@@ -691,7 +691,15 @@ var_definition_simple:
       variable_define( _environment, $1, VT_BYTE, 0 );
   }
   | Identifier ON Identifier ASSIGN direct_integer {
-      variable_define( _environment, $1, VT_BYTE, 0 );
+      variable_define( _environment, $1, VT_BYTE, $5 );
+  }
+  | Identifier ON Identifier ASSIGN expressions {
+      Variable * v = variable_retrieve( _environment, $5 );
+      if ( v == NULL ) {
+          CRITICAL("Variable not found");
+      }
+      Variable * d = variable_define( _environment, $1, v->type, v->value );
+      variable_move_naked( _environment, v->name, d->name );
   };
 
 var_definition:
