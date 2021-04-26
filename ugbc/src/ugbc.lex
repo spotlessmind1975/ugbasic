@@ -98,6 +98,9 @@ ROWS { return (ROWS); }
 S { return (S); }
 SCREEN { return (SCREEN); }
 SCROLL { return (SCROLL); }
+MS { return (MILLISECOND); }
+MILLISECOND { return (MILLISECOND); }
+MILLISECONDS { return (MILLISECONDS); }
 SELECT { return (SELECT); }
 SPRITE { return (SPRITE); }
 TAN { return(TAN); }
@@ -105,6 +108,7 @@ TEMPORARY { return (TEMPORARY); }
 TEXT { return (TEXT); }
 TEXTMAP { return (TEXTMAP); }
 THEN { return (THEN); }
+TICKS { return (TICKS); }
 TILES { return (TILES); }
 TURQUOISE { return(TURQUOISE); }
 UP { return (UP); }

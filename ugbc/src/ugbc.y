@@ -37,6 +37,8 @@ int yywrap() { return 1; }
 %token BEG END GAMELOOP ENDIF UP DOWN LEFT RIGHT DEBUG AND RANDOMIZE GRAPHIC TEXTMAP
 %token POINT
 
+%token MILLISECOND MILLISECONDS TICKS
+
 %token BLACK WHITE RED CYAN VIOLET GREEN BLUE YELLOW ORANGE
 %token BROWN LIGHT DARK GREY GRAY MAGENTA PURPLE
 %token LAVENDER GOLD TURQUOISE TAN PINK PEACH OLIVE
@@ -397,15 +399,33 @@ color_definition:
     color_definition_simple
   | color_definition_expression;
 
+milliseconds:
+    MS
+    | MILLISECOND
+    | MILLISECONDS;
+
 wait_definition_simple:
-    direct_integer CYCLES {
+      direct_integer CYCLES {
       wait_cycles( _environment, $1 );
+    }
+    | direct_integer TICKS {
+      wait_ticks( _environment, $1 );
+    }
+    | direct_integer milliseconds {
+      wait_milliseconds( _environment, $1 );
     };
 
 wait_definition_expression:
-    expressions CYCLES {
+      expressions CYCLES {
       wait_cycles_var( _environment, $1 );
-    };
+    }
+    | expressions TICKS {
+      wait_ticks_var( _environment, $1 );
+    }
+    | expressions milliseconds {
+      wait_milliseconds_var( _environment, $1 );
+    }
+    ;
 
 wait_definition:
     wait_definition_simple

@@ -101,6 +101,7 @@ void vic2_xpen( Environment * _environment, char * _destination );
 void vic2_ypen( Environment * _environment, char * _destination );
 void vic2_vertical_scroll( Environment * _environment, char * _displacement );
 void vic2_horizontal_scroll( Environment * _environment, char * _displacement );
+void vic2_busy_wait( Environment * _environment, char * _timing );
 
 void vic2_point_at_int( Environment * _environment, int _x, int _y );
 void vic2_point_at_vars( Environment * _environment, char *_x, char *_y );

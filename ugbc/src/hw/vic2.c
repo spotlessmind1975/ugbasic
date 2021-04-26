@@ -734,4 +734,22 @@ void vic2_horizontal_scroll( Environment * _environment, char * _displacement ) 
 
 }
 
+void vic2_busy_wait( Environment * _environment, char * _timing ) {
+
+    MAKE_LABEL
+
+    outline0("LDA #$00");
+    outline0("STA $22");
+    outline0("SEI");
+    outhead1("%s_1:", label );
+    outline0("LDA #$fb");
+    outhead1("%s_2:", label );
+    outline0("CMP $D012");
+    outline1("BNE %s_2", label);
+    outline0("INC $22");
+    outline0("LDA $22");
+    outline1("CMP %s", _timing );
+    outline1("BNE %s_1", label );
+
+}
 #endif

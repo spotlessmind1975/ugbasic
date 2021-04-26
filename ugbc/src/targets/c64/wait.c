@@ -39,7 +39,7 @@
  ****************************************************************************/
 
 /**
- * @brief Emit ASM code for <b>WAIT [int] CYCLES</b>
+ * @brief Emit ASM code for <b>WAIT # [integer] CYCLES</b>
  * 
  * This function outputs a code that engages the CPU in a busy wait.
  * 
@@ -47,21 +47,24 @@
  * @param _timing Number of cycles to wait
  */
 /* <usermanual>
-    @keyword WAIT CYCLES
-    
-    @english
-    Engages the CPU in a busy wait.
-    
-    @italian
-    Impiega la CPU in una attesa.
+@keyword WAIT
 
-    @syntax WAIT # [integer] CYCLES
+@english
+Engages the CPU in a wait. The timing can be given as
+number of CPU cycles (''CYCLES''), number of 50th/seconds (''TICKS''),
+milliseconds (''MILLISECONDS'' or ''MS'') or seconds (''SECONDS'' or ''S'').
 
-    @example WAIT #42 CYCLES
+@italian
+Impiega la CPU in una attesa. Il tempo può essere espresso
+come numero di cicli CPU (''CYCLES''), numero di 50th/seconds (''TICKS''),
+millisecondi (''MILLISECONDS'' oppure ''MS'') o secondi (''SECONDS'' or ''S'')
 
-    @target c64
+@syntax WAIT [delay] [CYCLES|TICKS|MILLISECONDS|SECONDS]
 
- </usermanual> */
+@example WAIT #42 CYCLES
+
+@target c64
+</usermanual> */
 void wait_cycles( Environment * _environment, int _timing ) {
 
     outline1("; WAIT %d", _timing);
@@ -73,7 +76,7 @@ void wait_cycles( Environment * _environment, int _timing ) {
 }
 
 /**
- * @brief Emit ASM code for <b>WAIT [int] CYCLES</b>
+ * @brief Emit ASM code for <b>WAIT [expression] CYCLES</b>
  * 
  * This function outputs a code that engages the CPU in a busy wait.
  * 
@@ -81,15 +84,10 @@ void wait_cycles( Environment * _environment, int _timing ) {
  * @param _timing Number of cycles to wait
  */
 /* <usermanual>
-    @keyword WAIT CYCLES
-    
-    @syntax WAIT [expression] CYCLES
+@keyword WAIT
 
-    @example WAIT timing CYCLES
-
-    @target c64
-
- </usermanual> */
+@example WAIT delay CYCLES
+</usermanual> */
 void wait_cycles_var( Environment * _environment, char * _timing ) {
 
     outline1("; WAIT %s", _timing);
@@ -104,3 +102,114 @@ void wait_cycles_var( Environment * _environment, char * _timing ) {
     cpu6502_busy_wait( _environment, timing->realName );
 
 }
+
+/**
+ * @brief Emit ASM code for <b>WAIT # [integer] TICKS</b>
+ * 
+ * This function outputs a code that engages the CPU in a busy wait.
+ * 
+ * @param _environment Current calling environment
+ * @param _timing Number of cycles to wait
+ */
+/* <usermanual>
+@keyword WAIT
+
+@example WAIT #2 TICKS
+
+@target c64
+</usermanual> */
+void wait_ticks( Environment * _environment, int _timing ) {
+
+    outline1("; WAIT %d TICKS", _timing);
+
+    char timingString[16]; sprintf(timingString, "#$%2.2x", _timing );
+
+    vic2_busy_wait( _environment, timingString );
+
+}
+
+/**
+ * @brief Emit ASM code for <b>WAIT [expression] TICKS</b>
+ * 
+ * This function outputs a code that engages the CPU in a busy wait.
+ * 
+ * @param _environment Current calling environment
+ * @param _timing Number of cycles to wait
+ */
+/* <usermanual>
+@keyword WAIT
+
+@example WAIT timing TICKS
+</usermanual> */
+void wait_ticks_var( Environment * _environment, char * _timing ) {
+
+    outline1("; WAIT %s", _timing);
+
+    MAKE_LABEL
+
+    Variable * timing = variable_retrieve( _environment, _timing );
+    if ( ! timing ) {
+        CRITICAL("Internal error on WAIT [expression]");
+    }
+    
+    vic2_busy_wait( _environment, timing->realName );
+
+}
+
+/**
+ * @brief Emit ASM code for <b>WAIT # [integer] MS</b>
+ * 
+ * This function outputs a code that engages the CPU in a busy wait.
+ * 
+ * @param _environment Current calling environment
+ * @param _timing Number of cycles to wait
+ */
+/* <usermanual>
+@keyword WAIT
+
+@example WAIT #10 MILLISECONDS
+
+@target c64
+</usermanual> */
+void wait_milliseconds( Environment * _environment, int _timing ) {
+
+    outline1("; WAIT %d MILLISECONDS", _timing);
+
+    char timingString[16]; sprintf(timingString, "#$%2.2x", _timing >> 4 );
+
+    vic2_busy_wait( _environment, timingString );
+
+}
+
+/**
+ * @brief Emit ASM code for <b>WAIT [expression] MILLISECONDS</b>
+ * 
+ * This function outputs a code that engages the CPU in a busy wait.
+ * 
+ * @param _environment Current calling environment
+ * @param _timing Number of cycles to wait
+ */
+/* <usermanual>
+@keyword WAIT
+
+@example WAIT timing MILLISECONDS
+</usermanual> */
+void wait_milliseconds_var( Environment * _environment, char * _timing ) {
+
+    outline1("; WAIT %s MILLISECONDS", _timing);
+
+    MAKE_LABEL
+
+    Variable * timing = variable_retrieve( _environment, _timing );
+    if ( ! timing ) {
+        CRITICAL("Internal error on WAIT [expression]");
+    }
+
+    Variable * temp = variable_cast( _environment, timing->name, VT_BYTE );
+
+    variable_div2_const( _environment, temp->name, 4 );
+
+    vic2_busy_wait( _environment, temp->realName );
+    
+}
+
