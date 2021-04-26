@@ -38,10 +38,8 @@
  * CODE SECTION 
  ****************************************************************************/
 
-// TODO: goto_number - jump to line number
-
 /**
- * @brief Emit ASM code for <b>GOTO label</b>
+ * @brief Emit ASM code for <b>GOTO [label]</b>
  * 
  * This function can be used to issue a code equivalent to the unconditional 
  * jump to an alphanumeric label, previously or subsequently defined, with 
@@ -72,5 +70,36 @@ void goto_label( Environment * _environment, char * _label ) {
     outline1("; GOTO %s", _label);
 
     cpu_jump( _environment, _label );
+
+}
+
+/**
+ * @brief Emit ASM code for <b>GOTO [number]</b>
+ * 
+ * This function can be used to issue a code equivalent to the unconditional 
+ * jump to an alphanumeric label, previously or subsequently defined, with 
+ * the syntax of the labels.
+ * 
+ * @param _environment Current calling environment
+ * @param _label Label where to jump to
+ * 
+ * @todo Dynamic GOTO (GOTO [expression])
+ */
+/* <usermanual>
+@keyword GOTO
+
+@syntax GOTO [number]
+
+@example GOTO 42
+</usermanual> */
+void goto_number( Environment * _environment, int _number ) {
+
+    // TODO: Dynamic GOTO (GOTO [expression])
+    
+    outline1("; GOTO %d", _number);
+
+    char label[16]; sprintf( label, "_linenumber%d", _number );
+
+    cpu_jump( _environment, label );
 
 }

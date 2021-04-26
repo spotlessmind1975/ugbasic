@@ -702,6 +702,15 @@ var_definition_simple:
       variable_move_naked( _environment, v->name, d->name );
   };
 
+goto_definition:
+    Identifier {
+      goto_label( _environment, $1 );
+  }
+  | Integer {
+      goto_number( _environment, $1 );
+  }
+  ;
+
 var_definition:
     var_definition_simple;
 
@@ -755,9 +764,7 @@ statement:
   | HALT {
       halt( _environment );
   }
-  | GOTO Identifier {
-      goto_label( _environment, $2 );      
-  }
+  | GOTO goto_definition
   | DONE  {
       return 0;
   }
@@ -784,7 +791,7 @@ statements_no_linenumbers:
 
 statements_with_linenumbers:
       Integer {
-        outhead1("_line%d:", $1);
+        outhead1("_linenumber%d:", $1);
     } statements_no_linenumbers { 
         ((Environment *)_environment)->yylineno = yylineno;
     };

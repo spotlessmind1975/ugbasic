@@ -490,6 +490,7 @@ void end_gameloop( Environment * _environment );
 void end_if_then( Environment * _environment  );
 void gameloop_cleanup( Environment * _environment );
 void goto_label( Environment * _environment, char * _label );
+void goto_number( Environment * _environment, int _number );
 void graphic( Environment * _environment );
 void halt( Environment * _environment );
 Variable * hit_to( Environment * _environment, int _sprite );
