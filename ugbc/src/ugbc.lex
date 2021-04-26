@@ -22,6 +22,10 @@
 "--" { return(DECREMENT); }
 "#" { return(HASH); }
 
+8BIT { return (BYTE); }
+16BIT { return (WORD); }
+32BIT { return (DWORD); }
+
 AS { return (AS); }
 AT { return (AT); }
 AND { return (AND); }
