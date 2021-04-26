@@ -135,6 +135,7 @@ YPEN { return (YPEN); }
 $[0-9A-fa-f]+ { yylval.integer = strtol(yytext+1,0,16); return(Integer); }
 [0-9]+ { yylval.integer = atoi(yytext); return(Integer);  }
 REM\s*[^\n\r]+[\n\r] { return(Remark);  }
+'\s*[^\n\r]+[\n\r] { return(Remark);  }
 
 [ \t]+
 . { return(yytext[0]); }
