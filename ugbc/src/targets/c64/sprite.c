@@ -50,21 +50,20 @@
  * @param _address Address where the sprite data begins from
  */
 /* <usermanual>
-    @keyword SPRITE DATA FROM
-    
-    @english
-    Set the starting address of the sprite's graphical data.
+@keyword SPRITE DATA FROM
 
-    @italian
-    Imposta l'indirizzo iniziale dei dati grafici dello sprite.
+@english
+Set the starting address of the sprite's graphical data.
 
-    @syntax SPRITE # [integer] DATA FROM # [integer]
+@italian
+Imposta l'indirizzo iniziale dei dati grafici dello sprite.
 
-    @example SPRITE #$1 DATA FROM #$0800
+@syntax SPRITE # [integer] DATA FROM # [integer]
 
-    @target c64
+@example SPRITE #$1 DATA FROM #$0800
 
- </usermanual> */
+@target c64
+</usermanual> */
 void sprite_data_from( Environment * _environment, int _sprite, int _address ) {
 
     outline2("; SPRITE %d DATA FROM $%4.4x", _sprite, _address);
@@ -88,15 +87,14 @@ void sprite_data_from( Environment * _environment, int _sprite, int _address ) {
  * @param _address Expression with the address where the sprite data begins from
  */
 /* <usermanual>
-    @keyword SPRITE DATA FROM
-    
-    @syntax SPRITE [expression] DATA FROM [expression]
+@keyword SPRITE DATA FROM
 
-    @example SPRITE starship DATA FROM starshipGraphicalData
+@syntax SPRITE [expression] DATA FROM [expression]
 
-    @target c64
+@example SPRITE starship DATA FROM starshipGraphicalData
 
- </usermanual> */
+@target c64
+</usermanual> */
 void sprite_data_from_vars( Environment * _environment, char * _sprite, char * _address ) {
 
     outline2("; SPRITE %s DATA FROM %s", _sprite, _address);
@@ -125,21 +123,20 @@ void sprite_data_from_vars( Environment * _environment, char * _sprite, char * _
  * @param _sprite Index of the sprite to enable (0...7)
  */
 /* <usermanual>
-    @keyword SPRITE ENABLE
-    
-    @english
-    Enable the sprite.
+@keyword SPRITE ENABLE
 
-    @italian
-    Abilita lo sprite.
+@english
+Enable the sprite.
 
-    @syntax SPRITE # [integer] ENABLE
+@italian
+Abilita lo sprite.
 
-    @example SPRITE #1 ENABLE
+@syntax SPRITE # [integer] ENABLE
 
-    @target c64
+@example SPRITE #1 ENABLE
 
- </usermanual> */
+@target c64
+</usermanual> */
 void sprite_enable( Environment * _environment, int _sprite ) {
 
     outline1("; SPRITE %d ENABLE", _sprite);
@@ -160,13 +157,12 @@ void sprite_enable( Environment * _environment, int _sprite ) {
  * @param _sprite Expression with the index of the sprite to enable (0...7)
  */
 /* <usermanual>
-    @keyword SPRITE ENABLE
-    
-    @syntax SPRITE [expression] ENABLE
+@keyword SPRITE ENABLE
 
-    @example SPRITE starship ENABLE
+@syntax SPRITE [expression] ENABLE
 
- </usermanual> */
+@example SPRITE starship ENABLE
+</usermanual> */
 void sprite_enable_var( Environment * _environment, char * _sprite ) {
 
     outline1("; SPRITE %s ENABLE", _sprite);
@@ -190,21 +186,20 @@ void sprite_enable_var( Environment * _environment, char * _sprite ) {
  * @param _sprite Index of the sprite to disable (0...7)
  */
 /* <usermanual>
-    @keyword SPRITE DISABLE
-    
-    @english
-    Disable the sprite.
+@keyword SPRITE DISABLE
 
-    @italian
-    Disabilita lo sprite.
+@english
+Disable the sprite.
 
-    @syntax SPRITE # [integer] DISABLE
+@italian
+Disabilita lo sprite.
 
-    @example SPRITE #1 DISABLE
+@syntax SPRITE # [integer] DISABLE
 
-    @target c64
+@example SPRITE #1 DISABLE
 
- </usermanual> */
+@target c64
+</usermanual> */
 void sprite_disable( Environment * _environment, int _sprite ) {
 
     outline1("; SPRITE %d DISABLE", _sprite);
@@ -225,13 +220,12 @@ void sprite_disable( Environment * _environment, int _sprite ) {
  * @param _sprite Expression with the index of the sprite to disable (0...7)
  */
 /* <usermanual>
-    @keyword SPRITE DISABLE
-    
-    @syntax SPRITE [expression] DISABLE
+@keyword SPRITE DISABLE
 
-    @example SPRITE starship DISABLE
+@syntax SPRITE [expression] DISABLE
 
- </usermanual> */
+@example SPRITE starship DISABLE
+</usermanual> */
 void sprite_disable_var( Environment * _environment, char * _sprite ) {
 
     _environment->bitmaskNeeded = 1;
@@ -258,21 +252,20 @@ void sprite_disable_var( Environment * _environment, char * _sprite ) {
  * @param _y The ordinate of the sprite
  */
 /* <usermanual>
-    @keyword SPRITE AT
-    
-    @english
-    Position a sprite to the (x,y) on the screen.
-    
-    @italian
-    Posiziona uno sprite sullo schermo alla posizione (x,y).
+@keyword SPRITE AT
 
-    @syntax SPRITE # [integer] AT ( # [integer], # [integer] )
+@english
+Position a sprite to the (x,y) on the screen.
 
-    @example SPRITE #1 AT ( #42, #42 )
+@italian
+Posiziona uno sprite sullo schermo alla posizione (x,y).
 
-    @target c64
+@syntax SPRITE # [integer] AT ( # [integer], # [integer] )
 
- </usermanual> */
+@example SPRITE #1 AT ( #42, #42 )
+
+@target c64
+</usermanual> */
 void sprite_position( Environment * _environment, int _sprite, int _x, int _y ) {
 
     outline3("; SPRITE %d AT (%d,%d)", _sprite, _x, _y);
@@ -300,13 +293,12 @@ void sprite_position( Environment * _environment, int _sprite, int _x, int _y ) 
  * @param _y Expression with the ordinate of the sprite
  */
 /* <usermanual>
-    @keyword SPRITE AT
-    
-    @syntax SPRITE [expression] AT ( [expression], [expression] )
+@keyword SPRITE AT
 
-    @example SPRITE starship AT ( starshipX, starshipY )
+@syntax SPRITE [expression] AT ( [expression], [expression] )
 
- </usermanual> */
+@example SPRITE starship AT ( starshipX, starshipY )
+</usermanual> */
 void sprite_position_vars( Environment * _environment, char * _sprite, char * _x, char * _y ) {
 
     Variable * sprite = variable_retrieve( _environment, _sprite );
@@ -340,21 +332,20 @@ void sprite_position_vars( Environment * _environment, char * _sprite, char * _x
  * @param _sprite Index of the sprite to expand vertically (0...7)
  */
 /* <usermanual>
-    @keyword SPRITE EXPAND
-    
-    @english
-    Expand a given sprite, vertically or horizontally,
-    
-    @italian
-    Espande un dato sprite, verticalmente oppure orizzontalmente.
+@keyword SPRITE EXPAND
 
-    @syntax SPRITE # [integer] EXPAND VERTICAL
+@english
+Expand a given sprite, vertically or horizontally,
 
-    @example SPRITE #1 EXPAND VERTICAL
+@italian
+Espande un dato sprite, verticalmente oppure orizzontalmente.
 
-    @target c64
+@syntax SPRITE # [integer] EXPAND VERTICAL
 
- </usermanual> */
+@example SPRITE #1 EXPAND VERTICAL
+
+@target c64
+</usermanual> */
 void sprite_expand_vertical( Environment * _environment, int _sprite ) {
 
     outline1("; SPRITE %d EXPAND VERTICAL", _sprite);
@@ -375,15 +366,14 @@ void sprite_expand_vertical( Environment * _environment, int _sprite ) {
  * @param _sprite Expression with the index of the sprite to expand vertically (0...7)
  */
 /* <usermanual>
-    @keyword SPRITE EXPAND
-    
-    @syntax SPRITE [expression] EXPAND VERTICAL
+@keyword SPRITE EXPAND
 
-    @example SPRITE sharship EXPAND VERTICAL
+@syntax SPRITE [expression] EXPAND VERTICAL
 
-    @target c64
+@example SPRITE sharship EXPAND VERTICAL
 
- </usermanual> */
+@target c64
+</usermanual> */
 void sprite_expand_vertical_var( Environment * _environment, char * _sprite ) {
 
     outline1("; SPRITE %s EXPAND VERTICAL", _sprite);
@@ -409,21 +399,20 @@ void sprite_expand_vertical_var( Environment * _environment, char * _sprite ) {
  * @param _sprite Index of the sprite to compress vertically (0...7)
  */
 /* <usermanual>
-    @keyword SPRITE COMPRESS
-    
-    @english
-    Compress a given sprite, vertically or horizontally,
-    
-    @italian
-    Comprime un dato sprite, verticalmente oppure orizzontalmente.
+@keyword SPRITE COMPRESS
 
-    @syntax SPRITE # [integer] COMPRESS VERTICAL
+@english
+Compress a given sprite, vertically or horizontally,
 
-    @example SPRITE #1 COMPRESS VERTICAL
+@italian
+Comprime un dato sprite, verticalmente oppure orizzontalmente.
 
-    @target c64
+@syntax SPRITE # [integer] COMPRESS VERTICAL
 
- </usermanual> */
+@example SPRITE #1 COMPRESS VERTICAL
+
+@target c64
+</usermanual> */
 void sprite_compress_vertical( Environment * _environment, int _sprite ) {
 
     outline1("; SPRITE %d COMPRESS VERTICAL", _sprite);
@@ -444,15 +433,14 @@ void sprite_compress_vertical( Environment * _environment, int _sprite ) {
  * @param _sprite Expression with the index of the sprite to compress vertically (0...7)
  */
 /* <usermanual>
-    @keyword SPRITE COMPRESS
-    
-    @syntax SPRITE [expression] COMPRESS VERTICAL
+@keyword SPRITE COMPRESS
 
-    @example SPRITE #1 COMPRESS VERTICAL
+@syntax SPRITE [expression] COMPRESS VERTICAL
 
-    @target c64
+@example SPRITE #1 COMPRESS VERTICAL
 
- </usermanual> */
+@target c64
+</usermanual> */
 void sprite_compress_vertical_var( Environment * _environment, char * _sprite ) {
 
     _environment->bitmaskNeeded = 1;
@@ -476,15 +464,14 @@ void sprite_compress_vertical_var( Environment * _environment, char * _sprite ) 
  * @param _sprite Index of the sprite to expand horizontally (0...7)
  */
 /* <usermanual>
-    @keyword SPRITE EXPAND
-    
-    @syntax SPRITE # [integer] EXPAND HORIZONTAL
+@keyword SPRITE EXPAND
 
-    @example SPRITE #1 EXPAND HORIZONTAL
+@syntax SPRITE # [integer] EXPAND HORIZONTAL
 
-    @target c64
+@example SPRITE #1 EXPAND HORIZONTAL
 
- </usermanual> */
+@target c64
+</usermanual> */
 void sprite_expand_horizontal( Environment * _environment, int _sprite ) {
 
     outline1("; SPRITE %d EXPAND HORIZONTAL", _sprite);
@@ -505,15 +492,14 @@ void sprite_expand_horizontal( Environment * _environment, int _sprite ) {
  * @param _sprite Expression with the index of the sprite to expand horizontally (0...7)
  */
 /* <usermanual>
-    @keyword SPRITE EXPAND
-    
-    @syntax SPRITE [expression] EXPAND HORIZONTAL
+@keyword SPRITE EXPAND
 
-    @example SPRITE starship EXPAND HORIZONTAL
+@syntax SPRITE [expression] EXPAND HORIZONTAL
 
-    @target c64
+@example SPRITE starship EXPAND HORIZONTAL
 
- </usermanual> */
+@target c64
+</usermanual> */
 void sprite_expand_horizontal_var( Environment * _environment, char * _sprite ) {
 
     outline1("; SPRITE %s EXPAND HORIZONTAL", _sprite);
@@ -539,15 +525,14 @@ void sprite_expand_horizontal_var( Environment * _environment, char * _sprite ) 
  * @param _sprite Index of the sprite to compress horizontally (0...7)
  */
 /* <usermanual>
-    @keyword SPRITE COMPRESS
-    
-    @syntax SPRITE # [integer] COMPRESS HORIZONTAL
+@keyword SPRITE COMPRESS
 
-    @example SPRITE #1 COMPRESS HORIZONTAL
+@syntax SPRITE # [integer] COMPRESS HORIZONTAL
 
-    @target c64
+@example SPRITE #1 COMPRESS HORIZONTAL
 
- </usermanual> */
+@target c64
+</usermanual> */
 void sprite_compress_horizontal( Environment * _environment, int _sprite ) {
     
     outline1("; SPRITE %d COMPRESS HORIZONTAL", _sprite);
@@ -568,15 +553,14 @@ void sprite_compress_horizontal( Environment * _environment, int _sprite ) {
  * @param _sprite Index of the sprite to compress horizontally (0...7)
  */
 /* <usermanual>
-    @keyword SPRITE COMPRESS
-    
-    @syntax SPRITE [expression] COMPRESS HORIZONTAL
+@keyword SPRITE COMPRESS
 
-    @example SPRITE starship COMPRESS HORIZONTAL
+@syntax SPRITE [expression] COMPRESS HORIZONTAL
 
-    @target c64
+@example SPRITE starship COMPRESS HORIZONTAL
 
- </usermanual> */
+@target c64
+</usermanual> */
 void sprite_compress_horizontal_var( Environment * _environment, char * _sprite ) {
 
     outline1("; SPRITE %s COMPRESS HORIZONTAL", _sprite);
@@ -602,21 +586,20 @@ void sprite_compress_horizontal_var( Environment * _environment, char * _sprite 
  * @param _sprite Index of the sprite for which enable multicolor (0...7)
  */
 /* <usermanual>
-    @keyword SPRITE MULTICOLOR
-    
-    @english
-    Enable multicolor for sprite.
-    
-    @italian
-    Abilita il multicolor per lo sprite dato.
+@keyword SPRITE MULTICOLOR
 
-    @syntax SPRITE # [integer] MULTICOLOR
+@english
+Enable multicolor for sprite.
 
-    @example SPRITE #1 MULTICOLOR
+@italian
+Abilita il multicolor per lo sprite dato.
 
-    @target c64
+@syntax SPRITE # [integer] MULTICOLOR
 
- </usermanual> */
+@example SPRITE #1 MULTICOLOR
+
+@target c64
+</usermanual> */
 void sprite_multicolor( Environment * _environment, int _sprite ) {
 
     outline1("; SPRITE %d MULTICOLOR", _sprite);
@@ -637,15 +620,14 @@ void sprite_multicolor( Environment * _environment, int _sprite ) {
  * @param _sprite Expression with index of the sprite for which enable multicolor (0...7)
  */
 /* <usermanual>
-    @keyword SPRITE MULTICOLOR
-    
-    @syntax SPRITE [expression] MULTICOLOR
+@keyword SPRITE MULTICOLOR
 
-    @example SPRITE starship MULTICOLOR
+@syntax SPRITE [expression] MULTICOLOR
 
-    @target c64
+@example SPRITE starship MULTICOLOR
 
- </usermanual> */
+@target c64
+</usermanual> */
 void sprite_multicolor_var( Environment * _environment, char * _sprite ) {
 
     outline1("; SPRITE %s MULTICOLOR", _sprite);
@@ -671,21 +653,20 @@ void sprite_multicolor_var( Environment * _environment, char * _sprite ) {
  * @param _sprite Index of the sprite for which enable monocolor (0...7)
  */
 /* <usermanual>
-    @keyword SPRITE MONOCOLOR
-    
-    @english
-    Disable multicolor for sprite.
-    
-    @italian
-    Disabilita il multicolor per lo sprite dato.
+@keyword SPRITE MONOCOLOR
 
-    @syntax SPRITE # [integer] MONOCOLOR
+@english
+Disable multicolor for sprite.
 
-    @example SPRITE #1 MONOCOLOR
+@italian
+Disabilita il multicolor per lo sprite dato.
 
-    @target c64
+@syntax SPRITE # [integer] MONOCOLOR
 
- </usermanual> */
+@example SPRITE #1 MONOCOLOR
+
+@target c64
+</usermanual> */
 void sprite_monocolor( Environment * _environment, int _sprite ) {
 
     outline1("; SPRITE %d MONOCOLOR", _sprite);
@@ -706,15 +687,14 @@ void sprite_monocolor( Environment * _environment, int _sprite ) {
  * @param _sprite Expression with index of the sprite for which enable monocolor (0...7)
  */
 /* <usermanual>
-    @keyword SPRITE MONOCOLOR
-    
-    @syntax SPRITE [expression] MONOCOLOR
+@keyword SPRITE MONOCOLOR
 
-    @example SPRITE starship MONOCOLOR
+@syntax SPRITE [expression] MONOCOLOR
 
-    @target c64
+@example SPRITE starship MONOCOLOR
 
- </usermanual> */
+@target c64
+</usermanual> */
 void sprite_monocolor_var( Environment * _environment, char * _sprite ) {
 
     outline1("; SPRITE %s MULTICOLOR", _sprite);
@@ -741,21 +721,20 @@ void sprite_monocolor_var( Environment * _environment, char * _sprite ) {
  * @param _color Index of the color
  */
 /* <usermanual>
-    @keyword SPRITE COLOR
-    
-    @english
-    Change specific color for a given sprite.
-    
-    @italian
-    Cambia il colore specifico per un dato sprite.
+@keyword SPRITE COLOR
 
-    @syntax SPRITE # [integer] COLOR # [integer]
+@english
+Change specific color for a given sprite.
 
-    @example SPRITE #1 COLOR #2
+@italian
+Cambia il colore specifico per un dato sprite.
 
-    @target c64
+@syntax SPRITE # [integer] COLOR # [integer]
 
- </usermanual> */
+@example SPRITE #1 COLOR #2
+
+@target c64
+</usermanual> */
 void sprite_color( Environment * _environment, int _sprite, int _color ) {
 
     outline2("; COLOR SPRITE %d TO %2.2x", _sprite, _color);
@@ -778,15 +757,14 @@ void sprite_color( Environment * _environment, int _sprite, int _color ) {
  * @param _color Expression with the index of the color
  */
 /* <usermanual>
-    @keyword SPRITE COLOR
-    
-    @syntax SPRITE [expression] COLOR [expression]
+@keyword SPRITE COLOR
 
-    @example SPRITE #1 COLOR YELLOW
+@syntax SPRITE [expression] COLOR [expression]
 
-    @target c64
+@example SPRITE #1 COLOR YELLOW
 
- </usermanual> */
+@target c64
+</usermanual> */
 void sprite_color_vars( Environment * _environment, char * _sprite, char * _color ) {
 
     outline2("; COLOR SPRITE %s TO %s", _sprite, _color);

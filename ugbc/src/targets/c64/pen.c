@@ -49,21 +49,20 @@
  * @return Variable* Variable with the result of the reading
  */
 /* <usermanual>
-    @keyword XPEN
-    
-    @english
-    Read the X (horizontal) position of the electronic pen connected to the hardware.
+@keyword XPEN
 
-    @italian
-    Legge la posizione X (orizzontale) della penna elettronica collegata all'hardware.
+@english
+Read the X (horizontal) position of the electronic pen connected to the hardware.
 
-    @syntax = XPEN( )
+@italian
+Legge la posizione X (orizzontale) della penna elettronica collegata all'hardware.
 
-    @example x = XPEN( )
+@syntax = XPEN( )
 
-    @target c64
+@example x = XPEN( )
 
- </usermanual> */
+@target c64
+</usermanual> */
 Variable * xpen( Environment * _environment ) {
 
     outline0("; = XPEN");
@@ -87,21 +86,20 @@ Variable * xpen( Environment * _environment ) {
  * @return Variable* Variable with the result of the reading
  */
 /* <usermanual>
-    @keyword YPEN
-    
-    @english
-    Read the Y (vertical) position of the electronic pen connected to the hardware.
+@keyword YPEN
 
-    @italian
-    Legge la posizione Y (verticale) della penna elettronica collegata all'hardware.
+@english
+Read the Y (vertical) position of the electronic pen connected to the hardware.
 
-    @syntax = YPEN( )
+@italian
+Legge la posizione Y (verticale) della penna elettronica collegata all'hardware.
 
-    @example y = YPEN( )
+@syntax = YPEN( )
 
-    @target c64
+@example y = YPEN( )
 
- </usermanual> */
+@target c64
+</usermanual> */
 Variable * ypen( Environment * _environment ) {
 
     outline0("; = YPEN");

@@ -46,21 +46,20 @@
  * @param _environment Current calling environment
  */
 /* <usermanual>
-    @keyword RANDOMIZE
-    
-    @english
-    Initialize the random seed.
+@keyword RANDOMIZE
 
-    @italian
-    Inizializza il seme casuale.
+@english
+Initialize the random seed.
 
-    @syntax RANDOMIZE
+@italian
+Inizializza il seme casuale.
 
-    @example RANDOMIZE
+@syntax RANDOMIZE
 
-    @target c64
+@example RANDOMIZE
 
- </usermanual> */
+@target c64
+</usermanual> */
 void randomize( Environment * _environment ) {
 
     Variable * seed = variable_define( _environment, "seed", VT_DWORD, 0Xffffffff );
@@ -87,26 +86,25 @@ void randomize( Environment * _environment ) {
  * @return Variable* The random value calculated
  */
 /* <usermanual>
-    @keyword RANDOM
-    
-    @english
-    Calculate a random value.
+@keyword RANDOM
 
-    @italian
-    Calcola un valore casuale.
+@english
+Calculate a random value.
 
-    @syntax = (BYTE) RANDOM
-    @syntax = (COLOR) RANDOM
-    @syntax = (WORD) RANDOM
-    @syntax = (ADDRESS) RANDOM
-    @syntax = (POSITION) RANDOM
-    @syntax = (DWORD) RANDOM
+@italian
+Calcola un valore casuale.
 
-    @example randomX = (POSITION) RANDOM
+@syntax = (BYTE) RANDOM
+@syntax = (COLOR) RANDOM
+@syntax = (WORD) RANDOM
+@syntax = (ADDRESS) RANDOM
+@syntax = (POSITION) RANDOM
+@syntax = (DWORD) RANDOM
 
-    @target c64
+@example randomX = (POSITION) RANDOM
 
- </usermanual> */
+@target c64
+</usermanual> */
 Variable * random_value( Environment * _environment, VariableType _type ) {
 
     Variable * seed = variable_define( _environment, "seed", VT_DWORD, 0Xffffffff );
@@ -141,21 +139,20 @@ Variable * random_value( Environment * _environment, VariableType _type ) {
  * @return Variable* The random value calculated
  */
 /* <usermanual>
-    @keyword RANDOM WIDTH
-    
-    @english
-    Calculate a random width.
+@keyword RANDOM WIDTH
 
-    @italian
-    Calcola un valore di larghezza casuale.
+@english
+Calculate a random width.
 
-    @syntax = RANDOM WIDTH
+@italian
+Calcola un valore di larghezza casuale.
 
-    @example POINT AT (RANDOM WIDTH, RANDOM HEIGHT)
+@syntax = RANDOM WIDTH
 
-    @target c64
+@example POINT AT (RANDOM WIDTH, RANDOM HEIGHT)
 
- </usermanual> */
+@target c64
+</usermanual> */
 Variable * random_width( Environment * _environment ) {
  
     Variable * result1 = random_value( _environment, VT_POSITION );
@@ -177,21 +174,20 @@ Variable * random_width( Environment * _environment ) {
  * @return Variable* The random value calculated
  */
 /* <usermanual>
-    @keyword RANDOM HEIGHT
-    
-    @english
-    Calculate a random height.
+@keyword RANDOM HEIGHT
 
-    @italian
-    Calcola un valore di altezza casuale.
+@english
+Calculate a random height.
 
-    @syntax = RANDOM HEIGHT
+@italian
+Calcola un valore di altezza casuale.
 
-    @example POINT AT (RANDOM WIDTH, RANDOM HEIGHT)
+@syntax = RANDOM HEIGHT
 
-    @target c64
+@example POINT AT (RANDOM WIDTH, RANDOM HEIGHT)
 
- </usermanual> */
+@target c64
+</usermanual> */
 Variable * random_height( Environment * _environment ) {
 
     Variable * result = random_value( _environment, VT_POSITION );

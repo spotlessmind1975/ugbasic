@@ -147,11 +147,10 @@ void bitmap_at_var( Environment * _environment, char * _address ) {
  * @throw EXIT_FAILURE "BITMAP CLEAR WITH xxx needs BITMAP ENABLED"
  */
 /* <usermanual>
-    @keyword BITMAP CLEAR
-    
-    @target zx
+@keyword BITMAP CLEAR
 
- </usermanual> */
+@target zx
+</usermanual> */
 void bitmap_clear_with( Environment * _environment, int _pattern ) {
 
     outline1("; BITMAP CLEAR WITH $%2.2x", _pattern );

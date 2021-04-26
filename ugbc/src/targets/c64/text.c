@@ -55,25 +55,24 @@
  * @param _address Address to use
  */
 /* <usermanual>
-    @keyword TEXTMAP AT
-    
-    @english
-    Set the starting address, in memory, for the textmap. The input parameter 
-    is decoded and declined according to the hardware limits. So it is not
-    said that exactly the given address is set.
-    
-    @italian
-    Imposta l'indirizzo di partenza, in memoria, per la textmap. Il parametro 
-    di input viene decodificato e declinato in base ai limiti hardware. Quindi 
-    non è detto che sia impostato esattamente con l'indirizzo specificato.
+@keyword TEXTMAP AT
 
-    @syntax TEXTMAP AT # [integer]
+@english
+Set the starting address, in memory, for the textmap. The input parameter 
+is decoded and declined according to the hardware limits. So it is not
+said that exactly the given address is set.
 
-    @example TEXTMAP AT #$0400
+@italian
+Imposta l'indirizzo di partenza, in memoria, per la textmap. Il parametro 
+di input viene decodificato e declinato in base ai limiti hardware. Quindi 
+non è detto che sia impostato esattamente con l'indirizzo specificato.
 
-    @target c64
+@syntax TEXTMAP AT # [integer]
 
- </usermanual> */
+@example TEXTMAP AT #$0400
+
+@target c64
+</usermanual> */
 void textmap_at( Environment * _environment, int _address ) {
 
     outline1("; TEXTMAP AT $%4.4x", _address);
@@ -106,15 +105,14 @@ void textmap_at( Environment * _environment, int _address ) {
  * @param _address Expression with address to use
  */
 /* <usermanual>
-    @keyword TEXTMAP AT
-    
-    @syntax TEXTMAP AT [expression]
+@keyword TEXTMAP AT
 
-    @example TEXTMAP AT newTextmapAddress
+@syntax TEXTMAP AT [expression]
 
-    @target c64
+@example TEXTMAP AT newTextmapAddress
 
- </usermanual> */
+@target c64
+</usermanual> */
 void textmap_at_var( Environment * _environment, char * _address ) {
 
     outline1("; TEXTMAP AT %s", _address);
@@ -141,21 +139,20 @@ void textmap_at_var( Environment * _environment, char * _address ) {
  * @param _environment Current calling environment
  */
 /* <usermanual>
-    @keyword TEXT ENABLE
-    
-    @english
-    Enable the text mode.
-    
-    @italian
-    Abilita la modalità testuale.
+@keyword TEXT ENABLE
 
-    @syntax TEXT ENABLE
+@english
+Enable the text mode.
 
-    @example TEXT ENABLE
+@italian
+Abilita la modalità testuale.
 
-    @target c64
+@syntax TEXT ENABLE
 
- </usermanual> */
+@example TEXT ENABLE
+
+@target c64
+</usermanual> */
 void text_enable( Environment * _environment ) {
     
     bitmap_disable( _environment );
@@ -171,21 +168,20 @@ void text_enable( Environment * _environment ) {
  * @param _environment Current calling environment
  */
 /* <usermanual>
-    @keyword TEXT DISABLE
-    
-    @english
-    Disable the text mode.
-    
-    @italian
-    Disabilita la modalità testuale.
+@keyword TEXT DISABLE
 
-    @syntax TEXT ENABLE
+@english
+Disable the text mode.
 
-    @example TEXT ENABLE
+@italian
+Disabilita la modalità testuale.
 
-    @target c64
+@syntax TEXT ENABLE
 
- </usermanual> */
+@example TEXT ENABLE
+
+@target c64
+</usermanual> */
 void text_disable( Environment * _environment ) {
     
     bitmap_enable( _environment );

@@ -52,21 +52,20 @@
  * @throw EXIT_FAILURE "CRITICAL: POINT AT (xxx,xxx) needs BITMAP ENABLE"
  */
 /* <usermanual>
-    @keyword POINT AT
-    
-    @english
-    Draws a pixel on the screen in bitmap mode on given coordinates. 
+@keyword POINT AT
 
-    @italian
-    Disegna un pixel sullo schermo in modalità bitmap su coordinate date.
+@english
+Draws a pixel on the screen in bitmap mode on given coordinates. 
 
-    @syntax POINT AT (# [integer], # [integer])
+@italian
+Disegna un pixel sullo schermo in modalità bitmap su coordinate date.
 
-    @example POINT AT (#42,#42)
+@syntax POINT AT (# [integer], # [integer])
 
-    @target c64
+@example POINT AT (#42,#42)
 
- </usermanual> */
+@target c64
+</usermanual> */
 void point_at( Environment * _environment, int _x, int _y ) {
 
     outline2("; POINT AT (%d,%d)", _x, _y);
@@ -94,13 +93,12 @@ void point_at( Environment * _environment, int _x, int _y ) {
  * @throw EXIT_FAILURE "CRITICAL: POINT AT (xxx,xxx) needs BITMAP ENABLE"
  */
 /* <usermanual>
-    @keyword POINT AT
-    
-    @syntax POINT AT ([expression],[expression])
+@keyword POINT AT
 
-    @example POINT AT (x+1,y+1)
+@syntax POINT AT ([expression],[expression])
 
- </usermanual> */
+@example POINT AT (x+1,y+1)
+</usermanual> */
 void point_at_vars( Environment * _environment, char * _x, char * _y ) {
 
     outline2("; POINT AT (%s,%s)", _x, _y);

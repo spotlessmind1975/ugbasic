@@ -52,33 +52,32 @@
  * @param _environment Current calling environment
  */
 /* <usermanual>
-    @keyword GRAPHIC
-    
-    @english
-    Do a quickly initialization with the high resolution graphics mode. 
-    It is equivalent to running the following commands:
+@keyword GRAPHIC
 
-      - ''BITMAP ENABLE''
-      - ''BITMAP CLEAR''
-      - ''COLORMAP CLEAR''
-      - ''COLOR BORDER BLACK''
-    
-    @italian
-    Eseguire una rapida inizializzazione con la modalità grafica ad 
-    alta risoluzione. Equivale a eseguire i seguenti comandi:
+@english
+Do a quickly initialization with the high resolution graphics mode. 
+It is equivalent to running the following commands:
 
-      - ''BITMAP ENABLE''
-      - ''BITMAP CLEAR''
-      - ''COLORMAP CLEAR''
-      - ''COLOR BORDER BLACK''
+  - ''BITMAP ENABLE''
+  - ''BITMAP CLEAR''
+  - ''COLORMAP CLEAR''
+  - ''COLOR BORDER BLACK''
 
-    @syntax GRAPHIC
+@italian
+Eseguire una rapida inizializzazione con la modalità grafica ad 
+alta risoluzione. Equivale a eseguire i seguenti comandi:
 
-    @example GRAPHIC
+  - ''BITMAP ENABLE''
+  - ''BITMAP CLEAR''
+  - ''COLORMAP CLEAR''
+  - ''COLOR BORDER BLACK''
 
-    @target all
+@syntax GRAPHIC
 
- </usermanual> */
+@example GRAPHIC
+
+@target all
+</usermanual> */
 void graphic( Environment * _environment ) {
 
     outline0("; GRAPHIC" );

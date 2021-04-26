@@ -134,9 +134,14 @@ typedef struct _Bank {
 
 /**
  * @brief Type of variables
+ * 
+ * @todo support for data type VT_STRING
+ * @todo support for signed data type
+ * @todo support for arrays
  */
 typedef enum _VariableType {
 
+    // TODO: support for signed data type
     /** Single byte (8 bit) */
     VT_BYTE = 1,
     /** Single word (16 bit) */
@@ -153,6 +158,8 @@ typedef enum _VariableType {
     /** Color index */
     VT_COLOR = 4
 
+    // TODO: support for data type VT_STRING.
+    // TODO: support for arrays.
 } VariableType;
 
 /**
@@ -200,8 +207,14 @@ typedef struct _Variable {
 
 /**
  * @brief Structure of compilation environment
+ * 
+ * @todo implement DEF FN
+ * @todo implement PROCEDURE
  */
 typedef struct _Environment {
+
+    // TODO: implement DEF FN
+    // TODO: implement procedures
 
     /* --------------------------------------------------------------------- */
     /* INPUT PARAMETERS                                                      */
@@ -286,8 +299,8 @@ typedef struct _Environment {
 
 #define UNIQUE_ID   _environment->uniqueId++
 #define MAKE_LABEL  char label[32]; sprintf( label, "_label%d", UNIQUE_ID);
-#define CRITICAL( s ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s at %d\n", _environment->sourceFileName, s, _environment->yylineno ); exit( EXIT_FAILURE );
-#define CRITICAL2( s, v ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%s) at %d\n", _environment->sourceFileName, s, v, _environment->yylineno ); exit( EXIT_FAILURE );
+#define CRITICAL( s ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); exit( EXIT_FAILURE );
+#define CRITICAL2( s, v ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); exit( EXIT_FAILURE );
 #define CRITICAL_TEMPORARY2( v ) CRITICAL("I001 - Unable to create space for temporary variable", v );
 
 #define outline0n(n,s,r)     \
@@ -555,6 +568,10 @@ Variable * variable_and_const( Environment * _environment, char * _source, int _
 Variable * variable_complement_const( Environment * _environment, char * _source, int _mask );
 void wait_cycles( Environment * _environment, int _timing );
 void wait_cycles_var( Environment * _environment, char * _timing );
+void wait_ticks( Environment * _environment, int _timing );
+void wait_ticks_var( Environment * _environment, char * _timing );
+void wait_milliseconds( Environment * _environment, int _timing );
+void wait_milliseconds_var( Environment * _environment, char * _timing );
 Variable * xpen( Environment * _environment );
 Variable * ypen( Environment * _environment );
 

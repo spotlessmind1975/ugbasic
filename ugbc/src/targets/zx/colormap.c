@@ -55,11 +55,10 @@
  * @param _address Address to use
  */
 /* <usermanual>
-    @keyword COLORMAP AT
-    
-    @target zx
+@keyword COLORMAP AT
 
- </usermanual> */
+@target zx
+</usermanual> */
 void colormap_at( Environment * _environment, int _address ) {
 
     outline1("; COLORMAP AT $%4.4x", _address);

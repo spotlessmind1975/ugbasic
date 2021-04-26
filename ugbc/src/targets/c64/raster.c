@@ -53,27 +53,26 @@
  * @param _position The vertical position to wait for
  */
 /* <usermanual>
-    @keyword RASTER AT
-    
-    @english
-    Initialize a raster routine. In other words, asynchronously and in parallel 
-    with the execution of the main program, the routine starting from the label 
-    provided will be executed when the video raster on the screen reaches the 
-    value given. 
+@keyword RASTER AT
 
-    @italian
-    Inizializza una routine raster. In altre parole, in modo asincrono e in parallelo
-     con l'esecuzione del programma principale, viene impostata una routine a partire 
-     dall'etichetta fornita. Questa sarà eseguita quando il raster video sullo 
-     schermo raggiunge il valore dato. 
+@english
+Initialize a raster routine. In other words, asynchronously and in parallel 
+with the execution of the main program, the routine starting from the label 
+provided will be executed when the video raster on the screen reaches the 
+value given. 
 
-    @syntax RASTER AT [integer] WITH [label]
+@italian
+Inizializza una routine raster. In altre parole, in modo asincrono e in parallelo
+    con l'esecuzione del programma principale, viene impostata una routine a partire 
+    dall'etichetta fornita. Questa sarà eseguita quando il raster video sullo 
+    schermo raggiunge il valore dato. 
 
-    @example RASTER AT #$42 WITH rasterRoutine
+@syntax RASTER AT [integer] WITH [label]
 
-    @target c64
+@example RASTER AT #$42 WITH rasterRoutine
 
- </usermanual> */
+@target c64
+</usermanual> */
 void raster_at( Environment * _environment, char * _label, int _position ) {
     
     outline2("; RASTER AT %d WITH %s", _position, _label);
@@ -100,13 +99,12 @@ void raster_at( Environment * _environment, char * _label, int _position ) {
  * @param _position The vertical position to wait for
  */
 /* <usermanual>
-    @keyword RASTER AT
-    
-    @syntax RASTER AT [expression] WITH [label]
+@keyword RASTER AT
 
-    @example RASTER AT (rasterLine+1) WITH rasterRoutine
+@syntax RASTER AT [expression] WITH [label]
 
- </usermanual> */
+@example RASTER AT (rasterLine+1) WITH rasterRoutine
+</usermanual> */
 void raster_at_var( Environment * _environment, char * _label, char * _position ) {
    
     outline2("; RASTER AT %s WITH %s", _position, _label);
@@ -135,23 +133,22 @@ void raster_at_var( Environment * _environment, char * _label, char * _position 
  * @param _environment Current calling environment
  */
 /* <usermanual>
-    @keyword NEXT RASTER
-    
-    @english
-    Wait for the next raster. Meanwhile, the execution of the main 
-    code will resume where it left off.
+@keyword NEXT RASTER
 
-    @italian
-    Aspetta il prossimo raster. Nel frattempo, l'esecuzione del 
-    codice riprenderà da dove era stato interrotto.
+@english
+Wait for the next raster. Meanwhile, the execution of the main 
+code will resume where it left off.
 
-    @syntax NEXT RASTER
+@italian
+Aspetta il prossimo raster. Nel frattempo, l'esecuzione del 
+codice riprenderà da dove era stato interrotto.
 
-    @example NEXT RASTER
+@syntax NEXT RASTER
 
-    @target c64
+@example NEXT RASTER
 
- </usermanual> */
+@target c64
+</usermanual> */
 void next_raster( Environment * _environment ) {
 
     outline0("; NEXT RASTER");
@@ -173,26 +170,25 @@ void next_raster( Environment * _environment ) {
  * @param _position The vertical position to wait for
  */
 /* <usermanual>
-    @keyword NEXT RASTER AT
-    
-    @english
-    Wait for the next raster at a specific, new, raster position
-    and to execute the code at the given label. Meanwhile, the 
-    execution of the main code will resume where it left off.
+@keyword NEXT RASTER AT
 
-    @italian
-    Attendi il raster successivo in una nuova posizione raster specifica
-    ed esegui il codice in corrispondenza dell'etichetta data. Nel 
-    frattempo, l'esecuzione del codice principale riprenderà da dove 
-    era stata interrotta.
+@english
+Wait for the next raster at a specific, new, raster position
+and to execute the code at the given label. Meanwhile, the 
+execution of the main code will resume where it left off.
 
-    @syntax NEXT RASTER AT # [integer] WITH [label]
+@italian
+Attendi il raster successivo in una nuova posizione raster specifica
+ed esegui il codice in corrispondenza dell'etichetta data. Nel 
+frattempo, l'esecuzione del codice principale riprenderà da dove 
+era stata interrotta.
 
-    @example NEXT RASTER AT #$42 WITH myRasterRoutine
+@syntax NEXT RASTER AT # [integer] WITH [label]
 
-    @target c64
+@example NEXT RASTER AT #$42 WITH myRasterRoutine
 
- </usermanual> */
+@target c64
+</usermanual> */
 void next_raster_at_with( Environment * _environment, int _position, char * _label ) {
     
     outline2("; RASTER AT %d WITH %s", _position, _label);
@@ -217,13 +213,12 @@ void next_raster_at_with( Environment * _environment, int _position, char * _lab
  * @param _position The vertical position to wait for
  */
 /* <usermanual>
-    @keyword NEXT RASTER AT
-    
-    @syntax NEXT RASTER AT [expression] WITH [label]
+@keyword NEXT RASTER AT
 
-    @example NEXT RASTER AT newRaterLine WITH myRasterRoutine
+@syntax NEXT RASTER AT [expression] WITH [label]
 
- </usermanual> */
+@example NEXT RASTER AT newRaterLine WITH myRasterRoutine
+</usermanual> */
 void next_raster_at_with_var( Environment * _environment, char * _position, char * _label ) {
 
     outline2("; NEXT RASTER AT %s WITH %s", _position, _label);

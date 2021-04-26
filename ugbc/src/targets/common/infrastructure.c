@@ -270,6 +270,28 @@ void variable_reset( Environment * _environment ) {
  * @return Variable* The variable definition
  * @throw EXIT_FAILURE "Variable redefined with a different type"
  */
+/* <usermanual>
+@keyword VAR
+
+@english
+Define a variable [name] on bank [bank]. Optionally,
+you can assign to that variable a value given by [expression].
+
+@italian
+Definisci una variabile [name] sul banko [bank]. Eventualmente,
+è possibile assegnare alla variabile il valore dell'espressione
+[expression].
+
+@syntax VAR [name] ON [bank] { = [expression] }
+
+@example VAR x ON bank1 = #$42
+
+@seeAlso BANK
+
+@target all
+
+ </usermanual> */
+
 Variable * variable_define( Environment * _environment, char * _name, VariableType _type, int _value ) {
     Variable * var = variable_find( _environment->variables, _name );
     if ( var ) {

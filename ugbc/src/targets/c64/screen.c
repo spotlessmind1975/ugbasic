@@ -46,21 +46,20 @@
  * @param _environment Current calling environment
  */
 /* <usermanual>
-    @keyword SCREEN OFF
-    
-    @english
-    Turn off the screen.
+@keyword SCREEN OFF
 
-    @italian
-    Spegni lo schermo.
+@english
+Turn off the screen.
 
-    @syntax SCREEN OFF
+@italian
+Spegni lo schermo.
 
-    @example SCREEN OFF
+@syntax SCREEN OFF
 
-    @target c64
+@example SCREEN OFF
 
- </usermanual> */
+@target c64
+</usermanual> */
 void screen_off( Environment * _environment ) {
 
     outline0("; SCREEN OFF");
@@ -77,21 +76,20 @@ void screen_off( Environment * _environment ) {
  * @param _environment Current calling environment
  */
 /* <usermanual>
-    @keyword SCREEN ON
-    
-    @english
-    Turn on the screen.
+@keyword SCREEN ON
 
-    @italian
-    Riaccendi lo schermo.
+@english
+Turn on the screen.
 
-    @syntax SCREEN ON
+@italian
+Riaccendi lo schermo.
 
-    @example SCREEN ON
+@syntax SCREEN ON
 
-    @target c64
+@example SCREEN ON
 
- </usermanual> */
+@target c64
+</usermanual> */
 void screen_on( Environment * _environment ) {
 
     outline0("; SCREEN ON");
@@ -112,25 +110,24 @@ void screen_on( Environment * _environment ) {
  * @param _rows Number of rows
  */
 /* <usermanual>
-    @keyword SCREEN ROWS
-    
-    @english
-    Changes the number of lines that can be displayed. Depending 
-    on the hardware, the effect can be different as different 
-    are the acceptable values.
+@keyword SCREEN ROWS
 
-    @italian
-    Modifica il numero di righe che possono essere visualizzate. A seconda
-    dell'hardware, l'effetto può essere diverso come diversi sono i valori 
-    accettabili.
+@english
+Changes the number of lines that can be displayed. Depending 
+on the hardware, the effect can be different as different 
+are the acceptable values.
 
-    @syntax SCREEN ROWS [integer]
+@italian
+Modifica il numero di righe che possono essere visualizzate. A seconda
+dell'hardware, l'effetto può essere diverso come diversi sono i valori 
+accettabili.
 
-    @example SCREEN ROWS 24
+@syntax SCREEN ROWS [integer]
 
-    @target c64
+@example SCREEN ROWS 24
 
- </usermanual> */
+@target c64
+</usermanual> */
 void screen_rows( Environment * _environment, int _rows ) {
 
     outline1("; SCREEN ROWS %d", _rows);
@@ -153,13 +150,12 @@ void screen_rows( Environment * _environment, int _rows ) {
  * @param _rows Number of rows
  */
 /* <usermanual>
-    @keyword SCREEN ROWS
-    
-    @syntax SCREEN ROWS [expression]
+@keyword SCREEN ROWS
 
-    @example SCREEN ROWS newRows
+@syntax SCREEN ROWS [expression]
 
- </usermanual> */
+@example SCREEN ROWS newRows
+</usermanual> */
 void screen_rows_var( Environment * _environment, char * _rows ) {
 
     outline1("; SCREEN ROWS %s", _rows);
@@ -186,27 +182,26 @@ void screen_rows_var( Environment * _environment, char * _rows ) {
  * @param _displacement Vertical offset in pixels (0-7)
  */
 /* <usermanual>
-    @keyword SCREEN VERTICAL SCROLL
-    
-    @english
-    Performs an hardware scroll of the screen. The scroll is always in 
-    the direction from bottom to up, so with a displacement of 0 the 
-    screen is exactly as it would be without scrolling while with the 
-    value 7 you would have a scroll of 7 pixels upwards.
+@keyword SCREEN VERTICAL SCROLL
 
-    @italian
-    Esegue uno scorrimento hardware dello schermo. Lo scorrimento è sempre
-    dal basso verso l'alto, quindi con uno spostamento di 0 lo schermo è 
-    esattamente come sarebbe senza scrolling, mentre con il valore 7 
-    si avrebbe uno scroll di 7 pixel verso l'alto.
+@english
+Performs an hardware scroll of the screen. The scroll is always in 
+the direction from bottom to up, so with a displacement of 0 the 
+screen is exactly as it would be without scrolling while with the 
+value 7 you would have a scroll of 7 pixels upwards.
 
-    @syntax SCREEN VERTICAL SCROLL [integer]
+@italian
+Esegue uno scorrimento hardware dello schermo. Lo scorrimento è sempre
+dal basso verso l'alto, quindi con uno spostamento di 0 lo schermo è 
+esattamente come sarebbe senza scrolling, mentre con il valore 7 
+si avrebbe uno scroll di 7 pixel verso l'alto.
 
-    @example SCREEN VERTICAL SCROLL 3
+@syntax SCREEN VERTICAL SCROLL [integer]
 
-    @target c64
+@example SCREEN VERTICAL SCROLL 3
 
- </usermanual> */
+@target c64
+</usermanual> */
 void screen_vertical_scroll( Environment * _environment, int _displacement ) {
 
     outline1("; SCREEN VERTICAL SCROLL %d", _displacement);
@@ -230,13 +225,12 @@ void screen_vertical_scroll( Environment * _environment, int _displacement ) {
  * @param _displacement Vertical offset in pixels (0-7)
  */
 /* <usermanual>
-    @keyword SCREEN VERTICAL SCROLL
-    
-    @syntax SCREEN VERTICAL SCROLL [expression]
+@keyword SCREEN VERTICAL SCROLL
 
-    @example SCREEN VERTICAL SCROLL newScrolling
+@syntax SCREEN VERTICAL SCROLL [expression]
 
- </usermanual> */
+@example SCREEN VERTICAL SCROLL newScrolling
+</usermanual> */
 void screen_vertical_scroll_var( Environment * _environment, char * _displacement ) {
 
     outline1("; SCREEN VERTICAL SCROLL %s", _displacement );
@@ -263,27 +257,26 @@ void screen_vertical_scroll_var( Environment * _environment, char * _displacemen
  * @param _displacement Horizontal offset in pixels (0-7)
  */
 /* <usermanual>
-    @keyword SCREEN HORIZONTAL SCROLL
-    
-    @english
-    Performs an hardware scroll of the screen. The scroll is always in 
-    the direction from right to left, so with a displacement of 0 the 
-    screen is exactly as it would be without scrolling while with the 
-    value 7 you would have a scroll of 7 pixels to the left.
+@keyword SCREEN HORIZONTAL SCROLL
 
-    @italian
-    Esegue uno scorrimento hardware dello schermo. Lo scorrimento è sempre
-    a destra a sinistra, quindi con uno spostamento di 0 lo schermo è 
-    esattamente come sarebbe senza scrolling, mentre con il valore 7 
-    si avrebbe uno scroll di 7 pixel verso sinistra.
+@english
+Performs an hardware scroll of the screen. The scroll is always in 
+the direction from right to left, so with a displacement of 0 the 
+screen is exactly as it would be without scrolling while with the 
+value 7 you would have a scroll of 7 pixels to the left.
 
-    @syntax SCREEN HORIZONTAL SCROLL [integer]
+@italian
+Esegue uno scorrimento hardware dello schermo. Lo scorrimento è sempre
+a destra a sinistra, quindi con uno spostamento di 0 lo schermo è 
+esattamente come sarebbe senza scrolling, mentre con il valore 7 
+si avrebbe uno scroll di 7 pixel verso sinistra.
 
-    @example SCREEN HORIZONTAL SCROLL 3
+@syntax SCREEN HORIZONTAL SCROLL [integer]
 
-    @target c64
+@example SCREEN HORIZONTAL SCROLL 3
 
- </usermanual> */
+@target c64
+</usermanual> */
 void screen_horizontal_scroll( Environment * _environment, int _displacement ) {
 
     outline1("; SCREEN HORIZONTAL SCROLL %d", _displacement);
@@ -307,13 +300,12 @@ void screen_horizontal_scroll( Environment * _environment, int _displacement ) {
  * @param _displacement Horizontal offset in pixels (0-7)
  */
 /* <usermanual>
-    @keyword SCREEN HORIZONTAL SCROLL
-    
-    @syntax SCREEN HORIZONTAL SCROLL [expression]
+@keyword SCREEN HORIZONTAL SCROLL
 
-    @example SCREEN HORIZONTAL SCROLL newDisplacement
+@syntax SCREEN HORIZONTAL SCROLL [expression]
 
- </usermanual> */
+@example SCREEN HORIZONTAL SCROLL newDisplacement
+</usermanual> */
 void screen_horizontal_scroll_var( Environment * _environment, char * _displacement ) {
 
     outline1("; SCREEN HORIZONTAL SCROLL %s", _displacement);

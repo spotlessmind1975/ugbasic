@@ -44,11 +44,10 @@
  * @param _color Index color to use.
  */
 /* <usermanual>
-    @keyword COLOR BORDER
-    
-    @target zx
+@keyword COLOR BORDER
 
- </usermanual> */
+@target zx
+</usermanual> */
 void color_border( Environment * _environment, int _color ) {
     
     outline1("; COLOR BORDER %2.2x", _color);

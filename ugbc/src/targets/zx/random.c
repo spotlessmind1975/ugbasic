@@ -46,11 +46,10 @@
  * @param _environment Current calling environment
  */
 /* <usermanual>
-    @keyword RANDOMIZE
-    
-    @target zx
+@keyword RANDOMIZE
 
- </usermanual> */
+@target zx
+</usermanual> */
 void randomize( Environment * _environment ) {
 
     Variable * seed = variable_define( _environment, "seed", VT_DWORD, 0Xffffffff );
@@ -77,11 +76,10 @@ void randomize( Environment * _environment ) {
  * @return Variable* The random value calculated
  */
 /* <usermanual>
-    @keyword RANDOM
-    
-    @target zx
+@keyword RANDOM
 
- </usermanual> */
+@target zx
+</usermanual> */
 Variable * random_value( Environment * _environment, VariableType _type ) {
 
     Variable * seed = variable_define( _environment, "seed", VT_DWORD, 0Xffffffff );
@@ -116,11 +114,10 @@ Variable * random_value( Environment * _environment, VariableType _type ) {
  * @return Variable* The random value calculated
  */
 /* <usermanual>
-    @keyword RANDOM WIDTH
+@keyword RANDOM WIDTH
 
-    @target zx
-
- </usermanual> */
+@target zx
+</usermanual> */
 Variable * random_width( Environment * _environment ) {
  
     Variable * result1 = random_value( _environment, VT_POSITION );
@@ -138,11 +135,10 @@ Variable * random_width( Environment * _environment ) {
  * @return Variable* The random value calculated
  */
 /* <usermanual>
-    @keyword RANDOM HEIGHT
+@keyword RANDOM HEIGHT
 
-    @target zx
-
- </usermanual> */
+@target zx
+</usermanual> */
 Variable * random_height( Environment * _environment ) {
 
     Variable * result = random_value( _environment, VT_POSITION );

@@ -52,24 +52,23 @@
  *                      hit, 1 = hit occurred)
  */
 /* <usermanual>
-    @keyword HIT
-    
-    @english
-    Verify if a sprite has had a collision with a tile. The result 
-    (0 = no collision, 1 = collision occurred) is returned as result.
+@keyword HIT
 
-    @italian
-    Verifica se uno sprite ha avuto una collisione con un tile. Il risultato
-    (0 = nessuna collisione, 1 = si è verificata una collisione) viene restituito
-    come risultato.
+@english
+Verify if a sprite has had a collision with a tile. The result 
+(0 = no collision, 1 = collision occurred) is returned as result.
 
-    @syntax = HIT( # [integer] )
+@italian
+Verifica se uno sprite ha avuto una collisione con un tile. Il risultato
+(0 = nessuna collisione, 1 = si è verificata una collisione) viene restituito
+come risultato.
 
-    @example IF HIT( #1 ) THEN POINT AT (100,100): ENDIF
+@syntax = HIT( # [integer] )
 
-    @target c64
+@example IF HIT( #1 ) THEN POINT AT (100,100): ENDIF
 
- </usermanual> */
+@target c64
+</usermanual> */
 Variable * hit_to( Environment * _environment, int _sprite ) {
 
     outline0("; = HIT(...)");
@@ -98,13 +97,12 @@ Variable * hit_to( Environment * _environment, int _sprite ) {
  *                      hit, 1 = hit occurred)
  */
 /* <usermanual>
-    @keyword HIT
-    
-    @syntax = HIT([expression])
+@keyword HIT
 
-    @example IF HIT(startship) THEN HALT: ENDIF
+@syntax = HIT([expression])
 
- </usermanual> */
+@example IF HIT(startship) THEN HALT: ENDIF
+</usermanual> */
 Variable * hit_to_vars( Environment * _environment, char * _sprite ) {
 
     outline0("; = HIT(...)");

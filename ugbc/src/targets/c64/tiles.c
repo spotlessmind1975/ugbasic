@@ -55,26 +55,25 @@
  * @param _address Address to use
  */
 /* <usermanual>
-    @keyword TILES AT
-    
-    @english
-    Set the starting address, in memory, for the tiles (for textual mode).
-    The input parameter is decoded and declined according to the hardware 
-    limits. So it is not said that exactly the given address is set.
-    
-    @italian
-    Imposta l'indirizzo di partenza, in memoria, per le tile (per 
-    la modalità testuale). Il parametro di input viene decodificato e 
-    declinato in base all'hardware. Quindi non è detto che sia impostato
-    esattamente all'indirizzo specificato.
+@keyword TILES AT
 
-    @syntax TILES AT # [integer]
+@english
+Set the starting address, in memory, for the tiles (for textual mode).
+The input parameter is decoded and declined according to the hardware 
+limits. So it is not said that exactly the given address is set.
 
-    @example TILES AT #$0400
+@italian
+Imposta l'indirizzo di partenza, in memoria, per le tile (per 
+la modalità testuale). Il parametro di input viene decodificato e 
+declinato in base all'hardware. Quindi non è detto che sia impostato
+esattamente all'indirizzo specificato.
 
-    @target c64
+@syntax TILES AT # [integer]
 
- </usermanual> */
+@example TILES AT #$0400
+
+@target c64
+</usermanual> */
 void tiles_at( Environment * _environment, int _address ) {
 
     outline1("; TILES AT $%4.4x", _address);
@@ -108,15 +107,14 @@ void tiles_at( Environment * _environment, int _address ) {
  * @param _address Address to use
  */
 /* <usermanual>
-    @keyword TILES AT
-    
-    @syntax TILES AT [expression]
+@keyword TILES AT
 
-    @example TILES AT tilesAddress
+@syntax TILES AT [expression]
 
-    @target c64
+@example TILES AT tilesAddress
 
- </usermanual> */
+@target c64
+</usermanual> */
 void tiles_at_var( Environment * _environment, char * _address ) {
 
     outline1("; TEXT AT %s", _address);

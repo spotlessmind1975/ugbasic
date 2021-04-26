@@ -44,21 +44,20 @@
  * @param _color Index color to use.
  */
 /* <usermanual>
-    @keyword COLOR BORDER
-    
-    @english
-    Change the border color.
+@keyword COLOR BORDER
 
-    @italian
-    Modifica il colore del bordo (dello schermo).
+@english
+Change the border color.
 
-    @syntax COLOR BORDER # [integer]
+@italian
+Modifica il colore del bordo (dello schermo).
 
-    @example COLOR BORDER #$1
+@syntax COLOR BORDER # [integer]
 
-    @target c64
+@example COLOR BORDER #$1
 
- </usermanual> */
+@target c64
+</usermanual> */
 void color_border( Environment * _environment, int _color ) {
     
     outline1("; COLOR BORDER %2.2x", _color);
@@ -79,13 +78,12 @@ void color_border( Environment * _environment, int _color ) {
  * @param _color Variable with the expression.
  */
 /* <usermanual>
-    @keyword COLOR BORDER
-    
-    @syntax COLOR BORDER [expression]
+@keyword COLOR BORDER
 
-    @example COLOR BORDER BLACK
+@syntax COLOR BORDER [expression]
 
- </usermanual> */
+@example COLOR BORDER BLACK
+</usermanual> */
 void color_border_var( Environment * _environment, char * _color ) {
 
     outline1("; COLOR BORDER %s", _color);
@@ -112,21 +110,20 @@ void color_border_var( Environment * _environment, char * _color ) {
  * @param _background_color Index of the color to use
  */
 /* <usermanual>
-    @keyword COLOR BACKGROUND
-    
-    @english
-    Change the background color among those available.
+@keyword COLOR BACKGROUND
 
-    @italian
-    Modifica il colore dello sfondo tra quelli disponibili.
+@english
+Change the background color among those available.
 
-    @syntax COLOR BACKGROUND # [integer] TO # [integer]
+@italian
+Modifica il colore dello sfondo tra quelli disponibili.
 
-    @example COLOR BACKGROUND #$1 TO #$2
+@syntax COLOR BACKGROUND # [integer] TO # [integer]
 
-    @target c64
+@example COLOR BACKGROUND #$1 TO #$2
 
- </usermanual> */
+@target c64
+</usermanual> */
 void color_background( Environment * _environment, int _index, int _background_color ) {
     
     outline2("; COLOR BACKGROUND #$%2.2x TO #$%2.2x", _index, _background_color);
@@ -149,13 +146,12 @@ void color_background( Environment * _environment, int _index, int _background_c
  * @param _background_color Expression with the index of the color to use
  */
 /* <usermanual>
-    @keyword COLOR BACKGROUND
-    
-    @syntax COLOR BACKGROUND [expression] TO [expression]
+@keyword COLOR BACKGROUND
 
-    @example COLOR BACKGROUND newIndex TO BLACK
+@syntax COLOR BACKGROUND [expression] TO [expression]
 
- </usermanual> */
+@example COLOR BACKGROUND newIndex TO BLACK
+</usermanual> */
 void color_background_vars( Environment * _environment, char * _index, char * _background_color ) {
 
     outline2("; COLOR BACKGROUND %s TO %s", _index, _background_color);
@@ -185,21 +181,20 @@ void color_background_vars( Environment * _environment, char * _index, char * _b
  * @param _common_color Index of the color to use
  */
 /* <usermanual>
-    @keyword COLOR SPRITE
-    
-    @english
-    Change the sprite color among those available.
+@keyword COLOR SPRITE
 
-    @italian
-    Modifica il colore comune dello sprite tra quelli disponibili.
+@english
+Change the sprite color among those available.
 
-    @syntax COLOR SPRITE # [integer] TO # [integer]
+@italian
+Modifica il colore comune dello sprite tra quelli disponibili.
 
-    @example COLOR SPRITE #$1 TO #$2
+@syntax COLOR SPRITE # [integer] TO # [integer]
 
-    @target c64
+@example COLOR SPRITE #$1 TO #$2
 
- </usermanual> */
+@target c64
+</usermanual> */
 void color_sprite( Environment * _environment, int _index, int _common_color ) {
 
     outline2("; COLOR SPRITE #$%2.2x TO #$%2.2x", _index, _common_color);
@@ -222,13 +217,12 @@ void color_sprite( Environment * _environment, int _index, int _common_color ) {
  * @param _common_color Expression with the index of the color to use
  */
 /* <usermanual>
-    @keyword COLOR SPRITE
-    
-    @syntax COLOR SPRITE [expression] TO [expression]
+@keyword COLOR SPRITE
 
-    @example COLOR SPRITE mySprite TO YELLOW
+@syntax COLOR SPRITE [expression] TO [expression]
 
- </usermanual> */
+@example COLOR SPRITE mySprite TO YELLOW
+</usermanual> */
 void color_sprite_vars( Environment * _environment, char * _index, char * _common_color ) {
 
     outline2("; COLOR SPRITE %s TO %s", _index, _common_color);

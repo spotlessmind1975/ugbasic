@@ -51,23 +51,22 @@
  * @param _label Label where to jump to
  */
 /* <usermanual>
-    @keyword GOTO
-    
-    @english
-    Do an unconditional jump to an alphanumeric label, previously or 
-    subsequently defined, with the syntax of the labels.
-    
-    @italian
-    Fare un salto incondizionato a un'etichetta, definita in precedenza o
-    successivamente.
+@keyword GOTO
 
-    @syntax GOTO [label]
+@english
+Do an unconditional jump to an alphanumeric label, previously or 
+subsequently defined, with the syntax of the labels.
 
-    @example GOTO nuovaEtichetta
+@italian
+Fare un salto incondizionato a un'etichetta, definita in precedenza o
+successivamente.
 
-    @target all
+@syntax GOTO [label]
 
- </usermanual> */
+@example GOTO nuovaEtichetta
+
+@target all
+</usermanual> */
 void goto_label( Environment * _environment, char * _label ) {
 
     outline1("; GOTO %s", _label);

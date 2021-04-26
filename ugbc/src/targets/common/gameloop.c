@@ -50,28 +50,27 @@
  * @param _environment Current calling environment
  */
 /* <usermanual>
-    @keyword BEGIN GAMELOOP
-    
-    @english
-    Define the starting point of a game loop. A game loop is nothing more 
-    than an implicit loop, within which all the logic of the program (or
-    of the game) runs. The end point of a game loop can correspond to 
-    the end of the program or to the ''END GAMELOOP'' statement.
-    
-    @italian
-    Definisce il punto di partenza di un loop di gioco. Un loop di 
-    gioco non è altro che un ciclo implicito, all'interno del quale 
-    tutta la logica del programma (o del gioco) viene eseguita. 
-    Il punto finale di un ciclo di gioco può corrispondere al termine
-    del programma o all'istruzione ''END GAMELOOP''. 
+@keyword BEGIN GAMELOOP
 
-    @syntax BEGIN GAMELOOP
+@english
+Define the starting point of a game loop. A game loop is nothing more 
+than an implicit loop, within which all the logic of the program (or
+of the game) runs. The end point of a game loop can correspond to 
+the end of the program or to the ''END GAMELOOP'' statement.
 
-    @example BEGIN GAMELOOP
+@italian
+Definisce il punto di partenza di un loop di gioco. Un loop di 
+gioco non è altro che un ciclo implicito, all'interno del quale 
+tutta la logica del programma (o del gioco) viene eseguita. 
+Il punto finale di un ciclo di gioco può corrispondere al termine
+del programma o all'istruzione ''END GAMELOOP''. 
 
-    @target all
+@syntax BEGIN GAMELOOP
 
- </usermanual> */
+@example BEGIN GAMELOOP
+
+@target all
+</usermanual> */
 void begin_gameloop( Environment * _environment ) {
 
     outline0("; BEGIN GAMELOOP" );
@@ -95,21 +94,20 @@ void begin_gameloop( Environment * _environment ) {
  * @throw EXIT_FAILURE "Cannot call END GAMELOOP without BEGIN GAMELOOP"
  */
 /* <usermanual>
-    @keyword END GAMELOOP
-    
-    @english
-    Define the ending point of a game loop.
-    
-    @italian
-    Definisce il punto di arrivo di un loop di gioco.
+@keyword END GAMELOOP
 
-    @syntax END GAMELOOP
+@english
+Define the ending point of a game loop.
 
-    @example END GAMELOOP
+@italian
+Definisce il punto di arrivo di un loop di gioco.
 
-    @target all
+@syntax END GAMELOOP
 
- </usermanual> */
+@example END GAMELOOP
+
+@target all
+</usermanual> */
 void end_gameloop( Environment * _environment ) {
     if ( _environment->hasGameLoop ) {
         cpu_jump( _environment, "__ugbgameloop");    

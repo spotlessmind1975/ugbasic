@@ -55,27 +55,26 @@
  * @param _address Address to use
  */
 /* <usermanual>
-    @keyword COLORMAP AT
-    
-    @english
-    Set the starting address, in memory, for the colormap. The input parameter 
-    is decoded and declined according to the hardware limits. So it is not said 
-    that exactly the given address is set.
+@keyword COLORMAP AT
 
-    @italian
-    Imposta l'indirizzo di partenza, in memoria, per la mappa dei colori. Il parametro di input
-    viene decodificato e declinato in base ai limiti hardware. Quindi non è detto
-    che sia impostato esattamente l'indirizzo specificato. 
+@english
+Set the starting address, in memory, for the colormap. The input parameter 
+is decoded and declined according to the hardware limits. So it is not said 
+that exactly the given address is set.
 
-    @syntax COLORMAP AT # [integer]
+@italian
+Imposta l'indirizzo di partenza, in memoria, per la mappa dei colori. Il parametro di input
+viene decodificato e declinato in base ai limiti hardware. Quindi non è detto
+che sia impostato esattamente l'indirizzo specificato. 
 
-    @example COLORMAP AT #$B800
+@syntax COLORMAP AT # [integer]
 
-    @seeAlso BITMAP ENABLE
+@example COLORMAP AT #$B800
 
-    @target c64
+@seeAlso BITMAP ENABLE
 
- </usermanual> */
+@target c64
+</usermanual> */
 void colormap_at( Environment * _environment, int _address ) {
 
     outline1("; COLORMAP AT #$%4.4x", _address);
@@ -109,13 +108,12 @@ void colormap_at( Environment * _environment, int _address ) {
  * @param _address Address to use
  */
 /* <usermanual>
-    @keyword COLORMAP AT
-    
-    @syntax COLORMAP AT [expression]
+@keyword COLORMAP AT
 
-    @example COLORMAP AT newAddress
+@syntax COLORMAP AT [expression]
 
- </usermanual> */
+@example COLORMAP AT newAddress
+</usermanual> */
 void colormap_at_var( Environment * _environment, char * _address ) {
 
     outline1("; COLORMAP AT %s", _address);
@@ -148,24 +146,23 @@ void colormap_at_var( Environment * _environment, char * _address ) {
  * @throw EXIT_FAILURE "COLORMAP CLEAR WITH xxx ON xxx needs BITMAP ENABLED"
  */
 /* <usermanual>
-    @keyword COLORMAP CLEAR
-    
-    @english
-    Erase the entire color map, using a foreground and a background color.
+@keyword COLORMAP CLEAR
 
-    @italian
-    Cancella l'intera mappa dei colori, utilizzando un colore di primo piano 
-    e uno di sfondo.
+@english
+Erase the entire color map, using a foreground and a background color.
 
-    @syntax COLORMAP CLEAR WITH # [integer] ON # [integer]
+@italian
+Cancella l'intera mappa dei colori, utilizzando un colore di primo piano 
+e uno di sfondo.
 
-    @example COLORMAP CLEAR WITH #$0 ON #$1
+@syntax COLORMAP CLEAR WITH # [integer] ON # [integer]
 
-    @seeAlso BITMAP ENABLE
+@example COLORMAP CLEAR WITH #$0 ON #$1
 
-    @target c64
+@seeAlso BITMAP ENABLE
 
- </usermanual> */
+@target c64
+</usermanual> */
 void colormap_clear_with( Environment * _environment, int _foreground, int _background ) {
 
     outline2("; COLORMAP CLEAR WITH #$%2.2x AND #$%2.2x", _foreground, _background );
@@ -196,13 +193,12 @@ void colormap_clear_with( Environment * _environment, int _foreground, int _back
  * @throw EXIT_FAILURE "CRITICAL: COLORMAP CLEAR WITH xxx AND xxx needs BITMAP ENABLED"
  */
 /* <usermanual>
-    @keyword COLORMAP CLEAR
-    
-    @syntax COLORMAP CLEAR WITH [expression] ON [expression]
+@keyword COLORMAP CLEAR
 
-    @example COLORMAP CLEAR WITH YELLOW ON RED
+@syntax COLORMAP CLEAR WITH [expression] ON [expression]
 
- </usermanual> */
+@example COLORMAP CLEAR WITH YELLOW ON RED
+</usermanual> */
 void colormap_clear_with_vars( Environment * _environment, char * _foreground, char * _background ) {
 
     outline2("; COLORMAP CLEAR WITH %s AND %s", _foreground, _background );
@@ -241,13 +237,12 @@ void colormap_clear_with_vars( Environment * _environment, char * _foreground, c
  * @throw EXIT_FAILURE "CRITICAL: COLORMAP CLEAR WITH xxx AND xxx needs BITMAP ENABLED"
  */
 /* <usermanual>
-    @keyword COLORMAP CLEAR
-    
-    @syntax COLORMAP CLEAR
+@keyword COLORMAP CLEAR
 
-    @example COLORMAP CLEAR
+@syntax COLORMAP CLEAR
 
- </usermanual> */
+@example COLORMAP CLEAR
+</usermanual> */
 void colormap_clear( Environment * _environment ) {
 
     outline0("; COLORMAP CLEAR WITH BLACK ON WHIKE");

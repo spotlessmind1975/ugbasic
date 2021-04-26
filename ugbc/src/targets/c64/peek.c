@@ -51,21 +51,20 @@
  * @return Variable* Temporary variable with the content of the location (1 byte).
  */
 /* <usermanual>
-    @keyword PEEK
-    
-    @english
-    Retrieve a byte from memory, and returns it.
+@keyword PEEK
 
-    @italian
-    Recupera un byte dalla memoria e restituiscilo.
+@english
+Retrieve a byte from memory, and returns it.
 
-    @syntax = PEEK( # [integer] )
+@italian
+Recupera un byte dalla memoria e restituiscilo.
 
-    @example memoria = PEEK( # 49192 )
+@syntax = PEEK( # [integer] )
 
-    @target c64
+@example memoria = PEEK( # 49192 )
 
- </usermanual> */
+@target c64
+</usermanual> */
 Variable * peek( Environment * _environment, int _location ) {
 
     outline1("; PEEK(%d)", _location );
@@ -92,15 +91,14 @@ Variable * peek( Environment * _environment, int _location ) {
  * @return Variable* Temporary variable with the content of the location (1 byte).
  */
 /* <usermanual>
-    @keyword PEEK
-    
-    @syntax = PEEK( [expressiio] )
+@keyword PEEK
 
-    @example memory = PEEK( location )
+@syntax = PEEK( [expressiio] )
 
-    @target c64
+@example memory = PEEK( location )
 
- </usermanual> */
+@target c64
+</usermanual> */
 Variable * peek_var( Environment * _environment, char * _location ) {
 
     outline1("; PEEK(%s)", _location);

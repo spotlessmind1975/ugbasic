@@ -55,31 +55,30 @@
  * @param _expression Expression with the true / false condition
  */
 /* <usermanual>
-    @keyword IF ... THEN
-    
-    @english
-    Implement the conditional jump. This implementation assumes that
-    an expression passed as a parameter is 0 (for false) and not 
-    zero (for true). In this case, if the expression is zero, it 
-    jumps directly to the statement following the corresponding 
-    ENDIF. Otherwise, the following code will be executed (up to 
-    ENDIF).
-    
-    @italian
-    Implementa il salto condizionale. Questa implementazione presuppone che
-    un'espressione passata come parametro è 0 (per falso) e non
-    zero (per vero). In questo caso, se l'espressione è zero, esso
-    salta direttamente all'istruzione che segue il corrispondente
-    ENDIF. In caso contrario, verrà eseguito il codice seguente (fino a
-    ENDIF).
+@keyword IF ... THEN
 
-    @syntax IF [ expression ] THEN
+@english
+Implement the conditional jump. This implementation assumes that
+an expression passed as a parameter is 0 (for false) and not 
+zero (for true). In this case, if the expression is zero, it 
+jumps directly to the statement following the corresponding 
+ENDIF. Otherwise, the following code will be executed (up to 
+ENDIF).
 
-    @example IF ( x == 42 ) THEN
+@italian
+Implementa il salto condizionale. Questa implementazione presuppone che
+un'espressione passata come parametro è 0 (per falso) e non
+zero (per vero). In questo caso, se l'espressione è zero, esso
+salta direttamente all'istruzione che segue il corrispondente
+ENDIF. In caso contrario, verrà eseguito il codice seguente (fino a
+ENDIF).
 
-    @target all
+@syntax IF [ expression ] THEN
 
- </usermanual> */
+@example IF ( x == 42 ) THEN
+
+@target all
+</usermanual> */
 void if_then( Environment * _environment, char * _expression ) {
 
     outline1( "; IF %s THEN ...", _expression);
@@ -110,21 +109,20 @@ void if_then( Environment * _environment, char * _expression ) {
  * @param _environment Current calling environment
  */
 /* <usermanual>
-    @keyword ENDIF
-    
-    @english
-    Implement the end of conditional jump.
-    
-    @italian
-    Implementa la fine di un salto condizionale.
+@keyword ENDIF
 
-    @syntax ENDIF
+@english
+Implement the end of conditional jump.
 
-    @example IF ( x == 42 ) THEN x = 0: ENDIF
+@italian
+Implementa la fine di un salto condizionale.
 
-    @target all
+@syntax ENDIF
 
- </usermanual> */
+@example IF ( x == 42 ) THEN x = 0: ENDIF
+
+@target all
+</usermanual> */
 void end_if_then( Environment * _environment ) {
 
     // TODO: Better management of conditional types and missing

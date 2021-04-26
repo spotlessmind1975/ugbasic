@@ -48,25 +48,24 @@
  * @param _environment Current calling environment
  */
 /* <usermanual>
-    @keyword HALT
-    
-    @english
-    Stop the main process indefinitely.  Note that even if the 
-    main program is suspended, the raster and other functions 
-    will continue without problems.
-    
-    @italian
-    Interrompi il processo principale a tempo indeterminato. Notare che 
-    anche se il programma principale viene sospeso, il raster e altre 
-    funzioni continueranno senza problemi.
+@keyword HALT
 
-    @syntax HALT
+@english
+Stop the main process indefinitely.  Note that even if the 
+main program is suspended, the raster and other functions 
+will continue without problems.
 
-    @example HALT
+@italian
+Interrompi il processo principale a tempo indeterminato. Notare che 
+anche se il programma principale viene sospeso, il raster e altre 
+funzioni continueranno senza problemi.
 
-    @target all
+@syntax HALT
 
- </usermanual> */
+@example HALT
+
+@target all
+</usermanual> */
 void halt( Environment * _environment ) {
 
     outline0("; HALT");

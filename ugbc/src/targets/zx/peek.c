@@ -51,11 +51,10 @@
  * @return Variable* Temporary variable with the content of the location (1 byte).
  */
 /* <usermanual>
-    @keyword PEEK
-    
-    @target zx
+@keyword PEEK
 
- </usermanual> */
+@target zx
+</usermanual> */
 Variable * peek( Environment * _environment, int _location ) {
 
     outline1("; PEEK(%d)", _location );

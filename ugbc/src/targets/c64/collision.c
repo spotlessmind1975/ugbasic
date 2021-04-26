@@ -52,26 +52,25 @@
  *                      collision, 1 = collision occurred)
  */
 /* <usermanual>
-    @keyword COLLISION
-    
-    @english
-    Verify if a sprite has had a collision with another sprite. The result 
-    (0 = no collision, 1 = collision occurred) is returned as result.
+@keyword COLLISION
 
-    @italian
-    Verifica se uno sprite ha avuto una collisione con un altro sprite. Il risultato
-    (0 = nessuna collisione, 1 = si è verificata una collisione) viene restituito
-    come risultato.
+@english
+Verify if a sprite has had a collision with another sprite. The result 
+(0 = no collision, 1 = collision occurred) is returned as result.
 
-    @syntax = COLLISION(# [integer] )
+@italian
+Verifica se uno sprite ha avuto una collisione con un altro sprite. Il risultato
+(0 = nessuna collisione, 1 = si è verificata una collisione) viene restituito
+come risultato.
 
-    @example = COLLISION(#1)
+@syntax = COLLISION(# [integer] )
 
-    @seeAlso HIT
+@example = COLLISION(#1)
 
-    @target c64
+@seeAlso HIT
 
- </usermanual> */
+@target c64
+</usermanual> */
 Variable * collision_to( Environment * _environment, int _sprite ) {
 
     outline0("; = COLLISION(...)");
@@ -100,13 +99,12 @@ Variable * collision_to( Environment * _environment, int _sprite ) {
  *                      collision, 1 = collision occurred)
  */
 /* <usermanual>
-    @keyword COLLISION
-    
-    @syntax = COLLISION([expression])
+@keyword COLLISION
 
-    @example = COLLISION(newValue+1)
+@syntax = COLLISION([expression])
 
- </usermanual> */
+@example = COLLISION(newValue+1)
+</usermanual> */
 Variable * collision_to_vars( Environment * _environment, char * _sprite ) {
 
     outline0("; = COLLISION(...)");

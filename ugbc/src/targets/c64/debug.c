@@ -50,25 +50,24 @@
  * @throw EXIT_FAILURE "DWORD variables cannot be debugged"
  */
 /* <usermanual>
-    @keyword DEBUG
-    
-    @english
-    Outputs a string with the value contained in the indicated expression.
-    The variable must be up to 2 bytes longs. For speed of implementation 
-    it uses the function of the KERNAL, so it cannot work if the ROM is disabled.
+@keyword DEBUG
 
-    @italian
-    Stampa una stringa con il valore contenuto nella espressione indicata.
-    La variabile può essere lunga fino a 2 byte. Per velocità di implementazione
-    usa la funzione del KERNAL, quindi non può funzionare se la ROM è disabilitata.
+@english
+Outputs a string with the value contained in the indicated expression.
+The variable must be up to 2 bytes longs. For speed of implementation 
+it uses the function of the KERNAL, so it cannot work if the ROM is disabled.
 
-    @syntax DEBUG [expression]
+@italian
+Stampa una stringa con il valore contenuto nella espressione indicata.
+La variabile può essere lunga fino a 2 byte. Per velocità di implementazione
+usa la funzione del KERNAL, quindi non può funzionare se la ROM è disabilitata.
 
-    @example DEBUG someValue
+@syntax DEBUG [expression]
 
-    @target c64
+@example DEBUG someValue
 
- </usermanual> */
+@target c64
+</usermanual> */
 void debug_var( Environment * _environment, char * _name ) {
 
     // Safety check

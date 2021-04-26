@@ -54,28 +54,28 @@
  * @param _environment Current calling environment
  */
 /* <usermanual>
-    @keyword BITMAP ENABLE
-    
-    @english
-    Enable bitmap graphics on the target machine. Bitmap resolution and colors depends on hardware.
-    Enabling the bitmap also sets the starting address in memory, for those computers that have 
-    graphics mapped in memory.
+@keyword BITMAP ENABLE
 
-    @italian
-    Abilita la grafica bitmap sulla macchina di destinazione. La risoluzione e i colori dipendono 
-    dall'hardware. L'abilitazione della bitmap imposta anche l'indirizzo iniziale in memoria, 
-    per quei computer che hanno la grafica mappata in memoria.
+@english
+Enable bitmap graphics on the target machine. Bitmap resolution and colors depends on hardware.
+Enabling the bitmap also sets the starting address in memory, for those computers that have 
+graphics mapped in memory.
 
-    @syntax BITMAP ENABLE
+@italian
+Abilita la grafica bitmap sulla macchina di destinazione. La risoluzione e i colori dipendono 
+dall'hardware. L'abilitazione della bitmap imposta anche l'indirizzo iniziale in memoria, 
+per quei computer che hanno la grafica mappata in memoria.
 
-    @example BITMAP ENABLE
-    @example POINT AT (100,100)
+@syntax BITMAP ENABLE
 
-    @seeAlso BITMAP DISABLE
+@example BITMAP ENABLE
+@example POINT AT (100,100)
 
-    @target c64
+@seeAlso BITMAP DISABLE
 
- </usermanual> */
+@target c64
+
+</usermanual> */
 void bitmap_enable( Environment * _environment ) {
 
     // Let's define the special variable bitmap_address.
@@ -99,23 +99,22 @@ void bitmap_enable( Environment * _environment ) {
  * @param _environment Current calling environment
  */
 /* <usermanual>
-    @keyword BITMAP DISABLE
-    
-    @english
-    Disable bitmap graphics on the target machine.
+@keyword BITMAP DISABLE
 
-    @italian
-    Disabilita la grafica bitmap sulla macchina di destinazione.
+@english
+Disable bitmap graphics on the target machine.
 
-    @syntax BITMAP DISABLE
+@italian
+Disabilita la grafica bitmap sulla macchina di destinazione.
 
-    @example BITMAP DISABLE
+@syntax BITMAP DISABLE
 
-    @seeAlso BITMAP ENABLE
+@example BITMAP DISABLE
 
-    @target c64
+@seeAlso BITMAP ENABLE
 
- </usermanual> */
+@target c64
+</usermanual> */
 void bitmap_disable( Environment * _environment ) {
 
     outline0("; BITMAP DISABLE");
@@ -141,27 +140,26 @@ void bitmap_disable( Environment * _environment ) {
  * @param _address Address to use
  */
 /* <usermanual>
-    @keyword BITMAP AT
-    
-    @english
-    Set the starting address, in memory, for the bitmap. The input parameter 
-    is decoded and declined according to the hardware limits. So it is not 
-    said that exactly the  given address is set.
-    
-    @italian
-    Imposta l'indirizzo di partenza, in memoria, per la bitmap. Il parametro 
-    di input viene decodificato e declinato in base ai limiti hardware. 
-    Quindi non èdetto che sia impostato esattamente l'indirizzo specificato.
+@keyword BITMAP AT
 
-    @syntax BITMAP AT # [integer]
+@english
+Set the starting address, in memory, for the bitmap. The input parameter 
+is decoded and declined according to the hardware limits. So it is not 
+said that exactly the  given address is set.
 
-    @example BITMAP AT #$0000
+@italian
+Imposta l'indirizzo di partenza, in memoria, per la bitmap. Il parametro 
+di input viene decodificato e declinato in base ai limiti hardware. 
+Quindi non èdetto che sia impostato esattamente l'indirizzo specificato.
 
-    @seeAlso BITMAP ENABLE
+@syntax BITMAP AT # [integer]
 
-    @target c64
+@example BITMAP AT #$0000
 
- </usermanual> */
+@seeAlso BITMAP ENABLE
+
+@target c64
+</usermanual> */
 void bitmap_at( Environment * _environment, int _address ) {
 
     outline1("; BITMAP AT #$%4.4x", _address );
@@ -194,13 +192,12 @@ void bitmap_at( Environment * _environment, int _address ) {
  * @param _address Address to use
  */
 /* <usermanual>
-    @keyword BITMAP AT
-    
-    @syntax BITMAP AT [expression]
+@keyword BITMAP AT
 
-    @example BITMAP AT newAddress
+@syntax BITMAP AT [expression]
 
- </usermanual> */
+@example BITMAP AT newAddress
+</usermanual> */
 void bitmap_at_var( Environment * _environment, char * _address ) {
 
     outline1("; BITMAP AT %s", _address );
@@ -235,33 +232,32 @@ void bitmap_at_var( Environment * _environment, char * _address ) {
  * @throw EXIT_FAILURE "BITMAP CLEAR WITH xxx needs BITMAP ENABLED"
  */
 /* <usermanual>
-    @keyword BITMAP CLEAR
-    
-    @english
-    Fill the bitmap with a certain pattern (by default is ZERO, used to indicate
-    the blank screen). The filled part is exclusively that linked to the bitmap, 
-    so the color information is kept unchanged.
+@keyword BITMAP CLEAR
 
-    Note that bitmap must be enabled at least once with instruction ''BITMAP ENABLE''.
+@english
+Fill the bitmap with a certain pattern (by default is ZERO, used to indicate
+the blank screen). The filled part is exclusively that linked to the bitmap, 
+so the color information is kept unchanged.
 
-    @italian
-    Riempi la bitmap con un determinato motivo (per impostazione predefinita è
-    ZERO, utilizzato per indicare lo schermo vuoto). La parte riempita è 
-    esclusivamente quella legata alla bitmap, quindi le informazioni sul 
-    colore vengono mantenute invariate.
+Note that bitmap must be enabled at least once with instruction ''BITMAP ENABLE''.
 
-    Notare che la bitmap deve essere abilitata almeno una volta con 
-    l'istruzione ''BITMAP ENABLE''.
-    
-    @syntax BITMAP CLEAR WITH # [integer]
+@italian
+Riempi la bitmap con un determinato motivo (per impostazione predefinita è
+ZERO, utilizzato per indicare lo schermo vuoto). La parte riempita è 
+esclusivamente quella legata alla bitmap, quindi le informazioni sul 
+colore vengono mantenute invariate.
 
-    @example BITMAP CLEAR WITH #$42
+Notare che la bitmap deve essere abilitata almeno una volta con 
+l'istruzione ''BITMAP ENABLE''.
 
-    @seeAlso BITMAP ENABLE
+@syntax BITMAP CLEAR WITH # [integer]
 
-    @target c64
+@example BITMAP CLEAR WITH #$42
 
- </usermanual> */
+@seeAlso BITMAP ENABLE
+
+@target c64
+</usermanual> */
 void bitmap_clear_with( Environment * _environment, int _pattern ) {
 
     outline1("; BITMAP CLEAR WITH #$%2.2x", _pattern );
@@ -294,13 +290,12 @@ void bitmap_clear_with( Environment * _environment, int _pattern ) {
  * @throw EXIT_FAILURE "BITMAP CLEAR WITH xxx needs BITMAP ENABLED"
  */
 /* <usermanual>
-    @keyword BITMAP CLEAR
-    
-    @syntax BITMAP CLEAR WITH [expression]
+@keyword BITMAP CLEAR
 
-    @example BITMAP CLEAR WITH newValue
+@syntax BITMAP CLEAR WITH [expression]
 
- </usermanual> */
+@example BITMAP CLEAR WITH newValue
+</usermanual> */
 void bitmap_clear_with_vars( Environment * _environment, char * _pattern ) {
 
     outline1("; BITMAP CLEAR WITH %s", _pattern );
@@ -336,13 +331,12 @@ void bitmap_clear_with_vars( Environment * _environment, char * _pattern ) {
  * @throw EXIT_FAILURE CRITICAL: BITMAP CLEAR WITH xxx needs BITMAP ENABLED
  */
 /* <usermanual>
-    @keyword BITMAP CLEAR
-    
-    @syntax BITMAP CLEAR
+@keyword BITMAP CLEAR
 
-    @example BITMAP CLEAR
+@syntax BITMAP CLEAR
 
- </usermanual> */
+@example BITMAP CLEAR
+</usermanual> */
 void bitmap_clear( Environment * _environment ) {
 
     outline0("; BITMAP CLEAR ->" );
