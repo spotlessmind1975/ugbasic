@@ -35,7 +35,7 @@ int yywrap() { return 1; }
 %token COLORMAP SELECT MONOCOLOR MULTICOLOR COLLISION IF THEN HIT BACKGROUND TO RANDOM
 %token BYTE WORD POSITION CODE VARIABLES MS CYCLES S HASH WIDTH HEIGHT DWORD PEN CLEAR
 %token BEG END GAMELOOP ENDIF UP DOWN LEFT RIGHT DEBUG AND RANDOMIZE GRAPHIC TEXTMAP
-%token POINT GOSUB RETURN
+%token POINT GOSUB RETURN POP
 
 %token MILLISECOND MILLISECONDS TICKS
 
@@ -777,6 +777,9 @@ statement:
   | GOSUB gosub_definition
   | RETURN {
       return_label( _environment );
+  }
+  | POP {
+      pop( _environment );
   }
   | DONE  {
       return 0;

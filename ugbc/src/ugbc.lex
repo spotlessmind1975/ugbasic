@@ -91,6 +91,7 @@ PEEK { return (PEEK); }
 PEN { return (PEN); }
 PINK { return(PINK); }
 POINT { return (POINT); }
+POP { return (POP); }
 POSITION { return (POSITION); }
 PURPLE { return(PURPLE); }
 RANDOM { return (RANDOM); }

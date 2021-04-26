@@ -44,6 +44,7 @@ void cpu6502_fill( Environment * _environment, char * _address, char * _blocks, 
 void cpu6502_halt( Environment * _environment );
 void cpu6502_jump( Environment * _environment, char * _label );
 void cpu6502_call( Environment * _environment, char * _label );
+void cpu6502_pop( Environment * _environment );
 void cpu6502_return( Environment * _environment );
 void cpu6502_label( Environment * _environment, char * _label );
 void cpu6502_limit_16bit( Environment * _environment, char * _variable, int _value );
@@ -96,6 +97,7 @@ void cpu6502_store_8bit( Environment * _environment, char *_source, int _value )
 #define cpu_jump( _environment,  _label  ) cpu6502_jump( _environment,  _label  )
 #define cpu_call( _environment,  _label  ) cpu6502_call( _environment,  _label  )
 #define cpu_return( _environment  ) cpu6502_return( _environment )
+#define cpu_pop( _environment  ) cpu6502_pop( _environment )
 #define cpu_label( _environment,  _label  ) cpu6502_label( _environment,  _label  )
 #define cpu_limit_16bit( _environment,  _variable, _value  ) cpu6502_limit_16bit( _environment,  _variable, _value  )
 #define cpu_math_add_16bit( _environment, _source, _destination,  _name  ) cpu6502_math_add_16bit( _environment, _source, _destination,  _name  )

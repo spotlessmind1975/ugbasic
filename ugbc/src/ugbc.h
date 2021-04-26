@@ -509,6 +509,7 @@ Variable * peek( Environment * _environment, int _location );
 Variable * peek_var( Environment * _environment, char * _location );
 void point_at( Environment * _environment, int _x, int _y );
 void point_at_vars( Environment * _environment, char * _x, char * _y );
+void pop( Environment * _environment );
 void randomize( Environment * _environment );
 Variable * random_value( Environment * _environment, VariableType _type );
 Variable * random_width( Environment * _environment );

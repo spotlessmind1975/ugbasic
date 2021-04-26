@@ -864,6 +864,12 @@ void z80_return( Environment * _environment ) {
 
 }
 
+void z80_pop( Environment * _environment ) {
+
+    outline0("POP IX" );
+
+}
+
 void z80_halt( Environment * _environment ) {
 
     MAKE_LABEL
