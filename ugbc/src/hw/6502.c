@@ -937,6 +937,18 @@ void cpu6502_jump( Environment * _environment, char * _label ) {
 
 }
 
+void cpu6502_call( Environment * _environment, char * _label ) {
+
+    outline1("JSR %s", _label );
+
+}
+
+void cpu6502_return( Environment * _environment ) {
+
+    outline0("RTS" );
+
+}
+
 void cpu6502_halt( Environment * _environment ) {
 
     MAKE_LABEL

@@ -852,6 +852,18 @@ void z80_jump( Environment * _environment, char * _label ) {
 
 }
 
+void z80_call( Environment * _environment, char * _label ) {
+
+    outline1("call %s", _label );
+
+}
+
+void z80_return( Environment * _environment ) {
+
+    outline0("RET" );
+
+}
+
 void z80_halt( Environment * _environment ) {
 
     MAKE_LABEL

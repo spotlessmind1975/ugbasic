@@ -43,6 +43,8 @@ void z80_compare_8bit( Environment * _environment, char *_source, char *_destina
 void z80_fill( Environment * _environment, char * _address, char * _blocks, char * _pattern );
 void z80_halt( Environment * _environment );
 void z80_jump( Environment * _environment, char * _label );
+void z80_call( Environment * _environment, char * _label );
+void z80_return( Environment * _environment, char * _label );
 void z80_label( Environment * _environment, char * _label );
 void z80_limit_16bit( Environment * _environment, char * _variable, int _value );
 void z80_math_add_16bit( Environment * _environment, char *_source, char *_destination,  char *_name );
@@ -93,6 +95,8 @@ void z80_store_8bit( Environment * _environment, char *_source, int _value );
 #define cpu_fill( _environment,  _address,  _blocks,  _pattern  ) z80_fill( _environment,  _address,  _blocks,  _pattern  )
 #define cpu_halt( _environment  ) z80_halt( _environment  )
 #define cpu_jump( _environment,  _label  ) z80_jump( _environment,  _label  )
+#define cpu_call( _environment,  _label  ) z80_call( _environment,  _label  )
+#define cpu_return( _environment ) z80_return( _environment  )
 #define cpu_label( _environment,  _label  ) z80_label( _environment,  _label  )
 #define cpu_limit_16bit( _environment,  _variable, _value  ) z80_limit_16bit( _environment,  _variable, _value  )
 #define cpu_math_add_16bit( _environment, _source, _destination,  _name  ) z80_math_add_16bit( _environment, _source, _destination,  _name  )

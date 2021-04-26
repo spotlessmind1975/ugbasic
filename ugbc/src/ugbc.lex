@@ -62,6 +62,7 @@ FROM { return (FROM); }
 GAMELOOP { return (GAMELOOP); }
 GOLD { return(GOLD); }
 GOTO { return (GOTO); }
+GOSUB { return (GOSUB); }
 GRAPHIC { return (GRAPHIC); }
 GRAY { return(GRAY); }
 GREEN { return(GREEN); }
@@ -97,6 +98,7 @@ RANDOMIZE { return (RANDOMIZE); }
 RASTER { return (RASTER); }
 RED { return(RED); }
 REPEAT { return (REPEAT); }
+RETURN { return (RETURN); }
 RIGHT { return (RIGHT); }
 ROWS { return (ROWS); }
 S { return (S); }
