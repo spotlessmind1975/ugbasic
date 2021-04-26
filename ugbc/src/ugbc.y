@@ -284,8 +284,14 @@ expressions :
 position:   POSITION | AT;
 
 bank_definition_simple:
-  Identifier AT direct_integer {
+  AT direct_integer {
+      bank_define( _environment, NULL, BT_DATA, $2, NULL );
+  }
+  | Identifier AT direct_integer {
       bank_define( _environment, $1, BT_DATA, $3, NULL );
+  }
+  | AT direct_integer AS DATA {
+      bank_define( _environment, NULL, BT_DATA, $2, NULL );
   }
   | Identifier AT direct_integer AS DATA {
       bank_define( _environment, $1, BT_DATA, $3, NULL );
@@ -293,11 +299,25 @@ bank_definition_simple:
   | DATA Identifier AT direct_integer {
       bank_define( _environment, $2, BT_DATA, $4, NULL );
   }
+  | DATA AT direct_integer {
+      bank_define( _environment, NULL, BT_DATA, $3, NULL );
+  }
+
   | Identifier AT direct_integer AS CODE {
       bank_define( _environment, $1, BT_CODE, $3, NULL );
   }
+  | AT direct_integer AS CODE {
+      bank_define( _environment, NULL, BT_CODE, $2, NULL );
+  }
   | CODE Identifier AT direct_integer {
       bank_define( _environment, $2, BT_CODE, $4, NULL );
+  }
+  | CODE AT direct_integer {
+      bank_define( _environment, NULL, BT_CODE, $3, NULL );
+  }
+
+  | AT direct_integer AS VARIABLES {
+      bank_define( _environment, NULL, BT_VARIABLES, $2, NULL );
   }
   | Identifier AT direct_integer AS VARIABLES {
       bank_define( _environment, $1, BT_VARIABLES, $3, NULL );
@@ -305,12 +325,23 @@ bank_definition_simple:
   | VARIABLES Identifier AT direct_integer {
       bank_define( _environment, $2, BT_VARIABLES, $4, NULL );
   }
+  | VARIABLES AT direct_integer {
+      bank_define( _environment, NULL, BT_VARIABLES, $3, NULL );
+  }
+
   | Identifier AT direct_integer AS TEMPORARY {
       bank_define( _environment, $1, BT_TEMPORARY, $3, NULL );
   }
+  | AT direct_integer AS TEMPORARY {
+      bank_define( _environment, NULL, BT_TEMPORARY, $2, NULL );
+  }
   | TEMPORARY Identifier AT direct_integer {
       bank_define( _environment, $2, BT_TEMPORARY, $4, NULL );
-  };
+  }
+  | TEMPORARY AT direct_integer {
+      bank_define( _environment, NULL, BT_TEMPORARY, $3, NULL );
+  }  
+  ;
 
 bank_definition_with_payload:
   Identifier AT direct_integer WITH String {

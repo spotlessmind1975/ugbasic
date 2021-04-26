@@ -107,11 +107,11 @@ static Variable * variable_find_first_unused( Variable * _first, VariableType _t
  * 
  * This method deals with populating the data structures for the definition of
  * a "bank" of memory. The memory banks are defined and separate areas, 
- * identified by a name and a starting address and populated (optionally) with 
- * data coming from an external file. This definition occurs when the program 
- * presents a <b>BANK</b> instruction. Banks are characterized by a "type", 
- * which represents the nature of the data contained therein. The types 
- * surveyed are the following:
+ * identified by a name (optionally given) and a starting address and 
+ * populated (optionally) with data coming from an external file. This 
+ * definition occurs when the program presents a <b>BANK</b> instruction. 
+ * Banks are characterized by a "type", which represents the nature of the 
+ * data contained therein. The types surveyed are the following:
  * 
  * - `BT_CODE` (<b>CODE</b>) - executable code
  * - `BT_VARIABLES` (<b>VARIABLES</b>) - program's variables
@@ -122,14 +122,67 @@ static Variable * variable_find_first_unused( Variable * _first, VariableType _t
  * Any duplicate definitions will be ignored.
  * 
  * @param _environment Current calling environment
- * @param _name Name of the bank
+ * @param _name Name of the bank (NULL if automatic)
  * @param _type 
  * @param _address 
  * @param _filename 
  * @return Bank* 
  */
+/* <usermanual>
+@keyword BANK
+
+@english
+Define a bank of memory named [identifier], starting from [address] 
+of type [bankType]. Optionally, fill the bank of memory with static 
+data coming from [filename].
+
+Available [bankType]:
+
+    * ''CODE'' executable code (binary)
+    * ''VARIABLES'' program's variables
+    * ''TEMPORARY'' temporary variables
+    * ''DATA'' unspecified data
+
+If [identifier] is missing, the bank will have an unique name.
+If [bankType] is missing, the default type is DATA.
+If [filename] is missing, the default is a simply memory reservation.
+
+@italian
+Definisce un banco di memoria di nome [identifier], che inizia
+all'indirizzo [address] e del tipo [bankType]. In opzione, è possibile
+riempire tale banco con dei dati statici che provengano dal file
+[filename].
+
+I tipi di banco sono:
+
+    * ''CODE'' codice eseguibile (binario)
+    * ''VARIABLES'' variabili del programma
+    * ''TEMPORARY'' variabili temporanee
+    * ''DATA'' dati non meglio specificati
+
+Se [identifier] manca, al banco sarà assegnato un nome univoco.
+Se non viene indicato il [bankType], quello di default è DATA.
+Se manca il [filename] allora il banco non sarà preriempito.
+
+@syntax BANK { [identifier] } AT # [address] { AS [bankType]} { WITH [filename] }
+@syntax BANK { [bankType] } { [identifier] } AT # [address] { WITH [filename] }
+
+@example BANK VARIABLES AT $c000
+
+@seeAlso VAR
+
+@target all
+
+ </usermanual> */
 Bank * bank_define( Environment * _environment, char * _name, BankType _type, int _address, char * _filename ) {
-    Bank * bank = bank_find( _environment->banks[_type], _name );
+    Bank * bank = NULL;
+    if ( _name != NULL ) {
+        bank = bank_find( _environment->banks[_type], _name );
+    } else {
+        char temporaryName[16];
+        sprintf(temporaryName, "bank%4.4d", UNIQUE_ID );
+        _name = strdup( temporaryName );
+    }
     if ( bank ) {
         if ( _filename ) {
             outline4("; BANK %s %s AT $%4.4x WITH \"%s\" (duplicate)", BANK_TYPE_AS_STRING[_type], _name, _address, _filename);
