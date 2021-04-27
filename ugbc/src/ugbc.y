@@ -27,7 +27,7 @@ int yywrap() { return 1; }
 
 %token Remark
 %token NewLine 
-%token SEMICOLON COLON COMMA PLUS MINUS INCREMENT DECREMENT EQUAL ASSIGN
+%token SEMICOLON COLON COMMA PLUS MINUS INCREMENT DECREMENT EQUAL ASSIGN LT LTE GT GTE DISEQUAL
 
 %token RASTER DONE AT COLOR BORDER WAIT NEXT WITH BANK SPRITE DATA FROM OP CP 
 %token ENABLE DISABLE HALT ECM BITMAP SCREEN ON OFF ROWS VERTICAL SCROLL VAR AS TEMPORARY 
@@ -283,6 +283,21 @@ expressions_raw :
     } 
     | expression EQUAL expressions_raw {
         $$ = variable_compare( _environment, $1, $3 )->name;
+    }
+    | expression DISEQUAL expressions_raw {
+        $$ = variable_compare_not( _environment, $1, $3 )->name;
+    }
+    | expression LT expressions_raw {
+        $$ = variable_less_than( _environment, $1, $3, 0 )->name;
+    }
+    | expression LTE expressions_raw {
+        $$ = variable_less_than( _environment, $1, $3, 1 )->name;
+    }
+    | expression GT expressions_raw {
+        $$ = variable_greater_than( _environment, $1, $3, 0 )->name;
+    }
+    | expression GTE expressions_raw {
+        $$ = variable_greater_than( _environment, $1, $3, 0 )->name;
     }
     ; 
 

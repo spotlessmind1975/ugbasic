@@ -576,6 +576,9 @@ Variable * variable_store( Environment * _environment, char * _source, int _valu
 Variable * variable_move( Environment * _environment, char * _source, char * _dest );
 Variable * variable_move_naked( Environment * _environment, char * _source, char * _dest );
 Variable * variable_compare( Environment * _environment, char * _source, char * _dest );
+Variable * variable_compare_not( Environment * _environment, char * _source, char * _dest );
+Variable * variable_less_than( Environment * _environment, char * _source, char * _dest, int _equal );
+Variable * variable_greater_than( Environment * _environment, char * _source, char * _dest, int _equal );
 Variable * variable_add( Environment * _environment, char * _source, char * _dest );
 Variable * variable_or( Environment * _environment, char * _source, char * _dest );
 Variable * variable_sub( Environment * _environment, char * _source, char * _dest );

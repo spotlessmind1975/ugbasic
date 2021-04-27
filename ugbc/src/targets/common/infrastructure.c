@@ -875,16 +875,65 @@ Variable * variable_compare( Environment * _environment, char * _source, char * 
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of compare)" );
     switch( source->type ) {
         case VT_DWORD:
-            cpu_compare_32bit( _environment, source->realName, target->realName, result->realName );
+            cpu_compare_32bit( _environment, source->realName, target->realName, result->realName, 1 );
             break;
         case VT_ADDRESS:
         case VT_POSITION:
         case VT_WORD:
-            cpu_compare_16bit( _environment, source->realName, target->realName, result->realName );
+            cpu_compare_16bit( _environment, source->realName, target->realName, result->realName, 1 );
             break;
         case VT_BYTE:
         case VT_COLOR:
-            cpu_compare_8bit( _environment, source->realName, target->realName, result->realName );
+            cpu_compare_8bit( _environment, source->realName, target->realName, result->realName, 1 );
+            break;
+    }
+    return result;
+}
+
+/**
+ * @brief Compare two variable and return the result of comparation
+ * 
+ * This function allows you to compare the value of two variables. Note 
+ * that both variables must pre-exist before the operation, 
+ * under penalty of an exception.
+ * 
+ * @pre _source and _destination variables must exist
+ * 
+ * @param _environment Current calling environment
+ * @param _source Source variable's name
+ * @param _destination Destination variable's name
+ * @return Variable* The product of source and destination variable
+ * @throw EXIT_FAILURE "Destination variable does not cast"
+ * @throw EXIT_FAILURE "Source variable does not exist"
+ */
+Variable * variable_compare_not( Environment * _environment, char * _source, char * _destination ) {
+    Variable * source = variable_find( _environment->tempVariables, _source );
+    if ( ! source ) {
+        source = variable_find( _environment->variables, _source );
+    }
+    if ( ! source ) {
+        CRITICAL("Source variable does not exist");
+    }
+    Variable * target = variable_find( _environment->tempVariables, _destination );
+    if ( ! target ) {
+        target = variable_find( _environment->variables, _destination );
+    }
+    if ( ! source ) {
+        CRITICAL("Destination variable does not exist");
+    }
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of compare)" );
+    switch( source->type ) {
+        case VT_DWORD:
+            cpu_compare_32bit( _environment, source->realName, target->realName, result->realName, 0 );
+            break;
+        case VT_ADDRESS:
+        case VT_POSITION:
+        case VT_WORD:
+            cpu_compare_16bit( _environment, source->realName, target->realName, result->realName, 0 );
+            break;
+        case VT_BYTE:
+        case VT_COLOR:
+            cpu_compare_8bit( _environment, source->realName, target->realName, result->realName, 0 );
             break;
     }
     return result;
@@ -1049,5 +1098,105 @@ Variable * variable_or( Environment * _environment, char * _left, char * _right 
     Variable * right = variable_cast( _environment, _right, VT_BYTE );
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of logical OR)");
     cpu_logical_or_8bit( _environment, left->realName, right->realName, result->realName );
+    return result;
+}
+
+/**
+ * @brief Compare two variable and return the result of comparation
+ * 
+ * This function allows you to compare the value of two variables. Note 
+ * that both variables must pre-exist before the operation, 
+ * under penalty of an exception.
+ * 
+ * @pre _source and _destination variables must exist
+ * 
+ * @param _environment Current calling environment
+ * @param _source Source variable's name
+ * @param _destination Destination variable's name
+ * @param _equal True if equal
+ * @return Variable* The product of source and destination variable
+ * @throw EXIT_FAILURE "Destination variable does not cast"
+ * @throw EXIT_FAILURE "Source variable does not exist"
+ */
+Variable * variable_less_than( Environment * _environment, char * _source, char * _destination, int _equal ) {
+    Variable * source = variable_find( _environment->tempVariables, _source );
+    if ( ! source ) {
+        source = variable_find( _environment->variables, _source );
+    }
+    if ( ! source ) {
+        CRITICAL("Source variable does not exist");
+    }
+    Variable * target = variable_find( _environment->tempVariables, _destination );
+    if ( ! target ) {
+        target = variable_find( _environment->variables, _destination );
+    }
+    if ( ! source ) {
+        CRITICAL("Destination variable does not exist");
+    }
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of compare)" );
+    switch( source->type ) {
+        case VT_DWORD:
+            cpu_less_than_32bit( _environment, source->realName, target->realName, result->realName, _equal );
+            break;
+        case VT_ADDRESS:
+        case VT_POSITION:
+        case VT_WORD:
+            cpu_less_than_16bit( _environment, source->realName, target->realName, result->realName, _equal );
+            break;
+        case VT_BYTE:
+        case VT_COLOR:
+            cpu_less_than_8bit( _environment, source->realName, target->realName, result->realName, _equal );
+            break;
+    }
+    return result;
+}
+
+/**
+ * @brief Compare two variable and return the result of comparation
+ * 
+ * This function allows you to compare the value of two variables. Note 
+ * that both variables must pre-exist before the operation, 
+ * under penalty of an exception.
+ * 
+ * @pre _source and _destination variables must exist
+ * 
+ * @param _environment Current calling environment
+ * @param _source Source variable's name
+ * @param _destination Destination variable's name
+ * @param _equal True if equal
+ * @return Variable* The product of source and destination variable
+ * @throw EXIT_FAILURE "Destination variable does not cast"
+ * @throw EXIT_FAILURE "Source variable does not exist"
+ */
+Variable * variable_greater_than( Environment * _environment, char * _source, char * _destination, int _equal ) {
+    Variable * source = variable_find( _environment->tempVariables, _source );
+    if ( ! source ) {
+        source = variable_find( _environment->variables, _source );
+    }
+    if ( ! source ) {
+        CRITICAL("Source variable does not exist");
+    }
+    Variable * target = variable_find( _environment->tempVariables, _destination );
+    if ( ! target ) {
+        target = variable_find( _environment->variables, _destination );
+    }
+    if ( ! source ) {
+        CRITICAL("Destination variable does not exist");
+    }
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of compare)" );
+    switch( source->type ) {
+        case VT_DWORD:
+            cpu_greater_than_32bit( _environment, source->realName, target->realName, result->realName, _equal );
+            break;
+        case VT_ADDRESS:
+        case VT_POSITION:
+        case VT_WORD:
+            cpu_greater_than_16bit( _environment, source->realName, target->realName, result->realName, _equal );
+            break;
+        case VT_BYTE:
+        case VT_COLOR:
+            cpu_greater_than_8bit( _environment, source->realName, target->realName, result->realName, _equal );
+            break;
+    }
     return result;
 }

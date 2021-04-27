@@ -21,6 +21,11 @@
 "++" { return(INCREMENT); }
 "--" { return(DECREMENT); }
 "#" { return(HASH); }
+"<" { return(LT); }
+"<=" { return(LTE); }
+">" { return(GT); }
+">=" { return(GTE); }
+"<>" { return(DISEQUAL); }
 
 8BIT { return (BYTE); }
 16BIT { return (WORD); }

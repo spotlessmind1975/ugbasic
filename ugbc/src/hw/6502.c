@@ -185,15 +185,16 @@ void cpu6502_store_8bit( Environment * _environment, char *_destination, int _va
  * @param _source First value to compare
  * @param _destination Second value to compare and destination address for result (if _other is NULL)
  * @param _other Destination address for result
+ * @param _positive Invert meaning of comparison
  */
-void cpu6502_compare_8bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
+void cpu6502_compare_8bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _positive ) {
 
     MAKE_LABEL
 
     outline1("LDA %s", _source);
     outline1("CMP %s", _destination);
     outline1("BNE %s", label);
-    outline0("LDA #1");
+    outline1("LDA #%d", _positive );
     if ( _other ) {
         outline1("STA %s", _other);
     } else {
@@ -201,7 +202,81 @@ void cpu6502_compare_8bit( Environment * _environment, char *_source, char *_des
     }
     outline1("JMP %s2", label);
     outhead1("%s:", label);
-    outline0("LDA #0");
+    outline1("LDA #%d", (1-_positive) );
+    if ( _other ) {
+        outline1("STA %s", _other);
+    } else {
+        outline1("STA %s", _destination);
+    }
+    outhead1("%s2:", label);
+
+}
+
+/**
+ * @brief <i>CPU 6502</i>: emit code to compare two 8 bit values
+ * 
+ * @param _environment Current calling environment
+ * @param _source First value to compare
+ * @param _destination Second value to compare and destination address for result (if _other is NULL)
+ * @param _other Destination address for result
+ * @param _equal True if equal
+ */
+void cpu6502_less_than_8bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal ) {
+
+    MAKE_LABEL
+
+    outline1("LDA %s", _source);
+    outline1("CMP %s", _destination );
+    outline1("BCC %s", label);
+    if ( _equal ) {
+        outline1("BEQ %s", label);
+    }
+    outline0("LDA #0" );
+    if ( _other ) {
+        outline1("STA %s", _other);
+    } else {
+        outline1("STA %s", _destination);
+    }
+    outline1("JMP %s2", label);
+    outhead1("%s:", label);
+    outline0("LDA #1" );
+    if ( _other ) {
+        outline1("STA %s", _other);
+    } else {
+        outline1("STA %s", _destination);
+    }
+    outhead1("%s2:", label);
+
+}
+
+/**
+ * @brief <i>CPU 6502</i>: emit code to compare two 8 bit values
+ * 
+ * @param _environment Current calling environment
+ * @param _source First value to compare
+ * @param _destination Second value to compare and destination address for result (if _other is NULL)
+ * @param _other Destination address for result
+ * @param _equal True if equal
+ */
+void cpu6502_greater_than_8bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal ) {
+
+    MAKE_LABEL
+
+    outline1("LDA %s", _source);
+    outline1("CMP %s", _destination );
+    outline1("BCS %s", label);
+    if ( _equal ) {
+        outline1("BEQ %s", label);
+    }
+    outline0("LDA #0" );
+    if ( _other ) {
+        outline1("STA %s", _other);
+    } else {
+        outline1("STA %s", _destination);
+    }
+    outline1("JMP %s2", label);
+    outhead1("%s:", label);
+    outline0("LDA #1" );
     if ( _other ) {
         outline1("STA %s", _other);
     } else {
@@ -414,8 +489,9 @@ void cpu6502_store_16bit( Environment * _environment, char *_destination, int _v
  * @param _source First value to compare
  * @param _destination Second value to compare and destination address for result (if _other is NULL)
  * @param _other Destination address for result
+ * @param _positive Invert meaning of comparison
  */
-void cpu6502_compare_16bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
+void cpu6502_compare_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _positive ) {
 
     MAKE_LABEL
 
@@ -425,7 +501,7 @@ void cpu6502_compare_16bit( Environment * _environment, char *_source, char *_de
     outline1("LDA %s+1", _source);
     outline1("CMP %s+1", _destination);
     outline1("BNE %s", label);
-    outline0("LDA #1");
+    outline1("LDA #%d", _positive );
     if ( _other ) {
         outline1("STA %s", _other);
     } else {
@@ -433,7 +509,7 @@ void cpu6502_compare_16bit( Environment * _environment, char *_source, char *_de
     }
     outline1("JMP %s2", label);
     outhead1("%s:", label);
-    outline0("LDA #0");
+    outline1("LDA #%d", (1-_positive) );
     if ( _other ) {
         outline1("STA %s", _other);
     } else {
@@ -441,6 +517,85 @@ void cpu6502_compare_16bit( Environment * _environment, char *_source, char *_de
     }
     outhead1("%s2:", label);
     
+}
+
+/**
+ * @brief <i>CPU 6502</i>: emit code to compare two 8 bit values
+ * 
+ * @param _environment Current calling environment
+ * @param _source First value to compare
+ * @param _destination Second value to compare and destination address for result (if _other is NULL)
+ * @param _other Destination address for result
+ * @param _equal True if equal
+ */
+void cpu6502_less_than_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal ) {
+
+    MAKE_LABEL
+
+    outline1("LDA %s+1", _source);
+    outline1("CMP %s+1", _destination );
+    outline1("BCC %s", label);
+    outline1("LDA %s", _source);
+    outline1("CMP %s", _destination );
+    if ( _equal ) {
+        outline1("BEQ %s", label);
+    }
+    outline0("LDA #0" );
+    if ( _other ) {
+        outline1("STA %s", _other);
+    } else {
+        outline1("STA %s", _destination);
+    }
+    outline1("JMP %s2", label);
+    outhead1("%s:", label);
+    outline0("LDA #1" );
+    if ( _other ) {
+        outline1("STA %s", _other);
+    } else {
+        outline1("STA %s", _destination);
+    }
+    outhead1("%s2:", label);
+
+}
+
+/**
+ * @brief <i>CPU 6502</i>: emit code to compare two 8 bit values
+ * 
+ * @param _environment Current calling environment
+ * @param _source First value to compare
+ * @param _destination Second value to compare and destination address for result (if _other is NULL)
+ * @param _other Destination address for result
+ * @param _equal True if equal
+ */
+void cpu6502_greater_than_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal ) {
+
+    MAKE_LABEL
+
+    outline1("LDA %s+1", _source);
+    outline1("CMP %s+1", _destination );
+    outline1("BCS %s", label);
+    outline1("LDA %s", _source);
+    outline1("CMP %s", _destination );
+    outline1("BCS %s", label);
+    if ( _equal ) {
+        outline1("BEQ %s", label);
+    }
+    outline0("LDA #0" );
+    if ( _other ) {
+        outline1("STA %s", _other);
+    } else {
+        outline1("STA %s", _destination);
+    }
+    outline1("JMP %s2", label);
+    outhead1("%s:", label);
+    outline0("LDA #1" );
+    if ( _other ) {
+        outline1("STA %s", _other);
+    } else {
+        outline1("STA %s", _destination);
+    }
+    outhead1("%s2:", label);
+
 }
 
 /**
@@ -698,8 +853,9 @@ void cpu6502_store_32bit( Environment * _environment, char *_destination, int _v
  * @param _source First value to compare
  * @param _destination Second value to compare and destination address for result (if _other is NULL)
  * @param _other Destination address for result
+ * @param _positive Meaning of comparison
  */
-void cpu6502_compare_32bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
+void cpu6502_compare_32bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _positive ) {
 
     MAKE_LABEL
 
@@ -715,7 +871,7 @@ void cpu6502_compare_32bit( Environment * _environment, char *_source, char *_de
     outline1("LDA %s+3", _source);
     outline1("CMP %s+3", _destination);
     outline1("BNE %s", label);
-    outline0("LDA #1");
+    outline1("LDA #%d", _positive);
     if ( _other ) {
         outline1("STA %s", _other);
     } else {
@@ -723,7 +879,7 @@ void cpu6502_compare_32bit( Environment * _environment, char *_source, char *_de
     }
     outline1("JMP %s2", label);
     outhead1("%s:", label);
-    outline0("LDA #0");
+    outline1("LDA #%d", (1-_positive));
     if ( _other ) {
         outline1("STA %s", _other);
     } else {
@@ -731,6 +887,97 @@ void cpu6502_compare_32bit( Environment * _environment, char *_source, char *_de
     }
     outhead1("%s2:", label);
     
+}
+
+/**
+ * @brief <i>CPU 6502</i>: emit code to compare two 32 bit values
+ * 
+ * @param _environment Current calling environment
+ * @param _source First value to compare
+ * @param _destination Second value to compare and destination address for result (if _other is NULL)
+ * @param _other Destination address for result
+ * @param _equal True if equal
+ */
+void cpu6502_less_than_32bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal ) {
+
+    MAKE_LABEL
+
+    outline1("LDA %s+3", _source);
+    outline1("CMP %s+3", _destination );
+    outline1("BCC %s", label);
+    outline1("LDA %s+2", _source);
+    outline1("CMP %s+2", _destination );
+    outline1("BCC %s", label);
+    outline1("LDA %s+1", _source);
+    outline1("CMP %s+1", _destination );
+    outline1("BCC %s", label);
+    outline1("LDA %s", _source);
+    outline1("CMP %s", _destination );
+    if ( _equal ) {
+        outline1("BEQ %s", label);
+    }
+    outline0("LDA #0" );
+    if ( _other ) {
+        outline1("STA %s", _other);
+    } else {
+        outline1("STA %s", _destination);
+    }
+    outline1("JMP %s2", label);
+    outhead1("%s:", label);
+    outline0("LDA #1" );
+    if ( _other ) {
+        outline1("STA %s", _other);
+    } else {
+        outline1("STA %s", _destination);
+    }
+    outhead1("%s2:", label);
+
+}
+
+/**
+ * @brief <i>CPU 6502</i>: emit code to compare two 8 bit values
+ * 
+ * @param _environment Current calling environment
+ * @param _source First value to compare
+ * @param _destination Second value to compare and destination address for result (if _other is NULL)
+ * @param _other Destination address for result
+ * @param _equal True if equal
+ */
+void cpu6502_greater_than_32bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal ) {
+
+    MAKE_LABEL
+
+    outline1("LDA %s+3", _source);
+    outline1("CMP %s+3", _destination );
+    outline1("BCS %s", label);
+    outline1("LDA %s+2", _source);
+    outline1("CMP %s+2", _destination );
+    outline1("BCS %s", label);
+    outline1("LDA %s+1", _source);
+    outline1("CMP %s+1", _destination );
+    outline1("BCS %s", label);
+    outline1("LDA %s", _source);
+    outline1("CMP %s", _destination );
+    outline1("BCS %s", label);
+    if ( _equal ) {
+        outline1("BEQ %s", label);
+    }
+    outline0("LDA #0" );
+    if ( _other ) {
+        outline1("STA %s", _other);
+    } else {
+        outline1("STA %s", _destination);
+    }
+    outline1("JMP %s2", label);
+    outhead1("%s:", label);
+    outline0("LDA #1" );
+    if ( _other ) {
+        outline1("STA %s", _other);
+    } else {
+        outline1("STA %s", _destination);
+    }
+    outhead1("%s2:", label);
+
 }
 
 /**

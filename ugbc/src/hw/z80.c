@@ -183,15 +183,16 @@ void z80_store_8bit( Environment * _environment, char *_destination, int _value 
  * @param _source First value to compare
  * @param _destination Second value to compare and destination address for result (if _other is NULL)
  * @param _other Destination address for result
+ * @param _positive Meaning of comparison
  */
-void z80_compare_8bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
+void z80_compare_8bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _positive ) {
 
     MAKE_LABEL
 
     outline1("LD A, (%s)", _source);
     outline1("CP (%s)", _destination);
     outline1("JP Z, %s", label);
-    outline0("LD A, 1");
+    outline1("LD A, %s", _positive);
     if ( _other ) {
         outline1("LD (%s), A", _other);
     } else {
@@ -199,7 +200,81 @@ void z80_compare_8bit( Environment * _environment, char *_source, char *_destina
     }
     outline1("JMP %s2", label);
     outhead1("%s:", label);
+    outline1("LD A, %s", (1-_positive));
+    if ( _other ) {
+        outline1("LD (%s), A", _other);
+    } else {
+        outline1("LD (%s), A", _destination);
+    }
+    outhead1("%s2:", label);
+
+}
+
+/**
+ * @brief <i>Z80</i>: emit code to compare two 8 bit values
+ * 
+ * @param _environment Current calling environment
+ * @param _source First value to compare
+ * @param _destination Second value to compare and destination address for result (if _other is NULL)
+ * @param _other Destination address for result
+ * @param _equal True if equal
+ */
+void z80_less_than_8bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal ) {
+
+    MAKE_LABEL
+
+    outline1("LD A, (%s)", _source);
+    outline1("CP (%s)", _destination);
+    outline1("JR C, %s", label);
+    if ( _equal ) {
+        outline1("JR Z, %s", label);
+    }
     outline0("LD A, 0");
+    if ( _other ) {
+        outline1("LD (%s), A", _other);
+    } else {
+        outline1("LD (%s), A", _destination);
+    }
+    outline1("JMP %s2", label);
+    outhead1("%s:", label);
+    outline0("LD A, 1");
+    if ( _other ) {
+        outline1("LD (%s), A", _other);
+    } else {
+        outline1("LD (%s), A", _destination);
+    }
+    outhead1("%s2:", label);
+
+}
+
+/**
+ * @brief <i>Z80</i>: emit code to compare two 8 bit values
+ * 
+ * @param _environment Current calling environment
+ * @param _source First value to compare
+ * @param _destination Second value to compare and destination address for result (if _other is NULL)
+ * @param _other Destination address for result
+ * @param _equal True if equal
+ */
+void z80_greater_than_8bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal ) {
+
+    MAKE_LABEL
+
+    outline1("LD A, (%s)", _source);
+    outline1("CP (%s)", _destination);
+    outline1("JR NC, %s", label);
+    if ( !_equal ) {
+        outline1("JR NZ, %s", label);
+    }
+    outline0("LD A, 0");
+    if ( _other ) {
+        outline1("LD (%s), A", _other);
+    } else {
+        outline1("LD (%s), A", _destination);
+    }
+    outline1("JMP %s2", label);
+    outhead1("%s:", label);
+    outline0("LD A, 1");
     if ( _other ) {
         outline1("LD (%s), A", _other);
     } else {
@@ -435,7 +510,7 @@ void z80_store_16bit( Environment * _environment, char *_destination, int _value
  * @param _destination Second value to compare and destination address for result (if _other is NULL)
  * @param _other Destination address for result
  */
-void z80_compare_16bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
+void z80_compare_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _positive ) {
 
     MAKE_LABEL
 
@@ -445,7 +520,7 @@ void z80_compare_16bit( Environment * _environment, char *_source, char *_destin
     outline1("LD A, (%s+1)", _source);
     outline1("CP (%s+1)", _destination);
     outline1("JP NZ, %s", label);
-    outline0("LD A, $1");
+    outline1("LD A, %s", _positive);
     if ( _other ) {
         outline1("LD (%s), A", _other);
     } else {
@@ -453,7 +528,87 @@ void z80_compare_16bit( Environment * _environment, char *_source, char *_destin
     }
     outline1("JMP %s2", label);
     outhead1("%s:", label);
-    outline0("LD A, $0");
+    outline1("LD A, %s", (1-_positive));
+    if ( _other ) {
+        outline1("LD (%s), A", _other);
+    } else {
+        outline1("LD (%s), A", _destination);
+    }
+    outhead1("%s2:", label);
+
+}
+
+/**
+ * @brief <i>Z80</i>: emit code to compare two 8 bit values
+ * 
+ * @param _environment Current calling environment
+ * @param _source First value to compare
+ * @param _destination Second value to compare and destination address for result (if _other is NULL)
+ * @param _other Destination address for result
+ * @param _equal True if equal
+ */
+void z80_less_than_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal ) {
+
+    MAKE_LABEL
+
+    outline1("LD A, (%s+1)", _source);
+    outline1("CP (%s+1)", _destination);
+    outline1("JR C, %s", label);
+    outline1("LD A, (%s)", _source);
+    outline1("CP (%s)", _destination);
+    outline1("JR C, %s", label);
+    if ( _equal ) {
+        outline1("JR Z, %s", label);
+    }
+    outline0("LD A, 0");
+    if ( _other ) {
+        outline1("LD (%s), A", _other);
+    } else {
+        outline1("LD (%s), A", _destination);
+    }
+    outline1("JMP %s2", label);
+    outhead1("%s:", label);
+    outline0("LD A, 1");
+    if ( _other ) {
+        outline1("LD (%s), A", _other);
+    } else {
+        outline1("LD (%s), A", _destination);
+    }
+    outhead1("%s2:", label);
+
+}
+
+/**
+ * @brief <i>Z80</i>: emit code to compare two 8 bit values
+ * 
+ * @param _environment Current calling environment
+ * @param _source First value to compare
+ * @param _destination Second value to compare and destination address for result (if _other is NULL)
+ * @param _other Destination address for result
+ * @param _equal True if equal
+ */
+void z80_greater_than_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal ) {
+
+    MAKE_LABEL
+
+    outline1("LD A, (%s+1)", _source);
+    outline1("CP (%s+1)", _destination);
+    outline1("JR NC, %s", label);
+    outline1("LD A, (%s)", _source);
+    outline1("CP (%s)", _destination);
+    outline1("JR NC, %s", label);
+    if ( !_equal ) {
+        outline1("JR NZ, %s", label);
+    }
+    outline0("LD A, 0");
+    if ( _other ) {
+        outline1("LD (%s), A", _other);
+    } else {
+        outline1("LD (%s), A", _destination);
+    }
+    outline1("JMP %s2", label);
+    outhead1("%s:", label);
+    outline0("LD A, 1");
     if ( _other ) {
         outline1("LD (%s), A", _other);
     } else {
@@ -686,8 +841,9 @@ void z80_store_32bit( Environment * _environment, char *_destination, int _value
  * @param _source First value to compare
  * @param _destination Second value to compare and destination address for result (if _other is NULL)
  * @param _other Destination address for result
+ * @param _positive Meaning of comparison
  */
-void z80_compare_32bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
+void z80_compare_32bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _positive ) {
 
     MAKE_LABEL
 
@@ -703,7 +859,7 @@ void z80_compare_32bit( Environment * _environment, char *_source, char *_destin
     outline1("LD A, (%s+3)", _source);
     outline1("CP (%s+3)", _destination);
     outline1("JP NZ, %s", label);
-    outline0("LD A, $1");
+    outline1("LD A, %s", _positive);
     if ( _other ) {
         outline1("LD (%s), A", _other);
     } else {
@@ -711,7 +867,99 @@ void z80_compare_32bit( Environment * _environment, char *_source, char *_destin
     }
     outline1("JMP %s2", label);
     outhead1("%s:", label);
-    outline0("LD A, $0");
+    outline1("LD A, %s", (1-_positive));
+    if ( _other ) {
+        outline1("LD (%s), A", _other);
+    } else {
+        outline1("LD (%s), A", _destination);
+    }
+    outhead1("%s2:", label);
+
+}
+
+/**
+ * @brief <i>Z80</i>: emit code to compare two 8 bit values
+ * 
+ * @param _environment Current calling environment
+ * @param _source First value to compare
+ * @param _destination Second value to compare and destination address for result (if _other is NULL)
+ * @param _other Destination address for result
+ * @param _equal True if equal
+ */
+void z80_less_than_32bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal ) {
+
+    MAKE_LABEL
+
+    outline1("LD A, (%s+3)", _source);
+    outline1("CP (%s+3)", _destination);
+    outline1("JR C, %s", label);
+    outline1("LD A, (%s+2)", _source);
+    outline1("CP (%s+2)", _destination);
+    outline1("JR C, %s", label);
+    outline1("LD A, (%s+1)", _source);
+    outline1("CP (%s+1)", _destination);
+    outline1("JR C, %s", label);
+    outline1("LD A, (%s)", _source);
+    outline1("CP (%s)", _destination);
+    outline1("JR C, %s", label);
+    if ( _equal ) {
+        outline1("JR Z, %s", label);
+    }
+    outline0("LD A, 0");
+    if ( _other ) {
+        outline1("LD (%s), A", _other);
+    } else {
+        outline1("LD (%s), A", _destination);
+    }
+    outline1("JMP %s2", label);
+    outhead1("%s:", label);
+    outline0("LD A, 1");
+    if ( _other ) {
+        outline1("LD (%s), A", _other);
+    } else {
+        outline1("LD (%s), A", _destination);
+    }
+    outhead1("%s2:", label);
+
+}
+
+/**
+ * @brief <i>Z80</i>: emit code to compare two 8 bit values
+ * 
+ * @param _environment Current calling environment
+ * @param _source First value to compare
+ * @param _destination Second value to compare and destination address for result (if _other is NULL)
+ * @param _other Destination address for result
+ * @param _equal True if equal
+ */
+void z80_greater_than_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal ) {
+
+    MAKE_LABEL
+
+    outline1("LD A, (%s+3)", _source);
+    outline1("CP (%s+3)", _destination);
+    outline1("JR NC, %s", label);
+    outline1("LD A, (%s+2)", _source);
+    outline1("CP (%s+2)", _destination);
+    outline1("JR NC, %s", label);
+    outline1("LD A, (%s+1)", _source);
+    outline1("CP (%s+1)", _destination);
+    outline1("JR NC, %s", label);
+    outline1("LD A, (%s)", _source);
+    outline1("CP (%s)", _destination);
+    outline1("JR NC, %s", label);
+    if ( !_equal ) {
+        outline1("JR NZ, %s", label);
+    }
+    outline0("LD A, 0");
+    if ( _other ) {
+        outline1("LD (%s), A", _other);
+    } else {
+        outline1("LD (%s), A", _destination);
+    }
+    outline1("JMP %s2", label);
+    outhead1("%s:", label);
+    outline0("LD A, 1");
     if ( _other ) {
         outline1("LD (%s), A", _other);
     } else {

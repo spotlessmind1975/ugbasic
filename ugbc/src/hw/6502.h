@@ -39,9 +39,15 @@ void cpu6502_busy_wait( Environment * _environment, char * _timing );
 void cpu6502_bveq( Environment * _environment, char * _value, char * _label );
 void cpu6502_bvneq( Environment * _environment, char * _value, char * _label );
 void cpu6502_combine_nibbles( Environment * _environment, char * _low_nibble, char * _hi_nibble, char * _byte );
-void cpu6502_compare_16bit( Environment * _environment, char *_source, char *_destination,  char *_name );
-void cpu6502_compare_32bit( Environment * _environment, char *_source, char *_destination,  char *_name );
-void cpu6502_compare_8bit( Environment * _environment, char *_source, char *_destination,  char *_name );
+void cpu6502_compare_16bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _positive );
+void cpu6502_compare_32bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _positive );
+void cpu6502_compare_8bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _positive );
+void cpu6502_less_than_16bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _equal );
+void cpu6502_less_than_32bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _equal );
+void cpu6502_less_than_8bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _equal );
+void cpu6502_greater_than_16bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _equal );
+void cpu6502_greater_than_32bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _equal );
+void cpu6502_greater_than_8bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _equal );
 void cpu6502_fill( Environment * _environment, char * _address, char * _blocks, char * _pattern );
 void cpu6502_halt( Environment * _environment );
 void cpu6502_jump( Environment * _environment, char * _label );
@@ -95,9 +101,15 @@ void cpu6502_store_8bit( Environment * _environment, char *_source, int _value )
 #define cpu_bveq( _environment,  _value,  _label  ) cpu6502_bveq( _environment,  _value,  _label  )
 #define cpu_bvneq( _environment,  _value,  _label  ) cpu6502_bveq( _environment,  _value,  _label  )
 #define cpu_combine_nibbles( _environment,  _low_nibble,  _hi_nibble,  _byte  ) cpu6502_combine_nibbles( _environment,  _low_nibble,  _hi_nibble,  _byte  )
-#define cpu_compare_16bit( _environment, _source, _destination,  _name  ) cpu6502_compare_16bit( _environment, _source, _destination,  _name  )
-#define cpu_compare_32bit( _environment, _source, _destination,  _name  ) cpu6502_compare_32bit( _environment, _source, _destination,  _name  )
-#define cpu_compare_8bit( _environment, _source, _destination,  _name  ) cpu6502_compare_8bit( _environment, _source, _destination,  _name  )
+#define cpu_compare_16bit( _environment, _source, _destination, _name, _positive ) cpu6502_compare_16bit( _environment, _source, _destination, _name, _positive )
+#define cpu_compare_32bit( _environment, _source, _destination, _name, _positive ) cpu6502_compare_32bit( _environment, _source, _destination, _name, _positive )
+#define cpu_compare_8bit( _environment, _source, _destination, _name, _positive ) cpu6502_compare_8bit( _environment, _source, _destination, _name, _positive )
+#define cpu_less_than_16bit( _environment, _source, _destination, _name, _equal ) cpu6502_less_than_16bit( _environment, _source, _destination, _name, _equal )
+#define cpu_less_than_32bit( _environment, _source, _destination, _name, _equal ) cpu6502_less_than_32bit( _environment, _source, _destination, _name, _equal )
+#define cpu_less_than_8bit( _environment, _source, _destination, _name, _equal ) cpu6502_less_than_8bit( _environment, _source, _destination, _name, _equal )
+#define cpu_greater_than_16bit( _environment, _source, _destination, _name, _equal ) cpu6502_greater_than_16bit( _environment, _source, _destination, _name, _equal )
+#define cpu_greater_than_32bit( _environment, _source, _destination, _name, _equal ) cpu6502_greater_than_32bit( _environment, _source, _destination, _name, _equal )
+#define cpu_greater_than_8bit( _environment, _source, _destination, _name, _equal ) cpu6502_greater_than_8bit( _environment, _source, _destination, _name, _equal )
 #define cpu_fill( _environment,  _address,  _blocks,  _pattern  ) cpu6502_fill( _environment,  _address,  _blocks,  _pattern  )
 #define cpu_halt( _environment  ) cpu6502_halt( _environment  )
 #define cpu_jump( _environment,  _label  ) cpu6502_jump( _environment,  _label  )

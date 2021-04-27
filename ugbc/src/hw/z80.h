@@ -39,9 +39,15 @@ void z80_busy_wait( Environment * _environment, char * _timing );
 void z80_bveq( Environment * _environment, char * _value, char * _label );
 void z80_bvneq( Environment * _environment, char * _value, char * _label );
 void z80_combine_nibbles( Environment * _environment, char * _low_nibble, char * _hi_nibble, char * _byte );
-void z80_compare_16bit( Environment * _environment, char *_source, char *_destination,  char *_name );
-void z80_compare_32bit( Environment * _environment, char *_source, char *_destination,  char *_name );
-void z80_compare_8bit( Environment * _environment, char *_source, char *_destination,  char *_name );
+void z80_compare_16bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _positive );
+void z80_compare_32bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _positive );
+void z80_compare_8bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _positive );
+void z80_less_than_16bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _equal );
+void z80_less_than_32bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _equal );
+void z80_less_than_8bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _equal );
+void z80_greater_than_16bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _equal );
+void z80_greater_than_32bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _equal );
+void z80_greater_than_8bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _equal );
 void z80_fill( Environment * _environment, char * _address, char * _blocks, char * _pattern );
 void z80_halt( Environment * _environment );
 void z80_jump( Environment * _environment, char * _label );
@@ -96,9 +102,15 @@ void z80_store_8bit( Environment * _environment, char *_source, int _value );
 #define cpu_bveq( _environment,  _value,  _label  ) z80_bveq( _environment,  _value,  _label  )
 #define cpu_bvneq( _environment,  _value,  _label  ) z80_bveq( _environment,  _value,  _label  )
 #define cpu_combine_nibbles( _environment,  _low_nibble,  _hi_nibble,  _byte  ) z80_combine_nibbles( _environment,  _low_nibble,  _hi_nibble,  _byte  )
-#define cpu_compare_16bit( _environment, _source, _destination,  _name  ) z80_compare_16bit( _environment, _source, _destination,  _name  )
-#define cpu_compare_32bit( _environment, _source, _destination,  _name  ) z80_compare_32bit( _environment, _source, _destination,  _name  )
-#define cpu_compare_8bit( _environment, _source, _destination,  _name  ) z80_compare_8bit( _environment, _source, _destination,  _name  )
+#define cpu_compare_16bit( _environment, _source, _destination, _name, _positive ) z80_compare_16bit( _environment, _source, _destination, _name, _positive )
+#define cpu_compare_32bit( _environment, _source, _destination, _name, _positive ) z80_compare_32bit( _environment, _source, _destination, _name, _positive )
+#define cpu_compare_8bit( _environment, _source, _destination, _name, _positive ) z80_compare_8bit( _environment, _source, _destination, _name, _positive )
+#define cpu_less_than_16bit( _environment, _source, _destination, _name, _equal ) z80_less_than_16bit( _environment, _source, _destination, _name, _equal )
+#define cpu_less_than_32bit( _environment, _source, _destination, _name, _equal ) z80_less_than_32bit( _environment, _source, _destination, _name, _equal )
+#define cpu_less_than_8bit( _environment, _source, _destination, _name, _equal ) z80_less_than_8bit( _environment, _source, _destination, _name, _equal )
+#define cpu_greater_than_16bit( _environment, _source, _destination, _name, _equal ) z80_greater_than_16bit( _environment, _source, _destination, _name, _equal )
+#define cpu_greater_than_32bit( _environment, _source, _destination, _name, _equal ) z80_greater_than_32bit( _environment, _source, _destination, _name, _equal )
+#define cpu_greater_than_8bit( _environment, _source, _destination, _name, _equal ) z80_greater_than_8bit( _environment, _source, _destination, _name, _equal )
 #define cpu_fill( _environment,  _address,  _blocks,  _pattern  ) z80_fill( _environment,  _address,  _blocks,  _pattern  )
 #define cpu_halt( _environment  ) z80_halt( _environment  )
 #define cpu_jump( _environment,  _label  ) z80_jump( _environment,  _label  )
