@@ -813,11 +813,20 @@ statement:
   | EXIT {
       exit_loop( _environment, 0 );  
   }
+  | EXIT IF expressions {
+      exit_loop_if( _environment, $3, 0 );  
+  }
   | EXIT Integer {
       exit_loop( _environment, $2 );  
   }
   | EXIT direct_integer {
       exit_loop( _environment, $2 );  
+  }
+  | EXIT IF expression COMMA Integer {
+      exit_loop_if( _environment, $3, $5 );  
+  }
+  | EXIT IF expression COMMA direct_integer {
+      exit_loop_if( _environment, $3, $5 );  
   }
   | BEG GAMELOOP {
       begin_gameloop( _environment );

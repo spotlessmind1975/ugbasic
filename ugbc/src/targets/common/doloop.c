@@ -161,3 +161,58 @@ void exit_loop( Environment * _environment, int _number ) {
     cpu_jump( _environment, newLabel );
 
 }
+
+/**
+ * @brief Emit ASM code for <b>EXIT IF</b>
+ * 
+ * This function out of the loop on condition. Optionally, the programmer can
+ * give the number of loops to jump out.
+ * 
+ * @param _environment Current calling environment
+ * @param _expression Expression to check
+ * @param _number Number of loops to exit.
+ */
+/* <usermanual>
+@keyword EXIT IF
+
+@english
+Exits from a ''DO...LOOP'' on condition. Optionally, you can
+give a number that represent the number of loops to jump out.
+
+@italian
+Esce da un loop incondizionato in base a una condizione. 
+Opzionalmente, può essere dato un numero che rappresenta 
+il numero di loop da cui uscire.
+
+@syntax EXIT IF [expression] {,  [number] }
+
+@example EXIT 2
+
+@target all
+</usermanual> */
+void exit_loop_if( Environment * _environment, char * _expression, int _number ) {
+
+    outline2( "; EXIT IF %s, %d", _expression, _number );
+
+    // TODO: Better management of conditional types and missing
+    Loop * loop = _environment->loops;
+
+    if ( ! loop ) {
+        CRITICAL("EXIT without DO...LOOP");
+    }
+
+    while( _number ) {
+        loop = loop->next;
+
+        if ( ! loop ) {
+            CRITICAL("EXIT without enough DO...LOOP");
+        }
+    }
+
+    unsigned char newLabel[32]; sprintf(newLabel, "%sbis", loop->label );
+
+    Variable * expression = variable_retrieve( _environment, expression->name );
+
+    cpu_bvneq( _environment,  expression->realName, newLabel );
+       
+}

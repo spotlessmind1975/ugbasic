@@ -536,6 +536,7 @@ void end_loop( Environment * _environment );
 void end_gameloop( Environment * _environment );
 void end_if_then( Environment * _environment  );
 void exit_loop( Environment * _environment, int _number );
+void exit_loop_if( Environment * _environment, char * _expression, int _number );
 void gameloop_cleanup( Environment * _environment );
 void goto_label( Environment * _environment, char * _label );
 void goto_number( Environment * _environment, int _number );
