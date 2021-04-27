@@ -220,7 +220,11 @@ typedef struct _Conditional {
  */
 typedef enum _LoopType {
     /** DO ... LOOP */
-    CT_DO = 0,
+    LT_DO = 0,
+
+    /** WHILE ... WEND */
+    LT_WHILE = 0,
+
 } LoopType;
 
 /**
@@ -509,6 +513,7 @@ typedef struct _Environment {
 Bank * bank_define( Environment * _environment, char * _name, BankType _type, int _address, char * _filename );
 void   bank_cleanup( Environment * _environment );
 void begin_loop( Environment * _environment );
+void begin_while( Environment * _environment, char * _expression );
 void begin_gameloop( Environment * _environment );
 void bitmap_at( Environment * _environment, int _address );
 void bitmap_at_var( Environment * _environment, char * _address );
@@ -533,6 +538,7 @@ void colormap_clear_with_vars( Environment * _environment, char * _foreground, c
 void debug_var( Environment * _environment, char *_name );
 void else_if_then( Environment * _environment, char * _expression );
 void end_loop( Environment * _environment );
+void end_while( Environment * _environment );
 void end_gameloop( Environment * _environment );
 void end_if_then( Environment * _environment  );
 void exit_loop( Environment * _environment, int _number );

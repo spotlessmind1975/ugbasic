@@ -135,6 +135,7 @@ VARIABLES { return (VARIABLES); }
 VERTICAL { return (VERTICAL); }
 VIOLET { return(VIOLET); }
 WAIT { return (WAIT); }
+WEND { return (WEND); }
 WITH { return (WITH); }
 WIDTH { return (WIDTH); }
 WHILE { return (WHILE); }

@@ -72,7 +72,7 @@ void begin_loop( Environment * _environment ) {
 
     Loop * loop = malloc( sizeof( Loop ) );
     loop->label = strdup( label );
-    loop->type = CT_DO;
+    loop->type = LT_DO;
     loop->next = _environment->loops;
     _environment->loops = loop;
 
@@ -97,7 +97,7 @@ void end_loop( Environment * _environment ) {
         CRITICAL("LOOP without DO");
     }
 
-    if ( loop->type != CT_DO ) {
+    if ( loop->type != LT_DO ) {
         CRITICAL("LOOP without DO");
     }
 
@@ -145,14 +145,14 @@ void exit_loop( Environment * _environment, int _number ) {
     Loop * loop = _environment->loops;
 
     if ( ! loop ) {
-        CRITICAL("EXIT without DO...LOOP");
+        CRITICAL("EXIT without any loop");
     }
 
     while( _number ) {
         loop = loop->next;
 
         if ( ! loop ) {
-            CRITICAL("EXIT without enough DO...LOOP");
+            CRITICAL("EXIT without enough loops");
         }
     }
 
@@ -198,14 +198,14 @@ void exit_loop_if( Environment * _environment, char * _expression, int _number )
     Loop * loop = _environment->loops;
 
     if ( ! loop ) {
-        CRITICAL("EXIT without DO...LOOP");
+        CRITICAL("EXIT without any loop");
     }
 
     while( _number ) {
         loop = loop->next;
 
         if ( ! loop ) {
-            CRITICAL("EXIT without enough DO...LOOP");
+            CRITICAL("EXIT without enough loops");
         }
     }
 
