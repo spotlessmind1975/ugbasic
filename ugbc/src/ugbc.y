@@ -772,6 +772,9 @@ statement:
   | ELSE {
       else_if_then( _environment, NULL );  
   }
+  | ELSE IF expression {
+      else_if_then( _environment, $3 );  
+  }
   | ENDIF {
       end_if_then( _environment );  
   }

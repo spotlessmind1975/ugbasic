@@ -166,6 +166,7 @@ void else_if_then( Environment * _environment, char * _expression ) {
     if ( ! _expression ) {
         cpu_bvneq( _environment, _environment->conditionals->expression->realName, _environment->conditionals->label );
     } else {
+
         Variable * expression = variable_retrieve( _environment, _expression );
         if ( ! expression ) {
             CRITICAL("Internal error on IF ... THEN ... ELSE ... ");
@@ -174,6 +175,10 @@ void else_if_then( Environment * _environment, char * _expression ) {
         if ( ! _environment->conditionals ) {
             CRITICAL("Missing IF for ELSE");
         }
+
+        _environment->conditionals->expression->locked = 0;
+        _environment->conditionals->expression = variable_cast( _environment, expression->name, expression->type );
+        _environment->conditionals->expression->locked = 1;
 
         cpu_bvneq( _environment, expression->realName, _environment->conditionals->label );
 
