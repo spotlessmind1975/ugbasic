@@ -1292,4 +1292,13 @@ void z80_logical_or_8bit( Environment * _environment, char * _left, char * _righ
 
 }
 
+void z80_logical_not_8bit( Environment * _environment, char * _value, char * _result ) {
+
+    outline1("LD A, (%s)", _value );
+    outline0("XOR $FF" );
+    outline1("LD (%s), A", _result );
+
+}
+
+
 #endif

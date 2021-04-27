@@ -64,6 +64,7 @@ END { return (END); }
 ENDIF { return (ENDIF); }
 ENABLE { return (ENABLE); }
 EXPAND { return (EXPAND); }
+FALSE { return(FALSE); }
 FROM { return (FROM); }
 GAMELOOP { return (GAMELOOP); }
 GOLD { return(GOLD); }
@@ -90,6 +91,7 @@ MS { return (MILLISECOND); }
 MILLISECOND { return (MILLISECOND); }
 MILLISECONDS { return (MILLISECONDS); }
 MULTICOLOR { return(MULTICOLOR); }
+NOT { return(NOT); }
 OLIVE { return(OLIVE); }
 OFF { return (OFF); }
 ON { return (ON); }
@@ -124,6 +126,7 @@ THEN { return (THEN); }
 TICKS { return (TICKS); }
 TILES { return (TILES); }
 TURQUOISE { return(TURQUOISE); }
+TRUE { return(TRUE); }
 UP { return (UP); }
 VAR { return (VAR); }
 VARIABLES { return (VARIABLES); }

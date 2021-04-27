@@ -1102,6 +1102,24 @@ Variable * variable_or( Environment * _environment, char * _left, char * _right 
 }
 
 /**
+ * @brief Calculate logical "not" and return it as the result
+ * 
+ * This function allows you to emit code to make a logical
+ * OR between two expressions, and return the result
+ * as boolean.
+ * 
+ * @param _environment Current calling environment
+ * @param _value Left expression to check
+ * @return Variable* The result of operation
+ */
+Variable * variable_not( Environment * _environment, char * _value ) {
+    Variable * value = variable_cast( _environment, _value, VT_BYTE );
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of logical NOT)");
+    cpu_logical_not_8bit( _environment, value->realName, result->realName );
+    return result;
+}
+
+/**
  * @brief Compare two variable and return the result of comparation
  * 
  * This function allows you to compare the value of two variables. Note 

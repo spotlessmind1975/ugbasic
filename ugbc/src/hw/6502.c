@@ -1360,5 +1360,14 @@ void cpu6502_logical_or_8bit( Environment * _environment, char * _left, char * _
 
 }
 
+void cpu6502_logical_not_8bit( Environment * _environment, char * _value, char * _result ) {
+
+    MAKE_LABEL
+
+    outline1("LDA %s", _value );
+    outline0("EOR $FF" );
+    outline1("STA %s", _result );
+
+}
 
 #endif

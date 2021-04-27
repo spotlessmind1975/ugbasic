@@ -35,7 +35,7 @@ int yywrap() { return 1; }
 %token COLORMAP SELECT MONOCOLOR MULTICOLOR COLLISION IF THEN HIT BACKGROUND TO RANDOM
 %token BYTE WORD POSITION CODE VARIABLES MS CYCLES S HASH WIDTH HEIGHT DWORD PEN CLEAR
 %token BEG END GAMELOOP ENDIF UP DOWN LEFT RIGHT DEBUG AND RANDOMIZE GRAPHIC TEXTMAP
-%token POINT GOSUB RETURN POP OR ELSE
+%token POINT GOSUB RETURN POP OR ELSE NOT TRUE FALSE
 
 %token MILLISECOND MILLISECONDS TICKS
 
@@ -261,6 +261,17 @@ expression:
     }
     | OP expression CP {
         $$ = $2;
+    }
+    | TRUE {
+        $$ = variable_temporary( _environment, VT_BYTE, "(true)" )->name;
+        variable_store( _environment, $$, 255 );
+    }
+    | FALSE {
+        $$ = variable_temporary( _environment, VT_BYTE, "(false)" )->name;
+        variable_store( _environment, $$, 255 );
+    }
+    | NOT expression {
+        $$ = variable_not( _environment, $2 )->name;
     }
     ;
 

@@ -58,6 +58,7 @@ void cpu6502_label( Environment * _environment, char * _label );
 void cpu6502_limit_16bit( Environment * _environment, char * _variable, int _value );
 void cpu6502_logical_and_8bit( Environment * _environment, char * _left, char * _right, char * _result );
 void cpu6502_logical_or_8bit( Environment * _environment, char * _left, char * _right, char * _result );
+void cpu6502_logical_not_8bit( Environment * _environment, char * _value, char * _result );
 void cpu6502_math_add_16bit( Environment * _environment, char *_source, char *_destination,  char *_name );
 void cpu6502_math_add_32bit( Environment * _environment, char *_source, char *_destination,  char *_name );
 void cpu6502_math_add_8bit( Environment * _environment, char *_source, char *_destination,  char *_name );
@@ -118,6 +119,7 @@ void cpu6502_store_8bit( Environment * _environment, char *_source, int _value )
 #define cpu_pop( _environment  ) cpu6502_pop( _environment )
 #define cpu_label( _environment,  _label  ) cpu6502_label( _environment,  _label  )
 #define cpu_limit_16bit( _environment,  _variable, _value  ) cpu6502_limit_16bit( _environment,  _variable, _value  )
+#define cpu_logical_not_8bit( _environment, _value, _result ) cpu6502_logical_not_8bit( _environment, _value, _result )
 #define cpu_logical_and_8bit( _environment, _left, _right,  _result ) cpu6502_logical_and_8bit( _environment, _left, _right,  _result )
 #define cpu_logical_or_8bit( _environment, _left, _right,  _result ) cpu6502_logical_or_8bit( _environment, _left, _right,  _result )
 #define cpu_math_add_16bit( _environment, _source, _destination,  _name  ) cpu6502_math_add_16bit( _environment, _source, _destination,  _name  )
