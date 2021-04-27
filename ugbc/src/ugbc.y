@@ -35,7 +35,7 @@ int yywrap() { return 1; }
 %token COLORMAP SELECT MONOCOLOR MULTICOLOR COLLISION IF THEN HIT BACKGROUND TO RANDOM
 %token BYTE WORD POSITION CODE VARIABLES MS CYCLES S HASH WIDTH HEIGHT DWORD PEN CLEAR
 %token BEG END GAMELOOP ENDIF UP DOWN LEFT RIGHT DEBUG AND RANDOMIZE GRAPHIC TEXTMAP
-%token POINT GOSUB RETURN POP OR ELSE NOT TRUE FALSE DO EXIT WEND UNTIL
+%token POINT GOSUB RETURN POP OR ELSE NOT TRUE FALSE DO EXIT WEND UNTIL FOR STEP
 
 %token MILLISECOND MILLISECONDS TICKS
 
@@ -839,6 +839,15 @@ statement:
   }
   | EXIT IF expression COMMA direct_integer {
       exit_loop_if( _environment, $3, $5 );  
+  }
+  | FOR Identifier ASSIGN expressions TO expressions {
+      begin_for( _environment, $2, $4, $6 );  
+  }
+  | NEXT {
+      end_for( _environment );
+  }
+  | FOR Identifier ASSIGN expressions TO expressions STEP expressions {
+      begin_for_step( _environment, $2, $4, $6, $8 );  
   }
   | BEG GAMELOOP {
       begin_gameloop( _environment );

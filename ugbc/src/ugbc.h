@@ -228,6 +228,9 @@ typedef enum _LoopType {
     /** REPEAT ... UNTIL */
     LT_REPEAT = 0,
 
+    /** FOR ... NEXT */
+    LT_FOR = 0,
+
 } LoopType;
 
 /**
@@ -519,6 +522,8 @@ void begin_loop( Environment * _environment );
 void begin_while( Environment * _environment, char * _expression );
 void begin_gameloop( Environment * _environment );
 void begin_repeat( Environment * _environment );
+void begin_for( Environment * _environment, char * _index, char * _from, char * _to );  
+void begin_for_step( Environment * _environment, char * _index, char * _from, char * _to, char * _step );  
 void bitmap_at( Environment * _environment, int _address );
 void bitmap_at_var( Environment * _environment, char * _address );
 void bitmap_enable( Environment * _environment );
@@ -546,6 +551,7 @@ void end_while( Environment * _environment );
 void end_gameloop( Environment * _environment );
 void end_if_then( Environment * _environment  );
 void end_repeat( Environment * _environment, char * _expression );
+void end_for( Environment * _environment );
 void exit_loop( Environment * _environment, int _number );
 void exit_loop_if( Environment * _environment, char * _expression, int _number );
 void gameloop_cleanup( Environment * _environment );

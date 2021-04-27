@@ -67,6 +67,7 @@ ENABLE { return (ENABLE); }
 EXIT { return (EXPAND); }
 EXPAND { return (EXPAND); }
 FALSE { return(FALSE); }
+FOR { return(FOR); }
 FROM { return (FROM); }
 GAMELOOP { return (GAMELOOP); }
 GOLD { return(GOLD); }
@@ -120,6 +121,7 @@ SCREEN { return (SCREEN); }
 SCROLL { return (SCROLL); }
 SELECT { return (SELECT); }
 SPRITE { return (SPRITE); }
+STEP { return (STEP); }
 TAN { return(TAN); }
 TEMPORARY { return (TEMPORARY); }
 TEXT { return (TEXT); }
