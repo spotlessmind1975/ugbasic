@@ -94,6 +94,7 @@ void if_then( Environment * _environment, char * _expression ) {
 
     Conditional * conditional = malloc( sizeof( Conditional ) );
     conditional->label = strdup( label );
+    conditional->type = CT_IF;
 
     conditional->expression = variable_cast( _environment, expression->name, expression->type );
     conditional->expression->locked = 1;
@@ -131,6 +132,14 @@ void end_if_then( Environment * _environment ) {
     // TODO: Better management of conditional types and missing
     Conditional * conditional = _environment->conditionals;
 
+    if ( ! conditional ) {
+        CRITICAL("ENDIF without IF");
+    }
+
+    if ( conditional->type != CT_IF ) {
+        CRITICAL("ENDIF without IF");
+    }
+
     _environment->conditionals->expression->locked = 0;
 
     _environment->conditionals = _environment->conditionals->next;
@@ -161,10 +170,21 @@ void else_if_then( Environment * _environment, char * _expression ) {
 
     outline1( "; IF %s THEN ... ELSE ...", _expression);
 
+    // TODO: Better management of conditional types and missing
+    Conditional * conditional = _environment->conditionals;
+
+    if ( ! conditional ) {
+        CRITICAL("ENDIF without IF");
+    }
+
+    if ( conditional->type != CT_IF ) {
+        CRITICAL("ENDIF without IF");
+    }
+
     MAKE_LABEL
 
     if ( ! _expression ) {
-        cpu_bvneq( _environment, _environment->conditionals->expression->realName, _environment->conditionals->label );
+        cpu_bvneq( _environment, conditional->expression->realName, conditional->label );
     } else {
 
         Variable * expression = variable_retrieve( _environment, _expression );
@@ -172,15 +192,12 @@ void else_if_then( Environment * _environment, char * _expression ) {
             CRITICAL("Internal error on IF ... THEN ... ELSE ... ");
         }
 
-        if ( ! _environment->conditionals ) {
-            CRITICAL("Missing IF for ELSE");
-        }
+        conditional->expression->locked = 0;
+        conditional->expression = variable_cast( _environment, expression->name, expression->type );
+        conditional->expression->locked = 1;
 
-        _environment->conditionals->expression->locked = 0;
-        _environment->conditionals->expression = variable_cast( _environment, expression->name, expression->type );
-        _environment->conditionals->expression->locked = 1;
-
-        cpu_bvneq( _environment, expression->realName, _environment->conditionals->label );
+        cpu_bvneq( _environment, expression->realName, conditional->label );
 
     }
+    
 }

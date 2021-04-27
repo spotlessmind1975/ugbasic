@@ -215,6 +215,34 @@ typedef struct _Conditional {
 
 } Conditional;
 
+/**
+ * @brief Types of loops supported.
+ */
+typedef enum _LoopType {
+    /** DO ... LOOP */
+    CT_DO = 0,
+} LoopType;
+
+/**
+ * @brief Maximum number of loop types
+ */
+#define LOOP_TYPE_COUNT   1
+
+/**
+ * @brief Structure of a single loop.
+ */
+typedef struct _Loop {
+
+    /** Type of conditional */
+    LoopType type;
+
+    /** Label to jump. */
+    char *label;
+
+    /** Next conditional */
+    struct _Loop * next;
+
+} Loop;
 
 /**
  * @brief Structure of compilation environment
@@ -291,6 +319,11 @@ typedef struct _Environment {
      * List of (currently opened) conditionals.
      */
     Conditional * conditionals;
+
+    /**
+     * List of (currently opened) loops.
+     */
+    Loop * loops;
 
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
@@ -475,6 +508,7 @@ typedef struct _Environment {
 
 Bank * bank_define( Environment * _environment, char * _name, BankType _type, int _address, char * _filename );
 void   bank_cleanup( Environment * _environment );
+void begin_loop( Environment * _environment );
 void begin_gameloop( Environment * _environment );
 void bitmap_at( Environment * _environment, int _address );
 void bitmap_at_var( Environment * _environment, char * _address );
@@ -498,8 +532,10 @@ void colormap_clear_with( Environment * _environment, int _foreground, int _back
 void colormap_clear_with_vars( Environment * _environment, char * _foreground, char * _background );
 void debug_var( Environment * _environment, char *_name );
 void else_if_then( Environment * _environment, char * _expression );
+void end_loop( Environment * _environment );
 void end_gameloop( Environment * _environment );
 void end_if_then( Environment * _environment  );
+void exit_loop( Environment * _environment, int _number );
 void gameloop_cleanup( Environment * _environment );
 void goto_label( Environment * _environment, char * _label );
 void goto_number( Environment * _environment, int _number );

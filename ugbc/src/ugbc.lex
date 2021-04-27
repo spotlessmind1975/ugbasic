@@ -56,6 +56,7 @@ DATA { return (DATA); }
 DEBUG { return (DEBUG); }
 DISABLE { return (DISABLE); }
 DONE { return (DONE); }
+DO { return (DO); }
 DOWN { return (DOWN); }
 DWORD { return (DWORD); }
 ECM { return(ECM); }
@@ -63,6 +64,7 @@ ELSE { return(ELSE); }
 END { return (END); }
 ENDIF { return (ENDIF); }
 ENABLE { return (ENABLE); }
+EXIT { return (EXPAND); }
 EXPAND { return (EXPAND); }
 FALSE { return(FALSE); }
 FROM { return (FROM); }
