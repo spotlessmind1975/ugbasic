@@ -1010,3 +1010,43 @@ Variable * variable_and_const( Environment * _environment, char * _destination, 
     }
     return destination;
 }
+
+/**
+ * @brief Calculate logical "and" and return it as the result
+ * 
+ * This function allows you to emit code to make a logical
+ * AND between two expressions, and return the result
+ * as boolean.
+ * 
+ * @param _environment Current calling environment
+ * @param _left Left expression to check
+ * @param _right Right expression to check
+ * @return Variable* The result of operation
+ */
+Variable * variable_and( Environment * _environment, char * _left, char * _right ) {
+    Variable * left = variable_cast( _environment, _left, VT_BYTE );
+    Variable * right = variable_cast( _environment, _right, VT_BYTE );
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of logical AND)");
+    cpu_logical_and_8bit( _environment, left->realName, right->realName, result->realName );
+    return result;
+}
+
+/**
+ * @brief Calculate logical "or" and return it as the result
+ * 
+ * This function allows you to emit code to make a logical
+ * OR between two expressions, and return the result
+ * as boolean.
+ * 
+ * @param _environment Current calling environment
+ * @param _left Left expression to check
+ * @param _right Right expression to check
+ * @return Variable* The result of operation
+ */
+Variable * variable_or( Environment * _environment, char * _left, char * _right ) {
+    Variable * left = variable_cast( _environment, _left, VT_BYTE );
+    Variable * right = variable_cast( _environment, _right, VT_BYTE );
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of logical OR)");
+    cpu_logical_or_8bit( _environment, left->realName, right->realName, result->realName );
+    return result;
+}

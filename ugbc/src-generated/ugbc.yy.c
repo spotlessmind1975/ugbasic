@@ -385,7 +385,7 @@ static const flex_int16_t yy_accept[465] =
         0,    0,  132,  130,  129,    1,    1,  130,   13,  130,
       130,    4,    5,    9,    6,   10,  126,  126,  126,  126,
         3,    2,    7,  123,  123,  123,  123,  123,  123,  123,
-      123,  123,  123,  123,  123,  123,  123,  123,  123,   93,
+      123,  123,  123,  123,  123,  123,  123,  123,  123,   96,
       123,  123,  123,  123,  123,  123,  129,    1,    0,  124,
         0,  125,    0,    0,   11,   12,  126,  126,  126,    0,
         8,  123,  123,   17,   18,  123,  123,  123,  123,  123,
@@ -393,7 +393,7 @@ static const flex_int16_t yy_accept[465] =
       123,  123,  123,  123,  123,  123,  123,  123,  123,  123,
       123,   62,  123,  123,  123,  123,  123,  123,  123,  123,
 
-       71,  123,  123,  123,  123,   75,  123,  123,  123,  123,
+       71,  123,  123,  123,  123,   77,   78,  123,  123,  123,
       123,  123,  123,  123,  123,  123,  123,  123,  123,  123,
       123,  123,  123,  109,  123,  123,  123,  123,  123,  123,
       123,  123,  123,  123,  128,    0,    0,    0,   19,  123,
@@ -401,8 +401,8 @@ static const flex_int16_t yy_accept[465] =
       123,  123,  123,  123,  123,  123,  123,  123,  123,  123,
       123,   44,  123,   45,  123,  123,  123,  123,  123,  123,
       123,  123,  123,  123,   60,  123,  123,  123,  123,  123,
-      123,   69,  123,  123,  123,  123,   74,  123,  123,  123,
-      123,   79,  123,  123,   82,  123,  123,  123,  123,   88,
+      123,   69,  123,  123,  123,  123,   76,  123,  123,  123,
+      123,   82,  123,  123,   85,  123,  123,  123,  123,   91,
 
       123,  123,  123,  123,  123,  123,  123,  123,  101,  123,
       123,  123,  123,  123,  123,  110,  123,  123,  123,  123,
@@ -411,28 +411,28 @@ static const flex_int16_t yy_accept[465] =
       123,  123,  123,   35,  123,   37,   38,  123,  123,   41,
        42,  123,  123,  123,  123,   49,  123,   51,  123,   52,
       123,   55,  123,   57,   58,  123,  123,  123,   64,  123,
-       66,  123,  123,  123,  123,   68,  123,  123,  123,   78,
-       80,  123,  123,  123,  123,  123,    0,  123,  123,  123,
-      123,  123,   92,  123,  123,  123,  123,  123,  103,  105,
+       66,  123,  123,  123,  123,   68,  123,  123,  123,   81,
+       83,  123,  123,  123,  123,  123,    0,  123,  123,  123,
+      123,  123,   95,  123,  123,  123,  123,  123,  103,  105,
 
       123,  123,  123,  123,  123,  123,  114,  123,  123,  123,
       115,  119,  120,  123,  122,   15,   16,  123,   22,  123,
        24,  123,   26,   29,  123,   32,  123,  123,   39,  123,
        43,  123,   46,  123,  123,   53,  123,   56,  123,  123,
-      123,   65,  123,  123,  123,  123,   73,  123,   77,   81,
-      123,  123,  123,  123,  127,  123,  123,   91,  123,  123,
+      123,   65,  123,  123,  123,  123,   75,  123,   80,   84,
+      123,  123,  123,  123,  127,  123,  123,   94,  123,  123,
       123,  123,  123,  123,  106,  107,  123,  123,  123,  123,
       117,  118,  116,  123,  123,   23,   28,  123,  123,  123,
        36,  123,   47,   48,  123,  123,   59,  123,  123,  123,
-      123,  123,  123,   76,  123,   84,   85,   87,   89,   90,
+      123,  123,  123,   79,  123,   87,   88,   90,   92,   93,
 
-       94,   95,   99,  100,  123,  123,  123,  123,  123,  113,
+       97,   98,   99,  100,  123,  123,  123,  123,  123,  113,
       121,  123,  123,  123,  123,   40,  123,   54,  123,  123,
        67,  123,  123,  123,  123,  123,  123,  104,  123,  123,
       123,  123,  123,   33,   34,   50,  123,   63,  123,  123,
-      123,   83,  123,  123,  123,  123,  112,  123,   31,  123,
-      123,   70,  123,   86,  102,  108,  111,   20,   61,  123,
-       72,   97,   98,    0
+      123,   86,  123,  123,  123,  123,  112,  123,   31,  123,
+      123,   70,  123,   89,  102,  108,  111,   20,   61,  123,
+       74,   72,   73,    0
     } ;
 
 static const YY_CHAR yy_ec[256] =
@@ -1405,142 +1405,142 @@ YY_RULE_SETUP
 case 71:
 YY_RULE_SETUP
 #line 83 "src/ugbc.lex"
-{ return(MS); }
+{ return (MILLISECOND); }
 	YY_BREAK
 case 72:
 YY_RULE_SETUP
 #line 84 "src/ugbc.lex"
-{ return(MULTICOLOR); }
+{ return (MILLISECOND); }
 	YY_BREAK
 case 73:
 YY_RULE_SETUP
 #line 85 "src/ugbc.lex"
-{ return(OLIVE); }
+{ return (MILLISECONDS); }
 	YY_BREAK
 case 74:
 YY_RULE_SETUP
 #line 86 "src/ugbc.lex"
-{ return (OFF); }
+{ return(MULTICOLOR); }
 	YY_BREAK
 case 75:
 YY_RULE_SETUP
 #line 87 "src/ugbc.lex"
-{ return (ON); }
+{ return(OLIVE); }
 	YY_BREAK
 case 76:
 YY_RULE_SETUP
 #line 88 "src/ugbc.lex"
-{ return(ORANGE); }
+{ return (OFF); }
 	YY_BREAK
 case 77:
 YY_RULE_SETUP
 #line 89 "src/ugbc.lex"
-{ return(PEACH); }
+{ return (ON); }
 	YY_BREAK
 case 78:
 YY_RULE_SETUP
 #line 90 "src/ugbc.lex"
-{ return (PEEK); }
+{ return (OR); }
 	YY_BREAK
 case 79:
 YY_RULE_SETUP
 #line 91 "src/ugbc.lex"
-{ return (PEN); }
+{ return(ORANGE); }
 	YY_BREAK
 case 80:
 YY_RULE_SETUP
 #line 92 "src/ugbc.lex"
-{ return(PINK); }
+{ return(PEACH); }
 	YY_BREAK
 case 81:
 YY_RULE_SETUP
 #line 93 "src/ugbc.lex"
-{ return (POINT); }
+{ return (PEEK); }
 	YY_BREAK
 case 82:
 YY_RULE_SETUP
 #line 94 "src/ugbc.lex"
-{ return (POP); }
+{ return (PEN); }
 	YY_BREAK
 case 83:
 YY_RULE_SETUP
 #line 95 "src/ugbc.lex"
-{ return (POSITION); }
+{ return(PINK); }
 	YY_BREAK
 case 84:
 YY_RULE_SETUP
 #line 96 "src/ugbc.lex"
-{ return(PURPLE); }
+{ return (POINT); }
 	YY_BREAK
 case 85:
 YY_RULE_SETUP
 #line 97 "src/ugbc.lex"
-{ return (RANDOM); }
+{ return (POP); }
 	YY_BREAK
 case 86:
 YY_RULE_SETUP
 #line 98 "src/ugbc.lex"
-{ return (RANDOMIZE); }
+{ return (POSITION); }
 	YY_BREAK
 case 87:
 YY_RULE_SETUP
 #line 99 "src/ugbc.lex"
-{ return (RASTER); }
+{ return(PURPLE); }
 	YY_BREAK
 case 88:
 YY_RULE_SETUP
 #line 100 "src/ugbc.lex"
-{ return(RED); }
+{ return (RANDOM); }
 	YY_BREAK
 case 89:
 YY_RULE_SETUP
 #line 101 "src/ugbc.lex"
-{ return (REPEAT); }
+{ return (RANDOMIZE); }
 	YY_BREAK
 case 90:
 YY_RULE_SETUP
 #line 102 "src/ugbc.lex"
-{ return (RETURN); }
+{ return (RASTER); }
 	YY_BREAK
 case 91:
 YY_RULE_SETUP
 #line 103 "src/ugbc.lex"
-{ return (RIGHT); }
+{ return(RED); }
 	YY_BREAK
 case 92:
 YY_RULE_SETUP
 #line 104 "src/ugbc.lex"
-{ return (ROWS); }
+{ return (REPEAT); }
 	YY_BREAK
 case 93:
 YY_RULE_SETUP
 #line 105 "src/ugbc.lex"
-{ return (S); }
+{ return (RETURN); }
 	YY_BREAK
 case 94:
 YY_RULE_SETUP
 #line 106 "src/ugbc.lex"
-{ return (SCREEN); }
+{ return (RIGHT); }
 	YY_BREAK
 case 95:
 YY_RULE_SETUP
 #line 107 "src/ugbc.lex"
-{ return (SCROLL); }
+{ return (ROWS); }
 	YY_BREAK
 case 96:
 YY_RULE_SETUP
 #line 108 "src/ugbc.lex"
-{ return (MILLISECOND); }
+{ return (S); }
 	YY_BREAK
 case 97:
 YY_RULE_SETUP
 #line 109 "src/ugbc.lex"
-{ return (MILLISECOND); }
+{ return (SCREEN); }
 	YY_BREAK
 case 98:
 YY_RULE_SETUP
 #line 110 "src/ugbc.lex"
-{ return (MILLISECONDS); }
+{ return (SCROLL); }
 	YY_BREAK
 case 99:
 YY_RULE_SETUP

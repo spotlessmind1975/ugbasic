@@ -981,4 +981,42 @@ void z80_port_out( Environment * _environment, char * _port, char * _value ) {
 
 }
 
+void z80_logical_and_8bit( Environment * _environment, char * _left, char * _right, char * _result ) {
+
+    MAKE_LABEL
+
+    outline1("LD A, (%s)", _left );
+    outline1("JR Z, %s", label );
+    outline1("LD A, (%s)", _right );
+    outline1("JR Z, %s", label );
+    outline0("LD A, #1" );
+    outline1("LD (%s), A", _result );
+    outline1("JMP %s2", label );
+    outhead1("%s:", label );
+    outline0("LD A, #0" );
+    outline1("LD (%s), A", _result );
+    outhead1("%s2:", label );
+
+
+}
+
+void z80_logical_or_8bit( Environment * _environment, char * _left, char * _right, char * _result ) {
+
+    MAKE_LABEL
+
+    outline1("LD A, (%s)", _left );
+    outline1("JR NZ, %s1", label );
+    outline1("LD A, (%s)", _right );
+    outline1("JR NZ, %s1", label );
+    outhead1("%s0:", label );
+    outline0("LD A, #0" );
+    outline1("LD (%s), A", _result );
+    outline1("JMP %sx", label );
+    outhead1("%s1:", label );
+    outline0("LD A, #1" );
+    outline1("LD (%s), A", _result );
+    outhead1("%sx:", label );
+
+}
+
 #endif

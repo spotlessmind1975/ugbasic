@@ -565,8 +565,11 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
 Variable * variable_move_naked( Environment * _environment, char * _source, char * _dest );
 Variable * variable_compare( Environment * _environment, char * _source, char * _dest );
 Variable * variable_add( Environment * _environment, char * _source, char * _dest );
+Variable * variable_or( Environment * _environment, char * _source, char * _dest );
 Variable * variable_sub( Environment * _environment, char * _source, char * _dest );
 Variable * variable_mul( Environment * _environment, char * _source, char * _dest );
+Variable * variable_and( Environment * _environment, char * _left, char * _right );
+Variable * variable_or( Environment * _environment, char * _left, char * _right );
 Variable * variable_div2_const( Environment * _environment, char * _source, int _bits );
 Variable * variable_mul2_const( Environment * _environment, char * _source, int _bits );
 Variable * variable_and_const( Environment * _environment, char * _source, int _mask );

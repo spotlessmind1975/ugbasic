@@ -80,11 +80,14 @@ MAGENTA { return(MAGENTA); }
 NEXT { return (NEXT); }
 MCM { return(MCM); }
 MONOCOLOR { return(MONOCOLOR); }
-MS { return(MS); }
+MS { return (MILLISECOND); }
+MILLISECOND { return (MILLISECOND); }
+MILLISECONDS { return (MILLISECONDS); }
 MULTICOLOR { return(MULTICOLOR); }
 OLIVE { return(OLIVE); }
 OFF { return (OFF); }
 ON { return (ON); }
+OR { return (OR); }
 ORANGE { return(ORANGE); }
 PEACH { return(PEACH); }
 PEEK { return (PEEK); }
@@ -105,9 +108,6 @@ ROWS { return (ROWS); }
 S { return (S); }
 SCREEN { return (SCREEN); }
 SCROLL { return (SCROLL); }
-MS { return (MILLISECOND); }
-MILLISECOND { return (MILLISECOND); }
-MILLISECONDS { return (MILLISECONDS); }
 SELECT { return (SELECT); }
 SPRITE { return (SPRITE); }
 TAN { return(TAN); }

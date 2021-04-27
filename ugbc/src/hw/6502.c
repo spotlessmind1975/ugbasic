@@ -1052,4 +1052,43 @@ void cpu6502_busy_wait( Environment * _environment, char * _timing ) {
 
 }
 
+void cpu6502_logical_and_8bit( Environment * _environment, char * _left, char * _right, char * _result ) {
+
+    MAKE_LABEL
+
+    outline1("LDA %s", _left );
+    outhead1("BEQ %s", label );
+    outline1("LDA %s", _right );
+    outline1("BEQ %s", label);
+    outline0("LDA #1");
+    outline1("STA %s", _result);
+    outline1("JMP %s2", label);
+    outhead1("%s:", label);
+    outline0("LDA #0");
+    outline1("STA %s", _result);
+    outhead1("%s2:", label);
+
+}
+
+void cpu6502_logical_or_8bit( Environment * _environment, char * _left, char * _right, char * _result ) {
+
+    MAKE_LABEL
+
+    outline1("LDA %s", _left );
+    outhead1("BNE %s1", label );
+    outline1("LDA %s", _right );
+    outline1("BNE %s1", label);
+    outline1("JMP %s0", label);
+    outhead1("%s1:", label);
+    outline0("LDA #1");
+    outline1("STA %s", _result);
+    outline1("JMP %sx", label);
+    outhead1("%s0:", label);
+    outline0("LDA #0");
+    outline1("STA %s", _result);
+    outhead1("%sx:", label);
+
+}
+
+
 #endif

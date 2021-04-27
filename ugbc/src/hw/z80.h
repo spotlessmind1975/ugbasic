@@ -48,6 +48,8 @@ void z80_return( Environment * _environment );
 void z80_pop( Environment * _environment );
 void z80_label( Environment * _environment, char * _label );
 void z80_limit_16bit( Environment * _environment, char * _variable, int _value );
+void z80_logical_and_8bit( Environment * _environment, char * _left, char * _right, char * _result );
+void z80_logical_or_8bit( Environment * _environment, char * _left, char * _right, char * _result );
 void z80_math_add_16bit( Environment * _environment, char *_source, char *_destination,  char *_name );
 void z80_math_add_32bit( Environment * _environment, char *_source, char *_destination,  char *_name );
 void z80_math_add_8bit( Environment * _environment, char *_source, char *_destination,  char *_name );
@@ -101,6 +103,8 @@ void z80_store_8bit( Environment * _environment, char *_source, int _value );
 #define cpu_pop( _environment ) z80_pop( _environment  )
 #define cpu_label( _environment,  _label  ) z80_label( _environment,  _label  )
 #define cpu_limit_16bit( _environment,  _variable, _value  ) z80_limit_16bit( _environment,  _variable, _value  )
+#define cpu_logical_and_8bit( _environment, _left, _right,  _result ) z80_logical_and_8bit( _environment, _left, _right,  _result )
+#define cpu_logical_or_8bit( _environment, _left, _right,  _result ) z80_logical_or_8bit( _environment, _left, _right,  _result )
 #define cpu_math_add_16bit( _environment, _source, _destination,  _name  ) z80_math_add_16bit( _environment, _source, _destination,  _name  )
 #define cpu_math_add_32bit( _environment, _source, _destination,  _name  ) z80_math_add_32bit( _environment, _source, _destination,  _name  )
 #define cpu_math_add_8bit( _environment, _source, _destination,  _name  ) z80_math_add_8bit( _environment, _source, _destination,  _name  )

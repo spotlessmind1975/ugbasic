@@ -35,7 +35,7 @@ int yywrap() { return 1; }
 %token COLORMAP SELECT MONOCOLOR MULTICOLOR COLLISION IF THEN HIT BACKGROUND TO RANDOM
 %token BYTE WORD POSITION CODE VARIABLES MS CYCLES S HASH WIDTH HEIGHT DWORD PEN CLEAR
 %token BEG END GAMELOOP ENDIF UP DOWN LEFT RIGHT DEBUG AND RANDOMIZE GRAPHIC TEXTMAP
-%token POINT GOSUB RETURN POP
+%token POINT GOSUB RETURN POP OR
 
 %token MILLISECOND MILLISECONDS TICKS
 
@@ -52,7 +52,8 @@ int yywrap() { return 1; }
 %type <string> random_definition_simple random_definition
 %type <string> color_enumeration
 
-%right Integer String
+%right Integer String CP
+%left OP
 
 %%
 
@@ -270,6 +271,14 @@ expressions_raw :
     | expression MINUS expressions_raw {
         $$ = variable_sub( _environment, $1, $3 )->name;
         outline3("; %s = %s - %s", $$, $1, $3 );
+    } 
+    | expression AND expressions_raw {
+        $$ = variable_and( _environment, $1, $3 )->name;
+        outline3("; %s = %s AND %s", $$, $1, $3 );
+    } 
+    | expression OR expressions_raw {
+        $$ = variable_or( _environment, $1, $3 )->name;
+        outline3("; %s = %s OR %s", $$, $1, $3 );
     } 
     | expression EQUAL expressions_raw {
         $$ = variable_compare( _environment, $1, $3 )->name;
