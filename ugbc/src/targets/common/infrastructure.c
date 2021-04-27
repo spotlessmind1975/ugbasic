@@ -74,7 +74,9 @@ static void variable_dump( Variable * _first ) {
 static void variable_reset_pool( Variable * _pool ) {
     Variable * actual = _pool;
     while( actual ) {
-        actual->used = 0;
+        if ( actual->locked == 0 ) {
+            actual->used = 0;            
+        }
         actual = actual->next;
     }
 }
@@ -306,12 +308,12 @@ Variable * variable_define( Environment * _environment, char * _name, VariableTy
         var->next = _environment->variables; 
         var->type = _type;
         var->value = _value;
-        var->used = 1;
         var->bank = _environment->banks[BT_VARIABLES];
         _environment->variables = var;
         variable_store( _environment, var->name, _value );
     }
     var->used = 1;
+    var->locked = 0;
     return var;
 }
 
@@ -344,7 +346,6 @@ Variable * variable_define( Environment * _environment, char * _name, VariableTy
 Variable * variable_temporary( Environment * _environment, VariableType _type, char * _meaning ) {
     Variable * var = variable_find_first_unused( _environment->tempVariables, _type );
     if ( var ) {
-        var->used = 1;
         var->meaningName = _meaning;
     } else {
         char * name = malloc(32);
@@ -355,14 +356,14 @@ Variable * variable_temporary( Environment * _environment, VariableType _type, c
         var->meaningName = _meaning;
         var->next = _environment->tempVariables; 
         var->type = _type;
-        var->used = 1;
         var->bank = _environment->banks[BT_TEMPORARY];
         _environment->tempVariables = var;
     }
     if ( var->meaningName ) {
         outline2("; %s <-> %s", var->realName, var->meaningName );
     }
-
+    var->used = 1;
+    var->locked = 0;
     return var;
 }
 

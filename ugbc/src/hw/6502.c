@@ -64,10 +64,33 @@ void cpu6502_beq( Environment * _environment, char * _label ) {
     
 }
 
+/**
+ * @brief <i>CPU 6502</i>: emit code to make long conditional jump
+ * 
+ * @param _environment Current calling environment
+ * @param _label Destination of the conditional jump.
+ */
+void cpu6502_bneq( Environment * _environment, char * _label ) {
+    
+    MAKE_LABEL
+
+    outline1("BEQ %s", label);
+    outline1("JMP %s", _label);    
+    outline1("%s:", label);
+    
+}
+
 void cpu6502_bveq( Environment * _environment, char * _value, char * _label ) {
 
     outline1("LDA _%s", _value);
     cpu6502_beq( _environment,  _label );
+
+}
+
+void cpu6502_bvneq( Environment * _environment, char * _value, char * _label ) {
+
+    outline1("LDA _%s", _value);
+    cpu6502_bneq( _environment,  _label );
 
 }
 

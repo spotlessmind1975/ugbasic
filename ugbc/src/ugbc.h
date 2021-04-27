@@ -58,35 +58,6 @@
  ****************************************************************************/
 
 /**
- * @brief Types of conditional jumps supported.
- */
-typedef enum _ConditionalType {
-    /** IF ... THEN ... ENDIF */
-    CT_IF = 0,
-} ConditionalType;
-
-/**
- * @brief Maximum number of conditional types
- */
-#define CONDITIONAL_TYPE_COUNT   1
-
-/**
- * @brief Structure of a single conditional jump.
- */
-typedef struct _Conditional {
-
-    /** Type of conditional */
-    ConditionalType type;
-
-    /** Label to jump. */
-    char *label;
-
-    /** Next conditional */
-    struct _Conditional * next;
-
-} Conditional;
-
-/**
  * @brief Type of memory banks
  */
 typedef enum _BankType {
@@ -191,6 +162,13 @@ typedef struct _Variable {
     int used;
 
     /** 
+     * This flag mark if this variable is locked (1) or not (0); 
+     * it is valid only for temporary one and avoid to free
+     * variables that are still used. 
+     */
+    int locked;
+
+    /** 
      * The initial value of the variable, as given by last (re)definition.
      */
     int value;
@@ -204,6 +182,39 @@ typedef struct _Variable {
     struct _Variable * next;
 
 } Variable;
+
+/**
+ * @brief Types of conditional jumps supported.
+ */
+typedef enum _ConditionalType {
+    /** IF ... THEN ... ENDIF */
+    CT_IF = 0,
+} ConditionalType;
+
+/**
+ * @brief Maximum number of conditional types
+ */
+#define CONDITIONAL_TYPE_COUNT   1
+
+/**
+ * @brief Structure of a single conditional jump.
+ */
+typedef struct _Conditional {
+
+    /** Type of conditional */
+    ConditionalType type;
+
+    /** Label to jump. */
+    char *label;
+
+    /** Expression to evaluate. */
+    Variable *expression;
+
+    /** Next conditional */
+    struct _Conditional * next;
+
+} Conditional;
+
 
 /**
  * @brief Structure of compilation environment
@@ -486,6 +497,7 @@ void colormap_clear( Environment * _environment );
 void colormap_clear_with( Environment * _environment, int _foreground, int _background );
 void colormap_clear_with_vars( Environment * _environment, char * _foreground, char * _background );
 void debug_var( Environment * _environment, char *_name );
+void else_if_then( Environment * _environment, char * _expression );
 void end_gameloop( Environment * _environment );
 void end_if_then( Environment * _environment  );
 void gameloop_cleanup( Environment * _environment );

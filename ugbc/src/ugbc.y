@@ -35,7 +35,7 @@ int yywrap() { return 1; }
 %token COLORMAP SELECT MONOCOLOR MULTICOLOR COLLISION IF THEN HIT BACKGROUND TO RANDOM
 %token BYTE WORD POSITION CODE VARIABLES MS CYCLES S HASH WIDTH HEIGHT DWORD PEN CLEAR
 %token BEG END GAMELOOP ENDIF UP DOWN LEFT RIGHT DEBUG AND RANDOMIZE GRAPHIC TEXTMAP
-%token POINT GOSUB RETURN POP OR
+%token POINT GOSUB RETURN POP OR ELSE
 
 %token MILLISECOND MILLISECONDS TICKS
 
@@ -54,6 +54,7 @@ int yywrap() { return 1; }
 
 %right Integer String CP
 %left OP
+%right THEN ELSE
 
 %%
 
@@ -767,9 +768,13 @@ statement:
   }
   | IF expressions {
       if_then( _environment, $2 );  
-  } THEN statements_no_linenumbers {
-      end_if_then( _environment );
-  } ENDIF
+  }
+  | ELSE {
+      else_if_then( _environment, NULL );  
+  }
+  | ENDIF {
+      end_if_then( _environment );  
+  }
   | BEG GAMELOOP {
       begin_gameloop( _environment );
   }

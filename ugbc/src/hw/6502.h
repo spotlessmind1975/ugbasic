@@ -34,8 +34,10 @@
 #include "../ugbc.h"
 
 void cpu6502_beq( Environment * _environment, char * _label );
+void cpu6502_bneq( Environment * _environment, char * _label );
 void cpu6502_busy_wait( Environment * _environment, char * _timing );
 void cpu6502_bveq( Environment * _environment, char * _value, char * _label );
+void cpu6502_bvneq( Environment * _environment, char * _value, char * _label );
 void cpu6502_combine_nibbles( Environment * _environment, char * _low_nibble, char * _hi_nibble, char * _byte );
 void cpu6502_compare_16bit( Environment * _environment, char *_source, char *_destination,  char *_name );
 void cpu6502_compare_32bit( Environment * _environment, char *_source, char *_destination,  char *_name );
@@ -88,8 +90,10 @@ void cpu6502_store_32bit( Environment * _environment, char *_source, int _value 
 void cpu6502_store_8bit( Environment * _environment, char *_source, int _value );
 
 #define cpu_beq( _environment,  _label  ) cpu6502_beq( _environment,  _label  )
+#define cpu_bneq( _environment,  _label  ) cpu6502_beq( _environment,  _label  )
 #define cpu_busy_wait( _environment,  _timing  ) cpu6502_busy_wait( _environment,  _timing  )
 #define cpu_bveq( _environment,  _value,  _label  ) cpu6502_bveq( _environment,  _value,  _label  )
+#define cpu_bvneq( _environment,  _value,  _label  ) cpu6502_bveq( _environment,  _value,  _label  )
 #define cpu_combine_nibbles( _environment,  _low_nibble,  _hi_nibble,  _byte  ) cpu6502_combine_nibbles( _environment,  _low_nibble,  _hi_nibble,  _byte  )
 #define cpu_compare_16bit( _environment, _source, _destination,  _name  ) cpu6502_compare_16bit( _environment, _source, _destination,  _name  )
 #define cpu_compare_32bit( _environment, _source, _destination,  _name  ) cpu6502_compare_32bit( _environment, _source, _destination,  _name  )

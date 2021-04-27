@@ -54,6 +54,7 @@ DONE { return (DONE); }
 DOWN { return (DOWN); }
 DWORD { return (DWORD); }
 ECM { return(ECM); }
+ELSE { return(ELSE); }
 END { return (END); }
 ENDIF { return (ENDIF); }
 ENABLE { return (ENABLE); }

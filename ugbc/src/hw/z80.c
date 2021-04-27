@@ -66,10 +66,35 @@ void z80_beq( Environment * _environment, char * _label ) {
 
 }
 
+/**
+ * @brief <i>Z80</i>: emit code to make long conditional jump
+
+ * @param _environment Current calling environment
+ * @param _label Destination of the conditional jump.
+ */
+void z80_bneq( Environment * _environment, char * _label ) {
+
+    MAKE_LABEL
+
+    outline1("JP NZ, %s", label);
+    outline1("JMP %s2", label);
+    outhead1("%s:", label);
+    outline1("JMP %s", _label);
+    outhead1("%s2:", label);
+
+}
+
 void z80_bveq( Environment * _environment, char * _value, char * _label ) {
 
     outline1("LD A, (%s)", _value);
     z80_beq( _environment, _label );
+
+}
+
+void z80_bvneq( Environment * _environment, char * _value, char * _label ) {
+
+    outline1("LD A, (%s)", _value);
+    z80_bneq( _environment, _label );
 
 }
 

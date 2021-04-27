@@ -94,6 +94,9 @@ void if_then( Environment * _environment, char * _expression ) {
 
     Conditional * conditional = malloc( sizeof( Conditional ) );
     conditional->label = strdup( label );
+
+    conditional->expression = variable_cast( _environment, expression->name, expression->type );
+    conditional->expression->locked = 1;
     conditional->next = _environment->conditionals;
     _environment->conditionals = conditional;
 
@@ -128,8 +131,51 @@ void end_if_then( Environment * _environment ) {
     // TODO: Better management of conditional types and missing
     Conditional * conditional = _environment->conditionals;
 
+    _environment->conditionals->expression->locked = 0;
+
     _environment->conditionals = _environment->conditionals->next;
 
     cpu_label( _environment, conditional->label );
 
 };
+
+/**
+ * @brief Emit ASM code for <b>... ELSE ...</b>
+ * 
+ * This function outputs the code to implement the alternative for a
+ * conditional jump.
+ * 
+ * @param _environment Current calling environment
+ * @param _expression Expression with the true / false condition
+ */
+/* <usermanual>
+@keyword IF ... THEN
+
+@syntax IF [ expression ] THEN ... ELSE ...
+
+@example IF ( x == 42 ) THEN x = 21 ELSE x = 84
+
+@target all
+</usermanual> */
+void else_if_then( Environment * _environment, char * _expression ) {
+
+    outline1( "; IF %s THEN ... ELSE ...", _expression);
+
+    MAKE_LABEL
+
+    if ( ! _expression ) {
+        cpu_bvneq( _environment, _environment->conditionals->expression->realName, _environment->conditionals->label );
+    } else {
+        Variable * expression = variable_retrieve( _environment, _expression );
+        if ( ! expression ) {
+            CRITICAL("Internal error on IF ... THEN ... ELSE ... ");
+        }
+
+        if ( ! _environment->conditionals ) {
+            CRITICAL("Missing IF for ELSE");
+        }
+
+        cpu_bvneq( _environment, expression->realName, _environment->conditionals->label );
+
+    }
+}
