@@ -259,7 +259,7 @@ expression:
     | RANDOM random_definition {
         $$ = $2;
     }
-    | OP expression CP {
+    | OP expressions CP {
         $$ = $2;
     }
     | TRUE {
@@ -810,7 +810,7 @@ statement:
   | LOOP {
       end_loop( _environment );  
   }
-  | WHILE expression {
+  | WHILE expressions {
       begin_while( _environment, $2 );  
   }
   | WEND {
@@ -819,7 +819,7 @@ statement:
   | REPEAT {
       begin_repeat( _environment );  
   }
-  | UNTIL expression {
+  | UNTIL expressions {
       end_repeat( _environment, $2 );  
   }
   | EXIT {
@@ -834,10 +834,10 @@ statement:
   | EXIT direct_integer {
       exit_loop( _environment, $2 );  
   }
-  | EXIT IF expression COMMA Integer {
+  | EXIT IF expressions COMMA Integer {
       exit_loop_if( _environment, $3, $5 );  
   }
-  | EXIT IF expression COMMA direct_integer {
+  | EXIT IF expressions COMMA direct_integer {
       exit_loop_if( _environment, $3, $5 );  
   }
   | FOR Identifier ASSIGN expressions TO expressions {
