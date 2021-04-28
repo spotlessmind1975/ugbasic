@@ -1,0 +1,6 @@
+label: 
+    COLOR BORDER YELLOW
+    WAIT 100 MS
+    COLOR BORDER BLACK
+    WAIT 100 MS
+    GOTO label

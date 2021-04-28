@@ -55,6 +55,8 @@ Modifica il colore del bordo (dello schermo).
 @syntax COLOR BORDER # [integer]
 
 @example COLOR BORDER #$1
+@usedInExample control_uncond_jumps_01.bas
+@usedInExample control_uncond_jumps_02.bas
 
 @target c64
 </usermanual> */
