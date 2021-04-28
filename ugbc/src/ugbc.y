@@ -917,8 +917,11 @@ statement:
   | Identifier ASSIGN expressions {
         outline2("; %s = %s", $1, $3 );
         Variable * expressions = variable_retrieve( _environment, $3 );
+        outline1("; retrieved %s ", $3 );
         variable_define( _environment, $1, expressions->type, 0 )->name;
+        outline1("; defined %s ", $1 );
         variable_move( _environment, $3, $1 );
+        outline2("; moved %s -> %s ", $3, $1 );
   }
   | DEBUG expressions {
       debug_var( _environment, $2 );
