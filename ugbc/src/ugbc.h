@@ -259,6 +259,12 @@ typedef struct _Loop {
     /** Label to jump. */
     char *label;
 
+    /** Variable with index. */
+    Variable *index;
+
+    /** Variable with step. */
+    Variable *step;
+
     /** Next conditional */
     struct _Loop * next;
 

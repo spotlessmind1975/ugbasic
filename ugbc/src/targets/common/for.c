@@ -79,17 +79,20 @@ void begin_for( Environment * _environment, char * _index, char * _from, char * 
     loop->label = strdup( label );
     loop->type = LT_FOR;
     loop->next = _environment->loops;
+    loop->index = index;
+    loop->index->locked = 1;
+    loop->step = step;
+    loop->step->locked = 1;
     _environment->loops = loop;
 
     variable_move( _environment, from->name, index->name );
 
-    unsigned char newLabel[32]; sprintf(newLabel, "%sbis", loop->label );
+    unsigned char beginFor[32]; sprintf(beginFor, "%sbf", loop->label );
+    unsigned char endFor[32]; sprintf(endFor, "%sef", loop->label );
 
-    cpu_bvneq( _environment, variable_compare( _environment, index->name, to->name )->realName, newLabel );
+    cpu_label( _environment, beginFor );
 
-    cpu_label( _environment, loop->label );
-
-    variable_move_naked( _environment, variable_add( _environment, index->name, step->name )->name, index->name );
+    cpu_bvneq( _environment, variable_compare( _environment, index->name, variable_add( _environment, to->name, loop->step->name )->name )->realName, endFor );
 
 }
 
@@ -130,23 +133,28 @@ void begin_for_step( Environment * _environment, char * _index, char * _from, ch
     Variable * to = variable_retrieve( _environment, _to );
     Variable * step = variable_retrieve( _environment, _step );
 
+    variable_store( _environment, step->name, 1 );
+    
     MAKE_LABEL
 
     Loop * loop = malloc( sizeof( Loop ) );
     loop->label = strdup( label );
     loop->type = LT_FOR;
     loop->next = _environment->loops;
+    loop->index = index;
+    loop->index->locked = 1;
+    loop->step = step;
+    loop->step->locked = 1;
     _environment->loops = loop;
 
     variable_move( _environment, from->name, index->name );
 
-    unsigned char newLabel[32]; sprintf(newLabel, "%sbis", loop->label );
+    unsigned char beginFor[32]; sprintf(beginFor, "%sbf", loop->label );
+    unsigned char endFor[32]; sprintf(endFor, "%sef", loop->label );
 
-    cpu_bvneq( _environment, variable_compare( _environment, index->name, to->name )->realName, newLabel );
+    cpu_label( _environment, beginFor );
 
-    cpu_label( _environment, loop->label );
-
-    variable_move_naked( _environment, variable_add( _environment, index->name, step->name )->name, index->name );
+    cpu_bvneq( _environment, variable_compare( _environment, index->name, variable_add( _environment, to->name, loop->step->name )->name )->realName, endFor );
 
 }
 
@@ -171,8 +179,18 @@ void end_for( Environment * _environment ) {
         CRITICAL("NEXT outside a FOR loop");
     }
 
-    _environment->loops = _environment->loops->next;
+    unsigned char beginFor[32]; sprintf(beginFor, "%sbf", loop->label );
+    unsigned char endFor[32]; sprintf(endFor, "%sef", loop->label );
 
-    cpu_jump( _environment, loop->label );
+    variable_move_naked( _environment, variable_add( _environment, loop->index->name, loop->step->name )->name, loop->index->name );
+
+    cpu_jump( _environment, beginFor );
+
+    cpu_label( _environment, endFor );
+
+    loop->index->locked = 0;
+    loop->step->locked = 0;
+
+    _environment->loops = _environment->loops->next;
 
 };
