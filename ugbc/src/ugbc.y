@@ -835,7 +835,7 @@ statement:
   | ELSE {
       else_if_then( _environment, NULL );  
   }
-  | ELSE IF expression THEN {
+  | ELSE IF expressions THEN {
       else_if_then( _environment, $3 );  
   }
   | ENDIF {
