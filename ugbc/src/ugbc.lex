@@ -66,6 +66,7 @@ ENDIF { return (ENDIF); }
 ENABLE { return (ENABLE); }
 EXIT { return (EXPAND); }
 EXPAND { return (EXPAND); }
+EVERY { return (EVERY); }
 FALSE { return(FALSE); }
 FOR { return(FOR); }
 FROM { return (FROM); }

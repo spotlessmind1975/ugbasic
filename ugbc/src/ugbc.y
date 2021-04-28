@@ -35,7 +35,7 @@ int yywrap() { return 1; }
 %token COLORMAP SELECT MONOCOLOR MULTICOLOR COLLISION IF THEN HIT BACKGROUND TO RANDOM
 %token BYTE WORD POSITION CODE VARIABLES MS CYCLES S HASH WIDTH HEIGHT DWORD PEN CLEAR
 %token BEG END GAMELOOP ENDIF UP DOWN LEFT RIGHT DEBUG AND RANDOMIZE GRAPHIC TEXTMAP
-%token POINT GOSUB RETURN POP OR ELSE NOT TRUE FALSE DO EXIT WEND UNTIL FOR STEP
+%token POINT GOSUB RETURN POP OR ELSE NOT TRUE FALSE DO EXIT WEND UNTIL FOR STEP EVERY
 
 %token MILLISECOND MILLISECONDS TICKS
 
@@ -800,6 +800,17 @@ on_definition:
         on_gosub( _environment, $1 );  
     } on_gosub_definition;
 
+every_definition :
+      expression TICKS GOSUB Identifier {
+          every_ticks_gosub( _environment, $1, $4 );
+    }
+    | ON {
+          every_on( _environment );
+    }
+    | OFF {
+          every_off( _environment );
+    };
+
 statement:
     BANK bank_definition
   | RASTER raster_definition
@@ -890,6 +901,7 @@ statement:
   | ON on_definition
   | GOTO goto_definition
   | GOSUB gosub_definition
+  | EVERY every_definition
   | RETURN {
       return_label( _environment );
   }
