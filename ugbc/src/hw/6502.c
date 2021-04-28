@@ -264,10 +264,11 @@ void cpu6502_greater_than_8bit( Environment * _environment, char *_source, char 
 
     outline1("LDA %s", _source);
     outline1("CMP %s", _destination );
-    outline1("BCS %s", label);
-    if ( _equal ) {
-        outline1("BEQ %s", label);
+    if ( ! _equal ) {
+        outline1("BEQ %sfalse", label);
     }
+    outline1("BCS %strue", label);
+    outhead1("%sfalse:", label);
     outline0("LDA #0" );
     if ( _other ) {
         outline1("STA %s", _other);
@@ -275,7 +276,7 @@ void cpu6502_greater_than_8bit( Environment * _environment, char *_source, char 
         outline1("STA %s", _destination);
     }
     outline1("JMP %s2", label);
-    outhead1("%s:", label);
+    outhead1("%strue:", label);
     outline0("LDA #1" );
     if ( _other ) {
         outline1("STA %s", _other);
@@ -970,7 +971,7 @@ void cpu6502_greater_than_32bit( Environment * _environment, char *_source, char
     outhead1("%snext3:", label);
     outline1("LDA %s", _source);
     outline1("CMP %s", _destination );
-    if ( _equal ) {
+    if ( ! _equal ) {
         outline1("BEQ %sfalse", label);
     }
     outline1("BCS %strue", label);
