@@ -192,7 +192,7 @@ void z80_compare_8bit( Environment * _environment, char *_source, char *_destina
     outline1("LD A, (%s)", _source);
     outline1("CP (%s)", _destination);
     outline1("JP Z, %s", label);
-    outline1("LD A, %s", _positive);
+    outline1("LD A, %d", _positive);
     if ( _other ) {
         outline1("LD (%s), A", _other);
     } else {
@@ -200,7 +200,7 @@ void z80_compare_8bit( Environment * _environment, char *_source, char *_destina
     }
     outline1("JMP %s2", label);
     outhead1("%s:", label);
-    outline1("LD A, %s", (1-_positive));
+    outline1("LD A, %d", (1-_positive));
     if ( _other ) {
         outline1("LD (%s), A", _other);
     } else {
@@ -520,7 +520,7 @@ void z80_compare_16bit( Environment * _environment, char *_source, char *_destin
     outline1("LD A, (%s+1)", _source);
     outline1("CP (%s+1)", _destination);
     outline1("JP NZ, %s", label);
-    outline1("LD A, %s", _positive);
+    outline1("LD A, %d", _positive);
     if ( _other ) {
         outline1("LD (%s), A", _other);
     } else {
@@ -528,7 +528,7 @@ void z80_compare_16bit( Environment * _environment, char *_source, char *_destin
     }
     outline1("JMP %s2", label);
     outhead1("%s:", label);
-    outline1("LD A, %s", (1-_positive));
+    outline1("LD A, %d", (1-_positive));
     if ( _other ) {
         outline1("LD (%s), A", _other);
     } else {
@@ -859,7 +859,7 @@ void z80_compare_32bit( Environment * _environment, char *_source, char *_destin
     outline1("LD A, (%s+3)", _source);
     outline1("CP (%s+3)", _destination);
     outline1("JP NZ, %s", label);
-    outline1("LD A, %s", _positive);
+    outline1("LD A, %d", _positive);
     if ( _other ) {
         outline1("LD (%s), A", _other);
     } else {
@@ -867,7 +867,7 @@ void z80_compare_32bit( Environment * _environment, char *_source, char *_destin
     }
     outline1("JMP %s2", label);
     outhead1("%s:", label);
-    outline1("LD A, %s", (1-_positive));
+    outline1("LD A, %d", (1-_positive));
     if ( _other ) {
         outline1("LD (%s), A", _other);
     } else {
@@ -932,7 +932,7 @@ void z80_less_than_32bit( Environment * _environment, char *_source, char *_dest
  * @param _other Destination address for result
  * @param _equal True if equal
  */
-void z80_greater_than_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal ) {
+void z80_greater_than_32bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal ) {
 
     MAKE_LABEL
 

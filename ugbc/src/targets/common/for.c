@@ -85,7 +85,7 @@ void begin_for( Environment * _environment, char * _index, char * _from, char * 
 
     unsigned char newLabel[32]; sprintf(newLabel, "%sbis", loop->label );
 
-    cpu6502_bvneq( _environment, variable_compare( _environment, index->name, to->name )->realName, newLabel );
+    cpu_bvneq( _environment, variable_compare( _environment, index->name, to->name )->realName, newLabel );
 
     cpu_label( _environment, loop->label );
 
@@ -142,7 +142,7 @@ void begin_for_step( Environment * _environment, char * _index, char * _from, ch
 
     unsigned char newLabel[32]; sprintf(newLabel, "%sbis", loop->label );
 
-    cpu6502_bvneq( _environment, variable_compare( _environment, index->name, to->name )->realName, newLabel );
+    cpu_bvneq( _environment, variable_compare( _environment, index->name, to->name )->realName, newLabel );
 
     cpu_label( _environment, loop->label );
 

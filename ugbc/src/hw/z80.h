@@ -58,7 +58,7 @@ void z80_label( Environment * _environment, char * _label );
 void z80_limit_16bit( Environment * _environment, char * _variable, int _value );
 void z80_logical_and_8bit( Environment * _environment, char * _left, char * _right, char * _result );
 void z80_logical_or_8bit( Environment * _environment, char * _left, char * _right, char * _result );
-void z80_logical_not_8bit( Environment * _environment, char _value, char * _result );
+void z80_logical_not_8bit( Environment * _environment, char * _value, char * _result );
 void z80_math_add_16bit( Environment * _environment, char *_source, char *_destination,  char *_name );
 void z80_math_add_32bit( Environment * _environment, char *_source, char *_destination,  char *_name );
 void z80_math_add_8bit( Environment * _environment, char *_source, char *_destination,  char *_name );

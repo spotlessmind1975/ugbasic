@@ -78,7 +78,7 @@ void begin_while( Environment * _environment, char * _expression ) {
 
     unsigned char newLabel[32]; sprintf(newLabel, "%sbis", loop->label );
 
-    cpu6502_bveq( _environment, expression->realName, newLabel );
+    cpu_bveq( _environment, expression->realName, newLabel );
 
     cpu_label( _environment, loop->label );
 
