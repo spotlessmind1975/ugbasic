@@ -367,7 +367,7 @@ typedef struct _Environment {
 } Environment;
 
 #define UNIQUE_ID   _environment->uniqueId++
-#define MAKE_LABEL  char label[32]; sprintf( label, "_label%d", UNIQUE_ID);
+#define MAKE_LABEL  char label[12]; sprintf( label, "_label%d", UNIQUE_ID);
 #define CRITICAL( s ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); exit( EXIT_FAILURE );
 #define CRITICAL2( s, v ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); exit( EXIT_FAILURE );
 #define CRITICAL_TEMPORARY2( v ) CRITICAL("I001 - Unable to create space for temporary variable", v );
