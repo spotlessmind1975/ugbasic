@@ -90,7 +90,14 @@ void debug_var( Environment * _environment, char * _name ) {
             outline0( "JSR $BDCD" );
             break;
         case VT_DWORD:
-            CRITICAL("DWORD variables cannot be debugged");
+            outline1( "LDA %s+1", var->realName );
+            outline1( "LDX %s", var->realName );
+            outline0( "JSR $BDCD" );
+            outline0( "LDA #35" );
+            outline0( "JSR $FFD2" );
+            outline1( "LDA %s+3", var->realName );
+            outline1( "LDX %s+2", var->realName );
+            outline0( "JSR $BDCD" );
             break;
     }
     outline0("LDA #32");
