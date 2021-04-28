@@ -1227,8 +1227,8 @@ void cpu6502_return( Environment * _environment ) {
 
 void cpu6502_pop( Environment * _environment ) {
 
-    outline0("INC SP" );
-    outline0("INC SP" );
+    outline0("PLA" );
+    outline0("PLA" );
 
 }
 
