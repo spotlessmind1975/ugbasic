@@ -94,8 +94,6 @@ void if_then( Environment * _environment, char * _expression ) {
         CRITICAL("Internal error on IF ... THEN ... ");
     }
 
-    cpu_bveq( _environment, expression->realName, label );
-
     Conditional * conditional = malloc( sizeof( Conditional ) );
     conditional->label = strdup( label );
     conditional->type = CT_IF;
@@ -105,37 +103,14 @@ void if_then( Environment * _environment, char * _expression ) {
     conditional->next = _environment->conditionals;
     _environment->conditionals = conditional;
 
+    char thenLabel[16]; sprintf(thenLabel, "%st", label );
+    char elseLabel[16]; sprintf(elseLabel, "%se%d", conditional->label, conditional->index );
+
+    cpu_bveq( _environment, expression->realName, elseLabel );
+
+    cpu_label( _environment, thenLabel );
+
 }
-
-/**
- * @brief Emit ASM code for <b>ENDIF</b>
- * 
- * This function outputs the code to implement the end of
- * conditional jump, by defining the last label present
- * into the stack.
- * 
- * @param _environment Current calling environment
- */
-void end_if_then( Environment * _environment ) {
-
-    // TODO: Better management of conditional types and missing
-    Conditional * conditional = _environment->conditionals;
-
-    if ( ! conditional ) {
-        CRITICAL("ENDIF without IF");
-    }
-
-    if ( conditional->type != CT_IF ) {
-        CRITICAL("ENDIF without IF");
-    }
-
-    _environment->conditionals->expression->locked = 0;
-
-    _environment->conditionals = _environment->conditionals->next;
-
-    cpu_label( _environment, conditional->label );
-
-};
 
 /**
  * @brief Emit ASM code for <b>... ELSE ...</b>
@@ -161,10 +136,19 @@ void else_if_then( Environment * _environment, char * _expression ) {
         CRITICAL("ELSE outside IF");
     }
 
-    MAKE_LABEL
+    char endifLabel[16]; sprintf(endifLabel, "%sf", conditional->label );
+    char elseLabel[16]; sprintf(elseLabel, "%se%d", conditional->label, conditional->index );
+
+    ++conditional->index;
+
+    cpu_jump( _environment, endifLabel );
+
+    cpu_label( _environment, elseLabel );
 
     if ( ! _expression ) {
-        cpu_bvneq( _environment, conditional->expression->realName, conditional->label );
+
+        cpu_bvneq( _environment, conditional->expression->realName, endifLabel );
+
     } else {
 
         Variable * expression = variable_retrieve( _environment, _expression );
@@ -176,8 +160,48 @@ void else_if_then( Environment * _environment, char * _expression ) {
         conditional->expression = variable_cast( _environment, expression->name, expression->type );
         conditional->expression->locked = 1;
 
-        cpu_bvneq( _environment, expression->realName, conditional->label );
+        cpu_bveq( _environment, expression->realName, elseLabel );
 
     }
     
 }
+
+/**
+ * @brief Emit ASM code for <b>ENDIF</b>
+ * 
+ * This function outputs the code to implement the end of
+ * conditional jump, by defining the last label present
+ * into the stack.
+ * 
+ * @param _environment Current calling environment
+ */
+void end_if_then( Environment * _environment ) {
+
+    // TODO: Better management of conditional types and missing
+    Conditional * conditional = _environment->conditionals;
+
+    if ( ! conditional ) {
+        CRITICAL("ENDIF without IF");
+    }
+
+    if ( conditional->type != CT_IF ) {
+        CRITICAL("ENDIF without IF");
+    }
+
+    char elseLabel[16]; sprintf(elseLabel, "%se%d", conditional->label, conditional->index );
+
+    if ( conditional->index ) {
+        char endifLabel[16]; sprintf(endifLabel, "%sf", conditional->label );
+
+        cpu_label( _environment, endifLabel );
+    } else {
+        char elseLabel[16]; sprintf(elseLabel, "%se%d", conditional->label, conditional->index );
+
+        cpu_label( _environment, elseLabel );
+    }
+
+    _environment->conditionals->expression->locked = 0;
+
+    _environment->conditionals = _environment->conditionals->next;
+
+};
