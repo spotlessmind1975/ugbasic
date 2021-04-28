@@ -829,13 +829,13 @@ statement:
   | RANDOMIZE {
       randomize( _environment );
   }
-  | IF expressions {
+  | IF expressions THEN {
       if_then( _environment, $2 );  
   }
   | ELSE {
       else_if_then( _environment, NULL );  
   }
-  | ELSE IF expression {
+  | ELSE IF expression THEN {
       else_if_then( _environment, $3 );  
   }
   | ENDIF {

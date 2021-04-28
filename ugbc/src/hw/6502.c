@@ -82,14 +82,14 @@ void cpu6502_bneq( Environment * _environment, char * _label ) {
 
 void cpu6502_bveq( Environment * _environment, char * _value, char * _label ) {
 
-    outline1("LDA _%s", _value);
+    outline1("LDA %s", _value);
     cpu6502_beq( _environment,  _label );
 
 }
 
 void cpu6502_bvneq( Environment * _environment, char * _value, char * _label ) {
 
-    outline1("LDA _%s", _value);
+    outline1("LDA %s", _value);
     cpu6502_bneq( _environment,  _label );
 
 }
@@ -1315,7 +1315,7 @@ void cpu6502_busy_wait( Environment * _environment, char * _timing ) {
 
     MAKE_LABEL
 
-    outline1("LDX _%s", _timing );
+    outline1("LDX %s", _timing );
     outhead1("%s:", label );
     outline0("DEX");
     outline1("BNE %s", label);
