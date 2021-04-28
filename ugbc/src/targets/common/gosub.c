@@ -172,6 +172,7 @@ possibile usare un ''GOTO'' invece di un ''RETURN''.
 @syntax POP
 
 @example POP
+@usedInExample control_popping_01.bas
 
 @target all
 

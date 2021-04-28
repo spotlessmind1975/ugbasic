@@ -45,37 +45,41 @@
  * implementation assumes that an expression passed as a parameter is 0 
  * (for false) and not zero (for true). In this case, if the expression 
  * is zero, it jumps directly to the statement following the corresponding 
- * ENDIF. Otherwise, the following code will be executed (up to ENDIF). 
- * Since the compiler acts with a single pass, it is necessary to keep 
- * the information on the last used label. For this purpose, the label 
- * where it will jump will be inserted in the stack, so that it is 
- * defined at the moment when the ENDIF instruction will be examined.
+ * ENDIF (or ELSE, if present). Otherwise, the following code will be 
+ * executed (up to ENDIF). Since the compiler acts with a single pass, 
+ * it is necessary to keep the information on the last used label. 
+ * For this purpose, the label where it will jump will be inserted 
+ * in the stack, so that it is defined at the moment when the ENDIF 
+ * instruction will be examined.
  * 
  * @param _environment Current calling environment
  * @param _expression Expression with the true / false condition
  */
 /* <usermanual>
-@keyword IF ... THEN
+@keyword IF...THEN...ELSE...ENDIF
 
 @english
-Implement the conditional jump. This implementation assumes that
+Implement a conditional jump. This implementation assumes that
 an expression passed as a parameter is 0 (for false) and not 
 zero (for true). In this case, if the expression is zero, it 
 jumps directly to the statement following the corresponding 
-ENDIF. Otherwise, the following code will be executed (up to 
-ENDIF).
+''ENDIF'' (or ''ELSE'', if present). Otherwise, the following 
+code will be executed (up to ''ENDIF'' or ''ELSE'').
 
 @italian
 Implementa il salto condizionale. Questa implementazione presuppone che
 un'espressione passata come parametro è 0 (per falso) e non
 zero (per vero). In questo caso, se l'espressione è zero, esso
 salta direttamente all'istruzione che segue il corrispondente
-ENDIF. In caso contrario, verrà eseguito il codice seguente (fino a
-ENDIF).
+''ENDIF'' (oppure ''ELSE'', se presente). In caso contrario, 
+verrà eseguito il codice seguente (fino a ''ENDIF'').
 
-@syntax IF [ expression ] THEN
+@syntax IF [ expression ] THEN : ... : { ELSE : ... : } ENDIF
 
-@example IF ( x == 42 ) THEN
+@example IF ( x == 42 ) THEN : x = 0 : ELSE : x = 1 : ENDIF
+@usedInExample control_returning_01.bas
+@usedInExample control_returning_02.bas
+@usedInExample control_popping_91.bas
 
 @target all
 </usermanual> */
@@ -112,21 +116,6 @@ void if_then( Environment * _environment, char * _expression ) {
  * 
  * @param _environment Current calling environment
  */
-/* <usermanual>
-@keyword ENDIF
-
-@english
-Implement the end of conditional jump.
-
-@italian
-Implementa la fine di un salto condizionale.
-
-@syntax ENDIF
-
-@example IF ( x == 42 ) THEN x = 0: ENDIF
-
-@target all
-</usermanual> */
 void end_if_then( Environment * _environment ) {
 
     // TODO: Better management of conditional types and missing
@@ -157,15 +146,6 @@ void end_if_then( Environment * _environment ) {
  * @param _environment Current calling environment
  * @param _expression Expression with the true / false condition
  */
-/* <usermanual>
-@keyword IF ... THEN
-
-@syntax IF [ expression ] THEN ... ELSE ...
-
-@example IF ( x == 42 ) THEN x = 21 ELSE x = 84
-
-@target all
-</usermanual> */
 void else_if_then( Environment * _environment, char * _expression ) {
 
     outline1( "; IF %s THEN ... ELSE ...", _expression);
@@ -174,11 +154,11 @@ void else_if_then( Environment * _environment, char * _expression ) {
     Conditional * conditional = _environment->conditionals;
 
     if ( ! conditional ) {
-        CRITICAL("ENDIF without IF");
+        CRITICAL("ELSE without IF");
     }
 
     if ( conditional->type != CT_IF ) {
-        CRITICAL("ENDIF without IF");
+        CRITICAL("ELSE outside IF");
     }
 
     MAKE_LABEL
@@ -189,7 +169,7 @@ void else_if_then( Environment * _environment, char * _expression ) {
 
         Variable * expression = variable_retrieve( _environment, _expression );
         if ( ! expression ) {
-            CRITICAL("Internal error on IF ... THEN ... ELSE ... ");
+            CRITICAL("Internal error on IF ... THEN : ... : ELSE : ... : ENDIF ");
         }
 
         conditional->expression->locked = 0;
