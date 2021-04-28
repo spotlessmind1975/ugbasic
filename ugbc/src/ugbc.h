@@ -534,7 +534,8 @@ typedef struct _Environment {
 Bank * bank_define( Environment * _environment, char * _name, BankType _type, int _address, char * _filename );
 void   bank_cleanup( Environment * _environment );
 void begin_loop( Environment * _environment );
-void begin_while( Environment * _environment, char * _expression );
+void begin_while( Environment * _environment );
+void begin_while_condition( Environment * _environment, char * _expression );
 void begin_gameloop( Environment * _environment );
 void begin_repeat( Environment * _environment );
 void begin_for( Environment * _environment, char * _index, char * _from, char * _to );  

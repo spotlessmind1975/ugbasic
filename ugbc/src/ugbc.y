@@ -851,8 +851,10 @@ statement:
   | LOOP {
       end_loop( _environment );  
   }
-  | WHILE expressions {
-      begin_while( _environment, $2 );  
+  | WHILE { 
+      begin_while( _environment );  
+  } expressions {
+      begin_while_condition( _environment, $3 );  
   }
   | WEND {
       end_while( _environment );  

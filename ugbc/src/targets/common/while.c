@@ -62,11 +62,9 @@ Implementa un loop condizionato.
 
 @target all
 </usermanual> */
-void begin_while( Environment * _environment, char * _expression ) {
+void begin_while( Environment * _environment ) {
 
     outline0( "; WHILE ... ");
-
-    Variable * expression = variable_retrieve( _environment, _expression );
 
     MAKE_LABEL
 
@@ -76,11 +74,31 @@ void begin_while( Environment * _environment, char * _expression ) {
     loop->next = _environment->loops;
     _environment->loops = loop;
 
-    unsigned char newLabel[32]; sprintf(newLabel, "%sbis", loop->label );
-
-    cpu_bveq( _environment, expression->realName, newLabel );
+    unsigned char endWhile[32]; sprintf(endWhile, "%sew", loop->label );
 
     cpu_label( _environment, loop->label );
+
+}
+
+void begin_while_condition( Environment * _environment, char * _expression ) {
+
+    outline0( "; WHILE condition ... ");
+
+    Loop * loop = _environment->loops;
+
+    if ( ! loop ) {
+        CRITICAL("Internal error on WHILE...WEND");
+    }
+
+    if ( loop->type != LT_WHILE ) {
+        CRITICAL("Internal error on WHILE...WEND (2)");
+    }
+
+    Variable * expression = variable_retrieve( _environment, _expression );
+
+    unsigned char endWhile[32]; sprintf(endWhile, "%sew", loop->label );
+
+    cpu_bveq( _environment, expression->realName, endWhile );
 
 }
 
@@ -105,12 +123,12 @@ void end_while( Environment * _environment ) {
         CRITICAL("WEND outside a WHILE loop");
     }
 
-    _environment->loops = _environment->loops->next;
-
     cpu_jump( _environment, loop->label );
 
-    unsigned char newLabel[32]; sprintf(newLabel, "%sbis", loop->label );
+    unsigned char endWhile[32]; sprintf(endWhile, "%sew", loop->label );
 
-    cpu_label( _environment, newLabel );
+    cpu_label( _environment, endWhile );
+
+    _environment->loops = _environment->loops->next;
 
 };
