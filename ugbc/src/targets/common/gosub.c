@@ -53,7 +53,7 @@
 
 @english
 Do an unconditional jump to an alphanumeric label, previously or 
-subsequently defined, with the syntax of the labels. When a <b>RETURN</b>
+subsequently defined, with the syntax of the labels. When a ''RETURN''
 is encountered, the execution will continue to the instruction next
 to this one.
 
@@ -68,7 +68,10 @@ continuerà all'istruzione successiva a qeusta.
 
 @target all
 
-@seeAlso RETURN POP
+@seeAlso RETURN
+@seeAlso POP
+@usedInExample control_returning_01.bas
+@usedInExample control_returning_02.bas
 
 </usermanual> */
 void gosub_label( Environment * _environment, char * _label ) {
@@ -131,10 +134,13 @@ a quella chaimante.
 @syntax RETURN
 
 @example RETURN
+@usedInExample control_returning_01.bas
+@usedInExample control_returning_02.bas
 
 @target all
 
-@seeAlso GOSUB POP
+@seeAlso GOSUB
+@seeAlso POP
 </usermanual> */
 void return_label( Environment * _environment ) {
 
@@ -169,7 +175,8 @@ possibile usare un ''GOTO'' invece di un ''RETURN''.
 
 @target all
 
-@seeAlso GOSUB RETURN 
+@seeAlso RETURN
+@seeAlso GOSUB
 </usermanual> */
 void pop( Environment * _environment ) {
 

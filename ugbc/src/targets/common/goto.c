@@ -56,12 +56,16 @@ Do an unconditional jump to an alphanumeric label, previously or
 subsequently defined, with the syntax of the labels.
 
 @italian
-Fare un salto incondizionato a un'etichetta, definita in precedenza o
+Esegue un salto incondizionato a un'etichetta, definita in precedenza o
 successivamente.
 
 @syntax GOTO [label]
 
 @example GOTO nuovaEtichetta
+@usedInExample control_uncond_jumps_01.bas
+@usedInExample control_uncond_jumps_02.bas
+@usedInExample control_returning_01.bas
+@usedInExample control_returning_02.bas
 
 @target all
 </usermanual> */

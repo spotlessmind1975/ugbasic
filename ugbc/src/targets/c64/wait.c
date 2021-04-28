@@ -62,6 +62,10 @@ millisecondi (''MILLISECONDS'' oppure ''MS'') o secondi (''SECONDS'' or ''S'')
 @syntax WAIT [delay] [CYCLES|TICKS|MILLISECONDS|SECONDS]
 
 @example WAIT #42 CYCLES
+@usedInExample control_uncond_jumps_01.bas
+@usedInExample control_uncond_jumps_02.bas
+@usedInExample control_returning_01.bas
+@usedInExample control_returning_02.bas
 
 @target c64
 </usermanual> */

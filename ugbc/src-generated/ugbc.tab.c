@@ -730,8 +730,8 @@ static const yytype_int16 yyrline[] =
      835,   838,   841,   844,   847,   850,   853,   856,   859,   862,
      865,   868,   871,   874,   877,   880,   883,   886,   889,   892,
      895,   898,   901,   902,   903,   904,   905,   908,   911,   914,
-     917,   923,   926,   927,   931,   932,   932,   936,   936,   943,
-     944,   945,   946,   950
+     917,   926,   929,   930,   934,   935,   935,   939,   939,   946,
+     947,   948,   949,   953
 };
 #endif
 
@@ -3869,50 +3869,53 @@ yyreduce:
                                   {
         outline2("; %s = %s", (yyvsp[-2].string), (yyvsp[0].string) );
         Variable * expressions = variable_retrieve( _environment, (yyvsp[0].string) );
+        outline1("; retrieved %s ", (yyvsp[0].string) );
         variable_define( _environment, (yyvsp[-2].string), expressions->type, 0 )->name;
+        outline1("; defined %s ", (yyvsp[-2].string) );
         variable_move( _environment, (yyvsp[0].string), (yyvsp[-2].string) );
+        outline2("; moved %s -> %s ", (yyvsp[0].string), (yyvsp[-2].string) );
   }
-#line 3876 "src-generated/ugbc.tab.c"
+#line 3879 "src-generated/ugbc.tab.c"
     break;
 
   case 271: /* statement: DEBUG expressions  */
-#line 923 "src/ugbc.y"
+#line 926 "src/ugbc.y"
                       {
       debug_var( _environment, (yyvsp[0].string) );
   }
-#line 3884 "src-generated/ugbc.tab.c"
+#line 3887 "src-generated/ugbc.tab.c"
     break;
 
   case 274: /* statements_no_linenumbers: statement  */
-#line 931 "src/ugbc.y"
+#line 934 "src/ugbc.y"
                 { ((Environment *)_environment)->yylineno = yylineno; }
-#line 3890 "src-generated/ugbc.tab.c"
+#line 3893 "src-generated/ugbc.tab.c"
     break;
 
   case 275: /* $@5: %empty  */
-#line 932 "src/ugbc.y"
+#line 935 "src/ugbc.y"
                       { ((Environment *)_environment)->yylineno = yylineno; }
-#line 3896 "src-generated/ugbc.tab.c"
+#line 3899 "src-generated/ugbc.tab.c"
     break;
 
   case 277: /* $@6: %empty  */
-#line 936 "src/ugbc.y"
+#line 939 "src/ugbc.y"
               {
         outhead1("_linenumber%d:", (yyvsp[0].integer));
     }
-#line 3904 "src-generated/ugbc.tab.c"
+#line 3907 "src-generated/ugbc.tab.c"
     break;
 
   case 278: /* statements_with_linenumbers: Integer $@6 statements_no_linenumbers  */
-#line 938 "src/ugbc.y"
+#line 941 "src/ugbc.y"
                                 { 
         ((Environment *)_environment)->yylineno = yylineno;
     }
-#line 3912 "src-generated/ugbc.tab.c"
+#line 3915 "src-generated/ugbc.tab.c"
     break;
 
 
-#line 3916 "src-generated/ugbc.tab.c"
+#line 3919 "src-generated/ugbc.tab.c"
 
       default: break;
     }
@@ -4142,7 +4145,7 @@ yyreturn:
   return yyresult;
 }
 
-#line 952 "src/ugbc.y"
+#line 955 "src/ugbc.y"
 
 
 void show_usage_and_exit( int _argc, char *_argv[] ) {
