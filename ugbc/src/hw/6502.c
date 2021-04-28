@@ -573,9 +573,9 @@ void cpu6502_greater_than_16bit( Environment * _environment, char *_source, char
 
     outline1("LDA %s+1", _source);
     outline1("CMP %s+1", _destination );
-    if ( ! _equal ) {
-        outline1("BEQ %sfalse", label);
-    }
+    outline1("BEQ %snext", label);
+    outline1("BCS %strue", label);
+    outhead1("%snext:", label);
     outline1("LDA %s", _source);
     outline1("CMP %s", _destination );
     if ( ! _equal ) {
@@ -955,19 +955,26 @@ void cpu6502_greater_than_32bit( Environment * _environment, char *_source, char
 
     outline1("LDA %s+3", _source);
     outline1("CMP %s+3", _destination );
-    outline1("BCS %s", label);
+    outline1("BEQ %snext", label);
+    outline1("BCS %strue", label);
+    outhead1("%snext:", label);
     outline1("LDA %s+2", _source);
     outline1("CMP %s+2", _destination );
-    outline1("BCS %s", label);
+    outline1("BEQ %snext2", label);
+    outline1("BCS %strue", label);
+    outhead1("%snext2:", label);
     outline1("LDA %s+1", _source);
     outline1("CMP %s+1", _destination );
-    outline1("BCS %s", label);
+    outline1("BEQ %snext3", label);
+    outline1("BCS %strue", label);
+    outhead1("%snext3:", label);
     outline1("LDA %s", _source);
     outline1("CMP %s", _destination );
-    outline1("BCS %s", label);
     if ( _equal ) {
-        outline1("BEQ %s", label);
+        outline1("BEQ %sfalse", label);
     }
+    outline1("BCS %strue", label);
+    outhead1("%sfalse:", label);
     outline0("LDA #0" );
     if ( _other ) {
         outline1("STA %s", _other);
@@ -975,7 +982,7 @@ void cpu6502_greater_than_32bit( Environment * _environment, char *_source, char
         outline1("STA %s", _destination);
     }
     outline1("JMP %s2", label);
-    outhead1("%s:", label);
+    outhead1("%strue:", label);
     outline0("LDA #1" );
     if ( _other ) {
         outline1("STA %s", _other);
