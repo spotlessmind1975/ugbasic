@@ -139,12 +139,13 @@ void else_if_then( Environment * _environment, char * _expression ) {
     char endifLabel[16]; sprintf(endifLabel, "%sf", conditional->label );
     char elseLabel[16]; sprintf(elseLabel, "%se%d", conditional->label, conditional->index );
 
-    ++conditional->index;
-
     cpu_jump( _environment, endifLabel );
 
     cpu_label( _environment, elseLabel );
 
+    ++conditional->index;
+    sprintf(elseLabel, "%se%d", conditional->label, conditional->index );
+    
     if ( ! _expression ) {
 
         cpu_bvneq( _environment, conditional->expression->realName, endifLabel );
