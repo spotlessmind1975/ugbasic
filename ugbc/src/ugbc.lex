@@ -26,6 +26,7 @@
 ">" { return(GT); }
 ">=" { return(GTE); }
 "<>" { return(DISEQUAL); }
+"*" { return(MULTIPLICATION); }
 
 8BIT { return (BYTE); }
 16BIT { return (WORD); }
