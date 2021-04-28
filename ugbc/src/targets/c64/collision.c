@@ -111,9 +111,6 @@ Variable * collision_to_vars( Environment * _environment, char * _sprite ) {
 
     // Safety check -- expression must exists (it should be always true)
     Variable * sprite = variable_retrieve( _environment, _sprite );
-    if ( ! sprite ) {
-        CRITICAL("Internal error on COLLISION");
-    }
 
     // Safety check -- expression must exists (it should be always true)
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result)" );

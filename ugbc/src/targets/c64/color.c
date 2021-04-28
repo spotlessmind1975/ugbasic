@@ -92,9 +92,6 @@ void color_border_var( Environment * _environment, char * _color ) {
 
     // Safety check -- expression must exists (it should be always true)
     Variable * color = variable_retrieve( _environment, _color );
-    if ( ! color ) {
-        CRITICAL("Internal error on COLOR BORDER");
-    }
 
     vic2_border_color( _environment, color->realName );
 
@@ -159,14 +156,8 @@ void color_background_vars( Environment * _environment, char * _index, char * _b
     outline2("; COLOR BACKGROUND %s TO %s", _index, _background_color);
 
     Variable * index = variable_retrieve( _environment, _index );
-    if ( ! index ) {
-        CRITICAL("Internal error on COLOR BACKGROUND");
-    }
 
     Variable * background_color = variable_retrieve( _environment, _background_color );
-    if ( ! background_color ) {
-        CRITICAL("Internal error on COLOR BACKGROUND");
-    }
 
     vic2_background_color( _environment, index->realName, background_color->realName );
 
@@ -230,13 +221,7 @@ void color_sprite_vars( Environment * _environment, char * _index, char * _commo
     outline2("; COLOR SPRITE %s TO %s", _index, _common_color);
 
     Variable * index = variable_retrieve( _environment, _index );
-    if ( ! index ) {
-        CRITICAL("Internal error on COLOR SPRITE");
-    }
     Variable * common_color = variable_retrieve( _environment, _common_color );
-    if ( ! common_color ) {
-        CRITICAL("Internal error on COLOR SPRITE");
-    }
 
     vic2_sprite_common_color( _environment, index->realName, common_color->realName );
 

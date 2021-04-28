@@ -424,9 +424,6 @@ void vic2_textmap_at( Environment * _environment, char * _address ) {
 void vic2_point_at_int( Environment * _environment, int _x, int _y ) {
 
     Variable * bitmap_address = variable_retrieve( _environment, "bitmap_address" );
-    if ( ! bitmap_address ) {
-        CRITICAL( "CRITICAL: POINT AT (xxx,xxx) needs BITMAP ENABLE");
-    }
 
     int offset = (_y>>3)*320+(_x>>3)*8+(_y&7);
     int bitmask = 1 << ( 7 - ( _x & 0x07 ) );

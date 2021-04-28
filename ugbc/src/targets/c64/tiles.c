@@ -120,9 +120,6 @@ void tiles_at_var( Environment * _environment, char * _address ) {
     outline1("; TEXT AT %s", _address);
 
     Variable * address = variable_retrieve( _environment, _address );
-    if ( ! address ) {
-        CRITICAL("Internal error on TILES AT [expression]");
-    }
 
     Variable * temp = variable_temporary( _environment, VT_ADDRESS, "(temporary storage)" );
 

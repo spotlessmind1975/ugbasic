@@ -168,9 +168,6 @@ void colormap_clear_with( Environment * _environment, int _foreground, int _back
     outline2("; COLORMAP CLEAR WITH #$%2.2x AND #$%2.2x", _foreground, _background );
 
     Variable * colormap_address = variable_retrieve( _environment, "colormap_address" );
-    if ( ! colormap_address ) {
-        CRITICAL( "COLORMAP CLEAR WITH xxx ON xxx needs BITMAP ENABLED");
-    }
 
     char value[16]; sprintf(value, "#$%2.2x", ( ( _foreground & 0x0f ) << 4 ) | ( _background & 0x0f ));
     
@@ -209,15 +206,8 @@ void colormap_clear_with_vars( Environment * _environment, char * _foreground, c
     }
 
     Variable * foreground = variable_retrieve( _environment, _foreground );
-    if ( ! foreground ) {
-        // TODO: in general, missing variable is not an internal error but citing a variable without defining it.
-        CRITICAL( "Internal error for COLORMAP CLEAR WITH xxx ON xxx");
-    }
 
     Variable * background = variable_retrieve( _environment, _background );
-    if ( ! background ) {
-        CRITICAL( "Internal error for COLORMAP CLEAR WITH xxx ON xxx");
-    }
 
     cpu6502_combine_nibbles( _environment, background->realName, foreground->realName, "$24" );
 

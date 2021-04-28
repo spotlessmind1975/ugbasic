@@ -112,9 +112,6 @@ void raster_at_var( Environment * _environment, char * _label, char * _position 
     MAKE_LABEL
 
     Variable * var = variable_retrieve( _environment, _position );
-    if ( ! var ) {
-        CRITICAL("Internal error on RASTER AT xxx WITH yyyy");
-    }
 
     char positionlo[16]; sprintf( positionlo, "%s", var->realName );
     char positionhi[16]; sprintf( positionhi, "%s+1", var->realName );
@@ -226,9 +223,6 @@ void next_raster_at_with_var( Environment * _environment, char * _position, char
     MAKE_LABEL
 
     Variable * var = variable_retrieve( _environment, _position );
-    if ( ! var ) {
-        CRITICAL("Internal error on NEXT RASTER AT xxx WITH yyyy");
-    }
 
     char positionlo[16]; sprintf( positionlo, "%s", var->realName );
     char positionhi[16]; sprintf( positionhi, "%s+1", var->realName );

@@ -99,9 +99,6 @@ void wait_cycles_var( Environment * _environment, char * _timing ) {
     MAKE_LABEL
 
     Variable * timing = variable_retrieve( _environment, _timing );
-    if ( ! timing ) {
-        CRITICAL("Internal error on WAIT [expression]");
-    }
     
     cpu6502_busy_wait( _environment, timing->realName );
 
@@ -152,9 +149,6 @@ void wait_ticks_var( Environment * _environment, char * _timing ) {
     MAKE_LABEL
 
     Variable * timing = variable_retrieve( _environment, _timing );
-    if ( ! timing ) {
-        CRITICAL("Internal error on WAIT [expression]");
-    }
     
     vic2_busy_wait( _environment, timing->realName );
 
@@ -205,9 +199,6 @@ void wait_milliseconds_var( Environment * _environment, char * _timing ) {
     MAKE_LABEL
 
     Variable * timing = variable_retrieve( _environment, _timing );
-    if ( ! timing ) {
-        CRITICAL("Internal error on WAIT [expression]");
-    }
 
     Variable * temp = variable_cast( _environment, timing->name, VT_BYTE );
 

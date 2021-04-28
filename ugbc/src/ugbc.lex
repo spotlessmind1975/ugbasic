@@ -131,6 +131,7 @@ TEXTMAP { return (TEXTMAP); }
 THEN { return (THEN); }
 TICKS { return (TICKS); }
 TILES { return (TILES); }
+TO { return (TO); }
 TURQUOISE { return(TURQUOISE); }
 TRUE { return(TRUE); }
 UNTIL { return (UNTIL); }

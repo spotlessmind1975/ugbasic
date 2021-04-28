@@ -68,9 +68,6 @@ void on_goto( Environment * _environment, char * _expression ) {
     MAKE_LABEL
 
     Variable * expression = variable_retrieve( _environment, _expression );
-    if ( ! expression ) {
-        CRITICAL("Internal error on ON ... GOTO ... ");
-    }
 
     Conditional * conditional = malloc( sizeof( Conditional ) );
     conditional->label = strdup( label );
@@ -175,9 +172,6 @@ void on_gosub( Environment * _environment, char * _expression ) {
     MAKE_LABEL
 
     Variable * expression = variable_retrieve( _environment, _expression );
-    if ( ! expression ) {
-        CRITICAL("Internal error on ON ... GOSUB ... ");
-    }
 
     char newLabel[16]; sprintf(newLabel, "gosub%d", UNIQUE_ID );
 

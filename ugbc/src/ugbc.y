@@ -735,9 +735,6 @@ var_definition_simple:
   }
   | Identifier ON Identifier ASSIGN expressions {
       Variable * v = variable_retrieve( _environment, $5 );
-      if ( v == NULL ) {
-          CRITICAL("Variable not found");
-      }
       Variable * d = variable_define( _environment, $1, v->type, v->value );
       variable_move_naked( _environment, v->name, d->name );
   };
@@ -956,7 +953,7 @@ statements_complex:
     ;
 
 program : 
-  statements_complex;
+  { ((Environment *)_environment)->yylineno = yylineno; } statements_complex;
 
 %%
 

@@ -225,6 +225,9 @@ Variable * variable_retrieve( Environment * _environment, char * _name ) {
     if ( ! var ) {
         var = variable_find( _environment->variables, _name );
     }
+    if ( ! var ) {
+        CRITICAL_VARIABLE( _name );
+    }
     return var;
 }
 

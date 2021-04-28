@@ -120,9 +120,6 @@ void textmap_at_var( Environment * _environment, char * _address ) {
     Variable * text_address = variable_define( _environment, "text_address", VT_ADDRESS, 0x0400 );
 
     Variable * address = variable_retrieve( _environment, _address );
-    if ( ! address ) {
-        CRITICAL("Internal error on TEXTMAP AT [expression]");
-    }
 
     char addressString[16]; sprintf(addressString, "%s+1", address->realName );
 

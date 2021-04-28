@@ -74,9 +74,6 @@ void color_border_var( Environment * _environment, char * _color ) {
 
     // Safety check -- expression must exists (it should be always true)
     Variable * color = variable_retrieve( _environment, _color );
-    if ( ! color ) {
-        CRITICAL("Internal error on COLOR BORDER");
-    }
 
     char port[16]; sprintf(port, "$%2.2x", PORT_COLOR_BORDER);
 

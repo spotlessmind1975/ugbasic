@@ -90,9 +90,6 @@ void if_then( Environment * _environment, char * _expression ) {
     MAKE_LABEL
 
     Variable * expression = variable_retrieve( _environment, _expression );
-    if ( ! expression ) {
-        CRITICAL("Internal error on IF ... THEN ... ");
-    }
 
     Conditional * conditional = malloc( sizeof( Conditional ) );
     conditional->label = strdup( label );
@@ -153,9 +150,6 @@ void else_if_then( Environment * _environment, char * _expression ) {
     } else {
 
         Variable * expression = variable_retrieve( _environment, _expression );
-        if ( ! expression ) {
-            CRITICAL("Internal error on IF ... THEN : ... : ELSE : ... : ENDIF ");
-        }
 
         conditional->expression->locked = 0;
         conditional->expression = variable_cast( _environment, expression->name, expression->type );

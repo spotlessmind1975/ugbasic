@@ -72,9 +72,6 @@ void debug_var( Environment * _environment, char * _name ) {
 
     // Safety check
     Variable * var = variable_retrieve( _environment, _name );
-    if ( ! var ) {
-        CRITICAL("Cannot DEBUG a VAR that does not exist" );
-    }
     switch( var->type ) {
         case VT_BYTE:
         case VT_COLOR:

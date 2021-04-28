@@ -161,10 +161,6 @@ void screen_rows_var( Environment * _environment, char * _rows ) {
     outline1("; SCREEN ROWS %s", _rows);
 
     Variable * rows = variable_retrieve( _environment, _rows );
-    if ( ! rows ) {
-        CRITICAL("Internal error on SCREEN ROWS [expression]");
-    }
-
     vic2_screen_rows( _environment, rows->realName );
 
 }
@@ -236,9 +232,6 @@ void screen_vertical_scroll_var( Environment * _environment, char * _displacemen
     outline1("; SCREEN VERTICAL SCROLL %s", _displacement );
 
     Variable * displacement = variable_retrieve( _environment, _displacement );
-    if ( ! displacement ) {
-        CRITICAL("Internal error on SCREEN VERTICAL SCROLL [expression]");
-    }
 
     vic2_vertical_scroll( _environment, displacement->realName );
 
@@ -311,9 +304,6 @@ void screen_horizontal_scroll_var( Environment * _environment, char * _displacem
     outline1("; SCREEN HORIZONTAL SCROLL %s", _displacement);
 
     Variable * displacement = variable_retrieve( _environment, _displacement );
-    if ( ! displacement ) {
-        CRITICAL("Internal error on SCREEN HORIZONTAL SCROLL [expression]");
-    }
 
     vic2_horizontal_scroll( _environment, _displacement );
 

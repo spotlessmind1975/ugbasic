@@ -87,9 +87,6 @@ Variable * peek_var( Environment * _environment, char * _location ) {
     outline1("; PEEK(%s)", _location);
 
     Variable * location = variable_retrieve( _environment, _location );
-    if ( ! location ) {
-        CRITICAL("Internal error on PEEK(...)");
-    }
 
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result)" );
 

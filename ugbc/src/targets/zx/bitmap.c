@@ -157,9 +157,6 @@ void bitmap_clear_with( Environment * _environment, int _pattern ) {
 
     // Safety check -- bitmap address must be defined at least once.
     Variable * bitmap_address = variable_retrieve( _environment, "bitmap_address" );
-    if ( ! bitmap_address ) {
-        CRITICAL( "BITMAP CLEAR WITH xxx needs BITMAP ENABLED");
-    }
 
     Variable * pattern = variable_temporary( _environment, VT_BYTE, "(pattern)");
 
@@ -192,15 +189,9 @@ void bitmap_clear_with_vars( Environment * _environment, char * _pattern ) {
 
     // Safety check -- bitmap address must be defined at least once.
     Variable * bitmap_address = variable_retrieve( _environment, "bitmap_address" );
-    if ( ! bitmap_address ) {
-        CRITICAL( "BITMAP CLEAR WITH xxx needs BITMAP ENABLED");
-    }
 
     // Safety check -- expression must exists (it should be always true)
     Variable * pattern = variable_retrieve( _environment, _pattern );
-    if ( ! pattern ) {
-        CRITICAL("Internal error on BITMAP CLEAR WITH xxx");
-    }
 
     z80_fill( _environment, bitmap_address->realName, "24", pattern->realName );
 

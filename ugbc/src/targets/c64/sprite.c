@@ -100,14 +100,8 @@ void sprite_data_from_vars( Environment * _environment, char * _sprite, char * _
     outline2("; SPRITE %s DATA FROM %s", _sprite, _address);
 
     Variable * sprite = variable_retrieve( _environment, _sprite );
-    if ( ! sprite ) {
-        CRITICAL("Internal error on SPRITE [expression] DATA FROM [expression]");
-    }
 
     Variable * address = variable_retrieve( _environment, _address );
-    if ( ! address ) {
-        CRITICAL("Internal error on SPRITE [expression] DATA FROM [expression]");
-    }
 
     vic2_sprite_data_from( _environment, sprite->realName, address->realName );
 
@@ -168,9 +162,6 @@ void sprite_enable_var( Environment * _environment, char * _sprite ) {
     outline1("; SPRITE %s ENABLE", _sprite);
 
     Variable * sprite = variable_retrieve( _environment, _sprite );
-    if ( ! sprite ) {
-        CRITICAL("Internal error on SPRITE [expression] DATA FROM [expression]");
-    }
 
     vic2_sprite_enable( _environment, sprite->realName );
 
@@ -231,9 +222,6 @@ void sprite_disable_var( Environment * _environment, char * _sprite ) {
     _environment->bitmaskNeeded = 1;
     
     Variable * sprite = variable_retrieve( _environment, _sprite );
-    if ( ! sprite ) {
-        CRITICAL("Internal error on SPRITE [expression] DISABLE");
-    }
 
     vic2_sprite_disable( _environment, sprite->realName );
 
@@ -302,19 +290,10 @@ void sprite_position( Environment * _environment, int _sprite, int _x, int _y ) 
 void sprite_position_vars( Environment * _environment, char * _sprite, char * _x, char * _y ) {
 
     Variable * sprite = variable_retrieve( _environment, _sprite );
-    if ( ! sprite ) {
-        CRITICAL("Internal error on SPRITE [expression] AT ([expression],[expression])");
-    }
 
     Variable * x = variable_retrieve( _environment, _x );
-    if ( ! x ) {
-        CRITICAL("Internal error on SPRITE [expression] AT ([expression],[expression])");
-    }
 
     Variable * y = variable_retrieve( _environment, _y );
-    if ( ! y ) {
-        CRITICAL("Internal error on SPRITE [expression] AT ([expression],[expression])");
-    }
 
     outline3("; SPRITE %s AT (%s,%s)", sprite->name, x->name, y->name);
 
@@ -381,9 +360,6 @@ void sprite_expand_vertical_var( Environment * _environment, char * _sprite ) {
     _environment->bitmaskNeeded = 1;
     
     Variable * sprite = variable_retrieve( _environment, _sprite );
-    if ( ! sprite ) {
-        CRITICAL("Internal error on SPRITE [expression] EXPAND VERTICAL");
-    }
 
     vic2_sprite_expand_vertical( _environment, sprite->realName );
 
@@ -446,9 +422,6 @@ void sprite_compress_vertical_var( Environment * _environment, char * _sprite ) 
     _environment->bitmaskNeeded = 1;
     
     Variable * sprite = variable_retrieve( _environment, _sprite );
-    if ( ! sprite ) {
-        CRITICAL("Internal error on SPRITE [expression] COMPRESS VERTICAL");
-    }
 
     vic2_sprite_compress_vertical( _environment, sprite->realName );
 
@@ -507,9 +480,6 @@ void sprite_expand_horizontal_var( Environment * _environment, char * _sprite ) 
     _environment->bitmaskNeeded = 1;
     
     Variable * sprite = variable_retrieve( _environment, _sprite );
-    if ( ! sprite ) {
-        CRITICAL("Internal error on SPRITE [expression] EXPAND HORIZONTAL");
-    }
 
     vic2_sprite_expand_horizontal( _environment, sprite->realName );
 
@@ -568,9 +538,6 @@ void sprite_compress_horizontal_var( Environment * _environment, char * _sprite 
     _environment->bitmaskNeeded = 1;
     
     Variable * sprite = variable_retrieve( _environment, _sprite );
-    if ( ! sprite ) {
-        CRITICAL("Internal error on SPRITE [expression] COMPRESS HORIZONTAL");
-    }
 
     vic2_sprite_compress_horizontal( _environment, sprite->realName );
 
@@ -635,9 +602,6 @@ void sprite_multicolor_var( Environment * _environment, char * _sprite ) {
     _environment->bitmaskNeeded = 1;
     
     Variable * sprite = variable_retrieve( _environment, _sprite );
-    if ( ! sprite ) {
-        CRITICAL("Internal error on SPRITE [expression] MULTICOLOR");
-    }
 
     vic2_sprite_multicolor( _environment, sprite->realName );
 
@@ -702,9 +666,6 @@ void sprite_monocolor_var( Environment * _environment, char * _sprite ) {
     _environment->bitmaskNeeded = 1;
     
     Variable * sprite = variable_retrieve( _environment, _sprite );
-    if ( ! sprite ) {
-        CRITICAL("Internal error on SPRITE [expression] MONOCOLOR");
-    }
 
     vic2_sprite_monocolor( _environment, sprite->realName );
 
@@ -770,14 +731,8 @@ void sprite_color_vars( Environment * _environment, char * _sprite, char * _colo
     outline2("; COLOR SPRITE %s TO %s", _sprite, _color);
 
     Variable * sprite = variable_retrieve( _environment, _sprite );
-    if ( ! sprite ) {
-        CRITICAL("Internal error on SPRITE [expression] COLOR [expression]");
-    }
 
     Variable * color = variable_retrieve( _environment, _color );
-    if ( ! color ) {
-        CRITICAL("Internal error on SPRITE [expression] COLOR [expression]");
-    }
 
     vic2_sprite_color( _environment, sprite->realName, color->realName );
 

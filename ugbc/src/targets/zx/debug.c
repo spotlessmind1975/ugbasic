@@ -53,9 +53,6 @@ void debug_var( Environment * _environment, char * _name ) {
 
     // Safety check
     Variable * var = variable_retrieve( _environment, _name );
-    if ( ! var ) {
-        CRITICAL("Cannot DEBUG a VAR that does not exist" );
-    }
 
     // TODO: implement zx/debug_var
     
