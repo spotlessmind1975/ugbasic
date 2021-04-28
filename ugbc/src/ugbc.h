@@ -189,6 +189,13 @@ typedef struct _Variable {
 typedef enum _ConditionalType {
     /** IF ... THEN ... ENDIF */
     CT_IF = 0,
+
+    /** ON ... GOTO ... */
+    CT_ON_GOTO = 1,
+
+    /** ON ... GOSUB ... */
+    CT_ON_GOSUB = 2
+
 } ConditionalType;
 
 /**
@@ -209,6 +216,9 @@ typedef struct _Conditional {
 
     /** Expression to evaluate. */
     Variable *expression;
+
+    /** Incremental index for forced jumps. */
+    int index;
 
     /** Next conditional */
     struct _Conditional * next;
@@ -571,6 +581,12 @@ void loop( Environment * _environment, char *_label );
 void next_raster( Environment * _environment );
 void next_raster_at_with( Environment * _environment, int _at, char * _with );
 void next_raster_at_with_var( Environment * _environment, char * _var, char * _with );
+void on_gosub( Environment * _environment, char * _expression );
+void on_gosub_index( Environment * _environment, char * _label );
+void on_gosub_end( Environment * _environment );
+void on_goto( Environment * _environment, char * _expression );
+void on_goto_index( Environment * _environment, char * _label );
+void on_goto_end( Environment * _environment );
 Variable * peek( Environment * _environment, int _location );
 Variable * peek_var( Environment * _environment, char * _location );
 void point_at( Environment * _environment, int _x, int _y );

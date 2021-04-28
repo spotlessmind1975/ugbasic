@@ -774,6 +774,32 @@ point_definition:
     point_definition_simple
   | point_definition_expression;
 
+on_goto_definition:
+      Identifier {
+          on_goto_index( _environment, $1 );
+          on_goto_end( _environment );
+      }
+    | Identifier {
+        on_goto_index( _environment, $1 );
+    } COMMA on_goto_definition;
+
+on_gosub_definition:
+      Identifier {
+          on_gosub_index( _environment, $1 );
+          on_gosub_end( _environment );
+      }
+    | Identifier {
+          on_gosub_index( _environment, $1 );
+    } COMMA on_gosub_definition;
+
+on_definition:
+      expressions GOTO {
+          on_goto( _environment, $1 );
+      } on_goto_definition
+    | expressions GOSUB {
+        on_gosub( _environment, $1 );  
+    } on_gosub_definition;
+
 statement:
     BANK bank_definition
   | RASTER raster_definition
@@ -861,6 +887,7 @@ statement:
   | HALT {
       halt( _environment );
   }
+  | ON on_definition
   | GOTO goto_definition
   | GOSUB gosub_definition
   | RETURN {
