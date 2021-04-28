@@ -148,7 +148,11 @@ void exit_loop( Environment * _environment, int _number ) {
         CRITICAL("EXIT without any loop");
     }
 
-    while( _number ) {
+    if ( _number ) {
+        --_number;
+    }
+
+    while( _number-- ) {
         loop = loop->next;
 
         if ( ! loop ) {
@@ -201,7 +205,11 @@ void exit_loop_if( Environment * _environment, char * _expression, int _number )
         CRITICAL("EXIT without any loop");
     }
 
-    while( _number ) {
+    if ( _number ) {
+        --_number;
+    }
+
+    while( _number-- ) {
         loop = loop->next;
 
         if ( ! loop ) {

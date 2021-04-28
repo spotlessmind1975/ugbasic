@@ -1355,7 +1355,7 @@ YY_RULE_SETUP
 case 56:
 YY_RULE_SETUP
 #line 68 "src/ugbc.lex"
-{ return (EXPAND); }
+{ return (EXIT); }
 	YY_BREAK
 case 57:
 YY_RULE_SETUP

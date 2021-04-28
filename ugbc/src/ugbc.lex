@@ -65,7 +65,7 @@ ELSE { return(ELSE); }
 END { return (END); }
 ENDIF { return (ENDIF); }
 ENABLE { return (ENABLE); }
-EXIT { return (EXPAND); }
+EXIT { return (EXIT); }
 EXPAND { return (EXPAND); }
 EVERY { return (EVERY); }
 FALSE { return(FALSE); }
