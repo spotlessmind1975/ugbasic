@@ -42,6 +42,10 @@ void cpu6502_combine_nibbles( Environment * _environment, char * _low_nibble, ch
 void cpu6502_compare_16bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _positive );
 void cpu6502_compare_32bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _positive );
 void cpu6502_compare_8bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _positive );
+void cpu6502_di( Environment * _environment );
+void cpu6502_ei( Environment * _environment );
+void cpu6502_inc( Environment * _environment, char * _variable );
+void cpu6502_dec( Environment * _environment, char * _variable );
 void cpu6502_less_than_16bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _equal );
 void cpu6502_less_than_32bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _equal );
 void cpu6502_less_than_8bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _equal );
@@ -105,6 +109,10 @@ void cpu6502_store_8bit( Environment * _environment, char *_source, int _value )
 #define cpu_compare_16bit( _environment, _source, _destination, _name, _positive ) cpu6502_compare_16bit( _environment, _source, _destination, _name, _positive )
 #define cpu_compare_32bit( _environment, _source, _destination, _name, _positive ) cpu6502_compare_32bit( _environment, _source, _destination, _name, _positive )
 #define cpu_compare_8bit( _environment, _source, _destination, _name, _positive ) cpu6502_compare_8bit( _environment, _source, _destination, _name, _positive )
+#define cpu_di( _environment ) cpu6502_di( _environment )
+#define cpu_ei( _environment ) cpu6502_ei( _environment )
+#define cpu_inc( _environment, _variable ) cpu6502_inc( _environment, _variable );
+#define cpu_dec( _environment, _variable ) cpu6502_dec( _environment, _variable );
 #define cpu_less_than_16bit( _environment, _source, _destination, _name, _equal ) cpu6502_less_than_16bit( _environment, _source, _destination, _name, _equal )
 #define cpu_less_than_32bit( _environment, _source, _destination, _name, _equal ) cpu6502_less_than_32bit( _environment, _source, _destination, _name, _equal )
 #define cpu_less_than_8bit( _environment, _source, _destination, _name, _equal ) cpu6502_less_than_8bit( _environment, _source, _destination, _name, _equal )

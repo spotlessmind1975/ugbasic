@@ -356,6 +356,16 @@ typedef struct _Environment {
      */
     Variable * everyStatus;
 
+    /**
+     * "Every" counter
+     */
+    Variable * everyCounter;
+
+    /**
+     * "Every" timing
+     */
+    Variable * everyTiming;
+
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */

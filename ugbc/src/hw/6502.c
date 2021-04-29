@@ -1384,4 +1384,28 @@ void cpu6502_logical_not_8bit( Environment * _environment, char * _value, char *
 
 }
 
+void cpu6502_di( Environment * _environment ) {
+
+    outline0("SEI" );
+
+}
+
+void cpu6502_ei( Environment * _environment ) {
+
+    outline0("CLI" );
+
+}
+
+void cpu6502_inc( Environment * _environment, char * _variable ) {
+
+    outline1("INC %s", _variable );
+
+}
+
+void cpu6502_dec( Environment * _environment, char * _variable ) {
+
+    outline1("DEC %s", _variable );
+
+}
+
 #endif

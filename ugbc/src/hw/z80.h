@@ -38,6 +38,10 @@ void z80_bneq( Environment * _environment, char * _label );
 void z80_busy_wait( Environment * _environment, char * _timing );
 void z80_bveq( Environment * _environment, char * _value, char * _label );
 void z80_bvneq( Environment * _environment, char * _value, char * _label );
+void z80_di( Environment * _environment );
+void z80_ei( Environment * _environment );
+void z80_inc( Environment * _environment, char * _variable );
+void z80_dec( Environment * _environment, char * _variable );
 void z80_combine_nibbles( Environment * _environment, char * _low_nibble, char * _hi_nibble, char * _byte );
 void z80_compare_16bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _positive );
 void z80_compare_32bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _positive );
@@ -106,6 +110,10 @@ void z80_store_8bit( Environment * _environment, char *_source, int _value );
 #define cpu_compare_16bit( _environment, _source, _destination, _name, _positive ) z80_compare_16bit( _environment, _source, _destination, _name, _positive )
 #define cpu_compare_32bit( _environment, _source, _destination, _name, _positive ) z80_compare_32bit( _environment, _source, _destination, _name, _positive )
 #define cpu_compare_8bit( _environment, _source, _destination, _name, _positive ) z80_compare_8bit( _environment, _source, _destination, _name, _positive )
+#define cpu_di( _environment  ) z80_di( _environment  )
+#define cpu_ei( _environment  ) z80_ei( _environment  )
+#define cpu_inc( _environment, _variable ) z80_inc( _environment, _variable );
+#define cpu_dec( _environment, _variable ) z80_dec( _environment, _variable );
 #define cpu_less_than_16bit( _environment, _source, _destination, _name, _equal ) z80_less_than_16bit( _environment, _source, _destination, _name, _equal )
 #define cpu_less_than_32bit( _environment, _source, _destination, _name, _equal ) z80_less_than_32bit( _environment, _source, _destination, _name, _equal )
 #define cpu_less_than_8bit( _environment, _source, _destination, _name, _equal ) z80_less_than_8bit( _environment, _source, _destination, _name, _equal )

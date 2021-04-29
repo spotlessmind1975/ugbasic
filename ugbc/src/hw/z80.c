@@ -1300,5 +1300,16 @@ void z80_logical_not_8bit( Environment * _environment, char * _value, char * _re
 
 }
 
+void z80_di( Environment * _environment ) {
+
+    outline0("DI" );
+
+}
+
+void z80_ei( Environment * _environment ) {
+
+    outline0("EI" );
+
+}
 
 #endif

@@ -41,9 +41,9 @@
 /**
  * @brief Emit ASM code for <b>EVERY ... TICKS GOSUB ...</b>
  * 
- * @param _environment Current calling environment
- * @param _label Label to jump to when vertical raster reach the value given
- * @param _position The vertical position to wait for
+ * @param _environment 
+ * @param _timing 
+ * @param _label 
  */
 /* <usermanual>
 @keyword EVERY ... TICKS GOSUB ...
@@ -62,8 +62,18 @@ void every_ticks_gosub( Environment * _environment, char * _timing, char * _labe
 
     outline2("; EVERY %s TICKS GOSUB %s", _timing, _label );
 
+    Variable * timing = variable_retrieve( _environment, _timing );
+
+    if ( _environment->everyStatus ) {
+        CRITICAL("Cannot call EVERY ... TICKS more than one time.");
+    }
+
     _environment->everyStatus = variable_temporary( _environment, VT_BYTE, "(every status)");
     _environment->everyStatus->locked = 1;
+    _environment->everyCounter = variable_temporary( _environment, VT_WORD, "(every counter)");
+    _environment->everyCounter->locked = 1;
+    _environment->everyTiming = variable_cast( _environment, timing->name, VT_WORD );
+    _environment->everyTiming->locked = 1;
 
     char skipEveryRoutineLabel[16]; sprintf(skipEveryRoutineLabel, "setg%d", UNIQUE_ID );
     char everyRoutineLabel[16]; sprintf(everyRoutineLabel, "etg%d", UNIQUE_ID );
@@ -73,17 +83,27 @@ void every_ticks_gosub( Environment * _environment, char * _timing, char * _labe
     
     cpu_label( _environment, everyRoutineLabel );
     
+    cpu_di( _environment );
+
     cpu_bveq( _environment, _environment->everyStatus->realName, endOfEveryRoutineLabel );
+
+    cpu_dec( _environment, _environment->everyCounter->realName );
+
+    cpu_bvneq( _environment, _environment->everyCounter->realName, endOfEveryRoutineLabel );
 
     cpu_call( _environment, _label );
 
+    variable_move_naked( _environment, _environment->everyTiming->name, _environment->everyCounter->name );
+
     cpu_label( _environment, endOfEveryRoutineLabel );
+
+    cpu_ei( _environment );
 
     vic2_next_raster( _environment );
 
-    vic2_raster_at( _environment, everyRoutineLabel, "0", "0" );
-
     cpu_label( _environment, skipEveryRoutineLabel );
+
+    vic2_raster_at( _environment, everyRoutineLabel, "0", "42" );
 
 }
 
