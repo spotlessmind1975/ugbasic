@@ -1,6 +1,7 @@
      times = 1
    start:
-     ON times GOSUB first, second, third
+     ON times GOTO first, second, third
+   nextLoop:
      times = times + 1
      IF times > 3 THEN
         times = 1
@@ -9,12 +10,12 @@
      
    first:
      DEBUG 1
-     RETURN
+     GOTO nextLoop
      
    second:
      DEBUG 2
-     RETURN
+     GOTO nextLoop
      
    third:
      DEBUG 3
-     RETURN
+     GOTO nextLoop

@@ -41,23 +41,38 @@
 /**
  * @brief Emit ASM code for <b>ON ... GOTO ...</b>
  * 
- * This function outputs the code to implement the conditional jump.
+ * This function outputs the code to implement the conditional jump by
+ * expression.
  * 
  * @param _environment Current calling environment
  * @param _expression Expression with the true / false condition
  */
 /* <usermanual>
-@keyword ON ... GOTO ...
+@keyword ON...GOTO
 
 @english
-Implement the conditional jump.
+This command is used to force a unconditional jump to a pre-defined position when a 
+specific expression is calculated. The choice is done against several positions,
+and it depends on what value is held by the expression at the time it is spotted.
+
+To work properly, the expression must have a value from 1 up to the number of 
+the highest possible destination. If the expression has a value of 0 or 
+greater than the highest possibile destination, no jump will be performed.
 
 @italian
-Implementa il salto condizionale.
+Questo comando viene utilizzato per forzare un salto incondizionato a una
+posizione predefinita, calcolata da un'espressione. La scelta è tra le posizioni
+elencate, e dipende dal valore dell'espressione al momento in cui viene 
+calcolata.
 
-@syntax ON [expression] GOTO [label1]{,[label2]{,[label3], ... } }
+Per funzionare correttamente, l'espressione deve avere un valore compreso 
+tra 1 e il numero di destinazioni. Se l'espressione ha un valore di 0 o
+maggiore della destinazione più alta possibile, non sarà eseguito alcun salto.
+
+@syntax ON [expression] GOTO [label1] {, [label2] {, [label3], ... }}
 
 @example ON level GOTO level1, level2, level3
+@usedInExample control_by_expression_02.bas
 
 @target all
 </usermanual> */
@@ -84,13 +99,13 @@ void on_goto( Environment * _environment, char * _expression ) {
  * @brief Emit ASM code for <b>... (of ON ... GOTO ...)</b>
  * 
  * This function outputs the code to implement any specific
- * indexed jump on forced jumps.
+ * indexed jump on forced jumps by expression.
  * 
  * @param _environment Current calling environment
+ * @param _label Label to jump to
  */
 void on_goto_index( Environment * _environment, char * _label ) {
 
-    // TODO: Better management of conditional types and missing
     Conditional * conditional = _environment->conditionals;
 
     if ( ! conditional ) {
@@ -116,14 +131,13 @@ void on_goto_index( Environment * _environment, char * _label ) {
 /**
  * @brief Emit ASM code for <b>... (of ON ... GOTO ...)</b>
  * 
- * This function outputs the code to implement any specific
- * indexed jump on forced jumps.
+ * This function outputs the code to implement the ending
+ * of unconditional jump by expression.
  * 
  * @param _environment Current calling environment
  */
 void on_goto_end( Environment * _environment ) {
 
-    // TODO: Better management of conditional types and missing
     Conditional * conditional = _environment->conditionals;
 
     if ( ! conditional ) {
@@ -145,23 +159,38 @@ void on_goto_end( Environment * _environment ) {
 /**
  * @brief Emit ASM code for <b>ON ... GOSUB ...</b>
  * 
- * This function outputs the code to implement the conditional jump.
+ * This function outputs the code to implement the unconditional jump
+ * with returning, calculated by expression.
  * 
  * @param _environment Current calling environment
  * @param _expression Expression with the true / false condition
  */
 /* <usermanual>
-@keyword ON ... GOSUB ...
+@keyword ON...GOSUB
 
 @english
-Implement the conditional jump.
+This command is used to force a unconditional jump with returning to a pre-defined position when a 
+specific expression is calculated. The choice is done against several positions,
+and it depends on what value is held by the expression at the time it is spotted.
+
+To work properly, the expression must have a value from 1 up to the number of 
+the highest possible destination. If the expression has a value of 0 or 
+greater than the highest possibile destination, no jump will be performed.
 
 @italian
-Implementa il salto condizionale.
+Questo comando viene utilizzato per forzare un salto incondizionato a una
+posizione predefinita (con ritorno), calcolata da un'espressione. La scelta è tra le posizioni
+elencate, e dipende dal valore dell'espressione al momento in cui viene 
+calcolata.
 
-@syntax ON [expression] GOSUB [label1]{,[label2]{,[label3], ... } }
+Per funzionare correttamente, l'espressione deve avere un valore compreso 
+tra 1 e il numero di destinazioni. Se l'espressione ha un valore di 0 o
+maggiore della destinazione più alta possibile, non sarà eseguito alcun salto.
+
+@syntax ON [expression] GOSUB [label1] {, [label2] {, [label3], ... }}
 
 @example ON level GOSUB level1, level2, level3
+@usedInExample control_by_expression_01.bas
 
 @target all
 </usermanual> */
@@ -190,13 +219,13 @@ void on_gosub( Environment * _environment, char * _expression ) {
  * @brief Emit ASM code for <b>... (of ON ... GOSUB ...)</b>
  * 
  * This function outputs the code to implement any specific
- * indexed jump on forced jumps.
+ * indexed jump with returning on forced jumps by expression.
  * 
  * @param _environment Current calling environment
+ * @param _label Label to jump to
  */
 void on_gosub_index( Environment * _environment, char * _label ) {
 
-    // TODO: Better management of conditional types and missing
     Conditional * conditional = _environment->conditionals;
 
     if ( ! conditional ) {
@@ -232,14 +261,13 @@ void on_gosub_index( Environment * _environment, char * _label ) {
 /**
  * @brief Emit ASM code for <b>... (of ON ... GOSUB ...)</b>
  * 
- * This function outputs the code to implement any specific
- * indexed jump on forced jumps.
+ * This function outputs the code to implement the end of
+ * unconditional jump (with returning) by expression.
  * 
  * @param _environment Current calling environment
  */
 void on_gosub_end( Environment * _environment ) {
 
-    // TODO: Better management of conditional types and missing
     Conditional * conditional = _environment->conditionals;
 
     if ( ! conditional ) {

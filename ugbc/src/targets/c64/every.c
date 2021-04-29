@@ -41,20 +41,44 @@
 /**
  * @brief Emit ASM code for <b>EVERY ... TICKS GOSUB ...</b>
  * 
+ * Emit assembly code to initialize the EVERY subsystem.
+ * 
  * @param _environment 
  * @param _timing 
  * @param _label 
  */
 /* <usermanual>
-@keyword EVERY ... TICKS GOSUB ...
+@keyword EVERY...GOSUB...
 
 @english
+Define the call of a sub-routine at regular intervals, without 
+interfering with the main program. You must specifying the length of time 
+between every call, measured in TICKS. 
+
+Note that the subroutine execution 
+time should be less than the interval time, or the main program timings 
+will be affected. After a subroutine has been entered, the 
+''EVERY'' system is automatically disabled. This means that, 
+in order to call this feature continuously, an ''EVERY ON'' command 
+must be inserted into a subroutine before the final RETURN statement.
 
 @italian
+Definisce una chiamata a una sottoprogramma a intervalli regolari, senza
+interferire con il programma principale. È necessario specificare il
+periodo di tempo tra ogni chiamata, misurata in TICKS.
 
-@syntax EVERY [expression] TICKS GOSUB [label]
+Si fa notare che la durata dell'esecuzione della subroutine dovrebbe essere 
+inferiore al tempo dell'intervallo indicato, altrimenti le temporizzazioni 
+del programma principale ne risentiranno. 
 
-@example EVERY period TICKS GOSUB updateGameStatus
+Dopo essere entrati nella subroutine, il sistema disabilita la chiamata
+periodica. Ciò significa che, per richiamare questa funzione in modo continuo,
+è necessario invocare il comando ''EVERY ON'' prima dell'istruzione ''RETURN'' finale.
+
+@syntax EVERY [timing] TICKS GOSUB [identifier]
+
+@example EVERY 50 TICKS GOSUB changeBorderColor
+@usedInExample control_by_expression_02.bas
 
 @target c64
 </usermanual> */
