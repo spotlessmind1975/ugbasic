@@ -48,7 +48,7 @@
  * @param _label 
  */
 /* <usermanual>
-@keyword EVERY...GOSUB...
+@keyword EVERY...GOSUB
 
 @english
 Define the call of a sub-routine at regular intervals, without 
@@ -78,7 +78,7 @@ periodica. Ciò significa che, per richiamare questa funzione in modo continuo,
 @syntax EVERY [timing] TICKS GOSUB [identifier]
 
 @example EVERY 50 TICKS GOSUB changeBorderColor
-@usedInExample control_by_expression_02.bas
+@usedInExample control_periodic_01.bas
 
 @target c64
 </usermanual> */

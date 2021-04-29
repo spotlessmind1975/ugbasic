@@ -67,7 +67,7 @@ jumps directly to the statement following the corresponding
 code will be executed (up to ''ENDIF'' or ''ELSE'').
 
 @italian
-Implementa il salto condizionale. Questa implementazione presuppone che
+Implementa il salto condizionato. Questa implementazione presuppone che
 un'espressione passata come parametro è 0 (per falso) e non
 zero (per vero). In questo caso, se l'espressione è zero, esso
 salta direttamente all'istruzione che segue il corrispondente
@@ -75,8 +75,18 @@ salta direttamente all'istruzione che segue il corrispondente
 verrà eseguito il codice seguente (fino a ''ENDIF'').
 
 @syntax IF [ expression ] THEN : ... : { ELSE : ... : } ENDIF
+@syntax IF [ expression ] THEN : ... : { ELSEIF : ... : { ELSEIF : ... : } } ELSE : ... : ENDIF
 
 @example IF ( x == 42 ) THEN : x = 0 : ELSE : x = 1 : ENDIF
+@example IF ( x == 42 ) THEN : x = 0 : ELSE IF y == 0 THEN : y = 42 : ELSE : x = 1 : ENDIF
+@example IF ( x == 42 ) THEN
+@example   x = 0
+@example ELSE IF y == 0 THEN
+@example   y = 42
+@example ELSE
+@example   x = 1
+@example ENDIF
+
 @usedInExample control_returning_01.bas
 @usedInExample control_returning_02.bas
 @usedInExample control_popping_91.bas
@@ -110,10 +120,10 @@ void if_then( Environment * _environment, char * _expression ) {
 }
 
 /**
- * @brief Emit ASM code for <b>... ELSE ...</b>
+ * @brief Emit ASM code for <b>... ELSE [IF] ...</b>
  * 
  * This function outputs the code to implement the alternative for a
- * conditional jump.
+ * conditional if.
  * 
  * @param _environment Current calling environment
  * @param _expression Expression with the true / false condition
@@ -122,7 +132,6 @@ void else_if_then( Environment * _environment, char * _expression ) {
 
     outline1( "; IF %s THEN ... ELSE ...", _expression);
 
-    // TODO: Better management of conditional types and missing
     Conditional * conditional = _environment->conditionals;
 
     if ( ! conditional ) {
@@ -172,7 +181,6 @@ void else_if_then( Environment * _environment, char * _expression ) {
  */
 void end_if_then( Environment * _environment ) {
 
-    // TODO: Better management of conditional types and missing
     Conditional * conditional = _environment->conditionals;
 
     if ( ! conditional ) {
