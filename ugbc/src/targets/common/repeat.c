@@ -47,17 +47,30 @@
  * @param _environment Current calling environment
  */
 /* <usermanual>
-@keyword REPEAT ... UNTIL
+@keyword REPEAT...UNTIL
 
 @english
-Implement an conditional loop. 
+This instruction define a conditional loop, or a list of statements that will be executed
+until an expression is true. ''REPEAT'' acts as the starting position while ''UNTIL'' 
+as the ending one. This command provides a convenient way of making the program repeat 
+a group of instructions all the time a particular condition is false. The condition is
+checked again at ending of every turn of the loop, until it is no longer false. 
 
 @italian
-Implementa un loop condizionato.
+Questa istruzione definisce un ciclo condizionale o un elenco di istruzioni che verranno eseguite
+mentre fino a che un'espressione diventa vera. ''REPEAT'' funge da posizione di partenza del loop mentre ''UNTIL''
+come quello di fine. Questo comando fornisce un modo conveniente per ripetere un gruppo
+di istruzioni per tutto il tempo nel quale una particolare condizione è falsa. La condizione è
+controllata di nuovo ad ogni ciclo, fino a quando non è più vera.
 
-@syntax REPEAT ... UNTIL [expression]
+@syntax REPEAT [expression] : ... : UNTIL
+@syntax REPEAT [expression]
+@syntax   ...
+@syntax UNTIL
 
-@example REPEAT ... UNTIL 
+@example REPEAT score = score + 1 : UNTIL NOT alive
+
+@usedInExample control_loops_05.bas
 
 @target all
 </usermanual> */
@@ -89,7 +102,6 @@ void begin_repeat( Environment * _environment ) {
  */
 void end_repeat( Environment * _environment, char * _expression ) {
 
-    // TODO: Better management of conditional types and missing
     Loop * loop = _environment->loops;
 
     if ( ! loop ) {

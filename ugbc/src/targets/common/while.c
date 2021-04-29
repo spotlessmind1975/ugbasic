@@ -48,20 +48,34 @@
  * @param _expression Expression to evaluate
  */
 /* <usermanual>
-@keyword WHILE [expression] ... WEND
+@keyword WHILE...WEND
 
 @english
-Implement an conditional loop. 
+This instruction define a conditional loop, or a list of statements that will be executed
+while an expression is true. ''WHILE'' acts as the starting position while ''WEND'' 
+as the ending one. This command provides a convenient way of making the program repeat 
+a group of instructions all the time a particular condition is true. The condition is
+checked again at every turn of the loop, until it is no longer true. 
 
 @italian
-Implementa un loop condizionato.
+Questa istruzione definisce un ciclo condizionale o un elenco di istruzioni che verranno eseguite
+mentre un'espressione è vera. ''WHILE'' funge da posizione di partenza del loop mentre ''WEND''
+come quello di fine. Questo comando fornisce un modo conveniente per ripetere un gruppo
+di istruzioni per tutto il tempo nel quale una particolare condizione è vera. La condizione è
+controllata di nuovo ad ogni ciclo, fino a quando non è più vera.
 
-@syntax WHILE [expression] ... WEND
+@syntax WHILE [expression] : ... : WEND
+@syntax WHILE [expression]
+@syntax   ...
+@syntax WEND
 
-@example WHILE lives ... WEND
+@example WHILE alive : score = score + 1 : WEND
+
+@usedInExample control_loops_04.bas
 
 @target all
 </usermanual> */
+
 void begin_while( Environment * _environment ) {
 
     outline0( "; WHILE ... ");
@@ -112,7 +126,6 @@ void begin_while_condition( Environment * _environment, char * _expression ) {
  */
 void end_while( Environment * _environment ) {
 
-    // TODO: Better management of conditional types and missing
     Loop * loop = _environment->loops;
 
     if ( ! loop ) {
