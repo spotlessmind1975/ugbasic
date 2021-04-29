@@ -107,7 +107,7 @@ void on_goto_index( Environment * _environment, char * _label ) {
 
     Variable * expression = variable_retrieve( _environment, conditional->expression->name );
 
-    cpu_bveq( _environment, variable_compare( _environment, expression->name, index->name )->name, _label );
+    cpu_bveq( _environment, variable_compare( _environment, expression->name, index->name )->realName, _label );
 
     ++conditional->index;
 
@@ -215,7 +215,7 @@ void on_gosub_index( Environment * _environment, char * _label ) {
 
     char newLabel[16]; sprintf(newLabel, "%s%d", conditional->label, (conditional->index+1) );
 
-    cpu_bvneq( _environment, variable_compare( _environment, expression->name, index->name )->name, newLabel );
+    cpu_bveq( _environment, variable_compare( _environment, expression->name, index->name )->realName, newLabel );
 
     cpu_call( _environment, _label );
 

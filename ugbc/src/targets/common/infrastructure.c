@@ -872,22 +872,55 @@ Variable * variable_compare( Environment * _environment, char * _source, char * 
     if ( ! target ) {
         target = variable_find( _environment->variables, _destination );
     }
-    if ( ! source ) {
+    if ( ! target ) {
         CRITICAL("Destination variable does not exist");
     }
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of compare)" );
     switch( source->type ) {
         case VT_DWORD:
-            cpu_compare_32bit( _environment, source->realName, target->realName, result->realName, 1 );
+            switch( target->type ) {
+                case VT_DWORD:
+                    cpu_compare_32bit( _environment, source->realName, target->realName, result->realName, 1 );
+                    break;
+                case VT_ADDRESS:
+                case VT_POSITION:
+                case VT_WORD:
+                    cpu_compare_16bit( _environment, source->realName, target->realName, result->realName, 1 );
+                    break;
+                case VT_BYTE:
+                case VT_COLOR:
+                    cpu_compare_8bit( _environment, source->realName, target->realName, result->realName, 1 );
+                    break;
+            }
             break;
         case VT_ADDRESS:
         case VT_POSITION:
         case VT_WORD:
-            cpu_compare_16bit( _environment, source->realName, target->realName, result->realName, 1 );
+            switch( target->type ) {
+                case VT_DWORD:
+                case VT_ADDRESS:
+                case VT_POSITION:
+                case VT_WORD:
+                    cpu_compare_16bit( _environment, source->realName, target->realName, result->realName, 1 );
+                    break;
+                case VT_BYTE:
+                case VT_COLOR:
+                    cpu_compare_8bit( _environment, source->realName, target->realName, result->realName, 1 );
+                    break;
+            }
             break;
         case VT_BYTE:
         case VT_COLOR:
-            cpu_compare_8bit( _environment, source->realName, target->realName, result->realName, 1 );
+            switch( target->type ) {
+                case VT_DWORD:
+                case VT_ADDRESS:
+                case VT_POSITION:
+                case VT_WORD:
+                case VT_BYTE:
+                case VT_COLOR:
+                    cpu_compare_8bit( _environment, source->realName, target->realName, result->realName, 1 );
+                    break;
+            }
             break;
     }
     return result;
@@ -921,22 +954,55 @@ Variable * variable_compare_not( Environment * _environment, char * _source, cha
     if ( ! target ) {
         target = variable_find( _environment->variables, _destination );
     }
-    if ( ! source ) {
+    if ( ! target ) {
         CRITICAL("Destination variable does not exist");
     }
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of compare)" );
     switch( source->type ) {
         case VT_DWORD:
-            cpu_compare_32bit( _environment, source->realName, target->realName, result->realName, 0 );
+            switch( target->type ) {
+                case VT_DWORD:
+                    cpu_compare_32bit( _environment, source->realName, target->realName, result->realName, 0 );
+                    break;
+                case VT_ADDRESS:
+                case VT_POSITION:
+                case VT_WORD:
+                    cpu_compare_16bit( _environment, source->realName, target->realName, result->realName, 0 );
+                    break;
+                case VT_BYTE:
+                case VT_COLOR:
+                    cpu_compare_8bit( _environment, source->realName, target->realName, result->realName, 0 );
+                    break;
+            }
             break;
         case VT_ADDRESS:
         case VT_POSITION:
         case VT_WORD:
-            cpu_compare_16bit( _environment, source->realName, target->realName, result->realName, 0 );
+            switch( target->type ) {
+                case VT_DWORD:
+                case VT_ADDRESS:
+                case VT_POSITION:
+                case VT_WORD:
+                    cpu_compare_16bit( _environment, source->realName, target->realName, result->realName, 0 );
+                    break;
+                case VT_BYTE:
+                case VT_COLOR:
+                    cpu_compare_8bit( _environment, source->realName, target->realName, result->realName, 0 );
+                    break;
+            }
             break;
         case VT_BYTE:
         case VT_COLOR:
-            cpu_compare_8bit( _environment, source->realName, target->realName, result->realName, 0 );
+            switch( target->type ) {
+                case VT_DWORD:
+                case VT_ADDRESS:
+                case VT_POSITION:
+                case VT_WORD:
+                case VT_BYTE:
+                case VT_COLOR:
+                    cpu_compare_8bit( _environment, source->realName, target->realName, result->realName, 0 );
+                    break;
+            }
             break;
     }
     return result;
