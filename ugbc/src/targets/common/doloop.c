@@ -47,20 +47,28 @@
  * @param _environment Current calling environment
  */
 /* <usermanual>
-@keyword DO ... LOOP
+@keyword DO...LOOP
 
 @english
-Implement an unconditional loop. The ''DO'' instruction defines the starting 
-point of the loop, while the ''LOOP'' instruction defines the end point.
+This instruction define a loop, or a list of statements that will be executed forever.
+''DO'' acts as the starting position while ''LOOP'' the endig one.
 
 @italian
-Implementa un loop incondizionato. L'istruzione ''DO'' definisce il
-punto iniziale del loop, mentre la parola chiave ''LOOP' definisce il
-punto finale.
+Questa istruzione definisce un "loop" cioè un elenco di istruzioni che saranno
+eseguite per sempre. La parola chiave ''DO'' indica il punto di innesto del
+loop mentre la parola ''LOOP'' l'ultima istruzione del loop.
 
-@syntax DO ... LOOP
+@syntax DO : ... : LOOP
+@syntax DO
+@syntax   ...
+@syntax LOOP
 
 @example DO : x = x + 1 : LOOP
+@usedInExample control_loops_01.bas
+@usedInExample control_loops_02.bas
+@usedInExample control_loops_03.bas
+@usedInExample control_loops_04.bas
+@usedInExample control_loops_05.bas
 
 @target all
 </usermanual> */
@@ -90,7 +98,6 @@ void begin_loop( Environment * _environment ) {
  */
 void end_loop( Environment * _environment ) {
 
-    // TODO: Better management of conditional types and missing
     Loop * loop = _environment->loops;
 
     if ( ! loop ) {
@@ -124,16 +131,45 @@ void end_loop( Environment * _environment ) {
 @keyword EXIT
 
 @english
-Exits from a ''DO...LOOP''. Optionally, you can
-give a number that represent the number of loops to jump out.
+The instruction forces the program to leave a loop immediately, and it can 
+be used to escape from all the types of loop, such as ''FOR...NEXT'', 
+''REPEAT...UNTIL'', ''WHILE...WEND'' and ''DO...LOOP''.
+
+When used on its own, ''EXIT'' will short-circuit the innermost loop only. 
+By including a number after EXIT, that number of nested loops will be taken 
+into account before the ''EXIT'' is made.
+
+If you need to leave a loop as a result of a specific set of conditions, 
+this can be made by using the ''EXIT IF'' instruction. The ''EXIT'' will 
+only be performed ''IF'' the result is found to true. 
+
+Finally, an optional number can be given to specify the number of loops 
+to be jumped out, otherwise only the current loop will be aborted.
 
 @italian
-Esce da un loop incondizionato. Opzionalmente, può essere dato
-un numero che rappresenta il numero di loop da cui uscire.
+Questa istruzione forza il programma ad abbandonare immediatamente un 
+ciclo e può essere usato per uscire da tutti i tipi di loop, come 
+''FOR...NEXT'', ''REPEAT...UNTIL'', ''WHILE...WEND'' e ''DO...LOOP''.
+
+Se usato da solo, ''EXIT'' uscità solo dal loop più interno.
+Includendo un numero dopo ''EXIT'', si uscirà da quel numero di 
+cicli annidati.
+
+Se è necessario abbandonare un ciclo in base a delle condizioni,
+può essere utile l'istruzione ''EXIT IF'': tale istruzione uscirà
+(''EXIT'') solo se se (''IF'') il risultato viene valutato come vero.
+
+Infine, può essere fornito un numero opzionale per specificare il numero di loop
+da cui uscire, altrimenti verrà interrotto solo il loop più interno.
 
 @syntax EXIT { [number] }
+@syntax EXIT IF [expression]{, [number] }
 
 @example EXIT 2
+@example EXIT IF lifes == 0, 2
+
+@usedInExample control_loops_02.bas
+@usedInExample control_loops_03.bas
 
 @target all
 </usermanual> */
@@ -141,7 +177,6 @@ void exit_loop( Environment * _environment, int _number ) {
 
     outline1( "; EXIT %d", _number );
 
-    // TODO: Better management of conditional types and missing
     Loop * loop = _environment->loops;
 
     if ( ! loop ) {
@@ -176,29 +211,10 @@ void exit_loop( Environment * _environment, int _number ) {
  * @param _expression Expression to check
  * @param _number Number of loops to exit.
  */
-/* <usermanual>
-@keyword EXIT IF
-
-@english
-Exits from a ''DO...LOOP'' on condition. Optionally, you can
-give a number that represent the number of loops to jump out.
-
-@italian
-Esce da un loop incondizionato in base a una condizione. 
-Opzionalmente, può essere dato un numero che rappresenta 
-il numero di loop da cui uscire.
-
-@syntax EXIT IF [expression] {,  [number] }
-
-@example EXIT 2
-
-@target all
-</usermanual> */
 void exit_loop_if( Environment * _environment, char * _expression, int _number ) {
 
     outline2( "; EXIT IF %s, %d", _expression, _number );
 
-    // TODO: Better management of conditional types and missing
     Loop * loop = _environment->loops;
 
     if ( ! loop ) {

@@ -48,17 +48,40 @@
  * @param _expression Expression to evaluate
  */
 /* <usermanual>
-@keyword FOR ... NEXT
+@keyword FOR...NEXT
 
 @english
-Implement an conditional loop. 
+This instruction implements a loop with explicit number of times to repeat.
+Each ''FOR'' statement must be matched by a single ''NEXT'', and pairs of ''FOR...NEXT'' 
+loops can be nested inside one another. Each loop repeats a list of 
+instructions for a specific number of times, governed by an index which 
+counts the number of times the loop is repeated. Once inside the loop, 
+this index can be read by the program as if it is a normal variable.
+
+Normally, the index counter is increased by 1 unit at every turn of a 
+''FOR...NEXT'' loop. When the current value exceeds that of the last 
+number specified, the loop is terminated. ''STEP'' is used to 
+change the size of increase in the index value.
 
 @italian
-Implementa un loop condizionato.
+Questa istruzione implementa un ciclo con un numero di ripetizioni indicato
+esplicitamente. Ogni istruzione ''FOR'' deve essere abbinata a una singola
+istruzione ''NEXT'' e le coppie di cicli ''FOR...NEXT'' possono essere 
+annidate l'una nell'altra. Ogni ciclo ripete un elenco di istruzioni per 
+un numero specifico di volte, governato da un indice che conta il numero 
+di volte che il ciclo viene ripetuto. Una volta all'interno del ciclo,
+questo indice può essere letto dal programma come se fosse una normale variabile.
 
-@syntax FOR [identifier] = [expression] TO [expression] { STEP [expression] }
+Normalmente, il contatore dell'indice viene incrementato di uno ad ogni 
+ciclo. Quando il valore attuale supera quello dell'ultimo numero specificato, 
+il ciclo si intende terminato. L'istruzione ''STEP'' può essere sfruttata
+per modificare la dimensione dell'incremento del valore dell'indice.
 
-@example FOR levels = 1 to 10 STEP 2
+@syntax FOR [identifier] = [expression] TO [expression] { STEP [expression] } : ... : NEXT
+
+@example i = 0 : FOR i = 1 to 100 STEP 2: DEBUG i : NEXT
+@usedInExample control_controlled_01.bas
+@usedInExample control_controlled_02.bas
 
 @target all
 </usermanual> */
@@ -109,21 +132,6 @@ void begin_for( Environment * _environment, char * _index, char * _from, char * 
  * @param _environment Current calling environment
  * @param _expression Expression to evaluate
  */
-/* <usermanual>
-@keyword FOR ... NEXT
-
-@english
-Implement an conditional loop. 
-
-@italian
-Implementa un loop condizionato.
-
-@syntax FOR [identifier] = [expression] TO [expression] { STEP [expression] }
-
-@example FOR levels = 1 to 10 STEP 2
-
-@target all
-</usermanual> */
 void begin_for_step( Environment * _environment, char * _index, char * _from, char * _to, char * _step ) {
 
     outline0( "; FOR ... ");
@@ -168,7 +176,6 @@ void begin_for_step( Environment * _environment, char * _index, char * _from, ch
  */
 void end_for( Environment * _environment ) {
 
-    // TODO: Better management of conditional types and missing
     Loop * loop = _environment->loops;
 
     if ( ! loop ) {
