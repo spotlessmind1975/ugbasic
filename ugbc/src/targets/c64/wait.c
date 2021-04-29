@@ -51,15 +51,15 @@
 
 @english
 Engages the CPU in a wait. The timing can be given as
-number of CPU cycles (''CYCLES''), number of 50th/seconds (''TICKS''),
-milliseconds (''MILLISECONDS'' or ''MS'') or seconds (''SECONDS'' or ''S'').
+number of CPU cycles (''CYCLES''), number of 50th/seconds (''TICKS'')
+or milliseconds (''MILLISECONDS'' or ''MS'').
 
 @italian
 Impiega la CPU in una attesa. Il tempo può essere espresso
 come numero di cicli CPU (''CYCLES''), numero di 50th/seconds (''TICKS''),
-millisecondi (''MILLISECONDS'' oppure ''MS'') o secondi (''SECONDS'' or ''S'')
+o millisecondi (''MILLISECONDS'' oppure ''MS'').
 
-@syntax WAIT [delay] [CYCLES|TICKS|MILLISECONDS|SECONDS]
+@syntax WAIT [delay] [CYCLES|TICKS|MILLISECONDS]
 
 @example WAIT #42 CYCLES
 @usedInExample control_uncond_jumps_01.bas
