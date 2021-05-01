@@ -264,9 +264,6 @@ expression:
     | HIT OP expressions CP {
         $$ = collision_to_vars( _environment, $3 )->name;
       }      
-    | LEFT OP expressions COMMA expressions CP {
-        $$ = string_left( _environment, $3, $5 )->name;
-      }      
     | RANDOM random_definition {
         $$ = $2;
     }
