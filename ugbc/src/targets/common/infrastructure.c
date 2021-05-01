@@ -45,9 +45,9 @@ char BANK_TYPE_AS_STRING[][16] = {
     "CODE", 
     "VARIABLES",
     "TEMPORARY",
-    "DATA"
+    "DATA",
+    "STRINGS"
 };
-
 
 static Bank * bank_find( Bank * _first, char * _name ) {
     Bank * actual = _first;
@@ -417,6 +417,9 @@ Variable * variable_cast( Environment * _environment, char * _source, VariableTy
                 case VT_DWORD:
                     cpu_move_16bit( _environment, source->realName, target->realName );
                     break;
+                case VT_STRING:
+                    CRITICAL("Cannot cast from ADDRESS to STRING.");
+                    break;
             }
             break;
         case VT_DWORD:
@@ -439,6 +442,9 @@ Variable * variable_cast( Environment * _environment, char * _source, VariableTy
                 case VT_DWORD:
                     cpu_move_32bit( _environment, source->realName, target->realName );
                     break;
+                case VT_STRING:
+                    CRITICAL("Cannot cast from DWORD to STRING.");
+                    break;
             }
             break;
         case VT_BYTE:
@@ -450,6 +456,9 @@ Variable * variable_cast( Environment * _environment, char * _source, VariableTy
                 case VT_COLOR:
                 case VT_DWORD:
                     cpu_move_8bit( _environment, source->realName, target->realName );
+                    break;
+                case VT_STRING:
+                    CRITICAL("Cannot cast from BYTE to STRING.");
                     break;
             }
             break;
@@ -475,6 +484,9 @@ Variable * variable_cast( Environment * _environment, char * _source, VariableTy
                 case VT_DWORD:
                     cpu_move_16bit( _environment, source->realName, target->realName );
                     break;
+                case VT_STRING:
+                    CRITICAL("Cannot cast from WORD to STRING.");
+                    break;
             }
             break;
         case VT_POSITION:
@@ -499,6 +511,9 @@ Variable * variable_cast( Environment * _environment, char * _source, VariableTy
                 case VT_DWORD:
                     cpu_move_16bit( _environment, source->realName, target->realName );
                     break;
+                case VT_STRING:
+                    CRITICAL("Cannot cast from POSITION to STRING.");
+                    break;
             }
             break;
         case VT_COLOR:
@@ -510,6 +525,34 @@ Variable * variable_cast( Environment * _environment, char * _source, VariableTy
                 case VT_COLOR:
                 case VT_DWORD:
                     cpu_move_8bit( _environment, source->realName, target->realName );
+                    break;
+                case VT_STRING:
+                    CRITICAL("Cannot cast from COLOR to STRING.");
+                    break;
+            }
+            break;
+        case VT_STRING:
+            switch( target->type ) {
+                case VT_ADDRESS:
+                    CRITICAL("Cannot cast from STRING to ADDRESS.");
+                    break;
+                case VT_BYTE:
+                    CRITICAL("Cannot cast from STRING to BYTE.");
+                    break;
+                case VT_WORD:
+                    CRITICAL("Cannot cast from STRING to WORD.");
+                    break;
+                case VT_POSITION:
+                    CRITICAL("Cannot cast from STRING to POSITION.");
+                    break;
+                case VT_COLOR:
+                    CRITICAL("Cannot cast from STRING to COLOR.");
+                    break;
+                case VT_DWORD:
+                    CRITICAL("Cannot cast from STRING to DWORD.");
+                    break;
+                case VT_STRING:
+                    // TODO 
                     break;
             }
             break;
@@ -553,6 +596,38 @@ Variable * variable_store( Environment * _environment, char * _destination, int 
         case VT_COLOR:
             cpu_store_8bit( _environment, destination->realName, _value );
             break;
+        case VT_STRING:
+            CRITICAL("Cannot store a direct value on STRING");;
+            break;
+    }
+    return destination;
+}
+
+Variable * variable_store_string( Environment * _environment, char * _destination, char * _value ) {
+    Variable * destination = variable_find( _environment->tempVariables, _destination );
+    if ( ! destination ) {
+        destination = variable_find( _environment->variables, _destination );
+        if ( ! destination ) {
+            CRITICAL( "Destination variable does not exists" );
+        }
+    }
+    switch( destination->type ) {
+        case VT_DWORD:
+        case VT_ADDRESS:
+        case VT_POSITION:
+        case VT_WORD:
+        case VT_BYTE:
+        case VT_COLOR:
+            CRITICAL("Cannot store a STRING on a numeric value");;
+            break;
+        case VT_STRING: {
+            char destinationAddress[16]; sprintf(destinationAddress, "%s+1", destination->realName );
+            destination->valueString = strdup( _value );
+            cpu_store_8bit( _environment, destination->realName, strlen( _value ) );
+            cpu_store_16bit( _environment, destinationAddress, _environment->valueStringOffset );
+            _environment->valueStringOffset += strlen( _value );
+            break;
+        }
     }
     return destination;
 }
@@ -598,6 +673,13 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
         case VT_COLOR:
             cpu_move_8bit( _environment, source->realName, target->realName );
             break;
+        case VT_STRING: {
+            char sourceAddress[16]; sprintf(sourceAddress, "%s+1", source->realName );
+            char destinationAddress[16]; sprintf(destinationAddress, "%s+1", target->realName );
+            cpu_move_8bit( _environment, source->realName, target->realName );
+            cpu_move_16bit( _environment, sourceAddress, destinationAddress );
+            break;
+        }
     }
     return target;
 }
@@ -646,6 +728,13 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
         case VT_COLOR:
             cpu_move_8bit( _environment, source->realName, target->realName );
             break;
+        case VT_STRING: {
+            char sourceAddress[16]; sprintf(sourceAddress, "%s+1", source->realName );
+            char destinationAddress[16]; sprintf(destinationAddress, "%s+1", target->realName );
+            cpu_move_8bit( _environment, source->realName, target->realName );
+            cpu_move_16bit( _environment, sourceAddress, destinationAddress );
+            break;
+        }
     }
     return source;
 }
@@ -692,6 +781,15 @@ Variable * variable_add( Environment * _environment, char * _source, char * _des
         case VT_COLOR:
             cpu_math_add_8bit( _environment, source->realName, target->realName, result->realName );
             break;
+        case VT_STRING: {
+            char sourceAddress[16]; sprintf(sourceAddress, "%s+1", source->realName );
+            char destinationAddress[16]; sprintf(destinationAddress, "%s+1", target->realName );
+            char resultAddress[16]; sprintf(resultAddress, "%s+1", result->realName );
+            cpu6502_math_add_8bit( _environment, sourceAddress, destinationAddress, resultAddress );
+            cpu_mem_move( _environment, sourceAddress, resultAddress, source->realName );
+            cpu_mem_move_displacement( _environment, sourceAddress, resultAddress, source->realName, target->realName );
+            break;
+        }
     }
     return result;
 }
@@ -738,6 +836,10 @@ Variable * variable_sub( Environment * _environment, char * _source, char * _des
         case VT_COLOR:
             cpu_math_sub_8bit( _environment, source->realName, target->realName, result->realName );
             break;
+        case VT_STRING:
+            CRITICAL("Cannot subtract STRINGS!");
+            break;
+
      }
     return result;
 }
@@ -779,6 +881,9 @@ Variable * variable_complement_const( Environment * _environment, char * _destin
         case VT_COLOR:
             cpu_math_complement_const_8bit( _environment, destination->realName, _value );
             break;
+        case VT_STRING:
+            CRITICAL("Cannot calculate a complement of a STRING");
+            break;
      }
     return destination;
 }
@@ -814,29 +919,20 @@ Variable * variable_mul( Environment * _environment, char * _source, char * _des
     Variable * result = NULL;
     switch( source->type ) {
         case VT_DWORD:
-            fprintf(stderr, "ERROR!");
+            CRITICAL("Cannot calculate multiplication of DWORD variables");
+            break;
+        case VT_STRING:
+            CRITICAL("Cannot calculate multiplication of STRING variables");
             break;
         case VT_ADDRESS:
         case VT_POSITION:
         case VT_WORD:
             result = variable_temporary( _environment, VT_DWORD, "(result of multiplication)" );
-            break;
-        case VT_BYTE:
-        case VT_COLOR:
-            result = variable_temporary( _environment, VT_WORD, "(result of multiplication)" );
-            break;
-    }
-    switch( source->type ) {
-        case VT_DWORD:
-            fprintf(stderr, "ERROR!");
-            break;
-        case VT_ADDRESS:
-        case VT_POSITION:
-        case VT_WORD:
             cpu_math_mul_16bit_to_32bit( _environment, source->realName, target->realName, result->realName );
             break;
         case VT_BYTE:
         case VT_COLOR:
+            result = variable_temporary( _environment, VT_WORD, "(result of multiplication)" );
             cpu_math_mul_8bit_to_16bit( _environment, source->realName, target->realName, result->realName );
             break;
     }
@@ -891,6 +987,9 @@ Variable * variable_compare( Environment * _environment, char * _source, char * 
                 case VT_COLOR:
                     cpu_compare_8bit( _environment, source->realName, target->realName, result->realName, 1 );
                     break;
+                case VT_STRING:
+                    CRITICAL("Cannot compare DWORD with STRING");
+                    break;
             }
             break;
         case VT_ADDRESS:
@@ -907,6 +1006,9 @@ Variable * variable_compare( Environment * _environment, char * _source, char * 
                 case VT_COLOR:
                     cpu_compare_8bit( _environment, source->realName, target->realName, result->realName, 1 );
                     break;
+                case VT_STRING:
+                    CRITICAL("Cannot compare ADDRESS/POSITION/WORD with STRING");
+                    break;
             }
             break;
         case VT_BYTE:
@@ -920,6 +1022,43 @@ Variable * variable_compare( Environment * _environment, char * _source, char * 
                 case VT_COLOR:
                     cpu_compare_8bit( _environment, source->realName, target->realName, result->realName, 1 );
                     break;
+                case VT_STRING:
+                    CRITICAL("Cannot compare BYTE/COLOR with STRING");
+                    break;
+            }
+            break;
+        case VT_STRING:
+            switch( target->type ) {
+                case VT_DWORD:
+                    CRITICAL("Cannot compare STRING with DWORD");
+                    break;
+                case VT_ADDRESS:
+                    CRITICAL("Cannot compare STRING with DWORD");
+                    break;
+                case VT_POSITION:
+                    CRITICAL("Cannot compare STRING with POSITION");
+                    break;
+                case VT_WORD:
+                    CRITICAL("Cannot compare STRING with WORD");
+                    break;
+                case VT_BYTE:
+                    CRITICAL("Cannot compare STRING with BYTE");
+                    break;
+                case VT_COLOR:
+                    CRITICAL("Cannot compare STRING with COLOR");
+                    break;
+                case VT_STRING: {
+                    
+                    MAKE_LABEL
+
+                    char sourceAddress[16]; sprintf(sourceAddress, "%s+1", source->realName );
+                    char destinationAddress[16]; sprintf(destinationAddress, "%s+1", target->realName );
+                    cpu_compare_8bit( _environment, source->realName, target->realName, result->realName, 1 );
+                    cpu_bveq( _environment, result->realName, label );
+                    cpu_compare_memory( _environment, sourceAddress, destinationAddress, source->realName, result->realName, 1 );
+                    cpu_label( _environment, label );
+                    break;
+                }
             }
             break;
     }
@@ -973,6 +1112,9 @@ Variable * variable_compare_not( Environment * _environment, char * _source, cha
                 case VT_COLOR:
                     cpu_compare_8bit( _environment, source->realName, target->realName, result->realName, 0 );
                     break;
+                case VT_STRING:
+                    CRITICAL("Cannot compare DWORD with STRING");
+                    break;
             }
             break;
         case VT_ADDRESS:
@@ -989,6 +1131,9 @@ Variable * variable_compare_not( Environment * _environment, char * _source, cha
                 case VT_COLOR:
                     cpu_compare_8bit( _environment, source->realName, target->realName, result->realName, 0 );
                     break;
+                case VT_STRING:
+                    CRITICAL("Cannot compare ADDRESS/POSITION/WORD with STRING");
+                    break;
             }
             break;
         case VT_BYTE:
@@ -1002,6 +1147,43 @@ Variable * variable_compare_not( Environment * _environment, char * _source, cha
                 case VT_COLOR:
                     cpu_compare_8bit( _environment, source->realName, target->realName, result->realName, 0 );
                     break;
+                case VT_STRING:
+                    CRITICAL("Cannot compare BYTE/COLOR with STRING");
+                    break;
+            }
+            break;
+        case VT_STRING:
+            switch( target->type ) {
+                case VT_DWORD:
+                    CRITICAL("Cannot compare STRING with DWORD");
+                    break;
+                case VT_ADDRESS:
+                    CRITICAL("Cannot compare STRING with DWORD");
+                    break;
+                case VT_POSITION:
+                    CRITICAL("Cannot compare STRING with POSITION");
+                    break;
+                case VT_WORD:
+                    CRITICAL("Cannot compare STRING with WORD");
+                    break;
+                case VT_BYTE:
+                    CRITICAL("Cannot compare STRING with BYTE");
+                    break;
+                case VT_COLOR:
+                    CRITICAL("Cannot compare STRING with COLOR");
+                    break;
+                case VT_STRING: {
+
+                    MAKE_LABEL
+
+                    char sourceAddress[16]; sprintf(sourceAddress, "%s+1", source->realName );
+                    char destinationAddress[16]; sprintf(destinationAddress, "%s+1", target->realName );
+                    cpu_compare_8bit( _environment, source->realName, target->realName, result->realName, 0 );
+                    cpu_bveq( _environment, result->realName, label );
+                    cpu_compare_memory( _environment, sourceAddress, destinationAddress, source->realName, result->realName, 0 );
+                    cpu_label( _environment, label );
+                    break;
+                }
             }
             break;
     }
@@ -1044,6 +1226,9 @@ Variable * variable_mul2_const( Environment * _environment, char * _destination,
         case VT_COLOR:
             cpu_math_mul2_const_8bit( _environment, destination->realName, _steps );
             break;
+        case VT_STRING:
+            CRITICAL("Cannot multiplicate a STRING by 2");
+            break;
     }
     return destination;
 }
@@ -1085,6 +1270,9 @@ Variable * variable_div2_const( Environment * _environment, char * _destination,
         case VT_COLOR:
             cpu_math_div2_const_8bit( _environment, destination->realName, _bits );
             break;
+        case VT_STRING:
+            CRITICAL("Cannot divide a STRING by 2");
+            break;
     }
     return destination;
 }
@@ -1125,6 +1313,9 @@ Variable * variable_and_const( Environment * _environment, char * _destination, 
         case VT_BYTE:
         case VT_COLOR:
             cpu_math_and_const_8bit( _environment, destination->realName, _mask );
+            break;
+        case VT_STRING:
+            CRITICAL("Cannot make an \"and\" with a STRING");
             break;
     }
     return destination;
@@ -1234,6 +1425,18 @@ Variable * variable_less_than( Environment * _environment, char * _source, char 
         case VT_COLOR:
             cpu_less_than_8bit( _environment, source->realName, target->realName, result->realName, _equal );
             break;
+        case VT_STRING: {
+
+            MAKE_LABEL
+
+            char sourceAddress[16]; sprintf(sourceAddress, "%s+1", source->realName );
+            char destinationAddress[16]; sprintf(destinationAddress, "%s+1", target->realName );
+            cpu_less_than_8bit( _environment, source->realName, target->realName, result->realName, _equal );
+            cpu_bveq( _environment, result->realName, label );
+            cpu_less_than_memory( _environment, sourceAddress, destinationAddress, source->realName, result->realName, _equal );
+            cpu_label( _environment, label );
+            break;
+        }
     }
     return result;
 }
@@ -1284,6 +1487,18 @@ Variable * variable_greater_than( Environment * _environment, char * _source, ch
         case VT_COLOR:
             cpu_greater_than_8bit( _environment, source->realName, target->realName, result->realName, _equal );
             break;
+        case VT_STRING: {
+            
+            MAKE_LABEL
+
+            char sourceAddress[16]; sprintf(sourceAddress, "%s+1", source->realName );
+            char destinationAddress[16]; sprintf(destinationAddress, "%s+1", target->realName );
+            cpu_greater_than_8bit( _environment, source->realName, target->realName, result->realName, _equal );
+            cpu_bveq( _environment, result->realName, label );
+            cpu_greater_than_memory( _environment, sourceAddress, destinationAddress, source->realName, result->realName, _equal );
+            cpu_label( _environment, label );
+            break;
+        }
     }
     return result;
 }

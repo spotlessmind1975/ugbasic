@@ -73,6 +73,9 @@ void variable_cleanup( Environment * _environment ) {
                         case VT_DWORD:
                             outline1("%s: .res 4", variable->realName);
                             break;
+                        case VT_STRING:
+                            outline1("%s: .res 3", variable->realName);
+                            break;
                     }
                     variable = variable->next;
                 }
@@ -98,6 +101,29 @@ void variable_cleanup( Environment * _environment ) {
                             break;
                         case VT_DWORD:
                             outline1("%s: .res 4", variable->realName);
+                            break;
+                        case VT_STRING:
+                            outline1("%s: .res 3", variable->realName);
+                            break;
+                    }
+                    variable = variable->next;
+                }
+            } else if ( actual->type == BT_STRINGS ) {
+                cfgline3("# BANK %s %s AT $%4.4x", BANK_TYPE_AS_STRING[actual->type], actual->name, actual->address);
+                cfgline2("%s:   load = MAIN,     type = ro,  optional = yes, start = $%4.4x;", actual->name, actual->address);
+                outhead1(".segment \"%s\"", actual->name);
+                Variable * variable = _environment->tempVariables;
+                while( variable ) {
+                    switch( variable->type ) {
+                        case VT_BYTE:
+                        case VT_COLOR:
+                        case VT_WORD:
+                        case VT_POSITION:
+                        case VT_ADDRESS:
+                        case VT_DWORD:
+                            break;
+                        case VT_STRING:
+                            outline2("%s_static: .db \"%s\"", variable->realName, variable->valueString);
                             break;
                     }
                     variable = variable->next;

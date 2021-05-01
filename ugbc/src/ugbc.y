@@ -209,6 +209,10 @@ expression:
         $$ = variable_temporary( _environment, VT_WORD, "(integer value)" )->name;
         variable_store( _environment, $$, $1 );
       }
+    | String { 
+        $$ = variable_temporary( _environment, VT_STRING, "(string value)" )->name;
+        variable_store_string( _environment, $$, $1 );
+      }
     | OP BYTE CP Integer { 
         $$ = variable_temporary( _environment, VT_BYTE, "(BYTE value)" )->name;
         variable_store( _environment, $$, $4 );

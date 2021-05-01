@@ -100,6 +100,10 @@ void z80_random_8bit( Environment * _environment, char * _seed, char * _entropy,
 void z80_store_16bit( Environment * _environment, char *_source, int _value );
 void z80_store_32bit( Environment * _environment, char *_source, int _value );
 void z80_store_8bit( Environment * _environment, char *_source, int _value );
+void z80_mem_move_displacement(  Environment * _environment, char *_source, char *_destination, char * _displacement, char *_size );
+void z80_compare_memory(  Environment * _environment, char *_source, char *_destination, char * _displacement, char *_size, char * _result, int _equal );
+void z80_less_than_memory(  Environment * _environment, char *_source, char *_destination, char * _displacement, char *_size, char * _result, int _equal );
+void z80_greater_than_memory(  Environment * _environment, char *_source, char *_destination, char * _displacement, char *_size, char * _result, int _equal );
 
 #define cpu_beq( _environment,  _label  ) z80_beq( _environment,  _label  )
 #define cpu_bneq( _environment,  _label  ) z80_beq( _environment,  _label  )
@@ -167,5 +171,9 @@ void z80_store_8bit( Environment * _environment, char *_source, int _value );
 #define cpu_store_16bit( _environment, _source, _value  ) z80_store_16bit( _environment, _source, _value  )
 #define cpu_store_32bit( _environment, _source, _value  ) z80_store_32bit( _environment, _source, _value  )
 #define cpu_store_8bit( _environment, _source, _value  ) z80_store_8bit( _environment, _source, _value  )
+#define cpu_mem_move_displacement( _environment, _source, _destination, _displacement, _size ) z80_mem_move_displacement( _environment, _source, _destination, _displacement, _size )
+#define cpu_compare_memory( _environment, _source, _destination, _size, _result, _equal ) z80_compare_memory( _environment, _source, _destination, _size, _result, _equal )
+#define cpu_less_than_memory( _environment, _source, _destination, _displacement, _size, _result, _equal ) z80_less_than_memory( _environment, _source, _destination, _displacement, _size, _result, _equal )
+#define cpu_greater_than_memory( _environment, _source, _destination, _displacement, char *_size, char * _result, int _equal ) z80_greater_than_memory( _environment, _source, _destination, _size, _result, _equal )
 
 #endif

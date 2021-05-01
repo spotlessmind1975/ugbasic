@@ -114,7 +114,7 @@ void end_repeat( Environment * _environment, char * _expression ) {
 
     _environment->loops = _environment->loops->next;
 
-    Variable * expression = variable_retrieve( _environment, expression->name );
+    Variable * expression = variable_retrieve( _environment, _expression );
 
     cpu_bveq( _environment,  expression->realName, loop->label );
 

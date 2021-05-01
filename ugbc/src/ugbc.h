@@ -72,14 +72,17 @@ typedef enum _BankType {
     BT_TEMPORARY = 2,
 
     /** Generic (unknonw) data */
-    BT_DATA = 3
+    BT_DATA = 3,
+
+    /** Strings (static and dynamic) */
+    BT_STRINGS = 4
 
 } BankType;
 
 /**
  * @brief Maximum number of bank types
  */
-#define BANK_TYPE_COUNT   4
+#define BANK_TYPE_COUNT   5
 
 /**
  * @brief Structure of a single bank
@@ -127,9 +130,11 @@ typedef enum _VariableType {
     VT_POSITION = 3,
 
     /** Color index */
-    VT_COLOR = 4
+    VT_COLOR = 4,
 
-    // TODO: support for data type VT_STRING.
+    /** Strings (static or dynamic) */
+    VT_STRING = 6
+
     // TODO: support for arrays.
 } VariableType;
 
@@ -172,6 +177,11 @@ typedef struct _Variable {
      * The initial value of the variable, as given by last (re)definition.
      */
     int value;
+
+    /** 
+     * The initial value of the (string) variable, as given by last (re)definition.
+     */
+    char *valueString;
 
     /** 
      * Pointer to the bank where this variable belongs to.
@@ -365,6 +375,11 @@ typedef struct _Environment {
      * "Every" timing
      */
     Variable * everyTiming;
+
+    /** 
+     * The offset with the initial value of the (string) variable.
+     */
+    int valueStringOffset;
 
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
@@ -669,6 +684,7 @@ Variable * variable_cast( Environment * _environment, char * _source, VariableTy
 Variable * variable_temporary( Environment * _environment, VariableType _type, char * _meaning );
 void variable_cleanup( Environment * _Environment );
 Variable * variable_store( Environment * _environment, char * _source, int _value );
+Variable * variable_store_string( Environment * _environment, char * _source, char * _string );
 Variable * variable_move( Environment * _environment, char * _source, char * _dest );
 Variable * variable_move_naked( Environment * _environment, char * _source, char * _dest );
 Variable * variable_compare( Environment * _environment, char * _source, char * _dest );

@@ -1408,4 +1408,106 @@ void cpu6502_dec( Environment * _environment, char * _variable ) {
 
 }
 
+void cpu6502_mem_move( Environment * _environment, char *_source, char *_destination,  char *_size ) {
+
+    MAKE_LABEL
+
+    outline1("LDX %s", _size );
+    outhead1("%s:", label );
+    outline1("LDA %s, X", _source );
+    outline1("STA %s, X", _destination );
+    outline0("DEC X" );
+    outline1("BNE %s", label );
+
+}
+
+void cpu6502_mem_move_displacement(  Environment * _environment, char *_source, char *_destination, char * _displacement, char *_size ) {
+
+    MAKE_LABEL
+
+    outline1("LDX %s", _size );
+    outline1("LDA %s+1", _destination );
+    outline0("STA $23" );
+    outline1("LDA %s", _destination );
+    outline1("ADC %s", _displacement );
+    outline0("STA $22" );
+    outline1("LDA %s+1", _source );
+    outline0("STA $25" );
+    outline1("LDA %s", _source );
+    outline0("STA $24" );
+    outhead1("%s:", label );
+    outline0("LDA ($24), X" );
+    outline0("STA ($22), X" );
+    outline0("DEC X" );
+    outline1("BNE %s", label );
+}
+
+void cpu6502_compare_memory( Environment * _environment, char *_source, char *_destination, char *_size, char * _result, int _equal ) {
+    
+    MAKE_LABEL
+
+    outline1("LDX %s", _size );
+    outhead1("%s:", label );
+    outline1("LDA %s, X", _source );
+    outline1("CMP %s, X", _destination );
+    outline1("BNE %sdiff", label );
+    outline0("DEC X" );
+    outline1("BNE %s", label );
+    outline1("LDA #%d", _equal ? 1 : 0 );
+    outline1("STA %s", _result );
+    outline1("JMP %sfinal", _result );
+    outhead1("%sdiff:", label );
+    outline1("LDA #%d", _equal ? 0 : 1 );
+    outline1("STA %s", _result );
+    outhead1("%sfinal:", label );
+
+}
+
+void cpu6502_less_than_memory( Environment * _environment, char *_source, char *_destination, char *_size, char * _result, int _equal ) {
+    
+    MAKE_LABEL
+
+    outline1("LDX %s", _size );
+    outhead1("%s:", label );
+    outline1("LDA %s, X", _source );
+    outline1("CMP %s, X", _destination );
+    if ( ! _equal ) {
+        outline1("BEQ %sfalse", label);
+    }
+    outline1("BCS %strue", label);
+    outline0("DEC X" );
+    outline1("BNE %s", label );
+    outline0("LDA #0" );
+    outline1("STA %s", _result );
+    outline1("JMP %sfinal", _result );
+    outhead1("%strue:", label );
+    outline0("LDA #1" );
+    outline1("STA %s", _result );
+    outhead1("%sfinal:", label );
+
+}
+
+void cpu6502_greater_than_memory( Environment * _environment, char *_source, char *_destination, char *_size, char * _result, int _equal ) {
+    
+    MAKE_LABEL
+
+    outline1("LDX %s", _size );
+    outhead1("%s:", label );
+    outline1("LDA %s, X", _source );
+    outline1("CMP %s, X", _destination );
+    outline1("BCC %sfalse", label);
+    if ( ! _equal ) {
+        outline1("BEQ %sfalse", label);
+    }
+    outline0("DEC X" );
+    outline1("BNE %s", label );
+    outline0("LDA #0" );
+    outline1("STA %s", _result );
+    outline1("JMP %sfinal", _result );
+    outhead1("%strue:", label );
+    outline0("LDA #1" );
+    outline1("STA %s", _result );
+    outhead1("%sfinal:", label );
+
+}
 #endif
