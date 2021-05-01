@@ -1567,3 +1567,43 @@ Variable * variable_string_left( Environment * _environment, char * _string, cha
     }
     return result;
 }
+
+void variable_string_left_assign( Environment * _environment, char * _string, char * _position, char * _expression ) {
+    Variable * string = variable_find( _environment->tempVariables, _string );
+    if ( ! string ) {
+        string = variable_find( _environment->variables, _string );
+    }
+    if ( ! string ) {
+        CRITICAL("String variable does not exist");
+    }
+    Variable * position = variable_find( _environment->tempVariables, _position );
+    if ( ! position ) {
+        position = variable_find( _environment->variables, _position );
+    }
+    if ( ! position ) {
+        CRITICAL("Position variable does not exist");
+    }
+    Variable * expression = variable_find( _environment->tempVariables, _expression );
+    if ( ! expression ) {
+        expression = variable_find( _environment->variables, _expression );
+    }
+    if ( ! expression ) {
+        CRITICAL("Position variable does not exist");
+    }
+    switch( string->type ) {
+        case VT_DWORD:
+        case VT_ADDRESS:
+        case VT_POSITION:
+        case VT_WORD:
+        case VT_BYTE:
+        case VT_COLOR:
+            CRITICAL("Cannot make a LEFT assignment on a number");
+            break;
+        case VT_STRING: {            
+            char expressionAddress[16]; sprintf(expressionAddress, "%s+1", expression->realName );
+            char stringAddress[16]; sprintf(stringAddress, "%s+1", string->realName );
+            cpu_mem_move( _environment, expressionAddress, stringAddress, position->realName );
+            break;
+        }
+    }
+}

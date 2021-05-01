@@ -27,7 +27,7 @@ int yywrap() { return 1; }
 
 %token Remark
 %token NewLine 
-%token SEMICOLON COLON COMMA PLUS MINUS INCREMENT DECREMENT EQUAL ASSIGN LT LTE GT GTE DISEQUAL MULTIPLICATION
+%token SEMICOLON COLON COMMA PLUS MINUS INCREMENT DECREMENT EQUAL ASSIGN LT LTE GT GTE DISEQUAL MULTIPLICATION DOLLAR
 
 %token RASTER DONE AT COLOR BORDER WAIT NEXT WITH BANK SPRITE DATA FROM OP CP 
 %token ENABLE DISABLE HALT ECM BITMAP SCREEN ON OFF ROWS VERTICAL SCROLL VAR AS TEMPORARY 
@@ -44,7 +44,6 @@ int yywrap() { return 1; }
 %token LAVENDER GOLD TURQUOISE TAN PINK PEACH OLIVE
 
 %token <string> Identifier
-%token <string> IdentifierString
 %token <string> String
 %token <integer> Integer
 
@@ -206,7 +205,7 @@ expression:
       Identifier { 
         $$ = $1;
       }
-    | IdentifierString { 
+    | Identifier DOLLAR { 
         $$ = $1;
       }
     | Integer { 
@@ -744,7 +743,7 @@ var_definition_simple:
   | Identifier ON Identifier {
       variable_define( _environment, $1, VT_BYTE, 0 );
   }
-  | IdentifierString ON Identifier {
+  | Identifier DOLLAR ON Identifier {
       variable_define( _environment, $1, VT_STRING, 0 );
   }
   | Identifier ON Identifier ASSIGN direct_integer {
@@ -755,8 +754,8 @@ var_definition_simple:
       Variable * d = variable_define( _environment, $1, v->type, v->value );
       variable_move_naked( _environment, v->name, d->name );
   }
-  | IdentifierString ON Identifier ASSIGN expressions {
-      Variable * v = variable_retrieve( _environment, $5 );
+  | Identifier DOLLAR ON Identifier ASSIGN expressions {
+      Variable * v = variable_retrieve( _environment, $6 );
       Variable * d = variable_define( _environment, $1, VT_STRING, 0 );
       variable_move( _environment, v->name, d->name );
   };
@@ -936,6 +935,9 @@ statement:
   | DONE  {
       return 0;
   }
+  | LEFT OP expression COMMA expression CP ASSIGN expressions {
+        variable_string_left_assign( _environment, $3, $5, $8 );
+  }
   | Identifier COLON {
       outhead1("%s:", $1);
   }
@@ -948,14 +950,14 @@ statement:
         variable_move( _environment, $3, $1 );
         outline2("; moved %s -> %s ", $3, $1 );
   }
-  | IdentifierString ASSIGN expressions {
-        outline2("; %s = %s", $1, $3 );
-        Variable * expressions = variable_retrieve( _environment, $3 );
-        outline1("; retrieved %s ", $3 );
+  | Identifier DOLLAR ASSIGN expressions {
+        outline2("; %s = %s", $1, $4 );
+        Variable * expressions = variable_retrieve( _environment, $4 );
+        outline1("; retrieved %s ", $4 );
         variable_define( _environment, $1, VT_STRING, 0 )->name;
         outline1("; defined %s ", $1 );
-        variable_move( _environment, $3, $1 );
-        outline2("; moved %s -> %s ", $3, $1 );
+        variable_move( _environment, $4, $1 );
+        outline2("; moved %s -> %s ", $4, $1 );
   }
   | DEBUG expressions {
       debug_var( _environment, $2 );
