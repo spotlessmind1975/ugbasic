@@ -93,6 +93,8 @@ LOOP { return (LOOP); }
 MAGENTA { return(MAGENTA); }
 NEXT { return (NEXT); }
 MCM { return(MCM); }
+MID { return(MID); }
+MID\$ { return(MID); }
 MONOCOLOR { return(MONOCOLOR); }
 MS { return (MILLISECOND); }
 MILLISECOND { return (MILLISECOND); }
