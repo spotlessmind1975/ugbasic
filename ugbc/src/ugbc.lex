@@ -151,7 +151,8 @@ XPEN { return (XPEN); }
 YELLOW { return(YELLOW); }
 YPEN { return (YPEN); }
 
-[A-Za-z][A-Za-z0-9\_]* { yylval.string = strdup(yytext); return(Identifier);  }
+[A-Za-z][A-Za-z0-9\_]*[\$]? { yylval.string = strdup(yytext); return(Identifier);  }
+[A-Za-z][A-Za-z0-9\_]*\\$ { yylval.string = strdup(yytext); return(IdentifierString);  }
 \"(\\.|[^"\\])*\" { yylval.string = strdup(yytext); memcpy(yylval.string,yylval.string+1,strlen(yylval.string)); yylval.string[strlen(yylval.string)-1]=0; return(String);  }
 $[0-9A-fa-f]+ { yylval.integer = strtol(yytext+1,0,16); return(Integer); }
 [0-9]+ { yylval.integer = atoi(yytext); return(Integer);  }

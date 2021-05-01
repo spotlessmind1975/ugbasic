@@ -44,6 +44,7 @@ int yywrap() { return 1; }
 %token LAVENDER GOLD TURQUOISE TAN PINK PEACH OLIVE
 
 %token <string> Identifier
+%token <string> IdentifierString
 %token <string> String
 %token <integer> Integer
 
@@ -203,6 +204,9 @@ color_enumeration:
 
 expression:
       Identifier { 
+        $$ = $1;
+      }
+    | IdentifierString { 
         $$ = $1;
       }
     | Integer { 
@@ -734,6 +738,9 @@ var_definition_simple:
   | Identifier ON Identifier {
       variable_define( _environment, $1, VT_BYTE, 0 );
   }
+  | IdentifierString ON Identifier {
+      variable_define( _environment, $1, VT_STRING, 0 );
+  }
   | Identifier ON Identifier ASSIGN direct_integer {
       variable_define( _environment, $1, VT_BYTE, $5 );
   }
@@ -741,6 +748,11 @@ var_definition_simple:
       Variable * v = variable_retrieve( _environment, $5 );
       Variable * d = variable_define( _environment, $1, v->type, v->value );
       variable_move_naked( _environment, v->name, d->name );
+  }
+  | IdentifierString ON Identifier ASSIGN expressions {
+      Variable * v = variable_retrieve( _environment, $5 );
+      Variable * d = variable_define( _environment, $1, VT_STRING, 0 );
+      variable_move( _environment, v->name, d->name );
   };
 
 goto_definition:
@@ -926,6 +938,15 @@ statement:
         Variable * expressions = variable_retrieve( _environment, $3 );
         outline1("; retrieved %s ", $3 );
         variable_define( _environment, $1, expressions->type, 0 )->name;
+        outline1("; defined %s ", $1 );
+        variable_move( _environment, $3, $1 );
+        outline2("; moved %s -> %s ", $3, $1 );
+  }
+  | IdentifierString ASSIGN expressions {
+        outline2("; %s = %s", $1, $3 );
+        Variable * expressions = variable_retrieve( _environment, $3 );
+        outline1("; retrieved %s ", $3 );
+        variable_define( _environment, $1, VT_STRING, 0 )->name;
         outline1("; defined %s ", $1 );
         variable_move( _environment, $3, $1 );
         outline2("; moved %s -> %s ", $3, $1 );

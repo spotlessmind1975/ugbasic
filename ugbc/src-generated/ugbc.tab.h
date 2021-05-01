@@ -193,8 +193,9 @@ extern int yydebug;
     PEACH = 394,                   /* PEACH  */
     OLIVE = 395,                   /* OLIVE  */
     Identifier = 396,              /* Identifier  */
-    String = 397,                  /* String  */
-    Integer = 398                  /* Integer  */
+    IdentifierString = 397,        /* IdentifierString  */
+    String = 398,                  /* String  */
+    Integer = 399                  /* Integer  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -208,7 +209,7 @@ union YYSTYPE
     int integer;
     char * string;
 
-#line 212 "src-generated/ugbc.tab.h"
+#line 213 "src-generated/ugbc.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
