@@ -214,8 +214,11 @@ expression:
         variable_store( _environment, $$, $1 );
       }
     | String { 
+        outline1("; (expression string: \"%s\")", $1 );
         $$ = variable_temporary( _environment, VT_STRING, "(string value)" )->name;
+        outline1("; %s", $$ );
         variable_store_string( _environment, $$, $1 );
+        outline2("; variable stored: %s = %s", $$, $1 );
       }
     | OP BYTE CP Integer { 
         $$ = variable_temporary( _environment, VT_BYTE, "(BYTE value)" )->name;
@@ -264,6 +267,9 @@ expression:
     | HIT OP expressions CP {
         $$ = collision_to_vars( _environment, $3 )->name;
       }      
+    | LEFT OP expression COMMA expression CP {
+        $$ = variable_string_left( _environment, $3, $5 )->name;
+    }
     | RANDOM random_definition {
         $$ = $2;
     }
@@ -1041,8 +1047,10 @@ int main( int _argc, char *_argv[] ) {
         outhead0("org 32768");
     }
 
+    variable_define( _environment, "strings_address", VT_ADDRESS, 0x4200 );
     bank_define( _environment, "VARIABLES", BT_VARIABLES, 0x4000, NULL );
     bank_define( _environment, "TEMPORARY", BT_TEMPORARY, 0x4100, NULL );
+    bank_define( _environment, "STRINGS", BT_STRINGS, 0x4200, NULL );
 
     yydebug = 1;
     errors = 0;

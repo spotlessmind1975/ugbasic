@@ -202,6 +202,9 @@ Bank * bank_define( Environment * _environment, char * _name, BankType _type, in
         bank->type = _type;
         bank->filename = _filename;
         bank->address = _address;
+        if ( bank->type == BT_STRINGS ) {
+            variable_store( _environment, "strings_address", bank->address );
+        }
         bank->next = _environment->banks[_type]; 
         _environment->banks[_type] = bank;
     }
@@ -308,12 +311,21 @@ Variable * variable_define( Environment * _environment, char * _name, VariableTy
         var = malloc( sizeof( Variable ) );
         var->name = strdup( _name );
         var->realName = malloc( strlen( _name ) + 1 ); strcpy( var->realName, "_" ); strcat( var->realName, var->name );
-        var->next = _environment->variables; 
         var->type = _type;
         var->value = _value;
         var->bank = _environment->banks[BT_VARIABLES];
-        _environment->variables = var;
-        variable_store( _environment, var->name, _value );
+        Variable * varLast = _environment->variables;
+        if ( varLast ) {
+            while( varLast->next ) {
+                varLast = varLast->next;
+            }
+            varLast->next = var;
+        } else {
+            _environment->variables = var;
+        }
+        if ( var->type != VT_STRING ) {
+            variable_store( _environment, var->name, _value );
+        }
     }
     var->used = 1;
     var->locked = 0;
@@ -357,10 +369,17 @@ Variable * variable_temporary( Environment * _environment, VariableType _type, c
         var->name = name;
         var->realName = malloc( strlen( var->name ) + 1 ); strcpy( var->realName, "_" ); strcat( var->realName, var->name );
         var->meaningName = _meaning;
-        var->next = _environment->tempVariables; 
         var->type = _type;
         var->bank = _environment->banks[BT_TEMPORARY];
-        _environment->tempVariables = var;
+        Variable * varLast = _environment->tempVariables;
+        if ( varLast ) {
+            while( varLast->next ) {
+                varLast = varLast->next;
+            }
+            varLast->next = var;
+        } else {
+            _environment->tempVariables = var;
+        }
     }
     if ( var->meaningName ) {
         outline2("; %s <-> %s", var->realName, var->meaningName );
@@ -551,9 +570,13 @@ Variable * variable_cast( Environment * _environment, char * _source, VariableTy
                 case VT_DWORD:
                     CRITICAL("Cannot cast from STRING to DWORD.");
                     break;
-                case VT_STRING:
-                    // TODO 
+                case VT_STRING: {
+                    char sourceAddress[16]; sprintf(sourceAddress, "%s+1", source->realName );
+                    char destinationAddress[16]; sprintf(destinationAddress, "%s+1", target->realName );
+                    cpu_move_8bit( _environment, source->realName, target->realName );
+                    cpu_move_16bit( _environment, sourceAddress, destinationAddress );
                     break;
+                }
             }
             break;
     }
@@ -580,7 +603,7 @@ Variable * variable_store( Environment * _environment, char * _destination, int 
     if ( ! destination ) {
         destination = variable_find( _environment->variables, _destination );
         if ( ! destination ) {
-            CRITICAL( "Destination variable does not exists" );
+            CRITICAL_VARIABLE( _destination );
         }
     }
     switch( destination->type ) {
@@ -597,7 +620,7 @@ Variable * variable_store( Environment * _environment, char * _destination, int 
             cpu_store_8bit( _environment, destination->realName, _value );
             break;
         case VT_STRING:
-            CRITICAL("Cannot store a direct value on STRING");;
+            CRITICAL("Cannot store a direct value on STRING");
             break;
     }
     return destination;
@@ -608,7 +631,7 @@ Variable * variable_store_string( Environment * _environment, char * _destinatio
     if ( ! destination ) {
         destination = variable_find( _environment->variables, _destination );
         if ( ! destination ) {
-            CRITICAL( "Destination variable does not exists" );
+            CRITICAL_VARIABLE( _destination );
         }
     }
     switch( destination->type ) {
@@ -618,14 +641,18 @@ Variable * variable_store_string( Environment * _environment, char * _destinatio
         case VT_WORD:
         case VT_BYTE:
         case VT_COLOR:
-            CRITICAL("Cannot store a STRING on a numeric value");;
+            CRITICAL("Cannot store a STRING on a numeric value");
             break;
         case VT_STRING: {
+            Variable * strings_address = variable_retrieve( _environment, "strings_address" );
             char destinationAddress[16]; sprintf(destinationAddress, "%s+1", destination->realName );
-            destination->valueString = strdup( _value );
             cpu_store_8bit( _environment, destination->realName, strlen( _value ) );
-            cpu_store_16bit( _environment, destinationAddress, _environment->valueStringOffset );
-            _environment->valueStringOffset += strlen( _value );
+            cpu_move_16bit( _environment, strings_address->realName, destinationAddress );
+            while( *_value ) {
+                cpu_store_8bit_indirect( _environment, strings_address->realName, *_value );
+                cpu_inc_16bit( _environment, strings_address->realName );
+                ++_value;
+            }
             break;
         }
     }
@@ -705,14 +732,14 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
     if ( ! source ) {
         source = variable_find( _environment->variables, _source );
         if ( ! source ) {
-            CRITICAL( "Source variable does not exist" );
+            CRITICAL_VARIABLE( _source );
         }
     }
     Variable * target = variable_find( _environment->tempVariables, _destination );
     if ( ! target ) {
         target = variable_find( _environment->variables, _destination );
         if ( ! target ) {
-            CRITICAL( "Destination variable does not exist" );
+            CRITICAL_VARIABLE( _source );
         }
     }
     switch( source->type ) {
@@ -761,11 +788,11 @@ Variable * variable_add( Environment * _environment, char * _source, char * _des
         source = variable_find( _environment->variables, _source );
     }
     if ( ! source ) {
-        CRITICAL("Source variable does not exist");
+        CRITICAL_VARIABLE(_source);
     }
     Variable * target = variable_cast( _environment, _destination, source->type );
     if ( ! target ) {
-        CRITICAL("Destination variable does not cast");
+        CRITICAL_VARIABLE(_destination);
     }
     Variable * result = variable_temporary( _environment, source->type, "(result of adding)" );
     switch( source->type ) {
@@ -781,15 +808,9 @@ Variable * variable_add( Environment * _environment, char * _source, char * _des
         case VT_COLOR:
             cpu_math_add_8bit( _environment, source->realName, target->realName, result->realName );
             break;
-        case VT_STRING: {
-            char sourceAddress[16]; sprintf(sourceAddress, "%s+1", source->realName );
-            char destinationAddress[16]; sprintf(destinationAddress, "%s+1", target->realName );
-            char resultAddress[16]; sprintf(resultAddress, "%s+1", result->realName );
-            cpu6502_math_add_8bit( _environment, sourceAddress, destinationAddress, resultAddress );
-            cpu_mem_move( _environment, sourceAddress, resultAddress, source->realName );
-            cpu_mem_move_displacement( _environment, sourceAddress, resultAddress, source->realName, target->realName );
+        case VT_STRING: 
+            // TODO:
             break;
-        }
     }
     return result;
 }
@@ -1497,6 +1518,50 @@ Variable * variable_greater_than( Environment * _environment, char * _source, ch
             cpu_bveq( _environment, result->realName, label );
             cpu_greater_than_memory( _environment, sourceAddress, destinationAddress, source->realName, result->realName, _equal );
             cpu_label( _environment, label );
+            break;
+        }
+    }
+    return result;
+}
+
+Variable * variable_string_left( Environment * _environment, char * _string, char * _position ) {
+    Variable * string = variable_find( _environment->tempVariables, _string );
+    if ( ! string ) {
+        string = variable_find( _environment->variables, _string );
+    }
+    if ( ! string ) {
+        CRITICAL("String variable does not exist");
+    }
+    Variable * position = variable_find( _environment->tempVariables, _position );
+    if ( ! position ) {
+        position = variable_find( _environment->variables, _position );
+    }
+    if ( ! position ) {
+        CRITICAL("Position variable does not exist");
+    }
+    Variable * result = variable_temporary( _environment, VT_STRING, "(result of left)" );
+    switch( string->type ) {
+        case VT_DWORD:
+        case VT_ADDRESS:
+        case VT_POSITION:
+        case VT_WORD:
+        case VT_BYTE:
+        case VT_COLOR:
+            CRITICAL("Cannot make a LEFT function on a number");
+            break;
+        case VT_STRING: {            
+            char stringAddress[16]; sprintf(stringAddress, "%s+1", string->realName );
+            char resultAddress[16]; sprintf(resultAddress, "%s+1", result->realName );
+            Variable * strings_address = variable_retrieve( _environment, "strings_address" );
+            outline0("; here 1!");
+            cpu_move_16bit( _environment, strings_address->realName, resultAddress );
+            outline0("; here 2!");
+            cpu_mem_move( _environment, stringAddress, resultAddress, position->realName );
+            outline0("; here 3!");
+            cpu_move_8bit( _environment, position->realName, result->realName );
+            outline0("; here 4!");
+            cpu_math_add_16bit_with_8bit( _environment, strings_address->realName, position->realName, strings_address->realName );
+            outline0("; here 5!");
             break;
         }
     }

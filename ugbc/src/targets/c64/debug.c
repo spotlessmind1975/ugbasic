@@ -96,6 +96,23 @@ void debug_var( Environment * _environment, char * _name ) {
             outline1( "LDX %s+2", var->realName );
             outline0( "JSR $BDCD" );
             break;
+        case VT_STRING: {
+
+            MAKE_LABEL
+
+            outline1( "LDA %s+1", var->realName );
+            outline0( "STA $22" );
+            outline1( "LDA %s+2", var->realName );
+            outline0( "STA $23" );
+            outline0( "LDY #$0" );
+            outhead1( "%s:", label);
+            outline0( "LDA ($22),Y" );
+            outline0( "JSR $FFD2" );
+            outline0( "INY" );
+            outline1( "CPY %s", var->realName );
+            outline1( "BNE %s", label );
+            break;
+        }
     }
     outline0("LDA #32");
     outline0("JSR $FFD2");

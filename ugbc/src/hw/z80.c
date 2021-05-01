@@ -1312,6 +1312,30 @@ void z80_ei( Environment * _environment ) {
 
 }
 
+void z80_inc( Environment * _environment, char * _variable ) {
+
+    outline1("LD A, (%s)", _variable  );
+    outline0("INC A" );
+    outline1("LD (%s), A", _variable  );
+
+}
+
+void z80_dec( Environment * _environment, char * _variable ) {
+
+    outline1("LD A, (%s)", _variable  );
+    outline0("DEC A" );
+    outline1("LD (%s), A", _variable  );
+
+}
+
+void z80_inc_16bit( Environment * _environment, char * _variable ) {
+
+    outline1("LD HL, (%s)", _variable  );
+    outline0("INC HL" );
+    outline1("LD (%s), HL", _variable  );
+
+}
+
 void z80_mem_move( Environment * _environment, char *_source, char *_destination,  char *_size ) {
 
     outline1("LD HL,(%s)", _source);

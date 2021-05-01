@@ -86,6 +86,7 @@ HORIZONTAL { return (HORIZONTAL); }
 IF { return (IF); }
 LAVENDER { return(LAVENDER); }
 LEFT { return (LEFT); }
+LEFT\$ { return (LEFT); }
 LIGHT { return(LIGHT); }
 LOOP { return (LOOP); }
 MAGENTA { return(MAGENTA); }

@@ -59,6 +59,8 @@ void bank_cleanup( Environment * _environment ) {
 
             } else if ( actual->type == BT_TEMPORARY ) {
 
+            } else if ( actual->type == BT_STRINGS ) {
+
             } else {
                 if ( actual->filename ) {
                     cfgline4("# BANK %s %s AT $%4.4x WITH \"%s\"", BANK_TYPE_AS_STRING[actual->type], actual->name, actual->address, actual->filename);

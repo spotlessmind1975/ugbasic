@@ -45,6 +45,7 @@ void cpu6502_compare_8bit( Environment * _environment, char *_source, char *_des
 void cpu6502_di( Environment * _environment );
 void cpu6502_ei( Environment * _environment );
 void cpu6502_inc( Environment * _environment, char * _variable );
+void cpu6502_inc_16bit( Environment * _environment, char * _variable );
 void cpu6502_dec( Environment * _environment, char * _variable );
 void cpu6502_less_than_16bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _equal );
 void cpu6502_less_than_32bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _equal );
@@ -64,6 +65,7 @@ void cpu6502_logical_and_8bit( Environment * _environment, char * _left, char * 
 void cpu6502_logical_or_8bit( Environment * _environment, char * _left, char * _right, char * _result );
 void cpu6502_logical_not_8bit( Environment * _environment, char * _value, char * _result );
 void cpu6502_math_add_16bit( Environment * _environment, char *_source, char *_destination,  char *_name );
+void cpu6502_math_add_16bit_with_8bit( Environment * _environment, char *_source, char *_destination,  char *_name );
 void cpu6502_math_add_32bit( Environment * _environment, char *_source, char *_destination,  char *_name );
 void cpu6502_math_add_8bit( Environment * _environment, char *_source, char *_destination,  char *_name );
 void cpu6502_math_and_const_16bit( Environment * _environment, char *_source, int _mask );
@@ -99,6 +101,7 @@ void cpu6502_random_8bit( Environment * _environment, char * _seed, char * _entr
 void cpu6502_store_16bit( Environment * _environment, char *_source, int _value );
 void cpu6502_store_32bit( Environment * _environment, char *_source, int _value );
 void cpu6502_store_8bit( Environment * _environment, char *_source, int _value );
+void cpu6502_store_8bit_indirect( Environment * _environment, char *_source, int _value );
 void cpu6502_mem_move( Environment * _environment, char *_source, char *_destination,  char *_size );
 void cpu6502_mem_move_displacement( Environment * _environment, char *_source, char *_destination, char * _displacement, char *_size );
 void cpu6502_compare_memory( Environment * _environment, char *_source, char *_destination, char *_size, char *_result, int _equal );
@@ -117,6 +120,7 @@ void cpu6502_greater_than_memory( Environment * _environment, char *_source, cha
 #define cpu_di( _environment ) cpu6502_di( _environment )
 #define cpu_ei( _environment ) cpu6502_ei( _environment )
 #define cpu_inc( _environment, _variable ) cpu6502_inc( _environment, _variable );
+#define cpu_inc_16bit( _environment, _variable ) cpu6502_inc_16bit( _environment, _variable )
 #define cpu_dec( _environment, _variable ) cpu6502_dec( _environment, _variable );
 #define cpu_less_than_16bit( _environment, _source, _destination, _name, _equal ) cpu6502_less_than_16bit( _environment, _source, _destination, _name, _equal )
 #define cpu_less_than_32bit( _environment, _source, _destination, _name, _equal ) cpu6502_less_than_32bit( _environment, _source, _destination, _name, _equal )
@@ -136,6 +140,7 @@ void cpu6502_greater_than_memory( Environment * _environment, char *_source, cha
 #define cpu_logical_and_8bit( _environment, _left, _right,  _result ) cpu6502_logical_and_8bit( _environment, _left, _right,  _result )
 #define cpu_logical_or_8bit( _environment, _left, _right,  _result ) cpu6502_logical_or_8bit( _environment, _left, _right,  _result )
 #define cpu_math_add_16bit( _environment, _source, _destination,  _name  ) cpu6502_math_add_16bit( _environment, _source, _destination,  _name  )
+#define cpu_math_add_16bit_with_8bit( _environment, _source, _destination,  _name  ) cpu6502_math_add_16bit( _environment, _source, _destination,  _name  )
 #define cpu_math_add_32bit( _environment, _source, _destination,  _name  ) cpu6502_math_add_32bit( _environment, _source, _destination,  _name  )
 #define cpu_math_add_8bit( _environment, _source, _destination,  _name  ) cpu6502_math_add_8bit( _environment, _source, _destination,  _name  )
 #define cpu_math_and_const_16bit( _environment, _source, _mask  ) cpu6502_math_and_const_16bit( _environment, _source, _mask  )
@@ -171,6 +176,7 @@ void cpu6502_greater_than_memory( Environment * _environment, char *_source, cha
 #define cpu_store_16bit( _environment, _source, _value  ) cpu6502_store_16bit( _environment, _source, _value  )
 #define cpu_store_32bit( _environment, _source, _value  ) cpu6502_store_32bit( _environment, _source, _value  )
 #define cpu_store_8bit( _environment, _source, _value  ) cpu6502_store_8bit( _environment, _source, _value  )
+#define cpu_store_8bit_indirect( _environment, _source, _value ) cpu6502_store_8bit_indirect( _environment, _source, _value )
 #define cpu_mem_move( _environment, _source, _destination, _size ) cpu6502_mem_move( _environment, _source, _destination, _size )
 #define cpu_mem_move_displacement( _environment, _source, _destination, _displacement, _size ) cpu6502_mem_move_displacement( _environment, _source, _destination, _displacement, _size )
 #define cpu_compare_memory( _environment, _source, _destination, _size, _result, _equal ) cpu6502_compare_memory( _environment, _source, _destination, _size, _result, _equal )

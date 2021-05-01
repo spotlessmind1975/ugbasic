@@ -631,6 +631,24 @@ void cpu6502_math_add_16bit( Environment * _environment, char *_source, char *_d
     }
 }
 
+void cpu6502_math_add_16bit_with_8bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
+    outline0("CLC");
+    outline1("LDA %s", _source);
+    outline1("ADC %s", _destination);
+    if ( _other ) {
+        outline1("STA %s", _other);
+    } else {
+        outline1("STA %s", _destination);
+    }
+    outline0("LDA #$0");
+    outline1("ADC %s+1", _destination);
+    if ( _other ) {
+        outline1("STA %s+1", _other);
+    } else {
+        outline1("STA %s+1", _destination);
+    }
+}
+
 /**
  * @brief <i>CPU 6502</i>: emit code to double a 16 bit value
  * 
@@ -1402,6 +1420,17 @@ void cpu6502_inc( Environment * _environment, char * _variable ) {
 
 }
 
+void cpu6502_inc_16bit( Environment * _environment, char * _variable ) {
+
+    MAKE_LABEL
+
+    outline1("INC %s", _variable );
+    outline1("BNE %s", label );
+    outline1("INC %s+1", _variable );
+    outhead1("%s:", label );
+
+}
+
 void cpu6502_dec( Environment * _environment, char * _variable ) {
 
     outline1("DEC %s", _variable );
@@ -1412,11 +1441,20 @@ void cpu6502_mem_move( Environment * _environment, char *_source, char *_destina
 
     MAKE_LABEL
 
-    outline1("LDX %s", _size );
+    outline0("LDY 0" );
+    outline1("LDA %s+1", _source );
+    outline0("STA $23" );
+    outline1("LDA %s", _source );
+    outline0("STA $22" );
+    outline1("LDA %s+1", _destination );
+    outline0("STA $25" );
+    outline1("LDA %s", _destination );
+    outline0("STA $24" );
     outhead1("%s:", label );
-    outline1("LDA %s, X", _source );
-    outline1("STA %s, X", _destination );
-    outline0("DEC X" );
+    outline0("LDA ($22), Y" );
+    outline0("STA ($24), Y" );
+    outline0("INY" );
+    outline1("CPY %s", _size );
     outline1("BNE %s", label );
 
 }
@@ -1425,21 +1463,23 @@ void cpu6502_mem_move_displacement(  Environment * _environment, char *_source, 
 
     MAKE_LABEL
 
-    outline1("LDX %s", _size );
-    outline1("LDA %s+1", _destination );
+    outline0("LDY 0" );
+    outline1("LDA %s+1", _source );
     outline0("STA $23" );
-    outline1("LDA %s", _destination );
+    outline1("LDA %s", _source );
     outline1("ADC %s", _displacement );
     outline0("STA $22" );
-    outline1("LDA %s+1", _source );
+    outline1("LDA %s+1", _destination );
     outline0("STA $25" );
-    outline1("LDA %s", _source );
+    outline1("LDA %s", _destination );
     outline0("STA $24" );
     outhead1("%s:", label );
-    outline0("LDA ($24), X" );
-    outline0("STA ($22), X" );
-    outline0("DEC X" );
+    outline0("LDA ($24), Y" );
+    outline0("STA ($22), Y" );
+    outline0("INY" );
+    outline1("CPY %s", _size );
     outline1("BNE %s", label );
+    
 }
 
 void cpu6502_compare_memory( Environment * _environment, char *_source, char *_destination, char *_size, char * _result, int _equal ) {
@@ -1451,7 +1491,7 @@ void cpu6502_compare_memory( Environment * _environment, char *_source, char *_d
     outline1("LDA %s, X", _source );
     outline1("CMP %s, X", _destination );
     outline1("BNE %sdiff", label );
-    outline0("DEC X" );
+    outline0("DEX" );
     outline1("BNE %s", label );
     outline1("LDA #%d", _equal ? 1 : 0 );
     outline1("STA %s", _result );
@@ -1475,7 +1515,7 @@ void cpu6502_less_than_memory( Environment * _environment, char *_source, char *
         outline1("BEQ %sfalse", label);
     }
     outline1("BCS %strue", label);
-    outline0("DEC X" );
+    outline0("DEX" );
     outline1("BNE %s", label );
     outline0("LDA #0" );
     outline1("STA %s", _result );
@@ -1499,7 +1539,7 @@ void cpu6502_greater_than_memory( Environment * _environment, char *_source, cha
     if ( ! _equal ) {
         outline1("BEQ %sfalse", label);
     }
-    outline0("DEC X" );
+    outline0("DEX" );
     outline1("BNE %s", label );
     outline0("LDA #0" );
     outline1("STA %s", _result );
@@ -1510,4 +1550,17 @@ void cpu6502_greater_than_memory( Environment * _environment, char *_source, cha
     outhead1("%sfinal:", label );
 
 }
+
+void cpu6502_store_8bit_indirect( Environment * _environment, char *_source, int _value ) {
+
+    outline1("LDA %s", _source);
+    outline0("STA $22");
+    outline1("LDA %s+1", _source);
+    outline0("STA $23");
+    outline1("LDA #$%2.2x", (_value & 0xff));
+    outline0("LDY #$0" );
+    outline0("STA ($22),Y");
+
+}
+
 #endif

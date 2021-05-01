@@ -179,11 +179,6 @@ typedef struct _Variable {
     int value;
 
     /** 
-     * The initial value of the (string) variable, as given by last (re)definition.
-     */
-    char *valueString;
-
-    /** 
      * Pointer to the bank where this variable belongs to.
      */
     Bank * bank;
@@ -375,11 +370,6 @@ typedef struct _Environment {
      * "Every" timing
      */
     Variable * everyTiming;
-
-    /** 
-     * The offset with the initial value of the (string) variable.
-     */
-    int valueStringOffset;
 
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
@@ -702,6 +692,7 @@ Variable * variable_div2_const( Environment * _environment, char * _source, int 
 Variable * variable_mul2_const( Environment * _environment, char * _source, int _bits );
 Variable * variable_and_const( Environment * _environment, char * _source, int _mask );
 Variable * variable_complement_const( Environment * _environment, char * _source, int _mask );
+Variable * variable_string_left( Environment * _environment, char * _string, char * _position );
 void wait_cycles( Environment * _environment, int _timing );
 void wait_cycles_var( Environment * _environment, char * _timing );
 void wait_ticks( Environment * _environment, int _timing );
