@@ -640,8 +640,8 @@ void cpu6502_math_add_16bit_with_8bit( Environment * _environment, char *_source
     } else {
         outline1("STA %s", _destination);
     }
-    outline0("LDA #$0");
-    outline1("ADC %s+1", _destination);
+    outline1("LDA %s+1", _source);
+    outline0("ADC #$0");
     if ( _other ) {
         outline1("STA %s+1", _other);
     } else {
@@ -751,6 +751,24 @@ void cpu6502_math_sub_16bit( Environment * _environment, char *_source, char *_d
     }
     outline1("LDA %s+1", _source);
     outline1("SBC %s+1", _destination);
+    if ( _other ) {
+        outline1("STA %s+1", _other);
+    } else {
+        outline1("STA %s+1", _destination);
+    }
+}
+
+void cpu6502_math_sub_16bit_with_8bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
+    outline0("SEC");
+    outline1("LDA %s", _source);
+    outline1("SBC %s", _destination);
+    if ( _other ) {
+        outline1("STA %s", _other);
+    } else {
+        outline1("STA %s", _destination);
+    }
+    outline1("LDA %s+1", _source);
+    outline0("SBC #$0");
     if ( _other ) {
         outline1("STA %s+1", _other);
     } else {
@@ -1479,7 +1497,7 @@ void cpu6502_mem_move_displacement(  Environment * _environment, char *_source, 
     outline0("INY" );
     outline1("CPY %s", _size );
     outline1("BNE %s", label );
-    
+
 }
 
 void cpu6502_compare_memory( Environment * _environment, char *_source, char *_destination, char *_size, char * _result, int _equal ) {

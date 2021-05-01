@@ -269,6 +269,9 @@ expression:
     | LEFT OP expression COMMA expression CP {
         $$ = variable_string_left( _environment, $3, $5 )->name;
     }
+    | RIGHT OP expression COMMA expression CP {
+        $$ = variable_string_right( _environment, $3, $5 )->name;
+    }
     | RANDOM random_definition {
         $$ = $2;
     }
@@ -937,6 +940,9 @@ statement:
   }
   | LEFT OP expression COMMA expression CP ASSIGN expressions {
         variable_string_left_assign( _environment, $3, $5, $8 );
+  }
+  | RIGHT OP expression COMMA expression CP ASSIGN expressions {
+        variable_string_right_assign( _environment, $3, $5, $8 );
   }
   | Identifier COLON {
       outhead1("%s:", $1);

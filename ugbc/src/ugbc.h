@@ -694,6 +694,8 @@ Variable * variable_and_const( Environment * _environment, char * _source, int _
 Variable * variable_complement_const( Environment * _environment, char * _source, int _mask );
 Variable * variable_string_left( Environment * _environment, char * _string, char * _position );
 void variable_string_left_assign( Environment * _environment, char * _string, char * _position, char * _expression );
+Variable * variable_string_right( Environment * _environment, char * _string, char * _position );
+void variable_string_right_assign( Environment * _environment, char * _string, char * _position, char * _expression );
 void wait_cycles( Environment * _environment, int _timing );
 void wait_cycles_var( Environment * _environment, char * _timing );
 void wait_ticks( Environment * _environment, int _timing );

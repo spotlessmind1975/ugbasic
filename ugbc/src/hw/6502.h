@@ -89,6 +89,7 @@ void cpu6502_math_mul2_const_8bit( Environment * _environment, char *_source, in
 void cpu6502_math_sub_16bit( Environment * _environment, char *_source, char *_destination,  char *_name );
 void cpu6502_math_sub_32bit( Environment * _environment, char *_source, char *_destination,  char *_name );
 void cpu6502_math_sub_8bit( Environment * _environment, char *_source, char *_destination,  char *_name );
+void cpu6502_math_sub_16bit_with_8bit( Environment * _environment, char *_source, char *_destination,  char *_name );
 void cpu6502_move_16bit( Environment * _environment, char *_source, char *_destination );
 void cpu6502_move_32bit( Environment * _environment, char *_source, char *_destination );
 void cpu6502_move_8bit( Environment * _environment, char *_source, char *_destination );
@@ -140,7 +141,7 @@ void cpu6502_greater_than_memory( Environment * _environment, char *_source, cha
 #define cpu_logical_and_8bit( _environment, _left, _right,  _result ) cpu6502_logical_and_8bit( _environment, _left, _right,  _result )
 #define cpu_logical_or_8bit( _environment, _left, _right,  _result ) cpu6502_logical_or_8bit( _environment, _left, _right,  _result )
 #define cpu_math_add_16bit( _environment, _source, _destination,  _name  ) cpu6502_math_add_16bit( _environment, _source, _destination,  _name  )
-#define cpu_math_add_16bit_with_8bit( _environment, _source, _destination,  _name  ) cpu6502_math_add_16bit( _environment, _source, _destination,  _name  )
+#define cpu_math_add_16bit_with_8bit( _environment, _source, _destination,  _name  ) cpu6502_math_add_16bit_with_8bit( _environment, _source, _destination,  _name  )
 #define cpu_math_add_32bit( _environment, _source, _destination,  _name  ) cpu6502_math_add_32bit( _environment, _source, _destination,  _name  )
 #define cpu_math_add_8bit( _environment, _source, _destination,  _name  ) cpu6502_math_add_8bit( _environment, _source, _destination,  _name  )
 #define cpu_math_and_const_16bit( _environment, _source, _mask  ) cpu6502_math_and_const_16bit( _environment, _source, _mask  )
@@ -164,6 +165,7 @@ void cpu6502_greater_than_memory( Environment * _environment, char *_source, cha
 #define cpu_math_sub_16bit( _environment, _source, _destination,  _name  ) cpu6502_math_sub_16bit( _environment, _source, _destination,  _name  )
 #define cpu_math_sub_32bit( _environment, _source, _destination,  _name  ) cpu6502_math_sub_32bit( _environment, _source, _destination,  _name  )
 #define cpu_math_sub_8bit( _environment, _source, _destination,  _name  ) cpu6502_math_sub_8bit( _environment, _source, _destination,  _name  )
+#define cpu_math_sub_16bit_with_8bit( _environment, _source, _destination,  _name  ) cpu6502_math_sub_16bit_with_8bit( _environment, _source, _destination,  _name  )
 #define cpu_move_16bit( _environment, _source, _destination  ) cpu6502_move_16bit( _environment, _source, _destination  )
 #define cpu_move_32bit( _environment, _source, _destination  ) cpu6502_move_32bit( _environment, _source, _destination  )
 #define cpu_move_8bit( _environment, _source, _destination  ) cpu6502_move_8bit( _environment, _source, _destination  )

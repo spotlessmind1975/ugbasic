@@ -119,6 +119,7 @@ RED { return(RED); }
 REPEAT { return (REPEAT); }
 RETURN { return (RETURN); }
 RIGHT { return (RIGHT); }
+RIGHT\$ { return (RIGHT); }
 ROWS { return (ROWS); }
 S { return (S); }
 SCREEN { return (SCREEN); }
