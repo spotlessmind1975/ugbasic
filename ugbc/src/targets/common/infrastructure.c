@@ -2168,3 +2168,40 @@ Variable * variable_string_flip( Environment * _environment, char * _string  ) {
     return result;
     
 }
+
+Variable * variable_string_chr( Environment * _environment, char * _ascii  ) {
+
+    Variable * ascii = variable_find( _environment->tempVariables, _ascii );
+    if ( ! ascii ) {
+        ascii = variable_find( _environment->variables, _ascii );
+    }
+    if ( ! ascii ) {
+        CRITICAL("String variable does not exist");
+    }
+
+    Variable * result = variable_temporary( _environment, VT_STRING, "(result of STRING)");
+    
+    Variable * strings_address = variable_retrieve( _environment, "strings_address" );
+    
+    char resultAddress[16]; sprintf(resultAddress, "%s+1", result->realName );
+
+    switch( ascii->type ) {
+        case VT_DWORD:
+        case VT_ADDRESS:
+        case VT_POSITION:
+        case VT_WORD:
+        case VT_BYTE:
+        case VT_COLOR:
+            break;
+        case VT_STRING: {
+            CRITICAL("Cannot call CHR on STRING");
+            break;
+        }
+    }
+
+    cpu_store_8bit( _environment, result->realName, 1 );
+    cpu_move_8bit_indirect( _environment, ascii->realName, resultAddress );
+
+    return result;
+    
+}

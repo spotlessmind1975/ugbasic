@@ -1608,6 +1608,18 @@ void cpu6502_store_8bit_indirect( Environment * _environment, char *_source, int
 
 }
 
+void cpu6502_move_8bit_indirect( Environment * _environment, char *_source, char * _value ) {
+
+    outline1("LDA %s", _value);
+    outline0("STA $22");
+    outline1("LDA %s+1", _value);
+    outline0("STA $23");
+    outline1("LDA %s", _source);
+    outline0("LDY #$0" );
+    outline0("STA ($22),Y");
+
+}
+
 void cpu6502_uppercase( Environment * _environment, char *_source, char *_size, char *_result ) {
 
     MAKE_LABEL

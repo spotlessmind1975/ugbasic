@@ -45,6 +45,8 @@ BLUE { return (BLUE); }
 BROWN { return(BROWN); }
 BYTE { return (BYTE); }
 BORDER { return (BORDER); }
+CHR { return (CHR); }
+CHR\$ { return (CHR); }
 CLEAR { return (CLEAR); }
 CODE { return (CODE); }
 COLLISION { return (COLLISION); }

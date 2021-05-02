@@ -706,6 +706,7 @@ Variable * variable_string_val( Environment * _environment, char * _value );
 Variable * variable_string_string( Environment * _environment, char * _string, char * _repetitions  );
 Variable * variable_string_space( Environment * _environment, char * _repetitions  );
 Variable * variable_string_flip( Environment * _environment, char * _string  );
+Variable * variable_string_chr( Environment * _environment, char * _ascii  );
 void wait_cycles( Environment * _environment, int _timing );
 void wait_cycles_var( Environment * _environment, char * _timing );
 void wait_ticks( Environment * _environment, int _timing );
