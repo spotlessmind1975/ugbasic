@@ -116,6 +116,7 @@ void cpu6502_convert_string_into_16bit( Environment * _environment, char * _stri
 void cpu6502_fill_indirect( Environment * _environment, char * _address, char * _size, char * _pattern );
 void cpu6502_flip( Environment * _environment, char * _source, char * _size, char * _destination );
 void cpu6502_move_8bit_indirect( Environment * _environment, char *_source, char * _value );
+void cpu6502_move_8bit_indirect2( Environment * _environment, char * _value, char *_source );
 
 #define cpu_beq( _environment,  _label  ) cpu6502_beq( _environment,  _label  )
 #define cpu_bneq( _environment,  _label  ) cpu6502_beq( _environment,  _label  )
@@ -201,5 +202,6 @@ void cpu6502_move_8bit_indirect( Environment * _environment, char *_source, char
 #define cpu_fill_indirect( _environment, _address, _size, _pattern ) cpu6502_fill_indirect( _environment, _address, _size,  _pattern )
 #define cpu_flip( _environment, _source, _size, _destination ) cpu6502_flip( _environment, _source, _size, _destination )
 #define cpu_move_8bit_indirect( _environment, _source, _value ) cpu6502_move_8bit_indirect( _environment, _source, _value )
+#define cpu_move_8bit_indirect2( _environment, _value, _source ) cpu6502_move_8bit_indirect2( _environment, _value, _source )
 
 #endif

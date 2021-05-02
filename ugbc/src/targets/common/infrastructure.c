@@ -2201,6 +2201,41 @@ Variable * variable_string_chr( Environment * _environment, char * _ascii  ) {
 
     cpu_store_8bit( _environment, result->realName, 1 );
     cpu_move_8bit_indirect( _environment, ascii->realName, resultAddress );
+    cpu_math_add_16bit_with_8bit( _environment, strings_address->realName, result->realName, strings_address->realName );
+
+    return result;
+    
+}
+
+Variable * variable_string_asc( Environment * _environment, char * _char  ) {
+
+    Variable * character = variable_find( _environment->tempVariables, _char );
+    if ( ! character ) {
+        character = variable_find( _environment->variables, _char );
+    }
+    if ( ! character ) {
+        CRITICAL("String variable does not exist");
+    }
+
+    char characterAddress[16]; sprintf(characterAddress, "%s+1", character->realName );
+
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of STRING)");
+    
+    switch( character->type ) {
+        case VT_DWORD:
+        case VT_ADDRESS:
+        case VT_POSITION:
+        case VT_WORD:
+        case VT_BYTE:
+        case VT_COLOR:
+            CRITICAL("Cannot call VAL on number");
+            break;
+        case VT_STRING: {
+            cpu_move_8bit_indirect2( _environment, characterAddress, result->realName );
+            break;
+        }
+    }
+
 
     return result;
     

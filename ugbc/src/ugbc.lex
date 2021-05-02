@@ -34,6 +34,7 @@
 32BIT { return (DWORD); }
 
 AS { return (AS); }
+ASC { return (ASC); }
 AT { return (AT); }
 AND { return (AND); }
 BACKGROUND { return (BACKGROUND); }
