@@ -2141,3 +2141,30 @@ Variable * variable_string_space( Environment * _environment, char * _repetition
     return variable_string_string( _environment, space->name, _repetitions  );
     
 }
+
+Variable * variable_string_flip( Environment * _environment, char * _string  ) {
+
+    Variable * string = variable_find( _environment->tempVariables, _string );
+    if ( ! string ) {
+        string = variable_find( _environment->variables, _string );
+    }
+    if ( ! string ) {
+        CRITICAL("String variable does not exist");
+    }
+
+    Variable * result = variable_temporary( _environment, VT_STRING, "(result of STRING)");
+    
+    Variable * strings_address = variable_retrieve( _environment, "strings_address" );
+    
+    char resultAddress[16]; sprintf(resultAddress, "%s+1", result->realName );
+    char stringAddress[16]; sprintf(stringAddress, "%s+1", string->realName );
+
+    cpu_move_8bit( _environment, string->realName, result->realName );
+    cpu_move_16bit( _environment, strings_address->realName, resultAddress );
+    cpu_math_add_16bit_with_8bit( _environment, strings_address->realName, string->realName, strings_address->realName );
+
+    cpu6502_flip( _environment, stringAddress, result->realName, resultAddress );
+
+    return result;
+    
+}

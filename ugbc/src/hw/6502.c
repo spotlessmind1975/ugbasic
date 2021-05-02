@@ -1901,4 +1901,34 @@ void cpu6502_fill_indirect( Environment * _environment, char * _address, char * 
 
 }
 
+void cpu6502_flip( Environment * _environment, char * _source, char * _size, char * _destination ) {
+
+    MAKE_LABEL
+
+    outline1("LDA %s", _source);
+    outline0("STA $22");
+    outline1("LDA %s+1", _source);
+    outline0("STA $23");
+
+    outline1("LDA %s", _destination);
+    outline0("STA $24");
+    outline1("LDA %s+1", _destination);
+    outline0("STA $25");
+
+    outline1("LDA %s", _size);
+    outline0("ADC $24");
+    outline0("STA $24");
+    outline0("DEC $24");
+
+    outline1("LDX %s", _size );
+    outline0("LDY #$0");
+    outhead1("%sx:", label);
+    outline0("LDA ($22),Y");
+    outline0("STA ($24),Y");
+    outline0("DEC $24");
+    outline0("INC $22");
+    outline0("DEX");
+    outline1("BNE %sx", label);
+
+}
 #endif

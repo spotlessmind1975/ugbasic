@@ -70,6 +70,8 @@ EXIT { return (EXIT); }
 EXPAND { return (EXPAND); }
 EVERY { return (EVERY); }
 FALSE { return(FALSE); }
+FLIP { return(FLIP); }
+FLIP\$ { return(FLIP); }
 FOR { return(FOR); }
 FROM { return (FROM); }
 GAMELOOP { return (GAMELOOP); }
