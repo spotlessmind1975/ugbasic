@@ -130,6 +130,7 @@ S { return (S); }
 SCREEN { return (SCREEN); }
 SCROLL { return (SCROLL); }
 SELECT { return (SELECT); }
+SPACE { return (SPACE); }
 SPRITE { return (SPRITE); }
 STEP { return (STEP); }
 STR { return (STR); }

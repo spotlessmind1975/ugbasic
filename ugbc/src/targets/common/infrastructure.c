@@ -810,17 +810,28 @@ Variable * variable_add( Environment * _environment, char * _source, char * _des
             cpu_math_add_8bit( _environment, source->realName, target->realName, result->realName );
             break;
         case VT_STRING:  {
+            outline2("; ADD STRINGS (%s,%s)", source->realName, target->realName);
             Variable * strings_address = variable_retrieve( _environment, "strings_address" );
             char resultAddress[16]; sprintf(resultAddress, "%s+1", result->realName );
             char sourceAddress[16]; sprintf(sourceAddress, "%s+1", source->realName );
             char targetAddress[16]; sprintf(targetAddress, "%s+1", target->realName );
+            outline0("; cpu_move_8bit");
             cpu_move_8bit( _environment, source->realName, result->realName );
+            outline0("; cpu_math_add_8bit");
             cpu_math_add_8bit( _environment, target->realName, result->realName, result->realName );
+            outline0("; cpu_move_16bit");
             cpu_move_16bit( _environment, strings_address->realName, resultAddress );
+            outline0("; cpu_mem_move");
             cpu_mem_move( _environment, sourceAddress, resultAddress, source->realName );
+            outline0("; cpu_math_add_16bit_with_8bit");
             cpu_math_add_16bit_with_8bit( _environment, resultAddress, source->realName, resultAddress );
+            outline0("; cpu_mem_move");
             cpu_mem_move( _environment, targetAddress, resultAddress, target->realName );
+            outline0("; cpu_math_sub_16bit_with_8bit");
             cpu_math_sub_16bit_with_8bit( _environment, resultAddress, source->realName, resultAddress );
+            outline0("; ---");
+            cpu_math_add_16bit_with_8bit( _environment, strings_address->realName, source->realName, strings_address->realName );
+            cpu_math_add_16bit_with_8bit( _environment, strings_address->realName, target->realName, strings_address->realName );
             break;
         }
     }
@@ -2087,6 +2098,7 @@ Variable * variable_string_val( Environment * _environment, char * _value ) {
 }
 
 Variable * variable_string_string( Environment * _environment, char * _string, char * _repetitions  ) {
+
     Variable * string = variable_find( _environment->tempVariables, _string );
     if ( ! string ) {
         string = variable_find( _environment->variables, _string );
@@ -2112,9 +2124,20 @@ Variable * variable_string_string( Environment * _environment, char * _string, c
 
     cpu_move_8bit( _environment, repetitions->realName, result->realName );
     cpu_move_16bit( _environment, strings_address->realName, resultAddress );
+    cpu_math_add_16bit_with_8bit( _environment, strings_address->realName, repetitions->realName, strings_address->realName );
 
     cpu6502_fill_indirect( _environment, resultAddress, result->realName, stringAddress );
 
     return result;
+    
+}
+
+Variable * variable_string_space( Environment * _environment, char * _repetitions  ) {
+    
+    Variable * space = variable_temporary( _environment, VT_STRING, "(space)");
+    
+    variable_store_string( _environment, space->name, " " );
+
+    return variable_string_string( _environment, space->name, _repetitions  );
     
 }
