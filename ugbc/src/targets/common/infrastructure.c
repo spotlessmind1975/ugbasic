@@ -2240,3 +2240,35 @@ Variable * variable_string_asc( Environment * _environment, char * _char  ) {
     return result;
     
 }
+
+Variable * variable_string_len( Environment * _environment, char * _string  ) {
+
+    Variable * string = variable_find( _environment->tempVariables, _string );
+    if ( ! string ) {
+        string = variable_find( _environment->variables, _string );
+    }
+    if ( ! string ) {
+        CRITICAL("String variable does not exist");
+    }
+
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of LEN)");
+    
+    switch( string->type ) {
+        case VT_DWORD:
+        case VT_ADDRESS:
+        case VT_POSITION:
+        case VT_WORD:
+        case VT_BYTE:
+        case VT_COLOR:
+            CRITICAL("Cannot call LEN on number");
+            break;
+        case VT_STRING: {
+            cpu_move_8bit( _environment, string->realName, result->realName );
+            break;
+        }
+    }
+
+
+    return result;
+    
+}

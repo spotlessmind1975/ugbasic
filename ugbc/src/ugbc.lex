@@ -94,6 +94,7 @@ INSTR { return (INSTR); }
 LAVENDER { return(LAVENDER); }
 LEFT { return (LEFT); }
 LEFT\$ { return (LEFT); }
+LEN { return (LEN); }
 LIGHT { return(LIGHT); }
 LOOP { return (LOOP); }
 LOWER { return (LOWER); }
