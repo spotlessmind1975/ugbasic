@@ -809,9 +809,20 @@ Variable * variable_add( Environment * _environment, char * _source, char * _des
         case VT_COLOR:
             cpu_math_add_8bit( _environment, source->realName, target->realName, result->realName );
             break;
-        case VT_STRING: 
-            // TODO:
+        case VT_STRING:  {
+            Variable * strings_address = variable_retrieve( _environment, "strings_address" );
+            char resultAddress[16]; sprintf(resultAddress, "%s+1", result->realName );
+            char sourceAddress[16]; sprintf(sourceAddress, "%s+1", source->realName );
+            char targetAddress[16]; sprintf(targetAddress, "%s+1", target->realName );
+            cpu_move_8bit( _environment, source->realName, result->realName );
+            cpu_math_add_8bit( _environment, target->realName, result->realName, result->realName );
+            cpu_move_16bit( _environment, strings_address->realName, resultAddress );
+            cpu_mem_move( _environment, sourceAddress, resultAddress, source->realName );
+            cpu_math_add_16bit_with_8bit( _environment, resultAddress, source->realName, resultAddress );
+            cpu_mem_move( _environment, targetAddress, resultAddress, target->realName );
+            cpu_math_sub_16bit_with_8bit( _environment, resultAddress, source->realName, resultAddress );
             break;
+        }
     }
     return result;
 }

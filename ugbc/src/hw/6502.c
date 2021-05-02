@@ -1459,7 +1459,7 @@ void cpu6502_mem_move( Environment * _environment, char *_source, char *_destina
 
     MAKE_LABEL
 
-    outline0("LDY 0" );
+    outline0("LDY #$0" );
     outline1("LDA %s+1", _source );
     outline0("STA $23" );
     outline1("LDA %s", _source );
@@ -1481,7 +1481,7 @@ void cpu6502_mem_move_displacement(  Environment * _environment, char *_source, 
 
     MAKE_LABEL
 
-    outline0("LDY 0" );
+    outline0("LDY #$0" );
     outline1("LDA %s+1", _source );
     outline0("STA $23" );
     outline1("LDA %s", _source );
@@ -1612,7 +1612,7 @@ void cpu6502_uppercase( Environment * _environment, char *_source, char *_size, 
 
     MAKE_LABEL
 
-    outline0("LDY 0" );
+    outline0("LDY #$0" );
     outline1("LDA %s+1", _source );
     outline0("STA $23" );
     outline1("LDA %s", _source );
@@ -1651,7 +1651,7 @@ void cpu6502_lowercase( Environment * _environment, char *_source, char *_size, 
 
     MAKE_LABEL
 
-    outline0("LDY 0" );
+    outline0("LDY #$0" );
     outline1("LDA %s+1", _source );
     outline0("STA $23" );
     outline1("LDA %s", _source );
@@ -1801,6 +1801,9 @@ void cpu6502_convert_bcd_to_digits( Environment * _environment, char * _source, 
     outline0("INY");
     outline0("STA ($22),Y");
 
+    outline0("INY" );
+    outline0("TYA" );
+    outline1("STA %s-1", _dest );
 
 }
 
