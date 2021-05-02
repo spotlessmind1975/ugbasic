@@ -2045,3 +2045,43 @@ Variable * variable_string_str( Environment * _environment, char * _value ) {
     return result;
     
 }
+
+Variable * variable_string_val( Environment * _environment, char * _value ) {
+    Variable * value = variable_find( _environment->tempVariables, _value );
+    if ( ! value ) {
+        value = variable_find( _environment->variables, _value );
+    }
+    if ( ! value ) {
+        CRITICAL("String variable does not exist");
+    }
+    Variable * result = variable_temporary( _environment, VT_WORD, "(result of val)" );
+
+    switch( value->type ) {
+        case VT_DWORD:
+            CRITICAL("Cannot call VAL on DWORD");
+            break;
+        case VT_ADDRESS:
+            CRITICAL("Cannot call VAL on ADDRESS");
+            break;
+        case VT_POSITION:
+            CRITICAL("Cannot call VAL on POSITION");
+            break;
+        case VT_WORD:
+            CRITICAL("Cannot call VAL on WORD");
+            break;
+        case VT_BYTE:
+            CRITICAL("Cannot call VAL on BYTE");
+            break;
+        case VT_COLOR:
+            CRITICAL("Cannot call VAL on COLOR");
+            break;
+        case VT_STRING: {
+            char valueAddress[16]; sprintf(valueAddress, "%s+1", value->realName );
+            cpu_convert_string_into_16bit( _environment, valueAddress, value->realName, result->realName );
+            break;
+        }
+    }
+
+    return result;
+    
+}

@@ -36,7 +36,7 @@ int yywrap() { return 1; }
 %token BYTE WORD POSITION CODE VARIABLES MS CYCLES S HASH WIDTH HEIGHT DWORD PEN CLEAR
 %token BEG END GAMELOOP ENDIF UP DOWN LEFT RIGHT DEBUG AND RANDOMIZE GRAPHIC TEXTMAP
 %token POINT GOSUB RETURN POP OR ELSE NOT TRUE FALSE DO EXIT WEND UNTIL FOR STEP EVERY
-%token MID INSTR UPPER LOWER STR
+%token MID INSTR UPPER LOWER STR VAL
 
 %token MILLISECOND MILLISECONDS TICKS
 
@@ -293,6 +293,9 @@ expression:
     }
     | STR OP expression CP {
         $$ = variable_string_str( _environment, $3 )->name;
+    }
+    | VAL OP expression CP {
+        $$ = variable_string_val( _environment, $3 )->name;
     }
     | RANDOM random_definition {
         $$ = $2;

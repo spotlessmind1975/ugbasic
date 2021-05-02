@@ -112,6 +112,7 @@ void cpu6502_uppercase( Environment * _environment, char *_source, char *_size, 
 void cpu6502_lowercase( Environment * _environment, char *_source, char *_size, char *_result );
 void cpu6502_convert_upto_24bit_bcd( Environment * _environment, char * _source, char * _dest, int _bits );
 void cpu6502_convert_bcd_to_digits( Environment * _environment, char * _source, char * _dest );
+void cpu6502_convert_string_into_16bit( Environment * _environment, char * _string, char * _len, char * _value );
 
 #define cpu_beq( _environment,  _label  ) cpu6502_beq( _environment,  _label  )
 #define cpu_bneq( _environment,  _label  ) cpu6502_beq( _environment,  _label  )
@@ -193,5 +194,6 @@ void cpu6502_convert_bcd_to_digits( Environment * _environment, char * _source, 
 #define cpu_lowercase( _environment, _source, _size, _result ) cpu6502_lowercase( _environment, _source, _size, _result )
 #define cpu_convert_upto_24bit_bcd( _environment, _source, _dest, _bits ) cpu6502_convert_upto_24bit_bcd( _environment, _source, _dest, _bits )
 #define cpu_convert_bcd_to_digits( _environment, _source, _dest ) cpu6502_convert_bcd_to_digits( _environment, _source, _dest )
+#define cpu_convert_string_into_16bit( _environment, _string, _len, _value ) cpu6502_convert_string_into_16bit( _environment, _string, _len, _value )
 
 #endif

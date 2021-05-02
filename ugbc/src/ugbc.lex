@@ -148,6 +148,7 @@ UNTIL { return (UNTIL); }
 UP { return (UP); }
 UPPER { return (UPPER); }
 UPPER\$ { return (UPPER); }
+VAL { return (VAL); }
 VAR { return (VAR); }
 VARIABLES { return (VARIABLES); }
 VERTICAL { return (VERTICAL); }

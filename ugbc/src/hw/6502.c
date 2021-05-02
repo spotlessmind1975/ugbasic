@@ -1807,4 +1807,68 @@ void cpu6502_convert_bcd_to_digits( Environment * _environment, char * _source, 
 
 }
 
+void cpu6502_convert_string_into_16bit( Environment * _environment, char * _string, char * _len, char * _value ) {
+
+    MAKE_LABEL
+
+    outline0("LDA #$0" );
+    outline1("STA %s", _value );
+    outline1("STA %s+1", _value );
+
+    outline1("LDA %s+1", _string );
+    outline0("STA $23" );
+    outline1("LDA %s", _string  );
+    outline0("STA $22" );
+
+    outline0("LDY #$0"); // mine
+
+    outhead1("%srepeat:", label );
+
+    outline0("LDA ($22),Y" );
+    outline0("CMP #$39" );
+    outline1("BCS %send", label);
+    outline0("CMP #$30" );
+    outline1("BCC %send", label);
+    outline0("SBC #$30" );
+
+    outline0("CLC");
+    outline1("ADC %s", _value);
+    outline1("STA %s", _value);
+    outline0("LDA #$0");
+    outline1("ADC %s+1", _value);
+    outline1("STA %s+1", _value);
+
+    outline1("LDA %s+1", _value );
+    outline0("STA $25" );
+    outline1("LDA %s", _value  );
+    outline0("STA $24" );
+
+    outline0("INY");
+    outline1("CPY %s", _len );
+    outline1("BEQ %send", label );
+
+    outline0("LDA $24" );
+    outline1("STA %s", _value );
+    outline0("LDA $25" );
+    outline1("STA %s+1", _value );
+    outline1("ASL %s", _value );
+    outline1("ROL %s+1", _value );
+    outline1("ASL %s", _value );
+    outline1("ROL %s+1", _value );
+    outline0("CLC" );
+    outline0("LDA $24" );
+    outline1("ADC %s", _value );
+    outline1("STA %s", _value );
+    outline0("LDA $25" );
+    outline1("ADC %s+1", _value );
+    outline1("STA %s+1", _value );
+    outline1("ASL %s", _value );
+    outline1("ROL %s+1", _value );
+
+    outline1("JMP %srepeat", label );
+
+    outhead1("%send:", label );
+
+}
+
 #endif
