@@ -703,6 +703,7 @@ Variable * variable_string_upper( Environment * _environment, char * _string );
 Variable * variable_string_lower( Environment * _environment, char * _string );
 Variable * variable_string_str( Environment * _environment, char * _value );
 Variable * variable_string_val( Environment * _environment, char * _value );
+Variable * variable_string_string( Environment * _environment, char * _string, char * _repetitions  );
 void wait_cycles( Environment * _environment, int _timing );
 void wait_cycles_var( Environment * _environment, char * _timing );
 void wait_ticks( Environment * _environment, int _timing );

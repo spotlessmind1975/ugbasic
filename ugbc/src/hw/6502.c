@@ -1871,4 +1871,34 @@ void cpu6502_convert_string_into_16bit( Environment * _environment, char * _stri
 
 }
 
+void cpu6502_fill_indirect( Environment * _environment, char * _address, char * _size, char * _pattern ) {
+
+    MAKE_LABEL
+
+    // Use the current bitmap address as starting address for filling routine.
+    outline1("LDA %s", _address);
+    outline0("STA $22");
+    outline1("LDA %s+1", _address);
+    outline0("STA $23");
+
+    outline1("LDA %s", _pattern);
+    outline0("STA $24");
+    outline1("LDA %s+1", _pattern);
+    outline0("STA $25");
+
+    // Fill the bitmap with the given pattern.
+    outline1("LDX %s", _size );
+    outhead1("%sx:", label);
+    outline0("LDY #$0");
+    outline0("LDA ($24),Y");
+    outhead1("%sy:", label);
+    outline0("STA ($22),y");
+    outline0("INY");
+    outline1("BNE %sy", label);
+    outline0("INC $23");
+    outline0("DEX");
+    outline1("BNE %sx", label);
+
+}
+
 #endif

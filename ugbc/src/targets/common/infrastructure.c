@@ -2085,3 +2085,36 @@ Variable * variable_string_val( Environment * _environment, char * _value ) {
     return result;
     
 }
+
+Variable * variable_string_string( Environment * _environment, char * _string, char * _repetitions  ) {
+    Variable * string = variable_find( _environment->tempVariables, _string );
+    if ( ! string ) {
+        string = variable_find( _environment->variables, _string );
+    }
+    if ( ! string ) {
+        CRITICAL("String variable does not exist");
+    }
+
+    Variable * repetitions = variable_find( _environment->tempVariables, _repetitions );
+    if ( ! repetitions ) {
+        repetitions = variable_find( _environment->variables, _repetitions );
+    }
+    if ( ! repetitions ) {
+        CRITICAL("String variable does not exist");
+    }
+
+    Variable * result = variable_temporary( _environment, VT_STRING, "(result of STRING)");
+    
+    Variable * strings_address = variable_retrieve( _environment, "strings_address" );
+    
+    char resultAddress[16]; sprintf(resultAddress, "%s+1", result->realName );
+    char stringAddress[16]; sprintf(stringAddress, "%s+1", string->realName );
+
+    cpu_move_8bit( _environment, repetitions->realName, result->realName );
+    cpu_move_16bit( _environment, strings_address->realName, resultAddress );
+
+    cpu6502_fill_indirect( _environment, resultAddress, result->realName, stringAddress );
+
+    return result;
+    
+}
