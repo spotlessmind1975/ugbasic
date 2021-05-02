@@ -1,0 +1,2 @@
+ DEBUG STR$(42)
+ HALT
