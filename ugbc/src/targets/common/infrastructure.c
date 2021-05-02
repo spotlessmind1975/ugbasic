@@ -1912,7 +1912,7 @@ Variable * variable_string_instr( Environment * _environment, char * _search, ch
     outline0("NOP");
     outline0("NOP");
     outline0("NOP");
-    
+
     cpu_bvneq( _environment, found->realName, foundLabel );
 
     cpu_inc_16bit( _environment, address->realName );
@@ -1926,4 +1926,72 @@ Variable * variable_string_instr( Environment * _environment, char * _search, ch
     cpu_label( _environment, foundLabel );
 
     return result;
+}
+
+Variable * variable_string_lower( Environment * _environment, char * _string ) {
+    Variable * string = variable_find( _environment->tempVariables, _string );
+    if ( ! string ) {
+        string = variable_find( _environment->variables, _string );
+    }
+    if ( ! string ) {
+        CRITICAL("String variable does not exist");
+    }
+    Variable * result = variable_cast( _environment, string->name, VT_STRING );
+    switch( string->type ) {
+        case VT_DWORD:
+        case VT_ADDRESS:
+        case VT_POSITION:
+        case VT_WORD:
+        case VT_BYTE:
+        case VT_COLOR:
+            CRITICAL("Cannot make a UPPER function on a number");
+            break;
+        case VT_STRING:
+            break;
+    }
+    Variable * found = variable_temporary( _environment, VT_BYTE, "(valid alphabetic)" );
+    Variable * index = variable_temporary( _environment, VT_BYTE, "(index)" );
+
+    MAKE_LABEL
+
+    char resultAddress[16]; sprintf(resultAddress, "%s+1", result->realName );
+
+    cpu_lowercase( _environment, resultAddress, result->realName, resultAddress );
+
+    return result;
+
+}
+
+Variable * variable_string_upper( Environment * _environment, char * _string ) {
+    Variable * string = variable_find( _environment->tempVariables, _string );
+    if ( ! string ) {
+        string = variable_find( _environment->variables, _string );
+    }
+    if ( ! string ) {
+        CRITICAL("String variable does not exist");
+    }
+    Variable * result = variable_cast( _environment, string->name, VT_STRING );
+    switch( string->type ) {
+        case VT_DWORD:
+        case VT_ADDRESS:
+        case VT_POSITION:
+        case VT_WORD:
+        case VT_BYTE:
+        case VT_COLOR:
+            CRITICAL("Cannot make a UPPER function on a number");
+            break;
+        case VT_STRING:
+            break;
+    }
+    Variable * found = variable_temporary( _environment, VT_BYTE, "(valid alphabetic)" );
+    Variable * index = variable_temporary( _environment, VT_BYTE, "(index)" );
+
+    MAKE_LABEL
+
+    char resultAddress[16]; sprintf(resultAddress, "%s+1", result->realName );
+
+    cpu_uppercase( _environment, resultAddress, result->realName, resultAddress );
+
+    return result;
+    
 }

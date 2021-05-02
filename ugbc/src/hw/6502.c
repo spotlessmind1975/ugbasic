@@ -1608,4 +1608,82 @@ void cpu6502_store_8bit_indirect( Environment * _environment, char *_source, int
 
 }
 
+void cpu6502_uppercase( Environment * _environment, char *_source, char *_size, char *_result ) {
+
+    MAKE_LABEL
+
+    outline0("LDY 0" );
+    outline1("LDA %s+1", _source );
+    outline0("STA $23" );
+    outline1("LDA %s", _source );
+    outline0("STA $22" );
+    if ( _result ) {
+        outline1("LDA %s+1", _result );
+        outline0("STA $25" );
+        outline1("LDA %s", _result );
+        outline0("STA $24" );
+    } else {
+        outline1("LDA %s+1", _source );
+        outline0("STA $25" );
+        outline1("LDA %s", _source );
+        outline0("STA $24" );
+    }
+    outhead1("%supper:", label );
+    outline0("LDA ($22), Y" );
+    
+    outline0("CMP #65");
+    outline1("BCS %snext", label);
+
+    outline0("CMP #90");
+    outline1("BCC %snext", label);
+
+    outline0("ADC #32");
+    outline0("STA ($24), Y" );
+
+    outhead1("%snext:", label );
+    outline0("INY" );
+    outline1("CPY %s", _size );
+    outline1("BNE %supper", label );
+
+}
+
+void cpu6502_lowercase( Environment * _environment, char *_source, char *_size, char *_result ) {
+
+    MAKE_LABEL
+
+    outline0("LDY 0" );
+    outline1("LDA %s+1", _source );
+    outline0("STA $23" );
+    outline1("LDA %s", _source );
+    outline0("STA $22" );
+    if ( _result ) {
+        outline1("LDA %s+1", _result );
+        outline0("STA $25" );
+        outline1("LDA %s", _result );
+        outline0("STA $24" );
+    } else {
+        outline1("LDA %s+1", _source );
+        outline0("STA $25" );
+        outline1("LDA %s", _source );
+        outline0("STA $24" );
+    }
+    outhead1("%slower:", label );
+    outline0("LDA ($22), Y" );
+    
+    outline0("CMP #97");
+    outline1("BCS %snext", label);
+
+    outline0("CMP #122");
+    outline1("BCC %snext", label);
+
+    outline0("SBC #32");
+    outline0("STA ($24), Y" );
+
+    outhead1("%snext:", label );
+    outline0("INY" );
+    outline1("CPY %s", _size );
+    outline1("BNE %slower", label );
+
+}
+
 #endif

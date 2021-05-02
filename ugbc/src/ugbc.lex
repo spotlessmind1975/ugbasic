@@ -91,6 +91,8 @@ LEFT { return (LEFT); }
 LEFT\$ { return (LEFT); }
 LIGHT { return(LIGHT); }
 LOOP { return (LOOP); }
+LOWER { return (LOWER); }
+LOWER\$ { return (LOWER); }
 MAGENTA { return(MAGENTA); }
 NEXT { return (NEXT); }
 MCM { return(MCM); }
@@ -142,6 +144,8 @@ TURQUOISE { return(TURQUOISE); }
 TRUE { return(TRUE); }
 UNTIL { return (UNTIL); }
 UP { return (UP); }
+UPPER { return (UPPER); }
+UPPER\$ { return (UPPER); }
 VAR { return (VAR); }
 VARIABLES { return (VARIABLES); }
 VERTICAL { return (VERTICAL); }

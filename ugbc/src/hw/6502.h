@@ -108,6 +108,8 @@ void cpu6502_mem_move_displacement( Environment * _environment, char *_source, c
 void cpu6502_compare_memory( Environment * _environment, char *_source, char *_destination, char *_size, char *_result, int _equal );
 void cpu6502_less_than_memory( Environment * _environment, char *_source, char *_destination, char *_size, char *_result, int _equal );
 void cpu6502_greater_than_memory( Environment * _environment, char *_source, char *_destination, char *_size, char *_result, int _equal );
+void cpu6502_uppercase( Environment * _environment, char *_source, char *_size, char *_result );
+void cpu6502_lowercase( Environment * _environment, char *_source, char *_size, char *_result );
 
 #define cpu_beq( _environment,  _label  ) cpu6502_beq( _environment,  _label  )
 #define cpu_bneq( _environment,  _label  ) cpu6502_beq( _environment,  _label  )
@@ -184,5 +186,7 @@ void cpu6502_greater_than_memory( Environment * _environment, char *_source, cha
 #define cpu_compare_memory( _environment, _source, _destination, _size, _result, _equal ) cpu6502_compare_memory( _environment, _source, _destination, _size, _result, _equal )
 #define cpu_less_than_memory( _environment, _source, _destination, _size, _result, _equal ) cpu6502_less_than_memory( _environment, _source, _destination, _size, _result, _equal )
 #define cpu_greater_than_memory( _environment, _source, _destination, _size, _result, _equal ) cpu6502_greater_than_memory( _environment, _source, _destination, _size, _result, _equal )
+#define cpu_uppercase( _environment, _source, _size, _result ) cpu6502_uppercase( _environment, _source, _size, _result )
+#define cpu_lowercase( _environment, _source, _size, _result ) cpu6502_lowercase( _environment, _source, _size, _result )
 
 #endif
