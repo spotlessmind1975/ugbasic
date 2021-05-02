@@ -132,6 +132,8 @@ SCROLL { return (SCROLL); }
 SELECT { return (SELECT); }
 SPRITE { return (SPRITE); }
 STEP { return (STEP); }
+STR { return (STR); }
+STR\$ { return (STR); }
 TAN { return(TAN); }
 TEMPORARY { return (TEMPORARY); }
 TEXT { return (TEXT); }

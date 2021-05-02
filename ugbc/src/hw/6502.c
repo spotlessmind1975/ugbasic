@@ -1686,4 +1686,122 @@ void cpu6502_lowercase( Environment * _environment, char *_source, char *_size, 
 
 }
 
+void cpu6502_convert_upto_24bit_bcd( Environment * _environment, char * _source, char * _dest, int _bits ) {
+
+    MAKE_LABEL
+
+    outline0("SED");
+    outline0("LDA #0");
+    outline1("STA %s+0", _dest);
+    outline1("STA %s+1", _dest);
+    outline1("STA %s+2", _dest);
+    outline1("LDX #%d", _bits );
+
+    outhead1("%sCNVBIT:", label );
+
+    outline1("ASL %s+0", _source );
+    outline1("ROL %s+1", _source );
+    outline1("LDA %s+0", _dest);
+    outline1("ADC %s+0", _dest);
+    outline1("STA %s+0", _dest);
+    outline1("LDA %s+1", _dest);
+    outline1("ADC %s+1", _dest);
+    outline1("STA %s+1", _dest);
+    outline1("LDA %s+2", _dest);
+    outline1("ADC %s+2", _dest);
+    outline1("STA %s+2", _dest);
+    outline0("DEX");
+    outline1("BNE %sCNVBIT", label);
+    outline0("CLD");
+
+}
+
+void cpu6502_convert_bcd_to_digits( Environment * _environment, char * _source, char * _dest ) {
+
+    MAKE_LABEL
+
+    outline1("LDA %s+1", _dest );
+    outline0("STA $23" );
+    outline1("LDA %s", _dest  );
+    outline0("STA $22" );
+
+    outline0("LDX #$0");
+    outline0("LDY #$ff");
+    outline1("LDA %s+2", _source);
+    outline0("LSR A");
+    outline0("LSR A");
+    outline0("LSR A");
+    outline0("LSR A");
+    outline0("AND #$0F");
+    outline1("BEQ %sd0", label);
+    outline0("LDX #$1");
+    outline0("ADC #48");
+    outline0("INY");
+    outline0("STA ($22),Y");
+    outhead1("%sd0:", label);
+    outline1("LDA %s+2", _source);
+    outline0("AND #$0F");
+    outline1("BNE %sd1a", label);
+    outline0("CPX #$1");
+    outline1("BNE %sd1", label);
+    outline0("LDX #$1");
+    outhead1("%sd1a:", label);
+    outline0("ADC #48");
+    outline0("INY");
+    outline0("STA ($22),Y");
+
+    outhead1("%sd1:", label);
+    outline1("LDA %s+1", _source);
+    outline0("LSR A");
+    outline0("LSR A");
+    outline0("LSR A");
+    outline0("LSR A");
+    outline0("AND #$0F");
+    outline1("BNE %sd2a", label);
+    outline0("CPX #$1");
+    outline1("BNE %sd2", label);
+    outline0("LDX #$1");
+    outhead1("%sd2a:", label);
+    outline0("ADC #48");
+    outline0("INY");
+    outline0("STA ($22),Y");
+
+    outhead1("%sd2:", label);
+    outline1("LDA %s+1", _source);
+    outline0("AND #$0F");
+    outline1("BNE %sd3a", label);
+    outline0("CPX #$1");
+    outline1("BNE %sd3", label);
+    outline0("LDX #$1");
+    outhead1("%sd3a:", label);
+    outline0("ADC #48");
+    outline0("INY");
+    outline0("STA ($22),Y");
+
+    outhead1("%sd3:", label);
+    outline1("LDA %s", _source);
+    outline0("LSR A");
+    outline0("LSR A");
+    outline0("LSR A");
+    outline0("LSR A");
+    outline0("AND #$0F");
+    outline1("BNE %sd4a", label);
+    outline0("CPX #$1");
+    outline1("BNE %sd4", label);
+    outline0("LDX #$1");
+    outhead1("%sd4a:", label);
+    outline0("ADC #48");
+    outline0("INY");
+    outline0("STA ($22),Y");
+
+    outhead1("%sd4:", label);
+    outline1("LDA %s", _source);
+    outline0("AND #$0F");
+    outline0("ADC #48");
+    outline0("INY");
+    outline0("STA ($22),Y");
+
+
+}
+
 #endif

@@ -412,7 +412,7 @@ Variable * variable_cast( Environment * _environment, char * _source, VariableTy
         source = variable_find( _environment->tempVariables, _source );
     }
     if ( ! source ) {
-        CRITICAL("Cannot find source var");
+        CRITICAL_VARIABLE( _source );
     }
     Variable * target = variable_temporary( _environment, _type, "(generated for cast)" );
     switch( source->type ) {
@@ -1991,6 +1991,45 @@ Variable * variable_string_upper( Environment * _environment, char * _string ) {
     char resultAddress[16]; sprintf(resultAddress, "%s+1", result->realName );
 
     cpu_uppercase( _environment, resultAddress, result->realName, resultAddress );
+
+    return result;
+    
+}
+
+Variable * variable_string_str( Environment * _environment, char * _value ) {
+    Variable * value = variable_find( _environment->tempVariables, _value );
+    if ( ! value ) {
+        value = variable_find( _environment->variables, _value );
+    }
+    if ( ! value ) {
+        CRITICAL("String variable does not exist");
+    }
+    Variable * dword = variable_temporary( _environment, VT_DWORD, "(bcd result of STR)" );
+    Variable * result = variable_temporary( _environment, VT_STRING, "(result of STR)" );
+
+    switch( value->type ) {
+        case VT_DWORD:
+            CRITICAL("Cannot convert a DWORD into BCD");
+            break;
+        case VT_ADDRESS:
+        case VT_POSITION:
+        case VT_WORD:
+            cpu_convert_upto_24bit_bcd( _environment, value->realName, dword->realName, 16 );
+            break;
+        case VT_BYTE:
+        case VT_COLOR:
+            cpu_convert_upto_24bit_bcd( _environment, value->realName, dword->realName, 8 );
+            break;
+        case VT_STRING:
+            CRITICAL("Cannot use STR with a STRING value");
+            break;
+    }
+
+    variable_store_string( _environment, result->name, "      " );
+
+    char resultAddress[16]; sprintf(resultAddress, "%s+1", result->realName );
+
+    cpu_convert_bcd_to_digits( _environment, dword->realName, resultAddress );
 
     return result;
     
