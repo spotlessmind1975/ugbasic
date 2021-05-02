@@ -1374,7 +1374,7 @@ void z80_compare_memory( Environment * _environment, char *_source, char *_desti
     outline0("JR NZ, %s");
     outline1("LD A, #%d", _equal ? 1 : 0 );
     outline0("LD (%s), A", _result );
-    outline0("JMP %sfinal" );
+    outline1("JMP %sfinal", label );
     outhead1("%sdiff:", label );
     outline1("LD A, #%d", _equal ? 1 : 0 );
     outline0("LD (%s), A", _result );
@@ -1401,7 +1401,7 @@ void z80_less_than_memory( Environment * _environment, char *_source, char *_des
     outline0("JR NZ, %s");
     outline0("LD A, 1" );
     outline0("LD (%s), A", _result );
-    outline0("JMP %sfinal" );
+    outline1("JMP %sfinal", label );
     outhead1("%sdiff:", label );
     outline0("LD A, 0" );
     outline0("LD (%s), A", _result );
@@ -1429,7 +1429,7 @@ void z80_greater_than_memory( Environment * _environment, char *_source, char *_
     outline0("JR NZ, %s");
     outline1("LD A, #%d", _equal ? 1 : 0 );
     outline0("LD (%s), A", _result );
-    outline0("JMP %sfinal" );
+    outline1("JMP %sfinal", label );
     outhead1("%sdiff:", label );
     outline1("LD A, #%d", _equal ? 1 : 0 );
     outline0("LD (%s), A", _result );

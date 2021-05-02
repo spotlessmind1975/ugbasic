@@ -85,6 +85,7 @@ HEIGHT { return (HEIGHT); }
 HIT { return (HIT); }
 HORIZONTAL { return (HORIZONTAL); }
 IF { return (IF); }
+INSTR { return (INSTR); }
 LAVENDER { return(LAVENDER); }
 LEFT { return (LEFT); }
 LEFT\$ { return (LEFT); }

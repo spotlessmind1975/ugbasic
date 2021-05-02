@@ -1504,16 +1504,25 @@ void cpu6502_compare_memory( Environment * _environment, char *_source, char *_d
     
     MAKE_LABEL
 
-    outline1("LDX %s", _size );
-    outhead1("%s:", label );
-    outline1("LDA %s, X", _source );
-    outline1("CMP %s, X", _destination );
+    outline0("LDY #$0" );
+    outline1("LDA %s+1", _source );
+    outline0("STA $23" );
+    outline1("LDA %s", _source );
+    outline0("STA $22" );
+    outline1("LDA %s+1", _destination );
+    outline0("STA $25" );
+    outline1("LDA %s", _destination );
+    outline0("STA $24" );
+    outhead1("%sloop:", label );
+    outline0("LDA ($24), Y" );
+    outline0("CMP ($22), Y" );
     outline1("BNE %sdiff", label );
-    outline0("DEX" );
-    outline1("BNE %s", label );
+    outline0("INY" );
+    outline1("CPY %s", _size );
+    outline1("BNE %sloop", label );
     outline1("LDA #%d", _equal ? 1 : 0 );
     outline1("STA %s", _result );
-    outline1("JMP %sfinal", _result );
+    outline1("JMP %sfinal", label );
     outhead1("%sdiff:", label );
     outline1("LDA #%d", _equal ? 0 : 1 );
     outline1("STA %s", _result );
@@ -1525,19 +1534,28 @@ void cpu6502_less_than_memory( Environment * _environment, char *_source, char *
     
     MAKE_LABEL
 
-    outline1("LDX %s", _size );
-    outhead1("%s:", label );
-    outline1("LDA %s, X", _source );
-    outline1("CMP %s, X", _destination );
+    outline0("LDY #$0" );
+    outline1("LDA %s+1", _source );
+    outline0("STA $23" );
+    outline1("LDA %s", _source );
+    outline0("STA $22" );
+    outline1("LDA %s+1", _destination );
+    outline0("STA $25" );
+    outline1("LDA %s", _destination );
+    outline0("STA $24" );    
+    outhead1("%sloop:", label );
+    outline0("LDA ($24), Y" );
+    outline0("CMP ($22), Y" );
     if ( ! _equal ) {
         outline1("BEQ %sfalse", label);
     }
     outline1("BCS %strue", label);
-    outline0("DEX" );
-    outline1("BNE %s", label );
+    outline0("INY" );
+    outline1("CPY %s", _size );
+    outline1("BNE %sloop", label );
     outline0("LDA #0" );
     outline1("STA %s", _result );
-    outline1("JMP %sfinal", _result );
+    outline1("JMP %sfinal", label );
     outhead1("%strue:", label );
     outline0("LDA #1" );
     outline1("STA %s", _result );
@@ -1549,19 +1567,28 @@ void cpu6502_greater_than_memory( Environment * _environment, char *_source, cha
     
     MAKE_LABEL
 
-    outline1("LDX %s", _size );
-    outhead1("%s:", label );
-    outline1("LDA %s, X", _source );
-    outline1("CMP %s, X", _destination );
+    outline0("LDY #$0" );
+    outline1("LDA %s+1", _source );
+    outline0("STA $23" );
+    outline1("LDA %s", _source );
+    outline0("STA $22" );
+    outline1("LDA %s+1", _destination );
+    outline0("STA $25" );
+    outline1("LDA %s", _destination );
+    outline0("STA $24" );    
+    outhead1("%sloop:", label );
+    outline0("LDA ($24), Y" );
+    outline0("CMP ($22), Y" );
     outline1("BCC %sfalse", label);
     if ( ! _equal ) {
         outline1("BEQ %sfalse", label);
     }
-    outline0("DEX" );
-    outline1("BNE %s", label );
+    outline0("INY" );
+    outline1("CPY %s", _size );
+    outline1("BNE %sloop", label );
     outline0("LDA #0" );
     outline1("STA %s", _result );
-    outline1("JMP %sfinal", _result );
+    outline1("JMP %sfinal", label );
     outhead1("%strue:", label );
     outline0("LDA #1" );
     outline1("STA %s", _result );

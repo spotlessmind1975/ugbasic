@@ -1826,3 +1826,104 @@ void variable_string_mid_assign( Environment * _environment, char * _string, cha
         }
     }
 }
+
+Variable * variable_string_instr( Environment * _environment, char * _search, char * _searched, char * _start ) {
+    Variable * search = variable_find( _environment->tempVariables, _search );
+    if ( ! search ) {
+        search = variable_find( _environment->variables, _search );
+    }
+    if ( ! search ) {
+        CRITICAL("String variable does not exist");
+    }
+    Variable * searched = variable_find( _environment->tempVariables, _searched );
+    if ( ! searched ) {
+        searched = variable_find( _environment->variables, _searched );
+    }
+    if ( ! searched ) {
+        CRITICAL("Position variable does not exist");
+    }
+    Variable * start = NULL;
+    if ( _start ) {
+        start = variable_find( _environment->tempVariables, _start );
+        if ( ! start ) {
+            start = variable_find( _environment->variables, _start );
+        }
+        if ( ! start ) {
+            CRITICAL("Len variable does not exist");
+        }
+    }
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of INSTR)" );
+    switch( search->type ) {
+        case VT_DWORD:
+        case VT_ADDRESS:
+        case VT_POSITION:
+        case VT_WORD:
+        case VT_BYTE:
+        case VT_COLOR:
+            CRITICAL("Cannot make a INSTR function on a number");
+            break;
+        case VT_STRING:
+            break;
+    }
+    switch( searched->type ) {
+        case VT_DWORD:
+        case VT_ADDRESS:
+        case VT_POSITION:
+        case VT_WORD:
+        case VT_BYTE:
+        case VT_COLOR:
+            CRITICAL("Cannot make a INSTR function on a number");
+            break;
+        case VT_STRING:
+            break;
+    }
+
+    MAKE_LABEL
+
+    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address offset of search)" );
+    Variable * found = variable_temporary( _environment, VT_BYTE, "(found flag)" );
+    char searchAddress[16]; sprintf(searchAddress, "%s+1", search->realName );
+    char searchedAddress[16]; sprintf(searchedAddress, "%s+1", searched->realName );
+    char repeatLabel[16]; sprintf( repeatLabel, "%srep", label );
+    char foundLabel[16]; sprintf( foundLabel, "%sfnd", label );
+    char notFoundLabel[16]; sprintf( notFoundLabel, "%snfnd", label );
+
+    cpu_move_16bit( _environment, searchAddress, address->realName );
+    if ( start ) {
+        cpu_math_add_16bit_with_8bit( _environment, address->realName, start->realName, address->realName );
+        cpu_move_8bit( _environment, start->realName, result->realName );
+    } else {
+        cpu_store_8bit( _environment, result->realName, 1 );        
+    }
+
+    cpu_label( _environment, repeatLabel );
+
+    cpu_compare_8bit( _environment, result->realName, search->realName, found->realName, 1 );
+
+    cpu_bvneq( _environment, found->realName, notFoundLabel );
+
+    outline0("NOP");
+    outline0("NOP");
+    outline0("NOP");
+
+    cpu_compare_memory( _environment, address->realName, searchedAddress, searched->realName, found->realName, 1 );
+
+    outline0("NOP");
+    outline0("NOP");
+    outline0("NOP");
+    outline0("NOP");
+    
+    cpu_bvneq( _environment, found->realName, foundLabel );
+
+    cpu_inc_16bit( _environment, address->realName );
+    cpu_inc( _environment, result->realName );
+
+    cpu_jump( _environment, repeatLabel );
+
+    cpu_label( _environment, notFoundLabel );
+    cpu_store_8bit( _environment, result->realName, 0 );
+
+    cpu_label( _environment, foundLabel );
+
+    return result;
+}

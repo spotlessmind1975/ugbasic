@@ -698,6 +698,7 @@ Variable * variable_string_right( Environment * _environment, char * _string, ch
 void variable_string_right_assign( Environment * _environment, char * _string, char * _position, char * _expression );
 Variable * variable_string_mid( Environment * _environment, char * _string, char * _position, char * _len );
 void variable_string_mid_assign( Environment * _environment, char * _string, char * _position, char * _len, char * _expression );
+Variable * variable_string_instr( Environment * _environment, char * _search, char * _searched, char * _start );
 void wait_cycles( Environment * _environment, int _timing );
 void wait_cycles_var( Environment * _environment, char * _timing );
 void wait_ticks( Environment * _environment, int _timing );

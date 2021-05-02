@@ -75,7 +75,7 @@ void debug_var( Environment * _environment, char * _name ) {
     switch( var->type ) {
         case VT_BYTE:
         case VT_COLOR:
-            outline1( "LDA %s+1", var->realName );
+            outline0( "LDA #$0" );
             outline1( "LDX %s", var->realName );
             outline0( "JSR $BDCD" );
             break;
