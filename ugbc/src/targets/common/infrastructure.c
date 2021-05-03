@@ -1547,6 +1547,42 @@ Variable * variable_greater_than( Environment * _environment, char * _source, ch
     return result;
 }
 
+/**
+ * @brief Emit code for <b>= LEFT( ..., ... )</b>
+ * 
+ * @param _environment Current calling environment
+ * @param _string String to extract text from
+ * @param _position Position to start from
+ * @return Variable* Result of text extraction
+ */
+/* <usermanual>
+@keyword LEFT
+
+@english
+This function reads the specified number of characters from a source string, 
+starting from the left-hand side, and copies them into a destination string,
+that is returned. The first type of usage of this function creates a new 
+destination string from the chosen number of characters of the source string.
+The second usage is to replace the leftmost number of characters:
+
+@italian
+Questa funzione legge il numero di caratteri specificato da una stringa di origine, 
+a partire dall'inizio, e li copia in una stringa di destinazione, che viene 
+restituita. Il primo tipo di utilizzo di questa funzione crea una nuova stringa 
+di destinazione dal numero di caratteri scelto della stringa di origine. 
+Il secondo utilizzo è sostituire il numero di caratteri più a sinistra:
+
+@syntax = LEFT( [text], [position] )
+
+@example x = LEFT( "TEST", 2 )
+@usedInExample strings_left_01.bas
+@usedInExample strings_left_02.bas
+
+@seeAlso RIGHT
+@seeAlso MID
+
+@target all
+ </usermanual> */
 Variable * variable_string_left( Environment * _environment, char * _string, char * _position ) {
     Variable * string = variable_find( _environment->tempVariables, _string );
     if ( ! string ) {
@@ -1591,6 +1627,23 @@ Variable * variable_string_left( Environment * _environment, char * _string, cha
     return result;
 }
 
+/**
+ * @brief Emit code for <b>LEFT( ..., ... ) = ...</b>
+ * 
+ * @param _environment Current calling environment
+ * @param _string String to extract text from
+ * @param _position Position to start from
+ * @return Variable* Result of text extraction
+ */
+/* <usermanual>
+@keyword LEFT
+
+@syntax LEFT( [text], [position] ) = [expression]
+
+@example LEFT( "TEST", 2 ) = "PA"
+
+@target all
+ </usermanual> */
 void variable_string_left_assign( Environment * _environment, char * _string, char * _position, char * _expression ) {
     Variable * string = variable_find( _environment->tempVariables, _string );
     if ( ! string ) {
@@ -1631,6 +1684,41 @@ void variable_string_left_assign( Environment * _environment, char * _string, ch
     }
 }
 
+/**
+ * @brief Emit code for <b>= RIGHT( ..., ... )</b>
+ * 
+ * @param _environment Current calling environment
+ * @param _string String to extract text from
+ * @param _position Position to start from
+ * @return Variable* Result of text extraction
+ */
+/* <usermanual>
+@keyword RIGHT
+
+@english
+This function reads the specified number of characters from a source string, 
+starting from the right-hand side, and it copies them into a destination string,
+that is returned. The first type of usage of this function creates a new 
+destination string from the chosen number of characters of the source string.
+The second usage is to replace the rightmost number of characters:
+
+@italian
+Questa funzione legge il numero di caratteri specificato da una stringa di origine, 
+a partire dalla fine, e li copia in una stringa di destinazione, che viene 
+restituita. Il primo tipo di utilizzo di questa funzione crea una nuova stringa 
+di destinazione dal numero di caratteri scelto della stringa di origine. 
+Il secondo utilizzo è sostituire il numero di caratteri più a destra.
+
+@syntax = RIGHT( [text], [position] )
+
+@example x = RIGHT( "TEST", 2 )
+@usedInExample strings_right_01.bas
+
+@seeAlso LEFT 
+@seeAlso MID
+
+@target all
+ </usermanual> */
 Variable * variable_string_right( Environment * _environment, char * _string, char * _position ) {
     Variable * string = variable_find( _environment->tempVariables, _string );
     if ( ! string ) {
@@ -1684,6 +1772,23 @@ Variable * variable_string_right( Environment * _environment, char * _string, ch
     return result;
 }
 
+/**
+ * @brief Emit code for <b>RIGHT( ..., ... ) = ...</b>
+ * 
+ * @param _environment Current calling environment
+ * @param _string String to extract text from
+ * @param _position Position to start from
+ * @return Variable* Result of text extraction
+ */
+/* <usermanual>
+@keyword RIGHT
+
+@syntax RIGHT( [text], [position] ) = [expression]
+
+@example RIGHT( "TEST", 2 ) = "AM"
+
+@target all
+ </usermanual> */
 void variable_string_right_assign( Environment * _environment, char * _string, char * _position, char * _expression ) {
     Variable * string = variable_find( _environment->tempVariables, _string );
     if ( ! string ) {
@@ -1728,6 +1833,44 @@ void variable_string_right_assign( Environment * _environment, char * _string, c
     }
 }
 
+/**
+ * @brief Emit code for <b>= MID( ..., ... [, ...] )</b>
+ * 
+ * @param _environment Current calling environment
+ * @param _string String to extract text from
+ * @param _position Position to start from
+ * @param _len Length to extract
+ * @return Variable* Result of text extraction
+ */
+/* <usermanual>
+@keyword MID
+
+@english
+This function returns characters from the middle of a string, with the first 
+number specified in brackets setting the offset from the start of the string 
+and the second number setting how many characters are to be fetched. 
+If the number of characters to be fetched is omitted from your instruction, 
+then the characters will be read right up to the end of the string being examined.
+A second usage of this function is to replace the middle number of characters.
+
+@italian
+Questa funzione restituisce caratteri dalla metà di una stringa, con il primo 
+numero specificato tra parentesi che imposta l'offset dall'inizio della stringa 
+e il secondo numero che imposta quanti caratteri devono essere recuperati.
+Se il numero di caratteri da recuperare viene omesso dall'istruzione, 
+i caratteri verranno letti fino alla fine della stringa in esame. Un secondo 
+utilizzo di questa funzione è sostituire il numero medio di caratteri.
+
+@syntax = MID( [text], [position] { , [length] } )
+
+@example x = MID( "TEST", 2, 2 )
+@usedInExample strings_mid_01.bas
+
+@seeAlso LEFT
+@seeAlso RIGHT
+
+@target all
+ </usermanual> */
 Variable * variable_string_mid( Environment * _environment, char * _string, char * _position, char * _len ) {
     Variable * string = variable_find( _environment->tempVariables, _string );
     if ( ! string ) {
@@ -1792,6 +1935,24 @@ Variable * variable_string_mid( Environment * _environment, char * _string, char
     return result;
 }
 
+/**
+ * @brief Emit code for <b>MID( ..., ... [, ...] ) = ...</b>
+ * 
+ * @param _environment Current calling environment
+ * @param _string String to extract text from
+ * @param _position Position to start from
+ * @param _len Length to extract
+ * @return Variable* Result of text extraction
+ */
+/* <usermanual>
+@keyword MID
+
+@syntax MID( [text], [position] { , [length] } ) = [expression]
+
+@example MID( "TEST", 2, 2 ) = "xx"
+
+@target all
+ </usermanual> */
 void variable_string_mid_assign( Environment * _environment, char * _string, char * _position, char * _len, char * _expression ) {
     Variable * string = variable_find( _environment->tempVariables, _string );
     if ( ! string ) {
@@ -1849,6 +2010,53 @@ void variable_string_mid_assign( Environment * _environment, char * _string, cha
     }
 }
 
+/**
+ * @brief Emit code for <b>= INSTR( ..., ... [, ...] )</b>
+ * 
+ * @param _environment Current calling environment
+ * @param _search String to be searched
+ * @param _searched String to search
+ * @param _start Starting position to start to search
+ * @return Variable* Result of text search
+ */
+/* <usermanual>
+@keyword INSTR
+
+@english
+
+This function can be called to search through strings for individual characters or sub-strings:
+it allows you to search for all instances of one string inside another. The string is searched 
+for the first occurrence of the second strings. If it is found, its location will be reported 
+in the form of the number of characters from the left-hand side of the searched string. 
+If the search is unsuccessful, a result of zero will be given.
+
+Normally, the search will begin from the first character at the extreme left-hand side of the 
+host string, but you can specify an (optional) number of characters from the beginning of the 
+searched string. The optional start-of-search position can range from one to the maximum 
+number of characters in the searched string to be searched.
+
+@italian
+
+Questa funzione può essere chiamata per cercare nelle stringhe singoli caratteri o sottostringhe: 
+permette di cercare tutte le istanze di una stringa all'interno di un'altra.
+La stringa viene ricercata per la prima occorrenza della seconda stringa. Se viene trovato, 
+la sua posizione verrà riportata sotto forma di numero di caratteri dall'inizio della 
+stringa cercata. Se la ricerca ha esito negativo, verrà fornito un risultato pari a zero.
+
+Normalmente, la ricerca inizierà dal primo carattere all'estrema sinistra della stringa host,
+ma è possibile specificare un numero (facoltativo) di caratteri dall'inizio della stringa 
+cercata. La posizione di inizio ricerca opzionale può variare da uno al massimo
+numero di caratteri nella stringa da cercare.
+
+@syntax = INSTR( [text], [searched] {, [start] } )
+
+@example x = INSTR( "ugBASIC", "A" )
+@example x = INSTR( "ugBASIC", "A", 2 )
+@usedInExample strings_instr_01.bas
+@usedInExample strings_instr_02.bas
+
+@target all
+ </usermanual> */
 Variable * variable_string_instr( Environment * _environment, char * _search, char * _searched, char * _start ) {
     Variable * search = variable_find( _environment->tempVariables, _search );
     if ( ! search ) {
@@ -1950,6 +2158,29 @@ Variable * variable_string_instr( Environment * _environment, char * _search, ch
     return result;
 }
 
+/**
+ * @brief Emit code for <b>= UPPER( ... )</b>
+ * 
+ * @param _environment Current calling environment
+ * @param _string String to convert in lower case
+ * @return Variable* Result of case conversion
+ */
+/* <usermanual>
+@keyword LOWER
+
+@english
+This function converts the characters in a string into lower case (capital) letters.
+
+@italian
+Questa funzione converte i caratteri presenti in una stringa in lettere minuscole.
+
+@syntax = LOWER( [text] )
+
+@example x = LOWER( "ugBASIC" )
+@usedInExample strings_cases_01.bas
+
+@target all
+ </usermanual> */
 Variable * variable_string_lower( Environment * _environment, char * _string ) {
     Variable * string = variable_find( _environment->tempVariables, _string );
     if ( ! string ) {
@@ -1984,6 +2215,29 @@ Variable * variable_string_lower( Environment * _environment, char * _string ) {
 
 }
 
+/**
+ * @brief Emit code for <b>= UPPER( ... )</b>
+ * 
+ * @param _environment Current calling environment
+ * @param _string String to convert in uppercase
+ * @return Variable* Result of case conversion
+ */
+/* <usermanual>
+@keyword UPPER
+
+@english
+This function converts the characters in a string into upper case (capital) letters.
+
+@italian
+Questa funzione converte i caratteri presenti in una stringa in lettere maiuscole.
+
+@syntax = UPPER( [text] )
+
+@example x = UPPER( "ugBASIC" )
+@usedInExample strings_cases_01.bas
+
+@target all
+ </usermanual> */
 Variable * variable_string_upper( Environment * _environment, char * _string ) {
     Variable * string = variable_find( _environment->tempVariables, _string );
     if ( ! string ) {
@@ -2018,6 +2272,37 @@ Variable * variable_string_upper( Environment * _environment, char * _string ) {
     
 }
 
+/**
+ * @brief Emit code for <b>= STR( ... )</b>
+ * 
+ * @param _environment Current calling environment
+ * @param _value Number to convert to string
+ * @return Variable* Result of conversion
+ */
+/* <usermanual>
+@keyword STR
+
+@english
+This function converts numbers into strings. This can be used to overcome some 
+limitations posed by functions which does not accept numbers as parameters, 
+but will work happily with parameters in the form of strings. 
+Also, when string adding is performed, all operand must be strings,
+so this function is really useful.
+
+@italian
+Questa funzione converte i numeri in stringhe. Può essere usata per superare 
+alcune limitazioni poste dalle funzioni che non accettano numeri come parametri, 
+ma che funzionano bene con  parametri sotto forma di stringhe. Inoltre, quando 
+viene eseguita l'aggiunta di stringhe, tutti gli operandi devono essere stringhe, 
+quindi questa funzione è davvero utile.
+
+@syntax = STR( [number] )
+
+@example x = STR( 42 )
+@usedInExample strings_str_01.bas
+
+@target all
+ </usermanual> */
 Variable * variable_string_str( Environment * _environment, char * _value ) {
     Variable * value = variable_find( _environment->tempVariables, _value );
     if ( ! value ) {
@@ -2057,6 +2342,29 @@ Variable * variable_string_str( Environment * _environment, char * _value ) {
     
 }
 
+/**
+ * @brief Emit code for <b>= VAL( ... )</b>
+ * 
+ * @param _environment Current calling environment
+ * @param _value String to convert to number
+ * @return Variable* Result of conversion
+ */
+/* <usermanual>
+@keyword VAL
+
+@english
+This function converts strings into number.
+
+@italian
+Questa funzione converte le stringhe in numeri.
+
+@syntax = VAL( [number] )
+
+@example x = VAL( 42 )
+@usedInExample strings_val_01.bas
+
+@target all
+ </usermanual> */
 Variable * variable_string_val( Environment * _environment, char * _value ) {
     Variable * value = variable_find( _environment->tempVariables, _value );
     if ( ! value ) {
@@ -2097,6 +2405,34 @@ Variable * variable_string_val( Environment * _environment, char * _value ) {
     
 }
 
+/**
+ * @brief Emit code for <b>= STRING( ..., ... )</b>
+ *
+ * @param _environment Current calling environment
+ * @param _string String to use as base (the first letter)
+ * @param _repetitions Number of repetition of output string
+ * @return Variable* Result of production
+ */
+/* <usermanual>
+@keyword STRING
+
+@english
+This function can be used to create 
+a new string filled with the required number of copies of the first 
+character from an existing string.
+
+@italian
+Questa funzione può essere utilizzata per creare
+una nuova stringa riempita con tante copie della prima lettera
+della stringa in ingresso.
+
+@syntax = STRING( [text], [number] )
+
+@example x = STRING( "A", 42 )
+@usedInExample strings_string_01.bas
+
+@target all
+ </usermanual> */
 Variable * variable_string_string( Environment * _environment, char * _string, char * _repetitions  ) {
 
     Variable * string = variable_find( _environment->tempVariables, _string );
@@ -2132,6 +2468,32 @@ Variable * variable_string_string( Environment * _environment, char * _string, c
     
 }
 
+/**
+ * @brief Emit code for <b>= SPACE( ... )</b>
+ * 
+ * @param _environment Current calling environment
+ * @param _repetitions Number of spaces to produce in output string
+ * @return Variable* Result of production
+ */
+/* <usermanual>
+@keyword SPACE
+
+@english
+This function can be used to create 
+a new string filled with the required number of spaces.
+
+@italian
+Questa funzione può essere utilizzata per creare
+una nuova stringa riempita con tanti spazi quanto
+quelli richiesti.
+
+@syntax = SPACE( [number] )
+
+@example x = SPACE( 42 )
+@usedInExample strings_space_01.bas
+
+@target all
+ </usermanual> */
 Variable * variable_string_space( Environment * _environment, char * _repetitions  ) {
     
     Variable * space = variable_temporary( _environment, VT_STRING, "(space)");
@@ -2142,6 +2504,29 @@ Variable * variable_string_space( Environment * _environment, char * _repetition
     
 }
 
+/**
+ * @brief Emit code for <b>= FLIP( ... )</b>
+ * 
+ * @param _environment Current calling environment
+ * @param _string String to flip
+ * @return Variable* Result of flip
+ */
+/* <usermanual>
+@keyword FLIP
+
+@english
+This function will flip a given string, reversing the order of letters.
+
+@italian
+Questa funzione inverte l'ordine delle lettere della stringa data in ingresso.
+
+@syntax = FLIP( [string] )
+
+@example x = FLIP( "test" )
+@usedInExample strings_flip_01.bas
+
+@target all
+ </usermanual> */
 Variable * variable_string_flip( Environment * _environment, char * _string  ) {
 
     Variable * string = variable_find( _environment->tempVariables, _string );
@@ -2169,6 +2554,33 @@ Variable * variable_string_flip( Environment * _environment, char * _string  ) {
     
 }
 
+/**
+ * @brief Emit code for <b>= CHR( ... )</b> 
+ * 
+ * @param _environment Current calling environment
+ * @param _ascii ASCII value to convert to string
+ * @return Variable* Result of conversion
+ */
+/* <usermanual>
+@keyword CHR
+
+@english
+This function creates a string that contains a single character, generated by a 
+given ASCII code number. Note that, depending on the hardware, only some characters 
+are printable on the screen. Others are used internally as control codes.
+
+@italian
+Questa funzione crea una stringa che contiene un singolo carattere, generato da un dato
+codice ASCII. Da notare che, a seconda dell'hardware, solo alcuni caratteri sono 
+stampabili sullo schermo. Altri sono usati internamente come codici di controllo.
+
+@syntax = CHR( [ascii] )
+
+@example x = CHR( 65 )
+@usedInExample strings_chr_01.bas
+
+@target all
+ </usermanual> */
 Variable * variable_string_chr( Environment * _environment, char * _ascii  ) {
 
     Variable * ascii = variable_find( _environment->tempVariables, _ascii );
@@ -2207,6 +2619,30 @@ Variable * variable_string_chr( Environment * _environment, char * _ascii  ) {
     
 }
 
+/**
+ * @brief Emit code for <b>= ASC( ... )</b>  
+ * 
+ * @param _environment Current calling environment
+ * @param _char String to convert to ascii
+ * @return Variable* Result of conversion
+ */
+/* <usermanual>
+@keyword ASC
+
+@english
+This function returns the internal ASCII code of the first character
+in a string.
+
+@italian
+Questa funzione ritorna il codice ASCII del primo carattere di una stringa.
+
+@syntax = ASC( [text] )
+
+@example x = ASC( "UGBASIC" )
+@usedInExample strings_asc_01.bas
+
+@target all
+ </usermanual> */
 Variable * variable_string_asc( Environment * _environment, char * _char  ) {
 
     Variable * character = variable_find( _environment->tempVariables, _char );
@@ -2241,6 +2677,29 @@ Variable * variable_string_asc( Environment * _environment, char * _char  ) {
     
 }
 
+/**
+ * @brief Emit code for <b>= LEN( ... )</b>   
+ * 
+ * @param _environment Current calling environment
+ * @param _string String to examinate
+ * @return Variable* Result of length measurement
+ */
+/* <usermanual>
+@keyword LEN
+
+@english
+This function returns the number of characters stored in a string.
+
+@italian
+Questa funzione restituisce il numero di caratteri memorizzato in una stringa.
+
+@syntax = LEN( [text] )
+
+@example x = LEN( "TEST" )
+@usedInExample strings_len_01.bas
+
+@target all
+ </usermanual> */
 Variable * variable_string_len( Environment * _environment, char * _string  ) {
 
     Variable * string = variable_find( _environment->tempVariables, _string );
