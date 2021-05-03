@@ -1513,7 +1513,8 @@ void z80_math_sub_16bit_with_8bit( Environment * _environment, char *_source, ch
 
     outline1("LD HL, (%s)", _source );
     outline0("LD DE, 0" );
-    outline1("LD E, (%s)", _destination );
+    outline1("LD A, (%s)", _destination );
+    outline0("LD E, A" );
     outline0("SUB HL, DE" );
     if ( _other ) {
         outline1("LD (%s), HL", _other );
@@ -1596,7 +1597,8 @@ void z80_convert_upto_24bit_bcd( Environment * _environment, char * _source, cha
     MAKE_LABEL
 
     outline1("LD HL, (%s)", _source );
-    outline1("LD E, (%s+2)", _source );
+    outline1("LD A, (%s+2)", _source );
+    outline0("LD E, A" );
 
     outline0("LD C,E");
     outline0("PUSH HL");
