@@ -388,7 +388,8 @@ void z80_math_mul_8bit_to_16bit( Environment * _environment, char *_source, char
     MAKE_LABEL
 
     outline1("LD H, (%s)", _source );
-    outline1("LD E, (%s)", _destination );
+    outline1("LD A, (%s)", _destination );
+    outline0("LD E, A" );
 
     outline0("LD D,0");
     outline0("LD L,D");
@@ -1304,11 +1305,11 @@ void z80_logical_and_8bit( Environment * _environment, char * _left, char * _rig
     outline1("JR Z, %s", label );
     outline1("LD A, (%s)", _right );
     outline1("JR Z, %s", label );
-    outline0("LD A, #1" );
+    outline0("LD A, 1" );
     outline1("LD (%s), A", _result );
     outline1("JMP %s2", label );
     outhead1("%s:", label );
-    outline0("LD A, #0" );
+    outline0("LD A, 0" );
     outline1("LD (%s), A", _result );
     outhead1("%s2:", label );
 
@@ -1324,11 +1325,11 @@ void z80_logical_or_8bit( Environment * _environment, char * _left, char * _righ
     outline1("LD A, (%s)", _right );
     outline1("JR NZ, %s1", label );
     outhead1("%s0:", label );
-    outline0("LD A, #0" );
+    outline0("LD A, 0" );
     outline1("LD (%s), A", _result );
     outline1("JMP %sx", label );
     outhead1("%s1:", label );
-    outline0("LD A, #1" );
+    outline0("LD A, 1" );
     outline1("LD (%s), A", _result );
     outhead1("%sx:", label );
 
@@ -1382,7 +1383,8 @@ void z80_mem_move( Environment * _environment, char *_source, char *_destination
 
     outline1("LD HL,(%s)", _source);
     outline1("LD DE,(%s)", _destination);
-    outline1("LD C, (%s)", _size);
+    outline1("LD A, (%s)", _size);
+    outline0("LD C, A");
     outline0("LD B, 0");
     outline0("LDIR");
 
@@ -1405,20 +1407,23 @@ void z80_compare_memory( Environment * _environment, char *_source, char *_desti
 
     outline1("LD HL,(%s)", _source);
     outline1("LD DE,(%s)", _destination);
-    outline1("LD C, (%s)", _size);
+    outline1("LD A, (%s)", _size);
+    outline0("LD C, A");
     outhead1("%s:", label );
     outline0("LD A, (HL)");
-    outline0("CP (DE)");
-    outline0("JR NZ, %sdiff");
+    outline0("LD B, A");
+    outline0("LD A, (DE)");
+    outline0("CP B");
+    outline1("JR NZ, %sdiff", label);
     outline0("INC DE");
     outline0("INC HL");
     outline0("DEC C");
-    outline0("JR NZ, %s");
-    outline1("LD A, #%d", _equal ? 1 : 0 );
+    outline1("JR NZ, %s", label);
+    outline1("LD A, %d", _equal ? 1 : 0 );
     outline1("LD (%s), A", _result );
     outline1("JMP %sfinal", label );
     outhead1("%sdiff:", label );
-    outline1("LD A, #%d", _equal ? 1 : 0 );
+    outline1("LD A, %d", _equal ? 1 : 0 );
     outline1("LD (%s), A", _result );
     outhead1("%sfinal:", label );
 
@@ -1430,7 +1435,8 @@ void z80_less_than_memory( Environment * _environment, char *_source, char *_des
 
     outline1("LD HL,(%s)", _source);
     outline1("LD DE,(%s)", _destination);
-    outline1("LD C, (%s)", _size);
+    outline1("LD A, (%s)", _size);
+    outline0("LD C, A");
     outhead1("%s:", label );
     outline0("LD A, (HL)");
     outline1("JR NC, %sdiff", label);
@@ -1457,7 +1463,8 @@ void z80_greater_than_memory( Environment * _environment, char *_source, char *_
 
     outline1("LD HL,(%s)", _source);
     outline1("LD DE,(%s)", _destination);
-    outline1("LD C, (%s)", _size);
+    outline1("LD A, (%s)", _size);
+    outline0("LD C, A");
     outhead1("%s:", label );
     outline0("LD A, (HL)");
     outline0("CP (DE)");
@@ -1469,11 +1476,11 @@ void z80_greater_than_memory( Environment * _environment, char *_source, char *_
     outline0("INC HL");
     outline0("DEC C");
     outline1("JR NZ, %s", label);
-    outline1("LD A, #%d", _equal ? 1 : 0 );
+    outline1("LD A, %d", _equal ? 1 : 0 );
     outline1("LD (%s), A", _result );
     outline1("JMP %sfinal", label );
     outhead1("%sdiff:", label );
-    outline1("LD A, #%d", _equal ? 1 : 0 );
+    outline1("LD A, %d", _equal ? 1 : 0 );
     outline1("LD (%s), A", _result );
     outhead1("%sfinal:", label );
 
@@ -1491,7 +1498,8 @@ void z80_math_add_16bit_with_8bit( Environment * _environment, char *_source, ch
 
     outline1("LD HL, (%s)", _source );
     outline0("LD DE, 0" );
-    outline1("LD E, (%s)", _destination );
+    outline1("LD A, (%s)", _destination );
+    outline0("LD E, A" );
     outline0("ADD HL, DE" );
     if ( _other ) {
         outline1("LD (%s), HL", _other );
@@ -1519,7 +1527,8 @@ void z80_uppercase( Environment * _environment, char *_source, char *_size, char
 
     MAKE_LABEL
 
-    outline1("LD C, (%s)", _size );
+    outline1("LD A, (%s)", _size);
+    outline0("LD C, A" );
     outline1("LD HL, (%s)", _source );
     if ( _result ) {
         outline1("LD DE, (%s)", _result );
@@ -1529,21 +1538,21 @@ void z80_uppercase( Environment * _environment, char *_source, char *_size, char
     outhead1("%supper:", label );
     outline0("LD A, (HL)" );
     
-    outline0("CP #65");
+    outline0("CP 65");
     outline1("JR NC, %snext", label);
     outline1("JR NZ, %snext", label);
 
-    outline0("CP #90");
+    outline0("CP 90");
     outline1("JR C, %snext", label);
 
-    outline0("SUB A, #32");
+    outline0("SUB A, 32");
     outline0("LD (DE), A" );
 
     outhead1("%snext:", label );
     outline0("INC HL" );
     outline0("INC DE" );
     outline0("DEC C" );
-    outline0("CP #0" );
+    outline0("CP 0" );
     outline1("JR Z, %supper", label);
 
 }
@@ -1552,7 +1561,8 @@ void z80_lowercase( Environment * _environment, char *_source, char *_size, char
 
     MAKE_LABEL
 
-    outline1("LD C, (%s)", _size );
+    outline1("LD A, (%s)", _size);
+    outline0("LD C, A" );
     outline1("LD HL, (%s)", _source );
     if ( _result ) {
         outline1("LD DE, (%s)", _result );
@@ -1562,21 +1572,21 @@ void z80_lowercase( Environment * _environment, char *_source, char *_size, char
     outhead1("%slower:", label );
     outline0("LD A, (HL)" );
     
-    outline0("CP #97");
+    outline0("CP 97");
     outline1("JR NC, %snext", label);
     outline1("JR NZ, %snext", label);
 
-    outline0("CP #122");
+    outline0("CP 122");
     outline1("JR C, %snext", label);
 
-    outline0("SUB A, #32");
+    outline0("SUB A, 32");
     outline0("LD (DE), A" );
 
     outhead1("%snext:", label );
     outline0("INC HL" );
     outline0("INC DE" );
     outline0("DEC C" );
-    outline0("CP #0" );
+    outline0("CP 0" );
     outline1("JR Z, %slower", label);
 
 }
@@ -1655,7 +1665,7 @@ void z80_convert_bcd_to_digits( Environment * _environment, char * _source, char
     outline0("AND #$0F");
     outline1("JR Z,%sd0", label);
     outline0("INC I");
-    outline0("ADC A, #48");
+    outline0("ADC A, 48");
     outline0("INC DE");
     outline0("LD (DE),A");
     outhead1("%sd0:", label);
@@ -1667,7 +1677,7 @@ void z80_convert_bcd_to_digits( Environment * _environment, char * _source, char
     outline1("JR Z, %sd1", label);
     outline0("INC I");
     outhead1("%sd1a:", label);
-    outline0("ADC A, #48");
+    outline0("ADC A, 48");
     outline0("INC DE");
     outline0("LD (DE), A");
 
@@ -1684,7 +1694,7 @@ void z80_convert_bcd_to_digits( Environment * _environment, char * _source, char
     outline1("JR Z,%sd2", label);
     outline0("INC I");
     outhead1("%sd2a:", label);
-    outline0("ADC A, #48");
+    outline0("ADC A, 48");
     outline0("INC DE");
     outline0("LD (DE), A");
 
@@ -1697,7 +1707,7 @@ void z80_convert_bcd_to_digits( Environment * _environment, char * _source, char
     outline1("JR Z,%sd3", label);
     outline0("INC I");
     outhead1("%sd3a:", label);
-    outline0("ADC A, #48");
+    outline0("ADC A, 48");
     outline0("INC DE");
     outline0("LD (DE), A");
 
@@ -1714,14 +1724,14 @@ void z80_convert_bcd_to_digits( Environment * _environment, char * _source, char
     outline1("JR Z,%sd4", label);
     outline0("INC I");
     outhead1("%sd4a:", label);
-    outline0("ADC A, #48");
+    outline0("ADC A, 48");
     outline0("INC DE");
     outline0("LD (DE), A");
 
     outhead1("%sd4:", label);
     outline1("LD A,(%s)", _source);
     outline0("AND #$0F");
-    outline0("ADC A, #48");
+    outline0("ADC A, 48");
     outline0("INC DE");
     outline0("LD (DE), A");
 
@@ -1743,11 +1753,11 @@ void z80_convert_string_into_16bit( Environment * _environment, char * _string, 
     outhead1("%srepeat:", label );
 
     outline0("LD A, (HL)" );
-    outline0("CP #$39" );
+    outline0("CP $39" );
     outline1("JR NC, %send", label);
-    outline0("CP #$30" );
+    outline0("CP $30" );
     outline1("JR C, %send", label);
-    outline0("SBC A, #$30" );
+    outline0("SBC A, $30" );
 
     outline1("LD BC, (%s)", _value );
     outline0("LD DE, A" );
@@ -1757,7 +1767,7 @@ void z80_convert_string_into_16bit( Environment * _environment, char * _string, 
 
     // MULT x 10
     outline1("LD BC, (%s)", _value );
-    outline0("LD DE, #10" );
+    outline0("LD DE, 10" );
     outline0("LD A, C" );
     outline0("LD C, B" );
     outline0("LD HL, 0" );
@@ -1794,7 +1804,8 @@ void z80_fill_indirect( Environment * _environment, char * _address, char * _siz
     outline1("LD HL, (%s)", _pattern);
 
     // Fill the bitmap with the given pattern.
-    outline1("LD C, (%s)", _size );
+    outline1("LD A, (%s)", _size);
+    outline0("LD C, A" );
     outhead1("%sx:", label);
     outline0("LD A, (HL)");
     outline0("LD (DE),A");
@@ -1807,11 +1818,13 @@ void z80_flip( Environment * _environment, char * _source, char * _size, char * 
 
     MAKE_LABEL
 
-    outline1("LDA HL, (%s)", _source);
-    outline1("LDA DE, (%s)", _destination);
+    outline1("LD HL, %s", _size);
+    outline1("LD DE, (%s)", _destination);
+    outline0("ADC HL, DE");
+    outline0("LD DE, HL");
+
+    outline1("LD HL, (%s)", _source);
     
-    outline1("LD C, %s", _size);
-    outline0("ADC DE, C");
     outline0("DEC DE");
 
     outhead1("%sx:", label);
