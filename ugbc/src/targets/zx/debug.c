@@ -51,10 +51,45 @@
  */
 void debug_var( Environment * _environment, char * _name ) {
 
+    MAKE_LABEL
+
     // Safety check
     Variable * var = variable_retrieve( _environment, _name );
 
-    // TODO: implement zx/debug_var
-    
+    switch( var->type ) {
+        case VT_BYTE:
+        case VT_COLOR:
+            outline1( "LD A, (%s)", var->realName );
+            outline0( "LD B, 0" );
+            outline0( "LD C, A" );
+            outline0( "CALL 6683" );
+            break;
+        case VT_ADDRESS:
+        case VT_WORD:
+        case VT_POSITION:
+            outline1( "LD BC, (%s)", var->realName );
+            outline0( "CALL 6683" );
+            break;
+        case VT_DWORD:
+            outline1( "LD BC, (%s+2)", var->realName );
+            outline0( "CALL 6683" );
+            outline1( "LD BC, (%s)", var->realName );
+            outline0( "CALL 6683" );
+            break;
+        case VT_STRING: {
+
+            char stringAddress[16]; sprintf(stringAddress, "%s+1", var->realName );
+
+            outline1( "LD DE, (%s)", stringAddress );
+            outline1( "LD C, %s", var->realName );
+            outline0( "LD B, 0" );
+            outline0( "CALL $8252" );
+            break;
+        }
+
+    }
+
+    outline0( "LD A, 32");
+    outline0( "RST $10" );
 }
 

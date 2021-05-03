@@ -123,7 +123,7 @@ void z80_move_8bit_indirect2( Environment * _environment, char *_source, char * 
 #define cpu_bneq( _environment,  _label  ) z80_beq( _environment,  _label  )
 #define cpu_busy_wait( _environment,  _timing  ) z80_busy_wait( _environment,  _timing  )
 #define cpu_bveq( _environment,  _value,  _label  ) z80_bveq( _environment,  _value,  _label  )
-#define cpu_bvneq( _environment,  _value,  _label  ) z80_bveq( _environment,  _value,  _label  )
+#define cpu_bvneq( _environment,  _value,  _label  ) z80_bvneq( _environment,  _value,  _label  )
 #define cpu_combine_nibbles( _environment,  _low_nibble,  _hi_nibble,  _byte  ) z80_combine_nibbles( _environment,  _low_nibble,  _hi_nibble,  _byte  )
 #define cpu_compare_16bit( _environment, _source, _destination, _name, _positive ) z80_compare_16bit( _environment, _source, _destination, _name, _positive )
 #define cpu_compare_32bit( _environment, _source, _destination, _name, _positive ) z80_compare_32bit( _environment, _source, _destination, _name, _positive )
