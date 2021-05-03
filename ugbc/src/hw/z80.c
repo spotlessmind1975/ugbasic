@@ -190,7 +190,9 @@ void z80_compare_8bit( Environment * _environment, char *_source, char *_destina
     MAKE_LABEL
 
     outline1("LD A, (%s)", _source);
-    outline1("CP (%s)", _destination);
+    outline0("LD B, A");
+    outline1("LD A, (%s)", _destination);
+    outline0("CP B");
     outline1("JP Z, %s", label);
     outline1("LD A, %d", _positive);
     if ( _other ) {
@@ -224,7 +226,9 @@ void z80_less_than_8bit( Environment * _environment, char *_source, char *_desti
     MAKE_LABEL
 
     outline1("LD A, (%s)", _source);
-    outline1("CP (%s)", _destination);
+    outline0("LD B, A");
+    outline1("LD A, (%s)", _destination);
+    outline0("CP B");
     outline1("JR C, %s", label);
     if ( _equal ) {
         outline1("JR Z, %s", label);
@@ -261,7 +265,9 @@ void z80_greater_than_8bit( Environment * _environment, char *_source, char *_de
     MAKE_LABEL
 
     outline1("LD A, (%s)", _source);
-    outline1("CP (%s)", _destination);
+    outline0("LD B, A");
+    outline1("LD A, (%s)", _destination);
+    outline0("CP B");
     outline1("JR NC, %s", label);
     if ( !_equal ) {
         outline1("JR NZ, %s", label);
@@ -515,10 +521,14 @@ void z80_compare_16bit( Environment * _environment, char *_source, char *_destin
     MAKE_LABEL
 
     outline1("LD A, (%s)", _source);
-    outline1("CP (%s)", _destination);
+    outline0("LD B, A");
+    outline1("LD A, (%s)", _destination);
+    outline0("CP B");
     outline1("JP NZ, %s", label);
     outline1("LD A, (%s+1)", _source);
-    outline1("CP (%s+1)", _destination);
+    outline0("LD B, A");
+    outline1("LD A, (%s+1)", _destination);
+    outline0("CP B");
     outline1("JP NZ, %s", label);
     outline1("LD A, %d", _positive);
     if ( _other ) {
@@ -552,10 +562,14 @@ void z80_less_than_16bit( Environment * _environment, char *_source, char *_dest
     MAKE_LABEL
 
     outline1("LD A, (%s+1)", _source);
-    outline1("CP (%s+1)", _destination);
+    outline0("LD B, A");
+    outline1("LD A, (%s+1)", _destination);
+    outline0("CP B");
     outline1("JR C, %s", label);
     outline1("LD A, (%s)", _source);
-    outline1("CP (%s)", _destination);
+    outline0("LD B, A");
+    outline1("LD A, (%s)", _destination);
+    outline0("CP B");
     outline1("JR C, %s", label);
     if ( _equal ) {
         outline1("JR Z, %s", label);
@@ -592,10 +606,14 @@ void z80_greater_than_16bit( Environment * _environment, char *_source, char *_d
     MAKE_LABEL
 
     outline1("LD A, (%s+1)", _source);
-    outline1("CP (%s+1)", _destination);
+    outline0("LD B, A");
+    outline1("LD A, (%s+1)", _destination);
+    outline0("CP B");
     outline1("JR NC, %s", label);
     outline1("LD A, (%s)", _source);
-    outline1("CP (%s)", _destination);
+    outline0("LD B, A");
+    outline1("LD A, (%s)", _destination);
+    outline0("CP B");
     outline1("JR NC, %s", label);
     if ( !_equal ) {
         outline1("JR NZ, %s", label);
@@ -848,16 +866,24 @@ void z80_compare_32bit( Environment * _environment, char *_source, char *_destin
     MAKE_LABEL
 
     outline1("LD A, (%s)", _source);
-    outline1("CP (%s)", _destination);
+    outline0("LD B, A");
+    outline1("LD A, (%s)", _destination);
+    outline0("CP B");
     outline1("JP NZ, %s", label);
     outline1("LD A, (%s+1)", _source);
-    outline1("CP (%s+1)", _destination);
+    outline0("LD B, A");
+    outline1("LD A, (%s+1)", _destination);
+    outline0("CP B");
     outline1("JP NZ, %s", label);
     outline1("LD A, (%s+2)", _source);
-    outline1("CP (%s+2)", _destination);
+    outline0("LD B, A");
+    outline1("LD A, (%s+2)", _destination);
+    outline0("CP B");
     outline1("JP NZ, %s", label);
     outline1("LD A, (%s+3)", _source);
-    outline1("CP (%s+3)", _destination);
+    outline0("LD B, A");
+    outline1("LD A, (%s+3)", _destination);
+    outline0("CP B");
     outline1("JP NZ, %s", label);
     outline1("LD A, %d", _positive);
     if ( _other ) {
@@ -891,16 +917,24 @@ void z80_less_than_32bit( Environment * _environment, char *_source, char *_dest
     MAKE_LABEL
 
     outline1("LD A, (%s+3)", _source);
-    outline1("CP (%s+3)", _destination);
+    outline0("LD B, A");
+    outline1("LD A, (%s+3)", _destination);
+    outline0("CP B");
     outline1("JR C, %s", label);
     outline1("LD A, (%s+2)", _source);
-    outline1("CP (%s+2)", _destination);
+    outline0("LD B, A");
+    outline1("LD A, (%s+2)", _destination);
+    outline0("CP B");
     outline1("JR C, %s", label);
     outline1("LD A, (%s+1)", _source);
-    outline1("CP (%s+1)", _destination);
+    outline0("LD B, A");
+    outline1("LD A, (%s+1)", _destination);
+    outline0("CP B");
     outline1("JR C, %s", label);
     outline1("LD A, (%s)", _source);
-    outline1("CP (%s)", _destination);
+    outline0("LD B, A");
+    outline1("LD A, (%s)", _destination);
+    outline0("CP B");
     outline1("JR C, %s", label);
     if ( _equal ) {
         outline1("JR Z, %s", label);
@@ -937,16 +971,24 @@ void z80_greater_than_32bit( Environment * _environment, char *_source, char *_d
     MAKE_LABEL
 
     outline1("LD A, (%s+3)", _source);
-    outline1("CP (%s+3)", _destination);
+    outline0("LD B, A");
+    outline1("LD A, (%s+3)", _destination);
+    outline0("CP B");
     outline1("JR NC, %s", label);
     outline1("LD A, (%s+2)", _source);
-    outline1("CP (%s+2)", _destination);
+    outline0("LD B, A");
+    outline1("LD A, (%s+2)", _destination);
+    outline0("CP B");
     outline1("JR NC, %s", label);
     outline1("LD A, (%s+1)", _source);
-    outline1("CP (%s+1)", _destination);
+    outline0("LD B, A");
+    outline1("LD A, (%s+1)", _destination);
+    outline0("CP B");
     outline1("JR NC, %s", label);
     outline1("LD A, (%s)", _source);
-    outline1("CP (%s)", _destination);
+    outline0("LD B, A");
+    outline1("LD A, (%s)", _destination);
+    outline0("CP B");
     outline1("JR NC, %s", label);
     if ( !_equal ) {
         outline1("JR NZ, %s", label);
@@ -1249,7 +1291,7 @@ void z80_busy_wait( Environment * _environment, char * _timing ) {
  */
 void z80_port_out( Environment * _environment, char * _port, char * _value ) {
 
-    outline1("LD A, %s", _value );
+    outline1("LD A, (%s)", _value );
     outline1("OUT (%s), A", _port );
 
 }
@@ -1794,7 +1836,7 @@ void z80_move_8bit_indirect2( Environment * _environment, char * _value, char *_
 
     outline1("LD DE, (%s)", _value);
     outline0("LD A, (DE)");
-    outline1("LD %s, A", _source);
+    outline1("LD (%s), A", _source);
 
 }
 
