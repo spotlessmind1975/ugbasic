@@ -1955,4 +1955,5 @@ void cpu6502_flip( Environment * _environment, char * _source, char * _size, cha
     outline1("BNE %sx", label);
 
 }
+
 #endif

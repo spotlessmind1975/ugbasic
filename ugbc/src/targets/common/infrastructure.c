@@ -2462,7 +2462,7 @@ Variable * variable_string_string( Environment * _environment, char * _string, c
     cpu_move_16bit( _environment, strings_address->realName, resultAddress );
     cpu_math_add_16bit_with_8bit( _environment, strings_address->realName, repetitions->realName, strings_address->realName );
 
-    cpu6502_fill_indirect( _environment, resultAddress, result->realName, stringAddress );
+    cpu_fill_indirect( _environment, resultAddress, result->realName, stringAddress );
 
     return result;
     
@@ -2548,7 +2548,7 @@ Variable * variable_string_flip( Environment * _environment, char * _string  ) {
     cpu_move_16bit( _environment, strings_address->realName, resultAddress );
     cpu_math_add_16bit_with_8bit( _environment, strings_address->realName, string->realName, strings_address->realName );
 
-    cpu6502_flip( _environment, stringAddress, result->realName, resultAddress );
+    cpu_flip( _environment, stringAddress, result->realName, resultAddress );
 
     return result;
     
