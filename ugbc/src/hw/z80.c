@@ -1645,7 +1645,7 @@ void z80_convert_upto_24bit_bcd( Environment * _environment, char * _source, cha
     outline1("DJNZ %sDBLLOOP", label );
     outline1("JMP %send", label );
 
-    outhead1("%send", label );
+    outhead1("%send:", label );
     outline1("LD DE, (%s+1)", _dest );
     outline1("LD HL, (%s)", _dest );
 
@@ -1658,13 +1658,13 @@ void z80_convert_bcd_to_digits( Environment * _environment, char * _source, char
     outline1("LD DE, (%s)", _dest );
     outline0("DEC DE" );
 
-    outline0("LD I, 0");
+    outline0("LD L, 0");
     outline1("LD A, (%s+2)", _source);
     outline0("SRA A");
     outline0("SRA A");
     outline0("SRA A");
     outline0("SRA A");
-    outline0("AND #$0F");
+    outline0("AND $0F");
     outline1("JR Z,%sd0", label);
     outline0("INC I");
     outline0("ADC A, 48");
@@ -1672,7 +1672,7 @@ void z80_convert_bcd_to_digits( Environment * _environment, char * _source, char
     outline0("LD (DE),A");
     outhead1("%sd0:", label);
     outline1("LD A,(%s+2)", _source);
-    outline0("AND #$0F");
+    outline0("AND $0F");
     outline1("JR NZ,%sd1a", label);
     outline0("INC I");
     outline0("DEC I");
@@ -1689,7 +1689,7 @@ void z80_convert_bcd_to_digits( Environment * _environment, char * _source, char
     outline0("SRA A");
     outline0("SRA A");
     outline0("SRA A");
-    outline0("AND #$0F");
+    outline0("AND $0F");
     outline1("JR NZ,%sd2a", label);
     outline0("INC I");
     outline0("DEC I");
@@ -1702,7 +1702,7 @@ void z80_convert_bcd_to_digits( Environment * _environment, char * _source, char
 
     outhead1("%sd2:", label);
     outline1("LD A, (%s+1)", _source);
-    outline0("AND #$0F");
+    outline0("AND $0F");
     outline1("JR NZ,%sd3a", label);
     outline0("INC I");
     outline0("DEC I");
@@ -1719,7 +1719,7 @@ void z80_convert_bcd_to_digits( Environment * _environment, char * _source, char
     outline0("SRA A");
     outline0("SRA A");
     outline0("SRA A");
-    outline0("AND #$0F");
+    outline0("AND $0F");
     outline1("JR NZ,%sd4a", label);
     outline0("INC I");
     outline0("DEC I");
@@ -1732,7 +1732,7 @@ void z80_convert_bcd_to_digits( Environment * _environment, char * _source, char
 
     outhead1("%sd4:", label);
     outline1("LD A,(%s)", _source);
-    outline0("AND #$0F");
+    outline0("AND $0F");
     outline0("ADC A, 48");
     outline0("INC DE");
     outline0("LD (DE), A");
@@ -1746,11 +1746,13 @@ void z80_convert_string_into_16bit( Environment * _environment, char * _string, 
 
     MAKE_LABEL
 
+    outline1("LD A, (%s)", _len );
+    outline0("LD I, A" );
+
     outline0("LD A, 0" );
     outline1("LD (%s), A", _value );
 
     outline1("LD HL, (%s)", _string );
-    outline1("LD I, (%s)", _len );
 
     outhead1("%srepeat:", label );
 
