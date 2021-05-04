@@ -193,7 +193,7 @@ void z80_compare_8bit( Environment * _environment, char *_source, char *_destina
     outline0("LD B, A");
     outline1("LD A, (%s)", _destination);
     outline0("CP B");
-    outline1("JP Z, %s", label);
+    outline1("JP NZ, %s", label);
     outline1("LD A, %d", _positive);
     if ( _other ) {
         outline1("LD (%s), A", _other);
