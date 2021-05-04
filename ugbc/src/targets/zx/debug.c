@@ -87,7 +87,8 @@ void debug_var( Environment * _environment, char * _name ) {
             char stringAddress[16]; sprintf(stringAddress, "%s+1", var->realName );
 
             outline1( "LD DE, (%s)", stringAddress );
-            outline1( "LD C, %s", var->realName );
+            outline1( "LD A, (%s)", var->realName );
+            outline0( "LD C, A" );
             outline0( "LD B, 0" );
             outline0( "CALL $8252" );
             break;
