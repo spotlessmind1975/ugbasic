@@ -49,6 +49,12 @@
  * @param _name Name of the variable to print
  * @throw EXIT_FAILURE "DWORD variables cannot be debugged"
  */
+/* <usermanual>
+@keyword DEBUG
+
+@target zx
+</usermanual> */
+
 void debug_var( Environment * _environment, char * _name ) {
 
     MAKE_LABEL

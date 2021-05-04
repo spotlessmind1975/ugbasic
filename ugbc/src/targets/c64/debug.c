@@ -54,12 +54,12 @@
 
 @english
 Outputs a string with the value contained in the indicated expression.
-The variable must be up to 2 bytes longs. For speed of implementation 
+For speed of implementation 
 it uses the function of the KERNAL, so it cannot work if the ROM is disabled.
 
 @italian
 Stampa una stringa con il valore contenuto nella espressione indicata.
-La variabile può essere lunga fino a 2 byte. Per velocità di implementazione
+Per velocità di implementazione
 usa la funzione del KERNAL, quindi non può funzionare se la ROM è disabilitata.
 
 @syntax DEBUG [expression]
