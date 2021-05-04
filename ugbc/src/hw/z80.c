@@ -58,7 +58,7 @@ void z80_beq( Environment * _environment, char * _label ) {
 
     MAKE_LABEL
 
-    outline1("JP Z, %s", label);
+    outline1("JP NZ, %s", label);
     outline1("JMP %s2", label);
     outhead1("%s:", label);
     outline1("JMP %s", _label);
@@ -76,7 +76,7 @@ void z80_bneq( Environment * _environment, char * _label ) {
 
     MAKE_LABEL
 
-    outline1("JP NZ, %s", label);
+    outline1("JP Z, %s", label);
     outline1("JMP %s2", label);
     outhead1("%s:", label);
     outline1("JMP %s", _label);
