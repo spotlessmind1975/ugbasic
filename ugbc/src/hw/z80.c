@@ -1748,7 +1748,8 @@ void z80_convert_string_into_16bit( Environment * _environment, char * _string, 
     MAKE_LABEL
 
     outline1("LD A, (%s)", _len );
-    outline0("LD I, A" );
+    outline0("LD IX, 0" );
+    outline0("LD IXL, A" );
 
     outline0("LD A, 0" );
     outline1("LD (%s), A", _value );
@@ -1765,13 +1766,13 @@ void z80_convert_string_into_16bit( Environment * _environment, char * _string, 
     outline0("SBC A, $30" );
 
     outline0("PUSH AF" );
-    outline1("LD A, (%s)", _value );
-    outline0("LD C, A"  );
     outline1("LD A, (%s+1)", _value );
-    outline0("LD B, A" );
+    outline0("LD B, A"  );
+    outline1("LD A, (%s)", _value );
+    outline0("LD C, A" );
     outline0("POP AF" );
-    outline0("LD D, A" );
-    outline0("LD E, 0" );
+    outline0("LD E, A" );
+    outline0("LD D, 0" );
     outline0("PUSH HL" );
     outline0("LD HL, 0" );
     outline0("ADC HL, DE" );
@@ -1779,35 +1780,32 @@ void z80_convert_string_into_16bit( Environment * _environment, char * _string, 
     outline1("LD (%s), HL", _value );
     outline0("POP HL" );
 
-    outline0("PUSH HL" );
 
     // MULT x 10
-    outline1("LD BC, (%s)", _value );
-    outline0("LD DE, 10" );
-    outline0("LD A, C" );
-    outline0("LD C, B" );
-    outline0("LD HL, 0" );
-    outline0("LD B, 16" );
-    outhead1("%s:", label );
-    outline0("ADD HL, HL" );
-    outline0("RLA " );
-    outline0("RL C" );
-    outline1("JR NC,%s2", label );
-    outline0("ADD HL, DE" );
-    outline0("ADC A, 0" );
-    outline1("JP NC,%s2", label );
-    outline0("INC C" );
-    outhead1("%s2:", label );
-    outline1("DJNZ %s", label );
-    outline0("LD B, C" );
-    outline0("LD C, A" );
-    outline1("LD (%s), BC", _value );
 
-    outline0("POP HL" );
-    
     outline0("INC HL" );
     outline0("DEC IX" );
-    outline1("JR NZ,%srepeat", label );
+    outline0("LD A, 0" );
+    outline0("CP IXL" );
+    outline1("JR Z,%send", label );
+
+    outline0("PUSH HL" );
+
+    outline1("LD DE, (%s)", _value );
+    outline0("LD A, 10" );
+    outline0("LD B, 8" );
+    outline0("LD HL, 0" );
+    outline0("ADD HL, HL" );
+    outline0("RLCA" );
+    outline0("JR NC,$+3" );
+    outline0("ADD HL, DE" );
+    outline0("DJNZ $-5" );
+    outline1("LD (%s), HL", _value );
+
+    outline0("POP HL" );
+
+    outline1("JMP %srepeat", label );
+
     outhead1("%send:", label );
   
 }
