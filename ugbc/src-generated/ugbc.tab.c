@@ -4543,8 +4543,8 @@ int main( int _argc, char *_argv[] ) {
         }
         linker_setup( _environment );
         outhead0(".segment \"CODE\"");
-        bank_define( _environment, "STRINGS", BT_STRINGS, 0x4200, NULL );
         variable_define( _environment, "strings_address", VT_ADDRESS, 0x4200 );
+        bank_define( _environment, "STRINGS", BT_STRINGS, 0x4200, NULL );
     } else {
         outhead0("org 32768");
         variable_define( _environment, "strings_address", VT_ADDRESS, 0xa000 );
