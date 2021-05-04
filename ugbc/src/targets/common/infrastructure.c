@@ -2123,7 +2123,7 @@ Variable * variable_string_instr( Environment * _environment, char * _search, ch
         cpu_math_add_16bit_with_8bit( _environment, address->realName, start->realName, address->realName );
         cpu_move_8bit( _environment, start->realName, result->realName );
     } else {
-        cpu_store_8bit( _environment, result->realName, 1 );        
+        cpu_store_8bit( _environment, result->realName, 0 );        
     }
 
     cpu_label( _environment, repeatLabel );
