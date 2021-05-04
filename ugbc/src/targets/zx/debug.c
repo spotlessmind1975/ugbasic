@@ -90,7 +90,7 @@ void debug_var( Environment * _environment, char * _name ) {
             outline1( "LD A, (%s)", var->realName );
             outline0( "LD C, A" );
             outline0( "LD B, 0" );
-            outline0( "CALL $8252" );
+            outline0( "CALL 8252" );
             break;
         }
 

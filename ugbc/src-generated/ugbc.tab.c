@@ -4532,6 +4532,9 @@ int main( int _argc, char *_argv[] ) {
         exit(EXIT_FAILURE);
     }
 
+    bank_define( _environment, "VARIABLES", BT_VARIABLES, 0x4000, NULL );
+    bank_define( _environment, "TEMPORARY", BT_TEMPORARY, 0x4100, NULL );
+
     if ( _environment->configurationFileName ) {
         _environment->configurationFile = fopen( _environment->configurationFileName, "wt");
         if ( ! _environment->configurationFile ) {
@@ -4540,14 +4543,13 @@ int main( int _argc, char *_argv[] ) {
         }
         linker_setup( _environment );
         outhead0(".segment \"CODE\"");
+        bank_define( _environment, "STRINGS", BT_STRINGS, 0x4200, NULL );
+        variable_define( _environment, "strings_address", VT_ADDRESS, 0x4200 );
     } else {
         outhead0("org 32768");
+        variable_define( _environment, "strings_address", VT_ADDRESS, 0xa000 );
     }
 
-    variable_define( _environment, "strings_address", VT_ADDRESS, 0x4200 );
-    bank_define( _environment, "VARIABLES", BT_VARIABLES, 0x4000, NULL );
-    bank_define( _environment, "TEMPORARY", BT_TEMPORARY, 0x4100, NULL );
-    bank_define( _environment, "STRINGS", BT_STRINGS, 0x4200, NULL );
 
     yydebug = 1;
     errors = 0;
