@@ -1824,6 +1824,7 @@ void z80_fill_indirect( Environment * _environment, char * _address, char * _siz
     outhead1("%sx:", label);
     outline0("LD A, (HL)");
     outline0("LD (DE),A");
+    outline0("INC DE");
     outline0("DEC C");
     outline1("JR NZ,%sx", label);
 
