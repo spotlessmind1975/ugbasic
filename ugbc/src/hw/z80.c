@@ -325,10 +325,10 @@ void z80_math_add_8bit( Environment * _environment, char *_source, char *_destin
 void z80_math_sub_8bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
 
     outline0("LD B, 0" );
-    outline1("LD A, (%s)", _source );
+    outline1("LD A, (%s)", _destination );
     outline0("SUB A, B" );
     outline0("LD B, A" );
-    outline1("LD A, (%s)", _destination );
+    outline1("LD A, (%s)", _source );
     outline0("SUB A,B" );
     if ( _other ) {
         outline1("LD (%s), A", _other );
@@ -1596,6 +1596,8 @@ void z80_convert_upto_24bit_bcd( Environment * _environment, char * _source, cha
 
     MAKE_LABEL
 
+    outline0("NOP");
+    outline0("NOP");
     outline1("LD HL, (%s)", _source );
     outline1("LD A, (%s+2)", _source );
     outline0("LD E, A" );
@@ -1646,8 +1648,8 @@ void z80_convert_upto_24bit_bcd( Environment * _environment, char * _source, cha
     outline1("JMP %send", label );
 
     outhead1("%send:", label );
-    outline1("LD DE, (%s+1)", _dest );
-    outline1("LD HL, (%s)", _dest );
+    outline1("LD (%s+1), DE", _dest );
+    outline1("LD (%s), HL", _dest );
 
 }
 
