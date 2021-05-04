@@ -2143,10 +2143,10 @@ Variable * variable_string_instr( Environment * _environment, char * _search, ch
     outline0("NOP");
     outline0("NOP");
 
-    cpu_bvneq( _environment, found->realName, foundLabel );
-
     cpu_inc_16bit( _environment, address->realName );
     cpu_inc( _environment, result->realName );
+
+    cpu_bvneq( _environment, found->realName, foundLabel );
 
     cpu_jump( _environment, repeatLabel );
 
