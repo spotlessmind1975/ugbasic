@@ -1540,13 +1540,12 @@ void z80_uppercase( Environment * _environment, char *_source, char *_size, char
     }
     outhead1("%supper:", label );
     outline0("LD A, (HL)" );
-    
-    outline0("CP 65");
-    outline1("JR NC, %snext", label);
-    outline1("JR NZ, %snext", label);
 
-    outline0("CP 90");
+    outline0("CP 97");
     outline1("JR C, %snext", label);
+
+    outline0("CP 122");
+    outline1("JR NC, %snext", label);
 
     outline0("SUB A, 32");
     outline0("LD (DE), A" );
@@ -1555,8 +1554,9 @@ void z80_uppercase( Environment * _environment, char *_source, char *_size, char
     outline0("INC HL" );
     outline0("INC DE" );
     outline0("DEC C" );
+    outline0("LD A, C" );
     outline0("CP 0" );
-    outline1("JR Z, %supper", label);
+    outline1("JR NZ, %supper", label);
 
 }
 
@@ -1574,23 +1574,23 @@ void z80_lowercase( Environment * _environment, char *_source, char *_size, char
     }
     outhead1("%slower:", label );
     outline0("LD A, (HL)" );
-    
-    outline0("CP 97");
-    outline1("JR NC, %snext", label);
-    outline1("JR NZ, %snext", label);
 
-    outline0("CP 122");
+    outline0("CP 65");
     outline1("JR C, %snext", label);
 
-    outline0("SUB A, 32");
+    outline0("CP 90");
+    outline1("JR NC, %snext", label);
+
+    outline0("ADC A, 32");
     outline0("LD (DE), A" );
 
     outhead1("%snext:", label );
     outline0("INC HL" );
     outline0("INC DE" );
     outline0("DEC C" );
+    outline0("LD A, C" );
     outline0("CP 0" );
-    outline1("JR Z, %slower", label);
+    outline1("JR NZ, %slower", label);
 
 }
 
@@ -1861,7 +1861,7 @@ void z80_flip( Environment * _environment, char * _source, char * _size, char * 
 void z80_move_8bit_indirect( Environment * _environment, char *_source, char * _value ) {
 
     outline1("LD DE, (%s)", _value);
-    outline1("LD A, %s", _source);
+    outline1("LD A, (%s)", _source);
     outline0("LD (DE), A");
 
 }
