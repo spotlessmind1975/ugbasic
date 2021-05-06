@@ -77,6 +77,9 @@ void variable_cleanup( Environment * _environment ) {
                         case VT_STRING:
                             outline1("%s: defs 3", variable->realName);
                             break;
+                        case VT_BUFFER:
+                            outline2("%s: defs %d", variable->realName, variable->size);
+                            break;
                     }
                     variable = variable->next;
                 }
@@ -105,6 +108,9 @@ void variable_cleanup( Environment * _environment ) {
                             break;
                         case VT_STRING:
                             outline1("%s: defs 3", variable->realName);
+                            break;
+                        case VT_BUFFER:
+                            outline2("%s: defs %d", variable->realName, variable->size);
                             break;
                     }
                     variable = variable->next;

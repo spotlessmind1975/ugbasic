@@ -28,6 +28,7 @@
 "<>" { return(DISEQUAL); }
 "*" { return(MULTIPLICATION); }
 "$" { return(DOLLAR); }
+"^" { return(POW); }
 
 8BIT { return (BYTE); }
 16BIT { return (WORD); }

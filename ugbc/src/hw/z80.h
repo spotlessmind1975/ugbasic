@@ -102,11 +102,15 @@ void z80_store_32bit( Environment * _environment, char *_source, int _value );
 void z80_store_8bit( Environment * _environment, char *_source, int _value );
 void z80_mem_move_displacement(  Environment * _environment, char *_source, char *_destination, char * _displacement, char *_size );
 void z80_compare_memory( Environment * _environment, char *_source, char *_destination, char *_size, char * _result, int _equal );
+void z80_compare_memory_size( Environment * _environment, char *_source, char *_destination, int _size, char * _result, int _equal );
 void z80_less_than_memory( Environment * _environment, char *_source, char *_destination, char *_size, char * _result, int _equal );
+void z80_less_than_memory_size( Environment * _environment, char *_source, char *_destination, int _size, char * _result, int _equal );
 void z80_greater_than_memory( Environment * _environment, char *_source, char *_destination, char *_size, char * _result, int _equal );
+void z80_greater_than_memory_size( Environment * _environment, char *_source, char *_destination, int _size, char * _result, int _equal );
 void z80_store_8bit_indirect( Environment * _environment, char *_source, int _value );
 void z80_inc_16bit( Environment * _environment, char * _variable );
 void z80_mem_move( Environment * _environment, char *_source, char *_destination,  char *_size );
+void z80_mem_move_size( Environment * _environment, char *_source, char *_destination, int _size );
 void z80_math_add_16bit_with_8bit( Environment * _environment, char *_source, char *_destination,  char *_other );
 void z80_math_sub_16bit_with_8bit( Environment * _environment, char *_source, char *_destination,  char *_other );
 void z80_uppercase( Environment * _environment, char *_source, char *_size, char *_result );
@@ -187,11 +191,15 @@ void z80_move_8bit_indirect2( Environment * _environment, char *_source, char * 
 #define cpu_store_8bit( _environment, _source, _value  ) z80_store_8bit( _environment, _source, _value  )
 #define cpu_mem_move_displacement( _environment, _source, _destination, _displacement, _size ) z80_mem_move_displacement( _environment, _source, _destination, _displacement, _size )
 #define cpu_compare_memory( _environment, _source, _destination, _size, _result, _equal ) z80_compare_memory( _environment, _source, _destination, _size, _result, _equal )
+#define cpu_compare_memory_size( _environment, _source, _destination, _size, _result, _equal ) z80_compare_memory_size( _environment, _source, _destination, _size, _result, _equal )
 #define cpu_less_than_memory( _environment, _source, _destination, _size, _result, _equal ) z80_less_than_memory( _environment, _source, _destination,  _size, _result, _equal )
+#define cpu_less_than_memory_size( _environment, _source, _destination, _size, _result, _equal ) z80_less_than_memory_size( _environment, _source, _destination,  _size, _result, _equal )
 #define cpu_greater_than_memory( _environment, _source, _destination, _size, _result, _equal ) z80_greater_than_memory( _environment, _source, _destination, _size, _result, _equal )
+#define cpu_greater_than_memory_size( _environment, _source, _destination, _size, _result, _equal ) z80_greater_than_memory_size( _environment, _source, _destination, _size, _result, _equal )
 #define cpu_store_8bit_indirect( _environment, _source, _value ) z80_store_8bit_indirect( _environment, _source, _value )
 #define cpu_inc_16bit( _environment, _variable ) z80_inc_16bit( _environment, _variable )
 #define cpu_mem_move( _environment, _source, _destination,  _size ) z80_mem_move( _environment, _source, _destination, _size )
+#define cpu_mem_move_size( _environment, _source, _destination,  _size ) z80_mem_move_size( _environment, _source, _destination, _size )
 #define cpu_math_add_16bit_with_8bit( _environment, _source, _destination, _other ) z80_math_add_16bit_with_8bit( _environment, _source, _destination, _other )
 #define cpu_math_sub_16bit_with_8bit( _environment, _source, _destination, _other ) z80_math_sub_16bit_with_8bit( _environment, _source, _destination, _other )
 #define cpu_uppercase( _environment, _source, _size, _result ) z80_uppercase( _environment, _source, _size, _result )

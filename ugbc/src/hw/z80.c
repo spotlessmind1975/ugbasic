@@ -1392,6 +1392,17 @@ void z80_mem_move( Environment * _environment, char *_source, char *_destination
 
 }
 
+void z80_mem_move_size( Environment * _environment, char *_source, char *_destination, int _size ) {
+
+    outline1("LD HL,(%s)", _source);
+    outline1("LD DE,(%s)", _destination);
+    outline1("LD A, $2.2x", _size);
+    outline0("LD C, A");
+    outline0("LD B, 0");
+    outline0("LDIR");
+
+}
+
 void z80_mem_move_displacement(  Environment * _environment, char *_source, char *_destination, char * _displacement, char *_size ) {
 
     outline1("LD HL,(%s)", _source);
@@ -1410,6 +1421,34 @@ void z80_compare_memory( Environment * _environment, char *_source, char *_desti
     outline1("LD HL,(%s)", _source);
     outline1("LD DE,(%s)", _destination);
     outline1("LD A, (%s)", _size);
+    outline0("LD C, A");
+    outhead1("%s:", label );
+    outline0("LD A, (HL)");
+    outline0("LD B, A");
+    outline0("LD A, (DE)");
+    outline0("CP B");
+    outline1("JR NZ, %sdiff", label);
+    outline0("INC DE");
+    outline0("INC HL");
+    outline0("DEC C");
+    outline1("JR NZ, %s", label);
+    outline1("LD A, %d", _equal ? 1 : 0 );
+    outline1("LD (%s), A", _result );
+    outline1("JMP %sfinal", label );
+    outhead1("%sdiff:", label );
+    outline1("LD A, %d", _equal ? 0 : 1 );
+    outline1("LD (%s), A", _result );
+    outhead1("%sfinal:", label );
+
+}
+
+void z80_compare_memory_size( Environment * _environment, char *_source, char *_destination, int _size, char * _result, int _equal ) {
+
+    MAKE_LABEL
+
+    outline1("LD HL,(%s)", _source);
+    outline1("LD DE,(%s)", _destination);
+    outline1("LD A, $%2.2x", _size);
     outline0("LD C, A");
     outhead1("%s:", label );
     outline0("LD A, (HL)");
@@ -1459,6 +1498,34 @@ void z80_less_than_memory( Environment * _environment, char *_source, char *_des
 
 }
 
+void z80_less_than_memory_size( Environment * _environment, char *_source, char *_destination, int _size, char * _result, int _equal ) {
+
+    MAKE_LABEL
+
+    outline1("LD HL,(%s)", _source);
+    outline1("LD DE,(%s)", _destination);
+    outline1("LD A, $%2.2x", _size);
+    outline0("LD C, A");
+    outhead1("%s:", label );
+    outline0("LD A, (HL)");
+    outline1("JR NC, %sdiff", label);
+    if ( ! _equal ) {
+        outline1("JR Z, %sdiff", label);
+    }
+    outline0("INC DE");
+    outline0("INC HL");
+    outline0("DEC C");
+    outline1("JR NZ, %s", label);
+    outline0("LD A, 1" );
+    outline1("LD (%s), A", _result );
+    outline1("JMP %sfinal", label );
+    outhead1("%sdiff:", label );
+    outline0("LD A, 0" );
+    outline1("LD (%s), A", _result );
+    outhead1("%sfinal:", label );
+
+}
+
 void z80_greater_than_memory( Environment * _environment, char *_source, char *_destination, char *_size, char * _result, int _equal ) {
 
     MAKE_LABEL
@@ -1466,6 +1533,35 @@ void z80_greater_than_memory( Environment * _environment, char *_source, char *_
     outline1("LD HL,(%s)", _source);
     outline1("LD DE,(%s)", _destination);
     outline1("LD A, (%s)", _size);
+    outline0("LD C, A");
+    outhead1("%s:", label );
+    outline0("LD A, (HL)");
+    outline0("CP (DE)");
+    outline1("JR C, %sdiff", label);
+    if ( ! _equal ) {
+        outline1("JR Z, %sdiff", label);
+    }
+    outline0("INC DE");
+    outline0("INC HL");
+    outline0("DEC C");
+    outline1("JR NZ, %s", label);
+    outline1("LD A, %d", _equal ? 1 : 0 );
+    outline1("LD (%s), A", _result );
+    outline1("JMP %sfinal", label );
+    outhead1("%sdiff:", label );
+    outline1("LD A, %d", _equal ? 1 : 0 );
+    outline1("LD (%s), A", _result );
+    outhead1("%sfinal:", label );
+
+}
+
+void z80_greater_than_memory_size( Environment * _environment, char *_source, char *_destination, int _size, char * _result, int _equal ) {
+
+    MAKE_LABEL
+
+    outline1("LD HL,(%s)", _source);
+    outline1("LD DE,(%s)", _destination);
+    outline1("LD A, $%2.2x", _size);
     outline0("LD C, A");
     outhead1("%s:", label );
     outline0("LD A, (HL)");

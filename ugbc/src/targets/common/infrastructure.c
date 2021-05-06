@@ -323,7 +323,7 @@ Variable * variable_define( Environment * _environment, char * _name, VariableTy
         } else {
             _environment->variables = var;
         }
-        if ( var->type != VT_STRING ) {
+        if ( var->type != VT_STRING && var->type != VT_BUFFER ) {
             variable_store( _environment, var->name, _value );
         }
     }
@@ -439,6 +439,9 @@ Variable * variable_cast( Environment * _environment, char * _source, VariableTy
                 case VT_STRING:
                     CRITICAL("Cannot cast from ADDRESS to STRING.");
                     break;
+                case VT_BUFFER:
+                    CRITICAL("Cannot cast from ADDRESS to BUFFER.");
+                    break;
             }
             break;
         case VT_DWORD:
@@ -464,6 +467,9 @@ Variable * variable_cast( Environment * _environment, char * _source, VariableTy
                 case VT_STRING:
                     CRITICAL("Cannot cast from DWORD to STRING.");
                     break;
+                case VT_BUFFER:
+                    CRITICAL("Cannot cast from DWORD to BUFFER.");
+                    break;
             }
             break;
         case VT_BYTE:
@@ -478,6 +484,9 @@ Variable * variable_cast( Environment * _environment, char * _source, VariableTy
                     break;
                 case VT_STRING:
                     CRITICAL("Cannot cast from BYTE to STRING.");
+                    break;
+                case VT_BUFFER:
+                    CRITICAL("Cannot cast from BYTE to BUFFER.");
                     break;
             }
             break;
@@ -506,6 +515,9 @@ Variable * variable_cast( Environment * _environment, char * _source, VariableTy
                 case VT_STRING:
                     CRITICAL("Cannot cast from WORD to STRING.");
                     break;
+                case VT_BUFFER:
+                    CRITICAL("Cannot cast from WORD to BUFFER.");
+                    break;
             }
             break;
         case VT_POSITION:
@@ -533,6 +545,9 @@ Variable * variable_cast( Environment * _environment, char * _source, VariableTy
                 case VT_STRING:
                     CRITICAL("Cannot cast from POSITION to STRING.");
                     break;
+                case VT_BUFFER:
+                    CRITICAL("Cannot cast from POSITION to BUFFER.");
+                    break;
             }
             break;
         case VT_COLOR:
@@ -547,6 +562,9 @@ Variable * variable_cast( Environment * _environment, char * _source, VariableTy
                     break;
                 case VT_STRING:
                     CRITICAL("Cannot cast from COLOR to STRING.");
+                    break;
+                case VT_BUFFER:
+                    CRITICAL("Cannot cast from COLOR to BUFFER.");
                     break;
             }
             break;
@@ -577,6 +595,9 @@ Variable * variable_cast( Environment * _environment, char * _source, VariableTy
                     cpu_move_16bit( _environment, sourceAddress, destinationAddress );
                     break;
                 }
+                case VT_BUFFER:
+                    CRITICAL("Cannot cast from STRING to BUFFER.");
+                    break;
             }
             break;
     }
@@ -622,6 +643,9 @@ Variable * variable_store( Environment * _environment, char * _destination, int 
         case VT_STRING:
             CRITICAL("Cannot store a direct value on STRING");
             break;
+        case VT_BUFFER:
+            CRITICAL("Cannot store a direct value on BUFFER.");
+            break;
     }
     return destination;
 }
@@ -654,6 +678,35 @@ Variable * variable_store_string( Environment * _environment, char * _destinatio
                 cpu_inc_16bit( _environment, strings_address->realName );
                 ++_value;
             }
+            break;
+        }
+        case VT_BUFFER:
+            CRITICAL("Cannot store a STRING on BUFFER.");
+            break;
+    }
+    return destination;
+}
+
+Variable * variable_resize_buffer( Environment * _environment, char * _destination, int _size ) {
+    Variable * destination = variable_find( _environment->tempVariables, _destination );
+    if ( ! destination ) {
+        destination = variable_find( _environment->variables, _destination );
+        if ( ! destination ) {
+            CRITICAL_VARIABLE( _destination );
+        }
+    }
+    switch( destination->type ) {
+        case VT_DWORD:
+        case VT_ADDRESS:
+        case VT_POSITION:
+        case VT_WORD:
+        case VT_BYTE:
+        case VT_COLOR:
+        case VT_STRING:
+            CRITICAL("Cannot change the size of a STRING or a numeric value");
+            break;
+        case VT_BUFFER: {
+            destination->size = _size;
             break;
         }
     }
@@ -706,6 +759,13 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
             char destinationAddress[16]; sprintf(destinationAddress, "%s+1", target->realName );
             cpu_move_8bit( _environment, source->realName, target->realName );
             cpu_move_16bit( _environment, sourceAddress, destinationAddress );
+            break;
+        }
+        case VT_BUFFER: {
+            if ( source->size != target->size ) {
+                CRITICAL( "Cannot move BUFFERS of different sizes");
+            }
+            cpu_mem_move_size( _environment, source->realName, target->realName, source->size );
             break;
         }
     }
@@ -761,6 +821,13 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
             char destinationAddress[16]; sprintf(destinationAddress, "%s+1", target->realName );
             cpu_move_8bit( _environment, source->realName, target->realName );
             cpu_move_16bit( _environment, sourceAddress, destinationAddress );
+            break;
+        }
+        case VT_BUFFER: {
+            if ( source->size != target->size ) {
+                CRITICAL( "Cannot move BUFFERS of different sizes");
+            }
+            cpu_mem_move_size( _environment, source->realName, target->realName, source->size );
             break;
         }
     }
@@ -834,6 +901,9 @@ Variable * variable_add( Environment * _environment, char * _source, char * _des
             cpu_math_add_16bit_with_8bit( _environment, strings_address->realName, target->realName, strings_address->realName );
             break;
         }
+        case VT_BUFFER: {
+            CRITICAL( "Cannot add BUFFERS");
+        }
     }
     return result;
 }
@@ -883,6 +953,9 @@ Variable * variable_sub( Environment * _environment, char * _source, char * _des
         case VT_STRING:
             CRITICAL("Cannot subtract STRINGS!");
             break;
+        case VT_BUFFER: {
+            CRITICAL( "Cannot sub BUFFERS");
+        }
 
      }
     return result;
@@ -928,6 +1001,9 @@ Variable * variable_complement_const( Environment * _environment, char * _destin
         case VT_STRING:
             CRITICAL("Cannot calculate a complement of a STRING");
             break;
+        case VT_BUFFER: {
+            CRITICAL( "Cannot calculate complement of a BUFFER");
+        }
      }
     return destination;
 }
@@ -979,6 +1055,9 @@ Variable * variable_mul( Environment * _environment, char * _source, char * _des
             result = variable_temporary( _environment, VT_WORD, "(result of multiplication)" );
             cpu_math_mul_8bit_to_16bit( _environment, source->realName, target->realName, result->realName );
             break;
+        case VT_BUFFER: {
+            CRITICAL( "Cannot multiplicate a BUFFER");
+        }
     }
 
     return result;
@@ -1034,6 +1113,9 @@ Variable * variable_compare( Environment * _environment, char * _source, char * 
                 case VT_STRING:
                     CRITICAL("Cannot compare DWORD with STRING");
                     break;
+                case VT_BUFFER:
+                    CRITICAL("Cannot compare DWORD with BUFFER");
+                    break;
             }
             break;
         case VT_ADDRESS:
@@ -1053,6 +1135,9 @@ Variable * variable_compare( Environment * _environment, char * _source, char * 
                 case VT_STRING:
                     CRITICAL("Cannot compare ADDRESS/POSITION/WORD with STRING");
                     break;
+                case VT_BUFFER:
+                    CRITICAL("Cannot compare ADDRESS/POSITION/WORD with BUFFER");
+                    break;
             }
             break;
         case VT_BYTE:
@@ -1068,6 +1153,9 @@ Variable * variable_compare( Environment * _environment, char * _source, char * 
                     break;
                 case VT_STRING:
                     CRITICAL("Cannot compare BYTE/COLOR with STRING");
+                    break;
+                case VT_BUFFER:
+                    CRITICAL("Cannot compare BYTE/COLOR with BUFFER");
                     break;
             }
             break;
@@ -1103,6 +1191,37 @@ Variable * variable_compare( Environment * _environment, char * _source, char * 
                     cpu_label( _environment, label );
                     break;
                 }
+                case VT_BUFFER:
+                    CRITICAL("Cannot compare STRING with BUFFER");
+                    break;
+            }
+            break;
+        case VT_BUFFER:
+            switch( target->type ) {
+                case VT_DWORD:
+                    CRITICAL("Cannot compare BUFFER with DWORD");
+                    break;
+                case VT_ADDRESS:
+                    CRITICAL("Cannot compare BUFFER with ADDRESS");
+                    break;
+                case VT_POSITION:
+                    CRITICAL("Cannot compare BUFFER with POSITION");
+                    break;
+                case VT_WORD:
+                    CRITICAL("Cannot compare BUFFER with WORD");
+                    break;
+                case VT_BYTE:
+                    CRITICAL("Cannot compare BUFFER with BYTE");
+                    break;
+                case VT_COLOR:
+                    CRITICAL("Cannot compare BUFFER with COLOR");
+                    break;
+                case VT_STRING:
+                    CRITICAL("Cannot compare BUFFER with STRING");
+                    break;
+                case VT_BUFFER: 
+                    cpu_compare_memory_size( _environment, source->realName, target->realName, source->size, result->realName, 1 );
+                    break;
             }
             break;
     }
@@ -1126,112 +1245,7 @@ Variable * variable_compare( Environment * _environment, char * _source, char * 
  * @throw EXIT_FAILURE "Source variable does not exist"
  */
 Variable * variable_compare_not( Environment * _environment, char * _source, char * _destination ) {
-    Variable * source = variable_find( _environment->tempVariables, _source );
-    if ( ! source ) {
-        source = variable_find( _environment->variables, _source );
-    }
-    if ( ! source ) {
-        CRITICAL("Source variable does not exist");
-    }
-    Variable * target = variable_find( _environment->tempVariables, _destination );
-    if ( ! target ) {
-        target = variable_find( _environment->variables, _destination );
-    }
-    if ( ! target ) {
-        CRITICAL("Destination variable does not exist");
-    }
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of compare)" );
-    switch( source->type ) {
-        case VT_DWORD:
-            switch( target->type ) {
-                case VT_DWORD:
-                    cpu_compare_32bit( _environment, source->realName, target->realName, result->realName, 0 );
-                    break;
-                case VT_ADDRESS:
-                case VT_POSITION:
-                case VT_WORD:
-                    cpu_compare_16bit( _environment, source->realName, target->realName, result->realName, 0 );
-                    break;
-                case VT_BYTE:
-                case VT_COLOR:
-                    cpu_compare_8bit( _environment, source->realName, target->realName, result->realName, 0 );
-                    break;
-                case VT_STRING:
-                    CRITICAL("Cannot compare DWORD with STRING");
-                    break;
-            }
-            break;
-        case VT_ADDRESS:
-        case VT_POSITION:
-        case VT_WORD:
-            switch( target->type ) {
-                case VT_DWORD:
-                case VT_ADDRESS:
-                case VT_POSITION:
-                case VT_WORD:
-                    cpu_compare_16bit( _environment, source->realName, target->realName, result->realName, 0 );
-                    break;
-                case VT_BYTE:
-                case VT_COLOR:
-                    cpu_compare_8bit( _environment, source->realName, target->realName, result->realName, 0 );
-                    break;
-                case VT_STRING:
-                    CRITICAL("Cannot compare ADDRESS/POSITION/WORD with STRING");
-                    break;
-            }
-            break;
-        case VT_BYTE:
-        case VT_COLOR:
-            switch( target->type ) {
-                case VT_DWORD:
-                case VT_ADDRESS:
-                case VT_POSITION:
-                case VT_WORD:
-                case VT_BYTE:
-                case VT_COLOR:
-                    cpu_compare_8bit( _environment, source->realName, target->realName, result->realName, 0 );
-                    break;
-                case VT_STRING:
-                    CRITICAL("Cannot compare BYTE/COLOR with STRING");
-                    break;
-            }
-            break;
-        case VT_STRING:
-            switch( target->type ) {
-                case VT_DWORD:
-                    CRITICAL("Cannot compare STRING with DWORD");
-                    break;
-                case VT_ADDRESS:
-                    CRITICAL("Cannot compare STRING with DWORD");
-                    break;
-                case VT_POSITION:
-                    CRITICAL("Cannot compare STRING with POSITION");
-                    break;
-                case VT_WORD:
-                    CRITICAL("Cannot compare STRING with WORD");
-                    break;
-                case VT_BYTE:
-                    CRITICAL("Cannot compare STRING with BYTE");
-                    break;
-                case VT_COLOR:
-                    CRITICAL("Cannot compare STRING with COLOR");
-                    break;
-                case VT_STRING: {
-
-                    MAKE_LABEL
-
-                    char sourceAddress[16]; sprintf(sourceAddress, "%s+1", source->realName );
-                    char destinationAddress[16]; sprintf(destinationAddress, "%s+1", target->realName );
-                    cpu_compare_8bit( _environment, source->realName, target->realName, result->realName, 0 );
-                    cpu_bveq( _environment, result->realName, label );
-                    cpu_compare_memory( _environment, sourceAddress, destinationAddress, source->realName, result->realName, 0 );
-                    cpu_label( _environment, label );
-                    break;
-                }
-            }
-            break;
-    }
-    return result;
+    return variable_not( _environment, variable_compare( _environment, _source, _destination)->name );
 }
 
 /**
@@ -1272,6 +1286,9 @@ Variable * variable_mul2_const( Environment * _environment, char * _destination,
             break;
         case VT_STRING:
             CRITICAL("Cannot multiplicate a STRING by 2");
+            break;
+        case VT_BUFFER:
+            CRITICAL("Cannot multiplicate a BUFFER by 2");
             break;
     }
     return destination;
@@ -1317,6 +1334,9 @@ Variable * variable_div2_const( Environment * _environment, char * _destination,
         case VT_STRING:
             CRITICAL("Cannot divide a STRING by 2");
             break;
+        case VT_BUFFER:
+            CRITICAL("Cannot divide a BUFFER by 2");
+            break;
     }
     return destination;
 }
@@ -1360,6 +1380,9 @@ Variable * variable_and_const( Environment * _environment, char * _destination, 
             break;
         case VT_STRING:
             CRITICAL("Cannot make an \"and\" with a STRING");
+            break;
+        case VT_BUFFER:
+            CRITICAL("Cannot make an \"and\" with a BUFFER");
             break;
     }
     return destination;
@@ -1481,6 +1504,9 @@ Variable * variable_less_than( Environment * _environment, char * _source, char 
             cpu_label( _environment, label );
             break;
         }
+        case VT_BUFFER:
+            cpu_less_than_memory_size( _environment, source->realName, target->realName, source->size, result->realName, _equal );
+            break;
     }
     return result;
 }
@@ -1543,6 +1569,9 @@ Variable * variable_greater_than( Environment * _environment, char * _source, ch
             cpu_label( _environment, label );
             break;
         }
+        case VT_BUFFER:
+            cpu_greater_than_memory_size( _environment, source->realName, target->realName, source->size, result->realName, _equal );
+            break;
     }
     return result;
 }
@@ -1623,6 +1652,9 @@ Variable * variable_string_left( Environment * _environment, char * _string, cha
             outline0("; here 5!");
             break;
         }
+        case VT_BUFFER:
+            CRITICAL("Cannot make a LEFT function on a BUFFER");
+            break;
     }
     return result;
 }
@@ -1681,6 +1713,9 @@ void variable_string_left_assign( Environment * _environment, char * _string, ch
             cpu_mem_move( _environment, expressionAddress, stringAddress, position->realName );
             break;
         }
+        case VT_BUFFER:
+            CRITICAL("Cannot make a LEFT function on a BUFFER");
+            break;
     }
 }
 
@@ -1768,6 +1803,9 @@ Variable * variable_string_right( Environment * _environment, char * _string, ch
             cpu_math_sub_16bit_with_8bit( _environment, stringAddress, string->realName, stringAddress );
             break;
         }
+        case VT_BUFFER:
+            CRITICAL("Cannot make a RIGHT function on a BUFFER");
+            break;
     }
     return result;
 }
@@ -1830,6 +1868,9 @@ void variable_string_right_assign( Environment * _environment, char * _string, c
             cpu_math_sub_16bit_with_8bit( _environment, stringAddress, string->realName, stringAddress );
             break;
         }
+        case VT_BUFFER:
+            CRITICAL("Cannot make a RIGHT assignment on a BUFFER");
+            break;
     }
 }
 
@@ -1930,7 +1971,11 @@ Variable * variable_string_mid( Environment * _environment, char * _string, char
                 cpu_math_add_16bit_with_8bit( _environment, strings_address->realName, len->realName, strings_address->realName );
                 cpu_math_sub_16bit_with_8bit( _environment, stringAddress, position->realName, stringAddress );
             }
+            break;
         }
+        case VT_BUFFER:
+            CRITICAL("Cannot make a MID function on a BUFFER");
+            break;
     }
     return result;
 }
@@ -2007,6 +2052,9 @@ void variable_string_mid_assign( Environment * _environment, char * _string, cha
             cpu_math_sub_16bit_with_8bit( _environment, stringAddress, position->realName, stringAddress );
             break;
         }
+        case VT_BUFFER:
+            CRITICAL("Cannot make a MID assignment on a BUFFER");
+            break;
     }
 }
 
@@ -2094,6 +2142,8 @@ Variable * variable_string_instr( Environment * _environment, char * _search, ch
             break;
         case VT_STRING:
             break;
+        case VT_BUFFER:
+            CRITICAL("Cannot make a INSTR function on a BUFFER");
     }
     switch( searched->type ) {
         case VT_DWORD:
@@ -2106,6 +2156,8 @@ Variable * variable_string_instr( Environment * _environment, char * _search, ch
             break;
         case VT_STRING:
             break;
+        case VT_BUFFER:
+            CRITICAL("Cannot make a INSTR function on a BUFFER");
     }
 
     MAKE_LABEL
@@ -2201,6 +2253,8 @@ Variable * variable_string_lower( Environment * _environment, char * _string ) {
             break;
         case VT_STRING:
             break;
+        case VT_BUFFER:
+            CRITICAL("Cannot make a UPPER function on a BUFFER");
     }
     Variable * found = variable_temporary( _environment, VT_BYTE, "(valid alphabetic)" );
     Variable * index = variable_temporary( _environment, VT_BYTE, "(index)" );
@@ -2258,6 +2312,8 @@ Variable * variable_string_upper( Environment * _environment, char * _string ) {
             break;
         case VT_STRING:
             break;
+        case VT_BUFFER:
+            CRITICAL("Cannot make a UPPER function on a BUFFER");
     }
     Variable * found = variable_temporary( _environment, VT_BYTE, "(valid alphabetic)" );
     Variable * index = variable_temporary( _environment, VT_BYTE, "(index)" );
@@ -2330,6 +2386,8 @@ Variable * variable_string_str( Environment * _environment, char * _value ) {
         case VT_STRING:
             CRITICAL("Cannot use STR with a STRING value");
             break;
+        case VT_BUFFER:
+            CRITICAL("Cannot use STR on a BUFFER");
     }
 
     variable_store_string( _environment, result->name, "      " );
@@ -2399,6 +2457,9 @@ Variable * variable_string_val( Environment * _environment, char * _value ) {
             cpu_convert_string_into_16bit( _environment, valueAddress, value->realName, result->realName );
             break;
         }
+        case VT_BUFFER:
+            CRITICAL("Cannot use VAL on a BUFFER");
+            break;
     }
 
     return result;
@@ -2609,6 +2670,9 @@ Variable * variable_string_chr( Environment * _environment, char * _ascii  ) {
             CRITICAL("Cannot call CHR on STRING");
             break;
         }
+        case VT_BUFFER:
+            CRITICAL("Cannot call CHR on a BUFFER");
+            break;
     }
 
     cpu_store_8bit( _environment, result->realName, 1 );
@@ -2670,6 +2734,9 @@ Variable * variable_string_asc( Environment * _environment, char * _char  ) {
             cpu_move_8bit_indirect2( _environment, characterAddress, result->realName );
             break;
         }
+        case VT_BUFFER:
+            CRITICAL("Cannot call VAL on a BUFFER");
+            break;
     }
 
 
@@ -2725,9 +2792,84 @@ Variable * variable_string_len( Environment * _environment, char * _string  ) {
             cpu_move_8bit( _environment, string->realName, result->realName );
             break;
         }
+        case VT_BUFFER:
+            CRITICAL("Cannot call LEN on a BUFFER");
+            break;
     }
 
 
     return result;
     
+}
+
+/**
+ * @brief Emit code to raise a variable to a given variable
+ * 
+ * This function allows you to emit a code that raise a variable
+ * to a given variable.
+ * 
+ * @pre _source and _destination variables must exist
+ * 
+ * @param _environment Current calling environment
+ * @param _source Source variable's name
+ * @param _destination Destination variable's name
+ * @return Variable* The result of calculation
+ */
+Variable * variable_pow( Environment * _environment, char * _source, char * _destination ) {
+    Variable * source = variable_find( _environment->tempVariables, _source );
+    if ( ! source ) {
+        source = variable_find( _environment->variables, _source );
+    }
+    if ( ! source ) {
+        CRITICAL_VARIABLE(_source);
+    }
+    Variable * target = variable_cast( _environment, _destination, source->type );
+    if ( ! target ) {
+        CRITICAL_VARIABLE(_destination);
+    }
+    Variable * result;
+
+    if ( source->type == VT_DWORD || target->type == VT_DWORD ) {
+        CRITICAL("Cannot raise a DWORD");
+    }
+
+    if ( source->type == VT_STRING || target->type == VT_STRING ) {
+        CRITICAL("Cannot raise a STRING");
+    }
+
+    if ( source->type == VT_BUFFER || target->type == VT_BUFFER ) {
+        CRITICAL("Cannot raise a BUFFER");
+    }
+
+    MAKE_LABEL
+
+    char endLabel[16]; sprintf(endLabel, "%send", label);
+
+    Variable * counter = variable_cast( _environment, target->name, VT_BYTE );
+    switch( source->type ) {
+        case VT_ADDRESS:
+        case VT_POSITION:
+        case VT_WORD:
+            result = variable_temporary( _environment, VT_DWORD, "(result of pow)");
+            variable_store( _environment, result->name, 1 );
+            cpu_bveq( _environment, counter->realName, endLabel );
+            cpu_label( _environment, label );
+            cpu_math_mul_16bit_to_32bit( _environment, source->realName, result->realName, result->realName );
+            cpu_dec( _environment, counter->realName );
+            cpu_bvneq( _environment, counter->realName, label );
+            cpu_label( _environment, endLabel );
+            break;
+        case VT_BYTE:
+        case VT_COLOR:
+            result = variable_temporary( _environment, VT_DWORD, "(result of pow)");
+            variable_store( _environment, result->name, 1 );
+            cpu_bveq( _environment, counter->realName, endLabel );
+            cpu_label( _environment, label );
+            cpu_math_mul_8bit_to_16bit( _environment, source->realName, result->realName, result->realName );
+            cpu_dec( _environment, counter->realName );
+            cpu_bvneq( _environment, counter->realName, label );
+            cpu_label( _environment, endLabel );
+            break;
+    }
+    return result;
 }

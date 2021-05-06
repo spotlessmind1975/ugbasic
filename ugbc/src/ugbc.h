@@ -133,7 +133,10 @@ typedef enum _VariableType {
     VT_COLOR = 4,
 
     /** Strings (static or dynamic) */
-    VT_STRING = 6
+    VT_STRING = 6,
+
+    /** Static buffer of a specific size */
+    VT_BUFFER = 7
 
     // TODO: support for arrays.
 } VariableType;
@@ -141,7 +144,7 @@ typedef enum _VariableType {
 /**
  * @brief Maximum number of variable types
  */
-#define VARIABLE_TYPE_COUNT   6
+#define VARIABLE_TYPE_COUNT   8
 
 /**
  * @brief Structure of a single variable
@@ -177,6 +180,11 @@ typedef struct _Variable {
      * The initial value of the variable, as given by last (re)definition.
      */
     int value;
+
+    /** 
+     * The size of the static buffer (in bytes).
+     */
+    int size;
 
     /** 
      * Pointer to the bank where this variable belongs to.
@@ -671,6 +679,7 @@ void tiles_at_var( Environment * _environment, char * _address );
 void       variable_reset( Environment * _environment );
 Variable * variable_define( Environment * _environment, char * _name, VariableType _type, int _value );
 Variable * variable_retrieve( Environment * _environment, char * _name );
+Variable * variable_resize_buffer( Environment * _environment, char * _destination, int _size );
 Variable * variable_cast( Environment * _environment, char * _source, VariableType _type );
 Variable * variable_temporary( Environment * _environment, VariableType _type, char * _meaning );
 void variable_cleanup( Environment * _Environment );
@@ -686,6 +695,7 @@ Variable * variable_add( Environment * _environment, char * _source, char * _des
 Variable * variable_or( Environment * _environment, char * _source, char * _dest );
 Variable * variable_sub( Environment * _environment, char * _source, char * _dest );
 Variable * variable_mul( Environment * _environment, char * _source, char * _dest );
+Variable * variable_pow( Environment * _environment, char * _source, char * _dest );
 Variable * variable_and( Environment * _environment, char * _left, char * _right );
 Variable * variable_or( Environment * _environment, char * _left, char * _right );
 Variable * variable_not( Environment * _environment, char * _value );

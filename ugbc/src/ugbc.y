@@ -36,7 +36,7 @@ int yywrap() { return 1; }
 %token BYTE WORD POSITION CODE VARIABLES MS CYCLES S HASH WIDTH HEIGHT DWORD PEN CLEAR
 %token BEG END GAMELOOP ENDIF UP DOWN LEFT RIGHT DEBUG AND RANDOMIZE GRAPHIC TEXTMAP
 %token POINT GOSUB RETURN POP OR ELSE NOT TRUE FALSE DO EXIT WEND UNTIL FOR STEP EVERY
-%token MID INSTR UPPER LOWER STR VAL STRING SPACE FLIP CHR ASC LEN
+%token MID INSTR UPPER LOWER STR VAL STRING SPACE FLIP CHR ASC LEN POW
 
 %token MILLISECOND MILLISECONDS TICKS
 
@@ -354,6 +354,10 @@ expressions_raw :
     | expression OR expressions_raw {
         $$ = variable_or( _environment, $1, $3 )->name;
         outline3("; %s = %s OR %s", $$, $1, $3 );
+    } 
+    | expression POW expressions_raw {
+        $$ = variable_pow( _environment, $1, $3 )->name;
+        outline3("; %s = %s ^ %s", $$, $1, $3 );
     } 
     | expression EQUAL expressions_raw {
         $$ = variable_compare( _environment, $1, $3 )->name;

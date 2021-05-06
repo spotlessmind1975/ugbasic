@@ -70,6 +70,8 @@ usa la funzione del KERNAL, quindi non può funzionare se la ROM è disabilitata
 </usermanual> */
 void debug_var( Environment * _environment, char * _name ) {
 
+    MAKE_LABEL
+
     // Safety check
     Variable * var = variable_retrieve( _environment, _name );
     switch( var->type ) {
@@ -86,16 +88,54 @@ void debug_var( Environment * _environment, char * _name ) {
             outline1( "LDX %s", var->realName );
             outline0( "JSR $BDCD" );
             break;
-        case VT_DWORD:
-            outline1( "LDA %s+1", var->realName );
-            outline1( "LDX %s", var->realName );
-            outline0( "JSR $BDCD" );
-            outline0( "LDA #35" );
-            outline0( "JSR $FFD2" );
-            outline1( "LDA %s+3", var->realName );
-            outline1( "LDX %s+2", var->realName );
-            outline0( "JSR $BDCD" );
+        case VT_DWORD: {
+
+            Variable * result = variable_temporary( _environment, VT_BUFFER, "(buffer for DEBUG)");
+            variable_resize_buffer( _environment, result->name, 10 );
+
+            outline1("JSR %shex2dec", label);
+            outline0("LDX #9");
+            outhead1("%sl1:", label);
+            outline1("LDA %s,x", result->realName);
+            outline1("BNE %sl2", label );
+            outline0("DEX");
+            outline1("BNE %sl1", label );
+            outhead1("%sl2:", label);
+            outline1("LDA %s,x", result->realName);
+            outline0("ORA #$30");
+            outline0("JSR $FFD2");
+            outline0("DEX");
+            outline1("BPL %sl2", label );
+            outline1("JMP %send", label );
+            outhead1("%shex2dec:", label);
+            outline0("LDX #0" );
+            outhead1("%sl3:", label);
+            outline1("JSR %sdiv10", label );
+            outline1("STA %s, X", result->realName );
+            outline0("INX" );
+            outline0("CPX #10" );
+            outline1("BNE %sl3", label );
+            outline0("RTS" );
+            outhead1("%sdiv10:", label);
+            outline0("LDY #32" );
+            outline0("LDA #0" );
+            outline0("CLC" );
+            outhead1("%sl4:", label);
+            outline0("ROL" );
+            outline0("CMP #10" );
+            outline1("BCC %sskip", label );
+            outline0("SBC #10" );
+            outhead1("%sskip:", label);
+            outline1("ROL %s", var->realName );
+            outline1("ROL %s+1", var->realName );
+            outline1("ROL %s+2", var->realName );
+            outline1("ROL %s+3", var->realName );
+            outline0("DEY" );
+            outline1("BPL %sl4", label );
+            outline0("RTS" );
+            outhead1("%send:", label);
             break;
+        }
         case VT_STRING: {
 
             MAKE_LABEL
