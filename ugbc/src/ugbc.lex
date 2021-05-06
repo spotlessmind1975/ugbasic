@@ -29,6 +29,7 @@
 "*" { return(MULTIPLICATION); }
 "$" { return(DOLLAR); }
 "^" { return(POW); }
+"/" { return(DIVISION); }
 
 8BIT { return (BYTE); }
 16BIT { return (WORD); }

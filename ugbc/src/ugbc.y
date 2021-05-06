@@ -27,7 +27,7 @@ int yywrap() { return 1; }
 
 %token Remark
 %token NewLine 
-%token SEMICOLON COLON COMMA PLUS MINUS INCREMENT DECREMENT EQUAL ASSIGN LT LTE GT GTE DISEQUAL MULTIPLICATION DOLLAR
+%token SEMICOLON COLON COMMA PLUS MINUS INCREMENT DECREMENT EQUAL ASSIGN LT LTE GT GTE DISEQUAL MULTIPLICATION DOLLAR DIVISION
 
 %token RASTER DONE AT COLOR BORDER WAIT NEXT WITH BANK SPRITE DATA FROM OP CP 
 %token ENABLE DISABLE HALT ECM BITMAP SCREEN ON OFF ROWS VERTICAL SCROLL VAR AS TEMPORARY 
@@ -346,6 +346,10 @@ expressions_raw :
     | expression MULTIPLICATION expressions_raw {
         $$ = variable_mul( _environment, $1, $3 )->name;
         outline3("; %s = %s * %s", $$, $1, $3 );
+    } 
+    | expression DIVISION expressions_raw {
+        $$ = variable_div( _environment, $1, $3 )->name;
+        outline3("; %s = %s / %s", $$, $1, $3 );
     } 
     | expression AND expressions_raw {
         $$ = variable_and( _environment, $1, $3 )->name;

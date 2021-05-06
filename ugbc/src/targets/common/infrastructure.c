@@ -1063,6 +1063,50 @@ Variable * variable_mul( Environment * _environment, char * _source, char * _des
     return result;
 }
 
+Variable * variable_div( Environment * _environment, char * _source, char * _destination ) {
+    Variable * source = variable_find( _environment->tempVariables, _source );
+    if ( ! source ) {
+        source = variable_find( _environment->variables, _source );
+        if ( ! source ) {
+            CRITICAL("Source variable does not exist");
+        }
+    }
+    Variable * target = variable_cast( _environment, _destination, source->type );
+    if ( ! target ) {
+        CRITICAL("Destination variable does not cast");
+    }
+    Variable * result = NULL;
+    Variable * remainder = NULL;
+    switch( source->type ) {
+        case VT_DWORD:
+            result = variable_temporary( _environment, VT_DWORD, "(result of division)" );
+            remainder = variable_temporary( _environment, VT_WORD, "(remainder of division)" );
+            cpu_math_div_32bit_to_16bit( _environment, source->realName, target->realName, result->realName, remainder->realName );
+            break;
+        case VT_STRING:
+            CRITICAL("Cannot calculate division of STRING variables");
+            break;
+        case VT_ADDRESS:
+        case VT_POSITION:
+        case VT_WORD:
+            result = variable_temporary( _environment, VT_DWORD, "(result of division)" );
+            remainder = variable_temporary( _environment, VT_WORD, "(remainder of division)" );
+            cpu_math_div_16bit_to_16bit( _environment, source->realName, target->realName, result->realName, remainder->realName );
+            break;
+        case VT_BYTE:
+        case VT_COLOR:
+            result = variable_temporary( _environment, VT_BYTE, "(result of division)" );
+            remainder = variable_temporary( _environment, VT_BYTE, "(remainder of division)" );
+            cpu_math_div_8bit_to_8bit( _environment, source->realName, target->realName, result->realName, remainder->realName );
+            break;
+        case VT_BUFFER: {
+            CRITICAL( "Cannot divide a BUFFER");
+        }
+    }
+
+    return result;
+}
+
 /**
  * @brief Compare two variable and return the result of comparation
  * 

@@ -385,6 +385,32 @@ void cpu6502_math_mul_8bit_to_16bit( Environment * _environment, char *_source, 
     outline1("STA %s+1", _other );
 }
 
+void cpu6502_math_div_8bit_to_8bit( Environment * _environment, char *_source, char *_destination,  char *_other, char * _other_remainder ) {
+
+    MAKE_LABEL
+
+    outline1("LDA %s", _source );
+    outline1("STA %s", _other );
+
+    outline0("LDA #0" );
+    outline1("STA %s", _other_remainder );
+    outline0("LDX #8");
+    outhead1("%sL1:", label );
+    outline1("ASL %s", _other );
+    outline1("ROL %s", _other_remainder );
+    outline1("LDA %s", _other_remainder );
+    outline0("SEC" );
+    outline1("SBC %s", _destination );
+    outline0("TAY" );
+    outline1("BCC %sL2", label );
+    outline1("STY %s", _other_remainder );
+    outline1("INC %s", _other );
+    outhead1("%sL2:", label );
+    outline0("DEX" );
+    outhead1("BNE %sL1", label );
+    
+}
+
 /**
  * @brief <i>CPU 6502</i>: emit code to halves for several times a 8 bit value 
  * 
@@ -732,6 +758,40 @@ void cpu6502_math_mul_16bit_to_32bit( Environment * _environment, char *_source,
 
 }
 
+void cpu6502_math_div_16bit_to_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, char * _other_remainder ) {
+
+    MAKE_LABEL
+
+    outline1("LDA %s", _source );
+    outline1("STA %s", _other );
+    outline1("LDA %s+1", _source );
+    outline1("STA %s+1", _other );
+
+    outline0("LDA #0" );
+    outline1("STA %s", _other_remainder );
+    outline1("STA %s+1", _other_remainder );
+    outline0("LDX #16" );
+    outhead1("%sL1:", label );
+    outline1("ASL %s", _other );
+    outline1("ROL %s+1", _other );
+    outline1("ROL %s", _other_remainder );
+    outline1("ROL %s+1", _other_remainder );
+    outline1("LDA %s", _other_remainder );
+    outline0("SEC" );
+    outline1("SBC %s", _destination );
+    outline0("TAY" );
+    outline1("LDA %s+1", _other_remainder );
+    outline1("SBC %s+1", _destination );
+    outline1("BCC %sL2", label );
+    outline1("STA %s+1", _other_remainder );
+    outline1("STY %s", _other_remainder );
+    outline1("INC %s", _other );
+    outhead1("%sL2:", label );
+    outline0("DEX" );
+    outhead1("BNE %sL1", label );
+
+}
+
 /**
  * @brief <i>CPU 6502</i>: emit code to subtract two 16 bit values
  * 
@@ -888,6 +948,78 @@ void cpu6502_store_32bit( Environment * _environment, char *_destination, int _v
     outline1("LDA #$%2.2x", ( ( _value >> 24 ) & 0xff ) );
     outline1("STA %s+3", _destination);
 }
+
+void cpu6502_math_div_32bit_to_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, char * _other_remainder ) {
+
+    MAKE_LABEL
+
+    outline1("LDA %s", _source );
+    outline0("STA $26");
+    outline1("LDA %s+1", _source );
+    outline0("STA $27");
+    outline1("LDA %s+2", _source );
+    outline0("STA $24");
+    outline1("LDA %s+3", _source );
+    outline0("STA $25" );
+
+    outline1("LDA %s", _destination );
+    outline0("STA $22");
+    outline1("LDA %s+1", _destination );
+    outline0("STA $23" );
+
+    outhead1("%sSTART:", label );
+    outline0("SEC" );
+    outline0("LDA $24" );
+    outline0("SBC N" );
+    outline0("LDA $25" );
+    outline0("SBC N+1 " );
+    outline1("BCS %soflo", label );
+    outline0("LDX #$11" );
+    outhead1("%sloop:", label)
+
+    outline0("ROL $26");
+    outline0("ROL $27");
+    outline0("DEX" );
+    outline1("BEQ %send", label );
+
+    outline0("ROL $24" );
+    outline0("ROL $25" );
+    outline0("STZ $29" );
+    outline0("ROL $30" ); // <<--- forse $29
+    outline0("SEC" );
+    outline0("LDA $24" );
+    outline0("SBC $22" );
+    outline0("STA $28" );
+    outline0("LDA $25" );
+    outline0("SBC $23" );
+    outline0("TAY" );
+    outline0("LDA $30" ); // <<--- forse $30
+    outline0("SBC #0" );
+    outline1("BCC %sloop", label )
+    outline0("LDA $28");
+    outline0("STA $24");
+    outline0("STY $25" );
+    outline1("BRA %sloop", label );
+
+    outhead1("%soflo", label );
+    outline0("LDA $ff" );
+    outline0("STA $24" );
+    outline0("STA $25" );
+    outline0("STA $26" );
+    outline0("STA $27" );
+    outhead1("%send:", label );
+
+    outline0("LDA $26");
+    outline1("STA %s", _other );
+    outline0("LDA $27");
+    outline1("STA %s+1", _other );
+    outline0("LDA $24");
+    outline1("STA %s", _other_remainder );
+    outline0("LDA $25");
+    outline1("STA %s+1", _other_remainder );
+
+}
+
 
 /**
  * @brief <i>CPU 6502</i>: emit code to compare two 32 bit values
