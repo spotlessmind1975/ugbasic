@@ -1673,7 +1673,7 @@ Variable * variable_greater_than( Environment * _environment, char * _source, ch
             char sourceAddress[16]; sprintf(sourceAddress, "%s+1", source->realName );
             char destinationAddress[16]; sprintf(destinationAddress, "%s+1", target->realName );
             cpu_greater_than_8bit( _environment, source->realName, target->realName, result->realName, _equal );
-            cpu_bveq( _environment, result->realName, label );
+            cpu_bvneq( _environment, result->realName, label );
             cpu_greater_than_memory( _environment, sourceAddress, destinationAddress, source->realName, result->realName, _equal );
             cpu_label( _environment, label );
             break;
@@ -2980,5 +2980,87 @@ Variable * variable_pow( Environment * _environment, char * _source, char * _des
             cpu_label( _environment, endLabel );
             break;
     }
+    return result;
+}
+
+Variable * variable_min( Environment * _environment, char * _source, char * _destination ) {
+    Variable * source = variable_find( _environment->tempVariables, _source );
+    if ( ! source ) {
+        source = variable_find( _environment->variables, _source );
+    }
+    if ( ! source ) {
+        CRITICAL_VARIABLE(_source);
+    }
+    Variable * target = variable_cast( _environment, _destination, source->type );
+    if ( ! target ) {
+        CRITICAL_VARIABLE(_destination);
+    }
+
+    if ( target->type != source->type ) {
+        CRITICAL("Cannot calculate MIN of different type of variables");
+    }
+
+    Variable * result = variable_temporary( _environment, source->type, "(result of MIN)");
+
+    MAKE_LABEL
+
+    char greaterThanLabel[32]; sprintf( greaterThanLabel, "%sl1", label );
+    char endLabel[32]; sprintf( endLabel, "%sl2", label );
+
+    Variable * compare = variable_less_than( _environment, source->name, target->name, 0 );
+
+    cpu_bveq( _environment, compare->realName, greaterThanLabel );
+
+    variable_move_naked( _environment, target->name, result->name );
+    
+    cpu_jump( _environment, endLabel );
+
+    cpu_label( _environment, greaterThanLabel );
+
+    variable_move_naked( _environment, source->name, result->name );
+    
+    cpu_label( _environment, endLabel );
+
+    return result;
+}
+
+Variable * variable_max( Environment * _environment, char * _source, char * _destination ) {
+    Variable * source = variable_find( _environment->tempVariables, _source );
+    if ( ! source ) {
+        source = variable_find( _environment->variables, _source );
+    }
+    if ( ! source ) {
+        CRITICAL_VARIABLE(_source);
+    }
+    Variable * target = variable_cast( _environment, _destination, source->type );
+    if ( ! target ) {
+        CRITICAL_VARIABLE(_destination);
+    }
+
+    if ( target->type != source->type ) {
+        CRITICAL("Cannot calculate MAX of different type of variables");
+    }
+
+    Variable * result = variable_temporary( _environment, source->type, "(result of MAX)");
+
+    MAKE_LABEL
+
+    char greaterThanLabel[32]; sprintf( greaterThanLabel, "%sl1", label );
+    char endLabel[32]; sprintf( endLabel, "%sl2", label );
+
+    Variable * compare = variable_greater_than( _environment, source->name, target->name, 0 );
+
+    cpu_bveq( _environment, compare->realName, greaterThanLabel );
+
+    variable_move_naked( _environment, source->name, result->name );
+    
+    cpu_jump( _environment, endLabel );
+
+    cpu_label( _environment, greaterThanLabel );
+
+    variable_move_naked( _environment, target->name, result->name );
+    
+    cpu_label( _environment, endLabel );
+
     return result;
 }

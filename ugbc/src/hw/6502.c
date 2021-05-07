@@ -1747,6 +1747,7 @@ void cpu6502_less_than_memory( Environment * _environment, char *_source, char *
     outline0("INY" );
     outline1("CPY %s", _size );
     outline1("BNE %sloop", label );
+    outhead1("%sfalse:", label );
     outline0("LDA #0" );
     outline1("STA %s", _result );
     outline1("JMP %sfinal", label );
@@ -1780,6 +1781,7 @@ void cpu6502_less_than_memory_size( Environment * _environment, char *_source, c
     outline0("INY" );
     outline1("CPY #$%2.2x", _size );
     outline1("BNE %sloop", label );
+    outhead1("%sfalse:", label );
     outline0("LDA #0" );
     outline1("STA %s", _result );
     outline1("JMP %sfinal", label );
@@ -1806,13 +1808,14 @@ void cpu6502_greater_than_memory( Environment * _environment, char *_source, cha
     outhead1("%sloop:", label );
     outline0("LDA ($24), Y" );
     outline0("CMP ($22), Y" );
-    outline1("BCC %sfalse", label);
     if ( ! _equal ) {
         outline1("BEQ %sfalse", label);
     }
+    outline1("BCS %sfalse", label);
     outline0("INY" );
     outline1("CPY %s", _size );
     outline1("BNE %sloop", label );
+    outhead1("%sfalse:", label );
     outline0("LDA #0" );
     outline1("STA %s", _result );
     outline1("JMP %sfinal", label );
@@ -1846,6 +1849,7 @@ void cpu6502_greater_than_memory_size( Environment * _environment, char *_source
     outline0("INY" );
     outline1("CPY #$%2.2x", _size );
     outline1("BNE %sloop", label );
+    outhead1("%sfalse:", label );
     outline0("LDA #0" );
     outline1("STA %s", _result );
     outline1("JMP %sfinal", label );

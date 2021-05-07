@@ -36,7 +36,7 @@ int yywrap() { return 1; }
 %token BYTE WORD POSITION CODE VARIABLES MS CYCLES S HASH WIDTH HEIGHT DWORD PEN CLEAR
 %token BEG END GAMELOOP ENDIF UP DOWN LEFT RIGHT DEBUG AND RANDOMIZE GRAPHIC TEXTMAP
 %token POINT GOSUB RETURN POP OR ELSE NOT TRUE FALSE DO EXIT WEND UNTIL FOR STEP EVERY
-%token MID INSTR UPPER LOWER STR VAL STRING SPACE FLIP CHR ASC LEN POW MOD ADD
+%token MID INSTR UPPER LOWER STR VAL STRING SPACE FLIP CHR ASC LEN POW MOD ADD MIN MAX
 
 %token MILLISECOND MILLISECONDS TICKS
 
@@ -394,6 +394,12 @@ exponential:
     }
     | OP expr CP {
         $$ = $2;
+    }
+    | MAX OP expr COMMA expr CP {
+        $$ = variable_max( _environment, $3, $5 )->name;
+    }
+    | MIN OP expr COMMA expr CP {
+        $$ = variable_min( _environment, $3, $5 )->name;
     }
     | TRUE {
         $$ = variable_temporary( _environment, VT_BYTE, "(true)" )->name;

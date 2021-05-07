@@ -106,8 +106,10 @@ LOWER { return (LOWER); }
 LOWER\$ { return (LOWER); }
 MAGENTA { return(MAGENTA); }
 NEXT { return (NEXT); }
+MAX { return(MAX); }
 MCM { return(MCM); }
 MID { return(MID); }
+MIN { return(MIN); }
 MID\$ { return(MID); }
 MOD { return(MOD); }
 MONOCOLOR { return(MONOCOLOR); }

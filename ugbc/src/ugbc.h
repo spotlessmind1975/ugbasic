@@ -703,6 +703,8 @@ Variable * variable_sub( Environment * _environment, char * _source, char * _des
 Variable * variable_mul( Environment * _environment, char * _source, char * _dest );
 Variable * variable_div( Environment * _environment, char * _source, char * _dest );
 Variable * variable_pow( Environment * _environment, char * _source, char * _dest );
+Variable * variable_min( Environment * _environment, char * _source, char * _dest );
+Variable * variable_max( Environment * _environment, char * _source, char * _dest );
 Variable * variable_and( Environment * _environment, char * _left, char * _right );
 Variable * variable_or( Environment * _environment, char * _left, char * _right );
 Variable * variable_not( Environment * _environment, char * _value );

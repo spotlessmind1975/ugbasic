@@ -183,35 +183,37 @@ extern int yydebug;
     POW = 384,                     /* POW  */
     MOD = 385,                     /* MOD  */
     ADD = 386,                     /* ADD  */
-    MILLISECOND = 387,             /* MILLISECOND  */
-    MILLISECONDS = 388,            /* MILLISECONDS  */
-    TICKS = 389,                   /* TICKS  */
-    BLACK = 390,                   /* BLACK  */
-    WHITE = 391,                   /* WHITE  */
-    RED = 392,                     /* RED  */
-    CYAN = 393,                    /* CYAN  */
-    VIOLET = 394,                  /* VIOLET  */
-    GREEN = 395,                   /* GREEN  */
-    BLUE = 396,                    /* BLUE  */
-    YELLOW = 397,                  /* YELLOW  */
-    ORANGE = 398,                  /* ORANGE  */
-    BROWN = 399,                   /* BROWN  */
-    LIGHT = 400,                   /* LIGHT  */
-    DARK = 401,                    /* DARK  */
-    GREY = 402,                    /* GREY  */
-    GRAY = 403,                    /* GRAY  */
-    MAGENTA = 404,                 /* MAGENTA  */
-    PURPLE = 405,                  /* PURPLE  */
-    LAVENDER = 406,                /* LAVENDER  */
-    GOLD = 407,                    /* GOLD  */
-    TURQUOISE = 408,               /* TURQUOISE  */
-    TAN = 409,                     /* TAN  */
-    PINK = 410,                    /* PINK  */
-    PEACH = 411,                   /* PEACH  */
-    OLIVE = 412,                   /* OLIVE  */
-    Identifier = 413,              /* Identifier  */
-    String = 414,                  /* String  */
-    Integer = 415                  /* Integer  */
+    MIN = 387,                     /* MIN  */
+    MAX = 388,                     /* MAX  */
+    MILLISECOND = 389,             /* MILLISECOND  */
+    MILLISECONDS = 390,            /* MILLISECONDS  */
+    TICKS = 391,                   /* TICKS  */
+    BLACK = 392,                   /* BLACK  */
+    WHITE = 393,                   /* WHITE  */
+    RED = 394,                     /* RED  */
+    CYAN = 395,                    /* CYAN  */
+    VIOLET = 396,                  /* VIOLET  */
+    GREEN = 397,                   /* GREEN  */
+    BLUE = 398,                    /* BLUE  */
+    YELLOW = 399,                  /* YELLOW  */
+    ORANGE = 400,                  /* ORANGE  */
+    BROWN = 401,                   /* BROWN  */
+    LIGHT = 402,                   /* LIGHT  */
+    DARK = 403,                    /* DARK  */
+    GREY = 404,                    /* GREY  */
+    GRAY = 405,                    /* GRAY  */
+    MAGENTA = 406,                 /* MAGENTA  */
+    PURPLE = 407,                  /* PURPLE  */
+    LAVENDER = 408,                /* LAVENDER  */
+    GOLD = 409,                    /* GOLD  */
+    TURQUOISE = 410,               /* TURQUOISE  */
+    TAN = 411,                     /* TAN  */
+    PINK = 412,                    /* PINK  */
+    PEACH = 413,                   /* PEACH  */
+    OLIVE = 414,                   /* OLIVE  */
+    Identifier = 415,              /* Identifier  */
+    String = 416,                  /* String  */
+    Integer = 417                  /* Integer  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -225,7 +227,7 @@ union YYSTYPE
     int integer;
     char * string;
 
-#line 229 "src-generated/ugbc.tab.h"
+#line 231 "src-generated/ugbc.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
