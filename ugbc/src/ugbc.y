@@ -36,7 +36,7 @@ int yywrap() { return 1; }
 %token BYTE WORD POSITION CODE VARIABLES MS CYCLES S HASH WIDTH HEIGHT DWORD PEN CLEAR
 %token BEG END GAMELOOP ENDIF UP DOWN LEFT RIGHT DEBUG AND RANDOMIZE GRAPHIC TEXTMAP
 %token POINT GOSUB RETURN POP OR ELSE NOT TRUE FALSE DO EXIT WEND UNTIL FOR STEP EVERY
-%token MID INSTR UPPER LOWER STR VAL STRING SPACE FLIP CHR ASC LEN POW
+%token MID INSTR UPPER LOWER STR VAL STRING SPACE FLIP CHR ASC LEN POW MOD
 
 %token MILLISECOND MILLISECONDS TICKS
 
@@ -48,7 +48,7 @@ int yywrap() { return 1; }
 %token <string> String
 %token <integer> Integer
 
-%type <string> expression expressions_raw expressions
+%type <string> expr term modula factor exponential expr_math
 %type <integer> direct_integer
 %type <string> random_definition_simple random_definition
 %type <string> color_enumeration
@@ -56,8 +56,82 @@ int yywrap() { return 1; }
 %right Integer String CP
 %left OP
 %right THEN ELSE
+%left POW
+%left MULTIPLICATION DIVISION
+%left MOD
+%left PLUS MINUS
+%left AND OR EQUAL DISEQUAL LT LTE GT GTE
 
 %%
+
+expr : 
+      expr_math
+    | expr_math AND expr_math {
+        $$ = variable_and( _environment, $1, $3 )->name;
+        outline3("; %s = %s AND %s", $$, $1, $3 );
+    } 
+    | expr_math OR expr_math {
+        $$ = variable_or( _environment, $1, $3 )->name;
+        outline3("; %s = %s OR %s", $$, $1, $3 );
+    } 
+    | expr_math EQUAL expr_math {
+        $$ = variable_compare( _environment, $1, $3 )->name;
+    }
+    | expr_math DISEQUAL expr_math {
+        $$ = variable_compare_not( _environment, $1, $3 )->name;
+    }
+    | expr_math LT expr_math {
+        $$ = variable_less_than( _environment, $1, $3, 0 )->name;
+    }
+    | expr_math LTE expr_math {
+        $$ = variable_less_than( _environment, $1, $3, 1 )->name;
+    }
+    | expr_math GT expr_math {
+        $$ = variable_greater_than( _environment, $1, $3, 0 )->name;
+    }
+    | expr_math GTE expr_math {
+        $$ = variable_greater_than( _environment, $1, $3, 0 )->name;
+    }
+    | NOT expr {
+        $$ = variable_not( _environment, $2 )->name;
+    }
+    ;
+    
+expr_math: 
+      term
+    | expr_math PLUS term {
+        $$ = variable_add( _environment, $1, $3 )->name;
+    }
+    | expr_math MINUS term {
+        $$ = variable_sub( _environment, $1, $3 )->name;
+        outline3("; %s = %s - %s", $$, $1, $3 );
+    }       
+    ;
+
+term:
+      modula
+    | term MOD modula
+    ;
+
+modula: 
+      factor
+    | modula MULTIPLICATION factor {
+        $$ = variable_mul( _environment, $1, $3 )->name;
+        outline3("; %s = %s * %s", $$, $1, $3 );
+    } 
+    | modula DIVISION factor {
+        $$ = variable_div( _environment, $1, $3 )->name;
+        outline3("; %s = %s / %s", $$, $1, $3 );
+    } 
+    ;
+
+factor: 
+        exponential
+      | factor POW exponential {
+        $$ = variable_pow( _environment, $1, $3 )->name;
+        outline3("; %s = %s ^ %s", $$, $1, $3 );
+      }
+      ;
 
 direct_integer:
     HASH Integer {
@@ -202,7 +276,7 @@ color_enumeration:
           variable_store( _environment, $$, COLOR_PEACH );
       };
 
-expression:
+exponential:
       Identifier { 
         $$ = $1;
       }
@@ -214,7 +288,7 @@ expression:
         variable_store( _environment, $$, $1 );
       }
     | String { 
-        outline1("; (expression string: \"%s\")", $1 );
+        outline1("; (expr string: \"%s\")", $1 );
         $$ = variable_temporary( _environment, VT_STRING, "(string value)" )->name;
         outline1("; %s", $$ );
         variable_store_string( _environment, $$, $1 );
@@ -246,7 +320,7 @@ expression:
     | PEEK OP direct_integer CP {
         $$ = peek( _environment, $3 )->name;
       }
-    | PEEK OP expressions CP {
+    | PEEK OP expr CP {
         $$ = peek_var( _environment, $3 )->name;
       }
     | XPEN {
@@ -258,67 +332,67 @@ expression:
     | COLLISION OP direct_integer CP {
         $$ = collision_to( _environment, $3 )->name;
       }      
-    | COLLISION OP expressions CP {
+    | COLLISION OP expr CP {
         $$ = collision_to_vars( _environment, $3 )->name;
       }      
     | HIT OP direct_integer CP {
         $$ = collision_to( _environment, $3 )->name;
       }      
-    | HIT OP expressions CP {
+    | HIT OP expr CP {
         $$ = collision_to_vars( _environment, $3 )->name;
       }      
-    | LEFT OP expression COMMA expression CP {
+    | LEFT OP expr COMMA expr CP {
         $$ = variable_string_left( _environment, $3, $5 )->name;
     }
-    | RIGHT OP expression COMMA expression CP {
+    | RIGHT OP expr COMMA expr CP {
         $$ = variable_string_right( _environment, $3, $5 )->name;
     }
-    | MID OP expression COMMA expression CP {
+    | MID OP expr COMMA expr CP {
         $$ = variable_string_mid( _environment, $3, $5, NULL )->name;
     }
-    | MID OP expression COMMA expression COMMA expression CP {
+    | MID OP expr COMMA expr COMMA expr CP {
         $$ = variable_string_mid( _environment, $3, $5, $7 )->name;
     }
-    | INSTR OP expression COMMA expression CP {
+    | INSTR OP expr COMMA expr CP {
         $$ = variable_string_instr( _environment, $3, $5, NULL )->name;
     }
-    | INSTR OP expression COMMA expression COMMA expression CP {
+    | INSTR OP expr COMMA expr COMMA expr CP {
         $$ = variable_string_instr( _environment, $3, $5, $7 )->name;
     }
-    | UPPER OP expression CP {
+    | UPPER OP expr CP {
         $$ = variable_string_upper( _environment, $3 )->name;
     }
-    | LOWER OP expression CP {
+    | LOWER OP expr CP {
         $$ = variable_string_lower( _environment, $3 )->name;
     }
-    | STR OP expression CP {
+    | STR OP expr CP {
         $$ = variable_string_str( _environment, $3 )->name;
     }
-    | SPACE OP expression CP {
+    | SPACE OP expr CP {
         $$ = variable_string_space( _environment, $3 )->name;
     }
-    | FLIP OP expression CP {
+    | FLIP OP expr CP {
         $$ = variable_string_flip( _environment, $3 )->name;
     }
-    | CHR OP expression CP {
+    | CHR OP expr CP {
         $$ = variable_string_chr( _environment, $3 )->name;
     }
-    | ASC OP expression CP {
+    | ASC OP expr CP {
         $$ = variable_string_asc( _environment, $3 )->name;
     }
-    | LEN OP expression CP {
+    | LEN OP expr CP {
         $$ = variable_string_len( _environment, $3 )->name;
     }
-    | STRING OP expression COMMA expression CP {
+    | STRING OP expr COMMA expr CP {
         $$ = variable_string_string( _environment, $3, $5 )->name;
     }
-    | VAL OP expression CP {
+    | VAL OP expr CP {
         $$ = variable_string_val( _environment, $3 )->name;
     }
     | RANDOM random_definition {
         $$ = $2;
     }
-    | OP expressions CP {
+    | OP expr CP {
         $$ = $2;
     }
     | TRUE {
@@ -329,64 +403,7 @@ expression:
         $$ = variable_temporary( _environment, VT_BYTE, "(false)" )->name;
         variable_store( _environment, $$, 255 );
     }
-    | NOT expression {
-        $$ = variable_not( _environment, $2 )->name;
-    }
     ;
-
-expressions_raw :
-      expression { $$ = $1; }
-    | expression PLUS expressions_raw {
-        $$ = variable_add( _environment, $1, $3 )->name;
-    }
-    | expression MINUS expressions_raw {
-        $$ = variable_sub( _environment, $1, $3 )->name;
-        outline3("; %s = %s - %s", $$, $1, $3 );
-    } 
-    | expression MULTIPLICATION expressions_raw {
-        $$ = variable_mul( _environment, $1, $3 )->name;
-        outline3("; %s = %s * %s", $$, $1, $3 );
-    } 
-    | expression DIVISION expressions_raw {
-        $$ = variable_div( _environment, $1, $3 )->name;
-        outline3("; %s = %s / %s", $$, $1, $3 );
-    } 
-    | expression AND expressions_raw {
-        $$ = variable_and( _environment, $1, $3 )->name;
-        outline3("; %s = %s AND %s", $$, $1, $3 );
-    } 
-    | expression OR expressions_raw {
-        $$ = variable_or( _environment, $1, $3 )->name;
-        outline3("; %s = %s OR %s", $$, $1, $3 );
-    } 
-    | expression POW expressions_raw {
-        $$ = variable_pow( _environment, $1, $3 )->name;
-        outline3("; %s = %s ^ %s", $$, $1, $3 );
-    } 
-    | expression EQUAL expressions_raw {
-        $$ = variable_compare( _environment, $1, $3 )->name;
-    }
-    | expression DISEQUAL expressions_raw {
-        $$ = variable_compare_not( _environment, $1, $3 )->name;
-    }
-    | expression LT expressions_raw {
-        $$ = variable_less_than( _environment, $1, $3, 0 )->name;
-    }
-    | expression LTE expressions_raw {
-        $$ = variable_less_than( _environment, $1, $3, 1 )->name;
-    }
-    | expression GT expressions_raw {
-        $$ = variable_greater_than( _environment, $1, $3, 0 )->name;
-    }
-    | expression GTE expressions_raw {
-        $$ = variable_greater_than( _environment, $1, $3, 0 )->name;
-    }
-    ; 
-
-expressions :
-    expressions_raw {
-      $$ = $1;
-    }
 
 position:   POSITION | AT;
 
@@ -480,10 +497,10 @@ raster_definition_simple:
     };
 
 raster_definition_expression:
-    Identifier AT expressions {
+    Identifier AT expr {
       raster_at_var( _environment, $1, $3 );
     }
-  | AT expressions WITH Identifier {
+  | AT expr WITH Identifier {
       raster_at_var( _environment, $2, $4 );
     };
 
@@ -500,10 +517,10 @@ next_raster_definition_simple:
     };
 
 next_raster_definition_expression:
-    Identifier AT expressions {
+    Identifier AT expr {
       next_raster_at_with_var( _environment, $3, $1 );
     }
-  | AT expressions WITH Identifier {
+  | AT expr WITH Identifier {
       next_raster_at_with_var( _environment, $2, $4 );
     };
 
@@ -523,13 +540,13 @@ color_definition_simple:
   };
 
 color_definition_expression:
-    BORDER expressions {
+    BORDER expr {
       color_border_var( _environment, $2 );
   }
-  | BACKGROUND expressions TO expressions {
+  | BACKGROUND expr TO expr {
       color_background_vars( _environment, $2, $4 );
   }
-  | SPRITE expressions TO expressions {
+  | SPRITE expr TO expr {
       color_sprite_vars( _environment, $2, $4 );
   };
 
@@ -554,13 +571,13 @@ wait_definition_simple:
     };
 
 wait_definition_expression:
-      expressions CYCLES {
+      expr CYCLES {
       wait_cycles_var( _environment, $1 );
     }
-    | expressions TICKS {
+    | expr TICKS {
       wait_ticks_var( _environment, $1 );
     }
-    | expressions milliseconds {
+    | expr milliseconds {
       wait_milliseconds_var( _environment, $1 );
     }
     ;
@@ -617,49 +634,49 @@ sprite_definition_simple:
   };
 
 sprite_definition_expression:
-    expressions DATA FROM expressions {
+    expr DATA FROM expr {
       sprite_data_from_vars( _environment, $1, $4 );
   }
-  | expressions MULTICOLOR {
+  | expr MULTICOLOR {
       sprite_multicolor_var( _environment, $1 );
   }
-  | expressions MONOCOLOR {
+  | expr MONOCOLOR {
       sprite_monocolor_var( _environment, $1 );
   }
-  | expressions COLOR expressions {
+  | expr COLOR expr {
       sprite_color_vars( _environment, $1, $3 );
   }
-  | expressions position OP expressions COMMA expressions CP {
+  | expr position OP expr COMMA expr CP {
       sprite_position_vars( _environment, $1, $4, $6 );
   }
-  | expressions ENABLE {
+  | expr ENABLE {
       sprite_enable_var( _environment, $1 );
   }
-  | expressions DISABLE {
+  | expr DISABLE {
       sprite_disable_var( _environment, $1 );
   }
-  | expressions EXPAND VERTICAL {
+  | expr EXPAND VERTICAL {
       sprite_expand_vertical_var( _environment, $1 );
   }
-  | expressions COMPRESS VERTICAL {
+  | expr COMPRESS VERTICAL {
       sprite_compress_vertical_var( _environment, $1 );
   }
-  | expressions VERTICAL EXPAND {
+  | expr VERTICAL EXPAND {
       sprite_expand_vertical_var( _environment, $1 );
   }
-  | expressions VERTICAL COMPRESS {
+  | expr VERTICAL COMPRESS {
       sprite_compress_vertical_var( _environment, $1 );
   }
-  | expressions EXPAND HORIZONTAL {
+  | expr EXPAND HORIZONTAL {
       sprite_expand_horizontal_var( _environment, $1 );
   }
-  | expressions COMPRESS HORIZONTAL {
+  | expr COMPRESS HORIZONTAL {
       sprite_compress_horizontal_var( _environment, $1 );
   }
-  | expressions HORIZONTAL EXPAND {
+  | expr HORIZONTAL EXPAND {
       sprite_expand_horizontal_var( _environment, $1 );
   }
-  | expressions HORIZONTAL COMPRESS {
+  | expr HORIZONTAL COMPRESS {
       sprite_compress_horizontal_var( _environment, $1 );
   };
 
@@ -686,10 +703,10 @@ bitmap_definition_simple:
   ;
 
 bitmap_definition_expression:
-    AT expressions {
+    AT expr {
       bitmap_at_var( _environment, $2 );
   }
-  | CLEAR WITH expressions {
+  | CLEAR WITH expr {
       bitmap_clear_with_vars( _environment, $3 );
   }
   ;
@@ -704,7 +721,7 @@ textmap_definition_simple:
   };
 
 textmap_definition_expression:
-    AT expressions {
+    AT expr {
       textmap_at_var( _environment, $2 );
   };
 
@@ -729,7 +746,7 @@ tiles_definition_simple:
   };
 
 tiles_definition_expression:
-    AT expressions {
+    AT expr {
       tiles_at_var( _environment, $2 );
   };
 
@@ -749,10 +766,10 @@ colormap_definition_simple:
   };
 
 colormap_definition_expression:
-    AT expressions {
+    AT expr {
       colormap_at_var( _environment, $2 );
   }
-  | CLEAR WITH expressions ON expressions {
+  | CLEAR WITH expr ON expr {
       colormap_clear_with_vars( _environment, $3, $5 );
   };
   ;
@@ -779,13 +796,13 @@ screen_definition_simple:
   };
 
 screen_definition_expression:
-    ROWS expressions {
+    ROWS expr {
       screen_rows_var( _environment, $2 );
   }
-  | VERTICAL SCROLL expressions {
+  | VERTICAL SCROLL expr {
       screen_vertical_scroll_var( _environment, $3 );
   }
-  | HORIZONTAL SCROLL expressions {
+  | HORIZONTAL SCROLL expr {
       screen_horizontal_scroll_var( _environment, $3 );
   };
 
@@ -803,12 +820,12 @@ var_definition_simple:
   | Identifier ON Identifier ASSIGN direct_integer {
       variable_define( _environment, $1, VT_BYTE, $5 );
   }
-  | Identifier ON Identifier ASSIGN expressions {
+  | Identifier ON Identifier ASSIGN expr {
       Variable * v = variable_retrieve( _environment, $5 );
       Variable * d = variable_define( _environment, $1, v->type, v->value );
       variable_move_naked( _environment, v->name, d->name );
   }
-  | Identifier DOLLAR ON Identifier ASSIGN expressions {
+  | Identifier DOLLAR ON Identifier ASSIGN expr {
       Variable * v = variable_retrieve( _environment, $6 );
       Variable * d = variable_define( _environment, $1, VT_STRING, 0 );
       variable_move( _environment, v->name, d->name );
@@ -842,7 +859,7 @@ point_definition_simple:
     ;
 
 point_definition_expression:
-      AT OP expressions COMMA expressions CP {
+      AT OP expr COMMA expr CP {
         point_at_vars( _environment, $3, $5 );
     };
 
@@ -869,15 +886,15 @@ on_gosub_definition:
     } COMMA on_gosub_definition;
 
 on_definition:
-      expressions GOTO {
+      expr GOTO {
           on_goto( _environment, $1 );
       } on_goto_definition
-    | expressions GOSUB {
+    | expr GOSUB {
         on_gosub( _environment, $1 );  
     } on_gosub_definition;
 
 every_definition :
-      expression TICKS GOSUB Identifier {
+      expr TICKS GOSUB Identifier {
           every_ticks_gosub( _environment, $1, $4 );
     }
     | ON {
@@ -905,13 +922,13 @@ statement:
   | RANDOMIZE {
       randomize( _environment );
   }
-  | IF expressions THEN {
+  | IF expr THEN {
       if_then( _environment, $2 );  
   }
   | ELSE {
       else_if_then( _environment, NULL );  
   }
-  | ELSE IF expressions THEN {
+  | ELSE IF expr THEN {
       else_if_then( _environment, $3 );  
   }
   | ENDIF {
@@ -925,7 +942,7 @@ statement:
   }
   | WHILE { 
       begin_while( _environment );  
-  } expressions {
+  } expr {
       begin_while_condition( _environment, $3 );  
   }
   | WEND {
@@ -934,13 +951,13 @@ statement:
   | REPEAT {
       begin_repeat( _environment );  
   }
-  | UNTIL expressions {
+  | UNTIL expr {
       end_repeat( _environment, $2 );  
   }
   | EXIT {
       exit_loop( _environment, 0 );  
   }
-  | EXIT IF expressions {
+  | EXIT IF expr {
       exit_loop_if( _environment, $3, 0 );  
   }
   | EXIT Integer {
@@ -949,19 +966,19 @@ statement:
   | EXIT direct_integer {
       exit_loop( _environment, $2 );  
   }
-  | EXIT IF expressions COMMA Integer {
+  | EXIT IF expr COMMA Integer {
       exit_loop_if( _environment, $3, $5 );  
   }
-  | EXIT IF expressions COMMA direct_integer {
+  | EXIT IF expr COMMA direct_integer {
       exit_loop_if( _environment, $3, $5 );  
   }
-  | FOR Identifier ASSIGN expressions TO expressions {
+  | FOR Identifier ASSIGN expr TO expr {
       begin_for( _environment, $2, $4, $6 );  
   }
   | NEXT {
       end_for( _environment );
   }
-  | FOR Identifier ASSIGN expressions TO expressions STEP expressions {
+  | FOR Identifier ASSIGN expr TO expr STEP expr {
       begin_for_step( _environment, $2, $4, $6, $8 );  
   }
   | BEG GAMELOOP {
@@ -989,40 +1006,40 @@ statement:
   | DONE  {
       return 0;
   }
-  | LEFT OP expression COMMA expression CP ASSIGN expressions {
+  | LEFT OP expr COMMA expr CP ASSIGN expr {
         variable_string_left_assign( _environment, $3, $5, $8 );
   }
-  | RIGHT OP expression COMMA expression CP ASSIGN expressions {
+  | RIGHT OP expr COMMA expr CP ASSIGN expr {
         variable_string_right_assign( _environment, $3, $5, $8 );
   }
-  | MID OP expression COMMA expression CP ASSIGN expressions {
+  | MID OP expr COMMA expr CP ASSIGN expr {
         variable_string_mid_assign( _environment, $3, $5, NULL, $8 );
   }
-  | MID OP expression COMMA expression COMMA expression CP ASSIGN expressions {
+  | MID OP expr COMMA expr COMMA expr CP ASSIGN expr {
         variable_string_mid_assign( _environment, $3, $5, $7, $10 );
   }
   | Identifier COLON {
       outhead1("%s:", $1);
   }
-  | Identifier ASSIGN expressions {
+  | Identifier ASSIGN expr {
         outline2("; %s = %s", $1, $3 );
-        Variable * expressions = variable_retrieve( _environment, $3 );
+        Variable * expr = variable_retrieve( _environment, $3 );
         outline1("; retrieved %s ", $3 );
-        variable_define( _environment, $1, expressions->type, 0 )->name;
+        variable_define( _environment, $1, expr->type, 0 )->name;
         outline1("; defined %s ", $1 );
         variable_move( _environment, $3, $1 );
         outline2("; moved %s -> %s ", $3, $1 );
   }
-  | Identifier DOLLAR ASSIGN expressions {
+  | Identifier DOLLAR ASSIGN expr {
         outline2("; %s = %s", $1, $4 );
-        Variable * expressions = variable_retrieve( _environment, $4 );
+        Variable * expr = variable_retrieve( _environment, $4 );
         outline1("; retrieved %s ", $4 );
         variable_define( _environment, $1, VT_STRING, 0 )->name;
         outline1("; defined %s ", $1 );
         variable_move( _environment, $4, $1 );
         outline2("; moved %s -> %s ", $4, $1 );
   }
-  | DEBUG expressions {
+  | DEBUG expr {
       debug_var( _environment, $2 );
   }
   | Remark

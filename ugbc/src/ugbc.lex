@@ -106,6 +106,7 @@ NEXT { return (NEXT); }
 MCM { return(MCM); }
 MID { return(MID); }
 MID\$ { return(MID); }
+MOD { return(MOD); }
 MONOCOLOR { return(MONOCOLOR); }
 MS { return (MILLISECOND); }
 MILLISECOND { return (MILLISECOND); }
