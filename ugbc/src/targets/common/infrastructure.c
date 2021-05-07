@@ -1039,7 +1039,10 @@ Variable * variable_mul( Environment * _environment, char * _source, char * _des
     Variable * result = NULL;
     switch( source->type ) {
         case VT_DWORD:
-            CRITICAL("Cannot calculate multiplication of DWORD variables");
+            WARNING_BITWIDTH(source->name);
+            WARNING_BITWIDTH(target->name);
+            result = variable_temporary( _environment, VT_DWORD, "(result of multiplication)" );
+            cpu_math_mul_16bit_to_32bit( _environment, source->realName, target->realName, result->realName );
             break;
         case VT_STRING:
             CRITICAL("Cannot calculate multiplication of STRING variables");

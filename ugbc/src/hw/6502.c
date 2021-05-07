@@ -1020,7 +1020,6 @@ void cpu6502_math_div_32bit_to_16bit( Environment * _environment, char *_source,
 
 }
 
-
 /**
  * @brief <i>CPU 6502</i>: emit code to compare two 32 bit values
  * 

@@ -402,6 +402,9 @@ typedef struct _Environment {
 #define CRITICAL_UNIMPLEMENTED( v ) CRITICAL2("E000 - Internal method not implemented:", v );
 #define CRITICAL_TEMPORARY2( v ) CRITICAL2("E001 - Unable to create space for temporary variable", v );
 #define CRITICAL_VARIABLE( v ) CRITICAL2("E002 - Using of an undefined variable", v );
+#define WARNING( s ) fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno );
+#define WARNING2( s, v ) fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno );
+#define WARNING_BITWIDTH( v ) WARNING2("W001 - Implicit casting of result to less bitwidth (precision loss)", v );
 
 #define outline0n(n,s,r)     \
     { \
