@@ -1,0 +1,3 @@
+  DEBUG MAX(99,1) : REM Print a 99
+  DEBUG MAX("UGBASIC","AAAA") : REM Print "UGBASIC"
+  HALT
