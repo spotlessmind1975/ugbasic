@@ -115,31 +115,47 @@ typedef struct _Bank {
  */
 typedef enum _VariableType {
 
-    // TODO: support for signed data type
-    /** Single byte (8 bit) */
+    /** Single unsigned byte (8 bit) */
     VT_BYTE = 1,
-    /** Single word (16 bit) */
-    VT_WORD = 2,
-    /** Single double word (32 bit) */
+    /** Single signed byte (7 bit w / 2 complement) */
+    VT_SBYTE = 2,
+
+    /** Single unsigned word (16 bit) */
+    VT_WORD = 3,
+    /** Single signed word (15 bit w / 2 complement) */
+    VT_SWORD = 4,
+
+    /** Single unsigned double word (32 bit) */
     VT_DWORD = 5,
+    /** Single signed double word (31 bit w / 2 complement) */
+    VT_SDWORD = 6,
 
-    /** Memory address */
-    VT_ADDRESS = 0,
+    /** Memory address (16 bit) */
+    VT_ADDRESS = 7,
 
-    /** Ordinate or abscissa */
-    VT_POSITION = 3,
+    /** Ordinate or abscissa (8 bit or 16 bit) */
+    VT_POSITION = 8,
 
-    /** Color index */
-    VT_COLOR = 4,
+    /** Color index (8 bit) */
+    VT_COLOR = 9,
 
     /** Strings (static or dynamic) */
-    VT_STRING = 6,
+    VT_STRING = 10,
 
     /** Static buffer of a specific size */
-    VT_BUFFER = 7
+    VT_BUFFER = 11
 
     // TODO: support for arrays.
 } VariableType;
+
+#define VT_BW_8BIT( t, v )              ( ( t == v ) ? 8 : 0 )
+#define VT_BW_16BIT( t, v )             ( ( t == v ) ? 16 : 0 )
+#define VT_BW_32BIT( t, v )             ( ( t == v ) ? 32 : 0 )
+
+#define VT_BITWIDTH( t ) \
+        VT_BW_8BIT( t, VT_BYTE ) + VT_BW_8BIT( t, VT_SBYTE ) + VT_BW_8BIT( t, VT_COLOR ) + \
+        VT_BW_16BIT( t, VT_WORD ) + VT_BW_16BIT( t, VT_SWORD ) + VT_BW_16BIT( t, VT_ADDRESS ) + VT_BW_16BIT( t, VT_POSITION ) + \
+        VT_BW_32BIT( t, VT_DWORD ) + VT_BW_32BIT( t, VT_SDWORD )
 
 /**
  * @brief Maximum number of variable types
@@ -399,12 +415,44 @@ typedef struct _Environment {
 #define MAKE_LABEL  char label[12]; sprintf( label, "_label%d", UNIQUE_ID);
 #define CRITICAL( s ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); exit( EXIT_FAILURE );
 #define CRITICAL2( s, v ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); exit( EXIT_FAILURE );
+#define CRITICAL3( s, v1, v2 ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%s, %s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v1, v2, _environment->yylineno ); exit( EXIT_FAILURE );
 #define CRITICAL_UNIMPLEMENTED( v ) CRITICAL2("E000 - Internal method not implemented:", v );
 #define CRITICAL_TEMPORARY2( v ) CRITICAL2("E001 - Unable to create space for temporary variable", v );
 #define CRITICAL_VARIABLE( v ) CRITICAL2("E002 - Using of an undefined variable", v );
+#define CRITICAL_DATATYPE_UNSUPPORTED( k, v ) CRITICAL3("E003 - Datatype not supported for keyword", k, v );
+#define CRITICAL_CANNOT_CAST( t1, t2 ) CRITICAL3("E004 - Cannot cast types", t1, t2 );
+#define CRITICAL_STORE_UNSUPPORTED( t ) CRITICAL2("E005 - Datatype cannot be stored directly", t );
+#define CRITICAL_RESIZE_UNSUPPORTED( t ) CRITICAL2("E006 - Datatype cannot be resized directly", t );
+#define CRITICAL_MOVE_UNSUPPORTED( t ) CRITICAL2("E007 - Datatype cannot be copied directly", t );
+#define CRITICAL_BUFFER_SIZE_MISMATCH( v1, v2 ) CRITICAL3("E008 - Buffer sizes mismatch -- cannot be copied", v1, v2 );
+#define CRITICAL_DATATYPE_MISMATCH( v1, v2 ) CRITICAL3("E009 - Datatype mismatch", v1, v2 );
+#define CRITICAL_ADD_UNSUPPORTED( v, t ) CRITICAL3("E007 - Add unsupported for variable of given datatype", v, t );
+#define CRITICAL_SUB_UNSUPPORTED( v, t ) CRITICAL3("E008 - Sub unsupported for variable of given datatype", v, t );
+#define CRITICAL_COMPLEMENT_UNSUPPORTED( v, t ) CRITICAL3("E009 - Complement unsupported for variable of given datatype", v, t );
+#define CRITICAL_MUL_UNSUPPORTED( v, t ) CRITICAL3("E010 - Multiplication unsupported for variable of given datatype", v, t );
+#define CRITICAL_DIV_UNSUPPORTED( v, t ) CRITICAL3("E011 - Division unsupported for variable of given datatype", v, t );
+#define CRITICAL_CANNOT_COMPARE( t1, t2 ) CRITICAL3("E012 - Cannot compare types", t1, t2 );
+#define CRITICAL_MUL2_UNSUPPORTED( v, t ) CRITICAL3("E013 - Double unsupported for variable of given datatype", v, t );
+#define CRITICAL_DIV2_UNSUPPORTED( v, t ) CRITICAL3("E014 - Division by 2 unsupported for variable of given datatype", v, t );
+#define CRITICAL_AND_UNSUPPORTED( v, t ) CRITICAL3("E015 - Bitwise AND unsupported for variable of given datatype", v, t );
+#define CRITICAL_LEFT_UNSUPPORTED( v, t ) CRITICAL3("E016 - LEFT unsupported for variable of given datatype", v, t );
+#define CRITICAL_RIGHT_UNSUPPORTED( v, t ) CRITICAL3("E017 - RIGHT unsupported for variable of given datatype", v, t );
+#define CRITICAL_MID_UNSUPPORTED( v, t ) CRITICAL3("E018 - MID unsupported for variable of given datatype", v, t );
+#define CRITICAL_INSTR_UNSUPPORTED( v, t ) CRITICAL3("E019 - INSTR unsupported for variable of given datatype", v, t );
+#define CRITICAL_STRING_UNSUPPORTED( v, t ) CRITICAL3("E020 - STRING unsupported for variable of given datatype", v, t );
+#define CRITICAL_UPPER_UNSUPPORTED( v, t ) CRITICAL3("E021 - UPPER unsupported for variable of given datatype", v, t );
+#define CRITICAL_LOWER_UNSUPPORTED( v, t ) CRITICAL3("E022 - LOWER unsupported for variable of given datatype", v, t );
+#define CRITICAL_STR_UNSUPPORTED( v, t ) CRITICAL3("E023 - STR unsupported for variable of given datatype", v, t );
+#define CRITICAL_VAL_UNSUPPORTED( v, t ) CRITICAL3("E024 - VAL unsupported for variable of given datatype", v, t );
+#define CRITICAL_CHR_UNSUPPORTED( v, t ) CRITICAL3("E025 - CHR unsupported for variable of given datatype", v, t );
+#define CRITICAL_ASC_UNSUPPORTED( v, t ) CRITICAL3("E026 - ASC unsupported for variable of given datatype", v, t );
+#define CRITICAL_LEN_UNSUPPORTED( v, t ) CRITICAL3("E027 - LEN unsupported for variable of given datatype", v, t );
+#define CRITICAL_POW_UNSUPPORTED( v, t ) CRITICAL3("E028 - ^ unsupported for variable of given datatype", v, t );
 #define WARNING( s ) fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno );
 #define WARNING2( s, v ) fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno );
-#define WARNING_BITWIDTH( v ) WARNING2("W001 - Implicit casting of result to less bitwidth (precision loss)", v );
+#define WARNING3( s, v1, v2 ) fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s, %s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v1, v2, _environment->yylineno );
+#define WARNING_BITWIDTH( v1, v2 ) WARNING3("W001 - Multiplication could loose precision", v1, v2 );
+#define WARNING_DOWNCAST( v1, v2 ) WARNING3("W002 - Implicit downcasting to less bitwidth (precision loss)", v1, v2 );
 
 #define outline0n(n,s,r)     \
     { \

@@ -74,21 +74,18 @@ void debug_var( Environment * _environment, char * _name ) {
 
     // Safety check
     Variable * var = variable_retrieve( _environment, _name );
-    switch( var->type ) {
-        case VT_BYTE:
-        case VT_COLOR:
+    switch( VT_BITWIDTH( var->type ) ) {
+        case 8:
             outline0( "LDA #$0" );
             outline1( "LDX %s", var->realName );
             outline0( "JSR $BDCD" );
             break;
-        case VT_ADDRESS:
-        case VT_WORD:
-        case VT_POSITION:
+        case 16:
             outline0( "LDA #$0" );
             outline1( "LDX %s", var->realName );
             outline0( "JSR $BDCD" );
             break;
-        case VT_DWORD: {
+        case 32: {
 
             Variable * result = variable_temporary( _environment, VT_BUFFER, "(buffer for DEBUG)");
             variable_resize_buffer( _environment, result->name, 10 );
@@ -136,23 +133,28 @@ void debug_var( Environment * _environment, char * _name ) {
             outhead1("%send:", label);
             break;
         }
-        case VT_STRING: {
+        default:
+            switch( var->type ) {
+                case VT_STRING: {
 
-            MAKE_LABEL
+                    MAKE_LABEL
 
-            outline1( "LDA %s+1", var->realName );
-            outline0( "STA $22" );
-            outline1( "LDA %s+2", var->realName );
-            outline0( "STA $23" );
-            outline0( "LDY #$0" );
-            outhead1( "%s:", label);
-            outline0( "LDA ($22),Y" );
-            outline0( "JSR $FFD2" );
-            outline0( "INY" );
-            outline1( "CPY %s", var->realName );
-            outline1( "BNE %s", label );
-            break;
-        }
+                    outline1( "LDA %s+1", var->realName );
+                    outline0( "STA $22" );
+                    outline1( "LDA %s+2", var->realName );
+                    outline0( "STA $23" );
+                    outline0( "LDY #$0" );
+                    outhead1( "%s:", label);
+                    outline0( "LDA ($22),Y" );
+                    outline0( "JSR $FFD2" );
+                    outline0( "INY" );
+                    outline1( "CPY %s", var->realName );
+                    outline1( "BNE %s", label );
+                    break;
+                }
+                case VT_BUFFER:
+                    CRITICAL_DATATYPE_UNSUPPORTED("DEBUG", var->type);
+            }
     }
     outline0("LDA #32");
     outline0("JSR $FFD2");
