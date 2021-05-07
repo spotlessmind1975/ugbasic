@@ -18,8 +18,8 @@
 "==" { return(EQUAL); }
 "+" { return(PLUS); }
 "-" { return(MINUS); }
-"++" { return(INCREMENT); }
-"--" { return(DECREMENT); }
+"++" { return(INC); }
+"--" { return(DEC); }
 "#" { return(HASH); }
 "<" { return(LT); }
 "<=" { return(LTE); }
@@ -38,6 +38,7 @@
 AS { return (AS); }
 ASC { return (ASC); }
 AT { return (AT); }
+ADD { return (ADD); }
 AND { return (AND); }
 BACKGROUND { return (BACKGROUND); }
 BANK { return (BANK); }
@@ -61,6 +62,7 @@ CYCLES { return (CYCLES); }
 DARK { return(DARK); }
 DATA { return (DATA); }
 DEBUG { return (DEBUG); }
+DEC { return (DEC); }
 DISABLE { return (DISABLE); }
 DONE { return (DONE); }
 DO { return (DO); }
@@ -92,6 +94,7 @@ HEIGHT { return (HEIGHT); }
 HIT { return (HIT); }
 HORIZONTAL { return (HORIZONTAL); }
 IF { return (IF); }
+INC { return (INC); }
 INSTR { return (INSTR); }
 LAVENDER { return(LAVENDER); }
 LEFT { return (LEFT); }

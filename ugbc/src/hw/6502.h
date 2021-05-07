@@ -47,6 +47,7 @@ void cpu6502_ei( Environment * _environment );
 void cpu6502_inc( Environment * _environment, char * _variable );
 void cpu6502_inc_16bit( Environment * _environment, char * _variable );
 void cpu6502_dec( Environment * _environment, char * _variable );
+void cpu6502_dec_16bit( Environment * _environment, char * _variable );
 void cpu6502_less_than_16bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _equal );
 void cpu6502_less_than_32bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _equal );
 void cpu6502_less_than_8bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _equal );

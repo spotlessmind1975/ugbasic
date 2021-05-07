@@ -1110,6 +1110,68 @@ Variable * variable_div( Environment * _environment, char * _source, char * _des
     return result;
 }
 
+Variable * variable_increment( Environment * _environment, char * _source ) {
+    Variable * source = variable_find( _environment->tempVariables, _source );
+    if ( ! source ) {
+        source = variable_find( _environment->variables, _source );
+        if ( ! source ) {
+            CRITICAL("Source variable does not exist");
+        }
+    }
+    switch( source->type ) {
+        case VT_DWORD:
+            CRITICAL("Cannot increment DWORD variables");
+            break;
+        case VT_STRING:
+            CRITICAL("Cannot increment STRING variables");
+            break;
+        case VT_ADDRESS:
+        case VT_POSITION:
+        case VT_WORD:
+            cpu_inc_16bit( _environment, source->realName );
+            break;
+        case VT_BYTE:
+        case VT_COLOR:
+            cpu_inc( _environment, source->realName );
+            break;
+        case VT_BUFFER: {
+            CRITICAL("Cannot increment BUFFER variables");
+        }
+    }
+    return source;
+}
+
+Variable * variable_decrement( Environment * _environment, char * _source ) {
+    Variable * source = variable_find( _environment->tempVariables, _source );
+    if ( ! source ) {
+        source = variable_find( _environment->variables, _source );
+        if ( ! source ) {
+            CRITICAL("Source variable does not exist");
+        }
+    }
+    switch( source->type ) {
+        case VT_DWORD:
+            CRITICAL("Cannot decrement DWORD variables");
+            break;
+        case VT_STRING:
+            CRITICAL("Cannot decrement STRING variables");
+            break;
+        case VT_ADDRESS:
+        case VT_POSITION:
+        case VT_WORD:
+            cpu_dec_16bit( _environment, source->realName );
+            break;
+        case VT_BYTE:
+        case VT_COLOR:
+            cpu_dec( _environment, source->realName );
+            break;
+        case VT_BUFFER: {
+            CRITICAL("Cannot decrement BUFFER variables");
+        }
+    }
+    return source;
+}
+
 /**
  * @brief Compare two variable and return the result of comparation
  * 

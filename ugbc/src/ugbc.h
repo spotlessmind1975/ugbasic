@@ -565,6 +565,7 @@ typedef struct _Environment {
 #define cfg5(s,a,b,c,d,e)       cfgline5n(0, s, a, b, c, d, e, 0)
 
 
+void add_complex( Environment * _environment, char * _variable, char * _expression, char * _limit_lower, char * _limit_upper );
 Bank * bank_define( Environment * _environment, char * _name, BankType _type, int _address, char * _filename );
 void   bank_cleanup( Environment * _environment );
 void begin_loop( Environment * _environment );
@@ -694,6 +695,8 @@ Variable * variable_compare( Environment * _environment, char * _source, char * 
 Variable * variable_compare_not( Environment * _environment, char * _source, char * _dest );
 Variable * variable_less_than( Environment * _environment, char * _source, char * _dest, int _equal );
 Variable * variable_greater_than( Environment * _environment, char * _source, char * _dest, int _equal );
+Variable * variable_increment( Environment * _environment, char * _source );
+Variable * variable_decrement( Environment * _environment, char * _source );
 Variable * variable_add( Environment * _environment, char * _source, char * _dest );
 Variable * variable_or( Environment * _environment, char * _source, char * _dest );
 Variable * variable_sub( Environment * _environment, char * _source, char * _dest );

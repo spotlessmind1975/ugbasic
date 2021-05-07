@@ -1586,6 +1586,17 @@ void cpu6502_dec( Environment * _environment, char * _variable ) {
 
 }
 
+void cpu6502_dec_16bit( Environment * _environment, char * _variable ) {
+
+    MAKE_LABEL
+
+    outline1("DEC %s", _variable );
+    outline1("BNE %s", label );
+    outline1("DEC %s+1", _variable );
+    outhead1("%s:", label );
+
+}
+
 void cpu6502_mem_move( Environment * _environment, char *_source, char *_destination,  char *_size ) {
 
     MAKE_LABEL

@@ -27,7 +27,7 @@ int yywrap() { return 1; }
 
 %token Remark
 %token NewLine 
-%token SEMICOLON COLON COMMA PLUS MINUS INCREMENT DECREMENT EQUAL ASSIGN LT LTE GT GTE DISEQUAL MULTIPLICATION DOLLAR DIVISION
+%token SEMICOLON COLON COMMA PLUS MINUS INC DEC EQUAL ASSIGN LT LTE GT GTE DISEQUAL MULTIPLICATION DOLLAR DIVISION
 
 %token RASTER DONE AT COLOR BORDER WAIT NEXT WITH BANK SPRITE DATA FROM OP CP 
 %token ENABLE DISABLE HALT ECM BITMAP SCREEN ON OFF ROWS VERTICAL SCROLL VAR AS TEMPORARY 
@@ -36,7 +36,7 @@ int yywrap() { return 1; }
 %token BYTE WORD POSITION CODE VARIABLES MS CYCLES S HASH WIDTH HEIGHT DWORD PEN CLEAR
 %token BEG END GAMELOOP ENDIF UP DOWN LEFT RIGHT DEBUG AND RANDOMIZE GRAPHIC TEXTMAP
 %token POINT GOSUB RETURN POP OR ELSE NOT TRUE FALSE DO EXIT WEND UNTIL FOR STEP EVERY
-%token MID INSTR UPPER LOWER STR VAL STRING SPACE FLIP CHR ASC LEN POW MOD
+%token MID INSTR UPPER LOWER STR VAL STRING SPACE FLIP CHR ASC LEN POW MOD ADD
 
 %token MILLISECOND MILLISECONDS TICKS
 
@@ -105,7 +105,7 @@ expr_math:
     | expr_math MINUS term {
         $$ = variable_sub( _environment, $1, $3 )->name;
         outline3("; %s = %s - %s", $$, $1, $3 );
-    }       
+    }
     ;
 
 term:
@@ -904,6 +904,15 @@ every_definition :
           every_off( _environment );
     };
 
+add_definition :
+    Identifier COMMA expr {
+        variable_move_naked( _environment, variable_add( _environment, $1, $3 )->name, $1 );
+    }
+    | Identifier COMMA expr COMMA expr TO expr {
+        add_complex( _environment, $1, $3, $5, $7 );
+    }
+    ;
+
 statement:
     BANK bank_definition
   | RASTER raster_definition
@@ -919,6 +928,13 @@ statement:
   | SCREEN screen_definition
   | POINT point_definition
   | VAR var_definition
+  | ADD add_definition
+  | INC Identifier {
+      variable_increment( _environment, $2 );
+  }
+  | DEC Identifier {
+      variable_decrement( _environment, $2 );
+  }
   | RANDOMIZE {
       randomize( _environment );
   }
