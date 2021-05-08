@@ -34,6 +34,8 @@
 
 #include "../../ugbc.h"
 
+extern char DATATYPE_AS_STRING[][16];
+
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
@@ -153,7 +155,7 @@ void debug_var( Environment * _environment, char * _name ) {
                     break;
                 }
                 case VT_BUFFER:
-                    CRITICAL_DATATYPE_UNSUPPORTED("DEBUG", var->type);
+                    CRITICAL_DATATYPE_UNSUPPORTED("DEBUG", DATATYPE_AS_STRING[var->type]);
             }
     }
     outline0("LDA #32");
