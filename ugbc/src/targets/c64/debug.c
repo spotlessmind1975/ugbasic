@@ -78,14 +78,52 @@ void debug_var( Environment * _environment, char * _name ) {
     Variable * var = variable_retrieve( _environment, _name );
     switch( VT_BITWIDTH( var->type ) ) {
         case 8:
-            outline0( "LDA #$0" );
-            outline1( "LDX %s", var->realName );
-            outline0( "JSR $BDCD" );
+            if ( VT_SIGNED( var->type ) ) {
+                outline0( "LDA #$7" );
+                outline0( "STA $22" );
+                outline1( "LDX %s", var->realName );
+                outline1( "LDA %s", var->realName );
+                outline0( "BIT $22" );
+                outline1( "BEQ %spos", label );
+                outline0( "LDA #45");
+                outline0( "JSR $FFD2");
+                outhead1( "%spos:", label );
+                outline0( "LDA #$0" );
+                outhead1( "%sout:", label );
+                outline0( "JSR $BDCD" );
+            } else {
+                outline0( "LDA #$0" );
+                outline1( "LDX %s", var->realName );
+                outline0( "JSR $BDCD" );
+            }
             break;
         case 16:
-            outline0( "LDA #$0" );
-            outline1( "LDX %s", var->realName );
-            outline0( "JSR $BDCD" );
+            if ( VT_SIGNED( var->type ) ) {
+                outline0( "LDA #$7" );
+                outline0( "STA $22" );
+                outline1( "LDA %s+1", var->realName );
+                outline0( "BIT $22" );
+                outline1( "BEQ %spos", label );
+                outhead1( "%sneg:", label );
+                outline0( "LDA #45");
+                outline0( "JSR $FFD2");
+                outline1( "LDA %s", var->realName );
+                outline0( "EOR #$ff" );
+                outline0( "TAX" );
+                outline1( "LDA %s+1", var->realName );
+                outline0( "EOR #$ff" );
+                outline1( "JMP %sout", label );
+                outhead1( "%spos:", label );
+                outline1( "LDA %s+1", var->realName );
+                outline1( "LDX %s", var->realName );
+                outline1( "JMP %sout", label );
+                outhead1( "%sout:", label );
+                outline0( "JSR $BDCD" );
+            } else {
+                outline1( "LDA %s+1", var->realName );
+                outline1( "LDX %s", var->realName );
+                outline0( "JSR $BDCD" );
+            }
             break;
         case 32: {
 
@@ -116,7 +154,11 @@ void debug_var( Environment * _environment, char * _name ) {
             outline1("BNE %sl3", label );
             outline0("RTS" );
             outhead1("%sdiv10:", label);
-            outline0("LDY #32" );
+            if ( VT_SIGNED( result->type ) ) {
+                outline0("LDY #31" );
+            } else {
+                outline0("LDY #32" );
+            }
             outline0("LDA #0" );
             outline0("CLC" );
             outhead1("%sl4:", label);
