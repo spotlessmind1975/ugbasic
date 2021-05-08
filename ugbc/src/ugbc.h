@@ -148,14 +148,25 @@ typedef enum _VariableType {
     // TODO: support for arrays.
 } VariableType;
 
-#define VT_BW_8BIT( t, v )              ( ( t == v ) ? 8 : 0 )
-#define VT_BW_16BIT( t, v )             ( ( t == v ) ? 16 : 0 )
-#define VT_BW_32BIT( t, v )             ( ( t == v ) ? 32 : 0 )
+#define VT_BW_8BIT( t, v )              ( ( (t) == (v) ) ? 8 : 0 )
+#define VT_BW_16BIT( t, v )             ( ( (t) == (v) ) ? 16 : 0 )
+#define VT_BW_32BIT( t, v )             ( ( (t) == (v) ) ? 32 : 0 )
 
 #define VT_BITWIDTH( t ) \
-        VT_BW_8BIT( t, VT_BYTE ) + VT_BW_8BIT( t, VT_SBYTE ) + VT_BW_8BIT( t, VT_COLOR ) + \
+        ( VT_BW_8BIT( t, VT_BYTE ) + VT_BW_8BIT( t, VT_SBYTE ) + VT_BW_8BIT( t, VT_COLOR ) + \
         VT_BW_16BIT( t, VT_WORD ) + VT_BW_16BIT( t, VT_SWORD ) + VT_BW_16BIT( t, VT_ADDRESS ) + VT_BW_16BIT( t, VT_POSITION ) + \
-        VT_BW_32BIT( t, VT_DWORD ) + VT_BW_32BIT( t, VT_SDWORD )
+        VT_BW_32BIT( t, VT_DWORD ) + VT_BW_32BIT( t, VT_SDWORD ) )
+
+#define VT_SIGNED( t ) \
+        ( ( (t) == VT_SBYTE ) || ( (t) == VT_SWORD ) || ( (t) == VT_SDWORD ) )
+
+#define VT_SIGN_8BIT( t, v ) ( v < 0 ? ( ((~(unsigned char)v) ) + 1 ) : v )
+#define VT_SIGN_16BIT( t, v ) ( v < 0 ? ( ((~(unsigned short)v) ) + 1 ) : v )
+#define VT_SIGN_32BIT( t, v ) ( v < 0 ? ( (~((unsigned int)v) ) + 1 ) : v )
+
+#define VT_ESIGN_8BIT( t, v ) ( VT_SIGNED(t) ? VT_SIGN_8BIT(t, v) : (v) )
+#define VT_ESIGN_16BIT( t, v ) ( VT_SIGNED(t) ? VT_SIGN_16BIT(t, v) : (v) ) 
+#define VT_ESIGN_32BIT( t, v ) ( VT_SIGNED(t) ? VT_SIGN_32BIT(t, v) : (v) ) 
 
 /**
  * @brief Maximum number of variable types
@@ -334,7 +345,7 @@ typedef struct _Environment {
      */
 
     int warningsEnabled;
-    
+
     /* --------------------------------------------------------------------- */
     /* INTERNAL STRUCTURES                                                   */
     /* --------------------------------------------------------------------- */

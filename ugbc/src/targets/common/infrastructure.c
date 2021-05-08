@@ -531,13 +531,13 @@ Variable * variable_store( Environment * _environment, char * _destination, int 
     }
     switch( VT_BITWIDTH( destination->type ) ) {
         case 32:
-            cpu_store_32bit( _environment, destination->realName, _value );
+            cpu_store_32bit( _environment, destination->realName, VT_ESIGN_32BIT( destination->type, _value ) );
             break;
         case 16:
-            cpu_store_16bit( _environment, destination->realName, _value );
+            cpu_store_16bit( _environment, destination->realName, VT_ESIGN_32BIT( destination->type, _value ) );
             break;
         case 8:
-            cpu_store_8bit( _environment, destination->realName, _value );
+            cpu_store_8bit( _environment, destination->realName, VT_ESIGN_32BIT( destination->type, _value ) );
             break;
         case 0:
             CRITICAL_STORE_UNSUPPORTED(DATATYPE_AS_STRING[destination->type]);
