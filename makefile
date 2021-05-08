@@ -37,31 +37,31 @@ EXECUTABLES := $(subst /asm/,/exe/,$(COMPILED:.asm=.$(output)))
 all: paths compiler $(COMPILED) $(EXECUTABLES)
 
 generated/c64/asm/%.asm:
-	ugbc/exe/ugbc.c64 -c $(subst /asm/,/cfg/,$(@:.asm=.cfg)) $(subst generated/c64/asm/,examples/,$(@:.asm=.bas)) $@
+	@ugbc/exe/ugbc.c64 -c $(subst /asm/,/cfg/,$(@:.asm=.cfg)) $(subst generated/c64/asm/,examples/,$(@:.asm=.bas)) $@
 
 generated/c64/exe/%.prg: $(subst /exe/,/asm/,$(@:.prg=.asm))
-	cl65 -Ln $(@:.prg=.lbl) -o $@ --mapfile $(@:.prg=.map) -u __EXEHDR__ -t c64 -C $(subst /exe/,/cfg/,$(@:.prg=.cfg)) $(subst /exe/,/asm/,$(@:.prg=.asm))
-	rm -f $(@:.prg=.o)
+	@cl65 -Ln $(@:.prg=.lbl) -o $@ --mapfile $(@:.prg=.map) -u __EXEHDR__ -t c64 -C $(subst /exe/,/cfg/,$(@:.prg=.cfg)) $(subst /exe/,/asm/,$(@:.prg=.asm))
+	@rm -f $(@:.prg=.o)
 
 generated/zx/asm/%.asm:
-	ugbc/exe/ugbc.zx $(subst generated/zx/asm/,examples/,$(@:.asm=.bas)) $@ 
+	@ugbc/exe/ugbc.zx $(subst generated/zx/asm/,examples/,$(@:.asm=.bas)) $@ 
 
 generated/zx/exe/%.tap:
-	z88dk-z80asm -b $(subst /exe/,/asm/,$(@:.tap=.asm))
-	rm -f $(subst /exe/,/asm/,$(@:.tap=.o))
-	mv $(subst /exe/,/asm/,$(@:.tap=.bin)) $(@:.tap=.bin)
-	z88dk-appmake +zx --org 32768 -b $(@:.tap=.bin)
-	rm -f $(@:.tap=.bin) $(@:.tap=_*.bin)
+	@z88dk-z80asm -b $(subst /exe/,/asm/,$(@:.tap=.asm))
+	@rm -f $(subst /exe/,/asm/,$(@:.tap=.o))
+	@mv $(subst /exe/,/asm/,$(@:.tap=.bin)) $(@:.tap=.bin)
+	@z88dk-appmake +zx --org 32768 -b $(@:.tap=.bin)
+	@rm -f $(@:.tap=.bin) $(@:.tap=_*.bin)
 
 paths:
-	mkdir -p generated
-	mkdir -p generated/$(target)/asm
-	mkdir -p generated/$(target)/cfg
-	mkdir -p generated/$(target)/exe
+	@mkdir -p generated
+	@mkdir -p generated/$(target)/asm
+	@mkdir -p generated/$(target)/cfg
+	@mkdir -p generated/$(target)/exe
 
 compiler:
-	cd ugbc; make target=$(target) all
+	@cd ugbc; make target=$(target) all
 
 clean:
-	cd ugbc; make clean
-	rm -f -r generated
+	@cd ugbc; make clean
+	@rm -f -r generated

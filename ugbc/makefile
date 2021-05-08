@@ -36,10 +36,10 @@ BISON_OPTIONS=--locations -d -Wcounterexamples
 all: paths compiler
 
 src-generated/ugbc.yy.c: src/ugbc.lex src/ugbc.y
-	flex ${FLEX_OPTIONS} --outfile=src-generated/ugbc.yy.c src/ugbc.lex
+	@flex ${FLEX_OPTIONS} --outfile=src-generated/ugbc.yy.c src/ugbc.lex
 
 src-generated/ugbc.tab.c: src/ugbc.lex src/ugbc.y
-	bison ${BISON_OPTIONS} --file-prefix=src-generated/ugbc src/ugbc.y
+	@bison ${BISON_OPTIONS} --file-prefix=src-generated/ugbc src/ugbc.y
 
 SOURCES := $(wildcard src/*.c)
 SOURCES += $(wildcard src/targets/*.c)
@@ -49,14 +49,14 @@ SOURCES += $(wildcard src/targets/$(target)/*.c)
 SOURCES += src-generated/ugbc.yy.c src-generated/ugbc.tab.c
 
 paths:
-	mkdir -p src-generated
-	mkdir -p exe
+	@mkdir -p src-generated
+	@mkdir -p exe
 
 compiler: $(SOURCES)
-	cc -D__$(target)__ -g $(SOURCES) -o exe/ugbc.$(target) -lm
+	@cc -D__$(target)__ -g $(SOURCES) -o exe/ugbc.$(target) -lm
 
 clean:
-	rm -f exe/ugbc.*
-	rm -f src-generated/ugbc.yy.c
-	rm -f src-generated/ugbc.tab.c
+	@rm -f exe/ugbc.*
+	@rm -f src-generated/ugbc.yy.c
+	@rm -f src-generated/ugbc.tab.c
 
