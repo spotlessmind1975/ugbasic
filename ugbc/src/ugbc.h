@@ -329,6 +329,12 @@ typedef struct _Environment {
      */
     char * configurationFileName;
 
+    /**
+     * Enable the visualization of warnings during compilation.
+     */
+
+    int warningsEnabled;
+    
     /* --------------------------------------------------------------------- */
     /* INTERNAL STRUCTURES                                                   */
     /* --------------------------------------------------------------------- */
@@ -448,9 +454,9 @@ typedef struct _Environment {
 #define CRITICAL_ASC_UNSUPPORTED( v, t ) CRITICAL3("E026 - ASC unsupported for variable of given datatype", v, t );
 #define CRITICAL_LEN_UNSUPPORTED( v, t ) CRITICAL3("E027 - LEN unsupported for variable of given datatype", v, t );
 #define CRITICAL_POW_UNSUPPORTED( v, t ) CRITICAL3("E028 - ^ unsupported for variable of given datatype", v, t );
-#define WARNING( s ) fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno );
-#define WARNING2( s, v ) fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno );
-#define WARNING3( s, v1, v2 ) fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s, %s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v1, v2, _environment->yylineno );
+#define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
+#define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
+#define WARNING3( s, v1, v2 ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s, %s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v1, v2, _environment->yylineno ); }
 #define WARNING_BITWIDTH( v1, v2 ) WARNING3("W001 - Multiplication could loose precision", v1, v2 );
 #define WARNING_DOWNCAST( v1, v2 ) WARNING3("W002 - Implicit downcasting to less bitwidth (precision loss)", v1, v2 );
 

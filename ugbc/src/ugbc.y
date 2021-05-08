@@ -1106,6 +1106,7 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     printf("\t<source>     Input filename with ugBASIC source code" );
     printf("\t<asm>        Output filename with ASM source code" );
     printf("\t-c <file>    Output filename with linker configuration" );
+    printf("\t-W           Enable warnings during compilation" );
     exit(EXIT_FAILURE);
 }
 
@@ -1115,10 +1116,15 @@ int main( int _argc, char *_argv[] ) {
     int nsecs, tfnd;
     Environment * _environment = malloc(sizeof(Environment));
 
-    while ((opt = getopt(_argc, _argv, "e:c:")) != -1) {
+    _environment->warningsEnabled = 0;
+    
+    while ((opt = getopt(_argc, _argv, "e:c:W")) != -1) {
         switch (opt) {
                 case 'c':
                     _environment->configurationFileName = strdup(optarg);
+                    break;
+                case 'W':
+                    _environment->warningsEnabled = 1;
                     break;
                 default: /* '?' */
                     show_usage_and_exit( _argc, _argv );
