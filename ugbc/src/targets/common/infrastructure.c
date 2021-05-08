@@ -534,10 +534,10 @@ Variable * variable_store( Environment * _environment, char * _destination, int 
             cpu_store_32bit( _environment, destination->realName, VT_ESIGN_32BIT( destination->type, _value ) );
             break;
         case 16:
-            cpu_store_16bit( _environment, destination->realName, VT_ESIGN_32BIT( destination->type, _value ) );
+            cpu_store_16bit( _environment, destination->realName, VT_ESIGN_16BIT( destination->type, _value ) );
             break;
         case 8:
-            cpu_store_8bit( _environment, destination->realName, VT_ESIGN_32BIT( destination->type, _value ) );
+            cpu_store_8bit( _environment, destination->realName, VT_ESIGN_8BIT( destination->type, _value ) );
             break;
         case 0:
             CRITICAL_STORE_UNSUPPORTED(DATATYPE_AS_STRING[destination->type]);
@@ -2763,6 +2763,50 @@ Variable * variable_max( Environment * _environment, char * _source, char * _des
 
     variable_move_naked( _environment, target->name, result->name );
     
+    cpu_label( _environment, endLabel );
+
+    return result;
+}
+
+Variable * variable_sgn( Environment * _environment, char * _value ) {
+    Variable * value = variable_find( _environment->tempVariables, _value );
+    if ( ! value ) {
+        value = variable_find( _environment->variables, _value );
+        if ( ! value ) {
+            CRITICAL_VARIABLE( _value );
+        }
+    }
+    Variable * result = variable_temporary( _environment, VT_SBYTE, "(result of SGN)");
+
+    MAKE_LABEL
+
+    char positiveLabel[32]; sprintf(positiveLabel, "%spos", label );
+    char negativeLabel[32]; sprintf(negativeLabel, "%snev", label );
+    char endLabel[32]; sprintf(endLabel, "%send", label );
+
+    switch( VT_BITWIDTH( value->type ) ) {
+        case 32:
+        case 16:
+        case 8:
+            if ( VT_SIGNED( value->type ) ) {
+                cpu_bit_check( _environment, value->realName, VT_BITWIDTH( value->type ) - 1, result->realName );
+            } else {
+                variable_store( _environment, result->name, 0 );
+            }
+            break;
+        case 0:
+            CRITICAL_SGN_UNSUPPORTED( _value, DATATYPE_AS_STRING[value->type] );
+            break;
+    }
+
+    cpu_label( _environment, positiveLabel );
+    variable_store( _environment, result->name, 1 );   
+    cpu_jump( _environment, endLabel );
+    
+    cpu_label( _environment, negativeLabel );
+    variable_store( _environment, result->name, VT_SIGN_8BIT(-1) );
+    cpu_jump( _environment, endLabel );
+
     cpu_label( _environment, endLabel );
 
     return result;

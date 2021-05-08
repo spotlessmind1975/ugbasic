@@ -2220,4 +2220,35 @@ void cpu6502_flip( Environment * _environment, char * _source, char * _size, cha
 
 }
 
+void cpu6502_bit_check( Environment * _environment, char * _value, int _position, char *_result ) {
+
+    MAKE_LABEL
+
+    outline1("LDA %2.2x", ( _position ) & 0x07 );
+    outline0("STA $22" );
+    switch( _position ) {
+        case 31: case 30: case 29: case 28: case 27: case 26: case 25: case 24: 
+            outline1("LDA %s+3", _value);
+            break;
+        case 23: case 22: case 21: case 20: case 19: case 18: case 17: case 16:
+            outline1("LDA %s+2", _value);
+            break;
+        case 15: case 14: case 13: case 12: case 11: case 10: case 9: case 8:
+            outline1("LDA %s+1", _value);
+            break;
+        case 7:  case 6:  case 5:  case 4:  case 3:  case 2:  case 1: case 0:
+            outline1("LDA %s", _value);
+            break;
+    }
+    outline0("BIT $22" );
+    outline1("BEQ %szero", label);
+    outhead1("%sone:", label)
+    outline0("LDA #$1");
+    outline1("JMP %send", label );
+    outhead1("%szero:", label)
+    outline0("LDA #$0");
+    outhead1("%send:", label)
+
+}
+
 #endif

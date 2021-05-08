@@ -36,7 +36,8 @@ int yywrap() { return 1; }
 %token BYTE WORD POSITION CODE VARIABLES MS CYCLES S HASH WIDTH HEIGHT DWORD PEN CLEAR
 %token BEG END GAMELOOP ENDIF UP DOWN LEFT RIGHT DEBUG AND RANDOMIZE GRAPHIC TEXTMAP
 %token POINT GOSUB RETURN POP OR ELSE NOT TRUE FALSE DO EXIT WEND UNTIL FOR STEP EVERY
-%token MID INSTR UPPER LOWER STR VAL STRING SPACE FLIP CHR ASC LEN POW MOD ADD MIN MAX
+%token MID INSTR UPPER LOWER STR VAL STRING SPACE FLIP CHR ASC LEN POW MOD ADD MIN MAX SGN
+%token SIGNED
 
 %token MILLISECOND MILLISECONDS TICKS
 
@@ -284,8 +285,17 @@ exponential:
         $$ = $1;
       }
     | Integer { 
-        $$ = variable_temporary( _environment, VT_WORD, "(integer value)" )->name;
-        variable_store( _environment, $$, $1 );
+        if ( $1 < 0 ) {
+            $$ = variable_temporary( _environment, VT_SWORD, "(signed integer value)" )->name;
+            variable_store( _environment, $$, $1 );
+        } else {
+            $$ = variable_temporary( _environment, VT_WORD, "(integer value)" )->name;
+            variable_store( _environment, $$, $1 );
+        }
+      }
+    | MINUS Integer { 
+        $$ = variable_temporary( _environment, VT_SWORD, "(negative integer value)" )->name;
+        variable_store( _environment, $$, -$2 );
       }
     | String { 
         outline1("; (expr string: \"%s\")", $1 );
@@ -298,13 +308,25 @@ exponential:
         $$ = variable_temporary( _environment, VT_BYTE, "(BYTE value)" )->name;
         variable_store( _environment, $$, $4 );
       }
+    | OP SIGNED BYTE CP Integer { 
+        $$ = variable_temporary( _environment, VT_SBYTE, "(signed BYTE value)" )->name;
+        variable_store( _environment, $$, $5 );
+      }
     | OP WORD CP Integer { 
         $$ = variable_temporary( _environment, VT_WORD, "(WORD value)" )->name;
         variable_store( _environment, $$, $4 );
       }
+    | OP SIGNED WORD CP Integer { 
+        $$ = variable_temporary( _environment, VT_WORD, "(signed WORD value)" )->name;
+        variable_store( _environment, $$, $5 );
+      }
     | OP DWORD CP Integer { 
         $$ = variable_temporary( _environment, VT_DWORD, "(DWORD value)" )->name;
         variable_store( _environment, $$, $4 );
+      }
+    | OP SIGNED DWORD CP Integer { 
+        $$ = variable_temporary( _environment, VT_DWORD, "(DWORD value)" )->name;
+        variable_store( _environment, $$, $5 );
       }
     | OP POSITION CP Integer { 
         $$ = variable_temporary( _environment, VT_POSITION, "(POSITION value)" )->name;
@@ -400,6 +422,9 @@ exponential:
     }
     | MIN OP expr COMMA expr CP {
         $$ = variable_min( _environment, $3, $5 )->name;
+    }
+    | SGN OP expr CP {
+        $$ = variable_sgn( _environment, $3 )->name;
     }
     | TRUE {
         $$ = variable_temporary( _environment, VT_BYTE, "(true)" )->name;
@@ -1117,7 +1142,7 @@ int main( int _argc, char *_argv[] ) {
     Environment * _environment = malloc(sizeof(Environment));
 
     _environment->warningsEnabled = 0;
-    
+
     while ((opt = getopt(_argc, _argv, "e:c:W")) != -1) {
         switch (opt) {
                 case 'c':
