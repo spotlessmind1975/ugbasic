@@ -466,6 +466,7 @@ typedef struct _Environment {
 #define CRITICAL_LEN_UNSUPPORTED( v, t ) CRITICAL3("E027 - LEN unsupported for variable of given datatype", v, t );
 #define CRITICAL_POW_UNSUPPORTED( v, t ) CRITICAL3("E028 - ^ unsupported for variable of given datatype", v, t );
 #define CRITICAL_SGN_UNSUPPORTED( v, t ) CRITICAL3("E029 - SGN unsupported for variable of given datatype", v, t );
+#define CRITICAL_ABS_UNSUPPORTED( v, t ) CRITICAL3("E030 - ABS unsupported for variable of given datatype", v, t );
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
 #define WARNING3( s, v1, v2 ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s, %s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v1, v2, _environment->yylineno ); }
@@ -775,6 +776,7 @@ Variable * variable_and( Environment * _environment, char * _left, char * _right
 Variable * variable_or( Environment * _environment, char * _left, char * _right );
 Variable * variable_not( Environment * _environment, char * _value );
 Variable * variable_sgn( Environment * _environment, char * _value );
+Variable * variable_abs( Environment * _environment, char * _value );
 Variable * variable_div2_const( Environment * _environment, char * _source, int _bits );
 Variable * variable_mul2_const( Environment * _environment, char * _source, int _bits );
 Variable * variable_and_const( Environment * _environment, char * _source, int _mask );

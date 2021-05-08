@@ -37,7 +37,7 @@ int yywrap() { return 1; }
 %token BEG END GAMELOOP ENDIF UP DOWN LEFT RIGHT DEBUG AND RANDOMIZE GRAPHIC TEXTMAP
 %token POINT GOSUB RETURN POP OR ELSE NOT TRUE FALSE DO EXIT WEND UNTIL FOR STEP EVERY
 %token MID INSTR UPPER LOWER STR VAL STRING SPACE FLIP CHR ASC LEN POW MOD ADD MIN MAX SGN
-%token SIGNED
+%token SIGNED ABS
 
 %token MILLISECOND MILLISECONDS TICKS
 
@@ -425,6 +425,9 @@ exponential:
     }
     | SGN OP expr CP {
         $$ = variable_sgn( _environment, $3 )->name;
+    }
+    | ABS OP expr CP {
+        $$ = variable_abs( _environment, $3 )->name;
     }
     | TRUE {
         $$ = variable_temporary( _environment, VT_BYTE, "(true)" )->name;

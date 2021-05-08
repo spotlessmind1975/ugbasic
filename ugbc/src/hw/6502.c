@@ -1546,7 +1546,7 @@ void cpu6502_logical_not_8bit( Environment * _environment, char * _value, char *
     MAKE_LABEL
 
     outline1("LDA %s", _value );
-    outline0("EOR $FF" );
+    outline0("EOR #$FF" );
     outline1("STA %s", _result );
 
 }
@@ -2224,7 +2224,7 @@ void cpu6502_bit_check( Environment * _environment, char * _value, int _position
 
     MAKE_LABEL
 
-    outline1("LDA %2.2x", ( _position ) & 0x07 );
+    outline1("LDA #$%2.2x", ( _position ) & 0x07 );
     outline0("STA $22" );
     switch( _position ) {
         case 31: case 30: case 29: case 28: case 27: case 26: case 25: case 24: 
@@ -2248,6 +2248,7 @@ void cpu6502_bit_check( Environment * _environment, char * _value, int _position
     outhead1("%szero:", label)
     outline0("LDA #$0");
     outhead1("%send:", label)
+    outline1("STA %s", _result);
 
 }
 

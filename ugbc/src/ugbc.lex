@@ -35,6 +35,7 @@
 16BIT { return (WORD); }
 32BIT { return (DWORD); }
 
+ABS { return (ABS); }
 AS { return (AS); }
 ASC { return (ASC); }
 AT { return (AT); }
