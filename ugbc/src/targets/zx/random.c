@@ -50,9 +50,14 @@
 
 @target zx
 </usermanual> */
-void randomize( Environment * _environment ) {
+void randomize( Environment * _environment, char * _other_seed ) {
 
     Variable * seed = variable_define( _environment, "seed", VT_DWORD, 0Xffffffff );
+
+    if ( _other_seed ) {
+        Variable * other_seed = variable_retrieve( _environment, _other_seed );
+        variable_move( _environment, other_seed->name, seed->name );
+    }
 
 }
 

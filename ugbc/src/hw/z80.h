@@ -84,6 +84,9 @@ void z80_math_mul_8bit_to_16bit( Environment * _environment, char *_source, char
 void z80_math_mul2_const_16bit( Environment * _environment, char *_source, int _value );
 void z80_math_mul2_const_32bit( Environment * _environment, char *_source, int _value );
 void z80_math_mul2_const_8bit( Environment * _environment, char *_source, int _value );
+void z80_math_div_32bit_to_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, char * _other_remainder );
+void z80_math_div_16bit_to_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, char * _other_remainder );
+void z80_math_div_8bit_to_8bit( Environment * _environment, char *_source, char *_destination,  char *_other, char * _other_remainder );
 void z80_math_sub_16bit( Environment * _environment, char *_source, char *_destination,  char *_name );
 void z80_math_sub_32bit( Environment * _environment, char *_source, char *_destination,  char *_name );
 void z80_math_sub_8bit( Environment * _environment, char *_source, char *_destination,  char *_name );
@@ -109,6 +112,7 @@ void z80_greater_than_memory( Environment * _environment, char *_source, char *_
 void z80_greater_than_memory_size( Environment * _environment, char *_source, char *_destination, int _size, char * _result, int _equal );
 void z80_store_8bit_indirect( Environment * _environment, char *_source, int _value );
 void z80_inc_16bit( Environment * _environment, char * _variable );
+void z80_dec_16bit( Environment * _environment, char * _variable );
 void z80_mem_move( Environment * _environment, char *_source, char *_destination,  char *_size );
 void z80_mem_move_size( Environment * _environment, char *_source, char *_destination, int _size );
 void z80_math_add_16bit_with_8bit( Environment * _environment, char *_source, char *_destination,  char *_other );
@@ -122,6 +126,7 @@ void z80_fill_indirect( Environment * _environment, char * _address, char * _siz
 void z80_flip( Environment * _environment, char * _source, char * _size, char * _destination );
 void z80_move_8bit_indirect( Environment * _environment, char *_source, char * _value );
 void z80_move_8bit_indirect2( Environment * _environment, char *_source, char * _value );
+void z80_bit_check( Environment * _environment, char *_value, int _position, char * _result );
 
 #define cpu_beq( _environment,  _label  ) z80_beq( _environment,  _label  )
 #define cpu_bneq( _environment,  _label  ) z80_beq( _environment,  _label  )
@@ -198,6 +203,7 @@ void z80_move_8bit_indirect2( Environment * _environment, char *_source, char * 
 #define cpu_greater_than_memory_size( _environment, _source, _destination, _size, _result, _equal ) z80_greater_than_memory_size( _environment, _source, _destination, _size, _result, _equal )
 #define cpu_store_8bit_indirect( _environment, _source, _value ) z80_store_8bit_indirect( _environment, _source, _value )
 #define cpu_inc_16bit( _environment, _variable ) z80_inc_16bit( _environment, _variable )
+#define cpu_dec_16bit( _environment, _variable ) z80_dec_16bit( _environment, _variable )
 #define cpu_mem_move( _environment, _source, _destination,  _size ) z80_mem_move( _environment, _source, _destination, _size )
 #define cpu_mem_move_size( _environment, _source, _destination,  _size ) z80_mem_move_size( _environment, _source, _destination, _size )
 #define cpu_math_add_16bit_with_8bit( _environment, _source, _destination, _other ) z80_math_add_16bit_with_8bit( _environment, _source, _destination, _other )
@@ -211,5 +217,9 @@ void z80_move_8bit_indirect2( Environment * _environment, char *_source, char * 
 #define cpu_flip( _environment, _source, _size, _destination ) z80_flip( _environment, _source, _size, _destination )
 #define cpu_move_8bit_indirect( _environment, _source, _value ) z80_move_8bit_indirect( _environment, _source, _value )
 #define cpu_move_8bit_indirect2( _environment, _source, _value ) z80_move_8bit_indirect2( _environment, _source, _value )
+#define cpu_math_div_32bit_to_16bit( _environment, _source, _destination,  _other, _other_remainder  ) z80_math_div_32bit_to_16bit( _environment, _source, _destination, _other, _other_remainder )
+#define cpu_math_div_16bit_to_16bit( _environment, _source, _destination,  _other, _other_remainder  ) z80_math_div_16bit_to_16bit( _environment, _source, _destination, _other, _other_remainder )
+#define cpu_math_div_8bit_to_8bit( _environment, _source, _destination,   _other, _other_remainder  ) z80_math_div_8bit_to_8bit( _environment, _source, _destination,  _other, _other_remainder )
+#define cpu_bit_check( _environment, _value, _position, _result ) z80_bit_check( _environment, _value, _position, _result )
 
 #endif

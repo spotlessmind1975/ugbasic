@@ -63,15 +63,18 @@ void variable_cleanup( Environment * _environment ) {
                 while( variable ) {
                     switch( variable->type ) {
                         case VT_BYTE:
+                        case VT_SBYTE:
                         case VT_COLOR:
                             outline1("%s: defs 1", variable->realName);
                             break;
                         case VT_WORD:
+                        case VT_SWORD:
                         case VT_POSITION:
                         case VT_ADDRESS:
                             outline1("%s: defs 2", variable->realName);
                             break;
                         case VT_DWORD:
+                        case VT_SDWORD:
                             outline1("%s: defs 4", variable->realName);
                             break;
                         case VT_STRING:
@@ -95,15 +98,18 @@ void variable_cleanup( Environment * _environment ) {
                 while( variable ) {
                     switch( variable->type ) {
                         case VT_BYTE:
+                        case VT_SBYTE:
                         case VT_COLOR:
                             outline1("%s: defs 1", variable->realName);
                             break;
                         case VT_WORD:
+                        case VT_SWORD:
                         case VT_POSITION:
                         case VT_ADDRESS:
                             outline1("%s: defs 2", variable->realName);
                             break;
                         case VT_DWORD:
+                        case VT_SDWORD:
                             outline1("%s: defs 4", variable->realName);
                             break;
                         case VT_STRING:

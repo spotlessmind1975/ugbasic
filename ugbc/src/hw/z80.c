@@ -1381,6 +1381,14 @@ void z80_inc_16bit( Environment * _environment, char * _variable ) {
 
 }
 
+void z80_dec_16bit( Environment * _environment, char * _variable ) {
+
+    outline1("LD HL, (%s)", _variable  );
+    outline0("DEC HL" );
+    outline1("LD (%s), HL", _variable  );
+
+}
+
 void z80_mem_move( Environment * _environment, char *_source, char *_destination,  char *_size ) {
 
     outline1("LD HL,(%s)", _source);
@@ -1396,7 +1404,7 @@ void z80_mem_move_size( Environment * _environment, char *_source, char *_destin
 
     outline1("LD HL,(%s)", _source);
     outline1("LD DE,(%s)", _destination);
-    outline1("LD A, $2.2x", _size);
+    outline1("LD A, $%2.2x", _size);
     outline0("LD C, A");
     outline0("LD B, 0");
     outline0("LDIR");
@@ -1536,7 +1544,9 @@ void z80_greater_than_memory( Environment * _environment, char *_source, char *_
     outline0("LD C, A");
     outhead1("%s:", label );
     outline0("LD A, (HL)");
-    outline0("CP (DE)");
+    outline0("LD B, A");
+    outline0("LD A, (DE)");
+    outline0("CP B");
     outline1("JR C, %sdiff", label);
     if ( ! _equal ) {
         outline1("JR Z, %sdiff", label);
@@ -1967,6 +1977,135 @@ void z80_move_8bit_indirect2( Environment * _environment, char * _value, char *_
     outline1("LD DE, (%s)", _value);
     outline0("LD A, (DE)");
     outline1("LD (%s), A", _source);
+
+}
+
+void z80_math_div_32bit_to_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, char * _other_remainder ) {
+
+    MAKE_LABEL
+
+    outline1("LD HL, %s", _source);
+    outline0("LD IX, (HL)");
+    outline0("INC HL");
+    outline0("INC HL");
+    outline0("LD A, (HL)");
+    outline0("LD C, A");
+    outline0("INC HL");
+    outline0("LD A, (HL)");
+    outline1("LD DE, (%s)", _destination);
+
+    outline0("LD HL, 0");
+    outline0("LD B, 32");
+    outhead1("%sloop:", label);
+    outline0("ADD IX, IX");
+    outline0("RL C");
+    outline0("RLA");
+    outline0("ADC HL, HL");
+    outline1("JR C, %soverflow", label);
+    outline0("SBC HL, DE");
+    outline1("JR NC, %ssetbit", label);
+    outline0("ADD HL, DE");
+    outline1("DJNZ %sloop", label);
+    outline1("JMP %send", label);
+    outhead1("%soverflow:", label);
+    outline0("OR A");
+    outline0("SBC HL, DE");
+    outhead1("%ssetbit:", label);
+    outline0("INC IXL");
+    outline1("DJNZ %sloop", label);
+    outhead1("%send:", label);
+    outline1("LD (%s), HL", _other_remainder);
+    outline1("LD HL, %s", _other);
+    outline0("LD (HL), IX");
+    outline0("INC HL");
+    outline0("INC HL");
+    outline0("INC HL");
+    outline0("LD (HL), A");
+    outline0("DEC HL");
+    outline0("LD C, (HL)");
+ 
+}
+
+void z80_math_div_16bit_to_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, char * _other_remainder ) {
+
+    MAKE_LABEL
+
+    outline1("LD HL, %s", _source);
+    outline0("LD A, (HL)");
+    outline0("LD C, A");
+    outline0("INC HL");
+    outline0("LD A, (HL)");
+    outline1("LD DE, (%s)", _destination);
+
+    outline0("LD HL, 0");
+    outline0("LD B, 16");
+    outhead1("%sloop:", label );
+    outline0("SLL C");
+    outline0("RLA");
+    outline0("ADC HL, HL");
+    outline0("SBC HL, DE");
+    outline0("JR NC, $+4");
+    outline0("ADD HL, DE");
+    outline0("DEC C");
+    outline1("DJNZ %sloop", label);
+    outline1("LD (%s), HL", _other_remainder);
+    outline1("LD DE, %s", _other);
+    outline0("LD A, L");
+    outline0("LD (DE), A");
+    outline0("INC DE");
+    outline0("LD A, H");
+    outline0("LD (DE), A");
+    
+}
+
+void z80_math_div_8bit_to_8bit( Environment * _environment, char *_source, char *_destination,  char *_other, char * _other_remainder ) {
+
+    MAKE_LABEL
+
+    outline1("LD D, (%s)", _source);
+    outline1("LD E, (%s)", _destination);
+
+    outline0("XOR A");
+    outline0("LD B, 8");
+    outhead1("%sloop:", label);
+
+    outline0("SLA D");
+    outline0("RLA");
+    outline0("CP E");
+    outline0("JR C, $+4");
+    outline0("SUB E");
+    outline0("INC D");
+    outline1("DJNZ %sloop", label );
+
+    outline1("LD (%s), D", _other);
+    outline1("LD (%s), A", _other_remainder);
+}
+
+void z80_bit_check( Environment * _environment, char *_value, int _position, char * _result ) {
+
+    MAKE_LABEL
+
+    outline1("LD HL, %s", _value);
+    switch( _position ) {
+        case 31: case 30: case 29: case 28: case 27: case 26: case 25: case 24: 
+            outline0("INC HL");
+        case 23: case 22: case 21: case 20: case 19: case 18: case 17: case 16:
+            outline0("INC HL");
+        case 15: case 14: case 13: case 12: case 11: case 10: case 9: case 8:
+            outline0("INC HL");
+        case 7:  case 6:  case 5:  case 4:  case 3:  case 2:  case 1: case 0:
+            outline0("LD A, (HL)");
+            break;
+    }
+    outline1("BIT $%1.1x, A", ( _position & 0x07 ) );
+    outline1("JR Z, %szero", label);
+    outline0("LD A, 1");
+    outline1("LD (%s), A", _result);
+    outline1("JMP %sdone", label);
+    outhead1("%szero:", label);
+    outline0("LD A, 0");
+    outline1("LD (%s), A", _result);
+    outhead1("%sdone:", label);
 
 }
 

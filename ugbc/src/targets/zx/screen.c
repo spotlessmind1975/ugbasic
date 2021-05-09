@@ -170,3 +170,22 @@ void screen_horizontal_scroll_var( Environment * _environment, char * _displacem
    
 }
 
+Variable * screen_get_width( Environment * _environment ) {
+
+    Variable * width = variable_temporary( _environment, VT_POSITION, "(result of get width)");
+
+    variable_store( _environment, width->name, 256 );
+
+    return width;
+
+}
+
+Variable * screen_get_height( Environment * _environment ) {
+
+    Variable * height = variable_temporary( _environment, VT_POSITION, "(result of get height)");
+
+    variable_store( _environment, height->name, 192 );
+   
+    return height;
+
+}
