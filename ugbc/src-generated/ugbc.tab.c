@@ -249,110 +249,111 @@ enum yysymbol_kind_t
   YYSYMBOL_RND = 137,                      /* RND  */
   YYSYMBOL_COLORS = 138,                   /* COLORS  */
   YYSYMBOL_INK = 139,                      /* INK  */
-  YYSYMBOL_MILLISECOND = 140,              /* MILLISECOND  */
-  YYSYMBOL_MILLISECONDS = 141,             /* MILLISECONDS  */
-  YYSYMBOL_TICKS = 142,                    /* TICKS  */
-  YYSYMBOL_BLACK = 143,                    /* BLACK  */
-  YYSYMBOL_WHITE = 144,                    /* WHITE  */
-  YYSYMBOL_RED = 145,                      /* RED  */
-  YYSYMBOL_CYAN = 146,                     /* CYAN  */
-  YYSYMBOL_VIOLET = 147,                   /* VIOLET  */
-  YYSYMBOL_GREEN = 148,                    /* GREEN  */
-  YYSYMBOL_BLUE = 149,                     /* BLUE  */
-  YYSYMBOL_YELLOW = 150,                   /* YELLOW  */
-  YYSYMBOL_ORANGE = 151,                   /* ORANGE  */
-  YYSYMBOL_BROWN = 152,                    /* BROWN  */
-  YYSYMBOL_LIGHT = 153,                    /* LIGHT  */
-  YYSYMBOL_DARK = 154,                     /* DARK  */
-  YYSYMBOL_GREY = 155,                     /* GREY  */
-  YYSYMBOL_GRAY = 156,                     /* GRAY  */
-  YYSYMBOL_MAGENTA = 157,                  /* MAGENTA  */
-  YYSYMBOL_PURPLE = 158,                   /* PURPLE  */
-  YYSYMBOL_LAVENDER = 159,                 /* LAVENDER  */
-  YYSYMBOL_GOLD = 160,                     /* GOLD  */
-  YYSYMBOL_TURQUOISE = 161,                /* TURQUOISE  */
-  YYSYMBOL_TAN = 162,                      /* TAN  */
-  YYSYMBOL_PINK = 163,                     /* PINK  */
-  YYSYMBOL_PEACH = 164,                    /* PEACH  */
-  YYSYMBOL_OLIVE = 165,                    /* OLIVE  */
-  YYSYMBOL_Identifier = 166,               /* Identifier  */
-  YYSYMBOL_String = 167,                   /* String  */
-  YYSYMBOL_Integer = 168,                  /* Integer  */
-  YYSYMBOL_YYACCEPT = 169,                 /* $accept  */
-  YYSYMBOL_expr = 170,                     /* expr  */
-  YYSYMBOL_expr_math = 171,                /* expr_math  */
-  YYSYMBOL_term = 172,                     /* term  */
-  YYSYMBOL_modula = 173,                   /* modula  */
-  YYSYMBOL_factor = 174,                   /* factor  */
-  YYSYMBOL_direct_integer = 175,           /* direct_integer  */
-  YYSYMBOL_random_definition_simple = 176, /* random_definition_simple  */
-  YYSYMBOL_random_definition = 177,        /* random_definition  */
-  YYSYMBOL_color_enumeration = 178,        /* color_enumeration  */
-  YYSYMBOL_exponential = 179,              /* exponential  */
-  YYSYMBOL_position = 180,                 /* position  */
-  YYSYMBOL_bank_definition_simple = 181,   /* bank_definition_simple  */
-  YYSYMBOL_bank_definition_with_payload = 182, /* bank_definition_with_payload  */
-  YYSYMBOL_bank_definition = 183,          /* bank_definition  */
-  YYSYMBOL_raster_definition_simple = 184, /* raster_definition_simple  */
-  YYSYMBOL_raster_definition_expression = 185, /* raster_definition_expression  */
-  YYSYMBOL_raster_definition = 186,        /* raster_definition  */
-  YYSYMBOL_next_raster_definition_simple = 187, /* next_raster_definition_simple  */
-  YYSYMBOL_next_raster_definition_expression = 188, /* next_raster_definition_expression  */
-  YYSYMBOL_next_raster_definition = 189,   /* next_raster_definition  */
-  YYSYMBOL_color_definition_simple = 190,  /* color_definition_simple  */
-  YYSYMBOL_color_definition_expression = 191, /* color_definition_expression  */
-  YYSYMBOL_color_definition = 192,         /* color_definition  */
-  YYSYMBOL_milliseconds = 193,             /* milliseconds  */
-  YYSYMBOL_wait_definition_simple = 194,   /* wait_definition_simple  */
-  YYSYMBOL_wait_definition_expression = 195, /* wait_definition_expression  */
-  YYSYMBOL_wait_definition = 196,          /* wait_definition  */
-  YYSYMBOL_sprite_definition_simple = 197, /* sprite_definition_simple  */
-  YYSYMBOL_sprite_definition_expression = 198, /* sprite_definition_expression  */
-  YYSYMBOL_sprite_definition = 199,        /* sprite_definition  */
-  YYSYMBOL_bitmap_definition_simple = 200, /* bitmap_definition_simple  */
-  YYSYMBOL_bitmap_definition_expression = 201, /* bitmap_definition_expression  */
-  YYSYMBOL_bitmap_definition = 202,        /* bitmap_definition  */
-  YYSYMBOL_textmap_definition_simple = 203, /* textmap_definition_simple  */
-  YYSYMBOL_textmap_definition_expression = 204, /* textmap_definition_expression  */
-  YYSYMBOL_textmap_definition = 205,       /* textmap_definition  */
-  YYSYMBOL_text_definition_simple = 206,   /* text_definition_simple  */
-  YYSYMBOL_text_definition_expression = 207, /* text_definition_expression  */
-  YYSYMBOL_text_definition = 208,          /* text_definition  */
-  YYSYMBOL_tiles_definition_simple = 209,  /* tiles_definition_simple  */
-  YYSYMBOL_tiles_definition_expression = 210, /* tiles_definition_expression  */
-  YYSYMBOL_tiles_definition = 211,         /* tiles_definition  */
-  YYSYMBOL_colormap_definition_simple = 212, /* colormap_definition_simple  */
-  YYSYMBOL_colormap_definition_expression = 213, /* colormap_definition_expression  */
-  YYSYMBOL_colormap_definition = 214,      /* colormap_definition  */
-  YYSYMBOL_screen_definition_simple = 215, /* screen_definition_simple  */
-  YYSYMBOL_screen_definition_expression = 216, /* screen_definition_expression  */
-  YYSYMBOL_screen_definition = 217,        /* screen_definition  */
-  YYSYMBOL_var_definition_simple = 218,    /* var_definition_simple  */
-  YYSYMBOL_goto_definition = 219,          /* goto_definition  */
-  YYSYMBOL_gosub_definition = 220,         /* gosub_definition  */
-  YYSYMBOL_var_definition = 221,           /* var_definition  */
-  YYSYMBOL_point_definition_simple = 222,  /* point_definition_simple  */
-  YYSYMBOL_point_definition_expression = 223, /* point_definition_expression  */
-  YYSYMBOL_point_definition = 224,         /* point_definition  */
-  YYSYMBOL_ink_definition = 225,           /* ink_definition  */
-  YYSYMBOL_on_goto_definition = 226,       /* on_goto_definition  */
-  YYSYMBOL_227_1 = 227,                    /* $@1  */
-  YYSYMBOL_on_gosub_definition = 228,      /* on_gosub_definition  */
-  YYSYMBOL_229_2 = 229,                    /* $@2  */
-  YYSYMBOL_on_definition = 230,            /* on_definition  */
-  YYSYMBOL_231_3 = 231,                    /* $@3  */
-  YYSYMBOL_232_4 = 232,                    /* $@4  */
-  YYSYMBOL_every_definition = 233,         /* every_definition  */
-  YYSYMBOL_add_definition = 234,           /* add_definition  */
-  YYSYMBOL_statement = 235,                /* statement  */
-  YYSYMBOL_236_5 = 236,                    /* $@5  */
-  YYSYMBOL_statements_no_linenumbers = 237, /* statements_no_linenumbers  */
-  YYSYMBOL_238_6 = 238,                    /* $@6  */
-  YYSYMBOL_statements_with_linenumbers = 239, /* statements_with_linenumbers  */
-  YYSYMBOL_240_7 = 240,                    /* $@7  */
-  YYSYMBOL_statements_complex = 241,       /* statements_complex  */
-  YYSYMBOL_program = 242,                  /* program  */
-  YYSYMBOL_243_8 = 243                     /* $@8  */
+  YYSYMBOL_TIMER = 140,                    /* TIMER  */
+  YYSYMBOL_MILLISECOND = 141,              /* MILLISECOND  */
+  YYSYMBOL_MILLISECONDS = 142,             /* MILLISECONDS  */
+  YYSYMBOL_TICKS = 143,                    /* TICKS  */
+  YYSYMBOL_BLACK = 144,                    /* BLACK  */
+  YYSYMBOL_WHITE = 145,                    /* WHITE  */
+  YYSYMBOL_RED = 146,                      /* RED  */
+  YYSYMBOL_CYAN = 147,                     /* CYAN  */
+  YYSYMBOL_VIOLET = 148,                   /* VIOLET  */
+  YYSYMBOL_GREEN = 149,                    /* GREEN  */
+  YYSYMBOL_BLUE = 150,                     /* BLUE  */
+  YYSYMBOL_YELLOW = 151,                   /* YELLOW  */
+  YYSYMBOL_ORANGE = 152,                   /* ORANGE  */
+  YYSYMBOL_BROWN = 153,                    /* BROWN  */
+  YYSYMBOL_LIGHT = 154,                    /* LIGHT  */
+  YYSYMBOL_DARK = 155,                     /* DARK  */
+  YYSYMBOL_GREY = 156,                     /* GREY  */
+  YYSYMBOL_GRAY = 157,                     /* GRAY  */
+  YYSYMBOL_MAGENTA = 158,                  /* MAGENTA  */
+  YYSYMBOL_PURPLE = 159,                   /* PURPLE  */
+  YYSYMBOL_LAVENDER = 160,                 /* LAVENDER  */
+  YYSYMBOL_GOLD = 161,                     /* GOLD  */
+  YYSYMBOL_TURQUOISE = 162,                /* TURQUOISE  */
+  YYSYMBOL_TAN = 163,                      /* TAN  */
+  YYSYMBOL_PINK = 164,                     /* PINK  */
+  YYSYMBOL_PEACH = 165,                    /* PEACH  */
+  YYSYMBOL_OLIVE = 166,                    /* OLIVE  */
+  YYSYMBOL_Identifier = 167,               /* Identifier  */
+  YYSYMBOL_String = 168,                   /* String  */
+  YYSYMBOL_Integer = 169,                  /* Integer  */
+  YYSYMBOL_YYACCEPT = 170,                 /* $accept  */
+  YYSYMBOL_expr = 171,                     /* expr  */
+  YYSYMBOL_expr_math = 172,                /* expr_math  */
+  YYSYMBOL_term = 173,                     /* term  */
+  YYSYMBOL_modula = 174,                   /* modula  */
+  YYSYMBOL_factor = 175,                   /* factor  */
+  YYSYMBOL_direct_integer = 176,           /* direct_integer  */
+  YYSYMBOL_random_definition_simple = 177, /* random_definition_simple  */
+  YYSYMBOL_random_definition = 178,        /* random_definition  */
+  YYSYMBOL_color_enumeration = 179,        /* color_enumeration  */
+  YYSYMBOL_exponential = 180,              /* exponential  */
+  YYSYMBOL_position = 181,                 /* position  */
+  YYSYMBOL_bank_definition_simple = 182,   /* bank_definition_simple  */
+  YYSYMBOL_bank_definition_with_payload = 183, /* bank_definition_with_payload  */
+  YYSYMBOL_bank_definition = 184,          /* bank_definition  */
+  YYSYMBOL_raster_definition_simple = 185, /* raster_definition_simple  */
+  YYSYMBOL_raster_definition_expression = 186, /* raster_definition_expression  */
+  YYSYMBOL_raster_definition = 187,        /* raster_definition  */
+  YYSYMBOL_next_raster_definition_simple = 188, /* next_raster_definition_simple  */
+  YYSYMBOL_next_raster_definition_expression = 189, /* next_raster_definition_expression  */
+  YYSYMBOL_next_raster_definition = 190,   /* next_raster_definition  */
+  YYSYMBOL_color_definition_simple = 191,  /* color_definition_simple  */
+  YYSYMBOL_color_definition_expression = 192, /* color_definition_expression  */
+  YYSYMBOL_color_definition = 193,         /* color_definition  */
+  YYSYMBOL_milliseconds = 194,             /* milliseconds  */
+  YYSYMBOL_wait_definition_simple = 195,   /* wait_definition_simple  */
+  YYSYMBOL_wait_definition_expression = 196, /* wait_definition_expression  */
+  YYSYMBOL_wait_definition = 197,          /* wait_definition  */
+  YYSYMBOL_sprite_definition_simple = 198, /* sprite_definition_simple  */
+  YYSYMBOL_sprite_definition_expression = 199, /* sprite_definition_expression  */
+  YYSYMBOL_sprite_definition = 200,        /* sprite_definition  */
+  YYSYMBOL_bitmap_definition_simple = 201, /* bitmap_definition_simple  */
+  YYSYMBOL_bitmap_definition_expression = 202, /* bitmap_definition_expression  */
+  YYSYMBOL_bitmap_definition = 203,        /* bitmap_definition  */
+  YYSYMBOL_textmap_definition_simple = 204, /* textmap_definition_simple  */
+  YYSYMBOL_textmap_definition_expression = 205, /* textmap_definition_expression  */
+  YYSYMBOL_textmap_definition = 206,       /* textmap_definition  */
+  YYSYMBOL_text_definition_simple = 207,   /* text_definition_simple  */
+  YYSYMBOL_text_definition_expression = 208, /* text_definition_expression  */
+  YYSYMBOL_text_definition = 209,          /* text_definition  */
+  YYSYMBOL_tiles_definition_simple = 210,  /* tiles_definition_simple  */
+  YYSYMBOL_tiles_definition_expression = 211, /* tiles_definition_expression  */
+  YYSYMBOL_tiles_definition = 212,         /* tiles_definition  */
+  YYSYMBOL_colormap_definition_simple = 213, /* colormap_definition_simple  */
+  YYSYMBOL_colormap_definition_expression = 214, /* colormap_definition_expression  */
+  YYSYMBOL_colormap_definition = 215,      /* colormap_definition  */
+  YYSYMBOL_screen_definition_simple = 216, /* screen_definition_simple  */
+  YYSYMBOL_screen_definition_expression = 217, /* screen_definition_expression  */
+  YYSYMBOL_screen_definition = 218,        /* screen_definition  */
+  YYSYMBOL_var_definition_simple = 219,    /* var_definition_simple  */
+  YYSYMBOL_goto_definition = 220,          /* goto_definition  */
+  YYSYMBOL_gosub_definition = 221,         /* gosub_definition  */
+  YYSYMBOL_var_definition = 222,           /* var_definition  */
+  YYSYMBOL_point_definition_simple = 223,  /* point_definition_simple  */
+  YYSYMBOL_point_definition_expression = 224, /* point_definition_expression  */
+  YYSYMBOL_point_definition = 225,         /* point_definition  */
+  YYSYMBOL_ink_definition = 226,           /* ink_definition  */
+  YYSYMBOL_on_goto_definition = 227,       /* on_goto_definition  */
+  YYSYMBOL_228_1 = 228,                    /* $@1  */
+  YYSYMBOL_on_gosub_definition = 229,      /* on_gosub_definition  */
+  YYSYMBOL_230_2 = 230,                    /* $@2  */
+  YYSYMBOL_on_definition = 231,            /* on_definition  */
+  YYSYMBOL_232_3 = 232,                    /* $@3  */
+  YYSYMBOL_233_4 = 233,                    /* $@4  */
+  YYSYMBOL_every_definition = 234,         /* every_definition  */
+  YYSYMBOL_add_definition = 235,           /* add_definition  */
+  YYSYMBOL_statement = 236,                /* statement  */
+  YYSYMBOL_237_5 = 237,                    /* $@5  */
+  YYSYMBOL_statements_no_linenumbers = 238, /* statements_no_linenumbers  */
+  YYSYMBOL_239_6 = 239,                    /* $@6  */
+  YYSYMBOL_statements_with_linenumbers = 240, /* statements_with_linenumbers  */
+  YYSYMBOL_241_7 = 241,                    /* $@7  */
+  YYSYMBOL_statements_complex = 242,       /* statements_complex  */
+  YYSYMBOL_program = 243,                  /* program  */
+  YYSYMBOL_244_8 = 244                     /* $@8  */
 };
 typedef enum yysymbol_kind_t yysymbol_kind_t;
 
@@ -665,19 +666,19 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  3
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   1700
+#define YYLAST   1827
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  169
+#define YYNTOKENS  170
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  75
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  339
+#define YYNRULES  341
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  668
+#define YYNSTATES  670
 
 /* YYMAXUTOK -- Last valid token kind.  */
-#define YYMAXUTOK   423
+#define YYMAXUTOK   424
 
 
 /* YYTRANSLATE(TOKEN-NUM) -- Symbol number corresponding to TOKEN-NUM
@@ -733,7 +734,7 @@ static const yytype_uint8 yytranslate[] =
      135,   136,   137,   138,   139,   140,   141,   142,   143,   144,
      145,   146,   147,   148,   149,   150,   151,   152,   153,   154,
      155,   156,   157,   158,   159,   160,   161,   162,   163,   164,
-     165,   166,   167,   168
+     165,   166,   167,   168,   169
 };
 
 #if YYDEBUG
@@ -750,30 +751,31 @@ static const yytype_int16 yyrline[] =
      335,   339,   342,   345,   348,   351,   354,   357,   360,   363,
      366,   369,   372,   375,   378,   381,   384,   387,   390,   393,
      396,   399,   402,   405,   408,   411,   414,   417,   420,   423,
-     426,   429,   432,   435,   439,   443,   447,   450,   455,   455,
-     458,   461,   464,   467,   470,   473,   477,   480,   483,   486,
-     490,   493,   496,   499,   503,   506,   509,   512,   518,   521,
-     524,   527,   530,   535,   536,   539,   542,   547,   550,   555,
-     556,   559,   562,   567,   570,   575,   576,   579,   582,   585,
-     590,   593,   596,   601,   602,   605,   606,   607,   610,   613,
-     616,   621,   624,   627,   633,   634,   637,   640,   643,   646,
+     426,   429,   432,   435,   439,   443,   447,   450,   453,   458,
+     458,   461,   464,   467,   470,   473,   476,   480,   483,   486,
+     489,   493,   496,   499,   502,   506,   509,   512,   515,   521,
+     524,   527,   530,   533,   538,   539,   542,   545,   550,   553,
+     558,   559,   562,   565,   570,   573,   578,   579,   582,   585,
+     588,   593,   596,   599,   604,   605,   608,   609,   610,   613,
+     616,   619,   624,   627,   630,   636,   637,   640,   643,   646,
      649,   652,   655,   658,   661,   664,   667,   670,   673,   676,
-     679,   684,   687,   690,   693,   696,   699,   702,   705,   708,
-     711,   714,   717,   720,   723,   726,   731,   732,   735,   738,
-     741,   744,   747,   753,   756,   762,   763,   766,   771,   776,
-     777,   780,   783,   788,   791,   796,   797,   800,   805,   810,
-     811,   814,   817,   820,   825,   828,   834,   835,   838,   841,
-     844,   847,   850,   855,   858,   861,   866,   867,   869,   870,
-     873,   876,   879,   884,   891,   894,   900,   903,   909,   912,
-     918,   923,   924,   927,   932,   936,   936,   941,   945,   945,
-     950,   950,   953,   953,   958,   961,   964,   969,   972,   978,
-     979,   980,   981,   982,   983,   984,   985,   986,   987,   988,
-     989,   990,   991,   992,   993,   994,   997,  1000,  1003,  1006,
-    1009,  1012,  1015,  1018,  1021,  1021,  1026,  1029,  1032,  1035,
+     679,   682,   687,   690,   693,   696,   699,   702,   705,   708,
+     711,   714,   717,   720,   723,   726,   729,   734,   735,   738,
+     741,   744,   747,   750,   756,   759,   765,   766,   769,   774,
+     779,   780,   783,   786,   791,   794,   799,   800,   803,   808,
+     813,   814,   817,   820,   823,   828,   831,   837,   838,   841,
+     844,   847,   850,   853,   858,   861,   864,   869,   870,   872,
+     873,   876,   879,   882,   887,   894,   897,   903,   906,   912,
+     915,   921,   926,   927,   930,   935,   939,   939,   944,   948,
+     948,   953,   953,   956,   956,   961,   964,   967,   972,   975,
+     981,   982,   983,   984,   985,   986,   987,   988,   989,   990,
+     991,   992,   993,   994,   995,   996,   997,  1000,  1003,  1006,
+    1009,  1012,  1015,  1018,  1021,  1024,  1027,  1027,  1032,  1035,
     1038,  1041,  1044,  1047,  1050,  1053,  1056,  1059,  1062,  1065,
-    1068,  1071,  1074,  1075,  1076,  1077,  1078,  1081,  1084,  1087,
-    1090,  1093,  1096,  1099,  1102,  1111,  1120,  1123,  1124,  1128,
-    1129,  1129,  1133,  1133,  1140,  1141,  1142,  1143,  1147,  1147
+    1068,  1071,  1074,  1077,  1080,  1081,  1082,  1083,  1084,  1087,
+    1090,  1093,  1096,  1099,  1102,  1105,  1108,  1117,  1126,  1129,
+    1130,  1134,  1135,  1135,  1139,  1139,  1146,  1147,  1148,  1149,
+    1153,  1153
 };
 #endif
 
@@ -807,11 +809,11 @@ static const char *const yytname[] =
   "UNTIL", "FOR", "STEP", "EVERY", "MID", "INSTR", "UPPER", "LOWER", "STR",
   "VAL", "STRING", "SPACE", "FLIP", "CHR", "ASC", "LEN", "POW", "MOD",
   "ADD", "MIN", "MAX", "SGN", "SIGNED", "ABS", "RND", "COLORS", "INK",
-  "MILLISECOND", "MILLISECONDS", "TICKS", "BLACK", "WHITE", "RED", "CYAN",
-  "VIOLET", "GREEN", "BLUE", "YELLOW", "ORANGE", "BROWN", "LIGHT", "DARK",
-  "GREY", "GRAY", "MAGENTA", "PURPLE", "LAVENDER", "GOLD", "TURQUOISE",
-  "TAN", "PINK", "PEACH", "OLIVE", "Identifier", "String", "Integer",
-  "$accept", "expr", "expr_math", "term", "modula", "factor",
+  "TIMER", "MILLISECOND", "MILLISECONDS", "TICKS", "BLACK", "WHITE", "RED",
+  "CYAN", "VIOLET", "GREEN", "BLUE", "YELLOW", "ORANGE", "BROWN", "LIGHT",
+  "DARK", "GREY", "GRAY", "MAGENTA", "PURPLE", "LAVENDER", "GOLD",
+  "TURQUOISE", "TAN", "PINK", "PEACH", "OLIVE", "Identifier", "String",
+  "Integer", "$accept", "expr", "expr_math", "term", "modula", "factor",
   "direct_integer", "random_definition_simple", "random_definition",
   "color_enumeration", "exponential", "position", "bank_definition_simple",
   "bank_definition_with_payload", "bank_definition",
@@ -869,16 +871,16 @@ static const yytype_int16 yytoknum[] =
      385,   386,   387,   388,   389,   390,   391,   392,   393,   394,
      395,   396,   397,   398,   399,   400,   401,   402,   403,   404,
      405,   406,   407,   408,   409,   410,   411,   412,   413,   414,
-     415,   416,   417,   418,   419,   420,   421,   422,   423
+     415,   416,   417,   418,   419,   420,   421,   422,   423,   424
 };
 #endif
 
-#define YYPACT_NINF (-227)
+#define YYPACT_NINF (-231)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
 
-#define YYTABLE_NINF (-259)
+#define YYTABLE_NINF (-260)
 
 #define yytable_value_is_error(Yyn) \
   0
@@ -887,73 +889,73 @@ static const yytype_int16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int16 yypact[] =
 {
-    -227,    40,    57,  -227,  -227,  -110,  -100,   -22,  -227,    15,
-    1288,    49,   -23,  1288,  -227,     6,   136,  1410,   -92,   -57,
-    -227,  -227,  -227,  1019,    54,    -6,  1410,    23,    34,  -227,
-      74,    93,  1410,  -227,  -227,   151,   162,    29,  -227,  -227,
-     121,  -227,   -62,  -227,  1410,    28,  1166,   175,    60,  1410,
-      94,  -227,   218,   225,   226,  -227,  -227,  -227,  1288,   208,
-    -227,  -227,  -227,  1288,  1288,  1288,  -227,  -227,  -227,    63,
-     872,  -227,  -227,   199,   200,   201,   117,    68,  -227,  -227,
-     206,   209,  1410,  -227,  -227,   210,   211,   212,   213,   214,
-     215,   236,   239,   240,   241,   242,   243,   244,   246,   248,
-     251,   252,  -227,  -227,  -227,  -227,  -227,  -227,  -227,  -227,
-     104,  -227,  -227,    58,  -117,  -227,  -227,  -227,  -227,  -227,
-    -227,  -227,  -227,  -227,   133,   221,  -227,  -227,   -65,   114,
-     112,   191,   160,   -51,  -227,  -227,  -227,  -227,  -227,   -19,
-     216,   -17,   -12,     0,    11,   266,  -227,  -227,  -227,   247,
-     263,  -227,  -227,  -227,  1288,  -227,  -227,   262,  -227,  -227,
-    -227,  -227,  -227,  1288,   250,   259,  -227,  -227,  -227,   -37,
-    -227,    17,  -227,  -227,  -227,  -227,  -227,  1410,  1410,  -227,
-    -227,   286,  -227,  -227,  -227,  1288,  -227,  -227,  -227,  1288,
-     265,  -227,  -227,  -227,   228,  -227,  -227,  1410,  1410,  -227,
-    1288,  -227,  -227,  -227,   272,  -227,  -227,  -227,  -227,  -227,
-    -227,  1410,  1410,  -227,  -227,  -227,   294,  -227,  -227,   167,
-    -227,  1410,   303,  -227,  -227,  -227,  -227,  1410,   298,   772,
-    -227,    57,    57,   285,   287,  1288,  -227,  -227,   249,   253,
-     254,   255,  -227,   280,   289,   295,   296,   297,   -27,   299,
-    1288,  1288,  1288,  -227,  -227,  -227,  -227,  -227,  -227,  -227,
-    -227,  -227,  -227,  1410,  1410,  -227,  1410,  1410,  1410,  1410,
-    1410,  1410,  1410,  1410,  1410,  1410,  1410,  1410,  1410,  1410,
-    1410,  1410,  1410,  -227,  -227,  -227,  -227,  -227,  -227,  -227,
-    -227,  -227,  -227,  -227,  -227,  -227,  -227,  -227,  1532,  1532,
-    1532,  1532,  1532,  1532,  1532,  1532,  1532,  1532,  1532,  1532,
-    1532,  1532,  -227,  -227,  -227,  1288,   309,  -227,  -227,  -227,
-     274,   216,   311,   216,   312,   216,   313,   216,   314,   216,
-    -227,  1410,   307,  -227,  -227,   -34,    46,    16,    47,  -227,
-    -227,  -227,   308,   216,   316,  -227,  -227,   126,   148,    51,
-      67,  -227,  -227,   310,  -227,  -227,  1288,  -227,  -227,  1288,
-    1288,  -227,  -227,   315,   179,  -227,   334,  1410,  -227,  -227,
-    -227,  -227,  1288,  -227,   343,   344,  -227,  -227,  1288,   283,
-     346,  1410,   256,   348,  1410,  -227,  1410,  -227,   772,  -227,
-    -227,   190,   194,  -227,  -227,  1410,   216,  1410,   216,   193,
-     195,   196,   198,   202,   327,   332,   337,  -227,   339,   340,
-     341,   345,   350,   351,   362,   371,   372,   374,   352,   353,
-     354,   355,   376,   356,   357,   359,   360,   361,   390,   394,
-     367,   368,   369,   112,   112,   207,   207,   207,   207,   207,
-     207,   207,   207,   191,   160,   160,  -227,   377,   378,  1288,
-     -15,  -227,   216,  -227,   216,  -227,   216,  -227,   216,    35,
-    -227,  1410,  -227,  -227,  -227,  -227,  -227,  -227,  -227,  -227,
-    1410,  -227,   216,  -227,  -227,  -227,  -227,  -227,  -227,  -227,
-    -227,   216,  -227,  -227,  -227,  -227,  -227,  -227,   245,   257,
-     258,   392,  1410,   401,   370,   373,  1410,  1410,   402,   403,
-    -227,   -74,   342,   260,  1410,   406,  -227,  -227,  -227,  -227,
-    -227,  -227,  -227,  -227,  -227,  -227,  -227,  -227,  -227,   261,
-     264,   267,  -227,  -227,  -227,  -227,  -227,  -227,  1410,  1410,
-    1410,  1410,  -227,  -227,  -227,  -227,  1410,  -227,  -227,  -227,
-    -227,  -227,  1410,  1410,  -227,  -227,  -227,   268,   271,  -227,
-    -227,  -227,  -227,  -227,  -227,   387,  -227,   388,  -227,   273,
-      -5,  -227,   411,  -227,   412,   413,  -227,   414,  -227,   409,
-    1288,   418,  1410,  1410,   216,   393,   395,  1410,   216,  -227,
-    -227,  1410,  -227,     4,  1410,  -227,  -227,  -227,   396,   398,
-      14,    18,   404,   407,   408,  -227,  -227,   277,   278,  -227,
-     417,  -227,   420,  -227,  1410,   216,   431,   434,  1410,  -227,
-    -227,  1410,  -227,  -227,  -227,   437,   438,   419,   421,   338,
-    1410,   439,   375,  -227,  -227,  1410,  -227,  1410,  -227,  -227,
-    -227,  -227,  -227,  -227,   288,   291,   424,   425,   245,   257,
-    -227,  -227,  1410,  1410,  -227,  -227,  1410,   426,  1410,  1410,
-     427,   428,  -227,  -227,  -227,  -227,  -227,  -227,  -227,  -227,
-    -227,   451,  -227,  -227,  -227,  -227,  1410,  -227
+    -231,    56,   698,  -231,  -231,  -108,   -97,   -22,  -231,    15,
+    1362,   101,   -17,  1362,  -231,     6,    68,  1510,   -70,   -88,
+    -231,  -231,  -231,  1066,   102,   -10,  1510,    43,    45,  -231,
+     119,   122,  1510,  1510,  -231,   137,   145,   -48,  -231,  -231,
+      91,  -231,   -60,  -231,  1510,    13,  1214,   142,    14,  1510,
+      74,  -231,   176,   180,   183,  -231,  -231,  -231,  1362,   164,
+    -231,  -231,  -231,  1362,  1362,  1362,  -231,  -231,  -231,    21,
+     918,  -231,  -231,   157,   159,   162,    -9,    30,  -231,  -231,
+     163,   168,  1510,  -231,  -231,   171,   172,   173,   174,   175,
+     177,   178,   179,   181,   184,   185,   186,   187,   188,   189,
+     199,   200,  -231,  -231,  -231,  -231,  -231,  -231,  -231,  -231,
+    -231,    49,  -231,  -231,     8,   -72,  -231,  -231,  -231,  -231,
+    -231,  -231,  -231,  -231,  -231,    86,   197,  -231,  -231,   -51,
+       9,   106,   113,   108,   -42,  -231,  -231,  -231,  -231,  -231,
+     -21,   156,   -19,   -18,   -15,   -12,   218,  -231,  -231,  -231,
+      71,   138,  -231,  -231,  -231,  1362,  -231,  -231,   214,  -231,
+    -231,  -231,  -231,  -231,  1362,   198,   201,  -231,  -231,  -231,
+     -14,  -231,    29,  -231,  -231,  -231,  -231,  -231,  1510,  1510,
+    -231,  -231,   238,  -231,  -231,  -231,  1362,  -231,  -231,  -231,
+    1362,   217,  -231,  -231,  -231,   182,  -231,  -231,  1510,  1510,
+    -231,  -231,  1362,  -231,  -231,  -231,   215,  -231,  -231,  -231,
+    -231,  -231,  -231,  1510,  1510,  -231,  -231,  -231,   235,  -231,
+    -231,   107,  -231,  1510,   247,  -231,  -231,  -231,  -231,  1510,
+     260,   822,  -231,   698,   698,   245,   246,  1362,  -231,  -231,
+     204,   205,   206,   207,  -231,   248,   249,   250,   251,   252,
+     -27,   253,  1362,  1362,  1362,  -231,  -231,  -231,  -231,  -231,
+    -231,  -231,  -231,  -231,  -231,  1510,  1510,  -231,  1510,  1510,
+    1510,  1510,  1510,  1510,  1510,  1510,  1510,  1510,  1510,  1510,
+    1510,  1510,  1510,  1510,  1510,  -231,  -231,  -231,  -231,  -231,
+    -231,  -231,  -231,  -231,  -231,  -231,  -231,  -231,  -231,  -231,
+    1658,  1658,  1658,  1658,  1658,  1658,  1658,  1658,  1658,  1658,
+    1658,  1658,  1658,  1658,  -231,  -231,  -231,  1362,   256,  -231,
+    -231,  -231,   233,   156,   258,   156,   265,   156,   266,   156,
+     267,   156,  -231,  1510,   261,  -231,  -231,    26,    48,    -1,
+      10,  -231,  -231,  -231,   262,   156,   264,  -231,  -231,    82,
+      84,    70,    75,  -231,  -231,   268,  -231,  -231,  1362,  -231,
+    -231,  1362,  1362,  -231,  -231,   257,   125,  -231,   286,  1510,
+    -231,  -231,  -231,  -231,  1362,  -231,   288,   291,  -231,  -231,
+    1362,   231,   296,  1510,   203,   299,  1510,  -231,  1510,  -231,
+     822,  -231,  -231,   140,   141,  -231,  -231,  1510,   156,  1510,
+     156,   143,   144,   146,   147,   149,   274,   275,   276,  -231,
+     279,   284,   290,   292,   293,   294,   314,   319,   323,   324,
+     297,   298,   300,   301,   327,   302,   303,   304,   305,   306,
+     335,   336,   309,   311,   312,   106,   106,   135,   135,   135,
+     135,   135,   135,   135,   135,   113,   108,   108,  -231,   321,
+     322,  1362,    40,  -231,   156,  -231,   156,  -231,   156,  -231,
+     156,    25,  -231,  1510,  -231,  -231,  -231,  -231,  -231,  -231,
+    -231,  -231,  1510,  -231,   156,  -231,  -231,  -231,  -231,  -231,
+    -231,  -231,  -231,   156,  -231,  -231,  -231,  -231,  -231,  -231,
+     190,   191,   192,   339,  1510,   346,   313,   318,  1510,  1510,
+     347,   355,  -231,   -71,   307,   196,  1510,   357,  -231,  -231,
+    -231,  -231,  -231,  -231,  -231,  -231,  -231,  -231,  -231,  -231,
+    -231,   202,   208,   209,  -231,  -231,  -231,  -231,  -231,  -231,
+    1510,  1510,  1510,  1510,  -231,  -231,  -231,  -231,  1510,  -231,
+    -231,  -231,  -231,  -231,  1510,  1510,  -231,  -231,  -231,   213,
+     216,  -231,  -231,  -231,  -231,  -231,  -231,   337,  -231,   340,
+    -231,   219,    53,  -231,   358,  -231,   361,   365,  -231,   367,
+    -231,   363,  1362,   374,  1510,  1510,   156,   350,   353,  1510,
+     156,  -231,  -231,  1510,  -231,    27,  1510,  -231,  -231,  -231,
+     354,   356,    28,    33,   359,   360,   362,  -231,  -231,   222,
+     224,  -231,   364,  -231,   369,  -231,  1510,   156,   375,   389,
+    1510,  -231,  -231,  1510,  -231,  -231,  -231,   386,   388,   368,
+     370,   287,  1510,   391,   334,  -231,  -231,  1510,  -231,  1510,
+    -231,  -231,  -231,  -231,  -231,  -231,   239,   240,   376,   377,
+     190,   191,  -231,  -231,  1510,  1510,  -231,  -231,  1510,   378,
+    1510,  1510,   380,   381,  -231,  -231,  -231,  -231,  -231,  -231,
+    -231,  -231,  -231,   396,  -231,  -231,  -231,  -231,  1510,  -231
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -961,99 +963,99 @@ static const yytype_int16 yypact[] =
      means the default is an error.  */
 static const yytype_int16 yydefact[] =
 {
-     338,     0,   328,     1,   327,     0,     0,     0,   318,     0,
-       0,   306,     0,     0,   311,     0,     0,     0,   238,     0,
-     293,   297,   294,     0,     0,     0,     0,     0,     0,   291,
-       0,     0,     0,   287,   310,     0,     0,     0,   316,   317,
-     289,   292,   299,   296,     0,     0,     0,     0,     0,     0,
-       0,   332,   329,   334,   336,   339,   285,   286,     0,     0,
-     139,   140,   270,     0,     0,     0,   153,   154,   272,     0,
+     340,     0,   330,     1,   329,     0,     0,     0,   320,     0,
+       0,   308,     0,     0,   313,     0,     0,     0,   239,     0,
+     295,   299,   296,     0,     0,     0,     0,     0,     0,   293,
+       0,     0,     0,   288,   312,     0,     0,     0,   318,   319,
+     291,   294,   301,   298,     0,     0,     0,     0,     0,     0,
+       0,   334,   331,   336,   338,   341,   286,   287,     0,     0,
+     140,   141,   271,     0,     0,     0,   154,   155,   273,     0,
        0,    74,    75,     0,     0,     0,     0,     0,   106,   107,
        0,     0,     0,   103,   104,     0,     0,     0,     0,     0,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,   105,    31,    32,    33,    34,    35,    36,    37,
-      38,    39,    40,     0,     0,    43,    48,    49,    50,    51,
-      52,    53,    56,    57,     0,    58,    62,    60,     0,     2,
-      12,    15,    17,     0,    71,    20,   164,   165,   273,     0,
-       0,     0,     0,     0,     0,     0,   133,   134,   269,     0,
-       0,   196,   197,   274,     0,   199,   200,   201,   205,   206,
-     275,   228,   229,     0,     0,     0,   236,   237,   280,     0,
-     312,     0,   248,   283,   244,   245,   313,     0,     0,   211,
-     212,     0,   215,   216,   277,     0,   219,   220,   278,     0,
-     222,   226,   227,   279,     0,   308,   309,     0,     0,   326,
-       0,   209,   210,   276,     0,   251,   252,   281,   246,   247,
-     314,     0,     0,   301,   302,   298,     0,   265,   266,     0,
-     315,     0,     0,   284,   253,   282,   323,     0,     0,   328,
-     330,   328,   328,     0,     0,     0,   150,   147,     0,     0,
-       0,     0,    61,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,    27,    23,    24,    26,    28,    29,    25,
-      30,    96,    22,     0,     0,    11,     0,     0,     0,     0,
+       0,     0,   105,   108,    31,    32,    33,    34,    35,    36,
+      37,    38,    39,    40,     0,     0,    43,    48,    49,    50,
+      51,    52,    53,    56,    57,     0,    58,    62,    60,     0,
+       2,    12,    15,    17,     0,    71,    20,   165,   166,   274,
+       0,     0,     0,     0,     0,     0,     0,   134,   135,   270,
+       0,     0,   197,   198,   275,     0,   200,   201,   202,   206,
+     207,   276,   229,   230,     0,     0,     0,   237,   238,   281,
+       0,   314,     0,   249,   284,   245,   246,   315,     0,     0,
+     212,   213,     0,   216,   217,   278,     0,   220,   221,   279,
+       0,   223,   227,   228,   280,     0,   310,   311,     0,     0,
+     328,   289,     0,   210,   211,   277,     0,   252,   253,   282,
+     247,   248,   316,     0,     0,   303,   304,   300,     0,   266,
+     267,     0,   317,     0,     0,   285,   254,   283,   325,     0,
+       0,   330,   332,   330,   330,     0,     0,     0,   151,   148,
+       0,     0,     0,     0,    61,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,    27,    23,    24,    26,    28,
+      29,    25,    30,    96,    22,     0,     0,    11,     0,     0,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,    54,    41,    44,    45,    46,    47,    42,
-      55,    59,   155,   161,   156,   157,   162,   163,     0,     0,
+       0,     0,     0,     0,     0,    54,    41,    44,    45,    46,
+      47,    42,    55,    59,   156,   162,   157,   158,   163,   164,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,   158,   159,   160,     0,     0,   145,   146,   271,
-     110,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-     109,     0,     0,   186,   187,     0,     0,     0,     0,   183,
-     182,   108,     0,     0,     0,   171,   172,     0,     0,     0,
-       0,   168,   167,     0,   203,   198,     0,   233,   230,     0,
-       0,   260,   262,     0,     0,   295,     0,     0,   218,   217,
-     224,   221,     0,   288,     0,     0,   208,   207,     0,     0,
-     300,     0,     0,     0,     0,   324,     0,   333,   328,   335,
-     337,     0,     0,   137,   135,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,    98,     0,     0,
+       0,     0,     0,     0,   159,   160,   161,     0,     0,   146,
+     147,   272,   111,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,   110,     0,     0,   187,   188,     0,     0,     0,
+       0,   184,   183,   109,     0,     0,     0,   172,   173,     0,
+       0,     0,     0,   169,   168,     0,   204,   199,     0,   234,
+     231,     0,     0,   261,   263,     0,     0,   297,     0,     0,
+     219,   218,   225,   222,     0,   290,     0,     0,   209,   208,
+       0,     0,   302,     0,     0,     0,     0,   326,     0,   335,
+     330,   337,   339,     0,     0,   138,   136,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,    98,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,    13,    14,     5,     7,     8,     9,    10,
-       6,     3,     4,    16,    18,    19,    21,     0,     0,     0,
-       0,   115,     0,   127,     0,   119,     0,   123,     0,   111,
-     184,     0,   191,   190,   195,   194,   189,   193,   188,   192,
-       0,   169,     0,   176,   175,   180,   179,   174,   178,   173,
-     177,     0,   204,   202,   234,   231,   235,   232,     0,     0,
-       0,   239,     0,     0,     0,     0,     0,     0,     0,     0,
-     290,     0,     0,     0,     0,   267,   325,   331,   138,   136,
-     152,   149,   151,   148,    70,    63,    65,    69,    67,     0,
-       0,     0,    73,    72,    77,    76,    79,    78,     0,     0,
-       0,     0,    86,    87,    88,    95,     0,    89,    90,    91,
-      92,    93,     0,     0,   101,   102,    97,     0,     0,   143,
-     141,   112,   125,   117,   120,   114,   126,   118,   122,     0,
-       0,   181,     0,   166,     0,   254,   261,   257,   263,   240,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,   303,
-     304,     0,   264,     0,     0,    64,    66,    68,     0,     0,
-       0,     0,     0,     0,     0,   144,   142,     0,     0,   128,
-     113,   124,   116,   121,     0,     0,     0,     0,     0,   242,
-     241,     0,   214,   225,   223,     0,     0,     0,     0,   305,
-       0,     0,     0,    80,    81,     0,    82,     0,    84,    94,
-     100,    99,   130,   132,     0,     0,     0,     0,     0,     0,
-     243,   213,     0,     0,   250,   249,     0,     0,     0,     0,
-       0,     0,   129,   131,   185,   170,   256,   259,   319,   320,
-     307,     0,   321,   268,    83,    85,     0,   322
+       0,     0,     0,     0,     0,    13,    14,     5,     7,     8,
+       9,    10,     6,     3,     4,    16,    18,    19,    21,     0,
+       0,     0,     0,   116,     0,   128,     0,   120,     0,   124,
+       0,   112,   185,     0,   192,   191,   196,   195,   190,   194,
+     189,   193,     0,   170,     0,   177,   176,   181,   180,   175,
+     179,   174,   178,     0,   205,   203,   235,   232,   236,   233,
+       0,     0,     0,   240,     0,     0,     0,     0,     0,     0,
+       0,     0,   292,     0,     0,     0,     0,   268,   327,   333,
+     139,   137,   153,   150,   152,   149,    70,    63,    65,    69,
+      67,     0,     0,     0,    73,    72,    77,    76,    79,    78,
+       0,     0,     0,     0,    86,    87,    88,    95,     0,    89,
+      90,    91,    92,    93,     0,     0,   101,   102,    97,     0,
+       0,   144,   142,   113,   126,   118,   121,   115,   127,   119,
+     123,     0,     0,   182,     0,   167,     0,   255,   262,   258,
+     264,   241,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,   305,   306,     0,   265,     0,     0,    64,    66,    68,
+       0,     0,     0,     0,     0,     0,     0,   145,   143,     0,
+       0,   129,   114,   125,   117,   122,     0,     0,     0,     0,
+       0,   243,   242,     0,   215,   226,   224,     0,     0,     0,
+       0,   307,     0,     0,     0,    80,    81,     0,    82,     0,
+      84,    94,   100,    99,   131,   133,     0,     0,     0,     0,
+       0,     0,   244,   214,     0,     0,   251,   250,     0,     0,
+       0,     0,     0,     0,   130,   132,   186,   171,   257,   260,
+     321,   322,   309,     0,   323,   269,    83,    85,     0,   324
 };
 
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int16 yypgoto[] =
 {
-    -227,   -13,  -167,   -81,   119,   -89,   335,  -227,  -227,  -227,
-     154,   317,  -227,  -227,  -227,  -227,  -227,  -227,  -227,  -227,
-    -227,  -227,  -227,  -227,   333,  -227,  -227,  -227,  -227,  -227,
-    -227,  -227,  -227,  -227,  -227,  -227,  -227,  -227,  -227,  -227,
-    -227,  -227,  -227,  -227,  -227,  -227,  -227,  -227,  -227,  -227,
-    -227,  -227,  -227,  -227,  -227,  -227,  -227,  -170,  -227,  -169,
-    -227,  -227,  -227,  -227,  -227,  -227,  -227,  -227,  -226,  -227,
-    -227,  -227,    -4,  -227,  -227
+    -231,   -13,   -77,  -133,   100,  -140,   259,  -231,  -231,  -231,
+     104,   269,  -231,  -231,  -231,  -231,  -231,  -231,  -231,  -231,
+    -231,  -231,  -231,  -231,   285,  -231,  -231,  -231,  -231,  -231,
+    -231,  -231,  -231,  -231,  -231,  -231,  -231,  -231,  -231,  -231,
+    -231,  -231,  -231,  -231,  -231,  -231,  -231,  -231,  -231,  -231,
+    -231,  -231,  -231,  -231,  -231,  -231,  -231,  -222,  -231,  -220,
+    -231,  -231,  -231,  -231,  -231,  -231,  -231,  -231,  -230,  -231,
+    -231,  -231,   -55,  -231,  -231
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int16 yydefgoto[] =
 {
-      -1,   128,   129,   130,   131,   132,   133,   260,   261,   134,
-     135,   342,   146,   147,   148,    60,    61,    62,   317,   318,
-     319,    66,    67,    68,   297,   136,   137,   138,   151,   152,
-     153,   158,   159,   160,   201,   202,   203,   182,   183,   184,
-     186,   187,   188,   191,   192,   193,   166,   167,   168,   172,
-     176,   210,   173,   205,   206,   207,   225,   566,   606,   568,
-     607,   170,   488,   489,   220,   223,    52,   177,    53,   388,
-      54,   229,    55,     1,     2
+      -1,   129,   130,   131,   132,   133,   134,   262,   263,   135,
+     136,   344,   147,   148,   149,    60,    61,    62,   319,   320,
+     321,    66,    67,    68,   299,   137,   138,   139,   152,   153,
+     154,   159,   160,   161,   203,   204,   205,   183,   184,   185,
+     187,   188,   189,   192,   193,   194,   167,   168,   169,   173,
+     177,   212,   174,   207,   208,   209,   227,   568,   608,   570,
+     609,   171,   490,   491,   222,   225,    52,   178,    53,   390,
+      54,   231,    55,     1,     2
 };
 
   /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -1061,127 +1063,117 @@ static const yytype_int16 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int16 yytable[] =
 {
-     149,   140,    58,   387,   169,   315,   212,   321,    77,   141,
-     181,   620,   323,   194,   292,   293,   361,   551,   189,   199,
-      77,   625,   462,   463,   325,   627,   142,   600,   292,   312,
-     154,   215,   288,   219,   552,   327,   224,   363,   289,   621,
-       3,    63,   155,   156,   601,   233,    64,   404,   405,   626,
-     236,   238,   240,   628,   143,   144,    56,   249,   406,   364,
-       4,   466,   553,   554,   559,   362,    57,     5,     6,   265,
-     467,   139,   602,   603,   171,   294,   295,   296,   185,     7,
-       8,   190,     9,   560,    10,    11,    65,    12,    13,   294,
-     295,   313,   468,   157,   579,    14,   477,    15,    16,    17,
-     226,   469,   464,   465,    18,   478,   213,   227,   197,   174,
-      19,   175,   479,   195,   228,    20,    21,    22,    23,    24,
-      25,   480,   298,   299,   196,    26,   300,   198,   301,   302,
-     303,   304,   305,   435,   436,   437,   438,   439,   440,   441,
-     442,   354,   253,   145,    59,    27,    28,   316,    29,   322,
-     357,    30,    31,    32,   324,    33,    34,    35,    36,    37,
-      38,    39,   507,    40,   365,   366,   326,    41,    42,    43,
-      44,    45,   368,    46,    47,   200,   370,   328,   161,   162,
-     163,   164,   473,   474,   374,   375,   204,   376,    48,   211,
-     165,   254,   255,   256,   216,   208,    49,   209,   379,   380,
-     257,   258,   259,   284,   475,   476,   285,   286,   383,   221,
-     309,   306,   310,   287,   385,   298,   299,   433,   434,   307,
-     444,   445,   393,    50,   230,    51,   222,   389,   390,   231,
-     232,   242,   235,   250,   251,   252,   262,   408,   410,   412,
-     263,   291,   308,   264,   266,   267,   268,   269,   270,   271,
-     414,   415,   283,   416,   417,   418,   419,   420,   421,   422,
+     150,   389,    58,   317,   170,   323,   325,   141,   214,   327,
+     182,    77,   329,   195,   190,   142,   255,   300,   301,   200,
+     201,   302,    77,   303,   304,   305,   306,   307,   294,   295,
+     155,   217,   143,   221,   622,   627,   226,   294,   314,   363,
+     629,    63,   156,   157,   468,   235,    64,   406,   407,   365,
+     238,   240,   242,   469,   561,   470,     3,   251,   408,    56,
+     144,   145,   623,   628,   471,   256,   257,   258,   630,   267,
+      57,   366,   553,   562,   259,   260,   261,   191,   290,   175,
+     228,   176,   464,   465,   291,   602,    65,   229,   364,   554,
+     296,   297,   298,   158,   230,   332,   333,   172,   581,   296,
+     297,   315,   603,   334,   466,   467,   308,   335,   336,   215,
+     162,   163,   164,   165,   309,   479,   337,   555,   556,   210,
+     481,   211,   166,   140,   480,   338,   186,   339,   340,   482,
+     604,   605,   311,   196,   312,   197,   341,   342,   475,   476,
+     477,   478,   356,   300,   301,    59,   318,   343,   324,   326,
+     146,   359,   328,   198,   286,   330,   199,   287,   288,   213,
+     509,   202,   332,   345,   289,   367,   368,   435,   436,   206,
+     346,   446,   447,   370,   347,   348,   223,   372,   391,   392,
+     218,   224,   232,   349,   233,   376,   377,   234,   237,   378,
+     244,   252,   350,   253,   351,   352,   254,   265,   285,   264,
+     381,   382,   266,   353,   354,   268,   269,   270,   271,   272,
+     385,   273,   274,   275,   343,   276,   387,   293,   277,   278,
+     279,   280,   281,   282,   395,   437,   438,   439,   440,   441,
+     442,   443,   444,   283,   284,   292,   310,   313,    77,   410,
+     412,   414,   331,   358,   361,   369,   374,   362,   383,   380,
+     384,   375,   416,   417,   386,   418,   419,   420,   421,   422,
      423,   424,   425,   426,   427,   428,   429,   430,   431,   432,
-     272,   330,   331,   273,   274,   275,   276,   277,   278,   332,
-     279,   290,   280,   333,   334,   281,   282,   330,   343,   311,
-     329,   356,   335,   367,   372,   344,   359,   373,    77,   345,
-     346,   336,   447,   337,   338,   360,   378,   381,   347,   382,
-     384,   386,   339,   340,   391,   399,   392,   348,   460,   349,
-     350,   395,   450,   341,   400,   396,   397,   398,   351,   352,
-     401,   402,   403,   449,   407,   452,   454,   456,   458,   341,
-     461,   492,   470,   482,   481,   491,   484,   486,   150,   472,
-     496,   497,   500,   501,   493,   504,   508,   490,   503,   494,
-     509,   514,   519,   515,   516,   498,   517,   520,   502,   528,
-     518,   505,   521,   506,   522,   523,   524,   214,   529,   530,
-     525,   531,   510,   536,   512,   526,   527,   532,   533,   534,
-     535,   537,   538,   234,   539,   540,   541,   542,   237,   239,
-     241,   543,   544,   545,   546,   570,   547,   548,   572,   577,
-     578,   565,   573,   584,   581,   574,   597,   598,   604,   605,
-    -255,  -258,   608,   567,   569,   611,   582,   443,   615,   585,
-     616,   623,   586,   624,   595,   587,   549,   596,   638,   629,
-     599,   639,   630,   631,   632,   633,   634,   649,   561,   635,
-     642,   643,   648,   646,   644,   652,   645,   562,   653,   654,
-     655,   661,   664,   665,   666,   446,   314,   353,   656,     0,
-     657,     0,     0,     0,     0,   320,     0,     0,     0,   571,
-       0,     0,     0,   575,   576,     0,     0,     0,     0,   355,
-       0,   583,     0,     0,     0,     0,     0,     0,   358,     0,
+     433,   434,   151,   388,   393,   394,   397,   398,   399,   400,
+     451,   452,   454,   401,   402,   403,   404,   405,   409,   456,
+     458,   460,   493,   494,   463,   498,   472,   474,   499,   492,
+     502,   216,   483,   503,   449,   505,   506,   510,   511,   521,
+     522,   523,   516,   517,   524,   518,   519,   236,   520,   525,
+     462,   530,   239,   241,   243,   526,   531,   527,   528,   529,
+     532,   533,   534,   535,   538,   536,   537,   539,   540,   541,
+     542,   543,   544,   545,   546,   484,   547,   548,   486,   488,
+     549,   550,   572,   574,   579,   575,   495,   567,   569,   571,
+     576,   496,   580,   584,   586,   606,   599,   500,   607,   600,
+     504,   587,  -256,   507,  -259,   508,   610,   588,   589,   583,
+     597,   613,   640,   598,   512,   617,   514,   601,   618,   625,
+     634,   626,   635,   636,   631,   632,   641,   633,   637,   644,
+     322,   645,   648,   646,   650,   647,   651,   654,   655,   668,
+     445,   656,   657,   663,   357,   666,   667,   448,   658,   316,
+     355,   659,     0,   360,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,   551,     0,
+       0,     0,     0,     0,     0,   371,     0,     0,     0,   373,
+     563,     0,     0,     0,     0,     0,     0,     0,     0,   564,
+       0,   379,     0,     0,     0,     0,     0,     0,     0,     0,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,   588,   589,   590,   591,     0,
-     369,     0,     0,   592,   371,     0,     0,     0,     0,   593,
-     594,     0,     0,     0,     0,   377,     0,     0,     0,     0,
+       0,   573,     0,     0,     0,   577,   578,     0,     0,     0,
+       0,     0,     0,   585,     0,     0,   396,     0,     0,     0,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,   609,     0,   612,
-     613,     0,     0,     0,   617,     0,     0,     0,   619,     0,
-     394,   622,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,   409,   411,   413,     0,     0,
-       0,   636,     0,     0,     0,   640,     0,     0,   641,     0,
-       0,     0,     0,     0,     0,     0,     0,   647,     0,     0,
-       0,     0,   650,     0,   651,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,   658,
-     659,     0,     0,   660,     0,   662,   663,     0,     0,     0,
+       0,   411,   413,   415,     0,     0,     0,   590,   591,   592,
+     593,     0,     0,     0,     0,   594,     0,     0,     0,     0,
+       0,   595,   596,     0,     0,     0,     0,     0,     0,     0,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-     448,     0,     0,   667,     0,     0,   451,     0,   453,     0,
-     455,     0,   457,     0,   459,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,   471,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,   611,
+       0,   614,   615,     0,     0,     0,   619,     0,     0,     0,
+     621,     0,     0,   624,     0,     0,   450,     0,     0,     0,
+       0,     0,   453,     0,   455,     0,   457,     0,   459,     0,
+     461,     0,     0,   638,     0,     0,     0,   642,     0,     0,
+     643,     0,     0,     0,   473,     0,     0,     0,     0,   649,
+       0,     0,     0,     0,   652,     0,   653,   485,     0,     0,
+     487,   489,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,   660,   661,   497,     0,   662,     0,   664,   665,   501,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,   483,     0,     0,   485,   487,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,   495,     0,     0,
-       0,     0,     0,   499,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,   511,     0,   513,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,   669,     0,   513,     0,   515,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     4,     0,     0,     0,     0,
-       0,     0,     5,     6,   550,     0,     0,   555,     0,   556,
-       0,   557,     0,   558,     7,     8,     0,     9,     0,    10,
-      11,     0,    12,    13,     0,     0,     0,   563,     0,     0,
-      14,     0,    15,    16,    17,     0,   564,     0,     0,    18,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     4,     0,     0,     0,     0,     0,     0,     5,     6,
+     552,     0,     0,   557,     0,   558,     0,   559,     0,   560,
+       7,     8,     0,     9,     0,    10,    11,     0,    12,    13,
+       0,     0,     0,   565,     0,     0,    14,     0,    15,    16,
+      17,     0,   566,     0,     0,    18,     0,     0,     0,     0,
+       0,    19,     0,     0,     0,     0,    20,    21,    22,    23,
+      24,    25,   582,     0,     0,     0,    26,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,    27,    28,     0,    29,
+       0,     0,    30,    31,    32,     0,    33,    34,    35,    36,
+      37,    38,    39,     0,    40,     0,     0,     0,    41,    42,
+      43,    44,    45,     0,    46,    47,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     4,     0,     0,     0,    48,
+       0,   612,     5,     6,     0,   616,     0,    49,     0,   620,
+       0,     0,     0,     0,     7,     8,     0,     9,     0,    10,
+      11,     0,    12,    13,     0,     0,     0,     0,     0,     0,
+      14,     0,    15,    16,    17,    50,   639,    51,     0,    18,
        0,     0,     0,     0,     0,    19,     0,     0,     0,     0,
-      20,    21,    22,    23,    24,    25,   580,     0,     0,     0,
+      20,    21,    22,    23,    24,    25,     0,     0,     0,     0,
       26,     0,     0,     0,     0,     0,     0,     0,     0,     0,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
       27,    28,     0,    29,     0,     0,    30,    31,    32,     0,
-      33,    34,    35,    36,    37,    38,    39,     0,    40,     0,
-       0,    69,    41,    42,    43,    44,    45,     0,    46,    47,
-       0,     0,     0,     0,     0,     0,     0,   243,     0,     0,
-       0,     0,     0,    48,     0,   610,    70,     0,     0,   614,
-       0,    49,     0,   618,     0,     0,     0,     0,     0,     0,
-       0,     0,    71,    72,    73,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,    50,    74,
-     637,     0,    75,     0,     0,    76,   244,   245,   246,     0,
-       0,     0,     0,     0,     0,    78,    79,   247,     0,     0,
-       0,     0,     0,     0,     0,     0,    80,    81,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,    82,
-      83,    84,     0,     0,     0,     0,     0,     0,     0,    85,
-      86,    87,    88,    89,    90,    91,    92,    93,    94,    95,
-      96,     0,     0,     0,    97,    98,    99,   248,   100,   101,
-     102,     0,     0,     0,     0,   103,   104,   105,   106,   107,
-     108,   109,   110,   111,   112,   113,   114,   115,    69,   116,
-     117,   118,   119,   120,   121,   122,   123,   124,   125,   126,
-     127,     0,     0,   178,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,    70,     0,   179,   180,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,    71,
-      72,    73,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,    74,     0,     0,    75,
-       0,     0,    76,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,    78,    79,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,    80,    81,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,    82,    83,    84,     0,
-       0,     0,     0,     0,     0,     0,    85,    86,    87,    88,
-      89,    90,    91,    92,    93,    94,    95,    96,     0,     0,
-       0,    97,    98,    99,     0,   100,   101,   102,     0,     0,
-       0,     0,   103,   104,   105,   106,   107,   108,   109,   110,
-     111,   112,   113,   114,   115,    69,   116,   117,   118,   119,
-     120,   121,   122,   123,   124,   125,   126,   127,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-      70,     0,     0,     0,     0,     0,     0,     0,   217,   218,
+      33,    34,    35,    36,    37,    38,    39,    69,    40,     0,
+       0,     0,    41,    42,    43,    44,    45,     0,    46,    47,
+       0,     0,     0,   245,     0,     0,     0,     0,     0,     0,
+       0,     0,    70,    48,     0,     0,     0,     0,     0,     0,
+       0,    49,     0,     0,     0,     0,     0,     0,    71,    72,
+      73,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,    74,     0,     0,    75,    50,
+       0,    76,   246,   247,   248,     0,     0,     0,     0,     0,
+       0,    78,    79,   249,     0,     0,     0,     0,     0,     0,
+       0,     0,    80,    81,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,    82,    83,    84,     0,     0,
+       0,     0,     0,     0,     0,    85,    86,    87,    88,    89,
+      90,    91,    92,    93,    94,    95,    96,     0,     0,     0,
+      97,    98,    99,   250,   100,   101,   102,     0,   103,     0,
+       0,     0,   104,   105,   106,   107,   108,   109,   110,   111,
+     112,   113,   114,   115,   116,    69,   117,   118,   119,   120,
+     121,   122,   123,   124,   125,   126,   127,   128,     0,     0,
+     179,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+      70,     0,   180,   181,     0,     0,     0,     0,     0,     0,
        0,     0,     0,     0,     0,     0,    71,    72,    73,     0,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
        0,     0,     0,    74,     0,     0,    75,     0,     0,    76,
@@ -1190,23 +1182,43 @@ static const yytype_int16 yytable[] =
       80,    81,     0,     0,     0,     0,     0,     0,     0,     0,
        0,     0,     0,    82,    83,    84,     0,     0,     0,     0,
        0,     0,     0,    85,    86,    87,    88,    89,    90,    91,
-      92,    93,    94,    95,    96,     0,     0,    69,    97,    98,
-      99,     0,   100,   101,   102,     0,     0,     0,     0,   103,
+      92,    93,    94,    95,    96,     0,     0,     0,    97,    98,
+      99,     0,   100,   101,   102,     0,   103,     0,     0,     0,
      104,   105,   106,   107,   108,   109,   110,   111,   112,   113,
-     114,   115,    70,   116,   117,   118,   119,   120,   121,   122,
-     123,   124,   125,   126,   127,     0,     0,     0,    71,    72,
-      73,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,    74,     0,     0,    75,     0,
-       0,    76,     0,     0,     0,     0,     0,     0,     0,     0,
-      77,    78,    79,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,    80,    81,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,    82,    83,    84,     0,     0,
-       0,     0,     0,     0,     0,    85,    86,    87,    88,    89,
-      90,    91,    92,    93,    94,    95,    96,     0,     0,    69,
-      97,    98,    99,     0,   100,   101,   102,     0,     0,     0,
-       0,   103,   104,   105,   106,   107,   108,   109,   110,   111,
-     112,   113,   114,   115,    70,   116,   117,   118,   119,   120,
-     121,   122,   123,   124,   125,   126,   127,     0,     0,     0,
+     114,   115,   116,    69,   117,   118,   119,   120,   121,   122,
+     123,   124,   125,   126,   127,   128,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,    70,     0,
+       0,     0,     0,     0,     0,     0,   219,   220,     0,     0,
+       0,     0,     0,     0,    71,    72,    73,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,    74,     0,     0,    75,     0,     0,    76,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,    78,    79,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,    80,    81,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,    82,    83,    84,     0,     0,     0,     0,     0,     0,
+       0,    85,    86,    87,    88,    89,    90,    91,    92,    93,
+      94,    95,    96,     0,     0,     0,    97,    98,    99,     0,
+     100,   101,   102,     0,   103,     0,     0,     0,   104,   105,
+     106,   107,   108,   109,   110,   111,   112,   113,   114,   115,
+     116,    69,   117,   118,   119,   120,   121,   122,   123,   124,
+     125,   126,   127,   128,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,    70,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,    71,    72,    73,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,    74,
+       0,     0,    75,     0,     0,    76,     0,     0,     0,     0,
+       0,     0,     0,     0,    77,    78,    79,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,    80,    81,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,    82,
+      83,    84,     0,     0,     0,     0,     0,     0,     0,    85,
+      86,    87,    88,    89,    90,    91,    92,    93,    94,    95,
+      96,     0,     0,     0,    97,    98,    99,     0,   100,   101,
+     102,     0,   103,     0,     0,     0,   104,   105,   106,   107,
+     108,   109,   110,   111,   112,   113,   114,   115,   116,    69,
+     117,   118,   119,   120,   121,   122,   123,   124,   125,   126,
+     127,   128,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,    70,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
       71,    72,    73,     0,     0,     0,     0,     0,     0,     0,
        0,     0,     0,     0,     0,     0,     0,    74,     0,     0,
       75,     0,     0,    76,     0,     0,     0,     0,     0,     0,
@@ -1215,148 +1227,140 @@ static const yytype_int16 yytable[] =
        0,     0,     0,     0,     0,     0,     0,    82,    83,    84,
        0,     0,     0,     0,     0,     0,     0,    85,    86,    87,
       88,    89,    90,    91,    92,    93,    94,    95,    96,     0,
-       0,    69,    97,    98,    99,     0,   100,   101,   102,     0,
-       0,     0,     0,   103,   104,   105,   106,   107,   108,   109,
-     110,   111,   112,   113,   114,   115,    70,   116,   117,   118,
-     119,   120,   121,   122,   123,   124,   125,   126,   127,     0,
-       0,     0,    71,    72,    73,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,    74,
-       0,     0,    75,     0,     0,    76,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,    78,    79,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,    80,    81,     0,     0,
+       0,     0,    97,    98,    99,     0,   100,   101,   102,     0,
+     103,     0,     0,     0,   104,   105,   106,   107,   108,   109,
+     110,   111,   112,   113,   114,   115,   116,    69,   117,   118,
+     119,   120,   121,   122,   123,   124,   125,   126,   127,   128,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-      83,    84,     0,     0,     0,     0,     0,     0,     0,    85,
-      86,    87,    88,    89,    90,    91,    92,    93,    94,    95,
-      96,     0,     0,     0,    97,    98,    99,     0,   100,   101,
-     102,     0,     0,     0,     0,   103,   104,   105,   106,   107,
-     108,   109,   110,   111,   112,   113,   114,   115,     0,   116,
-     117,   118,   119,   120,   121,   122,   123,   124,   125,   126,
-     127
+       0,     0,    70,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,    71,    72,
+      73,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,    74,     0,     0,    75,     0,
+       0,    76,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,    78,    79,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,    80,    81,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,    83,    84,     0,     0,
+       0,     0,     0,     0,     0,    85,    86,    87,    88,    89,
+      90,    91,    92,    93,    94,    95,    96,     0,     0,     0,
+      97,    98,    99,     0,   100,   101,   102,     0,   103,     0,
+       0,     0,   104,   105,   106,   107,   108,   109,   110,   111,
+     112,   113,   114,   115,   116,     0,   117,   118,   119,   120,
+     121,   122,   123,   124,   125,   126,   127,   128
 };
 
 static const yytype_int16 yycheck[] =
 {
-      13,    24,    24,   229,    17,    24,    68,    24,    82,    32,
-      23,     7,    24,    26,    79,    80,    53,    32,    24,    32,
-      82,     7,    56,    57,    24,     7,    49,    32,    79,    80,
-      24,    44,   149,    46,    49,    24,    49,    20,   155,    35,
-       0,    26,    36,    37,    49,    58,    31,    74,    75,    35,
-      63,    64,    65,    35,    77,    78,   166,    70,    85,    42,
-       3,    45,    77,    78,    29,   102,   166,    10,    11,    82,
-      54,    22,    77,    78,   166,   140,   141,   142,    24,    22,
-      23,    87,    25,    48,    27,    28,    71,    30,    31,   140,
-     141,   142,    45,    87,   168,    38,    45,    40,    41,    42,
-       6,    54,    56,    57,    47,    54,   168,    13,    34,   166,
-      53,   168,    45,    90,    20,    58,    59,    60,    61,    62,
-      63,    54,     8,     9,    90,    68,    12,    34,    14,    15,
-      16,    17,    18,   300,   301,   302,   303,   304,   305,   306,
-     307,   154,    25,   166,   166,    88,    89,   166,    91,   166,
-     163,    94,    95,    96,   166,    98,    99,   100,   101,   102,
-     103,   104,   388,   106,   177,   178,   166,   110,   111,   112,
-     113,   114,   185,   116,   117,    24,   189,   166,    42,    43,
-      44,    45,    56,    57,   197,   198,    24,   200,   131,    68,
-      54,    74,    75,    76,   166,   166,   139,   168,   211,   212,
-      83,    84,    85,   145,    56,    57,   148,   149,   221,    34,
-      19,    97,    21,   155,   227,     8,     9,   298,   299,   105,
-     309,   310,   235,   166,     6,   168,   166,   231,   232,     4,
-       4,   168,    24,    34,    34,    34,   168,   250,   251,   252,
-      34,    20,   130,    34,    34,    34,    34,    34,    34,    34,
-     263,   264,   148,   266,   267,   268,   269,   270,   271,   272,
+      13,   231,    24,    24,    17,    24,    24,    24,    68,    24,
+      23,    82,    24,    26,    24,    32,    25,     8,     9,    32,
+      33,    12,    82,    14,    15,    16,    17,    18,    79,    80,
+      24,    44,    49,    46,     7,     7,    49,    79,    80,    53,
+       7,    26,    36,    37,    45,    58,    31,    74,    75,    20,
+      63,    64,    65,    54,    29,    45,     0,    70,    85,   167,
+      77,    78,    35,    35,    54,    74,    75,    76,    35,    82,
+     167,    42,    32,    48,    83,    84,    85,    87,   150,   167,
+       6,   169,    56,    57,   156,    32,    71,    13,   102,    49,
+     141,   142,   143,    87,    20,    24,    25,   167,   169,   141,
+     142,   143,    49,    32,    56,    57,    97,    36,    37,   169,
+      42,    43,    44,    45,   105,    45,    45,    77,    78,   167,
+      45,   169,    54,    22,    54,    54,    24,    56,    57,    54,
+      77,    78,    19,    90,    21,    90,    65,    66,    56,    57,
+      56,    57,   155,     8,     9,   167,   167,    76,   167,   167,
+     167,   164,   167,    34,   146,   167,    34,   149,   150,    68,
+     390,    24,    24,    25,   156,   178,   179,   300,   301,    24,
+      32,   311,   312,   186,    36,    37,    34,   190,   233,   234,
+     167,   167,     6,    45,     4,   198,   199,     4,    24,   202,
+     169,    34,    54,    34,    56,    57,    34,    34,   149,   169,
+     213,   214,    34,    65,    66,    34,    34,    34,    34,    34,
+     223,    34,    34,    34,    76,    34,   229,    20,    34,    34,
+      34,    34,    34,    34,   237,   302,   303,   304,   305,   306,
+     307,   308,   309,    34,    34,   149,   130,   129,    82,   252,
+     253,   254,    24,    29,    46,     7,    29,    46,    13,    34,
+     143,    69,   265,   266,     7,   268,   269,   270,   271,   272,
      273,   274,   275,   276,   277,   278,   279,   280,   281,   282,
-      34,    24,    25,    34,    34,    34,    34,    34,    34,    32,
-      34,   148,    34,    36,    37,    34,    34,    24,    25,   129,
-      24,    29,    45,     7,    29,    32,    46,    69,    82,    36,
-      37,    54,   315,    56,    57,    46,    34,    13,    45,   142,
-       7,    13,    65,    66,    29,    35,    29,    54,   331,    56,
-      57,    72,    48,    76,    35,    72,    72,    72,    65,    66,
-      35,    35,    35,    24,    35,    24,    24,    24,    24,    76,
-      33,     7,    34,   356,    34,   166,   359,   360,    13,    33,
-       7,     7,    69,     7,   367,     7,   166,    42,   102,   372,
-     166,   168,    35,   168,   168,   378,   168,    35,   381,     7,
-     168,   384,    35,   386,    35,    35,    35,    42,     7,     7,
-      35,     7,   395,     7,   397,    35,    35,    35,    35,    35,
-      35,    35,    35,    58,    35,    35,    35,     7,    63,    64,
-      65,     7,    35,    35,    35,    13,    29,    29,     7,     7,
-       7,   166,    42,     7,    72,    42,    29,    29,     7,     7,
-       7,     7,    13,   166,   166,     7,   166,   308,    35,   168,
-      35,    35,   168,    35,   166,   168,   449,   166,     7,    35,
-     167,     7,    35,    35,   167,   167,    29,    72,   461,    29,
-      13,    13,    13,   115,    35,   167,    35,   470,   167,    35,
-      35,    35,    35,    35,    13,   311,   133,   150,   638,    -1,
-     639,    -1,    -1,    -1,    -1,   140,    -1,    -1,    -1,   492,
-      -1,    -1,    -1,   496,   497,    -1,    -1,    -1,    -1,   154,
-      -1,   504,    -1,    -1,    -1,    -1,    -1,    -1,   163,    -1,
+     283,   284,    13,    13,    29,    29,    72,    72,    72,    72,
+      24,    48,    24,    35,    35,    35,    35,    35,    35,    24,
+      24,    24,   167,     7,    33,     7,    34,    33,     7,    42,
+      69,    42,    34,     7,   317,   102,     7,   167,   167,    35,
+      35,    35,   169,   169,    35,   169,   169,    58,   169,    35,
+     333,     7,    63,    64,    65,    35,     7,    35,    35,    35,
+       7,     7,    35,    35,     7,    35,    35,    35,    35,    35,
+      35,    35,     7,     7,    35,   358,    35,    35,   361,   362,
+      29,    29,    13,     7,     7,    42,   369,   167,   167,   167,
+      42,   374,     7,   167,     7,     7,    29,   380,     7,    29,
+     383,   169,     7,   386,     7,   388,    13,   169,   169,    72,
+     167,     7,     7,   167,   397,    35,   399,   168,    35,    35,
+     168,    35,   168,    29,    35,    35,     7,    35,    29,    13,
+     141,    13,   115,    35,    13,    35,    72,   168,   168,    13,
+     310,    35,    35,    35,   155,    35,    35,   313,   640,   134,
+     151,   641,    -1,   164,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,   451,    -1,
+      -1,    -1,    -1,    -1,    -1,   186,    -1,    -1,    -1,   190,
+     463,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,   472,
+      -1,   202,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
       -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,   528,   529,   530,   531,    -1,
-     185,    -1,    -1,   536,   189,    -1,    -1,    -1,    -1,   542,
-     543,    -1,    -1,    -1,    -1,   200,    -1,    -1,    -1,    -1,
+      -1,   494,    -1,    -1,    -1,   498,   499,    -1,    -1,    -1,
+      -1,    -1,    -1,   506,    -1,    -1,   237,    -1,    -1,    -1,
       -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,    -1,   570,    -1,   572,
-     573,    -1,    -1,    -1,   577,    -1,    -1,    -1,   581,    -1,
-     235,   584,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,   250,   251,   252,    -1,    -1,
-      -1,   604,    -1,    -1,    -1,   608,    -1,    -1,   611,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,    -1,   620,    -1,    -1,
-      -1,    -1,   625,    -1,   627,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,   642,
-     643,    -1,    -1,   646,    -1,   648,   649,    -1,    -1,    -1,
+      -1,   252,   253,   254,    -1,    -1,    -1,   530,   531,   532,
+     533,    -1,    -1,    -1,    -1,   538,    -1,    -1,    -1,    -1,
+      -1,   544,   545,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
       -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-     315,    -1,    -1,   666,    -1,    -1,   321,    -1,   323,    -1,
-     325,    -1,   327,    -1,   329,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,   343,    -1,
+      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,   572,
+      -1,   574,   575,    -1,    -1,    -1,   579,    -1,    -1,    -1,
+     583,    -1,    -1,   586,    -1,    -1,   317,    -1,    -1,    -1,
+      -1,    -1,   323,    -1,   325,    -1,   327,    -1,   329,    -1,
+     331,    -1,    -1,   606,    -1,    -1,    -1,   610,    -1,    -1,
+     613,    -1,    -1,    -1,   345,    -1,    -1,    -1,    -1,   622,
+      -1,    -1,    -1,    -1,   627,    -1,   629,   358,    -1,    -1,
+     361,   362,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,   644,   645,   374,    -1,   648,    -1,   650,   651,   380,
       -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,   356,    -1,    -1,   359,   360,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,    -1,   372,    -1,    -1,
-      -1,    -1,    -1,   378,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,   396,    -1,   398,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,   668,    -1,   398,    -1,   400,
       -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
       -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
       -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,     3,    -1,    -1,    -1,    -1,
-      -1,    -1,    10,    11,   449,    -1,    -1,   452,    -1,   454,
-      -1,   456,    -1,   458,    22,    23,    -1,    25,    -1,    27,
-      28,    -1,    30,    31,    -1,    -1,    -1,   472,    -1,    -1,
-      38,    -1,    40,    41,    42,    -1,   481,    -1,    -1,    47,
+      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,     3,    -1,    -1,    -1,    -1,    -1,    -1,    10,    11,
+     451,    -1,    -1,   454,    -1,   456,    -1,   458,    -1,   460,
+      22,    23,    -1,    25,    -1,    27,    28,    -1,    30,    31,
+      -1,    -1,    -1,   474,    -1,    -1,    38,    -1,    40,    41,
+      42,    -1,   483,    -1,    -1,    47,    -1,    -1,    -1,    -1,
+      -1,    53,    -1,    -1,    -1,    -1,    58,    59,    60,    61,
+      62,    63,   503,    -1,    -1,    -1,    68,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,    -1,    88,    89,    -1,    91,
+      -1,    -1,    94,    95,    96,    -1,    98,    99,   100,   101,
+     102,   103,   104,    -1,   106,    -1,    -1,    -1,   110,   111,
+     112,   113,   114,    -1,   116,   117,    -1,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,     3,    -1,    -1,    -1,   131,
+      -1,   572,    10,    11,    -1,   576,    -1,   139,    -1,   580,
+      -1,    -1,    -1,    -1,    22,    23,    -1,    25,    -1,    27,
+      28,    -1,    30,    31,    -1,    -1,    -1,    -1,    -1,    -1,
+      38,    -1,    40,    41,    42,   167,   607,   169,    -1,    47,
       -1,    -1,    -1,    -1,    -1,    53,    -1,    -1,    -1,    -1,
-      58,    59,    60,    61,    62,    63,   501,    -1,    -1,    -1,
+      58,    59,    60,    61,    62,    63,    -1,    -1,    -1,    -1,
       68,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
       -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
       88,    89,    -1,    91,    -1,    -1,    94,    95,    96,    -1,
-      98,    99,   100,   101,   102,   103,   104,    -1,   106,    -1,
-      -1,     9,   110,   111,   112,   113,   114,    -1,   116,   117,
-      -1,    -1,    -1,    -1,    -1,    -1,    -1,    25,    -1,    -1,
-      -1,    -1,    -1,   131,    -1,   570,    34,    -1,    -1,   574,
-      -1,   139,    -1,   578,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    50,    51,    52,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,   166,    67,
-     605,    -1,    70,    -1,    -1,    73,    74,    75,    76,    -1,
-      -1,    -1,    -1,    -1,    -1,    83,    84,    85,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,    94,    95,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,   107,
-     108,   109,    -1,    -1,    -1,    -1,    -1,    -1,    -1,   117,
-     118,   119,   120,   121,   122,   123,   124,   125,   126,   127,
-     128,    -1,    -1,    -1,   132,   133,   134,   135,   136,   137,
-     138,    -1,    -1,    -1,    -1,   143,   144,   145,   146,   147,
-     148,   149,   150,   151,   152,   153,   154,   155,     9,   157,
-     158,   159,   160,   161,   162,   163,   164,   165,   166,   167,
-     168,    -1,    -1,    24,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    34,    -1,    36,    37,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    50,
-      51,    52,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,    67,    -1,    -1,    70,
-      -1,    -1,    73,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    83,    84,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    94,    95,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,   107,   108,   109,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,   117,   118,   119,   120,
-     121,   122,   123,   124,   125,   126,   127,   128,    -1,    -1,
-      -1,   132,   133,   134,    -1,   136,   137,   138,    -1,    -1,
-      -1,    -1,   143,   144,   145,   146,   147,   148,   149,   150,
-     151,   152,   153,   154,   155,     9,   157,   158,   159,   160,
-     161,   162,   163,   164,   165,   166,   167,   168,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-      34,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    42,    43,
+      98,    99,   100,   101,   102,   103,   104,     9,   106,    -1,
+      -1,    -1,   110,   111,   112,   113,   114,    -1,   116,   117,
+      -1,    -1,    -1,    25,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,    34,   131,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,   139,    -1,    -1,    -1,    -1,    -1,    -1,    50,    51,
+      52,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,    67,    -1,    -1,    70,   167,
+      -1,    73,    74,    75,    76,    -1,    -1,    -1,    -1,    -1,
+      -1,    83,    84,    85,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,    94,    95,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,   107,   108,   109,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,   117,   118,   119,   120,   121,
+     122,   123,   124,   125,   126,   127,   128,    -1,    -1,    -1,
+     132,   133,   134,   135,   136,   137,   138,    -1,   140,    -1,
+      -1,    -1,   144,   145,   146,   147,   148,   149,   150,   151,
+     152,   153,   154,   155,   156,     9,   158,   159,   160,   161,
+     162,   163,   164,   165,   166,   167,   168,   169,    -1,    -1,
+      24,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
+      34,    -1,    36,    37,    -1,    -1,    -1,    -1,    -1,    -1,
       -1,    -1,    -1,    -1,    -1,    -1,    50,    51,    52,    -1,
       -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
       -1,    -1,    -1,    67,    -1,    -1,    70,    -1,    -1,    73,
@@ -1365,23 +1369,43 @@ static const yytype_int16 yycheck[] =
       94,    95,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
       -1,    -1,    -1,   107,   108,   109,    -1,    -1,    -1,    -1,
       -1,    -1,    -1,   117,   118,   119,   120,   121,   122,   123,
-     124,   125,   126,   127,   128,    -1,    -1,     9,   132,   133,
-     134,    -1,   136,   137,   138,    -1,    -1,    -1,    -1,   143,
+     124,   125,   126,   127,   128,    -1,    -1,    -1,   132,   133,
+     134,    -1,   136,   137,   138,    -1,   140,    -1,    -1,    -1,
      144,   145,   146,   147,   148,   149,   150,   151,   152,   153,
-     154,   155,    34,   157,   158,   159,   160,   161,   162,   163,
-     164,   165,   166,   167,   168,    -1,    -1,    -1,    50,    51,
-      52,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    67,    -1,    -1,    70,    -1,
-      -1,    73,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-      82,    83,    84,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    94,    95,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,   107,   108,   109,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,   117,   118,   119,   120,   121,
-     122,   123,   124,   125,   126,   127,   128,    -1,    -1,     9,
-     132,   133,   134,    -1,   136,   137,   138,    -1,    -1,    -1,
-      -1,   143,   144,   145,   146,   147,   148,   149,   150,   151,
-     152,   153,   154,   155,    34,   157,   158,   159,   160,   161,
-     162,   163,   164,   165,   166,   167,   168,    -1,    -1,    -1,
+     154,   155,   156,     9,   158,   159,   160,   161,   162,   163,
+     164,   165,   166,   167,   168,   169,    -1,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    34,    -1,
+      -1,    -1,    -1,    -1,    -1,    -1,    42,    43,    -1,    -1,
+      -1,    -1,    -1,    -1,    50,    51,    52,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,    67,    -1,    -1,    70,    -1,    -1,    73,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,    -1,    -1,    83,    84,    -1,
+      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    94,    95,
+      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,   107,   108,   109,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,   117,   118,   119,   120,   121,   122,   123,   124,   125,
+     126,   127,   128,    -1,    -1,    -1,   132,   133,   134,    -1,
+     136,   137,   138,    -1,   140,    -1,    -1,    -1,   144,   145,
+     146,   147,   148,   149,   150,   151,   152,   153,   154,   155,
+     156,     9,   158,   159,   160,   161,   162,   163,   164,   165,
+     166,   167,   168,   169,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,    -1,    34,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,    50,    51,    52,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    67,
+      -1,    -1,    70,    -1,    -1,    73,    -1,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,    82,    83,    84,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,    -1,    94,    95,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,   107,
+     108,   109,    -1,    -1,    -1,    -1,    -1,    -1,    -1,   117,
+     118,   119,   120,   121,   122,   123,   124,   125,   126,   127,
+     128,    -1,    -1,    -1,   132,   133,   134,    -1,   136,   137,
+     138,    -1,   140,    -1,    -1,    -1,   144,   145,   146,   147,
+     148,   149,   150,   151,   152,   153,   154,   155,   156,     9,
+     158,   159,   160,   161,   162,   163,   164,   165,   166,   167,
+     168,   169,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,    34,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
       50,    51,    52,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
       -1,    -1,    -1,    -1,    -1,    -1,    -1,    67,    -1,    -1,
       70,    -1,    -1,    73,    -1,    -1,    -1,    -1,    -1,    -1,
@@ -1390,135 +1414,138 @@ static const yytype_int16 yycheck[] =
       -1,    -1,    -1,    -1,    -1,    -1,    -1,   107,   108,   109,
       -1,    -1,    -1,    -1,    -1,    -1,    -1,   117,   118,   119,
      120,   121,   122,   123,   124,   125,   126,   127,   128,    -1,
-      -1,     9,   132,   133,   134,    -1,   136,   137,   138,    -1,
-      -1,    -1,    -1,   143,   144,   145,   146,   147,   148,   149,
-     150,   151,   152,   153,   154,   155,    34,   157,   158,   159,
-     160,   161,   162,   163,   164,   165,   166,   167,   168,    -1,
-      -1,    -1,    50,    51,    52,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    67,
-      -1,    -1,    70,    -1,    -1,    73,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    83,    84,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,    94,    95,    -1,    -1,
+      -1,    -1,   132,   133,   134,    -1,   136,   137,   138,    -1,
+     140,    -1,    -1,    -1,   144,   145,   146,   147,   148,   149,
+     150,   151,   152,   153,   154,   155,   156,     9,   158,   159,
+     160,   161,   162,   163,   164,   165,   166,   167,   168,   169,
       -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-     108,   109,    -1,    -1,    -1,    -1,    -1,    -1,    -1,   117,
-     118,   119,   120,   121,   122,   123,   124,   125,   126,   127,
-     128,    -1,    -1,    -1,   132,   133,   134,    -1,   136,   137,
-     138,    -1,    -1,    -1,    -1,   143,   144,   145,   146,   147,
-     148,   149,   150,   151,   152,   153,   154,   155,    -1,   157,
-     158,   159,   160,   161,   162,   163,   164,   165,   166,   167,
-     168
+      -1,    -1,    34,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    50,    51,
+      52,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,    67,    -1,    -1,    70,    -1,
+      -1,    73,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,    83,    84,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,    94,    95,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,    -1,   108,   109,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,   117,   118,   119,   120,   121,
+     122,   123,   124,   125,   126,   127,   128,    -1,    -1,    -1,
+     132,   133,   134,    -1,   136,   137,   138,    -1,   140,    -1,
+      -1,    -1,   144,   145,   146,   147,   148,   149,   150,   151,
+     152,   153,   154,   155,   156,    -1,   158,   159,   160,   161,
+     162,   163,   164,   165,   166,   167,   168,   169
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
      symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
-       0,   242,   243,     0,     3,    10,    11,    22,    23,    25,
+       0,   243,   244,     0,     3,    10,    11,    22,    23,    25,
       27,    28,    30,    31,    38,    40,    41,    42,    47,    53,
       58,    59,    60,    61,    62,    63,    68,    88,    89,    91,
       94,    95,    96,    98,    99,   100,   101,   102,   103,   104,
      106,   110,   111,   112,   113,   114,   116,   117,   131,   139,
-     166,   168,   235,   237,   239,   241,   166,   166,    24,   166,
-     184,   185,   186,    26,    31,    71,   190,   191,   192,     9,
+     167,   169,   236,   238,   240,   242,   167,   167,    24,   167,
+     185,   186,   187,    26,    31,    71,   191,   192,   193,     9,
       34,    50,    51,    52,    67,    70,    73,    82,    83,    84,
       94,    95,   107,   108,   109,   117,   118,   119,   120,   121,
      122,   123,   124,   125,   126,   127,   128,   132,   133,   134,
-     136,   137,   138,   143,   144,   145,   146,   147,   148,   149,
-     150,   151,   152,   153,   154,   155,   157,   158,   159,   160,
-     161,   162,   163,   164,   165,   166,   167,   168,   170,   171,
-     172,   173,   174,   175,   178,   179,   194,   195,   196,    22,
-      24,    32,    49,    77,    78,   166,   181,   182,   183,   170,
-     175,   197,   198,   199,    24,    36,    37,    87,   200,   201,
-     202,    42,    43,    44,    45,    54,   215,   216,   217,   170,
-     230,   166,   218,   221,   166,   168,   219,   236,    24,    36,
-      37,   170,   206,   207,   208,    24,   209,   210,   211,    24,
-      87,   212,   213,   214,   170,    90,    90,    34,    34,   170,
-      24,   203,   204,   205,    24,   222,   223,   224,   166,   168,
-     220,    68,    68,   168,   175,   170,   166,    42,    43,   170,
-     233,    34,   166,   234,   170,   225,     6,    13,    20,   240,
-       6,     4,     4,   170,   175,    24,   170,   175,   170,   175,
-     170,   175,   168,    25,    74,    75,    76,    85,   135,   170,
-      34,    34,    34,    25,    74,    75,    76,    83,    84,    85,
-     176,   177,   168,    34,    34,   170,    34,    34,    34,    34,
+     136,   137,   138,   140,   144,   145,   146,   147,   148,   149,
+     150,   151,   152,   153,   154,   155,   156,   158,   159,   160,
+     161,   162,   163,   164,   165,   166,   167,   168,   169,   171,
+     172,   173,   174,   175,   176,   179,   180,   195,   196,   197,
+      22,    24,    32,    49,    77,    78,   167,   182,   183,   184,
+     171,   176,   198,   199,   200,    24,    36,    37,    87,   201,
+     202,   203,    42,    43,    44,    45,    54,   216,   217,   218,
+     171,   231,   167,   219,   222,   167,   169,   220,   237,    24,
+      36,    37,   171,   207,   208,   209,    24,   210,   211,   212,
+      24,    87,   213,   214,   215,   171,    90,    90,    34,    34,
+     171,   171,    24,   204,   205,   206,    24,   223,   224,   225,
+     167,   169,   221,    68,    68,   169,   176,   171,   167,    42,
+      43,   171,   234,    34,   167,   235,   171,   226,     6,    13,
+      20,   241,     6,     4,     4,   171,   176,    24,   171,   176,
+     171,   176,   171,   176,   169,    25,    74,    75,    76,    85,
+     135,   171,    34,    34,    34,    25,    74,    75,    76,    83,
+      84,    85,   177,   178,   169,    34,    34,   171,    34,    34,
       34,    34,    34,    34,    34,    34,    34,    34,    34,    34,
-      34,    34,    34,   148,   145,   148,   149,   155,   149,   155,
-     148,    20,    79,    80,   140,   141,   142,   193,     8,     9,
-      12,    14,    15,    16,    17,    18,    97,   105,   130,    19,
-      21,   129,    80,   142,   193,    24,   166,   187,   188,   189,
-     175,    24,   166,    24,   166,    24,   166,    24,   166,    24,
-      24,    25,    32,    36,    37,    45,    54,    56,    57,    65,
-      66,    76,   180,    25,    32,    36,    37,    45,    54,    56,
-      57,    65,    66,   180,   170,   175,    29,   170,   175,    46,
-      46,    53,   102,    20,    42,   170,   170,     7,   170,   175,
-     170,   175,    29,    69,   170,   170,   170,   175,    34,   170,
-     170,    13,   142,   170,     7,   170,    13,   237,   238,   241,
-     241,    29,    29,   170,   175,    72,    72,    72,    72,    35,
-      35,    35,    35,    35,    74,    75,    85,    35,   170,   175,
-     170,   175,   170,   175,   170,   170,   170,   170,   170,   170,
-     170,   170,   170,   170,   170,   170,   170,   170,   170,   170,
-     170,   170,   170,   172,   172,   171,   171,   171,   171,   171,
-     171,   171,   171,   173,   174,   174,   179,   170,   175,    24,
-      48,   175,    24,   175,    24,   175,    24,   175,    24,   175,
-     170,    33,    56,    57,    56,    57,    45,    54,    45,    54,
-      34,   175,    33,    56,    57,    56,    57,    45,    54,    45,
-      54,    34,   170,   175,   170,   175,   170,   175,   231,   232,
-      42,   166,     7,   170,   170,   175,     7,     7,   170,   175,
-      69,     7,   170,   102,     7,   170,   170,   237,   166,   166,
-     170,   175,   170,   175,   168,   168,   168,   168,   168,    35,
-      35,    35,    35,    35,    35,    35,    35,    35,     7,     7,
-       7,     7,    35,    35,    35,    35,     7,    35,    35,    35,
-      35,    35,     7,     7,    35,    35,    35,    29,    29,   170,
-     175,    32,    49,    77,    78,   175,   175,   175,   175,    29,
-      48,   170,   170,   175,   175,   166,   226,   166,   228,   166,
-      13,   170,     7,    42,    42,   170,   170,     7,     7,   168,
-     175,    72,   166,   170,     7,   168,   168,   168,   170,   170,
-     170,   170,   170,   170,   170,   166,   166,    29,    29,   167,
-      32,    49,    77,    78,     7,     7,   227,   229,    13,   170,
-     175,     7,   170,   170,   175,    35,    35,   170,   175,   170,
-       7,    35,   170,    35,    35,     7,    35,     7,    35,    35,
-      35,    35,   167,   167,    29,    29,   170,   175,     7,     7,
-     170,   170,    13,    13,    35,    35,   115,   170,    13,    72,
-     170,   170,   167,   167,    35,    35,   226,   228,   170,   170,
-     170,    35,   170,   170,    35,    35,    13,   170
+      34,    34,    34,    34,    34,   149,   146,   149,   150,   156,
+     150,   156,   149,    20,    79,    80,   141,   142,   143,   194,
+       8,     9,    12,    14,    15,    16,    17,    18,    97,   105,
+     130,    19,    21,   129,    80,   143,   194,    24,   167,   188,
+     189,   190,   176,    24,   167,    24,   167,    24,   167,    24,
+     167,    24,    24,    25,    32,    36,    37,    45,    54,    56,
+      57,    65,    66,    76,   181,    25,    32,    36,    37,    45,
+      54,    56,    57,    65,    66,   181,   171,   176,    29,   171,
+     176,    46,    46,    53,   102,    20,    42,   171,   171,     7,
+     171,   176,   171,   176,    29,    69,   171,   171,   171,   176,
+      34,   171,   171,    13,   143,   171,     7,   171,    13,   238,
+     239,   242,   242,    29,    29,   171,   176,    72,    72,    72,
+      72,    35,    35,    35,    35,    35,    74,    75,    85,    35,
+     171,   176,   171,   176,   171,   176,   171,   171,   171,   171,
+     171,   171,   171,   171,   171,   171,   171,   171,   171,   171,
+     171,   171,   171,   171,   171,   173,   173,   172,   172,   172,
+     172,   172,   172,   172,   172,   174,   175,   175,   180,   171,
+     176,    24,    48,   176,    24,   176,    24,   176,    24,   176,
+      24,   176,   171,    33,    56,    57,    56,    57,    45,    54,
+      45,    54,    34,   176,    33,    56,    57,    56,    57,    45,
+      54,    45,    54,    34,   171,   176,   171,   176,   171,   176,
+     232,   233,    42,   167,     7,   171,   171,   176,     7,     7,
+     171,   176,    69,     7,   171,   102,     7,   171,   171,   238,
+     167,   167,   171,   176,   171,   176,   169,   169,   169,   169,
+     169,    35,    35,    35,    35,    35,    35,    35,    35,    35,
+       7,     7,     7,     7,    35,    35,    35,    35,     7,    35,
+      35,    35,    35,    35,     7,     7,    35,    35,    35,    29,
+      29,   171,   176,    32,    49,    77,    78,   176,   176,   176,
+     176,    29,    48,   171,   171,   176,   176,   167,   227,   167,
+     229,   167,    13,   171,     7,    42,    42,   171,   171,     7,
+       7,   169,   176,    72,   167,   171,     7,   169,   169,   169,
+     171,   171,   171,   171,   171,   171,   171,   167,   167,    29,
+      29,   168,    32,    49,    77,    78,     7,     7,   228,   230,
+      13,   171,   176,     7,   171,   171,   176,    35,    35,   171,
+     176,   171,     7,    35,   171,    35,    35,     7,    35,     7,
+      35,    35,    35,    35,   168,   168,    29,    29,   171,   176,
+       7,     7,   171,   171,    13,    13,    35,    35,   115,   171,
+      13,    72,   171,   171,   168,   168,    35,    35,   227,   229,
+     171,   171,   171,    35,   171,   171,    35,    35,    13,   171
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_uint8 yyr1[] =
 {
-       0,   169,   170,   170,   170,   170,   170,   170,   170,   170,
-     170,   170,   171,   171,   171,   172,   172,   173,   173,   173,
-     174,   174,   175,   176,   176,   176,   176,   176,   176,   176,
-     177,   178,   178,   178,   178,   178,   178,   178,   178,   178,
-     178,   178,   178,   178,   178,   178,   178,   178,   178,   178,
-     178,   178,   178,   178,   178,   178,   178,   178,   179,   179,
-     179,   179,   179,   179,   179,   179,   179,   179,   179,   179,
-     179,   179,   179,   179,   179,   179,   179,   179,   179,   179,
-     179,   179,   179,   179,   179,   179,   179,   179,   179,   179,
+       0,   170,   171,   171,   171,   171,   171,   171,   171,   171,
+     171,   171,   172,   172,   172,   173,   173,   174,   174,   174,
+     175,   175,   176,   177,   177,   177,   177,   177,   177,   177,
+     178,   179,   179,   179,   179,   179,   179,   179,   179,   179,
      179,   179,   179,   179,   179,   179,   179,   179,   179,   179,
      179,   179,   179,   179,   179,   179,   179,   179,   180,   180,
-     181,   181,   181,   181,   181,   181,   181,   181,   181,   181,
-     181,   181,   181,   181,   181,   181,   181,   181,   182,   182,
-     182,   182,   182,   183,   183,   184,   184,   185,   185,   186,
-     186,   187,   187,   188,   188,   189,   189,   190,   190,   190,
-     191,   191,   191,   192,   192,   193,   193,   193,   194,   194,
-     194,   195,   195,   195,   196,   196,   197,   197,   197,   197,
-     197,   197,   197,   197,   197,   197,   197,   197,   197,   197,
-     197,   198,   198,   198,   198,   198,   198,   198,   198,   198,
-     198,   198,   198,   198,   198,   198,   199,   199,   200,   200,
-     200,   200,   200,   201,   201,   202,   202,   203,   204,   205,
-     205,   206,   206,   207,   207,   208,   208,   209,   210,   211,
-     211,   212,   212,   212,   213,   213,   214,   214,   215,   215,
-     215,   215,   215,   216,   216,   216,   217,   217,   218,   218,
-     218,   218,   218,   218,   219,   219,   220,   220,   221,   222,
-     223,   224,   224,   225,   226,   227,   226,   228,   229,   228,
-     231,   230,   232,   230,   233,   233,   233,   234,   234,   235,
-     235,   235,   235,   235,   235,   235,   235,   235,   235,   235,
-     235,   235,   235,   235,   235,   235,   235,   235,   235,   235,
-     235,   235,   235,   235,   236,   235,   235,   235,   235,   235,
-     235,   235,   235,   235,   235,   235,   235,   235,   235,   235,
-     235,   235,   235,   235,   235,   235,   235,   235,   235,   235,
-     235,   235,   235,   235,   235,   235,   235,   235,   235,   237,
-     238,   237,   240,   239,   241,   241,   241,   241,   243,   242
+     180,   180,   180,   180,   180,   180,   180,   180,   180,   180,
+     180,   180,   180,   180,   180,   180,   180,   180,   180,   180,
+     180,   180,   180,   180,   180,   180,   180,   180,   180,   180,
+     180,   180,   180,   180,   180,   180,   180,   180,   180,   180,
+     180,   180,   180,   180,   180,   180,   180,   180,   180,   181,
+     181,   182,   182,   182,   182,   182,   182,   182,   182,   182,
+     182,   182,   182,   182,   182,   182,   182,   182,   182,   183,
+     183,   183,   183,   183,   184,   184,   185,   185,   186,   186,
+     187,   187,   188,   188,   189,   189,   190,   190,   191,   191,
+     191,   192,   192,   192,   193,   193,   194,   194,   194,   195,
+     195,   195,   196,   196,   196,   197,   197,   198,   198,   198,
+     198,   198,   198,   198,   198,   198,   198,   198,   198,   198,
+     198,   198,   199,   199,   199,   199,   199,   199,   199,   199,
+     199,   199,   199,   199,   199,   199,   199,   200,   200,   201,
+     201,   201,   201,   201,   202,   202,   203,   203,   204,   205,
+     206,   206,   207,   207,   208,   208,   209,   209,   210,   211,
+     212,   212,   213,   213,   213,   214,   214,   215,   215,   216,
+     216,   216,   216,   216,   217,   217,   217,   218,   218,   219,
+     219,   219,   219,   219,   219,   220,   220,   221,   221,   222,
+     223,   224,   225,   225,   226,   227,   228,   227,   229,   230,
+     229,   232,   231,   233,   231,   234,   234,   234,   235,   235,
+     236,   236,   236,   236,   236,   236,   236,   236,   236,   236,
+     236,   236,   236,   236,   236,   236,   236,   236,   236,   236,
+     236,   236,   236,   236,   236,   236,   237,   236,   236,   236,
+     236,   236,   236,   236,   236,   236,   236,   236,   236,   236,
+     236,   236,   236,   236,   236,   236,   236,   236,   236,   236,
+     236,   236,   236,   236,   236,   236,   236,   236,   236,   236,
+     236,   238,   239,   238,   241,   240,   242,   242,   242,   242,
+     244,   243
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
@@ -1535,29 +1562,30 @@ static const yytype_int8 yyr2[] =
        6,     6,     6,     8,     6,     8,     4,     4,     4,     4,
        4,     4,     4,     4,     6,     4,     2,     4,     3,     6,
        6,     4,     4,     1,     1,     1,     1,     1,     1,     1,
-       2,     3,     4,     5,     4,     3,     5,     4,     4,     3,
-       4,     5,     4,     3,     5,     4,     4,     3,     5,     7,
-       6,     7,     6,     1,     1,     3,     4,     3,     4,     1,
-       1,     3,     4,     3,     4,     1,     1,     2,     4,     4,
-       2,     4,     4,     1,     1,     1,     1,     1,     2,     2,
-       2,     2,     2,     2,     1,     1,     4,     2,     2,     3,
-       7,     2,     2,     3,     3,     3,     3,     3,     3,     3,
-       3,     4,     2,     2,     3,     7,     2,     2,     3,     3,
-       3,     3,     3,     3,     3,     3,     1,     1,     2,     1,
-       1,     1,     3,     2,     3,     1,     1,     2,     2,     1,
-       1,     1,     1,     6,     5,     1,     1,     2,     2,     1,
-       1,     2,     1,     5,     2,     5,     1,     1,     1,     1,
-       2,     3,     3,     2,     3,     3,     1,     1,     0,     3,
-       4,     5,     5,     6,     1,     1,     1,     1,     1,     6,
-       6,     1,     1,     1,     1,     0,     4,     1,     0,     4,
-       0,     4,     0,     4,     4,     1,     1,     3,     7,     2,
-       2,     3,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     1,     3,     1,
-       4,     1,     1,     1,     0,     3,     1,     1,     2,     1,
-       3,     2,     2,     5,     5,     6,     1,     8,     2,     2,
-       1,     1,     2,     2,     2,     2,     1,     1,     1,     8,
-       8,     8,    10,     2,     3,     4,     2,     1,     0,     1,
-       0,     4,     0,     3,     1,     3,     1,     3,     0,     2
+       1,     2,     3,     4,     5,     4,     3,     5,     4,     4,
+       3,     4,     5,     4,     3,     5,     4,     4,     3,     5,
+       7,     6,     7,     6,     1,     1,     3,     4,     3,     4,
+       1,     1,     3,     4,     3,     4,     1,     1,     2,     4,
+       4,     2,     4,     4,     1,     1,     1,     1,     1,     2,
+       2,     2,     2,     2,     2,     1,     1,     4,     2,     2,
+       3,     7,     2,     2,     3,     3,     3,     3,     3,     3,
+       3,     3,     4,     2,     2,     3,     7,     2,     2,     3,
+       3,     3,     3,     3,     3,     3,     3,     1,     1,     2,
+       1,     1,     1,     3,     2,     3,     1,     1,     2,     2,
+       1,     1,     1,     1,     6,     5,     1,     1,     2,     2,
+       1,     1,     2,     1,     5,     2,     5,     1,     1,     1,
+       1,     2,     3,     3,     2,     3,     3,     1,     1,     0,
+       3,     4,     5,     5,     6,     1,     1,     1,     1,     1,
+       6,     6,     1,     1,     1,     1,     0,     4,     1,     0,
+       4,     0,     4,     0,     4,     4,     1,     1,     3,     7,
+       2,     2,     3,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     1,     2,
+       3,     1,     4,     1,     1,     1,     0,     3,     1,     1,
+       2,     1,     3,     2,     2,     5,     5,     6,     1,     8,
+       2,     2,     1,     1,     2,     2,     2,     2,     1,     1,
+       1,     8,     8,     8,    10,     2,     3,     4,     2,     1,
+       0,     1,     0,     4,     0,     3,     1,     3,     1,     3,
+       0,     2
 };
 
 
@@ -2398,7 +2426,7 @@ yyreduce:
         (yyval.string) = variable_and( _environment, (yyvsp[-2].string), (yyvsp[0].string) )->name;
         outline3("; %s = %s AND %s", (yyval.string), (yyvsp[-2].string), (yyvsp[0].string) );
     }
-#line 2402 "src-generated/ugbc.tab.c"
+#line 2430 "src-generated/ugbc.tab.c"
     break;
 
   case 4: /* expr: expr_math OR expr_math  */
@@ -2407,7 +2435,7 @@ yyreduce:
         (yyval.string) = variable_or( _environment, (yyvsp[-2].string), (yyvsp[0].string) )->name;
         outline3("; %s = %s OR %s", (yyval.string), (yyvsp[-2].string), (yyvsp[0].string) );
     }
-#line 2411 "src-generated/ugbc.tab.c"
+#line 2439 "src-generated/ugbc.tab.c"
     break;
 
   case 5: /* expr: expr_math EQUAL expr_math  */
@@ -2415,7 +2443,7 @@ yyreduce:
                                 {
         (yyval.string) = variable_compare( _environment, (yyvsp[-2].string), (yyvsp[0].string) )->name;
     }
-#line 2419 "src-generated/ugbc.tab.c"
+#line 2447 "src-generated/ugbc.tab.c"
     break;
 
   case 6: /* expr: expr_math DISEQUAL expr_math  */
@@ -2423,7 +2451,7 @@ yyreduce:
                                    {
         (yyval.string) = variable_compare_not( _environment, (yyvsp[-2].string), (yyvsp[0].string) )->name;
     }
-#line 2427 "src-generated/ugbc.tab.c"
+#line 2455 "src-generated/ugbc.tab.c"
     break;
 
   case 7: /* expr: expr_math LT expr_math  */
@@ -2431,7 +2459,7 @@ yyreduce:
                              {
         (yyval.string) = variable_less_than( _environment, (yyvsp[-2].string), (yyvsp[0].string), 0 )->name;
     }
-#line 2435 "src-generated/ugbc.tab.c"
+#line 2463 "src-generated/ugbc.tab.c"
     break;
 
   case 8: /* expr: expr_math LTE expr_math  */
@@ -2439,7 +2467,7 @@ yyreduce:
                               {
         (yyval.string) = variable_less_than( _environment, (yyvsp[-2].string), (yyvsp[0].string), 1 )->name;
     }
-#line 2443 "src-generated/ugbc.tab.c"
+#line 2471 "src-generated/ugbc.tab.c"
     break;
 
   case 9: /* expr: expr_math GT expr_math  */
@@ -2447,7 +2475,7 @@ yyreduce:
                              {
         (yyval.string) = variable_greater_than( _environment, (yyvsp[-2].string), (yyvsp[0].string), 0 )->name;
     }
-#line 2451 "src-generated/ugbc.tab.c"
+#line 2479 "src-generated/ugbc.tab.c"
     break;
 
   case 10: /* expr: expr_math GTE expr_math  */
@@ -2455,7 +2483,7 @@ yyreduce:
                               {
         (yyval.string) = variable_greater_than( _environment, (yyvsp[-2].string), (yyvsp[0].string), 0 )->name;
     }
-#line 2459 "src-generated/ugbc.tab.c"
+#line 2487 "src-generated/ugbc.tab.c"
     break;
 
   case 11: /* expr: NOT expr  */
@@ -2463,7 +2491,7 @@ yyreduce:
                {
         (yyval.string) = variable_not( _environment, (yyvsp[0].string) )->name;
     }
-#line 2467 "src-generated/ugbc.tab.c"
+#line 2495 "src-generated/ugbc.tab.c"
     break;
 
   case 13: /* expr_math: expr_math PLUS term  */
@@ -2471,7 +2499,7 @@ yyreduce:
                           {
         (yyval.string) = variable_add( _environment, (yyvsp[-2].string), (yyvsp[0].string) )->name;
     }
-#line 2475 "src-generated/ugbc.tab.c"
+#line 2503 "src-generated/ugbc.tab.c"
     break;
 
   case 14: /* expr_math: expr_math MINUS term  */
@@ -2480,7 +2508,7 @@ yyreduce:
         (yyval.string) = variable_sub( _environment, (yyvsp[-2].string), (yyvsp[0].string) )->name;
         outline3("; %s = %s - %s", (yyval.string), (yyvsp[-2].string), (yyvsp[0].string) );
     }
-#line 2484 "src-generated/ugbc.tab.c"
+#line 2512 "src-generated/ugbc.tab.c"
     break;
 
   case 18: /* modula: modula MULTIPLICATION factor  */
@@ -2489,7 +2517,7 @@ yyreduce:
         (yyval.string) = variable_mul( _environment, (yyvsp[-2].string), (yyvsp[0].string) )->name;
         outline3("; %s = %s * %s", (yyval.string), (yyvsp[-2].string), (yyvsp[0].string) );
     }
-#line 2493 "src-generated/ugbc.tab.c"
+#line 2521 "src-generated/ugbc.tab.c"
     break;
 
   case 19: /* modula: modula DIVISION factor  */
@@ -2498,7 +2526,7 @@ yyreduce:
         (yyval.string) = variable_div( _environment, (yyvsp[-2].string), (yyvsp[0].string) )->name;
         outline3("; %s = %s / %s", (yyval.string), (yyvsp[-2].string), (yyvsp[0].string) );
     }
-#line 2502 "src-generated/ugbc.tab.c"
+#line 2530 "src-generated/ugbc.tab.c"
     break;
 
   case 21: /* factor: factor POW exponential  */
@@ -2507,7 +2535,7 @@ yyreduce:
         (yyval.string) = variable_pow( _environment, (yyvsp[-2].string), (yyvsp[0].string) )->name;
         outline3("; %s = %s ^ %s", (yyval.string), (yyvsp[-2].string), (yyvsp[0].string) );
       }
-#line 2511 "src-generated/ugbc.tab.c"
+#line 2539 "src-generated/ugbc.tab.c"
     break;
 
   case 22: /* direct_integer: HASH Integer  */
@@ -2515,7 +2543,7 @@ yyreduce:
                  {
         (yyval.integer) = (yyvsp[0].integer);
     }
-#line 2519 "src-generated/ugbc.tab.c"
+#line 2547 "src-generated/ugbc.tab.c"
     break;
 
   case 23: /* random_definition_simple: BYTE  */
@@ -2523,7 +2551,7 @@ yyreduce:
            {
         (yyval.string) = random_value( _environment, VT_BYTE )->name;
     }
-#line 2527 "src-generated/ugbc.tab.c"
+#line 2555 "src-generated/ugbc.tab.c"
     break;
 
   case 24: /* random_definition_simple: WORD  */
@@ -2531,7 +2559,7 @@ yyreduce:
            {
         (yyval.string) = random_value( _environment, VT_WORD )->name;
     }
-#line 2535 "src-generated/ugbc.tab.c"
+#line 2563 "src-generated/ugbc.tab.c"
     break;
 
   case 25: /* random_definition_simple: DWORD  */
@@ -2539,7 +2567,7 @@ yyreduce:
             {
         (yyval.string) = random_value( _environment, VT_DWORD )->name;
     }
-#line 2543 "src-generated/ugbc.tab.c"
+#line 2571 "src-generated/ugbc.tab.c"
     break;
 
   case 26: /* random_definition_simple: POSITION  */
@@ -2547,7 +2575,7 @@ yyreduce:
                {
         (yyval.string) = random_value( _environment, VT_POSITION )->name;
     }
-#line 2551 "src-generated/ugbc.tab.c"
+#line 2579 "src-generated/ugbc.tab.c"
     break;
 
   case 27: /* random_definition_simple: COLOR  */
@@ -2555,7 +2583,7 @@ yyreduce:
             {
         (yyval.string) = random_value( _environment, VT_COLOR )->name;
     }
-#line 2559 "src-generated/ugbc.tab.c"
+#line 2587 "src-generated/ugbc.tab.c"
     break;
 
   case 28: /* random_definition_simple: WIDTH  */
@@ -2563,7 +2591,7 @@ yyreduce:
             {
         (yyval.string) = random_width( _environment )->name;
     }
-#line 2567 "src-generated/ugbc.tab.c"
+#line 2595 "src-generated/ugbc.tab.c"
     break;
 
   case 29: /* random_definition_simple: HEIGHT  */
@@ -2571,7 +2599,7 @@ yyreduce:
              {
         (yyval.string) = random_height( _environment )->name;
     }
-#line 2575 "src-generated/ugbc.tab.c"
+#line 2603 "src-generated/ugbc.tab.c"
     break;
 
   case 30: /* random_definition: random_definition_simple  */
@@ -2579,7 +2607,7 @@ yyreduce:
                                {
           (yyval.string) = (yyvsp[0].string);
       }
-#line 2583 "src-generated/ugbc.tab.c"
+#line 2611 "src-generated/ugbc.tab.c"
     break;
 
   case 31: /* color_enumeration: BLACK  */
@@ -2588,7 +2616,7 @@ yyreduce:
           (yyval.string) = variable_temporary( _environment, VT_COLOR, "(color BLACK)" )->name;
           variable_store( _environment, (yyval.string), COLOR_BLACK );
       }
-#line 2592 "src-generated/ugbc.tab.c"
+#line 2620 "src-generated/ugbc.tab.c"
     break;
 
   case 32: /* color_enumeration: WHITE  */
@@ -2597,7 +2625,7 @@ yyreduce:
           (yyval.string) = variable_temporary( _environment, VT_COLOR, "(color WHITE)" )->name;
           variable_store( _environment, (yyval.string), COLOR_WHITE );
       }
-#line 2601 "src-generated/ugbc.tab.c"
+#line 2629 "src-generated/ugbc.tab.c"
     break;
 
   case 33: /* color_enumeration: RED  */
@@ -2606,7 +2634,7 @@ yyreduce:
           (yyval.string) = variable_temporary( _environment, VT_COLOR, "(color BLACK)" )->name;
           variable_store( _environment, (yyval.string), COLOR_RED );
       }
-#line 2610 "src-generated/ugbc.tab.c"
+#line 2638 "src-generated/ugbc.tab.c"
     break;
 
   case 34: /* color_enumeration: CYAN  */
@@ -2615,7 +2643,7 @@ yyreduce:
           (yyval.string) = variable_temporary( _environment, VT_COLOR, "(color CYAN)" )->name;
           variable_store( _environment, (yyval.string), COLOR_CYAN );
       }
-#line 2619 "src-generated/ugbc.tab.c"
+#line 2647 "src-generated/ugbc.tab.c"
     break;
 
   case 35: /* color_enumeration: VIOLET  */
@@ -2624,7 +2652,7 @@ yyreduce:
           (yyval.string) = variable_temporary( _environment, VT_COLOR, "(color VIOLET)" )->name;
           variable_store( _environment, (yyval.string), COLOR_VIOLET );
       }
-#line 2628 "src-generated/ugbc.tab.c"
+#line 2656 "src-generated/ugbc.tab.c"
     break;
 
   case 36: /* color_enumeration: GREEN  */
@@ -2633,7 +2661,7 @@ yyreduce:
           (yyval.string) = variable_temporary( _environment, VT_COLOR, "(color GREEN)" )->name;
           variable_store( _environment, (yyval.string), COLOR_GREEN );
       }
-#line 2637 "src-generated/ugbc.tab.c"
+#line 2665 "src-generated/ugbc.tab.c"
     break;
 
   case 37: /* color_enumeration: BLUE  */
@@ -2642,7 +2670,7 @@ yyreduce:
           (yyval.string) = variable_temporary( _environment, VT_COLOR, "(color BLUE)" )->name;
           variable_store( _environment, (yyval.string), COLOR_BLUE );
       }
-#line 2646 "src-generated/ugbc.tab.c"
+#line 2674 "src-generated/ugbc.tab.c"
     break;
 
   case 38: /* color_enumeration: YELLOW  */
@@ -2651,7 +2679,7 @@ yyreduce:
           (yyval.string) = variable_temporary( _environment, VT_COLOR, "(color YELLOW)" )->name;
           variable_store( _environment, (yyval.string), COLOR_YELLOW );
       }
-#line 2655 "src-generated/ugbc.tab.c"
+#line 2683 "src-generated/ugbc.tab.c"
     break;
 
   case 39: /* color_enumeration: ORANGE  */
@@ -2660,7 +2688,7 @@ yyreduce:
           (yyval.string) = variable_temporary( _environment, VT_COLOR, "(color ORANGE)" )->name;
           variable_store( _environment, (yyval.string), COLOR_ORANGE );
       }
-#line 2664 "src-generated/ugbc.tab.c"
+#line 2692 "src-generated/ugbc.tab.c"
     break;
 
   case 40: /* color_enumeration: BROWN  */
@@ -2669,7 +2697,7 @@ yyreduce:
           (yyval.string) = variable_temporary( _environment, VT_COLOR, "(color BROWN)" )->name;
           variable_store( _environment, (yyval.string), COLOR_BROWN );
       }
-#line 2673 "src-generated/ugbc.tab.c"
+#line 2701 "src-generated/ugbc.tab.c"
     break;
 
   case 41: /* color_enumeration: LIGHT RED  */
@@ -2678,7 +2706,7 @@ yyreduce:
           (yyval.string) = variable_temporary( _environment, VT_COLOR, "(color LIGHT RED)" )->name;
           variable_store( _environment, (yyval.string), COLOR_LIGHT_RED );
       }
-#line 2682 "src-generated/ugbc.tab.c"
+#line 2710 "src-generated/ugbc.tab.c"
     break;
 
   case 42: /* color_enumeration: DARK GREY  */
@@ -2687,7 +2715,7 @@ yyreduce:
           (yyval.string) = variable_temporary( _environment, VT_COLOR, "(color DARK GREY)" )->name;
           variable_store( _environment, (yyval.string), COLOR_DARK_GREY );
       }
-#line 2691 "src-generated/ugbc.tab.c"
+#line 2719 "src-generated/ugbc.tab.c"
     break;
 
   case 43: /* color_enumeration: GREY  */
@@ -2696,7 +2724,7 @@ yyreduce:
           (yyval.string) = variable_temporary( _environment, VT_COLOR, "(color GREY)" )->name;
           variable_store( _environment, (yyval.string), COLOR_GREY );
       }
-#line 2700 "src-generated/ugbc.tab.c"
+#line 2728 "src-generated/ugbc.tab.c"
     break;
 
   case 44: /* color_enumeration: LIGHT GREEN  */
@@ -2705,7 +2733,7 @@ yyreduce:
           (yyval.string) = variable_temporary( _environment, VT_COLOR, "(color LIGHT GREEN)" )->name;
           variable_store( _environment, (yyval.string), COLOR_LIGHT_GREEN );
       }
-#line 2709 "src-generated/ugbc.tab.c"
+#line 2737 "src-generated/ugbc.tab.c"
     break;
 
   case 45: /* color_enumeration: LIGHT BLUE  */
@@ -2714,7 +2742,7 @@ yyreduce:
           (yyval.string) = variable_temporary( _environment, VT_COLOR, "(color LIGHT BLUE)" )->name;
           variable_store( _environment, (yyval.string), COLOR_LIGHT_BLUE );
       }
-#line 2718 "src-generated/ugbc.tab.c"
+#line 2746 "src-generated/ugbc.tab.c"
     break;
 
   case 46: /* color_enumeration: LIGHT GREY  */
@@ -2723,7 +2751,7 @@ yyreduce:
           (yyval.string) = variable_temporary( _environment, VT_COLOR, "(color LIGHT GREY)" )->name;
           variable_store( _environment, (yyval.string), COLOR_LIGHT_GREY );
       }
-#line 2727 "src-generated/ugbc.tab.c"
+#line 2755 "src-generated/ugbc.tab.c"
     break;
 
   case 47: /* color_enumeration: DARK BLUE  */
@@ -2732,7 +2760,7 @@ yyreduce:
           (yyval.string) = variable_temporary( _environment, VT_COLOR, "(color DARK BLUE)" )->name;
           variable_store( _environment, (yyval.string), COLOR_DARK_BLUE );
       }
-#line 2736 "src-generated/ugbc.tab.c"
+#line 2764 "src-generated/ugbc.tab.c"
     break;
 
   case 48: /* color_enumeration: MAGENTA  */
@@ -2741,7 +2769,7 @@ yyreduce:
           (yyval.string) = variable_temporary( _environment, VT_COLOR, "(color MAGENTA)" )->name;
           variable_store( _environment, (yyval.string), COLOR_MAGENTA );
       }
-#line 2745 "src-generated/ugbc.tab.c"
+#line 2773 "src-generated/ugbc.tab.c"
     break;
 
   case 49: /* color_enumeration: PURPLE  */
@@ -2750,7 +2778,7 @@ yyreduce:
           (yyval.string) = variable_temporary( _environment, VT_COLOR, "(color PURPLE)" )->name;
           variable_store( _environment, (yyval.string), COLOR_PURPLE );
       }
-#line 2754 "src-generated/ugbc.tab.c"
+#line 2782 "src-generated/ugbc.tab.c"
     break;
 
   case 50: /* color_enumeration: LAVENDER  */
@@ -2759,7 +2787,7 @@ yyreduce:
           (yyval.string) = variable_temporary( _environment, VT_COLOR, "(color LAVENDER)" )->name;
           variable_store( _environment, (yyval.string), COLOR_LAVENDER );
       }
-#line 2763 "src-generated/ugbc.tab.c"
+#line 2791 "src-generated/ugbc.tab.c"
     break;
 
   case 51: /* color_enumeration: GOLD  */
@@ -2768,7 +2796,7 @@ yyreduce:
           (yyval.string) = variable_temporary( _environment, VT_COLOR, "(color GOLD)" )->name;
           variable_store( _environment, (yyval.string), COLOR_GOLD );
       }
-#line 2772 "src-generated/ugbc.tab.c"
+#line 2800 "src-generated/ugbc.tab.c"
     break;
 
   case 52: /* color_enumeration: TURQUOISE  */
@@ -2777,7 +2805,7 @@ yyreduce:
           (yyval.string) = variable_temporary( _environment, VT_COLOR, "(color TURQUOISE)" )->name;
           variable_store( _environment, (yyval.string), COLOR_TURQUOISE );
       }
-#line 2781 "src-generated/ugbc.tab.c"
+#line 2809 "src-generated/ugbc.tab.c"
     break;
 
   case 53: /* color_enumeration: TAN  */
@@ -2786,7 +2814,7 @@ yyreduce:
           (yyval.string) = variable_temporary( _environment, VT_COLOR, "(color TAN)" )->name;
           variable_store( _environment, (yyval.string), COLOR_TAN );
       }
-#line 2790 "src-generated/ugbc.tab.c"
+#line 2818 "src-generated/ugbc.tab.c"
     break;
 
   case 54: /* color_enumeration: YELLOW GREEN  */
@@ -2795,7 +2823,7 @@ yyreduce:
           (yyval.string) = variable_temporary( _environment, VT_COLOR, "(color YELLOW GREEN)" )->name;
           variable_store( _environment, (yyval.string), COLOR_YELLOW_GREEN );
       }
-#line 2799 "src-generated/ugbc.tab.c"
+#line 2827 "src-generated/ugbc.tab.c"
     break;
 
   case 55: /* color_enumeration: OLIVE GREEN  */
@@ -2804,7 +2832,7 @@ yyreduce:
           (yyval.string) = variable_temporary( _environment, VT_COLOR, "(color OLIVE)" )->name;
           variable_store( _environment, (yyval.string), COLOR_OLIVE_GREEN );
       }
-#line 2808 "src-generated/ugbc.tab.c"
+#line 2836 "src-generated/ugbc.tab.c"
     break;
 
   case 56: /* color_enumeration: PINK  */
@@ -2813,7 +2841,7 @@ yyreduce:
           (yyval.string) = variable_temporary( _environment, VT_COLOR, "(color PINK)" )->name;
           variable_store( _environment, (yyval.string), COLOR_PINK );
       }
-#line 2817 "src-generated/ugbc.tab.c"
+#line 2845 "src-generated/ugbc.tab.c"
     break;
 
   case 57: /* color_enumeration: PEACH  */
@@ -2822,7 +2850,7 @@ yyreduce:
           (yyval.string) = variable_temporary( _environment, VT_COLOR, "(color PEACH)" )->name;
           variable_store( _environment, (yyval.string), COLOR_PEACH );
       }
-#line 2826 "src-generated/ugbc.tab.c"
+#line 2854 "src-generated/ugbc.tab.c"
     break;
 
   case 58: /* exponential: Identifier  */
@@ -2830,7 +2858,7 @@ yyreduce:
                  { 
         (yyval.string) = (yyvsp[0].string);
       }
-#line 2834 "src-generated/ugbc.tab.c"
+#line 2862 "src-generated/ugbc.tab.c"
     break;
 
   case 59: /* exponential: Identifier DOLLAR  */
@@ -2838,7 +2866,7 @@ yyreduce:
                         { 
         (yyval.string) = (yyvsp[-1].string);
       }
-#line 2842 "src-generated/ugbc.tab.c"
+#line 2870 "src-generated/ugbc.tab.c"
     break;
 
   case 60: /* exponential: Integer  */
@@ -2852,7 +2880,7 @@ yyreduce:
             variable_store( _environment, (yyval.string), (yyvsp[0].integer) );
         }
       }
-#line 2856 "src-generated/ugbc.tab.c"
+#line 2884 "src-generated/ugbc.tab.c"
     break;
 
   case 61: /* exponential: MINUS Integer  */
@@ -2861,7 +2889,7 @@ yyreduce:
         (yyval.string) = variable_temporary( _environment, VT_SWORD, "(negative integer value)" )->name;
         variable_store( _environment, (yyval.string), -(yyvsp[0].integer) );
       }
-#line 2865 "src-generated/ugbc.tab.c"
+#line 2893 "src-generated/ugbc.tab.c"
     break;
 
   case 62: /* exponential: String  */
@@ -2873,7 +2901,7 @@ yyreduce:
         variable_store_string( _environment, (yyval.string), (yyvsp[0].string) );
         outline2("; variable stored: %s = %s", (yyval.string), (yyvsp[0].string) );
       }
-#line 2877 "src-generated/ugbc.tab.c"
+#line 2905 "src-generated/ugbc.tab.c"
     break;
 
   case 63: /* exponential: OP BYTE CP Integer  */
@@ -2882,7 +2910,7 @@ yyreduce:
         (yyval.string) = variable_temporary( _environment, VT_BYTE, "(BYTE value)" )->name;
         variable_store( _environment, (yyval.string), (yyvsp[0].integer) );
       }
-#line 2886 "src-generated/ugbc.tab.c"
+#line 2914 "src-generated/ugbc.tab.c"
     break;
 
   case 64: /* exponential: OP SIGNED BYTE CP Integer  */
@@ -2891,7 +2919,7 @@ yyreduce:
         (yyval.string) = variable_temporary( _environment, VT_SBYTE, "(signed BYTE value)" )->name;
         variable_store( _environment, (yyval.string), (yyvsp[0].integer) );
       }
-#line 2895 "src-generated/ugbc.tab.c"
+#line 2923 "src-generated/ugbc.tab.c"
     break;
 
   case 65: /* exponential: OP WORD CP Integer  */
@@ -2900,7 +2928,7 @@ yyreduce:
         (yyval.string) = variable_temporary( _environment, VT_WORD, "(WORD value)" )->name;
         variable_store( _environment, (yyval.string), (yyvsp[0].integer) );
       }
-#line 2904 "src-generated/ugbc.tab.c"
+#line 2932 "src-generated/ugbc.tab.c"
     break;
 
   case 66: /* exponential: OP SIGNED WORD CP Integer  */
@@ -2909,7 +2937,7 @@ yyreduce:
         (yyval.string) = variable_temporary( _environment, VT_WORD, "(signed WORD value)" )->name;
         variable_store( _environment, (yyval.string), (yyvsp[0].integer) );
       }
-#line 2913 "src-generated/ugbc.tab.c"
+#line 2941 "src-generated/ugbc.tab.c"
     break;
 
   case 67: /* exponential: OP DWORD CP Integer  */
@@ -2918,7 +2946,7 @@ yyreduce:
         (yyval.string) = variable_temporary( _environment, VT_DWORD, "(DWORD value)" )->name;
         variable_store( _environment, (yyval.string), (yyvsp[0].integer) );
       }
-#line 2922 "src-generated/ugbc.tab.c"
+#line 2950 "src-generated/ugbc.tab.c"
     break;
 
   case 68: /* exponential: OP SIGNED DWORD CP Integer  */
@@ -2927,7 +2955,7 @@ yyreduce:
         (yyval.string) = variable_temporary( _environment, VT_DWORD, "(DWORD value)" )->name;
         variable_store( _environment, (yyval.string), (yyvsp[0].integer) );
       }
-#line 2931 "src-generated/ugbc.tab.c"
+#line 2959 "src-generated/ugbc.tab.c"
     break;
 
   case 69: /* exponential: OP POSITION CP Integer  */
@@ -2936,7 +2964,7 @@ yyreduce:
         (yyval.string) = variable_temporary( _environment, VT_POSITION, "(POSITION value)" )->name;
         variable_store( _environment, (yyval.string), (yyvsp[0].integer) );
       }
-#line 2940 "src-generated/ugbc.tab.c"
+#line 2968 "src-generated/ugbc.tab.c"
     break;
 
   case 70: /* exponential: OP COLOR CP Integer  */
@@ -2945,7 +2973,7 @@ yyreduce:
         (yyval.string) = variable_temporary( _environment, VT_COLOR, "(COLOR value)" )->name;
         variable_store( _environment, (yyval.string), (yyvsp[0].integer) );
       }
-#line 2949 "src-generated/ugbc.tab.c"
+#line 2977 "src-generated/ugbc.tab.c"
     break;
 
   case 71: /* exponential: color_enumeration  */
@@ -2953,7 +2981,7 @@ yyreduce:
                         { 
         (yyval.string) = (yyvsp[0].string);
       }
-#line 2957 "src-generated/ugbc.tab.c"
+#line 2985 "src-generated/ugbc.tab.c"
     break;
 
   case 72: /* exponential: PEEK OP direct_integer CP  */
@@ -2961,7 +2989,7 @@ yyreduce:
                                 {
         (yyval.string) = peek( _environment, (yyvsp[-1].integer) )->name;
       }
-#line 2965 "src-generated/ugbc.tab.c"
+#line 2993 "src-generated/ugbc.tab.c"
     break;
 
   case 73: /* exponential: PEEK OP expr CP  */
@@ -2969,7 +2997,7 @@ yyreduce:
                       {
         (yyval.string) = peek_var( _environment, (yyvsp[-1].string) )->name;
       }
-#line 2973 "src-generated/ugbc.tab.c"
+#line 3001 "src-generated/ugbc.tab.c"
     break;
 
   case 74: /* exponential: XPEN  */
@@ -2977,7 +3005,7 @@ yyreduce:
            {
         (yyval.string) = xpen( _environment )->name;
       }
-#line 2981 "src-generated/ugbc.tab.c"
+#line 3009 "src-generated/ugbc.tab.c"
     break;
 
   case 75: /* exponential: YPEN  */
@@ -2985,7 +3013,7 @@ yyreduce:
            {
         (yyval.string) = ypen( _environment )->name;
       }
-#line 2989 "src-generated/ugbc.tab.c"
+#line 3017 "src-generated/ugbc.tab.c"
     break;
 
   case 76: /* exponential: COLLISION OP direct_integer CP  */
@@ -2993,7 +3021,7 @@ yyreduce:
                                      {
         (yyval.string) = collision_to( _environment, (yyvsp[-1].integer) )->name;
       }
-#line 2997 "src-generated/ugbc.tab.c"
+#line 3025 "src-generated/ugbc.tab.c"
     break;
 
   case 77: /* exponential: COLLISION OP expr CP  */
@@ -3001,7 +3029,7 @@ yyreduce:
                            {
         (yyval.string) = collision_to_vars( _environment, (yyvsp[-1].string) )->name;
       }
-#line 3005 "src-generated/ugbc.tab.c"
+#line 3033 "src-generated/ugbc.tab.c"
     break;
 
   case 78: /* exponential: HIT OP direct_integer CP  */
@@ -3009,7 +3037,7 @@ yyreduce:
                                {
         (yyval.string) = collision_to( _environment, (yyvsp[-1].integer) )->name;
       }
-#line 3013 "src-generated/ugbc.tab.c"
+#line 3041 "src-generated/ugbc.tab.c"
     break;
 
   case 79: /* exponential: HIT OP expr CP  */
@@ -3017,7 +3045,7 @@ yyreduce:
                      {
         (yyval.string) = collision_to_vars( _environment, (yyvsp[-1].string) )->name;
       }
-#line 3021 "src-generated/ugbc.tab.c"
+#line 3049 "src-generated/ugbc.tab.c"
     break;
 
   case 80: /* exponential: LEFT OP expr COMMA expr CP  */
@@ -3025,7 +3053,7 @@ yyreduce:
                                  {
         (yyval.string) = variable_string_left( _environment, (yyvsp[-3].string), (yyvsp[-1].string) )->name;
     }
-#line 3029 "src-generated/ugbc.tab.c"
+#line 3057 "src-generated/ugbc.tab.c"
     break;
 
   case 81: /* exponential: RIGHT OP expr COMMA expr CP  */
@@ -3033,7 +3061,7 @@ yyreduce:
                                   {
         (yyval.string) = variable_string_right( _environment, (yyvsp[-3].string), (yyvsp[-1].string) )->name;
     }
-#line 3037 "src-generated/ugbc.tab.c"
+#line 3065 "src-generated/ugbc.tab.c"
     break;
 
   case 82: /* exponential: MID OP expr COMMA expr CP  */
@@ -3041,7 +3069,7 @@ yyreduce:
                                 {
         (yyval.string) = variable_string_mid( _environment, (yyvsp[-3].string), (yyvsp[-1].string), NULL )->name;
     }
-#line 3045 "src-generated/ugbc.tab.c"
+#line 3073 "src-generated/ugbc.tab.c"
     break;
 
   case 83: /* exponential: MID OP expr COMMA expr COMMA expr CP  */
@@ -3049,7 +3077,7 @@ yyreduce:
                                            {
         (yyval.string) = variable_string_mid( _environment, (yyvsp[-5].string), (yyvsp[-3].string), (yyvsp[-1].string) )->name;
     }
-#line 3053 "src-generated/ugbc.tab.c"
+#line 3081 "src-generated/ugbc.tab.c"
     break;
 
   case 84: /* exponential: INSTR OP expr COMMA expr CP  */
@@ -3057,7 +3085,7 @@ yyreduce:
                                   {
         (yyval.string) = variable_string_instr( _environment, (yyvsp[-3].string), (yyvsp[-1].string), NULL )->name;
     }
-#line 3061 "src-generated/ugbc.tab.c"
+#line 3089 "src-generated/ugbc.tab.c"
     break;
 
   case 85: /* exponential: INSTR OP expr COMMA expr COMMA expr CP  */
@@ -3065,7 +3093,7 @@ yyreduce:
                                              {
         (yyval.string) = variable_string_instr( _environment, (yyvsp[-5].string), (yyvsp[-3].string), (yyvsp[-1].string) )->name;
     }
-#line 3069 "src-generated/ugbc.tab.c"
+#line 3097 "src-generated/ugbc.tab.c"
     break;
 
   case 86: /* exponential: UPPER OP expr CP  */
@@ -3073,7 +3101,7 @@ yyreduce:
                        {
         (yyval.string) = variable_string_upper( _environment, (yyvsp[-1].string) )->name;
     }
-#line 3077 "src-generated/ugbc.tab.c"
+#line 3105 "src-generated/ugbc.tab.c"
     break;
 
   case 87: /* exponential: LOWER OP expr CP  */
@@ -3081,7 +3109,7 @@ yyreduce:
                        {
         (yyval.string) = variable_string_lower( _environment, (yyvsp[-1].string) )->name;
     }
-#line 3085 "src-generated/ugbc.tab.c"
+#line 3113 "src-generated/ugbc.tab.c"
     break;
 
   case 88: /* exponential: STR OP expr CP  */
@@ -3089,7 +3117,7 @@ yyreduce:
                      {
         (yyval.string) = variable_string_str( _environment, (yyvsp[-1].string) )->name;
     }
-#line 3093 "src-generated/ugbc.tab.c"
+#line 3121 "src-generated/ugbc.tab.c"
     break;
 
   case 89: /* exponential: SPACE OP expr CP  */
@@ -3097,7 +3125,7 @@ yyreduce:
                        {
         (yyval.string) = variable_string_space( _environment, (yyvsp[-1].string) )->name;
     }
-#line 3101 "src-generated/ugbc.tab.c"
+#line 3129 "src-generated/ugbc.tab.c"
     break;
 
   case 90: /* exponential: FLIP OP expr CP  */
@@ -3105,7 +3133,7 @@ yyreduce:
                       {
         (yyval.string) = variable_string_flip( _environment, (yyvsp[-1].string) )->name;
     }
-#line 3109 "src-generated/ugbc.tab.c"
+#line 3137 "src-generated/ugbc.tab.c"
     break;
 
   case 91: /* exponential: CHR OP expr CP  */
@@ -3113,7 +3141,7 @@ yyreduce:
                      {
         (yyval.string) = variable_string_chr( _environment, (yyvsp[-1].string) )->name;
     }
-#line 3117 "src-generated/ugbc.tab.c"
+#line 3145 "src-generated/ugbc.tab.c"
     break;
 
   case 92: /* exponential: ASC OP expr CP  */
@@ -3121,7 +3149,7 @@ yyreduce:
                      {
         (yyval.string) = variable_string_asc( _environment, (yyvsp[-1].string) )->name;
     }
-#line 3125 "src-generated/ugbc.tab.c"
+#line 3153 "src-generated/ugbc.tab.c"
     break;
 
   case 93: /* exponential: LEN OP expr CP  */
@@ -3129,7 +3157,7 @@ yyreduce:
                      {
         (yyval.string) = variable_string_len( _environment, (yyvsp[-1].string) )->name;
     }
-#line 3133 "src-generated/ugbc.tab.c"
+#line 3161 "src-generated/ugbc.tab.c"
     break;
 
   case 94: /* exponential: STRING OP expr COMMA expr CP  */
@@ -3137,7 +3165,7 @@ yyreduce:
                                    {
         (yyval.string) = variable_string_string( _environment, (yyvsp[-3].string), (yyvsp[-1].string) )->name;
     }
-#line 3141 "src-generated/ugbc.tab.c"
+#line 3169 "src-generated/ugbc.tab.c"
     break;
 
   case 95: /* exponential: VAL OP expr CP  */
@@ -3145,7 +3173,7 @@ yyreduce:
                      {
         (yyval.string) = variable_string_val( _environment, (yyvsp[-1].string) )->name;
     }
-#line 3149 "src-generated/ugbc.tab.c"
+#line 3177 "src-generated/ugbc.tab.c"
     break;
 
   case 96: /* exponential: RANDOM random_definition  */
@@ -3153,7 +3181,7 @@ yyreduce:
                                {
         (yyval.string) = (yyvsp[0].string);
     }
-#line 3157 "src-generated/ugbc.tab.c"
+#line 3185 "src-generated/ugbc.tab.c"
     break;
 
   case 97: /* exponential: RND OP expr CP  */
@@ -3161,7 +3189,7 @@ yyreduce:
                      {
         (yyval.string) = variable_rnd( _environment, (yyvsp[-1].string) )->name;
     }
-#line 3165 "src-generated/ugbc.tab.c"
+#line 3193 "src-generated/ugbc.tab.c"
     break;
 
   case 98: /* exponential: OP expr CP  */
@@ -3169,7 +3197,7 @@ yyreduce:
                  {
         (yyval.string) = (yyvsp[-1].string);
     }
-#line 3173 "src-generated/ugbc.tab.c"
+#line 3201 "src-generated/ugbc.tab.c"
     break;
 
   case 99: /* exponential: MAX OP expr COMMA expr CP  */
@@ -3177,7 +3205,7 @@ yyreduce:
                                 {
         (yyval.string) = variable_max( _environment, (yyvsp[-3].string), (yyvsp[-1].string) )->name;
     }
-#line 3181 "src-generated/ugbc.tab.c"
+#line 3209 "src-generated/ugbc.tab.c"
     break;
 
   case 100: /* exponential: MIN OP expr COMMA expr CP  */
@@ -3185,7 +3213,7 @@ yyreduce:
                                 {
         (yyval.string) = variable_min( _environment, (yyvsp[-3].string), (yyvsp[-1].string) )->name;
     }
-#line 3189 "src-generated/ugbc.tab.c"
+#line 3217 "src-generated/ugbc.tab.c"
     break;
 
   case 101: /* exponential: SGN OP expr CP  */
@@ -3193,7 +3221,7 @@ yyreduce:
                      {
         (yyval.string) = variable_sgn( _environment, (yyvsp[-1].string) )->name;
     }
-#line 3197 "src-generated/ugbc.tab.c"
+#line 3225 "src-generated/ugbc.tab.c"
     break;
 
   case 102: /* exponential: ABS OP expr CP  */
@@ -3201,7 +3229,7 @@ yyreduce:
                      {
         (yyval.string) = variable_abs( _environment, (yyvsp[-1].string) )->name;
     }
-#line 3205 "src-generated/ugbc.tab.c"
+#line 3233 "src-generated/ugbc.tab.c"
     break;
 
   case 103: /* exponential: TRUE  */
@@ -3210,7 +3238,7 @@ yyreduce:
         (yyval.string) = variable_temporary( _environment, VT_BYTE, "(true)" )->name;
         variable_store( _environment, (yyval.string), 255 );
     }
-#line 3214 "src-generated/ugbc.tab.c"
+#line 3242 "src-generated/ugbc.tab.c"
     break;
 
   case 104: /* exponential: FALSE  */
@@ -3219,7 +3247,7 @@ yyreduce:
         (yyval.string) = variable_temporary( _environment, VT_BYTE, "(false)" )->name;
         variable_store( _environment, (yyval.string), 255 );
     }
-#line 3223 "src-generated/ugbc.tab.c"
+#line 3251 "src-generated/ugbc.tab.c"
     break;
 
   case 105: /* exponential: COLORS  */
@@ -3228,7 +3256,7 @@ yyreduce:
         (yyval.string) = variable_temporary( _environment, VT_COLOR, "(COLORS)" )->name;
         variable_store( _environment, (yyval.string), 16 );
     }
-#line 3232 "src-generated/ugbc.tab.c"
+#line 3260 "src-generated/ugbc.tab.c"
     break;
 
   case 106: /* exponential: WIDTH  */
@@ -3236,7 +3264,7 @@ yyreduce:
             {
         (yyval.string) = screen_get_width( _environment )->name;
     }
-#line 3240 "src-generated/ugbc.tab.c"
+#line 3268 "src-generated/ugbc.tab.c"
     break;
 
   case 107: /* exponential: HEIGHT  */
@@ -3244,1289 +3272,1305 @@ yyreduce:
              {
         (yyval.string) = screen_get_height( _environment )->name;
     }
-#line 3248 "src-generated/ugbc.tab.c"
+#line 3276 "src-generated/ugbc.tab.c"
     break;
 
-  case 110: /* bank_definition_simple: AT direct_integer  */
-#line 458 "src/ugbc.y"
+  case 108: /* exponential: TIMER  */
+#line 453 "src/ugbc.y"
+            {
+        (yyval.string) = get_timer( _environment )->name;
+    }
+#line 3284 "src-generated/ugbc.tab.c"
+    break;
+
+  case 111: /* bank_definition_simple: AT direct_integer  */
+#line 461 "src/ugbc.y"
                     {
       bank_define( _environment, NULL, BT_DATA, (yyvsp[0].integer), NULL );
   }
-#line 3256 "src-generated/ugbc.tab.c"
+#line 3292 "src-generated/ugbc.tab.c"
     break;
 
-  case 111: /* bank_definition_simple: Identifier AT direct_integer  */
-#line 461 "src/ugbc.y"
+  case 112: /* bank_definition_simple: Identifier AT direct_integer  */
+#line 464 "src/ugbc.y"
                                  {
       bank_define( _environment, (yyvsp[-2].string), BT_DATA, (yyvsp[0].integer), NULL );
   }
-#line 3264 "src-generated/ugbc.tab.c"
+#line 3300 "src-generated/ugbc.tab.c"
     break;
 
-  case 112: /* bank_definition_simple: AT direct_integer AS DATA  */
-#line 464 "src/ugbc.y"
+  case 113: /* bank_definition_simple: AT direct_integer AS DATA  */
+#line 467 "src/ugbc.y"
                               {
       bank_define( _environment, NULL, BT_DATA, (yyvsp[-2].integer), NULL );
   }
-#line 3272 "src-generated/ugbc.tab.c"
+#line 3308 "src-generated/ugbc.tab.c"
     break;
 
-  case 113: /* bank_definition_simple: Identifier AT direct_integer AS DATA  */
-#line 467 "src/ugbc.y"
+  case 114: /* bank_definition_simple: Identifier AT direct_integer AS DATA  */
+#line 470 "src/ugbc.y"
                                          {
       bank_define( _environment, (yyvsp[-4].string), BT_DATA, (yyvsp[-2].integer), NULL );
   }
-#line 3280 "src-generated/ugbc.tab.c"
+#line 3316 "src-generated/ugbc.tab.c"
     break;
 
-  case 114: /* bank_definition_simple: DATA Identifier AT direct_integer  */
-#line 470 "src/ugbc.y"
+  case 115: /* bank_definition_simple: DATA Identifier AT direct_integer  */
+#line 473 "src/ugbc.y"
                                       {
       bank_define( _environment, (yyvsp[-2].string), BT_DATA, (yyvsp[0].integer), NULL );
   }
-#line 3288 "src-generated/ugbc.tab.c"
+#line 3324 "src-generated/ugbc.tab.c"
     break;
 
-  case 115: /* bank_definition_simple: DATA AT direct_integer  */
-#line 473 "src/ugbc.y"
+  case 116: /* bank_definition_simple: DATA AT direct_integer  */
+#line 476 "src/ugbc.y"
                            {
       bank_define( _environment, NULL, BT_DATA, (yyvsp[0].integer), NULL );
   }
-#line 3296 "src-generated/ugbc.tab.c"
+#line 3332 "src-generated/ugbc.tab.c"
     break;
 
-  case 116: /* bank_definition_simple: Identifier AT direct_integer AS CODE  */
-#line 477 "src/ugbc.y"
+  case 117: /* bank_definition_simple: Identifier AT direct_integer AS CODE  */
+#line 480 "src/ugbc.y"
                                          {
       bank_define( _environment, (yyvsp[-4].string), BT_CODE, (yyvsp[-2].integer), NULL );
   }
-#line 3304 "src-generated/ugbc.tab.c"
+#line 3340 "src-generated/ugbc.tab.c"
     break;
 
-  case 117: /* bank_definition_simple: AT direct_integer AS CODE  */
-#line 480 "src/ugbc.y"
+  case 118: /* bank_definition_simple: AT direct_integer AS CODE  */
+#line 483 "src/ugbc.y"
                               {
       bank_define( _environment, NULL, BT_CODE, (yyvsp[-2].integer), NULL );
   }
-#line 3312 "src-generated/ugbc.tab.c"
+#line 3348 "src-generated/ugbc.tab.c"
     break;
 
-  case 118: /* bank_definition_simple: CODE Identifier AT direct_integer  */
-#line 483 "src/ugbc.y"
+  case 119: /* bank_definition_simple: CODE Identifier AT direct_integer  */
+#line 486 "src/ugbc.y"
                                       {
       bank_define( _environment, (yyvsp[-2].string), BT_CODE, (yyvsp[0].integer), NULL );
   }
-#line 3320 "src-generated/ugbc.tab.c"
+#line 3356 "src-generated/ugbc.tab.c"
     break;
 
-  case 119: /* bank_definition_simple: CODE AT direct_integer  */
-#line 486 "src/ugbc.y"
+  case 120: /* bank_definition_simple: CODE AT direct_integer  */
+#line 489 "src/ugbc.y"
                            {
       bank_define( _environment, NULL, BT_CODE, (yyvsp[0].integer), NULL );
   }
-#line 3328 "src-generated/ugbc.tab.c"
+#line 3364 "src-generated/ugbc.tab.c"
     break;
 
-  case 120: /* bank_definition_simple: AT direct_integer AS VARIABLES  */
-#line 490 "src/ugbc.y"
+  case 121: /* bank_definition_simple: AT direct_integer AS VARIABLES  */
+#line 493 "src/ugbc.y"
                                    {
       bank_define( _environment, NULL, BT_VARIABLES, (yyvsp[-2].integer), NULL );
   }
-#line 3336 "src-generated/ugbc.tab.c"
+#line 3372 "src-generated/ugbc.tab.c"
     break;
 
-  case 121: /* bank_definition_simple: Identifier AT direct_integer AS VARIABLES  */
-#line 493 "src/ugbc.y"
+  case 122: /* bank_definition_simple: Identifier AT direct_integer AS VARIABLES  */
+#line 496 "src/ugbc.y"
                                               {
       bank_define( _environment, (yyvsp[-4].string), BT_VARIABLES, (yyvsp[-2].integer), NULL );
   }
-#line 3344 "src-generated/ugbc.tab.c"
+#line 3380 "src-generated/ugbc.tab.c"
     break;
 
-  case 122: /* bank_definition_simple: VARIABLES Identifier AT direct_integer  */
-#line 496 "src/ugbc.y"
+  case 123: /* bank_definition_simple: VARIABLES Identifier AT direct_integer  */
+#line 499 "src/ugbc.y"
                                            {
       bank_define( _environment, (yyvsp[-2].string), BT_VARIABLES, (yyvsp[0].integer), NULL );
   }
-#line 3352 "src-generated/ugbc.tab.c"
+#line 3388 "src-generated/ugbc.tab.c"
     break;
 
-  case 123: /* bank_definition_simple: VARIABLES AT direct_integer  */
-#line 499 "src/ugbc.y"
+  case 124: /* bank_definition_simple: VARIABLES AT direct_integer  */
+#line 502 "src/ugbc.y"
                                 {
       bank_define( _environment, NULL, BT_VARIABLES, (yyvsp[0].integer), NULL );
   }
-#line 3360 "src-generated/ugbc.tab.c"
+#line 3396 "src-generated/ugbc.tab.c"
     break;
 
-  case 124: /* bank_definition_simple: Identifier AT direct_integer AS TEMPORARY  */
-#line 503 "src/ugbc.y"
+  case 125: /* bank_definition_simple: Identifier AT direct_integer AS TEMPORARY  */
+#line 506 "src/ugbc.y"
                                               {
       bank_define( _environment, (yyvsp[-4].string), BT_TEMPORARY, (yyvsp[-2].integer), NULL );
   }
-#line 3368 "src-generated/ugbc.tab.c"
+#line 3404 "src-generated/ugbc.tab.c"
     break;
 
-  case 125: /* bank_definition_simple: AT direct_integer AS TEMPORARY  */
-#line 506 "src/ugbc.y"
+  case 126: /* bank_definition_simple: AT direct_integer AS TEMPORARY  */
+#line 509 "src/ugbc.y"
                                    {
       bank_define( _environment, NULL, BT_TEMPORARY, (yyvsp[-2].integer), NULL );
   }
-#line 3376 "src-generated/ugbc.tab.c"
+#line 3412 "src-generated/ugbc.tab.c"
     break;
 
-  case 126: /* bank_definition_simple: TEMPORARY Identifier AT direct_integer  */
-#line 509 "src/ugbc.y"
+  case 127: /* bank_definition_simple: TEMPORARY Identifier AT direct_integer  */
+#line 512 "src/ugbc.y"
                                            {
       bank_define( _environment, (yyvsp[-2].string), BT_TEMPORARY, (yyvsp[0].integer), NULL );
   }
-#line 3384 "src-generated/ugbc.tab.c"
+#line 3420 "src-generated/ugbc.tab.c"
     break;
 
-  case 127: /* bank_definition_simple: TEMPORARY AT direct_integer  */
-#line 512 "src/ugbc.y"
+  case 128: /* bank_definition_simple: TEMPORARY AT direct_integer  */
+#line 515 "src/ugbc.y"
                                 {
       bank_define( _environment, NULL, BT_TEMPORARY, (yyvsp[0].integer), NULL );
   }
-#line 3392 "src-generated/ugbc.tab.c"
+#line 3428 "src-generated/ugbc.tab.c"
     break;
 
-  case 128: /* bank_definition_with_payload: Identifier AT direct_integer WITH String  */
-#line 518 "src/ugbc.y"
+  case 129: /* bank_definition_with_payload: Identifier AT direct_integer WITH String  */
+#line 521 "src/ugbc.y"
                                            {
       bank_define( _environment, (yyvsp[-4].string), BT_DATA, (yyvsp[-2].integer), (yyvsp[0].string) );
   }
-#line 3400 "src-generated/ugbc.tab.c"
+#line 3436 "src-generated/ugbc.tab.c"
     break;
 
-  case 129: /* bank_definition_with_payload: Identifier AT direct_integer AS DATA WITH String  */
-#line 521 "src/ugbc.y"
+  case 130: /* bank_definition_with_payload: Identifier AT direct_integer AS DATA WITH String  */
+#line 524 "src/ugbc.y"
                                                      {
       bank_define( _environment, (yyvsp[-6].string), BT_DATA, (yyvsp[-4].integer), (yyvsp[0].string) );
   }
-#line 3408 "src-generated/ugbc.tab.c"
+#line 3444 "src-generated/ugbc.tab.c"
     break;
 
-  case 130: /* bank_definition_with_payload: DATA Identifier AT direct_integer WITH String  */
-#line 524 "src/ugbc.y"
+  case 131: /* bank_definition_with_payload: DATA Identifier AT direct_integer WITH String  */
+#line 527 "src/ugbc.y"
                                                   {
       bank_define( _environment, (yyvsp[-4].string), BT_DATA, (yyvsp[-2].integer), (yyvsp[0].string) );
   }
-#line 3416 "src-generated/ugbc.tab.c"
+#line 3452 "src-generated/ugbc.tab.c"
     break;
 
-  case 131: /* bank_definition_with_payload: Identifier AT direct_integer AS CODE WITH String  */
-#line 527 "src/ugbc.y"
+  case 132: /* bank_definition_with_payload: Identifier AT direct_integer AS CODE WITH String  */
+#line 530 "src/ugbc.y"
                                                      {
       bank_define( _environment, (yyvsp[-6].string), BT_CODE, (yyvsp[-4].integer), (yyvsp[0].string) );
   }
-#line 3424 "src-generated/ugbc.tab.c"
+#line 3460 "src-generated/ugbc.tab.c"
     break;
 
-  case 132: /* bank_definition_with_payload: CODE Identifier AT direct_integer WITH String  */
-#line 530 "src/ugbc.y"
+  case 133: /* bank_definition_with_payload: CODE Identifier AT direct_integer WITH String  */
+#line 533 "src/ugbc.y"
                                                   {
       bank_define( _environment, (yyvsp[-4].string), BT_CODE, (yyvsp[-2].integer), (yyvsp[0].string) );
   }
-#line 3432 "src-generated/ugbc.tab.c"
+#line 3468 "src-generated/ugbc.tab.c"
     break;
 
-  case 135: /* raster_definition_simple: Identifier AT direct_integer  */
-#line 539 "src/ugbc.y"
+  case 136: /* raster_definition_simple: Identifier AT direct_integer  */
+#line 542 "src/ugbc.y"
                                  {
       raster_at( _environment, (yyvsp[-2].string), (yyvsp[0].integer) );
     }
-#line 3440 "src-generated/ugbc.tab.c"
+#line 3476 "src-generated/ugbc.tab.c"
     break;
 
-  case 136: /* raster_definition_simple: AT direct_integer WITH Identifier  */
-#line 542 "src/ugbc.y"
+  case 137: /* raster_definition_simple: AT direct_integer WITH Identifier  */
+#line 545 "src/ugbc.y"
                                       {
       raster_at( _environment, (yyvsp[0].string), (yyvsp[-2].integer) );
     }
-#line 3448 "src-generated/ugbc.tab.c"
+#line 3484 "src-generated/ugbc.tab.c"
     break;
 
-  case 137: /* raster_definition_expression: Identifier AT expr  */
-#line 547 "src/ugbc.y"
+  case 138: /* raster_definition_expression: Identifier AT expr  */
+#line 550 "src/ugbc.y"
                        {
       raster_at_var( _environment, (yyvsp[-2].string), (yyvsp[0].string) );
     }
-#line 3456 "src-generated/ugbc.tab.c"
+#line 3492 "src-generated/ugbc.tab.c"
     break;
 
-  case 138: /* raster_definition_expression: AT expr WITH Identifier  */
-#line 550 "src/ugbc.y"
+  case 139: /* raster_definition_expression: AT expr WITH Identifier  */
+#line 553 "src/ugbc.y"
                             {
       raster_at_var( _environment, (yyvsp[-2].string), (yyvsp[0].string) );
     }
-#line 3464 "src-generated/ugbc.tab.c"
+#line 3500 "src-generated/ugbc.tab.c"
     break;
 
-  case 141: /* next_raster_definition_simple: Identifier AT direct_integer  */
-#line 559 "src/ugbc.y"
+  case 142: /* next_raster_definition_simple: Identifier AT direct_integer  */
+#line 562 "src/ugbc.y"
                                  {
       next_raster_at_with( _environment, (yyvsp[0].integer), (yyvsp[-2].string) );
     }
-#line 3472 "src-generated/ugbc.tab.c"
+#line 3508 "src-generated/ugbc.tab.c"
     break;
 
-  case 142: /* next_raster_definition_simple: AT direct_integer WITH Identifier  */
-#line 562 "src/ugbc.y"
+  case 143: /* next_raster_definition_simple: AT direct_integer WITH Identifier  */
+#line 565 "src/ugbc.y"
                                       {
       next_raster_at_with( _environment, (yyvsp[-2].integer), (yyvsp[0].string) );
     }
-#line 3480 "src-generated/ugbc.tab.c"
+#line 3516 "src-generated/ugbc.tab.c"
     break;
 
-  case 143: /* next_raster_definition_expression: Identifier AT expr  */
-#line 567 "src/ugbc.y"
+  case 144: /* next_raster_definition_expression: Identifier AT expr  */
+#line 570 "src/ugbc.y"
                        {
       next_raster_at_with_var( _environment, (yyvsp[0].string), (yyvsp[-2].string) );
     }
-#line 3488 "src-generated/ugbc.tab.c"
+#line 3524 "src-generated/ugbc.tab.c"
     break;
 
-  case 144: /* next_raster_definition_expression: AT expr WITH Identifier  */
-#line 570 "src/ugbc.y"
+  case 145: /* next_raster_definition_expression: AT expr WITH Identifier  */
+#line 573 "src/ugbc.y"
                             {
       next_raster_at_with_var( _environment, (yyvsp[-2].string), (yyvsp[0].string) );
     }
-#line 3496 "src-generated/ugbc.tab.c"
+#line 3532 "src-generated/ugbc.tab.c"
     break;
 
-  case 147: /* color_definition_simple: BORDER direct_integer  */
-#line 579 "src/ugbc.y"
+  case 148: /* color_definition_simple: BORDER direct_integer  */
+#line 582 "src/ugbc.y"
                           {
       color_border( _environment, (yyvsp[0].integer) );
   }
-#line 3504 "src-generated/ugbc.tab.c"
+#line 3540 "src-generated/ugbc.tab.c"
     break;
 
-  case 148: /* color_definition_simple: BACKGROUND direct_integer TO direct_integer  */
-#line 582 "src/ugbc.y"
+  case 149: /* color_definition_simple: BACKGROUND direct_integer TO direct_integer  */
+#line 585 "src/ugbc.y"
                                                 {
       color_background( _environment, (yyvsp[-2].integer), (yyvsp[0].integer) );
   }
-#line 3512 "src-generated/ugbc.tab.c"
+#line 3548 "src-generated/ugbc.tab.c"
     break;
 
-  case 149: /* color_definition_simple: SPRITE direct_integer TO direct_integer  */
-#line 585 "src/ugbc.y"
+  case 150: /* color_definition_simple: SPRITE direct_integer TO direct_integer  */
+#line 588 "src/ugbc.y"
                                             {
       color_sprite( _environment, (yyvsp[-2].integer), (yyvsp[0].integer) );
   }
-#line 3520 "src-generated/ugbc.tab.c"
+#line 3556 "src-generated/ugbc.tab.c"
     break;
 
-  case 150: /* color_definition_expression: BORDER expr  */
-#line 590 "src/ugbc.y"
+  case 151: /* color_definition_expression: BORDER expr  */
+#line 593 "src/ugbc.y"
                 {
       color_border_var( _environment, (yyvsp[0].string) );
   }
-#line 3528 "src-generated/ugbc.tab.c"
+#line 3564 "src-generated/ugbc.tab.c"
     break;
 
-  case 151: /* color_definition_expression: BACKGROUND expr TO expr  */
-#line 593 "src/ugbc.y"
+  case 152: /* color_definition_expression: BACKGROUND expr TO expr  */
+#line 596 "src/ugbc.y"
                             {
       color_background_vars( _environment, (yyvsp[-2].string), (yyvsp[0].string) );
   }
-#line 3536 "src-generated/ugbc.tab.c"
+#line 3572 "src-generated/ugbc.tab.c"
     break;
 
-  case 152: /* color_definition_expression: SPRITE expr TO expr  */
-#line 596 "src/ugbc.y"
+  case 153: /* color_definition_expression: SPRITE expr TO expr  */
+#line 599 "src/ugbc.y"
                         {
       color_sprite_vars( _environment, (yyvsp[-2].string), (yyvsp[0].string) );
   }
-#line 3544 "src-generated/ugbc.tab.c"
+#line 3580 "src-generated/ugbc.tab.c"
     break;
 
-  case 158: /* wait_definition_simple: direct_integer CYCLES  */
-#line 610 "src/ugbc.y"
+  case 159: /* wait_definition_simple: direct_integer CYCLES  */
+#line 613 "src/ugbc.y"
                             {
       wait_cycles( _environment, (yyvsp[-1].integer) );
     }
-#line 3552 "src-generated/ugbc.tab.c"
+#line 3588 "src-generated/ugbc.tab.c"
     break;
 
-  case 159: /* wait_definition_simple: direct_integer TICKS  */
-#line 613 "src/ugbc.y"
+  case 160: /* wait_definition_simple: direct_integer TICKS  */
+#line 616 "src/ugbc.y"
                            {
       wait_ticks( _environment, (yyvsp[-1].integer) );
     }
-#line 3560 "src-generated/ugbc.tab.c"
+#line 3596 "src-generated/ugbc.tab.c"
     break;
 
-  case 160: /* wait_definition_simple: direct_integer milliseconds  */
-#line 616 "src/ugbc.y"
+  case 161: /* wait_definition_simple: direct_integer milliseconds  */
+#line 619 "src/ugbc.y"
                                   {
       wait_milliseconds( _environment, (yyvsp[-1].integer) );
     }
-#line 3568 "src-generated/ugbc.tab.c"
+#line 3604 "src-generated/ugbc.tab.c"
     break;
 
-  case 161: /* wait_definition_expression: expr CYCLES  */
-#line 621 "src/ugbc.y"
+  case 162: /* wait_definition_expression: expr CYCLES  */
+#line 624 "src/ugbc.y"
                   {
       wait_cycles_var( _environment, (yyvsp[-1].string) );
     }
-#line 3576 "src-generated/ugbc.tab.c"
+#line 3612 "src-generated/ugbc.tab.c"
     break;
 
-  case 162: /* wait_definition_expression: expr TICKS  */
-#line 624 "src/ugbc.y"
+  case 163: /* wait_definition_expression: expr TICKS  */
+#line 627 "src/ugbc.y"
                  {
       wait_ticks_var( _environment, (yyvsp[-1].string) );
     }
-#line 3584 "src-generated/ugbc.tab.c"
+#line 3620 "src-generated/ugbc.tab.c"
     break;
 
-  case 163: /* wait_definition_expression: expr milliseconds  */
-#line 627 "src/ugbc.y"
+  case 164: /* wait_definition_expression: expr milliseconds  */
+#line 630 "src/ugbc.y"
                         {
       wait_milliseconds_var( _environment, (yyvsp[-1].string) );
     }
-#line 3592 "src-generated/ugbc.tab.c"
+#line 3628 "src-generated/ugbc.tab.c"
     break;
 
-  case 166: /* sprite_definition_simple: direct_integer DATA FROM direct_integer  */
-#line 637 "src/ugbc.y"
+  case 167: /* sprite_definition_simple: direct_integer DATA FROM direct_integer  */
+#line 640 "src/ugbc.y"
                                             {
       sprite_data_from( _environment, (yyvsp[-3].integer), (yyvsp[0].integer) );
   }
-#line 3600 "src-generated/ugbc.tab.c"
+#line 3636 "src-generated/ugbc.tab.c"
     break;
 
-  case 167: /* sprite_definition_simple: direct_integer MULTICOLOR  */
-#line 640 "src/ugbc.y"
+  case 168: /* sprite_definition_simple: direct_integer MULTICOLOR  */
+#line 643 "src/ugbc.y"
                               {
       sprite_multicolor( _environment, (yyvsp[-1].integer) );
   }
-#line 3608 "src-generated/ugbc.tab.c"
+#line 3644 "src-generated/ugbc.tab.c"
     break;
 
-  case 168: /* sprite_definition_simple: direct_integer MONOCOLOR  */
-#line 643 "src/ugbc.y"
+  case 169: /* sprite_definition_simple: direct_integer MONOCOLOR  */
+#line 646 "src/ugbc.y"
                              {
       sprite_monocolor( _environment, (yyvsp[-1].integer) );
   }
-#line 3616 "src-generated/ugbc.tab.c"
+#line 3652 "src-generated/ugbc.tab.c"
     break;
 
-  case 169: /* sprite_definition_simple: direct_integer COLOR direct_integer  */
-#line 646 "src/ugbc.y"
+  case 170: /* sprite_definition_simple: direct_integer COLOR direct_integer  */
+#line 649 "src/ugbc.y"
                                         {
       sprite_color( _environment, (yyvsp[-2].integer), (yyvsp[0].integer) );
   }
-#line 3624 "src-generated/ugbc.tab.c"
+#line 3660 "src-generated/ugbc.tab.c"
     break;
 
-  case 170: /* sprite_definition_simple: direct_integer position OP direct_integer COMMA direct_integer CP  */
-#line 649 "src/ugbc.y"
+  case 171: /* sprite_definition_simple: direct_integer position OP direct_integer COMMA direct_integer CP  */
+#line 652 "src/ugbc.y"
                                                                       {
       sprite_position( _environment, (yyvsp[-6].integer), (yyvsp[-3].integer), (yyvsp[-1].integer) );
   }
-#line 3632 "src-generated/ugbc.tab.c"
+#line 3668 "src-generated/ugbc.tab.c"
     break;
 
-  case 171: /* sprite_definition_simple: direct_integer ENABLE  */
-#line 652 "src/ugbc.y"
+  case 172: /* sprite_definition_simple: direct_integer ENABLE  */
+#line 655 "src/ugbc.y"
                           {
       sprite_enable( _environment, (yyvsp[-1].integer) );
   }
-#line 3640 "src-generated/ugbc.tab.c"
+#line 3676 "src-generated/ugbc.tab.c"
     break;
 
-  case 172: /* sprite_definition_simple: direct_integer DISABLE  */
-#line 655 "src/ugbc.y"
+  case 173: /* sprite_definition_simple: direct_integer DISABLE  */
+#line 658 "src/ugbc.y"
                            {
       sprite_disable( _environment, (yyvsp[-1].integer) );
   }
-#line 3648 "src-generated/ugbc.tab.c"
+#line 3684 "src-generated/ugbc.tab.c"
     break;
 
-  case 173: /* sprite_definition_simple: direct_integer EXPAND VERTICAL  */
-#line 658 "src/ugbc.y"
-                                   {
-      sprite_expand_vertical( _environment, (yyvsp[-2].integer) );
-  }
-#line 3656 "src-generated/ugbc.tab.c"
-    break;
-
-  case 174: /* sprite_definition_simple: direct_integer COMPRESS VERTICAL  */
+  case 174: /* sprite_definition_simple: direct_integer EXPAND VERTICAL  */
 #line 661 "src/ugbc.y"
-                                     {
-      sprite_compress_vertical( _environment, (yyvsp[-2].integer) );
-  }
-#line 3664 "src-generated/ugbc.tab.c"
-    break;
-
-  case 175: /* sprite_definition_simple: direct_integer VERTICAL EXPAND  */
-#line 664 "src/ugbc.y"
                                    {
       sprite_expand_vertical( _environment, (yyvsp[-2].integer) );
   }
-#line 3672 "src-generated/ugbc.tab.c"
+#line 3692 "src-generated/ugbc.tab.c"
     break;
 
-  case 176: /* sprite_definition_simple: direct_integer VERTICAL COMPRESS  */
-#line 667 "src/ugbc.y"
+  case 175: /* sprite_definition_simple: direct_integer COMPRESS VERTICAL  */
+#line 664 "src/ugbc.y"
                                      {
       sprite_compress_vertical( _environment, (yyvsp[-2].integer) );
   }
-#line 3680 "src-generated/ugbc.tab.c"
+#line 3700 "src-generated/ugbc.tab.c"
     break;
 
-  case 177: /* sprite_definition_simple: direct_integer EXPAND HORIZONTAL  */
+  case 176: /* sprite_definition_simple: direct_integer VERTICAL EXPAND  */
+#line 667 "src/ugbc.y"
+                                   {
+      sprite_expand_vertical( _environment, (yyvsp[-2].integer) );
+  }
+#line 3708 "src-generated/ugbc.tab.c"
+    break;
+
+  case 177: /* sprite_definition_simple: direct_integer VERTICAL COMPRESS  */
 #line 670 "src/ugbc.y"
                                      {
-      sprite_expand_horizontal( _environment, (yyvsp[-2].integer) );
+      sprite_compress_vertical( _environment, (yyvsp[-2].integer) );
   }
-#line 3688 "src-generated/ugbc.tab.c"
+#line 3716 "src-generated/ugbc.tab.c"
     break;
 
-  case 178: /* sprite_definition_simple: direct_integer COMPRESS HORIZONTAL  */
+  case 178: /* sprite_definition_simple: direct_integer EXPAND HORIZONTAL  */
 #line 673 "src/ugbc.y"
-                                       {
-      sprite_compress_horizontal( _environment, (yyvsp[-2].integer) );
-  }
-#line 3696 "src-generated/ugbc.tab.c"
-    break;
-
-  case 179: /* sprite_definition_simple: direct_integer HORIZONTAL EXPAND  */
-#line 676 "src/ugbc.y"
                                      {
       sprite_expand_horizontal( _environment, (yyvsp[-2].integer) );
   }
-#line 3704 "src-generated/ugbc.tab.c"
+#line 3724 "src-generated/ugbc.tab.c"
     break;
 
-  case 180: /* sprite_definition_simple: direct_integer HORIZONTAL COMPRESS  */
-#line 679 "src/ugbc.y"
+  case 179: /* sprite_definition_simple: direct_integer COMPRESS HORIZONTAL  */
+#line 676 "src/ugbc.y"
                                        {
       sprite_compress_horizontal( _environment, (yyvsp[-2].integer) );
   }
-#line 3712 "src-generated/ugbc.tab.c"
+#line 3732 "src-generated/ugbc.tab.c"
     break;
 
-  case 181: /* sprite_definition_expression: expr DATA FROM expr  */
-#line 684 "src/ugbc.y"
+  case 180: /* sprite_definition_simple: direct_integer HORIZONTAL EXPAND  */
+#line 679 "src/ugbc.y"
+                                     {
+      sprite_expand_horizontal( _environment, (yyvsp[-2].integer) );
+  }
+#line 3740 "src-generated/ugbc.tab.c"
+    break;
+
+  case 181: /* sprite_definition_simple: direct_integer HORIZONTAL COMPRESS  */
+#line 682 "src/ugbc.y"
+                                       {
+      sprite_compress_horizontal( _environment, (yyvsp[-2].integer) );
+  }
+#line 3748 "src-generated/ugbc.tab.c"
+    break;
+
+  case 182: /* sprite_definition_expression: expr DATA FROM expr  */
+#line 687 "src/ugbc.y"
                         {
       sprite_data_from_vars( _environment, (yyvsp[-3].string), (yyvsp[0].string) );
   }
-#line 3720 "src-generated/ugbc.tab.c"
+#line 3756 "src-generated/ugbc.tab.c"
     break;
 
-  case 182: /* sprite_definition_expression: expr MULTICOLOR  */
-#line 687 "src/ugbc.y"
+  case 183: /* sprite_definition_expression: expr MULTICOLOR  */
+#line 690 "src/ugbc.y"
                     {
       sprite_multicolor_var( _environment, (yyvsp[-1].string) );
   }
-#line 3728 "src-generated/ugbc.tab.c"
+#line 3764 "src-generated/ugbc.tab.c"
     break;
 
-  case 183: /* sprite_definition_expression: expr MONOCOLOR  */
-#line 690 "src/ugbc.y"
+  case 184: /* sprite_definition_expression: expr MONOCOLOR  */
+#line 693 "src/ugbc.y"
                    {
       sprite_monocolor_var( _environment, (yyvsp[-1].string) );
   }
-#line 3736 "src-generated/ugbc.tab.c"
+#line 3772 "src-generated/ugbc.tab.c"
     break;
 
-  case 184: /* sprite_definition_expression: expr COLOR expr  */
-#line 693 "src/ugbc.y"
+  case 185: /* sprite_definition_expression: expr COLOR expr  */
+#line 696 "src/ugbc.y"
                     {
       sprite_color_vars( _environment, (yyvsp[-2].string), (yyvsp[0].string) );
   }
-#line 3744 "src-generated/ugbc.tab.c"
+#line 3780 "src-generated/ugbc.tab.c"
     break;
 
-  case 185: /* sprite_definition_expression: expr position OP expr COMMA expr CP  */
-#line 696 "src/ugbc.y"
+  case 186: /* sprite_definition_expression: expr position OP expr COMMA expr CP  */
+#line 699 "src/ugbc.y"
                                         {
       sprite_position_vars( _environment, (yyvsp[-6].string), (yyvsp[-3].string), (yyvsp[-1].string) );
   }
-#line 3752 "src-generated/ugbc.tab.c"
+#line 3788 "src-generated/ugbc.tab.c"
     break;
 
-  case 186: /* sprite_definition_expression: expr ENABLE  */
-#line 699 "src/ugbc.y"
+  case 187: /* sprite_definition_expression: expr ENABLE  */
+#line 702 "src/ugbc.y"
                 {
       sprite_enable_var( _environment, (yyvsp[-1].string) );
   }
-#line 3760 "src-generated/ugbc.tab.c"
+#line 3796 "src-generated/ugbc.tab.c"
     break;
 
-  case 187: /* sprite_definition_expression: expr DISABLE  */
-#line 702 "src/ugbc.y"
+  case 188: /* sprite_definition_expression: expr DISABLE  */
+#line 705 "src/ugbc.y"
                  {
       sprite_disable_var( _environment, (yyvsp[-1].string) );
   }
-#line 3768 "src-generated/ugbc.tab.c"
+#line 3804 "src-generated/ugbc.tab.c"
     break;
 
-  case 188: /* sprite_definition_expression: expr EXPAND VERTICAL  */
-#line 705 "src/ugbc.y"
-                         {
-      sprite_expand_vertical_var( _environment, (yyvsp[-2].string) );
-  }
-#line 3776 "src-generated/ugbc.tab.c"
-    break;
-
-  case 189: /* sprite_definition_expression: expr COMPRESS VERTICAL  */
+  case 189: /* sprite_definition_expression: expr EXPAND VERTICAL  */
 #line 708 "src/ugbc.y"
-                           {
-      sprite_compress_vertical_var( _environment, (yyvsp[-2].string) );
-  }
-#line 3784 "src-generated/ugbc.tab.c"
-    break;
-
-  case 190: /* sprite_definition_expression: expr VERTICAL EXPAND  */
-#line 711 "src/ugbc.y"
                          {
       sprite_expand_vertical_var( _environment, (yyvsp[-2].string) );
   }
-#line 3792 "src-generated/ugbc.tab.c"
+#line 3812 "src-generated/ugbc.tab.c"
     break;
 
-  case 191: /* sprite_definition_expression: expr VERTICAL COMPRESS  */
-#line 714 "src/ugbc.y"
+  case 190: /* sprite_definition_expression: expr COMPRESS VERTICAL  */
+#line 711 "src/ugbc.y"
                            {
       sprite_compress_vertical_var( _environment, (yyvsp[-2].string) );
   }
-#line 3800 "src-generated/ugbc.tab.c"
+#line 3820 "src-generated/ugbc.tab.c"
     break;
 
-  case 192: /* sprite_definition_expression: expr EXPAND HORIZONTAL  */
+  case 191: /* sprite_definition_expression: expr VERTICAL EXPAND  */
+#line 714 "src/ugbc.y"
+                         {
+      sprite_expand_vertical_var( _environment, (yyvsp[-2].string) );
+  }
+#line 3828 "src-generated/ugbc.tab.c"
+    break;
+
+  case 192: /* sprite_definition_expression: expr VERTICAL COMPRESS  */
 #line 717 "src/ugbc.y"
                            {
-      sprite_expand_horizontal_var( _environment, (yyvsp[-2].string) );
+      sprite_compress_vertical_var( _environment, (yyvsp[-2].string) );
   }
-#line 3808 "src-generated/ugbc.tab.c"
+#line 3836 "src-generated/ugbc.tab.c"
     break;
 
-  case 193: /* sprite_definition_expression: expr COMPRESS HORIZONTAL  */
+  case 193: /* sprite_definition_expression: expr EXPAND HORIZONTAL  */
 #line 720 "src/ugbc.y"
-                             {
-      sprite_compress_horizontal_var( _environment, (yyvsp[-2].string) );
-  }
-#line 3816 "src-generated/ugbc.tab.c"
-    break;
-
-  case 194: /* sprite_definition_expression: expr HORIZONTAL EXPAND  */
-#line 723 "src/ugbc.y"
                            {
       sprite_expand_horizontal_var( _environment, (yyvsp[-2].string) );
   }
-#line 3824 "src-generated/ugbc.tab.c"
+#line 3844 "src-generated/ugbc.tab.c"
     break;
 
-  case 195: /* sprite_definition_expression: expr HORIZONTAL COMPRESS  */
-#line 726 "src/ugbc.y"
+  case 194: /* sprite_definition_expression: expr COMPRESS HORIZONTAL  */
+#line 723 "src/ugbc.y"
                              {
       sprite_compress_horizontal_var( _environment, (yyvsp[-2].string) );
   }
-#line 3832 "src-generated/ugbc.tab.c"
+#line 3852 "src-generated/ugbc.tab.c"
     break;
 
-  case 198: /* bitmap_definition_simple: AT direct_integer  */
-#line 735 "src/ugbc.y"
+  case 195: /* sprite_definition_expression: expr HORIZONTAL EXPAND  */
+#line 726 "src/ugbc.y"
+                           {
+      sprite_expand_horizontal_var( _environment, (yyvsp[-2].string) );
+  }
+#line 3860 "src-generated/ugbc.tab.c"
+    break;
+
+  case 196: /* sprite_definition_expression: expr HORIZONTAL COMPRESS  */
+#line 729 "src/ugbc.y"
+                             {
+      sprite_compress_horizontal_var( _environment, (yyvsp[-2].string) );
+  }
+#line 3868 "src-generated/ugbc.tab.c"
+    break;
+
+  case 199: /* bitmap_definition_simple: AT direct_integer  */
+#line 738 "src/ugbc.y"
                       {
       bitmap_at( _environment, (yyvsp[0].integer) );
   }
-#line 3840 "src-generated/ugbc.tab.c"
+#line 3876 "src-generated/ugbc.tab.c"
     break;
 
-  case 199: /* bitmap_definition_simple: ENABLE  */
-#line 738 "src/ugbc.y"
+  case 200: /* bitmap_definition_simple: ENABLE  */
+#line 741 "src/ugbc.y"
            {
       bitmap_enable( _environment );
   }
-#line 3848 "src-generated/ugbc.tab.c"
+#line 3884 "src-generated/ugbc.tab.c"
     break;
 
-  case 200: /* bitmap_definition_simple: DISABLE  */
-#line 741 "src/ugbc.y"
+  case 201: /* bitmap_definition_simple: DISABLE  */
+#line 744 "src/ugbc.y"
             {
       bitmap_disable( _environment );
   }
-#line 3856 "src-generated/ugbc.tab.c"
+#line 3892 "src-generated/ugbc.tab.c"
     break;
 
-  case 201: /* bitmap_definition_simple: CLEAR  */
-#line 744 "src/ugbc.y"
+  case 202: /* bitmap_definition_simple: CLEAR  */
+#line 747 "src/ugbc.y"
           {
       bitmap_clear( _environment );
   }
-#line 3864 "src-generated/ugbc.tab.c"
+#line 3900 "src-generated/ugbc.tab.c"
     break;
 
-  case 202: /* bitmap_definition_simple: CLEAR WITH direct_integer  */
-#line 747 "src/ugbc.y"
+  case 203: /* bitmap_definition_simple: CLEAR WITH direct_integer  */
+#line 750 "src/ugbc.y"
                               {
       bitmap_clear_with( _environment, (yyvsp[0].integer) );
   }
-#line 3872 "src-generated/ugbc.tab.c"
+#line 3908 "src-generated/ugbc.tab.c"
     break;
 
-  case 203: /* bitmap_definition_expression: AT expr  */
-#line 753 "src/ugbc.y"
+  case 204: /* bitmap_definition_expression: AT expr  */
+#line 756 "src/ugbc.y"
             {
       bitmap_at_var( _environment, (yyvsp[0].string) );
   }
-#line 3880 "src-generated/ugbc.tab.c"
+#line 3916 "src-generated/ugbc.tab.c"
     break;
 
-  case 204: /* bitmap_definition_expression: CLEAR WITH expr  */
-#line 756 "src/ugbc.y"
+  case 205: /* bitmap_definition_expression: CLEAR WITH expr  */
+#line 759 "src/ugbc.y"
                     {
       bitmap_clear_with_vars( _environment, (yyvsp[0].string) );
   }
-#line 3888 "src-generated/ugbc.tab.c"
+#line 3924 "src-generated/ugbc.tab.c"
     break;
 
-  case 207: /* textmap_definition_simple: AT direct_integer  */
-#line 766 "src/ugbc.y"
+  case 208: /* textmap_definition_simple: AT direct_integer  */
+#line 769 "src/ugbc.y"
                       {
       textmap_at( _environment, (yyvsp[0].integer) );
   }
-#line 3896 "src-generated/ugbc.tab.c"
+#line 3932 "src-generated/ugbc.tab.c"
     break;
 
-  case 208: /* textmap_definition_expression: AT expr  */
-#line 771 "src/ugbc.y"
+  case 209: /* textmap_definition_expression: AT expr  */
+#line 774 "src/ugbc.y"
             {
       textmap_at_var( _environment, (yyvsp[0].string) );
   }
-#line 3904 "src-generated/ugbc.tab.c"
+#line 3940 "src-generated/ugbc.tab.c"
     break;
 
-  case 211: /* text_definition_simple: ENABLE  */
-#line 780 "src/ugbc.y"
+  case 212: /* text_definition_simple: ENABLE  */
+#line 783 "src/ugbc.y"
            {
       text_enable( _environment );
   }
-#line 3912 "src-generated/ugbc.tab.c"
+#line 3948 "src-generated/ugbc.tab.c"
     break;
 
-  case 212: /* text_definition_simple: DISABLE  */
-#line 783 "src/ugbc.y"
+  case 213: /* text_definition_simple: DISABLE  */
+#line 786 "src/ugbc.y"
             {
       text_disable( _environment );
   }
-#line 3920 "src-generated/ugbc.tab.c"
+#line 3956 "src-generated/ugbc.tab.c"
     break;
 
-  case 213: /* text_definition_expression: AT expr COMMA expr COMMA expr  */
-#line 788 "src/ugbc.y"
+  case 214: /* text_definition_expression: AT expr COMMA expr COMMA expr  */
+#line 791 "src/ugbc.y"
                                    {
        text_at( _environment, (yyvsp[-4].string), (yyvsp[-2].string), (yyvsp[0].string) );
    }
-#line 3928 "src-generated/ugbc.tab.c"
+#line 3964 "src-generated/ugbc.tab.c"
     break;
 
-  case 214: /* text_definition_expression: expr COMMA expr COMMA expr  */
-#line 791 "src/ugbc.y"
+  case 215: /* text_definition_expression: expr COMMA expr COMMA expr  */
+#line 794 "src/ugbc.y"
                                 {
        text_at( _environment, (yyvsp[-4].string), (yyvsp[-2].string), (yyvsp[0].string) );
    }
-#line 3936 "src-generated/ugbc.tab.c"
+#line 3972 "src-generated/ugbc.tab.c"
     break;
 
-  case 217: /* tiles_definition_simple: AT direct_integer  */
-#line 800 "src/ugbc.y"
+  case 218: /* tiles_definition_simple: AT direct_integer  */
+#line 803 "src/ugbc.y"
                       {
       tiles_at( _environment, (yyvsp[0].integer) );
   }
-#line 3944 "src-generated/ugbc.tab.c"
+#line 3980 "src-generated/ugbc.tab.c"
     break;
 
-  case 218: /* tiles_definition_expression: AT expr  */
-#line 805 "src/ugbc.y"
+  case 219: /* tiles_definition_expression: AT expr  */
+#line 808 "src/ugbc.y"
             {
       tiles_at_var( _environment, (yyvsp[0].string) );
   }
-#line 3952 "src-generated/ugbc.tab.c"
+#line 3988 "src-generated/ugbc.tab.c"
     break;
 
-  case 221: /* colormap_definition_simple: AT direct_integer  */
-#line 814 "src/ugbc.y"
+  case 222: /* colormap_definition_simple: AT direct_integer  */
+#line 817 "src/ugbc.y"
                       {
       colormap_at( _environment, (yyvsp[0].integer) );
   }
-#line 3960 "src-generated/ugbc.tab.c"
+#line 3996 "src-generated/ugbc.tab.c"
     break;
 
-  case 222: /* colormap_definition_simple: CLEAR  */
-#line 817 "src/ugbc.y"
+  case 223: /* colormap_definition_simple: CLEAR  */
+#line 820 "src/ugbc.y"
           {
       colormap_clear( _environment );
   }
-#line 3968 "src-generated/ugbc.tab.c"
+#line 4004 "src-generated/ugbc.tab.c"
     break;
 
-  case 223: /* colormap_definition_simple: CLEAR WITH direct_integer ON direct_integer  */
-#line 820 "src/ugbc.y"
+  case 224: /* colormap_definition_simple: CLEAR WITH direct_integer ON direct_integer  */
+#line 823 "src/ugbc.y"
                                                 {
       colormap_clear_with( _environment, (yyvsp[-2].integer), (yyvsp[0].integer) );
   }
-#line 3976 "src-generated/ugbc.tab.c"
+#line 4012 "src-generated/ugbc.tab.c"
     break;
 
-  case 224: /* colormap_definition_expression: AT expr  */
-#line 825 "src/ugbc.y"
+  case 225: /* colormap_definition_expression: AT expr  */
+#line 828 "src/ugbc.y"
             {
       colormap_at_var( _environment, (yyvsp[0].string) );
   }
-#line 3984 "src-generated/ugbc.tab.c"
+#line 4020 "src-generated/ugbc.tab.c"
     break;
 
-  case 225: /* colormap_definition_expression: CLEAR WITH expr ON expr  */
-#line 828 "src/ugbc.y"
+  case 226: /* colormap_definition_expression: CLEAR WITH expr ON expr  */
+#line 831 "src/ugbc.y"
                             {
       colormap_clear_with_vars( _environment, (yyvsp[-2].string), (yyvsp[0].string) );
   }
-#line 3992 "src-generated/ugbc.tab.c"
+#line 4028 "src-generated/ugbc.tab.c"
     break;
 
-  case 228: /* screen_definition_simple: ON  */
-#line 838 "src/ugbc.y"
+  case 229: /* screen_definition_simple: ON  */
+#line 841 "src/ugbc.y"
        {   
       screen_on( _environment );
   }
-#line 4000 "src-generated/ugbc.tab.c"
+#line 4036 "src-generated/ugbc.tab.c"
     break;
 
-  case 229: /* screen_definition_simple: OFF  */
-#line 841 "src/ugbc.y"
+  case 230: /* screen_definition_simple: OFF  */
+#line 844 "src/ugbc.y"
         {
       screen_off( _environment );
   }
-#line 4008 "src-generated/ugbc.tab.c"
+#line 4044 "src-generated/ugbc.tab.c"
     break;
 
-  case 230: /* screen_definition_simple: ROWS direct_integer  */
-#line 844 "src/ugbc.y"
+  case 231: /* screen_definition_simple: ROWS direct_integer  */
+#line 847 "src/ugbc.y"
                         {
       screen_rows( _environment, (yyvsp[0].integer) );
   }
-#line 4016 "src-generated/ugbc.tab.c"
+#line 4052 "src-generated/ugbc.tab.c"
     break;
 
-  case 231: /* screen_definition_simple: VERTICAL SCROLL direct_integer  */
-#line 847 "src/ugbc.y"
+  case 232: /* screen_definition_simple: VERTICAL SCROLL direct_integer  */
+#line 850 "src/ugbc.y"
                                    {
       screen_vertical_scroll( _environment, (yyvsp[0].integer) );
   }
-#line 4024 "src-generated/ugbc.tab.c"
+#line 4060 "src-generated/ugbc.tab.c"
     break;
 
-  case 232: /* screen_definition_simple: HORIZONTAL SCROLL direct_integer  */
-#line 850 "src/ugbc.y"
+  case 233: /* screen_definition_simple: HORIZONTAL SCROLL direct_integer  */
+#line 853 "src/ugbc.y"
                                      {
       screen_horizontal_scroll( _environment, (yyvsp[0].integer) );
   }
-#line 4032 "src-generated/ugbc.tab.c"
+#line 4068 "src-generated/ugbc.tab.c"
     break;
 
-  case 233: /* screen_definition_expression: ROWS expr  */
-#line 855 "src/ugbc.y"
+  case 234: /* screen_definition_expression: ROWS expr  */
+#line 858 "src/ugbc.y"
               {
       screen_rows_var( _environment, (yyvsp[0].string) );
   }
-#line 4040 "src-generated/ugbc.tab.c"
+#line 4076 "src-generated/ugbc.tab.c"
     break;
 
-  case 234: /* screen_definition_expression: VERTICAL SCROLL expr  */
-#line 858 "src/ugbc.y"
+  case 235: /* screen_definition_expression: VERTICAL SCROLL expr  */
+#line 861 "src/ugbc.y"
                          {
       screen_vertical_scroll_var( _environment, (yyvsp[0].string) );
   }
-#line 4048 "src-generated/ugbc.tab.c"
+#line 4084 "src-generated/ugbc.tab.c"
     break;
 
-  case 235: /* screen_definition_expression: HORIZONTAL SCROLL expr  */
-#line 861 "src/ugbc.y"
+  case 236: /* screen_definition_expression: HORIZONTAL SCROLL expr  */
+#line 864 "src/ugbc.y"
                            {
       screen_horizontal_scroll_var( _environment, (yyvsp[0].string) );
   }
-#line 4056 "src-generated/ugbc.tab.c"
+#line 4092 "src-generated/ugbc.tab.c"
     break;
 
-  case 239: /* var_definition_simple: Identifier ON Identifier  */
-#line 870 "src/ugbc.y"
+  case 240: /* var_definition_simple: Identifier ON Identifier  */
+#line 873 "src/ugbc.y"
                              {
       variable_define( _environment, (yyvsp[-2].string), VT_BYTE, 0 );
   }
-#line 4064 "src-generated/ugbc.tab.c"
+#line 4100 "src-generated/ugbc.tab.c"
     break;
 
-  case 240: /* var_definition_simple: Identifier DOLLAR ON Identifier  */
-#line 873 "src/ugbc.y"
+  case 241: /* var_definition_simple: Identifier DOLLAR ON Identifier  */
+#line 876 "src/ugbc.y"
                                     {
       variable_define( _environment, (yyvsp[-3].string), VT_STRING, 0 );
   }
-#line 4072 "src-generated/ugbc.tab.c"
+#line 4108 "src-generated/ugbc.tab.c"
     break;
 
-  case 241: /* var_definition_simple: Identifier ON Identifier ASSIGN direct_integer  */
-#line 876 "src/ugbc.y"
+  case 242: /* var_definition_simple: Identifier ON Identifier ASSIGN direct_integer  */
+#line 879 "src/ugbc.y"
                                                    {
       variable_define( _environment, (yyvsp[-4].string), VT_BYTE, (yyvsp[0].integer) );
   }
-#line 4080 "src-generated/ugbc.tab.c"
+#line 4116 "src-generated/ugbc.tab.c"
     break;
 
-  case 242: /* var_definition_simple: Identifier ON Identifier ASSIGN expr  */
-#line 879 "src/ugbc.y"
+  case 243: /* var_definition_simple: Identifier ON Identifier ASSIGN expr  */
+#line 882 "src/ugbc.y"
                                          {
       Variable * v = variable_retrieve( _environment, (yyvsp[0].string) );
       Variable * d = variable_define( _environment, (yyvsp[-4].string), v->type, v->value );
       variable_move_naked( _environment, v->name, d->name );
   }
-#line 4090 "src-generated/ugbc.tab.c"
+#line 4126 "src-generated/ugbc.tab.c"
     break;
 
-  case 243: /* var_definition_simple: Identifier DOLLAR ON Identifier ASSIGN expr  */
-#line 884 "src/ugbc.y"
+  case 244: /* var_definition_simple: Identifier DOLLAR ON Identifier ASSIGN expr  */
+#line 887 "src/ugbc.y"
                                                 {
       Variable * v = variable_retrieve( _environment, (yyvsp[0].string) );
       Variable * d = variable_define( _environment, (yyvsp[-5].string), VT_STRING, 0 );
       variable_move( _environment, v->name, d->name );
   }
-#line 4100 "src-generated/ugbc.tab.c"
+#line 4136 "src-generated/ugbc.tab.c"
     break;
 
-  case 244: /* goto_definition: Identifier  */
-#line 891 "src/ugbc.y"
+  case 245: /* goto_definition: Identifier  */
+#line 894 "src/ugbc.y"
                {
       goto_label( _environment, (yyvsp[0].string) );
   }
-#line 4108 "src-generated/ugbc.tab.c"
+#line 4144 "src-generated/ugbc.tab.c"
     break;
 
-  case 245: /* goto_definition: Integer  */
-#line 894 "src/ugbc.y"
+  case 246: /* goto_definition: Integer  */
+#line 897 "src/ugbc.y"
             {
       goto_number( _environment, (yyvsp[0].integer) );
   }
-#line 4116 "src-generated/ugbc.tab.c"
+#line 4152 "src-generated/ugbc.tab.c"
     break;
 
-  case 246: /* gosub_definition: Identifier  */
-#line 900 "src/ugbc.y"
+  case 247: /* gosub_definition: Identifier  */
+#line 903 "src/ugbc.y"
                {
       gosub_label( _environment, (yyvsp[0].string) );
   }
-#line 4124 "src-generated/ugbc.tab.c"
+#line 4160 "src-generated/ugbc.tab.c"
     break;
 
-  case 247: /* gosub_definition: Integer  */
-#line 903 "src/ugbc.y"
+  case 248: /* gosub_definition: Integer  */
+#line 906 "src/ugbc.y"
             {
       gosub_number( _environment, (yyvsp[0].integer) );
   }
-#line 4132 "src-generated/ugbc.tab.c"
+#line 4168 "src-generated/ugbc.tab.c"
     break;
 
-  case 249: /* point_definition_simple: AT OP direct_integer COMMA direct_integer CP  */
-#line 912 "src/ugbc.y"
+  case 250: /* point_definition_simple: AT OP direct_integer COMMA direct_integer CP  */
+#line 915 "src/ugbc.y"
                                                    {
         point_at( _environment, (yyvsp[-3].integer), (yyvsp[-1].integer) );
     }
-#line 4140 "src-generated/ugbc.tab.c"
+#line 4176 "src-generated/ugbc.tab.c"
     break;
 
-  case 250: /* point_definition_expression: AT OP expr COMMA expr CP  */
-#line 918 "src/ugbc.y"
+  case 251: /* point_definition_expression: AT OP expr COMMA expr CP  */
+#line 921 "src/ugbc.y"
                                {
         point_at_vars( _environment, (yyvsp[-3].string), (yyvsp[-1].string) );
     }
-#line 4148 "src-generated/ugbc.tab.c"
+#line 4184 "src-generated/ugbc.tab.c"
     break;
 
-  case 253: /* ink_definition: expr  */
-#line 927 "src/ugbc.y"
+  case 254: /* ink_definition: expr  */
+#line 930 "src/ugbc.y"
          {
         ink( _environment, (yyvsp[0].string) );
     }
-#line 4156 "src-generated/ugbc.tab.c"
+#line 4192 "src-generated/ugbc.tab.c"
     break;
 
-  case 254: /* on_goto_definition: Identifier  */
-#line 932 "src/ugbc.y"
+  case 255: /* on_goto_definition: Identifier  */
+#line 935 "src/ugbc.y"
                  {
           on_goto_index( _environment, (yyvsp[0].string) );
           on_goto_end( _environment );
       }
-#line 4165 "src-generated/ugbc.tab.c"
+#line 4201 "src-generated/ugbc.tab.c"
     break;
 
-  case 255: /* $@1: %empty  */
-#line 936 "src/ugbc.y"
+  case 256: /* $@1: %empty  */
+#line 939 "src/ugbc.y"
                  {
         on_goto_index( _environment, (yyvsp[0].string) );
     }
-#line 4173 "src-generated/ugbc.tab.c"
+#line 4209 "src-generated/ugbc.tab.c"
     break;
 
-  case 257: /* on_gosub_definition: Identifier  */
-#line 941 "src/ugbc.y"
+  case 258: /* on_gosub_definition: Identifier  */
+#line 944 "src/ugbc.y"
                  {
           on_gosub_index( _environment, (yyvsp[0].string) );
           on_gosub_end( _environment );
       }
-#line 4182 "src-generated/ugbc.tab.c"
+#line 4218 "src-generated/ugbc.tab.c"
     break;
 
-  case 258: /* $@2: %empty  */
-#line 945 "src/ugbc.y"
+  case 259: /* $@2: %empty  */
+#line 948 "src/ugbc.y"
                  {
           on_gosub_index( _environment, (yyvsp[0].string) );
     }
-#line 4190 "src-generated/ugbc.tab.c"
+#line 4226 "src-generated/ugbc.tab.c"
     break;
 
-  case 260: /* $@3: %empty  */
-#line 950 "src/ugbc.y"
+  case 261: /* $@3: %empty  */
+#line 953 "src/ugbc.y"
                 {
           on_goto( _environment, (yyvsp[-1].string) );
       }
-#line 4198 "src-generated/ugbc.tab.c"
+#line 4234 "src-generated/ugbc.tab.c"
     break;
 
-  case 262: /* $@4: %empty  */
-#line 953 "src/ugbc.y"
+  case 263: /* $@4: %empty  */
+#line 956 "src/ugbc.y"
                  {
         on_gosub( _environment, (yyvsp[-1].string) );  
     }
-#line 4206 "src-generated/ugbc.tab.c"
+#line 4242 "src-generated/ugbc.tab.c"
     break;
 
-  case 264: /* every_definition: expr TICKS GOSUB Identifier  */
-#line 958 "src/ugbc.y"
+  case 265: /* every_definition: expr TICKS GOSUB Identifier  */
+#line 961 "src/ugbc.y"
                                   {
           every_ticks_gosub( _environment, (yyvsp[-3].string), (yyvsp[0].string) );
     }
-#line 4214 "src-generated/ugbc.tab.c"
+#line 4250 "src-generated/ugbc.tab.c"
     break;
 
-  case 265: /* every_definition: ON  */
-#line 961 "src/ugbc.y"
+  case 266: /* every_definition: ON  */
+#line 964 "src/ugbc.y"
          {
           every_on( _environment );
     }
-#line 4222 "src-generated/ugbc.tab.c"
+#line 4258 "src-generated/ugbc.tab.c"
     break;
 
-  case 266: /* every_definition: OFF  */
-#line 964 "src/ugbc.y"
+  case 267: /* every_definition: OFF  */
+#line 967 "src/ugbc.y"
           {
           every_off( _environment );
     }
-#line 4230 "src-generated/ugbc.tab.c"
+#line 4266 "src-generated/ugbc.tab.c"
     break;
 
-  case 267: /* add_definition: Identifier COMMA expr  */
-#line 969 "src/ugbc.y"
+  case 268: /* add_definition: Identifier COMMA expr  */
+#line 972 "src/ugbc.y"
                           {
         variable_move_naked( _environment, variable_add( _environment, (yyvsp[-2].string), (yyvsp[0].string) )->name, (yyvsp[-2].string) );
     }
-#line 4238 "src-generated/ugbc.tab.c"
+#line 4274 "src-generated/ugbc.tab.c"
     break;
 
-  case 268: /* add_definition: Identifier COMMA expr COMMA expr TO expr  */
-#line 972 "src/ugbc.y"
+  case 269: /* add_definition: Identifier COMMA expr COMMA expr TO expr  */
+#line 975 "src/ugbc.y"
                                                {
         add_complex( _environment, (yyvsp[-6].string), (yyvsp[-4].string), (yyvsp[-2].string), (yyvsp[0].string) );
     }
-#line 4246 "src-generated/ugbc.tab.c"
+#line 4282 "src-generated/ugbc.tab.c"
     break;
 
-  case 285: /* statement: INC Identifier  */
-#line 994 "src/ugbc.y"
+  case 286: /* statement: INC Identifier  */
+#line 997 "src/ugbc.y"
                    {
       variable_increment( _environment, (yyvsp[0].string) );
   }
-#line 4254 "src-generated/ugbc.tab.c"
+#line 4290 "src-generated/ugbc.tab.c"
     break;
 
-  case 286: /* statement: DEC Identifier  */
-#line 997 "src/ugbc.y"
+  case 287: /* statement: DEC Identifier  */
+#line 1000 "src/ugbc.y"
                    {
       variable_decrement( _environment, (yyvsp[0].string) );
   }
-#line 4262 "src-generated/ugbc.tab.c"
+#line 4298 "src-generated/ugbc.tab.c"
     break;
 
-  case 287: /* statement: RANDOMIZE  */
-#line 1000 "src/ugbc.y"
-              {
-      randomize( _environment );
-  }
-#line 4270 "src-generated/ugbc.tab.c"
-    break;
-
-  case 288: /* statement: IF expr THEN  */
+  case 288: /* statement: RANDOMIZE  */
 #line 1003 "src/ugbc.y"
+              {
+      randomize( _environment, NULL );
+  }
+#line 4306 "src-generated/ugbc.tab.c"
+    break;
+
+  case 289: /* statement: RANDOMIZE expr  */
+#line 1006 "src/ugbc.y"
+                   {
+      randomize( _environment, (yyvsp[0].string) );
+  }
+#line 4314 "src-generated/ugbc.tab.c"
+    break;
+
+  case 290: /* statement: IF expr THEN  */
+#line 1009 "src/ugbc.y"
                  {
       if_then( _environment, (yyvsp[-1].string) );  
   }
-#line 4278 "src-generated/ugbc.tab.c"
+#line 4322 "src-generated/ugbc.tab.c"
     break;
 
-  case 289: /* statement: ELSE  */
-#line 1006 "src/ugbc.y"
+  case 291: /* statement: ELSE  */
+#line 1012 "src/ugbc.y"
          {
       else_if_then( _environment, NULL );  
   }
-#line 4286 "src-generated/ugbc.tab.c"
+#line 4330 "src-generated/ugbc.tab.c"
     break;
 
-  case 290: /* statement: ELSE IF expr THEN  */
-#line 1009 "src/ugbc.y"
+  case 292: /* statement: ELSE IF expr THEN  */
+#line 1015 "src/ugbc.y"
                       {
       else_if_then( _environment, (yyvsp[-1].string) );  
   }
-#line 4294 "src-generated/ugbc.tab.c"
+#line 4338 "src-generated/ugbc.tab.c"
     break;
 
-  case 291: /* statement: ENDIF  */
-#line 1012 "src/ugbc.y"
+  case 293: /* statement: ENDIF  */
+#line 1018 "src/ugbc.y"
           {
       end_if_then( _environment );  
   }
-#line 4302 "src-generated/ugbc.tab.c"
+#line 4346 "src-generated/ugbc.tab.c"
     break;
 
-  case 292: /* statement: DO  */
-#line 1015 "src/ugbc.y"
+  case 294: /* statement: DO  */
+#line 1021 "src/ugbc.y"
        {
       begin_loop( _environment );  
   }
-#line 4310 "src-generated/ugbc.tab.c"
+#line 4354 "src-generated/ugbc.tab.c"
     break;
 
-  case 293: /* statement: LOOP  */
-#line 1018 "src/ugbc.y"
+  case 295: /* statement: LOOP  */
+#line 1024 "src/ugbc.y"
          {
       end_loop( _environment );  
   }
-#line 4318 "src-generated/ugbc.tab.c"
+#line 4362 "src-generated/ugbc.tab.c"
     break;
 
-  case 294: /* $@5: %empty  */
-#line 1021 "src/ugbc.y"
+  case 296: /* $@5: %empty  */
+#line 1027 "src/ugbc.y"
           { 
       begin_while( _environment );  
   }
-#line 4326 "src-generated/ugbc.tab.c"
+#line 4370 "src-generated/ugbc.tab.c"
     break;
 
-  case 295: /* statement: WHILE $@5 expr  */
-#line 1023 "src/ugbc.y"
+  case 297: /* statement: WHILE $@5 expr  */
+#line 1029 "src/ugbc.y"
          {
       begin_while_condition( _environment, (yyvsp[0].string) );  
   }
-#line 4334 "src-generated/ugbc.tab.c"
+#line 4378 "src-generated/ugbc.tab.c"
     break;
 
-  case 296: /* statement: WEND  */
-#line 1026 "src/ugbc.y"
+  case 298: /* statement: WEND  */
+#line 1032 "src/ugbc.y"
          {
       end_while( _environment );  
   }
-#line 4342 "src-generated/ugbc.tab.c"
+#line 4386 "src-generated/ugbc.tab.c"
     break;
 
-  case 297: /* statement: REPEAT  */
-#line 1029 "src/ugbc.y"
+  case 299: /* statement: REPEAT  */
+#line 1035 "src/ugbc.y"
            {
       begin_repeat( _environment );  
   }
-#line 4350 "src-generated/ugbc.tab.c"
+#line 4394 "src-generated/ugbc.tab.c"
     break;
 
-  case 298: /* statement: UNTIL expr  */
-#line 1032 "src/ugbc.y"
+  case 300: /* statement: UNTIL expr  */
+#line 1038 "src/ugbc.y"
                {
       end_repeat( _environment, (yyvsp[0].string) );  
   }
-#line 4358 "src-generated/ugbc.tab.c"
+#line 4402 "src-generated/ugbc.tab.c"
     break;
 
-  case 299: /* statement: EXIT  */
-#line 1035 "src/ugbc.y"
+  case 301: /* statement: EXIT  */
+#line 1041 "src/ugbc.y"
          {
       exit_loop( _environment, 0 );  
   }
-#line 4366 "src-generated/ugbc.tab.c"
+#line 4410 "src-generated/ugbc.tab.c"
     break;
 
-  case 300: /* statement: EXIT IF expr  */
-#line 1038 "src/ugbc.y"
+  case 302: /* statement: EXIT IF expr  */
+#line 1044 "src/ugbc.y"
                  {
       exit_loop_if( _environment, (yyvsp[0].string), 0 );  
   }
-#line 4374 "src-generated/ugbc.tab.c"
+#line 4418 "src-generated/ugbc.tab.c"
     break;
 
-  case 301: /* statement: EXIT Integer  */
-#line 1041 "src/ugbc.y"
+  case 303: /* statement: EXIT Integer  */
+#line 1047 "src/ugbc.y"
                  {
       exit_loop( _environment, (yyvsp[0].integer) );  
   }
-#line 4382 "src-generated/ugbc.tab.c"
+#line 4426 "src-generated/ugbc.tab.c"
     break;
 
-  case 302: /* statement: EXIT direct_integer  */
-#line 1044 "src/ugbc.y"
+  case 304: /* statement: EXIT direct_integer  */
+#line 1050 "src/ugbc.y"
                         {
       exit_loop( _environment, (yyvsp[0].integer) );  
   }
-#line 4390 "src-generated/ugbc.tab.c"
+#line 4434 "src-generated/ugbc.tab.c"
     break;
 
-  case 303: /* statement: EXIT IF expr COMMA Integer  */
-#line 1047 "src/ugbc.y"
+  case 305: /* statement: EXIT IF expr COMMA Integer  */
+#line 1053 "src/ugbc.y"
                                {
       exit_loop_if( _environment, (yyvsp[-2].string), (yyvsp[0].integer) );  
   }
-#line 4398 "src-generated/ugbc.tab.c"
+#line 4442 "src-generated/ugbc.tab.c"
     break;
 
-  case 304: /* statement: EXIT IF expr COMMA direct_integer  */
-#line 1050 "src/ugbc.y"
+  case 306: /* statement: EXIT IF expr COMMA direct_integer  */
+#line 1056 "src/ugbc.y"
                                       {
       exit_loop_if( _environment, (yyvsp[-2].string), (yyvsp[0].integer) );  
   }
-#line 4406 "src-generated/ugbc.tab.c"
+#line 4450 "src-generated/ugbc.tab.c"
     break;
 
-  case 305: /* statement: FOR Identifier ASSIGN expr TO expr  */
-#line 1053 "src/ugbc.y"
+  case 307: /* statement: FOR Identifier ASSIGN expr TO expr  */
+#line 1059 "src/ugbc.y"
                                        {
       begin_for( _environment, (yyvsp[-4].string), (yyvsp[-2].string), (yyvsp[0].string) );  
   }
-#line 4414 "src-generated/ugbc.tab.c"
+#line 4458 "src-generated/ugbc.tab.c"
     break;
 
-  case 306: /* statement: NEXT  */
-#line 1056 "src/ugbc.y"
+  case 308: /* statement: NEXT  */
+#line 1062 "src/ugbc.y"
          {
       end_for( _environment );
   }
-#line 4422 "src-generated/ugbc.tab.c"
+#line 4466 "src-generated/ugbc.tab.c"
     break;
 
-  case 307: /* statement: FOR Identifier ASSIGN expr TO expr STEP expr  */
-#line 1059 "src/ugbc.y"
+  case 309: /* statement: FOR Identifier ASSIGN expr TO expr STEP expr  */
+#line 1065 "src/ugbc.y"
                                                  {
       begin_for_step( _environment, (yyvsp[-6].string), (yyvsp[-4].string), (yyvsp[-2].string), (yyvsp[0].string) );  
   }
-#line 4430 "src-generated/ugbc.tab.c"
+#line 4474 "src-generated/ugbc.tab.c"
     break;
 
-  case 308: /* statement: BEG GAMELOOP  */
-#line 1062 "src/ugbc.y"
+  case 310: /* statement: BEG GAMELOOP  */
+#line 1068 "src/ugbc.y"
                  {
       begin_gameloop( _environment );
   }
-#line 4438 "src-generated/ugbc.tab.c"
+#line 4482 "src-generated/ugbc.tab.c"
     break;
 
-  case 309: /* statement: END GAMELOOP  */
-#line 1065 "src/ugbc.y"
+  case 311: /* statement: END GAMELOOP  */
+#line 1071 "src/ugbc.y"
                  {
       end_gameloop( _environment );
   }
-#line 4446 "src-generated/ugbc.tab.c"
+#line 4490 "src-generated/ugbc.tab.c"
     break;
 
-  case 310: /* statement: GRAPHIC  */
-#line 1068 "src/ugbc.y"
+  case 312: /* statement: GRAPHIC  */
+#line 1074 "src/ugbc.y"
             {
       graphic( _environment );
   }
-#line 4454 "src-generated/ugbc.tab.c"
+#line 4498 "src-generated/ugbc.tab.c"
     break;
 
-  case 311: /* statement: HALT  */
-#line 1071 "src/ugbc.y"
+  case 313: /* statement: HALT  */
+#line 1077 "src/ugbc.y"
          {
       halt( _environment );
   }
-#line 4462 "src-generated/ugbc.tab.c"
+#line 4506 "src-generated/ugbc.tab.c"
     break;
 
-  case 316: /* statement: RETURN  */
-#line 1078 "src/ugbc.y"
+  case 318: /* statement: RETURN  */
+#line 1084 "src/ugbc.y"
            {
       return_label( _environment );
   }
-#line 4470 "src-generated/ugbc.tab.c"
+#line 4514 "src-generated/ugbc.tab.c"
     break;
 
-  case 317: /* statement: POP  */
-#line 1081 "src/ugbc.y"
+  case 319: /* statement: POP  */
+#line 1087 "src/ugbc.y"
         {
       pop( _environment );
   }
-#line 4478 "src-generated/ugbc.tab.c"
+#line 4522 "src-generated/ugbc.tab.c"
     break;
 
-  case 318: /* statement: DONE  */
-#line 1084 "src/ugbc.y"
+  case 320: /* statement: DONE  */
+#line 1090 "src/ugbc.y"
           {
       return 0;
   }
-#line 4486 "src-generated/ugbc.tab.c"
+#line 4530 "src-generated/ugbc.tab.c"
     break;
 
-  case 319: /* statement: LEFT OP expr COMMA expr CP ASSIGN expr  */
-#line 1087 "src/ugbc.y"
+  case 321: /* statement: LEFT OP expr COMMA expr CP ASSIGN expr  */
+#line 1093 "src/ugbc.y"
                                            {
         variable_string_left_assign( _environment, (yyvsp[-5].string), (yyvsp[-3].string), (yyvsp[0].string) );
   }
-#line 4494 "src-generated/ugbc.tab.c"
+#line 4538 "src-generated/ugbc.tab.c"
     break;
 
-  case 320: /* statement: RIGHT OP expr COMMA expr CP ASSIGN expr  */
-#line 1090 "src/ugbc.y"
+  case 322: /* statement: RIGHT OP expr COMMA expr CP ASSIGN expr  */
+#line 1096 "src/ugbc.y"
                                             {
         variable_string_right_assign( _environment, (yyvsp[-5].string), (yyvsp[-3].string), (yyvsp[0].string) );
   }
-#line 4502 "src-generated/ugbc.tab.c"
+#line 4546 "src-generated/ugbc.tab.c"
     break;
 
-  case 321: /* statement: MID OP expr COMMA expr CP ASSIGN expr  */
-#line 1093 "src/ugbc.y"
+  case 323: /* statement: MID OP expr COMMA expr CP ASSIGN expr  */
+#line 1099 "src/ugbc.y"
                                           {
         variable_string_mid_assign( _environment, (yyvsp[-5].string), (yyvsp[-3].string), NULL, (yyvsp[0].string) );
   }
-#line 4510 "src-generated/ugbc.tab.c"
+#line 4554 "src-generated/ugbc.tab.c"
     break;
 
-  case 322: /* statement: MID OP expr COMMA expr COMMA expr CP ASSIGN expr  */
-#line 1096 "src/ugbc.y"
+  case 324: /* statement: MID OP expr COMMA expr COMMA expr CP ASSIGN expr  */
+#line 1102 "src/ugbc.y"
                                                      {
         variable_string_mid_assign( _environment, (yyvsp[-7].string), (yyvsp[-5].string), (yyvsp[-3].string), (yyvsp[0].string) );
   }
-#line 4518 "src-generated/ugbc.tab.c"
+#line 4562 "src-generated/ugbc.tab.c"
     break;
 
-  case 323: /* statement: Identifier COLON  */
-#line 1099 "src/ugbc.y"
+  case 325: /* statement: Identifier COLON  */
+#line 1105 "src/ugbc.y"
                      {
       outhead1("%s:", (yyvsp[-1].string));
   }
-#line 4526 "src-generated/ugbc.tab.c"
+#line 4570 "src-generated/ugbc.tab.c"
     break;
 
-  case 324: /* statement: Identifier ASSIGN expr  */
-#line 1102 "src/ugbc.y"
+  case 326: /* statement: Identifier ASSIGN expr  */
+#line 1108 "src/ugbc.y"
                            {
         outline2("; %s = %s", (yyvsp[-2].string), (yyvsp[0].string) );
         Variable * expr = variable_retrieve( _environment, (yyvsp[0].string) );
@@ -4536,11 +4580,11 @@ yyreduce:
         variable_move( _environment, (yyvsp[0].string), (yyvsp[-2].string) );
         outline2("; moved %s -> %s ", (yyvsp[0].string), (yyvsp[-2].string) );
   }
-#line 4540 "src-generated/ugbc.tab.c"
+#line 4584 "src-generated/ugbc.tab.c"
     break;
 
-  case 325: /* statement: Identifier DOLLAR ASSIGN expr  */
-#line 1111 "src/ugbc.y"
+  case 327: /* statement: Identifier DOLLAR ASSIGN expr  */
+#line 1117 "src/ugbc.y"
                                   {
         outline2("; %s = %s", (yyvsp[-3].string), (yyvsp[0].string) );
         Variable * expr = variable_retrieve( _environment, (yyvsp[0].string) );
@@ -4550,53 +4594,53 @@ yyreduce:
         variable_move( _environment, (yyvsp[0].string), (yyvsp[-3].string) );
         outline2("; moved %s -> %s ", (yyvsp[0].string), (yyvsp[-3].string) );
   }
-#line 4554 "src-generated/ugbc.tab.c"
+#line 4598 "src-generated/ugbc.tab.c"
     break;
 
-  case 326: /* statement: DEBUG expr  */
-#line 1120 "src/ugbc.y"
+  case 328: /* statement: DEBUG expr  */
+#line 1126 "src/ugbc.y"
                {
       debug_var( _environment, (yyvsp[0].string) );
   }
-#line 4562 "src-generated/ugbc.tab.c"
+#line 4606 "src-generated/ugbc.tab.c"
     break;
 
-  case 329: /* statements_no_linenumbers: statement  */
-#line 1128 "src/ugbc.y"
+  case 331: /* statements_no_linenumbers: statement  */
+#line 1134 "src/ugbc.y"
                 { ((Environment *)_environment)->yylineno = yylineno; }
-#line 4568 "src-generated/ugbc.tab.c"
+#line 4612 "src-generated/ugbc.tab.c"
     break;
 
-  case 330: /* $@6: %empty  */
-#line 1129 "src/ugbc.y"
+  case 332: /* $@6: %empty  */
+#line 1135 "src/ugbc.y"
                       { ((Environment *)_environment)->yylineno = yylineno; }
-#line 4574 "src-generated/ugbc.tab.c"
+#line 4618 "src-generated/ugbc.tab.c"
     break;
 
-  case 332: /* $@7: %empty  */
-#line 1133 "src/ugbc.y"
+  case 334: /* $@7: %empty  */
+#line 1139 "src/ugbc.y"
               {
         outhead1("_linenumber%d:", (yyvsp[0].integer));
     }
-#line 4582 "src-generated/ugbc.tab.c"
+#line 4626 "src-generated/ugbc.tab.c"
     break;
 
-  case 333: /* statements_with_linenumbers: Integer $@7 statements_no_linenumbers  */
-#line 1135 "src/ugbc.y"
+  case 335: /* statements_with_linenumbers: Integer $@7 statements_no_linenumbers  */
+#line 1141 "src/ugbc.y"
                                 { 
         ((Environment *)_environment)->yylineno = yylineno;
     }
-#line 4590 "src-generated/ugbc.tab.c"
+#line 4634 "src-generated/ugbc.tab.c"
     break;
 
-  case 338: /* $@8: %empty  */
-#line 1147 "src/ugbc.y"
+  case 340: /* $@8: %empty  */
+#line 1153 "src/ugbc.y"
   { ((Environment *)_environment)->yylineno = yylineno; }
-#line 4596 "src-generated/ugbc.tab.c"
+#line 4640 "src-generated/ugbc.tab.c"
     break;
 
 
-#line 4600 "src-generated/ugbc.tab.c"
+#line 4644 "src-generated/ugbc.tab.c"
 
       default: break;
     }
@@ -4826,7 +4870,7 @@ yyreturn:
   return yyresult;
 }
 
-#line 1149 "src/ugbc.y"
+#line 1155 "src/ugbc.y"
 
 
 void show_usage_and_exit( int _argc, char *_argv[] ) {

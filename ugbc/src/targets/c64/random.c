@@ -54,15 +54,20 @@ Initialize the random seed.
 @italian
 Inizializza il seme casuale.
 
-@syntax RANDOMIZE
+@syntax RANDOMIZE {[seed]}
 
 @example RANDOMIZE
 
 @target c64
 </usermanual> */
-void randomize( Environment * _environment ) {
+void randomize( Environment * _environment, char * _ext_seed ) {
 
     Variable * seed = variable_define( _environment, "seed", VT_DWORD, 0Xffffffff );
+
+    if ( _ext_seed ) {
+        Variable * external_seed = variable_retrieve( _environment, _ext_seed );
+        variable_move( _environment, external_seed->name, seed->name );
+    }
 
 }
 

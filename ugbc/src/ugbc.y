@@ -37,7 +37,7 @@ int yywrap() { return 1; }
 %token BEG END GAMELOOP ENDIF UP DOWN LEFT RIGHT DEBUG AND RANDOMIZE GRAPHIC TEXTMAP
 %token POINT GOSUB RETURN POP OR ELSE NOT TRUE FALSE DO EXIT WEND UNTIL FOR STEP EVERY
 %token MID INSTR UPPER LOWER STR VAL STRING SPACE FLIP CHR ASC LEN POW MOD ADD MIN MAX SGN
-%token SIGNED ABS RND COLORS INK
+%token SIGNED ABS RND COLORS INK TIMER
 
 %token MILLISECOND MILLISECONDS TICKS
 
@@ -449,6 +449,9 @@ exponential:
     }
     | HEIGHT {
         $$ = screen_get_height( _environment )->name;
+    }
+    | TIMER {
+        $$ = get_timer( _environment )->name;
     }
     ;
 
@@ -998,7 +1001,10 @@ statement:
       variable_decrement( _environment, $2 );
   }
   | RANDOMIZE {
-      randomize( _environment );
+      randomize( _environment, NULL );
+  }
+  | RANDOMIZE expr {
+      randomize( _environment, $2 );
   }
   | IF expr THEN {
       if_then( _environment, $2 );  
