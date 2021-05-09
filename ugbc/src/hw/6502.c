@@ -1425,7 +1425,7 @@ void cpu6502_random( Environment * _environment, char * _seed, char * _entropy )
     outline1("ROL %s+1", _seed);
     outline1("ROL %s+2", _seed);
     outline1("ROL %s+3", _seed);
-    outline1("BCC %s2", label);
+    outline1("BCC %sxx2", label);
     outline1("LDA %s", _seed);
     outline1("EOR %s", _entropy)
     outline1("STA %s", _seed);
@@ -1438,7 +1438,7 @@ void cpu6502_random( Environment * _environment, char * _seed, char * _entropy )
     outline1("LDA %s+3", _seed );
     outline0("EOR #$04" );
     outline1("STA %s+3", _seed );
-    outhead1("%s2:", label);
+    outhead1("%sxx2:", label);
 
 }
 

@@ -309,3 +309,26 @@ void screen_horizontal_scroll_var( Environment * _environment, char * _displacem
 
 }
 
+Variable * screen_get_width( Environment * _environment ) {
+
+    Variable * width = variable_temporary( _environment, VT_POSITION, "(result of get width)");
+
+    MAKE_LABEL
+    
+    vic2_get_width( _environment, width->realName );
+
+    return width;
+
+}
+
+Variable * screen_get_height( Environment * _environment ) {
+
+    Variable * height = variable_temporary( _environment, VT_POSITION, "(result of get height)");
+
+    MAKE_LABEL
+    
+    vic2_get_height( _environment, height->realName );
+   
+    return height;
+
+}

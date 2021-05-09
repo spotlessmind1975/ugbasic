@@ -103,8 +103,11 @@ void vic2_vertical_scroll( Environment * _environment, char * _displacement );
 void vic2_horizontal_scroll( Environment * _environment, char * _displacement );
 void vic2_busy_wait( Environment * _environment, char * _timing );
 
+void vic2_text_at( Environment * _environment, char * _x, char * _y, char * _text, char * _size );
+void vic2_get_width( Environment * _environment, char * _result );
+void vic2_get_height( Environment * _environment, char * _result );
+
 void vic2_point_at_int( Environment * _environment, int _x, int _y );
 void vic2_point_at_vars( Environment * _environment, char *_x, char *_y );
-
 
 #endif

@@ -184,3 +184,15 @@ void text_disable( Environment * _environment ) {
     bitmap_enable( _environment );
     
 }
+
+void text_at( Environment * _environment, char * _x, char * _y, char * _text ) {
+
+    Variable * x = variable_retrieve( _environment, _x );
+    Variable * y = variable_retrieve( _environment, _y );
+    Variable * text = variable_retrieve( _environment, _text );
+
+    char textString[16]; sprintf(textString, "%s+1", text->realName );
+
+    vic2_text_at( _environment, x->realName, y->realName, textString, text->realName );
+    
+}

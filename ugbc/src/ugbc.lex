@@ -56,6 +56,7 @@ CLEAR { return (CLEAR); }
 CODE { return (CODE); }
 COLLISION { return (COLLISION); }
 COLOR { return (COLOR); }
+COLORS { return (COLORS); }
 COLORMAP { return (COLORMAP); }
 COMPRESS { return (COMPRESS); }
 CYAN { return(CYAN); }
@@ -96,6 +97,7 @@ HIT { return (HIT); }
 HORIZONTAL { return (HORIZONTAL); }
 IF { return (IF); }
 INC { return (INC); }
+INK { return (INK); }
 INSTR { return (INSTR); }
 LAVENDER { return(LAVENDER); }
 LEFT { return (LEFT); }
@@ -140,6 +142,7 @@ REPEAT { return (REPEAT); }
 RETURN { return (RETURN); }
 RIGHT { return (RIGHT); }
 RIGHT\$ { return (RIGHT); }
+RND { return (RND); }
 ROWS { return (ROWS); }
 S { return (S); }
 SCREEN { return (SCREEN); }

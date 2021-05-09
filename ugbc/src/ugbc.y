@@ -37,7 +37,7 @@ int yywrap() { return 1; }
 %token BEG END GAMELOOP ENDIF UP DOWN LEFT RIGHT DEBUG AND RANDOMIZE GRAPHIC TEXTMAP
 %token POINT GOSUB RETURN POP OR ELSE NOT TRUE FALSE DO EXIT WEND UNTIL FOR STEP EVERY
 %token MID INSTR UPPER LOWER STR VAL STRING SPACE FLIP CHR ASC LEN POW MOD ADD MIN MAX SGN
-%token SIGNED ABS
+%token SIGNED ABS RND COLORS INK
 
 %token MILLISECOND MILLISECONDS TICKS
 
@@ -414,6 +414,9 @@ exponential:
     | RANDOM random_definition {
         $$ = $2;
     }
+    | RND OP expr CP {
+        $$ = variable_rnd( _environment, $3 )->name;
+    }
     | OP expr CP {
         $$ = $2;
     }
@@ -436,6 +439,16 @@ exponential:
     | FALSE {
         $$ = variable_temporary( _environment, VT_BYTE, "(false)" )->name;
         variable_store( _environment, $$, 255 );
+    }
+    | COLORS {
+        $$ = variable_temporary( _environment, VT_COLOR, "(COLORS)" )->name;
+        variable_store( _environment, $$, 16 );
+    }
+    | WIDTH {
+        $$ = screen_get_width( _environment )->name;
+    }
+    | HEIGHT {
+        $$ = screen_get_height( _environment )->name;
     }
     ;
 
@@ -771,8 +784,17 @@ text_definition_simple:
       text_disable( _environment );
   };
 
+text_definition_expression:
+     AT expr COMMA expr COMMA expr {
+       text_at( _environment, $2, $4, $6 );
+   }
+   | expr COMMA expr COMMA expr {
+       text_at( _environment, $1, $3, $5 );
+   };
+
 text_definition:
-  text_definition_simple;
+    text_definition_simple
+  | text_definition_expression;
 
 tiles_definition_simple:
     AT direct_integer {
@@ -901,6 +923,11 @@ point_definition:
     point_definition_simple
   | point_definition_expression;
 
+ink_definition:
+    expr {
+        ink( _environment, $1 );
+    }
+
 on_goto_definition:
       Identifier {
           on_goto_index( _environment, $1 );
@@ -961,6 +988,7 @@ statement:
   | COLORMAP colormap_definition
   | SCREEN screen_definition
   | POINT point_definition
+  | INK ink_definition
   | VAR var_definition
   | ADD add_definition
   | INC Identifier {
@@ -1186,6 +1214,7 @@ int main( int _argc, char *_argv[] ) {
         outhead0(".segment \"CODE\"");
         variable_define( _environment, "strings_address", VT_ADDRESS, 0x4200 );
         bank_define( _environment, "STRINGS", BT_STRINGS, 0x4200, NULL );
+        variable_define( _environment, "text_address", VT_ADDRESS, 0x0400 );
     } else {
         outhead0("org 32768");
         variable_define( _environment, "strings_address", VT_ADDRESS, 0xa000 );
