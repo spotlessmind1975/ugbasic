@@ -430,7 +430,7 @@ exponential:
         $$ = variable_sgn( _environment, $3 )->name;
     }
     | ABS OP expr CP {
-        $$ = variable_abs( _environment, $3 )->name;
+        $$ = abs( _environment, $3 )->name;
     }
     | TRUE {
         $$ = variable_temporary( _environment, VT_BYTE, "(true)" )->name;
