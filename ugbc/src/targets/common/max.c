@@ -48,6 +48,27 @@ extern char DATATYPE_AS_STRING[][16];
  * @param _destination Destination variable's name
  * @return Variable* The maximum value of both
  */
+/* <usermanual>
+@keyword MAX
+
+@english
+The function ''MAX'' compares two expressions and returns the largest. 
+It can be used with any type of expressions, but they cannot be compared 
+if they are mixed.
+
+@italian
+La funzione "MAX" confronta due espressioni e restituisce la più grande.
+Può essere utilizzata con qualsiasi tipo di espressione, ma non possono 
+essere confrontati tipi diversi tra loro.
+
+@syntax MAX([expression],[expression])
+
+@example result = MAX( a, b )
+
+@usedInExample maths_relatives_01.bas
+
+@target all
+</usermanual> */
 Variable * maximum( Environment * _environment, char * _source, char * _destination ) {
     Variable * source = variable_retrieve( _environment, _source );
 
