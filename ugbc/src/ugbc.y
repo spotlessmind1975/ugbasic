@@ -37,7 +37,7 @@ int yywrap() { return 1; }
 %token BEG END GAMELOOP ENDIF UP DOWN LEFT RIGHT DEBUG AND RANDOMIZE GRAPHIC TEXTMAP
 %token POINT GOSUB RETURN POP OR ELSE NOT TRUE FALSE DO EXIT WEND UNTIL FOR STEP EVERY
 %token MID INSTR UPPER LOWER STR VAL STRING SPACE FLIP CHR ASC LEN POW MOD ADD MIN MAX SGN
-%token SIGNED ABS RND COLORS INK TIMER
+%token SIGNED ABS RND COLORS INK TIMER POWERING
 
 %token MILLISECOND MILLISECONDS TICKS
 
@@ -131,6 +131,10 @@ factor:
       | factor POW exponential {
         $$ = powering( _environment, $1, $3 )->name;
         outline3("; %s = %s ^ %s", $$, $1, $3 );
+      }
+      | POWERING OP factor COMMA exponential CP {
+        $$ = powering( _environment, $3, $5 )->name;
+        outline3("; %s = %s ^ %s", $$, $3, $5 );
       }
       ;
 

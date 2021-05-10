@@ -46,49 +46,82 @@ extern char DATATYPE_AS_STRING[][16];
  * This function allows you to emit a code that raise a variable
  * to a given variable.
  * 
- * @pre _source and _destination variables must exist
+ * @pre _base and _exponential variables must exist
  * 
  * @param _environment Current calling environment
- * @param _source Source variable's name
- * @param _destination Destination variable's name
+ * @param _base Base variable's name
+ * @param _exponential Exponential variable's name
  * @return Variable* The result of calculation
  */
-Variable * powering( Environment * _environment, char * _source, char * _destination ) {
+/* <usermanual>
+@keyword POW
 
-    Variable * source = variable_retrieve( _environment, _source );
+@english
+The function raise a number to a given power. 
+It can be also represented using the ''^'' (circumflex) character as exponential symbol.
 
-    Variable * target = variable_cast( _environment, _destination, source->type );
-    if ( ! target ) {
-        CRITICAL_VARIABLE(_destination);
+@italian
+La funzione eleva un numero a una data potenza.
+Può essere espresso anche usando il simbolo ''^'' (accento circonflesso).
+
+@syntax POW([base],[exponent])
+@syntax [base]^[exponent]
+
+@example pitagora = POW(a,2) + b^2 + POW(c,2)
+
+@usedInExample maths_example_01.bas
+
+@target all
+</usermanual> */
+
+Variable * powering( Environment * _environment, char * _base, char * _exponential ) {
+
+    Variable * base = variable_retrieve( _environment, _base );
+
+    Variable * exponential = variable_cast( _environment, _exponential, base->type );
+    if ( ! exponential ) {
+        CRITICAL_VARIABLE(_exponential);
     }
 
     Variable * result;
 
-    if ( source->type == VT_DWORD || target->type == VT_DWORD ) {
-        CRITICAL_POW_UNSUPPORTED( _source, DATATYPE_AS_STRING[source->type]);
+    if ( base->type == VT_DWORD ) {
+        CRITICAL_POW_UNSUPPORTED( _base, DATATYPE_AS_STRING[base->type]);
     }
 
-    if ( source->type == VT_STRING || target->type == VT_STRING ) {
-        CRITICAL_POW_UNSUPPORTED( _source, DATATYPE_AS_STRING[source->type]);
+    if ( exponential->type == VT_DWORD ) {
+        CRITICAL_POW_UNSUPPORTED( _exponential, DATATYPE_AS_STRING[exponential->type]);
     }
 
-    if ( source->type == VT_BUFFER || target->type == VT_BUFFER ) {
-        CRITICAL_POW_UNSUPPORTED( _source, DATATYPE_AS_STRING[source->type]);
+    if ( base->type == VT_STRING ) {
+        CRITICAL_POW_UNSUPPORTED( _base, DATATYPE_AS_STRING[base->type]);
+    }
+
+    if ( exponential->type == VT_STRING ) {
+        CRITICAL_POW_UNSUPPORTED( _exponential, DATATYPE_AS_STRING[exponential->type]);
+    }
+
+    if ( base->type == VT_BUFFER ) {
+        CRITICAL_POW_UNSUPPORTED( _base, DATATYPE_AS_STRING[base->type]);
+    }
+
+    if ( exponential->type == VT_BUFFER ) {
+        CRITICAL_POW_UNSUPPORTED( _exponential, DATATYPE_AS_STRING[exponential->type]);
     }
 
     MAKE_LABEL
 
     char endLabel[16]; sprintf(endLabel, "%send", label);
 
-    Variable * counter = variable_cast( _environment, target->name, VT_BYTE );
-    switch( VT_BITWIDTH( source->type ) ) {
+    Variable * counter = variable_cast( _environment, exponential->name, VT_BYTE );
+    switch( VT_BITWIDTH( base->type ) ) {
         case 32:
         case 16:
             result = variable_temporary( _environment, VT_DWORD, "(result of pow)");
             variable_store( _environment, result->name, 1 );
             cpu_bveq( _environment, counter->realName, endLabel );
             cpu_label( _environment, label );
-            cpu_math_mul_16bit_to_32bit( _environment, source->realName, result->realName, result->realName );
+            cpu_math_mul_16bit_to_32bit( _environment, base->realName, result->realName, result->realName );
             cpu_dec( _environment, counter->realName );
             cpu_bvneq( _environment, counter->realName, label );
             cpu_label( _environment, endLabel );
@@ -98,7 +131,7 @@ Variable * powering( Environment * _environment, char * _source, char * _destina
             variable_store( _environment, result->name, 1 );
             cpu_bveq( _environment, counter->realName, endLabel );
             cpu_label( _environment, label );
-            cpu_math_mul_8bit_to_16bit( _environment, source->realName, result->realName, result->realName );
+            cpu_math_mul_8bit_to_16bit( _environment, base->realName, result->realName, result->realName );
             cpu_dec( _environment, counter->realName );
             cpu_bvneq( _environment, counter->realName, label );
             cpu_label( _environment, endLabel );

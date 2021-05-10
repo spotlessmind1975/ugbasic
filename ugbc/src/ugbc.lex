@@ -133,6 +133,7 @@ PINK { return(PINK); }
 POINT { return (POINT); }
 POP { return (POP); }
 POSITION { return (POSITION); }
+POW { return (POWERING); }
 PURPLE { return(PURPLE); }
 RANDOM { return (RANDOM); }
 RANDOMIZE { return (RANDOMIZE); }
