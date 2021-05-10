@@ -3211,7 +3211,7 @@ yyreduce:
   case 100: /* exponential: MIN OP expr COMMA expr CP  */
 #line 426 "src/ugbc.y"
                                 {
-        (yyval.string) = variable_min( _environment, (yyvsp[-3].string), (yyvsp[-1].string) )->name;
+        (yyval.string) = minimum( _environment, (yyvsp[-3].string), (yyvsp[-1].string) )->name;
     }
 #line 3217 "src-generated/ugbc.tab.c"
     break;

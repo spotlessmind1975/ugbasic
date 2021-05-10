@@ -424,7 +424,7 @@ exponential:
         $$ = maximum( _environment, $3, $5 )->name;
     }
     | MIN OP expr COMMA expr CP {
-        $$ = variable_min( _environment, $3, $5 )->name;
+        $$ = minimum( _environment, $3, $5 )->name;
     }
     | SGN OP expr CP {
         $$ = sign( _environment, $3 )->name;
