@@ -3227,7 +3227,7 @@ yyreduce:
   case 102: /* exponential: ABS OP expr CP  */
 #line 432 "src/ugbc.y"
                      {
-        (yyval.string) = variable_abs( _environment, (yyvsp[-1].string) )->name;
+        (yyval.string) = abs( _environment, (yyvsp[-1].string) )->name;
     }
 #line 3233 "src-generated/ugbc.tab.c"
     break;

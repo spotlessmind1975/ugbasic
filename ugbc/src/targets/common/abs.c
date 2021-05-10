@@ -70,7 +70,7 @@ sia positivo o negativo, in altre parole, ignorando il suo segno.
 
 @target all
 </usermanual> */
-Variable * abs( Environment * _environment, char * _value ) {
+Variable * absolute( Environment * _environment, char * _value ) {
     Variable * value = variable_retrieve( _environment, _value );
 
     Variable * result = variable_temporary( _environment, value->type, "(result of ABS)");

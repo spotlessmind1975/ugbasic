@@ -632,7 +632,7 @@ typedef struct _Environment {
 #define cfg4(s,a,b,c,d)         cfgline4n(0, s, a, b, c, d, 0)
 #define cfg5(s,a,b,c,d,e)       cfgline5n(0, s, a, b, c, d, e, 0)
 
-
+Variable * absolute( Environment * _environment, char * _value );
 void add_complex( Environment * _environment, char * _variable, char * _expression, char * _limit_lower, char * _limit_upper );
 Bank * bank_define( Environment * _environment, char * _name, BankType _type, int _address, char * _filename );
 void   bank_cleanup( Environment * _environment );
@@ -783,7 +783,6 @@ Variable * variable_and( Environment * _environment, char * _left, char * _right
 Variable * variable_or( Environment * _environment, char * _left, char * _right );
 Variable * variable_not( Environment * _environment, char * _value );
 Variable * variable_sgn( Environment * _environment, char * _value );
-Variable * variable_abs( Environment * _environment, char * _value );
 Variable * variable_div2_const( Environment * _environment, char * _source, int _bits );
 Variable * variable_mul2_const( Environment * _environment, char * _source, int _bits );
 Variable * variable_and_const( Environment * _environment, char * _source, int _mask );
