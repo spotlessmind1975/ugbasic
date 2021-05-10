@@ -114,9 +114,44 @@ void text_at( Environment * _environment, char * _x, char * _y, char * _text ) {
     Variable * x = variable_retrieve( _environment, _x );
     Variable * y = variable_retrieve( _environment, _y );
     Variable * text = variable_retrieve( _environment, _text );
+    Variable * bitmap_enabled = variable_retrieve( _environment, "bitmap_enabled" );
 
     char textString[16]; sprintf(textString, "%s+1", text->realName );
 
-    outline0("; TEXT AT (ignored)" );
+    outline0("; TEXT AT" );
+
+    MAKE_LABEL
+
+    char bitmapEnabledLabel[32]; sprintf(bitmapEnabledLabel, "%senabled", label );
     
+    cpu_bvneq( _environment, bitmap_enabled->realName, bitmapEnabledLabel );
+
+    Variable * buffer = variable_temporary( _environment, VT_BUFFER, "(buffer fot AT command)");
+    variable_resize_buffer( _environment, buffer->name, 3 );
+
+    char bufferAddress[16]; 
+    
+    sprintf( bufferAddress, "%s", buffer->realName );
+    cpu_store_8bit( _environment, bufferAddress, 22 );
+    sprintf( bufferAddress, "%s+1", buffer->realName );
+    cpu_move_8bit( _environment, y->realName, bufferAddress );
+    sprintf( bufferAddress, "%s+2", buffer->realName );
+    cpu_move_8bit( _environment, y->realName, bufferAddress );
+
+    outline0("LD A,2");
+    outline0("CALL 5633");
+    outline1("LD DE,%s", buffer->realName);
+    outline0("LD BC,3");
+    outline0("CALL 8252");
+
+    char stringAddress[16]; 
+    sprintf(stringAddress, "%s+1", text->realName );
+    outline1( "LD DE, (%s)", stringAddress );
+    outline1( "LD A, (%s)", text->realName );
+    outline0( "LD C, A" );
+    outline0( "LD B, 0" );
+    outline0( "CALL 8252" );
+
+    cpu_label( _environment, bitmapEnabledLabel );
+
 }

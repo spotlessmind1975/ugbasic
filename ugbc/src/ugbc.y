@@ -1224,6 +1224,7 @@ int main( int _argc, char *_argv[] ) {
     } else {
         outhead0("org 32768");
         variable_define( _environment, "strings_address", VT_ADDRESS, 0xa000 );
+        variable_define( _environment, "bitmap_enabled", VT_BYTE, 0 );
     }
 
 

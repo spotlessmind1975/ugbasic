@@ -172,9 +172,26 @@ void screen_horizontal_scroll_var( Environment * _environment, char * _displacem
 
 Variable * screen_get_width( Environment * _environment ) {
 
+    MAKE_LABEL
+
     Variable * width = variable_temporary( _environment, VT_POSITION, "(result of get width)");
 
+    Variable * bitmap_enabled = variable_retrieve( _environment, "bitmap_enabled" );
+
+    char bitmapEnabledLabel[32]; sprintf(bitmapEnabledLabel, "%senabled", label );
+    char endLabel[32]; sprintf(endLabel, "%send", label );
+
+    cpu_bvneq( _environment, bitmap_enabled->realName, bitmapEnabledLabel );
+    
+    variable_store( _environment, width->name, 32 );
+
+    cpu_jump( _environment, endLabel );
+
+    cpu_label( _environment, bitmapEnabledLabel );
+
     variable_store( _environment, width->name, 256 );
+
+    cpu_label( _environment, endLabel );
 
     return width;
 
@@ -182,10 +199,29 @@ Variable * screen_get_width( Environment * _environment ) {
 
 Variable * screen_get_height( Environment * _environment ) {
 
+    MAKE_LABEL
+
     Variable * height = variable_temporary( _environment, VT_POSITION, "(result of get height)");
 
     variable_store( _environment, height->name, 192 );
    
+    Variable * bitmap_enabled = variable_retrieve( _environment, "bitmap_enabled" );
+
+    char bitmapEnabledLabel[32]; sprintf(bitmapEnabledLabel, "%senabled", label );
+    char endLabel[32]; sprintf(endLabel, "%send", label );
+
+    cpu_bvneq( _environment, bitmap_enabled->realName, bitmapEnabledLabel );
+    
+    variable_store( _environment, height->name, 20 );
+
+    cpu_jump( _environment, endLabel );
+
+    cpu_label( _environment, bitmapEnabledLabel );
+
+    variable_store( _environment, height->name, 192 );
+
+    cpu_label( _environment, endLabel );
+
     return height;
 
 }
