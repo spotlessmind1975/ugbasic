@@ -427,7 +427,7 @@ exponential:
         $$ = variable_min( _environment, $3, $5 )->name;
     }
     | SGN OP expr CP {
-        $$ = variable_sgn( _environment, $3 )->name;
+        $$ = sign( _environment, $3 )->name;
     }
     | ABS OP expr CP {
         $$ = absolute( _environment, $3 )->name;

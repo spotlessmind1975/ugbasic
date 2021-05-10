@@ -725,6 +725,7 @@ void screen_horizontal_scroll( Environment * _environment, int _displacement );
 void screen_horizontal_scroll_var( Environment * _environment, char * _displacement );
 Variable * screen_get_width( Environment * _environment );
 Variable * screen_get_height( Environment * _environment );
+Variable * sign( Environment * _environment, char * _value );
 void sprite_data_from( Environment * _environment, int _sprite, int _address );
 void sprite_data_from_vars( Environment * _environment, char * _sprite, char * _address );
 void sprite_disable( Environment * _environment, int _sprite );
@@ -782,7 +783,6 @@ Variable * variable_max( Environment * _environment, char * _source, char * _des
 Variable * variable_and( Environment * _environment, char * _left, char * _right );
 Variable * variable_or( Environment * _environment, char * _left, char * _right );
 Variable * variable_not( Environment * _environment, char * _value );
-Variable * variable_sgn( Environment * _environment, char * _value );
 Variable * variable_div2_const( Environment * _environment, char * _source, int _bits );
 Variable * variable_mul2_const( Environment * _environment, char * _source, int _bits );
 Variable * variable_and_const( Environment * _environment, char * _source, int _mask );
