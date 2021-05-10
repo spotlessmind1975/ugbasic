@@ -95,8 +95,8 @@ void z80_bveq( Environment * _environment, char * _value, char * _label ) {
 void z80_bvneq( Environment * _environment, char * _value, char * _label ) {
 
     outline1("LD A, (%s)", _value);
-    outline0("CP 1");
-    z80_beq( _environment, _label );
+    outline0("CP 0");
+    z80_bneq( _environment, _label );
 
 }
 

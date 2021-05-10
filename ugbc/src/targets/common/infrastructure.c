@@ -2658,10 +2658,9 @@ Variable * variable_pow( Environment * _environment, char * _source, char * _des
     char endLabel[16]; sprintf(endLabel, "%send", label);
 
     Variable * counter = variable_cast( _environment, target->name, VT_BYTE );
-    switch( source->type ) {
-        case VT_ADDRESS:
-        case VT_POSITION:
-        case VT_WORD:
+    switch( VT_BITWIDTH( source->type ) ) {
+        case 32:
+        case 16:
             result = variable_temporary( _environment, VT_DWORD, "(result of pow)");
             variable_store( _environment, result->name, 1 );
             cpu_bveq( _environment, counter->realName, endLabel );
@@ -2671,8 +2670,7 @@ Variable * variable_pow( Environment * _environment, char * _source, char * _des
             cpu_bvneq( _environment, counter->realName, label );
             cpu_label( _environment, endLabel );
             break;
-        case VT_BYTE:
-        case VT_COLOR:
+        case 8:
             result = variable_temporary( _environment, VT_DWORD, "(result of pow)");
             variable_store( _environment, result->name, 1 );
             cpu_bveq( _environment, counter->realName, endLabel );
