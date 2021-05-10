@@ -3203,7 +3203,7 @@ yyreduce:
   case 99: /* exponential: MAX OP expr COMMA expr CP  */
 #line 423 "src/ugbc.y"
                                 {
-        (yyval.string) = variable_max( _environment, (yyvsp[-3].string), (yyvsp[-1].string) )->name;
+        (yyval.string) = maximum( _environment, (yyvsp[-3].string), (yyvsp[-1].string) )->name;
     }
 #line 3209 "src-generated/ugbc.tab.c"
     break;

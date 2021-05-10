@@ -691,6 +691,7 @@ int is_word( Environment * _environment, char * _name );
 void linker_setup( Environment * _environment );
 void linker_cleanup( Environment * _environment );
 void loop( Environment * _environment, char *_label );
+Variable * maximum( Environment * _environment, char * _source, char * _dest );
 void next_raster( Environment * _environment );
 void next_raster_at_with( Environment * _environment, int _at, char * _with );
 void next_raster_at_with_var( Environment * _environment, char * _var, char * _with );
@@ -779,7 +780,6 @@ Variable * variable_mul( Environment * _environment, char * _source, char * _des
 Variable * variable_div( Environment * _environment, char * _source, char * _dest );
 Variable * variable_pow( Environment * _environment, char * _source, char * _dest );
 Variable * variable_min( Environment * _environment, char * _source, char * _dest );
-Variable * variable_max( Environment * _environment, char * _source, char * _dest );
 Variable * variable_and( Environment * _environment, char * _left, char * _right );
 Variable * variable_or( Environment * _environment, char * _left, char * _right );
 Variable * variable_not( Environment * _environment, char * _value );
