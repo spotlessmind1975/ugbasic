@@ -2712,13 +2712,13 @@ Variable * variable_min( Environment * _environment, char * _source, char * _des
 
     cpu_bveq( _environment, compare->realName, greaterThanLabel );
 
-    variable_move_naked( _environment, target->name, result->name );
+    variable_move_naked( _environment, source->name, result->name );
     
     cpu_jump( _environment, endLabel );
 
     cpu_label( _environment, greaterThanLabel );
 
-    variable_move_naked( _environment, source->name, result->name );
+    variable_move_naked( _environment, target->name, result->name );
     
     cpu_label( _environment, endLabel );
 

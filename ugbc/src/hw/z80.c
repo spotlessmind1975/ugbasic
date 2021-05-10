@@ -227,9 +227,9 @@ void z80_less_than_8bit( Environment * _environment, char *_source, char *_desti
 
     MAKE_LABEL
 
-    outline1("LD A, (%s)", _source);
-    outline0("LD B, A");
     outline1("LD A, (%s)", _destination);
+    outline0("LD B, A");
+    outline1("LD A, (%s)", _source);
     outline0("CP B");
     outline1("JR C, %s", label);
     if ( _equal ) {
@@ -266,9 +266,9 @@ void z80_greater_than_8bit( Environment * _environment, char *_source, char *_de
 
     MAKE_LABEL
 
-    outline1("LD A, (%s)", _source);
-    outline0("LD B, A");
     outline1("LD A, (%s)", _destination);
+    outline0("LD B, A");
+    outline1("LD A, (%s)", _source);
     outline0("CP B");
     if ( !_equal ) {
         outline1("JR Z, %sg2", label);
@@ -569,7 +569,9 @@ void z80_less_than_16bit( Environment * _environment, char *_source, char *_dest
     outline0("LD B, A");
     outline1("LD A, (%s+1)", _source);
     outline0("CP B");
+    outline1("JR Z, %sl2", label);
     outline1("JR C, %s", label);
+    outhead1("%sl2:", label);
     outline1("LD A, (%s)", _destination);
     outline0("LD B, A");
     outline1("LD A, (%s)", _source);
@@ -1549,8 +1551,8 @@ void z80_greater_than_memory( Environment * _environment, char *_source, char *_
 
     MAKE_LABEL
 
-    outline1("LD HL,(%s)", _source);
-    outline1("LD DE,(%s)", _destination);
+    outline1("LD HL,(%s)", _destination);
+    outline1("LD DE,(%s)", _source);
     outline1("LD A, (%s)", _size);
     outline0("LD C, A");
     outhead1("%s:", label );
@@ -1558,10 +1560,10 @@ void z80_greater_than_memory( Environment * _environment, char *_source, char *_
     outline0("LD B, A");
     outline0("LD A, (DE)");
     outline0("CP B");
-    outline1("JR C, %sdiff", label);
-    if ( ! _equal ) {
+    if ( !_equal ) {
         outline1("JR Z, %sdiff", label);
     }
+    outline1("JR C, %sdiff", label);
     outline0("INC DE");
     outline0("INC HL");
     outline0("DEC C");
@@ -1580,17 +1582,17 @@ void z80_greater_than_memory_size( Environment * _environment, char *_source, ch
 
     MAKE_LABEL
 
-    outline1("LD HL,(%s)", _source);
-    outline1("LD DE,(%s)", _destination);
+    outline1("LD HL,(%s)", _destination);
+    outline1("LD DE,(%s)", _source);
     outline1("LD A, $%2.2x", _size);
     outline0("LD C, A");
     outhead1("%s:", label );
     outline0("LD A, (HL)");
     outline0("CP (DE)");
-    outline1("JR C, %sdiff", label);
     if ( ! _equal ) {
         outline1("JR Z, %sdiff", label);
     }
+    outline1("JR C, %sdiff", label);
     outline0("INC DE");
     outline0("INC HL");
     outline0("DEC C");
