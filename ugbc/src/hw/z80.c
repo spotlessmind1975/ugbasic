@@ -2050,10 +2050,11 @@ void z80_math_div_16bit_to_16bit( Environment * _environment, char *_source, cha
     outline1("DJNZ %sloop", label);
     outline1("LD (%s), HL", _other_remainder);
     outline1("LD DE, %s", _other);
-    outline0("LD A, L");
+    outline0("LD B, A");
+    outline0("LD A, C");
     outline0("LD (DE), A");
     outline0("INC DE");
-    outline0("LD A, H");
+    outline0("LD A, B");
     outline0("LD (DE), A");
     
 }
