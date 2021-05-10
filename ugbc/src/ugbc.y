@@ -129,7 +129,7 @@ modula:
 factor: 
         exponential
       | factor POW exponential {
-        $$ = variable_pow( _environment, $1, $3 )->name;
+        $$ = powering( _environment, $1, $3 )->name;
         outline3("; %s = %s ^ %s", $$, $1, $3 );
       }
       ;
