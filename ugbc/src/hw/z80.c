@@ -270,10 +270,11 @@ void z80_greater_than_8bit( Environment * _environment, char *_source, char *_de
     outline0("LD B, A");
     outline1("LD A, (%s)", _destination);
     outline0("CP B");
-    outline1("JR NC, %s", label);
     if ( !_equal ) {
-        outline1("JR NZ, %s", label);
+        outline1("JR Z, %sg2", label);
     }
+    outline1("JR NC, %s", label);
+    outhead1("%sg2:", label);
     outline0("LD A, 0");
     if ( _other ) {
         outline1("LD (%s), A", _other);
@@ -564,14 +565,14 @@ void z80_less_than_16bit( Environment * _environment, char *_source, char *_dest
 
     MAKE_LABEL
 
-    outline1("LD A, (%s+1)", _source);
-    outline0("LD B, A");
     outline1("LD A, (%s+1)", _destination);
+    outline0("LD B, A");
+    outline1("LD A, (%s+1)", _source);
     outline0("CP B");
     outline1("JR C, %s", label);
-    outline1("LD A, (%s)", _source);
-    outline0("LD B, A");
     outline1("LD A, (%s)", _destination);
+    outline0("LD B, A");
+    outline1("LD A, (%s)", _source);
     outline0("CP B");
     outline1("JR C, %s", label);
     if ( _equal ) {
@@ -608,19 +609,22 @@ void z80_greater_than_16bit( Environment * _environment, char *_source, char *_d
 
     MAKE_LABEL
 
-    outline1("LD A, (%s+1)", _source);
-    outline0("LD B, A");
     outline1("LD A, (%s+1)", _destination);
-    outline0("CP B");
-    outline1("JR NC, %s", label);
-    outline1("LD A, (%s)", _source);
     outline0("LD B, A");
-    outline1("LD A, (%s)", _destination);
+    outline1("LD A, (%s+1)", _source);
     outline0("CP B");
+    outline1("JR Z, %sc2", label);
     outline1("JR NC, %s", label);
+    outhead1("%sc2:", label);
+    outline1("LD A, (%s)", _destination);
+    outline0("LD B, A");
+    outline1("LD A, (%s)", _source);
+    outline0("CP B");
     if ( !_equal ) {
-        outline1("JR NZ, %s", label);
+        outline1("JR Z, %sd2", label);
     }
+    outline1("JR NC, %s", label);
+    outhead1("%sd2:", label);
     outline0("LD A, 0");
     if ( _other ) {
         outline1("LD (%s), A", _other);
@@ -973,36 +977,43 @@ void z80_greater_than_32bit( Environment * _environment, char *_source, char *_d
 
     MAKE_LABEL
 
-    outline1("LD A, (%s+3)", _source);
-    outline0("LD B, A");
     outline1("LD A, (%s+3)", _destination);
-    outline0("CP B");
-    outline1("JR NC, %s", label);
-    outline1("LD A, (%s+2)", _source);
     outline0("LD B, A");
+    outline1("LD A, (%s+3)", _source);
+    outline0("CP B");
+    outline1("JR Z, %sg2", label);
+    outline1("JR NC, %s", label);
+    outhead1("%sg2:", label);
     outline1("LD A, (%s+2)", _destination);
-    outline0("CP B");
-    outline1("JR NC, %s", label);
-    outline1("LD A, (%s+1)", _source);
     outline0("LD B, A");
+    outline1("LD A, (%s+2)", _source);
+    outline0("CP B");
+    outline1("JR Z, %sg3", label);
+    outline1("JR NC, %s", label);
+    outhead1("%sg3:", label);
     outline1("LD A, (%s+1)", _destination);
-    outline0("CP B");
-    outline1("JR NC, %s", label);
-    outline1("LD A, (%s)", _source);
     outline0("LD B, A");
-    outline1("LD A, (%s)", _destination);
+    outline1("LD A, (%s+1)", _source);
     outline0("CP B");
+    outline1("JR Z, %sg4", label);
     outline1("JR NC, %s", label);
+    outhead1("%sg4:", label);
+    outline1("LD A, (%s)", _destination);
+    outline0("LD B, A");
+    outline1("LD A, (%s)", _source);
+    outline0("CP B");
     if ( !_equal ) {
-        outline1("JR NZ, %s", label);
+        outline1("JR Z, %sg5", label);
     }
+    outline1("JR NC, %s", label);
+    outhead1("%sg5:", label);
     outline0("LD A, 0");
     if ( _other ) {
         outline1("LD (%s), A", _other);
     } else {
         outline1("LD (%s), A", _destination);
     }
-    outline1("JMP %s2", label);
+    outline1("JMP %send", label);
     outhead1("%s:", label);
     outline0("LD A, 1");
     if ( _other ) {
@@ -1010,7 +1021,7 @@ void z80_greater_than_32bit( Environment * _environment, char *_source, char *_d
     } else {
         outline1("LD (%s), A", _destination);
     }
-    outhead1("%s2:", label);
+    outhead1("%send:", label);
 
 }
 
