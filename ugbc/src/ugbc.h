@@ -714,6 +714,7 @@ void raster_at( Environment * _environment, char * _label, int _position );
 void raster_at_var( Environment * _environment, char * _label, char * _position );
 void repeat( Environment * _environment, char *_label );
 void return_label( Environment * _environment );
+Variable * rnd( Environment * _environment, char * _value );
 void screen_on( Environment * _environment );
 void screen_off( Environment * _environment );
 void screen_rows( Environment * _environment, int _rows );
@@ -782,7 +783,6 @@ Variable * variable_and( Environment * _environment, char * _left, char * _right
 Variable * variable_or( Environment * _environment, char * _left, char * _right );
 Variable * variable_not( Environment * _environment, char * _value );
 Variable * variable_sgn( Environment * _environment, char * _value );
-Variable * variable_rnd( Environment * _environment, char * _value );
 Variable * variable_abs( Environment * _environment, char * _value );
 Variable * variable_div2_const( Environment * _environment, char * _source, int _bits );
 Variable * variable_mul2_const( Environment * _environment, char * _source, int _bits );

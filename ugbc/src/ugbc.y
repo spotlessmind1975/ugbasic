@@ -415,7 +415,7 @@ exponential:
         $$ = $2;
     }
     | RND OP expr CP {
-        $$ = variable_rnd( _environment, $3 )->name;
+        $$ = rnd( _environment, $3 )->name;
     }
     | OP expr CP {
         $$ = $2;

@@ -3187,7 +3187,7 @@ yyreduce:
   case 97: /* exponential: RND OP expr CP  */
 #line 417 "src/ugbc.y"
                      {
-        (yyval.string) = variable_rnd( _environment, (yyvsp[-1].string) )->name;
+        (yyval.string) = rnd( _environment, (yyvsp[-1].string) )->name;
     }
 #line 3193 "src-generated/ugbc.tab.c"
     break;
