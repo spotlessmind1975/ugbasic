@@ -38,6 +38,50 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/**
+ * @brief Emit code for <strong>ADD x,y,a TO b</strong>
+ * 
+ * @param _environment Current calling environment
+ * @param _variable Variable to operate on
+ * @param _expression Expression to add to the variable
+ * @param _limit_lower Lower limit
+ * @param _limit_upper Upper limit
+ */
+/* <usermanual>
+@keyword ADD
+
+@english
+The ''ADD'' command can be used to add the result of an expression to a whole number variable. 
+It is the equivalent to make a ''variable=variable+expression'' but performs the addition 
+faster. There is a more complex version of ''ADD'', which is ideal for handling certain 
+loops much more quickly than the equivalent separate instructions. When those other 
+parameters are included, ''ADD v,a,b TO t'' is the equivalent to the following lines:
+
+  v=v+a
+  IF v<b THEN v=t: ENDIF
+  IF v>t THEN v=b: ENDIF
+
+@italian
+Il comando ''ADD'' può essere utilizzato per aggiungere il risultato di un'espressione 
+a una variabile intera. È l'equivalente di ''variabile = variabile + espressione'' ma esegue 
+l'addizione molto più velocemente. Esiste una versione più complessa di ''ADD'', ideale 
+per gestire determinati loop molto più rapidamente rispetto alle istruzioni separate 
+equivalenti. Quando questi altri parametri sono inclusi, il comando ''ADD v, a, b TO t'' 
+è equivalente alle seguenti righe:
+
+  v=v+a
+  IF v<b THEN v=t: ENDIF
+  IF v>t THEN v=b: ENDIF
+
+@syntax ADD [variable],[expression]{,[lower] TO [upper]}
+
+@example ADD x,42,1 TO 100
+@example ADD y,10
+
+@usedInExample maths_fast_02.bas
+
+@target all
+</usermanual> */
 void add_complex( Environment * _environment, char * _variable, char * _expression, char * _limit_lower, char * _limit_upper ) { 
 
     MAKE_LABEL

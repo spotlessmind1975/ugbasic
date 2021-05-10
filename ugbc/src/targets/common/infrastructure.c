@@ -362,11 +362,16 @@ Variable * variable_define( Environment * _environment, char * _name, VariableTy
  * Allowed types:
  * 
  * - `VT_BYTE` (<b>BYTE</b>)
+ * - `VT_SBYTE` (<b>SIGNED BYTE</b>)
  * - `VT_COLOR` (<b>COLOR</b>)
  * - `VT_WORD` (<b>WORD</b>)
+ * - `VT_SWORD` (<b>SIGNED WORD</b>)
  * - `VT_ADDRESS` (<b>ADDRESS</b>)
  * - `VT_POSITION` (<b>POSITION</b>)
  * - `VT_DWORD` (<b>DWORD</b>)
+ * - `VT_SIGNED DWORD` (<b>SIGNED DWORD</b>)
+ * - `VT_STRING` (<b>STRING</b>)
+ * - `VT_BUFFER`
  * 
  * @param _environment Current calling environment
  * @param _type Type of the variable to define
@@ -546,6 +551,14 @@ Variable * variable_store( Environment * _environment, char * _destination, int 
     return destination;
 }
 
+/**
+ * @brief Store a string to a variable 
+ * 
+ * @param _environment Current calling environment
+ * @param _destination Destination variable's name
+ * @param _value Value to assign
+ * @return Variable* The destination variable
+ */
 Variable * variable_store_string( Environment * _environment, char * _destination, char * _value ) {
     Variable * destination = variable_find( _environment->tempVariables, _destination );
     if ( ! destination ) {
@@ -574,6 +587,14 @@ Variable * variable_store_string( Environment * _environment, char * _destinatio
     return destination;
 }
 
+/**
+ * @brief Resize the (static) size of a buffer
+ * 
+ * @param _environment Current calling environment
+ * @param _destination Destination variable's name
+ * @param _size Size of the buffer, in bytes
+ * @return Variable* The destination variable
+ */
 Variable * variable_resize_buffer( Environment * _environment, char * _destination, int _size ) {
     Variable * destination = variable_find( _environment->tempVariables, _destination );
     if ( ! destination ) {
@@ -913,6 +934,14 @@ Variable * variable_mul( Environment * _environment, char * _source, char * _des
     return result;
 }
 
+/**
+ * @brief Make a division between two variable and return the product of them
+ * 
+ * @param _environment Current calling environment
+ * @param _source Source variable's name
+ * @param _destination Destination variable's name
+ * @return Variable* The quotient of source and destination variable
+ */
 Variable * variable_div( Environment * _environment, char * _source, char * _destination ) {
     Variable * source = variable_find( _environment->tempVariables, _source );
     if ( ! source ) {
@@ -947,6 +976,13 @@ Variable * variable_div( Environment * _environment, char * _source, char * _des
     return result;
 }
 
+/**
+ * @brief Increment a variable by one
+ * 
+ * @param _environment Current calling environment
+ * @param _source Source variable's name
+ * @return Variable* The source variable
+ */
 Variable * variable_increment( Environment * _environment, char * _source ) {
     Variable * source = variable_find( _environment->tempVariables, _source );
     if ( ! source ) {
@@ -970,6 +1006,13 @@ Variable * variable_increment( Environment * _environment, char * _source ) {
     return source;
 }
 
+/**
+ * @brief Decrement a variable by one
+ * 
+ * @param _environment Current calling environment
+ * @param _source Source variable's name
+ * @return Variable* The source variable
+ */
 Variable * variable_decrement( Environment * _environment, char * _source ) {
     Variable * source = variable_find( _environment->tempVariables, _source );
     if ( ! source ) {
@@ -2684,6 +2727,14 @@ Variable * variable_pow( Environment * _environment, char * _source, char * _des
     return result;
 }
 
+/**
+ * @brief Return the minimum value between two expressions
+ * 
+ * @param _environment Current calling environment
+ * @param _source Source variable's name
+ * @param _destination Destination variable's name
+ * @return Variable* The minimum value of both
+ */
 Variable * variable_min( Environment * _environment, char * _source, char * _destination ) {
     Variable * source = variable_find( _environment->tempVariables, _source );
     if ( ! source ) {
@@ -2725,6 +2776,14 @@ Variable * variable_min( Environment * _environment, char * _source, char * _des
     return result;
 }
 
+/**
+ * @brief Return the maximum value between two expressions
+ * 
+ * @param _environment Current calling environment
+ * @param _source Source variable's name
+ * @param _destination Destination variable's name
+ * @return Variable* The maximum value of both
+ */
 Variable * variable_max( Environment * _environment, char * _source, char * _destination ) {
     Variable * source = variable_find( _environment->tempVariables, _source );
     if ( ! source ) {
@@ -2766,6 +2825,13 @@ Variable * variable_max( Environment * _environment, char * _source, char * _des
     return result;
 }
 
+/**
+ * @brief Return the sign of a variable
+ * 
+ * @param _environment Current calling environment
+ * @param _value Value to calculate the sign
+ * @return Variable* The sign of value
+ */
 Variable * variable_sgn( Environment * _environment, char * _value ) {
     Variable * value = variable_find( _environment->tempVariables, _value );
     if ( ! value ) {
@@ -2810,6 +2876,13 @@ Variable * variable_sgn( Environment * _environment, char * _value ) {
     return result;
 }
 
+/**
+ * @brief Return the absolute value of a variable
+ * 
+ * @param _environment Current calling environment
+ * @param _value Value to calculate the absolute value
+ * @return Variable* The absolute value
+ */
 Variable * variable_abs( Environment * _environment, char * _value ) {
     Variable * value = variable_find( _environment->tempVariables, _value );
     if ( ! value ) {
@@ -2855,6 +2928,13 @@ Variable * variable_abs( Environment * _environment, char * _value ) {
     return result;
 }
 
+/**
+ * @brief Return the random value 
+ * 
+ * @param _environment Current calling environment
+ * @param _value Maximum value for the random value
+ * @return Variable* The random value
+ */
 Variable * variable_rnd( Environment * _environment, char * _value ) {
 
     Variable * last_random = variable_temporary( _environment, VT_DWORD, "(last temporary for RND)");
