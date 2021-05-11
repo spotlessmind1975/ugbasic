@@ -56,6 +56,7 @@ void cpu6502_greater_than_32bit( Environment * _environment, char *_source, char
 void cpu6502_greater_than_8bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _equal );
 void cpu6502_fill( Environment * _environment, char * _address, char * _blocks, char * _pattern );
 void cpu6502_halt( Environment * _environment );
+void cpu6502_end( Environment * _environment );
 void cpu6502_jump( Environment * _environment, char * _label );
 void cpu6502_call( Environment * _environment, char * _label );
 void cpu6502_pop( Environment * _environment );
@@ -154,6 +155,7 @@ void cpu6502_bit_check( Environment * _environment, char * _value, int _position
 #define cpu_greater_than_8bit( _environment, _source, _destination, _name, _equal ) cpu6502_greater_than_8bit( _environment, _source, _destination, _name, _equal )
 #define cpu_fill( _environment,  _address,  _blocks,  _pattern  ) cpu6502_fill( _environment,  _address,  _blocks,  _pattern  )
 #define cpu_halt( _environment  ) cpu6502_halt( _environment  )
+#define cpu_end( _environment  ) cpu6502_end( _environment  )
 #define cpu_jump( _environment,  _label  ) cpu6502_jump( _environment,  _label  )
 #define cpu_call( _environment,  _label  ) cpu6502_call( _environment,  _label  )
 #define cpu_return( _environment  ) cpu6502_return( _environment )

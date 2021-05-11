@@ -1416,6 +1416,13 @@ void cpu6502_halt( Environment * _environment ) {
 
 }
 
+void cpu6502_end( Environment * _environment ) {
+
+    outline0("SEI");
+    cpu6502_halt( _environment );
+
+}
+
 void cpu6502_random( Environment * _environment, char * _seed, char * _entropy ) {
 
     MAKE_LABEL

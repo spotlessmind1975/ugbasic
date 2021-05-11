@@ -691,7 +691,7 @@ union yyalloc
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  88
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  375
+#define YYNRULES  376
 /* YYNSTATES -- Number of states.  */
 #define YYNSTATES  740
 
@@ -793,10 +793,10 @@ static const yytype_int16 yyrline[] =
     1109,  1110,  1111,  1112,  1115,  1118,  1121,  1124,  1127,  1130,
     1133,  1136,  1139,  1142,  1142,  1147,  1150,  1153,  1156,  1159,
     1162,  1165,  1168,  1171,  1174,  1177,  1180,  1183,  1186,  1189,
-    1192,  1195,  1196,  1197,  1198,  1199,  1202,  1205,  1208,  1211,
-    1214,  1217,  1220,  1221,  1224,  1233,  1242,  1242,  1254,  1254,
-    1271,  1271,  1288,  1291,  1292,  1296,  1297,  1297,  1301,  1301,
-    1308,  1309,  1310,  1311,  1315,  1315
+    1192,  1195,  1198,  1199,  1200,  1201,  1202,  1205,  1208,  1211,
+    1214,  1217,  1220,  1223,  1224,  1227,  1236,  1245,  1245,  1257,
+    1257,  1274,  1274,  1291,  1294,  1295,  1299,  1300,  1300,  1304,
+    1304,  1311,  1312,  1313,  1314,  1318,  1318
 };
 #endif
 
@@ -905,7 +905,7 @@ static const yytype_int16 yytoknum[] =
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
 
-#define YYTABLE_NINF (-357)
+#define YYTABLE_NINF (-358)
 
 #define yytable_value_is_error(Yyn) \
   0
@@ -995,12 +995,12 @@ static const yytype_int16 yypact[] =
      means the default is an error.  */
 static const yytype_int16 yydefact[] =
 {
-     374,     0,   364,     1,   363,     0,     0,     0,   347,     0,
+     375,     0,   365,     1,   364,     0,     0,     0,   348,     0,
        0,   335,     0,     0,   340,     0,     0,     0,   244,     0,
-     322,   326,   323,     0,     0,     0,     0,     0,     0,   320,
-       0,     0,     0,   315,   339,     0,     0,     0,   345,   346,
+     322,   326,   323,     0,     0,     0,     0,     0,   341,   320,
+       0,     0,     0,   315,   339,     0,     0,     0,   346,   347,
      318,   321,   328,   325,     0,     0,     0,     0,     0,     0,
-       0,   360,   368,   365,   370,   372,   375,   313,   314,     0,
+       0,   361,   369,   366,   371,   373,   376,   313,   314,     0,
        0,   145,   146,   298,     0,     0,     0,   159,   160,   300,
        0,     0,    79,    80,     0,     0,     0,     0,     0,   111,
      112,     0,     0,     0,   108,   109,     0,     0,     0,     0,
@@ -1012,14 +1012,14 @@ static const yytype_int16 yydefact[] =
      171,   301,     0,     0,     0,     0,     0,     0,     0,   139,
      140,   297,     0,     0,   202,   203,   302,     0,   205,   206,
      207,   211,   212,   303,   234,   235,     0,     0,     0,   242,
-     243,   308,     0,   341,     0,   254,   311,   250,   251,   342,
+     243,   308,     0,   342,     0,   254,   311,   250,   251,   343,
        0,     0,   217,   218,     0,   221,   222,   305,     0,   225,
      226,   306,     0,   228,   232,   233,   307,     0,   337,   338,
-       0,     0,   362,   316,     0,   215,   216,   304,     0,   257,
-     258,   309,   252,   253,   343,     0,     0,   330,   331,   327,
-       0,   271,   272,     0,   344,     0,     0,   312,   259,   310,
-     287,   293,   352,   353,     0,   358,     0,     0,   364,   366,
-     364,   364,     0,     0,     0,   156,   153,     0,     0,     0,
+       0,     0,   363,   316,     0,   215,   216,   304,     0,   257,
+     258,   309,   252,   253,   344,     0,     0,   330,   331,   327,
+       0,   271,   272,     0,   345,     0,     0,   312,   259,   310,
+     287,   293,   353,   354,     0,   359,     0,     0,   365,   367,
+     365,   365,     0,     0,     0,   156,   153,     0,     0,     0,
        0,    66,     0,     0,     0,     0,     0,     0,     0,     0,
        0,     0,    28,    24,    25,    27,    29,    30,    26,    31,
      101,    23,     0,     0,    11,     0,     0,     0,     0,     0,
@@ -1035,8 +1035,8 @@ static const yytype_int16 yydefact[] =
        0,     0,   266,   268,     0,     0,   324,     0,     0,   224,
      223,   230,   227,     0,   317,     0,     0,   214,   213,     0,
        0,   329,     0,     0,     0,     0,   285,   277,   279,   284,
-     281,   286,     0,   283,   291,     0,     0,     0,   354,     0,
-       0,     0,     0,   369,   364,   371,   373,     0,     0,   143,
+     281,   286,     0,   283,   291,     0,     0,     0,   355,     0,
+       0,     0,     0,   370,   365,   372,   374,     0,     0,   143,
      141,     0,     0,     0,     0,     0,     0,     0,     0,     0,
        0,     0,     0,   103,     0,     0,     0,     0,     0,     0,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
@@ -1049,7 +1049,7 @@ static const yytype_int16 yydefact[] =
        0,   210,   208,   240,   237,   241,   238,     0,     0,     0,
      245,     0,     0,     0,     0,     0,     0,     0,     0,   319,
        0,     0,     0,     0,   273,   278,   280,   282,     0,     0,
-       0,   294,   355,     0,   295,     0,     0,   367,   144,   142,
+       0,   294,   356,     0,   295,     0,     0,   368,   144,   142,
      158,   155,   157,   154,    75,    68,    70,    74,    72,     0,
        0,     0,    78,    77,    82,    81,    84,    83,     0,     0,
        0,     0,    91,    92,    93,   100,     0,    94,    95,    96,
@@ -1066,9 +1066,9 @@ static const yytype_int16 yydefact[] =
        0,     0,   296,     0,     0,    85,    86,     0,    87,     0,
       89,    99,   105,   104,    22,    62,   136,   138,     0,     0,
        0,     0,     0,     0,   249,   219,     0,     0,   256,   255,
-       0,     0,     0,     0,   292,   276,   290,     0,   357,     0,
-       0,     0,   135,   137,   191,   176,   262,   265,   348,   349,
-     336,     0,   350,   274,   359,   361,    88,    90,     0,   351
+       0,     0,     0,     0,   292,   276,   290,     0,   358,     0,
+       0,     0,   135,   137,   191,   176,   262,   265,   349,   350,
+     336,     0,   351,   274,   360,   362,    88,    90,     0,   352
 };
 
   /* YYPGOTO[NTERM-NUM].  */
@@ -1119,7 +1119,7 @@ static const yytype_int16 yytable[] =
      250,   174,   217,   401,   301,   177,   317,   178,   401,   647,
      233,   655,   322,   495,   318,   402,   497,   234,   -59,   212,
      402,   213,   496,   403,   235,   498,   198,   365,   403,   188,
-     148,    60,   327,   506,   333,   335,   368,   337,  -356,   656,
+     148,    60,   327,   506,   333,   335,   368,   337,  -357,   656,
      657,   339,   507,   164,   165,   166,   167,   508,   430,   431,
      376,   377,   535,   536,   682,   168,   509,   547,   379,   432,
      341,   342,   381,   537,   320,   199,   321,   200,   343,   201,
@@ -1604,9 +1604,9 @@ static const yytype_int16 yyr1[] =
      249,   249,   249,   250,   249,   249,   249,   249,   249,   249,
      249,   249,   249,   249,   249,   249,   249,   249,   249,   249,
      249,   249,   249,   249,   249,   249,   249,   249,   249,   249,
-     249,   249,   249,   249,   249,   249,   251,   249,   252,   249,
-     253,   249,   249,   249,   249,   254,   255,   254,   257,   256,
-     258,   258,   258,   258,   260,   259
+     249,   249,   249,   249,   249,   249,   249,   251,   249,   252,
+     249,   253,   249,   249,   249,   249,   254,   255,   254,   257,
+     256,   258,   258,   258,   258,   260,   259
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
@@ -1646,10 +1646,10 @@ static const yytype_int8 yyr2[] =
        2,     2,     2,     2,     2,     1,     2,     3,     1,     4,
        1,     1,     1,     0,     3,     1,     1,     2,     1,     3,
        2,     2,     5,     5,     6,     1,     8,     2,     2,     1,
-       1,     2,     2,     2,     2,     1,     1,     1,     8,     8,
-       8,    10,     2,     2,     3,     4,     0,     7,     0,     8,
-       0,     8,     2,     1,     0,     1,     0,     4,     0,     3,
-       1,     3,     1,     3,     0,     2
+       1,     1,     2,     2,     2,     2,     1,     1,     1,     8,
+       8,     8,    10,     2,     2,     3,     4,     0,     7,     0,
+       8,     0,     8,     2,     1,     0,     1,     0,     4,     0,
+       3,     1,     3,     1,     3,     0,     2
 };
 
 
@@ -4793,72 +4793,80 @@ yyreduce:
 #line 4794 "src-generated/ugbc.tab.c"
     break;
 
-  case 345: /* statement: RETURN  */
-#line 1199 "src/ugbc.y"
-           {
-      return_label( _environment );
+  case 341: /* statement: END  */
+#line 1195 "src/ugbc.y"
+        {
+      end( _environment );
   }
 #line 4802 "src-generated/ugbc.tab.c"
     break;
 
-  case 346: /* statement: POP  */
+  case 346: /* statement: RETURN  */
 #line 1202 "src/ugbc.y"
-        {
-      pop( _environment );
+           {
+      return_label( _environment );
   }
 #line 4810 "src-generated/ugbc.tab.c"
     break;
 
-  case 347: /* statement: DONE  */
+  case 347: /* statement: POP  */
 #line 1205 "src/ugbc.y"
-          {
-      return 0;
+        {
+      pop( _environment );
   }
 #line 4818 "src-generated/ugbc.tab.c"
     break;
 
-  case 348: /* statement: LEFT OP expr COMMA expr CP ASSIGN expr  */
+  case 348: /* statement: DONE  */
 #line 1208 "src/ugbc.y"
-                                           {
-        variable_string_left_assign( _environment, (yyvsp[-5].string), (yyvsp[-3].string), (yyvsp[0].string) );
+          {
+      return 0;
   }
 #line 4826 "src-generated/ugbc.tab.c"
     break;
 
-  case 349: /* statement: RIGHT OP expr COMMA expr CP ASSIGN expr  */
+  case 349: /* statement: LEFT OP expr COMMA expr CP ASSIGN expr  */
 #line 1211 "src/ugbc.y"
-                                            {
-        variable_string_right_assign( _environment, (yyvsp[-5].string), (yyvsp[-3].string), (yyvsp[0].string) );
+                                           {
+        variable_string_left_assign( _environment, (yyvsp[-5].string), (yyvsp[-3].string), (yyvsp[0].string) );
   }
 #line 4834 "src-generated/ugbc.tab.c"
     break;
 
-  case 350: /* statement: MID OP expr COMMA expr CP ASSIGN expr  */
+  case 350: /* statement: RIGHT OP expr COMMA expr CP ASSIGN expr  */
 #line 1214 "src/ugbc.y"
-                                          {
-        variable_string_mid_assign( _environment, (yyvsp[-5].string), (yyvsp[-3].string), NULL, (yyvsp[0].string) );
+                                            {
+        variable_string_right_assign( _environment, (yyvsp[-5].string), (yyvsp[-3].string), (yyvsp[0].string) );
   }
 #line 4842 "src-generated/ugbc.tab.c"
     break;
 
-  case 351: /* statement: MID OP expr COMMA expr COMMA expr CP ASSIGN expr  */
+  case 351: /* statement: MID OP expr COMMA expr CP ASSIGN expr  */
 #line 1217 "src/ugbc.y"
-                                                     {
-        variable_string_mid_assign( _environment, (yyvsp[-7].string), (yyvsp[-5].string), (yyvsp[-3].string), (yyvsp[0].string) );
+                                          {
+        variable_string_mid_assign( _environment, (yyvsp[-5].string), (yyvsp[-3].string), NULL, (yyvsp[0].string) );
   }
 #line 4850 "src-generated/ugbc.tab.c"
     break;
 
-  case 353: /* statement: Identifier COLON  */
-#line 1221 "src/ugbc.y"
-                     {
-      outhead1("%s:", (yyvsp[-1].string));
+  case 352: /* statement: MID OP expr COMMA expr COMMA expr CP ASSIGN expr  */
+#line 1220 "src/ugbc.y"
+                                                     {
+        variable_string_mid_assign( _environment, (yyvsp[-7].string), (yyvsp[-5].string), (yyvsp[-3].string), (yyvsp[0].string) );
   }
 #line 4858 "src-generated/ugbc.tab.c"
     break;
 
-  case 354: /* statement: Identifier ASSIGN expr  */
+  case 354: /* statement: Identifier COLON  */
 #line 1224 "src/ugbc.y"
+                     {
+      outhead1("%s:", (yyvsp[-1].string));
+  }
+#line 4866 "src-generated/ugbc.tab.c"
+    break;
+
+  case 355: /* statement: Identifier ASSIGN expr  */
+#line 1227 "src/ugbc.y"
                            {
         outline2("; %s = %s", (yyvsp[-2].string), (yyvsp[0].string) );
         Variable * expr = variable_retrieve( _environment, (yyvsp[0].string) );
@@ -4868,11 +4876,11 @@ yyreduce:
         variable_move( _environment, (yyvsp[0].string), (yyvsp[-2].string) );
         outline2("; moved %s -> %s ", (yyvsp[0].string), (yyvsp[-2].string) );
   }
-#line 4872 "src-generated/ugbc.tab.c"
+#line 4880 "src-generated/ugbc.tab.c"
     break;
 
-  case 355: /* statement: Identifier DOLLAR ASSIGN expr  */
-#line 1233 "src/ugbc.y"
+  case 356: /* statement: Identifier DOLLAR ASSIGN expr  */
+#line 1236 "src/ugbc.y"
                                   {
         outline2("; %s = %s", (yyvsp[-3].string), (yyvsp[0].string) );
         Variable * expr = variable_retrieve( _environment, (yyvsp[0].string) );
@@ -4882,20 +4890,20 @@ yyreduce:
         variable_move( _environment, (yyvsp[0].string), (yyvsp[-3].string) );
         outline2("; moved %s -> %s ", (yyvsp[0].string), (yyvsp[-3].string) );
   }
-#line 4886 "src-generated/ugbc.tab.c"
+#line 4894 "src-generated/ugbc.tab.c"
     break;
 
-  case 356: /* $@11: %empty  */
-#line 1242 "src/ugbc.y"
+  case 357: /* $@11: %empty  */
+#line 1245 "src/ugbc.y"
                {
         memset( ((struct _Environment *)_environment)->arrayIndexesEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
         ((struct _Environment *)_environment)->arrayIndexes = 0;
     }
-#line 4895 "src-generated/ugbc.tab.c"
+#line 4903 "src-generated/ugbc.tab.c"
     break;
 
-  case 357: /* statement: Identifier $@11 OP indexes CP ASSIGN expr  */
-#line 1246 "src/ugbc.y"
+  case 358: /* statement: Identifier $@11 OP indexes CP ASSIGN expr  */
+#line 1249 "src/ugbc.y"
                                 {
         Variable * expr = variable_retrieve( _environment, (yyvsp[0].string) );
         Variable * array = variable_retrieve( _environment, (yyvsp[-6].string) );
@@ -4904,20 +4912,20 @@ yyreduce:
         }
         variable_move_array( _environment, (yyvsp[-6].string), expr->name );
   }
-#line 4908 "src-generated/ugbc.tab.c"
+#line 4916 "src-generated/ugbc.tab.c"
     break;
 
-  case 358: /* $@12: %empty  */
-#line 1254 "src/ugbc.y"
+  case 359: /* $@12: %empty  */
+#line 1257 "src/ugbc.y"
                       {
         memset( ((struct _Environment *)_environment)->arrayIndexesEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
         ((struct _Environment *)_environment)->arrayIndexes = 0;
     }
-#line 4917 "src-generated/ugbc.tab.c"
+#line 4925 "src-generated/ugbc.tab.c"
     break;
 
-  case 359: /* statement: Identifier DOLLAR $@12 OP indexes CP ASSIGN expr  */
-#line 1257 "src/ugbc.y"
+  case 360: /* statement: Identifier DOLLAR $@12 OP indexes CP ASSIGN expr  */
+#line 1260 "src/ugbc.y"
                                 {
         Variable * x = variable_retrieve( _environment, (yyvsp[0].string) );
         Variable * a = variable_retrieve( _environment, (yyvsp[-7].string) );
@@ -4932,20 +4940,20 @@ yyreduce:
         }
         variable_move_array_string( _environment, (yyvsp[-7].string), x->name );
   }
-#line 4936 "src-generated/ugbc.tab.c"
+#line 4944 "src-generated/ugbc.tab.c"
     break;
 
-  case 360: /* $@13: %empty  */
-#line 1271 "src/ugbc.y"
+  case 361: /* $@13: %empty  */
+#line 1274 "src/ugbc.y"
                {
         memset( ((struct _Environment *)_environment)->arrayIndexesEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
         ((struct _Environment *)_environment)->arrayIndexes = 0;
     }
-#line 4945 "src-generated/ugbc.tab.c"
+#line 4953 "src-generated/ugbc.tab.c"
     break;
 
-  case 361: /* statement: Identifier $@13 datatype OP indexes CP ASSIGN expr  */
-#line 1274 "src/ugbc.y"
+  case 362: /* statement: Identifier $@13 datatype OP indexes CP ASSIGN expr  */
+#line 1277 "src/ugbc.y"
                                          {
         Variable * x = variable_retrieve( _environment, (yyvsp[0].string) );
         Variable * a = variable_retrieve( _environment, (yyvsp[-7].string) );
@@ -4960,53 +4968,53 @@ yyreduce:
         }
         variable_move_array( _environment, (yyvsp[-7].string), x->name );
   }
-#line 4964 "src-generated/ugbc.tab.c"
-    break;
-
-  case 362: /* statement: DEBUG expr  */
-#line 1288 "src/ugbc.y"
-               {
-      debug_var( _environment, (yyvsp[0].string) );
-  }
 #line 4972 "src-generated/ugbc.tab.c"
     break;
 
-  case 365: /* statements_no_linenumbers: statement  */
-#line 1296 "src/ugbc.y"
+  case 363: /* statement: DEBUG expr  */
+#line 1291 "src/ugbc.y"
+               {
+      debug_var( _environment, (yyvsp[0].string) );
+  }
+#line 4980 "src-generated/ugbc.tab.c"
+    break;
+
+  case 366: /* statements_no_linenumbers: statement  */
+#line 1299 "src/ugbc.y"
                 { ((Environment *)_environment)->yylineno = yylineno; }
-#line 4978 "src-generated/ugbc.tab.c"
+#line 4986 "src-generated/ugbc.tab.c"
     break;
 
-  case 366: /* $@14: %empty  */
-#line 1297 "src/ugbc.y"
+  case 367: /* $@14: %empty  */
+#line 1300 "src/ugbc.y"
                       { ((Environment *)_environment)->yylineno = yylineno; }
-#line 4984 "src-generated/ugbc.tab.c"
-    break;
-
-  case 368: /* $@15: %empty  */
-#line 1301 "src/ugbc.y"
-              {
-        outhead1("_linenumber%d:", (yyvsp[0].integer));
-    }
 #line 4992 "src-generated/ugbc.tab.c"
     break;
 
-  case 369: /* statements_with_linenumbers: Integer $@15 statements_no_linenumbers  */
-#line 1303 "src/ugbc.y"
-                                { 
-        ((Environment *)_environment)->yylineno = yylineno;
+  case 369: /* $@15: %empty  */
+#line 1304 "src/ugbc.y"
+              {
+        outhead1("_linenumber%d:", (yyvsp[0].integer));
     }
 #line 5000 "src-generated/ugbc.tab.c"
     break;
 
-  case 374: /* $@16: %empty  */
-#line 1315 "src/ugbc.y"
+  case 370: /* statements_with_linenumbers: Integer $@15 statements_no_linenumbers  */
+#line 1306 "src/ugbc.y"
+                                { 
+        ((Environment *)_environment)->yylineno = yylineno;
+    }
+#line 5008 "src-generated/ugbc.tab.c"
+    break;
+
+  case 375: /* $@16: %empty  */
+#line 1318 "src/ugbc.y"
   { ((Environment *)_environment)->yylineno = yylineno; }
-#line 5006 "src-generated/ugbc.tab.c"
+#line 5014 "src-generated/ugbc.tab.c"
     break;
 
 
-#line 5010 "src-generated/ugbc.tab.c"
+#line 5018 "src-generated/ugbc.tab.c"
 
       default: break;
     }
@@ -5236,7 +5244,7 @@ yyreturn:
   return yyresult;
 }
 
-#line 1317 "src/ugbc.y"
+#line 1320 "src/ugbc.y"
 
 
 void show_usage_and_exit( int _argc, char *_argv[] ) {

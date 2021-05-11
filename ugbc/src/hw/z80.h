@@ -54,6 +54,7 @@ void z80_greater_than_32bit( Environment * _environment, char *_source, char *_d
 void z80_greater_than_8bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _equal );
 void z80_fill( Environment * _environment, char * _address, char * _blocks, char * _pattern );
 void z80_halt( Environment * _environment );
+void z80_end( Environment * _environment );
 void z80_jump( Environment * _environment, char * _label );
 void z80_call( Environment * _environment, char * _label );
 void z80_return( Environment * _environment );
@@ -153,6 +154,7 @@ void z80_bit_check( Environment * _environment, char *_value, int _position, cha
 #define cpu_greater_than_8bit( _environment, _source, _destination, _name, _equal ) z80_greater_than_8bit( _environment, _source, _destination, _name, _equal )
 #define cpu_fill( _environment,  _address,  _blocks,  _pattern  ) z80_fill( _environment,  _address,  _blocks,  _pattern  )
 #define cpu_halt( _environment  ) z80_halt( _environment  )
+#define cpu_end( _environment  ) z80_end( _environment  )
 #define cpu_jump( _environment,  _label  ) z80_jump( _environment,  _label  )
 #define cpu_call( _environment,  _label  ) z80_call( _environment,  _label  )
 #define cpu_return( _environment ) z80_return( _environment  )

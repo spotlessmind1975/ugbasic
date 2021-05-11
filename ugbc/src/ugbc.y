@@ -1192,6 +1192,9 @@ statement:
   | HALT {
       halt( _environment );
   }
+  | END {
+      end( _environment );
+  }
   | ON on_definition
   | GOTO goto_definition
   | GOSUB gosub_definition

@@ -722,6 +722,7 @@ void gosub_label( Environment * _environment, char * _label );
 void gosub_number( Environment * _environment, int _number );
 void graphic( Environment * _environment );
 void halt( Environment * _environment );
+void end( Environment * _environment );
 Variable * hit_to( Environment * _environment, int _sprite );
 Variable * hit_to_vars( Environment * _environment, char * _sprite );
 void if_then( Environment * _environment, char * _expression );

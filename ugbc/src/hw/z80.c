@@ -1210,6 +1210,13 @@ void z80_halt( Environment * _environment ) {
 
 }
 
+void z80_end( Environment * _environment ) {
+
+    outline0("DI");
+    outline0("HLT");
+
+}
+
 void z80_random( Environment * _environment, char * _seed, char * _entropy ) {
 
     outline1("LD HL, (%s)", _seed);
