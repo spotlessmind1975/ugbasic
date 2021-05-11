@@ -39,7 +39,7 @@ extern char DATATYPE_AS_STRING[][16];
 %token BEG END GAMELOOP ENDIF UP DOWN LEFT RIGHT DEBUG AND RANDOMIZE GRAPHIC TEXTMAP
 %token POINT GOSUB RETURN POP OR ELSE NOT TRUE FALSE DO EXIT WEND UNTIL FOR STEP EVERY
 %token MID INSTR UPPER LOWER STR VAL STRING SPACE FLIP CHR ASC LEN POW MOD ADD MIN MAX SGN
-%token SIGNED ABS RND COLORS INK TIMER POWERING DIM ADDRESS
+%token SIGNED ABS RND COLORS INK TIMER POWERING DIM ADDRESS PROC PROCEDURE CALL
 
 %token MILLISECOND MILLISECONDS TICKS
 
@@ -290,7 +290,7 @@ exponential:
         ((struct _Environment *)_environment)->arrayIndexes = 0;
     }
       OP indexes CP {
-        Variable * array = variable_retrieve( _environment, $1 );
+        Variable * array = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
         if ( array->type != VT_ARRAY ) {
             CRITICAL_NOT_ARRAY( $1 );
         }
@@ -301,17 +301,17 @@ exponential:
         ((struct _Environment *)_environment)->arrayIndexes = 0;
      } 
       OP indexes CP {
-        Variable * array = variable_retrieve( _environment, $1 );
+        Variable * array = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
         if ( array->type != VT_ARRAY ) {
             CRITICAL_NOT_ARRAY( $1 );
         }
         $$ = variable_move_from_array( _environment, $1 )->name;
     }
-    | Identifier { 
-        $$ = $1;
+    | Identifier {
+        $$ = variable_retrieve_or_define( _environment, $1, VT_WORD, 0 )->name;
       }
     | Identifier DOLLAR { 
-        $$ = $1;
+        $$ = variable_retrieve_or_define( _environment, $1, VT_STRING, 0 )->name;
       }
     | Integer { 
         if ( $1 < 0 ) {
@@ -900,22 +900,22 @@ screen_definition:
 
 var_definition_simple:
   | Identifier ON Identifier {
-      variable_define( _environment, $1, VT_BYTE, 0 );
+      variable_retrieve_or_define( _environment, $1, VT_BYTE, 0 );
   }
   | Identifier DOLLAR ON Identifier {
-      variable_define( _environment, $1, VT_STRING, 0 );
+      variable_retrieve_or_define( _environment, $1, VT_STRING, 0 );
   }
   | Identifier ON Identifier ASSIGN direct_integer {
-      variable_define( _environment, $1, VT_BYTE, $5 );
+      variable_retrieve_or_define( _environment, $1, VT_BYTE, $5 );
   }
   | Identifier ON Identifier ASSIGN expr {
       Variable * v = variable_retrieve( _environment, $5 );
-      Variable * d = variable_define( _environment, $1, v->type, v->value );
+      Variable * d = variable_retrieve_or_define( _environment, $1, v->type, v->value );
       variable_move_naked( _environment, v->name, d->name );
   }
   | Identifier DOLLAR ON Identifier ASSIGN expr {
       Variable * v = variable_retrieve( _environment, $6 );
-      Variable * d = variable_define( _environment, $1, VT_STRING, 0 );
+      Variable * d = variable_retrieve_or_define( _environment, $1, VT_STRING, 0 );
       variable_move( _environment, v->name, d->name );
   };
 
@@ -978,10 +978,22 @@ on_gosub_definition:
           on_gosub_index( _environment, $1 );
     } COMMA on_gosub_definition;
 
+on_proc_definition:
+      Identifier {
+          on_proc_index( _environment, $1 );
+          on_proc_end( _environment );
+      }
+    | Identifier {
+          on_proc_index( _environment, $1 );
+    } COMMA on_proc_definition;
+
 on_definition:
       expr GOTO {
           on_goto( _environment, $1 );
       } on_goto_definition
+    | expr PROC {
+          on_proc( _environment, $1 );
+      } on_proc_definition
     | expr GOSUB {
         on_gosub( _environment, $1 );  
     } on_gosub_definition;
@@ -1054,7 +1066,7 @@ dim_definition :
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
           ((struct _Environment *)_environment)->arrayDimensions = 0;
       } OP dimensions CP {
-        variable_define( _environment, $1, VT_ARRAY, 0 );
+        variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
         variable_array_type( _environment, $1, VT_WORD );
         variable_reset( _environment );
     }
@@ -1062,7 +1074,7 @@ dim_definition :
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
           ((struct _Environment *)_environment)->arrayDimensions = 0;
       } DOLLAR OP dimensions CP {
-        variable_define( _environment, $1, VT_ARRAY, 0 );
+        variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
         variable_array_type( _environment, $1, VT_STRING );
         variable_reset( _environment );
     }
@@ -1070,7 +1082,7 @@ dim_definition :
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
           ((struct _Environment *)_environment)->arrayDimensions = 0;
       } OP dimensions CP {
-        variable_define( _environment, $1, VT_ARRAY, 0 );
+        variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
         variable_array_type( _environment, $1, $2 );
         variable_reset( _environment );
     }
@@ -1156,6 +1168,12 @@ statement:
   | EXIT {
       exit_loop( _environment, 0 );  
   }
+  | EXIT PROC {
+      exit_procedure( _environment );
+  }
+  | POP PROC {
+      exit_procedure( _environment );
+  }
   | EXIT IF expr {
       exit_loop_if( _environment, $3, 0 );  
   }
@@ -1177,9 +1195,27 @@ statement:
   | NEXT {
       end_for( _environment );
   }
+  | PROCEDURE Identifier {
+      begin_procedure( _environment, $2 );
+  }
+  | END PROC {
+      end_procedure( _environment );
+  }
   | FOR Identifier ASSIGN expr TO expr STEP expr {
       begin_for_step( _environment, $2, $4, $6, $8 );  
   }
+  | Identifier SPACE {
+      call_procedure( _environment, $1 );
+  }
+  | PROC Identifier {
+      call_procedure( _environment, $2 );
+  }
+  | CALL Identifier {
+      call_procedure( _environment, $2 );
+  }
+  | Identifier COLON {
+      outhead1("%s:", $1);
+  } 
   | BEG GAMELOOP {
       begin_gameloop( _environment );
   }
@@ -1221,14 +1257,11 @@ statement:
         variable_string_mid_assign( _environment, $3, $5, $7, $10 );
   }
   | DIM dim_definitions
-  | Identifier COLON {
-      outhead1("%s:", $1);
-  }
   | Identifier ASSIGN expr {
         outline2("; %s = %s", $1, $3 );
         Variable * expr = variable_retrieve( _environment, $3 );
         outline1("; retrieved %s ", $3 );
-        variable_define( _environment, $1, expr->type, 0 )->name;
+        variable_retrieve_or_define( _environment, $1, expr->type, 0 )->name;
         outline1("; defined %s ", $1 );
         variable_move( _environment, $3, $1 );
         outline2("; moved %s -> %s ", $3, $1 );
@@ -1237,7 +1270,7 @@ statement:
         outline2("; %s = %s", $1, $4 );
         Variable * expr = variable_retrieve( _environment, $4 );
         outline1("; retrieved %s ", $4 );
-        variable_define( _environment, $1, VT_STRING, 0 )->name;
+        variable_retrieve_or_define( _environment, $1, VT_STRING, 0 )->name;
         outline1("; defined %s ", $1 );
         variable_move( _environment, $4, $1 );
         outline2("; moved %s -> %s ", $4, $1 );
@@ -1308,7 +1341,10 @@ statements_with_linenumbers:
     };
 
 statements_complex:
-      statements_no_linenumbers
+    Identifier NewLine {
+        call_procedure( _environment, $1 );
+    } statements_complex
+    | statements_no_linenumbers
     | statements_no_linenumbers NewLine statements_complex
     | statements_with_linenumbers
     | statements_with_linenumbers NewLine statements_complex
@@ -1384,12 +1420,16 @@ int main( int _argc, char *_argv[] ) {
         linker_setup( _environment );
         outhead0(".segment \"CODE\"");
         variable_define( _environment, "strings_address", VT_ADDRESS, 0x4200 );
+        variable_global( _environment, "strings_address" );
         bank_define( _environment, "STRINGS", BT_STRINGS, 0x4200, NULL );
         variable_define( _environment, "text_address", VT_ADDRESS, 0x0400 );
+        variable_global( _environment, "text_address" );
     } else {
         outhead0("org 32768");
         variable_define( _environment, "strings_address", VT_ADDRESS, 0xa000 );
+        variable_global( _environment, "strings_address" );
         variable_define( _environment, "bitmap_enabled", VT_BYTE, 0 );
+        variable_global( _environment, "bitmap_enabled" );
     }
 
 

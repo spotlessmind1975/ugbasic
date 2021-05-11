@@ -89,7 +89,7 @@ void begin_for( Environment * _environment, char * _index, char * _from, char * 
 
     outline0( "; FOR ... ");
 
-    Variable * index = variable_retrieve( _environment, _index );
+    Variable * index = variable_retrieve_or_define( _environment, _index, VT_WORD, 0 );
     Variable * from = variable_retrieve( _environment, _from );
     Variable * to = variable_retrieve( _environment, _to );
     Variable * step = variable_temporary( _environment, VT_BYTE, "(step 1)" );
@@ -136,7 +136,7 @@ void begin_for_step( Environment * _environment, char * _index, char * _from, ch
 
     outline0( "; FOR ... ");
 
-    Variable * index = variable_retrieve( _environment, _index );
+    Variable * index = variable_retrieve_or_define( _environment, _index, VT_WORD, 0 );
     Variable * from = variable_retrieve( _environment, _from );
     Variable * to = variable_retrieve( _environment, _to );
     Variable * step = variable_retrieve( _environment, _step );

@@ -56,13 +56,13 @@
 void bitmap_enable( Environment * _environment ) {
 
     // Let's define the special variable bitmap_address.
-    Variable * bitmap_address = variable_define( _environment, "bitmap_address", VT_ADDRESS, 0x4000 );
+    Variable * bitmap_address = variable_retrieve_or_define( _environment, "bitmap_address", VT_ADDRESS, 0x4000 );
 
     // Let's define the special variable colormap_address.
-    Variable * colormap_address = variable_define( _environment, "colormap_address", VT_ADDRESS, 0x5800 );
+    Variable * colormap_address = variable_retrieve_or_define( _environment, "colormap_address", VT_ADDRESS, 0x5800 );
 
     // Let's define the special variable colormap_address.
-    Variable * bitmap_enabled = variable_define( _environment, "bitmap_enabled", VT_BYTE, 1 );
+    Variable * bitmap_enabled = variable_retrieve_or_define( _environment, "bitmap_enabled", VT_BYTE, 1 );
 
     outline0("; BITMAP ENABLE (ignored)");
     
@@ -80,7 +80,7 @@ void bitmap_enable( Environment * _environment ) {
  */
 void bitmap_disable( Environment * _environment ) {
 
-    Variable * bitmap_enabled = variable_define( _environment, "bitmap_enabled", VT_BYTE, 0 );
+    Variable * bitmap_enabled = variable_retrieve_or_define( _environment, "bitmap_enabled", VT_BYTE, 0 );
 
     outline0("; BITMAP DISABLE (ignored)");
 
@@ -109,7 +109,7 @@ void bitmap_at( Environment * _environment, int _address ) {
 
     // Let's define the special variable bitmap_address, and update
     // it with the requested value.
-    Variable * bitmap_address = variable_define( _environment, "bitmap_address", VT_ADDRESS, 0x4000 );
+    Variable * bitmap_address = variable_retrieve_or_define( _environment, "bitmap_address", VT_ADDRESS, 0x4000 );
 
 }
 
@@ -135,7 +135,7 @@ void bitmap_at_var( Environment * _environment, char * _address ) {
 
     // Let's define the special variable bitmap_address, and update
     // it with the requested value.    
-    Variable * bitmap_address = variable_define( _environment, "bitmap_address", VT_ADDRESS, 0x4000 );
+    Variable * bitmap_address = variable_retrieve_or_define( _environment, "bitmap_address", VT_ADDRESS, 0x4000 );
 
 }
 

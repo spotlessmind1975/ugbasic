@@ -51,6 +51,7 @@ BLUE { return (BLUE); }
 BROWN { return(BROWN); }
 BYTE { return (BYTE); }
 BORDER { return (BORDER); }
+CALL { return (CALL); }
 CHR { return (CHR); }
 CHR\$ { return (CHR); }
 CLEAR { return (CLEAR); }
@@ -136,6 +137,8 @@ POINT { return (POINT); }
 POP { return (POP); }
 POSITION { return (POSITION); }
 POW { return (POWERING); }
+PROC { return (PROC); }
+PROCEDURE { return (PROCEDURE); }
 PURPLE { return(PURPLE); }
 RANDOM { return (RANDOM); }
 RANDOMIZE { return (RANDOMIZE); }

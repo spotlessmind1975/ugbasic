@@ -62,7 +62,7 @@ Inizializza il seme casuale.
 </usermanual> */
 void randomize( Environment * _environment, char * _ext_seed ) {
 
-    Variable * seed = variable_define( _environment, "seed", VT_DWORD, 0Xffffffff );
+    Variable * seed = variable_retrieve_or_define( _environment, "seed", VT_DWORD, 0Xffffffff );
 
     if ( _ext_seed ) {
         Variable * external_seed = variable_retrieve( _environment, _ext_seed );
@@ -112,7 +112,7 @@ Calcola un valore casuale.
 </usermanual> */
 Variable * random_value( Environment * _environment, VariableType _type ) {
 
-    Variable * seed = variable_define( _environment, "seed", VT_DWORD, 0Xffffffff );
+    Variable * seed = variable_retrieve_or_define( _environment, "seed", VT_DWORD, 0Xffffffff );
 
     Variable * result = variable_temporary( _environment, _type, "(random value)" );
 

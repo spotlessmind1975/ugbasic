@@ -64,7 +64,7 @@ void colormap_at( Environment * _environment, int _address ) {
     outline1("; COLORMAP AT $%4.4x", _address);
 
     // Let's define the special variable and fill up with the value.
-    Variable * colormap_address = variable_define( _environment, "colormap_address", VT_ADDRESS, _address );
+    Variable * colormap_address = variable_retrieve_or_define( _environment, "colormap_address", VT_ADDRESS, _address );
 
     // TODO: colormap_address must be retrieved by a zx_get_colormap_address()
 
@@ -93,8 +93,8 @@ void colormap_at_var( Environment * _environment, char * _address ) {
 
     // Let's define the special variable and fill up with the value.
     // TODO: colormap_address must be retrieved by a zx_get_colormap_address()
-    Variable * colormap_address = variable_define( _environment, "colormap_address", VT_ADDRESS, 0x5800 );
-    Variable * address = variable_retrieve( _environment, _address );
+    Variable * colormap_address = variable_retrieve_or_define( _environment, "colormap_address", VT_ADDRESS, 0x5800 );
+    Variable * address = variable_retrieve_or_define( _environment, _address, VT_ADDRESS, 0x0000 );
 
     // variable_store( _environment, colormap_address->name, ( ( ( _address >> 10 ) & 0x0f ) * 0x0400 ) );
 
@@ -148,14 +148,14 @@ void colormap_clear_with_vars( Environment * _environment, char * _foreground, c
 
     outline2("; COLORMAP CLEAR WITH %s AND %s", _foreground, _background );
 
-    Variable * colormap_address = variable_define( _environment, "colormap_address", VT_ADDRESS, 0x0400 );
+    Variable * colormap_address = variable_retrieve_or_define( _environment, "colormap_address", VT_ADDRESS, 0x0400 );
     if ( ! colormap_address ) {
         CRITICAL( "COLORMAP CLEAR WITH xxx ON xxx needs BITMAP ENABLED");
     }
 
-    Variable * foreground = variable_retrieve( _environment, _foreground );
+    Variable * foreground = variable_retrieve_or_define( _environment, _foreground, VT_COLOR, COLOR_WHITE );
 
-    Variable * background = variable_retrieve( _environment, _background );
+    Variable * background = variable_retrieve_or_define( _environment, _background, VT_COLOR, COLOR_BLACK );
 
     Variable * pattern = variable_temporary( _environment, VT_BYTE, "(pattern)" );
     

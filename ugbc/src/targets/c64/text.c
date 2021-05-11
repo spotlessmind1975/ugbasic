@@ -80,7 +80,7 @@ void textmap_at( Environment * _environment, int _address ) {
     // Let's define the special variable bitmap_address, and update
     // it with the requested value.
     // TODO: the textmap_address should be populated by a get_textmap_address() function!
-    Variable * text_address = variable_define( _environment, "textmap_address", VT_ADDRESS, _address );
+    Variable * text_address = variable_retrieve_or_define( _environment, "textmap_address", VT_ADDRESS, _address );
     variable_store( _environment, "textmap_address", ( ( _address >> 10 ) & 0x0f ) * 0x0400 );
 
     char addressString[16]; sprintf(addressString, "#$%2.2x", ( _address >> 8 ) & 0xff );
@@ -117,7 +117,7 @@ void textmap_at_var( Environment * _environment, char * _address ) {
 
     outline1("; TEXTMAP AT %s", _address);
 
-    Variable * text_address = variable_define( _environment, "text_address", VT_ADDRESS, 0x0400 );
+    Variable * text_address = variable_retrieve_or_define( _environment, "text_address", VT_ADDRESS, 0x0400 );
 
     Variable * address = variable_retrieve( _environment, _address );
 

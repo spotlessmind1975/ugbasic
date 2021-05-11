@@ -289,3 +289,82 @@ void on_gosub_end( Environment * _environment ) {
     variable_reset( _environment );
 
 };
+
+void on_proc( Environment * _environment, char * _expression ) {
+
+    outline1( "; ON %s PROC ...", _expression);
+
+    MAKE_LABEL
+
+    Variable * expression = variable_retrieve( _environment, _expression );
+
+    char newLabel[16]; sprintf(newLabel, "proc%d", UNIQUE_ID );
+
+    Conditional * conditional = malloc( sizeof( Conditional ) );
+    conditional->label = strdup( newLabel );
+    conditional->type = CT_ON_PROC;
+    conditional->expression = variable_cast( _environment, expression->name, expression->type );
+    conditional->expression->locked = 1;
+    conditional->index = 1;
+    conditional->next = _environment->conditionals;
+    _environment->conditionals = conditional;
+
+}
+
+void on_proc_index( Environment * _environment, char * _label ) {
+
+    Conditional * conditional = _environment->conditionals;
+
+    if ( ! conditional ) {
+        CRITICAL("Syntax error on ON PROC");
+    }
+
+    if ( conditional->type != CT_ON_PROC ) {
+        CRITICAL("ON ... PROC");
+    }
+
+    Variable * index = variable_temporary( _environment, VT_BYTE, "(index)");
+    
+    variable_store( _environment, index->name, conditional->index );
+
+    Variable * expression = variable_retrieve( _environment, conditional->expression->name );
+
+    char newLabel[16]; sprintf(newLabel, "%s%d", conditional->label, (conditional->index+1) );
+
+    cpu_bveq( _environment, variable_compare( _environment, expression->name, index->name )->realName, newLabel );
+
+    cpu_call( _environment, _label );
+
+    char newLabel2[16]; sprintf(newLabel2, "%sfinal", conditional->label );
+
+    cpu_jump( _environment, newLabel2 );
+
+    cpu_label( _environment, newLabel );
+
+    ++conditional->index;
+
+};
+
+void on_proc_end( Environment * _environment ) {
+
+    Conditional * conditional = _environment->conditionals;
+
+    if ( ! conditional ) {
+        CRITICAL("Syntax error on ON PROC");
+    }
+
+    if ( conditional->type != CT_ON_PROC ) {
+        CRITICAL("ON ... PROC");
+    }
+
+    char newLabel2[16]; sprintf(newLabel2, "%sfinal", conditional->label );
+
+    cpu_label( _environment, newLabel2 );
+
+    _environment->conditionals->expression->locked = 0;
+
+    _environment->conditionals = _environment->conditionals->next;
+
+    variable_reset( _environment );
+
+};

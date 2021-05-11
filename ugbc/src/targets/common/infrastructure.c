@@ -119,6 +119,146 @@ static Variable * variable_find_first_unused( Variable * _first, VariableType _t
     return actual;
 }
 
+void variable_global( Environment * _environment, char * _pattern ) {
+
+    Pattern * pattern = malloc( sizeof( Pattern ) ) ;
+
+    pattern->pattern = strdup( _pattern );
+    pattern->next = _environment->globalVariablePatterns;
+    _environment->globalVariablePatterns = pattern;
+
+    fprintf(stderr, "variable_global(%s)\n", _pattern );
+
+}
+
+/**
+ * @brief Define a variable for the program
+ * 
+ * This function is necessary to define a variable within the program. This
+ * call reserves a space compatible with the given variable type, and 
+ * assigns it to the given name. The initial value of the variable is 
+ * also passed.
+ * 
+ * Allowed types:
+ * 
+ * - `VT_BYTE` (<b>BYTE</b>)
+ * - `VT_COLOR` (<b>COLOR</b>)
+ * - `VT_WORD` (<b>WORD</b>)
+ * - `VT_ADDRESS` (<b>ADDRESS</b>)
+ * - `VT_POSITION` (<b>POSITION</b>)
+ * - `VT_DWORD` (<b>DWORD</b>)
+ * 
+ * It is possible to call the function several times with the same variable 
+ * name: a single memory space will always be reserved. If the type differs, 
+ * an exception will be thrown.
+ * Note that the variable will be defined in the last bank defined 
+ * by the <b>BANK</b> command as <b>VARIABLES</b>. In other words, it is possible 
+ * to define different variables in different banks, thus optimizing 
+ * the space occupied by the program.
+ * 
+ * @param _environment Current calling environment
+ * @param _name Name of the variable to define
+ * @param _type Type of the variable to define
+ * @param _value Inital valure
+ * @return Variable* The variable definition
+ * @throw EXIT_FAILURE "Variable redefined with a different type"
+ */
+/* <usermanual>
+@keyword VAR
+
+@english
+Define a variable [name] on bank [bank]. Optionally,
+you can assign to that variable a value given by [expression].
+
+@italian
+Definisci una variabile [name] sul banko [bank]. Eventualmente,
+è possibile assegnare alla variabile il valore dell'espressione
+[expression].
+
+@syntax VAR [name] ON [bank] { = [expression] }
+
+@example VAR x ON bank1 = #$42
+
+@seeAlso BANK
+
+@target all
+
+ </usermanual> */
+
+Variable * variable_define( Environment * _environment, char * _name, VariableType _type, int _value ) {
+
+    Variable * var = variable_find( _environment->variables, _name );
+    if ( var ) {
+        if ( var->type != _type ) {
+            CRITICAL( "Variable redefined with a different type");
+        }
+        var->value = _value;
+    } else {
+        var = malloc( sizeof( Variable ) );
+        var->name = _name;
+        var->realName = malloc( strlen( _name ) + 1 ); strcpy( var->realName, "_" ); strcat( var->realName, var->name );
+        var->type = _type;
+        var->value = _value;
+        var->bank = _environment->banks[BT_VARIABLES];
+        Variable * varLast = _environment->variables;
+        if ( varLast ) {
+            while( varLast->next ) {
+                varLast = varLast->next;
+            }
+            varLast->next = var;
+        } else {
+            _environment->variables = var;
+        }
+        if ( var->type != VT_STRING && var->type != VT_BUFFER && var->type != VT_ARRAY ) {
+            variable_store( _environment, var->name, _value );
+        }
+        if ( var->type == VT_ARRAY ) {
+            memcpy( var->arrayDimensionsEach, ((struct _Environment *)_environment)->arrayDimensionsEach, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
+            var->arrayDimensions = ((struct _Environment *)_environment)->arrayDimensions;
+        }
+    }
+    var->used = 1;
+    var->locked = 0;
+    return var;
+}
+
+Variable * variable_define_local( Environment * _environment, char * _name, VariableType _type, int _value ) {
+
+    Variable * var = variable_find( _environment->procedureVariables, _name );
+    if ( var ) {
+        if ( var->type != _type ) {
+            CRITICAL( "Variable redefined with a different type");
+        }
+        var->value = _value;
+    } else {
+        var = malloc( sizeof( Variable ) );
+        var->name = _name;
+        var->realName = malloc( strlen( _name ) + 1 ); strcpy( var->realName, "_" ); strcat( var->realName, _environment->procedureName ); strcat( var->realName, "_" ); strcat( var->realName, var->name );
+        var->type = _type;
+        var->value = _value;
+        var->bank = _environment->banks[BT_VARIABLES];
+        Variable * varLast = _environment->procedureVariables;
+        if ( varLast ) {
+            while( varLast->next ) {
+                varLast = varLast->next;
+            }
+            varLast->next = var;
+        } else {
+            _environment->procedureVariables = var;
+        }
+        if ( var->type != VT_STRING && var->type != VT_BUFFER && var->type != VT_ARRAY ) {
+            variable_store( _environment, var->name, _value );
+        }
+        if ( var->type == VT_ARRAY ) {
+            memcpy( var->arrayDimensionsEach, ((struct _Environment *)_environment)->arrayDimensionsEach, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
+            var->arrayDimensions = ((struct _Environment *)_environment)->arrayDimensions;
+        }
+    }
+    var->used = 1;
+    var->locked = 0;
+    return var;
+}
+
 /**
  * @brief Implementation for <b>BANK xxx AT [WITH yyy]</b>
  * 
@@ -239,13 +379,74 @@ Bank * bank_define( Environment * _environment, char * _name, BankType _type, in
  * @return Variable* Definition of the variable (if it exists) or NULL.
  */
 Variable * variable_retrieve( Environment * _environment, char * _name ) {
+    fprintf(stderr, "variable_retrieve(%s)\n", _name );
     Variable * var = variable_find( _environment->tempVariables, _name );
     if ( ! var ) {
-        var = variable_find( _environment->variables, _name );
+        int isGlobal = 0;
+        Pattern * current = _environment->globalVariablePatterns;
+        if ( _environment->procedureName ) {
+            while( current ) {
+                fprintf(stderr, " - %s\n", current->pattern );
+                if ( strcmp( current->pattern, _name ) == 0 ) {
+                    isGlobal = 1;
+                    break;
+                }
+                current = current->next;
+            }
+        } else {
+            isGlobal = 1;
+        }
+        if ( isGlobal ) {
+            fprintf(stderr, "global(%s)\n", _name );
+            var = variable_find( _environment->variables, _name );
+        } else {
+            fprintf(stderr, "local(%s)\n", _name );
+            var = variable_find( _environment->procedureVariables, _name );
+        }
+        // _environment->globalVariablePatterns;
     }
     if ( ! var ) {
         CRITICAL_VARIABLE( _name );
     }
+    return var;
+}
+
+Variable * variable_retrieve_or_define( Environment * _environment, char * _name, VariableType _type, int _value ) {
+
+    fprintf(stderr, "variable_retrieve_or_define(%s)\n", _name );
+
+    Variable * var = variable_find( _environment->procedureVariables, _name );
+
+    if ( ! var ) {
+        fprintf(stderr, "Locally (%s) not found\n", _name );
+        int isGlobal = 0;
+        // _environment->globalVariablePatterns;
+        Pattern * current = _environment->globalVariablePatterns;
+        if ( _environment->procedureName ) {
+            while( current ) {
+                fprintf(stderr, " - %s\n", current->pattern );
+                if ( strcmp( current->pattern, _name ) == 0 ) {
+                    isGlobal = 1;
+                    break;
+                }
+                current = current->next;
+            }
+        } else {
+            isGlobal = 1;
+        }
+        if ( isGlobal ) {
+            fprintf(stderr, "Globally (%s)\n", _name );
+            var = variable_find( _environment->variables, _name );
+            if ( ! var ) {
+                fprintf(stderr, "Define (%s)\n", _name );
+                var = variable_define( _environment, _name, _type, _value );
+            }
+        } else {
+            fprintf(stderr, "Locally (%s)\n", _name );
+            var = variable_define_local( _environment, _name, _type, _value );
+        }        
+    }
+
     return var;
 }
 
@@ -259,96 +460,6 @@ Variable * variable_retrieve( Environment * _environment, char * _name ) {
  */
 void variable_reset( Environment * _environment ) {
     variable_reset_pool( _environment->tempVariables );        
-}
-
-/**
- * @brief Define a variable for the program
- * 
- * This function is necessary to define a variable within the program. This
- * call reserves a space compatible with the given variable type, and 
- * assigns it to the given name. The initial value of the variable is 
- * also passed.
- * 
- * Allowed types:
- * 
- * - `VT_BYTE` (<b>BYTE</b>)
- * - `VT_COLOR` (<b>COLOR</b>)
- * - `VT_WORD` (<b>WORD</b>)
- * - `VT_ADDRESS` (<b>ADDRESS</b>)
- * - `VT_POSITION` (<b>POSITION</b>)
- * - `VT_DWORD` (<b>DWORD</b>)
- * 
- * It is possible to call the function several times with the same variable 
- * name: a single memory space will always be reserved. If the type differs, 
- * an exception will be thrown.
- * Note that the variable will be defined in the last bank defined 
- * by the <b>BANK</b> command as <b>VARIABLES</b>. In other words, it is possible 
- * to define different variables in different banks, thus optimizing 
- * the space occupied by the program.
- * 
- * @param _environment Current calling environment
- * @param _name Name of the variable to define
- * @param _type Type of the variable to define
- * @param _value Inital valure
- * @return Variable* The variable definition
- * @throw EXIT_FAILURE "Variable redefined with a different type"
- */
-/* <usermanual>
-@keyword VAR
-
-@english
-Define a variable [name] on bank [bank]. Optionally,
-you can assign to that variable a value given by [expression].
-
-@italian
-Definisci una variabile [name] sul banko [bank]. Eventualmente,
-è possibile assegnare alla variabile il valore dell'espressione
-[expression].
-
-@syntax VAR [name] ON [bank] { = [expression] }
-
-@example VAR x ON bank1 = #$42
-
-@seeAlso BANK
-
-@target all
-
- </usermanual> */
-
-Variable * variable_define( Environment * _environment, char * _name, VariableType _type, int _value ) {
-    Variable * var = variable_find( _environment->variables, _name );
-    if ( var ) {
-        if ( var->type != _type ) {
-            CRITICAL( "Variable redefined with a different type");
-        }
-        var->value = _value;
-    } else {
-        var = malloc( sizeof( Variable ) );
-        var->name = strdup( _name );
-        var->realName = malloc( strlen( _name ) + 1 ); strcpy( var->realName, "_" ); strcat( var->realName, var->name );
-        var->type = _type;
-        var->value = _value;
-        var->bank = _environment->banks[BT_VARIABLES];
-        Variable * varLast = _environment->variables;
-        if ( varLast ) {
-            while( varLast->next ) {
-                varLast = varLast->next;
-            }
-            varLast->next = var;
-        } else {
-            _environment->variables = var;
-        }
-        if ( var->type != VT_STRING && var->type != VT_BUFFER && var->type != VT_ARRAY ) {
-            variable_store( _environment, var->name, _value );
-        }
-        if ( var->type == VT_ARRAY ) {
-            memcpy( var->arrayDimensionsEach, ((struct _Environment *)_environment)->arrayDimensionsEach, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
-            var->arrayDimensions = ((struct _Environment *)_environment)->arrayDimensions;
-        }
-    }
-    var->used = 1;
-    var->locked = 0;
-    return var;
 }
 
 Variable * variable_array_type( Environment * _environment, char *_name, VariableType _type ) {
@@ -439,13 +550,7 @@ Variable * variable_temporary( Environment * _environment, VariableType _type, c
  * @throw EXIT_FAILURE "Cannot find source var"
  */
 Variable * variable_cast( Environment * _environment, char * _source, VariableType _type ) {
-    Variable * source = variable_find( _environment->variables, _source );
-    if ( ! source ) {
-        source = variable_find( _environment->tempVariables, _source );
-    }
-    if ( ! source ) {
-        CRITICAL_VARIABLE( _source );
-    }
+    Variable * source = variable_retrieve( _environment, _source );
     Variable * target = variable_temporary( _environment, _type, "(generated for cast)" );
     switch( VT_BITWIDTH( source->type ) ) {
         case 32:
@@ -540,13 +645,9 @@ Variable * variable_cast( Environment * _environment, char * _source, VariableTy
  * @throw EXIT_FAILURE "Destination variable does not exists"
  */
 Variable * variable_store( Environment * _environment, char * _destination, int _value ) {
-    Variable * destination = variable_find( _environment->tempVariables, _destination );
-    if ( ! destination ) {
-        destination = variable_find( _environment->variables, _destination );
-        if ( ! destination ) {
-            CRITICAL_VARIABLE( _destination );
-        }
-    }
+    
+    Variable * destination = variable_retrieve( _environment, _destination );
+
     switch( VT_BITWIDTH( destination->type ) ) {
         case 32:
             cpu_store_32bit( _environment, destination->realName, VT_ESIGN_32BIT( destination->type, _value ) );
@@ -573,13 +674,9 @@ Variable * variable_store( Environment * _environment, char * _destination, int 
  * @return Variable* The destination variable
  */
 Variable * variable_store_string( Environment * _environment, char * _destination, char * _value ) {
-    Variable * destination = variable_find( _environment->tempVariables, _destination );
-    if ( ! destination ) {
-        destination = variable_find( _environment->variables, _destination );
-        if ( ! destination ) {
-            CRITICAL_VARIABLE( _destination );
-        }
-    }
+
+    Variable * destination = variable_retrieve( _environment, _destination );
+
     switch( destination->type ) {
         case VT_STRING: {
             Variable * strings_address = variable_retrieve( _environment, "strings_address" );
@@ -609,13 +706,7 @@ Variable * variable_store_string( Environment * _environment, char * _destinatio
  * @return Variable* The destination variable
  */
 Variable * variable_resize_buffer( Environment * _environment, char * _destination, int _size ) {
-    Variable * destination = variable_find( _environment->tempVariables, _destination );
-    if ( ! destination ) {
-        destination = variable_find( _environment->variables, _destination );
-        if ( ! destination ) {
-            CRITICAL_VARIABLE( _destination );
-        }
-    }
+    Variable * destination = variable_retrieve( _environment, _destination );
     switch( destination->type ) {
         case VT_BUFFER: {
             destination->size = _size;
@@ -644,13 +735,9 @@ Variable * variable_resize_buffer( Environment * _environment, char * _destinati
  * @throw EXIT_FAILURE "Source variable does not cast"
  */
 Variable * variable_move( Environment * _environment, char * _source, char * _destination ) {
-    Variable * target = variable_find( _environment->tempVariables, _destination );
-    if ( ! target ) {
-        target = variable_find( _environment->variables, _destination );
-        if ( ! target ) {
-            CRITICAL_VARIABLE( _destination );
-        }
-    }
+
+    Variable * target = variable_retrieve( _environment, _destination );
+
     Variable * source = variable_cast( _environment, _source, target->type );
     switch( VT_BITWIDTH( target->type ) ) {
         case 32:
@@ -702,20 +789,10 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
  * @throw EXIT_FAILURE "Source variable does not exist"
  */
 Variable * variable_move_naked( Environment * _environment, char * _source, char * _destination ) {
-    Variable * source = variable_find( _environment->tempVariables, _source );
-    if ( ! source ) {
-        source = variable_find( _environment->variables, _source );
-        if ( ! source ) {
-            CRITICAL_VARIABLE( _source );
-        }
-    }
-    Variable * target = variable_find( _environment->tempVariables, _destination );
-    if ( ! target ) {
-        target = variable_find( _environment->variables, _destination );
-        if ( ! target ) {
-            CRITICAL_VARIABLE( _source );
-        }
-    }
+    Variable * source = variable_retrieve( _environment, _source );
+
+    Variable * target = variable_retrieve( _environment, _destination );
+
     if ( source->type != target->type ) {
         CRITICAL_DATATYPE_MISMATCH( _source, _destination );
     }
@@ -769,13 +846,8 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
  * @throw EXIT_FAILURE "Source variable does not exist"
  */
 Variable * variable_add( Environment * _environment, char * _source, char * _destination ) {
-    Variable * source = variable_find( _environment->tempVariables, _source );
-    if ( ! source ) {
-        source = variable_find( _environment->variables, _source );
-    }
-    if ( ! source ) {
-        CRITICAL_VARIABLE(_source);
-    }
+    Variable * source = variable_retrieve( _environment, _source );
+
     Variable * target = variable_cast( _environment, _destination, source->type );
     if ( ! target ) {
         CRITICAL_VARIABLE(_destination);
@@ -834,13 +906,7 @@ Variable * variable_add( Environment * _environment, char * _source, char * _des
  * @throw EXIT_FAILURE "Source variable does not exist"
  */
 Variable * variable_sub( Environment * _environment, char * _source, char * _dest ) {
-    Variable * source = variable_find( _environment->tempVariables, _source );
-    if ( ! source ) {
-        source = variable_find( _environment->variables, _source );
-        if ( ! source ) {
-            CRITICAL_VARIABLE( _source );
-        }
-    }
+    Variable * source = variable_retrieve( _environment, _source );
     Variable * target = variable_cast( _environment, _dest, source->type );
     Variable * result = variable_temporary( _environment, source->type, "(result of subtracting)" );
     switch( VT_BITWIDTH( source->type ) ) {
@@ -876,13 +942,7 @@ Variable * variable_sub( Environment * _environment, char * _source, char * _des
  * @throw EXIT_FAILURE "Destination variable does not exist"
  */
 Variable * variable_complement_const( Environment * _environment, char * _destination, int _value ) {
-    Variable * destination = variable_find( _environment->tempVariables, _destination );
-    if ( ! destination ) {
-        destination = variable_find( _environment->variables, _destination );
-        if ( ! destination ) {
-            CRITICAL_VARIABLE( _destination );
-        }
-    }
+    Variable * destination = variable_retrieve( _environment, _destination );
     switch( VT_BITWIDTH( destination->type ) ) {
         case 32:
             cpu_math_complement_const_32bit( _environment, destination->realName, _value );
@@ -916,13 +976,7 @@ Variable * variable_complement_const( Environment * _environment, char * _destin
  * @throw EXIT_FAILURE "Source variable does not exist"
  */
 Variable * variable_mul( Environment * _environment, char * _source, char * _destination ) {
-    Variable * source = variable_find( _environment->tempVariables, _source );
-    if ( ! source ) {
-        source = variable_find( _environment->variables, _source );
-        if ( ! source ) {
-            CRITICAL_VARIABLE( _source );
-        }
-    }
+    Variable * source = variable_retrieve( _environment, _source );
     Variable * target = variable_cast( _environment, _destination, source->type );
     Variable * result = NULL;
     switch( VT_BITWIDTH( source->type ) ) {
@@ -956,13 +1010,7 @@ Variable * variable_mul( Environment * _environment, char * _source, char * _des
  * @return Variable* The quotient of source and destination variable
  */
 Variable * variable_div( Environment * _environment, char * _source, char * _destination ) {
-    Variable * source = variable_find( _environment->tempVariables, _source );
-    if ( ! source ) {
-        source = variable_find( _environment->variables, _source );
-        if ( ! source ) {
-            CRITICAL_VARIABLE( _source );
-        }
-    }
+    Variable * source = variable_retrieve( _environment, _source );
     Variable * target = variable_cast( _environment, _destination, source->type );
     Variable * result = NULL;
     Variable * remainder = NULL;
@@ -997,13 +1045,7 @@ Variable * variable_div( Environment * _environment, char * _source, char * _des
  * @return Variable* The source variable
  */
 Variable * variable_increment( Environment * _environment, char * _source ) {
-    Variable * source = variable_find( _environment->tempVariables, _source );
-    if ( ! source ) {
-        source = variable_find( _environment->variables, _source );
-        if ( ! source ) {
-            CRITICAL_VARIABLE( _source );
-        }
-    }
+    Variable * source = variable_retrieve( _environment, _source );
     switch( VT_BITWIDTH( source->type ) ) {
         case 32:
         case 0:
@@ -1027,13 +1069,7 @@ Variable * variable_increment( Environment * _environment, char * _source ) {
  * @return Variable* The source variable
  */
 Variable * variable_decrement( Environment * _environment, char * _source ) {
-    Variable * source = variable_find( _environment->tempVariables, _source );
-    if ( ! source ) {
-        source = variable_find( _environment->variables, _source );
-        if ( ! source ) {
-            CRITICAL_VARIABLE( _source );
-        }
-    }
+    Variable * source = variable_retrieve( _environment, _source );
     switch( VT_BITWIDTH( source->type ) ) {
         case 32:
         case 0:
@@ -1066,20 +1102,8 @@ Variable * variable_decrement( Environment * _environment, char * _source ) {
  * @throw EXIT_FAILURE "Source variable does not exist"
  */
 Variable * variable_compare( Environment * _environment, char * _source, char * _destination ) {
-    Variable * source = variable_find( _environment->tempVariables, _source );
-    if ( ! source ) {
-        source = variable_find( _environment->variables, _source );
-    }
-    if ( ! source ) {
-        CRITICAL_VARIABLE( _source );
-    }
-    Variable * target = variable_find( _environment->tempVariables, _destination );
-    if ( ! target ) {
-        target = variable_find( _environment->variables, _destination );
-    }
-    if ( ! target ) {
-        CRITICAL_VARIABLE( _destination );
-    }
+    Variable * source = variable_retrieve( _environment, _source );
+    Variable * target = variable_retrieve( _environment, _destination );
 
     MAKE_LABEL
 
@@ -1201,13 +1225,7 @@ Variable * variable_compare_not( Environment * _environment, char * _source, cha
  * @throw EXIT_FAILURE "Destination variable does not exist"
  */
 Variable * variable_mul2_const( Environment * _environment, char * _destination, int _steps ) {
-    Variable * destination = variable_find( _environment->tempVariables, _destination );
-    if ( ! destination ) {
-        destination = variable_find( _environment->variables, _destination );
-        if ( ! destination ) {
-            CRITICAL_VARIABLE( _destination );
-        }
-    }
+    Variable * destination = variable_retrieve( _environment, _destination );
     switch( VT_BITWIDTH( destination->type ) ) {
         case 32:
             cpu_math_mul2_const_32bit( _environment, destination->realName, _steps );
@@ -1242,13 +1260,7 @@ Variable * variable_mul2_const( Environment * _environment, char * _destination,
  * @throw EXIT_FAILURE "Destination variable does not exist"
  */
 Variable * variable_div2_const( Environment * _environment, char * _destination, int _bits ) {
-    Variable * destination = variable_find( _environment->tempVariables, _destination );
-    if ( ! destination ) {
-        destination = variable_find( _environment->variables, _destination );
-        if ( ! destination ) {
-            CRITICAL_VARIABLE( _destination );
-        }
-    }
+    Variable * destination = variable_retrieve( _environment, _destination );
     switch( VT_BITWIDTH( destination->type ) ) {
         case 32:
             cpu_math_div2_const_32bit( _environment, destination->realName, _bits );
@@ -1283,13 +1295,7 @@ Variable * variable_div2_const( Environment * _environment, char * _destination,
  * @throw EXIT_FAILURE "Destination variable does not exist"
  */
 Variable * variable_and_const( Environment * _environment, char * _destination, int _mask ) {
-    Variable * destination = variable_find( _environment->tempVariables, _destination );
-    if ( ! destination ) {
-        destination = variable_find( _environment->variables, _destination );
-        if ( ! destination ) {
-            CRITICAL_VARIABLE( _destination );
-        }
-    }
+    Variable * destination = variable_retrieve( _environment, _destination );
     switch( VT_BITWIDTH( destination->type ) ) {
         case 32:
             cpu_math_and_const_32bit( _environment, destination->realName, _mask );
@@ -1384,20 +1390,8 @@ Variable * variable_not( Environment * _environment, char * _value ) {
  * @throw EXIT_FAILURE "Source variable does not exist"
  */
 Variable * variable_less_than( Environment * _environment, char * _source, char * _destination, int _equal ) {
-    Variable * source = variable_find( _environment->tempVariables, _source );
-    if ( ! source ) {
-        source = variable_find( _environment->variables, _source );
-    }
-    if ( ! source ) {
-        CRITICAL_VARIABLE( _source );
-    }
-    Variable * target = variable_find( _environment->tempVariables, _destination );
-    if ( ! target ) {
-        target = variable_find( _environment->variables, _destination );
-    }
-    if ( ! source ) {
-        CRITICAL_VARIABLE( _destination );
-    }
+    Variable * source = variable_retrieve( _environment, _source );
+    Variable * target = variable_retrieve( _environment, _destination );
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of compare)" );
     switch( VT_BITWIDTH( source->type ) ) {
         case 32:
@@ -1497,20 +1491,8 @@ Variable * variable_less_than( Environment * _environment, char * _source, char 
  * @throw EXIT_FAILURE "Source variable does not exist"
  */
 Variable * variable_greater_than( Environment * _environment, char * _source, char * _destination, int _equal ) {
-    Variable * source = variable_find( _environment->tempVariables, _source );
-    if ( ! source ) {
-        source = variable_find( _environment->variables, _source );
-    }
-    if ( ! source ) {
-        CRITICAL_VARIABLE( _source );
-    }
-    Variable * target = variable_find( _environment->tempVariables, _destination );
-    if ( ! target ) {
-        target = variable_find( _environment->variables, _destination );
-    }
-    if ( ! target ) {
-        CRITICAL_VARIABLE( _destination );
-    }
+    Variable * source = variable_retrieve( _environment, _source );
+    Variable * target = variable_retrieve( _environment, _destination );
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of compare)" );
     switch( VT_BITWIDTH( source->type ) ) {
         case 32:
@@ -1630,20 +1612,8 @@ Il secondo utilizzo è sostituire il numero di caratteri più a sinistra:
 @target all
  </usermanual> */
 Variable * variable_string_left( Environment * _environment, char * _string, char * _position ) {
-    Variable * string = variable_find( _environment->tempVariables, _string );
-    if ( ! string ) {
-        string = variable_find( _environment->variables, _string );
-    }
-    if ( ! string ) {
-        CRITICAL_VARIABLE(_string);
-    }
-    Variable * position = variable_find( _environment->tempVariables, _position );
-    if ( ! position ) {
-        position = variable_find( _environment->variables, _position );
-    }
-    if ( ! position ) {
-        CRITICAL_VARIABLE(_position);
-    }
+    Variable * string = variable_retrieve( _environment, _string );
+    Variable * position = variable_retrieve( _environment, _position );
     Variable * result = variable_temporary( _environment, VT_STRING, "(result of left)" );
     switch( string->type ) {
         case VT_STRING: {            
@@ -1686,27 +1656,9 @@ Variable * variable_string_left( Environment * _environment, char * _string, cha
 @target all
  </usermanual> */
 void variable_string_left_assign( Environment * _environment, char * _string, char * _position, char * _expression ) {
-    Variable * string = variable_find( _environment->tempVariables, _string );
-    if ( ! string ) {
-        string = variable_find( _environment->variables, _string );
-    }
-    if ( ! string ) {
-        CRITICAL_VARIABLE(_string);
-    }
-    Variable * position = variable_find( _environment->tempVariables, _position );
-    if ( ! position ) {
-        position = variable_find( _environment->variables, _position );
-    }
-    if ( ! position ) {
-        CRITICAL_VARIABLE(_position);
-    }
-    Variable * expression = variable_find( _environment->tempVariables, _expression );
-    if ( ! expression ) {
-        expression = variable_find( _environment->variables, _expression );
-    }
-    if ( ! expression ) {
-        CRITICAL_VARIABLE(_expression);
-    }
+    Variable * string = variable_retrieve( _environment, _string );
+    Variable * position = variable_retrieve( _environment, _position );
+    Variable * expression = variable_retrieve( _environment, _expression );
     switch( string->type ) {
         case VT_STRING: {            
             char expressionAddress[16]; sprintf(expressionAddress, "%s+1", expression->realName );
@@ -1756,20 +1708,8 @@ Il secondo utilizzo è sostituire il numero di caratteri più a destra.
 @target all
  </usermanual> */
 Variable * variable_string_right( Environment * _environment, char * _string, char * _position ) {
-    Variable * string = variable_find( _environment->tempVariables, _string );
-    if ( ! string ) {
-        string = variable_find( _environment->variables, _string );
-    }
-    if ( ! string ) {
-        CRITICAL_VARIABLE(_string);
-    }
-    Variable * position = variable_find( _environment->tempVariables, _position );
-    if ( ! position ) {
-        position = variable_find( _environment->variables, _position );
-    }
-    if ( ! position ) {
-        CRITICAL_VARIABLE(_position);
-    }
+    Variable * string = variable_retrieve( _environment, _string );
+    Variable * position = variable_retrieve( _environment, _position );
     Variable * result = variable_temporary( _environment, VT_STRING, "(result of left)" );
     switch( string->type ) {
         case VT_STRING: {            
@@ -1811,27 +1751,9 @@ Variable * variable_string_right( Environment * _environment, char * _string, ch
 @target all
  </usermanual> */
 void variable_string_right_assign( Environment * _environment, char * _string, char * _position, char * _expression ) {
-    Variable * string = variable_find( _environment->tempVariables, _string );
-    if ( ! string ) {
-        string = variable_find( _environment->variables, _string );
-    }
-    if ( ! string ) {
-        CRITICAL_VARIABLE( _string );
-    }
-    Variable * position = variable_find( _environment->tempVariables, _position );
-    if ( ! position ) {
-        position = variable_find( _environment->variables, _position );
-    }
-    if ( ! position ) {
-        CRITICAL_VARIABLE( _position );
-    }
-    Variable * expression = variable_find( _environment->tempVariables, _expression );
-    if ( ! expression ) {
-        expression = variable_find( _environment->variables, _expression );
-    }
-    if ( ! expression ) {
-        CRITICAL_VARIABLE( _expression );
-    }
+    Variable * string = variable_retrieve( _environment, _string );
+    Variable * position = variable_retrieve( _environment, _position );
+    Variable * expression = variable_retrieve( _environment, _expression );
     switch( string->type ) {
         case VT_STRING: {            
             char expressionAddress[16]; sprintf(expressionAddress, "%s+1", expression->realName );
@@ -1888,29 +1810,11 @@ utilizzo di questa funzione è sostituire il numero medio di caratteri.
 @target all
  </usermanual> */
 Variable * variable_string_mid( Environment * _environment, char * _string, char * _position, char * _len ) {
-    Variable * string = variable_find( _environment->tempVariables, _string );
-    if ( ! string ) {
-        string = variable_find( _environment->variables, _string );
-    }
-    if ( ! string ) {
-        CRITICAL_VARIABLE( _string );
-    }
-    Variable * position = variable_find( _environment->tempVariables, _position );
-    if ( ! position ) {
-        position = variable_find( _environment->variables, _position );
-    }
-    if ( ! position ) {
-        CRITICAL_VARIABLE( _position );
-    }
+    Variable * string = variable_retrieve( _environment, _string );
+    Variable * position = variable_retrieve( _environment, _position );
     Variable * len;
     if ( _len ) {
-        len = variable_find( _environment->tempVariables, _len );
-        if ( ! len ) {
-            len = variable_find( _environment->variables, _len );
-        }
-        if ( ! len ) {
-            CRITICAL_VARIABLE( _len );
-        }
+        len = variable_retrieve( _environment, _len );
     } else {
         len = variable_temporary( _environment, VT_BYTE, "(calculated MID len)");
         variable_store( _environment, len->name, 0 );
@@ -1966,42 +1870,18 @@ Variable * variable_string_mid( Environment * _environment, char * _string, char
 @target all
  </usermanual> */
 void variable_string_mid_assign( Environment * _environment, char * _string, char * _position, char * _len, char * _expression ) {
-    Variable * string = variable_find( _environment->tempVariables, _string );
-    if ( ! string ) {
-        string = variable_find( _environment->variables, _string );
-    }
-    if ( ! string ) {
-        CRITICAL_VARIABLE( _string );
-    }
-    Variable * position = variable_find( _environment->tempVariables, _position );
-    if ( ! position ) {
-        position = variable_find( _environment->variables, _position );
-    }
-    if ( ! position ) {
-        CRITICAL_VARIABLE( _position );
-    }
+    Variable * string = variable_retrieve( _environment, _string );
+    Variable * position = variable_retrieve( _environment, _position );
     Variable * len;
     if ( _len ) {
-        len = variable_find( _environment->tempVariables, _len );
-        if ( ! len ) {
-            len = variable_find( _environment->variables, _len );
-        }
-        if ( ! position ) {
-            CRITICAL_VARIABLE( _len );
-        }
+        len = variable_retrieve( _environment, _len );
     } else {
         len = variable_temporary( _environment, VT_BYTE, "(calculated MID len)");
         variable_store( _environment, len->name, 0 );
         cpu_math_add_8bit( _environment, len->realName, string->realName, len->realName );
         cpu_math_sub_8bit( _environment, len->realName, position->realName, len->realName );
     }
-    Variable * expression = variable_find( _environment->tempVariables, _expression );
-    if ( ! expression ) {
-        expression = variable_find( _environment->variables, _expression );
-    }
-    if ( ! expression ) {
-        CRITICAL_VARIABLE( _expression );
-    }
+    Variable * expression = variable_retrieve( _environment, _expression );
     switch( string->type ) {
         case VT_STRING: {            
             char expressionAddress[16]; sprintf(expressionAddress, "%s+1", expression->realName );
@@ -2065,29 +1945,11 @@ numero di caratteri nella stringa da cercare.
 @target all
  </usermanual> */
 Variable * variable_string_instr( Environment * _environment, char * _search, char * _searched, char * _start ) {
-    Variable * search = variable_find( _environment->tempVariables, _search );
-    if ( ! search ) {
-        search = variable_find( _environment->variables, _search );
-    }
-    if ( ! search ) {
-        CRITICAL_VARIABLE( _search );
-    }
-    Variable * searched = variable_find( _environment->tempVariables, _searched );
-    if ( ! searched ) {
-        searched = variable_find( _environment->variables, _searched );
-    }
-    if ( ! searched ) {
-        CRITICAL_VARIABLE( _searched );
-    }
+    Variable * search = variable_retrieve( _environment, _search );
+    Variable * searched = variable_retrieve( _environment, _searched );
     Variable * start = NULL;
     if ( _start ) {
-        start = variable_find( _environment->tempVariables, _start );
-        if ( ! start ) {
-            start = variable_find( _environment->variables, _start );
-        }
-        if ( ! start ) {
-            CRITICAL_VARIABLE( _start );
-        }
+        start = variable_retrieve( _environment, _start );
     }
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of INSTR)" );
     switch( search->type ) {
@@ -2168,13 +2030,7 @@ Questa funzione converte i caratteri presenti in una stringa in lettere minuscol
 @target all
  </usermanual> */
 Variable * variable_string_lower( Environment * _environment, char * _string ) {
-    Variable * string = variable_find( _environment->tempVariables, _string );
-    if ( ! string ) {
-        string = variable_find( _environment->variables, _string );
-    }
-    if ( ! string ) {
-        CRITICAL_VARIABLE( _string );
-    }
+    Variable * string = variable_retrieve( _environment, _string );
     Variable * result = variable_cast( _environment, string->name, VT_STRING );
     switch( string->type ) {
         case VT_STRING:
@@ -2219,13 +2075,7 @@ Questa funzione converte i caratteri presenti in una stringa in lettere maiuscol
 @target all
  </usermanual> */
 Variable * variable_string_upper( Environment * _environment, char * _string ) {
-    Variable * string = variable_find( _environment->tempVariables, _string );
-    if ( ! string ) {
-        string = variable_find( _environment->variables, _string );
-    }
-    if ( ! string ) {
-        CRITICAL_VARIABLE( _string );
-    }
+    Variable * string = variable_retrieve( _environment, _string );
     Variable * result = variable_cast( _environment, string->name, VT_STRING );
     switch( string->type ) {
         case VT_STRING:
@@ -2278,13 +2128,7 @@ quindi questa funzione è davvero utile.
 @target all
  </usermanual> */
 Variable * variable_string_str( Environment * _environment, char * _value ) {
-    Variable * value = variable_find( _environment->tempVariables, _value );
-    if ( ! value ) {
-        value = variable_find( _environment->variables, _value );
-    }
-    if ( ! value ) {
-        CRITICAL_VARIABLE( _value );
-    }
+    Variable * value = variable_retrieve( _environment, _value );
     Variable * dword = variable_temporary( _environment, VT_DWORD, "(bcd result of STR)" );
     Variable * result = variable_temporary( _environment, VT_STRING, "(result of STR)" );
 
@@ -2333,13 +2177,7 @@ Questa funzione converte le stringhe in numeri.
 @target all
  </usermanual> */
 Variable * variable_string_val( Environment * _environment, char * _value ) {
-    Variable * value = variable_find( _environment->tempVariables, _value );
-    if ( ! value ) {
-        value = variable_find( _environment->variables, _value );
-    }
-    if ( ! value ) {
-        CRITICAL_VARIABLE( _value );
-    }
+    Variable * value = variable_retrieve( _environment, _value );
     Variable * result = variable_temporary( _environment, VT_WORD, "(result of val)" );
 
     switch( value->type ) {
@@ -2387,22 +2225,8 @@ della stringa in ingresso.
  </usermanual> */
 Variable * variable_string_string( Environment * _environment, char * _string, char * _repetitions  ) {
 
-    Variable * string = variable_find( _environment->tempVariables, _string );
-    if ( ! string ) {
-        string = variable_find( _environment->variables, _string );
-    }
-    if ( ! string ) {
-        CRITICAL_VARIABLE( _string );
-    }
-
-    Variable * repetitions = variable_find( _environment->tempVariables, _repetitions );
-    if ( ! repetitions ) {
-        repetitions = variable_find( _environment->variables, _repetitions );
-    }
-    if ( ! repetitions ) {
-        CRITICAL_VARIABLE( _repetitions );
-    }
-
+    Variable * string = variable_retrieve( _environment, _string );
+    Variable * repetitions = variable_retrieve( _environment, _repetitions );
     Variable * result = variable_temporary( _environment, VT_STRING, "(result of STRING)");
     
     Variable * strings_address = variable_retrieve( _environment, "strings_address" );
@@ -2481,13 +2305,7 @@ Questa funzione inverte l'ordine delle lettere della stringa data in ingresso.
  </usermanual> */
 Variable * variable_string_flip( Environment * _environment, char * _string  ) {
 
-    Variable * string = variable_find( _environment->tempVariables, _string );
-    if ( ! string ) {
-        string = variable_find( _environment->variables, _string );
-    }
-    if ( ! string ) {
-        CRITICAL_VARIABLE( _string );
-    }
+    Variable * string = variable_retrieve( _environment, _string );
 
     Variable * result = variable_temporary( _environment, VT_STRING, "(result of STRING)");
     
@@ -2535,13 +2353,7 @@ stampabili sullo schermo. Altri sono usati internamente come codici di controllo
  </usermanual> */
 Variable * variable_string_chr( Environment * _environment, char * _ascii  ) {
 
-    Variable * ascii = variable_find( _environment->tempVariables, _ascii );
-    if ( ! ascii ) {
-        ascii = variable_find( _environment->variables, _ascii );
-    }
-    if ( ! ascii ) {
-        CRITICAL_VARIABLE( _ascii );
-    }
+    Variable * ascii = variable_retrieve( _environment, _ascii );
 
     Variable * result = variable_temporary( _environment, VT_STRING, "(result of STRING)");
     
@@ -2593,13 +2405,7 @@ Questa funzione ritorna il codice ASCII del primo carattere di una stringa.
  </usermanual> */
 Variable * variable_string_asc( Environment * _environment, char * _char  ) {
 
-    Variable * character = variable_find( _environment->tempVariables, _char );
-    if ( ! character ) {
-        character = variable_find( _environment->variables, _char );
-    }
-    if ( ! character ) {
-        CRITICAL_VARIABLE( _char );
-    }
+    Variable * character = variable_retrieve( _environment, _char );
 
     char characterAddress[16]; sprintf(characterAddress, "%s+1", character->realName );
 
@@ -2645,14 +2451,7 @@ Questa funzione restituisce il numero di caratteri memorizzato in una stringa.
  </usermanual> */
 Variable * variable_string_len( Environment * _environment, char * _string  ) {
 
-    Variable * string = variable_find( _environment->tempVariables, _string );
-    if ( ! string ) {
-        string = variable_find( _environment->variables, _string );
-    }
-    if ( ! string ) {
-        CRITICAL_VARIABLE( _string );
-    }
-
+    Variable * string = variable_retrieve( _environment, _string );
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of LEN)");
     
     switch( string->type ) {

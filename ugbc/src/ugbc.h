@@ -251,7 +251,10 @@ typedef enum _ConditionalType {
     CT_ON_GOTO = 1,
 
     /** ON ... GOSUB ... */
-    CT_ON_GOSUB = 2
+    CT_ON_GOSUB = 2,
+
+    /** ON ... PROC ... */
+    CT_ON_PROC = 3
 
 } ConditionalType;
 
@@ -327,6 +330,15 @@ typedef struct _Loop {
 
 } Loop;
 
+typedef struct _Pattern {
+
+    char * pattern;
+
+    /** Next pattern */
+    struct _Pattern * next;
+
+} Pattern;
+
 /**
  * @brief Structure of compilation environment
  * 
@@ -395,6 +407,16 @@ typedef struct _Environment {
     Variable * variables;
 
     /**
+     * List of variables defined in the procedure.
+     */
+    Variable * procedureVariables;
+
+    /**
+     * List of patterns for GLOBAL / SHARED variables
+     */
+    Pattern * globalVariablePatterns;
+
+    /**
      * This flag marks if the program has opened a "game loop".
      */
     int hasGameLoop;
@@ -448,6 +470,11 @@ typedef struct _Environment {
      * Temporary storage for array access
      */
     char * arrayIndexesEach[MAX_ARRAY_DIMENSIONS];
+
+    /**
+     * Current procedure
+     */
+    char * procedureName;
 
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
@@ -507,6 +534,8 @@ typedef struct _Environment {
 #define CRITICAL_DEBUG_UNSUPPORTED( v, t ) CRITICAL3("E031 - DEBUG unsupported for variable of given datatype", v, t );
 #define CRITICAL_ARRAY_SIZE_MISMATCH( v ) CRITICAL2("E032 - number of indexes different from array dimensions", v );
 #define CRITICAL_NOT_ARRAY( v ) CRITICAL2("E032 - accessing with indexes on a non array variable", v );
+#define CRITICAL_PROCEDURE_NESTED_UNSUPPORTED( n ) CRITICAL2("E033 - cannot define a nested procedure (a procedure inside a procedure)", n ); 
+#define CRITICAL_PROCEDURE_NOT_OPENED() CRITICAL("E034 - END PROC outside a procedure" ); 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
 #define WARNING3( s, v1, v2 ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s, %s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v1, v2, _environment->yylineno ); }
@@ -675,6 +704,8 @@ Variable * absolute( Environment * _environment, char * _value );
 void add_complex( Environment * _environment, char * _variable, char * _expression, char * _limit_lower, char * _limit_upper );
 Bank * bank_define( Environment * _environment, char * _name, BankType _type, int _address, char * _filename );
 void   bank_cleanup( Environment * _environment );
+void begin_procedure( Environment * _environment, char * _name );
+void end_procedure( Environment * _environment );
 void begin_loop( Environment * _environment );
 void begin_while( Environment * _environment );
 void begin_while_condition( Environment * _environment, char * _expression );
@@ -689,6 +720,7 @@ void bitmap_disable( Environment * _environment );
 void bitmap_clear( Environment * _environment );
 void bitmap_clear_with( Environment * _environment, int _value );
 void bitmap_clear_with_vars( Environment * _environment, char * _value );
+void call_procedure( Environment * _environment, char * _name );
 Variable * collision_to( Environment * _environment, int _sprite );
 Variable * collision_to_vars( Environment * _environment, char * _sprite );
 void color_border( Environment * _environment, int _border_color );
@@ -715,6 +747,7 @@ void every_off( Environment * _environment );
 void every_ticks_gosub( Environment * _environment, char * _timing, char * _label );
 void exit_loop( Environment * _environment, int _number );
 void exit_loop_if( Environment * _environment, char * _expression, int _number );
+void exit_procedure( Environment * _environment );
 void gameloop_cleanup( Environment * _environment );
 void goto_label( Environment * _environment, char * _label );
 void goto_number( Environment * _environment, int _number );
@@ -742,6 +775,9 @@ void on_gosub_end( Environment * _environment );
 void on_goto( Environment * _environment, char * _expression );
 void on_goto_index( Environment * _environment, char * _label );
 void on_goto_end( Environment * _environment );
+void on_proc( Environment * _environment, char * _expression );
+void on_proc_index( Environment * _environment, char * _label );
+void on_proc_end( Environment * _environment );
 Variable * peek( Environment * _environment, int _location );
 Variable * peek_var( Environment * _environment, char * _location );
 void point_at( Environment * _environment, int _x, int _y );
@@ -799,8 +835,10 @@ void textmap_at_var( Environment * _environment, char * _address );
 void tiles_at( Environment * _environment, int _address );
 void tiles_at_var( Environment * _environment, char * _address );
 void       variable_reset( Environment * _environment );
+void variable_global( Environment * _environment, char * _pattern );
 Variable * variable_define( Environment * _environment, char * _name, VariableType _type, int _value );
 Variable * variable_retrieve( Environment * _environment, char * _name );
+Variable * variable_retrieve_or_define( Environment * _environment, char * _name, VariableType _type, int _value );
 Variable * variable_resize_buffer( Environment * _environment, char * _destination, int _size );
 Variable * variable_array_type( Environment * _environment, char *_name, VariableType _type );
 Variable * variable_cast( Environment * _environment, char * _source, VariableType _type );

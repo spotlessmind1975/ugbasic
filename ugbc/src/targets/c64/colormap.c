@@ -80,7 +80,7 @@ void colormap_at( Environment * _environment, int _address ) {
     outline1("; COLORMAP AT #$%4.4x", _address);
 
     // Let's define the special variable and fill up with the value.
-    Variable * colormap_address = variable_define( _environment, "colormap_address", VT_ADDRESS, _address );
+    Variable * colormap_address = variable_retrieve_or_define( _environment, "colormap_address", VT_ADDRESS, _address );
 
     // TODO: colormap_address must be retrieved by a vic2_get_colormap_address()
 
@@ -120,7 +120,7 @@ void colormap_at_var( Environment * _environment, char * _address ) {
 
     // Let's define the special variable and fill up with the value.
     // TODO: colormap_address must be retrieved by a vic2_get_colormap_address()
-    Variable * colormap_address = variable_define( _environment, "colormap_address", VT_ADDRESS, 0x0400 );
+    Variable * colormap_address = variable_retrieve_or_define( _environment, "colormap_address", VT_ADDRESS, 0x0400 );
     Variable * address = variable_retrieve( _environment, _address );
 
     // variable_store( _environment, colormap_address->name, ( ( ( _address >> 10 ) & 0x0f ) * 0x0400 ) );
@@ -167,7 +167,7 @@ void colormap_clear_with( Environment * _environment, int _foreground, int _back
 
     outline2("; COLORMAP CLEAR WITH #$%2.2x AND #$%2.2x", _foreground, _background );
 
-    Variable * colormap_address = variable_retrieve( _environment, "colormap_address" );
+    Variable * colormap_address = variable_retrieve_or_define( _environment, "colormap_address", VT_ADDRESS, 0x0400 );
 
     char value[16]; sprintf(value, "#$%2.2x", ( ( _foreground & 0x0f ) << 4 ) | ( _background & 0x0f ));
     
@@ -200,7 +200,7 @@ void colormap_clear_with_vars( Environment * _environment, char * _foreground, c
 
     outline2("; COLORMAP CLEAR WITH %s AND %s", _foreground, _background );
 
-    Variable * colormap_address = variable_define( _environment, "colormap_address", VT_ADDRESS, 0x0400 );
+    Variable * colormap_address = variable_retrieve_or_define( _environment, "colormap_address", VT_ADDRESS, 0x0400 );
     if ( ! colormap_address ) {
         CRITICAL( "COLORMAP CLEAR WITH xxx ON xxx needs BITMAP ENABLED");
     }

@@ -52,10 +52,10 @@
 </usermanual> */
 void randomize( Environment * _environment, char * _other_seed ) {
 
-    Variable * seed = variable_define( _environment, "seed", VT_DWORD, 0Xffffffff );
+    Variable * seed = variable_retrieve_or_define( _environment, "seed", VT_DWORD, 0xffffffff );
 
     if ( _other_seed ) {
-        Variable * other_seed = variable_retrieve( _environment, _other_seed );
+        Variable * other_seed = variable_retrieve_or_define( _environment, _other_seed, VT_DWORD, 0xffffffff );
         variable_move( _environment, other_seed->name, seed->name );
     }
 
@@ -87,7 +87,7 @@ void randomize( Environment * _environment, char * _other_seed ) {
 </usermanual> */
 Variable * random_value( Environment * _environment, VariableType _type ) {
 
-    Variable * seed = variable_define( _environment, "seed", VT_DWORD, 0Xffffffff );
+    Variable * seed = variable_retrieve_or_define( _environment, "seed", VT_DWORD, 0Xffffffff );
 
     Variable * result = variable_temporary( _environment, _type, "(random value)" );
 

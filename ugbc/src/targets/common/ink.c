@@ -42,9 +42,9 @@ void ink( Environment * _environment, char * _color ) {
 
     outline1("; INK %s", _color);
 
-    Variable * color = variable_retrieve( _environment, _color );
+    Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_BLACK );
 
-    Variable * ink_color = variable_define( _environment, "ink_color", VT_COLOR, COLOR_BLACK);
+    Variable * ink_color = variable_retrieve_or_define( _environment, "ink_color", VT_COLOR, COLOR_BLACK);
     
     variable_move( _environment, color->name, ink_color->name );
 
