@@ -125,6 +125,10 @@ void cpu6502_fill_indirect( Environment * _environment, char * _address, char * 
 void cpu6502_flip( Environment * _environment, char * _source, char * _size, char * _destination );
 void cpu6502_move_8bit_indirect( Environment * _environment, char *_source, char * _value );
 void cpu6502_move_8bit_indirect2( Environment * _environment, char * _value, char *_source );
+void cpu6502_move_16bit_indirect( Environment * _environment, char *_source, char * _value );
+void cpu6502_move_16bit_indirect2( Environment * _environment, char * _value, char *_source );
+void cpu6502_move_32bit_indirect( Environment * _environment, char *_source, char * _value );
+void cpu6502_move_32bit_indirect2( Environment * _environment, char * _value, char *_source );
 void cpu6502_bit_check( Environment * _environment, char * _value, int _position, char *_result );
 
 #define cpu_beq( _environment,  _label  ) cpu6502_beq( _environment,  _label  )
@@ -220,6 +224,10 @@ void cpu6502_bit_check( Environment * _environment, char * _value, int _position
 #define cpu_flip( _environment, _source, _size, _destination ) cpu6502_flip( _environment, _source, _size, _destination )
 #define cpu_move_8bit_indirect( _environment, _source, _value ) cpu6502_move_8bit_indirect( _environment, _source, _value )
 #define cpu_move_8bit_indirect2( _environment, _value, _source ) cpu6502_move_8bit_indirect2( _environment, _value, _source )
+#define cpu_move_16bit_indirect( _environment, _source, _value ) cpu6502_move_16bit_indirect( _environment, _source, _value )
+#define cpu_move_16bit_indirect2( _environment, _value, _source ) cpu6502_move_16bit_indirect2( _environment, _value, _source )
+#define cpu_move_32bit_indirect( _environment, _source, _value ) cpu6502_move_32bit_indirect( _environment, _source, _value )
+#define cpu_move_32bit_indirect2( _environment, _value, _source ) cpu6502_move_32bit_indirect2( _environment, _value, _source )
 #define cpu_bit_check( _environment, _value, _position, _result ) cpu6502_bit_check( _environment, _value, _position, _result )
 
 #endif

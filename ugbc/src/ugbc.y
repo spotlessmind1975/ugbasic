@@ -10,6 +10,8 @@ extern int yylineno;
 
 int yywrap() { return 1; }
  
+extern char DATATYPE_AS_STRING[][16];
+
 %}
 
 %parse-param {void * _environment}
@@ -37,7 +39,7 @@ int yywrap() { return 1; }
 %token BEG END GAMELOOP ENDIF UP DOWN LEFT RIGHT DEBUG AND RANDOMIZE GRAPHIC TEXTMAP
 %token POINT GOSUB RETURN POP OR ELSE NOT TRUE FALSE DO EXIT WEND UNTIL FOR STEP EVERY
 %token MID INSTR UPPER LOWER STR VAL STRING SPACE FLIP CHR ASC LEN POW MOD ADD MIN MAX SGN
-%token SIGNED ABS RND COLORS INK TIMER POWERING
+%token SIGNED ABS RND COLORS INK TIMER POWERING DIM ADDRESS
 
 %token MILLISECOND MILLISECONDS TICKS
 
@@ -53,8 +55,9 @@ int yywrap() { return 1; }
 %type <integer> direct_integer
 %type <string> random_definition_simple random_definition
 %type <string> color_enumeration
+%type <integer> datatype
 
-%right Integer String CP
+%right Integer String CP 
 %left OP
 %right THEN ELSE
 %left POW
@@ -282,7 +285,29 @@ color_enumeration:
       };
 
 exponential:
-      Identifier { 
+    Identifier {
+        memset( ((struct _Environment *)_environment)->arrayIndexesEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
+        ((struct _Environment *)_environment)->arrayIndexes = 0;
+    }
+      OP indexes CP {
+        Variable * array = variable_retrieve( _environment, $1 );
+        if ( array->type != VT_ARRAY ) {
+            CRITICAL_NOT_ARRAY( $1 );
+        }
+        $$ = variable_move_from_array( _environment, $1 )->name;
+    }
+    | Identifier DOLLAR {
+        memset( ((struct _Environment *)_environment)->arrayIndexesEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
+        ((struct _Environment *)_environment)->arrayIndexes = 0;
+     } 
+      OP indexes CP {
+        Variable * array = variable_retrieve( _environment, $1 );
+        if ( array->type != VT_ARRAY ) {
+            CRITICAL_NOT_ARRAY( $1 );
+        }
+        $$ = variable_move_from_array( _environment, $1 )->name;
+    }
+    | Identifier { 
         $$ = $1;
       }
     | Identifier DOLLAR { 
@@ -981,6 +1006,92 @@ add_definition :
     }
     ;
 
+dimensions :
+      Integer {
+          ((struct _Environment *)_environment)->arrayDimensionsEach[((struct _Environment *)_environment)->arrayDimensions] = $1;
+          ++((struct _Environment *)_environment)->arrayDimensions;
+    }
+    | Integer COMMA dimensions {
+          ((struct _Environment *)_environment)->arrayDimensionsEach[((struct _Environment *)_environment)->arrayDimensions] = $1;
+          ++((struct _Environment *)_environment)->arrayDimensions;
+    }
+    ;
+
+datatype : 
+    BYTE {
+        $$ = VT_BYTE;
+    }
+    | SIGNED BYTE {
+        $$ = VT_SBYTE;
+    }
+    | WORD {
+        $$ = VT_WORD;
+    }
+    | SIGNED WORD {
+        $$ = VT_SWORD;
+    }
+    | DWORD {
+        $$ = VT_DWORD;
+    }
+    | SIGNED DWORD {
+        $$ = VT_SDWORD;
+    }
+    | ADDRESS {
+        $$ = VT_ADDRESS;
+    }
+    | POSITION {
+        $$ = VT_POSITION;
+    }
+    | COLOR {
+        $$ = VT_COLOR;
+    }
+    | STRING {
+        $$ = VT_STRING;
+    };
+    
+dim_definition :
+      Identifier {
+          memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
+          ((struct _Environment *)_environment)->arrayDimensions = 0;
+      } OP dimensions CP {
+        variable_define( _environment, $1, VT_ARRAY, 0 );
+        variable_array_type( _environment, $1, VT_WORD );
+        variable_reset( _environment );
+    }
+    | Identifier {
+          memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
+          ((struct _Environment *)_environment)->arrayDimensions = 0;
+      } DOLLAR OP dimensions CP {
+        variable_define( _environment, $1, VT_ARRAY, 0 );
+        variable_array_type( _environment, $1, VT_STRING );
+        variable_reset( _environment );
+    }
+    | Identifier datatype {
+          memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
+          ((struct _Environment *)_environment)->arrayDimensions = 0;
+      } OP dimensions CP {
+        variable_define( _environment, $1, VT_ARRAY, 0 );
+        variable_array_type( _environment, $1, $2 );
+        variable_reset( _environment );
+    }
+    ;
+
+dim_definitions :
+      dim_definition
+    | dim_definition COMMA dim_definitions
+    ;
+
+indexes :
+      expr {
+          ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayIndexes] = $1;
+          ++((struct _Environment *)_environment)->arrayIndexes;
+    }
+    | expr COMMA indexes {
+          ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayIndexes] = $1;
+          ++((struct _Environment *)_environment)->arrayIndexes;
+    }
+    ;
+
 statement:
     BANK bank_definition
   | RASTER raster_definition
@@ -1106,6 +1217,7 @@ statement:
   | MID OP expr COMMA expr COMMA expr CP ASSIGN expr {
         variable_string_mid_assign( _environment, $3, $5, $7, $10 );
   }
+  | DIM dim_definitions
   | Identifier COLON {
       outhead1("%s:", $1);
   }
@@ -1126,6 +1238,52 @@ statement:
         outline1("; defined %s ", $1 );
         variable_move( _environment, $4, $1 );
         outline2("; moved %s -> %s ", $4, $1 );
+  }
+  | Identifier {
+        memset( ((struct _Environment *)_environment)->arrayIndexesEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
+        ((struct _Environment *)_environment)->arrayIndexes = 0;
+    }
+      OP indexes CP ASSIGN expr {
+        Variable * expr = variable_retrieve( _environment, $7 );
+        Variable * array = variable_retrieve( _environment, $1 );
+        if ( array->type != VT_ARRAY ) {
+            CRITICAL_NOT_ARRAY( $1 );
+        }
+        variable_move_array( _environment, $1, expr->name );
+  }
+  | Identifier DOLLAR {
+        memset( ((struct _Environment *)_environment)->arrayIndexesEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
+        ((struct _Environment *)_environment)->arrayIndexes = 0;
+    } OP indexes CP ASSIGN expr {
+        Variable * x = variable_retrieve( _environment, $8 );
+        Variable * a = variable_retrieve( _environment, $1 );
+        if ( x->type != VT_STRING ) {
+            CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[x->type], DATATYPE_AS_STRING[VT_STRING] );
+        }
+        if ( a->type != VT_ARRAY ) {
+            CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[a->type], DATATYPE_AS_STRING[VT_ARRAY] );
+        }
+        if ( a->arrayType != VT_STRING ) {
+            CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[a->arrayType], DATATYPE_AS_STRING[VT_STRING] );
+        }
+        variable_move_array_string( _environment, $1, x->name );
+  }
+  | Identifier {
+        memset( ((struct _Environment *)_environment)->arrayIndexesEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
+        ((struct _Environment *)_environment)->arrayIndexes = 0;
+    } datatype OP indexes CP ASSIGN expr {
+        Variable * x = variable_retrieve( _environment, $8 );
+        Variable * a = variable_retrieve( _environment, $1 );
+        if ( x->type != $3 ) {
+            CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[x->type], DATATYPE_AS_STRING[$3] );
+        }
+        if ( a->type != VT_ARRAY ) {
+            CRITICAL_NOT_ARRAY( $1 );
+        }
+        if ( a->arrayType != $3 ) {
+            CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[a->arrayType], DATATYPE_AS_STRING[$3] );
+        }
+        variable_move_array( _environment, $1, x->name );
   }
   | DEBUG expr {
       debug_var( _environment, $2 );

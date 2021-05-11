@@ -60,7 +60,8 @@ char DATATYPE_AS_STRING[][16] = {
     "POSITION",
     "COLOR",
     "STRING",
-    "BUFFER"
+    "BUFFER",
+    "ARRAY"
 };
 
 static Bank * bank_find( Bank * _first, char * _name ) {
@@ -337,13 +338,25 @@ Variable * variable_define( Environment * _environment, char * _name, VariableTy
         } else {
             _environment->variables = var;
         }
-        if ( var->type != VT_STRING && var->type != VT_BUFFER ) {
+        if ( var->type != VT_STRING && var->type != VT_BUFFER && var->type != VT_ARRAY ) {
             variable_store( _environment, var->name, _value );
+        }
+        if ( var->type == VT_ARRAY ) {
+            memcpy( var->arrayDimensionsEach, ((struct _Environment *)_environment)->arrayDimensionsEach, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
+            var->arrayDimensions = ((struct _Environment *)_environment)->arrayDimensions;
         }
     }
     var->used = 1;
     var->locked = 0;
     return var;
+}
+
+Variable * variable_array_type( Environment * _environment, char *_name, VariableType _type ) {
+    Variable * var = variable_find( _environment->variables, _name );
+    if ( ! var ) {
+        CRITICAL_VARIABLE( _name );
+    }
+    var->arrayType = _type;
 }
 
 /**
@@ -2657,5 +2670,150 @@ Variable * variable_string_len( Environment * _environment, char * _string  ) {
     
 }
 
+static Variable * calculate_offset_in_array( Environment * _environment, char * _array ) {
 
+    Variable * array = variable_retrieve( _environment, _array );
 
+    if ( array->arrayDimensions != _environment->arrayIndexes ) {
+        CRITICAL_ARRAY_SIZE_MISMATCH( _array );
+    }
+
+    Variable * base = variable_temporary( _environment, VT_DWORD, "(base in array)");
+    Variable * size = variable_temporary( _environment, VT_DWORD, "(size in array)");
+    Variable * offset = variable_temporary( _environment, VT_DWORD, "(offset in array)");
+
+    variable_store( _environment, offset->name, 0 );
+
+    int i,j;
+
+    for( i = 0; i<_environment->arrayIndexes; ++i ) {
+        variable_store( _environment, base->name, 1 );
+        for( j=(i+1); j<_environment->arrayIndexes; ++j ) {
+            variable_store( _environment, size->name, array->arrayDimensionsEach[j] );
+            base = variable_mul( _environment, base->name, size->name );
+        }
+        offset = variable_add( _environment, offset->name, variable_mul( _environment, variable_retrieve( _environment, _environment->arrayIndexesEach[i])->name, base->name )->name );
+    }
+
+    return offset;
+
+}
+
+void variable_move_array( Environment * _environment, char * _array, char * _value  ) {
+
+    Variable * array = variable_retrieve( _environment, _array );
+
+    if ( array->arrayDimensions != _environment->arrayIndexes ) {
+        CRITICAL_ARRAY_SIZE_MISMATCH( _array );
+    }
+
+    Variable * offset = calculate_offset_in_array( _environment, _array);
+
+    variable_mul2_const( _environment, offset->name, VT_BITWIDTH( array->arrayType ) >> 3 );
+
+    cpu_math_add_16bit( _environment, offset->realName, array->realName, offset->realName );
+
+    Variable * value = variable_cast( _environment, _value, array->arrayType );
+
+    switch( VT_BITWIDTH( array->arrayType ) ) {
+        case 32:
+            cpu6502_move_32bit_indirect( _environment, value->realName, offset->realName );
+            break;
+        case 16:
+            cpu6502_move_16bit_indirect( _environment, value->realName, offset->realName );
+            break;
+        case 8:
+            cpu6502_move_8bit_indirect( _environment, value->realName, offset->realName );
+            break;
+        case 0:
+            CRITICAL_DATATYPE_UNSUPPORTED("array", DATATYPE_AS_STRING[array->arrayType]);
+    }
+
+    variable_reset( _environment );
+
+}
+
+void variable_move_array_string( Environment * _environment, char * _array, char * _string  ) {
+
+    Variable * array = variable_retrieve( _environment, _array );
+
+    if ( array->arrayDimensions != _environment->arrayIndexes ) {
+        CRITICAL_ARRAY_SIZE_MISMATCH( _array );
+    }
+
+    Variable * offset = calculate_offset_in_array( _environment, _array);
+
+    variable_mul2_const( _environment, offset->name, 2 );
+
+    cpu_math_add_16bit( _environment, offset->realName, array->realName, offset->realName );
+
+    Variable * string = variable_cast( _environment, _string, array->arrayType );
+
+    cpu6502_move_8bit_indirect( _environment, string->realName, offset->realName );
+
+    char stringAddress[32]; sprintf(stringAddress, "%s+1", string->realName );
+    char offsetAddress[32]; sprintf(offsetAddress, "%s+1", offset->realName );
+    cpu6502_move_16bit_indirect( _environment, stringAddress, offsetAddress );
+
+    variable_reset( _environment );
+
+}
+
+Variable * variable_move_from_array( Environment * _environment, char * _array ) {
+
+    Variable * array = variable_retrieve( _environment, _array );
+
+    if ( array->arrayDimensions != _environment->arrayIndexes ) {
+        CRITICAL_ARRAY_SIZE_MISMATCH( _array );
+    }
+
+    Variable * offset = calculate_offset_in_array( _environment, _array);
+
+    Variable * result;
+
+    switch( array->arrayType ) {
+        case VT_STRING: {
+
+            variable_mul2_const( _environment, offset->name, 2 );
+
+            cpu_math_add_16bit( _environment, offset->realName, array->realName, offset->realName );
+
+            result = variable_temporary( _environment, VT_STRING, "(element from array)" );
+
+            cpu6502_move_8bit_indirect2( _environment, offset->realName, result->realName );
+
+            char stringAddress[32]; sprintf(stringAddress, "%s+1", result->realName );
+            char offsetAddress[32]; sprintf(offsetAddress, "%s+1", offset->realName );
+            cpu6502_move_16bit_indirect2( _environment, offsetAddress, stringAddress );
+            break;
+        }
+
+        default: {
+
+            variable_mul2_const( _environment, offset->name, VT_BITWIDTH( array->arrayType ) >> 3 );
+
+            cpu_math_add_16bit( _environment, offset->realName, array->realName, offset->realName );
+
+            result = variable_temporary( _environment, array->arrayType, "(element from array)" );
+
+            switch( VT_BITWIDTH( array->arrayType ) ) {
+                case 32:
+                    cpu6502_move_32bit_indirect2( _environment, offset->realName, result->realName );
+                    break;
+                case 16:
+                    cpu6502_move_16bit_indirect2( _environment, offset->realName, result->realName);
+                    break;
+                case 8:
+                    cpu6502_move_8bit_indirect2( _environment, offset->realName, result->realName );
+                    break;
+                case 0:
+                    CRITICAL_DATATYPE_UNSUPPORTED("array", DATATYPE_AS_STRING[array->arrayType]);
+            }
+
+        }
+
+    }
+
+    return result;
+
+}

@@ -1993,6 +1993,46 @@ void z80_move_8bit_indirect2( Environment * _environment, char * _value, char *_
 
 }
 
+void z80_move_16bit_indirect( Environment * _environment, char *_source, char * _value ) {
+
+    outline1("LD DE, (%s)", _value);
+    outline1("LD HL, (%s)", _source);
+    outline0("LD (DE), HL");
+
+}
+
+void z80_move_16bit_indirect2( Environment * _environment, char * _value, char *_source ) {
+
+    outline1("LD DE, (%s)", _value);
+    outline0("LD HL, (DE)");
+    outline1("LD (%s), HL", _source);
+
+}
+
+void z80_move_32bit_indirect( Environment * _environment, char *_source, char * _value ) {
+
+    outline1("LD DE, (%s)", _value);
+    outline1("LD HL, (%s)", _source);
+    outline0("LD (DE), HL");
+    outline0("INC DE");
+    outline0("INC DE");
+    outline1("LD HL, (%s+2)", _source);
+    outline0("LD (DE), HL");
+
+}
+
+void z80_move_32bit_indirect2( Environment * _environment, char * _value, char *_source ) {
+
+    outline1("LD DE, (%s)", _value);
+    outline0("LD HL, (DE)");
+    outline1("LD (%s), HL", _source);
+    outline0("INC DE");
+    outline0("INC DE");
+    outline0("LD HL, (DE)");
+    outline1("LD (%s+2), HL", _source);
+
+}
+
 void z80_math_div_32bit_to_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, char * _other_remainder ) {
 
     MAKE_LABEL

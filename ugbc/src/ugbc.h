@@ -143,10 +143,14 @@ typedef enum _VariableType {
     VT_STRING = 10,
 
     /** Static buffer of a specific size */
-    VT_BUFFER = 11
+    VT_BUFFER = 11,
 
-    // TODO: support for arrays.
+    /** Array of any kind */
+    VT_ARRAY = 12
+
 } VariableType;
+
+#define MAX_ARRAY_DIMENSIONS            256
 
 #define VT_BW_8BIT( t, v )              ( ( (t) == (v) ) ? 8 : 0 )
 #define VT_BW_16BIT( t, v )             ( ( (t) == (v) ) ? 16 : 0 )
@@ -217,6 +221,19 @@ typedef struct _Variable {
      * Pointer to the bank where this variable belongs to.
      */
     Bank * bank;
+
+    /**
+     * Number of dimensions of this array
+     */
+    int arrayDimensions;
+
+    /**
+     * Size of each dimension
+     */
+    int arrayDimensionsEach[MAX_ARRAY_DIMENSIONS];
+
+    /** Variable type */
+    VariableType arrayType;
 
     /** Link to the next variable (NULL if this is the last one) */
     struct _Variable * next;
@@ -412,6 +429,26 @@ typedef struct _Environment {
      */
     Variable * everyTiming;
 
+    /**
+     * Temporary storage for array definition
+     */
+    int arrayDimensions;
+
+    /**
+     * Temporary storage for array definition
+     */
+    int arrayDimensionsEach[MAX_ARRAY_DIMENSIONS];
+
+    /**
+     * Temporary storage for array access
+     */
+    int arrayIndexes;
+
+    /**
+     * Temporary storage for array access
+     */
+    char * arrayIndexesEach[MAX_ARRAY_DIMENSIONS];
+
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */
@@ -431,8 +468,8 @@ typedef struct _Environment {
 #define UNIQUE_ID   _environment->uniqueId++
 #define MAKE_LABEL  char label[12]; sprintf( label, "_label%d", UNIQUE_ID);
 #define CRITICAL( s ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); exit( EXIT_FAILURE );
-#define CRITICAL2( s, v ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); exit( EXIT_FAILURE );
-#define CRITICAL3( s, v1, v2 ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%s, %s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v1, v2, _environment->yylineno ); exit( EXIT_FAILURE );
+#define CRITICAL2( s, v ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, ((struct _Environment *)_environment)->yylineno ); exit( EXIT_FAILURE );
+#define CRITICAL3( s, v1, v2 ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%s, %s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v1, v2, ((struct _Environment *)_environment)->yylineno ); exit( EXIT_FAILURE );
 #define CRITICAL_UNIMPLEMENTED( v ) CRITICAL2("E000 - Internal method not implemented:", v );
 #define CRITICAL_TEMPORARY2( v ) CRITICAL2("E001 - Unable to create space for temporary variable", v );
 #define CRITICAL_VARIABLE( v ) CRITICAL2("E002 - Using of an undefined variable", v );
@@ -468,6 +505,8 @@ typedef struct _Environment {
 #define CRITICAL_SGN_UNSUPPORTED( v, t ) CRITICAL3("E029 - SGN unsupported for variable of given datatype", v, t );
 #define CRITICAL_ABS_UNSUPPORTED( v, t ) CRITICAL3("E030 - ABS unsupported for variable of given datatype", v, t );
 #define CRITICAL_DEBUG_UNSUPPORTED( v, t ) CRITICAL3("E031 - DEBUG unsupported for variable of given datatype", v, t );
+#define CRITICAL_ARRAY_SIZE_MISMATCH( v ) CRITICAL2("E032 - number of indexes different from array dimensions", v );
+#define CRITICAL_NOT_ARRAY( v ) CRITICAL2("E032 - accessing with indexes on a non array variable", v );
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
 #define WARNING3( s, v1, v2 ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s, %s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v1, v2, _environment->yylineno ); }
@@ -762,6 +801,7 @@ void       variable_reset( Environment * _environment );
 Variable * variable_define( Environment * _environment, char * _name, VariableType _type, int _value );
 Variable * variable_retrieve( Environment * _environment, char * _name );
 Variable * variable_resize_buffer( Environment * _environment, char * _destination, int _size );
+Variable * variable_array_type( Environment * _environment, char *_name, VariableType _type );
 Variable * variable_cast( Environment * _environment, char * _source, VariableType _type );
 Variable * variable_temporary( Environment * _environment, VariableType _type, char * _meaning );
 void variable_cleanup( Environment * _Environment );
@@ -769,6 +809,9 @@ Variable * variable_store( Environment * _environment, char * _source, int _valu
 Variable * variable_store_string( Environment * _environment, char * _source, char * _string );
 Variable * variable_move( Environment * _environment, char * _source, char * _dest );
 Variable * variable_move_naked( Environment * _environment, char * _source, char * _dest );
+Variable * variable_move_from_array( Environment * _environment, char * _array );
+void variable_move_array( Environment * _environment, char * _array, char * _value  );
+void variable_move_array_string( Environment * _environment, char * _array, char * _string  );
 Variable * variable_compare( Environment * _environment, char * _source, char * _dest );
 Variable * variable_compare_not( Environment * _environment, char * _source, char * _dest );
 Variable * variable_less_than( Environment * _environment, char * _source, char * _dest, int _equal );

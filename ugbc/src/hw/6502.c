@@ -1896,6 +1896,78 @@ void cpu6502_move_8bit_indirect2( Environment * _environment, char * _value, cha
 
 }
 
+void cpu6502_move_16bit_indirect( Environment * _environment, char *_source, char * _value ) {
+
+    outline1("LDA %s", _value);
+    outline0("STA $22");
+    outline1("LDA %s+1", _value);
+    outline0("STA $23");
+    outline1("LDA %s", _source);
+    outline0("LDY #$0" );
+    outline0("STA ($22),Y");
+    outline1("LDA %s+1", _source);
+    outline0("LDY #$1" );
+    outline0("STA ($22),Y");
+
+}
+
+void cpu6502_move_16bit_indirect2( Environment * _environment, char * _value, char *_source ) {
+
+    outline1("LDA %s", _value);
+    outline0("STA $22");
+    outline1("LDA %s+1", _value);
+    outline0("STA $23");
+    outline0("LDY #$0" );
+    outline0("LDA ($22),Y");
+    outline1("STA %s", _source);
+    outline0("LDY #$1" );
+    outline0("LDA ($22),Y");
+    outline1("STA %s+1", _source);
+
+}
+
+void cpu6502_move_32bit_indirect( Environment * _environment, char *_source, char * _value ) {
+
+    outline1("LDA %s", _value);
+    outline0("STA $22");
+    outline1("LDA %s+1", _value);
+    outline0("STA $23");
+    outline1("LDA %s", _source);
+    outline0("LDY #$0" );
+    outline0("STA ($22),Y");
+    outline1("LDA %s+1", _source);
+    outline0("LDY #$1" );
+    outline0("STA ($22),Y");
+    outline1("LDA %s+2", _source);
+    outline0("LDY #$2" );
+    outline0("STA ($22),Y");
+    outline1("LDA %s+2", _source);
+    outline0("LDY #$2" );
+    outline0("STA ($22),Y");
+
+}
+
+void cpu6502_move_32bit_indirect2( Environment * _environment, char * _value, char *_source ) {
+
+    outline1("LDA %s", _value);
+    outline0("STA $22");
+    outline1("LDA %s+1", _value);
+    outline0("STA $23");
+    outline0("LDY #$0" );
+    outline0("LDA ($22),Y");
+    outline1("STA %s", _source);
+    outline0("LDY #$1" );
+    outline0("LDA ($22),Y");
+    outline1("STA %s+1", _source);
+    outline0("LDY #$2" );
+    outline0("LDA ($22),Y");
+    outline1("STA %s+2", _source);
+    outline0("LDY #$3" );
+    outline0("LDA ($22),Y");
+    outline1("STA %s+3", _source);
+
+}
+
 void cpu6502_uppercase( Environment * _environment, char *_source, char *_size, char *_result ) {
 
     MAKE_LABEL

@@ -40,6 +40,7 @@ AS { return (AS); }
 ASC { return (ASC); }
 AT { return (AT); }
 ADD { return (ADD); }
+ADDRESS { return (ADDRESS); }
 AND { return (AND); }
 BACKGROUND { return (BACKGROUND); }
 BANK { return (BANK); }
@@ -65,6 +66,7 @@ DARK { return(DARK); }
 DATA { return (DATA); }
 DEBUG { return (DEBUG); }
 DEC { return (DEC); }
+DIM { return (DIM); }
 DISABLE { return (DISABLE); }
 DONE { return (DONE); }
 DO { return (DO); }

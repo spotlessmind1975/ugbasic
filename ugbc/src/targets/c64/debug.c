@@ -203,5 +203,7 @@ void debug_var( Environment * _environment, char * _name ) {
     outline0("LDA #32");
     outline0("JSR $FFD2");
     
+    variable_reset( _environment );
+
 }
 

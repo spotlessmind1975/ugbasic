@@ -39,6 +39,7 @@
  ****************************************************************************/
 
 extern char BANK_TYPE_AS_STRING[][16];
+extern char DATATYPE_AS_STRING[][16];
 
 /**
  * @brief Emit source and configuration lines for variables
@@ -82,6 +83,21 @@ void variable_cleanup( Environment * _environment ) {
                         case VT_BUFFER:
                             outline2("%s: .res %d", variable->realName, variable->size);
                             break;
+                        case VT_ARRAY: {
+                            int i=0,size=1;
+                            for( i=0; i<variable->arrayDimensions; ++i ) {
+                                size *= variable->arrayDimensionsEach[i];
+                            }
+                            if ( VT_BITWIDTH( variable->arrayType ) > 0 ) {
+                                size *= VT_BITWIDTH( variable->arrayType );
+                            } else if ( variable->arrayType == VT_STRING ) {
+                                size *= 4;
+                            } else {
+                                CRITICAL_DATATYPE_UNSUPPORTED("array", DATATYPE_AS_STRING[variable->arrayType]);
+                            }
+                            outline2("%s: .res %d", variable->realName, size);
+                            break;
+                        }
                     }
                     variable = variable->next;
                 }
@@ -117,6 +133,21 @@ void variable_cleanup( Environment * _environment ) {
                         case VT_BUFFER:
                             outline2("%s: .res %d", variable->realName, variable->size);
                             break;
+                        case VT_ARRAY: {
+                            int i=0,size=1;
+                            for( i=0; i<variable->arrayDimensions; ++i ) {
+                                size *= variable->arrayDimensionsEach[i];
+                            }
+                            if ( VT_BITWIDTH( variable->arrayType ) > 0 ) {
+                                size *= VT_BITWIDTH( variable->arrayType );
+                            } else if ( variable->arrayType == VT_STRING ) {
+                                size *= 4;
+                            } else {
+                                CRITICAL_DATATYPE_UNSUPPORTED("array", DATATYPE_AS_STRING[variable->arrayType]);
+                            }
+                            outline2("%s: .res %d", variable->realName, size);
+                            break;
+                        }
                     }
                     variable = variable->next;
                 }

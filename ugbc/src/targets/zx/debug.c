@@ -219,5 +219,8 @@ void debug_var( Environment * _environment, char * _name ) {
 
     outline0( "LD A, 32");
     outline0( "RST $10" );
+
+    variable_reset( _environment );
+
 }
 
