@@ -127,8 +127,6 @@ void variable_global( Environment * _environment, char * _pattern ) {
     pattern->next = _environment->globalVariablePatterns;
     _environment->globalVariablePatterns = pattern;
 
-    fprintf(stderr, "variable_global(%s)\n", _pattern );
-
 }
 
 /**
@@ -379,14 +377,12 @@ Bank * bank_define( Environment * _environment, char * _name, BankType _type, in
  * @return Variable* Definition of the variable (if it exists) or NULL.
  */
 Variable * variable_retrieve( Environment * _environment, char * _name ) {
-    fprintf(stderr, "variable_retrieve(%s)\n", _name );
     Variable * var = variable_find( _environment->tempVariables, _name );
     if ( ! var ) {
         int isGlobal = 0;
         Pattern * current = _environment->globalVariablePatterns;
         if ( _environment->procedureName ) {
             while( current ) {
-                fprintf(stderr, " - %s\n", current->pattern );
                 if ( strcmp( current->pattern, _name ) == 0 ) {
                     isGlobal = 1;
                     break;
@@ -397,10 +393,8 @@ Variable * variable_retrieve( Environment * _environment, char * _name ) {
             isGlobal = 1;
         }
         if ( isGlobal ) {
-            fprintf(stderr, "global(%s)\n", _name );
             var = variable_find( _environment->variables, _name );
         } else {
-            fprintf(stderr, "local(%s)\n", _name );
             var = variable_find( _environment->procedureVariables, _name );
         }
         // _environment->globalVariablePatterns;
@@ -413,18 +407,14 @@ Variable * variable_retrieve( Environment * _environment, char * _name ) {
 
 Variable * variable_retrieve_or_define( Environment * _environment, char * _name, VariableType _type, int _value ) {
 
-    fprintf(stderr, "variable_retrieve_or_define(%s)\n", _name );
-
     Variable * var = variable_find( _environment->procedureVariables, _name );
 
     if ( ! var ) {
-        fprintf(stderr, "Locally (%s) not found\n", _name );
         int isGlobal = 0;
         // _environment->globalVariablePatterns;
         Pattern * current = _environment->globalVariablePatterns;
         if ( _environment->procedureName ) {
             while( current ) {
-                fprintf(stderr, " - %s\n", current->pattern );
                 if ( strcmp( current->pattern, _name ) == 0 ) {
                     isGlobal = 1;
                     break;
@@ -435,14 +425,11 @@ Variable * variable_retrieve_or_define( Environment * _environment, char * _name
             isGlobal = 1;
         }
         if ( isGlobal ) {
-            fprintf(stderr, "Globally (%s)\n", _name );
             var = variable_find( _environment->variables, _name );
             if ( ! var ) {
-                fprintf(stderr, "Define (%s)\n", _name );
                 var = variable_define( _environment, _name, _type, _value );
             }
         } else {
-            fprintf(stderr, "Locally (%s)\n", _name );
             var = variable_define_local( _environment, _name, _type, _value );
         }        
     }
