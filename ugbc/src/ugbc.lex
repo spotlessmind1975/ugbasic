@@ -157,6 +157,7 @@ SCREEN { return (SCREEN); }
 SCROLL { return (SCROLL); }
 SELECT { return (SELECT); }
 SGN { return (SGN); }
+SHARED { return (SHARED); }
 SIGNED { return (SIGNED); }
 SPACE { return (SPACE); }
 SPRITE { return (SPRITE); }

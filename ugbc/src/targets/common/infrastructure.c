@@ -220,6 +220,38 @@ Variable * variable_define( Environment * _environment, char * _name, VariableTy
     return var;
 }
 
+Variable * variable_define_no_init( Environment * _environment, char * _name, VariableType _type ) {
+
+    Variable * var = variable_find( _environment->variables, _name );
+    if ( var ) {
+        if ( var->type != _type ) {
+            CRITICAL( "Variable redefined with a different type");
+        }
+    } else {
+        var = malloc( sizeof( Variable ) );
+        var->name = strdup( _name );
+        var->realName = malloc( strlen( _name ) + 1 ); strcpy( var->realName, "_" ); strcat( var->realName, var->name );
+        var->type = _type;
+        var->bank = _environment->banks[BT_VARIABLES];
+        Variable * varLast = _environment->variables;
+        if ( varLast ) {
+            while( varLast->next ) {
+                varLast = varLast->next;
+            }
+            varLast->next = var;
+        } else {
+            _environment->variables = var;
+        }
+        if ( var->type == VT_ARRAY ) {
+            memcpy( var->arrayDimensionsEach, ((struct _Environment *)_environment)->arrayDimensionsEach, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
+            var->arrayDimensions = ((struct _Environment *)_environment)->arrayDimensions;
+        }
+    }
+    var->used = 1;
+    var->locked = 0;
+    return var;
+}
+
 Variable * variable_define_local( Environment * _environment, char * _name, VariableType _type, int _value ) {
 
     Variable * var = variable_find( _environment->procedureVariables, _name );
@@ -457,8 +489,12 @@ Variable * variable_retrieve_or_define( Environment * _environment, char * _name
         }
         if ( isGlobal ) {
             var = variable_find( _environment->variables, _name );
-            if ( ! var ) {
-                var = variable_define( _environment, _name, _type, _value );
+            if ( ! var  ) {
+                if ( _environment->procedureName ) {
+                    var = variable_define_no_init( _environment, _name, _type );
+                } else {
+                    var = variable_define( _environment, _name, _type, _value );
+                }
             }
         } else {
             var = variable_define_local( _environment, _name, _type, _value );

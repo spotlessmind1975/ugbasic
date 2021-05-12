@@ -40,8 +40,7 @@ extern char DATATYPE_AS_STRING[][16];
 %token POINT GOSUB RETURN POP OR ELSE NOT TRUE FALSE DO EXIT WEND UNTIL FOR STEP EVERY
 %token MID INSTR UPPER LOWER STR VAL STRING SPACE FLIP CHR ASC LEN POW MOD ADD MIN MAX SGN
 %token SIGNED ABS RND COLORS INK TIMER POWERING DIM ADDRESS PROC PROCEDURE CALL OSP CSP
-
-%token MILLISECOND MILLISECONDS TICKS
+%token SHARED MILLISECOND MILLISECONDS TICKS
 
 %token BLACK WHITE RED CYAN VIOLET GREEN BLUE YELLOW ORANGE
 %token BROWN LIGHT DARK GREY GRAY MAGENTA PURPLE
@@ -1248,6 +1247,9 @@ statement:
       ((struct _Environment *)_environment)->parameters = 0;
     } OSP parameters CSP {
       begin_procedure( _environment, $2 );
+  }
+  | SHARED parameters {
+      shared( _environment );
   }
   | END PROC {
       end_procedure( _environment );

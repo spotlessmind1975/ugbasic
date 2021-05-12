@@ -56,6 +56,7 @@ void begin_procedure( Environment * _environment, char * _name ) {
     procedure->parameters = _environment->parameters;
     memcpy( &procedure->parametersEach, &_environment->parametersEach, sizeof( char * ) * _environment->parameters );
     memcpy( &procedure->parametersTypeEach, &_environment->parametersTypeEach, sizeof( VariableType ) * _environment->parameters );
+    _environment->parameters = 0;
 
     procedure->next = _environment->procedures;
     _environment->procedures = procedure;
@@ -128,6 +129,7 @@ void call_procedure( Environment * _environment, char * _name ) {
         Variable * value = variable_retrieve( _environment, _environment->parametersEach[i] );
         variable_move( _environment, value->name, parameter->name );
     }
+    _environment->parameters = 0;
 
     char procedureLabel[32]; sprintf(procedureLabel, "%s", _name );
 
@@ -139,4 +141,12 @@ void exit_procedure( Environment * _environment ) {
 
     cpu_return( _environment );
     
+}
+
+void shared( Environment * _environment ) {
+    int i = 0;
+    for( i=0; i<_environment->parameters; ++i ) {
+        variable_global( _environment, _environment->parametersEach[i] );
+    }
+    _environment->parameters = 0;
 }
