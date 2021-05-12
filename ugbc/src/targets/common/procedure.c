@@ -144,6 +144,24 @@ void exit_procedure( Environment * _environment ) {
 }
 
 void shared( Environment * _environment ) {
+
+    if ( !_environment->procedureName ) {
+        CRITICAL_SHARED_ONLY_IN_PROCEDURES();
+    }
+
+    int i = 0;
+    for( i=0; i<_environment->parameters; ++i ) {
+        variable_global( _environment, _environment->parametersEach[i] );
+    }
+    _environment->parameters = 0;
+}
+
+void global( Environment * _environment ) {
+
+    if ( _environment->procedureName ) {
+        CRITICAL_GLOBAL_ONLY_OUTSIDE_PROCEDURES();
+    }
+
     int i = 0;
     for( i=0; i<_environment->parameters; ++i ) {
         variable_global( _environment, _environment->parametersEach[i] );

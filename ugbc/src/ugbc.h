@@ -584,6 +584,8 @@ typedef struct _Environment {
 #define CRITICAL_PROCEDURE_NOT_OPENED() CRITICAL("E034 - END PROC outside a procedure" ); 
 #define CRITICAL_PROCEDURE_MISSING( n ) CRITICAL2("E035 - call to an undefined procedure", n ); 
 #define CRITICAL_PROCEDURE_PARAMETERS_MISMATCH( n ) CRITICAL2("E036 - wrong number of parameters on procedure call", n ); 
+#define CRITICAL_SHARED_ONLY_IN_PROCEDURES() CRITICAL("E037 - SHARED can be used only inside a PROCEDURE");
+#define CRITICAL_GLOBAL_ONLY_OUTSIDE_PROCEDURES() CRITICAL("E038 - GLOBAL can be used only outside a PROCEDURE");
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
 #define WARNING3( s, v1, v2 ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s, %s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v1, v2, _environment->yylineno ); }
@@ -805,6 +807,7 @@ void graphic( Environment * _environment );
 void halt( Environment * _environment );
 void end( Environment * _environment );
 void shared( Environment * _environment );
+void global( Environment * _environment );
 Variable * hit_to( Environment * _environment, int _sprite );
 Variable * hit_to_vars( Environment * _environment, char * _sprite );
 void if_then( Environment * _environment, char * _expression );

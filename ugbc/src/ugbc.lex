@@ -89,6 +89,7 @@ FLIP\$ { return(FLIP); }
 FOR { return(FOR); }
 FROM { return (FROM); }
 GAMELOOP { return (GAMELOOP); }
+GLOBAL { return (GLOBAL); }
 GOLD { return(GOLD); }
 GOTO { return (GOTO); }
 GOSUB { return (GOSUB); }
