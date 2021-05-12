@@ -193,7 +193,7 @@ Variable * variable_define( Environment * _environment, char * _name, VariableTy
         var->value = _value;
     } else {
         var = malloc( sizeof( Variable ) );
-        var->name = _name;
+        var->name = strdup( _name );
         var->realName = malloc( strlen( _name ) + 1 ); strcpy( var->realName, "_" ); strcat( var->realName, var->name );
         var->type = _type;
         var->value = _value;
@@ -230,7 +230,7 @@ Variable * variable_define_local( Environment * _environment, char * _name, Vari
         var->value = _value;
     } else {
         var = malloc( sizeof( Variable ) );
-        var->name = _name;
+        var->name = strdup( _name );
         var->realName = malloc( strlen( _name ) + strlen( _environment->procedureName ) + 2 ); strcpy( var->realName, "_" ); strcat( var->realName, _environment->procedureName ); strcat( var->realName, "_" ); strcat( var->realName, _name );
         var->type = _type;
         var->value = _value;
@@ -420,15 +420,21 @@ Variable * variable_retrieve( Environment * _environment, char * _name ) {
 
 Variable * variable_retrieve_or_define( Environment * _environment, char * _name, VariableType _type, int _value ) {
 
+    Variable * var = variable_find( _environment->tempVariables, _name );
+
+    if ( var ){
+        return var;
+    }
+
     if ( _environment->procedureName && strchr( _name, '_' ) == NULL ) {
         char parameterName[256]; sprintf( parameterName, "%s_%s", _environment->procedureName, _name );
-        Variable * var = variable_find( _environment->variables, parameterName );
+        var = variable_find( _environment->variables, parameterName );
         if ( var ) {
             return var;
         }
     }
 
-    Variable * var = variable_find( _environment->procedureVariables, _name );
+    var = variable_find( _environment->procedureVariables, _name );
 
     if ( ! var ) {
         int isGlobal = 0;
