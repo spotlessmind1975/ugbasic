@@ -42,7 +42,7 @@ extern char DATATYPE_AS_STRING[][16];
 
 Variable * vt_to_buffer( Environment * _environment, char * _input ) {
 
-    Variable * input = variable_retrieve( _environment, _input );
+    Variable * input = variable_retrieve_or_define( _environment, _input, VT_WORD, 0 );
 
     Variable * b2dinv = variable_temporary( _environment, VT_BUFFER, "(64-bit input value)");
     variable_resize_buffer( _environment, b2dinv->name, 8 );

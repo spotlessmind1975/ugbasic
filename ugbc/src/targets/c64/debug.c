@@ -75,7 +75,7 @@ void debug_var( Environment * _environment, char * _name ) {
     MAKE_LABEL
 
     // Safety check
-    Variable * var = variable_retrieve( _environment, _name );
+    Variable * var = variable_retrieve_or_define( _environment, _name, VT_DWORD, 0 );
     switch( VT_BITWIDTH( var->type ) ) {
         case 8:
             if ( VT_SIGNED( var->type ) ) {
