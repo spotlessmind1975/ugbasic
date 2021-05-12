@@ -97,6 +97,7 @@ static void variable_reset_pool( Variable * _pool ) {
 }
 
 static Variable * variable_find( Variable * _first, char * _name ) {
+
     Variable * actual = _first;
     while( actual ) {
         if ( strcmp( actual->name, _name ) == 0 ) {
@@ -362,6 +363,7 @@ Se manca il [filename] allora il banco non sarà preriempito.
 
  </usermanual> */
 Bank * bank_define( Environment * _environment, char * _name, BankType _type, int _address, char * _filename ) {
+
     Bank * bank = NULL;
     if ( _name != NULL ) {
         bank = bank_find( _environment->banks[_type], _name );
@@ -427,7 +429,7 @@ Variable * variable_retrieve( Environment * _environment, char * _name ) {
                 isGlobal = 1;
             } else {
                 while( current ) {
-                    if ( strcmp( current->pattern, _name ) == 0 ) {
+                    if ( pattern_match( current->pattern, _name ) == 0 ) {
                         isGlobal = 1;
                         break;
                     }
@@ -470,14 +472,13 @@ Variable * variable_retrieve_or_define( Environment * _environment, char * _name
 
     if ( ! var ) {
         int isGlobal = 0;
-        // _environment->globalVariablePatterns;
         Pattern * current = _environment->globalVariablePatterns;
         if ( _environment->procedureName ) {
             if ( strchr( _name, '_' ) != NULL ) {
                 isGlobal = 1;
             } else {
                 while( current ) {
-                    if ( strcmp( current->pattern, _name ) == 0 ) {
+                    if ( pattern_match( current->pattern, _name ) == 0 ) {
                         isGlobal = 1;
                         break;
                     }
@@ -500,7 +501,9 @@ Variable * variable_retrieve_or_define( Environment * _environment, char * _name
             var = variable_define_local( _environment, _name, _type, _value );
         }        
     }
-
+    if (!var) {
+        CRITICAL_VARIABLE( _name );
+    }
     return var;
 }
 
@@ -2673,3 +2676,46 @@ Variable * variable_move_from_array( Environment * _environment, char * _array )
     return result;
 
 }
+
+int pattern_match( char * _pattern, char * _value ) {
+
+    int n = strlen( _value );
+    int m = strlen( _pattern );
+
+    if (m == 0)
+        return (n == 0);
+ 
+    char * lookup = malloc( ( n + 1 ) * ( m + 1 ) );
+ 
+    memset(lookup, 0, ( n + 1 ) * ( m + 1 ));
+ 
+    lookup[0] = 1;
+ 
+    int i=0,j=0;
+
+    for (j = 1; j <= m; j++)
+        if (_pattern[j - 1] == '*')
+            lookup[0+(j*n)] = lookup[0+(j-1)*n];
+ 
+    for (i = 1; i <= n; i++) {
+        for (j = 1; j <= m; j++) {
+            if (_pattern[j-1] == '*')
+                lookup[i+(j*m)]
+                    = lookup[i+(j-1)*n] || lookup[(i-1)+(j*n)];
+ 
+            else if (_pattern[j-1] == '?'
+                     || _value[i-1] == _pattern[j-1])
+                lookup[i+j*n] = lookup[(i-1)+(j-1)*n];
+ 
+            else
+                lookup[i+j*n] = 0;
+        }
+    }
+ 
+    char result = lookup[i+j*n];
+
+    free(lookup);
+
+    return result;
+}
+ 

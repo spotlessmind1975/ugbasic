@@ -1095,55 +1095,96 @@ dim_definitions :
 
 indexes :
       expr {
-          ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayIndexes] = $1;
+          ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayIndexes] = strdup( $1 );
           ++((struct _Environment *)_environment)->arrayIndexes;
     }
     | expr COMMA indexes {
-          ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayIndexes] = $1;
+          ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayIndexes] = strdup( $1 );
           ++((struct _Environment *)_environment)->arrayIndexes;
     }
     ;
 
 parameters : 
       Identifier {
-          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = $1;
+          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
           ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_WORD;
           ++((struct _Environment *)_environment)->parameters;
     }
     | Identifier DOLLAR {
-          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = $1;
+          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
           ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_STRING;
           ++((struct _Environment *)_environment)->parameters;
     }
     | Identifier AS datatype {
-          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = $1;
+          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
           ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = $3;
           ++((struct _Environment *)_environment)->parameters;
     }
     | Identifier COMMA parameters {
-          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = $1;
+          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
           ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_WORD;
           ++((struct _Environment *)_environment)->parameters;
     }
     | Identifier DOLLAR COMMA parameters {
-          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = $1;
+          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
           ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_STRING;
           ++((struct _Environment *)_environment)->parameters;
     }
     | Identifier AS datatype COMMA parameters {
-          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = $1;
+          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
           ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = $3;
+          ++((struct _Environment *)_environment)->parameters;
+    }
+    ;
+
+parameters_expr : 
+      Identifier {
+          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
+          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_WORD;
+          ++((struct _Environment *)_environment)->parameters;
+    }
+    | Identifier DOLLAR {
+          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
+          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_STRING;
+          ++((struct _Environment *)_environment)->parameters;
+    }
+    | Identifier AS datatype {
+          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
+          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = $3;
+          ++((struct _Environment *)_environment)->parameters;
+    }
+    | Identifier COMMA parameters_expr {
+          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
+          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_WORD;
+          ++((struct _Environment *)_environment)->parameters;
+    }
+    | Identifier DOLLAR COMMA parameters_expr {
+          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
+          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_STRING;
+          ++((struct _Environment *)_environment)->parameters;
+    }
+    | Identifier AS datatype COMMA parameters_expr {
+          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
+          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = $3;
+          ++((struct _Environment *)_environment)->parameters;
+    }
+    | String {
+          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
+          ++((struct _Environment *)_environment)->parameters;
+    }
+    | String COMMA parameters_expr {
+          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
           ++((struct _Environment *)_environment)->parameters;
     }
     ;
 
 values : 
       expr {
-          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = $1;
+          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
           ++((struct _Environment *)_environment)->parameters;
     }
     | expr COMMA values {
-          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = $1;
+          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
           ++((struct _Environment *)_environment)->parameters;
     }
     ;
@@ -1248,10 +1289,10 @@ statement:
     } OSP parameters CSP {
       begin_procedure( _environment, $2 );
   }
-  | SHARED parameters {
+  | SHARED parameters_expr {
       shared( _environment );
   }
-  | GLOBAL parameters {
+  | GLOBAL parameters_expr {
       global( _environment );
   }
   | END PROC {

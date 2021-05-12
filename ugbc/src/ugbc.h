@@ -830,6 +830,7 @@ void on_goto_end( Environment * _environment );
 void on_proc( Environment * _environment, char * _expression );
 void on_proc_index( Environment * _environment, char * _label );
 void on_proc_end( Environment * _environment );
+int pattern_match( char * _pattern, char * _value );
 Variable * peek( Environment * _environment, int _location );
 Variable * peek_var( Environment * _environment, char * _location );
 void point_at( Environment * _environment, int _x, int _y );
