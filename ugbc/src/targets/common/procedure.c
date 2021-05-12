@@ -73,10 +73,47 @@ void begin_procedure( Environment * _environment, char * _name ) {
 
 }
 
-void end_procedure( Environment * _environment ) {
+void return_procedure( Environment * _environment, char * _value ) {
+    char paramName[256]; sprintf(paramName,"%s_PARAM", _environment->procedureName );
+    Variable * value = variable_retrieve_or_define( _environment, _value, VT_WORD, 0 );
+    Variable * param = variable_retrieve_or_define( _environment, paramName, value->type, 0 );
+    variable_move( _environment, value->name, param->name );
+    cpu_return( _environment );
+}
+
+Variable * param_procedure( Environment * _environment, char * _name ) {
+
+    Procedure * procedure = _environment->procedures;
+
+    while( procedure ) {
+        if ( strcmp( procedure->name, _name ) == 0 ) {
+            break;
+        }
+        procedure = procedure->next;
+    }
+
+    if ( !procedure ) {
+        CRITICAL_PROCEDURE_MISSING(_name);
+    }
+
+    char paramName[256]; sprintf(paramName,"%s_PARAM", _name );
+    Variable * param = variable_retrieve( _environment, paramName );
+    
+    return param;
+
+}
+
+void end_procedure( Environment * _environment, char * _value ) {
 
     if ( ! _environment->procedureName ) {
         CRITICAL_PROCEDURE_NOT_OPENED();
+    }
+
+    if ( _value ) {
+        char paramName[256]; sprintf(paramName,"%s_PARAM", _environment->procedureName );
+        Variable * value = variable_retrieve_or_define( _environment, _value, VT_WORD, 0 );
+        Variable * param = variable_retrieve_or_define( _environment, paramName, value->type, 0 );
+        variable_move( _environment, value->name, param->name );
     }
 
     char procedureAfterLabel[32]; sprintf(procedureAfterLabel, "%safter", _environment->procedureName );

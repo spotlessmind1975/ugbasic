@@ -40,7 +40,7 @@ extern char DATATYPE_AS_STRING[][16];
 %token POINT GOSUB RETURN POP OR ELSE NOT TRUE FALSE DO EXIT WEND UNTIL FOR STEP EVERY
 %token MID INSTR UPPER LOWER STR VAL STRING SPACE FLIP CHR ASC LEN POW MOD ADD MIN MAX SGN
 %token SIGNED ABS RND COLORS INK TIMER POWERING DIM ADDRESS PROC PROCEDURE CALL OSP CSP
-%token SHARED MILLISECOND MILLISECONDS TICKS GLOBAL
+%token SHARED MILLISECOND MILLISECONDS TICKS GLOBAL PARAM
 
 %token BLACK WHITE RED CYAN VIOLET GREEN BLUE YELLOW ORANGE
 %token BROWN LIGHT DARK GREY GRAY MAGENTA PURPLE
@@ -454,6 +454,18 @@ exponential:
     }
     | MIN OP expr COMMA expr CP {
         $$ = minimum( _environment, $3, $5 )->name;
+    }
+    | PARAM OP Identifier CP {
+        $$ = param_procedure( _environment, $3 )->name;
+    }
+    | PARAM DOLLAR OP Identifier CP {
+        $$ = param_procedure( _environment, $4 )->name;
+    }
+    | Identifier OSP {
+      ((struct _Environment *)_environment)->parameters = 0;
+    } values CSP {
+      call_procedure( _environment, $1 );
+      $$ = param_procedure( _environment, $1 )->name;
     }
     | SGN OP expr CP {
         $$ = sign( _environment, $3 )->name;
@@ -1296,7 +1308,10 @@ statement:
       global( _environment );
   }
   | END PROC {
-      end_procedure( _environment );
+      end_procedure( _environment, NULL );
+  }
+  | END PROC OSP expr CSP {
+      end_procedure( _environment, $4 );
   }
   | FOR Identifier ASSIGN expr TO expr STEP expr {
       begin_for_step( _environment, $2, $4, $6, $8 );  
@@ -1352,6 +1367,9 @@ statement:
   | EVERY every_definition
   | RETURN {
       return_label( _environment );
+  }
+  | RETURN expr {
+      return_procedure( _environment, $2 );
   }
   | POP {
       pop( _environment );

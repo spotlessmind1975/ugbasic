@@ -755,7 +755,9 @@ void add_complex( Environment * _environment, char * _variable, char * _expressi
 Bank * bank_define( Environment * _environment, char * _name, BankType _type, int _address, char * _filename );
 void   bank_cleanup( Environment * _environment );
 void begin_procedure( Environment * _environment, char * _name );
-void end_procedure( Environment * _environment );
+void end_procedure( Environment * _environment, char * _value );
+Variable * param_procedure( Environment * _environment, char * _name );
+void return_procedure( Environment * _environment, char * _value );
 void begin_loop( Environment * _environment );
 void begin_while( Environment * _environment );
 void begin_while_condition( Environment * _environment, char * _expression );
