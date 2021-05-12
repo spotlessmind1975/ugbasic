@@ -75,9 +75,9 @@ static Bank * bank_find( Bank * _first, char * _name ) {
     return actual;
 }
 
-static void variable_dump( Variable * _first );
+void variable_dump( Variable * _first );
 
-static void variable_dump( Variable * _first ) {
+void variable_dump( Variable * _first ) {
     fprintf(stderr, "Variables defined:\n");
     Variable * actual = _first;
     while( actual ) {
@@ -231,7 +231,7 @@ Variable * variable_define_local( Environment * _environment, char * _name, Vari
     } else {
         var = malloc( sizeof( Variable ) );
         var->name = _name;
-        var->realName = malloc( strlen( _name ) + 1 ); strcpy( var->realName, "_" ); strcat( var->realName, _environment->procedureName ); strcat( var->realName, "_" ); strcat( var->realName, var->name );
+        var->realName = malloc( strlen( _name ) + strlen( _environment->procedureName ) + 2 ); strcpy( var->realName, "_" ); strcat( var->realName, _environment->procedureName ); strcat( var->realName, "_" ); strcat( var->realName, _name );
         var->type = _type;
         var->value = _value;
         var->bank = _environment->banks[BT_VARIABLES];
@@ -377,17 +377,30 @@ Bank * bank_define( Environment * _environment, char * _name, BankType _type, in
  * @return Variable* Definition of the variable (if it exists) or NULL.
  */
 Variable * variable_retrieve( Environment * _environment, char * _name ) {
+
+    if ( _environment->procedureName && strchr( _name, '_' ) == NULL ) {
+        char parameterName[256]; sprintf( parameterName, "%s_%s", _environment->procedureName, _name );
+        Variable * var = variable_find( _environment->variables, parameterName );
+        if ( var ) {
+            return var;
+        }
+    }
+
     Variable * var = variable_find( _environment->tempVariables, _name );
     if ( ! var ) {
         int isGlobal = 0;
         Pattern * current = _environment->globalVariablePatterns;
         if ( _environment->procedureName ) {
-            while( current ) {
-                if ( strcmp( current->pattern, _name ) == 0 ) {
-                    isGlobal = 1;
-                    break;
+            if ( strchr( _name, '_' ) != NULL ) {
+                isGlobal = 1;
+            } else {
+                while( current ) {
+                    if ( strcmp( current->pattern, _name ) == 0 ) {
+                        isGlobal = 1;
+                        break;
+                    }
+                    current = current->next;
                 }
-                current = current->next;
             }
         } else {
             isGlobal = 1;
@@ -407,6 +420,14 @@ Variable * variable_retrieve( Environment * _environment, char * _name ) {
 
 Variable * variable_retrieve_or_define( Environment * _environment, char * _name, VariableType _type, int _value ) {
 
+    if ( _environment->procedureName && strchr( _name, '_' ) == NULL ) {
+        char parameterName[256]; sprintf( parameterName, "%s_%s", _environment->procedureName, _name );
+        Variable * var = variable_find( _environment->variables, parameterName );
+        if ( var ) {
+            return var;
+        }
+    }
+
     Variable * var = variable_find( _environment->procedureVariables, _name );
 
     if ( ! var ) {
@@ -414,12 +435,16 @@ Variable * variable_retrieve_or_define( Environment * _environment, char * _name
         // _environment->globalVariablePatterns;
         Pattern * current = _environment->globalVariablePatterns;
         if ( _environment->procedureName ) {
-            while( current ) {
-                if ( strcmp( current->pattern, _name ) == 0 ) {
-                    isGlobal = 1;
-                    break;
+            if ( strchr( _name, '_' ) != NULL ) {
+                isGlobal = 1;
+            } else {
+                while( current ) {
+                    if ( strcmp( current->pattern, _name ) == 0 ) {
+                        isGlobal = 1;
+                        break;
+                    }
+                    current = current->next;
                 }
-                current = current->next;
             }
         } else {
             isGlobal = 1;
@@ -494,7 +519,7 @@ Variable * variable_temporary( Environment * _environment, VariableType _type, c
         var->meaningName = _meaning;
     } else {
         char * name = malloc(32);
-        sprintf(name, "_tmp%d", UNIQUE_ID);
+        sprintf(name, "Ttmp%d", UNIQUE_ID);
         var = malloc( sizeof( Variable ) );
         var->name = name;
         var->realName = malloc( strlen( var->name ) + 1 ); strcpy( var->realName, "_" ); strcat( var->realName, var->name );
@@ -537,7 +562,9 @@ Variable * variable_temporary( Environment * _environment, VariableType _type, c
  * @throw EXIT_FAILURE "Cannot find source var"
  */
 Variable * variable_cast( Environment * _environment, char * _source, VariableType _type ) {
+
     Variable * source = variable_retrieve( _environment, _source );
+
     Variable * target = variable_temporary( _environment, _type, "(generated for cast)" );
     switch( VT_BITWIDTH( source->type ) ) {
         case 32:
@@ -833,6 +860,7 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
  * @throw EXIT_FAILURE "Source variable does not exist"
  */
 Variable * variable_add( Environment * _environment, char * _source, char * _destination ) {
+
     Variable * source = variable_retrieve( _environment, _source );
 
     Variable * target = variable_cast( _environment, _destination, source->type );

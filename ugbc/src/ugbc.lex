@@ -204,7 +204,7 @@ YPEN { return (YPEN); }
 REM\s*[^\n\r]+[\n\r] { return(Remark);  }
 '\s*[^\n\r]+[\n\r] { return(Remark);  }
 
-[ \t]+
+[ \t]+ 
 . { return(yytext[0]); }
 
 %%

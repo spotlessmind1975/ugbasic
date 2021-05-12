@@ -934,6 +934,7 @@ Variable * variable_string_flip( Environment * _environment, char * _string  );
 Variable * variable_string_chr( Environment * _environment, char * _ascii  );
 Variable * variable_string_asc( Environment * _environment, char * _char );
 Variable * variable_string_len( Environment * _environment, char * _string );
+void variable_dump( Variable * _first );
 void wait_cycles( Environment * _environment, int _timing );
 void wait_cycles_var( Environment * _environment, char * _timing );
 void wait_ticks( Environment * _environment, int _timing );

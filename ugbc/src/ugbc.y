@@ -1105,10 +1105,6 @@ indexes :
     }
     ;
 
-open_parentesys : OP | OSP;
-
-close_parentesys : CP | CSP;
-
 parameters : 
       Identifier {
           ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = $1;
@@ -1250,7 +1246,7 @@ statement:
   }
   | PROCEDURE Identifier {
       ((struct _Environment *)_environment)->parameters = 0;
-    } open_parentesys parameters close_parentesys {
+    } OSP parameters CSP {
       begin_procedure( _environment, $2 );
   }
   | END PROC {
@@ -1259,7 +1255,7 @@ statement:
   | FOR Identifier ASSIGN expr TO expr STEP expr {
       begin_for_step( _environment, $2, $4, $6, $8 );  
   }
-  | Identifier SPACE {
+  | Identifier " " {
       ((struct _Environment *)_environment)->parameters = 0;
       call_procedure( _environment, $1 );
   }
@@ -1271,19 +1267,19 @@ statement:
       ((struct _Environment *)_environment)->parameters = 0;
       call_procedure( _environment, $2 );
   }
-  | Identifier SPACE {
+  | Identifier OSP {
       ((struct _Environment *)_environment)->parameters = 0;
-    } open_parentesys values close_parentesys {
+    } values CSP {
       call_procedure( _environment, $1 );
   }
-  | PROC Identifier {
+  | PROC Identifier OSP {
       ((struct _Environment *)_environment)->parameters = 0;
-    } open_parentesys values close_parentesys {
+    } values CSP {
       call_procedure( _environment, $2 );
   }
-  | CALL Identifier {
+  | CALL Identifier OSP {
       ((struct _Environment *)_environment)->parameters = 0;
-    } open_parentesys values close_parentesys {
+    } values CSP {
       call_procedure( _environment, $2 );
   }
   | Identifier COLON {
