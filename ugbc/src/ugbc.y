@@ -39,7 +39,7 @@ extern char DATATYPE_AS_STRING[][16];
 %token BEG END GAMELOOP ENDIF UP DOWN LEFT RIGHT DEBUG AND RANDOMIZE GRAPHIC TEXTMAP
 %token POINT GOSUB RETURN POP OR ELSE NOT TRUE FALSE DO EXIT WEND UNTIL FOR STEP EVERY
 %token MID INSTR UPPER LOWER STR VAL STRING SPACE FLIP CHR ASC LEN POW MOD ADD MIN MAX SGN
-%token SIGNED ABS RND COLORS INK TIMER POWERING DIM ADDRESS PROC PROCEDURE CALL
+%token SIGNED ABS RND COLORS INK TIMER POWERING DIM ADDRESS PROC PROCEDURE CALL OSP CSP
 
 %token MILLISECOND MILLISECONDS TICKS
 
@@ -58,6 +58,7 @@ extern char DATATYPE_AS_STRING[][16];
 %type <integer> datatype
 
 %right Integer String CP 
+%left DOLLAR
 %left OP
 %right THEN ELSE
 %left POW
@@ -1104,6 +1105,54 @@ indexes :
     }
     ;
 
+open_parentesys : OP | OSP;
+
+close_parentesys : CP | CSP;
+
+parameters : 
+      Identifier {
+          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = $1;
+          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_WORD;
+          ++((struct _Environment *)_environment)->parameters;
+    }
+    | Identifier DOLLAR {
+          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = $1;
+          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_STRING;
+          ++((struct _Environment *)_environment)->parameters;
+    }
+    | Identifier AS datatype {
+          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = $1;
+          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = $3;
+          ++((struct _Environment *)_environment)->parameters;
+    }
+    | Identifier COMMA parameters {
+          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = $1;
+          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_WORD;
+          ++((struct _Environment *)_environment)->parameters;
+    }
+    | Identifier DOLLAR COMMA parameters {
+          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = $1;
+          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_STRING;
+          ++((struct _Environment *)_environment)->parameters;
+    }
+    | Identifier AS datatype COMMA parameters {
+          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = $1;
+          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = $3;
+          ++((struct _Environment *)_environment)->parameters;
+    }
+    ;
+
+values : 
+      expr {
+          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = $1;
+          ++((struct _Environment *)_environment)->parameters;
+    }
+    | expr COMMA values {
+          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = $1;
+          ++((struct _Environment *)_environment)->parameters;
+    }
+    ;
+
 statement:
     BANK bank_definition
   | RASTER raster_definition
@@ -1196,6 +1245,12 @@ statement:
       end_for( _environment );
   }
   | PROCEDURE Identifier {
+      ((struct _Environment *)_environment)->parameters = 0;
+      begin_procedure( _environment, $2 );
+  }
+  | PROCEDURE Identifier {
+      ((struct _Environment *)_environment)->parameters = 0;
+    } open_parentesys parameters close_parentesys {
       begin_procedure( _environment, $2 );
   }
   | END PROC {
@@ -1205,12 +1260,30 @@ statement:
       begin_for_step( _environment, $2, $4, $6, $8 );  
   }
   | Identifier SPACE {
+      ((struct _Environment *)_environment)->parameters = 0;
       call_procedure( _environment, $1 );
   }
   | PROC Identifier {
+      ((struct _Environment *)_environment)->parameters = 0;
       call_procedure( _environment, $2 );
   }
   | CALL Identifier {
+      ((struct _Environment *)_environment)->parameters = 0;
+      call_procedure( _environment, $2 );
+  }
+  | Identifier SPACE {
+      ((struct _Environment *)_environment)->parameters = 0;
+    } open_parentesys values close_parentesys {
+      call_procedure( _environment, $1 );
+  }
+  | PROC Identifier {
+      ((struct _Environment *)_environment)->parameters = 0;
+    } open_parentesys values close_parentesys {
+      call_procedure( _environment, $2 );
+  }
+  | CALL Identifier {
+      ((struct _Environment *)_environment)->parameters = 0;
+    } open_parentesys values close_parentesys {
       call_procedure( _environment, $2 );
   }
   | Identifier COLON {

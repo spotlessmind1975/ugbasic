@@ -44,6 +44,22 @@ void begin_procedure( Environment * _environment, char * _name ) {
         CRITICAL_PROCEDURE_NESTED_UNSUPPORTED(_name);
     }
 
+    Procedure * procedure = malloc( sizeof( Procedure ) );
+    procedure->name = strdup( _name );
+    
+    int i = 0;
+    for( i=0; i<_environment->parameters; ++i ) {
+        char parameterName[256]; sprintf( parameterName, "%s_%s", procedure->name, _environment->parametersEach[i] );
+        Variable * parameter = variable_retrieve_or_define( _environment, parameterName, _environment->parametersTypeEach[i], 0 );
+    }
+
+    procedure->parameters = _environment->parameters;
+    memcpy( &procedure->parametersEach, &_environment->parametersEach, sizeof( char * ) * _environment->parameters );
+    memcpy( &procedure->parametersTypeEach, &_environment->parametersTypeEach, sizeof( VariableType ) * _environment->parameters );
+
+    procedure->next = _environment->procedures;
+    _environment->procedures = procedure;
+
     _environment->procedureName = strdup( _name );
     _environment->procedureVariables = NULL;
 
@@ -70,7 +86,7 @@ void end_procedure( Environment * _environment ) {
 
     _environment->procedureName = NULL;
 
-    Variable * current = _environment->procedureVariables ;
+    Variable * current = _environment->procedureVariables;
 
     Variable * varLast = _environment->variables;
     if ( varLast ) {
@@ -87,6 +103,31 @@ void end_procedure( Environment * _environment ) {
 };
 
 void call_procedure( Environment * _environment, char * _name ) {
+
+    Procedure * procedure = _environment->procedures;
+
+    while( procedure ) {
+        if ( strcmp( procedure->name, _name ) == 0 ) {
+            break;
+        }
+        procedure = procedure->next;
+    }
+
+    if ( !procedure ) {
+        CRITICAL_PROCEDURE_MISSING(_name);
+    }
+
+    if ( _environment->parameters != procedure->parameters ) {
+        CRITICAL_PROCEDURE_PARAMETERS_MISMATCH(_name);
+    }
+
+    int i=0;
+    for( i=0; i<procedure->parameters; ++i ) {
+        char parameterName[256]; sprintf( parameterName, "%s_%s", procedure->name, procedure->parametersEach[i] );
+        Variable * parameter = variable_retrieve_or_define( _environment, parameterName, procedure->parametersTypeEach[i], 0 );
+        Variable * value = variable_retrieve( _environment, _environment->parametersEach[i] );
+        variable_move( _environment, value->name, parameter->name );
+    }
 
     char procedureLabel[32]; sprintf(procedureLabel, "%s", _name );
 

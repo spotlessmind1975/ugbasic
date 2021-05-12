@@ -151,6 +151,7 @@ typedef enum _VariableType {
 } VariableType;
 
 #define MAX_ARRAY_DIMENSIONS            256
+#define MAX_PARAMETERS                  256
 
 #define VT_BW_8BIT( t, v )              ( ( (t) == (v) ) ? 8 : 0 )
 #define VT_BW_16BIT( t, v )             ( ( (t) == (v) ) ? 16 : 0 )
@@ -239,6 +240,31 @@ typedef struct _Variable {
     struct _Variable * next;
 
 } Variable;
+
+typedef struct _Procedure {
+
+    /** Name of the procedure (in the program) */
+    char * name;
+
+    /**
+     * Parameters definition
+     */
+    int parameters;
+
+    /**
+     * Parameters definition
+     */
+    char * parametersEach[MAX_PARAMETERS];
+
+    /**
+     * Parameters definition
+     */
+    VariableType parametersTypeEach[MAX_PARAMETERS];
+
+    /** Link to the next procedure (NULL if this is the last one) */
+    struct _Procedure * next;
+
+} Procedure;
 
 /**
  * @brief Types of conditional jumps supported.
@@ -407,6 +433,11 @@ typedef struct _Environment {
     Variable * variables;
 
     /**
+     * List of procedures defined in the program.
+     */
+    Procedure * procedures;
+
+    /**
      * List of variables defined in the procedure.
      */
     Variable * procedureVariables;
@@ -476,6 +507,21 @@ typedef struct _Environment {
      */
     char * procedureName;
 
+    /**
+     * Temporary storage for parameters definition
+     */
+    int parameters;
+
+    /**
+     * Temporary storage for parameters definition
+     */
+    char * parametersEach[MAX_PARAMETERS];
+
+    /**
+     * Temporary storage for parameters definition
+     */
+    VariableType parametersTypeEach[MAX_PARAMETERS];
+
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */
@@ -536,6 +582,8 @@ typedef struct _Environment {
 #define CRITICAL_NOT_ARRAY( v ) CRITICAL2("E032 - accessing with indexes on a non array variable", v );
 #define CRITICAL_PROCEDURE_NESTED_UNSUPPORTED( n ) CRITICAL2("E033 - cannot define a nested procedure (a procedure inside a procedure)", n ); 
 #define CRITICAL_PROCEDURE_NOT_OPENED() CRITICAL("E034 - END PROC outside a procedure" ); 
+#define CRITICAL_PROCEDURE_MISSING( n ) CRITICAL2("E035 - call to an undefined procedure", n ); 
+#define CRITICAL_PROCEDURE_PARAMETERS_MISMATCH( n ) CRITICAL2("E036 - wrong number of parameters on procedure call", n ); 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
 #define WARNING3( s, v1, v2 ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s, %s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v1, v2, _environment->yylineno ); }

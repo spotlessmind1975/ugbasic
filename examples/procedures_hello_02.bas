@@ -1,6 +1,7 @@
- hello
-
- PROCEDURE hello
+  PROCEDURE hello
     DEBUG "HELLO I AM A PROCEDURE!"
  END PROC
  HALT
+
+ hello
+ 
