@@ -3,6 +3,8 @@
     DEBUG a
  END PROC
 
+ REM print 1 each
+ 
  plus
  plus
  plus
