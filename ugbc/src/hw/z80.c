@@ -437,6 +437,7 @@ void z80_math_div2_const_8bit( Environment * _environment, char *_source, int _s
  */
 void z80_math_mul2_const_8bit( Environment * _environment, char *_source, int _steps ) {
 
+    outline0("; variable_mul2_const");
     outline1("LD A, (%s)", _source );
     while( _steps ) {
         outline0("SLA A" );
@@ -649,12 +650,13 @@ void z80_greater_than_16bit( Environment * _environment, char *_source, char *_d
  * @brief <i>Z80</i>: emit code to add two 16 bit values
  * 
  * @param _environment Current calling environment
- * @param _source First value to add
+ * @param _source First value to add (memory)
  * @param _destination Second value to add and destination address for result (if _other is NULL)
  * @param _other Destination address for result
  */
 void z80_math_add_16bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
 
+    outline0("; z80_math_add_16bit");
     outline1("LD HL, (%s)", _source );
     outline1("LD DE, (%s)", _destination );
     outline0("ADD HL, DE" );
@@ -663,6 +665,16 @@ void z80_math_add_16bit( Environment * _environment, char *_source, char *_desti
     } else {
         outline1("LD (%s), HL", _destination );
     }
+
+}
+
+void z80_math_add_16bit_with_16bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
+
+    outline0("; z80_math_add_16bit");
+    outline1("LD HL, (%s)", _source );
+    outline1("LD DE, %s", _destination );
+    outline0("ADD HL, DE" );
+    outline1("LD (%s), HL", _other );
 
 }
 
@@ -2004,15 +2016,22 @@ void z80_move_16bit_indirect( Environment * _environment, char *_source, char * 
 
     outline1("LD DE, (%s)", _value);
     outline1("LD HL, (%s)", _source);
-    outline0("LD (DE), HL");
+    outline0("LD A, L");
+    outline0("LD (DE), A");
+    outline0("INC DE");
+    outline0("LD A, H");
+    outline0("LD (DE), A");
 
 }
 
 void z80_move_16bit_indirect2( Environment * _environment, char * _value, char *_source ) {
 
     outline1("LD DE, (%s)", _value);
-    outline0("LD HL, (DE)");
-    outline1("LD (%s), HL", _source);
+    outline0("LD A, (DE)");
+    outline1("LD (%s), A", _source);
+    outline0("INC DE");
+    outline0("LD A, (DE)");
+    outline1("LD (%s+1), A", _source);
 
 }
 

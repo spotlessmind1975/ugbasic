@@ -2570,19 +2570,19 @@ void variable_move_array( Environment * _environment, char * _array, char * _val
 
     variable_mul2_const( _environment, offset->name, VT_BITWIDTH( array->arrayType ) >> 3 );
 
-    cpu_math_add_16bit( _environment, offset->realName, array->realName, offset->realName );
+    cpu_math_add_16bit_with_16bit( _environment, offset->realName, array->realName, offset->realName );
 
     Variable * value = variable_cast( _environment, _value, array->arrayType );
 
     switch( VT_BITWIDTH( array->arrayType ) ) {
         case 32:
-            cpu6502_move_32bit_indirect( _environment, value->realName, offset->realName );
+            cpu_move_32bit_indirect( _environment, value->realName, offset->realName );
             break;
         case 16:
-            cpu6502_move_16bit_indirect( _environment, value->realName, offset->realName );
+            cpu_move_16bit_indirect( _environment, value->realName, offset->realName );
             break;
         case 8:
-            cpu6502_move_8bit_indirect( _environment, value->realName, offset->realName );
+            cpu_move_8bit_indirect( _environment, value->realName, offset->realName );
             break;
         case 0:
             CRITICAL_DATATYPE_UNSUPPORTED("array", DATATYPE_AS_STRING[array->arrayType]);
@@ -2604,15 +2604,15 @@ void variable_move_array_string( Environment * _environment, char * _array, char
 
     variable_mul2_const( _environment, offset->name, 2 );
 
-    cpu_math_add_16bit( _environment, offset->realName, array->realName, offset->realName );
+    cpu_math_add_16bit_with_16bit( _environment, offset->realName, array->realName, offset->realName );
 
     Variable * string = variable_cast( _environment, _string, array->arrayType );
 
-    cpu6502_move_8bit_indirect( _environment, string->realName, offset->realName );
+    cpu_move_8bit_indirect( _environment, string->realName, offset->realName );
 
     char stringAddress[32]; sprintf(stringAddress, "%s+1", string->realName );
     char offsetAddress[32]; sprintf(offsetAddress, "%s+1", offset->realName );
-    cpu6502_move_16bit_indirect( _environment, stringAddress, offsetAddress );
+    cpu_move_16bit_indirect( _environment, stringAddress, offsetAddress );
 
     variable_reset( _environment );
 
@@ -2635,15 +2635,15 @@ Variable * variable_move_from_array( Environment * _environment, char * _array )
 
             variable_mul2_const( _environment, offset->name, 2 );
 
-            cpu_math_add_16bit( _environment, offset->realName, array->realName, offset->realName );
+            cpu_math_add_16bit_with_16bit( _environment, offset->realName, array->realName, offset->realName );
 
             result = variable_temporary( _environment, VT_STRING, "(element from array)" );
 
-            cpu6502_move_8bit_indirect2( _environment, offset->realName, result->realName );
+            cpu_move_8bit_indirect2( _environment, offset->realName, result->realName );
 
             char stringAddress[32]; sprintf(stringAddress, "%s+1", result->realName );
             char offsetAddress[32]; sprintf(offsetAddress, "%s+1", offset->realName );
-            cpu6502_move_16bit_indirect2( _environment, offsetAddress, stringAddress );
+            cpu_move_16bit_indirect2( _environment, offsetAddress, stringAddress );
             break;
         }
 
@@ -2651,19 +2651,19 @@ Variable * variable_move_from_array( Environment * _environment, char * _array )
 
             variable_mul2_const( _environment, offset->name, VT_BITWIDTH( array->arrayType ) >> 3 );
 
-            cpu_math_add_16bit( _environment, offset->realName, array->realName, offset->realName );
+            cpu_math_add_16bit_with_16bit( _environment, offset->realName, array->realName, offset->realName );
 
             result = variable_temporary( _environment, array->arrayType, "(element from array)" );
 
             switch( VT_BITWIDTH( array->arrayType ) ) {
                 case 32:
-                    cpu6502_move_32bit_indirect2( _environment, offset->realName, result->realName );
+                    cpu_move_32bit_indirect2( _environment, offset->realName, result->realName );
                     break;
                 case 16:
-                    cpu6502_move_16bit_indirect2( _environment, offset->realName, result->realName);
+                    cpu_move_16bit_indirect2( _environment, offset->realName, result->realName);
                     break;
                 case 8:
-                    cpu6502_move_8bit_indirect2( _environment, offset->realName, result->realName );
+                    cpu_move_8bit_indirect2( _environment, offset->realName, result->realName );
                     break;
                 case 0:
                     CRITICAL_DATATYPE_UNSUPPORTED("array", DATATYPE_AS_STRING[array->arrayType]);

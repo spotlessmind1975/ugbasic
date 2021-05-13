@@ -657,6 +657,24 @@ void cpu6502_math_add_16bit( Environment * _environment, char *_source, char *_d
     }
 }
 
+/**
+ * @brief <i>CPU 6502</i>: emit code to add two 16 bit values
+ * 
+ * @param _environment Current calling environment
+ * @param _source First value to add
+ * @param _destination Second value to add and destination address for result (if _other is NULL)
+ * @param _other Destination address for result
+ */
+void cpu6502_math_add_16bit_with_16bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
+    outline0("CLC");
+    outline1("LDA %s", _source);
+    outline1("ADC #<%s", _destination);
+    outline1("STA %s", _other);
+    outline1("LDA %s+1", _source);
+    outline1("ADC #>%s", _destination);
+    outline1("STA %s+1", _other);
+}
+
 void cpu6502_math_add_16bit_with_8bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
     outline0("CLC");
     outline1("LDA %s", _source);

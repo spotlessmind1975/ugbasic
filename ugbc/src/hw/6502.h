@@ -67,6 +67,7 @@ void cpu6502_logical_and_8bit( Environment * _environment, char * _left, char * 
 void cpu6502_logical_or_8bit( Environment * _environment, char * _left, char * _right, char * _result );
 void cpu6502_logical_not_8bit( Environment * _environment, char * _value, char * _result );
 void cpu6502_math_add_16bit( Environment * _environment, char *_source, char *_destination,  char *_name );
+void cpu6502_math_add_16bit_with_16bit( Environment * _environment, char *_source, char *_destination,  char *_name );
 void cpu6502_math_add_16bit_with_8bit( Environment * _environment, char *_source, char *_destination,  char *_name );
 void cpu6502_math_add_32bit( Environment * _environment, char *_source, char *_destination,  char *_name );
 void cpu6502_math_add_8bit( Environment * _environment, char *_source, char *_destination,  char *_name );
@@ -166,6 +167,7 @@ void cpu6502_bit_check( Environment * _environment, char * _value, int _position
 #define cpu_logical_and_8bit( _environment, _left, _right,  _result ) cpu6502_logical_and_8bit( _environment, _left, _right,  _result )
 #define cpu_logical_or_8bit( _environment, _left, _right,  _result ) cpu6502_logical_or_8bit( _environment, _left, _right,  _result )
 #define cpu_math_add_16bit( _environment, _source, _destination,  _name  ) cpu6502_math_add_16bit( _environment, _source, _destination,  _name  )
+#define cpu_math_add_16bit_with_16bit( _environment, _source, _destination,  _name  ) cpu6502_math_add_16bit_with_16bit( _environment, _source, _destination,  _name  )
 #define cpu_math_add_16bit_with_8bit( _environment, _source, _destination,  _name  ) cpu6502_math_add_16bit_with_8bit( _environment, _source, _destination,  _name  )
 #define cpu_math_add_32bit( _environment, _source, _destination,  _name  ) cpu6502_math_add_32bit( _environment, _source, _destination,  _name  )
 #define cpu_math_add_8bit( _environment, _source, _destination,  _name  ) cpu6502_math_add_8bit( _environment, _source, _destination,  _name  )
