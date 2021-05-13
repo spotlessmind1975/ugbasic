@@ -161,7 +161,7 @@ void call_procedure( Environment * _environment, char * _name ) {
 
     int i=0;
     for( i=0; i<procedure->parameters; ++i ) {
-        char parameterName[MAX_TEMPORARY_STORAGE]; sprintf( parameterName, "%s_%s", procedure->name, procedure->parametersEach[i] );
+        char parameterName[MAX_TEMPORARY_STORAGE]; sprintf( parameterName, "%s__%s", procedure->name, procedure->parametersEach[i] );
         Variable * parameter = variable_retrieve_or_define( _environment, parameterName, procedure->parametersTypeEach[i], 0 );
         Variable * value = variable_retrieve( _environment, _environment->parametersEach[i] );
         variable_move( _environment, value->name, parameter->name );
