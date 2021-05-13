@@ -86,9 +86,9 @@ void add_complex( Environment * _environment, char * _variable, char * _expressi
 
     MAKE_LABEL
 
-    char lessThanLabel[32]; sprintf( lessThanLabel, "%sl", label );
-    char greaterThanLabel[32]; sprintf( greaterThanLabel, "%sg", label );
-    char endLabel[32]; sprintf( endLabel, "%se", label );
+    char lessThanLabel[MAX_TEMPORARY_STORAGE]; sprintf( lessThanLabel, "%sl", label );
+    char greaterThanLabel[MAX_TEMPORARY_STORAGE]; sprintf( greaterThanLabel, "%sg", label );
+    char endLabel[MAX_TEMPORARY_STORAGE]; sprintf( endLabel, "%se", label );
     
     variable_move_naked( _environment, variable_add( _environment, _variable, _expression )->name, _variable );
 

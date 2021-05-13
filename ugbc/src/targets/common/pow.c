@@ -111,7 +111,7 @@ Variable * powering( Environment * _environment, char * _base, char * _exponenti
 
     MAKE_LABEL
 
-    char endLabel[16]; sprintf(endLabel, "%send", label);
+    char endLabel[MAX_TEMPORARY_STORAGE]; sprintf(endLabel, "%send", label);
 
     Variable * counter = variable_cast( _environment, exponential->name, VT_BYTE );
     switch( VT_BITWIDTH( base->type ) ) {

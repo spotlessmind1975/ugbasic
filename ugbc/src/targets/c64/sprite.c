@@ -68,8 +68,8 @@ void sprite_data_from( Environment * _environment, int _sprite, int _address ) {
 
     outline2("; SPRITE %d DATA FROM $%4.4x", _sprite, _address);
 
-    char spriteString[16]; sprintf(spriteString, "#$%2.2x", _sprite );
-    char addressString[16]; sprintf(addressString, "#$%2.2x", (unsigned char)( _address / 0x40 ) );
+    char spriteString[MAX_TEMPORARY_STORAGE]; sprintf(spriteString, "#$%2.2x", _sprite );
+    char addressString[MAX_TEMPORARY_STORAGE]; sprintf(addressString, "#$%2.2x", (unsigned char)( _address / 0x40 ) );
 
     vic2_sprite_data_from( _environment, spriteString, addressString );
 
@@ -135,7 +135,7 @@ void sprite_enable( Environment * _environment, int _sprite ) {
 
     outline1("; SPRITE %d ENABLE", _sprite);
 
-    char spriteString[16]; sprintf( spriteString, "#$%2.2x", _sprite );
+    char spriteString[MAX_TEMPORARY_STORAGE]; sprintf( spriteString, "#$%2.2x", _sprite );
 
     vic2_sprite_enable( _environment, spriteString );
 
@@ -195,7 +195,7 @@ void sprite_disable( Environment * _environment, int _sprite ) {
 
     outline1("; SPRITE %d DISABLE", _sprite);
 
-    char spriteString[16]; sprintf( spriteString, "#$%2.2x", _sprite );
+    char spriteString[MAX_TEMPORARY_STORAGE]; sprintf( spriteString, "#$%2.2x", _sprite );
 
     vic2_sprite_disable( _environment, spriteString );
 
@@ -258,8 +258,8 @@ void sprite_position( Environment * _environment, int _sprite, int _x, int _y ) 
 
     outline3("; SPRITE %d AT (%d,%d)", _sprite, _x, _y);
 
-    char spriteString[16]; sprintf( spriteString, "#$%2.2x", _sprite );
-    char yString[16]; sprintf( yString, "#$%2.2x", _y );
+    char spriteString[MAX_TEMPORARY_STORAGE]; sprintf( spriteString, "#$%2.2x", _sprite );
+    char yString[MAX_TEMPORARY_STORAGE]; sprintf( yString, "#$%2.2x", _y );
     
     Variable * x = variable_temporary( _environment, VT_POSITION, "(x)" );
     variable_store( _environment, x->name, _x );
@@ -329,7 +329,7 @@ void sprite_expand_vertical( Environment * _environment, int _sprite ) {
 
     outline1("; SPRITE %d EXPAND VERTICAL", _sprite);
 
-    char spriteString[16]; sprintf( spriteString, "#$%2.2x", _sprite );
+    char spriteString[MAX_TEMPORARY_STORAGE]; sprintf( spriteString, "#$%2.2x", _sprite );
 
     vic2_sprite_expand_vertical( _environment, spriteString );
 
@@ -393,7 +393,7 @@ void sprite_compress_vertical( Environment * _environment, int _sprite ) {
 
     outline1("; SPRITE %d COMPRESS VERTICAL", _sprite);
 
-    char spriteString[16]; sprintf( spriteString, "#$%2.2x", _sprite );
+    char spriteString[MAX_TEMPORARY_STORAGE]; sprintf( spriteString, "#$%2.2x", _sprite );
 
     vic2_sprite_compress_vertical( _environment, spriteString );
 
@@ -449,7 +449,7 @@ void sprite_expand_horizontal( Environment * _environment, int _sprite ) {
 
     outline1("; SPRITE %d EXPAND HORIZONTAL", _sprite);
 
-    char spriteString[16]; sprintf( spriteString, "#$%2.2x", _sprite );
+    char spriteString[MAX_TEMPORARY_STORAGE]; sprintf( spriteString, "#$%2.2x", _sprite );
 
     vic2_sprite_expand_horizontal( _environment, spriteString );
 
@@ -507,7 +507,7 @@ void sprite_compress_horizontal( Environment * _environment, int _sprite ) {
     
     outline1("; SPRITE %d COMPRESS HORIZONTAL", _sprite);
 
-    char spriteString[16]; sprintf( spriteString, "#$%2.2x", _sprite );
+    char spriteString[MAX_TEMPORARY_STORAGE]; sprintf( spriteString, "#$%2.2x", _sprite );
 
     vic2_sprite_compress_horizontal( _environment, spriteString );
 
@@ -571,7 +571,7 @@ void sprite_multicolor( Environment * _environment, int _sprite ) {
 
     outline1("; SPRITE %d MULTICOLOR", _sprite);
 
-    char spriteString[16]; sprintf( spriteString, "#$%2.2x", _sprite );
+    char spriteString[MAX_TEMPORARY_STORAGE]; sprintf( spriteString, "#$%2.2x", _sprite );
 
     vic2_sprite_multicolor( _environment, spriteString );
 
@@ -635,7 +635,7 @@ void sprite_monocolor( Environment * _environment, int _sprite ) {
 
     outline1("; SPRITE %d MONOCOLOR", _sprite);
 
-    char spriteString[16]; sprintf( spriteString, "#$%2.2x", _sprite );
+    char spriteString[MAX_TEMPORARY_STORAGE]; sprintf( spriteString, "#$%2.2x", _sprite );
 
     vic2_sprite_monocolor( _environment, spriteString );
 
@@ -700,8 +700,8 @@ void sprite_color( Environment * _environment, int _sprite, int _color ) {
 
     outline2("; COLOR SPRITE %d TO %2.2x", _sprite, _color);
 
-    char spriteString[16]; sprintf(spriteString, "#$%2.2x", _sprite );
-    char colorString[16]; sprintf(colorString, "#$%2.2x", _color );
+    char spriteString[MAX_TEMPORARY_STORAGE]; sprintf(spriteString, "#$%2.2x", _sprite );
+    char colorString[MAX_TEMPORARY_STORAGE]; sprintf(colorString, "#$%2.2x", _color );
 
     vic2_sprite_color( _environment, spriteString, colorString );
 

@@ -77,9 +77,9 @@ Variable * absolute( Environment * _environment, char * _value ) {
 
     MAKE_LABEL
 
-    char positiveLabel[32]; sprintf(positiveLabel, "%spos", label );
-    char negativeLabel[32]; sprintf(negativeLabel, "%snev", label );
-    char endLabel[32]; sprintf(endLabel, "%send", label );
+    char positiveLabel[MAX_TEMPORARY_STORAGE]; sprintf(positiveLabel, "%spos", label );
+    char negativeLabel[MAX_TEMPORARY_STORAGE]; sprintf(negativeLabel, "%snev", label );
+    char endLabel[MAX_TEMPORARY_STORAGE]; sprintf(endLabel, "%send", label );
 
     switch( VT_BITWIDTH( value->type ) ) {
         case 32:

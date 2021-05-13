@@ -85,8 +85,8 @@ Variable * maximum( Environment * _environment, char * _source, char * _destinat
 
     MAKE_LABEL
 
-    char greaterThanLabel[32]; sprintf( greaterThanLabel, "%sl1", label );
-    char endLabel[32]; sprintf( endLabel, "%sl2", label );
+    char greaterThanLabel[MAX_TEMPORARY_STORAGE]; sprintf( greaterThanLabel, "%sl1", label );
+    char endLabel[MAX_TEMPORARY_STORAGE]; sprintf( endLabel, "%sl2", label );
 
     Variable * compare = variable_greater_than( _environment, source->name, target->name, 0 );
 

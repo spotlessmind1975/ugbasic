@@ -750,6 +750,8 @@ typedef struct _Environment {
 #define cfg4(s,a,b,c,d)         cfgline4n(0, s, a, b, c, d, 0)
 #define cfg5(s,a,b,c,d,e)       cfgline5n(0, s, a, b, c, d, e, 0)
 
+#define MAX_TEMPORARY_STORAGE   1024
+
 Variable * absolute( Environment * _environment, char * _value );
 void add_complex( Environment * _environment, char * _variable, char * _expression, char * _limit_lower, char * _limit_upper );
 Bank * bank_define( Environment * _environment, char * _name, BankType _type, int _address, char * _filename );

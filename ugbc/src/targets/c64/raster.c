@@ -77,8 +77,8 @@ void raster_at( Environment * _environment, char * _label, int _position ) {
     
     outline2("; RASTER AT %d WITH %s", _position, _label);
 
-    char positionlo[16]; sprintf( positionlo, "%2.2x", (unsigned char) ( _position & 0xff )  );
-    char positionhi[16]; sprintf( positionhi, "%2.2x", (unsigned char) ( ( ( _position >> 8 ) & 0x01 ) << 8 ) );
+    char positionlo[MAX_TEMPORARY_STORAGE]; sprintf( positionlo, "%2.2x", (unsigned char) ( _position & 0xff )  );
+    char positionhi[MAX_TEMPORARY_STORAGE]; sprintf( positionhi, "%2.2x", (unsigned char) ( ( ( _position >> 8 ) & 0x01 ) << 8 ) );
 
     vic2_raster_at( _environment, _label, positionlo, positionhi );
 
@@ -113,8 +113,8 @@ void raster_at_var( Environment * _environment, char * _label, char * _position 
 
     Variable * var = variable_retrieve( _environment, _position );
 
-    char positionlo[16]; sprintf( positionlo, "%s", var->realName );
-    char positionhi[16]; sprintf( positionhi, "%s+1", var->realName );
+    char positionlo[MAX_TEMPORARY_STORAGE]; sprintf( positionlo, "%s", var->realName );
+    char positionhi[MAX_TEMPORARY_STORAGE]; sprintf( positionhi, "%s+1", var->realName );
 
     vic2_raster_at( _environment, _label, positionlo, positionhi );
 
@@ -190,8 +190,8 @@ void next_raster_at_with( Environment * _environment, int _position, char * _lab
     
     outline2("; RASTER AT %d WITH %s", _position, _label);
 
-    char positionlo[16]; sprintf( positionlo, "%2.2x", (unsigned char) ( _position & 0xff )  );
-    char positionhi[16]; sprintf( positionhi, "%2.2x", (unsigned char) ( ( ( _position >> 8 ) & 0x01 ) << 8 ) );
+    char positionlo[MAX_TEMPORARY_STORAGE]; sprintf( positionlo, "%2.2x", (unsigned char) ( _position & 0xff )  );
+    char positionhi[MAX_TEMPORARY_STORAGE]; sprintf( positionhi, "%2.2x", (unsigned char) ( ( ( _position >> 8 ) & 0x01 ) << 8 ) );
 
     vic2_next_raster_at( _environment, _label, positionlo, positionhi );
 
@@ -224,8 +224,8 @@ void next_raster_at_with_var( Environment * _environment, char * _position, char
 
     Variable * var = variable_retrieve( _environment, _position );
 
-    char positionlo[16]; sprintf( positionlo, "%s", var->realName );
-    char positionhi[16]; sprintf( positionhi, "%s+1", var->realName );
+    char positionlo[MAX_TEMPORARY_STORAGE]; sprintf( positionlo, "%s", var->realName );
+    char positionhi[MAX_TEMPORARY_STORAGE]; sprintf( positionhi, "%s+1", var->realName );
 
     vic2_next_raster_at( _environment, _label, positionlo, positionhi );
 

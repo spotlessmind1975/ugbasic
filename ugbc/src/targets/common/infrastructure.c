@@ -368,7 +368,7 @@ Bank * bank_define( Environment * _environment, char * _name, BankType _type, in
     if ( _name != NULL ) {
         bank = bank_find( _environment->banks[_type], _name );
     } else {
-        char temporaryName[16];
+        char temporaryName[MAX_TEMPORARY_STORAGE];
         sprintf(temporaryName, "bank%4.4d", UNIQUE_ID );
         _name = strdup( temporaryName );
     }
@@ -412,8 +412,8 @@ Bank * bank_define( Environment * _environment, char * _name, BankType _type, in
  */
 Variable * variable_retrieve( Environment * _environment, char * _name ) {
 
-    if ( _environment->procedureName && strchr( _name, '_' ) == NULL ) {
-        char parameterName[256]; sprintf( parameterName, "%s_%s", _environment->procedureName, _name );
+    if ( _environment->procedureName && strstr( _name, "__" ) == NULL ) {
+        char parameterName[MAX_TEMPORARY_STORAGE]; sprintf( parameterName, "%s__%s", _environment->procedureName, _name );
         Variable * var = variable_find( _environment->variables, parameterName );
         if ( var ) {
             return var;
@@ -425,7 +425,7 @@ Variable * variable_retrieve( Environment * _environment, char * _name ) {
         int isGlobal = 0;
         Pattern * current = _environment->globalVariablePatterns;
         if ( _environment->procedureName ) {
-            if ( strchr( _name, '_' ) != NULL ) {
+            if ( strstr( _name, "__" ) != NULL ) {
                 isGlobal = 1;
             } else {
                 while( current ) {
@@ -460,8 +460,8 @@ Variable * variable_retrieve_or_define( Environment * _environment, char * _name
         return var;
     }
 
-    if ( _environment->procedureName && strchr( _name, '_' ) == NULL ) {
-        char parameterName[256]; sprintf( parameterName, "%s_%s", _environment->procedureName, _name );
+    if ( _environment->procedureName && strstr( _name, "__" ) == NULL ) {
+        char parameterName[MAX_TEMPORARY_STORAGE]; sprintf( parameterName, "%s__%s", _environment->procedureName, _name );
         var = variable_find( _environment->variables, parameterName );
         if ( var ) {
             return var;
@@ -474,7 +474,7 @@ Variable * variable_retrieve_or_define( Environment * _environment, char * _name
         int isGlobal = 0;
         Pattern * current = _environment->globalVariablePatterns;
         if ( _environment->procedureName ) {
-            if ( strchr( _name, '_' ) != NULL ) {
+            if ( strstr( _name, "__" ) != NULL ) {
                 isGlobal = 1;
             } else {
                 while( current ) {
@@ -563,7 +563,7 @@ Variable * variable_temporary( Environment * _environment, VariableType _type, c
     if ( var ) {
         var->meaningName = _meaning;
     } else {
-        char * name = malloc(32);
+        char * name = malloc(MAX_TEMPORARY_STORAGE);
         sprintf(name, "Ttmp%d", UNIQUE_ID);
         var = malloc( sizeof( Variable ) );
         var->name = name;
@@ -611,6 +611,7 @@ Variable * variable_cast( Environment * _environment, char * _source, VariableTy
     Variable * source = variable_retrieve( _environment, _source );
 
     Variable * target = variable_temporary( _environment, _type, "(generated for cast)" );
+    
     switch( VT_BITWIDTH( source->type ) ) {
         case 32:
             switch( VT_BITWIDTH( target->type ) ) {
@@ -665,8 +666,8 @@ Variable * variable_cast( Environment * _environment, char * _source, VariableTy
                         case VT_STRING:
                             switch( target->type ) {
                                 case VT_STRING: {
-                                    char sourceAddress[16]; sprintf(sourceAddress, "%s+1", source->realName );
-                                    char destinationAddress[16]; sprintf(destinationAddress, "%s+1", target->realName );
+                                    char sourceAddress[MAX_TEMPORARY_STORAGE]; sprintf(sourceAddress, "%s+1", source->realName );
+                                    char destinationAddress[MAX_TEMPORARY_STORAGE]; sprintf(destinationAddress, "%s+1", target->realName );
                                     cpu_move_8bit( _environment, source->realName, target->realName );
                                     cpu_move_16bit( _environment, sourceAddress, destinationAddress );
                                     break;
@@ -739,7 +740,7 @@ Variable * variable_store_string( Environment * _environment, char * _destinatio
     switch( destination->type ) {
         case VT_STRING: {
             Variable * strings_address = variable_retrieve( _environment, "strings_address" );
-            char destinationAddress[16]; sprintf(destinationAddress, "%s+1", destination->realName );
+            char destinationAddress[MAX_TEMPORARY_STORAGE]; sprintf(destinationAddress, "%s+1", destination->realName );
             cpu_store_8bit( _environment, destination->realName, strlen( _value ) );
             cpu_move_16bit( _environment, strings_address->realName, destinationAddress );
             while( *_value ) {
@@ -811,8 +812,8 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
         case 0:
             switch( target->type ) {
                 case VT_STRING: {
-                    char sourceAddress[16]; sprintf(sourceAddress, "%s+1", source->realName );
-                    char destinationAddress[16]; sprintf(destinationAddress, "%s+1", target->realName );
+                    char sourceAddress[MAX_TEMPORARY_STORAGE]; sprintf(sourceAddress, "%s+1", source->realName );
+                    char destinationAddress[MAX_TEMPORARY_STORAGE]; sprintf(destinationAddress, "%s+1", target->realName );
                     cpu_move_8bit( _environment, source->realName, target->realName );
                     cpu_move_16bit( _environment, sourceAddress, destinationAddress );
                     break;
@@ -868,8 +869,8 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
         case 0:
             switch( target->type ) {
                 case VT_STRING: {
-                    char sourceAddress[16]; sprintf(sourceAddress, "%s+1", source->realName );
-                    char destinationAddress[16]; sprintf(destinationAddress, "%s+1", target->realName );
+                    char sourceAddress[MAX_TEMPORARY_STORAGE]; sprintf(sourceAddress, "%s+1", source->realName );
+                    char destinationAddress[MAX_TEMPORARY_STORAGE]; sprintf(destinationAddress, "%s+1", target->realName );
                     cpu_move_8bit( _environment, source->realName, target->realName );
                     cpu_move_16bit( _environment, sourceAddress, destinationAddress );
                     break;
@@ -912,7 +913,9 @@ Variable * variable_add( Environment * _environment, char * _source, char * _des
     if ( ! target ) {
         CRITICAL_VARIABLE(_destination);
     }
+
     Variable * result = variable_temporary( _environment, source->type, "(result of adding)" );
+
     switch( VT_BITWIDTH( source->type ) ) {
         case 32:
             cpu_math_add_32bit( _environment, source->realName, target->realName, result->realName );
@@ -927,9 +930,9 @@ Variable * variable_add( Environment * _environment, char * _source, char * _des
             switch( source->type ) {
                 case VT_STRING:  {
                     Variable * strings_address = variable_retrieve( _environment, "strings_address" );
-                    char resultAddress[16]; sprintf(resultAddress, "%s+1", result->realName );
-                    char sourceAddress[16]; sprintf(sourceAddress, "%s+1", source->realName );
-                    char targetAddress[16]; sprintf(targetAddress, "%s+1", target->realName );
+                    char resultAddress[MAX_TEMPORARY_STORAGE]; sprintf(resultAddress, "%s+1", result->realName );
+                    char sourceAddress[MAX_TEMPORARY_STORAGE]; sprintf(sourceAddress, "%s+1", source->realName );
+                    char targetAddress[MAX_TEMPORARY_STORAGE]; sprintf(targetAddress, "%s+1", target->realName );
                     cpu_move_8bit( _environment, source->realName, result->realName );
                     cpu_math_add_8bit( _environment, target->realName, result->realName, result->realName );
                     cpu_move_16bit( _environment, strings_address->realName, resultAddress );
@@ -1218,8 +1221,8 @@ Variable * variable_compare( Environment * _environment, char * _source, char * 
                 case VT_STRING:
                     switch( source->type ) {
                         case VT_STRING: {
-                            char sourceAddress[16]; sprintf(sourceAddress, "%s+1", source->realName );
-                            char destinationAddress[16]; sprintf(destinationAddress, "%s+1", target->realName );
+                            char sourceAddress[MAX_TEMPORARY_STORAGE]; sprintf(sourceAddress, "%s+1", source->realName );
+                            char destinationAddress[MAX_TEMPORARY_STORAGE]; sprintf(destinationAddress, "%s+1", target->realName );
                             cpu_compare_8bit( _environment, source->realName, target->realName, result->realName, 1 );
                             cpu_bveq( _environment, result->realName, label );
                             cpu_compare_memory( _environment, sourceAddress, destinationAddress, source->realName, result->realName, 1 );
@@ -1506,8 +1509,8 @@ Variable * variable_less_than( Environment * _environment, char * _source, char 
                     switch( target->type ) {
                         case VT_STRING: {
                             MAKE_LABEL
-                            char sourceAddress[16]; sprintf(sourceAddress, "%s+1", source->realName );
-                            char destinationAddress[16]; sprintf(destinationAddress, "%s+1", target->realName );
+                            char sourceAddress[MAX_TEMPORARY_STORAGE]; sprintf(sourceAddress, "%s+1", source->realName );
+                            char destinationAddress[MAX_TEMPORARY_STORAGE]; sprintf(destinationAddress, "%s+1", target->realName );
                             cpu_less_than_8bit( _environment, source->realName, target->realName, result->realName, _equal );
                             cpu_bveq( _environment, result->realName, label );
                             cpu_less_than_memory( _environment, sourceAddress, destinationAddress, source->realName, result->realName, _equal );
@@ -1608,8 +1611,8 @@ Variable * variable_greater_than( Environment * _environment, char * _source, ch
                     switch( target->type ) {
                         case VT_STRING: {
                             MAKE_LABEL
-                            char sourceAddress[16]; sprintf(sourceAddress, "%s+1", source->realName );
-                            char destinationAddress[16]; sprintf(destinationAddress, "%s+1", target->realName );
+                            char sourceAddress[MAX_TEMPORARY_STORAGE]; sprintf(sourceAddress, "%s+1", source->realName );
+                            char destinationAddress[MAX_TEMPORARY_STORAGE]; sprintf(destinationAddress, "%s+1", target->realName );
                             cpu_greater_than_8bit( _environment, source->realName, target->realName, result->realName, _equal );
                             cpu_bvneq( _environment, result->realName, label );
                             cpu_greater_than_memory( _environment, sourceAddress, destinationAddress, source->realName, result->realName, _equal );
@@ -1677,8 +1680,8 @@ Variable * variable_string_left( Environment * _environment, char * _string, cha
     Variable * result = variable_temporary( _environment, VT_STRING, "(result of left)" );
     switch( string->type ) {
         case VT_STRING: {            
-            char stringAddress[16]; sprintf(stringAddress, "%s+1", string->realName );
-            char resultAddress[16]; sprintf(resultAddress, "%s+1", result->realName );
+            char stringAddress[MAX_TEMPORARY_STORAGE]; sprintf(stringAddress, "%s+1", string->realName );
+            char resultAddress[MAX_TEMPORARY_STORAGE]; sprintf(resultAddress, "%s+1", result->realName );
             Variable * strings_address = variable_retrieve( _environment, "strings_address" );
             outline0("; here 1!");
             cpu_move_16bit( _environment, strings_address->realName, resultAddress );
@@ -1721,8 +1724,8 @@ void variable_string_left_assign( Environment * _environment, char * _string, ch
     Variable * expression = variable_retrieve( _environment, _expression );
     switch( string->type ) {
         case VT_STRING: {            
-            char expressionAddress[16]; sprintf(expressionAddress, "%s+1", expression->realName );
-            char stringAddress[16]; sprintf(stringAddress, "%s+1", string->realName );
+            char expressionAddress[MAX_TEMPORARY_STORAGE]; sprintf(expressionAddress, "%s+1", expression->realName );
+            char stringAddress[MAX_TEMPORARY_STORAGE]; sprintf(stringAddress, "%s+1", string->realName );
             cpu_mem_move( _environment, expressionAddress, stringAddress, position->realName );
             break;
         }
@@ -1773,8 +1776,8 @@ Variable * variable_string_right( Environment * _environment, char * _string, ch
     Variable * result = variable_temporary( _environment, VT_STRING, "(result of left)" );
     switch( string->type ) {
         case VT_STRING: {            
-            char stringAddress[16]; sprintf(stringAddress, "%s+1", string->realName );
-            char resultAddress[16]; sprintf(resultAddress, "%s+1", result->realName );
+            char stringAddress[MAX_TEMPORARY_STORAGE]; sprintf(stringAddress, "%s+1", string->realName );
+            char resultAddress[MAX_TEMPORARY_STORAGE]; sprintf(resultAddress, "%s+1", result->realName );
             Variable * strings_address = variable_retrieve( _environment, "strings_address" );
             cpu_move_16bit( _environment, strings_address->realName, resultAddress );
             cpu_math_add_16bit_with_8bit( _environment, stringAddress, string->realName, stringAddress );
@@ -1816,8 +1819,8 @@ void variable_string_right_assign( Environment * _environment, char * _string, c
     Variable * expression = variable_retrieve( _environment, _expression );
     switch( string->type ) {
         case VT_STRING: {            
-            char expressionAddress[16]; sprintf(expressionAddress, "%s+1", expression->realName );
-            char stringAddress[16]; sprintf(stringAddress, "%s+1", string->realName );
+            char expressionAddress[MAX_TEMPORARY_STORAGE]; sprintf(expressionAddress, "%s+1", expression->realName );
+            char stringAddress[MAX_TEMPORARY_STORAGE]; sprintf(stringAddress, "%s+1", string->realName );
             cpu_math_add_16bit_with_8bit( _environment, stringAddress, string->realName, stringAddress );
             cpu_math_sub_16bit_with_8bit( _environment, stringAddress, position->realName, stringAddress );
             cpu_mem_move( _environment, expressionAddress, stringAddress, position->realName );
@@ -1883,8 +1886,8 @@ Variable * variable_string_mid( Environment * _environment, char * _string, char
     switch( string->type ) {
         case VT_STRING: {            
             Variable * strings_address = variable_retrieve( _environment, "strings_address" );
-            char stringAddress[16]; sprintf(stringAddress, "%s+1", string->realName );
-            char resultAddress[16]; sprintf(resultAddress, "%s+1", result->realName );
+            char stringAddress[MAX_TEMPORARY_STORAGE]; sprintf(stringAddress, "%s+1", string->realName );
+            char resultAddress[MAX_TEMPORARY_STORAGE]; sprintf(resultAddress, "%s+1", result->realName );
             if ( _len ) {
                 cpu_move_16bit( _environment, strings_address->realName, resultAddress );
                 cpu_math_add_16bit_with_8bit( _environment, stringAddress, position->realName, stringAddress );
@@ -1944,8 +1947,8 @@ void variable_string_mid_assign( Environment * _environment, char * _string, cha
     Variable * expression = variable_retrieve( _environment, _expression );
     switch( string->type ) {
         case VT_STRING: {            
-            char expressionAddress[16]; sprintf(expressionAddress, "%s+1", expression->realName );
-            char stringAddress[16]; sprintf(stringAddress, "%s+1", string->realName );
+            char expressionAddress[MAX_TEMPORARY_STORAGE]; sprintf(expressionAddress, "%s+1", expression->realName );
+            char stringAddress[MAX_TEMPORARY_STORAGE]; sprintf(stringAddress, "%s+1", string->realName );
             cpu_math_add_16bit_with_8bit( _environment, stringAddress, position->realName, stringAddress );
             cpu_mem_move( _environment, expressionAddress, stringAddress, len->realName );
             cpu_math_sub_16bit_with_8bit( _environment, stringAddress, position->realName, stringAddress );
@@ -2029,11 +2032,11 @@ Variable * variable_string_instr( Environment * _environment, char * _search, ch
 
     Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address offset of search)" );
     Variable * found = variable_temporary( _environment, VT_BYTE, "(found flag)" );
-    char searchAddress[16]; sprintf(searchAddress, "%s+1", search->realName );
-    char searchedAddress[16]; sprintf(searchedAddress, "%s+1", searched->realName );
-    char repeatLabel[16]; sprintf( repeatLabel, "%srep", label );
-    char foundLabel[16]; sprintf( foundLabel, "%sfnd", label );
-    char notFoundLabel[16]; sprintf( notFoundLabel, "%snfnd", label );
+    char searchAddress[MAX_TEMPORARY_STORAGE]; sprintf(searchAddress, "%s+1", search->realName );
+    char searchedAddress[MAX_TEMPORARY_STORAGE]; sprintf(searchedAddress, "%s+1", searched->realName );
+    char repeatLabel[MAX_TEMPORARY_STORAGE]; sprintf( repeatLabel, "%srep", label );
+    char foundLabel[MAX_TEMPORARY_STORAGE]; sprintf( foundLabel, "%sfnd", label );
+    char notFoundLabel[MAX_TEMPORARY_STORAGE]; sprintf( notFoundLabel, "%snfnd", label );
 
     cpu_move_16bit( _environment, searchAddress, address->realName );
     if ( start ) {
@@ -2103,7 +2106,7 @@ Variable * variable_string_lower( Environment * _environment, char * _string ) {
 
     MAKE_LABEL
 
-    char resultAddress[16]; sprintf(resultAddress, "%s+1", result->realName );
+    char resultAddress[MAX_TEMPORARY_STORAGE]; sprintf(resultAddress, "%s+1", result->realName );
 
     cpu_lowercase( _environment, resultAddress, result->realName, resultAddress );
 
@@ -2148,7 +2151,7 @@ Variable * variable_string_upper( Environment * _environment, char * _string ) {
 
     MAKE_LABEL
 
-    char resultAddress[16]; sprintf(resultAddress, "%s+1", result->realName );
+    char resultAddress[MAX_TEMPORARY_STORAGE]; sprintf(resultAddress, "%s+1", result->realName );
 
     cpu_uppercase( _environment, resultAddress, result->realName, resultAddress );
 
@@ -2205,7 +2208,7 @@ Variable * variable_string_str( Environment * _environment, char * _value ) {
 
     variable_store_string( _environment, result->name, "      " );
 
-    char resultAddress[16]; sprintf(resultAddress, "%s+1", result->realName );
+    char resultAddress[MAX_TEMPORARY_STORAGE]; sprintf(resultAddress, "%s+1", result->realName );
 
     cpu_convert_bcd_to_digits( _environment, dword->realName, resultAddress );
 
@@ -2242,7 +2245,7 @@ Variable * variable_string_val( Environment * _environment, char * _value ) {
 
     switch( value->type ) {
         case VT_STRING: {
-            char valueAddress[16]; sprintf(valueAddress, "%s+1", value->realName );
+            char valueAddress[MAX_TEMPORARY_STORAGE]; sprintf(valueAddress, "%s+1", value->realName );
             cpu_convert_string_into_16bit( _environment, valueAddress, value->realName, result->realName );
             break;
         }
@@ -2291,8 +2294,8 @@ Variable * variable_string_string( Environment * _environment, char * _string, c
     
     Variable * strings_address = variable_retrieve( _environment, "strings_address" );
     
-    char resultAddress[16]; sprintf(resultAddress, "%s+1", result->realName );
-    char stringAddress[16]; sprintf(stringAddress, "%s+1", string->realName );
+    char resultAddress[MAX_TEMPORARY_STORAGE]; sprintf(resultAddress, "%s+1", result->realName );
+    char stringAddress[MAX_TEMPORARY_STORAGE]; sprintf(stringAddress, "%s+1", string->realName );
 
     cpu_move_8bit( _environment, repetitions->realName, result->realName );
     cpu_move_16bit( _environment, strings_address->realName, resultAddress );
@@ -2371,8 +2374,8 @@ Variable * variable_string_flip( Environment * _environment, char * _string  ) {
     
     Variable * strings_address = variable_retrieve( _environment, "strings_address" );
     
-    char resultAddress[16]; sprintf(resultAddress, "%s+1", result->realName );
-    char stringAddress[16]; sprintf(stringAddress, "%s+1", string->realName );
+    char resultAddress[MAX_TEMPORARY_STORAGE]; sprintf(resultAddress, "%s+1", result->realName );
+    char stringAddress[MAX_TEMPORARY_STORAGE]; sprintf(stringAddress, "%s+1", string->realName );
 
     cpu_move_8bit( _environment, string->realName, result->realName );
     cpu_move_16bit( _environment, strings_address->realName, resultAddress );
@@ -2419,7 +2422,7 @@ Variable * variable_string_chr( Environment * _environment, char * _ascii  ) {
     
     Variable * strings_address = variable_retrieve( _environment, "strings_address" );
     
-    char resultAddress[16]; sprintf(resultAddress, "%s+1", result->realName );
+    char resultAddress[MAX_TEMPORARY_STORAGE]; sprintf(resultAddress, "%s+1", result->realName );
 
     switch( VT_BITWIDTH( ascii->type ) ) {
         case 8:
@@ -2467,7 +2470,7 @@ Variable * variable_string_asc( Environment * _environment, char * _char  ) {
 
     Variable * character = variable_retrieve( _environment, _char );
 
-    char characterAddress[16]; sprintf(characterAddress, "%s+1", character->realName );
+    char characterAddress[MAX_TEMPORARY_STORAGE]; sprintf(characterAddress, "%s+1", character->realName );
 
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of STRING)");
     
@@ -2610,8 +2613,8 @@ void variable_move_array_string( Environment * _environment, char * _array, char
 
     cpu_move_8bit_indirect( _environment, string->realName, offset->realName );
 
-    char stringAddress[32]; sprintf(stringAddress, "%s+1", string->realName );
-    char offsetAddress[32]; sprintf(offsetAddress, "%s+1", offset->realName );
+    char stringAddress[MAX_TEMPORARY_STORAGE]; sprintf(stringAddress, "%s+1", string->realName );
+    char offsetAddress[MAX_TEMPORARY_STORAGE]; sprintf(offsetAddress, "%s+1", offset->realName );
     cpu_move_16bit_indirect( _environment, stringAddress, offsetAddress );
 
     variable_reset( _environment );
@@ -2641,8 +2644,8 @@ Variable * variable_move_from_array( Environment * _environment, char * _array )
 
             cpu_move_8bit_indirect2( _environment, offset->realName, result->realName );
 
-            char stringAddress[32]; sprintf(stringAddress, "%s+1", result->realName );
-            char offsetAddress[32]; sprintf(offsetAddress, "%s+1", offset->realName );
+            char stringAddress[MAX_TEMPORARY_STORAGE]; sprintf(stringAddress, "%s+1", result->realName );
+            char offsetAddress[MAX_TEMPORARY_STORAGE]; sprintf(offsetAddress, "%s+1", offset->realName );
             cpu_move_16bit_indirect2( _environment, offsetAddress, stringAddress );
             break;
         }
@@ -2712,7 +2715,7 @@ int pattern_match( char * _pattern, char * _value ) {
         }
     }
  
-    char result = lookup[i+j*n];
+    char result = ( lookup[n+m*n] == 0 );
 
     free(lookup);
 

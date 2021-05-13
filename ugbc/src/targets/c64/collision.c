@@ -77,7 +77,7 @@ Variable * collision_to( Environment * _environment, int _sprite ) {
 
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result)" );
 
-    char sprite[16]; sprintf(sprite, "#$%2.2x", _sprite);
+    char sprite[MAX_TEMPORARY_STORAGE]; sprintf(sprite, "#$%2.2x", _sprite);
 
     vic2_collision( _environment, sprite, result->realName );
 

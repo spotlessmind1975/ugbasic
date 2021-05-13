@@ -55,7 +55,7 @@ void wait_cycles( Environment * _environment, int _timing ) {
 
     outline1("; WAIT %d", _timing);
 
-    char timingString[16]; sprintf(timingString, "$%2.2x", _timing );
+    char timingString[MAX_TEMPORARY_STORAGE]; sprintf(timingString, "$%2.2x", _timing );
 
     z80_busy_wait( _environment, timingString );
 
@@ -91,7 +91,7 @@ void wait_ticks( Environment * _environment, int _timing ) {
 
     outline1("; WAIT %d TICKS", _timing);
 
-    char timingString[16]; sprintf(timingString, "$%2.2x", _timing );
+    char timingString[MAX_TEMPORARY_STORAGE]; sprintf(timingString, "$%2.2x", _timing );
 
     MAKE_LABEL
 
@@ -143,7 +143,7 @@ void wait_milliseconds( Environment * _environment, int _timing ) {
 
     outline1("; WAIT %d MILLISECONDS", _timing);
 
-    char timingString[16]; sprintf(timingString, "#$%2.2x", _timing >> 4 );
+    char timingString[MAX_TEMPORARY_STORAGE]; sprintf(timingString, "#$%2.2x", _timing >> 4 );
 
     wait_ticks( _environment, _timing >> 4 );
 

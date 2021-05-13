@@ -110,8 +110,8 @@ void begin_for( Environment * _environment, char * _index, char * _from, char * 
 
     variable_move( _environment, from->name, index->name );
 
-    unsigned char beginFor[32]; sprintf(beginFor, "%sbf", loop->label );
-    unsigned char endFor[32]; sprintf(endFor, "%sef", loop->label );
+    unsigned char beginFor[MAX_TEMPORARY_STORAGE]; sprintf(beginFor, "%sbf", loop->label );
+    unsigned char endFor[MAX_TEMPORARY_STORAGE]; sprintf(endFor, "%sef", loop->label );
 
     cpu_label( _environment, beginFor );
 
@@ -157,8 +157,8 @@ void begin_for_step( Environment * _environment, char * _index, char * _from, ch
 
     variable_move( _environment, from->name, index->name );
 
-    unsigned char beginFor[32]; sprintf(beginFor, "%sbf", loop->label );
-    unsigned char endFor[32]; sprintf(endFor, "%sef", loop->label );
+    unsigned char beginFor[MAX_TEMPORARY_STORAGE]; sprintf(beginFor, "%sbf", loop->label );
+    unsigned char endFor[MAX_TEMPORARY_STORAGE]; sprintf(endFor, "%sef", loop->label );
 
     cpu_label( _environment, beginFor );
 
@@ -186,8 +186,8 @@ void end_for( Environment * _environment ) {
         CRITICAL("NEXT outside a FOR loop");
     }
 
-    unsigned char beginFor[32]; sprintf(beginFor, "%sbf", loop->label );
-    unsigned char endFor[32]; sprintf(endFor, "%sef", loop->label );
+    unsigned char beginFor[MAX_TEMPORARY_STORAGE]; sprintf(beginFor, "%sbf", loop->label );
+    unsigned char endFor[MAX_TEMPORARY_STORAGE]; sprintf(endFor, "%sef", loop->label );
 
     variable_move_naked( _environment, variable_add( _environment, loop->index->name, loop->step->name )->name, loop->index->name );
 

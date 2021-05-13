@@ -202,7 +202,7 @@ void debug_var( Environment * _environment, char * _name ) {
         case 0:
             switch( var->type ) {
                 case VT_STRING: {
-                    char stringAddress[16]; sprintf(stringAddress, "%s+1", var->realName );
+                    char stringAddress[MAX_TEMPORARY_STORAGE]; sprintf(stringAddress, "%s+1", var->realName );
                     outline1( "LD DE, (%s)", stringAddress );
                     outline1( "LD A, (%s)", var->realName );
                     outline0( "LD C, A" );

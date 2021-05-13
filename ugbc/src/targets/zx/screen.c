@@ -178,8 +178,8 @@ Variable * screen_get_width( Environment * _environment ) {
 
     Variable * bitmap_enabled = variable_retrieve( _environment, "bitmap_enabled" );
 
-    char bitmapEnabledLabel[32]; sprintf(bitmapEnabledLabel, "%senabled", label );
-    char endLabel[32]; sprintf(endLabel, "%send", label );
+    char bitmapEnabledLabel[MAX_TEMPORARY_STORAGE]; sprintf(bitmapEnabledLabel, "%senabled", label );
+    char endLabel[MAX_TEMPORARY_STORAGE]; sprintf(endLabel, "%send", label );
 
     cpu_bvneq( _environment, bitmap_enabled->realName, bitmapEnabledLabel );
     
@@ -207,8 +207,8 @@ Variable * screen_get_height( Environment * _environment ) {
    
     Variable * bitmap_enabled = variable_retrieve( _environment, "bitmap_enabled" );
 
-    char bitmapEnabledLabel[32]; sprintf(bitmapEnabledLabel, "%senabled", label );
-    char endLabel[32]; sprintf(endLabel, "%send", label );
+    char bitmapEnabledLabel[MAX_TEMPORARY_STORAGE]; sprintf(bitmapEnabledLabel, "%senabled", label );
+    char endLabel[MAX_TEMPORARY_STORAGE]; sprintf(endLabel, "%send", label );
 
     cpu_bvneq( _environment, bitmap_enabled->realName, bitmapEnabledLabel );
     

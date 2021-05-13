@@ -83,8 +83,8 @@ Variable * rnd( Environment * _environment, char * _value ) {
 
     MAKE_LABEL
 
-    char endLabel[32]; sprintf(endLabel, "%send", label );
-    char lastRandomLabel[32]; sprintf(lastRandomLabel, "%slr", label );
+    char endLabel[MAX_TEMPORARY_STORAGE]; sprintf(endLabel, "%send", label );
+    char lastRandomLabel[MAX_TEMPORARY_STORAGE]; sprintf(lastRandomLabel, "%slr", label );
 
     cpu_bveq( _environment, value->realName, lastRandomLabel );
 

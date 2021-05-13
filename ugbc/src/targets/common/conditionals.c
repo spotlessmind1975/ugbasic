@@ -110,8 +110,8 @@ void if_then( Environment * _environment, char * _expression ) {
     conditional->next = _environment->conditionals;
     _environment->conditionals = conditional;
 
-    char thenLabel[16]; sprintf(thenLabel, "%st", label );
-    char elseLabel[16]; sprintf(elseLabel, "%se%d", conditional->label, conditional->index );
+    char thenLabel[MAX_TEMPORARY_STORAGE]; sprintf(thenLabel, "%st", label );
+    char elseLabel[MAX_TEMPORARY_STORAGE]; sprintf(elseLabel, "%se%d", conditional->label, conditional->index );
 
     cpu_bveq( _environment, expression->realName, elseLabel );
 
@@ -142,8 +142,8 @@ void else_if_then( Environment * _environment, char * _expression ) {
         CRITICAL("ELSE outside IF");
     }
 
-    char endifLabel[16]; sprintf(endifLabel, "%sf", conditional->label );
-    char elseLabel[16]; sprintf(elseLabel, "%se%d", conditional->label, conditional->index );
+    char endifLabel[MAX_TEMPORARY_STORAGE]; sprintf(endifLabel, "%sf", conditional->label );
+    char elseLabel[MAX_TEMPORARY_STORAGE]; sprintf(elseLabel, "%se%d", conditional->label, conditional->index );
 
     cpu_jump( _environment, endifLabel );
 
@@ -191,14 +191,14 @@ void end_if_then( Environment * _environment ) {
         CRITICAL("ENDIF without IF");
     }
 
-    char elseLabel[16]; sprintf(elseLabel, "%se%d", conditional->label, conditional->index );
+    char elseLabel[MAX_TEMPORARY_STORAGE]; sprintf(elseLabel, "%se%d", conditional->label, conditional->index );
 
     if ( conditional->index ) {
-        char endifLabel[16]; sprintf(endifLabel, "%sf", conditional->label );
+        char endifLabel[MAX_TEMPORARY_STORAGE]; sprintf(endifLabel, "%sf", conditional->label );
 
         cpu_label( _environment, endifLabel );
     } else {
-        char elseLabel[16]; sprintf(elseLabel, "%se%d", conditional->label, conditional->index );
+        char elseLabel[MAX_TEMPORARY_STORAGE]; sprintf(elseLabel, "%se%d", conditional->label, conditional->index );
 
         cpu_label( _environment, elseLabel );
     }

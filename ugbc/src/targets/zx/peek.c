@@ -61,7 +61,7 @@ Variable * peek( Environment * _environment, int _location ) {
 
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result)" );
 
-    char location[16]; sprintf(location, "$%4.4x", ( _location & 0xffff ) );
+    char location[MAX_TEMPORARY_STORAGE]; sprintf(location, "$%4.4x", ( _location & 0xffff ) );
 
     z80_peek( _environment, location, result->realName );
 

@@ -169,7 +169,7 @@ void bitmap_at( Environment * _environment, int _address ) {
     Variable * bitmap_address = variable_retrieve_or_define( _environment, "bitmap_address", VT_ADDRESS, _address );
     variable_store( _environment, "bitmap_address", ( ( _address >> 14 ) & 0x1 ) * 0x2000 );
 
-    char addressString[16]; sprintf(addressString, "#$%2.2x", ( _address >> 8 ) );
+    char addressString[MAX_TEMPORARY_STORAGE]; sprintf(addressString, "#$%2.2x", ( _address >> 8 ) );
 
     vic2_bitmap_at( _environment, addressString );
 
@@ -210,7 +210,7 @@ void bitmap_at_var( Environment * _environment, char * _address ) {
     // TODO: bitmap_address must be retrieved by a specific vic2_get_bitmap_address() function!
     variable_move_naked( _environment, address->name, bitmap_address->name );
 
-    char addressString[16]; sprintf(addressString, "%s+1", address->realName );
+    char addressString[MAX_TEMPORARY_STORAGE]; sprintf(addressString, "%s+1", address->realName );
 
     vic2_bitmap_at( _environment, addressString );
 
@@ -265,7 +265,7 @@ void bitmap_clear_with( Environment * _environment, int _pattern ) {
     // Safety check -- bitmap address must be defined at least once.
     Variable * bitmap_address = variable_retrieve_or_define( _environment, "bitmap_address", VT_ADDRESS, 0x2000 );
 
-    char pattern[16]; sprintf(pattern, "#$%2.2x", _pattern);
+    char pattern[MAX_TEMPORARY_STORAGE]; sprintf(pattern, "#$%2.2x", _pattern);
     
     cpu6502_fill( _environment, bitmap_address->realName, "#$20", pattern );
 

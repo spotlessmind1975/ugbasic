@@ -112,7 +112,7 @@ void end_loop( Environment * _environment ) {
 
     cpu_jump( _environment, loop->label );
 
-    unsigned char newLabel[32]; sprintf(newLabel, "%sbis", loop->label );
+    unsigned char newLabel[MAX_TEMPORARY_STORAGE]; sprintf(newLabel, "%sbis", loop->label );
 
     cpu_label( _environment, newLabel );
 
@@ -195,7 +195,7 @@ void exit_loop( Environment * _environment, int _number ) {
         }
     }
 
-    unsigned char newLabel[32]; sprintf(newLabel, "%sbis", loop->label );
+    unsigned char newLabel[MAX_TEMPORARY_STORAGE]; sprintf(newLabel, "%sbis", loop->label );
 
     cpu_jump( _environment, newLabel );
 
@@ -233,7 +233,7 @@ void exit_loop_if( Environment * _environment, char * _expression, int _number )
         }
     }
 
-    unsigned char newLabel[32]; sprintf(newLabel, "%sbis", loop->label );
+    unsigned char newLabel[MAX_TEMPORARY_STORAGE]; sprintf(newLabel, "%sbis", loop->label );
 
     Variable * expression = variable_retrieve( _environment, expression->name );
 

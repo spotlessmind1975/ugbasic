@@ -83,7 +83,7 @@ void textmap_at( Environment * _environment, int _address ) {
     Variable * text_address = variable_retrieve_or_define( _environment, "textmap_address", VT_ADDRESS, _address );
     variable_store( _environment, "textmap_address", ( ( _address >> 10 ) & 0x0f ) * 0x0400 );
 
-    char addressString[16]; sprintf(addressString, "#$%2.2x", ( _address >> 8 ) & 0xff );
+    char addressString[MAX_TEMPORARY_STORAGE]; sprintf(addressString, "#$%2.2x", ( _address >> 8 ) & 0xff );
 
     vic2_textmap_at( _environment, addressString );
 
@@ -121,7 +121,7 @@ void textmap_at_var( Environment * _environment, char * _address ) {
 
     Variable * address = variable_retrieve( _environment, _address );
 
-    char addressString[16]; sprintf(addressString, "%s+1", address->realName );
+    char addressString[MAX_TEMPORARY_STORAGE]; sprintf(addressString, "%s+1", address->realName );
 
     vic2_textmap_at( _environment, addressString );
 
@@ -191,7 +191,7 @@ void text_at( Environment * _environment, char * _x, char * _y, char * _text ) {
     Variable * y = variable_retrieve( _environment, _y );
     Variable * text = variable_retrieve( _environment, _text );
 
-    char textString[16]; sprintf(textString, "%s+1", text->realName );
+    char textString[MAX_TEMPORARY_STORAGE]; sprintf(textString, "%s+1", text->realName );
 
     vic2_text_at( _environment, x->realName, y->realName, textString, text->realName );
     

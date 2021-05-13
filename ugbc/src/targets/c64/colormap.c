@@ -86,7 +86,7 @@ void colormap_at( Environment * _environment, int _address ) {
 
     variable_store( _environment, colormap_address->name, ( ( ( _address >> 10 ) & 0x0f ) * 0x0400 ) );
 
-    char addressString[16]; sprintf(addressString, "%2.2x", ( _address >> 10 ) & 0x0f );
+    char addressString[MAX_TEMPORARY_STORAGE]; sprintf(addressString, "%2.2x", ( _address >> 10 ) & 0x0f );
 
     vic2_colormap_at( _environment, addressString );
 
@@ -125,7 +125,7 @@ void colormap_at_var( Environment * _environment, char * _address ) {
 
     // variable_store( _environment, colormap_address->name, ( ( ( _address >> 10 ) & 0x0f ) * 0x0400 ) );
 
-    char addressString[16]; sprintf(addressString, "%s+1", address->realName );
+    char addressString[MAX_TEMPORARY_STORAGE]; sprintf(addressString, "%s+1", address->realName );
 
     vic2_colormap_at( _environment, addressString );
 
@@ -169,7 +169,7 @@ void colormap_clear_with( Environment * _environment, int _foreground, int _back
 
     Variable * colormap_address = variable_retrieve_or_define( _environment, "colormap_address", VT_ADDRESS, 0x0400 );
 
-    char value[16]; sprintf(value, "#$%2.2x", ( ( _foreground & 0x0f ) << 4 ) | ( _background & 0x0f ));
+    char value[MAX_TEMPORARY_STORAGE]; sprintf(value, "#$%2.2x", ( ( _foreground & 0x0f ) << 4 ) | ( _background & 0x0f ));
     
     cpu6502_fill( _environment, colormap_address->realName, "#$04", value );
 

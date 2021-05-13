@@ -132,7 +132,7 @@ void screen_rows( Environment * _environment, int _rows ) {
 
     outline1("; SCREEN ROWS %d", _rows);
 
-    char rowsString[16]; sprintf( rowsString, "#$%2.2x", _rows );
+    char rowsString[MAX_TEMPORARY_STORAGE]; sprintf( rowsString, "#$%2.2x", _rows );
 
     vic2_screen_rows( _environment, rowsString );
 
@@ -202,7 +202,7 @@ void screen_vertical_scroll( Environment * _environment, int _displacement ) {
 
     outline1("; SCREEN VERTICAL SCROLL %d", _displacement);
 
-    char displacementString[16]; sprintf( displacementString, "#$%2.2x", _displacement );
+    char displacementString[MAX_TEMPORARY_STORAGE]; sprintf( displacementString, "#$%2.2x", _displacement );
 
     vic2_vertical_scroll( _environment, displacementString );
 
@@ -274,7 +274,7 @@ void screen_horizontal_scroll( Environment * _environment, int _displacement ) {
 
     outline1("; SCREEN HORIZONTAL SCROLL %d", _displacement);
 
-    char displacementString[16]; sprintf( displacementString, "#$%2.2x", _displacement );
+    char displacementString[MAX_TEMPORARY_STORAGE]; sprintf( displacementString, "#$%2.2x", _displacement );
 
     vic2_horizontal_scroll( _environment, displacementString );
 

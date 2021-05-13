@@ -86,7 +86,7 @@ void begin_repeat( Environment * _environment ) {
     loop->next = _environment->loops;
     _environment->loops = loop;
 
-    unsigned char newLabel[32]; sprintf(newLabel, "%sbis", loop->label );
+    unsigned char newLabel[MAX_TEMPORARY_STORAGE]; sprintf(newLabel, "%sbis", loop->label );
 
     cpu_label( _environment, loop->label );
 

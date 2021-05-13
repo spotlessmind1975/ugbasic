@@ -116,20 +116,20 @@ void text_at( Environment * _environment, char * _x, char * _y, char * _text ) {
     Variable * text = variable_retrieve( _environment, _text );
     Variable * bitmap_enabled = variable_retrieve( _environment, "bitmap_enabled" );
 
-    char textString[16]; sprintf(textString, "%s+1", text->realName );
+    char textString[MAX_TEMPORARY_STORAGE]; sprintf(textString, "%s+1", text->realName );
 
     outline0("; TEXT AT" );
 
     MAKE_LABEL
 
-    char bitmapEnabledLabel[32]; sprintf(bitmapEnabledLabel, "%senabled", label );
+    char bitmapEnabledLabel[MAX_TEMPORARY_STORAGE]; sprintf(bitmapEnabledLabel, "%senabled", label );
     
     cpu_bvneq( _environment, bitmap_enabled->realName, bitmapEnabledLabel );
 
     Variable * buffer = variable_temporary( _environment, VT_BUFFER, "(buffer fot AT command)");
     variable_resize_buffer( _environment, buffer->name, 3 );
 
-    char bufferAddress[16]; 
+    char bufferAddress[MAX_TEMPORARY_STORAGE]; 
     
     sprintf( bufferAddress, "%s", buffer->realName );
     cpu_store_8bit( _environment, bufferAddress, 22 );
@@ -144,7 +144,7 @@ void text_at( Environment * _environment, char * _x, char * _y, char * _text ) {
     outline0("LD BC,3");
     outline0("CALL 8252");
 
-    char stringAddress[16]; 
+    char stringAddress[MAX_TEMPORARY_STORAGE]; 
     sprintf(stringAddress, "%s+1", text->realName );
     outline1( "LD DE, (%s)", stringAddress );
     outline1( "LD A, (%s)", text->realName );

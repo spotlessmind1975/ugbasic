@@ -99,9 +99,9 @@ void every_ticks_gosub( Environment * _environment, char * _timing, char * _labe
     _environment->everyTiming = variable_cast( _environment, timing->name, VT_WORD );
     _environment->everyTiming->locked = 1;
 
-    char skipEveryRoutineLabel[16]; sprintf(skipEveryRoutineLabel, "setg%d", UNIQUE_ID );
-    char everyRoutineLabel[16]; sprintf(everyRoutineLabel, "etg%d", UNIQUE_ID );
-    char endOfEveryRoutineLabel[16]; sprintf(endOfEveryRoutineLabel, "eetg%d", UNIQUE_ID );
+    char skipEveryRoutineLabel[MAX_TEMPORARY_STORAGE]; sprintf(skipEveryRoutineLabel, "setg%d", UNIQUE_ID );
+    char everyRoutineLabel[MAX_TEMPORARY_STORAGE]; sprintf(everyRoutineLabel, "etg%d", UNIQUE_ID );
+    char endOfEveryRoutineLabel[MAX_TEMPORARY_STORAGE]; sprintf(endOfEveryRoutineLabel, "eetg%d", UNIQUE_ID );
     
     cpu_jump( _environment, skipEveryRoutineLabel );
     

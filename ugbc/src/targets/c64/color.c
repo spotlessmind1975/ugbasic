@@ -64,7 +64,7 @@ void color_border( Environment * _environment, int _color ) {
     
     outline1("; COLOR BORDER %2.2x", _color);
 
-    char color[16]; sprintf(color, "#$%2.2x", _color);
+    char color[MAX_TEMPORARY_STORAGE]; sprintf(color, "#$%2.2x", _color);
 
     vic2_border_color( _environment, color );
 
@@ -127,8 +127,8 @@ void color_background( Environment * _environment, int _index, int _background_c
     
     outline2("; COLOR BACKGROUND #$%2.2x TO #$%2.2x", _index, _background_color);
 
-    char index[16]; sprintf(index, "#$%2.2x", _index );
-    char background_color[16]; sprintf(background_color, "#$%2.2x", _background_color );
+    char index[MAX_TEMPORARY_STORAGE]; sprintf(index, "#$%2.2x", _index );
+    char background_color[MAX_TEMPORARY_STORAGE]; sprintf(background_color, "#$%2.2x", _background_color );
 
     vic2_background_color( _environment, index, background_color );
 
@@ -192,8 +192,8 @@ void color_sprite( Environment * _environment, int _index, int _common_color ) {
 
     outline2("; COLOR SPRITE #$%2.2x TO #$%2.2x", _index, _common_color);
 
-    char index[16]; sprintf(index, "#$%2.2x", _index);
-    char common_color[16]; sprintf(common_color, "#$%2.2x", _common_color);
+    char index[MAX_TEMPORARY_STORAGE]; sprintf(index, "#$%2.2x", _index);
+    char common_color[MAX_TEMPORARY_STORAGE]; sprintf(common_color, "#$%2.2x", _common_color);
 
     vic2_sprite_common_color( _environment, index, common_color );
 

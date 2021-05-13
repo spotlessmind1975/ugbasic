@@ -84,7 +84,7 @@ void tiles_at( Environment * _environment, int _address ) {
     Variable * tiles_address = variable_retrieve_or_define( _environment, "tiles_address", VT_ADDRESS, _address );
     variable_store( _environment, tiles_address->name, ( ( _address >> 11 ) & 0x07 ) * 0x0400 );
 
-    char addressString[16]; sprintf(addressString, "#$%2.2x", ( _address >> 8 ) & 0xff );
+    char addressString[MAX_TEMPORARY_STORAGE]; sprintf(addressString, "#$%2.2x", ( _address >> 8 ) & 0xff );
 
     vic2_tiles_at( _environment, addressString );
 
@@ -128,7 +128,7 @@ void tiles_at_var( Environment * _environment, char * _address ) {
     // TODO: tile_address should be retrieved via function!
     Variable * tiles_address = variable_define( _environment, "tiles_address", VT_ADDRESS, 0x0800 );
     
-    char addressString[16]; sprintf(addressString, "%s+1", address->realName );
+    char addressString[MAX_TEMPORARY_STORAGE]; sprintf(addressString, "%s+1", address->realName );
 
     vic2_tiles_at( _environment, addressString );
 

@@ -49,7 +49,7 @@ void begin_procedure( Environment * _environment, char * _name ) {
     
     int i = 0;
     for( i=0; i<_environment->parameters; ++i ) {
-        char parameterName[256]; sprintf( parameterName, "%s_%s", procedure->name, _environment->parametersEach[i] );
+        char parameterName[MAX_TEMPORARY_STORAGE]; sprintf( parameterName, "%s__%s", procedure->name, _environment->parametersEach[i] );
         Variable * parameter = variable_retrieve_or_define( _environment, parameterName, _environment->parametersTypeEach[i], 0 );
     }
 
@@ -64,8 +64,8 @@ void begin_procedure( Environment * _environment, char * _name ) {
     _environment->procedureName = strdup( _name );
     _environment->procedureVariables = NULL;
 
-    char procedureAfterLabel[32]; sprintf(procedureAfterLabel, "%safter", _environment->procedureName );
-    char procedureLabel[32]; sprintf(procedureLabel, "%s", _environment->procedureName );
+    char procedureAfterLabel[MAX_TEMPORARY_STORAGE]; sprintf(procedureAfterLabel, "%safter", _environment->procedureName );
+    char procedureLabel[MAX_TEMPORARY_STORAGE]; sprintf(procedureLabel, "%s", _environment->procedureName );
 
     cpu_jump( _environment, procedureAfterLabel  );
 
@@ -74,7 +74,7 @@ void begin_procedure( Environment * _environment, char * _name ) {
 }
 
 void return_procedure( Environment * _environment, char * _value ) {
-    char paramName[256]; sprintf(paramName,"%s_PARAM", _environment->procedureName );
+    char paramName[MAX_TEMPORARY_STORAGE]; sprintf(paramName,"%s__PARAM", _environment->procedureName );
     Variable * value = variable_retrieve_or_define( _environment, _value, VT_WORD, 0 );
     Variable * param = variable_retrieve_or_define( _environment, paramName, value->type, 0 );
     variable_move( _environment, value->name, param->name );
@@ -96,7 +96,7 @@ Variable * param_procedure( Environment * _environment, char * _name ) {
         CRITICAL_PROCEDURE_MISSING(_name);
     }
 
-    char paramName[256]; sprintf(paramName,"%s_PARAM", _name );
+    char paramName[MAX_TEMPORARY_STORAGE]; sprintf(paramName,"%s__PARAM", _name );
     Variable * param = variable_retrieve( _environment, paramName );
     
     return param;
@@ -110,13 +110,13 @@ void end_procedure( Environment * _environment, char * _value ) {
     }
 
     if ( _value ) {
-        char paramName[256]; sprintf(paramName,"%s_PARAM", _environment->procedureName );
+        char paramName[MAX_TEMPORARY_STORAGE]; sprintf(paramName,"%s__PARAM", _environment->procedureName );
         Variable * value = variable_retrieve_or_define( _environment, _value, VT_WORD, 0 );
         Variable * param = variable_retrieve_or_define( _environment, paramName, value->type, 0 );
         variable_move( _environment, value->name, param->name );
     }
 
-    char procedureAfterLabel[32]; sprintf(procedureAfterLabel, "%safter", _environment->procedureName );
+    char procedureAfterLabel[MAX_TEMPORARY_STORAGE]; sprintf(procedureAfterLabel, "%safter", _environment->procedureName );
 
     cpu_return( _environment );
 
@@ -161,14 +161,14 @@ void call_procedure( Environment * _environment, char * _name ) {
 
     int i=0;
     for( i=0; i<procedure->parameters; ++i ) {
-        char parameterName[256]; sprintf( parameterName, "%s_%s", procedure->name, procedure->parametersEach[i] );
+        char parameterName[MAX_TEMPORARY_STORAGE]; sprintf( parameterName, "%s_%s", procedure->name, procedure->parametersEach[i] );
         Variable * parameter = variable_retrieve_or_define( _environment, parameterName, procedure->parametersTypeEach[i], 0 );
         Variable * value = variable_retrieve( _environment, _environment->parametersEach[i] );
         variable_move( _environment, value->name, parameter->name );
     }
     _environment->parameters = 0;
 
-    char procedureLabel[32]; sprintf(procedureLabel, "%s", _name );
+    char procedureLabel[MAX_TEMPORARY_STORAGE]; sprintf(procedureLabel, "%s", _name );
 
     cpu_call( _environment, procedureLabel );
     
