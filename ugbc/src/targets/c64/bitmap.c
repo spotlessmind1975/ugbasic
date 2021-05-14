@@ -49,7 +49,7 @@
  * On some machine calling this instruction will define two special variables:
  * 
  *  * `bitmap_address` (VT_ADDRESS) - the starting address of bitmap memory
- *  * `colormap_address` (VT_ADDRESS) - the starting address of color map memory
+ *  * `colormapAddress` (VT_ADDRESS) - the starting address of color map memory
  * 
  * @param _environment Current calling environment
  */
@@ -81,8 +81,8 @@ void bitmap_enable( Environment * _environment ) {
     // Let's define the special variable bitmap_address.
     Variable * bitmap_address = variable_retrieve_or_define( _environment, "bitmap_address", VT_ADDRESS, 0x2000 );
 
-    // Let's define the special variable colormap_address.
-    Variable * colormap_address = variable_retrieve_or_define( _environment, "colormap_address", VT_ADDRESS, 0x0400 );
+    // Let's define the special variable colormapAddress.
+    Variable * colormapAddress = variable_retrieve_or_define( _environment, "colormapAddress", VT_ADDRESS, 0x0400 );
 
     outline0("; BITMAP ENABLE");
 
