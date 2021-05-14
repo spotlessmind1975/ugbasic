@@ -300,10 +300,17 @@ void text_newline( Environment * _environment ) {
     Variable * result = variable_compare( _environment, y->name, y2->name );    
 
     char endLabel[MAX_TEMPORARY_STORAGE]; sprintf(endLabel, "%send", label);
+    char scrollLabel[MAX_TEMPORARY_STORAGE]; sprintf(scrollLabel, "%sscroll", label);
 
-    cpu_bvneq( _environment, result->realName, endLabel );
+    cpu_bvneq( _environment, result->realName, scrollLabel );
 
     cpu_inc( _environment, y->realName );
+
+    cpu_jump( _environment, endLabel );
+
+    cpu_label( _environment, scrollLabel );
+
+    text_vscroll( _environment );
 
     cpu_label( _environment, endLabel );
 

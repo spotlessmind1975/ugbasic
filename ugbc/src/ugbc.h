@@ -533,6 +533,12 @@ typedef struct _Environment {
 
     int bitsToString;
 
+    /**
+     * Deployed the vertical scroll text routine
+     */
+
+    int textVScrollDeployed;
+
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */
@@ -918,6 +924,7 @@ void text_newline( Environment * _environment );
 void text_tab( Environment * _environment );
 
 void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _text, char * _encoding, char * _pen, char * _paper );
+void text_vscroll( Environment * _environment );
 
 void textmap_at( Environment * _environment, int _address );
 void textmap_at_var( Environment * _environment, char * _address );
