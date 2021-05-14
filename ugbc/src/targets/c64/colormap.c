@@ -49,7 +49,7 @@
  * 
  * On some machine calling this instruction will define the special variable:
  * 
- *  * `colormap_address` (VT_ADDRESS) - the starting address of colormap memory
+ *  * `colormapAddress` (VT_ADDRESS) - the starting address of colormap memory
  * 
  * @param _environment Current calling environment
  * @param _address Address to use
@@ -80,11 +80,11 @@ void colormap_at( Environment * _environment, int _address ) {
     outline1("; COLORMAP AT #$%4.4x", _address);
 
     // Let's define the special variable and fill up with the value.
-    Variable * colormap_address = variable_retrieve_or_define( _environment, "colormap_address", VT_ADDRESS, _address );
+    Variable * colormapAddress = variable_retrieve_or_define( _environment, "colormapAddress", VT_ADDRESS, _address );
 
-    // TODO: colormap_address must be retrieved by a vic2_get_colormap_address()
+    // TODO: colormapAddress must be retrieved by a vic2_get_colormapAddress()
 
-    variable_store( _environment, colormap_address->name, ( ( ( _address >> 10 ) & 0x0f ) * 0x0400 ) );
+    variable_store( _environment, colormapAddress->name, ( ( ( _address >> 10 ) & 0x0f ) * 0x0400 ) );
 
     char addressString[MAX_TEMPORARY_STORAGE]; sprintf(addressString, "%2.2x", ( _address >> 10 ) & 0x0f );
 
@@ -102,7 +102,7 @@ void colormap_at( Environment * _environment, int _address ) {
  * 
  * On some machine calling this instruction will define the special variable:
  * 
- *  * `colormap_address` (VT_ADDRESS) - the starting address of colormap memory
+ *  * `colormapAddress` (VT_ADDRESS) - the starting address of colormap memory
  * 
  * @param _environment Current calling environment
  * @param _address Address to use
@@ -119,11 +119,11 @@ void colormap_at_var( Environment * _environment, char * _address ) {
     outline1("; COLORMAP AT %s", _address);
 
     // Let's define the special variable and fill up with the value.
-    // TODO: colormap_address must be retrieved by a vic2_get_colormap_address()
-    Variable * colormap_address = variable_retrieve_or_define( _environment, "colormap_address", VT_ADDRESS, 0x0400 );
+    // TODO: colormapAddress must be retrieved by a vic2_get_colormapAddress()
+    Variable * colormapAddress = variable_retrieve_or_define( _environment, "colormapAddress", VT_ADDRESS, 0x0400 );
     Variable * address = variable_retrieve( _environment, _address );
 
-    // variable_store( _environment, colormap_address->name, ( ( ( _address >> 10 ) & 0x0f ) * 0x0400 ) );
+    // variable_store( _environment, colormapAddress->name, ( ( ( _address >> 10 ) & 0x0f ) * 0x0400 ) );
 
     char addressString[MAX_TEMPORARY_STORAGE]; sprintf(addressString, "%s+1", address->realName );
 
@@ -167,11 +167,11 @@ void colormap_clear_with( Environment * _environment, int _foreground, int _back
 
     outline2("; COLORMAP CLEAR WITH #$%2.2x AND #$%2.2x", _foreground, _background );
 
-    Variable * colormap_address = variable_retrieve_or_define( _environment, "colormap_address", VT_ADDRESS, 0x0400 );
+    Variable * colormapAddress = variable_retrieve_or_define( _environment, "colormapAddress", VT_ADDRESS, 0x0400 );
 
     char value[MAX_TEMPORARY_STORAGE]; sprintf(value, "#$%2.2x", ( ( _foreground & 0x0f ) << 4 ) | ( _background & 0x0f ));
     
-    cpu6502_fill( _environment, colormap_address->realName, "#$04", value );
+    cpu6502_fill( _environment, colormapAddress->realName, "#$04", value );
 
 }
 
@@ -200,8 +200,8 @@ void colormap_clear_with_vars( Environment * _environment, char * _foreground, c
 
     outline2("; COLORMAP CLEAR WITH %s AND %s", _foreground, _background );
 
-    Variable * colormap_address = variable_retrieve_or_define( _environment, "colormap_address", VT_ADDRESS, 0x0400 );
-    if ( ! colormap_address ) {
+    Variable * colormapAddress = variable_retrieve_or_define( _environment, "colormapAddress", VT_ADDRESS, 0x0400 );
+    if ( ! colormapAddress ) {
         CRITICAL( "COLORMAP CLEAR WITH xxx ON xxx needs BITMAP ENABLED");
     }
 
@@ -211,7 +211,7 @@ void colormap_clear_with_vars( Environment * _environment, char * _foreground, c
 
     cpu6502_combine_nibbles( _environment, background->realName, foreground->realName, "$24" );
 
-    cpu6502_fill( _environment, colormap_address->realName, "#$04", "$24" );
+    cpu6502_fill( _environment, colormapAddress->realName, "#$04", "$24" );
 
 }
 
