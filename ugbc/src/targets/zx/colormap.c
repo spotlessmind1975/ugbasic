@@ -49,7 +49,7 @@
  * 
  * On some machine calling this instruction will define the special variable:
  * 
- *  * `colormap_address` (VT_ADDRESS) - the starting address of colormap memory
+ *  * `colormapAddress` (VT_ADDRESS) - the starting address of colormap memory
  * 
  * @param _environment Current calling environment
  * @param _address Address to use
@@ -64,11 +64,11 @@ void colormap_at( Environment * _environment, int _address ) {
     outline1("; COLORMAP AT $%4.4x", _address);
 
     // Let's define the special variable and fill up with the value.
-    Variable * colormap_address = variable_retrieve_or_define( _environment, "colormap_address", VT_ADDRESS, _address );
+    Variable * colormapAddress = variable_retrieve_or_define( _environment, "colormapAddress", VT_ADDRESS, _address );
 
-    // TODO: colormap_address must be retrieved by a zx_get_colormap_address()
+    // TODO: colormapAddress must be retrieved by a zx_get_colormapAddress()
 
-    variable_store( _environment, colormap_address->name, 0x5800 );
+    variable_store( _environment, colormapAddress->name, 0x5800 );
 
 }
 
@@ -82,7 +82,7 @@ void colormap_at( Environment * _environment, int _address ) {
  * 
  * On some machine calling this instruction will define the special variable:
  * 
- *  * `colormap_address` (VT_ADDRESS) - the starting address of colormap memory
+ *  * `colormapAddress` (VT_ADDRESS) - the starting address of colormap memory
  * 
  * @param _environment Current calling environment
  * @param _address Address to use
@@ -92,11 +92,11 @@ void colormap_at_var( Environment * _environment, char * _address ) {
     outline1("; COLORMAP AT %s", _address);
 
     // Let's define the special variable and fill up with the value.
-    // TODO: colormap_address must be retrieved by a zx_get_colormap_address()
-    Variable * colormap_address = variable_retrieve_or_define( _environment, "colormap_address", VT_ADDRESS, 0x5800 );
+    // TODO: colormapAddress must be retrieved by a zx_get_colormapAddress()
+    Variable * colormapAddress = variable_retrieve_or_define( _environment, "colormapAddress", VT_ADDRESS, 0x5800 );
     Variable * address = variable_retrieve_or_define( _environment, _address, VT_ADDRESS, 0x0000 );
 
-    // variable_store( _environment, colormap_address->name, ( ( ( _address >> 10 ) & 0x0f ) * 0x0400 ) );
+    // variable_store( _environment, colormapAddress->name, ( ( ( _address >> 10 ) & 0x0f ) * 0x0400 ) );
 
 }
 
@@ -118,13 +118,13 @@ void colormap_clear_with( Environment * _environment, int _foreground, int _back
 
     outline2("; COLORMAP CLEAR WITH $%2.2x AND $%2.2x", _foreground, _background );
 
-    Variable * colormap_address = variable_retrieve( _environment, "colormap_address" );
+    Variable * colormapAddress = variable_retrieve( _environment, "colormapAddress" );
 
     Variable * value = variable_temporary( _environment, VT_BYTE, "(background + foreground)" );
 
     variable_store( _environment, value->name, ( ( _background & 0x07 ) << 3 ) | ( _foreground & 0x07 ) );
 
-    z80_fill( _environment, colormap_address->realName, "3", value->realName );
+    z80_fill( _environment, colormapAddress->realName, "3", value->realName );
 
     variable_reset( _environment );
 
@@ -148,8 +148,8 @@ void colormap_clear_with_vars( Environment * _environment, char * _foreground, c
 
     outline2("; COLORMAP CLEAR WITH %s AND %s", _foreground, _background );
 
-    Variable * colormap_address = variable_retrieve_or_define( _environment, "colormap_address", VT_ADDRESS, 0x0400 );
-    if ( ! colormap_address ) {
+    Variable * colormapAddress = variable_retrieve_or_define( _environment, "colormapAddress", VT_ADDRESS, 0x0400 );
+    if ( ! colormapAddress ) {
         CRITICAL( "COLORMAP CLEAR WITH xxx ON xxx needs BITMAP ENABLED");
     }
 
@@ -169,7 +169,7 @@ void colormap_clear_with_vars( Environment * _environment, char * _foreground, c
     outline0("OR B" );
     outline1("LD (%s), A", pattern->realName );
 
-    z80_fill( _environment, colormap_address->realName, "3", pattern->realName );
+    z80_fill( _environment, colormapAddress->realName, "3", pattern->realName );
 
     variable_reset( _environment );
 
