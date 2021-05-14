@@ -219,8 +219,8 @@ void setup_text_variables( Environment * _environment ) {
     variable_define( _environment, "windowY2", VT_BYTE, 24 );                
     variable_define( _environment, "windowCX", VT_BYTE, 0 );
     variable_define( _environment, "windowCY", VT_BYTE, 0 );
-    variable_define( _environment, "windowPE", VT_COLOR, 0 );
-    variable_define( _environment, "windowPA", VT_COLOR, 0 );
+    variable_define( _environment, "windowPE", VT_COLOR, COLOR_WHITE );
+    variable_define( _environment, "windowPA", VT_COLOR, COLOR_BLACK );
     variable_define( _environment, "windowE", VT_BYTE, 0 );
     variable_define( _environment, "windowS", VT_BYTE, 0 );
     variable_define( _environment, "windowW", VT_BYTE, 0 );
@@ -337,16 +337,16 @@ void text_at( Environment * _environment, char * _x, char * _y, char * _text ) {
 void text_pen( Environment * _environment, char * _color ) {
 
     Variable * pen = variable_retrieve( _environment, "windowPE" );
-    Variable * color = variable_retrieve_or_define( _environment, "pen", VT_COLOR, COLOR_BLACK );
+    Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_BLACK );
 
     variable_move( _environment, color->name, pen->name );
     
 }
 
-void text_paper( Environment * _environment, char * _paper ) {
+void text_paper( Environment * _environment, char * _color ) {
 
     Variable * paper = variable_retrieve( _environment, "windowPA" );
-    Variable * color = variable_retrieve_or_define( _environment, "pen", VT_COLOR, COLOR_BLACK );
+    Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_BLACK );
 
     variable_move( _environment, color->name, paper->name );
     

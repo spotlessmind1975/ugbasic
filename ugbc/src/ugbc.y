@@ -1364,6 +1364,9 @@ statement:
     } values CSP {
       call_procedure( _environment, $2 );
   }
+  | PEN expr {
+      text_pen( _environment, $2 );
+  }
   | Identifier COLON {
       outhead1("%s:", $1);
   } 
@@ -1578,6 +1581,8 @@ int main( int _argc, char *_argv[] ) {
         bank_define( _environment, "STRINGS", BT_STRINGS, 0x4200, NULL );
         variable_define( _environment, "textAddress", VT_ADDRESS, 0x0400 );
         variable_global( _environment, "textAddress" );
+        variable_define( _environment, "colormapAddress", VT_ADDRESS, 0xD800 );
+        variable_global( _environment, "colormapAddress" );
     } else {
         outhead0("org 32768");
         variable_define( _environment, "stringsAddress", VT_ADDRESS, 0xa000 );
