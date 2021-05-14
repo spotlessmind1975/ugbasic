@@ -38,161 +38,144 @@
  * CODE SECTION 
  ****************************************************************************/
 
-/**
- * @brief Emit ASM code for <b>TEXTMAP AT [int]xx</b>
- * 
- * This function allows you to set the starting address, in memory, for the 
- * text and it is the version that is used when the memory is given as a
- * direct number (i.e.: $0400). The input parameter is decoded and declined 
- * according to the hardware limits. So it is not said that exactly the 
- * given address is set.
- * 
- * On some machine calling this instruction will define the special variable:
- * 
- *  * `textmap_address` (VT_ADDRESS) - the starting address of text memory
- * 
- * @param _environment Current calling environment
- * @param _address Address to use
- */
-/* <usermanual>
-@keyword TEXTMAP AT
+void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _text, char * _encoding, char * _pen, char * _paper ) {
 
-@english
-Set the starting address, in memory, for the textmap. The input parameter 
-is decoded and declined according to the hardware limits. So it is not
-said that exactly the given address is set.
-
-@italian
-Imposta l'indirizzo di partenza, in memoria, per la textmap. Il parametro 
-di input viene decodificato e declinato in base ai limiti hardware. Quindi 
-non è detto che sia impostato esattamente con l'indirizzo specificato.
-
-@syntax TEXTMAP AT # [integer]
-
-@example TEXTMAP AT #$0400
-
-@target c64
-</usermanual> */
-void textmap_at( Environment * _environment, int _address ) {
-
-    outline1("; TEXTMAP AT $%4.4x", _address);
-
-    // Let's define the special variable bitmap_address, and update
-    // it with the requested value.
-    // TODO: the textmap_address should be populated by a get_textmap_address() function!
-    Variable * text_address = variable_retrieve_or_define( _environment, "textmap_address", VT_ADDRESS, _address );
-    variable_store( _environment, "textmap_address", ( ( _address >> 10 ) & 0x0f ) * 0x0400 );
-
-    char addressString[MAX_TEMPORARY_STORAGE]; sprintf(addressString, "#$%2.2x", ( _address >> 8 ) & 0xff );
-
-    vic2_textmap_at( _environment, addressString );
-
-}
-
-/**
- * @brief Emit ASM code for <b>TEXTMAP AT [expression]</b>
- * 
- * This function allows you to set the starting address, in memory, for the 
- * text and it is the version that is used when the memory is given as an
- * expression. The input parameter is decoded and declined according to the 
- * hardware limits. So it is not said that exactly the given address is set.
- * 
- * On some machine calling this instruction will define the special variable:
- * 
- *  * `textmap_address` (VT_ADDRESS) - the starting address of text memory
- * 
- * @param _environment Current calling environment
- * @param _address Expression with address to use
- */
-/* <usermanual>
-@keyword TEXTMAP AT
-
-@syntax TEXTMAP AT [expression]
-
-@example TEXTMAP AT newTextmapAddress
-
-@target c64
-</usermanual> */
-void textmap_at_var( Environment * _environment, char * _address ) {
-
-    outline1("; TEXTMAP AT %s", _address);
-
-    Variable * text_address = variable_retrieve_or_define( _environment, "text_address", VT_ADDRESS, 0x0400 );
-
-    Variable * address = variable_retrieve( _environment, _address );
-
-    char addressString[MAX_TEMPORARY_STORAGE]; sprintf(addressString, "%s+1", address->realName );
-
-    vic2_textmap_at( _environment, addressString );
-
-}
-
-/**
- * @brief Emit ASM implementation for <b>TEXT ENABLE</b> instruction
- * 
- * This function can be called to emit the code to enable text mode
- * on the target machine.
- * 
- * @param _environment Current calling environment
- */
-/* <usermanual>
-@keyword TEXT ENABLE
-
-@english
-Enable the text mode.
-
-@italian
-Abilita la modalità testuale.
-
-@syntax TEXT ENABLE
-
-@example TEXT ENABLE
-
-@target c64
-</usermanual> */
-void text_enable( Environment * _environment ) {
-    
-    bitmap_disable( _environment );
-
-}
-
-/**
- * @brief Emit ASM implementation for <b>TEXT DISABLE</b> instruction
- * 
- * This function can be called to emit the code to disable text mode
- * on the target machine.
- * 
- * @param _environment Current calling environment
- */
-/* <usermanual>
-@keyword TEXT DISABLE
-
-@english
-Disable the text mode.
-
-@italian
-Disabilita la modalità testuale.
-
-@syntax TEXT ENABLE
-
-@example TEXT ENABLE
-
-@target c64
-</usermanual> */
-void text_disable( Environment * _environment ) {
-    
-    bitmap_enable( _environment );
-    
-}
-
-void text_at( Environment * _environment, char * _x, char * _y, char * _text ) {
-
+    Variable * text = variable_retrieve( _environment, _text );
     Variable * x = variable_retrieve( _environment, _x );
     Variable * y = variable_retrieve( _environment, _y );
-    Variable * text = variable_retrieve( _environment, _text );
+    Variable * encoding = variable_retrieve( _environment, _encoding );
+    Variable * pen = variable_retrieve( _environment, _pen );
+    Variable * paper = variable_retrieve( _environment, _paper );
+    Variable * textAddress = variable_retrieve( _environment, "textAddress" );
 
     char textString[MAX_TEMPORARY_STORAGE]; sprintf(textString, "%s+1", text->realName );
 
-    vic2_text_at( _environment, x->realName, y->realName, textString, text->realName );
+    MAKE_LABEL
+
+    // $16-$17 : height
+    // $18-$19 :    width
+    // $20-$21 :    text address
+    // $22-$23 :    screen base
+    // $24 :    text size
+    // $d6 : y
+    // $d3 : x
+
+    vic2_get_height( _environment, "$16" );
+
+    outline1("LDA %s", textString );
+    outline0("STA $20");
+    outline1("LDA %s+1", textString );
+    outline0("STA $21");
+    outline1("LDA %s", textAddress->realName );
+    outline0("STA $22");
+    outline1("LDA %s+1", textAddress->realName );
+    outline0("STA $23");
+    outline1("LDA %s", y->realName );
+    outline0("STA $d6" );
+    outline1("LDA %s", x->realName );
+    outline0("STA $d3");
+    outline1("LDA %s", text->realName );
+    outline0("STA $24" );
+
+    if ( ! _environment->textEncodedAtDeployed ) {
+
+        outline0("JMP lib_text_encoded_at_after");
+        outhead0("lib_text_encoded_at:");
+        outline0("LDX $d6" ); // y
+        outline0("BEQ lib_text_encoded_at_skip" );
+        outhead0("lib_text_encoded_at_loop1:" );
+        outline0("LDA #40"); // width (lo)
+        outline0("ADC $22");
+        outline0("STA $22");
+        outline0("LDA #0"); // width (hi)
+        outline0("ADC $23");
+        outline0("STA $23");
+        outline0("DEX" );
+        outline0("BNE lib_text_encoded_at_loop1" );
+        outhead0("lib_text_encoded_at_skip:" );
+        outline0("LDA $d3"); // x
+        outline0("ADC $22");
+        outline0("STA $22");
+        outline0("LDA #0");
+        outline0("ADC $23");
+        outline0("STA $23");
+        outline0("LDX $24"); // size
+        outline0("LDY #$0" );
+        outhead0("lib_text_encoded_at_loop2:" );
+        outline0("LDA ($20),Y");
+
+        outline0("CMP #32");
+        outline0("BCC lib_text_encoded_at_sp128");
+        outline0("CMP #64");
+        outline0("BCC lib_text_encoded_at_sp0");
+        outline0("CMP #96");
+        outline0("BCC lib_text_encoded_at_sm64");
+        outline0("CMP #160");
+        outline0("BCC lib_text_encoded_at_sp64");
+        outline0("CMP #192");
+        outline0("BCC lib_text_encoded_at_sm64");
+        outline0("CMP #224");
+        outline0("BCC lib_text_encoded_at_sm128");
+        outline0("JMP lib_text_encoded_at_sp0");
+        outhead0("lib_text_encoded_at_sp64:");
+        outline0("ADC #64");
+        outline0("JMP lib_text_encoded_at_sp0");
+        outhead0("lib_text_encoded_at_sp128:");
+        outline0("ADC #128");
+        outline0("JMP lib_text_encoded_at_sp0");
+        outhead0("lib_text_encoded_at_sm64:");
+        outline0("SBC #63");
+        outline0("JMP lib_text_encoded_at_sp0");
+        outhead0("lib_text_encoded_at_sm128:");
+        outline0("SBC #127");
+        outline0("JMP lib_text_encoded_at_sp0");
+        outhead0("lib_text_encoded_at_sp0:");
+
+        outline0("STA ($22),Y");
+
+        outline0("INC $d3"); // x
+        outline0("LDA $d3"); // x
+        outline0("CMP #40"); // x
+        outline0("BNE lib_text_encoded_at_next"); // x
+        outline0("LDA #0"); // x
+        outline0("STA $d3"); // x
+        outline0("INC $d6"); // y
+        outline0("LDA $d6"); // y
+        outline0("CMP #24"); // h
+        outline0("BNE lib_text_encoded_at_next"); // x
+
+        // TODO: scrolling up by 1 row
+
+        outline0("DEC $d6"); // y
+        outline0("SEC");
+        outline0("LDA $22");
+        outline0("SBC #40");
+        outline0("STA $22");
+        outline0("LDA $23");
+        outline0("SBC #0");
+        outline0("STA $23");
+
+        outhead0("lib_text_encoded_at_next:");
+        outline0("INY" );
+        outline0("DEX" );
+        outline0("BNE lib_text_encoded_at_loop2" );
+        outline0("JMP lib_text_encoded_at_end" );
+
+        outhead0("lib_text_encoded_at_end:" );
+        outline0("RTS" );
+
+        outhead0("lib_text_encoded_at_after:");
+
+        _environment->textEncodedAtDeployed = 1;
+
+    }
+
+    outline0("JSR lib_text_encoded_at");
     
+    outline0("LDA $d6" );
+    outline1("STA %s", y->realName );
+    outline0("LDA $d3");
+    outline1("STA %s", x->realName );
+
 }
+

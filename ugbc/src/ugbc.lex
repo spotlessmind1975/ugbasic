@@ -141,6 +141,7 @@ POINT { return (POINT); }
 POP { return (POP); }
 POSITION { return (POSITION); }
 POW { return (POWERING); }
+PRINT { return (PRINT); }
 PROC { return (PROC); }
 PROCEDURE { return (PROCEDURE); }
 PURPLE { return(PURPLE); }

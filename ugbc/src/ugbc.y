@@ -40,7 +40,7 @@ extern char DATATYPE_AS_STRING[][16];
 %token POINT GOSUB RETURN POP OR ELSE NOT TRUE FALSE DO EXIT WEND UNTIL FOR STEP EVERY
 %token MID INSTR UPPER LOWER STR VAL STRING SPACE FLIP CHR ASC LEN POW MOD ADD MIN MAX SGN
 %token SIGNED ABS RND COLORS INK TIMER POWERING DIM ADDRESS PROC PROCEDURE CALL OSP CSP
-%token SHARED MILLISECOND MILLISECONDS TICKS GLOBAL PARAM
+%token SHARED MILLISECOND MILLISECONDS TICKS GLOBAL PARAM PRINT
 
 %token BLACK WHITE RED CYAN VIOLET GREEN BLUE YELLOW ORANGE
 %token BROWN LIGHT DARK GREY GRAY MAGENTA PURPLE
@@ -1201,6 +1201,26 @@ values :
     }
     ;
 
+print_definition :
+    expr {
+        print( _environment, $1, 1 );
+    }
+  | expr COMMA {
+        print( _environment, $1, 0 );
+        print_tab( _environment, 0 );
+  }
+  | expr SEMICOLON {
+        print( _environment, $1, 0 );
+  }
+  | expr COMMA {
+        print( _environment, $1, 0 );
+        print_tab( _environment, 0 );
+  }  print_definition
+  | expr SEMICOLON  {
+        print( _environment, $1, 0 );
+  } print_definition
+  ;
+
 statement:
     BANK bank_definition
   | RASTER raster_definition
@@ -1218,6 +1238,7 @@ statement:
   | INK ink_definition
   | VAR var_definition
   | ADD add_definition
+  | PRINT print_definition
   | INC Identifier {
       variable_increment( _environment, $2 );
   }
@@ -1544,6 +1565,8 @@ int main( int _argc, char *_argv[] ) {
     bank_define( _environment, "VARIABLES", BT_VARIABLES, 0x4000, NULL );
     bank_define( _environment, "TEMPORARY", BT_TEMPORARY, 0x4100, NULL );
 
+    setup_text_variables( _environment );
+
     if ( _environment->configurationFileName ) {
         _environment->configurationFile = fopen( _environment->configurationFileName, "wt");
         if ( ! _environment->configurationFile ) {
@@ -1555,8 +1578,8 @@ int main( int _argc, char *_argv[] ) {
         variable_define( _environment, "strings_address", VT_ADDRESS, 0x4200 );
         variable_global( _environment, "strings_address" );
         bank_define( _environment, "STRINGS", BT_STRINGS, 0x4200, NULL );
-        variable_define( _environment, "text_address", VT_ADDRESS, 0x0400 );
-        variable_global( _environment, "text_address" );
+        variable_define( _environment, "textAddress", VT_ADDRESS, 0x0400 );
+        variable_global( _environment, "textAddress" );
     } else {
         outhead0("org 32768");
         variable_define( _environment, "strings_address", VT_ADDRESS, 0xa000 );

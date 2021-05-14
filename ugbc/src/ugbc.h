@@ -374,7 +374,6 @@ typedef struct _Pattern {
 typedef struct _Environment {
 
     // TODO: implement DEF FN
-    // TODO: implement procedures
 
     /* --------------------------------------------------------------------- */
     /* INPUT PARAMETERS                                                      */
@@ -522,6 +521,18 @@ typedef struct _Environment {
      */
     VariableType parametersTypeEach[MAX_PARAMETERS];
 
+    /**
+     * Deployed the text_encoded_at routine
+     */
+
+    int textEncodedAtDeployed;
+
+    /**
+     * Deployed the bits to string routine
+     */
+
+    int bitsToString;
+
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */
@@ -586,6 +597,7 @@ typedef struct _Environment {
 #define CRITICAL_PROCEDURE_PARAMETERS_MISMATCH( n ) CRITICAL2("E036 - wrong number of parameters on procedure call", n ); 
 #define CRITICAL_SHARED_ONLY_IN_PROCEDURES() CRITICAL("E037 - SHARED can be used only inside a PROCEDURE");
 #define CRITICAL_GLOBAL_ONLY_OUTSIDE_PROCEDURES() CRITICAL("E038 - GLOBAL can be used only outside a PROCEDURE");
+#define CRITICAL_PRINT_UNSUPPORTED(v, t) CRITICAL3("E039 - PRINT unsupported for variable of given datatype", v, t );
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
 #define WARNING3( s, v1, v2 ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s, %s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v1, v2, _environment->yylineno ); }
@@ -841,6 +853,8 @@ void point_at( Environment * _environment, int _x, int _y );
 void point_at_vars( Environment * _environment, char * _x, char * _y );
 void pop( Environment * _environment );
 Variable * powering( Environment * _environment, char * _source, char * _dest );
+void print( Environment * _environment, char * _text, int _new_line );
+void print_tab( Environment * _environment, int _new_line );
 void randomize( Environment * _environment, char * _seed );
 Variable * random_value( Environment * _environment, VariableType _type );
 Variable * random_width( Environment * _environment );
@@ -861,6 +875,7 @@ void screen_horizontal_scroll( Environment * _environment, int _displacement );
 void screen_horizontal_scroll_var( Environment * _environment, char * _displacement );
 Variable * screen_get_width( Environment * _environment );
 Variable * screen_get_height( Environment * _environment );
+void setup_text_variables( Environment * _environment );
 Variable * sign( Environment * _environment, char * _value );
 void sprite_data_from( Environment * _environment, int _sprite, int _address );
 void sprite_data_from_vars( Environment * _environment, char * _sprite, char * _address );
@@ -886,7 +901,24 @@ void sprite_position( Environment * _environment, int _sprite, int _x, int _y );
 void sprite_position_vars( Environment * _environment, char * _sprite, char * _x, char * _y );
 void text_enable( Environment * _environment );
 void text_disable( Environment * _environment );
+
 void text_at( Environment * _environment, char * _x, char * _y, char * _text );
+void text_locate( Environment * _environment, char * _x, char * _y );
+void text_cmove( Environment * _environment, char * _dx, char * _dy );
+void text_home( Environment * _environment );
+void text_text( Environment * _environment, char * _text );
+void text_pen( Environment * _environment, char * _color );
+void text_paper( Environment * _environment, char * _paper );
+void use_ansi( Environment * _environment );
+void use_specific( Environment * _environment );
+void text_inverse( Environment * _environment, int _value );
+void text_shade( Environment * _environment, int _value );
+void text_under( Environment * _environment, int _value );
+void text_newline( Environment * _environment );
+void text_tab( Environment * _environment );
+
+void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _text, char * _encoding, char * _pen, char * _paper );
+
 void textmap_at( Environment * _environment, int _address );
 void textmap_at_var( Environment * _environment, char * _address );
 void tiles_at( Environment * _environment, int _address );
