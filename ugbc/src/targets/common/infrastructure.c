@@ -2418,7 +2418,7 @@ Variable * variable_string_chr( Environment * _environment, char * _ascii  ) {
 
     Variable * ascii = variable_retrieve( _environment, _ascii );
 
-    Variable * result = variable_temporary( _environment, VT_STRING, "(result of STRING)");
+    Variable * result = variable_temporary( _environment, VT_STRING, "(result of CHR)");
     
     Variable * strings_address = variable_retrieve( _environment, "strings_address" );
     
