@@ -47,6 +47,7 @@ void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _
     Variable * pen = variable_retrieve( _environment, _pen );
     Variable * paper = variable_retrieve( _environment, _paper );
     Variable * textAddress = variable_retrieve( _environment, "textAddress" );
+    Variable * tab = variable_retrieve( _environment, "windowT" );
 
     char textString[MAX_TEMPORARY_STORAGE]; sprintf(textString, "%s+1", text->realName );
 
@@ -57,6 +58,7 @@ void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _
     // $20-$21 :    text address
     // $22-$23 :    screen base
     // $24 :    text size
+    // $25 :    characters to skip
     // $d6 : y
     // $d3 : x
 
@@ -76,6 +78,8 @@ void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _
     outline0("STA $d3");
     outline1("LDA %s", text->realName );
     outline0("STA $24" );
+    outline0("LDA #0" );
+    outline0("STA $25" );
 
     if ( ! _environment->textEncodedAtDeployed ) {
 
@@ -102,7 +106,14 @@ void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _
         outline0("LDX $24"); // size
         outline0("LDY #$0" );
         outhead0("lib_text_encoded_at_loop2:" );
+
+        outline0("LDA $25" );
+        outline0("BNE lib_text_encoded_at_skip_for_tab" );
+
         outline0("LDA ($20),Y");
+
+        outline0("CMP #09");
+        outline0("BEQ lib_text_encoded_at_tab");
 
         outline0("CMP #32");
         outline0("BCC lib_text_encoded_at_sp128");
@@ -129,10 +140,30 @@ void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _
         outhead0("lib_text_encoded_at_sm128:");
         outline0("SBC #127");
         outline0("JMP lib_text_encoded_at_sp0");
+
+        outhead0("lib_text_encoded_at_tab:");
+        outline0("LDA $d3");
+        outhead0("lib_text_encoded_at_tab2:");
+        outline1("CMP %s", tab->realName); // tab spaces
+        outline0("BCC lib_text_encoded_at_tab3");
+        outline1("DEC %s", tab->realName); // tab spaces
+        outline0("JMP lib_text_encoded_at_tab2");
+        outhead0("lib_text_encoded_at_tab3:");
+        outline0("STA $25");
+        outline0("TXA");
+        outline0("ADC $25");
+        outline0("TAX");
+        outline0("JMP lib_text_encoded_at_increment_x");
+
         outhead0("lib_text_encoded_at_sp0:");
-
         outline0("STA ($22),Y");
+        outline0("JMP lib_text_encoded_at_increment_x");
 
+        outhead0("lib_text_encoded_at_skip_for_tab:");
+        outline0("DEC $25");
+        outline0("JMP lib_text_encoded_at_increment_x");
+
+        outhead0("lib_text_encoded_at_increment_x:");
         outline0("INC $d3"); // x
         outline0("LDA $d3"); // x
         outline0("CMP #40"); // x
@@ -143,8 +174,6 @@ void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _
         outline0("LDA $d6"); // y
         outline0("CMP #24"); // h
         outline0("BNE lib_text_encoded_at_next"); // x
-
-        // TODO: scrolling up by 1 row
 
         text_vscroll( _environment );
 

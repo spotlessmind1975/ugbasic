@@ -224,7 +224,9 @@ void setup_text_variables( Environment * _environment ) {
     variable_define( _environment, "windowE", VT_BYTE, 0 );
     variable_define( _environment, "windowS", VT_BYTE, 0 );
     variable_define( _environment, "windowW", VT_BYTE, 0 );
-    variable_define( _environment, "windowT", VT_BYTE, 0 );
+    variable_define( _environment, "windowT", VT_BYTE, 4 );
+    variable_define( _environment, "TAB", VT_STRING, 0 );
+    variable_store_string( _environment, "TAB", "\t");
 
 }
 
@@ -318,10 +320,9 @@ void text_newline( Environment * _environment ) {
 
 void text_tab( Environment * _environment ) {
 
-    Variable * x = variable_retrieve( _environment, "windowCX" );
-    Variable * tab = variable_retrieve( _environment, "windowT" );
+    Variable * tab = variable_retrieve( _environment, "TAB" );
 
-    variable_move_naked( _environment, variable_add( _environment, tab->name, x->name )->name, x->name );
+    text_text( _environment, tab->name );
     
 }
 

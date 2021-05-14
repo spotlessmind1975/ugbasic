@@ -1565,8 +1565,6 @@ int main( int _argc, char *_argv[] ) {
     bank_define( _environment, "VARIABLES", BT_VARIABLES, 0x4000, NULL );
     bank_define( _environment, "TEMPORARY", BT_TEMPORARY, 0x4100, NULL );
 
-    setup_text_variables( _environment );
-
     if ( _environment->configurationFileName ) {
         _environment->configurationFile = fopen( _environment->configurationFileName, "wt");
         if ( ! _environment->configurationFile ) {
@@ -1575,19 +1573,20 @@ int main( int _argc, char *_argv[] ) {
         }
         linker_setup( _environment );
         outhead0(".segment \"CODE\"");
-        variable_define( _environment, "strings_address", VT_ADDRESS, 0x4200 );
-        variable_global( _environment, "strings_address" );
+        variable_define( _environment, "stringsAddress", VT_ADDRESS, 0x4200 );
+        variable_global( _environment, "stringsAddress" );
         bank_define( _environment, "STRINGS", BT_STRINGS, 0x4200, NULL );
         variable_define( _environment, "textAddress", VT_ADDRESS, 0x0400 );
         variable_global( _environment, "textAddress" );
     } else {
         outhead0("org 32768");
-        variable_define( _environment, "strings_address", VT_ADDRESS, 0xa000 );
-        variable_global( _environment, "strings_address" );
+        variable_define( _environment, "stringsAddress", VT_ADDRESS, 0xa000 );
+        variable_global( _environment, "stringsAddress" );
         variable_define( _environment, "bitmap_enabled", VT_BYTE, 0 );
         variable_global( _environment, "bitmap_enabled" );
     }
 
+    setup_text_variables( _environment );
 
     yydebug = 1;
     errors = 0;
