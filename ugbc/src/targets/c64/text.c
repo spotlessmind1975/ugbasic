@@ -167,28 +167,37 @@ void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _
         outhead0("lib_text_encoded_at_nskip_for_tab:" );
         outline0("LDA ($20),Y");
 
-        outline0("CMP #09");
-        outline0("BEQ lib_text_encoded_at_tab");
-
-        outline0("CMP #01");
-        outline0("BEQ lib_text_encoded_at_pen");
-
-        outline0("CMP #02");
-        outline0("BEQ lib_text_encoded_at_paper");
+        outline0("CMP #04");
+        outline0("BCS lib_text_encoded_at_xcontrol_code");
+        outline0("JMP lib_text_encoded_at_control_code");
+        outhead0("lib_text_encoded_at_xcontrol_code:");
 
         outline0("CMP #32");
-        outline0("BCC lib_text_encoded_at_sp128");
+        outline0("BCS lib_text_encoded_at_xsp128");
+        outline0("JMP lib_text_encoded_at_sp128");
+        outhead0("lib_text_encoded_at_xsp128:")
         outline0("CMP #64");
-        outline0("BCC lib_text_encoded_at_sp0");
-        outline0("CMP #96");
-        outline0("BCC lib_text_encoded_at_sm64");
-        outline0("CMP #160");
-        outline0("BCC lib_text_encoded_at_sp64");
-        outline0("CMP #192");
-        outline0("BCC lib_text_encoded_at_sm64");
-        outline0("CMP #224");
-        outline0("BCC lib_text_encoded_at_sm128");
+        outline0("BCS lib_text_encoded_at_xsp0");
         outline0("JMP lib_text_encoded_at_sp0");
+        outhead0("lib_text_encoded_at_xsp0:")
+        outline0("CMP #96");
+        outline0("BCS lib_text_encoded_at_xsm64");
+        outline0("JMP lib_text_encoded_at_sm64");
+        outhead0("lib_text_encoded_at_xsm64:")
+        outline0("CMP #160");
+        outline0("BCS lib_text_encoded_at_xsp64");
+        outline0("JMP lib_text_encoded_at_sp64");
+        outhead0("lib_text_encoded_at_xsp64:")
+        outline0("CMP #192");
+        outline0("BCS lib_text_encoded_at_x2sm64");
+        outline0("JMP lib_text_encoded_at_sm64");
+        outhead0("lib_text_encoded_at_x2sm64:")
+        outline0("CMP #224");
+        outline0("BCS lib_text_encoded_at_x2sm128");
+        outline0("JMP lib_text_encoded_at_sm128");
+        outhead0("lib_text_encoded_at_x2sm128:")
+        outline0("JMP lib_text_encoded_at_sp0");
+
         outhead0("lib_text_encoded_at_sp64:");
         outline0("ADC #64");
         outline0("JMP lib_text_encoded_at_sp0");
@@ -216,6 +225,17 @@ void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _
         outline0("TAX");
         outline0("JMP lib_text_encoded_at_increment_x");
 
+        outhead0("lib_text_encoded_at_control_code:")
+        outline0("CMP #09");
+        outline0("BEQ lib_text_encoded_at_tab");
+        outline0("CMP #01");
+        outline0("BEQ lib_text_encoded_at_pen");
+        outline0("CMP #02");
+        outline0("BEQ lib_text_encoded_at_paper");
+        outline0("CMP #03");
+        outline0("BEQ lib_text_encoded_at_cmove");
+        outline0("JMP lib_text_encoded_at_increment_x");
+
         outhead0("lib_text_encoded_at_pen:");
         outline0("INC $20");
         outline0("DEX");
@@ -241,6 +261,79 @@ void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _
         outhead0("lib_text_encoded_at_paper_disabled:");
         outline0("INC $20");
         outline0("DEY");
+        outline0("JMP lib_text_encoded_at_increment_x");
+
+        outhead0("lib_text_encoded_at_cmove:");
+        outline0("INC $20");
+        outline0("DEX");
+        outline0("LDA ($20), Y");
+        outline0("ADC $d3");
+        outline0("CMP #$80");
+        outline0("BCS lib_text_encoded_at_cmove_skipx");
+        outline0("CMP #40");
+        outline0("BCS lib_text_encoded_at_cmove_skipx");
+        outline0("STA $d3");
+        outline0("LDA ($20), Y");
+        outline0("CLC"); // x
+        outline0("ADC $22");
+        outline0("STA $22");
+        outline0("LDA #0"); // width (hi)
+        outline0("ADC $23");
+        outline0("STA $23");
+
+        outhead0("lib_text_encoded_at_cmove_skipx:");
+        outline0("INC $20");
+        outline0("DEX");
+        outline0("LDA ($20), Y");
+        outline0("ADC $d6");
+        outline0("CMP #$80");
+        outline0("BCS lib_text_encoded_at_cmove_skipy");
+        outline0("CMP #24");
+        outline0("BCS lib_text_encoded_at_cmove_skipy");
+        outline0("STA $d6");
+        outline0("TXA");
+        outline0("PHA");
+        outline0("LDA ($20), Y");
+        outline0("CMP #$80");
+        outline0("BCC lib_text_encoded_at_cmove_loopyp");
+        outline0("JMP lib_text_encoded_at_cmove_loopym");
+
+        outhead0("lib_text_encoded_at_cmove_loopyp:")
+        outline0("TAX");
+        outhead0("lib_text_encoded_at_cmove_loopy:")
+        outline0("CLC"); // x
+        outline0("LDA #40"); // width (lo)
+        outline0("ADC $22");
+        outline0("STA $22");
+        outline0("LDA #0"); // width (hi)
+        outline0("ADC $23");
+        outline0("STA $23");
+        outline0("DEX" );
+        outline0("BNE lib_text_encoded_at_cmove_loopy" );
+        outline0("PLA");
+        outline0("TAX");
+        outline0("JMP lib_text_encoded_at_cmove_skipy" );
+
+        outhead0("lib_text_encoded_at_cmove_loopym:")
+        outline0("TAX");
+        outhead0("lib_text_encoded_at_cmove_loopy2:")
+        outline0("SEC"); // x
+        outline0("LDA #40"); // width (lo)
+        outline0("SBC $22");
+        outline0("STA $22");
+        outline0("LDA #0"); // width (hi)
+        outline0("SBC $23");
+        outline0("STA $23");
+        outline0("DEX" );
+        outline0("BNE lib_text_encoded_at_cmove_loopy2" );
+        outline0("PLA");
+        outline0("TAX");
+        outline0("JMP lib_text_encoded_at_cmove_skipy" );
+
+        outhead0("lib_text_encoded_at_cmove_skipy:");
+        outline0("INC $20");
+        outline0("DEY");
+
         outline0("JMP lib_text_encoded_at_increment_x");
 
         outhead0("lib_text_encoded_at_sp0:");

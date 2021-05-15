@@ -948,6 +948,7 @@ void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _
 void text_vscroll( Environment * _environment );
 Variable * text_get_pen( Environment * _environment, char * _color );
 Variable * text_get_paper( Environment * _environment, char * _color );
+Variable * text_get_cmove( Environment * _environment, char * _x, char * _y );
 void use_ansi( Environment * _environment );
 void use_specific( Environment * _environment );
 void text_cls( Environment * _environment );

@@ -526,6 +526,9 @@ exponential:
     | PAPER DOLLAR OP expr CP {
         $$ = text_get_paper( _environment, $4 )->name;
     }
+    | CMOVE DOLLAR OP expr COMMA expr CP {
+        $$ = text_get_cmove( _environment, $4, $6 )->name;
+    }
     ;
 
 position:   POSITION | AT;
