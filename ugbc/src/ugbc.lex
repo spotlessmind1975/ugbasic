@@ -59,6 +59,7 @@ CHR { return (CHR); }
 CHR\$ { return (CHR); }
 CLEAR { return (CLEAR); }
 CLS { return (CLS); }
+CMOVE { return (CMOVE); }
 CODE { return (CODE); }
 COLLISION { return (COLLISION); }
 COLOR { return (COLOR); }

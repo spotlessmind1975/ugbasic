@@ -41,7 +41,7 @@ extern char DATATYPE_AS_STRING[][16];
 %token MID INSTR UPPER LOWER STR VAL STRING SPACE FLIP CHR ASC LEN POW MOD ADD MIN MAX SGN
 %token SIGNED ABS RND COLORS INK TIMER POWERING DIM ADDRESS PROC PROCEDURE CALL OSP CSP
 %token SHARED MILLISECOND MILLISECONDS TICKS GLOBAL PARAM PRINT DEFAULT SPECIFIC ANSI USE
-%token PAPER INVERSE REPLACE XOR IGNORE NORMAL WRITING ONLY LOCATE CLS HOME
+%token PAPER INVERSE REPLACE XOR IGNORE NORMAL WRITING ONLY LOCATE CLS HOME CMOVE
 
 %token BLACK WHITE RED CYAN VIOLET GREEN BLUE YELLOW ORANGE
 %token BROWN LIGHT DARK GREY GRAY MAGENTA PURPLE
@@ -1326,6 +1326,18 @@ locate_definition :
     }
     ;
 
+cmove_definition : 
+     COMMA expr {
+        text_cmove( _environment, NULL, $2 );
+    }
+    | expr COMMA {
+        text_cmove( _environment, $1, NULL );
+    } 
+    | expr COMMA expr {
+        text_cmove( _environment, $1, $3 );
+    }
+    ;
+
 statement:
     BANK bank_definition
   | RASTER raster_definition
@@ -1345,6 +1357,7 @@ statement:
   | ADD add_definition
   | PRINT print_definition
   | LOCATE locate_definition
+  | CMOVE cmove_definition
   | CLS {
       text_cls( _environment );
   }
