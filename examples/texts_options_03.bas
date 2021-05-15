@@ -1,0 +1,7 @@
+  PEN DEFAULT PEN
+  FOR index = 0 TO PAPER COLORS
+     PAPER index
+     PRINT "PAPER NUMBER ";index;SPACE(23)
+  NEXT
+
+  HALT
