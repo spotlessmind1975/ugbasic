@@ -41,6 +41,7 @@ extern char DATATYPE_AS_STRING[][16];
 %token MID INSTR UPPER LOWER STR VAL STRING SPACE FLIP CHR ASC LEN POW MOD ADD MIN MAX SGN
 %token SIGNED ABS RND COLORS INK TIMER POWERING DIM ADDRESS PROC PROCEDURE CALL OSP CSP
 %token SHARED MILLISECOND MILLISECONDS TICKS GLOBAL PARAM PRINT DEFAULT SPECIFIC ANSI USE
+%token PAPER
 
 %token BLACK WHITE RED CYAN VIOLET GREEN BLUE YELLOW ORANGE
 %token BROWN LIGHT DARK GREY GRAY MAGENTA PURPLE
@@ -492,6 +493,22 @@ exponential:
     | PEN DEFAULT {
         $$ = variable_temporary( _environment, VT_COLOR, "(COLORS)" )->name;
         variable_store( _environment, $$, COLOR_WHITE );
+    }
+    | DEFAULT PEN {
+        $$ = variable_temporary( _environment, VT_COLOR, "(COLORS)" )->name;
+        variable_store( _environment, $$, COLOR_WHITE );
+    }
+    | PAPER COLORS {
+        $$ = variable_temporary( _environment, VT_COLOR, "(COLORS)" )->name;
+        variable_store( _environment, $$, COLOR_COUNT );
+    }
+    | PAPER DEFAULT {
+        $$ = variable_temporary( _environment, VT_COLOR, "(COLORS)" )->name;
+        variable_store( _environment, $$, COLOR_BLACK );
+    }
+    | DEFAULT PAPER {
+        $$ = variable_temporary( _environment, VT_COLOR, "(COLORS)" )->name;
+        variable_store( _environment, $$, COLOR_BLACK );
     }
     | WIDTH {
         $$ = screen_get_width( _environment )->name;
@@ -1386,6 +1403,9 @@ statement:
   }
   | PEN expr {
       text_pen( _environment, $2 );
+  }
+  | PAPER expr {
+      text_paper( _environment, $2 );
   }
   | Identifier COLON {
       outhead1("%s:", $1);

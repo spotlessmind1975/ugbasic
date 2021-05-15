@@ -134,6 +134,7 @@ OFF { return (OFF); }
 ON { return (ON); }
 OR { return (OR); }
 ORANGE { return(ORANGE); }
+PAPER { return(PAPER); }
 PARAM { return(PARAM); }
 PEACH { return(PEACH); }
 PEEK { return (PEEK); }

@@ -326,3 +326,15 @@ void text_vscroll( Environment * _environment ) {
     outline0("JSR text_vscroll");
 
 }
+
+void text_paper( Environment * _environment, char * _color ) {
+
+    Variable * paper = variable_retrieve( _environment, "windowPA" );
+    Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_BLACK );
+
+    variable_move( _environment, color->name, paper->name );
+    
+    vic2_background_color( _environment, "#0", color->realName );
+    vic2_border_color( _environment, color->realName );
+    
+}
