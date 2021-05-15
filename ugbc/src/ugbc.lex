@@ -114,6 +114,7 @@ LEFT { return (LEFT); }
 LEFT\$ { return (LEFT); }
 LEN { return (LEN); }
 LIGHT { return(LIGHT); }
+LOCATE { return(LOCATE); }
 LOOP { return (LOOP); }
 LOWER { return (LOWER); }
 LOWER\$ { return (LOWER); }
