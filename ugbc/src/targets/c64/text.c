@@ -50,6 +50,7 @@ void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _
     Variable * tab = variable_retrieve( _environment, "windowT" );
     Variable * colormapAddress = variable_retrieve( _environment, "colormapAddress" );
     Variable * styles = variable_retrieve( _environment, "windowS" );
+    Variable * ww = variable_retrieve( _environment, "windowWW" );
 
     char textString[MAX_TEMPORARY_STORAGE]; sprintf(textString, "%s+1", text->realName );
 
@@ -86,6 +87,8 @@ void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _
     outline0("STA $29");
     outline1("LDA %s+1", colormapAddress->realName );
     outline0("STA $2a");
+    outline1("LDA %s", ww->realName );
+    outline0("STA $2c");
     outline1("LDA %s", styles->realName );
     outline0("AND #$1" );
     outline1("BNE %sinverse", label );
@@ -100,6 +103,17 @@ void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _
     if ( ! _environment->textEncodedAtDeployed ) {
 
         outline0("JMP lib_text_encoded_at_after");
+
+        outline0("NOP");
+        outline0("NOP");
+        outline0("NOP");
+        outline0("NOP");
+        outline0("NOP");
+        outline0("NOP");
+        outline0("NOP");
+        outline0("NOP");
+        outline0("NOP");
+
         outhead0("lib_text_encoded_at:");
         outline0("LDX $d6" ); // y
         outline0("BEQ lib_text_encoded_at_skip" );
@@ -148,8 +162,9 @@ void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _
         outhead0("lib_text_encoded_at_loop2:" );
 
         outline0("LDA $25" );
-        outline0("BNE lib_text_encoded_at_skip_for_tab" );
-
+        outline0("BEQ lib_text_encoded_at_nskip_for_tab" );
+        outline0("JMP lib_text_encoded_at_skip_for_tab" );
+        outhead0("lib_text_encoded_at_nskip_for_tab:" );
         outline0("LDA ($20),Y");
 
         outline0("CMP #09");
@@ -204,8 +219,12 @@ void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _
         outhead0("lib_text_encoded_at_pen:");
         outline0("INC $20");
         outline0("DEX");
+        outline0("LDA $2c");
+        outline0("AND #$2");
+        outline0("BEQ lib_text_encoded_at_pen_disabled");
         outline0("LDA ($20), Y");
         outline0("STA $2b");
+        outhead0("lib_text_encoded_at_pen_disabled:");
         outline0("INC $20");
         outline0("DEY");
         outline0("JMP lib_text_encoded_at_increment_x");
@@ -213,17 +232,25 @@ void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _
         outhead0("lib_text_encoded_at_paper:");
         outline0("INC $20");
         outline0("DEX");
+        outline0("LDA $2c");
+        outline0("AND #$1");
+        outline0("BEQ lib_text_encoded_at_paper_disabled");
         outline0("LDA ($20), Y");
         outline0("STA $d021");
         outline0("STA $d020");
+        outhead0("lib_text_encoded_at_paper_disabled:");
         outline0("INC $20");
         outline0("DEY");
         outline0("JMP lib_text_encoded_at_increment_x");
 
         outhead0("lib_text_encoded_at_sp0:");
         outline0("STA ($22),Y");
+        outline0("LDA $2c");
+        outline0("AND #$2");
+        outline0("BEQ lib_text_encoded_at_nopen");
         outline0("LDA $2b");
         outline0("STA ($29),Y");
+        outhead0("lib_text_encoded_at_nopen:");
         outline0("JMP lib_text_encoded_at_increment_x");
 
         outhead0("lib_text_encoded_at_skip_for_tab:");

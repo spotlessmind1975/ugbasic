@@ -225,6 +225,7 @@ void setup_text_variables( Environment * _environment ) {
     variable_define( _environment, "windowS", VT_BYTE, 0 );
     variable_define( _environment, "windowW", VT_BYTE, 0 );
     variable_define( _environment, "windowT", VT_BYTE, 4 );
+    variable_define( _environment, "windowWW", VT_BYTE, 4 );
     variable_define( _environment, "TAB", VT_STRING, 0 );
     variable_store_string( _environment, "TAB", "\t");
 
@@ -426,3 +427,18 @@ void text_under( Environment * _environment, int _value ) {
     variable_store( _environment, under->name, _value );
     
 }
+
+void text_writing( Environment * _environment, char * _mode, char * _parts ) {
+
+    setup_text_variables( _environment );
+
+    Variable * ww = variable_retrieve( _environment, "windowWW" );
+    Variable * mode = variable_retrieve_or_define( _environment, _mode, VT_BYTE, WRITING_REPLACE );
+    Variable * parts = variable_retrieve_or_define( _environment, _parts, VT_BYTE, WRITING_NORMAL );
+
+    variable_move( _environment, mode->name, ww->name );
+    cpu_math_mul2_const_8bit( _environment, ww->realName, 4  );
+    cpu_math_add_8bit( _environment, ww->realName, parts->realName, ww->realName );
+    
+}
+

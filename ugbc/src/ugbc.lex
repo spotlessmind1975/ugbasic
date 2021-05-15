@@ -104,6 +104,7 @@ HEIGHT { return (HEIGHT); }
 HIT { return (HIT); }
 HORIZONTAL { return (HORIZONTAL); }
 IF { return (IF); }
+IGNORE { return (IGNORE); }
 INC { return (INC); }
 INK { return (INK); }
 INVERSE { return (INVERSE); }
@@ -129,10 +130,12 @@ MS { return (MILLISECOND); }
 MILLISECOND { return (MILLISECOND); }
 MILLISECONDS { return (MILLISECONDS); }
 MULTICOLOR { return(MULTICOLOR); }
+NORMAL { return(NORMAL); }
 NOT { return(NOT); }
 OLIVE { return(OLIVE); }
 OFF { return (OFF); }
 ON { return (ON); }
+ONLY { return (ONLY); }
 OR { return (OR); }
 ORANGE { return(ORANGE); }
 PAPER { return(PAPER); }
@@ -154,6 +157,7 @@ RANDOMIZE { return (RANDOMIZE); }
 RASTER { return (RASTER); }
 RED { return(RED); }
 REPEAT { return (REPEAT); }
+REPLACE { return (REPLACE); }
 RETURN { return (RETURN); }
 RIGHT { return (RIGHT); }
 RIGHT\$ { return (RIGHT); }
@@ -201,7 +205,9 @@ WITH { return (WITH); }
 WIDTH { return (WIDTH); }
 WHILE { return (WHILE); }
 WHITE { return(WHITE); }
+WRITING { return(WRITING); }
 WORD { return (WORD); }
+XOR { return (XOR); }
 XPEN { return (XPEN); }
 YELLOW { return(YELLOW); }
 YPEN { return (YPEN); }

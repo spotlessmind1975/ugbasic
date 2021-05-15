@@ -41,7 +41,7 @@ extern char DATATYPE_AS_STRING[][16];
 %token MID INSTR UPPER LOWER STR VAL STRING SPACE FLIP CHR ASC LEN POW MOD ADD MIN MAX SGN
 %token SIGNED ABS RND COLORS INK TIMER POWERING DIM ADDRESS PROC PROCEDURE CALL OSP CSP
 %token SHARED MILLISECOND MILLISECONDS TICKS GLOBAL PARAM PRINT DEFAULT SPECIFIC ANSI USE
-%token PAPER INVERSE
+%token PAPER INVERSE REPLACE XOR IGNORE NORMAL WRITING ONLY
 
 %token BLACK WHITE RED CYAN VIOLET GREEN BLUE YELLOW ORANGE
 %token BROWN LIGHT DARK GREY GRAY MAGENTA PURPLE
@@ -55,6 +55,7 @@ extern char DATATYPE_AS_STRING[][16];
 %type <integer> direct_integer
 %type <string> random_definition_simple random_definition
 %type <string> color_enumeration
+%type <string> writing_mode_definition writing_part_definition
 %type <integer> datatype
 
 %right Integer String CP 
@@ -1261,6 +1262,58 @@ use_definition :
   }
   ;
 
+writing_mode_definition : 
+      REPLACE {
+          $$ = variable_temporary( _environment, VT_BYTE, "(writing REPLACE)" )->name;
+          variable_store( _environment, $$, WRITING_REPLACE );
+    }
+    | OR {
+          $$ = variable_temporary( _environment, VT_BYTE, "(writing OR)" )->name;
+          variable_store( _environment, $$, WRITING_OR );
+    }
+    | XOR {
+          $$ = variable_temporary( _environment, VT_BYTE, "(writing XOR)" )->name;
+          variable_store( _environment, $$, WRITING_XOR );
+    }
+    | AND {
+          $$ = variable_temporary( _environment, VT_BYTE, "(writing AND)" )->name;
+          variable_store( _environment, $$, WRITING_AND );
+    }
+    | IGNORE {
+          $$ = variable_temporary( _environment, VT_BYTE, "(writing IGNORE)" )->name;
+          variable_store( _environment, $$, WRITING_IGNORE );
+    }
+    ;
+
+writing_part_definition :
+      NORMAL {
+          $$ = variable_temporary( _environment, VT_BYTE, "(writing NORMAL)" )->name;
+          variable_store( _environment, $$, WRITING_NORMAL );
+    }
+    | PAPER {
+          $$ = variable_temporary( _environment, VT_BYTE, "(writing PAPER)" )->name;
+          variable_store( _environment, $$, WRITING_PAPER );
+    }
+    | PAPER ONLY {
+          $$ = variable_temporary( _environment, VT_BYTE, "(writing PAPER)" )->name;
+          variable_store( _environment, $$, WRITING_PAPER );
+    }
+    | PEN {
+          $$ = variable_temporary( _environment, VT_BYTE, "(writing PEN)" )->name;
+          variable_store( _environment, $$, WRITING_PEN );
+    }
+    | PEN ONLY {
+          $$ = variable_temporary( _environment, VT_BYTE, "(writing PEN)" )->name;
+          variable_store( _environment, $$, WRITING_PEN );
+    }
+    ;
+
+writing_definition : 
+    writing_mode_definition COMMA writing_part_definition {
+        text_writing( _environment, $1, $3 );
+    }
+    ;
+
 statement:
     BANK bank_definition
   | RASTER raster_definition
@@ -1416,6 +1469,7 @@ statement:
   | INVERSE OFF {
       text_inverse( _environment, 0 );
   }
+  | WRITING writing_definition
   | Identifier COLON {
       outhead1("%s:", $1);
   } 

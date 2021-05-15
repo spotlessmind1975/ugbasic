@@ -365,6 +365,20 @@ typedef struct _Pattern {
 
 } Pattern;
 
+typedef enum _Writing {
+
+    WRITING_REPLACE = 0,
+    WRITING_OR = 1,
+    WRITING_XOR = 2,
+    WRITING_AND = 3,
+    WRITING_IGNORE = 4,
+
+    WRITING_PAPER = 1,
+    WRITING_PEN = 2,
+    WRITING_NORMAL = 3
+
+} Writing;
+
 /**
  * @brief Structure of compilation environment
  * 
@@ -922,6 +936,7 @@ void text_shade( Environment * _environment, int _value );
 void text_under( Environment * _environment, int _value );
 void text_newline( Environment * _environment );
 void text_tab( Environment * _environment );
+void text_writing( Environment * _environment, char * _mode, char * _parts );
 
 void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _text, char * _encoding, char * _pen, char * _paper );
 void text_vscroll( Environment * _environment );
