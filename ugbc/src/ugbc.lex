@@ -106,6 +106,7 @@ HORIZONTAL { return (HORIZONTAL); }
 IF { return (IF); }
 INC { return (INC); }
 INK { return (INK); }
+INVERSE { return (INVERSE); }
 INSTR { return (INSTR); }
 LAVENDER { return(LAVENDER); }
 LEFT { return (LEFT); }

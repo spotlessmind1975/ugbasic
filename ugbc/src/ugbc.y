@@ -41,7 +41,7 @@ extern char DATATYPE_AS_STRING[][16];
 %token MID INSTR UPPER LOWER STR VAL STRING SPACE FLIP CHR ASC LEN POW MOD ADD MIN MAX SGN
 %token SIGNED ABS RND COLORS INK TIMER POWERING DIM ADDRESS PROC PROCEDURE CALL OSP CSP
 %token SHARED MILLISECOND MILLISECONDS TICKS GLOBAL PARAM PRINT DEFAULT SPECIFIC ANSI USE
-%token PAPER
+%token PAPER INVERSE
 
 %token BLACK WHITE RED CYAN VIOLET GREEN BLUE YELLOW ORANGE
 %token BROWN LIGHT DARK GREY GRAY MAGENTA PURPLE
@@ -1409,6 +1409,12 @@ statement:
   }
   | PAPER expr {
       text_paper( _environment, $2 );
+  }
+  | INVERSE ON {
+      text_inverse( _environment, 1 );
+  }
+  | INVERSE OFF {
+      text_inverse( _environment, 0 );
   }
   | Identifier COLON {
       outhead1("%s:", $1);

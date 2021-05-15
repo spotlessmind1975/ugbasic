@@ -49,6 +49,7 @@ void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _
     Variable * textAddress = variable_retrieve( _environment, "textAddress" );
     Variable * tab = variable_retrieve( _environment, "windowT" );
     Variable * colormapAddress = variable_retrieve( _environment, "colormapAddress" );
+    Variable * styles = variable_retrieve( _environment, "windowS" );
 
     char textString[MAX_TEMPORARY_STORAGE]; sprintf(textString, "%s+1", text->realName );
 
@@ -85,18 +86,20 @@ void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _
     outline0("STA $29");
     outline1("LDA %s+1", colormapAddress->realName );
     outline0("STA $2a");
+    outline1("LDA %s", styles->realName );
+    outline0("AND #$1" );
+    outline1("BNE %sinverse", label );
     outline1("LDA %s", pen->realName );
     outline0("STA $2b");
+    outline1("JMP %stext", label );
+    outhead1("%sinverse:", label)
+    outline1("LDA %s", paper->realName );
+    outline0("STA $2b");
+    outhead1("%stext:", label)
 
     if ( ! _environment->textEncodedAtDeployed ) {
 
         outline0("JMP lib_text_encoded_at_after");
-        outline0("NOP");
-        outline0("NOP");
-        outline0("NOP");
-        outline0("NOP");
-        outline0("NOP");
-
         outhead0("lib_text_encoded_at:");
         outline0("LDX $d6" ); // y
         outline0("BEQ lib_text_encoded_at_skip" );
