@@ -269,8 +269,8 @@ void text_cmove( Environment * _environment, char * _dx, char * _dy ) {
 
 void text_home( Environment * _environment ) {
 
-    Variable * x = variable_retrieve( _environment, "windowX" );
-    Variable * y = variable_retrieve( _environment, "windowY" );
+    Variable * x = variable_retrieve( _environment, "windowCX" );
+    Variable * y = variable_retrieve( _environment, "windowCY" );
 
     variable_store( _environment, x->name, 0 );
     variable_store( _environment, y->name, 0 );

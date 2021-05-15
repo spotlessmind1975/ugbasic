@@ -381,3 +381,47 @@ void text_paper( Environment * _environment, char * _color ) {
     vic2_border_color( _environment, color->realName );
     
 }
+
+void text_cls( Environment * _environment ) {
+
+    if ( !_environment->textClsDeployed ) {
+
+        Variable * textAddress = variable_retrieve( _environment, "textAddress" );
+
+        outline0("JMP lib_text_cls_after");
+
+        outline0("lib_text_cls:");
+        // Use the current bitmap address as starting address for filling routine.
+        outline1("LDA %s", textAddress->realName);
+        outline0("STA $25");
+        outline1("LDA %s+1", textAddress->realName);
+        outline0("STA $26");
+        outline0("LDX #3" );
+        outline0("LDY #0" );
+        outline0("LDA #32" );
+        outhead0("lib_text_cls_yloop:");
+        outline0("STA ($25),Y");
+        outline0("INY");
+        outline0("BNE lib_text_cls_yloop");
+        outline0("INC $26");
+        outline0("CPX #1");
+        outline0("BNE lib_text_cls_next_block");
+        outhead0("lib_text_cls_yloop2:");
+        outline0("STA ($25),Y");
+        outline0("INY");
+        outline0("CPY #232");
+        outline0("BNE lib_text_cls_yloop2");
+        outhead0("lib_text_cls_next_block:");
+        outline0("DEX");
+        outline0("BNE lib_text_cls_yloop");
+        outline0("RTS");
+
+        outline0("lib_text_cls_after:");
+
+        _environment->textClsDeployed = 1;
+
+    }
+
+    outline0("JSR lib_text_cls");
+    
+}

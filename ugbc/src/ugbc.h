@@ -553,6 +553,12 @@ typedef struct _Environment {
 
     int textVScrollDeployed;
 
+    /**
+     * Deployed the cls text routine
+     */
+
+    int textClsDeployed;
+
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */
@@ -944,6 +950,7 @@ Variable * text_get_pen( Environment * _environment, char * _color );
 Variable * text_get_paper( Environment * _environment, char * _color );
 void use_ansi( Environment * _environment );
 void use_specific( Environment * _environment );
+void text_cls( Environment * _environment );
 
 void textmap_at( Environment * _environment, int _address );
 void textmap_at_var( Environment * _environment, char * _address );

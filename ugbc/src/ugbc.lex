@@ -58,6 +58,7 @@ CALL { return (CALL); }
 CHR { return (CHR); }
 CHR\$ { return (CHR); }
 CLEAR { return (CLEAR); }
+CLS { return (CLS); }
 CODE { return (CODE); }
 COLLISION { return (COLLISION); }
 COLOR { return (COLOR); }
@@ -102,6 +103,7 @@ GREY { return(GREY); }
 HALT { return (HALT); }
 HEIGHT { return (HEIGHT); }
 HIT { return (HIT); }
+HOME { return (HOME); }
 HORIZONTAL { return (HORIZONTAL); }
 IF { return (IF); }
 IGNORE { return (IGNORE); }
