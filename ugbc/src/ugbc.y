@@ -40,7 +40,7 @@ extern char DATATYPE_AS_STRING[][16];
 %token POINT GOSUB RETURN POP OR ELSE NOT TRUE FALSE DO EXIT WEND UNTIL FOR STEP EVERY
 %token MID INSTR UPPER LOWER STR VAL STRING SPACE FLIP CHR ASC LEN POW MOD ADD MIN MAX SGN
 %token SIGNED ABS RND COLORS INK TIMER POWERING DIM ADDRESS PROC PROCEDURE CALL OSP CSP
-%token SHARED MILLISECOND MILLISECONDS TICKS GLOBAL PARAM PRINT
+%token SHARED MILLISECOND MILLISECONDS TICKS GLOBAL PARAM PRINT DEFAULT SPECIFIC ANSI USE
 
 %token BLACK WHITE RED CYAN VIOLET GREEN BLUE YELLOW ORANGE
 %token BROWN LIGHT DARK GREY GRAY MAGENTA PURPLE
@@ -485,6 +485,14 @@ exponential:
         $$ = variable_temporary( _environment, VT_COLOR, "(COLORS)" )->name;
         variable_store( _environment, $$, 16 );
     }
+    | PEN COLORS {
+        $$ = variable_temporary( _environment, VT_COLOR, "(COLORS)" )->name;
+        variable_store( _environment, $$, COLOR_COUNT );
+    }
+    | PEN DEFAULT {
+        $$ = variable_temporary( _environment, VT_COLOR, "(COLORS)" )->name;
+        variable_store( _environment, $$, COLOR_WHITE );
+    }
     | WIDTH {
         $$ = screen_get_width( _environment )->name;
     }
@@ -493,6 +501,9 @@ exponential:
     }
     | TIMER {
         $$ = get_timer( _environment )->name;
+    }
+    | PEN DOLLAR OP expr CP {
+        $$ = text_get_pen( _environment, $4 )->name;
     }
     ;
 
@@ -1221,6 +1232,15 @@ print_definition :
   } print_definition
   ;
 
+use_definition : 
+    ANSI {
+        use_ansi( _environment );
+    }
+  | SPECIFIC {
+        use_specific( _environment );
+  }
+  ;
+
 statement:
     BANK bank_definition
   | RASTER raster_definition
@@ -1414,6 +1434,7 @@ statement:
         variable_string_mid_assign( _environment, $3, $5, $7, $10 );
   }
   | DIM dim_definitions
+  | USE use_definition
   | Identifier ASSIGN expr {
         outline2("; %s = %s", $1, $3 );
         Variable * expr = variable_retrieve( _environment, $3 );

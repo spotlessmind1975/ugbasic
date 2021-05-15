@@ -60,6 +60,7 @@
 #define COLOR_OLIVE_GREEN       	COLOR_GREEN
 #define COLOR_PINK       			COLOR_LIGHT_RED
 #define COLOR_PEACH       			COLOR_PINK
+#define COLOR_COUNT                 16
 
 
 void vic2_background_color( Environment * _environment, char * _index, char * _background_color );

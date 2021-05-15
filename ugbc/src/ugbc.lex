@@ -44,6 +44,7 @@ AT { return (AT); }
 ADD { return (ADD); }
 ADDRESS { return (ADDRESS); }
 AND { return (AND); }
+ANSI { return (ANSI); }
 BACKGROUND { return (BACKGROUND); }
 BANK { return (BANK); }
 BEGIN { return (BEG); }
@@ -69,6 +70,7 @@ DARK { return(DARK); }
 DATA { return (DATA); }
 DEBUG { return (DEBUG); }
 DEC { return (DEC); }
+DEFAULT { return (DEFAULT); }
 DIM { return (DIM); }
 DISABLE { return (DISABLE); }
 DONE { return (DONE); }
@@ -163,6 +165,7 @@ SGN { return (SGN); }
 SHARED { return (SHARED); }
 SIGNED { return (SIGNED); }
 SPACE { return (SPACE); }
+SPECIFIC { return (SPECIFIC); }
 SPRITE { return (SPRITE); }
 STEP { return (STEP); }
 STR { return (STR); }
@@ -184,6 +187,7 @@ UNTIL { return (UNTIL); }
 UP { return (UP); }
 UPPER { return (UPPER); }
 UPPER\$ { return (UPPER); }
+USE { return (USE); }
 VAL { return (VAL); }
 VAR { return (VAR); }
 VARIABLES { return (VARIABLES); }

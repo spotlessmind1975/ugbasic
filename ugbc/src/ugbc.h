@@ -925,6 +925,9 @@ void text_tab( Environment * _environment );
 
 void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _text, char * _encoding, char * _pen, char * _paper );
 void text_vscroll( Environment * _environment );
+Variable * text_get_pen( Environment * _environment, char * _color );
+void use_ansi( Environment * _environment );
+void use_specific( Environment * _environment );
 
 void textmap_at( Environment * _environment, int _address );
 void textmap_at_var( Environment * _environment, char * _address );

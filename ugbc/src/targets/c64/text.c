@@ -91,6 +91,12 @@ void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _
     if ( ! _environment->textEncodedAtDeployed ) {
 
         outline0("JMP lib_text_encoded_at_after");
+        outline0("NOP");
+        outline0("NOP");
+        outline0("NOP");
+        outline0("NOP");
+        outline0("NOP");
+
         outhead0("lib_text_encoded_at:");
         outline0("LDX $d6" ); // y
         outline0("BEQ lib_text_encoded_at_skip" );
@@ -146,6 +152,9 @@ void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _
         outline0("CMP #09");
         outline0("BEQ lib_text_encoded_at_tab");
 
+        outline0("CMP #01");
+        outline0("BEQ lib_text_encoded_at_pen");
+
         outline0("CMP #32");
         outline0("BCC lib_text_encoded_at_sp128");
         outline0("CMP #64");
@@ -184,6 +193,15 @@ void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _
         outline0("TXA");
         outline0("ADC $25");
         outline0("TAX");
+        outline0("JMP lib_text_encoded_at_increment_x");
+
+        outhead0("lib_text_encoded_at_pen:");
+        outline0("INC $20");
+        outline0("DEX");
+        outline0("LDA ($20), Y");
+        outline0("STA $2b");
+        outline0("INC $20");
+        outline0("DEY");
         outline0("JMP lib_text_encoded_at_increment_x");
 
         outhead0("lib_text_encoded_at_sp0:");
