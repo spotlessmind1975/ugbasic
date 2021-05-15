@@ -291,14 +291,29 @@ void text_text( Environment * _environment, char * _text ) {
 
 Variable * text_get_pen( Environment * _environment, char * _color ) {
     
-    Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_BLACK );
+    Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_WHITE );
 
     Variable * result = variable_temporary( _environment, VT_STRING, 0 );
 
     char resultString[MAX_TEMPORARY_STORAGE]; sprintf( resultString, "\x1 " );
     char stringAddress[MAX_TEMPORARY_STORAGE]; sprintf( stringAddress, "%s+1", result->realName );
 
-    outline0(";cpu_move_8bit_indirect_with_offset");
+    variable_store_string(_environment, result->name, resultString );
+
+    cpu_move_8bit_indirect_with_offset(_environment, color->realName, stringAddress, 1 );
+        
+    return result;
+
+}
+
+Variable * text_get_paper( Environment * _environment, char * _color ) {
+    
+    Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_BLACK );
+
+    Variable * result = variable_temporary( _environment, VT_STRING, 0 );
+
+    char resultString[MAX_TEMPORARY_STORAGE]; sprintf( resultString, "\x2 " );
+    char stringAddress[MAX_TEMPORARY_STORAGE]; sprintf( stringAddress, "%s+1", result->realName );
 
     variable_store_string(_environment, result->name, resultString );
 

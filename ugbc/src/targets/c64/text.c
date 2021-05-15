@@ -155,6 +155,9 @@ void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _
         outline0("CMP #01");
         outline0("BEQ lib_text_encoded_at_pen");
 
+        outline0("CMP #02");
+        outline0("BEQ lib_text_encoded_at_paper");
+
         outline0("CMP #32");
         outline0("BCC lib_text_encoded_at_sp128");
         outline0("CMP #64");
@@ -200,6 +203,16 @@ void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _
         outline0("DEX");
         outline0("LDA ($20), Y");
         outline0("STA $2b");
+        outline0("INC $20");
+        outline0("DEY");
+        outline0("JMP lib_text_encoded_at_increment_x");
+
+        outhead0("lib_text_encoded_at_paper:");
+        outline0("INC $20");
+        outline0("DEX");
+        outline0("LDA ($20), Y");
+        outline0("STA $d021");
+        outline0("STA $d020");
         outline0("INC $20");
         outline0("DEY");
         outline0("JMP lib_text_encoded_at_increment_x");

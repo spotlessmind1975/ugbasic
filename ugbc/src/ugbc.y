@@ -522,6 +522,9 @@ exponential:
     | PEN DOLLAR OP expr CP {
         $$ = text_get_pen( _environment, $4 )->name;
     }
+    | PAPER DOLLAR OP expr CP {
+        $$ = text_get_paper( _environment, $4 )->name;
+    }
     ;
 
 position:   POSITION | AT;
