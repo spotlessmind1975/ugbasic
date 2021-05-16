@@ -62,6 +62,7 @@ CHR { return (CHR); }
 CHR\$ { return (CHR); }
 CLEAR { return (CLEAR); }
 CLEFT { return (CLEFT); }
+CLINE { return (CLINE); }
 CLS { return (CLS); }
 CMOVE { return (CMOVE); }
 CODE { return (CODE); }

@@ -559,6 +559,12 @@ typedef struct _Environment {
 
     int textClsDeployed;
 
+    /**
+     * Deployed the cline text routine
+     */
+
+    int textClineDeployed;
+
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */
@@ -932,6 +938,7 @@ void text_at( Environment * _environment, char * _x, char * _y, char * _text );
 void text_locate( Environment * _environment, char * _x, char * _y );
 void text_cmove( Environment * _environment, char * _dx, char * _dy );
 void text_cmove_direct( Environment * _environment, int _dx, int _dy );
+void text_cline( Environment * _environment, char * _characters );
 void text_home( Environment * _environment );
 void text_text( Environment * _environment, char * _text );
 void text_pen( Environment * _environment, char * _color );

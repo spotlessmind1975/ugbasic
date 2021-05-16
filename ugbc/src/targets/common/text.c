@@ -551,4 +551,3 @@ void text_center( Environment * _environment, char * _string ) {
     text_at( _environment, w->name, y->name, string->name );
 
 }
-

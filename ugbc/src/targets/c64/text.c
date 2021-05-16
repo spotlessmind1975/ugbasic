@@ -104,16 +104,6 @@ void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _
 
         outline0("JMP lib_text_encoded_at_after");
 
-        outline0("NOP");
-        outline0("NOP");
-        outline0("NOP");
-        outline0("NOP");
-        outline0("NOP");
-        outline0("NOP");
-        outline0("NOP");
-        outline0("NOP");
-        outline0("NOP");
-
         outhead0("lib_text_encoded_at:");
         outline0("SEI" ); // y
         outline0("LDX $d6" ); // y
@@ -605,5 +595,167 @@ void text_cls( Environment * _environment ) {
     }
 
     outline0("JSR lib_text_cls");
+    
+}
+
+void text_cline( Environment * _environment, char * _characters ) {
+
+    Variable * characters = NULL;
+    if ( _characters ) {
+        characters = variable_retrieve( _environment, _characters );
+        outline1("LDA %s", characters->realName);
+    } else {
+        outline0("LDA #0");
+    }
+    outline0("STA $25");
+
+    if ( !_environment->textClineDeployed ) {
+
+        Variable * colormapAddress = variable_retrieve( _environment, "colormapAddress" );
+        Variable * textAddress = variable_retrieve( _environment, "textAddress" );
+        Variable * x = variable_retrieve( _environment, "windowCX" );
+        Variable * y = variable_retrieve( _environment, "windowCY" );
+
+        outline0("JMP lib_text_cline_after");
+
+        outline0("NOP");
+        outline0("NOP");
+        outline0("NOP");
+        outline0("NOP");
+        outline0("NOP");
+        outline0("NOP");
+        outline0("NOP");
+        outline0("NOP");
+        outline0("NOP");
+
+        outline0("lib_text_cline:");
+        outline1("LDA %s", x->realName );
+        outline0("STA $30" );
+        outline1("LDA %s", y->realName );
+        outline0("STA $31");
+
+        // Use the current bitmap address as starting address for filling routine.
+        outline1("LDA %s", textAddress->realName);
+        outline0("STA $22");
+        outline1("LDA %s+1", textAddress->realName);
+        outline0("STA $23");
+        outline1("LDA %s", colormapAddress->realName );
+        outline0("STA $29");
+        outline1("LDA %s+1", colormapAddress->realName );
+        outline0("STA $2a");
+ 
+        outline0("LDX $31" ); // y
+        outline0("BEQ lib_text_cline_skip" );
+        outhead0("lib_text_cline_loop1:" );
+        outline0("CLC"); // x
+        outline0("LDA #40"); // width (lo)
+        outline0("ADC $22");
+        outline0("STA $22");
+        outline0("LDA #0"); // width (hi)
+        outline0("ADC $23");
+        outline0("STA $23");
+        outline0("DEX" );
+        outline0("BNE lib_text_cline_loop1" );
+
+        outline0("LDX $31" ); // y
+        outhead0("lib_text_cline_loopc1:" );
+        outline0("CLC"); // x
+        outline0("LDA #40"); // width (lo)
+        outline0("ADC $29");
+        outline0("STA $29");
+        outline0("LDA #0"); // width (hi)
+        outline0("ADC $2a");
+        outline0("STA $2a");
+        outline0("DEX" );
+        outline0("BNE lib_text_cline_loopc1" );
+
+        outhead0("lib_text_cline_skip:" );
+
+        outline0("LDA $25");
+        outline0("BEQ lib_text_cline_entire_line");
+
+        outline0("CLC"); // x
+        outline0("LDA $30"); // x
+        outline0("ADC $22");
+        outline0("STA $22");
+        outline0("LDA #0");
+        outline0("ADC $23");
+        outline0("STA $23");
+
+        outline0("CLC"); // x
+        outline0("LDA $30"); // x
+        outline0("ADC $29");
+        outline0("STA $29");
+        outline0("LDA #0");
+        outline0("ADC $2a");
+        outline0("STA $2a");
+
+        outline0("LDX $25");
+        outline0("LDY #0");
+
+
+        outhead0("lib_text_cline_increment_x:");
+        outline0("LDA #32");
+        outline0("STA ($22),y");
+        
+        outline0("INC $30"); // x
+        outline0("LDA $30"); // x
+        outline0("CMP #40"); // x
+        outline0("BNE lib_text_cline_next"); // x
+        outline0("LDA #0"); // x
+        outline0("STA $30"); // x
+        outline0("INC $31"); // y
+        outline0("LDA $31"); // y
+        outline0("CMP #24"); // h
+        outline0("BNE lib_text_cline_next"); // x
+
+        text_vscroll( _environment );
+
+        outline0("DEC $31"); // y
+        outline0("SEC");
+        outline0("LDA $22");
+        outline0("SBC #40");
+        outline0("STA $22");
+        outline0("LDA $23");
+        outline0("SBC #0");
+        outline0("STA $23");
+
+        outline0("SEC");
+        outline0("LDA $29");
+        outline0("SBC #40");
+        outline0("STA $29");
+        outline0("LDA $2a");
+        outline0("SBC #0");
+        outline0("STA $2a");
+ 
+        outline0("lib_text_cline_next:");
+        outline0("INY");
+        outline0("DEX");
+        outline0("BNE lib_text_cline_increment_x");
+        outline0("RTS");
+
+        outhead0("lib_text_cline_entire_line:");
+
+        outline0("LDY #0");
+
+        outhead0("lib_text_cline_increment2_x:");
+
+        outline0("LDA #32");
+        outline0("STA ($22),y");
+        
+        outline0("INY"); // x
+        outline0("INC $30"); // x
+        outline0("LDA $30"); // x
+        outline0("CMP #40"); // x
+        outline0("BNE lib_text_cline_increment2_x"); // x
+        outline0("RTS");
+
+        outhead0("lib_text_cline_after:");
+
+        _environment->textClineDeployed = 1;
+
+    }
+
+    outline0("JSR lib_text_cline");
     
 }
