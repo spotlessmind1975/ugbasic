@@ -962,6 +962,8 @@ Variable * text_get_cmove( Environment * _environment, char * _x, char * _y );
 Variable * text_get_cmove_direct( Environment * _environment, int _x, int _y );
 Variable * text_get_at( Environment * _environment, char * _x, char * _y );
 Variable * text_get_tab( Environment * _environment );
+Variable * text_get_xcurs( Environment * _environment );
+Variable * text_get_ycurs( Environment * _environment );
 void use_ansi( Environment * _environment );
 void use_specific( Environment * _environment );
 void text_cls( Environment * _environment );

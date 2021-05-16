@@ -221,7 +221,9 @@ WHITE { return(WHITE); }
 WRITING { return(WRITING); }
 WORD { return (WORD); }
 XOR { return (XOR); }
+XCURS { return (XCURS); }
 XPEN { return (XPEN); }
+YCURS { return (YCURS); }
 YELLOW { return(YELLOW); }
 YPEN { return (YPEN); }
 
