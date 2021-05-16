@@ -1,0 +1,6 @@
+    LOCATE 0,1
+    CENTRE "ABOVE"
+    CMOVE ,3
+    CENTRE "SUSPICION"
+
+    HALT
