@@ -2421,6 +2421,8 @@ void cpu6502_bits_to_string( Environment * _environment, char * _number, char * 
 
         outline0("bits_to_string_after:");
      
+        _environment->bitsToString = 1;
+        
     }
 
     outline0("LDA #0" );
