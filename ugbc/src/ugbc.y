@@ -529,6 +529,12 @@ exponential:
     | CMOVE DOLLAR OP expr COMMA expr CP {
         $$ = text_get_cmove( _environment, $4, $6 )->name;
     }
+    | AT DOLLAR OP expr COMMA expr CP {
+        $$ = text_get_at( _environment, $4, $6 )->name;
+    }
+    | LOCATE DOLLAR OP expr COMMA expr CP {
+        $$ = text_get_at( _environment, $4, $6 )->name;
+    }
     ;
 
 position:   POSITION | AT;

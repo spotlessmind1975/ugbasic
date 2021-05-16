@@ -115,6 +115,7 @@ void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _
         outline0("NOP");
 
         outhead0("lib_text_encoded_at:");
+        outline0("SEI" ); // y
         outline0("LDX $d6" ); // y
         outline0("BEQ lib_text_encoded_at_skip" );
         outhead0("lib_text_encoded_at_loop1:" );
@@ -167,7 +168,7 @@ void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _
         outhead0("lib_text_encoded_at_nskip_for_tab:" );
         outline0("LDA ($20),Y");
 
-        outline0("CMP #04");
+        outline0("CMP #05");
         outline0("BCS lib_text_encoded_at_xcontrol_code");
         outline0("JMP lib_text_encoded_at_control_code");
         outhead0("lib_text_encoded_at_xcontrol_code:");
@@ -199,6 +200,7 @@ void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _
         outline0("JMP lib_text_encoded_at_sp0");
 
         outhead0("lib_text_encoded_at_sp64:");
+        outline0("CLC"); // x
         outline0("ADC #64");
         outline0("JMP lib_text_encoded_at_sp0");
         outhead0("lib_text_encoded_at_sp128:");
@@ -221,9 +223,10 @@ void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _
         outhead0("lib_text_encoded_at_tab3:");
         outline0("STA $25");
         outline0("TXA");
+        outline0("CLC"); // x
         outline0("ADC $25");
         outline0("TAX");
-        outline0("JMP lib_text_encoded_at_increment_x");
+        outline0("JMP lib_text_encoded_at_next");
 
         outhead0("lib_text_encoded_at_control_code:")
         outline0("CMP #09");
@@ -233,8 +236,12 @@ void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _
         outline0("CMP #02");
         outline0("BEQ lib_text_encoded_at_paper");
         outline0("CMP #03");
-        outline0("BEQ lib_text_encoded_at_cmove");
-        outline0("JMP lib_text_encoded_at_increment_x");
+        outline0("BEQ lib_text_encoded_at_cmove_prepare");
+        outline0("CMP #04");
+        outline0("BEQ lib_text_encoded_at_xat");
+        outline0("JMP lib_text_encoded_at_next");
+        outhead0("lib_text_encoded_at_xat:");
+        outline0("JMP lib_text_encoded_at_at");
 
         outhead0("lib_text_encoded_at_pen:");
         outline0("INC $20");
@@ -247,7 +254,7 @@ void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _
         outhead0("lib_text_encoded_at_pen_disabled:");
         outline0("INC $20");
         outline0("DEY");
-        outline0("JMP lib_text_encoded_at_increment_x");
+        outline0("JMP lib_text_encoded_at_next");
 
         outhead0("lib_text_encoded_at_paper:");
         outline0("INC $20");
@@ -261,39 +268,80 @@ void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _
         outhead0("lib_text_encoded_at_paper_disabled:");
         outline0("INC $20");
         outline0("DEY");
-        outline0("JMP lib_text_encoded_at_increment_x");
+        outline0("JMP lib_text_encoded_at_next");
 
-        outhead0("lib_text_encoded_at_cmove:");
+        outhead0("lib_text_encoded_at_cmove_prepare:");
         outline0("INC $20");
         outline0("DEX");
         outline0("LDA ($20), Y");
+        outline0("STA $33");
+        outline0("INC $20");
+        outline0("DEX");
+        outline0("LDA ($20), Y");
+        outline0("STA $34");
+
+        outhead0("lib_text_encoded_at_cmove:");
+        outline0("CLC"); // x
+        outline0("LDA $33");
         outline0("ADC $d3");
         outline0("CMP #$80");
         outline0("BCS lib_text_encoded_at_cmove_skipx");
         outline0("CMP #40");
         outline0("BCS lib_text_encoded_at_cmove_skipx");
         outline0("STA $d3");
-        outline0("LDA ($20), Y");
+        outline0("LDA $33");
+
+        outline0("CMP #$80");
+        outline0("BCC lib_text_encoded_at_cmove_addpx");
+
+        outhead0("lib_text_encoded_at_cmove_subpx:")
+        outline0("EOR #$FF"); // x
+        outline0("CLC"); // x
+        outline0("ADC #$1"); // x
+        outline0("STA $33"); // x
+        outline0("SEC"); // x
+        outline0("LDA $22");
+        outline0("SBC $33");
+        outline0("STA $22");
+        outline0("LDA $23"); // width (hi)
+        outline0("SBC #0");
+        outline0("STA $23");
+
+        outline0("SEC"); // x
+        outline0("LDA $29");
+        outline0("SBC $33");
+        outline0("STA $29");
+        outline0("LDA $30"); // width (hi)
+        outline0("SBC #0");
+        outline0("STA $30");
+
+        outline0("JMP lib_text_encoded_at_cmove_skipx");
+
+        outhead0("lib_text_encoded_at_cmove_addpx:")
+
         outline0("CLC"); // x
         outline0("ADC $22");
         outline0("STA $22");
         outline0("LDA #0"); // width (hi)
         outline0("ADC $23");
         outline0("STA $23");
+        outline0("JMP lib_text_encoded_at_cmove_skipx");
 
         outhead0("lib_text_encoded_at_cmove_skipx:");
-        outline0("INC $20");
-        outline0("DEX");
-        outline0("LDA ($20), Y");
+
+        outline0("CLC"); // x
+        outline0("LDA $34");
         outline0("ADC $d6");
         outline0("CMP #$80");
         outline0("BCS lib_text_encoded_at_cmove_skipy");
-        outline0("CMP #24");
+        outline0("CMP #26");
         outline0("BCS lib_text_encoded_at_cmove_skipy");
         outline0("STA $d6");
+
+        outhead0("lib_text_encoded_at_cmove_addpy:");
         outline0("TXA");
         outline0("PHA");
-        outline0("LDA ($20), Y");
+        outline0("LDA $34");
         outline0("CMP #$80");
         outline0("BCC lib_text_encoded_at_cmove_loopyp");
         outline0("JMP lib_text_encoded_at_cmove_loopym");
@@ -301,6 +349,7 @@ void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _
         outhead0("lib_text_encoded_at_cmove_loopyp:")
         outline0("TAX");
         outhead0("lib_text_encoded_at_cmove_loopy:")
+
         outline0("CLC"); // x
         outline0("LDA #40"); // width (lo)
         outline0("ADC $22");
@@ -308,6 +357,15 @@ void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _
         outline0("LDA #0"); // width (hi)
         outline0("ADC $23");
         outline0("STA $23");
+
+        outline0("CLC"); // x
+        outline0("LDA #40"); // width (lo)
+        outline0("ADC $29");
+        outline0("STA $29");
+        outline0("LDA #0"); // width (hi)
+        outline0("ADC $30");
+        outline0("STA $30");
+
         outline0("DEX" );
         outline0("BNE lib_text_encoded_at_cmove_loopy" );
         outline0("PLA");
@@ -315,15 +373,29 @@ void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _
         outline0("JMP lib_text_encoded_at_cmove_skipy" );
 
         outhead0("lib_text_encoded_at_cmove_loopym:")
+        outline0("EOR #$FF"); // x
+        outline0("CLC"); // x
+        outline0("ADC #$1"); // x
+        outline0("STA $34"); // x
         outline0("TAX");
         outhead0("lib_text_encoded_at_cmove_loopy2:")
+
         outline0("SEC"); // x
-        outline0("LDA #40"); // width (lo)
-        outline0("SBC $22");
+        outline0("LDA $22"); // width (lo)
+        outline0("SBC #40");
         outline0("STA $22");
-        outline0("LDA #0"); // width (hi)
-        outline0("SBC $23");
+        outline0("LDA $23"); // width (hi)
+        outline0("SBC #0");
         outline0("STA $23");
+
+        outline0("SEC"); // x
+        outline0("LDA $29"); // width (lo)
+        outline0("SBC #40");
+        outline0("STA $29");
+        outline0("LDA $30"); // width (hi)
+        outline0("SBC #0");
+        outline0("STA $30");
+
         outline0("DEX" );
         outline0("BNE lib_text_encoded_at_cmove_loopy2" );
         outline0("PLA");
@@ -333,8 +405,22 @@ void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _
         outhead0("lib_text_encoded_at_cmove_skipy:");
         outline0("INC $20");
         outline0("DEY");
+        outline0("JMP lib_text_encoded_at_next");
 
-        outline0("JMP lib_text_encoded_at_increment_x");
+        outhead0("lib_text_encoded_at_at:");
+        outline0("INC $20");
+        outline0("DEX");
+        outline0("LDA ($20), Y");
+        outline0("SEC");
+        outline0("SBC $d3");
+        outline0("STA $33");
+        outline0("INC $20");
+        outline0("DEX");
+        outline0("LDA ($20), Y");
+        outline0("SEC");
+        outline0("SBC $d6");
+        outline0("STA $34");
+        outhead0("JMP lib_text_encoded_at_cmove");
 
         outhead0("lib_text_encoded_at_sp0:");
         outline0("STA ($22),Y");
@@ -387,6 +473,7 @@ void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _
         outline0("BEQ lib_text_encoded_at_end" );
         outline0("JMP lib_text_encoded_at_loop2" );
         outline0("lib_text_encoded_at_end:" );
+        outline0("SEI" ); // y
         outline0("RTS" );
 
         outhead0("lib_text_encoded_at_after:");

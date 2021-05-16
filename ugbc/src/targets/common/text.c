@@ -343,6 +343,25 @@ Variable * text_get_cmove( Environment * _environment, char * _x, char * _y ) {
 
 }
 
+Variable * text_get_at( Environment * _environment, char * _x, char * _y ) {
+    
+    Variable * x = variable_retrieve_or_define( _environment, _x, VT_BYTE, 0 );
+    Variable * y = variable_retrieve_or_define( _environment, _y, VT_BYTE, 0 );
+
+    Variable * result = variable_temporary( _environment, VT_STRING, 0 );
+
+    char resultString[MAX_TEMPORARY_STORAGE]; sprintf( resultString, "\x4  " );
+    char stringAddress[MAX_TEMPORARY_STORAGE]; sprintf( stringAddress, "%s+1", result->realName );
+
+    variable_store_string(_environment, result->name, resultString );
+
+    cpu_move_8bit_indirect_with_offset(_environment, x->realName, stringAddress, 1 );
+    cpu_move_8bit_indirect_with_offset(_environment, y->realName, stringAddress, 2 );
+        
+    return result;
+
+}
+
 void text_newline( Environment * _environment ) {
 
     MAKE_LABEL
