@@ -228,6 +228,8 @@ void setup_text_variables( Environment * _environment ) {
     variable_define( _environment, "windowWW", VT_BYTE, 4 );
     variable_define( _environment, "TAB", VT_STRING, 0 );
     variable_store_string( _environment, "TAB", "\t");
+    variable_define( _environment, "windowMX", VT_BYTE, 0 );
+    variable_define( _environment, "windowMY", VT_BYTE, 0 );                
 
 }
 
@@ -561,5 +563,37 @@ Variable * text_get_xcurs( Environment * _environment ) {
 Variable * text_get_ycurs( Environment * _environment ) {
     
     return variable_retrieve( _environment, "windowCY");
+
+}
+
+void text_memorize( Environment * _environment ) {
+
+    setup_text_variables( _environment );
+
+    Variable * x = variable_retrieve( _environment, "windowCX" );
+    Variable * y = variable_retrieve( _environment, "windowCY" );
+    Variable * mx = variable_retrieve( _environment, "windowMX" );
+    Variable * my = variable_retrieve( _environment, "windowMY" );
+
+    variable_move_naked( _environment, x->name, mx->name );
+    variable_move_naked( _environment, y->name, my->name );
+
+}
+
+void text_remember( Environment * _environment ) {
+
+    outline0("; text_remember");
+    
+    setup_text_variables( _environment );
+
+    Variable * x = variable_retrieve( _environment, "windowCX" );
+    Variable * y = variable_retrieve( _environment, "windowCY" );
+    Variable * mx = variable_retrieve( _environment, "windowMX" );
+    Variable * my = variable_retrieve( _environment, "windowMY" );
+
+    variable_move_naked( _environment, mx->name, x->name );
+    variable_move_naked( _environment, my->name, y->name );
+    variable_store( _environment, mx->name, 0 );
+    variable_store( _environment, my->name, 0 );
 
 }

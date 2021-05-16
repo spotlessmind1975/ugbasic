@@ -967,6 +967,8 @@ Variable * text_get_ycurs( Environment * _environment );
 void use_ansi( Environment * _environment );
 void use_specific( Environment * _environment );
 void text_cls( Environment * _environment );
+void text_memorize( Environment * _environment );
+void text_remember( Environment * _environment );
 
 void textmap_at( Environment * _environment, int _address );
 void textmap_at_var( Environment * _environment, char * _address );

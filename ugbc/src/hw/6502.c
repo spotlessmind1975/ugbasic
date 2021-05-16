@@ -162,6 +162,7 @@ void cpu6502_fill( Environment * _environment, char * _address, char * _blocks, 
  * @param _destination Destination of movement
  */
 void cpu6502_move_8bit( Environment * _environment, char *_source, char *_destination ) {
+    outline0("; cpu6502_move_8bit");
     outline1("LDA %s", _source);
     outline1("STA %s", _destination);
 }
