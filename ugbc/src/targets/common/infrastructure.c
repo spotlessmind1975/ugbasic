@@ -611,7 +611,7 @@ Variable * variable_cast( Environment * _environment, char * _source, VariableTy
     Variable * source = variable_retrieve( _environment, _source );
 
     Variable * target = variable_temporary( _environment, _type, "(generated for cast)" );
-    
+
     switch( VT_BITWIDTH( source->type ) ) {
         case 32:
             switch( VT_BITWIDTH( target->type ) ) {

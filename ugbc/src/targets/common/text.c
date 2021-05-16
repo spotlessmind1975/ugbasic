@@ -362,6 +362,14 @@ Variable * text_get_at( Environment * _environment, char * _x, char * _y ) {
 
 }
 
+Variable * text_get_tab( Environment * _environment ) {
+    
+    Variable * tab = variable_retrieve( _environment, "TAB" );
+
+    return tab;
+
+}
+
 void text_newline( Environment * _environment ) {
 
     MAKE_LABEL
@@ -396,6 +404,15 @@ void text_tab( Environment * _environment ) {
     Variable * tab = variable_retrieve( _environment, "TAB" );
 
     text_text( _environment, tab->name );
+    
+}
+
+void text_set_tab( Environment * _environment, char * _new_tab ) {
+
+    Variable * tab = variable_retrieve( _environment, "windowT" );
+    Variable * new_tab = variable_retrieve_or_define( _environment, _new_tab, VT_BYTE, 4 );
+
+    variable_move( _environment, new_tab->name, tab->name );
     
 }
 

@@ -173,6 +173,7 @@ S { return (S); }
 SCREEN { return (SCREEN); }
 SCROLL { return (SCROLL); }
 SELECT { return (SELECT); }
+SET { return (SET); }
 SGN { return (SGN); }
 SHARED { return (SHARED); }
 SIGNED { return (SIGNED); }
@@ -184,6 +185,7 @@ STR { return (STR); }
 STR\$ { return (STR); }
 STRING { return (STRING); }
 STRING\$ { return (STRING); }
+TAB { return(TAB); }
 TAN { return(TAN); }
 TEMPORARY { return (TEMPORARY); }
 TEXT { return (TEXT); }

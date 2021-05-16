@@ -42,7 +42,7 @@ extern char DATATYPE_AS_STRING[][16];
 %token SIGNED ABS RND COLORS INK TIMER POWERING DIM ADDRESS PROC PROCEDURE CALL OSP CSP
 %token SHARED MILLISECOND MILLISECONDS TICKS GLOBAL PARAM PRINT DEFAULT SPECIFIC ANSI USE
 %token PAPER INVERSE REPLACE XOR IGNORE NORMAL WRITING ONLY LOCATE CLS HOME CMOVE
-%token CENTER CENTRE
+%token CENTER CENTRE TAB SET
 
 %token BLACK WHITE RED CYAN VIOLET GREEN BLUE YELLOW ORANGE
 %token BROWN LIGHT DARK GREY GRAY MAGENTA PURPLE
@@ -535,6 +535,9 @@ exponential:
     }
     | LOCATE DOLLAR OP expr COMMA expr CP {
         $$ = text_get_at( _environment, $4, $6 )->name;
+    }
+    | TAB DOLLAR {
+        $$ = text_get_tab( _environment )->name;
     }
     ;
 
@@ -1368,6 +1371,9 @@ statement:
   | PRINT print_definition
   | LOCATE locate_definition
   | CMOVE cmove_definition
+  | SET TAB expr {
+      text_set_tab( _environment, $3 );
+  }
   | CENTER expr {
       text_center( _environment, $2 );
   }

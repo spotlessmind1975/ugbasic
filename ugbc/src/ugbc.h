@@ -947,10 +947,12 @@ void text_center( Environment * _environment, char * _string );
 
 void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _text, char * _encoding, char * _pen, char * _paper );
 void text_vscroll( Environment * _environment );
+void text_set_tab( Environment * _environment, char * _net_tab );
 Variable * text_get_pen( Environment * _environment, char * _color );
 Variable * text_get_paper( Environment * _environment, char * _color );
 Variable * text_get_cmove( Environment * _environment, char * _x, char * _y );
 Variable * text_get_at( Environment * _environment, char * _x, char * _y );
+Variable * text_get_tab( Environment * _environment );
 void use_ansi( Environment * _environment );
 void use_specific( Environment * _environment );
 void text_cls( Environment * _environment );

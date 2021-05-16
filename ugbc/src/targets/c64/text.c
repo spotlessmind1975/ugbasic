@@ -168,7 +168,7 @@ void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _
         outhead0("lib_text_encoded_at_nskip_for_tab:" );
         outline0("LDA ($20),Y");
 
-        outline0("CMP #05");
+        outline0("CMP #10");
         outline0("BCS lib_text_encoded_at_xcontrol_code");
         outline0("JMP lib_text_encoded_at_control_code");
         outhead0("lib_text_encoded_at_xcontrol_code:");
@@ -221,11 +221,9 @@ void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _
         outline1("DEC %s", tab->realName); // tab spaces
         outline0("JMP lib_text_encoded_at_tab2");
         outhead0("lib_text_encoded_at_tab3:");
-        outline0("STA $25");
-        outline0("TXA");
         outline0("CLC"); // x
-        outline0("ADC $25");
-        outline0("TAX");
+        outline1("ADC %s", tab->realName); // tab spaces
+        outline0("STA $25");
         outline0("JMP lib_text_encoded_at_next");
 
         outhead0("lib_text_encoded_at_control_code:")
@@ -468,6 +466,10 @@ void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _
         outline0("STA $2a");
 
         outhead0("lib_text_encoded_at_next:");
+        outline0("LDA $25");
+        outline0("BEQ lib_text_encoded_at_xloop2");
+        outline0("JMP lib_text_encoded_at_loop2");
+        outhead0("lib_text_encoded_at_xloop2:");
         outline0("INY" );
         outline0("DEX" );
         outline0("BEQ lib_text_encoded_at_end" );
