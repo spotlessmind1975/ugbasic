@@ -480,3 +480,20 @@ void text_writing( Environment * _environment, char * _mode, char * _parts ) {
     
 }
 
+void text_center( Environment * _environment, char * _string ) {
+
+    setup_text_variables( _environment );
+
+    Variable * x = variable_retrieve( _environment, "windowX" );
+    Variable * y = variable_retrieve( _environment, "windowCY" );
+    Variable * x2 = variable_retrieve( _environment, "windowX2" );
+    Variable * y2 = variable_retrieve( _environment, "windowY2" );
+    Variable * string = variable_retrieve( _environment, _string );
+
+    Variable * w = variable_sub( _environment, variable_sub( _environment, x2->name, x->name )->name, variable_string_len( _environment, _string)->name );
+    variable_div2_const( _environment, w->name, 1 );
+
+    text_at( _environment, w->name, y->name, string->name );
+
+}
+

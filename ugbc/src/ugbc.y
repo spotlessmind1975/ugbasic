@@ -42,6 +42,7 @@ extern char DATATYPE_AS_STRING[][16];
 %token SIGNED ABS RND COLORS INK TIMER POWERING DIM ADDRESS PROC PROCEDURE CALL OSP CSP
 %token SHARED MILLISECOND MILLISECONDS TICKS GLOBAL PARAM PRINT DEFAULT SPECIFIC ANSI USE
 %token PAPER INVERSE REPLACE XOR IGNORE NORMAL WRITING ONLY LOCATE CLS HOME CMOVE
+%token CENTER CENTRE
 
 %token BLACK WHITE RED CYAN VIOLET GREEN BLUE YELLOW ORANGE
 %token BROWN LIGHT DARK GREY GRAY MAGENTA PURPLE
@@ -1367,6 +1368,12 @@ statement:
   | PRINT print_definition
   | LOCATE locate_definition
   | CMOVE cmove_definition
+  | CENTER expr {
+      text_center( _environment, $2 );
+  }
+  | CENTRE expr {
+      text_center( _environment, $2 );
+  }
   | CLS {
       text_cls( _environment );
   }

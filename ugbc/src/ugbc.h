@@ -943,6 +943,7 @@ void text_under( Environment * _environment, int _value );
 void text_newline( Environment * _environment );
 void text_tab( Environment * _environment );
 void text_writing( Environment * _environment, char * _mode, char * _parts );
+void text_center( Environment * _environment, char * _string );
 
 void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _text, char * _encoding, char * _pen, char * _paper );
 void text_vscroll( Environment * _environment );

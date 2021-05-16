@@ -55,6 +55,8 @@ BROWN { return(BROWN); }
 BYTE { return (BYTE); }
 BORDER { return (BORDER); }
 CALL { return (CALL); }
+CENTER { return (CENTER); }
+CENTRE { return (CENTRE); }
 CHR { return (CHR); }
 CHR\$ { return (CHR); }
 CLEAR { return (CLEAR); }
