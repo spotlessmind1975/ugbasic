@@ -55,11 +55,13 @@ BROWN { return(BROWN); }
 BYTE { return (BYTE); }
 BORDER { return (BORDER); }
 CALL { return (CALL); }
+CDOWN { return (CDOWN); }
 CENTER { return (CENTER); }
 CENTRE { return (CENTRE); }
 CHR { return (CHR); }
 CHR\$ { return (CHR); }
 CLEAR { return (CLEAR); }
+CLEFT { return (CLEFT); }
 CLS { return (CLS); }
 CMOVE { return (CMOVE); }
 CODE { return (CODE); }
@@ -68,6 +70,8 @@ COLOR { return (COLOR); }
 COLORS { return (COLORS); }
 COLORMAP { return (COLORMAP); }
 COMPRESS { return (COMPRESS); }
+CRIGHT { return (CRIGHT); }
+CUP { return (CUP); }
 CYAN { return(CYAN); }
 CYCLES { return (CYCLES); }
 DARK { return(DARK); }

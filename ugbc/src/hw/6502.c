@@ -1897,6 +1897,19 @@ void cpu6502_store_8bit_indirect( Environment * _environment, char *_source, int
 
 }
 
+void cpu6502_store_8bit_indirect_with_offset( Environment * _environment, char *_source, int _value, int _offset ) {
+
+    outline1("LDA %s", _source);
+    outline0("STA $22");
+    outline1("LDA %s+1", _source);
+    outline0("STA $23");
+    outline1("LDA #$%2.2x", (_value & 0xff));
+    outline1("LDy #$%2.2x", (_offset & 0xff));
+    outline0("STA ($22),Y");
+
+}
+
+
 void cpu6502_move_8bit_indirect( Environment * _environment, char *_source, char * _value ) {
 
     outline1("LDA %s", _value);
@@ -2422,7 +2435,7 @@ void cpu6502_bits_to_string( Environment * _environment, char * _number, char * 
         outline0("bits_to_string_after:");
      
         _environment->bitsToString = 1;
-        
+
     }
 
     outline0("LDA #0" );

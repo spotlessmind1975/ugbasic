@@ -42,7 +42,7 @@ extern char DATATYPE_AS_STRING[][16];
 %token SIGNED ABS RND COLORS INK TIMER POWERING DIM ADDRESS PROC PROCEDURE CALL OSP CSP
 %token SHARED MILLISECOND MILLISECONDS TICKS GLOBAL PARAM PRINT DEFAULT SPECIFIC ANSI USE
 %token PAPER INVERSE REPLACE XOR IGNORE NORMAL WRITING ONLY LOCATE CLS HOME CMOVE
-%token CENTER CENTRE TAB SET
+%token CENTER CENTRE TAB SET CUP CDOWN CLEFT CRIGHT
 
 %token BLACK WHITE RED CYAN VIOLET GREEN BLUE YELLOW ORANGE
 %token BROWN LIGHT DARK GREY GRAY MAGENTA PURPLE
@@ -529,6 +529,18 @@ exponential:
     }
     | CMOVE DOLLAR OP expr COMMA expr CP {
         $$ = text_get_cmove( _environment, $4, $6 )->name;
+    }
+    | CUP DOLLAR {
+        $$ = text_get_cmove_direct( _environment, 0, -1 )->name;
+    }
+    | CDOWN DOLLAR {
+        $$ = text_get_cmove_direct( _environment, 0, 1 )->name;
+    }
+    | CLEFT DOLLAR {
+        $$ = text_get_cmove_direct( _environment, -1, 0 )->name;
+    }
+    | CRIGHT DOLLAR {
+        $$ = text_get_cmove_direct( _environment, 1, 0 )->name;
     }
     | AT DOLLAR OP expr COMMA expr CP {
         $$ = text_get_at( _environment, $4, $6 )->name;
@@ -1371,6 +1383,18 @@ statement:
   | PRINT print_definition
   | LOCATE locate_definition
   | CMOVE cmove_definition
+  | CUP {
+      text_cmove_direct( _environment, 0, -1 );
+  }
+  | CDOWN {
+      text_cmove_direct( _environment, 0, 1 );
+  }
+  | CLEFT {
+      text_cmove_direct( _environment, -1, 0 );
+  }
+  | CRIGHT {
+      text_cmove_direct( _environment, 1, 0 );
+  }
   | SET TAB expr {
       text_set_tab( _environment, $3 );
   }

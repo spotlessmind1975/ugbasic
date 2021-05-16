@@ -247,6 +247,28 @@ void text_locate( Environment * _environment, char * _x, char * _y ) {
 
 }
 
+void text_cmove_direct( Environment * _environment, int _dx, int _dy ) {
+
+    if ( _dx ) {
+        Variable * windowCX = variable_retrieve( _environment, "windowCX" );
+        Variable * windowX = variable_retrieve( _environment, "windowX" );
+        Variable * windowX2 = variable_retrieve( _environment, "windowX2" );
+        Variable * dx = variable_temporary( _environment, VT_SBYTE, "(cmove hz)" );
+        variable_store( _environment, dx->name, _dx );
+        add_complex( _environment, windowCX->name, dx->name, windowX->name, windowX2->name );
+    }
+
+    if ( _dy ) {
+        Variable * windowCY = variable_retrieve( _environment, "windowCY" );
+        Variable * windowY = variable_retrieve( _environment, "windowY" );
+        Variable * windowY2 = variable_retrieve( _environment, "windowY2" );
+        Variable * dy = variable_temporary( _environment, VT_SBYTE, "(cmove vt)" );
+        variable_store( _environment, dy->name, _dy );
+        add_complex( _environment, windowCY->name, dy->name, windowY->name, windowY2->name );
+    }
+
+}
+
 void text_cmove( Environment * _environment, char * _dx, char * _dy ) {
 
     if ( _dx ) {
@@ -338,6 +360,22 @@ Variable * text_get_cmove( Environment * _environment, char * _x, char * _y ) {
 
     cpu_move_8bit_indirect_with_offset(_environment, x->realName, stringAddress, 1 );
     cpu_move_8bit_indirect_with_offset(_environment, y->realName, stringAddress, 2 );
+        
+    return result;
+
+}
+
+Variable * text_get_cmove_direct( Environment * _environment, int _x, int _y ) {
+    
+    Variable * result = variable_temporary( _environment, VT_STRING, 0 );
+
+    char resultString[MAX_TEMPORARY_STORAGE]; sprintf( resultString, "\x3  " );
+    char stringAddress[MAX_TEMPORARY_STORAGE]; sprintf( stringAddress, "%s+1", result->realName );
+
+    variable_store_string(_environment, result->name, resultString );
+
+    cpu_store_8bit_indirect_with_offset(_environment, stringAddress, (_x & 0xff), 1 );
+    cpu_store_8bit_indirect_with_offset(_environment, stringAddress, (_y & 0xff), 2 );
         
     return result;
 
