@@ -113,6 +113,7 @@ HEIGHT { return (HEIGHT); }
 HIT { return (HIT); }
 HOME { return (HOME); }
 HORIZONTAL { return (HORIZONTAL); }
+HSCROLL { return (HSCROLL); }
 IF { return (IF); }
 IGNORE { return (IGNORE); }
 INC { return (INC); }

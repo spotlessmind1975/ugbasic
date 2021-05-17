@@ -43,6 +43,7 @@ extern char DATATYPE_AS_STRING[][16];
 %token SHARED MILLISECOND MILLISECONDS TICKS GLOBAL PARAM PRINT DEFAULT SPECIFIC ANSI USE
 %token PAPER INVERSE REPLACE XOR IGNORE NORMAL WRITING ONLY LOCATE CLS HOME CMOVE
 %token CENTER CENTRE TAB SET CUP CDOWN CLEFT CRIGHT CLINE XCURS YCURS MEMORIZE REMEMBER
+%token HSCROLL
 
 %token BLACK WHITE RED CYAN VIOLET GREEN BLUE YELLOW ORANGE
 %token BROWN LIGHT DARK GREY GRAY MAGENTA PURPLE
@@ -1369,6 +1370,21 @@ cmove_definition :
     }
     ;
 
+hscroll_definition : 
+    LEFT {
+        text_hscroll_line( _environment, -1 );
+    }
+    | SCREEN LEFT {
+        text_hscroll_screen( _environment, -1 );
+    }
+    | RIGHT {
+        text_hscroll_line( _environment, 1 );
+    }
+    | SCREEN RIGHT {
+        text_hscroll_screen( _environment, 1 );
+    }
+    ;
+
 statement:
     BANK bank_definition
   | RASTER raster_definition
@@ -1394,6 +1410,7 @@ statement:
   | REMEMBER {
       text_remember( _environment );
   }
+  | HSCROLL hscroll_definition
   | CMOVE cmove_definition
   | CUP {
       text_cmove_direct( _environment, 0, -1 );
@@ -1765,8 +1782,8 @@ int main( int _argc, char *_argv[] ) {
         exit(EXIT_FAILURE);
     }
 
-    bank_define( _environment, "VARIABLES", BT_VARIABLES, 0x4000, NULL );
-    bank_define( _environment, "TEMPORARY", BT_TEMPORARY, 0x4100, NULL );
+    bank_define( _environment, "VARIABLES", BT_VARIABLES, 0x5000, NULL );
+    bank_define( _environment, "TEMPORARY", BT_TEMPORARY, 0x5100, NULL );
 
     if ( _environment->configurationFileName ) {
         _environment->configurationFile = fopen( _environment->configurationFileName, "wt");
