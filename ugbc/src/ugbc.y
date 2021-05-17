@@ -43,7 +43,7 @@ extern char DATATYPE_AS_STRING[][16];
 %token SHARED MILLISECOND MILLISECONDS TICKS GLOBAL PARAM PRINT DEFAULT SPECIFIC ANSI USE
 %token PAPER INVERSE REPLACE XOR IGNORE NORMAL WRITING ONLY LOCATE CLS HOME CMOVE
 %token CENTER CENTRE TAB SET CUP CDOWN CLEFT CRIGHT CLINE XCURS YCURS MEMORIZE REMEMBER
-%token HSCROLL
+%token HSCROLL VSCROLL
 
 %token BLACK WHITE RED CYAN VIOLET GREEN BLUE YELLOW ORANGE
 %token BROWN LIGHT DARK GREY GRAY MAGENTA PURPLE
@@ -1385,6 +1385,15 @@ hscroll_definition :
     }
     ;
 
+vscroll_definition : 
+      SCREEN UP {
+        text_vscroll_screen( _environment, -1 );
+    }
+    | SCREEN DOWN {
+        text_vscroll_screen( _environment, 1 );
+    }
+    ;
+
 statement:
     BANK bank_definition
   | RASTER raster_definition
@@ -1411,6 +1420,7 @@ statement:
       text_remember( _environment );
   }
   | HSCROLL hscroll_definition
+  | VSCROLL vscroll_definition
   | CMOVE cmove_definition
   | CUP {
       text_cmove_direct( _environment, 0, -1 );

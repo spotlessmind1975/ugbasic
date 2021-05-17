@@ -551,7 +551,7 @@ typedef struct _Environment {
      * Deployed the vertical scroll text routine
      */
 
-    int textVScrollDeployed;
+    int textVScrollScreenDeployed;
 
     /**
      * Deployed the cls text routine
@@ -981,6 +981,8 @@ void text_memorize( Environment * _environment );
 void text_remember( Environment * _environment );
 void text_hscroll_line( Environment * _environment, int _direction );
 void text_hscroll_screen( Environment * _environment, int _direction );
+// void text_vscroll_line( Environment * _environment, int _direction );
+void text_vscroll_screen( Environment * _environment, int _direction );
 
 void textmap_at( Environment * _environment, int _address );
 void textmap_at_var( Environment * _environment, char * _address );

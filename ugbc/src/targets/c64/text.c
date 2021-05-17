@@ -428,15 +428,20 @@ void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _
         outline0("INC $d3"); // x
         outline0("LDA $d3"); // x
         outline0("CMP #40"); // x
-        outline0("BNE lib_text_encoded_at_next"); // x
+        outline0("BEQ lib_text_encoded_at_next2"); // x
+        outline0("JMP lib_text_encoded_at_next"); // x
+        outhead0("lib_text_encoded_at_next2:");
         outline0("LDA #0"); // x
         outline0("STA $d3"); // x
         outline0("INC $d6"); // y
         outline0("LDA $d6"); // y
         outline0("CMP #24"); // h
-        outline0("BNE lib_text_encoded_at_next"); // x
 
-        text_vscroll( _environment );
+        outline0("BEQ lib_text_encoded_at_next3"); // x
+        outline0("JMP lib_text_encoded_at_next"); // x
+        outhead0("lib_text_encoded_at_next3:");
+
+        text_vscroll_screen( _environment, -1 );
 
         outline0("DEC $d6"); // y
         outline0("SEC");
@@ -483,15 +488,18 @@ void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _
 
 }
 
-void text_vscroll( Environment * _environment ) {
+void text_vscroll_screen( Environment * _environment, int _direction ) {
 
-    if ( !_environment->textVScrollDeployed ) {
+    outline1("LDA #$%2.2x", ( _direction & 0xff ) );
+    outline0("STA $30" );
+
+    if ( !_environment->textVScrollScreenDeployed ) {
 
         Variable * textAddress = variable_retrieve( _environment, "textAddress" );
 
-        outline0("JMP text_vscroll_after");
+        outline0("JMP text_vscroll_screen_after");
 
-        outline0("text_vscroll:");
+        outline0("text_vscroll_screen:");
         // Use the current bitmap address as starting address for filling routine.
         outline1("LDA %s", textAddress->realName);
         outline0("STA $25");
@@ -503,44 +511,187 @@ void text_vscroll( Environment * _environment ) {
         outline0("STA $27");
         outline1("LDA %s+1", textAddress->realName);
         outline0("STA $28");
+
+        outline0("LDA $30");
+        outline0("CMP #$80");
+        outline0("BCC text_vscroll_screen_down");
+
+        outhead0("text_vscroll_screen_up:");
         outline0("LDX #3" );
         outline0("LDY #0" );
-        outhead0("lib_text_encoded_at_yscroll:");
+        outhead0("text_vscroll_screen_up_yscroll:");
         outline0("LDA ($27),Y");
         outline0("STA ($25),Y");
         outline0("INY");
-        outline0("BNE lib_text_encoded_at_yscroll");
+        outline0("BNE text_vscroll_screen_up_yscroll");
         outline0("INC $26");
         outline0("INC $28");
         outline0("CPX #1");
-        outline0("BNE lib_text_encoded_at_nextblock");
-        outhead0("lib_text_encoded_at_yscroll2:");
+        outline0("BNE text_vscroll_screen_up_yscroll_next");
+        outhead0("text_vscroll_screen_up_yscroll2:");
         outline0("LDA ($27),Y");
         outline0("STA ($25),Y");
         outline0("INY");
         outline0("CPY #232");
-        outline0("BNE lib_text_encoded_at_yscroll2");
-        outhead0("lib_text_encoded_at_nextblock:");
+        outline0("BNE text_vscroll_screen_up_yscroll2");
+        outhead0("text_vscroll_screen_up_yscroll_next:");
         outline0("DEX");
-        outline0("BNE lib_text_encoded_at_yscroll");
+        outline0("BNE text_vscroll_screen_up_yscroll");
         outline0("LDY #192");
-        outhead0("lib_text_encoded_at_refill:");
+        outhead0("text_vscroll_screen_up_refill:");
         outline0("LDA #32");
         outline0("STA ($25),Y");
         outline0("INY");
         outline0("CPY #232");
-        outline0("BNE lib_text_encoded_at_refill");
+        outline0("BNE text_vscroll_screen_up_refill");
         outline0("RTS");
 
-        outline0("text_vscroll_after:");
+        outhead0("text_vscroll_screen_down:");
+        outline0("INC $26" );
+        outline0("INC $28" );
+        outline0("INC $26" );
+        outline0("INC $28" );
+        outline0("INC $26" );
+        outline0("INC $28" );
+        outline0("INC $26" );
+        outline0("INC $28" );
+        outline0("LDY #232");
+        outhead0("text_vscroll_screen_down_yscroll3:");
+        outline0("LDA ($25),Y");
+        outline0("STA ($27),Y");
+        outline0("DEY");
+        outline0("CPY #255");
+        outline0("BNE text_vscroll_screen_down_yscroll3");
 
-        _environment->textVScrollDeployed = 1;
+        outline0("DEC $26" );
+        outline0("DEC $28");
+        outline0("LDX #4" );
+        outline0("LDY #255");
+        outhead0("text_vscroll_screen_down_yscroll4:");
+        outline0("LDA ($25),Y");
+        outline0("STA ($27),Y");
+        outline0("DEY");
+        outline0("CPY #255");
+        outline0("BNE text_vscroll_screen_down_yscroll4");
+
+        outline0("DEC $26");
+        outline0("DEC $28");
+        outline0("LDY #255");
+        outline0("DEX");
+        outline0("BNE text_vscroll_screen_down_yscroll4");
+        outline0("RTS");
+
+        outline0("text_vscroll_screen_after:");
+
+        _environment->textVScrollScreenDeployed = 1;
 
     }
 
-    outline0("JSR text_vscroll");
+    outline0("JSR text_vscroll_screen");
 
 }
+
+// void text_vscroll_line( Environment * _environment, int _direction ) {
+
+//     Variable * y = variable_retrieve( _environment, "windowCY" );
+//     outline1("LDA #$%2.2x", ( _direction & 0xff ) );
+//     outline0("STA $30" );
+//     outline1("LDA %s", y->realName );
+//     outline0("STA $31");
+
+//     if ( !_environment->textVScrollLineDeployed ) {
+
+//         Variable * textAddress = variable_retrieve( _environment, "textAddress" );
+
+//         outline0("JMP text_vscroll_line_after");
+
+//         outline0("text_vscroll_line:");
+//         // Use the current bitmap address as starting address for filling routine.
+//         outline1("LDA %s", textAddress->realName);
+//         outline0("STA $25");
+//         outline1("LDA %s+1", textAddress->realName);
+//         outline0("STA $26");
+//         outline0("CLC");
+//         outline1("LDA %s", textAddress->realName);
+//         outline0("ADC #40");
+//         outline0("STA $27");
+//         outline1("LDA %s+1", textAddress->realName);
+//         outline0("STA $28");
+
+//         outline0("LDA #$6" );
+//         outline0("STA $32" );
+//         outline0("LDA $31" );
+
+//         cpu6502_math_div_8bit_to_8bit( _environment, "$31", "$32", "$33", "$34" );
+
+//         outline0("LDA #$0" );
+//         outline0("LDX $34" );
+//         outhead0("text_vscroll_line_ybase:");
+//         outline0("ADC #40" );
+//         outline0("DEX" );
+//         outline0("BNE text_vscroll_line_ybase" );
+//         outline0("STA $34" );
+
+//         outline1("LDA $30");
+//         outline0("CMP #$80");
+//         outline0("BCC text_vscroll_line_down");
+
+//         outhead0("text_vscroll_line_up:");
+
+//         outline0("LDX $33" );
+//         outline0("LDY #0" );
+//         outhead0("text_vscroll_line_yscroll:");
+//         outline0("LDA ($27),Y");
+//         outline0("STA ($25),Y");
+//         outline0("INY");
+//         outline0("BNE text_vscroll_line_yscroll");
+//         outline0("INC $26");
+//         outline0("INC $28");
+//         outline0("CPX #1");
+//         outline0("BNE text_vscroll_line_nextblock");
+//         outhead0("text_vscroll_line_yscroll2:");
+//         outline0("LDA ($27),Y");
+//         outline0("STA ($25),Y");
+//         outline0("INY");
+//         outline0("CPY $34");
+//         outline0("BNE text_vscroll_line_yscroll2");
+//         outhead0("text_vscroll_line_nextblock:");
+//         outline0("DEX");
+//         outline0("BNE text_vscroll_line_yscroll");
+//         outline0("RTS");
+
+//         outhead0("text_vscroll_line_down:");
+//         outline0("LDX #3" );
+//         outline0("LDY #40" );
+//         outhead0("text_vscroll_line_down_yscroll:");
+//         outline0("LDA ($25),Y");
+//         outline0("STA ($27),Y");
+//         outline0("INY");
+//         outline0("BNE text_vscroll_line_down_yscroll");
+//         outline0("INC $26");
+//         outline0("INC $28");
+//         outline0("CPX #1");
+//         outline0("BNE text_vscroll_line_down_nextblock");
+//         outhead0(" text_vscroll_line_down_yscroll2:");
+//         outline0("LDA ($27),Y");
+//         outline0("STA ($25),Y");
+//         outline0("INY");
+//         outline0("CPY #232");
+//         outline0("BNE  text_vscroll_line_down_yscroll2");
+//         outhead0("text_vscroll_line_down_nextblock:");
+//         outline0("DEX");
+//         outline0("BNE text_vscroll_line_down_yscroll");
+//         outline0("RTS");
+
+//         outline0("text_vscroll_screen_after:");
+
+//         _environment->textVScrollDeployed = 1;
+
+//     }
+
+//     outline0("JSR text_vscroll_screen");
+
+// }
 
 void text_paper( Environment * _environment, char * _color ) {
 
@@ -709,7 +860,7 @@ void text_cline( Environment * _environment, char * _characters ) {
         outline0("CMP #24"); // h
         outline0("BNE lib_text_cline_next"); // x
 
-        text_vscroll( _environment );
+        text_vscroll_screen( _environment, -1 );
 
         outline0("DEC $31"); // y
         outline0("SEC");

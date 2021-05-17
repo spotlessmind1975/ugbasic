@@ -215,6 +215,7 @@ VAR { return (VAR); }
 VARIABLES { return (VARIABLES); }
 VERTICAL { return (VERTICAL); }
 VIOLET { return(VIOLET); }
+VSCROLL { return (VSCROLL); }
 WAIT { return (WAIT); }
 WEND { return (WEND); }
 WITH { return (WITH); }

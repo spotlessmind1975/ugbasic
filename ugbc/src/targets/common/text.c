@@ -433,7 +433,7 @@ void text_newline( Environment * _environment ) {
 
     cpu_label( _environment, scrollLabel );
 
-    text_vscroll( _environment );
+    text_vscroll_screen( _environment, -1 );
 
     cpu_label( _environment, endLabel );
 
