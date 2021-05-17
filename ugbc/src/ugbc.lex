@@ -32,6 +32,7 @@
 "/" { return(DIVISION); }
 "[" { return(OSP); }
 "]" { return(CSP); }
+"?" { return(QM); }
 
 8BIT { return (BYTE); }
 16BIT { return (WORD); }
