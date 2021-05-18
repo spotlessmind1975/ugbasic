@@ -39,95 +39,6 @@
  ****************************************************************************/
 
 /**
- * @brief Emit ASM code for <b>TEXTMAP AT [int]xx</b>
- * 
- * This function allows you to set the starting address, in memory, for the 
- * text and it is the version that is used when the memory is given as a
- * direct number (i.e.: $0400). The input parameter is decoded and declined 
- * according to the hardware limits. So it is not said that exactly the 
- * given address is set.
- * 
- * On some machine calling this instruction will define the special variable:
- * 
- *  * `textmap_address` (VT_ADDRESS) - the starting address of text memory
- * 
- * @param _environment Current calling environment
- * @param _address Address to use
- */
-/* <usermanual>
-@keyword TEXTMAP AT
-
-@english
-Set the starting address, in memory, for the textmap. The input parameter 
-is decoded and declined according to the hardware limits. So it is not
-said that exactly the given address is set.
-
-@italian
-Imposta l'indirizzo di partenza, in memoria, per la textmap. Il parametro 
-di input viene decodificato e declinato in base ai limiti hardware. Quindi 
-non è detto che sia impostato esattamente con l'indirizzo specificato.
-
-@syntax TEXTMAP AT # [integer]
-
-@example TEXTMAP AT #$0400
-
-@target c64
-</usermanual> */
-void textmap_at( Environment * _environment, int _address ) {
-
-    outline1("; TEXTMAP AT $%4.4x", _address);
-
-    // Let's define the special variable bitmap_address, and update
-    // it with the requested value.
-    // TODO: the textmap_address should be populated by a get_textmap_address() function!
-    Variable * textAddress = variable_retrieve_or_define( _environment, "textmap_address", VT_ADDRESS, _address );
-    variable_store( _environment, "textmap_address", ( ( _address >> 10 ) & 0x0f ) * 0x0400 );
-
-    char addressString[MAX_TEMPORARY_STORAGE]; sprintf(addressString, "#$%2.2x", ( _address >> 8 ) & 0xff );
-
-    vic2_textmap_at( _environment, addressString );
-
-}
-
-/**
- * @brief Emit ASM code for <b>TEXTMAP AT [expression]</b>
- * 
- * This function allows you to set the starting address, in memory, for the 
- * text and it is the version that is used when the memory is given as an
- * expression. The input parameter is decoded and declined according to the 
- * hardware limits. So it is not said that exactly the given address is set.
- * 
- * On some machine calling this instruction will define the special variable:
- * 
- *  * `textmap_address` (VT_ADDRESS) - the starting address of text memory
- * 
- * @param _environment Current calling environment
- * @param _address Expression with address to use
- */
-/* <usermanual>
-@keyword TEXTMAP AT
-
-@syntax TEXTMAP AT [expression]
-
-@example TEXTMAP AT newTextmapAddress
-
-@target c64
-</usermanual> */
-void textmap_at_var( Environment * _environment, char * _address ) {
-
-    outline1("; TEXTMAP AT %s", _address);
-
-    Variable * textAddress = variable_retrieve_or_define( _environment, "textAddress", VT_ADDRESS, 0x0400 );
-
-    Variable * address = variable_retrieve( _environment, _address );
-
-    char addressString[MAX_TEMPORARY_STORAGE]; sprintf(addressString, "%s+1", address->realName );
-
-    vic2_textmap_at( _environment, addressString );
-
-}
-
-/**
  * @brief Emit ASM implementation for <b>TEXT ENABLE</b> instruction
  * 
  * This function can be called to emit the code to enable text mode
@@ -314,40 +225,6 @@ void text_text( Environment * _environment, char * _text ) {
     
 }
 
-Variable * text_get_pen( Environment * _environment, char * _color ) {
-    
-    Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_WHITE );
-
-    Variable * result = variable_temporary( _environment, VT_STRING, 0 );
-
-    char resultString[MAX_TEMPORARY_STORAGE]; sprintf( resultString, "\x1 " );
-    char stringAddress[MAX_TEMPORARY_STORAGE]; sprintf( stringAddress, "%s+1", result->realName );
-
-    variable_store_string(_environment, result->name, resultString );
-
-    cpu_move_8bit_indirect_with_offset(_environment, color->realName, stringAddress, 1 );
-        
-    return result;
-
-}
-
-Variable * text_get_paper( Environment * _environment, char * _color ) {
-    
-    Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_BLACK );
-
-    Variable * result = variable_temporary( _environment, VT_STRING, 0 );
-
-    char resultString[MAX_TEMPORARY_STORAGE]; sprintf( resultString, "\x2 " );
-    char stringAddress[MAX_TEMPORARY_STORAGE]; sprintf( stringAddress, "%s+1", result->realName );
-
-    variable_store_string(_environment, result->name, resultString );
-
-    cpu_move_8bit_indirect_with_offset(_environment, color->realName, stringAddress, 1 );
-        
-    return result;
-
-}
-
 Variable * text_get_cmove( Environment * _environment, char * _x, char * _y ) {
     
     Variable * x = variable_retrieve_or_define( _environment, _x, VT_BYTE, 0 );
@@ -383,24 +260,6 @@ Variable * text_get_cmove_direct( Environment * _environment, int _x, int _y ) {
 
 }
 
-Variable * text_get_at( Environment * _environment, char * _x, char * _y ) {
-    
-    Variable * x = variable_retrieve_or_define( _environment, _x, VT_BYTE, 0 );
-    Variable * y = variable_retrieve_or_define( _environment, _y, VT_BYTE, 0 );
-
-    Variable * result = variable_temporary( _environment, VT_STRING, 0 );
-
-    char resultString[MAX_TEMPORARY_STORAGE]; sprintf( resultString, "\x4  " );
-    char stringAddress[MAX_TEMPORARY_STORAGE]; sprintf( stringAddress, "%s+1", result->realName );
-
-    variable_store_string(_environment, result->name, resultString );
-
-    cpu_move_8bit_indirect_with_offset(_environment, x->realName, stringAddress, 1 );
-    cpu_move_8bit_indirect_with_offset(_environment, y->realName, stringAddress, 2 );
-        
-    return result;
-
-}
 
 Variable * text_get_tab( Environment * _environment ) {
     
