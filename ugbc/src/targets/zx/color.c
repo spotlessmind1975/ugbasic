@@ -52,10 +52,9 @@ void color_border( Environment * _environment, int _color ) {
     
     outline1("; COLOR BORDER %2.2x", _color);
 
-    char port[MAX_TEMPORARY_STORAGE]; sprintf(port, "$%2.2x", PORT_COLOR_BORDER);
     char color[MAX_TEMPORARY_STORAGE]; sprintf(color, "$%2.2x", _color);
 
-    z80_port_out( _environment, port, color );
+    zx_color_border( _environment, color );
 
 }
 
@@ -75,9 +74,7 @@ void color_border_var( Environment * _environment, char * _color ) {
     // Safety check -- expression must exists (it should be always true)
     Variable * color = variable_retrieve( _environment, _color );
 
-    char port[MAX_TEMPORARY_STORAGE]; sprintf(port, "$%2.2x", PORT_COLOR_BORDER);
-
-    z80_port_out( _environment, port, color->realName );
+    zx_color_border( _environment, color->realName );
 
 }
 

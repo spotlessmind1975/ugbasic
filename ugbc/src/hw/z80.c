@@ -164,6 +164,16 @@ void z80_move_8bit( Environment * _environment, char *_source, char *_destinatio
 
 }
 
+void z80_move_8bit_with_offset( Environment * _environment, char *_source, char *_destination, int _offset ) {
+    
+    outline1("LD A, $%2.2x", _offset);
+    outline1("LD DE, %s", _destination);
+    outline0("ADD DE, A");
+    outline1("LD A, (%s)", _source);
+    outline0("LD (DE), A");
+
+}
+
 /**
  * @brief <i>Z80</i>: emit code to store 8 bit
  * 
@@ -175,6 +185,16 @@ void z80_store_8bit( Environment * _environment, char *_destination, int _value 
 
     outline1("LD A, $%2.2x", _value);
     outline1("LD (%s), A", _destination);
+
+}
+
+void z80_store_8bit_with_offset( Environment * _environment, char *_destination, int _value, int _offset ) {
+
+    outline1("LD A, $%2.2x", _offset);
+    outline1("LD DE, %s", _destination);
+    outline0("ADD DE,A");
+    outline1("LD A, $%2.2x", _value);
+    outline0("LD (DE), A");
 
 }
 
@@ -2016,11 +2036,11 @@ void z80_move_8bit_indirect( Environment * _environment, char *_source, char * _
 
 void z80_move_8bit_indirect_with_offset( Environment * _environment, char *_source, char * _value, int _offset ) {
 
-    outline1("LD DE, (%s)", _value);
-    outline1("LD HL, %2.2x", ( _offset & 0xff ) );
-    outline0("ADD DE, HL" );
+    outline1("LD HL, (%s)", _value);
+    outline1("LD DE, $%2.2x", ( _offset & 0xff ) );
+    outline0("ADD HL, DE" );
     outline1("LD A, (%s)", _source);
-    outline0("LD (DE), A");
+    outline0("LD (HL), A");
 
 }
 

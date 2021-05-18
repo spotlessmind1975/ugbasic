@@ -2435,6 +2435,7 @@ Variable * variable_string_chr( Environment * _environment, char * _ascii  ) {
     }
 
     cpu_store_8bit( _environment, result->realName, 1 );
+    cpu_move_16bit( _environment, stringsAddress->realName, resultAddress );
     cpu_move_8bit_indirect( _environment, ascii->realName, resultAddress );
     cpu_math_add_16bit_with_8bit( _environment, stringsAddress->realName, result->realName, stringsAddress->realName );
 

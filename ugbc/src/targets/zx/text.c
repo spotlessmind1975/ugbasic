@@ -83,53 +83,229 @@ void textmap_at_var( Environment * _environment, char * _address ) {
 
 void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _text, char * _encoding, char * _pen, char * _paper ) {
 
-    Variable * buffer = variable_temporary( _environment, VT_BUFFER, "(buffer fot AT/PEN/PAPER command)");
-    variable_resize_buffer( _environment, buffer->name, 3 );
+    Variable * text = variable_retrieve( _environment, _text );
+    Variable * x = variable_retrieve( _environment, _x );
+    Variable * y = variable_retrieve( _environment, _y );
+    Variable * pen = variable_retrieve( _environment, _pen );
+    Variable * paper = variable_retrieve( _environment, _paper );
+    Variable * tab = variable_retrieve( _environment, "TAB" );
+    Variable * ww = variable_retrieve( _environment, "windowWW" );
 
-    char bufferAddress[MAX_TEMPORARY_STORAGE]; 
+    Variable * localpen = variable_define( _environment, "localpen", VT_COLOR, COLOR_BLACK );
+    Variable * localpaper = variable_define( _environment, "localpaper", VT_COLOR, COLOR_WHITE );
+
+    variable_move_naked( _environment, pen->name, localpen->name );
+    variable_move_naked( _environment, paper->name, localpaper->name );
+
+    outline1("LD A, (%s)", y->realName );
+    outline0("LD D, A" );
+    outline1("LD A, (%s)", x->realName );
+    outline0("LD E, A" );
+    outline1("LD A, (%s)", text->realName );
+    outline0("LD C, A" );
+    outline0("LD B, 0" );
+    outline1("LD HL, (%s+1)", text->realName );
     
-    sprintf( bufferAddress, "%s", buffer->realName );
-    cpu_store_8bit( _environment, bufferAddress, 22 );
-    sprintf( bufferAddress, "%s+1", buffer->realName );
-    cpu_move_8bit( _environment, _x, bufferAddress );
-    sprintf( bufferAddress, "%s+2", buffer->realName );
-    cpu_move_8bit( _environment, _y, bufferAddress );
+    if ( ! _environment->textEncodedAtDeployed ) {
 
-    outline0("LD A,2");
-    outline0("CALL 5633");
-    outline1("LD DE,%s", buffer->realName);
-    outline0("LD BC,3");
-    outline0("CALL 8252");
+        Variable * colormapAddress = variable_retrieve( _environment, "colormapAddress" );
+        Variable * bitmapAddress = variable_retrieve( _environment, "bitmapAddress" );
 
-    sprintf( bufferAddress, "%s", buffer->realName );
-    cpu_store_8bit( _environment, bufferAddress, 16 );
-    sprintf( bufferAddress, "%s+1", buffer->realName );
-    cpu_move_8bit( _environment, _pen, bufferAddress );
+        outline0("JMP text_encoded_at_after" );
 
-    outline0("LD A,2");
-    outline0("CALL 5633");
-    outline1("LD DE,%s", buffer->realName);
-    outline0("LD BC,2");
-    outline0("CALL 8252");
+        outhead0("text_encoded_at:");
+        outline0("LD A, (HL)");
+        outline0("INC HL");
+        outline0("CP 6");
+        outline0("JP C, text_encoded_at_control_code");
+        outline0("CP 32");
+        outline0("JP C, text_encoded_at");
+        outline0("PUSH DE");
+        outline0("PUSH HL");
+        outline0("PUSH BC");
+        outline0("CALL text_encoded_at_pc");
+        outline0("POP BC");
+        outline0("POP HL");
+        outline0("POP DE");
+        outline0("INC E");
+        outline0("LD A, E");
+        outline0("CP 32");
+        outline0("JP C, text_encoded_at_next_column");
+        outline0("LD E, 0");
+        outline0("INC D");
+        outline0("LD A, D");
+        outline0("CP 24");
+        outline0("JP C, text_encoded_at_next_column");
 
-    sprintf( bufferAddress, "%s", buffer->realName );
-    cpu_store_8bit( _environment, bufferAddress, 16 );
-    sprintf( bufferAddress, "%s+1", buffer->realName );
-    cpu_move_8bit( _environment, _paper, bufferAddress );
+        outhead0("text_encoded_at_scroll_screen:");
+        outline0("DEC D");
 
-    outline0("LD A,2");
-    outline0("CALL 5633");
-    outline1("LD DE,%s", buffer->realName);
-    outline0("LD BC,2");
-    outline0("CALL 8252");
+        outline0("PUSH DE");
+        outline0("PUSH HL");
+        outline0("PUSH BC");
 
-    char stringAddress[MAX_TEMPORARY_STORAGE]; 
-    sprintf(stringAddress, "%s+1", _text );
-    outline1( "LD DE, (%s)", stringAddress );
-    outline1( "LD A, (%s)", _text );
-    outline0( "LD C, A" );
-    outline0( "LD B, 0" );
-    outline0( "CALL 8252" );
+        text_vscroll_screen( _environment, -1 );
+
+        outline0("POP BC");
+        outline0("POP HL");
+        outline0("POP DE");
+        outline0("JMP text_encoded_at_next_column");
+
+        outhead0("text_encoded_at_control_code:");
+        outline0("CP 9");
+        outline0("JP Z, text_encoded_at_tab");
+        outline0("CP 1");
+        outline0("JP Z, text_encoded_at_pen");
+        outline0("CP 2");
+        outline0("JP Z, text_encoded_at_paper");
+        outline0("CP 3");
+        outline0("JP Z, text_encoded_at_cmove");
+        outline0("CP 4");
+        outline0("JP Z, text_encoded_at_at");
+        outline0("JMP text_encoded_at_next_column");
+
+        outhead0("text_encoded_at_tab:");
+        outline0("LD A, E");
+        outhead0("text_encoded_at_tab_repeat:");
+        outline1("LD A, (%s)", tab->realName);
+        outline0("LD B, A");
+        outline0("SBC A, B");
+        outline0("JP M, text_encoded_at_tab_next");
+        outline0("JMP text_encoded_at_tab_repeat");
+        outhead0("text_encoded_at_tab_next:");
+        outline0("ADD A, B");
+        outline0("ADD A, E");
+        outline0("LD E, A");
+        outline0("CP 32");
+        outline0("JP C, text_encoded_at_next_column");
+        outline0("LD E, 0");
+        outline0("INC D");
+        outline0("CP 24");
+        outline0("JP C, text_encoded_at_next_column");
+        outline0("JMP text_encoded_at_scroll_screen");
+
+        outhead0("text_encoded_at_pen:");
+        outline0("INC HL");
+        outline0("LD A, (HL)");
+        outline1("LD (%s), A", localpen->realName);        
+        outline0("JMP text_encoded_at_next_column");
+
+        outhead0("text_encoded_at_paper:");
+        outline0("INC HL");
+        outline0("LD A, (HL)");
+        outline1("LD (%s), A", localpaper->realName);        
+        outline0("JMP text_encoded_at_next_column");
+
+        outhead0("text_encoded_at_at:");
+        outline0("INC HL");
+        outline0("LD A, (HL)");
+        outline0("LD E, A");   
+        outline0("INC HL");
+        outline0("LD A, (HL)");
+        outline0("LD D, A");   
+        outline0("JMP text_encoded_at_next_column");
+
+        outhead0("text_encoded_at_cmove:");
+        outline0("INC HL");
+        outline0("LD A, (HL)");
+        outline0("ADD A, E");   
+        outline0("LD E, A");
+        outline0("INC HL");
+        outline0("LD A, (HL)");
+        outline0("ADD A, D");   
+        outline0("LD D, A");
+        outline0("JMP text_encoded_at_next_column");
+
+        outhead0("text_encoded_at_next_column:");
+        outline0("DEC C");
+        outline0("RET Z");
+        outline0("JP text_encoded_at");
+
+        outhead0("text_encoded_at_pc:");
+        outline0("PUSH AF" );
+        outline0("PUSH DE" );
+        outline0("LD HL, $5800" );
+        outline0("LD A, D" );
+        outline0("CP 0" );
+        outline0("JP Z, text_encoded_at_row");
+        outhead0("text_encoded_at_pc2:");
+        outline0("ADD HL, 32" );
+        outline0("DEC D" );
+        outline0("JP NZ, text_encoded_at_pc2");
+        outhead0("text_encoded_at_row:");
+        outline0("LD A, E" );
+        outline0("ADD HL, A" );
+        outline0("POP DE" );
+        outline0("LD A, (HL)" );
+        outline0("AND $38" );
+        outline0("LD B, A" );
+        outline1("LD A, (%s)", ww->realName );
+        outline0("AND 1" );
+        outline0("JP Z, text_encoded_at_pc3");
+        outline1("LD A, (%s)", localpaper->realName );
+        outline0("SLA A" );
+        outline0("SLA A" );
+        outline0("SLA A" );
+        outline0("LD B, A" );
+        outhead0("text_encoded_at_pc3:");
+        outline1("LD A, (%s)", ww->realName );
+        outline0("AND 2" );
+        outline0("JP Z, text_encoded_at_pc4");
+        outline1("LD A, (%s)", localpen->realName );
+        outline0("AND $07" );
+        outline0("JMP text_encoded_at_pc5");
+        outhead0("text_encoded_at_pc4:");
+        outline0("LD A, (HL)" );
+        outline0("AND $07" );
+        outhead0("text_encoded_at_pc5:");
+        outline0("OR A, B" );
+        outline0("LD (HL), A" );
+
+        outline0("POP AF" );
+        outline0("LD HL, $3C00" );
+        outline0("LD B,0" );
+        outline0("LD C, A" );
+        outline0("SLA C" );
+        outline0("RL B" );
+        outline0("SLA C" );
+        outline0("RL B" );
+        outline0("SLA C" );
+        outline0("RL B" );
+        outline0("ADD HL, BC");
+        outline0("CALL text_encoded_at_gc");
+        outline0("LD B,8");
+        outhead0("text_encoded_at_l1:");
+        outline0("LD A,(HL)");
+        outline0("LD (DE),A");
+        outline0("INC HL");
+        outline0("INC D");
+        outline0("DJNZ text_encoded_at_l1");
+        outline0("RET");
+        outhead0("text_encoded_at_gc:");    
+        outline0("LD A,D");
+        outline0("AND %00000111");
+        outline0("RRA");
+        outline0("RRA");
+        outline0("RRA");
+        outline0("RRA");
+        outline0("OR E");
+        outline0("LD E,A");
+        outline0("LD A,D");
+        outline0("AND %00011000");
+        outline0("OR %01000000");
+        outline0("LD D,A");
+        outline0("RET");
+
+        _environment->textEncodedAtDeployed = 1;
+
+        outhead0("text_encoded_at_after:");
+    }
+
+    outline0("CALL text_encoded_at");
+    outline0("LD A, D" );
+    outline1("LD (%s), A", y->realName );
+    outline0("LD A, E" );
+    outline1("LD (%s), A", x->realName );
 
 }
 
@@ -199,7 +375,7 @@ void text_vscroll_screen( Environment * _environment, int _direction ) {
 
         outline0("text_vscroll_screen:");
         outline0("CP $80");
-        outline0("JR C, text_vscroll_screen_down");
+        outline0("JP C, text_vscroll_screen_down");
 
         outline0("text_vscroll_screen_up:");
         outline0("LD DE, 32" );
@@ -211,18 +387,211 @@ void text_vscroll_screen( Environment * _environment, int _direction ) {
         outline0("RET")
 
         outline0("text_vscroll_screen_down:");
-        outline0("LD HL, 32" );
-        outline1("LD DE, (%s)", bitmapAddress->realName );
-        outline0("ADD DE, HL" );
+        outline0("LD DE, 32" );
+        outline1("LD HL, (%s)", bitmapAddress->realName );
+        outline0("ADD HL, DE" );
+        outline0("LD DE, HL" );
         outline1("LD HL, (%s)", bitmapAddress->realName );
         outline0("LD BC, 6880")
         outline0("LDIR")
         outline0("RET")
 
+        outhead0("text_vscroll_screen_after:");
+
         _environment->textVScrollScreenDeployed = 1;
 
     }
 
-    outline0("JSR text_vscroll_screen_down");
+    outline0("CALL text_vscroll_screen_down");
 
+}
+
+void text_hscroll_line( Environment * _environment, int _direction ) {
+
+    Variable * y = variable_retrieve( _environment, "windowCY" );
+    outline1("LD A, (%s)", y->realName );
+    outline0("LD B, A" );
+    outline1("LD A, $%2.2x", ( _direction & 0xff ) );
+
+    if ( !_environment->textHScrollLineDeployed ) {
+
+        Variable * bitmapAddress = variable_retrieve( _environment, "bitmapAddress" );
+
+        outline0("JMP lib_text_hscroll_line_after");
+
+        outhead0("lib_text_hscroll_line:" );
+        outline1("LD HL, (%s)", bitmapAddress->realName );
+        outline0("LD DE, 32");
+        outhead0("lib_text_hscroll_line_ypos:");
+        outline0("ADC HL, DE");
+        outline0("DEC B");
+        outline0("JP NZ,lib_text_hscroll_line_ypos");
+        outline0("LD DE, HL");
+
+        outline0("CP $80");
+        outline0("JP C, lib_text_hscroll_line_right");
+
+        outhead0("lib_text_hscroll_line_left:");
+        outline0("LD A, 0" );
+        outline0("LD C, A" );
+        outhead0("lib_text_hscroll_line_left3:");
+        outline0("LD A, 0" );
+        outline0("LD B, A" );
+        outline0("LD HL, DE" );
+        outhead0("lib_text_hscroll_line_left2:");
+        outline0("RL (HL)");
+        outline0("INC HL");
+        outline0("INC B");
+        outline0("LD A,B");
+        outline0("CP 32");
+        outline0("JP NZ,lib_text_hscroll_line_right2");
+        outline0("INC C");
+        outline0("LD A,B");
+        outline0("CP 8");
+        outline0("JP NZ,lib_text_hscroll_line_right3");
+        outline0("RET")
+
+        outhead0("lib_text_hscroll_line_right:");
+        outline0("LD A, 8" );
+        outline0("LD C, A" );
+        outhead0("lib_text_hscroll_line_right3:");
+        outline0("LD A, 32" );
+        outline0("LD B, A" );
+        outline0("LD HL, DE" );
+        outhead0("lib_text_hscroll_line_right2:");
+        outline0("RR (HL)");
+        outline0("INC HL");
+        outline0("DEC B");
+        outline0("JP NZ,lib_text_hscroll_line_right2");
+        outline0("DEC C");
+        outline0("JP NZ,lib_text_hscroll_line_right3");
+        outline0("RET")
+
+        outhead0("lib_text_hscroll_line_after:");
+
+        _environment->textHScrollLineDeployed = 1;
+
+    }
+
+    outline0("CALL lib_text_hscroll_line");
+    
+}
+
+void text_hscroll_screen( Environment * _environment, int _direction ) {
+
+    outline1("LD A, $%2.2x", ( _direction & 0xff ) );
+
+    if ( !_environment->textHScrollScreenDeployed ) {
+
+        Variable * bitmapAddress = variable_retrieve( _environment, "bitmapAddress" );
+
+        outline0("JMP lib_text_hscroll_screen_after");
+
+        outhead0("lib_text_hscroll_screen:" );
+        outline0("CP $80");
+        outline0("JP C, lib_text_hscroll_screen_right");
+
+        outhead0("lib_text_hscroll_screen_left:");
+        outline0("LD A, 0" );
+        outline0("LD D, A" );
+        outhead0("lib_text_hscroll_screen_left4:");
+        outline0("LD A, 0" );
+        outline0("LD C, A" );
+        outhead0("lib_text_hscroll_screen_left3:");
+        outline0("LD A, 0" );
+        outline0("LD B, A" );
+        outline1("LD HL, (%s)", bitmapAddress->realName );
+        outhead0("lib_text_hscroll_screen_left2:");
+        outline0("RL (HL)");
+        outline0("INC HL");
+        outline0("INC B");
+        outline0("LD A,B");
+        outline0("CP 32");
+        outline0("JP NZ,lib_text_hscroll_screen_right2");
+        outline0("INC C");
+        outline0("LD A,B");
+        outline0("CP 8");
+        outline0("JP NZ,lib_text_hscroll_screen_right3");
+        outline0("DEC D");
+        outline0("LD A,D");
+        outline0("CP 192");
+        outline0("JP NZ,lib_text_hscroll_screen_right4");
+        outline0("RET")
+
+        outhead0("lib_text_hscroll_screen_right:");
+        outline0("LD A, 192" );
+        outline0("LD D, A" );
+        outhead0("lib_text_hscroll_screen_right4:");
+        outline0("LD A, 8" );
+        outline0("LD C, A" );
+        outhead0("lib_text_hscroll_screen_right3:");
+        outline0("LD A, 32" );
+        outline0("LD B, A" );
+        outline1("LD HL, (%s)", bitmapAddress->realName );
+        outhead0("lib_text_hscroll_screen_right2:");
+        outline0("RR (HL)");
+        outline0("INC HL");
+        outline0("DEC B");
+        outline0("JP NZ,lib_text_hscroll_screen_right2");
+        outline0("DEC C");
+        outline0("JP NZ,lib_text_hscroll_screen_right3");
+        outline0("DEC D");
+        outline0("JP NZ,lib_text_hscroll_screen_right4");
+        outline0("RET")
+
+        outhead0("lib_text_hscroll_screen_after:");
+
+        _environment->textHScrollScreenDeployed = 1;
+
+    }
+
+    outline0("CALL lib_text_hscroll_screen");
+    
+}
+
+void text_cline( Environment * _environment, char * _characters ) {
+
+   
+}
+
+void text_cls( Environment * _environment ) {
+
+    if ( !_environment->textClsDeployed ) {
+
+        Variable * bitmapAddress = variable_retrieve( _environment, "bitmapAddress" );
+
+        outline0("JMP lib_text_cls_after");
+
+        outline0("lib_text_cls:");
+
+        outline0("LD A, 0" );
+        outline1("LD HL, (%s)", bitmapAddress->realName );
+        outline0("LD (HL), A" );
+        outline0("LD DE, 1" );
+        outline1("LD HL, (%s)", bitmapAddress->realName );
+        outline0("ADD HL, DE" );
+        outline0("LD DE, HL" );
+        outline1("LD HL, (%s)", bitmapAddress->realName );
+        outline0("LD BC, 6144")
+        outline0("LDIR")
+
+        outline0("lib_text_cls_after:");
+
+        _environment->textClsDeployed = 1;
+
+    }
+
+    outline0("CALL lib_text_cls");
+    
+}
+
+void text_paper( Environment * _environment, char * _color ) {
+
+    Variable * paper = variable_retrieve( _environment, "windowPA" );
+    Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_BLACK );
+
+    variable_move( _environment, color->name, paper->name );
+    
+    zx_color_border( _environment, color->realName );
+    
 }

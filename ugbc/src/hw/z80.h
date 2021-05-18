@@ -95,6 +95,7 @@ void z80_math_sub_8bit( Environment * _environment, char *_source, char *_destin
 void z80_move_16bit( Environment * _environment, char *_source, char *_destination );
 void z80_move_32bit( Environment * _environment, char *_source, char *_destination );
 void z80_move_8bit( Environment * _environment, char *_source, char *_destination );
+void z80_move_8bit_with_offset( Environment * _environment, char *_source, char *_destination, int _offset );
 void z80_peek( Environment * _environment, char * _address, char * _target );
 void z80_poke( Environment * _environment, char * _address, char * _value );
 void z80_port_out( Environment * _environment, char * _port, char * _value );
@@ -105,6 +106,7 @@ void z80_random_8bit( Environment * _environment, char * _seed, char * _entropy,
 void z80_store_16bit( Environment * _environment, char *_source, int _value );
 void z80_store_32bit( Environment * _environment, char *_source, int _value );
 void z80_store_8bit( Environment * _environment, char *_source, int _value );
+void z80_store_8bit_with_offset( Environment * _environment, char *_source, int _value, int _offset );
 void z80_mem_move_displacement(  Environment * _environment, char *_source, char *_destination, char * _displacement, char *_size );
 void z80_compare_memory( Environment * _environment, char *_source, char *_destination, char *_size, char * _result, int _equal );
 void z80_compare_memory_size( Environment * _environment, char *_source, char *_destination, int _size, char * _result, int _equal );
@@ -239,5 +241,7 @@ void z80_store_8bit_indirect_with_offset( Environment * _environment, char *_sou
 #define cpu_bits_to_string( _environment, _number, _string, _string_size, _bits ) z80_bits_to_string( _environment, _number, _string, _string_size, _bits )
 #define cpu_move_8bit_indirect_with_offset( _environment, _source, _value, _offset ) z80_move_8bit_indirect_with_offset( _environment, _source, _value, _offset )
 #define cpu_store_8bit_indirect_with_offset( _environment, _source, _value, _offset ) z80_store_8bit_indirect_with_offset( _environment, _source, _value, _offset )
+#define cpu_store_8bit_with_offset( _environment, _source, _value, _offset ) z80_store_8bit_with_offset( _environment, _source, _value, _offset )
+#define cpu_move_8bit_with_offset( _environment, _source, _destination, _offset ) z80_move_8bit_with_offset( _environment, _source, _destination, _offset )
 
 #endif
