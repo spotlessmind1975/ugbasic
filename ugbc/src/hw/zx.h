@@ -60,6 +60,7 @@
 #define COLOR_OLIVE_GREEN       	4 /* alias */
 #define COLOR_PINK       			2 /* alias */
 #define COLOR_PEACH       			2 /* alias */
+#define COLOR_COUNT                 16
 
 #define PORT_COLOR_BORDER           254
 
