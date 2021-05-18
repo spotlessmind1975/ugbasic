@@ -1634,6 +1634,16 @@ void z80_store_8bit_indirect( Environment * _environment, char *_source, int _va
 
 }
 
+void z80_store_8bit_indirect_with_offset( Environment * _environment, char *_source, int _value, int _offset ) {
+
+    outline1("LD HL,(%s)", _source);
+    outline1("LD DE,%2.2x", ( _offset & 0xff ) );
+    outline0("ADD HL, DE");
+    outline1("LD A, $%2.2x", (_value & 0xff));
+    outline0("LD (HL), A" );
+
+}
+
 void z80_math_add_16bit_with_8bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
 
     outline1("LD HL, (%s)", _source );
@@ -2004,6 +2014,16 @@ void z80_move_8bit_indirect( Environment * _environment, char *_source, char * _
 
 }
 
+void z80_move_8bit_indirect_with_offset( Environment * _environment, char *_source, char * _value, int _offset ) {
+
+    outline1("LD DE, (%s)", _value);
+    outline1("LD HL, %2.2x", ( _offset & 0xff ) );
+    outline0("ADD DE, HL" );
+    outline1("LD A, (%s)", _source);
+    outline0("LD (DE), A");
+
+}
+
 void z80_move_8bit_indirect2( Environment * _environment, char * _value, char *_source ) {
 
     outline1("LD DE, (%s)", _value);
@@ -2186,6 +2206,144 @@ void z80_bit_check( Environment * _environment, char *_value, int _position, cha
     outline0("LD A, 0");
     outline1("LD (%s), A", _result);
     outhead1("%sdone:", label);
+
+}
+
+void z80_bits_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits ) {
+
+    Variable * b2dbuf = variable_temporary( _environment, VT_BUFFER, "(up to 20 decimal digits + terminating null)");
+    variable_resize_buffer( _environment, b2dbuf->name, 21 );
+
+    if ( ! _environment->bitsToStringDeployed ) {
+
+        outline0("JMP bits_to_string_after");
+
+        outhead0("bits_to_string:");
+
+        Variable * b2dinv = variable_temporary( _environment, VT_BUFFER, "(64-bit input value)");
+        variable_resize_buffer( _environment, b2dinv->name, 8 );
+
+        outline1("LD (%s),HL", b2dinv->realName);
+        outline1("LD (%s+2),DE", b2dinv->realName);
+        outline1("LD (%s+4),BC", b2dinv->realName);
+        outline1("LD (%s+6),IX", b2dinv->realName);
+        outline1("LD HL,%s", b2dbuf->realName);
+        outline1("LD DE,%s+1", b2dbuf->realName);
+        outline0("LD (HL), 32" );
+        outhead0("bits_to_stringB2DFILC: EQU $-1" );
+        outline0("LD BC,18" );
+        outline0("LDIR");
+        outhead1("LD (%s+20),BC", b2dbuf->realName);
+        outline0("LD E,1");
+        outline1("LD HL,%s+8", b2dinv->realName);
+        outline0("LD BC,$0909");
+        outline0("XOR A");
+        outhead0("bits_to_stringB2DSKP0:" );
+        outline0("DEC B");
+        outline0("JR Z,bits_to_stringB2DSIZ" );
+        outline0("DEC HL");
+        outline0("OR (HL)");
+        outline0("JR Z,bits_to_stringB2DSKP0");
+        outhead0("bits_to_stringB2DFND1:");
+        outline0("DEC C");
+        outline0("RLA");
+        outline0("JR NC,bits_to_stringB2DFND1" );
+        outline0("RRA");
+        outline0("LD D,A");
+        outhead0("bits_to_stringB2DLUS2:");
+        outline0("PUSH HL");
+        outline0("PUSH BC");
+        outhead0("bits_to_stringB2DLUS1:" );
+        outline1("LD HL,%s+20", b2dbuf->realName);
+        outline0("LD B,E" );
+        outline0("RL D" );
+        outhead0("bits_to_stringB2DLUS0:" );
+        outline0("LD A,(HL)");
+        outline0("ADC A,A" );
+        outline0("DAA");
+        outline0("LD (HL),A");
+        outline0("DEC HL");
+        outline0("DJNZ bits_to_stringB2DLUS0");
+        outline0("JR NC,bits_to_stringB2DNXT");
+        outline0("INC E");
+        outline0("LD (HL),1");
+        outhead0("bits_to_stringB2DNXT:" );
+        outline0("DEC C");
+        outline0("JR NZ,bits_to_stringB2DLUS1" );
+        outline0("POP BC" );
+        outline0("LD C,8" );
+        outline0("POP HL" );
+        outline0("DEC HL" );
+        outline0("LD D,(HL)" );
+        outline0("DJNZ bits_to_stringB2DLUS2" );
+        outhead0("bits_to_stringB2DSIZ:" );
+        outline1("LD HL,%s+21", b2dbuf->realName );
+        outline0("LD C,E");
+        outline0("OR A");
+        outline0("SBC HL,BC");
+        outline0("LD D,H");
+        outline0("LD E,L");
+        outline0("SBC HL,BC");
+        outline0("EX DE,HL");
+        outline0("LD B,C");
+        outline0("SLA C");
+        outline0("LD A, 48");
+        outline0("RLD");
+        outline0("CP 48");
+        outline0("JR NZ,bits_to_stringB2DEXPH");
+        outline0("DEC C");
+        outline0("INC DE");
+        outline0("JR bits_to_stringB2DEXPL" );
+        outhead0("bits_to_stringB2DEXP:" ); 
+        outline0("RLD");
+        outhead0("bits_to_stringB2DEXPH:" );
+        outline0("LD (DE),A");
+        outline0("INC DE");
+        outhead0("bits_to_stringB2DEXPL:" );
+        outline0("RLD");
+        outline0("LD (DE),A");
+        outline0("INC DE");
+        outline0("INC HL");
+        outline0("DJNZ bits_to_stringB2DEXP" );
+        outline0("SBC HL,BC" );
+        outline0("RET" );
+
+        outhead0("bits_to_string_after:");
+
+        _environment->bitsToStringDeployed = 1;
+
+    }
+
+    switch( _bits ) {
+        case 8:
+            outline1("LD A,(%s)", _number);
+            outline0("LD H,0");
+            outline0("LD L,A");
+            outline0("LD E,0");
+            outline0("LD D,0");
+            outline0("LD BC,0");
+            outline0("LD IX,0");
+            break;
+        case 16:
+            outline1("LD HL,(%s)", _number);
+            outline0("LD E,0");
+            outline0("LD D,0");
+            outline0("LD BC,0");
+            outline0("LD IX,0");
+            break;
+        case 32:
+            outline1("LD HL,(%s)", _number);
+            outline1("LD DE,(%s+2)", _number);
+            outline0("LD BC,0");
+            outline0("LD IX,0");
+            break;
+        default:
+            CRITICAL_DEBUG_UNSUPPORTED( _number, "unknown");
+    }
+
+    outline0("CALL bits_to_string");
+    
+    z80_mem_move( _environment, b2dbuf->realName, _string, _string_size );
 
 }
 
