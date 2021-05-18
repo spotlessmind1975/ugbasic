@@ -48,7 +48,7 @@
  * 
  * On some machine calling this instruction will define two special variables:
  * 
- *  * `bitmap_address` (VT_ADDRESS) - the starting address of bitmap memory
+ *  * `bitmapAddress` (VT_ADDRESS) - the starting address of bitmap memory
  *  * `colormapAddress` (VT_ADDRESS) - the starting address of color map memory
  * 
  * @param _environment Current calling environment
@@ -78,8 +78,8 @@ per quei computer che hanno la grafica mappata in memoria.
 </usermanual> */
 void bitmap_enable( Environment * _environment ) {
 
-    // Let's define the special variable bitmap_address.
-    Variable * bitmap_address = variable_retrieve_or_define( _environment, "bitmap_address", VT_ADDRESS, 0x2000 );
+    // Let's define the special variable bitmapAddress.
+    Variable * bitmapAddress = variable_retrieve_or_define( _environment, "bitmapAddress", VT_ADDRESS, 0x2000 );
 
     // Let's define the special variable colormapAddress.
     Variable * colormapAddress = variable_retrieve_or_define( _environment, "colormapAddress", VT_ADDRESS, 0x0400 );
@@ -134,7 +134,7 @@ void bitmap_disable( Environment * _environment ) {
  * 
  * On some machine calling this instruction will define the special variable:
  * 
- *  * `bitmap_address` (VT_ADDRESS) - the starting address of bitmap memory
+ *  * `bitmapAddress` (VT_ADDRESS) - the starting address of bitmap memory
  * 
  * @param _environment Current calling environment
  * @param _address Address to use
@@ -164,10 +164,10 @@ void bitmap_at( Environment * _environment, int _address ) {
 
     outline1("; BITMAP AT #$%4.4x", _address );
 
-    // Let's define the special variable bitmap_address, and update
+    // Let's define the special variable bitmapAddress, and update
     // it with the requested value.
-    Variable * bitmap_address = variable_retrieve_or_define( _environment, "bitmap_address", VT_ADDRESS, _address );
-    variable_store( _environment, "bitmap_address", ( ( _address >> 14 ) & 0x1 ) * 0x2000 );
+    Variable * bitmapAddress = variable_retrieve_or_define( _environment, "bitmapAddress", VT_ADDRESS, _address );
+    variable_store( _environment, "bitmapAddress", ( ( _address >> 14 ) & 0x1 ) * 0x2000 );
 
     char addressString[MAX_TEMPORARY_STORAGE]; sprintf(addressString, "#$%2.2x", ( _address >> 8 ) );
 
@@ -186,7 +186,7 @@ void bitmap_at( Environment * _environment, int _address ) {
  * 
  * On some machine calling this instruction will define the special variable:
  * 
- *  * `bitmap_address` (VT_ADDRESS) - the starting address of bitmap memory
+ *  * `bitmapAddress` (VT_ADDRESS) - the starting address of bitmap memory
  * 
  * @param _environment Current calling environment
  * @param _address Address to use
@@ -202,13 +202,13 @@ void bitmap_at_var( Environment * _environment, char * _address ) {
 
     outline1("; BITMAP AT %s", _address );
 
-    // Let's define the special variable bitmap_address, and update
+    // Let's define the special variable bitmapAddress, and update
     // it with the requested value.    
-    Variable * bitmap_address = variable_retrieve_or_define( _environment, "bitmap_address", VT_ADDRESS, 0x2000 );
+    Variable * bitmapAddress = variable_retrieve_or_define( _environment, "bitmapAddress", VT_ADDRESS, 0x2000 );
     Variable * address = variable_retrieve( _environment, _address );
 
-    // TODO: bitmap_address must be retrieved by a specific vic2_get_bitmap_address() function!
-    variable_move_naked( _environment, address->name, bitmap_address->name );
+    // TODO: bitmapAddress must be retrieved by a specific vic2_get_bitmapAddress() function!
+    variable_move_naked( _environment, address->name, bitmapAddress->name );
 
     char addressString[MAX_TEMPORARY_STORAGE]; sprintf(addressString, "%s+1", address->realName );
 
@@ -263,11 +263,11 @@ void bitmap_clear_with( Environment * _environment, int _pattern ) {
     outline1("; BITMAP CLEAR WITH #$%2.2x", _pattern );
 
     // Safety check -- bitmap address must be defined at least once.
-    Variable * bitmap_address = variable_retrieve_or_define( _environment, "bitmap_address", VT_ADDRESS, 0x2000 );
+    Variable * bitmapAddress = variable_retrieve_or_define( _environment, "bitmapAddress", VT_ADDRESS, 0x2000 );
 
     char pattern[MAX_TEMPORARY_STORAGE]; sprintf(pattern, "#$%2.2x", _pattern);
     
-    cpu6502_fill( _environment, bitmap_address->realName, "#$20", pattern );
+    cpu6502_fill( _environment, bitmapAddress->realName, "#$20", pattern );
 
 }
 
@@ -298,12 +298,12 @@ void bitmap_clear_with_vars( Environment * _environment, char * _pattern ) {
     outline1("; BITMAP CLEAR WITH %s", _pattern );
 
     // Safety check -- bitmap address must be defined at least once.
-    Variable * bitmap_address = variable_retrieve_or_define( _environment, "bitmap_address", VT_ADDRESS, 0x2000 );
+    Variable * bitmapAddress = variable_retrieve_or_define( _environment, "bitmapAddress", VT_ADDRESS, 0x2000 );
 
     // Safety check -- expression must exists (it should be always true)
     Variable * pattern = variable_retrieve( _environment, _pattern );
 
-    cpu6502_fill( _environment, bitmap_address->realName, "#$20", pattern->realName );
+    cpu6502_fill( _environment, bitmapAddress->realName, "#$20", pattern->realName );
 
 }
 

@@ -78,7 +78,7 @@ void tiles_at( Environment * _environment, int _address ) {
 
     outline1("; TILES AT $%4.4x", _address);
 
-    // Let's define the special variable bitmap_address, and update
+    // Let's define the special variable bitmapAddress, and update
     // it with the requested value.
     // TODO: tile_address should be retrieved via function!
     Variable * tiles_address = variable_retrieve_or_define( _environment, "tiles_address", VT_ADDRESS, _address );
@@ -123,7 +123,7 @@ void tiles_at_var( Environment * _environment, char * _address ) {
 
     Variable * temp = variable_temporary( _environment, VT_ADDRESS, "(temporary storage)" );
 
-    // Let's define the special variable bitmap_address, and update
+    // Let's define the special variable bitmapAddress, and update
     // it with the requested value.
     // TODO: tile_address should be retrieved via function!
     Variable * tiles_address = variable_define( _environment, "tiles_address", VT_ADDRESS, 0x0800 );

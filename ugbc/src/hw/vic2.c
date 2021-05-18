@@ -423,7 +423,7 @@ void vic2_textmap_at( Environment * _environment, char * _address ) {
 
 void vic2_point_at_int( Environment * _environment, int _x, int _y ) {
 
-    Variable * bitmap_address = variable_retrieve( _environment, "bitmap_address" );
+    Variable * bitmapAddress = variable_retrieve( _environment, "bitmapAddress" );
 
     int offset = (_y>>3)*320+(_x>>3)*8+(_y&7);
     int bitmask = 1 << ( 7 - ( _x & 0x07 ) );
@@ -432,7 +432,7 @@ void vic2_point_at_int( Environment * _environment, int _x, int _y ) {
 
     variable_store( _environment, offset_temp->name, offset );
     
-    variable_move_naked( _environment, variable_add( _environment, offset_temp->name, bitmap_address->name )->name, offset_temp->name );
+    variable_move_naked( _environment, variable_add( _environment, offset_temp->name, bitmapAddress->name )->name, offset_temp->name );
 
     outline1("LDA _%s", offset_temp->name);
     outline0("STA $22");
@@ -450,9 +450,9 @@ void vic2_point_at_int( Environment * _environment, int _x, int _y ) {
 
 void vic2_point_at_vars( Environment * _environment, char *_x, char *_y ) {
 
-    Variable * bitmap_address = variable_retrieve( _environment, "bitmap_address" );
+    Variable * bitmapAddress = variable_retrieve( _environment, "bitmapAddress" );
 
-    if ( ! bitmap_address ) {
+    if ( ! bitmapAddress ) {
         CRITICAL( "CRITICAL: POINT AT (xxx,xxx) needs BITMAP ENABLE");
     }
 
@@ -487,7 +487,7 @@ void vic2_point_at_vars( Environment * _environment, char *_x, char *_y ) {
     variable_and_const( _environment, b->name, 7 );
     variable_complement_const( _environment, b->name, 7 );
 
-    variable_move_naked( _environment, variable_add( _environment, offset->name, bitmap_address->name )->name, offset->name );
+    variable_move_naked( _environment, variable_add( _environment, offset->name, bitmapAddress->name )->name, offset->name );
 
     MAKE_LABEL
 
