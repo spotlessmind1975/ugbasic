@@ -545,7 +545,7 @@ typedef struct _Environment {
      * Deployed the bits to string routine
      */
 
-    int bitsToString;
+    int bitsToStringDeployed;
 
     /**
      * Deployed the vertical scroll text routine

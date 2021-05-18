@@ -40,131 +40,6 @@
 
 extern char DATATYPE_AS_STRING[][16];
 
-Variable * vt_to_buffer( Environment * _environment, char * _input ) {
-
-    Variable * input = variable_retrieve_or_define( _environment, _input, VT_WORD, 0 );
-
-    Variable * b2dinv = variable_temporary( _environment, VT_BUFFER, "(64-bit input value)");
-    variable_resize_buffer( _environment, b2dinv->name, 8 );
-    Variable * b2dbuf = variable_temporary( _environment, VT_BUFFER, "(up to 20 decimal digits + terminating null)");
-    variable_resize_buffer( _environment, b2dbuf->name, 21 );
-
-    MAKE_LABEL
-
-    switch( VT_BITWIDTH( input->type ) ) {
-        case 8:
-            outline1("LD A,(%s)", input->realName);
-            outline0("LD H,0");
-            outline0("LD L,A");
-            outline0("LD E,0");
-            outline0("LD D,0");
-            outline0("LD BC,0");
-            outline0("LD IX,0");
-            break;
-        case 16:
-            outline1("LD HL,(%s)", input->realName);
-            outline0("LD E,0");
-            outline0("LD D,0");
-            outline0("LD BC,0");
-            outline0("LD IX,0");
-            break;
-        case 32:
-            outline1("LD HL,(%s)", input->realName);
-            outline1("LD DE,(%s+2)", input->realName);
-            outline0("LD BC,0");
-            outline0("LD IX,0");
-            break;
-        default:
-            CRITICAL_DEBUG_UNSUPPORTED( _input, DATATYPE_AS_STRING[input->type]);
-    }
-
-    outline1("LD (%s),HL", b2dinv->realName);
-    outline1("LD (%s+2),DE", b2dinv->realName);
-    outline1("LD (%s+4),BC", b2dinv->realName);
-    outline1("LD (%s+6),IX", b2dinv->realName);
-    outline1("LD HL,%s", b2dbuf->realName);
-    outline1("LD DE,%s+1", b2dbuf->realName);
-    outline0("LD (HL), 32" );
-    outhead1("%sB2DFILC: EQU $-1", label );
-    outline0("LD BC,18" );
-    outline0("LDIR");
-    outhead1("LD (%s+20),BC", b2dbuf->realName);
-    outline0("LD E,1");
-    outline1("LD HL,%s+8", b2dinv->realName);
-    outline0("LD BC,$0909");
-    outline0("XOR A");
-    outhead1("%sB2DSKP0:", label );
-    outline0("DEC B");
-    outline1("JR Z,%sB2DSIZ", label );
-    outline0("DEC HL");
-    outline0("OR (HL)");
-    outline1("JR Z,%sB2DSKP0", label);
-    outhead1("%sB2DFND1:", label );
-    outline0("DEC C");
-    outline0("RLA");
-    outline1("JR NC,%sB2DFND1", label );
-    outline0("RRA");
-    outline0("LD D,A");
-    outhead1("%sB2DLUS2:", label );
-    outline0("PUSH HL");
-    outline0("PUSH BC");
-    outhead1("%sB2DLUS1:", label );
-    outline1("LD HL,%s+20", b2dbuf->realName);
-    outline0("LD B,E" );
-    outline0("RL D" );
-    outhead1("%sB2DLUS0:", label );
-    outline0("LD A,(HL)");
-    outline0("ADC A,A" );
-    outline0("DAA");
-    outline0("LD (HL),A");
-    outline0("DEC HL");
-    outline1("DJNZ %sB2DLUS0", label);
-    outline1("JR NC,%sB2DNXT", label);
-    outline0("INC E");
-    outline0("LD (HL),1");
-    outhead1("%sB2DNXT:", label );
-    outline0("DEC C");
-    outline1("JR NZ,%sB2DLUS1", label );
-    outline0("POP BC" );
-    outline0("LD C,8" );
-    outline0("POP HL" );
-    outline0("DEC HL" );
-    outline0("LD D,(HL)" );
-    outline1("DJNZ %sB2DLUS2", label );
-    outhead1("%sB2DSIZ:", label );
-    outline1("LD HL,%s+21", b2dbuf->realName );
-    outline0("LD C,E");
-    outline0("OR A");
-    outline0("SBC HL,BC");
-    outline0("LD D,H");
-    outline0("LD E,L");
-    outline0("SBC HL,BC");
-    outline0("EX DE,HL");
-    outline0("LD B,C");
-    outline0("SLA C");
-    outline0("LD A, 48");
-    outline0("RLD");
-    outline0("CP 48");
-    outline1("JR NZ,%sB2DEXPH", label);
-    outline0("DEC C");
-    outline0("INC DE");
-    outline1("JR %sB2DEXPL", label );
-    outhead1("%sB2DEXP:", label ); 
-    outline0("RLD");
-    outhead1("%sB2DEXPH:", label );
-    outline0("LD (DE),A");
-    outline0("INC DE");
-    outhead1("%sB2DEXPL:", label );
-    outline0("RLD");
-    outline0("LD (DE),A");
-    outline0("INC DE");
-    outline0("INC HL");
-    outline1("DJNZ %sB2DEXP", label );
-    outline0("SBC HL,BC" );
-       
-    return b2dbuf;
-
-}
 
 /**
  * @brief Emit ASM implementation for <b>DEBUG [expression]</b> instruction 
@@ -194,7 +69,10 @@ void debug_var( Environment * _environment, char * _name ) {
         case 8:
         case 16:
         case 32: {
-            Variable * buffer = vt_to_buffer( _environment, var->name );
+            Variable * string = variable_temporary( _environment, VT_STRING, "(string for debug)");
+            variable_store_string( _environment, string->name,"                    ");
+            char stringAddress[MAX_TEMPORARY_STORAGE]; sprintf(stringAddress, "%s+1", string->name);
+            cpu_bits_to_string( _environment, var->name, stringAddress, string->name, VT_BITWIDTH( var->type ) );
             outline0( "LD DE, HL" );
             outline0( "CALL 8252" );
         }

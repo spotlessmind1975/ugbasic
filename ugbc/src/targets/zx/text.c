@@ -81,52 +81,9 @@ void textmap_at_var( Environment * _environment, char * _address ) {
 
 }
 
-/**
- * @brief Emit ASM implementation for <b>TEXT ENABLE</b> instruction
- * 
- * This function can be called to emit the code to enable text mode
- * on the target machine.
- * 
- * @param _environment Current calling environment
- */
-void text_enable( Environment * _environment ) {
-    
-    bitmap_disable( _environment );
+void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _text, char * _encoding, char * _pen, char * _paper ) {
 
-}
-
-/**
- * @brief Emit ASM implementation for <b>TEXT DISABLE</b> instruction
- * 
- * This function can be called to emit the code to disable text mode
- * on the target machine.
- * 
- * @param _environment Current calling environment
- */
-void text_disable( Environment * _environment ) {
-    
-    bitmap_enable( _environment );
-    
-}
-
-void text_at( Environment * _environment, char * _x, char * _y, char * _text ) {
-
-    Variable * x = variable_retrieve( _environment, _x );
-    Variable * y = variable_retrieve( _environment, _y );
-    Variable * text = variable_retrieve( _environment, _text );
-    Variable * bitmap_enabled = variable_retrieve( _environment, "bitmap_enabled" );
-
-    char textString[MAX_TEMPORARY_STORAGE]; sprintf(textString, "%s+1", text->realName );
-
-    outline0("; TEXT AT" );
-
-    MAKE_LABEL
-
-    char bitmapEnabledLabel[MAX_TEMPORARY_STORAGE]; sprintf(bitmapEnabledLabel, "%senabled", label );
-    
-    cpu_bvneq( _environment, bitmap_enabled->realName, bitmapEnabledLabel );
-
-    Variable * buffer = variable_temporary( _environment, VT_BUFFER, "(buffer fot AT command)");
+    Variable * buffer = variable_temporary( _environment, VT_BUFFER, "(buffer fot AT/PEN/PAPER command)");
     variable_resize_buffer( _environment, buffer->name, 3 );
 
     char bufferAddress[MAX_TEMPORARY_STORAGE]; 
@@ -134,9 +91,9 @@ void text_at( Environment * _environment, char * _x, char * _y, char * _text ) {
     sprintf( bufferAddress, "%s", buffer->realName );
     cpu_store_8bit( _environment, bufferAddress, 22 );
     sprintf( bufferAddress, "%s+1", buffer->realName );
-    cpu_move_8bit( _environment, y->realName, bufferAddress );
+    cpu_move_8bit( _environment, _x, bufferAddress );
     sprintf( bufferAddress, "%s+2", buffer->realName );
-    cpu_move_8bit( _environment, y->realName, bufferAddress );
+    cpu_move_8bit( _environment, _y, bufferAddress );
 
     outline0("LD A,2");
     outline0("CALL 5633");
@@ -144,14 +101,128 @@ void text_at( Environment * _environment, char * _x, char * _y, char * _text ) {
     outline0("LD BC,3");
     outline0("CALL 8252");
 
+    sprintf( bufferAddress, "%s", buffer->realName );
+    cpu_store_8bit( _environment, bufferAddress, 16 );
+    sprintf( bufferAddress, "%s+1", buffer->realName );
+    cpu_move_8bit( _environment, _pen, bufferAddress );
+
+    outline0("LD A,2");
+    outline0("CALL 5633");
+    outline1("LD DE,%s", buffer->realName);
+    outline0("LD BC,2");
+    outline0("CALL 8252");
+
+    sprintf( bufferAddress, "%s", buffer->realName );
+    cpu_store_8bit( _environment, bufferAddress, 16 );
+    sprintf( bufferAddress, "%s+1", buffer->realName );
+    cpu_move_8bit( _environment, _paper, bufferAddress );
+
+    outline0("LD A,2");
+    outline0("CALL 5633");
+    outline1("LD DE,%s", buffer->realName);
+    outline0("LD BC,2");
+    outline0("CALL 8252");
+
     char stringAddress[MAX_TEMPORARY_STORAGE]; 
-    sprintf(stringAddress, "%s+1", text->realName );
+    sprintf(stringAddress, "%s+1", _text );
     outline1( "LD DE, (%s)", stringAddress );
-    outline1( "LD A, (%s)", text->realName );
+    outline1( "LD A, (%s)", _text );
     outline0( "LD C, A" );
     outline0( "LD B, 0" );
     outline0( "CALL 8252" );
 
-    cpu_label( _environment, bitmapEnabledLabel );
+}
+
+Variable * text_get_pen( Environment * _environment, char * _color ) {
+    
+    Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_WHITE );
+
+    Variable * result = variable_temporary( _environment, VT_STRING, 0 );
+
+    char resultString[MAX_TEMPORARY_STORAGE]; sprintf( resultString, "\xf " );
+    char stringAddress[MAX_TEMPORARY_STORAGE]; sprintf( stringAddress, "%s+1", result->realName );
+
+    variable_store_string(_environment, result->name, resultString );
+
+    cpu_move_8bit_indirect_with_offset(_environment, color->realName, stringAddress, 1 );
+        
+    return result;
+
+}
+
+Variable * text_get_paper( Environment * _environment, char * _color ) {
+    
+    Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_BLACK );
+
+    Variable * result = variable_temporary( _environment, VT_STRING, 0 );
+
+    char resultString[MAX_TEMPORARY_STORAGE]; sprintf( resultString, "\x10 " );
+    char stringAddress[MAX_TEMPORARY_STORAGE]; sprintf( stringAddress, "%s+1", result->realName );
+
+    variable_store_string(_environment, result->name, resultString );
+
+    cpu_move_8bit_indirect_with_offset(_environment, color->realName, stringAddress, 1 );
+        
+    return result;
+
+}
+
+
+Variable * text_get_at( Environment * _environment, char * _x, char * _y ) {
+    
+    Variable * x = variable_retrieve_or_define( _environment, _x, VT_BYTE, 0 );
+    Variable * y = variable_retrieve_or_define( _environment, _y, VT_BYTE, 0 );
+
+    Variable * result = variable_temporary( _environment, VT_STRING, 0 );
+
+    char resultString[MAX_TEMPORARY_STORAGE]; sprintf( resultString, "\x16  " );
+    char stringAddress[MAX_TEMPORARY_STORAGE]; sprintf( stringAddress, "%s+1", result->realName );
+
+    variable_store_string(_environment, result->name, resultString );
+
+    cpu_move_8bit_indirect_with_offset(_environment, x->realName, stringAddress, 1 );
+    cpu_move_8bit_indirect_with_offset(_environment, y->realName, stringAddress, 2 );
+        
+    return result;
+
+}
+
+void text_vscroll_screen( Environment * _environment, int _direction ) {
+
+    outline1("LD A, $%2.2x", ( _direction & 0xff ) );
+
+    if ( !_environment->textVScrollScreenDeployed ) {
+
+        Variable * bitmapAddress = variable_retrieve_or_define( _environment, "bitmapAddress", VT_ADDRESS, 0x4000 );
+
+        outline0("JMP text_vscroll_screen_after");
+
+        outline0("text_vscroll_screen:");
+        outline0("CP $80");
+        outline0("JR C, text_vscroll_screen_down");
+
+        outline0("text_vscroll_screen_up:");
+        outline0("LD DE, 32" );
+        outline1("LD HL, (%s)", bitmapAddress->realName );
+        outline0("ADD HL, DE" );
+        outline1("LD DE, (%s)", bitmapAddress->realName );
+        outline0("LD BC, 6880")
+        outline0("LDDR")
+        outline0("RET")
+
+        outline0("text_vscroll_screen_down:");
+        outline0("LD HL, 32" );
+        outline1("LD DE, (%s)", bitmapAddress->realName );
+        outline0("ADD DE, HL" );
+        outline1("LD HL, (%s)", bitmapAddress->realName );
+        outline0("LD BC, 6880")
+        outline0("LDIR")
+        outline0("RET")
+
+        _environment->textVScrollScreenDeployed = 1;
+
+    }
+
+    outline0("JSR text_vscroll_screen_down");
 
 }
