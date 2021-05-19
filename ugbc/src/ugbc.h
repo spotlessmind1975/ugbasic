@@ -766,6 +766,22 @@ typedef struct _Environment {
             fputs("\n", ((Environment *)_environment)->configurationFile); \
     }
 
+#define outfile0(f)     \
+    { \
+        FILE * fh = fopen( f, "rt" ); \
+        if ( fh ) { \
+            char line[MAX_TEMPORARY_STORAGE]; \
+            while( ! feof( fh ) ) { \
+                if ( fgets( line, MAX_TEMPORARY_STORAGE, fh ) ) { \
+                    fputs( line, ((Environment *)_environment)->asmFile); \
+                } \
+            } \
+            fclose( fh ); \
+        } else { \
+            CRITICAL2("Unable to include ugbasic system file", f ); \
+        } \
+    } 
+
 #define outhead0(s)             outline0n(0, s, 1)
 #define outhead1(s,a)           outline1n(0, s, a, 1)
 #define outhead2(s,a,b)         outline2n(0, s, a, b, 1)
