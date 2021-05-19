@@ -2196,21 +2196,19 @@ Variable * variable_string_str( Environment * _environment, char * _value ) {
     Variable * result = variable_temporary( _environment, VT_STRING, "(result of STR)" );
 
     switch( VT_BITWIDTH( value->type ) ) {
-        case 32:
         case 0:
             CRITICAL_STR_UNSUPPORTED( _value, DATATYPE_AS_STRING[value->type]);
             break;
+        case 32:
         case 16:
         case 8:
-            cpu_convert_upto_24bit_bcd( _environment, value->realName, dword->realName, VT_BITWIDTH( value->type ) );
             break;
     }
 
-    variable_store_string( _environment, result->name, "      " );
-
-    char resultAddress[MAX_TEMPORARY_STORAGE]; sprintf(resultAddress, "%s+1", result->realName );
-
-    cpu_convert_bcd_to_digits( _environment, dword->realName, resultAddress );
+    variable_store_string( _environment, result->name, "          " );
+    
+    char resultAddress[MAX_TEMPORARY_STORAGE]; sprintf(resultAddress, "%s+1", result->realName);
+    cpu_bits_to_string( _environment, value->realName, resultAddress, result->realName, VT_BITWIDTH( value->type ) );
 
     return result;
     
