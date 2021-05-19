@@ -858,16 +858,6 @@ void text_cline( Environment * _environment, char * _characters ) {
 
         outline0("JMP lib_text_cline_after");
 
-        outline0("NOP");
-        outline0("NOP");
-        outline0("NOP");
-        outline0("NOP");
-        outline0("NOP");
-        outline0("NOP");
-        outline0("NOP");
-        outline0("NOP");
-        outline0("NOP");
-
         outline0("lib_text_cline:");
         outline1("LDA %s", x->realName );
         outline0("STA $30" );
@@ -1017,16 +1007,6 @@ void text_hscroll_line( Environment * _environment, int _direction ) {
 
         outhead0("lib_text_hscroll_line:" );
 
-        outline0("NOP");
-        outline0("NOP");
-        outline0("NOP");
-        outline0("NOP");
-        outline0("NOP");
-        outline0("NOP");
-        outline0("NOP");
-        outline0("NOP");
-        outline0("NOP");
-
         // Use the current bitmap address as starting address for filling routine.
         outline1("LDA %s", textAddress->realName);
         outline0("STA $22");
@@ -1132,16 +1112,6 @@ void text_hscroll_screen( Environment * _environment, int _direction ) {
         Variable * textAddress = variable_retrieve( _environment, "textAddress" );
 
         outline0("JMP lib_text_hscroll_screen_after");
-
-        outline0("NOP");
-        outline0("NOP");
-        outline0("NOP");
-        outline0("NOP");
-        outline0("NOP");
-        outline0("NOP");
-        outline0("NOP");
-        outline0("NOP");
-        outline0("NOP");
 
         outline0("lib_text_hscroll_screen:");
 
