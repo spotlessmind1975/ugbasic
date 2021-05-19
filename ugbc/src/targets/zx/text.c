@@ -378,21 +378,27 @@ void text_vscroll_screen( Environment * _environment, int _direction ) {
         outline0("JP C, text_vscroll_screen_down");
 
         outline0("text_vscroll_screen_up:");
-        outline0("LD DE, 32" );
+        outline0("LD DE, 6112" );
         outline1("LD HL, (%s)", bitmapAddress->realName );
         outline0("ADD HL, DE" );
-        outline1("LD DE, (%s)", bitmapAddress->realName );
-        outline0("LD BC, 6880")
+        outline0("PUSH HL" );
+        outline0("LD DE, 6144" );
+        outline1("LD HL, (%s)", bitmapAddress->realName );
+        outline0("ADD HL, DE" );
+        outline0("LD DE, HL" );
+        outline0("POP HL" );
+        outline0("LD BC, 6112")
         outline0("LDDR")
         outline0("RET")
 
         outline0("text_vscroll_screen_down:");
+        outline1("LD HL, (%s)", bitmapAddress->realName );
+        outline0("PUSH HL" );
+        outline0("POP DE" );
+        outline1("LD HL, (%s)", bitmapAddress->realName );
         outline0("LD DE, 32" );
-        outline1("LD HL, (%s)", bitmapAddress->realName );
         outline0("ADD HL, DE" );
-        outline0("LD DE, HL" );
-        outline1("LD HL, (%s)", bitmapAddress->realName );
-        outline0("LD BC, 6880")
+        outline0("LD BC, 6112")
         outline0("LDIR")
         outline0("RET")
 
@@ -402,7 +408,7 @@ void text_vscroll_screen( Environment * _environment, int _direction ) {
 
     }
 
-    outline0("CALL text_vscroll_screen_down");
+    outline0("CALL text_vscroll_screen");
 
 }
 
