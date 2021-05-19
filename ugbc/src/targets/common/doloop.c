@@ -79,6 +79,7 @@ void begin_loop( Environment * _environment ) {
     MAKE_LABEL
 
     Loop * loop = malloc( sizeof( Loop ) );
+    memset( loop, 0, sizeof( Loop ) );
     loop->label = strdup( label );
     loop->type = LT_DO;
     loop->next = _environment->loops;

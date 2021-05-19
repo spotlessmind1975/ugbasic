@@ -102,6 +102,7 @@ void if_then( Environment * _environment, char * _expression ) {
     Variable * expression = variable_retrieve( _environment, _expression );
 
     Conditional * conditional = malloc( sizeof( Conditional ) );
+    memset( conditional, 0, sizeof( Conditional ) );
     conditional->label = strdup( label );
     conditional->type = CT_IF;
 

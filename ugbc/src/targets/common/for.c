@@ -99,6 +99,7 @@ void begin_for( Environment * _environment, char * _index, char * _from, char * 
     MAKE_LABEL
 
     Loop * loop = malloc( sizeof( Loop ) );
+    memset( loop, 0, sizeof( Loop ) );
     loop->label = strdup( label );
     loop->type = LT_FOR;
     loop->next = _environment->loops;
@@ -146,6 +147,7 @@ void begin_for_step( Environment * _environment, char * _index, char * _from, ch
     MAKE_LABEL
 
     Loop * loop = malloc( sizeof( Loop ) );
+    memset( loop, 0, sizeof( Loop ) );
     loop->label = strdup( label );
     loop->type = LT_FOR;
     loop->next = _environment->loops;

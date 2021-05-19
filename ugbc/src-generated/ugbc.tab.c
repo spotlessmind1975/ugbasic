@@ -6648,6 +6648,7 @@ int main( int _argc, char *_argv[] ) {
     int flags, opt;
     int nsecs, tfnd;
     Environment * _environment = malloc(sizeof(Environment));
+    memset( _environment, 0, sizeof(Environment));
 
     _environment->warningsEnabled = 0;
 
