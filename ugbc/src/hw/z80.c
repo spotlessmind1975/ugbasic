@@ -2362,8 +2362,11 @@ void z80_bits_to_string( Environment * _environment, char * _number, char * _str
     }
 
     outline0("CALL bits_to_string");
-    
-    z80_mem_move( _environment, b2dbuf->realName, _string, _string_size );
+
+    outline1("LD DE,(%s)", _string);
+    outline0("LD A,C");
+    outline1("LD (%s), A", _string_size);
+    outline0("LDIR");
 
 }
 
