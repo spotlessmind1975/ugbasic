@@ -536,6 +536,12 @@ typedef struct _Environment {
     VariableType parametersTypeEach[MAX_PARAMETERS];
 
     /**
+     * Deployed the vars
+     */
+
+    int varsDeployed;
+
+    /**
      * Deployed the text_encoded_at routine
      */
 
@@ -563,7 +569,7 @@ typedef struct _Environment {
      * Deployed the cls text routine
      */
 
-    int textClsDeployed;
+    int clsDeployed;
 
     /**
      * Deployed the cline text routine
@@ -783,6 +789,7 @@ typedef struct _Environment {
                 } \
             } \
             fclose( fh ); \
+            fputs("\n", ((Environment *)_environment)->asmFile); \
         } else { \
             CRITICAL2("Unable to include ugbasic system file", f ); \
         } \

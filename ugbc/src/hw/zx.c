@@ -52,7 +52,8 @@ void zx_vscroll( Environment * _environment, int _displacement ) {
 
     outline1("LD A, $%2.2x", ( _displacement & 0xff ) );
 
-    deploy(vScrollDeployed,"./ugbc/src/hw/zx/vscroll.asm");
+    deploy( varsDeployed,"./ugbc/src/hw/zx/vars.asm" );
+    deploy( vScrollDeployed,"./ugbc/src/hw/zx/vscroll.asm" );
 
     outline0("CALL VSCROLL");
 
@@ -60,6 +61,7 @@ void zx_vscroll( Environment * _environment, int _displacement ) {
 
 void zx_text_at( Environment * _environment, char * _x, char * _y, char * _text, char * _text_size, char * _pen, char * _paper ) {
 
+    deploy( varsDeployed,"./ugbc/src/hw/zx/vars.asm" );
     deploy( vScrollDeployed, "./ugbc/src/hw/zx/vscroll.asm" );
     deploy( textEncodedAtDeployed, "./ugbc/src/hw/zx/text_at.asm" );
 
@@ -76,7 +78,24 @@ void zx_text_at( Environment * _environment, char * _x, char * _y, char * _text,
 
     z80_move_8bit( _environment, "XCURS", _x );
     z80_move_8bit( _environment, "YCURS", _y );
-    
+
+}
+
+void zx_cls( Environment * _environment, char * _pen, char * _paper ) {
+
+    deploy( varsDeployed,"./ugbc/src/hw/zx/vars.asm" );
+    deploy( clsDeployed, "./ugbc/src/hw/zx/cls.asm" );
+
+    if ( _pen ) {
+        z80_move_8bit( _environment, _pen, "LOCALPEN");
+    }
+    if ( _paper ) {
+        z80_move_8bit( _environment, _paper, "LOCALPAPER");
+    }
+
+    outline0("LD A, 0");
+    outline0("CALL CLS");
+
 }
 
 #endif

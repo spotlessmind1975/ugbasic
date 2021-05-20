@@ -198,10 +198,3 @@ TEXTATGC:
     LD D,A
     RET
 
-
-TABCOUNT:   DEFB    4
-LOCALPEN:   DEFB    0
-LOCALPAPER: DEFB    7
-XCURS:      DEFB    0
-YCURS:      DEFB    0
-LOCALWW:    DEFB    3

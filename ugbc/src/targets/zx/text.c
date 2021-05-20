@@ -91,7 +91,7 @@ void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _
     Variable * ww = variable_retrieve( _environment, "windowWW" );
 
     char textString[MAX_TEMPORARY_STORAGE]; sprintf( textString, "%s+1", text->realName );
-    
+
     zx_text_at( _environment, x->realName, y->realName, textString, text->realName, pen->realName, paper->realName );
 
 }
@@ -306,33 +306,8 @@ void text_cline( Environment * _environment, char * _characters ) {
 
 void text_cls( Environment * _environment ) {
 
-    if ( !_environment->textClsDeployed ) {
+    zx_cls( _environment, NULL, NULL );
 
-        Variable * bitmapAddress = variable_retrieve( _environment, "bitmapAddress" );
-
-        outline0("JMP lib_text_cls_after");
-
-        outline0("lib_text_cls:");
-
-        outline0("LD A, 0" );
-        outline1("LD HL, (%s)", bitmapAddress->realName );
-        outline0("LD (HL), A" );
-        outline0("LD DE, 1" );
-        outline1("LD HL, (%s)", bitmapAddress->realName );
-        outline0("ADD HL, DE" );
-        outline0("LD DE, HL" );
-        outline1("LD HL, (%s)", bitmapAddress->realName );
-        outline0("LD BC, 6144")
-        outline0("LDIR")
-
-        outline0("lib_text_cls_after:");
-
-        _environment->textClsDeployed = 1;
-
-    }
-
-    outline0("CALL lib_text_cls");
-    
 }
 
 void text_paper( Environment * _environment, char * _color ) {
