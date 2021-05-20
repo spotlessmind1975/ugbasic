@@ -102,7 +102,7 @@ Variable * text_get_pen( Environment * _environment, char * _color ) {
 
     Variable * result = variable_temporary( _environment, VT_STRING, 0 );
 
-    char resultString[MAX_TEMPORARY_STORAGE]; sprintf( resultString, "\xf " );
+    char resultString[MAX_TEMPORARY_STORAGE]; sprintf( resultString, "\x1 " );
     char stringAddress[MAX_TEMPORARY_STORAGE]; sprintf( stringAddress, "%s+1", result->realName );
 
     variable_store_string(_environment, result->name, resultString );
@@ -119,7 +119,7 @@ Variable * text_get_paper( Environment * _environment, char * _color ) {
 
     Variable * result = variable_temporary( _environment, VT_STRING, 0 );
 
-    char resultString[MAX_TEMPORARY_STORAGE]; sprintf( resultString, "\x10 " );
+    char resultString[MAX_TEMPORARY_STORAGE]; sprintf( resultString, "\x2 " );
     char stringAddress[MAX_TEMPORARY_STORAGE]; sprintf( stringAddress, "%s+1", result->realName );
 
     variable_store_string(_environment, result->name, resultString );
@@ -138,7 +138,7 @@ Variable * text_get_at( Environment * _environment, char * _x, char * _y ) {
 
     Variable * result = variable_temporary( _environment, VT_STRING, 0 );
 
-    char resultString[MAX_TEMPORARY_STORAGE]; sprintf( resultString, "\x16  " );
+    char resultString[MAX_TEMPORARY_STORAGE]; sprintf( resultString, "\x4  " );
     char stringAddress[MAX_TEMPORARY_STORAGE]; sprintf( stringAddress, "%s+1", result->realName );
 
     variable_store_string(_environment, result->name, resultString );
