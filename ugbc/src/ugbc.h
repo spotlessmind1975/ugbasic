@@ -826,6 +826,14 @@ typedef struct _Environment {
 #define cfg4(s,a,b,c,d)         cfgline4n(0, s, a, b, c, d, 0)
 #define cfg5(s,a,b,c,d,e)       cfgline5n(0, s, a, b, c, d, e, 0)
 
+#define deploy(s,f)  \
+        if ( ! _environment->s ) { \
+            outline1("JMP %s_after", #s); \
+            outfile0(f); \
+            outhead1("%s_after:", #s); \
+            _environment->s = 1; \
+        }
+
 #define MAX_TEMPORARY_STORAGE   1024
 
 Variable * absolute( Environment * _environment, char * _value );
