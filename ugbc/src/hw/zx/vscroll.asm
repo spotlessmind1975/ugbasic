@@ -4,15 +4,30 @@
 ; -------------------------------------------------------------------------------
 
 VSCROLL:
+    PUSH AF
+    PUSH BC
+    PUSH DE
+    PUSH HL
     CP $80
     JP C, VSCROLLDOWN
 
+; ------------------------------------------------------------
+; | SCROLL UP
+; ------------------------------------------------------------
+
 VSCROLLUP:
     XOR $FF
+    ADD A, 1
     LD B, A
 VSCROLLUPL:
     LD C, 191
+
+    LD A, C
+    SUB A, B
+    LD C, A
+
     LD IX, ROWSADDRESS
+
 ROWSELECTUP:
     LD A, (IX)
     LD E, A
@@ -20,6 +35,18 @@ ROWSELECTUP:
     LD A, (IX)
     LD D, A
     INC IX
+
+    PUSH B
+    DEC B
+    JR Z, ROWSELECTUP1
+ROWSELECTUP0:
+    INC IX
+    INC IX
+    DEC B
+    JR NZ, ROWSELECTUP0
+ROWSELECTUP1:
+    POP B
+
     LD A, (IX)
     LD L, A
     INC IX
@@ -28,47 +55,101 @@ ROWSELECTUP:
     INC IX
     DEC IX
     DEC IX
+
+    PUSH B
+    DEC B
+    JR Z, ROWSELECTUP3
+ROWSELECTUP2:
+    DEC IX
+    DEC IX
+    DEC B
+    JR NZ, ROWSELECTUP2
+ROWSELECTUP3:
+    POP B
+
     CALL ROWCOPY
     DEC C
     JR NZ, ROWSELECTUP
     PUSH HL
     POP DE
     CALL ROWCLEAR
-    DEC B
-    JR NZ, VSCROLLUPL
-    RET
+    JP VSCROLLE
+
+; ------------------------------------------------------------
+; | SCROLL DOWN
+; ------------------------------------------------------------
 
 VSCROLLDOWN:
     LD B, A
 VSCROLLDOWNL:
     LD C, 191
+
+    LD A, C
+    SUB A, B
+    LD C, A
+
     LD IX, ROWSADDRESSL
 ROWSELECTDOWN:
+
     DEC IX
     DEC IX
+
+    PUSH B
+    DEC B
+    JR NZ, ROWSELECTDOWN1
+ROWSELECTDOWN0:
+    DEC IX
+    DEC IX
+    DEC B
+    JR NZ, ROWSELECTDOWN0
+ROWSELECTDOWN1:
+    POP B
+
     LD A, (IX)
     LD L, A
     INC IX
     LD A, (IX)
     LD H, A
     INC IX
+
+    PUSH B
+    DEC B
+    JR Z, ROWSELECTDOWN2
+ROWSELECTDOWN3:
+    INC IX
+    INC IX
+    JR NZ, ROWSELECTDOWN3
+ROWSELECTDOWN2:
+    POP B
+
     LD A, (IX)
     LD E, A
     INC IX
     LD A, (IX)
     LD D, A
     INC IX
+
     DEC IX
     DEC IX
     DEC IX
     DEC IX
+
+    PUSH B
+    DEC B
+    JR Z, ROWSELECTDOWN5
+ROWSELECTDOWN4:
+    DEC IX
+    DEC IX
+    DEC B
+    JR NZ, ROWSELECTDOWN4
+ROWSELECTDOWN5:
+    POP B
+
     CALL ROWCOPY
     DEC C
     JR NZ, ROWSELECTDOWN
     CALL ROWCLEAR
-    DEC B
-    JR NZ, VSCROLLDOWNL
-    RET
+    JP VSCROLLE
 
 ROWCOPY:
     PUSH HL
@@ -101,7 +182,13 @@ ROWCLEARL:
     POP BC
     RET
 
-txt:  DB "0123456789AAAAAAAAAABBBBBBBBBBXX"
+VSCROLLE:
+    POP HL
+    POP DE
+    POP BC
+    POP AF
+    RET
+
 ROWSADDRESS: 
     DEFW 16384
     DEFW 16640

@@ -144,7 +144,7 @@ void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _
         outline0("PUSH HL");
         outline0("PUSH BC");
 
-        text_vscroll_screen( _environment, -8 );
+        text_vscroll_screen( _environment, -1 );
 
         outline0("POP BC");
         outline0("POP HL");
