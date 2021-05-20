@@ -81,18 +81,19 @@ void textmap_at_var( Environment * _environment, char * _address ) {
 
 }
 
-void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _text, char * _encoding, char * _pen, char * _paper ) {
+void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _text, char * _encoding, char * _pen, char * _paper, char * _ww, char * _tab ) {
 
     Variable * text = variable_retrieve( _environment, _text );
     Variable * x = variable_retrieve( _environment, _x );
     Variable * y = variable_retrieve( _environment, _y );
     Variable * pen = variable_retrieve( _environment, _pen );
     Variable * paper = variable_retrieve( _environment, _paper );
-    Variable * ww = variable_retrieve( _environment, "windowWW" );
+    Variable * ww = variable_retrieve( _environment, _ww );
+    Variable * tab = variable_retrieve( _environment, _tab );
 
     char textString[MAX_TEMPORARY_STORAGE]; sprintf( textString, "%s+1", text->realName );
 
-    zx_text_at( _environment, x->realName, y->realName, textString, text->realName, pen->realName, paper->realName );
+    zx_text_at( _environment, x->realName, y->realName, textString, text->realName, pen->realName, paper->realName, ww->realName, tab->realName );
 
 }
 

@@ -59,7 +59,7 @@ void zx_vscroll( Environment * _environment, int _displacement ) {
 
 }
 
-void zx_text_at( Environment * _environment, char * _x, char * _y, char * _text, char * _text_size, char * _pen, char * _paper ) {
+void zx_text_at( Environment * _environment, char * _x, char * _y, char * _text, char * _text_size, char * _pen, char * _paper, char * _ww, char * _tab ) {
 
     deploy( varsDeployed,"./ugbc/src/hw/zx/vars.asm" );
     deploy( vScrollDeployed, "./ugbc/src/hw/zx/vscroll.asm" );
@@ -69,6 +69,8 @@ void zx_text_at( Environment * _environment, char * _x, char * _y, char * _text,
     z80_move_8bit( _environment, _y, "YCURS");
     z80_move_8bit( _environment, _pen, "LOCALPEN");
     z80_move_8bit( _environment, _paper, "LOCALPAPER");
+    z80_move_8bit( _environment, _ww, "LOCALWW");
+    z80_move_8bit( _environment, _tab, "TABCOUNT");
 
     outline1("LD A, (%s)", _text_size );
     outline0("LD C, A");
