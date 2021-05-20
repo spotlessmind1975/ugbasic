@@ -64,6 +64,9 @@
 
 #define PORT_COLOR_BORDER           254
 
+#define TEXT_COLUMNS_COUNT          32
+#define TEXT_ROWS_COUNT             24
+
 void zx_color_border( Environment * _environment, char * _color );
 void zx_vscroll( Environment * _environment, int _displacement );
 
