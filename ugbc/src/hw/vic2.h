@@ -62,6 +62,8 @@
 #define COLOR_PEACH       			COLOR_PINK
 #define COLOR_COUNT                 16
 
+#define TEXT_COLUMNS_COUNT          40
+#define TEXT_ROWS_COUNT             25
 
 void vic2_background_color( Environment * _environment, char * _index, char * _background_color );
 void vic2_border_color( Environment * _environment, char * _border_color );
