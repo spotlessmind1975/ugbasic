@@ -144,7 +144,7 @@ void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _
         outline0("PUSH HL");
         outline0("PUSH BC");
 
-        text_vscroll_screen( _environment, -1 );
+        text_vscroll_screen( _environment, -8 );
 
         outline0("POP BC");
         outline0("POP HL");
@@ -365,50 +365,7 @@ Variable * text_get_at( Environment * _environment, char * _x, char * _y ) {
 
 void text_vscroll_screen( Environment * _environment, int _direction ) {
 
-    outline1("LD A, $%2.2x", ( _direction & 0xff ) );
-
-    if ( !_environment->textVScrollScreenDeployed ) {
-
-        Variable * bitmapAddress = variable_retrieve_or_define( _environment, "bitmapAddress", VT_ADDRESS, 0x4000 );
-
-        outline0("JMP text_vscroll_screen_after");
-
-        outline0("text_vscroll_screen:");
-        outline0("CP $80");
-        outline0("JP C, text_vscroll_screen_down");
-
-        outline0("text_vscroll_screen_up:");
-        outline0("LD DE, 6112" );
-        outline1("LD HL, (%s)", bitmapAddress->realName );
-        outline0("ADD HL, DE" );
-        outline0("PUSH HL" );
-        outline0("LD DE, 6144" );
-        outline1("LD HL, (%s)", bitmapAddress->realName );
-        outline0("ADD HL, DE" );
-        outline0("LD DE, HL" );
-        outline0("POP HL" );
-        outline0("LD BC, 6112")
-        outline0("LDDR")
-        outline0("RET")
-
-        outline0("text_vscroll_screen_down:");
-        outline1("LD HL, (%s)", bitmapAddress->realName );
-        outline0("PUSH HL" );
-        outline0("POP DE" );
-        outline1("LD HL, (%s)", bitmapAddress->realName );
-        outline0("LD DE, 32" );
-        outline0("ADD HL, DE" );
-        outline0("LD BC, 6112")
-        outline0("LDIR")
-        outline0("RET")
-
-        outhead0("text_vscroll_screen_after:");
-
-        _environment->textVScrollScreenDeployed = 1;
-
-    }
-
-    outline0("CALL text_vscroll_screen");
+    zx_vscroll( _environment, 8 * _direction );
 
 }
 
