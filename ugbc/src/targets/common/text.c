@@ -130,8 +130,8 @@ void setup_text_variables( Environment * _environment ) {
     variable_define( _environment, "windowY2", VT_BYTE, (TEXT_ROWS_COUNT-1) );                
     variable_define( _environment, "windowCX", VT_BYTE, 0 );
     variable_define( _environment, "windowCY", VT_BYTE, 0 );
-    variable_define( _environment, "windowPE", VT_COLOR, COLOR_WHITE );
-    variable_define( _environment, "windowPA", VT_COLOR, COLOR_BLACK );
+    variable_define( _environment, "windowPE", VT_COLOR, COLOR_BLACK );
+    variable_define( _environment, "windowPA", VT_COLOR, COLOR_WHITE );
     variable_define( _environment, "windowE", VT_BYTE, 0 );
     variable_define( _environment, "windowS", VT_BYTE, 0 );
     variable_define( _environment, "windowW", VT_BYTE, 0 );
