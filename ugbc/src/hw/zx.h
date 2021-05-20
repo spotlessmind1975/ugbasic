@@ -65,5 +65,6 @@
 #define PORT_COLOR_BORDER           254
 
 void zx_color_border( Environment * _environment, char * _color );
+void zx_vscroll( Environment * _environment, int _displacement );
 
 #endif

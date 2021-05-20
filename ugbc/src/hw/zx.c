@@ -48,5 +48,24 @@ void zx_color_border( Environment * _environment, char * _color ) {
 
 }
 
+void zx_vscroll( Environment * _environment, int _displacement ) {
+
+    outline1("LD A, $%2.2x", ( _displacement & 0xff ) );
+
+    if ( !_environment->vScrollDeployed ) {
+
+        outline0("JMP vscroll_after");
+
+        outfile0("./ugbc/src/hw/zx/vscroll.asm");
+
+        outhead0("vscroll_after:");
+
+        _environment->vScrollDeployed = 1;
+
+    }
+
+    outline0("CALL VSCROLL");
+
+}
 
 #endif
