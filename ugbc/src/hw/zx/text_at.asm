@@ -82,33 +82,33 @@ TEXTATTABN:
     JMP TEXTATVSCROLL
 
 TEXTATPEN:
-    INC HL
     LD A, (HL)
+    INC HL
     LD (LOCALPEN), A
     JMP TEXTATNEXTCOL
 
 TEXTATPAPER:
-    INC HL
     LD A, (HL)
+    INC HL
     LD (LOCALPAPER), A
     JMP TEXTATNEXTCOL
 
 TEXTATAT:
-    INC HL
     LD A, (HL)
+    INC HL
     LD E, A   
-    INC HL
     LD A, (HL)
+    INC HL
     LD D, A
     JMP TEXTATNEXTCOL
 
 TEXTATCMOVE:
-    INC HL
     LD A, (HL)
+    INC HL
     ADD A, E
     LD E, A
-    INC HL
     LD A, (HL)
+    INC HL
     ADD A, D
     LD D, A
     JMP TEXTATNEXTCOL
@@ -197,4 +197,4 @@ TEXTATGC:
     OR %01000000
     LD D,A
     RET
-
+    
