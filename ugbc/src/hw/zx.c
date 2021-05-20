@@ -52,20 +52,31 @@ void zx_vscroll( Environment * _environment, int _displacement ) {
 
     outline1("LD A, $%2.2x", ( _displacement & 0xff ) );
 
-    if ( !_environment->vScrollDeployed ) {
-
-        outline0("JMP vscroll_after");
-
-        outfile0("./ugbc/src/hw/zx/vscroll.asm");
-
-        outhead0("vscroll_after:");
-
-        _environment->vScrollDeployed = 1;
-
-    }
+    deploy(vScrollDeployed,"./ugbc/src/hw/zx/vscroll.asm");
 
     outline0("CALL VSCROLL");
 
+}
+
+void zx_text_at( Environment * _environment, char * _x, char * _y, char * _text, char * _text_size, char * _pen, char * _paper ) {
+
+    deploy( vScrollDeployed, "./ugbc/src/hw/zx/vscroll.asm" );
+    deploy( textEncodedAtDeployed, "./ugbc/src/hw/zx/text_at.asm" );
+
+    z80_move_8bit( _environment, _x, "XCURS");
+    z80_move_8bit( _environment, _y, "YCURS");
+    z80_move_8bit( _environment, _pen, "LOCALPEN");
+    z80_move_8bit( _environment, _paper, "LOCALPAPER");
+
+    outline1("LD A, (%s)", _text_size );
+    outline0("LD C, A");
+    outline0("LD B, 0");
+    outline1("LD HL, (%s)", _text );
+    outline0("CALL TEXTAT");
+
+    z80_move_8bit( _environment, "XCURS", _x );
+    z80_move_8bit( _environment, "YCURS", _y );
+    
 }
 
 #endif
