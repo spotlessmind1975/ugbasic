@@ -45,7 +45,6 @@ AT { return (AT); }
 ADD { return (ADD); }
 ADDRESS { return (ADDRESS); }
 AND { return (AND); }
-ANSI { return (ANSI); }
 BACKGROUND { return (BACKGROUND); }
 BANK { return (BANK); }
 BEGIN { return (BEG); }
@@ -187,7 +186,6 @@ SGN { return (SGN); }
 SHARED { return (SHARED); }
 SIGNED { return (SIGNED); }
 SPACE { return (SPACE); }
-SPECIFIC { return (SPECIFIC); }
 SPRITE { return (SPRITE); }
 STEP { return (STEP); }
 STR { return (STR); }
@@ -199,6 +197,7 @@ TAN { return(TAN); }
 TEMPORARY { return (TEMPORARY); }
 TEXT { return (TEXT); }
 TEXTMAP { return (TEXTMAP); }
+TEXTADDRESS { return (TEXTADDRESS); }
 THEN { return (THEN); }
 TICKS { return (TICKS); }
 TILES { return (TILES); }
@@ -210,7 +209,6 @@ UNTIL { return (UNTIL); }
 UP { return (UP); }
 UPPER { return (UPPER); }
 UPPER\$ { return (UPPER); }
-USE { return (USE); }
 VAL { return (VAL); }
 VAR { return (VAR); }
 VARIABLES { return (VARIABLES); }

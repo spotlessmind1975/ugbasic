@@ -121,7 +121,6 @@ windowX_cx:	.res 1
 windowX_cy:	.res 1
 
 */
-
 void setup_text_variables( Environment * _environment ) {
 
     variable_define( _environment, "windowX", VT_BYTE, 0 );
@@ -144,6 +143,78 @@ void setup_text_variables( Environment * _environment ) {
 
 }
 
+/**
+ * @brief Emit code for <strong>LOCATE ...,...</strong>
+ * 
+ * @param _environment Current calling environment
+ * @param _x Column to locate to
+ * @param _y Row to locate to
+ */
+/* <usermanual>
+@keyword LOCATE
+
+@english
+The ''LOCATE'' command moves the text cursor to specific coordinates, 
+and this new location sets the start position for all subsequent 
+text printing until commanded otherwise. 
+
+All screen positions are measured in “text coordinates”, which are 
+measured in units of one printed character on screen, with the 
+x-coordinate controlling the horizontal position and the 
+y-coordinate referring to the vertical. 
+
+The top left-hand corner of the screen has coordinates of 0,0 
+whereas text coordinates of 15,10 refer to a position 15 characters 
+from the left-hand edge of the screen and 10 characters from the top.
+
+The range of these coordinates will depend on the size of your character 
+set and the dimensions of the display area allocated, known as a “window”. 
+
+All coordinate measurements are taken using text coordinates relative to 
+the current window. If you try and print something outside of these 
+limits, an error will be generated or the screen will be automatically
+scrolled down.
+
+The current screen is automatically treated as a window, so there is no 
+need to "open" one.
+
+@italian
+Il comando ''LOCATE'' sposta il cursore del testo su coordinate specifiche,
+e questa nuova posizione definisce la posizione iniziale per tutti i successivi
+comandi di stampa testo fino a quando non viene comandato diversamente.
+
+Tutte le posizioni dello schermo sono misurate in "coordinate di testo", che sono
+misurate in unità di un carattere stampato sullo schermo, con la coordinata x 
+che controlla la posizione orizzontale e la coordinata y riferita alla
+posizione verticale.
+
+L'angolo in alto a sinistra dello schermo ha coordinate 0,0
+mentre le coordinate di testo di 15,10 si riferiscono a una posizione di 15 caratteri
+dal bordo sinistro dello schermo e 10 caratteri dall'alto.
+
+L'intervallo di queste coordinate dipenderà dalle dimensioni del carattere
+e le dimensioni dell'area di visualizzazione assegnata, denominata "finestra".
+
+Tutte le misurazionidi  coordinate vengono effettuate utilizzando le coordinate 
+di  testo relative a la finestra corrente. Provare a stampare qualcosa al di fuori di questi
+limiti verrà generato un errore o la schermata verrà automaticamente
+fatta scorrere verso il basso.
+
+La schermata corrente viene automaticamente trattata come una finestra, quindi non c'è
+bisogno di "aprirne" una.
+
+@syntax LOCATE {[x]},{[y]}
+
+@example LOCATE 15,0
+@example LOCATE ,20
+
+@usedInExample texts_position_01.bas
+@usedInExample texts_position_02.bas
+
+@seeAlso AT$
+@seeAlso CMOVE
+@target all
+</usermanual> */
 void text_locate( Environment * _environment, char * _x, char * _y ) {
 
     if ( _x ) {
@@ -182,6 +253,39 @@ void text_cmove_direct( Environment * _environment, int _dx, int _dy ) {
 
 }
 
+/**
+ * @brief Emit code for <strong>CLS</strong>
+ * 
+ * @param _environment 
+ */
+/* <usermanual>
+@keyword CMOVE
+
+@english
+''CMOVE'' allows to move the text cursor a pre-set distance away from its current position. 
+The command is followed by a pair of variables that represent the width and height of the 
+required offset, and these values are added to the current cursor coordinates. Like 
+''LOCATE'', either of the coordinates can be omitted, as long as the comma is positioned
+correctly. An additional technique is to use negative values as well as positive offsets.
+
+@italian
+Il comando ''CMOVE'' consente di spostare il cursore del testo di una distanza preimpostata 
+dalla sua posizione corrente. Il comando è seguito da una coppia di variabili che rappresentano
+la larghezza e l'altezza dell'offset richiesto e questi valori vengono aggiunti alle coordinate
+correnti del cursore. Come "LOCATE", una delle coordinate può essere omessa, purché la virgola
+sia posizionata correttamente. Una tecnica aggiuntiva consiste nell'utilizzare valori negativi 
+e offset positivi.
+
+@syntax CMOVE {[dx]},{[dy]}
+
+@example CMOVE -1, -1
+
+@usedInExample texts_position_03.bas
+@usedInExample texts_position_04.bas
+@usedInExample texts_position_07.bas
+
+@target all
+</usermanual> */
 void text_cmove( Environment * _environment, char * _dx, char * _dy ) {
 
     if ( _dx ) {
@@ -202,6 +306,33 @@ void text_cmove( Environment * _environment, char * _dx, char * _dy ) {
 
 }
 
+/**
+ * @brief Emit code for <strong>LOCATE ...,...</strong>
+ * 
+ * @param _environment Current calling environment
+ */
+/* <usermanual>
+@keyword LOCATE
+
+@english
+The ''HOME'' command moves the text cursor back to the top left-hand corner
+of the screen in a hurry.
+
+@italian
+Il comando "HOME" riporta il cursore del testo nell'angolo in alto a sinistra
+dello schermo in fretta.
+
+@syntax HOME
+
+@example HOME
+
+@usedInExample texts_position_02.bas
+
+@seeAlso LOCATE
+@seeAlso AT$
+@seeAlso CMOVE
+@target all
+</usermanual> */
 void text_home( Environment * _environment ) {
 
     Variable * x = variable_retrieve( _environment, "windowCX" );
@@ -227,6 +358,33 @@ void text_text( Environment * _environment, char * _text ) {
     
 }
 
+/**
+ * @brief Emit code for <strong>= CMOVE(...,...)</strong>
+ * 
+ * @param _environment Current calling environment
+ * @param _x Column to locate to
+ * @param _y Row to locate to
+ */
+/* <usermanual>
+@keyword CMOVE$
+
+@english
+The ''CMOVE$'' function can be used to print something relative to the current 
+cursor position.
+
+@italian
+La funzione ''CMOVE''" può essere utilizzata per stampare qualcosa relativo 
+alla posizione corrente del cursore.
+
+@syntax = CMOVE$([x],[y])
+
+@example PRINT CMOVE$(10,10)
+
+@usedInExample texts_position_04.bas
+
+@seeAlso CMOVE
+@target all
+</usermanual> */
 Variable * text_get_cmove( Environment * _environment, char * _x, char * _y ) {
     
     Variable * x = variable_retrieve_or_define( _environment, _x, VT_BYTE, 0 );
@@ -262,7 +420,38 @@ Variable * text_get_cmove_direct( Environment * _environment, int _x, int _y ) {
 
 }
 
+/**
+ * @brief Emit code for <strong>TAB$</strong>
+ * 
+ * @param _environment Current calling environment
+ */
+/* <usermanual>
+@keyword TAB$
 
+@english
+The ''TAB$'' function returns a special control character called ''TAB'', 
+which carries the ASCII code of ''9''. When this character is printed, 
+the text cursor is automatically moved to the next tabulated column 
+setting (tab) to the right. The default setting for this is four
+characters, which can be changed using ''[[SET TAB]]''. 
+
+
+@italian
+La funzione ''TAB$'' restituisce un carattere di controllo speciale 
+chiamato "TAB", che contiene il codice ASCII 9. Quando questo carattere
+viene stampato, il cursore del testo viene automaticamente spostato 
+alla successiva impostazione della colonna tabulata (tabulazione) 
+a destra. L'impostazione predefinita per questo è di quattro caratteri,
+che può essere modificata utilizzando il comando ''[[SET TAB]]''.
+
+@syntax = TAB$
+
+@example PRINT TAB$
+
+@usedInExample texts_position_08.bas
+
+@target all
+</usermanual> */
 Variable * text_get_tab( Environment * _environment ) {
     
     Variable * tab = variable_retrieve( _environment, "TAB" );
@@ -308,6 +497,33 @@ void text_tab( Environment * _environment ) {
     
 }
 
+/**
+ * @brief Emit code for <strong>SET TAB ...</strong>
+ * 
+ * @param _environment Current calling environment
+ * @param _new_tab New tab count value
+ */
+/* <usermanual>
+@keyword SET TAB
+
+@english
+The ''SET TAB'' command specifies the number of characters 
+that the text cursor will move to the right when the next 
+TAB$ is printed.
+
+@italian
+Il comando ''SET TAB'' specifica il numero di caratteri che
+il cursore di testo sposterà a destra quando verrà stampato 
+il successivo TAB $.
+
+@syntax SET TAB [expression]
+
+@example SET TAB 10
+
+@usedInExample texts_position_08.bas
+
+@target all
+</usermanual> */
 void text_set_tab( Environment * _environment, char * _new_tab ) {
 
     Variable * tab = variable_retrieve( _environment, "windowT" );
@@ -324,6 +540,41 @@ void text_at( Environment * _environment, char * _x, char * _y, char * _text ) {
     text_text( _environment, _text );
     
 }
+
+/**
+ * @brief Emit code for <strong>PEN ...</strong> command
+ * 
+ * @param _environment Current calling environment
+ * @param _color Color to use for the pen
+ */
+/* <usermanual>
+@keyword PEN
+
+@english
+The ''PEN'' command sets the colour of the text displayed in the current
+window, when followed by the colour index number of your choice. 
+The default setting of the pen colour is index number ''DEFAULT PEN'', 
+and alternative colours may be selected from one of up to ''PEN COLORS'' 
+choices, depending on the current graphics mode.
+
+@italian
+Il comando "PEN" imposta il colore del testo visualizzato nella finestra 
+corrente, quando seguito dal numero di indice del colore scelto. 
+L'impostazione predefinita del colore della penna è il numero di indice
+''DEFAULT PEN'', e colori alternativi possono essere selezionati 
+da una delle scelte fino a "PEN COLORS", a seconda della modalità 
+grafica corrente.
+
+@syntax PEN [expression]
+
+@example PEN 4
+@example PEN (esempio)
+
+@usedInExample text_options_01.bas
+@usedInExample text_options_02.bas
+
+@target all
+</usermanual> */
 
 void text_pen( Environment * _environment, char * _color ) {
 
@@ -384,6 +635,68 @@ void text_under( Environment * _environment, int _value ) {
     
 }
 
+/**
+ * @brief Emit code for <strong>WRITING</strong>
+ * 
+ * @param _environment Current calling environment
+ * @param _mode Expression with the writing mode
+ * @param _parts Expression with the writings parts
+ */
+/* <usermanual>
+@keyword WRITING
+
+@english
+The WRITING command is used to control how the text is presented on the screen. 
+The first value selects one of five writing modes:
+
+ * ''REPLACE'' (0) – new text replaces any existing screen data;
+ * ''OR'' (1) – merge new text with screen data, using logical OR;
+ * ''XOR'' (2) – combine new text with screen data, using XOR;
+ * ''AND'' (3) – Combine new text and screen data, using logical AND;
+ * ''IGNORE'' (4) – ignore all subsequent printing instructions.
+
+A number set as the optional second value selects which parts of the
+text are to be printed on the screen, as follows:
+
+ * ''NORMAL'' (3) – Print text and background together;
+ * ''PAPER'' or ''PAPER ONLY'' (1) – paper only the background to be drawn on screen;
+ * ''PEN'' or ''PEN ONLY'' (2) – ignore paper colour and print text on actual background.
+
+The default value for both of the ''WRITING'' parameters is three (''3''), 
+giving normal printed output.
+
+@italian
+Il comando ''WRITING'' viene utilizzato per controllare come 
+il testo viene presentato sullo schermo. Il primo valore seleziona
+una delle cinque modalità di scrittura:
+
+  * ''REPLACE'' (0) - il nuovo testo sostituisce i dati dello schermo esistenti;
+  * ''OR'' (1) - unisce il nuovo testo con i dati dello schermo, usando l'OR logico;
+  * ''XOR'' (2) - combina il nuovo testo con i dati dello schermo, usando XOR;
+  * ''AND'' (3) - Combina nuovo testo e dati sullo schermo, usando AND logico;
+  * ''IGNORE'' (4) - ignora tutte le istruzioni di stampa successive.
+
+Un numero impostato come secondo valore opzionale seleziona quali parti di
+il testo deve essere stampato sullo schermo, come segue:
+
+  * ''NORMAL'' (3) - Stampa testo e sfondo insieme;
+  * ''PAPER'' o ''PAPER ONLY'' (1) - colora solo lo sfondo;
+  * ''PEN'' o ''PEN ONLY'' (2) - colora solo il testo.
+
+Il valore predefinito per entrambi i parametri di ''WRITING'' è tre ('' 3 ''),
+che danno un output stampato normale.
+
+@syntax WRITE {[mode]},{[parts]}
+
+@example WRITING REPLACE,PEN
+@example WRITING 3,
+
+@usedInExample text_options_06.bas
+
+@seeAlso PEN
+@seeAlso PAPER
+@target all
+</usermanual> */
 void text_writing( Environment * _environment, char * _mode, char * _parts ) {
 
     setup_text_variables( _environment );
@@ -398,6 +711,37 @@ void text_writing( Environment * _environment, char * _mode, char * _parts ) {
     
 }
 
+/**
+ * @brief Emit code for <strong>CENTRE ...</strong>
+ * 
+ * @param _environment Current calling environment
+ * @param _string String to center
+ */
+/* <usermanual>
+@keyword CENTRE
+
+@english
+The ''CENTRE'' (or ''CENTER'') command can be used to position text in the 
+centre of the screen, and to save you the effort of calculating the text 
+coordinates in order to achieve this. The CENTRE command takes a string 
+of characters and prints it in the middle of the line currently occupied 
+by the cursor.
+
+@italian
+Il comando ''CENTRE'' (o ''CENTER'') può essere utilizzato per posizionare
+il testo al centro dello schermo e per risparmiare lo sforzo di 
+calcolare le coordinate del testo per ottenere ciò. Il comando ''CENTER''
+prende una stringa di caratteri e la stampa al centro della riga 
+attualmente occupata dal cursore.
+
+@syntax CENTRE [expression]
+
+@example CENTRE "HELLO!"
+
+@usedInExample texts_position_07.bas
+
+@target all
+</usermanual> */
 void text_center( Environment * _environment, char * _string ) {
 
     setup_text_variables( _environment );
@@ -458,3 +802,213 @@ void text_remember( Environment * _environment ) {
     variable_store( _environment, my->name, 0 );
 
 }
+
+/* <usermanual>
+@keyword CDOWN
+
+@english
+By using the ''CDOWN'' command you can force the text cursor down a single line.
+
+@italian
+Utilizzando il comando ''CDOWN'' è possibile forzare il cursore del testo
+verso il basso di una singola riga.
+
+@syntax CDOWN
+
+@example CDOWN
+
+@usedInExample texts_position_04.bas
+
+@seeAlso CMOVE
+@seeAlso CUP
+@seeAlso CDOWN$
+@seeAlso CLEFT
+@seeAlso CRIGHT
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword CDOWN$
+
+@english
+The effect of summoning up the special control character ''CDOWN$'' is exactly the 
+same as printing after a ''CDOWN'' command. The advantage of this alternative is 
+that several text cursor movements can be combined in a single string, using ''CDOWN$''.
+
+@italian
+L'effetto dell'uso del carattere di controllo speciale ''CDOWN$'' è esattamente lo
+stesso della stampa dopo un comando ''CDOWN''. Il vantaggio di questa alternativa
+è che diversi movimenti del cursore di testo possono essere combinati
+in una singola stringa, utilizzando ''CDOWN$''.
+
+@syntax CDOWN$
+
+@example PRINT CDOWN$
+
+@usedInExample texts_position_10.bas
+
+@seeAlso CMOVE$
+@seeAlso CUP$
+@seeAlso CDOWN
+@seeAlso CLEFT$
+@seeAlso CRIGHT$
+@target all
+</usermanual> */
+
+
+/* <usermanual>
+@keyword CUP
+
+@english
+By using the ''CUP'' command you can force the text cursor up a single line.
+
+@italian
+Utilizzando il comando ''CUP'' è possibile forzare il cursore del testo
+verso l'alto di una singola riga.
+
+@syntax CUP
+
+@example CUP
+
+@usedInExample texts_position_04.bas
+
+@seeAlso CMOVE
+@seeAlso CUP$
+@seeAlso CDOWN
+@seeAlso CLEFT
+@seeAlso CRIGHT
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword CUP$
+
+@english
+The effect of summoning up the special control character ''CUP$'' is exactly the 
+same as printing after a ''CUP'' command. The advantage of this alternative is 
+that several text cursor movements can be combined in a single string, using ''CUP$''.
+
+@italian
+L'effetto dell'uso del carattere di controllo speciale ''CUP$'' è esattamente lo
+stesso della stampa dopo un comando ''CUP''. Il vantaggio di questa alternativa
+è che diversi movimenti del cursore di testo possono essere combinati
+in una singola stringa, utilizzando ''CUP$''.
+
+@syntax CUP$
+
+@example PRINT CUP$
+
+@usedInExample texts_position_10.bas
+
+@seeAlso CMOVE$
+@seeAlso CUP
+@seeAlso CDOWN$
+@seeAlso CLEFT$
+@seeAlso CRIGHT$
+@target all
+</usermanual> */
+
+
+/* <usermanual>
+@keyword CRIGHT
+
+@english
+By using the ''CRIGHT'' command you can force the text cursor right by a single character.
+
+@italian
+Utilizzando il comando ''CRIGHT'' è possibile forzare il cursore del testo
+verso destra di un singolo carattere.
+
+@syntax CRIGHT
+
+@example CRIGHT
+
+@usedInExample texts_position_04.bas
+
+@seeAlso CMOVE
+@seeAlso CUP
+@seeAlso CDOWN
+@seeAlso CLEFT
+@seeAlso CRIGHT$
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword CLEFT$
+
+@english
+The effect of summoning up the special control character ''CLEFT$'' is exactly the 
+same as printing after a ''CLEFT'' command. The advantage of this alternative is 
+that several text cursor movements can be combined in a single string, using ''CLEFT$''.
+
+@italian
+L'effetto dell'uso del carattere di controllo speciale ''CLEFT$'' è esattamente lo
+stesso della stampa dopo un comando ''CLEFT''. Il vantaggio di questa alternativa
+è che diversi movimenti del cursore di testo possono essere combinati
+in una singola stringa, utilizzando ''CLEFT$''.
+
+@syntax CLEFT$
+
+@example PRINT CCLEFTUP$
+
+@usedInExample texts_position_10.bas
+
+@seeAlso CMOVE$
+@seeAlso CUP$
+@seeAlso CDOWN$
+@seeAlso CLEFT
+@seeAlso CRIGHT$
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword CLEFT
+
+@english
+By using the ''CLEFT'' command you can force the text cursor left by a single character.
+
+@italian
+Utilizzando il comando ''CLEFT'' è possibile forzare il cursore del testo
+verso sinistra di un singolo carattere.
+
+@syntax CLEFT
+
+@example CLEFT
+
+@usedInExample texts_position_04.bas
+
+@seeAlso CMOVE
+@seeAlso CUP
+@seeAlso CDOWN
+@seeAlso CLEFT$
+@seeAlso CRIGHT
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword CLEFT$
+
+@english
+The effect of summoning up the special control character ''CLEFT$'' is exactly the 
+same as printing after a ''CLEFT'' command. The advantage of this alternative is 
+that several text cursor movements can be combined in a single string, using ''CLEFT$''.
+
+@italian
+L'effetto dell'uso del carattere di controllo speciale ''CLEFT$'' è esattamente lo
+stesso della stampa dopo un comando ''CLEFT''. Il vantaggio di questa alternativa
+è che diversi movimenti del cursore di testo possono essere combinati
+in una singola stringa, utilizzando ''CLEFT$''.
+
+@syntax CLEFT$
+
+@example PRINT CCLEFTUP$
+
+@usedInExample texts_position_10.bas
+
+@seeAlso CMOVE$
+@seeAlso CUP$
+@seeAlso CDOWN$
+@seeAlso CLEFT
+@seeAlso CRIGHT$
+@target all
+</usermanual> */

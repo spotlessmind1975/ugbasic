@@ -209,62 +209,61 @@ extern int yydebug;
     PARAM = 410,                   /* PARAM  */
     PRINT = 411,                   /* PRINT  */
     DEFAULT = 412,                 /* DEFAULT  */
-    SPECIFIC = 413,                /* SPECIFIC  */
-    ANSI = 414,                    /* ANSI  */
-    USE = 415,                     /* USE  */
-    PAPER = 416,                   /* PAPER  */
-    INVERSE = 417,                 /* INVERSE  */
-    REPLACE = 418,                 /* REPLACE  */
-    XOR = 419,                     /* XOR  */
-    IGNORE = 420,                  /* IGNORE  */
-    NORMAL = 421,                  /* NORMAL  */
-    WRITING = 422,                 /* WRITING  */
-    ONLY = 423,                    /* ONLY  */
-    LOCATE = 424,                  /* LOCATE  */
-    CLS = 425,                     /* CLS  */
-    HOME = 426,                    /* HOME  */
-    CMOVE = 427,                   /* CMOVE  */
-    CENTER = 428,                  /* CENTER  */
-    CENTRE = 429,                  /* CENTRE  */
-    TAB = 430,                     /* TAB  */
-    SET = 431,                     /* SET  */
-    CUP = 432,                     /* CUP  */
-    CDOWN = 433,                   /* CDOWN  */
-    CLEFT = 434,                   /* CLEFT  */
-    CRIGHT = 435,                  /* CRIGHT  */
-    CLINE = 436,                   /* CLINE  */
-    XCURS = 437,                   /* XCURS  */
-    YCURS = 438,                   /* YCURS  */
-    MEMORIZE = 439,                /* MEMORIZE  */
-    REMEMBER = 440,                /* REMEMBER  */
-    HSCROLL = 441,                 /* HSCROLL  */
-    VSCROLL = 442,                 /* VSCROLL  */
-    BLACK = 443,                   /* BLACK  */
-    WHITE = 444,                   /* WHITE  */
-    RED = 445,                     /* RED  */
-    CYAN = 446,                    /* CYAN  */
-    VIOLET = 447,                  /* VIOLET  */
-    GREEN = 448,                   /* GREEN  */
-    BLUE = 449,                    /* BLUE  */
-    YELLOW = 450,                  /* YELLOW  */
-    ORANGE = 451,                  /* ORANGE  */
-    BROWN = 452,                   /* BROWN  */
-    LIGHT = 453,                   /* LIGHT  */
-    DARK = 454,                    /* DARK  */
-    GREY = 455,                    /* GREY  */
-    GRAY = 456,                    /* GRAY  */
-    MAGENTA = 457,                 /* MAGENTA  */
-    PURPLE = 458,                  /* PURPLE  */
-    LAVENDER = 459,                /* LAVENDER  */
-    GOLD = 460,                    /* GOLD  */
-    TURQUOISE = 461,               /* TURQUOISE  */
-    TAN = 462,                     /* TAN  */
-    PINK = 463,                    /* PINK  */
-    PEACH = 464,                   /* PEACH  */
-    OLIVE = 465,                   /* OLIVE  */
-    Identifier = 466,              /* Identifier  */
-    String = 467,                  /* String  */
-    Integer = 468                  /* Integer  */
+    USE = 413,                     /* USE  */
+    PAPER = 414,                   /* PAPER  */
+    INVERSE = 415,                 /* INVERSE  */
+    REPLACE = 416,                 /* REPLACE  */
+    XOR = 417,                     /* XOR  */
+    IGNORE = 418,                  /* IGNORE  */
+    NORMAL = 419,                  /* NORMAL  */
+    WRITING = 420,                 /* WRITING  */
+    ONLY = 421,                    /* ONLY  */
+    LOCATE = 422,                  /* LOCATE  */
+    CLS = 423,                     /* CLS  */
+    HOME = 424,                    /* HOME  */
+    CMOVE = 425,                   /* CMOVE  */
+    CENTER = 426,                  /* CENTER  */
+    CENTRE = 427,                  /* CENTRE  */
+    TAB = 428,                     /* TAB  */
+    SET = 429,                     /* SET  */
+    CUP = 430,                     /* CUP  */
+    CDOWN = 431,                   /* CDOWN  */
+    CLEFT = 432,                   /* CLEFT  */
+    CRIGHT = 433,                  /* CRIGHT  */
+    CLINE = 434,                   /* CLINE  */
+    XCURS = 435,                   /* XCURS  */
+    YCURS = 436,                   /* YCURS  */
+    MEMORIZE = 437,                /* MEMORIZE  */
+    REMEMBER = 438,                /* REMEMBER  */
+    HSCROLL = 439,                 /* HSCROLL  */
+    VSCROLL = 440,                 /* VSCROLL  */
+    TEXTADDRESS = 441,             /* TEXTADDRESS  */
+    BLACK = 442,                   /* BLACK  */
+    WHITE = 443,                   /* WHITE  */
+    RED = 444,                     /* RED  */
+    CYAN = 445,                    /* CYAN  */
+    VIOLET = 446,                  /* VIOLET  */
+    GREEN = 447,                   /* GREEN  */
+    BLUE = 448,                    /* BLUE  */
+    YELLOW = 449,                  /* YELLOW  */
+    ORANGE = 450,                  /* ORANGE  */
+    BROWN = 451,                   /* BROWN  */
+    LIGHT = 452,                   /* LIGHT  */
+    DARK = 453,                    /* DARK  */
+    GREY = 454,                    /* GREY  */
+    GRAY = 455,                    /* GRAY  */
+    MAGENTA = 456,                 /* MAGENTA  */
+    PURPLE = 457,                  /* PURPLE  */
+    LAVENDER = 458,                /* LAVENDER  */
+    GOLD = 459,                    /* GOLD  */
+    TURQUOISE = 460,               /* TURQUOISE  */
+    TAN = 461,                     /* TAN  */
+    PINK = 462,                    /* PINK  */
+    PEACH = 463,                   /* PEACH  */
+    OLIVE = 464,                   /* OLIVE  */
+    Identifier = 465,              /* Identifier  */
+    String = 466,                  /* String  */
+    Integer = 467                  /* Integer  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -278,7 +277,7 @@ union YYSTYPE
     int integer;
     char * string;
 
-#line 282 "src-generated/ugbc.tab.h"
+#line 281 "src-generated/ugbc.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

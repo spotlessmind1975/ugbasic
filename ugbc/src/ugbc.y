@@ -41,10 +41,10 @@ extern char DATATYPE_AS_STRING[][16];
 %token POINT GOSUB RETURN POP OR ELSE NOT TRUE FALSE DO EXIT WEND UNTIL FOR STEP EVERY
 %token MID INSTR UPPER LOWER STR VAL STRING SPACE FLIP CHR ASC LEN POW MOD ADD MIN MAX SGN
 %token SIGNED ABS RND COLORS INK TIMER POWERING DIM ADDRESS PROC PROCEDURE CALL OSP CSP
-%token SHARED MILLISECOND MILLISECONDS TICKS GLOBAL PARAM PRINT DEFAULT SPECIFIC ANSI USE
+%token SHARED MILLISECOND MILLISECONDS TICKS GLOBAL PARAM PRINT DEFAULT USE
 %token PAPER INVERSE REPLACE XOR IGNORE NORMAL WRITING ONLY LOCATE CLS HOME CMOVE
 %token CENTER CENTRE TAB SET CUP CDOWN CLEFT CRIGHT CLINE XCURS YCURS MEMORIZE REMEMBER
-%token HSCROLL VSCROLL
+%token HSCROLL VSCROLL TEXTADDRESS
 
 %token BLACK WHITE RED CYAN VIOLET GREEN BLUE YELLOW ORANGE
 %token BROWN LIGHT DARK GREY GRAY MAGENTA PURPLE
@@ -558,6 +558,9 @@ exponential:
     }
     | YCURS {
         $$ = text_get_ycurs( _environment )->name;
+    }
+    | TEXTADDRESS {
+        $$ = strdup( "TEXTADDRESS" );
     }
     ;
 
@@ -1286,15 +1289,6 @@ print_definition :
   } print_definition
   ;
 
-use_definition : 
-    ANSI {
-        use_ansi( _environment );
-    }
-  | SPECIFIC {
-        use_specific( _environment );
-  }
-  ;
-
 writing_mode_definition : 
       REPLACE {
           $$ = variable_temporary( _environment, VT_BYTE, "(writing REPLACE)" )->name;
@@ -1411,6 +1405,9 @@ statement:
   | POINT point_definition
   | INK ink_definition
   | VAR var_definition
+  | TEXTADDRESS ASSIGN expr {
+      variable_move( _environment, $3, "ADDRESS" );
+  }
   | ADD add_definition
   | PRINT print_definition
   | QM print_definition
@@ -1642,7 +1639,6 @@ statement:
         variable_string_mid_assign( _environment, $3, $5, $7, $10 );
   }
   | DIM dim_definitions
-  | USE use_definition
   | Identifier ASSIGN expr {
         outline2("; %s = %s", $1, $3 );
         Variable * expr = variable_retrieve( _environment, $3 );

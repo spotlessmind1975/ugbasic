@@ -38,6 +38,35 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/* <usermanual>
+@keyword TEXTADDRESS
+
+@english
+This is a variable (16 bit) that contains the actual address of the textmap. 
+It can be modified directly by using assignment, and can be read as any 
+other variable. Note that no check is done when using this variable, so an
+invalid value lead to undefined behaviours. If you want to use a valid value
+please use the [[TEXTMAP AT]] command.
+
+@italian
+Questa variabile contiene l'indirizzo effettivo (a 16 bit) della mappa 
+di memoria con i contenuti testuali. Può essere modificata direttamente 
+utilizzando l'assegnazione, e può essere letta come qualsiasi altra 
+variabile. Si noti che non viene eseguito alcun controllo quando si utilizza
+questa variabile, quindi un valore non valido porta a comportamenti 
+indefiniti. Se vuoi assegnare un valore valido usa il comando [[TEXTMAP AT]].
+
+@syntax [variable] = TEXTADDRESS
+@syntax TEXTADDRESS = [expression]
+
+@example actual = TEXTADDRESS
+@example TEXTADDRESS = $0400
+
+@target c64
+
+@seeAlso TEXTMAP AT
+</usermanual> */
+
 /**
  * @brief Emit ASM code for <b>TEXTMAP AT [int]xx</b>
  * 
@@ -72,6 +101,8 @@ non è detto che sia impostato esattamente con l'indirizzo specificato.
 @example TEXTMAP AT #$0400
 
 @target c64
+
+@seealso TEXTADDRESS
 </usermanual> */
 void textmap_at( Environment * _environment, int _address ) {
 
@@ -681,108 +712,40 @@ void text_vscroll_screen( Environment * _environment, int _direction ) {
 
 }
 
-// void text_vscroll_line( Environment * _environment, int _direction ) {
+/**
+ * @brief Emit code for <strong>PAPER ...</strong> command
+ * 
+ * @param _environment Current calling environment
+ * @param _color Color to use for the paper
+ */
+/* <usermanual>
+@keyword PAPER
 
-//     Variable * y = variable_retrieve( _environment, "windowCY" );
-//     outline1("LDA #$%2.2x", ( _direction & 0xff ) );
-//     outline0("STA $30" );
-//     outline1("LDA %s", y->realName );
-//     outline0("STA $31");
+@english
+This command allow to select a background colour on which your text is
+to be printed. The command is 
+followed by a colour index number between 0 and ''PAPER COLORS'', 
+depending on the graphics mode in use, in exactly the same way 
+as ''PEN''. The normal default colour index number is 
+''DEFAULT PAPER''.
 
-//     if ( !_environment->textVScrollLineDeployed ) {
+@italian
+Questo comando permette di selezionare un colore di sfondo 
+su cui si trova il testo da stampare Il comando è seguito da 
+un numero compreso tra 0 e ''PAPER COLORS'', a seconda della
+modalità grafica in uso, esattamente come ''PEN''. Il colore
+predefinito è ''DEFAULT PAPER''.
 
-//         Variable * TEXTADDRESS = variable_retrieve( _environment, "TEXTADDRESS" );
+@syntax PAPER [expression]
 
-//         outline0("JMP text_vscroll_line_after");
+@example PAPER 4
+@example PAPER (esempio)
 
-//         outline0("text_vscroll_line:");
-//         // Use the current bitmap address as starting address for filling routine.
-//         outline1("LDA %s", TEXTADDRESS->realName);
-//         outline0("STA $25");
-//         outline1("LDA %s+1", TEXTADDRESS->realName);
-//         outline0("STA $26");
-//         outline0("CLC");
-//         outline1("LDA %s", TEXTADDRESS->realName);
-//         outline0("ADC #40");
-//         outline0("STA $27");
-//         outline1("LDA %s+1", TEXTADDRESS->realName);
-//         outline0("STA $28");
+@usedInExample text_options_01.bas
+@usedInExample text_options_02.bas
 
-//         outline0("LDA #$6" );
-//         outline0("STA $32" );
-//         outline0("LDA $31" );
-
-//         cpu6502_math_div_8bit_to_8bit( _environment, "$31", "$32", "$33", "$34" );
-
-//         outline0("LDA #$0" );
-//         outline0("LDX $34" );
-//         outhead0("text_vscroll_line_ybase:");
-//         outline0("ADC #40" );
-//         outline0("DEX" );
-//         outline0("BNE text_vscroll_line_ybase" );
-//         outline0("STA $34" );
-
-//         outline1("LDA $30");
-//         outline0("CMP #$80");
-//         outline0("BCC text_vscroll_line_down");
-
-//         outhead0("text_vscroll_line_up:");
-
-//         outline0("LDX $33" );
-//         outline0("LDY #0" );
-//         outhead0("text_vscroll_line_yscroll:");
-//         outline0("LDA ($27),Y");
-//         outline0("STA ($25),Y");
-//         outline0("INY");
-//         outline0("BNE text_vscroll_line_yscroll");
-//         outline0("INC $26");
-//         outline0("INC $28");
-//         outline0("CPX #1");
-//         outline0("BNE text_vscroll_line_nextblock");
-//         outhead0("text_vscroll_line_yscroll2:");
-//         outline0("LDA ($27),Y");
-//         outline0("STA ($25),Y");
-//         outline0("INY");
-//         outline0("CPY $34");
-//         outline0("BNE text_vscroll_line_yscroll2");
-//         outhead0("text_vscroll_line_nextblock:");
-//         outline0("DEX");
-//         outline0("BNE text_vscroll_line_yscroll");
-//         outline0("RTS");
-
-//         outhead0("text_vscroll_line_down:");
-//         outline0("LDX #3" );
-//         outline0("LDY #40" );
-//         outhead0("text_vscroll_line_down_yscroll:");
-//         outline0("LDA ($25),Y");
-//         outline0("STA ($27),Y");
-//         outline0("INY");
-//         outline0("BNE text_vscroll_line_down_yscroll");
-//         outline0("INC $26");
-//         outline0("INC $28");
-//         outline0("CPX #1");
-//         outline0("BNE text_vscroll_line_down_nextblock");
-//         outhead0(" text_vscroll_line_down_yscroll2:");
-//         outline0("LDA ($27),Y");
-//         outline0("STA ($25),Y");
-//         outline0("INY");
-//         outline0("CPY #232");
-//         outline0("BNE  text_vscroll_line_down_yscroll2");
-//         outhead0("text_vscroll_line_down_nextblock:");
-//         outline0("DEX");
-//         outline0("BNE text_vscroll_line_down_yscroll");
-//         outline0("RTS");
-
-//         outline0("text_vscroll_screen_after:");
-
-//         _environment->textVScrollDeployed = 1;
-
-//     }
-
-//     outline0("JSR text_vscroll_screen");
-
-// }
-
+@target all
+</usermanual> */
 void text_paper( Environment * _environment, char * _color ) {
 
     Variable * paper = variable_retrieve( _environment, "windowPA" );
@@ -795,6 +758,29 @@ void text_paper( Environment * _environment, char * _color ) {
     
 }
 
+/**
+ * @brief Emit code for <strong>CLS</strong>
+ * 
+ * @param _environment Current calling environment
+ */
+/* <usermanual>
+@keyword CLS
+
+@english
+The ''CLS'' command clears the current window.
+
+@italian
+Il comando ''CLS'' cancella lo schermo corrente.
+
+@syntax CLS
+
+@example CLS
+
+@usedInExample texts_position_01.bas
+@usedInExample texts_position_02.bas
+
+@target all
+</usermanual> */
 void text_cls( Environment * _environment ) {
 
     vic2_cls( _environment );
@@ -803,6 +789,36 @@ void text_cls( Environment * _environment ) {
     
 }
 
+/**
+ * @brief Emit code for <strong>CLINE ...</strong>
+ * 
+ * @param _environment Current calling environment
+ * @param _characters Characters to remove
+ */
+/* <usermanual>
+@keyword CLINE
+
+@english
+The ''CLINE'' command is used to clear the line currently occupied by the text 
+cursor. If ''CLINE'' is followed by a number, then that number of characters
+get cleared, starting from the current cursor position and leaving the cursor 
+exactly where it is. 
+
+@italian
+Il comando ''CLINE'' viene utilizzato per cancellare la riga attualmente 
+occupata dal cursore. Se ''CLINE'' è seguito da un numero, quel numero 
+di caratteri sarà cancellato, a partire dalla posizione corrente del 
+cursore e lasciando il cursore esattamente dove si trova.
+
+@syntax CLINE {[expression]}
+
+@example CLINE
+
+@usedInExample texts_position_01.bas
+@usedInExample texts_position_02.bas
+
+@target all
+</usermanual> */
 void text_cline( Environment * _environment, char * _characters ) {
 
     Variable * characters = NULL;
@@ -1172,6 +1188,39 @@ void text_hscroll_screen( Environment * _environment, int _direction ) {
     
 }
 
+/**
+ * @brief Emit code for the <strong>PEN$(...)</strong>
+ * 
+ * @param _environment 
+ * @param _color 
+ * @return Variable* 
+ */
+/* <usermanual>
+@keyword PEN$
+
+@english
+The ''PEN$'' function returns a special control sequence that changes
+the pen colour inside a string. This means that, whenever the string is 
+printed on the screen, the pre-set pen colour is automatically assigned 
+to it. The format of the string returned by ''PEN$'' is not specific 
+for the target. 
+
+@italian
+La funzione ''PEN$'' restituisce una speciale sequenza di controllo 
+che cambia il colore della penna all'interno di una stringa. 
+Ciò significa che, ogni volta che la stringa viene stampata 
+sullo schermo, le viene automaticamente assegnato il colore 
+della penna preimpostato. Il formato della stringa restituita da
+''PEN$'' non è specifico per l'hardware
+
+@syntax = PEN$([expression])
+
+@example PRINT PEN$(BLACK)
+
+@usedInExample text_options_02.bas
+
+@target all
+</usermanual> */
 Variable * text_get_pen( Environment * _environment, char * _color ) {
     
     Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_WHITE );
@@ -1189,6 +1238,39 @@ Variable * text_get_pen( Environment * _environment, char * _color ) {
 
 }
 
+/**
+ * @brief Emit code for the <strong>PAPER$(...)</strong>
+ * 
+ * @param _environment 
+ * @param _color 
+ * @return Variable* 
+ */
+/* <usermanual>
+@keyword PAPER$
+
+@english
+The ''PEN$'' function returns a special control sequence that changes
+the paper colour inside a string. This means that, whenever the string is 
+printed on the screen, the pre-set paper colour is automatically assigned 
+to it. The format of the string returned by ''PAPER$'' is not specific 
+for the target. 
+
+@italian
+La funzione ''PAPER$'' restituisce una speciale sequenza di controllo 
+che cambia il colore dello sfondo all'interno di una stringa. 
+Ciò significa che, ogni volta che la stringa viene stampata 
+sullo schermo, le viene automaticamente assegnato il colore 
+dello sfondo preimpostato. Il formato della stringa restituita da
+''PAPER$'' non è specifico per l'hardware
+
+@syntax = PAPER$([expression])
+
+@example PRINT PAPER$(WHITE)
+
+@usedInExample text_options_02.bas
+
+@target all
+</usermanual> */
 Variable * text_get_paper( Environment * _environment, char * _color ) {
     
     Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_BLACK );
@@ -1206,6 +1288,46 @@ Variable * text_get_paper( Environment * _environment, char * _color ) {
 
 }
 
+/**
+ * @brief Emit code for <strong>= AT$(...,...)</strong>
+ * 
+ * @param _environment Current calling environment
+ * @param _x Column to locate to
+ * @param _y Row to locate to
+ */
+/* <usermanual>
+@keyword AT$
+
+@english
+The ''AT$'' can be used to change the position of the text cursor directly from 
+inside a character string. This is ideal for positioning text once and for all
+on screen, no matter what happens in the program, because the text cursor can
+be set during the program's initialisation phase. 
+
+The string that is returned takes the standard format. So whenever this string
+is printed, the text cursor will be moved to the text coordinates held by x and y.
+
+@italian
+''AT$'' può essere utilizzato per modificare la posizione del cursore del 
+testo direttamente dall'interno di una stringa di caratteri. Questo è l'ideale 
+per posizionare il testo una volta per tutte sullo schermo, indipendentemente 
+da ciò che accade nel programma, perché il cursore del testo può essere
+impostato durante la fase di inizializzazione del programma.
+
+La stringa restituita assume il formato standard. Quindi ogni volta che
+questa stringa viene stampata, il cursore del testo verrà spostato sulle 
+coordinate testo x e y.
+
+@syntax = AT$([x],[y])
+
+@example PRINT AT$(10,10)
+
+@usedInExample texts_position_05.bas
+@usedInExample texts_position_06.bas
+
+@seeAlso LOCATE
+@target all
+</usermanual> */
 
 Variable * text_get_at( Environment * _environment, char * _x, char * _y ) {
     
