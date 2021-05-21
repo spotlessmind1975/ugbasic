@@ -49,7 +49,7 @@
  * 
  * On some machine calling this instruction will define the special variable:
  * 
- *  * `textmap_address` (VT_ADDRESS) - the starting address of text memory
+ *  * `TEXTADDRESS` (VT_ADDRESS) - the starting address of text memory
  * 
  * @param _environment Current calling environment
  * @param _address Address to use
@@ -79,9 +79,9 @@ void textmap_at( Environment * _environment, int _address ) {
 
     // Let's define the special variable bitmapAddress, and update
     // it with the requested value.
-    // TODO: the textmap_address should be populated by a get_textmap_address() function!
-    Variable * textAddress = variable_retrieve_or_define( _environment, "textmap_address", VT_ADDRESS, _address );
-    variable_store( _environment, "textmap_address", ( ( _address >> 10 ) & 0x0f ) * 0x0400 );
+    // TODO: the TEXTADDRESS should be populated by a get_TEXTADDRESS() function!
+    Variable * TEXTADDRESS = variable_retrieve( _environment, "TEXTADDRESS" );
+    variable_store( _environment, TEXTADDRESS->realName, ( ( _address >> 10 ) & 0x0f ) * 0x0400 );
 
     char addressString[MAX_TEMPORARY_STORAGE]; sprintf(addressString, "#$%2.2x", ( _address >> 8 ) & 0xff );
 
@@ -99,7 +99,7 @@ void textmap_at( Environment * _environment, int _address ) {
  * 
  * On some machine calling this instruction will define the special variable:
  * 
- *  * `textmap_address` (VT_ADDRESS) - the starting address of text memory
+ *  * `TEXTADDRESS` (VT_ADDRESS) - the starting address of text memory
  * 
  * @param _environment Current calling environment
  * @param _address Expression with address to use
@@ -117,9 +117,10 @@ void textmap_at_var( Environment * _environment, char * _address ) {
 
     outline1("; TEXTMAP AT %s", _address);
 
-    Variable * textAddress = variable_retrieve_or_define( _environment, "textAddress", VT_ADDRESS, 0x0400 );
-
+    Variable * TEXTADDRESS = variable_retrieve( _environment, "TEXTADDRESS" );
     Variable * address = variable_retrieve( _environment, _address );
+
+    variable_move( _environment, address->name, TEXTADDRESS->name );
 
     char addressString[MAX_TEMPORARY_STORAGE]; sprintf(addressString, "%s+1", address->realName );
 
@@ -127,7 +128,7 @@ void textmap_at_var( Environment * _environment, char * _address ) {
 
 }
 
-void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _text, char * _encoding, char * _pen, char * _paper ) {
+void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _text, char * _encoding, char * _pen, char * _paper, char *_ww, char *_tab ) {
 
     Variable * text = variable_retrieve( _environment, _text );
     Variable * x = variable_retrieve( _environment, _x );
@@ -135,11 +136,11 @@ void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _
     Variable * encoding = variable_retrieve( _environment, _encoding );
     Variable * pen = variable_retrieve( _environment, _pen );
     Variable * paper = variable_retrieve( _environment, _paper );
-    Variable * textAddress = variable_retrieve( _environment, "textAddress" );
-    Variable * tab = variable_retrieve( _environment, "windowT" );
+    Variable * TEXTADDRESS = variable_retrieve( _environment, "TEXTADDRESS" );
+    Variable * tab = variable_retrieve( _environment, _tab );
     Variable * colormapAddress = variable_retrieve( _environment, "colormapAddress" );
     Variable * styles = variable_retrieve( _environment, "windowS" );
-    Variable * ww = variable_retrieve( _environment, "windowWW" );
+    Variable * ww = variable_retrieve( _environment, _ww );
 
     char textString[MAX_TEMPORARY_STORAGE]; sprintf(textString, "%s+1", text->realName );
 
@@ -160,9 +161,9 @@ void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _
     outline0("STA $20");
     outline1("LDA %s+1", textString );
     outline0("STA $21");
-    outline1("LDA %s", textAddress->realName );
+    outline1("LDA %s", TEXTADDRESS->realName );
     outline0("STA $22");
-    outline1("LDA %s+1", textAddress->realName );
+    outline1("LDA %s+1", TEXTADDRESS->realName );
     outline0("STA $23");
     outline1("LDA %s", y->realName );
     outline0("STA $d6" );
@@ -584,21 +585,21 @@ void text_vscroll_screen( Environment * _environment, int _direction ) {
 
     if ( !_environment->textVScrollScreenDeployed ) {
 
-        Variable * textAddress = variable_retrieve( _environment, "textAddress" );
+        Variable * TEXTADDRESS = variable_retrieve( _environment, "TEXTADDRESS" );
 
         outline0("JMP text_vscroll_screen_after");
 
         outline0("text_vscroll_screen:");
         // Use the current bitmap address as starting address for filling routine.
-        outline1("LDA %s", textAddress->realName);
+        outline1("LDA %s", TEXTADDRESS->realName);
         outline0("STA $25");
-        outline1("LDA %s+1", textAddress->realName);
+        outline1("LDA %s+1", TEXTADDRESS->realName);
         outline0("STA $26");
         outline0("CLC");
-        outline1("LDA %s", textAddress->realName);
+        outline1("LDA %s", TEXTADDRESS->realName);
         outline0("ADC #40");
         outline0("STA $27");
-        outline1("LDA %s+1", textAddress->realName);
+        outline1("LDA %s+1", TEXTADDRESS->realName);
         outline0("STA $28");
 
         outline0("LDA $30");
@@ -690,21 +691,21 @@ void text_vscroll_screen( Environment * _environment, int _direction ) {
 
 //     if ( !_environment->textVScrollLineDeployed ) {
 
-//         Variable * textAddress = variable_retrieve( _environment, "textAddress" );
+//         Variable * TEXTADDRESS = variable_retrieve( _environment, "TEXTADDRESS" );
 
 //         outline0("JMP text_vscroll_line_after");
 
 //         outline0("text_vscroll_line:");
 //         // Use the current bitmap address as starting address for filling routine.
-//         outline1("LDA %s", textAddress->realName);
+//         outline1("LDA %s", TEXTADDRESS->realName);
 //         outline0("STA $25");
-//         outline1("LDA %s+1", textAddress->realName);
+//         outline1("LDA %s+1", TEXTADDRESS->realName);
 //         outline0("STA $26");
 //         outline0("CLC");
-//         outline1("LDA %s", textAddress->realName);
+//         outline1("LDA %s", TEXTADDRESS->realName);
 //         outline0("ADC #40");
 //         outline0("STA $27");
-//         outline1("LDA %s+1", textAddress->realName);
+//         outline1("LDA %s+1", TEXTADDRESS->realName);
 //         outline0("STA $28");
 
 //         outline0("LDA #$6" );
@@ -796,45 +797,9 @@ void text_paper( Environment * _environment, char * _color ) {
 
 void text_cls( Environment * _environment ) {
 
-    if ( !_environment->textClsDeployed ) {
+    vic2_cls( _environment );
 
-        Variable * textAddress = variable_retrieve( _environment, "textAddress" );
-
-        outline0("JMP lib_text_cls_after");
-
-        outline0("lib_text_cls:");
-        // Use the current bitmap address as starting address for filling routine.
-        outline1("LDA %s", textAddress->realName);
-        outline0("STA $25");
-        outline1("LDA %s+1", textAddress->realName);
-        outline0("STA $26");
-        outline0("LDX #3" );
-        outline0("LDY #0" );
-        outline0("LDA #32" );
-        outhead0("lib_text_cls_yloop:");
-        outline0("STA ($25),Y");
-        outline0("INY");
-        outline0("BNE lib_text_cls_yloop");
-        outline0("INC $26");
-        outline0("CPX #1");
-        outline0("BNE lib_text_cls_next_block");
-        outhead0("lib_text_cls_yloop2:");
-        outline0("STA ($25),Y");
-        outline0("INY");
-        outline0("CPY #232");
-        outline0("BNE lib_text_cls_yloop2");
-        outhead0("lib_text_cls_next_block:");
-        outline0("DEX");
-        outline0("BNE lib_text_cls_yloop");
-        outline0("RTS");
-
-        outline0("lib_text_cls_after:");
-
-        _environment->textClsDeployed = 1;
-
-    }
-
-    outline0("JSR lib_text_cls");
+    outline0("JSR CLS");
     
 }
 
@@ -852,7 +817,7 @@ void text_cline( Environment * _environment, char * _characters ) {
     if ( !_environment->textClineDeployed ) {
 
         Variable * colormapAddress = variable_retrieve( _environment, "colormapAddress" );
-        Variable * textAddress = variable_retrieve( _environment, "textAddress" );
+        Variable * TEXTADDRESS = variable_retrieve( _environment, "TEXTADDRESS" );
         Variable * x = variable_retrieve( _environment, "windowCX" );
         Variable * y = variable_retrieve( _environment, "windowCY" );
 
@@ -865,9 +830,9 @@ void text_cline( Environment * _environment, char * _characters ) {
         outline0("STA $31");
 
         // Use the current bitmap address as starting address for filling routine.
-        outline1("LDA %s", textAddress->realName);
+        outline1("LDA %s", TEXTADDRESS->realName);
         outline0("STA $22");
-        outline1("LDA %s+1", textAddress->realName);
+        outline1("LDA %s+1", TEXTADDRESS->realName);
         outline0("STA $23");
         outline1("LDA %s", colormapAddress->realName );
         outline0("STA $29");
@@ -1001,16 +966,16 @@ void text_hscroll_line( Environment * _environment, int _direction ) {
     if ( !_environment->textHScrollLineDeployed ) {
 
         Variable * colormapAddress = variable_retrieve( _environment, "colormapAddress" );
-        Variable * textAddress = variable_retrieve( _environment, "textAddress" );
+        Variable * TEXTADDRESS = variable_retrieve( _environment, "TEXTADDRESS" );
 
         outline0("JMP lib_text_hscroll_line_after");
 
         outhead0("lib_text_hscroll_line:" );
 
         // Use the current bitmap address as starting address for filling routine.
-        outline1("LDA %s", textAddress->realName);
+        outline1("LDA %s", TEXTADDRESS->realName);
         outline0("STA $22");
-        outline1("LDA %s+1", textAddress->realName);
+        outline1("LDA %s+1", TEXTADDRESS->realName);
         outline0("STA $23");
         outline1("LDA %s", colormapAddress->realName );
         outline0("STA $29");
@@ -1109,16 +1074,16 @@ void text_hscroll_screen( Environment * _environment, int _direction ) {
     if ( !_environment->textHScrollScreenDeployed ) {
 
         Variable * colormapAddress = variable_retrieve( _environment, "colormapAddress" );
-        Variable * textAddress = variable_retrieve( _environment, "textAddress" );
+        Variable * TEXTADDRESS = variable_retrieve( _environment, "TEXTADDRESS" );
 
         outline0("JMP lib_text_hscroll_screen_after");
 
         outline0("lib_text_hscroll_screen:");
 
         // Use the current bitmap address as starting address for filling routine.
-        outline1("LDA %s", textAddress->realName);
+        outline1("LDA %s", TEXTADDRESS->realName);
         outline0("STA $22");
-        outline1("LDA %s+1", textAddress->realName);
+        outline1("LDA %s+1", TEXTADDRESS->realName);
         outline0("STA $23");
         outline1("LDA %s", colormapAddress->realName );
         outline0("STA $29");

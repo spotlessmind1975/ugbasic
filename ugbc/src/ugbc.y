@@ -1809,8 +1809,8 @@ int main( int _argc, char *_argv[] ) {
         variable_define( _environment, "stringsAddress", VT_ADDRESS, 0x4200 );
         variable_global( _environment, "stringsAddress" );
         bank_define( _environment, "STRINGS", BT_STRINGS, 0x4200, NULL );
-        variable_define( _environment, "textAddress", VT_ADDRESS, 0x0400 );
-        variable_global( _environment, "textAddress" );
+        variable_import( _environment, "TEXTADDRESS", VT_ADDRESS );
+        variable_global( _environment, "TEXTADDRESS" );    
         variable_define( _environment, "colormapAddress", VT_ADDRESS, 0xD800 );
         variable_global( _environment, "colormapAddress" );
     } else {

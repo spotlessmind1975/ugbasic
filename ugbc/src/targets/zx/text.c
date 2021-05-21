@@ -49,7 +49,7 @@
  * 
  * On some machine calling this instruction will define the special variable:
  * 
- *  * `textmap_address` (VT_ADDRESS) - the starting address of text memory
+ *  * `TEXTADDRESS` (VT_ADDRESS) - the starting address of text memory
  * 
  * @param _environment Current calling environment
  * @param _address Address to use
@@ -70,7 +70,7 @@ void textmap_at( Environment * _environment, int _address ) {
  * 
  * On some machine calling this instruction will define the special variable:
  * 
- *  * `textmap_address` (VT_ADDRESS) - the starting address of text memory
+ *  * `TEXTADDRESS` (VT_ADDRESS) - the starting address of text memory
  * 
  * @param _environment Current calling environment
  * @param _address Expression with address to use
