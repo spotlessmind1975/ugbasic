@@ -112,5 +112,6 @@ void vic2_get_height( Environment * _environment, char * _result );
 
 void vic2_point_at_int( Environment * _environment, int _x, int _y );
 void vic2_point_at_vars( Environment * _environment, char *_x, char *_y );
+void vic2_cls( Environment * _environment );
 
 #endif

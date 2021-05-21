@@ -803,4 +803,12 @@ void vic2_get_height( Environment * _environment, char *_result ) {
 
 }
 
+void vic2_cls( Environment * _environment ) {
+    
+    deploy( clsDeployed, "./ugbc/src/hw/vic2/cls.asm" );
+
+    outline0("JSR CLS");
+
+}
+
 #endif
