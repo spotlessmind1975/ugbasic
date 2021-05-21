@@ -652,6 +652,7 @@ typedef struct _Environment {
 #define CRITICAL_SHARED_ONLY_IN_PROCEDURES() CRITICAL("E037 - SHARED can be used only inside a PROCEDURE");
 #define CRITICAL_GLOBAL_ONLY_OUTSIDE_PROCEDURES() CRITICAL("E038 - GLOBAL can be used only outside a PROCEDURE");
 #define CRITICAL_PRINT_UNSUPPORTED(v, t) CRITICAL3("E039 - PRINT unsupported for variable of given datatype", v, t );
+#define CRITICAL_NOT_SUPPORTED( v ) CRITICAL2("E040 - Command / Keyword not supported:", v );
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
 #define WARNING3( s, v1, v2 ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s, %s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v1, v2, _environment->yylineno ); }
@@ -995,7 +996,7 @@ void text_pen( Environment * _environment, char * _color );
 void text_paper( Environment * _environment, char * _paper );
 void use_ansi( Environment * _environment );
 void use_specific( Environment * _environment );
-void text_inverse( Environment * _environment, int _value );
+// unsupported: void text_inverse( Environment * _environment, int _value );
 void text_shade( Environment * _environment, int _value );
 void text_under( Environment * _environment, int _value );
 void text_newline( Environment * _environment );

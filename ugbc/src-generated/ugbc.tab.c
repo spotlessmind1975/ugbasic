@@ -6110,7 +6110,7 @@ yyreduce:
   case 451: /* statement: INVERSE ON  */
 #line 1591 "src/ugbc.y"
                {
-      text_inverse( _environment, 1 );
+      CRITICAL_NOT_SUPPORTED("INVERSE");
   }
 #line 6116 "src-generated/ugbc.tab.c"
     break;
@@ -6118,7 +6118,7 @@ yyreduce:
   case 452: /* statement: INVERSE OFF  */
 #line 1594 "src/ugbc.y"
                 {
-      text_inverse( _environment, 0 );
+      CRITICAL_NOT_SUPPORTED("INVERSE");
   }
 #line 6124 "src-generated/ugbc.tab.c"
     break;

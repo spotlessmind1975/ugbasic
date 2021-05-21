@@ -1589,10 +1589,10 @@ statement:
       text_paper( _environment, $2 );
   }
   | INVERSE ON {
-      text_inverse( _environment, 1 );
+      CRITICAL_NOT_SUPPORTED("INVERSE");
   }
   | INVERSE OFF {
-      text_inverse( _environment, 0 );
+      CRITICAL_NOT_SUPPORTED("INVERSE");
   }
   | WRITING writing_definition
   | Identifier COLON {
