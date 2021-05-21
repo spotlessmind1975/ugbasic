@@ -2377,73 +2377,7 @@ void cpu6502_bit_check( Environment * _environment, char * _value, int _position
 
 void cpu6502_bits_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits ) {
 
-    if ( ! _environment->bitsToString ) {
-
-        Variable * result = variable_temporary( _environment, VT_BUFFER, "(buffer for BITS TO STRING)");
-        variable_resize_buffer( _environment, result->name, 10 );
-
-        outline0("JMP bits_to_string_after");
-
-        outline0("bits_to_string:");
-        outline0("JSR bits_to_string_hex2dec");
-        outline0("LDX #9");
-        outline0("LDY #0");
-        outhead0("bits_to_string_l1:");
-        outline1("LDA %s,x", result->realName);
-        outline0("BNE bits_to_string_l2" );
-        outline0("DEX");
-        outline0("BNE bits_to_string_l1");
-        outhead0("bits_to_string_l2:");
-        outline1("LDA %s,X", result->realName);
-        outline0("ORA #$30");
-        outline0("STA ($23),Y");
-        //outline0("JSR $FFD2");
-        outline0("INY");
-        outline0("DEX");
-        outline0("BPL bits_to_string_l2");
-        outline0("JMP bits_to_string_end" );
-        outhead0("bits_to_string_hex2dec:");
-        outline0("LDX #0" );
-        outhead0("bits_to_string_l3:");
-        outline0("JSR bits_to_string_div10");
-        outline1("STA %s, X", result->realName );
-        outline0("INX" );
-        outline0("CPX #10" );
-        outline0("BNE bits_to_string_l3");
-        outline0("RTS" );
-        outhead0("bits_to_string_div10:");
-        outline0("LDY #32" );
-        outline0("LDA #0" );
-        outline0("CLC" );
-        outhead0("bits_to_string_l4:");
-        outline0("ROL" );
-        outline0("CMP #10" );
-        outline0("BCC bits_to_string_skip");
-        outline0("SBC #10" );
-        outhead0("bits_to_string_skip:");
-        outline0("ROL $19" );
-        outline0("ROL $20" );
-        outline0("ROL $21" );
-        outline0("ROL $22" );
-        outline0("DEY" );
-        outline0("BPL bits_to_string_l4");
-        outline0("RTS" );
-        outhead0("bits_to_string_end:");
-        outline0("TYA" );
-        outline0("STA $25" );
-        outline0("RTS" );
-
-        outline0("bits_to_string_after:");
-     
-        _environment->bitsToString = 1;
-
-    }
-
-    outline0("LDA #0" );
-    outline0("STA $22");
-    outline0("STA $21");
-    outline0("STA $20");
-    outline0("STA $19");
+    deploy( bitsToStringDeployed,"./ugbc/src/hw/6502/bits_to_string.asm" );
 
     outline1("LDA %s", _string );
     outline0("STA $23");
@@ -2467,7 +2401,7 @@ void cpu6502_bits_to_string( Environment * _environment, char * _number, char * 
     outline1("LDA #$%2.2X", _bits );
     outline0("STA $25");
 
-    outline0("JSR bits_to_string");
+    outline0("JSR B2STRING");
 
     outline0("LDA $25" );
     outline1("STA %s", _string_size);
