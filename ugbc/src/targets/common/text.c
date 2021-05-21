@@ -934,22 +934,22 @@ verso destra di un singolo carattere.
 </usermanual> */
 
 /* <usermanual>
-@keyword CLEFT$
+@keyword CRIGHT$
 
 @english
-The effect of summoning up the special control character ''CLEFT$'' is exactly the 
-same as printing after a ''CLEFT'' command. The advantage of this alternative is 
-that several text cursor movements can be combined in a single string, using ''CLEFT$''.
+The effect of summoning up the special control character ''CRIGHT$'' is exactly the 
+same as printing after a ''CRIGHT'' command. The advantage of this alternative is 
+that several text cursor movements can be combined in a single string, using ''CRIGHT$''.
 
 @italian
-L'effetto dell'uso del carattere di controllo speciale ''CLEFT$'' è esattamente lo
-stesso della stampa dopo un comando ''CLEFT''. Il vantaggio di questa alternativa
+L'effetto dell'uso del carattere di controllo speciale ''CRIGHT$'' è esattamente lo
+stesso della stampa dopo un comando ''CRIGHT''. Il vantaggio di questa alternativa
 è che diversi movimenti del cursore di testo possono essere combinati
-in una singola stringa, utilizzando ''CLEFT$''.
+in una singola stringa, utilizzando ''CRIGHT$''.
 
-@syntax CLEFT$
+@syntax CRIGHT$
 
-@example PRINT CCLEFTUP$
+@example PRINT CRIGHT$
 
 @usedInExample texts_position_10.bas
 
