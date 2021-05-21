@@ -20,7 +20,7 @@ VSCROLLUP:
     ADD A, 1
     LD B, A
 VSCROLLUPL:
-    LD C, 191
+    LD C, 192
 
     LD A, C
     SUB A, B
@@ -73,6 +73,28 @@ ROWSELECTUP3:
     PUSH HL
     POP DE
     CALL ROWCLEAR
+
+    ;
+    ;
+
+    PUSH B
+    DEC B
+    JR Z, ROWSELECTUP5
+ROWSELECTUP4:
+    LD A, (IX)
+    LD E, A
+    INC IX
+    LD A, (IX)
+    LD D, A
+    INC IX
+    CALL ROWCLEAR    
+    DEC B
+    JR NZ, ROWSELECTUP4
+ROWSELECTUP5:
+    POP B
+
+    ;
+    ;
 
     LD IX, COLRADDRESS
 
@@ -138,7 +160,7 @@ ROWCSELECTUPL4:
 VSCROLLDOWN:
     LD B, A
 VSCROLLDOWNL:
-    LD C, 191
+    LD C, 192
 
     LD A, C
     SUB A, B
@@ -204,6 +226,22 @@ ROWSELECTDOWN5:
     CALL ROWCOPY
     DEC C
     JR NZ, ROWSELECTDOWN
+
+    PUSH B
+    DEC B
+    JR Z, ROWSELECTDOWN7
+ROWSELECTDOWN6:
+    LD A, (IX)
+    LD E, A
+    INC IX
+    LD A, (IX)
+    LD D, A
+    INC IX
+    CALL ROWCLEAR    
+    DEC B
+    JR NZ, ROWSELECTDOWN6
+ROWSELECTDOWN7:
+    POP B
 
     CALL ROWCLEAR
 
@@ -698,4 +736,3 @@ COLRADDRESS:
     DEFW 23264
 COLRADDRESSL:
     DEFW 23296
-
