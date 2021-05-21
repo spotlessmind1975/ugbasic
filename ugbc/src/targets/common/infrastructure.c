@@ -223,6 +223,37 @@ Variable * variable_define( Environment * _environment, char * _name, VariableTy
     return var;
 }
 
+Variable * variable_import( Environment * _environment, char * _name, VariableType _type ) {
+
+    Variable * var = variable_find( _environment->variables, _name );
+    if ( var ) {
+        if ( var->type != _type ) {
+            CRITICAL( "Variable imported with a different type");
+        }
+    } else {
+        var = malloc( sizeof( Variable ) );
+        memset( var, 0, sizeof( Variable ) );
+        var->name = strdup( _name );
+        var->realName = strdup( _name );
+        var->type = _type;
+        var->value = 0;
+        var->bank = NULL;
+        Variable * varLast = _environment->variables;
+        if ( varLast ) {
+            while( varLast->next ) {
+                varLast = varLast->next;
+            }
+            varLast->next = var;
+        } else {
+            _environment->variables = var;
+        }
+    }
+    var->defined = 1;
+    var->used = 1;
+    var->locked = 1;
+    return var;
+}
+
 Variable * variable_define_no_init( Environment * _environment, char * _name, VariableType _type ) {
 
     Variable * var = variable_find( _environment->variables, _name );

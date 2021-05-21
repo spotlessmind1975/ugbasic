@@ -209,6 +209,11 @@ typedef struct _Variable {
     int locked;
 
     /** 
+     * This flag mark if this variable is already defined.
+     */
+    int defined;
+
+    /** 
      * The initial value of the variable, as given by last (re)definition.
      */
     int value;
@@ -1031,6 +1036,7 @@ void tiles_at( Environment * _environment, int _address );
 void tiles_at_var( Environment * _environment, char * _address );
 void       variable_reset( Environment * _environment );
 void variable_global( Environment * _environment, char * _pattern );
+Variable * variable_import( Environment * _environment, char * _name, VariableType _type );
 Variable * variable_define( Environment * _environment, char * _name, VariableType _type, int _value );
 Variable * variable_define_no_init( Environment * _environment, char * _name, VariableType _type );
 Variable * variable_retrieve( Environment * _environment, char * _name );
