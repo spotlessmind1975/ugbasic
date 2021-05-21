@@ -168,6 +168,7 @@ TEXTATROW:
     AND 1
     JP Z, TEXTATPC3
     LD A, (LOCALPAPER)
+    AND $07
     SLA A
     SLA A
     SLA A
