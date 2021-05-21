@@ -136,7 +136,7 @@ void setup_text_variables( Environment * _environment ) {
     variable_define( _environment, "windowS", VT_BYTE, 0 );
     variable_define( _environment, "windowW", VT_BYTE, 0 );
     variable_define( _environment, "windowT", VT_BYTE, 4 );
-    variable_define( _environment, "windowWW", VT_BYTE, 4 );
+    variable_define( _environment, "windowWW", VT_BYTE, WW_PEN | WW_PAPER );
     variable_define( _environment, "TAB", VT_STRING, 0 );
     variable_store_string( _environment, "TAB", "\t");
     variable_define( _environment, "windowMX", VT_BYTE, 0 );

@@ -843,6 +843,9 @@ typedef struct _Environment {
 
 #define MAX_TEMPORARY_STORAGE   1024
 
+#define WW_PEN              1
+#define WW_PAPER            2
+
 Variable * absolute( Environment * _environment, char * _value );
 void add_complex( Environment * _environment, char * _variable, char * _expression, char * _limit_lower, char * _limit_upper );
 Bank * bank_define( Environment * _environment, char * _name, BankType _type, int _address, char * _filename );
