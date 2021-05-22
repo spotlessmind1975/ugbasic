@@ -59,7 +59,7 @@ void zx_vscroll( Environment * _environment, int _displacement ) {
 
 }
 
-void zx_text_at( Environment * _environment, char * _x, char * _y, char * _text, char * _text_size, char * _pen, char * _paper, char * _ww, char * _tab ) {
+void zx_text_at( Environment * _environment, char * _x, char * _y, char * _text, char * _text_size, char * _pen, char * _paper, char * _ww ) {
 
     deploy( varsDeployed,"./ugbc/src/hw/zx/vars.asm" );
     deploy( vScrollDeployed, "./ugbc/src/hw/zx/vscroll.asm" );

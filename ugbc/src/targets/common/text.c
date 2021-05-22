@@ -348,13 +348,11 @@ void text_text( Environment * _environment, char * _text ) {
     Variable * text = variable_retrieve( _environment, _text );
     Variable * x = variable_retrieve( _environment, "windowCX" );
     Variable * y = variable_retrieve( _environment, "windowCY" );
-    Variable * encoding = variable_retrieve( _environment, "windowE" );
     Variable * pen = variable_retrieve( _environment, "windowPE" );
     Variable * paper = variable_retrieve( _environment, "windowPA" );
     Variable * ww = variable_retrieve( _environment, "windowWW" );
-    Variable * tab = variable_retrieve( _environment, "windowT" );
 
-    text_encoded_at( _environment, x->name, y->name, text->name, encoding->name, pen->name, paper->name, ww->name, tab->name );
+    text_encoded_at( _environment, x->name, y->name, text->name, pen->name, paper->name, ww->name );
     
 }
 
