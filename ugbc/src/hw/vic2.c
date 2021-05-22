@@ -811,4 +811,15 @@ void vic2_cls( Environment * _environment ) {
 
 }
 
+void vic2_scroll_text( Environment * _environment, int _direction ) {
+
+    deploy( vScrollTextDeployed, "./ugbc/src/hw/vic2/vscroll_text.asm" );
+
+    outline1("LDA #$%2.2x", ( _direction & 0xff ) );
+    outline0("STA $30" );
+
+    outline0("JSR VSCROLLT");
+
+}
+
 #endif

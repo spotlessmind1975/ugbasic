@@ -2789,13 +2789,15 @@ Variable * variable_bin( Environment * _environment, char * _value, char * _digi
     char resultAddress[MAX_TEMPORARY_STORAGE]; sprintf(resultAddress, "%s+1", result->realName);
     cpu_bits_to_string( _environment, value->realName, resultAddress, result->realName, VT_BITWIDTH( value->type ) );
 
-    cpu_less_than_8bit( _environment, result->realName, digits->realName, pad->realName, 0 );
+    if ( digits ) {
+        cpu_less_than_8bit( _environment, result->realName, digits->realName, pad->realName, 0 );
 
-    cpu_bveq( _environment, pad->realName, finishedLabel );
+        cpu_bveq( _environment, pad->realName, finishedLabel );
 
-    // TODO: padding
+        // TODO: padding
 
-    cpu_label( _environment, finishedLabel );
+        cpu_label( _environment, finishedLabel );
+    }
     
     return result;
     
