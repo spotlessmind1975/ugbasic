@@ -2377,7 +2377,7 @@ void cpu6502_bit_check( Environment * _environment, char * _value, int _position
 
 void cpu6502_number_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits ) {
 
-    deploy( bitsToStringDeployed,"./ugbc/src/hw/6502/number_to_string.asm" );
+    deploy( numberToStringDeployed,"./ugbc/src/hw/6502/number_to_string.asm" );
 
     outline1("LDA %s", _string );
     outline0("STA $23");
@@ -2405,6 +2405,31 @@ void cpu6502_number_to_string( Environment * _environment, char * _number, char 
 
     outline0("LDA $25" );
     outline1("STA %s", _string_size);
+
+}
+
+void cpu6502_bits_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits ) {
+
+    MAKE_LABEL
+
+    deploy( bitsToStringDeployed,"./ugbc/src/hw/6502/bits_to_string.asm" );
+
+    outline1("LDA %2.2x", _bits);
+    outline0("STA $35");
+    outline0("LDA #45");
+    outline1("LDX #<%s", _number);
+    outline1("LDY #>%s", _number);
+    outline0("ORA #%10000000" );
+    outline0("JSR binstr");
+    outline0("STX $36");
+    outline0("STY $37");
+    outline1("STA %s", _string_size);
+    outline0("TAY");
+    outline1("%sLOOP:", label );
+    outline0("LDA ($36),Y" );
+    outline1("STA %s,Y", _string );
+    outline0("DEY");
+    outline1("BPL %sLOOP", label );
 
 }
 
