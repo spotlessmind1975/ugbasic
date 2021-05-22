@@ -2375,6 +2375,48 @@ void cpu6502_bit_check( Environment * _environment, char * _value, int _position
 
 }
 
+void cpu6502_bit_check_extended( Environment * _environment, char * _value, char * _position, char *_result ) {
+
+    MAKE_LABEL
+
+    outline1("LDA %s", _position );
+    outline0("AND #$07" );
+    outline0("STA $22" );
+    outline1("LDA %s", _position );
+    outline0("CMP #8" );
+    outline1("BCS %sb0", label );
+    outline0("CMP #16" );
+    outline1("BCS %sb1", label );
+    outline0("CMP #24" );
+    outline1("BCS %sb2", label );
+    outline1("JMP %sb3", label );
+
+    outhead1("%sb0:", label );
+    outline1("LDA %s", _value );
+    outline1("JMP %sbit", label );
+    outhead1("%sb1:", label );
+    outline1("LDA %s+1", _value );
+    outline1("JMP %sbit", label );
+    outhead1("%sb2:", label );
+    outline1("LDA %s+2", _value );
+    outline1("JMP %sbit", label );
+    outhead1("%sb3:", label );
+    outline1("LDA %s+3", _value );
+    outline1("JMP %sbit", label );
+
+    outhead1("%sbit:", label );
+    outline0("BIT $22" );
+    outline1("BEQ %szero", label);
+    outhead1("%sone:", label)
+    outline0("LDA #$1");
+    outline1("JMP %send", label );
+    outhead1("%szero:", label)
+    outline0("LDA #$0");
+    outhead1("%send:", label)
+    outline1("STA %s", _result);
+
+}
+
 void cpu6502_number_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits ) {
 
     deploy( numberToStringDeployed,"./ugbc/src/hw/6502/number_to_string.asm" );
