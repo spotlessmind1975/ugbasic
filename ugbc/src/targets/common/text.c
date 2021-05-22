@@ -570,8 +570,8 @@ grafica corrente.
 @example PEN 4
 @example PEN (esempio)
 
-@usedInExample text_options_01.bas
-@usedInExample text_options_02.bas
+@UsedInExample texts_options_01.bas
+@UsedInExample texts_options_02.bas
 
 @target all
 </usermanual> */
@@ -691,7 +691,7 @@ che danno un output stampato normale.
 @example WRITING REPLACE,PEN
 @example WRITING 3,
 
-@usedInExample text_options_06.bas
+@UsedInExample texts_options_06.bas
 
 @seeAlso PEN
 @seeAlso PAPER

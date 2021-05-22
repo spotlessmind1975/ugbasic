@@ -741,8 +741,8 @@ predefinito è ''DEFAULT PAPER''.
 @example PAPER 4
 @example PAPER (esempio)
 
-@usedInExample text_options_01.bas
-@usedInExample text_options_02.bas
+@UsedInExample texts_options_01.bas
+@UsedInExample texts_options_02.bas
 
 @target all
 </usermanual> */
@@ -1217,7 +1217,7 @@ della penna preimpostato. Il formato della stringa restituita da
 
 @example PRINT PEN$(BLACK)
 
-@usedInExample text_options_02.bas
+@UsedInExample texts_options_02.bas
 
 @target all
 </usermanual> */
@@ -1267,7 +1267,7 @@ dello sfondo preimpostato. Il formato della stringa restituita da
 
 @example PRINT PAPER$(WHITE)
 
-@usedInExample text_options_02.bas
+@UsedInExample texts_options_02.bas
 
 @target all
 </usermanual> */
