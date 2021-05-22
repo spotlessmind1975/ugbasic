@@ -2248,16 +2248,16 @@ void z80_number_to_string( Environment * _environment, char * _number, char * _s
     switch( _bits ) {
         case 8:
             outline1("LD A,(%s)", _number);
-            outline0("CALL B2D8");
+            outline0("CALL N2D8");
             break;
         case 16:
             outline1("LD HL,(%s)", _number);
-            outline0("CALL B2D16");
+            outline0("CALL N2D16");
             break;
         case 32:
             outline1("LD HL,(%s)", _number);
             outline1("LD DE,(%s+2)", _number);
-            outline0("CALL B2D32");
+            outline0("CALL N2D32");
             break;
         default:
             CRITICAL_DEBUG_UNSUPPORTED( _number, "unknown");

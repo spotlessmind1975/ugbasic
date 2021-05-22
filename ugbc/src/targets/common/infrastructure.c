@@ -2779,7 +2779,7 @@ Variable * variable_bin( Environment * _environment, char * _value ) {
     }
 
     char resultAddress[MAX_TEMPORARY_STORAGE]; sprintf(resultAddress, "%s+1", result->realName);
-    cpu_number_to_string( _environment, value->realName, resultAddress, result->realName, VT_BITWIDTH( value->type ) );
+    cpu_bits_to_string( _environment, value->realName, resultAddress, result->realName, VT_BITWIDTH( value->type ) );
 
     return result;
     

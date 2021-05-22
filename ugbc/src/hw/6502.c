@@ -2401,7 +2401,7 @@ void cpu6502_number_to_string( Environment * _environment, char * _number, char 
     outline1("LDA #$%2.2X", _bits );
     outline0("STA $25");
 
-    outline0("JSR B2STRING");
+    outline0("JSR N2STRING");
 
     outline0("LDA $25" );
     outline1("STA %s", _string_size);
