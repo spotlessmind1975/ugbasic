@@ -48,6 +48,7 @@ AND { return (AND); }
 BACKGROUND { return (BACKGROUND); }
 BANK { return (BANK); }
 BEGIN { return (BEG); }
+BIN\$ { return (BIN); }
 BITMAP { return (BITMAP); }
 BLACK { return (BLACK); }
 BLUE { return (BLUE); }
@@ -120,6 +121,7 @@ INC { return (INC); }
 INK { return (INK); }
 INVERSE { return (INVERSE); }
 INSTR { return (INSTR); }
+JOY { return (JOY); }
 LAVENDER { return(LAVENDER); }
 LEFT { return (LEFT); }
 LEFT\$ { return (LEFT); }

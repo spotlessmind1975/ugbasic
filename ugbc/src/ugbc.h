@@ -910,6 +910,7 @@ void gosub_number( Environment * _environment, int _number );
 void graphic( Environment * _environment );
 void halt( Environment * _environment );
 void end( Environment * _environment );
+Variable * joy( Environment * _environment, char * _port );
 void shared( Environment * _environment );
 void global( Environment * _environment );
 Variable * hit_to( Environment * _environment, int _sprite );

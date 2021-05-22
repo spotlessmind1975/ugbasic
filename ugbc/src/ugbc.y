@@ -44,7 +44,7 @@ extern char DATATYPE_AS_STRING[][16];
 %token SHARED MILLISECOND MILLISECONDS TICKS GLOBAL PARAM PRINT DEFAULT USE
 %token PAPER INVERSE REPLACE XOR IGNORE NORMAL WRITING ONLY LOCATE CLS HOME CMOVE
 %token CENTER CENTRE TAB SET CUP CDOWN CLEFT CRIGHT CLINE XCURS YCURS MEMORIZE REMEMBER
-%token HSCROLL VSCROLL TEXTADDRESS
+%token HSCROLL VSCROLL TEXTADDRESS JOY BIN
 
 %token BLACK WHITE RED CYAN VIOLET GREEN BLUE YELLOW ORANGE
 %token BROWN LIGHT DARK GREY GRAY MAGENTA PURPLE
@@ -424,6 +424,9 @@ exponential:
     | STR OP expr CP {
         $$ = variable_string_str( _environment, $3 )->name;
     }
+    | BIN OP expr CP {
+        $$ = variable_bin( _environment, $3 )->name;
+    }
     | SPACE OP expr CP {
         $$ = variable_string_space( _environment, $3 )->name;
     }
@@ -561,6 +564,9 @@ exponential:
     }
     | TEXTADDRESS {
         $$ = strdup( "TEXTADDRESS" );
+    }
+    | JOY OP expr CP {
+        $$ = joy( _environment, $3 )->name;
     }
     ;
 

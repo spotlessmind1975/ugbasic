@@ -2757,4 +2757,30 @@ int pattern_match( char * _pattern, char * _value ) {
 
     return result;
 }
- 
+
+Variable * variable_bin( Environment * _environment, char * _value ) {
+
+    Variable * value = variable_retrieve_or_define( _environment, _value, VT_BYTE, 0 );
+    Variable * result = variable_temporary( _environment, VT_STRING, "(result of BIN)" );
+
+    switch( VT_BITWIDTH( value->type ) ) {
+        case 0:
+            CRITICAL_STR_UNSUPPORTED( _value, DATATYPE_AS_STRING[value->type]);
+            break;
+        case 32:
+            variable_store_string( _environment, result->name, "                                " );
+            break;
+        case 16:
+            variable_store_string( _environment, result->name, "                " );
+            break;
+        case 8:
+            variable_store_string( _environment, result->name, "        " );
+            break;
+    }
+
+    char resultAddress[MAX_TEMPORARY_STORAGE]; sprintf(resultAddress, "%s+1", result->realName);
+    cpu_bits_to_string( _environment, value->realName, resultAddress, result->realName, VT_BITWIDTH( value->type ) );
+
+    return result;
+    
+}
