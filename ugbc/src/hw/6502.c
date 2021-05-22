@@ -2347,7 +2347,7 @@ void cpu6502_bit_check( Environment * _environment, char * _value, int _position
 
     MAKE_LABEL
 
-    outline1("LDA #$%2.2x", ( _position ) & 0x07 );
+    outline1("LDA #$%2.2x", 1 << ( ( _position ) & 0x07 ) );
     outline0("STA $22" );
     switch( _position ) {
         case 31: case 30: case 29: case 28: case 27: case 26: case 25: case 24: 
@@ -2363,7 +2363,7 @@ void cpu6502_bit_check( Environment * _environment, char * _value, int _position
             outline1("LDA %s", _value);
             break;
     }
-    outline0("BIT $22" );
+    outline0("AND $22" );
     outline1("BEQ %szero", label);
     outhead1("%sone:", label)
     outline0("LDA #$1");
@@ -2381,6 +2381,17 @@ void cpu6502_bit_check_extended( Environment * _environment, char * _value, char
 
     outline1("LDA %s", _position );
     outline0("AND #$07" );
+    outline1("BEQ %sl3", label );
+    outline0("TAX" );
+    outline0("LDA #$1" );
+    outhead1("%sl1:", label );
+    outline0("ASL A" );
+    outline0("DEX" );
+    outline1("BNE %sl1", label );
+    outhead1("JMP %sl2", label );
+    outhead1("%sl3:", label );
+    outline0("LDA #$1" );
+    outhead1("%sl2:", label );
     outline0("STA $22" );
     outline1("LDA %s", _position );
     outline0("CMP #8" );
@@ -2405,7 +2416,7 @@ void cpu6502_bit_check_extended( Environment * _environment, char * _value, char
     outline1("JMP %sbit", label );
 
     outhead1("%sbit:", label );
-    outline0("BIT $22" );
+    outline0("AND $22" );
     outline1("BEQ %szero", label);
     outhead1("%sone:", label)
     outline0("LDA #$1");
