@@ -72,3 +72,16 @@ Variable * joy( Environment * _environment, char * _port ) {
     return result;
 
 }
+
+Variable * joy_direction( Environment * _environment, char * _port, int _direction ) {
+
+    MAKE_LABEL
+
+    Variable * value = joy( _environment, _port );
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of J*)" );
+
+    cpu_bit_check( _environment, value->realName, _direction, result->realName );
+
+    return result;
+
+}

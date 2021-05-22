@@ -126,6 +126,11 @@ INK { return (INK); }
 INVERSE { return (INVERSE); }
 INSTR { return (INSTR); }
 IS { return (IS); }
+JDOWN { return (JDOWN); }
+JFIRE { return (JFIRE); }
+JLEFT { return (JLEFT); }
+JRIGHT { return (JRIGHT); }
+JUP { return (JUP); }
 JOY { return (JOY); }
 JOYCOUNT { return (JOYCOUNT); }
 LAVENDER { return(LAVENDER); }

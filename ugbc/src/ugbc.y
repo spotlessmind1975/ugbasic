@@ -44,7 +44,7 @@ extern char DATATYPE_AS_STRING[][16];
 %token SHARED MILLISECOND MILLISECONDS TICKS GLOBAL PARAM PRINT DEFAULT USE
 %token PAPER INVERSE REPLACE XOR IGNORE NORMAL WRITING ONLY LOCATE CLS HOME CMOVE
 %token CENTER CENTRE TAB SET CUP CDOWN CLEFT CRIGHT CLINE XCURS YCURS MEMORIZE REMEMBER
-%token HSCROLL VSCROLL TEXTADDRESS JOY BIN BIT COUNT JOYCOUNT FIRE
+%token HSCROLL VSCROLL TEXTADDRESS JOY BIN BIT COUNT JOYCOUNT FIRE JUP JDOWN JLEFT JRIGHT JFIRE
 
 %token BLACK WHITE RED CYAN VIOLET GREEN BLUE YELLOW ORANGE
 %token BROWN LIGHT DARK GREY GRAY MAGENTA PURPLE
@@ -587,6 +587,24 @@ exponential:
     }
     | JOY OP expr CP {
         $$ = joy( _environment, $3 )->name;
+    }
+    | JUP OP expr CP {
+        $$ = joy_direction( _environment, $3, JOY_UP )->name;
+    }
+    | JDOWN OP expr CP {
+        $$ = joy_direction( _environment, $3, JOY_DOWN )->name;
+    }
+    | JLEFT OP expr CP {
+        $$ = joy_direction( _environment, $3, JOY_LEFT )->name;
+    }
+    | JRIGHT OP expr CP {
+        $$ = joy_direction( _environment, $3, JOY_RIGHT )->name;
+    }
+    | JFIRE OP expr CP {
+        $$ = joy_direction( _environment, $3, JOY_FIRE )->name;
+    }
+    | FIRE OP expr CP {
+        $$ = joy_direction( _environment, $3, JOY_FIRE )->name;
     }
     | JOY COUNT {
         $$ = variable_temporary( _environment, VT_BYTE, "(JOYCOUNT)" )->name;
