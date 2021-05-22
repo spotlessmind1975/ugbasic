@@ -45,14 +45,20 @@ Variable * joy( Environment * _environment, char * _port ) {
     Variable * port = variable_retrieve_or_define( _environment, _port, VT_BYTE, 0 );
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of JOY)" );
 
-    outline1("LDA, %s", port->realName );
-    outline0("CMP 0" );
+    outline0("NOP");
+    outline0("NOP");
+    outline0("NOP");
+    outline0("NOP");
+    outline0("NOP");
+
+    outline1("LDA %s", port->realName );
+    outline0("CMP #0" );
     outline1("BEQ %sjoy0", label );
-    outline0("CMP 1" );
+    outline0("CMP #1" );
     outline1("BEQ %sjoy1", label );
-    outline0("CMP 2" );
+    outline0("CMP #2" );
     outline1("BEQ %sjoy2", label );
-    outline0("CMP 3" );
+    outline0("CMP #3" );
     outline1("BEQ %sjoy3", label );
     outline1("JMP %send2", label );
 
@@ -66,7 +72,7 @@ Variable * joy( Environment * _environment, char * _port ) {
     outline1("STA %s", result->realName );
     outline0("LDA $d300");
     outline0("AND #$0f");
-    outline1("OR %s", result->realName );
+    outline1("ORA %s", result->realName );
     outline1("STA %s", result->realName );
     outline1("JMP %send", label );
 
@@ -85,7 +91,7 @@ Variable * joy( Environment * _environment, char * _port ) {
     outline0("ROR A");
     outline0("ROR A");
     outline0("AND #$0f");
-    outline1("OR %s", result->realName );
+    outline1("ORA %s", result->realName );
     outline1("STA %s", result->realName );
     outline1("JMP %send", label );
 
@@ -99,7 +105,7 @@ Variable * joy( Environment * _environment, char * _port ) {
     outline1("STA %s", result->realName );
     outline0("LDA $d301");
     outline0("AND #$0f");
-    outline1("OR %s", result->realName );
+    outline1("ORA %s", result->realName );
     outline1("STA %s", result->realName );
     outline1("JMP %send", label );
 
@@ -118,7 +124,7 @@ Variable * joy( Environment * _environment, char * _port ) {
     outline0("ROR A");
     outline0("ROR A");
     outline0("AND #$0f");
-    outline1("OR %s", result->realName );
+    outline1("ORA %s", result->realName );
     outline1("STA %s", result->realName );
     outline1("JMP %send", label );
 
@@ -126,6 +132,7 @@ Variable * joy( Environment * _environment, char * _port ) {
     outline1("LDA %s", result->realName );
     outline0("EOR #$FF");
     outline1("STA %s", result->realName );
+    outhead1("%send2:", label );
 
     return result;
 
