@@ -2231,7 +2231,7 @@ void z80_bit_check( Environment * _environment, char *_value, int _position, cha
 
 void z80_number_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits ) {
 
-    if ( ! _environment->bitsToStringDeployed ) {
+    if ( ! _environment->numberToStringDeployed ) {
 
         outline0("JMP number_to_string_after");
 
@@ -2241,7 +2241,7 @@ void z80_number_to_string( Environment * _environment, char * _number, char * _s
 
         outhead0("number_to_string_after:");
 
-        _environment->bitsToStringDeployed = 1;
+        _environment->numberToStringDeployed = 1;
 
     }
 
