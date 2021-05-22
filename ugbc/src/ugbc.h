@@ -574,12 +574,6 @@ typedef struct _Environment {
      * Deployed the vertical scroll text routine
      */
 
-    int vScrollTextDeployed;
-
-    /**
-     * Deployed the vertical scroll text routine
-     */
-
     int textVScrollScreenDeployed;
 
     /**

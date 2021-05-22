@@ -1,5 +1,10 @@
 
 N2STRING:
+    LDA #0
+    STA $22
+    STA $21
+    STA $20
+    STA $19
     JSR N2STRINGH2D
     LDX #9;
     LDY #0;
