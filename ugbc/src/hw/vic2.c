@@ -836,9 +836,9 @@ void vic2_text_at( Environment * _environment, char * _x, char * _y, char * _tex
     outline0("LDA TEXTADDRESS+1" );
     outline0("STA $23" );
     outline1("LDA %s", _x );
-    outline0("STA $d6" );
-    outline1("LDA %s", _y );
     outline0("STA $d3" );
+    outline1("LDA %s", _y );
+    outline0("STA $d6" );
     outline1("LDA %s", _text_size);
     outline0("STA $24" );
     outline0("LDA #0" );
