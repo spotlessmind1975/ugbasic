@@ -60,43 +60,48 @@ void variable_cleanup( Environment * _environment ) {
                 cfgline2("%s:   load = MAIN,     type = ro,  optional = yes, start = $%4.4x;", actual->name, actual->address);
                 outhead1(".segment \"%s\"", actual->name);
                 Variable * variable = _environment->variables;
+                
                 while( variable ) {
-                    switch( variable->type ) {
-                        case VT_BYTE:
-                        case VT_SBYTE:
-                        case VT_COLOR:
-                            outline1("%s: .res 1", variable->realName);
-                            break;
-                        case VT_WORD:
-                        case VT_SWORD:
-                        case VT_POSITION:
-                        case VT_ADDRESS:
-                            outline1("%s: .res 2", variable->realName);
-                            break;
-                        case VT_DWORD:
-                        case VT_SDWORD:
-                            outline1("%s: .res 4", variable->realName);
-                            break;
-                        case VT_STRING:
-                            outline1("%s: .res 3", variable->realName);
-                            break;
-                        case VT_BUFFER:
-                            outline2("%s: .res %d", variable->realName, variable->size);
-                            break;
-                        case VT_ARRAY: {
-                            int i=0,size=1;
-                            for( i=0; i<variable->arrayDimensions; ++i ) {
-                                size *= variable->arrayDimensionsEach[i];
+
+                    if ( !variable->imported ) {
+
+                        switch( variable->type ) {
+                            case VT_BYTE:
+                            case VT_SBYTE:
+                            case VT_COLOR:
+                                outline1("%s: .res 1", variable->realName);
+                                break;
+                            case VT_WORD:
+                            case VT_SWORD:
+                            case VT_POSITION:
+                            case VT_ADDRESS:
+                                outline1("%s: .res 2", variable->realName);
+                                break;
+                            case VT_DWORD:
+                            case VT_SDWORD:
+                                outline1("%s: .res 4", variable->realName);
+                                break;
+                            case VT_STRING:
+                                outline1("%s: .res 3", variable->realName);
+                                break;
+                            case VT_BUFFER:
+                                outline2("%s: .res %d", variable->realName, variable->size);
+                                break;
+                            case VT_ARRAY: {
+                                int i=0,size=1;
+                                for( i=0; i<variable->arrayDimensions; ++i ) {
+                                    size *= variable->arrayDimensionsEach[i];
+                                }
+                                if ( VT_BITWIDTH( variable->arrayType ) > 0 ) {
+                                    size *= VT_BITWIDTH( variable->arrayType );
+                                } else if ( variable->arrayType == VT_STRING ) {
+                                    size *= 4;
+                                } else {
+                                    CRITICAL_DATATYPE_UNSUPPORTED("array", DATATYPE_AS_STRING[variable->arrayType]);
+                                }
+                                outline2("%s: .res %d", variable->realName, size);
+                                break;
                             }
-                            if ( VT_BITWIDTH( variable->arrayType ) > 0 ) {
-                                size *= VT_BITWIDTH( variable->arrayType );
-                            } else if ( variable->arrayType == VT_STRING ) {
-                                size *= 4;
-                            } else {
-                                CRITICAL_DATATYPE_UNSUPPORTED("array", DATATYPE_AS_STRING[variable->arrayType]);
-                            }
-                            outline2("%s: .res %d", variable->realName, size);
-                            break;
                         }
                     }
                     variable = variable->next;
@@ -110,43 +115,47 @@ void variable_cleanup( Environment * _environment ) {
                     outhead0("BITMASKN: .byte $fe,$fd,$fb,$f7,$ef,$df,$bf,$7f");
                 }
                 Variable * variable = _environment->tempVariables;
+
                 while( variable ) {
-                    switch( variable->type ) {
-                        case VT_BYTE:
-                        case VT_SBYTE:
-                        case VT_COLOR:
-                            outline1("%s: .res 1", variable->realName);
-                            break;
-                        case VT_WORD:
-                        case VT_SWORD:
-                        case VT_POSITION:
-                        case VT_ADDRESS:
-                            outline1("%s: .res 2", variable->realName);
-                            break;
-                        case VT_DWORD:
-                        case VT_SDWORD:
-                            outline1("%s: .res 4", variable->realName);
-                            break;
-                        case VT_STRING:
-                            outline1("%s: .res 3", variable->realName);
-                            break;
-                        case VT_BUFFER:
-                            outline2("%s: .res %d", variable->realName, variable->size);
-                            break;
-                        case VT_ARRAY: {
-                            int i=0,size=1;
-                            for( i=0; i<variable->arrayDimensions; ++i ) {
-                                size *= variable->arrayDimensionsEach[i];
+                    if ( !variable->imported ) {
+
+                        switch( variable->type ) {
+                            case VT_BYTE:
+                            case VT_SBYTE:
+                            case VT_COLOR:
+                                outline1("%s: .res 1", variable->realName);
+                                break;
+                            case VT_WORD:
+                            case VT_SWORD:
+                            case VT_POSITION:
+                            case VT_ADDRESS:
+                                outline1("%s: .res 2", variable->realName);
+                                break;
+                            case VT_DWORD:
+                            case VT_SDWORD:
+                                outline1("%s: .res 4", variable->realName);
+                                break;
+                            case VT_STRING:
+                                outline1("%s: .res 3", variable->realName);
+                                break;
+                            case VT_BUFFER:
+                                outline2("%s: .res %d", variable->realName, variable->size);
+                                break;
+                            case VT_ARRAY: {
+                                int i=0,size=1;
+                                for( i=0; i<variable->arrayDimensions; ++i ) {
+                                    size *= variable->arrayDimensionsEach[i];
+                                }
+                                if ( VT_BITWIDTH( variable->arrayType ) > 0 ) {
+                                    size *= VT_BITWIDTH( variable->arrayType );
+                                } else if ( variable->arrayType == VT_STRING ) {
+                                    size *= 4;
+                                } else {
+                                    CRITICAL_DATATYPE_UNSUPPORTED("array", DATATYPE_AS_STRING[variable->arrayType]);
+                                }
+                                outline2("%s: .res %d", variable->realName, size);
+                                break;
                             }
-                            if ( VT_BITWIDTH( variable->arrayType ) > 0 ) {
-                                size *= VT_BITWIDTH( variable->arrayType );
-                            } else if ( variable->arrayType == VT_STRING ) {
-                                size *= 4;
-                            } else {
-                                CRITICAL_DATATYPE_UNSUPPORTED("array", DATATYPE_AS_STRING[variable->arrayType]);
-                            }
-                            outline2("%s: .res %d", variable->realName, size);
-                            break;
                         }
                     }
                     variable = variable->next;

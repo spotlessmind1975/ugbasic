@@ -248,7 +248,7 @@ Variable * variable_import( Environment * _environment, char * _name, VariableTy
             _environment->variables = var;
         }
     }
-    var->defined = 1;
+    var->imported = 1;
     var->used = 1;
     var->locked = 1;
     return var;
@@ -2758,10 +2758,17 @@ int pattern_match( char * _pattern, char * _value ) {
     return result;
 }
 
-Variable * variable_bin( Environment * _environment, char * _value ) {
+Variable * variable_bin( Environment * _environment, char * _value, char * _digits ) {
+
+    MAKE_LABEL
 
     Variable * value = variable_retrieve_or_define( _environment, _value, VT_BYTE, 0 );
+    Variable * digits = NULL;
+    if ( _digits ) {
+        digits = variable_retrieve( _environment, _digits );
+    }
     Variable * result = variable_temporary( _environment, VT_STRING, "(result of BIN)" );
+    Variable * pad = variable_temporary( _environment, VT_BYTE, "(is padding needed?)");
 
     switch( VT_BITWIDTH( value->type ) ) {
         case 0:
@@ -2778,9 +2785,18 @@ Variable * variable_bin( Environment * _environment, char * _value ) {
             break;
     }
 
+    char finishedLabel[MAX_TEMPORARY_STORAGE]; sprintf(finishedLabel, "%send", label); 
     char resultAddress[MAX_TEMPORARY_STORAGE]; sprintf(resultAddress, "%s+1", result->realName);
     cpu_bits_to_string( _environment, value->realName, resultAddress, result->realName, VT_BITWIDTH( value->type ) );
 
+    cpu_less_than_8bit( _environment, result->realName, digits->realName, pad->realName, 0 );
+
+    cpu_bveq( _environment, pad->realName, finishedLabel );
+
+    // TODO: padding
+
+    cpu_label( _environment, finishedLabel );
+    
     return result;
     
 }

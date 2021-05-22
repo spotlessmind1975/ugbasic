@@ -425,7 +425,10 @@ exponential:
         $$ = variable_string_str( _environment, $3 )->name;
     }
     | BIN OP expr CP {
-        $$ = variable_bin( _environment, $3 )->name;
+        $$ = variable_bin( _environment, $3, NULL )->name;
+    }
+    | BIN OP expr COMMA expr CP {
+        $$ = variable_bin( _environment, $3, $5 )->name;
     }
     | SPACE OP expr CP {
         $$ = variable_string_space( _environment, $3 )->name;
@@ -1807,6 +1810,7 @@ int main( int _argc, char *_argv[] ) {
             exit(EXIT_FAILURE);
         }
         linker_setup( _environment );
+        deploy( varsDeployed, "./ugbc/src/hw/c64/vars.asm");
         outhead0(".segment \"CODE\"");
         variable_define( _environment, "stringsAddress", VT_ADDRESS, 0x4200 );
         variable_global( _environment, "stringsAddress" );
