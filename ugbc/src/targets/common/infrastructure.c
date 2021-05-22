@@ -2802,3 +2802,37 @@ Variable * variable_bin( Environment * _environment, char * _value, char * _digi
     return result;
     
 }
+
+Variable * variable_bit( Environment * _environment, char * _value, char * _position ) {
+    Variable * value = variable_retrieve_or_define( _environment, _value, VT_WORD, 0 );
+    Variable * position = variable_retrieve_or_define( _environment, _value, VT_WORD, 1 );
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of BIT)");
+
+    MAKE_LABEL
+
+    char unsetLabel[MAX_TEMPORARY_STORAGE]; sprintf(unsetLabel, "%sunset", label );
+    char setLabel[MAX_TEMPORARY_STORAGE]; sprintf(setLabel, "%sset", label );
+    char endLabel[MAX_TEMPORARY_STORAGE]; sprintf(endLabel, "%send", label );
+
+    switch( VT_BITWIDTH( value->type ) ) {
+        case 32:
+        case 16:
+        case 8:
+            cpu_bit_check_extended( _environment, value->realName, position->realName, result->realName );
+            cpu_bveq( _environment, result->realName, unsetLabel );
+
+            cpu_label( _environment, setLabel );
+            cpu_store_8bit( _environment, result->realName, 1 );
+            cpu_jump( _environment, endLabel );
+
+            cpu_label( _environment, unsetLabel );
+            cpu_store_8bit( _environment, result->realName, 0 );
+            cpu_label( _environment, endLabel );
+            break;
+        case 0:
+            CRITICAL_BIT_UNSUPPORTED( _value, DATATYPE_AS_STRING[value->type] );
+            break;
+    }
+
+    return result;
+}

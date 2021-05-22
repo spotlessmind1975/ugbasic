@@ -1,5 +1,5 @@
-#ifndef __UGBC_ZX__
-#define __UGBC_ZX__
+#ifndef __UGBC_C64__
+#define __UGBC_C64__
 
 /*****************************************************************************
  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
@@ -33,45 +33,6 @@
 
 #include "../ugbc.h"
 
-#define COLOR_BLACK					0
-#define COLOR_WHITE					7
-#define COLOR_RED					2
-#define COLOR_CYAN					5
-#define COLOR_VIOLET				2 /* alias */
-#define COLOR_GREEN					4
-#define COLOR_BLUE					3  /* alias */
-#define COLOR_YELLOW				6
-#define COLOR_ORANGE				2 /* alias */
-#define COLOR_BROWN					2 /* alias */
-#define COLOR_LIGHT_RED				2 /* alias */
-#define COLOR_DARK_GREY				0 /* alias */
-#define COLOR_GREY					7 /* alias */
-#define COLOR_LIGHT_GREEN			4 /* alias */
-#define COLOR_LIGHT_BLUE			5 /* alias */
-#define COLOR_LIGHT_GREY			7 /* alias */
-#define COLOR_DARK_BLUE				3 /* alias */
-#define COLOR_MAGENTA				3
-#define COLOR_PURPLE				2 /* alias */
-#define COLOR_LAVENDER       		2 /* alias */
-#define COLOR_GOLD       			6 /* alias */
-#define COLOR_TURQUOISE       		5 /* alias */
-#define COLOR_TAN       		    5 /* alias */
-#define COLOR_YELLOW_GREEN       	6 /* alias */
-#define COLOR_OLIVE_GREEN       	4 /* alias */
-#define COLOR_PINK       			2 /* alias */
-#define COLOR_PEACH       			2 /* alias */
-#define COLOR_COUNT                 16
-
-#define PORT_COLOR_BORDER           254
-
-#define TEXT_COLUMNS_COUNT          32
-#define TEXT_ROWS_COUNT             24
-
-void zx_color_border( Environment * _environment, char * _color );
-void zx_vscroll( Environment * _environment, int _displacement );
-void zx_text_at( Environment * _environment, char * _x, char * _y, char * _text, char * _text_size, char * _pen, char * _paper, char * _tab, char * _ww );
-void zx_cls( Environment * _environment, char * _pen, char * _paper );
-
-#define         JOY_COUNT           0
+#define         JOY_COUNT           2
 
 #endif
