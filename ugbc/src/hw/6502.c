@@ -2384,6 +2384,12 @@ void cpu6502_number_to_string( Environment * _environment, char * _number, char 
     outline1("LDA %s+1", _string );
     outline0("STA $24");
 
+    outline0("LDA #0");
+    outline0("STA $22");
+    outline0("STA $21");
+    outline0("STA $20");
+    outline0("STA $19");
+
     switch( _bits ) {
         case 32:
             outline1("LDA %s+3", _number );
