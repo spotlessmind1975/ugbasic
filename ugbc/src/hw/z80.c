@@ -2229,17 +2229,17 @@ void z80_bit_check( Environment * _environment, char *_value, int _position, cha
 
 }
 
-void z80_bits_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits ) {
+void z80_number_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits ) {
 
     if ( ! _environment->bitsToStringDeployed ) {
 
-        outline0("JMP bits_to_string_after");
+        outline0("JMP number_to_string_after");
 
-        outhead0("bits_to_string:");
+        outhead0("number_to_string:");
 
-        outfile0("./ugbc/src/hw/z80/bits_to_string.asm");
+        outfile0("./ugbc/src/hw/z80/number_to_string.asm");
 
-        outhead0("bits_to_string_after:");
+        outhead0("number_to_string_after:");
 
         _environment->bitsToStringDeployed = 1;
 

@@ -2375,9 +2375,9 @@ void cpu6502_bit_check( Environment * _environment, char * _value, int _position
 
 }
 
-void cpu6502_bits_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits ) {
+void cpu6502_number_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits ) {
 
-    deploy( bitsToStringDeployed,"./ugbc/src/hw/6502/bits_to_string.asm" );
+    deploy( bitsToStringDeployed,"./ugbc/src/hw/6502/number_to_string.asm" );
 
     outline1("LDA %s", _string );
     outline0("STA $23");

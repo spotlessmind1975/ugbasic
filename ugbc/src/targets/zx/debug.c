@@ -72,7 +72,7 @@ void debug_var( Environment * _environment, char * _name ) {
             Variable * string = variable_temporary( _environment, VT_STRING, "(string for debug)");
             variable_store_string( _environment, string->name,"                    ");
             char stringAddress[MAX_TEMPORARY_STORAGE]; sprintf(stringAddress, "%s+1", string->realName);
-            cpu_bits_to_string( _environment, var->realName, stringAddress, string->realName, VT_BITWIDTH( var->type ) );
+            cpu_number_to_string( _environment, var->realName, stringAddress, string->realName, VT_BITWIDTH( var->type ) );
             outline0( "LD DE, HL" );
             outline0( "CALL 8252" );
         }

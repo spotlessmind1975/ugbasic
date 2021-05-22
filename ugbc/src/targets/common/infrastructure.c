@@ -2245,7 +2245,7 @@ Variable * variable_string_str( Environment * _environment, char * _value ) {
     variable_store_string( _environment, result->name, "          " );
 
     char resultAddress[MAX_TEMPORARY_STORAGE]; sprintf(resultAddress, "%s+1", result->realName);
-    cpu_bits_to_string( _environment, value->realName, resultAddress, result->realName, VT_BITWIDTH( value->type ) );
+    cpu_number_to_string( _environment, value->realName, resultAddress, result->realName, VT_BITWIDTH( value->type ) );
 
     return result;
     
@@ -2779,7 +2779,7 @@ Variable * variable_bin( Environment * _environment, char * _value ) {
     }
 
     char resultAddress[MAX_TEMPORARY_STORAGE]; sprintf(resultAddress, "%s+1", result->realName);
-    cpu_bits_to_string( _environment, value->realName, resultAddress, result->realName, VT_BITWIDTH( value->type ) );
+    cpu_number_to_string( _environment, value->realName, resultAddress, result->realName, VT_BITWIDTH( value->type ) );
 
     return result;
     

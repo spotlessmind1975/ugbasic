@@ -111,7 +111,7 @@ void print( Environment * _environment, char * _value, int _new_line ) {
                 variable_store_string( _environment, tmp->name, "          " );
                 
                 char tmpAddress[MAX_TEMPORARY_STORAGE]; sprintf(tmpAddress, "%s+1", tmp->realName);
-                cpu_bits_to_string( _environment, value->realName, tmpAddress, tmp->realName, VT_BITWIDTH( value->type ) );
+                cpu_number_to_string( _environment, value->realName, tmpAddress, tmp->realName, VT_BITWIDTH( value->type ) );
 
                 value = tmp;
                 
