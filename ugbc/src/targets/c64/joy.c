@@ -72,4 +72,3 @@ Variable * joy( Environment * _environment, char * _port ) {
     return result;
 
 }
-

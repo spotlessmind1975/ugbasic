@@ -49,6 +49,7 @@ BACKGROUND { return (BACKGROUND); }
 BANK { return (BANK); }
 BEGIN { return (BEG); }
 BIN\$ { return (BIN); }
+BIT { return (BIT); }
 BITMAP { return (BITMAP); }
 BLACK { return (BLACK); }
 BLUE { return (BLUE); }
@@ -72,6 +73,7 @@ COLOR { return (COLOR); }
 COLORS { return (COLORS); }
 COLORMAP { return (COLORMAP); }
 COMPRESS { return (COMPRESS); }
+COUNT { return (COUNT); }
 CRIGHT { return (CRIGHT); }
 CUP { return (CUP); }
 CYAN { return(CYAN); }
@@ -96,6 +98,7 @@ EXIT { return (EXIT); }
 EXPAND { return (EXPAND); }
 EVERY { return (EVERY); }
 FALSE { return(FALSE); }
+FIRE { return(FIRE); }
 FLIP { return(FLIP); }
 FLIP\$ { return(FLIP); }
 FOR { return(FOR); }
@@ -110,6 +113,7 @@ GRAY { return(GRAY); }
 GREEN { return(GREEN); }
 GREY { return(GREY); }
 HALT { return (HALT); }
+HAS { return (HAS); }
 HEIGHT { return (HEIGHT); }
 HIT { return (HIT); }
 HOME { return (HOME); }
@@ -121,7 +125,9 @@ INC { return (INC); }
 INK { return (INK); }
 INVERSE { return (INVERSE); }
 INSTR { return (INSTR); }
+IS { return (IS); }
 JOY { return (JOY); }
+JOYCOUNT { return (JOYCOUNT); }
 LAVENDER { return(LAVENDER); }
 LEFT { return (LEFT); }
 LEFT\$ { return (LEFT); }
@@ -147,8 +153,9 @@ MILLISECONDS { return (MILLISECONDS); }
 MULTICOLOR { return(MULTICOLOR); }
 NORMAL { return(NORMAL); }
 NOT { return(NOT); }
-OLIVE { return(OLIVE); }
+OF { return (OF); }
 OFF { return (OFF); }
+OLIVE { return(OLIVE); }
 ON { return (ON); }
 ONLY { return (ONLY); }
 OR { return (OR); }

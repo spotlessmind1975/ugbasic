@@ -670,6 +670,7 @@ typedef struct _Environment {
 #define CRITICAL_GLOBAL_ONLY_OUTSIDE_PROCEDURES() CRITICAL("E038 - GLOBAL can be used only outside a PROCEDURE");
 #define CRITICAL_PRINT_UNSUPPORTED(v, t) CRITICAL3("E039 - PRINT unsupported for variable of given datatype", v, t );
 #define CRITICAL_NOT_SUPPORTED( v ) CRITICAL2("E040 - Command / Keyword not supported:", v );
+#define CRITICAL_BIT_UNSUPPORTED( v, t ) CRITICAL3("E041 - BIT unsupported for variable of given datatype", v, t );
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
 #define WARNING3( s, v1, v2 ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s, %s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v1, v2, _environment->yylineno ); }
@@ -863,6 +864,12 @@ typedef struct _Environment {
 
 #define WW_PEN              1
 #define WW_PAPER            2
+
+#define JOY_UP              0
+#define JOY_DOWN            1
+#define JOY_LEFT            2
+#define JOY_RIGHT           3
+#define JOY_FIRE            4
 
 Variable * absolute( Environment * _environment, char * _value );
 void add_complex( Environment * _environment, char * _variable, char * _expression, char * _limit_lower, char * _limit_upper );
@@ -1102,6 +1109,7 @@ Variable * variable_string_chr( Environment * _environment, char * _ascii  );
 Variable * variable_string_asc( Environment * _environment, char * _char );
 Variable * variable_string_len( Environment * _environment, char * _string );
 Variable * variable_bin( Environment * _environment, char * _value, char * _digits );
+Variable * variable_bit( Environment * _environment, char * _value, char * _position );
 void variable_dump( Variable * _first );
 void wait_cycles( Environment * _environment, int _timing );
 void wait_cycles_var( Environment * _environment, char * _timing );
@@ -1113,8 +1121,9 @@ Variable * xpen( Environment * _environment );
 Variable * ypen( Environment * _environment );
 
 #ifdef __c64__
-    #include "hw/vic2.h"
     #include "hw/6502.h"
+    #include "hw/vic2.h"
+    #include "hw/c64.h"
 #elif __zx__
     #include "hw/z80.h"
     #include "hw/zx.h"

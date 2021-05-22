@@ -30,7 +30,7 @@ extern char DATATYPE_AS_STRING[][16];
 %token Remark
 %token NewLine 
 %token SEMICOLON COLON COMMA PLUS MINUS INC DEC EQUAL ASSIGN LT LTE GT GTE 
-%token DISEQUAL MULTIPLICATION DOLLAR DIVISION QM
+%token DISEQUAL MULTIPLICATION DOLLAR DIVISION QM HAS IS OF
 
 %token RASTER DONE AT COLOR BORDER WAIT NEXT WITH BANK SPRITE DATA FROM OP CP 
 %token ENABLE DISABLE HALT ECM BITMAP SCREEN ON OFF ROWS VERTICAL SCROLL VAR AS TEMPORARY 
@@ -44,7 +44,7 @@ extern char DATATYPE_AS_STRING[][16];
 %token SHARED MILLISECOND MILLISECONDS TICKS GLOBAL PARAM PRINT DEFAULT USE
 %token PAPER INVERSE REPLACE XOR IGNORE NORMAL WRITING ONLY LOCATE CLS HOME CMOVE
 %token CENTER CENTRE TAB SET CUP CDOWN CLEFT CRIGHT CLINE XCURS YCURS MEMORIZE REMEMBER
-%token HSCROLL VSCROLL TEXTADDRESS JOY BIN
+%token HSCROLL VSCROLL TEXTADDRESS JOY BIN BIT COUNT JOYCOUNT FIRE
 
 %token BLACK WHITE RED CYAN VIOLET GREEN BLUE YELLOW ORANGE
 %token BROWN LIGHT DARK GREY GRAY MAGENTA PURPLE
@@ -69,6 +69,8 @@ extern char DATATYPE_AS_STRING[][16];
 %left MULTIPLICATION DIVISION
 %left MOD
 %left PLUS MINUS
+%left OF IS
+%right HAS BIT
 %left AND OR EQUAL DISEQUAL LT LTE GT GTE
 
 %%
@@ -143,6 +145,21 @@ factor:
       | POWERING OP factor COMMA exponential CP {
         $$ = powering( _environment, $3, $5 )->name;
         outline3("; %s = %s ^ %s", $$, $3, $5 );
+      }
+      | factor HAS BIT exponential {
+        $$ = variable_bit( _environment, $1, $4 )->name;
+      }
+      | factor HAS NOT BIT exponential {
+        $$ = variable_not( _environment, variable_bit( _environment, $1, $5 )->name )->name;
+      }
+      | factor IS exponential {
+        $$ = variable_bit( _environment, $1, $3 )->name;
+      }
+      | factor IS NOT exponential {
+        $$ = variable_not( _environment, variable_bit( _environment, $1, $4 )->name )->name;
+      }
+      | BIT exponential OF factor {
+        $$ = variable_bit( _environment, $2, $4 )->name;
       }
       ;
 
@@ -570,6 +587,37 @@ exponential:
     }
     | JOY OP expr CP {
         $$ = joy( _environment, $3 )->name;
+    }
+    | JOY COUNT {
+        $$ = variable_temporary( _environment, VT_BYTE, "(JOYCOUNT)" )->name;
+        variable_store( _environment, $$, JOY_COUNT );
+    }
+    | JOYCOUNT {
+        $$ = variable_temporary( _environment, VT_BYTE, "(JOYCOUNT)" )->name;
+        variable_store( _environment, $$, JOY_COUNT );
+    }
+    | BIT OP expr COMMA expr CP {
+        $$ = variable_bit( _environment, $3, $5 )->name;
+    }
+    | UP {
+        $$ = variable_temporary( _environment, VT_BYTE, "(UP)" )->name;
+        variable_store( _environment, $$, JOY_UP );
+    }
+    | DOWN {
+        $$ = variable_temporary( _environment, VT_BYTE, "(DOWN)" )->name;
+        variable_store( _environment, $$, JOY_DOWN );
+    }
+    | LEFT {
+        $$ = variable_temporary( _environment, VT_BYTE, "(LEFT)" )->name;
+        variable_store( _environment, $$, JOY_LEFT );
+    }
+    | RIGHT {
+        $$ = variable_temporary( _environment, VT_BYTE, "(RIGHT)" )->name;
+        variable_store( _environment, $$, JOY_RIGHT );
+    }
+    | FIRE {
+        $$ = variable_temporary( _environment, VT_BYTE, "(FIRE)" )->name;
+        variable_store( _environment, $$, JOY_FIRE );
     }
     ;
 
