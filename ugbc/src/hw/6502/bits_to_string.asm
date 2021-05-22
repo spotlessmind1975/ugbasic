@@ -278,6 +278,7 @@ binstr15:dec wrkspc02+1        ;numerals=numerals-1
          ldx #<strbuf          ;converted string LSB
          ldy #>strbuf          ;converted string MSB
          clc                   ;all okay
+         cld
          rts
 ;
 ;================================================================================
