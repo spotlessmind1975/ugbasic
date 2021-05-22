@@ -822,4 +822,43 @@ void vic2_scroll_text( Environment * _environment, int _direction ) {
 
 }
 
+void vic2_text_at( Environment * _environment, char * _x, char * _y, char * _text, char * _text_size, char * _pen, char *_ww ) {
+
+    deploy( vScrollTextDeployed, "./ugbc/src/hw/vic2/vscroll_text.asm" );
+    deploy( textEncodedAtDeployed, "./ugbc/src/hw/vic2/text_at.asm" );
+
+    outline1("LDA %s", _text);
+    outline0("STA $20" );
+    outline1("LDA %s+1", _text);
+    outline0("STA $21" );
+    outline0("LDA TEXTADDRESS" );
+    outline0("STA $22" );
+    outline0("LDA TEXTADDRESS+1" );
+    outline0("STA $23" );
+    outline1("LDA %s", _x );
+    outline0("STA $d6" );
+    outline1("LDA %s", _y );
+    outline0("STA $d3" );
+    outline1("LDA %s", _text_size);
+    outline0("STA $24" );
+    outline0("LDA #0" );
+    outline0("STA $25" );
+    outline0("LDA COLORADDRESS" );
+    outline0("STA $29" );
+    outline0("LDA COLORADDRESS+1" );
+    outline0("STA $2a" );
+    outline1("LDA %s", _ww );
+    outline0("STA $2c" );
+    outline1("LDA %s", _pen );
+    outline0("STA $2b" );
+
+    outline0("JSR TEXTAT");
+
+    outline0("LDA $d6" );
+    outline1("STA %s", _y );
+    outline0("LDA $d3");
+    outline1("STA %s", _x );
+
+}
+
 #endif
