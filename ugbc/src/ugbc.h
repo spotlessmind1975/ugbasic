@@ -975,6 +975,7 @@ void raster_at_var( Environment * _environment, char * _label, char * _position 
 void repeat( Environment * _environment, char *_label );
 void return_label( Environment * _environment );
 Variable * rnd( Environment * _environment, char * _value );
+Variable * scancode( Environment * _environment );
 void screen_on( Environment * _environment );
 void screen_off( Environment * _environment );
 void screen_rows( Environment * _environment, int _rows );

@@ -194,6 +194,7 @@ RIGHT\$ { return (RIGHT); }
 RND { return (RND); }
 ROWS { return (ROWS); }
 S { return (S); }
+SCANCODE { return (SCANCODE); }
 SCREEN { return (SCREEN); }
 SCROLL { return (SCROLL); }
 SELECT { return (SELECT); }

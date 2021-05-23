@@ -106,4 +106,36 @@ void c64_inkey( Environment * _environment, char * _pressed, char * _key ) {
    
 }
 
+void c64_scancode( Environment * _environment, char * _pressed, char * _scancode ) {
+
+    MAKE_LABEL
+
+    // The KERNAL ROM contains four tables used by the system to convert keyboard codes into PETSCII character codes:
+    // Each table contains 65 bytes; one PETSCII code for each of the 64 keys assigned a keyboard code, plus a 
+    // 255/$FF which will be returned for the keyboard code of 64/$40 (indicating no key pressed).
+
+    // 60289–60353/$EB81–$EBC1: PETSCII codes for keys pressed without simultaneously using Shift, Commodore or Ctrl keys. 
+    // In this table, the entries for those three keys are 1, 2 and 4; values which get "sorted out" by the keyboard scan 
+    // routines in ROM and thus never "show up" in the adresses 203 and 197.
+
+    // 60354–60418/$EBC2–$EC02: PETSCII codes for keys pressed simultaneously with a Shift or the Shift Lock keys.
+    // 60419–60483/$EC03–$EC43: PETSCII codes for keys pressed simultaneously with the Commodore logo key.
+    // 60536–60600/$EC78–$ECB8: PETSCII codes for keys pressed simultaneously with the Ctrl key. 
+    // This table has several bytes with 255/$FF, indicating no character; if you press Ctrl along with e.g. Inst/Del, 
+    // the 64 behaves as if nothing was typed at all.
+
+    outline0("LDA #$0");
+    outline1("STA %s", _pressed );
+
+    outline0("LDY $c5");
+    outline0("CPY #$40");
+    outline1("BEQ %snokey", label );
+
+    outline1("STY %s", _scancode );
+    outline0("LDA #$1");
+    outline1("STA %s", _pressed );
+
+    outhead1("%snokey:", label );
+   
+}
 #endif
