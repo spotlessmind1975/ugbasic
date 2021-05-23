@@ -1699,6 +1699,8 @@ void cpu6502_compare_memory( Environment * _environment, char *_source, char *_d
     
     MAKE_LABEL
 
+    outline1("LDA %s", _size );
+    outline1("BEQ %sequal", label );
     outline0("LDY #$0" );
     outline1("LDA %s+1", _source );
     outline0("STA $23" );
