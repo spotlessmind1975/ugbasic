@@ -69,7 +69,7 @@ Variable * xpen( Environment * _environment ) {
 
     Variable * result = variable_temporary( _environment, VT_POSITION, "(result)" );
 
-    vic2_xpen( _environment, result->realName );
+    c64_xpen( _environment, result->realName );
     
     return result;
 
@@ -106,7 +106,7 @@ Variable * ypen( Environment * _environment ) {
 
     Variable * result = variable_temporary( _environment, VT_POSITION, "(result)" );
 
-    vic2_ypen( _environment, result->realName );
+    c64_ypen( _environment, result->realName );
 
     return result;
 
