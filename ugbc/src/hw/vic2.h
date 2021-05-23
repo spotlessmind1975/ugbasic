@@ -100,8 +100,6 @@ void vic2_sprite_compress_horizontal( Environment * _environment, char * _sprite
 void vic2_sprite_multicolor( Environment * _environment, char * _sprite );
 void vic2_sprite_monocolor( Environment * _environment, char * _sprite );
 void vic2_sprite_color( Environment * _environment, char * _sprite, char * _color );
-void vic2_xpen( Environment * _environment, char * _destination );
-void vic2_ypen( Environment * _environment, char * _destination );
 void vic2_vertical_scroll( Environment * _environment, char * _displacement );
 void vic2_horizontal_scroll( Environment * _environment, char * _displacement );
 void vic2_busy_wait( Environment * _environment, char * _timing );

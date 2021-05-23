@@ -123,6 +123,8 @@ IF { return (IF); }
 IGNORE { return (IGNORE); }
 INC { return (INC); }
 INK { return (INK); }
+INKEY { return (INKEY); }
+INKEY\$ { return (INKEY); }
 INVERSE { return (INVERSE); }
 INSTR { return (INSTR); }
 IS { return (IS); }

@@ -929,6 +929,7 @@ void gosub_number( Environment * _environment, int _number );
 void graphic( Environment * _environment );
 void halt( Environment * _environment );
 void end( Environment * _environment );
+Variable * inkey( Environment * _environment );
 Variable * joy( Environment * _environment, char * _port );
 Variable * joy_direction( Environment * _environment, char * _port, int _direction );
 void shared( Environment * _environment );

@@ -1,6 +1,3 @@
-#ifndef __UGBC_C64__
-#define __UGBC_C64__
-
 /*****************************************************************************
  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
  *****************************************************************************
@@ -31,12 +28,63 @@
  * autorizzazioni e le limitazioni previste dalla medesima.
  ****************************************************************************/
 
+/****************************************************************************
+ * INCLUDE SECTION 
+ ****************************************************************************/
+
+#ifdef __c64__
+
 #include "../ugbc.h"
+#include "6502.h"
 
-#define         JOY_COUNT           2
+/****************************************************************************
+ * CODE SECTION
+ ****************************************************************************/
 
-void c64_xpen( Environment * _environment, char * _destination );
-void c64_ypen( Environment * _environment, char * _destination );
-void c64_inkey( Environment * _environment, char * _pressed, char * _key );
+void c64_xpen( Environment * _environment, char * _destination ) {
+
+    MAKE_LABEL
+
+    outline0("LDA $D013");    
+    outline0("ASL" );
+    outline1("STA %s", _destination);
+    outline1("BCC %s", label );
+    outline0("LDA #1");    
+    outline1("STA _%s+1", _destination);
+    outhead1("%s:", label );
+
+}
+
+void c64_ypen( Environment * _environment, char * _destination ) {
+
+    MAKE_LABEL
+
+    outline0("LDA $d014");
+    outline1("STA %s", _destination);    
+    outline0("LDA #0");
+    outline1("STA %s+1", _destination);    
+   
+}
+
+void c64_inkey( Environment * _environment, char * _pressed, char * _key ) {
+
+    MAKE_LABEL
+
+    outline0("NOP");
+    outline0("NOP");
+    outline0("NOP");
+    outline0("NOP");
+    
+    outline0("LDA #$0");
+    outline1("STA %s", _pressed );
+    outline0("LDA $c5");
+    outline0("CMP #$40");
+    outline1("STA %s", _key );
+    outline1("BEQ %snokey", label );
+    outline0("LDA #$1");
+    outline1("STA %s", _pressed );
+    outhead1("%snokey:", label );
+   
+}
 
 #endif

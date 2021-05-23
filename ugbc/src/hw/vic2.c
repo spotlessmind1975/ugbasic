@@ -688,31 +688,6 @@ void vic2_tiles_at( Environment * _environment, char * _address ) {
 
 }
 
-void vic2_xpen( Environment * _environment, char * _destination ) {
-
-    MAKE_LABEL
-
-    outline0("LDA $D013");    
-    outline0("ASL" );
-    outline1("STA %s", _destination);
-    outline1("BCC %s", label );
-    outline0("LDA #1");    
-    outline1("STA _%s+1", _destination);
-    outhead1("%s:", label );
-
-}
-
-void vic2_ypen( Environment * _environment, char * _destination ) {
-
-    MAKE_LABEL
-
-    outline0("LDA $d014");
-    outline1("STA %s", _destination);    
-    outline0("LDA #0");
-    outline1("STA %s+1", _destination);    
-   
-}
-
 void vic2_vertical_scroll( Environment * _environment, char * _displacement ) {
 
     outline0("LDA $D011" );
