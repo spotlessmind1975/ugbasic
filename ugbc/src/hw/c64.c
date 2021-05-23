@@ -92,9 +92,16 @@ void c64_inkey( Environment * _environment, char * _pressed, char * _key ) {
     outline1("BEQ %snokey", label );
 
     outline0("LDA $EB81,Y" );
+    outline0("CMP #$FF");
+    outline1("BEQ %snopetscii", label );
     outline1("STA %s", _key );
     outline0("LDA #$1");
     outline1("STA %s", _pressed );
+    outline1("JMP %snokey", label );
+
+    outhead1("%snopetscii:", label );
+    outline0("LDA #0");
+    outline1("STA %s", _key );
     outhead1("%snokey:", label );
    
 }
