@@ -1256,12 +1256,14 @@ Variable * variable_compare( Environment * _environment, char * _source, char * 
         case 0:
             switch( source->type ) {
                 case VT_STRING:
-                    switch( source->type ) {
+                    switch( target->type ) {
                         case VT_STRING: {
                             char sourceAddress[MAX_TEMPORARY_STORAGE]; sprintf(sourceAddress, "%s+1", source->realName );
                             char destinationAddress[MAX_TEMPORARY_STORAGE]; sprintf(destinationAddress, "%s+1", target->realName );
+                            outline0("; compare 8 bit string size");
                             cpu_compare_8bit( _environment, source->realName, target->realName, result->realName, 1 );
                             cpu_bveq( _environment, result->realName, label );
+                            outline0("; compare 8 bit string content");
                             cpu_compare_memory( _environment, sourceAddress, destinationAddress, source->realName, result->realName, 1 );
                             cpu_label( _environment, label );
                             break;
@@ -1272,7 +1274,7 @@ Variable * variable_compare( Environment * _environment, char * _source, char * 
                     }
                     break;
                 case VT_BUFFER:
-                    switch( source->type ) {
+                    switch( target->type ) {
                         case VT_STRING:
                             CRITICAL_CANNOT_COMPARE(DATATYPE_AS_STRING[source->type],DATATYPE_AS_STRING[target->type]);
                             break;
