@@ -206,7 +206,7 @@ void cpu6502_compare_8bit( Environment * _environment, char *_source, char *_des
     } else {
         outline1("STA %s", _destination);
     }
-    outline1("JMP %s2", label);
+    outline1("JMP %s_2", label);
     outhead1("%s:", label);
     outline1("LDA #%d", (1-_positive) );
     if ( _other ) {
@@ -214,7 +214,7 @@ void cpu6502_compare_8bit( Environment * _environment, char *_source, char *_des
     } else {
         outline1("STA %s", _destination);
     }
-    outhead1("%s2:", label);
+    outhead1("%s_2:", label);
 
 }
 
@@ -243,7 +243,7 @@ void cpu6502_less_than_8bit( Environment * _environment, char *_source, char *_d
     } else {
         outline1("STA %s", _destination);
     }
-    outline1("JMP %s2", label);
+    outline1("JMP %s_2", label);
     outhead1("%s:", label);
     outline0("LDA #1" );
     if ( _other ) {
@@ -251,7 +251,7 @@ void cpu6502_less_than_8bit( Environment * _environment, char *_source, char *_d
     } else {
         outline1("STA %s", _destination);
     }
-    outhead1("%s2:", label);
+    outhead1("%s_2:", label);
 
 }
 
@@ -281,7 +281,7 @@ void cpu6502_greater_than_8bit( Environment * _environment, char *_source, char 
     } else {
         outline1("STA %s", _destination);
     }
-    outline1("JMP %s2", label);
+    outline1("JMP %s_2", label);
     outhead1("%strue:", label);
     outline0("LDA #1" );
     if ( _other ) {
@@ -289,7 +289,7 @@ void cpu6502_greater_than_8bit( Environment * _environment, char *_source, char 
     } else {
         outline1("STA %s", _destination);
     }
-    outhead1("%s2:", label);
+    outhead1("%s_2:", label);
 
 }
 
@@ -380,10 +380,10 @@ void cpu6502_math_mul_8bit_to_16bit( Environment * _environment, char *_source, 
     outline0("LDX #8");
     outhead1("%s1:", label);
     outline1("LSR %s", _destination);
-    outline1("BCC %s2", label);
+    outline1("BCC %s_2", label);
     outline0("CLC");
     outline1("ADC %s", _source);
-    outline1("%s2:", label);
+    outline1("%s_2:", label);
     outline0("ROR A");
     outline1("ROR %s", _other);
     outline0("DEX" );
@@ -540,7 +540,7 @@ void cpu6502_compare_16bit( Environment * _environment, char *_source, char *_de
     } else {
         outline1("STA %s", _destination);
     }
-    outline1("JMP %s2", label);
+    outline1("JMP %s_2", label);
     outhead1("%s:", label);
     outline1("LDA #%d", (1-_positive) );
     if ( _other ) {
@@ -548,7 +548,7 @@ void cpu6502_compare_16bit( Environment * _environment, char *_source, char *_de
     } else {
         outline1("STA %s", _destination);
     }
-    outhead1("%s2:", label);
+    outhead1("%s_2:", label);
     
 }
 
@@ -579,7 +579,7 @@ void cpu6502_less_than_16bit( Environment * _environment, char *_source, char *_
     } else {
         outline1("STA %s", _destination);
     }
-    outline1("JMP %s2", label);
+    outline1("JMP %s_2", label);
     outhead1("%s:", label);
     outline0("LDA #1" );
     if ( _other ) {
@@ -587,7 +587,7 @@ void cpu6502_less_than_16bit( Environment * _environment, char *_source, char *_
     } else {
         outline1("STA %s", _destination);
     }
-    outhead1("%s2:", label);
+    outhead1("%s_2:", label);
 
 }
 
@@ -754,7 +754,7 @@ void cpu6502_math_mul_16bit_to_32bit( Environment * _environment, char *_source,
  	outhead1("%s:", label);
  	outline0("LSR $F8");
  	outline0("ROR $F7");
- 	outline1("BCC %s2", label);
+ 	outline1("BCC %s_2", label);
     outline0("LDA $FB+2");
     outline0("CLC");
     outline0("ADC $F9");
@@ -762,7 +762,7 @@ void cpu6502_math_mul_16bit_to_32bit( Environment * _environment, char *_source,
     outline0("LDA $FB+3");
     outline0("ADC $FA");
 
- 	outhead1("%s2:", label);
+ 	outhead1("%s_2:", label);
     outline0("ROR");
     outline0("STA $FB+3");
     outline0("ROR $FB+2");
@@ -1075,7 +1075,7 @@ void cpu6502_compare_32bit( Environment * _environment, char *_source, char *_de
     } else {
         outline1("STA %s", _destination);
     }
-    outline1("JMP %s2", label);
+    outline1("JMP %s_2", label);
     outhead1("%s:", label);
     outline1("LDA #%d", (1-_positive));
     if ( _other ) {
@@ -1083,7 +1083,7 @@ void cpu6502_compare_32bit( Environment * _environment, char *_source, char *_de
     } else {
         outline1("STA %s", _destination);
     }
-    outhead1("%s2:", label);
+    outhead1("%s_2:", label);
     
 }
 
@@ -1120,7 +1120,7 @@ void cpu6502_less_than_32bit( Environment * _environment, char *_source, char *_
     } else {
         outline1("STA %s", _destination);
     }
-    outline1("JMP %s2", label);
+    outline1("JMP %s_2", label);
     outhead1("%s:", label);
     outline0("LDA #1" );
     if ( _other ) {
@@ -1128,7 +1128,7 @@ void cpu6502_less_than_32bit( Environment * _environment, char *_source, char *_
     } else {
         outline1("STA %s", _destination);
     }
-    outhead1("%s2:", label);
+    outhead1("%s_2:", label);
 
 }
 
@@ -1173,7 +1173,7 @@ void cpu6502_greater_than_32bit( Environment * _environment, char *_source, char
     } else {
         outline1("STA %s", _destination);
     }
-    outline1("JMP %s2", label);
+    outline1("JMP %s_2", label);
     outhead1("%strue:", label);
     outline0("LDA #1" );
     if ( _other ) {
@@ -1181,7 +1181,7 @@ void cpu6502_greater_than_32bit( Environment * _environment, char *_source, char
     } else {
         outline1("STA %s", _destination);
     }
-    outhead1("%s2:", label);
+    outhead1("%s_2:", label);
 
 }
 
@@ -1544,11 +1544,11 @@ void cpu6502_logical_and_8bit( Environment * _environment, char * _left, char * 
     outline1("BEQ %s", label);
     outline0("LDA #1");
     outline1("STA %s", _result);
-    outline1("JMP %s2", label);
+    outline1("JMP %s_2", label);
     outhead1("%s:", label);
     outline0("LDA #0");
     outline1("STA %s", _result);
-    outhead1("%s2:", label);
+    outhead1("%s_2:", label);
 
 }
 

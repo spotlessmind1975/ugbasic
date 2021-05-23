@@ -64,12 +64,12 @@ void vic2_collision( Environment * _environment, char * _sprite_mask, char * _re
 
     outline0("LDA #$1");
     outline1("STA %s", _result);
-    outline1("JMP %s2", label);
+    outline1("JMP %s_2", label);
 
     outhead1("%s:", label);
     outline0("LDA #0");
     outline1("STA %s", _result);
-    outhead1("%s2:", label);
+    outhead1("%s_2:", label);
 
 }
 
@@ -96,12 +96,12 @@ void vic2_hit( Environment * _environment, char * _sprite_mask, char * _result )
 
     outline0("LDA #$1");
     outline1("STA %s", _result);
-    outline1("JMP %s2", label);
+    outline1("JMP %s_2", label);
 
     outhead1("%s:", label);
     outline0("LDA #0");
     outline1("STA %s", _result);
-    outhead1("%s2:", label);
+    outhead1("%s_2:", label);
 
 }
 
@@ -203,12 +203,12 @@ void vic2_raster_at( Environment * _environment, char * _label, char * _position
     outline0("AND #%01111111" );
     outline0("ORA #%10000000" );
     outline0("STA $D011");
-    outline1("JMP %s2", label );
+    outline1("JMP %s_2", label );
     outhead1("%s:", label );
     outline0("LDA $D011" );
     outline0("AND #%01111111" );
     outline0("STA $D011");
-    outhead1("%s2:", label );
+    outhead1("%s_2:", label );
     outline0("CLI");
 
 }
@@ -256,12 +256,12 @@ void vic2_next_raster_at( Environment * _environment, char * _label, char * _pos
     outline0("AND #%01111111" );
     outline0("ORA #%10000000" );
     outline0("STA $D011");
-    outline1("JMP %s2", label );
+    outline1("JMP %s_2", label );
     outhead1("%s:", label );
     outline0("LDA $D011" );
     outline0("AND #%01111111" );
     outline0("STA $D011");
-    outhead1("%s2:", label );
+    outhead1("%s_2:", label );
     outline1("LDA #<%s", _label);
     outline0("STA $0314");
     outline1("LDA #>%s", _label);
@@ -535,13 +535,13 @@ void vic2_screen_rows( Environment * _environment, char * _rows ) {
     outline0("LDA $D011" );
     outline0("ORA #%00001000");
     outline0("STA $D011" );
-    outline1("JMP %s2", label);
+    outline1("JMP %s_2", label);
     outhead1("%s:", label );
     outline0("LDA $D011" );
     outline0("AND #%11110111");
     outline0("STA $D011" );
-    outline1("JMP %s2", label);
-    outhead1("%s2:", label );
+    outline1("JMP %s_2", label);
+    outhead1("%s_2:", label );
 
 }
 
@@ -596,12 +596,12 @@ void vic2_sprite_position( Environment * _environment, char * _sprite, char * _x
     outline0("LDA $D010");
     outline0("ORA BITMASK,X");
     outline0("STA $D010" );
-    outline1("JMP %s2", label);
+    outline1("JMP %s_2", label);
     outhead1("%s:", label);
     outline0("LDA $D010");
     outline0("AND BITMASKN,X");
     outline0("STA $D010" );
-    outhead1("%s2:", label);
+    outhead1("%s_2:", label);
     outline0("INX");
     outline1("LDA %s", _y);
     outline0("STA $D000, X");
@@ -757,13 +757,13 @@ void vic2_get_height( Environment * _environment, char *_result ) {
     outhead1("%stext:", label );
     outline0("LDA $D011" );
     outline0("AND #%00001000");
-    outline1("BNE %s25", label );
+    outline1("BNE %s_25", label );
     outline0("LDA #24" );
     outline1("STA %s", _result );
     outline0("LDA #0" );
     outline1("STA %s+1", _result );
     outline1("JMP %send", label );
-    outhead1("%s25:", label );
+    outhead1("%s_25:", label );
     outline0("LDA #25" );
     outline1("STA %s", _result );
     outline0("LDA #0" );

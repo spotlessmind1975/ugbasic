@@ -932,7 +932,7 @@ void z80_compare_32bit( Environment * _environment, char *_source, char *_destin
     } else {
         outline1("LD (%s), A", _destination);
     }
-    outline1("JMP %s2", label);
+    outline1("JMP %s_2", label);
     outhead1("%s:", label);
     outline1("LD A, %d", (1-_positive));
     if ( _other ) {
@@ -940,7 +940,7 @@ void z80_compare_32bit( Environment * _environment, char *_source, char *_destin
     } else {
         outline1("LD (%s), A", _destination);
     }
-    outhead1("%s2:", label);
+    outhead1("%s_2:", label);
 
 }
 
@@ -986,7 +986,7 @@ void z80_less_than_32bit( Environment * _environment, char *_source, char *_dest
     } else {
         outline1("LD (%s), A", _destination);
     }
-    outline1("JMP %s2", label);
+    outline1("JMP %s_2", label);
     outhead1("%s:", label);
     outline0("LD A, 1");
     if ( _other ) {
@@ -994,7 +994,7 @@ void z80_less_than_32bit( Environment * _environment, char *_source, char *_dest
     } else {
         outline1("LD (%s), A", _destination);
     }
-    outhead1("%s2:", label);
+    outhead1("%s_2:", label);
 
 }
 
@@ -1361,11 +1361,11 @@ void z80_logical_and_8bit( Environment * _environment, char * _left, char * _rig
     outline1("JR Z, %s", label );
     outline0("LD A, 1" );
     outline1("LD (%s), A", _result );
-    outline1("JMP %s2", label );
+    outline1("JMP %s_2", label );
     outhead1("%s:", label );
     outline0("LD A, 0" );
     outline1("LD (%s), A", _result );
-    outhead1("%s2:", label );
+    outhead1("%s_2:", label );
 
 
 }
