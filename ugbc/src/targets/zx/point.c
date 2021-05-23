@@ -110,10 +110,10 @@ void point_at_vars( Environment * _environment, char * _x, char * _y ) {
     outline0( "LD E, 1");
     outhead1( "%s:", label );
     outline0( "DEC B");
-    outline1( "JR Z,%s2", label);
+    outline1( "JR Z,%s_2", label);
     outline0( "SLA E");
     outline1( "JMP %s", label);
-    outhead1( "%s2:", label );
+    outhead1( "%s_2:", label );
 
     outline1( "LD A,(%s)", y->realName );
     outline0( "LD B, A");
