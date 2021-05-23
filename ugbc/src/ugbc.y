@@ -391,9 +391,6 @@ exponential:
     | color_enumeration { 
         $$ = $1;
       }
-    | PEEK OP direct_integer CP {
-        $$ = peek( _environment, $3 )->name;
-      }
     | PEEK OP expr CP {
         $$ = peek_var( _environment, $3 )->name;
       }

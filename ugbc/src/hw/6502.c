@@ -101,6 +101,11 @@ void cpu6502_label( Environment * _environment, char * _label ) {
 void cpu6502_peek( Environment * _environment, char * _address, char * _target ) {
 
     outline1("LDA %s", _address);
+    outline0("STA $22");
+    outline1("LDA %s+1", _address);
+    outline0("STA $23");
+    outline0("LDY #0");
+    outline0("LDA ($22),Y");
     outline1("STA %s", _target);
 
 }
