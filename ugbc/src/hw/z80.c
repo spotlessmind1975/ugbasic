@@ -1493,11 +1493,12 @@ void z80_compare_memory( Environment * _environment, char *_source, char *_desti
     outline0("INC HL");
     outline0("DEC C");
     outline1("JR NZ, %s", label);
-    outline1("LD A, %d", _equal ? 1 : 0 );
+    outhead1("%sequal:", label );
+    outline1("LD A, %d", _equal ? 255 : 0 );
     outline1("LD (%s), A", _result );
     outline1("JMP %sfinal", label );
     outhead1("%sdiff:", label );
-    outline1("LD A, %d", _equal ? 0 : 1 );
+    outline1("LD A, %d", _equal ? 0 : 255 );
     outline1("LD (%s), A", _result );
     outhead1("%sfinal:", label );
 
@@ -1521,11 +1522,11 @@ void z80_compare_memory_size( Environment * _environment, char *_source, char *_
     outline0("INC HL");
     outline0("DEC C");
     outline1("JR NZ, %s", label);
-    outline1("LD A, %d", _equal ? 1 : 0 );
+    outline1("LD A, %d", _equal ? 255 : 0 );
     outline1("LD (%s), A", _result );
     outline1("JMP %sfinal", label );
     outhead1("%sdiff:", label );
-    outline1("LD A, %d", _equal ? 0 : 1 );
+    outline1("LD A, %d", _equal ? 0 : 255 );
     outline1("LD (%s), A", _result );
     outhead1("%sfinal:", label );
 
@@ -1608,11 +1609,11 @@ void z80_greater_than_memory( Environment * _environment, char *_source, char *_
     outline0("INC HL");
     outline0("DEC C");
     outline1("JR NZ, %s", label);
-    outline1("LD A, %d", _equal ? 1 : 0 );
+    outline1("LD A, %d", _equal ? 255 : 0 );
     outline1("LD (%s), A", _result );
     outline1("JMP %sfinal", label );
     outhead1("%sdiff:", label );
-    outline1("LD A, %d", _equal ? 1 : 0 );
+    outline1("LD A, %d", _equal ? 0 : 255 );
     outline1("LD (%s), A", _result );
     outhead1("%sfinal:", label );
 
@@ -1637,11 +1638,11 @@ void z80_greater_than_memory_size( Environment * _environment, char *_source, ch
     outline0("INC HL");
     outline0("DEC C");
     outline1("JR NZ, %s", label);
-    outline1("LD A, %d", _equal ? 1 : 0 );
+    outline1("LD A, %d", _equal ? 255 : 0 );
     outline1("LD (%s), A", _result );
     outline1("JMP %sfinal", label );
     outhead1("%sdiff:", label );
-    outline1("LD A, %d", _equal ? 1 : 0 );
+    outline1("LD A, %d", _equal ? 0 : 255 );
     outline1("LD (%s), A", _result );
     outhead1("%sfinal:", label );
 

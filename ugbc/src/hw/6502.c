@@ -1717,11 +1717,12 @@ void cpu6502_compare_memory( Environment * _environment, char *_source, char *_d
     outline0("INY" );
     outline1("CPY %s", _size );
     outline1("BNE %sloop", label );
-    outline1("LDA #%d", _equal ? 1 : 0 );
+    outhead1("%sequal:", label );
+    outline1("LDA #%d", _equal ? 255 : 0 );
     outline1("STA %s", _result );
     outline1("JMP %sfinal", label );
     outhead1("%sdiff:", label );
-    outline1("LDA #%d", _equal ? 0 : 1 );
+    outline1("LDA #%d", _equal ? 0 : 255 );
     outline1("STA %s", _result );
     outhead1("%sfinal:", label );
 
@@ -1747,11 +1748,11 @@ void cpu6502_compare_memory_size( Environment * _environment, char *_source, cha
     outline0("INY" );
     outline1("CPY #$%2.2x", _size );
     outline1("BNE %sloop", label );
-    outline1("LDA #%d", _equal ? 1 : 0 );
+    outline1("LDA #%d", _equal ? 255 : 0 );
     outline1("STA %s", _result );
     outline1("JMP %sfinal", label );
     outhead1("%sdiff:", label );
-    outline1("LDA #%d", _equal ? 0 : 1 );
+    outline1("LDA #%d", _equal ? 0 : 255 );
     outline1("STA %s", _result );
     outhead1("%sfinal:", label );
 
