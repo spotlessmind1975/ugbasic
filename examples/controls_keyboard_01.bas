@@ -1,6 +1,4 @@
-    message = "YOU PRESSED A KEY!"
-
     DO
         k = INKEY$
-        IF k<>"" THEN : PRINT message : ENDIF
+        IF k<>"" THEN : PRINT "YOU PRESSED A KEY!" : ENDIF
     LOOP
