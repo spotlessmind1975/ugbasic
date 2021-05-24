@@ -137,6 +137,7 @@ void cpu6502_number_to_string( Environment * _environment, char * _number, char 
 void cpu6502_move_8bit_indirect_with_offset( Environment * _environment, char *_source, char * _value, int _offset );
 void cpu6502_store_8bit_indirect_with_offset( Environment * _environment, char *_source, int _value, int _offset );
 void cpu6502_bits_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits );
+void cpu6502_move_8bit_indirect_with_offset2( Environment * _environment, char *_source, char * _value, char * _offset );
 
 #define cpu_beq( _environment,  _label  ) cpu6502_beq( _environment,  _label  )
 #define cpu_bneq( _environment,  _label  ) cpu6502_beq( _environment,  _label  )
@@ -243,5 +244,6 @@ void cpu6502_bits_to_string( Environment * _environment, char * _number, char * 
 #define cpu_store_8bit_indirect_with_offset( _environment, _source, _value, _offset ) cpu6502_store_8bit_indirect_with_offset( _environment, _source, _value, _offset )
 #define cpu_bits_to_string( _environment, _number, _string, _string_size, _bits ) cpu6502_bits_to_string( _environment, _number, _string, _string_size, _bits )
 #define cpu_bit_check_extended( _environment, _value, _position, _result ) cpu6502_bit_check_extended( _environment, _value, _position, _result )
+#define cpu_move_8bit_indirect_with_offset2( _environment, _source, _value, _offset ) cpu6502_move_8bit_indirect_with_offset2( _environment, _source, _value, _offset )
 
 #endif
