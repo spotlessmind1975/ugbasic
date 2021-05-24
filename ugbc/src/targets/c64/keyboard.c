@@ -106,3 +106,15 @@ Variable * key_state( Environment * _environment, char * _scancode ) {
     return variable_compare( _environment, s->name, key->name );
 
 }
+
+Variable * keyshift( Environment * _environment ) {
+
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of KEYSHIFT)");
+
+    c64_keyshift( _environment, result->realName );
+
+    return result;
+
+}
+
+

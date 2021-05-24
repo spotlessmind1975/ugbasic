@@ -47,7 +47,7 @@ extern char DATATYPE_AS_STRING[][16];
 %token HSCROLL VSCROLL TEXTADDRESS JOY BIN BIT COUNT JOYCOUNT FIRE JUP JDOWN JLEFT JRIGHT JFIRE
 %token INKEY SCANCODE SCAN SHIFT SCANSHIFT BOTH SHIFTS NONE LETTER ASTERISK COLON COMMA 
 %token COMMODORE CONTROL CRSR CURSOR DELETE EQUAL FUNCTION INSERT ARROW MINUS PERIOD PLUS 
-%token POUND RUNSTOP RUN STOP SEMICOLON SLASH KEY STATE KEYSTATE
+%token POUND RUNSTOP RUN STOP SEMICOLON SLASH KEY STATE KEYSTATE KEYSHIFT CAPSLOCK CAPS LOCK ALT
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -963,13 +963,55 @@ exponential:
     | SCAN SHIFT {
         $$ = scanshift( _environment )->name;
     }
+    | KEYSHIFT {
+        $$ = keyshift( _environment )->name;
+    }
+    | KEY SHIFT {
+        $$ = keyshift( _environment )->name;
+    }
     | LEFT SHIFT {
+        $$ = variable_temporary( _environment, VT_BYTE, "(SHIFT LEFT)" )->name;
+        variable_store( _environment, $$, SHIFT_LEFT );
+    }
+    | SHIFT LEFT {
         $$ = variable_temporary( _environment, VT_BYTE, "(SHIFT LEFT)" )->name;
         variable_store( _environment, $$, SHIFT_LEFT );
     }
     | RIGHT SHIFT {
         $$ = variable_temporary( _environment, VT_BYTE, "(SHIFT RIGHT)" )->name;
         variable_store( _environment, $$, SHIFT_RIGHT );
+    }
+    | SHIFT RIGHT {
+        $$ = variable_temporary( _environment, VT_BYTE, "(SHIFT RIGHT)" )->name;
+        variable_store( _environment, $$, SHIFT_RIGHT );
+    }
+    | CAPSLOCK {
+        $$ = variable_temporary( _environment, VT_BYTE, "(SHIFT CAPSLOCK)" )->name;
+        variable_store( _environment, $$, SHIFT_CAPSLOCK );
+    }
+    | CAPS LOCK {
+        $$ = variable_temporary( _environment, VT_BYTE, "(SHIFT CAPSLOCK)" )->name;
+        variable_store( _environment, $$, SHIFT_CAPSLOCK );
+    }
+    | CONTROL {
+        $$ = variable_temporary( _environment, VT_BYTE, "(SHIFT CONTROL)" )->name;
+        variable_store( _environment, $$, SHIFT_CONTROL );
+    }
+    | LEFT ALT {
+        $$ = variable_temporary( _environment, VT_BYTE, "(SHIFT LEFT ALT)" )->name;
+        variable_store( _environment, $$, SHIFT_LEFT_ALT );
+    }
+    | ALT LEFT {
+        $$ = variable_temporary( _environment, VT_BYTE, "(SHIFT LEFT ALT)" )->name;
+        variable_store( _environment, $$, SHIFT_LEFT_ALT );
+    }
+    | RIGHT ALT {
+        $$ = variable_temporary( _environment, VT_BYTE, "(SHIFT RIGHT ALT)" )->name;
+        variable_store( _environment, $$, SHIFT_RIGHT_ALT );
+    }
+    | ALT RIGHT {
+        $$ = variable_temporary( _environment, VT_BYTE, "(SHIFT RIGHT ALT)" )->name;
+        variable_store( _environment, $$, SHIFT_RIGHT_ALT );
     }
     | KEY key_scancode_definition {
         $$ = $2;

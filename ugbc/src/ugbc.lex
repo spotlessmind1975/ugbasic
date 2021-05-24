@@ -40,6 +40,7 @@
 
 A { return (A); }
 ABS { return (ABS); }
+ALT { return (ALT); }
 AS { return (AS); }
 ASC { return (ASC); }
 ASTERISK { return (ASTERISK); }
@@ -63,6 +64,8 @@ BYTE { return (BYTE); }
 BORDER { return (BORDER); }
 C { return (C); }
 CALL { return (CALL); }
+CAPS { return (CAPS); }
+CAPSLOCK { return (CAPSLOCK); }
 CDOWN { return (CDOWN); }
 CENTER { return (CENTER); }
 CENTRE { return (CENTRE); }
@@ -168,6 +171,7 @@ JOY { return (JOY); }
 JOYCOUNT { return (JOYCOUNT); }
 K { return (K); }
 KEY { return (KEY); }
+KEYSHIFT { return (KEYSHIFT); }
 KEYSTATE { return (KEYSTATE); }
 L { return (L); }
 LAVENDER { return(LAVENDER); }
@@ -177,6 +181,7 @@ LEN { return (LEN); }
 LETTER { return (LETTER); }
 LIGHT { return(LIGHT); }
 LOCATE { return(LOCATE); }
+LOCK { return (LOCK); }
 LOOP { return (LOOP); }
 LOWER { return (LOWER); }
 LOWER\$ { return (LOWER); }
