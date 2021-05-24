@@ -84,21 +84,37 @@ void c64_inkey( Environment * _environment, char * _pressed, char * _key ) {
     // This table has several bytes with 255/$FF, indicating no character; if you press Ctrl along with e.g. Inst/Del, 
     // the 64 behaves as if nothing was typed at all.
 
+    // Addresses 631-640 (Hex: $0277-$0280, name KEYD) is the keyboard buffer used by Commodore basic.
+
+    // When a key is pressed, the new character is placed in memory at position 631+PEEK(198), then the content of address 198 was incremented to increase the size of the buffer.
+
+    // When a key is retrieved from the buffer, the character at address 631 is read and handled. The other characters are then shifted onto the previous character, then the
+
     outline0("LDA #$0");
     outline1("STA %s", _pressed );
     outline0("LDA #$0");
     outline1("STA %s", _key );
 
-    outline0("LDY $c5");
-    outline0("CPY #$40");
+    outline0("LDX $c6");
+    outline0("CPX #$0");
     outline1("BEQ %snokey", label );
 
-    outline0("LDA $EB81,Y" );
+    outline0("LDA $0277" );
     outline0("CMP #$FF");
     outline1("BEQ %snopetscii", label );
     outline1("STA %s", _key );
     outline0("LDA #$FF");
     outline1("STA %s", _pressed );
+
+    outline0("LDX #0");
+    outhead1("%sclkeys:", label);
+    outline0("LDA $0278,X" );
+    outline0("LDA $0277,X" );
+    outline0("INX");
+    outline0("CPX $c6");
+    outline1("BNE %sclkeys", label);
+    outline0("DEC $c6");
+
     outline1("JMP %snokey", label );
 
     outhead1("%snopetscii:", label );
