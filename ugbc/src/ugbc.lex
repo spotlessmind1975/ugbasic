@@ -29,7 +29,7 @@
 "*" { return(OP_MULTIPLICATION); }
 "$" { return(OP_DOLLAR); }
 "^" { return(OP_POW); }
-"/" { return(DIVISION); }
+"/" { return(OP_DIVISION); }
 "[" { return(OSP); }
 "]" { return(CSP); }
 "?" { return(QM); }
@@ -82,7 +82,7 @@ CYCLES { return (CYCLES); }
 DARK { return(DARK); }
 DATA { return (DATA); }
 DEBUG { return (DEBUG); }
-DEC { return (DEC); }
+DEC { return (OP_DEC); }
 DEFAULT { return (DEFAULT); }
 DIM { return (DIM); }
 DISABLE { return (DISABLE); }
@@ -122,7 +122,7 @@ HORIZONTAL { return (HORIZONTAL); }
 HSCROLL { return (HSCROLL); }
 IF { return (IF); }
 IGNORE { return (IGNORE); }
-INC { return (INC); }
+INC { return (OP_INC); }
 INK { return (INK); }
 INKEY { return (INKEY); }
 INKEY\$ { return (INKEY); }

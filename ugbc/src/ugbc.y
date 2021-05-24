@@ -72,7 +72,7 @@ extern char DATATYPE_AS_STRING[][16];
 %left OP_PLUS OP_MINUS
 %left OF IS
 %right HAS BIT
-%left AND OR EQUAL OP_DISEQUAL OP_LT OP_LTE OP_GT OP_GTE
+%left AND OR OP_EQUAL OP_DISEQUAL OP_LT OP_LTE OP_GT OP_GTE
 
 %%
 
@@ -86,7 +86,7 @@ expr :
         $$ = variable_or( _environment, $1, $3 )->name;
         outline3("; %s = %s OR %s", $$, $1, $3 );
     } 
-    | expr_math EQUAL expr_math {
+    | expr_math OP_EQUAL expr_math {
         $$ = variable_compare( _environment, $1, $3 )->name;
     }
     | expr_math OP_DISEQUAL expr_math {

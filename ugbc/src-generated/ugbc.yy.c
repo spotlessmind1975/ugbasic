@@ -1232,12 +1232,12 @@ YY_RULE_SETUP
 case 2:
 YY_RULE_SETUP
 #line 12 "src/ugbc.lex"
-{ return(SEMICOLON); }
+{ return(OP_SEMICOLON); }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
 #line 13 "src/ugbc.lex"
-{ return(COLON); }
+{ return(OP_COLON); }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
@@ -1252,87 +1252,87 @@ YY_RULE_SETUP
 case 6:
 YY_RULE_SETUP
 #line 16 "src/ugbc.lex"
-{ return(COMMA); }
+{ return(OP_COMMA); }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
 #line 17 "src/ugbc.lex"
-{ return(ASSIGN); }
+{ return(OP_ASSIGN); }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
 #line 18 "src/ugbc.lex"
-{ return(EQUAL); }
+{ return(OP_EQUAL); }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
 #line 19 "src/ugbc.lex"
-{ return(PLUS); }
+{ return(OP_PLUS); }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
 #line 20 "src/ugbc.lex"
-{ return(MINUS); }
+{ return(OP_MINUS); }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
 #line 21 "src/ugbc.lex"
-{ return(INC); }
+{ return(OP_INC); }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
 #line 22 "src/ugbc.lex"
-{ return(DEC); }
+{ return(OP_DEC); }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
 #line 23 "src/ugbc.lex"
-{ return(HASH); }
+{ return(OP_HASH); }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
 #line 24 "src/ugbc.lex"
-{ return(LT); }
+{ return(OP_LT); }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
 #line 25 "src/ugbc.lex"
-{ return(LTE); }
+{ return(OP_LTE); }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
 #line 26 "src/ugbc.lex"
-{ return(GT); }
+{ return(OP_GT); }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
 #line 27 "src/ugbc.lex"
-{ return(GTE); }
+{ return(OP_GTE); }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
 #line 28 "src/ugbc.lex"
-{ return(DISEQUAL); }
+{ return(OP_DISEQUAL); }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
 #line 29 "src/ugbc.lex"
-{ return(MULTIPLICATION); }
+{ return(OP_MULTIPLICATION); }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
 #line 30 "src/ugbc.lex"
-{ return(DOLLAR); }
+{ return(OP_DOLLAR); }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
 #line 31 "src/ugbc.lex"
-{ return(POW); }
+{ return(OP_POW); }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
 #line 32 "src/ugbc.lex"
-{ return(DIVISION); }
+{ return(OP_DIVISION); }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
@@ -1587,7 +1587,7 @@ YY_RULE_SETUP
 case 73:
 YY_RULE_SETUP
 #line 85 "src/ugbc.lex"
-{ return (DEC); }
+{ return (OP_DEC); }
 	YY_BREAK
 case 74:
 YY_RULE_SETUP
@@ -1787,7 +1787,7 @@ YY_RULE_SETUP
 case 113:
 YY_RULE_SETUP
 #line 125 "src/ugbc.lex"
-{ return (INC); }
+{ return (OP_INC); }
 	YY_BREAK
 case 114:
 YY_RULE_SETUP
