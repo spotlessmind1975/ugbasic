@@ -36,7 +36,7 @@ extern char DATATYPE_AS_STRING[][16];
 %token ENABLE DISABLE HALT ECM BITMAP SCREEN ON OFF ROWS VERTICAL SCROLL VAR AS TEMPORARY 
 %token XPEN YPEN PEEK GOTO HORIZONTAL MCM COMPRESS EXPAND LOOP REPEAT WHILE TEXT TILES
 %token COLORMAP SELECT MONOCOLOR MULTICOLOR COLLISION IF THEN HIT BACKGROUND TO RANDOM
-%token BYTE WORD POSITION CODE VARIABLES MS CYCLES S WIDTH HEIGHT DWORD PEN CLEAR
+%token BYTE WORD POSITION CODE VARIABLES MS CYCLES WIDTH HEIGHT DWORD PEN CLEAR
 %token BEG END GAMELOOP ENDIF UP DOWN LEFT RIGHT DEBUG AND RANDOMIZE GRAPHIC TEXTMAP
 %token POINT GOSUB RETURN POP OR ELSE NOT TRUE FALSE DO EXIT WEND UNTIL FOR STEP EVERY
 %token MID INSTR UPPER LOWER STR VAL STRING SPACE FLIP CHR ASC LEN MOD ADD MIN MAX SGN
@@ -45,7 +45,12 @@ extern char DATATYPE_AS_STRING[][16];
 %token PAPER INVERSE REPLACE XOR IGNORE NORMAL WRITING ONLY LOCATE CLS HOME CMOVE
 %token CENTER CENTRE TAB SET CUP CDOWN CLEFT CRIGHT CLINE XCURS YCURS MEMORIZE REMEMBER
 %token HSCROLL VSCROLL TEXTADDRESS JOY BIN BIT COUNT JOYCOUNT FIRE JUP JDOWN JLEFT JRIGHT JFIRE
-%token INKEY SCANCODE SCAN SHIFT SCANSHIFT BOTH SHIFTS
+%token INKEY SCANCODE SCAN SHIFT SCANSHIFT BOTH SHIFTS NONE LETTER ASTERISK COLON COMMA 
+%token COMMODORE CONTROL CRSR CURSOR DELETE EQUAL FUNCTION INSERT ARROW MINUS PERIOD PLUS 
+%token POUND RUNSTOP RUN STOP SEMICOLON SLASH KEY STATE KEYSTATE
+
+%token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
+%token F1 F2 F3 F4 F5 F6 F7 F8
 
 %token BLACK WHITE RED CYAN VIOLET GREEN BLUE YELLOW ORANGE
 %token BROWN LIGHT DARK GREY GRAY MAGENTA PURPLE
@@ -60,6 +65,7 @@ extern char DATATYPE_AS_STRING[][16];
 %type <string> random_definition_simple random_definition
 %type <string> color_enumeration
 %type <string> writing_mode_definition writing_part_definition
+%type <string> key_scancode_definition key_scancode_alphadigit key_scancode_function_digit
 %type <integer> datatype
 
 %right Integer String CP 
@@ -307,6 +313,307 @@ color_enumeration:
           variable_store( _environment, $$, COLOR_PEACH );
       };
 
+key_scancode_alphadigit :
+      "0" {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode DIGIT 0)")->name;
+        variable_store( _environment, $$, KEY_0 );
+    }
+    | "1" {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode DIGIT 1)")->name;
+        variable_store( _environment, $$, KEY_1 );
+    }
+    | "2" {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode DIGIT 2)")->name;
+        variable_store( _environment, $$, KEY_2 );
+    }
+    | "3" {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode DIGIT 3)")->name;
+        variable_store( _environment, $$, KEY_3 );
+    }
+    | "4" {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode DIGIT 4)")->name;
+        variable_store( _environment, $$, KEY_4 );
+    }
+    | "5" {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode DIGIT 5)")->name;
+        variable_store( _environment, $$, KEY_5 );
+    }
+    | "6" {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode DIGIT 6)")->name;
+        variable_store( _environment, $$, KEY_6 );
+    }
+    | "7" {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode DIGIT 7)")->name;
+        variable_store( _environment, $$, KEY_7 );
+    }
+    | "8" {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode DIGIT 8)")->name;
+        variable_store( _environment, $$, KEY_8 );
+    }
+    | "9" {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode DIGIT 9)")->name;
+        variable_store( _environment, $$, KEY_9 );
+    }
+    | A {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode LETTER A)")->name;
+        variable_store( _environment, $$, KEY_A );
+    }
+    | B {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode LETTER B)")->name;
+        variable_store( _environment, $$, KEY_B );
+    }
+    | C {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode LETTER C)")->name;
+        variable_store( _environment, $$, KEY_C );
+    }
+    | D {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode LETTER D)")->name;
+        variable_store( _environment, $$, KEY_D );
+    }
+    | E {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode LETTER E)")->name;
+        variable_store( _environment, $$, KEY_E );
+    }
+    | F {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode LETTER F)")->name;
+        variable_store( _environment, $$, KEY_F );
+    }
+    | G {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode LETTER G)")->name;
+        variable_store( _environment, $$, KEY_G );
+    }
+    | H {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode LETTER H)")->name;
+        variable_store( _environment, $$, KEY_H );
+    }
+    | I {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode LETTER I)")->name;
+        variable_store( _environment, $$, KEY_I );
+    }
+    | J {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode LETTER J)")->name;
+        variable_store( _environment, $$, KEY_J );
+    }
+    | K {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode LETTER K)")->name;
+        variable_store( _environment, $$, KEY_K );
+    }
+    | L {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode LETTER L)")->name;
+        variable_store( _environment, $$, KEY_L );
+    }
+    | M {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode LETTER M)")->name;
+        variable_store( _environment, $$, KEY_M );
+    }
+    | N {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode LETTER N)")->name;
+        variable_store( _environment, $$, KEY_N );
+    }
+    | O {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode LETTER O)")->name;
+        variable_store( _environment, $$, KEY_O );
+    }
+    | P {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode LETTER P)")->name;
+        variable_store( _environment, $$, KEY_P );
+    }
+    | Q {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode LETTER Q)")->name;
+        variable_store( _environment, $$, KEY_Q );
+    }
+    | R {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode LETTER R)")->name;
+        variable_store( _environment, $$, KEY_R );
+    }
+    | S {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode LETTER S)")->name;
+        variable_store( _environment, $$, KEY_S );
+    }
+    | T {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode LETTER T)")->name;
+        variable_store( _environment, $$, KEY_T );
+    }
+    | U {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode LETTER U)")->name;
+        variable_store( _environment, $$, KEY_U );
+    }
+    | V {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode LETTER V)")->name;
+        variable_store( _environment, $$, KEY_V );
+    }
+    | X {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode LETTER X)")->name;
+        variable_store( _environment, $$, KEY_X );
+    }
+    | Y {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode LETTER Y)")->name;
+        variable_store( _environment, $$, KEY_Y );
+    }
+    | W {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode LETTER W)")->name;
+        variable_store( _environment, $$, KEY_W );
+    }
+    | Z {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode LETTER Z)")->name;
+        variable_store( _environment, $$, KEY_Z );
+    }
+    ;
+
+key_scancode_function_digit :
+      F1 {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode F1)")->name;
+        variable_store( _environment, $$, KEY_F1 );
+    }
+    | F2 {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode F2)")->name;
+        variable_store( _environment, $$, KEY_F2 );
+    }
+    | F3 {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode F3)")->name;
+        variable_store( _environment, $$, KEY_F3 );
+    }
+    | F4 {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode F4)")->name;
+        variable_store( _environment, $$, KEY_F4 );
+    }
+    | F5 {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode F5)")->name;
+        variable_store( _environment, $$, KEY_F5 );
+    }
+    | F6 {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode F6)")->name;
+        variable_store( _environment, $$, KEY_F6 );
+    }
+    | F7 {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode F7)")->name;
+        variable_store( _environment, $$, KEY_F7 );
+    }
+    | F8 {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode F8)")->name;
+        variable_store( _environment, $$, KEY_F8 );
+    };
+
+key_scancode_definition : 
+      NONE {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode NONE)")->name;
+        variable_store( _environment, $$, KEY_NONE );
+    }
+    | key_scancode_alphadigit {
+        $$ = $1;
+    }
+    | ASTERISK {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode ASTERISK)")->name;
+        variable_store( _environment, $$, KEY_ASTERISK );
+    }
+    | AT {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode AT)")->name;
+        variable_store( _environment, $$, KEY_AT );
+    }
+    | CLEAR {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode CLEAR)")->name;
+        variable_store( _environment, $$, KEY_CLEAR );
+    }
+    | COLON {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode COLON)")->name;
+        variable_store( _environment, $$, KEY_COLON );
+    }
+    | COMMA {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode COMMA)")->name;
+        variable_store( _environment, $$, KEY_COMMA );
+    }
+    | COMMODORE {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode COMMODORE)")->name;
+        variable_store( _environment, $$, KEY_COMMODORE );
+    }
+    | CONTROL {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode CONTROL)")->name;
+        variable_store( _environment, $$, KEY_CONTROL );
+    }
+    | CRSR LEFT RIGHT {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode CRSR LEFT RIGHT)")->name;
+        variable_store( _environment, $$, KEY_CRSR_LEFT_RIGHT );
+    }
+    | CRSR UP DOWN {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode CRSR UP DOWN)")->name;
+        variable_store( _environment, $$, KEY_CRSR_UP_DOWN );
+    }
+    | DELETE {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode DELETE)")->name;
+        variable_store( _environment, $$, KEY_DELETE );
+    }
+    | EQUAL {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode EQUAL)")->name;
+        variable_store( _environment, $$, KEY_EQUAL );
+    }
+    | key_scancode_function_digit {
+        $$ = $1;
+    }
+    | HOME {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode HOME)")->name;
+        variable_store( _environment, $$, KEY_HOME );
+    }
+    | INSERT {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode INSERT)")->name;
+        variable_store( _environment, $$, KEY_INSERT );
+    }
+    | ARROW LEFT {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode ARROW LEFT)")->name;
+        variable_store( _environment, $$, KEY_LEFT_ARROW );
+    }
+    | LEFT ARROW {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode ARROW LEFT)")->name;
+        variable_store( _environment, $$, KEY_LEFT_ARROW );
+    }
+    | ARROW UP {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode ARROW UP)")->name;
+        variable_store( _environment, $$, KEY_UP_ARROW );
+    }
+    | UP ARROW {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode ARROW UP)")->name;
+        variable_store( _environment, $$, KEY_UP_ARROW );
+    }
+    | MINUS {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode MINUS)")->name;
+        variable_store( _environment, $$, KEY_MINUS );
+    }
+    | PERIOD {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode PERIOD)")->name;
+        variable_store( _environment, $$, KEY_PERIOD );
+    }
+    | PLUS {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode PLUS)")->name;
+        variable_store( _environment, $$, KEY_PLUS );
+    }
+    | POUND {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode POUND)")->name;
+        variable_store( _environment, $$, KEY_POUND );
+    }
+    | RETURN {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode RETURN)")->name;
+        variable_store( _environment, $$, KEY_RETURN );
+    }
+    | RUNSTOP {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode RUNSTOP)")->name;
+        variable_store( _environment, $$, KEY_RUNSTOP );        
+    }
+    | RUN STOP {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode RUNSTOP)")->name;
+        variable_store( _environment, $$, KEY_RUNSTOP );        
+    }
+    | SEMICOLON {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode SEMICOLON)")->name;
+        variable_store( _environment, $$, KEY_SEMICOLON );
+    }
+    | SLASH {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode SLASH)")->name;
+        variable_store( _environment, $$, KEY_SLASH );        
+    }
+    | SPACE {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode SPACE)")->name;
+        variable_store( _environment, $$, KEY_SPACE );        
+    };
+
 exponential:
     Identifier {
         memset( ((struct _Environment *)_environment)->arrayIndexesEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
@@ -505,7 +812,7 @@ exponential:
     }
     | FALSE {
         $$ = variable_temporary( _environment, VT_BYTE, "(false)" )->name;
-        variable_store( _environment, $$, 255 );
+        variable_store( _environment, $$, 0 );
     }
     | COLORS {
         $$ = variable_temporary( _environment, VT_COLOR, "(COLORS)" )->name;
@@ -644,6 +951,12 @@ exponential:
     | SCAN CODE {
         $$ = scancode( _environment )->name;
     }
+    | KEY STATE OP expr CP {
+        $$ = key_state( _environment, $4 )->name;
+    }
+    | KEYSTATE OP expr CP {
+        $$ = key_state( _environment, $3 )->name;
+    }
     | SCANSHIFT {
         $$ = scanshift( _environment )->name;
     }
@@ -657,6 +970,9 @@ exponential:
     | RIGHT SHIFT {
         $$ = variable_temporary( _environment, VT_BYTE, "(SHIFT RIGHT)" )->name;
         variable_store( _environment, $$, SHIFT_RIGHT );
+    }
+    | KEY key_scancode_definition {
+        $$ = $2;
     }
     ;
 
