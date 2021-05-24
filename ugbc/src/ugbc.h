@@ -871,6 +871,9 @@ typedef struct _Environment {
 #define JOY_RIGHT           3
 #define JOY_FIRE            4
 
+#define SHIFT_LEFT          1
+#define SHIFT_RIGHT         2
+
 Variable * absolute( Environment * _environment, char * _value );
 void add_complex( Environment * _environment, char * _variable, char * _expression, char * _limit_lower, char * _limit_upper );
 Bank * bank_define( Environment * _environment, char * _name, BankType _type, int _address, char * _filename );
@@ -976,6 +979,7 @@ void repeat( Environment * _environment, char *_label );
 void return_label( Environment * _environment );
 Variable * rnd( Environment * _environment, char * _value );
 Variable * scancode( Environment * _environment );
+Variable * scanshift( Environment * _environment );
 void screen_on( Environment * _environment );
 void screen_off( Environment * _environment );
 void screen_rows( Environment * _environment, int _rows );

@@ -39,5 +39,6 @@ void c64_xpen( Environment * _environment, char * _destination );
 void c64_ypen( Environment * _environment, char * _destination );
 void c64_inkey( Environment * _environment, char * _pressed, char * _key );
 void c64_scancode( Environment * _environment, char * _pressed, char * _scacode );
+void c64_scanshift( Environment * _environment, char * _shifts );
 
 #endif

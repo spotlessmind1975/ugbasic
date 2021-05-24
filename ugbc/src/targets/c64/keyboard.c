@@ -73,16 +73,23 @@ Variable * inkey( Environment * _environment ) {
 
 }
 
-
 Variable * scancode( Environment * _environment ) {
 
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of SCANCODE)");
 
-    MAKE_LABEL
-
     Variable * pressed = variable_temporary( _environment, VT_BYTE, "(key pressed?)");
 
     c64_scancode( _environment, pressed->realName, result->realName );
+
+    return result;
+
+}
+
+Variable * scanshift( Environment * _environment ) {
+
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of SCANSHIFT)");
+
+    c64_scanshift( _environment, result->realName );
 
     return result;
 

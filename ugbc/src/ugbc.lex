@@ -50,6 +50,7 @@ BANK { return (BANK); }
 BEGIN { return (BEG); }
 BIN\$ { return (BIN); }
 BIT { return (BIT); }
+BOTH { return (BOTH); }
 BITMAP { return (BITMAP); }
 BLACK { return (BLACK); }
 BLUE { return (BLUE); }
@@ -196,12 +197,15 @@ ROWS { return (ROWS); }
 S { return (S); }
 SCAN { return (SCAN); }
 SCANCODE { return (SCANCODE); }
+SCANSHIFT { return (SCANSHIFT); }
 SCREEN { return (SCREEN); }
 SCROLL { return (SCROLL); }
 SELECT { return (SELECT); }
 SET { return (SET); }
 SGN { return (SGN); }
 SHARED { return (SHARED); }
+SHIFT { return (SHIFT); }
+SHIFTS { return (SHIFTS); }
 SIGNED { return (SIGNED); }
 SPACE { return (SPACE); }
 SPRITE { return (SPRITE); }

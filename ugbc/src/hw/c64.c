@@ -138,4 +138,42 @@ void c64_scancode( Environment * _environment, char * _pressed, char * _scancode
     outhead1("%snokey:", label );
    
 }
+
+void c64_scanshift( Environment * _environment, char * _shifts ) {
+
+    // 653	
+    // Shift key indicator. Bits:
+    // Bit #0: 1 = One or more of left Shift, right Shift or Shift Lock is currently being pressed or locked.
+    // Bit #1: 1 = Commodore is currently being pressed.
+    // Bit #2: 1 = Control is currently being pressed.
+    // NO SHIFT (0) - if no SHIFT key pressed;
+    // LEFT SHIFT (1) - if the left SHIFT pressed;
+    // RIGHT SHIFT (2) - if the right SHIFT pressed;
+    // BOTH SHIFTS (3) - if both keys pressed.
+
+    MAKE_LABEL
+
+    outline0("LDA #0");
+    outline1("STA %s", _shifts);
+    outline0("LDA #$10");
+    outline0("STA $DC00");
+    outline0("LDA $DC01");
+    outline0("AND #$80");
+    outline1("BNE %snoleft", label);
+    outline0("LDA #1");
+    outline1("STA %s", _shifts);
+    outhead1("%snoleft:", label );
+
+    outline0("LDA #$20");
+    outline0("STA $DC00");
+    outline0("LDA $DC01");
+    outline0("AND #$10");
+    outline1("BNE %snoright", label);
+    outline1("LDA %s", _shifts);
+    outline0("ORA #2");
+    outline1("STA %s", _shifts);
+    outhead1("%snoright:", label );
+
+}
+
 #endif

@@ -45,7 +45,7 @@ extern char DATATYPE_AS_STRING[][16];
 %token PAPER INVERSE REPLACE XOR IGNORE NORMAL WRITING ONLY LOCATE CLS HOME CMOVE
 %token CENTER CENTRE TAB SET CUP CDOWN CLEFT CRIGHT CLINE XCURS YCURS MEMORIZE REMEMBER
 %token HSCROLL VSCROLL TEXTADDRESS JOY BIN BIT COUNT JOYCOUNT FIRE JUP JDOWN JLEFT JRIGHT JFIRE
-%token INKEY SCANCODE SCAN
+%token INKEY SCANCODE SCAN SHIFT SCANSHIFT BOTH SHIFTS
 
 %token BLACK WHITE RED CYAN VIOLET GREEN BLUE YELLOW ORANGE
 %token BROWN LIGHT DARK GREY GRAY MAGENTA PURPLE
@@ -643,6 +643,20 @@ exponential:
     }
     | SCAN CODE {
         $$ = scancode( _environment )->name;
+    }
+    | SCANSHIFT {
+        $$ = scanshift( _environment )->name;
+    }
+    | SCAN SHIFT {
+        $$ = scanshift( _environment )->name;
+    }
+    | LEFT SHIFT {
+        $$ = variable_temporary( _environment, VT_BYTE, "(SHIFT LEFT)" )->name;
+        variable_store( _environment, $$, SHIFT_LEFT );
+    }
+    | RIGHT SHIFT {
+        $$ = variable_temporary( _environment, VT_BYTE, "(SHIFT RIGHT)" )->name;
+        variable_store( _environment, $$, SHIFT_RIGHT );
     }
     ;
 
