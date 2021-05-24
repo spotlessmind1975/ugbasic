@@ -987,6 +987,7 @@ Variable * scanshift( Environment * _environment );
 Variable * key_state( Environment * _environment, char * _scancode );
 Variable * keyshift( Environment * _environment );
 Variable * clear_key( Environment * _environment );
+Variable * input_string( Environment * _environment, char * _size );
 void wait_key( Environment * _environment );
 void screen_on( Environment * _environment );
 void screen_off( Environment * _environment );

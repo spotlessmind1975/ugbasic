@@ -126,7 +126,7 @@ Variable * clear_key( Environment * _environment ) {
 void wait_key( Environment * _environment ) {
 
     MAKE_LABEL
-    
+
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of SCANCODE)");
 
     Variable * pressed = variable_temporary( _environment, VT_BYTE, "(key pressed?)");
@@ -138,5 +138,43 @@ void wait_key( Environment * _environment ) {
     c64_scancode( _environment, pressed->realName, result->realName );
 
     cpu_bveq( _environment, pressed->realName, repeatLabel );
+
+}
+
+Variable * input_string( Environment * _environment, char * _size ) {
+
+    MAKE_LABEL
+    
+    char repeatLabel[MAX_TEMPORARY_STORAGE]; sprintf(repeatLabel, "%srepeat", label );
+
+    Variable * result = variable_temporary( _environment, VT_STRING, "(result of INPUT$)");
+    Variable * offset = variable_temporary( _environment, VT_BYTE, "(offset inside INPUT$)");
+
+    char resultString[MAX_TEMPORARY_STORAGE]; sprintf(resultString, "%s+1", result->realName );
+
+    Variable * size = variable_retrieve_or_define( _environment, _size, VT_BYTE, 0 );
+    Variable * pressed = variable_temporary( _environment, VT_BYTE, "(key pressed?)");
+    Variable * key = variable_temporary( _environment, VT_BYTE, "(key pressed)");
+
+    cpu_store_8bit( _environment, offset->realName, 0 );
+
+    cpu_move_8bit( _environment, size->realName, result->realName );
+
+    cpu_label( _environment, repeatLabel );
+
+    c64_inkey( _environment, pressed->realName, key->realName );
+
+    cpu_bveq( _environment, pressed->realName, repeatLabel );
+    cpu_bveq( _environment, key->realName, repeatLabel );
+
+    cpu_move_8bit_indirect_with_offset2( _environment, key->realName, resultString, offset->realName );
+
+    cpu_inc( _environment, offset->realName );
+
+    cpu_compare_8bit( _environment, offset->realName, size->realName, pressed->realName, 1 );
+
+    cpu_bveq( _environment, pressed->realName, repeatLabel );
+
+    return result;
 
 }

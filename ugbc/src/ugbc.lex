@@ -157,6 +157,7 @@ INC { return (OP_INC); }
 INK { return (INK); }
 INKEY { return (INKEY); }
 INKEY\$ { return (INKEY); }
+INPUT { return (INPUT); }
 INSERT { return (INSERT); }
 INVERSE { return (INVERSE); }
 INSTR { return (INSTR); }
