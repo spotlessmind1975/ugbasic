@@ -117,4 +117,9 @@ Variable * keyshift( Environment * _environment ) {
 
 }
 
+Variable * clear_key( Environment * _environment ) {
+
+    c64_clear_key( _environment );
+
+}
 

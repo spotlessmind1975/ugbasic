@@ -251,4 +251,11 @@ void c64_keyshift( Environment * _environment, char * _shifts ) {
 
 }
 
+void c64_clear_key( Environment * _environment ) {
+
+    outline0("LDA #$0");
+    outline0("STA $c6");
+   
+}
+
 #endif

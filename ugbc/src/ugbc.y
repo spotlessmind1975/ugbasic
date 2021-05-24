@@ -1908,6 +1908,9 @@ statement:
   | HOME {
       text_home( _environment );
   }
+  | CLEAR KEY {
+      clear_key( _environment );
+  }
   | OP_INC Identifier {
       variable_increment( _environment, $2 );
   }
