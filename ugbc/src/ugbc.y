@@ -1181,7 +1181,11 @@ wait_definition_simple:
     }
     | direct_integer milliseconds {
       wait_milliseconds( _environment, $1 );
+    }
+    | KEY {
+      wait_key( _environment );
     };
+;
 
 wait_definition_expression:
       expr CYCLES {

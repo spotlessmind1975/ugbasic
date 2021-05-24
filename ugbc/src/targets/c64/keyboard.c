@@ -123,3 +123,20 @@ Variable * clear_key( Environment * _environment ) {
 
 }
 
+void wait_key( Environment * _environment ) {
+
+    MAKE_LABEL
+    
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of SCANCODE)");
+
+    Variable * pressed = variable_temporary( _environment, VT_BYTE, "(key pressed?)");
+
+    char repeatLabel[MAX_TEMPORARY_STORAGE]; sprintf(repeatLabel, "%srepeat", label );
+
+    cpu_label( _environment, repeatLabel );
+
+    c64_scancode( _environment, pressed->realName, result->realName );
+
+    cpu_bveq( _environment, pressed->realName, repeatLabel );
+
+}
