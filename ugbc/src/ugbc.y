@@ -29,17 +29,17 @@ extern char DATATYPE_AS_STRING[][16];
 
 %token Remark
 %token NewLine 
-%token SEMICOLON COLON COMMA PLUS MINUS INC DEC EQUAL ASSIGN LT LTE GT GTE 
-%token DISEQUAL MULTIPLICATION DOLLAR DIVISION QM HAS IS OF
+%token OP_SEMICOLON OP_COLON OP_COMMA OP_PLUS OP_MINUS OP_INC OP_DEC OP_EQUAL OP_ASSIGN OP_LT OP_LTE OP_GT OP_GTE 
+%token OP_DISEQUAL OP_MULTIPLICATION OP_DOLLAR OP_DIVISION QM HAS IS OF OP_HASH OP_POW 
 
 %token RASTER DONE AT COLOR BORDER WAIT NEXT WITH BANK SPRITE DATA FROM OP CP 
 %token ENABLE DISABLE HALT ECM BITMAP SCREEN ON OFF ROWS VERTICAL SCROLL VAR AS TEMPORARY 
 %token XPEN YPEN PEEK GOTO HORIZONTAL MCM COMPRESS EXPAND LOOP REPEAT WHILE TEXT TILES
 %token COLORMAP SELECT MONOCOLOR MULTICOLOR COLLISION IF THEN HIT BACKGROUND TO RANDOM
-%token BYTE WORD POSITION CODE VARIABLES MS CYCLES S HASH WIDTH HEIGHT DWORD PEN CLEAR
+%token BYTE WORD POSITION CODE VARIABLES MS CYCLES S WIDTH HEIGHT DWORD PEN CLEAR
 %token BEG END GAMELOOP ENDIF UP DOWN LEFT RIGHT DEBUG AND RANDOMIZE GRAPHIC TEXTMAP
 %token POINT GOSUB RETURN POP OR ELSE NOT TRUE FALSE DO EXIT WEND UNTIL FOR STEP EVERY
-%token MID INSTR UPPER LOWER STR VAL STRING SPACE FLIP CHR ASC LEN POW MOD ADD MIN MAX SGN
+%token MID INSTR UPPER LOWER STR VAL STRING SPACE FLIP CHR ASC LEN MOD ADD MIN MAX SGN
 %token SIGNED ABS RND COLORS INK TIMER POWERING DIM ADDRESS PROC PROCEDURE CALL OSP CSP
 %token SHARED MILLISECOND MILLISECONDS TICKS GLOBAL PARAM PRINT DEFAULT USE
 %token PAPER INVERSE REPLACE XOR IGNORE NORMAL WRITING ONLY LOCATE CLS HOME CMOVE
@@ -63,16 +63,16 @@ extern char DATATYPE_AS_STRING[][16];
 %type <integer> datatype
 
 %right Integer String CP 
-%left DOLLAR
+%left OP_DOLLAR
 %left OP
 %right THEN ELSE
-%left POW
-%left MULTIPLICATION DIVISION
+%left OP_POW
+%left OP_MULTIPLICATION OP_DIVISION
 %left MOD
-%left PLUS MINUS
+%left OP_PLUS OP_MINUS
 %left OF IS
 %right HAS BIT
-%left AND OR EQUAL DISEQUAL LT LTE GT GTE
+%left AND OR EQUAL OP_DISEQUAL OP_LT OP_LTE OP_GT OP_GTE
 
 %%
 
@@ -89,19 +89,19 @@ expr :
     | expr_math EQUAL expr_math {
         $$ = variable_compare( _environment, $1, $3 )->name;
     }
-    | expr_math DISEQUAL expr_math {
+    | expr_math OP_DISEQUAL expr_math {
         $$ = variable_compare_not( _environment, $1, $3 )->name;
     }
-    | expr_math LT expr_math {
+    | expr_math OP_LT expr_math {
         $$ = variable_less_than( _environment, $1, $3, 0 )->name;
     }
-    | expr_math LTE expr_math {
+    | expr_math OP_LTE expr_math {
         $$ = variable_less_than( _environment, $1, $3, 1 )->name;
     }
-    | expr_math GT expr_math {
+    | expr_math OP_GT expr_math {
         $$ = variable_greater_than( _environment, $1, $3, 0 )->name;
     }
-    | expr_math GTE expr_math {
+    | expr_math OP_GTE expr_math {
         $$ = variable_greater_than( _environment, $1, $3, 0 )->name;
     }
     | NOT expr {
@@ -111,10 +111,10 @@ expr :
     
 expr_math: 
       term
-    | expr_math PLUS term {
+    | expr_math OP_PLUS term {
         $$ = variable_add( _environment, $1, $3 )->name;
     }
-    | expr_math MINUS term {
+    | expr_math OP_MINUS term {
         $$ = variable_sub( _environment, $1, $3 )->name;
         outline3("; %s = %s - %s", $$, $1, $3 );
     }
@@ -127,11 +127,11 @@ term:
 
 modula: 
       factor
-    | modula MULTIPLICATION factor {
+    | modula OP_MULTIPLICATION factor {
         $$ = variable_mul( _environment, $1, $3 )->name;
         outline3("; %s = %s * %s", $$, $1, $3 );
     } 
-    | modula DIVISION factor {
+    | modula OP_DIVISION factor {
         $$ = variable_div( _environment, $1, $3 )->name;
         outline3("; %s = %s / %s", $$, $1, $3 );
     } 
@@ -139,11 +139,11 @@ modula:
 
 factor: 
         exponential
-      | factor POW exponential {
+      | factor OP_POW exponential {
         $$ = powering( _environment, $1, $3 )->name;
         outline3("; %s = %s ^ %s", $$, $1, $3 );
       }
-      | POWERING OP factor COMMA exponential CP {
+      | POWERING OP factor OP_COMMA exponential CP {
         $$ = powering( _environment, $3, $5 )->name;
         outline3("; %s = %s ^ %s", $$, $3, $5 );
       }
@@ -165,7 +165,7 @@ factor:
       ;
 
 direct_integer:
-    HASH Integer {
+    OP_HASH Integer {
         $$ = $2;
     };
 
@@ -319,7 +319,7 @@ exponential:
         }
         $$ = variable_move_from_array( _environment, $1 )->name;
     }
-    | Identifier DOLLAR {
+    | Identifier OP_DOLLAR {
         memset( ((struct _Environment *)_environment)->arrayIndexesEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
         ((struct _Environment *)_environment)->arrayIndexes = 0;
      } 
@@ -333,7 +333,7 @@ exponential:
     | Identifier {
         $$ = variable_retrieve_or_define( _environment, $1, VT_WORD, 0 )->name;
       }
-    | Identifier DOLLAR { 
+    | Identifier OP_DOLLAR { 
         $$ = variable_retrieve_or_define( _environment, $1, VT_STRING, 0 )->name;
       }
     | Integer { 
@@ -345,7 +345,7 @@ exponential:
             variable_store( _environment, $$, $1 );
         }
       }
-    | MINUS Integer { 
+    | OP_MINUS Integer { 
         $$ = variable_temporary( _environment, VT_SWORD, "(negative integer value)" )->name;
         variable_store( _environment, $$, -$2 );
       }
@@ -412,22 +412,22 @@ exponential:
     | HIT OP expr CP {
         $$ = collision_to_vars( _environment, $3 )->name;
       }      
-    | LEFT OP expr COMMA expr CP {
+    | LEFT OP expr OP_COMMA expr CP {
         $$ = variable_string_left( _environment, $3, $5 )->name;
     }
-    | RIGHT OP expr COMMA expr CP {
+    | RIGHT OP expr OP_COMMA expr CP {
         $$ = variable_string_right( _environment, $3, $5 )->name;
     }
-    | MID OP expr COMMA expr CP {
+    | MID OP expr OP_COMMA expr CP {
         $$ = variable_string_mid( _environment, $3, $5, NULL )->name;
     }
-    | MID OP expr COMMA expr COMMA expr CP {
+    | MID OP expr OP_COMMA expr OP_COMMA expr CP {
         $$ = variable_string_mid( _environment, $3, $5, $7 )->name;
     }
-    | INSTR OP expr COMMA expr CP {
+    | INSTR OP expr OP_COMMA expr CP {
         $$ = variable_string_instr( _environment, $3, $5, NULL )->name;
     }
-    | INSTR OP expr COMMA expr COMMA expr CP {
+    | INSTR OP expr OP_COMMA expr OP_COMMA expr CP {
         $$ = variable_string_instr( _environment, $3, $5, $7 )->name;
     }
     | UPPER OP expr CP {
@@ -442,7 +442,7 @@ exponential:
     | BIN OP expr CP {
         $$ = variable_bin( _environment, $3, NULL )->name;
     }
-    | BIN OP expr COMMA expr CP {
+    | BIN OP expr OP_COMMA expr CP {
         $$ = variable_bin( _environment, $3, $5 )->name;
     }
     | SPACE OP expr CP {
@@ -460,7 +460,7 @@ exponential:
     | LEN OP expr CP {
         $$ = variable_string_len( _environment, $3 )->name;
     }
-    | STRING OP expr COMMA expr CP {
+    | STRING OP expr OP_COMMA expr CP {
         $$ = variable_string_string( _environment, $3, $5 )->name;
     }
     | VAL OP expr CP {
@@ -475,16 +475,16 @@ exponential:
     | OP expr CP {
         $$ = $2;
     }
-    | MAX OP expr COMMA expr CP {
+    | MAX OP expr OP_COMMA expr CP {
         $$ = maximum( _environment, $3, $5 )->name;
     }
-    | MIN OP expr COMMA expr CP {
+    | MIN OP expr OP_COMMA expr CP {
         $$ = minimum( _environment, $3, $5 )->name;
     }
     | PARAM OP Identifier CP {
         $$ = param_procedure( _environment, $3 )->name;
     }
-    | PARAM DOLLAR OP Identifier CP {
+    | PARAM OP_DOLLAR OP Identifier CP {
         $$ = param_procedure( _environment, $4 )->name;
     }
     | Identifier OSP {
@@ -544,34 +544,34 @@ exponential:
     | TIMER {
         $$ = get_timer( _environment )->name;
     }
-    | PEN DOLLAR OP expr CP {
+    | PEN OP_DOLLAR OP expr CP {
         $$ = text_get_pen( _environment, $4 )->name;
     }
-    | PAPER DOLLAR OP expr CP {
+    | PAPER OP_DOLLAR OP expr CP {
         $$ = text_get_paper( _environment, $4 )->name;
     }
-    | CMOVE DOLLAR OP expr COMMA expr CP {
+    | CMOVE OP_DOLLAR OP expr OP_COMMA expr CP {
         $$ = text_get_cmove( _environment, $4, $6 )->name;
     }
-    | CUP DOLLAR {
+    | CUP OP_DOLLAR {
         $$ = text_get_cmove_direct( _environment, 0, -1 )->name;
     }
-    | CDOWN DOLLAR {
+    | CDOWN OP_DOLLAR {
         $$ = text_get_cmove_direct( _environment, 0, 1 )->name;
     }
-    | CLEFT DOLLAR {
+    | CLEFT OP_DOLLAR {
         $$ = text_get_cmove_direct( _environment, -1, 0 )->name;
     }
-    | CRIGHT DOLLAR {
+    | CRIGHT OP_DOLLAR {
         $$ = text_get_cmove_direct( _environment, 1, 0 )->name;
     }
-    | AT DOLLAR OP expr COMMA expr CP {
+    | AT OP_DOLLAR OP expr OP_COMMA expr CP {
         $$ = text_get_at( _environment, $4, $6 )->name;
     }
-    | LOCATE DOLLAR OP expr COMMA expr CP {
+    | LOCATE OP_DOLLAR OP expr OP_COMMA expr CP {
         $$ = text_get_at( _environment, $4, $6 )->name;
     }
-    | TAB DOLLAR {
+    | TAB OP_DOLLAR {
         $$ = text_get_tab( _environment )->name;
     }
     | XCURS {
@@ -612,7 +612,7 @@ exponential:
         $$ = variable_temporary( _environment, VT_BYTE, "(JOYCOUNT)" )->name;
         variable_store( _environment, $$, JOY_COUNT );
     }
-    | BIT OP expr COMMA expr CP {
+    | BIT OP expr OP_COMMA expr CP {
         $$ = variable_bit( _environment, $3, $5 )->name;
     }
     | UP {
@@ -854,7 +854,7 @@ sprite_definition_simple:
   | direct_integer COLOR direct_integer {
       sprite_color( _environment, $1, $3 );
   }
-  | direct_integer position OP direct_integer COMMA direct_integer CP {
+  | direct_integer position OP direct_integer OP_COMMA direct_integer CP {
       sprite_position( _environment, $1, $4, $6 );
   }
   | direct_integer ENABLE {
@@ -901,7 +901,7 @@ sprite_definition_expression:
   | expr COLOR expr {
       sprite_color_vars( _environment, $1, $3 );
   }
-  | expr position OP expr COMMA expr CP {
+  | expr position OP expr OP_COMMA expr CP {
       sprite_position_vars( _environment, $1, $4, $6 );
   }
   | expr ENABLE {
@@ -993,10 +993,10 @@ text_definition_simple:
   };
 
 text_definition_expression:
-     AT expr COMMA expr COMMA expr {
+     AT expr OP_COMMA expr OP_COMMA expr {
        text_at( _environment, $2, $4, $6 );
    }
-   | expr COMMA expr COMMA expr {
+   | expr OP_COMMA expr OP_COMMA expr {
        text_at( _environment, $1, $3, $5 );
    };
 
@@ -1078,18 +1078,18 @@ var_definition_simple:
   | Identifier ON Identifier {
       variable_retrieve_or_define( _environment, $1, VT_BYTE, 0 );
   }
-  | Identifier DOLLAR ON Identifier {
+  | Identifier OP_DOLLAR ON Identifier {
       variable_retrieve_or_define( _environment, $1, VT_STRING, 0 );
   }
-  | Identifier ON Identifier ASSIGN direct_integer {
+  | Identifier ON Identifier OP_ASSIGN direct_integer {
       variable_retrieve_or_define( _environment, $1, VT_BYTE, $5 );
   }
-  | Identifier ON Identifier ASSIGN expr {
+  | Identifier ON Identifier OP_ASSIGN expr {
       Variable * v = variable_retrieve( _environment, $5 );
       Variable * d = variable_retrieve_or_define( _environment, $1, v->type, v->value );
       variable_move_naked( _environment, v->name, d->name );
   }
-  | Identifier DOLLAR ON Identifier ASSIGN expr {
+  | Identifier OP_DOLLAR ON Identifier OP_ASSIGN expr {
       Variable * v = variable_retrieve( _environment, $6 );
       Variable * d = variable_retrieve_or_define( _environment, $1, VT_STRING, 0 );
       variable_move( _environment, v->name, d->name );
@@ -1117,13 +1117,13 @@ var_definition:
     var_definition_simple;
 
 point_definition_simple:
-      AT OP direct_integer COMMA direct_integer CP {
+      AT OP direct_integer OP_COMMA direct_integer CP {
         point_at( _environment, $3, $5 );
     }
     ;
 
 point_definition_expression:
-      AT OP expr COMMA expr CP {
+      AT OP expr OP_COMMA expr CP {
         point_at_vars( _environment, $3, $5 );
     };
 
@@ -1143,7 +1143,7 @@ on_goto_definition:
       }
     | Identifier {
         on_goto_index( _environment, $1 );
-    } COMMA on_goto_definition;
+    } OP_COMMA on_goto_definition;
 
 on_gosub_definition:
       Identifier {
@@ -1152,7 +1152,7 @@ on_gosub_definition:
       }
     | Identifier {
           on_gosub_index( _environment, $1 );
-    } COMMA on_gosub_definition;
+    } OP_COMMA on_gosub_definition;
 
 on_proc_definition:
       Identifier {
@@ -1161,7 +1161,7 @@ on_proc_definition:
       }
     | Identifier {
           on_proc_index( _environment, $1 );
-    } COMMA on_proc_definition;
+    } OP_COMMA on_proc_definition;
 
 on_definition:
       expr GOTO {
@@ -1186,10 +1186,10 @@ every_definition :
     };
 
 add_definition :
-    Identifier COMMA expr {
+    Identifier OP_COMMA expr {
         variable_move_naked( _environment, variable_add( _environment, $1, $3 )->name, $1 );
     }
-    | Identifier COMMA expr COMMA expr TO expr {
+    | Identifier OP_COMMA expr OP_COMMA expr TO expr {
         add_complex( _environment, $1, $3, $5, $7 );
     }
     ;
@@ -1199,7 +1199,7 @@ dimensions :
           ((struct _Environment *)_environment)->arrayDimensionsEach[((struct _Environment *)_environment)->arrayDimensions] = $1;
           ++((struct _Environment *)_environment)->arrayDimensions;
     }
-    | Integer COMMA dimensions {
+    | Integer OP_COMMA dimensions {
           ((struct _Environment *)_environment)->arrayDimensionsEach[((struct _Environment *)_environment)->arrayDimensions] = $1;
           ++((struct _Environment *)_environment)->arrayDimensions;
     }
@@ -1249,7 +1249,7 @@ dim_definition :
     | Identifier {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
           ((struct _Environment *)_environment)->arrayDimensions = 0;
-      } DOLLAR OP dimensions CP {
+      } OP_DOLLAR OP dimensions CP {
         variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
         variable_array_type( _environment, $1, VT_STRING );
         variable_reset( _environment );
@@ -1266,7 +1266,7 @@ dim_definition :
 
 dim_definitions :
       dim_definition
-    | dim_definition COMMA dim_definitions
+    | dim_definition OP_COMMA dim_definitions
     ;
 
 indexes :
@@ -1274,7 +1274,7 @@ indexes :
           ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayIndexes] = strdup( $1 );
           ++((struct _Environment *)_environment)->arrayIndexes;
     }
-    | expr COMMA indexes {
+    | expr OP_COMMA indexes {
           ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayIndexes] = strdup( $1 );
           ++((struct _Environment *)_environment)->arrayIndexes;
     }
@@ -1286,7 +1286,7 @@ parameters :
           ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_WORD;
           ++((struct _Environment *)_environment)->parameters;
     }
-    | Identifier DOLLAR {
+    | Identifier OP_DOLLAR {
           ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
           ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_STRING;
           ++((struct _Environment *)_environment)->parameters;
@@ -1296,17 +1296,17 @@ parameters :
           ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = $3;
           ++((struct _Environment *)_environment)->parameters;
     }
-    | Identifier COMMA parameters {
+    | Identifier OP_COMMA parameters {
           ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
           ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_WORD;
           ++((struct _Environment *)_environment)->parameters;
     }
-    | Identifier DOLLAR COMMA parameters {
+    | Identifier OP_DOLLAR OP_COMMA parameters {
           ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
           ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_STRING;
           ++((struct _Environment *)_environment)->parameters;
     }
-    | Identifier AS datatype COMMA parameters {
+    | Identifier AS datatype OP_COMMA parameters {
           ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
           ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = $3;
           ++((struct _Environment *)_environment)->parameters;
@@ -1319,7 +1319,7 @@ parameters_expr :
           ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_WORD;
           ++((struct _Environment *)_environment)->parameters;
     }
-    | Identifier DOLLAR {
+    | Identifier OP_DOLLAR {
           ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
           ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_STRING;
           ++((struct _Environment *)_environment)->parameters;
@@ -1329,17 +1329,17 @@ parameters_expr :
           ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = $3;
           ++((struct _Environment *)_environment)->parameters;
     }
-    | Identifier COMMA parameters_expr {
+    | Identifier OP_COMMA parameters_expr {
           ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
           ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_WORD;
           ++((struct _Environment *)_environment)->parameters;
     }
-    | Identifier DOLLAR COMMA parameters_expr {
+    | Identifier OP_DOLLAR OP_COMMA parameters_expr {
           ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
           ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_STRING;
           ++((struct _Environment *)_environment)->parameters;
     }
-    | Identifier AS datatype COMMA parameters_expr {
+    | Identifier AS datatype OP_COMMA parameters_expr {
           ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
           ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = $3;
           ++((struct _Environment *)_environment)->parameters;
@@ -1348,7 +1348,7 @@ parameters_expr :
           ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
           ++((struct _Environment *)_environment)->parameters;
     }
-    | String COMMA parameters_expr {
+    | String OP_COMMA parameters_expr {
           ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
           ++((struct _Environment *)_environment)->parameters;
     }
@@ -1359,7 +1359,7 @@ values :
           ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
           ++((struct _Environment *)_environment)->parameters;
     }
-    | expr COMMA values {
+    | expr OP_COMMA values {
           ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
           ++((struct _Environment *)_environment)->parameters;
     }
@@ -1369,18 +1369,18 @@ print_definition :
     expr {
         print( _environment, $1, 1 );
     }
-  | expr COMMA {
+  | expr OP_COMMA {
         print( _environment, $1, 0 );
         print_tab( _environment, 0 );
   }
-  | expr SEMICOLON {
+  | expr OP_SEMICOLON {
         print( _environment, $1, 0 );
   }
-  | expr COMMA {
+  | expr OP_COMMA {
         print( _environment, $1, 0 );
         print_tab( _environment, 0 );
   }  print_definition
-  | expr SEMICOLON  {
+  | expr OP_SEMICOLON  {
         print( _environment, $1, 0 );
   } print_definition
   ;
@@ -1432,31 +1432,31 @@ writing_part_definition :
     ;
 
 writing_definition : 
-    writing_mode_definition COMMA writing_part_definition {
+    writing_mode_definition OP_COMMA writing_part_definition {
         text_writing( _environment, $1, $3 );
     }
     ;
 
 locate_definition : 
-     COMMA expr {
+     OP_COMMA expr {
         text_locate( _environment, NULL, $2 );
     }
-    | expr COMMA {
+    | expr OP_COMMA {
         text_locate( _environment, $1, NULL );
     } 
-    | expr COMMA expr {
+    | expr OP_COMMA expr {
         text_locate( _environment, $1, $3 );
     }
     ;
 
 cmove_definition : 
-     COMMA expr {
+     OP_COMMA expr {
         text_cmove( _environment, NULL, $2 );
     }
-    | expr COMMA {
+    | expr OP_COMMA {
         text_cmove( _environment, $1, NULL );
     } 
-    | expr COMMA expr {
+    | expr OP_COMMA expr {
         text_cmove( _environment, $1, $3 );
     }
     ;
@@ -1501,7 +1501,7 @@ statement:
   | POINT point_definition
   | INK ink_definition
   | VAR var_definition
-  | TEXTADDRESS ASSIGN expr {
+  | TEXTADDRESS OP_ASSIGN expr {
       variable_move( _environment, $3, "ADDRESS" );
   }
   | ADD add_definition
@@ -1550,10 +1550,10 @@ statement:
   | HOME {
       text_home( _environment );
   }
-  | INC Identifier {
+  | OP_INC Identifier {
       variable_increment( _environment, $2 );
   }
-  | DEC Identifier {
+  | OP_DEC Identifier {
       variable_decrement( _environment, $2 );
   }
   | RANDOMIZE {
@@ -1612,13 +1612,13 @@ statement:
   | EXIT direct_integer {
       exit_loop( _environment, $2 );  
   }
-  | EXIT IF expr COMMA Integer {
+  | EXIT IF expr OP_COMMA Integer {
       exit_loop_if( _environment, $3, $5 );  
   }
-  | EXIT IF expr COMMA direct_integer {
+  | EXIT IF expr OP_COMMA direct_integer {
       exit_loop_if( _environment, $3, $5 );  
   }
-  | FOR Identifier ASSIGN expr TO expr {
+  | FOR Identifier OP_ASSIGN expr TO expr {
       begin_for( _environment, $2, $4, $6 );  
   }
   | NEXT {
@@ -1645,7 +1645,7 @@ statement:
   | END PROC OSP expr CSP {
       end_procedure( _environment, $4 );
   }
-  | FOR Identifier ASSIGN expr TO expr STEP expr {
+  | FOR Identifier OP_ASSIGN expr TO expr STEP expr {
       begin_for_step( _environment, $2, $4, $6, $8 );  
   }
   | Identifier " " {
@@ -1688,7 +1688,7 @@ statement:
       CRITICAL_NOT_SUPPORTED("INVERSE");
   }
   | WRITING writing_definition
-  | Identifier COLON {
+  | Identifier OP_COLON {
       outhead1("%s:", $1);
   } 
   | BEG GAMELOOP {
@@ -1722,20 +1722,20 @@ statement:
   | DONE  {
       return 0;
   }
-  | LEFT OP expr COMMA expr CP ASSIGN expr {
+  | LEFT OP expr OP_COMMA expr CP OP_ASSIGN expr {
         variable_string_left_assign( _environment, $3, $5, $8 );
   }
-  | RIGHT OP expr COMMA expr CP ASSIGN expr {
+  | RIGHT OP expr OP_COMMA expr CP OP_ASSIGN expr {
         variable_string_right_assign( _environment, $3, $5, $8 );
   }
-  | MID OP expr COMMA expr CP ASSIGN expr {
+  | MID OP expr OP_COMMA expr CP OP_ASSIGN expr {
         variable_string_mid_assign( _environment, $3, $5, NULL, $8 );
   }
-  | MID OP expr COMMA expr COMMA expr CP ASSIGN expr {
+  | MID OP expr OP_COMMA expr OP_COMMA expr CP OP_ASSIGN expr {
         variable_string_mid_assign( _environment, $3, $5, $7, $10 );
   }
   | DIM dim_definitions
-  | Identifier ASSIGN expr {
+  | Identifier OP_ASSIGN expr {
         outline2("; %s = %s", $1, $3 );
         Variable * expr = variable_retrieve( _environment, $3 );
         outline1("; retrieved %s ", $3 );
@@ -1744,7 +1744,7 @@ statement:
         variable_move( _environment, $3, $1 );
         outline2("; moved %s -> %s ", $3, $1 );
   }
-  | Identifier DOLLAR ASSIGN expr {
+  | Identifier OP_DOLLAR OP_ASSIGN expr {
         outline2("; %s = %s", $1, $4 );
         Variable * expr = variable_retrieve( _environment, $4 );
         outline1("; retrieved %s ", $4 );
@@ -1757,7 +1757,7 @@ statement:
         memset( ((struct _Environment *)_environment)->arrayIndexesEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
         ((struct _Environment *)_environment)->arrayIndexes = 0;
     }
-      OP indexes CP ASSIGN expr {
+      OP indexes CP OP_ASSIGN expr {
         Variable * expr = variable_retrieve( _environment, $7 );
         Variable * array = variable_retrieve( _environment, $1 );
         if ( array->type != VT_ARRAY ) {
@@ -1765,10 +1765,10 @@ statement:
         }
         variable_move_array( _environment, $1, expr->name );
   }
-  | Identifier DOLLAR {
+  | Identifier OP_DOLLAR {
         memset( ((struct _Environment *)_environment)->arrayIndexesEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
         ((struct _Environment *)_environment)->arrayIndexes = 0;
-    } OP indexes CP ASSIGN expr {
+    } OP indexes CP OP_ASSIGN expr {
         Variable * x = variable_retrieve( _environment, $8 );
         Variable * a = variable_retrieve( _environment, $1 );
         if ( x->type != VT_STRING ) {
@@ -1785,7 +1785,7 @@ statement:
   | Identifier {
         memset( ((struct _Environment *)_environment)->arrayIndexesEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
         ((struct _Environment *)_environment)->arrayIndexes = 0;
-    } datatype OP indexes CP ASSIGN expr {
+    } datatype OP indexes CP OP_ASSIGN expr {
         Variable * x = variable_retrieve( _environment, $8 );
         Variable * a = variable_retrieve( _environment, $1 );
         if ( x->type != $3 ) {
@@ -1808,7 +1808,7 @@ statement:
 
 statements_no_linenumbers:
       statement { ((Environment *)_environment)->yylineno = yylineno; }
-    | statement COLON { ((Environment *)_environment)->yylineno = yylineno; } statements_no_linenumbers
+    | statement OP_COLON { ((Environment *)_environment)->yylineno = yylineno; } statements_no_linenumbers
     ;
 
 statements_with_linenumbers:
