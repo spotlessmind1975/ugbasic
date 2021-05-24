@@ -216,7 +216,7 @@ void z80_compare_8bit( Environment * _environment, char *_source, char *_destina
     outline1("LD A, (%s)", _destination);
     outline0("CP B");
     outline1("JP NZ, %s", label);
-    outline1("LD A, %d", _positive);
+    outline1("LD A, $%2.2x", 0xff*_positive);
     if ( _other ) {
         outline1("LD (%s), A", _other);
     } else {
@@ -224,7 +224,7 @@ void z80_compare_8bit( Environment * _environment, char *_source, char *_destina
     }
     outline1("JMP %sb2", label);
     outhead1("%s:", label);
-    outline1("LD A, %d", (1-_positive));
+    outline1("LD A, $%2.2x", 0xff*(1-_positive));
     if ( _other ) {
         outline1("LD (%s), A", _other);
     } else {
@@ -555,7 +555,7 @@ void z80_compare_16bit( Environment * _environment, char *_source, char *_destin
     outline1("LD A, (%s+1)", _destination);
     outline0("CP B");
     outline1("JP NZ, %s", label);
-    outline1("LD A, %d", _positive);
+    outline1("LD A, $%2.2x", 0xff*_positive);
     if ( _other ) {
         outline1("LD (%s), A", _other);
     } else {
@@ -563,7 +563,7 @@ void z80_compare_16bit( Environment * _environment, char *_source, char *_destin
     }
     outline1("JMP %sb2", label);
     outhead1("%s:", label);
-    outline1("LD A, %d", (1-_positive));
+    outline1("LD A, $%2.2x", 0xff*(1-_positive));
     if ( _other ) {
         outline1("LD (%s), A", _other);
     } else {
@@ -926,7 +926,7 @@ void z80_compare_32bit( Environment * _environment, char *_source, char *_destin
     outline1("LD A, (%s+3)", _destination);
     outline0("CP B");
     outline1("JP NZ, %s", label);
-    outline1("LD A, %d", _positive);
+    outline1("LD A, $%2.2x", 0xff*_positive);
     if ( _other ) {
         outline1("LD (%s), A", _other);
     } else {
@@ -934,7 +934,7 @@ void z80_compare_32bit( Environment * _environment, char *_source, char *_destin
     }
     outline1("JMP %s_2", label);
     outhead1("%s:", label);
-    outline1("LD A, %d", (1-_positive));
+    outline1("LD A, $%2.2x", 0xff*(1-_positive));
     if ( _other ) {
         outline1("LD (%s), A", _other);
     } else {

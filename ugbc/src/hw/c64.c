@@ -86,6 +86,8 @@ void c64_inkey( Environment * _environment, char * _pressed, char * _key ) {
 
     outline0("LDA #$0");
     outline1("STA %s", _pressed );
+    outline0("LDA #$0");
+    outline1("STA %s", _key );
 
     outline0("LDY $c5");
     outline0("CPY #$40");
@@ -95,7 +97,7 @@ void c64_inkey( Environment * _environment, char * _pressed, char * _key ) {
     outline0("CMP #$FF");
     outline1("BEQ %snopetscii", label );
     outline1("STA %s", _key );
-    outline0("LDA #$1");
+    outline0("LDA #$FF");
     outline1("STA %s", _pressed );
     outline1("JMP %snokey", label );
 
@@ -126,13 +128,15 @@ void c64_scancode( Environment * _environment, char * _pressed, char * _scancode
 
     outline0("LDA #$0");
     outline1("STA %s", _pressed );
+    outline0("LDA #$0");
+    outline1("STA %s", _scancode );
 
     outline0("LDY $c5");
     outline0("CPY #$40");
     outline1("BEQ %snokey", label );
 
     outline1("STY %s", _scancode );
-    outline0("LDA #$1");
+    outline0("LDA #$ff");
     outline1("STA %s", _pressed );
 
     outhead1("%snokey:", label );

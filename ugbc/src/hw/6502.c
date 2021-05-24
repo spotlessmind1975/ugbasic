@@ -200,7 +200,7 @@ void cpu6502_compare_8bit( Environment * _environment, char *_source, char *_des
     outline1("LDA %s", _source);
     outline1("CMP %s", _destination);
     outline1("BNE %s", label);
-    outline1("LDA #%d", _positive );
+    outline1("LDA #$%2.2x", 0xff*_positive );
     if ( _other ) {
         outline1("STA %s", _other);
     } else {
@@ -208,7 +208,7 @@ void cpu6502_compare_8bit( Environment * _environment, char *_source, char *_des
     }
     outline1("JMP %s_2", label);
     outhead1("%s:", label);
-    outline1("LDA #%d", (1-_positive) );
+    outline1("LDA #$%2.2x", 0xff*(1-_positive) );
     if ( _other ) {
         outline1("STA %s", _other);
     } else {
@@ -245,7 +245,7 @@ void cpu6502_less_than_8bit( Environment * _environment, char *_source, char *_d
     }
     outline1("JMP %s_2", label);
     outhead1("%s:", label);
-    outline0("LDA #1" );
+    outline0("LDA #$FF" );
     if ( _other ) {
         outline1("STA %s", _other);
     } else {
@@ -283,7 +283,7 @@ void cpu6502_greater_than_8bit( Environment * _environment, char *_source, char 
     }
     outline1("JMP %s_2", label);
     outhead1("%strue:", label);
-    outline0("LDA #1" );
+    outline0("LDA #$FF" );
     if ( _other ) {
         outline1("STA %s", _other);
     } else {
@@ -534,7 +534,7 @@ void cpu6502_compare_16bit( Environment * _environment, char *_source, char *_de
     outline1("LDA %s+1", _source);
     outline1("CMP %s+1", _destination);
     outline1("BNE %s", label);
-    outline1("LDA #%d", _positive );
+    outline1("LDA #$%2.2x", 0xff*_positive );
     if ( _other ) {
         outline1("STA %s", _other);
     } else {
@@ -542,7 +542,7 @@ void cpu6502_compare_16bit( Environment * _environment, char *_source, char *_de
     }
     outline1("JMP %s_2", label);
     outhead1("%s:", label);
-    outline1("LDA #%d", (1-_positive) );
+    outline1("LDA #$%2.2x", 0xff*(1-_positive) );
     if ( _other ) {
         outline1("STA %s", _other);
     } else {
@@ -581,7 +581,7 @@ void cpu6502_less_than_16bit( Environment * _environment, char *_source, char *_
     }
     outline1("JMP %s_2", label);
     outhead1("%s:", label);
-    outline0("LDA #1" );
+    outline0("LDA #$FF" );
     if ( _other ) {
         outline1("STA %s", _other);
     } else {
@@ -627,7 +627,7 @@ void cpu6502_greater_than_16bit( Environment * _environment, char *_source, char
     }
     outline1("JMP %sfinal", label);
     outhead1("%strue:", label);
-    outline0("LDA #1" );
+    outline0("LDA #$FF" );
     if ( _other ) {
         outline1("STA %s", _other);
     } else {
@@ -1069,7 +1069,7 @@ void cpu6502_compare_32bit( Environment * _environment, char *_source, char *_de
     outline1("LDA %s+3", _source);
     outline1("CMP %s+3", _destination);
     outline1("BNE %s", label);
-    outline1("LDA #%d", _positive);
+    outline1("LDA #$%2.2x", 0xff*_positive);
     if ( _other ) {
         outline1("STA %s", _other);
     } else {
@@ -1077,7 +1077,7 @@ void cpu6502_compare_32bit( Environment * _environment, char *_source, char *_de
     }
     outline1("JMP %s_2", label);
     outhead1("%s:", label);
-    outline1("LDA #%d", (1-_positive));
+    outline1("LDA #$%2.2x", 0xff*(1-_positive));
     if ( _other ) {
         outline1("STA %s", _other);
     } else {
@@ -1122,7 +1122,7 @@ void cpu6502_less_than_32bit( Environment * _environment, char *_source, char *_
     }
     outline1("JMP %s_2", label);
     outhead1("%s:", label);
-    outline0("LDA #1" );
+    outline0("LDA #$FF" );
     if ( _other ) {
         outline1("STA %s", _other);
     } else {
@@ -1175,7 +1175,7 @@ void cpu6502_greater_than_32bit( Environment * _environment, char *_source, char
     }
     outline1("JMP %s_2", label);
     outhead1("%strue:", label);
-    outline0("LDA #1" );
+    outline0("LDA #$FF" );
     if ( _other ) {
         outline1("STA %s", _other);
     } else {
@@ -1542,7 +1542,7 @@ void cpu6502_logical_and_8bit( Environment * _environment, char * _left, char * 
     outhead1("BEQ %s", label );
     outline1("LDA %s", _right );
     outline1("BEQ %s", label);
-    outline0("LDA #1");
+    outline0("LDA #$FF");
     outline1("STA %s", _result);
     outline1("JMP %s_2", label);
     outhead1("%s:", label);
@@ -1562,7 +1562,7 @@ void cpu6502_logical_or_8bit( Environment * _environment, char * _left, char * _
     outline1("BNE %s1", label);
     outline1("JMP %s0", label);
     outhead1("%s1:", label);
-    outline0("LDA #1");
+    outline0("LDA #$FF");
     outline1("STA %s", _result);
     outline1("JMP %sx", label);
     outhead1("%s0:", label);
@@ -1786,7 +1786,7 @@ void cpu6502_less_than_memory( Environment * _environment, char *_source, char *
     outline1("STA %s", _result );
     outline1("JMP %sfinal", label );
     outhead1("%strue:", label );
-    outline0("LDA #1" );
+    outline0("LDA #$FF" );
     outline1("STA %s", _result );
     outhead1("%sfinal:", label );
 
@@ -1820,7 +1820,7 @@ void cpu6502_less_than_memory_size( Environment * _environment, char *_source, c
     outline1("STA %s", _result );
     outline1("JMP %sfinal", label );
     outhead1("%strue:", label );
-    outline0("LDA #1" );
+    outline0("LDA #$FF" );
     outline1("STA %s", _result );
     outhead1("%sfinal:", label );
 
@@ -1854,7 +1854,7 @@ void cpu6502_greater_than_memory( Environment * _environment, char *_source, cha
     outline1("STA %s", _result );
     outline1("JMP %sfinal", label );
     outhead1("%strue:", label );
-    outline0("LDA #1" );
+    outline0("LDA #$FF" );
     outline1("STA %s", _result );
     outhead1("%sfinal:", label );
 
@@ -1888,7 +1888,7 @@ void cpu6502_greater_than_memory_size( Environment * _environment, char *_source
     outline1("STA %s", _result );
     outline1("JMP %sfinal", label );
     outhead1("%strue:", label );
-    outline0("LDA #1" );
+    outline0("LDA #$FF" );
     outline1("STA %s", _result );
     outhead1("%sfinal:", label );
 
