@@ -1851,6 +1851,37 @@ vscroll_definition :
     }
     ;
 
+input_definition2 :
+      Identifier {
+        input( _environment, $1 );
+        print_newline( _environment );
+      }
+    | Identifier OP_SEMICOLON {
+        input( _environment, $1 );
+      }
+    | Identifier {
+        input( _environment, $1 );
+      } OP_COMMA input_definition2
+    ;
+
+input_definition :
+      String OP_SEMICOLON Identifier {
+        print( _environment, $1, 0 );
+        input( _environment, $3 );
+        print_newline( _environment );
+    }
+    | String OP_SEMICOLON Identifier OP_SEMICOLON {
+        print( _environment, $1, 0 );
+        input( _environment, $3 );
+    }
+    | String OP_SEMICOLON Identifier OP_SEMICOLON {
+        print( _environment, $1, 0 );
+        input( _environment, $3 );
+    }  input_definition2
+    | input_definition2
+  ;
+
+
 statement:
     BANK bank_definition
   | RASTER raster_definition
@@ -1872,6 +1903,7 @@ statement:
   }
   | ADD add_definition
   | PRINT print_definition
+  | INPUT input_definition
   | QM print_definition
   | LOCATE locate_definition
   | MEMORIZE {

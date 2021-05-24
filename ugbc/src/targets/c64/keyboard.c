@@ -38,6 +38,8 @@
  * CODE SECTION 
  ****************************************************************************/
 
+extern char DATATYPE_AS_STRING[][16];
+
 Variable * inkey( Environment * _environment ) {
 
     Variable * result = variable_temporary( _environment, VT_STRING, "(result of INKEY$)");
@@ -176,5 +178,75 @@ Variable * input_string( Environment * _environment, char * _size ) {
     cpu_bveq( _environment, pressed->realName, repeatLabel );
 
     return result;
+
+}
+
+void input( Environment * _environment, char * _variable ) {
+
+    MAKE_LABEL
+    
+    Variable * result = variable_retrieve_or_define( _environment, _variable, VT_WORD, 0 );
+
+    char repeatLabel[MAX_TEMPORARY_STORAGE]; sprintf(repeatLabel, "%srepeat", label );
+    char finishedLabel[MAX_TEMPORARY_STORAGE]; sprintf(finishedLabel, "%sfinished", label );
+
+    Variable * temporary = variable_temporary( _environment, VT_STRING, "(temporary storage for input)");
+    Variable * offset = variable_temporary( _environment, VT_BYTE, "(offset inside temporary storage)");
+
+    char temporaryString[MAX_TEMPORARY_STORAGE]; sprintf(temporaryString, "%s+1", temporary->realName );
+
+    Variable * enter = variable_temporary( _environment, VT_BYTE, "(enter)" );
+    Variable * comma = variable_temporary( _environment, VT_BYTE, "(comma)" );
+    Variable * size = variable_temporary( _environment, VT_BYTE, "(size max)" );
+    Variable * pressed = variable_temporary( _environment, VT_BYTE, "(key pressed?)");
+    Variable * key = variable_temporary( _environment, VT_BYTE, "(key pressed)");
+
+    cpu_store_8bit( _environment, comma->realName, ',' );
+    cpu_store_8bit( _environment, enter->realName, 13 );
+    cpu_store_8bit( _environment, offset->realName, 0 );
+    cpu_store_8bit( _environment, size->realName, 254 );
+
+    cpu_label( _environment, repeatLabel );
+
+    c64_inkey( _environment, pressed->realName, key->realName );
+
+    cpu_bveq( _environment, pressed->realName, repeatLabel );
+    cpu_bveq( _environment, key->realName, repeatLabel );
+
+    cpu_compare_8bit( _environment, key->realName, comma->realName, pressed->realName, 1 );
+
+    cpu_bvneq( _environment, pressed->realName, finishedLabel );
+
+    cpu_compare_8bit( _environment, key->realName, enter->realName, pressed->realName, 1 );
+
+    cpu_bvneq( _environment, pressed->realName, finishedLabel );
+
+    cpu_move_8bit_indirect_with_offset2( _environment, key->realName, temporaryString, offset->realName );
+
+    cpu_inc( _environment, offset->realName );
+
+    cpu_compare_8bit( _environment, offset->realName, size->realName, pressed->realName, 1 );
+
+    cpu_bveq( _environment, pressed->realName, repeatLabel );
+
+    cpu_label( _environment, finishedLabel );
+
+    cpu_move_8bit( _environment, offset->realName, temporary->realName );
+
+    switch( VT_BITWIDTH( result->type ) ) {
+        case 8:
+        case 16:
+        case 32:
+            variable_move( _environment, variable_string_val( _environment, temporary->name )->name, result->name );
+            break;
+        case 0:
+            switch( result->type ) {
+                case VT_STRING:
+                    variable_move_naked( _environment, temporary->name, result->name );
+                    break;
+                default:
+                    CRITICAL_INPUT_UNSUPPORTED( _variable, DATATYPE_AS_STRING[result->type] );        
+            }
+    }
 
 }

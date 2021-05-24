@@ -671,6 +671,7 @@ typedef struct _Environment {
 #define CRITICAL_PRINT_UNSUPPORTED(v, t) CRITICAL3("E039 - PRINT unsupported for variable of given datatype", v, t );
 #define CRITICAL_NOT_SUPPORTED( v ) CRITICAL2("E040 - Command / Keyword not supported:", v );
 #define CRITICAL_BIT_UNSUPPORTED( v, t ) CRITICAL3("E041 - BIT unsupported for variable of given datatype", v, t );
+#define CRITICAL_INPUT_UNSUPPORTED( v, t ) CRITICAL3("E042 - INPUT unsupported for variable of given datatype", v, t );
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
 #define WARNING3( s, v1, v2 ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s, %s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v1, v2, _environment->yylineno ); }
@@ -972,6 +973,8 @@ void pop( Environment * _environment );
 Variable * powering( Environment * _environment, char * _source, char * _dest );
 void print( Environment * _environment, char * _text, int _new_line );
 void print_tab( Environment * _environment, int _new_line );
+void print_newline( Environment * _environment );
+void print_question_mark( Environment * _environment );
 void randomize( Environment * _environment, char * _seed );
 Variable * random_value( Environment * _environment, VariableType _type );
 Variable * random_width( Environment * _environment );
@@ -988,6 +991,7 @@ Variable * key_state( Environment * _environment, char * _scancode );
 Variable * keyshift( Environment * _environment );
 Variable * clear_key( Environment * _environment );
 Variable * input_string( Environment * _environment, char * _size );
+void input( Environment * _environment, char * _variable );
 void wait_key( Environment * _environment );
 void screen_on( Environment * _environment );
 void screen_off( Environment * _environment );
@@ -1044,6 +1048,7 @@ void text_newline( Environment * _environment );
 void text_tab( Environment * _environment );
 void text_writing( Environment * _environment, char * _mode, char * _parts );
 void text_center( Environment * _environment, char * _string );
+void text_question_mark( Environment * _environment );
 
 void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _text, char * _pen, char * _paper, char * _ww );
 void text_vscroll( Environment * _environment );

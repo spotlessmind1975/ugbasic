@@ -801,6 +801,18 @@ void text_remember( Environment * _environment ) {
 
 }
 
+void text_question_mark( Environment * _environment ) {
+
+    Variable * questionMark = variable_temporary( _environment, VT_STRING, "(question mark)" );
+
+    char resultString[MAX_TEMPORARY_STORAGE]; sprintf( resultString, "?" );
+
+    variable_store_string(_environment, questionMark->name, resultString );
+
+    text_text( _environment, questionMark->name );
+
+}
+
 /* <usermanual>
 @keyword CDOWN
 

@@ -139,3 +139,12 @@ void print_tab( Environment * _environment, int _new_line ) {
     }
 
 }
+
+void print_question_mark( Environment * _environment ) {
+    text_question_mark( _environment );
+}
+
+void print_newline( Environment * _environment ) {
+    text_newline( _environment );
+}
+
