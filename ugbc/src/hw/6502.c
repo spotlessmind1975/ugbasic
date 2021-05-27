@@ -1943,11 +1943,35 @@ void cpu6502_move_8bit_indirect_with_offset( Environment * _environment, char *_
 
 }
 
+void cpu6502_move_8bit_with_offset( Environment * _environment, char *_source, char * _value, int _offset ) {
+
+    outline1("LDA #<%s", _value);
+    outline0("STA $22");
+    outline1("LDA #>%s", _value);
+    outline0("STA $23");
+    outline1("LDA %s", _source);
+    outline1("LDY #$%2.2x", (_offset & 0xff ) );
+    outline0("STA ($22),Y");
+
+}
+
 void cpu6502_move_8bit_indirect_with_offset2( Environment * _environment, char *_source, char * _value, char * _offset ) {
 
     outline1("LDA %s", _value);
     outline0("STA $22");
     outline1("LDA %s+1", _value);
+    outline0("STA $23");
+    outline1("LDA %s", _source);
+    outline1("LDY %s", _offset );
+    outline0("STA ($22),Y");
+
+}
+
+void cpu6502_move_8bit_with_offset2( Environment * _environment, char *_source, char * _value, char * _offset ) {
+
+    outline1("LDA #<%s", _value);
+    outline0("STA $22");
+    outline1("LDA #>%s", _value);
     outline0("STA $23");
     outline1("LDA %s", _source);
     outline1("LDY %s", _offset );
@@ -2519,6 +2543,94 @@ void cpu6502_bits_to_string( Environment * _environment, char * _number, char * 
     outline0("STA ($38),Y");
     outline0("DEY");
     outline1("BPL %sLOOP", label );
+
+}
+
+void cpu6502_dsdefine( Environment * _environment, char * _string, char * _index ) {
+
+    deploy( dstringDeployed,"./ugbc/src/hw/6502/dstring.asm" );
+
+    outline1( "LDA #<%s", _string );
+    outline0( "STA $22" );
+    outline1( "LDA #>%s", _string );
+    outline0( "STA $23" );
+    outline0( "JSR DSDEFINE" );
+    outline1( "STX %s", _index );
+    
+}
+
+void cpu6502_dsalloc( Environment * _environment, char * _size, char * _index ) {
+
+    deploy( dstringDeployed,"./ugbc/src/hw/6502/dstring.asm" );
+
+    outline1( "LDA %s", _size );
+    outline0( "STA $21" );
+    outline0( "JSR DSALLOC" );
+    outline1( "STX %s", _index );
+
+}
+
+void cpu6502_dsalloc_size( Environment * _environment, int _size, char * _index ) {
+
+    deploy( dstringDeployed,"./ugbc/src/hw/6502/dstring.asm" );
+
+    outline1( "LDA #$%2.2x", _size );
+    outline0( "STA $21" );
+    outline0( "JSR DSALLOC" );
+    outline1( "STX %s", _index );
+
+}
+
+void cpu6502_dsfree( Environment * _environment, char * _index ) {
+
+    deploy( dstringDeployed,"./ugbc/src/hw/6502/dstring.asm" );
+
+    outline1( "LDX %s", _index );
+    outline0( "JSR DSFREE" );
+
+}
+
+void cpu6502_dswrite( Environment * _environment, char * _index ) {
+
+    deploy( dstringDeployed,"./ugbc/src/hw/6502/dstring.asm" );
+
+    outline1( "LDX %s", _index );
+    outline0( "JSR DSWRITE" );
+
+}
+
+void cpu6502_dsgc( Environment * _environment ) {
+
+    deploy( dstringDeployed,"./ugbc/src/hw/6502/dstring.asm" );
+
+    outline0( "JSR DSGC" );
+
+}
+
+void cpu6502_dsdescriptor( Environment * _environment, char * _index, char * _address, char * _size ) {
+
+    deploy( dstringDeployed,"./ugbc/src/hw/6502/dstring.asm" );
+
+    outline1( "LDX %s", _index );
+    outline0( "JSR DSDESCRIPTOR" );
+    outline0( "LDA $22" );
+    outline1( "STA %s", _address );
+    outline0( "LDA $23" );
+    outline1( "STA %s", _address );
+    outline0( "LDA $21" );
+    outline1( "STA %s", _size );
+
+}
+
+void cpu6502_store_8bit_with_offset( Environment * _environment, char *_destination, int _value, int _offset ) {
+
+    outline1("LDX $%2.2x", _offset);
+    outline1("LDA #<%s", _destination);
+    outline0("STA $22");
+    outline1("LDA #>%s", _destination);
+    outline0("STA $23");
+    outline1("LDA $%2.2x", _value);
+    outline0("STA ($22),X");
 
 }
 

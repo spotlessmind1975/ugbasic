@@ -388,15 +388,17 @@ Variable * text_get_cmove( Environment * _environment, char * _x, char * _y ) {
     Variable * x = variable_retrieve_or_define( _environment, _x, VT_BYTE, 0 );
     Variable * y = variable_retrieve_or_define( _environment, _x, VT_BYTE, 0 );
 
-    Variable * result = variable_temporary( _environment, VT_STRING, 0 );
+    Variable * result = variable_temporary( _environment, VT_DSTRING, "(text_get_cmove)" );
+    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(text_get_cmove)" );
+    Variable * size = variable_temporary( _environment, VT_BYTE, "(text_get_cmove)" );
 
     char resultString[MAX_TEMPORARY_STORAGE]; sprintf( resultString, "\x3  " );
-    char stringAddress[MAX_TEMPORARY_STORAGE]; sprintf( stringAddress, "%s+1", result->realName );
 
     variable_store_string(_environment, result->name, resultString );
-
-    cpu_move_8bit_indirect_with_offset(_environment, x->realName, stringAddress, 1 );
-    cpu_move_8bit_indirect_with_offset(_environment, y->realName, stringAddress, 2 );
+    cpu_dsdescriptor( _environment, result->realName, address->realName, size->realName );
+    
+    cpu_move_8bit_with_offset(_environment, x->realName, address->realName, 1 );
+    cpu_move_8bit_with_offset(_environment, y->realName, address->realName, 2 );
         
     return result;
 
@@ -404,15 +406,17 @@ Variable * text_get_cmove( Environment * _environment, char * _x, char * _y ) {
 
 Variable * text_get_cmove_direct( Environment * _environment, int _x, int _y ) {
     
-    Variable * result = variable_temporary( _environment, VT_STRING, 0 );
+    Variable * result = variable_temporary( _environment, VT_DSTRING, 0 );
+    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(text_get_cmove)" );
+    Variable * size = variable_temporary( _environment, VT_BYTE, "(text_get_cmove)" );
 
     char resultString[MAX_TEMPORARY_STORAGE]; sprintf( resultString, "\x3  " );
-    char stringAddress[MAX_TEMPORARY_STORAGE]; sprintf( stringAddress, "%s+1", result->realName );
 
     variable_store_string(_environment, result->name, resultString );
+    cpu_dsdescriptor( _environment, result->realName, address->realName, size->realName );
 
-    cpu_store_8bit_indirect_with_offset(_environment, stringAddress, (_x & 0xff), 1 );
-    cpu_store_8bit_indirect_with_offset(_environment, stringAddress, (_y & 0xff), 2 );
+    cpu_store_8bit_with_offset(_environment, address->realName, (_x & 0xff), 1 );
+    cpu_store_8bit_with_offset(_environment, address->realName, (_y & 0xff), 2 );
         
     return result;
 

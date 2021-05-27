@@ -183,9 +183,16 @@ void debug_var( Environment * _environment, char * _name ) {
 
                     MAKE_LABEL
 
-                    outline1( "LDA %s+1", var->realName );
+                    outline1( "LDA #<%s", var->realName );
                     outline0( "STA $22" );
-                    outline1( "LDA %s+2", var->realName );
+                    outline1( "LDA #>%s", var->realName );
+                    outline0( "STA $23" );
+                    outline0( "CLC" );
+                    outline0( "LDA $22" );
+                    outline0( "ADC #1" );
+                    outline0( "STA $22" );
+                    outline0( "LDA $23" );
+                    outline0( "ADC #0" );
                     outline0( "STA $23" );
                     outline0( "LDY #$0" );
                     outhead1( "%s:", label);
@@ -193,6 +200,28 @@ void debug_var( Environment * _environment, char * _name ) {
                     outline0( "JSR $FFD2" );
                     outline0( "INY" );
                     outline1( "CPY %s", var->realName );
+                    outline1( "BNE %s", label );
+                    break;
+                }
+                case VT_DSTRING: {
+
+                    MAKE_LABEL
+                    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
+                    Variable * size = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
+                    cpu_dsdescriptor( _environment, var->realName, address->realName, size->realName );
+
+                    outline1( "LDA #<%s", address->realName );
+                    outline0( "STA $22" );
+                    outline1( "LDA #>%s", address->realName );
+                    outline0( "STA $23" );
+                    outline1( "LDA %s", size->realName );
+                    outline0( "STA $21" );
+                    outline0( "LDY #$0" );
+                    outhead1( "%s:", label);
+                    outline0( "LDA ($22),Y" );
+                    outline0( "JSR $FFD2" );
+                    outline0( "INY" );
+                    outline0( "CPY $21");
                     outline1( "BNE %s", label );
                     break;
                 }

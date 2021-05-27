@@ -99,26 +99,36 @@ la regola può essere modificata.
 </usermanual> */
 void print( Environment * _environment, char * _value, int _new_line ) {
 
-    Variable * value = variable_retrieve_or_define( _environment, _value, VT_STRING, 0 );
+    Variable * value = variable_retrieve_or_define( _environment, _value, VT_DSTRING, 0 );
     
-    if ( value->type != VT_STRING ) {
+    if ( value->type != VT_DSTRING ) {
         switch( VT_BITWIDTH( value->type ) ) {
             case 32:
             case 16:
             case 8: {
-
-                Variable * tmp = variable_temporary( _environment, VT_STRING, "(temporary for PRINT)");
+                Variable * address = variable_temporary( _environment, VT_ADDRESS, "(temporary for PRINT)");
+                Variable * size = variable_temporary( _environment, VT_BYTE, "(temporary for PRINT)");
+                Variable * tmp = variable_temporary( _environment, VT_DSTRING, "(temporary for PRINT)");
                 variable_store_string( _environment, tmp->name, "          " );
                 
-                char tmpAddress[MAX_TEMPORARY_STORAGE]; sprintf(tmpAddress, "%s+1", tmp->realName);
-                cpu_number_to_string( _environment, value->realName, tmpAddress, tmp->realName, VT_BITWIDTH( value->type ) );
+                cpu_dsdescriptor( _environment, tmp->realName, address->realName, size->realName );
+
+                cpu_number_to_string( _environment, value->realName, address->realName, size->realName, VT_BITWIDTH( value->type ) );
 
                 value = tmp;
                 
                 break;
             }
             case 0:
-                CRITICAL_PRINT_UNSUPPORTED( _value, DATATYPE_AS_STRING[value->type]);
+                switch( value->type ) {
+                    case VT_STRING: {
+                        Variable * temporary = variable_temporary( _environment, VT_DSTRING, "(temporary for PRINT)");
+                        cpu_dsdefine( _environment, value->realName, temporary->realName );
+                        value = temporary;                   
+                    }
+                    default:                 
+                        CRITICAL_PRINT_UNSUPPORTED( _value, DATATYPE_AS_STRING[value->type]);
+                }
         }
     }
 

@@ -1,5 +1,5 @@
-#ifndef __UGBC_CPU6502__
-#define __UGBC_CPU6502__
+#ifndef __UGBC_z80__
+#define __UGBC_z80__
 
 /*****************************************************************************
  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
@@ -138,6 +138,14 @@ void z80_bit_check( Environment * _environment, char *_value, int _position, cha
 void z80_number_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits );
 void z80_move_8bit_indirect_with_offset( Environment * _environment, char *_source, char * _value, int _offset );
 void z80_store_8bit_indirect_with_offset( Environment * _environment, char *_source, int _value, int _offset );
+void z80_dsdefine( Environment * _environment, char * _string, char * _index );
+void z80_dsalloc( Environment * _environment, char * _size, char * _index );
+void z80_dsfree( Environment * _environment, char * _index );
+void z80_dswrite( Environment * _environment, char * _index );
+void z80_dsgc( Environment * _environment );
+void z80_dsdescriptor( Environment * _environment, char * _index, char * _address, char * _size );
+void z80_move_8bit_with_offset( Environment * _environment, char *_source, char * _value, int _offset );
+void z80_dsalloc_size( Environment * _environment, int _size, char * _index );
 
 #define cpu_beq( _environment,  _label  ) z80_beq( _environment,  _label  )
 #define cpu_bneq( _environment,  _label  ) z80_beq( _environment,  _label  )
@@ -243,5 +251,13 @@ void z80_store_8bit_indirect_with_offset( Environment * _environment, char *_sou
 #define cpu_store_8bit_indirect_with_offset( _environment, _source, _value, _offset ) z80_store_8bit_indirect_with_offset( _environment, _source, _value, _offset )
 #define cpu_store_8bit_with_offset( _environment, _source, _value, _offset ) z80_store_8bit_with_offset( _environment, _source, _value, _offset )
 #define cpu_move_8bit_with_offset( _environment, _source, _destination, _offset ) z80_move_8bit_with_offset( _environment, _source, _destination, _offset )
+#define cpu_dsdefine( _environment, _string, _index ) z80_dsdefine( _environment, _string, _index )
+#define cpu_dsalloc( _environment, _size, _index ) z80_dsalloc( _environment, _size, _index )
+#define cpu_dsfree( _environment, _index ) z80_dsfree( _environment, _index )
+#define cpu_dswrite( _environment, _index ) z80_dswrite( _environment, _index )
+#define cpu_dsgc( _environment ) z80_dsgc( _environment )
+#define cpu_dsdescriptor( _environment, _index, _address, _size ) z80_dsdescriptor( _environment, _index, _address, _size )
+#define cpu_move_8bit_with_offset( _environment, _source, _value, _offset ) z80_move_8bit_with_offset( _environment, _source, _value, _offset )
+#define cpu_dsalloc_size( _environment, _size, _index ) z80_dsalloc_size( _environment, _size, _index ) 
 
 #endif

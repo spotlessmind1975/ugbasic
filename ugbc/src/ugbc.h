@@ -139,15 +139,18 @@ typedef enum _VariableType {
     /** Color index (8 bit) */
     VT_COLOR = 9,
 
-    /** Strings (static or dynamic) */
+    /** Strings (static) */
     VT_STRING = 10,
 
     /** Static buffer of a specific size */
     VT_BUFFER = 11,
 
     /** Array of any kind */
-    VT_ARRAY = 12
+    VT_ARRAY = 12,
 
+    /** Strings (dynamic) */
+    VT_DSTRING = 13
+    
 } VariableType;
 
 #define MAX_ARRAY_DIMENSIONS            256
@@ -217,6 +220,11 @@ typedef struct _Variable {
      * The initial value of the variable, as given by last (re)definition.
      */
     int value;
+
+    /** 
+     * The static string's valu, as given by last (re)definition.
+     */
+    char * valueString;
 
     /** 
      * The size of the static buffer (in bytes).
@@ -545,6 +553,12 @@ typedef struct _Environment {
      */
 
     int varsDeployed;
+
+    /**
+     * Deployed the dynamic string support
+     */
+
+    int dstringDeployed;
 
     /**
      * Deployed the text_encoded_at routine

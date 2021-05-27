@@ -82,7 +82,10 @@ void variable_cleanup( Environment * _environment ) {
                                 outline1("%s: .res 4", variable->realName);
                                 break;
                             case VT_STRING:
-                                outline1("%s: .res 3", variable->realName);
+                                outline2("%s: .res 1+%d", variable->realName, (int)strlen(variable->valueString));
+                                break;
+                            case VT_DSTRING:
+                                outline1("%s: .res 1", variable->realName);
                                 break;
                             case VT_BUFFER:
                                 outline2("%s: .res %d", variable->realName, variable->size);
@@ -93,9 +96,9 @@ void variable_cleanup( Environment * _environment ) {
                                     size *= variable->arrayDimensionsEach[i];
                                 }
                                 if ( VT_BITWIDTH( variable->arrayType ) > 0 ) {
-                                    size *= VT_BITWIDTH( variable->arrayType );
-                                } else if ( variable->arrayType == VT_STRING ) {
-                                    size *= 4;
+                                    size *= ( VT_BITWIDTH( variable->arrayType ) >> 3 );
+                                } else if ( variable->arrayType == VT_DSTRING ) {
+                                    size *= 1;
                                 } else {
                                     CRITICAL_DATATYPE_UNSUPPORTED("array", DATATYPE_AS_STRING[variable->arrayType]);
                                 }
@@ -136,7 +139,10 @@ void variable_cleanup( Environment * _environment ) {
                                 outline1("%s: .res 4", variable->realName);
                                 break;
                             case VT_STRING:
-                                outline1("%s: .res 3", variable->realName);
+                                outline2("%s: .res 1+%d", variable->realName, (int)strlen(variable->valueString));
+                                break;
+                            case VT_DSTRING:
+                                outline1("%s: .res 1", variable->realName);
                                 break;
                             case VT_BUFFER:
                                 outline2("%s: .res %d", variable->realName, variable->size);
@@ -147,9 +153,9 @@ void variable_cleanup( Environment * _environment ) {
                                     size *= variable->arrayDimensionsEach[i];
                                 }
                                 if ( VT_BITWIDTH( variable->arrayType ) > 0 ) {
-                                    size *= VT_BITWIDTH( variable->arrayType );
-                                } else if ( variable->arrayType == VT_STRING ) {
-                                    size *= 4;
+                                    size *= ( VT_BITWIDTH( variable->arrayType ) >> 3 );
+                                } else if ( variable->arrayType == VT_DSTRING ) {
+                                    size *= 1;
                                 } else {
                                     CRITICAL_DATATYPE_UNSUPPORTED("array", DATATYPE_AS_STRING[variable->arrayType]);
                                 }

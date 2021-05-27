@@ -69,10 +69,12 @@ void debug_var( Environment * _environment, char * _name ) {
         case 8:
         case 16:
         case 32: {
-            Variable * string = variable_temporary( _environment, VT_STRING, "(string for debug)");
+            Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
+            Variable * size = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
+            Variable * string = variable_temporary( _environment, VT_DSTRING, "(string for debug)");
             variable_store_string( _environment, string->name,"                    ");
-            char stringAddress[MAX_TEMPORARY_STORAGE]; sprintf(stringAddress, "%s+1", string->realName);
-            cpu_number_to_string( _environment, var->realName, stringAddress, string->realName, VT_BITWIDTH( var->type ) );
+            cpu_dsdescriptor( _environment, string->realName, address->realName, size->realName );
+            cpu_number_to_string( _environment, var->realName, address->realName, size->realName, VT_BITWIDTH( var->type ) );
             outline0( "LD DE, HL" );
             outline0( "CALL 8252" );
         }
@@ -80,9 +82,24 @@ void debug_var( Environment * _environment, char * _name ) {
         case 0:
             switch( var->type ) {
                 case VT_STRING: {
-                    char stringAddress[MAX_TEMPORARY_STORAGE]; sprintf(stringAddress, "%s+1", var->realName );
-                    outline1( "LD DE, (%s)", stringAddress );
-                    outline1( "LD A, (%s)", var->realName );
+                    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
+                    Variable * size = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
+                    cpu_move_8bit( _environment, search->realName, size->realName );
+                    cpu_move_16bit( _environment, search->realName, address->realName );
+                    cpu_inc_16bit( _environment, address->realName );
+                    outline1( "LD DE, %s", address->realName );
+                    outline1( "LD A, (%s)", size->realName );
+                    outline0( "LD C, A" );
+                    outline0( "LD B, 0" );
+                    outline0( "CALL 8252" );
+                    break;
+                }
+                case VT_DSTRING: {
+                    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
+                    Variable * size = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
+                    cpu_dsdescriptor( _environment, var->realName, address->realName, size->realName );
+                    outline1( "LD DE, %s", address->realName );
+                    outline1( "LD A, (%s)", size->realName );
                     outline0( "LD C, A" );
                     outline0( "LD B, 0" );
                     outline0( "CALL 8252" );

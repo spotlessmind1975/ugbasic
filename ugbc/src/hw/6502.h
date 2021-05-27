@@ -138,6 +138,16 @@ void cpu6502_move_8bit_indirect_with_offset( Environment * _environment, char *_
 void cpu6502_store_8bit_indirect_with_offset( Environment * _environment, char *_source, int _value, int _offset );
 void cpu6502_bits_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits );
 void cpu6502_move_8bit_indirect_with_offset2( Environment * _environment, char *_source, char * _value, char * _offset );
+void cpu6502_dsdefine( Environment * _environment, char * _string, char * _index );
+void cpu6502_dsalloc( Environment * _environment, char * _size, char * _index );
+void cpu6502_dsfree( Environment * _environment, char * _index );
+void cpu6502_dswrite( Environment * _environment, char * _index );
+void cpu6502_dsgc( Environment * _environment );
+void cpu6502_dsdescriptor( Environment * _environment, char * _index, char * _address, char * _size );
+void cpu6502_move_8bit_with_offset( Environment * _environment, char *_source, char * _value, int _offset );
+void cpu6502_move_8bit_with_offset2( Environment * _environment, char *_source, char * _value, char * _offset );
+void cpu6502_store_8bit_with_offset( Environment * _environment, char *_destination, int _value, int _offset );
+void cpu6502_dsalloc_size( Environment * _environment, int _size, char * _index );
 
 #define cpu_beq( _environment,  _label  ) cpu6502_beq( _environment,  _label  )
 #define cpu_bneq( _environment,  _label  ) cpu6502_beq( _environment,  _label  )
@@ -245,5 +255,15 @@ void cpu6502_move_8bit_indirect_with_offset2( Environment * _environment, char *
 #define cpu_bits_to_string( _environment, _number, _string, _string_size, _bits ) cpu6502_bits_to_string( _environment, _number, _string, _string_size, _bits )
 #define cpu_bit_check_extended( _environment, _value, _position, _result ) cpu6502_bit_check_extended( _environment, _value, _position, _result )
 #define cpu_move_8bit_indirect_with_offset2( _environment, _source, _value, _offset ) cpu6502_move_8bit_indirect_with_offset2( _environment, _source, _value, _offset )
+#define cpu_dsdefine( _environment, _string, _index ) cpu6502_dsdefine( _environment, _string, _index )
+#define cpu_dsalloc( _environment, _size, _index ) cpu6502_dsalloc( _environment, _size, _index )
+#define cpu_dsfree( _environment, _index ) cpu6502_dsfree( _environment, _index )
+#define cpu_dswrite( _environment, _index ) cpu6502_dswrite( _environment, _index )
+#define cpu_dsgc( _environment ) cpu6502_dsgc( _environment )
+#define cpu_dsdescriptor( _environment, _index, _address, _size ) cpu6502_dsdescriptor( _environment, _index, _address, _size )
+#define cpu_move_8bit_with_offset( _environment, _source, _value, _offset ) cpu6502_move_8bit_with_offset( _environment, _source, _value, _offset )
+#define cpu_move_8bit_with_offset2( _environment, _source, _value, _offset ) cpu6502_move_8bit_with_offset2( _environment, _source, _value, _offset )
+#define cpu_store_8bit_with_offset( _environment, _destination, _value, _offset ) cpu6502_store_8bit_with_offset( _environment, _destination, _value, _offset )
+#define cpu_dsalloc_size( _environment, _size, _index ) cpu6502_dsalloc_size( _environment, _size, _index )
 
 #endif

@@ -2046,6 +2046,16 @@ void z80_move_8bit_indirect_with_offset( Environment * _environment, char *_sour
 
 }
 
+void z80_move_8bit_with_offset( Environment * _environment, char *_source, char * _value, int _offset ) {
+
+    outline1("LD HL, %s", _value);
+    outline1("LD DE, $%2.2x", ( _offset & 0xff ) );
+    outline0("ADD HL, DE" );
+    outline1("LD A, (%s)", _source);
+    outline0("LD (HL), A");
+
+}
+
 void z80_move_8bit_indirect2( Environment * _environment, char * _value, char *_source ) {
 
     outline1("LD DE, (%s)", _value);
@@ -2269,6 +2279,85 @@ void z80_number_to_string( Environment * _environment, char * _number, char * _s
     outline0("LD A,C");
     outline1("LD (%s), A", _string_size);
     outline0("LDIR");
+
+}
+
+void z80_dsdefine( Environment * _environment, char * _string, char * _index ) {
+
+    deploy( dstringDeployed,"./ugbc/src/hw/z80/dstring.asm" );
+
+    outline1( "LD HL, %s", _string );
+    outline0( "CALL DSDEFINE" );
+    outline0( "LD A, B" );
+    outline1( "LD (%s), B", _index );
+    
+}
+
+void z80_dsalloc( Environment * _environment, char * _size, char * _index ) {
+
+    deploy( dstringDeployed,"./ugbc/src/hw/z80/dstring.asm" );
+
+    outline1( "LD A, (%s)", _size );
+    outline0( "LD C, A" );
+    outline0( "CALL DSALLOC" );
+    outline0( "LD A, B" );
+    outline1( "LD (%s), A", _index );
+
+}
+
+void z80_dsalloc_size( Environment * _environment, int _size, char * _index ) {
+
+    deploy( dstringDeployed,"./ugbc/src/hw/z80/dstring.asm" );
+
+    outline1( "LD A, $%2.2x", _size );
+    outline0( "LD C, A" );
+    outline0( "CALL DSALLOC" );
+    outline0( "LD A, B" );
+    outline1( "LD (%s), A", _index );
+
+}
+
+void z80_dsfree( Environment * _environment, char * _index ) {
+
+    deploy( dstringDeployed,"./ugbc/src/hw/z80/dstring.asm" );
+
+    outline1( "LD A, (%s)", _index );
+    outline0( "LD B, A" );
+    outline0( "CALL DSFREE" );
+
+}
+
+void z80_dswrite( Environment * _environment, char * _index ) {
+
+    deploy( dstringDeployed,"./ugbc/src/hw/z80/dstring.asm" );
+
+    outline1( "LD A, (%s)", _index );
+    outline0( "LD B, A" );
+    outline0( "CALL DSWRITE" );
+
+}
+
+void z80_dsgc( Environment * _environment ) {
+
+    deploy( dstringDeployed,"./ugbc/src/hw/z80/dstring.asm" );
+
+    outline0( "CALL DSGC" );
+
+}
+
+void z80_dsdescriptor( Environment * _environment, char * _index, char * _address, char * _size ) {
+
+    deploy( dstringDeployed,"./ugbc/src/hw/z80/dstring.asm" );
+
+    outline1( "LD A, (%s)", _index );
+    outline0( "LD B, A" );
+    outline0( "CALL DSDESCRIPTOR" );
+    outline0( "LD A, (IX)" );
+    outline1( "LD (%s), A", _size );
+    outline0( "LD A, (IX+1)" );
+    outline1( "LD (%s), A", _address );
+    outline0( "LD A, (IX+2)" );
+    outline1( "LD (%s+1), A", _address );
 
 }
 

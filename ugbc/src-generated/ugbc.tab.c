@@ -4782,7 +4782,7 @@ yyreduce:
   case 143: /* exponential: Identifier OP_DOLLAR  */
 #line 644 "src/ugbc.y"
                            { 
-        (yyval.string) = variable_retrieve_or_define( _environment, (yyvsp[-1].string), VT_STRING, 0 )->name;
+        (yyval.string) = variable_retrieve_or_define( _environment, (yyvsp[-1].string), VT_DSTRING, 0 )->name;
       }
 #line 4788 "src-generated/ugbc.tab.c"
     break;
@@ -6541,7 +6541,7 @@ yyreduce:
   case 387: /* var_definition_simple: Identifier OP_DOLLAR ON Identifier  */
 #line 1447 "src/ugbc.y"
                                        {
-      variable_retrieve_or_define( _environment, (yyvsp[-3].string), VT_STRING, 0 );
+      variable_retrieve_or_define( _environment, (yyvsp[-3].string), VT_DSTRING, 0 );
   }
 #line 6547 "src-generated/ugbc.tab.c"
     break;
@@ -6568,7 +6568,7 @@ yyreduce:
 #line 1458 "src/ugbc.y"
                                                       {
       Variable * v = variable_retrieve( _environment, (yyvsp[0].string) );
-      Variable * d = variable_retrieve_or_define( _environment, (yyvsp[-5].string), VT_STRING, 0 );
+      Variable * d = variable_retrieve_or_define( _environment, (yyvsp[-5].string), VT_DSTRING, 0 );
       variable_move( _environment, v->name, d->name );
   }
 #line 6575 "src-generated/ugbc.tab.c"
@@ -6838,7 +6838,7 @@ yyreduce:
   case 432: /* datatype: STRING  */
 #line 1602 "src/ugbc.y"
              {
-        (yyval.integer) = VT_STRING;
+        (yyval.integer) = VT_DSTRING;
     }
 #line 6844 "src-generated/ugbc.tab.c"
     break;
@@ -6875,7 +6875,7 @@ yyreduce:
 #line 1618 "src/ugbc.y"
                                    {
         variable_retrieve_or_define( _environment, (yyvsp[-5].string), VT_ARRAY, 0 );
-        variable_array_type( _environment, (yyvsp[-5].string), VT_STRING );
+        variable_array_type( _environment, (yyvsp[-5].string), VT_DSTRING );
         variable_reset( _environment );
     }
 #line 6882 "src-generated/ugbc.tab.c"
@@ -6932,7 +6932,7 @@ yyreduce:
 #line 1655 "src/ugbc.y"
                            {
           ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( (yyvsp[-1].string) );
-          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_STRING;
+          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_DSTRING;
           ++((struct _Environment *)_environment)->parameters;
     }
 #line 6939 "src-generated/ugbc.tab.c"
@@ -6962,7 +6962,7 @@ yyreduce:
 #line 1670 "src/ugbc.y"
                                                {
           ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( (yyvsp[-3].string) );
-          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_STRING;
+          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_DSTRING;
           ++((struct _Environment *)_environment)->parameters;
     }
 #line 6969 "src-generated/ugbc.tab.c"
@@ -6992,7 +6992,7 @@ yyreduce:
 #line 1688 "src/ugbc.y"
                            {
           ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( (yyvsp[-1].string) );
-          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_STRING;
+          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_DSTRING;
           ++((struct _Environment *)_environment)->parameters;
     }
 #line 6999 "src-generated/ugbc.tab.c"
@@ -7022,7 +7022,7 @@ yyreduce:
 #line 1703 "src/ugbc.y"
                                                     {
           ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( (yyvsp[-3].string) );
-          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_STRING;
+          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_DSTRING;
           ++((struct _Environment *)_environment)->parameters;
     }
 #line 7029 "src-generated/ugbc.tab.c"
@@ -7987,7 +7987,7 @@ yyreduce:
         outline2("; %s = %s", (yyvsp[-3].string), (yyvsp[0].string) );
         Variable * expr = variable_retrieve( _environment, (yyvsp[0].string) );
         outline1("; retrieved %s ", (yyvsp[0].string) );
-        variable_retrieve_or_define( _environment, (yyvsp[-3].string), VT_STRING, 0 )->name;
+        variable_retrieve_or_define( _environment, (yyvsp[-3].string), VT_DSTRING, 0 )->name;
         outline1("; defined %s ", (yyvsp[-3].string) );
         variable_move( _environment, (yyvsp[0].string), (yyvsp[-3].string) );
         outline2("; moved %s -> %s ", (yyvsp[0].string), (yyvsp[-3].string) );
@@ -8031,14 +8031,14 @@ yyreduce:
                                    {
         Variable * x = variable_retrieve( _environment, (yyvsp[0].string) );
         Variable * a = variable_retrieve( _environment, (yyvsp[-7].string) );
-        if ( x->type != VT_STRING ) {
-            CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[x->type], DATATYPE_AS_STRING[VT_STRING] );
+        if ( x->type != VT_STRING && x->type != VT_DSTRING ) {
+            CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[x->type], DATATYPE_AS_STRING[VT_DSTRING] );
         }
         if ( a->type != VT_ARRAY ) {
             CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[a->type], DATATYPE_AS_STRING[VT_ARRAY] );
         }
-        if ( a->arrayType != VT_STRING ) {
-            CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[a->arrayType], DATATYPE_AS_STRING[VT_STRING] );
+        if ( a->arrayType != VT_DSTRING ) {
+            CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[a->arrayType], DATATYPE_AS_STRING[VT_DSTRING] );
         }
         variable_move_array_string( _environment, (yyvsp[-7].string), x->name );
   }

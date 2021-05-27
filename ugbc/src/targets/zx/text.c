@@ -90,7 +90,21 @@ void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _
     Variable * paper = variable_retrieve( _environment, _paper );
     Variable * ww = variable_retrieve( _environment, _ww );
 
-    char textString[MAX_TEMPORARY_STORAGE]; sprintf( textString, "%s+1", text->realName );
+    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
+    Variable * size = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
+
+    switch( text->type ) {
+        case VT_STRING: {
+            cpu_move_8bit( _environment, text->realName, size->realName );
+            cpu_move_16bit( _environment, text->realName, address->realName );
+            cpu_inc_16bit( _environment, address->realName );
+            break;
+        }
+        case VT_DSTRING: {
+            cpu_dsdescriptor( _environment, text->realName, address->realName, size->realName );
+            break;
+        }
+    }
 
     zx_text_at( _environment, x->realName, y->realName, textString, text->realName, pen->realName, paper->realName, ww->realName );
 
@@ -100,14 +114,17 @@ Variable * text_get_pen( Environment * _environment, char * _color ) {
     
     Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_WHITE );
 
-    Variable * result = variable_temporary( _environment, VT_STRING, 0 );
+    Variable * result = variable_temporary( _environment, VT_DSTRING, 0 );
 
     char resultString[MAX_TEMPORARY_STORAGE]; sprintf( resultString, "\x1 " );
-    char stringAddress[MAX_TEMPORARY_STORAGE]; sprintf( stringAddress, "%s+1", result->realName );
 
     variable_store_string(_environment, result->name, resultString );
 
-    cpu_move_8bit_indirect_with_offset(_environment, color->realName, stringAddress, 1 );
+    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
+    Variable * size = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
+    cpu_dsdescriptor( _environment, result->realName, address->realName, size->realName );
+
+    cpu_move_8bit_with_offset(_environment, color->realName, address->realName, 1 );
         
     return result;
 
@@ -117,14 +134,19 @@ Variable * text_get_paper( Environment * _environment, char * _color ) {
     
     Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_BLACK );
 
-    Variable * result = variable_temporary( _environment, VT_STRING, 0 );
+    Variable * result = variable_temporary( _environment, VT_DSTRING, 0 );
 
     char resultString[MAX_TEMPORARY_STORAGE]; sprintf( resultString, "\x2 " );
-    char stringAddress[MAX_TEMPORARY_STORAGE]; sprintf( stringAddress, "%s+1", result->realName );
 
     variable_store_string(_environment, result->name, resultString );
 
-    cpu_move_8bit_indirect_with_offset(_environment, color->realName, stringAddress, 1 );
+    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
+    Variable * size = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
+    cpu_dsdescriptor( _environment, result->realName, address->realName, size->realName );
+
+    variable_store_string(_environment, result->name, resultString );
+
+    cpu_move_8bit_with_offset(_environment, color->realName, address->realName, 1 );
         
     return result;
 
@@ -136,15 +158,18 @@ Variable * text_get_at( Environment * _environment, char * _x, char * _y ) {
     Variable * x = variable_retrieve_or_define( _environment, _x, VT_BYTE, 0 );
     Variable * y = variable_retrieve_or_define( _environment, _y, VT_BYTE, 0 );
 
-    Variable * result = variable_temporary( _environment, VT_STRING, 0 );
+    Variable * result = variable_temporary( _environment, VT_DSTRING, 0 );
 
     char resultString[MAX_TEMPORARY_STORAGE]; sprintf( resultString, "\x4  " );
-    char stringAddress[MAX_TEMPORARY_STORAGE]; sprintf( stringAddress, "%s+1", result->realName );
 
     variable_store_string(_environment, result->name, resultString );
 
-    cpu_move_8bit_indirect_with_offset(_environment, x->realName, stringAddress, 1 );
-    cpu_move_8bit_indirect_with_offset(_environment, y->realName, stringAddress, 2 );
+    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
+    Variable * size = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
+    cpu_dsdescriptor( _environment, result->realName, address->realName, size->realName );
+
+    cpu_move_8bit_with_offset(_environment, x->realName, address->realName, 1 );
+    cpu_move_8bit_with_offset(_environment, y->realName, address->realName, 2 );
         
     return result;
 

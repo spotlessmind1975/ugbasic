@@ -642,7 +642,7 @@ exponential:
         $$ = variable_retrieve_or_define( _environment, $1, VT_WORD, 0 )->name;
       }
     | Identifier OP_DOLLAR { 
-        $$ = variable_retrieve_or_define( _environment, $1, VT_STRING, 0 )->name;
+        $$ = variable_retrieve_or_define( _environment, $1, VT_DSTRING, 0 )->name;
       }
     | Integer { 
         if ( $1 < 0 ) {
@@ -1445,7 +1445,7 @@ var_definition_simple:
       variable_retrieve_or_define( _environment, $1, VT_BYTE, 0 );
   }
   | Identifier OP_DOLLAR ON Identifier {
-      variable_retrieve_or_define( _environment, $1, VT_STRING, 0 );
+      variable_retrieve_or_define( _environment, $1, VT_DSTRING, 0 );
   }
   | Identifier ON Identifier OP_ASSIGN direct_integer {
       variable_retrieve_or_define( _environment, $1, VT_BYTE, $5 );
@@ -1457,7 +1457,7 @@ var_definition_simple:
   }
   | Identifier OP_DOLLAR ON Identifier OP_ASSIGN expr {
       Variable * v = variable_retrieve( _environment, $6 );
-      Variable * d = variable_retrieve_or_define( _environment, $1, VT_STRING, 0 );
+      Variable * d = variable_retrieve_or_define( _environment, $1, VT_DSTRING, 0 );
       variable_move( _environment, v->name, d->name );
   };
 
@@ -1600,7 +1600,7 @@ datatype :
         $$ = VT_COLOR;
     }
     | STRING {
-        $$ = VT_STRING;
+        $$ = VT_DSTRING;
     };
     
 dim_definition :
@@ -1617,7 +1617,7 @@ dim_definition :
           ((struct _Environment *)_environment)->arrayDimensions = 0;
       } OP_DOLLAR OP dimensions CP {
         variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
-        variable_array_type( _environment, $1, VT_STRING );
+        variable_array_type( _environment, $1, VT_DSTRING );
         variable_reset( _environment );
     }
     | Identifier datatype {
@@ -1654,7 +1654,7 @@ parameters :
     }
     | Identifier OP_DOLLAR {
           ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
-          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_STRING;
+          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_DSTRING;
           ++((struct _Environment *)_environment)->parameters;
     }
     | Identifier AS datatype {
@@ -1669,7 +1669,7 @@ parameters :
     }
     | Identifier OP_DOLLAR OP_COMMA parameters {
           ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
-          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_STRING;
+          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_DSTRING;
           ++((struct _Environment *)_environment)->parameters;
     }
     | Identifier AS datatype OP_COMMA parameters {
@@ -1687,7 +1687,7 @@ parameters_expr :
     }
     | Identifier OP_DOLLAR {
           ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
-          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_STRING;
+          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_DSTRING;
           ++((struct _Environment *)_environment)->parameters;
     }
     | Identifier AS datatype {
@@ -1702,7 +1702,7 @@ parameters_expr :
     }
     | Identifier OP_DOLLAR OP_COMMA parameters_expr {
           ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
-          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_STRING;
+          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_DSTRING;
           ++((struct _Environment *)_environment)->parameters;
     }
     | Identifier AS datatype OP_COMMA parameters_expr {
@@ -2149,7 +2149,7 @@ statement:
         outline2("; %s = %s", $1, $4 );
         Variable * expr = variable_retrieve( _environment, $4 );
         outline1("; retrieved %s ", $4 );
-        variable_retrieve_or_define( _environment, $1, VT_STRING, 0 )->name;
+        variable_retrieve_or_define( _environment, $1, VT_DSTRING, 0 )->name;
         outline1("; defined %s ", $1 );
         variable_move( _environment, $4, $1 );
         outline2("; moved %s -> %s ", $4, $1 );
@@ -2172,14 +2172,14 @@ statement:
     } OP indexes CP OP_ASSIGN expr {
         Variable * x = variable_retrieve( _environment, $8 );
         Variable * a = variable_retrieve( _environment, $1 );
-        if ( x->type != VT_STRING ) {
-            CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[x->type], DATATYPE_AS_STRING[VT_STRING] );
+        if ( x->type != VT_STRING && x->type != VT_DSTRING ) {
+            CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[x->type], DATATYPE_AS_STRING[VT_DSTRING] );
         }
         if ( a->type != VT_ARRAY ) {
             CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[a->type], DATATYPE_AS_STRING[VT_ARRAY] );
         }
-        if ( a->arrayType != VT_STRING ) {
-            CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[a->arrayType], DATATYPE_AS_STRING[VT_STRING] );
+        if ( a->arrayType != VT_DSTRING ) {
+            CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[a->arrayType], DATATYPE_AS_STRING[VT_DSTRING] );
         }
         variable_move_array_string( _environment, $1, x->name );
   }
