@@ -100,7 +100,7 @@ void variable_cleanup( Environment * _environment ) {
                                 } else if ( variable->arrayType == VT_DSTRING ) {
                                     size *= 1;
                                 } else {
-                                    CRITICAL_DATATYPE_UNSUPPORTED("array", DATATYPE_AS_STRING[variable->arrayType]);
+                                    CRITICAL_DATATYPE_UNSUPPORTED("array(5)", DATATYPE_AS_STRING[variable->arrayType]);
                                 }
                                 outline2("%s: defs %d", variable->realName, size);
                                 break;
@@ -158,7 +158,7 @@ void variable_cleanup( Environment * _environment ) {
                                 } else if ( variable->arrayType == VT_DSTRING ) {
                                     size *= 1;
                                 } else {
-                                    CRITICAL_DATATYPE_UNSUPPORTED("array", DATATYPE_AS_STRING[variable->arrayType]);
+                                    CRITICAL_DATATYPE_UNSUPPORTED("array(6)", DATATYPE_AS_STRING[variable->arrayType]);
                                 }
                                 outline2("%s: defs %d", variable->realName, size);
                                 break;

@@ -646,7 +646,7 @@ typedef struct _Environment {
 #define CRITICAL_CANNOT_CAST( t1, t2 ) CRITICAL3("E004 - Cannot cast types", t1, t2 );
 #define CRITICAL_STORE_UNSUPPORTED( t ) CRITICAL2("E005 - Datatype cannot be stored directly", t );
 #define CRITICAL_RESIZE_UNSUPPORTED( t ) CRITICAL2("E006 - Datatype cannot be resized directly", t );
-#define CRITICAL_MOVE_UNSUPPORTED( t ) CRITICAL2("E007 - Datatype cannot be copied directly", t );
+#define CRITICAL_MOVE_NAKED_UNSUPPORTED( t ) CRITICAL2("E007 - Datatype cannot be copied directly", t );
 #define CRITICAL_BUFFER_SIZE_MISMATCH( v1, v2 ) CRITICAL3("E008 - Buffer sizes mismatch -- cannot be copied", v1, v2 );
 #define CRITICAL_DATATYPE_MISMATCH( v1, v2 ) CRITICAL3("E009 - Datatype mismatch", v1, v2 );
 #define CRITICAL_ADD_UNSUPPORTED( v, t ) CRITICAL3("E007 - Add unsupported for variable of given datatype", v, t );
@@ -686,6 +686,7 @@ typedef struct _Environment {
 #define CRITICAL_NOT_SUPPORTED( v ) CRITICAL2("E040 - Command / Keyword not supported:", v );
 #define CRITICAL_BIT_UNSUPPORTED( v, t ) CRITICAL3("E041 - BIT unsupported for variable of given datatype", v, t );
 #define CRITICAL_INPUT_UNSUPPORTED( v, t ) CRITICAL3("E042 - INPUT unsupported for variable of given datatype", v, t );
+#define CRITICAL_MOVE_UNSUPPORTED( t ) CRITICAL2("E043 - Datatype cannot be copied", t );
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
 #define WARNING3( s, v1, v2 ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s, %s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v1, v2, _environment->yylineno ); }

@@ -125,10 +125,12 @@ void print( Environment * _environment, char * _value, int _new_line ) {
                         Variable * temporary = variable_temporary( _environment, VT_DSTRING, "(temporary for PRINT)");
                         cpu_dsdefine( _environment, value->realName, temporary->realName );
                         value = temporary;                   
+                        break;
                     }
-                    default:                 
+                    default:               
                         CRITICAL_PRINT_UNSUPPORTED( _value, DATATYPE_AS_STRING[value->type]);
                 }
+                break;
         }
     }
 

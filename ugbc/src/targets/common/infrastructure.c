@@ -49,20 +49,21 @@ char BANK_TYPE_AS_STRING[][16] = {
     "STRINGS"
 };
 
-char DATATYPE_AS_STRING[][16] = {
+char DATATYPE_AS_STRING[][32] = {
+    "",
     "BYTE",
     "SBYTE",
     "WORD",
     "SWORD",
     "DWORD",
-    "SDWORD"
+    "SDWORD",
     "ADDRESS",
     "POSITION",
     "COLOR",
     "STATIC STRING",
     "BUFFER",
     "ARRAY",
-    "DYNAMIC STRING"
+    "DYNAMIC STRING"   
 };
 
 static Bank * bank_find( Bank * _first, char * _name ) {
@@ -508,6 +509,9 @@ Variable * variable_retrieve_or_define( Environment * _environment, char * _name
     var = variable_find( _environment->procedureVariables, _name );
 
     if ( ! var ) {
+        if ( _type == VT_STRING ) {
+            _type = VT_DSTRING;
+        }
         int isGlobal = 0;
         Pattern * current = _environment->globalVariablePatterns;
         if ( _environment->procedureName ) {
@@ -648,6 +652,10 @@ Variable * variable_temporary( Environment * _environment, VariableType _type, c
 Variable * variable_cast( Environment * _environment, char * _source, VariableType _type ) {
 
     Variable * source = variable_retrieve( _environment, _source );
+
+    if ( source->type == VT_STRING && _type == VT_STRING ) {
+        _type = VT_DSTRING;
+    }
 
     Variable * target = variable_temporary( _environment, _type, "(generated for cast)" );
 
@@ -855,6 +863,7 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
     Variable * target = variable_retrieve( _environment, _destination );
 
     Variable * source = variable_cast( _environment, _source, target->type );
+
     switch( VT_BITWIDTH( target->type ) ) {
         case 32:
             cpu_move_32bit( _environment, source->realName, target->realName );
@@ -950,7 +959,7 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
                     break;
                 }
                 default:
-                    CRITICAL_MOVE_UNSUPPORTED(DATATYPE_AS_STRING[target->type]);
+                    CRITICAL_MOVE_NAKED_UNSUPPORTED(DATATYPE_AS_STRING[target->type]);
             }
     }
     return source;
@@ -2985,7 +2994,7 @@ void variable_move_array( Environment * _environment, char * _array, char * _val
             cpu_move_8bit_indirect( _environment, value->realName, offset->realName );
             break;
         case 0:
-            CRITICAL_DATATYPE_UNSUPPORTED("array", DATATYPE_AS_STRING[array->arrayType]);
+            CRITICAL_DATATYPE_UNSUPPORTED("array(3)", DATATYPE_AS_STRING[array->arrayType]);
     }
 
     variable_reset( _environment );
@@ -2995,6 +3004,7 @@ void variable_move_array( Environment * _environment, char * _array, char * _val
 void variable_move_array_string( Environment * _environment, char * _array, char * _string  ) {
 
     Variable * array = variable_retrieve( _environment, _array );
+    Variable * string = variable_retrieve( _environment, _string );
 
     if ( array->arrayDimensions != _environment->arrayIndexes ) {
         CRITICAL_ARRAY_SIZE_MISMATCH( _array );
@@ -3004,8 +3014,33 @@ void variable_move_array_string( Environment * _environment, char * _array, char
 
     cpu_math_add_16bit_with_16bit( _environment, offset->realName, array->realName, offset->realName );
 
-    // TODO
+    Variable * dstring = variable_temporary( _environment, VT_DSTRING, "(array element)");
 
+    cpu_move_8bit( _environment, offset->realName, dstring->realName );
+
+    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(result of array move)" );
+    Variable * size = variable_temporary( _environment, VT_BYTE, "(result of array move)" );
+    Variable * address2 = variable_temporary( _environment, VT_ADDRESS, "(result of array move)" );
+    Variable * size2 = variable_temporary( _environment, VT_BYTE, "(result of array move)" );
+
+    switch( string->type ) {
+        case VT_STRING:
+            cpu_move_8bit( _environment, string->realName, size->realName );
+            cpu_move_16bit( _environment, string->realName, address->realName );
+            cpu_inc_16bit( _environment, address->realName );
+            break;
+        case VT_DSTRING:
+            cpu_dsdescriptor( _environment, string->realName, address->realName, size->realName );
+            break;
+        default:
+            CRITICAL_LOWER_UNSUPPORTED( _string, DATATYPE_AS_STRING[string->type]);
+    }
+
+    cpu_dsfree( _environment, dstring->realName );
+    cpu_dsalloc( _environment, size->realName, dstring->realName );
+    cpu_dsdescriptor( _environment, string->realName, address2->realName, size2->realName );
+    cpu_mem_move(_environment, address->realName, address2->realName, size->realName );
+     
     variable_reset( _environment );
 
 }
@@ -3022,16 +3057,32 @@ Variable * variable_move_from_array( Environment * _environment, char * _array )
 
     Variable * result;
 
+    result = variable_temporary( _environment, array->arrayType, "(element from array)" );
+
     switch( array->arrayType ) {
         case VT_STRING: {
 
-            variable_mul2_const( _environment, offset->name, 2 );
+            CRITICAL_DATATYPE_UNSUPPORTED("array(a)", DATATYPE_AS_STRING[array->arrayType]);
+
+            break;
+        }
+         case VT_DSTRING: {
 
             cpu_math_add_16bit_with_16bit( _environment, offset->realName, array->realName, offset->realName );
 
-            result = variable_temporary( _environment, VT_STRING, "(element from array)" );
+            Variable * dstring = variable_temporary( _environment, VT_DSTRING, "(array element)");
 
-            // TODO:
+            cpu_move_8bit( _environment, offset->realName, dstring->realName );
+
+            Variable * address = variable_temporary( _environment, VT_ADDRESS, "(result of array move)" );
+            Variable * size = variable_temporary( _environment, VT_BYTE, "(result of array move)" );
+            Variable * address2 = variable_temporary( _environment, VT_ADDRESS, "(result of array move)" );
+            Variable * size2 = variable_temporary( _environment, VT_BYTE, "(result of array move)" );
+
+            cpu_dsdescriptor( _environment, dstring->realName, address->realName, size->realName );
+            cpu_dsalloc( _environment, size->realName, result->realName );
+            cpu_dsdescriptor( _environment, result->realName, address2->realName, size2->realName );
+            cpu_mem_move(_environment, address->realName, address2->realName, size->realName );
 
             break;
         }
@@ -3041,8 +3092,6 @@ Variable * variable_move_from_array( Environment * _environment, char * _array )
             variable_mul2_const( _environment, offset->name, VT_BITWIDTH( array->arrayType ) >> 3 );
 
             cpu_math_add_16bit_with_16bit( _environment, offset->realName, array->realName, offset->realName );
-
-            result = variable_temporary( _environment, array->arrayType, "(element from array)" );
 
             switch( VT_BITWIDTH( array->arrayType ) ) {
                 case 32:
@@ -3055,7 +3104,7 @@ Variable * variable_move_from_array( Environment * _environment, char * _array )
                     cpu_move_8bit_indirect2( _environment, offset->realName, result->realName );
                     break;
                 case 0:
-                    CRITICAL_DATATYPE_UNSUPPORTED("array", DATATYPE_AS_STRING[array->arrayType]);
+                    CRITICAL_DATATYPE_UNSUPPORTED("array(4)", DATATYPE_AS_STRING[array->arrayType]);
             }
 
         }
