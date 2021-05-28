@@ -2624,13 +2624,13 @@ void cpu6502_dsdescriptor( Environment * _environment, char * _index, char * _ad
 
 void cpu6502_store_8bit_with_offset( Environment * _environment, char *_destination, int _value, int _offset ) {
 
-    outline1("LDX $%2.2x", _offset);
+    outline1("LDY $%2.2x", _offset);
     outline1("LDA #<%s", _destination);
     outline0("STA $22");
     outline1("LDA #>%s", _destination);
     outline0("STA $23");
     outline1("LDA $%2.2x", _value);
-    outline0("STA ($22),X");
+    outline0("STA ($22),Y");
 
 }
 
