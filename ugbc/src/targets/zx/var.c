@@ -82,7 +82,7 @@ void variable_cleanup( Environment * _environment ) {
                                 outline1("%s: defs 4", variable->realName);
                                 break;
                             case VT_STRING:
-                                outline2("%s: db %d,'%s'", strlen( variable->valueString ), variable->valueString);
+                                outline3("%s: db %d,'%s'", variable->realName, (int)strlen(variable->valueString), variable->valueString );
                                 break;
                             case VT_DSTRING:
                                 outline1("%s: db 0", variable->realName);
@@ -140,7 +140,7 @@ void variable_cleanup( Environment * _environment ) {
                                 outline1("%s: defs 4", variable->realName);
                                 break;
                             case VT_STRING:
-                                outline2("%s: db %d,'%s'", strlen( variable->valueString ), variable->valueString);
+                                outline3("%s: db %d,'%s'", variable->realName, (int)strlen(variable->valueString), variable->valueString );
                                 break;
                             case VT_DSTRING:
                                 outline1("%s: db 0", variable->realName);

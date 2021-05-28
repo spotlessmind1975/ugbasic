@@ -82,7 +82,11 @@ void variable_cleanup( Environment * _environment ) {
                                 outline1("%s: .res 4", variable->realName);
                                 break;
                             case VT_STRING:
-                                outline2("%s: .res 1+%d", variable->realName, (int)strlen(variable->valueString));
+                                if ( ! variable->valueString ) {
+                                    printf("%s", variable->realName);
+                                    exit(EXIT_FAILURE);
+                                }
+                                outline3("%s: .byte %d,\"%s\"", variable->realName, (int)strlen(variable->valueString), variable->valueString );
                                 break;
                             case VT_DSTRING:
                                 outline1("%s: .res 1", variable->realName);
@@ -139,7 +143,11 @@ void variable_cleanup( Environment * _environment ) {
                                 outline1("%s: .res 4", variable->realName);
                                 break;
                             case VT_STRING:
-                                outline2("%s: .res 1+%d", variable->realName, (int)strlen(variable->valueString));
+                                if ( ! variable->valueString ) {
+                                    printf("%s", variable->realName);
+                                    exit(EXIT_FAILURE);
+                                }
+                                outline3("%s: .byte %d,\"%s\"", variable->realName, (int)strlen(variable->valueString), variable->valueString );
                                 break;
                             case VT_DSTRING:
                                 outline1("%s: .res 1", variable->realName);

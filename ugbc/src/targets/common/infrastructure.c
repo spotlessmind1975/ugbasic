@@ -49,7 +49,7 @@ char BANK_TYPE_AS_STRING[][16] = {
     "STRINGS"
 };
 
-char DATATYPE_AS_STRING[][32] = {
+char DATATYPE_AS_STRING[][16] = {
     "",
     "BYTE",
     "SBYTE",
@@ -653,7 +653,7 @@ Variable * variable_cast( Environment * _environment, char * _source, VariableTy
 
     Variable * source = variable_retrieve( _environment, _source );
 
-    if ( source->type == VT_STRING && _type == VT_STRING ) {
+    if ( _type == VT_STRING ) {
         _type = VT_DSTRING;
     }
 
@@ -925,7 +925,7 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
     Variable * target = variable_retrieve( _environment, _destination );
 
     if ( source->type != target->type ) {
-        CRITICAL_DATATYPE_MISMATCH( _source, _destination );
+        CRITICAL_DATATYPE_MISMATCH( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
     }
     switch( VT_BITWIDTH( source->type ) ) {
         case 32:
@@ -984,6 +984,9 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
 Variable * variable_add( Environment * _environment, char * _source, char * _destination ) {
 
     Variable * source = variable_retrieve( _environment, _source );
+    if ( source->type == VT_STRING ) {
+        source = variable_cast( _environment, _source, VT_DSTRING );
+    }
 
     Variable * target = variable_cast( _environment, _destination, source->type );
     if ( ! target ) {
@@ -1015,14 +1018,31 @@ Variable * variable_add( Environment * _environment, char * _source, char * _des
                     cpu_dsdescriptor( _environment, source->realName, address1->realName, size1->realName );
                     cpu_dsdescriptor( _environment, target->realName, address2->realName, size2->realName );
                     cpu_math_add_8bit( _environment, size1->realName, size2->realName, size->realName );
-                    cpu_dsalloc( _environment, size->realName, target->realName );
+                    cpu_dsalloc( _environment, size->realName, result->realName );
                     cpu_dsdescriptor( _environment, source->realName, address->realName, size->realName );
                     cpu_mem_move( _environment, address1->realName, address->realName, size1->realName );
                     cpu_math_add_16bit_with_8bit( _environment, address->realName, size1->realName, address->realName );
                     cpu_mem_move( _environment, address2->realName, address->realName, size2->realName );
                     break;
                 }
-                case VT_STRING:
+                case VT_STRING: {
+                    Variable * address1 = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING1)");
+                    Variable * size1 = variable_temporary( _environment, VT_BYTE, "(size of DSTRING1)");
+                    Variable * address2 = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING2)");
+                    Variable * size2 = variable_temporary( _environment, VT_BYTE, "(size of DSTRING2)");
+                    Variable * address= variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
+                    Variable * size = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
+                    cpu_dsfree( _environment, result->realName );
+                    cpu_move_8bit( _environment, source->realName, size1->realName );
+                    cpu_move_16bit( _environment, source->realName, address1->realName );
+                    cpu_inc_16bit( _environment, address1->realName );
+                    cpu_math_add_8bit( _environment, size1->realName, size2->realName, size->realName );
+                    cpu_dsalloc( _environment, size->realName, result->realName );
+                    cpu_mem_move( _environment, address1->realName, address->realName, size1->realName );
+                    cpu_math_add_16bit_with_8bit( _environment, address->realName, size1->realName, address->realName );
+                    cpu_mem_move( _environment, address2->realName, address->realName, size2->realName );
+                    break;
+                }
                 case VT_BUFFER: {
                     CRITICAL_ADD_UNSUPPORTED( _source, DATATYPE_AS_STRING[source->type]);
                 }
@@ -1996,6 +2016,7 @@ void variable_string_left_assign( Environment * _environment, char * _string, ch
             cpu_dsdescriptor( _environment, string->realName, address->realName, size->realName );
             cpu_dsdescriptor( _environment, expression->realName, address2->realName, size2->realName );
             cpu_mem_move( _environment, address2->realName, address->realName, position->realName );
+            break;
         }
         case VT_BUFFER:
             CRITICAL_LEFT_UNSUPPORTED( _string, DATATYPE_AS_STRING[string->type]);

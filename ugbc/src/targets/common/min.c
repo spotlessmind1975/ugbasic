@@ -79,7 +79,11 @@ Variable * minimum( Environment * _environment, char * _source, char * _destinat
     }
 
     if ( target->type != source->type ) {
-        CRITICAL_DATATYPE_MISMATCH( _source, _destination );
+        if ( source->type == VT_STRING ) {
+            source = variable_cast( _environment, _source, VT_DSTRING );
+        } else {
+            CRITICAL_DATATYPE_MISMATCH( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
+        }
     }
 
     Variable * result = variable_temporary( _environment, source->type, "(result of MIN)");
