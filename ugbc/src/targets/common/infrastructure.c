@@ -606,9 +606,15 @@ Variable * variable_temporary( Environment * _environment, VariableType _type, c
         var->meaningName = _meaning;
     } else {
         char * name = malloc(MAX_TEMPORARY_STORAGE);
-        sprintf(name, "Ttmp%d", UNIQUE_ID);
         var = malloc( sizeof( Variable ) );
         memset( var, 0, sizeof( Variable ) );
+        var->locked = 0;
+        if ( _type == VT_STRING ) {
+            sprintf(name, "Tstr%d", UNIQUE_ID);
+            var->locked = 1;
+        } else {
+            sprintf(name, "Ttmp%d", UNIQUE_ID);
+        }
         var->name = name;
         var->realName = malloc( strlen( var->name ) + 2 ); strcpy( var->realName, "_" ); strcat( var->realName, var->name );
         var->meaningName = _meaning;
@@ -628,7 +634,6 @@ Variable * variable_temporary( Environment * _environment, VariableType _type, c
         outline2("; %s <-> %s", var->realName, var->meaningName );
     }
     var->used = 1;
-    var->locked = 0;
     return var;
 }
 
