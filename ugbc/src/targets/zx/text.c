@@ -106,7 +106,7 @@ void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _
         }
     }
 
-    zx_text_at( _environment, x->realName, y->realName, textString, text->realName, pen->realName, paper->realName, ww->realName );
+    zx_text_at( _environment, x->realName, y->realName, address->realName, size->realName, pen->realName, paper->realName, ww->realName );
 
 }
 

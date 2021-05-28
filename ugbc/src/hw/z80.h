@@ -257,7 +257,6 @@ void z80_dsalloc_size( Environment * _environment, int _size, char * _index );
 #define cpu_dswrite( _environment, _index ) z80_dswrite( _environment, _index )
 #define cpu_dsgc( _environment ) z80_dsgc( _environment )
 #define cpu_dsdescriptor( _environment, _index, _address, _size ) z80_dsdescriptor( _environment, _index, _address, _size )
-#define cpu_move_8bit_with_offset( _environment, _source, _value, _offset ) z80_move_8bit_with_offset( _environment, _source, _value, _offset )
 #define cpu_dsalloc_size( _environment, _size, _index ) z80_dsalloc_size( _environment, _size, _index ) 
 
 #endif
