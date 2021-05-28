@@ -37,7 +37,7 @@ EXECUTABLES := $(subst /asm/,/exe/,$(COMPILED:.asm=.$(output)))
 all: paths compiler $(COMPILED) $(EXECUTABLES)
 
 generated/c64/asm/%.asm:
-	ugbc/exe/ugbc.c64 -c $(subst /asm/,/cfg/,$(@:.asm=.cfg)) $(subst generated/c64/asm/,examples/,$(@:.asm=.bas)) $@
+	@ugbc/exe/ugbc.c64 -c $(subst /asm/,/cfg/,$(@:.asm=.cfg)) $(subst generated/c64/asm/,examples/,$(@:.asm=.bas)) $@
 
 generated/c64/exe/%.prg: $(subst /exe/,/asm/,$(@:.prg=.asm))
 	@cl65 -Ln $(@:.prg=.lbl) -o $@ --mapfile $(@:.prg=.map) -u __EXEHDR__ -t c64 -C $(subst /exe/,/cfg/,$(@:.prg=.cfg)) $(subst /exe/,/asm/,$(@:.prg=.asm))
