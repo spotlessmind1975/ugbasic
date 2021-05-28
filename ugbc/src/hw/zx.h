@@ -168,6 +168,11 @@ void zx_color_border( Environment * _environment, char * _color );
 void zx_vscroll( Environment * _environment, int _displacement );
 void zx_text_at( Environment * _environment, char * _x, char * _y, char * _text, char * _text_size, char * _pen, char * _paper, char * _ww );
 void zx_cls( Environment * _environment, char * _pen, char * _paper );
+void zx_inkey( Environment * _environment, char * _pressed, char * _key );
+void zx_scancode( Environment * _environment, char * _pressed, char * _scacode );
+void zx_scanshift( Environment * _environment, char * _shifts );
+void zx_keyshift( Environment * _environment, char * _shifts );
+void zx_clear_key( Environment * _environment );
 
 #define         JOY_COUNT           0
 

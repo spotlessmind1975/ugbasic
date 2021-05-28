@@ -148,6 +148,7 @@ void z80_dsdescriptor( Environment * _environment, char * _index, char * _addres
 void z80_move_8bit_with_offset( Environment * _environment, char *_source, char * _value, int _offset );
 void z80_dsalloc_size( Environment * _environment, int _size, char * _index );
 void z80_bits_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits );
+void z80_move_8bit_with_offset2( Environment * _environment, char *_source, char * _value, char * _offset );
 
 #define cpu_beq( _environment,  _label  ) z80_beq( _environment,  _label  )
 #define cpu_bneq( _environment,  _label  ) z80_beq( _environment,  _label  )
@@ -262,5 +263,6 @@ void z80_bits_to_string( Environment * _environment, char * _number, char * _str
 #define cpu_dsalloc_size( _environment, _size, _index ) z80_dsalloc_size( _environment, _size, _index ) 
 #define cpu_bit_check_extended( _environment, _value, _position, _result ) z80_bit_check_extended( _environment, _value, _position, _result )
 #define cpu_bits_to_string( _environment, _number, _string, _string_size, _bits ) z80_bits_to_string( _environment, _number, _string, _string_size, _bits )
+#define cpu_move_8bit_with_offset2( _environment, _source, _value, _offset ) z80_move_8bit_with_offset2( _environment, _source, _value, _offset ) 
 
 #endif

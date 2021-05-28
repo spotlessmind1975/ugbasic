@@ -100,4 +100,90 @@ void zx_cls( Environment * _environment, char * _pen, char * _paper ) {
 
 }
 
+void zx_inkey( Environment * _environment, char * _pressed, char * _key ) {
+
+    MAKE_LABEL
+
+    outline0("LD A, 0");
+    outline1("LD (%s), A", _pressed );
+    outline1("LD (%s), A", _key );
+    outline0("LD A, ($5C08)");
+    outline0("CP 13");
+    outline1("BEQ %snokey", label );
+    outline1("LD (%s), a", _key );
+    outline0("LD A, $FF");
+    outline1("LD (%s), A", _pressed );
+    outline0("LD A, 13");
+    outline0("LD ($5C08), A");
+    outhead1("%snokey:", label );
+   
+}
+
+void zx_scancode( Environment * _environment, char * _pressed, char * _scancode ) {
+
+    MAKE_LABEL
+
+    deploy( scancodeDeployed, "./ugbc/src/hw/zx/scancode.asm" );
+
+    outline0("LD A, 0");
+    outline1("LD (%s), A", _scancode );
+    outline1("LD (%s), A", _pressed );
+    outline0("CALL SCANCODE");
+    outline0("CP 0");
+    outline1("JR Z,%snokey", label);
+    outline1("LD (%s), A", _scancode );
+    outline0("LD A, $FF");
+    outline1("LD (%s), A", _pressed );
+    outhead1("%snokey:", label );
+   
+}
+
+void zx_scanshift( Environment * _environment, char * _shifts ) {
+
+    // 653	
+    // Shift key indicator. Bits:
+    // Bit #0: 1 = One or more of left Shift, right Shift or Shift Lock is currently being pressed or locked.
+    // Bit #1: 1 = Commodore is currently being pressed.
+    // Bit #2: 1 = Control is currently being pressed.
+    // NO SHIFT (0) - if no SHIFT key pressed;
+    // LEFT SHIFT (1) - if the left SHIFT pressed;
+    // RIGHT SHIFT (2) - if the right SHIFT pressed;
+    // BOTH SHIFTS (3) - if both keys pressed.
+
+    MAKE_LABEL
+
+    deploy( scancodeDeployed, "./ugbc/src/hw/zx/scancode.asm" );
+
+    outline0("CALL SCANCODE");
+    outline0("CP $f1");
+    outline1("JR NZ,%snokey", label);
+    outline0("LD A, $03");
+    outline1("LD (%s), A", _shifts );
+    outhead1("%snokey:", label );
+
+}
+
+void zx_keyshift( Environment * _environment, char * _shifts ) {
+
+    // On the same way, KEY SHIFT is used to report the current status of those keys 
+    // which cannot be detected by either INKEY$ or SCANCODE because they do not 
+    // carry the relevant codes. These control keys cannot be tested individually, or a test can be set up for any combination of such keys pressed together. A single call to the KEY SHIFT function can test for all eventualities, by examining a bit map in the following format:
+
+    MAKE_LABEL
+
+    deploy( scancodeDeployed, "./ugbc/src/hw/zx/scancode.asm" );
+
+    outline0("CALL SCANCODE");
+    outline0("CP $f1");
+    outline1("JR NZ,%snokey", label);
+    outline0("LD A, $03");
+    outline1("LD (%s), A", _shifts );
+    outhead1("%snokey:", label );
+
+}
+
+void zx_clear_key( Environment * _environment ) {
+
+}
+
 #endif

@@ -35,8 +35,6 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-max_free_string = 4
-
 ; DSDEFINE(HL) -> B
 DSDEFINE:
     CALL DSFINDFREE

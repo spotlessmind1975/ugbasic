@@ -561,6 +561,12 @@ typedef struct _Environment {
     int dstringDeployed;
 
     /**
+     * Deployed the scancode routine
+     */
+
+    int scancodeDeployed;
+
+    /**
      * Deployed the text_encoded_at routine
      */
 

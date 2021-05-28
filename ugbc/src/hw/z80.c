@@ -2036,6 +2036,16 @@ void z80_move_8bit_indirect_with_offset( Environment * _environment, char *_sour
 
 }
 
+void z80_move_8bit_with_offset2( Environment * _environment, char *_source, char * _value, char * _offset ) {
+
+    outline1("LD HL, (%s)", _value);
+    outline1("LD DE, (%s)", _offset );
+    outline0("ADD HL, DE" );
+    outline1("LD A, (%s)", _source);
+    outline0("LD (HL), A");
+
+}
+
 void z80_move_8bit_with_offset( Environment * _environment, char *_source, char * _value, int _offset ) {
 
     outline1("LD HL, %s", _value);
@@ -2240,11 +2250,11 @@ void z80_bit_check_extended( Environment * _environment, char *_value, char * _p
     outline0("SRA A");
     outline0("SRA A");
     outline0("SRA A");
-    outline0("CP #3");
+    outline0("CP 3");
     outline1("JR Z,%s_3", label );
-    outline0("CP #2");
+    outline0("CP 2");
     outline1("JR Z,%s_2", label );
-    outline0("CP #1");
+    outline0("CP 1");
     outline1("JR Z,%s_1", label );
     outline1("JMP %send", label );
     outhead1("%s_3:", label );
@@ -2344,7 +2354,7 @@ void z80_dsdefine( Environment * _environment, char * _string, char * _index ) {
     outline1( "LD HL, %s", _string );
     outline0( "CALL DSDEFINE" );
     outline0( "LD A, B" );
-    outline1( "LD (%s), B", _index );
+    outline1( "LD (%s), A", _index );
     
 }
 
