@@ -164,16 +164,6 @@ void z80_move_8bit( Environment * _environment, char *_source, char *_destinatio
 
 }
 
-void z80_move_8bit_with_offset( Environment * _environment, char *_source, char *_destination, int _offset ) {
-    
-    outline1("LD A, $%2.2x", _offset);
-    outline1("LD DE, %s", _destination);
-    outline0("ADD DE, A");
-    outline1("LD A, (%s)", _source);
-    outline0("LD (DE), A");
-
-}
-
 /**
  * @brief <i>Z80</i>: emit code to store 8 bit
  * 
@@ -1479,7 +1469,7 @@ void z80_compare_memory( Environment * _environment, char *_source, char *_desti
     MAKE_LABEL
 
     outline1("LD A, (%s)", _size);
-    outline1("JZ %equal", label);
+    outline1("JR Z, %sequal", label);
     outline0("LD C, A");
     outline1("LD HL,(%s)", _source);
     outline1("LD DE,(%s)", _destination);
@@ -2241,6 +2231,49 @@ void z80_bit_check( Environment * _environment, char *_value, int _position, cha
 
 }
 
+void z80_bit_check_extended( Environment * _environment, char *_value, char * _position, char * _result ) {
+
+    MAKE_LABEL
+
+    outline1("LD HL, %s", _value);
+    outline1("LD A, (%s)", _position);
+    outline0("SRA A");
+    outline0("SRA A");
+    outline0("SRA A");
+    outline0("CP #3");
+    outline1("JR Z,%s_3", label );
+    outline0("CP #2");
+    outline1("JR Z,%s_2", label );
+    outline0("CP #1");
+    outline1("JR Z,%s_1", label );
+    outline1("JMP %send", label );
+    outhead1("%s_3:", label );
+    outline0("INC HL" );
+    outhead1("%s_2:", label );
+    outline0("INC HL" );
+    outhead1("%s_1:", label );
+    outline0("INC HL" );
+    outhead1("%send:", label );
+    outline0("LD A, (HL)" );
+
+    outline0("PUSH AF" );
+    outline1("LD A, (%s)", _position);
+    outline0("AND $07" );
+    outline0("LD B, A");
+    outline0("POP AF" );
+
+    outline0("BIT B, A" );
+    outline1("JR Z, %szero", label);
+    outline0("LD A, 1");
+    outline1("LD (%s), A", _result);
+    outline1("JMP %sdone", label);
+    outhead1("%szero:", label);
+    outline0("LD A, 0");
+    outline1("LD (%s), A", _result);
+    outhead1("%sdone:", label);
+
+}
+
 void z80_number_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits ) {
 
     if ( ! _environment->numberToStringDeployed ) {
@@ -2279,6 +2312,28 @@ void z80_number_to_string( Environment * _environment, char * _number, char * _s
     outline0("LD A,C");
     outline1("LD (%s), A", _string_size);
     outline0("LDIR");
+
+}
+
+void z80_bits_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits ) {
+
+    deploy( bitsToStringDeployed,"./ugbc/src/hw/z80/bits_to_string.asm" );
+
+    outline1("LD BC, (%s+2)", _number );
+    outline1("LD DE, (%s)", _number );
+    outline1("LD A, %2.2x", _bits );
+    outline0("CALL BINSTR");
+    
+    outline0("LD HL, BINSTRBUF");
+    outline1("LD DE,(%s)", _string);
+    outline1("LD A, %2.2x", _bits );
+    outline0("LD C, A");
+    outline0("LD B, 0");
+    outline0("LDIR");
+
+    outline1("LD A, %2.2x", _bits );
+    outline1("LD HL, %s", _string_size );
+    outline0("LD (HL), A" );
 
 }
 

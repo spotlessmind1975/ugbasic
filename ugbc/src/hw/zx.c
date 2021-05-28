@@ -70,7 +70,7 @@ void zx_text_at( Environment * _environment, char * _x, char * _y, char * _text,
     z80_move_8bit( _environment, _pen, "LOCALPEN");
     z80_move_8bit( _environment, _paper, "LOCALPAPER");
     z80_move_8bit( _environment, _ww, "LOCALWW");
-    z80_move_8bit( _environment, _tab, "TABCOUNT");
+    // z80_move_8bit( _environment, _tab, "TABCOUNT");
 
     outline1("LD A, (%s)", _text_size );
     outline0("LD C, A");

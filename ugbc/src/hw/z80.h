@@ -135,6 +135,7 @@ void z80_move_16bit_indirect2( Environment * _environment, char *_source, char *
 void z80_move_32bit_indirect( Environment * _environment, char *_source, char * _value );
 void z80_move_32bit_indirect2( Environment * _environment, char *_source, char * _value );
 void z80_bit_check( Environment * _environment, char *_value, int _position, char * _result );
+void z80_bit_check_extended( Environment * _environment, char *_value, char * _position, char * _result );
 void z80_number_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits );
 void z80_move_8bit_indirect_with_offset( Environment * _environment, char *_source, char * _value, int _offset );
 void z80_store_8bit_indirect_with_offset( Environment * _environment, char *_source, int _value, int _offset );
@@ -146,6 +147,7 @@ void z80_dsgc( Environment * _environment );
 void z80_dsdescriptor( Environment * _environment, char * _index, char * _address, char * _size );
 void z80_move_8bit_with_offset( Environment * _environment, char *_source, char * _value, int _offset );
 void z80_dsalloc_size( Environment * _environment, int _size, char * _index );
+void z80_bits_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits );
 
 #define cpu_beq( _environment,  _label  ) z80_beq( _environment,  _label  )
 #define cpu_bneq( _environment,  _label  ) z80_beq( _environment,  _label  )
@@ -258,5 +260,7 @@ void z80_dsalloc_size( Environment * _environment, int _size, char * _index );
 #define cpu_dsgc( _environment ) z80_dsgc( _environment )
 #define cpu_dsdescriptor( _environment, _index, _address, _size ) z80_dsdescriptor( _environment, _index, _address, _size )
 #define cpu_dsalloc_size( _environment, _size, _index ) z80_dsalloc_size( _environment, _size, _index ) 
+#define cpu_bit_check_extended( _environment, _value, _position, _result ) z80_bit_check_extended( _environment, _value, _position, _result )
+#define cpu_bits_to_string( _environment, _number, _string, _string_size, _bits ) z80_bits_to_string( _environment, _number, _string, _string_size, _bits )
 
 #endif
