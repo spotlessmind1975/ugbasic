@@ -130,6 +130,7 @@ FIRE { return(FIRE); }
 FLIP { return(FLIP); }
 FLIP\$ { return(FLIP); }
 FOR { return(FOR); }
+FREE { return (FREE); }
 FROM { return (FROM); }
 FUNCTION { return (FUNCTION); }
 G { return (G); }

@@ -48,7 +48,7 @@ extern char DATATYPE_AS_STRING[][16];
 %token INKEY SCANCODE SCAN SHIFT SCANSHIFT BOTH SHIFTS NONE LETTER ASTERISK COLON COMMA 
 %token COMMODORE CONTROL CRSR CURSOR DELETE EQUAL FUNCTION INSERT ARROW MINUS PERIOD PLUS 
 %token POUND RUNSTOP RUN STOP SEMICOLON SLASH KEY STATE KEYSTATE KEYSHIFT CAPSLOCK CAPS LOCK ALT
-%token INPUT
+%token INPUT FREE
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -782,6 +782,10 @@ exponential:
     }
     | OP expr CP {
         $$ = $2;
+    }
+    | FREE {
+        cpu_dsgc( _environment );
+        $$ = variable_retrieve( _environment, "FREE_STRING" )->name;
     }
     | MAX OP expr OP_COMMA expr CP {
         $$ = maximum( _environment, $3, $5 )->name;
@@ -2290,6 +2294,8 @@ int main( int _argc, char *_argv[] ) {
 
     bank_define( _environment, "VARIABLES", BT_VARIABLES, 0x5000, NULL );
     bank_define( _environment, "TEMPORARY", BT_TEMPORARY, 0x5100, NULL );
+    variable_import( _environment, "FREE_STRING", VT_WORD );
+    variable_global( _environment, "FREE_STRING" );    
 
     if ( _environment->configurationFileName ) {
         _environment->configurationFile = fopen( _environment->configurationFileName, "wt");
