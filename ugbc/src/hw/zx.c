@@ -109,7 +109,7 @@ void zx_inkey( Environment * _environment, char * _pressed, char * _key ) {
     outline1("LD (%s), A", _key );
     outline0("LD A, ($5C08)");
     outline0("CP 13");
-    outline1("BEQ %snokey", label );
+    outline1("JR Z, %snokey", label );
     outline1("LD (%s), a", _key );
     outline0("LD A, $FF");
     outline1("LD (%s), A", _pressed );

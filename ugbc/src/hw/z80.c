@@ -2269,10 +2269,17 @@ void z80_bit_check_extended( Environment * _environment, char *_value, char * _p
     outline0("PUSH AF" );
     outline1("LD A, (%s)", _position);
     outline0("AND $07" );
-    outline0("LD B, A");
+    outline0("LD B, 1");
+    outline0("CP 0");
+    outline1("JR Z, %sdone2", label);
+    outhead1("%sloop2:", label);
+    outline0("SLA B");
+    outline0("DEC A");
+    outline1("JR NZ, %sloop2", label);
+    outhead1("%sdone2:", label);
     outline0("POP AF" );
 
-    outline0("BIT B, A" );
+    outline0("AND A, B" );
     outline1("JR Z, %szero", label);
     outline0("LD A, 1");
     outline1("LD (%s), A", _result);
