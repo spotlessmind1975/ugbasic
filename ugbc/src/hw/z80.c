@@ -141,7 +141,8 @@ void z80_fill( Environment * _environment, char * _address, char * _blocks, char
     outline0("INC DE");
     outline0("LD (DE),A")
     outline0("LD C,255");
-    outline1("LD B,%s", _blocks);
+    outline1("LD A,(%s)", _blocks);
+    outline0("LD B,A");
     outline0("LDIR");
 
 }
