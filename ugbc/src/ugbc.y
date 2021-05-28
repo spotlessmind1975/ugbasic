@@ -85,7 +85,7 @@ extern char DATATYPE_AS_STRING[][16];
 
 expr : 
       expr_math
-    | expr_math AND expr_math {
+    | expr_math AND expr_math {        
         $$ = variable_and( _environment, $1, $3 )->name;
         outline3("; %s = %s AND %s", $$, $1, $3 );
     } 

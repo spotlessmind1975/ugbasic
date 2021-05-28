@@ -432,6 +432,11 @@ typedef struct _Environment {
     /* --------------------------------------------------------------------- */
 
     /**
+     * Current line parsed.
+     */
+    char * parsedLine;
+
+    /**
      * Current line number in the BAS file.
      */
     int yylineno;

@@ -3585,7 +3585,7 @@ yyreduce:
     {
   case 3: /* expr: expr_math AND expr_math  */
 #line 88 "src/ugbc.y"
-                              {
+                              {        
         (yyval.string) = variable_and( _environment, (yyvsp[-2].string), (yyvsp[0].string) )->name;
         outline3("; %s = %s AND %s", (yyval.string), (yyvsp[-2].string), (yyvsp[0].string) );
     }
