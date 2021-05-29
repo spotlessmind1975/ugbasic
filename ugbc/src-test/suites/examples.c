@@ -46,6 +46,8 @@ void test_control_by_expression_01_payload( TestEnvironment * _te ) {
     Variable * prima = variable_define( e, "prima", VT_WORD, 0 );
     Variable * seconda = variable_define( e, "seconda", VT_WORD, 0 );
     Variable * terza = variable_define( e, "terza", VT_WORD, 0 );
+    Variable * one = variable_define( e, "one", VT_WORD, 1 );
+    Variable * three = variable_define( e, "three", VT_WORD, 3 );
 
     Variable * times = variable_define( e, "times", VT_WORD, 1 );
     cpu_label( e, "start" );
@@ -55,10 +57,8 @@ void test_control_by_expression_01_payload( TestEnvironment * _te ) {
     on_goto_index( e, "third" );
     on_goto_end( e );
     cpu_label( e, "nextLoop" );
-    Variable * one = variable_temporary( e, VT_WORD, "(1)" );
     variable_store( e, one->name, 1 );    
     variable_move( e, variable_add( e, times->name, one->name )->name, times->name );
-    Variable * three = variable_temporary( e, VT_WORD, "(3)" );
     variable_store( e, three->name, 3 );    
     if_then( e, variable_greater_than( e, times->name, three->name, 0 )->name );
         variable_move( e, one->name, times->name );    

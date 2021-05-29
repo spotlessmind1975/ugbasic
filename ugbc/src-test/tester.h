@@ -47,6 +47,7 @@
  * DECLARATIONS AND DEFINITIONS SECTION 
  ****************************************************************************/
 
+void test_cpu( );
 void test_variables( );
 void test_conditionals( );
 void test_ons( );

@@ -39,6 +39,8 @@
  * CODE SECTION
  ****************************************************************************/
 
+//===========================================================================
+
 void test_variables_add01_payload( TestEnvironment * _te ) {
 
     Environment * e = &_te->environment;
@@ -58,6 +60,8 @@ int test_variables_add01_tester( TestEnvironment * _te ) {
     return sum->value == 66;
 
 }
+
+//===========================================================================
 
 void test_variables_greater_than_payload( TestEnvironment * _te ) {
 
@@ -90,9 +94,34 @@ int test_variables_greater_than_tester( TestEnvironment * _te ) {
 
 }
 
+//===========================================================================
+
+void test_variables_bin_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * fiftyfive = variable_define( e, "fiftyfive", VT_WORD, 0x55 );
+    Variable * five = variable_define( e, "five", VT_WORD, 5 );
+    Variable * b = variable_bin( e, fiftyfive->name, five->name );
+
+    _te->trackedVariables[0] = b;
+
+}
+
+int test_variables_bin_tester( TestEnvironment * _te ) {
+
+    Variable * b = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+
+    return strcmp( b->valueString, "01010101" ) == 0;
+
+}
+
+
+
 void test_variables( ) {
 
     create_test( "variables_add01", &test_variables_add01_payload, &test_variables_add01_tester );    
     create_test( "variables_greater", &test_variables_greater_than_payload, &test_variables_greater_than_tester );    
+    create_test( "variables_bin", &test_variables_bin_payload, &test_variables_bin_tester );    
 
 }

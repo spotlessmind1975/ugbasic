@@ -45,6 +45,8 @@ void create_test( char *_name, void (*_payload)(TestEnvironment *), int (*_teste
     printf("%s : ", _name);
 
     TestEnvironment t;
+    memset( &t, 0, sizeof(TestEnvironment));
+
     Environment * _environment = &t.environment;
 
     t.environment.sourceFileName = strdup("/tmp/out.bas");
@@ -132,11 +134,12 @@ void create_test( char *_name, void (*_payload)(TestEnvironment *), int (*_teste
                         switch( v->type ) {
                             case VT_DSTRING: {
                                 v->value = memory[0];
-                                v->valueString = malloc(t.state.descriptors_size[v->value]+1);
-                                memset(v->valueString,0,t.state.descriptors_size[v->value]+1);
-                                if ( t.state.descriptors_status[v->value] & 0x80 == 0 ) {
+                                v->size = t.state.descriptors_size[v->value];
+                                v->valueString = malloc(v->size+1);
+                                memset(v->valueString,0,v->size+1);
+                                if ( ( t.state.descriptors_status[v->value] & 0x80 ) == 0 ) {
                                     unsigned int baseAddress = ( ( t.state.descriptors_address_lo[v->value] & 0xff ) | ( t.state.descriptors_address_hi[v->value] & 0xff ) << 8 );
-                                    for( i=0; i<t.state.descriptors_size[v->value]; ++i ) {
+                                    for( i=0; i<v->size; ++i ) {
                                         if ( ! t.state.xusing ) {
                                             v->valueString[i] = t.state.working[baseAddress-t.state.working_base_address+i];
                                         } else {
