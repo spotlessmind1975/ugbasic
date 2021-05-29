@@ -1,0 +1,101 @@
+/*****************************************************************************
+ * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
+ *****************************************************************************
+ * Copyright 2021 Marco Spedaletti (asimov@mclink.it)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *----------------------------------------------------------------------------
+ * Concesso in licenza secondo i termini della Licenza Apache, versione 2.0
+ * (la "Licenza"); è proibito usare questo file se non in conformità alla
+ * Licenza. Una copia della Licenza è disponibile all'indirizzo:
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Se non richiesto dalla legislazione vigente o concordato per iscritto,
+ * il software distribuito nei termini della Licenza è distribuito
+ * "COSì COM'è", SENZA GARANZIE O CONDIZIONI DI ALCUN TIPO, esplicite o
+ * implicite. Consultare la Licenza per il testo specifico che regola le
+ * autorizzazioni e le limitazioni previste dalla medesima.
+ ****************************************************************************/
+
+/****************************************************************************
+ * INCLUDE SECTION 
+ ****************************************************************************/
+
+#include "../tester.h"
+
+
+/****************************************************************************
+ * CODE SECTION
+ ****************************************************************************/
+
+void test_control_by_expression_01_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * prima = variable_define( e, "prima", VT_WORD, 0 );
+    Variable * seconda = variable_define( e, "seconda", VT_WORD, 0 );
+    Variable * terza = variable_define( e, "terza", VT_WORD, 0 );
+
+    Variable * times = variable_define( e, "times", VT_WORD, 1 );
+    cpu_label( e, "start" );
+    on_goto( e, times->name );
+    on_goto_index( e, "first" );
+    on_goto_index( e, "second" );
+    on_goto_index( e, "third" );
+    on_goto_end( e );
+    cpu_label( e, "nextLoop" );
+    Variable * one = variable_temporary( e, VT_WORD, "(1)" );
+    variable_store( e, one->name, 1 );    
+    variable_move( e, variable_add( e, times->name, one->name )->name, times->name );
+    Variable * three = variable_temporary( e, VT_WORD, "(3)" );
+    variable_store( e, three->name, 3 );    
+    if_then( e, variable_greater_than( e, times->name, three->name, 0 )->name );
+        variable_move( e, one->name, times->name );    
+        stop_test( e );
+    end_if_then( e );
+    cpu_jump( e, "start" );
+
+    cpu_label( e, "first");
+    variable_move( e, one->name, prima->name );
+    cpu_jump( e, "nextLoop" );
+     
+    cpu_label( e, "second");
+    variable_move( e, one->name, seconda->name );
+    cpu_jump( e, "nextLoop" );
+     
+    cpu_label( e, "third");
+    variable_move( e, one->name, terza->name );
+    cpu_jump( e, "nextLoop" );
+
+    _te->trackedVariables[0] = prima;
+    _te->trackedVariables[1] = seconda;
+    _te->trackedVariables[2] = terza;
+
+}
+
+int test_control_by_expression_01_tester( TestEnvironment * _te ) {
+
+    Variable * prima = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * seconda = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+    Variable * terza = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
+
+    return prima->value == 1 && seconda->value == 1 && terza->value == 1;
+
+}
+
+void test_examples( ) {
+
+    create_test( "control_by_expression_01", &test_control_by_expression_01_payload, &test_control_by_expression_01_tester );    
+
+}
