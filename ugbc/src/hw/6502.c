@@ -2616,7 +2616,7 @@ void cpu6502_dsdescriptor( Environment * _environment, char * _index, char * _ad
     outline0( "LDA $22" );
     outline1( "STA %s", _address );
     outline0( "LDA $23" );
-    outline1( "STA %s", _address );
+    outline1( "STA %s+1", _address );
     outline0( "LDA $21" );
     outline1( "STA %s", _size );
 
