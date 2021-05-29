@@ -100,7 +100,7 @@ void test_variables_bin_payload( TestEnvironment * _te ) {
 
     Environment * e = &_te->environment;
 
-    Variable * fiftyfive = variable_define( e, "fiftyfive", VT_WORD, 0x55 );
+    Variable * fiftyfive = variable_define( e, "fiftyfive", VT_BYTE, 0x55 );
     Variable * five = variable_define( e, "five", VT_WORD, 5 );
     Variable * b = variable_bin( e, fiftyfive->name, five->name );
 

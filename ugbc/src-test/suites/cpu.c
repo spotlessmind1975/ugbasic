@@ -43,13 +43,13 @@ void test_cpu_bits_to_string_payload( TestEnvironment * _te ) {
 
     Environment * e = &_te->environment;
 
-    Variable * number = variable_define( e, "number", VT_WORD, 2 );
+    Variable * number = variable_define( e, "number", VT_BYTE, 2 );
     Variable * string = variable_define( e, "string", VT_DSTRING, 0 );
     Variable * address = variable_define( e, "address", VT_ADDRESS, 0 );
     Variable * size = variable_define( e, "size", VT_BYTE, 0 );
-    cpu_dsalloc_size( e, 16, string->realName );
+    cpu_dsalloc_size( e, 8, string->realName );
     cpu_dsdescriptor( e, string->realName, address->realName, size->realName );
-    cpu6502_bits_to_string( e, number->realName, address->realName, size->realName, 16 );
+    cpu_bits_to_string( e, number->realName, address->realName, size->realName, 8 );
 
     _te->trackedVariables[0] = string;
 
