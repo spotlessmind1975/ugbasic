@@ -3295,20 +3295,27 @@ Variable * variable_bin( Environment * _environment, char * _value, char * _digi
     }
 
     char finishedLabel[MAX_TEMPORARY_STORAGE]; sprintf(finishedLabel, "%send", label); 
+    char padLabel[MAX_TEMPORARY_STORAGE]; sprintf(padLabel, "%spad", label); 
+    char truncateLabel[MAX_TEMPORARY_STORAGE]; sprintf(truncateLabel, "%strunc", label); 
 
     Variable * address = variable_temporary( _environment, VT_ADDRESS, "(result of val)" );
     Variable * size = variable_temporary( _environment, VT_BYTE, "(result of val)" );
+    cpu_dswrite( _environment, result->realName );
     cpu_dsdescriptor( _environment, result->realName, address->realName, size->realName );
 
-    cpu_bits_to_string( _environment, value->realName, result->realName, size->realName, VT_BITWIDTH( value->type ) );
+    cpu_bits_to_string( _environment, value->realName, address->realName, size->realName, VT_BITWIDTH( value->type ) );
 
     if ( digits ) {
-        cpu_less_than_8bit( _environment, result->realName, digits->realName, pad->realName, 0 );
+        cpu_less_than_8bit( _environment, size->realName, digits->realName, pad->realName, 0 );
 
-        cpu_bveq( _environment, pad->realName, finishedLabel );
+        cpu_bveq( _environment, pad->realName, truncateLabel );
 
-        // TODO: padding
+        cpu_label( _environment, padLabel );
 
+        cpu_jump( _environment, truncateLabel );
+
+        cpu_label( _environment, truncateLabel );
+        
         cpu_label( _environment, finishedLabel );
     }
     
