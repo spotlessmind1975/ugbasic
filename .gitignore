@@ -5,4 +5,5 @@ userref/
 prepare_docs.sh
 prepare_user_manual.php
 ugbc/exe
+ugbc/exe-test
 tests/
