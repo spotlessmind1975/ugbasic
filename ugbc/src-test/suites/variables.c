@@ -59,8 +59,40 @@ int test_variables_add01_tester( TestEnvironment * _te ) {
 
 }
 
+void test_variables_greater_than_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * one = variable_temporary( e, VT_WORD, "(1)" );
+    variable_store( e, one->name, 1 );
+    Variable * three = variable_temporary( e, VT_WORD, "(3)" );
+    variable_store( e, three->name, 3 );
+    Variable * compare1 = variable_greater_than( e, one->name, one->name, 0 );
+    Variable * compare2 = variable_greater_than( e, one->name, three->name, 0 );
+    Variable * compare3 = variable_greater_than( e, three->name, one->name, 0 );
+    Variable * compare4 = variable_greater_than( e, three->name, three->name, 0 );
+
+    _te->trackedVariables[0] = compare1;
+    _te->trackedVariables[1] = compare2;
+    _te->trackedVariables[2] = compare3;
+    _te->trackedVariables[3] = compare4;
+
+}
+
+int test_variables_greater_than_tester( TestEnvironment * _te ) {
+
+    Variable * compare1 = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * compare2 = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+    Variable * compare3 = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
+    Variable * compare4 = variable_retrieve( &_te->environment, _te->trackedVariables[3]->name );
+
+    return compare1->value == 0 && compare2->value == 0 && compare3->value == 0xff && compare4->value == 0;
+
+}
+
 void test_variables( ) {
 
     create_test( "variables_add01", &test_variables_add01_payload, &test_variables_add01_tester );    
+    create_test( "variables_greater", &test_variables_greater_than_payload, &test_variables_greater_than_tester );    
 
 }

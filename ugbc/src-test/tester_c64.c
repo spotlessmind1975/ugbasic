@@ -123,7 +123,6 @@ void create_test( char *_name, void (*_payload)(TestEnvironment *), int (*_teste
                         v->value = memory[0];
                         break;
                     case 16:
-                        printf("%s = %d\n", &realname[0], memory[0]+(memory[1]<<8) );
                         v->value = memory[0]+(memory[1]<<8);
                         break;
                     case 32:
@@ -164,6 +163,10 @@ void create_test( char *_name, void (*_payload)(TestEnvironment *), int (*_teste
     };
     printf("\n");
 
+}
+
+void stop_test( Environment * _environment ) {
+    outline0("BRK");
 }
 
 #endif

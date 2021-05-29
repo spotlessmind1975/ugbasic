@@ -47,6 +47,11 @@
  * DECLARATIONS AND DEFINITIONS SECTION 
  ****************************************************************************/
 
+void test_variables( );
+void test_conditionals( );
+void test_ons( );
+void test_examples( );
+
 #ifdef __c64__
     #include "tester_c64.h"
 #elif __zx__

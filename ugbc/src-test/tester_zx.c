@@ -146,4 +146,9 @@ void create_test( char *_name, void (*_payload)(TestEnvironment *), int (*_teste
 
 }
 
+void stop_test( Environment * _environment ) {
+    outline0("HALT");
+}
+
+
 #endif
