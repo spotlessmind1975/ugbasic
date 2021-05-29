@@ -905,6 +905,9 @@ typedef struct _Environment {
 #define SHIFT_LEFT_ALT      16
 #define SHIFT_RIGHT_ALT     32
 
+void begin_compilation( Environment * _environment );
+void end_compilation( Environment * _environment );
+
 Variable * absolute( Environment * _environment, char * _value );
 void add_complex( Environment * _environment, char * _variable, char * _expression, char * _limit_lower, char * _limit_upper );
 Bank * bank_define( Environment * _environment, char * _name, BankType _type, int _address, char * _filename );
@@ -1107,6 +1110,7 @@ Variable * variable_import( Environment * _environment, char * _name, VariableTy
 Variable * variable_define( Environment * _environment, char * _name, VariableType _type, int _value );
 Variable * variable_define_no_init( Environment * _environment, char * _name, VariableType _type );
 Variable * variable_retrieve( Environment * _environment, char * _name );
+Variable * variable_retrieve_by_realname( Environment * _environment, char * _name );
 Variable * variable_retrieve_or_define( Environment * _environment, char * _name, VariableType _type, int _value );
 Variable * variable_resize_buffer( Environment * _environment, char * _destination, int _size );
 Variable * variable_array_type( Environment * _environment, char *_name, VariableType _type );
