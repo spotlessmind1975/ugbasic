@@ -1,5 +1,6 @@
 .vscode/
 generated/
+ugbc/src-generated/
 usermanual/
 userref/
 prepare_docs.sh
