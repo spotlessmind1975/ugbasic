@@ -143,7 +143,21 @@ stridx   =radix+1              ;string buffer index
 binstr:  stx ptr01             ;operand pointer LSB
          sty ptr01+1           ;operand pointer MSB
          tax                   ;protect radix
-         ldy #s_pfac-1         ;operand size
+         lda $35
+         lsr a
+         lsr a
+         lsr a
+         sbc #$1
+         pha
+         tay
+
+binstr00:lda #$0         ;copy operand to...
+         sta pfac,y            ;workspace
+         dey
+         bpl binstr00
+         pla
+         tay
+         ; ldy #s_pfac-1         ;operand size
 ;
 binstr01:lda (ptr01),y         ;copy operand to...
          sta pfac,y            ;workspace
