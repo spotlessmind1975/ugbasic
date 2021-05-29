@@ -38,7 +38,7 @@
  * CODE SECTION
  ****************************************************************************/
 
-#ifdef __c64__
+#ifdef __zx__
 
 void create_test( char *_name, void (*_payload)(TestEnvironment *), int (*_tester)(TestEnvironment *) ) {
 
@@ -49,15 +49,14 @@ void create_test( char *_name, void (*_payload)(TestEnvironment *), int (*_teste
 
     t.environment.sourceFileName = strdup("/tmp/out.bas");
     t.environment.asmFileName = strdup("/tmp/out.asm");
-    t.environment.configurationFileName = strdup("/tmp/out.cfg");
     begin_compilation( &t.environment );    
     _payload( &t );
-    outline0("BRK");
+    outline0("HALT");
     end_compilation( &t.environment );
-    system("cl65 -Ln /tmp/out.lbl -g -o /tmp/out.prg -C /tmp/out.cfg -u __EXEHDR__ -t c64 /tmp/out.asm");
-    system("run6502 -L /tmp/out.lbl -X 0000 -R 080d -l 07ff /tmp/out.prg -O /tmp/out.out");
+    system("z88dk-z80asm -s -b /tmp/out.asm");
+    system("runz80 -R 8000 -L /tmp/out.sym -l 8000 /tmp/out.bin -O /tmp/out.out");
     FILE * handle = fopen( "/tmp/out.out", "rt" );
-    fscanf(handle, "%x %x %x %x %x %x", &t.state.a, &t.state.x, &t.state.y, &t.state.p, &t.state.s, &t.state.pc );
+    fscanf(handle, "%x %x %x %x %x %x %x %x", &t.state.a, &t.state.b, &t.state.c, &t.state.d, &t.state.e, &t.state.f, &t.state.h, &t.state.l );
     while( !feof(handle) ) {
         char realname[MAX_TEMPORARY_STORAGE];
         int address;
@@ -66,10 +65,7 @@ void create_test( char *_name, void (*_payload)(TestEnvironment *), int (*_teste
         if ( 
                strcmp( realname, "WORKING") == 0 
             || strcmp( realname, "TEMPORARY") == 0 
-            || strcmp( realname, "DESCRIPTORS_STATUS") == 0 
-            || strcmp( realname, "DESCRIPTORS_ADDRESS_LO") == 0 
-            || strcmp( realname, "DESCRIPTORS_ADDRESS_HI") == 0 
-            || strcmp( realname, "DESCRIPTORS_SIZE") == 0 
+            || strcmp( realname, "DESCRIPTORS") == 0 
             || strcmp( realname, "USING") == 0 
         ) {
           if ( strcmp( realname, "WORKING") == 0 ) {
@@ -86,28 +82,13 @@ void create_test( char *_name, void (*_payload)(TestEnvironment *), int (*_teste
                   fscanf(handle, "%x", &t.state.temporary[i] );
               }
           }
-          if ( strcmp( realname, "DESCRIPTORS_STATUS") == 0 ) {
+          if ( strcmp( realname, "DESCRIPTORS") == 0 ) {
               int i=0;
               for( i=0; i<255; ++i ) {
-                  fscanf(handle, "%x", &t.state.descriptors_status[i] );
-              }
-          }
-          if ( strcmp( realname, "DESCRIPTORS_ADDRESS_LO") == 0 ) {
-              int i=0;
-              for( i=0; i<255; ++i ) {
-                  fscanf(handle, "%x", &t.state.descriptors_address_lo[i] );
-              }
-          }
-          if ( strcmp( realname, "DESCRIPTORS_ADDRESS_HI") == 0 ) {
-              int i=0;
-              for( i=0; i<255; ++i ) {
-                  fscanf(handle, "%x", &t.state.descriptors_address_hi[i] );
-              }
-          }
-          if ( strcmp( realname, "DESCRIPTORS_SIZE") == 0 ) {
-              int i=0;
-              for( i=0; i<255; ++i ) {
-                  fscanf(handle, "%x", &t.state.descriptors_size[i] );
+                  fscanf(handle, "%x", &t.state.descriptors[i].size );
+                  fscanf(handle, "%x", &t.state.descriptors[i].low );
+                  fscanf(handle, "%x", &t.state.descriptors[i].high );
+                  fscanf(handle, "%x", &t.state.descriptors[i].status );
               }
           }
           if ( strcmp( realname, "USING") == 0 ) {
@@ -123,7 +104,6 @@ void create_test( char *_name, void (*_payload)(TestEnvironment *), int (*_teste
                         v->value = memory[0];
                         break;
                     case 16:
-                        printf("%s = %d\n", &realname[0], memory[0]+(memory[1]<<8) );
                         v->value = memory[0]+(memory[1]<<8);
                         break;
                     case 32:
@@ -133,11 +113,11 @@ void create_test( char *_name, void (*_payload)(TestEnvironment *), int (*_teste
                         switch( v->type ) {
                             case VT_DSTRING: {
                                 v->value = memory[0];
-                                v->valueString = malloc(t.state.descriptors_size[v->value]+1);
-                                memset(v->valueString,0,t.state.descriptors_size[v->value]+1);
-                                if ( t.state.descriptors_status[v->value] & 0x80 == 0 ) {
-                                    unsigned int baseAddress = ( ( t.state.descriptors_address_lo[v->value] & 0xff ) | ( t.state.descriptors_address_hi[v->value] & 0xff ) << 8 );
-                                    for( i=0; i<t.state.descriptors_size[v->value]; ++i ) {
+                                v->valueString = malloc(t.state.descriptors[v->value].size+1);
+                                memset(v->valueString,0,t.state.descriptors[v->value].size+1);
+                                if ( t.state.descriptors[v->value].status & 0x80 == 0 ) {
+                                    unsigned int baseAddress = ( ( t.state.descriptors[v->value].low & 0xff ) | ( t.state.descriptors[v->value].high & 0xff ) << 8 );
+                                    for( i=0; i<t.state.descriptors[v->value].size; ++i ) {
                                         if ( ! t.state.xusing ) {
                                             v->valueString[i] = t.state.working[baseAddress-t.state.working_base_address+i];
                                         } else {
