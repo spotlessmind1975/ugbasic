@@ -67,7 +67,6 @@ void c64_ypen( Environment * _environment, char * _destination ) {
 }
 
 void c64_inkey( Environment * _environment, char * _pressed, char * _key ) {
-
     MAKE_LABEL
 
     // The KERNAL ROM contains four tables used by the system to convert keyboard codes into PETSCII character codes:
