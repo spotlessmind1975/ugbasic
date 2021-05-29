@@ -35,6 +35,8 @@ BISON_OPTIONS=--locations -d -Wcounterexamples
 
 all: paths compiler
 
+test: paths-test tester
+
 src-generated/ugbc.yy.c: src/ugbc.lex src/ugbc.y
 	@flex ${FLEX_OPTIONS} --outfile=src-generated/ugbc.yy.c src/ugbc.lex
 
@@ -48,15 +50,30 @@ SOURCES += $(wildcard src/targets/common/*.c)
 SOURCES += $(wildcard src/targets/$(target)/*.c)
 SOURCES += src-generated/ugbc.yy.c src-generated/ugbc.tab.c
 
+SOURCESTEST := $(wildcard src/*.c)
+SOURCESTEST += $(wildcard src/targets/*.c)
+SOURCESTEST += $(wildcard src/hw/*.c)
+SOURCESTEST += $(wildcard src/targets/common/*.c)
+SOURCESTEST += $(wildcard src/targets/$(target)/*.c)
+SOURCESTEST += $(wildcard src-test/suites/*.c)
+SOURCESTEST += src-test/tester.c
+
 paths:
 	@mkdir -p src-generated
 	@mkdir -p exe
 
+paths-test:
+	@mkdir -p exe-test
+
 compiler: $(SOURCES)
 	@cc -D__$(target)__ -g $(SOURCES) -o exe/ugbc.$(target) -lm
+
+tester: $(SOURCESTEST)
+	@cc -DCPU_6502_STATIC -DCPU_6502_USE_LOCAL_HEADER -I../../Z/API -I../../6502/API/emulation/CPU -D__$(target)__ -g $(SOURCESTEST) -o exe-test/ugbc.$(target) -lm
 
 clean:
 	@rm -f exe/ugbc.*
 	@rm -f src-generated/ugbc.yy.c
 	@rm -f src-generated/ugbc.tab.c
+	@rm -f exe-test/ugbc.*
 

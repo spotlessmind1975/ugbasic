@@ -36,6 +36,10 @@ EXECUTABLES := $(subst /asm/,/exe/,$(COMPILED:.asm=.$(output)))
 
 all: paths compiler $(COMPILED) $(EXECUTABLES)
 
+test:
+	@cd ugbc; make target=$(target) test
+	@ugbc/exe-test/ugbc.$(target)
+
 generated/c64/asm/%.asm:
 	@ugbc/exe/ugbc.c64 -c $(subst /asm/,/cfg/,$(@:.asm=.cfg)) $(subst generated/c64/asm/,examples/,$(@:.asm=.bas)) $@
 
