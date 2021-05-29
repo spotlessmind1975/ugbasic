@@ -2525,11 +2525,6 @@ void cpu6502_bits_to_string( Environment * _environment, char * _number, char * 
     outline0("ORA #%10000000" );
     outline0("JSR binstr");
 
-    outline0("NOP");
-    outline0("NOP");
-    outline0("NOP");
-    outline0("NOP");
-    outline0("NOP");
     outline0("STX $36");
     outline0("STY $37");
     outline1("STA %s", _string_size);
