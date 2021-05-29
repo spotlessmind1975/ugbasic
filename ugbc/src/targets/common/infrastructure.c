@@ -98,6 +98,18 @@ static void variable_reset_pool( Variable * _pool ) {
     }
 }
 
+static Variable * variable_find_by_realname( Variable * _first, char * _name ) {
+
+    Variable * actual = _first;
+    while( actual ) {
+        if ( strcmp( actual->realName, _name ) == 0 ) {
+            break;
+        }
+        actual = actual->next;
+    }
+    return actual;
+}
+
 static Variable * variable_find( Variable * _first, char * _name ) {
 
     Variable * actual = _first;
@@ -120,6 +132,66 @@ static Variable * variable_find_first_unused( Variable * _first, VariableType _t
         }
     }
     return actual;
+}
+
+void begin_compilation( Environment * _environment ) {
+
+    _environment->asmFile = fopen( _environment->asmFileName, "wt");
+    if ( ! _environment->asmFile ) {
+        fprintf(stderr, "Unable to open output file: %s\n", _environment->asmFileName );
+        exit(EXIT_FAILURE);
+    }
+
+    bank_define( _environment, "VARIABLES", BT_VARIABLES, 0x5000, NULL );
+    bank_define( _environment, "TEMPORARY", BT_TEMPORARY, 0x5100, NULL );
+    variable_import( _environment, "FREE_STRING", VT_WORD );
+    variable_global( _environment, "FREE_STRING" );    
+
+    if ( _environment->configurationFileName ) {
+        _environment->configurationFile = fopen( _environment->configurationFileName, "wt");
+        if ( ! _environment->configurationFile ) {
+            fprintf(stderr, "Unable to open configuration file: %s\n", _environment->configurationFileName );
+            exit(EXIT_FAILURE);
+        }
+        linker_setup( _environment );
+        deploy( varsDeployed, "./ugbc/src/hw/c64/vars.asm");
+        outhead0(".segment \"CODE\"");
+        variable_define( _environment, "stringsAddress", VT_ADDRESS, 0x4200 );
+        variable_global( _environment, "stringsAddress" );
+        bank_define( _environment, "STRINGS", BT_STRINGS, 0x4200, NULL );
+        variable_import( _environment, "TEXTADDRESS", VT_ADDRESS );
+        variable_global( _environment, "TEXTADDRESS" );    
+        variable_define( _environment, "colormapAddress", VT_ADDRESS, 0xD800 );
+        variable_global( _environment, "colormapAddress" );
+    } else {
+        outhead0("org 32768");
+        variable_define( _environment, "stringsAddress", VT_ADDRESS, 0xa000 );
+        variable_global( _environment, "stringsAddress" );
+        variable_define( _environment, "bitmap_enabled", VT_BYTE, 0 );
+        variable_global( _environment, "bitmap_enabled" );
+        variable_define( _environment, "bitmapAddress", VT_ADDRESS, 0x4000 );
+        variable_global( _environment, "bitmapAddress" );
+        variable_define( _environment, "colormapAddress", VT_ADDRESS, 0x5800 );
+        variable_global( _environment, "colormapAddress" );
+    }
+
+    setup_text_variables( _environment );
+
+}
+
+void end_compilation( Environment * _environment ) {
+
+    gameloop_cleanup( _environment );
+    bank_cleanup( _environment );
+    variable_cleanup( _environment );
+
+    if ( _environment->configurationFileName ) {
+        linker_cleanup( _environment );
+        fclose(_environment->configurationFile);
+    }
+
+    fclose(_environment->asmFile);
+
 }
 
 void variable_global( Environment * _environment, char * _pattern ) {
@@ -434,6 +506,18 @@ Bank * bank_define( Environment * _environment, char * _name, BankType _type, in
         _environment->banks[_type] = bank;
     }
     return bank;
+}
+
+Variable * variable_retrieve_by_realname( Environment * _environment, char * _name ) {
+
+    Variable * var = variable_find_by_realname( _environment->tempVariables, _name );
+    if ( ! var ) {
+        var = variable_find_by_realname( _environment->procedureVariables, _name );
+    }
+    if ( ! var ) {
+        var = variable_find_by_realname( _environment->variables, _name );
+    }
+    return var;
 }
 
 /**
