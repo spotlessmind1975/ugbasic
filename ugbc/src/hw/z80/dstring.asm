@@ -39,7 +39,8 @@
 DSDEFINE:
     CALL DSFINDFREE
     CALL DSDESCRIPTOR
-    LD A, C
+    LD A, (HL)
+    INC HL
     LD (IX),A
     LD (IX+1),L
     LD (IX+2),H
@@ -78,11 +79,15 @@ DSWRITE:
     LD (IX+3),A
     CALL DSCHECKFREE
 DSWRITEOK:
-    CALL DSDESCRIPTOR
-    CALL DSUSING
+    LD D, B
     LD C, (IX+1)
     LD B, (IX+2)
+    PUSH BC
+    CALL DSUSING
+    LD C, (IX)
+    LD B, D
     CALL DSMALLOC
+    POP BC
     LD HL, BC
     LD E, (IX+1)
     LD D, (IX+2)
@@ -123,7 +128,10 @@ DSGCLOOP:
     JR Z, DSGCLOOP2
     LD C, (IX+1)
     LD B, (IX+2)
+    PUSH BC
+    LD C, (IX)
     CALL DSMALLOC
+    POP BC
     LD E, (IX+1)
     LD D, (IX+2)
     PUSH HL
@@ -209,6 +217,7 @@ DSCHECKFREEOK:
 ; DSUSING() -> HL
 DSUSING:
     LD A, (USING)
+    CP 0
     JR Z, DSUSINGW
     JR DSUSINGT
 DSUSINGT:
@@ -249,7 +258,7 @@ WORKING:                DEFS    1024
 TEMPORARY:              DEFS    1024
 USING:                  DB    0
     
-FREE_STRING:            DB 255, max_free_string
+FREE_STRING:            DB 0, max_free_string
 
 primo:                  DB 0
 secondo:                DB 0
