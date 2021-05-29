@@ -147,14 +147,18 @@ binstr:  stx ptr01             ;operand pointer LSB
          lsr a
          lsr a
          lsr a
-         sbc #$1
          pha
+         sbc #$1
          tay
+         cpy #0
+         beq binstr0a
 
 binstr00:lda #$0         ;copy operand to...
          sta pfac,y            ;workspace
          dey
          bpl binstr00
+
+binstr0a:
          pla
          tay
          ; ldy #s_pfac-1         ;operand size
