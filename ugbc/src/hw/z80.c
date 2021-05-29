@@ -254,7 +254,7 @@ void z80_less_than_8bit( Environment * _environment, char *_source, char *_desti
     }
     outline1("JMP %sb2", label);
     outhead1("%s:", label);
-    outline0("LD A, 1");
+    outline0("LD A, $ff");
     if ( _other ) {
         outline1("LD (%s), A", _other);
     } else {
@@ -294,7 +294,7 @@ void z80_greater_than_8bit( Environment * _environment, char *_source, char *_de
     }
     outline1("JMP %sb2", label);
     outhead1("%s:", label);
-    outline0("LD A, 1");
+    outline0("LD A, $ff");
     if ( _other ) {
         outline1("LD (%s), A", _other);
     } else {
@@ -600,7 +600,7 @@ void z80_less_than_16bit( Environment * _environment, char *_source, char *_dest
     }
     outline1("JMP %sb2", label);
     outhead1("%s:", label);
-    outline0("LD A, 1");
+    outline0("LD A, $ff");
     if ( _other ) {
         outline1("LD (%s), A", _other);
     } else {
@@ -647,7 +647,7 @@ void z80_greater_than_16bit( Environment * _environment, char *_source, char *_d
     }
     outline1("JMP %sb2", label);
     outhead1("%s:", label);
-    outline0("LD A, 1");
+    outline0("LD A, $ff");
     if ( _other ) {
         outline1("LD (%s), A", _other);
     } else {
@@ -979,7 +979,7 @@ void z80_less_than_32bit( Environment * _environment, char *_source, char *_dest
     }
     outline1("JMP %s_2", label);
     outhead1("%s:", label);
-    outline0("LD A, 1");
+    outline0("LD A, $ff");
     if ( _other ) {
         outline1("LD (%s), A", _other);
     } else {
@@ -1040,7 +1040,7 @@ void z80_greater_than_32bit( Environment * _environment, char *_source, char *_d
     }
     outline1("JMP %send", label);
     outhead1("%s:", label);
-    outline0("LD A, 1");
+    outline0("LD A, $ff");
     if ( _other ) {
         outline1("LD (%s), A", _other);
     } else {
@@ -1350,7 +1350,7 @@ void z80_logical_and_8bit( Environment * _environment, char * _left, char * _rig
     outline1("JR Z, %s", label );
     outline1("LD A, (%s)", _right );
     outline1("JR Z, %s", label );
-    outline0("LD A, 1" );
+    outline0("LD A, $ff" );
     outline1("LD (%s), A", _result );
     outline1("JMP %s_2", label );
     outhead1("%s:", label );
@@ -1374,7 +1374,7 @@ void z80_logical_or_8bit( Environment * _environment, char * _left, char * _righ
     outline1("LD (%s), A", _result );
     outline1("JMP %sx", label );
     outhead1("%s1:", label );
-    outline0("LD A, 1" );
+    outline0("LD A, $ff" );
     outline1("LD (%s), A", _result );
     outhead1("%sx:", label );
 
@@ -1541,7 +1541,7 @@ void z80_less_than_memory( Environment * _environment, char *_source, char *_des
     outline0("INC HL");
     outline0("DEC C");
     outline1("JR NZ, %s", label);
-    outline0("LD A, 1" );
+    outline0("LD A, $ff" );
     outline1("LD (%s), A", _result );
     outline1("JMP %sfinal", label );
     outhead1("%sdiff:", label );
@@ -1569,7 +1569,7 @@ void z80_less_than_memory_size( Environment * _environment, char *_source, char 
     outline0("INC HL");
     outline0("DEC C");
     outline1("JR NZ, %s", label);
-    outline0("LD A, 1" );
+    outline0("LD A, $ff" );
     outline1("LD (%s), A", _result );
     outline1("JMP %sfinal", label );
     outhead1("%sdiff:", label );
@@ -2232,7 +2232,7 @@ void z80_bit_check( Environment * _environment, char *_value, int _position, cha
     }
     outline1("BIT $%1.1x, A", ( _position & 0x07 ) );
     outline1("JR Z, %szero", label);
-    outline0("LD A, 1");
+    outline0("LD A, $ff");
     outline1("LD (%s), A", _result);
     outline1("JMP %sdone", label);
     outhead1("%szero:", label);
@@ -2282,7 +2282,7 @@ void z80_bit_check_extended( Environment * _environment, char *_value, char * _p
 
     outline0("AND A, B" );
     outline1("JR Z, %szero", label);
-    outline0("LD A, 1");
+    outline0("LD A, $ff");
     outline1("LD (%s), A", _result);
     outline1("JMP %sdone", label);
     outhead1("%szero:", label);
@@ -2337,19 +2337,34 @@ void z80_bits_to_string( Environment * _environment, char * _number, char * _str
 
     deploy( bitsToStringDeployed,"./ugbc/src/hw/z80/bits_to_string.asm" );
 
-    outline1("LD BC, (%s+2)", _number );
-    outline1("LD DE, (%s)", _number );
-    outline1("LD A, %2.2x", _bits );
+    switch( _bits ) {
+        case 32:
+            outline1("LD BC, (%s+2)", _number );
+            outline1("LD DE, (%s)", _number );
+            break;
+        case 16:
+            outline0("LD BC, 0" );
+            outline1("LD DE, (%s)", _number );
+            break;
+        case 8:        
+            outline0("LD BC, 0" );
+            outline0("LD D, 0" );
+            outline1("LD A, (%s)", _number );
+            outline0("LD E, A" );
+            outline0("LD A, 0" );
+            break;
+    }
+
+    outline1("LD A, $%2.2x", _bits );
     outline0("CALL BINSTR");
     
-    outline0("LD HL, BINSTRBUF");
     outline1("LD DE,(%s)", _string);
-    outline1("LD A, %2.2x", _bits );
+    outline1("LD A, %2.2x", (_bits+1) );
     outline0("LD C, A");
     outline0("LD B, 0");
     outline0("LDIR");
 
-    outline1("LD A, %2.2x", _bits );
+    outline1("LD A, $%2.2x", _bits );
     outline1("LD HL, %s", _string_size );
     outline0("LD (HL), A" );
 
