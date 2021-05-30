@@ -106,9 +106,10 @@ DSWRITED:
 ; DSGC()
 DSGC:
     LD HL, FREE_STRING
-    LD (HL), 255
+    LD (HL), 0
     INC HL
-    LD (HL), max_free_string
+    LD A, max_free_string
+    LD (HL), A
     LD A, (USING)
     CMP 0
     JR Z, DSGT
@@ -122,6 +123,7 @@ DSGW:
 BSGCLOOP0:
     LD B, 0
 DSGCLOOP:
+    PUSH BC
     CALL DSDESCRIPTOR
     LD A, (IX+3)
     AND $40
@@ -145,7 +147,9 @@ DSGCLOOP2:
     LD (IX), A
     JMP DSGCLOOP3
 DSGCLOOP3:
-    DJNZ DSGCLOOP
+    POP BC
+    INC B
+    JR NZ, DSGCLOOP
 DSGCEND:
     LD A,(USING)
     XOR $FF
@@ -253,7 +257,7 @@ OUT_OF_MEMORY:
     JMP OUT_OF_MEMORY
 
 MAXSTRINGS:             DB    255
-DESCRIPTORS:            DEFS    4*255
+DESCRIPTORS:            DEFS    1024
 WORKING:                DEFS    1024
 TEMPORARY:              DEFS    1024
 USING:                  DB    0
