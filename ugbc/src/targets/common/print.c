@@ -101,7 +101,7 @@ void print( Environment * _environment, char * _value, int _new_line ) {
 
     Variable * value = variable_retrieve_or_define( _environment, _value, VT_DSTRING, 0 );
     
-    if ( value->type != VT_DSTRING ) {
+    if ( value->type != VT_DSTRING && value->type != VT_STRING ) {
         switch( VT_BITWIDTH( value->type ) ) {
             case 32:
             case 16:
@@ -120,17 +120,7 @@ void print( Environment * _environment, char * _value, int _new_line ) {
                 break;
             }
             case 0:
-                switch( value->type ) {
-                    case VT_STRING: {
-                        Variable * temporary = variable_temporary( _environment, VT_DSTRING, "(temporary for PRINT)");
-                        cpu_dsdefine( _environment, value->realName, temporary->realName );
-                        value = temporary;                   
-                        break;
-                    }
-                    default:               
-                        CRITICAL_PRINT_UNSUPPORTED( _value, DATATYPE_AS_STRING[value->type]);
-                }
-                break;
+                CRITICAL_PRINT_UNSUPPORTED( _value, DATATYPE_AS_STRING[value->type]);
         }
     }
 
