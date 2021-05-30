@@ -44,14 +44,15 @@ Variable * inkey( Environment * _environment ) {
 
     Variable * result = variable_temporary( _environment, VT_DSTRING, "(result of INKEY$)");
     Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of temporary string)");
+    Variable * size = variable_temporary( _environment, VT_BYTE, "(size)");
     Variable * pressed = variable_temporary( _environment, VT_BYTE, "(key pressed?)");
     Variable * key = variable_temporary( _environment, VT_BYTE, "(key pressed)");
 
     char resultString[MAX_TEMPORARY_STORAGE]; sprintf( resultString, " " );
 
     variable_store_string(_environment, result->name, resultString );
-
-    cpu_dsdescriptor( _environment, result->realName, address->realName, pressed->realName );
+    cpu_dswrite( _environment, result->realName );
+    cpu_dsdescriptor( _environment, result->realName, address->realName, size->realName );
 
     MAKE_LABEL
 
@@ -68,7 +69,7 @@ Variable * inkey( Environment * _environment ) {
 
     cpu_label( _environment, noKeyPressedLabel );
 
-    cpu_store_8bit(_environment, result->realName, 0 );
+    cpu_store_8bit(_environment, address->realName, 0 );
 
     cpu_label( _environment, finishedLabel );
     
