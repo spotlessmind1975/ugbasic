@@ -143,7 +143,6 @@ void create_test( char *_name, void (*_payload)(TestEnvironment *), int (*_teste
                                         if ( ! t.state.xusing ) {
                                             v->valueString[i] = t.state.working[baseAddress-t.state.working_base_address+i];
                                         } else {
-                                            printf("baseAddress = %4.4x, offset = %d\n", baseAddress, baseAddress-t.state.temporary_base_address+i);
                                             v->valueString[i] = t.state.temporary[baseAddress-t.state.temporary_base_address+i];
                                         }
                                     }

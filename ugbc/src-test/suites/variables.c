@@ -242,6 +242,35 @@ int test_variables_cast_tester( TestEnvironment * _te ) {
 
 }
 
+//==========================================================================
+
+void test_variable_compare_not_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * k = variable_define( e, "k", VT_DSTRING, 0 );
+    Variable * empty = variable_define( e, "empty", VT_STRING, 0 );
+
+    variable_store_string( e, k->name, "" );
+    variable_store_string( e, empty->name, "" );
+
+    Variable * result0 = variable_compare( e, k->name, empty->name );
+    Variable * result1 = variable_compare_not( e, k->name, empty->name );
+
+    _te->trackedVariables[0] = result0;
+    _te->trackedVariables[1] = result1;
+
+}
+
+int test_variable_compare_not_tester( TestEnvironment * _te ) {
+
+    Variable * result0 = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * result1 = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+
+    return result1->value == 0x0 && result0->value == 0xff;
+    
+}
+
 void test_variables( ) {
 
     //create_test( "variables_add01", &test_variables_add01_payload, &test_variables_add01_tester );    
@@ -250,6 +279,7 @@ void test_variables( ) {
     //create_test( "variables_bin2", &test_variables_bin2_payload, &test_variables_bin2_tester );    
     //create_test( "variables_and", &test_variables_and_payload, &test_variables_and_tester );
     //create_test( "variables_not", &test_variables_not_payload, &test_variables_not_tester );
-    create_test( "variables_cast", &test_variables_not_payload, &test_variables_not_tester );
+    //create_test( "variables_cast", &test_variables_not_payload, &test_variables_not_tester );
+    create_test( "variable_compare_not", &test_variable_compare_not_payload, &test_variable_compare_not_tester );
 
 }

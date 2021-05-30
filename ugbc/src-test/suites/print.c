@@ -1,6 +1,3 @@
-#ifndef __UGBASICTESTER__
-#define __UGBASICTESTER__
-
 /*****************************************************************************
  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
  *****************************************************************************
@@ -26,7 +23,7 @@
  *
  * Se non richiesto dalla legislazione vigente o concordato per iscritto,
  * il software distribuito nei termini della Licenza è distribuito
- * "COSÌ COM'È", SENZA GARANZIE O CONDIZIONI DI ALCUN TIPO, esplicite o
+ * "COSì COM'è", SENZA GARANZIE O CONDIZIONI DI ALCUN TIPO, esplicite o
  * implicite. Consultare la Licenza per il testo specifico che regola le
  * autorizzazioni e le limitazioni previste dalla medesima.
  ****************************************************************************/
@@ -35,30 +32,60 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <limits.h>
-#include <unistd.h>
+#include "../tester.h"
 
-#include "../src/ugbc.h"
 
 /****************************************************************************
- * DECLARATIONS AND DEFINITIONS SECTION 
+ * CODE SECTION
  ****************************************************************************/
 
-void test_cpu( );
-void test_variables( );
-void test_conditionals( );
-void test_ons( );
-void test_controls( );
-void test_examples( );
-void test_print( );
+void test_print_payload( TestEnvironment * _te ) {
 
-#ifdef __c64__
-    #include "tester_c64.h"
-#elif __zx__
-    #include "tester_zx.h"
-#endif
+    Environment * e = &_te->environment;
 
-#endif
+    Variable * s = variable_define( e, "t", VT_STRING, 0 );
+
+    variable_store_string( e, s->name, "TEST" );
+
+    print( e, s->name, 1 );
+
+}
+
+int test_print_tester( TestEnvironment * _te ) {
+
+    return 1;
+
+}
+
+//==========================================================================
+
+void test_print2_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * d = variable_define( e, "t", VT_DSTRING, 0 );
+
+    variable_store_string( e, d->name, "test" );
+    
+    cpu_dswrite( e, d->realName );
+
+    print( e, d->name, 1 );
+
+    _te->trackedVariables[0] = d;
+
+}
+
+int test_print2_tester( TestEnvironment * _te ) {
+
+    Variable * d = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+
+    return strcasecmp( d->valueString, "TEST" ) == 0;
+
+}
+
+void test_print( ) {
+
+   create_test( "print", &test_print_payload, &test_print_tester );    
+   create_test( "print2", &test_print2_payload, &test_print2_tester );    
+
+}

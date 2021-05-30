@@ -128,10 +128,52 @@ int test_controls_joy_01_tester( TestEnvironment * _te ) {
     
 }
 
+//===========================================================================
+
+void test_controls_keyboard_01_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * k = variable_define( e, "k", VT_DSTRING, 0 );
+    Variable * q = variable_define( e, "q", VT_DSTRING, 0 );
+    Variable * s = variable_define( e, "s", VT_STRING, 0 );
+    Variable * empty = variable_define( e, "empty", VT_STRING, 0 );
+    Variable * limit = variable_define( e, "limit", VT_WORD, 1 );
+    Variable * times = variable_define( e, "times", VT_WORD, 0 );
+    Variable * one = variable_define( e, "one", VT_WORD, 1 );
+
+    variable_store_string( e, s->name, "YOU PRESSED A KEY!" );
+    variable_store_string( e, empty->name, "" );
+    variable_store_string( e, q->name, "q" );
+
+    begin_loop( e );
+        variable_move( e, inkey( e )->name, k->name );
+        variable_move( e, q->name, k->name );
+        if_then( e, variable_compare_not( e, k->name, empty->name )->name );
+            print( e, s->name, 1 );
+        end_if_then( e );
+        variable_move( e, variable_add( e, times->name, one->name )->name, times->name );
+        if_then( e, variable_compare( e, times->name, limit->name )->name );
+            stop_test( e );
+        end_if_then( e );
+    end_loop( e );
+
+    _te->trackedVariables[0] = k;
+
+}
+
+int test_controls_keyboard_01_tester( TestEnvironment * _te ) {
+
+    Variable * k = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+
+    return strcmp( k->valueString, "" ) == 0;
+    
+}
 
 void test_examples( ) {
 
-    // create_test( "control_by_expression_01", &test_control_by_expression_01_payload, &test_control_by_expression_01_tester );    
+    create_test( "control_by_expression_01", &test_control_by_expression_01_payload, &test_control_by_expression_01_tester );    
     create_test( "controls_joy_01", &test_controls_joy_01_payload, &test_controls_joy_01_tester );    
+    create_test( "controls_keyboard_01", &test_controls_keyboard_01_payload, &test_controls_keyboard_01_tester );    
 
 }
