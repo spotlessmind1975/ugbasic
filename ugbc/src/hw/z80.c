@@ -2361,7 +2361,7 @@ void z80_bits_to_string( Environment * _environment, char * _number, char * _str
     outline0("CALL BINSTR");
     
     outline1("LD DE,(%s)", _string);
-    outline1("LD A, %2.2x", (_bits+1) );
+    outline1("LD A, $%2.2x", (_bits+1) );
     outline0("LD C, A");
     outline0("LD B, 0");
     outline0("LDIR");
