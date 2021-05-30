@@ -94,8 +94,44 @@ int test_control_by_expression_01_tester( TestEnvironment * _te ) {
 
 }
 
+//===========================================================================
+
+void test_controls_joy_01_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * j = variable_define( e, "j", VT_BYTE, 0 );
+    Variable * one = variable_define( e, "one", VT_WORD, 1 );
+    Variable * limit = variable_define( e, "limit", VT_WORD, 10000 );
+    Variable * five = variable_define( e, "five", VT_WORD, 5 );
+    Variable * times = variable_define( e, "times", VT_WORD, 0 );
+
+    begin_loop( e );
+        variable_move( e, joy( e, one->name )->name, j->name );
+        print( e, variable_bin( e, j->name, five->name )->name, 0 );
+        print( e, j->name, 1 );
+        variable_move( e, variable_add( e, times->name, one->name )->name, times->name );
+        if_then( e, variable_compare( e, times->name, limit->name )->name );
+            stop_test( e );
+        end_if_then( e );
+    end_loop( e );
+
+    _te->trackedVariables[0] = j;
+
+}
+
+int test_controls_joy_01_tester( TestEnvironment * _te ) {
+
+    Variable * j = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+
+    return j->value == 0x1f;
+    
+}
+
+
 void test_examples( ) {
 
     create_test( "control_by_expression_01", &test_control_by_expression_01_payload, &test_control_by_expression_01_tester );    
+    create_test( "controls_joy_01", &test_controls_joy_01_payload, &test_controls_joy_01_tester );    
 
 }

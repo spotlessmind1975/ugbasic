@@ -137,12 +137,13 @@ void create_test( char *_name, void (*_payload)(TestEnvironment *), int (*_teste
                                 v->size = t.state.descriptors_size[v->value];
                                 v->valueString = malloc(v->size+1);
                                 memset(v->valueString,0,v->size+1);
-                                if ( ( t.state.descriptors_status[v->value] & 0x80 ) == 0 ) {
+                                if ( ( t.state.descriptors_status[v->value] & 0x80 ) == 0 && ( t.state.descriptors_status[v->value] & 0x40 ) == 0x40 ) {
                                     unsigned int baseAddress = ( ( t.state.descriptors_address_lo[v->value] & 0xff ) | ( t.state.descriptors_address_hi[v->value] & 0xff ) << 8 );
                                     for( i=0; i<v->size; ++i ) {
                                         if ( ! t.state.xusing ) {
                                             v->valueString[i] = t.state.working[baseAddress-t.state.working_base_address+i];
                                         } else {
+                                            printf("baseAddress = %4.4x, offset = %d\n", baseAddress, baseAddress-t.state.temporary_base_address+i);
                                             v->valueString[i] = t.state.temporary[baseAddress-t.state.temporary_base_address+i];
                                         }
                                     }

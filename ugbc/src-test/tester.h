@@ -51,6 +51,7 @@ void test_cpu( );
 void test_variables( );
 void test_conditionals( );
 void test_ons( );
+void test_controls( );
 void test_examples( );
 
 #ifdef __c64__

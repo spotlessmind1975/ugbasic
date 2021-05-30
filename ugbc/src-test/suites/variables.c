@@ -116,12 +116,116 @@ int test_variables_bin_tester( TestEnvironment * _te ) {
 
 }
 
+//===========================================================================
 
+void test_variables_bin2_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * fiftyfive = variable_define( e, "fiftyfive", VT_BYTE, 0x55 );
+
+    Variable * j = variable_define( e, "j", VT_BYTE, 0 );
+    Variable * one = variable_define( e, "one", VT_WORD, 1 );
+    Variable * limit = variable_define( e, "limit", VT_WORD, 10000 );
+    Variable * five = variable_define( e, "five", VT_WORD, 5 );
+    Variable * times = variable_define( e, "times", VT_WORD, 0 );
+    Variable * b;
+
+    begin_loop( e );
+        b = variable_bin( e, j->name, five->name );
+        variable_reset( e );
+        variable_move( e, variable_add( e, times->name, one->name )->name, times->name );
+        if_then( e, variable_compare( e, times->name, limit->name )->name );
+            stop_test( e );
+        end_if_then( e );
+    end_loop( e );
+
+    b = variable_bin( e, j->name, five->name );
+
+    _te->trackedVariables[0] = b;
+
+}
+
+int test_variables_bin2_tester( TestEnvironment * _te ) {
+
+    Variable * b = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+
+    return strcmp( b->valueString, "01010101" ) == 0;
+
+}
+
+//===========================================================================
+
+void test_variables_and_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * zero = variable_define( e, "zero", VT_WORD, 0 );
+    Variable * one = variable_define( e, "one", VT_WORD, 1 );
+    Variable * a = variable_define( e, "a", VT_WORD, 0 );
+    Variable * b = variable_define( e, "b", VT_WORD, 1 );
+    Variable * c = variable_define( e, "c", VT_WORD, 2 );
+
+    Variable * x = variable_define( e, "x", VT_BYTE, 0 );
+    Variable * y = variable_define( e, "y", VT_BYTE, 0 );
+    Variable * z = variable_define( e, "z", VT_BYTE, 0 );
+
+    x = variable_and( e, variable_compare_not( e, a->name, zero->name )->name, variable_compare_not( e, a->name, one->name )->name );
+    y = variable_and( e, variable_compare_not( e, b->name, zero->name )->name, variable_compare_not( e, b->name, one->name )->name );
+    z = variable_and( e, variable_compare_not( e, c->name, zero->name )->name, variable_compare_not( e, c->name, one->name )->name );
+
+    _te->trackedVariables[0] = x;
+    _te->trackedVariables[1] = y;
+    _te->trackedVariables[2] = z;
+
+}
+
+int test_variables_and_tester( TestEnvironment * _te ) {
+
+    Variable * x = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * y = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+    Variable * z = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
+
+    return x->value == 0x00 && y->value == 0x00 && z->value == 0xff;
+
+}
+
+//===========================================================================
+
+void test_variables_not_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * true = variable_define( e, "true", VT_BYTE, 0xff );
+    Variable * false = variable_define( e, "false", VT_BYTE, 0x00 );
+
+    Variable * x = variable_define( e, "x", VT_BYTE, 0 );
+    Variable * y = variable_define( e, "y", VT_BYTE, 0 );
+
+    x = variable_not( e, true->name );
+    y = variable_not( e, false->name );
+
+    _te->trackedVariables[0] = x;
+    _te->trackedVariables[1] = y;
+
+}
+
+int test_variables_not_tester( TestEnvironment * _te ) {
+
+    Variable * x = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * y = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+
+    return x->value == 0x00 && y->value == 0xff;
+
+}
 
 void test_variables( ) {
 
     create_test( "variables_add01", &test_variables_add01_payload, &test_variables_add01_tester );    
     create_test( "variables_greater", &test_variables_greater_than_payload, &test_variables_greater_than_tester );    
     create_test( "variables_bin", &test_variables_bin_payload, &test_variables_bin_tester );    
+    create_test( "variables_bin2", &test_variables_bin2_payload, &test_variables_bin2_tester );    
+    create_test( "variables_and", &test_variables_and_payload, &test_variables_and_tester );
+    create_test( "variables_not", &test_variables_not_payload, &test_variables_not_tester );
 
 }

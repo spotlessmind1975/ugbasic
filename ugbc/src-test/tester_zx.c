@@ -118,7 +118,7 @@ void create_test( char *_name, void (*_payload)(TestEnvironment *), int (*_teste
                                 v->valueString = malloc(t.state.descriptors[v->value].size+1);
                                 v->size = t.state.descriptors[v->value].size;
                                 memset(v->valueString,0,t.state.descriptors[v->value].size+1);
-                                if ( ( t.state.descriptors[v->value].status & 0x80 ) == 0 ) {
+                                if ( ( t.state.descriptors[v->value].status & 0x80 ) == 0 && ( t.state.descriptors[v->value].status & 0x40 ) == 0x40 ) {
                                     unsigned int baseAddress = ( ( t.state.descriptors[v->value].low & 0xff ) | ( t.state.descriptors[v->value].high & 0xff ) << 8 );
                                     for( i=0; i<v->size; ++i ) {
                                         if ( ! t.state.xusing ) {
