@@ -112,6 +112,8 @@ int test_variables_bin_tester( TestEnvironment * _te ) {
 
     Variable * b = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
 
+printf("%s", b->valueString );
+
     return strcmp( b->valueString, "01010101" ) == 0;
 
 }
@@ -219,13 +221,35 @@ int test_variables_not_tester( TestEnvironment * _te ) {
 
 }
 
+//===========================================================================
+
+void test_variables_cast_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * a = variable_define( e, "a", VT_BYTE, 0x55 );
+    Variable * b = variable_cast( e, a->name, VT_DWORD );
+
+    _te->trackedVariables[0] = b;
+
+}
+
+int test_variables_cast_tester( TestEnvironment * _te ) {
+
+    Variable * b = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+
+    return b->value == 0x00000055;
+
+}
+
 void test_variables( ) {
 
-    create_test( "variables_add01", &test_variables_add01_payload, &test_variables_add01_tester );    
-    create_test( "variables_greater", &test_variables_greater_than_payload, &test_variables_greater_than_tester );    
-    create_test( "variables_bin", &test_variables_bin_payload, &test_variables_bin_tester );    
-    create_test( "variables_bin2", &test_variables_bin2_payload, &test_variables_bin2_tester );    
-    create_test( "variables_and", &test_variables_and_payload, &test_variables_and_tester );
-    create_test( "variables_not", &test_variables_not_payload, &test_variables_not_tester );
+    //create_test( "variables_add01", &test_variables_add01_payload, &test_variables_add01_tester );    
+    //create_test( "variables_greater", &test_variables_greater_than_payload, &test_variables_greater_than_tester );    
+    //create_test( "variables_bin", &test_variables_bin_payload, &test_variables_bin_tester );    
+    //create_test( "variables_bin2", &test_variables_bin2_payload, &test_variables_bin2_tester );    
+    //create_test( "variables_and", &test_variables_and_payload, &test_variables_and_tester );
+    //create_test( "variables_not", &test_variables_not_payload, &test_variables_not_tester );
+    create_test( "variables_cast", &test_variables_not_payload, &test_variables_not_tester );
 
 }

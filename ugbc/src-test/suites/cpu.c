@@ -65,6 +65,33 @@ int test_cpu_bits_to_string_tester( TestEnvironment * _te ) {
 
 //===========================================================================
 
+void test_cpu_bits_to_string32_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * number = variable_define( e, "number", VT_DWORD, 0x00000055 );
+    Variable * string = variable_define( e, "string", VT_DSTRING, 0 );
+    Variable * address = variable_define( e, "address", VT_ADDRESS, 0 );
+    Variable * size = variable_define( e, "size", VT_BYTE, 0 );
+    cpu_dsalloc_size( e, 32, string->realName );
+    cpu_dsdescriptor( e, string->realName, address->realName, size->realName );
+    cpu_bits_to_string( e, number->realName, address->realName, size->realName, 32 );
+
+    _te->trackedVariables[0] = string;
+
+}
+
+int test_cpu_bits_to_string32_tester( TestEnvironment * _te ) {
+
+    Variable * string = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+
+    return strcmp( string->valueString, "00000000000000000000000001010101" ) == 0 ||
+            strcmp( string->valueString, "01010101" ) == 0;
+
+}
+
+//===========================================================================
+
 void test_cpu_dswrite_payload( TestEnvironment * _te ) {
 
     Environment * e = &_te->environment;
@@ -191,13 +218,13 @@ int test_cpu_dsgc_tester( TestEnvironment * _te ) {
     Variable * k = variable_retrieve( &_te->environment, _te->trackedVariables[7]->name );
     Variable * freeString = variable_retrieve( &_te->environment, _te->trackedVariables[8]->name );
 
-    printf("a = %2.2x\n", a->value );
-    printf("b = %2.2x\n", b->value );
-    printf("c = %2.2x\n", c->value );
-    printf("d = %2.2x\n", d->value );
-    printf("k = %2.2x\n", k->value );
-    printf("freeString = %d\n", freeString->value );
-    printf("times = %d\n", times->value );
+    // printf("a = %2.2x\n", a->value );
+    // printf("b = %2.2x\n", b->value );
+    // printf("c = %2.2x\n", c->value );
+    // printf("d = %2.2x\n", d->value );
+    // printf("k = %2.2x\n", k->value );
+    // printf("freeString = %d\n", freeString->value );
+    // printf("times = %d\n", times->value );
 
     return  a->value == 1 &&
             b->value == 1 &&
@@ -239,11 +266,6 @@ int test_cpu_logical_and_8bit_tester( TestEnvironment * _te ) {
     Variable * and10 = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
     Variable * and11 = variable_retrieve( &_te->environment, _te->trackedVariables[3]->name );
 
-    printf("00 = %2.2x\n", and00->value );
-    printf("01 = %2.2x\n", and01->value );
-    printf("10 = %2.2x\n", and10->value );
-    printf("11 = %2.2x\n", and11->value );
-
     return  and00->value == 0x00 && 
             and01->value == 0x00 && 
             and10->value == 0x00 && 
@@ -284,6 +306,7 @@ int test_cpu_logical_not_8bit_tester( TestEnvironment * _te ) {
 void test_cpu( ) {
 
     create_test( "cpu_bits_to_string", &test_cpu_bits_to_string_payload, &test_cpu_bits_to_string_tester );    
+    create_test( "cpu_bits_to_string32", &test_cpu_bits_to_string32_payload, &test_cpu_bits_to_string32_tester );    
     create_test( "cpu_dswrite", &test_cpu_dswrite_payload, &test_cpu_dswrite_tester );    
     create_test( "cpu_dsgc", &test_cpu_dsgc_payload, &test_cpu_dsgc_tester );    
     create_test( "cpu_logical_and_8bit", &test_cpu_logical_and_8bit_payload, &test_cpu_logical_and_8bit_tester );    

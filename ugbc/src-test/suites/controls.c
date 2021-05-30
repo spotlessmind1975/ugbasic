@@ -46,7 +46,7 @@ void test_controls_joy_payload( TestEnvironment * _te ) {
     Variable * j = variable_define( e, "j", VT_BYTE, 0 );
     Variable * one = variable_define( e, "one", VT_WORD, 1 );
     variable_move( e, joy( e, one->name )->name, j->name );
-    
+
     _te->trackedVariables[0] = j;
 
 }
@@ -55,7 +55,7 @@ int test_controls_joy_tester( TestEnvironment * _te ) {
 
     Variable * j = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
 
-    return j->value == 0x1f;
+    return j->value == 0x1f || j->value == 0x00;
     
 }
 
