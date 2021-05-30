@@ -166,12 +166,23 @@ void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _
     Variable * y = variable_retrieve( _environment, _y );
     Variable * pen = variable_retrieve( _environment, _pen );
     Variable * ww = variable_retrieve( _environment, _ww );
+    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(text address)" );
+    Variable * size = variable_temporary( _environment, VT_BYTE, "(text size)" );
 
-    char textString[MAX_TEMPORARY_STORAGE]; sprintf(textString, "%s+1", text->realName );
+    switch( text->type ) {
+        case VT_STRING:
+            cpu_move_8bit( _environment, text->realName, size->realName );
+            cpu_move_16bit( _environment, text->realName, address->realName );
+            cpu_inc_16bit( _environment, address->realName );
+            break;
+        case VT_DSTRING:
+            cpu_dsdescriptor( _environment, text->realName, address->realName, size->realName );
+            break;
+    }
 
     MAKE_LABEL
 
-    vic2_text_at( _environment, x->realName, y->realName, textString, text->realName, pen->realName, ww->realName );
+    vic2_text_at( _environment, x->realName, y->realName, address->realName, size->realName, pen->realName, ww->realName );
 
 }
 
