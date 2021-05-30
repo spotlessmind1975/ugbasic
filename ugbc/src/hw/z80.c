@@ -1347,8 +1347,10 @@ void z80_logical_and_8bit( Environment * _environment, char * _left, char * _rig
     MAKE_LABEL
 
     outline1("LD A, (%s)", _left );
+    outline0("CMP 0" );
     outline1("JR Z, %s", label );
     outline1("LD A, (%s)", _right );
+    outline0("CMP 0" );
     outline1("JR Z, %s", label );
     outline0("LD A, $ff" );
     outline1("LD (%s), A", _result );
