@@ -3271,7 +3271,8 @@ Variable * variable_bin( Environment * _environment, char * _value, char * _digi
 
     MAKE_LABEL
 
-    Variable * value = variable_retrieve_or_define( _environment, _value, VT_BYTE, 0 );
+    Variable * originalValue = variable_retrieve_or_define( _environment, _value, VT_BYTE, 0 );
+    Variable * value = variable_cast( _environment, _value, VT_DWORD );
     Variable * digits = NULL;
     if ( _digits ) {
         digits = variable_retrieve( _environment, _digits );
