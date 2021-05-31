@@ -97,6 +97,7 @@ void cpu6502_math_sub_32bit( Environment * _environment, char *_source, char *_d
 void cpu6502_math_sub_8bit( Environment * _environment, char *_source, char *_destination,  char *_name );
 void cpu6502_math_sub_16bit_with_8bit( Environment * _environment, char *_source, char *_destination,  char *_name );
 void cpu6502_move_16bit( Environment * _environment, char *_source, char *_destination );
+void cpu6502_addressof_16bit( Environment * _environment, char *_source, char *_destination );
 void cpu6502_move_32bit( Environment * _environment, char *_source, char *_destination );
 void cpu6502_move_8bit( Environment * _environment, char *_source, char *_destination );
 void cpu6502_peek( Environment * _environment, char * _address, char * _target );
@@ -214,6 +215,7 @@ void cpu6502_dsalloc_size( Environment * _environment, int _size, char * _index 
 #define cpu_math_sub_8bit( _environment, _source, _destination,  _name  ) cpu6502_math_sub_8bit( _environment, _source, _destination,  _name  )
 #define cpu_math_sub_16bit_with_8bit( _environment, _source, _destination,  _name  ) cpu6502_math_sub_16bit_with_8bit( _environment, _source, _destination,  _name  )
 #define cpu_move_16bit( _environment, _source, _destination  ) cpu6502_move_16bit( _environment, _source, _destination  )
+#define cpu_addressof_16bit( _environment, _source, _destination  ) cpu6502_addressof_16bit( _environment, _source, _destination  )
 #define cpu_move_32bit( _environment, _source, _destination  ) cpu6502_move_32bit( _environment, _source, _destination  )
 #define cpu_move_8bit( _environment, _source, _destination  ) cpu6502_move_8bit( _environment, _source, _destination  )
 #define cpu_peek( _environment,  _address,  _target  ) cpu6502_peek( _environment,  _address,  _target  )

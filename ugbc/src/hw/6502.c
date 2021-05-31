@@ -500,6 +500,13 @@ void cpu6502_move_16bit( Environment * _environment, char *_source, char *_desti
     outline1("STA %s+1", _destination);
 }
 
+void cpu6502_addressof_16bit( Environment * _environment, char *_source, char *_destination ) {
+    outline1("LDA #<%s", _source);
+    outline1("STA %s", _destination);
+    outline1("LDA #>%s", _source);
+    outline1("STA %s+1", _destination);
+}
+
 /**
  * @brief <i>CPU 6502</i>: emit code to store 16 bit
  * 
@@ -2439,11 +2446,11 @@ void cpu6502_bit_check_extended( Environment * _environment, char * _value, char
     outline0("STA $22" );
     outline1("LDA %s", _position );
     outline0("CMP #8" );
-    outline1("BCS %sb0", label );
+    outline1("BCC %sb0", label );
     outline0("CMP #16" );
-    outline1("BCS %sb1", label );
+    outline1("BCC %sb1", label );
     outline0("CMP #24" );
-    outline1("BCS %sb2", label );
+    outline1("BCC %sb2", label );
     outline1("JMP %sb3", label );
 
     outhead1("%sb0:", label );
@@ -2463,7 +2470,7 @@ void cpu6502_bit_check_extended( Environment * _environment, char * _value, char
     outline0("AND $22" );
     outline1("BEQ %szero", label);
     outhead1("%sone:", label)
-    outline0("LDA #$1");
+    outline0("LDA #$ff");
     outline1("JMP %send", label );
     outhead1("%szero:", label)
     outline0("LDA #$0");
