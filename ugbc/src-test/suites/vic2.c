@@ -77,9 +77,324 @@ int test_vic2_text_at_tester( TestEnvironment * _te ) {
 
 }
 
+//============================================================================
+
+void test_vic2_bitmap_enable_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * d011a = variable_define( e, "d011a", VT_BYTE, 0 );
+    Variable * d016a = variable_define( e, "d016a", VT_BYTE, 0 );
+    Variable * d011b = variable_define( e, "d011b", VT_BYTE, 0 );
+    Variable * d016b = variable_define( e, "d016b", VT_BYTE, 0 );
+    Variable * d011c = variable_define( e, "d011c", VT_BYTE, 0 );
+    Variable * d016c = variable_define( e, "d016c", VT_BYTE, 0 );
+    Variable * d011d = variable_define( e, "d011d", VT_BYTE, 0 );
+    Variable * d016d = variable_define( e, "d016d", VT_BYTE, 0 );
+    Variable * d011e = variable_define( e, "d011e", VT_BYTE, 0 );
+    Variable * d016e = variable_define( e, "d016e", VT_BYTE, 0 );
+    Variable * d011f = variable_define( e, "d011f", VT_BYTE, 0 );
+    Variable * d016f = variable_define( e, "d016f", VT_BYTE, 0 );
+    Variable * d011g = variable_define( e, "d011g", VT_BYTE, 0 );
+    Variable * d016g = variable_define( e, "d016g", VT_BYTE, 0 );
+    Variable * d011h = variable_define( e, "d011h", VT_BYTE, 0 );
+    Variable * d016h = variable_define( e, "d016h", VT_BYTE, 0 );
+
+    // a) Standard Bitmap Mode
+    vic2_bitmap_enable( e, 0, 0, 0 );
+    cpu_move_8bit( e, "$D011", d011a->realName );
+    cpu_move_8bit( e, "$D016", d016a->realName );
+
+    // b) Standard Bitmap Mode
+    vic2_bitmap_enable( e, 320, 0, 0 );
+    cpu_move_8bit( e, "$D011", d011b->realName );
+    cpu_move_8bit( e, "$D016", d016b->realName );
+
+    // c) Multicolor Character Mode
+    vic2_bitmap_enable( e, 160, 0, 0 );
+    cpu_move_8bit( e, "$D011", d011c->realName );
+    cpu_move_8bit( e, "$D016", d016c->realName );
+
+    // d) Standard Bitmap Mode
+    vic2_bitmap_enable( e, 0, 200, 0 );
+    cpu_move_8bit( e, "$D011", d011d->realName );
+    cpu_move_8bit( e, "$D016", d016d->realName );
+    
+    // e) Standard Bitmap Mode
+    vic2_bitmap_enable( e, 0, 0, 2 );
+    cpu_move_8bit( e, "$D011", d011e->realName );
+    cpu_move_8bit( e, "$D016", d016e->realName );
+
+    // f) Multicolor Bitmap Mode
+    vic2_bitmap_enable( e, 0, 0, 4 );
+    cpu_move_8bit( e, "$D011", d011f->realName );
+    cpu_move_8bit( e, "$D016", d016f->realName );
+
+    // g) Multicolor Bitmap Mode
+    vic2_bitmap_enable( e, 0, 0, 8 );
+    cpu_move_8bit( e, "$D011", d011g->realName );
+    cpu_move_8bit( e, "$D016", d016g->realName );
+
+    // h) Multicolor Bitmap Mode
+    vic2_bitmap_enable( e, 0, 0, 16 );
+    cpu_move_8bit( e, "$D011", d011h->realName );
+    cpu_move_8bit( e, "$D016", d016h->realName );
+    
+    _te->trackedVariables[0] = d011a;
+    _te->trackedVariables[1] = d016a;
+    _te->trackedVariables[2] = d011b;
+    _te->trackedVariables[3] = d016b;
+    _te->trackedVariables[4] = d011c;
+    _te->trackedVariables[5] = d016c;
+    _te->trackedVariables[6] = d011d;
+    _te->trackedVariables[7] = d016d;
+    _te->trackedVariables[8] = d011e;
+    _te->trackedVariables[9] = d016e;
+    _te->trackedVariables[10] = d011f;
+    _te->trackedVariables[11] = d016f;
+    _te->trackedVariables[12] = d011g;
+    _te->trackedVariables[13] = d016g;
+    _te->trackedVariables[14] = d011h;
+    _te->trackedVariables[15] = d016h;
+
+
+}
+
+#define ecm(a,b) ( ( a & 0x40 ) == 0x40 )
+#define bmm(a,b) ( ( a & 0x20 ) == 0x20 )
+#define mcm(a,b) ( ( b & 0x10 ) == 0x10 )
+#define standard_character_mode( a, b )     ( ( !ecm(a,b) ) && ( !bmm(a,b) ) && ( !mcm(a,b) ) )
+#define multicolor_character_mode( a, b )   ( ( !ecm(a,b) ) && ( !bmm(a,b) ) && ( mcm(a,b) ) )
+#define standard_bitmap_mode( a, b )        ( ( !ecm(a,b) ) && ( bmm(a,b) ) && ( !mcm(a,b) ) )
+#define multicolor_bitmap_mode( a, b )      ( ( !ecm(a,b) ) && ( bmm(a,b) ) && ( mcm(a,b) ) )
+#define extended_character_mode( a, b )    ( ( !ecm(a,b) ) && ( !bmm(a,b) ) && ( mcm(a,b) ) )
+
+int test_vic2_bitmap_enable_tester( TestEnvironment * _te ) {
+
+    Variable * d011a = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * d016a = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+    Variable * d011b = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
+    Variable * d016b = variable_retrieve( &_te->environment, _te->trackedVariables[3]->name );
+    Variable * d011c = variable_retrieve( &_te->environment, _te->trackedVariables[4]->name );
+    Variable * d016c = variable_retrieve( &_te->environment, _te->trackedVariables[5]->name );
+    Variable * d011d = variable_retrieve( &_te->environment, _te->trackedVariables[6]->name );
+    Variable * d016d = variable_retrieve( &_te->environment, _te->trackedVariables[7]->name );
+    Variable * d011e = variable_retrieve( &_te->environment, _te->trackedVariables[8]->name );
+    Variable * d016e = variable_retrieve( &_te->environment, _te->trackedVariables[9]->name );
+    Variable * d011f = variable_retrieve( &_te->environment, _te->trackedVariables[10]->name );
+    Variable * d016f = variable_retrieve( &_te->environment, _te->trackedVariables[11]->name );
+    Variable * d011g = variable_retrieve( &_te->environment, _te->trackedVariables[12]->name );
+    Variable * d016g = variable_retrieve( &_te->environment, _te->trackedVariables[13]->name );
+    Variable * d011h = variable_retrieve( &_te->environment, _te->trackedVariables[14]->name );
+    Variable * d016h = variable_retrieve( &_te->environment, _te->trackedVariables[15]->name );
+
+    // printf("................\n");
+
+    // if ( ! standard_bitmap_mode( d011b->value, d016b->value ) ) {
+    //     printf("Failed a)\n");
+    // }
+    
+    // if ( ! standard_bitmap_mode( d011b->value, d016b->value ) ) {
+    //     printf("Failed b)\n");
+    // }
+
+    // if ( ! multicolor_bitmap_mode( d011c->value, d016c->value ) )  {
+    //     printf("Failed c)\n");
+    // }
+
+    // if ( ! standard_bitmap_mode( d011d->value, d016d->value ) ) {
+    //     printf("Failed d)\n");
+    // }
+
+    // if ( ! standard_bitmap_mode( d011e->value, d016e->value ) ) {
+    //     printf("Failed e)\n");
+    // }
+
+    // if ( ! multicolor_bitmap_mode( d011f->value, d016f->value ) ) {
+    //     printf("Failed f)\n");
+    // }
+
+    // if ( ! multicolor_bitmap_mode( d011g->value, d016g->value ) ) {
+    //     printf("Failed g)\n");
+    // }
+
+    // if ( ! multicolor_bitmap_mode( d011h->value, d016h->value ) ) {
+    //     printf("Failed h)\n");
+    // }
+
+    return standard_bitmap_mode( d011a->value, d016a->value ) &&
+            standard_bitmap_mode( d011b->value, d016b->value ) &&
+            multicolor_bitmap_mode( d011c->value, d016c->value ) &&
+            standard_bitmap_mode( d011d->value, d016d->value ) &&
+            standard_bitmap_mode( d011e->value, d016e->value ) &&
+            multicolor_bitmap_mode( d011f->value, d016f->value ) &&
+            multicolor_bitmap_mode( d011g->value, d016g->value ) &&
+            multicolor_bitmap_mode( d011h->value, d016h->value );
+
+}
+
+//============================================================================
+
+void test_vic2_tilemap_enable_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * d011a = variable_define( e, "d011a", VT_BYTE, 0 );
+    Variable * d016a = variable_define( e, "d016a", VT_BYTE, 0 );
+    Variable * d011b = variable_define( e, "d011b", VT_BYTE, 0 );
+    Variable * d016b = variable_define( e, "d016b", VT_BYTE, 0 );
+    Variable * d011c = variable_define( e, "d011c", VT_BYTE, 0 );
+    Variable * d016c = variable_define( e, "d016c", VT_BYTE, 0 );
+    Variable * d011d = variable_define( e, "d011d", VT_BYTE, 0 );
+    Variable * d016d = variable_define( e, "d016d", VT_BYTE, 0 );
+    Variable * d011e = variable_define( e, "d011e", VT_BYTE, 0 );
+    Variable * d016e = variable_define( e, "d016e", VT_BYTE, 0 );
+    Variable * d011f = variable_define( e, "d011f", VT_BYTE, 0 );
+    Variable * d016f = variable_define( e, "d016f", VT_BYTE, 0 );
+    Variable * d011g = variable_define( e, "d011g", VT_BYTE, 0 );
+    Variable * d016g = variable_define( e, "d016g", VT_BYTE, 0 );
+    Variable * d011h = variable_define( e, "d011h", VT_BYTE, 0 );
+    Variable * d016h = variable_define( e, "d016h", VT_BYTE, 0 );
+
+    // a) Standard Character Mode
+    vic2_tilemap_enable( e, 0, 0, 0 );
+    cpu_move_8bit( e, "$D011", d011a->realName );
+    cpu_move_8bit( e, "$D016", d016a->realName );
+
+    // b) Standard Character Mode
+    vic2_bitmap_enable( e, 80, 0, 0 );
+    cpu_move_8bit( e, "$D011", d011b->realName );
+    cpu_move_8bit( e, "$D016", d016b->realName );
+
+    // c) Standard Character Mode
+    vic2_bitmap_enable( e, 30, 0, 0 );
+    cpu_move_8bit( e, "$D011", d011c->realName );
+    cpu_move_8bit( e, "$D016", d016c->realName );
+
+    // d) Standard Character Mode
+    vic2_bitmap_enable( e, 0, 30, 0 );
+    cpu_move_8bit( e, "$D011", d011d->realName );
+    cpu_move_8bit( e, "$D016", d016d->realName );
+    
+    // e) Multicolor Character Mode
+    vic2_bitmap_enable( e, 0, 0, 8 );
+    cpu_move_8bit( e, "$D011", d011e->realName );
+    cpu_move_8bit( e, "$D016", d016e->realName );
+
+    // f) Multicolor Character Mode
+    vic2_bitmap_enable( e, 0, 0, 16 );
+    cpu_move_8bit( e, "$D011", d011f->realName );
+    cpu_move_8bit( e, "$D016", d016f->realName );
+
+    // g) Extended Multicolor Character Mode
+    vic2_bitmap_enable( e, 0, 0, 20 );
+    cpu_move_8bit( e, "$D011", d011g->realName );
+    cpu_move_8bit( e, "$D016", d016g->realName );
+
+    // h) Multicolor Character Mode
+    vic2_bitmap_enable( e, 0, 0, 16 );
+    cpu_move_8bit( e, "$D011", d011h->realName );
+    cpu_move_8bit( e, "$D016", d016h->realName );
+    
+    _te->trackedVariables[0] = d011a;
+    _te->trackedVariables[1] = d016a;
+    _te->trackedVariables[2] = d011b;
+    _te->trackedVariables[3] = d016b;
+    _te->trackedVariables[4] = d011c;
+    _te->trackedVariables[5] = d016c;
+    _te->trackedVariables[6] = d011d;
+    _te->trackedVariables[7] = d016d;
+    _te->trackedVariables[8] = d011e;
+    _te->trackedVariables[9] = d016e;
+    _te->trackedVariables[10] = d011f;
+    _te->trackedVariables[11] = d016f;
+    _te->trackedVariables[12] = d011g;
+    _te->trackedVariables[13] = d016g;
+    _te->trackedVariables[14] = d011h;
+    _te->trackedVariables[15] = d016h;
+
+
+}
+
+int test_vic2_tilemap_enable_tester( TestEnvironment * _te ) {
+
+    Variable * d011a = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * d016a = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+    Variable * d011b = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
+    Variable * d016b = variable_retrieve( &_te->environment, _te->trackedVariables[3]->name );
+    Variable * d011c = variable_retrieve( &_te->environment, _te->trackedVariables[4]->name );
+    Variable * d016c = variable_retrieve( &_te->environment, _te->trackedVariables[5]->name );
+    Variable * d011d = variable_retrieve( &_te->environment, _te->trackedVariables[6]->name );
+    Variable * d016d = variable_retrieve( &_te->environment, _te->trackedVariables[7]->name );
+    Variable * d011e = variable_retrieve( &_te->environment, _te->trackedVariables[8]->name );
+    Variable * d016e = variable_retrieve( &_te->environment, _te->trackedVariables[9]->name );
+    Variable * d011f = variable_retrieve( &_te->environment, _te->trackedVariables[10]->name );
+    Variable * d016f = variable_retrieve( &_te->environment, _te->trackedVariables[11]->name );
+    Variable * d011g = variable_retrieve( &_te->environment, _te->trackedVariables[12]->name );
+    Variable * d016g = variable_retrieve( &_te->environment, _te->trackedVariables[13]->name );
+    Variable * d011h = variable_retrieve( &_te->environment, _te->trackedVariables[14]->name );
+    Variable * d016h = variable_retrieve( &_te->environment, _te->trackedVariables[15]->name );
+
+    printf("................\n");
+
+    // a) Standard Character Mode
+    // b) Standard Character Mode
+    // c) Standard Character Mode
+    // d) Standard Character Mode
+    // e) Multicolor Character Mode
+    // f) Multicolor Character Mode
+    // g) Extended Multicolor Character Mode
+    // h) Multicolor Character Mode
+
+
+    if ( ! standard_character_mode( d011b->value, d016b->value ) ) {
+        printf("Failed a)\n");
+    }
+    
+    if ( ! standard_character_mode( d011b->value, d016b->value ) ) {
+        printf("Failed b)\n");
+    }
+
+    if ( ! standard_character_mode( d011c->value, d016c->value ) )  {
+        printf("Failed c)\n");
+    }
+
+    if ( ! standard_character_mode( d011d->value, d016d->value ) ) {
+        printf("Failed d)\n");
+    }
+
+    if ( ! multicolor_character_mode( d011e->value, d016e->value ) ) {
+        printf("Failed e)\n");
+    }
+
+    if ( ! multicolor_character_mode( d011f->value, d016f->value ) ) {
+        printf("Failed f)\n");
+    }
+
+    if ( ! extended_character_mode( d011g->value, d016g->value ) ) {
+        printf("Failed g)\n");
+    }
+
+    if ( ! multicolor_character_mode( d011h->value, d016h->value ) ) {
+        printf("Failed h)\n");
+    }
+
+    return standard_character_mode( d011a->value, d016a->value ) &&
+            standard_character_mode( d011b->value, d016b->value ) &&
+            standard_character_mode( d011c->value, d016c->value ) &&
+            standard_character_mode( d011d->value, d016d->value ) &&
+            multicolor_character_mode( d011e->value, d016e->value ) &&
+            multicolor_character_mode( d011f->value, d016f->value ) &&
+            extended_character_mode( d011g->value, d016g->value ) &&
+            multicolor_character_mode( d011h->value, d016h->value );
+
+}
+
 void test_vic2( ) {
 
-   create_test( "vic2_text_at", &test_vic2_text_at_payload, &test_vic2_text_at_tester );    
+    // create_test( "vic2_text_at", &test_vic2_text_at_payload, &test_vic2_text_at_tester );    
+    // create_test( "vic2_bitmap_enabled", &test_vic2_bitmap_enable_payload, &test_vic2_bitmap_enable_tester );    
+    create_test( "vic2_tilemap_enabled", &test_vic2_bitmap_enable_payload, &test_vic2_bitmap_enable_tester );    
 
 }
 
