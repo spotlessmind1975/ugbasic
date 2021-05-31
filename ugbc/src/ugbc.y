@@ -48,7 +48,7 @@ extern char DATATYPE_AS_STRING[][16];
 %token INKEY SCANCODE SCAN SHIFT SCANSHIFT BOTH SHIFTS NONE LETTER ASTERISK COLON COMMA 
 %token COMMODORE CONTROL CRSR CURSOR DELETE EQUAL FUNCTION INSERT ARROW MINUS PERIOD PLUS 
 %token POUND RUNSTOP RUN STOP SEMICOLON SLASH KEY STATE KEYSTATE KEYSHIFT CAPSLOCK CAPS LOCK ALT
-%token INPUT FREE
+%token INPUT FREE TILEMAP
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -786,6 +786,18 @@ exponential:
     | FREE {
         cpu_dsgc( _environment );
         $$ = variable_retrieve( _environment, "FREE_STRING" )->name;
+    }
+    | SCREEN {
+        $$ = variable_temporary( _environment, VT_BYTE, "(SCREEN)" )->name;
+        variable_store( _environment, $$, SCREEN_CAPABILITIES );
+    }
+    | TILEMAP {
+        $$ = variable_temporary( _environment, VT_BYTE, "(TILEMAP)" )->name;
+        variable_store( _environment, $$, TILEMAP_NATIVE );
+    }
+    | BITMAP {
+        $$ = variable_temporary( _environment, VT_BYTE, "(BITMAP)" )->name;
+        variable_store( _environment, $$, BITMAP_NATIVE );
     }
     | MAX OP expr OP_COMMA expr CP {
         $$ = maximum( _environment, $3, $5 )->name;

@@ -282,6 +282,7 @@ TEXTMAP { return (TEXTMAP); }
 TEXTADDRESS { return (TEXTADDRESS); }
 THEN { return (THEN); }
 TICKS { return (TICKS); }
+TILEMAP { return (TILEMAP); }
 TILES { return (TILES); }
 TIMER { return (TIMER); }
 TO { return (TO); }
