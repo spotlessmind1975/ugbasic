@@ -112,8 +112,6 @@ int test_variables_bin_tester( TestEnvironment * _te ) {
 
     Variable * b = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
 
-printf("%s", b->valueString );
-
     return strcmp( b->valueString, "01010101" ) == 0;
 
 }
@@ -138,11 +136,10 @@ void test_variables_bin2_payload( TestEnvironment * _te ) {
         variable_reset( e );
         variable_move( e, variable_add( e, times->name, one->name )->name, times->name );
         if_then( e, variable_compare( e, times->name, limit->name )->name );
+            b = variable_bin( e, fiftyfive->name, five->name );
             stop_test( e );
         end_if_then( e );
     end_loop( e );
-
-    b = variable_bin( e, j->name, five->name );
 
     _te->trackedVariables[0] = b;
 
@@ -271,15 +268,84 @@ int test_variable_compare_not_tester( TestEnvironment * _te ) {
     
 }
 
+//===========================================================================
+
+void test_variables_bit_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * data = variable_define( e, "data", VT_BYTE, 0x55 );
+
+    Variable * pos0 = variable_define( e, "pos0", VT_BYTE, 0x00 );
+    Variable * pos1 = variable_define( e, "pos1", VT_BYTE, 0x01 );
+    Variable * pos2 = variable_define( e, "pos2", VT_BYTE, 0x02 );
+    Variable * pos3 = variable_define( e, "pos3", VT_BYTE, 0x03 );
+    Variable * pos4 = variable_define( e, "pos4", VT_BYTE, 0x04 );
+    Variable * pos5 = variable_define( e, "pos5", VT_BYTE, 0x05 );
+    Variable * pos6 = variable_define( e, "pos6", VT_BYTE, 0x06 );
+    Variable * pos7 = variable_define( e, "pos7", VT_BYTE, 0x07 );
+
+    Variable * result0 = variable_bit( e, data->name, pos0->name );
+    Variable * result1 = variable_bit( e, data->name, pos1->name );
+    Variable * result2 = variable_bit( e, data->name, pos2->name );
+    Variable * result3 = variable_bit( e, data->name, pos3->name );
+    Variable * result4 = variable_bit( e, data->name, pos4->name );
+    Variable * result5 = variable_bit( e, data->name, pos5->name );
+    Variable * result6 = variable_bit( e, data->name, pos6->name );
+    Variable * result7 = variable_bit( e, data->name, pos7->name );
+
+    _te->trackedVariables[0] = result0;
+    _te->trackedVariables[1] = result1;
+    _te->trackedVariables[2] = result2;
+    _te->trackedVariables[3] = result3;
+    _te->trackedVariables[4] = result4;
+    _te->trackedVariables[5] = result5;
+    _te->trackedVariables[6] = result6;
+    _te->trackedVariables[7] = result7;
+
+}
+
+int test_variables_bit_tester( TestEnvironment * _te ) {
+
+    Variable * result0 = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * result1 = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+    Variable * result2 = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
+    Variable * result3 = variable_retrieve( &_te->environment, _te->trackedVariables[3]->name );
+    Variable * result4 = variable_retrieve( &_te->environment, _te->trackedVariables[4]->name );
+    Variable * result5 = variable_retrieve( &_te->environment, _te->trackedVariables[5]->name );
+    Variable * result6 = variable_retrieve( &_te->environment, _te->trackedVariables[6]->name );
+    Variable * result7 = variable_retrieve( &_te->environment, _te->trackedVariables[7]->name );
+
+    // printf("%2.2x\n", result0->value );
+    // printf("%2.2x\n", result1->value );
+    // printf("%2.2x\n", result2->value );
+    // printf("%2.2x\n", result3->value );
+    // printf("%2.2x\n", result4->value );
+    // printf("%2.2x\n", result5->value );
+    // printf("%2.2x\n", result6->value );
+    // printf("%2.2x\n", result7->value );
+
+    return  result0->value == 0xff && 
+            result1->value == 0x00 &&
+            result2->value == 0xff && 
+            result3->value == 0x00 &&
+            result4->value == 0xff && 
+            result5->value == 0x00 &&
+            result6->value == 0xff && 
+            result7->value == 0x00;
+
+}
+
 void test_variables( ) {
 
-    //create_test( "variables_add01", &test_variables_add01_payload, &test_variables_add01_tester );    
-    //create_test( "variables_greater", &test_variables_greater_than_payload, &test_variables_greater_than_tester );    
-    //create_test( "variables_bin", &test_variables_bin_payload, &test_variables_bin_tester );    
-    //create_test( "variables_bin2", &test_variables_bin2_payload, &test_variables_bin2_tester );    
-    //create_test( "variables_and", &test_variables_and_payload, &test_variables_and_tester );
-    //create_test( "variables_not", &test_variables_not_payload, &test_variables_not_tester );
-    //create_test( "variables_cast", &test_variables_not_payload, &test_variables_not_tester );
-    create_test( "variable_compare_not", &test_variable_compare_not_payload, &test_variable_compare_not_tester );
+    create_test( "variables_add01", &test_variables_add01_payload, &test_variables_add01_tester );    
+    create_test( "variables_greater", &test_variables_greater_than_payload, &test_variables_greater_than_tester );    
+    create_test( "variables_bin", &test_variables_bin_payload, &test_variables_bin_tester );    
+    create_test( "variables_bin2", &test_variables_bin2_payload, &test_variables_bin2_tester );    
+    create_test( "variables_and", &test_variables_and_payload, &test_variables_and_tester );
+    create_test( "variables_not", &test_variables_not_payload, &test_variables_not_tester );
+    create_test( "variables_cast", &test_variables_not_payload, &test_variables_not_tester );
+    create_test( "variables_compare_not", &test_variable_compare_not_payload, &test_variable_compare_not_tester );
+    create_test( "variables_bit", &test_variables_bit_payload, &test_variables_bit_tester );
 
 }

@@ -59,7 +59,7 @@ void test_vic2_text_at_payload( TestEnvironment * _te ) {
     variable_store_string( e, textd->name, "TEST2" );
 
     cpu_move_8bit( e, texts->realName, size->realName );
-    cpu_move_16bit( e, texts->realName, address->realName );
+    cpu_addressof_16bit( e, texts->realName, address->realName );
     cpu_inc_16bit( e, address->realName );
 
     vic2_text_at( e, x->realName, y->realName, address->realName, size->realName, pen->realName, ww->realName );

@@ -303,6 +303,88 @@ int test_cpu_logical_not_8bit_tester( TestEnvironment * _te ) {
 
 }
 
+//===========================================================================
+
+void test_cpu_bit_check_extended_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * true = variable_define( e, "true", VT_BYTE, 0xff );
+    Variable * false = variable_define( e, "false", VT_BYTE, 0x00 );
+
+    Variable * value = variable_define( e, "value", VT_BYTE, 0x55 );
+
+    Variable * pos0 = variable_define( e, "pos0", VT_BYTE, 0x00 );
+    Variable * pos1 = variable_define( e, "pos1", VT_BYTE, 0x01 );
+    Variable * pos2 = variable_define( e, "pos2", VT_BYTE, 0x02 );
+    Variable * pos3 = variable_define( e, "pos3", VT_BYTE, 0x03 );
+    Variable * pos4 = variable_define( e, "pos4", VT_BYTE, 0x04 );
+    Variable * pos5 = variable_define( e, "pos5", VT_BYTE, 0x05 );
+    Variable * pos6 = variable_define( e, "pos6", VT_BYTE, 0x06 );
+    Variable * pos7 = variable_define( e, "pos7", VT_BYTE, 0x07 );
+
+    Variable * result0 = variable_define( e, "result0", VT_BYTE, 0x00 );
+    Variable * result1 = variable_define( e, "result1", VT_BYTE, 0x01 );
+    Variable * result2 = variable_define( e, "result2", VT_BYTE, 0x02 );
+    Variable * result3 = variable_define( e, "result3", VT_BYTE, 0x03 );
+    Variable * result4 = variable_define( e, "result4", VT_BYTE, 0x04 );
+    Variable * result5 = variable_define( e, "result5", VT_BYTE, 0x05 );
+    Variable * result6 = variable_define( e, "result6", VT_BYTE, 0x06 );
+    Variable * result7 = variable_define( e, "result7", VT_BYTE, 0x07 );
+
+    cpu_bit_check_extended( e, value->realName, pos0->realName, result0->realName );
+    cpu_bit_check_extended( e, value->realName, pos1->realName, result1->realName );
+    cpu_bit_check_extended( e, value->realName, pos2->realName, result2->realName );
+    cpu_bit_check_extended( e, value->realName, pos3->realName, result3->realName );
+    cpu_bit_check_extended( e, value->realName, pos4->realName, result4->realName );
+    cpu_bit_check_extended( e, value->realName, pos5->realName, result5->realName );
+    cpu_bit_check_extended( e, value->realName, pos6->realName, result6->realName );
+    cpu_bit_check_extended( e, value->realName, pos7->realName, result7->realName );
+    
+    _te->trackedVariables[0] = result0;
+    _te->trackedVariables[1] = result1;
+    _te->trackedVariables[2] = result2;
+    _te->trackedVariables[3] = result3;
+    _te->trackedVariables[4] = result4;
+    _te->trackedVariables[5] = result5;
+    _te->trackedVariables[6] = result6;
+    _te->trackedVariables[7] = result7;
+
+}
+
+int test_cpu_bit_check_extended_tester( TestEnvironment * _te ) {
+
+    Variable * result0 = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * result1 = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+    Variable * result2 = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
+    Variable * result3 = variable_retrieve( &_te->environment, _te->trackedVariables[3]->name );
+    Variable * result4 = variable_retrieve( &_te->environment, _te->trackedVariables[4]->name );
+    Variable * result5 = variable_retrieve( &_te->environment, _te->trackedVariables[5]->name );
+    Variable * result6 = variable_retrieve( &_te->environment, _te->trackedVariables[6]->name );
+    Variable * result7 = variable_retrieve( &_te->environment, _te->trackedVariables[7]->name );
+
+    // printf("%2.2x\n", result0->value );
+    // printf("%2.2x\n", result1->value );
+    // printf("%2.2x\n", result2->value );
+    // printf("%2.2x\n", result3->value );
+    // printf("%2.2x\n", result4->value );
+    // printf("%2.2x\n", result5->value );
+    // printf("%2.2x\n", result6->value );
+    // printf("%2.2x\n", result7->value );
+
+    return  result0->value == 0xff && 
+            result1->value == 0x00 &&
+            result2->value == 0xff && 
+            result3->value == 0x00 &&
+            result4->value == 0xff && 
+            result5->value == 0x00 &&
+            result6->value == 0xff && 
+            result7->value == 0x00;
+
+}
+
+
+
 void test_cpu( ) {
 
     create_test( "cpu_bits_to_string", &test_cpu_bits_to_string_payload, &test_cpu_bits_to_string_tester );    
@@ -311,5 +393,6 @@ void test_cpu( ) {
     create_test( "cpu_dsgc", &test_cpu_dsgc_payload, &test_cpu_dsgc_tester );    
     create_test( "cpu_logical_and_8bit", &test_cpu_logical_and_8bit_payload, &test_cpu_logical_and_8bit_tester );    
     create_test( "cpu_logical_not_8bit", &test_cpu_logical_not_8bit_payload, &test_cpu_logical_not_8bit_tester );    
+    create_test( "cpu_bit_check_extended", &test_cpu_bit_check_extended_payload, &test_cpu_bit_check_extended_tester );    
 
 }
