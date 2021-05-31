@@ -164,6 +164,8 @@
 #define KEY_RIGHT                    151
 #define KEY_DIVISION                 154
 
+#define SCREEN_CAPABILITIES         ( ( BITMAP_NATIVE ) )
+
 void zx_color_border( Environment * _environment, char * _color );
 void zx_vscroll( Environment * _environment, int _displacement );
 void zx_text_at( Environment * _environment, char * _x, char * _y, char * _text, char * _text_size, char * _pen, char * _paper, char * _ww );
