@@ -68,6 +68,7 @@ extern char DATATYPE_AS_STRING[][16];
 %type <string> writing_mode_definition writing_part_definition
 %type <string> key_scancode_definition key_scancode_alphadigit key_scancode_function_digit
 %type <integer> datatype
+%type <integer> optional_integer
 
 %right Integer String CP 
 %left OP_DOLLAR
@@ -833,7 +834,19 @@ exponential:
     }
     | COLORS {
         $$ = variable_temporary( _environment, VT_COLOR, "(COLORS)" )->name;
-        variable_store( _environment, $$, 16 );
+        variable_store( _environment, $$, COLOR_COUNT );
+    }
+    | COLORS COUNT {
+        $$ = variable_temporary( _environment, VT_COLOR, "(COLORS COUNT)" )->name;
+        variable_store( _environment, $$, COLOR_COUNT );
+    }
+    | COLOR COUNT {
+        $$ = variable_temporary( _environment, VT_COLOR, "(COLORS COUNT)" )->name;
+        variable_store( _environment, $$, COLOR_COUNT );
+    }
+    | SCREEN COLORS {
+        $$ = variable_temporary( _environment, VT_COLOR, "(SCREEN COLORS)" )->name;
+        variable_store( _environment, $$, COLOR_COUNT );
     }
     | PEN COLORS {
         $$ = variable_temporary( _environment, VT_COLOR, "(COLORS)" )->name;
@@ -862,7 +875,13 @@ exponential:
     | WIDTH {
         $$ = screen_get_width( _environment )->name;
     }
+    | SCREEN WIDTH {
+        $$ = screen_get_width( _environment )->name;
+    }
     | HEIGHT {
+        $$ = screen_get_height( _environment )->name;
+    }
+    | SCREEN HEIGHT {
         $$ = screen_get_height( _environment )->name;
     }
     | TIMER {
@@ -1323,7 +1342,7 @@ sprite_definition:
 
 optional_integer : 
     Integer {
-        $$ = $1
+        $$ = $1;
     } | {
         $$ = 0;
     };
@@ -1332,10 +1351,13 @@ bitmap_enable_resolution :
       {
         bitmap_enable( _environment, 0, 0, 0 );
     }
-    | OP CP {
-        bitmap_enable( _environment, 0, 0, 0 );
+    | OP optional_integer  CP {
+        bitmap_enable( _environment, 0, 0, $2 );
     }
-    | OP optional_integer COMMA optional_integer COMMA optional_integer CP {
+    | OP optional_integer OP_COMMA optional_integer CP {
+        bitmap_enable( _environment, $2, $4, 0 );
+    }
+    | OP optional_integer OP_COMMA optional_integer OP_COMMA optional_integer CP {
         bitmap_enable( _environment, $2, $4, $6 );
     }
 
@@ -1399,10 +1421,13 @@ tilemap_enable_resolution :
       {
         tilemap_enable( _environment, 0, 0, 0 );
     }
-    | OP CP {
-        tilemap_enable( _environment, 0, 0, 0 );
+    | OP optional_integer CP {
+        tilemap_enable( _environment, 0, 0, $2 );
     }
-    | OP optional_integer COMMA optional_integer COMMA optional_integer CP {
+    | OP optional_integer OP_COMMA optional_integer CP {
+        tilemap_enable( _environment, $2, $4, 0 );
+    }
+    | OP optional_integer OP_COMMA optional_integer OP_COMMA optional_integer CP {
         tilemap_enable( _environment, $2, $4, $6 );
     }
 
