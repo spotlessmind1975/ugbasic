@@ -905,6 +905,9 @@ typedef struct _Environment {
 #define SHIFT_LEFT_ALT      16
 #define SHIFT_RIGHT_ALT     32
 
+#define TILEMAP_NATIVE      1
+#define BITMAP_NATIVE       2
+
 void begin_compilation( Environment * _environment );
 void end_compilation( Environment * _environment );
 void bank_cleanup( Environment * _environment );
