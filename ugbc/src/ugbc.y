@@ -2016,7 +2016,7 @@ statement:
       text_center( _environment, $2 );
   }
   | CLS {
-      text_cls( _environment );
+      cls( _environment );
   }
   | HOME {
       text_home( _environment );

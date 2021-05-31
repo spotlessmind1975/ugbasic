@@ -329,7 +329,7 @@ void text_cline( Environment * _environment, char * _characters ) {
    
 }
 
-void text_cls( Environment * _environment ) {
+void cls( Environment * _environment ) {
 
     zx_cls( _environment, NULL, NULL );
 
