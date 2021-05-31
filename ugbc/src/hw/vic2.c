@@ -335,19 +335,49 @@ void vic2_bank_select( Environment * _environment, int _bank ) {
 
 void vic2_bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {
 
-    // This fix is necessary to set the starting address of the bitmap 
-    // to $2000 (which is an address available on C=64) instead of the 
-    // address $0000 (which, in the first bank, occupies page 0 of the 
-    // CPU).
-    outline0("LDA $D018" );
-    outline0("AND #%11110111");
-    outline0("ORA #%00001000" );
-    outline0("STA $D018" );
+    ScreenMode * mode = find_screen_mode_by_suggestion( _environment, 1, _width, _height, _colors );
 
-    // Let's enable graphics!
-    outline0("LDA $D011" );
-    outline0("ORA #%00100000");
-    outline0("STA $D011" );
+    switch( mode->id ) {
+        case BITMAP_MODE_STANDARD:
+            // This fix is necessary to set the starting address of the bitmap 
+            // to $2000 (which is an address available on C=64) instead of the 
+            // address $0000 (which, in the first bank, occupies page 0 of the 
+            // CPU).
+            outline0("LDA $D018" );
+            outline0("AND #%11110111");
+            outline0("ORA #%00001000" );
+            outline0("STA $D018" );
+
+            // Let's enable monocolor graphics!
+            outline0("LDA $D011" );
+            outline0("ORA #%00100000");
+            outline0("STA $D011" );
+            outline0("LDA $D016" );
+            outline0("AND #%11101111");
+            outline0("STA $D016" );
+            break;
+        case BITMAP_MODE_MULTICOLOR:
+            // This fix is necessary to set the starting address of the bitmap 
+            // to $2000 (which is an address available on C=64) instead of the 
+            // address $0000 (which, in the first bank, occupies page 0 of the 
+            // CPU).
+            outline0("LDA $D018" );
+            outline0("AND #%11110111");
+            outline0("ORA #%00001000" );
+            outline0("STA $D018" );
+
+            // Let's enable multicolor graphics!
+            outline0("LDA $D011" );
+            outline0("ORA #%00100000");
+            outline0("STA $D011" );
+            outline0("LDA $D016" );
+            outline0("ORA #%00010000");
+            outline0("STA $D016" );
+            break;
+        default:
+            CRITICAL_SCREEN_MODE_BITMAP_UNSUPPORTED( mode->description );
+    }
+
 
 }
 
@@ -357,6 +387,49 @@ void vic2_bitmap_disable( Environment * _environment ) {
     outline0("LDA $D011" );
     outline0("AND #%11011111");
     outline0("STA $D011" );
+    outline0("LDA $D016" );
+    outline0("AND #%11101111");
+    outline0("STA $D016" );
+
+}
+
+void vic2_tilemap_enable( Environment * _environment, int _width, int _height, int _colors ) {
+
+    ScreenMode * mode = find_screen_mode_by_suggestion( _environment, 0, _width, _height, _colors );
+
+    switch( mode->id ) {
+        case TILEMAP_MODE_STANDARD:
+            // Let's disable graphics!
+            outline0("LDA $D011" );
+            outline0("AND #%10011111");
+            outline0("STA $D011" );
+            outline0("LDA $D016" );
+            outline0("AND #%11101111");
+            outline0("STA $D016" );
+            break;
+        case TILEMAP_MODE_MULTICOLOR:
+            // Let's disable graphics!
+            outline0("LDA $D011" );
+            outline0("AND #%10011111");
+            outline0("STA $D011" );
+            outline0("LDA $D016" );
+            outline0("ORA #%00010000");
+            outline0("STA $D016" );
+            break;
+        case TILEMAP_MODE_EXTENDED:
+            // Let's disable graphics!
+            outline0("LDA $D011" );
+            outline0("AND #%10011111");
+            outline0("ORA #%01000000");
+            outline0("STA $D011" );
+            outline0("LDA $D016" );
+            outline0("AND #%11101111");
+            outline0("STA $D016" );
+            break;
+        default:
+            CRITICAL_SCREEN_MODE_TILEMAP_UNSUPPORTED( mode->description );
+    }
+
 
 }
 
@@ -838,11 +911,11 @@ void vic2_text_at( Environment * _environment, char * _x, char * _y, char * _tex
 
 void vic2_initialization( Environment * _environment ) {
 
-    SCREEN_MODE_DEFINE( BITMAP_MODE_STANDARD, 1, 320, 200, 2 );
-    SCREEN_MODE_DEFINE( BITMAP_MODE_MULTICOLOR, 1, 160, 200, 4 );
-    SCREEN_MODE_DEFINE( TILEMAP_MODE_STANDARD, 0, 40, 25, 16 );
-    SCREEN_MODE_DEFINE( TILEMAP_MODE_MULTICOLOR, 0, 40, 25, 16 );
-    SCREEN_MODE_DEFINE( TILEMAP_MODE_EXTENDED, 0, 40, 25, 20 );
+    SCREEN_MODE_DEFINE( BITMAP_MODE_STANDARD, 1, 320, 200, 2, "Standard Bitmap Mode" );
+    SCREEN_MODE_DEFINE( BITMAP_MODE_MULTICOLOR, 1, 160, 200, 4, "Multicolor Bitmap Mode"  );
+    SCREEN_MODE_DEFINE( TILEMAP_MODE_STANDARD, 0, 40, 25, 2, "Standard Character Mode" );
+    SCREEN_MODE_DEFINE( TILEMAP_MODE_MULTICOLOR, 0, 40, 25, 16, "Multicolor Character Mode" );
+    SCREEN_MODE_DEFINE( TILEMAP_MODE_EXTENDED, 0, 40, 25, 20, "Extended Multicolor Character Mode" );
 
 }
 

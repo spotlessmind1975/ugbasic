@@ -97,7 +97,6 @@
 #define BITMAP_MODE_MCI            32
 #define BITMAP_MODE_MEGATEXT       33
 #define BITMAP_MODE_PRS            34
-#define BITMAP_MODE_AH             35
 
 #define TILEMAP_MODE_STANDARD       0           // Standard Character Mode        40 x 25 x 16
 #define TILEMAP_MODE_MULTICOLOR     1           // Multicolor Character Mode      40 x 25 x 16
@@ -113,12 +112,13 @@ void vic2_next_raster( Environment * _environment );
 void vic2_next_raster_at( Environment * _environment, char * _label, char * _positionlo, char * _positionhi );
 void vic2_raster_at( Environment * _environment, char * _label, char * _positionlo, char * _positionhi );
 void vic2_sprite_common_color( Environment * _environment, char * _index, char * _common_color );
-void vic2_bitmap_enable( Environment * _environment );
+void vic2_bitmap_enable( Environment * _environment, int _width, int _height, int _colors );
 void vic2_bitmap_disable( Environment * _environment );
 void vic2_bitmap_at( Environment * _environment, char * _address );
 void vic2_colormap_at( Environment * _environment, char * _address );
 void vic2_textmap_at( Environment * _environment, char * _address );
 void vic2_tiles_at( Environment * _environment, char * _address );
+void vic2_tilemap_enable( Environment * _environment, int _width, int _height, int _colors );
 
 void vic2_bank_select( Environment * _environment, int _bank );
 void vic2_enable_ecm( Environment * _environment );
