@@ -1,6 +1,10 @@
 
 TEXTAT:
     SEI
+    
+    LDA #23
+    STA 53272
+    
     LDX $d6
     BEQ TEXTATSKIP
     TEXTATLOOP1:
