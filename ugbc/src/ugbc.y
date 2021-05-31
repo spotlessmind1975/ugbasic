@@ -1366,14 +1366,6 @@ textmap_definition:
     textmap_definition_simple
   | textmap_definition_expression;
 
-text_definition_simple:
-    ENABLE {
-      text_enable( _environment );
-  }
-  | DISABLE {
-      text_disable( _environment );
-  };
-
 text_definition_expression:
      AT expr OP_COMMA expr OP_COMMA expr {
        text_at( _environment, $2, $4, $6 );
@@ -1383,8 +1375,18 @@ text_definition_expression:
    };
 
 text_definition:
-    text_definition_simple
-  | text_definition_expression;
+    text_definition_expression;
+
+tilemap_definition_simple:
+    ENABLE {
+      tilemap_enable( _environment );
+  }
+  | DISABLE {
+      tilemap_disable( _environment );
+  };
+
+tilemap_definition:
+    tilemap_definition_simple;
 
 tiles_definition_simple:
     AT direct_integer {
@@ -1907,6 +1909,7 @@ statement:
   | SPRITE sprite_definition
   | BITMAP bitmap_definition
   | TEXTMAP textmap_definition
+  | TILEMAP tilemap_definition
   | TEXT text_definition
   | TILES tiles_definition
   | COLORMAP colormap_definition

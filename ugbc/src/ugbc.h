@@ -905,8 +905,8 @@ typedef struct _Environment {
 #define SHIFT_LEFT_ALT      16
 #define SHIFT_RIGHT_ALT     32
 
-#define TILEMAP_NATIVE      1
-#define BITMAP_NATIVE       2
+#define TILEMAP_NATIVE      0
+#define BITMAP_NATIVE       1
 
 void begin_compilation( Environment * _environment );
 void end_compilation( Environment * _environment );
@@ -1160,8 +1160,6 @@ void                    text_cline( Environment * _environment, char * _characte
 void                    text_cls( Environment * _environment );
 void                    text_cmove( Environment * _environment, char * _dx, char * _dy );
 void                    text_cmove_direct( Environment * _environment, int _dx, int _dy );
-void                    text_disable( Environment * _environment );
-void                    text_enable( Environment * _environment );
 void                    text_encoded_at( Environment * _environment, char * _x, char * _y, char * _text, char * _pen, char * _paper, char * _ww );
 Variable *              text_get_at( Environment * _environment, char * _x, char * _y );
 Variable *              text_get_cmove( Environment * _environment, char * _x, char * _y );
@@ -1191,6 +1189,8 @@ void                    text_vscroll_screen( Environment * _environment, int _di
 void                    text_writing( Environment * _environment, char * _mode, char * _parts );
 void                    textmap_at( Environment * _environment, int _address );
 void                    textmap_at_var( Environment * _environment, char * _address );
+void                    tilemap_disable( Environment * _environment );
+void                    tilemap_enable( Environment * _environment );
 void                    tiles_at( Environment * _environment, int _address );
 void                    tiles_at_var( Environment * _environment, char * _address );
 

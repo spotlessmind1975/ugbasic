@@ -47,21 +47,21 @@
  * @param _environment Current calling environment
  */
 /* <usermanual>
-@keyword TEXT ENABLE
+@keyword TILEMAP ENABLE
 
 @english
-Enable the text mode.
+Enable the tilemap mode.
 
 @italian
-Abilita la modalità testuale.
+Abilita la modalità a tiles.
 
-@syntax TEXT ENABLE
+@syntax TILEMAP ENABLE
 
-@example TEXT ENABLE
+@example TILEMAP ENABLE
 
 @target c64
 </usermanual> */
-void text_enable( Environment * _environment ) {
+void tilemap_enable( Environment * _environment ) {
     
     bitmap_disable( _environment );
 
@@ -76,21 +76,21 @@ void text_enable( Environment * _environment ) {
  * @param _environment Current calling environment
  */
 /* <usermanual>
-@keyword TEXT DISABLE
+@keyword TILEMAP DISABLE
 
 @english
-Disable the text mode.
+Disable the tilemap mode.
 
 @italian
-Disabilita la modalità testuale.
+Disabilita la modalità a tiles.
 
-@syntax TEXT ENABLE
+@syntax TILEMAP DISABLE
 
-@example TEXT ENABLE
+@example TILEMAP DISABLE
 
 @target c64
 </usermanual> */
-void text_disable( Environment * _environment ) {
+void tilemap_disable( Environment * _environment ) {
     
     bitmap_enable( _environment );
     
