@@ -836,3 +836,32 @@ Variable * text_get_at( Environment * _environment, char * _x, char * _y ) {
     return result;
 
 }
+
+/**
+ * @brief Emit ASM implementation for <b>TEXT ENABLE</b> instruction
+ * 
+ * This function can be called to emit the code to enable text mode
+ * on the target machine.
+ * 
+ * @param _environment Current calling environment
+ */
+/* <usermanual>
+@keyword TILEMAP ENABLE
+
+@english
+Enable the tilemap mode.
+
+@italian
+Abilita la modalità a tiles.
+
+@syntax TILEMAP ENABLE
+
+@example TILEMAP ENABLE
+
+@target c64
+</usermanual> */
+void tilemap_enable( Environment * _environment, int _width, int _height, int _colors ) {
+    
+    vic2_tilemap_enable( _environment, _width, _height, _colors );
+
+}
