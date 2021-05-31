@@ -75,10 +75,21 @@ typedef struct _InternalMachineState {
 
 } InternalMachineState;
 
+typedef struct _DebugInspection {
+    char *      name;
+    int         address;
+} DebugInspection;
+
+typedef struct _Debug {
+    int                 inspections_count;
+    DebugInspection     inspections[1024];
+} Debug;
+
 typedef struct _TestEnvironment {
     Environment                 environment;
     InternalMachineState        state;
     Variable                *   trackedVariables[128];
+    Debug                       debug;
 } TestEnvironment;
 
 void create_test( char *_name, void (*_payload)(TestEnvironment *), int (*_tester)(TestEnvironment *) );

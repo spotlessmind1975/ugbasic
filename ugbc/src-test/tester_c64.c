@@ -56,8 +56,16 @@ void create_test( char *_name, void (*_payload)(TestEnvironment *), int (*_teste
     _payload( &t );
     outline0("BRK");
     end_compilation( &t.environment );
+    
+    FILE *handleIns = fopen( "/tmp/out.ins", "wt" );
+    int i=0;
+    for(i=0; i<t.debug.inspections_count; ++i ) {
+        fprintf( handleIns, "%4.4x %s\n", t.debug.inspections[i].address, t.debug.inspections[i].name );
+    }
+    fclose(handleIns);
+    
     system("cl65 -Ln /tmp/out.lbl -g -o /tmp/out.prg -C /tmp/out.cfg -u __EXEHDR__ -t c64 /tmp/out.asm");
-    system("run6502 -L /tmp/out.lbl -X 0000 -R 080d -l 07ff /tmp/out.prg -O /tmp/out.out");
+    system("run6502 -L /tmp/out.lbl -Li /tmp/out.ins -X 0000 -R 080d -l 07ff /tmp/out.prg -O /tmp/out.out");
     FILE * handle = fopen( "/tmp/out.out", "rt" );
     fscanf(handle, "%x %x %x %x %x %x", &t.state.a, &t.state.x, &t.state.y, &t.state.p, &t.state.s, &t.state.pc );
     while( !feof(handle) ) {
