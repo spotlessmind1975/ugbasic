@@ -39,35 +39,6 @@
  ****************************************************************************/
 
 /**
- * @brief Emit ASM implementation for <b>TEXT ENABLE</b> instruction
- * 
- * This function can be called to emit the code to enable text mode
- * on the target machine.
- * 
- * @param _environment Current calling environment
- */
-/* <usermanual>
-@keyword TILEMAP ENABLE
-
-@english
-Enable the tilemap mode.
-
-@italian
-Abilita la modalità a tiles.
-
-@syntax TILEMAP ENABLE
-
-@example TILEMAP ENABLE
-
-@target c64
-</usermanual> */
-void tilemap_enable( Environment * _environment ) {
-    
-    bitmap_disable( _environment );
-
-}
-
-/**
  * @brief Emit ASM implementation for <b>TEXT DISABLE</b> instruction
  * 
  * This function can be called to emit the code to disable text mode

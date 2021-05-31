@@ -3324,3 +3324,52 @@ Variable * variable_bit( Environment * _environment, char * _value, char * _posi
 
     return result;
 }
+
+ScreenMode * find_screen_mode_by_suggestion( Environment * _environment, int _bitmap, int _width, int _height, int _colors ) {
+
+    ScreenMode * screenMode = _environment->screenModes;
+    ScreenMode * firstMode = NULL;
+
+    while ( screenMode ) {
+        if ( screenMode->bitmap == _bitmap ) {
+            firstMode = screenMode;
+            break;
+        }
+        screenMode = screenMode->next;
+    }
+
+    if ( ! _width && ! _height && ! _colors ) {
+        // printf( "first mode: %s\n", firstMode->description );
+        return firstMode;
+    }
+
+    screenMode = _environment->screenModes;
+    ScreenMode * bestMode = NULL;
+
+    while ( screenMode ) {
+        if ( screenMode->bitmap == _bitmap ) {
+           screenMode->score = 100;
+            screenMode->score -= ( _width ) ? ( abs( _width - screenMode->width ) ) : 0;
+            screenMode->score -= ( _height ) ? ( abs( _height - screenMode->height ) ) : 0;
+            screenMode->score -= ( _colors ) ? ( abs( _colors - screenMode->colors ) ) : 0;
+        } else {
+            screenMode->score = -100;
+        }
+        screenMode = screenMode->next;
+    }
+
+    screenMode = _environment->screenModes;
+    bestMode = firstMode;
+
+    while ( screenMode ) {
+        if ( screenMode->score > bestMode->score ) {
+            bestMode = screenMode;
+        }
+        screenMode = screenMode->next;
+    }
+
+    // printf( "best mode for %dx%d %d: %s\n", _width, _height, _colors, bestMode->description );
+   
+    return bestMode;
+
+}

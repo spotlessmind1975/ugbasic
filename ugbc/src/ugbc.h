@@ -396,6 +396,8 @@ typedef struct _ScreenMode {
 
     int         id;
 
+    char *      description;
+
     int         bitmap;
 
     int         width;
@@ -404,11 +406,13 @@ typedef struct _ScreenMode {
 
     int         colors;
 
+    int         score;
+
     struct _ScreenMode  * next;
 
 } ScreenMode;
 
-#define SCREEN_MODE_DEFINE( _id, _bitmap, _width, _height, _colors ) \
+#define SCREEN_MODE_DEFINE( _id, _bitmap, _width, _height, _colors, _description ) \
     { \
         ScreenMode * screenMode = malloc( sizeof( ScreenMode ) ); \
         screenMode->bitmap = _bitmap; \
@@ -416,8 +420,17 @@ typedef struct _ScreenMode {
         screenMode->width = _width; \
         screenMode->height = _height; \
         screenMode->colors = _colors; \
-        screenMode->next = _environment->screenModes; \
-        _environment->screenModes = screenMode; \
+        screenMode->score = 0; \
+        screenMode->description = _description; \
+        ScreenMode * last = _environment->screenModes; \
+        if ( last ) { \
+            while( last->next ) { \
+                last = last->next; \
+            } \
+            last->next = screenMode; \
+        } else { \
+            _environment->screenModes = screenMode; \
+        } \
     }
 
 /**
@@ -728,6 +741,8 @@ typedef struct _Environment {
 #define CRITICAL_BIT_UNSUPPORTED( v, t ) CRITICAL3("E045 - BIT unsupported for variable of given datatype", v, t );
 #define CRITICAL_INPUT_UNSUPPORTED( v, t ) CRITICAL3("E046 - INPUT unsupported for variable of given datatype", v, t );
 #define CRITICAL_MOVE_UNSUPPORTED( t ) CRITICAL2("E047 - Datatype cannot be copied", t );
+#define CRITICAL_SCREEN_MODE_BITMAP_UNSUPPORTED( t ) CRITICAL2("E048 - Screen mode unsupported for BITMAP mode", t );
+#define CRITICAL_SCREEN_MODE_TILEMAP_UNSUPPORTED( t ) CRITICAL2("E049 - Screen mode unsupported for TILEMAP mode", t );
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
 #define WARNING3( s, v1, v2 ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s, %s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v1, v2, _environment->yylineno ); }
@@ -947,6 +962,7 @@ void linker_cleanup( Environment * _environment );
 void linker_setup( Environment * _environment );
 int pattern_match( char * _pattern, char * _value );
 void setup_text_variables( Environment * _environment );
+ScreenMode * find_screen_mode_by_suggestion( Environment * _environment, int _bitmap, int _width, int _height, int _colors );
 
 //----------------------------------------------------------------------------
 // *A*
