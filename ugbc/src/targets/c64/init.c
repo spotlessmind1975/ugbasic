@@ -65,4 +65,6 @@ void target_initialization( Environment * _environment ) {
 
     setup_text_variables( _environment );
 
+    vic2_initialization( _environment );
+
 }

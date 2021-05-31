@@ -76,7 +76,7 @@ per quei computer che hanno la grafica mappata in memoria.
 @target c64
 
 </usermanual> */
-void bitmap_enable( Environment * _environment ) {
+void bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {
 
     // Let's define the special variable bitmapAddress.
     Variable * bitmapAddress = variable_retrieve_or_define( _environment, "bitmapAddress", VT_ADDRESS, 0x2000 );
@@ -86,7 +86,7 @@ void bitmap_enable( Environment * _environment ) {
 
     outline0("; BITMAP ENABLE");
 
-    vic2_bitmap_enable( _environment );
+    vic2_bitmap_enable( _environment, _width, _height, _colors );
 
 }
 

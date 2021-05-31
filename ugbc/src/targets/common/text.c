@@ -92,7 +92,7 @@ Disabilita la modalità a tiles.
 </usermanual> */
 void tilemap_disable( Environment * _environment ) {
     
-    bitmap_enable( _environment );
+    bitmap_enable( _environment, 0, 0, 0 );
     
 }
 

@@ -1321,12 +1321,30 @@ sprite_definition:
     sprite_definition_simple
   | sprite_definition_expression;
 
+optional_integer : 
+    Integer {
+        $$ = $1
+    } | {
+        $$ = 0;
+    };
+
+bitmap_enable_resolution : 
+      {
+        bitmap_enable( _environment, 0, 0, 0 );
+    }
+    | OP CP {
+        bitmap_enable( _environment, 0, 0, 0 );
+    }
+    | OP optional_integer COMMA optional_integer COMMA optional_integer CP {
+        bitmap_enable( _environment, $2, $4, $6 );
+    }
+
 bitmap_definition_simple:
     AT direct_integer {
       bitmap_at( _environment, $2 );
   } 
-  | ENABLE {
-      bitmap_enable( _environment );
+  | ENABLE bitmap_enable_resolution {
+
   }
   | DISABLE {
       bitmap_disable( _environment );
@@ -1377,9 +1395,20 @@ text_definition_expression:
 text_definition:
     text_definition_expression;
 
+tilemap_enable_resolution : 
+      {
+        tilemap_enable( _environment, 0, 0, 0 );
+    }
+    | OP CP {
+        tilemap_enable( _environment, 0, 0, 0 );
+    }
+    | OP optional_integer COMMA optional_integer COMMA optional_integer CP {
+        tilemap_enable( _environment, $2, $4, $6 );
+    }
+
 tilemap_definition_simple:
-    ENABLE {
-      tilemap_enable( _environment );
+    ENABLE tilemap_enable_resolution {
+
   }
   | DISABLE {
       tilemap_disable( _environment );

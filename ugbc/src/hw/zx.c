@@ -186,4 +186,11 @@ void zx_clear_key( Environment * _environment ) {
 
 }
 
+void zx_initialization( Environment * _environment ) {
+
+    SCREEN_MODE_DEFINE( BITMAP_MODE_STANDARD, 1, 192, 256, 2 );
+    SCREEN_MODE_DEFINE( TILEMAP_MODE_STANDARD, 0, 32, 25, 8 );
+
+}
+
 #endif

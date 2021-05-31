@@ -57,4 +57,6 @@ void target_initialization( Environment * _environment ) {
 
     setup_text_variables( _environment );
 
+    zx_initialization( _environment );
+
 }

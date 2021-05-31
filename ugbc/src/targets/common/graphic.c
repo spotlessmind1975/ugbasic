@@ -81,7 +81,7 @@ void graphic( Environment * _environment ) {
 
     outline0("; GRAPHIC" );
 
-    bitmap_enable( _environment );
+    bitmap_enable( _environment, 0, 0, 0 );
     bitmap_clear( _environment );
     colormap_clear( _environment );
     color_border( _environment, COLOR_BLACK );

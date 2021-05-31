@@ -166,6 +166,9 @@
 
 #define SCREEN_CAPABILITIES         ( ( 1<<BITMAP_NATIVE ) )
 
+#define BITMAP_MODE_STANDARD        1           // Standard Bitmap Mode     192 x 256 x 2
+#define TILEMAP_MODE_STANDARD       0           // Standard Character Mode  32 x 25 x 8
+
 void zx_color_border( Environment * _environment, char * _color );
 void zx_vscroll( Environment * _environment, int _displacement );
 void zx_text_at( Environment * _environment, char * _x, char * _y, char * _text, char * _text_size, char * _pen, char * _paper, char * _ww );

@@ -333,7 +333,7 @@ void vic2_bank_select( Environment * _environment, int _bank ) {
     outline0("STA $DD00" );
 }
 
-void vic2_bitmap_enable( Environment * _environment ) {
+void vic2_bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {
 
     // This fix is necessary to set the starting address of the bitmap 
     // to $2000 (which is an address available on C=64) instead of the 
@@ -833,6 +833,16 @@ void vic2_text_at( Environment * _environment, char * _x, char * _y, char * _tex
     outline1("STA %s", _y );
     outline0("LDA $d3");
     outline1("STA %s", _x );
+
+}
+
+void vic2_initialization( Environment * _environment ) {
+
+    SCREEN_MODE_DEFINE( BITMAP_MODE_STANDARD, 1, 320, 200, 2 );
+    SCREEN_MODE_DEFINE( BITMAP_MODE_MULTICOLOR, 1, 160, 200, 4 );
+    SCREEN_MODE_DEFINE( TILEMAP_MODE_STANDARD, 0, 40, 25, 16 );
+    SCREEN_MODE_DEFINE( TILEMAP_MODE_MULTICOLOR, 0, 40, 25, 16 );
+    SCREEN_MODE_DEFINE( TILEMAP_MODE_EXTENDED, 0, 40, 25, 20 );
 
 }
 

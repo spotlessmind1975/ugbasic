@@ -396,6 +396,8 @@ typedef struct _ScreenMode {
 
     int         id;
 
+    int         bitmap;
+
     int         width;
 
     int         height;
@@ -405,6 +407,18 @@ typedef struct _ScreenMode {
     struct _ScreenMode  * next;
 
 } ScreenMode;
+
+#define SCREEN_MODE_DEFINE( _id, _bitmap, _width, _height, _colors ) \
+    { \
+        ScreenMode * screenMode = malloc( sizeof( ScreenMode ) ); \
+        screenMode->bitmap = _bitmap; \
+        screenMode->id = _id; \
+        screenMode->width = _width; \
+        screenMode->height = _height; \
+        screenMode->colors = _colors; \
+        screenMode->next = _environment->screenModes; \
+        _environment->screenModes = screenMode; \
+    }
 
 /**
  * @brief Structure of compilation environment
@@ -960,7 +974,7 @@ void                    bitmap_clear( Environment * _environment );
 void                    bitmap_clear_with( Environment * _environment, int _value );
 void                    bitmap_clear_with_vars( Environment * _environment, char * _value );
 void                    bitmap_disable( Environment * _environment );
-void                    bitmap_enable( Environment * _environment );
+void                    bitmap_enable( Environment * _environment, int _width, int _height, int _colors );
 
 //----------------------------------------------------------------------------
 // *C*
@@ -1207,7 +1221,7 @@ void                    text_writing( Environment * _environment, char * _mode, 
 void                    textmap_at( Environment * _environment, int _address );
 void                    textmap_at_var( Environment * _environment, char * _address );
 void                    tilemap_disable( Environment * _environment );
-void                    tilemap_enable( Environment * _environment );
+void                    tilemap_enable( Environment * _environment, int _width, int _height, int _colors );
 void                    tiles_at( Environment * _environment, int _address );
 void                    tiles_at_var( Environment * _environment, char * _address );
 
