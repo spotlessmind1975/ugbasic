@@ -508,6 +508,13 @@ void z80_move_16bit( Environment * _environment, char *_source, char *_destinati
 
 }
 
+void z80_addressof_16bit( Environment * _environment, char *_source, char *_destination ) {
+    
+    outline1("LD HL, %s", _source );
+    outline1("LD (%s), HL", _destination );
+
+}
+
 /**
  * @brief <i>Z80</i>: emit code to store 16 bit
  * 

@@ -93,6 +93,7 @@ void z80_math_sub_16bit( Environment * _environment, char *_source, char *_desti
 void z80_math_sub_32bit( Environment * _environment, char *_source, char *_destination,  char *_name );
 void z80_math_sub_8bit( Environment * _environment, char *_source, char *_destination,  char *_name );
 void z80_move_16bit( Environment * _environment, char *_source, char *_destination );
+void z80_addressof_16bit( Environment * _environment, char *_source, char *_destination );
 void z80_move_32bit( Environment * _environment, char *_source, char *_destination );
 void z80_move_8bit( Environment * _environment, char *_source, char *_destination );
 void z80_move_8bit_with_offset( Environment * _environment, char *_source, char *_destination, int _offset );
@@ -207,6 +208,7 @@ void z80_move_8bit_with_offset2( Environment * _environment, char *_source, char
 #define cpu_math_sub_32bit( _environment, _source, _destination,  _name  ) z80_math_sub_32bit( _environment, _source, _destination,  _name  )
 #define cpu_math_sub_8bit( _environment, _source, _destination,  _name  ) z80_math_sub_8bit( _environment, _source, _destination,  _name  )
 #define cpu_move_16bit( _environment, _source, _destination  ) z80_move_16bit( _environment, _source, _destination  )
+#define cpu_addressof_16bit( _environment, _source, _destination  ) z80_addressof_16bit( _environment, _source, _destination  )
 #define cpu_move_32bit( _environment, _source, _destination  ) z80_move_32bit( _environment, _source, _destination  )
 #define cpu_move_8bit( _environment, _source, _destination  ) z80_move_8bit( _environment, _source, _destination  )
 #define cpu_peek( _environment,  _address,  _target  ) z80_peek( _environment,  _address,  _target  )
