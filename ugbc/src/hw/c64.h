@@ -107,7 +107,7 @@
 #define KEY_Y						25
 #define KEY_Z						12
 
-#define SCREEN_CAPABILITIES         ( ( TILEMAP_NATIVE ) | ( BITMAP_NATIVE ) )
+#define SCREEN_CAPABILITIES         ( ( 1<<TILEMAP_NATIVE ) | ( 1<<BITMAP_NATIVE ) )
 
 void c64_xpen( Environment * _environment, char * _destination );
 void c64_ypen( Environment * _environment, char * _destination );
