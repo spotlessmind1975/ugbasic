@@ -85,7 +85,7 @@ void debug_var( Environment * _environment, char * _name ) {
                     Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
                     Variable * size = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
                     cpu_move_8bit( _environment, var->realName, size->realName );
-                    cpu_move_16bit( _environment, var->realName, address->realName );
+                    cpu_addressof_16bit( _environment, var->realName, address->realName );
                     cpu_inc_16bit( _environment, address->realName );
                     outline1( "LD DE, %s", address->realName );
                     outline1( "LD A, (%s)", size->realName );

@@ -172,7 +172,7 @@ void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _
     switch( text->type ) {
         case VT_STRING:
             cpu_move_8bit( _environment, text->realName, size->realName );
-            cpu_move_16bit( _environment, text->realName, address->realName );
+            cpu_addressof_16bit( _environment, text->realName, address->realName );
             cpu_inc_16bit( _environment, address->realName );
             break;
         case VT_DSTRING:

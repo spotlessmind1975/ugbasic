@@ -1123,7 +1123,7 @@ Variable * variable_add( Environment * _environment, char * _source, char * _des
                     Variable * size = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
                     cpu_dsfree( _environment, result->realName );
                     cpu_move_8bit( _environment, source->realName, size1->realName );
-                    cpu_move_16bit( _environment, source->realName, address1->realName );
+                    cpu_addressof_16bit( _environment, source->realName, address1->realName );
                     cpu_inc_16bit( _environment, address1->realName );
                     cpu_math_add_8bit( _environment, size1->realName, size2->realName, size->realName );
                     cpu_dsalloc( _environment, size->realName, result->realName );
@@ -1422,7 +1422,7 @@ Variable * variable_compare( Environment * _environment, char * _source, char * 
                             cpu_dsdescriptor( _environment, target->realName, address2->realName, size2->realName );
                             cpu_compare_8bit( _environment, size->realName, size2->realName, result->realName, 1 );
                             cpu_bveq( _environment, result->realName, differentLabel );
-                            cpu_move_16bit( _environment, source->realName, address->realName );
+                            cpu_addressof_16bit( _environment, source->realName, address->realName );
                             cpu_inc_16bit(  _environment, address->realName );
                             cpu_compare_memory( _environment, address->realName, address2->realName, size->realName, result->realName, 1 );
                             cpu_label( _environment, differentLabel );
@@ -1445,7 +1445,7 @@ Variable * variable_compare( Environment * _environment, char * _source, char * 
                             cpu_dsdescriptor( _environment, source->realName, address->realName, size->realName );
                             cpu_compare_8bit( _environment, size->realName, size2->realName, result->realName, 1 );
                             cpu_bveq( _environment, result->realName, differentLabel );
-                            cpu_move_16bit( _environment, target->realName, address2->realName );
+                            cpu_addressof_16bit( _environment, target->realName, address2->realName );
                             cpu_inc_16bit(  _environment, address2->realName );
                             cpu_compare_memory( _environment, address->realName, address2->realName, size->realName, result->realName, 1 );
                             cpu_label( _environment, differentLabel );
@@ -1757,9 +1757,9 @@ Variable * variable_less_than( Environment * _environment, char * _source, char 
                             cpu_move_8bit( _environment, target->realName, size2->realName );
                             cpu_less_than_8bit( _environment, size->realName, size2->realName, result->realName, _equal );
                             cpu_bveq( _environment, result->realName, differentLabel );
-                            cpu_move_16bit( _environment, source->realName, address->realName );
+                            cpu_addressof_16bit( _environment, source->realName, address->realName );
                             cpu_inc_16bit(  _environment, address->realName );
-                            cpu_move_16bit( _environment, target->realName, address2->realName );
+                            cpu_addressof_16bit( _environment, target->realName, address2->realName );
                             cpu_inc_16bit(  _environment, address2->realName );
                             cpu_less_than_memory( _environment, address->realName, address2->realName, size->realName, result->realName, _equal );
                             cpu_label( _environment, differentLabel );
@@ -1775,7 +1775,7 @@ Variable * variable_less_than( Environment * _environment, char * _source, char 
                             cpu_dsdescriptor( _environment, target->realName, address2->realName, size2->realName );
                             cpu_less_than_8bit( _environment, size->realName, size2->realName, result->realName, 1 );
                             cpu_bveq( _environment, result->realName, differentLabel );
-                            cpu_move_16bit( _environment, source->realName, address->realName );
+                            cpu_addressof_16bit( _environment, source->realName, address->realName );
                             cpu_inc_16bit(  _environment, address->realName );
                             cpu_less_than_memory( _environment, address->realName, address2->realName, size->realName, result->realName, 1 );
                             cpu_label( _environment, differentLabel );
@@ -1797,7 +1797,7 @@ Variable * variable_less_than( Environment * _environment, char * _source, char 
                             cpu_dsdescriptor( _environment, source->realName, address->realName, size->realName );
                             cpu_less_than_8bit( _environment, size->realName, size2->realName, result->realName, 1 );
                             cpu_bveq( _environment, result->realName, differentLabel );
-                            cpu_move_16bit( _environment, target->realName, address2->realName );
+                            cpu_addressof_16bit( _environment, target->realName, address2->realName );
                             cpu_inc_16bit(  _environment, address2->realName );
                             cpu_less_than_memory( _environment, address->realName, address2->realName, size->realName, result->realName, 1 );
                             cpu_label( _environment, differentLabel );
@@ -1922,9 +1922,9 @@ Variable * variable_greater_than( Environment * _environment, char * _source, ch
                             cpu_move_8bit( _environment, target->realName, size2->realName );
                             cpu_greater_than_8bit( _environment, size->realName, size2->realName, result->realName, _equal );
                             cpu_bveq( _environment, result->realName, differentLabel );
-                            cpu_move_16bit( _environment, source->realName, address->realName );
+                            cpu_addressof_16bit( _environment, source->realName, address->realName );
                             cpu_inc_16bit(  _environment, address->realName );
-                            cpu_move_16bit( _environment, target->realName, address2->realName );
+                            cpu_addressof_16bit( _environment, target->realName, address2->realName );
                             cpu_inc_16bit(  _environment, address2->realName );
                             cpu_greater_than_memory( _environment, address->realName, address2->realName, size->realName, result->realName, _equal );
                             cpu_label( _environment, differentLabel );
@@ -1940,7 +1940,7 @@ Variable * variable_greater_than( Environment * _environment, char * _source, ch
                             cpu_dsdescriptor( _environment, target->realName, address2->realName, size2->realName );
                             cpu_greater_than_8bit( _environment, size->realName, size2->realName, result->realName, 1 );
                             cpu_bveq( _environment, result->realName, differentLabel );
-                            cpu_move_16bit( _environment, source->realName, address->realName );
+                            cpu_addressof_16bit( _environment, source->realName, address->realName );
                             cpu_inc_16bit(  _environment, address->realName );
                             cpu_greater_than_memory( _environment, address->realName, address2->realName, size->realName, result->realName, 1 );
                             cpu_label( _environment, differentLabel );
@@ -1962,7 +1962,7 @@ Variable * variable_greater_than( Environment * _environment, char * _source, ch
                             cpu_dsdescriptor( _environment, source->realName, address->realName, size->realName );
                             cpu_greater_than_8bit( _environment, size->realName, size2->realName, result->realName, 1 );
                             cpu_bveq( _environment, result->realName, differentLabel );
-                            cpu_move_16bit( _environment, target->realName, address2->realName );
+                            cpu_addressof_16bit( _environment, target->realName, address2->realName );
                             cpu_inc_16bit(  _environment, address2->realName );
                             cpu_greater_than_memory( _environment, address->realName, address2->realName, size->realName, result->realName, 1 );
                             cpu_label( _environment, differentLabel );
@@ -2160,7 +2160,7 @@ Variable * variable_string_right( Environment * _environment, char * _string, ch
             Variable * address2 = variable_temporary( _environment, VT_ADDRESS, "(result of right)" );
             Variable * size2 = variable_temporary( _environment, VT_BYTE, "(result of right)" );
             cpu_move_8bit( _environment, string->realName, size->realName );
-            cpu_move_16bit( _environment, string->realName, address->realName );
+            cpu_addressof_16bit( _environment, string->realName, address->realName );
             cpu_inc_16bit( _environment, address->realName );
             cpu_move_8bit( _environment, size->realName, size2->realName );
             cpu_math_sub_8bit( _environment, size2->realName, position->realName, size2->realName );
@@ -2293,7 +2293,7 @@ Variable * variable_string_mid( Environment * _environment, char * _string, char
             Variable * address2 = variable_temporary( _environment, VT_ADDRESS, "(result of mid)" );
             Variable * size2 = variable_temporary( _environment, VT_BYTE, "(result of mid)" );
             cpu_move_8bit( _environment, string->realName, size->realName );
-            cpu_move_16bit( _environment, string->realName, address->realName );
+            cpu_addressof_16bit( _environment, string->realName, address->realName );
             cpu_inc_16bit( _environment, address->realName );
             cpu_math_add_16bit_with_8bit( _environment, address->realName, position->realName, address->realName );
 
@@ -2458,7 +2458,7 @@ Variable * variable_string_instr( Environment * _environment, char * _search, ch
     switch( search->type ) {
         case VT_STRING:
             cpu_move_8bit( _environment, search->realName, size->realName );
-            cpu_move_16bit( _environment, search->realName, address->realName );
+            cpu_addressof_16bit( _environment, search->realName, address->realName );
             cpu_inc_16bit( _environment, address->realName );
             break;
         case VT_DSTRING:
@@ -2470,7 +2470,7 @@ Variable * variable_string_instr( Environment * _environment, char * _search, ch
     switch( searched->type ) {
         case VT_STRING:
             cpu_move_8bit( _environment, searched->realName, size2->realName );
-            cpu_move_16bit( _environment, searched->realName, address2->realName );
+            cpu_addressof_16bit( _environment, searched->realName, address2->realName );
             cpu_inc_16bit( _environment, address2->realName );
             break;
         case VT_DSTRING:
@@ -2553,7 +2553,7 @@ Variable * variable_string_lower( Environment * _environment, char * _string ) {
     switch( string->type ) {
         case VT_STRING:
             cpu_move_8bit( _environment, string->realName, size->realName );
-            cpu_move_16bit( _environment, string->realName, address->realName );
+            cpu_addressof_16bit( _environment, string->realName, address->realName );
             cpu_inc_16bit( _environment, address->realName );
             break;
         case VT_DSTRING:
@@ -2608,7 +2608,7 @@ Variable * variable_string_upper( Environment * _environment, char * _string ) {
     switch( string->type ) {
         case VT_STRING:
             cpu_move_8bit( _environment, string->realName, size->realName );
-            cpu_move_16bit( _environment, string->realName, address->realName );
+            cpu_addressof_16bit( _environment, string->realName, address->realName );
             cpu_inc_16bit( _environment, address->realName );
             break;
         case VT_DSTRING:
@@ -2717,7 +2717,7 @@ Variable * variable_string_val( Environment * _environment, char * _value ) {
     switch( value->type ) {
         case VT_STRING: {
             cpu_move_8bit( _environment, value->realName, size->realName );
-            cpu_move_16bit( _environment, value->realName, address->realName );
+            cpu_addressof_16bit( _environment, value->realName, address->realName );
             cpu_inc_16bit( _environment, address->realName );
             cpu_convert_string_into_16bit( _environment, address->realName, size->realName, result->realName );
             break;
@@ -2781,7 +2781,7 @@ Variable * variable_string_string( Environment * _environment, char * _string, c
     switch( string->type ) {
         case VT_STRING: {
             cpu_move_8bit( _environment, string->realName, size->realName );
-            cpu_move_16bit( _environment, string->realName, address->realName );
+            cpu_addressof_16bit( _environment, string->realName, address->realName );
             cpu_inc_16bit( _environment, address->realName );
             break;
         }
@@ -2870,7 +2870,7 @@ Variable * variable_string_flip( Environment * _environment, char * _string  ) {
     switch( string->type ) {
         case VT_STRING: {
             cpu_move_8bit( _environment, string->realName, size->realName );
-            cpu_move_16bit( _environment, string->realName, address->realName );
+            cpu_addressof_16bit( _environment, string->realName, address->realName );
             cpu_inc_16bit( _environment, address->realName );
 
             cpu_dsdescriptor( _environment, result->realName, address->realName, size->realName );
@@ -2982,7 +2982,7 @@ Variable * variable_string_asc( Environment * _environment, char * _char  ) {
     switch( character->type ) {
         case VT_STRING: {
             cpu_move_8bit( _environment, character->realName, size->realName );
-            cpu_move_16bit( _environment, character->realName, address->realName );
+            cpu_addressof_16bit( _environment, character->realName, address->realName );
             cpu_inc_16bit( _environment, address->realName );
 
             break;
@@ -3136,7 +3136,7 @@ void variable_move_array_string( Environment * _environment, char * _array, char
     switch( string->type ) {
         case VT_STRING:
             cpu_move_8bit( _environment, string->realName, size->realName );
-            cpu_move_16bit( _environment, string->realName, address->realName );
+            cpu_addressof_16bit( _environment, string->realName, address->realName );
             cpu_inc_16bit( _environment, address->realName );
             break;
         case VT_DSTRING:
@@ -3326,7 +3326,7 @@ Variable * variable_bin( Environment * _environment, char * _value, char * _digi
 
 Variable * variable_bit( Environment * _environment, char * _value, char * _position ) {
     Variable * value = variable_retrieve_or_define( _environment, _value, VT_WORD, 0 );
-    Variable * position = variable_retrieve_or_define( _environment, _value, VT_WORD, 1 );
+    Variable * position = variable_retrieve_or_define( _environment, _position, VT_WORD, 1 );
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of BIT)");
 
     MAKE_LABEL
@@ -3343,7 +3343,7 @@ Variable * variable_bit( Environment * _environment, char * _value, char * _posi
             cpu_bveq( _environment, result->realName, unsetLabel );
 
             cpu_label( _environment, setLabel );
-            cpu_store_8bit( _environment, result->realName, 1 );
+            cpu_store_8bit( _environment, result->realName, 0xff );
             cpu_jump( _environment, endLabel );
 
             cpu_label( _environment, unsetLabel );
