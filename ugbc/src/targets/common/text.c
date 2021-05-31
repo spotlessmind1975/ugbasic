@@ -101,7 +101,7 @@ void setup_text_variables( Environment * _environment ) {
     variable_define( _environment, "windowCX", VT_BYTE, 0 );
     variable_define( _environment, "windowCY", VT_BYTE, 0 );
     variable_define( _environment, "windowPE", VT_COLOR, COLOR_BLACK );
-    variable_define( _environment, "windowPA", VT_COLOR, COLOR_WHITE );
+    variable_define( _environment, "PAPER", VT_COLOR, COLOR_WHITE );
     variable_define( _environment, "windowE", VT_BYTE, 0 );
     variable_define( _environment, "windowS", VT_BYTE, 0 );
     variable_define( _environment, "windowW", VT_BYTE, 0 );
@@ -320,7 +320,7 @@ void text_text( Environment * _environment, char * _text ) {
     Variable * x = variable_retrieve( _environment, "windowCX" );
     Variable * y = variable_retrieve( _environment, "windowCY" );
     Variable * pen = variable_retrieve( _environment, "windowPE" );
-    Variable * paper = variable_retrieve( _environment, "windowPA" );
+    Variable * paper = variable_retrieve( _environment, "PAPER" );
     Variable * ww = variable_retrieve( _environment, "windowWW" );
 
     text_encoded_at( _environment, x->name, y->name, text->name, pen->name, paper->name, ww->name );

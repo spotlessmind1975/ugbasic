@@ -369,7 +369,7 @@ predefinito è ''DEFAULT PAPER''.
 </usermanual> */
 void paper( Environment * _environment, char * _color ) {
 
-    Variable * paper = variable_retrieve( _environment, "windowPA" );
+    Variable * paper = variable_retrieve( _environment, "PAPER" );
     Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_BLACK );
 
     variable_move( _environment, color->name, paper->name );
