@@ -56,7 +56,7 @@
 void bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {
 
     // Let's define the special variable bitmapAddress.
-    Variable * bitmapAddress = variable_retrieve_or_define( _environment, "bitmapAddress", VT_ADDRESS, 0x4000 );
+    Variable * bitmapAddress = variable_retrieve_or_define( _environment, "BITMAPADDRESS", VT_ADDRESS, 0x4000 );
 
     // Let's define the special variable colormapAddress.
     Variable * colormapAddress = variable_retrieve_or_define( _environment, "colormapAddress", VT_ADDRESS, 0x5800 );
@@ -109,7 +109,7 @@ void bitmap_at( Environment * _environment, int _address ) {
 
     // Let's define the special variable bitmapAddress, and update
     // it with the requested value.
-    Variable * bitmapAddress = variable_retrieve_or_define( _environment, "bitmapAddress", VT_ADDRESS, 0x4000 );
+    Variable * bitmapAddress = variable_retrieve_or_define( _environment, "BITMAPADDRESS", VT_ADDRESS, 0x4000 );
 
 }
 
@@ -135,7 +135,7 @@ void bitmap_at_var( Environment * _environment, char * _address ) {
 
     // Let's define the special variable bitmapAddress, and update
     // it with the requested value.    
-    Variable * bitmapAddress = variable_retrieve_or_define( _environment, "bitmapAddress", VT_ADDRESS, 0x4000 );
+    Variable * bitmapAddress = variable_retrieve_or_define( _environment, "BITMAPADDRESS", VT_ADDRESS, 0x4000 );
 
 }
 
@@ -164,7 +164,7 @@ void bitmap_clear_with( Environment * _environment, int _pattern ) {
     outline1("; BITMAP CLEAR WITH $%2.2x", _pattern );
 
     // Safety check -- bitmap address must be defined at least once.
-    Variable * bitmapAddress = variable_retrieve( _environment, "bitmapAddress" );
+    Variable * bitmapAddress = variable_retrieve( _environment, "BITMAPADDRESS" );
 
     Variable * pattern = variable_temporary( _environment, VT_BYTE, "(pattern)");
 
@@ -196,7 +196,7 @@ void bitmap_clear_with_vars( Environment * _environment, char * _pattern ) {
     outline1("; BITMAP CLEAR WITH %s", _pattern );
 
     // Safety check -- bitmap address must be defined at least once.
-    Variable * bitmapAddress = variable_retrieve( _environment, "bitmapAddress" );
+    Variable * bitmapAddress = variable_retrieve( _environment, "BITMAPADDRESS" );
 
     // Safety check -- expression must exists (it should be always true)
     Variable * pattern = variable_retrieve( _environment, _pattern );

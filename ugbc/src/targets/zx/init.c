@@ -50,8 +50,8 @@ void target_initialization( Environment * _environment ) {
     variable_global( _environment, "stringsAddress" );
     variable_define( _environment, "bitmap_enabled", VT_BYTE, 0 );
     variable_global( _environment, "bitmap_enabled" );
-    variable_define( _environment, "bitmapAddress", VT_ADDRESS, 0x4000 );
-    variable_global( _environment, "bitmapAddress" );
+    variable_define( _environment, "BITMAPADDRESS", VT_ADDRESS, 0x4000 );
+    variable_global( _environment, "BITMAPADDRESS" );
     variable_define( _environment, "colormapAddress", VT_ADDRESS, 0x5800 );
     variable_global( _environment, "colormapAddress" );
 

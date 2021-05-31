@@ -190,7 +190,7 @@ void text_hscroll_line( Environment * _environment, int _direction ) {
 
     if ( !_environment->textHScrollLineDeployed ) {
 
-        Variable * bitmapAddress = variable_retrieve( _environment, "bitmapAddress" );
+        Variable * bitmapAddress = variable_retrieve( _environment, "BITMAPADDRESS" );
 
         outline0("JMP lib_text_hscroll_line_after");
 
@@ -258,7 +258,7 @@ void text_hscroll_screen( Environment * _environment, int _direction ) {
 
     if ( !_environment->textHScrollScreenDeployed ) {
 
-        Variable * bitmapAddress = variable_retrieve( _environment, "bitmapAddress" );
+        Variable * bitmapAddress = variable_retrieve( _environment, "BITMAPADDRESS" );
 
         outline0("JMP lib_text_hscroll_screen_after");
 
