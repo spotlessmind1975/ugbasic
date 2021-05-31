@@ -34,6 +34,7 @@
 
 #include "../tester.h"
 
+#ifdef __c64__
 
 /****************************************************************************
  * CODE SECTION
@@ -81,3 +82,5 @@ void test_vic2( ) {
    create_test( "vic2_text_at", &test_vic2_text_at_payload, &test_vic2_text_at_tester );    
 
 }
+
+#endif
