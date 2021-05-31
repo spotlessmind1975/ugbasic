@@ -167,7 +167,7 @@ factor:
         $$ = variable_not( _environment, variable_bit( _environment, $1, $4 )->name )->name;
       }
       | BIT exponential OF factor {
-        $$ = variable_bit( _environment, $2, $4 )->name;
+        $$ = variable_bit( _environment, $4, $2 )->name;
       }
       ;
 
