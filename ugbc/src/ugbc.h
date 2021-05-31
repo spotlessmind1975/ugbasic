@@ -392,6 +392,20 @@ typedef enum _Writing {
 
 } Writing;
 
+typedef struct _ScreenMode {
+
+    int         id;
+
+    int         width;
+
+    int         height;
+
+    int         colors;
+
+    struct _ScreenMode  * next;
+
+} ScreenMode;
+
 /**
  * @brief Structure of compilation environment
  * 
@@ -452,6 +466,8 @@ typedef struct _Environment {
      * It contains all the banks, divided by type.
      */
     Bank * banks[BANK_TYPE_COUNT];
+
+    ScreenMode * screenModes;
 
     /**
      * List of temporary (and reused) variables.
@@ -909,6 +925,7 @@ typedef struct _Environment {
 #define BITMAP_NATIVE       1
 
 void begin_compilation( Environment * _environment );
+void target_initialization( Environment *_environment );
 void end_compilation( Environment * _environment );
 void bank_cleanup( Environment * _environment );
 void gameloop_cleanup( Environment * _environment );
