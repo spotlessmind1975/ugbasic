@@ -1125,6 +1125,7 @@ void                    on_proc_index( Environment * _environment, char * _label
 // *P*
 //----------------------------------------------------------------------------
 
+void                    paper( Environment * _environment, char * _paper );
 Variable *              param_procedure( Environment * _environment, char * _name );
 Variable *              peek( Environment * _environment, int _location );
 Variable *              peek_var( Environment * _environment, char * _location );
@@ -1222,7 +1223,6 @@ void                    text_hscroll_screen( Environment * _environment, int _di
 void                    text_locate( Environment * _environment, char * _x, char * _y );
 void                    text_memorize( Environment * _environment );
 void                    text_newline( Environment * _environment );
-void                    text_paper( Environment * _environment, char * _paper );
 void                    text_pen( Environment * _environment, char * _color );
 void                    text_question_mark( Environment * _environment );
 void                    text_remember( Environment * _environment );

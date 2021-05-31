@@ -335,17 +335,6 @@ void text_cls( Environment * _environment ) {
 
 }
 
-void text_paper( Environment * _environment, char * _color ) {
-
-    Variable * paper = variable_retrieve( _environment, "windowPA" );
-    Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_BLACK );
-
-    variable_move( _environment, color->name, paper->name );
-    
-    zx_color_border( _environment, color->realName );
-    
-}
-
 /**
  * @brief Emit ASM implementation for <b>TEXT ENABLE</b> instruction
  * 

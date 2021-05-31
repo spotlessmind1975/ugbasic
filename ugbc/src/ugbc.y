@@ -2153,7 +2153,7 @@ statement:
       text_pen( _environment, $2 );
   }
   | PAPER expr {
-      text_paper( _environment, $2 );
+      paper( _environment, $2 );
   }
   | INVERSE ON {
       CRITICAL_NOT_SUPPORTED("INVERSE");
