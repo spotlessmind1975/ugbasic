@@ -396,23 +396,45 @@ void test_vic2_cls_payload( TestEnvironment * _te ) {
 
     Environment * e = &_te->environment;
 
+    Variable * red = variable_define( e, "red", VT_COLOR, COLOR_RED );
+    Variable * yellow = variable_define( e, "yellow", VT_COLOR, COLOR_YELLOW );
+
     _te->debug.inspections[0].name="BITMAP";
     _te->debug.inspections[0].address=0x2000;
     _te->debug.inspections[0].size=8000;
     ++_te->debug.inspections_count;
 
+    _te->debug.inspections[1].name="COLORMAP";
+    _te->debug.inspections[1].address=0x0400;
+    _te->debug.inspections[1].size=1000;
+    ++_te->debug.inspections_count;
+
     // a) Standard Character Mode
     vic2_bitmap_enable( e, 0, 0, 0 );
+    paper( e, red->name );
+    pen( e, yellow->name );
     vic2_cls( e );
     
+    _te->trackedVariables[0] = red;
+    _te->trackedVariables[1] = yellow;
+
 }
 
 int test_vic2_cls_tester( TestEnvironment * _te ) {
+
+    Variable * red = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * yellow = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
 
     int i=0, j=0; 
 
     for( i=0; i<_te->debug.inspections[0].size; ++i ) {
         if ( _te->debug.inspections[0].memory[i] != 0 ) {
+            return 0;
+        }
+    }
+
+    for( i=0; i<_te->debug.inspections[1].size; ++i ) {
+        if ( _te->debug.inspections[1].memory[i] != ( red->value | ( yellow->value << 4 ) ) ) {
             return 0;
         }
     }
@@ -427,25 +449,59 @@ void test_vic2_cls2_payload( TestEnvironment * _te ) {
 
     Environment * e = &_te->environment;
 
+    Variable * red = variable_define( e, "red", VT_COLOR, COLOR_RED );
+    Variable * yellow = variable_define( e, "yellow", VT_COLOR, COLOR_YELLOW );
+
     _te->debug.inspections[0].name="TEXTAREA";
     _te->debug.inspections[0].address=0x0400;
     _te->debug.inspections[0].size=1000;
     ++_te->debug.inspections_count;
 
+    _te->debug.inspections[1].name="COLORMAP";
+    _te->debug.inspections[1].address=0xD800;
+    _te->debug.inspections[1].size=1000;
+    ++_te->debug.inspections_count;
+
+    _te->debug.inspections[2].name="BG";
+    _te->debug.inspections[2].address=0xd021;
+    _te->debug.inspections[2].size=1;
+    ++_te->debug.inspections_count;
+
     // a) Standard Character Mode
     vic2_tilemap_enable( e, 0, 0, 0 );
+    paper( e, red->name );
+    pen( e, yellow->name );
     vic2_cls( e );
     
+    _te->trackedVariables[0] = red;
+    _te->trackedVariables[1] = yellow;
+
 }
 
 int test_vic2_cls2_tester( TestEnvironment * _te ) {
+
+    Variable * red = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * yellow = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
 
     int i=0, j=0; 
 
     for( i=0; i<_te->debug.inspections[0].size; ++i ) {
         if ( _te->debug.inspections[0].memory[i] != 32 ) {
+            printf( "Failed clearing text\n");
             return 0;
         }
+    }
+
+    for( i=0; i<_te->debug.inspections[1].size; ++i ) {
+        if ( _te->debug.inspections[1].memory[i] != ( yellow->value ) ) {
+            printf( "Failed clearing background\n");
+            return 0;
+        }
+    }
+
+    if ( _te->debug.inspections[2].memory[0] != ( red->value ) ) {
+            printf( "Failed background color\n");
+        return 0;
     }
 
     return 1;
@@ -459,18 +515,34 @@ void test_vic2_cls3_payload( TestEnvironment * _te ) {
     Environment * e = &_te->environment;
 
     Variable * emptyTile = variable_retrieve( e, "EMPTYTILE" );
+    Variable * red = variable_define( e, "red", VT_COLOR, COLOR_RED );
+    Variable * yellow = variable_define( e, "yellow", VT_COLOR, COLOR_YELLOW );
 
     _te->debug.inspections[0].name="TEXTAREA";
     _te->debug.inspections[0].address=0x0400;
     _te->debug.inspections[0].size=1000;
     ++_te->debug.inspections_count;
 
+    _te->debug.inspections[1].name="COLORMAP";
+    _te->debug.inspections[1].address=0xD800;
+    _te->debug.inspections[1].size=1000;
+    ++_te->debug.inspections_count;
+
+    _te->debug.inspections[2].name="BG";
+    _te->debug.inspections[2].address=0xd021;
+    _te->debug.inspections[2].size=1;
+    ++_te->debug.inspections_count;
+
     // a) Standard Character Mode
     cpu_store_8bit( e, emptyTile->realName, 42 );
     vic2_tilemap_enable( e, 0, 0, 0 );
+    paper( e, red->name );
+    pen( e, yellow->name );
     vic2_cls( e );
     
     _te->trackedVariables[0] = emptyTile;
+    _te->trackedVariables[1] = red;
+    _te->trackedVariables[2] = yellow;
 
 }
 
@@ -479,11 +551,60 @@ int test_vic2_cls3_tester( TestEnvironment * _te ) {
     int i=0, j=0; 
 
     Variable * emptyTile = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * red = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+    Variable * yellow = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
 
     for( i=0; i<_te->debug.inspections[0].size; ++i ) {
         if ( _te->debug.inspections[0].memory[i] != emptyTile->value ) {
+            printf( "Failed clearing text at %4.4x\n", i);
             return 0;
         }
+    }
+
+    for( i=0; i<_te->debug.inspections[1].size; ++i ) {
+        if ( _te->debug.inspections[1].memory[i] != ( yellow->value ) ) {
+            printf( "Failed clearing background\n");
+            return 0;
+        }
+    }
+
+    if ( _te->debug.inspections[2].memory[0] != ( red->value ) ) {
+        printf( "Failed background color\n");
+        return 0;
+    }
+
+    return 1;
+
+}
+
+//============================================================================
+
+void test_vic2_background_color_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * red = variable_define( e, "red", VT_COLOR, COLOR_RED );
+
+    _te->debug.inspections[0].name="BG";
+    _te->debug.inspections[0].address=0xd021;
+    _te->debug.inspections[0].size=1;
+    ++_te->debug.inspections_count;
+
+    vic2_background_color( e, "#0", red->realName );
+
+    _te->trackedVariables[0] = red;
+
+}
+
+int test_vic2_background_color_tester( TestEnvironment * _te ) {
+
+    int i=0, j=0; 
+
+    Variable * red = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+
+    if ( _te->debug.inspections[0].memory[0] != ( red->value ) ) {
+        printf( "Failed background color\n");
+        return 0;
     }
 
     return 1;
@@ -498,6 +619,7 @@ void test_vic2( ) {
     create_test( "vic2_cls", &test_vic2_cls_payload, &test_vic2_cls_tester );
     create_test( "vic2_cls2", &test_vic2_cls2_payload, &test_vic2_cls2_tester );
     create_test( "vic2_cls3", &test_vic2_cls3_payload, &test_vic2_cls3_tester );
+    create_test( "vic2_background_color", &test_vic2_background_color_payload, &test_vic2_background_color_tester );
 
 }
 

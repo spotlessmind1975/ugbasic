@@ -81,9 +81,10 @@ void create_test( char *_name, void (*_payload)(TestEnvironment *), int (*_teste
                     fscanf(handle, "%x", &v );
                     t.debug.inspections[i].memory[j] = v;
                 }
-                continue;
+                break;
             }
         }
+        if ( i<t.debug.inspections_count ) continue;
 
         if ( 
                strcmp( realname, "WORKING") == 0 
