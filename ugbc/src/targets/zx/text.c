@@ -360,6 +360,8 @@ Abilita la modalità a tiles.
 </usermanual> */
 void tilemap_enable( Environment * _environment, int _width, int _height, int _colors ) {
     
-     bitmap_disable( _environment );
+    bitmap_disable( _environment );
 
+    zx_tilemap_enable( _environment, _width, _height, _colors );
+    
 }

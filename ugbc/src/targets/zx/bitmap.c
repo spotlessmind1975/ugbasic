@@ -68,6 +68,8 @@ void bitmap_enable( Environment * _environment, int _width, int _height, int _co
     
     variable_store( _environment, bitmap_enabled->name, 1 );
 
+    zx_bitmap_enable( _environment, _width, _height, _colors );
+    
 }
 
 /**

@@ -67,8 +67,8 @@ void zx_text_at( Environment * _environment, char * _x, char * _y, char * _text,
 
     z80_move_8bit( _environment, _x, "XCURS");
     z80_move_8bit( _environment, _y, "YCURS");
-    z80_move_8bit( _environment, _pen, "LOCALPEN");
-    z80_move_8bit( _environment, _paper, "LOCALPAPER");
+    z80_move_8bit( _environment, _pen, "_PEN");
+    z80_move_8bit( _environment, _paper, "_PAPER");
     z80_move_8bit( _environment, _ww, "LOCALWW");
     // z80_move_8bit( _environment, _tab, "TABCOUNT");
 
@@ -89,13 +89,12 @@ void zx_cls( Environment * _environment, char * _pen, char * _paper ) {
     deploy( clsDeployed, "./ugbc/src/hw/zx/cls.asm" );
 
     if ( _pen ) {
-        z80_move_8bit( _environment, _pen, "LOCALPEN");
+        z80_move_8bit( _environment, _pen, "_PEN");
     }
     if ( _paper ) {
-        z80_move_8bit( _environment, _paper, "LOCALPAPER");
+        z80_move_8bit( _environment, _paper, "_PAPER");
     }
 
-    outline0("LD A, 0");
     outline0("CALL CLS");
 
 }
@@ -191,6 +190,14 @@ void zx_initialization( Environment * _environment ) {
     SCREEN_MODE_DEFINE( BITMAP_MODE_STANDARD, 1, 192, 256, 2, "Standard Bitmap Mode" );
     SCREEN_MODE_DEFINE( TILEMAP_MODE_STANDARD, 0, 32, 25, 8, "(emulated) Standard Character Mode" );
 
+}
+
+void zx_bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {
+
+}
+
+void zx_tilemap_enable( Environment * _environment, int _width, int _height, int _colors ) {
+    
 }
 
 #endif
