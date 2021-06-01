@@ -48,7 +48,7 @@ extern char DATATYPE_AS_STRING[][16];
 %token INKEY SCANCODE SCAN SHIFT SCANSHIFT BOTH SHIFTS NONE LETTER ASTERISK COLON COMMA 
 %token COMMODORE CONTROL CRSR CURSOR DELETE EQUAL FUNCTION INSERT ARROW MINUS PERIOD PLUS 
 %token POUND RUNSTOP RUN STOP SEMICOLON SLASH KEY STATE KEYSTATE KEYSHIFT CAPSLOCK CAPS LOCK ALT
-%token INPUT FREE TILEMAP
+%token INPUT FREE TILEMAP EMPTY TILE EMPTYTILE
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -1975,7 +1975,7 @@ statement:
       variable_move( _environment, $3, "ADDRESS" );
   }
   | EMPTY TILE OP_ASSIGN expr {
-      variable_move( _environment, $3, "EMPTYTILE" );
+      variable_move( _environment, $4, "EMPTYTILE" );
   }
   | EMPTYTILE OP_ASSIGN expr {
       variable_move( _environment, $3, "EMPTYTILE" );

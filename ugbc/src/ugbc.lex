@@ -109,6 +109,8 @@ DWORD { return (DWORD); }
 E { return (E); }
 ECM { return(ECM); }
 ELSE { return(ELSE); }
+EMPTY { return(EMPTY); }
+EMPTYTILE { return(EMPTYTILE); }
 END { return (END); }
 ENDIF { return (ENDIF); }
 ENABLE { return (ENABLE); }
@@ -283,6 +285,7 @@ TEXTADDRESS { return (TEXTADDRESS); }
 THEN { return (THEN); }
 TICKS { return (TICKS); }
 TILEMAP { return (TILEMAP); }
+TILE { return (TILE); }
 TILES { return (TILES); }
 TIMER { return (TIMER); }
 TO { return (TO); }
