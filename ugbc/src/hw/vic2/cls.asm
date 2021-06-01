@@ -16,10 +16,39 @@ CLSG:
 CLSGY:
     STA ($25),Y
     INY
-    BNE CLSY
+    BNE CLSGY
     INC $26
     DEX
     BNE CLSGY
+
+    LDA COLORMAPADDRESS
+    STA $25
+    LDA COLORMAPADDRESS+1
+    STA $26
+    LDX #3
+    LDY #0
+    LDA _PEN
+    ASL A
+    ASL A
+    ASL A
+    ASL A
+    ORA _PAPER
+CLGC:
+    STA ($25),Y
+    INY
+    BNE CLGC
+    INC $26
+    CPX #1
+    BNE CLGCNB
+CLGC2:
+    STA ($25),Y
+    INY
+    CPY #232
+    BNE CLGC2
+CLGCNB:
+    DEX
+    BNE CLGC
+
     RTS
 
 CLST:
@@ -30,19 +59,43 @@ CLST:
     LDX #3
     LDY #0
     LDA EMPTYTILE
-CLSY:
+CLST2:
     STA ($25),Y
     INY
-    BNE CLSY
+    BNE CLST2
     INC $26
     CPX #1
-    BNE CLSNB
-CLSY2:
+    BNE CLSTNB
+CLST2X:
     STA ($25),Y
     INY
     CPY #232
-    BNE CLSY2
-CLSNB:
+    BNE CLST2X
+CLSTNB:
     DEX
-    BNE CLSY
+    BNE CLST2
+
+    LDA COLORMAPADDRESS
+    STA $25
+    LDA COLORMAPADDRESS+1
+    STA $26
+    LDX #3
+    LDY #0
+    LDA _PEN
+CLSTC:
+    STA ($25),Y
+    INY
+    BNE CLSTC
+    INC $26
+    CPX #1
+    BNE CLSTCNB
+CLSTC2:
+    STA ($25),Y
+    INY
+    CPY #232
+    BNE CLSTC2
+CLSTCNB:
+    DEX
+    BNE CLSTC
+
     RTS
