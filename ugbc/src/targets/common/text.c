@@ -100,7 +100,7 @@ void setup_text_variables( Environment * _environment ) {
     variable_define( _environment, "windowY2", VT_BYTE, (TEXT_ROWS_COUNT-1) );                
     variable_define( _environment, "windowCX", VT_BYTE, 0 );
     variable_define( _environment, "windowCY", VT_BYTE, 0 );
-    variable_define( _environment, "windowPE", VT_COLOR, COLOR_BLACK );
+    variable_define( _environment, "PEN", VT_COLOR, COLOR_BLACK );
     variable_define( _environment, "PAPER", VT_COLOR, COLOR_WHITE );
     variable_define( _environment, "windowE", VT_BYTE, 0 );
     variable_define( _environment, "windowS", VT_BYTE, 0 );
@@ -319,7 +319,7 @@ void text_text( Environment * _environment, char * _text ) {
     Variable * text = variable_retrieve( _environment, _text );
     Variable * x = variable_retrieve( _environment, "windowCX" );
     Variable * y = variable_retrieve( _environment, "windowCY" );
-    Variable * pen = variable_retrieve( _environment, "windowPE" );
+    Variable * pen = variable_retrieve( _environment, "PEN" );
     Variable * paper = variable_retrieve( _environment, "PAPER" );
     Variable * ww = variable_retrieve( _environment, "windowWW" );
 
@@ -549,9 +549,9 @@ grafica corrente.
 @target all
 </usermanual> */
 
-void text_pen( Environment * _environment, char * _color ) {
+void pen( Environment * _environment, char * _color ) {
 
-    Variable * pen = variable_retrieve( _environment, "windowPE" );
+    Variable * pen = variable_retrieve( _environment, "PEN" );
     Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_BLACK );
 
     variable_move( _environment, color->name, pen->name );
