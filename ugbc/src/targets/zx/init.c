@@ -40,6 +40,11 @@
 
 void target_initialization( Environment * _environment ) {
 
+    variable_import( _environment, "BITMAPADDRESS", VT_ADDRESS );
+    variable_global( _environment, "BITMAPADDRESS" );
+    variable_import( _environment, "EMPTYTILE", VT_BYTE );
+    variable_global( _environment, "EMPTYTILE" );    
+
     bank_define( _environment, "VARIABLES", BT_VARIABLES, 0x5000, NULL );
     bank_define( _environment, "TEMPORARY", BT_TEMPORARY, 0x5100, NULL );
     variable_import( _environment, "FREE_STRING", VT_WORD );
@@ -50,8 +55,6 @@ void target_initialization( Environment * _environment ) {
     variable_global( _environment, "stringsAddress" );
     variable_define( _environment, "bitmap_enabled", VT_BYTE, 0 );
     variable_global( _environment, "bitmap_enabled" );
-    variable_import( _environment, "BITMAPADDRESS", VT_ADDRESS );
-    variable_global( _environment, "BITMAPADDRESS" );
     variable_define( _environment, "colormapAddress", VT_ADDRESS, 0x5800 );
     variable_global( _environment, "colormapAddress" );
 
