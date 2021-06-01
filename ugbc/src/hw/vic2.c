@@ -337,6 +337,8 @@ void vic2_bitmap_enable( Environment * _environment, int _width, int _height, in
 
     ScreenMode * mode = find_screen_mode_by_suggestion( _environment, 1, _width, _height, _colors );
 
+    Variable * colormapAddress = variable_retrieve( _environment, "COLORMAPADDRESS" );
+
     switch( mode->id ) {
         case BITMAP_MODE_STANDARD:
             // This fix is necessary to set the starting address of the bitmap 
@@ -355,6 +357,9 @@ void vic2_bitmap_enable( Environment * _environment, int _width, int _height, in
             outline0("LDA $D016" );
             outline0("AND #%11101111");
             outline0("STA $D016" );
+
+            cpu_store_16bit( _environment, colormapAddress->realName, 0x0400 );
+
             break;
         case BITMAP_MODE_MULTICOLOR:
             // This fix is necessary to set the starting address of the bitmap 
@@ -373,6 +378,9 @@ void vic2_bitmap_enable( Environment * _environment, int _width, int _height, in
             outline0("LDA $D016" );
             outline0("ORA #%00010000");
             outline0("STA $D016" );
+
+            cpu_store_16bit( _environment, colormapAddress->realName, 0x0400 );
+            
             break;
         default:
             CRITICAL_SCREEN_MODE_BITMAP_UNSUPPORTED( mode->description );
@@ -383,6 +391,8 @@ void vic2_bitmap_enable( Environment * _environment, int _width, int _height, in
 
 void vic2_bitmap_disable( Environment * _environment ) {
 
+    Variable * colormapAddress = variable_retrieve( _environment, "COLORMAPADDRESS" );
+
     // Let's disable graphics!
     outline0("LDA $D011" );
     outline0("AND #%11011111");
@@ -391,11 +401,15 @@ void vic2_bitmap_disable( Environment * _environment ) {
     outline0("AND #%11101111");
     outline0("STA $D016" );
 
+    cpu_store_16bit( _environment, colormapAddress->realName, 0xd800 );
+
 }
 
 void vic2_tilemap_enable( Environment * _environment, int _width, int _height, int _colors ) {
 
     ScreenMode * mode = find_screen_mode_by_suggestion( _environment, 0, _width, _height, _colors );
+
+    Variable * colormapAddress = variable_retrieve( _environment, "COLORMAPADDRESS" );
 
     switch( mode->id ) {
         case TILEMAP_MODE_STANDARD:
@@ -406,6 +420,9 @@ void vic2_tilemap_enable( Environment * _environment, int _width, int _height, i
             outline0("LDA $D016" );
             outline0("AND #%11101111");
             outline0("STA $D016" );
+
+            cpu_store_16bit( _environment, colormapAddress->realName, 0xd800 );
+
             break;
         case TILEMAP_MODE_MULTICOLOR:
             // Let's disable graphics!
@@ -415,6 +432,9 @@ void vic2_tilemap_enable( Environment * _environment, int _width, int _height, i
             outline0("LDA $D016" );
             outline0("ORA #%00010000");
             outline0("STA $D016" );
+
+            cpu_store_16bit( _environment, colormapAddress->realName, 0xd800 );
+
             break;
         case TILEMAP_MODE_EXTENDED:
             // Let's disable graphics!
@@ -425,6 +445,9 @@ void vic2_tilemap_enable( Environment * _environment, int _width, int _height, i
             outline0("LDA $D016" );
             outline0("AND #%11101111");
             outline0("STA $D016" );
+
+            cpu_store_16bit( _environment, colormapAddress->realName, 0xd800 );
+
             break;
         default:
             CRITICAL_SCREEN_MODE_TILEMAP_UNSUPPORTED( mode->description );
