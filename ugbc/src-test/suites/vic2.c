@@ -347,37 +347,37 @@ int test_vic2_tilemap_enable_tester( TestEnvironment * _te ) {
     // h) Multicolor Character Mode
 
 
-    if ( ! standard_character_mode( d011b->value, d016b->value ) ) {
-        printf("Failed a)\n");
-    }
+    // if ( ! standard_character_mode( d011b->value, d016b->value ) ) {
+    //     printf("Failed a)\n");
+    // }
     
-    if ( ! standard_character_mode( d011b->value, d016b->value ) ) {
-        printf("Failed b)\n");
-    }
+    // if ( ! standard_character_mode( d011b->value, d016b->value ) ) {
+    //     printf("Failed b)\n");
+    // }
 
-    if ( ! standard_character_mode( d011c->value, d016c->value ) )  {
-        printf("Failed c)\n");
-    }
+    // if ( ! standard_character_mode( d011c->value, d016c->value ) )  {
+    //     printf("Failed c)\n");
+    // }
 
-    if ( ! standard_character_mode( d011d->value, d016d->value ) ) {
-        printf("Failed d)\n");
-    }
+    // if ( ! standard_character_mode( d011d->value, d016d->value ) ) {
+    //     printf("Failed d)\n");
+    // }
 
-    if ( ! multicolor_character_mode( d011e->value, d016e->value ) ) {
-        printf("Failed e)\n");
-    }
+    // if ( ! multicolor_character_mode( d011e->value, d016e->value ) ) {
+    //     printf("Failed e)\n");
+    // }
 
-    if ( ! multicolor_character_mode( d011f->value, d016f->value ) ) {
-        printf("Failed f)\n");
-    }
+    // if ( ! multicolor_character_mode( d011f->value, d016f->value ) ) {
+    //     printf("Failed f)\n");
+    // }
 
-    if ( ! extended_character_mode( d011g->value, d016g->value ) ) {
-        printf("Failed g)\n");
-    }
+    // if ( ! extended_character_mode( d011g->value, d016g->value ) ) {
+    //     printf("Failed g)\n");
+    // }
 
-    if ( ! multicolor_character_mode( d011h->value, d016h->value ) ) {
-        printf("Failed h)\n");
-    }
+    // if ( ! multicolor_character_mode( d011h->value, d016h->value ) ) {
+    //     printf("Failed h)\n");
+    // }
 
     return standard_character_mode( d011a->value, d016a->value ) &&
             standard_character_mode( d011b->value, d016b->value ) &&
@@ -390,11 +390,114 @@ int test_vic2_tilemap_enable_tester( TestEnvironment * _te ) {
 
 }
 
+//============================================================================
+
+void test_vic2_cls_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    _te->debug.inspections[0].name="BITMAP";
+    _te->debug.inspections[0].address=0x2000;
+    _te->debug.inspections[0].size=8000;
+    ++_te->debug.inspections_count;
+
+    // a) Standard Character Mode
+    vic2_bitmap_enable( e, 0, 0, 0 );
+    vic2_cls( e );
+    
+}
+
+int test_vic2_cls_tester( TestEnvironment * _te ) {
+
+    int i=0, j=0; 
+
+    for( i=0; i<_te->debug.inspections[0].size; ++i ) {
+        if ( _te->debug.inspections[0].memory[i] != 0 ) {
+            return 0;
+        }
+    }
+
+    return 1;
+
+}
+
+//============================================================================
+
+void test_vic2_cls2_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    _te->debug.inspections[0].name="TEXTAREA";
+    _te->debug.inspections[0].address=0x0400;
+    _te->debug.inspections[0].size=1000;
+    ++_te->debug.inspections_count;
+
+    // a) Standard Character Mode
+    vic2_tilemap_enable( e, 0, 0, 0 );
+    vic2_cls( e );
+    
+}
+
+int test_vic2_cls2_tester( TestEnvironment * _te ) {
+
+    int i=0, j=0; 
+
+    for( i=0; i<_te->debug.inspections[0].size; ++i ) {
+        if ( _te->debug.inspections[0].memory[i] != 32 ) {
+            return 0;
+        }
+    }
+
+    return 1;
+
+}
+
+//============================================================================
+
+void test_vic2_cls3_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * emptyTile = variable_retrieve( e, "EMPTYTILE" );
+
+    _te->debug.inspections[0].name="TEXTAREA";
+    _te->debug.inspections[0].address=0x0400;
+    _te->debug.inspections[0].size=1000;
+    ++_te->debug.inspections_count;
+
+    // a) Standard Character Mode
+    cpu_store_8bit( e, emptyTile->realName, 42 );
+    vic2_tilemap_enable( e, 0, 0, 0 );
+    vic2_cls( e );
+    
+    _te->trackedVariables[0] = emptyTile;
+
+}
+
+int test_vic2_cls3_tester( TestEnvironment * _te ) {
+
+    int i=0, j=0; 
+
+    Variable * emptyTile = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+
+    for( i=0; i<_te->debug.inspections[0].size; ++i ) {
+        if ( _te->debug.inspections[0].memory[i] != emptyTile->value ) {
+            return 0;
+        }
+    }
+
+    return 1;
+
+}
+
 void test_vic2( ) {
 
-    // create_test( "vic2_text_at", &test_vic2_text_at_payload, &test_vic2_text_at_tester );    
-    // create_test( "vic2_bitmap_enabled", &test_vic2_bitmap_enable_payload, &test_vic2_bitmap_enable_tester );    
+    create_test( "vic2_text_at", &test_vic2_text_at_payload, &test_vic2_text_at_tester );    
+    create_test( "vic2_bitmap_enabled", &test_vic2_bitmap_enable_payload, &test_vic2_bitmap_enable_tester );    
     create_test( "vic2_tilemap_enabled", &test_vic2_bitmap_enable_payload, &test_vic2_bitmap_enable_tester );    
+    create_test( "vic2_cls", &test_vic2_cls_payload, &test_vic2_cls_tester );
+    create_test( "vic2_cls2", &test_vic2_cls2_payload, &test_vic2_cls2_tester );
+    create_test( "vic2_cls3", &test_vic2_cls3_payload, &test_vic2_cls3_tester );
 
 }
 

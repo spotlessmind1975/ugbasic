@@ -78,6 +78,8 @@ typedef struct _InternalMachineState {
 typedef struct _DebugInspection {
     char *      name;
     int         address;
+    int         size;
+    char *      memory;
 } DebugInspection;
 
 typedef struct _Debug {

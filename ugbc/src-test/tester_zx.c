@@ -57,9 +57,9 @@ void create_test( char *_name, void (*_payload)(TestEnvironment *), int (*_teste
     end_compilation( &t.environment );
 
     FILE *handleIns = fopen( "/tmp/out.ins", "wt" );
-    int i=0;
+    int i=0,j=0;
     for(i=0; i<t.debug.inspections_count; ++i ) {
-        fprintf( handleIns, "%4.4x %s\n", t.debug.inspections[i].address, t.debug.inspections[i].name );
+        fprintf( handleIns, "%4.4x %4.4x %s\n", t.debug.inspections[i].address, t.debug.inspections[i].size, t.debug.inspections[i].name );
     }
     fclose(handleIns);
 
@@ -72,6 +72,19 @@ void create_test( char *_name, void (*_payload)(TestEnvironment *), int (*_teste
         int address;
         unsigned int memory[4];
         fscanf(handle, "%s", realname);
+
+        for( i=0; i<t.debug.inspections_count; ++i ) {
+            if ( strcmp( realname, t.debug.inspections[i].name) == 0 ) {
+                t.debug.inspections[i].memory = malloc(t.debug.inspections[i].size);
+                for(j=0; j<t.debug.inspections[i].size; ++j ) {
+                    int v;
+                    fscanf(handle, "%x", &v );
+                    t.debug.inspections[i].memory[j] = v;
+                }
+                continue;
+            }
+        }
+
         if ( 
                strcmp( realname, "WORKING") == 0 
             || strcmp( realname, "TEMPORARY") == 0 
