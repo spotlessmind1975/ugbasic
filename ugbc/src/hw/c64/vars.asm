@@ -7,3 +7,4 @@ LOCALPAPER: .BYTE    7
 XCURS:      .BYTE    0
 YCURS:      .BYTE    0
 LOCALWW:    .BYTE    3
+EMPTYTILE:  .BYTE   32
