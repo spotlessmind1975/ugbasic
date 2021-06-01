@@ -2156,7 +2156,7 @@ statement:
       call_procedure( _environment, $2 );
   }
   | PEN expr {
-      text_pen( _environment, $2 );
+      pen( _environment, $2 );
   }
   | PAPER expr {
       paper( _environment, $2 );

@@ -1130,6 +1130,7 @@ void                    paper( Environment * _environment, char * _paper );
 Variable *              param_procedure( Environment * _environment, char * _name );
 Variable *              peek( Environment * _environment, int _location );
 Variable *              peek_var( Environment * _environment, char * _location );
+void                    pen( Environment * _environment, char * _color );
 void                    point_at( Environment * _environment, int _x, int _y );
 void                    point_at_vars( Environment * _environment, char * _x, char * _y );
 void                    pop( Environment * _environment );
@@ -1223,7 +1224,6 @@ void                    text_hscroll_screen( Environment * _environment, int _di
 void                    text_locate( Environment * _environment, char * _x, char * _y );
 void                    text_memorize( Environment * _environment );
 void                    text_newline( Environment * _environment );
-void                    text_pen( Environment * _environment, char * _color );
 void                    text_question_mark( Environment * _environment );
 void                    text_remember( Environment * _environment );
 void                    text_set_tab( Environment * _environment, char * _net_tab );
