@@ -1,13 +1,7 @@
-# ugBASIC
-
-An isomorphic BASIC language compiler for retrocomputers
-
-by Marco Spedaletti (asimov@mclink.it)
-
-## THIRD PARTS LICENSES
+# THIRD PARTS ATTRIBUTIONS AND LICENSES
 
 ugBASIC contains algorithms and software written
-by third parties, as follows. Please refer to the following
+by third parts, as follows. Please refer to the following
 conditions if you wish to reproduce or reuse this software.
 
 [CONVERT 32-BIT BINARY TO ASCII NUMBER STRING](https://github.com/spotlessmind1975/ugbasic/blob/main/ugbc/src/hw/6502/bits_to_string.asm)
