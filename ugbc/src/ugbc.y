@@ -1974,6 +1974,12 @@ statement:
   | TEXTADDRESS OP_ASSIGN expr {
       variable_move( _environment, $3, "ADDRESS" );
   }
+  | EMPTY TILE OP_ASSIGN expr {
+      variable_move( _environment, $3, "EMPTYTILE" );
+  }
+  | EMPTYTILE OP_ASSIGN expr {
+      variable_move( _environment, $3, "EMPTYTILE" );
+  }
   | ADD add_definition
   | PRINT print_definition
   | INPUT input_definition

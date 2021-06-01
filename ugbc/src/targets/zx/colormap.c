@@ -64,7 +64,7 @@ void colormap_at( Environment * _environment, int _address ) {
     outline1("; COLORMAP AT $%4.4x", _address);
 
     // Let's define the special variable and fill up with the value.
-    Variable * colormapAddress = variable_retrieve_or_define( _environment, "colormapAddress", VT_ADDRESS, _address );
+    Variable * colormapAddress = variable_retrieve_or_define( _environment, "COLORMAPADDRESS", VT_ADDRESS, _address );
 
     // TODO: colormapAddress must be retrieved by a zx_get_colormapAddress()
 
@@ -93,7 +93,7 @@ void colormap_at_var( Environment * _environment, char * _address ) {
 
     // Let's define the special variable and fill up with the value.
     // TODO: colormapAddress must be retrieved by a zx_get_colormapAddress()
-    Variable * colormapAddress = variable_retrieve_or_define( _environment, "colormapAddress", VT_ADDRESS, 0x5800 );
+    Variable * colormapAddress = variable_retrieve_or_define( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0x5800 );
     Variable * address = variable_retrieve_or_define( _environment, _address, VT_ADDRESS, 0x0000 );
 
     // variable_store( _environment, colormapAddress->name, ( ( ( _address >> 10 ) & 0x0f ) * 0x0400 ) );
@@ -118,7 +118,7 @@ void colormap_clear_with( Environment * _environment, int _foreground, int _back
 
     outline2("; COLORMAP CLEAR WITH $%2.2x AND $%2.2x", _foreground, _background );
 
-    Variable * colormapAddress = variable_retrieve( _environment, "colormapAddress" );
+    Variable * colormapAddress = variable_retrieve( _environment, "COLORMAPADDRESS" );
 
     Variable * value = variable_temporary( _environment, VT_BYTE, "(background + foreground)" );
 
@@ -148,7 +148,7 @@ void colormap_clear_with_vars( Environment * _environment, char * _foreground, c
 
     outline2("; COLORMAP CLEAR WITH %s AND %s", _foreground, _background );
 
-    Variable * colormapAddress = variable_retrieve_or_define( _environment, "colormapAddress", VT_ADDRESS, 0x0400 );
+    Variable * colormapAddress = variable_retrieve_or_define( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0x0400 );
     if ( ! colormapAddress ) {
         CRITICAL( "COLORMAP CLEAR WITH xxx ON xxx needs BITMAP ENABLED");
     }

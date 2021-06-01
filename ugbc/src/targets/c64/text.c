@@ -266,7 +266,7 @@ void text_cline( Environment * _environment, char * _characters ) {
 
     if ( !_environment->textClineDeployed ) {
 
-        Variable * colormapAddress = variable_retrieve( _environment, "colormapAddress" );
+        Variable * colormapAddress = variable_retrieve( _environment, "COLORMAPADDRESS" );
         Variable * TEXTADDRESS = variable_retrieve( _environment, "TEXTADDRESS" );
         Variable * x = variable_retrieve( _environment, "windowCX" );
         Variable * y = variable_retrieve( _environment, "windowCY" );
@@ -415,7 +415,7 @@ void text_hscroll_line( Environment * _environment, int _direction ) {
 
     if ( !_environment->textHScrollLineDeployed ) {
 
-        Variable * colormapAddress = variable_retrieve( _environment, "colormapAddress" );
+        Variable * colormapAddress = variable_retrieve( _environment, "COLORMAPADDRESS" );
         Variable * TEXTADDRESS = variable_retrieve( _environment, "TEXTADDRESS" );
 
         outline0("JMP lib_text_hscroll_line_after");
@@ -523,7 +523,7 @@ void text_hscroll_screen( Environment * _environment, int _direction ) {
 
     if ( !_environment->textHScrollScreenDeployed ) {
 
-        Variable * colormapAddress = variable_retrieve( _environment, "colormapAddress" );
+        Variable * colormapAddress = variable_retrieve( _environment, "COLORMAPADDRESS" );
         Variable * TEXTADDRESS = variable_retrieve( _environment, "TEXTADDRESS" );
 
         outline0("JMP lib_text_hscroll_screen_after");
