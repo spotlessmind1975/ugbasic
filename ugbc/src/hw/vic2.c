@@ -891,9 +891,9 @@ void vic2_text_at( Environment * _environment, char * _x, char * _y, char * _tex
     outline0("STA $24" );
     outline0("LDA #0" );
     outline0("STA $25" );
-    outline0("LDA COLORADDRESS" );
+    outline0("LDA COLORMAPADDRESS" );
     outline0("STA $29" );
-    outline0("LDA COLORADDRESS+1" );
+    outline0("LDA COLORMAPADDRESS+1" );
     outline0("STA $2a" );
     outline1("LDA %s", _ww );
     outline0("STA $2c" );
