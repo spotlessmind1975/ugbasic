@@ -20,3 +20,7 @@ attribution is given.  Any redistribution, regardless of form, must
 be at no charge to the end user. This code MAY NOT be incorporated
 into any package intended for sale unless written permission has
 been given by the copyright holder.
+
+[CONVERT 64-BIT BINARY TO ASCII NUMBER STRING](https://github.com/spotlessmind1975/ugbasic/blob/main/ugbc/src/hw/z80/number_to_string.asm)
+
+Source code originally published by Alwin Henseler on [MSX forum development](https://www.msx.org/forum/development/msx-development/32-bit-long-ascii), and adapted by Marco Spedaletti for z88sdk assembler.
