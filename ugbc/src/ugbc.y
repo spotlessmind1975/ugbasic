@@ -2022,7 +2022,10 @@ statement:
       text_center( _environment, $2 );
   }
   | CLS {
-      cls( _environment );
+      cls( _environment, NULL );
+  }
+  | CLS expr {
+      cls( _environment, $2 );
   }
   | HOME {
       text_home( _environment );

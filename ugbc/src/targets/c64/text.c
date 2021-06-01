@@ -215,7 +215,11 @@ Il comando ''CLS'' cancella lo schermo corrente.
 
 @target all
 </usermanual> */
-void cls( Environment * _environment ) {
+void cls( Environment * _environment, char * _paper ) {
+
+    if ( _paper ) {
+        paper( _environment, _paper );
+    }
 
     vic2_cls( _environment );
 
