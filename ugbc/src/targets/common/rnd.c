@@ -111,7 +111,7 @@ Variable * rnd( Environment * _environment, char * _value ) {
             cpu_jump( _environment, label );
             break;
         case 0:
-            CRITICAL_ABS_UNSUPPORTED( _value, DATATYPE_AS_STRING[value->type] );
+            CRITICAL_RANDOM_UNSUPPORTED( _value, DATATYPE_AS_STRING[value->type] );
             break;
     }
 
