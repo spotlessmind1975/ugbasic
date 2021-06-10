@@ -225,6 +225,7 @@ PEEK { return (PEEK); }
 PEN { return (PEN); }
 PERIOD { return (PERIOD); }
 PINK { return(PINK); }
+PLOT { return(PLOT); }
 PLUS { return(PLUS); }
 POINT { return (POINT); }
 POUND { return (POUND); }
