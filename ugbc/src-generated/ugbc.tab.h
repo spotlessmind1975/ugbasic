@@ -295,66 +295,67 @@ extern int yydebug;
     EMPTY = 496,                   /* EMPTY  */
     TILE = 497,                    /* TILE  */
     EMPTYTILE = 498,               /* EMPTYTILE  */
-    A = 499,                       /* A  */
-    B = 500,                       /* B  */
-    C = 501,                       /* C  */
-    D = 502,                       /* D  */
-    E = 503,                       /* E  */
-    F = 504,                       /* F  */
-    G = 505,                       /* G  */
-    H = 506,                       /* H  */
-    I = 507,                       /* I  */
-    J = 508,                       /* J  */
-    K = 509,                       /* K  */
-    L = 510,                       /* L  */
-    M = 511,                       /* M  */
-    N = 512,                       /* N  */
-    O = 513,                       /* O  */
-    P = 514,                       /* P  */
-    Q = 515,                       /* Q  */
-    R = 516,                       /* R  */
-    S = 517,                       /* S  */
-    T = 518,                       /* T  */
-    U = 519,                       /* U  */
-    V = 520,                       /* V  */
-    X = 521,                       /* X  */
-    Y = 522,                       /* Y  */
-    W = 523,                       /* W  */
-    Z = 524,                       /* Z  */
-    F1 = 525,                      /* F1  */
-    F2 = 526,                      /* F2  */
-    F3 = 527,                      /* F3  */
-    F4 = 528,                      /* F4  */
-    F5 = 529,                      /* F5  */
-    F6 = 530,                      /* F6  */
-    F7 = 531,                      /* F7  */
-    F8 = 532,                      /* F8  */
-    BLACK = 533,                   /* BLACK  */
-    WHITE = 534,                   /* WHITE  */
-    RED = 535,                     /* RED  */
-    CYAN = 536,                    /* CYAN  */
-    VIOLET = 537,                  /* VIOLET  */
-    GREEN = 538,                   /* GREEN  */
-    BLUE = 539,                    /* BLUE  */
-    YELLOW = 540,                  /* YELLOW  */
-    ORANGE = 541,                  /* ORANGE  */
-    BROWN = 542,                   /* BROWN  */
-    LIGHT = 543,                   /* LIGHT  */
-    DARK = 544,                    /* DARK  */
-    GREY = 545,                    /* GREY  */
-    GRAY = 546,                    /* GRAY  */
-    MAGENTA = 547,                 /* MAGENTA  */
-    PURPLE = 548,                  /* PURPLE  */
-    LAVENDER = 549,                /* LAVENDER  */
-    GOLD = 550,                    /* GOLD  */
-    TURQUOISE = 551,               /* TURQUOISE  */
-    TAN = 552,                     /* TAN  */
-    PINK = 553,                    /* PINK  */
-    PEACH = 554,                   /* PEACH  */
-    OLIVE = 555,                   /* OLIVE  */
-    Identifier = 556,              /* Identifier  */
-    String = 557,                  /* String  */
-    Integer = 558                  /* Integer  */
+    PLOT = 499,                    /* PLOT  */
+    A = 500,                       /* A  */
+    B = 501,                       /* B  */
+    C = 502,                       /* C  */
+    D = 503,                       /* D  */
+    E = 504,                       /* E  */
+    F = 505,                       /* F  */
+    G = 506,                       /* G  */
+    H = 507,                       /* H  */
+    I = 508,                       /* I  */
+    J = 509,                       /* J  */
+    K = 510,                       /* K  */
+    L = 511,                       /* L  */
+    M = 512,                       /* M  */
+    N = 513,                       /* N  */
+    O = 514,                       /* O  */
+    P = 515,                       /* P  */
+    Q = 516,                       /* Q  */
+    R = 517,                       /* R  */
+    S = 518,                       /* S  */
+    T = 519,                       /* T  */
+    U = 520,                       /* U  */
+    V = 521,                       /* V  */
+    X = 522,                       /* X  */
+    Y = 523,                       /* Y  */
+    W = 524,                       /* W  */
+    Z = 525,                       /* Z  */
+    F1 = 526,                      /* F1  */
+    F2 = 527,                      /* F2  */
+    F3 = 528,                      /* F3  */
+    F4 = 529,                      /* F4  */
+    F5 = 530,                      /* F5  */
+    F6 = 531,                      /* F6  */
+    F7 = 532,                      /* F7  */
+    F8 = 533,                      /* F8  */
+    BLACK = 534,                   /* BLACK  */
+    WHITE = 535,                   /* WHITE  */
+    RED = 536,                     /* RED  */
+    CYAN = 537,                    /* CYAN  */
+    VIOLET = 538,                  /* VIOLET  */
+    GREEN = 539,                   /* GREEN  */
+    BLUE = 540,                    /* BLUE  */
+    YELLOW = 541,                  /* YELLOW  */
+    ORANGE = 542,                  /* ORANGE  */
+    BROWN = 543,                   /* BROWN  */
+    LIGHT = 544,                   /* LIGHT  */
+    DARK = 545,                    /* DARK  */
+    GREY = 546,                    /* GREY  */
+    GRAY = 547,                    /* GRAY  */
+    MAGENTA = 548,                 /* MAGENTA  */
+    PURPLE = 549,                  /* PURPLE  */
+    LAVENDER = 550,                /* LAVENDER  */
+    GOLD = 551,                    /* GOLD  */
+    TURQUOISE = 552,               /* TURQUOISE  */
+    TAN = 553,                     /* TAN  */
+    PINK = 554,                    /* PINK  */
+    PEACH = 555,                   /* PEACH  */
+    OLIVE = 556,                   /* OLIVE  */
+    Identifier = 557,              /* Identifier  */
+    String = 558,                  /* String  */
+    Integer = 559                  /* Integer  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -368,7 +369,7 @@ union YYSTYPE
     int integer;
     char * string;
 
-#line 372 "src-generated/ugbc.tab.h"
+#line 373 "src-generated/ugbc.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
