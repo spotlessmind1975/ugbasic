@@ -18,3 +18,7 @@ been given by the copyright holder.
 [CONVERT 64-BIT BINARY TO ASCII NUMBER STRING](https://github.com/spotlessmind1975/ugbasic/blob/main/ugbc/src/hw/z80/number_to_string.asm)
 
 Source code originally published by Alwin Henseler on [MSX forum development](https://www.msx.org/forum/development/msx-development/32-bit-long-ascii), and adapted by Marco Spedaletti for z88sdk assembler.
+
+[PLOTTING PIXELS ON COMMODORE 64 (VIC-II)](https://github.com/spotlessmind1975/ugbasic/blob/main/ugbc/src/hw/vic2/plot.asm)
+
+Source code originally published by satpro on [C= FORUM](https://www.lemon64.com/forum/viewtopic.php?p=599219#599219), and adapted by Marco Spedaletti for ca65 assembler.
