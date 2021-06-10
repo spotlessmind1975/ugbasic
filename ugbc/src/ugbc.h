@@ -603,6 +603,12 @@ typedef struct _Environment {
     int varsDeployed;
 
     /**
+     * Deployed plotting routine
+     */
+
+    int plotDeployed;
+
+    /**
      * Deployed the dynamic string support
      */
 
@@ -1132,6 +1138,7 @@ Variable *              param_procedure( Environment * _environment, char * _nam
 Variable *              peek( Environment * _environment, int _location );
 Variable *              peek_var( Environment * _environment, char * _location );
 void                    pen( Environment * _environment, char * _color );
+void                    plot( Environment * _environment, char * _x, char * _y, char *_c );
 void                    point_at( Environment * _environment, int _x, int _y );
 void                    point_at_vars( Environment * _environment, char * _x, char * _y );
 void                    pop( Environment * _environment );

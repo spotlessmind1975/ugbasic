@@ -519,26 +519,17 @@ void vic2_textmap_at( Environment * _environment, char * _address ) {
 
 void vic2_point_at_int( Environment * _environment, int _x, int _y ) {
 
-    Variable * bitmapAddress = variable_retrieve( _environment, "BITMAPADDRESS" );
-
-    int offset = (_y>>3)*320+(_x>>3)*8+(_y&7);
-    int bitmask = 1 << ( 7 - ( _x & 0x07 ) );
-
-    Variable * offset_temp = variable_temporary( _environment, VT_POSITION, "(offset)" );
-
-    variable_store( _environment, offset_temp->name, offset );
+    deploy( plotDeployed, "./ugbc/src/hw/vic2/plot.asm" );
     
-    variable_move_naked( _environment, variable_add( _environment, offset_temp->name, bitmapAddress->name )->name, offset_temp->name );
-
-    outline1("LDA _%s", offset_temp->name);
-    outline0("STA $22");
-    outline1("LDA _%s+1", offset_temp->name);
-    outline0("STA $23");
-
-    outline0("LDY #0");
-    outline0("LDA ($22),y");    
-    outline1("ORA #$%x", bitmask );
-    outline0("STA ($22),y");    
+    outline1("LDA %2.2x", (_x & 0xff ) );
+    outline0("STA PLOTX");
+    outline1("LDA %2.2x", ( ( _x >> 8 ) & 0xff ) );
+    outline0("STA PLOTX+1");
+    outline1("LDA %2.2x", ( _y & 0xff ) );
+    outline0("STA PLOTY");
+    outline0("LDA #1");
+    outline0("STA PLOTM");
+    outline0("JSR PLOT");
 
     variable_reset( _environment );
 
@@ -546,60 +537,20 @@ void vic2_point_at_int( Environment * _environment, int _x, int _y ) {
 
 void vic2_point_at_vars( Environment * _environment, char *_x, char *_y ) {
 
-    Variable * bitmapAddress = variable_retrieve( _environment, "BITMAPADDRESS" );
+    Variable * x = variable_retrieve( _environment, _x );
+    Variable * y = variable_retrieve( _environment, _y );
 
-    if ( ! bitmapAddress ) {
-        CRITICAL( "CRITICAL: POINT AT (xxx,xxx) needs BITMAP ENABLE");
-    }
-
-    // int offset = (_y>>3)*320+(_x>>3)*8+(_y&7);
-
-    Variable * y = variable_temporary( _environment, VT_POSITION, "(y)" );
-    Variable * x = variable_temporary( _environment, VT_POSITION, "(x)" );
-    Variable * z = variable_temporary( _environment, VT_POSITION, "(z)" );
-    Variable * offset = variable_temporary( _environment, VT_POSITION, "(offset)" );
-    Variable * b = variable_temporary( _environment, VT_BYTE, "(b)" );
-    Variable * const320 = variable_temporary( _environment, VT_POSITION, "(const320)" );
-
-    variable_store( _environment, offset->name, 0 );
-
-    variable_move_naked( _environment, _y, y->name );
-    variable_div2_const( _environment, y->name, 3 );
-    variable_store( _environment, const320->name, 320 );
-    Variable * ym320 = variable_mul( _environment, y->name, const320->name );
+    deploy( plotDeployed, "./ugbc/src/hw/vic2/plot.asm" );
     
-    variable_move_naked( _environment, variable_add( _environment, offset->name, ym320->name )->name, offset->name );
-
-    variable_move_naked( _environment, _x, x->name );
-    variable_div2_const( _environment, x->name, 3 );
-    variable_mul2_const( _environment, x->name, 3 );
-    variable_move_naked( _environment, variable_add( _environment, offset->name, x->name )->name, offset->name);
-
-    variable_move_naked( _environment, _y, z->name );
-    variable_and_const( _environment, z->name, 7 );
-    variable_move_naked( _environment, variable_add( _environment, offset->name, z->name )->name, offset->name);
-
-    variable_move( _environment, _x, b->name );
-    variable_and_const( _environment, b->name, 7 );
-    variable_complement_const( _environment, b->name, 7 );
-
-    variable_move_naked( _environment, variable_add( _environment, offset->name, bitmapAddress->name )->name, offset->name );
-
-    MAKE_LABEL
-
-    _environment->bitmaskNeeded = 1;
-
-    outline1("LDA %s", offset->realName);
-    outline0("STA $22");
-    outline1("LDA %s+1", offset->realName);
-    outline0("STA $23");
-
-    outline0("LDY #0");
-    outline0("LDA ($22),y");    
-    outline1("LDY %s", b->realName);
-    outline0("ORA BITMASK,y");
-    outline0("LDY #0");
-    outline0("STA ($22),y");    
+    outline1("LDA %s", x->realName );
+    outline0("STA PLOTX");
+    outline1("LDA %s+1", x->realName );
+    outline0("STA PLOTX+1");
+    outline1("LDA %s", y->realName );
+    outline0("STA PLOTY");
+    outline0("LDA #1");
+    outline0("STA PLOTM");
+    outline0("JSR PLOT");
 
     variable_reset( _environment );
 
