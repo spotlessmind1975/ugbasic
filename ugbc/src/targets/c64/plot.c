@@ -55,3 +55,21 @@ void plot( Environment * _environment, char * _x, char * _y, char *_c ) {
     vic2_point_at_vars( _environment, _x, _y );
 
 }
+
+Variable * point( Environment * _environment, char * _x, char * _y ) {
+
+    Variable * result = variable_temporary( _environment, VT_COLOR, "(point's result)");
+
+    if ( !_x ) {
+        _x = variable_retrieve( _environment, "XGR" )->name;
+    }
+
+    if ( !_y ) {
+        _y = variable_retrieve( _environment, "YGR" )->name;
+    }
+
+    vic2_point( _environment, _x, _y, result->name );
+
+    return result;
+
+}

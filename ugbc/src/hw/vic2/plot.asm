@@ -86,9 +86,18 @@ PLOT:
     ;depending on PLOTM, routine draws or erases
     ;----------------------------------------------
 
-    LDA PLOTM                  ;(0 = erase, 1 = set)
+    LDA PLOTM                  ;(0 = erase, 1 = set, 2 = get pixel, 3 = get color)
+    CMP #0
     BEQ PLOTE                  ;if = 0 then branch to clear the point
+    CMP #1
+    BEQ PLOTD                  ;if = 1 then branch to draw the point
+    CMP #2
+    BEQ PLOTG                  ;if = 2 then branch to get the point (0/1)
+    CMP #3
+    BEQ PLOTC                  ;if = 2 then branch to get the color index (0...15)
+    JMP PLOTP
 
+PLOTD:
     ;---------
     ;set point
     ;---------
@@ -108,6 +117,29 @@ PLOTE:                          ;handled same way as setting a point
     LDA (PLOTDEST),y            ;just with opposite bit-mask
     AND PLOTANDBIT,x            ;isolate AND erase the point
     STA (PLOTDEST),y            ;write back to $2000
+
+PLOTG:                          
+    LDA (PLOTDEST),y            
+    AND PLOTORBIT,x            
+    CMP #0
+    BEQ PLOTG0
+PLOTG1:
+    LDA #$ff
+    STA PLOTM
+    JMP PLOTP
+PLOTG0:
+    LDA #$0
+    STA PLOTM
+    JMP PLOTP            
+
+PLOTC:                          
+    LDA (PLOTCDEST),y          ;get row with point in it
+    LSR A
+    LSR A
+    LSR A
+    LSR A
+    STA PLOTM
+    JMP PLOTP            
 
 PLOTP:
     RTS

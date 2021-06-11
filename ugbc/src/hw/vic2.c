@@ -556,6 +556,28 @@ void vic2_point_at_vars( Environment * _environment, char *_x, char *_y ) {
 
 }
 
+void vic2_point( Environment * _environment, char *_x, char *_y, char * _result ) {
+
+    Variable * x = variable_retrieve( _environment, _x );
+    Variable * y = variable_retrieve( _environment, _y );
+    Variable * result = variable_retrieve( _environment, _result );
+
+    deploy( plotDeployed, "./ugbc/src/hw/vic2/plot.asm" );
+    
+    outline1("LDA %s", x->realName );
+    outline0("STA PLOTX");
+    outline1("LDA %s+1", x->realName );
+    outline0("STA PLOTX+1");
+    outline1("LDA %s", y->realName );
+    outline0("STA PLOTY");
+    outline0("LDA #3");
+    outline0("STA PLOTM");
+    outline0("JSR PLOT");
+    outline0("LDA PLOTM");
+    outline1("STA %s", result->realName);
+
+}
+
 void vic2_screen_on( Environment * _environment ) {
 
     outline0("LDA $D011" );
