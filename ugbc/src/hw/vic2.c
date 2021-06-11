@@ -519,6 +519,7 @@ void vic2_textmap_at( Environment * _environment, char * _address ) {
 
 void vic2_point_at_int( Environment * _environment, int _x, int _y ) {
 
+    deploy( vic2varsDeployed, "./ugbc/src/hw/vic2/vars.asm" );
     deploy( plotDeployed, "./ugbc/src/hw/vic2/plot.asm" );
     
     outline1("LDA %2.2x", (_x & 0xff ) );
@@ -540,6 +541,7 @@ void vic2_point_at_vars( Environment * _environment, char *_x, char *_y ) {
     Variable * x = variable_retrieve( _environment, _x );
     Variable * y = variable_retrieve( _environment, _y );
 
+    deploy( vic2varsDeployed, "./ugbc/src/hw/vic2/vars.asm" );
     deploy( plotDeployed, "./ugbc/src/hw/vic2/plot.asm" );
     
     outline1("LDA %s", x->realName );
@@ -562,6 +564,7 @@ void vic2_point( Environment * _environment, char *_x, char *_y, char * _result 
     Variable * y = variable_retrieve( _environment, _y );
     Variable * result = variable_retrieve( _environment, _result );
 
+    deploy( vic2varsDeployed, "./ugbc/src/hw/vic2/vars.asm" );
     deploy( plotDeployed, "./ugbc/src/hw/vic2/plot.asm" );
     
     outline1("LDA %s", x->realName );

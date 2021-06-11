@@ -603,6 +603,12 @@ typedef struct _Environment {
     int varsDeployed;
 
     /**
+     * Deployed the vars for VIC-II
+     */
+
+    int vic2varsDeployed;
+
+    /**
      * Deployed plotting routine
      */
 

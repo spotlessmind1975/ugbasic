@@ -695,7 +695,7 @@ int test_vic2_point_tester( TestEnvironment * _te ) {
 
 void test_vic2( ) {
 
-    /reate_test( "vic2_text_at", &test_vic2_text_at_payload, &test_vic2_text_at_tester );    
+    create_test( "vic2_text_at", &test_vic2_text_at_payload, &test_vic2_text_at_tester );    
     create_test( "vic2_bitmap_enabled", &test_vic2_bitmap_enable_payload, &test_vic2_bitmap_enable_tester );    
     create_test( "vic2_tilemap_enabled", &test_vic2_bitmap_enable_payload, &test_vic2_bitmap_enable_tester );    
     create_test( "vic2_cls", &test_vic2_cls_payload, &test_vic2_cls_tester );
