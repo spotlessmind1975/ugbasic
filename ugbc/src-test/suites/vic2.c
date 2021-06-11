@@ -665,16 +665,45 @@ int test_vic2_point_at_vars_tester( TestEnvironment * _te ) {
 
 }
 
+//============================================================================
+
+void test_vic2_point_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * x = variable_define( e, "x", VT_POSITION, 160 );
+    Variable * y = variable_define( e, "y", VT_POSITION, 120 );
+    Variable * c = variable_define( e, "c", VT_COLOR, COLOR_RED );
+    Variable * result = variable_define( e, "r", VT_COLOR, 0 );
+
+    vic2_bitmap_enable( e, 0, 0, 0 );
+    pen( e, c->name );
+    vic2_point_at_vars( e, x->name, y->name );
+    vic2_point( e, x->name, y->name, result->name );
+
+    _te->trackedVariables[0] = result;
+
+}
+
+int test_vic2_point_tester( TestEnvironment * _te ) {
+
+    Variable * result = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+
+    return result->value == COLOR_RED;
+
+}
+
 void test_vic2( ) {
 
-    /*create_test( "vic2_text_at", &test_vic2_text_at_payload, &test_vic2_text_at_tester );    
+    /reate_test( "vic2_text_at", &test_vic2_text_at_payload, &test_vic2_text_at_tester );    
     create_test( "vic2_bitmap_enabled", &test_vic2_bitmap_enable_payload, &test_vic2_bitmap_enable_tester );    
     create_test( "vic2_tilemap_enabled", &test_vic2_bitmap_enable_payload, &test_vic2_bitmap_enable_tester );    
     create_test( "vic2_cls", &test_vic2_cls_payload, &test_vic2_cls_tester );
     create_test( "vic2_cls2", &test_vic2_cls2_payload, &test_vic2_cls2_tester );
     create_test( "vic2_cls3", &test_vic2_cls3_payload, &test_vic2_cls3_tester );
-    create_test( "vic2_background_color", &test_vic2_background_color_payload, &test_vic2_background_color_tester );*/
+    create_test( "vic2_background_color", &test_vic2_background_color_payload, &test_vic2_background_color_tester );
     create_test( "vic2_point_at_vars", &test_vic2_point_at_vars_payload, &test_vic2_point_at_vars_tester );
+    create_test( "vic2_point", &test_vic2_point_payload, &test_vic2_point_tester );
 
 }
 
