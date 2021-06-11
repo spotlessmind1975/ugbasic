@@ -23,6 +23,8 @@ PLOTCDEST= $26 ; $27
 
 PLOT:
 
+    CLC
+
     ;-------------------------
     ;calc Y-cell, divide by 8
     ;y/8 is y-cell table index
@@ -33,12 +35,14 @@ PLOT:
     LSR                         ;/ 8
     TAY                         ;tbl_8,y index
 
+    CLC
+
     ;------------------------
     ;calc X-cell, divide by 8
     ;divide 2-byte PLOTX / 8
     ;------------------------
-    ROR PLOTX+1                ;rotate the high byte into carry flag
     LDA PLOTX
+    ROR PLOTX+1                ;rotate the high byte into carry flag
     ROR                        ;lo byte / 2 (rotate C into low byte)
     LSR                        ;lo byte / 4
     LSR                        ;lo byte / 8
