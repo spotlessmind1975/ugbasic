@@ -40,7 +40,7 @@
  * CODE SECTION
  ****************************************************************************/
 
-void test_vic2_text_at_payload( TestEnvironment * _te ) {
+void test_vic2_text_at_payloadA( TestEnvironment * _te ) {
 
     Environment * e = &_te->environment;
 
@@ -71,7 +71,7 @@ void test_vic2_text_at_payload( TestEnvironment * _te ) {
 
 }
 
-int test_vic2_text_at_tester( TestEnvironment * _te ) {
+int test_vic2_text_at_testerA( TestEnvironment * _te ) {
 
     return 1;
 
@@ -693,17 +693,129 @@ int test_vic2_point_tester( TestEnvironment * _te ) {
 
 }
 
+//============================================================================
+
+void test_vic2_text_at_payloadB( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * x = variable_define( e, "x", VT_POSITION, 0 );
+    Variable * y = variable_define( e, "y", VT_POSITION, 0 );
+    Variable * text = variable_define( e, "text", VT_DSTRING, 0 );
+    Variable * c = variable_define( e, "c", VT_COLOR, COLOR_RED );
+    Variable * ww = variable_define( e, "ww", VT_BYTE, WW_PEN | WW_PAPER );
+
+    variable_store_string( e, text->name, "abcde" );
+
+    Variable * address = variable_temporary( e, VT_ADDRESS, "(text address)" );
+    Variable * size = variable_temporary( e, VT_BYTE, "(text size)" );
+
+    cpu_dsdescriptor( e, text->realName, address->realName, size->realName );
+
+    _te->debug.inspections[0].name="TEXT";
+    _te->debug.inspections[0].address=0x0400;
+    _te->debug.inspections[0].size=1000;
+    ++_te->debug.inspections_count;
+
+    _te->debug.inspections[1].name="COLORMAP";
+    _te->debug.inspections[1].address=0xD800;
+    _te->debug.inspections[1].size=1000;
+    ++_te->debug.inspections_count;
+
+    vic2_text_at( e, x->realName, y->realName, address->realName, size->realName, c->realName, ww->realName );
+
+}
+
+int test_vic2_text_at_testerB( TestEnvironment * _te ) {
+
+    int x = 1;
+
+    for( int i=0; i<5; ++i ) {
+        if ( ( _te->debug.inspections[0].memory[i] ) != x ) {
+            printf( "Failed letter %d = %2.2x %2.2x\n", i, _te->debug.inspections[0].memory[i], x );
+            return 0;
+        }
+        ++x;
+    }
+
+    return 1;
+
+}
+
+//============================================================================
+
+void test_vic2_text_at_payloadC( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * x = variable_define( e, "x", VT_POSITION, 0 );
+    Variable * y = variable_define( e, "y", VT_POSITION, 0 );
+    Variable * text = variable_define( e, "text", VT_DSTRING, 0 );
+    Variable * c = variable_define( e, "c", VT_COLOR, COLOR_RED );
+    Variable * ww = variable_define( e, "ww", VT_BYTE, WW_PEN | WW_PAPER );
+
+    char sequence[MAX_TEMPORARY_STORAGE]; sprintf(sequence, "abcde%s%s%sabcde", "\x4","\x4", "\x4" );
+
+    variable_store_string( e, text->name, sequence );
+
+    Variable * address = variable_temporary( e, VT_ADDRESS, "(text address)" );
+    Variable * size = variable_temporary( e, VT_BYTE, "(text size)" );
+
+    cpu_dsdescriptor( e, text->realName, address->realName, size->realName );
+
+    _te->debug.inspections[0].name="TEXT";
+    _te->debug.inspections[0].address=0x0400;
+    _te->debug.inspections[0].size=1000;
+    ++_te->debug.inspections_count;
+
+    _te->debug.inspections[1].name="COLORMAP";
+    _te->debug.inspections[1].address=0xD800;
+    _te->debug.inspections[1].size=1000;
+    ++_te->debug.inspections_count;
+
+    vic2_text_at( e, x->realName, y->realName, address->realName, size->realName, c->realName, ww->realName );
+
+}
+
+int test_vic2_text_at_testerC( TestEnvironment * _te ) {
+
+    int x = 1, i = 0;
+
+    for( i=0; i<5; ++i ) {
+        if ( ( _te->debug.inspections[0].memory[i] ) != x ) {
+            printf( "Failed letter %d = %2.2x %2.2x\n", i, _te->debug.inspections[0].memory[i], x );
+            return 0;
+        }
+        ++x;
+    }
+
+    x = 1;
+
+    for( i=0; i<5; ++i ) {
+        if ( ( _te->debug.inspections[0].memory[40*4+4+i] ) != x ) {
+            printf( "Failed letter %d = %2.2x %2.2x\n", i+5, _te->debug.inspections[0].memory[40*4+4+i], x );
+            return 0;
+        }
+        ++x;
+    }
+
+    return 1;
+
+}
+
 void test_vic2( ) {
 
-    create_test( "vic2_text_at", &test_vic2_text_at_payload, &test_vic2_text_at_tester );    
-    create_test( "vic2_bitmap_enabled", &test_vic2_bitmap_enable_payload, &test_vic2_bitmap_enable_tester );    
+    create_test( "vic2_text_at A", &test_vic2_text_at_payloadA, &test_vic2_text_at_testerA );    
+    create_test( "vic2_text_at B", &test_vic2_text_at_payloadB, &test_vic2_text_at_testerB );
+    create_test( "vic2_text_at C", &test_vic2_text_at_payloadC, &test_vic2_text_at_testerC );
+    /*create_test( "vic2_bitmap_enabled", &test_vic2_bitmap_enable_payload, &test_vic2_bitmap_enable_tester );    
     create_test( "vic2_tilemap_enabled", &test_vic2_bitmap_enable_payload, &test_vic2_bitmap_enable_tester );    
     create_test( "vic2_cls", &test_vic2_cls_payload, &test_vic2_cls_tester );
     create_test( "vic2_cls2", &test_vic2_cls2_payload, &test_vic2_cls2_tester );
     create_test( "vic2_cls3", &test_vic2_cls3_payload, &test_vic2_cls3_tester );
     create_test( "vic2_background_color", &test_vic2_background_color_payload, &test_vic2_background_color_tester );
     create_test( "vic2_point_at_vars", &test_vic2_point_at_vars_payload, &test_vic2_point_at_vars_tester );
-    create_test( "vic2_point", &test_vic2_point_payload, &test_vic2_point_tester );
+    create_test( "vic2_point", &test_vic2_point_payload, &test_vic2_point_tester );*/
 
 }
 
