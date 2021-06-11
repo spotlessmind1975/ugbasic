@@ -617,8 +617,9 @@ void test_vic2_point_at_vars_payload( TestEnvironment * _te ) {
 
     Environment * e = &_te->environment;
 
-    Variable * x = variable_define( e, "x", VT_POSITION, 100 );
-    Variable * y = variable_define( e, "y", VT_POSITION, 100 );
+    Variable * x = variable_define( e, "x", VT_POSITION, 0 );
+    Variable * y = variable_define( e, "y", VT_POSITION, 0 );
+    Variable * c = variable_define( e, "c", VT_COLOR, COLOR_RED );
 
     _te->debug.inspections[0].name="BITMAP";
     _te->debug.inspections[0].address=0x2000;
@@ -630,23 +631,33 @@ void test_vic2_point_at_vars_payload( TestEnvironment * _te ) {
     _te->debug.inspections[1].size=1000;
     ++_te->debug.inspections_count;
 
+    vic2_bitmap_enable( e, 0, 0, 0 );
+    pen( e, c->name );
     vic2_point_at_vars( e, x->name, y->name );
-
-    _te->trackedVariables[0] = x;
-    _te->trackedVariables[1] = y;
+    variable_store( e, x->name, 9 );
+    vic2_point_at_vars( e, x->name, y->name );
 
 }
 
 int test_vic2_point_at_vars_tester( TestEnvironment * _te ) {
 
-    Variable * x = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
-    Variable * y = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+    if ( ( _te->debug.inspections[0].memory[0] ) != 0x80 ) {
+        printf( "Failed pixel 1 = %2.2x\n", _te->debug.inspections[0].memory[0] );
+        return 0;
+    }
 
-    int offset = ((y->value)>>3)*320+((x->value)>>3)*8+((y->value)&7);
-    int bitmask = 1 << ( 7 - ( (x->value) & 0x07 ) );
+    if ( ( _te->debug.inspections[0].memory[8] ) != 0x40 ) {
+        printf( "Failed pixel 2\n");
+        return 0;
+    }
 
-    if ( ( _te->debug.inspections[0].memory[offset] & bitmask ) != bitmask ) {
-        printf( "Failed pixel\n");
+    if ( ( _te->debug.inspections[1].memory[0] ) != ( ( COLOR_RED << 4 ) & 0xff ) ) {
+        printf( "Failed color 1 = %2.2x\n", _te->debug.inspections[1].memory[0] );
+        return 0;
+    }
+
+    if ( ( _te->debug.inspections[1].memory[1] ) != ( ( COLOR_RED << 4 ) & 0xff ) ) {
+        printf( "Failed color 1 = %2.2x\n", _te->debug.inspections[1].memory[0] );
         return 0;
     }
 
@@ -656,13 +667,13 @@ int test_vic2_point_at_vars_tester( TestEnvironment * _te ) {
 
 void test_vic2( ) {
 
-    create_test( "vic2_text_at", &test_vic2_text_at_payload, &test_vic2_text_at_tester );    
+    /*create_test( "vic2_text_at", &test_vic2_text_at_payload, &test_vic2_text_at_tester );    
     create_test( "vic2_bitmap_enabled", &test_vic2_bitmap_enable_payload, &test_vic2_bitmap_enable_tester );    
     create_test( "vic2_tilemap_enabled", &test_vic2_bitmap_enable_payload, &test_vic2_bitmap_enable_tester );    
     create_test( "vic2_cls", &test_vic2_cls_payload, &test_vic2_cls_tester );
     create_test( "vic2_cls2", &test_vic2_cls2_payload, &test_vic2_cls2_tester );
     create_test( "vic2_cls3", &test_vic2_cls3_payload, &test_vic2_cls3_tester );
-    create_test( "vic2_background_color", &test_vic2_background_color_payload, &test_vic2_background_color_tester );
+    create_test( "vic2_background_color", &test_vic2_background_color_payload, &test_vic2_background_color_tester );*/
     create_test( "vic2_point_at_vars", &test_vic2_point_at_vars_payload, &test_vic2_point_at_vars_tester );
 
 }
