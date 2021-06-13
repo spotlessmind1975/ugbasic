@@ -120,6 +120,8 @@ Variable * text_get_pen( Environment * _environment, char * _color ) {
 
     variable_store_string(_environment, result->name, resultString );
 
+    cpu_dswrite( _environment, result->realName );
+
     Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
     Variable * size = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
     cpu_dsdescriptor( _environment, result->realName, address->realName, size->realName );
@@ -139,6 +141,8 @@ Variable * text_get_paper( Environment * _environment, char * _color ) {
     char resultString[MAX_TEMPORARY_STORAGE]; sprintf( resultString, "\x2 " );
 
     variable_store_string(_environment, result->name, resultString );
+
+    cpu_dswrite( _environment, result->realName );
 
     Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
     Variable * size = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
@@ -163,6 +167,8 @@ Variable * text_get_at( Environment * _environment, char * _x, char * _y ) {
     char resultString[MAX_TEMPORARY_STORAGE]; sprintf( resultString, "\x4  " );
 
     variable_store_string(_environment, result->name, resultString );
+
+    cpu_dswrite( _environment, result->realName );
 
     Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
     Variable * size = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
