@@ -187,7 +187,7 @@ DSGCEND:
 
 ; DSFINDFREE() -> X
 DSFINDFREE:
-    LDX #0
+    LDX #1 ; fix -- 0 is used to denote unused slot
 DSFINDFREEL:
     LDA DESCRIPTORS_STATUS,X
     AND #$40
