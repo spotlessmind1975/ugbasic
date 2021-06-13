@@ -918,6 +918,8 @@ void vic2_initialization( Environment * _environment ) {
 
     outline0("JSR VIC2STARTUP");
 
+    vic2_cls( _environment );
+
 }
 
 #endif
