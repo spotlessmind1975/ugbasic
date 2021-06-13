@@ -9,13 +9,13 @@
      GOTO start
      
    first:
-     DEBUG 1
+     PRINT 1;" ";
      GOTO nextLoop
      
    second:
-     DEBUG 2
+     PRINT 2;" ";
      GOTO nextLoop
      
    third:
-     DEBUG 3
+     PRINT 3;" ";
      GOTO nextLoop

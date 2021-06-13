@@ -8,13 +8,13 @@
      GOTO start
      
    first:
-     DEBUG 1
+     PRINT 1;" ";
      RETURN
      
    second:
-     DEBUG 2
+     PRINT 2;" ";
      RETURN
      
    third:
-     DEBUG 3
+     PRINT 3;" ";
      RETURN
