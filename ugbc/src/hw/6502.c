@@ -1952,9 +1952,9 @@ void cpu6502_move_8bit_indirect_with_offset( Environment * _environment, char *_
 
 void cpu6502_move_8bit_with_offset( Environment * _environment, char *_source, char * _value, int _offset ) {
 
-    outline1("LDA #<%s", _value);
+    outline1("LDA %s", _value);
     outline0("STA $22");
-    outline1("LDA #>%s", _value);
+    outline1("LDA %s+1", _value);
     outline0("STA $23");
     outline1("LDA %s", _source);
     outline1("LDY #$%2.2x", (_offset & 0xff ) );
