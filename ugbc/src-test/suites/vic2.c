@@ -400,12 +400,12 @@ void test_vic2_cls_payload( TestEnvironment * _te ) {
     Variable * yellow = variable_define( e, "yellow", VT_COLOR, COLOR_YELLOW );
 
     _te->debug.inspections[0].name="BITMAP";
-    _te->debug.inspections[0].address=0x2000;
+    _te->debug.inspections[0].address=0xA000;
     _te->debug.inspections[0].size=8000;
     ++_te->debug.inspections_count;
 
     _te->debug.inspections[1].name="COLORMAP";
-    _te->debug.inspections[1].address=0x0400;
+    _te->debug.inspections[1].address=0x8400;
     _te->debug.inspections[1].size=1000;
     ++_te->debug.inspections_count;
 
@@ -453,7 +453,7 @@ void test_vic2_cls2_payload( TestEnvironment * _te ) {
     Variable * yellow = variable_define( e, "yellow", VT_COLOR, COLOR_YELLOW );
 
     _te->debug.inspections[0].name="TEXTAREA";
-    _te->debug.inspections[0].address=0x0400;
+    _te->debug.inspections[0].address=0x8400;
     _te->debug.inspections[0].size=1000;
     ++_te->debug.inspections_count;
 
@@ -519,7 +519,7 @@ void test_vic2_cls3_payload( TestEnvironment * _te ) {
     Variable * yellow = variable_define( e, "yellow", VT_COLOR, COLOR_YELLOW );
 
     _te->debug.inspections[0].name="TEXTAREA";
-    _te->debug.inspections[0].address=0x0400;
+    _te->debug.inspections[0].address=0x8400;
     _te->debug.inspections[0].size=1000;
     ++_te->debug.inspections_count;
 
@@ -622,12 +622,12 @@ void test_vic2_point_at_vars_payload( TestEnvironment * _te ) {
     Variable * c = variable_define( e, "c", VT_COLOR, COLOR_RED );
 
     _te->debug.inspections[0].name="BITMAP";
-    _te->debug.inspections[0].address=0x2000;
+    _te->debug.inspections[0].address=0xA000;
     _te->debug.inspections[0].size=8000;
     ++_te->debug.inspections_count;
 
     _te->debug.inspections[1].name="COLORMAP";
-    _te->debug.inspections[1].address=0x0400;
+    _te->debug.inspections[1].address=0x8400;
     _te->debug.inspections[1].size=1000;
     ++_te->debug.inspections_count;
 
@@ -665,6 +665,175 @@ int test_vic2_point_at_vars_tester( TestEnvironment * _te ) {
 
 }
 
+//============================================================================
+
+void test_vic2_point_at_vars_payloadB( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * x = variable_define( e, "x", VT_POSITION, 0 );
+    Variable * y = variable_define( e, "y", VT_POSITION, 0 );
+    Variable * c = variable_define( e, "c", VT_COLOR, COLOR_RED );
+
+    _te->debug.inspections[0].name="BITMAP";
+    _te->debug.inspections[0].address=0xA000;
+    _te->debug.inspections[0].size=8000;
+    ++_te->debug.inspections_count;
+
+    _te->debug.inspections[1].name="COLORMAP";
+    _te->debug.inspections[1].address=0x8400;
+    _te->debug.inspections[1].size=1000;
+    ++_te->debug.inspections_count;
+
+    vic2_bitmap_enable( e, 0, 0, 0 );
+    pen( e, c->name );
+    int i;
+    for( i=0; i<16; ++i ) {
+        variable_store( e, x->name, i );
+        vic2_point_at_vars( e, x->name, y->name );
+    }
+
+}
+
+int test_vic2_point_at_vars_testerB( TestEnvironment * _te ) {
+
+    if ( ( _te->debug.inspections[0].memory[0] ) != 0xff ) {
+        printf( "Failed pixel 1 = %2.2x\n", _te->debug.inspections[0].memory[0] );
+        return 0;
+    }
+
+    if ( ( _te->debug.inspections[0].memory[8] ) != 0xff ) {
+        printf( "Failed pixel 2 = %2.2x\n", _te->debug.inspections[0].memory[8] );
+        return 0;
+    }
+
+    if ( ( _te->debug.inspections[1].memory[0] ) != ( ( COLOR_RED << 4 ) & 0xff ) ) {
+        printf( "Failed color 1 = %2.2x\n", _te->debug.inspections[1].memory[0] );
+        return 0;
+    }
+
+    if ( ( _te->debug.inspections[1].memory[1] ) != ( ( COLOR_RED << 4 ) & 0xff ) ) {
+        printf( "Failed color 1 = %2.2x\n", _te->debug.inspections[1].memory[0] );
+        return 0;
+    }
+
+    return 1;
+
+}
+
+//============================================================================
+
+void test_vic2_point_at_vars_payloadC( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * x = variable_define( e, "x", VT_POSITION, 0 );
+    Variable * y = variable_define( e, "y", VT_POSITION, 0 );
+    Variable * red = variable_define( e, "red", VT_COLOR, COLOR_RED );
+    Variable * white = variable_define( e, "white", VT_COLOR, COLOR_WHITE );
+    Variable * zero = variable_define( e, "zero", VT_WORD, 0 );
+    Variable * screenWidth = variable_define( e, "screenWidth", VT_WORD, 319 );
+    Variable * screenHeight = variable_define( e, "screenHeight", VT_WORD, 199 );
+
+    _te->debug.inspections[0].name="BITMAP";
+    _te->debug.inspections[0].address=0xA000;
+    _te->debug.inspections[0].size=8000;
+    ++_te->debug.inspections_count;
+
+    _te->debug.inspections[1].name="COLORMAP";
+    _te->debug.inspections[1].address=0x8400;
+    _te->debug.inspections[1].size=1000;
+    ++_te->debug.inspections_count;
+
+    vic2_bitmap_enable( e, 0, 0, 0 );
+    paper( e, red->name );
+    vic2_cls( e );
+    begin_for( e, y->name, zero->name, screenHeight->name );
+        begin_for( e, x->name, zero->name, screenWidth->name );
+            pen( e, white->name );
+            vic2_point_at_vars( e, x->name, y->name );
+        end_for( e );
+    end_for( e );
+
+}
+
+int test_vic2_point_at_vars_testerC( TestEnvironment * _te ) {
+
+    int i=0;
+    
+    for( i=0; i<_te->debug.inspections[0].size; ++i ) {
+        if ( ( _te->debug.inspections[0].memory[i] ) != 0xff ) {
+            printf( "Failed pixel %d = %2.2x\n", i, _te->debug.inspections[0].memory[i] );
+            return 0;
+        }
+    }
+
+    for( i=0; i<_te->debug.inspections[1].size; ++i ) {
+        if ( ( _te->debug.inspections[1].memory[i] ) != ( ( COLOR_RED << 4 ) & 0xff ) ) {
+            printf( "Failed color %d = %2.2x\n", i, _te->debug.inspections[0].memory[i] );
+            return 0;
+        }
+    }
+
+    return 1;
+
+}
+
+//============================================================================
+
+void test_vic2_point_at_vars_payloadD( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * x = variable_define( e, "x", VT_POSITION, 0 );
+    Variable * y = variable_define( e, "y", VT_POSITION, 199 );
+    Variable * c = variable_define( e, "c", VT_COLOR, COLOR_RED );
+
+    _te->debug.inspections[0].name="BITMAP";
+    _te->debug.inspections[0].address=0xA000;
+    _te->debug.inspections[0].size=8000;
+    ++_te->debug.inspections_count;
+
+    _te->debug.inspections[1].name="COLORMAP";
+    _te->debug.inspections[1].address=0x8400;
+    _te->debug.inspections[1].size=1000;
+    ++_te->debug.inspections_count;
+
+    vic2_bitmap_enable( e, 0, 0, 0 );
+    pen( e, c->name );
+    int i;
+    for( i=312; i<320; ++i ) {
+        variable_store( e, x->name, i );
+        vic2_point_at_vars( e, x->name, y->name );
+    }
+
+}
+
+int test_vic2_point_at_vars_testerD( TestEnvironment * _te ) {
+
+    if ( ( _te->debug.inspections[0].memory[0] ) != 0xff ) {
+        printf( "Failed pixel 1 = %2.2x\n", _te->debug.inspections[0].memory[0] );
+        return 0;
+    }
+
+    if ( ( _te->debug.inspections[0].memory[0] ) != 0xff ) {
+        printf( "Failed pixel 2 = %2.2x\n", _te->debug.inspections[0].memory[8] );
+        return 0;
+    }
+
+    if ( ( _te->debug.inspections[1].memory[0] ) != ( ( COLOR_RED << 4 ) & 0xff ) ) {
+        printf( "Failed color 1 = %2.2x\n", _te->debug.inspections[1].memory[0] );
+        return 0;
+    }
+
+    if ( ( _te->debug.inspections[1].memory[1] ) != ( ( COLOR_RED << 4 ) & 0xff ) ) {
+        printf( "Failed color 1 = %2.2x\n", _te->debug.inspections[1].memory[0] );
+        return 0;
+    }
+
+    return 1;
+
+}
 //============================================================================
 
 void test_vic2_point_payload( TestEnvironment * _te ) {
@@ -713,7 +882,7 @@ void test_vic2_text_at_payloadB( TestEnvironment * _te ) {
     cpu_dsdescriptor( e, text->realName, address->realName, size->realName );
 
     _te->debug.inspections[0].name="TEXT";
-    _te->debug.inspections[0].address=0x0400;
+    _te->debug.inspections[0].address=0x8400;
     _te->debug.inspections[0].size=1000;
     ++_te->debug.inspections_count;
 
@@ -764,7 +933,7 @@ void test_vic2_text_at_payloadC( TestEnvironment * _te ) {
     cpu_dsdescriptor( e, text->realName, address->realName, size->realName );
 
     _te->debug.inspections[0].name="TEXT";
-    _te->debug.inspections[0].address=0x0400;
+    _te->debug.inspections[0].address=0x8400;
     _te->debug.inspections[0].size=1000;
     ++_te->debug.inspections_count;
 
@@ -803,19 +972,24 @@ int test_vic2_text_at_testerC( TestEnvironment * _te ) {
 
 }
 
+
 void test_vic2( ) {
 
-    create_test( "vic2_text_at A", &test_vic2_text_at_payloadA, &test_vic2_text_at_testerA );    
+    /*create_test( "vic2_text_at A", &test_vic2_text_at_payloadA, &test_vic2_text_at_testerA );    
     create_test( "vic2_text_at B", &test_vic2_text_at_payloadB, &test_vic2_text_at_testerB );
     create_test( "vic2_text_at C", &test_vic2_text_at_payloadC, &test_vic2_text_at_testerC );
-    /*create_test( "vic2_bitmap_enabled", &test_vic2_bitmap_enable_payload, &test_vic2_bitmap_enable_tester );    
-    create_test( "vic2_tilemap_enabled", &test_vic2_bitmap_enable_payload, &test_vic2_bitmap_enable_tester );    
-    create_test( "vic2_cls", &test_vic2_cls_payload, &test_vic2_cls_tester );
+    create_test( "vic2_bitmap_enabled", &test_vic2_bitmap_enable_payload, &test_vic2_bitmap_enable_tester );    
+    create_test( "vic2_tilemap_enabled", &test_vic2_bitmap_enable_payload, &test_vic2_bitmap_enable_tester );*/ 
+    /*create_test( "vic2_cls", &test_vic2_cls_payload, &test_vic2_cls_tester );
     create_test( "vic2_cls2", &test_vic2_cls2_payload, &test_vic2_cls2_tester );
     create_test( "vic2_cls3", &test_vic2_cls3_payload, &test_vic2_cls3_tester );
     create_test( "vic2_background_color", &test_vic2_background_color_payload, &test_vic2_background_color_tester );
     create_test( "vic2_point_at_vars", &test_vic2_point_at_vars_payload, &test_vic2_point_at_vars_tester );
-    create_test( "vic2_point", &test_vic2_point_payload, &test_vic2_point_tester );*/
+    create_test( "vic2_point", &test_vic2_point_payload, &test_vic2_point_tester );
+
+    create_test( "vic2_point_at_vars B", &test_vic2_point_at_vars_payloadB, &test_vic2_point_at_vars_testerB );
+    create_test( "vic2_point_at_vars C", &test_vic2_point_at_vars_payloadC, &test_vic2_point_at_vars_testerC );*/
+    create_test( "vic2_point_at_vars D", &test_vic2_point_at_vars_payloadD, &test_vic2_point_at_vars_testerD );
 
 }
 
