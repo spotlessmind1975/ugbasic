@@ -172,32 +172,6 @@ TEXTATBMPEN:
     AND #$2
     BEQ TEXTATBMPENDISABLED
     LDA ($20), Y
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
-    NOP
     ASL A
     ASL A
     ASL A
@@ -341,10 +315,10 @@ TEXTATBMCNOPEN:
     LDA $2c
     AND #$1
     BEQ TEXTATBMCNOPAPER
-    ; LDA (PLOTCDEST),Y
-    ; AND $f0
-    ; ORA $2d
-    ; STA (PLOTCDEST),Y
+    LDA (PLOTCDEST),Y
+    AND $f0
+    ORA $2d
+    STA (PLOTCDEST),Y
 TEXTATBMCNOPAPER:
     LDA #$37
     STA $01
