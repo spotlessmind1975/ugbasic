@@ -1,7 +1,7 @@
 ;--------------------------------------------------------------------
-;This routine sets or erases a point on the hires $2000 based
+;This routine sets or erases a point on the hires $A000 based
 ;on coordinates AND PLOTM determined before-hand.  you can change
-;"$2000" to wherever your hires $2000 is located.
+;"$A000" to wherever your hires $A000 is located.
 ;plotPoint works by first determining which 8x8 cell the point is
 ;located in AND uses tables to figure that out.
 ;The in-cell offset is determined by just isolating the lowest 3 bits
@@ -13,11 +13,9 @@
 ; Adapted by Marco Spedaletti for ugbasic
 ;--------------------------------------------------------------------
 
-PLOTDEST = $20 ; $21
 PLOTX    = $22 ; $23
 PLOTY    = $24
 PLOTM    = $25
-PLOTCDEST= $26 ; $27
 
 ;--------------
 
@@ -53,7 +51,7 @@ PLOT:
     ;----------------------------------
     CLC
 
-    LDA PLOTVBASELO,Y          ;table of $2000 row base addresses
+    LDA PLOTVBASELO,Y          ;table of $A000 row base addresses
     ADC PLOT8LO,X              ;+ (8 * Xcell)
     STA PLOTDEST               ;= cell address
 
@@ -64,7 +62,7 @@ PLOT:
     CLC
 
     TXA
-    ADC PLOTCVBASELO,Y          ;table of $0400 row base addresses
+    ADC PLOTCVBASELO,Y          ;table of $8400 row base addresses
     STA PLOTCDEST               ;= cell address
 
     LDA #0
@@ -101,22 +99,33 @@ PLOTD:
     ;---------
     ;set point
     ;---------
+    SEI
+    LDA #$36
+    STA $01
     LDA (PLOTDEST),y           ;get row with point in it
     ORA PLOTORBIT,x            ;isolate AND set the point
-    STA (PLOTDEST),y           ;write back to $2000
+    STA (PLOTDEST),y           ;write back to $A000
     LDA (PLOTCDEST),y          ;get row with point in it
     AND #$0f                   ;isolate AND set the point
     ORA _PEN                   ;isolate OR set the point
-    STA (PLOTCDEST),y          ;write back to $2000    
+    STA (PLOTCDEST),y          ;write back to $A000    
+    LDA #$37
+    STA $01
+    CLI
     JMP PLOTP                  ;skip the erase-point section
 
     ;-----------
     ;erase point
     ;-----------
 PLOTE:                          ;handled same way as setting a point
+    LDA #$36
+    STA $01
     LDA (PLOTDEST),y            ;just with opposite bit-mask
     AND PLOTANDBIT,x            ;isolate AND erase the point
-    STA (PLOTDEST),y            ;write back to $2000
+    STA (PLOTDEST),y            ;write back to $A000
+    LDA #$37
+    STA $01
+    JMP PLOTP
 
 PLOTG:                          
     LDA (PLOTDEST),y            
