@@ -1,2 +1,2 @@
-    DEBUG 2+2
+    PRINT (2+2);" ";
     HALT

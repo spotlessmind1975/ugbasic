@@ -6,6 +6,6 @@
 
     a = 42
     test
-    DEBUG a: REM print 43
+    PRINT a;" ";: REM print 43
     
     HALT

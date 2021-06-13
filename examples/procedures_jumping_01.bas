@@ -1,13 +1,13 @@
     PROCEDURE first
-        DEBUG 1
+        PRINT 1;" ";
     END PROC
      
     PROCEDURE second
-        DEBUG 2
+        PRINT 2;" ";
     END PROC
      
     PROCEDURE third
-        DEBUG 3
+        PRINT 3;" ";
     END PROC
 
    times = 1

@@ -1,5 +1,5 @@
    PROCEDURE hello
-      DEBUG "HEY!"
+      PRINT "HEY!";" ";
    END PROC
    
    REM Demonstrate that a procedure is being called not simply a command

@@ -9,7 +9,7 @@
   
   example
   
-  DEBUG a
-  DEBUG b
+  PRINT a;" ";
+  PRINT b;" ";
   
   HALT

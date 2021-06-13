@@ -2,8 +2,8 @@
   b = 84
   
   PROCEDURE example
-     DEBUG a
-     DEBUG b
+     PRINT a;" ";
+     PRINT b;" ";
   END PROC
 
   example

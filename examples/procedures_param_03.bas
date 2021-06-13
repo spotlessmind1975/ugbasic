@@ -1,10 +1,10 @@
  PROCEDURE joinString[a$,b$,c$]
-    DEBUG a$
-    DEBUG b$
-    DEBUG c$   
+    PRINT a$;" ";
+    PRINT b$;" ";
+    PRINT c$   ;" ";
     RETURN a$+b$+c$
  END PROC
  
- DEBUG joinString["ONE","TWO","THREE"]
+ PRINT joinString["ONE","TWO","THREE"];" ";
  HALT
  

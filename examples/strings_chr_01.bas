@@ -1,2 +1,2 @@
-  i = 0: FOR i = 32 TO 255: DEBUG CHR(i): NEXT
+  i = 0: FOR i = 32 TO 255: PRINT CHR(i);" ";: NEXT
   HALT

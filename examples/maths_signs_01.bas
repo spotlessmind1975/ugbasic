@@ -1,2 +1,2 @@
-    DEBUG SGN(-42): REM Print -1
+    PRINT SGN(-42);" ";: REM Print -1
     HALT

@@ -1,2 +1,2 @@
-  DEBUG FLIP$("ugBASIC"): REM print out "CISABgu"
+  PRINT FLIP$("ugBASIC");" ";: REM print out "CISABgu"
   HALT

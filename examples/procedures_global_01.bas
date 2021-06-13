@@ -16,7 +16,7 @@
    test1
    test2
    
-   DEBUG a: REM print 17
-   DEBUG b: REM print 27
+   PRINT a;" ";: REM print 17
+   PRINT b;" ";: REM print 27
 
    HALT
