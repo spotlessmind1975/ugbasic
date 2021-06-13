@@ -415,13 +415,15 @@ typedef struct _ScreenMode {
 #define SCREEN_MODE_DEFINE( _id, _bitmap, _width, _height, _colors, _description ) \
     { \
         ScreenMode * screenMode = malloc( sizeof( ScreenMode ) ); \
+        memset( screenMode, 0, sizeof( screenMode ) ) ; \
         screenMode->bitmap = _bitmap; \
         screenMode->id = _id; \
         screenMode->width = _width; \
         screenMode->height = _height; \
         screenMode->colors = _colors; \
         screenMode->score = 0; \
-        screenMode->description = _description; \
+        screenMode->description = strdup( _description ); \
+        screenMode->next = NULL; \
         ScreenMode * last = _environment->screenModes; \
         if ( last ) { \
             while( last->next ) { \
@@ -601,6 +603,12 @@ typedef struct _Environment {
      */
 
     int varsDeployed;
+
+    /**
+     * Deployed the startup for VIC-II
+     */
+
+    int vicstartupDeployed;
 
     /**
      * Deployed the vars for VIC-II
