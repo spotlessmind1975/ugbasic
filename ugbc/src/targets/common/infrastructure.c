@@ -1075,7 +1075,7 @@ Variable * variable_add( Environment * _environment, char * _source, char * _des
                     cpu_dsdescriptor( _environment, target->realName, address2->realName, size2->realName );
                     cpu_math_add_8bit( _environment, size1->realName, size2->realName, size->realName );
                     cpu_dsalloc( _environment, size->realName, result->realName );
-                    cpu_dsdescriptor( _environment, source->realName, address->realName, size->realName );
+                    cpu_dsdescriptor( _environment, result->realName, address->realName, size->realName );
                     cpu_mem_move( _environment, address1->realName, address->realName, size1->realName );
                     cpu_math_add_16bit_with_8bit( _environment, address->realName, size1->realName, address->realName );
                     cpu_mem_move( _environment, address2->realName, address->realName, size2->realName );
@@ -2759,7 +2759,7 @@ Variable * variable_string_string( Environment * _environment, char * _string, c
         CRITICAL_STRING_UNSUPPORTED( _string, DATATYPE_AS_STRING[string->type]);
     }
 
-    cpu_fill( _environment, address->realName, size->realName, address2->realName );
+    cpu_fill( _environment, address->realName, size2->realName, address2->realName );
 
     return result;
     
