@@ -43,7 +43,7 @@
  * 
  * This function allows you to set the starting address, in memory, for the 
  * tiles (for textual mode) and it is the version that is used when the memory 
- * is given as a direct number (i.e.: $0400). The input parameter is decoded 
+ * is given as a direct number (i.e.: $8400). The input parameter is decoded 
  * and declined according to the hardware limits. So it is not said that 
  * exactly the given address is set.
  * 
@@ -70,7 +70,7 @@ esattamente all'indirizzo specificato.
 
 @syntax TILES AT # [integer]
 
-@example TILES AT #$0400
+@example TILES AT #$8400
 
 @target c64
 </usermanual> */
@@ -82,7 +82,7 @@ void tiles_at( Environment * _environment, int _address ) {
     // it with the requested value.
     // TODO: tile_address should be retrieved via function!
     Variable * tiles_address = variable_retrieve_or_define( _environment, "tiles_address", VT_ADDRESS, _address );
-    variable_store( _environment, tiles_address->name, ( ( _address >> 11 ) & 0x07 ) * 0x0400 );
+    variable_store( _environment, tiles_address->name, ( ( _address >> 11 ) & 0x07 ) * 0x8400 );
 
     char addressString[MAX_TEMPORARY_STORAGE]; sprintf(addressString, "#$%2.2x", ( _address >> 8 ) & 0xff );
 

@@ -82,7 +82,7 @@ void bitmap_enable( Environment * _environment, int _width, int _height, int _co
     Variable * bitmapAddress = variable_retrieve( _environment, "BITMAPADDRESS" );
 
     // Let's define the special variable colormapAddress.
-    Variable * colormapAddress = variable_retrieve_or_define( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0x0400 );
+    Variable * colormapAddress = variable_retrieve_or_define( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0x8400 );
 
     outline0("; BITMAP ENABLE");
 
@@ -128,7 +128,7 @@ void bitmap_disable( Environment * _environment ) {
  * 
  * This function allows you to set the starting address, in memory, for the 
  * bitmap and it is the version that is used when the memory is given as a
- * direct number (i.e.: $2000). The input parameter is decoded and declined 
+ * direct number (i.e.: $A000). The input parameter is decoded and declined 
  * according to the hardware limits. So it is not said that exactly the 
  * given address is set.
  * 

@@ -60,7 +60,7 @@ indefiniti. Se vuoi assegnare un valore valido usa il comando [[TEXTMAP AT]].
 @syntax TEXTADDRESS = [expression]
 
 @example actual = TEXTADDRESS
-@example TEXTADDRESS = $0400
+@example TEXTADDRESS = $8400
 
 @target c64
 
@@ -72,7 +72,7 @@ indefiniti. Se vuoi assegnare un valore valido usa il comando [[TEXTMAP AT]].
  * 
  * This function allows you to set the starting address, in memory, for the 
  * text and it is the version that is used when the memory is given as a
- * direct number (i.e.: $0400). The input parameter is decoded and declined 
+ * direct number (i.e.: $8400). The input parameter is decoded and declined 
  * according to the hardware limits. So it is not said that exactly the 
  * given address is set.
  * 
@@ -98,7 +98,7 @@ non è detto che sia impostato esattamente con l'indirizzo specificato.
 
 @syntax TEXTMAP AT # [integer]
 
-@example TEXTMAP AT #$0400
+@example TEXTMAP AT #$8400
 
 @target c64
 
@@ -112,7 +112,7 @@ void textmap_at( Environment * _environment, int _address ) {
     // it with the requested value.
     // TODO: the TEXTADDRESS should be populated by a get_TEXTADDRESS() function!
     Variable * TEXTADDRESS = variable_retrieve( _environment, "TEXTADDRESS" );
-    variable_store( _environment, TEXTADDRESS->realName, ( ( _address >> 10 ) & 0x0f ) * 0x0400 );
+    variable_store( _environment, TEXTADDRESS->realName, ( ( _address >> 10 ) & 0x0f ) * 0x8400 );
 
     char addressString[MAX_TEMPORARY_STORAGE]; sprintf(addressString, "#$%2.2x", ( _address >> 8 ) & 0xff );
 

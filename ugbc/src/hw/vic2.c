@@ -342,9 +342,7 @@ void vic2_bitmap_enable( Environment * _environment, int _width, int _height, in
     switch( mode->id ) {
         case BITMAP_MODE_STANDARD:
             // This fix is necessary to set the starting address of the bitmap 
-            // to $2000 (which is an address available on C=64) instead of the 
-            // address $0000 (which, in the first bank, occupies page 0 of the 
-            // CPU).
+            // to $A000 (which is an address available on C=64).
             outline0("LDA $D018" );
             outline0("AND #%11110111");
             outline0("ORA #%00001000" );
@@ -358,14 +356,13 @@ void vic2_bitmap_enable( Environment * _environment, int _width, int _height, in
             outline0("AND #%11101111");
             outline0("STA $D016" );
 
-            cpu_store_16bit( _environment, colormapAddress->realName, 0x0400 );
+            cpu_store_16bit( _environment, colormapAddress->realName, 0x8400 );
 
             break;
         case BITMAP_MODE_MULTICOLOR:
             // This fix is necessary to set the starting address of the bitmap 
-            // to $2000 (which is an address available on C=64) instead of the 
-            // address $0000 (which, in the first bank, occupies page 0 of the 
-            // CPU).
+            // to $A000 (which is an address available on C=64) instead of the 
+            // address $8000.
             outline0("LDA $D018" );
             outline0("AND #%11110111");
             outline0("ORA #%00001000" );
@@ -379,7 +376,7 @@ void vic2_bitmap_enable( Environment * _environment, int _width, int _height, in
             outline0("ORA #%00010000");
             outline0("STA $D016" );
 
-            cpu_store_16bit( _environment, colormapAddress->realName, 0x0400 );
+            cpu_store_16bit( _environment, colormapAddress->realName, 0x8400 );
             
             break;
         default:
@@ -871,6 +868,7 @@ void vic2_scroll_text( Environment * _environment, int _direction ) {
 
 void vic2_text_at( Environment * _environment, char * _x, char * _y, char * _text, char * _text_size, char * _pen, char *_ww ) {
 
+    deploy( vic2varsDeployed, "./ugbc/src/hw/vic2/vars.asm" );
     deploy( vScrollTextDeployed, "./ugbc/src/hw/vic2/vscroll_text.asm" );
     deploy( textEncodedAtDeployed, "./ugbc/src/hw/vic2/text_at.asm" );
 
@@ -910,11 +908,15 @@ void vic2_text_at( Environment * _environment, char * _x, char * _y, char * _tex
 
 void vic2_initialization( Environment * _environment ) {
 
+    deploy( vicstartupDeployed, "./ugbc/src/hw/vic2/startup.asm" );
+
     SCREEN_MODE_DEFINE( BITMAP_MODE_STANDARD, 1, 320, 200, 2, "Standard Bitmap Mode" );
     SCREEN_MODE_DEFINE( BITMAP_MODE_MULTICOLOR, 1, 160, 200, 4, "Multicolor Bitmap Mode"  );
     SCREEN_MODE_DEFINE( TILEMAP_MODE_STANDARD, 0, 40, 25, 2, "Standard Character Mode" );
     SCREEN_MODE_DEFINE( TILEMAP_MODE_MULTICOLOR, 0, 40, 25, 16, "Multicolor Character Mode" );
     SCREEN_MODE_DEFINE( TILEMAP_MODE_EXTENDED, 0, 40, 25, 20, "Extended Multicolor Character Mode" );
+
+    outline0("JSR VIC2STARTUP");
 
 }
 

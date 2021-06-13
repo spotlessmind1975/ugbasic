@@ -43,7 +43,7 @@
  * 
  * This function allows you to set the starting address, in memory, for the 
  * colormap and it is the version that is used when the memory is given as a
- * direct number (i.e.: $2000). The input parameter is decoded and declined 
+ * direct number (i.e.: $8400). The input parameter is decoded and declined 
  * according to the hardware limits. So it is not said that exactly the 
  * given address is set.
  * 
@@ -84,7 +84,7 @@ void colormap_at( Environment * _environment, int _address ) {
 
     // TODO: colormapAddress must be retrieved by a vic2_get_colormapAddress()
 
-    variable_store( _environment, colormapAddress->name, ( ( ( _address >> 10 ) & 0x0f ) * 0x0400 ) );
+    variable_store( _environment, colormapAddress->name, ( ( ( _address >> 10 ) & 0x0f ) * 0x8400 ) );
 
     char addressString[MAX_TEMPORARY_STORAGE]; sprintf(addressString, "%2.2x", ( _address >> 10 ) & 0x0f );
 
@@ -120,10 +120,10 @@ void colormap_at_var( Environment * _environment, char * _address ) {
 
     // Let's define the special variable and fill up with the value.
     // TODO: colormapAddress must be retrieved by a vic2_get_colormapAddress()
-    Variable * colormapAddress = variable_retrieve_or_define( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0x0400 );
+    Variable * colormapAddress = variable_retrieve_or_define( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0x8400 );
     Variable * address = variable_retrieve( _environment, _address );
 
-    // variable_store( _environment, colormapAddress->name, ( ( ( _address >> 10 ) & 0x0f ) * 0x0400 ) );
+    // variable_store( _environment, colormapAddress->name, ( ( ( _address >> 10 ) & 0x0f ) * 0x8400 ) );
 
     char addressString[MAX_TEMPORARY_STORAGE]; sprintf(addressString, "%s+1", address->realName );
 
@@ -167,7 +167,7 @@ void colormap_clear_with( Environment * _environment, int _foreground, int _back
 
     outline2("; COLORMAP CLEAR WITH #$%2.2x AND #$%2.2x", _foreground, _background );
 
-    Variable * colormapAddress = variable_retrieve_or_define( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0x0400 );
+    Variable * colormapAddress = variable_retrieve_or_define( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0x8400 );
 
     char value[MAX_TEMPORARY_STORAGE]; sprintf(value, "#$%2.2x", ( ( _foreground & 0x0f ) << 4 ) | ( _background & 0x0f ));
     
@@ -200,7 +200,7 @@ void colormap_clear_with_vars( Environment * _environment, char * _foreground, c
 
     outline2("; COLORMAP CLEAR WITH %s AND %s", _foreground, _background );
 
-    Variable * colormapAddress = variable_retrieve_or_define( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0x0400 );
+    Variable * colormapAddress = variable_retrieve_or_define( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0x8400 );
     if ( ! colormapAddress ) {
         CRITICAL( "COLORMAP CLEAR WITH xxx ON xxx needs BITMAP ENABLED");
     }
