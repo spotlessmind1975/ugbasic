@@ -158,7 +158,7 @@ DSGCEND:
 
 ; DSFINDFREE() -> B
 DSFINDFREE:
-    LD B, 0
+    LD B, 1; // fix denote 0 as "unused slot"
 DSFINDFREEL:
     CALL DSDESCRIPTOR
     LD A, (IX+3)
