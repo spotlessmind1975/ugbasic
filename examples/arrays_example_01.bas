@@ -9,8 +9,8 @@
     year(1)=1967
     price(1)=8
 
-    DEBUG title$(0) 
-    DEBUG price(0)
-    DEBUG title$(1) 
-    DEBUG year(1)
-    DEBUG price(1)
+    PRINT title$(0) 
+    PRINT price(0)
+    PRINT title$(1) 
+    PRINT year(1)
+    PRINT price(1)
