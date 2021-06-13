@@ -35,9 +35,365 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+SCREENCODE = $16
+
+TEXTATDECODE:
+    CMP #32
+    BCS TEXTATXSP128
+    JMP TEXTATSP128
+TEXTATXSP128:
+    CMP #64
+    BCS TEXTATXSP0
+    JMP TEXTATDECODE0
+TEXTATXSP0:
+    CMP #96
+    BCS TEXTATXSM64
+    JMP TEXTATSM64
+TEXTATXSM64:
+    CMP #160
+    BCS TEXTATXSP64
+    JMP TEXTATSP64
+TEXTATXSP64:
+    CMP #192
+    BCS TEXTATX2SM64
+    JMP TEXTATSM64
+TEXTATX2SM64:
+    CMP #224
+    BCS TEXTATX2SM128
+    JMP TEXTATSM128
+TEXTATX2SM128:
+    JMP TEXTATDECODE0
+TEXTATSP64:
+    CLC
+    ADC #64
+    JMP TEXTATDECODE0
+TEXTATSP128:
+    ADC #128
+    JMP TEXTATDECODE0
+TEXTATSM64:
+    SBC #63
+    JMP TEXTATDECODE0
+TEXTATSM128:
+    SBC #127
+    JMP TEXTATDECODE0
+TEXTATDECODE0:
+    STA SCREENCODE
+    RTS
+
 TEXTAT:
     SEI
+
+    LDA $D011
+    AND #%00100000
+    BNE TEXTATBITMAPMODE
+    JMP TEXTATTILEMODE
     
+;-----------------------------------------------------------------------------
+; BITMAP MODE
+;-----------------------------------------------------------------------------
+
+TEXTATBITMAPMODE:
+
+    LDX $d3
+    LDY $d6
+
+    CLC
+
+    LDA PLOTVBASELO,Y          ;table of $A000 row base addresses
+    ADC PLOT8LO,X              ;+ (8 * Xcell)
+    STA PLOTDEST               ;= cell address
+
+    LDA PLOTVBASEHI,Y          ;do the high byte
+    ADC PLOT8HI,X
+    STA PLOTDEST+1
+
+    CLC
+
+    TXA
+    ADC PLOTCVBASELO,Y          ;table of $8400 row base addresses
+    STA PLOTCDEST               ;= cell address
+
+    LDA #0
+    ADC PLOTCVBASEHI,Y          ;do the high byte
+    STA PLOTCDEST+1
+
+    LDX $24
+    LDY #$0
+TEXTATBMLOOP2:
+
+    LDA $25
+    BEQ TEXTATBMNSKIPTAB
+    JMP TEXTATBMSKIPTAB
+
+TEXTATBMNSKIPTAB:
+    LDA ($20),Y
+
+    CMP #31
+    BCS TEXTATBMXCC
+    JMP TEXTATBMCC
+
+TEXTATBMXCC:
+    JSR TEXTATDECODE
+    JMP TEXTATBMSP0
+
+TEXTATBMTAB:
+    LDA $d3
+TEXTATBMTAB2:
+    CMP TABCOUNT
+    BCC TEXTATBMTAB3
+    DEC TABCOUNT
+    JMP TEXTATBMTAB2
+TEXTATBMTAB3:
+    CLC
+    ADC TABCOUNT
+    STA $25
+    JMP TEXTATBMNEXT
+
+TEXTATBMCC:
+    CMP #09
+    BEQ TEXTATBMTAB
+    CMP #01
+    BEQ TEXTATBMPEN
+    CMP #02
+    BEQ TEXTATBMPAPER
+    CMP #03
+    BEQ TEXTATBMCMOVEPREPARE
+    CMP #04
+    BEQ TEXTATBMXAT
+    JMP TEXTATBMNEXT
+
+TEXTATBMXAT:
+    JMP TEXTATBMAT
+
+TEXTATBMPEN:
+    INC $20
+    DEX
+    LDA $2c
+    AND #$2
+    BEQ TEXTATBMPENDISABLED
+    LDA ($20), Y
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    ASL A
+    ASL A
+    ASL A
+    ASL A
+    STA $2b
+TEXTATBMPENDISABLED:
+    INC $20
+    DEY
+    JMP TEXTATBMNEXT
+
+TEXTATBMPAPER:
+    INC $20
+    DEX
+    LDA $2c
+    AND #$1
+    BEQ TEXTATBMPAPERDISABLED
+    LDA ($20), Y
+    STA $2d
+TEXTATBMPAPERDISABLED:
+    INC $20
+    DEY
+    JMP TEXTATBMNEXT
+
+TEXTATBMCMOVEPREPARE:
+    INC $20
+    DEX
+    LDA ($20), Y
+    STA $33
+    INC $20
+    DEX
+    LDA ($20), Y
+    STA $34
+
+TEXTATBMCMOVE:
+    CLC
+    LDA $33
+    ADC $d3
+    STA $d3
+    LDA $34
+    ADC $d6
+    STA $d6
+
+    JMP TEXTATBMNEXT
+
+TEXTATBMAT:
+    INC $20
+    DEX
+    LDA ($20), Y
+    SEC
+    SBC $d3
+    STA $33
+    INC $20
+    DEX
+    LDA ($20), Y
+    SEC
+    SBC $d6
+    STA $34
+    JMP TEXTATBMCMOVE
+
+TEXTATBMSP0:
+
+    TYA
+    PHA
+
+    TXA
+    PHA
+
+    LDX $d3
+    LDY $d6
+
+    CLC
+
+    LDA PLOTVBASELO,Y          ;table of $A000 row base addresses
+    ADC PLOT8LO,X              ;+ (8 * Xcell)
+    STA PLOTDEST               ;= cell address
+
+    LDA PLOTVBASEHI,Y          ;do the high byte
+    ADC PLOT8HI,X
+    STA PLOTDEST+1
+
+    CLC
+
+    TXA
+    ADC PLOTCVBASELO,Y          ;table of $8400 row base addresses
+    STA PLOTCDEST               ;= cell address
+
+    LDA #0
+    ADC PLOTCVBASEHI,Y          ;do the high byte
+    STA PLOTCDEST+1
+
+    PLA
+    TAX
+    
+    PLA
+    TAY
+
+    TYA
+    PHA
+    LDY #0
+
+    LDA SCREENCODE
+    STA $22
+    LDA #0
+    STA $23
+
+    CLC
+    ASL $22
+    ROL $23
+    CLC
+    ASL $22
+    ROL $23
+    CLC
+    ASL $22
+    ROL $23
+
+    CLC
+    LDA #$0
+    ADC $22
+    STA $22
+    LDA #$90
+    ADC $23
+    STA $23
+TEXTATBMSP0L1:
+    LDA ($22),Y
+    STA (PLOTDEST),Y
+    INY
+    CPY #8
+    BNE TEXTATBMSP0L1
+    LDA $2c
+    AND #$2
+    BEQ TEXTATBMCNOPEN
+    LDY #0
+    ; LDA (PLOTCDEST),Y
+    SEI
+    LDA #$36
+    STA $01
+    LDA #$05
+    ORA $2b
+    STA (PLOTCDEST),Y
+TEXTATBMCNOPEN:
+    LDA $2c
+    AND #$1
+    BEQ TEXTATBMCNOPAPER
+    ; LDA (PLOTCDEST),Y
+    ; AND $f0
+    ; ORA $2d
+    ; STA (PLOTCDEST),Y
+TEXTATBMCNOPAPER:
+    LDA #$37
+    STA $01
+    CLI
+    PLA
+    TAY
+    JMP TEXTATBMINCX
+
+TEXTATBMSKIPTAB:
+    DEC $25
+    JMP TEXTATBMINCX
+
+TEXTATBMINCX:
+    INC $d3
+    LDA $d3
+    CMP #40
+    BEQ TEXTATBMNEXT2
+    JMP TEXTATBMNEXT
+TEXTATBMNEXT2:
+    LDA #0
+    STA $d3
+    INC $d6
+    LDA $d6
+    CMP #24
+
+    BEQ TEXTATBMNEXT3
+    JMP TEXTATBMNEXT
+TEXTATBMNEXT3:
+
+    ; scrolling ?
+
+TEXTATBMNEXT:
+    LDA $25
+    BEQ TEXTATBMXLOOP2
+    JMP TEXTATBMLOOP2
+TEXTATBMXLOOP2:
+    INY
+    DEX
+    BEQ TEXTATBMEND
+    JMP TEXTATBMLOOP2
+TEXTATBMEND:
+    CLI
+    RTS
+
+;-----------------------------------------------------------------------------
+; TILE MODE
+;-----------------------------------------------------------------------------
+
+TEXTATTILEMODE:
     LDA #23
     STA 53272
     
@@ -99,44 +455,7 @@ TEXTATNSKIPTAB:
     JMP TEXTATCC
 
 TEXTATXCC:
-    CMP #32
-    BCS TEXTATXSP128
-    JMP TEXTATSP128
-TEXTATXSP128:
-    CMP #64
-    BCS TEXTATXSP0
-    JMP TEXTATSP0
-TEXTATXSP0:
-    CMP #96
-    BCS TEXTATXSM64
-    JMP TEXTATSM64
-TEXTATXSM64:
-    CMP #160
-    BCS TEXTATXSP64
-    JMP TEXTATSP64
-TEXTATXSP64:
-    CMP #192
-    BCS TEXTATX2SM64
-    JMP TEXTATSM64
-TEXTATX2SM64:
-    CMP #224
-    BCS TEXTATX2SM128
-    JMP TEXTATSM128
-TEXTATX2SM128:
-    JMP TEXTATSP0
-
-TEXTATSP64:
-    CLC
-    ADC #64
-    JMP TEXTATSP0
-TEXTATSP128:
-    ADC #128
-    JMP TEXTATSP0
-TEXTATSM64:
-    SBC #63
-    JMP TEXTATSP0
-TEXTATSM128:
-    SBC #127
+    JSR TEXTATDECODE
     JMP TEXTATSP0
 
 TEXTATTAB:
