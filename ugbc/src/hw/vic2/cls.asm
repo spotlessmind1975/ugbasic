@@ -48,7 +48,7 @@ CLSG:
     STA $26
     LDX #31
     LDY #0
-    LDA #0
+    LDA #$0
 CLSGY:
     STA ($25),Y
     INY
@@ -56,6 +56,12 @@ CLSGY:
     INC $26
     DEX
     BNE CLSGY
+    LDX #64
+CLSGY2:
+    STA ($25),Y
+    INY
+    DEX
+    BNE CLSGY2
 
     LDA COLORMAPADDRESS
     STA $25
