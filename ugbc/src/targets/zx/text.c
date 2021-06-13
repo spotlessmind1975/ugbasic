@@ -365,3 +365,24 @@ void tilemap_enable( Environment * _environment, int _width, int _height, int _c
     zx_tilemap_enable( _environment, _width, _height, _colors );
     
 }
+
+/**
+ * @brief Emit code for <strong>PEN ...</strong> command
+ * 
+ * @param _environment Current calling environment
+ * @param _color Color to use for the pen
+ */
+/* <usermanual>
+@keyword PEN
+
+@target zx
+</usermanual> */
+
+void pen( Environment * _environment, char * _color ) {
+
+    Variable * pen = variable_retrieve( _environment, "PEN" );
+    Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_BLACK );
+
+    variable_move( _environment, color->name, pen->name );
+    
+}

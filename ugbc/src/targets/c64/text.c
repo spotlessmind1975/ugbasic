@@ -823,3 +823,61 @@ void tilemap_enable( Environment * _environment, int _width, int _height, int _c
     vic2_tilemap_enable( _environment, _width, _height, _colors );
 
 }
+
+/**
+ * @brief Emit code for <strong>PEN ...</strong> command
+ * 
+ * @param _environment Current calling environment
+ * @param _color Color to use for the pen
+ */
+/* <usermanual>
+@keyword PEN
+
+@english
+The ''PEN'' command sets the colour of the text displayed in the current
+window, when followed by the colour index number of your choice. 
+The default setting of the pen colour is index number ''DEFAULT PEN'', 
+and alternative colours may be selected from one of up to ''PEN COLORS'' 
+choices, depending on the current graphics mode.
+
+@italian
+Il comando "PEN" imposta il colore del testo visualizzato nella finestra 
+corrente, quando seguito dal numero di indice del colore scelto. 
+L'impostazione predefinita del colore della penna è il numero di indice
+''DEFAULT PEN'', e colori alternativi possono essere selezionati 
+da una delle scelte fino a "PEN COLORS", a seconda della modalità 
+grafica corrente.
+
+@syntax PEN [expression]
+
+@example PEN 4
+@example PEN (esempio)
+
+@UsedInExample texts_options_01.bas
+@UsedInExample texts_options_02.bas
+
+@target all
+</usermanual> */
+
+void pen( Environment * _environment, char * _color ) {
+
+    Variable * pen = variable_retrieve( _environment, "PEN" );
+    Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_BLACK );
+
+    MAKE_LABEL
+
+    variable_move( _environment, color->name, pen->name );
+    outline0("LDA $D011");
+    outline0("AND #%00100000");
+    outline1("BEQ %stxt", label );
+    outline0("CLC" );
+    outline0("ASL A" );
+    outline0("CLC" );
+    outline0("ASL A" );
+    outline0("CLC" );
+    outline0("ASL A" );
+    outline0("CLC" );
+    outline0("ASL A" );
+    outhead1("%stxt:", label );
+    
+}
