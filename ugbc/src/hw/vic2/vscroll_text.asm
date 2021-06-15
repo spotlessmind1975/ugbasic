@@ -36,38 +36,45 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 VSCROLLT:
+    TXA
+    PHA
+    TYA
+    PHA
+    LDA #$36
+    STA $01
     LDA $30
     CMP #$80
     BCC VSCROLLTDOWN
 
 VSCROLLTUP:
     LDA TEXTADDRESS
-    STA $25
+    STA $35
     LDA TEXTADDRESS+1
-    STA $26
+    STA $36
     CLC
     LDA TEXTADDRESS
     ADC #40
-    STA $27
+    STA $37
     LDA TEXTADDRESS+1
-    STA $28
+    ADC #0
+    STA $38
 
     LDX #3
     LDY #0
 VSCROLLTUPYSCR:
-    LDA ($27),Y
-    STA ($25),Y
+    LDA ($37),Y
+    STA ($35),Y
     INY
     BNE VSCROLLTUPYSCR
-    INC $26
-    INC $28
+    INC $36
+    INC $38
     CPX #1
     BNE VSCROLLTUPYSCRNXT
 VSCROLLTUPYSCR2:
-    LDA ($27),Y
-    STA ($25),Y
+    LDA ($37),Y
+    STA ($35),Y
     INY
-    CPY #232
+    CPY #192
     BNE VSCROLLTUPYSCR2
 VSCROLLTUPYSCRNXT:
     DEX
@@ -75,52 +82,68 @@ VSCROLLTUPYSCRNXT:
     LDY #192
 VSCROLLTUPREFILL:
     LDA #32
-    STA ($25),Y
+    STA ($35),Y
     INY
     CPY #232
     BNE VSCROLLTUPREFILL
+VSCROLLTUEND:
+    LDA #$37
+    STA $01
+
+    PLA
+    TAy
+    PLA
+    TAx
     RTS
 
 VSCROLLTDOWN:
     LDA TEXTADDRESS
-    STA $25
+    STA $35
     LDA TEXTADDRESS+1
-    STA $26
+    STA $36
     CLC
     LDA TEXTADDRESS
     ADC #40
-    STA $27
+    STA $37
     LDA TEXTADDRESS+1
-    STA $28
+    ADC #0
+    STA $38
     
-    INC $26
-    INC $28
-    INC $26
-    INC $28
-    INC $26
-    INC $28
+    INC $36
+    INC $38
+    INC $36
+    INC $38
+    INC $36
+    INC $38
     LDY #232
 VSCROLLTDOWNYS3:
-    LDA ($25),Y
-    STA ($27),Y
+    LDA ($35),Y
+    STA ($37),Y
     DEY
     CPY #255
     BNE VSCROLLTDOWNYS3
 
-    DEC $26
-    DEC $28
+    DEC $36
+    DEC $38
     LDX #3
     LDY #255
 VSCROLLTDOWNYS4:
-    LDA ($25),Y
-    STA ($27),Y
+    LDA ($35),Y
+    STA ($37),Y
     DEY
     CPY #255
     BNE VSCROLLTDOWNYS4
 
-    DEC $26
-    DEC $28
+    DEC $36
+    DEC $38
     LDY #255
     DEX
     BNE VSCROLLTDOWNYS4
+    LDA #$37
+    STA $01
+
+    PLA
+    TYA
+    PLA
+    TXA
     RTS
