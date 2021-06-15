@@ -1290,7 +1290,8 @@ void z80_random_8bit( Environment * _environment, char * _seed, char * _entropy,
 
     z80_random( _environment, _seed, _entropy );
 
-    outline1("LD (%s), H", _result );
+    outline0("LD A, H" );
+    outline1("LD (%s), A", _result );
 
 }
 
