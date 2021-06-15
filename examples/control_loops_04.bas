@@ -22,7 +22,7 @@ REM il numero. Quindi ci aspettiamo di ottenere un flusso infinito di numeri
 REM da 10 a 1. Questo esempio mostra anche come funziona lo scorrimento 
 REM automatico, quando si raggiunge la fine della schermata con l'uso del 
 REM comando ''STAMPA''. Infine, il valore iniziale sarà rappresentato da 
-REM un singolo byte, utilizzando una sintassi chiamata "cast esplicito" ù
+REM un singolo byte, utilizzando una sintassi chiamata "cast esplicito"
 REM (''(8BIT)'').
 REM
 
