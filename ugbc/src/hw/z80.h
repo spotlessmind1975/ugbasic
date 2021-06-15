@@ -144,6 +144,7 @@ void z80_dsdefine( Environment * _environment, char * _string, char * _index );
 void z80_dsalloc( Environment * _environment, char * _size, char * _index );
 void z80_dsfree( Environment * _environment, char * _index );
 void z80_dswrite( Environment * _environment, char * _index );
+void z80_dsresize( Environment * _environment, char * _index, char * _size );
 void z80_dsgc( Environment * _environment );
 void z80_dsdescriptor( Environment * _environment, char * _index, char * _address, char * _size );
 void z80_move_8bit_with_offset( Environment * _environment, char *_source, char * _value, int _offset );
@@ -260,6 +261,7 @@ void z80_move_8bit_with_offset2( Environment * _environment, char *_source, char
 #define cpu_dsalloc( _environment, _size, _index ) z80_dsalloc( _environment, _size, _index )
 #define cpu_dsfree( _environment, _index ) z80_dsfree( _environment, _index )
 #define cpu_dswrite( _environment, _index ) z80_dswrite( _environment, _index )
+#define cpu_dsresize( _environment, _index, _size ) z80_dswrite( _environment, _index, _size )
 #define cpu_dsgc( _environment ) z80_dsgc( _environment )
 #define cpu_dsdescriptor( _environment, _index, _address, _size ) z80_dsdescriptor( _environment, _index, _address, _size )
 #define cpu_dsalloc_size( _environment, _size, _index ) z80_dsalloc_size( _environment, _size, _index ) 

@@ -2601,6 +2601,17 @@ void cpu6502_dswrite( Environment * _environment, char * _index ) {
 
 }
 
+void cpu6502_dsresize( Environment * _environment, char * _index, char * _resize ) {
+
+    deploy( dstringDeployed,"./ugbc/src/hw/6502/dstring.asm" );
+
+    outline1( "LDX %s", _index );
+    outline1( "LDA %s", _resize );
+    outline0( "STA $21" );
+    outline0( "JSR DSRESIZE" );
+
+}
+
 void cpu6502_dsgc( Environment * _environment ) {
 
     deploy( dstringDeployed,"./ugbc/src/hw/6502/dstring.asm" );

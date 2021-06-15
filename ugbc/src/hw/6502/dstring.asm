@@ -117,6 +117,12 @@ DSWRITECOPY:
 DSWRITED:
     RTS
 
+; DSRESIZE(X,$21)
+DSRESIZE:
+    LDA $21
+    STA DESCRIPTORS_SIZE,X
+    RTS
+
 ; DSGC()
 DSGC:
     LDA #<max_free_string
