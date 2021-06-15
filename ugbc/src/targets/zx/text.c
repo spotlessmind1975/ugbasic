@@ -337,7 +337,12 @@ void text_cline( Environment * _environment, char * _characters ) {
 
 void cls( Environment * _environment, char * _paper ) {
 
-    zx_cls( _environment, NULL, _paper );
+    if ( _paper ) {
+        Variable * paper = variable_retrieve_or_define( _environment, _paper, VT_COLOR, COLOR_BLACK );
+        zx_cls( _environment, NULL, paper->realName );
+    } else {
+        zx_cls( _environment, NULL, NULL );
+    }
 
 }
 
