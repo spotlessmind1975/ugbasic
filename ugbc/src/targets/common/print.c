@@ -132,6 +132,8 @@ void print( Environment * _environment, char * _value, int _new_line ) {
         text_newline( _environment );
     }
 
+    variable_reset( _environment );
+
 }
 
 void print_tab( Environment * _environment, int _new_line ) {
