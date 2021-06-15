@@ -2647,7 +2647,9 @@ Variable * variable_string_str( Environment * _environment, char * _value ) {
     cpu_dsdescriptor( _environment, result->realName, address->realName, size->realName );
 
     cpu_number_to_string( _environment, value->realName, address->realName, size->realName, VT_BITWIDTH( value->type ) );
-
+    
+    cpu_dsresize( _environment, result->realName, size->realName );
+    
     return result;
     
 }
