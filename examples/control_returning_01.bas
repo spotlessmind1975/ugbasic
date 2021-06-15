@@ -15,7 +15,7 @@ REM
 REM Questo esempio mostrerà l'uso delle parole chiave ''GOSUB...RETURN''. Il codice 
 REM principale alternerà i colori del bordo, prima giallo e poi nero. Ogni colore 
 REM durerà per un secondo sullo schermo. La routine di cambio colore è una routine 
-EREM separata, chiamata con ''GOSUB''. Il colore del bordo viene modificato 
+REM separata, chiamata con ''GOSUB''. Il colore del bordo viene modificato 
 REM utilizzando l'istruzione ''COLOR BORDER'', utilizzando le costanti predefinite 
 REM ''YELLOW'' e ''BLACK''. Per attendere un determinato periodo di tempo verrà 
 REM utilizzato il comando ''WAIT'', con l'unità di tempo ''MS'' (millisecondi).

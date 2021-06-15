@@ -1,6 +1,6 @@
 REM @english
 REM FLOW CONTROL WITH RETURNING (2)
-REM
+REM 
 REM This example will show the use of ''GOSUB...RETURN'' keywords. The main code
 REM will change the border color. Each color will last for half second on the screen. 
 REM The variable with the color is ''x'' and this is increased with a specific routine,
@@ -9,7 +9,7 @@ REM there are two ''RETURN'' instructions, because there is no need for a single
 REM point of exit when a routine is called by ''GOSUB''. The border color is changed using the 
 REM ''COLOR BORDER'' instruction. To wait for a specific amount of time the ''WAIT'' command will be 
 REM used, with the ''MS'' (milliseconds) unit of time.
-REM
+REM 
 REM @italian
 REM CONTROLLO DI FLUSSO CON RITORNO (2)
 REM
