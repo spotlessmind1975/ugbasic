@@ -1640,6 +1640,9 @@ every_definition :
       expr TICKS GOSUB Identifier {
           every_ticks_gosub( _environment, $1, $4 );
     }
+    | expr TICKS CALL Identifier {
+          every_ticks_call( _environment, $1, $4 );
+    }
     | ON {
           every_on( _environment );
     }

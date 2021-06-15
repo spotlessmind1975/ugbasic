@@ -88,12 +88,11 @@ void every_ticks_gosub( Environment * _environment, char * _timing, char * _labe
 
     Variable * timing = variable_retrieve( _environment, _timing );
 
-    if ( _environment->everyStatus ) {
-        CRITICAL("Cannot call EVERY ... TICKS more than one time.");
+    if ( ! _environment->everyStatus ) {
+        _environment->everyStatus = variable_temporary( _environment, VT_BYTE, "(every status)");
+        _environment->everyStatus->locked = 1;
     }
 
-    _environment->everyStatus = variable_temporary( _environment, VT_BYTE, "(every status)");
-    _environment->everyStatus->locked = 1;
     _environment->everyCounter = variable_temporary( _environment, VT_WORD, "(every counter)");
     _environment->everyCounter->locked = 1;
     _environment->everyTiming = variable_cast( _environment, timing->name, VT_WORD );
@@ -131,6 +130,54 @@ void every_ticks_gosub( Environment * _environment, char * _timing, char * _labe
 
 }
 
+void every_ticks_call( Environment * _environment, char * _timing, char * _label ) {
+
+    outline2("; EVERY %s TICKS CALL %s", _timing, _label );
+
+    Variable * timing = variable_retrieve( _environment, _timing );
+
+    if ( ! _environment->everyStatus ) {
+        _environment->everyStatus = variable_temporary( _environment, VT_BYTE, "(every status)");
+        _environment->everyStatus->locked = 1;
+    }
+
+    _environment->everyCounter = variable_temporary( _environment, VT_WORD, "(every counter)");
+    _environment->everyCounter->locked = 1;
+    _environment->everyTiming = variable_cast( _environment, timing->name, VT_WORD );
+    _environment->everyTiming->locked = 1;
+
+    char skipEveryRoutineLabel[MAX_TEMPORARY_STORAGE]; sprintf(skipEveryRoutineLabel, "setg%d", UNIQUE_ID );
+    char everyRoutineLabel[MAX_TEMPORARY_STORAGE]; sprintf(everyRoutineLabel, "etg%d", UNIQUE_ID );
+    char endOfEveryRoutineLabel[MAX_TEMPORARY_STORAGE]; sprintf(endOfEveryRoutineLabel, "eetg%d", UNIQUE_ID );
+    
+    cpu_jump( _environment, skipEveryRoutineLabel );
+    
+    cpu_label( _environment, everyRoutineLabel );
+    
+    cpu_di( _environment );
+
+    cpu_bveq( _environment, _environment->everyStatus->realName, endOfEveryRoutineLabel );
+
+    cpu_dec( _environment, _environment->everyCounter->realName );
+
+    cpu_bvneq( _environment, _environment->everyCounter->realName, endOfEveryRoutineLabel );
+
+    call_procedure( _environment, _label );
+
+    variable_move_naked( _environment, _environment->everyTiming->name, _environment->everyCounter->name );
+
+    cpu_label( _environment, endOfEveryRoutineLabel );
+
+    cpu_ei( _environment );
+
+    vic2_next_raster( _environment );
+
+    cpu_label( _environment, skipEveryRoutineLabel );
+
+    vic2_raster_at( _environment, everyRoutineLabel, "0", "42" );
+
+}
+
 /**
  * @brief Emit ASM code for <b>EVERY ON</b>
  * 
@@ -152,7 +199,8 @@ void every_on( Environment * _environment ) {
     outline0("; EVERY ON");
 
     if ( ! _environment->everyStatus ) {
-        CRITICAL("EVERY ON without EVERY definition");
+        _environment->everyStatus = variable_temporary( _environment, VT_BYTE, "(every status)");
+        _environment->everyStatus->locked = 1;
     }
 
     variable_store( _environment, _environment->everyStatus->name, 0xff );
