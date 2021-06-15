@@ -975,12 +975,12 @@ int test_vic2_text_at_testerC( TestEnvironment * _te ) {
 
 void test_vic2( ) {
 
-    /*create_test( "vic2_text_at A", &test_vic2_text_at_payloadA, &test_vic2_text_at_testerA );    
+    create_test( "vic2_text_at A", &test_vic2_text_at_payloadA, &test_vic2_text_at_testerA );    
     create_test( "vic2_text_at B", &test_vic2_text_at_payloadB, &test_vic2_text_at_testerB );
     create_test( "vic2_text_at C", &test_vic2_text_at_payloadC, &test_vic2_text_at_testerC );
     create_test( "vic2_bitmap_enabled", &test_vic2_bitmap_enable_payload, &test_vic2_bitmap_enable_tester );    
-    create_test( "vic2_tilemap_enabled", &test_vic2_bitmap_enable_payload, &test_vic2_bitmap_enable_tester );*/ 
-    /*create_test( "vic2_cls", &test_vic2_cls_payload, &test_vic2_cls_tester );
+    create_test( "vic2_tilemap_enabled", &test_vic2_bitmap_enable_payload, &test_vic2_bitmap_enable_tester );
+    create_test( "vic2_cls", &test_vic2_cls_payload, &test_vic2_cls_tester );
     create_test( "vic2_cls2", &test_vic2_cls2_payload, &test_vic2_cls2_tester );
     create_test( "vic2_cls3", &test_vic2_cls3_payload, &test_vic2_cls3_tester );
     create_test( "vic2_background_color", &test_vic2_background_color_payload, &test_vic2_background_color_tester );
@@ -988,7 +988,7 @@ void test_vic2( ) {
     create_test( "vic2_point", &test_vic2_point_payload, &test_vic2_point_tester );
 
     create_test( "vic2_point_at_vars B", &test_vic2_point_at_vars_payloadB, &test_vic2_point_at_vars_testerB );
-    create_test( "vic2_point_at_vars C", &test_vic2_point_at_vars_payloadC, &test_vic2_point_at_vars_testerC );*/
+    create_test( "vic2_point_at_vars C", &test_vic2_point_at_vars_payloadC, &test_vic2_point_at_vars_testerC );
     create_test( "vic2_point_at_vars D", &test_vic2_point_at_vars_payloadD, &test_vic2_point_at_vars_testerD );
 
 }

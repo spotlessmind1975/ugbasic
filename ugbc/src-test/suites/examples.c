@@ -117,14 +117,20 @@ void test_controls_joy_01_payload( TestEnvironment * _te ) {
     end_loop( e );
 
     _te->trackedVariables[0] = j;
+    _te->trackedVariables[1] = times;
+    _te->trackedVariables[2] = limit;
 
 }
 
 int test_controls_joy_01_tester( TestEnvironment * _te ) {
 
     Variable * j = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * times = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+    Variable * limit = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
 
-    return j->value == 0x1f  || j->value == 0x00;
+printf("times = %d\n", times->value );
+
+    return ( j->value == 0x1f  || j->value == 0x00 ) && times->value == limit->value;
     
 }
 
@@ -172,8 +178,8 @@ int test_controls_keyboard_01_tester( TestEnvironment * _te ) {
 
 void test_examples( ) {
 
-    create_test( "control_by_expression_01", &test_control_by_expression_01_payload, &test_control_by_expression_01_tester );    
+    //create_test( "control_by_expression_01", &test_control_by_expression_01_payload, &test_control_by_expression_01_tester );    
     create_test( "controls_joy_01", &test_controls_joy_01_payload, &test_controls_joy_01_tester );    
-    create_test( "controls_keyboard_01", &test_controls_keyboard_01_payload, &test_controls_keyboard_01_tester );    
+    //create_test( "controls_keyboard_01", &test_controls_keyboard_01_payload, &test_controls_keyboard_01_tester );    
 
 }

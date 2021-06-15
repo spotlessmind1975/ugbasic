@@ -126,7 +126,7 @@ int test_cpu_dswrite_tester( TestEnvironment * _te ) {
 
 //===========================================================================
 
-void test_cpu_dsgc_payload( TestEnvironment * _te ) {
+void test_cpu_dsgc_payloadA( TestEnvironment * _te ) {
 
     Environment * e = &_te->environment;
 
@@ -206,7 +206,7 @@ void test_cpu_dsgc_payload( TestEnvironment * _te ) {
 
 }
 
-int test_cpu_dsgc_tester( TestEnvironment * _te ) {
+int test_cpu_dsgc_testerA( TestEnvironment * _te ) {
 
     Variable * dy = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
     Variable * a = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
@@ -230,6 +230,127 @@ int test_cpu_dsgc_tester( TestEnvironment * _te ) {
             b->value == 1 &&
             c->value == 1 &&
             d->value == 1;
+
+}
+
+//===========================================================================
+
+void test_cpu_dsgc_payloadB( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * using = variable_import( e, "USING", VT_BYTE );
+
+    Variable * st = variable_define( e, "st", VT_STRING, 0 );
+    Variable * dy = variable_define( e, "dy", VT_DSTRING, 0 );
+    Variable * zero = variable_define( e, "zero", VT_WORD, 0 );
+    Variable * one = variable_define( e, "one", VT_WORD, 1 );
+    Variable * false = variable_define( e, "false", VT_BYTE, 0 );
+    Variable * true = variable_define( e, "true", VT_BYTE, 0xff );
+    Variable * four = variable_define( e, "four", VT_BYTE, 4 );
+    Variable * times = variable_define( e, "times", VT_WORD, 0 );
+    Variable * limit = variable_define( e, "limit", VT_WORD, 257 );
+    Variable * a = variable_define( e, "a", VT_WORD, 0 );
+    Variable * b = variable_define( e, "b", VT_WORD, 0 );
+    Variable * b2 = variable_define( e, "b2", VT_WORD, 0 );
+    Variable * c = variable_define( e, "c", VT_WORD, 0 );
+    Variable * d = variable_define( e, "d", VT_WORD, 0 );
+    Variable * k = variable_define( e, "k", VT_BYTE, 0 );
+    Variable * freeString = variable_retrieve( e, "FREE_STRING");
+
+    variable_store_string( e, st->name, "test");
+    cpu_dsdefine( e, st->realName, dy->realName );
+
+    int i = 0;
+
+    begin_loop( e );
+        variable_move_naked( e, zero->name, a->name );
+        variable_move_naked( e, zero->name, b->name );
+        variable_move_naked( e, zero->name, c->name );
+        variable_move_naked( e, zero->name, d->name );
+        variable_move_naked( e, using->name, k->name );
+
+        variable_store_string( e, st->name, "test  ");
+        if_then( e, variable_and( e, variable_compare_not( e, using->name, false->name )->name, variable_compare_not( e, using->name, true->name )->name )->name );
+            variable_move_naked( e, using->name, k->name );
+            stop_test( e );
+        end_if_then( e );
+
+        variable_move_naked( e, one->name, a->name );
+        cpu_dsdefine( e, st->realName, dy->realName );
+        if_then( e, variable_and( e, variable_compare_not( e, using->name, false->name )->name, variable_compare_not( e, using->name, true->name )->name )->name );
+            variable_move_naked( e, using->name, k->name );
+            stop_test( e );
+        end_if_then( e );
+
+        variable_move_naked( e, one->name, b->name );
+        cpu_dswrite( e, dy->realName );
+        if_then( e, variable_and( e, variable_compare_not( e, using->name, false->name )->name, variable_compare_not( e, using->name, true->name )->name )->name );
+            variable_move_naked( e, using->name, k->name );
+            stop_test( e );
+        end_if_then( e );
+
+        variable_move_naked( e, one->name, b2->name );
+        cpu_dsresize( e, dy->realName, four->realName );
+        if_then( e, variable_and( e, variable_compare_not( e, using->name, false->name )->name, variable_compare_not( e, using->name, true->name )->name )->name );
+            variable_move_naked( e, using->name, k->name );
+            stop_test( e );
+        end_if_then( e );
+
+        variable_move_naked( e, one->name, c->name );
+        cpu_dsfree( e, dy->realName );
+        if_then( e, variable_and( e, variable_compare_not( e, using->name, false->name )->name, variable_compare_not( e, using->name, true->name )->name )->name );
+            variable_move_naked( e, using->name, k->name );
+            stop_test( e );
+        end_if_then( e );
+
+        variable_move_naked( e, one->name, d->name );
+        variable_move( e, variable_add( e, times->name, one->name )->name, times->name );
+        if_then( e, variable_compare( e, times->name, limit->name )->name );
+            variable_move_naked( e, using->name, k->name );
+            stop_test( e );
+        end_if_then( e );
+    end_loop( e );
+
+    _te->trackedVariables[0] = dy;
+    _te->trackedVariables[1] = a;
+    _te->trackedVariables[2] = b;
+    _te->trackedVariables[3] = c;
+    _te->trackedVariables[4] = d;
+    _te->trackedVariables[5] = times;
+    _te->trackedVariables[6] = using;
+    _te->trackedVariables[7] = k;
+    _te->trackedVariables[8] = freeString;
+    _te->trackedVariables[9] = b2;
+
+}
+
+int test_cpu_dsgc_testerB( TestEnvironment * _te ) {
+
+    Variable * dy = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * a = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+    Variable * b = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
+    Variable * c = variable_retrieve( &_te->environment, _te->trackedVariables[3]->name );
+    Variable * d = variable_retrieve( &_te->environment, _te->trackedVariables[4]->name );
+    Variable * times = variable_retrieve( &_te->environment, _te->trackedVariables[5]->name );
+    Variable * using = variable_retrieve( &_te->environment, _te->trackedVariables[6]->name );
+    Variable * k = variable_retrieve( &_te->environment, _te->trackedVariables[7]->name );
+    Variable * freeString = variable_retrieve( &_te->environment, _te->trackedVariables[8]->name );
+    Variable * b2 = variable_retrieve( &_te->environment, _te->trackedVariables[9]->name );
+
+    // printf("a = %2.2x\n", a->value );
+    // printf("b = %2.2x\n", b->value );
+    // printf("c = %2.2x\n", c->value );
+    // printf("d = %2.2x\n", d->value );
+    // printf("k = %2.2x\n", k->value );
+    // printf("freeString = %d\n", freeString->value );
+    // printf("times = %d\n", times->value );
+
+    return  a->value == 1 &&
+            b->value == 1 &&
+            c->value == 1 &&
+            d->value == 1 &&
+            b->value == 1;
 
 }
 
@@ -390,7 +511,8 @@ void test_cpu( ) {
     create_test( "cpu_bits_to_string", &test_cpu_bits_to_string_payload, &test_cpu_bits_to_string_tester );    
     create_test( "cpu_bits_to_string32", &test_cpu_bits_to_string32_payload, &test_cpu_bits_to_string32_tester );    
     create_test( "cpu_dswrite", &test_cpu_dswrite_payload, &test_cpu_dswrite_tester );    
-    create_test( "cpu_dsgc", &test_cpu_dsgc_payload, &test_cpu_dsgc_tester );    
+    create_test( "cpu_dsgc A", &test_cpu_dsgc_payloadA, &test_cpu_dsgc_testerA );    
+    create_test( "cpu_dsgc B", &test_cpu_dsgc_payloadB, &test_cpu_dsgc_testerB );    
     create_test( "cpu_logical_and_8bit", &test_cpu_logical_and_8bit_payload, &test_cpu_logical_and_8bit_tester );    
     create_test( "cpu_logical_not_8bit", &test_cpu_logical_not_8bit_payload, &test_cpu_logical_not_8bit_tester );    
     create_test( "cpu_bit_check_extended", &test_cpu_bit_check_extended_payload, &test_cpu_bit_check_extended_tester );    
