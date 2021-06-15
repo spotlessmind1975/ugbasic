@@ -51,12 +51,6 @@ void every_ticks_gosub( Environment * _environment, char * _timing, char * _labe
 
 }
 
-void every_ticks_call( Environment * _environment, char * _timing, char * _label ) {
-
-    outline2("; EVERY %s TICKS CALL %s (ignored)", _timing, _label );
-
-}
-
 /**
  * @brief Emit ASM code for <b>EVERY ON</b>
  * 

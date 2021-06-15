@@ -1053,7 +1053,6 @@ void                    end_repeat( Environment * _environment, char * _expressi
 void                    end_while( Environment * _environment );
 void                    every_off( Environment * _environment );
 void                    every_on( Environment * _environment );
-void                    every_ticks_call( Environment * _environment, char * _timing, char * _label );
 void                    every_ticks_gosub( Environment * _environment, char * _timing, char * _label );
 void                    exit_loop( Environment * _environment, int _number );
 void                    exit_loop_if( Environment * _environment, char * _expression, int _number );
