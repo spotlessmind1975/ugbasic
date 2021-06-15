@@ -1829,20 +1829,35 @@ values :
 
 print_definition :
     expr {
+        outline0("; ------------------------------------------------" );
+        outline1("; PRINT %s", $1 );
+        outline0("; ------------------------------------------------" );
         print( _environment, $1, 1 );
     }
   | expr OP_COMMA {
+        outline0("; ------------------------------------------------" );
+        outline1("; PRINT %s,", $1 );
+        outline0("; ------------------------------------------------" );
         print( _environment, $1, 0 );
         print_tab( _environment, 0 );
   }
   | expr OP_SEMICOLON {
+        outline0("; ------------------------------------------------" );
+        outline1("; PRINT %s;", $1 );
+        outline0("; ------------------------------------------------" );
         print( _environment, $1, 0 );
   }
   | expr OP_COMMA {
+        outline0("; ------------------------------------------------" );
+        outline1("; PRINT %s,...", $1 );
+        outline0("; ------------------------------------------------" );
         print( _environment, $1, 0 );
         print_tab( _environment, 0 );
   }  print_definition
   | expr OP_SEMICOLON  {
+        outline0("; ------------------------------------------------" );
+        outline1("; PRINT %s;...", $1 );
+        outline0("; ------------------------------------------------" );
         print( _environment, $1, 0 );
   } print_definition
   ;
@@ -2325,7 +2340,9 @@ statements_with_linenumbers:
 
 statements_complex:
     Identifier NewLine {
-        call_procedure( _environment, $1 );
+        if ( strcmp( $1, "REM" ) != 0 ) {
+            call_procedure( _environment, $1 );
+        }
     } statements_complex
     | statements_no_linenumbers
     | statements_no_linenumbers NewLine statements_complex
