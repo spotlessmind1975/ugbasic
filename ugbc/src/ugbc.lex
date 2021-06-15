@@ -322,7 +322,7 @@ YELLOW { return(YELLOW); }
 YPEN { return (YPEN); }
 Z { return (Z); }
 
-"REM "[^\n\r]* { return(Remark);  }
+"REM"[^\n\r]* { return(Remark);  }
 "' "[^\n\r]* { return(Remark);  }
 
 [A-Za-z][A-Za-z0-9\_]* { yylval.string = strdup(yytext); return(Identifier);  }
