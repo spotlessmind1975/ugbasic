@@ -69,3 +69,9 @@ compiler:
 clean:
 	@cd ugbc; make clean
 	@rm -f -r generated
+
+runc64: generated/c64/asm/$(example).asm generated/c64/exe/$(example).$(output)
+	x64sc generated/c64/exe/$(example).$(output)
+
+runzx: generated/zx/asm/$(example).asm generated/zx/exe/$(example).$(output)
+	speccy generated/zx/exe/$(example).$(output)
