@@ -144,7 +144,7 @@ void test_controls_keyboard_01_payload( TestEnvironment * _te ) {
     Variable * q = variable_define( e, "q", VT_DSTRING, 0 );
     Variable * s = variable_define( e, "s", VT_STRING, 0 );
     Variable * empty = variable_define( e, "empty", VT_STRING, 0 );
-    Variable * limit = variable_define( e, "limit", VT_WORD, 1 );
+    Variable * limit = variable_define( e, "limit", VT_WORD, 100 );
     Variable * times = variable_define( e, "times", VT_WORD, 0 );
     Variable * one = variable_define( e, "one", VT_WORD, 1 );
 
@@ -178,8 +178,8 @@ int test_controls_keyboard_01_tester( TestEnvironment * _te ) {
 
 void test_examples( ) {
 
-    //create_test( "control_by_expression_01", &test_control_by_expression_01_payload, &test_control_by_expression_01_tester );    
+    create_test( "control_by_expression_01", &test_control_by_expression_01_payload, &test_control_by_expression_01_tester );    
     create_test( "controls_joy_01", &test_controls_joy_01_payload, &test_controls_joy_01_tester );    
-    //create_test( "controls_keyboard_01", &test_controls_keyboard_01_payload, &test_controls_keyboard_01_tester );    
+    create_test( "controls_keyboard_01", &test_controls_keyboard_01_payload, &test_controls_keyboard_01_tester );    
 
 }
