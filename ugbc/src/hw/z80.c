@@ -2447,6 +2447,18 @@ void z80_dsresize( Environment * _environment, char * _index, char * _resize ) {
 
 }
 
+void z80_dsresize_size( Environment * _environment, char * _index, int _resize ) {
+
+    deploy( dstringDeployed,"./ugbc/src/hw/6502/dstring.asm" );
+
+    outline1( "LD A, (%s)", _index );
+    outline0( "LD B, A" );
+    outline1( "LD A, $2.2x", _resize );
+    outline0( "LD C, A" );
+    outline0( "CALL DSRESIZE" );
+
+}
+
 void z80_dsgc( Environment * _environment ) {
 
     deploy( dstringDeployed,"./ugbc/src/hw/z80/dstring.asm" );

@@ -2612,6 +2612,17 @@ void cpu6502_dsresize( Environment * _environment, char * _index, char * _resize
 
 }
 
+void cpu6502_dsresize_size( Environment * _environment, char * _index, int _resize ) {
+
+    deploy( dstringDeployed,"./ugbc/src/hw/6502/dstring.asm" );
+
+    outline1( "LDX %s", _index );
+    outline1( "LDA #$%2.2x", _resize );
+    outline0( "STA $21" );
+    outline0( "JSR DSRESIZE" );
+
+}
+
 void cpu6502_dsgc( Environment * _environment ) {
 
     deploy( dstringDeployed,"./ugbc/src/hw/6502/dstring.asm" );
