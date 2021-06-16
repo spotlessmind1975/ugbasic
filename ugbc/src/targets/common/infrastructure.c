@@ -782,15 +782,15 @@ Variable * variable_cast( Environment * _environment, char * _source, VariableTy
                         case VT_DSTRING:
                             switch( target->type ) {
                                 case VT_DSTRING: {
-                                    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
-                                    Variable * size = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
-                                    Variable * address1 = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
-                                    Variable * size1 = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
+                                    Variable * sourceAddress = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
+                                    Variable * sourceSize = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
+                                    Variable * targetAddress = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
+                                    Variable * targetSize = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
                                     cpu_dsfree( _environment, target->realName );
-                                    cpu_dsdescriptor( _environment, source->realName, address->realName, size->realName );
-                                    cpu_dsalloc( _environment, size->realName, target->realName );
-                                    cpu_dsdescriptor( _environment, target->realName, address1->realName, size1->realName );
-                                    cpu_mem_move( _environment, address->realName, address1->realName, size->realName );
+                                    cpu_dsdescriptor( _environment, source->realName, sourceAddress->realName, sourceSize->realName );
+                                    cpu_dsalloc( _environment, sourceSize->realName, target->realName );
+                                    cpu_dsdescriptor( _environment, target->realName, targetAddress->realName, targetSize->realName );
+                                    cpu_mem_move( _environment, sourceAddress->realName, targetAddress->realName, sourceSize->realName );
                                     break;
                                 }
                                 case VT_STRING:
@@ -937,11 +937,11 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                     Variable * size = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
                     Variable * address2 = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
                     Variable * size2 = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
-                    cpu_dsdescriptor( _environment, target->realName, address2->realName, size2->realName );
-                    cpu_dsfree( _environment, target->realName );
-                    cpu_dsalloc( _environment, size2->realName, target->realName );
-                    cpu_dsdescriptor( _environment, target->realName, address2->realName, size2->realName );
+                    //cpu_dsdescriptor( _environment, target->realName, address2->realName, size2->realName );
                     cpu_dsdescriptor( _environment, source->realName, address->realName, size->realName );
+                    cpu_dsfree( _environment, target->realName );
+                    cpu_dsalloc( _environment, size->realName, target->realName );
+                    cpu_dsdescriptor( _environment, target->realName, address2->realName, size2->realName );
                     cpu_mem_move( _environment, address->realName, address2->realName, size->realName );
                     break;
                 }
