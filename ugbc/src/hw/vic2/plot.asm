@@ -92,7 +92,7 @@ PLOT:
     CMP #2
     BEQ PLOTG                  ;if = 2 then branch to get the point (0/1)
     CMP #3
-    BEQ PLOTC                  ;if = 2 then branch to get the color index (0...15)
+    BEQ PLOTC                  ;if = 3 then branch to get the color index (0...15)
     JMP PLOTP
 
 PLOTD:
@@ -127,7 +127,10 @@ PLOTE:                          ;handled same way as setting a point
     STA $01
     JMP PLOTP
 
-PLOTG:                          
+PLOTG:      
+    SEI
+    LDA #$36
+    STA $01
     LDA (PLOTDEST),y            
     AND PLOTORBIT,x            
     CMP #0
@@ -135,19 +138,31 @@ PLOTG:
 PLOTG1:
     LDA #$ff
     STA PLOTM
+    LDA #$37
+    STA $01    
+    CLI
     JMP PLOTP
 PLOTG0:
     LDA #$0
     STA PLOTM
+    LDA #$37
+    STA $01    
+    CLI
     JMP PLOTP            
 
 PLOTC:                          
+    SEI
+    LDA #$36
+    STA $01
     LDA (PLOTCDEST),y          ;get row with point in it
     LSR A
     LSR A
     LSR A
     LSR A
     STA PLOTM
+    LDA #$37
+    STA $01    
+    CLI
     JMP PLOTP            
 
 PLOTP:
