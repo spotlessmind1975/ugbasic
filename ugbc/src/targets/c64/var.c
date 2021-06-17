@@ -122,7 +122,7 @@ void variable_cleanup( Environment * _environment ) {
                     outhead0("BITMASKN: .byte $fe,$fd,$fb,$f7,$ef,$df,$bf,$7f");
                 }
                 if ( _environment->dstringDeployed ) {
-                    outhead0("max_free_string = 1024");
+                    outhead0("max_free_string = 1023");
                 }
                 Variable * variable = _environment->tempVariables;
 

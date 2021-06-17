@@ -93,6 +93,8 @@ DSWRITEOK:
     LD D, (IX+2)
 DSCOPY:
     LD C, (IX)
+    LD A, C
+    JR Z,DSWRITED
 DSWRITECOPY:
     LD A, (HL)
     LD (DE), A
@@ -270,7 +272,7 @@ WORKING:                DEFS    1024
 TEMPORARY:              DEFS    1024
 USING:                  DB    0
     
-FREE_STRING:            DB 0, max_free_string
+FREE_STRING:            DB $ff, (max_free_string-1)
 
 primo:                  DB 0
 secondo:                DB 0

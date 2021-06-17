@@ -107,6 +107,9 @@ DSWRITEOK:
     STA $21
     TAY
 DSCOPY:
+    LDY $21
+    CPY #0
+    BEQ DSWRITED
     LDY #0
 DSWRITECOPY:
     LDA ($22),Y
