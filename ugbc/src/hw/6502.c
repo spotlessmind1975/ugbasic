@@ -1639,6 +1639,8 @@ void cpu6502_mem_move( Environment * _environment, char *_source, char *_destina
 
     MAKE_LABEL
 
+    outline1("LDY %s", _size );
+    outline1("BEQ %sdone", label );
     outline0("LDY #$0" );
     outline1("LDA %s+1", _source );
     outline0("STA $23" );
@@ -1654,28 +1656,33 @@ void cpu6502_mem_move( Environment * _environment, char *_source, char *_destina
     outline0("INY" );
     outline1("CPY %s", _size );
     outline1("BNE %s", label );
+    outhead1("%sdone:", label );
 
 }
 
 void cpu6502_mem_move_size( Environment * _environment, char *_source, char *_destination, int _size ) {
 
-    MAKE_LABEL
+    if ( _size ) {
 
-    outline0("LDY #$0" );
-    outline1("LDA %s+1", _source );
-    outline0("STA $23" );
-    outline1("LDA %s", _source );
-    outline0("STA $22" );
-    outline1("LDA %s+1", _destination );
-    outline0("STA $25" );
-    outline1("LDA %s", _destination );
-    outline0("STA $24" );
-    outhead1("%s:", label );
-    outline0("LDA ($22), Y" );
-    outline0("STA ($24), Y" );
-    outline0("INY" );
-    outline1("CPY #$%2.2x", (_size & 0xff ) );
-    outline1("BNE %s", label );
+        MAKE_LABEL
+
+        outline0("LDY #$0" );
+        outline1("LDA %s+1", _source );
+        outline0("STA $23" );
+        outline1("LDA %s", _source );
+        outline0("STA $22" );
+        outline1("LDA %s+1", _destination );
+        outline0("STA $25" );
+        outline1("LDA %s", _destination );
+        outline0("STA $24" );
+        outhead1("%s:", label );
+        outline0("LDA ($22), Y" );
+        outline0("STA ($24), Y" );
+        outline0("INY" );
+        outline1("CPY #$%2.2x", (_size & 0xff ) );
+        outline1("BNE %s", label );
+
+    }
 
 }
 
@@ -1683,6 +1690,8 @@ void cpu6502_mem_move_displacement(  Environment * _environment, char *_source, 
 
     MAKE_LABEL
 
+    outline1("LDY %s", _size );
+    outline1("BEQ %sdone", label );
     outline0("LDY #$0" );
     outline1("LDA %s+1", _source );
     outline0("STA $23" );
@@ -1699,6 +1708,7 @@ void cpu6502_mem_move_displacement(  Environment * _environment, char *_source, 
     outline0("INY" );
     outline1("CPY %s", _size );
     outline1("BNE %s", label );
+    outhead1("%sdone:", label );
 
 }
 
