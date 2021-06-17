@@ -2944,9 +2944,9 @@ Variable * variable_string_asc( Environment * _environment, char * _char  ) {
 
     Variable * character = variable_retrieve( _environment, _char );
 
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of STRING)");
-    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(result of val)" );
-    Variable * size = variable_temporary( _environment, VT_BYTE, "(result of val)" );
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of ASC)");
+    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(result of ASC)" );
+    Variable * size = variable_temporary( _environment, VT_BYTE, "(result of ASC)" );
 
     switch( character->type ) {
         case VT_STRING: {
@@ -2963,7 +2963,7 @@ Variable * variable_string_asc( Environment * _environment, char * _char  ) {
         CRITICAL_ASC_UNSUPPORTED( _char, DATATYPE_AS_STRING[character->type]);
     }
 
-    cpu_move_8bit( _environment, character->realName, result->realName );
+    cpu_move_8bit_indirect2( _environment, address->realName, result->realName );
 
     return result;
     
