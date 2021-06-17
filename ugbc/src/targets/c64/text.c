@@ -871,10 +871,10 @@ void pen( Environment * _environment, char * _color ) {
 
     MAKE_LABEL
 
-    variable_move( _environment, color->name, pen->name );
     outline0("LDA $D011");
     outline0("AND #%00100000");
     outline1("BEQ %stxt", label );
+    outline1("LDA %s", color->realName);
     outline0("CLC" );
     outline0("ASL A" );
     outline0("CLC" );
@@ -883,6 +883,11 @@ void pen( Environment * _environment, char * _color ) {
     outline0("ASL A" );
     outline0("CLC" );
     outline0("ASL A" );
+    outline0("STA _PEN");
+    outline1("JMP %sdone", label);
     outhead1("%stxt:", label );
+    outline0("STA _PEN");
+    outline1("JMP %sdone", label);
+    outhead1("%sdone:", label );
     
 }
