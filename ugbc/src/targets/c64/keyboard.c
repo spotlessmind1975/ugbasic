@@ -159,11 +159,12 @@ Variable * input_string( Environment * _environment, char * _size ) {
     Variable * pressed = variable_temporary( _environment, VT_BYTE, "(key pressed?)");
     Variable * key = variable_temporary( _environment, VT_BYTE, "(key pressed)");
 
+cpu_label( _environment, "INPUT" );
+
+    cpu_dsalloc( _environment, size->realName, result->realName );
     cpu_dsdescriptor( _environment, result->realName, address->realName, pressed->realName );
 
     cpu_store_8bit( _environment, offset->realName, 0 );
-
-    cpu_move_8bit( _environment, size->realName, result->realName );
 
     cpu_label( _environment, repeatLabel );
 
@@ -203,6 +204,7 @@ void input( Environment * _environment, char * _variable ) {
     Variable * key = variable_temporary( _environment, VT_BYTE, "(key pressed)");
 
     Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
+    cpu_dsalloc( _environment, size->realName, temporary->realName );
     cpu_dsdescriptor( _environment, temporary->realName, address->realName, pressed->realName );
 
     cpu_store_8bit( _environment, comma->realName, ',' );
@@ -225,7 +227,7 @@ void input( Environment * _environment, char * _variable ) {
 
     cpu_bvneq( _environment, pressed->realName, finishedLabel );
 
-    cpu_move_8bit_with_offset2( _environment, key->realName, address->realName, offset->realName );
+    cpu_move_8bit_indirect_with_offset2( _environment, key->realName, address->realName, offset->realName );
 
     cpu_inc( _environment, offset->realName );
 
@@ -235,7 +237,7 @@ void input( Environment * _environment, char * _variable ) {
 
     cpu_label( _environment, finishedLabel );
 
-    cpu_move_8bit( _environment, offset->realName, temporary->realName );
+    cpu_dsresize( _environment, temporary->realName, size->realName );
 
     switch( VT_BITWIDTH( result->type ) ) {
         case 8:
