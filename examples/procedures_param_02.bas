@@ -1,11 +1,36 @@
- PROCEDURE joinString[a$,b$,c$]
-    PRINT a$;" ";
-    PRINT b$;" ";
-    PRINT c$   ;" ";
-    RETURN a$+b$+c$
- END PROC
- 
- joinString["ONE","TWO","THREE"]
- PRINT PARAM$(joinString);" ";
- 
- HALT
+REM @english
+REM USER-DEFINED PROCEDURES WITH PARAMETERS (2)
+REM
+REM This example will demonstrate how to define procedures with
+REM one or more parameters. Parameters are a way to give informations
+REM to the procedure. Moreover, it shows one way to retrieve the returning value
+REM of the procedure. There are several. Anyway, the parameters should
+REM be considered like local variables that are feeded by the caller.
+REM The returning value should be considered as a value than could
+REM be used by the caller. The example will implement a procedure that
+REM merges three strings all togheter. 
+REM
+REM @italian
+REM USARE LE PROCEDURE CON PARAMETRI (2)
+REM
+REM Questo esempio dimostrerà come definire procedure con uno o più parametri. 
+REM I parametri sono un modo per dare informazioni alla procedura. Inoltre, 
+REM l'esempio mostra un modo per recuperare il valore restituito dalla procedura. 
+REM Ce ne sono diversi. I parametri vanno comunque considerati come variabili 
+REM locali che vengono alimentate dal chiamante. Il valore restituito deve essere
+REM considerato come un valore che potrebbe essere utilizzato dal chiamante. 
+REM L'esempio implementerà una procedura che unisce tre stringhe tutte insieme.
+
+    PROCEDURE joinString[a$,b$,c$]
+        PRINT "joinString called with:"
+        PRINT " a$ = ";a$
+        PRINT " b$ = ";b$
+        PRINT " c$ = ";c$
+        RETURN a$+b$+c$
+    END PROC
+    
+    joinString["ONE","TWO","THREE"]
+
+    PRINT "joinString[ONE,TWO,THREE] = ";PARAM$(joinString)
+    
+    HALT
