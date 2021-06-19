@@ -99,6 +99,8 @@ la regola può essere modificata.
 </usermanual> */
 void print( Environment * _environment, char * _value, int _new_line ) {
 
+    MAKE_LABEL
+
     Variable * value = variable_retrieve_or_define( _environment, _value, VT_DSTRING, 0 );
     
     if ( value->type != VT_DSTRING && value->type != VT_STRING ) {
@@ -113,7 +115,7 @@ void print( Environment * _environment, char * _value, int _new_line ) {
                 
                 cpu_dsdescriptor( _environment, tmp->realName, address->realName, size->realName );
 
-                cpu_number_to_string( _environment, value->realName, address->realName, size->realName, VT_BITWIDTH( value->type ) );
+                cpu_number_to_string( _environment, value->realName, address->realName, size->realName, VT_BITWIDTH( value->type ), VT_SIGNED( value->type ) );
 
                 cpu_dsresize( _environment, tmp->realName, size->realName );
 

@@ -2489,7 +2489,9 @@ void cpu6502_bit_check_extended( Environment * _environment, char * _value, char
 
 }
 
-void cpu6502_number_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits ) {
+void cpu6502_number_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits, int _signed ) {
+
+    MAKE_LABEL
 
     deploy( numberToStringDeployed,"./ugbc/src/hw/6502/number_to_string.asm" );
 
@@ -2503,21 +2505,74 @@ void cpu6502_number_to_string( Environment * _environment, char * _number, char 
     outline0("STA $21");
     outline0("STA $20");
     outline0("STA $19");
+    outline0("STA $26");
 
     switch( _bits ) {
         case 32:
             outline1("LDA %s+3", _number );
+            if ( _signed ) {
+                outline0("AND #$80");
+                outline0("STA $26");
+                outline1("LDA %s+3", _number );
+            }
             outline0("STA $22");
             outline1("LDA %s+2", _number );
             outline0("STA $21");
         case 16:
             outline1("LDA %s+1", _number );
+            if ( _signed && _bits == 16 ) {
+                outline0("AND #$80");
+                outline0("STA $26");
+                outline1("LDA %s+1", _number );
+            }
             outline0("STA $20");
         case 8:
             outline1("LDA %s", _number );    
+            if ( _signed && _bits == 8 ) {
+                outline0("AND #$80");
+                outline0("STA $26");
+                outline1("LDA %s", _number );
+            }
             outline0("STA $19");
     }
 
+    outline0("LDA $26");
+    outline0("CMP #$80" );
+    outline1("BNE %spositive", label );
+
+    switch( _bits ) {
+        case 32:
+            outline0("LDA $22" );
+            outline0("EOR #$ff" );
+            outline0("STA $22" );
+            outline0("LDA $21" );
+            outline0("EOR #$ff" );
+            outline0("STA $21" );
+        case 16:
+            outline0("LDA $20" );
+            outline0("EOR #$ff" );
+            outline0("STA $20" );
+        case 8:
+            outline0("LDA $19" );
+            outline0("EOR #$ff" );
+            outline0("STA $19" );
+    }
+
+    outline0("CLC" );
+    outline0("LDA #$01" );
+    outline0("ADC $19" );
+    outline0("STA $19" );
+    outline0("LDA #$00" );
+    outline0("ADC $20" );
+    outline0("STA $20" );
+    outline0("LDA #$00" );
+    outline0("ADC $21" );
+    outline0("STA $21" );
+    outline0("LDA #$00" );
+    outline0("ADC $22" );
+    outline0("STA $22" );
+
+    outhead1("%spositive:", label );
     outline1("LDA #$%2.2X", _bits );
     outline0("STA $25");
 

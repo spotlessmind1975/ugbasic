@@ -2302,34 +2302,74 @@ void z80_bit_check_extended( Environment * _environment, char *_value, char * _p
 
 }
 
-void z80_number_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits ) {
+void z80_number_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits, int _signed ) {
 
-    if ( ! _environment->numberToStringDeployed ) {
-
-        outline0("JMP number_to_string_after");
-
-        outhead0("number_to_string:");
-
-        outfile0("./ugbc/src/hw/z80/number_to_string.asm");
-
-        outhead0("number_to_string_after:");
-
-        _environment->numberToStringDeployed = 1;
-
-    }
+    MAKE_LABEL
+    
+    deploy( numberToStringDeployed, "./ugbc/src/hw/z80/number_to_string.asm" );
 
     switch( _bits ) {
         case 8:
             outline1("LD A,(%s)", _number);
+            if ( _signed ) {
+                outline0("AND $80");
+                outline0("LD B, A");
+                outline1("JR Z, %sp8", label);
+                outline0("XOR $FF");
+                outline0("ADC $1");
+                outhead1("%sp8:", label);
+            }
             outline0("CALL N2D8");
             break;
         case 16:
             outline1("LD HL,(%s)", _number);
+            if ( _signed ) {
+                outline0("LD A, H");
+                outline0("AND $80");
+                outline0("LD B, A");
+                outline1("JR Z, %sp16", label);
+                outline0("LD A, H");
+                outline0("XOR $FF");
+                outline0("LD H, A");
+                outline0("LD A, L");
+                outline0("XOR $FF");
+                outline0("LD L, A");
+                outline0("LD DE, 1" );
+                outline0("ADD HL, DE" );
+                outline0("LD DE, 0" );
+                outhead1("%sp16:", label);
+            }
             outline0("CALL N2D16");
             break;
         case 32:
             outline1("LD HL,(%s)", _number);
             outline1("LD DE,(%s+2)", _number);
+            if ( _signed ) {
+                outline0("LD A, D");
+                outline0("AND $80");
+                outline0("LD B, A");
+                outline1("JR Z, %sp32", label);
+                outline0("LD A, D");
+                outline0("XOR $FF");
+                outline0("LD D, A");
+                outline0("LD A, E");
+                outline0("XOR $FF");
+                outline0("LD E, A");
+                outline0("LD A, H");
+                outline0("XOR $FF");
+                outline0("LD H, A");
+                outline0("LD A, L");
+                outline0("XOR $FF");
+                outline0("LD L, A");
+                outline0("EXX" );
+                outline0("LD HL, 1" );
+                outline0("LD DE, 0" );
+                outline0("ADD HL, DE" );
+                outline0("EXX" );
+                outline0("ADD HL, DE" );
+                outline0("EXX" );
+                outhead1("%sp16:", label);
+            }
             outline0("CALL N2D32");
             break;
         default:
@@ -2453,7 +2493,7 @@ void z80_dsresize_size( Environment * _environment, char * _index, int _resize )
 
     outline1( "LD A, (%s)", _index );
     outline0( "LD B, A" );
-    outline1( "LD A, $2.2x", _resize );
+    outline1( "LD A, $%2.2x", _resize );
     outline0( "LD C, A" );
     outline0( "CALL DSRESIZE" );
 
@@ -2480,6 +2520,16 @@ void z80_dsdescriptor( Environment * _environment, char * _index, char * _addres
     outline1( "LD (%s), A", _address );
     outline0( "LD A, (IX+2)" );
     outline1( "LD (%s+1), A", _address );
+
+}
+
+void z80_move_8bit_indirect_with_offset2( Environment * _environment, char *_source, char * _value, char * _offset ) {
+
+    outline1("LD HL, (%s)", _value);
+    outline1("LD DE, (%s)", _offset );
+    outline0("ADD HL, DE" );
+    outline1("LD A, (%s)", _source);
+    outline0("LD (HL), A");
 
 }
 
