@@ -896,6 +896,8 @@ void vic2_text_at( Environment * _environment, char * _x, char * _y, char * _tex
     outline0("STA $2c" );
     outline1("LDA %s", _pen );
     outline0("STA $2b" );
+    outline0("LDA _PAPER" );
+    outline0("STA $2d" );
 
     outline0("JSR TEXTAT");
 
