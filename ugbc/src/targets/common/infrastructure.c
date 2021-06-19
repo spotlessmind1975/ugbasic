@@ -1881,36 +1881,49 @@ Variable * variable_greater_than( Environment * _environment, char * _source, ch
                     switch( target->type ) {
                         case VT_STRING: {
                             char differentLabel[MAX_TEMPORARY_STORAGE]; sprintf(differentLabel, "%s", label );
+                            char doneLabel[MAX_TEMPORARY_STORAGE]; sprintf(doneLabel, "%sdone", label );
                             Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of STRING)");
                             Variable * size = variable_temporary( _environment, VT_BYTE, "(size of STRING)");
                             Variable * address2 = variable_temporary( _environment, VT_ADDRESS, "(address of STRING)");
                             Variable * size2 = variable_temporary( _environment, VT_BYTE, "(size of STRING)");
                             cpu_move_8bit( _environment, source->realName, size->realName );
                             cpu_move_8bit( _environment, target->realName, size2->realName );
-                            cpu_greater_than_8bit( _environment, size->realName, size2->realName, result->realName, _equal );
+                            cpu_compare_8bit( _environment, size->realName, size2->realName, result->realName, 1 );
                             cpu_bveq( _environment, result->realName, differentLabel );
+
                             cpu_addressof_16bit( _environment, source->realName, address->realName );
                             cpu_inc_16bit(  _environment, address->realName );
                             cpu_addressof_16bit( _environment, target->realName, address2->realName );
                             cpu_inc_16bit(  _environment, address2->realName );
                             cpu_greater_than_memory( _environment, address->realName, address2->realName, size->realName, result->realName, _equal );
+                            cpu_jump( _environment, doneLabel );
+
                             cpu_label( _environment, differentLabel );
+                            cpu_greater_than_8bit( _environment, size->realName, size2->realName, result->realName, _equal );
+                            cpu_label( _environment, doneLabel );
                             break;
                         }
                         case VT_DSTRING: {
                             char differentLabel[MAX_TEMPORARY_STORAGE]; sprintf(differentLabel, "%s", label );
+                            char doneLabel[MAX_TEMPORARY_STORAGE]; sprintf(doneLabel, "%sdone", label );
                             Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
                             Variable * size = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
                             Variable * address2 = variable_temporary( _environment, VT_ADDRESS, "(address of STRING)");
                             Variable * size2 = variable_temporary( _environment, VT_BYTE, "(size of STRING)");
                             cpu_move_8bit( _environment, source->realName, size->realName );
                             cpu_dsdescriptor( _environment, target->realName, address2->realName, size2->realName );
-                            cpu_greater_than_8bit( _environment, size->realName, size2->realName, result->realName, 1 );
+                            cpu_compare_8bit( _environment, size->realName, size2->realName, result->realName, 1 );
                             cpu_bveq( _environment, result->realName, differentLabel );
+
                             cpu_addressof_16bit( _environment, source->realName, address->realName );
                             cpu_inc_16bit(  _environment, address->realName );
                             cpu_greater_than_memory( _environment, address->realName, address2->realName, size->realName, result->realName, 1 );
+                            cpu_jump( _environment, doneLabel );
+
                             cpu_label( _environment, differentLabel );
+                            cpu_greater_than_8bit( _environment, size->realName, size2->realName, result->realName, 1 );
+                            cpu_bveq( _environment, result->realName, differentLabel );
+                            cpu_label( _environment, doneLabel );
                         }
                         
                         default:
@@ -1921,32 +1934,47 @@ Variable * variable_greater_than( Environment * _environment, char * _source, ch
                     switch( target->type ) {
                         case VT_STRING: {
                             char differentLabel[MAX_TEMPORARY_STORAGE]; sprintf(differentLabel, "%s", label );
+                            char doneLabel[MAX_TEMPORARY_STORAGE]; sprintf(doneLabel, "%sdone", label );
                             Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
                             Variable * size = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
                             Variable * address2 = variable_temporary( _environment, VT_ADDRESS, "(address of STRING)");
                             Variable * size2 = variable_temporary( _environment, VT_BYTE, "(size of STRING)");
                             cpu_move_8bit( _environment, target->realName, size->realName );
                             cpu_dsdescriptor( _environment, source->realName, address->realName, size->realName );
-                            cpu_greater_than_8bit( _environment, size->realName, size2->realName, result->realName, 1 );
+                            cpu_compare_8bit( _environment, size->realName, size2->realName, result->realName, 1 );
                             cpu_bveq( _environment, result->realName, differentLabel );
+
                             cpu_addressof_16bit( _environment, target->realName, address2->realName );
                             cpu_inc_16bit(  _environment, address2->realName );
                             cpu_greater_than_memory( _environment, address->realName, address2->realName, size->realName, result->realName, 1 );
+                            cpu_jump( _environment, doneLabel );
+
                             cpu_label( _environment, differentLabel );
+                            cpu_greater_than_8bit( _environment, size->realName, size2->realName, result->realName, 1 );
+                            cpu_bveq( _environment, result->realName, differentLabel );
+                            cpu_label( _environment, doneLabel );
                             break;
                         }
                         case VT_DSTRING: {
                             char differentLabel[MAX_TEMPORARY_STORAGE]; sprintf(differentLabel, "%s", label );
+                            char doneLabel[MAX_TEMPORARY_STORAGE]; sprintf(doneLabel, "%sdone", label );
                             Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
                             Variable * size = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
                             Variable * address2 = variable_temporary( _environment, VT_ADDRESS, "(address of STRING)");
                             Variable * size2 = variable_temporary( _environment, VT_BYTE, "(size of STRING)");
                             cpu_dsdescriptor( _environment, source->realName, address->realName, size->realName );
                             cpu_dsdescriptor( _environment, target->realName, address2->realName, size2->realName );
+                            cpu_compare_8bit( _environment, size->realName, size2->realName, result->realName, 1 );
+                            cpu_bveq( _environment, result->realName, differentLabel );
+
+                            cpu_greater_than_memory( _environment, address->realName, address2->realName, size->realName, result->realName, 1 );
+                            cpu_jump( _environment, doneLabel );
+
+                            cpu_label( _environment, differentLabel );
                             cpu_greater_than_8bit( _environment, size->realName, size2->realName, result->realName, 1 );
                             cpu_bveq( _environment, result->realName, differentLabel );
-                            cpu_greater_than_memory( _environment, address->realName, address2->realName, size->realName, result->realName, 1 );
-                            cpu_label( _environment, differentLabel );
+                            cpu_label( _environment, doneLabel );
+                            
                             break;
                         }
                         default:
