@@ -1,5 +1,5 @@
 REM @english
-REM USER-DEFINED PROCEDURES WITH PARAMETERS (2)
+REM USER-DEFINED PROCEDURES WITH PARAMETERS (3)
 REM
 REM This example will demonstrate how to define procedures with
 REM one or more parameters. Parameters are a way to give informations
@@ -11,7 +11,7 @@ REM be used by the caller. The example will implement a procedure that
 REM merges three strings all togheter. 
 REM
 REM @italian
-REM USARE LE PROCEDURE CON PARAMETRI (2)
+REM USARE LE PROCEDURE CON PARAMETRI (3)
 REM
 REM Questo esempio dimostrerà come definire procedure con uno o più parametri. 
 REM I parametri sono un modo per dare informazioni alla procedura. Inoltre, 
@@ -30,7 +30,7 @@ REM L'esempio implementerà una procedura che unisce tre stringhe tutte insieme.
    END PROC
 
    result = joinString["ONE","TWO","THREE"]
-   
+
    PRINT "joinString[ONE,TWO,THREE] = ";result
 
    HALT
