@@ -1,5 +1,5 @@
 REM @english
-REM GRAPHICS PRIMITIVES WITH PLOT (2)
+REM GRAPHICS PRIMITIVES USING PLOT (2)
 REM
 REM This example will fill the entire bitmap screen, from top left to bottom right,
 REM with the white color. It will enable the first bitmap mode available (in order 
@@ -8,7 +8,7 @@ REM will clear the screen with the black color. Finally, it will run a controlle
 REM (''FOR...NEXT'') that will draw the all pixels.
 REM
 REM @italian
-REM PRIMITIVE DI GRAFICA CON PLOT (2)
+REM PRIMITIVE DI GRAFICA CON L'USO DI PLOT (2)
 REM
 REM Questo esempio riempirà l'intero schermo bitmap, dall'alto a sinistra in basso 
 REM a destra, con il colore bianco. Abiliterà la prima modalità bitmap disponibile 

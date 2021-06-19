@@ -1,5 +1,5 @@
 REM @english
-REM GRAPHICS PRIMITIVES WITH PLOT (1)
+REM GRAPHICS PRIMITIVES USING PLOT (1)
 REM
 REM This example will fill the entire screen with random points. It will enable
 REM the first bitmap mode available (in order to have better resolution) by
@@ -8,7 +8,7 @@ REM the black color. Finally, it will run an endless loop (''DO...LOOP'')
 REM that will draw random points on the screen.
 REM
 REM @italian
-REM PRIMITIVE DI GRAFICA CON PLOT (1)
+REM PRIMITIVE DI GRAFICA CON L'USO DI PLOT (1)
 REM
 REM Questo esempio riempirà l'intero schermo con punti casuali. Abiliterà la 
 REM prima modalità bitmap disponibile (in modo da avere una migliore risoluzione) 
