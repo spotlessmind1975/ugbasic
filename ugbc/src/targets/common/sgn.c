@@ -102,7 +102,7 @@ Variable * sign( Environment * _environment, char * _value ) {
                 
                 cpu_label( _environment, endLabel );
             } else {
-                variable_store( _environment, result->name, 0 );
+                variable_store( _environment, result->name, 1 );
             }
             break;
         case 0:
