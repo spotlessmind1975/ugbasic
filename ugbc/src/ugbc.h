@@ -168,9 +168,9 @@ typedef enum _VariableType {
 #define VT_SIGNED( t ) \
         ( ( (t) == VT_SBYTE ) || ( (t) == VT_SWORD ) || ( (t) == VT_SDWORD ) )
 
-#define VT_SIGN_8BIT( v ) ( v < 0 ? ( ((~(unsigned char)(abs(v))) ) ) : (v) )
-#define VT_SIGN_16BIT( v ) ( v < 0 ? ( ((~(unsigned short)(abs(v))) ) ) : (v) )
-#define VT_SIGN_32BIT( v ) ( v < 0 ? ( (~((unsigned int) (abs(v))) ) ) : (v) )
+#define VT_SIGN_8BIT( v ) ( v < 0 ? ( ((~(unsigned char)(abs(v)))+1 ) ) : (v) )
+#define VT_SIGN_16BIT( v ) ( v < 0 ? ( ((~(unsigned short)(abs(v)))+1 ) ) : (v) )
+#define VT_SIGN_32BIT( v ) ( v < 0 ? ( (~((unsigned int) (abs(v)))+1 ) ) : (v) )
 
 #define VT_ESIGN_8BIT( t, v ) ( VT_SIGNED(t) ? VT_SIGN_8BIT(v) : (v) )
 #define VT_ESIGN_16BIT( t, v ) ( VT_SIGNED(t) ? VT_SIGN_16BIT(v) : (v) ) 
