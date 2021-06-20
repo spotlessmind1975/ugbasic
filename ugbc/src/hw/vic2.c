@@ -412,11 +412,16 @@ void vic2_tilemap_enable( Environment * _environment, int _width, int _height, i
         case TILEMAP_MODE_STANDARD:
             // Let's disable graphics!
             outline0("LDA $D011" );
-            outline0("AND #%10011111");
+            outline0("AND #%11011111");
             outline0("STA $D011" );
             outline0("LDA $D016" );
             outline0("AND #%11101111");
             outline0("STA $D016" );
+
+            // This fix is necessary to reset the lookup for rom character.
+            outline0("LDA $D018" );
+            outline0("AND #%11110111");
+            outline0("STA $D018" );
 
             cpu_store_16bit( _environment, colormapAddress->realName, 0xd800 );
 
@@ -424,11 +429,16 @@ void vic2_tilemap_enable( Environment * _environment, int _width, int _height, i
         case TILEMAP_MODE_MULTICOLOR:
             // Let's disable graphics!
             outline0("LDA $D011" );
-            outline0("AND #%10011111");
+            outline0("AND #%11011111");
             outline0("STA $D011" );
             outline0("LDA $D016" );
             outline0("ORA #%00010000");
             outline0("STA $D016" );
+
+            // This fix is necessary to reset the lookup for rom character.
+            outline0("LDA $D018" );
+            outline0("AND #%11110111");
+            outline0("STA $D018" );
 
             cpu_store_16bit( _environment, colormapAddress->realName, 0xd800 );
 
@@ -436,13 +446,18 @@ void vic2_tilemap_enable( Environment * _environment, int _width, int _height, i
         case TILEMAP_MODE_EXTENDED:
             // Let's disable graphics!
             outline0("LDA $D011" );
-            outline0("AND #%10011111");
+            outline0("AND #%11011111");
             outline0("ORA #%01000000");
             outline0("STA $D011" );
             outline0("LDA $D016" );
             outline0("AND #%11101111");
             outline0("STA $D016" );
 
+            // This fix is necessary to reset the lookup for rom character.
+            outline0("LDA $D018" );
+            outline0("AND #%11110111");
+            outline0("STA $D018" );
+            
             cpu_store_16bit( _environment, colormapAddress->realName, 0xd800 );
 
             break;
@@ -781,16 +796,18 @@ void vic2_busy_wait( Environment * _environment, char * _timing ) {
 
     outline0("LDA #$00");
     outline0("STA $22");
-    outline0("SEI");
-    outhead1("%s_1:", label );
-    outline0("LDA #$fb");
-    outhead1("%s_2:", label );
+    outhead1("%sfirst:", label );
+    outline0("LDA #$01");
+    outhead1("%ssecond:", label );
     outline0("CMP $D012");
-    outline1("BNE %s_2", label);
+    outline1("BNE %ssecond", label);
+    outhead1("%sthird:", label );
+    outline0("CMP $D012");
+    outline1("BEQ %sthird", label);
     outline0("INC $22");
     outline0("LDA $22");
     outline1("CMP %s", _timing );
-    outline1("BNE %s_1", label );
+    outline1("BNE %sfirst", label );
 
 }
 
