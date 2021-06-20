@@ -2219,13 +2219,13 @@ void variable_string_right_assign( Environment * _environment, char * _string, c
 
     switch( string->type ) {
         case VT_DSTRING: {            
-            cpu_dsdescriptor( _environment, expression->realName, address->realName, size->realName );
+            cpu_dsdescriptor( _environment, string->realName, address->realName, size->realName );
+            cpu_dsdescriptor( _environment, expression->realName, address2->realName, size2->realName );
             cpu_move_8bit( _environment, size->realName, size2->realName );
             cpu_math_sub_8bit( _environment, size2->realName, position->realName, size2->realName );
-            cpu_dsdescriptor( _environment, string->realName, address2->realName, size2->realName );
             cpu_math_add_16bit_with_8bit( _environment, address->realName, size->realName, address->realName );
             cpu_math_sub_16bit_with_8bit( _environment, address->realName, position->realName, address->realName );
-            cpu_mem_move( _environment, address->realName, address2->realName, size2->realName );
+            cpu_mem_move( _environment, address2->realName, address->realName, size2->realName );
             break;
         }
         default:
