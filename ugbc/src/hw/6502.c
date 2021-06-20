@@ -130,7 +130,7 @@ void cpu6502_poke( Environment * _environment, char * _address, char * _source )
  * @param _blocks Number of 256 bytes blocks to fill
  * @param _pattern Pattern to use
  */
-void cpu6502_fill( Environment * _environment, char * _address, char * _blocks, char * _pattern ) {
+void cpu6502_fill_blocks( Environment * _environment, char * _address, char * _blocks, char * _pattern ) {
 
     MAKE_LABEL
 
@@ -150,6 +150,46 @@ void cpu6502_fill( Environment * _environment, char * _address, char * _blocks, 
     outline0("INY");
     outline1("BNE %sy", label);
     outline0("INC $23");
+    outline0("DEX");
+    outline1("BNE %sx", label);
+
+}
+
+/**
+ * @brief <i>CPU 6502</i>: emit code to fill up a memory area
+ * 
+ * This function can be used to output a piece of code that fills a given 
+ * memory area with a given pattern (pattern size: 1 byte). The starting 
+ * address must be contained in a variable, while the area must be a multiple 
+ * of 256 bytes.
+ * 
+ * @param _environment Current calling environment
+ * @param _address Starting address
+ * @param _bytes Number of bytes to fill
+ * @param _pattern Pattern to use
+ */
+void cpu6502_fill( Environment * _environment, char * _address, char * _bytes, char * _pattern ) {
+
+    MAKE_LABEL
+
+    // Use the current bitmap address as starting address for filling routine.
+    outline1("LDA %s", _address);
+    outline0("STA $22");
+    outline1("LDA %s+1", _address);
+    outline0("STA $23");
+
+    outline1("LDA %s", _pattern);
+    outline0("STA $24");
+    outline1("LDA %s+1", _pattern);
+    outline0("STA $25");
+
+    // Fill the bitmap with the given pattern.
+    outline1("LDX %s", _bytes );
+    outline0("LDY #0");
+    outline0("LDA ($24),Y");
+    outhead1("%sx:", label);
+    outline0("STA ($22),Y");
+    outline0("INY");
     outline0("DEX");
     outline1("BNE %sx", label);
 

@@ -171,7 +171,7 @@ void colormap_clear_with( Environment * _environment, int _foreground, int _back
 
     char value[MAX_TEMPORARY_STORAGE]; sprintf(value, "#$%2.2x", ( ( _foreground & 0x0f ) << 4 ) | ( _background & 0x0f ));
     
-    cpu6502_fill( _environment, colormapAddress->realName, "#$04", value );
+    cpu_fill_blocks( _environment, colormapAddress->realName, "#$04", value );
 
 }
 
@@ -211,7 +211,7 @@ void colormap_clear_with_vars( Environment * _environment, char * _foreground, c
 
     cpu6502_combine_nibbles( _environment, background->realName, foreground->realName, "$24" );
 
-    cpu6502_fill( _environment, colormapAddress->realName, "#$04", "$24" );
+    cpu_fill_blocks( _environment, colormapAddress->realName, "#$04", "$24" );
 
 }
 

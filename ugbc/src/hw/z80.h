@@ -52,7 +52,8 @@ void z80_less_than_8bit( Environment * _environment, char *_source, char *_desti
 void z80_greater_than_16bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _equal );
 void z80_greater_than_32bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _equal );
 void z80_greater_than_8bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _equal );
-void z80_fill( Environment * _environment, char * _address, char * _blocks, char * _pattern );
+void z80_fill( Environment * _environment, char * _address, char * _bytes, char * _pattern );
+void z80_fill_blocks( Environment * _environment, char * _address, char * _blocks, char * _pattern );
 void z80_halt( Environment * _environment );
 void z80_end( Environment * _environment );
 void z80_jump( Environment * _environment, char * _label );
@@ -173,7 +174,8 @@ void z80_move_8bit_with_offset2( Environment * _environment, char *_source, char
 #define cpu_greater_than_16bit( _environment, _source, _destination, _name, _equal ) z80_greater_than_16bit( _environment, _source, _destination, _name, _equal )
 #define cpu_greater_than_32bit( _environment, _source, _destination, _name, _equal ) z80_greater_than_32bit( _environment, _source, _destination, _name, _equal )
 #define cpu_greater_than_8bit( _environment, _source, _destination, _name, _equal ) z80_greater_than_8bit( _environment, _source, _destination, _name, _equal )
-#define cpu_fill( _environment,  _address,  _blocks,  _pattern  ) z80_fill( _environment,  _address,  _blocks,  _pattern  )
+#define cpu_fill( _environment,  _address,  _bytes,  _pattern  ) z80_fill( _environment,  _address, _bytes,  _pattern  )
+#define cpu_fill_blocks( _environment,  _address,  _blocks,  _pattern  ) z80_fill_blocks( _environment,  _address,  _blocks,  _pattern  )
 #define cpu_halt( _environment  ) z80_halt( _environment  )
 #define cpu_end( _environment  ) z80_end( _environment  )
 #define cpu_jump( _environment,  _label  ) z80_jump( _environment,  _label  )

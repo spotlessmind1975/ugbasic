@@ -131,7 +131,7 @@ void z80_poke( Environment * _environment, char * _address, char * _source ) {
  * @param _blocks Number of 256 bytes blocks to fill
  * @param _pattern Pattern to use
  */
-void z80_fill( Environment * _environment, char * _address, char * _blocks, char * _pattern ) {
+void z80_fill_blocks( Environment * _environment, char * _address, char * _blocks, char * _pattern ) {
 
     outline1("LD A,(%s)", _pattern);
     outline1("LD HL,(%s)", _address);
@@ -142,6 +142,36 @@ void z80_fill( Environment * _environment, char * _address, char * _blocks, char
     outline0("LD (DE),A")
     outline0("LD C,255");
     outline1("LD A,(%s)", _blocks);
+    outline0("LD B,A");
+    outline0("LDIR");
+
+}
+
+/**
+ * @brief <i>Z80</i>: emit code to fill up a memory area
+ * 
+ * This function can be used to output a piece of code that fills a given 
+ * memory area with a given pattern (pattern size: 1 byte). The starting 
+ * address must be contained in a variable, while the area must be a multiple 
+ * of 256 bytes.
+ * 
+ * @param _environment Current calling environment
+ * @param _address Starting address
+ * @param _bytes Number of bytes to fill
+ * @param _pattern Pattern to use
+ */
+void z80_fill( Environment * _environment, char * _address, char * _bytes, char * _pattern ) {
+
+    outline1("LD A,(%s)", _pattern);
+    outline1("LD HL,(%s)", _address);
+    outline0("LD (HL),A")
+    outline0("LD E,L");
+    outline0("LD D,H");
+    outline0("INC DE");
+    outline0("LD (DE),A")
+    outline1("LD A,(%s)", _blocks);
+    outline0("LD C,A");
+    outline0("LD A,0");
     outline0("LD B,A");
     outline0("LDIR");
 
