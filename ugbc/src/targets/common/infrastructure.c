@@ -2306,7 +2306,7 @@ Variable * variable_string_mid( Environment * _environment, char * _string, char
                 cpu_dsfree( _environment, result->realName );
                 cpu_dsalloc( _environment, len->realName, result->realName );
                 cpu_dsdescriptor( _environment, result->realName, address2->realName, size2->realName );
-                cpu_mem_move( _environment, address->realName, result->realName, len->realName );
+                cpu_mem_move( _environment, address->realName, address2->realName, size2->realName );
             }
             break;
         }
@@ -2328,7 +2328,7 @@ Variable * variable_string_mid( Environment * _environment, char * _string, char
                 cpu_dsfree( _environment, result->realName );
                 cpu_dsalloc( _environment, len->realName, result->realName );
                 cpu_dsdescriptor( _environment, result->realName, address2->realName, size2->realName );
-                cpu_mem_move( _environment, address->realName, result->realName, len->realName );
+                cpu_mem_move( _environment, address->realName, address2->realName, size2->realName );
             }
             break;
         }
