@@ -2104,15 +2104,16 @@ void cpu6502_uppercase( Environment * _environment, char *_source, char *_size, 
     outline0("LDA ($22), Y" );
     
     outline0("CMP #65");
-    outline1("BCS %snext", label);
-
-    outline0("CMP #90");
     outline1("BCC %snext", label);
 
-    outline0("ADC #32");
-    outline0("STA ($24), Y" );
+    outline0("CMP #90");
+    outline1("BCS %snext", label);
+
+    outline0("CLC");
+    outline0("ADC #128");
 
     outhead1("%snext:", label );
+    outline0("STA ($24), Y" );
     outline0("INY" );
     outline1("CPY %s", _size );
     outline1("BNE %supper", label );
@@ -2142,16 +2143,17 @@ void cpu6502_lowercase( Environment * _environment, char *_source, char *_size, 
     outhead1("%slower:", label );
     outline0("LDA ($22), Y" );
     
-    outline0("CMP #97");
-    outline1("BCS %snext", label);
-
-    outline0("CMP #122");
+    outline0("CMP #193");
     outline1("BCC %snext", label);
 
-    outline0("SBC #32");
-    outline0("STA ($24), Y" );
+    outline0("CMP #218");
+    outline1("BCS %snext", label);
+
+    outline0("SEC");
+    outline0("SBC #128");
 
     outhead1("%snext:", label );
+    outline0("STA ($24), Y" );
     outline0("INY" );
     outline1("CPY %s", _size );
     outline1("BNE %slower", label );
