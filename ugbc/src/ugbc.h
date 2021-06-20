@@ -361,6 +361,9 @@ typedef struct _Loop {
     /** Variable with index. */
     Variable *index;
 
+    /** Variable with to. */
+    Variable *to;
+
     /** Variable with step. */
     Variable *step;
 

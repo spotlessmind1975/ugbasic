@@ -92,7 +92,7 @@ void begin_for( Environment * _environment, char * _index, char * _from, char * 
     Variable * index = variable_retrieve_or_define( _environment, _index, VT_WORD, 0 );
     Variable * from = variable_retrieve( _environment, _from );
     Variable * to = variable_retrieve( _environment, _to );
-    Variable * step = variable_temporary( _environment, VT_BYTE, "(step 1)" );
+    Variable * step = variable_temporary( _environment, VT_WORD, "(step 1)" );
 
     variable_store( _environment, step->name, 1 );
     
@@ -107,6 +107,8 @@ void begin_for( Environment * _environment, char * _index, char * _from, char * 
     loop->index->locked = 1;
     loop->step = step;
     loop->step->locked = 1;
+    loop->to = to;
+    loop->to->locked = 1;
     _environment->loops = loop;
 
     variable_move( _environment, from->name, index->name );
@@ -116,7 +118,10 @@ void begin_for( Environment * _environment, char * _index, char * _from, char * 
 
     cpu_label( _environment, beginFor );
 
-    cpu_bvneq( _environment, variable_compare( _environment, index->name, variable_add( _environment, to->name, loop->step->name )->name )->realName, endFor );
+    Variable * lastStep = variable_add( _environment, loop->to->name, loop->step->name );
+    Variable * isLastStep = variable_compare( _environment, index->name, lastStep->name );
+
+    cpu_bvneq( _environment, isLastStep->realName, endFor );
 
 }
 
@@ -155,6 +160,8 @@ void begin_for_step( Environment * _environment, char * _index, char * _from, ch
     loop->index->locked = 1;
     loop->step = step;
     loop->step->locked = 1;
+    loop->to = to;
+    loop->to->locked = 1;
     _environment->loops = loop;
 
     variable_move( _environment, from->name, index->name );
@@ -164,7 +171,7 @@ void begin_for_step( Environment * _environment, char * _index, char * _from, ch
 
     cpu_label( _environment, beginFor );
 
-    cpu_bvneq( _environment, variable_compare( _environment, index->name, variable_add( _environment, to->name, loop->step->name )->name )->realName, endFor );
+    cpu_bvneq( _environment, variable_compare( _environment, index->name, variable_add( _environment, loop->to->name, loop->step->name )->name )->realName, endFor );
 
 }
 
@@ -191,13 +198,16 @@ void end_for( Environment * _environment ) {
     unsigned char beginFor[MAX_TEMPORARY_STORAGE]; sprintf(beginFor, "%sbf", loop->label );
     unsigned char endFor[MAX_TEMPORARY_STORAGE]; sprintf(endFor, "%sef", loop->label );
 
-    variable_move_naked( _environment, variable_add( _environment, loop->index->name, loop->step->name )->name, loop->index->name );
+    Variable * incrementedIndex = variable_add( _environment, loop->index->name, loop->step->name );
+
+    variable_move_naked( _environment, incrementedIndex->name, loop->index->name );
 
     cpu_jump( _environment, beginFor );
 
     cpu_label( _environment, endFor );
 
     loop->index->locked = 0;
+    loop->to->locked = 0;
     loop->step->locked = 0;
 
     _environment->loops = _environment->loops->next;
