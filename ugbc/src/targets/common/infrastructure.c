@@ -2783,6 +2783,8 @@ Variable * variable_string_string( Environment * _environment, char * _string, c
     Variable * address2 = variable_temporary( _environment, VT_ADDRESS, "(result of LOWER)" );
     Variable * size2 = variable_temporary( _environment, VT_BYTE, "(result of LOWER)" );
 
+    outline0("; STRING(...)");
+
     cpu_dsfree( _environment, result->realName );
     cpu_dsalloc( _environment, repetitions->realName, result->realName );
     cpu_dsdescriptor( _environment, result->realName, address2->realName, size2->realName );
@@ -2801,7 +2803,9 @@ Variable * variable_string_string( Environment * _environment, char * _string, c
         CRITICAL_STRING_UNSUPPORTED( _string, DATATYPE_AS_STRING[string->type]);
     }
 
-    cpu_fill( _environment, address->realName, size2->realName, address2->realName );
+    cpu_fill( _environment, address2->realName, size2->realName, address->realName );
+
+    outline0("; -- STRING(...)");
 
     return result;
     
