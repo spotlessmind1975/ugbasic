@@ -2558,6 +2558,7 @@ Variable * variable_string_lower( Environment * _environment, char * _string ) {
             CRITICAL_LOWER_UNSUPPORTED( _string, DATATYPE_AS_STRING[string->type]);
     }
 
+    cpu_dsalloc( _environment, size->realName, result->realName );
     cpu_dsdescriptor( _environment, result->realName, address2->realName, size2->realName );
 
     MAKE_LABEL
@@ -2613,6 +2614,7 @@ Variable * variable_string_upper( Environment * _environment, char * _string ) {
             CRITICAL_LOWER_UNSUPPORTED( _string, DATATYPE_AS_STRING[string->type]);
     }
 
+    cpu_dsalloc( _environment, size->realName, result->realName );
     cpu_dsdescriptor( _environment, result->realName, address2->realName, size2->realName );
 
     MAKE_LABEL
