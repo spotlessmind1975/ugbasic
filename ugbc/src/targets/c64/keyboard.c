@@ -159,8 +159,7 @@ Variable * input_string( Environment * _environment, char * _size ) {
     Variable * pressed = variable_temporary( _environment, VT_BYTE, "(key pressed?)");
     Variable * key = variable_temporary( _environment, VT_BYTE, "(key pressed)");
 
-cpu_label( _environment, "INPUT" );
-
+    cpu_dsfree( _environment, result->realName );
     cpu_dsalloc( _environment, size->realName, result->realName );
     cpu_dsdescriptor( _environment, result->realName, address->realName, pressed->realName );
 
@@ -204,6 +203,7 @@ void input( Environment * _environment, char * _variable ) {
     Variable * key = variable_temporary( _environment, VT_BYTE, "(key pressed)");
 
     Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
+    cpu_dsfree( _environment, temporary->realName );
     cpu_dsalloc( _environment, size->realName, temporary->realName );
     cpu_dsdescriptor( _environment, temporary->realName, address->realName, pressed->realName );
 
