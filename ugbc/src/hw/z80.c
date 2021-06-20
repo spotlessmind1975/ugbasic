@@ -1769,8 +1769,6 @@ void z80_convert_upto_24bit_bcd( Environment * _environment, char * _source, cha
 
     MAKE_LABEL
 
-    outline0("NOP");
-    outline0("NOP");
     outline1("LD HL, (%s)", _source );
     outline1("LD A, (%s+2)", _source );
     outline0("LD E, A" );
