@@ -1,3 +1,17 @@
+REM @english
+REM TEXTS OUTPUT WITH WRITING MODE (1)
+REM
+REM This example shows the various combination allowed when using the ''WRITING'' command,
+REM and its effects in terms on graphical effects. Note that the text output will be the
+REM same for every call, while the output will differ in base of ''WROTR'
+REM
+REM @italian
+REM STAMPA DI TESTI CON MODALITA' DI SCRITTURA (1)
+REM
+REM Questo esempio mostra le varie combinazioni permette quando si utilizza il comando ''WRITING''
+REM e i loro effetti in termini di resa grafica. Da notare che il testo di output sarà lo stesso
+REM per ogni chiamata, mentre la resa differirà in base al valore attuale di ''WRITING''.
+
     t$ = PEN$(YELLOW)+"YELLOW ON "+PAPER$(BLUE)+" BLUE"
 
     PEN DEFAULT PEN
