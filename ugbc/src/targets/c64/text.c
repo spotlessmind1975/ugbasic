@@ -681,6 +681,7 @@ void pen( Environment * _environment, char * _color ) {
     outline0("STA _PEN");
     outline1("JMP %sdone", label);
     outhead1("%stxt:", label );
+    outline1("LDA %s", color->realName);
     outline0("STA _PEN");
     outline1("JMP %sdone", label);
     outhead1("%sdone:", label );
