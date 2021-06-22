@@ -91,9 +91,9 @@ VSCROLLTUEND:
     STA $01
 
     PLA
-    TAy
+    TAY
     PLA
-    TAx
+    TAX
     RTS
 
 VSCROLLTDOWN:
@@ -139,6 +139,20 @@ VSCROLLTDOWNYS4:
     LDY #255
     DEX
     BNE VSCROLLTDOWNYS4
+
+    LDA TEXTADDRESS
+    STA $35
+    LDA TEXTADDRESS+1
+    STA $36
+
+    LDY #0
+SCROLLFILLUP:
+    LDA EMPTYTILE
+    STA ($35),Y
+    INY
+    CPY #40
+    BNE SCROLLFILLUP
+
     LDA #$37
     STA $01
 
