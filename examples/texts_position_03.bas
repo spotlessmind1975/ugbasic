@@ -7,7 +7,7 @@ REM If the coordinates' component is omitted this means that the offset along th
 REM is 0 (remain in the same position).
 REM
 REM @italian
-REM STAMPA DI TESTI CON POSIZIONAMENTO (2)
+REM STAMPA DI TESTI CON POSIZIONAMENTO (3)
 REM
 REM Questo esempio mostra l'uso del comando ''CMOVE'' per reimpostare la
 REM posizione per il successivo output sullo schermo, con l'utilizzo di misure
