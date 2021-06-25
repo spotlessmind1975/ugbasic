@@ -174,8 +174,6 @@ void bitmap_clear_with( Environment * _environment, int _pattern ) {
 
     z80_fill_blocks( _environment, bitmapAddress->realName, "24", pattern->realName );
 
-    variable_reset( _environment );
-
 }
 
 /**

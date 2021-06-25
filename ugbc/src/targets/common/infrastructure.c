@@ -3163,8 +3163,6 @@ void variable_move_array( Environment * _environment, char * _array, char * _val
             CRITICAL_DATATYPE_UNSUPPORTED("array(3)", DATATYPE_AS_STRING[array->arrayType]);
     }
 
-    variable_reset( _environment );
-
 }
 
 void variable_move_array_string( Environment * _environment, char * _array, char * _string  ) {
@@ -3206,8 +3204,6 @@ void variable_move_array_string( Environment * _environment, char * _array, char
     cpu_dsalloc( _environment, size->realName, dstring->realName );
     cpu_dsdescriptor( _environment, string->realName, address2->realName, size2->realName );
     cpu_mem_move(_environment, address->realName, address2->realName, size->realName );
-     
-    variable_reset( _environment );
 
 }
 

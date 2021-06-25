@@ -71,8 +71,6 @@ void point_at( Environment * _environment, int _x, int _y ) {
 
     point_at_vars( _environment, x->name, y->name );
 
-    variable_reset( _environment );
-    
 }
 
 /**

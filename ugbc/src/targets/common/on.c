@@ -152,8 +152,6 @@ void on_goto_end( Environment * _environment ) {
 
     _environment->conditionals = _environment->conditionals->next;
 
-    variable_reset( _environment );
-
 };
 
 /**
@@ -286,8 +284,6 @@ void on_gosub_end( Environment * _environment ) {
 
     _environment->conditionals = _environment->conditionals->next;
 
-    variable_reset( _environment );
-
 };
 
 void on_proc( Environment * _environment, char * _expression ) {
@@ -364,7 +360,5 @@ void on_proc_end( Environment * _environment ) {
     _environment->conditionals->expression->locked = 0;
 
     _environment->conditionals = _environment->conditionals->next;
-
-    variable_reset( _environment );
 
 };

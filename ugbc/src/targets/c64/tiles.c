@@ -132,7 +132,5 @@ void tiles_at_var( Environment * _environment, char * _address ) {
 
     vic2_tiles_at( _environment, addressString );
 
-    variable_reset( _environment );
-
 }
 

@@ -126,8 +126,6 @@ void colormap_clear_with( Environment * _environment, int _foreground, int _back
 
     z80_fill_blocks( _environment, colormapAddress->realName, "3", value->realName );
 
-    variable_reset( _environment );
-
 }
 
 /**
@@ -170,8 +168,6 @@ void colormap_clear_with_vars( Environment * _environment, char * _foreground, c
     outline1("LD (%s), A", pattern->realName );
 
     z80_fill_blocks( _environment, colormapAddress->realName, "3", pattern->realName );
-
-    variable_reset( _environment );
 
 }
 

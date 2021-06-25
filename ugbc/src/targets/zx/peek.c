@@ -65,8 +65,6 @@ Variable * peek( Environment * _environment, int _location ) {
 
     z80_peek( _environment, location, result->realName );
 
-    variable_reset( _environment );
-
     return result;
 
 }
