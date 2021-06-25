@@ -169,7 +169,7 @@ void z80_fill( Environment * _environment, char * _address, char * _bytes, char 
     outline0("LD D,H");
     outline0("INC DE");
     outline0("LD (DE),A")
-    outline1("LD A,(%s)", _blocks);
+    outline1("LD A,(%s)", _bytes);
     outline0("LD C,A");
     outline0("LD A,0");
     outline0("LD B,A");
