@@ -690,6 +690,16 @@ typedef struct _Environment {
      */
     int textHScrollDeployed;
 
+    /**
+     *  Deployed the code for horizontal line scrolling
+     */
+    int textHScrollLineDeployed;
+
+    /**
+     *  Deployed the code for horizontal line scrolling
+     */
+    int textHScrollScreenDeployed;
+
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */
