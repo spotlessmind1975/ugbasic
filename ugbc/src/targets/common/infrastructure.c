@@ -226,7 +226,7 @@ Definisci una variabile [name] sul banko [bank]. Eventualmente,
 
  </usermanual> */
 
-Variable * variable_define( Environment * _environment, char * _name, VariableType _type, int _value ) {
+Variable * variable_define( Environment * _environment, char * _name, VariableType _type, unsigned int _value ) {
 
     Variable * var = variable_find( _environment->variables, _name );
     if ( var ) {
@@ -826,7 +826,7 @@ Variable * variable_cast( Environment * _environment, char * _source, VariableTy
  * @return Variable* The destination variable
  * @throw EXIT_FAILURE "Destination variable does not exists"
  */
-Variable * variable_store( Environment * _environment, char * _destination, int _value ) {
+Variable * variable_store( Environment * _environment, char * _destination, unsigned int _value ) {
     
     Variable * destination = variable_retrieve( _environment, _destination );
 

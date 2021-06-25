@@ -166,7 +166,7 @@ typedef enum _VariableType {
         VT_BW_32BIT( t, VT_DWORD ) + VT_BW_32BIT( t, VT_SDWORD ) )
 
 #define VT_SIGNED( t ) \
-        ( ( (t) == VT_SBYTE ) || ( (t) == VT_SWORD ) || ( (t) == VT_SDWORD ) )
+        ( ( (t) == VT_SBYTE ) || ( (t) == VT_SWORD ) || ( (t) == VT_SDWORD ) || ( (t) == VT_POSITION ) )
 
 #define VT_SIGN_8BIT( v ) ( v < 0 ? ( ((~(unsigned char)(abs(v)))+1 ) ) : (v) )
 #define VT_SIGN_16BIT( v ) ( v < 0 ? ( ((~(unsigned short)(abs(v)))+1 ) ) : (v) )
@@ -219,7 +219,7 @@ typedef struct _Variable {
     /** 
      * The initial value of the variable, as given by last (re)definition.
      */
-    int value;
+    unsigned int value;
 
     /** 
      * The static string's valu, as given by last (re)definition.
@@ -1278,7 +1278,7 @@ Variable *              variable_compare( Environment * _environment, char * _so
 Variable *              variable_compare_not( Environment * _environment, char * _source, char * _dest );
 Variable *              variable_complement_const( Environment * _environment, char * _source, int _mask );
 Variable *              variable_decrement( Environment * _environment, char * _source );
-Variable *              variable_define( Environment * _environment, char * _name, VariableType _type, int _value );
+Variable *              variable_define( Environment * _environment, char * _name, VariableType _type, unsigned int _value );
 Variable *              variable_define_no_init( Environment * _environment, char * _name, VariableType _type );
 Variable *              variable_div( Environment * _environment, char * _source, char * _dest );
 Variable *              variable_div2_const( Environment * _environment, char * _source, int _bits );
@@ -1303,7 +1303,7 @@ Variable *              variable_resize_buffer( Environment * _environment, char
 Variable *              variable_retrieve( Environment * _environment, char * _name );
 Variable *              variable_retrieve_by_realname( Environment * _environment, char * _name );
 Variable *              variable_retrieve_or_define( Environment * _environment, char * _name, VariableType _type, int _value );
-Variable *              variable_store( Environment * _environment, char * _source, int _value );
+Variable *              variable_store( Environment * _environment, char * _source, unsigned int _value );
 Variable *              variable_store_string( Environment * _environment, char * _source, char * _string );
 Variable *              variable_string_asc( Environment * _environment, char * _char );
 Variable *              variable_string_chr( Environment * _environment, char * _ascii  );
