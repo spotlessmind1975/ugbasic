@@ -114,7 +114,7 @@ void begin_for( Environment * _environment, char * _index, char * _from, char * 
     variable_move( _environment, from->name, index->name );
 
     unsigned char beginFor[MAX_TEMPORARY_STORAGE]; sprintf(beginFor, "%sbf", loop->label );
-    unsigned char endFor[MAX_TEMPORARY_STORAGE]; sprintf(endFor, "%sef", loop->label );
+    unsigned char endFor[MAX_TEMPORARY_STORAGE]; sprintf(endFor, "%sbis", loop->label );
 
     cpu_label( _environment, beginFor );
 
@@ -167,7 +167,7 @@ void begin_for_step( Environment * _environment, char * _index, char * _from, ch
     variable_move( _environment, from->name, index->name );
 
     unsigned char beginFor[MAX_TEMPORARY_STORAGE]; sprintf(beginFor, "%sbf", loop->label );
-    unsigned char endFor[MAX_TEMPORARY_STORAGE]; sprintf(endFor, "%sef", loop->label );
+    unsigned char endFor[MAX_TEMPORARY_STORAGE]; sprintf(endFor, "%sbis", loop->label );
 
     cpu_label( _environment, beginFor );
 
@@ -196,7 +196,7 @@ void end_for( Environment * _environment ) {
     }
 
     unsigned char beginFor[MAX_TEMPORARY_STORAGE]; sprintf(beginFor, "%sbf", loop->label );
-    unsigned char endFor[MAX_TEMPORARY_STORAGE]; sprintf(endFor, "%sef", loop->label );
+    unsigned char endFor[MAX_TEMPORARY_STORAGE]; sprintf(endFor, "%sbis", loop->label );
 
     Variable * incrementedIndex = variable_add( _environment, loop->index->name, loop->step->name );
 

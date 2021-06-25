@@ -88,7 +88,7 @@ void begin_while( Environment * _environment ) {
     loop->next = _environment->loops;
     _environment->loops = loop;
 
-    unsigned char endWhile[MAX_TEMPORARY_STORAGE]; sprintf(endWhile, "%sew", loop->label );
+    unsigned char endWhile[MAX_TEMPORARY_STORAGE]; sprintf(endWhile, "%sbis", loop->label );
 
     cpu_label( _environment, loop->label );
 
@@ -110,7 +110,7 @@ void begin_while_condition( Environment * _environment, char * _expression ) {
 
     Variable * expression = variable_retrieve( _environment, _expression );
 
-    unsigned char endWhile[MAX_TEMPORARY_STORAGE]; sprintf(endWhile, "%sew", loop->label );
+    unsigned char endWhile[MAX_TEMPORARY_STORAGE]; sprintf(endWhile, "%sbis", loop->label );
 
     cpu_bveq( _environment, expression->realName, endWhile );
 
@@ -138,7 +138,7 @@ void end_while( Environment * _environment ) {
 
     cpu_jump( _environment, loop->label );
 
-    unsigned char endWhile[MAX_TEMPORARY_STORAGE]; sprintf(endWhile, "%sew", loop->label );
+    unsigned char endWhile[MAX_TEMPORARY_STORAGE]; sprintf(endWhile, "%sbis", loop->label );
 
     cpu_label( _environment, endWhile );
 
