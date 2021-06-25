@@ -71,6 +71,7 @@ CENTER { return (CENTER); }
 CENTRE { return (CENTRE); }
 CHR { return (CHR); }
 CHR\$ { return (CHR); }
+CIRCLE { return (CIRCLE); }
 CLEAR { return (CLEAR); }
 CLEFT { return (CLEFT); }
 CLINE { return (CLINE); }

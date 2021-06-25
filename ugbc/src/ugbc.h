@@ -1026,6 +1026,7 @@ void                    bitmap_enable( Environment * _environment, int _width, i
 //----------------------------------------------------------------------------
 
 void                    call_procedure( Environment * _environment, char * _name );
+void                    circle( Environment * _environment, char * _x, char * _y, char * _r, char *_c );
 Variable *              clear_key( Environment * _environment );
 void                    cls( Environment * _environment, char * _paper );
 Variable *              collision_to( Environment * _environment, int _sprite );
