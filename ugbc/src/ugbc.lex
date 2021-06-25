@@ -140,6 +140,7 @@ GLOBAL { return (GLOBAL); }
 GOLD { return(GOLD); }
 GOTO { return (GOTO); }
 GOSUB { return (GOSUB); }
+GR { return (GR); }
 GRAPHIC { return (GRAPHIC); }
 GRAY { return(GRAY); }
 GREEN { return(GREEN); }

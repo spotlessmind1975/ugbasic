@@ -933,6 +933,11 @@ void vic2_initialization( Environment * _environment ) {
 
     outline0("JSR VIC2STARTUP");
 
+    variable_import( _environment, "XGR", VT_POSITION );
+    variable_global( _environment, "XGR" );
+    variable_import( _environment, "YGR", VT_POSITION );
+    variable_global( _environment, "YGR" );
+
     vic2_cls( _environment );
 
 }

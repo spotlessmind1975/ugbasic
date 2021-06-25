@@ -1072,6 +1072,7 @@ void                    gosub_number( Environment * _environment, int _number );
 void                    goto_label( Environment * _environment, char * _label );
 void                    goto_number( Environment * _environment, int _number );
 void                    graphic( Environment * _environment );
+void                    gr_locate( Environment * _environment, char * _x, char * _y );
 
 //----------------------------------------------------------------------------
 // *h*

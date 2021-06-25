@@ -48,7 +48,7 @@ extern char DATATYPE_AS_STRING[][16];
 %token INKEY SCANCODE SCAN SHIFT SCANSHIFT BOTH SHIFTS NONE LETTER ASTERISK COLON COMMA 
 %token COMMODORE CONTROL CRSR CURSOR DELETE EQUAL FUNCTION INSERT ARROW MINUS PERIOD PLUS 
 %token POUND RUNSTOP RUN STOP SEMICOLON SLASH KEY STATE KEYSTATE KEYSHIFT CAPSLOCK CAPS LOCK ALT
-%token INPUT FREE TILEMAP EMPTY TILE EMPTYTILE PLOT
+%token INPUT FREE TILEMAP EMPTY TILE EMPTYTILE PLOT GR
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -1926,6 +1926,18 @@ locate_definition :
     }
     ;
 
+gr_locate_definition : 
+     OP_COMMA expr {
+        gr_locate( _environment, NULL, $2 );
+    }
+    | expr OP_COMMA {
+        gr_locate( _environment, $1, NULL );
+    } 
+    | expr OP_COMMA expr {
+        gr_locate( _environment, $1, $3 );
+    }
+    ;
+
 cmove_definition : 
      OP_COMMA expr {
         text_cmove( _environment, NULL, $2 );
@@ -2025,6 +2037,7 @@ statement:
   | INPUT input_definition
   | QM print_definition
   | LOCATE locate_definition
+  | GR LOCATE gr_locate_definition
   | MEMORIZE {
       text_memorize( _environment );
   }
