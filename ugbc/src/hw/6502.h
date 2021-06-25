@@ -48,12 +48,12 @@ void cpu6502_inc( Environment * _environment, char * _variable );
 void cpu6502_inc_16bit( Environment * _environment, char * _variable );
 void cpu6502_dec( Environment * _environment, char * _variable );
 void cpu6502_dec_16bit( Environment * _environment, char * _variable );
-void cpu6502_less_than_16bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _equal );
-void cpu6502_less_than_32bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _equal );
-void cpu6502_less_than_8bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _equal );
-void cpu6502_greater_than_16bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _equal );
-void cpu6502_greater_than_32bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _equal );
-void cpu6502_greater_than_8bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _equal );
+void cpu6502_less_than_16bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _equal, int _signed );
+void cpu6502_less_than_32bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _equal, int _signed );
+void cpu6502_less_than_8bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _equal, int _signed );
+void cpu6502_greater_than_16bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _equal, int _signed );
+void cpu6502_greater_than_32bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _equal, int _signed );
+void cpu6502_greater_than_8bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _equal, int _signed );
 void cpu6502_fill( Environment * _environment, char * _address, char * _blocks, char * _pattern );
 void cpu6502_fill_blocks( Environment * _environment, char * _address, char * _blocks, char * _pattern );
 void cpu6502_halt( Environment * _environment );
@@ -168,12 +168,12 @@ void cpu6502_dsalloc_size( Environment * _environment, int _size, char * _index 
 #define cpu_inc_16bit( _environment, _variable ) cpu6502_inc_16bit( _environment, _variable )
 #define cpu_dec( _environment, _variable ) cpu6502_dec( _environment, _variable );
 #define cpu_dec_16bit( _environment, _variable ) cpu6502_dec_16bit( _environment, _variable );
-#define cpu_less_than_16bit( _environment, _source, _destination, _name, _equal ) cpu6502_less_than_16bit( _environment, _source, _destination, _name, _equal )
-#define cpu_less_than_32bit( _environment, _source, _destination, _name, _equal ) cpu6502_less_than_32bit( _environment, _source, _destination, _name, _equal )
-#define cpu_less_than_8bit( _environment, _source, _destination, _name, _equal ) cpu6502_less_than_8bit( _environment, _source, _destination, _name, _equal )
-#define cpu_greater_than_16bit( _environment, _source, _destination, _name, _equal ) cpu6502_greater_than_16bit( _environment, _source, _destination, _name, _equal )
-#define cpu_greater_than_32bit( _environment, _source, _destination, _name, _equal ) cpu6502_greater_than_32bit( _environment, _source, _destination, _name, _equal )
-#define cpu_greater_than_8bit( _environment, _source, _destination, _name, _equal ) cpu6502_greater_than_8bit( _environment, _source, _destination, _name, _equal )
+#define cpu_less_than_16bit( _environment, _source, _destination, _name, _equal, _signed ) cpu6502_less_than_16bit( _environment, _source, _destination, _name, _equal, _signed )
+#define cpu_less_than_32bit( _environment, _source, _destination, _name, _equal, _signed ) cpu6502_less_than_32bit( _environment, _source, _destination, _name, _equal, _signed )
+#define cpu_less_than_8bit( _environment, _source, _destination, _name, _equal, _signed ) cpu6502_less_than_8bit( _environment, _source, _destination, _name, _equal, _signed )
+#define cpu_greater_than_16bit( _environment, _source, _destination, _name, _equal, _signed ) cpu6502_greater_than_16bit( _environment, _source, _destination, _name, _equal, _signed )
+#define cpu_greater_than_32bit( _environment, _source, _destination, _name, _equal, _signed ) cpu6502_greater_than_32bit( _environment, _source, _destination, _name, _equal, _signed )
+#define cpu_greater_than_8bit( _environment, _source, _destination, _name, _equal, _signed ) cpu6502_greater_than_8bit( _environment, _source, _destination, _name, _equal, _signed )
 #define cpu_fill( _environment,  _address,  _blocks,  _pattern  ) cpu6502_fill( _environment,  _address,  _blocks,  _pattern  )
 #define cpu_fill_blocks( _environment,  _address,  _blocks,  _pattern  ) cpu6502_fill_blocks( _environment,  _address,  _blocks,  _pattern  )
 #define cpu_halt( _environment  ) cpu6502_halt( _environment  )

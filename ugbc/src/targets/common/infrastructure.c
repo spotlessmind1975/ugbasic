@@ -1662,20 +1662,31 @@ Variable * variable_less_than( Environment * _environment, char * _source, char 
 
     Variable * source = variable_retrieve( _environment, _source );
     Variable * target = variable_retrieve( _environment, _destination );
+
+    if ( VT_SIGNED( source->type ) != VT_SIGNED( target->type ) ) {
+        CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
+    }
+
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of compare)" );
     switch( VT_BITWIDTH( source->type ) ) {
         case 32:
             switch( VT_BITWIDTH( target->type ) ) {
                 case 32:
-                    cpu_less_than_32bit( _environment, source->realName, target->realName, result->realName, _equal );
+                    cpu_less_than_32bit( _environment, source->realName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
                     break;
                 case 16:
                     WARNING_BITWIDTH( _source, _destination );
-                    cpu_less_than_16bit( _environment, source->realName, target->realName, result->realName, _equal );
+                    if ( VT_SIGNED( source->type ) ) {
+                        CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
+                    }
+                    cpu_less_than_16bit( _environment, source->realName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
                     break;
                 case 8:
                     WARNING_BITWIDTH( _source, _destination );
-                    cpu_less_than_8bit( _environment, source->realName, target->realName, result->realName, _equal );
+                    if ( VT_SIGNED( source->type ) ) {
+                        CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
+                    }
+                    cpu_less_than_8bit( _environment, source->realName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
                     break;
                 case 0:
                     CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
@@ -1685,12 +1696,18 @@ Variable * variable_less_than( Environment * _environment, char * _source, char 
             switch( VT_BITWIDTH( target->type ) ) {
                 case 32:
                     WARNING_BITWIDTH( _source, _destination );
+                    if ( VT_SIGNED( source->type ) ) {
+                        CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
+                    }
                 case 16:
-                    cpu_less_than_16bit( _environment, source->realName, target->realName, result->realName, _equal );
+                    cpu_less_than_16bit( _environment, source->realName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
                     break;
                 case 8:
                     WARNING_BITWIDTH( _source, _destination );
-                    cpu_less_than_8bit( _environment, source->realName, target->realName, result->realName, _equal );
+                    if ( VT_SIGNED( source->type ) ) {
+                        CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
+                    }
+                    cpu_less_than_8bit( _environment, source->realName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
                     break;
                 case 0:
                     CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
@@ -1701,10 +1718,13 @@ Variable * variable_less_than( Environment * _environment, char * _source, char 
                 case 32:
                 case 16:
                     WARNING_BITWIDTH( _source, _destination );
-                    cpu_less_than_8bit( _environment, source->realName, target->realName, result->realName, _equal );
+                    if ( VT_SIGNED( source->type ) ) {
+                        CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
+                    }
+                    cpu_less_than_8bit( _environment, source->realName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
                     break;
                 case 8:
-                    cpu_less_than_8bit( _environment, source->realName, target->realName, result->realName, _equal );
+                    cpu_less_than_8bit( _environment, source->realName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
                     break;
                 case 0:
                     CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
@@ -1722,7 +1742,7 @@ Variable * variable_less_than( Environment * _environment, char * _source, char 
                             Variable * size2 = variable_temporary( _environment, VT_BYTE, "(size of STRING)");
                             cpu_move_8bit( _environment, source->realName, size->realName );
                             cpu_move_8bit( _environment, target->realName, size2->realName );
-                            cpu_less_than_8bit( _environment, size->realName, size2->realName, result->realName, _equal );
+                            cpu_less_than_8bit( _environment, size->realName, size2->realName, result->realName, _equal, 0 );
                             cpu_bveq( _environment, result->realName, differentLabel );
                             cpu_addressof_16bit( _environment, source->realName, address->realName );
                             cpu_inc_16bit(  _environment, address->realName );
@@ -1740,7 +1760,7 @@ Variable * variable_less_than( Environment * _environment, char * _source, char 
                             Variable * size2 = variable_temporary( _environment, VT_BYTE, "(size of STRING)");
                             cpu_move_8bit( _environment, source->realName, size->realName );
                             cpu_dsdescriptor( _environment, target->realName, address2->realName, size2->realName );
-                            cpu_less_than_8bit( _environment, size->realName, size2->realName, result->realName, 1 );
+                            cpu_less_than_8bit( _environment, size->realName, size2->realName, result->realName, 1, 0 );
                             cpu_bveq( _environment, result->realName, differentLabel );
                             cpu_addressof_16bit( _environment, source->realName, address->realName );
                             cpu_inc_16bit(  _environment, address->realName );
@@ -1762,7 +1782,7 @@ Variable * variable_less_than( Environment * _environment, char * _source, char 
                             Variable * size2 = variable_temporary( _environment, VT_BYTE, "(size of STRING)");
                             cpu_move_8bit( _environment, target->realName, size2->realName );
                             cpu_dsdescriptor( _environment, source->realName, address->realName, size->realName );
-                            cpu_less_than_8bit( _environment, size->realName, size2->realName, result->realName, 1 );
+                            cpu_less_than_8bit( _environment, size->realName, size2->realName, result->realName, 1, 0 );
                             cpu_bveq( _environment, result->realName, differentLabel );
                             cpu_addressof_16bit( _environment, target->realName, address2->realName );
                             cpu_inc_16bit(  _environment, address2->realName );
@@ -1778,7 +1798,7 @@ Variable * variable_less_than( Environment * _environment, char * _source, char 
                             Variable * size2 = variable_temporary( _environment, VT_BYTE, "(size of STRING)");
                             cpu_dsdescriptor( _environment, source->realName, address->realName, size->realName );
                             cpu_dsdescriptor( _environment, target->realName, address2->realName, size2->realName );
-                            cpu_less_than_8bit( _environment, size->realName, size2->realName, result->realName, _equal );
+                            cpu_less_than_8bit( _environment, size->realName, size2->realName, result->realName, _equal, 0 );
                             cpu_bveq( _environment, result->realName, differentLabel );
                             cpu_less_than_memory( _environment, address->realName, address2->realName, size->realName, result->realName, _equal );
                             cpu_label( _environment, differentLabel );
@@ -1826,20 +1846,31 @@ Variable * variable_greater_than( Environment * _environment, char * _source, ch
 
     Variable * source = variable_retrieve( _environment, _source );
     Variable * target = variable_retrieve( _environment, _destination );
+
+    if ( VT_SIGNED( source->type ) != VT_SIGNED( target->type ) ) {
+        CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
+    }
+
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of compare)" );
     switch( VT_BITWIDTH( source->type ) ) {
         case 32:
             switch( VT_BITWIDTH( target->type) ) {
                 case 32:
-                    cpu_greater_than_32bit( _environment, source->realName, target->realName, result->realName, _equal );
+                    cpu_greater_than_32bit( _environment, source->realName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
                     break;
                 case 16:
                     WARNING_BITWIDTH( _source, _destination );
-                    cpu_greater_than_16bit( _environment, source->realName, target->realName, result->realName, _equal );
+                    if ( VT_SIGNED( source->type ) ) {
+                        CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
+                    }
+                    cpu_greater_than_16bit( _environment, source->realName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
                     break;
                 case 8:
                     WARNING_BITWIDTH( _source, _destination );
-                    cpu_greater_than_8bit( _environment, source->realName, target->realName, result->realName, _equal );
+                    if ( VT_SIGNED( source->type ) ) {
+                        CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
+                    }
+                    cpu_greater_than_8bit( _environment, source->realName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
                     break;
                 case 0:
                     CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );        
@@ -1849,12 +1880,18 @@ Variable * variable_greater_than( Environment * _environment, char * _source, ch
             switch( VT_BITWIDTH( target->type) ) {
                 case 32:
                     WARNING_BITWIDTH( _source, _destination );
+                    if ( VT_SIGNED( source->type ) ) {
+                        CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
+                    }
                 case 16:
-                    cpu_greater_than_16bit( _environment, source->realName, target->realName, result->realName, _equal );
+                    cpu_greater_than_16bit( _environment, source->realName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
                     break;
                 case 8:
                     WARNING_BITWIDTH( _source, _destination );
-                    cpu_greater_than_8bit( _environment, source->realName, target->realName, result->realName, _equal );
+                    if ( VT_SIGNED( source->type ) ) {
+                        CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
+                    }
+                    cpu_greater_than_8bit( _environment, source->realName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
                     break;
                 case 0:
                     CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );        
@@ -1864,12 +1901,18 @@ Variable * variable_greater_than( Environment * _environment, char * _source, ch
             switch( VT_BITWIDTH( target->type) ) {
                 case 32:
                     WARNING_BITWIDTH( _source, _destination );
+                    if ( VT_SIGNED( source->type ) ) {
+                        CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
+                    }
                 case 16:
-                    cpu_greater_than_16bit( _environment, source->realName, target->realName, result->realName, _equal );
+                    cpu_greater_than_16bit( _environment, source->realName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
                     break;
                 case 8:
                     WARNING_BITWIDTH( _source, _destination );
-                    cpu_greater_than_8bit( _environment, source->realName, target->realName, result->realName, _equal );
+                    if ( VT_SIGNED( source->type ) ) {
+                        CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
+                    }
+                    cpu_greater_than_8bit( _environment, source->realName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
                     break;
                 case 0:
                     CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );        
@@ -1899,7 +1942,7 @@ Variable * variable_greater_than( Environment * _environment, char * _source, ch
                             cpu_jump( _environment, doneLabel );
 
                             cpu_label( _environment, differentLabel );
-                            cpu_greater_than_8bit( _environment, size->realName, size2->realName, result->realName, _equal );
+                            cpu_greater_than_8bit( _environment, size->realName, size2->realName, result->realName, _equal, 0 );
                             cpu_label( _environment, doneLabel );
                             break;
                         }
@@ -1921,7 +1964,7 @@ Variable * variable_greater_than( Environment * _environment, char * _source, ch
                             cpu_jump( _environment, doneLabel );
 
                             cpu_label( _environment, differentLabel );
-                            cpu_greater_than_8bit( _environment, size->realName, size2->realName, result->realName, 1 );
+                            cpu_greater_than_8bit( _environment, size->realName, size2->realName, result->realName, 1, 0 );
                             cpu_bveq( _environment, result->realName, differentLabel );
                             cpu_label( _environment, doneLabel );
                         }
@@ -1950,7 +1993,7 @@ Variable * variable_greater_than( Environment * _environment, char * _source, ch
                             cpu_jump( _environment, doneLabel );
 
                             cpu_label( _environment, differentLabel );
-                            cpu_greater_than_8bit( _environment, size->realName, size2->realName, result->realName, 1 );
+                            cpu_greater_than_8bit( _environment, size->realName, size2->realName, result->realName, 1, 0 );
                             cpu_bveq( _environment, result->realName, differentLabel );
                             cpu_label( _environment, doneLabel );
                             break;
@@ -1971,7 +2014,7 @@ Variable * variable_greater_than( Environment * _environment, char * _source, ch
                             cpu_jump( _environment, doneLabel );
 
                             cpu_label( _environment, differentLabel );
-                            cpu_greater_than_8bit( _environment, size->realName, size2->realName, result->realName, 1 );
+                            cpu_greater_than_8bit( _environment, size->realName, size2->realName, result->realName, 1, 0 );
                             cpu_bveq( _environment, result->realName, differentLabel );
                             cpu_label( _environment, doneLabel );
                             
@@ -3321,7 +3364,7 @@ Variable * variable_bin( Environment * _environment, char * _value, char * _digi
     cpu_bits_to_string( _environment, value->realName, address->realName, size->realName, VT_BITWIDTH( value->type ) );
 
     if ( digits ) {
-        cpu_less_than_8bit( _environment, size->realName, digits->realName, pad->realName, 0 );
+        cpu_less_than_8bit( _environment, size->realName, digits->realName, pad->realName, 0, 0 );
 
         cpu_bveq( _environment, pad->realName, truncateLabel );
 

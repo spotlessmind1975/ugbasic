@@ -91,21 +91,21 @@ Variable * rnd( Environment * _environment, char * _value ) {
     switch( VT_BITWIDTH( value->type ) ) {
         case 32:
             cpu_label( _environment, label );
-            cpu_greater_than_32bit( _environment, result->realName, value->realName, bresult->realName, 0 );
+            cpu_greater_than_32bit( _environment, result->realName, value->realName, bresult->realName, 0, 0 );
             cpu_bveq( _environment, bresult->realName, endLabel );
             cpu_math_sub_32bit( _environment, result->realName, value->realName, result->realName );
             cpu_jump( _environment, label );
             break;
         case 16:
             cpu_label( _environment, label );
-            cpu_greater_than_16bit( _environment, result->realName, value->realName, bresult->realName, 0 );
+            cpu_greater_than_16bit( _environment, result->realName, value->realName, bresult->realName, 0, 0 );
             cpu_bveq( _environment, bresult->realName, endLabel );
             cpu_math_sub_16bit( _environment, result->realName, value->realName, result->realName );
             cpu_jump( _environment, label );
             break;
         case 8:
             cpu_label( _environment, label );
-            cpu_greater_than_8bit( _environment, result->realName, value->realName, bresult->realName, 0 );
+            cpu_greater_than_8bit( _environment, result->realName, value->realName, bresult->realName, 0, 0 );
             cpu_bveq( _environment, bresult->realName, endLabel );
             cpu_math_sub_8bit( _environment, result->realName, value->realName, result->realName );
             cpu_jump( _environment, label );

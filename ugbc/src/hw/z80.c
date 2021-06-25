@@ -264,7 +264,7 @@ void z80_compare_8bit( Environment * _environment, char *_source, char *_destina
  * @param _other Destination address for result
  * @param _equal True if equal
  */
-void z80_less_than_8bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal ) {
+void z80_less_than_8bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _size ) {
 
     MAKE_LABEL
 
@@ -303,7 +303,7 @@ void z80_less_than_8bit( Environment * _environment, char *_source, char *_desti
  * @param _other Destination address for result
  * @param _equal True if equal
  */
-void z80_greater_than_8bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal ) {
+void z80_greater_than_8bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _size ) {
 
     MAKE_LABEL
 
@@ -610,7 +610,7 @@ void z80_compare_16bit( Environment * _environment, char *_source, char *_destin
  * @param _other Destination address for result
  * @param _equal True if equal
  */
-void z80_less_than_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal ) {
+void z80_less_than_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _size ) {
 
     MAKE_LABEL
 
@@ -656,7 +656,7 @@ void z80_less_than_16bit( Environment * _environment, char *_source, char *_dest
  * @param _other Destination address for result
  * @param _equal True if equal
  */
-void z80_greater_than_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal ) {
+void z80_greater_than_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _size ) {
 
     MAKE_LABEL
 
@@ -981,7 +981,7 @@ void z80_compare_32bit( Environment * _environment, char *_source, char *_destin
  * @param _other Destination address for result
  * @param _equal True if equal
  */
-void z80_less_than_32bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal ) {
+void z80_less_than_32bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _size ) {
 
     MAKE_LABEL
 
@@ -1035,7 +1035,7 @@ void z80_less_than_32bit( Environment * _environment, char *_source, char *_dest
  * @param _other Destination address for result
  * @param _equal True if equal
  */
-void z80_greater_than_32bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal ) {
+void z80_greater_than_32bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _size ) {
 
     MAKE_LABEL
 

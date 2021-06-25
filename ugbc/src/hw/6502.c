@@ -267,31 +267,57 @@ void cpu6502_compare_8bit( Environment * _environment, char *_source, char *_des
  * @param _other Destination address for result
  * @param _equal True if equal
  */
-void cpu6502_less_than_8bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal ) {
+void cpu6502_less_than_8bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed ) {
 
     MAKE_LABEL
 
-    outline1("LDA %s", _source);
-    outline1("CMP %s", _destination );
-    outline1("BCC %s", label);
-    if ( _equal ) {
-        outline1("BEQ %s", label);
-    }
-    outline0("LDA #0" );
-    if ( _other ) {
-        outline1("STA %s", _other);
+    if ( _signed ) {
+        outline1("LDA %s", _source);
+        outline0("SEC" );
+        outline1("SBC %s", _destination);
+        outline1("BVC %sv0", label );
+        outline0("EOR #$80" );
+        outhead1("%sv0:", label );
+        outline1("BMI %smi", label );
+        outhead1("%spl:", label );
+        outline0("LDA #0" );
+        if ( _other ) {
+            outline1("STA %s", _other);
+        } else {
+            outline1("STA %s", _destination);
+        }
+        outline1("JMP %sen", label );
+        outhead1("%smi:", label );
+        outline0("LDA #$ff" );
+        if ( _other ) {
+            outline1("STA %s", _other);
+        } else {
+            outline1("STA %s", _destination);
+        }
+        outhead1("%sen:", label);
     } else {
-        outline1("STA %s", _destination);
+        outline1("LDA %s", _source);
+        outline1("CMP %s", _destination );
+        outline1("BCC %s", label);
+        if ( _equal ) {
+            outline1("BEQ %s", label);
+        }
+        outline0("LDA #0" );
+        if ( _other ) {
+            outline1("STA %s", _other);
+        } else {
+            outline1("STA %s", _destination);
+        }
+        outline1("JMP %s_2", label);
+        outhead1("%s:", label);
+        outline0("LDA #$FF" );
+        if ( _other ) {
+            outline1("STA %s", _other);
+        } else {
+            outline1("STA %s", _destination);
+        }
+        outhead1("%s_2:", label);
     }
-    outline1("JMP %s_2", label);
-    outhead1("%s:", label);
-    outline0("LDA #$FF" );
-    if ( _other ) {
-        outline1("STA %s", _other);
-    } else {
-        outline1("STA %s", _destination);
-    }
-    outhead1("%s_2:", label);
 
 }
 
@@ -304,32 +330,14 @@ void cpu6502_less_than_8bit( Environment * _environment, char *_source, char *_d
  * @param _other Destination address for result
  * @param _equal True if equal
  */
-void cpu6502_greater_than_8bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal ) {
+void cpu6502_greater_than_8bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed ) {
 
-    MAKE_LABEL
-
-    outline1("LDA %s", _source);
-    outline1("CMP %s", _destination );
-    if ( ! _equal ) {
-        outline1("BEQ %sfalse", label);
-    }
-    outline1("BCS %strue", label);
-    outhead1("%sfalse:", label);
-    outline0("LDA #0" );
+    cpu6502_less_than_8bit( _environment, _source, _destination, _other, !_equal, _signed );
     if ( _other ) {
-        outline1("STA %s", _other);
+        cpu6502_logical_not_8bit( _environment, _other, _other );
     } else {
-        outline1("STA %s", _destination);
+        cpu6502_logical_not_8bit( _environment, _destination, _destination );
     }
-    outline1("JMP %s_2", label);
-    outhead1("%strue:", label);
-    outline0("LDA #$FF" );
-    if ( _other ) {
-        outline1("STA %s", _other);
-    } else {
-        outline1("STA %s", _destination);
-    }
-    outhead1("%s_2:", label);
 
 }
 
@@ -608,33 +616,60 @@ void cpu6502_compare_16bit( Environment * _environment, char *_source, char *_de
  * @param _other Destination address for result
  * @param _equal True if equal
  */
-void cpu6502_less_than_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal ) {
+void cpu6502_less_than_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed ) {
 
     MAKE_LABEL
 
-    outline1("LDA %s+1", _source);
-    outline1("CMP %s+1", _destination );
-    outline1("BCC %s", label);
-    outline1("LDA %s", _source);
-    outline1("CMP %s", _destination );
-    if ( _equal ) {
-        outline1("BEQ %s", label);
-    }
-    outline0("LDA #0" );
-    if ( _other ) {
-        outline1("STA %s", _other);
+    if ( _signed ) {
+        outline1("LDA %s", _source);
+        outline1("CMP %s", _destination);
+        outline1("LDA %s+1", _source);
+        outline1("SBC %s+1", _destination);
+        outline1("BVC %sv0", label );
+        outline0("EOR #$80" );
+        outhead1("%sv0:", label );
+        outline1("BMI %smi", label );
+        outhead1("%spl:", label );
+        outline0("LDA #0" );
+        if ( _other ) {
+            outline1("STA %s", _other);
+        } else {
+            outline1("STA %s", _destination);
+        }
+        outline1("JMP %sen", label );
+        outhead1("%smi:", label );
+        outline0("LDA #$ff" );
+        if ( _other ) {
+            outline1("STA %s", _other);
+        } else {
+            outline1("STA %s", _destination);
+        }
+        outhead1("%sen:", label);
     } else {
-        outline1("STA %s", _destination);
+        outline1("LDA %s+1", _source);
+        outline1("CMP %s+1", _destination );
+        outline1("BCC %s", label);
+        outline1("LDA %s", _source);
+        outline1("CMP %s", _destination );
+        if ( _equal ) {
+            outline1("BEQ %s", label);
+        }
+        outline0("LDA #0" );
+        if ( _other ) {
+            outline1("STA %s", _other);
+        } else {
+            outline1("STA %s", _destination);
+        }
+        outline1("JMP %s_2", label);
+        outhead1("%s:", label);
+        outline0("LDA #$FF" );
+        if ( _other ) {
+            outline1("STA %s", _other);
+        } else {
+            outline1("STA %s", _destination);
+        }
+        outhead1("%s_2:", label);
     }
-    outline1("JMP %s_2", label);
-    outhead1("%s:", label);
-    outline0("LDA #$FF" );
-    if ( _other ) {
-        outline1("STA %s", _other);
-    } else {
-        outline1("STA %s", _destination);
-    }
-    outhead1("%s_2:", label);
 
 }
 
@@ -647,40 +682,14 @@ void cpu6502_less_than_16bit( Environment * _environment, char *_source, char *_
  * @param _other Destination address for result
  * @param _equal True if equal
  */
-void cpu6502_greater_than_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal ) {
+void cpu6502_greater_than_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed ) {
 
-    MAKE_LABEL
-
-    outline1("LDA %s+1", _source);
-    outline1("CMP %s+1", _destination );
-    outline1("BEQ %snext", label);
-    outline1("BCS %strue", label);
-    outhead1("%snext:", label);
-    outline1("LDA %s", _source);
-    outline1("CMP %s", _destination );
-    if ( ! _equal ) {
-        outline1("BEQ %sfalse", label);
-    }
-    outline1("BCS %strue", label);
-    if ( _equal ) {
-        outline1("BEQ %s", label);
-    }
-    outhead1("%sfalse:", label);
-    outline0("LDA #0" );
+    cpu6502_less_than_16bit( _environment, _source, _destination, _other, !_equal, _signed );
     if ( _other ) {
-        outline1("STA %s", _other);
+        cpu6502_logical_not_8bit( _environment, _other, _other );
     } else {
-        outline1("STA %s", _destination);
+        cpu6502_logical_not_8bit( _environment, _destination, _destination );
     }
-    outline1("JMP %sfinal", label);
-    outhead1("%strue:", label);
-    outline0("LDA #$FF" );
-    if ( _other ) {
-        outline1("STA %s", _other);
-    } else {
-        outline1("STA %s", _destination);
-    }
-    outhead1("%sfinal:", label);
 
 }
 
@@ -1143,39 +1152,71 @@ void cpu6502_compare_32bit( Environment * _environment, char *_source, char *_de
  * @param _other Destination address for result
  * @param _equal True if equal
  */
-void cpu6502_less_than_32bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal ) {
+void cpu6502_less_than_32bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed ) {
 
     MAKE_LABEL
 
-    outline1("LDA %s+3", _source);
-    outline1("CMP %s+3", _destination );
-    outline1("BCC %s", label);
-    outline1("LDA %s+2", _source);
-    outline1("CMP %s+2", _destination );
-    outline1("BCC %s", label);
-    outline1("LDA %s+1", _source);
-    outline1("CMP %s+1", _destination );
-    outline1("BCC %s", label);
-    outline1("LDA %s", _source);
-    outline1("CMP %s", _destination );
-    if ( _equal ) {
-        outline1("BEQ %s", label);
-    }
-    outline0("LDA #0" );
-    if ( _other ) {
-        outline1("STA %s", _other);
+    if ( _signed ) {
+        outline1("LDA %s", _source);
+        outline1("CMP %s", _destination);
+        outline1("LDA %s+1", _source);
+        outline1("SBC %s+1", _destination);
+        outline1("LDA %s+2", _source);
+        outline1("SBC %s+2", _destination);
+        outline1("LDA %s+3", _source);
+        outline1("SBC %s+3", _destination);
+        outline1("BVC %sv0", label );
+        outline0("EOR #$80" );
+        outhead1("%sv0:", label );
+        outline1("BMI %smi", label );
+        outhead1("%spl:", label );
+        outline0("LDA #0" );
+        if ( _other ) {
+            outline1("STA %s", _other);
+        } else {
+            outline1("STA %s", _destination);
+        }
+        outline1("JMP %sen", label );
+        outhead1("%smi:", label );
+        outline0("LDA #$ff" );
+        if ( _other ) {
+            outline1("STA %s", _other);
+        } else {
+            outline1("STA %s", _destination);
+        }
+        outhead1("%sen:", label);
+
     } else {
-        outline1("STA %s", _destination);
+        outline1("LDA %s+3", _source);
+        outline1("CMP %s+3", _destination );
+        outline1("BCC %s", label);
+        outline1("LDA %s+2", _source);
+        outline1("CMP %s+2", _destination );
+        outline1("BCC %s", label);
+        outline1("LDA %s+1", _source);
+        outline1("CMP %s+1", _destination );
+        outline1("BCC %s", label);
+        outline1("LDA %s", _source);
+        outline1("CMP %s", _destination );
+        if ( _equal ) {
+            outline1("BEQ %s", label);
+        }
+        outline0("LDA #0" );
+        if ( _other ) {
+            outline1("STA %s", _other);
+        } else {
+            outline1("STA %s", _destination);
+        }
+        outline1("JMP %s_2", label);
+        outhead1("%s:", label);
+        outline0("LDA #$FF" );
+        if ( _other ) {
+            outline1("STA %s", _other);
+        } else {
+            outline1("STA %s", _destination);
+        }
+        outhead1("%s_2:", label);
     }
-    outline1("JMP %s_2", label);
-    outhead1("%s:", label);
-    outline0("LDA #$FF" );
-    if ( _other ) {
-        outline1("STA %s", _other);
-    } else {
-        outline1("STA %s", _destination);
-    }
-    outhead1("%s_2:", label);
 
 }
 
@@ -1188,47 +1229,14 @@ void cpu6502_less_than_32bit( Environment * _environment, char *_source, char *_
  * @param _other Destination address for result
  * @param _equal True if equal
  */
-void cpu6502_greater_than_32bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal ) {
+void cpu6502_greater_than_32bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed ) {
 
-    MAKE_LABEL
-
-    outline1("LDA %s+3", _source);
-    outline1("CMP %s+3", _destination );
-    outline1("BEQ %snext", label);
-    outline1("BCS %strue", label);
-    outhead1("%snext:", label);
-    outline1("LDA %s+2", _source);
-    outline1("CMP %s+2", _destination );
-    outline1("BEQ %snext2", label);
-    outline1("BCS %strue", label);
-    outhead1("%snext2:", label);
-    outline1("LDA %s+1", _source);
-    outline1("CMP %s+1", _destination );
-    outline1("BEQ %snext3", label);
-    outline1("BCS %strue", label);
-    outhead1("%snext3:", label);
-    outline1("LDA %s", _source);
-    outline1("CMP %s", _destination );
-    if ( ! _equal ) {
-        outline1("BEQ %sfalse", label);
-    }
-    outline1("BCS %strue", label);
-    outhead1("%sfalse:", label);
-    outline0("LDA #0" );
+    cpu6502_less_than_32bit( _environment, _source, _destination, _other, !_equal, _signed );
     if ( _other ) {
-        outline1("STA %s", _other);
+        cpu6502_logical_not_8bit( _environment, _other, _other );
     } else {
-        outline1("STA %s", _destination);
+        cpu6502_logical_not_8bit( _environment, _destination, _destination );
     }
-    outline1("JMP %s_2", label);
-    outhead1("%strue:", label);
-    outline0("LDA #$FF" );
-    if ( _other ) {
-        outline1("STA %s", _other);
-    } else {
-        outline1("STA %s", _destination);
-    }
-    outhead1("%s_2:", label);
 
 }
 
