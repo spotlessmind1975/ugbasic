@@ -154,7 +154,7 @@ void create_test( char *_name, void (*_payload)(TestEnvironment *), int (*_teste
                         v->value = memory[0]+(memory[1]<<8);
                         break;
                     case 32:
-                        v->value = memory[0]+(memory[1]<<8)+(memory[1]<<16)+(memory[1]<<24);
+                        v->value = memory[0]+(memory[1]<<8)+(memory[2]<<16)+(memory[3]<<24);
                         break;
                     case 0:
                         switch( v->type ) {
