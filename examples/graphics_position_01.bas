@@ -15,12 +15,10 @@ REM ''CIRCLE'' disegnerà un cerchio con il centro nelle coordinate date.
     BITMAP ENABLE
     CLS
 
-    CIRCLE 100,100,20,WHITE
-
-    HALT
-
-    x=150
-    y=10
+    x= (POSITION)150
+    y= (POSITION)10
+    r= (POSITION)0
+    
     FOR r=3 TO 87 STEP 3
         GR LOCATE x,y+r
         CIRCLE ,,r
