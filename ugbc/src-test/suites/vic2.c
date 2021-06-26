@@ -188,40 +188,6 @@ int test_vic2_bitmap_enable_tester( TestEnvironment * _te ) {
     Variable * d011h = variable_retrieve( &_te->environment, _te->trackedVariables[14]->name );
     Variable * d016h = variable_retrieve( &_te->environment, _te->trackedVariables[15]->name );
 
-    // printf("................\n");
-
-    // if ( ! standard_bitmap_mode( d011b->value, d016b->value ) ) {
-    //     printf("Failed a)\n");
-    // }
-    
-    // if ( ! standard_bitmap_mode( d011b->value, d016b->value ) ) {
-    //     printf("Failed b)\n");
-    // }
-
-    // if ( ! multicolor_bitmap_mode( d011c->value, d016c->value ) )  {
-    //     printf("Failed c)\n");
-    // }
-
-    // if ( ! standard_bitmap_mode( d011d->value, d016d->value ) ) {
-    //     printf("Failed d)\n");
-    // }
-
-    // if ( ! standard_bitmap_mode( d011e->value, d016e->value ) ) {
-    //     printf("Failed e)\n");
-    // }
-
-    // if ( ! multicolor_bitmap_mode( d011f->value, d016f->value ) ) {
-    //     printf("Failed f)\n");
-    // }
-
-    // if ( ! multicolor_bitmap_mode( d011g->value, d016g->value ) ) {
-    //     printf("Failed g)\n");
-    // }
-
-    // if ( ! multicolor_bitmap_mode( d011h->value, d016h->value ) ) {
-    //     printf("Failed h)\n");
-    // }
-
     return standard_bitmap_mode( d011a->value, d016a->value ) &&
             standard_bitmap_mode( d011b->value, d016b->value ) &&
             multicolor_bitmap_mode( d011c->value, d016c->value ) &&
@@ -334,50 +300,6 @@ int test_vic2_tilemap_enable_tester( TestEnvironment * _te ) {
     Variable * d016g = variable_retrieve( &_te->environment, _te->trackedVariables[13]->name );
     Variable * d011h = variable_retrieve( &_te->environment, _te->trackedVariables[14]->name );
     Variable * d016h = variable_retrieve( &_te->environment, _te->trackedVariables[15]->name );
-
-    printf("................\n");
-
-    // a) Standard Character Mode
-    // b) Standard Character Mode
-    // c) Standard Character Mode
-    // d) Standard Character Mode
-    // e) Multicolor Character Mode
-    // f) Multicolor Character Mode
-    // g) Extended Multicolor Character Mode
-    // h) Multicolor Character Mode
-
-
-    // if ( ! standard_character_mode( d011b->value, d016b->value ) ) {
-    //     printf("Failed a)\n");
-    // }
-    
-    // if ( ! standard_character_mode( d011b->value, d016b->value ) ) {
-    //     printf("Failed b)\n");
-    // }
-
-    // if ( ! standard_character_mode( d011c->value, d016c->value ) )  {
-    //     printf("Failed c)\n");
-    // }
-
-    // if ( ! standard_character_mode( d011d->value, d016d->value ) ) {
-    //     printf("Failed d)\n");
-    // }
-
-    // if ( ! multicolor_character_mode( d011e->value, d016e->value ) ) {
-    //     printf("Failed e)\n");
-    // }
-
-    // if ( ! multicolor_character_mode( d011f->value, d016f->value ) ) {
-    //     printf("Failed f)\n");
-    // }
-
-    // if ( ! extended_character_mode( d011g->value, d016g->value ) ) {
-    //     printf("Failed g)\n");
-    // }
-
-    // if ( ! multicolor_character_mode( d011h->value, d016h->value ) ) {
-    //     printf("Failed h)\n");
-    // }
 
     return standard_character_mode( d011a->value, d016a->value ) &&
             standard_character_mode( d011b->value, d016b->value ) &&

@@ -316,15 +316,6 @@ int test_variables_bit_tester( TestEnvironment * _te ) {
     Variable * result6 = variable_retrieve( &_te->environment, _te->trackedVariables[6]->name );
     Variable * result7 = variable_retrieve( &_te->environment, _te->trackedVariables[7]->name );
 
-    // printf("%2.2x\n", result0->value );
-    // printf("%2.2x\n", result1->value );
-    // printf("%2.2x\n", result2->value );
-    // printf("%2.2x\n", result3->value );
-    // printf("%2.2x\n", result4->value );
-    // printf("%2.2x\n", result5->value );
-    // printf("%2.2x\n", result6->value );
-    // printf("%2.2x\n", result7->value );
-
     return  result0->value == 0xff && 
             result1->value == 0x00 &&
             result2->value == 0xff && 

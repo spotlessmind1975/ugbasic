@@ -128,8 +128,6 @@ int test_controls_joy_01_tester( TestEnvironment * _te ) {
     Variable * times = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
     Variable * limit = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
 
-printf("times = %d\n", times->value );
-
     return ( j->value == 0x1f  || j->value == 0x00 ) && times->value == limit->value;
     
 }

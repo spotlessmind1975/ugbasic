@@ -218,14 +218,6 @@ int test_cpu_dsgc_testerA( TestEnvironment * _te ) {
     Variable * k = variable_retrieve( &_te->environment, _te->trackedVariables[7]->name );
     Variable * freeString = variable_retrieve( &_te->environment, _te->trackedVariables[8]->name );
 
-    // printf("a = %2.2x\n", a->value );
-    // printf("b = %2.2x\n", b->value );
-    // printf("c = %2.2x\n", c->value );
-    // printf("d = %2.2x\n", d->value );
-    // printf("k = %2.2x\n", k->value );
-    // printf("freeString = %d\n", freeString->value );
-    // printf("times = %d\n", times->value );
-
     return  a->value == 1 &&
             b->value == 1 &&
             c->value == 1 &&
@@ -337,14 +329,6 @@ int test_cpu_dsgc_testerB( TestEnvironment * _te ) {
     Variable * k = variable_retrieve( &_te->environment, _te->trackedVariables[7]->name );
     Variable * freeString = variable_retrieve( &_te->environment, _te->trackedVariables[8]->name );
     Variable * b2 = variable_retrieve( &_te->environment, _te->trackedVariables[9]->name );
-
-    // printf("a = %2.2x\n", a->value );
-    // printf("b = %2.2x\n", b->value );
-    // printf("c = %2.2x\n", c->value );
-    // printf("d = %2.2x\n", d->value );
-    // printf("k = %2.2x\n", k->value );
-    // printf("freeString = %d\n", freeString->value );
-    // printf("times = %d\n", times->value );
 
     return  a->value == 1 &&
             b->value == 1 &&
@@ -484,15 +468,6 @@ int test_cpu_bit_check_extended_tester( TestEnvironment * _te ) {
     Variable * result6 = variable_retrieve( &_te->environment, _te->trackedVariables[6]->name );
     Variable * result7 = variable_retrieve( &_te->environment, _te->trackedVariables[7]->name );
 
-    // printf("%2.2x\n", result0->value );
-    // printf("%2.2x\n", result1->value );
-    // printf("%2.2x\n", result2->value );
-    // printf("%2.2x\n", result3->value );
-    // printf("%2.2x\n", result4->value );
-    // printf("%2.2x\n", result5->value );
-    // printf("%2.2x\n", result6->value );
-    // printf("%2.2x\n", result7->value );
-
     return  result0->value == 0xff && 
             result1->value == 0x00 &&
             result2->value == 0xff && 
@@ -622,11 +597,6 @@ int test_cpu_less_than_32bit_tester( TestEnvironment * _te ) {
     Variable * resultu2 = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
     Variable * results1 = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
     Variable * results2 = variable_retrieve( &_te->environment, _te->trackedVariables[3]->name );
-
-    // printf( "resultu1->value = %x\n", resultu1->value );
-    // printf( "resultu2->value = %x\n", resultu2->value );
-    // printf( "results1->value = %x\n", results1->value );
-    // printf( "results2->value = %x\n", results2->value );
 
     return  resultu1->value == 0xff && 
             resultu2->value == 0x00 &&
@@ -763,21 +733,485 @@ int test_cpu_greater_than_32bit_tester( TestEnvironment * _te ) {
 
 }
 
+//===========================================================================
+
+void test_cpu_math_div2_8bit_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * ua = variable_define( e, "ua", VT_BYTE, 0x21 );
+    Variable * sa = variable_define( e, "sa", VT_SBYTE, 0xf8 );
+
+    cpu_math_div2_8bit( e, ua->realName, 1, 0  );
+    cpu_math_div2_8bit( e, sa->realName, 1, 1  );
+
+    _te->trackedVariables[0] = ua;
+    _te->trackedVariables[1] = sa;
+
+}
+
+int test_cpu_math_div2_8bit_tester( TestEnvironment * _te ) {
+
+    Variable * ua = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * sa = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+
+    return  ua->value == 0x10 && 
+            sa->value == 0xfc;
+
+}
+
+//===========================================================================
+
+void test_cpu_math_div2_const_16bit_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * ua = variable_define( e, "ua", VT_WORD, 0x2121 );
+    Variable * sa = variable_define( e, "sa", VT_SWORD, 0xfff8 );
+
+    cpu_math_div2_const_16bit( e, ua->realName, 1, 0  );
+    cpu_math_div2_const_16bit( e, sa->realName, 1, 1  );
+
+    _te->trackedVariables[0] = ua;
+    _te->trackedVariables[1] = sa;
+
+}
+
+int test_cpu_math_div2_const_16bit_tester( TestEnvironment * _te ) {
+
+    Variable * ua = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * sa = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+
+    return  ua->value == 0x1090 && 
+            sa->value == 0xfffc;
+
+}
+
+//===========================================================================
+
+void test_cpu_math_div2_const_32bit_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * ua = variable_define( e, "ua", VT_DWORD, 0x21212121 );
+    Variable * sa = variable_define( e, "sa", VT_SDWORD, 0xfffffff8 );
+
+    cpu_math_div2_const_32bit( e, ua->realName, 1, 0  );
+    cpu_math_div2_const_32bit( e, sa->realName, 1, 1  );
+
+    _te->trackedVariables[0] = ua;
+    _te->trackedVariables[1] = sa;
+
+}
+
+int test_cpu_math_div2_const_32bit_tester( TestEnvironment * _te ) {
+
+    Variable * ua = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * sa = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+
+    return  ua->value == 0x10909090 && 
+            sa->value == 0xfffffffc;
+
+}
+
+//===========================================================================
+
+void test_cpu_math_div2_const_8bit_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * ua = variable_define( e, "ua", VT_BYTE, 0x21 );
+    Variable * sa = variable_define( e, "sa", VT_SBYTE, 0xf8 );
+
+    cpu_math_div2_const_8bit( e, ua->realName, 1, 0  );
+    cpu_math_div2_const_8bit( e, sa->realName, 1, 1  );
+
+    _te->trackedVariables[0] = ua;
+    _te->trackedVariables[1] = sa;
+
+}
+
+int test_cpu_math_div2_const_8bit_tester( TestEnvironment * _te ) {
+
+    Variable * ua = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * sa = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+
+    return  ua->value == 0x10 && 
+            sa->value == 0xfc;
+
+}
+
+//===========================================================================
+
+void test_cpu_math_double_16bit_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * ua = variable_define( e, "ua", VT_WORD, 0x2121 );
+    Variable * sa = variable_define( e, "sa", VT_SWORD, 0xfff8 );
+
+    cpu_math_double_16bit( e, ua->realName, ua->realName, 0  );
+    cpu_math_double_16bit( e, sa->realName, sa->realName, 1  );
+
+    _te->trackedVariables[0] = ua;
+    _te->trackedVariables[1] = sa;
+
+}
+
+int test_cpu_math_double_16bit_tester( TestEnvironment * _te ) {
+
+    Variable * ua = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * sa = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+
+    return  ua->value == 0x4242 && 
+            sa->value == 0xfff0;
+
+}
+
+//===========================================================================
+
+void test_cpu_math_double_32bit_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * ua = variable_define( e, "ua", VT_DWORD, 0x21212121 );
+    Variable * sa = variable_define( e, "sa", VT_SDWORD, 0xfffffff8 );
+
+    cpu_math_double_32bit( e, ua->realName, ua->realName, 0  );
+    cpu_math_double_32bit( e, sa->realName, sa->realName, 1  );
+
+    _te->trackedVariables[0] = ua;
+    _te->trackedVariables[1] = sa;
+
+}
+
+int test_cpu_math_double_32bit_tester( TestEnvironment * _te ) {
+
+    Variable * ua = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * sa = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+
+    return  ua->value == 0x42424242 && 
+            sa->value == 0xfffffff0;
+
+}
+
+//===========================================================================
+
+void test_cpu_math_double_8bit_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * ua = variable_define( e, "ua", VT_BYTE, 0x21 );
+    Variable * sa = variable_define( e, "sa", VT_SBYTE, 0xec );
+
+    cpu_math_double_8bit( e, ua->realName, ua->realName, 0  );
+    cpu_math_double_8bit( e, sa->realName, sa->realName, 1  );
+
+    _te->trackedVariables[0] = ua;
+    _te->trackedVariables[1] = sa;
+
+}
+
+int test_cpu_math_double_8bit_tester( TestEnvironment * _te ) {
+
+    Variable * ua = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * sa = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+
+    return  ua->value == 0x42 && 
+            sa->value == 0xd8;
+
+}
+
+//===========================================================================
+
+void test_cpu_math_mul_16bit_to_32bit_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * ua = variable_define( e, "ua", VT_WORD, 0x2121 );
+    Variable * ub = variable_define( e, "ub", VT_WORD, 0x1010 );
+    Variable * sa = variable_define( e, "sa", VT_WORD, 0xfff8 );
+    Variable * sb = variable_define( e, "sb", VT_WORD, 0xfff0 );
+    Variable * resultu = variable_temporary( e, VT_DWORD, "(result unsigned)" );
+    Variable * results = variable_temporary( e, VT_DWORD, "(result signed)" );
+
+    cpu_math_mul_16bit_to_32bit( e, ua->realName, ub->realName, resultu->realName, 0 );
+    cpu_math_mul_16bit_to_32bit( e, sa->realName, sb->realName, results->realName, 1 );
+
+    _te->trackedVariables[0] = resultu;
+    _te->trackedVariables[1] = results;
+
+}
+
+int test_cpu_math_mul_16bit_to_32bit_tester( TestEnvironment * _te ) {
+
+    Variable * resultu = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * results = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+
+    return  resultu->value == 0x2142210 && 
+            results->value == 0x80;
+
+}
+
+//===========================================================================
+
+void test_cpu_math_mul_8bit_to_16bit_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * ua = variable_define( e, "ua", VT_BYTE, 0x21 );
+    Variable * ub = variable_define( e, "ub", VT_BYTE, 0x10 );
+    Variable * sa = variable_define( e, "sa", VT_SBYTE, 0xf8 );
+    Variable * sb = variable_define( e, "sb", VT_SBYTE, 0xf0 );
+    Variable * resultu = variable_temporary( e, VT_WORD, "(result unsigned)" );
+    Variable * results = variable_temporary( e, VT_SWORD, "(result signed)" );
+
+    cpu_math_mul_8bit_to_16bit( e, ua->realName, ub->realName, resultu->realName, 0 );
+    cpu_math_mul_8bit_to_16bit( e, sa->realName, sb->realName, results->realName, 1 );
+
+    _te->trackedVariables[0] = resultu;
+    _te->trackedVariables[1] = results;
+
+}
+
+int test_cpu_math_mul_8bit_to_16bit_tester( TestEnvironment * _te ) {
+
+    Variable * resultu = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * results = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+
+    return  resultu->value == 0X210 && 
+            results->value == 0x80;
+
+}
+
+//===========================================================================
+
+void test_cpu_math_div_32bit_to_16bit_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * ua = variable_define( e, "ua", VT_DWORD, 0x21212121 );
+    Variable * ub = variable_define( e, "ub", VT_DWORD, 0x10101010 );
+    Variable * sa = variable_define( e, "sa", VT_SDWORD, 0xfffffff8 );
+    Variable * sb = variable_define( e, "sb", VT_SDWORD, 0xfffffff0 );
+    Variable * resultu = variable_temporary( e, VT_WORD, "(result unsigned)" );
+    Variable * remainderu = variable_temporary( e, VT_WORD, "(result unsigned)" );
+    Variable * results = variable_temporary( e, VT_SWORD, "(result unsigned)" );
+    Variable * remainders = variable_temporary( e, VT_SWORD, "(result signed)" );
+
+    cpu_math_div_32bit_to_16bit( e, ua->realName, ub->realName, resultu->realName, remainderu->realName, 0 );
+    cpu_math_div_32bit_to_16bit( e, sa->realName, sb->realName, results->realName, remainders->realName, 1 );
+
+    _te->trackedVariables[0] = resultu;
+    _te->trackedVariables[1] = results;
+    _te->trackedVariables[2] = remainderu;
+    _te->trackedVariables[3] = remainders;
+
+}
+
+int test_cpu_math_div_32bit_to_16bit_tester( TestEnvironment * _te ) {
+
+    Variable * resultu = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * results = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+    Variable * remainderu = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
+    Variable * remainders = variable_retrieve( &_te->environment, _te->trackedVariables[3]->name );
+
+    return  resultu->value == 0x2 &&
+            remainderu->value == 0x1010101 && 
+            results->value == 0x1 && 
+            remainders->value == 0x1;
+
+}
+
+//===========================================================================
+
+void test_cpu_math_div_16bit_to_16bit_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * ua = variable_define( e, "ua", VT_WORD, 0x2121 );
+    Variable * ub = variable_define( e, "ub", VT_WORD, 0x1010 );
+    Variable * sa = variable_define( e, "sa", VT_SWORD, 0xfff8 );
+    Variable * sb = variable_define( e, "sb", VT_SWORD, 0xfff0 );
+    Variable * resultu = variable_temporary( e, VT_WORD, "(result unsigned)" );
+    Variable * remainderu = variable_temporary( e, VT_WORD, "(result unsigned)" );
+    Variable * results = variable_temporary( e, VT_SWORD, "(result unsigned)" );
+    Variable * remainders = variable_temporary( e, VT_SWORD, "(result signed)" );
+
+    cpu_math_div_16bit_to_16bit( e, ua->realName, ub->realName, resultu->realName, remainderu->realName, 0 );
+    cpu_math_div_16bit_to_16bit( e, sa->realName, sb->realName, results->realName, remainders->realName, 1 );
+
+    _te->trackedVariables[0] = resultu;
+    _te->trackedVariables[1] = results;
+    _te->trackedVariables[2] = remainderu;
+    _te->trackedVariables[3] = remainders;
+
+}
+
+int test_cpu_math_div_16bit_to_16bit_tester( TestEnvironment * _te ) {
+
+    Variable * resultu = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * results = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+    Variable * remainderu = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
+    Variable * remainders = variable_retrieve( &_te->environment, _te->trackedVariables[3]->name );
+
+    return  resultu->value == 0x2 &&
+            remainderu->value == 0x101 && 
+            results->value == 0x0 && 
+            remainders->value == 0X0008;
+
+}
+
+//===========================================================================
+
+void test_cpu_math_div_8bit_to_8bit_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * ua = variable_define( e, "ua", VT_BYTE, 0x21 );
+    Variable * ub = variable_define( e, "ub", VT_BYTE, 0x10 );
+    Variable * sa = variable_define( e, "sa", VT_SBYTE, 0xf8 );
+    Variable * sb = variable_define( e, "sb", VT_SBYTE, 0xf0 );
+    Variable * resultu = variable_temporary( e, VT_BYTE, "(result unsigned)" );
+    Variable * remainderu = variable_temporary( e, VT_BYTE, "(result unsigned)" );
+    Variable * results = variable_temporary( e, VT_SBYTE, "(result unsigned)" );
+    Variable * remainders = variable_temporary( e, VT_SBYTE, "(result signed)" );
+
+    cpu_math_div_8bit_to_8bit( e, ua->realName, ub->realName, resultu->realName, remainderu->realName, 0 );
+    cpu_math_div_8bit_to_8bit( e, sa->realName, sb->realName, results->realName, remainders->realName, 1 );
+
+    _te->trackedVariables[0] = resultu;
+    _te->trackedVariables[1] = results;
+    _te->trackedVariables[2] = remainderu;
+    _te->trackedVariables[3] = remainders;
+
+}
+
+int test_cpu_math_div_8bit_to_8bit_tester( TestEnvironment * _te ) {
+
+    Variable * resultu = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * results = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+    Variable * remainderu = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
+    Variable * remainders = variable_retrieve( &_te->environment, _te->trackedVariables[3]->name );
+
+    return  resultu->value == 0x2 &&
+            remainderu->value == 0x1 && 
+            results->value == 0x0 && 
+            remainders->value == 0x8;
+
+}
+
+//===========================================================================
+
+void test_cpu_math_mul2_const_16bit_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * ua = variable_define( e, "ua", VT_WORD, 0x2121 );
+    Variable * sa = variable_define( e, "sa", VT_SWORD, 0xfff8 );
+
+    cpu_math_mul2_const_16bit( e, ua->realName, 1, 0 );
+    cpu_math_mul2_const_16bit( e, sa->realName, 1, 1 );
+
+    _te->trackedVariables[0] = ua;
+    _te->trackedVariables[1] = sa;
+
+}
+
+int test_cpu_math_mul2_const_16bit_tester( TestEnvironment * _te ) {
+
+    Variable * ua = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * sa = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+
+    return  ua->value == 0x4242 &&
+            sa->value == 0xfff0;
+
+}
+
+//===========================================================================
+
+void test_cpu_math_mul2_const_32bit_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * ua = variable_define( e, "ua", VT_DWORD, 0x21212121 );
+    Variable * sa = variable_define( e, "sa", VT_SDWORD, 0xfffffff8 );
+
+    cpu_math_mul2_const_32bit( e, ua->realName, 1, 0 );
+    cpu_math_mul2_const_32bit( e, sa->realName, 1, 1 );
+
+    _te->trackedVariables[0] = ua;
+    _te->trackedVariables[1] = sa;
+
+}
+
+int test_cpu_math_mul2_const_32bit_tester( TestEnvironment * _te ) {
+
+    Variable * ua = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * sa = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+
+    return  ua->value == 0x42424242 &&
+            sa->value == 0xfffffff0;
+
+}
+
+//===========================================================================
+
+void test_cpu_math_mul2_const_8bit_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * ua = variable_define( e, "ua", VT_BYTE, 0x21 );
+    Variable * sa = variable_define( e, "sa", VT_SBYTE, 0xf8 );
+
+    cpu_math_mul2_const_8bit( e, ua->realName, 1, 0 );
+    cpu_math_mul2_const_8bit( e, sa->realName, 1, 1 );
+
+    _te->trackedVariables[0] = ua;
+    _te->trackedVariables[1] = sa;
+
+
+}
+
+int test_cpu_math_mul2_const_8bit_tester( TestEnvironment * _te ) {
+
+    Variable * ua = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * sa = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+
+    return  ua->value == 0x42 &&
+            sa->value == 0xf0;
+
+}
+
 void test_cpu( ) {
 
-    // create_test( "cpu_bits_to_string", &test_cpu_bits_to_string_payload, &test_cpu_bits_to_string_tester );    
-    // create_test( "cpu_bits_to_string32", &test_cpu_bits_to_string32_payload, &test_cpu_bits_to_string32_tester );    
-    // create_test( "cpu_dswrite", &test_cpu_dswrite_payload, &test_cpu_dswrite_tester );    
-    // create_test( "cpu_dsgc A", &test_cpu_dsgc_payloadA, &test_cpu_dsgc_testerA );    
-    // create_test( "cpu_dsgc B", &test_cpu_dsgc_payloadB, &test_cpu_dsgc_testerB );    
-    // create_test( "cpu_logical_and_8bit", &test_cpu_logical_and_8bit_payload, &test_cpu_logical_and_8bit_tester );    
-    // create_test( "cpu_logical_not_8bit", &test_cpu_logical_not_8bit_payload, &test_cpu_logical_not_8bit_tester );    
-    // create_test( "cpu_bit_check_extended", &test_cpu_bit_check_extended_payload, &test_cpu_bit_check_extended_tester );    
+    create_test( "cpu_bits_to_string", &test_cpu_bits_to_string_payload, &test_cpu_bits_to_string_tester );    
+    create_test( "cpu_bits_to_string32", &test_cpu_bits_to_string32_payload, &test_cpu_bits_to_string32_tester );    
+    create_test( "cpu_dswrite", &test_cpu_dswrite_payload, &test_cpu_dswrite_tester );    
+    create_test( "cpu_dsgc A", &test_cpu_dsgc_payloadA, &test_cpu_dsgc_testerA );    
+    create_test( "cpu_dsgc B", &test_cpu_dsgc_payloadB, &test_cpu_dsgc_testerB );    
+    create_test( "cpu_logical_and_8bit", &test_cpu_logical_and_8bit_payload, &test_cpu_logical_and_8bit_tester );    
+    create_test( "cpu_logical_not_8bit", &test_cpu_logical_not_8bit_payload, &test_cpu_logical_not_8bit_tester );    
+    create_test( "cpu_bit_check_extended", &test_cpu_bit_check_extended_payload, &test_cpu_bit_check_extended_tester );    
     create_test( "cpu_less_than_8bit", &test_cpu_less_than_8bit_payload, &test_cpu_less_than_8bit_tester );    
     create_test( "cpu_less_than_16bit", &test_cpu_less_than_16bit_payload, &test_cpu_less_than_16bit_tester );    
     create_test( "cpu_less_than_32bit", &test_cpu_less_than_32bit_payload, &test_cpu_less_than_32bit_tester );    
     create_test( "cpu_greater_than_8bit", &test_cpu_greater_than_8bit_payload, &test_cpu_greater_than_8bit_tester );    
     create_test( "cpu_greater_than_16bit", &test_cpu_greater_than_16bit_payload, &test_cpu_greater_than_16bit_tester );    
     create_test( "cpu_greater_than_32bit", &test_cpu_greater_than_32bit_payload, &test_cpu_greater_than_32bit_tester );    
+    create_test( "cpu_math_div2_8bit", &test_cpu_math_div2_8bit_payload, &test_cpu_math_div2_8bit_tester );
+    create_test( "cpu_math_div2_const_16bit", &test_cpu_math_div2_const_16bit_payload, &test_cpu_math_div2_const_16bit_tester );
+    create_test( "cpu_math_div2_const_32bit", &test_cpu_math_div2_const_32bit_payload, &test_cpu_math_div2_const_32bit_tester );
+    create_test( "cpu_math_div2_const_8bit", &test_cpu_math_div2_const_8bit_payload, &test_cpu_math_div2_const_8bit_tester );
+    create_test( "cpu_math_double_16bit", &test_cpu_math_double_16bit_payload, &test_cpu_math_double_16bit_tester );
+    create_test( "cpu_math_double_32bit", &test_cpu_math_double_32bit_payload, &test_cpu_math_double_32bit_tester );
+    create_test( "cpu_math_double_8bit", &test_cpu_math_double_8bit_payload, &test_cpu_math_double_8bit_tester );
+    create_test( "cpu_math_mul_8bit_to_16bit", &test_cpu_math_mul_8bit_to_16bit_payload, &test_cpu_math_mul_8bit_to_16bit_tester );
+    create_test( "cpu_math_mul_16bit_to_32bit", &test_cpu_math_mul_16bit_to_32bit_payload, &test_cpu_math_mul_16bit_to_32bit_tester );
+    create_test( "cpu_math_div_8bit_to_8bit", &test_cpu_math_div_8bit_to_8bit_payload, &test_cpu_math_div_8bit_to_8bit_tester );
+    create_test( "cpu_math_div_16bit_to_16bit", &test_cpu_math_div_16bit_to_16bit_payload, &test_cpu_math_div_16bit_to_16bit_tester );
+    create_test( "cpu_math_mul2_const_16bit", &test_cpu_math_mul2_const_16bit_payload, &test_cpu_math_mul2_const_16bit_tester );
+    create_test( "cpu_math_mul2_const_32bit", &test_cpu_math_mul2_const_32bit_payload, &test_cpu_math_mul2_const_32bit_tester );
+    create_test( "cpu_math_mul2_const_8bit", &test_cpu_math_mul2_const_8bit_payload, &test_cpu_math_mul2_const_8bit_tester );
 
 }
