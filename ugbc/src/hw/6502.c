@@ -828,6 +828,7 @@ void cpu6502_less_than_16bit( Environment * _environment, char *_source, char *_
         outline1("BCC %s", label);
         outline1("LDA %s", _source);
         outline1("CMP %s", _destination );
+        outline1("BCC %s", label);
         if ( _equal ) {
             outline1("BEQ %s", label);
         }
