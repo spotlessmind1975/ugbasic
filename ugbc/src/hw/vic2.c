@@ -383,6 +383,8 @@ void vic2_bitmap_enable( Environment * _environment, int _width, int _height, in
             CRITICAL_SCREEN_MODE_BITMAP_UNSUPPORTED( mode->description );
     }
 
+    cpu_store_8bit( _environment, "_PEN", 0x10 );
+    cpu_store_8bit( _environment, "_PAPER", 0x00 );
 
 }
 
@@ -465,6 +467,8 @@ void vic2_tilemap_enable( Environment * _environment, int _width, int _height, i
             CRITICAL_SCREEN_MODE_TILEMAP_UNSUPPORTED( mode->description );
     }
 
+    cpu_store_8bit( _environment, "_PEN", 0x01 );
+    cpu_store_8bit( _environment, "_PAPER", 0x00 );
 
 }
 
