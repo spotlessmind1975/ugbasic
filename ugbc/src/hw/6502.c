@@ -1021,9 +1021,9 @@ void cpu6502_math_mul_16bit_to_32bit( Environment * _environment, char *_source,
         outline0("STA $FA" );        
         outline1("JMP %sthird2", label );
         outhead1("%sthird:", label );
-        outline1("LDA %s", _source );
+        outline1("LDA %s", _destination );
         outline0("STA $F9");
-        outline1("LDA %s+1", _source );
+        outline1("LDA %s+1", _destination );
         outline0("STA $FA");
         outline1("JMP %sthird2", label );
 
@@ -1078,7 +1078,7 @@ void cpu6502_math_mul_16bit_to_32bit( Environment * _environment, char *_source,
         outline1("STA %s+2", _other );
         outline1("LDA %s+3", _other );
         outline0("EOR #$ff" );
-        outline1("STA %s+4", _other );
+        outline1("STA %s+3", _other );
         outline0("CLC" );
         outline1("LDA %s", _other );
         outline0("ADC #1" );
