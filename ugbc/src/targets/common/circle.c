@@ -71,7 +71,16 @@ void circle( Environment * _environment, char * _x, char * _y, char * _r, char *
     // after translation
     // printf("(%d, %d) ", x + x_centre, y + y_centre);
       
-    // plot( _environment, variable_add( _environment, x->name, xCentre->name )->name, variable_add( _environment, y->name, yCentre->name )->name, _c );
+    //print( _environment, variable_add( _environment, x->name, xCentre->name )->name, 0 );
+    //print_tab( _environment, 0 );
+    //print( _environment, variable_add( _environment, y->name, yCentre->name )->name, 1 );
+    plot( _environment, variable_add( _environment, x->name, xCentre->name )->name, variable_add( _environment, y->name, yCentre->name )->name, _c );
+    //printf("(%d, %d) ", -x + x_centre, y + y_centre);
+    plot( _environment, variable_sub( _environment, xCentre->name, x->name )->name, variable_add( _environment, y->name, yCentre->name )->name, _c );
+    //printf("(%d, %d) ", x + x_centre, -y + y_centre);
+    plot( _environment, variable_add( _environment, x->name, xCentre->name )->name, variable_sub( _environment, yCentre->name,  y->name )->name, _c );
+    //printf("(%d, %d)\n", -x + x_centre, -y + y_centre);
+    plot( _environment, variable_sub( _environment, xCentre->name, x->name )->name, variable_sub( _environment, yCentre->name,  y->name )->name, _c );
 
     // Initialising the value of P
     // int P = 1 - r;
@@ -80,7 +89,7 @@ void circle( Environment * _environment, char * _x, char * _y, char * _r, char *
 
     //while (x > y)
       begin_while( _environment );  
-      begin_while_condition( _environment, variable_greater_than( _environment, x->name, y->name, 0 )->name );  
+      begin_while_condition( _environment, variable_greater_than( _environment, x->name, y->name, 1 )->name );  
 
     //{ 
 
@@ -118,6 +127,10 @@ void circle( Environment * _environment, char * _x, char * _y, char * _r, char *
         // in the other octants after translation
         //printf("(%d, %d) ", x + x_centre, y + y_centre);
         
+        //print( _environment, variable_add( _environment, x->name, xCentre->name )->name, 0 );
+        //print_tab( _environment, 0 );
+        //print( _environment, variable_add( _environment, y->name, yCentre->name )->name, 1 );
+
         plot( _environment, variable_add( _environment, x->name, xCentre->name )->name, variable_add( _environment, y->name, yCentre->name )->name, _c );
         //printf("(%d, %d) ", -x + x_centre, y + y_centre);
         plot( _environment, variable_sub( _environment, xCentre->name, x->name )->name, variable_add( _environment, y->name, yCentre->name )->name, _c );
@@ -130,6 +143,20 @@ void circle( Environment * _environment, char * _x, char * _y, char * _r, char *
         // the perimeter points have already been printed
         // if (x != y)
         // {
+        if_then( _environment, variable_compare_not( _environment, x->name, y->name )->name );
+            //print( _environment, variable_add( _environment, x->name, xCentre->name )->name, 0 );
+            //print_tab( _environment, 0 );
+            //print( _environment, variable_add( _environment, y->name, yCentre->name )->name, 1 );
+            plot( _environment, variable_add( _environment, y->name, xCentre->name )->name, variable_add( _environment, x->name, yCentre->name )->name, _c );
+            //printf("(%d, %d) ", -x + x_centre, y + y_centre);
+            plot( _environment, variable_sub( _environment, xCentre->name, y->name )->name, variable_add( _environment, x->name, yCentre->name )->name, _c );
+            //printf("(%d, %d) ", x + x_centre, -y + y_centre);
+            plot( _environment, variable_add( _environment, y->name, xCentre->name )->name, variable_sub( _environment, yCentre->name,  x->name )->name, _c );
+            //printf("(%d, %d)\n", -x + x_centre, -y + y_centre);
+            plot( _environment, variable_sub( _environment, xCentre->name, y->name )->name, variable_sub( _environment, yCentre->name,  x->name )->name, _c );
+
+        end_if_then( _environment );
+
         //     printf("(%d, %d) ", y + x_centre, x + y_centre);
         //     printf("(%d, %d) ", -y + x_centre, x + y_centre);
         //     printf("(%d, %d) ", y + x_centre, -x + y_centre);
