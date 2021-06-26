@@ -117,21 +117,21 @@ Variable * powering( Environment * _environment, char * _base, char * _exponenti
     switch( VT_BITWIDTH( base->type ) ) {
         case 32:
         case 16:
-            result = variable_temporary( _environment, VT_DWORD, "(result of pow)");
+            result = variable_temporary( _environment, VT_SIGNED( base->type ) ? VT_SDWORD : VT_DWORD, "(result of pow)");
             variable_store( _environment, result->name, 1 );
             cpu_bveq( _environment, counter->realName, endLabel );
             cpu_label( _environment, label );
-            cpu_math_mul_16bit_to_32bit( _environment, base->realName, result->realName, result->realName );
+            cpu_math_mul_16bit_to_32bit( _environment, base->realName, result->realName, result->realName, VT_SIGNED( base->type ) );
             cpu_dec( _environment, counter->realName );
             cpu_bvneq( _environment, counter->realName, label );
             cpu_label( _environment, endLabel );
             break;
         case 8:
-            result = variable_temporary( _environment, VT_DWORD, "(result of pow)");
+            result = variable_temporary( _environment, VT_SIGNED( base->type ) ? VT_SDWORD : VT_DWORD, "(result of pow)");
             variable_store( _environment, result->name, 1 );
             cpu_bveq( _environment, counter->realName, endLabel );
             cpu_label( _environment, label );
-            cpu_math_mul_8bit_to_16bit( _environment, base->realName, result->realName, result->realName );
+            cpu_math_mul_8bit_to_16bit( _environment, base->realName, result->realName, result->realName, VT_SIGNED( base->type ) );
             cpu_dec( _environment, counter->realName );
             cpu_bvneq( _environment, counter->realName, label );
             cpu_label( _environment, endLabel );

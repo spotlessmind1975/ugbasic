@@ -656,7 +656,7 @@ void text_writing( Environment * _environment, char * _mode, char * _parts ) {
     Variable * parts = variable_retrieve_or_define( _environment, _parts, VT_BYTE, WRITING_NORMAL );
 
     variable_move( _environment, mode->name, ww->name );
-    cpu_math_mul2_const_8bit( _environment, ww->realName, 4  );
+    cpu_math_mul2_const_8bit( _environment, ww->realName, 4, 0  );
     cpu_math_add_8bit( _environment, ww->realName, parts->realName, ww->realName );
     
 }

@@ -389,7 +389,7 @@ void z80_math_sub_8bit( Environment * _environment, char *_source, char *_destin
  * @param _source Value to double and destination for result (if _other is NULL)
  * @param _other Destination address for result
  */
-void z80_math_double_8bit( Environment * _environment, char *_source, char *_other ) {
+void z80_math_double_8bit( Environment * _environment, char *_source, char *_other, int _signed ) {
 
     outline1("LD A, (%s)", _source );
     outline0("ADD A, A" );
@@ -407,7 +407,7 @@ void z80_math_double_8bit( Environment * _environment, char *_source, char *_oth
  * @param _source Value to halves and destination for result
  * @param _steps Times to halves
  */
-void z80_math_div2_8bit( Environment * _environment, char *_source, int _steps ) {
+void z80_math_div2_8bit( Environment * _environment, char *_source, int _steps, int _signed ) {
 
     outline1("LD A, (%s)", _source );
     while( _steps ) {
@@ -427,7 +427,7 @@ void z80_math_div2_8bit( Environment * _environment, char *_source, int _steps )
  * @param _other Destination address for result (16 bit)
  */
 
-void z80_math_mul_8bit_to_16bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
+void z80_math_mul_8bit_to_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _signed ) {
 
     MAKE_LABEL
 
@@ -458,7 +458,7 @@ void z80_math_mul_8bit_to_16bit( Environment * _environment, char *_source, char
  * @param _source Value to halves and destination for result
  * @param _steps Times to halves
  */
-void z80_math_div2_const_8bit( Environment * _environment, char *_source, int _steps ) {
+void z80_math_div2_const_8bit( Environment * _environment, char *_source, int _steps, int _signed ) {
 
     outline1("LD A, (%s)", _source );
     while( _steps ) {
@@ -476,7 +476,7 @@ void z80_math_div2_const_8bit( Environment * _environment, char *_source, int _s
  * @param _source Value to double and destination for result
  * @param _steps Times to double
  */
-void z80_math_mul2_const_8bit( Environment * _environment, char *_source, int _steps ) {
+void z80_math_mul2_const_8bit( Environment * _environment, char *_source, int _steps, int _signed ) {
 
     outline0("; variable_mul2_const");
     outline1("LD A, (%s)", _source );
@@ -610,7 +610,7 @@ void z80_compare_16bit( Environment * _environment, char *_source, char *_destin
  * @param _other Destination address for result
  * @param _equal True if equal
  */
-void z80_less_than_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _size ) {
+void z80_less_than_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed ) {
 
     MAKE_LABEL
 
@@ -656,7 +656,7 @@ void z80_less_than_16bit( Environment * _environment, char *_source, char *_dest
  * @param _other Destination address for result
  * @param _equal True if equal
  */
-void z80_greater_than_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _size ) {
+void z80_greater_than_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed ) {
 
     MAKE_LABEL
 
@@ -733,7 +733,7 @@ void z80_math_add_16bit_with_16bit( Environment * _environment, char *_source, c
  * @param _source Value to double and destination for result (if _other is NULL)
  * @param _other Destination address for result
  */
-void z80_math_double_16bit( Environment * _environment, char *_source, char *_other ) {
+void z80_math_double_16bit( Environment * _environment, char *_source, char *_other, int _signed ) {
     
     outline1("LD DE, (%s)", _source );
     outline0("SLA E" );
@@ -754,7 +754,7 @@ void z80_math_double_16bit( Environment * _environment, char *_source, char *_ot
  * @param _destination Second value to multipy (16 bit)
  * @param _other Destination address for result (32 bit)
  */
-void z80_math_mul_16bit_to_32bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
+void z80_math_mul_16bit_to_32bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _signed ) {
 
     MAKE_LABEL
 
@@ -825,7 +825,7 @@ void z80_math_complement_const_16bit( Environment * _environment, char *_source,
  * @param _source Value to halves and destination for result
  * @param _steps Times to halves
  */
-void z80_math_div2_const_16bit( Environment * _environment, char *_source, int _steps ) {
+void z80_math_div2_const_16bit( Environment * _environment, char *_source, int _steps, int _signed ) {
 
     outline1("LD HL, (%s)", _source );
     outline0("LD AF, HL" );
@@ -846,7 +846,7 @@ void z80_math_div2_const_16bit( Environment * _environment, char *_source, int _
  * @param _source Value to halves and destination for result
  * @param _steps Times to halves
  */
-void z80_math_mul2_const_16bit( Environment * _environment, char *_source, int _steps ) {
+void z80_math_mul2_const_16bit( Environment * _environment, char *_source, int _steps, int _signed ) {
 
     outline1("LD HL, (%s)", _source );
     outline0("LD AF, HL" );
@@ -1124,7 +1124,7 @@ void z80_math_add_32bit( Environment * _environment, char *_source, char *_desti
  * @param _other Destination address for result
  * @todo Not yet implemented
  */
-void z80_math_double_32bit( Environment * _environment, char *_source, char *_other ) {
+void z80_math_double_32bit( Environment * _environment, char *_source, char *_other, int _signed ) {
 
     // TODO: z80_math_double_32bit
 
@@ -1189,7 +1189,7 @@ void z80_math_complement_const_32bit( Environment * _environment, char *_source,
  * @param _source Value to halves and destination for result
  * @param _steps Times to halves
  */
-void z80_math_div2_const_32bit( Environment * _environment, char *_source, int _steps ) {
+void z80_math_div2_const_32bit( Environment * _environment, char *_source, int _steps, int _signed ) {
 
     outline1("ld de,(%s)", _source );
     outline1("ld bc,(%s+2)", _source );
@@ -1208,7 +1208,7 @@ void z80_math_div2_const_32bit( Environment * _environment, char *_source, int _
  * @param _steps Times to double
  * @todo Not yet implemented
  */
-void z80_math_mul2_const_32bit( Environment * _environment, char *_source, int _steps ) {
+void z80_math_mul2_const_32bit( Environment * _environment, char *_source, int _steps, int _signed ) {
 
 }
 

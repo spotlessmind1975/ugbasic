@@ -386,13 +386,34 @@ void cpu6502_math_sub_8bit( Environment * _environment, char *_source, char *_de
  * @param _source Value to double and destination for result (if _other is NULL)
  * @param _other Destination address for result
  */
-void cpu6502_math_double_8bit( Environment * _environment, char *_source, char *_other ) {
-    outline1("LDA %s", _source);
-    outline0("ASL A");
-    if ( _other ) {
-        outline1("STA %s", _other);
+void cpu6502_math_double_8bit( Environment * _environment, char *_source, char *_other, int _signed ) {
+    if ( _signed ) {
+        outline1("LDA %s", _source);
+        outline0("AND #$80");
+        outline0("TAX");
+        outline1("LDA %s", _source);
+        outline0("ASL A");
+        if ( _other ) {
+            outline1("STA %s", _other);
+            outline0("TXA");
+            outline1("ORA %s", _other);
+            outline1("STA %s", _other);
+        } else {
+            outline1("STA %s", _source);
+            outline0("TXA");
+            outline1("ORA %s", _source);
+            outline1("STA %s", _source);
+        }
+
     } else {
-        outline1("STA %s", _source);
+        outline1("LDA %s", _source);
+        outline0("ASL A");
+        if ( _other ) {
+            outline1("STA %s", _other);
+        } else {
+            outline1("STA %s", _source);
+        }
+
     }
 }
 
@@ -403,13 +424,27 @@ void cpu6502_math_double_8bit( Environment * _environment, char *_source, char *
  * @param _source Value to halves and destination for result
  * @param _steps Times to halves
  */
-void cpu6502_math_div2_8bit( Environment * _environment, char *_source, int _steps ) {
+void cpu6502_math_div2_8bit( Environment * _environment, char *_source, int _steps, int _signed ) {
     int i=0;
-    outline1("LDA %s", _source);
-    for(i=0; i<_steps; ++i ) {
-        outline0("LSR A");
+    if ( _signed ) {
+        outline1("LDA %s", _source);
+        outline0("AND #$80");
+        outline0("TAX");
+        outline1("LDA %s", _source);
+        for(i=0; i<_steps; ++i ) {
+            outline0("LSR A");
+        }
+        outline1("STA %s", _source);
+        outline0("TXA");
+        outline1("ORA %s", _source);
+        outline1("STA %s", _source);
+    } else {
+        outline1("LDA %s", _source);
+        for(i=0; i<_steps; ++i ) {
+            outline0("LSR A");
+        }
+        outline1("STA %s", _source);
     }
-    outline1("STA %s", _source);
 }
 
 /**
@@ -420,48 +455,162 @@ void cpu6502_math_div2_8bit( Environment * _environment, char *_source, int _ste
  * @param _destination Second value to multipy (8 bit)
  * @param _other Destination address for result (16 bit)
  */
-void cpu6502_math_mul_8bit_to_16bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
+void cpu6502_math_mul_8bit_to_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _signed ) {
 
     MAKE_LABEL
 
-    outline0("LDA #0");
-    outline0("LDX #8");
-    outhead1("%s1:", label);
-    outline1("LSR %s", _destination);
-    outline1("BCC %s_2", label);
-    outline0("CLC");
-    outline1("ADC %s", _source);
-    outline1("%s_2:", label);
-    outline0("ROR A");
-    outline1("ROR %s", _other);
-    outline0("DEX" );
-    outline1("BNE %s1", label);
-    outline1("STA %s+1", _other );
+    if ( _signed ) {
+        outline1("LDA %s", _source );
+        outline1("EOR %s", _destination );
+        outline0("AND #$80" );
+        outline0("PHA");
+        outline1("LDA %s", _source );
+        outline0("AND #$80" );
+        outline1("BEQ %ssecond", label );
+        outline0("CLC" );
+        outline1("LDA %s", _source );
+        outline0("EOR #$ff" );
+        outline0("ADC #1" );
+        outline0("STA $F7" );
+        outhead1("%ssecond:", label );
+        outline1("LDA %s", _destination );
+        outline0("AND #$80" );
+        outline1("BEQ %sthird", label );
+        outline0("CLC" );
+        outline1("LDA %s", _destination );
+        outline0("EOR #$ff" );
+        outline0("ADC #1" );
+        outline0("STA $F8" );
+        outhead1("%sthird:", label );
+
+        outline0("LDA #0");
+        outline0("LDX #8");
+        outhead1("%s1:", label);
+        outline0("LSR $F8");
+        outline1("BCC %s_2", label);
+        outline0("CLC");
+        outline0("ADC $F7");
+        outline1("%s_2:", label);
+        outline0("ROR A");
+        outline1("ROR %s", _other);
+        outline0("DEX" );
+        outline1("BNE %s1", label);
+        outline1("STA %s+1", _other );
+
+        outline0("PLA");
+        outline0("CMP #$80");
+        outline1("BNE %sdone", label);
+        outline1("LDA %s", _other );
+        outline0("EOR #$ff" );
+        outline1("STA %s", _other );
+        outline1("LDA %s+1", _other );
+        outline0("EOR #$ff" );
+        outline1("STA %s+1", _other );
+        outline0("CLC" );
+        outline1("LDA %s", _other );
+        outline0("ADC #1" );
+        outline1("STA %s", _other );
+        outline1("LDA %s+1", _other );
+        outline0("ADC #0" );
+        outline1("STA %s+1", _other );
+        outhead1("%sdone:", label );
+
+    } else {
+        outline0("LDA #0");
+        outline0("LDX #8");
+        outhead1("%s1:", label);
+        outline1("LSR %s", _destination);
+        outline1("BCC %s_2", label);
+        outline0("CLC");
+        outline1("ADC %s", _source);
+        outline1("%s_2:", label);
+        outline0("ROR A");
+        outline1("ROR %s", _other);
+        outline0("DEX" );
+        outline1("BNE %s1", label);
+        outline1("STA %s+1", _other );
+    }
 }
 
-void cpu6502_math_div_8bit_to_8bit( Environment * _environment, char *_source, char *_destination,  char *_other, char * _other_remainder ) {
+void cpu6502_math_div_8bit_to_8bit( Environment * _environment, char *_source, char *_destination,  char *_other, char * _other_remainder, int _signed ) {
 
     MAKE_LABEL
 
-    outline1("LDA %s", _source );
-    outline1("STA %s", _other );
+    if ( _signed ) {
+        outline1("LDA %s", _source );
+        outline1("EOR %s", _destination );
+        outline0("AND #$80" );
+        outline0("PHA");
+        outline1("LDA %s", _source );
+        outline0("AND #$80" );
+        outline1("BEQ %ssecond", label );
+        outline0("CLC" );
+        outline1("LDA %s", _source );
+        outline0("EOR #$ff" );
+        outline0("ADC #1" );
+        outline0("STA $F7" );
+        outhead1("%ssecond:", label );
+        outline1("LDA %s", _destination );
+        outline0("AND #$80" );
+        outline1("BEQ %sthird", label );
+        outline0("CLC" );
+        outline1("LDA %s", _destination );
+        outline0("EOR #$ff" );
+        outline0("ADC #1" );
+        outline0("STA $F8" );
+        outhead1("%sthird:", label );
 
-    outline0("LDA #0" );
-    outline1("STA %s", _other_remainder );
-    outline0("LDX #8");
-    outhead1("%sL1:", label );
-    outline1("ASL %s", _other );
-    outline1("ROL %s", _other_remainder );
-    outline1("LDA %s", _other_remainder );
-    outline0("SEC" );
-    outline1("SBC %s", _destination );
-    outline0("TAY" );
-    outline1("BCC %sL2", label );
-    outline1("STY %s", _other_remainder );
-    outline1("INC %s", _other );
-    outhead1("%sL2:", label );
-    outline0("DEX" );
-    outhead1("BNE %sL1", label );
+        outline0("LDA $F7" );
+        outline1("STA %s", _other );
+        outline0("LDA #0" );
+        outline1("STA %s", _other_remainder );
+        outline0("LDX #8");
+        outhead1("%sL1:", label );
+        outline1("ASL %s", _other );
+        outline1("ROL %s", _other_remainder );
+        outline1("LDA %s", _other_remainder );
+        outline0("SEC" );
+        outline0("SBC $F8" );
+        outline0("TAY" );
+        outline1("BCC %sL2", label );
+        outline1("STY %s", _other_remainder );
+        outline1("INC %s", _other );
+        outhead1("%sL2:", label );
+        outline0("DEX" );
+        outhead1("BNE %sL1", label );
+
+        outline0("PLA");
+        outline0("CMP #$80");
+        outline1("BNE %sdone", label);
+        outline1("LDA %s", _other );
+        outline0("EOR #$ff" );
+        outline1("STA %s", _other );
+        outline0("CLC" );
+        outline1("LDA %s", _other );
+        outline0("ADC #1" );
+        outline1("STA %s", _other );
+        outhead1("%sdone:", label );
+
+    } else {
+        outline1("LDA %s", _source );
+        outline1("STA %s", _other );
+        outline0("LDA #0" );
+        outline1("STA %s", _other_remainder );
+        outline0("LDX #8");
+        outhead1("%sL1:", label );
+        outline1("ASL %s", _other );
+        outline1("ROL %s", _other_remainder );
+        outline1("LDA %s", _other_remainder );
+        outline0("SEC" );
+        outline1("SBC %s", _destination );
+        outline0("TAY" );
+        outline1("BCC %sL2", label );
+        outline1("STY %s", _other_remainder );
+        outline1("INC %s", _other );
+        outhead1("%sL2:", label );
+        outline0("DEX" );
+        outhead1("BNE %sL1", label );
+    }
     
 }
 
@@ -472,12 +621,26 @@ void cpu6502_math_div_8bit_to_8bit( Environment * _environment, char *_source, c
  * @param _source Value to halves and destination for result
  * @param _steps Times to halves
  */
-void cpu6502_math_div2_const_8bit( Environment * _environment, char *_source, int _steps ) {
+void cpu6502_math_div2_const_8bit( Environment * _environment, char *_source, int _steps, int _signed ) {
 
-    while( _steps ) {
-        outline0("CLC");
-        outline1("ROR %s", _source);
-        --_steps;
+    if ( _signed ) {
+        outline1("LDA %s", _source);
+        outline0("AND #$80" );
+        outline0("TAX");
+        while( _steps ) {
+            outline0("CLC");
+            outline1("ROR %s", _source);
+            --_steps;
+        }
+        outline0("TXA");
+        outline1("ORA %s", _source);
+        outline1("STA %s", _source);
+    } else {
+        while( _steps ) {
+            outline0("CLC");
+            outline1("ROR %s", _source);
+            --_steps;
+        }
     }
 
 }
@@ -489,12 +652,26 @@ void cpu6502_math_div2_const_8bit( Environment * _environment, char *_source, in
  * @param _source Value to double and destination for result
  * @param _steps Times to double
  */
-void cpu6502_math_mul2_const_8bit( Environment * _environment, char *_source, int _steps ) {
+void cpu6502_math_mul2_const_8bit( Environment * _environment, char *_source, int _steps, int _signed ) {
 
-    while( _steps ) {
-        outline0("CLC");
-        outline1("ASL %s", _source);
-        --_steps;
+    if ( _signed ) {
+        outline1("LDA %s", _source);
+        outline0("AND #$80" );
+        outline0("TAX");
+        while( _steps ) {
+            outline0("CLC");
+            outline1("ASL %s", _source);
+            --_steps;
+        }
+        outline0("TXA");
+        outline1("ORA %s", _source);
+        outline1("STA %s", _source);
+    } else {
+        while( _steps ) {
+            outline0("CLC");
+            outline1("ASL %s", _source);
+            --_steps;
+        }
     }
 
 }
@@ -762,7 +939,7 @@ void cpu6502_math_add_16bit_with_8bit( Environment * _environment, char *_source
  * @param _source Value to double and destination for result (if _other is NULL)
  * @param _other Destination address for result
  */
-void cpu6502_math_double_16bit( Environment * _environment, char *_source, char *_other ) {
+void cpu6502_math_double_16bit( Environment * _environment, char *_source, char *_other, int _signed ) {
     outline1("LDA %s", _source);
     outline0("ASL A");
     if ( _other ) {
@@ -787,88 +964,309 @@ void cpu6502_math_double_16bit( Environment * _environment, char *_source, char 
  * @param _destination Second value to multipy (16 bit)
  * @param _other Destination address for result (32 bit)
  */
-void cpu6502_math_mul_16bit_to_32bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
+void cpu6502_math_mul_16bit_to_32bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _signed ) {
 
     MAKE_LABEL
 
-    outline1("LDA %s", _source );
-    outline0("STA $F7");
-    outline1("LDA %s+1", _source );
-    outline0("STA $F8");
-    outline1("LDA %s", _destination );
-    outline0("STA $F9");
-    outline1("LDA %s+1", _destination );
-    outline0("STA $FA");
+    if ( _signed ) {
 
- 	outline0("LDA #$00");
- 	outline0("STA $FB");
- 	outline0("STA $FB+1");
- 	outline0("STA $FB+2");
- 	outline0("STA $FB+3");
- 	outline0("LDX #$10");
+        outline1("LDA %s+1", _source );
+        outline1("EOR %s+1", _destination );
+        outline0("AND #$80" );
+        outline0("PHA");
 
- 	outhead1("%s:", label);
- 	outline0("LSR $F8");
- 	outline0("ROR $F7");
- 	outline1("BCC %s_2", label);
-    outline0("LDA $FB+2");
-    outline0("CLC");
-    outline0("ADC $F9");
-    outline0("STA $FB+2");
-    outline0("LDA $FB+3");
-    outline0("ADC $FA");
+        outline1("LDA %s+1", _source );
+        outline0("AND #$80" );
+        outline1("BEQ %ssecond", label );
+        outline0("CLC" );
+        outline1("LDA %s", _source );
+        outline0("EOR #$ff" );
+        outline0("STA $F7" );
+        outline1("LDA %s+1", _source );
+        outline0("EOR #$ff" );
+        outline0("STA $F8" );
+        outline0("CLC" );
+        outline0("LDA $F7" );
+        outline0("ADC #1" );
+        outline0("STA $F7" );
+        outline0("LDA $F8" );
+        outline0("ADC #0" );
+        outline0("STA $F8" );        
+        outline1("JMP %ssecond2", label );
+        outhead1("%ssecond:", label );
+        outline1("LDA %s", _source );
+        outline0("STA $F7");
+        outline1("LDA %s+1", _source );
+        outline0("STA $F8");
+        outline1("JMP %ssecond2", label );
 
- 	outhead1("%s_2:", label);
-    outline0("ROR");
-    outline0("STA $FB+3");
-    outline0("ROR $FB+2");
-    outline0("ROR $FB+1");
-    outline0("ROR $FB");
-    outline0("DEX");
-    outline1("BNE %s", label);
+        outhead1("%ssecond2:", label );
+        outline1("LDA %s+1", _destination );
+        outline0("AND #$80" );
+        outline1("BEQ %sthird", label );
+        outline0("CLC" );
+        outline1("LDA %s", _destination );
+        outline0("EOR #$ff" );
+        outline0("STA $F9" );
+        outline1("LDA %s+1", _destination );
+        outline0("EOR #$ff" );
+        outline0("STA $FA" );
+        outline0("CLC" );
+        outline0("LDA $F9" );
+        outline0("ADC #1" );
+        outline0("STA $F9" );
+        outline0("LDA $FA" );
+        outline0("ADC #0" );
+        outline0("STA $FA" );        
+        outline1("JMP %sthird2", label );
+        outhead1("%sthird:", label );
+        outline1("LDA %s", _source );
+        outline0("STA $F9");
+        outline1("LDA %s+1", _source );
+        outline0("STA $FA");
+        outline1("JMP %sthird2", label );
 
-    outline0("LDA $FB");
-    outline1("STA %s", _other );
-    outline0("LDA $FC");
-    outline1("STA %s+1", _other );
-    outline0("LDA $FD");
-    outline1("STA %s+2", _other );
-    outline0("LDA $FE");
-    outline1("STA %s+3", _other );
+        outhead1("%sthird2:", label );
+        outline0("LDA #$00");
+        outline0("STA $FB");
+        outline0("STA $FB+1");
+        outline0("STA $FB+2");
+        outline0("STA $FB+3");
+        outline0("LDX #$10");
+
+        outhead1("%s:", label);
+        outline0("LSR $F8");
+        outline0("ROR $F7");
+        outline1("BCC %s_2", label);
+        outline0("LDA $FB+2");
+        outline0("CLC");
+        outline0("ADC $F9");
+        outline0("STA $FB+2");
+        outline0("LDA $FB+3");
+        outline0("ADC $FA");
+
+        outhead1("%s_2:", label);
+        outline0("ROR");
+        outline0("STA $FB+3");
+        outline0("ROR $FB+2");
+        outline0("ROR $FB+1");
+        outline0("ROR $FB");
+        outline0("DEX");
+        outline1("BNE %s", label);
+
+        outline0("LDA $FB");
+        outline1("STA %s", _other );
+        outline0("LDA $FC");
+        outline1("STA %s+1", _other );
+        outline0("LDA $FD");
+        outline1("STA %s+2", _other );
+        outline0("LDA $FE");
+        outline1("STA %s+3", _other );
+
+        outline0("PLA");
+        outline0("CMP #$80");
+        outline1("BNE %sdone", label);
+        outline1("LDA %s", _other );
+        outline0("EOR #$ff" );
+        outline1("STA %s", _other );
+        outline1("LDA %s+1", _other );
+        outline0("EOR #$ff" );
+        outline1("STA %s+1", _other );
+        outline1("LDA %s+2", _other );
+        outline0("EOR #$ff" );
+        outline1("STA %s+2", _other );
+        outline1("LDA %s+3", _other );
+        outline0("EOR #$ff" );
+        outline1("STA %s+4", _other );
+        outline0("CLC" );
+        outline1("LDA %s", _other );
+        outline0("ADC #1" );
+        outline1("STA %s", _other );
+        outline1("LDA %s+1", _other );
+        outline0("ADC #0" );
+        outline1("STA %s+1", _other );
+        outline1("LDA %s+2", _other );
+        outline0("ADC #0" );
+        outline1("STA %s+2", _other );
+        outline1("LDA %s+3", _other );
+        outline0("ADC #0" );
+        outline1("STA %s+3", _other );
+        outhead1("%sdone:", label );
+
+
+    } else {
+
+        outline1("LDA %s", _source );
+        outline0("STA $F7");
+        outline1("LDA %s+1", _source );
+        outline0("STA $F8");
+        outline1("LDA %s", _destination );
+        outline0("STA $F9");
+        outline1("LDA %s+1", _destination );
+        outline0("STA $FA");
+
+        outline0("LDA #$00");
+        outline0("STA $FB");
+        outline0("STA $FB+1");
+        outline0("STA $FB+2");
+        outline0("STA $FB+3");
+        outline0("LDX #$10");
+
+        outhead1("%s:", label);
+        outline0("LSR $F8");
+        outline0("ROR $F7");
+        outline1("BCC %s_2", label);
+        outline0("LDA $FB+2");
+        outline0("CLC");
+        outline0("ADC $F9");
+        outline0("STA $FB+2");
+        outline0("LDA $FB+3");
+        outline0("ADC $FA");
+
+        outhead1("%s_2:", label);
+        outline0("ROR");
+        outline0("STA $FB+3");
+        outline0("ROR $FB+2");
+        outline0("ROR $FB+1");
+        outline0("ROR $FB");
+        outline0("DEX");
+        outline1("BNE %s", label);
+
+        outline0("LDA $FB");
+        outline1("STA %s", _other );
+        outline0("LDA $FC");
+        outline1("STA %s+1", _other );
+        outline0("LDA $FD");
+        outline1("STA %s+2", _other );
+        outline0("LDA $FE");
+        outline1("STA %s+3", _other );
+
+    }
+    
 
 }
 
-void cpu6502_math_div_16bit_to_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, char * _other_remainder ) {
+void cpu6502_math_div_16bit_to_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, char * _other_remainder, int _signed ) {
 
     MAKE_LABEL
 
-    outline1("LDA %s", _source );
-    outline1("STA %s", _other );
-    outline1("LDA %s+1", _source );
-    outline1("STA %s+1", _other );
+    if ( _signed ) {
 
-    outline0("LDA #0" );
-    outline1("STA %s", _other_remainder );
-    outline1("STA %s+1", _other_remainder );
-    outline0("LDX #16" );
-    outhead1("%sL1:", label );
-    outline1("ASL %s", _other );
-    outline1("ROL %s+1", _other );
-    outline1("ROL %s", _other_remainder );
-    outline1("ROL %s+1", _other_remainder );
-    outline1("LDA %s", _other_remainder );
-    outline0("SEC" );
-    outline1("SBC %s", _destination );
-    outline0("TAY" );
-    outline1("LDA %s+1", _other_remainder );
-    outline1("SBC %s+1", _destination );
-    outline1("BCC %sL2", label );
-    outline1("STA %s+1", _other_remainder );
-    outline1("STY %s", _other_remainder );
-    outline1("INC %s", _other );
-    outhead1("%sL2:", label );
-    outline0("DEX" );
-    outhead1("BNE %sL1", label );
+        outline1("LDA %s+1", _source );
+        outline1("EOR %s+1", _destination );
+        outline0("AND #$80" );
+        outline0("PHA");
+
+        outline1("LDA %s+1", _source );
+        outline0("AND #$80" );
+        outline1("BEQ %ssecond", label );
+        outline0("CLC" );
+        outline1("LDA %s", _source );
+        outline0("EOR #$ff" );
+        outline0("STA $F7" );
+        outline1("LDA %s+1", _source );
+        outline0("EOR #$ff" );
+        outline0("STA $F8" );
+        outline0("CLC" );
+        outline0("LDA $F7" );
+        outline0("ADC #1" );
+        outline0("STA $F7" );
+        outline0("LDA $F8" );
+        outline0("ADC #0" );
+        outline0("STA $F8" );        
+        outline1("JMP %ssecond2", label );
+        outhead1("%ssecond:", label );
+        outline1("LDA %s", _source );
+        outline0("STA $F7");
+        outline1("LDA %s+1", _source );
+        outline0("STA $F8");
+        outline1("JMP %ssecond2", label );
+
+        outhead1("%ssecond2:", label );
+        outline1("LDA %s+1", _destination );
+        outline0("AND #$80" );
+        outline1("BEQ %sthird", label );
+        outline0("CLC" );
+        outline1("LDA %s", _destination );
+        outline0("EOR #$ff" );
+        outline0("STA $F9" );
+        outline1("LDA %s+1", _destination );
+        outline0("EOR #$ff" );
+        outline0("STA $FA" );
+        outline0("CLC" );
+        outline0("LDA $F9" );
+        outline0("ADC #1" );
+        outline0("STA $F9" );
+        outline0("LDA $FA" );
+        outline0("ADC #0" );
+        outline0("STA $FA" );        
+        outline1("JMP %sthird2", label );
+        outhead1("%sthird:", label );
+        outline1("LDA %s", _source );
+        outline0("STA $F9");
+        outline1("LDA %s+1", _source );
+        outline0("STA $FA");
+        outline1("JMP %sthird2", label );
+
+        outhead1("%sthird2:", label );
+
+        outline0("LDA $F7" );
+        outline1("STA %s", _other );
+        outline0("LDA $F8" );
+        outline1("STA %s+1", _other );
+
+        outline0("LDA #0" );
+        outline1("STA %s", _other_remainder );
+        outline1("STA %s+1", _other_remainder );
+        outline0("LDX #16" );
+        outhead1("%sL1:", label );
+        outline1("ASL %s", _other );
+        outline1("ROL %s+1", _other );
+        outline1("ROL %s", _other_remainder );
+        outline1("ROL %s+1", _other_remainder );
+        outline1("LDA %s", _other_remainder );
+        outline0("SEC" );
+        outline0("SBC $F9" );
+        outline0("TAY" );
+        outline1("LDA %s+1", _other_remainder );
+        outline0("SBC $FA" );
+        outline1("BCC %sL2", label );
+        outline1("STA %s+1", _other_remainder );
+        outline1("STY %s", _other_remainder );
+        outline1("INC %s", _other );
+        outhead1("%sL2:", label );
+        outline0("DEX" );
+        outhead1("BNE %sL1", label );        
+    } else {
+        outline1("LDA %s", _source );
+        outline1("STA %s", _other );
+        outline1("LDA %s+1", _source );
+        outline1("STA %s+1", _other );
+
+        outline0("LDA #0" );
+        outline1("STA %s", _other_remainder );
+        outline1("STA %s+1", _other_remainder );
+        outline0("LDX #16" );
+        outhead1("%sL1:", label );
+        outline1("ASL %s", _other );
+        outline1("ROL %s+1", _other );
+        outline1("ROL %s", _other_remainder );
+        outline1("ROL %s+1", _other_remainder );
+        outline1("LDA %s", _other_remainder );
+        outline0("SEC" );
+        outline1("SBC %s", _destination );
+        outline0("TAY" );
+        outline1("LDA %s+1", _other_remainder );
+        outline1("SBC %s+1", _destination );
+        outline1("BCC %sL2", label );
+        outline1("STA %s+1", _other_remainder );
+        outline1("STY %s", _other_remainder );
+        outline1("INC %s", _other );
+        outhead1("%sL2:", label );
+        outline0("DEX" );
+        outhead1("BNE %sL1", label );
+    }
+
 
 }
 
@@ -942,13 +1340,28 @@ void cpu6502_math_complement_const_16bit( Environment * _environment, char *_sou
  * @param _source Value to halves and destination for result
  * @param _steps Times to halves
  */
-void cpu6502_math_div2_const_16bit( Environment * _environment, char *_source, int _steps ) {
+void cpu6502_math_div2_const_16bit( Environment * _environment, char *_source, int _steps, int _signed ) {
 
-    while( _steps ) {
-        outline0("CLC");
-        outline1("LSR %s+1", _source);
-        outline1("ROR %s", _source);
-        --_steps;
+    if ( _signed ) {
+        outline1("LDA %s+1", _source);
+        outline0("AND #$80" );
+        outline0("TAX")
+        while( _steps ) {
+            outline0("CLC");
+            outline1("LSR %s+1", _source);
+            outline1("ROR %s", _source);
+            --_steps;
+        }
+        outline0("TXA")
+        outline1("ORA %s+1", _source);
+        outline1("STA %s+1", _source);
+    } else {
+        while( _steps ) {
+            outline0("CLC");
+            outline1("LSR %s+1", _source);
+            outline1("ROR %s", _source);
+            --_steps;
+        }
     }
 
 }
@@ -960,13 +1373,28 @@ void cpu6502_math_div2_const_16bit( Environment * _environment, char *_source, i
  * @param _source Value to halves and destination for result
  * @param _steps Times to halves
  */
-void cpu6502_math_mul2_const_16bit( Environment * _environment, char *_source, int _steps ) {
+void cpu6502_math_mul2_const_16bit( Environment * _environment, char *_source, int _steps, int _signed ) {
 
-    while( _steps ) {
-        outline0("CLC");
-        outline1("ASL %s", _source);
-        outline1("ROL %s+1", _source);
-        --_steps;
+    if ( _signed ) {
+        outline1("LDA %s+1", _source);
+        outline0("AND #$80" );
+        outline0("TAX")
+        while( _steps ) {
+            outline0("CLC");
+            outline1("ASL %s", _source);
+            outline1("ROL %s+1", _source);
+            --_steps;
+        }
+        outline0("TXA")
+        outline1("ORA %s+1", _source);
+        outline1("STA %s+1", _source);
+    } else {
+        while( _steps ) {
+            outline0("CLC");
+            outline1("ASL %s", _source);
+            outline1("ROL %s+1", _source);
+            --_steps;
+        }
     }
 
 }
@@ -1029,7 +1457,7 @@ void cpu6502_store_32bit( Environment * _environment, char *_destination, int _v
     outline1("STA %s+3", _destination);
 }
 
-void cpu6502_math_div_32bit_to_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, char * _other_remainder ) {
+void cpu6502_math_div_32bit_to_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, char * _other_remainder, int _signed ) {
 
     MAKE_LABEL
 
@@ -1287,7 +1715,7 @@ void cpu6502_math_add_32bit( Environment * _environment, char *_source, char *_d
  * @param _source Value to double and destination for result (if _other is NULL)
  * @param _other Destination address for result
  */
-void cpu6502_math_double_32bit( Environment * _environment, char *_source, char *_other ) {
+void cpu6502_math_double_32bit( Environment * _environment, char *_source, char *_other, int _signed ) {
     outline1("LDA %s", _source);
     outline0("ASL A");
     if ( _other ) {
@@ -1390,15 +1818,32 @@ void cpu6502_math_complement_const_32bit( Environment * _environment, char *_sou
  * @param _source Value to halves and destination for result
  * @param _steps Times to halves
  */
-void cpu6502_math_div2_const_32bit( Environment * _environment, char *_source, int _steps ) {
+void cpu6502_math_div2_const_32bit( Environment * _environment, char *_source, int _steps, int _signed ) {
 
-    while( _steps ) {
-        outline0("CLC");
-        outline1("LSR %s+3", _source);
-        outline1("ROR %s+2", _source);
-        outline1("ROR %s+1", _source);
-        outline1("ROR %s", _source);
-        --_steps;
+    if ( _signed ) {
+        outline1("LDA %s+3", _source);
+        outline0("AND #$80");
+        outline0("TAX");
+        while( _steps ) {
+            outline0("CLC");
+            outline1("LSR %s+3", _source);
+            outline1("ROR %s+2", _source);
+            outline1("ROR %s+1", _source);
+            outline1("ROR %s", _source);
+            --_steps;
+        }
+        outline0("TXA");
+        outline1("ORA %s+3", _source);
+        outline1("STA %s+3", _source);
+    } else {
+        while( _steps ) {
+            outline0("CLC");
+            outline1("LSR %s+3", _source);
+            outline1("ROR %s+2", _source);
+            outline1("ROR %s+1", _source);
+            outline1("ROR %s", _source);
+            --_steps;
+        }
     }
 
 }
@@ -1410,15 +1855,32 @@ void cpu6502_math_div2_const_32bit( Environment * _environment, char *_source, i
  * @param _source Value to double and destination for result
  * @param _steps Times to double
  */
-void cpu6502_math_mul2_const_32bit( Environment * _environment, char *_source, int _steps ) {
+void cpu6502_math_mul2_const_32bit( Environment * _environment, char *_source, int _steps, int _signed ) {
 
-    while( _steps ) {
-        outline0("CLC");
-        outline1("ASL %s", _source);
-        outline1("ROL %s+1", _source);
-        outline1("ROL %s+2", _source);
-        outline1("ROL %s+3", _source);
-        --_steps;
+    if ( _signed ) {
+        outline1("LDA %s+3", _source);
+        outline0("AND #$80");
+        outline0("TAX");
+        while( _steps ) {
+            outline0("CLC");
+            outline1("ASL %s", _source);
+            outline1("ROL %s+1", _source);
+            outline1("ROL %s+2", _source);
+            outline1("ROL %s+3", _source);
+            --_steps;
+        }
+        outline0("TXA");
+        outline1("ORA %s+3", _source);
+        outline1("STA %s+3", _source);
+    } else {
+        while( _steps ) {
+            outline0("CLC");
+            outline1("ASL %s", _source);
+            outline1("ROL %s+1", _source);
+            outline1("ROL %s+2", _source);
+            outline1("ROL %s+3", _source);
+            --_steps;
+        }
     }
 
 }

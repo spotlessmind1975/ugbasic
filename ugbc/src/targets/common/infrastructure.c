@@ -1196,20 +1196,25 @@ Variable * variable_complement_const( Environment * _environment, char * _destin
 Variable * variable_mul( Environment * _environment, char * _source, char * _destination ) {
     Variable * source = variable_retrieve( _environment, _source );
     Variable * target = variable_cast( _environment, _destination, source->type );
+
+    if ( VT_SIGNED( source->type ) != VT_SIGNED( target->type ) ) {
+        CRITICAL_MUL_UNSUPPORTED( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
+    }
+
     Variable * result = NULL;
     switch( VT_BITWIDTH( source->type ) ) {
         case 32:
             WARNING_BITWIDTH(_source, _destination );
-            result = variable_temporary( _environment, VT_DWORD, "(result of multiplication)" );
-            cpu_math_mul_16bit_to_32bit( _environment, source->realName, target->realName, result->realName );
+            result = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SDWORD : VT_DWORD, "(result of multiplication)" );
+            cpu_math_mul_16bit_to_32bit( _environment, source->realName, target->realName, result->realName, VT_SIGNED( source->type ) );
             break;
         case 16:
-            result = variable_temporary( _environment, VT_DWORD, "(result of multiplication)" );
-            cpu_math_mul_16bit_to_32bit( _environment, source->realName, target->realName, result->realName );
+            result = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SDWORD : VT_DWORD, "(result of multiplication)" );
+            cpu_math_mul_16bit_to_32bit( _environment, source->realName, target->realName, result->realName, VT_SIGNED( source->type ) );
             break;
         case 8:
-            result = variable_temporary( _environment, VT_WORD, "(result of multiplication)" );
-            cpu_math_mul_8bit_to_16bit( _environment, source->realName, target->realName, result->realName );
+            result = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SWORD : VT_WORD, "(result of multiplication)" );
+            cpu_math_mul_8bit_to_16bit( _environment, source->realName, target->realName, result->realName, VT_SIGNED( source->type ) );
             break;
         case 0:
             CRITICAL_MUL_UNSUPPORTED(_source, DATATYPE_AS_STRING[source->type]);
@@ -1230,23 +1235,28 @@ Variable * variable_mul( Environment * _environment, char * _source, char * _des
 Variable * variable_div( Environment * _environment, char * _source, char * _destination ) {
     Variable * source = variable_retrieve( _environment, _source );
     Variable * target = variable_cast( _environment, _destination, source->type );
+
+    if ( VT_SIGNED( source->type ) != VT_SIGNED( target->type ) ) {
+        CRITICAL_DIV_UNSUPPORTED( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
+    }
+
     Variable * result = NULL;
     Variable * remainder = NULL;
     switch( VT_BITWIDTH( source->type ) ) {
         case 32:
             result = variable_temporary( _environment, VT_DWORD, "(result of division)" );
             remainder = variable_temporary( _environment, VT_WORD, "(remainder of division)" );
-            cpu_math_div_32bit_to_16bit( _environment, source->realName, target->realName, result->realName, remainder->realName );
+            cpu_math_div_32bit_to_16bit( _environment, source->realName, target->realName, result->realName, remainder->realName, VT_SIGNED( source->type ) );
             break;
         case 16:
             result = variable_temporary( _environment, VT_DWORD, "(result of division)" );
             remainder = variable_temporary( _environment, VT_WORD, "(remainder of division)" );
-            cpu_math_div_16bit_to_16bit( _environment, source->realName, target->realName, result->realName, remainder->realName );
+            cpu_math_div_16bit_to_16bit( _environment, source->realName, target->realName, result->realName, remainder->realName, VT_SIGNED( source->type ) );
             break;
         case 8:
             result = variable_temporary( _environment, VT_BYTE, "(result of division)" );
             remainder = variable_temporary( _environment, VT_BYTE, "(remainder of division)" );
-            cpu_math_div_8bit_to_8bit( _environment, source->realName, target->realName, result->realName, remainder->realName );
+            cpu_math_div_8bit_to_8bit( _environment, source->realName, target->realName, result->realName, remainder->realName, VT_SIGNED( source->type ) );
             break;
         case 0:
             CRITICAL_DIV_UNSUPPORTED(_source, DATATYPE_AS_STRING[source->type]);
@@ -1495,13 +1505,13 @@ Variable * variable_mul2_const( Environment * _environment, char * _destination,
     Variable * destination = variable_retrieve( _environment, _destination );
     switch( VT_BITWIDTH( destination->type ) ) {
         case 32:
-            cpu_math_mul2_const_32bit( _environment, destination->realName, _steps );
+            cpu_math_mul2_const_32bit( _environment, destination->realName, _steps, VT_SIGNED( destination->type ) );
             break;
         case 16:
-            cpu_math_mul2_const_16bit( _environment, destination->realName, _steps );
+            cpu_math_mul2_const_16bit( _environment, destination->realName, _steps, VT_SIGNED( destination->type ) );
             break;
         case 8:
-            cpu_math_mul2_const_8bit( _environment, destination->realName, _steps );
+            cpu_math_mul2_const_8bit( _environment, destination->realName, _steps, VT_SIGNED( destination->type ) );
             break;
         case 0:
             CRITICAL_MUL2_UNSUPPORTED( _destination, DATATYPE_AS_STRING[destination->type] );
@@ -1527,16 +1537,16 @@ Variable * variable_mul2_const( Environment * _environment, char * _destination,
  * @throw EXIT_FAILURE "Destination variable does not exist"
  */
 Variable * variable_div2_const( Environment * _environment, char * _destination, int _bits ) {
-    Variable * destination = variable_retrieve( _environment, _destination );
+    Variable * destination = variable_retrieve( _environment, _destination );    
     switch( VT_BITWIDTH( destination->type ) ) {
         case 32:
-            cpu_math_div2_const_32bit( _environment, destination->realName, _bits );
+            cpu_math_div2_const_32bit( _environment, destination->realName, _bits, VT_SIGNED( destination->type ) );
             break;
         case 16:
-            cpu_math_div2_const_16bit( _environment, destination->realName, _bits );
+            cpu_math_div2_const_16bit( _environment, destination->realName, _bits, VT_SIGNED( destination->type ) );
             break;
         case 8:
-            cpu_math_div2_const_8bit( _environment, destination->realName, _bits );
+            cpu_math_div2_const_8bit( _environment, destination->realName, _bits, VT_SIGNED( destination->type ) );
             break;
         case 0:
             CRITICAL_DIV2_UNSUPPORTED( _destination, DATATYPE_AS_STRING[destination->type] );
