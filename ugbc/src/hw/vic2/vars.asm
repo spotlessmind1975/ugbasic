@@ -86,4 +86,4 @@ PLOTCVBASEHI:
     .byte >($8400+(24*40))
 
 XGR:    .word 0
-YGR:    .byte 0
+YGR:    .word 0
