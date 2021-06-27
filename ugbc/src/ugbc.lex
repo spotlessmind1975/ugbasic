@@ -105,6 +105,7 @@ DISABLE { return (DISABLE); }
 DONE { return (DONE); }
 DO { return (DO); }
 DOWN { return (DOWN); }
+DRAW { return (DRAW); }
 DWORD { return (DWORD); }
 E { return (E); }
 ECM { return(ECM); }

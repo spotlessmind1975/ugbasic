@@ -48,7 +48,7 @@ extern char DATATYPE_AS_STRING[][16];
 %token INKEY SCANCODE SCAN SHIFT SCANSHIFT BOTH SHIFTS NONE LETTER ASTERISK COLON COMMA 
 %token COMMODORE CONTROL CRSR CURSOR DELETE EQUAL FUNCTION INSERT ARROW MINUS PERIOD PLUS 
 %token POUND RUNSTOP RUN STOP SEMICOLON SLASH KEY STATE KEYSTATE KEYSHIFT CAPSLOCK CAPS LOCK ALT
-%token INPUT FREE TILEMAP EMPTY TILE EMPTYTILE PLOT GR CIRCLE
+%token INPUT FREE TILEMAP EMPTY TILE EMPTYTILE PLOT GR CIRCLE DRAW
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -1622,6 +1622,23 @@ circle_definition_expression:
 circle_definition:
     circle_definition_expression;
 
+draw_definition_expression:
+      optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
+        draw( _environment, $1, $3, $5, $7, $9 );
+    }
+    | optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y  {
+        draw( _environment, $1, $3, $5, $7, NULL );
+    }
+    | TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
+        draw( _environment, "XGR", "YGR", $2, $4, $6 );
+    }
+    | TO optional_x OP_COMMA optional_y  {
+        draw( _environment, "XGR", "YGR", $2, $4, NULL );
+    };
+
+draw_definition:
+    draw_definition_expression;
+
 ink_definition:
     expr {
         ink( _environment, $1 );
@@ -2051,6 +2068,7 @@ statement:
   | POINT point_definition
   | PLOT plot_definition
   | CIRCLE circle_definition
+  | DRAW draw_definition
   | INK ink_definition
   | VAR var_definition
   | TEXTADDRESS OP_ASSIGN expr {
