@@ -226,7 +226,7 @@ Definisci una variabile [name] sul banko [bank]. Eventualmente,
 
  </usermanual> */
 
-Variable * variable_define( Environment * _environment, char * _name, VariableType _type, unsigned int _value ) {
+Variable * variable_define( Environment * _environment, char * _name, VariableType _type, int _value ) {
 
     Variable * var = variable_find( _environment->variables, _name );
     if ( var ) {

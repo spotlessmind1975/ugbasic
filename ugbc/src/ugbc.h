@@ -176,6 +176,14 @@ typedef enum _VariableType {
 #define VT_ESIGN_16BIT( t, v ) ( VT_SIGNED(t) ? VT_SIGN_16BIT(v) : (v) ) 
 #define VT_ESIGN_32BIT( t, v ) ( VT_SIGNED(t) ? VT_SIGN_32BIT(v) : (v) ) 
 
+#define VT_USIGN_8BIT( v ) (char)( ( v & 0x80 ) ? -( ((~((unsigned char)v)))+1 ) : (v) )
+#define VT_USIGN_16BIT( v ) (short)( ( v & 0x8000 ) ? -( ((~((unsigned short)v)))+1 ) : (v) )
+#define VT_USIGN_32BIT( v ) (int)( ( v & 0x80000000 ) ? -( ((~((unsigned int)v)))+1 ) : (v) )
+
+#define VT_UNSIGN_8BIT( t, v ) ( VT_SIGNED(t) ? VT_USIGN_8BIT(v) : (v) )
+#define VT_UNSIGN_16BIT( t, v ) ( VT_SIGNED(t) ? VT_USIGN_16BIT(v) : (v) ) 
+#define VT_UNSIGN_32BIT( t, v ) ( VT_SIGNED(t) ? VT_USIGN_32BIT(v) : (v) ) 
+
 /**
  * @brief Maximum number of variable types
  */
@@ -219,7 +227,7 @@ typedef struct _Variable {
     /** 
      * The initial value of the variable, as given by last (re)definition.
      */
-    unsigned int value;
+    int value;
 
     /** 
      * The static string's valu, as given by last (re)definition.
@@ -1289,7 +1297,7 @@ Variable *              variable_compare( Environment * _environment, char * _so
 Variable *              variable_compare_not( Environment * _environment, char * _source, char * _dest );
 Variable *              variable_complement_const( Environment * _environment, char * _source, int _mask );
 Variable *              variable_decrement( Environment * _environment, char * _source );
-Variable *              variable_define( Environment * _environment, char * _name, VariableType _type, unsigned int _value );
+Variable *              variable_define( Environment * _environment, char * _name, VariableType _type, int _value );
 Variable *              variable_define_no_init( Environment * _environment, char * _name, VariableType _type );
 Variable *              variable_div( Environment * _environment, char * _source, char * _dest );
 Variable *              variable_div2_const( Environment * _environment, char * _source, int _bits );
