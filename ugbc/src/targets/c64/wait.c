@@ -199,12 +199,17 @@ void wait_milliseconds_var( Environment * _environment, char * _timing ) {
     MAKE_LABEL
 
     Variable * timing = variable_retrieve( _environment, _timing );
+    Variable * zero = variable_temporary( _environment, VT_BYTE, "(0)" );
+    variable_store( _environment, zero->name, 0 );
 
     Variable * temp = variable_cast( _environment, timing->name, VT_BYTE );
 
     variable_div2_const( _environment, temp->name, 2 );
 
-    vic2_busy_wait( _environment, temp->realName );
+    if_then( _environment, variable_compare_not( _environment, temp->name, zero->name )->name );
+        vic2_busy_wait( _environment, temp->realName );
+    end_if_then( _environment );
+
     
 }
 
