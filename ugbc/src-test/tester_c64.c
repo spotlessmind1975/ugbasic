@@ -148,13 +148,13 @@ void create_test( char *_name, void (*_payload)(TestEnvironment *), int (*_teste
             if ( v ) {
                 switch( VT_BITWIDTH( v->type ) ) {
                     case 8:
-                        v->value = memory[0];
+                        v->value = VT_UNSIGN_8BIT( v->type, memory[0] );
                         break;
                     case 16:
-                        v->value = memory[0]+(memory[1]<<8);
+                        v->value = VT_UNSIGN_16BIT( v->type, memory[0]+(memory[1]<<8) );
                         break;
                     case 32:
-                        v->value = memory[0]+(memory[1]<<8)+(memory[2]<<16)+(memory[3]<<24);
+                        v->value = VT_UNSIGN_32BIT( v->type, memory[0]+(memory[1]<<8)+(memory[2]<<16)+(memory[3]<<24) ) ;
                         break;
                     case 0:
                         switch( v->type ) {

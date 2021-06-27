@@ -756,7 +756,7 @@ int test_cpu_math_div2_8bit_tester( TestEnvironment * _te ) {
     Variable * sa = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
 
     return  ua->value == 0x10 && 
-            sa->value == 0xfc;
+            sa->value == -4;
 
 }
 
@@ -783,7 +783,7 @@ int test_cpu_math_div2_const_16bit_tester( TestEnvironment * _te ) {
     Variable * sa = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
 
     return  ua->value == 0x1090 && 
-            sa->value == 0xfffc;
+            sa->value == -4;
 
 }
 
@@ -810,7 +810,7 @@ int test_cpu_math_div2_const_32bit_tester( TestEnvironment * _te ) {
     Variable * sa = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
 
     return  ua->value == 0x10909090 && 
-            sa->value == 0xfffffffc;
+            sa->value == -4;
 
 }
 
@@ -837,7 +837,7 @@ int test_cpu_math_div2_const_8bit_tester( TestEnvironment * _te ) {
     Variable * sa = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
 
     return  ua->value == 0x10 && 
-            sa->value == 0xfc;
+            sa->value == -4;
 
 }
 
@@ -864,7 +864,7 @@ int test_cpu_math_double_16bit_tester( TestEnvironment * _te ) {
     Variable * sa = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
 
     return  ua->value == 0x4242 && 
-            sa->value == 0xfff0;
+            sa->value == -16;
 
 }
 
@@ -891,7 +891,7 @@ int test_cpu_math_double_32bit_tester( TestEnvironment * _te ) {
     Variable * sa = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
 
     return  ua->value == 0x42424242 && 
-            sa->value == 0xfffffff0;
+            sa->value == -16;
 
 }
 
@@ -918,7 +918,7 @@ int test_cpu_math_double_8bit_tester( TestEnvironment * _te ) {
     Variable * sa = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
 
     return  ua->value == 0x42 && 
-            sa->value == 0xd8;
+            sa->value == -40;
 
 }
 
@@ -1124,7 +1124,7 @@ int test_cpu_math_mul2_const_16bit_tester( TestEnvironment * _te ) {
     Variable * sa = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
 
     return  ua->value == 0x4242 &&
-            sa->value == 0xfff0;
+            sa->value == -16;
 
 }
 
@@ -1151,7 +1151,7 @@ int test_cpu_math_mul2_const_32bit_tester( TestEnvironment * _te ) {
     Variable * sa = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
 
     return  ua->value == 0x42424242 &&
-            sa->value == 0xfffffff0;
+            sa->value == -16;
 
 }
 
@@ -1179,7 +1179,7 @@ int test_cpu_math_mul2_const_8bit_tester( TestEnvironment * _te ) {
     Variable * sa = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
 
     return  ua->value == 0x42 &&
-            sa->value == 0xf0;
+            sa->value == -16;
 
 }
 

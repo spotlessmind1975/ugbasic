@@ -18,6 +18,7 @@ int main( int _argc, char *_argv[] ) {
     test_cpu( );
     test_variables( );
     test_conditionals( );
+    test_loops( );
     test_ons( );
     test_controls( );
     test_examples( );

@@ -1,6 +1,3 @@
-#ifndef __UGBASICTESTER__
-#define __UGBASICTESTER__
-
 /*****************************************************************************
  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
  *****************************************************************************
@@ -26,7 +23,7 @@
  *
  * Se non richiesto dalla legislazione vigente o concordato per iscritto,
  * il software distribuito nei termini della Licenza è distribuito
- * "COSÌ COM'È", SENZA GARANZIE O CONDIZIONI DI ALCUN TIPO, esplicite o
+ * "COSì COM'è", SENZA GARANZIE O CONDIZIONI DI ALCUN TIPO, esplicite o
  * implicite. Consultare la Licenza per il testo specifico che regola le
  * autorizzazioni e le limitazioni previste dalla medesima.
  ****************************************************************************/
@@ -35,31 +32,44 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <limits.h>
-#include <unistd.h>
+#include "../tester.h"
 
-#include "../src/ugbc.h"
 
 /****************************************************************************
- * DECLARATIONS AND DEFINITIONS SECTION 
+ * CODE SECTION
  ****************************************************************************/
 
-void test_cpu( );
-void test_variables( );
-void test_conditionals( );
-void test_loops( );
-void test_ons( );
-void test_controls( );
-void test_examples( );
-void test_print( );
+void test_for_step_minus_one_payload( TestEnvironment * _te ) {
 
-#ifdef __c64__
-    #include "tester_c64.h"
-#elif __zx__
-    #include "tester_zx.h"
-#endif
+    Environment * e = &_te->environment;
 
-#endif
+    Variable * index = variable_define( e, "index", VT_SWORD, 0 );
+    Variable * hundred = variable_define( e, "hundred", VT_SWORD, 100 );
+    Variable * zero = variable_define( e, "zero", VT_SWORD, 0 );
+    Variable * minusOne = variable_define( e, "minusone", VT_SWORD, -1 );
+
+    begin_for_step( e, index->name, hundred->name, zero->name, minusOne->name );
+    end_for( e );
+    
+    _te->trackedVariables[0] = index;
+    _te->trackedVariables[1] = minusOne;
+
+}
+
+int test_for_step_minus_one_tester( TestEnvironment * _te ) {
+
+    Variable * index = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * minusOne = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+
+printf( "index = %d\n", index->value );
+printf( "minusOne = %d\n", minusOne->value );
+
+    return index->value == -1 && minusOne->value == -1;
+
+}
+
+void test_loops( ) {
+
+    create_test( "for_step_minus_one", &test_for_step_minus_one_payload, &test_for_step_minus_one_tester );    
+
+}
