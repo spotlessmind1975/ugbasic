@@ -40,14 +40,6 @@
 
 void circle( Environment * _environment, char * _x, char * _y, char * _r, char * _c ) {
 
-    if ( !_x ) {
-        _x = variable_retrieve( _environment, "XGR" )->name;
-    }
-
-    if ( !_y ) {
-        _y = variable_retrieve( _environment, "YGR" )->name;
-    }
-
     Variable * xCentre = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
     Variable * yCentre = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
     Variable * r = variable_retrieve_or_define( _environment, _r, VT_POSITION, 0 );
@@ -164,5 +156,13 @@ void circle( Environment * _environment, char * _x, char * _y, char * _r, char *
         // }
     // } 
     end_while( _environment );
+
+    if ( strcmp( _x, "XGR" ) != 0 ) {
+        variable_move( _environment, _x, "XGR" );
+    }
+
+    if ( strcmp( _y, "YGR" ) != 0 ) {
+        variable_move( _environment, _y, "YGR" );
+    }
 
 }

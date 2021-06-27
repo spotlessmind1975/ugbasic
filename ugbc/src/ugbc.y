@@ -69,7 +69,7 @@ extern char DATATYPE_AS_STRING[][16];
 %type <string> key_scancode_definition key_scancode_alphadigit key_scancode_function_digit
 %type <integer> datatype
 %type <integer> optional_integer
-%type <string> optional_expr
+%type <string> optional_expr optional_x optional_y
 
 %right Integer String CP 
 %left OP_DOLLAR
@@ -1573,6 +1573,24 @@ point_definition:
     point_definition_simple
   | point_definition_expression;
 
+optional_x:
+    expr {
+        $$ = $1;
+    }
+    | {
+        $$ = strdup( "XGR" );
+    }
+    ;
+
+optional_y:
+    expr {
+        $$ = $1;
+    }
+    | {
+        $$ = strdup( "YGR" );
+    }
+    ;
+
 optional_expr:
     expr {
         $$ = $1;
@@ -1583,10 +1601,10 @@ optional_expr:
     ;
 
 plot_definition_expression:
-      optional_expr OP_COMMA optional_expr OP_COMMA optional_expr {
+      optional_x OP_COMMA optional_y OP_COMMA optional_expr {
         plot( _environment, $1, $3, $5 );
     }
-    | optional_expr OP_COMMA optional_expr {
+    | optional_x OP_COMMA optional_y {
         plot( _environment, $1, $3, NULL );
     };
 
@@ -1594,10 +1612,10 @@ plot_definition:
     plot_definition_expression;
 
 circle_definition_expression:
-      optional_expr OP_COMMA optional_expr OP_COMMA optional_expr OP_COMMA optional_expr {
+      optional_x OP_COMMA optional_y OP_COMMA expr OP_COMMA optional_expr {
         circle( _environment, $1, $3, $5, $7 );
     }
-    | optional_expr OP_COMMA optional_expr OP_COMMA optional_expr {
+    | optional_x OP_COMMA optional_y OP_COMMA expr {
         circle( _environment, $1, $3, $5, NULL );
     };
 
