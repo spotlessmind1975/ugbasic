@@ -105,6 +105,7 @@ PLOTD:
     LDA (PLOTDEST),y           ;get row with point in it
     ORA PLOTORBIT,x            ;isolate AND set the point
     STA (PLOTDEST),y           ;write back to $A000
+    LDY #0
     LDA (PLOTCDEST),y          ;get row with point in it
     AND #$0f                   ;isolate AND set the point
     ORA _PEN                   ;isolate OR set the point
@@ -154,6 +155,7 @@ PLOTC:
     SEI
     LDA #$36
     STA $01
+    LDY #0
     LDA (PLOTCDEST),y          ;get row with point in it
     LSR A
     LSR A
