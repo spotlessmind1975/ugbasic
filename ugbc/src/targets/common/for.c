@@ -146,8 +146,6 @@ void begin_for_step( Environment * _environment, char * _index, char * _from, ch
     Variable * from = variable_retrieve( _environment, _from );
     Variable * to = variable_retrieve( _environment, _to );
     Variable * step = variable_retrieve( _environment, _step );
-
-    variable_store( _environment, step->name, 1 );
     
     MAKE_LABEL
 
