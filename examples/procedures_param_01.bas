@@ -21,7 +21,7 @@ REM locali che vengono alimentate dal chiamante. Il valore restituito deve esser
 REM considerato come un valore che potrebbe essere utilizzato dal chiamante. 
 REM L'esempio implementerà una procedura che unisce tre stringhe tutte insieme.
 
-    PROCEDURE joinString[a$,b$,c$]
+    PROCEDURE joinString[a$,b$,c$ ]
         PRINT "joinString called with:"
         PRINT " a$ = ";a$
         PRINT " b$ = ";b$
