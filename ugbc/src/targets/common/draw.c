@@ -38,8 +38,163 @@
  * CODE SECTION 
  ****************************************************************************/
 
-void draw( Environment * _environment, char * _x1, char * _y1, char * _x2, char * _y2, char * _c ) {
+void draw( Environment * _environment, char * _x0, char * _y0, char * _x1, char * _y1, char * _c ) {
 
+    Variable * zero = variable_temporary( _environment, VT_POSITION, "(0)" );
+    variable_store( _environment, zero->name, 0 );
+    Variable * sixteen = variable_temporary( _environment, VT_BYTE, "(16)" );
+    variable_store( _environment, sixteen->name, 16 );
+    
+    Variable * pattern = variable_retrieve( _environment, "LINE" );
+    Variable * bit = variable_temporary( _environment, VT_BYTE, "(bit)" );
+    Variable * fraction = variable_temporary( _environment, VT_POSITION, "(fraction)");
+    Variable * x0 = variable_retrieve_or_define( _environment, _x0, VT_POSITION, 0 );
+    Variable * y0 = variable_retrieve_or_define( _environment, _y0, VT_POSITION, 0 );
+    Variable * x1 = variable_retrieve_or_define( _environment, _x1, VT_POSITION, 0 );
+    Variable * y1 = variable_retrieve_or_define( _environment, _y1, VT_POSITION, 0 );
+    Variable * x = variable_temporary( _environment, VT_POSITION, "(x)" );
+    Variable * y = variable_temporary( _environment, VT_POSITION, "(y)" );
+
+    // int dx, dy;
+    Variable * dx = variable_temporary( _environment, VT_POSITION, "(dx)");
+    Variable * dy = variable_temporary( _environment, VT_POSITION, "(dy)");
+    Variable * dx2 = variable_temporary( _environment, VT_POSITION, "(dx2)");
+    Variable * dy2 = variable_temporary( _environment, VT_POSITION, "(dy2)");
+
+    // int stepx, stepy;
+    Variable * stepx = variable_temporary( _environment, VT_POSITION, "(stepx)");
+    Variable * stepy = variable_temporary( _environment, VT_POSITION, "(stepy)");
+
+    variable_move( _environment, x0->name, x->name );
+    variable_move( _environment, y0->name, y->name );
+
+    // dx = x1 - x0;
+    variable_move( _environment, variable_sub( _environment, x1->name, x0->name )->name, dx->name );
+    
+    // dy = y1 - y0;
+    variable_move( _environment, variable_sub( _environment, y1->name, y0->name )->name, dy->name );
+
+    // if (dy < 0)
+    // {
+    if_then( _environment, variable_less_than( _environment, dy->name, zero->name, 0 )->name );
+    //     dy = -dy;
+        variable_move( _environment, variable_sub( _environment, zero->name, dy->name )->name, dy->name );
+    //     stepy = -1;
+        variable_store( _environment, stepy->name, -1 );
+    // }
+    else_if_then( _environment, NULL );
+    // else
+    // {
+    //     stepy = 1;
+        variable_store( _environment, stepy->name, 1 );
+    // }
+    end_if_then( _environment );
+    // if (dx < 0)
+    // {
+    if_then( _environment, variable_less_than( _environment, dx->name, zero->name, 0 )->name );
+    //     dx = -dx;
+        variable_move( _environment, variable_sub( _environment, zero->name, dx->name )->name, dx->name );
+    //     stepx = -1;
+        variable_store( _environment, stepx->name, -1 );
+    // }
+    else_if_then( _environment, NULL );
+    // else
+    // {
+    //     stepx = 1;
+        variable_store( _environment, stepx->name, 1 );
+    // }
+    end_if_then( _environment );
+    // dy <<= 1; /* dy is now 2*dy */
+    variable_move_naked( _environment, dy->name, dy2->name );
+    variable_mul2_const( _environment, dy2->name, 1 );
+    // dx <<= 1; /* dx is now 2*dx */
+    variable_move_naked( _environment, dx->name, dx2->name );
+    variable_mul2_const( _environment, dx2->name, 1 );
+    // if ((0 <= x0) && (x0 < RDim) && (0 <= y0) && (y0 < RDim))
+    //     theRaster[x0][y0] = 1;
+    if_then( _environment, variable_bit( _environment, pattern->name, bit->name )->name );
+        // cout << "(" << x << "," << y << ")\n";
+        plot( _environment, x->name, y->name, _c );
+    end_if_then( _environment );
+    variable_increment( _environment, bit->name );
+    if_then( _environment, variable_compare( _environment, bit->name, sixteen->name )->name );
+        variable_store( _environment, bit->name, 0 );
+    end_if_then( _environment );
+    // 16 if (dx > dy)
+    // {
+    if_then( _environment, variable_greater_than( _environment, dx2->name, dy2->name, 0 )->name );
+    //     int fraction = dy - (dx >> 1);
+        variable_move( _environment, variable_sub( _environment, dy2->name, dx->name)->name, fraction->name);
+    //     while (x0 != x1)
+    //     {
+        begin_while( _environment );
+        begin_while_condition( _environment, variable_compare_not( _environment, x->name, x1->name )->name );
+    //         x0 += stepx;
+            variable_move( _environment, variable_add( _environment, x->name, stepx->name )->name, x->name );
+    //         if (fraction >= 0)
+    //         {
+            if_then( _environment, variable_greater_than( _environment, fraction->name, zero->name, 1 )->name );
+    //             y0 += stepy;
+                variable_move( _environment, variable_add( _environment, y->name, stepy->name )->name, y->name );
+    //             fraction -= dx;
+                variable_move( _environment, variable_sub( _environment, fraction->name, dx2->name )->name, fraction->name );
+    //         }
+            end_if_then( _environment );
+    //         fraction += dy;
+            variable_move( _environment, variable_add( _environment, fraction->name, dy2->name )->name, fraction->name );
+    //         if ((0 <= x0) && (x0 < RDim) && (0 <= y0) && (y0 < RDim))
+    //             theRaster[x0][y0] = 1;
+            if_then( _environment, variable_bit( _environment, pattern->name, bit->name )->name );
+                // cout << "(" << x << "," << y << ")\n";
+                plot( _environment, x->name, y->name, _c );
+            end_if_then( _environment );
+            variable_increment( _environment, bit->name );
+            if_then( _environment, variable_compare( _environment, bit->name, sixteen->name )->name );
+                variable_store( _environment, bit->name, 0 );
+            end_if_then( _environment );
+    //     }
+        end_while( _environment );
+    // }
+    else_if_then( _environment, NULL );
+    // else
+    // {
+    //     int fraction = dx - (dy >> 1);
+        variable_move( _environment, variable_sub( _environment, dx2->name, dy->name)->name, fraction->name);
+    //     while (y0 != y1)
+    //     {
+        begin_while( _environment );
+        begin_while_condition( _environment, variable_compare_not( _environment, y->name, y1->name )->name );
+    //         if (fraction >= 0)
+    //         {
+            if_then( _environment, variable_greater_than( _environment, fraction->name, zero->name, 1 )->name );
+    //             17 x0 += stepx;
+                variable_move( _environment, variable_add( _environment, x->name, stepx->name )->name, x->name );
+    //             fraction -= dy;
+                variable_move( _environment, variable_sub( _environment, fraction->name, dy2->name )->name, fraction->name );
+    //         }
+            end_if_then( _environment );
+    //         y0 += stepy;
+            variable_move( _environment, variable_add( _environment, y->name, stepy->name )->name, y->name );
+    //         fraction += dx;
+            variable_move( _environment, variable_add( _environment, fraction->name, dx2->name )->name, fraction->name );
+    //         if ((0 <= x0) && (x0 < RDim) && (0 <= y0) && (y0 < RDim))
+    //             theRaster[x0][y0] = 1;
+            if_then( _environment, variable_bit( _environment, pattern->name, bit->name )->name );
+                // cout << "(" << x << "," << y << ")\n";
+                plot( _environment, x->name, y->name, _c );
+            end_if_then( _environment );
+            variable_increment( _environment, bit->name );
+            if_then( _environment, variable_compare( _environment, bit->name, sixteen->name )->name );
+                variable_store( _environment, bit->name, 0 );
+            end_if_then( _environment );
+    //     }
+        end_while( _environment );
+    // }
+    end_if_then( _environment );
+
+
+
+/*
     Variable * x1 = variable_retrieve_or_define( _environment, _x1, VT_POSITION, 0 );
     Variable * y1 = variable_retrieve_or_define( _environment, _y1, VT_POSITION, 0 );
     Variable * x2 = variable_retrieve_or_define( _environment, _x2, VT_POSITION, 0 );
@@ -113,5 +268,5 @@ void draw( Environment * _environment, char * _x1, char * _y1, char * _x2, char 
         // }
         end_for( _environment );
     end_if_then( _environment );
-
+*/
 }
