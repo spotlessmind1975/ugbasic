@@ -1203,9 +1203,9 @@ void cpu6502_math_div_16bit_to_16bit( Environment * _environment, char *_source,
         outline0("STA $FA" );        
         outline1("JMP %sthird2", label );
         outhead1("%sthird:", label );
-        outline1("LDA %s", _source );
+        outline1("LDA %s", _destination );
         outline0("STA $F9");
-        outline1("LDA %s+1", _source );
+        outline1("LDA %s+1", _destination );
         outline0("STA $FA");
         outline1("JMP %sthird2", label );
 
@@ -1479,9 +1479,9 @@ void cpu6502_math_div_32bit_to_16bit( Environment * _environment, char *_source,
     outhead1("%sSTART:", label );
     outline0("SEC" );
     outline0("LDA $24" );
-    outline0("SBC N" );
+    outline0("SBC $22" );
     outline0("LDA $25" );
-    outline0("SBC N+1 " );
+    outline0("SBC $23 " );
     outline1("BCS %soflo", label );
     outline0("LDX #$11" );
     outhead1("%sloop:", label)
@@ -1493,7 +1493,7 @@ void cpu6502_math_div_32bit_to_16bit( Environment * _environment, char *_source,
 
     outline0("ROL $24" );
     outline0("ROL $25" );
-    outline0("STZ $29" );
+    outline0("STA $29" );
     outline0("ROL $30" ); // <<--- forse $29
     outline0("SEC" );
     outline0("LDA $24" );
@@ -1508,9 +1508,9 @@ void cpu6502_math_div_32bit_to_16bit( Environment * _environment, char *_source,
     outline0("LDA $28");
     outline0("STA $24");
     outline0("STY $25" );
-    outline1("BRA %sloop", label );
+    outline1("JMP %sloop", label );
 
-    outhead1("%soflo", label );
+    outhead1("%soflo:", label );
     outline0("LDA $ff" );
     outline0("STA $24" );
     outline0("STA $25" );
