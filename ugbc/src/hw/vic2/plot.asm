@@ -23,6 +23,20 @@ PLOT:
 
     CLC
 
+    LDA PLOTY
+    CMP #200
+    BCC PLOT2
+    JMP PLOTP
+PLOT2:
+    LDA PLOTX+1
+    AND #1
+    BEQ PLOT3
+    LDA PLOTX
+    CMP #64
+    BCC PLOT3
+    JMP PLOTP
+PLOT3:
+
     ;-------------------------
     ;calc Y-cell, divide by 8
     ;y/8 is y-cell table index
