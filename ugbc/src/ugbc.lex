@@ -232,6 +232,7 @@ PINK { return(PINK); }
 PLOT { return(PLOT); }
 PLUS { return(PLUS); }
 POINT { return (POINT); }
+POLYLINE { return (POLYLINE); }
 POUND { return (POUND); }
 POP { return (POP); }
 POSITION { return (POSITION); }

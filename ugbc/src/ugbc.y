@@ -48,7 +48,7 @@ extern char DATATYPE_AS_STRING[][16];
 %token INKEY SCANCODE SCAN SHIFT SCANSHIFT BOTH SHIFTS NONE LETTER ASTERISK COLON COMMA 
 %token COMMODORE CONTROL CRSR CURSOR DELETE EQUAL FUNCTION INSERT ARROW MINUS PERIOD PLUS 
 %token POUND RUNSTOP RUN STOP SEMICOLON SLASH KEY STATE KEYSTATE KEYSHIFT CAPSLOCK CAPS LOCK ALT
-%token INPUT FREE TILEMAP EMPTY TILE EMPTYTILE PLOT GR CIRCLE DRAW LINE BOX
+%token INPUT FREE TILEMAP EMPTY TILE EMPTYTILE PLOT GR CIRCLE DRAW LINE BOX POLYLINE
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -1648,19 +1648,66 @@ draw_definition:
 box_definition_expression:
       optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
         box( _environment, $1, $3, $5, $7, $9 );
+        gr_locate( _environment, $5, $7 );
     }
     | optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y  {
         box( _environment, $1, $3, $5, $7, NULL );
+        gr_locate( _environment, $5, $7 );
     }
     | TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
         box( _environment, "XGR", "YGR", $2, $4, $6 );
+        gr_locate( _environment, $2, $4 );
     }
     | TO optional_x OP_COMMA optional_y  {
         box( _environment, "XGR", "YGR", $2, $4, NULL );
+        gr_locate( _environment, $2, $4 );
     };
 
 box_definition:
     box_definition_expression;
+
+polyline_definition_expression_continue:
+      TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
+        draw( _environment, "XGR", "YGR", $2, $4, $6 );
+        gr_locate( _environment, $2, $4 );
+    }
+    | TO optional_x OP_COMMA optional_y  {
+        draw( _environment, "XGR", "YGR", $2, $4, NULL );
+        gr_locate( _environment, $2, $4 );
+    } polyline_definition_expression_continue
+    | TO optional_x OP_COMMA optional_y  {
+        draw( _environment, "XGR", "YGR", $2, $4, NULL );
+        gr_locate( _environment, $2, $4 );
+    };
+
+polyline_definition_expression:
+      optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
+        draw( _environment, $1, $3, $5, $7, $9 );
+        gr_locate( _environment, $5, $7 );
+    }
+    | optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y  {
+        draw( _environment, $1, $3, $5, $7, NULL );
+        gr_locate( _environment, $5, $7 );
+    }
+    | optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y  {
+        draw( _environment, $1, $3, $5, $7, NULL );
+        gr_locate( _environment, $5, $7 );
+    } polyline_definition_expression_continue
+    | TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
+        draw( _environment, "XGR", "YGR", $2, $4, $6 );
+        gr_locate( _environment, $2, $4 );
+    }
+    | TO optional_x OP_COMMA optional_y  {
+        draw( _environment, "XGR", "YGR", $2, $4, NULL );
+        gr_locate( _environment, $2, $4 );
+    }
+    | TO optional_x OP_COMMA optional_y  {
+        draw( _environment, "XGR", "YGR", $2, $4, NULL );
+        gr_locate( _environment, $2, $4 );
+    } polyline_definition_expression_continue;
+
+polyline_definition:
+    polyline_definition_expression;
 
 ink_definition:
     expr {
@@ -2093,6 +2140,7 @@ statement:
   | CIRCLE circle_definition
   | DRAW draw_definition
   | BOX box_definition
+  | POLYLINE polyline_definition
   | SET LINE expr {
       variable_move( _environment, $3, "LINE" );
   }

@@ -1056,7 +1056,7 @@ void                    colormap_clear_with_vars( Environment * _environment, ch
 // *D*
 //----------------------------------------------------------------------------
 
-void                    draw( Environment * _environment, char * _x1, char * _y1, char * _x2, char * _y2, char * _c );
+void                    draw( Environment * _environment, char * _x0, char * _y0, char * _x1, char * _y1, char * _c );
 
 //----------------------------------------------------------------------------
 // *E*
