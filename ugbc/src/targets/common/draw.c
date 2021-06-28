@@ -114,12 +114,4 @@ void draw( Environment * _environment, char * _x1, char * _y1, char * _x2, char 
         end_for( _environment );
     end_if_then( _environment );
 
-    if ( strcmp( _x2, "XGR" ) != 0 ) {
-        variable_move( _environment, _x2, "XGR" );
-    }
-
-    if ( strcmp( _y2, "YGR" ) != 0 ) {
-        variable_move( _environment, _y2, "YGR" );
-    }
-
 }

@@ -1614,9 +1614,11 @@ plot_definition:
 circle_definition_expression:
       optional_x OP_COMMA optional_y OP_COMMA expr OP_COMMA optional_expr {
         circle( _environment, $1, $3, $5, $7 );
+        gr_locate( _environment, $1, $3 );
     }
     | optional_x OP_COMMA optional_y OP_COMMA expr {
         circle( _environment, $1, $3, $5, NULL );
+        gr_locate( _environment, $1, $3 );
     };
 
 circle_definition:
@@ -1625,15 +1627,19 @@ circle_definition:
 draw_definition_expression:
       optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
         draw( _environment, $1, $3, $5, $7, $9 );
+        gr_locate( _environment, $5, $7 );
     }
     | optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y  {
         draw( _environment, $1, $3, $5, $7, NULL );
+        gr_locate( _environment, $5, $7 );
     }
     | TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
         draw( _environment, "XGR", "YGR", $2, $4, $6 );
+        gr_locate( _environment, $2, $4 );
     }
     | TO optional_x OP_COMMA optional_y  {
         draw( _environment, "XGR", "YGR", $2, $4, NULL );
+        gr_locate( _environment, $2, $4 );
     };
 
 draw_definition:

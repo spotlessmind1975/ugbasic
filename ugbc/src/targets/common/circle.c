@@ -157,12 +157,4 @@ void circle( Environment * _environment, char * _x, char * _y, char * _r, char *
     // } 
     end_while( _environment );
 
-    if ( strcmp( _x, "XGR" ) != 0 ) {
-        variable_move( _environment, _x, "XGR" );
-    }
-
-    if ( strcmp( _y, "YGR" ) != 0 ) {
-        variable_move( _environment, _y, "YGR" );
-    }
-
 }
