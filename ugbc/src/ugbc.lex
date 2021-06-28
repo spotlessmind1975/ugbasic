@@ -56,6 +56,7 @@ BEGIN { return (BEG); }
 BIN\$ { return (BIN); }
 BIT { return (BIT); }
 BOTH { return (BOTH); }
+BOX { return (BOX); }
 BITMAP { return (BITMAP); }
 BLACK { return (BLACK); }
 BLUE { return (BLUE); }
@@ -186,6 +187,7 @@ LEFT\$ { return (LEFT); }
 LEN { return (LEN); }
 LETTER { return (LETTER); }
 LIGHT { return(LIGHT); }
+LINE { return(LINE); }
 LOCATE { return(LOCATE); }
 LOCK { return (LOCK); }
 LOOP { return (LOOP); }
@@ -330,7 +332,8 @@ Z { return (Z); }
 
 [A-Za-z][A-Za-z0-9\_]* { yylval.string = strdup(yytext); return(Identifier);  }
 \"(\\.|[^"\\])*\" { yylval.string = strdup(yytext); memcpy(yylval.string,yylval.string+1,strlen(yylval.string)); yylval.string[strlen(yylval.string)-1]=0; return(String);  }
-\\$[0-9A-fa-f]+ { yylval.integer = strtol(yytext+1,0,16); return(Integer); }
+\$[a-fA-F0-9]+ { yylval.integer = strtol(yytext+1,0,16); return(Integer); }
+%[0-1]+ { yylval.integer = strtol(yytext+1,0,2); return(Integer); }
 \s[-][0-9]+ { yylval.integer = atoi(yytext); return(Integer);  }
 [0-9]+ { yylval.integer = atoi(yytext); return(Integer);  }
 

@@ -44,44 +44,75 @@ void draw( Environment * _environment, char * _x1, char * _y1, char * _x2, char 
     Variable * y1 = variable_retrieve_or_define( _environment, _y1, VT_POSITION, 0 );
     Variable * x2 = variable_retrieve_or_define( _environment, _x2, VT_POSITION, 0 );
     Variable * y2 = variable_retrieve_or_define( _environment, _y2, VT_POSITION, 0 );
+    Variable * pattern = variable_retrieve( _environment, "LINE" );
+    Variable * bit = variable_temporary( _environment, VT_BYTE, "(bit)" );
     Variable * m_new = variable_temporary( _environment, VT_POSITION, "(m_new)" );
     Variable * slope_error_new = variable_temporary( _environment, VT_POSITION, "(slope_error_new)" );
     Variable * x = variable_temporary( _environment, VT_POSITION, "(x)" );
     Variable * y = variable_temporary( _environment, VT_POSITION, "(y)" );
     Variable * zero = variable_temporary( _environment, VT_POSITION, "(0)" );
+    Variable * sixteen = variable_temporary( _environment, VT_BYTE, "(16)" );
+
     variable_store( _environment, zero->name, 0 );
+    variable_store( _environment, bit->name, 0 );
+    variable_store( _environment, sixteen->name, 16 );
 
-    // int m_new = 2 * (y2 - y1);
-    variable_move( _environment, variable_mul2_const( _environment, variable_sub( _environment, y2->name, y1->name)->name , 1 )->name, m_new->name );
+    if_then( _environment, variable_compare( _environment, x1->name, x2->name )->name );
+        variable_move( _environment, x1->name, x->name );
+        begin_for( _environment, y->name, y1->name, y2->name );
 
-    // int slope_error_new = m_new - (x2 - x1);
-    variable_move( _environment, variable_sub( _environment, m_new->name, variable_sub( _environment, x2->name, x1->name)->name )->name, slope_error_new->name );
+            if_then( _environment, variable_bit( _environment, pattern->name, bit->name )->name );
+                // cout << "(" << x << "," << y << ")\n";
+                plot( _environment, x->name, y->name, _c );
+            end_if_then( _environment );
 
-   // for (int x = x1, y = y1; x <= x2; x++)
-//   {
-    variable_move( _environment, y1->name, y->name );
-    begin_for( _environment, x->name, x1->name, x2->name );
+            variable_increment( _environment, bit->name );
+            if_then( _environment, variable_compare( _environment, bit->name, sixteen->name )->name );
+                variable_store( _environment, bit->name, 0 );
+            end_if_then( _environment );
 
-        // cout << "(" << x << "," << y << ")\n";
-        plot( _environment, x->name, y->name, _c );
+        end_for( _environment );
+    else_if_then( _environment, NULL );
 
-        // Add slope to increment angle formed
-        // slope_error_new += m_new;
-        variable_move( _environment, variable_add( _environment, slope_error_new->name, m_new->name)->name, slope_error_new->name );
+        // int m_new = 2 * (y2 - y1);
+        variable_move( _environment, variable_mul2_const( _environment, variable_sub( _environment, y2->name, y1->name)->name , 1 )->name, m_new->name );
 
-        // Slope error reached limit, time to
-        // increment y and update slope error.
-        // if (slope_error_new >= 0)
-        // {
-        if_then( _environment, variable_greater_than( _environment, slope_error_new->name, zero->name, 1 )->name );
-            // y++;
-            variable_increment( _environment, y->name );
-            // slope_error_new  -= 2 * (x2 - x1);
-            variable_move( _environment, variable_sub( _environment, slope_error_new->name, variable_mul2_const( _environment, variable_sub( _environment, x2->name, x1->name )->name, 1 )->name )->name, slope_error_new->name );
+        // int slope_error_new = m_new - (x2 - x1);
+        variable_move( _environment, variable_sub( _environment, m_new->name, variable_sub( _environment, x2->name, x1->name)->name )->name, slope_error_new->name );
+
+    // for (int x = x1, y = y1; x <= x2; x++)
+    //   {
+        variable_move( _environment, y1->name, y->name );
+        begin_for( _environment, x->name, x1->name, x2->name );
+
+            if_then( _environment, variable_bit( _environment, pattern->name, bit->name )->name );
+                // cout << "(" << x << "," << y << ")\n";
+                plot( _environment, x->name, y->name, _c );
+            end_if_then( _environment );
+
+            variable_increment( _environment, bit->name );
+            if_then( _environment, variable_compare( _environment, bit->name, sixteen->name )->name );
+                variable_store( _environment, bit->name, 0 );
+            end_if_then( _environment );
+
+            // Add slope to increment angle formed
+            // slope_error_new += m_new;
+            variable_move( _environment, variable_add( _environment, slope_error_new->name, m_new->name)->name, slope_error_new->name );
+
+            // Slope error reached limit, time to
+            // increment y and update slope error.
+            // if (slope_error_new >= 0)
+            // {
+            if_then( _environment, variable_greater_than( _environment, slope_error_new->name, zero->name, 1 )->name );
+                // y++;
+                variable_increment( _environment, y->name );
+                // slope_error_new  -= 2 * (x2 - x1);
+                variable_move( _environment, variable_sub( _environment, slope_error_new->name, variable_mul2_const( _environment, variable_sub( _environment, x2->name, x1->name )->name, 1 )->name )->name, slope_error_new->name );
+            // }
+            end_if_then( _environment );
         // }
-        end_if_then( _environment );
-   // }
-   end_for( _environment );
+        end_for( _environment );
+    end_if_then( _environment );
 
     if ( strcmp( _x2, "XGR" ) != 0 ) {
         variable_move( _environment, _x2, "XGR" );

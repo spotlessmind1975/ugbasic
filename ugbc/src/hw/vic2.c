@@ -941,6 +941,8 @@ void vic2_initialization( Environment * _environment ) {
     variable_global( _environment, "XGR" );
     variable_import( _environment, "YGR", VT_POSITION );
     variable_global( _environment, "YGR" );
+    variable_import( _environment, "LINE", VT_WORD );
+    variable_global( _environment, "LINE" );
 
     vic2_cls( _environment );
 

@@ -1028,6 +1028,7 @@ void                    bitmap_clear_with( Environment * _environment, int _valu
 void                    bitmap_clear_with_vars( Environment * _environment, char * _value );
 void                    bitmap_disable( Environment * _environment );
 void                    bitmap_enable( Environment * _environment, int _width, int _height, int _colors );
+void                    box( Environment * _environment, char * _x1, char * _y1, char * _x2, char * _y2, char * _c );
 
 //----------------------------------------------------------------------------
 // *C*

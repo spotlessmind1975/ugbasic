@@ -87,3 +87,4 @@ PLOTCVBASEHI:
 
 XGR:    .word 0
 YGR:    .word 0
+LINE:   .byte $ff, $ff
