@@ -81,6 +81,9 @@ Variable * rnd( Environment * _environment, char * _value ) {
 
     Variable * bresult = variable_temporary( _environment, VT_BYTE, "(temporary for RND)");
 
+    Variable * ignored = variable_temporary( _environment, value->type, "(ignored)");
+    Variable * remainder = variable_temporary( _environment, value->type, "(remainder)");
+
     MAKE_LABEL
 
     char endLabel[MAX_TEMPORARY_STORAGE]; sprintf(endLabel, "%send", label );
@@ -90,25 +93,22 @@ Variable * rnd( Environment * _environment, char * _value ) {
 
     switch( VT_BITWIDTH( value->type ) ) {
         case 32:
-            cpu_label( _environment, label );
-            cpu_greater_than_32bit( _environment, result->realName, value->realName, bresult->realName, 0, 0 );
-            cpu_bveq( _environment, bresult->realName, endLabel );
-            cpu_math_sub_32bit( _environment, result->realName, value->realName, result->realName );
-            cpu_jump( _environment, label );
+            cpu_math_div_32bit_to_16bit( _environment, result->realName, value->realName, ignored->realName, remainder->realName, VT_SIGNED( value->type )  );
+            cpu_move_32bit( _environment, remainder->realName, result->realName );
+            cpu_move_32bit( _environment, remainder->realName, last_random->realName );
+            cpu_jump( _environment, endLabel );
             break;
         case 16:
-            cpu_label( _environment, label );
-            cpu_greater_than_16bit( _environment, result->realName, value->realName, bresult->realName, 0, 0 );
-            cpu_bveq( _environment, bresult->realName, endLabel );
-            cpu_math_sub_16bit( _environment, result->realName, value->realName, result->realName );
-            cpu_jump( _environment, label );
+            cpu_math_div_16bit_to_16bit( _environment, result->realName, value->realName, ignored->realName, remainder->realName, VT_SIGNED( value->type )  );
+            cpu_move_16bit( _environment, remainder->realName, result->realName );
+            cpu_move_16bit( _environment, remainder->realName, last_random->realName );
+            cpu_jump( _environment, endLabel );
             break;
         case 8:
-            cpu_label( _environment, label );
-            cpu_greater_than_8bit( _environment, result->realName, value->realName, bresult->realName, 0, 0 );
-            cpu_bveq( _environment, bresult->realName, endLabel );
-            cpu_math_sub_8bit( _environment, result->realName, value->realName, result->realName );
-            cpu_jump( _environment, label );
+            cpu_math_div_8bit_to_8bit( _environment, result->realName, value->realName, ignored->realName, remainder->realName, VT_SIGNED( value->type )  );
+            cpu_move_8bit( _environment, remainder->realName, result->realName );
+            cpu_move_8bit( _environment, remainder->realName, last_random->realName );
+            cpu_jump( _environment, endLabel );
             break;
         case 0:
             CRITICAL_RANDOM_UNSUPPORTED( _value, DATATYPE_AS_STRING[value->type] );
