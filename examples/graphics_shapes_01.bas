@@ -6,7 +6,7 @@ REM
 REM @italian
 REM PRIMITIVE DI GRAFICA CON DISEGNO DI FORME (1)
 REM
-REM Questo esempio disegnerà un pentacolo, utilizzando i comandi ''CIRCLE'' e ''POLYLINE''..
+REM Questo esempio disegnerà un pentacolo, utilizzando i comandi ''CIRCLE'' e ''POLYLINE''.
 
     BITMAP ENABLE
     CLS
