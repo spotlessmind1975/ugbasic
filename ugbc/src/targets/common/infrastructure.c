@@ -1249,7 +1249,7 @@ Variable * variable_div( Environment * _environment, char * _source, char * _des
             cpu_math_div_32bit_to_16bit( _environment, source->realName, target->realName, result->realName, remainder->realName, VT_SIGNED( source->type ) );
             break;
         case 16:
-            result = variable_temporary( _environment, VT_DWORD, "(result of division)" );
+            result = variable_temporary( _environment, VT_WORD, "(result of division)" );
             remainder = variable_temporary( _environment, VT_WORD, "(remainder of division)" );
             cpu_math_div_16bit_to_16bit( _environment, source->realName, target->realName, result->realName, remainder->realName, VT_SIGNED( source->type ) );
             break;
