@@ -76,6 +76,7 @@ CIRCLE { return (CIRCLE); }
 CLEAR { return (CLEAR); }
 CLEFT { return (CLEFT); }
 CLINE { return (CLINE); }
+CLIP { return (CLIP); }
 CLS { return (CLS); }
 CMOVE { return (CMOVE); }
 CODE { return (CODE); }

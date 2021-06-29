@@ -88,3 +88,8 @@ PLOTCVBASEHI:
 XGR:    .word 0
 YGR:    .word 0
 LINE:   .byte $ff, $ff
+
+CLIPX1:    .word 0
+CLIPY1:    .word 0
+CLIPX2:    .word 320
+CLIPY2:    .word 200

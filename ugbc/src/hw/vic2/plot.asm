@@ -24,18 +24,40 @@ PLOT:
     CLC
 
     LDA PLOTY
-    CMP #200
+    CMP CLIPY2
     BCC PLOT2
+    BEQ PLOT2
     JMP PLOTP
 PLOT2:
-    LDA PLOTX+1
-    AND #1
+    CMP CLIPY1
     BEQ PLOT3
-    LDA PLOTX
-    CMP #64
-    BCC PLOT3
+    BCS PLOT3
     JMP PLOTP
 PLOT3:
+    LDA PLOTX+1
+    CMP CLIPX2+1
+    BCC PLOT4
+    BEQ PLOT3B
+    JMP PLOTP
+PLOT3B:
+    LDA PLOTX
+    CMP CLIPX2
+    BCC PLOT4
+    BEQ PLOT4
+    JMP PLOTP
+PLOT4:
+    LDA PLOTX+1
+    CMP CLIPX1+1
+    BCS PLOT5
+    BEQ PLOT4B
+    JMP PLOTP
+PLOT4B:
+    LDA PLOTX
+    CMP CLIPX2
+    BCS PLOT5
+    BEQ PLOT5
+    JMP PLOTP
+PLOT5:
 
     ;-------------------------
     ;calc Y-cell, divide by 8

@@ -48,7 +48,7 @@ extern char DATATYPE_AS_STRING[][16];
 %token INKEY SCANCODE SCAN SHIFT SCANSHIFT BOTH SHIFTS NONE LETTER ASTERISK COLON COMMA 
 %token COMMODORE CONTROL CRSR CURSOR DELETE EQUAL FUNCTION INSERT ARROW MINUS PERIOD PLUS 
 %token POUND RUNSTOP RUN STOP SEMICOLON SLASH KEY STATE KEYSTATE KEYSHIFT CAPSLOCK CAPS LOCK ALT
-%token INPUT FREE TILEMAP EMPTY TILE EMPTYTILE PLOT GR CIRCLE DRAW LINE BOX POLYLINE ELLIPSE
+%token INPUT FREE TILEMAP EMPTY TILE EMPTYTILE PLOT GR CIRCLE DRAW LINE BOX POLYLINE ELLIPSE CLIP
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -1679,6 +1679,17 @@ box_definition_expression:
 box_definition:
     box_definition_expression;
 
+clip_definition_expression:
+      expr OP_COMMA expr TO expr OP_COMMA expr {
+        clip( _environment, $1, $3, $5, $7 );
+    }
+    | {
+        clip( _environment, NULL, NULL, NULL, NULL );
+    };
+
+clip_definition:
+    clip_definition_expression;
+
 polyline_definition_expression_continue:
       TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
         draw( _environment, "XGR", "YGR", $2, $4, $6 );
@@ -2155,6 +2166,7 @@ statement:
   | DRAW draw_definition
   | BOX box_definition
   | POLYLINE polyline_definition
+  | CLIP clip_definition
   | SET LINE expr {
       variable_move( _environment, $3, "LINE" );
   }

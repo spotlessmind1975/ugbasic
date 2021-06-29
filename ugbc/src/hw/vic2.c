@@ -944,6 +944,15 @@ void vic2_initialization( Environment * _environment ) {
     variable_import( _environment, "LINE", VT_WORD );
     variable_global( _environment, "LINE" );
 
+    variable_import( _environment, "CLIPX1", VT_POSITION );
+    variable_global( _environment, "CLIPX1" );
+    variable_import( _environment, "CLIPX2", VT_POSITION );
+    variable_global( _environment, "CLIPX2" );
+    variable_import( _environment, "CLIPY1", VT_POSITION );
+    variable_global( _environment, "CLIPY1" );
+    variable_import( _environment, "CLIPY2", VT_POSITION );
+    variable_global( _environment, "CLIPY2" );
+
     vic2_cls( _environment );
 
 }
