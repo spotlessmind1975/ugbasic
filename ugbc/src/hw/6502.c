@@ -1238,6 +1238,25 @@ void cpu6502_math_div_16bit_to_16bit( Environment * _environment, char *_source,
         outhead1("%sL2:", label );
         outline0("DEX" );
         outhead1("BNE %sL1", label );        
+
+        outline0("PLA");
+        outline0("CMP #$80");
+        outline1("BNE %sdone", label);
+        outline1("LDA %s", _other );
+        outline0("EOR #$ff" );
+        outline1("STA %s", _other );
+        outline1("LDA %s+1", _other );
+        outline0("EOR #$ff" );
+        outline1("STA %s+1", _other );
+        outline0("CLC" );
+        outline1("LDA %s", _other );
+        outline0("ADC #1" );
+        outline1("STA %s", _other );
+        outline1("LDA %s+1", _other );
+        outline0("ADC #0" );
+        outline1("STA %s+1", _other );
+        outhead1("%sdone:", label );
+                
     } else {
         outline1("LDA %s", _source );
         outline1("STA %s", _other );
