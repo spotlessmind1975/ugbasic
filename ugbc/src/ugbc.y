@@ -49,6 +49,7 @@ extern char DATATYPE_AS_STRING[][16];
 %token COMMODORE CONTROL CRSR CURSOR DELETE EQUAL FUNCTION INSERT ARROW MINUS PERIOD PLUS 
 %token POUND RUNSTOP RUN STOP SEMICOLON SLASH KEY STATE KEYSTATE KEYSHIFT CAPSLOCK CAPS LOCK ALT
 %token INPUT FREE TILEMAP EMPTY TILE EMPTYTILE PLOT GR CIRCLE DRAW LINE BOX POLYLINE ELLIPSE CLIP
+%token BACK
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -1198,6 +1199,12 @@ color_definition_simple:
 color_definition_expression:
     BORDER expr {
       color_border_var( _environment, $2 );
+  }
+  | BACK expr {
+      back( _environment, $2 );
+  }
+  | BACKGROUND expr {
+      back( _environment, $2 );
   }
   | BACKGROUND expr TO expr {
       color_background_vars( _environment, $2, $4 );

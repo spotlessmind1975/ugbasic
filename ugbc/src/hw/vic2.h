@@ -104,6 +104,7 @@
 
 void vic2_initialization( Environment * _environment );
 
+void vic2_back( Environment * _environment );
 void vic2_background_color( Environment * _environment, char * _index, char * _background_color );
 void vic2_border_color( Environment * _environment, char * _border_color );
 void vic2_collision( Environment * _environment, char * _sprite_mask, char * _result );

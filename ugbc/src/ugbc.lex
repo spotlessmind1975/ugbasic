@@ -50,6 +50,7 @@ ADDRESS { return (ADDRESS); }
 AND { return (AND); }
 ARROW { return (ARROW); }
 B { return (B); }
+BACK { return (BACK); }
 BACKGROUND { return (BACKGROUND); }
 BANK { return (BANK); }
 BEGIN { return (BEG); }

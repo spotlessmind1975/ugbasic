@@ -981,5 +981,12 @@ void vic2_hscroll_screen( Environment * _environment, int _direction ) {
     outline0("JSR HSCROLLST");
 }
 
+void vic2_back( Environment * _environment ) {
+
+    deploy( backDeployed, "./ugbc/src/hw/vic2/back.asm" );
+
+    outline0("JSR BACK");
+
+}
 
 #endif
