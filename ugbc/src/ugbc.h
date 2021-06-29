@@ -1062,6 +1062,7 @@ void                    draw( Environment * _environment, char * _x0, char * _y0
 // *E*
 //----------------------------------------------------------------------------
 
+void                    ellipse( Environment * _environment, char * _x, char * _y, char * _rx, char * _ry, char * _c );
 void                    else_if_then( Environment * _environment, char * _expression );
 void                    end( Environment * _environment );
 void                    end_for( Environment * _environment );
@@ -1097,7 +1098,7 @@ void                    graphic( Environment * _environment );
 void                    gr_locate( Environment * _environment, char * _x, char * _y );
 
 //----------------------------------------------------------------------------
-// *h*
+// *H*
 //----------------------------------------------------------------------------
 
 void                    halt( Environment * _environment );

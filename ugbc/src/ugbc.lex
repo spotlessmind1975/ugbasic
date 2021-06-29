@@ -110,6 +110,7 @@ DRAW { return (DRAW); }
 DWORD { return (DWORD); }
 E { return (E); }
 ECM { return(ECM); }
+ELLIPSE { return(ELLIPSE); }
 ELSE { return(ELSE); }
 EMPTY { return(EMPTY); }
 EMPTYTILE { return(EMPTYTILE); }
