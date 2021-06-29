@@ -18,8 +18,8 @@ REM Questo esempio disegnerà cerchi casuali sullo schermo.
     r=(POSITION)0
     DO
         INK RND(SCREEN COLORS)
-        x=RND(SCREEN WIDTH/2)+20
-        y=RND(SCREEN HEIGHT/2)+20
-        r=RND(20)
-        ' CIRCLE x,y,10
+        x=RND(SCREEN WIDTH)
+        y=RND(SCREEN HEIGHT)
+        r=RND(20)+1
+        CIRCLE x,y,r
     LOOP
