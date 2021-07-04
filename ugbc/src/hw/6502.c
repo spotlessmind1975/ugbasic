@@ -2148,6 +2148,21 @@ void cpu6502_inc_16bit( Environment * _environment, char * _variable ) {
 
 }
 
+void cpu6502_inc_32bit( Environment * _environment, char * _variable ) {
+
+    MAKE_LABEL
+
+    outline1("INC %s", _variable );
+    outline1("BNE %s", label );
+    outline1("INC %s+1", _variable );
+    outline1("BNE %s", label );
+    outline1("INC %s+2", _variable );
+    outline1("BNE %s", label );
+    outline1("INC %s+3", _variable );
+    outhead1("%s:", label );
+
+}
+
 void cpu6502_dec( Environment * _environment, char * _variable ) {
 
     outline1("DEC %s", _variable );
@@ -3252,6 +3267,80 @@ void cpu6502_store_8bit_with_offset( Environment * _environment, char *_destinat
     outline0("STA $23");
     outline1("LDA $%2.2x", _value);
     outline0("STA ($22),Y");
+
+}
+
+void cpu6502_complement2_8bit( Environment * _environment, char * _source, char * _destination ) {
+    outline1( "LDA %s", _source );
+    outline1( "EOR #$FF", _source );
+    if ( _destination ) {
+        outline1( "STA %s", _destination );
+    } else {
+        outline1( "STA %s", _source );
+    }
+    if ( _destination ) {
+        cpu6502_inc( _environment, _destination );
+    } else {
+        cpu6502_inc( _environment, _source );
+    }
+}
+
+void cpu6502_complement2_16bit( Environment * _environment, char * _source, char * _destination ) {
+    outline1( "LDA %s", _source );
+    outline1( "EOR #$FF", _source );
+    if ( _destination ) {
+        outline1( "STA %s", _destination );
+    } else {
+        outline1( "STA %s", _source );
+    }
+    outline1( "LDA %s+1", _source );
+    outline1( "EOR #$FF", _source );
+    if ( _destination ) {
+        outline1( "STA %s+1", _destination );
+    } else {
+        outline1( "STA %s+1", _source );
+    }
+    if ( _destination ) {
+        cpu6502_inc_16bit( _environment, _destination );
+    } else {
+        cpu6502_inc_16bit( _environment, _source );
+    }
+}
+
+void cpu6502_complement2_32bit( Environment * _environment, char * _source, char * _destination ) {
+    outline1( "LDA %s", _source );
+    outline1( "EOR #$FF", _source );
+    if ( _destination ) {
+        outline1( "STA %s", _destination );
+    } else {
+        outline1( "STA %s", _source );
+    }
+    outline1( "LDA %s+1", _source );
+    outline1( "EOR #$FF", _source );
+    if ( _destination ) {
+        outline1( "STA %s+1", _destination );
+    } else {
+        outline1( "STA %s+1", _source );
+    }
+    outline1( "LDA %s+2", _source );
+    outline1( "EOR #$FF", _source );
+    if ( _destination ) {
+        outline1( "STA %s+2", _destination );
+    } else {
+        outline1( "STA %s+2", _source );
+    }
+    outline1( "LDA %s+3", _source );
+    outline1( "EOR #$FF", _source );
+    if ( _destination ) {
+        outline1( "STA %s+3", _destination );
+    } else {
+        outline1( "STA %s+3", _source );
+    }
+    if ( _destination ) {
+        cpu6502_inc_32bit( _environment, _destination );
+    } else {
+        cpu6502_inc_32bit( _environment, _source );
+    }
 
 }
 
