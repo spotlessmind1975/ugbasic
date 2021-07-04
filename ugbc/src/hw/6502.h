@@ -46,6 +46,7 @@ void cpu6502_di( Environment * _environment );
 void cpu6502_ei( Environment * _environment );
 void cpu6502_inc( Environment * _environment, char * _variable );
 void cpu6502_inc_16bit( Environment * _environment, char * _variable );
+void cpu6502_inc_32bit( Environment * _environment, char * _variable );
 void cpu6502_dec( Environment * _environment, char * _variable );
 void cpu6502_dec_16bit( Environment * _environment, char * _variable );
 void cpu6502_less_than_16bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _equal, int _signed );
@@ -152,6 +153,9 @@ void cpu6502_move_8bit_with_offset( Environment * _environment, char *_source, c
 void cpu6502_move_8bit_with_offset2( Environment * _environment, char *_source, char * _value, char * _offset );
 void cpu6502_store_8bit_with_offset( Environment * _environment, char *_destination, int _value, int _offset );
 void cpu6502_dsalloc_size( Environment * _environment, int _size, char * _index );
+void cpu6502_complement2_8bit( Environment * _environment, char * _source, char * _destination );
+void cpu6502_complement2_16bit( Environment * _environment, char * _source, char * _destination );
+void cpu6502_complement2_32bit( Environment * _environment, char * _source, char * _destination );
 
 #define cpu_beq( _environment,  _label  ) cpu6502_beq( _environment,  _label  )
 #define cpu_bneq( _environment,  _label  ) cpu6502_beq( _environment,  _label  )
@@ -166,6 +170,7 @@ void cpu6502_dsalloc_size( Environment * _environment, int _size, char * _index 
 #define cpu_ei( _environment ) cpu6502_ei( _environment )
 #define cpu_inc( _environment, _variable ) cpu6502_inc( _environment, _variable );
 #define cpu_inc_16bit( _environment, _variable ) cpu6502_inc_16bit( _environment, _variable )
+#define cpu_inc_32bit( _environment, _variable ) cpu6502_inc_32bit( _environment, _variable )
 #define cpu_dec( _environment, _variable ) cpu6502_dec( _environment, _variable );
 #define cpu_dec_16bit( _environment, _variable ) cpu6502_dec_16bit( _environment, _variable );
 #define cpu_less_than_16bit( _environment, _source, _destination, _name, _equal, _signed ) cpu6502_less_than_16bit( _environment, _source, _destination, _name, _equal, _signed )
@@ -273,5 +278,8 @@ void cpu6502_dsalloc_size( Environment * _environment, int _size, char * _index 
 #define cpu_move_8bit_with_offset2( _environment, _source, _value, _offset ) cpu6502_move_8bit_with_offset2( _environment, _source, _value, _offset )
 #define cpu_store_8bit_with_offset( _environment, _destination, _value, _offset ) cpu6502_store_8bit_with_offset( _environment, _destination, _value, _offset )
 #define cpu_dsalloc_size( _environment, _size, _index ) cpu6502_dsalloc_size( _environment, _size, _index )
+#define cpu_complement2_8bit( _environment, _source, _destination ) cpu6502_complement2_8bit( _environment, _source, _destination )
+#define cpu_complement2_16bit( _environment, _source, _destination ) cpu6502_complement2_16bit( _environment, _source, _destination )
+#define cpu_complement2_32bit( _environment, _source, _destination ) cpu6502_complement2_32bit( _environment, _source, _destination )
 
 #endif
