@@ -99,6 +99,33 @@ void point_at_vars( Environment * _environment, char * _x, char * _y ) {
 
     Variable * y = variable_retrieve( _environment, _y );
     Variable * x = variable_retrieve( _environment, _x );
+    Variable * clipX1 = variable_retrieve( _environment, "CLIPX1" );
+    Variable * clipX2 = variable_retrieve( _environment, "CLIPX2" );
+    Variable * clipY1 = variable_retrieve( _environment, "CLIPY1" );
+    Variable * clipY2 = variable_retrieve( _environment, "CLIPY2" );
+
+    outline1( "LD A,(%s)", clipX1->realName );
+    outline0( "LD B, A" );
+    outline1( "LD A,(%s)", clipX2->realName );
+    outline0( "LD D, A" );
+    outline1( "LD A,(%s)", x->realName );
+    outline0( "CMP B" );
+    outline1( "JR C, %sclipped", label );
+    outline0( "CMP D" );
+    outline1( "JR Z, %snoclipped", label );
+    outline1( "JR NC, %sclipped", label );
+    outhead1( "%snoclipped:", label );
+    outline1( "LD A,(%s)", clipY1->realName );
+    outline0( "LD B, A" );
+    outline1( "LD A,(%s)", clipY2->realName );
+    outline0( "LD D, A" );
+    outline1( "LD A,(%s)", y->realName );
+    outline0( "CMP B" );
+    outline1( "JR C, %sclipped", label );
+    outline0( "CMP D" );
+    outline1( "JR Z, %snoclipped2", label );
+    outline1( "JR NC, %sclipped", label );
+    outhead1( "%snoclipped2:", label );
 
     outline1( "LD A,(%s)", x->realName );
     outline0( "AND $7");
@@ -145,5 +172,7 @@ void point_at_vars( Environment * _environment, char * _x, char * _y ) {
     outline0( "LD A,(HL)");
     outline0( "OR E");
     outline0( "LD (HL),A");
+
+    outhead1( "%sclipped:", label );
 
 }
