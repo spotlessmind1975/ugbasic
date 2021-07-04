@@ -40,8 +40,6 @@
 
 void gr_locate( Environment * _environment, char * _x, char * _y ) {
 
-    deploy( vic2varsDeployed, "./ugbc/src/hw/vic2/vars.asm" );
-
     if ( _x ) {
         Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
         Variable * xgr = variable_retrieve( _environment, "XGR" );

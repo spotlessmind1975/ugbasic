@@ -40,8 +40,6 @@
 
 void clip( Environment * _environment, char * _x1, char * _y1, char * _x2, char * _y2 ) {
 
-    deploy( vic2varsDeployed, "./ugbc/src/hw/vic2/vars.asm" );
-
     Variable * c;
     
     c = variable_retrieve( _environment, "CLIPX1" );
