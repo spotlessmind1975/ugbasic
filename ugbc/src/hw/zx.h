@@ -182,6 +182,7 @@ void zx_scancode( Environment * _environment, char * _pressed, char * _scacode )
 void zx_scanshift( Environment * _environment, char * _shifts );
 void zx_keyshift( Environment * _environment, char * _shifts );
 void zx_clear_key( Environment * _environment );
+void zx_back( Environment * _environment );
 
 #define         JOY_COUNT           0
 

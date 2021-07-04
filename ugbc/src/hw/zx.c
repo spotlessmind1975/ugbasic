@@ -190,6 +190,22 @@ void zx_initialization( Environment * _environment ) {
     SCREEN_MODE_DEFINE( BITMAP_MODE_STANDARD, 1, 192, 256, 2, "Standard Bitmap Mode" );
     SCREEN_MODE_DEFINE( TILEMAP_MODE_STANDARD, 0, 32, 25, 8, "(emulated) Standard Character Mode" );
 
+    variable_import( _environment, "XGR", VT_POSITION );
+    variable_global( _environment, "XGR" );
+    variable_import( _environment, "YGR", VT_POSITION );
+    variable_global( _environment, "YGR" );
+    variable_import( _environment, "LINE", VT_WORD );
+    variable_global( _environment, "LINE" );
+
+    variable_import( _environment, "CLIPX1", VT_POSITION );
+    variable_global( _environment, "CLIPX1" );
+    variable_import( _environment, "CLIPX2", VT_POSITION );
+    variable_global( _environment, "CLIPX2" );
+    variable_import( _environment, "CLIPY1", VT_POSITION );
+    variable_global( _environment, "CLIPY1" );
+    variable_import( _environment, "CLIPY2", VT_POSITION );
+    variable_global( _environment, "CLIPY2" );
+
 }
 
 void zx_bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {
@@ -198,6 +214,14 @@ void zx_bitmap_enable( Environment * _environment, int _width, int _height, int 
 
 void zx_tilemap_enable( Environment * _environment, int _width, int _height, int _colors ) {
     
+}
+
+void zx_back( Environment * _environment ) {
+
+    deploy( backDeployed, "./ugbc/src/hw/zx/back.asm" );
+
+    outline0("CALL BACK");
+
 }
 
 #endif
