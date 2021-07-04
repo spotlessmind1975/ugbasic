@@ -264,33 +264,68 @@ void z80_compare_8bit( Environment * _environment, char *_source, char *_destina
  * @param _other Destination address for result
  * @param _equal True if equal
  */
-void z80_less_than_8bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _size ) {
+void z80_less_than_8bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed ) {
 
     MAKE_LABEL
 
-    outline1("LD A, (%s)", _destination);
-    outline0("LD B, A");
-    outline1("LD A, (%s)", _source);
-    outline0("CP B");
-    outline1("JR C, %s", label);
-    if ( _equal ) {
-        outline1("JR Z, %s", label);
-    }
-    outline0("LD A, 0");
-    if ( _other ) {
-        outline1("LD (%s), A", _other);
+    if ( _signed ) {
+
+        outline1("LD A, (%s)", _destination);
+        outline0("LD B, A");
+        outline1("LD A, (%s)", _source);
+        outline0("SUB A, B");
+        if ( _equal ) {
+            outline1("JP  Z,%strue", label);
+        }
+        outline1("JP PO,%snoxor", label);
+        outline0("XOR $80");
+        outhead1("%snoxor:", label);
+        outline1("JP M,%strue", label);
+        outline1("JP PE,%sfalse", label);
+        outhead1("%sfalse:", label);
+        outline0("LD A, 0");
+        if ( _other ) {
+            outline1("LD (%s), A", _other);
+        } else {
+            outline1("LD (%s), A", _destination);
+        }
+        outline1("JMP %sb2", label);
+        outhead1("%strue:", label);
+        outline0("LD A, $ff");
+        if ( _other ) {
+            outline1("LD (%s), A", _other);
+        } else {
+            outline1("LD (%s), A", _destination);
+        }
+        outhead1("%sb2:", label);
+
     } else {
-        outline1("LD (%s), A", _destination);
+
+        outline1("LD A, (%s)", _destination);
+        outline0("LD B, A");
+        outline1("LD A, (%s)", _source);
+        outline0("CP B");
+        outline1("JR C, %s", label);
+        if ( _equal ) {
+            outline1("JR Z, %s", label);
+        }
+        outline0("LD A, 0");
+        if ( _other ) {
+            outline1("LD (%s), A", _other);
+        } else {
+            outline1("LD (%s), A", _destination);
+        }
+        outline1("JMP %sb2", label);
+        outhead1("%s:", label);
+        outline0("LD A, $ff");
+        if ( _other ) {
+            outline1("LD (%s), A", _other);
+        } else {
+            outline1("LD (%s), A", _destination);
+        }
+        outhead1("%sb2:", label);
+
     }
-    outline1("JMP %sb2", label);
-    outhead1("%s:", label);
-    outline0("LD A, $ff");
-    if ( _other ) {
-        outline1("LD (%s), A", _other);
-    } else {
-        outline1("LD (%s), A", _destination);
-    }
-    outhead1("%sb2:", label);
 
 }
 
@@ -303,34 +338,14 @@ void z80_less_than_8bit( Environment * _environment, char *_source, char *_desti
  * @param _other Destination address for result
  * @param _equal True if equal
  */
-void z80_greater_than_8bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _size ) {
+void z80_greater_than_8bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed ) {
 
-    MAKE_LABEL
-
-    outline1("LD A, (%s)", _destination);
-    outline0("LD B, A");
-    outline1("LD A, (%s)", _source);
-    outline0("CP B");
-    if ( !_equal ) {
-        outline1("JR Z, %sg2", label);
-    }
-    outline1("JR NC, %s", label);
-    outhead1("%sg2:", label);
-    outline0("LD A, 0");
+    z80_less_than_8bit( _environment, _source, _destination, _other, !_equal, _signed );
     if ( _other ) {
-        outline1("LD (%s), A", _other);
+        z80_logical_not_8bit( _environment, _other, _other );
     } else {
-        outline1("LD (%s), A", _destination);
+        z80_logical_not_8bit( _environment, _destination, _destination );
     }
-    outline1("JMP %sb2", label);
-    outhead1("%s:", label);
-    outline0("LD A, $ff");
-    if ( _other ) {
-        outline1("LD (%s), A", _other);
-    } else {
-        outline1("LD (%s), A", _destination);
-    }
-    outhead1("%sb2:", label);
 
 }
 
@@ -391,12 +406,24 @@ void z80_math_sub_8bit( Environment * _environment, char *_source, char *_destin
  */
 void z80_math_double_8bit( Environment * _environment, char *_source, char *_other, int _signed ) {
 
-    outline1("LD A, (%s)", _source );
-    outline0("ADD A, A" );
-    if ( _other ) {
-        outline1("LD (%s), A", _other );
+    if ( _signed ) {
+
+        outline1("LD A, (%s)", _source );
+        outline0("ADD A, A" );
+        if ( _other ) {
+            outline1("LD (%s), A", _other );
+        } else {
+            outline1("LD (%s), A", _source );
+        }
+
     } else {
-        outline1("LD (%s), A", _source );
+        outline1("LD A, (%s)", _source );
+        outline0("ADD A, A" );
+        if ( _other ) {
+            outline1("LD (%s), A", _other );
+        } else {
+            outline1("LD (%s), A", _source );
+        }
     }
 }
 
@@ -409,12 +436,41 @@ void z80_math_double_8bit( Environment * _environment, char *_source, char *_oth
  */
 void z80_math_div2_8bit( Environment * _environment, char *_source, int _steps, int _signed ) {
 
-    outline1("LD A, (%s)", _source );
-    while( _steps ) {
-        outline0("SRA A" );
-        --_steps;
+    MAKE_LABEL
+
+    if ( _signed ) {
+        outline1("LD A, (%s)", _source );
+        outline0("AND $80" );
+        outline0("PUSH AF" );
+        outline1("JR Z,%spos", label );
+        outline1("LD A, (%s)", _source );
+        outline0("XOR $FF" );
+        outline0("ADC $1" );
+        outline1("JMP %spos2", label );
+        outhead1("%spos:", label );
+        outline1("LD A, (%s)", _source );
+        outhead1("%spos2:", label );
+        while( _steps ) {
+            outline0("SRA A" );
+            --_steps;
+        }
+        outline1("LD (%s), A", _source );
+        outline0("POP AF" );
+        outline0("AND $80" );
+        outline1("JR Z,%spos3", label );
+        outline1("LD A, (%s)", _source );
+        outline0("XOR $FF" );
+        outline0("ADC $1" );
+        outline1("LD (%s), A", _source );
+        outhead1("%spos3:", label );
+    } else {
+        outline1("LD A, (%s)", _source );
+        while( _steps ) {
+            outline0("SRA A" );
+            --_steps;
+        }
+        outline1("LD (%s), A", _source );
     }
-    outline1("LD (%s), A", _source );
 
 }
 
@@ -431,23 +487,78 @@ void z80_math_mul_8bit_to_16bit( Environment * _environment, char *_source, char
 
     MAKE_LABEL
 
-    outline1("LD H, (%s)", _source );
-    outline1("LD A, (%s)", _destination );
-    outline0("LD E, A" );
+    if ( _signed ) {
 
-    outline0("LD D,0");
-    outline0("LD L,D");
-    outline0("LD B,8");
+        outline1("LD A, (%s)", _source );
+        outline0("AND $80" );
+        outline0("LD B, A" );
+        outline1("LD A, (%s)", _destination );
+        outline0("AND $80" );
+        outline0("XOR A, B" );
+        outline0("PUSH AF" );
 
-    outhead1("%s:", label );
-    outline0("ADD HL, HL" );
-    outline1("JR NC,%sb2", label );
-    outline0("ADD HL, DE" );
+        outline1("LD A, (%s)", _source );
+        outline0("AND $80" );
+        outline1("JR Z, %spositive", label );
+        outline1("LD A, (%s)", _source );
+        outline0("XOR $FF" );
+        outline0("INC A" );
+        outline0("LD H, A" );
+        outhead1("%spositive:", label );
 
-    outhead1("%sb2:", label );
+        outline1("LD A, (%s)", _destination );
+        outline0("AND $80" );
+        outline1("JR Z, %spositive2", label );
+        outline1("LD A, (%s)", _destination );
+        outline0("XOR $FF" );
+        outline0("INC A" );
+        outline0("LD C, A" );
+        outhead1("%spositive2:", label );
 
-    outline1("DJNZ %s", label );
-    outline1("LD (%s), HL", _other );
+        outline0("LD E, A" );
+
+        outline0("LD D,0");
+        outline0("LD L,D");
+        outline0("LD B,8");
+
+        outhead1("%s:", label );
+        outline0("ADD HL, HL" );
+        outline1("JR NC,%sb2", label );
+        outline0("ADD HL, DE" );
+
+        outhead1("%sb2:", label );
+
+        outline1("DJNZ %s", label );
+
+        outline1("LD (%s), HL", _other );
+        outline0("POP AF" );
+        outline0("CMP $80" );
+        outline1("JR Z,%snc", label );
+        z80_complement2_16bit( _environment, _other, NULL );
+        outhead1("%snc:", label );
+
+    } else {
+
+        outline1("LD A, (%s)", _source );
+        outline0("LD H, A" );
+        outline1("LD A, (%s)", _destination );
+        outline0("LD E, A" );
+
+        outline0("LD D,0");
+        outline0("LD L,D");
+        outline0("LD B,8");
+
+        outhead1("%s:", label );
+        outline0("ADD HL, HL" );
+        outline1("JR NC,%sb2", label );
+        outline0("ADD HL, DE" );
+
+        outhead1("%sb2:", label );
+
+        outline1("DJNZ %s", label );
+        outline1("LD (%s), HL", _other );
+
+    }
 
 }
 
@@ -460,12 +571,36 @@ void z80_math_mul_8bit_to_16bit( Environment * _environment, char *_source, char
  */
 void z80_math_div2_const_8bit( Environment * _environment, char *_source, int _steps, int _signed ) {
 
-    outline1("LD A, (%s)", _source );
-    while( _steps ) {
-        outline0("SRA A" );
-        --_steps;
+    MAKE_LABEL
+
+    if ( _signed ) {
+        outline1("LD A, (%s+1)", _source );
+        outline0("AND $80" );
+        outline0("PUSH AF" );
+        outline1("JR Z, %spos", label );
+        z80_complement2_16bit( _environment, _source, _source );
+        outline1("JMP %spos2", label );
+        outhead1("%spos:", label );
+        outhead1("%spos2:", label );
+        outline1("LD A, (%s)", _source );
+        while( _steps ) {
+            outline0("SRA A" );
+            --_steps;
+        }
+        outline1("LD (%s), A", _source );
+        outline0("POP AF" );
+        outline0("AND $80" );
+        outline1("JR Z, %sdone", label );
+        z80_complement2_16bit( _environment, _source, _source );
+        outhead1("%sdone:", label );
+    } else {
+        outline1("LD A, (%s)", _source );
+        while( _steps ) {
+            outline0("SRA A" );
+            --_steps;
+        }
+        outline1("LD (%s), A", _source );
     }
-    outline1("LD (%s), A", _source );
 
 }
 
@@ -478,13 +613,30 @@ void z80_math_div2_const_8bit( Environment * _environment, char *_source, int _s
  */
 void z80_math_mul2_const_8bit( Environment * _environment, char *_source, int _steps, int _signed ) {
 
-    outline0("; variable_mul2_const");
-    outline1("LD A, (%s)", _source );
-    while( _steps ) {
-        outline0("SLA A" );
-        --_steps;
+    if ( _signed ) {
+        outline1("LD A, (%s)", _source );
+        outline0("AND $80" );
+        outline0("PUSH AF" );
+        outline1("LD A, (%s)", _source );
+        outline0("AND $7F" );
+        while( _steps ) {
+            outline0("SLA A" );
+            --_steps;
+        }
+        outline0("LD B, A" );
+        outline0("POP AF" );
+        outline0("OR A, B" );
+        outline1("LD (%s), A", _source );
+
+    } else {
+        outline0("; variable_mul2_const");
+        outline1("LD A, (%s)", _source );
+        while( _steps ) {
+            outline0("SLA A" );
+            --_steps;
+        }
+        outline1("LD (%s), A", _source );
     }
-    outline1("LD (%s), A", _source );
 
 }
 
@@ -614,36 +766,70 @@ void z80_less_than_16bit( Environment * _environment, char *_source, char *_dest
 
     MAKE_LABEL
 
-    outline1("LD A, (%s+1)", _destination);
-    outline0("LD B, A");
-    outline1("LD A, (%s+1)", _source);
-    outline0("CP B");
-    outline1("JR Z, %sl2", label);
-    outline1("JR C, %s", label);
-    outhead1("%sl2:", label);
-    outline1("LD A, (%s)", _destination);
-    outline0("LD B, A");
-    outline1("LD A, (%s)", _source);
-    outline0("CP B");
-    outline1("JR C, %s", label);
-    if ( _equal ) {
-        outline1("JR Z, %s", label);
-    }
-    outline0("LD A, 0");
-    if ( _other ) {
-        outline1("LD (%s), A", _other);
+    if ( _signed ) {
+
+        outline1("LD HL, (%s)", _destination);
+        outline1("LD DE, (%s)", _source);
+        outline0("LD A, H" );
+        outline0("XOR D" );
+        outline1("JP M,%scmpgte2", label );
+        outline0("SBC HL, DE" );
+        outline1("JR NC,%scmpgte3", label );
+        outhead1("%scmpgte1:", label ); 
+        outline0("LD A, 0");
+        if ( _other ) {
+            outline1("LD (%s), A", _other);
+        } else {
+            outline1("LD (%s), A", _destination);
+        }
+        outline1("JMP %send", label );
+        outhead1("%scmpgte2:", label ); 
+        outline0("BIT 7,D" );
+        outline1("JR Z, %scmpgte1", label );
+        outhead1("%scmpgte3:", label ); 
+        outline0("LD A, $ff");
+        if ( _other ) {
+            outline1("LD (%s), A", _other);
+        } else {
+            outline1("LD (%s), A", _destination);
+        }
+        outhead1("%send:", label ); 
+        
     } else {
-        outline1("LD (%s), A", _destination);
+
+        outline1("LD A, (%s+1)", _destination);
+        outline0("LD B, A");
+        outline1("LD A, (%s+1)", _source);
+        outline0("CP B");
+        outline1("JR Z, %sl2", label);
+        outline1("JR C, %s", label);
+        outhead1("%sl2:", label);
+        outline1("LD A, (%s)", _destination);
+        outline0("LD B, A");
+        outline1("LD A, (%s)", _source);
+        outline0("CP B");
+        outline1("JR C, %s", label);
+        if ( _equal ) {
+            outline1("JR Z, %s", label);
+        }
+        outline0("LD A, 0");
+        if ( _other ) {
+            outline1("LD (%s), A", _other);
+        } else {
+            outline1("LD (%s), A", _destination);
+        }
+        outline1("JMP %sb2", label);
+        outhead1("%s:", label);
+        outline0("LD A, $ff");
+        if ( _other ) {
+            outline1("LD (%s), A", _other);
+        } else {
+            outline1("LD (%s), A", _destination);
+        }
+        outhead1("%sb2:", label);
+
+
     }
-    outline1("JMP %sb2", label);
-    outhead1("%s:", label);
-    outline0("LD A, $ff");
-    if ( _other ) {
-        outline1("LD (%s), A", _other);
-    } else {
-        outline1("LD (%s), A", _destination);
-    }
-    outhead1("%sb2:", label);
 
 }
 
@@ -658,39 +844,12 @@ void z80_less_than_16bit( Environment * _environment, char *_source, char *_dest
  */
 void z80_greater_than_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed ) {
 
-    MAKE_LABEL
-
-    outline1("LD A, (%s+1)", _destination);
-    outline0("LD B, A");
-    outline1("LD A, (%s+1)", _source);
-    outline0("CP B");
-    outline1("JR Z, %sc2", label);
-    outline1("JR NC, %s", label);
-    outhead1("%sc2:", label);
-    outline1("LD A, (%s)", _destination);
-    outline0("LD B, A");
-    outline1("LD A, (%s)", _source);
-    outline0("CP B");
-    if ( !_equal ) {
-        outline1("JR Z, %sd2", label);
-    }
-    outline1("JR NC, %s", label);
-    outhead1("%sd2:", label);
-    outline0("LD A, 0");
+    z80_less_than_16bit( _environment, _source, _destination, _other, !_equal, _signed );
     if ( _other ) {
-        outline1("LD (%s), A", _other);
+        z80_logical_not_8bit( _environment, _other, _other );
     } else {
-        outline1("LD (%s), A", _destination);
+        z80_logical_not_8bit( _environment, _destination, _destination );
     }
-    outline1("JMP %sb2", label);
-    outhead1("%s:", label);
-    outline0("LD A, $ff");
-    if ( _other ) {
-        outline1("LD (%s), A", _other);
-    } else {
-        outline1("LD (%s), A", _destination);
-    }
-    outhead1("%sb2:", label);
 
 }
 
@@ -758,27 +917,92 @@ void z80_math_mul_16bit_to_32bit( Environment * _environment, char *_source, cha
 
     MAKE_LABEL
 
-    outline1("LD BC, (%s)", _source );
-    outline1("LD DE, (%s)", _destination );
-    outline0("LD A, C" );
-    outline0("LD C, B" );
-    outline0("LD HL, 0" );
-    outline0("LD B, 16" );
-    outhead1("%s:", label );
-    outline0("ADD HL, HL" );
-    outline0("RLA " );
-    outline0("RL C" );
-    outline1("JR NC,%sb2", label );
-    outline0("ADD HL, DE" );
-    outline0("ADC A, 0" );
-    outline1("JP NC,%sb2", label );
-    outline0("INC C" );
-    outhead1("%sb2:", label );
-    outline1("DJNZ %s", label );
-    outline0("LD B, C" );
-    outline0("LD C, A" );
-    outline1("LD (%s), HL", _other );
-    outline1("LD (%s+2), BC", _other );
+    if ( _signed ) {
+
+        outline1("LD A, (%s+1)", _source);
+        outline0("AND $80");
+        outline0("LD B, A");
+        outline1("LD A, (%s+1)", _destination);
+        outline0("AND $80");
+        outline0("XOR A, B");
+        outline0("PUSH AF");
+
+        outline1("LD A, (%s+1)", _source);
+        outline0("AND $80");
+        outline0("PUSH AF");
+        outline1("JR Z,%spositive", label);
+        z80_complement2_16bit( _environment, _source, NULL );
+        outhead1("%spositive:", label);
+
+        outline1("LD A, (%s+1)", _destination);
+        outline0("AND $80");
+        outline0("PUSH AF");
+        outline1("JR Z,%spositive2", label);
+        z80_complement2_16bit( _environment, _destination, NULL );
+        outhead1("%spositive2:", label);
+
+        outline1("LD BC, (%s)", _source );
+        outline1("LD DE, (%s)", _destination );
+        outline0("LD A, C" );
+        outline0("LD C, B" );
+        outline0("LD HL, 0" );
+        outline0("LD B, 16" );
+        outhead1("%s:", label );
+        outline0("ADD HL, HL" );
+        outline0("RLA " );
+        outline0("RL C" );
+        outline1("JR NC,%sb2", label );
+        outline0("ADD HL, DE" );
+        outline0("ADC A, 0" );
+        outline1("JP NC,%sb2", label );
+        outline0("INC C" );
+        outhead1("%sb2:", label );
+        outline1("DJNZ %s", label );
+        outline0("LD B, C" );
+        outline0("LD C, A" );
+        outline1("LD (%s), HL", _other );
+        outline1("LD (%s+2), BC", _other );
+
+        outline0("POP AF" );
+        outline1("JR Z, %srepositive", label );
+        z80_complement2_16bit( _environment, _destination, NULL );
+        outhead1("%srepositive:", label);
+
+        outline0("POP AF" );
+        outline1("JR Z, %srepositive2", label );
+        z80_complement2_16bit( _environment, _source, NULL );
+        outhead1("%srepositive2:", label);
+
+        outline0("POP AF" );
+        outline1("JR Z, %srepositive3", label );
+        z80_complement2_16bit( _environment, _other, NULL );
+        outhead1("%srepositive3:", label);
+
+    } else {
+
+        outline1("LD BC, (%s)", _source );
+        outline1("LD DE, (%s)", _destination );
+        outline0("LD A, C" );
+        outline0("LD C, B" );
+        outline0("LD HL, 0" );
+        outline0("LD B, 16" );
+        outhead1("%s:", label );
+        outline0("ADD HL, HL" );
+        outline0("RLA " );
+        outline0("RL C" );
+        outline1("JR NC,%sb2", label );
+        outline0("ADD HL, DE" );
+        outline0("ADC A, 0" );
+        outline1("JP NC,%sb2", label );
+        outline0("INC C" );
+        outhead1("%sb2:", label );
+        outline1("DJNZ %s", label );
+        outline0("LD B, C" );
+        outline0("LD C, A" );
+        outline1("LD (%s), HL", _other );
+        outline1("LD (%s+2), BC", _other );
+
+    }
 
 }
 
@@ -827,15 +1051,39 @@ void z80_math_complement_const_16bit( Environment * _environment, char *_source,
  */
 void z80_math_div2_const_16bit( Environment * _environment, char *_source, int _steps, int _signed ) {
 
-    outline1("LD HL, (%s)", _source );
-    outline0("LD AF, HL" );
-    while( _steps ) {
-        outline0("SRA A" );
-        outline0("RR F" );
-        --_steps;
+    MAKE_LABEL
+
+    if ( _signed ) {
+        outline1("LD A, (%s+1)", _source );
+        outline0("AND $80" );
+        outline0("PUSH AF" );
+        outline1("JR Z, %spos", label );
+        z80_complement2_16bit( _environment, _source, _source );
+        outline1("JMP %spos2", label );
+        outhead1("%spos:", label );
+        outhead1("%spos2:", label );
+        outline1("LD HL, (%s)", _source );
+        while( _steps ) {
+            outline0("SRA H" );
+            outline0("RR L" );
+            --_steps;
+        }
+        outline1("LD (%s), HL", _source );
+        outline0("POP AF" );
+        outline0("AND $80" );
+        outline1("JR Z, %sdone", label );
+        z80_complement2_16bit( _environment, _source, _source );
+        outhead1("%sdone:", label );
+    } else {
+        outline1("LD HL, (%s)", _source );
+        while( _steps ) {
+            outline0("SRA H" );
+            outline0("RR L" );
+            --_steps;
+        }
+        outline1("LD (%s), HL", _source );
+        
     }
-    outline0("LD HL, AF" );
-    outline1("LD (%s), HL", _source );
 
 }
 
@@ -848,15 +1096,38 @@ void z80_math_div2_const_16bit( Environment * _environment, char *_source, int _
  */
 void z80_math_mul2_const_16bit( Environment * _environment, char *_source, int _steps, int _signed ) {
 
-    outline1("LD HL, (%s)", _source );
-    outline0("LD AF, HL" );
-    while( _steps ) {
-        outline0("SLA A" );
-        outline0("RL F" );
-        --_steps;
+    MAKE_LABEL
+
+    if ( _signed ) {
+        outline1("LD A, (%s+1)", _source );
+        outline0("AND $80" );
+        outline0("PUSH AF" );
+        outline1("JR Z, %spos", label );
+        z80_complement2_16bit( _environment, _source, _source );
+        outline1("JMP %spos2", label );
+        outhead1("%spos:", label );
+        outhead1("%spos2:", label );
+        outline1("LD HL, (%s)", _source );
+        while( _steps ) {
+            outline0("SLA L" );
+            outline0("RL H" );
+            --_steps;
+        }
+        outline1("LD (%s), HL", _source );
+        outline0("POP AF" );
+        outline0("AND $80" );
+        outline1("JR Z, %sdone", label );
+        z80_complement2_16bit( _environment, _source, _source );
+        outhead1("%sdone:", label );
+    } else {
+        outline1("LD HL, (%s)", _source );
+        while( _steps ) {
+            outline0("SLA L" );
+            outline0("RL H" );
+            --_steps;
+        }
+        outline1("LD (%s), HL", _source );
     }
-    outline0("LD HL, AF" );
-    outline1("LD (%s), HL", _source );
 
 }
 
@@ -981,48 +1252,114 @@ void z80_compare_32bit( Environment * _environment, char *_source, char *_destin
  * @param _other Destination address for result
  * @param _equal True if equal
  */
-void z80_less_than_32bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _size ) {
+void z80_less_than_32bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed ) {
 
     MAKE_LABEL
 
-    outline1("LD A, (%s+3)", _source);
-    outline0("LD B, A");
-    outline1("LD A, (%s+3)", _destination);
-    outline0("CP B");
-    outline1("JR C, %s", label);
-    outline1("LD A, (%s+2)", _source);
-    outline0("LD B, A");
-    outline1("LD A, (%s+2)", _destination);
-    outline0("CP B");
-    outline1("JR C, %s", label);
-    outline1("LD A, (%s+1)", _source);
-    outline0("LD B, A");
-    outline1("LD A, (%s+1)", _destination);
-    outline0("CP B");
-    outline1("JR C, %s", label);
-    outline1("LD A, (%s)", _source);
-    outline0("LD B, A");
-    outline1("LD A, (%s)", _destination);
-    outline0("CP B");
-    outline1("JR C, %s", label);
-    if ( _equal ) {
-        outline1("JR Z, %s", label);
-    }
-    outline0("LD A, 0");
-    if ( _other ) {
-        outline1("LD (%s), A", _other);
+    if ( _signed ) {
+
+        outline1("LD IX, %s", _source);
+        outline1("LD IY, %s", _destination);
+        outline0("LD B, (IX+3)");
+        outline0("LD A, B");
+        outline0("AND $80");
+        outline1("JR NZ,%sNEGM1", label);
+        outline0("BIT 7,(IY+3)");
+        outline1("JR NZ,%sdone", label);
+        outline0("LD A, B");
+        outline0("CP (IY+3)");
+        outline1("JR NZ,%sdone", label);
+        outline0("LD A, (IX+2)");
+        outline0("CP (IY+2)");
+        outline1("JR NZ,%sdone", label);
+        outline0("LD A, (IX+1)");
+        outline0("CP (IY+1)");
+        outline1("JR NZ,%sdone", label);
+        outline0("LD A, (IX)");
+        outline0("CP (IY)");
+        outline1("JMP %sdone", label);
+        outhead1("%sNEGM1:", label);
+        outline0("XOR (IY+3)");
+        outline0("RLA");
+        outline1("JR C,%sdone", label);
+        outline0("LD A, B");
+        outline0("CP (IY+3)");
+        outline1("JR NZ,%sdone", label);
+        outline0("LD A, (IX+2)");
+        outline0("CP (IY+2)");
+        outline1("JR NZ,%sdone", label);
+        outline0("LD A, (IX+1)");
+        outline0("CP (IY+1)");
+        outline1("JR NZ,%sdone", label);
+        outline0("LD A, (IX)");
+        outline0("CP (IY)");
+        outline1("JMP %sdone", label);
+        outhead1("%sdone:", label);
+        if ( _equal ) {
+            outline1("JR Z,%smi", label);
+        }
+        outline1("JR C,%smi", label);
+        outhead1("%spl:", label);
+        outline0("LD A, 0");
+        if ( _other ) {
+            outline1("LD (%s), A", _other);
+        } else {
+            outline1("LD (%s), A", _destination);
+        }
+        outline1("JMP %sdone2", label);
+        outhead1("%smi:", label);
+        outline0("LD A, $ff");
+        if ( _other ) {
+            outline1("LD (%s), A", _other);
+        } else {
+            outline1("LD (%s), A", _destination);
+        }
+        outline1("JMP %sdone2", label);
+        outhead1("%sdone2:", label);
+
     } else {
-        outline1("LD (%s), A", _destination);
+
+        outline1("LD A, (%s+3)", _source);
+        outline0("LD B, A");
+        outline1("LD A, (%s+3)", _destination);
+        outline0("CP B");
+        outline1("JR C, %s", label);
+        outline1("LD A, (%s+2)", _source);
+        outline0("LD B, A");
+        outline1("LD A, (%s+2)", _destination);
+        outline0("CP B");
+        outline1("JR C, %s", label);
+        outline1("LD A, (%s+1)", _source);
+        outline0("LD B, A");
+        outline1("LD A, (%s+1)", _destination);
+        outline0("CP B");
+        outline1("JR C, %s", label);
+        outline1("LD A, (%s)", _source);
+        outline0("LD B, A");
+        outline1("LD A, (%s)", _destination);
+        outline0("CP B");
+        outline1("JR C, %s", label);
+        if ( _equal ) {
+            outline1("JR Z, %s", label);
+        }
+        outline0("LD A, $ff");
+        if ( _other ) {
+            outline1("LD (%s), A", _other);
+        } else {
+            outline1("LD (%s), A", _destination);
+        }
+        outline1("JMP %s_2", label);
+        outhead1("%s:", label);
+        outline0("LD A, $0");
+        if ( _other ) {
+            outline1("LD (%s), A", _other);
+        } else {
+            outline1("LD (%s), A", _destination);
+        }
+        outhead1("%s_2:", label);
+
+
     }
-    outline1("JMP %s_2", label);
-    outhead1("%s:", label);
-    outline0("LD A, $ff");
-    if ( _other ) {
-        outline1("LD (%s), A", _other);
-    } else {
-        outline1("LD (%s), A", _destination);
-    }
-    outhead1("%s_2:", label);
 
 }
 
@@ -1035,55 +1372,14 @@ void z80_less_than_32bit( Environment * _environment, char *_source, char *_dest
  * @param _other Destination address for result
  * @param _equal True if equal
  */
-void z80_greater_than_32bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _size ) {
+void z80_greater_than_32bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed ) {
 
-    MAKE_LABEL
-
-    outline1("LD A, (%s+3)", _destination);
-    outline0("LD B, A");
-    outline1("LD A, (%s+3)", _source);
-    outline0("CP B");
-    outline1("JR Z, %sg2", label);
-    outline1("JR NC, %s", label);
-    outhead1("%sg2:", label);
-    outline1("LD A, (%s+2)", _destination);
-    outline0("LD B, A");
-    outline1("LD A, (%s+2)", _source);
-    outline0("CP B");
-    outline1("JR Z, %sg3", label);
-    outline1("JR NC, %s", label);
-    outhead1("%sg3:", label);
-    outline1("LD A, (%s+1)", _destination);
-    outline0("LD B, A");
-    outline1("LD A, (%s+1)", _source);
-    outline0("CP B");
-    outline1("JR Z, %sg4", label);
-    outline1("JR NC, %s", label);
-    outhead1("%sg4:", label);
-    outline1("LD A, (%s)", _destination);
-    outline0("LD B, A");
-    outline1("LD A, (%s)", _source);
-    outline0("CP B");
-    if ( !_equal ) {
-        outline1("JR Z, %sg5", label);
-    }
-    outline1("JR NC, %s", label);
-    outhead1("%sg5:", label);
-    outline0("LD A, 0");
+    z80_less_than_32bit( _environment, _source, _destination, _other, !_equal, _signed );
     if ( _other ) {
-        outline1("LD (%s), A", _other);
+        z80_logical_not_8bit( _environment, _other, _other );
     } else {
-        outline1("LD (%s), A", _destination);
+        z80_logical_not_8bit( _environment, _destination, _destination );
     }
-    outline1("JMP %send", label);
-    outhead1("%s:", label);
-    outline0("LD A, $ff");
-    if ( _other ) {
-        outline1("LD (%s), A", _other);
-    } else {
-        outline1("LD (%s), A", _destination);
-    }
-    outhead1("%send:", label);
 
 }
 
@@ -1102,16 +1398,19 @@ void z80_math_add_32bit( Environment * _environment, char *_source, char *_desti
     outline0("EXX" );
     outline1("LD HL, (%s+2)", _source );
     outline1("LD DE, (%s+2)", _destination );
-    outline0("ADD HL, DE" );
     outline0("EXX" );
     outline0("ADD HL, DE" );
+    outline0("EXX" );
+    outline0("ADC HL, DE" );
     outline0("EXX" );
     if ( _other ) {
         outline1("LD (%s), HL", _other );
-        outline1("LD (%s+2), DE", _other );
+        outline0("EXX" );
+        outline1("LD (%s+2), HL", _other );
     } else {
         outline1("LD (%s), HL", _destination );
-        outline1("LD (%s+2), DE", _destination );
+        outline0("EXX" );
+        outline1("LD (%s+2), HL", _destination );
     }
 
 }
@@ -1126,7 +1425,11 @@ void z80_math_add_32bit( Environment * _environment, char *_source, char *_desti
  */
 void z80_math_double_32bit( Environment * _environment, char *_source, char *_other, int _signed ) {
 
-    // TODO: z80_math_double_32bit
+    if ( _other ) {
+        z80_math_add_32bit( _environment, _source, _source, _other );
+    } else {
+        z80_math_add_32bit( _environment, _source, _source, _source );
+    }
 
 }
 
@@ -1191,12 +1494,45 @@ void z80_math_complement_const_32bit( Environment * _environment, char *_source,
  */
 void z80_math_div2_const_32bit( Environment * _environment, char *_source, int _steps, int _signed ) {
 
-    outline1("ld de,(%s)", _source );
-    outline1("ld bc,(%s+2)", _source );
-    outline0("SRA B" );
-    outline0("RR C" );
-    outline0("RR D" );
-    outline0("RR E" );
+    MAKE_LABEL
+
+    if ( _signed ) {
+        outline1("LD A, (%s+3)", _source );
+        outline0("AND $80" );
+        outline0("PUSH AF" );
+        outline1("JR Z, %spos", label );
+        z80_complement2_32bit( _environment, _source, _source );
+        outline1("JMP %spos2", label );
+        outhead1("%spos:", label );
+        outhead1("%spos2:", label );
+        outline1("LD DE,(%s)", _source );
+        outline1("LD BC,(%s+2)", _source );
+        while( _steps ) {
+            outline0("SRA B" );
+            outline0("RR C" );
+            outline0("RR D" );
+            outline0("RR E" );
+            --_steps;
+        }
+        outline1("LD (%s),DE", _source );
+        outline1("LD (%s+2),BC", _source );
+        outline0("POP AF" );
+        outline0("AND $80" );
+        outline1("JR Z, %sdone", label );
+        z80_complement2_32bit( _environment, _source, _source );
+        outhead1("%sdone:", label );
+    } else {
+        outline1("LD DE,(%s)", _source );
+        outline1("LD BC,(%s+2)", _source );
+        while( _steps ) {
+            outline0("SRA B" );
+            outline0("RR C" );
+            outline0("RR D" );
+            outline0("RR E" );
+            --_steps;
+        }
+        outline1("LD (%s),DE", _source );
+        outline1("LD (%s+2),BC", _source );    }
 
 }
 
@@ -1209,6 +1545,47 @@ void z80_math_div2_const_32bit( Environment * _environment, char *_source, int _
  * @todo Not yet implemented
  */
 void z80_math_mul2_const_32bit( Environment * _environment, char *_source, int _steps, int _signed ) {
+
+    MAKE_LABEL
+
+    if ( _signed ) {
+        outline1("LD A, (%s+3)", _source );
+        outline0("AND $80" );
+        outline0("PUSH AF" );
+        outline1("JR Z, %spos", label );
+        z80_complement2_32bit( _environment, _source, _source );
+        outline1("JMP %spos2", label );
+        outhead1("%spos:", label );
+        outhead1("%spos2:", label );
+        outline1("LD HL, (%s)", _source );
+        outline1("LD DE, (%s+2)", _source );
+        while( _steps ) {
+            outline0("SLA L" );
+            outline0("RL H" );
+            outline0("RL E" );
+            outline0("RL D" );
+            --_steps;
+        }
+        outline1("LD (%s), HL", _source );
+        outline1("LD (%s+2), DE", _source );
+        outline0("POP AF" );
+        outline0("AND $80" );
+        outline1("JR Z, %sdone", label );
+        z80_complement2_32bit( _environment, _source, _source );
+        outhead1("%sdone:", label );
+    } else {
+        outline1("LD HL, (%s)", _source );
+        outline1("LD DE, (%s+2)", _source );
+        while( _steps ) {
+            outline0("SLA L" );
+            outline0("RL H" );
+            outline0("RL D" );
+            outline0("RL E" );
+            --_steps;
+        }
+        outline1("LD (%s), HL", _source );
+        outline1("LD (%s+2), DE", _source );
+    }
 
 }
 
@@ -1464,6 +1841,26 @@ void z80_inc_16bit( Environment * _environment, char * _variable ) {
 
 }
 
+void z80_inc_32bit( Environment * _environment, char * _variable ) {
+
+    MAKE_LABEL
+
+    outline1("LD HL, (%s)", _variable  );
+    outline0("INC HL" );
+    outline1("LD (%s), HL", _variable  );
+    outline0("LD A, L"  );
+    outline0("CMP 0"  );
+    outline1("JR NZ, %s", label  );
+    outline0("LD A, h"  );
+    outline0("CMP 0"  );
+    outline1("JR NZ, %s", label  );
+    outline1("LD HL, (%s+2)", _variable  );
+    outline0("INC HL" );
+    outline1("LD (%s+2), HL", _variable  );
+    outhead1("%s:", label  );
+
+}
+
 void z80_dec_16bit( Environment * _environment, char * _variable ) {
 
     outline1("LD HL, (%s)", _variable  );
@@ -1510,6 +1907,7 @@ void z80_compare_memory( Environment * _environment, char *_source, char *_desti
     MAKE_LABEL
 
     outline1("LD A, (%s)", _size);
+    outline0("CP 0");
     outline1("JR Z, %sequal", label);
     outline0("LD C, A");
     outline1("LD HL,(%s)", _source);
@@ -2150,106 +2548,297 @@ void z80_move_32bit_indirect2( Environment * _environment, char * _value, char *
 
 }
 
-void z80_math_div_32bit_to_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, char * _other_remainder ) {
+void z80_math_div_32bit_to_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, char * _other_remainder, int _signed ) {
 
     MAKE_LABEL
 
-    outline1("LD HL, %s", _source);
-    outline0("LD IX, (HL)");
-    outline0("INC HL");
-    outline0("INC HL");
-    outline0("LD A, (HL)");
-    outline0("LD C, A");
-    outline0("INC HL");
-    outline0("LD A, (HL)");
-    outline1("LD DE, (%s)", _destination);
+    if ( _signed ) {
 
-    outline0("LD HL, 0");
-    outline0("LD B, 32");
-    outhead1("%sloop:", label);
-    outline0("ADD IX, IX");
-    outline0("RL C");
-    outline0("RLA");
-    outline0("ADC HL, HL");
-    outline1("JR C, %soverflow", label);
-    outline0("SBC HL, DE");
-    outline1("JR NC, %ssetbit", label);
-    outline0("ADD HL, DE");
-    outline1("DJNZ %sloop", label);
-    outline1("JMP %send", label);
-    outhead1("%soverflow:", label);
-    outline0("OR A");
-    outline0("SBC HL, DE");
-    outhead1("%ssetbit:", label);
-    outline0("INC IXL");
-    outline1("DJNZ %sloop", label);
-    outhead1("%send:", label);
-    outline1("LD (%s), HL", _other_remainder);
-    outline1("LD HL, %s", _other);
-    outline0("LD (HL), IX");
-    outline0("INC HL");
-    outline0("INC HL");
-    outline0("INC HL");
-    outline0("LD (HL), A");
-    outline0("DEC HL");
-    outline0("LD C, (HL)");
+        outline1("LD A, (%s+3)", _source);
+        outline0("AND $80");
+        outline0("PUSH AF");
+        outline1("JR Z,%spositive", label);
+        z80_complement2_32bit( _environment, _source, NULL );
+        outhead1("%spositive:", label);
+        outline1("LD A, (%s+1)", _destination);
+        outline0("AND $80");
+        outline0("PUSH AF");
+        outline1("JR Z,%spositive2", label);
+        z80_complement2_16bit( _environment, _destination, NULL );
+        outhead1("%spositive2:", label);
+
+        outline1("LD HL, %s", _source);
+        outline0("LD IX, (HL)");
+        outline0("INC HL");
+        outline0("INC HL");
+        outline0("LD A, (HL)");
+        outline0("LD C, A");
+        outline0("INC HL");
+        outline0("LD A, (HL)");
+        outline1("LD DE, (%s)", _destination);
+
+        outline0("LD HL, 0");
+        outline0("LD B, 32");
+        outhead1("%sloop:", label);
+        outline0("ADD IX, IX");
+        outline0("RL C");
+        outline0("RLA");
+        outline0("ADC HL, HL");
+        outline1("JR C, %soverflow", label);
+        outline0("SBC HL, DE");
+        outline1("JR NC, %ssetbit", label);
+        outline0("ADD HL, DE");
+        outline1("DJNZ %sloop", label);
+        outline1("JMP %send", label);
+        outhead1("%soverflow:", label);
+        outline0("OR A");
+        outline0("SBC HL, DE");
+        outhead1("%ssetbit:", label);
+        outline0("INC IXL");
+        outline1("DJNZ %sloop", label);
+        outhead1("%send:", label);
+        outline1("LD (%s), HL", _other_remainder);
+        outline1("LD HL, %s", _other);
+        outline0("LD (HL), IX");
+        outline0("INC HL");
+        outline0("INC HL");
+        outline0("INC HL");
+        outline0("LD (HL), A");
+        outline0("DEC HL");
+        outline0("LD C, (HL)");
+
+        outline0("POP AF");
+        outline0("CMP $80");
+        outline1("JR NZ, %srepositive", label);
+        z80_complement2_16bit( _environment, _destination, NULL );
+        outhead1("%srepositive:", label);
+        outline0("POP AF");
+        outline0("CMP $80");
+        outline1("JR NZ, %srepositive2", label );
+        z80_complement2_32bit( _environment, _source, NULL );
+        outhead1("%srepositive2:", label);
+
+    } else {
+
+        outline1("LD HL, %s", _source);
+        outline0("LD IX, (HL)");
+        outline0("INC HL");
+        outline0("INC HL");
+        outline0("LD A, (HL)");
+        outline0("LD C, A");
+        outline0("INC HL");
+        outline0("LD A, (HL)");
+        outline1("LD DE, (%s)", _destination);
+
+        outline0("LD HL, 0");
+        outline0("LD B, 32");
+        outhead1("%sloop:", label);
+        outline0("ADD IX, IX");
+        outline0("RL C");
+        outline0("RLA");
+        outline0("ADC HL, HL");
+        outline1("JR C, %soverflow", label);
+        outline0("SBC HL, DE");
+        outline1("JR NC, %ssetbit", label);
+        outline0("ADD HL, DE");
+        outline1("DJNZ %sloop", label);
+        outline1("JMP %send", label);
+        outhead1("%soverflow:", label);
+        outline0("OR A");
+        outline0("SBC HL, DE");
+        outhead1("%ssetbit:", label);
+        outline0("INC IXL");
+        outline1("DJNZ %sloop", label);
+        outhead1("%send:", label);
+        outline1("LD (%s), HL", _other_remainder);
+        outline1("LD HL, %s", _other);
+        outline0("LD (HL), IX");
+        outline0("INC HL");
+        outline0("INC HL");
+        outline0("INC HL");
+        outline0("LD (HL), A");
+        outline0("DEC HL");
+        outline0("LD C, (HL)");
+
+    }
  
 }
 
-void z80_math_div_16bit_to_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, char * _other_remainder ) {
+void z80_math_div_16bit_to_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, char * _other_remainder, int _signed ) {
 
     MAKE_LABEL
 
-    outline1("LD HL, %s", _source);
-    outline0("LD A, (HL)");
-    outline0("LD C, A");
-    outline0("INC HL");
-    outline0("LD A, (HL)");
-    outline1("LD DE, (%s)", _destination);
+    if ( _signed ) {
 
-    outline0("LD HL, 0");
-    outline0("LD B, 16");
-    outhead1("%sloop:", label );
-    outline0("SLL C");
-    outline0("RLA");
-    outline0("ADC HL, HL");
-    outline0("SBC HL, DE");
-    outline0("JR NC, $+4");
-    outline0("ADD HL, DE");
-    outline0("DEC C");
-    outline1("DJNZ %sloop", label);
-    outline1("LD (%s), HL", _other_remainder);
-    outline1("LD DE, %s", _other);
-    outline0("LD B, A");
-    outline0("LD A, C");
-    outline0("LD (DE), A");
-    outline0("INC DE");
-    outline0("LD A, B");
-    outline0("LD (DE), A");
+        outline1("LD A, (%s+3)", _source);
+        outline0("AND $80");
+        outline0("PUSH AF");
+        outline1("JR Z,%spositive", label);
+        z80_complement2_32bit( _environment, _source, NULL );
+        outhead1("%spositive:", label);
+        outline1("LD A, (%s+1)", _destination);
+        outline0("AND $80");
+        outline0("PUSH AF");
+        outline1("JR Z,%spositive2", label);
+        z80_complement2_16bit( _environment, _destination, NULL );
+        outhead1("%spositive2:", label);
+
+        outline1("LD HL, %s", _source);
+        outline0("LD A, (HL)");
+        outline0("LD C, A");
+        outline0("INC HL");
+        outline0("LD A, (HL)");
+        outline1("LD DE, (%s)", _destination);
+
+        outline0("LD HL, 0");
+        outline0("LD B, 16");
+        outhead1("%sloop:", label );
+        outline0("SLL C");
+        outline0("RLA");
+        outline0("ADC HL, HL");
+        outline0("SBC HL, DE");
+        outline0("JR NC, $+4");
+        outline0("ADD HL, DE");
+        outline0("DEC C");
+        outline1("DJNZ %sloop", label);
+        outline1("LD (%s), HL", _other_remainder);
+        outline1("LD DE, %s", _other);
+        outline0("LD B, A");
+        outline0("LD A, C");
+        outline0("LD (DE), A");
+        outline0("INC DE");
+        outline0("LD A, B");
+        outline0("LD (DE), A");
+
+        outline0("POP AF");
+        outline0("CMP $80");
+        outline1("JR NZ, %srepositive", label);
+        z80_complement2_16bit( _environment, _destination, NULL );
+        outhead1("%srepositive:", label);
+        outline0("POP AF");
+        outline0("CMP $80");
+        outline1("JR NZ, %srepositive2", label );
+        z80_complement2_32bit( _environment, _source, NULL );
+        outhead1("%srepositive2:", label);
+
+    } else {
+
+        outline1("LD HL, %s", _source);
+        outline0("LD A, (HL)");
+        outline0("LD C, A");
+        outline0("INC HL");
+        outline0("LD A, (HL)");
+        outline1("LD DE, (%s)", _destination);
+
+        outline0("LD HL, 0");
+        outline0("LD B, 16");
+        outhead1("%sloop:", label );
+        outline0("SLL C");
+        outline0("RLA");
+        outline0("ADC HL, HL");
+        outline0("SBC HL, DE");
+        outline0("JR NC, $+4");
+        outline0("ADD HL, DE");
+        outline0("DEC C");
+        outline1("DJNZ %sloop", label);
+        outline1("LD (%s), HL", _other_remainder);
+        outline1("LD DE, %s", _other);
+        outline0("LD B, A");
+        outline0("LD A, C");
+        outline0("LD (DE), A");
+        outline0("INC DE");
+        outline0("LD A, B");
+        outline0("LD (DE), A");
+
+    }
     
 }
 
-void z80_math_div_8bit_to_8bit( Environment * _environment, char *_source, char *_destination,  char *_other, char * _other_remainder ) {
+void z80_math_div_8bit_to_8bit( Environment * _environment, char *_source, char *_destination,  char *_other, char * _other_remainder, int _signed ) {
 
     MAKE_LABEL
 
-    outline1("LD D, (%s)", _source);
-    outline1("LD E, (%s)", _destination);
+    if ( _signed ) {
 
-    outline0("XOR A");
-    outline0("LD B, 8");
-    outhead1("%sloop:", label);
+        outline1("LD A, (%s)", _source );
+        outline0("LD B, A" );
+        outline1("LD A, (%s)", _destination );
+        outline0("XOR A, B" );
+        outline0("AND $80" );
+        outline0("PUSH AF" );
+        outline1("LD A, (%s)", _source );
+        outline0("AND $80" );
+        outline1("JR Z,%spos", label );
+        outline1("LD A, (%s)", _source );
+        outline0("XOR $FF" );
+        outline0("ADC $1" );
+        outline1("JMP %spos2", label );
+        outhead1("%spos:", label );
+        outline1("LD A, (%s)", _source );
+        outhead1("%spos2:", label );
+        outline0("LD D, A");
+        
+        outline1("LD A, (%s)", _destination );
+        outline0("AND $80" );
+        outline1("JR Z,%sposx", label );
+        outline1("LD A, (%s)", _destination );
+        outline0("XOR $FF" );
+        outline0("ADC $1" );
+        outline1("JMP %sposx2", label );
+        outhead1("%sposx:", label );
+        outline1("LD A, (%s)", _destination );
+        outhead1("%sposx2:", label );
+        outline0("LD E, A");
 
-    outline0("SLA D");
-    outline0("RLA");
-    outline0("CP E");
-    outline0("JR C, $+4");
-    outline0("SUB E");
-    outline0("INC D");
-    outline1("DJNZ %sloop", label );
+        outline0("XOR A");
+        outline0("LD B, 8");
+        outhead1("%sloop:", label);
 
-    outline1("LD (%s), D", _other);
-    outline1("LD (%s), A", _other_remainder);
+        outline0("SLA D");
+        outline0("RLA");
+        outline0("CP E");
+        outline0("JR C, $+4");
+        outline0("SUB E");
+        outline0("INC D");
+        outline1("DJNZ %sloop", label );
+
+        outline1("LD (%s), A", _other_remainder);
+        outline0("LD A, D");
+        outline1("LD (%s), A", _other);
+
+        outline0("POP AF" );
+        outline0("AND $80" );
+        outline1("JR Z,%spos3", label );
+        outline1("LD A, (%s)", _other );
+        outline0("XOR $FF" );
+        outline0("ADC $1" );
+        outline1("LD (%s), A", _other );
+        outhead1("%spos3:", label );
+        
+    } else {
+
+        outline1("LD A, (%s)", _source);
+        outline0("LD D, A");
+        outline1("LD A, (%s)", _destination);
+        outline0("LD E, A");
+
+        outline0("XOR A");
+        outline0("LD B, 8");
+        outhead1("%sloop:", label);
+
+        outline0("SLA D");
+        outline0("RLA");
+        outline0("CP E");
+        outline0("JR C, $+4");
+        outline0("SUB E");
+        outline0("INC D");
+        outline1("DJNZ %sloop", label );
+
+        outline1("LD (%s), A", _other_remainder);
+        outline0("LD A, D");
+        outline1("LD (%s), A", _other);
+
+    }
 }
 
 void z80_bit_check( Environment * _environment, char *_value, int _position, char * _result ) {
@@ -2559,6 +3148,80 @@ void z80_move_8bit_indirect_with_offset2( Environment * _environment, char *_sou
     outline1("LD A, (%s)", _source);
     outline0("LD (HL), A");
 
+}
+
+void z80_complement2_8bit( Environment * _environment, char * _source, char * _destination ) {
+    outline1( "LD A, (%s)", _source );
+    outline0( "XOR $FF" );
+    outline0( "INC A" );        
+    if ( _destination ) {
+        outline1( "LD (%s), A", _destination );        
+    } else {
+        outline1( "LD (%s), A", _source );        
+    }
+    if ( _destination ) {
+        z80_inc( _environment, _destination );
+    } else {
+        z80_inc( _environment, _source );
+    }
+}
+
+void z80_complement2_16bit( Environment * _environment, char * _source, char * _destination ) {
+    outline1( "LD A, (%s)", _source );
+    outline0( "XOR $FF" );
+    if ( _destination ) {
+        outline1( "LD (%s), A", _destination );        
+    } else {
+        outline1( "LD (%s), A", _source );        
+    }
+    outline1( "LD A, (%s+1)", _source );
+    outline0( "XOR $FF" );
+    if ( _destination ) {
+        outline1( "LD (%s+1), A", _destination );        
+    } else {
+        outline1( "LD (%s+1), A", _source );        
+    }
+    if ( _destination ) {
+        z80_inc_16bit( _environment, _destination );
+    } else {
+        z80_inc_16bit( _environment, _source );
+    }
+}
+
+void z80_complement2_32bit( Environment * _environment, char * _source, char * _destination ) {
+    outline1( "LD A, (%s)", _source );
+    outline0( "XOR $FF" );
+    if ( _destination ) {
+        outline1( "LD (%s), A", _destination );        
+    } else {
+        outline1( "LD (%s), A", _source );        
+    }
+    outline1( "LD A, (%s+1)", _source );
+    outline0( "XOR $FF" );
+    if ( _destination ) {
+        outline1( "LD (%s+1), A", _destination );        
+    } else {
+        outline1( "LD (%s+1), A", _source );        
+    }
+    outline1( "LD A, (%s+2)", _source );
+    outline0( "XOR $FF" );
+    if ( _destination ) {
+        outline1( "LD (%s+2), A", _destination );        
+    } else {
+        outline1( "LD (%s+2), A", _source );        
+    }
+    outline1( "LD A, (%s+3)", _source );
+    outline0( "XOR $FF" );
+    if ( _destination ) {
+        outline1( "LD (%s+3), A", _destination );        
+    } else {
+        outline1( "LD (%s+3), A", _source );        
+    } 
+    if ( _destination ) {
+        z80_inc_32bit( _environment, _destination );
+    } else {
+        z80_inc_32bit( _environment, _source );
+    }
 }
 
 #endif
