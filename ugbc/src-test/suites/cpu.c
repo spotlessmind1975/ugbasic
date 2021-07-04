@@ -573,21 +573,29 @@ void test_cpu_less_than_32bit_payload( TestEnvironment * _te ) {
     Variable * ub = variable_define( e, "ub", VT_DWORD, 0x84000084 );
     Variable * sa = variable_define( e, "sa", VT_SDWORD, 0x1000000 );
     Variable * sb = variable_define( e, "sb", VT_SDWORD, 0xFFFF0000 );
+    Variable * sc = variable_define( e, "sc", VT_SDWORD, 0xFFFF0000 );
+    Variable * sd = variable_define( e, "sd", VT_SDWORD, 0xFFFF0000 );
 
     Variable * resultu1 = variable_temporary( e,VT_BYTE, "(result unsigned 1)");
     Variable * results1 = variable_temporary( e,VT_BYTE, "(result signed 1)");
     Variable * resultu2 = variable_temporary( e,VT_BYTE, "(result unsigned 2)");
     Variable * results2 = variable_temporary( e,VT_BYTE, "(result signed 2)");
+    Variable * results3 = variable_temporary( e,VT_BYTE, "(result signed 3)");
+    Variable * results4 = variable_temporary( e,VT_BYTE, "(result signed 4)");
 
     cpu_less_than_32bit( e, ua->realName, ub->realName, resultu1->realName, 0, 0 );
     cpu_less_than_32bit( e, ub->realName, ua->realName, resultu2->realName, 0, 0 );
     cpu_less_than_32bit( e, sa->realName, sb->realName, results1->realName, 0, 1 );
     cpu_less_than_32bit( e, sb->realName, sa->realName, results2->realName, 0, 1 );
+    cpu_less_than_32bit( e, sc->realName, sd->realName, results3->realName, 0, 1 );
+    cpu_less_than_32bit( e, sd->realName, sc->realName, results4->realName, 1, 1 );
 
     _te->trackedVariables[0] = resultu1;
     _te->trackedVariables[1] = resultu2;
     _te->trackedVariables[2] = results1;
     _te->trackedVariables[3] = results2;
+    _te->trackedVariables[4] = results3;
+    _te->trackedVariables[5] = results4;
 
 }
 
@@ -597,11 +605,16 @@ int test_cpu_less_than_32bit_tester( TestEnvironment * _te ) {
     Variable * resultu2 = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
     Variable * results1 = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
     Variable * results2 = variable_retrieve( &_te->environment, _te->trackedVariables[3]->name );
+    Variable * results3 = variable_retrieve( &_te->environment, _te->trackedVariables[4]->name );
+    Variable * results4 = variable_retrieve( &_te->environment, _te->trackedVariables[5]->name );
 
     return  resultu1->value == 0xff && 
             resultu2->value == 0x00 &&
             results1->value == 0x00 && 
-            results2->value == 0xff;
+            results2->value == 0xff &&
+            results3->value == 0x00 && 
+            results4->value == 0xff
+            ;
 
 }
 
@@ -980,7 +993,7 @@ int test_cpu_math_mul_8bit_to_16bit_tester( TestEnvironment * _te ) {
     Variable * results = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
 
     return  resultu->value == 0X210 && 
-            results->value == 0x80;
+            results->value == -128;
 
 }
 

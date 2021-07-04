@@ -61,9 +61,6 @@ int test_for_step_minus_one_tester( TestEnvironment * _te ) {
     Variable * index = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
     Variable * minusOne = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
 
-printf( "index = %d\n", index->value );
-printf( "minusOne = %d\n", minusOne->value );
-
     return index->value == -1 && minusOne->value == -1;
 
 }

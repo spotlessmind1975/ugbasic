@@ -126,10 +126,12 @@ void test_variables_bin2_payload( TestEnvironment * _te ) {
 
     Variable * j = variable_define( e, "j", VT_BYTE, 0 );
     Variable * one = variable_define( e, "one", VT_WORD, 1 );
-    Variable * limit = variable_define( e, "limit", VT_WORD, 10000 );
+    Variable * limit = variable_define( e, "limit", VT_WORD, 100 );
     Variable * five = variable_define( e, "five", VT_WORD, 5 );
     Variable * times = variable_define( e, "times", VT_WORD, 0 );
-    Variable * b;
+    Variable * b = variable_define( e, "b", VT_DSTRING, 42 );
+
+    variable_store_string( e, b->name, "" );
 
     begin_loop( e );
         b = variable_bin( e, j->name, five->name );
@@ -149,7 +151,7 @@ int test_variables_bin2_tester( TestEnvironment * _te ) {
 
     Variable * b = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
 
-    return strcmp( b->valueString, "01010101" ) == 0;
+    return strcmp( b->valueString, "01010101" ) == 0 || strcmp( b->valueString, "00000000000000000000000001010101" ) == 0;
 
 }
 
