@@ -132,6 +132,7 @@ void point_at_vars( Environment * _environment, char * _x, char * _y ) {
     outline0( "LD B, A");
     outline0( "LD A, $8");
     outline0( "SUB B");
+    outline0( "LD B, A");
     outline0( "LD E, 1");
     outhead1( "%s:", label );
     outline0( "DEC B");
