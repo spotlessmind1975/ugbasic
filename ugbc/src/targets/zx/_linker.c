@@ -46,7 +46,7 @@
  * @param _environment Current calling environment
  */
 void linker_setup( Environment * _environment ) {
-    // TODO: implement zx/linker_setup
+
 }
 
 /**
@@ -57,7 +57,5 @@ void linker_setup( Environment * _environment ) {
  * @param _environment Current calling environment
  */
 void linker_cleanup( Environment * _environment ) {
- 
-    // TODO: implement zx/linker_setup
     
 }
