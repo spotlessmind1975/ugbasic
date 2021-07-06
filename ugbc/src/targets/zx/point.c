@@ -110,10 +110,10 @@ void point_at_vars( Environment * _environment, char * _x, char * _y ) {
     outline0( "LD D, A" );
     outline1( "LD A,(%s)", x->realName );
     outline0( "CMP B" );
-    outline1( "JR C, %sclipped", label );
+    outline1( "JP C, %sclipped", label );
     outline0( "CMP D" );
     outline1( "JR Z, %snoclipped", label );
-    outline1( "JR NC, %sclipped", label );
+    outline1( "JP NC, %sclipped", label );
     outhead1( "%snoclipped:", label );
     outline1( "LD A,(%s)", clipY1->realName );
     outline0( "LD B, A" );
@@ -121,10 +121,10 @@ void point_at_vars( Environment * _environment, char * _x, char * _y ) {
     outline0( "LD D, A" );
     outline1( "LD A,(%s)", y->realName );
     outline0( "CMP B" );
-    outline1( "JR C, %sclipped", label );
+    outline1( "JP C, %sclipped", label );
     outline0( "CMP D" );
     outline1( "JR Z, %snoclipped2", label );
-    outline1( "JR NC, %sclipped", label );
+    outline1( "JP NC, %sclipped", label );
     outhead1( "%snoclipped2:", label );
 
     outline1( "LD A,(%s)", x->realName );
@@ -173,6 +173,30 @@ void point_at_vars( Environment * _environment, char * _x, char * _y ) {
     outline0( "LD A,(HL)");
     outline0( "OR E");
     outline0( "LD (HL),A");
+
+    outline1("LD HL,(%s)", x->realName );
+    outline0("SRA H" );
+    outline0("RR L" );
+    outline0("SRA H" );
+    outline0("RR L" );
+    outline0("SRA H" );
+    outline0("RR L" );
+    outline0("LD DE,HL");
+
+    outline1("LD HL,(%s)", y->realName );
+    outline0("SLA L" );
+    outline0("RL H" );
+    outline0("SLA L" );
+    outline0("RL H" );
+    outline0("ADD HL,DE" );
+    outline0("LD DE,(COLORMAPADDRESS)");
+    outline0("ADD HL,DE" );
+    outline0("LD A,(_PEN)" );
+    outline0("LD B,A" );
+    outline0("LD A,(HL)" );
+    outline0("AND $f8" );
+    outline0("OR A,B" );
+    outline0("LD (HL),A" );
 
     outhead1( "%sclipped:", label );
 
