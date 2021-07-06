@@ -79,4 +79,6 @@ BACKGCNB:
     RTS
 
 BACKT:
+    LDA _PAPER
+    STA $d021
     RTS
