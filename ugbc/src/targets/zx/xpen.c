@@ -48,67 +48,12 @@
  * @param _environment Current calling environment
  * @return Variable* Variable with the result of the reading
  */
-/* <usermanual>
-@keyword XPEN
-
-@english
-Read the X (horizontal) position of the electronic pen connected to the hardware.
-
-@italian
-Legge la posizione X (orizzontale) della penna elettronica collegata all'hardware.
-
-@syntax = XPEN( )
-
-@example x = XPEN( )
-
-@target c64
-</usermanual> */
 Variable * xpen( Environment * _environment ) {
 
     outline0("; = XPEN");
 
     Variable * result = variable_temporary( _environment, VT_POSITION, "(result)" );
-
-    c64_xpen( _environment, result->realName );
     
     return result;
 
 }
-
-/**
- * @brief Emit ASM code for <b>= YPEN()</b>
- * 
- * This function can be used to read the Y (vertical) position of the 
- * electronic pen connected to the hardware. The result is stored in a 
- * temporary variable.
- * 
- * @param _environment Current calling environment
- * @return Variable* Variable with the result of the reading
- */
-/* <usermanual>
-@keyword YPEN
-
-@english
-Read the Y (vertical) position of the electronic pen connected to the hardware.
-
-@italian
-Legge la posizione Y (verticale) della penna elettronica collegata all'hardware.
-
-@syntax = YPEN( )
-
-@example y = YPEN( )
-
-@target c64
-</usermanual> */
-Variable * ypen( Environment * _environment ) {
-
-    outline0("; = YPEN");
-
-    Variable * result = variable_temporary( _environment, VT_POSITION, "(result)" );
-
-    c64_ypen( _environment, result->realName );
-
-    return result;
-
-}
-

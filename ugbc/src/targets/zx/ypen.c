@@ -39,28 +39,6 @@
  ****************************************************************************/
 
 /**
- * @brief Emit ASM code for <b>= XPEN()</b>
- * 
- * This function can be used to read the X (horizontal) position of the 
- * electronic pen connected to the hardware. The result is stored in a 
- * temporary variable.
- * 
- * @param _environment Current calling environment
- * @return Variable* Variable with the result of the reading
- */
-Variable * xpen( Environment * _environment ) {
-
-    outline0("; = XPEN");
-
-    Variable * result = variable_temporary( _environment, VT_POSITION, "(result)" );
-    
-    // TODO: implement zx/xpen
-
-    return result;
-
-}
-
-/**
  * @brief Emit ASM code for <b>= YPEN()</b>
  * 
  * This function can be used to read the Y (vertical) position of the 
@@ -76,8 +54,6 @@ Variable * ypen( Environment * _environment ) {
 
     Variable * result = variable_temporary( _environment, VT_POSITION, "(result)" );
     
-    // TODO: implement zx/ypen
-
     return result;
 
 }
