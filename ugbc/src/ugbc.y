@@ -996,10 +996,10 @@ exponential:
         $$ = scancode( _environment )->name;
     }
     | KEY STATE OP expr CP {
-        $$ = key_state( _environment, $4 )->name;
+        $$ = keystate( _environment, $4 )->name;
     }
     | KEYSTATE OP expr CP {
-        $$ = key_state( _environment, $3 )->name;
+        $$ = keystate( _environment, $3 )->name;
     }
     | SCANSHIFT {
         $$ = scanshift( _environment )->name;

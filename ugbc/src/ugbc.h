@@ -1134,7 +1134,7 @@ Variable *              joy_direction( Environment * _environment, char * _port,
 // *K*
 //----------------------------------------------------------------------------
 
-Variable *              key_state( Environment * _environment, char * _scancode );
+Variable *              keystate( Environment * _environment, char * _scancode );
 Variable *              keyshift( Environment * _environment );
 
 //----------------------------------------------------------------------------
