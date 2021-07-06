@@ -80,3 +80,32 @@ void screen_vertical_scroll( Environment * _environment, int _displacement ) {
     vic2_vertical_scroll( _environment, displacementString );
 
 }
+
+/**
+ * @brief Emit ASM code for <b>SCREEN VERTICAL SCROLL [expression]</b>
+ * 
+ * This function outputs an assembly code capable of performing a 
+ * hardware scroll of the screen. The scroll is always in the direction 
+ * from bottom to up, so with a _displacement of 0 the screen is exactly as 
+ * it would be without scrolling while with the value 7 you would have a scroll
+ * of 7 pixels upwards. This version is used when an expression is used.
+ * 
+ * @param _environment Current calling environment
+ * @param _displacement Vertical offset in pixels (0-7)
+ */
+/* <usermanual>
+@keyword SCREEN VERTICAL SCROLL
+
+@syntax SCREEN VERTICAL SCROLL [expression]
+
+@example SCREEN VERTICAL SCROLL newScrolling
+</usermanual> */
+void screen_vertical_scroll_var( Environment * _environment, char * _displacement ) {
+
+    outline1("; SCREEN VERTICAL SCROLL %s", _displacement );
+
+    Variable * displacement = variable_retrieve( _environment, _displacement );
+
+    vic2_vertical_scroll( _environment, displacement->realName );
+
+}
