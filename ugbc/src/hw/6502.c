@@ -3272,7 +3272,7 @@ void cpu6502_store_8bit_with_offset( Environment * _environment, char *_destinat
 
 void cpu6502_complement2_8bit( Environment * _environment, char * _source, char * _destination ) {
     outline1( "LDA %s", _source );
-    outline1( "EOR #$FF", _source );
+    outline0( "EOR #$FF" );
     if ( _destination ) {
         outline1( "STA %s", _destination );
     } else {
@@ -3287,14 +3287,14 @@ void cpu6502_complement2_8bit( Environment * _environment, char * _source, char 
 
 void cpu6502_complement2_16bit( Environment * _environment, char * _source, char * _destination ) {
     outline1( "LDA %s", _source );
-    outline1( "EOR #$FF", _source );
+    outline0( "EOR #$FF" );
     if ( _destination ) {
         outline1( "STA %s", _destination );
     } else {
         outline1( "STA %s", _source );
     }
     outline1( "LDA %s+1", _source );
-    outline1( "EOR #$FF", _source );
+    outline0( "EOR #$FF" );
     if ( _destination ) {
         outline1( "STA %s+1", _destination );
     } else {
@@ -3309,28 +3309,28 @@ void cpu6502_complement2_16bit( Environment * _environment, char * _source, char
 
 void cpu6502_complement2_32bit( Environment * _environment, char * _source, char * _destination ) {
     outline1( "LDA %s", _source );
-    outline1( "EOR #$FF", _source );
+    outline0( "EOR #$FF" );
     if ( _destination ) {
         outline1( "STA %s", _destination );
     } else {
         outline1( "STA %s", _source );
     }
     outline1( "LDA %s+1", _source );
-    outline1( "EOR #$FF", _source );
+    outline0( "EOR #$FF" );
     if ( _destination ) {
         outline1( "STA %s+1", _destination );
     } else {
         outline1( "STA %s+1", _source );
     }
     outline1( "LDA %s+2", _source );
-    outline1( "EOR #$FF", _source );
+    outline0( "EOR #$FF" );
     if ( _destination ) {
         outline1( "STA %s+2", _destination );
     } else {
         outline1( "STA %s+2", _source );
     }
     outline1( "LDA %s+3", _source );
-    outline1( "EOR #$FF", _source );
+    outline0( "EOR #$FF" );
     if ( _destination ) {
         outline1( "STA %s+3", _destination );
     } else {

@@ -120,36 +120,3 @@ void raster_at_var( Environment * _environment, char * _label, char * _position 
 
 }
 
-/**
- * @brief Emit ASM code for <b>NEXT RASTER</b>
- * 
- * This function outputs assembly code needed to wait for the
- * next raster. Meanwhile, the execution of the main code will resume 
- * where it left off.
- * 
- * @param _environment Current calling environment
- */
-/* <usermanual>
-@keyword NEXT RASTER
-
-@english
-Wait for the next raster. Meanwhile, the execution of the main 
-code will resume where it left off.
-
-@italian
-Aspetta il prossimo raster. Nel frattempo, l'esecuzione del 
-codice riprenderà da dove era stato interrotto.
-
-@syntax NEXT RASTER
-
-@example NEXT RASTER
-
-@target c64
-</usermanual> */
-void next_raster( Environment * _environment ) {
-
-    outline0("; NEXT RASTER");
-
-    vic2_next_raster( _environment );
-
-}
