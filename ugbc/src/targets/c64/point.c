@@ -38,71 +38,12 @@
  * CODE SECTION 
  ****************************************************************************/
 
-/**
- * @brief Emit ASM code for <b>POINT AT ([int],[int])</b>
- * 
- * This function outputs a code that draws a pixel on the screen in bitmap
- * mode on coordinates given explicitly and directly as integers. 
- * 
- * @pre Bitmap must be enabled at least once with instruction <b>BITMAP ENABLE</b>.
- * 
- * @param _environment Current calling environment
- * @param _x Abscissa of the point to draw
- * @param _y Ordinate of the point
- * @throw EXIT_FAILURE "CRITICAL: POINT AT (xxx,xxx) needs BITMAP ENABLE"
- */
-/* <usermanual>
-@keyword POINT AT
+Variable * point( Environment * _environment, char * _x, char * _y ) {
 
-@english
-Draws a pixel on the screen in bitmap mode on given coordinates. 
+    Variable * result = variable_temporary( _environment, VT_COLOR, "(point's result)");
 
-@italian
-Disegna un pixel sullo schermo in modalità bitmap su coordinate date.
+    vic2_point( _environment, _x, _y, result->name );
 
-@syntax POINT AT (# [integer], # [integer])
-
-@example POINT AT (#42,#42)
-
-@target c64
-</usermanual> */
-void point_at( Environment * _environment, int _x, int _y ) {
-
-    outline2("; POINT AT (%d,%d)", _x, _y);
-
-    vic2_point_at_int( _environment, _x, _y );    
-
-}
-
-/**
- * @brief Emit ASM code for <b>POINT AT ([int]x,[int]x)</b>
- * 
- * This function outputs a code that draws a pixel on the screen in bitmap
- * mode on coordinates given explicitly and directly as integers. To do 
- * this, it calculates both the position in memory where it will draw and 
- * the offset within the byte, storing this information in the following 
- * special variables:
- * 
- * * `pen_address` - offset in memory that refers to the pixel to be modified
- * 
- * @pre Bitmap must be enabled at least once with instruction <b>BITMAP ENABLE</b>.
- * 
- * @param _environment Current calling environment
- * @param _x Expression with the abscissa of the point to draw
- * @param _y Expression with the ordinate of the point
- * @throw EXIT_FAILURE "CRITICAL: POINT AT (xxx,xxx) needs BITMAP ENABLE"
- */
-/* <usermanual>
-@keyword POINT AT
-
-@syntax POINT AT ([expression],[expression])
-
-@example POINT AT (x+1,y+1)
-</usermanual> */
-void point_at_vars( Environment * _environment, char * _x, char * _y ) {
-
-    outline2("; POINT AT (%s,%s)", _x, _y);
-
-    vic2_point_at_vars( _environment, _x, _y );
+    return result;
 
 }

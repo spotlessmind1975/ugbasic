@@ -38,141 +38,20 @@
  * CODE SECTION 
  ****************************************************************************/
 
-/**
- * @brief Emit ASM code for <b>POINT AT ([int]x,[int]x)</b>
- * 
- * This function outputs a code that draws a pixel on the screen in bitmap
- * mode on coordinates given explicitly and directly as integers. To do 
- * this, it calculates both the position in memory where it will draw and 
- * the offset within the byte, storing this information in the following 
- * special variables:
- * 
- * @pre Bitmap must be enabled at least once with instruction <b>BITMAP ENABLE</b>.
- * 
- * @param _environment Current calling environment
- * @param _x Abscissa of the point to draw
- * @param _y Ordinate of the point
- * @throw EXIT_FAILURE "CRITICAL: POINT AT (xxx,xxx) needs BITMAP ENABLE"
- */
-/* <usermanual>
-@keyword POINT AT
+Variable * point( Environment * _environment, char * _x, char * _y ) {
 
-@target zx
-</usermanual> */
-void point_at( Environment * _environment, int _x, int _y ) {
+    Variable * result = variable_temporary( _environment, VT_COLOR, "(point's result)");
 
-    outline2("; POINT AT (%d,%d)", _x, _y);
+    if ( !_x ) {
+        _x = variable_retrieve( _environment, "XGR" )->name;
+    }
 
-    Variable * y = variable_temporary( _environment, VT_POSITION, "(y)" );
-    Variable * x = variable_temporary( _environment, VT_POSITION, "(x)" );
-
-    variable_store( _environment, x->name, _x );
-    variable_store( _environment, y->name, _y );
-
-    point_at_vars( _environment, x->name, y->name );
-
-}
-
-/**
- * @brief Emit ASM code for <b>POINT AT ([int]x,[int]x)</b>
- * 
- * This function outputs a code that draws a pixel on the screen in bitmap
- * mode on coordinates given explicitly and directly as integers. To do 
- * this, it calculates both the position in memory where it will draw and 
- * the offset within the byte, storing this information in the following 
- * special variables:
- * 
- * * `pen_address` - offset in memory that refers to the pixel to be modified
- * 
- * @pre Bitmap must be enabled at least once with instruction <b>BITMAP ENABLE</b>.
- * 
- * @param _environment Current calling environment
- * @param _x Expression with the abscissa of the point to draw
- * @param _y Expression with the ordinate of the point
- * @throw EXIT_FAILURE "CRITICAL: POINT AT (xxx,xxx) needs BITMAP ENABLE"
- */
-void point_at_vars( Environment * _environment, char * _x, char * _y ) {
-
-    MAKE_LABEL
-
-    outline2("; POINT AT (%s,%s)", _x, _y);
+    if ( !_y ) {
+        _y = variable_retrieve( _environment, "YGR" )->name;
+    }
 
     Variable * y = variable_retrieve( _environment, _y );
     Variable * x = variable_retrieve( _environment, _x );
-    Variable * clipX1 = variable_retrieve( _environment, "CLIPX1" );
-    Variable * clipX2 = variable_retrieve( _environment, "CLIPX2" );
-    Variable * clipY1 = variable_retrieve( _environment, "CLIPY1" );
-    Variable * clipY2 = variable_retrieve( _environment, "CLIPY2" );
-
-    outline1( "LD A,(%s)", clipX1->realName );
-    outline0( "LD B, A" );
-    outline1( "LD A,(%s)", clipX2->realName );
-    outline0( "LD D, A" );
-    outline1( "LD A,(%s)", x->realName );
-    outline0( "CMP B" );
-    outline1( "JP C, %sclipped", label );
-    outline0( "CMP D" );
-    outline1( "JR Z, %snoclipped", label );
-    outline1( "JP NC, %sclipped", label );
-    outhead1( "%snoclipped:", label );
-    outline1( "LD A,(%s)", clipY1->realName );
-    outline0( "LD B, A" );
-    outline1( "LD A,(%s)", clipY2->realName );
-    outline0( "LD D, A" );
-    outline1( "LD A,(%s)", y->realName );
-    outline0( "CMP B" );
-    outline1( "JP C, %sclipped", label );
-    outline0( "CMP D" );
-    outline1( "JR Z, %snoclipped2", label );
-    outline1( "JP NC, %sclipped", label );
-    outhead1( "%snoclipped2:", label );
-
-    outline1( "LD A,(%s)", x->realName );
-    outline0( "AND $7");
-    outline0( "LD B, A");
-    outline0( "LD A, $8");
-    outline0( "SUB B");
-    outline0( "LD B, A");
-    outline0( "LD E, 1");
-    outhead1( "%s:", label );
-    outline0( "DEC B");
-    outline1( "JR Z,%s_2", label);
-    outline0( "SLA E");
-    outline1( "JMP %s", label);
-    outhead1( "%s_2:", label );
-
-    outline1( "LD A,(%s)", y->realName );
-    outline0( "LD B, A");
-    outline1( "LD A,(%s)", x->realName );
-    outline0( "LD C, A");
-
-    outline0( "LD A,B");
-    outline0( "AND %00000111");
-    outline0( "OR %01000000");
-    outline0( "LD H,A");
-    outline0( "LD A,B");
-    outline0( "RRA");
-    outline0( "RRA");
-    outline0( "RRA");
-    outline0( "AND %00011000");
-    outline0( "OR H");
-    outline0( "LD H,A");
-    outline0( "LD A,B");
-    outline0( "RLA");
-    outline0( "RLA");
-    outline0( "AND %11100000");
-    outline0( "LD L,A");
-    outline0( "LD A,C");
-    outline0( "RRA");
-    outline0( "RRA");
-    outline0( "RRA");
-    outline0( "AND %00011111");
-    outline0( "OR L");
-    outline0( "LD L,A");
-
-    outline0( "LD A,(HL)");
-    outline0( "OR E");
-    outline0( "LD (HL),A");
 
     outline1("LD HL,(%s)", x->realName );
     outline0("SRA H" );
@@ -191,13 +70,9 @@ void point_at_vars( Environment * _environment, char * _x, char * _y ) {
     outline0("ADD HL,DE" );
     outline0("LD DE,(COLORMAPADDRESS)");
     outline0("ADD HL,DE" );
-    outline0("LD A,(_PEN)" );
-    outline0("LD B,A" );
-    outline0("LD A,(HL)" );
-    outline0("AND $f8" );
-    outline0("OR A,B" );
-    outline0("LD (HL),A" );
+    outline0("LD A, (HL)");
+    outline1("LD (%s), A", result->realName );
 
-    outhead1( "%sclipped:", label );
+    return result;
 
 }
