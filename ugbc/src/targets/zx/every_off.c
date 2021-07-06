@@ -39,36 +39,6 @@
  ****************************************************************************/
 
 /**
- * @brief Emit ASM code for <b>EVERY ... TICKS GOSUB ...</b>
- * 
- * @param _environment Current calling environment
- * @param _label Label to jump to when vertical raster reach the value given
- * @param _position The vertical position to wait for
- */
-void every_ticks_gosub( Environment * _environment, char * _timing, char * _label ) {
-
-    outline2("; EVERY %s TICKS GOSUB %s (ignored)", _timing, _label );
-
-}
-
-void every_ticks_call( Environment * _environment, char * _timing, char * _label ) {
-
-    outline2("; EVERY %s TICKS CALL %s (ignored)", _timing, _label );
-
-}
-
-/**
- * @brief Emit ASM code for <b>EVERY ON</b>
- * 
- * @param _environment Current calling environment
- */
-void every_on( Environment * _environment ) {
-   
-    outline0("; EVERY ON (ignored)");
-
-}
-
-/**
  * @brief Emit ASM code for <b>EVERY OFF</b>
  * 
  * @param _environment Current calling environment
