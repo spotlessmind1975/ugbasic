@@ -34,6 +34,22 @@
 
 #include "../../ugbc.h"
 
+/**
+ * @brief Emit ASM code to fill background color
+ * 
+ * This function can be called to fill the screen background with the given
+ * color. Depending on the mode selected (TILEMAP vs BITMAP) it can fill
+ * the screen in a different way.
+ * 
+ * @param _environment Current calling environment
+ * @param _color Index of color to use to fill the screen
+ */
+/* <usermanual>
+@keyword COLOR BACK
+
+@target zx
+
+</usermanual> */
 void back( Environment * _environment, char * _color ) {
 
     paper( _environment, _color );
