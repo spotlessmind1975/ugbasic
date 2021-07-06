@@ -84,28 +84,33 @@ Variable * rnd( Environment * _environment, char * _value ) {
     Variable * ignored = variable_temporary( _environment, value->type, "(ignored)");
     Variable * remainder = variable_temporary( _environment, value->type, "(remainder)");
 
+    Variable * zero = variable_temporary( _environment, value->type, "(0)" );
+    variable_store( _environment, zero->name, 0 );
+    
     MAKE_LABEL
 
     char endLabel[MAX_TEMPORARY_STORAGE]; sprintf(endLabel, "%send", label );
     char lastRandomLabel[MAX_TEMPORARY_STORAGE]; sprintf(lastRandomLabel, "%slr", label );
 
-    cpu_bveq( _environment, value->realName, lastRandomLabel );
+    if_then( _environment, variable_compare( _environment, value->name, zero->name )->name );
+        cpu_jump( _environment, lastRandomLabel );
+    end_if_then( _environment );
 
     switch( VT_BITWIDTH( value->type ) ) {
         case 32:
-            cpu_math_div_32bit_to_16bit( _environment, result->realName, value->realName, ignored->realName, remainder->realName, VT_SIGNED( value->type )  );
+            cpu_math_div_32bit_to_16bit( _environment, result->realName, value->realName, ignored->realName, remainder->realName, 0 );
             cpu_move_32bit( _environment, remainder->realName, result->realName );
             cpu_move_32bit( _environment, remainder->realName, last_random->realName );
             cpu_jump( _environment, endLabel );
             break;
         case 16:
-            cpu_math_div_16bit_to_16bit( _environment, result->realName, value->realName, ignored->realName, remainder->realName, VT_SIGNED( value->type )  );
+            cpu_math_div_16bit_to_16bit( _environment, result->realName, value->realName, ignored->realName, remainder->realName, 0 );
             cpu_move_16bit( _environment, remainder->realName, result->realName );
             cpu_move_16bit( _environment, remainder->realName, last_random->realName );
             cpu_jump( _environment, endLabel );
             break;
         case 8:
-            cpu_math_div_8bit_to_8bit( _environment, result->realName, value->realName, ignored->realName, remainder->realName, VT_SIGNED( value->type )  );
+            cpu_math_div_8bit_to_8bit( _environment, result->realName, value->realName, ignored->realName, remainder->realName, 0 );
             cpu_move_8bit( _environment, remainder->realName, result->realName );
             cpu_move_8bit( _environment, remainder->realName, last_random->realName );
             cpu_jump( _environment, endLabel );
