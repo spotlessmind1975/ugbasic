@@ -53,8 +53,6 @@
  */
 Variable * hit_to( Environment * _environment, int _sprite ) {
 
-    outline0("; = HIT(...) (ignore)");
-
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result)" );
 
     return result;
@@ -75,8 +73,6 @@ Variable * hit_to( Environment * _environment, int _sprite ) {
  *                      hit, 1 = hit occurred)
  */
 Variable * hit_to_vars( Environment * _environment, char * _sprite ) {
-
-    outline0("; = HIT(...) (ignore)");
 
     // Safety check -- expression must exists (it should be always true)
     Variable * sprite = variable_retrieve( _environment, _sprite );

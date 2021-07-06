@@ -71,8 +71,6 @@ come risultato.
 </usermanual> */
 Variable * hit_to( Environment * _environment, int _sprite ) {
 
-    outline0("; = HIT(...)");
-
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result)" );
 
     char sprite[MAX_TEMPORARY_STORAGE]; sprintf(sprite, "#$%2.2x", _sprite);
@@ -104,8 +102,6 @@ Variable * hit_to( Environment * _environment, int _sprite ) {
 @example IF HIT(startship) THEN HALT: ENDIF
 </usermanual> */
 Variable * hit_to_vars( Environment * _environment, char * _sprite ) {
-
-    outline0("; = HIT(...)");
 
     // Safety check -- expression must exists (it should be always true)
     Variable * sprite = variable_retrieve( _environment, _sprite );
