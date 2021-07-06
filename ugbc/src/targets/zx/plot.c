@@ -71,19 +71,25 @@ Variable * point( Environment * _environment, char * _x, char * _y ) {
     Variable * y = variable_retrieve( _environment, _y );
     Variable * x = variable_retrieve( _environment, _x );
 
-    outline0( "LD HL, (COLORMAPADDRESS)");
-    outline1( "LD A, (%s)", y->realName );
-    outline0( "LD D, A" );
-    outline0( "LD A, 0" );
-    outline0( "LD E, A" );
-    outline0( "ADD HL,DE");
-    outline1( "LD A, (%s)", x->realName );
-    outline0( "LD E, A");
-    outline1( "LD A, (%s+1)", x->realName );
-    outline0( "LD D, A" );
-    outline0( "ADD HL, DE" );
-    outline0( "LD A, (HL)");
-    outline1( "LD (%s), A", result->realName );
+    outline1("LD HL,(%s)", x->realName );
+    outline0("SRA H" );
+    outline0("RR L" );
+    outline0("SRA H" );
+    outline0("RR L" );
+    outline0("SRA H" );
+    outline0("RR L" );
+    outline0("LD DE,HL");
+
+    outline1("LD HL,(%s)", y->realName );
+    outline0("SLA L" );
+    outline0("RL H" );
+    outline0("SLA L" );
+    outline0("RL H" );
+    outline0("ADD HL,DE" );
+    outline0("LD DE,(COLORMAPADDRESS)");
+    outline0("ADD HL,DE" );
+    outline0("LD A, (HL)");
+    outline1("LD (%s), A", result->realName );
 
     return result;
 
