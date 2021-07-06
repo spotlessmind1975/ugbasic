@@ -91,5 +91,5 @@ LINE:   .byte $ff, $ff
 
 CLIPX1:    .word 0
 CLIPY1:    .word 0
-CLIPX2:    .word 320
-CLIPY2:    .word 200
+CLIPX2:    .word 319
+CLIPY2:    .word 199
