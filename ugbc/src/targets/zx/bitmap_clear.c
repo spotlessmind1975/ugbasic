@@ -39,109 +39,6 @@
  ****************************************************************************/
 
 /**
- * @brief Emit ASM implementation for <b>BITMAP ENABLE</b> instruction
- * 
- * This function can be called to emit the code to enable bitmap graphics
- * on the target machine. Bitmap resolution and colors depends on hardware.
- * Enabling the bitmap also sets the starting address in memory, for those 
- * computers that have graphics mapped in memory.
- * 
- * On some machine calling this instruction will define two special variables:
- * 
- *  * `bitmapAddress` (VT_ADDRESS) - the starting address of bitmap memory
- *  * `colormapAddress` (VT_ADDRESS) - the starting address of color map memory
- * 
- * @param _environment Current calling environment
- */
-void bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {
-
-    // Let's define the special variable bitmapAddress.
-    Variable * bitmapAddress = variable_retrieve( _environment, "BITMAPADDRESS" );
-
-    // Let's define the special variable colormapAddress.
-    Variable * colormapAddress = variable_retrieve_or_define( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0x5800 );
-
-    // Let's define the special variable colormapAddress.
-    Variable * bitmap_enabled = variable_retrieve_or_define( _environment, "bitmap_enabled", VT_BYTE, 1 );
-
-    outline0("; BITMAP ENABLE (ignored)");
-    
-    variable_store( _environment, bitmap_enabled->name, 1 );
-
-    zx_bitmap_enable( _environment, _width, _height, _colors );
-    
-}
-
-/**
- * @brief Emit ASM implementation for <b>BITMAP DISABLE</b> instruction
- * 
- * This function can be called to emit the code to disable bitmap graphics
- * on the target machine.
- * 
- * @param _environment Current calling environment
- */
-void bitmap_disable( Environment * _environment ) {
-
-    Variable * bitmap_enabled = variable_retrieve_or_define( _environment, "bitmap_enabled", VT_BYTE, 0 );
-
-    outline0("; BITMAP DISABLE (ignored)");
-
-    variable_store( _environment, bitmap_enabled->name, 0 );
-}
-
-/**
- * @brief Emit ASM implementation for <b>BITMAP AT [int]</b> instruction
- * 
- * This function allows you to set the starting address, in memory, for the 
- * bitmap and it is the version that is used when the memory is given as a
- * direct number (i.e.: $2000). The input parameter is decoded and declined 
- * according to the hardware limits. So it is not said that exactly the 
- * given address is set.
- * 
- * On some machine calling this instruction will define the special variable:
- * 
- *  * `bitmapAddress` (VT_ADDRESS) - the starting address of bitmap memory
- * 
- * @param _environment Current calling environment
- * @param _address Address to use
- */
-void bitmap_at( Environment * _environment, int _address ) {
-
-    outline1("; BITMAP AT $%4.4x (ignored)", _address );
-
-    // Let's define the special variable bitmapAddress, and update
-    // it with the requested value.
-    Variable * bitmapAddress = variable_retrieve( _environment, "BITMAPADDRESS" );
-
-}
-
-/**
- * @brief Emit ASM implementation for <b>BITMAP AT [expression]</b> instruction
- * 
- * This function allows you to set the starting address, in memory, for the 
- * bitmap and it is the version that is used when the memory is given as a
- * expression that involves variables. The input parameter is decoded and declined 
- * according to the hardware limits. So it is not said that exactly the 
- * given address is set.
- * 
- * On some machine calling this instruction will define the special variable:
- * 
- *  * `bitmapAddress` (VT_ADDRESS) - the starting address of bitmap memory
- * 
- * @param _environment Current calling environment
- * @param _address Address to use
- */
-void bitmap_at_var( Environment * _environment, char * _address ) {
-
-    outline1("; BITMAP AT %s (ignored)", _address );
-
-    // Let's define the special variable bitmapAddress, and update
-    // it with the requested value.    
-    Variable * bitmapAddress = variable_retrieve( _environment, "BITMAPADDRESS" );
-
-}
-
-/**
 * @brief Emit ASM implementation for <b>BITMAP CLEAR WITH [int]</b> instruction
  * 
  * This instruction allows you to fill the bitmap with a certain pattern 
@@ -193,8 +90,6 @@ void bitmap_clear_with( Environment * _environment, int _pattern ) {
  */
 void bitmap_clear_with_vars( Environment * _environment, char * _pattern ) {
 
-    outline1("; BITMAP CLEAR WITH %s", _pattern );
-
     // Safety check -- bitmap address must be defined at least once.
     Variable * bitmapAddress = variable_retrieve( _environment, "BITMAPADDRESS" );
 
@@ -220,10 +115,6 @@ void bitmap_clear_with_vars( Environment * _environment, char * _pattern ) {
  * @throw EXIT_FAILURE CRITICAL: BITMAP CLEAR WITH xxx needs BITMAP ENABLED
  */
 void bitmap_clear( Environment * _environment ) {
-
-    outline0("; BITMAP CLEAR ->" );
-
-    // Equal to: "BITMAP CLEAR WITH $#0"
 
     bitmap_clear_with( _environment, 0 );
 
