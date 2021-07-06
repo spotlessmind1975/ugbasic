@@ -174,10 +174,37 @@ int test_controls_keyboard_01_tester( TestEnvironment * _te ) {
     
 }
 
+//===========================================================================
+
+void test_rnd_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * max1 = variable_define( e, "max1", VT_POSITION, 256 );
+    Variable * max2 = variable_define( e, "max2", VT_POSITION, 255 );
+
+    Variable * r1 = rnd( e, max1->name );
+    Variable * r2 = rnd( e, max2->name );
+
+    _te->trackedVariables[0] = r1;
+    _te->trackedVariables[1] = r2;
+
+}
+
+int test_rnd_tester( TestEnvironment * _te ) {
+
+    Variable * r1 = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * r2 = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+
+    return r1->value != 0 && r2->value != 0;
+    
+}
+
 void test_examples( ) {
 
     create_test( "control_by_expression_01", &test_control_by_expression_01_payload, &test_control_by_expression_01_tester );    
     create_test( "controls_joy_01", &test_controls_joy_01_payload, &test_controls_joy_01_tester );    
     create_test( "controls_keyboard_01", &test_controls_keyboard_01_payload, &test_controls_keyboard_01_tester );    
+    create_test( "rnd", &test_rnd_payload, &test_rnd_tester );    
 
 }
