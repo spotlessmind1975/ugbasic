@@ -34,55 +34,35 @@
 
 #include "../../ugbc.h"
 
-/****************************************************************************
- * CODE SECTION 
- ****************************************************************************/
-
 /**
- * @brief Emit ASM code for <b>= RANDOM(...)</b>
+ * @brief Emit ASM code for <b>= RANDOM HEIGHT</b>
  * 
- * This function outputs a code suitable for calculating a random value, 
- * the range of which depends on the type of data passed as a parameter:
- * 
- * - `VT_BYTE` (<b>BYTE</b>) : 0...255
- * - `VT_COLOR` (<b>COLOR</b>) : 0...15
- * - `VT_WORD` (<b>WORD</b>) : 0...65.535
- * - `VT_ADDRESS` (<b>ADDRESS</b>) : 0...65.535
- * - `VT_POSITION` (<b>POSITION</b>) : 0...65.535
- * - `VT_DWORD` (<b>DWORD</b>) : 0...4.294.967.295
- * 
- * The random value is passed back into a temporary variable.
+ * This function outputs a code suitable for calculating a random height.
  * 
  * @param _environment Current calling environment
- * @param _type Type of random number to generate
  * @return Variable* The random value calculated
  */
 /* <usermanual>
-@keyword RANDOM
+@keyword RANDOM HEIGHT
 
-@target zx
+@english
+Calculate a random height.
+
+@italian
+Calcola un valore di altezza casuale.
+
+@syntax = RANDOM HEIGHT
+
+@example POINT AT (RANDOM WIDTH, RANDOM HEIGHT)
+
+@target c64
 </usermanual> */
-Variable * random_value( Environment * _environment, VariableType _type ) {
+Variable * random_height( Environment * _environment ) {
 
-    Variable * seed = variable_retrieve_or_define( _environment, "seed", VT_DWORD, 0Xffffffff );
+    Variable * result = random_value( _environment, VT_POSITION );
 
-    Variable * result = variable_temporary( _environment, _type, "(random value)" );
-
-    switch(_type) {
-        case VT_BYTE:
-        case VT_COLOR:
-            z80_random_8bit( _environment, seed->realName, "$5C78", result->realName );
-            break;
-        case VT_WORD:
-        case VT_POSITION:
-        case VT_ADDRESS:
-            z80_random_16bit( _environment, seed->realName, "$5C78", result->realName );
-            break;
-        case VT_DWORD:
-            z80_random_32bit( _environment, seed->realName, "$5C78", result->realName );
-            break;
-    }
-
+    cpu6502_limit_16bit( _environment, result->realName, 199 );
+   
     return result;
 
 }

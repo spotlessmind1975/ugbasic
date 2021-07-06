@@ -39,39 +39,6 @@
  ****************************************************************************/
 
 /**
- * @brief Emit ASM code for <b>RANDOMIZE</b>
- * 
- * This function initialize the seed for random function.
- * 
- * @param _environment Current calling environment
- */
-/* <usermanual>
-@keyword RANDOMIZE
-
-@english
-Initialize the random seed.
-
-@italian
-Inizializza il seme casuale.
-
-@syntax RANDOMIZE {[seed]}
-
-@example RANDOMIZE
-
-@target c64
-</usermanual> */
-void randomize( Environment * _environment, char * _ext_seed ) {
-
-    Variable * seed = variable_retrieve_or_define( _environment, "seed", VT_DWORD, 0Xffffffff );
-
-    if ( _ext_seed ) {
-        Variable * external_seed = variable_retrieve( _environment, _ext_seed );
-        variable_move( _environment, external_seed->name, seed->name );
-    }
-
-}
-
-/**
  * @brief Emit ASM code for <b>= RANDOM</b>
  * 
  * This function outputs a code suitable for calculating a random value, 
@@ -128,74 +95,6 @@ Variable * random_value( Environment * _environment, VariableType _type ) {
             break;
     }
 
-    return result;
-
-}
-
-/**
- * @brief Emit ASM code for <b>= RANDOM WIDTH</b>
- * 
- * This function outputs a code suitable for calculating a random width.
- * 
- * @param _environment Current calling environment
- * @return Variable* The random value calculated
- */
-/* <usermanual>
-@keyword RANDOM WIDTH
-
-@english
-Calculate a random width.
-
-@italian
-Calcola un valore di larghezza casuale.
-
-@syntax = RANDOM WIDTH
-
-@example POINT AT (RANDOM WIDTH, RANDOM HEIGHT)
-
-@target c64
-</usermanual> */
-Variable * random_width( Environment * _environment ) {
- 
-    Variable * result1 = random_value( _environment, VT_POSITION );
-    Variable * result2 = random_value( _environment, VT_POSITION );
-
-    cpu6502_limit_16bit( _environment, result1->realName, 255 );
-    cpu6502_limit_16bit( _environment, result2->realName, 63 );
-
-    return variable_add( _environment, result1->name, result2->name );
-
-}
-
-/**
- * @brief Emit ASM code for <b>= RANDOM HEIGHT</b>
- * 
- * This function outputs a code suitable for calculating a random height.
- * 
- * @param _environment Current calling environment
- * @return Variable* The random value calculated
- */
-/* <usermanual>
-@keyword RANDOM HEIGHT
-
-@english
-Calculate a random height.
-
-@italian
-Calcola un valore di altezza casuale.
-
-@syntax = RANDOM HEIGHT
-
-@example POINT AT (RANDOM WIDTH, RANDOM HEIGHT)
-
-@target c64
-</usermanual> */
-Variable * random_height( Environment * _environment ) {
-
-    Variable * result = random_value( _environment, VT_POSITION );
-
-    cpu6502_limit_16bit( _environment, result->realName, 199 );
-   
     return result;
 
 }
