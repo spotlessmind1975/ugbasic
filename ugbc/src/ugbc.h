@@ -1249,8 +1249,8 @@ void                    sprite_monocolor( Environment * _environment, int _sprit
 void                    sprite_monocolor_var( Environment * _environment, char * _sprite );
 void                    sprite_multicolor( Environment * _environment, int _sprite );
 void                    sprite_multicolor_var( Environment * _environment, char * _sprite );
-void                    sprite_position( Environment * _environment, int _sprite, int _x, int _y );
-void                    sprite_position_vars( Environment * _environment, char * _sprite, char * _x, char * _y );
+void                    sprite_at( Environment * _environment, int _sprite, int _x, int _y );
+void                    sprite_at_vars( Environment * _environment, char * _sprite, char * _x, char * _y );
 
 //----------------------------------------------------------------------------
 // *T*

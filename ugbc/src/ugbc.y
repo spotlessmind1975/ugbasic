@@ -1267,7 +1267,7 @@ sprite_definition_simple:
       sprite_color( _environment, $1, $3 );
   }
   | direct_integer position OP direct_integer OP_COMMA direct_integer CP {
-      sprite_position( _environment, $1, $4, $6 );
+      sprite_at( _environment, $1, $4, $6 );
   }
   | direct_integer ENABLE {
       sprite_enable( _environment, $1 );
@@ -1314,7 +1314,7 @@ sprite_definition_expression:
       sprite_color_vars( _environment, $1, $3 );
   }
   | expr position OP expr OP_COMMA expr CP {
-      sprite_position_vars( _environment, $1, $4, $6 );
+      sprite_at_vars( _environment, $1, $4, $6 );
   }
   | expr ENABLE {
       sprite_enable_var( _environment, $1 );

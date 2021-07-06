@@ -664,7 +664,7 @@ void vic2_sprite_disable( Environment * _environment, char * _sprite ) {
 
 }
 
-void vic2_sprite_position( Environment * _environment, char * _sprite, char * _x, char * _y ) {
+void vic2_sprite_at( Environment * _environment, char * _sprite, char * _x, char * _y ) {
 
     MAKE_LABEL
 

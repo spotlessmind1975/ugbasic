@@ -133,7 +133,7 @@ void vic2_screen_rows( Environment * _environment, char * _rows );
 void vic2_sprite_data_from( Environment * _environment, char * _sprite, char * _address );
 void vic2_sprite_enable( Environment * _environment, char *_sprite );
 void vic2_sprite_disable( Environment * _environment, char * _sprite );
-void vic2_sprite_position( Environment * _environment, char * _sprite, char * _x, char * _y );
+void vic2_sprite_at( Environment * _environment, char * _sprite, char * _x, char * _y );
 void vic2_sprite_expand_vertical( Environment * _environment, char * _sprite );
 void vic2_sprite_expand_horizontal( Environment * _environment, char * _sprite );
 void vic2_sprite_compress_vertical( Environment * _environment, char * _sprite );
