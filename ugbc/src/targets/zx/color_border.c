@@ -50,8 +50,6 @@
 </usermanual> */
 void color_border( Environment * _environment, int _color ) {
     
-    outline1("; COLOR BORDER %2.2x", _color);
-
     char color[MAX_TEMPORARY_STORAGE]; sprintf(color, "$%2.2x", _color);
 
     zx_color_border( _environment, color );
@@ -69,76 +67,9 @@ void color_border( Environment * _environment, int _color ) {
  */
 void color_border_var( Environment * _environment, char * _color ) {
 
-    outline1("; COLOR BORDER %s", _color);
-
     // Safety check -- expression must exists (it should be always true)
     Variable * color = variable_retrieve( _environment, _color );
 
     zx_color_border( _environment, color->realName );
-
-}
-
-/**
- * @brief Emit ASM code for instruction <b>COLOR BACKGROUND [int] TO [int]x</b>
- * 
- * This function outputs the ASM code to change the background color, among 
- * those available. It should be used where the command is invoked with a 
- * direct integer value.
- * 
- * @param _environment Current calling environment
- * @param _index Index of the background color
- * @param _background_color Index of the color to use
- */
-void color_background( Environment * _environment, int _index, int _background_color ) {
-    
-    outline2("; COLOR BACKGROUND $%2.2x TO $%2.2x (ignored)", _index, _background_color);
-
-}
-
-/**
- * @brief Emit ASM code for instruction <b>COLOR BACKGROUND [expression] TO [expression]</b>
- * 
- * This function outputs the ASM code to change the background color, among 
- * those available. It should be used where the command is invoked with expressions.
- * 
- * @param _environment Current calling environment
- * @param _index Expression with the index of the background color
- * @param _background_color Expression with the index of the color to use
- */
-void color_background_vars( Environment * _environment, char * _index, char * _background_color ) {
-
-    outline2("; COLOR BACKGROUND %s TO %s (ignored)", _index, _background_color);
-
-}
-
-/**
- * @brief Emit ASM code for instruction <b>COLOR SPRITE [int]x TO [int]x</b>
- * 
- * This function outputs the ASM code to change the common sprite color, among 
- * those available. It should be used where the command is invoked with integers.
- * 
- * @param _environment Current calling environment
- * @param _index Index of the common color to set
- * @param _common_color Index of the color to use
- */
-void color_sprite( Environment * _environment, int _index, int _common_color ) {
-
-    outline2("; COLOR SPRITE $%2.2x TO $%2.2x (ignore)", _index, _common_color);
-
-}
-
-/**
- * @brief Emit ASM code for instruction <b>COLOR SPRITE [expression] TO [expression]</b>
- * 
- * This function outputs the ASM code to change the common sprite color, among 
- * those available. It should be used where the command is invoked with expressions.
- * 
- * @param _environment Current calling environment
- * @param _index Expression with the index of common color to set
- * @param _common_color Expression with the index of the color to use
- */
-void color_sprite_vars( Environment * _environment, char * _index, char * _common_color ) {
-
-    outline2("; COLOR SPRITE %s TO %s (ignore)", _index, _common_color);
 
 }
