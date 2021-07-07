@@ -98,8 +98,7 @@ void goto_label( Environment * _environment, char * _label ) {
 </usermanual> */
 void goto_number( Environment * _environment, int _number ) {
 
-    // TODO: Dynamic GOTO (GOTO [expression])
-    
+   
     outline1("; GOTO %d", _number);
 
     char label[MAX_TEMPORARY_STORAGE]; sprintf( label, "_linenumber%d", _number );
