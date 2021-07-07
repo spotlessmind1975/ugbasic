@@ -2216,10 +2216,10 @@ statement:
       text_cmove_direct( _environment, 1, 0 );
   }
   | CLINE {
-      text_cline( _environment, NULL );
+      cline( _environment, NULL );
   }
   | CLINE expr {
-      text_cline( _environment, $2 );
+      cline( _environment, $2 );
   }
   | SET TAB expr {
       text_set_tab( _environment, $3 );

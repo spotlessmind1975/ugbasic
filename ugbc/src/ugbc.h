@@ -1258,7 +1258,7 @@ void                    sprite_at_vars( Environment * _environment, char * _spri
 
 void                    text_at( Environment * _environment, char * _x, char * _y, char * _text );
 void                    text_center( Environment * _environment, char * _string );
-void                    text_cline( Environment * _environment, char * _characters );
+void                    cline( Environment * _environment, char * _characters );
 void                    text_cmove( Environment * _environment, char * _dx, char * _dy );
 void                    text_cmove_direct( Environment * _environment, int _dx, int _dy );
 void                    text_encoded_at( Environment * _environment, char * _x, char * _y, char * _text, char * _pen, char * _paper, char * _ww );
