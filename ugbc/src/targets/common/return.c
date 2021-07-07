@@ -39,69 +39,39 @@
  ****************************************************************************/
 
 /**
- * @brief Emit ASM code for <b>GOSUB [label]</b>
+ * @brief Emit ASM code for <b>RETURN</b>
  * 
- * This function can be used to issue a code equivalent to a unconditional 
- * jump to an alphanumeric label, previously or subsequently defined, with 
- * the syntax of the labels, saving the calling address.
+ * This function can be used to issue a code equivalent to the
+ * return from a conditional jump.
  * 
  * @param _environment Current calling environment
- * @param _label Label where to jump to
  */
 /* <usermanual>
-@keyword GOSUB
+@keyword RETURN
 
 @english
-Do an unconditional jump to an alphanumeric label, previously or 
-subsequently defined, with the syntax of the labels. When a ''RETURN''
-is encountered, the execution will continue to the instruction next
-to this one.
+Return from unconditional jump. The execution will continue to the instruction next
+to the caller's one.
 
 @italian
-Effettua un salto incondizionato a un'etichetta, definita in precedenza o
-successivamente. Quando si incontrerà il comando ''RETURN'', l'esecuzione
-continuerà all'istruzione successiva a qeusta.
+Ritorna da un salto incondizionato. L'esecuzione continuerà all'istruzione successiva 
+a quella chaimante.
 
-@syntax GOSUB [label]
+@syntax RETURN
 
-@example GOSUB leggiTasti
-
-@target all
-
-@seeAlso RETURN
-@seeAlso POP
+@example RETURN
 @usedInExample control_returning_01.bas
 @usedInExample control_returning_02.bas
 
+@target all
+
+@seeAlso GOSUB
+@seeAlso POP
 </usermanual> */
-void gosub_label( Environment * _environment, char * _label ) {
+void return_label( Environment * _environment ) {
 
-    cpu_call( _environment, _label );
+    outline0("; RETURN");
 
-}
-
-/**
- * @brief Emit ASM code for <b>GOSUB [number]</b>
- * 
- * This function can be used to issue a code equivalent to a unconditional 
- * jump to a numeric label, previously or subsequently defined, with 
- * the syntax of the labels, saving the calling address.
- * 
- * @param _environment Current calling environment
- * @param _label Label where to jump to
- */
-/* <usermanual>
-@keyword GOSUB
-
-@syntax GOSUB [number]
-
-@example GOSUB 42
-
-</usermanual> */
-void gosub_number( Environment * _environment, int _number ) {
-
-    char label[MAX_TEMPORARY_STORAGE]; sprintf( label, "_linenumber%d", _number );
-
-    cpu_call( _environment, label );
+    cpu_return( _environment );
 
 }

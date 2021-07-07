@@ -34,74 +34,39 @@
 
 #include "../../ugbc.h"
 
-/****************************************************************************
- * CODE SECTION 
- ****************************************************************************/
-
 /**
- * @brief Emit ASM code for <b>GOSUB [label]</b>
+ * @brief Emit ASM code for <b>POP</b>
  * 
- * This function can be used to issue a code equivalent to a unconditional 
- * jump to an alphanumeric label, previously or subsequently defined, with 
- * the syntax of the labels, saving the calling address.
+ * This function can be used to issue a code equivalent to removing
+ * caller address for a GOSUB.
  * 
  * @param _environment Current calling environment
- * @param _label Label where to jump to
  */
 /* <usermanual>
-@keyword GOSUB
+@keyword POP
 
 @english
-Do an unconditional jump to an alphanumeric label, previously or 
-subsequently defined, with the syntax of the labels. When a ''RETURN''
-is encountered, the execution will continue to the instruction next
-to this one.
+Remove the caller address from ''GOSUB'' call. So you can do a ''GOTO''
+instead of ''RETURN''.
 
 @italian
-Effettua un salto incondizionato a un'etichetta, definita in precedenza o
-successivamente. Quando si incontrerà il comando ''RETURN'', l'esecuzione
-continuerà all'istruzione successiva a qeusta.
+Rimuove l'indirizzo chiamante stoccato da ''GOSUB''. Quindi sarà
+possibile usare un ''GOTO'' invece di un ''RETURN''.
 
-@syntax GOSUB [label]
+@syntax POP
 
-@example GOSUB leggiTasti
+@example POP
+@usedInExample control_popping_01.bas
 
 @target all
 
 @seeAlso RETURN
-@seeAlso POP
-@usedInExample control_returning_01.bas
-@usedInExample control_returning_02.bas
-
+@seeAlso GOSUB
 </usermanual> */
-void gosub_label( Environment * _environment, char * _label ) {
+void pop( Environment * _environment ) {
 
-    cpu_call( _environment, _label );
+    outline0("; POP");
 
-}
-
-/**
- * @brief Emit ASM code for <b>GOSUB [number]</b>
- * 
- * This function can be used to issue a code equivalent to a unconditional 
- * jump to a numeric label, previously or subsequently defined, with 
- * the syntax of the labels, saving the calling address.
- * 
- * @param _environment Current calling environment
- * @param _label Label where to jump to
- */
-/* <usermanual>
-@keyword GOSUB
-
-@syntax GOSUB [number]
-
-@example GOSUB 42
-
-</usermanual> */
-void gosub_number( Environment * _environment, int _number ) {
-
-    char label[MAX_TEMPORARY_STORAGE]; sprintf( label, "_linenumber%d", _number );
-
-    cpu_call( _environment, label );
+    cpu_pop( _environment );
 
 }
