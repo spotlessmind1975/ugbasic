@@ -38,34 +38,14 @@
  * CODE SECTION 
  ****************************************************************************/
 
-/**
- * @brief Emit source and configuration lines for game loops
- * 
- * This function can be called to generate all the definitions (on the source
- * file, on the configuration file and on any support file) necessary to 
- * implement the memory banks.
- * 
- * @param _environment Current calling environment
- */
-void gameloop_cleanup( Environment * _environment ) {
+void begin_compilation( Environment * _environment ) {
 
-    if ( _environment->hasGameLoop ) {
-        end_gameloop( _environment );
-    }
-    
-}
-
-void end_compilation( Environment * _environment ) {
-
-    gameloop_cleanup( _environment );
-    bank_cleanup( _environment );
-    variable_cleanup( _environment );
-
-    if ( _environment->configurationFileName ) {
-        linker_cleanup( _environment );
-        fclose(_environment->configurationFile);
+    _environment->asmFile = fopen( _environment->asmFileName, "wt");
+    if ( ! _environment->asmFile ) {
+        fprintf(stderr, "Unable to open output file: %s\n", _environment->asmFileName );
+        exit(EXIT_FAILURE);
     }
 
-    fclose(_environment->asmFile);
+    target_initialization( _environment );
 
 }

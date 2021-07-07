@@ -123,33 +123,6 @@ static Variable * variable_find_first_unused( Variable * _first, VariableType _t
     return actual;
 }
 
-void begin_compilation( Environment * _environment ) {
-
-    _environment->asmFile = fopen( _environment->asmFileName, "wt");
-    if ( ! _environment->asmFile ) {
-        fprintf(stderr, "Unable to open output file: %s\n", _environment->asmFileName );
-        exit(EXIT_FAILURE);
-    }
-
-    target_initialization( _environment );
-
-}
-
-void end_compilation( Environment * _environment ) {
-
-    gameloop_cleanup( _environment );
-    bank_cleanup( _environment );
-    variable_cleanup( _environment );
-
-    if ( _environment->configurationFileName ) {
-        linker_cleanup( _environment );
-        fclose(_environment->configurationFile);
-    }
-
-    fclose(_environment->asmFile);
-
-}
-
 void variable_global( Environment * _environment, char * _pattern ) {
 
     Pattern * pattern = malloc( sizeof( Pattern ) ) ;
