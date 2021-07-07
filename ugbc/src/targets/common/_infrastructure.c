@@ -66,7 +66,7 @@ char DATATYPE_AS_STRING[][16] = {
     "DYNAMIC STRING"   
 };
 
-static Bank * bank_find( Bank * _first, char * _name ) {
+Bank * bank_find( Bank * _first, char * _name ) {
     Bank * actual = _first;
     while( actual ) {
         if ( strcmp( actual->name, _name ) == 0 ) {
@@ -75,17 +75,6 @@ static Bank * bank_find( Bank * _first, char * _name ) {
         actual = actual->next;
     }
     return actual;
-}
-
-void variable_dump( Variable * _first );
-
-void variable_dump( Variable * _first ) {
-    fprintf(stderr, "Variables defined:\n");
-    Variable * actual = _first;
-    while( actual ) {
-        fprintf(stderr, "\t- %s (%d)\n", actual->name, actual->type);
-        actual = actual->next;
-    }
 }
 
 static void variable_reset_pool( Variable * _pool ) {

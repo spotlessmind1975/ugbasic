@@ -1006,6 +1006,7 @@ void linker_setup( Environment * _environment );
 int pattern_match( char * _pattern, char * _value );
 void setup_text_variables( Environment * _environment );
 ScreenMode * find_screen_mode_by_suggestion( Environment * _environment, int _bitmap, int _width, int _height, int _colors );
+Bank * bank_find( Bank * _first, char * _name );
 
 //----------------------------------------------------------------------------
 // *A*
@@ -1313,7 +1314,6 @@ Variable *              variable_define( Environment * _environment, char * _nam
 Variable *              variable_define_no_init( Environment * _environment, char * _name, VariableType _type );
 Variable *              variable_div( Environment * _environment, char * _source, char * _dest );
 Variable *              variable_div2_const( Environment * _environment, char * _source, int _bits );
-void                    variable_dump( Variable * _first );
 void                    variable_global( Environment * _environment, char * _pattern );
 Variable *              variable_greater_than( Environment * _environment, char * _source, char * _dest, int _equal );
 Variable *              variable_import( Environment * _environment, char * _name, VariableType _type );
