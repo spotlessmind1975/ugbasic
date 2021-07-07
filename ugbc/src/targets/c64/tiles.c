@@ -125,7 +125,6 @@ void tiles_at_var( Environment * _environment, char * _address ) {
 
     // Let's define the special variable bitmapAddress, and update
     // it with the requested value.
-    // TODO: tile_address should be retrieved via function!
     Variable * tiles_address = variable_define( _environment, "tiles_address", VT_ADDRESS, 0x0800 );
     
     char addressString[MAX_TEMPORARY_STORAGE]; sprintf(addressString, "%s+1", address->realName );
