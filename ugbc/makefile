@@ -69,7 +69,7 @@ compiler: $(SOURCES)
 	@cc -D__$(target)__ -g $(SOURCES) -o exe/ugbc.$(target) -lm
 
 tester: $(SOURCESTEST)
-	@cc -DCPU_6502_STATIC -DCPU_6502_USE_LOCAL_HEADER -I../../Z/API -I../../6502/API/emulation/CPU -D__$(target)__ -g $(SOURCESTEST) -o exe-test/ugbc.$(target) -lm
+	@cc -D__$(target)__ -g $(SOURCESTEST) -o exe-test/ugbc.$(target) -lm
 
 clean:
 	@rm -f exe/ugbc.*
