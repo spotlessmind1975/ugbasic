@@ -565,6 +565,48 @@ int test_cpu_less_than_16bit_tester( TestEnvironment * _te ) {
 
 //===========================================================================
 
+void test_cpu_less_than_16bit_payloadB( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * ua = variable_define( e, "ua", VT_WORD, 0x4242 );
+    Variable * ub = variable_define( e, "ub", VT_WORD, 0x4284 );
+    Variable * sa = variable_define( e, "sa", VT_SWORD, 0xFFF0 );
+    Variable * sb = variable_define( e, "sb", VT_SWORD, 0xFF00 );
+
+    Variable * resultu1 = variable_temporary( e,VT_BYTE, "(result unsigned 1)");
+    Variable * results1 = variable_temporary( e,VT_BYTE, "(result signed 1)");
+    Variable * resultu2 = variable_temporary( e,VT_BYTE, "(result unsigned 2)");
+    Variable * results2 = variable_temporary( e,VT_BYTE, "(result signed 2)");
+
+    cpu_less_than_16bit( e, ua->realName, ub->realName, resultu1->realName, 0, 0 );
+    cpu_less_than_16bit( e, ub->realName, ua->realName, resultu2->realName, 0, 0 );
+    cpu_less_than_16bit( e, sa->realName, sb->realName, results1->realName, 0, 1 );
+    cpu_less_than_16bit( e, sb->realName, sa->realName, results2->realName, 0, 1 );
+
+    _te->trackedVariables[0] = resultu1;
+    _te->trackedVariables[1] = resultu2;
+    _te->trackedVariables[2] = results1;
+    _te->trackedVariables[3] = results2;
+
+}
+
+int test_cpu_less_than_16bit_testerB( TestEnvironment * _te ) {
+
+    Variable * resultu1 = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * resultu2 = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+    Variable * results1 = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
+    Variable * results2 = variable_retrieve( &_te->environment, _te->trackedVariables[3]->name );
+
+    return  resultu1->value == 0xff && 
+            resultu2->value == 0x00 &&
+            results1->value == 0x00 && 
+            results2->value == 0xff;
+
+}
+
+//===========================================================================
+
 void test_cpu_less_than_32bit_payload( TestEnvironment * _te ) {
 
     Environment * e = &_te->environment;
@@ -1304,7 +1346,8 @@ void test_cpu( ) {
     create_test( "cpu_bit_check_extended", &test_cpu_bit_check_extended_payload, &test_cpu_bit_check_extended_tester );    
     create_test( "cpu_bit_check_extended B", &test_cpu_bit_check_extended_payloadB, &test_cpu_bit_check_extended_testerB );
     create_test( "cpu_less_than_8bit", &test_cpu_less_than_8bit_payload, &test_cpu_less_than_8bit_tester );    
-    create_test( "cpu_less_than_16bit", &test_cpu_less_than_16bit_payload, &test_cpu_less_than_16bit_tester );    
+    create_test( "cpu_less_than_16bit A", &test_cpu_less_than_16bit_payload, &test_cpu_less_than_16bit_tester );    
+    create_test( "cpu_less_than_16bit B", &test_cpu_less_than_16bit_payloadB, &test_cpu_less_than_16bit_testerB );    
     create_test( "cpu_less_than_32bit", &test_cpu_less_than_32bit_payload, &test_cpu_less_than_32bit_tester );    
     create_test( "cpu_greater_than_8bit", &test_cpu_greater_than_8bit_payload, &test_cpu_greater_than_8bit_tester );    
     create_test( "cpu_greater_than_16bit", &test_cpu_greater_than_16bit_payload, &test_cpu_greater_than_16bit_tester );    

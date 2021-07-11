@@ -653,9 +653,9 @@ void test_vic2_point_at_vars_payloadC( TestEnvironment * _te ) {
     Variable * y = variable_define( e, "y", VT_POSITION, 0 );
     Variable * red = variable_define( e, "red", VT_COLOR, COLOR_RED );
     Variable * white = variable_define( e, "white", VT_COLOR, COLOR_WHITE );
-    Variable * zero = variable_define( e, "zero", VT_WORD, 0 );
-    Variable * screenWidth = variable_define( e, "screenWidth", VT_WORD, 319 );
-    Variable * screenHeight = variable_define( e, "screenHeight", VT_WORD, 199 );
+    Variable * zero = variable_define( e, "zero", VT_SWORD, 0 );
+    Variable * screenWidth = variable_define( e, "screenWidth", VT_SWORD, 319 );
+    Variable * screenHeight = variable_define( e, "screenHeight", VT_SWORD, 199 );
 
     _te->debug.inspections[0].name="BITMAP";
     _te->debug.inspections[0].address=0xA000;

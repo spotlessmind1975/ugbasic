@@ -42,8 +42,6 @@
 
 void create_test( char *_name, void (*_payload)(TestEnvironment *), int (*_tester)(TestEnvironment *) ) {
 
-    printf("%s : ", _name);
-
     TestEnvironment t;
     memset( &t, 0, sizeof( TestEnvironment ) ) ;
 
@@ -167,11 +165,12 @@ void create_test( char *_name, void (*_payload)(TestEnvironment *), int (*_teste
 
     }
     if ( ! _tester( &t ) ) {
-        printf("FAILED");
+        printf("%s : ", _name);
+        printf("\e[31mFAILED\e[0m");
+        printf("\n");
     } else {
-        printf("SUCCESS");
+        printf("\e[0m.\e[0m");
     };
-    printf("\n");
 
 }
 
