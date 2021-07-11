@@ -803,6 +803,7 @@ void z80_less_than_16bit( Environment * _environment, char *_source, char *_dest
         outline0("CP B");
         outline1("JR Z, %sl2", label);
         outline1("JR C, %s", label);
+        outline1("JR %s_0", label);
         outhead1("%sl2:", label);
         outline1("LD A, (%s)", _destination);
         outline0("LD B, A");
@@ -812,6 +813,7 @@ void z80_less_than_16bit( Environment * _environment, char *_source, char *_dest
         if ( _equal ) {
             outline1("JR Z, %s", label);
         }
+        outhead1("%s_0:", label);
         outline0("LD A, 0");
         if ( _other ) {
             outline1("LD (%s), A", _other);
@@ -1323,17 +1325,26 @@ void z80_less_than_32bit( Environment * _environment, char *_source, char *_dest
         outline0("LD B, A");
         outline1("LD A, (%s+3)", _destination);
         outline0("CP B");
+        outline1("JR Z, %s_2", label);
         outline1("JR C, %s", label);
+        outline1("JR %s_ok", label);
+        outhead1("%s_2:", label);
         outline1("LD A, (%s+2)", _source);
         outline0("LD B, A");
         outline1("LD A, (%s+2)", _destination);
         outline0("CP B");
+        outline1("JR Z, %s_1", label);
         outline1("JR C, %s", label);
+        outline1("JR %s_ok", label);
+        outhead1("%s_1:", label);
         outline1("LD A, (%s+1)", _source);
         outline0("LD B, A");
         outline1("LD A, (%s+1)", _destination);
         outline0("CP B");
+        outline1("JR Z, %s_0", label);
         outline1("JR C, %s", label);
+        outline1("JR %s_ok", label);
+        outhead1("%s_0:", label);
         outline1("LD A, (%s)", _source);
         outline0("LD B, A");
         outline1("LD A, (%s)", _destination);
@@ -1342,13 +1353,14 @@ void z80_less_than_32bit( Environment * _environment, char *_source, char *_dest
         if ( _equal ) {
             outline1("JR Z, %s", label);
         }
+        outhead1("%s_ok:", label);
         outline0("LD A, $ff");
         if ( _other ) {
             outline1("LD (%s), A", _other);
         } else {
             outline1("LD (%s), A", _destination);
         }
-        outline1("JMP %s_2", label);
+        outline1("JMP %s_xx", label);
         outhead1("%s:", label);
         outline0("LD A, $0");
         if ( _other ) {
@@ -1356,7 +1368,7 @@ void z80_less_than_32bit( Environment * _environment, char *_source, char *_dest
         } else {
             outline1("LD (%s), A", _destination);
         }
-        outhead1("%s_2:", label);
+        outhead1("%s_xx:", label);
 
 
     }
