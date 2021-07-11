@@ -118,8 +118,7 @@ void begin_for( Environment * _environment, char * _index, char * _from, char * 
 
     cpu_label( _environment, beginFor );
 
-    Variable * lastStep = variable_add( _environment, loop->to->name, loop->step->name );
-    Variable * isLastStep = variable_compare( _environment, index->name, lastStep->name );
+    Variable * isLastStep = variable_greater_than( _environment, index->name, loop->to->name, 0 );
 
     cpu_bvneq( _environment, isLastStep->realName, endFor );
 
