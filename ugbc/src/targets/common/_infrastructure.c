@@ -3431,3 +3431,37 @@ ScreenMode * find_screen_mode_by_suggestion( Environment * _environment, int _bi
     return bestMode;
 
 }
+
+Variable * variable_mod( Environment * _environment, char * _source, char * _destination ) {
+    Variable * source = variable_retrieve( _environment, _source );
+    Variable * target = variable_cast( _environment, _destination, source->type );
+
+    if ( VT_SIGNED( source->type ) != VT_SIGNED( target->type ) ) {
+        CRITICAL_MOD_UNSUPPORTED( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
+    }
+
+    Variable * result = NULL;
+    Variable * remainder = NULL;
+    switch( VT_BITWIDTH( source->type ) ) {
+        case 32:
+            result = variable_temporary( _environment, VT_DWORD, "(result of division)" );
+            remainder = variable_temporary( _environment, VT_WORD, "(remainder of division)" );
+            cpu_math_div_32bit_to_16bit( _environment, source->realName, target->realName, result->realName, remainder->realName, VT_SIGNED( source->type ) );
+            break;
+        case 16:
+            result = variable_temporary( _environment, VT_WORD, "(result of division)" );
+            remainder = variable_temporary( _environment, VT_WORD, "(remainder of division)" );
+            cpu_math_div_16bit_to_16bit( _environment, source->realName, target->realName, result->realName, remainder->realName, VT_SIGNED( source->type ) );
+            break;
+        case 8:
+            result = variable_temporary( _environment, VT_BYTE, "(result of division)" );
+            remainder = variable_temporary( _environment, VT_BYTE, "(remainder of division)" );
+            cpu_math_div_8bit_to_8bit( _environment, source->realName, target->realName, result->realName, remainder->realName, VT_SIGNED( source->type ) );
+            break;
+        case 0:
+            CRITICAL_DIV_UNSUPPORTED(_source, DATATYPE_AS_STRING[source->type]);
+            break;
+    }
+
+    return remainder;
+}
