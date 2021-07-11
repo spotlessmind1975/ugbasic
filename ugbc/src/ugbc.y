@@ -132,7 +132,9 @@ expr_math:
 
 term:
       modula
-    | term MOD modula
+    | term MOD modula {
+        $$ = variable_mod( _environment, $1, $3 )->name;
+    }
     ;
 
 modula: 
@@ -1976,35 +1978,20 @@ values :
 
 print_definition :
     expr {
-        outline0("; ------------------------------------------------" );
-        outline1("; PRINT %s", $1 );
-        outline0("; ------------------------------------------------" );
         print( _environment, $1, 1 );
     }
   | expr OP_COMMA {
-        outline0("; ------------------------------------------------" );
-        outline1("; PRINT %s,", $1 );
-        outline0("; ------------------------------------------------" );
         print( _environment, $1, 0 );
         print_tab( _environment, 0 );
   }
   | expr OP_SEMICOLON {
-        outline0("; ------------------------------------------------" );
-        outline1("; PRINT %s;", $1 );
-        outline0("; ------------------------------------------------" );
         print( _environment, $1, 0 );
   }
   | expr OP_COMMA {
-        outline0("; ------------------------------------------------" );
-        outline1("; PRINT %s,...", $1 );
-        outline0("; ------------------------------------------------" );
         print( _environment, $1, 0 );
         print_tab( _environment, 0 );
   }  print_definition
   | expr OP_SEMICOLON  {
-        outline0("; ------------------------------------------------" );
-        outline1("; PRINT %s;...", $1 );
-        outline0("; ------------------------------------------------" );
         print( _environment, $1, 0 );
   } print_definition
   ;
