@@ -8,7 +8,7 @@ REM
 REM @italian
 REM PRIMITIVE DI GRAFICA PER POSIZIONE (1)
 REM
-REM Questo esempio userà il comando ''GR LOCSATE'' per spostare il cursore grafico
+REM Questo esempio userà il comando ''GR LOCATE'' per spostare il cursore grafico
 REM in una posizione specifica. Omettendo le coordinate, il comando
 REM ''CIRCLE'' disegnerà un cerchio con il centro nelle coordinate date.
 

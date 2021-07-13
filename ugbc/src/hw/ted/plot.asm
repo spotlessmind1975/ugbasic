@@ -110,7 +110,7 @@ PLOT5:
     SBC #$00
     STA PLOTLDEST               ;= cell address
     LDA PLOTCDEST+1
-    SBC #$40
+    SBC #$04
     STA PLOTLDEST+1             ;= cell address
 
     ;---------------------------------
