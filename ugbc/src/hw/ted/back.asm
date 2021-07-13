@@ -42,9 +42,6 @@ BACK:
     JMP BACKG
     
 BACKG:
-    SEI
-    LDA #$36
-    STA $01
     LDA COLORMAPADDRESS
     STA $25
     LDA COLORMAPADDRESS+1
@@ -72,9 +69,6 @@ BACKGC2:
 BACKGCNB:
     DEX
     BNE BACKGC
-    LDA #$37
-    STA $01
-    CLI
 
     RTS
 

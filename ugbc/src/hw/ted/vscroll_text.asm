@@ -40,8 +40,6 @@ VSCROLLT:
     PHA
     TYA
     PHA
-    LDA #$36
-    STA $01
     LDA $30
     CMP #$80
     BCC VSCROLLTDOWN
@@ -87,8 +85,6 @@ VSCROLLTUPREFILL:
     CPY #232
     BNE VSCROLLTUPREFILL
 VSCROLLTUEND:
-    LDA #$37
-    STA $01
 
     PLA
     TAY
@@ -152,9 +148,6 @@ SCROLLFILLUP:
     INY
     CPY #40
     BNE SCROLLFILLUP
-
-    LDA #$37
-    STA $01
 
     PLA
     TYA
