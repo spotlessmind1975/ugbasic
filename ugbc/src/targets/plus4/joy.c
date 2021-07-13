@@ -53,13 +53,27 @@ Variable * joy( Environment * _environment, char * _port ) {
     outline1("JMP %send2", label );
 
     outhead1("%sjoy0:", label );
-    outline0("LDA $DC01");
+    outline0("LDA #$FF");
+    outline0("STA $FD30");
+    outline0("LDA #$02");
+    outline0("STA $FF08");
+    outline0("LDA $FF08");
+    outline0("LDA #$02");
+    outline0("STA $FF08");
+    outline0("LDA $FF08");
     outline0("EOR #$FF");
     outline0("AND #$1F");
     outline1("JMP %send", label );
 
     outhead1("%sjoy1:", label );
-    outline0("LDA $DC00");
+    outline0("LDA #$FF");
+    outline0("STA $FD30");
+    outline0("LDA #$04");
+    outline0("STA $FF08");
+    outline0("LDA $FF08");
+    outline0("LDA #$04");
+    outline0("STA $FF08");
+    outline0("LDA $FF08");
     outline0("EOR #$FF");
     outline0("AND #$1F");
     outline1("JMP %send", label );
