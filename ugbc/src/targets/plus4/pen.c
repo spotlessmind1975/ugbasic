@@ -56,7 +56,7 @@ void pen( Environment * _environment, char * _color ) {
 
     MAKE_LABEL
 
-    outline0("LDA $D011");
+    outline0("LDA $FF06");
     outline0("AND #%00100000");
     outline1("BEQ %stxt", label );
     outline1("LDA %s", color->realName);
