@@ -105,6 +105,14 @@ PLOT5:
     ADC PLOTCVBASEHI,Y          ;do the high byte
     STA PLOTCDEST+1
 
+    SEC
+    LDA PLOTCDEST
+    SBC #$00
+    STA PLOTLDEST               ;= cell address
+    LDA PLOTCDEST+1
+    SBC #$40
+    STA PLOTLDEST+1             ;= cell address
+
     ;---------------------------------
     ;get in-cell offset to point (0-7)
     ;---------------------------------
@@ -146,6 +154,13 @@ PLOTD:
     AND #$0f                   ;isolate AND set the point
     ORA _PEN                   ;isolate OR set the point
     STA (PLOTCDEST),y          ;write back to $A000    
+
+    LDY #0
+    LDA (PLOTLDEST),y          ;get row with point in it
+    AND #$0f                   ;isolate AND set the point
+    ORA #$30                   ;increase luminance
+    STA (PLOTLDEST),y          ;write back to $A000    
+
     LDA #$37
     STA $01
     CLI
@@ -160,6 +175,11 @@ PLOTE:                          ;handled same way as setting a point
     LDA (PLOTDEST),y            ;just with opposite bit-mask
     AND PLOTANDBIT,x            ;isolate AND erase the point
     STA (PLOTDEST),y            ;write back to $A000
+
+    LDY #0
+    LDA #0                      ;get row with point in it
+    STA (PLOTLDEST),y          ;write back to $A000    
+
     LDA #$37
     STA $01
     JMP PLOTP
