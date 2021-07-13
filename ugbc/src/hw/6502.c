@@ -38,7 +38,7 @@
  * CODE SECTION
  ****************************************************************************/
 
-#ifdef __c64__
+#if defined(__c64__) || defined(__plus4__)
 
 /**
  * @brief <i>CPU 6502</i>: emit code to make long conditional jump

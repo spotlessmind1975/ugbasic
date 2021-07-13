@@ -47,30 +47,7 @@
 /* <usermanual>
 @keyword PAPER
 
-@english
-This command allow to select a background colour on which your text is
-to be printed. The command is 
-followed by a colour index number between 0 and ''PAPER COLORS'', 
-depending on the graphics mode in use, in exactly the same way 
-as ''PEN''. The normal default colour index number is 
-''DEFAULT PAPER''.
-
-@italian
-Questo comando permette di selezionare un colore di sfondo 
-su cui si trova il testo da stampare Il comando è seguito da 
-un numero compreso tra 0 e ''PAPER COLORS'', a seconda della
-modalità grafica in uso, esattamente come ''PEN''. Il colore
-predefinito è ''DEFAULT PAPER''.
-
-@syntax PAPER [expression]
-
-@example PAPER 4
-@example PAPER (esempio)
-
-@UsedInExample texts_options_01.bas
-@UsedInExample texts_options_02.bas
-
-@target c64
+@target plus4
 </usermanual> */
 void paper( Environment * _environment, char * _color ) {
 
@@ -79,7 +56,7 @@ void paper( Environment * _environment, char * _color ) {
 
     variable_move( _environment, color->name, paper->name );
     
-    vic2_background_color( _environment, "#0", color->realName );
-    vic2_border_color( _environment, color->realName );
+    ted_background_color( _environment, "#0", color->realName );
+    ted_border_color( _environment, color->realName );
     
 }

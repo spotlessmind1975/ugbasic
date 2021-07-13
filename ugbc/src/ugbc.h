@@ -634,6 +634,18 @@ typedef struct _Environment {
     int vic2varsDeployed;
 
     /**
+     * Deployed the startup for TED
+     */
+
+    int tedstartupDeployed;
+
+    /**
+     * Deployed the vars for TED
+     */
+
+    int tedvarsDeployed;
+
+    /**
      * Deployed plotting routine
      */
 
@@ -1386,6 +1398,10 @@ Variable *              ypen( Environment * _environment );
     #include "hw/6502.h"
     #include "hw/vic2.h"
     #include "hw/c64.h"
+#elif __plus4__
+    #include "hw/6502.h"
+    #include "hw/ted.h"
+    #include "hw/plus4.h"
 #elif __zx__
     #include "hw/z80.h"
     #include "hw/zx.h"

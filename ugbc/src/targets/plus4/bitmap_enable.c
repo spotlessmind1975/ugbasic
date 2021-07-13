@@ -35,51 +35,40 @@
 #include "../../ugbc.h"
 
 /****************************************************************************
- * CODE SECTION 
+ * CODE SECTION
  ****************************************************************************/
 
 /**
- * @brief Emit code for <strong>PAPER ...</strong> command
+ * @brief Emit ASM implementation for <b>BITMAP ENABLE</b> instruction
+ * 
+ * This function can be called to emit the code to enable bitmap graphics
+ * on the target machine. Bitmap resolution and colors depends on hardware.
+ * Enabling the bitmap also sets the starting address in memory, for those 
+ * computers that have graphics mapped in memory.
+ * 
+ * On some machine calling this instruction will define two special variables:
+ * 
+ *  * `BITMAPADDRESS` (VT_ADDRESS) - the starting address of bitmap memory
+ *  * `COLORMAPADDRESS` (VT_ADDRESS) - the starting address of color map memory
  * 
  * @param _environment Current calling environment
- * @param _color Color to use for the paper
  */
 /* <usermanual>
-@keyword PAPER
+@keyword BITMAP ENABLE
 
-@english
-This command allow to select a background colour on which your text is
-to be printed. The command is 
-followed by a colour index number between 0 and ''PAPER COLORS'', 
-depending on the graphics mode in use, in exactly the same way 
-as ''PEN''. The normal default colour index number is 
-''DEFAULT PAPER''.
+@target plus4
 
-@italian
-Questo comando permette di selezionare un colore di sfondo 
-su cui si trova il testo da stampare Il comando è seguito da 
-un numero compreso tra 0 e ''PAPER COLORS'', a seconda della
-modalità grafica in uso, esattamente come ''PEN''. Il colore
-predefinito è ''DEFAULT PAPER''.
-
-@syntax PAPER [expression]
-
-@example PAPER 4
-@example PAPER (esempio)
-
-@UsedInExample texts_options_01.bas
-@UsedInExample texts_options_02.bas
-
-@target c64
 </usermanual> */
-void paper( Environment * _environment, char * _color ) {
+void bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {
 
-    Variable * paper = variable_retrieve( _environment, "PAPER" );
-    Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_BLACK );
+    // Let's define the special variable bitmapAddress.
+    Variable * bitmapAddress = variable_retrieve( _environment, "BITMAPADDRESS" );
 
-    variable_move( _environment, color->name, paper->name );
-    
-    vic2_background_color( _environment, "#0", color->realName );
-    vic2_border_color( _environment, color->realName );
-    
+    // Let's define the special variable colormapAddress.
+    Variable * colormapAddress = variable_retrieve_or_define( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0x8400 );
+
+    outline0("; BITMAP ENABLE");
+
+    ted_bitmap_enable( _environment, _width, _height, _colors );
+
 }

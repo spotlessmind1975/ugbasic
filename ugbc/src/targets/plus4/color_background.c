@@ -34,52 +34,57 @@
 
 #include "../../ugbc.h"
 
-/****************************************************************************
- * CODE SECTION 
- ****************************************************************************/
-
 /**
- * @brief Emit code for <strong>PAPER ...</strong> command
+ * @brief Emit ASM code for instruction <b>COLOR BACKGROUND [int] TO [int]x</b>
+ * 
+ * This function outputs the ASM code to change the background color, among 
+ * those available. It should be used where the command is invoked with a 
+ * direct integer value.
  * 
  * @param _environment Current calling environment
- * @param _color Color to use for the paper
+ * @param _index Index of the background color
+ * @param _background_color Index of the color to use
  */
 /* <usermanual>
-@keyword PAPER
+@keyword COLOR BACKGROUND
 
-@english
-This command allow to select a background colour on which your text is
-to be printed. The command is 
-followed by a colour index number between 0 and ''PAPER COLORS'', 
-depending on the graphics mode in use, in exactly the same way 
-as ''PEN''. The normal default colour index number is 
-''DEFAULT PAPER''.
-
-@italian
-Questo comando permette di selezionare un colore di sfondo 
-su cui si trova il testo da stampare Il comando è seguito da 
-un numero compreso tra 0 e ''PAPER COLORS'', a seconda della
-modalità grafica in uso, esattamente come ''PEN''. Il colore
-predefinito è ''DEFAULT PAPER''.
-
-@syntax PAPER [expression]
-
-@example PAPER 4
-@example PAPER (esempio)
-
-@UsedInExample texts_options_01.bas
-@UsedInExample texts_options_02.bas
-
-@target c64
+@target plus4
 </usermanual> */
-void paper( Environment * _environment, char * _color ) {
-
-    Variable * paper = variable_retrieve( _environment, "PAPER" );
-    Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_BLACK );
-
-    variable_move( _environment, color->name, paper->name );
+void color_background( Environment * _environment, int _index, int _background_color ) {
     
-    vic2_background_color( _environment, "#0", color->realName );
-    vic2_border_color( _environment, color->realName );
-    
+    outline2("; COLOR BACKGROUND #$%2.2x TO #$%2.2x", _index, _background_color);
+
+    char index[MAX_TEMPORARY_STORAGE]; sprintf(index, "#$%2.2x", _index );
+    char background_color[MAX_TEMPORARY_STORAGE]; sprintf(background_color, "#$%2.2x", _background_color );
+
+    ted_background_color( _environment, index, background_color );
+
+}
+
+/**
+ * @brief Emit ASM code for instruction <b>COLOR BACKGROUND [expression] TO [expression]</b>
+ * 
+ * This function outputs the ASM code to change the background color, among 
+ * those available. It should be used where the command is invoked with expressions.
+ * 
+ * @param _environment Current calling environment
+ * @param _index Expression with the index of the background color
+ * @param _background_color Expression with the index of the color to use
+ */
+/* <usermanual>
+@keyword COLOR BACKGROUND
+
+@target plus4
+
+</usermanual> */
+void color_background_vars( Environment * _environment, char * _index, char * _background_color ) {
+
+    outline2("; COLOR BACKGROUND %s TO %s", _index, _background_color);
+
+    Variable * index = variable_retrieve( _environment, _index );
+
+    Variable * background_color = variable_retrieve( _environment, _background_color );
+
+    ted_background_color( _environment, index->realName, background_color->realName );
+
 }

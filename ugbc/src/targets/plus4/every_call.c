@@ -38,48 +38,50 @@
  * CODE SECTION 
  ****************************************************************************/
 
-/**
- * @brief Emit code for <strong>PAPER ...</strong> command
- * 
- * @param _environment Current calling environment
- * @param _color Color to use for the paper
- */
-/* <usermanual>
-@keyword PAPER
+void every_ticks_call( Environment * _environment, char * _timing, char * _label ) {
 
-@english
-This command allow to select a background colour on which your text is
-to be printed. The command is 
-followed by a colour index number between 0 and ''PAPER COLORS'', 
-depending on the graphics mode in use, in exactly the same way 
-as ''PEN''. The normal default colour index number is 
-''DEFAULT PAPER''.
+    outline2("; EVERY %s TICKS CALL %s", _timing, _label );
 
-@italian
-Questo comando permette di selezionare un colore di sfondo 
-su cui si trova il testo da stampare Il comando è seguito da 
-un numero compreso tra 0 e ''PAPER COLORS'', a seconda della
-modalità grafica in uso, esattamente come ''PEN''. Il colore
-predefinito è ''DEFAULT PAPER''.
+    Variable * timing = variable_retrieve( _environment, _timing );
 
-@syntax PAPER [expression]
+    if ( ! _environment->everyStatus ) {
+        _environment->everyStatus = variable_temporary( _environment, VT_BYTE, "(every status)");
+        _environment->everyStatus->locked = 1;
+    }
 
-@example PAPER 4
-@example PAPER (esempio)
+    _environment->everyCounter = variable_temporary( _environment, VT_WORD, "(every counter)");
+    _environment->everyCounter->locked = 1;
+    _environment->everyTiming = variable_cast( _environment, timing->name, VT_WORD );
+    _environment->everyTiming->locked = 1;
 
-@UsedInExample texts_options_01.bas
-@UsedInExample texts_options_02.bas
-
-@target c64
-</usermanual> */
-void paper( Environment * _environment, char * _color ) {
-
-    Variable * paper = variable_retrieve( _environment, "PAPER" );
-    Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_BLACK );
-
-    variable_move( _environment, color->name, paper->name );
+    char skipEveryRoutineLabel[MAX_TEMPORARY_STORAGE]; sprintf(skipEveryRoutineLabel, "setg%d", UNIQUE_ID );
+    char everyRoutineLabel[MAX_TEMPORARY_STORAGE]; sprintf(everyRoutineLabel, "etg%d", UNIQUE_ID );
+    char endOfEveryRoutineLabel[MAX_TEMPORARY_STORAGE]; sprintf(endOfEveryRoutineLabel, "eetg%d", UNIQUE_ID );
     
-    vic2_background_color( _environment, "#0", color->realName );
-    vic2_border_color( _environment, color->realName );
+    cpu_jump( _environment, skipEveryRoutineLabel );
     
+    cpu_label( _environment, everyRoutineLabel );
+    
+    cpu_di( _environment );
+
+    cpu_bveq( _environment, _environment->everyStatus->realName, endOfEveryRoutineLabel );
+
+    cpu_dec( _environment, _environment->everyCounter->realName );
+
+    cpu_bvneq( _environment, _environment->everyCounter->realName, endOfEveryRoutineLabel );
+
+    call_procedure( _environment, _label );
+
+    variable_move_naked( _environment, _environment->everyTiming->name, _environment->everyCounter->name );
+
+    cpu_label( _environment, endOfEveryRoutineLabel );
+
+    cpu_ei( _environment );
+
+    ted_next_raster( _environment );
+
+    cpu_label( _environment, skipEveryRoutineLabel );
+
+    ted_raster_at( _environment, everyRoutineLabel, "0", "42" );
+
 }

@@ -39,47 +39,23 @@
  ****************************************************************************/
 
 /**
- * @brief Emit code for <strong>PAPER ...</strong> command
+ * @brief Emit ASM code for <b>NEXT RASTER</b>
+ * 
+ * This function outputs assembly code needed to wait for the
+ * next raster. Meanwhile, the execution of the main code will resume 
+ * where it left off.
  * 
  * @param _environment Current calling environment
- * @param _color Color to use for the paper
  */
 /* <usermanual>
-@keyword PAPER
+@keyword NEXT RASTER
 
-@english
-This command allow to select a background colour on which your text is
-to be printed. The command is 
-followed by a colour index number between 0 and ''PAPER COLORS'', 
-depending on the graphics mode in use, in exactly the same way 
-as ''PEN''. The normal default colour index number is 
-''DEFAULT PAPER''.
-
-@italian
-Questo comando permette di selezionare un colore di sfondo 
-su cui si trova il testo da stampare Il comando è seguito da 
-un numero compreso tra 0 e ''PAPER COLORS'', a seconda della
-modalità grafica in uso, esattamente come ''PEN''. Il colore
-predefinito è ''DEFAULT PAPER''.
-
-@syntax PAPER [expression]
-
-@example PAPER 4
-@example PAPER (esempio)
-
-@UsedInExample texts_options_01.bas
-@UsedInExample texts_options_02.bas
-
-@target c64
+@target plus4
 </usermanual> */
-void paper( Environment * _environment, char * _color ) {
+void next_raster( Environment * _environment ) {
 
-    Variable * paper = variable_retrieve( _environment, "PAPER" );
-    Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_BLACK );
+    outline0("; NEXT RASTER");
 
-    variable_move( _environment, color->name, paper->name );
-    
-    vic2_background_color( _environment, "#0", color->realName );
-    vic2_border_color( _environment, color->realName );
-    
+    ted_next_raster( _environment );
+
 }

@@ -39,47 +39,25 @@
  ****************************************************************************/
 
 /**
- * @brief Emit code for <strong>PAPER ...</strong> command
+ * @brief Emit ASM code for <b>EVERY ON</b>
  * 
  * @param _environment Current calling environment
- * @param _color Color to use for the paper
  */
 /* <usermanual>
-@keyword PAPER
+@keyword EVERY ON
 
-@english
-This command allow to select a background colour on which your text is
-to be printed. The command is 
-followed by a colour index number between 0 and ''PAPER COLORS'', 
-depending on the graphics mode in use, in exactly the same way 
-as ''PEN''. The normal default colour index number is 
-''DEFAULT PAPER''.
+@target plus4
 
-@italian
-Questo comando permette di selezionare un colore di sfondo 
-su cui si trova il testo da stampare Il comando è seguito da 
-un numero compreso tra 0 e ''PAPER COLORS'', a seconda della
-modalità grafica in uso, esattamente come ''PEN''. Il colore
-predefinito è ''DEFAULT PAPER''.
-
-@syntax PAPER [expression]
-
-@example PAPER 4
-@example PAPER (esempio)
-
-@UsedInExample texts_options_01.bas
-@UsedInExample texts_options_02.bas
-
-@target c64
 </usermanual> */
-void paper( Environment * _environment, char * _color ) {
+void every_on( Environment * _environment ) {
+   
+    outline0("; EVERY ON");
 
-    Variable * paper = variable_retrieve( _environment, "PAPER" );
-    Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_BLACK );
+    if ( ! _environment->everyStatus ) {
+        _environment->everyStatus = variable_temporary( _environment, VT_BYTE, "(every status)");
+        _environment->everyStatus->locked = 1;
+    }
 
-    variable_move( _environment, color->name, paper->name );
-    
-    vic2_background_color( _environment, "#0", color->realName );
-    vic2_border_color( _environment, color->realName );
-    
+    variable_store( _environment, _environment->everyStatus->name, 0xff );
+
 }

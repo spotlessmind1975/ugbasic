@@ -39,47 +39,39 @@
  ****************************************************************************/
 
 /**
- * @brief Emit code for <strong>PAPER ...</strong> command
+ * @brief Emit ASM code for <b>= YPEN()</b>
+ * 
+ * This function can be used to read the Y (vertical) position of the 
+ * electronic pen connected to the hardware. The result is stored in a 
+ * temporary variable.
  * 
  * @param _environment Current calling environment
- * @param _color Color to use for the paper
+ * @return Variable* Variable with the result of the reading
  */
 /* <usermanual>
-@keyword PAPER
+@keyword YPEN
 
 @english
-This command allow to select a background colour on which your text is
-to be printed. The command is 
-followed by a colour index number between 0 and ''PAPER COLORS'', 
-depending on the graphics mode in use, in exactly the same way 
-as ''PEN''. The normal default colour index number is 
-''DEFAULT PAPER''.
+Read the Y (vertical) position of the electronic pen connected to the hardware.
 
 @italian
-Questo comando permette di selezionare un colore di sfondo 
-su cui si trova il testo da stampare Il comando è seguito da 
-un numero compreso tra 0 e ''PAPER COLORS'', a seconda della
-modalità grafica in uso, esattamente come ''PEN''. Il colore
-predefinito è ''DEFAULT PAPER''.
+Legge la posizione Y (verticale) della penna elettronica collegata all'hardware.
 
-@syntax PAPER [expression]
+@syntax = YPEN( )
 
-@example PAPER 4
-@example PAPER (esempio)
+@example y = YPEN( )
 
-@UsedInExample texts_options_01.bas
-@UsedInExample texts_options_02.bas
-
-@target c64
+@target plus4
 </usermanual> */
-void paper( Environment * _environment, char * _color ) {
+Variable * ypen( Environment * _environment ) {
 
-    Variable * paper = variable_retrieve( _environment, "PAPER" );
-    Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_BLACK );
+    outline0("; = YPEN");
 
-    variable_move( _environment, color->name, paper->name );
-    
-    vic2_background_color( _environment, "#0", color->realName );
-    vic2_border_color( _environment, color->realName );
-    
+    Variable * result = variable_temporary( _environment, VT_POSITION, "(result)" );
+
+    plus4_ypen( _environment, result->realName );
+
+    return result;
+
 }
+

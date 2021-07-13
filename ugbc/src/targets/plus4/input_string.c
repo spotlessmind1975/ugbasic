@@ -38,48 +38,42 @@
  * CODE SECTION 
  ****************************************************************************/
 
-/**
- * @brief Emit code for <strong>PAPER ...</strong> command
- * 
- * @param _environment Current calling environment
- * @param _color Color to use for the paper
- */
-/* <usermanual>
-@keyword PAPER
+extern char DATATYPE_AS_STRING[][16];
 
-@english
-This command allow to select a background colour on which your text is
-to be printed. The command is 
-followed by a colour index number between 0 and ''PAPER COLORS'', 
-depending on the graphics mode in use, in exactly the same way 
-as ''PEN''. The normal default colour index number is 
-''DEFAULT PAPER''.
+Variable * input_string( Environment * _environment, char * _size ) {
 
-@italian
-Questo comando permette di selezionare un colore di sfondo 
-su cui si trova il testo da stampare Il comando è seguito da 
-un numero compreso tra 0 e ''PAPER COLORS'', a seconda della
-modalità grafica in uso, esattamente come ''PEN''. Il colore
-predefinito è ''DEFAULT PAPER''.
-
-@syntax PAPER [expression]
-
-@example PAPER 4
-@example PAPER (esempio)
-
-@UsedInExample texts_options_01.bas
-@UsedInExample texts_options_02.bas
-
-@target c64
-</usermanual> */
-void paper( Environment * _environment, char * _color ) {
-
-    Variable * paper = variable_retrieve( _environment, "PAPER" );
-    Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_BLACK );
-
-    variable_move( _environment, color->name, paper->name );
+    MAKE_LABEL
     
-    vic2_background_color( _environment, "#0", color->realName );
-    vic2_border_color( _environment, color->realName );
-    
+    char repeatLabel[MAX_TEMPORARY_STORAGE]; sprintf(repeatLabel, "%srepeat", label );
+
+    Variable * result = variable_temporary( _environment, VT_DSTRING, "(result of INPUT$)");
+    Variable * offset = variable_temporary( _environment, VT_BYTE, "(offset inside INPUT$)");
+    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of result of INPUT$)");
+    Variable * size = variable_retrieve_or_define( _environment, _size, VT_BYTE, 0 );
+    Variable * pressed = variable_temporary( _environment, VT_BYTE, "(key pressed?)");
+    Variable * key = variable_temporary( _environment, VT_BYTE, "(key pressed)");
+
+    cpu_dsfree( _environment, result->realName );
+    cpu_dsalloc( _environment, size->realName, result->realName );
+    cpu_dsdescriptor( _environment, result->realName, address->realName, pressed->realName );
+
+    cpu_store_8bit( _environment, offset->realName, 0 );
+
+    cpu_label( _environment, repeatLabel );
+
+    plus4_inkey( _environment, pressed->realName, key->realName );
+
+    cpu_bveq( _environment, pressed->realName, repeatLabel );
+    cpu_bveq( _environment, key->realName, repeatLabel );
+
+    cpu_move_8bit_indirect_with_offset2( _environment, key->realName, address->realName, offset->realName );
+
+    cpu_inc( _environment, offset->realName );
+
+    cpu_compare_8bit( _environment, offset->realName, size->realName, pressed->realName, 1 );
+
+    cpu_bveq( _environment, pressed->realName, repeatLabel );
+
+    return result;
+
 }

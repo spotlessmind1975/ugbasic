@@ -38,48 +38,15 @@
  * CODE SECTION 
  ****************************************************************************/
 
-/**
- * @brief Emit code for <strong>PAPER ...</strong> command
- * 
- * @param _environment Current calling environment
- * @param _color Color to use for the paper
- */
-/* <usermanual>
-@keyword PAPER
+Variable * joy_direction( Environment * _environment, char * _port, int _direction ) {
 
-@english
-This command allow to select a background colour on which your text is
-to be printed. The command is 
-followed by a colour index number between 0 and ''PAPER COLORS'', 
-depending on the graphics mode in use, in exactly the same way 
-as ''PEN''. The normal default colour index number is 
-''DEFAULT PAPER''.
+    MAKE_LABEL
 
-@italian
-Questo comando permette di selezionare un colore di sfondo 
-su cui si trova il testo da stampare Il comando è seguito da 
-un numero compreso tra 0 e ''PAPER COLORS'', a seconda della
-modalità grafica in uso, esattamente come ''PEN''. Il colore
-predefinito è ''DEFAULT PAPER''.
+    Variable * value = joy( _environment, _port );
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of J*)" );
 
-@syntax PAPER [expression]
+    cpu_bit_check( _environment, value->realName, _direction, result->realName );
 
-@example PAPER 4
-@example PAPER (esempio)
+    return result;
 
-@UsedInExample texts_options_01.bas
-@UsedInExample texts_options_02.bas
-
-@target c64
-</usermanual> */
-void paper( Environment * _environment, char * _color ) {
-
-    Variable * paper = variable_retrieve( _environment, "PAPER" );
-    Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_BLACK );
-
-    variable_move( _environment, color->name, paper->name );
-    
-    vic2_background_color( _environment, "#0", color->realName );
-    vic2_border_color( _environment, color->realName );
-    
 }

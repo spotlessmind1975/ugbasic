@@ -1,0 +1,20 @@
+TEDSTARTUP:
+
+    ; SET_VIDEO( DEFAULT_VIDEO )
+    LDA $FF12
+    ORA #%00101000
+    STA $FF12
+    LDA $FF14
+    AND #%00000111
+    LDA #%01111000
+    STA $FF14
+    LDA $FF13
+    AND #%00000011
+    LDA #%11010100
+    STA $FF13
+    
+    ; SET_BACKGROUND_COLOR( BLACK )
+    LDA #$0
+    STA $FF15
+
+    RTS

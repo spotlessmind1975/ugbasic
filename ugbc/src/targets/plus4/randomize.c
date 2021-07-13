@@ -39,47 +39,34 @@
  ****************************************************************************/
 
 /**
- * @brief Emit code for <strong>PAPER ...</strong> command
+ * @brief Emit ASM code for <b>RANDOMIZE</b>
+ * 
+ * This function initialize the seed for random function.
  * 
  * @param _environment Current calling environment
- * @param _color Color to use for the paper
  */
 /* <usermanual>
-@keyword PAPER
+@keyword RANDOMIZE
 
 @english
-This command allow to select a background colour on which your text is
-to be printed. The command is 
-followed by a colour index number between 0 and ''PAPER COLORS'', 
-depending on the graphics mode in use, in exactly the same way 
-as ''PEN''. The normal default colour index number is 
-''DEFAULT PAPER''.
+Initialize the random seed.
 
 @italian
-Questo comando permette di selezionare un colore di sfondo 
-su cui si trova il testo da stampare Il comando è seguito da 
-un numero compreso tra 0 e ''PAPER COLORS'', a seconda della
-modalità grafica in uso, esattamente come ''PEN''. Il colore
-predefinito è ''DEFAULT PAPER''.
+Inizializza il seme casuale.
 
-@syntax PAPER [expression]
+@syntax RANDOMIZE {[seed]}
 
-@example PAPER 4
-@example PAPER (esempio)
-
-@UsedInExample texts_options_01.bas
-@UsedInExample texts_options_02.bas
+@example RANDOMIZE
 
 @target c64
 </usermanual> */
-void paper( Environment * _environment, char * _color ) {
+void randomize( Environment * _environment, char * _ext_seed ) {
 
-    Variable * paper = variable_retrieve( _environment, "PAPER" );
-    Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_BLACK );
+    Variable * seed = variable_retrieve_or_define( _environment, "seed", VT_DWORD, 0Xffffffff );
 
-    variable_move( _environment, color->name, paper->name );
-    
-    vic2_background_color( _environment, "#0", color->realName );
-    vic2_border_color( _environment, color->realName );
-    
+    if ( _ext_seed ) {
+        Variable * external_seed = variable_retrieve( _environment, _ext_seed );
+        variable_move( _environment, external_seed->name, seed->name );
+    }
+
 }

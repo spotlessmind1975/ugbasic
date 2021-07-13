@@ -39,47 +39,70 @@
  ****************************************************************************/
 
 /**
- * @brief Emit code for <strong>PAPER ...</strong> command
+ * @brief Emit ASM code for <b>POINT AT ([int],[int])</b>
+ * 
+ * This function outputs a code that draws a pixel on the screen in bitmap
+ * mode on coordinates given explicitly and directly as integers. 
+ * 
+ * @pre Bitmap must be enabled at least once with instruction <b>BITMAP ENABLE</b>.
  * 
  * @param _environment Current calling environment
- * @param _color Color to use for the paper
+ * @param _x Abscissa of the point to draw
+ * @param _y Ordinate of the point
+ * @throw EXIT_FAILURE "CRITICAL: POINT AT (xxx,xxx) needs BITMAP ENABLE"
  */
 /* <usermanual>
-@keyword PAPER
+@keyword POINT AT
 
 @english
-This command allow to select a background colour on which your text is
-to be printed. The command is 
-followed by a colour index number between 0 and ''PAPER COLORS'', 
-depending on the graphics mode in use, in exactly the same way 
-as ''PEN''. The normal default colour index number is 
-''DEFAULT PAPER''.
+Draws a pixel on the screen in bitmap mode on given coordinates. 
 
 @italian
-Questo comando permette di selezionare un colore di sfondo 
-su cui si trova il testo da stampare Il comando è seguito da 
-un numero compreso tra 0 e ''PAPER COLORS'', a seconda della
-modalità grafica in uso, esattamente come ''PEN''. Il colore
-predefinito è ''DEFAULT PAPER''.
+Disegna un pixel sullo schermo in modalità bitmap su coordinate date.
 
-@syntax PAPER [expression]
+@syntax POINT AT (# [integer], # [integer])
 
-@example PAPER 4
-@example PAPER (esempio)
-
-@UsedInExample texts_options_01.bas
-@UsedInExample texts_options_02.bas
+@example POINT AT (#42,#42)
 
 @target c64
 </usermanual> */
-void paper( Environment * _environment, char * _color ) {
+void point_at( Environment * _environment, int _x, int _y ) {
 
-    Variable * paper = variable_retrieve( _environment, "PAPER" );
-    Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_BLACK );
+    outline2("; POINT AT (%d,%d)", _x, _y);
 
-    variable_move( _environment, color->name, paper->name );
-    
-    vic2_background_color( _environment, "#0", color->realName );
-    vic2_border_color( _environment, color->realName );
-    
+    ted_point_at_int( _environment, _x, _y );    
+
+}
+
+/**
+ * @brief Emit ASM code for <b>POINT AT ([int]x,[int]x)</b>
+ * 
+ * This function outputs a code that draws a pixel on the screen in bitmap
+ * mode on coordinates given explicitly and directly as integers. To do 
+ * this, it calculates both the position in memory where it will draw and 
+ * the offset within the byte, storing this information in the following 
+ * special variables:
+ * 
+ * * `pen_address` - offset in memory that refers to the pixel to be modified
+ * 
+ * @pre Bitmap must be enabled at least once with instruction <b>BITMAP ENABLE</b>.
+ * 
+ * @param _environment Current calling environment
+ * @param _x Expression with the abscissa of the point to draw
+ * @param _y Expression with the ordinate of the point
+ * @throw EXIT_FAILURE "CRITICAL: POINT AT (xxx,xxx) needs BITMAP ENABLE"
+ */
+/* <usermanual>
+@keyword POINT AT
+
+@syntax POINT AT ([expression],[expression])
+
+@example POINT AT (x+1,y+1)
+</usermanual> */
+void point_at_vars( Environment * _environment, char * _x, char * _y ) {
+
+    outline2("; POINT AT (%s,%s)", _x, _y);
+
+    ted_point_at_vars( _environment, _x, _y );
+
 }

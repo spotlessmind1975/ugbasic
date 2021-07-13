@@ -37,7 +37,17 @@
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
+/**
+ * @brief Emit code for <strong>PAPER ...</strong> command
+ * 
+ * @param _environment Current calling environment
+ * @param _color Color to use for the paper
+ */
+/* <usermanual>
+@keyword PAPER
 
+@target zx
+</usermanual> */
 void paper( Environment * _environment, char * _color ) {
 
     Variable * paper = variable_retrieve( _environment, "PAPER" );

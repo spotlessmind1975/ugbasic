@@ -35,51 +35,24 @@
 #include "../../ugbc.h"
 
 /****************************************************************************
- * CODE SECTION 
+ * CODE SECTION
  ****************************************************************************/
 
 /**
- * @brief Emit code for <strong>PAPER ...</strong> command
+ * @brief Emit ASM implementation for <b>BITMAP DISABLE</b> instruction
+ * 
+ * This function can be called to emit the code to disable bitmap graphics
+ * on the target machine.
  * 
  * @param _environment Current calling environment
- * @param _color Color to use for the paper
  */
 /* <usermanual>
-@keyword PAPER
+@keyword BITMAP DISABLE
 
-@english
-This command allow to select a background colour on which your text is
-to be printed. The command is 
-followed by a colour index number between 0 and ''PAPER COLORS'', 
-depending on the graphics mode in use, in exactly the same way 
-as ''PEN''. The normal default colour index number is 
-''DEFAULT PAPER''.
-
-@italian
-Questo comando permette di selezionare un colore di sfondo 
-su cui si trova il testo da stampare Il comando è seguito da 
-un numero compreso tra 0 e ''PAPER COLORS'', a seconda della
-modalità grafica in uso, esattamente come ''PEN''. Il colore
-predefinito è ''DEFAULT PAPER''.
-
-@syntax PAPER [expression]
-
-@example PAPER 4
-@example PAPER (esempio)
-
-@UsedInExample texts_options_01.bas
-@UsedInExample texts_options_02.bas
-
-@target c64
+@target plus4
 </usermanual> */
-void paper( Environment * _environment, char * _color ) {
+void bitmap_disable( Environment * _environment ) {
 
-    Variable * paper = variable_retrieve( _environment, "PAPER" );
-    Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_BLACK );
+    ted_bitmap_disable( _environment );
 
-    variable_move( _environment, color->name, paper->name );
-    
-    vic2_background_color( _environment, "#0", color->realName );
-    vic2_border_color( _environment, color->realName );
-    
 }

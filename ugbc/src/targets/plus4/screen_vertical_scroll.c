@@ -39,47 +39,56 @@
  ****************************************************************************/
 
 /**
- * @brief Emit code for <strong>PAPER ...</strong> command
+ * @brief Emit ASM code for <b>SCREEN VERTICAL SCROLL [integer]</b>
+ * 
+ * This function outputs an assembly code capable of performing a 
+ * hardware scroll of the screen. The scroll is always in the direction 
+ * from bottom to up, so with a _displacement of 0 the screen is exactly as 
+ * it would be without scrolling while with the value 7 you would have a scroll
+ * of 7 pixels upwards. This version is used when a direct integer is used.
  * 
  * @param _environment Current calling environment
- * @param _color Color to use for the paper
+ * @param _displacement Vertical offset in pixels (0-7)
  */
 /* <usermanual>
-@keyword PAPER
+@keyword SCREEN VERTICAL SCROLL
 
-@english
-This command allow to select a background colour on which your text is
-to be printed. The command is 
-followed by a colour index number between 0 and ''PAPER COLORS'', 
-depending on the graphics mode in use, in exactly the same way 
-as ''PEN''. The normal default colour index number is 
-''DEFAULT PAPER''.
-
-@italian
-Questo comando permette di selezionare un colore di sfondo 
-su cui si trova il testo da stampare Il comando è seguito da 
-un numero compreso tra 0 e ''PAPER COLORS'', a seconda della
-modalità grafica in uso, esattamente come ''PEN''. Il colore
-predefinito è ''DEFAULT PAPER''.
-
-@syntax PAPER [expression]
-
-@example PAPER 4
-@example PAPER (esempio)
-
-@UsedInExample texts_options_01.bas
-@UsedInExample texts_options_02.bas
-
-@target c64
+@target plus4
 </usermanual> */
-void paper( Environment * _environment, char * _color ) {
+void screen_vertical_scroll( Environment * _environment, int _displacement ) {
 
-    Variable * paper = variable_retrieve( _environment, "PAPER" );
-    Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_BLACK );
+    outline1("; SCREEN VERTICAL SCROLL %d", _displacement);
 
-    variable_move( _environment, color->name, paper->name );
-    
-    vic2_background_color( _environment, "#0", color->realName );
-    vic2_border_color( _environment, color->realName );
-    
+    char displacementString[MAX_TEMPORARY_STORAGE]; sprintf( displacementString, "#$%2.2x", _displacement );
+
+    ted_vertical_scroll( _environment, displacementString );
+
+}
+
+/**
+ * @brief Emit ASM code for <b>SCREEN VERTICAL SCROLL [expression]</b>
+ * 
+ * This function outputs an assembly code capable of performing a 
+ * hardware scroll of the screen. The scroll is always in the direction 
+ * from bottom to up, so with a _displacement of 0 the screen is exactly as 
+ * it would be without scrolling while with the value 7 you would have a scroll
+ * of 7 pixels upwards. This version is used when an expression is used.
+ * 
+ * @param _environment Current calling environment
+ * @param _displacement Vertical offset in pixels (0-7)
+ */
+/* <usermanual>
+@keyword SCREEN VERTICAL SCROLL
+
+@target plus4
+
+</usermanual> */
+void screen_vertical_scroll_var( Environment * _environment, char * _displacement ) {
+
+    outline1("; SCREEN VERTICAL SCROLL %s", _displacement );
+
+    Variable * displacement = variable_retrieve( _environment, _displacement );
+
+    ted_vertical_scroll( _environment, displacement->realName );
+
 }

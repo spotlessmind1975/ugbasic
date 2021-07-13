@@ -38,20 +38,29 @@ all: paths compiler $(COMPILED) $(EXECUTABLES)
 
 test:
 	@cd ugbc; make target=$(target) test
+	@echo "--- START TEST ---"
 	@ugbc/exe-test/ugbc.$(target)
+	@echo "--- END TEST ---"
 
 generated/c64/asm/%.asm:
 	@ugbc/exe/ugbc.c64 -c $(subst /asm/,/cfg/,$(@:.asm=.cfg)) $(subst generated/c64/asm/,examples/,$(@:.asm=.bas)) $@
 
 generated/c64/exe/%.prg: $(subst /exe/,/asm/,$(@:.prg=.asm))
-	@cl65 -Ln $(@:.prg=.lbl) -o $@ --mapfile $(@:.prg=.map) -u __EXEHDR__ -t c64 -C $(subst /exe/,/cfg/,$(@:.prg=.cfg)) $(subst /exe/,/asm/,$(@:.prg=.asm))
+	@cl65 -Ln $(@:.prg=.lbl) -g -o $@ --mapfile $(@:.prg=.map) -u __EXEHDR__ -t c64 -C $(subst /exe/,/cfg/,$(@:.prg=.cfg)) $(subst /exe/,/asm/,$(@:.prg=.asm))
+	@rm -f $(@:.prg=.o)
+
+generated/plus4/asm/%.asm:
+	@ugbc/exe/ugbc.plus4 -c $(subst /asm/,/cfg/,$(@:.asm=.cfg)) $(subst generated/plus4/asm/,examples/,$(@:.asm=.bas)) $@
+
+generated/plus4/exe/%.prg: $(subst /exe/,/asm/,$(@:.prg=.asm))
+	@cl65 -Ln $(@:.prg=.lbl) -g -o $@ --mapfile $(@:.prg=.map) -u __EXEHDR__ -t plus4 -C $(subst /exe/,/cfg/,$(@:.prg=.cfg)) $(subst /exe/,/asm/,$(@:.prg=.asm))
 	@rm -f $(@:.prg=.o)
 
 generated/zx/asm/%.asm:
 	@ugbc/exe/ugbc.zx $(subst generated/zx/asm/,examples/,$(@:.asm=.bas)) $@ 
 
 generated/zx/exe/%.tap:
-	@z88dk-z80asm -b $(subst /exe/,/asm/,$(@:.tap=.asm))
+	@z88dk-z80asm -l -b $(subst /exe/,/asm/,$(@:.tap=.asm))
 	@rm -f $(subst /exe/,/asm/,$(@:.tap=.o))
 	@mv $(subst /exe/,/asm/,$(@:.tap=.bin)) $(@:.tap=.bin)
 	@z88dk-appmake +zx --org 32768 -b $(@:.tap=.bin)
@@ -75,3 +84,6 @@ runc64: generated/c64/asm/$(example).asm generated/c64/exe/$(example).$(output)
 
 runzx: generated/zx/asm/$(example).asm generated/zx/exe/$(example).$(output)
 	speccy generated/zx/exe/$(example).$(output)
+
+runplus4: generated/plus4/asm/$(example).asm generated/plus4/exe/$(example).$(output)
+	xplus4 generated/plus4/exe/$(example).$(output)

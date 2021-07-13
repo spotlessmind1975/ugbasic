@@ -39,47 +39,43 @@
  ****************************************************************************/
 
 /**
- * @brief Emit code for <strong>PAPER ...</strong> command
+ * @brief Emit tail of linker's configuration file lines
+ * 
+ * This function emit the header of linker's configuration file.
  * 
  * @param _environment Current calling environment
- * @param _color Color to use for the paper
  */
-/* <usermanual>
-@keyword PAPER
+void linker_setup( Environment * _environment ) {
+    cfghead0("FEATURES {");
+    cfgline0("STARTADDRESS: default = $1001;");
+    cfghead0("}");
+    cfghead0("SYMBOLS {");
+    cfgline0("__LOADADDR__: type = import;");
+    cfghead0("}");
+    cfghead0("MEMORY {");
+    cfgline0("ZP:       file = \"\", start = $0002,  size = $001A,      define = yes;");
+    cfgline0("LOADADDR: file = %O, start = %S - 2, size = $0002;");
+    cfgline0("MAIN:     file = %O, start = %S,     size = $FD00 - %S;");
+    cfghead0("}");
+    cfghead0("SEGMENTS {");
+    cfgline0("ZEROPAGE: load = ZP,       type = zp,  optional = yes;");
+    cfgline0("LOADADDR: load = LOADADDR, type = ro;");
+    cfgline0("EXEHDR:   load = MAIN,     type = ro,  optional = yes;");
+    cfgline0("CODE:     load = MAIN,     type = rw;");
+    cfgline0("RODATA:   load = MAIN,     type = ro,  optional = yes;");
+    cfgline0("DATA:     load = MAIN,     type = rw,  optional = yes;");
+    cfgline0("BSS:      load = MAIN,     type = bss, optional = yes, define = yes;");
+}
 
-@english
-This command allow to select a background colour on which your text is
-to be printed. The command is 
-followed by a colour index number between 0 and ''PAPER COLORS'', 
-depending on the graphics mode in use, in exactly the same way 
-as ''PEN''. The normal default colour index number is 
-''DEFAULT PAPER''.
-
-@italian
-Questo comando permette di selezionare un colore di sfondo 
-su cui si trova il testo da stampare Il comando è seguito da 
-un numero compreso tra 0 e ''PAPER COLORS'', a seconda della
-modalità grafica in uso, esattamente come ''PEN''. Il colore
-predefinito è ''DEFAULT PAPER''.
-
-@syntax PAPER [expression]
-
-@example PAPER 4
-@example PAPER (esempio)
-
-@UsedInExample texts_options_01.bas
-@UsedInExample texts_options_02.bas
-
-@target c64
-</usermanual> */
-void paper( Environment * _environment, char * _color ) {
-
-    Variable * paper = variable_retrieve( _environment, "PAPER" );
-    Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_BLACK );
-
-    variable_move( _environment, color->name, paper->name );
-    
-    vic2_background_color( _environment, "#0", color->realName );
-    vic2_border_color( _environment, color->realName );
+/**
+ * @brief Emit tail of linker's configuration file lines
+ * 
+ * This function emit the tail of linker's configuration file.
+ * 
+ * @param _environment Current calling environment
+ */
+void linker_cleanup( Environment * _environment ) {
+ 
+    cfghead0("}");
     
 }

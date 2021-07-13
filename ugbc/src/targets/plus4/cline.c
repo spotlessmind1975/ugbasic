@@ -47,26 +47,7 @@
 /* <usermanual>
 @keyword CLINE
 
-@english
-The ''CLINE'' command is used to clear the line currently occupied by the text 
-cursor. If ''CLINE'' is followed by a number, then that number of characters
-get cleared, starting from the current cursor position and leaving the cursor 
-exactly where it is. 
-
-@italian
-Il comando ''CLINE'' viene utilizzato per cancellare la riga attualmente 
-occupata dal cursore. Se ''CLINE'' è seguito da un numero, quel numero 
-di caratteri sarà cancellato, a partire dalla posizione corrente del 
-cursore e lasciando il cursore esattamente dove si trova.
-
-@syntax CLINE {[expression]}
-
-@example CLINE
-
-@usedInExample texts_position_01.bas
-@usedInExample texts_position_02.bas
-
-@target c64
+@target plus4
 </usermanual> */
 void cline( Environment * _environment, char * _characters ) {
 

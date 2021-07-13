@@ -56,9 +56,11 @@ void test_controls( );
 void test_examples( );
 void test_print( );
 
-#ifdef __c64__
+#if defined( __c64__ )
     #include "tester_c64.h"
-#elif __zx__
+#elif defined( __plus4__ )
+    #include "tester_plus4.h"
+#elif defined( __zx__ )
     #include "tester_zx.h"
 #endif
 

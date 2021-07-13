@@ -38,48 +38,37 @@
  * CODE SECTION 
  ****************************************************************************/
 
-/**
- * @brief Emit code for <strong>PAPER ...</strong> command
- * 
- * @param _environment Current calling environment
- * @param _color Color to use for the paper
- */
-/* <usermanual>
-@keyword PAPER
+Variable * joy( Environment * _environment, char * _port ) {
 
-@english
-This command allow to select a background colour on which your text is
-to be printed. The command is 
-followed by a colour index number between 0 and ''PAPER COLORS'', 
-depending on the graphics mode in use, in exactly the same way 
-as ''PEN''. The normal default colour index number is 
-''DEFAULT PAPER''.
+    MAKE_LABEL
 
-@italian
-Questo comando permette di selezionare un colore di sfondo 
-su cui si trova il testo da stampare Il comando è seguito da 
-un numero compreso tra 0 e ''PAPER COLORS'', a seconda della
-modalità grafica in uso, esattamente come ''PEN''. Il colore
-predefinito è ''DEFAULT PAPER''.
+    Variable * port = variable_retrieve_or_define( _environment, _port, VT_BYTE, 0 );
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of JOY)" );
 
-@syntax PAPER [expression]
+    outline1("LDA %s", port->realName );
+    outline0("CMP #0" );
+    outline1("BEQ %sjoy0", label );
+    outline0("CMP #1" );
+    outline1("BEQ %sjoy1", label );
+    outline1("JMP %send2", label );
 
-@example PAPER 4
-@example PAPER (esempio)
+    outhead1("%sjoy0:", label );
+    outline0("LDA $DC01");
+    outline0("EOR #$FF");
+    outline0("AND #$1F");
+    outline1("JMP %send", label );
 
-@UsedInExample texts_options_01.bas
-@UsedInExample texts_options_02.bas
+    outhead1("%sjoy1:", label );
+    outline0("LDA $DC00");
+    outline0("EOR #$FF");
+    outline0("AND #$1F");
+    outline1("JMP %send", label );
 
-@target c64
-</usermanual> */
-void paper( Environment * _environment, char * _color ) {
+    outhead1("%send:", label );
+    outline1("STA %s", result->realName );
 
-    Variable * paper = variable_retrieve( _environment, "PAPER" );
-    Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_BLACK );
+    outhead1("%send2:", label );
 
-    variable_move( _environment, color->name, paper->name );
-    
-    vic2_background_color( _environment, "#0", color->realName );
-    vic2_border_color( _environment, color->realName );
-    
+    return result;
+
 }

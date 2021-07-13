@@ -59,7 +59,7 @@ Il comando ''CLS'' cancella lo schermo corrente.
 @usedInExample texts_position_01.bas
 @usedInExample texts_position_02.bas
 
-@target all
+@target c64
 </usermanual> */
 void cls( Environment * _environment, char * _paper ) {
 

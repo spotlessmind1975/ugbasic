@@ -38,48 +38,42 @@
  * CODE SECTION 
  ****************************************************************************/
 
-/**
- * @brief Emit code for <strong>PAPER ...</strong> command
- * 
- * @param _environment Current calling environment
- * @param _color Color to use for the paper
- */
-/* <usermanual>
-@keyword PAPER
+extern char DATATYPE_AS_STRING[][16];
 
-@english
-This command allow to select a background colour on which your text is
-to be printed. The command is 
-followed by a colour index number between 0 and ''PAPER COLORS'', 
-depending on the graphics mode in use, in exactly the same way 
-as ''PEN''. The normal default colour index number is 
-''DEFAULT PAPER''.
+Variable * inkey( Environment * _environment ) {
 
-@italian
-Questo comando permette di selezionare un colore di sfondo 
-su cui si trova il testo da stampare Il comando è seguito da 
-un numero compreso tra 0 e ''PAPER COLORS'', a seconda della
-modalità grafica in uso, esattamente come ''PEN''. Il colore
-predefinito è ''DEFAULT PAPER''.
+    Variable * result = variable_temporary( _environment, VT_DSTRING, "(result of INKEY$)");
+    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of temporary string)");
+    Variable * size = variable_temporary( _environment, VT_BYTE, "(size)");
+    Variable * pressed = variable_temporary( _environment, VT_BYTE, "(key pressed?)");
+    Variable * key = variable_temporary( _environment, VT_BYTE, "(key pressed)");
 
-@syntax PAPER [expression]
+    char resultString[MAX_TEMPORARY_STORAGE]; sprintf( resultString, " " );
 
-@example PAPER 4
-@example PAPER (esempio)
+    variable_store_string(_environment, result->name, resultString );
+    cpu_dswrite( _environment, result->realName );
+    cpu_dsdescriptor( _environment, result->realName, address->realName, size->realName );
 
-@UsedInExample texts_options_01.bas
-@UsedInExample texts_options_02.bas
+    MAKE_LABEL
 
-@target c64
-</usermanual> */
-void paper( Environment * _environment, char * _color ) {
+    char noKeyPressedLabel[MAX_TEMPORARY_STORAGE]; sprintf(noKeyPressedLabel, "%snokeyPressed", label );
+    char finishedLabel[MAX_TEMPORARY_STORAGE]; sprintf(finishedLabel, "%sfinished", label );
 
-    Variable * paper = variable_retrieve( _environment, "PAPER" );
-    Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_BLACK );
+    plus4_inkey( _environment, pressed->realName, key->realName );
 
-    variable_move( _environment, color->name, paper->name );
+    cpu_bveq( _environment, pressed->realName, noKeyPressedLabel );
+
+    cpu_move_8bit_indirect(_environment, key->realName, address->realName );
+    cpu_dsresize_size(_environment, result->realName, 1 );
+
+    cpu_jump( _environment, finishedLabel );
+
+    cpu_label( _environment, noKeyPressedLabel );
+
+    cpu_dsresize_size(_environment, result->realName, 0 );
+
+    cpu_label( _environment, finishedLabel );
     
-    vic2_background_color( _environment, "#0", color->realName );
-    vic2_border_color( _environment, color->realName );
-    
+    return result;
+
 }

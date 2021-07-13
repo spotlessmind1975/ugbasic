@@ -34,52 +34,26 @@
 
 #include "../../ugbc.h"
 
-/****************************************************************************
- * CODE SECTION 
- ****************************************************************************/
-
 /**
- * @brief Emit code for <strong>PAPER ...</strong> command
+ * @brief Emit ASM code to fill background color
+ * 
+ * This function can be called to fill the screen background with the given
+ * color. Depending on the mode selected (TILEMAP vs BITMAP) it can fill
+ * the screen in a different way.
  * 
  * @param _environment Current calling environment
- * @param _color Color to use for the paper
+ * @param _color Index of color to use to fill the screen
  */
 /* <usermanual>
-@keyword PAPER
+@keyword COLOR BACK
 
-@english
-This command allow to select a background colour on which your text is
-to be printed. The command is 
-followed by a colour index number between 0 and ''PAPER COLORS'', 
-depending on the graphics mode in use, in exactly the same way 
-as ''PEN''. The normal default colour index number is 
-''DEFAULT PAPER''.
+@target plus4
 
-@italian
-Questo comando permette di selezionare un colore di sfondo 
-su cui si trova il testo da stampare Il comando è seguito da 
-un numero compreso tra 0 e ''PAPER COLORS'', a seconda della
-modalità grafica in uso, esattamente come ''PEN''. Il colore
-predefinito è ''DEFAULT PAPER''.
-
-@syntax PAPER [expression]
-
-@example PAPER 4
-@example PAPER (esempio)
-
-@UsedInExample texts_options_01.bas
-@UsedInExample texts_options_02.bas
-
-@target c64
 </usermanual> */
-void paper( Environment * _environment, char * _color ) {
+void back( Environment * _environment, char * _color ) {
 
-    Variable * paper = variable_retrieve( _environment, "PAPER" );
-    Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_BLACK );
+    paper( _environment, _color );
 
-    variable_move( _environment, color->name, paper->name );
-    
-    vic2_background_color( _environment, "#0", color->realName );
-    vic2_border_color( _environment, color->realName );
-    
+    ted_back( _environment );
+
 }

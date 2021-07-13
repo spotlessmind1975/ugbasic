@@ -1,3 +1,6 @@
+#ifndef __UGBASICTESTER_PLUS4__
+#define __UGBASICTESTER_PLUS4__
+
 /*****************************************************************************
  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
  *****************************************************************************
@@ -32,54 +35,68 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../src/ugbc.h"
 
 /****************************************************************************
- * CODE SECTION 
+ * DECLARATIONS AND DEFINITIONS SECTION 
  ****************************************************************************/
 
-/**
- * @brief Emit code for <strong>PAPER ...</strong> command
- * 
- * @param _environment Current calling environment
- * @param _color Color to use for the paper
- */
-/* <usermanual>
-@keyword PAPER
+typedef struct _InternalMachineState {
 
-@english
-This command allow to select a background colour on which your text is
-to be printed. The command is 
-followed by a colour index number between 0 and ''PAPER COLORS'', 
-depending on the graphics mode in use, in exactly the same way 
-as ''PEN''. The normal default colour index number is 
-''DEFAULT PAPER''.
-
-@italian
-Questo comando permette di selezionare un colore di sfondo 
-su cui si trova il testo da stampare Il comando è seguito da 
-un numero compreso tra 0 e ''PAPER COLORS'', a seconda della
-modalità grafica in uso, esattamente come ''PEN''. Il colore
-predefinito è ''DEFAULT PAPER''.
-
-@syntax PAPER [expression]
-
-@example PAPER 4
-@example PAPER (esempio)
-
-@UsedInExample texts_options_01.bas
-@UsedInExample texts_options_02.bas
-
-@target c64
-</usermanual> */
-void paper( Environment * _environment, char * _color ) {
-
-    Variable * paper = variable_retrieve( _environment, "PAPER" );
-    Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_BLACK );
-
-    variable_move( _environment, color->name, paper->name );
+    unsigned int a;
     
-    vic2_background_color( _environment, "#0", color->realName );
-    vic2_border_color( _environment, color->realName );
+    unsigned int x;
     
-}
+    unsigned int y;
+    
+    unsigned int p;
+    
+    unsigned int s;
+    
+    unsigned int pc;
+
+    unsigned int working[1024];
+
+    unsigned int temporary[1024];
+
+    unsigned int descriptors_status[255];
+
+    unsigned int descriptors_address_lo[255];
+
+    unsigned int descriptors_address_hi[255];
+
+    unsigned int descriptors_size[255];
+
+    unsigned int xusing;
+
+    unsigned int working_base_address;
+    
+    unsigned int temporary_base_address;
+
+} InternalMachineState;
+
+typedef struct _DebugInspection {
+    char *      name;
+    int         address;
+    int         size;
+    unsigned char *      memory;
+} DebugInspection;
+
+typedef struct _Debug {
+    int                 inspections_count;
+    DebugInspection     inspections[1024];
+} Debug;
+
+typedef struct _TestEnvironment {
+    Environment                 environment;
+    InternalMachineState        state;
+    Variable                *   trackedVariables[128];
+    Debug                       debug;
+} TestEnvironment;
+
+void create_test( char *_name, void (*_payload)(TestEnvironment *), int (*_tester)(TestEnvironment *) );
+void stop_test( Environment * _environment );
+
+void test_ted( );
+
+#endif

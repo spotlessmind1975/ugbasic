@@ -39,47 +39,62 @@
  ****************************************************************************/
 
 /**
- * @brief Emit code for <strong>PAPER ...</strong> command
+ * @brief Emit ASM code for <b>= RANDOM</b>
+ * 
+ * This function outputs a code suitable for calculating a random value, 
+ * the range of which depends on the type of data passed as a parameter:
+ * 
+ * - `VT_BYTE` (<b>BYTE</b>) : 0...255
+ * - `VT_COLOR` (<b>COLOR</b>) : 0...15
+ * - `VT_WORD` (<b>WORD</b>) : 0...65.535
+ * - `VT_ADDRESS` (<b>ADDRESS</b>) : 0...65.535
+ * - `VT_POSITION` (<b>POSITION</b>) : 0...65.535
+ * - `VT_DWORD` (<b>DWORD</b>) : 0...4.294.967.295
+ * 
+ * The random value is passed back into a temporary variable.
  * 
  * @param _environment Current calling environment
- * @param _color Color to use for the paper
+ * @param _type Type of random number to generate
+ * @return Variable* The random value calculated
  */
 /* <usermanual>
-@keyword PAPER
+@keyword RANDOM
 
 @english
-This command allow to select a background colour on which your text is
-to be printed. The command is 
-followed by a colour index number between 0 and ''PAPER COLORS'', 
-depending on the graphics mode in use, in exactly the same way 
-as ''PEN''. The normal default colour index number is 
-''DEFAULT PAPER''.
+Calculate a random value.
 
 @italian
-Questo comando permette di selezionare un colore di sfondo 
-su cui si trova il testo da stampare Il comando è seguito da 
-un numero compreso tra 0 e ''PAPER COLORS'', a seconda della
-modalità grafica in uso, esattamente come ''PEN''. Il colore
-predefinito è ''DEFAULT PAPER''.
+Calcola un valore casuale.
 
-@syntax PAPER [expression]
+@syntax = (BYTE) RANDOM
+@syntax = (COLOR) RANDOM
+@syntax = (WORD) RANDOM
+@syntax = (ADDRESS) RANDOM
+@syntax = (POSITION) RANDOM
+@syntax = (DWORD) RANDOM
 
-@example PAPER 4
-@example PAPER (esempio)
-
-@UsedInExample texts_options_01.bas
-@UsedInExample texts_options_02.bas
+@example randomX = (POSITION) RANDOM
 
 @target c64
 </usermanual> */
-void paper( Environment * _environment, char * _color ) {
+Variable * random_value( Environment * _environment, VariableType _type ) {
 
-    Variable * paper = variable_retrieve( _environment, "PAPER" );
-    Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_BLACK );
+    Variable * seed = variable_retrieve_or_define( _environment, "seed", VT_DWORD, 0Xffffffff );
 
-    variable_move( _environment, color->name, paper->name );
-    
-    vic2_background_color( _environment, "#0", color->realName );
-    vic2_border_color( _environment, color->realName );
-    
+    Variable * result = variable_temporary( _environment, _type, "(random value)" );
+
+    switch( VT_BITWIDTH( _type ) ) {
+        case 8:
+            cpu6502_random_8bit( _environment, seed->realName, "$D012", result->realName );
+            break;
+        case 16:
+            cpu6502_random_16bit( _environment, seed->realName, "$D012", result->realName );
+            break;
+        case 32:
+            cpu6502_random_32bit( _environment, seed->realName, "$D012", result->realName );
+            break;
+    }
+
+    return result;
+
 }

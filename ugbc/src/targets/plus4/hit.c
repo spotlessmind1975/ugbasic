@@ -39,47 +39,50 @@
  ****************************************************************************/
 
 /**
- * @brief Emit code for <strong>PAPER ...</strong> command
+ * @brief Emit ASM code for <b>= HIT([int]x)</b>
+ * 
+ * This function can be used to issue code aimed at verifying if a sprite has 
+ * had a collision with a tile. The result (0 = no collision, 1 = 
+ * collision occurred) is returned in the output variable. This function
+ * is used when a direct integer is used.
  * 
  * @param _environment Current calling environment
- * @param _color Color to use for the paper
+ * @param _sprite Integer with the bitmask of the sprites
+ * @return Variable* Temporary variable with the result of hit (0 = no 
+ *                      hit, 1 = hit occurred)
  */
 /* <usermanual>
-@keyword PAPER
+@keyword HIT
 
 @english
-This command allow to select a background colour on which your text is
-to be printed. The command is 
-followed by a colour index number between 0 and ''PAPER COLORS'', 
-depending on the graphics mode in use, in exactly the same way 
-as ''PEN''. The normal default colour index number is 
-''DEFAULT PAPER''.
+Verify if a sprite has had a collision with a tile. The result 
+(0 = no collision, 1 = collision occurred) is returned as result.
 
 @italian
-Questo comando permette di selezionare un colore di sfondo 
-su cui si trova il testo da stampare Il comando è seguito da 
-un numero compreso tra 0 e ''PAPER COLORS'', a seconda della
-modalità grafica in uso, esattamente come ''PEN''. Il colore
-predefinito è ''DEFAULT PAPER''.
+Verifica se uno sprite ha avuto una collisione con un tile. Il risultato
+(0 = nessuna collisione, 1 = si è verificata una collisione) viene restituito
+come risultato.
 
-@syntax PAPER [expression]
+@syntax = HIT( # [integer] )
 
-@example PAPER 4
-@example PAPER (esempio)
-
-@UsedInExample texts_options_01.bas
-@UsedInExample texts_options_02.bas
+@example IF HIT( #1 ) THEN POINT AT (100,100): ENDIF
 
 @target c64
 </usermanual> */
-void paper( Environment * _environment, char * _color ) {
+Variable * hit_to( Environment * _environment, int _sprite ) {
 
-    Variable * paper = variable_retrieve( _environment, "PAPER" );
-    Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_BLACK );
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(result)" );
 
-    variable_move( _environment, color->name, paper->name );
-    
-    vic2_background_color( _environment, "#0", color->realName );
-    vic2_border_color( _environment, color->realName );
-    
+    return result;
+
 }
+
+Variable * hit_to_vars( Environment * _environment, char * _sprite ) {
+
+    // Safety check -- expression must exists (it should be always true)
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(result)" );
+
+    return result;
+
+}
+

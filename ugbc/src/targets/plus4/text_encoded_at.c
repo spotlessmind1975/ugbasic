@@ -38,48 +38,29 @@
  * CODE SECTION 
  ****************************************************************************/
 
-/**
- * @brief Emit code for <strong>PAPER ...</strong> command
- * 
- * @param _environment Current calling environment
- * @param _color Color to use for the paper
- */
-/* <usermanual>
-@keyword PAPER
+void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _text, char * _pen, char * _paper, char *_ww ) {
 
-@english
-This command allow to select a background colour on which your text is
-to be printed. The command is 
-followed by a colour index number between 0 and ''PAPER COLORS'', 
-depending on the graphics mode in use, in exactly the same way 
-as ''PEN''. The normal default colour index number is 
-''DEFAULT PAPER''.
+    Variable * text = variable_retrieve( _environment, _text );
+    Variable * x = variable_retrieve( _environment, _x );
+    Variable * y = variable_retrieve( _environment, _y );
+    Variable * pen = variable_retrieve( _environment, _pen );
+    Variable * ww = variable_retrieve( _environment, _ww );
+    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(text address)" );
+    Variable * size = variable_temporary( _environment, VT_BYTE, "(text size)" );
 
-@italian
-Questo comando permette di selezionare un colore di sfondo 
-su cui si trova il testo da stampare Il comando è seguito da 
-un numero compreso tra 0 e ''PAPER COLORS'', a seconda della
-modalità grafica in uso, esattamente come ''PEN''. Il colore
-predefinito è ''DEFAULT PAPER''.
+    switch( text->type ) {
+        case VT_STRING:
+            cpu_move_8bit( _environment, text->realName, size->realName );
+            cpu_addressof_16bit( _environment, text->realName, address->realName );
+            cpu_inc_16bit( _environment, address->realName );
+            break;
+        case VT_DSTRING:
+            cpu_dsdescriptor( _environment, text->realName, address->realName, size->realName );
+            break;
+    }
 
-@syntax PAPER [expression]
+    MAKE_LABEL
 
-@example PAPER 4
-@example PAPER (esempio)
+    ted_text_at( _environment, x->realName, y->realName, address->realName, size->realName, pen->realName, ww->realName );
 
-@UsedInExample texts_options_01.bas
-@UsedInExample texts_options_02.bas
-
-@target c64
-</usermanual> */
-void paper( Environment * _environment, char * _color ) {
-
-    Variable * paper = variable_retrieve( _environment, "PAPER" );
-    Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_BLACK );
-
-    variable_move( _environment, color->name, paper->name );
-    
-    vic2_background_color( _environment, "#0", color->realName );
-    vic2_border_color( _environment, color->realName );
-    
 }

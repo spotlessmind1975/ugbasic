@@ -38,48 +38,41 @@
  * CODE SECTION 
  ****************************************************************************/
 
-/**
- * @brief Emit code for <strong>PAPER ...</strong> command
- * 
- * @param _environment Current calling environment
- * @param _color Color to use for the paper
- */
-/* <usermanual>
-@keyword PAPER
+void target_initialization( Environment * _environment ) {
 
-@english
-This command allow to select a background colour on which your text is
-to be printed. The command is 
-followed by a colour index number between 0 and ''PAPER COLORS'', 
-depending on the graphics mode in use, in exactly the same way 
-as ''PEN''. The normal default colour index number is 
-''DEFAULT PAPER''.
+    variable_import( _environment, "BITMAPADDRESS", VT_ADDRESS );
+    variable_global( _environment, "BITMAPADDRESS" );
+    variable_import( _environment, "COLORMAPADDRESS", VT_ADDRESS );
+    variable_global( _environment, "COLORMAPADDRESS" );
+    variable_import( _environment, "TEXTADDRESS", VT_ADDRESS );
+    variable_global( _environment, "TEXTADDRESS" );    
+    variable_import( _environment, "EMPTYTILE", VT_BYTE );
+    variable_global( _environment, "EMPTYTILE" );    
 
-@italian
-Questo comando permette di selezionare un colore di sfondo 
-su cui si trova il testo da stampare Il comando è seguito da 
-un numero compreso tra 0 e ''PAPER COLORS'', a seconda della
-modalità grafica in uso, esattamente come ''PEN''. Il colore
-predefinito è ''DEFAULT PAPER''.
+    bank_define( _environment, "VARIABLES", BT_VARIABLES, 0x5000, NULL );
+    bank_define( _environment, "TEMPORARY", BT_TEMPORARY, 0x5100, NULL );
+    variable_import( _environment, "FREE_STRING", VT_WORD );
+    variable_global( _environment, "FREE_STRING" );    
 
-@syntax PAPER [expression]
+    if ( _environment->configurationFileName ) {
+        _environment->configurationFile = fopen( _environment->configurationFileName, "wt");
+        if ( ! _environment->configurationFile ) {
+            fprintf(stderr, "Unable to open configuration file: %s\n", _environment->configurationFileName );
+            exit(EXIT_FAILURE);
+        }
+        linker_setup( _environment );
+    }
 
-@example PAPER 4
-@example PAPER (esempio)
+    deploy( varsDeployed, "./ugbc/src/hw/plus4/vars.asm");
+    outhead0(".segment \"CODE\"");
+    variable_define( _environment, "stringsAddress", VT_ADDRESS, 0x4200 );
+    variable_global( _environment, "stringsAddress" );
+    bank_define( _environment, "STRINGS", BT_STRINGS, 0x4200, NULL );
+    variable_define( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0xD800 );
+    variable_global( _environment, "COLORMAPADDRESS" );
 
-@UsedInExample texts_options_01.bas
-@UsedInExample texts_options_02.bas
+    setup_text_variables( _environment );
 
-@target c64
-</usermanual> */
-void paper( Environment * _environment, char * _color ) {
+    ted_initialization( _environment );
 
-    Variable * paper = variable_retrieve( _environment, "PAPER" );
-    Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_BLACK );
-
-    variable_move( _environment, color->name, paper->name );
-    
-    vic2_background_color( _environment, "#0", color->realName );
-    vic2_border_color( _environment, color->realName );
-    
 }
