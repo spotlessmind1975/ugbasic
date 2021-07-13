@@ -211,12 +211,6 @@ void ted_bitmap_enable( Environment * _environment, int _width, int _height, int
 
     switch( mode->id ) {
         case BITMAP_MODE_STANDARD:
-            // This fix is necessary to set the starting address of the bitmap 
-            // to $A000 (which is an address available on PLUS/4).
-            outline0("LDA $FF12" );
-            outline0("ORA #%00101000" );
-            outline0("STA $FF12" );
-
             // Enable graphics.
             outline0("LDA $FF06" );
             outline0("ORA #%00100000");
@@ -231,12 +225,6 @@ void ted_bitmap_enable( Environment * _environment, int _width, int _height, int
 
             break;
         case BITMAP_MODE_MULTICOLOR:
-            // This fix is necessary to set the starting address of the bitmap 
-            // to $A000 (which is an address available on PLUS/4).
-            outline0("LDA $FF12" );
-            outline0("ORA #%00101000" );
-            outline0("STA $FF12" );
-
             // Enable graphics.
             outline0("LDA $FF06" );
             outline0("ORA #%00100000");
@@ -280,11 +268,6 @@ void ted_tilemap_enable( Environment * _environment, int _width, int _height, in
 
     switch( mode->id ) {
         case TILEMAP_MODE_STANDARD:
-            // This fix is necessary to set the starting address of the bitmap 
-            // to $A400 (which is an address available on PLUS/4).
-            outline0("LDA #%10100100" );
-            outline0("STA $FF14" );
-
             // Let's disable graphics (and extended color)!
             outline0("LDA $FF06" );
             outline0("AND #%10011111");
@@ -295,11 +278,6 @@ void ted_tilemap_enable( Environment * _environment, int _width, int _height, in
             break;
         case TILEMAP_MODE_MULTICOLOR:
         case TILEMAP_MODE_EXTENDED:
-            // This fix is necessary to set the starting address of the bitmap 
-            // to $A400 (which is an address available on PLUS/4).
-            outline0("LDA #%10100100" );
-            outline0("STA $FF14" );
-
             // Let's disable graphics and enable extended color!
             outline0("LDA $FF06" );
             outline0("AND #%11011111");
