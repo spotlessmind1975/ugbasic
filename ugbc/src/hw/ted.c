@@ -487,7 +487,7 @@ void ted_get_width( Environment * _environment, char *_result ) {
     MAKE_LABEL
 
     outline0("LDA $FF06" );
-    outline0("AND #%00010000");
+    outline0("AND #%00100000");
     outline1("BNE %sbitmap", label );
     outhead1("%stext:", label );
     outline0("LDA #40" );
@@ -509,7 +509,7 @@ void ted_get_height( Environment * _environment, char *_result ) {
     MAKE_LABEL
 
     outline0("LDA $FF06" );
-    outline0("AND #%00010000");
+    outline0("AND #%00100000");
     outline1("BNE %sbitmap", label );
     outhead1("%stext:", label );
     outline0("LDA $FF06" );
