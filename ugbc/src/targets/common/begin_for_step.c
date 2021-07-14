@@ -35,14 +35,40 @@
 #include "../../ugbc.h"
 
 /**
- * @brief Emit ASM code for <b>FOR ...</b>
+ * @brief Emit ASM code for <b>FOR ... STEP ... NEXT</b>
  * 
  * This function outputs the code to implement the starting
- * point of a FOR...NEXT loop
+ * point of a FOR ... STEP ... NEXT loop
  * 
  * @param _environment Current calling environment
- * @param _expression Expression to evaluate
+ * @param _index Variable to use as index
+ * @param _from Starting value
+ * @param _to Ending value
+ * @param _step Step value
  */
+/* <usermanual>
+@keyword FOR...NEXT
+
+@english
+Normally, the index counter is increased by 1 unit at every turn of a 
+''FOR...NEXT'' loop. When the current value exceeds that of the last 
+number specified, the loop is terminated. ''STEP'' is used to 
+change the size of increase in the index value.
+
+@italian
+Normalmente, il contatore dell'indice viene incrementato di uno ad ogni 
+ciclo. Quando il valore attuale supera quello dell'ultimo numero specificato, 
+il ciclo si intende terminato. L'istruzione ''STEP'' può essere sfruttata
+per modificare la dimensione dell'incremento del valore dell'indice.
+
+@syntax FOR [identifier] = [expression] TO [expression] { STEP [expression] } : ... : NEXT
+
+@example i = 0 : FOR i = 1 to 100 STEP 2: PRINT i : NEXT
+@usedInExample control_controlled_01.bas
+@usedInExample control_controlled_02.bas
+
+@target all
+</usermanual> */
 void begin_for_step( Environment * _environment, char * _index, char * _from, char * _to, char * _step ) {
 
     outline0( "; FOR ... ");
