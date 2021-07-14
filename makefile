@@ -87,3 +87,6 @@ runzx: generated/zx/asm/$(example).asm generated/zx/exe/$(example).$(output)
 
 runplus4: generated/plus4/asm/$(example).asm generated/plus4/exe/$(example).$(output)
 	xplus4 generated/plus4/exe/$(example).$(output)
+
+runyape: generated/plus4/asm/$(example).asm generated/plus4/exe/$(example).$(output)
+	yape generated/plus4/exe/$(example).$(output)
