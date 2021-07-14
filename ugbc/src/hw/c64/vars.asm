@@ -43,3 +43,7 @@ XCURS:      .BYTE    0
 YCURS:      .BYTE    0
 LOCALWW:    .BYTE    3
 EMPTYTILE:  .BYTE   32
+
+TMPPTR = $22    ; $23
+TMPPTR2 = $24    ; $25
+MATHPTR = $F7   ; ... $FE
