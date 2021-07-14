@@ -83,14 +83,46 @@ Variable * absolute( Environment * _environment, char * _value ) {
 
     switch( VT_BITWIDTH( value->type ) ) {
         case 32:
+            if ( VT_SIGNED( value->type ) ) {
+                cpu_bit_check( _environment, value->realName, VT_BITWIDTH( value->type ) - 1, result->realName );
+                cpu_bveq( _environment, result->realName, positiveLabel );
+
+                cpu_label( _environment, negativeLabel );
+                cpu_complement2_32bit( _environment, value->realName, result->realName );
+                cpu_jump( _environment, endLabel );
+
+                cpu_label( _environment, positiveLabel );
+                variable_move( _environment, value->name, result->name );
+                cpu_label( _environment, endLabel );
+
+            } else {
+                variable_move( _environment, value->name, result->name );
+            }
+            break;
         case 16:
+            if ( VT_SIGNED( value->type ) ) {
+                cpu_bit_check( _environment, value->realName, VT_BITWIDTH( value->type ) - 1, result->realName );
+                cpu_bveq( _environment, result->realName, positiveLabel );
+
+                cpu_label( _environment, negativeLabel );
+                cpu_complement2_16bit( _environment, value->realName, result->realName );
+                cpu_jump( _environment, endLabel );
+
+                cpu_label( _environment, positiveLabel );
+                variable_move( _environment, value->name, result->name );
+                cpu_label( _environment, endLabel );
+
+            } else {
+                variable_move( _environment, value->name, result->name );
+            }
+            break;
         case 8:
             if ( VT_SIGNED( value->type ) ) {
                 cpu_bit_check( _environment, value->realName, VT_BITWIDTH( value->type ) - 1, result->realName );
                 cpu_bveq( _environment, result->realName, positiveLabel );
 
                 cpu_label( _environment, negativeLabel );
-                result = variable_not( _environment, value->name );
+                cpu_complement2_8bit( _environment, value->realName, result->realName );
                 cpu_jump( _environment, endLabel );
 
                 cpu_label( _environment, positiveLabel );
