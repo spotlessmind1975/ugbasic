@@ -2988,7 +2988,7 @@ void cpu6502_bit_check( Environment * _environment, char * _value, int _position
     outline0("AND TMPPTR" );
     outline1("BEQ %szero", label);
     outhead1("%sone:", label)
-    outline0("LDA #$1");
+    outline0("LDA #$ff");
     outline1("JMP %send", label );
     outhead1("%szero:", label)
     outline0("LDA #$0");
