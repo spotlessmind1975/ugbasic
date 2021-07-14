@@ -117,7 +117,7 @@ void plus4_scancode( Environment * _environment, char * _pressed, char * _scanco
     outline1("STA %s", _scancode );
 
     outline0("LDY $0527");
-    outline0("CPY #$40");
+    outline0("CPY #0");
     outline1("BEQ %snokey", label );
 
     outline1("STY %s", _scancode );
