@@ -1,0 +1,76 @@
+/*****************************************************************************
+ * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
+ *****************************************************************************
+ * Copyright 2021 Marco Spedaletti (asimov@mclink.it)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *----------------------------------------------------------------------------
+ * Concesso in licenza secondo i termini della Licenza Apache, versione 2.0
+ * (la "Licenza"); è proibito usare questo file se non in conformità alla
+ * Licenza. Una copia della Licenza è disponibile all'indirizzo:
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Se non richiesto dalla legislazione vigente o concordato per iscritto,
+ * il software distribuito nei termini della Licenza è distribuito
+ * "COSÌ COM'È", SENZA GARANZIE O CONDIZIONI DI ALCUN TIPO, esplicite o
+ * implicite. Consultare la Licenza per il testo specifico che regola le
+ * autorizzazioni e le limitazioni previste dalla medesima.
+ ****************************************************************************/
+
+/****************************************************************************
+ * INCLUDE SECTION 
+ ****************************************************************************/
+
+#include "../../ugbc.h"
+
+/****************************************************************************
+ * CODE SECTION 
+ ****************************************************************************/
+
+/**
+ * @brief Emit code for <strong>HOME</strong>
+ * 
+ * @param _environment Current calling environment
+ */
+/* <usermanual>
+@keyword HOME
+
+@english
+The ''HOME'' command moves the text cursor back to the top left-hand corner
+of the screen in a hurry.
+
+@italian
+Il comando "HOME" riporta il cursore del testo nell'angolo in alto a sinistra
+dello schermo in fretta.
+
+@syntax HOME
+
+@example HOME
+
+@usedInExample texts_position_02.bas
+
+@seeAlso LOCATE
+@seeAlso AT$
+@seeAlso CMOVE
+@target all
+</usermanual> */
+void text_home( Environment * _environment ) {
+
+    Variable * x = variable_retrieve( _environment, "windowCX" );
+    Variable * y = variable_retrieve( _environment, "windowCY" );
+
+    variable_store( _environment, x->name, 0 );
+    variable_store( _environment, y->name, 0 );
+
+}
