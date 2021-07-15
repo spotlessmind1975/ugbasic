@@ -2297,6 +2297,12 @@ statement:
   | EXIT IF expr OP_COMMA direct_integer {
       exit_loop_if( _environment, $3, $5 );  
   }
+  | EXIT Integer IF expr {
+      exit_loop_if( _environment, $4, $2 );  
+  }
+  | EXIT direct_integer IF expr  {
+      exit_loop_if( _environment, $4, $2 );  
+  }
   | FOR Identifier OP_ASSIGN expr TO expr {
       begin_for( _environment, $2, $4, $6 );  
   }
