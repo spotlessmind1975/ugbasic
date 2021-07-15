@@ -38,6 +38,13 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/**
+ * @brief Emit code for <strong>GR LOCATE</strong> command.
+ * 
+ * @param _environment Current calling environment
+ * @param _x Abscissa of current graphic location
+ * @param _y Ordinate of current graphic location
+ */
 void gr_locate( Environment * _environment, char * _x, char * _y ) {
 
     if ( _x ) {

@@ -47,6 +47,9 @@
  * @param _environment Current calling environment
  * @param _expression Expression with the true / false condition
  */
+/* <usermanual>
+@keyword IF...THEN...ELSE...ENDIF
+</usermanual> */
 void else_if_then( Environment * _environment, char * _expression ) {
 
     outline1( "; IF %s THEN ... ELSE ...", _expression);

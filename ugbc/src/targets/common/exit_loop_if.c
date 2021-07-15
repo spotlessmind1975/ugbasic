@@ -48,6 +48,40 @@
  * @param _expression Expression to check
  * @param _number Number of loops to exit.
  */
+/* <usermanual>
+@keyword EXIT IF
+
+@english
+The instruction forces the program to leave a loop, such as ''FOR...NEXT'', 
+''REPEAT...UNTIL'', ''WHILE...WEND'' and ''DO...LOOP'' under a specific 
+set of conditions. The ''EXIT'' will only be performed ''IF'' the
+result is found to true. 
+
+An optional number can be given to specify the number of loops 
+to be jumped out, otherwise only the current loop will be aborted.
+
+@italian
+Questa istruzione forza il programma ad abbandonare un 
+ciclo di tutti i tipi, come 
+''FOR...NEXT'', ''REPEAT...UNTIL'', ''WHILE...WEND'' e ''DO...LOOP'',
+in base a delle condizioni: tale istruzione uscirà
+(''EXIT'') solo se (''IF'') il risultato viene valutato come vero.
+
+Può essere fornito un numero opzionale per specificare il numero di loop
+da cui uscire, altrimenti verrà interrotto solo il loop più interno.
+
+@syntax EXIT IF [expression]{, [number] }
+@syntax EXIT [number] IF [expression]
+
+@example EXIT IF lifes == 0, 2
+@example EXIT 2 IF lifes
+
+@usedInExample control_loops_02.bas
+@usedInExample control_loops_03.bas
+
+@target all
+</usermanual> */
+
 void exit_loop_if( Environment * _environment, char * _expression, int _number ) {
 
     outline2( "; EXIT IF %s, %d", _expression, _number );

@@ -59,13 +59,6 @@ When used on its own, ''EXIT'' will short-circuit the innermost loop only.
 By including a number after EXIT, that number of nested loops will be taken 
 into account before the ''EXIT'' is made.
 
-If you need to leave a loop as a result of a specific set of conditions, 
-this can be made by using the ''EXIT IF'' instruction. The ''EXIT'' will 
-only be performed ''IF'' the result is found to true. 
-
-Finally, an optional number can be given to specify the number of loops 
-to be jumped out, otherwise only the current loop will be aborted.
-
 @italian
 Questa istruzione forza il programma ad abbandonare immediatamente un 
 ciclo e può essere usato per uscire da tutti i tipi di loop, come 
@@ -75,18 +68,9 @@ Se usato da solo, ''EXIT'' uscità solo dal loop più interno.
 Includendo un numero dopo ''EXIT'', si uscirà da quel numero di 
 cicli annidati.
 
-Se è necessario abbandonare un ciclo in base a delle condizioni,
-può essere utile l'istruzione ''EXIT IF'': tale istruzione uscirà
-(''EXIT'') solo se se (''IF'') il risultato viene valutato come vero.
-
-Infine, può essere fornito un numero opzionale per specificare il numero di loop
-da cui uscire, altrimenti verrà interrotto solo il loop più interno.
-
 @syntax EXIT { [number] }
-@syntax EXIT IF [expression]{, [number] }
 
 @example EXIT 2
-@example EXIT IF lifes == 0, 2
 
 @usedInExample control_loops_02.bas
 @usedInExample control_loops_03.bas
