@@ -45,6 +45,27 @@
  * @param _x Abscissa of current graphic location
  * @param _y Ordinate of current graphic location
  */
+/* <usermanual>
+@keyword GR LOCATE
+
+@english
+This command allows you to set the coordinates ''(x, y)'' for the next graphic operation. 
+If the component is omitted, the current one will remain.
+
+@italian
+Questo comando permette di impostare le coordinate ''(x,y)'' per le prossime operazioni 
+grafiche. Se la componente viene omessa, rimarrà quella attuale. 
+
+@syntax GR LOCATE { [x] },{ [y] }
+
+@example GR LOCATE 100,10
+@usedInExample graphics_clip_01.bas
+@usedInExample graphics_position_01.bas
+@usedInExample graphics_shapes_02.bas
+
+@target all
+</usermanual> */
+
 void gr_locate( Environment * _environment, char * _x, char * _y ) {
 
     if ( _x ) {

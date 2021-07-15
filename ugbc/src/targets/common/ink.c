@@ -38,6 +38,35 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/**
+ * @brief Emit code for <strong>INK ...</strong> command
+ * 
+ * @param _environment Current calling environment
+ * @param _color Color to use for the pen
+ */
+/* <usermanual>
+@keyword INK
+
+@english
+Alias for ''[[PEN]]''.
+
+@italian
+Alias for ''[[PEN]]''.
+
+@syntax INK [expression]
+
+@example INK 4
+
+@UsedInExample graphics_color_01.bas
+@UsedInExample graphics_lines_01.bas
+@UsedInExample graphics_lines_02.bas
+@UsedInExample graphics_plot_03.bas
+@UsedInExample graphics_shapes_02.bas
+@UsedInExample graphics_shapes_03.bas
+
+@target all
+</usermanual> */
+
 void ink( Environment * _environment, char * _color ) {
 
     pen( _environment, _color );

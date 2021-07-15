@@ -136,6 +136,12 @@ void print( Environment * _environment, char * _value, int _new_line ) {
 
 }
 
+/**
+ * @brief Emit code for print a single TAB
+ * 
+ * @param _environment Current calling environment
+ * @param _new_line 1 if a new line must be added at the end
+ */
 void print_tab( Environment * _environment, int _new_line ) {
 
     text_tab( _environment );
@@ -146,10 +152,20 @@ void print_tab( Environment * _environment, int _new_line ) {
 
 }
 
+/**
+ * @brief Emit code for print a single question mark
+ * 
+ * @param _environment Current calling environment
+ */
 void print_question_mark( Environment * _environment ) {
     text_question_mark( _environment );
 }
 
+/**
+ * @brief Emit code for print a single newline
+ * 
+ * @param _environment Current calling environment
+ */
 void print_newline( Environment * _environment ) {
     text_newline( _environment );
 }
