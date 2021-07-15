@@ -51,7 +51,7 @@
 @keyword CIRCLE
 
 @english
-This command allows you to draw a circle with starting coordinates in ''(x, y)'' 
+This command allows you to draw a circle with starting coordinates in ''(x,y)'' 
 and radius ''r''. The color is indicated by the parameter ''c''. If the abscissa 
 and/or ordinate is omitted, the last graphic position drawn will be used. In 
 addition, the color can also be omitted and, if necessary, the last color set with the 
@@ -64,8 +64,8 @@ l'ascissa e/o l'ordinata viene omessa, sarà utilizzata l'ultima posizione grafi
 disegnata. In più, anche il colore può essere omesso e, nel caso, sarà utilizzato 
 l'ultimo colore impostato con il comando ''PEN'' o ''INK''.
 
-@syntax CIRCLE { [x1] },{ [y1] },[r],[c] 
-@syntax CIRCLE { [x1] },{ [y1] },[r] 
+@syntax CIRCLE { [x] },{ [y] },[r],[c] 
+@syntax CIRCLE { [x] },{ [y] },[r] 
 
 @example CIRCLE 100,100,42
 @example CIRCLE ,,21,RED
