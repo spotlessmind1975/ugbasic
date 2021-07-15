@@ -38,6 +38,43 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/**
+ * @brief Emit code for <strong>CIRCLE</strong> command
+ * 
+ * @param _environment Current calling environment
+ * @param _x Abscissa of the center of the circle
+ * @param _y Ordinate of the center of the circle
+ * @param _r Radius of the circle 
+ * @param _c Color to be used to draw circle
+ */
+/* <usermanual>
+@keyword CIRCLE
+
+@english
+This command allows you to draw a circle with starting coordinates in ''(x, y)'' 
+and radius ''r''. The color is indicated by the parameter ''c''. If the abscissa 
+and/or ordinate is omitted, the last graphic position drawn will be used. In 
+addition, the color can also be omitted and, if necessary, the last color set with the 
+''PEN'' or ''INK'' command will be used.
+
+@italian
+Questo comando consente di disegnare un cerchio avente coordinate di partenza in 
+''(x,y)'' e raggio ''r''. Il colore viene indicato dal parametro ''c''. Se 
+l'ascissa e/o l'ordinata viene omessa, sarà utilizzata l'ultima posizione grafica 
+disegnata. In più, anche il colore può essere omesso e, nel caso, sarà utilizzato 
+l'ultimo colore impostato con il comando ''PEN'' o ''INK''.
+
+@syntax CIRCLE { [x1] },{ [y1] },[r],[c] 
+@syntax CIRCLE { [x1] },{ [y1] },[r] 
+
+@example CIRCLE 100,100,42
+@example CIRCLE ,,21,RED
+@usedInExample graphics_position_01.bas
+@usedInExample graphics_position_02.bas
+@usedInExample graphics_shapes_02.bas
+
+@target all
+</usermanual> */
 void circle( Environment * _environment, char * _x, char * _y, char * _r, char * _c ) {
 
     Variable * xCentre = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
@@ -50,111 +87,51 @@ void circle( Environment * _environment, char * _x, char * _y, char * _r, char *
     Variable * two = variable_temporary( _environment, VT_POSITION, "2" );
     variable_store( _environment, two->name, 2 );
 
-    // int x = r, y = 0;
-
     Variable * x = variable_temporary( _environment, VT_POSITION, "(x)" );
     variable_move( _environment, r->name, x->name );
     Variable * y = variable_temporary( _environment, VT_POSITION, "(y)" );
     variable_store( _environment, y->name, 0 );
     Variable * p = variable_temporary( _environment, VT_SWORD, "(p)" );
 
-      
-    // Printing the initial point on the axes 
-    // after translation
-    // printf("(%d, %d) ", x + x_centre, y + y_centre);
-      
-    //print( _environment, variable_add( _environment, x->name, xCentre->name )->name, 0 );
-    //print_tab( _environment, 0 );
-    //print( _environment, variable_add( _environment, y->name, yCentre->name )->name, 1 );
     plot( _environment, variable_add( _environment, x->name, xCentre->name )->name, variable_add( _environment, y->name, yCentre->name )->name, _c );
-    //printf("(%d, %d) ", -x + x_centre, y + y_centre);
     plot( _environment, variable_sub( _environment, xCentre->name, x->name )->name, variable_add( _environment, y->name, yCentre->name )->name, _c );
-    //printf("(%d, %d) ", x + x_centre, -y + y_centre);
     plot( _environment, variable_add( _environment, x->name, xCentre->name )->name, variable_sub( _environment, yCentre->name,  y->name )->name, _c );
-    //printf("(%d, %d)\n", -x + x_centre, -y + y_centre);
     plot( _environment, variable_sub( _environment, xCentre->name, x->name )->name, variable_sub( _environment, yCentre->name,  y->name )->name, _c );
-
-    // Initialising the value of P
-    // int P = 1 - r;
     
     variable_move( _environment, variable_sub( _environment, one->name, r->name )->name, p->name );
 
-    //while (x > y)
       begin_while( _environment );  
       begin_while_condition( _environment, variable_greater_than( _environment, x->name, y->name, 1 )->name );  
 
-    //{ 
-
-        // y++;
-
         variable_increment( _environment, y->name );
                   
-        // Mid-point is inside or on the perimeter
-        // if (P <= 0)
         if_then( _environment, variable_less_than( _environment, p->name, zero->name, 1 )->name );
-            // P = P + 2*y + 1;
             variable_move( _environment, variable_add( _environment, variable_mul( _environment, two->name, y->name )->name, p->name )->name, p->name );
             variable_increment( _environment, p->name );
-        // Mid-point is outside the perimeter
-        // else
         else_if_then( _environment, NULL );              
-        // {
-            // x--;
             variable_decrement( _environment, x->name );
-            // P = P + 2*y - 2*x + 1;
             variable_move( _environment, variable_add( _environment, variable_mul( _environment, two->name, y->name )->name, p->name )->name, p->name );
             variable_move( _environment, variable_sub( _environment, p->name, variable_mul( _environment, two->name, x->name )->name )->name, p->name );
             variable_increment( _environment, p->name );
-        //}
         end_if_then( _environment );
-          
-        // All the perimeter points have already been printed
-        // if (x < y)
+
         if_then( _environment, variable_less_than( _environment, x->name, y->name, 0 )->name );
-            // break;
             exit_loop( _environment, 0 );
         end_if_then( _environment );
-          
-        // Printing the generated point and its reflection
-        // in the other octants after translation
-        //printf("(%d, %d) ", x + x_centre, y + y_centre);
-        
-        //print( _environment, variable_add( _environment, x->name, xCentre->name )->name, 0 );
-        //print_tab( _environment, 0 );
-        //print( _environment, variable_add( _environment, y->name, yCentre->name )->name, 1 );
 
         plot( _environment, variable_add( _environment, x->name, xCentre->name )->name, variable_add( _environment, y->name, yCentre->name )->name, _c );
-        //printf("(%d, %d) ", -x + x_centre, y + y_centre);
         plot( _environment, variable_sub( _environment, xCentre->name, x->name )->name, variable_add( _environment, y->name, yCentre->name )->name, _c );
-        //printf("(%d, %d) ", x + x_centre, -y + y_centre);
         plot( _environment, variable_add( _environment, x->name, xCentre->name )->name, variable_sub( _environment, yCentre->name,  y->name )->name, _c );
-        //printf("(%d, %d)\n", -x + x_centre, -y + y_centre);
         plot( _environment, variable_sub( _environment, xCentre->name, x->name )->name, variable_sub( _environment, yCentre->name,  y->name )->name, _c );
           
-        // If the generated point is on the line x = y then 
-        // the perimeter points have already been printed
-        // if (x != y)
-        // {
         if_then( _environment, variable_compare_not( _environment, x->name, y->name )->name );
-            //print( _environment, variable_add( _environment, x->name, xCentre->name )->name, 0 );
-            //print_tab( _environment, 0 );
-            //print( _environment, variable_add( _environment, y->name, yCentre->name )->name, 1 );
             plot( _environment, variable_add( _environment, y->name, xCentre->name )->name, variable_add( _environment, x->name, yCentre->name )->name, _c );
-            //printf("(%d, %d) ", -x + x_centre, y + y_centre);
             plot( _environment, variable_sub( _environment, xCentre->name, y->name )->name, variable_add( _environment, x->name, yCentre->name )->name, _c );
-            //printf("(%d, %d) ", x + x_centre, -y + y_centre);
             plot( _environment, variable_add( _environment, y->name, xCentre->name )->name, variable_sub( _environment, yCentre->name,  x->name )->name, _c );
-            //printf("(%d, %d)\n", -x + x_centre, -y + y_centre);
             plot( _environment, variable_sub( _environment, xCentre->name, y->name )->name, variable_sub( _environment, yCentre->name,  x->name )->name, _c );
 
         end_if_then( _environment );
 
-        //     printf("(%d, %d) ", y + x_centre, x + y_centre);
-        //     printf("(%d, %d) ", -y + x_centre, x + y_centre);
-        //     printf("(%d, %d) ", y + x_centre, -x + y_centre);
-        //     printf("(%d, %d)\n", -y + x_centre, -x + y_centre);
-        // }
-    // } 
     end_while( _environment );
 
 }
