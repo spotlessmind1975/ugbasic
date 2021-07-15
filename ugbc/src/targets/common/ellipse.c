@@ -38,6 +38,45 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/**
+ * @brief Emit code for <strong>ELLIPSE</strong> command
+ * 
+ * @param _environment Current calling environment
+ * @param _x Abscissa of the center of the ellipse
+ * @param _y Ordinate of the center of the ellipse
+ * @param _rx Horizontal radius of the ellipse
+ * @param _ry Vertical radius of the ellipse
+ * @param _c Color to be used to draw ellipse
+ */
+/* <usermanual>
+@keyword ELLIPSE
+
+@english
+This command allows you to draw an ellipse with starting coordinates in ''(x,y)'' 
+and radius ''rx'' for the horizontal component and ''ry'' for the vertical component. 
+The color is indicated by the parameter ''c''. If the abscissa 
+and/or ordinate is omitted, the last graphic position drawn will be used. In 
+addition, the color can also be omitted and, if necessary, the last color set with the 
+''PEN'' or ''INK'' command will be used.
+
+@italian
+Questo comando consente di disegnare una ellisse avente coordinate di partenza in 
+''(x,y)'' e raggio orizzontale ''rx'' mentre avrà raggio verticale ''ry''. 
+Il colore viene indicato dal parametro ''c''. Se 
+l'ascissa e/o l'ordinata viene omessa, sarà utilizzata l'ultima posizione grafica 
+disegnata. In più, anche il colore può essere omesso e, nel caso, sarà utilizzato 
+l'ultimo colore impostato con il comando ''PEN'' o ''INK''.
+
+@syntax ELLIPSE { [x] },{ [y] },[rx],[ry],[c] 
+@syntax ELLIPSE { [x] },{ [y] },[rx],[ry] 
+
+@example ELLIPSE 100,100,42,21
+@example ELLIPSE ,,10,20,RED
+@usedInExample graphics_clip_01.bas
+@usedInExample graphics_shapes_03.bas
+
+@target all
+</usermanual> */
 void ellipse( Environment * _environment, char * _x, char * _y, char * _rx, char * _ry, char * _c ) {
 
     Variable * six = variable_temporary( _environment, VT_POSITION, "(6)");
@@ -56,7 +95,6 @@ void ellipse( Environment * _environment, char * _x, char * _y, char * _rx, char
     Variable * a = variable_retrieve_or_define( _environment, _rx, VT_POSITION, 0);
     Variable * b = variable_retrieve_or_define( _environment, _ry, VT_POSITION, 0);
 
-    // int a2 = a∗a, b2 = b∗b, fa2 = 4∗a2;
     Variable * a2 = variable_temporary( _environment, VT_POSITION, "(a2)");
     Variable * b2 = variable_temporary( _environment, VT_POSITION, "(b2)");
     Variable * fa2 = variable_temporary( _environment, VT_POSITION, "(fa2)");
@@ -67,13 +105,10 @@ void ellipse( Environment * _environment, char * _x, char * _y, char * _rx, char
     variable_move( _environment, variable_mul( _environment, four->name, a2->name )->name, fa2->name );
     variable_move( _environment, variable_mul( _environment, four->name, b2->name )->name, fb2->name );
 
-    // int x, y, sigma;
     Variable * x = variable_temporary( _environment, VT_POSITION, "(x)");
     Variable * y = variable_temporary( _environment, VT_POSITION, "(y)");
     Variable * sigma = variable_temporary( _environment, VT_POSITION, "(sigma)");
 
-    // for (x = 0, y = b, sigma = 2∗b2 + a2∗(1−2∗b); b2∗x <= a2∗y; x++)
-    // {
     variable_store( _environment, x->name, 0 );
     variable_move( _environment, b->name, y->name );
     variable_move( _environment, 
@@ -95,19 +130,12 @@ void ellipse( Environment * _environment, char * _x, char * _y, char * _rx, char
             )->name
     );
 
-    //     DrawPixel(xc + x, yc + y);
-    //     DrawPixel(xc−x, yc + y);
-    //     DrawPixel(xc + x, yc−y);
-    //     DrawPixel(xc−x, yc−y);
         plot( _environment, variable_add( _environment, x->name, xCentre->name )->name, variable_add( _environment, y->name, yCentre->name )->name, _c );
         plot( _environment, variable_sub( _environment, xCentre->name, x->name )->name, variable_add( _environment, y->name, yCentre->name )->name, _c );
         plot( _environment, variable_add( _environment, x->name, xCentre->name )->name, variable_sub( _environment, yCentre->name,  y->name )->name, _c );
         plot( _environment, variable_sub( _environment, xCentre->name, x->name )->name, variable_sub( _environment, yCentre->name,  y->name )->name, _c );
 
-    //     if (sigma >= 0)
-    //     {
         if_then( _environment, variable_greater_than( _environment, sigma->name, zero->name, 1 ) ->name );
-    //         sigma += fa2∗(1−y);
         variable_move( _environment,
             variable_add( _environment, 
                 sigma->name,
@@ -119,11 +147,8 @@ void ellipse( Environment * _environment, char * _x, char * _y, char * _rx, char
             sigma->name
         );
 
-    //         y−−;
         variable_decrement( _environment, y->name );
-    //     }
         end_if_then( _environment );
-    //     sigma += b2∗(4∗x + 6);
 
         variable_move( _environment,
             variable_add( _environment, 
@@ -141,11 +166,7 @@ void ellipse( Environment * _environment, char * _x, char * _y, char * _rx, char
 
         variable_increment( _environment, x->name );
     end_while( _environment );
-    // }
 
-
-    // for (x=a ,y=0 , sigma = 2∗a2+b2∗(1−2∗a ) ; a2∗y <= b2∗x ; y++)
-    // {
     variable_move( _environment, a->name, x->name );
     variable_store( _environment, y->name, 0 );
     variable_move( _environment, 
@@ -167,19 +188,12 @@ void ellipse( Environment * _environment, char * _x, char * _y, char * _rx, char
             )->name
     );
 
-    //     DrawPixel(xc + x, yc + y);
-    //     DrawPixel(xc−x, yc + y);
-    //     DrawPixel(xc + x, yc−y);
-    //     DrawPixel(xc−x, yc−y);
         plot( _environment, variable_add( _environment, x->name, xCentre->name )->name, variable_add( _environment, y->name, yCentre->name )->name, _c );
         plot( _environment, variable_sub( _environment, xCentre->name, x->name )->name, variable_add( _environment, y->name, yCentre->name )->name, _c );
         plot( _environment, variable_add( _environment, x->name, xCentre->name )->name, variable_sub( _environment, yCentre->name,  y->name )->name, _c );
         plot( _environment, variable_sub( _environment, xCentre->name, x->name )->name, variable_sub( _environment, yCentre->name,  y->name )->name, _c );
 
-    //     if (sigma >= 0)
-    //     {
         if_then( _environment, variable_greater_than( _environment, sigma->name, zero->name, 1 ) ->name );
-    //         sigma += fb2∗(1−x)
         variable_move( _environment,
             variable_add( _environment, 
                 sigma->name,
@@ -191,11 +205,8 @@ void ellipse( Environment * _environment, char * _x, char * _y, char * _rx, char
             sigma->name
         );
 
-    //         x−−;
         variable_decrement( _environment, x->name );
-    //     }
         end_if_then( _environment );
-    //     sigma += a2∗(4∗y+6);
 
         variable_move( _environment,
             variable_add( _environment, 
@@ -213,6 +224,5 @@ void ellipse( Environment * _environment, char * _x, char * _y, char * _rx, char
 
         variable_increment( _environment, y->name );
     end_while( _environment );
-    // }
 
 }

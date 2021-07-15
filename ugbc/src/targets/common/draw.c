@@ -85,7 +85,6 @@ bitmask di 16 bit con il comando ''SET LINE''.
 
 @target all
 </usermanual> */
-
 void draw( Environment * _environment, char * _x0, char * _y0, char * _x1, char * _y1, char * _c ) {
 
     Variable * zero = variable_temporary( _environment, VT_POSITION, "(0)" );
