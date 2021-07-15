@@ -38,9 +38,9 @@
  * CODE SECTION 
  ****************************************************************************/
 
-void text_remember( Environment * _environment ) {
+void remember( Environment * _environment ) {
 
-    outline0("; text_remember");
+    outline0("; remember");
     
     setup_text_variables( _environment );
 

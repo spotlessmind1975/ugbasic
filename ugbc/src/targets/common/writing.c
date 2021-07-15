@@ -100,7 +100,7 @@ che danno un output stampato normale.
 @seeAlso PAPER
 @target all
 </usermanual> */
-void text_writing( Environment * _environment, char * _mode, char * _parts ) {
+void writing( Environment * _environment, char * _mode, char * _parts ) {
 
     setup_text_variables( _environment );
 

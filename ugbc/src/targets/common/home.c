@@ -65,7 +65,7 @@ dello schermo in fretta.
 @seeAlso CMOVE
 @target all
 </usermanual> */
-void text_home( Environment * _environment ) {
+void home( Environment * _environment ) {
 
     Variable * x = variable_retrieve( _environment, "windowCX" );
     Variable * y = variable_retrieve( _environment, "windowCY" );

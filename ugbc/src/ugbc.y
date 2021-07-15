@@ -895,34 +895,34 @@ exponential:
         $$ = get_timer( _environment )->name;
     }
     | PEN OP_DOLLAR OP expr CP {
-        $$ = text_get_pen( _environment, $4 )->name;
+        $$ = get_pen( _environment, $4 )->name;
     }
     | PAPER OP_DOLLAR OP expr CP {
-        $$ = text_get_paper( _environment, $4 )->name;
+        $$ = get_paper( _environment, $4 )->name;
     }
     | CMOVE OP_DOLLAR OP expr OP_COMMA expr CP {
-        $$ = text_get_cmove( _environment, $4, $6 )->name;
+        $$ = get_cmove( _environment, $4, $6 )->name;
     }
     | CUP OP_DOLLAR {
-        $$ = text_get_cmove_direct( _environment, 0, -1 )->name;
+        $$ = get_cmove_direct( _environment, 0, -1 )->name;
     }
     | CDOWN OP_DOLLAR {
-        $$ = text_get_cmove_direct( _environment, 0, 1 )->name;
+        $$ = get_cmove_direct( _environment, 0, 1 )->name;
     }
     | CLEFT OP_DOLLAR {
-        $$ = text_get_cmove_direct( _environment, -1, 0 )->name;
+        $$ = get_cmove_direct( _environment, -1, 0 )->name;
     }
     | CRIGHT OP_DOLLAR {
-        $$ = text_get_cmove_direct( _environment, 1, 0 )->name;
+        $$ = get_cmove_direct( _environment, 1, 0 )->name;
     }
     | AT OP_DOLLAR OP expr OP_COMMA expr CP {
-        $$ = text_get_at( _environment, $4, $6 )->name;
+        $$ = get_at( _environment, $4, $6 )->name;
     }
     | LOCATE OP_DOLLAR OP expr OP_COMMA expr CP {
-        $$ = text_get_at( _environment, $4, $6 )->name;
+        $$ = get_at( _environment, $4, $6 )->name;
     }
     | TAB OP_DOLLAR {
-        $$ = text_get_tab( _environment )->name;
+        $$ = get_tab( _environment )->name;
     }
     | XCURS {
         $$ = text_get_xcurs( _environment )->name;
@@ -2044,7 +2044,7 @@ writing_part_definition :
 
 writing_definition : 
     writing_mode_definition OP_COMMA writing_part_definition {
-        text_writing( _environment, $1, $3 );
+        writing( _environment, $1, $3 );
     }
     ;
 
@@ -2182,25 +2182,25 @@ statement:
   | LOCATE locate_definition
   | GR LOCATE gr_locate_definition
   | MEMORIZE {
-      text_memorize( _environment );
+      memorize( _environment );
   }
   | REMEMBER {
-      text_remember( _environment );
+      remember( _environment );
   }
   | HSCROLL hscroll_definition
   | VSCROLL vscroll_definition
   | CMOVE cmove_definition
   | CUP {
-      text_cmove_direct( _environment, 0, -1 );
+      cmove_direct( _environment, 0, -1 );
   }
   | CDOWN {
-      text_cmove_direct( _environment, 0, 1 );
+      cmove_direct( _environment, 0, 1 );
   }
   | CLEFT {
-      text_cmove_direct( _environment, -1, 0 );
+      cmove_direct( _environment, -1, 0 );
   }
   | CRIGHT {
-      text_cmove_direct( _environment, 1, 0 );
+      cmove_direct( _environment, 1, 0 );
   }
   | CLINE {
       cline( _environment, NULL );
@@ -2212,10 +2212,10 @@ statement:
       text_set_tab( _environment, $3 );
   }
   | CENTER expr {
-      text_center( _environment, $2 );
+      center( _environment, $2 );
   }
   | CENTRE expr {
-      text_center( _environment, $2 );
+      center( _environment, $2 );
   }
   | CLS {
       cls( _environment, NULL );
@@ -2224,7 +2224,7 @@ statement:
       cls( _environment, $2 );
   }
   | HOME {
-      text_home( _environment );
+      home( _environment );
   }
   | CLEAR KEY {
       clear_key( _environment );

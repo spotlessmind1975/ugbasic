@@ -38,7 +38,7 @@
  * CODE SECTION 
  ****************************************************************************/
 
-Variable * text_get_at( Environment * _environment, char * _x, char * _y ) {
+Variable * get_at( Environment * _environment, char * _x, char * _y ) {
     
     Variable * x = variable_retrieve_or_define( _environment, _x, VT_BYTE, 0 );
     Variable * y = variable_retrieve_or_define( _environment, _y, VT_BYTE, 0 );

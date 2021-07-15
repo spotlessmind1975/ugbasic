@@ -65,14 +65,14 @@ alla posizione corrente del cursore.
 @seeAlso CMOVE
 @target all
 </usermanual> */
-Variable * text_get_cmove( Environment * _environment, char * _x, char * _y ) {
+Variable * get_cmove( Environment * _environment, char * _x, char * _y ) {
     
     Variable * x = variable_retrieve_or_define( _environment, _x, VT_BYTE, 0 );
     Variable * y = variable_retrieve_or_define( _environment, _x, VT_BYTE, 0 );
 
-    Variable * result = variable_temporary( _environment, VT_DSTRING, "(text_get_cmove)" );
-    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(text_get_cmove)" );
-    Variable * size = variable_temporary( _environment, VT_BYTE, "(text_get_cmove)" );
+    Variable * result = variable_temporary( _environment, VT_DSTRING, "(get_cmove)" );
+    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(get_cmove)" );
+    Variable * size = variable_temporary( _environment, VT_BYTE, "(get_cmove)" );
 
     char resultString[MAX_TEMPORARY_STORAGE]; sprintf( resultString, "\x3  " );
 
@@ -87,11 +87,11 @@ Variable * text_get_cmove( Environment * _environment, char * _x, char * _y ) {
 
 }
 
-Variable * text_get_cmove_direct( Environment * _environment, int _x, int _y ) {
+Variable * get_cmove_direct( Environment * _environment, int _x, int _y ) {
     
     Variable * result = variable_temporary( _environment, VT_DSTRING, 0 );
-    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(text_get_cmove)" );
-    Variable * size = variable_temporary( _environment, VT_BYTE, "(text_get_cmove)" );
+    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(get_cmove)" );
+    Variable * size = variable_temporary( _environment, VT_BYTE, "(get_cmove)" );
 
     char resultString[MAX_TEMPORARY_STORAGE]; sprintf( resultString, "\x3  " );
 

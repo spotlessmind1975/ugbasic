@@ -70,7 +70,7 @@ che può essere modificata utilizzando il comando ''[[SET TAB]]''.
 
 @target all
 </usermanual> */
-Variable * text_get_tab( Environment * _environment ) {
+Variable * get_tab( Environment * _environment ) {
     
     Variable * tab = variable_retrieve( _environment, "TAB" );
 

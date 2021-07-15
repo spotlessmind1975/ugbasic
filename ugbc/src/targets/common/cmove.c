@@ -38,7 +38,7 @@
  * CODE SECTION 
  ****************************************************************************/
 
-void text_cmove_direct( Environment * _environment, int _dx, int _dy ) {
+void cmove_direct( Environment * _environment, int _dx, int _dy ) {
 
     if ( _dx ) {
         Variable * windowCX = variable_retrieve( _environment, "windowCX" );

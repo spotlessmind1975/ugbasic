@@ -1056,10 +1056,14 @@ void                    box( Environment * _environment, char * _x1, char * _y1,
 //----------------------------------------------------------------------------
 
 void                    call_procedure( Environment * _environment, char * _name );
+void                    center( Environment * _environment, char * _string );
 void                    circle( Environment * _environment, char * _x, char * _y, char * _r, char *_c );
 Variable *              clear_key( Environment * _environment );
+void                    cline( Environment * _environment, char * _characters );
 void                    clip( Environment * _environment, char * _x1, char * _y1, char * _x2, char * _y2 );
 void                    cls( Environment * _environment, char * _paper );
+void                    cmove( Environment * _environment, char * _dx, char * _dy );
+void                    cmove_direct( Environment * _environment, int _dx, int _dy );
 Variable *              collision_to( Environment * _environment, int _sprite );
 Variable *              collision_to_vars( Environment * _environment, char * _sprite );
 void                    color_background( Environment * _environment, int _index, int _background_color );
@@ -1110,6 +1114,12 @@ void                    exit_procedure( Environment * _environment );
 // *G*
 //----------------------------------------------------------------------------
 
+Variable *              get_at( Environment * _environment, char * _x, char * _y );
+Variable *              get_cmove( Environment * _environment, char * _x, char * _y );
+Variable *              get_cmove_direct( Environment * _environment, int _x, int _y );
+Variable *              get_paper( Environment * _environment, char * _color );
+Variable *              get_pen( Environment * _environment, char * _color );
+Variable *              get_tab( Environment * _environment );
 Variable *              get_timer( Environment * _environment );
 void                    global( Environment * _environment );
 void                    gosub_label( Environment * _environment, char * _label );
@@ -1126,6 +1136,7 @@ void                    gr_locate( Environment * _environment, char * _x, char *
 void                    halt( Environment * _environment );
 Variable *              hit_to( Environment * _environment, int _sprite );
 Variable *              hit_to_vars( Environment * _environment, char * _sprite );
+void                    home( Environment * _environment );
 
 //----------------------------------------------------------------------------
 // *I*
@@ -1155,6 +1166,7 @@ Variable *              keyshift( Environment * _environment );
 // *L*
 //----------------------------------------------------------------------------
 
+void                    locate( Environment * _environment, char * _x, char * _y );
 void                    loop( Environment * _environment, char *_label );
 
 //----------------------------------------------------------------------------
@@ -1162,6 +1174,7 @@ void                    loop( Environment * _environment, char *_label );
 //----------------------------------------------------------------------------
 
 Variable *              maximum( Environment * _environment, char * _source, char * _dest );
+void                    memorize( Environment * _environment );
 Variable *              minimum( Environment * _environment, char * _source, char * _dest );
 
 //----------------------------------------------------------------------------
@@ -1220,6 +1233,7 @@ Variable *              random_width( Environment * _environment );
 void                    randomize( Environment * _environment, char * _seed );
 void                    raster_at( Environment * _environment, char * _label, int _position );
 void                    raster_at_var( Environment * _environment, char * _label, char * _position );
+void                    remember( Environment * _environment );
 void                    repeat( Environment * _environment, char *_label );
 void                    return_label( Environment * _environment );
 void                    return_procedure( Environment * _environment, char * _value );
@@ -1271,27 +1285,13 @@ void                    sprite_at_vars( Environment * _environment, char * _spri
 //----------------------------------------------------------------------------
 
 void                    text_at( Environment * _environment, char * _x, char * _y, char * _text );
-void                    text_center( Environment * _environment, char * _string );
-void                    cline( Environment * _environment, char * _characters );
-void                    cmove( Environment * _environment, char * _dx, char * _dy );
-void                    text_cmove_direct( Environment * _environment, int _dx, int _dy );
 void                    text_encoded_at( Environment * _environment, char * _x, char * _y, char * _text, char * _pen, char * _paper, char * _ww );
-Variable *              text_get_at( Environment * _environment, char * _x, char * _y );
-Variable *              text_get_cmove( Environment * _environment, char * _x, char * _y );
-Variable *              text_get_cmove_direct( Environment * _environment, int _x, int _y );
-Variable *              text_get_paper( Environment * _environment, char * _color );
-Variable *              text_get_pen( Environment * _environment, char * _color );
-Variable *              text_get_tab( Environment * _environment );
 Variable *              text_get_xcurs( Environment * _environment );
 Variable *              text_get_ycurs( Environment * _environment );
-void                    text_home( Environment * _environment );
 void                    text_hscroll_line( Environment * _environment, int _direction );
 void                    text_hscroll_screen( Environment * _environment, int _direction );
-void                    locate( Environment * _environment, char * _x, char * _y );
-void                    text_memorize( Environment * _environment );
 void                    text_newline( Environment * _environment );
 void                    text_question_mark( Environment * _environment );
-void                    text_remember( Environment * _environment );
 void                    text_set_tab( Environment * _environment, char * _net_tab );
 void                    text_shade( Environment * _environment, int _value );
 void                    text_tab( Environment * _environment );
@@ -1299,7 +1299,6 @@ void                    text_text( Environment * _environment, char * _text );
 void                    text_under( Environment * _environment, int _value );
 void                    text_vscroll( Environment * _environment );
 void                    text_vscroll_screen( Environment * _environment, int _direction );
-void                    text_writing( Environment * _environment, char * _mode, char * _parts );
 void                    textmap_at( Environment * _environment, int _address );
 void                    textmap_at_var( Environment * _environment, char * _address );
 void                    tilemap_disable( Environment * _environment );
@@ -1381,6 +1380,7 @@ void                    wait_milliseconds( Environment * _environment, int _timi
 void                    wait_milliseconds_var( Environment * _environment, char * _timing );
 void                    wait_ticks( Environment * _environment, int _timing );
 void                    wait_ticks_var( Environment * _environment, char * _timing );
+void                    writing( Environment * _environment, char * _mode, char * _parts );
 
 //----------------------------------------------------------------------------
 // *X*

@@ -38,7 +38,7 @@
  * CODE SECTION 
  ****************************************************************************/
 
-void text_memorize( Environment * _environment ) {
+void memorize( Environment * _environment ) {
 
     setup_text_variables( _environment );
 

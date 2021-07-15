@@ -69,7 +69,7 @@ attualmente occupata dal cursore.
 
 @target all
 </usermanual> */
-void text_center( Environment * _environment, char * _string ) {
+void center( Environment * _environment, char * _string ) {
 
     setup_text_variables( _environment );
 

@@ -71,7 +71,7 @@ dello sfondo preimpostato. Il formato della stringa restituita da
 
 @target all
 </usermanual> */
-Variable * text_get_paper( Environment * _environment, char * _color ) {
+Variable * get_paper( Environment * _environment, char * _color ) {
     
     Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_BLACK );
 
