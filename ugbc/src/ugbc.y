@@ -2050,13 +2050,13 @@ writing_definition :
 
 locate_definition : 
      OP_COMMA expr {
-        text_locate( _environment, NULL, $2 );
+        locate( _environment, NULL, $2 );
     }
     | expr OP_COMMA {
-        text_locate( _environment, $1, NULL );
+        locate( _environment, $1, NULL );
     } 
     | expr OP_COMMA expr {
-        text_locate( _environment, $1, $3 );
+        locate( _environment, $1, $3 );
     }
     ;
 
@@ -2074,13 +2074,13 @@ gr_locate_definition :
 
 cmove_definition : 
      OP_COMMA expr {
-        text_cmove( _environment, NULL, $2 );
+        cmove( _environment, NULL, $2 );
     }
     | expr OP_COMMA {
-        text_cmove( _environment, $1, NULL );
+        cmove( _environment, $1, NULL );
     } 
     | expr OP_COMMA expr {
-        text_cmove( _environment, $1, $3 );
+        cmove( _environment, $1, $3 );
     }
     ;
 

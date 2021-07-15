@@ -1273,7 +1273,7 @@ void                    sprite_at_vars( Environment * _environment, char * _spri
 void                    text_at( Environment * _environment, char * _x, char * _y, char * _text );
 void                    text_center( Environment * _environment, char * _string );
 void                    cline( Environment * _environment, char * _characters );
-void                    text_cmove( Environment * _environment, char * _dx, char * _dy );
+void                    cmove( Environment * _environment, char * _dx, char * _dy );
 void                    text_cmove_direct( Environment * _environment, int _dx, int _dy );
 void                    text_encoded_at( Environment * _environment, char * _x, char * _y, char * _text, char * _pen, char * _paper, char * _ww );
 Variable *              text_get_at( Environment * _environment, char * _x, char * _y );
@@ -1287,7 +1287,7 @@ Variable *              text_get_ycurs( Environment * _environment );
 void                    text_home( Environment * _environment );
 void                    text_hscroll_line( Environment * _environment, int _direction );
 void                    text_hscroll_screen( Environment * _environment, int _direction );
-void                    text_locate( Environment * _environment, char * _x, char * _y );
+void                    locate( Environment * _environment, char * _x, char * _y );
 void                    text_memorize( Environment * _environment );
 void                    text_newline( Environment * _environment );
 void                    text_question_mark( Environment * _environment );

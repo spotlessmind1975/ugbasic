@@ -67,70 +67,6 @@ void tilemap_disable( Environment * _environment ) {
     
 }
 
-/*
-
-text screen
-	- TEXT ENABLE
-	- SCREEN WIDTH
-	- SCREEN HEIGHT
-
-text window
-	- 0 <= index <= WINDOW COUNT
-	- 0 <= x <= SCREEN WIDTH = XWIND(index)
-	- 0 <= y <= SCREEN HEIGHT = YWIND(index)
-	- 1 <= width <= (SCREEN WIDTH - x) = WWIND(index)
-	- 1 <= height <= (SCREEN HEIGHT - x) = HWIND(index)
-
-by default:
-text window 0 <-> text screen
-
-windowX_x:	.res 1
-windowX_y:	.res 1
-windowX_w:	.res 1
-windowX_h:	.res 1
-windowX_cx:	.res 1
-windowX_cy:	.res 1
-
-*/
-void setup_text_variables( Environment * _environment ) {
-
-    variable_define( _environment, "windowX", VT_BYTE, 0 );
-    variable_global( _environment, "windowX" );
-    variable_define( _environment, "windowY", VT_BYTE, 0 );                
-    variable_global( _environment, "windowY" );
-    variable_define( _environment, "windowX2", VT_BYTE, (TEXT_COLUMNS_COUNT-1) );
-    variable_global( _environment, "windowX2" );
-    variable_define( _environment, "windowY2", VT_BYTE, (TEXT_ROWS_COUNT-1) );                
-    variable_global( _environment, "windowY2" );
-    variable_define( _environment, "windowCX", VT_BYTE, 0 );
-    variable_global( _environment, "windowCX" );
-    variable_define( _environment, "windowCY", VT_BYTE, 0 );
-    variable_global( _environment, "windowCY" );
-    variable_define( _environment, "PEN", VT_COLOR, COLOR_WHITE );
-    variable_global( _environment, "PEN" );
-    variable_define( _environment, "PAPER", VT_COLOR, COLOR_BLACK );
-    variable_global( _environment, "PAPER" );
-    variable_define( _environment, "windowE", VT_BYTE, 0 );
-    variable_global( _environment, "windowE" );
-    variable_define( _environment, "windowS", VT_BYTE, 0 );
-    variable_global( _environment, "windowS" );
-    variable_define( _environment, "windowW", VT_BYTE, 0 );
-    variable_global( _environment, "windowW" );
-    variable_define( _environment, "windowT", VT_BYTE, 4 );
-    variable_global( _environment, "windowT" );
-    variable_define( _environment, "windowWW", VT_BYTE, WW_PEN | WW_PAPER );
-    variable_global( _environment, "windowWW" );
-    variable_define( _environment, "TAB", VT_STRING, 0 );
-    variable_store_string( _environment, "TAB", "\t");
-    variable_global( _environment, "TAB" );
-    variable_global( _environment, "windowT" );
-    variable_define( _environment, "windowMX", VT_BYTE, 0 );
-    variable_global( _environment, "windowMX" );
-    variable_define( _environment, "windowMY", VT_BYTE, 0 );                
-    variable_global( _environment, "windowMY" );
-
-}
-
 /**
  * @brief Emit code for <strong>LOCATE ...,...</strong>
  * 
@@ -203,7 +139,7 @@ bisogno di "aprirne" una.
 @seeAlso CMOVE
 @target all
 </usermanual> */
-void text_locate( Environment * _environment, char * _x, char * _y ) {
+void locate( Environment * _environment, char * _x, char * _y ) {
 
     if ( _x ) {
         Variable * windowCX = variable_retrieve( _environment, "windowCX" );
@@ -274,7 +210,7 @@ e offset positivi.
 
 @target all
 </usermanual> */
-void text_cmove( Environment * _environment, char * _dx, char * _dy ) {
+void cmove( Environment * _environment, char * _dx, char * _dy ) {
 
     if ( _dx ) {
         Variable * windowCX = variable_retrieve( _environment, "windowCX" );
@@ -529,7 +465,7 @@ void text_at( Environment * _environment, char * _x, char * _y, char * _text ) {
 
     setup_text_variables( _environment );
 
-    text_locate( _environment, _x, _y );
+    locate( _environment, _x, _y );
 
     text_text( _environment, _text );
     
