@@ -100,6 +100,7 @@ CYCLES { return (CYCLES); }
 D { return (D); }
 DARK { return(DARK); }
 DATA { return (DATA); }
+DEBUG { return (DEBUG); }
 DEC { return (OP_DEC); }
 DEFAULT { return (DEFAULT); }
 DELETE { return (DELETE); }
