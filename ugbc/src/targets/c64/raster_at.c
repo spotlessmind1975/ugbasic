@@ -63,9 +63,9 @@ value given.
 
 @italian
 Inizializza una routine raster. In altre parole, in modo asincrono e in parallelo
-    con l'esecuzione del programma principale, viene impostata una routine a partire 
-    dall'etichetta fornita. Questa sarà eseguita quando il raster video sullo 
-    schermo raggiunge il valore dato. 
+con l'esecuzione del programma principale, viene impostata una routine a partire 
+dall'etichetta fornita. Questa sarà eseguita quando il raster video sullo 
+schermo raggiunge il valore dato. 
 
 @syntax RASTER AT [integer] WITH [label]
 
