@@ -35,14 +35,14 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-COPYOFTEXTADDRESS = $22
-COPYOFCOLORMAPADDRESS = $29
-TEXTPTR = $20
-TEXTSIZE = $24
-TABSTODRAW = $25
-TEXTWW = $2C
-TEXTPEN = $2B
-TEXTPAPER = $2D
+COPYOFTEXTADDRESS = $D9
+COPYOFCOLORMAPADDRESS = $DA
+TEXTPTR = $DB
+TEXTSIZE = $DC
+TABSTODRAW = $DD
+TEXTWW = $DE
+TEXTPEN = $DF
+TEXTPAPER = $E0
 
 SCREENCODE = $16
 
