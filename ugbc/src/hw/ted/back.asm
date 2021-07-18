@@ -35,6 +35,9 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+COPYOFTEXTADDRESS = $D9
+COPYOFCOLORMAPADDRESS = $DB
+
 BACK:
     LDA $FF06
     AND #%00100000
@@ -43,26 +46,26 @@ BACK:
     
 BACKG:
     LDA COLORMAPADDRESS
-    STA $25
+    STA COPYOFCOLORMAPADDRESS
     LDA COLORMAPADDRESS+1
-    STA $26
+    STA COPYOFCOLORMAPADDRESS+1
     LDX #3
     LDY #0
 BACKGC:
-    LDA ($25),Y
+    LDA (COPYOFCOLORMAPADDRESS),Y
     AND #$F0
     ORA _PAPER
-    STA ($25),Y
+    STA (COPYOFCOLORMAPADDRESS),Y
     INY
     BNE BACKGC
-    INC $26
+    INC COPYOFCOLORMAPADDRESS+1
     CPX #1
     BNE BACKGCNB
 BACKGC2:
-    LDA ($25),Y
+    LDA (COPYOFCOLORMAPADDRESS),Y
     AND #$F0
     ORA _PAPER
-    STA ($25),Y
+    STA (COPYOFCOLORMAPADDRESS),Y
     INY
     CPY #232
     BNE BACKGC2
