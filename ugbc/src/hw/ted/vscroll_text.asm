@@ -40,7 +40,7 @@ VSCROLLT:
     PHA
     TYA
     PHA
-    LDA $30
+    LDA DIRECTION
     CMP #$80
     BCC VSCROLLTDOWN
 
