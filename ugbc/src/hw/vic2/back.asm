@@ -35,9 +35,6 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-COPYOFTEXTADDRESS = $25
-COPYOFCOLORMAPADDRESS = $29
-
 BACK:
     LDA $D011
     AND #$20

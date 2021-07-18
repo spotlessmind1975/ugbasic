@@ -35,10 +35,6 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-COPYOFTEXTADDRESS = $22
-COPYOFCOLORMAPADDRESS = $29
-COPYOFTEXTADDRESS2 = $24
-
 HSCROLLST:
     LDA TEXTADDRESS
     STA COPYTEXTADDRESS

@@ -35,10 +35,6 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-COPYOFTEXTADDRESS = $D9
-COPYOFBITMAPADDRESS = $D9
-COPYOFCOLORMAPADDRESS = $DB
-
 CLS:
     LDA $FF06
     AND #%00100000

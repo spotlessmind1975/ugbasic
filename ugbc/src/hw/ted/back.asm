@@ -35,8 +35,7 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-COPYOFTEXTADDRESS = $D9
-COPYOFCOLORMAPADDRESS = $DB
+
 
 BACK:
     LDA $FF06

@@ -35,9 +35,7 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-COPYOFTEXTADDRESS = $25
-COPYOFBITMAPADDRESS = $25
-COPYOFCOLORMAPADDRESS = $29
+
 
 CLS:
     LDA $D011

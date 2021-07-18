@@ -34,10 +34,6 @@
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-COPYOFTEXTADDRESS = $D9
-COPYOFCOLORMAPADDRESS = $DB
-COPYOFTEXTADDRESS2 = $DD
-COPYOFCOLORMAPADDRESS2 = $DF
 
 HSCROLLST:
     LDA TEXTADDRESS

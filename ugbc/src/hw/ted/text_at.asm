@@ -35,8 +35,6 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-COPYOFTEXTADDRESS = $D9
-COPYOFCOLORMAPADDRESS = $DB
 TEXTPTR = $DB
 TEXTSIZE = $DC
 TABSTODRAW = $DD

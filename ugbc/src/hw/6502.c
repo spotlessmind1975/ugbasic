@@ -1502,68 +1502,68 @@ void cpu6502_math_div_32bit_to_16bit( Environment * _environment, char *_source,
     MAKE_LABEL
 
     outline1("LDA %s", _source );
-    outline0("STA $26");
+    outline0("STA MATHPTR4");
     outline1("LDA %s+1", _source );
-    outline0("STA $27");
+    outline0("STA MATHPTR5");
     outline1("LDA %s+2", _source );
-    outline0("STA TMPPTR2");
+    outline0("STA MATHPTR2");
     outline1("LDA %s+3", _source );
-    outline0("STA TMPPTR2+1" );
+    outline0("STA MATHPTR3" );
 
     outline1("LDA %s", _destination );
-    outline0("STA TMPPTR");
+    outline0("STA MATHPTR0");
     outline1("LDA %s+1", _destination );
-    outline0("STA TMPPTR+1" );
+    outline0("STA MATHPTR1" );
 
     outhead1("%sSTART:", label );
     outline0("SEC" );
-    outline0("LDA TMPPTR2" );
-    outline0("SBC TMPPTR" );
-    outline0("LDA TMPPTR2+1" );
-    outline0("SBC TMPPTR+1 " );
+    outline0("LDA MATHPTR2" );
+    outline0("SBC MATHPTR0" );
+    outline0("LDA MATHPTR3" );
+    outline0("SBC MATHPTR1 " );
     outline1("BCS %soflo", label );
     outline0("LDX #$11" );
     outhead1("%sloop:", label)
 
-    outline0("ROL $26");
-    outline0("ROL $27");
+    outline0("ROL MATHPTR4");
+    outline0("ROL MATHPTR5");
     outline0("DEX" );
     outline1("BEQ %send", label );
 
-    outline0("ROL TMPPTR2" );
-    outline0("ROL TMPPTR2+1" );
-    outline0("STA $29" );
-    outline0("ROL $30" ); // <<--- forse $29
+    outline0("ROL MATHPTR2" );
+    outline0("ROL MATHPTR3" );
+    outline0("STA MATHPTR7" );
+    outline0("ROL MATHPTR8" ); // <<--- forse MATHPTR7
     outline0("SEC" );
-    outline0("LDA TMPPTR2" );
-    outline0("SBC TMPPTR" );
+    outline0("LDA MATHPTR2" );
+    outline0("SBC MATHPTR0" );
     outline0("STA $28" );
-    outline0("LDA TMPPTR2+1" );
-    outline0("SBC TMPPTR+1" );
+    outline0("LDA MATHPTR3" );
+    outline0("SBC MATHPTR1" );
     outline0("TAY" );
-    outline0("LDA $30" ); // <<--- forse $30
+    outline0("LDA MATHPTR8" ); // <<--- forse MATHPTR8
     outline0("SBC #0" );
     outline1("BCC %sloop", label )
     outline0("LDA $28");
-    outline0("STA TMPPTR2");
-    outline0("STY TMPPTR2+1" );
+    outline0("STA MATHPTR2");
+    outline0("STY MATHPTR3" );
     outline1("JMP %sloop", label );
 
     outhead1("%soflo:", label );
     outline0("LDA $ff" );
-    outline0("STA TMPPTR2" );
-    outline0("STA TMPPTR2+1" );
-    outline0("STA $26" );
-    outline0("STA $27" );
+    outline0("STA MATHPTR2" );
+    outline0("STA MATHPTR3" );
+    outline0("STA MATHPTR4" );
+    outline0("STA MATHPTR5" );
     outhead1("%send:", label );
 
-    outline0("LDA $26");
+    outline0("LDA MATHPTR4");
     outline1("STA %s", _other );
-    outline0("LDA $27");
+    outline0("LDA MATHPTR5");
     outline1("STA %s+1", _other );
-    outline0("LDA TMPPTR2");
+    outline0("LDA MATHPTR2");
     outline1("STA %s", _other_remainder );
-    outline0("LDA TMPPTR2+1");
+    outline0("LDA MATHPTR3");
     outline1("STA %s+1", _other_remainder );
 
 }

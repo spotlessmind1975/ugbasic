@@ -35,8 +35,6 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-COPYOFTEXTADDRESS = $22
-COPYOFCOLORMAPADDRESS = $29
 TEXTPTR = $20
 TEXTSIZE = $24
 TABSTODRAW = $25
