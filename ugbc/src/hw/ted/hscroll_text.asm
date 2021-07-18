@@ -34,8 +34,8 @@
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-COPYOFTEXTADDRESS = $22
-COPYOFCOLORMAPADDRESS = $29
+COPYOFTEXTADDRESS = $D9
+COPYOFCOLORMAPADDRESS = $DB
 
 HSCROLLST:
     LDA TEXTADDRESS
