@@ -635,7 +635,7 @@ void ted_hscroll_line( Environment * _environment, int _direction ) {
     outline1("LDA #$%2.2x", ( _direction & 0xff ) );
     outline0("STA DIRECTION" );
     outline1("LDA %s", y->realName );
-    outline0("STA CLINE");
+    outline0("STA CLINEY");
 
     outline0("JSR HSCROLLLT");
 
