@@ -52,9 +52,6 @@
 void cline( Environment * _environment, char * _characters ) {
 
     Variable * characters = NULL;
-    outline0("CHARACTERS = $D9");
-    outline0("CLINEX = $DA");
-    outline0("CLINEY = $DB");    
     if ( _characters ) {
         characters = variable_retrieve( _environment, _characters );
         outline1("LDA %s", characters->realName);
@@ -84,11 +81,11 @@ void cline( Environment * _environment, char * _characters ) {
         outline1("LDA %s+1", TEXTADDRESS->realName);
         outline0("STA COPYOFTEXTADDRESS+1");
         outline1("LDA %s", colormapAddress->realName );
-        outline0("STA COPYCOLORMAPADDRESS");
+        outline0("STA COPYOFCOLORMAPADDRESS");
         outline1("LDA %s+1", colormapAddress->realName );
-        outline0("STA COPYCOLORMAPADDRESS+1");
+        outline0("STA COPYOFCOLORMAPADDRESS+1");
  
-        outline0("LDX $31" ); // y
+        outline0("LDX CLINEY" ); // y
         outline0("BEQ lib_cline_skip" );
         outhead0("lib_cline_loop1:" );
         outline0("CLC"); // x
@@ -105,11 +102,11 @@ void cline( Environment * _environment, char * _characters ) {
         outhead0("lib_cline_loopc1:" );
         outline0("CLC"); // x
         outline0("LDA #40"); // width (lo)
-        outline0("ADC COPYCOLORMAPADDRESS");
-        outline0("STA COPYCOLORMAPADDRESS");
+        outline0("ADC COPYOFCOLORMAPADDRESS");
+        outline0("STA COPYOFCOLORMAPADDRESS");
         outline0("LDA #0"); // width (hi)
-        outline0("ADC COPYCOLORMAPADDRESS+1");
-        outline0("STA COPYCOLORMAPADDRESS+1");
+        outline0("ADC COPYOFCOLORMAPADDRESS+1");
+        outline0("STA COPYOFCOLORMAPADDRESS+1");
         outline0("DEX" );
         outline0("BNE lib_cline_loopc1" );
 
@@ -128,11 +125,11 @@ void cline( Environment * _environment, char * _characters ) {
 
         outline0("CLC"); // x
         outline0("LDA CLINEX"); // x
-        outline0("ADC COPYCOLORMAPADDRESS");
-        outline0("STA COPYCOLORMAPADDRESS");
+        outline0("ADC COPYOFCOLORMAPADDRESS");
+        outline0("STA COPYOFCOLORMAPADDRESS");
         outline0("LDA #0");
-        outline0("ADC COPYCOLORMAPADDRESS+1");
-        outline0("STA COPYCOLORMAPADDRESS+1");
+        outline0("ADC COPYOFCOLORMAPADDRESS+1");
+        outline0("STA COPYOFCOLORMAPADDRESS+1");
 
         outline0("LDX CHARACTERS");
         outline0("LDY #0");
@@ -165,12 +162,12 @@ void cline( Environment * _environment, char * _characters ) {
         outline0("STA COPYOFTEXTADDRESS+1");
 
         outline0("SEC");
-        outline0("LDA COPYCOLORMAPADDRESS");
+        outline0("LDA COPYOFCOLORMAPADDRESS");
         outline0("SBC #40");
-        outline0("STA COPYCOLORMAPADDRESS");
-        outline0("LDA COPYCOLORMAPADDRESS+1");
+        outline0("STA COPYOFCOLORMAPADDRESS");
+        outline0("LDA COPYOFCOLORMAPADDRESS+1");
         outline0("SBC #0");
-        outline0("STA COPYCOLORMAPADDRESS+1");
+        outline0("STA COPYOFCOLORMAPADDRESS+1");
  
         outline0("lib_cline_next:");
         outline0("INY");
