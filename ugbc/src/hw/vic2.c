@@ -485,10 +485,10 @@ void vic2_bitmap_at( Environment * _environment, char * _address ) {
     outline0("ASL" );
     outline0("ASL" );
     outline0("ASL" );
-    outline0("STA $22" );
+    outline0("STA TMPPTR" );
     outline0("LDA $D018" );
     outline0("AND #%11110111");
-    outline0("ORA $22" );
+    outline0("ORA TMPPTR" );
     outline0("STA $D018" );
 
 }
@@ -525,10 +525,10 @@ void vic2_textmap_at( Environment * _environment, char * _address ) {
     outline0("ASL");
     outline0("ASL");
     outline0("ASL");
-    outline0("STA $22");
+    outline0("STA TMPPTR");
     outline0("LDA $D018");
     outline0("AND #%00001111");
-    outline0("ORA $22" );
+    outline0("ORA TMPPTR" );
     outline0("STA $D018");
 
 }
@@ -764,10 +764,10 @@ void vic2_tiles_at( Environment * _environment, char * _address ) {
     outline0("LSR");
     outline0("AND #$07");
     outline0("ASL");
-    outline0("STA $22");
+    outline0("STA TMPPTR");
     outline0("LDA $D018");
     outline0("AND #%00001111");
-    outline0("ORA $22");
+    outline0("ORA TMPPTR");
     outline0("STA $D018");
 
 }
@@ -795,7 +795,7 @@ void vic2_busy_wait( Environment * _environment, char * _timing ) {
     MAKE_LABEL
 
     outline0("LDA #$00");
-    outline0("STA $22");
+    outline0("STA TMPPTR");
     outhead1("%sfirst:", label );
     outline0("LDA #$01");
     outhead1("%ssecond:", label );
@@ -804,8 +804,8 @@ void vic2_busy_wait( Environment * _environment, char * _timing ) {
     outhead1("%sthird:", label );
     outline0("CMP $D012");
     outline1("BEQ %sthird", label);
-    outline0("INC $22");
-    outline0("LDA $22");
+    outline0("INC TMPPTR");
+    outline0("LDA TMPPTR");
     outline1("CMP %s", _timing );
     outline1("BNE %sfirst", label );
 

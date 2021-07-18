@@ -285,29 +285,29 @@ TEXTATBMSP0:
     LDY #0
 
     LDA SCREENCODE
-    STA $22
+    STA TMPPTR
     LDA #0
-    STA $23
+    STA TMPPTR+1
 
     CLC
-    ASL $22
-    ROL $23
+    ASL TMPPTR
+    ROL TMPPTR+1
     CLC
-    ASL $22
-    ROL $23
+    ASL TMPPTR
+    ROL TMPPTR+1
     CLC
-    ASL $22
-    ROL $23
+    ASL TMPPTR
+    ROL TMPPTR+1
 
     CLC
     LDA #$0
-    ADC $22
-    STA $22
+    ADC TMPPTR
+    STA TMPPTR
     LDA #$D0
-    ADC $23
-    STA $23
+    ADC TMPPTR+1
+    STA TMPPTR+1
 TEXTATBMSP0L1:
-    LDA ($22),Y
+    LDA (TMPPTR),Y
     STA (PLOTDEST),Y
     INY
     CPY #8

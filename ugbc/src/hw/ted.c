@@ -466,7 +466,7 @@ void ted_busy_wait( Environment * _environment, char * _timing ) {
     MAKE_LABEL
 
     outline0("LDA #$00");
-    outline0("STA $22");
+    outline0("STA TMPPTR");
     outhead1("%sfirst:", label );
     outline0("LDA #$01");
     outhead1("%ssecond:", label );
@@ -475,8 +475,8 @@ void ted_busy_wait( Environment * _environment, char * _timing ) {
     outhead1("%sthird:", label );
     outline0("CMP $FF1D");
     outline1("BEQ %sthird", label);
-    outline0("INC $22");
-    outline0("LDA $22");
+    outline0("INC TMPPTR");
+    outline0("LDA TMPPTR");
     outline1("CMP %s", _timing );
     outline1("BNE %sfirst", label );
 
