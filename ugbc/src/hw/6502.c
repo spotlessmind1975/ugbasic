@@ -3174,17 +3174,17 @@ void cpu6502_bits_to_string( Environment * _environment, char * _number, char * 
     outline0("ORA #%10000000" );
     outline0("JSR binstr");
 
-    outline0("STX $36");
-    outline0("STY $37");
+    outline0("STX TMPPTR");
+    outline0("STY TMPPTR+1");
     outline1("STA %s", _string_size);
     outline0("TAY");
     outline1("LDA %s", _string);
-    outline0("STA $38");
+    outline0("STA TMPPTR2");
     outline1("LDA %s+1", _string);
-    outline0("STA $39");
+    outline0("STA TMPPTR2+1");
     outline1("%sLOOP:", label );
-    outline0("LDA ($36),Y" );
-    outline0("STA ($38),Y");
+    outline0("LDA (TMPPTR),Y" );
+    outline0("STA (TMPPTR2),Y");
     outline0("DEY");
     outline1("BPL %sLOOP", label );
 
