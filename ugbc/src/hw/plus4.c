@@ -145,7 +145,7 @@ void plus4_scanshift( Environment * _environment, char * _shifts ) {
     outline0("LDA #0");
     outline1("STA %s", _shifts);
     outline0("LDA $0543");
-    outline0("AND $01");
+    outline0("AND #$01");
     outline1("BEQ %se", label);
     outline0("LDA $03");
     outline1("STA %s", _shifts);
