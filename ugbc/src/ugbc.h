@@ -235,6 +235,11 @@ typedef struct _Variable {
     char * valueString;
 
     /** 
+     * The static buffer's value, as given by last (re)definition.
+     */
+    unsigned char * valueBuffer;
+
+    /** 
      * The size of the static buffer (in bytes).
      */
     int size;
@@ -1394,7 +1399,12 @@ Variable *              xpen( Environment * _environment );
 
 Variable *              ypen( Environment * _environment );
 
-#ifdef __c64__
+#ifdef __atari__
+    #include "hw/6502.h"
+    #include "hw/antic.h"
+    #include "hw/gtia.h"
+    #include "hw/atari.h"
+#elif __c64__
     #include "hw/6502.h"
     #include "hw/vic2.h"
     #include "hw/c64.h"

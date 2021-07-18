@@ -752,6 +752,21 @@ Variable * variable_resize_buffer( Environment * _environment, char * _destinati
     return destination;
 }
 
+Variable * variable_store_buffer( Environment * _environment, char * _destination, unsigned char * _buffer, int _size ) {
+    Variable * destination = variable_retrieve( _environment, _destination );
+    switch( destination->type ) {
+        case VT_BUFFER: {
+            destination->valueBuffer = malloc( _size );
+            memcpy( destination->valueBuffer, _buffer, _size );
+            destination->size = _size;
+            break;
+        }
+        default:
+            CRITICAL_STORE_UNSUPPORTED(DATATYPE_AS_STRING[destination->type]);
+    }
+    return destination;
+}
+
 /**
  * @brief Store the value of a variable inside another variable by converting it
  * 

@@ -92,7 +92,16 @@ void variable_cleanup( Environment * _environment ) {
                                 outline1("%s: .res 1", variable->realName);
                                 break;
                             case VT_BUFFER:
-                                outline2("%s: .res %d", variable->realName, variable->size);
+                                if ( variable->valueBuffer ) {
+                                    outline1("%s: .byte ", variable->realName);
+                                    int i=0;
+                                    for (i=0; i<(variable->size-1); ++i ) {
+                                        outline1("%d,", variable->valueBuffer[i]);
+                                    }
+                                    outline1("%d", variable->valueBuffer[(variable->size-1)]);
+                                } else {
+                                    outline2("%s: .res %d", variable->realName, variable->size);
+                                }
                                 break;
                             case VT_ARRAY: {
                                 int i=0,size=1;
@@ -156,7 +165,16 @@ void variable_cleanup( Environment * _environment ) {
                                 outline1("%s: .res 1", variable->realName);
                                 break;
                             case VT_BUFFER:
-                                outline2("%s: .res %d", variable->realName, variable->size);
+                                if ( variable->valueBuffer ) {
+                                    outline1("%s: .byte ", variable->realName);
+                                    int i=0;
+                                    for (i=0; i<(variable->size-1); ++i ) {
+                                        outline1("%d,", variable->valueBuffer[i]);
+                                    }
+                                    outline1("%d", variable->valueBuffer[(variable->size-1)]);
+                                } else {
+                                    outline2("%s: .res %d", variable->realName, variable->size);
+                                }
                                 break;
                             case VT_ARRAY: {
                                 int i=0,size=1;

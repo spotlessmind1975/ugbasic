@@ -88,7 +88,16 @@ void variable_cleanup( Environment * _environment ) {
                                 outline1("%s: db 0", variable->realName);
                                 break;
                             case VT_BUFFER:
-                                outline2("%s: defs %d", variable->realName, variable->size);
+                                if ( variable->valueBuffer ) {
+                                    outline2("%s: .db ", variable->realName);
+                                    int i=0;
+                                    for (i=0; i<(variable->size-1); ++i ) {
+                                        outline2("%d,", variable->valueBuffer[i]);
+                                    }
+                                    outline2("%d", variable->valueBuffer[(variable->size-1)]);
+                                } else {
+                                    outline2("%s: defs %d", variable->realName, variable->size);
+                                }
                                 break;
                             case VT_ARRAY: {
                                 int i=0,size=1;
