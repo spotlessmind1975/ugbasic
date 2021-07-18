@@ -561,31 +561,31 @@ void ted_text_at( Environment * _environment, char * _x, char * _y, char * _text
     deploy( textEncodedAtDeployed, "./ugbc/src/hw/ted/text_at.asm" );
 
     outline1("LDA %s", _text);
-    outline0("STA $20" );
+    outline0("STA TEXTPTR" );
     outline1("LDA %s+1", _text);
-    outline0("STA $21" );
+    outline0("STA TEXTPTR+1" );
     outline0("LDA TEXTADDRESS" );
-    outline0("STA $22" );
+    outline0("STA COPYOFTEXTADDRESS" );
     outline0("LDA TEXTADDRESS+1" );
-    outline0("STA $23" );
+    outline0("STA COPYOFTEXTADDRESS+1" );
     outline1("LDA %s", _x );
     outline0("STA $d3" );
     outline1("LDA %s", _y );
     outline0("STA $d6" );
     outline1("LDA %s", _text_size);
-    outline0("STA $24" );
+    outline0("STA TEXTSIZE" );
     outline0("LDA #0" );
-    outline0("STA $25" );
+    outline0("STA TABSTODRAW" );
     outline0("LDA COLORMAPADDRESS" );
-    outline0("STA $29" );
+    outline0("STA COPYOFCOLORMAPADDRESS" );
     outline0("LDA COLORMAPADDRESS+1" );
-    outline0("STA $2a" );
+    outline0("STA COPYOFCOLORMAPADDRESS+1" );
     outline1("LDA %s", _ww );
-    outline0("STA $2c" );
+    outline0("STA TEXTWW" );
     outline1("LDA %s", _pen );
-    outline0("STA $2b" );
+    outline0("STA TEXTPEN" );
     outline0("LDA _PAPER" );
-    outline0("STA $2d" );
+    outline0("STA TEXTPAPER" );
 
     outline0("JSR TEXTAT");
 
