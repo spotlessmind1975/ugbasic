@@ -99,9 +99,9 @@ void cline( Environment * _environment, char * _characters ) {
 
         // Use the current bitmap address as starting address for filling routine.
         outline1("LDA %s", TEXTADDRESS->realName);
-        outline0("STA COPYTEXTADDRESS");
+        outline0("STA COPYOFTEXTADDRESS");
         outline1("LDA %s+1", TEXTADDRESS->realName);
-        outline0("STA COPYTEXTADDRESS+1");
+        outline0("STA COPYOFTEXTADDRESS+1");
         outline1("LDA %s", colormapAddress->realName );
         outline0("STA COPYCOLORMAPADDRESS");
         outline1("LDA %s+1", colormapAddress->realName );
@@ -112,11 +112,11 @@ void cline( Environment * _environment, char * _characters ) {
         outhead0("lib_cline_loop1:" );
         outline0("CLC"); // x
         outline0("LDA #40"); // width (lo)
-        outline0("ADC COPYTEXTADDRESS");
-        outline0("STA COPYTEXTADDRESS");
+        outline0("ADC COPYOFTEXTADDRESS");
+        outline0("STA COPYOFTEXTADDRESS");
         outline0("LDA #0"); // width (hi)
-        outline0("ADC COPYTEXTADDRESS+1");
-        outline0("STA COPYTEXTADDRESS+1");
+        outline0("ADC COPYOFTEXTADDRESS+1");
+        outline0("STA COPYOFTEXTADDRESS+1");
         outline0("DEX" );
         outline0("BNE lib_cline_loop1" );
 
@@ -139,11 +139,11 @@ void cline( Environment * _environment, char * _characters ) {
 
         outline0("CLC"); // x
         outline0("LDA CLINEX"); // x
-        outline0("ADC COPYTEXTADDRESS");
-        outline0("STA COPYTEXTADDRESS");
+        outline0("ADC COPYOFTEXTADDRESS");
+        outline0("STA COPYOFTEXTADDRESS");
         outline0("LDA #0");
-        outline0("ADC COPYTEXTADDRESS+1");
-        outline0("STA COPYTEXTADDRESS+1");
+        outline0("ADC COPYOFTEXTADDRESS+1");
+        outline0("STA COPYOFTEXTADDRESS+1");
 
         outline0("CLC"); // x
         outline0("LDA CLINEX"); // x
@@ -159,7 +159,7 @@ void cline( Environment * _environment, char * _characters ) {
 
         outhead0("lib_cline_increment_x:");
         outline0("LDA #32");
-        outline0("STA (COPYTEXTADDRESS),y");
+        outline0("STA (COPYOFTEXTADDRESS),y");
         
         outline0("INC CLINEX"); // x
         outline0("LDA CLINEX"); // x
@@ -176,12 +176,12 @@ void cline( Environment * _environment, char * _characters ) {
 
         outline0("DEC CLINEY"); // y
         outline0("SEC");
-        outline0("LDA COPYTEXTADDRESS");
+        outline0("LDA COPYOFTEXTADDRESS");
         outline0("SBC #40");
-        outline0("STA COPYTEXTADDRESS");
-        outline0("LDA COPYTEXTADDRESS+1");
+        outline0("STA COPYOFTEXTADDRESS");
+        outline0("LDA COPYOFTEXTADDRESS+1");
         outline0("SBC #0");
-        outline0("STA COPYTEXTADDRESS+1");
+        outline0("STA COPYOFTEXTADDRESS+1");
 
         outline0("SEC");
         outline0("LDA COPYCOLORMAPADDRESS");
@@ -204,7 +204,7 @@ void cline( Environment * _environment, char * _characters ) {
         outhead0("lib_cline_increment2_x:");
 
         outline0("LDA #32");
-        outline0("STA (COPYTEXTADDRESS),y");
+        outline0("STA (COPYOFTEXTADDRESS),y");
         
         outline0("INY"); // x
         outline0("INC CLINEX"); // x
