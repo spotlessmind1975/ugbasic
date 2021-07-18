@@ -3208,7 +3208,7 @@ void cpu6502_dsalloc( Environment * _environment, char * _size, char * _index ) 
     deploy( dstringDeployed,"./ugbc/src/hw/6502/dstring.asm" );
 
     outline1( "LDA %s", _size );
-    outline0( "STA $21" );
+    outline0( "STA DSSIZE" );
     outline0( "JSR DSALLOC" );
     outline1( "STX %s", _index );
 
@@ -3219,7 +3219,7 @@ void cpu6502_dsalloc_size( Environment * _environment, int _size, char * _index 
     deploy( dstringDeployed,"./ugbc/src/hw/6502/dstring.asm" );
 
     outline1( "LDA #$%2.2x", _size );
-    outline0( "STA $21" );
+    outline0( "STA DSSIZE" );
     outline0( "JSR DSALLOC" );
     outline1( "STX %s", _index );
 
@@ -3249,7 +3249,7 @@ void cpu6502_dsresize( Environment * _environment, char * _index, char * _resize
 
     outline1( "LDX %s", _index );
     outline1( "LDA %s", _resize );
-    outline0( "STA $21" );
+    outline0( "STA DSSIZE" );
     outline0( "JSR DSRESIZE" );
 
 }
@@ -3260,7 +3260,7 @@ void cpu6502_dsresize_size( Environment * _environment, char * _index, int _resi
 
     outline1( "LDX %s", _index );
     outline1( "LDA #$%2.2x", _resize );
-    outline0( "STA $21" );
+    outline0( "STA DSSIZE" );
     outline0( "JSR DSRESIZE" );
 
 }
@@ -3283,7 +3283,7 @@ void cpu6502_dsdescriptor( Environment * _environment, char * _index, char * _ad
     outline1( "STA %s", _address );
     outline0( "LDA TMPPTR+1" );
     outline1( "STA %s+1", _address );
-    outline0( "LDA $21" );
+    outline0( "LDA DSSIZE" );
     outline1( "STA %s", _size );
 
 }
