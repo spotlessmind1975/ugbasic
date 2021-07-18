@@ -1537,14 +1537,14 @@ void cpu6502_math_div_32bit_to_16bit( Environment * _environment, char *_source,
     outline0("SEC" );
     outline0("LDA MATHPTR2" );
     outline0("SBC MATHPTR0" );
-    outline0("STA $28" );
+    outline0("STA MATHPTR6" );
     outline0("LDA MATHPTR3" );
     outline0("SBC MATHPTR1" );
     outline0("TAY" );
     outline0("LDA MATHPTR8" ); // <<--- forse MATHPTR8
     outline0("SBC #0" );
     outline1("BCC %sloop", label )
-    outline0("LDA $28");
+    outline0("LDA MATHPTR6");
     outline0("STA MATHPTR2");
     outline0("STY MATHPTR3" );
     outline1("JMP %sloop", label );
