@@ -1550,7 +1550,7 @@ void cpu6502_math_div_32bit_to_16bit( Environment * _environment, char *_source,
     outline1("JMP %sloop", label );
 
     outhead1("%soflo:", label );
-    outline0("LDA $ff" );
+    outline0("LDA #$ff" );
     outline0("STA MATHPTR2" );
     outline0("STA MATHPTR3" );
     outline0("STA MATHPTR4" );
