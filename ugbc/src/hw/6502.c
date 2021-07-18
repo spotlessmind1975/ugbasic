@@ -3167,7 +3167,7 @@ void cpu6502_bits_to_string( Environment * _environment, char * _number, char * 
     deploy( bitsToStringDeployed,"./ugbc/src/hw/6502/bits_to_string.asm" );
 
     outline1("LDA #$%2.2x", _bits);
-    outline0("STA $35");
+    outline0("STA BITSTOCONVERT");
     outline0("LDA #37");
     outline1("LDX #<%s", _number);
     outline1("LDY #>%s", _number);

@@ -310,7 +310,7 @@ facbcd02:sta wrkspc01,x        ;clear final result
          ;sei                   ;!!! uncomment for NMOS MPU !!!
          sed                   ;select decimal mode
          ; ldy #m_bits-1         ;bits to convert -1
-         ldy $35                ;bits to convert -1
+         ldy BITSTOCONVERT     ;bits to convert -1
          dey
 ;
 facbcd03:ldx #s_pfac-1         ;operand size
