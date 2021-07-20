@@ -55,7 +55,7 @@ int test_controls_joy_tester( TestEnvironment * _te ) {
 
     Variable * j = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
 
-    return j->value == 0x1f || j->value == 0x00;
+    return j->value == 0x1f || j->value == 0xff || j->value == 0x00;
     
 }
 

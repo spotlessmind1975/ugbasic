@@ -1,5 +1,5 @@
-#ifndef __UGBASICTESTER__
-#define __UGBASICTESTER__
+#ifndef __UGBASICTESTER_ATARI__
+#define __UGBASICTESTER_ATARI__
 
 /*****************************************************************************
  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
@@ -35,35 +35,68 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <limits.h>
-#include <unistd.h>
-
 #include "../src/ugbc.h"
 
 /****************************************************************************
  * DECLARATIONS AND DEFINITIONS SECTION 
  ****************************************************************************/
 
-void test_cpu( );
-void test_variables( );
-void test_conditionals( );
-void test_loops( );
-void test_ons( );
-void test_controls( );
-void test_examples( );
-void test_print( );
+typedef struct _InternalMachineState {
 
-#if defined( __c64__ )
-    #include "tester_c64.h"
-#elif defined( __plus4__ )
-    #include "tester_plus4.h"
-#elif defined( __atari__ )
-    #include "tester_atari.h"
-#elif defined( __zx__ )
-    #include "tester_zx.h"
-#endif
+    unsigned int a;
+    
+    unsigned int x;
+    
+    unsigned int y;
+    
+    unsigned int p;
+    
+    unsigned int s;
+    
+    unsigned int pc;
+
+    unsigned int working[1024];
+
+    unsigned int temporary[1024];
+
+    unsigned int descriptors_status[255];
+
+    unsigned int descriptors_address_lo[255];
+
+    unsigned int descriptors_address_hi[255];
+
+    unsigned int descriptors_size[255];
+
+    unsigned int xusing;
+
+    unsigned int working_base_address;
+    
+    unsigned int temporary_base_address;
+
+} InternalMachineState;
+
+typedef struct _DebugInspection {
+    char *      name;
+    int         address;
+    int         size;
+    unsigned char *      memory;
+} DebugInspection;
+
+typedef struct _Debug {
+    int                 inspections_count;
+    DebugInspection     inspections[1024];
+} Debug;
+
+typedef struct _TestEnvironment {
+    Environment                 environment;
+    InternalMachineState        state;
+    Variable                *   trackedVariables[128];
+    Debug                       debug;
+} TestEnvironment;
+
+void create_test( char *_name, void (*_payload)(TestEnvironment *), int (*_tester)(TestEnvironment *) );
+void stop_test( Environment * _environment );
+
+void test_ted( );
 
 #endif

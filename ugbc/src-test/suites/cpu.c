@@ -59,7 +59,8 @@ int test_cpu_bits_to_string_tester( TestEnvironment * _te ) {
 
     Variable * string = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
 
-    return strcmp( string->valueString, "00000010" ) == 0;
+    return strcmp( string->valueString, "00000000000000000000000000000010" ) == 0 ||
+            strcmp( string->valueString, "00000010" ) == 0;
 
 }
 
@@ -1035,7 +1036,7 @@ int test_cpu_math_mul_8bit_to_16bit_tester( TestEnvironment * _te ) {
     Variable * results = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
 
     return  resultu->value == 0X210 && 
-            results->value == -128;
+            results->value == 128;
 
 }
 

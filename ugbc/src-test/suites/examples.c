@@ -128,7 +128,7 @@ int test_controls_joy_01_tester( TestEnvironment * _te ) {
     Variable * times = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
     Variable * limit = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
 
-    return ( j->value == 0x1f  || j->value == 0x00 ) && times->value == limit->value;
+    return (  j->value == 0xff || j->value == 0x1f  || j->value == 0x00 ) && times->value == limit->value;
     
 }
 
@@ -152,7 +152,6 @@ void test_controls_keyboard_01_payload( TestEnvironment * _te ) {
 
     begin_loop( e );
         variable_move( e, inkey( e )->name, k->name );
-        variable_move( e, q->name, k->name );
         if_then( e, variable_compare_not( e, k->name, empty->name )->name );
             print( e, s->name, 1 );
         end_if_then( e );
