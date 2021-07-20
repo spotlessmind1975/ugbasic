@@ -38,7 +38,7 @@
  * CODE SECTION
  ****************************************************************************/
 
-#if defined(__c64__) || defined(__plus4__)
+#if defined(__c64__) || defined(__plus4__) || defined(__atari__)
 
 /**
  * @brief <i>CPU 6502</i>: emit code to make long conditional jump
@@ -3195,9 +3195,9 @@ void cpu6502_dsdefine( Environment * _environment, char * _string, char * _index
     deploy( dstringDeployed,"./ugbc/src/hw/6502/dstring.asm" );
 
     outline1( "LDA #<%s", _string );
-    outline0( "STA TMPPTR" );
+    outline0( "STA DSADDRLO" );
     outline1( "LDA #>%s", _string );
-    outline0( "STA TMPPTR+1" );
+    outline0( "STA DSADDRHI" );
     outline0( "JSR DSDEFINE" );
     outline1( "STX %s", _index );
     
@@ -3279,9 +3279,9 @@ void cpu6502_dsdescriptor( Environment * _environment, char * _index, char * _ad
 
     outline1( "LDX %s", _index );
     outline0( "JSR DSDESCRIPTOR" );
-    outline0( "LDA TMPPTR" );
+    outline0( "LDA DSADDRLO" );
     outline1( "STA %s", _address );
-    outline0( "LDA TMPPTR+1" );
+    outline0( "LDA DSADDRHI" );
     outline1( "STA %s+1", _address );
     outline0( "LDA DSSIZE" );
     outline1( "STA %s", _size );
