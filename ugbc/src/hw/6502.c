@@ -474,8 +474,7 @@ void cpu6502_math_mul_8bit_to_16bit( Environment * _environment, char *_source, 
         outline1("LDA %s", _source );
         outline0("EOR #$ff" );
         outline0("ADC #1" );
-        outline0("STA MATHPTR0"
- );
+        outline0("STA MATHPTR0" );
         outhead1("%ssecond:", label );
         outline1("LDA %s", _destination );
         outline0("AND #$80" );
@@ -493,8 +492,7 @@ void cpu6502_math_mul_8bit_to_16bit( Environment * _environment, char *_source, 
         outline0("LSR MATHPTR1");
         outline1("BCC %s_2", label);
         outline0("CLC");
-        outline0("ADC MATHPTR0"
-);
+        outline0("ADC MATHPTR0");
         outline1("%s_2:", label);
         outline0("ROR A");
         outline1("ROR %s", _other);
@@ -503,8 +501,8 @@ void cpu6502_math_mul_8bit_to_16bit( Environment * _environment, char *_source, 
         outline1("STA %s+1", _other );
 
         outline0("PLA");
-        outline0("CMP #$80");
-        outline1("BNE %sdone", label);
+        outline0("AND #$80");
+        outline1("BEQ %sdone", label);
         outline1("LDA %s", _other );
         outline0("EOR #$ff" );
         outline1("STA %s", _other );
@@ -553,8 +551,7 @@ void cpu6502_math_div_8bit_to_8bit( Environment * _environment, char *_source, c
         outline1("LDA %s", _source );
         outline0("EOR #$ff" );
         outline0("ADC #1" );
-        outline0("STA MATHPTR0"
- );
+        outline0("STA MATHPTR0" );
         outhead1("%ssecond:", label );
         outline1("LDA %s", _destination );
         outline0("AND #$80" );
@@ -566,8 +563,7 @@ void cpu6502_math_div_8bit_to_8bit( Environment * _environment, char *_source, c
         outline0("STA MATHPTR1" );
         outhead1("%sthird:", label );
 
-        outline0("LDA MATHPTR0"
- );
+        outline0("LDA MATHPTR0" );
         outline1("STA %s", _other );
         outline0("LDA #0" );
         outline1("STA %s", _other_remainder );
@@ -587,8 +583,8 @@ void cpu6502_math_div_8bit_to_8bit( Environment * _environment, char *_source, c
         outhead1("BNE %sL1", label );
 
         outline0("PLA");
-        outline0("CMP #$80");
-        outline1("BNE %sdone", label);
+        outline0("AND #$80");
+        outline1("BEQ %sdone", label);
         outline1("LDA %s", _other );
         outline0("EOR #$ff" );
         outline1("STA %s", _other );
@@ -996,25 +992,21 @@ void cpu6502_math_mul_16bit_to_32bit( Environment * _environment, char *_source,
         outline0("CLC" );
         outline1("LDA %s", _source );
         outline0("EOR #$ff" );
-        outline0("STA MATHPTR0"
- );
+        outline0("STA MATHPTR0" );
         outline1("LDA %s+1", _source );
         outline0("EOR #$ff" );
         outline0("STA MATHPTR1" );
         outline0("CLC" );
-        outline0("LDA MATHPTR0"
- );
+        outline0("LDA MATHPTR0" );
         outline0("ADC #1" );
-        outline0("STA MATHPTR0"
- );
+        outline0("STA MATHPTR0" );
         outline0("LDA MATHPTR1" );
         outline0("ADC #0" );
         outline0("STA MATHPTR1" );        
         outline1("JMP %ssecond2", label );
         outhead1("%ssecond:", label );
         outline1("LDA %s", _source );
-        outline0("STA MATHPTR0"
-);
+        outline0("STA MATHPTR0");
         outline1("LDA %s+1", _source );
         outline0("STA MATHPTR1");
         outline1("JMP %ssecond2", label );
@@ -1055,8 +1047,7 @@ void cpu6502_math_mul_16bit_to_32bit( Environment * _environment, char *_source,
 
         outhead1("%s:", label);
         outline0("LSR MATHPTR1");
-        outline0("ROR MATHPTR0"
-);
+        outline0("ROR MATHPTR0");
         outline1("BCC %s_2", label);
         outline0("LDA MATHPTR6");
         outline0("CLC");
@@ -1084,8 +1075,8 @@ void cpu6502_math_mul_16bit_to_32bit( Environment * _environment, char *_source,
         outline1("STA %s+3", _other );
 
         outline0("PLA");
-        outline0("CMP #$80");
-        outline1("BNE %sdone", label);
+        outline0("AND #$80");
+        outline1("BEQ %sdone", label);
         outline1("LDA %s", _other );
         outline0("EOR #$ff" );
         outline1("STA %s", _other );
@@ -1117,8 +1108,7 @@ void cpu6502_math_mul_16bit_to_32bit( Environment * _environment, char *_source,
     } else {
 
         outline1("LDA %s", _source );
-        outline0("STA MATHPTR0"
-);
+        outline0("STA MATHPTR0");
         outline1("LDA %s+1", _source );
         outline0("STA MATHPTR1");
         outline1("LDA %s", _destination );
@@ -1135,8 +1125,7 @@ void cpu6502_math_mul_16bit_to_32bit( Environment * _environment, char *_source,
 
         outhead1("%s:", label);
         outline0("LSR MATHPTR1");
-        outline0("ROR MATHPTR0"
-);
+        outline0("ROR MATHPTR0");
         outline1("BCC %s_2", label);
         outline0("LDA MATHPTR6");
         outline0("CLC");
@@ -1185,25 +1174,21 @@ void cpu6502_math_div_16bit_to_16bit( Environment * _environment, char *_source,
         outline0("CLC" );
         outline1("LDA %s", _source );
         outline0("EOR #$ff" );
-        outline0("STA MATHPTR0"
- );
+        outline0("STA MATHPTR0" );
         outline1("LDA %s+1", _source );
         outline0("EOR #$ff" );
         outline0("STA MATHPTR1" );
         outline0("CLC" );
-        outline0("LDA MATHPTR0"
- );
+        outline0("LDA MATHPTR0" );
         outline0("ADC #1" );
-        outline0("STA MATHPTR0"
- );
+        outline0("STA MATHPTR0" );
         outline0("LDA MATHPTR1" );
         outline0("ADC #0" );
         outline0("STA MATHPTR1" );        
         outline1("JMP %ssecond2", label );
         outhead1("%ssecond:", label );
         outline1("LDA %s", _source );
-        outline0("STA MATHPTR0"
-);
+        outline0("STA MATHPTR0");
         outline1("LDA %s+1", _source );
         outline0("STA MATHPTR1");
         outline1("JMP %ssecond2", label );
@@ -1236,8 +1221,7 @@ void cpu6502_math_div_16bit_to_16bit( Environment * _environment, char *_source,
 
         outhead1("%sthird2:", label );
 
-        outline0("LDA MATHPTR0"
- );
+        outline0("LDA MATHPTR0" );
         outline1("STA %s", _other );
         outline0("LDA MATHPTR1" );
         outline1("STA %s+1", _other );
@@ -1266,8 +1250,8 @@ void cpu6502_math_div_16bit_to_16bit( Environment * _environment, char *_source,
         outhead1("BNE %sL1", label );        
 
         outline0("PLA");
-        outline0("CMP #$80");
-        outline1("BNE %sdone", label);
+        outline0("AND #$80");
+        outline1("BEQ %sdone", label);
         outline1("LDA %s", _other );
         outline0("EOR #$ff" );
         outline1("STA %s", _other );
@@ -3123,7 +3107,7 @@ void cpu6502_number_to_string( Environment * _environment, char * _number, char 
     }
 
     outline0("LDA MATHPTR4");
-    outline0("CMP #$80" );
+    outline0("AND #$80" );
     outline1("BEQ %spositive", label );
 
     switch( _bits ) {
