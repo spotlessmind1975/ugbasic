@@ -93,10 +93,10 @@ void variable_cleanup( Environment * _environment ) {
                                 break;
                             case VT_BUFFER:
                                 if ( variable->valueBuffer ) {
-                                    outline1("%s: .byte ", variable->realName);
+                                    out1("%s: .byte ", variable->realName);
                                     int i=0;
                                     for (i=0; i<(variable->size-1); ++i ) {
-                                        outline1("%d,", variable->valueBuffer[i]);
+                                        out1("%d,", variable->valueBuffer[i]);
                                     }
                                     outline1("%d", variable->valueBuffer[(variable->size-1)]);
                                 } else {
@@ -166,10 +166,10 @@ void variable_cleanup( Environment * _environment ) {
                                 break;
                             case VT_BUFFER:
                                 if ( variable->valueBuffer ) {
-                                    outline1("%s: .byte ", variable->realName);
+                                    out1("%s: .byte ", variable->realName);
                                     int i=0;
                                     for (i=0; i<(variable->size-1); ++i ) {
-                                        outline1("%d,", variable->valueBuffer[i]);
+                                        out1("%d,", variable->valueBuffer[i]);
                                     }
                                     outline1("%d", variable->valueBuffer[(variable->size-1)]);
                                 } else {

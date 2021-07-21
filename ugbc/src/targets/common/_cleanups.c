@@ -58,8 +58,11 @@ void gameloop_cleanup( Environment * _environment ) {
 void end_compilation( Environment * _environment ) {
 
     gameloop_cleanup( _environment );
+    
     bank_cleanup( _environment );
     variable_cleanup( _environment );
+
+    target_finalization( _environment );
 
     if ( _environment->configurationFileName ) {
         linker_cleanup( _environment );

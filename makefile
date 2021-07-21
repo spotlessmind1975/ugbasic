@@ -56,6 +56,13 @@ generated/plus4/exe/%.prg: $(subst /exe/,/asm/,$(@:.prg=.asm))
 	@cl65 -Ln $(@:.prg=.lbl) -g -o $@ --mapfile $(@:.prg=.map) -u __EXEHDR__ -t plus4 -C $(subst /exe/,/cfg/,$(@:.prg=.cfg)) $(subst /exe/,/asm/,$(@:.prg=.asm))
 	@rm -f $(@:.prg=.o)
 
+generated/atari/asm/%.asm:
+	@ugbc/exe/ugbc.atari -c $(subst /asm/,/cfg/,$(@:.asm=.cfg)) $(subst generated/atari/asm/,examples/,$(@:.asm=.bas)) $@
+
+generated/atari/exe/%.xex: $(subst /exe/,/asm/,$(@:.xex=.asm))
+	cl65 -Ln $(@:.xex=.lbl) -g -Os -o $@ --mapfile $(@:.xex=.map) -t atari -C $(subst /exe/,/cfg/,$(@:.xex=.cfg)) $(subst /exe/,/asm/,$(@:.xex=.asm))
+	@rm -f $(@:.xex=.o)
+
 generated/zx/asm/%.asm:
 	@ugbc/exe/ugbc.zx $(subst generated/zx/asm/,examples/,$(@:.asm=.bas)) $@ 
 
@@ -90,3 +97,6 @@ runplus4: generated/plus4/asm/$(example).asm generated/plus4/exe/$(example).$(ou
 
 runyape: generated/plus4/asm/$(example).asm generated/plus4/exe/$(example).$(output)
 	yape generated/plus4/exe/$(example).$(output)
+
+runatari: generated/atari/asm/$(example).asm generated/atari/exe/$(example).$(output)
+	altirra generated/atari/exe/$(example).$(output)

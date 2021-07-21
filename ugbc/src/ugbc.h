@@ -651,6 +651,18 @@ typedef struct _Environment {
     int tedvarsDeployed;
 
     /**
+     * Deployed the startup for GTIA
+     */
+
+    int gtiastartupDeployed;
+
+    /**
+     * Deployed the vars for GTIA
+     */
+
+    int gtiavarsDeployed;
+
+    /**
      * Deployed plotting routine
      */
 
@@ -1016,6 +1028,7 @@ typedef struct _Environment {
 
 void begin_compilation( Environment * _environment );
 void target_initialization( Environment *_environment );
+void target_finalization( Environment * _environment );
 void end_compilation( Environment * _environment );
 void bank_cleanup( Environment * _environment );
 void gameloop_cleanup( Environment * _environment );
@@ -1353,6 +1366,7 @@ Variable *              variable_retrieve( Environment * _environment, char * _n
 Variable *              variable_retrieve_by_realname( Environment * _environment, char * _name );
 Variable *              variable_retrieve_or_define( Environment * _environment, char * _name, VariableType _type, int _value );
 Variable *              variable_store( Environment * _environment, char * _source, unsigned int _value );
+Variable *              variable_store_buffer( Environment * _environment, char * _destination, unsigned char * _buffer, int _size );
 Variable *              variable_store_string( Environment * _environment, char * _source, char * _string );
 Variable *              variable_string_asc( Environment * _environment, char * _char );
 Variable *              variable_string_chr( Environment * _environment, char * _ascii  );
