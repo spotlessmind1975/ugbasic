@@ -36,12 +36,12 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 TEXTPTR = $DB
-TEXTSIZE = $DC
-TABSTODRAW = $DD
-TEXTWW = $DE
-TEXTPEN = $DF
-TEXTPAPER = $E0
-SCREENCODE = $E1
+TEXTSIZE = $DD
+TABSTODRAW = $DE
+TEXTWW = $DF
+TEXTPEN = $E0
+TEXTPAPER = $E1
+SCREENCODE = $E2
 
 TEXTATDECODE:
     CMP #32
