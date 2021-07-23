@@ -60,7 +60,7 @@ generated/atari/asm/%.asm:
 	@ugbc/exe/ugbc.atari -c $(subst /asm/,/cfg/,$(@:.asm=.cfg)) $(subst generated/atari/asm/,examples/,$(@:.asm=.bas)) $@
 
 generated/atari/exe/%.xex: $(subst /exe/,/asm/,$(@:.xex=.asm))
-	cl65 -Ln $(@:.xex=.lbl) -g -Os -o $@ --mapfile $(@:.xex=.map) -t atari -C $(subst /exe/,/cfg/,$(@:.xex=.cfg)) $(subst /exe/,/asm/,$(@:.xex=.asm))
+	cl65 -Ln $(@:.xex=.lbl) -g -o $@ --mapfile $(@:.xex=.map) -t atari -C $(subst /exe/,/cfg/,$(@:.xex=.cfg)) $(subst /exe/,/asm/,$(@:.xex=.asm))
 	@rm -f $(@:.xex=.o)
 
 generated/zx/asm/%.asm:
