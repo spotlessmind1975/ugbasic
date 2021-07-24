@@ -44,6 +44,7 @@ YCURS:      .BYTE    0
 LOCALWW:    .BYTE    3
 EMPTYTILE:  .BYTE   32
 CURRENTMODE:    .BYTE   2
+LASTCOLOR:      .BYTE   0
 
 TMPPTR = $80    ; $81
 TMPPTR2 = $82    ; $83

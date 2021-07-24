@@ -16,6 +16,8 @@
 PLOTX    = $90 ; $91
 PLOTY    = $92
 PLOTM    = $93
+PLOTOMA  = $94
+PLOTAMA  = $95
 
 ;--------------
 
@@ -53,7 +55,7 @@ PLOT4:
     JMP PLOTP
 PLOT4B:
     LDA PLOTX
-    CMP CLIPX2
+    CMP CLIPX1
     BCS PLOT5
     BEQ PLOT5
     JMP PLOTP
@@ -88,11 +90,72 @@ PLOT5:
 
 PLOTANTIC8:
 
-    ;-------------------------
-    ;calc Y-cell
-    ;-------------------------
-    LDA PLOTY
-    TAY                         ;tbl_8,y index
+    LDA _PEN
+    CMP $2C5
+    BEQ PLOTANTIC8C1
+    CMP $2C6
+    BEQ PLOTANTIC8C2
+    CMP $2C7
+    BEQ PLOTANTIC8C3
+
+    LDA LASTCOLOR
+    CMP #1
+    BEQ PLOTANTIC8SC1
+    CMP #2
+    BEQ PLOTANTIC8SC2
+    CMP #3
+    BEQ PLOTANTIC8SC3
+
+    LDA #1
+    STA LASTCOLOR
+    JMP PLOTANTIC8SC1
+
+; PLOTANTIC8SC0:
+;     LDA _PEN
+;     STA $2C4
+;     INC LASTCOLOR
+; PLOTANTIC8C0:
+;     LDA #<PLOTORBIT40
+;     STA TMPPTR
+;     LDA #>PLOTORBIT40
+;     STA TMPPTR+1
+;     JMP PLOTANTIC8PEN
+
+PLOTANTIC8SC1:
+    LDA _PEN
+    STA $2C5
+    INC LASTCOLOR
+PLOTANTIC8C1:
+    LDA #<PLOTORBIT41
+    STA TMPPTR
+    LDA #>PLOTORBIT41
+    STA TMPPTR+1
+    JMP PLOTANTIC8PEN
+
+PLOTANTIC8SC2:
+    LDA _PEN
+    STA $2C6
+    INC LASTCOLOR
+PLOTANTIC8C2:
+    LDA #<PLOTORBIT42
+    STA TMPPTR
+    LDA #>PLOTORBIT42
+    STA TMPPTR+1
+    JMP PLOTANTIC8PEN
+
+PLOTANTIC8SC3:
+    LDA _PEN
+    STA $2C7
+    LDA #1
+    STA LASTCOLOR
+PLOTANTIC8C3:
+    LDA #<PLOTORBIT43
+    STA TMPPTR
+    LDA #>PLOTORBIT43
+    STA TMPPTR+1
+    JMP PLOTANTIC8PEN
+
+PLOTANTIC8PEN:
 
     CLC
 
@@ -100,33 +163,61 @@ PLOTANTIC8:
     ;calc X-cell, divide by 4
     ;------------------------
     LDA PLOTX
+    AND #$03
+
+    CLC
+
+    ADC TMPPTR
+    STA TMPPTR
+    LDA #0
+    ADC TMPPTR+1
+    STA TMPPTR+1
+    LDY #0
+    LDA (TMPPTR),Y
+    STA PLOTOMA
+    
+    LDA PLOTX
+    AND #$03
+    TAX
+    LDA PLOTANDBIT4,x
+    STA PLOTAMA
+
+    LDA PLOTX
     LSR                        ;lo byte / 2
     LSR                        ;lo byte / 4
     TAX                        ;tbl_8,x index
+
+    ;-------------------------
+    ;calc Y-cell
+    ;-------------------------
+    LDA PLOTY
+    TAY                         ;tbl_8,y index
 
     ;----------------------------------
     ;add x & y to calc cell point is in
     ;----------------------------------
     CLC
 
-    LDA PLOTVBASELO,Y          ;table of $9C40 row base addresses
+    LDA PLOT4VBASELO,Y          ;table of $9C40 row base addresses
     ADC PLOT4LO,X              ;+ (4 * Xcell)
     STA PLOTDEST               ;= cell address
 
-    LDA PLOTVBASEHI,Y          ;do the high byte
+    LDA PLOT4VBASEHI,Y          ;do the high byte
     ADC PLOT4HI,X
     STA PLOTDEST+1
+    
+    CLC
 
     ;---------------------------------
     ;get in-cell offset to point (0-3)
     ;---------------------------------
-    LDA PLOTX                  ;get PLOTX offset from cell topleft
-    AND #%00000011             ;2 lowest bits = (0-3)
-    TAX                        ;put into index register
+    ; LDA PLOTX                  ;get PLOTX offset from cell topleft
+    ; AND #%00000011             ;2 lowest bits = (0-3)
+    ; TAX                        ;put into index register
 
-    LDA PLOTY                  ;get PLOTY offset from cell topleft
-    AND #%00000111             ;3 lowest bits = (0-7)
-    TAY                        ;put into index register
+    ; LDA PLOTY                  ;get PLOTY offset from cell topleft
+    ; AND #%00000111             ;3 lowest bits = (0-7)
+    ; TAY                        ;put into index register
 
     ;----------------------------------------------
     ;depending on PLOTM, routine draws or erases
@@ -147,8 +238,10 @@ PLOTD4:
     ;---------
     ;set point
     ;---------
+    LDY #0
     LDA (PLOTDEST),y           ;get row with point in it
-    ORA PLOTORBIT4,x           ;isolate AND set the point
+    AND PLOTAMA
+    ORA PLOTOMA
     STA (PLOTDEST),y           ;write back to $A000
     JMP PLOTP                  ;skip the erase-point section
 
@@ -156,15 +249,18 @@ PLOTD4:
     ;erase point
     ;-----------
 PLOTE4:                          ;handled same way as setting a point
+    LDY #0
     LDA (PLOTDEST),y            ;just with opposite bit-mask
-    AND PLOTANDBIT4,x           ;isolate AND erase the point
+    AND PLOTAMA
     STA (PLOTDEST),y            ;write back to $A000
 
     JMP PLOTP
 
 PLOTG4:      
+    LDY #0
     LDA (PLOTDEST),y            
-    AND PLOTORBIT4,x            
+    AND PLOTAMA
+    ORA PLOTOMA
     CPX #0
     BEQ PLOTG0
 PLOTG1:
@@ -212,9 +308,26 @@ PLOTANDBIT4:
     .byte %11110011
     .byte %11111100
 
-PLOTORBIT4:
+PLOTORBIT40:
+    .byte %00000000
+    .byte %00000000
+    .byte %00000000
+    .byte %00000000
+
+PLOTORBIT41:
+    .byte %01000000
+    .byte %00010000
+    .byte %00000100
+    .byte %00000001
+
+PLOTORBIT42:
+    .byte %10000000
+    .byte %00100000
+    .byte %00001000
+    .byte %00000010
+
+PLOTORBIT43:
     .byte %11000000
     .byte %00110000
     .byte %00001100
     .byte %00000011
-

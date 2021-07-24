@@ -189,6 +189,7 @@ void gtia_bank_select( Environment * _environment, int _bank ) {
 
 static int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
 
+    int i;
     int screenMemoryOffset;
     int dliListStartOffset;
 
@@ -208,9 +209,35 @@ static int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _sc
         // register encoded in the bit pattern to plot the color.        
         // 40x20, 4 colors
         case BITMAP_MODE_ANTIC8:
-            cpu_store_8bit( _environment, "CURRENTWIDTH", 40 );
-            cpu_store_8bit( _environment, "CURRENTHEIGHT", 20 );
-            break;
+            // 112	Blank 8 scan lines to provide for overscan
+            DLI_BLANK( dliListCurrent, 8 );
+            // 112
+            DLI_BLANK( dliListCurrent, 8 );
+            // 112
+            DLI_BLANK( dliListCurrent, 8 );
+            // 72	\Display ANTIC mode 8 (BASIC 3) 64+8
+            // 64	|Screen memory starts at
+            // 156	/64+156*256 =40000
+            DLI_LMS( dliListCurrent, 8, 40000 );
+
+            screenMemoryOffset = dliListCurrent - dliListStart - 2;
+
+            for( i=1; i<24; ++i ) {
+                // 8	\Display ANTIC mode 8 for second mode line
+                DLI_MODE( dliListCurrent, 8 );
+            }
+
+            // 65	\JVB-Jump and wait for Vertical Blank
+            // 32	|to display list address which starts
+            // 156	/at 32+256*156=39968
+            DLI_JVB( dliListCurrent, 39968 );
+            dliListStartOffset = dliListCurrent - dliListStart - 2;
+
+            cpu_store_16bit( _environment, "CURRENTWIDTH", 40 );
+            cpu_store_16bit( _environment, "CURRENTHEIGHT", 24 );
+            cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
+            cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 40 );
+            break;        
 
         // Graphics 4 (ANTIC 9)
         // This is a two-color graphics mode with four times the resolution of GRAPHICS 3. The pixels are 4 x 4, and 48 rows of 80 
@@ -220,8 +247,8 @@ static int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _sc
         // memory is needed for a display of similiar-sized pixels.
         // 80x48, 2 colors
         case BITMAP_MODE_ANTIC9:
-            cpu_store_8bit( _environment, "CURRENTWIDTH", 80 );
-            cpu_store_8bit( _environment, "CURRENTHEIGHT", 48 );
+            cpu_store_16bit( _environment, "CURRENTWIDTH", 80 );
+            cpu_store_16bit( _environment, "CURRENTHEIGHT", 48 );
             break;
 
         // Graphics 5 (ANTIC A or 10)
@@ -230,8 +257,8 @@ static int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _sc
         // about 1K.
         // 80x48, 4 colors
         case BITMAP_MODE_ANTIC10:
-            cpu_store_8bit( _environment, "CURRENTWIDTH", 80 );
-            cpu_store_8bit( _environment, "CURRENTHEIGHT", 48 );
+            cpu_store_16bit( _environment, "CURRENTWIDTH", 80 );
+            cpu_store_16bit( _environment, "CURRENTHEIGHT", 48 );
             break;
 
         // Graphics 6 (ANTIC B or 11)
@@ -239,8 +266,8 @@ static int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _sc
         // on a full screen. Although only a single bit is used to encode the color, screen memory still requires approximately 2K.
         // 160x96, 2 colors
         case BITMAP_MODE_ANTIC11: 
-            cpu_store_8bit( _environment, "CURRENTWIDTH", 160 );
-            cpu_store_8bit( _environment, "CURRENTHEIGHT", 96 );
+            cpu_store_16bit( _environment, "CURRENTWIDTH", 160 );
+            cpu_store_16bit( _environment, "CURRENTHEIGHT", 96 );
             break;
 
         // Graphics 7 (ANTIC D or 13)
@@ -250,8 +277,8 @@ static int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _sc
         // with another 104 bytes for the display list.
         // 160x96, 4 colors
         case BITMAP_MODE_ANTIC13:
-            cpu_store_8bit( _environment, "CURRENTWIDTH", 160 );
-            cpu_store_8bit( _environment, "CURRENTHEIGHT", 96 );
+            cpu_store_16bit( _environment, "CURRENTWIDTH", 160 );
+            cpu_store_16bit( _environment, "CURRENTHEIGHT", 96 );
             break;
 
         // Graphics 8 (ANTIC F or 15)
@@ -268,8 +295,8 @@ static int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _sc
         // on background color and luminance.
         // 320x192, 4 colors
         case BITMAP_MODE_ANTIC15:
-            cpu_store_8bit( _environment, "CURRENTWIDTH", 320 );
-            cpu_store_8bit( _environment, "CURRENTHEIGHT", 192 );
+            cpu_store_16bit( _environment, "CURRENTWIDTH", 320 );
+            cpu_store_16bit( _environment, "CURRENTHEIGHT", 192 );
             break;
             
         // The following five graphics modes have no equivalent in BASIC on older machine but if indicated do correspond to
@@ -282,8 +309,8 @@ static int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _sc
         // only uses 4K of screen memory and doesn't have artifacting problems.
         // 320x192, 2 colors
         case BITMAP_MODE_ANTIC12:
-            cpu_store_8bit( _environment, "CURRENTWIDTH", 320 );
-            cpu_store_8bit( _environment, "CURRENTHEIGHT", 192 );
+            cpu_store_16bit( _environment, "CURRENTWIDTH", 320 );
+            cpu_store_16bit( _environment, "CURRENTHEIGHT", 192 );
             break;
 
         // Antic E (Graphics 15-XL computers only)
@@ -293,8 +320,8 @@ static int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _sc
         // more control, but this mode uses a lot more memory, approximately
         // 160x192, 4 colors
         case BITMAP_MODE_ANTIC14:
-            cpu_store_8bit( _environment, "CURRENTWIDTH", 160 );
-            cpu_store_8bit( _environment, "CURRENTHEIGHT", 192 );
+            cpu_store_16bit( _environment, "CURRENTWIDTH", 160 );
+            cpu_store_16bit( _environment, "CURRENTHEIGHT", 192 );
             break;
 
         // Graphics Mode 0 (ANTIC 2)
@@ -373,8 +400,8 @@ static int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _sc
             DLI_JVB( dliListCurrent, 39968 );
             dliListStartOffset = dliListCurrent - dliListStart - 2;
 
-            cpu_store_8bit( _environment, "CURRENTWIDTH", 40 );
-            cpu_store_8bit( _environment, "CURRENTHEIGHT", 25 );
+            cpu_store_16bit( _environment, "CURRENTWIDTH", 40 );
+            cpu_store_16bit( _environment, "CURRENTHEIGHT", 25 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 152 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 192 );
             break;
@@ -391,8 +418,8 @@ static int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _sc
         // (Internal # 97-122) are signed to register #1.
         // 20x24, 4 color
         case TILEMAP_MODE_ANTIC6:
-            cpu_store_8bit( _environment, "CURRENTWIDTH", 20 );
-            cpu_store_8bit( _environment, "CURRENTHEIGHT", 24 );
+            cpu_store_16bit( _environment, "CURRENTWIDTH", 20 );
+            cpu_store_16bit( _environment, "CURRENTHEIGHT", 24 );
             break;
 
         // Graphics 2 (ANTIC 7)
@@ -400,8 +427,8 @@ static int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _sc
         // Thus 12 rows of 20 characters are displayed on a full screen. Only ten rows fit on a split screen.
         // 20x12, 4 color
         case TILEMAP_MODE_ANTIC7:
-            cpu_store_8bit( _environment, "CURRENTWIDTH", 20 );
-            cpu_store_8bit( _environment, "CURRENTHEIGHT", 12 );
+            cpu_store_16bit( _environment, "CURRENTWIDTH", 20 );
+            cpu_store_16bit( _environment, "CURRENTHEIGHT", 12 );
             break;
 
         // Antic 3
@@ -411,8 +438,8 @@ static int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _sc
         // allowing you to create lowercase characters with descenders.
         // 40x24, 4 color
         case TILEMAP_MODE_ANTIC3:
-            cpu_store_8bit( _environment, "CURRENTWIDTH", 20 );
-            cpu_store_8bit( _environment, "CURRENTHEIGHT", 24 );
+            cpu_store_16bit( _environment, "CURRENTWIDTH", 20 );
+            cpu_store_16bit( _environment, "CURRENTHEIGHT", 24 );
             break;
         
         // Antic 4 (Graphics 12-XL computers only)
@@ -425,8 +452,8 @@ static int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _sc
         // to form these characters.
         // 20x24, 4 color
         case TILEMAP_MODE_ANTIC4:
-            cpu_store_8bit( _environment, "CURRENTWIDTH", 20 );
-            cpu_store_8bit( _environment, "CURRENTHEIGHT", 24 );
+            cpu_store_16bit( _environment, "CURRENTWIDTH", 20 );
+            cpu_store_16bit( _environment, "CURRENTHEIGHT", 24 );
             break;
 
         // Antic 5 (Graphics 13-XL computers only)
@@ -434,8 +461,8 @@ static int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _sc
         // The character set data is still eight bytes high so ANTIC double plots each scan line.
         // 20x24, 4 color  
         case TILEMAP_MODE_ANTIC5:
-            cpu_store_8bit( _environment, "CURRENTWIDTH", 20 );
-            cpu_store_8bit( _environment, "CURRENTHEIGHT", 24 );
+            cpu_store_16bit( _environment, "CURRENTWIDTH", 20 );
+            cpu_store_16bit( _environment, "CURRENTHEIGHT", 24 );
             break;
 
         default:
@@ -443,8 +470,8 @@ static int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _sc
     }
 
     cpu_store_16bit( _environment, "CLIPX1", 0) ;
+    cpu_store_16bit( _environment, "CLIPY2", 0) ;
     cpu_move_16bit( _environment, "CURRENTWIDTH", "CLIPX2");
-    cpu_store_16bit( _environment, "CLIPX2", 0) ;
     cpu_move_16bit( _environment, "CURRENTHEIGHT", "CLIPY2");
 
     variable_store_buffer( _environment, dli->name, dliListStart, ( dliListCurrent - dliListStart ) );
@@ -501,9 +528,9 @@ static int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _sc
     cpu_store_8bit( _environment, "_PAPER", 0x00 );
 
     outline0("SEI" );
-    outline1("LDA %s", dli->realName );
+    outline1("LDA #<%s", dli->realName );
     outline0("STA $230" );
-    outline1("LDA %s+1", dli->realName );
+    outline1("LDA #>%s", dli->realName );
     outline0("STA $231" );
     outline0("CLI" );
 
@@ -790,20 +817,20 @@ void gtia_initialization( Environment * _environment ) {
     deploy( vicstartupDeployed, "./ugbc/src/hw/gtia/startup.asm" );
 
     SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC8, 1, 40, 24, 4, "Graphics 3 (ANTIC 8)" );
-    SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC9, 1, 80, 48, 2, "Graphics 4 (ANTIC 9)"  );
-    SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC10, 1, 80, 48, 4, "Graphics 5 (ANTIC A or 10)"  );
-    SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC11, 1, 160, 96, 2, "Graphics 6 (ANTIC B or 11)"  );
-    SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC13, 1, 160, 96, 4, "Graphics 7 (ANTIC D or 13)"  );
-    SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC15, 1, 320, 192, 4, "Graphics 8 (ANTIC F or 15)"  );
-    SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC12, 1, 320, 192, 4, "Antic C (Graphics 14-XL computers only)"  );
-    SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC14, 1, 160, 192, 4, "Antic E (Graphics 15-XL computers only)"  );
+    // SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC9, 1, 80, 48, 2, "Graphics 4 (ANTIC 9)"  );
+    // SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC10, 1, 80, 48, 4, "Graphics 5 (ANTIC A or 10)"  );
+    // SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC11, 1, 160, 96, 2, "Graphics 6 (ANTIC B or 11)"  );
+    // SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC13, 1, 160, 96, 4, "Graphics 7 (ANTIC D or 13)"  );
+    // SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC15, 1, 320, 192, 4, "Graphics 8 (ANTIC F or 15)"  );
+    // SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC12, 1, 320, 192, 4, "Antic C (Graphics 14-XL computers only)"  );
+    // SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC14, 1, 160, 192, 4, "Antic E (Graphics 15-XL computers only)"  );
 
     SCREEN_MODE_DEFINE( TILEMAP_MODE_ANTIC2, 0, 40, 24, 1, "Graphics Mode 0 (ANTIC 2)"  );
-    SCREEN_MODE_DEFINE( TILEMAP_MODE_ANTIC6, 0, 20, 24, 4, "Graphics 1 (ANTIC 6)"  );
-    SCREEN_MODE_DEFINE( TILEMAP_MODE_ANTIC7, 0, 20, 12, 4, "Graphics 2 (ANTIC 7)"  );
-    SCREEN_MODE_DEFINE( TILEMAP_MODE_ANTIC3, 0, 40, 24, 4, "Antic 3"  );
-    SCREEN_MODE_DEFINE( TILEMAP_MODE_ANTIC3, 0, 20, 24, 4, "Antic 4 (Graphics 12-XL computers only)"  );
-    SCREEN_MODE_DEFINE( TILEMAP_MODE_ANTIC3, 0, 20, 24, 4, "Antic 5 (Graphics 13-XL computers only)"  );
+    // SCREEN_MODE_DEFINE( TILEMAP_MODE_ANTIC6, 0, 20, 24, 4, "Graphics 1 (ANTIC 6)"  );
+    // SCREEN_MODE_DEFINE( TILEMAP_MODE_ANTIC7, 0, 20, 12, 4, "Graphics 2 (ANTIC 7)"  );
+    // SCREEN_MODE_DEFINE( TILEMAP_MODE_ANTIC3, 0, 40, 24, 4, "Antic 3"  );
+    // SCREEN_MODE_DEFINE( TILEMAP_MODE_ANTIC3, 0, 20, 24, 4, "Antic 4 (Graphics 12-XL computers only)"  );
+    // SCREEN_MODE_DEFINE( TILEMAP_MODE_ANTIC3, 0, 20, 24, 4, "Antic 5 (Graphics 13-XL computers only)"  );
 
     outline0("JSR GTIASTARTUP");
 
