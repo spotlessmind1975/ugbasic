@@ -156,5 +156,6 @@ void vic2_scroll_text( Environment * _environment, int _direction );
 void vic2_hscroll_line( Environment * _environment, int _direction );
 void vic2_hscroll_screen( Environment * _environment, int _direction );
 void vic2_text_at( Environment * _environment, char * _x, char * _y, char * _text, char * _text_size, char * _pen, char *_ww );
+void vic2_cline( Environment * _environment, char * _characters );
 
 #endif
