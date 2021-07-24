@@ -756,9 +756,18 @@ Variable * variable_store_buffer( Environment * _environment, char * _destinatio
     Variable * destination = variable_retrieve( _environment, _destination );
     switch( destination->type ) {
         case VT_BUFFER: {
-            destination->valueBuffer = malloc( _size );
-            memcpy( destination->valueBuffer, _buffer, _size );
-            destination->size = _size;
+            if ( ! destination->valueBuffer ) {
+                destination->valueBuffer = malloc( _size );
+                memcpy( destination->valueBuffer, _buffer, _size );
+                destination->size = _size;
+            } else {
+                Variable * temporary = variable_temporary( _environment, VT_BUFFER, "(copy of buffer)");
+                temporary->valueBuffer = malloc( _size );
+                memcpy( temporary->valueBuffer, _buffer, _size );
+                temporary->size = _size;
+                destination->size = _size;
+                variable_move_naked( _environment, temporary->name, destination->name );                
+            }
             break;
         }
         default:
