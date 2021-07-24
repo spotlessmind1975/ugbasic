@@ -683,9 +683,9 @@ void gtia_busy_wait( Environment * _environment, char * _timing ) {
     outline0("LDA #$00");
     outline0("STA TMPPTR");
     outhead1("%sfirst:", label );
-    outline0("LDA $12");
+    outline0("LDA $14");
     outhead1("%ssecond:", label );
-    outline0("CMP $12");
+    outline0("CMP $14");
     outline1("BEQ %ssecond", label);
     outline0("INC TMPPTR");
     outline0("LDA TMPPTR");
