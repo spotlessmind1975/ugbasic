@@ -180,7 +180,7 @@
 // The character set data is still eight bytes high so ANTIC double plots each scan line.
 #define TILEMAP_MODE_ANTIC5         5       // 20x24, 4 color
 
-#define COLOR_COUNT         256
+#define COLOR_COUNT         255
 
 void gtia_initialization( Environment * _environment );
 
@@ -237,5 +237,6 @@ void gtia_scroll_text( Environment * _environment, int _direction );
 void gtia_hscroll_line( Environment * _environment, int _direction );
 void gtia_hscroll_screen( Environment * _environment, int _direction );
 void gtia_text_at( Environment * _environment, char * _x, char * _y, char * _text, char * _text_size, char * _pen, char *_ww );
+void gtia_cline( Environment * _environment, char * _characters );
 
 #endif

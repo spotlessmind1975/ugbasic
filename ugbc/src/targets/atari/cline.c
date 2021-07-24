@@ -50,5 +50,11 @@
 @target atari
 </usermanual> */
 void cline( Environment * _environment, char * _characters ) {
-
+    if ( _characters ) {
+        Variable * characters = NULL;
+        characters = variable_retrieve( _environment, _characters );
+        gtia_cline( _environment, characters->realName );
+    } else {
+        gtia_cline( _environment, NULL );
+    }
 }
