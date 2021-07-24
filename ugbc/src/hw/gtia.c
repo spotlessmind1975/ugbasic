@@ -247,8 +247,34 @@ static int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _sc
         // memory is needed for a display of similiar-sized pixels.
         // 80x48, 2 colors
         case BITMAP_MODE_ANTIC9:
+            // 112	Blank 8 scan lines to provide for overscan
+            DLI_BLANK( dliListCurrent, 8 );
+            // 112
+            DLI_BLANK( dliListCurrent, 8 );
+            // 112
+            DLI_BLANK( dliListCurrent, 8 );
+            // 72	\Display ANTIC mode 9 (BASIC 3) 64+9
+            // 64	|Screen memory starts at
+            // 156	/64+156*256 =40000
+            DLI_LMS( dliListCurrent, 9, 40000 );
+
+            screenMemoryOffset = dliListCurrent - dliListStart - 2;
+
+            for( i=1; i<48; ++i ) {
+                // 8	\Display ANTIC mode 9 for second mode line
+                DLI_MODE( dliListCurrent, 9 );
+            }
+
+            // 65	\JVB-Jump and wait for Vertical Blank
+            // 32	|to display list address which starts
+            // 156	/at 32+256*156=39968
+            DLI_JVB( dliListCurrent, 39968 );
+            dliListStartOffset = dliListCurrent - dliListStart - 2;
+
             cpu_store_16bit( _environment, "CURRENTWIDTH", 80 );
             cpu_store_16bit( _environment, "CURRENTHEIGHT", 48 );
+            cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
+            cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 40 );
             break;
 
         // Graphics 5 (ANTIC A or 10)
@@ -816,8 +842,8 @@ void gtia_initialization( Environment * _environment ) {
 
     deploy( vicstartupDeployed, "./ugbc/src/hw/gtia/startup.asm" );
 
-    SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC8, 1, 40, 24, 4, "Graphics 3 (ANTIC 8)" );
-    // SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC9, 1, 80, 48, 2, "Graphics 4 (ANTIC 9)"  );
+    // SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC8, 1, 40, 24, 4, "Graphics 3 (ANTIC 8)" );
+    SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC9, 1, 80, 48, 2, "Graphics 4 (ANTIC 9)"  );
     // SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC10, 1, 80, 48, 4, "Graphics 5 (ANTIC A or 10)"  );
     // SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC11, 1, 160, 96, 2, "Graphics 6 (ANTIC B or 11)"  );
     // SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC13, 1, 160, 96, 4, "Graphics 7 (ANTIC D or 13)"  );

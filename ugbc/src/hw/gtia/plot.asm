@@ -64,8 +64,10 @@ PLOT5:
     LDA CURRENTMODE
     CMP #8
     BEQ PLOTANTIC8
-    ; CMP #9
-    ; BEQ PLOTANTIC9
+    CMP #9
+    BNE PLOTANTIC9X
+    JMP PLOTANTIC9
+PLOTANTIC9X:
     ; CMP #10
     ; BEQ PLOTANTIC10
     ; CMP #11
@@ -175,7 +177,7 @@ PLOTANTIC8PEN:
     LDY #0
     LDA (TMPPTR),Y
     STA PLOTOMA
-    
+
     LDA PLOTX
     AND #$03
     TAX
@@ -206,7 +208,87 @@ PLOTANTIC8PEN:
     ADC PLOT4HI,X
     STA PLOTDEST+1
     
+    JMP PLOTGENERIC
+
+; Graphics 4 (ANTIC 9)
+; This is a two-color graphics mode with four times the resolution of GRAPHICS 3. The pixels are 4 x 4, and 48 rows of 80 
+; pixels fit on a full screen. A single bit is used to store each pixel's color register. A zero refers to the background 
+; color register and a one to the foreground color register. The mode is used primarily to conserve screen memory. 
+; Only one bit is used for the color, so eight adjacent pixels are encoded within one byte, and only half as much screen 
+; memory is needed for a display of similiar-sized pixels.
+; 80x48, 2 colors
+
+PLOTANTIC9:
+
+    LDA _PEN
+    CMP $2C5
+    BEQ PLOTANTIC9C1
+
+PLOTANTIC9SC1:
+    LDA _PEN
+    STA $2C5
+PLOTANTIC9C1:
+    LDA #<PLOTORBIT21
+    STA TMPPTR
+    LDA #>PLOTORBIT21
+    STA TMPPTR+1
+    JMP PLOTANTIC9PEN
+
+PLOTANTIC9PEN:
+
     CLC
+
+    ;------------------------
+    ;calc X-cell, divide by 8
+    ;------------------------
+    LDA PLOTX
+    AND #$07
+
+    CLC
+
+    ADC TMPPTR
+    STA TMPPTR
+    LDA #0
+    ADC TMPPTR+1
+    STA TMPPTR+1
+    LDY #0
+    LDA (TMPPTR),Y
+    STA PLOTOMA
+
+    LDA PLOTX
+    AND #$07
+    TAX
+    LDA PLOTANDBIT2,x
+    STA PLOTAMA
+
+    LDA PLOTX
+    LSR                        ;lo byte / 2
+    LSR                        ;lo byte / 4
+    LSR                        ;lo byte / 8
+    TAX                        ;tbl_8,x index
+
+    ;-------------------------
+    ;calc Y-cell
+    ;-------------------------
+    LDA PLOTY
+    TAY                         ;tbl_8,y index
+
+    ;----------------------------------
+    ;add x & y to calc cell point is in
+    ;----------------------------------
+    CLC
+
+    TXA
+    ADC PLOT4VBASELO,Y          ;table of $9C40 row base addresses
+    STA PLOTDEST               ;= cell address
+
+    LDA #0
+    ADC PLOT4VBASEHI,Y          ;do the high byte
+    STA PLOTDEST+1
+    
+    JMP PLOTGENERIC
+
+PLOTGENERIC:
 
     ;---------------------------------
     ;get in-cell offset to point (0-3)
@@ -331,3 +413,23 @@ PLOTORBIT43:
     .byte %00110000
     .byte %00001100
     .byte %00000011
+
+PLOTORBIT21:
+    .byte %10000000
+    .byte %01000000
+    .byte %00100000
+    .byte %00010000
+    .byte %00001000
+    .byte %00000100
+    .byte %00000010
+    .byte %00000001
+
+PLOTANDBIT2:
+    .byte %01111111
+    .byte %10111111
+    .byte %11011111
+    .byte %11101111
+    .byte %11110111
+    .byte %11111011
+    .byte %11111101
+    .byte %11111110
