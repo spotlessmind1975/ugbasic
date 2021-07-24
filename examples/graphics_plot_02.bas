@@ -22,7 +22,11 @@ REM eseguirà un ciclo controllato (''FOR...NEXT'') che disegnerà tutti i pixel
   x = (POSITION) 0
   FOR y = 0 TO SCREEN HEIGHT - 1
     FOR x = 0 TO SCREEN WIDTH - 1
-      PLOT x,y,WHITE
+      IF x MOD 2 == 0 THEN
+        PLOT x,y,WHITE
+      ELSE
+        PLOT x,y,BLUE
+      ENDIF
     NEXT
   NEXT
   HALT

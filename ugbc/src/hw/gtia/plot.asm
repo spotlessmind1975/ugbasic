@@ -68,8 +68,10 @@ PLOT5:
     BNE PLOTANTIC9X
     JMP PLOTANTIC9
 PLOTANTIC9X:
-    ; CMP #10
-    ; BEQ PLOTANTIC10
+    CMP #10
+    BNE PLOTANTIC10X
+    JMP PLOTANTIC10
+PLOTANTIC10X:
     ; CMP #11
     ; BEQ PLOTANTIC11
     ; CMP #13
@@ -284,6 +286,132 @@ PLOTANTIC9PEN:
 
     LDA #0
     ADC PLOT4VBASEHI,Y          ;do the high byte
+    STA PLOTDEST+1
+    
+    JMP PLOTGENERIC
+
+; Graphics 5 (ANTIC A or 10)
+; This is the four color equivalent of GRAPHICS 4 sized pixels. The pixels are 4 x 4, but two bits are required to address 
+; the four color registers. With only four adjacent pixels encoded within a byte, the screen uses twice as much memory, 
+; about 1K.
+; 80x48, 4 colors
+
+PLOTANTIC10:
+
+    LDA _PEN
+    CMP $2C5
+    BEQ PLOTANTIC10C1
+    CMP $2C6
+    BEQ PLOTANTIC10C2
+    CMP $2C7
+    BEQ PLOTANTIC10C3
+
+    LDA LASTCOLOR
+    CMP #1
+    BEQ PLOTANTIC10SC1
+    CMP #2
+    BEQ PLOTANTIC10SC2
+    CMP #3
+    BEQ PLOTANTIC10SC3
+
+    LDA #1
+    STA LASTCOLOR
+    JMP PLOTANTIC10SC1
+
+; PLOTANTIC8SC0:
+;     LDA _PEN
+;     STA $2C4
+;     INC LASTCOLOR
+; PLOTANTIC8C0:
+;     LDA #<PLOTORBIT40
+;     STA TMPPTR
+;     LDA #>PLOTORBIT40
+;     STA TMPPTR+1
+;     JMP PLOTANTIC8PEN
+
+PLOTANTIC10SC1:
+    LDA _PEN
+    STA $2C5
+    INC LASTCOLOR
+PLOTANTIC10C1:
+    LDA #<PLOTORBIT41
+    STA TMPPTR
+    LDA #>PLOTORBIT41
+    STA TMPPTR+1
+    JMP PLOTANTIC10PEN
+
+PLOTANTIC10SC2:
+    LDA _PEN
+    STA $2C6
+    INC LASTCOLOR
+PLOTANTIC10C2:
+    LDA #<PLOTORBIT42
+    STA TMPPTR
+    LDA #>PLOTORBIT42
+    STA TMPPTR+1
+    JMP PLOTANTIC10PEN
+
+PLOTANTIC10SC3:
+    LDA _PEN
+    STA $2C7
+    LDA #1
+    STA LASTCOLOR
+PLOTANTIC10C3:
+    LDA #<PLOTORBIT43
+    STA TMPPTR
+    LDA #>PLOTORBIT43
+    STA TMPPTR+1
+    JMP PLOTANTIC10PEN
+
+PLOTANTIC10PEN:
+
+    CLC
+
+    ;------------------------
+    ;calc X-cell, divide by 4
+    ;------------------------
+    LDA PLOTX
+    AND #$03
+
+    CLC
+
+    ADC TMPPTR
+    STA TMPPTR
+    LDA #0
+    ADC TMPPTR+1
+    STA TMPPTR+1
+    LDY #0
+    LDA (TMPPTR),Y
+    STA PLOTOMA
+
+    LDA PLOTX
+    AND #$03
+    TAX
+    LDA PLOTANDBIT4,x
+    STA PLOTAMA
+
+    LDA PLOTX
+    LSR                        ;lo byte / 2
+    LSR                        ;lo byte / 4
+    TAX                        ;tbl_8,x index
+
+    ;-------------------------
+    ;calc Y-cell
+    ;-------------------------
+    LDA PLOTY
+    TAY                         ;tbl_8,y index
+
+    ;----------------------------------
+    ;add x & y to calc cell point is in
+    ;----------------------------------
+    CLC
+
+    TXA
+    ADC PLOT5VBASELO,Y          ;table of $9C40 row base addresses
+    STA PLOTDEST               ;= cell address
+
+    LDA #0
+    ADC PLOT5VBASEHI,Y          ;do the high byte
     STA PLOTDEST+1
     
     JMP PLOTGENERIC
