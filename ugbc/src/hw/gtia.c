@@ -355,9 +355,35 @@ static int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _sc
         // with another 104 bytes for the display list.
         // 160x96, 4 colors
         case BITMAP_MODE_ANTIC13:
+            // 112	Blank 8 scan lines to provide for overscan
+            DLI_BLANK( dliListCurrent, 8 );
+            // 112
+            DLI_BLANK( dliListCurrent, 8 );
+            // 112
+            DLI_BLANK( dliListCurrent, 8 );
+            // 77	\Display ANTIC mode 13 (BASIC 7) 64+13
+            // 64	|Screen memory starts at
+            // 156	/64+156*256 =40000
+            DLI_LMS( dliListCurrent, 13, 0x9000 );
+
+            screenMemoryOffset = dliListCurrent - dliListStart - 2;
+
+            for( i=1; i<96; ++i ) {
+                // 8	\Display ANTIC mode 13 for second mode line
+                DLI_MODE( dliListCurrent, 13 );
+            }
+
+            // 65	\JVB-Jump and wait for Vertical Blank
+            // 32	|to display list address which starts
+            // 156	/at 32+256*156=39968
+            DLI_JVB( dliListCurrent, 39968 );
+            dliListStartOffset = dliListCurrent - dliListStart - 2;
+
             cpu_store_16bit( _environment, "CURRENTWIDTH", 160 );
             cpu_store_16bit( _environment, "CURRENTHEIGHT", 96 );
-            break;
+            cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
+            cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 40 );
+        break;
 
         // Graphics 8 (ANTIC F or 15)
         // This mode is definitely the finest resolution available on the Atari. Individual dot-sized pixels can be addressed in 
@@ -897,8 +923,8 @@ void gtia_initialization( Environment * _environment ) {
     // SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC8, 1, 40, 24, 4, "Graphics 3 (ANTIC 8)" );
     // SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC9, 1, 80, 48, 2, "Graphics 4 (ANTIC 9)"  );
     // SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC10, 1, 80, 48, 4, "Graphics 5 (ANTIC A or 10)"  );
-    SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC11, 1, 160, 96, 2, "Graphics 6 (ANTIC B or 11)"  );
-    // SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC13, 1, 160, 96, 4, "Graphics 7 (ANTIC D or 13)"  );
+    // SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC11, 1, 160, 96, 2, "Graphics 6 (ANTIC B or 11)"  );
+    SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC13, 1, 160, 96, 4, "Graphics 7 (ANTIC D or 13)"  );
     // SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC15, 1, 320, 192, 4, "Graphics 8 (ANTIC F or 15)"  );
     // SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC12, 1, 320, 192, 4, "Antic C (Graphics 14-XL computers only)"  );
     // SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC14, 1, 160, 192, 4, "Antic E (Graphics 15-XL computers only)"  );
