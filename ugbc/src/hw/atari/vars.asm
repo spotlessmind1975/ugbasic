@@ -36,7 +36,7 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 TEXTADDRESS:        .BYTE   0, 0
-BITMAPADDRESS:      .WORD   $9C40
+BITMAPADDRESS:      .WORD   $9000
 COLORMAPADDRESS:       .BYTE   0, $0
 TABCOUNT:   .BYTE    4
 XCURS:      .BYTE    0

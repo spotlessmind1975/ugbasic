@@ -72,8 +72,10 @@ PLOTANTIC9X:
     BNE PLOTANTIC10X
     JMP PLOTANTIC10
 PLOTANTIC10X:
-    ; CMP #11
-    ; BEQ PLOTANTIC11
+    CMP #11
+    BNE PLOTANTIC11X
+    JMP PLOTANTIC11
+PLOTANTIC11X:
     ; CMP #13
     ; BEQ PLOTANTIC13
     ; CMP #15
@@ -393,6 +395,81 @@ PLOTANTIC10PEN:
     LDA PLOTX
     LSR                        ;lo byte / 2
     LSR                        ;lo byte / 4
+    TAX                        ;tbl_8,x index
+
+    ;-------------------------
+    ;calc Y-cell
+    ;-------------------------
+    LDA PLOTY
+    TAY                         ;tbl_8,y index
+
+    ;----------------------------------
+    ;add x & y to calc cell point is in
+    ;----------------------------------
+    CLC
+
+    TXA
+    ADC PLOT5VBASELO,Y          ;table of $9C40 row base addresses
+    STA PLOTDEST               ;= cell address
+
+    LDA #0
+    ADC PLOT5VBASEHI,Y          ;do the high byte
+    STA PLOTDEST+1
+    
+    JMP PLOTGENERIC
+
+; Graphics 6 (ANTIC B or 11)
+; This two color graphics mode has reasonably fine resolution. The 2 x 2 sized pixels allow 96 rows of 160 pixels to fit 
+; on a full screen. Although only a single bit is used to encode the color, screen memory still requires approximately 2K.
+; 160x96, 2 colors
+
+PLOTANTIC11:
+
+    LDA _PEN
+    CMP $2C5
+    BEQ PLOTANTIC11C1
+
+PLOTANTIC11SC1:
+    LDA _PEN
+    STA $2C5
+PLOTANTIC11C1:
+    LDA #<PLOTORBIT21
+    STA TMPPTR
+    LDA #>PLOTORBIT21
+    STA TMPPTR+1
+    JMP PLOTANTIC11PEN
+
+PLOTANTIC11PEN:
+
+    CLC
+
+    ;------------------------
+    ;calc X-cell, divide by 8
+    ;------------------------
+    LDA PLOTX
+    AND #$07
+
+    CLC
+
+    ADC TMPPTR
+    STA TMPPTR
+    LDA #0
+    ADC TMPPTR+1
+    STA TMPPTR+1
+    LDY #0
+    LDA (TMPPTR),Y
+    STA PLOTOMA
+
+    LDA PLOTX
+    AND #$07
+    TAX
+    LDA PLOTANDBIT2,x
+    STA PLOTAMA
+
+    LDA PLOTX
+    LSR                        ;lo byte / 2
+    LSR                        ;lo byte / 4
+    LSR                        ;lo byte / 8
     TAX                        ;tbl_8,x index
 
     ;-------------------------
