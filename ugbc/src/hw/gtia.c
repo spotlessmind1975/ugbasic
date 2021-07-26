@@ -503,8 +503,36 @@ static int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _sc
         // more control, but this mode uses a lot more memory, approximately
         // 160x192, 4 colors
         case BITMAP_MODE_ANTIC14:
+            // 112	Blank 8 scan lines to provide for overscan
+            DLI_BLANK( dliListCurrent, 8 );
+            // 112
+            DLI_BLANK( dliListCurrent, 8 );
+            // 112
+            DLI_BLANK( dliListCurrent, 8 );
+            // 76	\Display ANTIC mode 12 64+14
+            // 64	|Screen memory starts at
+            // 156	/64+156*256 =40000
+            DLI_LMS( dliListCurrent, 14, 0x9000 );
+
+            screenMemoryOffset = dliListCurrent - dliListStart - 2;
+
+            for( i=1; i<192; ++i ) {
+                // 8	\Display ANTIC mode 15 for second mode line
+                DLI_MODE( dliListCurrent, 14 );
+            }
+
+            // 65	\JVB-Jump and wait for Vertical Blank
+            // 32	|to display list address which starts
+            // 156	/at 32+256*156=39968
+            DLI_JVB( dliListCurrent, 39968 );
+            dliListStartOffset = dliListCurrent - dliListStart - 2;
+
+            currentHeight = 192;
+            scanline = 40;
             cpu_store_16bit( _environment, "CURRENTWIDTH", 160 );
-            cpu_store_16bit( _environment, "CURRENTHEIGHT", 192 );
+            cpu_store_16bit( _environment, "CURRENTHEIGHT", currentHeight );
+            cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
+            cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 40 );
             break;
 
         // Graphics Mode 0 (ANTIC 2)
@@ -1026,8 +1054,8 @@ void gtia_initialization( Environment * _environment ) {
     // SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC11, 1, 160, 96, 2, "Graphics 6 (ANTIC B or 11)"  );
     // SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC13, 1, 160, 96, 4, "Graphics 7 (ANTIC D or 13)"  );
     // SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC15, 1, 320, 192, 1, "Graphics 8 (ANTIC F or 15)"  );
-    SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC12, 1, 320, 192, 4, "Antic C (Graphics 14-XL computers only)"  );
-    // SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC14, 1, 160, 192, 4, "Antic E (Graphics 15-XL computers only)"  );
+    // SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC12, 1, 320, 192, 4, "Antic C (Graphics 14-XL computers only)"  );
+    SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC14, 1, 160, 192, 4, "Antic E (Graphics 15-XL computers only)"  );
 
     SCREEN_MODE_DEFINE( TILEMAP_MODE_ANTIC2, 0, 40, 24, 1, "Graphics Mode 0 (ANTIC 2)"  );
     // SCREEN_MODE_DEFINE( TILEMAP_MODE_ANTIC6, 0, 20, 24, 4, "Graphics 1 (ANTIC 6)"  );

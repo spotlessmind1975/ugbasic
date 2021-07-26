@@ -775,6 +775,133 @@ PLOTANTIC12PEN:
     
     JMP PLOTGENERIC
 
+; Antic E (Graphics 15-XL computers only)
+; This four-color, bit-mapped mode is sometimes known as BASIC 7 1/2. Its resolution is 160 x 192 or twice that of 
+; GRAPHIC 7. Each byte is divided into four pairs of bits. Like the character data in ANTIC 4, the bit pairs point to a
+; particular color register. The screen data, however, is not character data but individual bytes. The user has a lot
+; more control, but this mode uses a lot more memory, approximately
+; 160x192, 4 colors
+
+PLOTANTIC14:
+
+    LDA _PEN
+    CMP $2C5
+    BEQ PLOTANTIC14C1
+    CMP $2C6
+    BEQ PLOTANTIC14C2
+    CMP $2C7
+    BEQ PLOTANTIC14C3
+
+    LDA LASTCOLOR
+    CMP #1
+    BEQ PLOTANTIC14SC1
+    CMP #2
+    BEQ PLOTANTIC14SC2
+    CMP #3
+    BEQ PLOTANTIC14SC3
+
+    LDA #1
+    STA LASTCOLOR
+    JMP PLOTANTIC14SC1
+
+; PLOTANTIC8SC0:
+;     LDA _PEN
+;     STA $2C4
+;     INC LASTCOLOR
+; PLOTANTIC8C0:
+;     LDA #<PLOTORBIT40
+;     STA TMPPTR
+;     LDA #>PLOTORBIT40
+;     STA TMPPTR+1
+;     JMP PLOTANTIC8PEN
+
+PLOTANTIC14SC1:
+    LDA _PEN
+    STA $2C5
+    INC LASTCOLOR
+PLOTANTIC14C1:
+    LDA #<PLOTORBIT41
+    STA TMPPTR
+    LDA #>PLOTORBIT41
+    STA TMPPTR+1
+    JMP PLOTANTIC10PEN
+
+PLOTANTIC14SC2:
+    LDA _PEN
+    STA $2C6
+    INC LASTCOLOR
+PLOTANTIC14C2:
+    LDA #<PLOTORBIT42
+    STA TMPPTR
+    LDA #>PLOTORBIT42
+    STA TMPPTR+1
+    JMP PLOTANTIC10PEN
+
+PLOTANTIC14SC3:
+    LDA _PEN
+    STA $2C7
+    LDA #1
+    STA LASTCOLOR
+PLOTANTIC14C3:
+    LDA #<PLOTORBIT43
+    STA TMPPTR
+    LDA #>PLOTORBIT43
+    STA TMPPTR+1
+    JMP PLOTANTIC10PEN
+
+PLOTANTIC14PEN:
+
+    CLC
+
+    ;------------------------
+    ;calc X-cell, divide by 4
+    ;------------------------
+    LDA PLOTX
+    AND #$03
+
+    CLC
+
+    ADC TMPPTR
+    STA TMPPTR
+    LDA #0
+    ADC TMPPTR+1
+    STA TMPPTR+1
+    LDY #0
+    LDA (TMPPTR),Y
+    STA PLOTOMA
+
+    LDA PLOTX
+    AND #$03
+    TAX
+    LDA PLOTANDBIT4,x
+    STA PLOTAMA
+
+    LDA PLOTX
+    LSR                        ;lo byte / 2
+    LSR                        ;lo byte / 4
+    TAX                        ;tbl_8,x index
+
+    ;-------------------------
+    ;calc Y-cell
+    ;-------------------------
+    LDA PLOTY
+    TAY                         ;tbl_8,y index
+
+    ;----------------------------------
+    ;add x & y to calc cell point is in
+    ;----------------------------------
+    CLC
+
+    TXA
+    ADC PLOT5VBASELO,Y          ;table of $9C40 row base addresses
+    STA PLOTDEST               ;= cell address
+
+    LDA #0
+    ADC PLOT5VBASEHI,Y          ;do the high byte
+    STA PLOTDEST+1
+    
+    JMP PLOTGENERIC
+
 PLOTGENERIC:
 
     ;---------------------------------
