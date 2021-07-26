@@ -84,8 +84,10 @@ PLOTANTIC13X:
     BNE PLOTANTIC15X
     JMP PLOTANTIC15
 PLOTANTIC15X:
-    ; CMP #12
-    ; BEQ PLOTANTIC12
+    CMP #12
+    BNE PLOTANTIC12X
+    JMP PLOTANTIC12
+PLOTANTIC12X:
     ; CMP #14
     ; BEQ PLOTANTIC14
     JMP PLOTP
@@ -698,6 +700,80 @@ PLOTANTIC15PEN:
     
     JMP PLOTGENERIC
 
+; Antic C (Graphics 14-XL computers only)
+; This two-color, bit-mapped mode the eight bits correspond directly to the pixels on the screen. If a pixel is lit 
+; it receives its color information from color register #0, otherwise the color is set to the background color 
+; register #4. Each pixel is one scan line high and one color clock wide. This mode's advantages are that it 
+; only uses 4K of screen memory and doesn't have artifacting problems.
+; 320x192, 2 colors
+
+PLOTANTIC12:
+
+    LDA _PEN
+    CMP $2C5
+    BEQ PLOTANTIC12B1
+    STA $2C5
+
+PLOTANTIC12B1:
+    LDA #<PLOTORBIT21
+    STA TMPPTR
+    LDA #>PLOTORBIT21
+    STA TMPPTR+1
+
+PLOTANTIC12PEN:
+
+    CLC
+
+    ;------------------------
+    ;calc X-cell, divide by 8
+    ;------------------------
+    LDA PLOTX
+    AND #$07
+
+    CLC
+
+    ADC TMPPTR
+    STA TMPPTR
+    LDA #0
+    ADC TMPPTR+1
+    STA TMPPTR+1
+    LDY #0
+    LDA (TMPPTR),Y
+    STA PLOTOMA
+
+    LDA PLOTX
+    AND #$07
+    TAX
+    LDA PLOTANDBIT2,x
+    STA PLOTAMA
+
+    LDA PLOTX
+    ROR PLOTX+1                ;rotate the high byte into carry flag
+    ROR                        ;lo byte / 2
+    LSR                        ;lo byte / 4
+    LSR                        ;lo byte / 8
+    TAX                        ;tbl_8,x index
+
+    ;-------------------------
+    ;calc Y-cell
+    ;-------------------------
+    LDA PLOTY
+    TAY                         ;tbl_8,y index
+
+    ;----------------------------------
+    ;add x & y to calc cell point is in
+    ;----------------------------------
+    CLC
+
+    TXA
+    ADC PLOT6VBASELO,Y          ;table of $9C40 row base addresses
+    STA PLOTDEST               ;= cell address
+
+    LDA #0
+    ADC PLOT6VBASEHI,Y          ;do the high byte
+    STA PLOTDEST+1
+    
+    JMP PLOTGENERIC
 
 PLOTGENERIC:
 
