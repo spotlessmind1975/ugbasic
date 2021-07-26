@@ -10,6 +10,8 @@ REM
 REM Questo esempio mostra l'uso di ''CDOWN'', che incorpora un comando
 REM in una stringa per spostare il cursore in basso di 1 carattere.
 
+   TILEMAP ENABLE
+
    FOR c = 34 TO 64
       PRINT CHR$(c);" = CODE ";
       PRINT ASC(CHR$(c))

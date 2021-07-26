@@ -58,8 +58,10 @@ TEXTATANTIC2X:
     BNE TEXTATANTIC6X
     JMP TEXTATANTIC6
 TEXTATANTIC6X:    
-    ; CMP #7
-    ; BEQ TEXTATANTIC7
+    CMP #7
+    BNE TEXTATANTIC7X
+    JMP TEXTATANTIC7
+TEXTATANTIC7X:    
     ; CMP #3
     ; BEQ TEXTATANTIC3
     ; CMP #4
@@ -358,6 +360,7 @@ TEXTATDECODEE:
 ;-----------------------------------------------------------------------------
 
 TEXTATANTIC6:
+TEXTATANTIC7:
     LDA _PEN
     STA $2C5
     STA $2C6

@@ -623,8 +623,34 @@ static int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _sc
         // Thus 12 rows of 20 characters are displayed on a full screen. Only ten rows fit on a split screen.
         // 20x12, 4 color
         case TILEMAP_MODE_ANTIC7:
+            // 112	Blank 8 scan lines to provide for overscan
+            DLI_BLANK( dliListCurrent, 8 );
+            // 112
+            DLI_BLANK( dliListCurrent, 8 );
+            // 112
+            DLI_BLANK( dliListCurrent, 8 );
+            // 71	\Display ANTIC mode 2 (BASIC 0) 64+7
+            // 64	|Screen memory starts at
+            // 156	/64+156*256 =40000
+            DLI_LMS( dliListCurrent, 7, 40000 );
+
+            screenMemoryOffset = dliListCurrent - dliListStart - 2;
+
+            for(i=1; i<12; ++i ) {
+                // 2	\Display ANTIC mode 2 for second mode line
+                DLI_MODE( dliListCurrent, 7 );
+            }
+            
+            // 65	\JVB-Jump and wait for Vertical Blank
+            // 32	|to display list address which starts
+            // 156	/at 32+256*156=39968
+            DLI_JVB( dliListCurrent, 39968 );
+            dliListStartOffset = dliListCurrent - dliListStart - 2;
+
             cpu_store_16bit( _environment, "CURRENTWIDTH", 20 );
             cpu_store_16bit( _environment, "CURRENTHEIGHT", 12 );
+            cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 204 );
+            cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 224 );
             break;
 
         // Antic 3
@@ -1043,8 +1069,8 @@ void gtia_initialization( Environment * _environment ) {
     SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC14, 1, 160, 192, 4, "Antic E (Graphics 15-XL computers only)"  );
 
     // SCREEN_MODE_DEFINE( TILEMAP_MODE_ANTIC2, 0, 40, 24, 1, "Graphics Mode 0 (ANTIC 2)"  );
-    SCREEN_MODE_DEFINE( TILEMAP_MODE_ANTIC6, 0, 20, 24, 4, "Graphics 1 (ANTIC 6)"  );
-    // SCREEN_MODE_DEFINE( TILEMAP_MODE_ANTIC7, 0, 20, 12, 4, "Graphics 2 (ANTIC 7)"  );
+    // SCREEN_MODE_DEFINE( TILEMAP_MODE_ANTIC6, 0, 20, 24, 4, "Graphics 1 (ANTIC 6)"  );
+    SCREEN_MODE_DEFINE( TILEMAP_MODE_ANTIC7, 0, 20, 12, 4, "Graphics 2 (ANTIC 7)"  );
     // SCREEN_MODE_DEFINE( TILEMAP_MODE_ANTIC3, 0, 40, 24, 4, "Antic 3"  );
     // SCREEN_MODE_DEFINE( TILEMAP_MODE_ANTIC3, 0, 20, 24, 4, "Antic 4 (Graphics 12-XL computers only)"  );
     // SCREEN_MODE_DEFINE( TILEMAP_MODE_ANTIC3, 0, 20, 24, 4, "Antic 5 (Graphics 13-XL computers only)"  );
