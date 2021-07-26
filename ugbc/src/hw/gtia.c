@@ -674,10 +674,10 @@ static int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _sc
 
     if ( _screen_mode->bitmap ) {
         outline0("CLC" );
-        outline1("LDA %s", dli->realName );
+        outline1("LDA #<%s", dli->realName );
         outline1("ADC #%d", ( screenMemoryOffset & 0xff ) );
         outline0("STA TMPPTR" );
-        outline1("LDA %s+1", dli->realName );
+        outline1("LDA #>%s", dli->realName );
         outline1("ADC #%d", ( ( screenMemoryOffset >> 8 ) & 0xff ) );
         outline0("STA TMPPTR+1" );
         outline0("LDY #0" );
@@ -690,10 +690,10 @@ static int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _sc
 
         if ( screenMemoryOffset2 ) {
             outline0("CLC" );
-            outline1("LDA %s", dli->realName );
+            outline1("LDA #<%s", dli->realName );
             outline1("ADC #%d", ( screenMemoryOffset2 & 0xff ) );
             outline0("STA TMPPTR" );
-            outline1("LDA %s+1", dli->realName );
+            outline1("LDA #>%s", dli->realName );
             outline1("ADC #%d", ( ( screenMemoryOffset2 >> 8 ) & 0xff ) );
             outline0("STA TMPPTR+1" );
             outline0("LDY #0" );
@@ -710,10 +710,10 @@ static int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _sc
         }
     } else {
         outline0("CLC" );
-        outline1("LDA %s", dli->realName );
+        outline1("LDA #<%s", dli->realName );
         outline1("ADC #%d", ( screenMemoryOffset & 0xff ) );
         outline0("STA TMPPTR" );
-        outline1("LDA %s+1", dli->realName );
+        outline1("LDA #>%s", dli->realName );
         outline1("ADC #%d", ( ( screenMemoryOffset >> 8 ) & 0xff ) );
         outline0("STA TMPPTR+1" );
         outline0("LDY #0" );
@@ -727,10 +727,10 @@ static int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _sc
     }
 
     outline0("CLC" );
-    outline1("LDA %s", dli->realName );
+    outline1("LDA #<%s", dli->realName );
     outline1("ADC #%d", ( dliListStartOffset & 0xff ) );
     outline0("STA TMPPTR" );
-    outline1("LDA %s+1", dli->realName );
+    outline1("LDA #>%s", dli->realName );
     outline1("ADC #%d", ( ( dliListStartOffset >> 8 ) & 0xff ) );
     outline0("STA TMPPTR+1" );
     outline0("LDY #0" );
@@ -1042,8 +1042,8 @@ void gtia_initialization( Environment * _environment ) {
     // SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC12, 1, 320, 192, 4, "Antic C (Graphics 14-XL computers only)"  );
     SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC14, 1, 160, 192, 4, "Antic E (Graphics 15-XL computers only)"  );
 
-    SCREEN_MODE_DEFINE( TILEMAP_MODE_ANTIC2, 0, 40, 24, 1, "Graphics Mode 0 (ANTIC 2)"  );
-    // SCREEN_MODE_DEFINE( TILEMAP_MODE_ANTIC6, 0, 20, 24, 4, "Graphics 1 (ANTIC 6)"  );
+    // SCREEN_MODE_DEFINE( TILEMAP_MODE_ANTIC2, 0, 40, 24, 1, "Graphics Mode 0 (ANTIC 2)"  );
+    SCREEN_MODE_DEFINE( TILEMAP_MODE_ANTIC6, 0, 20, 24, 4, "Graphics 1 (ANTIC 6)"  );
     // SCREEN_MODE_DEFINE( TILEMAP_MODE_ANTIC7, 0, 20, 12, 4, "Graphics 2 (ANTIC 7)"  );
     // SCREEN_MODE_DEFINE( TILEMAP_MODE_ANTIC3, 0, 40, 24, 4, "Antic 3"  );
     // SCREEN_MODE_DEFINE( TILEMAP_MODE_ANTIC3, 0, 20, 24, 4, "Antic 4 (Graphics 12-XL computers only)"  );

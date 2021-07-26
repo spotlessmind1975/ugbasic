@@ -357,14 +357,14 @@ TEXTATDECODEE:
 ; TILE MODE
 ;-----------------------------------------------------------------------------
 
-TEXTATANTIC2:
+TEXTATANTIC6:
     LDA _PEN
     STA $2C5
     STA $2C6
     STA $2C7
     STA $2C8
     
-TEXTATANTIC6:
+TEXTATANTIC2:
     LDX YCURSYS
     BEQ TEXTATSKIP
 TEXTATLOOP1:
