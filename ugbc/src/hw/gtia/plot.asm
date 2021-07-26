@@ -80,8 +80,10 @@ PLOTANTIC11X:
     BNE PLOTANTIC13X
     JMP PLOTANTIC13
 PLOTANTIC13X:
-    ; CMP #15
-    ; BEQ PLOTANTIC15
+    CMP #15
+    BNE PLOTANTIC15X
+    JMP PLOTANTIC15
+PLOTANTIC15X:
     ; CMP #12
     ; BEQ PLOTANTIC12
     ; CMP #14
@@ -605,6 +607,97 @@ PLOTANTIC13PEN:
     STA PLOTDEST+1
     
     JMP PLOTGENERIC
+
+; Graphics 8 (ANTIC F or 15)
+; This mode is definitely the finest resolution available on the Atari. Individual dot-sized pixels can be addressed in 
+; this one-color, two-luminance mode. There are 192 rows of 320 dots in the full screen mode. Graphics 8 is memory 
+; intensive; it takes 8K bytes (eight pixels/byte) to address an entire screen. The color scheme is quite similar to that 
+; in GRAPHICS mode 0. Color register #2 sets the background color. Color register #1 sets the luminance. Changing the color
+; in this register has no effect, but, this doesn't mean that you are limited to just one color.
+; Fortunately, the pixels are each one half of a color clock. It takes two pixels to span one color clock made up of
+; alternating columns of complementary colors. If the background is set to black, these columns consist of blue and 
+; green stripes. If only the odd-columned pixels are plotted, you get blue pixels. If only the odd-columned pixels 
+; are plotted, you get green pixels. And if pairs of adjacent pixels are plotted, you get white. So by cleverly 
+; staggering the pixel patterns, you can achieve three colors. This method is called artifacting. This all depends
+; on background color and luminance.
+; 320x192, 3 colors
+
+PLOTANTIC15:
+
+    LDA _PEN
+    AND #$F0
+    CMP $2C6
+    BEQ PLOTANTIC15B1
+    STA $2C6
+
+PLOTANTIC15B1:
+    LDA _PEN
+    AND #$0F
+    CMP $2C5
+    BEQ PLOTANTIC15B2
+    STA $2C5
+
+PLOTANTIC15B2:
+    LDA #<PLOTORBIT21
+    STA TMPPTR
+    LDA #>PLOTORBIT21
+    STA TMPPTR+1
+
+PLOTANTIC15PEN:
+
+    CLC
+
+    ;------------------------
+    ;calc X-cell, divide by 8
+    ;------------------------
+    LDA PLOTX
+    AND #$07
+
+    CLC
+
+    ADC TMPPTR
+    STA TMPPTR
+    LDA #0
+    ADC TMPPTR+1
+    STA TMPPTR+1
+    LDY #0
+    LDA (TMPPTR),Y
+    STA PLOTOMA
+
+    LDA PLOTX
+    AND #$07
+    TAX
+    LDA PLOTANDBIT2,x
+    STA PLOTAMA
+
+    LDA PLOTX
+    ROR PLOTX+1                ;rotate the high byte into carry flag
+    ROR                        ;lo byte / 2
+    LSR                        ;lo byte / 4
+    LSR                        ;lo byte / 8
+    TAX                        ;tbl_8,x index
+
+    ;-------------------------
+    ;calc Y-cell
+    ;-------------------------
+    LDA PLOTY
+    TAY                         ;tbl_8,y index
+
+    ;----------------------------------
+    ;add x & y to calc cell point is in
+    ;----------------------------------
+    CLC
+
+    TXA
+    ADC PLOT6VBASELO,Y          ;table of $9C40 row base addresses
+    STA PLOTDEST               ;= cell address
+
+    LDA #0
+    ADC PLOT6VBASEHI,Y          ;do the high byte
+    STA PLOTDEST+1
+    
+    JMP PLOTGENERIC
+
 
 PLOTGENERIC:
 
