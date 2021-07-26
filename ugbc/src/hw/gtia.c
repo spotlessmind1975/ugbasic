@@ -724,7 +724,7 @@ static int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _sc
             DLI_JVB( dliListCurrent, 39968 );
             dliListStartOffset = dliListCurrent - dliListStart - 2;
 
-            cpu_store_16bit( _environment, "CURRENTWIDTH", 20 );
+            cpu_store_16bit( _environment, "CURRENTWIDTH", 40 );
             cpu_store_16bit( _environment, "CURRENTHEIGHT", 24 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 152 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 192 );
@@ -1123,9 +1123,9 @@ void gtia_initialization( Environment * _environment ) {
     // SCREEN_MODE_DEFINE( TILEMAP_MODE_ANTIC2, 0, 40, 24, 1, "Graphics Mode 0 (ANTIC 2)"  );
     // SCREEN_MODE_DEFINE( TILEMAP_MODE_ANTIC6, 0, 20, 24, 4, "Graphics 1 (ANTIC 6)"  );
     // SCREEN_MODE_DEFINE( TILEMAP_MODE_ANTIC7, 0, 20, 12, 4, "Graphics 2 (ANTIC 7)"  );
-    SCREEN_MODE_DEFINE( TILEMAP_MODE_ANTIC3, 0, 20, 24, 4, "Antic 3"  );
-    // SCREEN_MODE_DEFINE( TILEMAP_MODE_ANTIC3, 0, 20, 24, 4, "Antic 4 (Graphics 12-XL computers only)"  );
-    // SCREEN_MODE_DEFINE( TILEMAP_MODE_ANTIC3, 0, 20, 24, 4, "Antic 5 (Graphics 13-XL computers only)"  );
+    // SCREEN_MODE_DEFINE( TILEMAP_MODE_ANTIC3, 0, 40, 24, 4, "Antic 3"  );
+    SCREEN_MODE_DEFINE( TILEMAP_MODE_ANTIC4, 0, 40, 24, 4, "Antic 4 (Graphics 12-XL computers only)"  );
+    // SCREEN_MODE_DEFINE( TILEMAP_MODE_ANTIC5, 0, 20, 24, 4, "Antic 5 (Graphics 13-XL computers only)"  );
 
     outline0("JSR GTIASTARTUP");
 
