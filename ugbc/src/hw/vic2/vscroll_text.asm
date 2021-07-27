@@ -36,7 +36,6 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 VSCROLLT:
-    RTS
     TXA
     PHA
     TYA
@@ -88,7 +87,7 @@ VSCROLLTUPREFILL:
     CPY #232
     BNE VSCROLLTUPREFILL
 VSCROLLTUEND:
-    LDA #37
+    LDA #$37
     STA $01
 
     PLA
@@ -154,7 +153,7 @@ SCROLLFILLUP:
     CPY #40
     BNE SCROLLFILLUP
 
-    LDA #37
+    LDA #$37
     STA $01
 
     PLA
