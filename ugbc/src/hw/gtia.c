@@ -109,28 +109,13 @@ void gtia_raster_at( Environment * _environment, char * _label, char * _position
 
     MAKE_LABEL
 
+    outline0("SEI");
     outline1("LDA #<%s", _label);
     outline0("STA $0200");
     outline1("LDA #>%s", _label);
     outline0("STA $0201");
-
-    outline0("LDA #%00000001"); // enable raster interrupt signals from VIC
-    outline0("STA $D01A");
-    outline1("LDA %s", _positionlo );
-    outline0("STA $D012");
-    outline1("LDA %s", _positionhi );
-    outline0("AND #%00000001" );
-    cpu6502_beq(_environment, label);
-    outline0("LDA $D011" );
-    outline0("AND #%01111111" );
-    outline0("ORA #%10000000" );
-    outline0("STA $D011");
-    outline1("JMP %s_2", label );
-    outhead1("%s:", label );
-    outline0("LDA $D011" );
-    outline0("AND #%01111111" );
-    outline0("STA $D011");
-    outhead1("%s_2:", label );
+    outline0("LDA #192");
+    outline0("STA $D40E");
     outline0("CLI");
 
 }
@@ -146,6 +131,8 @@ void gtia_raster_at( Environment * _environment, char * _label, char * _position
  *
  */
 void gtia_next_raster( Environment * _environment ) {
+
+    outline0("RTI");
 
 }
 
@@ -164,6 +151,7 @@ void gtia_next_raster( Environment * _environment ) {
  */
 void gtia_next_raster_at( Environment * _environment, char * _label, char * _positionlo, char * _positionhi ) {
 
+    outline0("RTI");
 
 }
 
@@ -225,10 +213,12 @@ static int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _sc
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
-            for( i=1; i<24; ++i ) {
+            for( i=1; i<23; ++i ) {
                 // 8	\Display ANTIC mode 8 for second mode line
                 DLI_MODE( dliListCurrent, 8 );
             }
+
+            DLI_IRQ( dliListCurrent, 8 );
 
             // 65	\JVB-Jump and wait for Vertical Blank
             // 32	|to display list address which starts
@@ -265,10 +255,12 @@ static int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _sc
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
-            for( i=1; i<48; ++i ) {
+            for( i=1; i<47; ++i ) {
                 // 8	\Display ANTIC mode 9 for second mode line
                 DLI_MODE( dliListCurrent, 9 );
             }
+
+            DLI_IRQ( dliListCurrent, 9 );
 
             // 65	\JVB-Jump and wait for Vertical Blank
             // 32	|to display list address which starts
@@ -303,10 +295,12 @@ static int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _sc
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
-            for( i=1; i<48; ++i ) {
+            for( i=1; i<47; ++i ) {
                 // 8	\Display ANTIC mode 10 for second mode line
                 DLI_MODE( dliListCurrent, 10 );
             }
+
+            DLI_IRQ( dliListCurrent, 10 );
 
             // 65	\JVB-Jump and wait for Vertical Blank
             // 32	|to display list address which starts
@@ -340,10 +334,12 @@ static int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _sc
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
-            for( i=1; i<96; ++i ) {
+            for( i=1; i<95; ++i ) {
                 // 8	\Display ANTIC mode 11 for second mode line
                 DLI_MODE( dliListCurrent, 11 );
             }
+
+            DLI_IRQ( dliListCurrent, 10 );
 
             // 65	\JVB-Jump and wait for Vertical Blank
             // 32	|to display list address which starts
@@ -379,10 +375,12 @@ static int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _sc
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
-            for( i=1; i<96; ++i ) {
+            for( i=1; i<95; ++i ) {
                 // 8	\Display ANTIC mode 13 for second mode line
                 DLI_MODE( dliListCurrent, 13 );
             }
+
+            DLI_IRQ( dliListCurrent, 13 );
 
             // 65	\JVB-Jump and wait for Vertical Blank
             // 32	|to display list address which starts
@@ -434,11 +432,12 @@ static int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _sc
 
             screenMemoryOffset2 = dliListCurrent - dliListStart - 2;
 
-            for( i=1; i<96; ++i ) {
+            for( i=1; i<95; ++i ) {
                 // 8	\Display ANTIC mode 15 for second mode line
                 DLI_MODE( dliListCurrent, 15 );
             }
 
+            DLI_IRQ( dliListCurrent, 15 );
 
             // 65	\JVB-Jump and wait for Vertical Blank
             // 32	|to display list address which starts
@@ -477,10 +476,12 @@ static int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _sc
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
-            for( i=1; i<192; ++i ) {
+            for( i=1; i<191; ++i ) {
                 // 8	\Display ANTIC mode 15 for second mode line
                 DLI_MODE( dliListCurrent, 12 );
             }
+
+            DLI_IRQ( dliListCurrent, 12 );
 
             // 65	\JVB-Jump and wait for Vertical Blank
             // 32	|to display list address which starts
@@ -516,10 +517,12 @@ static int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _sc
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
-            for( i=1; i<192; ++i ) {
+            for( i=1; i<191; ++i ) {
                 // 8	\Display ANTIC mode 15 for second mode line
                 DLI_MODE( dliListCurrent, 14 );
             }
+
+            DLI_IRQ( dliListCurrent, 14 );
 
             // 65	\JVB-Jump and wait for Vertical Blank
             // 32	|to display list address which starts
@@ -559,10 +562,12 @@ static int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _sc
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
-            for(i=1; i<24; ++i ) {
+            for(i=1; i<23; ++i ) {
                 // 2	\Display ANTIC mode 2 for second mode line
                 DLI_MODE( dliListCurrent, 2 );
             }
+
+            DLI_IRQ( dliListCurrent, 2 );
 
             // 65	\JVB-Jump and wait for Vertical Blank
             // 32	|to display list address which starts
@@ -601,10 +606,12 @@ static int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _sc
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
-            for(i=1; i<24; ++i ) {
+            for(i=1; i<23; ++i ) {
                 // 2	\Display ANTIC mode 2 for second mode line
                 DLI_MODE( dliListCurrent, 6 );
             }
+
+            DLI_IRQ( dliListCurrent, 6 );
             
             // 65	\JVB-Jump and wait for Vertical Blank
             // 32	|to display list address which starts
@@ -636,10 +643,12 @@ static int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _sc
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
-            for(i=1; i<12; ++i ) {
+            for(i=1; i<11; ++i ) {
                 // 2	\Display ANTIC mode 2 for second mode line
                 DLI_MODE( dliListCurrent, 7 );
             }
+
+            DLI_IRQ( dliListCurrent, 7 );
             
             // 65	\JVB-Jump and wait for Vertical Blank
             // 32	|to display list address which starts
@@ -673,10 +682,12 @@ static int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _sc
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
-            for(i=1; i<24; ++i ) {
+            for(i=1; i<23; ++i ) {
                 // 2	\Display ANTIC mode 2 for second mode line
                 DLI_MODE( dliListCurrent, 3 );
             }
+
+            DLI_IRQ( dliListCurrent, 3 );
 
             // 65	\JVB-Jump and wait for Vertical Blank
             // 32	|to display list address which starts
@@ -713,10 +724,12 @@ static int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _sc
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
-            for(i=1; i<24; ++i ) {
+            for(i=1; i<23; ++i ) {
                 // 2	\Display ANTIC mode 2 for second mode line
                 DLI_MODE( dliListCurrent, 4 );
             }
+
+            DLI_IRQ( dliListCurrent, 4 );
 
             // 65	\JVB-Jump and wait for Vertical Blank
             // 32	|to display list address which starts
@@ -748,10 +761,12 @@ static int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _sc
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
-            for(i=1; i<24; ++i ) {
+            for(i=1; i<23; ++i ) {
                 // 2	\Display ANTIC mode 2 for second mode line
                 DLI_MODE( dliListCurrent, 5 );
             }
+
+            DLI_IRQ( dliListCurrent, 5 );
 
             // 65	\JVB-Jump and wait for Vertical Blank
             // 32	|to display list address which starts

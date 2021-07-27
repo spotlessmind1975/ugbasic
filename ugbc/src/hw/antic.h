@@ -131,8 +131,8 @@ load memory scan (LMS)
                                     *_list++ = ((unsigned char)( _addr & 0xff )); \
                                     *_list++ = ((unsigned char)( _addr >> 8 ));
 
-#define     DLI_IRQ( _list )      \
-                                    *_list++ = ((unsigned char)( 0x80 ));
+#define     DLI_IRQ( _list, _n )    \
+                                    *_list++ = ((unsigned char)( 0x80 | _n ));
 
 #define     DLI_HSCROLL( _list )      \
                                     *_list++ = ((unsigned char)( 0x08 ));

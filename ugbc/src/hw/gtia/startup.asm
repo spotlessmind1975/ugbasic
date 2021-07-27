@@ -1,3 +1,6 @@
+IRQLISTENER:
+    RTI
+
 GTIASTARTUP:
     LDA $0230
     STA TMPPTR
@@ -18,5 +21,25 @@ GTIASTARTUP:
     INY
     LDA (TMPPTR),Y
     STA TEXTADDRESS+1
+
+    CLC
+    LDA TMPPTR
+    ADC #23
+    STA TMPPTR
+    LDA TMPPTR+1
+    ADC #0
+    STA TMPPTR+1
+
+    SEI
+    LDA #<IRQLISTENER
+    STA $0200
+    LDA #>IRQLISTENER
+    STA $0201
+    CLI
+
+    LDY #0
+    LDA (TMPPTR),Y
+    ORA #$80
+    STA (TMPPTR),Y
 
     RTS
