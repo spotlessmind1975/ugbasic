@@ -139,7 +139,7 @@
 // color has no effect. Bits within a character are turned on in pairs to produce the luminace color. 
 // Otherwise single bits tend to produce colored artifacts on the high resolution screen. These colors
 // depend on whether the computer has a CTIA or GTIA chip, and the color of the background.
-#define TILEMAP_MODE_ANTIC2         0       // 40x24, 1 color
+#define TILEMAP_MODE_ANTIC2         2       // 40x24, 1 color
 
 // Graphics 1 (ANTIC 6)
 // This is one the expanded text modes. Each characters is 8 x 8 but the pixels are one color clock in 

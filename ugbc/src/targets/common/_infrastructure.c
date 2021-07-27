@@ -3313,7 +3313,6 @@ ScreenMode * find_screen_mode_by_suggestion( Environment * _environment, int _bi
     }
 
     if ( ! _width && ! _height && ! _colors ) {
-        // printf( "first mode: %s\n", firstMode->description );
         return firstMode;
     }
 
@@ -3341,8 +3340,6 @@ ScreenMode * find_screen_mode_by_suggestion( Environment * _environment, int _bi
         }
         screenMode = screenMode->next;
     }
-
-    // printf( "best mode for %dx%d %d: %s\n", _width, _height, _colors, bestMode->description );
    
     return bestMode;
 
