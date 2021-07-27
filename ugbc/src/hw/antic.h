@@ -218,4 +218,10 @@ Decimal  Hex
                                     *list++ = ((unsigned char)(addr&0xff)); \
                                     *list++ = ((unsigned char)(addr>>8));
 
+void antic_initialization( Environment * _environment );
+
+void antic_next_raster( Environment * _environment );
+void antic_next_raster_at( Environment * _environment, char * _label, char * _positionlo, char * _positionhi );
+void antic_raster_at( Environment * _environment, char * _label, char * _positionlo, char * _positionhi );
+
 #endif

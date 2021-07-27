@@ -78,10 +78,10 @@ void every_ticks_call( Environment * _environment, char * _timing, char * _label
 
     cpu_ei( _environment );
 
-    gtia_next_raster( _environment );
+    antic_next_raster( _environment );
 
     cpu_label( _environment, skipEveryRoutineLabel );
 
-    gtia_raster_at( _environment, everyRoutineLabel, "0", "42" );
+    antic_raster_at( _environment, everyRoutineLabel, "#$1", "#$0" );
 
 }

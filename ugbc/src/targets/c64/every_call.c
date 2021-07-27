@@ -82,6 +82,6 @@ void every_ticks_call( Environment * _environment, char * _timing, char * _label
 
     cpu_label( _environment, skipEveryRoutineLabel );
 
-    vic2_raster_at( _environment, everyRoutineLabel, "0", "42" );
+    vic2_raster_at( _environment, everyRoutineLabel, "#0", "#42" );
 
 }

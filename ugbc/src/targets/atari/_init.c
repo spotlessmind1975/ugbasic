@@ -76,6 +76,7 @@ void target_initialization( Environment * _environment ) {
 
     setup_text_variables( _environment );
 
+    antic_initialization( _environment );
     gtia_initialization( _environment );
 
 }

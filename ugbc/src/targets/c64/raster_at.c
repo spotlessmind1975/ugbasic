@@ -77,8 +77,8 @@ void raster_at( Environment * _environment, char * _label, int _position ) {
     
     outline2("; RASTER AT %d WITH %s", _position, _label);
 
-    char positionlo[MAX_TEMPORARY_STORAGE]; sprintf( positionlo, "%2.2x", (unsigned char) ( _position & 0xff )  );
-    char positionhi[MAX_TEMPORARY_STORAGE]; sprintf( positionhi, "%2.2x", (unsigned char) ( ( ( _position >> 8 ) & 0x01 ) << 8 ) );
+    char positionlo[MAX_TEMPORARY_STORAGE]; sprintf( positionlo, "#$%2.2x", (unsigned char) ( _position & 0xff )  );
+    char positionhi[MAX_TEMPORARY_STORAGE]; sprintf( positionhi, "#$%2.2x", (unsigned char) ( ( ( _position >> 8 ) & 0x01 ) << 8 ) );
 
     vic2_raster_at( _environment, _label, positionlo, positionhi );
 

@@ -190,9 +190,6 @@ void gtia_background_color( Environment * _environment, char * _index, char * _b
 void gtia_border_color( Environment * _environment, char * _border_color );
 void gtia_collision( Environment * _environment, char * _sprite_mask, char * _result );
 void gtia_hit( Environment * _environment, char * _sprite_mask, char * _result );
-void gtia_next_raster( Environment * _environment );
-void gtia_next_raster_at( Environment * _environment, char * _label, char * _positionlo, char * _positionhi );
-void gtia_raster_at( Environment * _environment, char * _label, char * _positionlo, char * _positionhi );
 void gtia_sprite_common_color( Environment * _environment, char * _index, char * _common_color );
 void gtia_bitmap_enable( Environment * _environment, int _width, int _height, int _colors );
 void gtia_bitmap_disable( Environment * _environment );

@@ -651,6 +651,12 @@ typedef struct _Environment {
     int tedvarsDeployed;
 
     /**
+     * Deployed the startup for ANTIC
+     */
+
+    int anticstartupDeployed;
+
+    /**
      * Deployed the startup for GTIA
      */
 
@@ -742,6 +748,12 @@ typedef struct _Environment {
      *  Deployed the code for horizontal line scrolling
      */
     int textHScrollScreenDeployed;
+
+    /**
+     * Deployed the raster routine
+     */
+
+    int rasterDeployed;
 
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
