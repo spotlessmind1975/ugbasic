@@ -36,11 +36,12 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 VSCROLLT:
+    RTS
     TXA
     PHA
     TYA
     PHA
-    LDA #COPYOFTEXTADDRESS+1
+    LDA #$36
     STA $01
     LDA DIRECTION
     CMP #$80
@@ -87,7 +88,7 @@ VSCROLLTUPREFILL:
     CPY #232
     BNE VSCROLLTUPREFILL
 VSCROLLTUEND:
-    LDA #COPYOFTEXTADDRESS2
+    LDA #37
     STA $01
 
     PLA
@@ -153,7 +154,7 @@ SCROLLFILLUP:
     CPY #40
     BNE SCROLLFILLUP
 
-    LDA #COPYOFTEXTADDRESS2
+    LDA #37
     STA $01
 
     PLA

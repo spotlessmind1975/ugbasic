@@ -109,6 +109,7 @@ void test_controls_joy_01_payload( TestEnvironment * _te ) {
     begin_loop( e );
         variable_move( e, joy( e, one->name )->name, j->name );
         print( e, variable_bin( e, j->name, five->name )->name, 0 );
+        print_tab( e, 0 );
         print( e, j->name, 1 );
         variable_move( e, variable_add( e, times->name, one->name )->name, times->name );
         if_then( e, variable_compare( e, times->name, limit->name )->name );
