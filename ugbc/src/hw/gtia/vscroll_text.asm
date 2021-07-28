@@ -206,7 +206,7 @@ SCROLLFILLUP:
     BNE SCROLLFILLUP
 
     PLA
-    TYA
+    TAY
     PLA
-    TXA
+    TAX
     RTS
