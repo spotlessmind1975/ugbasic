@@ -107,8 +107,8 @@ void test_controls_joy_01_payload( TestEnvironment * _te ) {
     Variable * times = variable_define( e, "times", VT_WORD, 0 );
 
     begin_loop( e );
-        variable_move( e, joy( e, one->name )->name, j->name );
-        print( e, variable_bin( e, j->name, five->name )->name, 0 );
+        // variable_move( e, joy( e, one->name )->name, j->name );
+        // print( e, variable_bin( e, j->name, five->name )->name, 0 );
         print_tab( e, 0 );
         print( e, j->name, 1 );
         variable_move( e, variable_add( e, times->name, one->name )->name, times->name );
@@ -202,9 +202,9 @@ int test_rnd_tester( TestEnvironment * _te ) {
 
 void test_examples( ) {
 
-    create_test( "control_by_expression_01", &test_control_by_expression_01_payload, &test_control_by_expression_01_tester );    
+    // create_test( "control_by_expression_01", &test_control_by_expression_01_payload, &test_control_by_expression_01_tester );    
     create_test( "controls_joy_01", &test_controls_joy_01_payload, &test_controls_joy_01_tester );    
-    create_test( "controls_keyboard_01", &test_controls_keyboard_01_payload, &test_controls_keyboard_01_tester );    
-    create_test( "rnd", &test_rnd_payload, &test_rnd_tester );    
+    // create_test( "controls_keyboard_01", &test_controls_keyboard_01_payload, &test_controls_keyboard_01_tester );    
+    // create_test( "rnd", &test_rnd_payload, &test_rnd_tester );    
 
 }

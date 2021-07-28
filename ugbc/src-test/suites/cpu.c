@@ -1333,6 +1333,91 @@ int test_cpu_bit_check_extended_testerB( TestEnvironment * _te ) {
 
 }
 
+//===========================================================================
+
+void test_cpu_number_to_string_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * value = variable_define( e, "e", VT_BYTE, 42 );
+    Variable * address = variable_temporary( e, VT_ADDRESS, "(temporary for PRINT)");
+    Variable * size = variable_temporary( e, VT_BYTE, "(temporary for PRINT)");
+    Variable * tmp = variable_temporary( e, VT_DSTRING, "(temporary for PRINT)");
+    variable_store_string( e, tmp->name, "          " );
+
+    cpu_dswrite( e, tmp->realName );
+    cpu_dsdescriptor( e, tmp->realName, address->realName, size->realName );
+
+    cpu_number_to_string( e, value->realName, address->realName, size->realName, VT_BITWIDTH( value->type ), VT_SIGNED( value->type ) );
+
+    cpu_dsresize( e, tmp->realName, size->realName );
+
+    _te->trackedVariables[0] = tmp;
+
+}
+
+int test_cpu_number_to_string_tester( TestEnvironment * _te ) {
+
+    Variable * tmp = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+
+    return strcmp( tmp->valueString, "42" ) == 0;
+
+}
+
+//===========================================================================
+
+void test_cpu_number_to_string_payloadB( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * value = variable_define( e, "e", VT_BYTE, 42 );
+    Variable * address = variable_temporary( e, VT_ADDRESS, "(temporary for PRINT)");
+    Variable * size = variable_temporary( e, VT_BYTE, "(temporary for PRINT)");
+    Variable * tmp = variable_temporary( e, VT_DSTRING, "(temporary for PRINT)");
+
+    variable_store_string( e, tmp->name, "          " );
+    cpu_dswrite( e, tmp->realName );
+    cpu_dsdescriptor( e, tmp->realName, address->realName, size->realName );
+    cpu_number_to_string( e, value->realName, address->realName, size->realName, VT_BITWIDTH( value->type ), VT_SIGNED( value->type ) );
+    cpu_dsresize( e, tmp->realName, size->realName );
+
+    variable_store_string( e, tmp->name, "          " );
+    cpu_dswrite( e, tmp->realName );
+    cpu_dsdescriptor( e, tmp->realName, address->realName, size->realName );
+    cpu_number_to_string( e, value->realName, address->realName, size->realName, VT_BITWIDTH( value->type ), VT_SIGNED( value->type ) );
+    cpu_dsresize( e, tmp->realName, size->realName );
+
+    variable_store_string( e, tmp->name, "          " );
+    cpu_dswrite( e, tmp->realName );
+    cpu_dsdescriptor( e, tmp->realName, address->realName, size->realName );
+    cpu_number_to_string( e, value->realName, address->realName, size->realName, VT_BITWIDTH( value->type ), VT_SIGNED( value->type ) );
+    cpu_dsresize( e, tmp->realName, size->realName );
+
+    variable_store_string( e, tmp->name, "          " );
+    cpu_dswrite( e, tmp->realName );
+    cpu_dsdescriptor( e, tmp->realName, address->realName, size->realName );
+    cpu_number_to_string( e, value->realName, address->realName, size->realName, VT_BITWIDTH( value->type ), VT_SIGNED( value->type ) );
+    cpu_dsresize( e, tmp->realName, size->realName );
+
+    variable_store_string( e, tmp->name, "          " );
+    cpu_dswrite( e, tmp->realName );
+    cpu_dsdescriptor( e, tmp->realName, address->realName, size->realName );
+    cpu_number_to_string( e, value->realName, address->realName, size->realName, VT_BITWIDTH( value->type ), VT_SIGNED( value->type ) );
+    cpu_dsresize( e, tmp->realName, size->realName );
+
+    _te->trackedVariables[0] = tmp;
+
+}
+
+int test_cpu_number_to_string_testerB( TestEnvironment * _te ) {
+
+    Variable * tmp = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+
+    return strcmp( tmp->valueString, "42" ) == 0;
+
+}
+
+
 
 
 void test_cpu( ) {
@@ -1368,5 +1453,7 @@ void test_cpu( ) {
     create_test( "cpu_math_mul2_const_16bit", &test_cpu_math_mul2_const_16bit_payload, &test_cpu_math_mul2_const_16bit_tester );
     create_test( "cpu_math_mul2_const_32bit", &test_cpu_math_mul2_const_32bit_payload, &test_cpu_math_mul2_const_32bit_tester );
     create_test( "cpu_math_mul2_const_8bit", &test_cpu_math_mul2_const_8bit_payload, &test_cpu_math_mul2_const_8bit_tester );
+    create_test( "cpu_number_to_string_payload", &test_cpu_number_to_string_payload, &test_cpu_number_to_string_tester );
+    create_test( "cpu_number_to_string_payloadB", &test_cpu_number_to_string_payloadB, &test_cpu_number_to_string_testerB );
 
 }
