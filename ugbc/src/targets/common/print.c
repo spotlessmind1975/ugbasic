@@ -112,7 +112,9 @@ void print( Environment * _environment, char * _value, int _new_line ) {
                 Variable * size = variable_temporary( _environment, VT_BYTE, "(temporary for PRINT)");
                 Variable * tmp = variable_temporary( _environment, VT_DSTRING, "(temporary for PRINT)");
                 variable_store_string( _environment, tmp->name, "          " );
-                
+
+                cpu_dswrite( _environment, tmp->realName );
+
                 cpu_dsdescriptor( _environment, tmp->realName, address->realName, size->realName );
 
                 cpu_number_to_string( _environment, value->realName, address->realName, size->realName, VT_BITWIDTH( value->type ), VT_SIGNED( value->type ) );
