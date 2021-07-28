@@ -72,13 +72,21 @@ void atari_inkey( Environment * _environment, char * _pressed, char * _key ) {
     outline0("LDA #$0");
     outline1("STA %s", _key );
 
-    outline0("LDX $02FB");
-    outline0("CMP #$00");
-    outline1("BNE %snokey", label );
+    outline0("LDY $02F2");
+    outline0("CPY #$FF");
+    outline1("BEQ %snokey", label );
+
+    outline0("LDA #<KEYCODE2ATASCII");
+    outline0("STA TMPPTR");
+    outline0("LDA #>KEYCODE2ATASCII");
+    outline0("STA TMPPTR+1");
+    outline0("LDA (TMPPTR),Y" );
+    outline1("BEQ %snokey", label );
 
     outline1("STA %s", _key );
     outline0("LDA #$FF");
     outline1("STA %s", _pressed );
+    outline0("STA $02F2" );
 
     outhead1("%snokey:", label );
    
