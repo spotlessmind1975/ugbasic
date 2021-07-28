@@ -107,6 +107,7 @@ Variable * joy( Environment * _environment, char * _port ) {
     outhead1("%send:", label );
     outline1("LDA %s", result->realName);
     outline0("EOR #$ff");
+    outline0("AND #$1f");
     outline1("STA %s", result->realName);
     outhead1("%send2:", label );
 
