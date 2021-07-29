@@ -11,15 +11,22 @@ REM Questo esempio disegnerà cerchi casuali sullo schermo.
     BITMAP ENABLE
     CLS
     INK RED
-    GR LOCATE SCREEN WIDTH/2,SCREEN HEIGHT/2
-    CIRCLE ,,45
+    w = SCREEN WIDTH / 2
+    h = SCREEN HEIGHT / 2
+    IF SCREEN HEIGHT > SCREEN WIDTH THEN
+        d = w/2 
+    ELSE
+        d = h/2 
+    ENDIF
+    GR LOCATE w,h
+    CIRCLE ,,d
     x=(POSITION)0
     y=(POSITION)0
     r=(POSITION)0
     DO
         INK RND(SCREEN COLORS)
-        x=RND(SCREEN WIDTH)
-        y=RND(SCREEN HEIGHT)
-        r=RND(20)+1
+        x=RND(w)
+        y=RND(h)
+        r=RND(d)+1
         CIRCLE x,y,r
     LOOP

@@ -10,6 +10,13 @@ REM Questo esempio disegnerà un pentacolo, utilizzando i comandi ''CIRCLE'' e '
 
     BITMAP ENABLE
     CLS
-    CIRCLE 160,100,95
-    POLYLINE 160,6 TO 100,173 TO 250,69 TO 71,69 TO 222,173 TO 160,6
+    w = SCREEN WIDTH / 2
+    h = SCREEN HEIGHT / 2
+    IF SCREEN HEIGHT > SCREEN WIDTH THEN
+        d = w/2 
+    ELSE
+        d = h/2 
+    ENDIF
+    CIRCLE w,h,d
+    POLYLINE w-d,h-d TO w+d,h+d TO w+d,h-d TO w-d,h-d TO w-d,h+d TO w-d,h-d
     HALT
