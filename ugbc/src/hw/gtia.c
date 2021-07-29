@@ -367,7 +367,7 @@ static int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _sc
 
             screenMemoryOffset2 = dliListCurrent - dliListStart - 2;
 
-            for( i=1; i<95; ++i ) {
+            for( i=0; i<95; ++i ) {
                 // 8	\Display ANTIC mode 15 for second mode line
                 DLI_MODE( dliListCurrent, 15 );
             }
@@ -1087,7 +1087,6 @@ void gtia_initialization( Environment * _environment ) {
 
     deploy( vicstartupDeployed, "./ugbc/src/hw/gtia/startup.asm" );
 
-    SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC12, 1, 320, 192, 4, "Antic C (Graphics 14-XL computers only)"  );
     SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC15, 1, 320, 192, 1, "Graphics 8 (ANTIC F or 15)"  );
     SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC8, 1, 40, 24, 4, "Graphics 3 (ANTIC 8)" );
     SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC9, 1, 80, 48, 2, "Graphics 4 (ANTIC 9)"  );
@@ -1095,6 +1094,7 @@ void gtia_initialization( Environment * _environment ) {
     SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC11, 1, 160, 96, 2, "Graphics 6 (ANTIC B or 11)"  );
     SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC13, 1, 160, 96, 4, "Graphics 7 (ANTIC D or 13)"  );
     SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC14, 1, 160, 192, 4, "Antic E (Graphics 15-XL computers only)"  );
+    SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC12, 1, 320, 192, 4, "Antic C (Graphics 14-XL computers only)"  );
 
     SCREEN_MODE_DEFINE( TILEMAP_MODE_ANTIC2, 0, 40, 24, 1, "Graphics Mode 0 (ANTIC 2)"  );
     SCREEN_MODE_DEFINE( TILEMAP_MODE_ANTIC6, 0, 20, 24, 4, "Graphics 1 (ANTIC 6)"  );
