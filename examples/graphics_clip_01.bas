@@ -14,7 +14,7 @@ REM Questo esempio mostra l'effetto dell'utilizzo del comando ''CLIP''.
     r = (POSITION) 0
     FOR r=4 TO 96 STEP 4
         GR LOCATE 10, r
-        ELLIPSE ,,r+9,r
+        CIRCLE ,,r+9
     NEXT
 
     HALT
