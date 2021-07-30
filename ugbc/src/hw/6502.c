@@ -801,18 +801,25 @@ void cpu6502_less_than_16bit( Environment * _environment, char *_source, char *_
     MAKE_LABEL
 
     if ( _signed ) {
-        outline1("LDA %s", _source);
-        outline1("CMP %s", _destination);
-        outline1("LDA %s+1", _source);
-        outline1("SBC %s+1", _destination);
-        outline1("BVC %sv0", label );
+
+        outline0("SEC");
+        outline1("LDA %s+1", _source );
+        outline1("SBC %s+1", _destination );
+        outline1("BVC %sLABEL1", label);
         outline0("EOR #$80" );
-        outhead1("%sv0:", label );
-        outline1("BMI %smi", label );
+        outhead1("%sLABEL1:", label );
+        outline1("BMI %sLABEL4", label );
+        outline1("BVC %sLABEL2", label );
+        outline0("EOR #$80" );
+        outhead1("%sLABEL2:", label );
+        outline1("BNE %sLABEL3", label );
+        outline1("LDA %s", _source );
+        outline1("SBC %s", _destination );
         if ( _equal ) {
-            outline1("BEQ %smi", label );
-        }        
-        outhead1("%spl:", label );
+            outline1("BEQ %sLABEL4", label );
+        }
+        outline1("BCC %sLABEL4", label );
+        outhead1("%sLABEL3:", label );
         outline0("LDA #0" );
         if ( _other ) {
             outline1("STA %s", _other);
@@ -820,7 +827,7 @@ void cpu6502_less_than_16bit( Environment * _environment, char *_source, char *_
             outline1("STA %s", _destination);
         }
         outline1("JMP %sen", label );
-        outhead1("%smi:", label );
+        outhead1("%sLABEL4:", label );
         outline0("LDA #$ff" );
         if ( _other ) {
             outline1("STA %s", _other);
@@ -837,10 +844,10 @@ void cpu6502_less_than_16bit( Environment * _environment, char *_source, char *_
         outhead1("%s_1:", label);
         outline1("LDA %s", _source);
         outline1("CMP %s", _destination );
-        outline1("BCC %s", label);
         if ( _equal ) {
             outline1("BEQ %s", label);
         }
+        outline1("BCC %s", label);
         outhead1("%s_0:", label);
         outline0("LDA #0" );
         if ( _other ) {
