@@ -78,7 +78,7 @@ void gtia_border_color( Environment * _environment, char * _border_color ) {
 void gtia_background_color( Environment * _environment, char * _index, char * _background_color ) {
  
     outline1("LDA %s", _index);
-    outline0("AND #$03");
+    outline0("AND #$07");
     outline0("TAX");
     outline1("LDA %s", _background_color );
     outline0("AND #$0f" );
