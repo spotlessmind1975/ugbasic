@@ -1892,10 +1892,32 @@ void z80_mem_move( Environment * _environment, char *_source, char *_destination
 
 }
 
+void z80_mem_move_direct( Environment * _environment, char *_source, char *_destination,  char *_size ) {
+
+    outline1("LD HL,%s", _source);
+    outline1("LD DE,%s", _destination);
+    outline1("LD A, (%s)", _size);
+    outline0("LD C, A");
+    outline0("LD B, 0");
+    outline0("LDIR");
+
+}
+
 void z80_mem_move_size( Environment * _environment, char *_source, char *_destination, int _size ) {
 
     outline1("LD HL,(%s)", _source);
     outline1("LD DE,(%s)", _destination);
+    outline1("LD A, $%2.2x", _size);
+    outline0("LD C, A");
+    outline0("LD B, 0");
+    outline0("LDIR");
+
+}
+
+void z80_mem_move_direct_size( Environment * _environment, char *_source, char *_destination, int _size ) {
+
+    outline1("LD HL,%s", _source);
+    outline1("LD DE,%s", _destination);
     outline1("LD A, $%2.2x", _size);
     outline0("LD C, A");
     outline0("LD B, 0");

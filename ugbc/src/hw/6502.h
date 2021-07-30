@@ -113,7 +113,9 @@ void cpu6502_store_32bit( Environment * _environment, char *_source, int _value 
 void cpu6502_store_8bit( Environment * _environment, char *_source, int _value );
 void cpu6502_store_8bit_indirect( Environment * _environment, char *_source, int _value );
 void cpu6502_mem_move( Environment * _environment, char *_source, char *_destination,  char *_size );
+void cpu6502_mem_move_direct( Environment * _environment, char *_source, char *_destination,  char *_size );
 void cpu6502_mem_move_size( Environment * _environment, char *_source, char *_destination, int _size );
+void cpu6502_mem_move_direct_size( Environment * _environment, char *_source, char *_destination, int _size );
 void cpu6502_mem_move_displacement( Environment * _environment, char *_source, char *_destination, char * _displacement, char *_size );
 void cpu6502_compare_memory( Environment * _environment, char *_source, char *_destination, char *_size, char *_result, int _equal );
 void cpu6502_compare_memory_size( Environment * _environment, char *_source, char *_destination, int _size, char *_result, int _equal );
@@ -238,7 +240,9 @@ void cpu6502_complement2_32bit( Environment * _environment, char * _source, char
 #define cpu_store_8bit( _environment, _source, _value  ) cpu6502_store_8bit( _environment, _source, _value  )
 #define cpu_store_8bit_indirect( _environment, _source, _value ) cpu6502_store_8bit_indirect( _environment, _source, _value )
 #define cpu_mem_move( _environment, _source, _destination, _size ) cpu6502_mem_move( _environment, _source, _destination, _size )
+#define cpu_mem_move_direct( _environment, _source, _destination, _size ) cpu6502_mem_move_direct( _environment, _source, _destination, _size )
 #define cpu_mem_move_size( _environment, _source, _destination, _size ) cpu6502_mem_move_size( _environment, _source, _destination, _size )
+#define cpu_mem_move_direct_size( _environment, _source, _destination, _size ) cpu6502_mem_move_direct_size( _environment, _source, _destination, _size )
 #define cpu_mem_move_displacement( _environment, _source, _destination, _displacement, _size ) cpu6502_mem_move_displacement( _environment, _source, _destination, _displacement, _size )
 #define cpu_compare_memory( _environment, _source, _destination, _size, _result, _equal ) cpu6502_compare_memory( _environment, _source, _destination, _size, _result, _equal )
 #define cpu_compare_memory_size( _environment, _source, _destination, _size, _result, _equal ) cpu6502_compare_memory_size( _environment, _source, _destination, _size, _result, _equal )

@@ -789,10 +789,10 @@ static int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _sc
     outline0("STA TMPPTR+1" );
     outline0("LDY #0" );
 
-    outline1("LDA %s", dli->realName );
+    outline1("LDA #<%s", dli->realName );
     outline0("STA (TMPPTR),Y" );
     outline0("INY" );
-    outline1("LDA %s+1", dli->realName );
+    outline1("LDA #>%s", dli->realName );
     outline0("STA (TMPPTR),Y" );
 
     cpu_store_8bit( _environment, "_PEN", 0x10 );
