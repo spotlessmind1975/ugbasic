@@ -35,14 +35,14 @@
 
 #define COLOR_BLACK					0x00
 #define COLOR_WHITE					0x0f
-#define COLOR_RED					0x1d
+#define COLOR_RED					0x48
 #define COLOR_VIOLET				0x44
 #define COLOR_GREEN					0xa2
 #define COLOR_BLUE					0x62
 #define COLOR_YELLOW				0xda
 #define COLOR_ORANGE				0x2a
-#define COLOR_BROWN					0x22
-#define COLOR_LIGHT_RED				0x1f
+#define COLOR_BROWN					0x14
+#define COLOR_LIGHT_RED				0x4f
 #define COLOR_DARK_GREY				0x04
 #define COLOR_GREY					0x08
 #define COLOR_LIGHT_GREEN			0xa8
@@ -50,10 +50,10 @@
 #define COLOR_LIGHT_GREY			0x0b
 #define COLOR_MAGENTA				0x1e
 #define COLOR_PURPLE				COLOR_VIOLET
-#define COLOR_LAVENDER       		0x48
+#define COLOR_LAVENDER       		0x55
 #define COLOR_GOLD       			0xd6
 #define COLOR_TURQUOISE       		0x78
-#define COLOR_TAN       		    0x77
+#define COLOR_TAN       		    0x65
 #define COLOR_YELLOW_GREEN       	0xaa
 #define COLOR_OLIVE_GREEN       	0xa6
 #define COLOR_PINK       			0x3a

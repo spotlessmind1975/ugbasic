@@ -55,7 +55,6 @@ void paper( Environment * _environment, char * _color ) {
 
     variable_move( _environment, color->name, paper->name );
     
-    gtia_background_color( _environment, "#4", color->realName );
     gtia_border_color( _environment, color->realName );
     
 }
