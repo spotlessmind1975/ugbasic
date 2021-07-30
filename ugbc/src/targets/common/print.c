@@ -128,9 +128,11 @@ void print( Environment * _environment, char * _value, int _new_line ) {
             case 0:
                 CRITICAL_PRINT_UNSUPPORTED( _value, DATATYPE_AS_STRING[value->type]);
         }
+        text_text( _environment, value->name );
+        cpu_dsfree( _environment, value->realName );
+    } else {
+        text_text( _environment, value->name );
     }
-
-    text_text( _environment, value->name );
 
     if ( _new_line ) {
         text_newline( _environment );

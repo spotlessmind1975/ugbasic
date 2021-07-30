@@ -827,7 +827,7 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                     if ( source->size != target->size ) {
                         CRITICAL_BUFFER_SIZE_MISMATCH(_source, _destination);
                     }
-                    cpu_mem_move_size( _environment, source->realName, target->realName, source->size );
+                    cpu_mem_move_direct_size( _environment, source->realName, target->realName, source->size );
                     break;
                 }
                 default:
@@ -889,7 +889,7 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
                     if ( source->size != target->size ) {
                         CRITICAL_BUFFER_SIZE_MISMATCH(_source, _destination);
                     }
-                    cpu_mem_move_size( _environment, source->realName, target->realName, source->size );
+                    cpu_mem_move_direct_size( _environment, source->realName, target->realName, source->size );
                     break;
                 }
                 default:
