@@ -157,7 +157,7 @@ SCROLLFILLUP:
     STA $01
 
     PLA
-    TYA
+    TAY
     PLA
-    TXA
+    TAX
     RTS
