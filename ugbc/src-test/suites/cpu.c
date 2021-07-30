@@ -537,16 +537,34 @@ void test_cpu_less_than_16bit_payload( TestEnvironment * _te ) {
     Variable * results1 = variable_temporary( e,VT_BYTE, "(result signed 1)");
     Variable * resultu2 = variable_temporary( e,VT_BYTE, "(result unsigned 2)");
     Variable * results2 = variable_temporary( e,VT_BYTE, "(result signed 2)");
+    Variable * resultu3 = variable_temporary( e,VT_BYTE, "(result unsigned 1)");
+    Variable * results3 = variable_temporary( e,VT_BYTE, "(result signed 1)");
+    Variable * resultu4 = variable_temporary( e,VT_BYTE, "(result unsigned 2)");
+    Variable * results4 = variable_temporary( e,VT_BYTE, "(result signed 2)");
+    Variable * resultu5 = variable_temporary( e,VT_BYTE, "(result unsigned 2)");
+    Variable * results5 = variable_temporary( e,VT_BYTE, "(result signed 2)");
 
     cpu_less_than_16bit( e, ua->realName, ub->realName, resultu1->realName, 0, 0 );
     cpu_less_than_16bit( e, ub->realName, ua->realName, resultu2->realName, 0, 0 );
     cpu_less_than_16bit( e, sa->realName, sb->realName, results1->realName, 0, 1 );
     cpu_less_than_16bit( e, sb->realName, sa->realName, results2->realName, 0, 1 );
+    cpu_less_than_16bit( e, ua->realName, ub->realName, resultu3->realName, 1, 0 );
+    cpu_less_than_16bit( e, ub->realName, ua->realName, resultu4->realName, 1, 0 );
+    cpu_less_than_16bit( e, sa->realName, sb->realName, results3->realName, 1, 1 );
+    cpu_less_than_16bit( e, sb->realName, sa->realName, results4->realName, 1, 1 );
+    cpu_less_than_16bit( e, ua->realName, ua->realName, resultu5->realName, 1, 0 );
+    cpu_less_than_16bit( e, sa->realName, sa->realName, results5->realName, 1, 1 );
 
     _te->trackedVariables[0] = resultu1;
     _te->trackedVariables[1] = resultu2;
     _te->trackedVariables[2] = results1;
     _te->trackedVariables[3] = results2;
+    _te->trackedVariables[4] = resultu3;
+    _te->trackedVariables[5] = resultu4;
+    _te->trackedVariables[6] = results3;
+    _te->trackedVariables[7] = results4;
+    _te->trackedVariables[8] = resultu5;
+    _te->trackedVariables[9] = results5;
 
 }
 
@@ -556,11 +574,35 @@ int test_cpu_less_than_16bit_tester( TestEnvironment * _te ) {
     Variable * resultu2 = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
     Variable * results1 = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
     Variable * results2 = variable_retrieve( &_te->environment, _te->trackedVariables[3]->name );
+    Variable * resultu3 = variable_retrieve( &_te->environment, _te->trackedVariables[4]->name );
+    Variable * resultu4 = variable_retrieve( &_te->environment, _te->trackedVariables[5]->name );
+    Variable * results3 = variable_retrieve( &_te->environment, _te->trackedVariables[6]->name );
+    Variable * results4 = variable_retrieve( &_te->environment, _te->trackedVariables[7]->name );
+    Variable * resultu5 = variable_retrieve( &_te->environment, _te->trackedVariables[8]->name );
+    Variable * results5 = variable_retrieve( &_te->environment, _te->trackedVariables[9]->name );
+
+    // printf( "ru1 = %2.2x\n", resultu1->value );
+    // printf( "ru2 = %2.2x\n", resultu2->value );
+    // printf( "rs1 = %2.2x\n", results1->value );
+    // printf( "rs2 = %2.2x\n", results2->value );
+    // printf( "ru3 = %2.2x\n", resultu3->value );
+    // printf( "ru4 = %2.2x\n", resultu4->value );
+    // printf( "rs3 = %2.2x\n", results3->value );
+    // printf( "rs4 = %2.2x\n", results4->value );
+    // printf( "ru5 = %2.2x\n", resultu5->value );
+    // printf( "rs5 = %2.2x\n", results5->value );
 
     return  resultu1->value == 0xff && 
             resultu2->value == 0x00 &&
             results1->value == 0x00 && 
-            results2->value == 0xff;
+            results2->value == 0xff &&
+            resultu3->value == 0xff && 
+            resultu4->value == 0x00 &&
+            results3->value == 0x00 && 
+            results4->value == 0xff &&
+            resultu5->value == 0xff && 
+            results5->value == 0xff
+            ;
 
 }
 
@@ -579,16 +621,22 @@ void test_cpu_less_than_16bit_payloadB( TestEnvironment * _te ) {
     Variable * results1 = variable_temporary( e,VT_BYTE, "(result signed 1)");
     Variable * resultu2 = variable_temporary( e,VT_BYTE, "(result unsigned 2)");
     Variable * results2 = variable_temporary( e,VT_BYTE, "(result signed 2)");
+    Variable * resultu3 = variable_temporary( e,VT_BYTE, "(result unsigned 2)");
+    Variable * results3 = variable_temporary( e,VT_BYTE, "(result signed 2)");
 
     cpu_less_than_16bit( e, ua->realName, ub->realName, resultu1->realName, 0, 0 );
     cpu_less_than_16bit( e, ub->realName, ua->realName, resultu2->realName, 0, 0 );
     cpu_less_than_16bit( e, sa->realName, sb->realName, results1->realName, 0, 1 );
     cpu_less_than_16bit( e, sb->realName, sa->realName, results2->realName, 0, 1 );
+    cpu_less_than_16bit( e, ua->realName, ua->realName, resultu3->realName, 1, 0 );
+    cpu_less_than_16bit( e, sb->realName, sa->realName, results3->realName, 1, 1 );
 
     _te->trackedVariables[0] = resultu1;
     _te->trackedVariables[1] = resultu2;
     _te->trackedVariables[2] = results1;
     _te->trackedVariables[3] = results2;
+    _te->trackedVariables[4] = resultu3;
+    _te->trackedVariables[5] = results3;
 
 }
 
@@ -598,11 +646,16 @@ int test_cpu_less_than_16bit_testerB( TestEnvironment * _te ) {
     Variable * resultu2 = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
     Variable * results1 = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
     Variable * results2 = variable_retrieve( &_te->environment, _te->trackedVariables[3]->name );
+    Variable * resultu3 = variable_retrieve( &_te->environment, _te->trackedVariables[4]->name );
+    Variable * results3 = variable_retrieve( &_te->environment, _te->trackedVariables[5]->name );
 
     return  resultu1->value == 0xff && 
             resultu2->value == 0x00 &&
             results1->value == 0x00 && 
-            results2->value == 0xff;
+            results2->value == 0xff &&
+            resultu3->value == 0xff &&
+            results3->value == 0xff
+            ;
 
 }
 
