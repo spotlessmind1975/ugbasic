@@ -3330,12 +3330,12 @@ ScreenMode * find_screen_mode_by_suggestion( Environment * _environment, int _bi
 
     while ( screenMode ) {
         if ( screenMode->bitmap == _bitmap ) {
-           screenMode->score = 100;
+           screenMode->score = 1000;
             screenMode->score -= ( _width ) ? ( abs( _width - screenMode->width ) ) : 0;
             screenMode->score -= ( _height ) ? ( abs( _height - screenMode->height ) ) : 0;
             screenMode->score -= ( _colors ) ? ( abs( _colors - screenMode->colors ) ) : 0;
         } else {
-            screenMode->score = -100;
+            screenMode->score = -1000;
         }
         screenMode = screenMode->next;
     }
