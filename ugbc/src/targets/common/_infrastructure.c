@@ -3343,14 +3343,36 @@ ScreenMode * find_screen_mode_by_suggestion( Environment * _environment, int _bi
     screenMode = _environment->screenModes;
     bestMode = firstMode;
 
+    printf( " MATCHING, first best mode score %d for %d (%s)\n", bestMode->score, bestMode->id, bestMode->description);
     while ( screenMode ) {
+        printf( " MATCHING, %d (score %d) > %d (score %d)\n", screenMode->id, screenMode->score, bestMode->id, bestMode->score);
         if ( screenMode->score > bestMode->score ) {
+             printf( "  FOUND\n");
             bestMode = screenMode;
         }
         screenMode = screenMode->next;
     }
    
+    printf( " FOUND, best mode = %d (%s)\n", bestMode->id, bestMode->description);
+    
     return bestMode;
+
+}
+
+ScreenMode * find_screen_mode_by_id( Environment * _environment, int _id ) {
+
+    ScreenMode * screenMode = _environment->screenModes;
+    ScreenMode * firstMode = NULL;
+
+    while ( screenMode ) {
+        if ( screenMode->id == _id ) {
+            firstMode = screenMode;
+            break;
+        }
+        screenMode = screenMode->next;
+    }
+
+    return firstMode;
 
 }
 

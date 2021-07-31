@@ -49,7 +49,7 @@ extern char DATATYPE_AS_STRING[][16];
 %token COMMODORE CONTROL CRSR CURSOR DELETE EQUAL FUNCTION INSERT ARROW MINUS PERIOD PLUS 
 %token POUND RUNSTOP RUN STOP SEMICOLON SLASH KEY STATE KEYSTATE KEYSHIFT CAPSLOCK CAPS LOCK ALT
 %token INPUT FREE TILEMAP EMPTY TILE EMPTYTILE PLOT GR CIRCLE DRAW LINE BOX POLYLINE ELLIPSE CLIP
-%token BACK DEBUG
+%token BACK DEBUG CAN
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -795,6 +795,9 @@ exponential:
     | SCREEN {
         $$ = variable_temporary( _environment, VT_BYTE, "(SCREEN)" )->name;
         variable_store( _environment, $$, SCREEN_CAPABILITIES );
+    }
+    | CAN SCREEN direct_integer {
+        $$ = screen_can( _environment, $3 )->name;
     }
     | TILEMAP {
         $$ = variable_temporary( _environment, VT_BYTE, "(TILEMAP)" )->name;

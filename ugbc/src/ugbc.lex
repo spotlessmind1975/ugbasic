@@ -66,6 +66,7 @@ BYTE { return (BYTE); }
 BORDER { return (BORDER); }
 C { return (C); }
 CALL { return (CALL); }
+CAN { return (CAN); }
 CAPS { return (CAPS); }
 CAPSLOCK { return (CAPSLOCK); }
 CDOWN { return (CDOWN); }

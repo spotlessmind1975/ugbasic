@@ -1285,6 +1285,7 @@ Variable *              rnd( Environment * _environment, char * _value );
 
 Variable *              scancode( Environment * _environment );
 Variable *              scanshift( Environment * _environment );
+Variable *              screen_can( Environment * _environment, int _mode );
 Variable *              screen_get_height( Environment * _environment );
 Variable *              screen_get_width( Environment * _environment );
 void                    screen_horizontal_scroll( Environment * _environment, int _displacement );
