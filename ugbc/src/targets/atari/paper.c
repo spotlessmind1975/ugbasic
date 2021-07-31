@@ -54,7 +54,8 @@ void paper( Environment * _environment, char * _color ) {
     Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_BLACK );
 
     variable_move( _environment, color->name, paper->name );
-    
+
+    gtia_back( _environment );
     gtia_border_color( _environment, color->realName );
     
 }
