@@ -1015,7 +1015,7 @@ void gtia_cls( Environment * _environment ) {
     deploy( clsDeployed, "./ugbc/src/hw/gtia/cls.asm" );
 
     outline0("LDA #$0");
-    outline0("STA TMPPTR");
+    outline0("STA PATTERN");
     outline0("JSR CLS");
 
 }
@@ -1025,7 +1025,7 @@ void gtia_clear( Environment * _environment, char * _pattern ) {
     deploy( clsDeployed, "./ugbc/src/hw/gtia/cls.asm" );
 
     outline1("LDA %s", _pattern );
-    outline0("STA TMPPTR");
+    outline0("STA PATTERN");
     outline0("JSR CLS");
 
 }
