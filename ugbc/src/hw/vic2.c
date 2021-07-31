@@ -333,13 +333,11 @@ void vic2_bank_select( Environment * _environment, int _bank ) {
     outline0("STA $DD00" );
 }
 
-void vic2_bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {
-
-    ScreenMode * mode = find_screen_mode_by_suggestion( _environment, 1, _width, _height, _colors );
+int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
 
     Variable * colormapAddress = variable_retrieve( _environment, "COLORMAPADDRESS" );
 
-    switch( mode->id ) {
+    switch( _screen_mode->id ) {
         case BITMAP_MODE_STANDARD:
             // This fix is necessary to set the starting address of the bitmap 
             // to $A000 (which is an address available on C=64).
@@ -357,6 +355,9 @@ void vic2_bitmap_enable( Environment * _environment, int _width, int _height, in
             outline0("STA $D016" );
 
             cpu_store_16bit( _environment, colormapAddress->realName, 0x8400 );
+
+            cpu_store_8bit( _environment, "_PEN", 0x10 );
+            cpu_store_8bit( _environment, "_PAPER", 0x00 );
 
             break;
         case BITMAP_MODE_MULTICOLOR:
@@ -377,14 +378,83 @@ void vic2_bitmap_enable( Environment * _environment, int _width, int _height, in
             outline0("STA $D016" );
 
             cpu_store_16bit( _environment, colormapAddress->realName, 0x8400 );
+
+            cpu_store_8bit( _environment, "_PEN", 0x10 );
+            cpu_store_8bit( _environment, "_PAPER", 0x00 );
             
             break;
+        case TILEMAP_MODE_STANDARD:
+            // Let's disable graphics!
+            outline0("LDA $D011" );
+            outline0("AND #%11011111");
+            outline0("STA $D011" );
+            outline0("LDA $D016" );
+            outline0("AND #%11101111");
+            outline0("STA $D016" );
+
+            // This fix is necessary to reset the lookup for rom character.
+            outline0("LDA $D018" );
+            outline0("AND #%11110111");
+            outline0("STA $D018" );
+
+            cpu_store_16bit( _environment, colormapAddress->realName, 0xd800 );
+
+            cpu_store_8bit( _environment, "_PEN", 0x01 );
+            cpu_store_8bit( _environment, "_PAPER", 0x00 );
+
+            break;
+        case TILEMAP_MODE_MULTICOLOR:
+            // Let's disable graphics!
+            outline0("LDA $D011" );
+            outline0("AND #%11011111");
+            outline0("STA $D011" );
+            outline0("LDA $D016" );
+            outline0("ORA #%00010000");
+            outline0("STA $D016" );
+
+            // This fix is necessary to reset the lookup for rom character.
+            outline0("LDA $D018" );
+            outline0("AND #%11110111");
+            outline0("STA $D018" );
+
+            cpu_store_16bit( _environment, colormapAddress->realName, 0xd800 );
+
+            cpu_store_8bit( _environment, "_PEN", 0x01 );
+            cpu_store_8bit( _environment, "_PAPER", 0x00 );
+
+            break;
+        case TILEMAP_MODE_EXTENDED:
+            // Let's disable graphics!
+            outline0("LDA $D011" );
+            outline0("AND #%11011111");
+            outline0("ORA #%01000000");
+            outline0("STA $D011" );
+            outline0("LDA $D016" );
+            outline0("AND #%11101111");
+            outline0("STA $D016" );
+
+            // This fix is necessary to reset the lookup for rom character.
+            outline0("LDA $D018" );
+            outline0("AND #%11110111");
+            outline0("STA $D018" );
+            
+            cpu_store_16bit( _environment, colormapAddress->realName, 0xd800 );
+
+            cpu_store_8bit( _environment, "_PEN", 0x01 );
+            cpu_store_8bit( _environment, "_PAPER", 0x00 );
+
+            break;
         default:
-            CRITICAL_SCREEN_MODE_BITMAP_UNSUPPORTED( mode->description );
+            CRITICAL_SCREEN_UNSUPPORTED( _screen_mode->id );
     }
 
-    cpu_store_8bit( _environment, "_PEN", 0x10 );
-    cpu_store_8bit( _environment, "_PAPER", 0x00 );
+}
+
+void vic2_bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {
+
+    ScreenMode * mode = find_screen_mode_by_suggestion( _environment, 1, _width, _height, _colors );
+
+    vic2_screen_mode_enable( _environment, mode );
 
 }
 
@@ -408,67 +478,7 @@ void vic2_tilemap_enable( Environment * _environment, int _width, int _height, i
 
     ScreenMode * mode = find_screen_mode_by_suggestion( _environment, 0, _width, _height, _colors );
 
-    Variable * colormapAddress = variable_retrieve( _environment, "COLORMAPADDRESS" );
-
-    switch( mode->id ) {
-        case TILEMAP_MODE_STANDARD:
-            // Let's disable graphics!
-            outline0("LDA $D011" );
-            outline0("AND #%11011111");
-            outline0("STA $D011" );
-            outline0("LDA $D016" );
-            outline0("AND #%11101111");
-            outline0("STA $D016" );
-
-            // This fix is necessary to reset the lookup for rom character.
-            outline0("LDA $D018" );
-            outline0("AND #%11110111");
-            outline0("STA $D018" );
-
-            cpu_store_16bit( _environment, colormapAddress->realName, 0xd800 );
-
-            break;
-        case TILEMAP_MODE_MULTICOLOR:
-            // Let's disable graphics!
-            outline0("LDA $D011" );
-            outline0("AND #%11011111");
-            outline0("STA $D011" );
-            outline0("LDA $D016" );
-            outline0("ORA #%00010000");
-            outline0("STA $D016" );
-
-            // This fix is necessary to reset the lookup for rom character.
-            outline0("LDA $D018" );
-            outline0("AND #%11110111");
-            outline0("STA $D018" );
-
-            cpu_store_16bit( _environment, colormapAddress->realName, 0xd800 );
-
-            break;
-        case TILEMAP_MODE_EXTENDED:
-            // Let's disable graphics!
-            outline0("LDA $D011" );
-            outline0("AND #%11011111");
-            outline0("ORA #%01000000");
-            outline0("STA $D011" );
-            outline0("LDA $D016" );
-            outline0("AND #%11101111");
-            outline0("STA $D016" );
-
-            // This fix is necessary to reset the lookup for rom character.
-            outline0("LDA $D018" );
-            outline0("AND #%11110111");
-            outline0("STA $D018" );
-            
-            cpu_store_16bit( _environment, colormapAddress->realName, 0xd800 );
-
-            break;
-        default:
-            CRITICAL_SCREEN_MODE_TILEMAP_UNSUPPORTED( mode->description );
-    }
-
-    cpu_store_8bit( _environment, "_PEN", 0x01 );
-    cpu_store_8bit( _environment, "_PAPER", 0x00 );
+    vic2_screen_mode_enable( _environment, mode );
 
 }
 

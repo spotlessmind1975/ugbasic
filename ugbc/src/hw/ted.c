@@ -203,9 +203,7 @@ void ted_bank_select( Environment * _environment, int _bank ) {
 
 }
 
-void ted_bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {
-
-    ScreenMode * mode = find_screen_mode_by_suggestion( _environment, 1, _width, _height, _colors );
+int ted_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
 
     Variable * colormapAddress = variable_retrieve( _environment, "COLORMAPADDRESS" );
 
@@ -223,6 +221,9 @@ void ted_bitmap_enable( Environment * _environment, int _width, int _height, int
 
             cpu_store_16bit( _environment, colormapAddress->realName, 0xA000-0x0400 );
 
+            cpu_store_8bit( _environment, "_PEN", 0x10 );
+            cpu_store_8bit( _environment, "_PAPER", 0x00 );
+            
             break;
         case BITMAP_MODE_MULTICOLOR:
             // Enable graphics.
@@ -237,13 +238,47 @@ void ted_bitmap_enable( Environment * _environment, int _width, int _height, int
 
             cpu_store_16bit( _environment, colormapAddress->realName, 0xA000-0x0400 );
             
+            cpu_store_8bit( _environment, "_PEN", 0x10 );
+            cpu_store_8bit( _environment, "_PAPER", 0x00 );
+
+            break;
+        case TILEMAP_MODE_STANDARD:
+            // Let's disable graphics (and extended color)!
+            outline0("LDA $FF06" );
+            outline0("AND #%10011111");
+            outline0("STA $FF06" );
+
+            cpu_store_16bit( _environment, colormapAddress->realName, 0xA000 );
+
+            cpu_store_8bit( _environment, "_PEN", 0x01 );
+            cpu_store_8bit( _environment, "_PAPER", 0x00 );
+
+            break;
+        case TILEMAP_MODE_MULTICOLOR:
+        case TILEMAP_MODE_EXTENDED:
+            // Let's disable graphics and enable extended color!
+            outline0("LDA $FF06" );
+            outline0("AND #%11011111");
+            outline0("ORA #%01000000");
+            outline0("STA $FF06" );
+
+            cpu_store_16bit( _environment, colormapAddress->realName, 0xA000 );
+
+            cpu_store_8bit( _environment, "_PEN", 0x01 );
+            cpu_store_8bit( _environment, "_PAPER", 0x00 );
+
             break;
         default:
-            CRITICAL_SCREEN_MODE_BITMAP_UNSUPPORTED( mode->description );
+            CRITICAL_SCREEN_UNSUPPORTED( mode->id );
     }
 
-    cpu_store_8bit( _environment, "_PEN", 0x10 );
-    cpu_store_8bit( _environment, "_PAPER", 0x00 );
+}
+
+void ted_bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {
+
+    ScreenMode * mode = find_screen_mode_by_suggestion( _environment, 1, _width, _height, _colors );
+
+    ted_screen_mode_enable( _environment, mode );
 
 }
 
@@ -264,34 +299,7 @@ void ted_tilemap_enable( Environment * _environment, int _width, int _height, in
 
     ScreenMode * mode = find_screen_mode_by_suggestion( _environment, 0, _width, _height, _colors );
 
-    Variable * colormapAddress = variable_retrieve( _environment, "COLORMAPADDRESS" );
-
-    switch( mode->id ) {
-        case TILEMAP_MODE_STANDARD:
-            // Let's disable graphics (and extended color)!
-            outline0("LDA $FF06" );
-            outline0("AND #%10011111");
-            outline0("STA $FF06" );
-
-            cpu_store_16bit( _environment, colormapAddress->realName, 0xA000 );
-
-            break;
-        case TILEMAP_MODE_MULTICOLOR:
-        case TILEMAP_MODE_EXTENDED:
-            // Let's disable graphics and enable extended color!
-            outline0("LDA $FF06" );
-            outline0("AND #%11011111");
-            outline0("ORA #%01000000");
-            outline0("STA $FF06" );
-
-            cpu_store_16bit( _environment, colormapAddress->realName, 0xA000 );
-            break;
-        default:
-            CRITICAL_SCREEN_MODE_TILEMAP_UNSUPPORTED( mode->description );
-    }
-
-    cpu_store_8bit( _environment, "_PEN", 0x01 );
-    cpu_store_8bit( _environment, "_PAPER", 0x00 );
+    ted_screen_mode_enable( _environment, mode );
 
 }
 

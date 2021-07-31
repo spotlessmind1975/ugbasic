@@ -110,7 +110,7 @@ void gtia_bank_select( Environment * _environment, int _bank ) {
 
 }
 
-static int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
+int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
 
     int i;
     int screenMemoryOffset = 0;
@@ -716,7 +716,7 @@ static int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _sc
             break;
 
         default:
-            CRITICAL_SCREEN_MODE_BITMAP_UNSUPPORTED( _screen_mode->description );
+            CRITICAL_SCREEN_UNSUPPORTED( _screen_mode->id );
     }
 
     cpu_store_16bit( _environment, "CLIPX1", 0) ;

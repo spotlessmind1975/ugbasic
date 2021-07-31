@@ -208,6 +208,10 @@ void zx_initialization( Environment * _environment ) {
 
 }
 
+int zx_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
+    
+}
+
 void zx_bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {
 
 }

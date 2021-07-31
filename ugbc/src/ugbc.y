@@ -1494,7 +1494,10 @@ colormap_definition:
   | colormap_definition_expression;
 
 screen_definition_simple:
-    ON {   
+    direct_integer {   
+      screen_mode( _environment, $1 );
+  }
+  | ON {   
       screen_on( _environment );
   }
   | OFF {

@@ -102,6 +102,8 @@
 #define TILEMAP_MODE_MULTICOLOR     1           // Multicolor Character Mode      40 x 25 x 16
 #define TILEMAP_MODE_EXTENDED       4           // Extended Background Color Mode 40 x 25 x 20
 
+int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode );
+
 void vic2_initialization( Environment * _environment );
 
 void vic2_back( Environment * _environment );

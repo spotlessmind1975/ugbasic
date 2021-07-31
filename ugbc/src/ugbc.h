@@ -828,6 +828,7 @@ typedef struct _Environment {
 #define CRITICAL_SCREEN_MODE_TILEMAP_UNSUPPORTED( t ) CRITICAL2("E049 - Screen mode unsupported for TILEMAP mode", t );
 #define CRITICAL_RANDOM_UNSUPPORTED(v, t) CRITICAL3("E050 - RANDOM unsupported for variable of given datatype", v, t );
 #define CRITICAL_MOD_UNSUPPORTED(v, t) CRITICAL3("E051 - MOD unsupported for variable of given datatype", v, t );
+#define CRITICAL_SCREEN_UNSUPPORTED(v) CRITICAL2("E052 - SCREEN mode unsupported", v );
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
 #define WARNING3( s, v1, v2 ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s, %s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v1, v2, _environment->yylineno ); }
@@ -1049,6 +1050,7 @@ void linker_setup( Environment * _environment );
 int pattern_match( char * _pattern, char * _value );
 void setup_text_variables( Environment * _environment );
 ScreenMode * find_screen_mode_by_suggestion( Environment * _environment, int _bitmap, int _width, int _height, int _colors );
+ScreenMode * find_screen_mode_by_id( Environment * _environment, int _id );
 Bank * bank_find( Bank * _first, char * _name );
 
 //----------------------------------------------------------------------------
@@ -1279,6 +1281,7 @@ Variable *              screen_get_height( Environment * _environment );
 Variable *              screen_get_width( Environment * _environment );
 void                    screen_horizontal_scroll( Environment * _environment, int _displacement );
 void                    screen_horizontal_scroll_var( Environment * _environment, char * _displacement );
+void                    screen_mode( Environment * _environment, int _mode );
 void                    screen_off( Environment * _environment );
 void                    screen_on( Environment * _environment );
 void                    screen_rows( Environment * _environment, int _rows );
