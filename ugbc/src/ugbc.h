@@ -245,6 +245,11 @@ typedef struct _Variable {
     int size;
 
     /** 
+     * The absolute address of this variable (if any).
+     */
+    int absoluteAddress;
+
+    /** 
      * Pointer to the bank where this variable belongs to.
      */
     Bank * bank;
@@ -1381,7 +1386,7 @@ Variable *              variable_retrieve( Environment * _environment, char * _n
 Variable *              variable_retrieve_by_realname( Environment * _environment, char * _name );
 Variable *              variable_retrieve_or_define( Environment * _environment, char * _name, VariableType _type, int _value );
 Variable *              variable_store( Environment * _environment, char * _source, unsigned int _value );
-Variable *              variable_store_buffer( Environment * _environment, char * _destination, unsigned char * _buffer, int _size );
+Variable *              variable_store_buffer( Environment * _environment, char * _destination, unsigned char * _buffer, int _size, int _at );
 Variable *              variable_store_string( Environment * _environment, char * _source, char * _string );
 Variable *              variable_string_asc( Environment * _environment, char * _char );
 Variable *              variable_string_chr( Environment * _environment, char * _ascii  );

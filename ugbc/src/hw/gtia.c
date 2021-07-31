@@ -724,7 +724,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     cpu_move_16bit( _environment, "CURRENTWIDTH", "CLIPX2");
     cpu_move_16bit( _environment, "CURRENTHEIGHT", "CLIPY2");
 
-    variable_store_buffer( _environment, dli->name, dliListStart, ( dliListCurrent - dliListStart ) );
+    variable_store_buffer( _environment, dli->name, dliListStart, ( dliListCurrent - dliListStart ), 0x8c00 );
 
     if ( _screen_mode->bitmap ) {
         outline0("CLC" );

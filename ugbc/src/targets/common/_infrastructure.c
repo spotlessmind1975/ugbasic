@@ -752,7 +752,7 @@ Variable * variable_resize_buffer( Environment * _environment, char * _destinati
     return destination;
 }
 
-Variable * variable_store_buffer( Environment * _environment, char * _destination, unsigned char * _buffer, int _size ) {
+Variable * variable_store_buffer( Environment * _environment, char * _destination, unsigned char * _buffer, int _size, int _at ) {
     Variable * destination = variable_retrieve( _environment, _destination );
     switch( destination->type ) {
         case VT_BUFFER: {
@@ -760,12 +760,21 @@ Variable * variable_store_buffer( Environment * _environment, char * _destinatio
                 destination->valueBuffer = malloc( _size );
                 memcpy( destination->valueBuffer, _buffer, _size );
                 destination->size = _size;
+                if ( _at ) {
+                    destination->absoluteAddress = _at;
+                    char bufferCopy[MAX_TEMPORARY_STORAGE]; sprintf( bufferCopy, "%scopy", destination->realName );
+                    cpu_mem_move_direct_size( _environment, bufferCopy, destination->realName, _size );
+                }
             } else {
                 Variable * temporary = variable_temporary( _environment, VT_BUFFER, "(copy of buffer)");
                 temporary->valueBuffer = malloc( _size );
                 memcpy( temporary->valueBuffer, _buffer, _size );
                 temporary->size = _size;
-                destination->size = _size;
+                if ( destination->size < _size ) {
+                    destination->valueBuffer = realloc( destination->valueBuffer, _size );
+                    memset( destination->valueBuffer + destination->size, 0, ( _size - destination->size ) );
+                    destination->size = _size;
+                }
                 variable_move_naked( _environment, temporary->name, destination->name );                
             }
             break;
@@ -886,7 +895,7 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
                     break;
                 }
                 case VT_BUFFER: {
-                    if ( source->size != target->size ) {
+                    if ( source->size > target->size ) {
                         CRITICAL_BUFFER_SIZE_MISMATCH(_source, _destination);
                     }
                     cpu_mem_move_direct_size( _environment, source->realName, target->realName, source->size );
