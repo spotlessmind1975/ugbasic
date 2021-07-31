@@ -53,11 +53,10 @@ void screen_mode( Environment * _environment, int _mode ) {
 
     ScreenMode * mode = find_screen_mode_by_id( _environment, _mode );
 
-    if ( !mode ) {
-        CRITICAL_SCREEN_UNSUPPORTED( _mode );
+    if ( mode ) {
+        zx_screen_mode_enable( _environment, mode );    
+    } else {
+        WARNING_SCREEN_MODE( _mode );
     }
-    
-    zx_screen_mode_enable( _environment, mode );
-
 }
 
