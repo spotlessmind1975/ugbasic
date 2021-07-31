@@ -32,7 +32,7 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#ifdef __atari__
+#if defined(__atari__) || defined(__atarixl__)
 
 #include "../ugbc.h"
 #include "6502.h"
@@ -1098,8 +1098,7 @@ void gtia_initialization( Environment * _environment ) {
 #ifdef __atarixl__
     SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC14, 1, 160, 192, 4, "Antic E (Graphics 15-XL computers only)"  );
 #endif
-    // Currently not working yet
-    // SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC15, 1, 320, 192, 1, "Graphics 8 (ANTIC F or 15)"  );
+    SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC15, 1, 320, 192, 1, "Graphics 8 (ANTIC F or 15)"  );
 
     SCREEN_MODE_DEFINE( TILEMAP_MODE_ANTIC2, 0, 40, 24, 1, "Graphics Mode 0 (ANTIC 2)"  );
     SCREEN_MODE_DEFINE( TILEMAP_MODE_ANTIC6, 0, 20, 24, 4, "Graphics 1 (ANTIC 6)"  );

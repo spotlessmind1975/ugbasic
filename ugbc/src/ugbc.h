@@ -1437,7 +1437,7 @@ Variable *              xpen( Environment * _environment );
 
 Variable *              ypen( Environment * _environment );
 
-#ifdef __atari__
+#if defined(__atari__) || defined(__atarixl__) 
     #include "hw/6502.h"
     #include "hw/antic.h"
     #include "hw/gtia.h"

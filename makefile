@@ -63,6 +63,13 @@ generated/atari/exe/%.xex: $(subst /exe/,/asm/,$(@:.xex=.asm))
 	@cl65 -Ln $(@:.xex=.lbl) -g -o $@ --mapfile $(@:.xex=.map) -t atari -C $(subst /exe/,/cfg/,$(@:.xex=.cfg)) $(subst /exe/,/asm/,$(@:.xex=.asm))
 	@rm -f $(@:.xex=.o)
 
+generated/atarixl/asm/%.asm:
+	@ugbc/exe/ugbc.atarixl -c $(subst /asm/,/cfg/,$(@:.asm=.cfg)) $(subst generated/atarixl/asm/,examples/,$(@:.asm=.bas)) $@
+
+generated/atarixl/exe/%.xex: $(subst /exe/,/asm/,$(@:.xex=.asm))
+	@cl65 -Ln $(@:.xex=.lbl) -g -o $@ --mapfile $(@:.xex=.map) -t atari -D __atarixl__ -C $(subst /exe/,/cfg/,$(@:.xex=.cfg)) $(subst /exe/,/asm/,$(@:.xex=.asm))
+	@rm -f $(@:.xex=.o)
+
 generated/zx/asm/%.asm:
 	@ugbc/exe/ugbc.zx $(subst generated/zx/asm/,examples/,$(@:.asm=.bas)) $@ 
 
@@ -100,3 +107,6 @@ runyape: generated/plus4/asm/$(example).asm generated/plus4/exe/$(example).$(out
 
 runatari: generated/atari/asm/$(example).asm generated/atari/exe/$(example).$(output)
 	altirra generated/atari/exe/$(example).$(output)
+
+runatarixl: generated/atarixl/asm/$(example).asm generated/atarixl/exe/$(example).$(output)
+	altirra generated/atarixl/exe/$(example).$(output)

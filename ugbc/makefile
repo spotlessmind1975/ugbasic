@@ -56,7 +56,7 @@ SOURCESTEST += $(wildcard src/hw/*.c)
 SOURCESTEST += $(wildcard src/targets/common/*.c)
 SOURCESTEST += $(wildcard src/targets/$(target)/*.c)
 SOURCESTEST += $(wildcard src-test/suites/*.c)
-SOURCESTEST += src-test/tester.c src-test/tester_c64.c src-test/tester_plus4.c src-test/tester_atari.c src-test/tester_zx.c
+SOURCESTEST += src-test/tester.c src-test/tester_c64.c src-test/tester_plus4.c src-test/tester_atari.c src-test/tester_atarixl.c src-test/tester_zx.c
 
 paths:
 	@mkdir -p src-generated
