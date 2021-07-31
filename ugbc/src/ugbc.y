@@ -2537,10 +2537,10 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     printf("usage: %s [-c <file>] <source> <asm>\n\n", _argv[0] );
 
     printf("Options and parameters:\n" );
-    printf("\t<source>     Input filename with ugBASIC source code" );
-    printf("\t<asm>        Output filename with ASM source code" );
-    printf("\t-c <file>    Output filename with linker configuration" );
-    printf("\t-W           Enable warnings during compilation" );
+    printf("\t<source>     Input filename with ugBASIC source code\n" );
+    printf("\t<asm>        Output filename with ASM source code\n" );
+    printf("\t-c <file>    Output filename with linker configuration\n" );
+    printf("\t-W           Enable warnings during compilation\n" );
     exit(EXIT_FAILURE);
 }
 
