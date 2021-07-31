@@ -3350,8 +3350,6 @@ ScreenMode * find_screen_mode_by_suggestion( Environment * _environment, int _bi
         screenMode = screenMode->next;
     }
    
-    printf( " FOUND, best mode = %d (%s)\n", bestMode->id, bestMode->description);
-    
     return bestMode;
 
 }
