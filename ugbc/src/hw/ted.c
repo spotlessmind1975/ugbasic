@@ -207,7 +207,7 @@ int ted_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
 
     Variable * colormapAddress = variable_retrieve( _environment, "COLORMAPADDRESS" );
 
-    switch( mode->id ) {
+    switch( _screen_mode->id ) {
         case BITMAP_MODE_STANDARD:
             // Enable graphics.
             outline0("LDA $FF06" );
@@ -269,7 +269,7 @@ int ted_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
 
             break;
         default:
-            CRITICAL_SCREEN_UNSUPPORTED( mode->id );
+            CRITICAL_SCREEN_UNSUPPORTED( _screen_mode->id );
     }
 
 }

@@ -169,6 +169,8 @@
 #define BITMAP_MODE_STANDARD        1           // Standard Bitmap Mode     192 x 256 x 2
 #define TILEMAP_MODE_STANDARD       0           // Standard Character Mode  32 x 25 x 8
 
+int zx_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode );
+
 void zx_initialization( Environment * _environment );
 
 void zx_color_border( Environment * _environment, char * _color );
