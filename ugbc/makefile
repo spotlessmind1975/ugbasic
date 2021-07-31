@@ -28,7 +28,7 @@
 # * autorizzazioni e le limitazioni previste dalla medesima.
 # ****************************************************************************/
 
-FLEX_OPTIONS=-8 
+FLEX_OPTIONS=--8bit 
 BISON_OPTIONS=--locations -d -Wcounterexamples
 
 .PHONY: paths clean all
@@ -38,7 +38,7 @@ all: paths compiler
 test: paths-test tester
 
 src-generated/ugbc.yy.c: src/ugbc.lex src/ugbc.y
-	@flex ${FLEX_OPTIONS} -o src-generated/ugbc.yy.c src/ugbc.lex
+	@flex ${FLEX_OPTIONS} --outfile=src-generated/ugbc.yy.c src/ugbc.lex
 
 src-generated/ugbc.tab.c: src/ugbc.lex src/ugbc.y
 	@bison ${BISON_OPTIONS} --file-prefix=src-generated/ugbc src/ugbc.y
