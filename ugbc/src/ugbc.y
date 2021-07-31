@@ -2566,6 +2566,14 @@ int main( int _argc, char *_argv[] ) {
                 }
     }
 
+    if ( ! _argv[optind] ) {
+        show_usage_and_exit( _argc, _argv );
+    }
+
+    if ( ! _argv[optind+1] ) {
+        show_usage_and_exit( _argc, _argv );
+    }
+
     _environment->sourceFileName = strdup(_argv[optind] );
     _environment->asmFileName = strdup(_argv[optind+1] );
     
