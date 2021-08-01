@@ -52,8 +52,8 @@ void zx_vscroll( Environment * _environment, int _displacement ) {
 
     outline1("LD A, $%2.2x", ( _displacement & 0xff ) );
 
-    deploy( varsDeployed,"./ugbc/src/hw/zx/vars.asm" );
-    deploy( vScrollDeployed,"./ugbc/src/hw/zx/vscroll.asm" );
+    deploy( varsDeployed,src_hw_zx_vars_asm);
+    deploy( vScrollDeployed,src_hw_zx_vscroll_asm );
 
     outline0("CALL VSCROLL");
 
@@ -61,9 +61,9 @@ void zx_vscroll( Environment * _environment, int _displacement ) {
 
 void zx_text_at( Environment * _environment, char * _x, char * _y, char * _text, char * _text_size, char * _pen, char * _paper, char * _ww ) {
 
-    deploy( varsDeployed,"./ugbc/src/hw/zx/vars.asm" );
-    deploy( vScrollDeployed, "./ugbc/src/hw/zx/vscroll.asm" );
-    deploy( textEncodedAtDeployed, "./ugbc/src/hw/zx/text_at.asm" );
+    deploy( varsDeployed,src_hw_zx_vars_asm);
+    deploy( vScrollDeployed, src_hw_zx_vscroll_asm );
+    deploy( textEncodedAtDeployed, src_hw_zx_text_at_asm );
 
     z80_move_8bit( _environment, _x, "XCURS");
     z80_move_8bit( _environment, _y, "YCURS");
@@ -85,8 +85,8 @@ void zx_text_at( Environment * _environment, char * _x, char * _y, char * _text,
 
 void zx_cls( Environment * _environment, char * _pen, char * _paper ) {
 
-    deploy( varsDeployed,"./ugbc/src/hw/zx/vars.asm" );
-    deploy( clsDeployed, "./ugbc/src/hw/zx/cls.asm" );
+    deploy( varsDeployed,src_hw_zx_vars_asm);
+    deploy( clsDeployed, src_hw_zx_cls_asm );
 
     if ( _pen ) {
         z80_move_8bit( _environment, _pen, "_PEN");
@@ -122,7 +122,7 @@ void zx_scancode( Environment * _environment, char * _pressed, char * _scancode 
 
     MAKE_LABEL
 
-    deploy( scancodeDeployed, "./ugbc/src/hw/zx/scancode.asm" );
+    deploy( scancodeDeployed, src_hw_zx_scancode_asm );
 
     outline0("LD A, 0");
     outline1("LD (%s), A", _scancode );
@@ -151,7 +151,7 @@ void zx_scanshift( Environment * _environment, char * _shifts ) {
 
     MAKE_LABEL
 
-    deploy( scancodeDeployed, "./ugbc/src/hw/zx/scancode.asm" );
+    deploy( scancodeDeployed, src_hw_zx_scancode_asm );
 
     outline0("CALL SCANCODE");
     outline0("CP $f1");
@@ -170,7 +170,7 @@ void zx_keyshift( Environment * _environment, char * _shifts ) {
 
     MAKE_LABEL
 
-    deploy( scancodeDeployed, "./ugbc/src/hw/zx/scancode.asm" );
+    deploy( scancodeDeployed, src_hw_zx_scancode_asm );
 
     outline0("CALL SCANCODE");
     outline0("CP $f1");
@@ -222,7 +222,7 @@ void zx_tilemap_enable( Environment * _environment, int _width, int _height, int
 
 void zx_back( Environment * _environment ) {
 
-    deploy( backDeployed, "./ugbc/src/hw/zx/back.asm" );
+    deploy( backDeployed, src_hw_zx_back_asm );
 
     outline0("CALL BACK");
 

@@ -119,7 +119,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     int scanline = 0;
     int dliListStartOffset;
 
-    deploy( gtiavarsDeployed, "./ugbc/src/hw/gtia/vars.asm" );
+    deploy( gtiavarsDeployed, src_hw_gtia_vars_asm );
     
     unsigned char * dliListStart = malloc( DLI_COUNT ), * dliListCurrent = dliListStart;
     
@@ -848,8 +848,8 @@ void gtia_textmap_at( Environment * _environment, char * _address ) {
 
 void gtia_point_at_int( Environment * _environment, int _x, int _y ) {
 
-    deploy( gtiavarsDeployed, "./ugbc/src/hw/gtia/vars.asm" );
-    deploy( plotDeployed, "./ugbc/src/hw/gtia/plot.asm" );
+    deploy( gtiavarsDeployed, src_hw_gtia_vars_asm );
+    deploy( plotDeployed, src_hw_gtia_plot_asm );
     
     outline1("LDA %2.2x", (_x & 0xff ) );
     outline0("STA PLOTX");
@@ -868,8 +868,8 @@ void gtia_point_at_vars( Environment * _environment, char *_x, char *_y ) {
     Variable * x = variable_retrieve( _environment, _x );
     Variable * y = variable_retrieve( _environment, _y );
 
-    deploy( gtiavarsDeployed, "./ugbc/src/hw/gtia/vars.asm" );
-    deploy( plotDeployed, "./ugbc/src/hw/gtia/plot.asm" );
+    deploy( gtiavarsDeployed, src_hw_gtia_vars_asm );
+    deploy( plotDeployed, src_hw_gtia_plot_asm );
     
     outline1("LDA %s", x->realName );
     outline0("STA PLOTX");
@@ -889,8 +889,8 @@ void gtia_point( Environment * _environment, char *_x, char *_y, char * _result 
     Variable * y = variable_retrieve( _environment, _y );
     Variable * result = variable_retrieve( _environment, _result );
 
-    deploy( gtiavarsDeployed, "./ugbc/src/hw/gtia/vars.asm" );
-    deploy( plotDeployed, "./ugbc/src/hw/gtia/plot.asm" );
+    deploy( gtiavarsDeployed, src_hw_gtia_vars_asm );
+    deploy( plotDeployed, src_hw_gtia_plot_asm );
     
     outline1("LDA %s", x->realName );
     outline0("STA PLOTX");
@@ -1012,7 +1012,7 @@ void gtia_get_height( Environment * _environment, char *_result ) {
 
 void gtia_cls( Environment * _environment ) {
     
-    deploy( clsDeployed, "./ugbc/src/hw/gtia/cls.asm" );
+    deploy( clsDeployed, src_hw_gtia_cls_asm );
 
     outline0("LDA #$0");
     outline0("STA PATTERN");
@@ -1022,7 +1022,7 @@ void gtia_cls( Environment * _environment ) {
 
 void gtia_clear( Environment * _environment, char * _pattern ) {
     
-    deploy( clsDeployed, "./ugbc/src/hw/gtia/cls.asm" );
+    deploy( clsDeployed, src_hw_gtia_cls_asm );
 
     outline1("LDA %s", _pattern );
     outline0("STA PATTERN");
@@ -1032,7 +1032,7 @@ void gtia_clear( Environment * _environment, char * _pattern ) {
 
 void gtia_scroll_text( Environment * _environment, int _direction ) {
 
-    deploy( vScrollTextDeployed, "./ugbc/src/hw/gtia/vscroll_text.asm" );
+    deploy( vScrollTextDeployed, src_hw_gtia_vscroll_text_asm );
 
     outline1("LDA #$%2.2x", ( _direction & 0xff ) );
     outline0("STA DIRECTION" );
@@ -1043,9 +1043,9 @@ void gtia_scroll_text( Environment * _environment, int _direction ) {
 
 void gtia_text_at( Environment * _environment, char * _x, char * _y, char * _text, char * _text_size, char * _pen, char *_ww ) {
 
-    deploy( gtiavarsDeployed, "./ugbc/src/hw/gtia/vars.asm" );
-    deploy( vScrollTextDeployed, "./ugbc/src/hw/gtia/vscroll_text.asm" );
-    deploy( textEncodedAtDeployed, "./ugbc/src/hw/gtia/text_at.asm" );
+    deploy( gtiavarsDeployed, src_hw_gtia_vars_asm );
+    deploy( vScrollTextDeployed, src_hw_gtia_vscroll_text_asm );
+    deploy( textEncodedAtDeployed, src_hw_gtia_text_at_asm );
 
     outline1("LDA %s", _text);
     outline0("STA TEXTPTR" );
@@ -1085,7 +1085,7 @@ void gtia_text_at( Environment * _environment, char * _x, char * _y, char * _tex
 
 void gtia_initialization( Environment * _environment ) {
 
-    deploy( vicstartupDeployed, "./ugbc/src/hw/gtia/startup.asm" );
+    deploy( vicstartupDeployed, src_hw_gtia_startup_asm );
 
 #ifdef __atarixl__
     SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC12, 1, 320, 192, 4, "Antic C (Graphics 14-XL computers only)"  );
@@ -1141,7 +1141,7 @@ void gtia_initialization( Environment * _environment ) {
 
 void gtia_hscroll_line( Environment * _environment, int _direction ) {
 
-    deploy( textHScrollDeployed, "./ugbc/src/hw/gtia/hscroll_text.asm" );
+    deploy( textHScrollDeployed, src_hw_gtia_hscroll_text_asm );
 
     Variable * y = variable_retrieve( _environment, "windowCY" );
     outline1("LDA #$%2.2x", ( _direction & 0xff ) );
@@ -1155,7 +1155,7 @@ void gtia_hscroll_line( Environment * _environment, int _direction ) {
 
 void gtia_hscroll_screen( Environment * _environment, int _direction ) {
 
-    deploy( textHScrollDeployed, "./ugbc/src/hw/gtia/hscroll_text.asm" );
+    deploy( textHScrollDeployed, src_hw_gtia_hscroll_text_asm );
 
     outline1("LDA #$%2.2x", ( _direction & 0xff ) );
     outline0("STA DIRECTION" );
@@ -1165,7 +1165,7 @@ void gtia_hscroll_screen( Environment * _environment, int _direction ) {
 
 void gtia_back( Environment * _environment ) {
 
-    deploy( backDeployed, "./ugbc/src/hw/gtia/back.asm" );
+    deploy( backDeployed, src_hw_gtia_back_asm );
 
     outline0("JSR BACK");
 
@@ -1173,7 +1173,7 @@ void gtia_back( Environment * _environment ) {
 
 void gtia_cline( Environment * _environment, char * _characters ) {
 
-    deploy( textClineDeployed, "./ugbc/src/hw/gtia/cline.asm" );
+    deploy( textClineDeployed, src_hw_gtia_cline_asm );
     Variable * x = variable_retrieve( _environment, "windowCX" );
     Variable * y = variable_retrieve( _environment, "windowCY" );
 

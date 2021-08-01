@@ -67,7 +67,7 @@ void target_initialization( Environment * _environment ) {
 
     linker_setup( _environment );
 
-    deploy( varsDeployed, "./ugbc/src/hw/plus4/vars.asm");
+    deploy( varsDeployed, src_hw_plus4_vars_asm);
     outhead0(".segment \"CODE\"");
     variable_define( _environment, "stringsAddress", VT_ADDRESS, 0x4200 );
     variable_global( _environment, "stringsAddress" );

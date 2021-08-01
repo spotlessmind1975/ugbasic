@@ -985,6 +985,12 @@ typedef struct _Environment {
         } \
     } 
 
+#define outembedded0(e)     \
+    { \
+        fwrite( e, e##_len, 1, ((Environment *)_environment)->asmFile ); \
+        fputs( "\n", ((Environment *)_environment)->asmFile ); \
+    } 
+
 #define outhead0(s)             outline0n(0, s, 1)
 #define outhead1(s,a)           outline1n(0, s, a, 1)
 #define outhead2(s,a,b)         outline2n(0, s, a, b, 1)
@@ -1023,10 +1029,10 @@ typedef struct _Environment {
 #define cfg4(s,a,b,c,d)         cfgline4n(0, s, a, b, c, d, 0)
 #define cfg5(s,a,b,c,d,e)       cfgline5n(0, s, a, b, c, d, e, 0)
 
-#define deploy(s,f)  \
+#define deploy(s,e)  \
         if ( ! _environment->s ) { \
             outline1("JMP %s_after", #s); \
-            outfile0(f); \
+            outembedded0(e); \
             outhead1("%s_after:", #s); \
             _environment->s = 1; \
         }
@@ -1446,20 +1452,30 @@ Variable *              xpen( Environment * _environment );
 
 Variable *              ypen( Environment * _environment );
 
-#if defined(__atari__) || defined(__atarixl__) 
+#if defined(__atari__) 
+    #include "../src-generated/modules_atari.h"
+    #include "hw/6502.h"
+    #include "hw/antic.h"
+    #include "hw/gtia.h"
+    #include "hw/atari.h"
+#elif defined(__atarixl__) 
+    #include "../src-generated/modules_atarixl.h"
     #include "hw/6502.h"
     #include "hw/antic.h"
     #include "hw/gtia.h"
     #include "hw/atari.h"
 #elif __c64__
+    #include "../src-generated/modules_c64.h"
     #include "hw/6502.h"
     #include "hw/vic2.h"
     #include "hw/c64.h"
 #elif __plus4__
+    #include "../src-generated/modules_plus4.h"
     #include "hw/6502.h"
     #include "hw/ted.h"
     #include "hw/plus4.h"
 #elif __zx__
+    #include "../src-generated/modules_zx.h"
     #include "hw/z80.h"
     #include "hw/zx.h"
 #endif

@@ -317,8 +317,8 @@ void ted_textmap_at( Environment * _environment, char * _address ) {
 
 void ted_point_at_int( Environment * _environment, int _x, int _y ) {
 
-    deploy( tedvarsDeployed, "./ugbc/src/hw/ted/vars.asm" );
-    deploy( plotDeployed, "./ugbc/src/hw/ted/plot.asm" );
+    deploy( tedvarsDeployed, src_hw_ted_vars_asm );
+    deploy( plotDeployed, src_hw_ted_plot_asm );
     
     outline1("LDA %2.2x", (_x & 0xff ) );
     outline0("STA PLOTX");
@@ -337,8 +337,8 @@ void ted_point_at_vars( Environment * _environment, char *_x, char *_y ) {
     Variable * x = variable_retrieve( _environment, _x );
     Variable * y = variable_retrieve( _environment, _y );
 
-    deploy( tedvarsDeployed, "./ugbc/src/hw/ted/vars.asm" );
-    deploy( plotDeployed, "./ugbc/src/hw/ted/plot.asm" );
+    deploy( tedvarsDeployed, src_hw_ted_vars_asm );
+    deploy( plotDeployed, src_hw_ted_plot_asm );
     
     outline1("LDA %s", x->realName );
     outline0("STA PLOTX");
@@ -358,8 +358,8 @@ void ted_point( Environment * _environment, char *_x, char *_y, char * _result )
     Variable * y = variable_retrieve( _environment, _y );
     Variable * result = variable_retrieve( _environment, _result );
 
-    deploy( tedvarsDeployed, "./ugbc/src/hw/ted/vars.asm" );
-    deploy( plotDeployed, "./ugbc/src/hw/ted/plot.asm" );
+    deploy( tedvarsDeployed, src_hw_ted_vars_asm );
+    deploy( plotDeployed, src_hw_ted_plot_asm );
     
     outline1("LDA %s", x->realName );
     outline0("STA PLOTX");
@@ -545,7 +545,7 @@ void ted_get_height( Environment * _environment, char *_result ) {
 
 void ted_cls( Environment * _environment ) {
     
-    deploy( clsDeployed, "./ugbc/src/hw/ted/cls.asm" );
+    deploy( clsDeployed, src_hw_ted_cls_asm );
 
     outline0("JSR CLS");
 
@@ -553,7 +553,7 @@ void ted_cls( Environment * _environment ) {
 
 void ted_scroll_text( Environment * _environment, int _direction ) {
 
-    deploy( vScrollTextDeployed, "./ugbc/src/hw/ted/vscroll_text.asm" );
+    deploy( vScrollTextDeployed, src_hw_ted_vscroll_text_asm );
 
     outline1("LDA #$%2.2x", ( _direction & 0xff ) );
     outline0("STA DIRECTION" );
@@ -564,9 +564,9 @@ void ted_scroll_text( Environment * _environment, int _direction ) {
 
 void ted_text_at( Environment * _environment, char * _x, char * _y, char * _text, char * _text_size, char * _pen, char *_ww ) {
 
-    deploy( tedvarsDeployed, "./ugbc/src/hw/ted/vars.asm" );
-    deploy( vScrollTextDeployed, "./ugbc/src/hw/ted/vscroll_text.asm" );
-    deploy( textEncodedAtDeployed, "./ugbc/src/hw/ted/text_at.asm" );
+    deploy( tedvarsDeployed, src_hw_ted_vars_asm );
+    deploy( vScrollTextDeployed, src_hw_ted_vscroll_text_asm );
+    deploy( textEncodedAtDeployed, src_hw_ted_text_at_asm );
 
     outline1("LDA %s", _text);
     outline0("STA TEXTPTR" );
@@ -606,7 +606,7 @@ void ted_text_at( Environment * _environment, char * _x, char * _y, char * _text
 
 void ted_initialization( Environment * _environment ) {
 
-    deploy( vicstartupDeployed, "./ugbc/src/hw/ted/startup.asm" );
+    deploy( vicstartupDeployed, src_hw_ted_startup_asm );
 
     SCREEN_MODE_DEFINE( BITMAP_MODE_STANDARD, 1, 320, 200, 2, "Standard Bitmap Mode" );
     SCREEN_MODE_DEFINE( BITMAP_MODE_MULTICOLOR, 1, 160, 200, 4, "Multicolor Bitmap Mode"  );
@@ -637,7 +637,7 @@ void ted_initialization( Environment * _environment ) {
 
 void ted_hscroll_line( Environment * _environment, int _direction ) {
 
-    deploy( textHScrollDeployed, "./ugbc/src/hw/ted/hscroll_text.asm" );
+    deploy( textHScrollDeployed, src_hw_ted_hscroll_text_asm );
 
     Variable * y = variable_retrieve( _environment, "windowCY" );
     outline1("LDA #$%2.2x", ( _direction & 0xff ) );
@@ -651,7 +651,7 @@ void ted_hscroll_line( Environment * _environment, int _direction ) {
 
 void ted_hscroll_screen( Environment * _environment, int _direction ) {
 
-    deploy( textHScrollDeployed, "./ugbc/src/hw/ted/hscroll_text.asm" );
+    deploy( textHScrollDeployed, src_hw_ted_hscroll_text_asm );
 
     outline1("LDA #$%2.2x", ( _direction & 0xff ) );
     outline0("STA DIRECTION" );
@@ -661,7 +661,7 @@ void ted_hscroll_screen( Environment * _environment, int _direction ) {
 
 void ted_back( Environment * _environment ) {
 
-    deploy( backDeployed, "./ugbc/src/hw/ted/back.asm" );
+    deploy( backDeployed, src_hw_ted_back_asm );
 
     outline0("JSR BACK");
 
