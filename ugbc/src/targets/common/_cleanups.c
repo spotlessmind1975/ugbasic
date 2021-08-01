@@ -72,3 +72,9 @@ void end_compilation( Environment * _environment ) {
     fclose(_environment->asmFile);
 
 }
+
+void end_build( Environment * _environment ) {
+
+    target_cleanup( _environment );
+    
+}

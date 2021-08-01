@@ -41,3 +41,17 @@
 void target_finalization( Environment * _environment ) {
 
 }
+
+void target_cleanup( Environment * _environment ) {
+
+    char binFileName[MAX_TEMPORARY_STORAGE];
+
+    strcpy( binFileName, _environment->exeFileName );
+    char * p = strrchr( binFileName, '.' );
+    memcpy( p, ".bin", 4 );
+
+    unlink( _environment->configurationFileName );
+    unlink( binFileName );
+    unlink( _environment->asmFileName );
+
+}

@@ -65,3 +65,19 @@ void target_initialization( Environment * _environment ) {
     zx_initialization( _environment );
 
 }
+
+void target_linkage( Environment * _environment ) {
+
+    char commandLine[MAX_TEMPORARY_STORAGE];
+    
+    sprintf( commandLine, "z88dk-z80asm -l -b %s %s",
+        _environment->exeFileName, 
+        _environment->asmFileName )
+    system( commandLine ); 
+
+    sprintf( commandLine, "z88dk-appmake +zx --org 32768 -b %s",
+        _environment->exeFileName );
+        
+    system( commandLine ); 
+
+}

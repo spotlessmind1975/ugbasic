@@ -54,14 +54,18 @@ void target_initialization( Environment * _environment ) {
     variable_import( _environment, "FREE_STRING", VT_WORD );
     variable_global( _environment, "FREE_STRING" );    
 
-    if ( _environment->configurationFileName ) {
-        _environment->configurationFile = fopen( _environment->configurationFileName, "wt");
-        if ( ! _environment->configurationFile ) {
-            fprintf(stderr, "Unable to open configuration file: %s\n", _environment->configurationFileName );
-            exit(EXIT_FAILURE);
-        }
-        linker_setup( _environment );
+    if ( !_environment->configurationFileName ) {
+        _environment->configurationFileName = tmpnam(NULL);
     }
+
+    _environment->configurationFile = fopen( _environment->configurationFileName, "wt");
+    
+    if ( ! _environment->configurationFile ) {
+        fprintf(stderr, "Unable to open configuration file: %s\n", _environment->configurationFileName ? _environment->configurationFileName : "(temporary)" );
+        exit(EXIT_FAILURE);
+    }
+
+    linker_setup( _environment );
 
     outhead0(".include \"atari.inc\"");
     outhead0(".segment \"CODE\"");
@@ -78,5 +82,18 @@ void target_initialization( Environment * _environment ) {
 
     antic_initialization( _environment );
     gtia_initialization( _environment );
+
+}
+
+void target_linkage( Environment * _environment ) {
+
+    char commandLine[MAX_TEMPORARY_STORAGE];
+    
+    sprintf( commandLine, "cl65 -o %s -t atari -C %s %s",
+        _environment->exeFileName, 
+        _environment->configurationFileName, 
+        _environment->asmFileName );
+
+    system( commandLine ); 
 
 }

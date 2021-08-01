@@ -55,3 +55,10 @@ void target_finalization( Environment * _environment ) {
     outhead0(".word   MAINENTRY");
 
 }
+
+void target_cleanup( Environment * _environment ) {
+
+    unlink( _environment->configurationFileName );
+    unlink( _environment->asmFileName );
+
+}

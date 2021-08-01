@@ -2534,12 +2534,13 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     printf("Licensed under the Apache License, Version 2.0 (the \"License\");\n");
     printf("you may not use this program except in compliance with the License.\n\n");
 
-    printf("usage: %s [-c <file>] <source> <asm>\n\n", _argv[0] );
+    printf("usage: %s [-c <file>] <source> [<asm>]\n\n", _argv[0] );
 
     printf("Options and parameters:\n" );
     printf("\t<source>     Input filename with ugBASIC source code\n" );
-    printf("\t<asm>        Output filename with ASM source code\n" );
+    printf("\t<asm>        Output filename with ASM source code (optional if '-o' given)\n" );
     printf("\t-c <file>    Output filename with linker configuration\n" );
+    printf("\t-o <exe>     Output filename with final executable file for target\n" );
     printf("\t-W           Enable warnings during compilation\n" );
     exit(EXIT_FAILURE);
 }
@@ -2553,10 +2554,13 @@ int main( int _argc, char *_argv[] ) {
 
     _environment->warningsEnabled = 0;
 
-    while ((opt = getopt(_argc, _argv, "e:c:W")) != -1) {
+    while ((opt = getopt(_argc, _argv, "e:c:Wo:")) != -1) {
         switch (opt) {
                 case 'c':
                     _environment->configurationFileName = strdup(optarg);
+                    break;
+                case 'o':
+                    _environment->exeFileName = strdup(optarg);
                     break;
                 case 'W':
                     _environment->warningsEnabled = 1;
@@ -2570,12 +2574,19 @@ int main( int _argc, char *_argv[] ) {
         show_usage_and_exit( _argc, _argv );
     }
 
-    if ( ! _argv[optind+1] ) {
+    if ( ! _argv[optind+1] && !_environment->exeFileName ) {
         show_usage_and_exit( _argc, _argv );
     }
 
     _environment->sourceFileName = strdup(_argv[optind] );
-    _environment->asmFileName = strdup(_argv[optind+1] );
+
+    if ( _environment->exeFileName && !_argv[optind+1]) {
+        char asmFileName[MAX_TEMPORARY_STORAGE];
+        sprintf( asmFileName, "%s.asm", tmpnam(NULL) );
+        _environment->asmFileName = strdup(asmFileName);
+    } else {
+        _environment->asmFileName = strdup(_argv[optind+1] );
+    }
     
     yyin = fopen( _environment->sourceFileName, "r" );
     if ( ! yyin ) {
@@ -2590,6 +2601,11 @@ int main( int _argc, char *_argv[] ) {
     yyparse (_environment);
 
     end_compilation( _environment );
+
+    if ( _environment->exeFileName ) {
+        begin_build( _environment );
+        end_build( _environment );
+    }
 
 }
 
