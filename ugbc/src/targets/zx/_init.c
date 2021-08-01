@@ -72,12 +72,11 @@ void target_linkage( Environment * _environment ) {
     
     sprintf( commandLine, "z88dk-z80asm -l -b %s %s",
         _environment->exeFileName, 
-        _environment->asmFileName )
+        _environment->asmFileName );
     system( commandLine ); 
 
     sprintf( commandLine, "z88dk-appmake +zx --org 32768 -b %s",
         _environment->exeFileName );
-        
     system( commandLine ); 
 
 }
