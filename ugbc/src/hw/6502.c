@@ -2312,6 +2312,32 @@ void cpu6502_mem_move_direct_size( Environment * _environment, char *_source, ch
 
 }
 
+void cpu6502_mem_move_direct_indirect_size( Environment * _environment, char *_source, char *_destination, int _size ) {
+
+    if ( _size ) {
+
+        MAKE_LABEL
+
+        outline0("LDY #$0" );
+        outline1("LDA #>%s", _source );
+        outline0("STA TMPPTR+1" );
+        outline1("LDA #<%s", _source );
+        outline0("STA TMPPTR" );
+        outline1("LDA %s+1", _destination );
+        outline0("STA TMPPTR2+1" );
+        outline1("LDA %s", _destination );
+        outline0("STA TMPPTR2" );
+        outhead1("%s:", label );
+        outline0("LDA (TMPPTR), Y" );
+        outline0("STA (TMPPTR2), Y" );
+        outline0("INY" );
+        outline1("CPY #$%2.2x", (_size & 0xff ) );
+        outline1("BNE %s", label );
+
+    }
+
+}
+
 void cpu6502_mem_move_displacement(  Environment * _environment, char *_source, char *_destination, char * _displacement, char *_size ) {
 
     MAKE_LABEL
