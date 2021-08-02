@@ -659,6 +659,9 @@ Variable * variable_cast( Environment * _environment, char * _source, VariableTy
                         case VT_BUFFER:
                             switch( target->type ) {
                                 case VT_DSTRING: {
+                                    if ( source->size > 255 ) {
+                                        CRITICAL_CANNOT_CAST_BUFFER_STRING_SIZE( source->name, target->name );
+                                    }
                                     cpu_dsfree( _environment, target->realName );
                                     cpu_dsalloc_size( _environment, source->size, target->realName );
                                     Variable * targetAddress = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
@@ -924,6 +927,9 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
                     break;
                 }
                 case VT_BUFFER: {
+                    if ( target->size == 0 ) {
+                        target->size = source->size;
+                    }
                     if ( source->size > target->size ) {
                         CRITICAL_BUFFER_SIZE_MISMATCH(_source, _destination);
                     }

@@ -197,6 +197,7 @@ LEN { return (LEN); }
 LETTER { return (LETTER); }
 LIGHT { return(LIGHT); }
 LINE { return(LINE); }
+LOAD { return(LOAD); }
 LOCATE { return(LOCATE); }
 LOCK { return (LOCK); }
 LOOP { return (LOOP); }
@@ -280,6 +281,7 @@ SHARED { return (SHARED); }
 SHIFT { return (SHIFT); }
 SHIFTS { return (SHIFTS); }
 SIGNED { return (SIGNED); }
+SIZE { return (SIZE); }
 SLASH { return (SLASH); }
 SPACE { return (SPACE); }
 SPRITE { return (SPRITE); }
