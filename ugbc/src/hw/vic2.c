@@ -456,6 +456,8 @@ void vic2_bitmap_enable( Environment * _environment, int _width, int _height, in
 
     vic2_screen_mode_enable( _environment, mode );
 
+    _environment->currentMode = mode->id;
+
 }
 
 void vic2_bitmap_disable( Environment * _environment ) {
@@ -479,6 +481,8 @@ void vic2_tilemap_enable( Environment * _environment, int _width, int _height, i
     ScreenMode * mode = find_screen_mode_by_suggestion( _environment, 0, _width, _height, _colors );
 
     vic2_screen_mode_enable( _environment, mode );
+
+    _environment->currentMode = mode->id;
 
 }
 
