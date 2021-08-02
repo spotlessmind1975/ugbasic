@@ -517,6 +517,9 @@ Variable * variable_temporary( Environment * _environment, VariableType _type, c
         if ( _type == VT_STRING ) {
             sprintf(name, "Tstr%d", UNIQUE_ID);
             var->locked = 1;
+        } else if ( _type == VT_BUFFER ) {
+            sprintf(name, "Tbuf%d", UNIQUE_ID);
+            var->locked = 1;
         } else {
             sprintf(name, "Ttmp%d", UNIQUE_ID);
         }
@@ -654,14 +657,30 @@ Variable * variable_cast( Environment * _environment, char * _source, VariableTy
                             }
                             break;
                         case VT_BUFFER:
-                            if ( target->size == 0 ) {
-                                target->size = source->size;
+                            switch( target->type ) {
+                                case VT_DSTRING: {
+                                    cpu_dsfree( _environment, target->realName );
+                                    cpu_dsalloc_size( _environment, source->size, target->realName );
+                                    Variable * targetAddress = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
+                                    Variable * targetSize = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
+                                    cpu_dsdescriptor( _environment, target->realName, targetAddress->realName, targetSize->realName );
+                                    cpu_mem_move_direct_indirect_size( _environment, source->realName, targetAddress->realName, source->size );
+                                    break;
+                                }
+                                case VT_STRING:
+                                    CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
+                                case VT_BUFFER:
+                                    if ( target->size == 0 ) {
+                                        target->size = source->size;
+                                    }
+                                    if ( source->size <= target->size ) {
+                                        cpu_mem_move_direct_size( _environment, source->realName, target->realName, source->size );
+                                    } else {
+                                        CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
+                                    }
+                                    break;
                             }
-                            if ( source->size <= target->size ) {
-                                cpu_mem_move_direct_size( _environment, source->realName, target->realName, source->size );
-                            } else {
-                                CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
-                            }
+                            break;
                             break;                        
                     }
                     break;
