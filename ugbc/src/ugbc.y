@@ -702,6 +702,9 @@ exponential:
         $$ = variable_temporary( _environment, VT_COLOR, "(COLOR value)" )->name;
         variable_store( _environment, $$, $4 );
       }
+    | OP STRING CP Identifier { 
+        $$ = variable_cast( _environment, $4, VT_DSTRING )->name;        
+      }
     | BufferDefinition { 
         char * buffer = malloc( strlen( $1 ) / 2 );
         char hexdigits[3];
