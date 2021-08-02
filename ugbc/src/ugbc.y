@@ -49,7 +49,7 @@ extern char DATATYPE_AS_STRING[][16];
 %token COMMODORE CONTROL CRSR CURSOR DELETE EQUAL FUNCTION INSERT ARROW MINUS PERIOD PLUS 
 %token POUND RUNSTOP RUN STOP SEMICOLON SLASH KEY STATE KEYSTATE KEYSHIFT CAPSLOCK CAPS LOCK ALT
 %token INPUT FREE TILEMAP EMPTY TILE EMPTYTILE PLOT GR CIRCLE DRAW LINE BOX POLYLINE ELLIPSE CLIP
-%token BACK DEBUG CAN
+%token BACK DEBUG CAN ELSEIF BUFFER
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -61,6 +61,7 @@ extern char DATATYPE_AS_STRING[][16];
 %token <string> Identifier
 %token <string> String
 %token <integer> Integer
+%token <string> BufferDefinition
 
 %type <string> expr term modula factor exponential expr_math
 %type <integer> direct_integer
@@ -700,6 +701,19 @@ exponential:
     | OP COLOR CP Integer { 
         $$ = variable_temporary( _environment, VT_COLOR, "(COLOR value)" )->name;
         variable_store( _environment, $$, $4 );
+      }
+    | BufferDefinition { 
+        char * buffer = malloc( strlen( $1 ) / 2 );
+        char hexdigits[3];
+        int i = 0, c = 0;
+        for( i = 1, c = strlen( $1 ); i<(c-1); i += 2 ) {
+            hexdigits[0] = $1[i];
+            hexdigits[1] = $1[i+1];
+            hexdigits[2] = 0;
+            buffer[i>>1] = strtol(hexdigits,0,16);
+        }
+        $$ = variable_temporary( _environment, VT_BUFFER, "(buffer)" )->name;
+        variable_store_buffer( _environment, $$, buffer, strlen( $1 ) / 2, 0 );
       }
     | color_enumeration { 
         $$ = $1;
@@ -2258,6 +2272,9 @@ statement:
   }
   | ELSE IF expr THEN {
       else_if_then( _environment, $3 );  
+  }
+  | ELSEIF expr THEN {
+      else_if_then( _environment, $2 );  
   }
   | ENDIF {
       end_if_then( _environment );  

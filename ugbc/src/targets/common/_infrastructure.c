@@ -654,7 +654,14 @@ Variable * variable_cast( Environment * _environment, char * _source, VariableTy
                             }
                             break;
                         case VT_BUFFER:
-                            CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
+                            if ( target->size == 0 ) {
+                                target->size = source->size;
+                            }
+                            if ( source->size <= target->size ) {
+                                cpu_mem_move_direct_size( _environment, source->realName, target->realName, source->size );
+                            } else {
+                                CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
+                            }
                             break;                        
                     }
                     break;
@@ -833,6 +840,9 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                     break;
                 }
                 case VT_BUFFER: {
+                    if ( target->size == 0 ) {
+                        target->size = source->size;
+                    }
                     if ( source->size != target->size ) {
                         CRITICAL_BUFFER_SIZE_MISMATCH(_source, _destination);
                     }

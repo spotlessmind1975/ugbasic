@@ -8,6 +8,8 @@
       
 %%
 
+"["[a-fA-F0-9]+"]" { yylval.string = strdup(yytext); return(BufferDefinition); }
+
 [\n\r]+ { return(NewLine);}
 ";" { return(OP_SEMICOLON); }
 ":" { return(OP_COLON); }
@@ -64,6 +66,7 @@ BLUE { return (BLUE); }
 BROWN { return(BROWN); }
 BYTE { return (BYTE); }
 BORDER { return (BORDER); }
+BUFFER { return (BUFFER); }
 C { return (C); }
 CALL { return (CALL); }
 CAN { return (CAN); }
@@ -116,6 +119,7 @@ E { return (E); }
 ECM { return(ECM); }
 ELLIPSE { return(ELLIPSE); }
 ELSE { return(ELSE); }
+ELSEIF { return(ELSEIF); }
 EMPTY { return(EMPTY); }
 EMPTYTILE { return(EMPTYTILE); }
 END { return (END); }
@@ -341,6 +345,7 @@ Z { return (Z); }
 \$[a-fA-F0-9]+ { yylval.integer = strtol(yytext+1,0,16); return(Integer); }
 %[0-1]+ { yylval.integer = strtol(yytext+1,0,2); return(Integer); }
 \s[-][0-9]+ { yylval.integer = atoi(yytext); return(Integer);  }
+[a-fA-F0-9][a-fA-F0-9] { yylval.integer = strtol(yytext+1,0,16); return(Integer); } 
 [0-9]+ { yylval.integer = atoi(yytext); return(Integer);  }
 
 [ \t]+ 
