@@ -55,6 +55,9 @@ void screen_mode( Environment * _environment, int _mode ) {
 
     if ( mode ) {
         gtia_screen_mode_enable( _environment, mode );    
+
+        _environment->currentMode = mode->id;
+
     } else {
         WARNING_SCREEN_MODE( _mode );
     }
