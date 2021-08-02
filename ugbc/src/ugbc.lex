@@ -212,6 +212,7 @@ MID { return(MID); }
 MID\$ { return(MID); }
 MIN { return(MIN); }
 MINUS { return(MINUS); }
+MOB { return(MOB); }
 MOD { return(MOD); }
 MONOCOLOR { return(MONOCOLOR); }
 MS { return (MILLISECOND); }

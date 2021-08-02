@@ -149,7 +149,10 @@ typedef enum _VariableType {
     VT_ARRAY = 12,
 
     /** Strings (dynamic) */
-    VT_DSTRING = 13
+    VT_DSTRING = 13,
+
+    /** MOBs (Movable OBjects) */
+    VT_MOB = 14
     
 } VariableType;
 
@@ -601,6 +604,11 @@ typedef struct _Environment {
     Variable * everyTiming;
 
     /**
+     * Current graphical mode
+     */
+    int currentMode;
+
+    /**
      * Temporary storage for array definition
      */
     int arrayDimensions;
@@ -859,6 +867,9 @@ typedef struct _Environment {
 #define CRITICAL_LOAD_MISSING_FILE(f) CRITICAL2("E053 - LOAD missing file", f );
 #define CRITICAL_LOAD_FILE_TOO_LONG(f) CRITICAL2("E054 - LOAD file too long (>255 bytes)", f );
 #define CRITICAL_CANNOT_CAST_BUFFER_STRING_SIZE(a,b) CRITICAL3("E055 - Cannot cast BUFFER to STRING: buffer too long (>255 bytes)", a, b );
+#define CRITICAL_MOB_LOAD_MISSING_FILE(f) CRITICAL2("E056 - MOB LOAD missing file", f );
+#define CRITICAL_MOB_LOAD_UNKNOWN_FORMAT(f) CRITICAL2("E057 - MOB LOAD file format unknown", f );
+#define CRITICAL_MOB_CONVERTER_UNSUPPORTED_MODE(f) CRITICAL2i("E058 - MOB converter unsupported for the given screen mode", f );
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
 #define WARNING2i( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%i) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -1251,6 +1262,8 @@ void                    loop( Environment * _environment, char *_label );
 Variable *              maximum( Environment * _environment, char * _source, char * _dest );
 void                    memorize( Environment * _environment );
 Variable *              minimum( Environment * _environment, char * _source, char * _dest );
+Variable *              mob_load( Environment * _environment, char * _filename, int _mode );
+Variable *              mob_converter( Environment * _environment, char * _data, int _width, int _height, int _mode );
 
 //----------------------------------------------------------------------------
 // *N*

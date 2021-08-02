@@ -91,6 +91,9 @@ void variable_cleanup( Environment * _environment ) {
                             case VT_DSTRING:
                                 outline1("%s: .res 1", variable->realName);
                                 break;
+                            case VT_MOB:
+                                outline1("%s: .res 1", variable->realName);
+                                break;
                             case VT_BUFFER:
                                 if ( ! variable->absoluteAddress ) {
                                     if ( variable->valueBuffer ) {
@@ -123,6 +126,8 @@ void variable_cleanup( Environment * _environment ) {
                                 if ( VT_BITWIDTH( variable->arrayType ) > 0 ) {
                                     size *= ( VT_BITWIDTH( variable->arrayType ) >> 3 );
                                 } else if ( variable->arrayType == VT_DSTRING ) {
+                                    size *= 1;
+                                } else if ( variable->arrayType == VT_MOB ) {
                                     size *= 1;
                                 } else {
                                     CRITICAL_DATATYPE_UNSUPPORTED("array(1)", DATATYPE_AS_STRING[variable->arrayType]);
@@ -176,6 +181,9 @@ void variable_cleanup( Environment * _environment ) {
                             case VT_DSTRING:
                                 outline1("%s: .res 1", variable->realName);
                                 break;
+                            case VT_MOB:
+                                outline1("%s: .res 1", variable->realName);
+                                break;
                             case VT_BUFFER:
                                 if ( ! variable->absoluteAddress ) {
                                     if ( variable->valueBuffer ) {
@@ -207,6 +215,8 @@ void variable_cleanup( Environment * _environment ) {
                                 if ( VT_BITWIDTH( variable->arrayType ) > 0 ) {
                                     size *= ( VT_BITWIDTH( variable->arrayType ) >> 3 );
                                 } else if ( variable->arrayType == VT_DSTRING ) {
+                                    size *= 1;
+                                } else if ( variable->arrayType == VT_MOB ) {
                                     size *= 1;
                                 } else {
                                     CRITICAL_DATATYPE_UNSUPPORTED("array(2)", DATATYPE_AS_STRING[variable->arrayType]);

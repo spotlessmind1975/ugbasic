@@ -213,7 +213,7 @@ Variable * variable_define( Environment * _environment, char * _name, VariableTy
         } else {
             _environment->variables = var;
         }
-        if ( var->type != VT_STRING && var->type != VT_DSTRING && var->type != VT_BUFFER && var->type != VT_ARRAY ) {
+        if ( var->type != VT_STRING && var->type != VT_DSTRING && var->type != VT_MOB && var->type != VT_BUFFER && var->type != VT_ARRAY ) {
             variable_store( _environment, var->name, _value );
         }
         if ( var->type == VT_ARRAY ) {
@@ -315,7 +315,7 @@ Variable * variable_define_local( Environment * _environment, char * _name, Vari
         } else {
             _environment->procedureVariables = var;
         }
-        if ( var->type != VT_STRING && var->type != VT_DSTRING && var->type != VT_BUFFER && var->type != VT_ARRAY ) {
+        if ( var->type != VT_STRING && var->type != VT_DSTRING && var->type != VT_MOB && var->type != VT_BUFFER && var->type != VT_ARRAY ) {
             variable_store( _environment, var->name, _value );
         }
         if ( var->type == VT_ARRAY ) {
@@ -500,6 +500,7 @@ Variable * variable_array_type( Environment * _environment, char *_name, Variabl
  * - `VT_STRING` (<b>STATIC STRING</b>)
  * - `VT_DSTRING` (<b>DYNAMIC STRING</b>)
  * - `VT_BUFFER`
+ * - `VT_MOB`
  * 
  * @param _environment Current calling environment
  * @param _type Type of the variable to define
@@ -652,6 +653,17 @@ Variable * variable_cast( Environment * _environment, char * _source, VariableTy
                                 }
                                 case VT_STRING:
                                 case VT_BUFFER:
+                                    CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
+                                    break;
+                            }
+                            break;
+                        case VT_MOB:
+                            switch( target->type ) {
+                                case VT_MOB: {
+                                    cpu_move_8bit( _environment, source->realName, target->realName );
+                                    break;
+                                }
+                                default:
                                     CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
                                     break;
                             }
@@ -861,6 +873,17 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                     cpu_mem_move( _environment, address->realName, address2->realName, size->realName );
                     break;
                 }
+                case VT_MOB:
+                    switch( target->type ) {
+                        case VT_MOB: {
+                            cpu_move_8bit( _environment, source->realName, target->realName );
+                            break;
+                        }
+                        default:
+                            CRITICAL_MOVE_UNSUPPORTED( DATATYPE_AS_STRING[target->type]);
+                            break;
+                    }
+                    break;
                 case VT_BUFFER: {
                     if ( target->size == 0 ) {
                         target->size = source->size;
@@ -926,6 +949,17 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
                     cpu_mem_move( _environment, address->realName, address2->realName, size->realName );
                     break;
                 }
+                case VT_MOB:
+                    switch( target->type ) {
+                        case VT_MOB: {
+                            cpu_move_8bit( _environment, source->realName, target->realName );
+                            break;
+                        }
+                        default:
+                            CRITICAL_MOVE_NAKED_UNSUPPORTED( DATATYPE_AS_STRING[target->type]);
+                            break;
+                    }
+                    break;
                 case VT_BUFFER: {
                     if ( target->size == 0 ) {
                         target->size = source->size;
@@ -1021,7 +1055,8 @@ Variable * variable_add( Environment * _environment, char * _source, char * _des
                     cpu_mem_move( _environment, address2->realName, address->realName, size2->realName );
                     break;
                 }
-                case VT_BUFFER: {
+                case VT_BUFFER:
+                default: {
                     CRITICAL_ADD_UNSUPPORTED( _source, DATATYPE_AS_STRING[source->type]);
                 }
             }
@@ -1328,6 +1363,7 @@ Variable * variable_compare( Environment * _environment, char * _source, char * 
                             break;
                         }
                         case VT_BUFFER:
+                        default:
                             CRITICAL_CANNOT_COMPARE(DATATYPE_AS_STRING[source->type],DATATYPE_AS_STRING[target->type]);
                             break;
                     }
@@ -1365,18 +1401,20 @@ Variable * variable_compare( Environment * _environment, char * _source, char * 
                             break;
                         }
                         case VT_BUFFER:
+                        default:
                             CRITICAL_CANNOT_COMPARE(DATATYPE_AS_STRING[source->type],DATATYPE_AS_STRING[target->type]);
                             break;
                     }
                     break;
                 case VT_BUFFER:
                     switch( target->type ) {
+                        case VT_BUFFER:
+                            cpu_compare_memory_size( _environment, source->realName, target->realName, source->size, result->realName, 1 );
+                            break;
+                        default:
                         case VT_DSTRING:
                         case VT_STRING:
                             CRITICAL_CANNOT_COMPARE(DATATYPE_AS_STRING[source->type],DATATYPE_AS_STRING[target->type]);
-                            break;
-                        case VT_BUFFER:
-                            cpu_compare_memory_size( _environment, source->realName, target->realName, source->size, result->realName, 1 );
                             break;
                     }
                     break;
@@ -1749,6 +1787,8 @@ Variable * variable_less_than( Environment * _environment, char * _source, char 
                             CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );        
                     }
                     break;
+                default:
+                    CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
             }
             break;
     }
@@ -1965,6 +2005,8 @@ Variable * variable_greater_than( Environment * _environment, char * _source, ch
                             CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );        
                     }
                     break;
+                default:
+                    CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );        
             }
             break;            
     }
@@ -2079,6 +2121,7 @@ void variable_string_left_assign( Environment * _environment, char * _string, ch
             break;
         }
         case VT_BUFFER:
+        default:
             CRITICAL_LEFT_UNSUPPORTED( _string, DATATYPE_AS_STRING[string->type]);
             break;
     }
@@ -2160,6 +2203,7 @@ Variable * variable_string_right( Environment * _environment, char * _string, ch
             break;
         }
         case VT_BUFFER:
+        default:
             CRITICAL_RIGHT_UNSUPPORTED( _string, DATATYPE_AS_STRING[string->type]);
             break;
     }
@@ -2775,7 +2819,8 @@ Variable * variable_string_string( Environment * _environment, char * _string, c
             cpu_dsdescriptor( _environment, string->realName, address->realName, size->realName );
             break;
         }
-        CRITICAL_STRING_UNSUPPORTED( _string, DATATYPE_AS_STRING[string->type]);
+        default:
+            CRITICAL_STRING_UNSUPPORTED( _string, DATATYPE_AS_STRING[string->type]);
     }
 
     cpu_fill( _environment, address2->realName, size2->realName, address->realName );
@@ -2867,7 +2912,8 @@ Variable * variable_string_flip( Environment * _environment, char * _string  ) {
             cpu_dsdescriptor( _environment, string->realName, address->realName, size->realName );
             break;
         }
-        CRITICAL_STRING_UNSUPPORTED( _string, DATATYPE_AS_STRING[string->type]);
+        default:
+            CRITICAL_STRING_UNSUPPORTED( _string, DATATYPE_AS_STRING[string->type]);
     }
 
     cpu_dsfree( _environment, result->realName );
@@ -2979,7 +3025,8 @@ Variable * variable_string_asc( Environment * _environment, char * _char  ) {
             cpu_dsdescriptor( _environment, character->realName, address->realName, size->realName );
             break;
         }
-        CRITICAL_ASC_UNSUPPORTED( _char, DATATYPE_AS_STRING[character->type]);
+        default:
+            CRITICAL_ASC_UNSUPPORTED( _char, DATATYPE_AS_STRING[character->type]);
     }
 
     cpu_move_8bit_indirect2( _environment, address->realName, result->realName );
@@ -3027,7 +3074,8 @@ Variable * variable_string_len( Environment * _environment, char * _string  ) {
             cpu_dsdescriptor( _environment, string->realName, address->realName, size->realName );
             break;
         }
-        CRITICAL_LEN_UNSUPPORTED( _string, DATATYPE_AS_STRING[string->type]);
+        default:
+            CRITICAL_LEN_UNSUPPORTED( _string, DATATYPE_AS_STRING[string->type]);
     }
 
     cpu_move_8bit( _environment, size->realName, result->realName );

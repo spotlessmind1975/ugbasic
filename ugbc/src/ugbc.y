@@ -49,7 +49,7 @@ extern char DATATYPE_AS_STRING[][16];
 %token COMMODORE CONTROL CRSR CURSOR DELETE EQUAL FUNCTION INSERT ARROW MINUS PERIOD PLUS 
 %token POUND RUNSTOP RUN STOP SEMICOLON SLASH KEY STATE KEYSTATE KEYSHIFT CAPSLOCK CAPS LOCK ALT
 %token INPUT FREE TILEMAP EMPTY TILE EMPTYTILE PLOT GR CIRCLE DRAW LINE BOX POLYLINE ELLIPSE CLIP
-%token BACK DEBUG CAN ELSEIF BUFFER LOAD SIZE
+%token BACK DEBUG CAN ELSEIF BUFFER LOAD SIZE MOB
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -723,6 +723,12 @@ exponential:
       }
     | LOAD OP String OP_COMMA Integer CP {
         $$ = load( _environment, $3, $5 )->name;
+      }
+    | MOB LOAD OP String CP {
+        $$ = mob_load( _environment, $4, ((struct _Environment *)_environment)->currentMode )->name;
+      }
+    | MOB LOAD OP String OP_COMMA Integer CP {
+        $$ = mob_load( _environment, $4, $6 )->name;
       }
     | SIZE OP expr CP {
         Variable * v = variable_retrieve( _environment, $3 );
