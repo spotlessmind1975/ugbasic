@@ -128,20 +128,10 @@ void print( Environment * _environment, char * _value, int _new_line ) {
             case 0:
                 switch( value->type ) {
                     case VT_BUFFER: {
-                        Variable * address = variable_temporary( _environment, VT_ADDRESS, "(temporary for PRINT)");
-                        Variable * size = variable_temporary( _environment, VT_BYTE, "(temporary for PRINT)");
+                        char bufferName[MAX_TEMPORARY_STORAGE];
+                        sprintf(bufferName, "@buffer(%s)", value->name);
                         Variable * tmp = variable_temporary( _environment, VT_DSTRING, "(temporary for PRINT)");
-                        variable_store_string( _environment, tmp->name, "@                       " );
-
-                        cpu_dswrite( _environment, tmp->realName );
-
-                        cpu_dsdescriptor( _environment, tmp->realName, address->realName, size->realName );
-
-                        cpu_inc( _environment, address->realName );
-
-                        cpu_number_to_string( _environment, address->realName, address->realName, size->realName, VT_BITWIDTH( value->type ), VT_SIGNED( value->type ) );
-
-                        cpu_dsresize( _environment, tmp->realName, size->realName );
+                        variable_store_string( _environment, tmp->name, bufferName );
 
                         value = tmp;
 
