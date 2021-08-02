@@ -76,6 +76,14 @@ da quella posizione invece della prima posizione disponibile.
 </usermanual> */
 Variable * load( Environment * _environment, char * _filename, int _at ) {
 
+    LoadedFile * first = _environment->loadedFiles;
+    while( first ) {
+        if ( strcmp(_filename, first->fileName ) == 0 ) {
+            return first->variable;
+        }
+        first = first->next;
+    }
+
     Variable * result = variable_temporary( _environment, VT_BUFFER, "(buffer)" );
 
     FILE * file = fopen( _filename, "rb" );
@@ -95,6 +103,11 @@ Variable * load( Environment * _environment, char * _filename, int _at ) {
     fclose( file );
 
     variable_store_buffer( _environment, result->name, buffer, size, _at );
+
+    LoadedFile * loaded = malloc( sizeof( LoadedFile ) );
+    loaded->next = first;
+    loaded->variable = result;
+    _environment->loadedFiles = loaded;
 
     return result;
 

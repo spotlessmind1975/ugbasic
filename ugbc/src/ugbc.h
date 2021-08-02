@@ -413,6 +413,17 @@ typedef enum _Writing {
 
 } Writing;
 
+typedef struct _LoadedFile {
+
+    char * fileName;
+
+    Variable * variable;
+
+    /** Next loaded file */
+    struct _LoadedFile * next;
+
+} LoadedFile;
+
 typedef struct _ScreenMode {
 
     int         id;
@@ -548,6 +559,11 @@ typedef struct _Environment {
      * List of patterns for GLOBAL / SHARED variables
      */
     Pattern * globalVariablePatterns;
+
+    /**
+     * List of loaded files
+     */
+    LoadedFile * loadedFiles;
 
     /**
      * This flag marks if the program has opened a "game loop".
