@@ -160,4 +160,6 @@ void vic2_hscroll_screen( Environment * _environment, int _direction );
 void vic2_text_at( Environment * _environment, char * _x, char * _y, char * _text, char * _text_size, char * _pen, char *_ww );
 void vic2_cline( Environment * _environment, char * _characters );
 
+Variable * vic2_image_converter( Environment * _environment, char * _data, int _width, int _height, int _mode );
+
 #endif

@@ -33,56 +33,66 @@
  ****************************************************************************/
 
 #include "../../ugbc.h"
+#define STB_IMAGE_IMPLEMENTATION
+#include "../../stb_image.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
-Variable * mob_converter( Environment * _environment, char * _data, int _width, int _height, int _mode ) {
+/**
+ * @brief Emit code for <strong>IMAGE LOAD(...)</strong>
+ * 
+ * @param _environment Current calling environment
+ * @param _filename Filename to read into buffer
+ * @param _mode Mode to use to convert data
+ */
+/* <usermanual>
+@keyword IMAGE LOAD
 
-    Variable * mob = variable_temporary( _environment, VT_MOB, "(mob)" );
+@english
+The ''IMAGE LOAD'' command allows you to load an image and to convert it into
+a BUFFER. The second parameter is the mode to use to convert
+the given data (by default, it is equal to current mode)
 
-    switch( _mode ) {
-        case BITMAP_MODE_STANDARD:
-        case BITMAP_MODE_MULTICOLOR:
-        case BITMAP_MODE_AH:
-        case BITMAP_MODE_AIFLI:
-        case BITMAP_MODE_ASSLACE:
-        case BITMAP_MODE_ECI:
-        case BITMAP_MODE_IAFLI:
-        case BITMAP_MODE_IH:
-        case BITMAP_MODE_MRFLI:
-        case BITMAP_MODE_MUCSUFLI:
-        case BITMAP_MODE_MUCSUH:
-        case BITMAP_MODE_MUFLI:
-        case BITMAP_MODE_MUIFLI:
-        case BITMAP_MODE_NUFLI:
-        case BITMAP_MODE_NUIFLI:
-        case BITMAP_MODE_SH:
-        case BITMAP_MODE_SHFLI:
-        case BITMAP_MODE_SHI:
-        case BITMAP_MODE_SHIFLI:
-        case BITMAP_MODE_SHIFXL:
-        case BITMAP_MODE_UFLI:
-        case BITMAP_MODE_UIFLI:
-        case BITMAP_MODE_TRIFLI:
-        case BITMAP_MODE_XFLI:
-        case BITMAP_MODE_XIFLI:
-        case BITMAP_MODE_FLI:
-        case BITMAP_MODE_HCB:
-        case BITMAP_MODE_IFLI:
-        case BITMAP_MODE_MUCSU:
-        case BITMAP_MODE_MCI:
-        case BITMAP_MODE_MEGATEXT:
-        case BITMAP_MODE_PRS:
-            CRITICAL_MOB_CONVERTER_UNSUPPORTED_MODE( _mode );
+@italian
+Il comando ''IMAGE LOAD'' permette di caricare un file immagine, e di convertirlo
+in un BUFFER. Il secondo parametro è la modalità grafica da usare
+per convertire il dato (per default, è il modo corrente).
 
-        case TILEMAP_MODE_STANDARD:
-        case TILEMAP_MODE_MULTICOLOR:
-        case TILEMAP_MODE_EXTENDED:
-            CRITICAL_MOB_CONVERTER_UNSUPPORTED_MODE( _mode );
+@syntax = IMAGE LOAD([filename]{,[mode]})
+
+@example starship = IMAGE LOAD("starship.png")
+@example alienAt11 = IMAGE LOAD("alien.jpg",11)
+
+@usedInExample image_loading_01.bas
+
+@target all
+</usermanual> */
+Variable * image_load( Environment * _environment, char * _filename, int _mode ) {
+
+    int width = 0;
+    int height = 0;
+    int depth = 3;
+
+    FILE * file = fopen( _filename, "rb" );
+
+    if ( !file ) {
+        CRITICAL_IMAGE_LOAD_MISSING_FILE( _filename );
+    }
+    
+    fclose( file );
+
+    unsigned char* source = stbi_load(_filename, &width, &height, &depth, 0);
+
+    if ( !source ) {
+        CRITICAL_IMAGE_LOAD_UNKNOWN_FORMAT( _filename );
     }
 
-    return mob;
+    Variable * result = image_converter( _environment, source, width, height, _mode );
+
+    stbi_image_free(source);
+
+    return result;
 
 }

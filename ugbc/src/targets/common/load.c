@@ -85,7 +85,7 @@ Variable * load( Environment * _environment, char * _filename, int _at ) {
     }
 
     Variable * result = variable_temporary( _environment, VT_BUFFER, "(buffer)" );
-
+    
     FILE * file = fopen( _filename, "rb" );
 
     if ( !file ) {

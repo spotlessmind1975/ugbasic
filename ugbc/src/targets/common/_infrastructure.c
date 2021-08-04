@@ -213,7 +213,7 @@ Variable * variable_define( Environment * _environment, char * _name, VariableTy
         } else {
             _environment->variables = var;
         }
-        if ( var->type != VT_STRING && var->type != VT_DSTRING && var->type != VT_MOB && var->type != VT_BUFFER && var->type != VT_ARRAY ) {
+        if ( var->type != VT_STRING && var->type != VT_DSTRING && var->type != VT_MOB && var->type != VT_BUFFER && var->type != VT_IMAGE && var->type != VT_ARRAY ) {
             variable_store( _environment, var->name, _value );
         }
         if ( var->type == VT_ARRAY ) {
@@ -315,7 +315,7 @@ Variable * variable_define_local( Environment * _environment, char * _name, Vari
         } else {
             _environment->procedureVariables = var;
         }
-        if ( var->type != VT_STRING && var->type != VT_DSTRING && var->type != VT_MOB && var->type != VT_BUFFER && var->type != VT_ARRAY ) {
+        if ( var->type != VT_STRING && var->type != VT_DSTRING && var->type != VT_MOB && var->type != VT_BUFFER && var->type != VT_IMAGE && var->type != VT_ARRAY ) {
             variable_store( _environment, var->name, _value );
         }
         if ( var->type == VT_ARRAY ) {
@@ -521,6 +521,9 @@ Variable * variable_temporary( Environment * _environment, VariableType _type, c
         } else if ( _type == VT_BUFFER ) {
             sprintf(name, "Tbuf%d", UNIQUE_ID);
             var->locked = 1;
+        } else if ( _type == VT_IMAGE ) {
+            sprintf(name, "Timg%d", UNIQUE_ID);
+            var->locked = 1;
         } else {
             sprintf(name, "Ttmp%d", UNIQUE_ID);
         }
@@ -633,6 +636,7 @@ Variable * variable_cast( Environment * _environment, char * _source, VariableTy
                                 }
                                 case VT_STRING:
                                 case VT_BUFFER:
+                                case VT_IMAGE:
                                     CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
                                     break;
                             }
@@ -653,6 +657,7 @@ Variable * variable_cast( Environment * _environment, char * _source, VariableTy
                                 }
                                 case VT_STRING:
                                 case VT_BUFFER:
+                                case VT_IMAGE:
                                     CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
                                     break;
                             }
@@ -666,6 +671,23 @@ Variable * variable_cast( Environment * _environment, char * _source, VariableTy
                                 default:
                                     CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
                                     break;
+                            }
+                            break;
+                        case VT_IMAGE:
+                            switch( target->type ) {
+                                case VT_IMAGE:
+                                case VT_BUFFER:
+                                    if ( target->size == 0 ) {
+                                        target->size = source->size;
+                                    }
+                                    if ( source->size <= target->size ) {
+                                        cpu_mem_move_direct_size( _environment, source->realName, target->realName, source->size );
+                                    } else {
+                                        CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
+                                    }
+                                    break;
+                                default:
+                                    CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
                             }
                             break;
                         case VT_BUFFER:
@@ -684,6 +706,7 @@ Variable * variable_cast( Environment * _environment, char * _source, VariableTy
                                 }
                                 case VT_STRING:
                                     CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
+                                case VT_IMAGE:
                                 case VT_BUFFER:
                                     if ( target->size == 0 ) {
                                         target->size = source->size;
@@ -696,7 +719,6 @@ Variable * variable_cast( Environment * _environment, char * _source, VariableTy
                                     break;
                             }
                             break;
-                            break;                        
                     }
                     break;
 
@@ -796,6 +818,7 @@ Variable * variable_resize_buffer( Environment * _environment, char * _destinati
 Variable * variable_store_buffer( Environment * _environment, char * _destination, unsigned char * _buffer, int _size, int _at ) {
     Variable * destination = variable_retrieve( _environment, _destination );
     switch( destination->type ) {
+        case VT_IMAGE:
         case VT_BUFFER: {
             if ( ! destination->valueBuffer ) {
                 destination->valueBuffer = malloc( _size );
@@ -807,7 +830,7 @@ Variable * variable_store_buffer( Environment * _environment, char * _destinatio
                     cpu_mem_move_direct_size( _environment, bufferCopy, destination->realName, _size );
                 }
             } else {
-                Variable * temporary = variable_temporary( _environment, VT_BUFFER, "(copy of buffer)");
+                Variable * temporary = variable_temporary( _environment, destination->type, "(copy of buffer/image)");
                 temporary->valueBuffer = malloc( _size );
                 memcpy( temporary->valueBuffer, _buffer, _size );
                 temporary->size = _size;
@@ -884,6 +907,7 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                             break;
                     }
                     break;
+                case VT_IMAGE:
                 case VT_BUFFER: {
                     if ( target->size == 0 ) {
                         target->size = source->size;
@@ -960,6 +984,7 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
                             break;
                     }
                     break;
+                case VT_IMAGE:
                 case VT_BUFFER: {
                     if ( target->size == 0 ) {
                         target->size = source->size;
@@ -1055,6 +1080,7 @@ Variable * variable_add( Environment * _environment, char * _source, char * _des
                     cpu_mem_move( _environment, address2->realName, address->realName, size2->realName );
                     break;
                 }
+                case VT_IMAGE:
                 case VT_BUFFER:
                 default: {
                     CRITICAL_ADD_UNSUPPORTED( _source, DATATYPE_AS_STRING[source->type]);
@@ -1362,6 +1388,7 @@ Variable * variable_compare( Environment * _environment, char * _source, char * 
                             cpu_label( _environment, differentLabel );
                             break;
                         }
+                        case VT_IMAGE:
                         case VT_BUFFER:
                         default:
                             CRITICAL_CANNOT_COMPARE(DATATYPE_AS_STRING[source->type],DATATYPE_AS_STRING[target->type]);
@@ -1400,15 +1427,18 @@ Variable * variable_compare( Environment * _environment, char * _source, char * 
                             cpu_label( _environment, differentLabel );
                             break;
                         }
+                        case VT_IMAGE:
                         case VT_BUFFER:
                         default:
                             CRITICAL_CANNOT_COMPARE(DATATYPE_AS_STRING[source->type],DATATYPE_AS_STRING[target->type]);
                             break;
                     }
                     break;
+                case VT_IMAGE:
                 case VT_BUFFER:
                     switch( target->type ) {
                         case VT_BUFFER:
+                        case VT_IMAGE:
                             cpu_compare_memory_size( _environment, source->realName, target->realName, source->size, result->realName, 1 );
                             break;
                         default:
@@ -1778,9 +1808,11 @@ Variable * variable_less_than( Environment * _environment, char * _source, char 
                             CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );        
                     }
                     break;
+                case VT_IMAGE:
                 case VT_BUFFER:
                     switch( target->type ) {
                         case VT_BUFFER:
+                        case VT_IMAGE:
                             cpu_less_than_memory_size( _environment, source->realName, target->realName, source->size, result->realName, _equal );
                             break;
                         default:                
@@ -1996,9 +2028,11 @@ Variable * variable_greater_than( Environment * _environment, char * _source, ch
                             CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );        
                     }
                     break;
+                case VT_IMAGE:
                 case VT_BUFFER:
                     switch( target->type ) {
                         case VT_BUFFER:
+                        case VT_IMAGE:
                             cpu_greater_than_memory_size( _environment, source->realName, target->realName, source->size, result->realName, _equal );
                             break;
                         default:                
@@ -2120,6 +2154,7 @@ void variable_string_left_assign( Environment * _environment, char * _string, ch
             cpu_mem_move( _environment, address2->realName, address->realName, position->realName );
             break;
         }
+        case VT_IMAGE:
         case VT_BUFFER:
         default:
             CRITICAL_LEFT_UNSUPPORTED( _string, DATATYPE_AS_STRING[string->type]);
@@ -2202,6 +2237,7 @@ Variable * variable_string_right( Environment * _environment, char * _string, ch
             cpu_mem_move( _environment, address->realName, address2->realName, size2->realName );
             break;
         }
+        case VT_IMAGE:
         case VT_BUFFER:
         default:
             CRITICAL_RIGHT_UNSUPPORTED( _string, DATATYPE_AS_STRING[string->type]);

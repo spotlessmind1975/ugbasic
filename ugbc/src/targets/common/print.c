@@ -127,6 +127,16 @@ void print( Environment * _environment, char * _value, int _new_line ) {
             }
             case 0:
                 switch( value->type ) {
+                    case VT_IMAGE: {
+                        char bufferName[MAX_TEMPORARY_STORAGE];
+                        sprintf(bufferName, "@image(%s)", value->name);
+                        Variable * tmp = variable_temporary( _environment, VT_DSTRING, "(temporary for PRINT)");
+                        variable_store_string( _environment, tmp->name, bufferName );
+
+                        value = tmp;
+
+                        break;
+                    }
                     case VT_BUFFER: {
                         char bufferName[MAX_TEMPORARY_STORAGE];
                         sprintf(bufferName, "@buffer(%s)", value->name);

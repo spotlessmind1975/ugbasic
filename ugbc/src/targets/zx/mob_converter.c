@@ -38,14 +38,14 @@
  * CODE SECTION 
  ****************************************************************************/
 
-Variable * mob_converter( Environment * _environment, char * _data, int _width, int _height, int _mode ) {
+Variable * image_converter( Environment * _environment, char * _data, int _width, int _height, int _mode ) {
 
     Variable * mob = variable_temporary( _environment, VT_MOB, "(mob)" );
 
     switch( _mode ) {
         case BITMAP_MODE_STANDARD:
         case TILEMAP_MODE_STANDARD:
-           CRITICAL_MOB_CONVERTER_UNSUPPORTED_MODE( _mode );
+           CRITICAL_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
     }
 
     return mob;

@@ -94,6 +94,7 @@ void variable_cleanup( Environment * _environment ) {
                             case VT_MOB:
                                 outline1("%s: .res 1", variable->realName);
                                 break;
+                            case VT_IMAGE:
                             case VT_BUFFER:
                                 if ( ! variable->absoluteAddress ) {
                                     if ( variable->valueBuffer ) {
@@ -184,6 +185,7 @@ void variable_cleanup( Environment * _environment ) {
                             case VT_MOB:
                                 outline1("%s: .res 1", variable->realName);
                                 break;
+                            case VT_IMAGE:
                             case VT_BUFFER:
                                 if ( ! variable->absoluteAddress ) {
                                     if ( variable->valueBuffer ) {

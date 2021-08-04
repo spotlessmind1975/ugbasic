@@ -49,7 +49,7 @@ extern char DATATYPE_AS_STRING[][16];
 %token COMMODORE CONTROL CRSR CURSOR DELETE EQUAL FUNCTION INSERT ARROW MINUS PERIOD PLUS 
 %token POUND RUNSTOP RUN STOP SEMICOLON SLASH KEY STATE KEYSTATE KEYSHIFT CAPSLOCK CAPS LOCK ALT
 %token INPUT FREE TILEMAP EMPTY TILE EMPTYTILE PLOT GR CIRCLE DRAW LINE BOX POLYLINE ELLIPSE CLIP
-%token BACK DEBUG CAN ELSEIF BUFFER LOAD SIZE MOB
+%token BACK DEBUG CAN ELSEIF BUFFER LOAD SIZE MOB IMAGE
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -718,19 +718,38 @@ exponential:
         $$ = variable_temporary( _environment, VT_BUFFER, "(buffer)" )->name;
         variable_store_buffer( _environment, $$, buffer, strlen( $1 ) / 2, 0 );
       }
+    | OP IMAGE CP BufferDefinition { 
+        char * buffer = malloc( strlen( $4 ) / 2 );
+        char hexdigits[3];
+        int i = 0, c = 0;
+        for( i = 1, c = strlen( $4 ); i<(c-1); i += 2 ) {
+            hexdigits[0] = $4[i];
+            hexdigits[1] = $4[i+1];
+            hexdigits[2] = 0;
+            buffer[i>>1] = strtol(hexdigits,0,16);
+        }
+        $$ = variable_temporary( _environment, VT_IMAGE, "(buffer)" )->name;
+        variable_store_buffer( _environment, $$, buffer, strlen( $4 ) / 2, 0 );
+      }      
     | LOAD OP String CP {
         $$ = load( _environment, $3, 0 )->name;
       }
     | LOAD OP String OP_COMMA Integer CP {
         $$ = load( _environment, $3, $5 )->name;
       }
-    | MOB LOAD OP String CP {
-        $$ = mob_load( _environment, $4, ((struct _Environment *)_environment)->currentMode )->name;
+    | IMAGE LOAD OP String CP {
+        $$ = image_load( _environment, $4, ((struct _Environment *)_environment)->currentMode )->name;
       }
-    | MOB LOAD OP String OP_COMMA Integer CP {
-        $$ = mob_load( _environment, $4, $6 )->name;
+    | IMAGE LOAD OP String OP_COMMA Integer CP {
+        $$ = image_load( _environment, $4, $6 )->name;
       }
-    | SIZE OP expr CP {
+    | LOAD IMAGE OP String CP {
+        $$ = image_load( _environment, $4, ((struct _Environment *)_environment)->currentMode )->name;
+      }
+    | LOAD IMAGE OP String OP_COMMA Integer CP {
+        $$ = image_load( _environment, $4, $6 )->name;
+      }
+   | SIZE OP expr CP {
         Variable * v = variable_retrieve( _environment, $3 );
         $$ = variable_temporary( _environment, VT_WORD, "(size)" )->name;
         variable_store( _environment, $$, v->size );

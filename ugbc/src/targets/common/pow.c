@@ -109,6 +109,14 @@ Variable * powering( Environment * _environment, char * _base, char * _exponenti
         CRITICAL_POW_UNSUPPORTED( _exponential, DATATYPE_AS_STRING[exponential->type]);
     }
 
+    if ( base->type == VT_IMAGE ) {
+        CRITICAL_POW_UNSUPPORTED( _base, DATATYPE_AS_STRING[base->type]);
+    }
+
+    if ( exponential->type == VT_IMAGE ) {
+        CRITICAL_POW_UNSUPPORTED( _exponential, DATATYPE_AS_STRING[exponential->type]);
+    }    
+
     MAKE_LABEL
 
     char endLabel[MAX_TEMPORARY_STORAGE]; sprintf(endLabel, "%send", label);

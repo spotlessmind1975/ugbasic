@@ -36,6 +36,7 @@
 
 #include "../ugbc.h"
 #include "6502.h"
+#include <math.h>
 
 /****************************************************************************
  * CODE SECTION
@@ -1020,6 +1021,143 @@ void vic2_cline( Environment * _environment, char * _characters ) {
     outline1("LDA %s", y->realName );
     outline0("STA CLINEY");
     outline0("JSR CLINE");
+
+}
+
+/**
+ * @brief Calculate the luminance of a color
+ * 
+ * This function calculates the luminance of a color. 
+ * By luminance we mean the modulus of the three-dimensional 
+ * vector, drawn in the space composed of the three components 
+ * (red, green and blue). The returned value is normalized to
+ * the nearest 8-bit value.
+ * 
+ * @param _a 
+ * @return int 
+ */
+// 
+
+int calculate_luminance(RGB _a) {
+
+    // Extract the vector's components 
+    // (each partecipate up to 1/3 of the luminance).
+    double red = (double)_a.red / 3;
+    double green = (double)_a.green / 3;
+    double blue = (double)_a.blue / 3;
+
+    // Calculate luminance using Pitagora's Theorem
+    return (int)sqrt(pow(red, 2) + pow(green, 2) + pow(blue, 2));
+
+}
+
+static Variable * vic2_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height ) {
+
+    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
+ 
+    int bufferSize = 2 + ( ( _width >> 3 ) * _height );
+    char * buffer = malloc ( bufferSize );
+
+    // Position of the pixel in the original image
+    int image_x, image_y;
+    
+    // Position of the pixel, in terms of tiles
+    int tile_x, tile_y;
+    
+    // Position of the pixel, in terms of offset and bitmask
+    int offset, bitmask;
+
+    // Color of the pixel to convert
+    RGB rgb;
+
+    *(buffer) = _width;
+    *(buffer+1) = _height;
+
+    // Loop for all the source surface.
+    for (image_y = 0; image_y < _height; ++image_y) {
+        for (image_x = 0; image_x < _width; ++image_x) {
+
+            // Take the color of the pixel
+            rgb.red = *_source;
+            rgb.green = *(_source + 1);
+            rgb.blue = *(_source + 2);
+
+            // Calculate the relative tile
+            tile_y = (image_y >> 3);
+            tile_x = (image_x >> 3);
+            
+            // Calculate the offset starting from the tile surface area
+            // and the bit to set.
+            offset = (tile_y * 8 *( _width >> 3 ) ) + (tile_x * 8) + (image_y & 0x07);
+            bitmask = 1 << ( 7 - (image_x & 0x7) );
+
+            // If the pixes has enough luminance value, it must be 
+            // considered as "on"; otherwise, it is "off".
+            if (calculate_luminance(rgb) >= 16 /* luminance threshold*/ ) {
+                *( buffer + offset + 2) |= bitmask;
+            } else {
+                *( buffer + offset + 2) &= ~bitmask;
+            }
+
+            _source += 3;
+
+        }
+
+    }
+
+    variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
+
+    return result;
+
+}
+
+
+Variable * vic2_image_converter( Environment * _environment, char * _data, int _width, int _height, int _mode ) {
+
+    switch( _mode ) {
+
+        case BITMAP_MODE_STANDARD:
+
+            return vic2_image_converter_bitmap_mode_standard( _environment, _data, _width, _height );
+
+        case BITMAP_MODE_MULTICOLOR:
+        case BITMAP_MODE_AH:
+        case BITMAP_MODE_AIFLI:
+        case BITMAP_MODE_ASSLACE:
+        case BITMAP_MODE_ECI:
+        case BITMAP_MODE_IAFLI:
+        case BITMAP_MODE_IH:
+        case BITMAP_MODE_MRFLI:
+        case BITMAP_MODE_MUCSUFLI:
+        case BITMAP_MODE_MUCSUH:
+        case BITMAP_MODE_MUFLI:
+        case BITMAP_MODE_MUIFLI:
+        case BITMAP_MODE_NUFLI:
+        case BITMAP_MODE_NUIFLI:
+        case BITMAP_MODE_SH:
+        case BITMAP_MODE_SHFLI:
+        case BITMAP_MODE_SHI:
+        case BITMAP_MODE_SHIFLI:
+        case BITMAP_MODE_SHIFXL:
+        case BITMAP_MODE_UFLI:
+        case BITMAP_MODE_UIFLI:
+        case BITMAP_MODE_TRIFLI:
+        case BITMAP_MODE_XFLI:
+        case BITMAP_MODE_XIFLI:
+        case BITMAP_MODE_FLI:
+        case BITMAP_MODE_HCB:
+        case BITMAP_MODE_IFLI:
+        case BITMAP_MODE_MUCSU:
+        case BITMAP_MODE_MCI:
+        case BITMAP_MODE_MEGATEXT:
+        case BITMAP_MODE_PRS:
+        case TILEMAP_MODE_STANDARD:
+        case TILEMAP_MODE_MULTICOLOR:
+        case TILEMAP_MODE_EXTENDED:
+            break;
+    }
+
+    CRITICAL_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
 
 }
 

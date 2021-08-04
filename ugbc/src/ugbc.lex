@@ -168,6 +168,7 @@ HSCROLL { return (HSCROLL); }
 I { return (I); }
 IF { return (IF); }
 IGNORE { return (IGNORE); }
+IMAGE { return (IMAGE); }
 INC { return (OP_INC); }
 INK { return (INK); }
 INKEY { return (INKEY); }

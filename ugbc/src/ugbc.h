@@ -152,7 +152,10 @@ typedef enum _VariableType {
     VT_DSTRING = 13,
 
     /** MOBs (Movable OBjects) */
-    VT_MOB = 14
+    VT_MOB = 14,
+
+    /** IMAGEs (static pictures) */
+    VT_IMAGE = 15
     
 } VariableType;
 
@@ -469,6 +472,19 @@ typedef struct _ScreenMode {
             _environment->screenModes = screenMode; \
         } \
     }
+
+/**
+ * @brief Structure to store color components (red, green and blue)
+ * 
+ * This structure stores the color components (red, blue and green) 
+ * of a pixel, 8 bits wide. This structure is used both to represent the 
+ * retrocomputer palette and to process input data from image files.
+ */
+typedef struct _RGB {
+    int red;
+    int green;
+    int blue;
+} RGB;
 
 /**
  * @brief Structure of compilation environment
@@ -867,9 +883,9 @@ typedef struct _Environment {
 #define CRITICAL_LOAD_MISSING_FILE(f) CRITICAL2("E053 - LOAD missing file", f );
 #define CRITICAL_LOAD_FILE_TOO_LONG(f) CRITICAL2("E054 - LOAD file too long (>255 bytes)", f );
 #define CRITICAL_CANNOT_CAST_BUFFER_STRING_SIZE(a,b) CRITICAL3("E055 - Cannot cast BUFFER to STRING: buffer too long (>255 bytes)", a, b );
-#define CRITICAL_MOB_LOAD_MISSING_FILE(f) CRITICAL2("E056 - MOB LOAD missing file", f );
-#define CRITICAL_MOB_LOAD_UNKNOWN_FORMAT(f) CRITICAL2("E057 - MOB LOAD file format unknown", f );
-#define CRITICAL_MOB_CONVERTER_UNSUPPORTED_MODE(f) CRITICAL2i("E058 - MOB converter unsupported for the given screen mode", f );
+#define CRITICAL_IMAGE_LOAD_MISSING_FILE(f) CRITICAL2("E056 - IMAGE LOAD missing file", f );
+#define CRITICAL_IMAGE_LOAD_UNKNOWN_FORMAT(f) CRITICAL2("E057 - IMAGE LOAD file format unknown", f );
+#define CRITICAL_IMAGE_CONVERTER_UNSUPPORTED_MODE(f) CRITICAL2i("E058 - IMAGE converter unsupported for the given screen mode", f );
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
 #define WARNING2i( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%i) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -1228,6 +1244,8 @@ void                    home( Environment * _environment );
 //----------------------------------------------------------------------------
 
 void                    if_then( Environment * _environment, char * _expression );
+Variable *              image_load( Environment * _environment, char * _filename, int _mode );
+Variable *              image_converter( Environment * _environment, char * _data, int _width, int _height, int _mode );
 void                    ink( Environment * _environment, char * _expression );
 Variable *              inkey( Environment * _environment );
 void                    input( Environment * _environment, char * _variable );
@@ -1262,8 +1280,6 @@ void                    loop( Environment * _environment, char *_label );
 Variable *              maximum( Environment * _environment, char * _source, char * _dest );
 void                    memorize( Environment * _environment );
 Variable *              minimum( Environment * _environment, char * _source, char * _dest );
-Variable *              mob_load( Environment * _environment, char * _filename, int _mode );
-Variable *              mob_converter( Environment * _environment, char * _data, int _width, int _height, int _mode );
 
 //----------------------------------------------------------------------------
 // *N*

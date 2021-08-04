@@ -38,9 +38,9 @@
  * CODE SECTION 
  ****************************************************************************/
 
-Variable * mob_converter( Environment * _environment, char * _data, int _width, int _height, int _mode ) {
+Variable * image_converter( Environment * _environment, char * _data, int _width, int _height, int _mode ) {
 
-    Variable * mob = variable_temporary( _environment, VT_MOB, "(mob)" );
+    Variable * result = variable_temporary( _environment, VT_IMAGE, "(mob)" );
 
     switch( _mode ) {
         // Graphics 3 (ANTIC 8)
@@ -158,9 +158,8 @@ Variable * mob_converter( Environment * _environment, char * _data, int _width, 
         // This mode is essentially the same as ANTIC 4 except that each character is sixteen scan lines high. 
         // The character set data is still eight bytes high so ANTIC double plots each scan line.
         case TILEMAP_MODE_ANTIC5:
-           CRITICAL_MOB_CONVERTER_UNSUPPORTED_MODE( _mode );
     }
 
-    return mob;
+    CRITICAL_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
 
 }
