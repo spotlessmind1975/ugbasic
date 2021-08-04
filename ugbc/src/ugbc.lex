@@ -350,7 +350,6 @@ Z { return (Z); }
 \$[a-fA-F0-9]+ { yylval.integer = strtol(yytext+1,0,16); return(Integer); }
 %[0-1]+ { yylval.integer = strtol(yytext+1,0,2); return(Integer); }
 \s[-][0-9]+ { yylval.integer = atoi(yytext); return(Integer);  }
-[a-fA-F0-9][a-fA-F0-9] { yylval.integer = strtol(yytext+1,0,16); return(Integer); } 
 [0-9]+ { yylval.integer = atoi(yytext); return(Integer);  }
 
 [ \t]+ 
