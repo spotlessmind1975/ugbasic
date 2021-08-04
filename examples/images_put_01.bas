@@ -11,8 +11,12 @@ REM
 
 BITMAP ENABLE
 
+CLS
+
 airplane = IMAGE LOAD("examples/air_attack_airplane.png")
 
 PUT IMAGE airplane AT 0,0
+PUT IMAGE airplane AT 16,16
+PUT IMAGE airplane AT 32,32
 
 HALT
