@@ -457,6 +457,8 @@ void vic2_bitmap_enable( Environment * _environment, int _width, int _height, in
 
     vic2_screen_mode_enable( _environment, mode );
 
+    cpu_store_8bit( _environment, "CURRENTMODE", mode->id );
+    
     _environment->currentMode = mode->id;
 
 }
@@ -484,6 +486,9 @@ void vic2_tilemap_enable( Environment * _environment, int _width, int _height, i
     vic2_screen_mode_enable( _environment, mode );
 
     _environment->currentMode = mode->id;
+
+    cpu_store_8bit( _environment, "CURRENTMODE", mode->id );
+    
 
 }
 
@@ -1042,7 +1047,7 @@ int calculate_luminance(RGB _a) {
 
     // Extract the vector's components 
     // (each partecipate up to 1/3 of the luminance).
-    double red = (double)_a.red / 3;
+    double red = (double) _a.red / 3;
     double green = (double)_a.green / 3;
     double blue = (double)_a.blue / 3;
 
@@ -1093,7 +1098,9 @@ static Variable * vic2_image_converter_bitmap_mode_standard( Environment * _envi
 
             // If the pixes has enough luminance value, it must be 
             // considered as "on"; otherwise, it is "off".
-            if (calculate_luminance(rgb) >= 16 /* luminance threshold*/ ) {
+            int luminance = calculate_luminance(rgb);
+
+            if (luminance >= 1 /* luminance threshold*/ ) {
                 *( buffer + offset + 2) |= bitmask;
             } else {
                 *( buffer + offset + 2) &= ~bitmask;
@@ -1161,4 +1168,25 @@ Variable * vic2_image_converter( Environment * _environment, char * _data, int _
 
 }
 
+void vic2_put_image( Environment * _environment, char * _image, char * _x, char * _y ) {
+
+    deploy( vic2varsDeployed, src_hw_vic2_vars_asm);
+    deploy( imageDeployed, src_hw_vic2_image_asm );
+
+    outline1("LDA #<%s", _image );
+    outline0("STA TMPPTR" );
+    outline1("LDA #>%s", _image );
+    outline0("STA TMPPTR+1" );
+    outline1("LDA %s", _x );
+    outline0("STA IMAGEX" );
+    outline1("LDA %s+1", _x );
+    outline0("STA IMAGEX+1" );
+    outline1("LDA %s", _y );
+    outline0("STA IMAGEY" );
+    outline1("LDA %s+1", _y );
+    outline0("STA IMAGEY+1" );
+
+    outline0("JSR PUTIMAGE");
+
+}
 #endif

@@ -38,6 +38,8 @@
 TEXTADDRESS:        .BYTE   0, $5c
 BITMAPADDRESS:      .WORD   $6000
 COLORMAPADDRESS:       .BYTE   0, $58
+MOBADDRESS:         .WORD   $5C00
+
 TABCOUNT:   .BYTE    4
 XCURS:      .BYTE    0
 YCURS:      .BYTE    0

@@ -49,7 +49,7 @@ extern char DATATYPE_AS_STRING[][16];
 %token COMMODORE CONTROL CRSR CURSOR DELETE EQUAL FUNCTION INSERT ARROW MINUS PERIOD PLUS 
 %token POUND RUNSTOP RUN STOP SEMICOLON SLASH KEY STATE KEYSTATE KEYSHIFT CAPSLOCK CAPS LOCK ALT
 %token INPUT FREE TILEMAP EMPTY TILE EMPTYTILE PLOT GR CIRCLE DRAW LINE BOX POLYLINE ELLIPSE CLIP
-%token BACK DEBUG CAN ELSEIF BUFFER LOAD SIZE MOB IMAGE
+%token BACK DEBUG CAN ELSEIF BUFFER LOAD SIZE MOB IMAGE PUT
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -1705,6 +1705,15 @@ ellipse_definition_expression:
 ellipse_definition:
     ellipse_definition_expression;
 
+put_definition_expression:
+      IMAGE expr AT optional_y OP_COMMA optional_x {
+        put_image( _environment, $2, $4, $6 );
+        gr_locate( _environment, $4, $6 );
+    };
+
+put_definition:
+    put_definition_expression;
+
 draw_definition_expression:
       optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
         draw( _environment, $1, $3, $5, $7, $9 );
@@ -2217,6 +2226,7 @@ statement:
   | CIRCLE circle_definition
   | ELLIPSE ellipse_definition
   | DRAW draw_definition
+  | PUT put_definition
   | BOX box_definition
   | POLYLINE polyline_definition
   | CLIP clip_definition

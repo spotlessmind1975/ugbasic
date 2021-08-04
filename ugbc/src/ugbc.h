@@ -481,9 +481,9 @@ typedef struct _ScreenMode {
  * retrocomputer palette and to process input data from image files.
  */
 typedef struct _RGB {
-    int red;
-    int green;
-    int blue;
+    unsigned char red;
+    unsigned char green;
+    unsigned char blue;
 } RGB;
 
 /**
@@ -804,6 +804,12 @@ typedef struct _Environment {
      */
 
     int rasterDeployed;
+
+    /**
+     * Deployed the image routines
+     */
+
+    int imageDeployed;
 
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
@@ -1322,6 +1328,7 @@ void                    print( Environment * _environment, char * _text, int _ne
 void                    print_newline( Environment * _environment );
 void                    print_question_mark( Environment * _environment );
 void                    print_tab( Environment * _environment, int _new_line );
+void                    put_image( Environment * _environment, char * _image, char * _x, char * _y );
 
 //----------------------------------------------------------------------------
 // *Q*

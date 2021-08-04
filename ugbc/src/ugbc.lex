@@ -253,6 +253,7 @@ PRINT { return (PRINT); }
 PROC { return (PROC); }
 PROCEDURE { return (PROCEDURE); }
 PURPLE { return(PURPLE); }
+PUT { return(PUT); }
 Q { return (Q); }
 R { return (R); }
 RANDOM { return (RANDOM); }
