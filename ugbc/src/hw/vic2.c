@@ -1060,7 +1060,7 @@ static Variable * vic2_image_converter_bitmap_mode_standard( Environment * _envi
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
  
-    int bufferSize = 2 + ( ( _width >> 3 ) * _height );
+    int bufferSize = 2 + ( ( _width >> 3 ) * _height ) + ( ( _width >> 3 ) * ( _height >> 3 ) );
     char * buffer = malloc ( bufferSize );
 
     // Position of the pixel in the original image
@@ -1105,6 +1105,9 @@ static Variable * vic2_image_converter_bitmap_mode_standard( Environment * _envi
             } else {
                 *( buffer + offset + 2) &= ~bitmask;
             }
+
+            offset = tile_y * ( _width >> 3 ) + tile_x;
+            *( buffer + 2 + ( ( _width >> 3 ) * _height ) + offset ) = 0x10; // white 
 
             _source += 3;
 

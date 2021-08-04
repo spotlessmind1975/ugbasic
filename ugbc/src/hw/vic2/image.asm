@@ -125,17 +125,23 @@ PUTIMAGE2:
     ADC PLOT8HI,X
     STA PLOTDEST+1
 
+    TXA
+    ADC PLOTCVBASELO,Y          ;table of $8400 row base addresses
+    STA PLOTCDEST               ;= cell address
+
+    LDA #0
+    ADC PLOTCVBASEHI,Y          ;do the high byte
+    STA PLOTCDEST+1
+
     LDA IMAGEW
     TAY
-PUTIMAGEL1:
+    DEY
+PUTIMAGE2L1:
     LDA (TMPPTR),Y
     STA (PLOTDEST),Y
     DEY
-    CPY #0
-    BNE PUTIMAGEL1
-
-    DEC IMAGEH
-    BEQ PUTIMAGEE
+    CPY #255
+    BNE PUTIMAGE2L1
 
     CLC
     LDA TMPPTR
@@ -153,9 +159,54 @@ PUTIMAGEL1:
     ADC #$1
     STA PLOTDEST+1
 
+    DEC IMAGEH
+    BEQ PUTIMAGE2C
+
     LDA IMAGEW
     TAY
-    JMP PUTIMAGEL1
+    DEY
+    JMP PUTIMAGE2L1
 
-PUTIMAGEE:
+PUTIMAGE2C:
+
+    LDA IMAGEW
+    LSR A
+    LSR A
+    LSR A
+    STA IMAGEW
+    TAY
+    DEY
+PUTIMAGE2L2:
+    LDA (TMPPTR),Y
+    STA (PLOTCDEST),Y
+    DEY
+    CPY #255
+    BNE PUTIMAGE2L2
+
+    DEC IMAGEH
+    BEQ PUTIMAGE2E
+
+    CLC
+    LDA TMPPTR
+    ADC IMAGEW
+    STA TMPPTR
+    LDA TMPPTR+1
+    ADC #0
+    STA TMPPTR+1
+
+    CLC
+    LDA PLOTCDEST
+    ADC #40
+    STA PLOTCDEST
+    LDA PLOTCDEST+1
+    ADC #0
+    STA PLOTCDEST+1
+
+    LDA IMAGEW
+    TAY
+    DEY
+    JMP PUTIMAGE2L2
+
+PUTIMAGE2E:
+
     RTS
