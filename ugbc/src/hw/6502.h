@@ -116,6 +116,7 @@ void cpu6502_mem_move( Environment * _environment, char *_source, char *_destina
 void cpu6502_mem_move_direct( Environment * _environment, char *_source, char *_destination,  char *_size );
 void cpu6502_mem_move_size( Environment * _environment, char *_source, char *_destination, int _size );
 void cpu6502_mem_move_direct_size( Environment * _environment, char *_source, char *_destination, int _size );
+void cpu6502_mem_move_direct_with_offset_size( Environment * _environment, char *_source, int _offset, char *_destination, int _size );
 void cpu6502_mem_move_direct_indirect_size( Environment * _environment, char *_source, char *_destination, int _size );
 void cpu6502_mem_move_displacement( Environment * _environment, char *_source, char *_destination, char * _displacement, char *_size );
 void cpu6502_compare_memory( Environment * _environment, char *_source, char *_destination, char *_size, char *_result, int _equal );
@@ -159,6 +160,11 @@ void cpu6502_dsalloc_size( Environment * _environment, int _size, char * _index 
 void cpu6502_complement2_8bit( Environment * _environment, char * _source, char * _destination );
 void cpu6502_complement2_16bit( Environment * _environment, char * _source, char * _destination );
 void cpu6502_complement2_32bit( Environment * _environment, char * _source, char * _destination );
+void cpu6502_mobinit( Environment * _environment, char * _index, char *_x, char *_y, char *_draw);
+void cpu6502_mobshow( Environment * _environment, char * _index );
+void cpu6502_mobhide( Environment * _environment, char * _index );
+void cpu6502_mobat( Environment * _environment, char * _index, char *_x, char *_y );
+void cpu6502_mobrender( Environment * _environment );
 
 #define cpu_beq( _environment,  _label  ) cpu6502_beq( _environment,  _label  )
 #define cpu_bneq( _environment,  _label  ) cpu6502_beq( _environment,  _label  )
@@ -242,6 +248,7 @@ void cpu6502_complement2_32bit( Environment * _environment, char * _source, char
 #define cpu_store_8bit_indirect( _environment, _source, _value ) cpu6502_store_8bit_indirect( _environment, _source, _value )
 #define cpu_mem_move( _environment, _source, _destination, _size ) cpu6502_mem_move( _environment, _source, _destination, _size )
 #define cpu_mem_move_direct( _environment, _source, _destination, _size ) cpu6502_mem_move_direct( _environment, _source, _destination, _size )
+#define cpu_mem_move_direct_with_offset_size( _environment, _source, _offset, _destination, _size ) cpu6502_mem_move_direct_with_offset_size( _environment, _source, _offset, _destination, _size )
 #define cpu_mem_move_size( _environment, _source, _destination, _size ) cpu6502_mem_move_size( _environment, _source, _destination, _size )
 #define cpu_mem_move_direct_size( _environment, _source, _destination, _size ) cpu6502_mem_move_direct_size( _environment, _source, _destination, _size )
 #define cpu_mem_move_direct_indirect_size( _environment, _source, _destination, _size ) cpu6502_mem_move_direct_indirect_size( _environment, _source, _destination, _size )
@@ -287,5 +294,14 @@ void cpu6502_complement2_32bit( Environment * _environment, char * _source, char
 #define cpu_complement2_8bit( _environment, _source, _destination ) cpu6502_complement2_8bit( _environment, _source, _destination )
 #define cpu_complement2_16bit( _environment, _source, _destination ) cpu6502_complement2_16bit( _environment, _source, _destination )
 #define cpu_complement2_32bit( _environment, _source, _destination ) cpu6502_complement2_32bit( _environment, _source, _destination )
+
+extern char * src_hw_chipset_mob_asm;
+extern unsigned int src_hw_chipset_mob_asm_len;
+
+#define cpu_mobinit( _environment, _index, _x, _y, _draw ) cpu6502_mobinit( _environment, _index, _x, _y, _draw )
+#define cpu_mobshow( _environment, _index ) cpu6502_mobshow( _environment, _index )
+#define cpu_mobhide( _environment, _index ) cpu6502_mobhide( _environment, _index )
+#define cpu_mobat( _environment, _index, _x, _y ) cpu6502_mobat( _environment, _index, _x, _y )
+#define cpu_mobrender( _environment ) cpu6502_mobrender( _environment )
 
 #endif

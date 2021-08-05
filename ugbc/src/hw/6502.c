@@ -2312,6 +2312,42 @@ void cpu6502_mem_move_direct_size( Environment * _environment, char *_source, ch
 
 }
 
+void cpu6502_mem_move_direct_with_offset_size( Environment * _environment, char *_source, int _offset, char *_destination, int _size ) {
+
+    if ( _size ) {
+
+        MAKE_LABEL
+
+        outline0("LDY #$0" );
+        outline1("LDA #>%s", _source );
+        outline0("STA TMPPTR+1" );
+        outline1("LDA #<%s", _source );
+        outline0("STA TMPPTR" );
+        if ( _offset ) {
+            outline0("CLC" );
+            outline0("LDA TMPPTR" );
+            outline1("ADC #$%2.2x", (unsigned char)( _offset & 0xff ) );
+            outline0("STA TMPPTR" );
+            outline0("LDA TMPPTR+1" );
+            outline1("ADC #$%2.2x", (unsigned char)( ( _offset >> 8 ) & 0xff ) );
+            outline0("STA TMPPTR+1" );
+        }
+        outline1("LDA #>%s", _destination );
+        outline0("STA TMPPTR2+1" );
+        outline1("LDA #<%s", _destination );
+        outline0("STA TMPPTR2" );
+        outhead1("%s:", label );
+        outline0("LDA (TMPPTR), Y" );
+        outline0("STA (TMPPTR2), Y" );
+        outline0("INY" );
+        outline1("CPY #$%2.2x", (_size & 0xff ) );
+        outline1("BNE %s", label );
+
+    }
+
+}
+
+
 void cpu6502_mem_move_direct_indirect_size( Environment * _environment, char *_source, char *_destination, int _size ) {
 
     if ( _size ) {
@@ -3450,5 +3486,95 @@ void cpu6502_complement2_32bit( Environment * _environment, char * _source, char
     }
 
 }
+
+char * src_hw_chipset_mob_asm;
+unsigned int src_hw_chipset_mob_asm_len;
+
+void cpu6502_mobinit( Environment * _environment, char * _index, char *_x, char *_y,  char *_draw) {
+
+    deploy( mobDeployed, src_hw_6502_mob_asm );
+    deploy( mobcsDeployed, src_hw_chipset_mob_asm );
+    
+    outline1("LDX %s", _index );
+    outline1("LDA %s", _x );
+    outline0("STA MOBX" );
+    outline1("LDA %s+1", _x );
+    outline0("STA MOBX+1" );
+    outline1("LDA %s", _y );
+    outline0("STA MOBY" );
+    outline1("LDA %s+1", _y );
+    outline0("STA MOBY+1" );
+    outline1("LDA #<%s", _draw );
+    outline0("STA MOBADDR" );
+    outline1("LDA #>%s", _draw );
+    outline0("STA MOBADDR+1" );
+    outline0("CLC" );
+    outline0("LDA MOBADDR" );
+    outline0("ADC #2" );
+    outline0("STA MOBADDR" );
+    outline0("LDA MOBADDR+1" );
+    outline0("ADC #0" );
+    outline0("STA MOBADDR+1" );
+    outline1("LDA %s", _draw );
+    outline0("STA MOBW" );
+    outline1("LDA %s+1", _draw );
+    outline0("STA MOBH" );
+
+    outline0("JSR MOBINIT" );
+
+}
+
+void cpu6502_mobshow( Environment * _environment, char * _index ) {
+
+    deploy( mobDeployed, src_hw_6502_mob_asm );
+    deploy( mobcsDeployed, src_hw_chipset_mob_asm );
+
+    outline1("LDX %s", _index );
+
+    outline0("JSR MOBSHOW" );
+
+}
+
+void cpu6502_mobhide( Environment * _environment, char * _index ) {
+
+    deploy( mobDeployed, src_hw_6502_mob_asm );
+    deploy( mobcsDeployed, src_hw_chipset_mob_asm );
+
+    outline1("LDX %s", _index );
+
+    outline0("JSR MOBHIDE" );
+
+}
+
+void cpu6502_mobat( Environment * _environment, char * _index, char *_x, char *_y ) {
+
+    deploy( mobDeployed, src_hw_6502_mob_asm );
+    deploy( mobcsDeployed, src_hw_chipset_mob_asm );
+
+    outline1("LDX %s", _index );
+
+    outline1("LDX %s", _index );
+    outline1("LDA %s", _x );
+    outline0("STA MOBX" );
+    outline1("LDA %s+1", _x );
+    outline0("STA MOBX+1" );
+    outline1("LDA %s", _y );
+    outline0("STA MOBY" );
+    outline1("LDA %s+1", _y );
+    outline0("STA MOBY+1" );
+
+    outline0("JSR MOBAT" );
+
+}
+
+void cpu6502_mobrender( Environment * _environment ) {
+
+    deploy( mobDeployed, src_hw_6502_mob_asm );
+    deploy( mobcsDeployed, src_hw_chipset_mob_asm );
+
+    outline0("JSR MOBRENDER" );
+
+}
+
 
 #endif
