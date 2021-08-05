@@ -143,8 +143,7 @@ PUTIMAGE2:
     TAY
     DEY
 PUTIMAGE2L1:
-    LDA #$55
-    ; LDA (TMPPTR),Y
+    LDA (TMPPTR),Y
     STA (PLOTDEST),Y
     DEY
     CPY #255
@@ -186,8 +185,7 @@ PUTIMAGE2C:
     TAY
     DEY
 PUTIMAGE2L2:
-    LDA #$10
-    ; LDA (TMPPTR),Y
+    LDA (TMPPTR),Y
     STA (PLOTCDEST),Y
     DEY
     CPY #255
