@@ -35,10 +35,11 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-IMAGEX = $24
-IMAGEY = $26
+IMAGEX = $34
+IMAGEY = $36
 IMAGEW = $32
 IMAGEH = $33
+IMAGEH2 = $31
 
 ; ----------------------------------------------------------------------------
 ; - Put image on bitmap
@@ -80,6 +81,7 @@ PUTIMAGE2:
     LSR
     LSR
     STA IMAGEH
+    STA IMAGEH2
 
     CLC
     LDA TMPPTR
@@ -133,11 +135,16 @@ PUTIMAGE2:
     ADC PLOTCVBASEHI,Y          ;do the high byte
     STA PLOTCDEST+1
 
+    SEI
+    LDA #$36
+    STA $01
+
     LDA IMAGEW
     TAY
     DEY
 PUTIMAGE2L1:
-    LDA (TMPPTR),Y
+    LDA #$55
+    ; LDA (TMPPTR),Y
     STA (PLOTDEST),Y
     DEY
     CPY #255
@@ -169,6 +176,8 @@ PUTIMAGE2L1:
 
 PUTIMAGE2C:
 
+    LDA IMAGEH2
+    STA IMAGEH
     LDA IMAGEW
     LSR A
     LSR A
@@ -177,7 +186,8 @@ PUTIMAGE2C:
     TAY
     DEY
 PUTIMAGE2L2:
-    LDA (TMPPTR),Y
+    LDA #$10
+    ; LDA (TMPPTR),Y
     STA (PLOTCDEST),Y
     DEY
     CPY #255
@@ -208,5 +218,8 @@ PUTIMAGE2L2:
     JMP PUTIMAGE2L2
 
 PUTIMAGE2E:
+    LDA #$37
+    STA $01
+    CLI
 
     RTS
