@@ -947,7 +947,10 @@ void vic2_text_at( Environment * _environment, char * _x, char * _y, char * _tex
 
 void vic2_initialization( Environment * _environment ) {
 
+    deploy( vic2varsDeployed, src_hw_vic2_vars_asm );
     deploy( vicstartupDeployed, src_hw_vic2_startup_asm );
+    src_hw_chipset_mob_asm = src_hw_vic2_mob_asm;
+    src_hw_chipset_mob_asm_len = src_hw_vic2_mob_asm_len;
 
     SCREEN_MODE_DEFINE( BITMAP_MODE_STANDARD, 1, 320, 200, 2, "Standard Bitmap Mode" );
     SCREEN_MODE_DEFINE( BITMAP_MODE_MULTICOLOR, 1, 160, 200, 4, "Multicolor Bitmap Mode"  );

@@ -35,16 +35,16 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-MOB_COUNT = 16
+MOB_COUNT = $10
 
-MOBI = $23
-MOBX = $24
-MOBY = $26
-MOBW = $28
-MOBH = $29
-MOBADDR = $32
-MOBSIZE = $34
-MOBLASTX = $35
+MOBI = $E9
+MOBX = $EA
+MOBY = $EC
+MOBW = $EF
+MOBH = $F0
+MOBADDR = $F1
+MOBSIZE = $F3
+MOBLASTX = $F5
 
 ; Generic initialization
 ; MOBINIT(X:indeX,X,y,w,h,draw)
@@ -69,6 +69,12 @@ MOBINIT:
     LDA MOBY+1
     STA MOBDESCRIPTORS_YH,X
     STA MOBDESCRIPTORS_PYH,X
+
+    ; Initialize size
+    LDA MOBW
+    STA MOBDESCRIPTORS_W,X
+    LDA MOBH
+    STA MOBDESCRIPTORS_H,X
 
     ; Save address of the given data.
     ; Note that specific chipset 
@@ -213,47 +219,54 @@ MOBDESCRIPTORS_SL:
     .RES    MOB_COUNT
 MOBDESCRIPTORS_SH:
     .RES    MOB_COUNT
+MOBDESCRIPTORS_SIZEL:
+    .RES    MOB_COUNT
+MOBDESCRIPTORS_SIZEH:
+    .RES    MOB_COUNT
 
 MOBALLOCATED:       .WORD   $0
 
 
 
-MOBRENDERER:
+MOBRENDER:
     ; X = 0
     LDX #0
 
-MOBRENDERERL1:
+MOBRENDERL1:
     ; take descriptor X
     LDA MOBDESCRIPTORS_S,X
 
-    ; moved + visibled? = $C1
-    ; moved + unvisibled? = $C2
-    CMP #$C1
-    BEQ MOBRENDERERV1
-    CMP #$C2
-    BEQ MOBRENDERERV1
+    ; unvisibled -> visibled? = $01
+    ; visibled? -> unvisibled = $02
+    ; moved + visibled? = $0D
+    ; moved + unvisibled? = $0E
+    AND #$03
+    CMP #$01
+    BEQ MOBRENDERV1
+    CMP #$02
+    BEQ MOBRENDERV1
 
     ; ++X
     INX
 
     ; X < N ?
-    CPX MOB_COUNT
-    BNE MOBRENDERERL1
+    CPX #MOB_COUNT
+    BNE MOBRENDERL1
     RTS
 
-MOBRENDERERV1:
+MOBRENDERV1:
     ; LASTX = X
     STX MOBLASTX
 
     ; X = N - 1
-    LDX MOB_COUNT
+    LDX #MOB_COUNT
     DEX
 
-MOBRENDERERL2:
+MOBRENDERL2:
     ; previously visible?
     LDA MOBDESCRIPTORS_S, X
     AND #$02
-    BEQ MOBRENDERERV2
+    BEQ MOBRENDERV2
 
     ; restore background at pX,py (w,h) save area
     JSR MOBRESTORE
@@ -271,39 +284,47 @@ MOBRENDERERL2:
     LDA MOBDESCRIPTORS_YH, X
     STA MOBDESCRIPTORS_PYH, X
     
-MOBRENDERERV2:
+MOBRENDERV2:
     ; --X
     DEX
 
     ; X >= LASTX
     CPX MOBLASTX
-    BCS MOBRENDERERL2
-    BEQ MOBRENDERERL2
+    BCS MOBRENDERL2
+    BEQ MOBRENDERL2
 
     ; Reset the save area to LAST X
 
-MOBRENDERERV3:
-MOBRENDERERL3:
+MOBRENDERV3:
+MOBRENDERL3:
     ; visible ?
     LDA MOBDESCRIPTORS_S, X
     AND #$01
-    BEQ MOBRENDERERV4
+    BEQ MOBRENDERV4
+
+    STX MOBI
 
     ; save background at X,y (w,h) to save area
     JSR MOBSAVE
 
+    LDX MOBI
+
     ; draw sprite at X,y (w,h) from draw area
     JSR MOBDRAW
 
+    LDX MOBI
+    
     ; adjust visibility flag
     JSR MOBADJUST
 
-MOBRENDERERV4:
+    LDX MOBI
+    
+MOBRENDERV4:
     ; ++X
     INX
 
     ; X < N ?
-    CPX MOB_COUNT
-    BCC MOBRENDERERL3
+    CPX #MOB_COUNT
+    BCC MOBRENDERL3
 
     RTS

@@ -161,6 +161,8 @@ H { return (H); }
 HALT { return (HALT); }
 HAS { return (HAS); }
 HEIGHT { return (HEIGHT); }
+HIDE { return (HIDE); }
+HIDDEN { return (HIDDEN); }
 HIT { return (HIT); }
 HOME { return (HOME); }
 HORIZONTAL { return (HORIZONTAL); }
@@ -261,6 +263,7 @@ RANDOMIZE { return (RANDOMIZE); }
 RASTER { return (RASTER); }
 RED { return(RED); }
 REMEMBER { return(REMEMBER); }
+RENDER { return(RENDER); }
 REPEAT { return (REPEAT); }
 REPLACE { return (REPLACE); }
 RETURN { return (RETURN); }
@@ -283,6 +286,7 @@ SGN { return (SGN); }
 SHARED { return (SHARED); }
 SHIFT { return (SHIFT); }
 SHIFTS { return (SHIFTS); }
+SHOW { return (SHOW); }
 SIGNED { return (SIGNED); }
 SIZE { return (SIZE); }
 SLASH { return (SLASH); }
@@ -322,6 +326,7 @@ VAR { return (VAR); }
 VARIABLES { return (VARIABLES); }
 VERTICAL { return (VERTICAL); }
 VIOLET { return(VIOLET); }
+VISIBLE { return(VISIBLE); }
 VSCROLL { return (VSCROLL); }
 W { return (W); }
 WAIT { return (WAIT); }

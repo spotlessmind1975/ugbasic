@@ -35,14 +35,15 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-MOBDRAW_TMP = $F6
-MOBDRAW_DY  = $F7
+MOBDRAW_TMP = $40
+MOBDRAW_DY  = $F6
+MOBDRAW_DY2 = $F7
 MOBDRAW_DX  = $F8
 MOBDRAW_I  = $F9
 MOBDRAW_J  = $FA
 MOBDRAW_K  = $FB
-MOBDRAW_C  = $FC
-MOBDRAW_R  = $FE
+MOBDRAW_C  = $38
+MOBDRAW_R  = $39
 
 ; ---------------------------------------------------------------------------
 ; Chipset specific initialization
@@ -52,19 +53,29 @@ MOBINITCS:
     LDA CURRENTMODE
     ; BITMAP_MODE_STANDARD
     CMP #2
-    BEQ MOBINITCS2
+    BNE MOBINITCS2X
+    JMP MOBINITCS2
+MOBINITCS2X:
     ; BITMAP_MODE_MULTICOLOR
     CMP #3
-    BEQ MOBINITCS3
+    BNE MOBINITCS3X
+    JMP MOBINITCS3
+MOBINITCS3X:
     ; TILEMAP_MODE_STANDARD
     CMP #0
-    BEQ MOBINITCS0
+    BNE MOBINITCS0X
+    JMP MOBINITCS0
+MOBINITCS0X:
     ; TILEMAP_MODE_MULTICOLOR
     CMP #1
-    BEQ MOBINITCS1
+    BNE MOBINITCS1X
+    JMP MOBINITCS1
+MOBINITCS1X:
     ; TILEMAP_MODE_EXTENDED
     CMP #4
-    BEQ MOBINITCS4
+    BNE MOBINITCS4X
+    JMP MOBINITCS4
+MOBINITCS4X:
     RTS
 
 ; ---------------------------------------------------------------------------
@@ -77,9 +88,9 @@ MOBDRAW2_SHIFTRIGHT:
     LDX MOBI
 
     ; Load first location of draw data
-    LDA MOBDESCRIPTOR_DL, X
+    LDA MOBDESCRIPTORS_DL, X
     STA MOBADDR
-    LDA MOBDESCRIPTOR_DH, X
+    LDA MOBDESCRIPTORS_DH, X
     STA MOBADDR+1
 
     ; Load height (in pixels) = height (in rows) + 8
@@ -339,7 +350,8 @@ MOBDRAW2_SHIFTDOWNL1:
 
     ; First is last -- the copy is reversed!
     LDY MOBDESCRIPTORS_H, X
-    LDX MOBDESCRIPTORS_W, X
+    LDA MOBDESCRIPTORS_W, X
+    TAX
 MOBDRAW2_SHIFTDOWNL1X:
     CLC
     TXA
@@ -418,8 +430,9 @@ MOBDRAW2_SHIFTDOWNL3:
 
     ; First is last -- the copy is reversed!
     LDY MOBDESCRIPTORS_H, X
-    LDX MOBDESCRIPTORS_W, X
-MOBDRAW2_SHIFTDOWNL1X:
+    LDA MOBDESCRIPTORS_W, X
+    TAX
+MOBDRAW2_SHIFTDOWNL3X:
     CLC
     TXA
     ADC MOBADDR
@@ -428,7 +441,7 @@ MOBDRAW2_SHIFTDOWNL1X:
     ADC MOBADDR+1
     STA MOBADDR+1
     DEY
-    BNE MOBDRAW2_SHIFTDOWNL1X
+    BNE MOBDRAW2_SHIFTDOWNL3X
     
     LDY MOBSIZE
     DEY
@@ -474,14 +487,14 @@ MOBDRAW2_SHIFTUP:
     ; Calculate the offset for previous line by displacement
     LDA #0
     STA MOBSIZE
-MOBDRAW2_SHIFTDOWNL1:
+MOBDRAW2_SHIFTUPL1:
     CLC
     LDA MOBSIZE
     ADC MOBDESCRIPTORS_H, X
     ADC #8
     STA MOBSIZE
     DEC MOBDRAW_K
-    BNE MOBDRAW2_SHIFTDOWNL1
+    BNE MOBDRAW2_SHIFTUPL1
 
     ; Reload displacement = iteraction for each  line
     LDA MOBDRAW_DY
@@ -508,7 +521,7 @@ MOBDRAW2_SHIFTDOWNL1:
     STA TMPPTR+1
 
     ; Rows loop
-MOBDRAW2_SHIFTDOWNL2:
+MOBDRAW2_SHIFTUPL2:
 
     ; j = cols
     LDA MOBDRAW_C
@@ -518,7 +531,7 @@ MOBDRAW2_SHIFTDOWNL2:
     CLC
 
     ; Cols loop
-MOBDRAW2_SHIFTDOWNL3:
+MOBDRAW2_SHIFTUPL3:
 
     ; Move the content of the cell by 1 row down.
     LDA (TMPPTR),Y
@@ -537,7 +550,7 @@ MOBDRAW2_SHIFTDOWNL3:
 
     ; Repeat for each cell of the same row.
     DEC MOBDRAW_J
-    BNE MOBDRAW2_SHIFTDOWNL3
+    BNE MOBDRAW2_SHIFTUPL3
 
     ; Move to the next line
     CLC
@@ -558,7 +571,7 @@ MOBDRAW2_SHIFTDOWNL3:
 
     ; Repeat for each row of the entire draw.
     DEC MOBDRAW_I
-    BNE MOBDRAW2_SHIFTDOWNL3
+    BNE MOBDRAW2_SHIFTUPL3
 
     ; At the end, put the top area to zero.
     LDX MOBI
@@ -569,14 +582,14 @@ MOBDRAW2_SHIFTDOWNL3:
     STA MOBADDR+1    
 
     LDY MOBSIZE
-    DEC Y
-    BEQ MOBDRAW2_SHIFTDOWND4 
-MOBDRAW2_SHIFTDOWNL4:
+    DEY
+    BEQ MOBDRAW2_SHIFTUPD4 
+MOBDRAW2_SHIFTUPL4:
     STA (MOBADDR), Y
-    DEC Y
-    BNE MOBDRAW2_SHIFTDOWNL4
+    DEY
+    BNE MOBDRAW2_SHIFTUPL4
 
-MOBDRAW2_SHIFTDOWND4:
+MOBDRAW2_SHIFTUPD4:
 
     RTS
 
@@ -604,19 +617,23 @@ MOBINITCS2:
     ; that will contain the drawing. It must be 8 pixels (+ 1 cell) wider
     ; and 8 pixel (+ 1 cell) higher.
     LDA MOBW
-    ROR
-    ROR
-    ROR
+    LSR
+    LSR
+    LSR
     CLC
     ADC #1
-    STA MOBW
+    STA MOBDRAW_C
 
     LDA MOBH
-    ROR
-    ROR
-    ROR
+    LSR
+    LSR
+    LSR
     CLC
     ADC #1
+    STA MOBDRAW_R
+    ASL
+    ASL
+    ASL
     STA MOBH
 
     ; Now calculate the product MOBW x MOBH
@@ -627,7 +644,7 @@ MOBINITCS21:
     LSR MOBH
     BCC MOBINITCS22
     CLC
-    ADC MOBW
+    ADC MOBDRAW_C
 MOBINITCS22:
     ROR A
     ROR MOBSIZE
@@ -635,6 +652,14 @@ MOBINITCS22:
     BNE MOBINITCS21
     STA MOBSIZE+1
 
+    LDX MOBI
+
+    LDA MOBSIZE
+    STA MOBDESCRIPTORS_SIZEL,X
+    LDA MOBSIZE+1
+    STA MOBDESCRIPTORS_SIZEH,X
+
+MOBINITCS22X:
     ; Now we can allocate the space on the MOBSEGMENT
     JSR MOBALLOC
 
@@ -651,14 +676,24 @@ MOBINITCS22:
     ; at position 0,0 and assuring that is aligned to the
     ; new space.
 
+XXXXXX:
     ; Recalculate limits (w,h)
-    LDA MOBDESCRIPTORS_W, X
-    ROR
-    ROR
-    ROR
+    LDA MOBDRAW_C
+    SEC
+    SBC #1
     STA MOBDRAW_J
-    LDA MOBDESCRIPTORS_H, X
+    ASL
+    ASL
+    ASL
+    STA MOBW
+    LDA MOBDRAW_R
+    SEC
+    SBC #1
     STA MOBDRAW_I
+    ASL
+    ASL
+    ASL
+    STA MOBH
 
     ; Move the source data to a temporary pointer,
     ; (the destination area is already on MOBADDR)
@@ -668,47 +703,60 @@ MOBINITCS22:
     STA TMPPTR+1
 
     ; Copy one line at a time.
+MOBINITCSL1A:
     LDY #0
 MOBINITCSL1:
     LDA (TMPPTR),Y
     STA (MOBADDR),Y
     INY
+    LDA (TMPPTR),Y
+    STA (MOBADDR),Y
     INY
+    LDA (TMPPTR),Y
+    STA (MOBADDR),Y
     INY
+    LDA (TMPPTR),Y
+    STA (MOBADDR),Y
     INY
+    LDA (TMPPTR),Y
+    STA (MOBADDR),Y
     INY
+    LDA (TMPPTR),Y
+    STA (MOBADDR),Y
     INY
+    LDA (TMPPTR),Y
+    STA (MOBADDR),Y
     INY
+    LDA (TMPPTR),Y
+    STA (MOBADDR),Y
     INY
     DEC MOBDRAW_J
     BNE MOBINITCSL1
 
-    ; Move to the next line
-    ; If we are at the last line of the cell,
-    ; we must advace of an entire row.
-    LDA MOBDRAW_I
-    AND #$07
-    CMP #$01
-    BEQ MOBINITCSL1R8
-
-MOBINITCSL1R1:
-    CLC
-    LDA TMPPTR
-    ADC #8
-    STA TMPPTR
-    LDA TMPPTR+1
-    ADC #0
-    STA TMPPTR
-
-    CLC
-    LDA MOBADDR
-    ADC #8
-    STA MOBADDR
-    LDA MOBADDR+1
-    ADC #0
-    STA MOBADDR
-
-    JMP MOBINITCSL1RD
+    LDA #0
+    STA (MOBADDR),Y
+    INY
+    LDA #0
+    STA (MOBADDR),Y
+    INY
+    LDA #0
+    STA (MOBADDR),Y
+    INY
+    LDA #0
+    STA (MOBADDR),Y
+    INY
+    LDA #0
+    STA (MOBADDR),Y
+    INY
+    LDA #0
+    STA (MOBADDR),Y
+    INY
+    LDA #0
+    STA (MOBADDR),Y
+    INY
+    LDA #0
+    STA (MOBADDR),Y
+    INY
 
 MOBINITCSL1R8:
     CLC
@@ -717,7 +765,7 @@ MOBINITCSL1R8:
     STA TMPPTR
     LDA TMPPTR+1
     ADC #0
-    STA TMPPTR
+    STA TMPPTR+1
 
     CLC
     LDA MOBADDR
@@ -726,15 +774,47 @@ MOBINITCSL1R8:
     STA MOBADDR
     LDA MOBADDR+1
     ADC #0
-    STA MOBADDR
-
-    JMP MOBINITCSL1RD
-
-MOBINITCSL1RD:
+    STA MOBADDR+1
 
     ; Repeat for each row of the entire draw.
+    LDA MOBDRAW_C
+    SEC
+    SBC #1
+    STA MOBDRAW_J
     DEC MOBDRAW_I
-    BNE MOBINITCSL1
+    BNE MOBINITCSL1A
+
+    LDA MOBDRAW_C
+    STA MOBDRAW_J
+MOBINITCSL1HG:
+    LDY #0
+MOBINITCSL1H:
+    LDA #0
+    STA (MOBADDR),Y
+    INY
+    LDA #0
+    STA (MOBADDR),Y
+    INY
+    LDA #0
+    STA (MOBADDR),Y
+    INY
+    LDA #0
+    STA (MOBADDR),Y
+    INY
+    LDA #0
+    STA (MOBADDR),Y
+    INY
+    LDA #0
+    STA (MOBADDR),Y
+    INY
+    LDA #0
+    STA (MOBADDR),Y
+    INY
+    LDA #0
+    STA (MOBADDR),Y
+    INY
+    DEC MOBDRAW_J
+    BNE MOBINITCSL1H
 
     ; Now we must adjust the image inside the larger
     ; clip, by right and bottom shifting it, accordingly
@@ -769,6 +849,8 @@ MOBINITCS2A:
     ; If not aligned, we must shift it down by dy
     JSR MOBDRAW2_SHIFTDOWN
 
+MOBINITCS2B:
+
     RTS
 
 MOBINITCS0:
@@ -784,22 +866,217 @@ MOBSAVE:
     LDA CURRENTMODE
     ; BITMAP_MODE_STANDARD
     CMP #2
-    BEQ MOBSAVE2
+    BNE MOBSAVE2X
+    JMP MOBSAVE2
+MOBSAVE2X:
     ; BITMAP_MODE_MULTICOLOR
     CMP #3
-    BEQ MOBSAVE3
+    BNE MOBSAVE3X
+    JMP MOBSAVE3
+MOBSAVE3X:
     ; TILEMAP_MODE_STANDARD
     CMP #0
-    BEQ MOBSAVE0
+    BNE MOBSAVE0X
+    JMP MOBSAVE0
+MOBSAVE0X:
     ; TILEMAP_MODE_MULTICOLOR
     CMP #1
-    BEQ MOBSAVE1
+    BNE MOBSAVE1X
+    JMP MOBSAVE1
+MOBSAVE1X:
     ; TILEMAP_MODE_EXTENDED
     CMP #4
-    BEQ MOBSAVE4
+    BNE MOBSAVE4X
+    JMP MOBSAVE4
+MOBSAVE4X:
     RTS
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; SAVE MODE 2
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; This routine will increment the position of the operation to the
+; next byte (row) of the current cell.
+MOBSAVE2_INC:
+    CLC
+    LDA MOBADDR
+    ADC #1
+    STA MOBADDR
+    LDA MOBADDR+1
+    ADC #0
+    STA MOBADDR+1
+
+    CLC
+    LDA PLOTDEST
+    ADC #1
+    STA PLOTDEST
+    LDA PLOTDEST+1
+    ADC #0
+    STA PLOTDEST+1
+    RTS
+
+; This entry point is needed do save the screen into the reserved area,
+; in standard BITMAP MODE (2).
 MOBSAVE2:
+
+    SEI
+    LDA #$36
+    STA $01
+
+    LDX MOBI
+
+    LDA MOBDESCRIPTORS_SIZEL,X
+    STA MOBSIZE
+    LDA MOBDESCRIPTORS_SIZEH,X
+    STA MOBSIZE+1
+
+    JSR MOBALLOC
+
+    LDA MOBADDR
+    STA MOBDESCRIPTORS_SL, X
+    LDA MOBADDR+1
+    STA MOBDESCRIPTORS_SH, X
+
+    ;-------------------------
+    ;calc Y-cell, divide by 8
+    ;y/8 is y-cell table index
+    ;-------------------------
+    LDA MOBDESCRIPTORS_YL, X
+    LSR                         ;/ 2
+    LSR                         ;/ 4
+    LSR                         ;/ 8
+    TAY                         ;tbl_8,y index
+
+    CLC
+
+    ;------------------------
+    ;calc X-cell, divide by 8
+    ;divide 2-byte PLOTX / 8
+    ;------------------------
+    LDA MOBDESCRIPTORS_XL, X
+    ROR MOBDESCRIPTORS_XH, X   ;rotate the high byte into carry flag
+    ROR                        ;lo byte / 2 (rotate C into low byte)
+    LSR                        ;lo byte / 4
+    LSR                        ;lo byte / 8
+    TAX                        ;tbl_8,x index
+
+    ;----------------------------------
+    ;add x & y to calc cell point is in
+    ;----------------------------------
+    CLC
+
+    LDA PLOTVBASELO,Y          ;table of $A000 row base addresses
+    ADC PLOT8LO,X              ;+ (8 * Xcell)
+    STA PLOTDEST               ;= cell address
+
+    LDA PLOTVBASEHI,Y          ;do the high byte
+    ADC PLOT8HI,X
+    STA PLOTDEST+1
+
+    TXA
+    ADC PLOTCVBASELO,Y          ;table of $8400 row base addresses
+    STA PLOTCDEST               ;= cell address
+
+    LDA #0
+    ADC PLOTCVBASEHI,Y          ;do the high byte
+    STA PLOTCDEST+1
+
+    ; +---+---...---+---+
+    ; |xxx|xxxxxxxxx|xxx|
+    ; +---+---...---+---+
+    ; |   |         |   |
+    ; .   .         .   .
+    ; |   |         |   |
+    ; +---+---...---+---+
+    ; |   |         |   |
+    ; +---+---...---+---+
+
+    LDX MOBI
+
+    ; Calculate how many times we have to repeat
+    ; the row copying. If the image's height is less than
+    ; 8 pixels, we skip this part.
+    LDA MOBDESCRIPTORS_H, X
+    LSR
+    LSR
+    LSR
+    BEQ MOBSAVE2L3
+    ADC #1
+    STA MOBDRAW_I
+
+    ; Calculate how many times we have to repeat
+    ; the cell copying. If the image's width is less than
+    ; 9 pixels, we skip this part.
+    LDA MOBDESCRIPTORS_W, X
+    LSR
+    LSR
+    LSR
+    BEQ MOBSAVE2L3
+    ADC #1
+    STA MOBDRAW_J
+    STA MOBDRAW_C
+
+    ; Repeate an entire cell copy for each column
+MOBSAVE2L2A:    
+    LDY #0
+MOBSAVE2L2:
+    LDA (PLOTDEST),Y       ; D
+    STA (MOBADDR),Y       ; S
+    INY
+    LDA (PLOTDEST),Y       ; D
+    STA (MOBADDR),Y       ; S
+    INY
+    LDA (PLOTDEST),Y       ; D
+    STA (MOBADDR),Y       ; S
+    INY
+    LDA (PLOTDEST),Y       ; D
+    STA (MOBADDR),Y       ; S
+    INY
+    LDA (PLOTDEST),Y       ; D
+    STA (MOBADDR),Y       ; S
+    INY
+    LDA (PLOTDEST),Y       ; D
+    STA (MOBADDR),Y       ; S
+    INY
+    LDA (PLOTDEST),Y       ; D
+    STA (MOBADDR),Y       ; S
+    INY
+    LDA (PLOTDEST),Y       ; D
+    STA (MOBADDR),Y       ; S
+    INY
+    DEC MOBDRAW_J
+    BNE MOBSAVE2L2
+
+    CLC
+    LDA PLOTDEST
+    ADC #$40
+    STA PLOTDEST
+    LDA PLOTDEST+1
+    ADC #$1
+    STA PLOTDEST+1
+
+    CLC
+    LDA MOBADDR
+    ADC MOBW
+    ADC #8
+    STA MOBADDR
+    LDA MOBADDR+1
+    ADC #0
+    STA MOBADDR+1
+    
+    LDA MOBDRAW_C
+    STA MOBDRAW_J
+    DEC MOBDRAW_I
+    BNE MOBSAVE2L2A
+
+MOBSAVE2L3:
+
+    LDA #$37
+    STA $01
+    CLI
+
+    RTS
+
 MOBSAVE3:
     RTS
 
@@ -813,22 +1090,188 @@ MOBRESTORE:
     LDA CURRENTMODE
     ; BITMAP_MODE_STANDARD
     CMP #2
-    BEQ MOBRESTORE2
+    BNE MOBRESTORE2X
+    JMP MOBRESTORE2
+MOBRESTORE2X:
     ; BITMAP_MODE_MULTICOLOR
     CMP #3
-    BEQ MOBRESTORE3
+    BNE MOBRESTORE3X
+    JMP MOBRESTORE3
+MOBRESTORE3X:
     ; TILEMAP_MODE_STANDARD
     CMP #0
-    BEQ MOBRESTORE0
+    BNE MOBRESTORE0X
+    JMP MOBRESTORE0
+MOBRESTORE0X:
     ; TILEMAP_MODE_MULTICOLOR
     CMP #1
-    BEQ MOBRESTORE1
+    BNE MOBRESTORE1X
+    JMP MOBRESTORE1
+MOBRESTORE1X:
     ; TILEMAP_MODE_EXTENDED
     CMP #4
-    BEQ MOBRESTORE4
+    BNE MOBRESTORE4X
+    JMP MOBRESTORE4
+MOBRESTORE4X:
     RTS
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; RESTORE MODE 2
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; This routine will do a simple copy of the screen pixels over the
+; save area one, replacing them.
+MOBRESTORE2_COPY:
+    LDY #0
+    LDA (MOBADDR),Y       ; S
+    STA (PLOTDEST),Y       ; D
+    RTS
+
+; This routine will increment the position of the operation to the
+; next byte (row) of the current cell.
+MOBRESTORE2_INC:
+    CLC
+    LDA MOBADDR
+    ADC #1
+    STA MOBADDR
+    LDA MOBADDR+1
+    ADC #0
+    STA MOBADDR+1
+
+    CLC
+    LDA PLOTDEST
+    ADC #1
+    STA PLOTDEST
+    LDA PLOTDEST+1
+    ADC #0
+    STA PLOTDEST+1
+    RTS
+
+; This entry point is needed do save the screen into the reserved area,
+; in standard BITMAP MODE (2).
 MOBRESTORE2:
+
+    LDX MOBI
+
+    LDA MOBDESCRIPTORS_SL, X
+    STA MOBADDR
+    LDA MOBDESCRIPTORS_SH, X
+    STA MOBADDR+1
+
+    ;-------------------------
+    ;calc Y-cell, divide by 8
+    ;y/8 is y-cell table index
+    ;-------------------------
+    LDA MOBDESCRIPTORS_PYL, X
+    LSR                         ;/ 2
+    LSR                         ;/ 4
+    LSR                         ;/ 8
+    TAY                         ;tbl_8,y index
+
+    CLC
+
+    ;------------------------
+    ;calc X-cell, divide by 8
+    ;divide 2-byte PLOTX / 8
+    ;------------------------
+    LDA MOBDESCRIPTORS_PXL, X
+    ROR MOBDESCRIPTORS_PXH, X   ;rotate the high byte into carry flag
+    ROR                        ;lo byte / 2 (rotate C into low byte)
+    LSR                        ;lo byte / 4
+    LSR                        ;lo byte / 8
+    TAX                        ;tbl_8,x index
+
+    ;----------------------------------
+    ;add x & y to calc cell point is in
+    ;----------------------------------
+    CLC
+
+    LDA PLOTVBASELO,Y          ;table of $A000 row base addresses
+    ADC PLOT8LO,X              ;+ (8 * Xcell)
+    STA PLOTDEST               ;= cell address
+
+    LDA PLOTVBASEHI,Y          ;do the high byte
+    ADC PLOT8HI,X
+    STA PLOTDEST+1
+
+    TXA
+    ADC PLOTCVBASELO,Y          ;table of $8400 row base addresses
+    STA PLOTCDEST               ;= cell address
+
+    LDA #0
+    ADC PLOTCVBASEHI,Y          ;do the high byte
+    STA PLOTCDEST+1
+
+    ; +---+---...---+---+
+    ; |xxx|xxxxxxxxx|xxx|
+    ; +---+---...---+---+
+    ; |   |         |   |
+    ; .   .         .   .
+    ; |   |         |   |
+    ; +---+---...---+---+
+    ; |   |         |   |
+    ; +---+---...---+---+
+
+    LDX MOBI
+
+    ; Calculate how many times we have to repeat
+    ; the row copying. If the image's height is less than
+    ; 8 pixels, we skip this part.
+    LDA MOBDESCRIPTORS_H, X
+    LSR
+    LSR
+    LSR
+    BEQ MOBRESTORE2L3
+    ADC #1
+    STA MOBDRAW_I
+
+    ; Calculate how many times we have to repeat
+    ; the cell copying. If the image's width is less than
+    ; 9 pixels, we skip this part.
+    LDA MOBDESCRIPTORS_W, X
+    LSR
+    LSR
+    LSR
+    BEQ MOBRESTORE2L3
+    ADC #1
+    STA MOBDRAW_J
+    STA MOBDRAW_C
+
+    ; Repeate an entire cell copy for each column
+MOBRESTORE2L2A:    
+    ; Copy 8 rows
+    LDX #8
+MOBRESTORE2L2:
+    JSR MOBRESTORE2_COPY
+    JSR MOBRESTORE2_INC
+    INX
+    CPX #8
+    BNE MOBRESTORE2L2
+    DEC MOBDRAW_J
+    BNE MOBRESTORE2L2A
+    LDA MOBDRAW_C
+    STA MOBDRAW_J
+    DEC MOBDRAW_I
+    BNE MOBRESTORE2L2A
+
+MOBRESTORE2L3:
+
+    LDX MOBI
+
+    LDA MOBDESCRIPTORS_SIZEL,X
+    STA MOBSIZE
+    LDA MOBDESCRIPTORS_SIZEH,X
+    STA MOBSIZE+1
+
+    JSR MOBFREE
+
+    LDA #0
+    STA MOBDESCRIPTORS_SL, X
+    LDA #0
+    STA MOBDESCRIPTORS_SH, X
+
+    RTS
+
 MOBRESTORE3:
     RTS
 
@@ -846,19 +1289,29 @@ MOBDRAW:
     LDA CURRENTMODE
     ; BITMAP_MODE_STANDARD
     CMP #2
-    BEQ MOBDRAW2
+    BNE MOBDRAW2X
+    JMP MOBDRAW2
+MOBDRAW2X:
     ; BITMAP_MODE_MULTICOLOR
     CMP #3
-    BEQ MOBDRAW3
+    BNE MOBDRAW3X
+    JMP MOBDRAW3
+MOBDRAW3X:
     ; TILEMAP_MODE_STANDARD
     CMP #0
-    BEQ MOBDRAW0
+    BNE MOBDRAW0X
+    JMP MOBDRAW0
+MOBDRAW0X:
     ; TILEMAP_MODE_MULTICOLOR
     CMP #1
-    BEQ MOBDRAW1
+    BNE MOBDRAW1X
+    JMP MOBDRAW1
+MOBDRAW1X:
     ; TILEMAP_MODE_EXTENDED
     CMP #4
-    BEQ MOBDRAW4
+    BNE MOBDRAW4X
+    JMP MOBDRAW4
+MOBDRAW4X:
 
     RTS
 
@@ -889,7 +1342,7 @@ MOBDRAW2_NOP:
 ; This routine will do nothing, by skipping the
 ; number of bytes (rows in a cell) given by 
 ; 8-MOBDRAW_DY parameters. 
-MOBDRAW2_NOP:
+MOBDRAW2_NOP2:
     CLC
     LDA MOBADDR
     ADC #8
@@ -925,14 +1378,14 @@ MOBDRAW2_NOP:
 ; from the drawing, protecting the first MOBDRAW_DX pixels and
 ; replacing the others. 
 MOBDRAW2_LEFTMASK:
-    LDY MOBDRAW_DX
-    LDA (MOBDRAW_MASKX),Y       ; maskX
-    EOR A                       ; ~ maskX
+    LDX MOBDRAW_DX
+    LDA MOBDRAW2_MASKX,X       ; maskX
+    EOR #$FF                       ; ~ maskX
     LDY #0
     AND (PLOTDEST),Y           ; B & ~ maskX
     STA MOBDRAW_TMP
-    LDY MOBDRAW_DX
-    LDA (MOBDRAW_MASKX),Y       ; maskX
+    LDX MOBDRAW_DX
+    LDA MOBDRAW2_MASKX,X       ; maskX
     LDY #0
     AND (MOBADDR),Y           ; S & maskX
     ORA MOBDRAW_TMP
@@ -943,14 +1396,14 @@ MOBDRAW2_LEFTMASK:
 ; from the drawing, protecting the last MOBDRAW_DX pixels and
 ; replacing the others.
 MOBDRAW2_RIGHTMASK:
-    LDY MOBDRAW_DX
-    LDA (MOBDRAW_MASKX),Y       ; maskX
+    LDX MOBDRAW_DX
+    LDA MOBDRAW2_MASKX,X       ; maskX
     LDY #0
     AND (PLOTDEST),Y           ; B & maskX
     STA MOBDRAW_TMP
-    LDY MOBDRAW_DX
-    LDA (MOBDRAW_MASKX),Y       ; maskX
-    EOR A                       ; ~ maskX
+    LDX MOBDRAW_DX
+    LDA MOBDRAW2_MASKX,X       ; maskX
+    EOR #$FF                       ; ~ maskX
     LDY #0
     AND (MOBADDR),Y           ; S & ~ maskX
     ORA MOBDRAW_TMP
@@ -985,20 +1438,107 @@ MOBDRAW2_INC:
     STA PLOTDEST+1
     RTS
 
+MOBDRAW2_INCL:
+    CLC
+    LDA PLOTDEST
+    ADC #$40
+    STA PLOTDEST
+    LDA PLOTDEST+1
+    ADC #$1
+    STA PLOTDEST+1
+
+    SEC
+    LDA PLOTDEST
+    SBC MOBW
+    STA PLOTDEST
+    LDA PLOTDEST+1
+    SBC #$0
+    STA PLOTDEST+1
+
+    SEC
+    LDA PLOTDEST
+    SBC #$8
+    STA PLOTDEST
+    LDA PLOTDEST+1
+    SBC #$0
+    STA PLOTDEST+1
+
+    RTS
+
 ; This entry point is needed do draw the image over the screen,
 ; in standard BITMAP MODE (2).
 MOBDRAW2:
 
+    SEI
+    LDA #$36
+    STA $01
+
+    STX MOBI
+
+    LDA MOBDESCRIPTORS_DL, X
+    STA MOBADDR
+    LDA MOBDESCRIPTORS_DH, X
+    STA MOBADDR+1
+
+    ;-------------------------
+    ;calc Y-cell, divide by 8
+    ;y/8 is y-cell table index
+    ;-------------------------
+    LDA MOBDESCRIPTORS_YL, X
+    LSR                         ;/ 2
+    LSR                         ;/ 4
+    LSR                         ;/ 8
+    TAY                         ;tbl_8,y index
+
+    CLC
+
+    ;------------------------
+    ;calc X-cell, divide by 8
+    ;divide 2-byte PLOTX / 8
+    ;------------------------
+    LDA MOBDESCRIPTORS_XL, X
+    ROR MOBDESCRIPTORS_XH, X   ;rotate the high byte into carry flag
+    ROR                        ;lo byte / 2 (rotate C into low byte)
+    LSR                        ;lo byte / 4
+    LSR                        ;lo byte / 8
+    TAX                        ;tbl_8,x index
+
+    ;----------------------------------
+    ;add x & y to calc cell point is in
+    ;----------------------------------
+    CLC
+
+    LDA PLOTVBASELO,Y          ;table of $A000 row base addresses
+    ADC PLOT8LO,X              ;+ (8 * Xcell)
+    STA PLOTDEST               ;= cell address
+
+    LDA PLOTVBASEHI,Y          ;do the high byte
+    ADC PLOT8HI,X
+    STA PLOTDEST+1
+
+    TXA
+    ADC PLOTCVBASELO,Y          ;table of $8400 row base addresses
+    STA PLOTCDEST               ;= cell address
+
+    LDA #0
+    ADC PLOTCVBASEHI,Y          ;do the high byte
+    STA PLOTCDEST+1
+
+    LDX MOBI
+
     ; Calculate the effective offset of the image,
     ; in order to know how many pixels we have to
     ; skip / mask.
-    LDA MOBDESCRIPTORS_YL, x
+    LDA MOBDESCRIPTORS_YL, X
     AND #$07
     STA MOBDRAW_DY
+    STA MOBDRAW_DY2
+    STA MOBDRAW_I
 
-    LDA MOBDESCRIPTORS_XL, x
+    LDA MOBDESCRIPTORS_XL, X
     AND #$07
     STA MOBDRAW_DX
+    STA MOBDRAW_J
 
     ; +---+---...---+---+
     ; |XXX|         |   |
@@ -1010,17 +1550,22 @@ MOBDRAW2:
     ; |   |         |   |
     ; +---+---...---+---+
 
+    LDA MOBDRAW_DY2
+    STA MOBDRAW_DY
+    
     ; Skip DY rows
     JSR MOBDRAW2_NOP
 
     ; Copy (masked) 8-DY rows
-    LDX MOBDRAW_DY
+    SEC
+    LDA #8
+    SBC MOBDRAW_DY
+    STA MOBDRAW_I
 MOBDRAW2L1:
     JSR MOBDRAW2_LEFTMASK
     JSR MOBDRAW2_INC
-    INX
-    CPX #8
-    BNE MOBDRAWL1
+    DEC MOBDRAW_I
+    BNE MOBDRAW2L1
 
     ; +---+---...---+---+
     ; |   |xxxxxxxxx|   |
@@ -1034,58 +1579,86 @@ MOBDRAW2L1:
 
     LDX MOBI
 
-    ; Calculate how many times we have to repeat
-    ; the cell copying. If the image's width is less than
-    ; 9 pixels, we skip this part.
+;     ; Calculate how many times we have to repeat
+;     ; the cell copying. If the image's width is less than
+;     ; 9 pixels, we skip this part.
+;     LDA MOBDESCRIPTORS_W, X
+;     LSR
+;     LSR
+;     LSR
+;     STA MOBDRAW_C
+;     ASL
+;     ASL
+;     ASL
+;     STA MOBW
+
     LDA MOBDESCRIPTORS_W, X
     LSR
     LSR
     LSR
     BEQ MOBDRAW2L3
-    DEC A
-    BEQ MOBDRAW2L3
     STA MOBDRAW_J
+    STA MOBDRAW_C
+    ASL
+    ASL
+    ASL
+    STA MOBW
 
-    ; Repeate an entire cell copy for each column
+;     ; Repeate an entire cell copy for each column
 MOBDRAW2L2A:    
-    ; Skip DY rows
+    LDA MOBDRAW_DY2
+    STA MOBDRAW_DY
+    
+;     ; Skip DY rows
     JSR MOBDRAW2_NOP
-    ; Copy 8-DY rows
-    LDX MOBDRAW_DY
+
+;     ; Copy (masked) 8-DY rows
+    SEC
+    LDA #8
+    SBC MOBDRAW_DY
+    STA MOBDRAW_I
 MOBDRAW2L2:
     JSR MOBDRAW2_COPY
     JSR MOBDRAW2_INC
-    INX
-    CPX #8
-    BNE MOBDRAWL2
+    DEC MOBDRAW_I
+    BNE MOBDRAW2L2
+
     DEC MOBDRAW_J
     BNE MOBDRAW2L2A
 
 MOBDRAW2L3:
 
-    ; +---+---...---+---+
-    ; |   |         |xxx|
-    ; +---+---...---+---+
-    ; |   |         |   |
-    ; .   .         .   .
-    ; |   |         |   |
-    ; +---+---...---+---+
-    ; |   |         |   |
-    ; +---+---...---+---+
+;     ; +---+---...---+---+
+;     ; |   |         |xxx|
+;     ; +---+---...---+---+
+;     ; |   |         |   |
+;     ; .   .         .   .
+;     ; |   |         |   |
+;     ; +---+---...---+---+
+;     ; |   |         |   |
+;     ; +---+---...---+---+
 
     LDX MOBI
 
-    ; Skip DY rows
+    LDA MOBDRAW_DY2
+    STA MOBDRAW_DY
+    
+;     ; Skip DY rows
     JSR MOBDRAW2_NOP
 
-    ; Copy by right masking 8-DY rows
-    LDX MOBDRAW2_DY
+;     ; Copy (masked) 8-DY rows
+    SEC
+    LDA #8
+    SBC MOBDRAW_DY
+    STA MOBDRAW_I
 MOBDRAW2L3B:
     JSR MOBDRAW2_RIGHTMASK
+    DEC MOBDRAW_I
+    BNE MOBDRAW2L3BX
     JSR MOBDRAW2_INC
-    INX
-    CPX #8
-    BNE MOBDRAW2L3B
+    JMP MOBDRAW2L3B
+
+MOBDRAW2L3BX:
 
     LDX MOBI
 
@@ -1096,13 +1669,21 @@ MOBDRAW2L3B:
     LSR
     LSR
     LSR
-    BEQ MOBDRAW2L6
-    DEC A
-    BEQ MOBDRAW2L6
+    BNE MOBDRAW2L6X
+    JMP MOBDRAW2L6
+MOBDRAW2L6X:
+    SEC
+    SBC #1
+    BNE MOBDRAW2L6X2
+    JMP MOBDRAW2L6
+MOBDRAW2L6X2:
 
-    STA MOBDRAW_J
+    STA MOBDRAW_I
 
 MOBDRAW2L4:
+
+    JSR MOBDRAW2_INCL
+
     ; +---+---...---+---+
     ; |   |         |   |
     ; +---+---...---+---+
@@ -1134,13 +1715,8 @@ MOBDRAW2L4:
     ; Calculate how many times we have to repeat
     ; the cell copying. If the image's width is less than
     ; 9 pixels, we skip this part.
-    LDA MOBDESCRIPTORS_W, X
-    LSR
-    LSR
-    LSR
-    BEQ MOBDRAW2L5
-    DEC A
-    BEQ MOBDRAW2L5
+    LDA MOBDRAW_C
+    STA MOBDRAW_J
 
     ; +---+---...---+---+
     ; |   |         |   |
@@ -1153,8 +1729,8 @@ MOBDRAW2L4:
     ; +---+---...---+---+
 
     ; Repeate an entire cell copy for each column
-    TAX
-MOBDRAW2L4:
+    
+MOBDRAW2L4A:
     JSR MOBDRAW2_COPY
     JSR MOBDRAW2_INC
     JSR MOBDRAW2_COPY
@@ -1171,20 +1747,20 @@ MOBDRAW2L4:
     JSR MOBDRAW2_INC
     JSR MOBDRAW2_COPY
     JSR MOBDRAW2_INC
-    DEX
-    BNE MOBDRAW2L4
+    DEC MOBDRAW_J
+    BNE MOBDRAW2L4A
 
-    ; +---+---...---+---+
-    ; |   |         |   |
-    ; +---+---...---+---+
-    ; |   |         |xxx|
-    ; .   .         .   .
-    ; |   |         |   |
-    ; +---+---...---+---+
-    ; |   |         |   |
-    ; +---+---...---+---+
+;     ; +---+---...---+---+
+;     ; |   |         |   |
+;     ; +---+---...---+---+
+;     ; |   |         |xxx|
+;     ; .   .         .   .
+;     ; |   |         |   |
+;     ; +---+---...---+---+
+;     ; |   |         |   |
+;     ; +---+---...---+---+
 
-    ; Copy "right masked" the left most cell.
+;     ; Copy "right masked" the left most cell.
 MOBDRAW2L5:
     
     JSR MOBDRAW2_RIGHTMASK
@@ -1204,11 +1780,16 @@ MOBDRAW2L5:
     JSR MOBDRAW2_RIGHTMASK
     JSR MOBDRAW2_INC
 
-    DEC MOBDRAW_J
-    BNE MOBDRAW2L4
+    DEC MOBDRAW_I
+    BEQ MOBDRAW2L4X
+    JMP MOBDRAW2L4
+
+MOBDRAW2L4X:
 
 MOBDRAW2L6:
     
+    JSR MOBDRAW2_INCL
+
     ; +---+---...---+---+
     ; |   |         |   |
     ; +---+---...---+---+
@@ -1222,13 +1803,19 @@ MOBDRAW2L6:
     LDX MOBI
 
     ; Copy (masked) DY rows
-    LDX #0
+    LDA MOBDRAW_DY2
+    STA MOBDRAW_DY
+    STA MOBDRAW_I
+    BNE MOBDRAW2L7
+    JMp MOBDRAW3E
 MOBDRAW2L7:
     JSR MOBDRAW2_LEFTMASK
     JSR MOBDRAW2_INC
-    INX
-    CPX MOBDRAW_DY
-    BNE MOBDRAWL1
+    DEC MOBDRAW_I
+    BEQ MOBDRAW2L1X2
+    JMP MOBDRAW2L7
+
+MOBDRAW2L1X2:
 
     ; Ignore 8-DY rows
     JSR MOBDRAW2_NOP2
@@ -1248,27 +1835,22 @@ MOBDRAW2L7:
     ; Calculate how many times we have to repeat
     ; the cell copying. If the image's width is less than
     ; 9 pixels, we skip this part.
-    LDA MOBDESCRIPTORS_W, X
-    LSR
-    LSR
-    LSR
-    BEQ MOBDRAW2L9
-    DEC A
-    BEQ MOBDRAW2L9
-    STA MOBDRAW_J
+    LDA  MOBDRAW_C
+    LDA  MOBDRAW_J
 
     ; Repeate an entire cell copy for each column
 MOBDRAW2L8A:    
     ; Copy DY rows
-    LDX #0
+    LDA MOBDRAW_DY
+    STA MOBDRAW_I
 MOBDRAW2L8:
     JSR MOBDRAW2_COPY
     JSR MOBDRAW2_INC
-    INX
-    CPX MOBDRAW_DY
+    DEC MOBDRAW_I
     BNE MOBDRAW2L8
     ; Skip 8-DY rows
     JSR MOBDRAW2_NOP2
+
     DEC MOBDRAW_J
     BNE MOBDRAW2L8A
 
@@ -1277,16 +1859,22 @@ MOBDRAW2L9:
     LDX MOBI
 
     ; Copy by right masking DY rows
-    LDX #0
-MOBDRAW2L3B:
+    LDA MOBDRAW_DY
+    STA MOBDRAW_I
+MOBDRAW2L9B:
     JSR MOBDRAW2_RIGHTMASK
     JSR MOBDRAW2_INC
-    INX
-    CPX MOBDRAW_DY
-    BNE MOBDRAW2L3B
+    DEC MOBDRAW_I
+    BNE MOBDRAW2L9B
 
     ; Skip 8-DY rows
     JSR MOBDRAW2_NOP2
+
+MOBDRAW3E:
+
+    LDA #$37
+    STA $01
+    CLI
 
     RTS
 

@@ -51,8 +51,6 @@
 #include <limits.h>
 #include <unistd.h>
 
-#include "../src/stb_image.h"
-
 /****************************************************************************
  * DECLARATIONS AND DEFINITIONS SECTION 
  ****************************************************************************/
@@ -811,6 +809,18 @@ typedef struct _Environment {
 
     int imageDeployed;
 
+    /**
+     * Deployed the mob routines
+     */
+
+    int mobDeployed;
+
+    /**
+     * Deployed the mob routines for specific chipset
+     */
+
+    int mobcsDeployed;
+
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */
@@ -1286,6 +1296,11 @@ void                    loop( Environment * _environment, char *_label );
 Variable *              maximum( Environment * _environment, char * _source, char * _dest );
 void                    memorize( Environment * _environment );
 Variable *              minimum( Environment * _environment, char * _source, char * _dest );
+void                    mob_at( Environment * _environment, char * _index, char * _x, char * _y );
+void                    mob_hide( Environment * _environment, char * _index );
+void                    mob_init( Environment * _environment, char * _index, char * _image, char * _x, char * _y );
+void                    mob_render( Environment * _environment );
+void                    mob_show( Environment * _environment, char * _index );
 
 //----------------------------------------------------------------------------
 // *N*

@@ -49,7 +49,7 @@ extern char DATATYPE_AS_STRING[][16];
 %token COMMODORE CONTROL CRSR CURSOR DELETE EQUAL FUNCTION INSERT ARROW MINUS PERIOD PLUS 
 %token POUND RUNSTOP RUN STOP SEMICOLON SLASH KEY STATE KEYSTATE KEYSHIFT CAPSLOCK CAPS LOCK ALT
 %token INPUT FREE TILEMAP EMPTY TILE EMPTYTILE PLOT GR CIRCLE DRAW LINE BOX POLYLINE ELLIPSE CLIP
-%token BACK DEBUG CAN ELSEIF BUFFER LOAD SIZE MOB IMAGE PUT
+%token BACK DEBUG CAN ELSEIF BUFFER LOAD SIZE MOB IMAGE PUT VISIBLE HIDDEN HIDE SHOW RENDER
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -1705,6 +1705,41 @@ ellipse_definition_expression:
 ellipse_definition:
     ellipse_definition_expression;
 
+mob_definition_expression:
+     SHOW expr {
+        mob_show( _environment, $2 );
+    }
+    | HIDE expr {
+        mob_hide( _environment, $2 );
+    }
+    | RENDER {
+        mob_render( _environment );
+    }
+    | expr OP_COMMA expr AT optional_x OP_COMMA optional_y VISIBLE {
+        mob_init( _environment, $1, $3, $5, $7 );
+        mob_show( _environment, $1 );
+        gr_locate( _environment, $5, $7 );
+    }
+    | expr OP_COMMA expr AT optional_x OP_COMMA optional_y HIDDEN {
+        mob_init( _environment, $1, $3, $5, $7 );
+        mob_hide( _environment, $1 );
+    }
+    | expr OP_COMMA expr AT optional_x OP_COMMA optional_y {
+        mob_init( _environment, $1, $3, $5, $7 );
+        gr_locate( _environment, $5, $7 );
+    }
+    | expr OP_COMMA expr {
+        mob_init( _environment, $1, $3, NULL, NULL );
+    }
+    | expr AT optional_x OP_COMMA optional_y {
+        mob_at( _environment, $1, $3, $5 );
+        gr_locate( _environment, $3, $5 );
+    }
+    ;
+
+mob_definition:
+    mob_definition_expression;
+
 put_definition_expression:
       IMAGE expr AT optional_y OP_COMMA optional_x {
         put_image( _environment, $2, $4, $6 );
@@ -2227,6 +2262,7 @@ statement:
   | ELLIPSE ellipse_definition
   | DRAW draw_definition
   | PUT put_definition
+  | MOB mob_definition
   | BOX box_definition
   | POLYLINE polyline_definition
   | CLIP clip_definition
