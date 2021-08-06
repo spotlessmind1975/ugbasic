@@ -36,6 +36,7 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 MOBDRAW_TMP = $40
+MOBDRAW_PD  = $F5
 MOBDRAW_DY  = $F6
 MOBDRAW_DY2 = $F7
 MOBDRAW_DX  = $F8
@@ -97,6 +98,7 @@ MOBDRAW2_SHIFTRIGHT:
     LDA MOBH
     ADC #8
     STA MOBDRAW_R
+    STA MOBDRAW_I
 
     ; Load width (in pixels) = width (in cols) + 1
     LDA MOBW
@@ -109,6 +111,7 @@ MOBDRAW2_SHIFTRIGHT:
 
     ; Load displacement = iteraction for each  line
     LDA MOBDRAW_DX
+    AND #$07
     STA MOBDRAW_K
 
     ; Rows loop
@@ -162,22 +165,21 @@ MOBDRAW2_SHIFTRIGHTL2:
 MOBDRAW2_SHIFTRIGHTR1:
     CLC
     LDA MOBADDR
-    ADC #8
+    ADC #1
     STA MOBADDR
     LDA MOBADDR+1
     ADC #0
-    STA MOBADDR
+    STA MOBADDR+1
     JMP MOBDRAW2_SHIFTRIGHTRD
 
 MOBDRAW2_SHIFTRIGHTR8:
     CLC
     LDA MOBADDR
-    ADC MOBW
     ADC #8
     STA MOBADDR
     LDA MOBADDR+1
     ADC #0
-    STA MOBADDR
+    STA MOBADDR+1
     JMP MOBDRAW2_SHIFTRIGHTRD
 
 MOBDRAW2_SHIFTRIGHTRD:
@@ -206,6 +208,7 @@ MOBDRAW2_SHIFTLEFT:
     LDA MOBH
     ADC #8
     STA MOBDRAW_R
+    STA MOBDRAW_I
 
     ; Load width (in pixels) = width (in cols) + 1
     LDA MOBW
@@ -218,6 +221,7 @@ MOBDRAW2_SHIFTLEFT:
 
     ; Load displacement = iteraction for each  line
     LDA MOBDRAW_DX
+    AND #$07
     STA MOBDRAW_K
 
     ; Rows loop
@@ -278,7 +282,7 @@ MOBDRAW2_SHIFTLEFTR1:
     STA MOBADDR
     LDA MOBADDR+1
     ADC #0
-    STA MOBADDR
+    STA MOBADDR+1
     JMP MOBDRAW2_SHIFTLEFTRD
 
 MOBDRAW2_SHIFTLEFTR8:
@@ -289,7 +293,7 @@ MOBDRAW2_SHIFTLEFTR8:
     STA MOBADDR
     LDA MOBADDR+1
     ADC #0
-    STA MOBADDR
+    STA MOBADDR+1
     JMP MOBDRAW2_SHIFTRIGHTRD
 
 MOBDRAW2_SHIFTLEFTRD:
@@ -312,6 +316,7 @@ MOBDRAW2_SHIFTDOWN:
     LDA MOBDESCRIPTORS_H, X
     ADC #8
     STA MOBDRAW_R
+    STA MOBDRAW_I
 
     ; Load width (in pixels) = width (in cols) + 1
     LDA MOBDESCRIPTORS_W, X
@@ -324,6 +329,7 @@ MOBDRAW2_SHIFTDOWN:
 
     ; Load displacement = iteraction for each  line
     LDA MOBDRAW_DY
+    AND #$07
     STA MOBDRAW_K
 
     ; Calculate the offset for next line by displacement
@@ -340,6 +346,7 @@ MOBDRAW2_SHIFTDOWNL1:
 
     ; Reload displacement = iteraction for each  line
     LDA MOBDRAW_DY
+    AND #$07
     STA MOBDRAW_K
 
     ; Load first location of draw data
@@ -411,7 +418,7 @@ MOBDRAW2_SHIFTDOWNL3:
     STA MOBADDR
     LDA MOBADDR+1
     SBC #0
-    STA MOBADDR
+    STA MOBADDR+1
 
     CLC
     LDA TMPPTR
@@ -419,7 +426,7 @@ MOBDRAW2_SHIFTDOWNL3:
     STA TMPPTR
     LDA TMPPTR+1
     SBC #0
-    STA TMPPTR
+    STA TMPPTR+1
 
     ; Repeat for each row of the entire draw.
     DEC MOBDRAW_I
@@ -482,6 +489,7 @@ MOBDRAW2_SHIFTUP:
 
     ; Load displacement = iteraction for each  line
     LDA MOBDRAW_DY
+    AND #$07
     STA MOBDRAW_K
 
     ; Calculate the offset for previous line by displacement
@@ -498,6 +506,7 @@ MOBDRAW2_SHIFTUPL1:
 
     ; Reload displacement = iteraction for each  line
     LDA MOBDRAW_DY
+    AND #$07
     STA MOBDRAW_K
 
     ; Load location of draw data
@@ -559,7 +568,7 @@ MOBDRAW2_SHIFTUPL3:
     STA MOBADDR
     LDA MOBADDR+1
     ADC #0
-    STA MOBADDR
+    STA MOBADDR+1
 
     CLC
     LDA TMPPTR
@@ -567,7 +576,7 @@ MOBDRAW2_SHIFTUPL3:
     STA TMPPTR
     LDA TMPPTR+1
     ADC #0
-    STA TMPPTR
+    STA TMPPTR+1
 
     ; Repeat for each row of the entire draw.
     DEC MOBDRAW_I
@@ -1885,6 +1894,90 @@ MOBDRAW3:
 MOBDRAW0:
 MOBDRAW1:
 MOBDRAW4:
+
+    RTS
+
+MOBATCS:
+
+    LDX MOBI
+
+    ; Now we must adjust the image inside the larger
+    ; clip, by right and bottom shifting it, accordingly
+    ; to the (relative) position (x,y)
+    ;
+    ; DX for *next* position (DXn)
+    LDA MOBDESCRIPTORS_XL, X
+    STA MOBX
+    AND #$07
+    STA MOBDRAW_DX
+
+    ; DX for *previous* position (DXp)
+    LDA MOBDESCRIPTORS_PXL, X
+    AND #$07
+
+    ; DX = (DXp-DXn)
+    ; So: if DX > 0 ---> DXp > DXn ---> shift left
+    ;     if DX < 0 ---> DXp < DXn ---> shift right
+    SEC
+    SBC MOBDRAW_DX
+    STA MOBDRAW_DX
+
+    ; DY for *next* position (DYn)
+    LDA MOBDESCRIPTORS_YL, X
+    STA MOBY
+    AND #$07
+    STA MOBDRAW_DY
+
+    ; DY for *previous* position (DYp)
+    LDA MOBDESCRIPTORS_PYL, X
+    AND #$07
+
+    ; DY = (DYp-DYn)
+    ; So: if DY > 0 ---> DYp > DYn ---> shift up
+    ;     if DY < 0 ---> DYp < DYn ---> shift down
+    SEC
+    SBC MOBDRAW_DY
+    STA MOBDRAW_DY
+
+    LDA MOBDRAW_DX
+    AND #$80
+    BEQ MOBATCS_LEFT
+
+MOBATCS_RIGHT:
+
+    LDA MOBDRAW_DX
+    CLC
+    EOR #$FF
+    ADC #1
+    STA MOBDRAW_DX
+    JSR MOBDRAW2_SHIFTRIGHT
+    JMP MOBATCS_VERT
+
+MOBATCS_LEFT:
+
+    JSR MOBDRAW2_SHIFTLEFT
+    JMP MOBATCS_VERT
+
+MOBATCS_VERT:
+
+    LDA MOBDRAW_DY
+    AND #$80
+    BEQ MOBATCS_UP
+
+MOBATCS_DOWN:
+
+    LDA MOBDRAW_DY
+    CLC
+    EOR #$FF
+    ADC #1
+    STA MOBDRAW_DY
+    JSR MOBDRAW2_SHIFTDOWN
+    JMP MOBATCS_VERT
+
+MOBATCS_UP:
+
+    JSR MOBDRAW2_SHIFTUP
+    JMP MOBATCS_VERT
 
     RTS
 
