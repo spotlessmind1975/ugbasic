@@ -86,7 +86,7 @@ void mob_init( Environment * _environment, char * _index, char * _image, char * 
     }    
 
     if ( _y ) {
-        Variable * oy = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
+        Variable * oy = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
         variable_move_naked( _environment, oy->name, y->name );
     }    
 

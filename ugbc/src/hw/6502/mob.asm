@@ -37,14 +37,14 @@
 
 MOB_COUNT = $10
 
-MOBI = $E9
-MOBX = $EA
-MOBY = $EC
-MOBW = $EF
-MOBH = $F0
-MOBADDR = $F1
-MOBSIZE = $F3
-MOBLASTX = $F5
+MOBI: .byte 0
+MOBX: .word 0
+MOBY: .word 0
+MOBW: .word 0
+MOBH: .word 0
+MOBADDR = $03
+MOBSIZE: .word 0
+MOBLASTX: .byte 0
 
 ; Generic initialization
 ; MOBINIT(X:indeX,X,y,w,h,draw)
@@ -151,7 +151,7 @@ MOBAT2:
 MOBAT3:
     LDA MOBY
     STA MOBDESCRIPTORS_YL,X
-    CMP MOBDESCRIPTORS_PXL,X
+    CMP MOBDESCRIPTORS_PYL,X
     BEQ MOBAT4
     LDA MOBDESCRIPTORS_S,X
     ORA #$08
@@ -249,11 +249,17 @@ MOBRENDERL1:
     ; visibled? -> unvisibled = $02
     ; moved + visibled? = $0D
     ; moved + unvisibled? = $0E
+    ; moved? = $08 or $04
     AND #$03
     CMP #$01
     BEQ MOBRENDERV1
     CMP #$02
     BEQ MOBRENDERV1
+
+    ; retake descriptor X
+    LDA MOBDESCRIPTORS_S,X
+    AND #$0C
+    BNE MOBRENDERV1
 
     ; ++X
     INX
@@ -282,6 +288,8 @@ MOBRENDERL2:
 
     ; adjust visibility flag
     JSR MOBADJUST
+    
+MOBRENDERV2:
 
     ; update positions
     LDA MOBDESCRIPTORS_XL, X
@@ -292,8 +300,7 @@ MOBRENDERL2:
     STA MOBDESCRIPTORS_PYL, X
     LDA MOBDESCRIPTORS_YH, X
     STA MOBDESCRIPTORS_PYH, X
-    
-MOBRENDERV2:
+
     ; --X
     DEX
 

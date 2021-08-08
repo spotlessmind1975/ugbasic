@@ -35,16 +35,16 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-MOBDRAW_TMP = $40
-MOBDRAW_PD  = $F5
-MOBDRAW_DY  = $F6
-MOBDRAW_DY2 = $F7
-MOBDRAW_DX  = $F8
-MOBDRAW_I  = $F9
-MOBDRAW_J  = $FA
-MOBDRAW_K  = $FB
-MOBDRAW_C  = $38
-MOBDRAW_R  = $39
+MOBDRAW_TMP: .byte 0
+MOBDRAW_PD: .byte 0
+MOBDRAW_DY: .byte 0
+MOBDRAW_DY2: .byte 0
+MOBDRAW_DX: .byte 0
+MOBDRAW_I: .byte 0
+MOBDRAW_J: .byte 0
+MOBDRAW_K: .byte 0
+MOBDRAW_C: .byte 0
+MOBDRAW_R: .byte 0
 
 ; ---------------------------------------------------------------------------
 ; Chipset specific initialization
@@ -95,19 +95,25 @@ MOBDRAW2_SHIFTRIGHT:
     STA MOBADDR+1
 
     ; Load height (in pixels) = height (in rows) + 8
-    LDA MOBH
+    CLC
+    LDA MOBDESCRIPTORS_H, X
+    STA MOBH
     ADC #8
     STA MOBDRAW_R
     STA MOBDRAW_I
 
     ; Load width (in pixels) = width (in cols) + 1
-    LDA MOBW
+    LDA MOBDESCRIPTORS_W, X
     LSR
     LSR
     LSR
     CLC
     ADC #1
     STA MOBDRAW_C
+    ASL
+    ASL
+    ASL
+    STA MOBW
 
     ; Load displacement = iteraction for each  line
     LDA MOBDRAW_DX
@@ -175,14 +181,26 @@ MOBDRAW2_SHIFTRIGHTR1:
 MOBDRAW2_SHIFTRIGHTR8:
     CLC
     LDA MOBADDR
-    ADC #8
+    ADC MOBW
     STA MOBADDR
     LDA MOBADDR+1
     ADC #0
     STA MOBADDR+1
+
+    SEC
+    LDA MOBADDR
+    SBC #7
+    STA MOBADDR
+    LDA MOBADDR+1
+    SBC #0
+    STA MOBADDR+1
+
     JMP MOBDRAW2_SHIFTRIGHTRD
 
 MOBDRAW2_SHIFTRIGHTRD:
+    LDA MOBDRAW_DX
+    AND #$07
+    STA MOBDRAW_K
     ; Repeat for each row of the entire draw.
     DEC MOBDRAW_I
     BNE MOBDRAW2_SHIFTRIGHTL1
@@ -204,20 +222,33 @@ MOBDRAW2_SHIFTLEFT:
     LDA MOBDESCRIPTORS_DH, X
     STA MOBADDR+1
 
+    LDA MOBDESCRIPTORS_SIZEL, X
+    STA MOBSIZE
+    LDA MOBDESCRIPTORS_SIZEH, X
+    STA MOBSIZE+1
+
     ; Load height (in pixels) = height (in rows) + 8
-    LDA MOBH
+    LDA MOBDESCRIPTORS_H, X
+    STA MOBH
+    CLC
     ADC #8
     STA MOBDRAW_R
     STA MOBDRAW_I
 
     ; Load width (in pixels) = width (in cols) + 1
-    LDA MOBW
+    LDA MOBDESCRIPTORS_W, X
     LSR
     LSR
     LSR
     CLC
     ADC #1
     STA MOBDRAW_C
+    SEC
+    SBC #1
+    ASL
+    ASL
+    ASL
+    STA MOBW
 
     ; Load displacement = iteraction for each  line
     LDA MOBDRAW_DX
@@ -243,7 +274,7 @@ MOBDRAW2_SHIFTLEFTL2:
     ; and save the first pixel on carry. The carry will be put
     ; on the rightmost pixel.
     LDA (MOBADDR),Y
-    ASL
+    ROL A
     STA (MOBADDR),Y
 
     ; Move to the previous cell on the same line.
@@ -278,7 +309,7 @@ MOBDRAW2_SHIFTLEFTL2:
 MOBDRAW2_SHIFTLEFTR1:
     CLC
     LDA MOBADDR
-    ADC #8
+    ADC #1
     STA MOBADDR
     LDA MOBADDR+1
     ADC #0
@@ -289,14 +320,24 @@ MOBDRAW2_SHIFTLEFTR8:
     CLC
     LDA MOBADDR
     ADC MOBW
-    ADC #8
     STA MOBADDR
     LDA MOBADDR+1
     ADC #0
     STA MOBADDR+1
-    JMP MOBDRAW2_SHIFTRIGHTRD
+
+    SEC
+    LDA MOBADDR
+    SBC #7
+    STA MOBADDR
+    LDA MOBADDR+1
+    SBC #0
+    STA MOBADDR+1
+    JMP MOBDRAW2_SHIFTLEFTRD
 
 MOBDRAW2_SHIFTLEFTRD:
+    LDA MOBDRAW_DX
+    AND #$07
+    STA MOBDRAW_K
     ; Repeat for each row of the entire draw.
     DEC MOBDRAW_I
     BNE MOBDRAW2_SHIFTLEFTL1
@@ -314,6 +355,7 @@ MOBDRAW2_SHIFTDOWN:
 
     ; Load height (in pixels) = height (in rows) + 8
     LDA MOBDESCRIPTORS_H, X
+    CLC
     ADC #8
     STA MOBDRAW_R
     STA MOBDRAW_I
@@ -364,7 +406,7 @@ MOBDRAW2_SHIFTDOWNL1X:
     TXA
     ADC MOBADDR
     STA MOBADDR
-    ADC #0
+    LDA #0
     ADC MOBADDR+1
     STA MOBADDR+1
     DEY
@@ -429,6 +471,8 @@ MOBDRAW2_SHIFTDOWNL3:
     STA TMPPTR+1
 
     ; Repeat for each row of the entire draw.
+    LDA MOBDRAW_C
+    STA MOBDRAW_J
     DEC MOBDRAW_I
     BNE MOBDRAW2_SHIFTDOWNL3
 
@@ -444,7 +488,7 @@ MOBDRAW2_SHIFTDOWNL3X:
     TXA
     ADC MOBADDR
     STA MOBADDR
-    ADC #0
+    LDA #0
     ADC MOBADDR+1
     STA MOBADDR+1
     DEY
@@ -475,6 +519,7 @@ MOBDRAW2_SHIFTUP:
 
     ; Load height (in pixels) = height (in rows) + 8
     LDA MOBDESCRIPTORS_H, X
+    CLC
     ADC #8
     STA MOBDRAW_R
 
@@ -791,7 +836,10 @@ MOBINITCSL1R8:
     SBC #1
     STA MOBDRAW_J
     DEC MOBDRAW_I
-    BNE MOBINITCSL1A
+    BEQ MOBINITCSL1AX
+    JMP MOBINITCSL1A
+
+MOBINITCSL1AX:
 
     LDA MOBDRAW_C
     STA MOBDRAW_J
@@ -1009,7 +1057,12 @@ MOBSAVE2:
     LSR
     LSR
     LSR
-    BEQ MOBSAVE2L3
+    BNE MOBSAVE2L3X1
+    JMP MOBSAVE2L3
+
+MOBSAVE2L3X1:
+
+    CLC
     ADC #1
     STA MOBDRAW_I
 
@@ -1020,7 +1073,11 @@ MOBSAVE2:
     LSR
     LSR
     LSR
-    BEQ MOBSAVE2L3
+    BNE MOBSAVE2L3X2
+    JMP MOBSAVE2L3
+MOBSAVE2L3X2:
+
+    CLC
     ADC #1
     STA MOBDRAW_J
     STA MOBDRAW_C
@@ -1031,30 +1088,49 @@ MOBSAVE2L2A:
 MOBSAVE2L2:
     LDA (PLOTDEST),Y       ; D
     STA (MOBADDR),Y       ; S
+    ; LDA #$55
+    ; STA (PLOTDEST),Y
     INY
     LDA (PLOTDEST),Y       ; D
     STA (MOBADDR),Y       ; S
+    ; LDA #$55
+    ; STA (PLOTDEST),Y
     INY
     LDA (PLOTDEST),Y       ; D
     STA (MOBADDR),Y       ; S
+    ; LDA #$55
+    ; STA (PLOTDEST),Y
     INY
     LDA (PLOTDEST),Y       ; D
     STA (MOBADDR),Y       ; S
+    ; LDA #$55
+    ; STA (PLOTDEST),Y
     INY
     LDA (PLOTDEST),Y       ; D
     STA (MOBADDR),Y       ; S
+    ; LDA #$55
+    ; STA (PLOTDEST),Y
     INY
     LDA (PLOTDEST),Y       ; D
     STA (MOBADDR),Y       ; S
+    ; LDA #$55
+    ; STA (PLOTDEST),Y
     INY
     LDA (PLOTDEST),Y       ; D
     STA (MOBADDR),Y       ; S
+    ; LDA #$55
+    ; STA (PLOTDEST),Y
     INY
     LDA (PLOTDEST),Y       ; D
     STA (MOBADDR),Y       ; S
+    ; LDA #$55
+    ; STA (PLOTDEST),Y
     INY
     DEC MOBDRAW_J
-    BNE MOBSAVE2L2
+    BEQ MOBSAVE2L2X
+    JMP MOBSAVE2L2
+
+MOBSAVE2L2X:
 
     CLC
     LDA PLOTDEST
@@ -1067,16 +1143,26 @@ MOBSAVE2L2:
     CLC
     LDA MOBADDR
     ADC MOBW
+    STA MOBADDR
+    LDA MOBADDR+1
+    ADC #0
+    STA MOBADDR+1
+
+    CLC
+    LDA MOBADDR
     ADC #8
     STA MOBADDR
     LDA MOBADDR+1
     ADC #0
     STA MOBADDR+1
-    
+
     LDA MOBDRAW_C
     STA MOBDRAW_J
     DEC MOBDRAW_I
-    BNE MOBSAVE2L2A
+    BEQ MOBSAVE2L2AX
+    JMP MOBSAVE2L2A
+
+MOBSAVE2L2AX:
 
 MOBSAVE2L3:
 
@@ -1133,6 +1219,7 @@ MOBRESTORE4X:
 MOBRESTORE2_COPY:
     LDY #0
     LDA (MOBADDR),Y       ; S
+    ; LDA #$AA
     STA (PLOTDEST),Y       ; D
     RTS
 
@@ -1156,9 +1243,32 @@ MOBRESTORE2_INC:
     STA PLOTDEST+1
     RTS
 
+MOBRESTORE2_INCL:
+    CLC
+    LDA PLOTDEST
+    ADC #$40
+    STA PLOTDEST
+    LDA PLOTDEST+1
+    ADC #$1
+    STA PLOTDEST+1
+
+    SEC
+    LDA PLOTDEST
+    SBC MOBW
+    STA PLOTDEST
+    LDA PLOTDEST+1
+    SBC #$0
+    STA PLOTDEST+1
+
+    RTS
+
 ; This entry point is needed do save the screen into the reserved area,
 ; in standard BITMAP MODE (2).
 MOBRESTORE2:
+
+    SEI
+    LDA #$36
+    STA $01
 
     LDX MOBI
 
@@ -1231,6 +1341,7 @@ MOBRESTORE2:
     LSR
     LSR
     BEQ MOBRESTORE2L3
+    CLC
     ADC #1
     STA MOBDRAW_I
 
@@ -1242,22 +1353,39 @@ MOBRESTORE2:
     LSR
     LSR
     BEQ MOBRESTORE2L3
+    CLC
     ADC #1
     STA MOBDRAW_J
     STA MOBDRAW_C
+    ASL
+    ASL
+    ASL
+    STA MOBW
 
     ; Repeate an entire cell copy for each column
 MOBRESTORE2L2A:    
-    ; Copy 8 rows
-    LDX #8
 MOBRESTORE2L2:
     JSR MOBRESTORE2_COPY
     JSR MOBRESTORE2_INC
-    INX
-    CPX #8
-    BNE MOBRESTORE2L2
+    JSR MOBRESTORE2_COPY
+    JSR MOBRESTORE2_INC
+    JSR MOBRESTORE2_COPY
+    JSR MOBRESTORE2_INC
+    JSR MOBRESTORE2_COPY
+    JSR MOBRESTORE2_INC
+    JSR MOBRESTORE2_COPY
+    JSR MOBRESTORE2_INC
+    JSR MOBRESTORE2_COPY
+    JSR MOBRESTORE2_INC
+    JSR MOBRESTORE2_COPY
+    JSR MOBRESTORE2_INC
+    JSR MOBRESTORE2_COPY
+    JSR MOBRESTORE2_INC
     DEC MOBDRAW_J
     BNE MOBRESTORE2L2A
+
+    JSR MOBRESTORE2_INCL
+
     LDA MOBDRAW_C
     STA MOBDRAW_J
     DEC MOBDRAW_I
@@ -1278,6 +1406,10 @@ MOBRESTORE2L3:
     STA MOBDESCRIPTORS_SL, X
     LDA #0
     STA MOBDESCRIPTORS_SH, X
+
+    LDA #$37
+    STA $01
+    SEI
 
     RTS
 
@@ -1588,18 +1720,9 @@ MOBDRAW2L1:
 
     LDX MOBI
 
-;     ; Calculate how many times we have to repeat
-;     ; the cell copying. If the image's width is less than
-;     ; 9 pixels, we skip this part.
-;     LDA MOBDESCRIPTORS_W, X
-;     LSR
-;     LSR
-;     LSR
-;     STA MOBDRAW_C
-;     ASL
-;     ASL
-;     ASL
-;     STA MOBW
+    ; Calculate how many times we have to repeat
+    ; the cell copying. If the image's width is less than
+    ; 9 pixels, we skip this part.
 
     LDA MOBDESCRIPTORS_W, X
     LSR
@@ -1612,6 +1735,8 @@ MOBDRAW2L1:
     ASL
     ASL
     STA MOBW
+
+    DEC MOBDRAW_J
 
 ;     ; Repeate an entire cell copy for each column
 MOBDRAW2L2A:    
@@ -1663,7 +1788,7 @@ MOBDRAW2L3:
 MOBDRAW2L3B:
     JSR MOBDRAW2_RIGHTMASK
     DEC MOBDRAW_I
-    BNE MOBDRAW2L3BX
+    BEQ MOBDRAW2L3BX
     JSR MOBDRAW2_INC
     JMP MOBDRAW2L3B
 
@@ -1726,6 +1851,7 @@ MOBDRAW2L4:
     ; 9 pixels, we skip this part.
     LDA MOBDRAW_C
     STA MOBDRAW_J
+    DEC MOBDRAW_J
 
     ; +---+---...---+---+
     ; |   |         |   |
@@ -1796,7 +1922,7 @@ MOBDRAW2L5:
 MOBDRAW2L4X:
 
 MOBDRAW2L6:
-    
+
     JSR MOBDRAW2_INCL
 
     ; +---+---...---+---+
@@ -1816,7 +1942,7 @@ MOBDRAW2L6:
     STA MOBDRAW_DY
     STA MOBDRAW_I
     BNE MOBDRAW2L7
-    JMp MOBDRAW3E
+    JMP MOBDRAW2E
 MOBDRAW2L7:
     JSR MOBDRAW2_LEFTMASK
     JSR MOBDRAW2_INC
@@ -1846,6 +1972,7 @@ MOBDRAW2L1X2:
     ; 9 pixels, we skip this part.
     LDA  MOBDRAW_C
     LDA  MOBDRAW_J
+    DEC  MOBDRAW_J
 
     ; Repeate an entire cell copy for each column
 MOBDRAW2L8A:    
@@ -1879,7 +2006,7 @@ MOBDRAW2L9B:
     ; Skip 8-DY rows
     JSR MOBDRAW2_NOP2
 
-MOBDRAW3E:
+MOBDRAW2E:
 
     LDA #$37
     STA $01
@@ -1940,6 +2067,7 @@ MOBATCS:
     STA MOBDRAW_DY
 
     LDA MOBDRAW_DX
+    BEQ MOBATCS_VERT
     AND #$80
     BEQ MOBATCS_LEFT
 
@@ -1961,6 +2089,7 @@ MOBATCS_LEFT:
 MOBATCS_VERT:
 
     LDA MOBDRAW_DY
+    BEQ MOBATCS_DONE
     AND #$80
     BEQ MOBATCS_UP
 
@@ -1972,12 +2101,13 @@ MOBATCS_DOWN:
     ADC #1
     STA MOBDRAW_DY
     JSR MOBDRAW2_SHIFTDOWN
-    JMP MOBATCS_VERT
+    JMP MOBATCS_DONE
 
 MOBATCS_UP:
 
     JSR MOBDRAW2_SHIFTUP
-    JMP MOBATCS_VERT
+
+MOBATCS_DONE:
 
     RTS
 
