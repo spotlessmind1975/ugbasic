@@ -353,158 +353,99 @@ MOBDRAW2_SHIFTDOWN:
 
     LDX MOBI
 
-    ; Load height (in pixels) = height (in rows) + 8
-    LDA MOBDESCRIPTORS_H, X
-    CLC
-    ADC #8
-    STA MOBDRAW_R
-    STA MOBDRAW_I
+    LDA MOBDRAW_DY
+    AND #$07
+    STA MOBDRAW_K
 
-    ; Load width (in pixels) = width (in cols) + 1
-    LDA MOBDESCRIPTORS_W, X
+    LDA MOBDESCRIPTORS_W, x
     LSR
     LSR
     LSR
     CLC
     ADC #1
     STA MOBDRAW_C
+    STA MOBDRAW_J
+    ASL
+    ASL
+    ASL
+    STA MOBW
 
-    ; Load displacement = iteraction for each  line
-    LDA MOBDRAW_DY
-    AND #$07
-    STA MOBDRAW_K
+MOBDRAW2_SHIFTDOWNL0:
 
-    ; Calculate the offset for next line by displacement
-    LDA #0
-    STA MOBSIZE
-MOBDRAW2_SHIFTDOWNL1:
-    CLC
-    LDA MOBSIZE
-    ADC MOBDESCRIPTORS_H, X
-    ADC #8
-    STA MOBSIZE
-    DEC MOBDRAW_K
-    BNE MOBDRAW2_SHIFTDOWNL1
-
-    ; Reload displacement = iteraction for each  line
-    LDA MOBDRAW_DY
-    AND #$07
-    STA MOBDRAW_K
-
-    ; Load first location of draw data
     LDA MOBDESCRIPTORS_DL, X
     STA MOBADDR
     LDA MOBDESCRIPTORS_DH, X
     STA MOBADDR+1
 
-    ; First is last -- the copy is reversed!
-    LDY MOBDESCRIPTORS_H, X
-    LDA MOBDESCRIPTORS_W, X
-    TAX
-MOBDRAW2_SHIFTDOWNL1X:
     CLC
-    TXA
+    LDA MOBDESCRIPTORS_SIZEL, X
     ADC MOBADDR
     STA MOBADDR
-    LDA #0
+    LDA MOBDESCRIPTORS_SIZEH, X
     ADC MOBADDR+1
     STA MOBADDR+1
-    DEY
-    BNE MOBDRAW2_SHIFTDOWNL1X
-    
-    ; Load location of draw data on the next (by displacement) line
+
     SEC
     LDA MOBADDR
-    SBC MOBSIZE
+    SBC MOBW
+    STA MOBADDR
+    LDA MOBADDR+1
+    SBC #0
+    STA MOBADDR+1
+
+    SEC
+    LDA MOBADDR
+    SBC MOBW
     STA TMPPTR
     LDA MOBADDR+1
     SBC #0
     STA TMPPTR+1
 
-    ; Rows loop
-MOBDRAW2_SHIFTDOWNL2:
 
-    ; j = cols
-    LDA MOBDRAW_C
-    STA MOBDRAW_J
+    ; Load height (in pixels) = height (in rows) + 8
+    LDA MOBDESCRIPTORS_H, X
+    STA MOBH
+    CLC
+    ADC #8
+    LSR
+    LSR
+    LSR
+    STA MOBDRAW_R
+    STA MOBDRAW_I
 
     LDY #0
-    CLC
+MOBDRAW2_SHIFTDOWNL1:
+    LDA (TMPPTR), Y
+    STA (MOBADDR), Y
+    INY
+    CPY MOBW
+    BNE MOBDRAW2_SHIFTDOWNL1
 
-    ; Cols loop
-MOBDRAW2_SHIFTDOWNL3:
-
-    ; Move the content of the cell by 1 row down.
-    LDA (MOBADDR),Y
-    STA (TMPPTR),Y
-
-    ; Move to the next cell on the same line.
-    ; This is placed after 8 bytes from the current position.
-    INY
-    INY
-    INY
-    INY
-    INY
-    INY
-    INY
-    INY
-
-    ; Repeat for each cell of the same row.
-    DEC MOBDRAW_J
-    BNE MOBDRAW2_SHIFTDOWNL3
-
-    ; Move to the next line
     SEC
     LDA MOBADDR
-    SBC #8
+    SBC MOBW
     STA MOBADDR
     LDA MOBADDR+1
     SBC #0
     STA MOBADDR+1
 
     CLC
-    LDA TMPPTR
-    SBC #8
+    LDA MOBADDR
+    ADC MOBW
     STA TMPPTR
-    LDA TMPPTR+1
-    SBC #0
+    LDA MOBADDR+1
+    ADC #0
     STA TMPPTR+1
 
-    ; Repeat for each row of the entire draw.
-    LDA MOBDRAW_C
-    STA MOBDRAW_J
+    LDY #0
     DEC MOBDRAW_I
-    BNE MOBDRAW2_SHIFTDOWNL3
+    BNE MOBDRAW2_SHIFTDOWNL1
 
-    ; At the end, put the bottom area to zero.
-    LDX MOBI
-
-    ; First is last -- the copy is reversed!
-    LDY MOBDESCRIPTORS_H, X
-    LDA MOBDESCRIPTORS_W, X
-    TAX
-MOBDRAW2_SHIFTDOWNL3X:
-    CLC
-    TXA
-    ADC MOBADDR
-    STA MOBADDR
-    LDA #0
-    ADC MOBADDR+1
-    STA MOBADDR+1
-    DEY
-    BNE MOBDRAW2_SHIFTDOWNL3X
+    DEC MOBDRAW_K
+    BEQ MOBDRAW2_SHIFTDOWNL0X
+    JMP MOBDRAW2_SHIFTDOWNL0
     
-    LDY MOBSIZE
-    DEY
-    BEQ MOBDRAW2_SHIFTDOWND4 
-    LDA #0
-MOBDRAW2_SHIFTDOWNL4:
-    STA (MOBADDR), Y
-    DEY
-    BNE MOBDRAW2_SHIFTDOWNL4
-
-MOBDRAW2_SHIFTDOWND4:
-
+MOBDRAW2_SHIFTDOWNL0X:
     RTS
 
 ; ---------------------------------------------------------------------------
