@@ -100,6 +100,6 @@ void begin_for_step( Environment * _environment, char * _index, char * _from, ch
 
     cpu_label( _environment, beginFor );
 
-    cpu_bvneq( _environment, variable_compare( _environment, index->name, variable_add( _environment, loop->to->name, loop->step->name )->name )->realName, endFor );
+    cpu_bvneq( _environment, variable_greater_than( _environment, index->name, variable_add( _environment, loop->to->name, loop->step->name )->name, 0 )->realName, endFor );
 
 }
