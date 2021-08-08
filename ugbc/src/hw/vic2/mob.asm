@@ -349,7 +349,7 @@ MOBDRAW2_SHIFTLEFTRD:
 ; to the bottom. Pixels on the top are put to zero.
 ; ---------------------------------------------------------------------------
 
-MOBDRAW2_SHIFTDOWN:
+MOBDRAW2_SHIFTUP:
 
     LDX MOBI
 
@@ -370,7 +370,44 @@ MOBDRAW2_SHIFTDOWN:
     ASL
     STA MOBW
 
-MOBDRAW2_SHIFTDOWNL0:
+    ; Load height (in pixels) = height (in rows) + 8
+    LDA MOBDESCRIPTORS_H, X
+    STA MOBH
+    CLC
+    ADC #8
+    LSR
+    LSR
+    LSR
+    STA MOBDRAW_R
+    STA MOBDRAW_I
+
+MOBDRAW2_SHIFTUPL0:
+
+    ; MOBSIZE = WC x WR
+    LDA MOBDESCRIPTORS_SIZEL, X
+    STA MOBSIZE
+    LDA MOBDESCRIPTORS_SIZEH, X
+    STA MOBSIZE+1
+    LDA MOBSIZE
+    ; MOBSIZE => C = 8 x WC X WR = MOBSIZE
+
+    ; WC1 = WC-1
+    LDA MOBDESCRIPTORS_W, X
+    LSR
+    LSR
+    LSR
+    SEC
+    STA MOBDRAW_C
+
+    ; WC12 = WC1*8
+    ASL A
+    ASL A
+    ASL A
+    ; MOBDRAW_TMP <= WC121 = WC12+1
+    CLC
+    ADC #1
+
+    STA MOBDRAW_TMP
 
     LDA MOBDESCRIPTORS_DL, X
     STA MOBADDR
@@ -378,29 +415,136 @@ MOBDRAW2_SHIFTDOWNL0:
     STA MOBADDR+1
 
     CLC
-    LDA MOBDESCRIPTORS_SIZEL, X
-    ADC MOBADDR
+    LDA MOBADDR
+    ADC MOBSIZE
     STA MOBADDR
-    LDA MOBDESCRIPTORS_SIZEH, X
-    ADC MOBADDR+1
+    LDA MOBADDR+1
+    ADC MOBSIZE+1
     STA MOBADDR+1
 
     SEC
     LDA MOBADDR
-    SBC MOBW
+    SBC #8
     STA MOBADDR
     LDA MOBADDR+1
     SBC #0
     STA MOBADDR+1
 
-    SEC
+    CLC
     LDA MOBADDR
-    SBC MOBW
+    ADC #1
     STA TMPPTR
     LDA MOBADDR+1
-    SBC #0
+    ADC #0
     STA TMPPTR+1
 
+    LDA MOBDRAW_R
+    STA MOBDRAW_J
+
+MOBDRAW2_SHIFTUPL1:
+
+    LDX MOBI
+    ; se C > WC121 allora
+
+    LDA MOBDRAW_I
+    CMP #$1
+    BEQ MOBDRAW2_SHIFTUPSKIP
+
+    ;      sposta da [C] a [C-[((WC-1)*8)+1]]
+
+    SEC
+    LDA MOBADDR
+    SBC MOBDRAW_TMP
+    STA MOBADDR
+    LDA MOBADDR+1
+    SBC #0
+    STA MOBADDR+1
+
+    LDY #0
+    LDA (TMPPTR),Y
+    LDY #1
+    STA (MOBADDR),Y
+
+    CLC
+    LDA MOBADDR
+    ADC MOBDRAW_TMP
+    STA MOBADDR
+    LDA MOBADDR+1
+    ADC #0
+    STA MOBADDR+1
+
+    LDY #0
+MOBDRAW2_SHIFTUPSKIP:
+    ; sposta da [C+1] a [C]
+    ; sposta da [C+2] a [C+1]
+    ; ...
+    ; sposta da [C+7] a [C+6]
+    LDA (TMPPTR),Y
+    STA (MOBADDR),Y
+    INY
+    CPY #8
+    BNE MOBDRAW2_SHIFTUPSKIP
+
+    ; C = C - 8
+
+    SEC
+    LDA MOBADDR
+    SBC #8
+    STA MOBADDR
+    LDA MOBADDR+1
+    SBC #0
+    STA MOBADDR+1
+
+    CLC
+    LDA MOBADDR
+    ADC #1
+    STA TMPPTR
+    LDA MOBADDR+1
+    ADC #0
+    STA TMPPTR+1
+
+    ; se C < 0 FINE
+
+    DEC MOBDRAW_J
+    BNE MOBDRAW2_SHIFTUPL1
+    
+    LDA MOBDRAW_C
+    STA MOBDRAW_J
+    DEC MOBDRAW_I
+
+    BNE MOBDRAW2_SHIFTUPL1
+    
+MOBDRAW2_SHIFTUPL0X:
+
+    RTS
+
+; ---------------------------------------------------------------------------
+; MODE 2 (BITMAP STANDARD)
+; Shift the *current* draw area image of MOBI mob of MOBDRAW_DY pixel 
+; to the bottom. Pixels on the top are put to zero.
+; ---------------------------------------------------------------------------
+
+MOBDRAW2_SHIFTDOWN:
+
+    LDX MOBI
+
+    LDA MOBDRAW_DY
+    AND #$07
+    STA MOBDRAW_K
+
+    LDA MOBDESCRIPTORS_W, x
+    LSR
+    LSR
+    LSR
+    CLC
+    ADC #1
+    STA MOBDRAW_C
+    LDA #0
+    STA MOBDRAW_J
+    ASL
+    ASL
+    ASL
+    STA MOBW
 
     ; Load height (in pixels) = height (in rows) + 8
     LDA MOBDESCRIPTORS_H, X
@@ -413,59 +557,19 @@ MOBDRAW2_SHIFTDOWNL0:
     STA MOBDRAW_R
     STA MOBDRAW_I
 
-    LDY #0
-MOBDRAW2_SHIFTDOWNL1:
-    LDA (TMPPTR), Y
-    STA (MOBADDR), Y
-    INY
-    CPY MOBW
-    BNE MOBDRAW2_SHIFTDOWNL1
+MOBDRAW2_SHIFTDOWNL0:
 
-    SEC
-    LDA MOBADDR
-    SBC MOBW
-    STA MOBADDR
-    LDA MOBADDR+1
-    SBC #0
-    STA MOBADDR+1
+    ; MOBSIZE = WC x WR
+    LDA MOBDESCRIPTORS_SIZEL, X
+    STA MOBSIZE
+    LDA MOBDESCRIPTORS_SIZEH, X
+    STA MOBSIZE+1
 
-    CLC
-    LDA MOBADDR
-    ADC MOBW
-    STA TMPPTR
-    LDA MOBADDR+1
-    ADC #0
-    STA TMPPTR+1
+    LDA MOBSIZE
+    ; MOBSIZE => C = 8 x WC X WR = MOBSIZE
 
-    LDY #0
-    DEC MOBDRAW_I
-    BNE MOBDRAW2_SHIFTDOWNL1
-
-    DEC MOBDRAW_K
-    BEQ MOBDRAW2_SHIFTDOWNL0X
-    JMP MOBDRAW2_SHIFTDOWNL0
-    
-MOBDRAW2_SHIFTDOWNL0X:
-    RTS
-
-; ---------------------------------------------------------------------------
-; MODE 2 (BITMAP STANDARD)
-; Shift the *current* draw area image of MOBI mob of MOBDRAW_DY pixel 
-; to the up. Pixels on the bottom are put to zero.
-; ---------------------------------------------------------------------------
-
-MOBDRAW2_SHIFTUP:
-
-    LDX MOBI
-
-    ; Load height (in pixels) = height (in rows) + 8
-    LDA MOBDESCRIPTORS_H, X
-    CLC
-    ADC #8
-    STA MOBDRAW_R
-
-    ; Load width (in pixels) = width (in cols) + 1
-    LDA MOBDESCRIPTORS_H, X
+    ; WC1 = WC-1
+    LDA MOBDESCRIPTORS_W, X
     LSR
     LSR
     LSR
@@ -473,118 +577,173 @@ MOBDRAW2_SHIFTUP:
     ADC #1
     STA MOBDRAW_C
 
-    ; Load displacement = iteraction for each  line
-    LDA MOBDRAW_DY
-    AND #$07
-    STA MOBDRAW_K
+    SEC
+    SBC #1
 
-    ; Calculate the offset for previous line by displacement
-    LDA #0
-    STA MOBSIZE
-MOBDRAW2_SHIFTUPL1:
+    ; WC12 = WC1*8
+    ASL A
+    ASL A
+    ASL A
+    ; MOBDRAW_TMP <= WC121 = WC12+1
     CLC
-    LDA MOBSIZE
-    ADC MOBDESCRIPTORS_H, X
-    ADC #8
-    STA MOBSIZE
-    DEC MOBDRAW_K
-    BNE MOBDRAW2_SHIFTUPL1
+    ADC #1
 
-    ; Reload displacement = iteraction for each  line
-    LDA MOBDRAW_DY
-    AND #$07
-    STA MOBDRAW_K
+    STA MOBDRAW_TMP
 
-    ; Load location of draw data
+MOBDRAW2_SHIFTDOWNLCC:
+
     LDA MOBDESCRIPTORS_DL, X
     STA MOBADDR
     LDA MOBDESCRIPTORS_DH, X
     STA MOBADDR+1
 
-    ; Load first location of draw data (by displacement)
-    LDA MOBDESCRIPTORS_DL, X
-    STA TMPPTR
-    LDA MOBDESCRIPTORS_DH, X
-    STA TMPPTR+1
+    CLC
+    LDA MOBADDR
+    ADC MOBSIZE
+    STA MOBADDR
+    LDA MOBADDR+1
+    ADC MOBSIZE+1
+    STA MOBADDR+1
+
+    SEC
+    LDA MOBADDR
+    SBC #8
+    STA MOBADDR
+    LDA MOBADDR+1
+    SBC #0
+    STA MOBADDR+1
 
     CLC
-    LDA TMPPTR
-    ADC MOBSIZE
+    LDA MOBADDR
+    ADC #1
     STA TMPPTR
-    LDA TMPPTR+1
+    LDA MOBADDR+1
     ADC #0
     STA TMPPTR+1
 
-    ; Rows loop
-MOBDRAW2_SHIFTUPL2:
-
-    ; j = cols
-    LDA MOBDRAW_C
+    LDA #0
     STA MOBDRAW_J
 
-    LDY #0
-    CLC
+MOBDRAW2_SHIFTDOWNL1:
 
-    ; Cols loop
-MOBDRAW2_SHIFTUPL3:
+    LDX MOBI
+    ; se C > WC121 allora
 
-    ; Move the content of the cell by 1 row down.
-    LDA (TMPPTR),Y
-    STA (MOBADDR),Y
+    LDY #6
 
-    ; Move to the next cell on the same line.
-    ; This is placed after 8 bytes from the current position.
-    INY
-    INY
-    INY
-    INY
-    INY
-    INY
-    INY
-    INY
+MOBDRAW2_SHIFTDOWNLA:
+    ; sposta da [C+6] a [C+7]
+    ; ...
+    ; sposta da [C+1] a [C+2]
+    ; sposta da [C] a [C+1]
+    LDA (MOBADDR),Y
+    STA (TMPPTR),Y
+    DEY
+    CPY #$FF
+    BNE MOBDRAW2_SHIFTDOWNLA
 
-    ; Repeat for each cell of the same row.
-    DEC MOBDRAW_J
-    BNE MOBDRAW2_SHIFTUPL3
+    LDA MOBDRAW_I
+    CMP #$1
+    BEQ MOBDRAW2_SHIFTDOWNSKIP
 
-    ; Move to the next line
+    ;      sposta da [C-[((WC-1)*8)+1]] a [C] 
+
     CLC
     LDA MOBADDR
-    ADC #8
+    ADC #0
+    STA TMPPTR
+    LDA MOBADDR+1
+    ADC #0
+    STA TMPPTR+1
+
+    SEC
+    LDA MOBADDR
+    SBC MOBDRAW_TMP
+    STA MOBADDR
+    LDA MOBADDR+1
+    SBC #0
+    STA MOBADDR+1
+
+    LDY #0
+    LDA (MOBADDR),Y
+    LDY #0
+    STA (TMPPTR),Y
+
+    CLC
+    LDA MOBADDR
+    ADC MOBDRAW_TMP
     STA MOBADDR
     LDA MOBADDR+1
     ADC #0
     STA MOBADDR+1
 
     CLC
-    LDA TMPPTR
-    ADC #8
+    LDA MOBADDR
+    ADC #1
     STA TMPPTR
-    LDA TMPPTR+1
+    LDA MOBADDR+1
     ADC #0
     STA TMPPTR+1
 
-    ; Repeat for each row of the entire draw.
-    DEC MOBDRAW_I
-    BNE MOBDRAW2_SHIFTUPL3
+    JMP MOBDRAW2_SHIFTDOWNSKIPD
 
-    ; At the end, put the top area to zero.
-    LDX MOBI
+MOBDRAW2_SHIFTDOWNSKIP:
 
-    LDA MOBDESCRIPTORS_DL, X
+    LDY #0
+    LDA #0
+    STA (MOBADDR),Y
+
+MOBDRAW2_SHIFTDOWNSKIPD:
+
+    ; C = C - 8
+
+    SEC
+    LDA MOBADDR
+    SBC #8
     STA MOBADDR
-    LDA MOBDESCRIPTORS_DH, X
-    STA MOBADDR+1    
+    LDA MOBADDR+1
+    SBC #0
+    STA MOBADDR+1
 
-    LDY MOBSIZE
-    DEY
-    BEQ MOBDRAW2_SHIFTUPD4 
-MOBDRAW2_SHIFTUPL4:
-    STA (MOBADDR), Y
-    DEY
-    BNE MOBDRAW2_SHIFTUPL4
+    CLC
+    LDA MOBADDR
+    ADC #1
+    STA TMPPTR
+    LDA MOBADDR+1
+    ADC #0
+    STA TMPPTR+1
 
-MOBDRAW2_SHIFTUPD4:
+    ; se C < 0 FINE
+
+    LDY #6
+    INC MOBDRAW_J
+    LDA MOBDRAW_J
+    CMP MOBDRAW_C
+    BEQ MOBDRAW2_SHIFTDOWNL1X
+    JMP MOBDRAW2_SHIFTDOWNL1
+
+MOBDRAW2_SHIFTDOWNL1X:
+    LDA #0
+    STA MOBDRAW_J
+    LDY #6
+    DEC MOBDRAW_I
+
+    LDA MOBDRAW_I
+    CMP #$0
+    BEQ MOBDRAW2_SHIFTDOWNL1X2
+    JMP MOBDRAW2_SHIFTDOWNL1
+
+MOBDRAW2_SHIFTDOWNL1X2:
+    
+    LDA MOBDRAW_R
+    STA MOBDRAW_I
+    DEC MOBDRAW_K
+    BEQ MOBDRAW2_SHIFTDOWNL1X3
+    JMP MOBDRAW2_SHIFTDOWNLCC
+
+MOBDRAW2_SHIFTDOWNL1X3:
+
+MOBDRAW2_SHIFTDOWNL0X:
 
     RTS
 
@@ -1912,7 +2071,7 @@ MOBDRAW2L1X2:
     ; the cell copying. If the image's width is less than
     ; 9 pixels, we skip this part.
     LDA  MOBDRAW_C
-    LDA  MOBDRAW_J
+    STA  MOBDRAW_J
     DEC  MOBDRAW_J
 
     ; Repeate an entire cell copy for each column
