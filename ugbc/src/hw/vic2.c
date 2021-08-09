@@ -38,6 +38,41 @@
 #include "6502.h"
 #include <math.h>
 
+static RGB SYSTEM_PALETTE[] = {
+    // { "BLACK", 
+        { 0x00, 0x00, 0x00 },        
+    // { "WHITE", 
+        { 0xff, 0xff, 0xff },
+    // { "RED", 
+        { 0x88, 0x00, 0x00 },
+    // { "CYAN", 
+        { 0xaa, 0xff, 0xe6 },
+    // { "VIOLET", 
+        { 0xcc, 0x44, 0xcc },
+    // { "GREEN", 
+        { 0x00, 0xcc, 0x55 },
+    // { "BLUE", 
+        { 0x00, 0x00, 0xaa },
+    // { "YELLOW", 
+        { 0xee, 0xee, 0x77 },
+    // { "ORANGE", 
+        { 0xa1, 0x68, 0x3c },
+    // { "BROWN", 
+        { 0xdd, 0x88, 0x65 },
+    // { "LIGHT_RED", 
+        { 0xff, 0x77, 0x77 },
+    // { "DARK_GREY", 
+        { 0x33, 0x33, 0x33 },
+    // { "GREY", 
+        { 0x77, 0x77, 0x77 },
+    // { "LIGHT_GREEN", 
+        { 0xaa, 0xff, 0x66 },
+    // { "LIGHT_BLUE", 
+        { 0x00, 0x88, 0xff },
+    // { "LIGHT_GREY", 
+        { 0xbb, 0xbb, 0xbb }
+};
+
 /****************************************************************************
  * CODE SECTION
  ****************************************************************************/
@@ -1046,7 +1081,7 @@ void vic2_cline( Environment * _environment, char * _characters ) {
  */
 // 
 
-int calculate_luminance(RGB _a) {
+static int calculate_luminance(RGB _a) {
 
     // Extract the vector's components 
     // (each partecipate up to 1/3 of the luminance).
@@ -1056,6 +1091,83 @@ int calculate_luminance(RGB _a) {
 
     // Calculate luminance using Pitagora's Theorem
     return (int)sqrt(pow(red, 2) + pow(green, 2) + pow(blue, 2));
+
+}
+
+
+/**
+ * @brief Calculate the distance between two colors
+ *
+ * This function calculates the color distance between two colors(_a and _b).
+ * By "distance" we mean the geometric distance between two points in a 
+ * three-dimensional space, where each dimension corresponds to one of the 
+ * components (red, green and blue). The returned value is normalized to 
+ * the nearest 8-bit value. 
+ * 
+ * @param _a First color 
+ * @param _b Second color
+ * @return int distance
+ */
+
+static int calculate_distance(RGB _a, RGB _b) {
+
+    // Extract the vector's components.
+    double red = (double)_a.red - (double)_b.red;
+    double green = (double)_a.green - (double)_b.green;
+    double blue = (double)_a.blue - (double)_b.blue;
+
+    // Calculate distance using Pitagora's Theorem
+    return (int)sqrt(pow(red, 2) + pow(green, 2) + pow(blue, 2));
+
+}
+
+/**
+ * @brief Extract the color palette from the given image
+ * 
+ * @param _source 
+ * @param _palette 
+ * @param _palette_size 
+ * @return int 
+ */
+static int extract_color_palette(unsigned char* _source, int _width, int _height, RGB _palette[], int _palette_size) {
+
+    RGB rgb;
+
+    int image_x, image_y;
+
+    int usedPalette = 0;
+    int i = 0;
+    unsigned char* source = _source;
+
+    for (image_y = 0; image_y < _height; ++image_y) {
+        for (image_x = 0; image_x < _width; ++image_x) {
+            rgb.red = *source;
+            rgb.green = *(source + 1);
+            rgb.blue = *(source + 2);
+
+            for (i = 0; i < usedPalette; ++i) {
+                if (_palette[i].red == rgb.red && _palette[i].green == rgb.green && _palette[i].blue == rgb.blue) {
+                    break;
+                }
+            }
+
+            if (i >= usedPalette) {
+                _palette[usedPalette].red = rgb.red;
+                _palette[usedPalette].green = rgb.green;
+                _palette[usedPalette].blue = rgb.blue;
+                ++usedPalette;
+                if (usedPalette > _palette_size) {
+                    break;
+                }
+            }
+            source += 3;
+        }
+        if (usedPalette > _palette_size) {
+            break;
+        }
+    }
+
+    return usedPalette;
 
 }
 
@@ -1125,6 +1237,82 @@ static Variable * vic2_image_converter_bitmap_mode_standard( Environment * _envi
 }
 
 
+static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _environment, char * _source, int _width, int _height ) {
+
+    RGB palette[MAX_PALETTE];
+
+    int colorUsed = extract_color_palette(_source, _width, _height, palette, MAX_PALETTE);
+
+    if (colorUsed > 4) {
+        CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
+    }
+
+    int i;
+
+    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
+ 
+    int bufferSize = 2 + ( ( _width >> 2 ) * _height ) + ( ( _width >> 2 ) * ( _height >> 3 ) );
+    char * buffer = malloc ( bufferSize );
+
+    // Position of the pixel in the original image
+    int image_x, image_y;
+    
+    // Position of the pixel, in terms of tiles
+    int tile_x, tile_y;
+    
+    // Position of the pixel, in terms of offset and bitmask
+    int offset, bitmask;
+
+    // Color of the pixel to convert
+    RGB rgb;
+
+    *(buffer) = _width;
+    *(buffer+1) = _height;
+
+    // Loop for all the source surface.
+    for (image_y = 0; image_y < _height; ++image_y) {
+        for (image_x = 0; image_x < _width; ++image_x) {
+
+            // Take the color of the pixel
+            rgb.red = *_source;
+            rgb.green = *(_source + 1);
+            rgb.blue = *(_source + 2);
+
+            // Calculate the relative tile
+            tile_y = (image_y >> 3);
+            tile_x = (image_x >> 2);
+
+            // Calculate the offset starting from the tile surface area
+            // and the bit to set.
+            offset = (tile_y * 8 *( _width >> 2 ) ) + (tile_x * 8) + (image_y & 0x07);
+
+            int minDistance = 0xffff;
+            int colorIndex = 0;
+
+            for (i = 0; i < 4; ++i) {
+                int distance = calculate_distance(rgb, palette[i]);
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    colorIndex = i;
+                };
+            }
+
+            bitmask = colorIndex << (6 - ((image_x & 0x3) * 2));
+
+            *(buffer + 2 + offset) |= bitmask;
+
+            _source += 3;
+
+        }
+
+    }
+
+    variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
+
+    return result;
+
+}
+
 Variable * vic2_image_converter( Environment * _environment, char * _data, int _width, int _height, int _mode ) {
 
     switch( _mode ) {
@@ -1134,6 +1322,9 @@ Variable * vic2_image_converter( Environment * _environment, char * _data, int _
             return vic2_image_converter_bitmap_mode_standard( _environment, _data, _width, _height );
 
         case BITMAP_MODE_MULTICOLOR:
+
+            return vic2_image_converter_multicolor_mode_standard( _environment, _data, _width, _height );
+
         case BITMAP_MODE_AH:
         case BITMAP_MODE_AIFLI:
         case BITMAP_MODE_ASSLACE:
