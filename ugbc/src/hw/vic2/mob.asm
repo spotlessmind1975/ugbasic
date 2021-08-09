@@ -346,7 +346,7 @@ MOBDRAW2_SHIFTLEFTRD:
 ; ---------------------------------------------------------------------------
 ; MODE 2 (BITMAP STANDARD)
 ; Shift the *current* draw area image of MOBI mob of MOBDRAW_DY pixel 
-; to the bottom. Pixels on the top are put to zero.
+; to the top. Pixels on the bottom are put to zero.
 ; ---------------------------------------------------------------------------
 
 MOBDRAW2_SHIFTUP:
@@ -364,6 +364,7 @@ MOBDRAW2_SHIFTUP:
     CLC
     ADC #1
     STA MOBDRAW_C
+    LDA #0
     STA MOBDRAW_J
     ASL
     ASL
@@ -388,6 +389,7 @@ MOBDRAW2_SHIFTUPL0:
     STA MOBSIZE
     LDA MOBDESCRIPTORS_SIZEH, X
     STA MOBSIZE+1
+
     LDA MOBSIZE
     ; MOBSIZE => C = 8 x WC X WR = MOBSIZE
 
@@ -396,8 +398,12 @@ MOBDRAW2_SHIFTUPL0:
     LSR
     LSR
     LSR
-    SEC
+    CLC
+    ADC #1
     STA MOBDRAW_C
+
+    SEC
+    SBC #1
 
     ; WC12 = WC1*8
     ASL A
@@ -409,61 +415,60 @@ MOBDRAW2_SHIFTUPL0:
 
     STA MOBDRAW_TMP
 
+MOBDRAW2_SHIFTUPLCC:
+
     LDA MOBDESCRIPTORS_DL, X
     STA MOBADDR
     LDA MOBDESCRIPTORS_DH, X
     STA MOBADDR+1
 
-    CLC
     LDA MOBADDR
-    ADC MOBSIZE
-    STA MOBADDR
+    STA TMPPTR
     LDA MOBADDR+1
-    ADC MOBSIZE+1
-    STA MOBADDR+1
-
-    SEC
-    LDA MOBADDR
-    SBC #8
-    STA MOBADDR
-    LDA MOBADDR+1
-    SBC #0
-    STA MOBADDR+1
+    STA TMPPTR+1
 
     CLC
     LDA MOBADDR
     ADC #1
-    STA TMPPTR
+    STA MOBADDR
     LDA MOBADDR+1
     ADC #0
-    STA TMPPTR+1
+    STA MOBADDR+1
 
-    LDA MOBDRAW_R
+    LDA #0
     STA MOBDRAW_J
 
 MOBDRAW2_SHIFTUPL1:
 
     LDX MOBI
-    ; se C > WC121 allora
+
+    LDY #0
+
+MOBDRAW2_SHIFTUPLA:
+    LDA (MOBADDR),Y
+    STA (TMPPTR),Y
+    INY
+    CPY #$7
+    BNE MOBDRAW2_SHIFTUPLA
 
     LDA MOBDRAW_I
     CMP #$1
     BEQ MOBDRAW2_SHIFTUPSKIP
 
-    ;      sposta da [C] a [C-[((WC-1)*8)+1]]
+    ;      sposta da [C-[((WC-1)*8)+1]] a [C] 
 
-    SEC
+    CLC
     LDA MOBADDR
-    SBC MOBDRAW_TMP
+    ADC #7
     STA MOBADDR
     LDA MOBADDR+1
-    SBC #0
+    ADC #0
     STA MOBADDR+1
 
-    LDY #0
-    LDA (TMPPTR),Y
-    LDY #1
-    STA (MOBADDR),Y
+    LDA MOBADDR
+    STA TMPPTR
+    LDA MOBADDR+1
+    STA TMPPTR+1
 
     CLC
     LDA MOBADDR
@@ -474,46 +479,84 @@ MOBDRAW2_SHIFTUPL1:
     STA MOBADDR+1
 
     LDY #0
-MOBDRAW2_SHIFTUPSKIP:
-    ; sposta da [C+1] a [C]
-    ; sposta da [C+2] a [C+1]
-    ; ...
-    ; sposta da [C+7] a [C+6]
-    LDA (TMPPTR),Y
-    STA (MOBADDR),Y
-    INY
-    CPY #8
-    BNE MOBDRAW2_SHIFTUPSKIP
-
-    ; C = C - 8
+    LDA (MOBADDR),Y
+    LDY #0
+    STA (TMPPTR),Y
 
     SEC
     LDA MOBADDR
-    SBC #8
+    SBC MOBDRAW_TMP
     STA MOBADDR
     LDA MOBADDR+1
     SBC #0
     STA MOBADDR+1
 
+    SEC
+    LDA MOBADDR
+    SBC #7
+    STA MOBADDR
+    LDA MOBADDR+1
+    SBC #0
+    STA MOBADDR+1
+
+    JMP MOBDRAW2_SHIFTUPSKIPD
+
+MOBDRAW2_SHIFTUPSKIP:
+
+    LDY #0
+    LDA #0
+    STA (MOBADDR),Y
+
+MOBDRAW2_SHIFTUPSKIPD:
+
+    ; C = C - 8
+
     CLC
     LDA MOBADDR
-    ADC #1
-    STA TMPPTR
+    ADC #8
+    STA MOBADDR
     LDA MOBADDR+1
     ADC #0
+    STA MOBADDR+1
+
+    SEC
+    LDA MOBADDR
+    SBC #1
+    STA TMPPTR
+    LDA MOBADDR+1
+    SBC #0
     STA TMPPTR+1
 
     ; se C < 0 FINE
 
-    DEC MOBDRAW_J
-    BNE MOBDRAW2_SHIFTUPL1
-    
-    LDA MOBDRAW_C
+    LDY #0
+    INC MOBDRAW_J
+    LDA MOBDRAW_J
+    CMP MOBDRAW_C
+    BEQ MOBDRAW2_SHIFTUPL1X
+    JMP MOBDRAW2_SHIFTUPL1
+
+MOBDRAW2_SHIFTUPL1X:
+    LDA #0
     STA MOBDRAW_J
+    LDY #0
     DEC MOBDRAW_I
 
-    BNE MOBDRAW2_SHIFTUPL1
+    LDA MOBDRAW_I
+    CMP #$0
+    BEQ MOBDRAW2_SHIFTUPL1X2
+    JMP MOBDRAW2_SHIFTUPL1
+
+MOBDRAW2_SHIFTUPL1X2:
     
+    LDA MOBDRAW_R
+    STA MOBDRAW_I
+    DEC MOBDRAW_K
+    BEQ MOBDRAW2_SHIFTUPL1X3
+    JMP MOBDRAW2_SHIFTUPLCC
+
+MOBDRAW2_SHIFTUPL1X3:
+
 MOBDRAW2_SHIFTUPL0X:
 
     RTS
