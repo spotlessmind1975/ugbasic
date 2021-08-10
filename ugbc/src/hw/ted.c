@@ -671,4 +671,24 @@ void ted_back( Environment * _environment ) {
 
 }
 
+Variable * ted_image_converter( Environment * _environment, char * _data, int _width, int _height, int _mode ) {
+
+    switch( _mode ) {
+        case BITMAP_MODE_STANDARD:
+        case BITMAP_MODE_MULTICOLOR:
+
+        case TILEMAP_MODE_STANDARD:
+        case TILEMAP_MODE_MULTICOLOR:
+        case TILEMAP_MODE_EXTENDED:
+            break;
+    }
+
+    CRITICAL_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
+
+}
+
+void ted_put_image( Environment * _environment, char * _image, char * _x, char * _y ) {
+
+}
+
 #endif
