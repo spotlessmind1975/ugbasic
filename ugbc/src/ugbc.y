@@ -2286,6 +2286,9 @@ statement:
   }
   | ADD add_definition
   | PRINT print_definition
+  | PRINT {
+      print_newline( _environment );
+  }
   | DEBUG expr {
       print( _environment, $2, 0 );
   }
