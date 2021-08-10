@@ -161,6 +161,12 @@ void z80_move_8bit_with_offset2( Environment * _environment, char *_source, char
 void z80_complement2_8bit( Environment * _environment, char * _source, char * _destination );
 void z80_complement2_16bit( Environment * _environment, char * _source, char * _destination );
 void z80_complement2_32bit( Environment * _environment, char * _source, char * _destination );
+void z80_mobinit( Environment * _environment, char * _index, char *_x, char *_y, char *_draw);
+void z80_mobshow( Environment * _environment, char * _index );
+void z80_mobhide( Environment * _environment, char * _index );
+void z80_mobat( Environment * _environment, char * _index, char *_x, char *_y );
+void z80_mobrender( Environment * _environment );
+void z80_sqroot( Environment * _environment, char * _number, char * _result );
 
 #define cpu_beq( _environment,  _label  ) z80_beq( _environment,  _label  )
 #define cpu_bneq( _environment,  _label  ) z80_beq( _environment,  _label  )
@@ -288,5 +294,15 @@ void z80_complement2_32bit( Environment * _environment, char * _source, char * _
 #define cpu_complement2_8bit( _environment, _source, _destination ) z80_complement2_8bit( _environment, _source, _destination )
 #define cpu_complement2_16bit( _environment, _source, _destination ) z80_complement2_16bit( _environment, _source, _destination )
 #define cpu_complement2_32bit( _environment, _source, _destination ) z80_complement2_32bit( _environment, _source, _destination )
+
+extern char * src_hw_chipset_mob_asm;
+extern unsigned int src_hw_chipset_mob_asm_len;
+
+#define cpu_mobinit( _environment, _index, _x, _y, _draw ) z80_mobinit( _environment, _index, _x, _y, _draw )
+#define cpu_mobshow( _environment, _index ) z80_mobshow( _environment, _index )
+#define cpu_mobhide( _environment, _index ) z80_mobhide( _environment, _index )
+#define cpu_mobat( _environment, _index, _x, _y ) z80_mobat( _environment, _index, _x, _y )
+#define cpu_mobrender( _environment ) z80_mobrender( _environment )
+#define cpu_sqroot( _environment, _number, _result ) z80_sqroot( _environment, _number, _result )
 
 #endif

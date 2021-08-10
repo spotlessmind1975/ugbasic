@@ -228,4 +228,21 @@ void zx_back( Environment * _environment ) {
 
 }
 
+Variable * zx_image_converter( Environment * _environment, char * _data, int _width, int _height, int _mode ) {
+
+    switch( _mode ) {
+
+        case BITMAP_MODE_STANDARD:
+        case TILEMAP_MODE_STANDARD:
+            break;
+    }
+
+    CRITICAL_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
+
+}
+
+void zx_put_image( Environment * _environment, char * _image, char * _x, char * _y ) {
+
+}
+
 #endif

@@ -3269,4 +3269,41 @@ void z80_complement2_32bit( Environment * _environment, char * _source, char * _
     }
 }
 
+
+char * src_hw_chipset_mob_asm;
+unsigned int src_hw_chipset_mob_asm_len;
+
+void z80_mobinit( Environment * _environment, char * _index, char *_x, char *_y,  char *_draw) {
+
+
+}
+
+void z80_mobshow( Environment * _environment, char * _index ) {
+
+}
+
+void z80_mobhide( Environment * _environment, char * _index ) {
+
+}
+
+void z80_mobat( Environment * _environment, char * _index, char *_x, char *_y ) {
+
+}
+
+void z80_mobrender( Environment * _environment ) {
+
+}
+
+void z80_sqroot( Environment * _environment, char * _number, char * _result ) {
+
+    deploy( sqrDeployed, src_hw_z80_sqr_asm );
+
+    outline1("LD HL,(%s)", _number );
+
+    outline0("CALL SQROOT" );
+
+    outline1("LD (%s),A", _result );
+
+}
+
 #endif

@@ -188,4 +188,7 @@ void zx_back( Environment * _environment );
 
 #define         JOY_COUNT           0
 
+Variable * zx_image_converter( Environment * _environment, char * _data, int _width, int _height, int _mode );
+void zx_put_image( Environment * _environment, char * _image, char * _x, char * _y );
+
 #endif
