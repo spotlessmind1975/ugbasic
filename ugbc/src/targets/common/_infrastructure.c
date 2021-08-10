@@ -1191,7 +1191,11 @@ Variable * variable_mul( Environment * _environment, char * _source, char * _des
     Variable * target = variable_cast( _environment, _destination, source->type );
 
     if ( VT_SIGNED( source->type ) != VT_SIGNED( target->type ) ) {
-        CRITICAL_MUL_UNSUPPORTED( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
+        if ( VT_SIGNED( source->type ) ) {
+            source = variable_cast( _environment, _destination, VT_SIGN( source->type ) );
+        } else {
+            target = variable_cast( _environment, _destination, VT_SIGN( target->type ) );
+        }
     }
 
     Variable * result = NULL;
@@ -1230,8 +1234,13 @@ Variable * variable_div( Environment * _environment, char * _source, char * _des
     Variable * target = variable_cast( _environment, _destination, source->type );
 
     if ( VT_SIGNED( source->type ) != VT_SIGNED( target->type ) ) {
-        CRITICAL_DIV_UNSUPPORTED( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
+        if ( VT_SIGNED( source->type ) ) {
+            source = variable_cast( _environment, _destination, VT_SIGN( source->type ) );
+        } else {
+            target = variable_cast( _environment, _destination, VT_SIGN( target->type ) );
+        }
     }
+
 
     Variable * result = NULL;
     Variable * remainder = NULL;
@@ -1672,7 +1681,11 @@ Variable * variable_less_than( Environment * _environment, char * _source, char 
     Variable * target = variable_retrieve( _environment, _destination );
 
     if ( VT_SIGNED( source->type ) != VT_SIGNED( target->type ) ) {
-        CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
+        if ( VT_SIGNED( source->type ) ) {
+            source = variable_cast( _environment, _destination, VT_SIGN( source->type ) );
+        } else {
+            target = variable_cast( _environment, _destination, VT_SIGN( target->type ) );
+        }
     }
 
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of compare)" );
@@ -1860,7 +1873,11 @@ Variable * variable_greater_than( Environment * _environment, char * _source, ch
     Variable * target = variable_retrieve( _environment, _destination );
 
     if ( VT_SIGNED( source->type ) != VT_SIGNED( target->type ) ) {
-        CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
+        if ( VT_SIGNED( source->type ) ) {
+            source = variable_cast( _environment, _destination, VT_SIGN( source->type ) );
+        } else {
+            target = variable_cast( _environment, _destination, VT_SIGN( target->type ) );
+        }
     }
 
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of compare)" );
@@ -3501,7 +3518,11 @@ Variable * variable_mod( Environment * _environment, char * _source, char * _des
     Variable * target = variable_cast( _environment, _destination, source->type );
 
     if ( VT_SIGNED( source->type ) != VT_SIGNED( target->type ) ) {
-        CRITICAL_MOD_UNSUPPORTED( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
+        if ( VT_SIGNED( source->type ) ) {
+            source = variable_cast( _environment, _destination, VT_SIGN( source->type ) );
+        } else {
+            target = variable_cast( _environment, _destination, VT_SIGN( target->type ) );
+        }
     }
 
     Variable * result = NULL;
