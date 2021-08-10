@@ -24,13 +24,13 @@ templ		= $F4		; temp partial low byte
 temph		= templ+1	; temp partial high byte
 Root		= $F6		; square root
 
-SQROOT
+SQROOT:
 	LDA	#$00		; clear A
 	STA	Reml		; clear remainder low byte
 	STA	Remh		; clear remainder high byte
 	STA	Root		; clear Root
 	LDX	#$08		; 8 pairs of bits to do
-SQROOTL1
+SQROOTL1:
 	ASL	Root		; Root = Root * 2
 
 	ASL	Numberl		; shift highest bit of number ..
@@ -64,7 +64,7 @@ SQROOTL1
 
 				; else remainder>=partial so subtract then
 				; and add 1 to root. carry is always set here
-SQROOTSB
+SQROOTSB:
 	LDA	Reml		; get remainder low byte
 	SBC	templ		; subtract partial low byte
 	STA	Reml		; save remainder low byte
@@ -73,7 +73,7 @@ SQROOTSB
 	STA	Remh		; save remainder high byte
 
 	INC	Root		; increment Root
-SQROOTNX
+SQROOTNX:
 	DEX			; decrement bit pair count
 	BNE	SQROOTL1		; loop if not all done
 
