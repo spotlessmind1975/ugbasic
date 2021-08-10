@@ -41,7 +41,7 @@ COLORMAPADDRESS:       .BYTE   0, $D8
 MOBADDRESS:         .WORD   $8C00
 CURRENTMODE:    .BYTE   0
 
-TABCOUNT:   .BYTE    4
+TABCOUNT:   .BYTE    3
 XCURS:      .BYTE    0
 YCURS:      .BYTE    0
 LOCALWW:    .BYTE    3
