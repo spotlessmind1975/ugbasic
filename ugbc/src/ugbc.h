@@ -173,6 +173,25 @@ typedef enum _VariableType {
 #define VT_SIGNED( t ) \
         ( ( (t) == VT_SBYTE ) || ( (t) == VT_SWORD ) || ( (t) == VT_SDWORD ) || ( (t) == VT_POSITION ) )
 
+#define VT_UNSIGN( t ) \
+            ( VT_SIGNED( t ) ? \
+                ( \
+                    ( ( (t) == (VT_SBYTE) ) ? VT_BYTE : 0 ) + \
+                    ( ( (t) == (VT_SWORD) ) ? VT_WORD : 0 ) + \
+                    ( ( (t) == (VT_SDWORD) ) ? VT_DWORD : 0 ) + \
+                    ( ( (t) == (VT_POSITION) ) ? VT_WORD : 0 ) \
+                ) \
+            : t )
+
+#define VT_SIGN( t ) \
+            ( ! VT_SIGNED( t ) ? \
+                ( \
+                    ( ( (t) == (VT_BYTE) ) ? VT_SBYTE : 0 ) + \
+                    ( ( (t) == (VT_WORD) ) ? VT_SWORD : 0 ) + \
+                    ( ( (t) == (VT_DWORD) ) ? VT_SDWORD : 0 ) \
+                ) \
+            : t )
+
 #define VT_SIGN_8BIT( v ) ( v < 0 ? ( ((~(unsigned char)(abs(v)))+1 ) ) : (v) )
 #define VT_SIGN_16BIT( v ) ( v < 0 ? ( ((~(unsigned short)(abs(v)))+1 ) ) : (v) )
 #define VT_SIGN_32BIT( v ) ( v < 0 ? ( (~((unsigned int) (abs(v)))+1 ) ) : (v) )
