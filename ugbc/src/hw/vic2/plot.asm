@@ -13,9 +13,11 @@
 ; Adapted by Marco Spedaletti for ugbasic
 ;--------------------------------------------------------------------
 
-PLOTX    = $22 ; $23
-PLOTY    = $24
-PLOTM    = $25
+PLOTX    = $F7 ; $F8
+PLOTY    = $F9
+PLOTM    = $FB
+PLOTOMA  = $FD
+PLOTAMA  = $FC
 
 ;--------------
 
@@ -59,6 +61,36 @@ PLOTCLIP4B:
     JMP PLOTP
 PLOTCLIP5:
 
+PLOTMODE:
+    LDA CURRENTMODE
+    ; BITMAP_MODE_STANDARD
+    CMP #2
+    BNE PLOT2X
+    JMP PLOT2
+PLOT2X:
+    ; BITMAP_MODE_MULTICOLOR
+    CMP #3
+    BNE PLOT3X
+    JMP PLOT3
+PLOT3X:
+    ; TILEMAP_MODE_STANDARD
+    CMP #0
+    BNE PLOT0X
+    JMP PLOT0
+PLOT0X:
+    ; TILEMAP_MODE_MULTICOLOR
+    CMP #1
+    BNE PLOT1X
+    JMP PLOT1
+PLOT1X:
+    ; TILEMAP_MODE_EXTENDED
+    CMP #4
+    BNE PLOT4X
+    JMP PLOT4
+PLOT4X:
+    RTS
+
+PLOT2:
 
     ;-------------------------
     ;calc Y-cell, divide by 8
@@ -117,6 +149,232 @@ PLOTCLIP5:
     AND #%00000111             ;3 lowest bits = (0-7)
     TAY                        ;put into index register
 
+    LDA #<PLOTORBIT
+    STA TMPPTR
+    LDA #>PLOTORBIT
+    STA TMPPTR+1
+
+    CLC
+    TXA
+    ADC TMPPTR
+    STA TMPPTR
+    LDA #0
+    ADC TMPPTR+1
+    STA TMPPTR+1
+    LDY #0
+    LDA (TMPPTR),Y
+    STA PLOTOMA
+
+    LDA PLOTX
+    AND #$07
+    TAX
+    LDA PLOTANDBIT,X
+    STA PLOTAMA
+
+    ;---------------------------------
+    ;get in-cell offset to point (0-7)
+    ;---------------------------------
+    LDA PLOTX                  ;get PLOTX offset from cell topleft
+    AND #%00000111             ;3 lowest bits = (0-7)
+    TAX                        ;put into index register
+
+    LDA PLOTY                  ;get PLOTY offset from cell topleft
+    AND #%00000111             ;3 lowest bits = (0-7)
+    TAY                        ;put into index register
+
+    JMP PLOTCOMMON
+
+PLOT3:
+
+    ;-------------------------
+    ;calc Y-cell, divide by 8
+    ;y/8 is y-cell table index
+    ;-------------------------
+    LDA PLOTY
+    LSR                         ;/ 2
+    LSR                         ;/ 4
+    LSR                         ;/ 8
+    TAY                         ;tbl_8,y index
+
+    CLC
+
+    ;------------------------
+    ;calc X-cell, divide by 8
+    ;divide 2-byte PLOTX / 8
+    ;------------------------
+    LDA PLOTX
+    ROR PLOTX+1                ;rotate the high byte into carry flag
+    ROR                        ;lo byte / 2 (rotate C into low byte)
+    LSR                        ;lo byte / 4
+    TAX                        ;tbl_8,x index
+
+    ;----------------------------------
+    ;add x & y to calc cell point is in
+    ;----------------------------------
+    CLC
+
+    LDA PLOTVBASELO,Y          ;table of $A000 row base addresses
+    ADC PLOT8LO,X              ;+ (8 * Xcell)
+    STA PLOTDEST               ;= cell address
+
+    LDA PLOTVBASEHI,Y          ;do the high byte
+    ADC PLOT8HI,X
+    STA PLOTDEST+1
+
+    CLC
+
+    TXA
+    ADC PLOTCVBASELO,Y          ;table of $8400 row base addresses
+    STA PLOTCDEST               ;= cell address
+
+    LDA #0
+    ADC PLOTCVBASEHI,Y          ;do the high byte
+    STA PLOTCDEST+1
+
+    TXA
+    ADC PLOTC2VBASELO,Y          ;table of $8400 row base addresses
+    STA PLOTC2DEST               ;= cell address
+
+    LDA #0
+    ADC PLOTC2VBASEHI,Y          ;do the high byte
+    STA PLOTC2DEST+1
+
+    ;---------------------------------
+    ;get in-cell offset to point (0-7)
+    ;---------------------------------
+    LDA PLOTX                  ;get PLOTX offset from cell topleft
+    AND #%00000111             ;3 lowest bits = (0-7)
+    TAX                        ;put into index register
+
+    LDA PLOTY                  ;get PLOTY offset from cell topleft
+    AND #%00000111             ;3 lowest bits = (0-7)
+    TAY                        ;put into index register
+
+    LDY #0
+    LDA (PLOTCDEST),Y
+    LSR
+    LSR
+    LSR
+    LSR
+    CMP _PEN
+    BEQ PLOT3C1
+    LDY #0
+    LDA (PLOTCDEST),Y
+    AND #$0F
+    CMP _PEN
+    BEQ PLOT3C2
+    LDA (PLOTC2DEST),Y
+    AND #$0F
+    CMP _PEN
+    BEQ PLOT3C3
+
+    LDA LASTCOLOR
+    CMP #1
+    BEQ PLOT3SC2
+    CMP #2
+    BEQ PLOT3SC3
+    CMP #3
+    BEQ PLOT3SC1
+
+PLOT3SC1:
+    LDA (PLOTCDEST),Y
+    AND #$0f
+    STA (PLOTCDEST),Y
+    LDA _PEN
+    ASL
+    ASL
+    ASL
+    ASL
+    ORA (PLOTCDEST),Y
+    STA (PLOTCDEST),Y
+    LDA #1
+    STA LASTCOLOR
+PLOT3C1:
+    LDA #<PLOTORBIT41
+    STA TMPPTR
+    LDA #>PLOTORBIT41
+    STA TMPPTR+1
+    JMP PLOT3PEN
+
+PLOT3SC2:
+    LDA (PLOTCDEST),Y
+    AND #$f0
+    STA (PLOTCDEST),Y
+    LDA _PEN
+    ORA (PLOTCDEST),Y
+    STA (PLOTCDEST),Y
+    LDA #2
+    STA LASTCOLOR
+PLOT3C2:
+    LDA #<PLOTORBIT42
+    STA TMPPTR
+    LDA #>PLOTORBIT42
+    STA TMPPTR+1
+    JMP PLOT3PEN
+
+PLOT3SC3:
+    LDA _PEN
+    LDY #0
+    STA (PLOTC2DEST),Y
+    LDA #3
+    STA LASTCOLOR
+PLOT3C3:
+    LDA #<PLOTORBIT43
+    STA TMPPTR
+    LDA #>PLOTORBIT43
+    STA TMPPTR+1
+    JMP PLOT3PEN
+
+PLOT3PEN:
+
+    ;---------------------------------
+    ;get in-cell offset to point (0-7)
+    ;---------------------------------
+    LDA PLOTX                  ;get PLOTX offset from cell topleft
+    AND #%00000011             ;2 lowest bits = (0-4)
+    TAX                        ;put into index register
+
+    LDA PLOTY                  ;get PLOTY offset from cell topleft
+    AND #%00000111             ;3 lowest bits = (0-7)
+    TAY                        ;put into index register
+
+    CLC
+    TXA
+    ADC TMPPTR
+    STA TMPPTR
+    LDA #0
+    ADC TMPPTR+1
+    STA TMPPTR+1
+    LDY #0
+    LDA (TMPPTR),Y
+    STA PLOTOMA
+
+    LDA PLOTX
+    AND #$03
+    TAX
+    LDA PLOTANDBIT4,X
+    STA PLOTAMA
+
+    ;---------------------------------
+    ;get in-cell offset to point (0-7)
+    ;---------------------------------
+    LDA PLOTX                  ;get PLOTX offset from cell topleft
+    AND #%00000111             ;2 lowest bits = (0-4)
+    TAX                        ;put into index register
+
+    LDA PLOTY                  ;get PLOTY offset from cell topleft
+    AND #%00000111             ;3 lowest bits = (0-7)
+    TAY  
+
+    JMP PLOTCOMMON
+
+PLOT0:
+PLOT1:
+PLOT4:
+    RTS
+
+PLOTCOMMON:
+
     ;----------------------------------------------
     ;depending on PLOTM, routine draws or erases
     ;----------------------------------------------
@@ -140,13 +398,24 @@ PLOTD:
     LDA #$36
     STA $01
     LDA (PLOTDEST),y           ;get row with point in it
-    ORA PLOTORBIT,x            ;isolate AND set the point
+    AND PLOTAMA
+    ORA PLOTOMA              ;isolate AND set the point
     STA (PLOTDEST),y           ;write back to $A000
+    LDA CURRENTMODE
+    CMP #$2
+    BNE PLOTDE
     LDY #0
     LDA (PLOTCDEST),y          ;get row with point in it
     AND #$0f                   ;isolate AND set the point
-    ORA _PEN                   ;isolate OR set the point
+    STA (PLOTCDEST),y          ;get row with point in it
+    LDA _PEN
+    ASL
+    ASL
+    ASL
+    ASL
+    ORA (PLOTCDEST),y          ;write back to $A000    
     STA (PLOTCDEST),y          ;write back to $A000    
+PLOTDE:
     LDA #$37
     STA $01
     CLI
@@ -159,7 +428,7 @@ PLOTE:                          ;handled same way as setting a point
     LDA #$36
     STA $01
     LDA (PLOTDEST),y            ;just with opposite bit-mask
-    AND PLOTANDBIT,x            ;isolate AND erase the point
+    AND PLOTAMA             ;isolate AND erase the point
     STA (PLOTDEST),y            ;write back to $A000
     LDA #$37
     STA $01
@@ -170,7 +439,7 @@ PLOTG:
     LDA #$36
     STA $01
     LDA (PLOTDEST),y            
-    AND PLOTORBIT,x            
+    AND PLOTOMA            
     CMP #0
     BEQ PLOTG0
 PLOTG1:
@@ -193,12 +462,73 @@ PLOTC:
     LDA #$36
     STA $01
     LDY #0
+    LDA CURRENTMODE
+    CMP #$3
+    BEQ PLOTC3
+
     LDA (PLOTCDEST),y          ;get row with point in it
     LSR A
     LSR A
     LSR A
     LSR A
     STA PLOTM
+    JMP PLOTCE
+
+PLOTC3:
+    LDA PLOTX                  ;get PLOTX offset from cell topleft
+    AND #%00000011             ;2 lowest bits = (0-4)
+    TAX                        ;put into index register
+    LDA (PLOTDEST),y            
+    AND PLOTOMA
+PLOTC3L1:
+    CPX #0
+    BEQ PLOTC3L1F
+    LSR
+    LSR
+    DEX
+    JMP PLOTC3L1
+
+PLOTC3L1F:
+    CMP #0
+    BEQ PLOTC3B
+    CMP #1
+    BEQ PLOTC3C1
+    CMP #2
+    BEQ PLOTC3C2
+    CMP #3
+    BEQ PLOTC3C3
+    JMP PLOTCE
+
+PLOTC3B:
+    LDA $D021
+    STA PLOTM
+    JMP PLOTCE
+
+PLOTC3C1:
+    LDY #0
+    LDA (PLOTCDEST),Y
+    LSR
+    LSR
+    LSR
+    LSR
+    STA PLOTM
+    JMP PLOTCE
+
+PLOTC3C2:
+    LDY #0
+    LDA (PLOTCDEST),Y
+    AND #$0f
+    STA PLOTM
+    JMP PLOTCE
+
+PLOTC3C3:
+    LDY #0
+    LDA (PLOTC2DEST),Y
+    AND #$0f
+    STA PLOTM
+    JMP PLOTCE
+
+PLOTCE:
     LDA #$37
     STA $01    
     CLI
@@ -231,3 +561,33 @@ PLOTANDBIT:
     .byte %11111011
     .byte %11111101
     .byte %11111110
+
+PLOTORBIT40:
+    .byte %00000000
+    .byte %00000000
+    .byte %00000000
+    .byte %00000000
+
+PLOTORBIT41:
+    .byte %01000000
+    .byte %00010000
+    .byte %00000100
+    .byte %00000001
+
+PLOTORBIT42:
+    .byte %10000000
+    .byte %00100000
+    .byte %00001000
+    .byte %00000010
+
+PLOTORBIT43:
+    .byte %11000000
+    .byte %00110000
+    .byte %00001100
+    .byte %00000011
+
+PLOTANDBIT4:
+    .byte %00111111
+    .byte %11001111
+    .byte %11110011
+    .byte %11111100
