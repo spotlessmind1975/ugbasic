@@ -158,6 +158,7 @@ Variable * image_converter( Environment * _environment, char * _data, int _width
         // This mode is essentially the same as ANTIC 4 except that each character is sixteen scan lines high. 
         // The character set data is still eight bytes high so ANTIC double plots each scan line.
         case TILEMAP_MODE_ANTIC5:
+            break;
     }
 
     CRITICAL_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
