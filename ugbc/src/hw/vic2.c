@@ -38,39 +38,39 @@
 #include "6502.h"
 #include <math.h>
 
-static RGB SYSTEM_PALETTE[] = {
+static RGBi SYSTEM_PALETTE[] = {
     // { "BLACK", 
-        { 0x00, 0x00, 0x00 },        
+        { 0x00, 0x00, 0x00, 0 },        
     // { "WHITE", 
-        { 0xff, 0xff, 0xff },
+        { 0xff, 0xff, 0xff, 1 },
     // { "RED", 
-        { 0x88, 0x00, 0x00 },
+        { 0x88, 0x00, 0x00, 2 },
     // { "CYAN", 
-        { 0xaa, 0xff, 0xe6 },
+        { 0xaa, 0xff, 0xe6, 3 },
     // { "VIOLET", 
-        { 0xcc, 0x44, 0xcc },
+        { 0xcc, 0x44, 0xcc, 4 },
     // { "GREEN", 
-        { 0x00, 0xcc, 0x55 },
+        { 0x00, 0xcc, 0x55, 5 },
     // { "BLUE", 
-        { 0x00, 0x00, 0xaa },
+        { 0x00, 0x00, 0xaa, 6 },
     // { "YELLOW", 
-        { 0xee, 0xee, 0x77 },
+        { 0xee, 0xee, 0x77, 7 },
     // { "ORANGE", 
-        { 0xa1, 0x68, 0x3c },
+        { 0xa1, 0x68, 0x3c, 8 },
     // { "BROWN", 
-        { 0xdd, 0x88, 0x65 },
+        { 0xdd, 0x88, 0x65, 9 },
     // { "LIGHT_RED", 
-        { 0xff, 0x77, 0x77 },
+        { 0xff, 0x77, 0x77, 10 },
     // { "DARK_GREY", 
-        { 0x33, 0x33, 0x33 },
+        { 0x33, 0x33, 0x33, 11 },
     // { "GREY", 
-        { 0x77, 0x77, 0x77 },
+        { 0x77, 0x77, 0x77, 12 },
     // { "LIGHT_GREEN", 
-        { 0xaa, 0xff, 0x66 },
+        { 0xaa, 0xff, 0x66, 13 },
     // { "LIGHT_BLUE", 
-        { 0x00, 0x88, 0xff },
+        { 0x00, 0x88, 0xff, 14 },
     // { "LIGHT_GREY", 
-        { 0xbb, 0xbb, 0xbb }
+        { 0xbb, 0xbb, 0xbb, 15 }
 };
 
 /****************************************************************************
@@ -1078,7 +1078,7 @@ void vic2_cline( Environment * _environment, char * _characters ) {
  */
 // 
 
-static int calculate_luminance(RGB _a) {
+static int calculate_luminance(RGBi _a) {
 
     // Extract the vector's components 
     // (each partecipate up to 1/3 of the luminance).
@@ -1106,7 +1106,7 @@ static int calculate_luminance(RGB _a) {
  * @return int distance
  */
 
-static int calculate_distance(RGB _a, RGB _b) {
+static int calculate_distance(RGBi _a, RGBi _b) {
 
     // Extract the vector's components.
     double red = (double)_a.red - (double)_b.red;
@@ -1126,9 +1126,9 @@ static int calculate_distance(RGB _a, RGB _b) {
  * @param _palette_size 
  * @return int 
  */
-static int extract_color_palette(unsigned char* _source, int _width, int _height, RGB _palette[], int _palette_size) {
+static int extract_color_palette(unsigned char* _source, int _width, int _height, RGBi _palette[], int _palette_size) {
 
-    RGB rgb;
+    RGBi rgb;
 
     int image_x, image_y;
 
@@ -1185,7 +1185,7 @@ static Variable * vic2_image_converter_bitmap_mode_standard( Environment * _envi
     int offset, bitmask;
 
     // Color of the pixel to convert
-    RGB rgb;
+    RGBi rgb;
 
     *(buffer) = _width;
     *(buffer+1) = _height;
@@ -1236,7 +1236,7 @@ static Variable * vic2_image_converter_bitmap_mode_standard( Environment * _envi
 
 static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _environment, char * _source, int _width, int _height ) {
 
-    RGB palette[MAX_PALETTE];
+    RGBi palette[MAX_PALETTE];
 
     int colorUsed = extract_color_palette(_source, _width, _height, palette, MAX_PALETTE);
 
@@ -1244,12 +1244,34 @@ static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _
         CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
     }
 
-    int i;
+    int i, j, k;
+
+    for( i=0; i<colorUsed; ++i ) {
+        int minDistance = 0xffff;
+        int colorIndex = 0;
+        for (j = 0; j < 16; ++j) {
+            int distance = calculate_distance(SYSTEM_PALETTE[j], palette[i]);
+            if (distance < minDistance) {
+                for( k=0; k<i; ++k ) {
+                    if ( palette[k].index == j ) {
+                        break;
+                    }
+                }
+                if ( k>=i ) {
+                    minDistance = distance;
+                    colorIndex = j;
+                }
+            }
+        }
+        palette[i].index = colorIndex;
+    }
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
  
-    int bufferSize = 2 + ( ( _width >> 2 ) * _height ) + ( ( _width >> 2 ) * ( _height >> 3 ) );
+    int bufferSize = 2 + ( ( _width >> 2 ) * _height ) + 2 * ( ( _width >> 2 ) * ( _height >> 3 ) );
+    
     char * buffer = malloc ( bufferSize );
+    memset( buffer, 0, sizeof( buffer) );
 
     // Position of the pixel in the original image
     int image_x, image_y;
@@ -1258,10 +1280,10 @@ static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _
     int tile_x, tile_y;
     
     // Position of the pixel, in terms of offset and bitmask
-    int offset, bitmask;
+    int offset, offsetc, bitmask;
 
     // Color of the pixel to convert
-    RGB rgb;
+    RGBi rgb;
 
     *(buffer) = _width;
     *(buffer+1) = _height;
@@ -1282,6 +1304,7 @@ static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _
             // Calculate the offset starting from the tile surface area
             // and the bit to set.
             offset = (tile_y * 8 *( _width >> 2 ) ) + (tile_x * 8) + (image_y & 0x07);
+            offsetc = (tile_y * ( _width >> 2 ) ) + (tile_x);
 
             int minDistance = 0xffff;
             int colorIndex = 0;
@@ -1295,6 +1318,23 @@ static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _
             }
 
             bitmask = colorIndex << (6 - ((image_x & 0x3) * 2));
+
+            switch( colorIndex ) {
+                case 0:
+                    break;
+                case 1:
+                    *(buffer + 2 + ( ( _width >> 2 ) * _height ) + offsetc ) &= 0x0f;
+                    *(buffer + 2 + ( ( _width >> 2 ) * _height ) + offsetc ) |= ( palette[colorIndex].index << 4 );
+                    break;
+                case 2:
+                    *(buffer + 2 + ( ( _width >> 2 ) * _height ) + offsetc ) &= 0xf0;
+                    *(buffer + 2 + ( ( _width >> 2 ) * _height ) + offsetc ) |= palette[colorIndex].index;
+                    break;
+                case 3:
+                    *(buffer + 2 + ( ( _width >> 2 ) * _height ) + ( _width >> 2 ) * ( _height >> 3 ) + offsetc ) = palette[colorIndex].index;
+                    break;
+
+            }
 
             *(buffer + 2 + offset) |= bitmask;
 

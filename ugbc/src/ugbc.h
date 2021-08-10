@@ -479,11 +479,12 @@ typedef struct _ScreenMode {
  * of a pixel, 8 bits wide. This structure is used both to represent the 
  * retrocomputer palette and to process input data from image files.
  */
-typedef struct _RGB {
+typedef struct _RGBi {
     unsigned char red;
     unsigned char green;
     unsigned char blue;
-} RGB;
+    unsigned char index;
+} RGBi;
 
 /**
  * @brief Structure of compilation environment
