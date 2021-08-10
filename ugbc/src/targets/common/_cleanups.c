@@ -58,7 +58,9 @@ void gameloop_cleanup( Environment * _environment ) {
 void end_compilation( Environment * _environment ) {
 
     gameloop_cleanup( _environment );
-    
+
+    halt( _environment );
+        
     bank_cleanup( _environment );
     variable_cleanup( _environment );
 
