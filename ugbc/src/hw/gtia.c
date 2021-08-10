@@ -1195,4 +1195,32 @@ void gtia_cline( Environment * _environment, char * _characters ) {
 
 }
 
+Variable * gtia_image_converter( Environment * _environment, char * _data, int _width, int _height, int _mode ) {
+
+    switch( _mode ) {
+        case BITMAP_MODE_ANTIC8:
+        case BITMAP_MODE_ANTIC9:
+        case BITMAP_MODE_ANTIC10:
+        case BITMAP_MODE_ANTIC11:
+        case BITMAP_MODE_ANTIC13:
+        case BITMAP_MODE_ANTIC15:
+        case BITMAP_MODE_ANTIC12:
+        case BITMAP_MODE_ANTIC14:
+        case TILEMAP_MODE_ANTIC2:
+        case TILEMAP_MODE_ANTIC6:
+        case TILEMAP_MODE_ANTIC7:
+        case TILEMAP_MODE_ANTIC3:
+        case TILEMAP_MODE_ANTIC4:
+        case TILEMAP_MODE_ANTIC5:
+            break;
+    }
+
+    CRITICAL_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
+
+}
+
+void gtia_put_image( Environment * _environment, char * _image, char * _x, char * _y ) {
+
+}
+
 #endif
