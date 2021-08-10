@@ -116,9 +116,15 @@ void plus4_scancode( Environment * _environment, char * _pressed, char * _scanco
     outline0("LDA #$0");
     outline1("STA %s", _scancode );
 
+    outline0("LDX $ef");
+    outline0("CPX #$0");
+    outline1("BEQ %snokey", label );
+
     outline0("LDY $0527");
     outline0("CPY #0");
     outline1("BEQ %snokey", label );
+
+    outline0("DEC $ef");
 
     outline1("STY %s", _scancode );
     outline0("LDA #$ff");
