@@ -50,6 +50,7 @@ extern char DATATYPE_AS_STRING[][16];
 %token POUND RUNSTOP RUN STOP SEMICOLON SLASH KEY STATE KEYSTATE KEYSHIFT CAPSLOCK CAPS LOCK ALT
 %token INPUT FREE TILEMAP EMPTY TILE EMPTYTILE PLOT GR CIRCLE DRAW LINE BOX POLYLINE ELLIPSE CLIP
 %token BACK DEBUG CAN ELSEIF BUFFER LOAD SIZE MOB IMAGE PUT VISIBLE HIDDEN HIDE SHOW RENDER
+%token SQR
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -731,6 +732,9 @@ exponential:
         $$ = variable_temporary( _environment, VT_IMAGE, "(buffer)" )->name;
         variable_store_buffer( _environment, $$, buffer, strlen( $4 ) / 2, 0 );
       }      
+    | SQR OP factor CP {
+        $$ = sqroot( _environment, $3 )->name;
+      }
     | LOAD OP String CP {
         $$ = load( _environment, $3, 0 )->name;
       }

@@ -665,6 +665,12 @@ typedef struct _Environment {
     VariableType parametersTypeEach[MAX_PARAMETERS];
 
     /**
+     * Deployed sqr
+     */
+
+    int sqrDeployed;
+
+    /**
      * Deployed back
      */
 
@@ -905,6 +911,7 @@ typedef struct _Environment {
 #define CRITICAL_IMAGE_LOAD_UNKNOWN_FORMAT(f) CRITICAL2("E057 - IMAGE LOAD file format unknown", f );
 #define CRITICAL_IMAGE_CONVERTER_UNSUPPORTED_MODE(f) CRITICAL2i("E058 - IMAGE converter unsupported for the given screen mode", f );
 #define CRITICAL_IMAGE_CONVERTER_TOO_COLORS(f) CRITICAL2i("E059 - IMAGE converter unsupported -- too much colors", f );
+#define CRITICAL_SQR_UNSUPPORTED( v, t ) CRITICAL3("E060 - SQR unsupported for variable of given datatype", v, t );
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
 #define WARNING2i( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%i) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -1410,6 +1417,7 @@ void                    sprite_multicolor( Environment * _environment, int _spri
 void                    sprite_multicolor_var( Environment * _environment, char * _sprite );
 void                    sprite_at( Environment * _environment, int _sprite, int _x, int _y );
 void                    sprite_at_vars( Environment * _environment, char * _sprite, char * _x, char * _y );
+Variable *              sqroot( Environment * _environment, char * _value );
 
 //----------------------------------------------------------------------------
 // *T*

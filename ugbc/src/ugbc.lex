@@ -292,6 +292,7 @@ SIZE { return (SIZE); }
 SLASH { return (SLASH); }
 SPACE { return (SPACE); }
 SPRITE { return (SPRITE); }
+SQR { return (SQR); }
 STATE { return (STATE); }
 STEP { return (STEP); }
 STOP { return (STOP); }
