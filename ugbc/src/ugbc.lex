@@ -312,6 +312,7 @@ TICKS { return (TICKS); }
 TILEMAP { return (TILEMAP); }
 TILE { return (TILE); }
 TILES { return (TILES); }
+TI { return (TI); }
 TIMER { return (TIMER); }
 TO { return (TO); }
 TURQUOISE { return(TURQUOISE); }
