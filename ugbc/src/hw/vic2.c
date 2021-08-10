@@ -900,54 +900,19 @@ void vic2_busy_wait( Environment * _environment, char * _timing ) {
 
 void vic2_get_width( Environment * _environment, char *_result ) {
 
-    MAKE_LABEL
-
-    outline0("LDA $D011" );
-    outline0("AND #%00100000");
-    outline1("BNE %sbitmap", label );
-    outhead1("%stext:", label );
-    outline0("LDA #40" );
+    outline0("LDA CURRENTWIDTH" );
     outline1("STA %s", _result );
-    outline0("LDA #0" );
+    outline0("LDA CURRENTWIDTH+1" );
     outline1("STA %s+1", _result );
-    outline1("JMP %send", label );
-    outhead1("%sbitmap:", label );
-    outline0("LDA #$40" );
-    outline1("STA %s", _result );
-    outline0("LDA #$1" );
-    outline1("STA %s+1", _result );
-    outhead1("%send:", label );
 
 }
 
 void vic2_get_height( Environment * _environment, char *_result ) {
 
-    MAKE_LABEL
-
-    outline0("LDA $D011" );
-    outline0("AND #%00100000");
-    outline1("BNE %sbitmap", label );
-    outhead1("%stext:", label );
-    outline0("LDA $D011" );
-    outline0("AND #%00001000");
-    outline1("BNE %s_25", label );
-    outline0("LDA #24" );
+    outline0("LDA CURRENTHEIGHT" );
     outline1("STA %s", _result );
-    outline0("LDA #0" );
+    outline0("LDA CURRENTHEIGHT+1" );
     outline1("STA %s+1", _result );
-    outline1("JMP %send", label );
-    outhead1("%s_25:", label );
-    outline0("LDA #25" );
-    outline1("STA %s", _result );
-    outline0("LDA #0" );
-    outline1("STA %s+1", _result );
-    outline1("JMP %send", label );
-    outhead1("%sbitmap:", label );
-    outline0("LDA #200" );
-    outline1("STA %s", _result );
-    outline0("LDA #0" );
-    outline1("STA %s+1", _result );
-    outhead1("%send:", label );
 
 }
 
