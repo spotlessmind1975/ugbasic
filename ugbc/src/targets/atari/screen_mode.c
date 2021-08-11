@@ -58,6 +58,8 @@ void screen_mode( Environment * _environment, int _mode ) {
 
         _environment->currentMode = mode->id;
 
+        cpu_store_8bit( _environment, "CURRENTMODE", mode->id );
+        
     } else {
         WARNING_SCREEN_MODE( _mode );
     }
