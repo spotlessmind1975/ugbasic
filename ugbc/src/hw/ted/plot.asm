@@ -90,6 +90,11 @@ PLOT1X:
 PLOT4X:
     RTS
 
+PLOT0:
+PLOT1:
+PLOT4:
+    RTS
+    
 PLOT2:
 
     ;-------------------------
@@ -479,3 +484,33 @@ PLOTANDBIT:
     .byte %11111011
     .byte %11111101
     .byte %11111110
+
+PLOTORBIT40:
+    .byte %00000000
+    .byte %00000000
+    .byte %00000000
+    .byte %00000000
+
+PLOTORBIT41:
+    .byte %01000000
+    .byte %00010000
+    .byte %00000100
+    .byte %00000001
+
+PLOTORBIT42:
+    .byte %10000000
+    .byte %00100000
+    .byte %00001000
+    .byte %00000010
+
+PLOTORBIT43:
+    .byte %11000000
+    .byte %00110000
+    .byte %00001100
+    .byte %00000011
+
+PLOTANDBIT4:
+    .byte %00111111
+    .byte %11001111
+    .byte %11110011
+    .byte %11111100
