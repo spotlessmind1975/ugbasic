@@ -923,7 +923,7 @@ static Variable * ted_image_converter_multicolor_mode_standard( Environment * _e
     for( i=0; i<colorUsed; ++i ) {
         int minDistance = 0xffff;
         int colorIndex = 0;
-        for (j = 0; j < 16; ++j) {
+        for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
             int distance = calculate_distance(SYSTEM_PALETTE[j], palette[i]);
             if (distance < minDistance) {
                 for( k=0; k<i; ++k ) {
