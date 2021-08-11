@@ -94,10 +94,10 @@ void variable_cleanup( Environment * _environment ) {
                             case VT_BUFFER:
                                 if ( ! variable->absoluteAddress ) {
                                     if ( variable->valueBuffer ) {
-                                        outline1("%s: .db ", variable->realName);
+                                        out1("%s: db ", variable->realName);
                                         int i=0;
                                         for (i=0; i<(variable->size-1); ++i ) {
-                                            outline1("%d,", variable->valueBuffer[i]);
+                                            out1("%d,", variable->valueBuffer[i]);
                                         }
                                         outline1("%d", variable->valueBuffer[(variable->size-1)]);
                                     } else {
@@ -106,10 +106,10 @@ void variable_cleanup( Environment * _environment ) {
                                 } else {
                                     outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                                     if ( variable->valueBuffer ) {
-                                        outline1("%scopy: .db ", variable->realName);
+                                        out1("%scopy: db ", variable->realName);
                                         int i=0;
                                         for (i=0; i<(variable->size-1); ++i ) {
-                                            outline1("%d,", variable->valueBuffer[i]);
+                                            out1("%d,", variable->valueBuffer[i]);
                                         }
                                         outline1("%d", variable->valueBuffer[(variable->size-1)]);
                                     }
@@ -183,10 +183,10 @@ void variable_cleanup( Environment * _environment ) {
                             case VT_BUFFER:
                                 if ( ! variable->absoluteAddress ) {
                                     if ( variable->valueBuffer ) {
-                                        outline1("%s: .db ", variable->realName);
+                                        out1("%s: db ", variable->realName);
                                         int i=0;
                                         for (i=0; i<(variable->size-1); ++i ) {
-                                            outline1("%d,", variable->valueBuffer[i]);
+                                            out1("%d,", variable->valueBuffer[i]);
                                         }
                                         outline1("%d", variable->valueBuffer[(variable->size-1)]);
                                     } else {
@@ -195,10 +195,10 @@ void variable_cleanup( Environment * _environment ) {
                                 } else {
                                     outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                                     if ( variable->valueBuffer ) {
-                                        outline1("%scopy: .db ", variable->realName);
+                                        out1("%scopy: db ", variable->realName);
                                         int i=0;
                                         for (i=0; i<(variable->size-1); ++i ) {
-                                            outline1("%d,", variable->valueBuffer[i]);
+                                            out1("%d,", variable->valueBuffer[i]);
                                         }
                                         outline1("%d", variable->valueBuffer[(variable->size-1)]);
                                     }
