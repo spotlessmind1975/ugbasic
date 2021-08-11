@@ -9,7 +9,7 @@ REM
 REM Questo piccolo esempio mostra come caricare una piccola PNG e disegnarla sulla bitmap.
 REM
 
-BITMAP ENABLE
+BITMAP ENABLE (2)
 
 CLS
 
