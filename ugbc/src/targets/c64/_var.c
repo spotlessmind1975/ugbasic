@@ -56,9 +56,9 @@ void variable_cleanup( Environment * _environment ) {
         Bank * actual = _environment->banks[i];
         while( actual ) {
             if ( actual->type == BT_VARIABLES ) {
-                cfgline3("# BANK %s %s AT $%4.4x", BANK_TYPE_AS_STRING[actual->type], actual->name, actual->address);
-                cfgline2("%s:   load = MAIN,     type = ro,  optional = yes, start = $%4.4x;", actual->name, actual->address);
-                outhead1(".segment \"%s\"", actual->name);
+                // cfgline3("# BANK %s %s AT $%4.4x", BANK_TYPE_AS_STRING[actual->type], actual->name, actual->address);
+                // cfgline2("%s:   load = MAIN,     type = ro,  optional = yes, start = $%4.4x;", actual->name, actual->address);
+                // outhead1(".segment \"%s\"", actual->name);
                 Variable * variable = _environment->variables;
                 
                 while( variable ) {
@@ -141,9 +141,9 @@ void variable_cleanup( Environment * _environment ) {
                     variable = variable->next;
                 }
             } else if ( actual->type == BT_TEMPORARY ) {
-                cfgline3("# BANK %s %s AT $%4.4x", BANK_TYPE_AS_STRING[actual->type], actual->name, actual->address);
-                cfgline2("%s:   load = MAIN,     type = ro,  optional = yes, start = $%4.4x;", actual->name, actual->address);
-                outhead1(".segment \"%s\"", actual->name);
+                // cfgline3("# BANK %s %s AT $%4.4x", BANK_TYPE_AS_STRING[actual->type], actual->name, actual->address);
+                // cfgline2("%s:   load = MAIN,     type = ro,  optional = yes, start = $%4.4x;", actual->name, actual->address);
+                // outhead1(".segment \"%s\"", actual->name);
                 if ( _environment->bitmaskNeeded ) {
                     outhead0("BITMASK: .byte $01,$02,$04,$08,$10,$20,$40,$80");
                     outhead0("BITMASKN: .byte $fe,$fd,$fb,$f7,$ef,$df,$bf,$7f");
