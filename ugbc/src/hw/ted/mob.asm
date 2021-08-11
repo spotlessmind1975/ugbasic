@@ -794,6 +794,9 @@ MOBDRAW2_SHIFTDOWNL0X:
 ; (we use the data that generic initialization put on descriptor)
 MOBINITCS2:
     
+    SEI
+    STA $FF3F
+
     LDX MOBI
 
     ; Save the actual data into save attribute of descriptor,
@@ -1051,6 +1054,9 @@ MOBINITCS2A:
 
 MOBINITCS2B:
 
+    STA $FF3E
+    CLI
+
     RTS
 
 MOBINITCS0:
@@ -1120,8 +1126,7 @@ MOBSAVE2_INC:
 MOBSAVE2:
 
     SEI
-    LDA #$36
-    STA $01
+    STA $FF3F
 
     LDX MOBI
 
@@ -1309,8 +1314,7 @@ MOBSAVE2L2AX:
 
 MOBSAVE2L3:
 
-    LDA #$37
-    STA $01
+    STA $FF3E
     CLI
 
     RTS
@@ -1410,8 +1414,7 @@ MOBRESTORE2_INCL:
 MOBRESTORE2:
 
     SEI
-    LDA #$36
-    STA $01
+    STA $FF3F
 
     LDX MOBI
 
@@ -1550,9 +1553,8 @@ MOBRESTORE2L3:
     LDA #0
     STA MOBDESCRIPTORS_SH, X
 
-    LDA #$37
-    STA $01
-    SEI
+    STA $FF3E
+    CLI
 
     RTS
 
@@ -1754,8 +1756,7 @@ MOBDRAW2_INCL:
 MOBDRAW2:
 
     SEI
-    LDA #$36
-    STA $01
+    STA $FF3F
 
     STX MOBI
 
@@ -2151,8 +2152,7 @@ MOBDRAW2L9B:
 
 MOBDRAW2E:
 
-    LDA #$37
-    STA $01
+    STA $FF3E
     CLI
 
     RTS
@@ -2168,6 +2168,9 @@ MOBDRAW4:
     RTS
 
 MOBATCS:
+
+    SEI
+    STA $FF3F
 
     LDX MOBI
 
@@ -2251,6 +2254,9 @@ MOBATCS_UP:
     JSR MOBDRAW2_SHIFTUP
 
 MOBATCS_DONE:
+
+    STA $FF3E
+    CLI
 
     RTS
 
