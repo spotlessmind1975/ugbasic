@@ -36,6 +36,42 @@
 
 #include "../ugbc.h"
 #include "6502.h"
+#include <math.h>
+
+static RGBi SYSTEM_PALETTE[] = {
+     // MR_COLOR_BLACK (0)
+    { 0x00, 0x00, 0x00, 0 },
+     // MR_COLOR_WHITE (1)    
+    { 0xff, 0xff, 0xff, 1 },
+     // MR_COLOR_RED (2)
+    { 0xbc, 0x68, 0x59, 2 },
+    // MR_COLOR_CYAN (3)
+    { 0x43, 0x97, 0xa6, 3 }, 
+    // MR_COLOR_PURPLE (4)
+    { 0xbc, 0x52, 0xcc, 4 }, 
+    // MR_COLOR_GREEN (5)
+    { 0x43, 0xad, 0x33, 5 }, 
+    // MR_COLOR_BLUE (6)
+    { 0x80, 0x71, 0xcc, 6 }, 
+    // MR_COLOR_YELLOW (7)
+    { 0x80, 0x8e, 0x33, 7 }, 
+    // MR_COLOR_ORANGE (8)
+    { 0xbc, 0x6f, 0x33, 8 }, 
+    // MR_COLOR_BROWN (9)
+    { 0x9e, 0x7f, 0x33, 9 }, 
+    // MR_COLOR_YELLOW_GREEN (10)
+    { 0x61, 0x9e, 0x33, 10 }, 
+    // MR_COLOR_PINK (11)
+    { 0xbc, 0x61, 0x80, 11 }, 
+    // MR_COLOR_BLUE_GREEN (12)
+    { 0x43, 0x9e, 0x80, 12 }, 
+    // MR_COLOR_LIGHT_BLUE (13)
+    { 0x43, 0x90, 0xcc, 13 }, 
+    // MR_COLOR_DARK_BLUE (14)
+    { 0x9e, 0x61, 0xcc, 14 },
+    // MR_COLOR_LIGHT_GREEN (15) 
+    { 0x43, 0xa6, 0x59, 15 } 
+};
 
 /****************************************************************************
  * CODE SECTION
@@ -638,7 +674,10 @@ void ted_text_at( Environment * _environment, char * _x, char * _y, char * _text
 
 void ted_initialization( Environment * _environment ) {
 
+    deploy( tedvarsDeployed, src_hw_ted_vars_asm );
     deploy( vicstartupDeployed, src_hw_ted_startup_asm );
+    src_hw_chipset_mob_asm = src_hw_ted_mob_asm;
+    src_hw_chipset_mob_asm_len = src_hw_ted_mob_asm_len;
 
     SCREEN_MODE_DEFINE( BITMAP_MODE_STANDARD, 1, 320, 200, 2, "Standard Bitmap Mode" );
     SCREEN_MODE_DEFINE( BITMAP_MODE_MULTICOLOR, 1, 160, 200, 4, "Multicolor Bitmap Mode"  );
@@ -1007,6 +1046,24 @@ Variable * ted_image_converter( Environment * _environment, char * _data, int _w
 }
 
 void ted_put_image( Environment * _environment, char * _image, char * _x, char * _y ) {
+
+    deploy( tedvarsDeployed, src_hw_ted_vars_asm);
+    deploy( imageDeployed, src_hw_ted_image_asm );
+
+    outline1("LDA #<%s", _image );
+    outline0("STA TMPPTR" );
+    outline1("LDA #>%s", _image );
+    outline0("STA TMPPTR+1" );
+    outline1("LDA %s", _x );
+    outline0("STA IMAGEX" );
+    outline1("LDA %s+1", _x );
+    outline0("STA IMAGEX+1" );
+    outline1("LDA %s", _y );
+    outline0("STA IMAGEY" );
+    outline1("LDA %s+1", _y );
+    outline0("STA IMAGEY+1" );
+
+    outline0("JSR PUTIMAGE");
 
 }
 
