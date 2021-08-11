@@ -40,18 +40,6 @@
 
 Variable * image_converter( Environment * _environment, char * _data, int _width, int _height, int _mode ) {
 
-    Variable * mob = variable_temporary( _environment, VT_MOB, "(mob)" );
-
-    switch( _mode ) {
-        case BITMAP_MODE_STANDARD:
-        case BITMAP_MODE_MULTICOLOR:
-
-        case TILEMAP_MODE_STANDARD:
-        case TILEMAP_MODE_MULTICOLOR:
-        case TILEMAP_MODE_EXTENDED:
-           CRITICAL_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
-    }
-
-    return mob;
+    return ted_image_converter( _environment, _data, _width, _height, _mode );
 
 }
