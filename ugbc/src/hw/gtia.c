@@ -36,6 +36,64 @@
 
 #include "../ugbc.h"
 #include "6502.h"
+#include <math.h>
+
+static RGBi SYSTEM_PALETTE[] = {
+    // { "BLACK", 
+        { 0x00, 0x00, 0x00, 0 },        
+    // { "WHITE", 
+        { 0xff, 0xff, 0xff, 0x0f },
+    // { "RED", 
+        { 0x88, 0x00, 0x00, 0x48 },
+    // { "CYAN", 
+        { 0xaa, 0xff, 0xe6, 3 },
+    // { "VIOLET", 
+        { 0xcc, 0x44, 0xcc, 0x44 },
+    // { "GREEN", 
+        { 0x00, 0xcc, 0x55, 0xa2 },
+    // { "BLUE", 
+        { 0x00, 0x00, 0xaa, 0x62 },
+    // { "YELLOW", 
+        { 0xee, 0xee, 0x77, 0xda },
+    // { "ORANGE", 
+        { 0xa1, 0x68, 0x3c, 0x2a },
+    // { "BROWN", 
+        { 0xdd, 0x88, 0x65, 0x14 },
+    // { "LIGHT_RED", 
+        { 0xff, 0x77, 0x77, 0x4f },
+    // { "DARK_GREY", 
+        { 0x33, 0x33, 0x33, 0x04 },
+    // { "GREY", 
+        { 0x77, 0x77, 0x77, 0x08 },
+    // { "LIGHT_GREEN", 
+        { 0xaa, 0xff, 0x66, 0xa8 },
+    // { "LIGHT_BLUE", 
+        { 0x00, 0x88, 0xff, 0x68 },
+    // { "LIGHT_GREY", 
+        { 0xbb, 0xbb, 0xbb, 0x0b },
+    // MAGENTA
+        { 0xf9, 0x84, 0xe5, 0x1e },
+    // LAVENDER
+        { 0xdc, 0xd0, 0xff, 0x55 },
+    // GOLD
+        { 0xFF, 0xd7, 0x00, 0xd6 },
+    // TURQUOISE
+        { 0x40, 0xe0, 0xd0, 0x78 },
+    // TAN
+        { 0xdc, 0xca, 0x98, 0x65 },
+    // YELLOW_GREEN
+        { 0x9a, 0xcd, 0x32, 0xaa },
+    // OLIVE_GREEN
+        { 0x4b, 0x53, 0x20, 0xa6 },
+    // PINK
+        { 0xff, 0xc0, 0xcb, 0x3a },
+    // PEACH
+        { 0xff, 0xcb, 0xa4, 0x38 },
+    // CYAN
+        { 0x00, 0xff, 0xff, 0x6a },
+    // DARK BLUE
+        { 0x00, 0x00, 0x80, 0x60 }
+};
 
 /****************************************************************************
  * CODE SECTION
@@ -167,6 +225,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             cpu_store_16bit( _environment, "CURRENTHEIGHT", currentHeight );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 40 );
+            cpu_store_8bit( _environment, "CURRENTSL", scanline );
+            
             break;        
 
         // Graphics 4 (ANTIC 9)
@@ -209,6 +269,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             cpu_store_16bit( _environment, "CURRENTHEIGHT", currentHeight );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 40 );
+            cpu_store_8bit( _environment, "CURRENTSL", scanline );
             break;
 
         // Graphics 5 (ANTIC A or 10)
@@ -249,6 +310,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             cpu_store_16bit( _environment, "CURRENTHEIGHT", currentHeight );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 40 );
+            cpu_store_8bit( _environment, "CURRENTSL", scanline );
             break;
 
         // Graphics 6 (ANTIC B or 11)
@@ -288,6 +350,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             cpu_store_16bit( _environment, "CURRENTHEIGHT", 96 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 40 );
+            cpu_store_8bit( _environment, "CURRENTSL", scanline );
         break;
 
         // Graphics 7 (ANTIC D or 13)
@@ -329,6 +392,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             cpu_store_16bit( _environment, "CURRENTHEIGHT", currentHeight );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 40 );
+            cpu_store_8bit( _environment, "CURRENTSL", scanline );
         break;
 
         // Graphics 8 (ANTIC F or 15)
@@ -386,6 +450,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             cpu_store_16bit( _environment, "CURRENTHEIGHT", currentHeight );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 40 );
+            cpu_store_8bit( _environment, "CURRENTSL", scanline );
         break;
             
         // The following five graphics modes have no equivalent in BASIC on older machine but if indicated do correspond to
@@ -430,6 +495,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             cpu_store_16bit( _environment, "CURRENTHEIGHT", currentHeight );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 40 );
+            cpu_store_8bit( _environment, "CURRENTSL", scanline );
             break;
 
         // Antic E (Graphics 15-XL computers only)
@@ -471,6 +537,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             cpu_store_16bit( _environment, "CURRENTHEIGHT", currentHeight );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 40 );
+            cpu_store_8bit( _environment, "CURRENTSL", scanline );
             break;
 
         // Graphics Mode 0 (ANTIC 2)
@@ -514,6 +581,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             cpu_store_16bit( _environment, "CURRENTHEIGHT", 24 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 152 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 192 );
+            cpu_store_8bit( _environment, "CURRENTSL", scanline );
             break;
 
         // Graphics 1 (ANTIC 6)
@@ -558,6 +626,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             cpu_store_16bit( _environment, "CURRENTHEIGHT", 24 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 204 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 224 );
+            cpu_store_8bit( _environment, "CURRENTSL", scanline );
             break;
 
         // Graphics 2 (ANTIC 7)
@@ -595,6 +664,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             cpu_store_16bit( _environment, "CURRENTHEIGHT", 12 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 204 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 224 );
+            cpu_store_8bit( _environment, "CURRENTSL", scanline );
             break;
 
         // Antic 3
@@ -634,6 +704,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             cpu_store_16bit( _environment, "CURRENTHEIGHT", 24 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 152 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 192 );
+            cpu_store_8bit( _environment, "CURRENTSL", scanline );
             break;
         
         // Antic 4 (Graphics 12-XL computers only)
@@ -676,6 +747,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             cpu_store_16bit( _environment, "CURRENTHEIGHT", 24 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 152 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 192 );
+            cpu_store_8bit( _environment, "CURRENTSL", scanline );
         break;
 
         // Antic 5 (Graphics 13-XL computers only)
@@ -713,6 +785,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             cpu_store_16bit( _environment, "CURRENTHEIGHT", 24 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 152 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 192 );
+            cpu_store_8bit( _environment, "CURRENTSL", scanline );
             break;
 
         default:
@@ -1089,7 +1162,10 @@ void gtia_text_at( Environment * _environment, char * _x, char * _y, char * _tex
 
 void gtia_initialization( Environment * _environment ) {
 
-    deploy( vicstartupDeployed, src_hw_gtia_startup_asm );
+    deploy( gtiavarsDeployed, src_hw_gtia_vars_asm );
+    deploy( gtiastartupDeployed, src_hw_gtia_startup_asm );
+    src_hw_chipset_mob_asm = src_hw_gtia_mob_asm;
+    src_hw_chipset_mob_asm_len = src_hw_gtia_mob_asm_len;
 
 #ifdef __atarixl__
     SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC12, 1, 320, 192, 4, "Antic C (Graphics 14-XL computers only)"  );
@@ -1195,22 +1271,454 @@ void gtia_cline( Environment * _environment, char * _characters ) {
 
 }
 
+/**
+ * @brief Calculate the luminance of a color
+ * 
+ * This function calculates the luminance of a color. 
+ * By luminance we mean the modulus of the three-dimensional 
+ * vector, drawn in the space composed of the three components 
+ * (red, green and blue). The returned value is normalized to
+ * the nearest 8-bit value.
+ * 
+ * @param _a 
+ * @return int 
+ */
+// 
+
+static int calculate_luminance(RGBi _a) {
+
+    // Extract the vector's components 
+    // (each partecipate up to 1/3 of the luminance).
+    double red = (double) _a.red / 3;
+    double green = (double)_a.green / 3;
+    double blue = (double)_a.blue / 3;
+
+    // Calculate luminance using Pitagora's Theorem
+    return (int)sqrt(pow(red, 2) + pow(green, 2) + pow(blue, 2));
+
+}
+
+
+/**
+ * @brief Calculate the distance between two colors
+ *
+ * This function calculates the color distance between two colors(_a and _b).
+ * By "distance" we mean the geometric distance between two points in a 
+ * three-dimensional space, where each dimension corresponds to one of the 
+ * components (red, green and blue). The returned value is normalized to 
+ * the nearest 8-bit value. 
+ * 
+ * @param _a First color 
+ * @param _b Second color
+ * @return int distance
+ */
+
+static int calculate_distance(RGBi _a, RGBi _b) {
+
+    // Extract the vector's components.
+    double red = (double)_a.red - (double)_b.red;
+    double green = (double)_a.green - (double)_b.green;
+    double blue = (double)_a.blue - (double)_b.blue;
+
+    // Calculate distance using Pitagora's Theorem
+    return (int)sqrt(pow(red, 2) + pow(green, 2) + pow(blue, 2));
+
+}
+
+/**
+ * @brief Extract the color palette from the given image
+ * 
+ * @param _source 
+ * @param _palette 
+ * @param _palette_size 
+ * @return int 
+ */
+static int extract_color_palette(unsigned char* _source, int _width, int _height, RGBi _palette[], int _palette_size) {
+
+    RGBi rgb;
+
+    int image_x, image_y;
+
+    int usedPalette = 0;
+    int i = 0;
+    unsigned char* source = _source;
+
+    for (image_y = 0; image_y < _height; ++image_y) {
+        for (image_x = 0; image_x < _width; ++image_x) {
+            rgb.red = *source;
+            rgb.green = *(source + 1);
+            rgb.blue = *(source + 2);
+
+            for (i = 0; i < usedPalette; ++i) {
+                if (_palette[i].red == rgb.red && _palette[i].green == rgb.green && _palette[i].blue == rgb.blue) {
+                    break;
+                }
+            }
+
+            if (i >= usedPalette) {
+                _palette[usedPalette].red = rgb.red;
+                _palette[usedPalette].green = rgb.green;
+                _palette[usedPalette].blue = rgb.blue;
+                ++usedPalette;
+                if (usedPalette > _palette_size) {
+                    break;
+                }
+            }
+            source += 3;
+        }
+        if (usedPalette > _palette_size) {
+            break;
+        }
+    }
+
+    return usedPalette;
+
+}
+
+static Variable * gtia_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height ) {
+
+    RGBi palette[MAX_PALETTE];
+
+    int colorUsed = extract_color_palette(_source, _width, _height, palette, MAX_PALETTE);
+
+    if (colorUsed > 2) {
+        CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
+    }
+
+    int i, j, k;
+
+    for( i=0; i<colorUsed; ++i ) {
+        int minDistance = 0xffff;
+        int colorIndex = 0;
+        for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
+            int distance = calculate_distance(SYSTEM_PALETTE[j], palette[i]);
+            if (distance < minDistance) {
+                for( k=0; k<i; ++k ) {
+                    if ( palette[k].index == j ) {
+                        break;
+                    }
+                }
+                if ( k>=i ) {
+                    minDistance = distance;
+                    colorIndex = j;
+                }
+            }
+        }
+        palette[i].index = SYSTEM_PALETTE[colorIndex].index;
+    }
+
+    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
+ 
+    int bufferSize = 2 + ( ( _width >> 3 ) * _height ) + 2;
+    char * buffer = malloc ( bufferSize );
+
+    // Position of the pixel in the original image
+    int image_x, image_y;
+    
+    // Position of the pixel, in terms of tiles
+    int tile_x, tile_y;
+    
+    // Position of the pixel, in terms of offset and bitmask
+    int offset, bitmask;
+
+    // Color of the pixel to convert
+    RGBi rgb;
+
+    *(buffer) = _width;
+    *(buffer+1) = _height;
+
+    // Loop for all the source surface.
+    for (image_y = 0; image_y < _height; ++image_y) {
+        for (image_x = 0; image_x < _width; ++image_x) {
+
+            // Take the color of the pixel
+            rgb.red = *_source;
+            rgb.green = *(_source + 1);
+            rgb.blue = *(_source + 2);
+
+            // Calculate the offset starting from the tile surface area
+            // and the bit to set.
+            offset = (image_y *( _width >> 3 ) ) + (image_x >> 3 );
+            bitmask = 1 << ( 7 - (image_x & 0x7) );
+
+            // If the pixes has enough luminance value, it must be 
+            // considered as "on"; otherwise, it is "off".
+            int luminance = calculate_luminance(rgb);
+
+            if (luminance >= 1 /* luminance threshold*/ ) {
+                *( buffer + offset + 2) |= bitmask;
+            } else {
+                *( buffer + offset + 2) &= ~bitmask;
+            }
+
+            _source += 3;
+
+        }
+
+    }
+
+    if ( colorUsed > 1 ) {
+        *(buffer + 2 + ( ( _width >> 3 ) * _height ) + 1 ) = palette[1].index;
+    } else {
+        *(buffer + 2 + ( ( _width >> 3 ) * _height ) + 1 ) = 0;
+    }
+
+    if ( colorUsed > 0 ) {
+        *(buffer + 2 + ( ( _width >> 3 ) * _height ) ) = palette[0].index;
+    } else {
+        *(buffer + 2 + ( ( _width >> 3 ) * _height ) ) = 0;
+    }
+
+    variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
+
+    return result;
+
+}
+
+
+static Variable * gtia_image_converter_multicolor_mode_standard( Environment * _environment, char * _source, int _width, int _height ) {
+
+    RGBi palette[MAX_PALETTE];
+
+    int colorUsed = extract_color_palette(_source, _width, _height, palette, MAX_PALETTE);
+
+    if (colorUsed > 4) {
+        CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
+    }
+
+    int i, j, k;
+
+    for( i=0; i<colorUsed; ++i ) {
+        int minDistance = 0xffff;
+        int colorIndex = 0;
+        for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
+            int distance = calculate_distance(SYSTEM_PALETTE[j], palette[i]);
+            if (distance < minDistance) {
+                for( k=0; k<i; ++k ) {
+                    if ( palette[k].index == j ) {
+                        break;
+                    }
+                }
+                if ( k>=i ) {
+                    minDistance = distance;
+                    colorIndex = j;
+                }
+            }
+        }
+        palette[i].index = SYSTEM_PALETTE[colorIndex].index;
+    }
+
+    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
+ 
+    int bufferSize = 2 + ( ( _width >> 2 ) * _height ) + 4;
+    
+    char * buffer = malloc ( bufferSize );
+    memset( buffer, 0, sizeof( buffer) );
+
+    // Position of the pixel in the original image
+    int image_x, image_y;
+    
+    // Position of the pixel, in terms of tiles
+    int tile_x, tile_y;
+    
+    // Position of the pixel, in terms of offset and bitmask
+    int offset, offsetc, bitmask;
+
+    // Color of the pixel to convert
+    RGBi rgb;
+
+    *(buffer) = _width;
+    *(buffer+1) = _height;
+
+    // Loop for all the source surface.
+    for (image_y = 0; image_y < _height; ++image_y) {
+        for (image_x = 0; image_x < _width; ++image_x) {
+
+            // Take the color of the pixel
+            rgb.red = *_source;
+            rgb.green = *(_source + 1);
+            rgb.blue = *(_source + 2);
+
+            // Calculate the offset starting from the tile surface area
+            // and the bit to set.
+            offset = (image_y * ( _width >> 2 ) ) + (image_x>>2);
+
+            int minDistance = 0xffff;
+            int colorIndex = 0;
+
+            for (i = 0; i < 4; ++i) {
+                int distance = calculate_distance(rgb, palette[i]);
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    colorIndex = i;
+                };
+            }
+
+            bitmask = colorIndex << (6 - ((image_x & 0x3) * 2));
+
+            *(buffer + 2 + offset) |= bitmask;
+
+            _source += 3;
+
+        }
+
+    }
+
+    if ( colorUsed > 3 ) {
+        *(buffer + 2 + ( ( _width >> 2 ) * _height ) + 3 ) = palette[3].index;
+    } else {
+        *(buffer + 2 + ( ( _width >> 2 ) * _height ) + 3 ) = 0;
+    }
+
+    if ( colorUsed > 2 ) {
+        *(buffer + 2 + ( ( _width >> 2 ) * _height ) + 2 ) = palette[2].index;
+    } else {
+        *(buffer + 2 + ( ( _width >> 2 ) * _height ) + 2 ) = 0;
+    }
+
+    if ( colorUsed > 1 ) {
+        *(buffer + 2 + ( ( _width >> 2 ) * _height ) + 1 ) = palette[1].index;
+    } else {
+        *(buffer + 2 + ( ( _width >> 2 ) * _height ) + 1 ) = 0;
+    }
+
+    if ( colorUsed > 0 ) {
+        *(buffer + 2 + ( ( _width >> 2 ) * _height ) ) = palette[0].index;
+    } else {
+        *(buffer + 2 + ( ( _width >> 2 ) * _height ) ) = 0;
+    }
+
+    variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
+
+    return result;
+
+}
+
 Variable * gtia_image_converter( Environment * _environment, char * _data, int _width, int _height, int _mode ) {
 
     switch( _mode ) {
+        // Graphics 3 (ANTIC 8)
+        // This four-color graphics mode turns a split screen into 20 rows of 40 graphics cells or pixels. 
+        // Each pixel is 8 x 8 or the size of a normal character. The data in each pixel is encoded as two bit pairs, 
+        // four per byte. The four possible bit pair combinations 00, 01, 10, and 11 point to one of the four color registers. 
+        // The bits 00 is assigned to the background color register and the rest refer to the three foreground color registers. 
+        // When the CTIA/GTIA chip interprets the data for the four adjacent pixels stored within the byte, it refers to the color 
+        // register encoded in the bit pattern to plot the color.
         case BITMAP_MODE_ANTIC8:
+            return gtia_image_converter_multicolor_mode_standard( _environment, _data, _width, _height );
+
+        // Graphics 4 (ANTIC 9)
+        // This is a two-color graphics mode with four times the resolution of GRAPHICS 3. The pixels are 4 x 4, and 48 rows of 80 
+        // pixels fit on a full screen. A single bit is used to store each pixel's color register. A zero refers to the background 
+        // color register and a one to the foreground color register. The mode is used primarily to conserve screen memory. 
+        // Only one bit is used for the color, so eight adjacent pixels are encoded within one byte, and only half as much screen 
+        // memory is needed for a display of similiar-sized pixels.
         case BITMAP_MODE_ANTIC9:
+            return gtia_image_converter_bitmap_mode_standard( _environment, _data, _width, _height );
+
+        // Graphics 5 (ANTIC A or 10)
+        // This is the four color equivalent of GRAPHICS 4 sized pixels. The pixels are 4 x 4, but two bits are required to address 
+        // the four color registers. With only four adjacent pixels encoded within a byte, the screen uses twice as much memory, 
+        // about 1K.
         case BITMAP_MODE_ANTIC10:
+            return gtia_image_converter_multicolor_mode_standard( _environment, _data, _width, _height );
+
+        // Graphics 6 (ANTIC B or 11)
+        // This two color graphics mode has reasonably fine resolution. The 2 x 2 sized pixels allow 96 rows of 160 pixels to fit 
+        // on a full screen. Although only a single bit is used to encode the color, screen memory still requires approximately 2K.
         case BITMAP_MODE_ANTIC11:
+            return gtia_image_converter_bitmap_mode_standard( _environment, _data, _width, _height );
+
+        // Graphics 7 (ANTIC D or 13)
+        // This is the four color equivalent to GRAPHICS mode 6. It is the finest resolution four color mode and naturally the
+        // most popular. The color is encoded in two bit-pairs exactly the same way as in GRAPHICS 3. The memory requirements 
+        // of course is much greater as there are 96 rows of 160 - 2 x 2 sized pixels. It requires 3840 bytes of screen memory
+        // with another 104 bytes for the display list.
         case BITMAP_MODE_ANTIC13:
+            return gtia_image_converter_multicolor_mode_standard( _environment, _data, _width, _height );
+
+        // Graphics 8 (ANTIC F or 15)
+        // This mode is definitely the finest resolution available on the Atari. Individual dot-sized pixels can be addressed in 
+        // this one-color, two-luminance mode. There are 192 rows of 320 dots in the full screen mode. Graphics 8 is memory 
+        // intensive; it takes 8K bytes (eight pixels/byte) to address an entire screen. The color scheme is quite similar to that 
+        // in GRAPHICS mode 0. Color register #2 sets the background color. Color register #1 sets the luminance. Changing the color
+        // in this register has no effect, but, this doesn't mean that you are limited to just one color.
+        // Fortunately, the pixels are each one half of a color clock. It takes two pixels to span one color clock made up of
+        // alternating columns of complementary colors. If the background is set to black, these columns consist of blue and 
+        // green stripes. If only the odd-columned pixels are plotted, you get blue pixels. If only the odd-columned pixels 
+        // are plotted, you get green pixels. And if pairs of adjacent pixels are plotted, you get white. So by cleverly 
+        // staggering the pixel patterns, you can achieve three colors. This method is called artifacting. This all depends
+        // on background color and luminance.
         case BITMAP_MODE_ANTIC15:
+            return gtia_image_converter_bitmap_mode_standard( _environment, _data, _width, _height );
+
+        // The following five graphics modes have no equivalent in BASIC on older machine but if indicated do correspond to
+        // an equivalent graphics mode on the newer XL models.
+
+        // Antic C (Graphics 14-XL computers only)
+        // This two-color, bit-mapped mode the eight bits correspond directly to the pixels on the screen. If a pixel is lit 
+        // it receives its color information from color register #0, otherwise the color is set to the background color 
+        // register #4. Each pixel is one scan line high and one color clock wide. This mode's advantages are that it 
+        // only uses 4K of screen memory and doesn't have artifacting problems.
         case BITMAP_MODE_ANTIC12:
+            return gtia_image_converter_bitmap_mode_standard( _environment, _data, _width, _height );
+
+        // Antic E (Graphics 15-XL computers only)
+        // This four-color, bit-mapped mode is sometimes known as BASIC 7 1/2. Its resolution is 160 x 192 or twice that of 
+        // GRAPHIC 7. Each byte is divided into four pairs of bits. Like the character data in ANTIC 4, the bit pairs point to a
+        // particular color register. The screen data, however, is not character data but individual bytes. The user has a lot
+        // more control, but this mode uses a lot more memory, approximately
         case BITMAP_MODE_ANTIC14:
+            return gtia_image_converter_multicolor_mode_standard( _environment, _data, _width, _height );
+
+        // Graphics Mode 0 (ANTIC 2)
+        // This is the normal-sized character or text mode that the computer defaults to on start up. 
+        // Being a character mode, screen memory consists of bytes that represent individual characters in either the 
+        // ROM or a custom character set. ANTIC displays forty of these 8 x 8 sized characters on each of 
+        // twenty-four lines. Graphics 0 is a 1 1/2 color mode. Color register #2 is used as the background color 
+        // register. Color register #1 sets the luminance of the characters against the background. Setting the 
+        // color has no effect. Bits within a character are turned on in pairs to produce the luminace color. 
+        // Otherwise single bits tend to produce colored artifacts on the high resolution screen. These colors
+        // depend on whether the computer has a CTIA or GTIA chip, and the color of the background.
         case TILEMAP_MODE_ANTIC2:
+
+        // Graphics 1 (ANTIC 6)
+        // This is one the expanded text modes. Each characters is 8 x 8 but the pixels are one color clock in 
+        // width instead of the 1/2 color clock mode of Graphics 0 making the characters twice as wide. Only twenty 
+        // characters fit on any line. A graphics 1 screen has twenty rows while the full screen mode has twenty-four 
+        // rows of characters. The two high bits of each ATASCII character, that normally identify lowercase or 
+        // inverse video text in Graphics 1, set the color register for the 64 character set. Decimal character
+        // numbers 0-63 use color register zero, while those same 64 characters if given character numbers 64-127 
+        // use color register #1. If you are typing from the Atari keyboard, the uppercase letters A-Z ATASCII 65-90
+        // (Internal # 33-58) are assigned to color register zero, while the lowercase numbers 97-122 
+        // (Internal # 97-122) are signed to register #1.
         case TILEMAP_MODE_ANTIC6:
+
+        // Graphics 2 (ANTIC 7)
+        // This text mode is basically the same as the previous mode except that each row of pixels is two scan lines high.
+        // Thus 12 rows of 20 characters are displayed on a full screen. Only ten rows fit on a split screen.
         case TILEMAP_MODE_ANTIC7:
+
+        // Antic 3
+        // This rarely used text mode is sometimes called the lowercase descenders mode. Each of the forty characters per line
+        // are ten scan lines high, but since each of the characters are only eight scan lines high, the lower two scan lines are
+        // normally left empty. However, if you use the last quarter of the character set, the top two lines remain blank, 
+        // allowing you to create lowercase characters with descenders.
         case TILEMAP_MODE_ANTIC3:
+
+        // Antic 4 (Graphics 12-XL computers only)
+        // This very powerful character graphics mode supports four colors while using relatively little screen memory (1 K). 
+        // In addition its 4 x 8 sized characters have the same horizontal resolution as GRAPHICS 7, yet twice the vertical resolution.
+        // A large number of games with colorful and detailed playfields use this mode. These characters differ considerably from 
+        // ANTIC 6 (BASIC 2) characters, in that each character contains pixels of four different colors, not just a choice of one color
+        // determined by the character number. Each byte in the character is broken into four bit pairs, each of which selects the color
+        // register for the pixel. That is why the horizontal resolution is only four bits. A special character set generator is used
+        // to form these characters.
         case TILEMAP_MODE_ANTIC4:
+
+        // Antic 5 (Graphics 13-XL computers only)
+        // This mode is essentially the same as ANTIC 4 except that each character is sixteen scan lines high. 
+        // The character set data is still eight bytes high so ANTIC double plots each scan line.
         case TILEMAP_MODE_ANTIC5:
             break;
     }
@@ -1220,6 +1728,24 @@ Variable * gtia_image_converter( Environment * _environment, char * _data, int _
 }
 
 void gtia_put_image( Environment * _environment, char * _image, char * _x, char * _y ) {
+
+    deploy( gtiavarsDeployed, src_hw_gtia_vars_asm);
+    deploy( imageDeployed, src_hw_gtia_image_asm );
+
+    outline1("LDA #<%s", _image );
+    outline0("STA TMPPTR" );
+    outline1("LDA #>%s", _image );
+    outline0("STA TMPPTR+1" );
+    outline1("LDA %s", _x );
+    outline0("STA IMAGEX" );
+    outline1("LDA %s+1", _x );
+    outline0("STA IMAGEX+1" );
+    outline1("LDA %s", _y );
+    outline0("STA IMAGEY" );
+    outline1("LDA %s+1", _y );
+    outline0("STA IMAGEY+1" );
+
+    outline0("JSR PUTIMAGE");
 
 }
 
