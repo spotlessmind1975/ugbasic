@@ -2643,7 +2643,7 @@ program :
 
 void show_usage_and_exit( int _argc, char *_argv[] ) {
 
-    printf("ugBASIC Compiler v1.0\n");
+    printf("ugBASIC Compiler v1.2-beta\n");
     printf("---------------------\n");
     printf("Copyright 2021 Marco Spedaletti (asimov@mclink.it)\n\n");
     printf("Licensed under the Apache License, Version 2.0 (the \"License\");\n");
