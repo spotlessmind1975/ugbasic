@@ -50,6 +50,7 @@ CLIPY2:    .word 199
 LASTCOLOR: .byte 0
 CURRENTWIDTH:      .word 40
 CURRENTHEIGHT:      .word 25
+CURRENTSL:          .byte 0
 
 PLOTVBASELO:
     .byte <($6000+(0*320)),<($6000+(1*320)),<($6000+(2*320)),<($6000+(3*320))

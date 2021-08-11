@@ -326,3 +326,4 @@ CURRENTWIDTH:      .word 40
 CURRENTHEIGHT:      .word 24
 TEXTBLOCKREMAIN:      .byte 152
 TEXTBLOCKREMAINPW:      .byte 192
+CURRENTSL:          .byte 0

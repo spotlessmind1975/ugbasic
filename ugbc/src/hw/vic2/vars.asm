@@ -49,6 +49,7 @@ CLIPY2:    .word 199
 LASTCOLOR: .byte 0
 CURRENTWIDTH:      .word 40
 CURRENTHEIGHT:      .word 25
+CURRENTSL:          .byte 0
 
 ; ------------------------------------------------------------------------------
 ; BITMAP MODE (MODE #2)
