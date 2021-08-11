@@ -221,8 +221,14 @@ int ted_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
 
             cpu_store_16bit( _environment, colormapAddress->realName, 0xA000-0x0400 );
 
-            cpu_store_8bit( _environment, "_PEN", 0x10 );
+            cpu_store_8bit( _environment, "_PEN", 0x01 );
             cpu_store_8bit( _environment, "_PAPER", 0x00 );
+            cpu_store_16bit( _environment, "CLIPX1", 0 );
+            cpu_store_16bit( _environment, "CLIPX2", 319 );
+            cpu_store_16bit( _environment, "CLIPY1", 0 );
+            cpu_store_16bit( _environment, "CLIPY2", 199 );
+            cpu_store_16bit( _environment, "CURRENTWIDTH", 320 );
+            cpu_store_16bit( _environment, "CURRENTHEIGHT", 200 );
             
             break;
         case BITMAP_MODE_MULTICOLOR:
@@ -238,8 +244,14 @@ int ted_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
 
             cpu_store_16bit( _environment, colormapAddress->realName, 0xA000-0x0400 );
             
-            cpu_store_8bit( _environment, "_PEN", 0x10 );
+            cpu_store_8bit( _environment, "_PEN", 0x01 );
             cpu_store_8bit( _environment, "_PAPER", 0x00 );
+            cpu_store_16bit( _environment, "CLIPX1", 0 );
+            cpu_store_16bit( _environment, "CLIPX2", 159 );
+            cpu_store_16bit( _environment, "CLIPY1", 0 );
+            cpu_store_16bit( _environment, "CLIPY2", 199 );
+            cpu_store_16bit( _environment, "CURRENTWIDTH", 160 );
+            cpu_store_16bit( _environment, "CURRENTHEIGHT", 200 );
 
             break;
         case TILEMAP_MODE_STANDARD:
@@ -252,6 +264,12 @@ int ted_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
 
             cpu_store_8bit( _environment, "_PEN", 0x01 );
             cpu_store_8bit( _environment, "_PAPER", 0x00 );
+            cpu_store_16bit( _environment, "CLIPX1", 0 );
+            cpu_store_16bit( _environment, "CLIPX2", 39 );
+            cpu_store_16bit( _environment, "CLIPY1", 0 );
+            cpu_store_16bit( _environment, "CLIPY2", 24 );
+            cpu_store_16bit( _environment, "CURRENTWIDTH", 40 );
+            cpu_store_16bit( _environment, "CURRENTHEIGHT", 25 );
 
             break;
         case TILEMAP_MODE_MULTICOLOR:
@@ -266,6 +284,12 @@ int ted_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
 
             cpu_store_8bit( _environment, "_PEN", 0x01 );
             cpu_store_8bit( _environment, "_PAPER", 0x00 );
+            cpu_store_16bit( _environment, "CLIPX1", 0 );
+            cpu_store_16bit( _environment, "CLIPX2", 39 );
+            cpu_store_16bit( _environment, "CLIPY1", 0 );
+            cpu_store_16bit( _environment, "CLIPY2", 24 );
+            cpu_store_16bit( _environment, "CURRENTWIDTH", 40 );
+            cpu_store_16bit( _environment, "CURRENTHEIGHT", 25 );
 
             break;
         default:
