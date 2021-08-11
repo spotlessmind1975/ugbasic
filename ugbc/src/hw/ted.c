@@ -280,6 +280,8 @@ void ted_bitmap_enable( Environment * _environment, int _width, int _height, int
 
     ted_screen_mode_enable( _environment, mode );
 
+    cpu_store_8bit( _environment, "CURRENTMODE", mode->id );
+
     _environment->currentMode = mode->id;
 
 }
@@ -302,6 +304,8 @@ void ted_tilemap_enable( Environment * _environment, int _width, int _height, in
     ScreenMode * mode = find_screen_mode_by_suggestion( _environment, 0, _width, _height, _colors );
 
     ted_screen_mode_enable( _environment, mode );
+
+    cpu_store_8bit( _environment, "CURRENTMODE", mode->id );
 
     _environment->currentMode = mode->id;
 
