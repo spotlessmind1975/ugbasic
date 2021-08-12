@@ -1,10 +1,10 @@
 REM @english
-REM OTHER CONTRIBUTIONS PRIME NUMBERS (2)
+REM OTHER CONTRIBUTIONS PRIME NUMBERS (3)
 REM
 REM This small example has been taken and adapted by [[https://www.facebook.com/groups/retroprogramming/posts/793835291296728/|RetroProgramming Italia]].
 REM 
 REM @italian
-REM VARI ALTRI CONTRIBUTI NUMERI PRIMI (2)
+REM VARI ALTRI CONTRIBUTI NUMERI PRIMI (3)
 REM
 REM Questo piccolo esempio è stato preso ed adattato da [[https://www.facebook.com/groups/retroprogramming/posts/793835291296728/|RetroProgramming Italia]].
 REM

@@ -656,7 +656,18 @@ exponential:
         $$ = variable_move_from_array( _environment, $1 )->name;
     }
     | Identifier {
-        $$ = variable_retrieve_or_define( _environment, $1, VT_WORD, 0 )->name;
+        Constant * c = constant_find( ((struct _Environment *)_environment)->constants, $1 );
+        if ( c ) {
+            if ( c->valueString ) {
+                $$ = variable_temporary( _environment,  VT_STRING, "(constant)" )->name;
+                variable_store_string( _environment, $$, c->valueString );
+            } else {
+                $$ = variable_temporary( _environment,  VT_WORD, "(constant)" )->name;
+                variable_store( _environment, $$, c->value );
+            }
+        } else {
+            $$ = variable_retrieve_or_define( _environment, $1, VT_WORD, 0 )->name;
+        }
     }
     | Identifier OP_DOLLAR { 
         $$ = variable_retrieve_or_define( _environment, $1, VT_DSTRING, 0 )->name;
