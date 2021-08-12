@@ -2571,6 +2571,12 @@ statement:
   | CONST Identifier OP_ASSIGN String {
         const_define_string( _environment, $2, $4 );
   }
+  | TI OP_ASSIGN expr {
+        set_timer( _environment, $3 );
+  }
+  | TIMER OP_ASSIGN expr {
+        set_timer( _environment, $3 );
+  }
   | Identifier OP_ASSIGN expr {
         outline2("; %s = %s", $1, $3 );
         Variable * expr = variable_retrieve( _environment, $3 );

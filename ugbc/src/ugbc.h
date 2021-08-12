@@ -1454,6 +1454,7 @@ void                    screen_rows( Environment * _environment, int _rows );
 void                    screen_rows_var( Environment * _environment, char * _rows );
 void                    screen_vertical_scroll( Environment * _environment, int _displacement );
 void                    screen_vertical_scroll_var( Environment * _environment, char * _displacement );
+void                    set_timer( Environment * _environment, char * _value );
 void                    shared( Environment * _environment );
 Variable *              sign( Environment * _environment, char * _value );
 void                    sprite_color( Environment * _environment, int _sprite, int _color );

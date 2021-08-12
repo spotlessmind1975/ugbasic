@@ -52,3 +52,16 @@ Variable * get_timer( Environment * _environment ) {
     return result;
     
 }
+
+void set_timer( Environment * _environment, char * _value ) {
+
+    Variable * value = variable_retrieve_or_define( _environment, _value, VT_WORD, 0 );
+
+    char valueAddress[MAX_TEMPORARY_STORAGE]; 
+    cpu_move_8bit( _environment, value->realName, "$12" );
+    sprintf(valueAddress, "%s+1", value->realName );
+    cpu_move_8bit( _environment, valueAddress, "$13" );
+    // sprintf(resultAddress, "%s+2", result->realName );
+    // cpu_move_8bit( _environment, "$A2", resultAddress );
+    
+}
