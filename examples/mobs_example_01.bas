@@ -9,12 +9,13 @@ REM
 REM Questo piccolo esempio mostra come usare i MOB per implementare oggetti in movimento.
 REM
 
-SCREEN #3
+BITMAP ENABLE (2)
 
 airplaneImage = IMAGE LOAD("examples/checkers.png")
 airplane1 = 1
 MOB airplane1, airplaneImage
 MOB SHOW airplane1
+MOB RENDER
 i = (POSITION) 0
 FOR i = (POSITION) 0 TO (POSITION) 50 STEP (POSITION) 1
     MOB airplane1 AT (POSITION) 0, i
