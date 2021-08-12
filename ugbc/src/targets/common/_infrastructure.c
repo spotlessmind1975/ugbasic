@@ -123,6 +123,30 @@ static Variable * variable_find_first_unused( Variable * _first, VariableType _t
     return actual;
 }
 
+static Constant * constant_find_by_realname( Constant * _first, char * _name ) {
+
+    Constant * actual = _first;
+    while( actual ) {
+        if ( strcmp( actual->realName, _name ) == 0 ) {
+            break;
+        }
+        actual = actual->next;
+    }
+    return actual;
+}
+
+Constant * constant_find( Constant * _first, char * _name ) {
+
+    Constant * actual = _first;
+    while( actual ) {
+        if ( strcmp( actual->name, _name ) == 0 ) {
+            break;
+        }
+        actual = actual->next;
+    }
+    return actual;
+}
+
 void variable_global( Environment * _environment, char * _pattern ) {
 
     Pattern * pattern = malloc( sizeof( Pattern ) ) ;
@@ -3549,4 +3573,66 @@ Variable * variable_mod( Environment * _environment, char * _source, char * _des
     }
 
     return remainder;
+}
+
+void const_define_numeric( Environment * _environment, char * _name, int _value ) {
+
+    Constant * c = constant_find( _environment->constants, _name );
+    if ( c ) {
+        if ( c->valueString ) {
+            CRITICAL( "Constant redefined with a different type (numeric -> string)");
+        }
+        if ( c->value != _value ) {
+            CRITICAL( "Numeric constant redefined with a different value");
+        }
+    } else {
+        c = malloc( sizeof( Constant ) );
+        memset( c, 0, sizeof( Constant ) );
+        c->name = strdup( _name );
+        c->realName = malloc( strlen( _name ) + strlen( c->name ) + 2 ); strcpy( c->realName, "_" ); strcat( c->realName, c->name );
+        c->value = _value;
+        Constant * constLast = _environment->constants;
+        if ( constLast ) {
+            while( constLast->next ) {
+                constLast = constLast->next;
+            }
+            constLast->next = c;
+        } else {
+            _environment->constants = c;
+        }
+        const_emit( _environment, c->name );
+    }
+
+}
+
+void const_define_string( Environment * _environment, char * _name, char * _value ) {
+
+    Constant * c = constant_find( _environment->constants, _name );
+    if ( c ) {
+        if ( c->valueString ) {
+            CRITICAL( "Constant redefined with a different type (string -> numeric)");
+        }
+        if ( strcmp( c->valueString , _value ) != 0 ) {
+            CRITICAL( "String constant redefined with a different value");
+        }
+    } else {
+        c = malloc( sizeof( Constant ) );
+        memset( c, 0, sizeof( Constant ) );
+        c->name = strdup( _name );
+        c->realName = malloc( strlen( _name ) + strlen( c->name ) + 2 ); strcpy( c->realName, "_" ); strcat( c->realName, c->name );
+        c->valueString = strdup( _value );
+        Constant * constLast = _environment->constants;
+        if ( constLast ) {
+            while( constLast->next ) {
+                constLast = constLast->next;
+            }
+            constLast->next = c;
+        } else {
+            _environment->constants = c;
+        }
+
+        const_emit( _environment, c->name );
+    
+    }
+
 }

@@ -93,6 +93,7 @@ COLORMAP { return (COLORMAP); }
 COMMA { return (COMMA); }
 COMMODORE { return (COMMODORE); }
 COMPRESS { return (COMPRESS); }
+CONST { return (CONST); }
 CONTROL { return (CONTROL); }
 COUNT { return (COUNT); }
 CRIGHT { return (CRIGHT); }

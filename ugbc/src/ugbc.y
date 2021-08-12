@@ -50,7 +50,7 @@ extern char DATATYPE_AS_STRING[][16];
 %token POUND RUNSTOP RUN STOP SEMICOLON SLASH KEY STATE KEYSTATE KEYSHIFT CAPSLOCK CAPS LOCK ALT
 %token INPUT FREE TILEMAP EMPTY TILE EMPTYTILE PLOT GR CIRCLE DRAW LINE BOX POLYLINE ELLIPSE CLIP
 %token BACK DEBUG CAN ELSEIF BUFFER LOAD SIZE MOB IMAGE PUT VISIBLE HIDDEN HIDE SHOW RENDER
-%token SQR TI
+%token SQR TI CONST
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -181,6 +181,16 @@ factor:
 direct_integer:
     OP_HASH Integer {
         $$ = $2;
+    }
+    | OP_HASH Identifier {
+        Constant * c = constant_find( ((struct _Environment *)_environment)->constants, $2 );
+        if ( !c ) {
+            CRITICAL_UNDEFINED_CONSTANT($2);
+        }
+        if ( c->valueString ) {
+            CRITICAL_TYPE_MISMATCH_CONSTANT_NUMERIC($2);
+        }
+        $$ = c->value;
     };
 
 random_definition_simple:
@@ -647,7 +657,7 @@ exponential:
     }
     | Identifier {
         $$ = variable_retrieve_or_define( _environment, $1, VT_WORD, 0 )->name;
-      }
+    }
     | Identifier OP_DOLLAR { 
         $$ = variable_retrieve_or_define( _environment, $1, VT_DSTRING, 0 )->name;
       }
@@ -1923,6 +1933,17 @@ dimensions :
           ((struct _Environment *)_environment)->arrayDimensionsEach[((struct _Environment *)_environment)->arrayDimensions] = $1;
           ++((struct _Environment *)_environment)->arrayDimensions;
     }
+    | Identifier  {
+        Constant * c = constant_find( ((struct _Environment *)_environment)->constants, $1 );
+        if ( !c ) {
+            CRITICAL_UNDEFINED_CONSTANT( $1 );
+        }
+        if ( c->valueString ) {
+            CRITICAL_TYPE_MISMATCH_CONSTANT_NUMERIC( $1 );
+        }
+        ((struct _Environment *)_environment)->arrayDimensionsEach[((struct _Environment *)_environment)->arrayDimensions] = c->value;
+        ++((struct _Environment *)_environment)->arrayDimensions;
+    }
     | Integer OP_COMMA dimensions {
           ((struct _Environment *)_environment)->arrayDimensionsEach[((struct _Environment *)_environment)->arrayDimensions] = $1;
           ++((struct _Environment *)_environment)->arrayDimensions;
@@ -2544,6 +2565,12 @@ statement:
         variable_string_mid_assign( _environment, $3, $5, $7, $10 );
   }
   | DIM dim_definitions
+  | CONST Identifier OP_ASSIGN Integer {
+        const_define_numeric( _environment, $2, $4 );
+  }
+  | CONST Identifier OP_ASSIGN String {
+        const_define_string( _environment, $2, $4 );
+  }
   | Identifier OP_ASSIGN expr {
         outline2("; %s = %s", $1, $3 );
         Variable * expr = variable_retrieve( _environment, $3 );

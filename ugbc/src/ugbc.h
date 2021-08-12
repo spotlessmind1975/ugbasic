@@ -296,6 +296,37 @@ typedef struct _Variable {
 
 } Variable;
 
+/**
+ * @brief Structure of a single constant
+ */
+typedef struct _Constant {
+
+    /** Name of the constant (in the program) */
+    char * name;
+
+    /** Real name (used for source generation) */
+    char * realName;
+
+    /** 
+     * This flag mark if this variable is imported by external ASM
+     */
+    int imported;
+
+    /** 
+     * The initial (numeric) value of the variable, as given by last (re)definition.
+     */
+    int value;
+
+    /** 
+     * The initial (string) value of the variable, as given by last (re)definition.
+     */
+    char * valueString;
+
+    /** Link to the next constant (NULL if this is the last one) */
+    struct _Constant * next;
+
+} Constant;
+
 typedef struct _Procedure {
 
     /** Name of the procedure (in the program) */
@@ -577,6 +608,11 @@ typedef struct _Environment {
      * List of temporary (and reused) variables.
      */
     Variable * tempVariables;
+
+    /**
+     * List of constants defined in the program.
+     */
+    Constant * constants;
 
     /**
      * List of variables defined in the program.
@@ -931,6 +967,8 @@ typedef struct _Environment {
 #define CRITICAL_IMAGE_CONVERTER_UNSUPPORTED_MODE(f) CRITICAL2i("E058 - IMAGE converter unsupported for the given screen mode", f );
 #define CRITICAL_IMAGE_CONVERTER_TOO_COLORS(f) CRITICAL2i("E059 - IMAGE converter unsupported -- too much colors", f );
 #define CRITICAL_SQR_UNSUPPORTED( v, t ) CRITICAL3("E060 - SQR unsupported for variable of given datatype", v, t );
+#define CRITICAL_UNDEFINED_CONSTANT( c ) CRITICAL2("E061 - use of an undefined constant", c );
+#define CRITICAL_TYPE_MISMATCH_CONSTANT_NUMERIC( c ) CRITICAL2("E062 - use of an wrong type constant (numeric expected, string used)", c );
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
 #define WARNING2i( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%i) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -1223,6 +1261,10 @@ void                    colormap_at_var( Environment * _environment, char * _add
 void                    colormap_clear( Environment * _environment );
 void                    colormap_clear_with( Environment * _environment, int _foreground, int _background );
 void                    colormap_clear_with_vars( Environment * _environment, char * _foreground, char * _background );
+void                    const_define_numeric( Environment * _environment, char * _name, int _value );
+void                    const_define_string( Environment * _environment, char * _name, char * _value );
+void                    const_emit( Environment * _environment, char * _name );
+Constant *              constant_find( Constant * _constant, char * _name );
 
 //----------------------------------------------------------------------------
 // *D*
