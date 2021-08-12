@@ -283,9 +283,13 @@ MOBRENDERL2:
     AND #$02
     BEQ MOBRENDERV2
 
+    STX MOBI
+
     ; restore background at pX,py (w,h) save area
     JSR MOBRESTORE
 
+    LDX MOBI
+    
     ; adjust visibility flag
     JSR MOBADJUST
     
