@@ -2663,6 +2663,7 @@ statements_no_linenumbers:
 
 statements_with_linenumbers:
       Integer {
+        outhead1("; BEGIN LINE %d OF BASIC PROGRAM", $1);
         outhead1("_linenumber%d:", $1);
     } statements_no_linenumbers { 
         ((Environment *)_environment)->yylineno = yylineno;
