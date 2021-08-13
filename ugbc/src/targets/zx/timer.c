@@ -61,7 +61,5 @@ void set_timer( Environment * _environment, char * _value ) {
     cpu_move_8bit( _environment, value->realName, "$5c78" );
     sprintf(valueAddress, "%s+1", value->realName );
     cpu_move_8bit( _environment, valueAddress, "$5c79" );
-    // sprintf(resultAddress, "%s+2", result->realName );
-    // cpu_move_8bit( _environment, "$A2", resultAddress );
         
 }

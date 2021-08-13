@@ -43,7 +43,7 @@ Variable * get_timer( Environment * _environment ) {
     Variable * result = variable_temporary( _environment, VT_WORD, "(result of get timer)");
 
     char resultAddress[MAX_TEMPORARY_STORAGE]; 
-    cpu_move_8bit( _environment, "$A0", result->realName );
+    cpu_move_8bit( _environment, "$A2", result->realName );
     sprintf(resultAddress, "%s+1", result->realName );
     cpu_move_8bit( _environment, "$A1", resultAddress );
     // sprintf(resultAddress, "%s+2", result->realName );
@@ -59,10 +59,9 @@ void set_timer( Environment * _environment, char * _value ) {
     Variable * value = variable_retrieve_or_define( _environment, _value, VT_WORD, 0 );
 
     char valueAddress[MAX_TEMPORARY_STORAGE]; 
-    cpu_move_8bit( _environment, value->realName, "$A0" );
+    cpu_move_8bit( _environment, value->realName, "$A2" );
     sprintf(valueAddress, "%s+1", value->realName );
     cpu_move_8bit( _environment, valueAddress, "$A1" );
-    // sprintf(resultAddress, "%s+2", result->realName );
-    // cpu_move_8bit( _environment, "$A2", resultAddress );
+    cpu_move_8bit( _environment, "#0", "$A0" );
         
 }
