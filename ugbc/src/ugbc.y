@@ -966,11 +966,17 @@ exponential:
     | SCREEN WIDTH {
         $$ = screen_get_width( _environment )->name;
     }
+    | IMAGE WIDTH OP expr CP {
+        $$ = image_get_width( _environment, $4 )->name;
+    }
     | HEIGHT {
         $$ = screen_get_height( _environment )->name;
     }
     | SCREEN HEIGHT {
         $$ = screen_get_height( _environment )->name;
+    }
+    | IMAGE HEIGHT OP expr CP {
+        $$ = image_get_height( _environment, $4 )->name;
     }
     | TI {
         $$ = get_timer( _environment )->name;

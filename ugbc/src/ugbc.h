@@ -1333,6 +1333,8 @@ void                    home( Environment * _environment );
 void                    if_then( Environment * _environment, char * _expression );
 Variable *              image_load( Environment * _environment, char * _filename, int _mode );
 Variable *              image_converter( Environment * _environment, char * _data, int _width, int _height, int _mode );
+Variable *              image_get_height( Environment * _environment, char * _image );
+Variable *              image_get_width( Environment * _environment, char * _image );
 void                    ink( Environment * _environment, char * _expression );
 Variable *              inkey( Environment * _environment );
 void                    input( Environment * _environment, char * _variable );
