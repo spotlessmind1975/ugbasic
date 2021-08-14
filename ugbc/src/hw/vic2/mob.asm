@@ -364,12 +364,12 @@ MOBDRAW2_SHIFTUP:
     CLC
     ADC #1
     STA MOBDRAW_C
-    LDA #0
-    STA MOBDRAW_J
     ASL
     ASL
     ASL
     STA MOBW
+    LDA #0
+    STA MOBDRAW_J
 
     ; Load height (in pixels) = height (in rows) + 8
     LDA MOBDESCRIPTORS_H, X
@@ -451,12 +451,6 @@ MOBDRAW2_SHIFTUPLA:
     CPY #$7
     BNE MOBDRAW2_SHIFTUPLA
 
-    LDA MOBDRAW_I
-    CMP #$1
-    BEQ MOBDRAW2_SHIFTUPSKIP
-
-    ;      sposta da [C-[((WC-1)*8)+1]] a [C] 
-
     CLC
     LDA MOBADDR
     ADC #7
@@ -470,34 +464,23 @@ MOBDRAW2_SHIFTUPLA:
     LDA MOBADDR+1
     STA TMPPTR+1
 
-    CLC
-    LDA MOBADDR
-    ADC MOBDRAW_TMP
-    STA MOBADDR
-    LDA MOBADDR+1
-    ADC #0
-    STA MOBADDR+1
+    SEC
+    LDA TMPPTR
+    SBC MOBDRAW_TMP
+    STA TMPPTR
+    LDA TMPPTR+1
+    SBC #0
+    STA TMPPTR+1
+
+    LDA MOBDRAW_I
+    CMP #$ff
+    BEQ MOBDRAW2_SHIFTUPSKIP
+
+    ;      sposta da [C-[((WC-1)*8)+1]] a [C] 
 
     LDY #0
     LDA (MOBADDR),Y
-    LDY #0
     STA (TMPPTR),Y
-
-    SEC
-    LDA MOBADDR
-    SBC MOBDRAW_TMP
-    STA MOBADDR
-    LDA MOBADDR+1
-    SBC #0
-    STA MOBADDR+1
-
-    SEC
-    LDA MOBADDR
-    SBC #7
-    STA MOBADDR
-    LDA MOBADDR+1
-    SBC #0
-    STA MOBADDR+1
 
     JMP MOBDRAW2_SHIFTUPSKIPD
 
@@ -508,6 +491,22 @@ MOBDRAW2_SHIFTUPSKIP:
     STA (MOBADDR),Y
 
 MOBDRAW2_SHIFTUPSKIPD:
+
+    CLC
+    LDA TMPPTR
+    ADC MOBDRAW_TMP
+    STA TMPPTR
+    LDA TMPPTR+1
+    ADC #0
+    STA TMPPTR+1
+
+    SEC
+    LDA MOBADDR
+    SBC #7
+    STA MOBADDR
+    LDA MOBADDR+1
+    SBC #0
+    STA MOBADDR+1
 
     ; C = C - 8
 
@@ -549,6 +548,8 @@ MOBDRAW2_SHIFTUPL1X:
 
 MOBDRAW2_SHIFTUPL1X2:
     
+    LDA #0
+    STA MOBDRAW_J
     LDA MOBDRAW_R
     STA MOBDRAW_I
     DEC MOBDRAW_K
