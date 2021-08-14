@@ -83,11 +83,15 @@ void mob_init( Environment * _environment, char * _index, char * _image, char * 
     if ( _x ) {
         Variable * ox = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
         variable_move_naked( _environment, ox->name, x->name );
-    }    
+    } else {
+        variable_store( _environment, x->name, 0 );
+    }
 
     if ( _y ) {
         Variable * oy = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
         variable_move_naked( _environment, oy->name, y->name );
+    } else {
+        variable_store( _environment, y->name, 0 );
     }    
 
     cpu_mobinit( _environment, index->realName, x->realName, y->realName, image->realName );
