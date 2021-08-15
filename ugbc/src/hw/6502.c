@@ -95,18 +95,7 @@ void cpu6502_bvneq( Environment * _environment, char * _value, char * _label ) {
 }
 
 void cpu6502_label( Environment * _environment, char * _label ) {
-
     outhead1("%s:", _label);
-
-    int i=0; 
-    for (i=0; i<_environment->rastereds; ++i ) {
-        if ( strcmp( _environment->rasteredLabels[i], _label ) == 0 && strcmp( _environment->rasteredLabels[i], "EVERYSVC" ) != 0 ) {
-            outline0("LDA #1");
-            outline0("STA INSIDERASTER");
-            _environment->insideRaster = 1;
-        }
-    }
-
 }
 
 void cpu6502_peek( Environment * _environment, char * _address, char * _target ) {
@@ -1998,12 +1987,6 @@ void cpu6502_call( Environment * _environment, char * _label ) {
 
 void cpu6502_return( Environment * _environment ) {
 
-    if (_environment->insideRaster ) {
-        outline0("LDA #0");
-        outline0("STA INSIDERASTER");
-        _environment->insideRaster = 0;
-    }
-
     outline0("RTS" );
 
 }
@@ -2026,7 +2009,7 @@ void cpu6502_halt( Environment * _environment ) {
 
 void cpu6502_end( Environment * _environment ) {
 
-    outline0("JSR NSEI");
+    outline0("SEI");
     cpu6502_halt( _environment );
 
 }
@@ -2168,13 +2151,13 @@ void cpu6502_logical_not_8bit( Environment * _environment, char * _value, char *
 
 void cpu6502_di( Environment * _environment ) {
 
-    outline0("JSR NSEI" );
+    outline0("SEI" );
 
 }
 
 void cpu6502_ei( Environment * _environment ) {
 
-    outline0("JSR NCLI" );
+    outline0("CLI" );
 
 }
 

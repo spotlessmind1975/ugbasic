@@ -57,6 +57,6 @@ void every_ticks_call( Environment * _environment, char * _timing, char * _label
 
     ++_environment->everys;
 
-    antic_raster_at( _environment, "EVERYSVC", "#$ff", "#$0" );
+    antic_raster_at( _environment, "EVERYSVC", "CURRENTHEIGHT", "CURRENTHEIGHT+1" );
 
 }

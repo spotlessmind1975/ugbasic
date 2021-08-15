@@ -19,7 +19,7 @@ RASTERHI = $92
 ;--------------
 
 RASTERAT:
-    JSR NSEI
+    SEI
     LDA TMPPTR
     STA $200
     LDA TMPPTR+1
@@ -49,5 +49,5 @@ RASTERATL3:
 
     LDA #$C0
     STA $D40E
-    JSR NCLI
+    CLI
     RTS

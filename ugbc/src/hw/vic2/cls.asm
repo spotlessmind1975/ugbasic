@@ -38,7 +38,7 @@
 
 
 CLS:
-    JSR NSEI
+    SEI
     LDA #$36
     STA $01
 
@@ -99,7 +99,7 @@ CLGCNB:
 
     LDA #$37
     STA $01
-    JSR NCLI
+    CLI
 
     RTS
 
@@ -152,6 +152,6 @@ CLSTCNB:
 
     LDA #$37
     STA $01
-    JSR NCLI
+    CLI
 
     RTS

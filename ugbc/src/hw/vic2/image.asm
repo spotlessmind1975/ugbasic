@@ -143,7 +143,7 @@ PUTIMAGE2:
     ADC PLOTCVBASEHI,Y          ;do the high byte
     STA PLOTCDEST+1
 
-    JSR NSEI
+    SEI
     LDA #$36
     STA $01
 
@@ -225,7 +225,7 @@ PUTIMAGE2L2:
 PUTIMAGE2E:
     LDA #$37
     STA $01
-    JSR NCLI
+    CLI
     RTS
 
 ;;;;;;;;;;;;;;;;;
@@ -305,7 +305,7 @@ PUTIMAGE3:
     ADC PLOTC2VBASEHI,Y          ;do the high byte
     STA PLOTC2DEST+1
 
-    JSR NSEI
+    SEI
     LDA #$36
     STA $01
 
@@ -436,5 +436,5 @@ PUTIMAGE3E:
 
     LDA #$37
     STA $01
-    JSR NCLI
+    CLI
     RTS

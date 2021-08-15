@@ -92,7 +92,7 @@ TEXTAT:
     RTS
 
 TEXTATGO:
-    JSR NSEI
+    SEI
     LDA CURRENTMODE
     CMP #0
     BNE TEXTATGO0X
@@ -114,7 +114,7 @@ TEXTATGO3X:
     BNE TEXTATGO4X
     JMP TEXTATTILEMODE
 TEXTATGO4X:
-    JSR NCLI
+    CLI
     RTS
     
 ;-----------------------------------------------------------------------------
@@ -363,7 +363,7 @@ TEXTATBMSP0L1X:
     CMP #3
     BEQ TEXTATBMC3
 
-    JSR NSEI
+    SEI
     LDA #$36
     STA $01
     LDA TEXTWW
@@ -384,11 +384,11 @@ TEXTATBMCNOPEN:
 TEXTATBMCNOPAPER:
     LDA #$37
     STA $01
-    JSR NCLI
+    CLI
     JMP TEXTATBMF
 
 TEXTATBMC3:
-    JSR NSEI
+    SEI
     LDA #$36
     STA $01
     LDA TEXTWW
@@ -409,7 +409,7 @@ TEXTATBMC3:
 TEXTATBMC3NOPEN:
     LDA #$37
     STA $01
-    JSR NCLI
+    CLI
     JMP TEXTATBMF
 
 TEXTATBMF:
@@ -450,7 +450,7 @@ TEXTATBMXLOOP2:
     BEQ TEXTATBMEND
     JMP TEXTATBMLOOP2
 TEXTATBMEND:
-    JSR NCLI
+    CLI
     RTS
 
 ;-----------------------------------------------------------------------------
@@ -795,5 +795,5 @@ TEXTATXLOOP2:
     BEQ TEXTATEND
     JMP TEXTATLOOP2
 TEXTATEND:
-    JSR NCLI
+    CLI
     RTS

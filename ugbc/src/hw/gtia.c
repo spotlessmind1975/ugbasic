@@ -871,12 +871,12 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     cpu_store_8bit( _environment, "_PEN", 0x10 );
     cpu_store_8bit( _environment, "_PAPER", 0x00 );
 
-    outline0("JSR NSEI" );
+    outline0("SEI" );
     outline1("LDA #<%s", dli->realName );
     outline0("STA $230" );
     outline1("LDA #>%s", dli->realName );
     outline0("STA $231" );
-    outline0("JSR NCLI" );
+    outline0("CLI" );
 
 }
 

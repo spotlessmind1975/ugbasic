@@ -56,6 +56,6 @@ void on_vbl_gosub( Environment * _environment, char * _label ) {
 
     ++_environment->vbls;
 
-    antic_raster_at( _environment, "EVERYSVC", "#$ff", "#$0" );
+    antic_raster_at( _environment, "EVERYSVC", "CURRENTHEIGHT", "CURRENTHEIGHT+1" );
 
 }
