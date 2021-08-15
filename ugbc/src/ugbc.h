@@ -1333,7 +1333,7 @@ void                    home( Environment * _environment );
 //----------------------------------------------------------------------------
 
 void                    if_then( Environment * _environment, char * _expression );
-Variable *              image_load( Environment * _environment, char * _filename, int _mode );
+Variable *              image_load( Environment * _environment, char * _filename, char * _alias, int _mode );
 Variable *              image_converter( Environment * _environment, char * _data, int _width, int _height, int _mode );
 Variable *              image_get_height( Environment * _environment, char * _image );
 Variable *              image_get_width( Environment * _environment, char * _image );
@@ -1360,7 +1360,7 @@ Variable *              keyshift( Environment * _environment );
 // *L*
 //----------------------------------------------------------------------------
 
-Variable *              load( Environment * _environment, char * _filename, int _at );
+Variable *              load( Environment * _environment, char * _filename, char * _alias, int _at );
 void                    locate( Environment * _environment, char * _x, char * _y );
 void                    loop( Environment * _environment, char *_label );
 

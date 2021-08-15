@@ -74,11 +74,15 @@ da quella posizione invece della prima posizione disponibile.
 
 @target all
 </usermanual> */
-Variable * load( Environment * _environment, char * _filename, int _at ) {
+Variable * load( Environment * _environment, char * _filename, char * _alias, int _at ) {
 
     LoadedFile * first = _environment->loadedFiles;
+    char *lookfor = _filename;
+    if ( _alias ) {
+        lookfor = _alias;
+    }
     while( first ) {
-        if ( strcmp(_filename, first->fileName ) == 0 ) {
+        if ( strcmp(lookfor, first->fileName ) == 0 ) {
             return first->variable;
         }
         first = first->next;
@@ -107,6 +111,7 @@ Variable * load( Environment * _environment, char * _filename, int _at ) {
     LoadedFile * loaded = malloc( sizeof( LoadedFile ) );
     loaded->next = first;
     loaded->variable = result;
+    loaded->fileName = lookfor;
     _environment->loadedFiles = loaded;
 
     return result;

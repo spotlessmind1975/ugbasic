@@ -757,22 +757,37 @@ exponential:
         $$ = sqroot( _environment, $3 )->name;
       }
     | LOAD OP String CP {
-        $$ = load( _environment, $3, 0 )->name;
+        $$ = load( _environment, $3, NULL, 0 )->name;
+      }
+    | LOAD OP String AS String CP {
+        $$ = load( _environment, $3, $5, 0 )->name;
       }
     | LOAD OP String OP_COMMA Integer CP {
-        $$ = load( _environment, $3, $5 )->name;
+        $$ = load( _environment, $3, NULL, $5 )->name;
+      }
+    | LOAD OP String AS String OP_COMMA Integer CP {
+        $$ = load( _environment, $3, $5, $7 )->name;
       }
     | IMAGE LOAD OP String CP {
-        $$ = image_load( _environment, $4, ((struct _Environment *)_environment)->currentMode )->name;
+        $$ = image_load( _environment, $4, NULL, ((struct _Environment *)_environment)->currentMode )->name;
       }
-    | IMAGE LOAD OP String OP_COMMA Integer CP {
-        $$ = image_load( _environment, $4, $6 )->name;
+    | IMAGE LOAD OP String AS String CP {
+        $$ = image_load( _environment, $4, $6, ((struct _Environment *)_environment)->currentMode )->name;
+      }
+    | IMAGE LOAD OP String AS String OP_COMMA Integer CP {
+        $$ = image_load( _environment, $4, $6, $8 )->name;
       }
     | LOAD IMAGE OP String CP {
-        $$ = image_load( _environment, $4, ((struct _Environment *)_environment)->currentMode )->name;
+        $$ = image_load( _environment, $4, NULL, ((struct _Environment *)_environment)->currentMode )->name;
+      }
+    | LOAD IMAGE OP String AS String CP {
+        $$ = image_load( _environment, $4, $6, ((struct _Environment *)_environment)->currentMode )->name;
       }
     | LOAD IMAGE OP String OP_COMMA Integer CP {
-        $$ = image_load( _environment, $4, $6 )->name;
+        $$ = image_load( _environment, $4, NULL, $6 )->name;
+      }
+    | LOAD IMAGE OP String AS String OP_COMMA Integer CP {
+        $$ = image_load( _environment, $4, $6, $8 )->name;
       }
    | SIZE OP expr CP {
         Variable * v = variable_retrieve( _environment, $3 );
@@ -1778,6 +1793,9 @@ put_definition_expression:
       IMAGE expr AT optional_y OP_COMMA optional_x {
         put_image( _environment, $2, $4, $6 );
         gr_locate( _environment, $4, $6 );
+    }
+    | IMAGE expr {
+        put_image( _environment, $2, "XGR", "YGR" );
     };
 
 put_definition:
@@ -2536,7 +2554,10 @@ statement:
       outhead1("%s:", $1);
   } 
   | LOAD String OP_COMMA Integer {
-    load( _environment, $2, $4 );
+    load( _environment, $2, NULL, $4 );
+  }
+  | LOAD String AS String OP_COMMA Integer {
+    load( _environment, $2, $4, $6 );
   }
   | BEG GAMELOOP {
       begin_gameloop( _environment );

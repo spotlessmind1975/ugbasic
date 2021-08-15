@@ -69,7 +69,19 @@ per convertire il dato (per default, è il modo corrente).
 
 @target all
 </usermanual> */
-Variable * image_load( Environment * _environment, char * _filename, int _mode ) {
+Variable * image_load( Environment * _environment, char * _filename, char * _alias, int _mode ) {
+
+    LoadedFile * first = _environment->loadedFiles;
+    char *lookfor = _filename;
+    if ( _alias ) {
+        lookfor = _alias;
+    }
+    while( first ) {
+        if ( strcmp(lookfor, first->fileName ) == 0 ) {
+            return first->variable;
+        }
+        first = first->next;
+    }
 
     int width = 0;
     int height = 0;
@@ -92,6 +104,12 @@ Variable * image_load( Environment * _environment, char * _filename, int _mode )
     Variable * result = image_converter( _environment, source, width, height, _mode );
 
     stbi_image_free(source);
+
+    LoadedFile * loaded = malloc( sizeof( LoadedFile ) );
+    loaded->next = first;
+    loaded->variable = result;
+    loaded->fileName = lookfor;
+    _environment->loadedFiles = loaded;
 
     return result;
 
