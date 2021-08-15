@@ -2290,23 +2290,74 @@ void cpu6502_mem_move_direct_size( Environment * _environment, char *_source, ch
 
     if ( _size ) {
 
-        MAKE_LABEL
+        if ( _size <= 0xff ) {
 
-        outline0("LDY #$0" );
-        outline1("LDA #>%s", _source );
-        outline0("STA TMPPTR+1" );
-        outline1("LDA #<%s", _source );
-        outline0("STA TMPPTR" );
-        outline1("LDA #>%s", _destination );
-        outline0("STA TMPPTR2+1" );
-        outline1("LDA #<%s", _destination );
-        outline0("STA TMPPTR2" );
-        outhead1("%s:", label );
-        outline0("LDA (TMPPTR), Y" );
-        outline0("STA (TMPPTR2), Y" );
-        outline0("INY" );
-        outline1("CPY #$%2.2x", (_size & 0xff ) );
-        outline1("BNE %s", label );
+            MAKE_LABEL
+
+            outline0("LDY #$0" );
+            outline1("LDA #>%s", _source );
+            outline0("STA TMPPTR+1" );
+            outline1("LDA #<%s", _source );
+            outline0("STA TMPPTR" );
+            outline1("LDA #>%s", _destination );
+            outline0("STA TMPPTR2+1" );
+            outline1("LDA #<%s", _destination );
+            outline0("STA TMPPTR2" );
+            outhead1("%s:", label );
+            outline0("LDA (TMPPTR), Y" );
+            outline0("STA (TMPPTR2), Y" );
+            outline0("INY" );
+            outline1("CPY #$%2.2x", (_size & 0xff ) );
+            outline1("BNE %s", label );
+
+        } else {
+
+            MAKE_LABEL
+
+            outline0("LDX #$0" );
+            outline0("LDY #$0" );
+            outline1("LDA #>%s", _source );
+            outline0("STA TMPPTR+1" );
+            outline1("LDA #<%s", _source );
+            outline0("STA TMPPTR" );
+            outline1("LDA #>%s", _destination );
+            outline0("STA TMPPTR2+1" );
+            outline1("LDA #<%s", _destination );
+            outline0("STA TMPPTR2" );
+            outhead1("%s:", label );
+            outline0("LDA (TMPPTR), Y" );
+            outline0("STA (TMPPTR2), Y" );
+            outline0("INY" );
+            outline0("CPY #$ff" );
+            outline1("BNE %s", label );
+            outline0("CLC" );
+            outline0("LDA TMPPTR" );
+            outline0("ADC #$FF" );
+            outline0("STA TMPPTR" );
+            outline0("LDA TMPPTR+1" );
+            outline0("ADC #0" );
+            outline0("STA TMPPTR+1" );
+            outline0("CLC" );
+            outline0("LDA TMPPTR2" );
+            outline0("ADC #$FF" );
+            outline0("STA TMPPTR2" );
+            outline0("LDA TMPPTR2+1" );
+            outline0("ADC #0" );
+            outline0("STA TMPPTR2+1" );
+            outline0("LDY #0" );
+            outline1("CPX #$%2.2x", ( ( ( _size >> 8 ) & 0xff ) ) - 1 );
+            outline1("BEQ %se", label );
+            outline0("INX" );
+            outline1("JMP %s", label );
+            outhead1("%se:", label );
+            outhead1("%sfinal:", label );
+            outline0("LDA (TMPPTR), Y" );
+            outline0("STA (TMPPTR2), Y" );
+            outline0("INY" );
+            outline1("CPY #$%2.2x", _size - ( ( ( ( _size >> 8 ) & 0xff ) ) ) * 0xff );
+            outline1("BNE %sfinal", label );
+
+        }
 
     }
 
