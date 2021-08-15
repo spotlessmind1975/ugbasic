@@ -1120,7 +1120,7 @@ MOBSAVE2_INC:
 ; in standard BITMAP MODE (2).
 MOBSAVE2:
 
-    SEI
+    JSR NSEI
     LDA #$36
     STA $01
 
@@ -1312,7 +1312,7 @@ MOBSAVE2L3:
 
     LDA #$37
     STA $01
-    CLI
+    JSR NCLI
 
     RTS
 
@@ -1410,7 +1410,7 @@ MOBRESTORE2_INCL:
 ; in standard BITMAP MODE (2).
 MOBRESTORE2:
 
-    SEI
+    JSR NSEI
     LDA #$36
     STA $01
 
@@ -1553,7 +1553,7 @@ MOBRESTORE2L3:
 
     LDA #$37
     STA $01
-    SEI
+    JSR NSEI
 
     RTS
 
@@ -1754,7 +1754,7 @@ MOBDRAW2_INCL:
 ; in standard BITMAP MODE (2).
 MOBDRAW2:
 
-    SEI
+    JSR NSEI
     LDA #$36
     STA $01
 
@@ -2154,7 +2154,7 @@ MOBDRAW2E:
 
     LDA #$37
     STA $01
-    CLI
+    JSR NCLI
 
     RTS
 

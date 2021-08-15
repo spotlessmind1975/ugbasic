@@ -697,6 +697,21 @@ typedef struct _Environment {
     char * vblLabel[MAX_VBLS];
 
     /**
+     * Number of Rasters' labels
+     */
+    int rastereds;
+
+    /**
+     * Rasters' labels
+     */
+    char * rasteredLabels[MAX_EVERY + MAX_VBLS];
+
+    /**
+     * Are we inside a raster routine?
+     */
+    int insideRaster;
+
+    /**
      * Current graphical mode
      */
     int currentMode;
@@ -1421,6 +1436,8 @@ void                    on_goto_index( Environment * _environment, char * _label
 void                    on_proc( Environment * _environment, char * _expression );
 void                    on_proc_end( Environment * _environment );
 void                    on_proc_index( Environment * _environment, char * _label );
+void                    on_vbl_gosub( Environment * _environment, char * _label );
+void                    on_vbl_call( Environment * _environment, char * _label );
 
 //----------------------------------------------------------------------------
 // *P*

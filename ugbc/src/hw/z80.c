@@ -102,6 +102,16 @@ void z80_bvneq( Environment * _environment, char * _value, char * _label ) {
 
 void z80_label( Environment * _environment, char * _label ) {
     outhead1("%s:", _label);
+
+    int i=0; 
+    for (i=0; i<_environment->rastereds; ++i ) {
+        if ( strcmp( _environment->rasteredLabels[i], _label ) == 0 && strcmp( _environment->rasteredLabels[i], "EVERYSVC" ) != 0 ) {
+            outline0("LD A, 1");
+            outline0("LD (INSIDERASTER), A");
+            _environment->insideRaster = 1;
+        }
+    }
+
 }
 
 void z80_peek( Environment * _environment, char * _address, char * _target ) {
@@ -1639,6 +1649,12 @@ void z80_call( Environment * _environment, char * _label ) {
 }
 
 void z80_return( Environment * _environment ) {
+
+    if ( _environment->insideRaster ) {
+        outline0("LD A, 0");
+        outline0("LD (INSIDERASTER), A");
+        _environment->insideRaster = 0;
+    }
 
     outline0("RET" );
 

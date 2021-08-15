@@ -218,6 +218,7 @@ void vic2_raster_at( Environment * _environment, char * _label, char * _position
 
     MAKE_LABEL
 
+    outline0("JSR NSEI");
     outline0("LDA #%01111111"); // switch off CIA-1
     outline0("STA $DC0D");
     outline0("AND $D011");
@@ -245,7 +246,10 @@ void vic2_raster_at( Environment * _environment, char * _label, char * _position
     outline0("AND #%01111111" );
     outline0("STA $D011");
     outhead1("%s_2:", label );
-    outline0("CLI");
+    outline0("JSR NCLI");
+
+    _environment->rasteredLabels[_environment->rastereds] = strdup( _label );
+    _environment->rastereds++;
 
 }
 
@@ -304,6 +308,9 @@ void vic2_next_raster_at( Environment * _environment, char * _label, char * _pos
     outline0("STA $0315");
 
     vic2_next_raster( _environment );
+
+    _environment->rasteredLabels[_environment->rastereds] = strdup( _label );
+    _environment->rastereds++;
 
 }
 

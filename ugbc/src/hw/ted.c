@@ -145,7 +145,7 @@ void ted_raster_at( Environment * _environment, char * _label, char * _positionl
 
     MAKE_LABEL
 
-    outline0("SEI");
+    outline0("JSR NSEI");
     outline1("LDA #<%s", _label);
     outline0("STA $0314");
     outline1("LDA #>%s", _label);
@@ -162,7 +162,10 @@ void ted_raster_at( Environment * _environment, char * _label, char * _positionl
     outline0("ORA #%10000000" );
     outline0("STA $FF0A");
     outhead1("%s:", label );
-    outline0("CLI");
+    outline0("JSR NCLI");
+
+    _environment->rasteredLabels[_environment->rastereds] = strdup( _label );
+    _environment->rastereds++;
 
 }
 
@@ -216,6 +219,9 @@ void ted_next_raster_at( Environment * _environment, char * _label, char * _posi
     outline0("STA $0315");
 
     ted_next_raster( _environment );
+
+    _environment->rasteredLabels[_environment->rastereds] = strdup( _label );
+    _environment->rastereds++;
 
 }
 

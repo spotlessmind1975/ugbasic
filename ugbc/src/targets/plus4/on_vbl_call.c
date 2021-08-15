@@ -56,6 +56,6 @@ void on_vbl_call( Environment * _environment, char * _label ) {
 
     ++_environment->vbls;
 
-    ted_raster_at( _environment, "EVERYSVC", "CURRENTHEIGHT", "CURRENTHEIGHT+1" );
+    ted_raster_at( _environment, "EVERYSVC", "#$ff", "#$0" );
 
 }

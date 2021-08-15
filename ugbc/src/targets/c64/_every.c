@@ -48,7 +48,9 @@ void every_cleanup( Environment * _environment ) {
 
         char everyGlobalCheckLabel[MAX_TEMPORARY_STORAGE]; sprintf(everyGlobalCheckLabel, "everystatus%d", UNIQUE_ID );
 
-        cpu_di( _environment );
+        // cpu_di( _environment );
+
+        cpu_store_8bit( _environment, "INSIDERASTER", 1 );
 
         for( i=0; i<_environment->vbls; ++i ) {
 
@@ -80,7 +82,9 @@ void every_cleanup( Environment * _environment ) {
 
         }
 
-        cpu_ei( _environment );
+        cpu_store_8bit( _environment, "INSIDERASTER", 0 );
+
+        // cpu_ei( _environment );
 
         vic2_next_raster( _environment );
 

@@ -795,7 +795,7 @@ MOBDRAW2_SHIFTDOWNL0X:
 ; (we use the data that generic initialization put on descriptor)
 MOBINITCS2:
     
-    SEI
+    JSR NSEI
     STA $FF3F
 
     LDX MOBI
@@ -1126,7 +1126,7 @@ MOBSAVE2_INC:
 ; in standard BITMAP MODE (2).
 MOBSAVE2:
 
-    SEI
+    JSR NSEI
     STA $FF3F
 
     LDX MOBI
@@ -1414,7 +1414,7 @@ MOBRESTORE2_INCL:
 ; in standard BITMAP MODE (2).
 MOBRESTORE2:
 
-    SEI
+    JSR NSEI
     STA $FF3F
 
     LDX MOBI
@@ -1756,7 +1756,7 @@ MOBDRAW2_INCL:
 ; in standard BITMAP MODE (2).
 MOBDRAW2:
 
-    SEI
+    JSR NSEI
     STA $FF3F
 
     STX MOBI
@@ -2170,7 +2170,7 @@ MOBDRAW4:
 
 MOBATCS:
 
-    SEI
+    JSR NSEI
     STA $FF3F
 
     LDX MOBI

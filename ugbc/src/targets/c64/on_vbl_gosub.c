@@ -56,6 +56,6 @@ void on_vbl_gosub( Environment * _environment, char * _label ) {
 
     ++_environment->vbls;
 
-    vic2_raster_at( _environment, "EVERYSVC", "CURRENTHEIGHT", "CURRENTHEIGHT+1" );
+    vic2_raster_at( _environment, "EVERYSVC", "#$ff", "#$0" );
 
 }

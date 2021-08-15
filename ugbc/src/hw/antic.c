@@ -70,6 +70,9 @@ void antic_raster_at( Environment * _environment, char * _label, char * _positio
     outline0("STA TMPPTR+1");
     outline0("JSR RASTERAT");
 
+    _environment->rasteredLabels[_environment->rastereds] = strdup( _label );
+    _environment->rastereds++;
+
 }
 
 /**
@@ -115,6 +118,9 @@ void antic_next_raster_at( Environment * _environment, char * _label, char * _po
     outline0("STA TMPPTR+1");
     outline0("JSR RASTERAT");
     outline0("RTI");
+
+    _environment->rasteredLabels[_environment->rastereds] = strdup( _label );
+    _environment->rastereds++;
 
 }
 

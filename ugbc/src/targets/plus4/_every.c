@@ -50,6 +50,8 @@ void every_cleanup( Environment * _environment ) {
 
         cpu_di( _environment );
 
+        cpu_store_8bit( _environment, "INSIDERASTER", 1 );
+
         for( i=0; i<_environment->vbls; ++i ) {
 
             cpu_call( _environment, _environment->vblLabel[i] );
@@ -79,6 +81,8 @@ void every_cleanup( Environment * _environment ) {
             cpu_label( _environment, everyGlobalCheckLabel );
 
         }
+
+        cpu_store_8bit( _environment, "INSIDERASTER", 0 );
 
         cpu_ei( _environment );
 

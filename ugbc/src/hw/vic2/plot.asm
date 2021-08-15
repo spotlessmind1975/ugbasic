@@ -394,7 +394,7 @@ PLOTD:
     ;---------
     ;set point
     ;---------
-    SEI
+    JSR NSEI
     LDA #$36
     STA $01
     LDA (PLOTDEST),y           ;get row with point in it
@@ -418,7 +418,7 @@ PLOTD:
 PLOTDE:
     LDA #$37
     STA $01
-    CLI
+    JSR NCLI
     JMP PLOTP                  ;skip the erase-point section
 
     ;-----------
@@ -435,7 +435,7 @@ PLOTE:                          ;handled same way as setting a point
     JMP PLOTP
 
 PLOTG:      
-    SEI
+    JSR NSEI
     LDA #$36
     STA $01
     LDA (PLOTDEST),y            
@@ -447,18 +447,18 @@ PLOTG1:
     STA PLOTM
     LDA #$37
     STA $01    
-    CLI
+    JSR NCLI
     JMP PLOTP
 PLOTG0:
     LDA #$0
     STA PLOTM
     LDA #$37
     STA $01    
-    CLI
+    JSR NCLI
     JMP PLOTP            
 
 PLOTC:                          
-    SEI
+    JSR NSEI
     LDA #$36
     STA $01
     LDY #0
@@ -531,7 +531,7 @@ PLOTC3C3:
 PLOTCE:
     LDA #$37
     STA $01    
-    CLI
+    JSR NCLI
     JMP PLOTP            
 
 PLOTP:
