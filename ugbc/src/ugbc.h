@@ -1288,6 +1288,7 @@ void                    end_loop( Environment * _environment );
 void                    end_procedure( Environment * _environment, char * _value );
 void                    end_repeat( Environment * _environment, char * _expression );
 void                    end_while( Environment * _environment );
+void                    every_cleanup( Environment * _environment );
 void                    every_off( Environment * _environment );
 void                    every_on( Environment * _environment );
 void                    every_ticks_call( Environment * _environment, char * _timing, char * _label );
