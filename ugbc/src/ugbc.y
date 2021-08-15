@@ -1780,6 +1780,13 @@ mob_definition_expression:
     | expr OP_COMMA expr {
         mob_init( _environment, $1, $3, NULL, NULL );
     }
+    | expr OP_COMMA expr VISIBLE {
+        mob_init( _environment, $1, $3, NULL, NULL );
+        mob_show( _environment, $1 );
+    }
+    | expr OP_COMMA expr HIDDEN {
+        mob_init( _environment, $1, $3, NULL, NULL );
+    }
     | expr AT optional_x OP_COMMA optional_y {
         mob_at( _environment, $1, $3, $5 );
         gr_locate( _environment, $3, $5 );
