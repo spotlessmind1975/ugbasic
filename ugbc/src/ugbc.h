@@ -969,6 +969,8 @@ typedef struct _Environment {
 #define CRITICAL_SQR_UNSUPPORTED( v, t ) CRITICAL3("E060 - SQR unsupported for variable of given datatype", v, t );
 #define CRITICAL_UNDEFINED_CONSTANT( c ) CRITICAL2("E061 - use of an undefined constant", c );
 #define CRITICAL_TYPE_MISMATCH_CONSTANT_NUMERIC( c ) CRITICAL2("E062 - use of an wrong type constant (numeric expected, string used)", c );
+#define CRITICAL_IMAGE_CONVERTER_INVALID_WIDTH( w ) CRITICAL2i("E063 - invalid width for image, must be multiple of 8 pixels", w );
+#define CRITICAL_IMAGE_CONVERTER_INVALID_HEIGHT( h ) CRITICAL2i("E064 - invalid height for image, must be multiple of 8 pixels", h );
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
 #define WARNING2i( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%i) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }

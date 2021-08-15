@@ -1313,15 +1313,13 @@ static int calculate_luminance(RGBi _a) {
  * @return int distance
  */
 
-static int calculate_distance(RGBi _a, RGBi _b) {
+static int calculate_distance(RGBi e1, RGBi e2) {
 
-    // Extract the vector's components.
-    double red = (double)_a.red - (double)_b.red;
-    double green = (double)_a.green - (double)_b.green;
-    double blue = (double)_a.blue - (double)_b.blue;
-
-    // Calculate distance using Pitagora's Theorem
-    return (int)sqrt(pow(red, 2) + pow(green, 2) + pow(blue, 2));
+    long rmean = ( (long)e1.red + (long)e2.red ) / 2;
+    long r = (long)e1.red - (long)e2.red;
+    long g = (long)e1.green - (long)e2.green;
+    long b = (long)e1.blue - (long)e2.blue;
+    return (int)( sqrt((((512+rmean)*r*r)>>8) + 4*g*g + (((767-rmean)*b*b)>>8)) );
 
 }
 
@@ -1377,6 +1375,10 @@ static int extract_color_palette(unsigned char* _source, int _width, int _height
 
 static Variable * gtia_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height ) {
 
+    if ( _width % 8 ) {
+        CRITICAL_IMAGE_CONVERTER_INVALID_WIDTH( _width );
+    }
+    
     RGBi palette[MAX_PALETTE];
 
     int colorUsed = extract_color_palette(_source, _width, _height, palette, MAX_PALETTE);
@@ -1394,7 +1396,7 @@ static Variable * gtia_image_converter_bitmap_mode_standard( Environment * _envi
             int distance = calculate_distance(SYSTEM_PALETTE[j], palette[i]);
             if (distance < minDistance) {
                 for( k=0; k<i; ++k ) {
-                    if ( palette[k].index == j ) {
+                    if ( palette[k].index == SYSTEM_PALETTE[j].index ) {
                         break;
                     }
                 }
@@ -1436,6 +1438,14 @@ static Variable * gtia_image_converter_bitmap_mode_standard( Environment * _envi
             rgb.green = *(_source + 1);
             rgb.blue = *(_source + 2);
 
+            for( i=0; i<colorUsed; ++i ) {
+                if ( palette[i].red == rgb.red && palette[i].green == rgb.green && palette[i].blue == rgb.blue ) {
+                    break;
+                }
+            }
+
+            // printf("%d", i );
+
             // Calculate the offset starting from the tile surface area
             // and the bit to set.
             offset = (image_y *( _width >> 3 ) ) + (image_x >> 3 );
@@ -1443,9 +1453,9 @@ static Variable * gtia_image_converter_bitmap_mode_standard( Environment * _envi
 
             // If the pixes has enough luminance value, it must be 
             // considered as "on"; otherwise, it is "off".
-            int luminance = calculate_luminance(rgb);
+            // int luminance = calculate_luminance(rgb);
 
-            if (luminance >= 1 /* luminance threshold*/ ) {
+            if ( i == 1 ) {
                 *( buffer + offset + 2) |= bitmask;
             } else {
                 *( buffer + offset + 2) &= ~bitmask;
@@ -1454,6 +1464,8 @@ static Variable * gtia_image_converter_bitmap_mode_standard( Environment * _envi
             _source += 3;
 
         }
+
+        // printf("\n" );
 
     }
 
@@ -1478,6 +1490,10 @@ static Variable * gtia_image_converter_bitmap_mode_standard( Environment * _envi
 
 static Variable * gtia_image_converter_multicolor_mode_standard( Environment * _environment, char * _source, int _width, int _height ) {
 
+    if ( _width % 8 ) {
+        CRITICAL_IMAGE_CONVERTER_INVALID_WIDTH( _width );
+    }
+
     RGBi palette[MAX_PALETTE];
 
     int colorUsed = extract_color_palette(_source, _width, _height, palette, MAX_PALETTE);
@@ -1493,19 +1509,24 @@ static Variable * gtia_image_converter_multicolor_mode_standard( Environment * _
         int colorIndex = 0;
         for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
             int distance = calculate_distance(SYSTEM_PALETTE[j], palette[i]);
+            // printf("%d <-> %d [%d] = %d [min = %d]\n", i, j, SYSTEM_PALETTE[j].index, distance, minDistance );
             if (distance < minDistance) {
+                // printf(" candidated...\n" );
                 for( k=0; k<i; ++k ) {
-                    if ( palette[k].index == j ) {
+                    if ( palette[k].index == SYSTEM_PALETTE[j].index ) {
+                        // printf(" ...used!\n" );
                         break;
                     }
                 }
                 if ( k>=i ) {
+                    // printf(" ...ok! (%d)\n", SYSTEM_PALETTE[j].index );
                     minDistance = distance;
                     colorIndex = j;
                 }
             }
         }
         palette[i].index = SYSTEM_PALETTE[colorIndex].index;
+        // printf("%d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
     }
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
@@ -1513,7 +1534,7 @@ static Variable * gtia_image_converter_multicolor_mode_standard( Environment * _
     int bufferSize = 2 + ( ( _width >> 2 ) * _height ) + 4;
     
     char * buffer = malloc ( bufferSize );
-    memset( buffer, 0, sizeof( buffer) );
+    memset( buffer, 0, bufferSize );
 
     // Position of the pixel in the original image
     int image_x, image_y;
@@ -1543,16 +1564,15 @@ static Variable * gtia_image_converter_multicolor_mode_standard( Environment * _
             // and the bit to set.
             offset = (image_y * ( _width >> 2 ) ) + (image_x>>2);
 
-            int minDistance = 0xffff;
-            int colorIndex = 0;
-
-            for (i = 0; i < 4; ++i) {
-                int distance = calculate_distance(rgb, palette[i]);
-                if (distance < minDistance) {
-                    minDistance = distance;
-                    colorIndex = i;
-                };
+            for( i=0; i<colorUsed; ++i ) {
+                if ( palette[i].red == rgb.red && palette[i].green == rgb.green && palette[i].blue == rgb.blue ) {
+                    break;
+                }
             }
+
+            int colorIndex = i;
+
+            // printf("%d", colorIndex );
 
             bitmask = colorIndex << (6 - ((image_x & 0x3) * 2));
 
@@ -1562,6 +1582,7 @@ static Variable * gtia_image_converter_multicolor_mode_standard( Environment * _
 
         }
 
+        // printf("\n" );
     }
 
     if ( colorUsed > 3 ) {

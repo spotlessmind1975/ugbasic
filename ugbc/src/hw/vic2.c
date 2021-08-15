@@ -1106,15 +1106,13 @@ static int calculate_luminance(RGBi _a) {
  * @return int distance
  */
 
-static int calculate_distance(RGBi _a, RGBi _b) {
+static int calculate_distance(RGBi e1, RGBi e2) {
 
-    // Extract the vector's components.
-    double red = (double)_a.red - (double)_b.red;
-    double green = (double)_a.green - (double)_b.green;
-    double blue = (double)_a.blue - (double)_b.blue;
-
-    // Calculate distance using Pitagora's Theorem
-    return (int)sqrt(pow(red, 2) + pow(green, 2) + pow(blue, 2));
+    long rmean = ( (long)e1.red + (long)e2.red ) / 2;
+    long r = (long)e1.red - (long)e2.red;
+    long g = (long)e1.green - (long)e2.green;
+    long b = (long)e1.blue - (long)e2.blue;
+    return (int)( sqrt((((512+rmean)*r*r)>>8) + 4*g*g + (((767-rmean)*b*b)>>8)) );
 
 }
 
@@ -1170,10 +1168,56 @@ static int extract_color_palette(unsigned char* _source, int _width, int _height
 
 static Variable * vic2_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height ) {
 
+    if ( _width % 8 ) {
+        CRITICAL_IMAGE_CONVERTER_INVALID_WIDTH( _width );
+    }
+
+    if ( _height % 8 ) {
+        CRITICAL_IMAGE_CONVERTER_INVALID_HEIGHT( _height );
+    }
+
+    RGBi palette[MAX_PALETTE];
+
+    int colorUsed = extract_color_palette(_source, _width, _height, palette, MAX_PALETTE);
+
+    if (colorUsed > 2) {
+        CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
+    }
+
+    int i, j, k;
+
+    for( i=0; i<colorUsed; ++i ) {
+        int minDistance = 0xffff;
+        int colorIndex = 0;
+        for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
+            int distance = calculate_distance(SYSTEM_PALETTE[j], palette[i]);
+            // printf("%d <-> %d [%d] = %d [min = %d]\n", i, j, SYSTEM_PALETTE[j].index, distance, minDistance );
+            if (distance < minDistance) {
+                // printf(" candidated...\n" );
+                for( k=0; k<i; ++k ) {
+                    if ( palette[k].index == SYSTEM_PALETTE[j].index ) {
+                        // printf(" ...used!\n" );
+                        break;
+                    }
+                }
+                if ( k>=i ) {
+                    // printf(" ...ok! (%d)\n", SYSTEM_PALETTE[j].index );
+                    minDistance = distance;
+                    colorIndex = j;
+                }
+            }
+        }
+        palette[i].index = SYSTEM_PALETTE[colorIndex].index;
+        // printf("%d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
+    }
+
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
  
     int bufferSize = 2 + ( ( _width >> 3 ) * _height ) + ( ( _width >> 3 ) * ( _height >> 3 ) );
+    // printf("bufferSize = %d\n", bufferSize );
+
     char * buffer = malloc ( bufferSize );
+    memset( buffer, 0, bufferSize );
 
     // Position of the pixel in the original image
     int image_x, image_y;
@@ -1199,6 +1243,14 @@ static Variable * vic2_image_converter_bitmap_mode_standard( Environment * _envi
             rgb.green = *(_source + 1);
             rgb.blue = *(_source + 2);
 
+            for( i=0; i<colorUsed; ++i ) {
+                if ( palette[i].red == rgb.red && palette[i].green == rgb.green && palette[i].blue == rgb.blue ) {
+                    break;
+                }
+            }
+
+            // printf("%d", i );
+
             // Calculate the relative tile
             tile_y = (image_y >> 3);
             tile_x = (image_x >> 3);
@@ -1210,31 +1262,44 @@ static Variable * vic2_image_converter_bitmap_mode_standard( Environment * _envi
 
             // If the pixes has enough luminance value, it must be 
             // considered as "on"; otherwise, it is "off".
-            int luminance = calculate_luminance(rgb);
+            // int luminance = calculate_luminance(rgb);
 
-            if (luminance >= 1 /* luminance threshold*/ ) {
+            if ( i == 1 ) {
                 *( buffer + offset + 2) |= bitmask;
             } else {
                 *( buffer + offset + 2) &= ~bitmask;
             }
 
             offset = tile_y * ( _width >> 3 ) + tile_x;
-            *( buffer + 2 + ( ( _width >> 3 ) * _height ) + offset ) = 0x10; // white 
+            *( buffer + 2 + ( ( _width >> 3 ) * _height ) + offset ) = ( palette[1].index << 4 ) | palette[0].index; 
 
             _source += 3;
 
         }
 
+        // printf("\n" );
+
     }
 
+    // printf("----\n");
+
     variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
+
+    // printf("----\n");
 
     return result;
 
 }
 
-
 static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _environment, char * _source, int _width, int _height ) {
+
+    if ( _width % 8 ) {
+        CRITICAL_IMAGE_CONVERTER_INVALID_WIDTH( _width );
+    }
+
+    if ( _height % 8 ) {
+        CRITICAL_IMAGE_CONVERTER_INVALID_HEIGHT( _height );
+    }
 
     RGBi palette[MAX_PALETTE];
 
@@ -1251,27 +1316,32 @@ static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _
         int colorIndex = 0;
         for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
             int distance = calculate_distance(SYSTEM_PALETTE[j], palette[i]);
+            // printf("%d <-> %d [%d] = %d [min = %d]\n", i, j, SYSTEM_PALETTE[j].index, distance, minDistance );
             if (distance < minDistance) {
+                // printf(" candidated...\n" );
                 for( k=0; k<i; ++k ) {
-                    if ( palette[k].index == j ) {
+                    if ( palette[k].index == SYSTEM_PALETTE[j].index ) {
+                        // printf(" ...used!\n" );
                         break;
                     }
                 }
                 if ( k>=i ) {
+                    // printf(" ...ok! (%d)\n", SYSTEM_PALETTE[j].index );
                     minDistance = distance;
                     colorIndex = j;
                 }
             }
         }
-        palette[i].index = colorIndex;
+        palette[i].index = SYSTEM_PALETTE[colorIndex].index;
+        // printf("%d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
     }
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
  
-    int bufferSize = 2 + ( ( _width >> 2 ) * _height ) + 2 * ( ( _width >> 2 ) * ( _height >> 3 ) );
+    int bufferSize = 2 + ( ( _width >> 2 ) * _height ) + 2 * ( ( _width >> 2 ) * ( _height >> 3 ) ) + 1;
     
     char * buffer = malloc ( bufferSize );
-    memset( buffer, 0, sizeof( buffer) );
+    memset( buffer, 0, bufferSize );
 
     // Position of the pixel in the original image
     int image_x, image_y;
@@ -1309,26 +1379,27 @@ static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _
             int minDistance = 0xffff;
             int colorIndex = 0;
 
-            for (i = 0; i < 4; ++i) {
-                int distance = calculate_distance(rgb, palette[i]);
-                if (distance < minDistance) {
-                    minDistance = distance;
-                    colorIndex = i;
-                };
+            for( i=0; i<colorUsed; ++i ) {
+                if ( palette[i].red == rgb.red && palette[i].green == rgb.green && palette[i].blue == rgb.blue ) {
+                    break;
+                }
             }
+
+            colorIndex = i;
 
             bitmask = colorIndex << (6 - ((image_x & 0x3) * 2));
 
             switch( colorIndex ) {
                 case 0:
+                    *(buffer + 2 + ( ( _width >> 2 ) * _height ) + 2 * ( _width >> 2 ) * ( _height >> 3 ) ) = palette[colorIndex].index;
                     break;
                 case 1:
-                    *(buffer + 2 + ( ( _width >> 2 ) * _height ) + offsetc ) &= 0x0f;
-                    *(buffer + 2 + ( ( _width >> 2 ) * _height ) + offsetc ) |= ( palette[colorIndex].index << 4 );
-                    break;
-                case 2:
                     *(buffer + 2 + ( ( _width >> 2 ) * _height ) + offsetc ) &= 0xf0;
                     *(buffer + 2 + ( ( _width >> 2 ) * _height ) + offsetc ) |= palette[colorIndex].index;
+                    break;
+                case 2:
+                    *(buffer + 2 + ( ( _width >> 2 ) * _height ) + offsetc ) &= 0x0f;
+                    *(buffer + 2 + ( ( _width >> 2 ) * _height ) + offsetc ) |= ( palette[colorIndex].index << 4 );
                     break;
                 case 3:
                     *(buffer + 2 + ( ( _width >> 2 ) * _height ) + ( _width >> 2 ) * ( _height >> 3 ) + offsetc ) = palette[colorIndex].index;
@@ -1341,6 +1412,8 @@ static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _
             _source += 3;
 
         }
+
+        // printf("\n" );
 
     }
 
