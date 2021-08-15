@@ -160,8 +160,6 @@ typedef enum _VariableType {
 #define MAX_ARRAY_DIMENSIONS            256
 #define MAX_PARAMETERS                  256
 #define MAX_PALETTE                     256
-#define MAX_EVERY                       8
-#define MAX_VBLS                        4
 
 #define VT_BW_8BIT( t, v )              ( ( (t) == (v) ) ? 8 : 0 )
 #define VT_BW_16BIT( t, v )             ( ( (t) == (v) ) ? 16 : 0 )
@@ -662,11 +660,6 @@ typedef struct _Environment {
     Loop * loops;
 
     /**
-     * Number of "Every" labels
-     */
-    int everys;
-
-    /**
      * "Every" status
      */
     Variable * everyStatus;
@@ -674,27 +667,12 @@ typedef struct _Environment {
     /**
      * "Every" counter
      */
-    Variable * everyCounter[MAX_EVERY];
+    Variable * everyCounter;
 
     /**
      * "Every" timing
      */
-    Variable * everyTiming[MAX_EVERY];
-
-    /**
-     * "Every" label (PROC & GOSUB are the same)
-     */
-    char * everyLabel[MAX_EVERY];
-
-    /**
-     * Number of "Vbl" labels
-     */
-    int vbls;
-
-    /**
-     * VBL label (PROC & GOSUB are the same)
-     */
-    char * vblLabel[MAX_VBLS];
+    Variable * everyTiming;
 
     /**
      * Current graphical mode
