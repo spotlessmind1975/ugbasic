@@ -93,39 +93,14 @@ void every_ticks_gosub( Environment * _environment, char * _timing, char * _labe
         _environment->everyStatus->locked = 1;
     }
 
-    _environment->everyCounter = variable_temporary( _environment, VT_WORD, "(every counter)");
-    _environment->everyCounter->locked = 1;
-    _environment->everyTiming = variable_cast( _environment, timing->name, VT_WORD );
-    _environment->everyTiming->locked = 1;
+    _environment->everyCounter[_environment->everys] = variable_temporary( _environment, VT_WORD, "(every counter)");
+    _environment->everyCounter[_environment->everys]->locked = 1;
+    _environment->everyTiming[_environment->everys] = variable_cast( _environment, timing->name, VT_WORD );
+    _environment->everyTiming[_environment->everys]->locked = 1;
+    _environment->everyLabel[_environment->everys] = strdup( _label );
 
-    char skipEveryRoutineLabel[MAX_TEMPORARY_STORAGE]; sprintf(skipEveryRoutineLabel, "setg%d", UNIQUE_ID );
-    char everyRoutineLabel[MAX_TEMPORARY_STORAGE]; sprintf(everyRoutineLabel, "etg%d", UNIQUE_ID );
-    char endOfEveryRoutineLabel[MAX_TEMPORARY_STORAGE]; sprintf(endOfEveryRoutineLabel, "eetg%d", UNIQUE_ID );
-    
-    cpu_jump( _environment, skipEveryRoutineLabel );
-    
-    cpu_label( _environment, everyRoutineLabel );
-    
-    cpu_di( _environment );
+    ++_environment->everys;
 
-    cpu_bveq( _environment, _environment->everyStatus->realName, endOfEveryRoutineLabel );
-
-    cpu_dec( _environment, _environment->everyCounter->realName );
-
-    cpu_bvneq( _environment, _environment->everyCounter->realName, endOfEveryRoutineLabel );
-
-    cpu_call( _environment, _label );
-
-    variable_move_naked( _environment, _environment->everyTiming->name, _environment->everyCounter->name );
-
-    cpu_label( _environment, endOfEveryRoutineLabel );
-
-    cpu_ei( _environment );
-
-    vic2_next_raster( _environment );
-
-    cpu_label( _environment, skipEveryRoutineLabel );
-
-    vic2_raster_at( _environment, everyRoutineLabel, "0", "42" );
+    vic2_raster_at( _environment, "EVERYSVC", "CURRENTHEIGHT", "CURRENTHEIGHT+1" );
 
 }

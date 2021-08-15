@@ -38,25 +38,24 @@
  * CODE SECTION 
  ****************************************************************************/
 
-void every_ticks_call( Environment * _environment, char * _timing, char * _label ) {
+/**
+ * @brief Emit ASM code for <b>EVERY ... TICKS GOSUB ...</b>
+ * 
+ * Emit assembly code to initialize the EVERY subsystem.
+ * 
+ * @param _environment 
+ * @param _timing 
+ * @param _label 
+ */
+/* <usermanual>
+@keyword EVERY...GOSUB
+</usermanual> */
+void on_vbl_gosub( Environment * _environment, char * _label ) {
 
-    outline2("; EVERY %s TICKS CALL %s", _timing, _label );
+    _environment->vblLabel[_environment->vbls] = strdup( _label );
 
-    Variable * timing = variable_retrieve( _environment, _timing );
+    ++_environment->vbls;
 
-    if ( ! _environment->everyStatus ) {
-        _environment->everyStatus = variable_temporary( _environment, VT_BYTE, "(every status)");
-        _environment->everyStatus->locked = 1;
-    }
-
-    _environment->everyCounter[_environment->everys] = variable_temporary( _environment, VT_WORD, "(every counter)");
-    _environment->everyCounter[_environment->everys]->locked = 1;
-    _environment->everyTiming[_environment->everys] = variable_cast( _environment, timing->name, VT_WORD );
-    _environment->everyTiming[_environment->everys]->locked = 1;
-    _environment->everyLabel[_environment->everys] = strdup( _label );
-
-    ++_environment->everys;
-
-    ted_raster_at( _environment, "EVERYSVC", "CURRENTHEIGHT", "CURRENTHEIGHT+1" );
+    antic_raster_at( _environment, "EVERYSVC", "CURRENTHEIGHT", "CURRENTHEIGHT+1" );
 
 }
