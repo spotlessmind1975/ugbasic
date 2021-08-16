@@ -164,7 +164,7 @@ void cpu6502_mobinit( Environment * _environment, char * _index, char *_x, char 
 void cpu6502_mobshow( Environment * _environment, char * _index );
 void cpu6502_mobhide( Environment * _environment, char * _index );
 void cpu6502_mobat( Environment * _environment, char * _index, char *_x, char *_y );
-void cpu6502_mobrender( Environment * _environment );
+void cpu6502_mobrender( Environment * _environment, int _on_vbl );
 void cpu6502_sqroot( Environment * _environment, char * _number, char * _result );
 
 #define cpu_beq( _environment,  _label  ) cpu6502_beq( _environment,  _label  )
@@ -303,7 +303,7 @@ extern unsigned int src_hw_chipset_mob_asm_len;
 #define cpu_mobshow( _environment, _index ) cpu6502_mobshow( _environment, _index )
 #define cpu_mobhide( _environment, _index ) cpu6502_mobhide( _environment, _index )
 #define cpu_mobat( _environment, _index, _x, _y ) cpu6502_mobat( _environment, _index, _x, _y )
-#define cpu_mobrender( _environment ) cpu6502_mobrender( _environment )
+#define cpu_mobrender( _environment, _on_vbl ) cpu6502_mobrender( _environment, _on_vbl )
 #define cpu_sqroot( _environment, _number, _result ) cpu6502_sqroot( _environment, _number, _result )
 
 #endif

@@ -3290,7 +3290,7 @@ void z80_mobat( Environment * _environment, char * _index, char *_x, char *_y ) 
 
 }
 
-void z80_mobrender( Environment * _environment ) {
+void z80_mobrender( Environment * _environment, int _on_vbl ) {
 
 }
 

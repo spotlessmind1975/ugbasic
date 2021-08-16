@@ -3618,11 +3618,13 @@ void cpu6502_mobat( Environment * _environment, char * _index, char *_x, char *_
 
 }
 
-void cpu6502_mobrender( Environment * _environment ) {
+void cpu6502_mobrender( Environment * _environment, int _on_vbl ) {
 
     deploy( mobDeployed, src_hw_6502_mob_asm );
     deploy( mobcsDeployed, src_hw_chipset_mob_asm );
 
+    outline1("LDA #$%2.2x", (_on_vbl) ? 0xff : 0x00 );
+    outline0("STA MOBVBL" );
     outline0("JSR MOBRENDER" );
 
 }

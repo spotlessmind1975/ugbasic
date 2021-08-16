@@ -326,6 +326,7 @@ UPPER\$ { return (UPPER); }
 V { return (V); }
 VAL { return (VAL); }
 VAR { return (VAR); }
+VBL { return (VBL); }
 VARIABLES { return (VARIABLES); }
 VERTICAL { return (VERTICAL); }
 VIOLET { return(VIOLET); }

@@ -234,10 +234,13 @@ MOBDESCRIPTORS_SIZEH:
     .RES    MOB_COUNT
 
 MOBALLOCATED:       .WORD   $0
-
+MOBVBL:     .BYTE $0
 
 
 MOBRENDER:
+
+    ; JSR MOBWAITVBL
+
     ; X = 0
     LDX #0
 
@@ -346,5 +349,7 @@ MOBRENDERV4:
     ; X < N ?
     CPX #MOB_COUNT
     BCC MOBRENDERL3
+
+    ; JSR MOBWAITVBL
 
     RTS

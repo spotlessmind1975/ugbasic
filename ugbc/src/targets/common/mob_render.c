@@ -63,8 +63,8 @@ Il comando ''MOB RENDER'' impone di aggiornare i MOB.
 
 @target all
 </usermanual> */
-void mob_render( Environment * _environment ) {
+void mob_render( Environment * _environment, int _on_vbl ) {
 
-    cpu_mobrender( _environment );
+    cpu_mobrender( _environment, _on_vbl );
 
 }

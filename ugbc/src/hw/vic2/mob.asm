@@ -1314,6 +1314,8 @@ MOBSAVE2L3:
     STA $01
     CLI
 
+MOBSAVE2E:
+
     RTS
 
 MOBSAVE3:
@@ -1358,35 +1360,6 @@ MOBRESTORE4X:
 ;; RESTORE MODE 2
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-; This routine will do a simple copy of the screen pixels over the
-; save area one, replacing them.
-MOBRESTORE2_COPY:
-    LDY #0
-    LDA (MOBADDR),Y       ; S
-    ; LDA #$AA
-    STA (PLOTDEST),Y       ; D
-    RTS
-
-; This routine will increment the position of the operation to the
-; next byte (row) of the current cell.
-MOBRESTORE2_INC:
-    CLC
-    LDA MOBADDR
-    ADC #1
-    STA MOBADDR
-    LDA MOBADDR+1
-    ADC #0
-    STA MOBADDR+1
-
-    CLC
-    LDA PLOTDEST
-    ADC #1
-    STA PLOTDEST
-    LDA PLOTDEST+1
-    ADC #0
-    STA PLOTDEST+1
-    RTS
-
 MOBRESTORE2_INCL:
     CLC
     LDA PLOTDEST
@@ -1394,14 +1367,6 @@ MOBRESTORE2_INCL:
     STA PLOTDEST
     LDA PLOTDEST+1
     ADC #$1
-    STA PLOTDEST+1
-
-    SEC
-    LDA PLOTDEST
-    SBC MOBW
-    STA PLOTDEST
-    LDA PLOTDEST+1
-    SBC #$0
     STA PLOTDEST+1
 
     RTS
@@ -1477,6 +1442,17 @@ MOBRESTORE2:
 
     LDX MOBI
 
+    LDA MOBVBL
+    BEQ MOBRESTORENOVBL
+    CLC
+    LDA MOBDESCRIPTORS_PYL,X
+    ADC #28
+    ADC MOBDESCRIPTORS_H,X
+    ADC MOBDESCRIPTORS_H,X
+    JSR MOBWAITLINE
+
+MOBRESTORENOVBL:
+
     ; Calculate how many times we have to repeat
     ; the row copying. If the image's height is less than
     ; 8 pixels, we skip this part.
@@ -1506,27 +1482,38 @@ MOBRESTORE2:
     ASL
     STA MOBW
 
+    LDX MOBI
+ 
     ; Repeate an entire cell copy for each column
 MOBRESTORE2L2A:    
+    LDY #0
 MOBRESTORE2L2:
-    JSR MOBRESTORE2_COPY
-    JSR MOBRESTORE2_INC
-    JSR MOBRESTORE2_COPY
-    JSR MOBRESTORE2_INC
-    JSR MOBRESTORE2_COPY
-    JSR MOBRESTORE2_INC
-    JSR MOBRESTORE2_COPY
-    JSR MOBRESTORE2_INC
-    JSR MOBRESTORE2_COPY
-    JSR MOBRESTORE2_INC
-    JSR MOBRESTORE2_COPY
-    JSR MOBRESTORE2_INC
-    JSR MOBRESTORE2_COPY
-    JSR MOBRESTORE2_INC
-    JSR MOBRESTORE2_COPY
-    JSR MOBRESTORE2_INC
+    LDA (MOBADDR),Y       ; S
+    STA (PLOTDEST),Y       ; D
+    INY
+    LDA (MOBADDR),Y       ; S
+    STA (PLOTDEST),Y       ; D
+    INY
+    LDA (MOBADDR),Y       ; S
+    STA (PLOTDEST),Y       ; D
+    INY
+    LDA (MOBADDR),Y       ; S
+    STA (PLOTDEST),Y       ; D
+    INY
+    LDA (MOBADDR),Y       ; S
+    STA (PLOTDEST),Y       ; D
+    INY
+    LDA (MOBADDR),Y       ; S
+    STA (PLOTDEST),Y       ; D
+    INY
+    LDA (MOBADDR),Y       ; S
+    STA (PLOTDEST),Y       ; D
+    INY
+    LDA (MOBADDR),Y       ; S
+    STA (PLOTDEST),Y       ; D
+    INY
     DEC MOBDRAW_J
-    BNE MOBRESTORE2L2A
+    BNE MOBRESTORE2L2
 
     JSR MOBRESTORE2_INCL
 
@@ -1555,6 +1542,7 @@ MOBRESTORE2L3:
     STA $01
     SEI
 
+MOBRESTORE2E:
     RTS
 
 MOBRESTORE3:
@@ -2253,6 +2241,19 @@ MOBATCS_UP:
 
 MOBATCS_DONE:
 
+    RTS
+    
+MOBWAITVBL:
+    BIT $D011
+    BPL MOBWAITVBL
+MOBWAITVBL2:
+    BIT $D011
+    BMI MOBWAITVBL2
+    RTS
+
+MOBWAITLINE:
+    CMP $D012
+    BCS MOBWAITLINE
     RTS
 
 ; Mask for bit selection / unselection on a single cell

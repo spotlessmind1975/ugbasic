@@ -165,7 +165,7 @@ void z80_mobinit( Environment * _environment, char * _index, char *_x, char *_y,
 void z80_mobshow( Environment * _environment, char * _index );
 void z80_mobhide( Environment * _environment, char * _index );
 void z80_mobat( Environment * _environment, char * _index, char *_x, char *_y );
-void z80_mobrender( Environment * _environment );
+void z80_mobrender( Environment * _environment, int _on_vbl );
 void z80_sqroot( Environment * _environment, char * _number, char * _result );
 
 #define cpu_beq( _environment,  _label  ) z80_beq( _environment,  _label  )
@@ -302,7 +302,7 @@ extern unsigned int src_hw_chipset_mob_asm_len;
 #define cpu_mobshow( _environment, _index ) z80_mobshow( _environment, _index )
 #define cpu_mobhide( _environment, _index ) z80_mobhide( _environment, _index )
 #define cpu_mobat( _environment, _index, _x, _y ) z80_mobat( _environment, _index, _x, _y )
-#define cpu_mobrender( _environment ) z80_mobrender( _environment )
+#define cpu_mobrender( _environment, _on_vbl ) z80_mobrender( _environment, _on_vbl )
 #define cpu_sqroot( _environment, _number, _result ) z80_sqroot( _environment, _number, _result )
 
 #endif

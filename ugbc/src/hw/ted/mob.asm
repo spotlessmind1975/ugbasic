@@ -1509,6 +1509,18 @@ MOBRESTORE2:
     ASL
     STA MOBW
 
+    LDX MOBI
+    LDA MOBVBL
+    BEQ MOBRESTORENOVBL
+    CLC
+    LDA MOBDESCRIPTORS_PYL,X
+    ADC #28
+    ADC MOBDESCRIPTORS_H,X
+    ADC MOBDESCRIPTORS_H,X
+    JSR MOBWAITLINE
+
+MOBRESTORENOVBL:
+
     ; Repeate an entire cell copy for each column
 MOBRESTORE2L2A:    
 MOBRESTORE2L2:
@@ -2261,6 +2273,19 @@ MOBATCS_DONE:
 
     RTS
 
+MOBWAITVBL:
+    BIT $FF1C
+    BPL MOBWAITVBL
+MOBWAITVBL2:
+    BIT $FF1C
+    BMI MOBWAITVBL2
+    RTS
+
+MOBWAITLINE:
+    CMP $FF1D
+    BCS MOBWAITLINE
+    RTS
+    
 ; Mask for bit selection / unselection on a single cell
 ; during drawing operations.
 MOBDRAW2_MASKX:

@@ -74,6 +74,9 @@ void every_ticks_gosub( Environment * _environment, char * _timing, char * _labe
     
     cpu_label( _environment, everyRoutineLabel );
     
+    outline0("LDA #1");
+    outline0("STA ANTICVBL");
+        
     cpu_di( _environment );
 
     cpu_bveq( _environment, _environment->everyStatus->realName, endOfEveryRoutineLabel );
