@@ -19,17 +19,17 @@ w = SCREEN WIDTH - IMAGE WIDTH(airplaneImage)
 airplane1 = 1
 MOB airplane1, airplaneImage
 MOB SHOW airplane1
-MOB RENDER
+MOB RENDER ON VBL
 WAIT KEY
 i = (POSITION) 0
 FOR i = (POSITION) 0 TO h STEP (POSITION) 1
     MOB airplane1 AT (POSITION) 0, i
-    MOB RENDER
+    MOB RENDER ON VBL
     WAIT KEY
 NEXT
 FOR i = (POSITION) 0 TO  w STEP (POSITION) 1
     MOB airplane1 AT i, h
-    MOB RENDER
+    MOB RENDER ON VBL
     WAIT KEY
 NEXT
 HALT

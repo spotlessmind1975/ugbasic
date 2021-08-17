@@ -780,6 +780,12 @@ typedef struct _Environment {
     int gtiavarsDeployed;
 
     /**
+     * Deployed the vars for ZX
+     */
+
+    int zxvarsDeployed;
+
+    /**
      * Deployed plotting routine
      */
 
