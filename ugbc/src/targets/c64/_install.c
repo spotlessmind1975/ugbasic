@@ -42,7 +42,7 @@ void target_install( Environment * _environment ) {
 
     char answer;
 
-    printf("\nYou have requested to install the chain tool for the ATARI target.\n"); 
+    printf("\nYou have requested to install the chaintool for the Commodore 64 target.\n"); 
 
     #ifdef _WIN32
         printf("This implies that \"CC65 - a freeware C compiler for 6502 based systems\"\n");

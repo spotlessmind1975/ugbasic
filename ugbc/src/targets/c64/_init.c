@@ -84,12 +84,23 @@ void target_initialization( Environment * _environment ) {
 void target_linkage( Environment * _environment ) {
 
     char commandLine[MAX_TEMPORARY_STORAGE];
+    char executableName[32];
     
-    sprintf( commandLine, "cl65 -o %s -u __EXEHDR__ -t c64 -C %s %s",
+    if( access( "cc65\\bin\\cl65.exe", F_OK ) == 0 ) {
+        sprintf(executableName, "%s", "cc65\\bin\\cl65.exe" );
+    } else {
+        sprintf(executableName, "%s", "cl65" );
+    }
+
+    sprintf( commandLine, "%s -o %s -u __EXEHDR__ -t c64 -C %s %s",
+        executableName,
         _environment->exeFileName, 
         _environment->configurationFileName, 
         _environment->asmFileName );
 
-    system( commandLine ); 
+    if ( system( commandLine ) ) {
+        printf("The compilation of assembly program failed.\n\n");
+        printf("Please use option '-I' to install chain tool.\n\n");
+    }; 
 
 }

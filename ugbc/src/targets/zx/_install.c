@@ -42,40 +42,36 @@ void target_install( Environment * _environment ) {
 
     char answer;
 
-    printf("\nYou have requested to install the chain tool for the ATARI target.\n"); 
+    printf("\nYou have requested to install the chaintool for the ZX Spectrum target.\n"); 
 
     #ifdef _WIN32
-        printf("This implies that \"CC65 - a freeware C compiler for 6502 based systems\"\n");
+        printf("This implies that \"Z88DK - The Development Kit for Z80 Computers\"\n");
         printf("will be downloaded from the ugBASIC site, and it will be run automatically.\n");
-        printf("The size of the self-extracting executable is of about 10 MB.n\n\n");
+        printf("The size of the self-extracting executable is of about 22 MB.n\n\n");
+
+        printf("Do you want to continue [y/N] ?");
+
+        scanf(" %c", &answer);
+
+        printf("\n\n");
+
+        if (answer == 'Y' || answer == 'y'){
+
+            printf("Downloading: Z88DK - The Development Kit for Z80 Computers\n\n");
+            system( "curl https://ugbasic.iwashere.eu/download/z88dk-win32.exe --output z88dk-win32.exe" );
+
+            printf("\n\nInstalling: Z88DK - The Development Kit for Z80 Computers\n\n");
+            system( "z88dk-win32.exe" );
+
+            unlink( "z88dk-win32.exe" );
+
+        }
+
     #else
-        printf("This implies that \"CC65 - a freeware C compiler for 6502 based systems\"\n");
-        printf("will be installed from the standard APT repository. Sudo password will be asked.\n\n");
+        printf("This implies that \"Z88DK - The Development Kit for Z80 Computers\"\n");
+        printf("must be installed from the standard GitHub repository:\n\n");
+        printf("https://github.com/z88dk/z88dk.git\n\n");
     #endif
 
-    printf("Do you want to continue [y/N] ?");
-
-    scanf(" %c", &answer);
-
-    printf("\n\n");
-
-    if (answer == 'Y' || answer == 'y'){
-
-        #ifdef _WIN32
-
-            printf("Downloading: CC65 - a freeware C compiler for 6502 based systems\n\n");
-            system( "curl https://ugbasic.iwashere.eu/download/cc65-win32.exe --output cc65-win32.exe" );
-
-            printf("\n\nInstalling: CC65 - a freeware C compiler for 6502 based systems\n\n");
-            system( "cc65-win32.exe" );
-
-            unlink( "cc65-win32.exe" );
-
-        #else
-            printf("\n\nInstalling: CC65 - a freeware C compiler for 6502 based systems\n\n");
-            system( "sudo apt-get install cc65" );
-        #endif
-
-    }
 
 }
