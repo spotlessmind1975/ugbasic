@@ -573,8 +573,12 @@ typedef struct _Environment {
     /**
      * Enable the visualization of warnings during compilation.
      */
-
     int warningsEnabled;
+
+    /**
+     * Enable the installation of chain tool.
+     */
+    int installChainTool;
 
     /* --------------------------------------------------------------------- */
     /* INTERNAL STRUCTURES                                                   */
@@ -1195,6 +1199,7 @@ typedef struct _Environment {
 #define TILEMAP_NATIVE      0
 #define BITMAP_NATIVE       1
 
+void target_install( Environment *_environment );
 void begin_compilation( Environment * _environment );
 void target_initialization( Environment *_environment );
 void target_finalization( Environment * _environment );

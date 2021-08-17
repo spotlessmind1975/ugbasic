@@ -2736,6 +2736,7 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     printf("Options and parameters:\n" );
     printf("\t<source>     Input filename with ugBASIC source code\n" );
     printf("\t<asm>        Output filename with ASM source code (optional if '-o' given)\n" );
+    printf("\t-I           Install needed chaintool for this target\n" );
     printf("\t-c <file>    Output filename with linker configuration\n" );
     printf("\t-o <exe>     Output filename with final executable file for target\n" );
     printf("\t-W           Enable warnings during compilation\n" );
@@ -2751,7 +2752,7 @@ int main( int _argc, char *_argv[] ) {
 
     _environment->warningsEnabled = 0;
 
-    while ((opt = getopt(_argc, _argv, "e:c:Wo:")) != -1) {
+    while ((opt = getopt(_argc, _argv, "e:c:Wo:I")) != -1) {
         switch (opt) {
                 case 'c':
                     _environment->configurationFileName = strdup(optarg);
@@ -2762,11 +2763,18 @@ int main( int _argc, char *_argv[] ) {
                 case 'W':
                     _environment->warningsEnabled = 1;
                     break;
+                case 'I':
+                    _environment->installChainTool = 1;
+                    break;
                 default: /* '?' */
                     show_usage_and_exit( _argc, _argv );
                 }
     }
 
+    if ( _environment->installChainTool ) {
+        target_install( _environment );
+    }
+    
     if ( ! _argv[optind] ) {
         show_usage_and_exit( _argc, _argv );
     }
