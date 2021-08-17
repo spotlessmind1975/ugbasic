@@ -70,6 +70,7 @@ void target_linkage( Environment * _environment ) {
 
     char commandLine[MAX_TEMPORARY_STORAGE];
     char executableName[64];
+    char binaryName[64];
     
     if( access( "z88dk\\z88dk\\bin\\z88dk-z80asm.exe", F_OK ) == 0 ) {
         sprintf(executableName, "%s", "z88dk\\z88dk\\bin\\z88dk-z80asm.exe" );
@@ -77,9 +78,8 @@ void target_linkage( Environment * _environment ) {
         sprintf(executableName, "%s", "z88dk-z80asm" );
     }
 
-    sprintf( commandLine, "%s -l -b %s %s",
+    sprintf( commandLine, "%s -l -b %s",
         executableName,
-        _environment->exeFileName, 
         _environment->asmFileName );
     system( commandLine ); 
 
@@ -88,6 +88,16 @@ void target_linkage( Environment * _environment ) {
         printf("Please use option '-I' to install chain tool.\n\n");
         return;
     }; 
+
+    strcpy( binaryName, _environment->exeFileName );
+    char * p = strstr( binaryName, ".tap" );
+    if ( p ) {
+        *(p+1) = 'b';
+        *(p+2) = 'i';
+        *(p+3) = 'n';
+    }
+
+    rename( binaryName, _environment->exeFileName );
 
     if( access( "z88dk\\z88dk\\bin\\z88dk-appmake.exe", F_OK ) == 0 ) {
         sprintf(executableName, "%s", "z88dk\\z88dk\\bin\\z88dk-appmake.exe" );
