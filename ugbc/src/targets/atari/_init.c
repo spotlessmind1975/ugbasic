@@ -90,8 +90,8 @@ void target_linkage( Environment * _environment ) {
     char commandLine[MAX_TEMPORARY_STORAGE];
     char executableName[32];
     
-    if( access( "cl65/bin/cl65.exe", F_OK ) == 0 ) {
-        sprintf(executableName, "%s", "cl65/bin/cl65.exe" );
+    if( access( "cc65\\bin\\cl65.exe", F_OK ) == 0 ) {
+        sprintf(executableName, "%s", "cc65\\bin\\cl65.exe" );
     } else {
         sprintf(executableName, "%s", "cl65" );
     }
