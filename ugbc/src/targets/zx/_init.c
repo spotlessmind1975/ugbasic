@@ -97,8 +97,6 @@ void target_linkage( Environment * _environment ) {
         *(p+3) = 'n';
     }
 
-    rename( binaryName, _environment->exeFileName );
-
     if( access( "z88dk\\z88dk\\bin\\z88dk-appmake.exe", F_OK ) == 0 ) {
         sprintf(executableName, "%s", "z88dk\\z88dk\\bin\\z88dk-appmake.exe" );
     } else {
@@ -107,7 +105,7 @@ void target_linkage( Environment * _environment ) {
 
     sprintf( commandLine, "%s +zx --org 32768 -b %s",
         executableName,
-        _environment->exeFileName );
+       binaryName );
 
     if ( system( commandLine ) ) {
         printf("The compilation of assembly program failed.\n\n");
