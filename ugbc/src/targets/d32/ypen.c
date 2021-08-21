@@ -53,5 +53,9 @@
 </usermanual> */
 Variable * ypen( Environment * _environment ) {
 
+    Variable * result = variable_temporary( _environment, VT_POSITION, "(result)" );
+
+    return result;
+
 }
 

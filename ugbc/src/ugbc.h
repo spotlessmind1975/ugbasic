@@ -1172,9 +1172,9 @@ typedef struct _Environment {
 
 #define deploy(s,e)  \
         if ( ! _environment->s ) { \
-            outline1("JMP %s_after", #s); \
+            cpu_jump( _environment, #s "_after" ); \
             outembedded0(e); \
-            outhead1("%s_after:", #s); \
+            cpu_label( _environment, #s "_after" ); \
             _environment->s = 1; \
         }
 

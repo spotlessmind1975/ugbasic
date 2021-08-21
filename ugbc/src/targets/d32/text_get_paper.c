@@ -49,6 +49,10 @@
 @keyword PAPER$
 </usermanual> */
 Variable * get_paper( Environment * _environment, char * _color ) {
+    
+    Variable * result = variable_temporary( _environment, VT_DSTRING, 0 );
+
+    return result;
 
 }
 

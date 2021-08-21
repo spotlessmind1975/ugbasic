@@ -58,6 +58,10 @@
 </usermanual> */
 Variable * hit_to( Environment * _environment, int _sprite ) {
 
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(hit)" );
+
+    return result;
+
 }
 
 /**
@@ -77,6 +81,10 @@ Variable * hit_to( Environment * _environment, int _sprite ) {
 @keyword HIT
 </usermanual> */
 Variable * hit_to_vars( Environment * _environment, char * _sprite ) {
+
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(hit)" );
+
+    return result;
 
 }
 

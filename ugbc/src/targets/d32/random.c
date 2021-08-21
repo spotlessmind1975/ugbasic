@@ -64,4 +64,8 @@
 </usermanual> */
 Variable * random_value( Environment * _environment, VariableType _type ) {
 
+    Variable * result = variable_temporary( _environment, _type, "(random value)" );
+
+    return result;
+
 }

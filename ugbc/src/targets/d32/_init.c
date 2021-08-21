@@ -40,6 +40,30 @@
 
 void target_initialization( Environment * _environment ) {
 
+    variable_import( _environment, "BITMAPADDRESS", VT_ADDRESS );
+    variable_global( _environment, "BITMAPADDRESS" );
+    variable_import( _environment, "COLORMAPADDRESS", VT_ADDRESS );
+    variable_global( _environment, "COLORMAPADDRESS" );
+    variable_import( _environment, "TEXTADDRESS", VT_ADDRESS );
+    variable_global( _environment, "TEXTADDRESS" );    
+    variable_import( _environment, "EMPTYTILE", VT_BYTE );
+    variable_global( _environment, "EMPTYTILE" );    
+
+    bank_define( _environment, "VARIABLES", BT_VARIABLES, 0x5000, NULL );
+    bank_define( _environment, "TEMPORARY", BT_TEMPORARY, 0x5100, NULL );
+    variable_import( _environment, "FREE_STRING", VT_WORD );
+    variable_global( _environment, "FREE_STRING" );    
+
+    outline0("ORG 20000");
+    deploy( varsDeployed, src_hw_d32_vars_asm);
+    variable_define( _environment, "stringsAddress", VT_ADDRESS, 0x4200 );
+    variable_global( _environment, "stringsAddress" );
+    bank_define( _environment, "STRINGS", BT_STRINGS, 0x4200, NULL );
+    variable_define( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0xD800 );
+    variable_global( _environment, "COLORMAPADDRESS" );
+
+    setup_text_variables( _environment );
+
 }
 
 void target_linkage( Environment * _environment ) {

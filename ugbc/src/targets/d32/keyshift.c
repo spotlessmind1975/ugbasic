@@ -42,4 +42,8 @@ extern char DATATYPE_AS_STRING[][16];
 
 Variable * keyshift( Environment * _environment ) {
 
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of KEYSHIFT)");
+
+    return result;
+
 }

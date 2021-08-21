@@ -49,5 +49,9 @@
 @keyword PEN$
 </usermanual> */
 Variable * get_pen( Environment * _environment, char * _color ) {
+    
+    Variable * result = variable_temporary( _environment, VT_DSTRING, 0 );
+        
+    return result;
 
 }

@@ -51,5 +51,199 @@ extern char DATATYPE_AS_STRING[][16];
  * @param _environment Current calling environment
  */
 void variable_cleanup( Environment * _environment ) {
+    int i=0;
+    for(i=0; i<BANK_TYPE_COUNT; ++i) {
+        Bank * actual = _environment->banks[i];
+        while( actual ) {
+            if ( actual->type == BT_VARIABLES ) {
+                // cfgline3("# BANK %s %s AT $%4.4x", BANK_TYPE_AS_STRING[actual->type], actual->name, actual->address);
+                // cfgline2("%s:   load = MAIN,     type = ro,  optional = yes, start = $%4.4x;", actual->name, actual->address);
+                // outhead1(".segment \"%s\"", actual->name);
+                Variable * variable = _environment->variables;
+                
+                while( variable ) {
 
+                    if ( !variable->imported ) {
+
+                        switch( variable->type ) {
+                            case VT_BYTE:
+                            case VT_SBYTE:
+                            case VT_COLOR:
+                                outhead1("%s rzb 1", variable->realName);
+                                break;
+                            case VT_WORD:
+                            case VT_SWORD:
+                            case VT_POSITION:
+                            case VT_ADDRESS:
+                                outhead1("%s rzb 2", variable->realName);
+                                break;
+                            case VT_DWORD:
+                            case VT_SDWORD:
+                                outhead1("%s rzb 4", variable->realName);
+                                break;
+                            case VT_STRING:
+                                if ( ! variable->valueString ) {
+                                    printf("%s", variable->realName);
+                                    exit(EXIT_FAILURE);
+                                }
+                                outhead2("%s fcb %d", variable->realName, (int)strlen(variable->valueString) );
+                                if ( strlen( variable->valueString ) > 0 ) {
+                                    outhead1("   fcc \"%s\"", variable->valueString );
+                                } 
+                                break;
+                            case VT_DSTRING:
+                                outhead1("%s rzb 1", variable->realName);
+                                break;
+                            case VT_MOB:
+                                outhead1("%s rzb 1", variable->realName);
+                                break;
+                            case VT_IMAGE:
+                            case VT_BUFFER:
+                                if ( ! variable->absoluteAddress ) {
+                                    if ( variable->valueBuffer ) {
+                                        out1("%s fcb ", variable->realName);
+                                        int i=0;
+                                        for (i=0; i<(variable->size-1); ++i ) {
+                                            out1("%d,", variable->valueBuffer[i]);
+                                        }
+                                        outhead1("%d", variable->valueBuffer[(variable->size-1)]);
+                                    } else {
+                                        outhead2("%s rzb %d", variable->realName, variable->size);
+                                    }
+                                } else {
+                                    outhead2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
+                                    if ( variable->valueBuffer ) {
+                                        out1("%scopy: fcb ", variable->realName);
+                                        int i=0;
+                                        for (i=0; i<(variable->size-1); ++i ) {
+                                            out1("%d,", variable->valueBuffer[i]);
+                                        }
+                                        outhead1("%d", variable->valueBuffer[(variable->size-1)]);
+                                    }
+                                }
+                                break;
+                            case VT_ARRAY: {
+                                int i=0,size=1;
+                                for( i=0; i<variable->arrayDimensions; ++i ) {
+                                    size *= variable->arrayDimensionsEach[i];
+                                }
+                                if ( VT_BITWIDTH( variable->arrayType ) > 0 ) {
+                                    size *= ( VT_BITWIDTH( variable->arrayType ) >> 3 );
+                                } else if ( variable->arrayType == VT_DSTRING ) {
+                                    size *= 1;
+                                } else if ( variable->arrayType == VT_MOB ) {
+                                    size *= 1;
+                                } else {
+                                    CRITICAL_DATATYPE_UNSUPPORTED("array(1)", DATATYPE_AS_STRING[variable->arrayType]);
+                                }
+                                outhead2("%s rzb %d", variable->realName, size);
+                                break;
+                            }
+                        }
+                    }
+                    variable = variable->next;
+                }
+            } else if ( actual->type == BT_TEMPORARY ) {
+                // cfgline3("# BANK %s %s AT $%4.4x", BANK_TYPE_AS_STRING[actual->type], actual->name, actual->address);
+                // cfgline2("%s:   load = MAIN,     type = ro,  optional = yes, start = $%4.4x;", actual->name, actual->address);
+                // outhead1(".segment \"%s\"", actual->name);
+                if ( _environment->bitmaskNeeded ) {
+                    outhead0("BITMASK fcb $01,$02,$04,$08,$10,$20,$40,$80");
+                    outhead0("BITMASKN fcb $fe,$fd,$fb,$f7,$ef,$df,$bf,$7f");
+                }
+                if ( _environment->dstringDeployed ) {
+                    outhead0("max_free_string = 1023");
+                }
+                Variable * variable = _environment->tempVariables;
+
+                while( variable ) {
+                    if ( !variable->imported ) {
+
+                        switch( variable->type ) {
+                            case VT_BYTE:
+                            case VT_SBYTE:
+                            case VT_COLOR:
+                                outhead1("%s rzb 1", variable->realName);
+                                break;
+                            case VT_WORD:
+                            case VT_SWORD:
+                            case VT_POSITION:
+                            case VT_ADDRESS:
+                                outhead1("%s rzb 2", variable->realName);
+                                break;
+                            case VT_DWORD:
+                            case VT_SDWORD:
+                                outhead1("%s rzb 4", variable->realName);
+                                break;
+                            case VT_STRING:
+                                if ( ! variable->valueString ) {
+                                    printf("%s", variable->realName);
+                                    exit(EXIT_FAILURE);
+                                }
+                                outhead2("%s fcb %d", variable->realName, (int)strlen(variable->valueString) );
+                                if ( strlen( variable->valueString ) > 0 ) {
+                                    outhead1("   fcc \"%s\"", variable->valueString );
+                                } 
+                                break;
+                            case VT_DSTRING:
+                                outhead1("%s rzb 1", variable->realName);
+                                break;
+                            case VT_MOB:
+                                outhead1("%s rzb 1", variable->realName);
+                                break;
+                            case VT_IMAGE:
+                            case VT_BUFFER:
+                                if ( ! variable->absoluteAddress ) {
+                                    if ( variable->valueBuffer ) {
+                                        out1("%s fcb ", variable->realName);
+                                        int i=0;
+                                        for (i=0; i<(variable->size-1); ++i ) {
+                                            out1("%d,", variable->valueBuffer[i]);
+                                        }
+                                        outhead1("%d", variable->valueBuffer[(variable->size-1)]);
+                                    } else {
+                                        outhead2("%s rzb %d", variable->realName, variable->size);
+                                    }
+                                } else {
+                                    outhead2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
+                                    if ( variable->valueBuffer ) {
+                                        out1("%scopy: fcb ", variable->realName);
+                                        int i=0;
+                                        for (i=0; i<(variable->size-1); ++i ) {
+                                            out1("%d,", variable->valueBuffer[i]);
+                                        }
+                                        outhead1("%d", variable->valueBuffer[(variable->size-1)]);
+                                    }
+                                }
+                                break;
+                            case VT_ARRAY: {
+                                int i=0,size=1;
+                                for( i=0; i<variable->arrayDimensions; ++i ) {
+                                    size *= variable->arrayDimensionsEach[i];
+                                }
+                                if ( VT_BITWIDTH( variable->arrayType ) > 0 ) {
+                                    size *= ( VT_BITWIDTH( variable->arrayType ) >> 3 );
+                                } else if ( variable->arrayType == VT_DSTRING ) {
+                                    size *= 1;
+                                } else if ( variable->arrayType == VT_MOB ) {
+                                    size *= 1;
+                                } else {
+                                    CRITICAL_DATATYPE_UNSUPPORTED("array(1)", DATATYPE_AS_STRING[variable->arrayType]);
+                                }
+                                outhead2("%s rzb %d", variable->realName, size);
+                                break;
+                            }
+                        }
+                    }
+                    variable = variable->next;
+                }
+            } else if ( actual->type == BT_STRINGS ) {
+                // cfgline3("# BANK %s %s AT $%4.4x", BANK_TYPE_AS_STRING[actual->type], actual->name, actual->address);
+                // cfgline2("%s:   load = MAIN,     type = ro,  optional = yes, start = $%4.4x;", actual->name, actual->address);
+            } else {
+
+            }
+           actual = actual->next;
+        }
+    }    
 }
