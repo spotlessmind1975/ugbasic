@@ -1470,7 +1470,73 @@ int test_cpu_number_to_string_testerB( TestEnvironment * _te ) {
 
 }
 
+//===========================================================================
 
+void test_cpu_peek_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * address1 = variable_define( e, "address1", VT_ADDRESS, 0x1000 );
+    Variable * address2 = variable_define( e, "address2", VT_ADDRESS, 0x1010 );
+    Variable * a = variable_define( e, "a", VT_BYTE, 42 );
+    Variable * b = variable_define( e, "b", VT_BYTE, 84 );
+    Variable * c = variable_define( e, "c", VT_BYTE, 21 );
+    Variable * d = variable_define( e, "d", VT_BYTE, 0 );
+    Variable * f = variable_define( e, "f", VT_BYTE, 0 );
+
+    cpu_poke( e, address1->realName, a->realName );
+    cpu_peek( e, address1->realName, b->realName );
+    cpu_poke( e, address1->realName, c->realName );
+    cpu_peek( e, address1->realName, d->realName );
+    cpu_poke( e, address2->realName, c->realName );
+    cpu_peek( e, address2->realName, f->realName );
+
+    _te->trackedVariables[0] = b;
+    _te->trackedVariables[1] = d;
+    _te->trackedVariables[2] = f;
+    _te->trackedVariables[3] = a;
+    _te->trackedVariables[4] = c;
+
+}
+
+int test_cpu_peek_tester( TestEnvironment * _te ) {
+
+    Variable * b = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * d = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+    Variable * f = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
+    Variable * a = variable_retrieve( &_te->environment, _te->trackedVariables[3]->name );
+    Variable * c = variable_retrieve( &_te->environment, _te->trackedVariables[4]->name );
+
+    return b->value == a->value && d->value == c->value && f->value == c->value;
+
+}
+
+//===========================================================================
+
+void test_cpu_poke_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * address1 = variable_define( e, "address1", VT_ADDRESS, 0x1000 );
+    Variable * a = variable_define( e, "a", VT_BYTE, 42 );
+    Variable * b = variable_define( e, "b", VT_BYTE, 84 );
+
+    cpu_poke( e, address1->realName, a->realName );
+    cpu_peek( e, address1->realName, b->realName );
+
+    _te->trackedVariables[0] = a;
+    _te->trackedVariables[1] = b;
+
+}
+
+int test_cpu_poke_tester( TestEnvironment * _te ) {
+
+    Variable * a = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * b = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+
+    return b->value == a->value;
+
+}
 
 
 void test_cpu( ) {
@@ -1508,5 +1574,7 @@ void test_cpu( ) {
     create_test( "cpu_math_mul2_const_8bit", &test_cpu_math_mul2_const_8bit_payload, &test_cpu_math_mul2_const_8bit_tester );
     create_test( "cpu_number_to_string_payload", &test_cpu_number_to_string_payload, &test_cpu_number_to_string_tester );
     create_test( "cpu_number_to_string_payloadB", &test_cpu_number_to_string_payloadB, &test_cpu_number_to_string_testerB );
+    create_test( "cpu_peek", &test_cpu_peek_payload, &test_cpu_peek_tester );
+    create_test( "cpu_poke", &test_cpu_poke_payload, &test_cpu_poke_tester );
 
 }
