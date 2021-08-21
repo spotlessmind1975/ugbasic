@@ -151,7 +151,7 @@ int test_variables_bin2_tester( TestEnvironment * _te ) {
 
     Variable * b = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
 
-    return strcmp( b->valueString, "01010101" ) == 0 || strcmp( b->valueString, "00000000000000000000000001010101" ) == 0;
+    return b->valueString != NULL && strcmp( b->valueString, "01010101" ) == 0 || strcmp( b->valueString, "00000000000000000000000001010101" ) == 0;
 
 }
 
