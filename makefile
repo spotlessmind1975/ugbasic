@@ -80,6 +80,12 @@ generated/zx/exe/%.tap:
 	@z88dk-appmake +zx --org 32768 -b $(@:.tap=.bin)
 	@rm -f $(@:.tap=.bin) $(@:.tap=_*.bin)
 
+generated/d32/asm/%.asm:
+	@ugbc/exe/ugbc.d32 -c $(subst /asm/,/cfg/,$(@:.asm=.cfg)) $(subst generated/d32/asm/,examples/,$(@:.asm=.bas)) $@
+
+generated/d32/exe/%.bin: $(subst /exe/,/asm/,$(@:.bin=.asm))
+	@asm6809 -s $(@:.prg=.lbl) -D -E 20000 -o $@ $(subst /exe/,/asm/,$(@:.prg=.asm))
+
 paths:
 	@mkdir -p generated
 	@mkdir -p generated/$(target)/asm

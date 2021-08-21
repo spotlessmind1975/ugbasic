@@ -1,6 +1,3 @@
-#ifndef __UGBASICTESTER__
-#define __UGBASICTESTER__
-
 /*****************************************************************************
  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
  *****************************************************************************
@@ -35,39 +32,47 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <limits.h>
-#include <unistd.h>
-
-#include "../src/ugbc.h"
+#include "../../ugbc.h"
 
 /****************************************************************************
- * DECLARATIONS AND DEFINITIONS SECTION 
+ * CODE SECTION 
  ****************************************************************************/
 
-void test_cpu( );
-void test_variables( );
-void test_conditionals( );
-void test_loops( );
-void test_ons( );
-void test_controls( );
-void test_examples( );
-void test_print( );
+/**
+ * @brief Emit ASM code for <b>SPRITE [int] DATA FROM [int]</b>
+ * 
+ * This function emits a code capable of setting the starting address of the 
+ * sprite _sprite to the value _address. This version is suitable when direct 
+ * value is used.
+ * 
+ * @param _environment Current calling environment
+ * @param _sprite Index of the sprite to define (0...7)
+ * @param _address Address where the sprite data begins from
+ */
+/* <usermanual>
+@keyword SPRITE DATA FROM
 
-#if defined( __c64__ )
-    #include "tester_c64.h"
-#elif defined( __plus4__ )
-    #include "tester_plus4.h"
-#elif defined( __atari__ )
-    #include "tester_atari.h"
-#elif defined( __atarixl__ )
-    #include "tester_atarixl.h"
-#elif defined( __zx__ )
-    #include "tester_zx.h"
-#elif defined( __d32__ )
-    #include "tester_d32.h"
-#endif
+@target d32
+</usermanual> */
+void sprite_data_from( Environment * _environment, int _sprite, int _address ) {
 
-#endif
+}
+
+/**
+ * @brief Emit ASM code for <b>SPRITE [expression] DATA FROM [expression]</b>
+ * 
+ * This function emits a code capable of setting the starting address of the 
+ * sprite _sprite to the value _address. This version is suitable when expressions
+ * are used.
+ * 
+ * @param _environment Current calling environment
+ * @param _sprite Expression with the index of the sprite to define (0...7)
+ * @param _address Expression with the address where the sprite data begins from
+ */
+/* <usermanual>
+@keyword SPRITE DATA FROM
+</usermanual> */
+void sprite_data_from_vars( Environment * _environment, char * _sprite, char * _address ) {
+
+}
+

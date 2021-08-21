@@ -47,6 +47,14 @@ test: paths-test tester
 # Components and chipsets
 # ----------------------------------------------------------------------------
 
+# Motorola 6809
+
+MODULES_6809 := $(wildcard src/hw/6809/*.asm)
+SOURCES_6502 := $(subst src/hw/6809/,src-generated/6809_,$(MODULES_6809:.asm=.c))
+
+src-generated/6809_%.c: $(MODULES_6809)
+	@xxd -i $(subst src-generated/6809_,src/hw/6809/,$(@:.c=.asm)) >$@
+
 # MOS Technology 6502/6510
 
 MODULES_6502 := $(wildcard src/hw/6502/*.asm)
@@ -140,6 +148,18 @@ src-generated/modules_plus4.c: $(SOURCES_6502) $(SOURCES_PLUS4) $(SOURCES_TED)
 	@cat $(SOURCES_6502) $(SOURCES_PLUS4) $(SOURCES_TED) >src-generated/modules_plus4.c
 	@grep "src" src-generated/modules_plus4.c | awk -f modules.awk >src-generated/modules_plus4.h
 
+# Dragon 32
+
+MODULES_D32 := $(wildcard src/hw/d32/*.asm)
+SOURCES_D32 := $(subst src/hw/d32/,src-generated/d32_,$(MODULES_D32:.asm=.c))
+
+src-generated/d32_%.c: $(MODULES_D32)
+	@xxd -i $(subst src-generated/d32_,src/hw/d32/,$(@:.c=.asm)) >$@
+
+src-generated/modules_d32.c: $(SOURCES_6809) $(SOURCES_D32)
+	@cat $(SOURCES_6809) $(SOURCES_D32) >src-generated/modules_d32.c
+	@grep "src" src-generated/modules_d32.c | awk -f modules.awk >src-generated/modules_d32.h
+
 # ZX Spectrum
 
 MODULES_ZX := $(wildcard src/hw/zx/*.asm)
@@ -183,7 +203,7 @@ SOURCESTEST += $(wildcard src/hw/*.c)
 SOURCESTEST += $(wildcard src/targets/common/*.c)
 SOURCESTEST += $(wildcard src/targets/$(target)/*.c)
 SOURCESTEST += $(wildcard src-test/suites/*.c)
-SOURCESTEST += src-generated/modules_$(target).c src-test/tester.c src-test/tester_c64.c src-test/tester_plus4.c src-test/tester_atari.c src-test/tester_atarixl.c src-test/tester_zx.c
+SOURCESTEST += src-generated/modules_$(target).c src-test/tester.c src-test/tester_c64.c src-test/tester_plus4.c src-test/tester_atari.c src-test/tester_atarixl.c src-test/tester_zx.c src-test/tester_d32.c
 
 paths:
 	@mkdir -p src-generated

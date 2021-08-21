@@ -1,6 +1,3 @@
-#ifndef __UGBASICTESTER__
-#define __UGBASICTESTER__
-
 /*****************************************************************************
  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
  *****************************************************************************
@@ -35,39 +32,21 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <limits.h>
-#include <unistd.h>
+#include "../../ugbc.h"
 
-#include "../src/ugbc.h"
+/**
+ * @brief Emit ASM code for <b>= RANDOM HEIGHT</b>
+ * 
+ * This function outputs a code suitable for calculating a random height.
+ * 
+ * @param _environment Current calling environment
+ * @return Variable* The random value calculated
+ */
+/* <usermanual>
+@keyword RANDOM HEIGHT
 
-/****************************************************************************
- * DECLARATIONS AND DEFINITIONS SECTION 
- ****************************************************************************/
+@target d32
+</usermanual> */
+Variable * random_height( Environment * _environment ) {
 
-void test_cpu( );
-void test_variables( );
-void test_conditionals( );
-void test_loops( );
-void test_ons( );
-void test_controls( );
-void test_examples( );
-void test_print( );
-
-#if defined( __c64__ )
-    #include "tester_c64.h"
-#elif defined( __plus4__ )
-    #include "tester_plus4.h"
-#elif defined( __atari__ )
-    #include "tester_atari.h"
-#elif defined( __atarixl__ )
-    #include "tester_atarixl.h"
-#elif defined( __zx__ )
-    #include "tester_zx.h"
-#elif defined( __d32__ )
-    #include "tester_d32.h"
-#endif
-
-#endif
+}

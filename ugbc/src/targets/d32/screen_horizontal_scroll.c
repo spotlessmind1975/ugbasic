@@ -1,6 +1,3 @@
-#ifndef __UGBASICTESTER__
-#define __UGBASICTESTER__
-
 /*****************************************************************************
  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
  *****************************************************************************
@@ -35,39 +32,49 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <limits.h>
-#include <unistd.h>
-
-#include "../src/ugbc.h"
+#include "../../ugbc.h"
 
 /****************************************************************************
- * DECLARATIONS AND DEFINITIONS SECTION 
+ * CODE SECTION 
  ****************************************************************************/
 
-void test_cpu( );
-void test_variables( );
-void test_conditionals( );
-void test_loops( );
-void test_ons( );
-void test_controls( );
-void test_examples( );
-void test_print( );
+/**
+ * @brief Emit ASM code for <b>SCREEN HORIZONTAL SCROLL [int]x</b>
+ * 
+ * This function outputs an assembly code capable of performing a 
+ * hardware scroll of the screen. The scroll is always in the direction 
+ * from right to left, so with a _displacement of 0 the screen is exactly as 
+ * it would be without scrolling while with the value 7 you would have a scroll
+ * of 7 pixels to left. This version is used when a direct integer is used.
+ * 
+ * @param _environment Current calling environment
+ * @param _displacement Horizontal offset in pixels (0-7)
+ */
+/* <usermanual>
+@keyword SCREEN HORIZONTAL SCROLL
 
-#if defined( __c64__ )
-    #include "tester_c64.h"
-#elif defined( __plus4__ )
-    #include "tester_plus4.h"
-#elif defined( __atari__ )
-    #include "tester_atari.h"
-#elif defined( __atarixl__ )
-    #include "tester_atarixl.h"
-#elif defined( __zx__ )
-    #include "tester_zx.h"
-#elif defined( __d32__ )
-    #include "tester_d32.h"
-#endif
+@target d32
+</usermanual> */
+void screen_horizontal_scroll( Environment * _environment, int _displacement ) {
 
-#endif
+}
+
+/**
+ * @brief Emit ASM code for <b>SCREEN HORIZONTAL SCROLL [expression[</b>
+ * 
+ * This function outputs an assembly code capable of performing a 
+ * hardware scroll of the screen. The scroll is always in the direction 
+ * from right to left, so with a _displacement of 0 the screen is exactly as 
+ * it would be without scrolling while with the value 7 you would have a scroll
+ * of 7 pixels to left. This version is used when an expression is used.
+ * 
+ * @param _environment Current calling environment
+ * @param _displacement Horizontal offset in pixels (0-7)
+ */
+/* <usermanual>
+@keyword SCREEN HORIZONTAL SCROLL
+</usermanual> */
+void screen_horizontal_scroll_var( Environment * _environment, char * _displacement ) {
+
+
+}
