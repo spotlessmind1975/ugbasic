@@ -61,8 +61,8 @@ void create_test( char *_name, void (*_payload)(TestEnvironment *), int (*_teste
     }
     fclose(handleIns);
 
-    system("asm6809 -H -e 20000 /tmp/out.asm -o /tmp/out.hex -s /tmp/out.sym");
-    system("usim -R 4E20 -L /tmp/out.sym -Li /tmp/out.ins -l 4E20 /tmp/out.hex -O /tmp/out.out");
+    system("asm6809 -H -e 7168 /tmp/out.asm -o /tmp/out.hex -s /tmp/out.sym -l /tmp/out.lis");
+    system("usim -R 1C00 -L /tmp/out.sym -Li /tmp/out.ins -l 1C00 /tmp/out.hex -O /tmp/out.out");
     FILE * handle = fopen( "/tmp/out.out", "rt" );
     fscanf(handle, "%x %x %x %x %x %x %x %x", 
     	&t.state.a,
@@ -138,10 +138,10 @@ void create_test( char *_name, void (*_payload)(TestEnvironment *), int (*_teste
                         v->value = VT_UNSIGN_8BIT( v->type, memory[0] );
                         break;
                     case 16:
-                        v->value = VT_UNSIGN_16BIT( v->type, memory[0]+(memory[1]<<8) );
+                        v->value = VT_UNSIGN_16BIT( v->type, (memory[0]<<8)+(memory[1]) );
                         break;
                     case 32:
-                        v->value = VT_UNSIGN_32BIT( v->type, memory[0]+(memory[1]<<8)+(memory[2]<<16)+(memory[3]<<24) ) ;
+                        v->value = VT_UNSIGN_32BIT( v->type, (memory[0]<<24)+(memory[1]<<16)+(memory[2]<<8)+(memory[3]) ) ;
                         break;
                     case 0:
                         switch( v->type ) {
