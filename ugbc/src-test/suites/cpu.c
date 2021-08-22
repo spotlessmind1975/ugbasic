@@ -515,10 +515,10 @@ int test_cpu_less_than_8bit_tester( TestEnvironment * _te ) {
     Variable * results1 = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
     Variable * results2 = variable_retrieve( &_te->environment, _te->trackedVariables[3]->name );
 
-    printf( "ru1 = %2.2x (expected: 0xff)\n", resultu1->value );
-    printf( "ru2 = %2.2x (expected: 0x00)\n", resultu2->value );
-    printf( "rs1 = %2.2x (expected: 0x00)\n", results1->value );
-    printf( "rs2 = %2.2x (expected: 0xff)\n", results2->value );
+    // printf( "ru1 = %2.2x (expected: 0xff)\n", resultu1->value );
+    // printf( "ru2 = %2.2x (expected: 0x00)\n", resultu2->value );
+    // printf( "rs1 = %2.2x (expected: 0x00)\n", results1->value );
+    // printf( "rs2 = %2.2x (expected: 0xff)\n", results2->value );
 
     return  resultu1->value == 0xff && 
             resultu2->value == 0x00 &&
@@ -868,6 +868,9 @@ int test_cpu_math_div2_8bit_tester( TestEnvironment * _te ) {
 
     Variable * ua = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
     Variable * sa = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+
+    // printf("ua = %2.2x (%d)\n", ua->value, ua->value );
+    // printf("sa = %2.2x (%d)\n", sa->value, sa->value );
 
     return  ua->value == 0x10 && 
             sa->value == -4;
@@ -1247,6 +1250,11 @@ int test_cpu_math_div_8bit_to_8bit_tester( TestEnvironment * _te ) {
     Variable * remainderu = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
     Variable * remainders = variable_retrieve( &_te->environment, _te->trackedVariables[3]->name );
 
+    printf("resultu = %2.2x (%d) [expected 0x2 (2)]\n", resultu->value, resultu->value );
+    printf("remainderu = %2.2x (%d) [expected 0x1 (1)]\n", remainderu->value, remainderu->value );
+    printf("results = %2.2x (%d) [expected 0x0 (0)]\n", results->value, results->value );
+    printf("remainders = %2.2x (%d) [expected 0x8 (8)]\n", remainders->value, remainders->value );
+
     return  resultu->value == 0x2 &&
             remainderu->value == 0x1 && 
             results->value == 0x0 && 
@@ -1561,8 +1569,8 @@ void test_cpu_fill_blocks_payload( TestEnvironment * _te ) {
     Variable * pattern1 = variable_define( e, "pattern1", VT_BYTE, 0x42 );
     Variable * pattern2 = variable_define( e, "pattern2", VT_BYTE, 0x00 );
 
-    cpu6809_fill_blocks( e, address->realName, blocks2->realName, pattern2->realName );
-    cpu6809_fill_blocks( e, address->realName, blocks1->realName, pattern1->realName );
+    cpu_fill_blocks( e, address->realName, blocks2->realName, pattern2->realName );
+    cpu_fill_blocks( e, address->realName, blocks1->realName, pattern1->realName );
 
     _te->debug.inspections[0].name="target";
     _te->debug.inspections[0].address=0x1000;
@@ -1617,8 +1625,8 @@ void test_cpu_fill_payload( TestEnvironment * _te ) {
     Variable * pattern1 = variable_define( e, "pattern1", VT_BYTE, 0x42 );
     Variable * pattern2 = variable_define( e, "pattern2", VT_BYTE, 0x00 );
 
-    cpu6809_fill( e, address->realName, bytes2->realName, pattern2->realName );
-    cpu6809_fill( e, address->realName, bytes1->realName, pattern1->realName );
+    cpu_fill( e, address->realName, bytes2->realName, pattern2->realName );
+    cpu_fill( e, address->realName, bytes1->realName, pattern1->realName );
 
     _te->debug.inspections[0].name="target";
     _te->debug.inspections[0].address=0x1000;
@@ -1697,12 +1705,12 @@ int test_cpu_compare_8bit_tester( TestEnvironment * _te ) {
     Variable * result11p = variable_retrieve( &_te->environment, _te->trackedVariables[4]->name );
     Variable * result11n = variable_retrieve( &_te->environment, _te->trackedVariables[5]->name );
 
-    printf( "byte1 = %2.2x\n", byte1->value );
-    printf( "byte2 = %2.2x\n", byte2->value );
-    printf( "result12p = %2.2x\n", result12p->value );
-    printf( "result12n = %2.2x\n", result12n->value );
-    printf( "result11p = %2.2x\n", result11p->value );
-    printf( "result11n = %2.2x\n", result11n->value );
+    // printf( "byte1 = %2.2x\n", byte1->value );
+    // printf( "byte2 = %2.2x\n", byte2->value );
+    // printf( "result12p = %2.2x\n", result12p->value );
+    // printf( "result12n = %2.2x\n", result12n->value );
+    // printf( "result11p = %2.2x\n", result11p->value );
+    // printf( "result11n = %2.2x\n", result11n->value );
 
     return byte1->value == 1 && 
             byte2->value == 2 && 
@@ -1710,6 +1718,118 @@ int test_cpu_compare_8bit_tester( TestEnvironment * _te ) {
             result12n->value == 0xff && 
             result11p->value == 0xff &&
             result11n->value == 0x00;
+
+}
+
+//===========================================================================
+
+void test_cpu_math_add_8bit_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * first = variable_define( e, "first", VT_BYTE, 1 );
+    Variable * second = variable_define( e, "second", VT_BYTE, 2 );
+    Variable * result = variable_define( e, "result", VT_BYTE, 0x42 );
+
+    cpu_math_add_8bit( e, first->realName, second->realName, result->realName );
+
+    _te->trackedVariables[0] = first;
+    _te->trackedVariables[1] = second;
+    _te->trackedVariables[2] = result;
+    
+}
+
+int test_cpu_math_add_8bit_tester( TestEnvironment * _te ) {
+
+    Variable * first = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * second = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+    Variable * result = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
+
+    // printf( "first = %2.2x\n", first->value );
+    // printf( "second = %2.2x\n", second->value );
+    // printf( "result = %2.2x\n", result->value );
+
+    return first->value == 1 && 
+            second->value == 2 && 
+            result->value == 3;
+
+}
+
+//===========================================================================
+
+void test_cpu_math_sub_8bit_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * first = variable_define( e, "first", VT_BYTE, 2 );
+    Variable * second = variable_define( e, "second", VT_BYTE, 1 );
+    Variable * result = variable_define( e, "result", VT_BYTE, 0x55 );
+
+    cpu_math_sub_8bit( e, first->realName, second->realName, result->realName );
+
+    _te->trackedVariables[0] = first;
+    _te->trackedVariables[1] = second;
+    _te->trackedVariables[2] = result;
+    
+}
+
+int test_cpu_math_sub_8bit_tester( TestEnvironment * _te ) {
+
+    Variable * first = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * second = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+    Variable * result = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
+
+    // printf( "first = %2.2x\n", first->value );
+    // printf( "second = %2.2x\n", second->value );
+    // printf( "result = %2.2x\n", result->value );
+
+    return first->value == 2 && 
+            second->value == 1 && 
+            result->value == 1;
+
+}
+
+//===========================================================================
+
+void test_cpu_math_complement_const_8bit_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * first = variable_define( e, "first", VT_BYTE, 0x42 );
+
+    cpu_math_complement_const_8bit( e, first->realName, 0x42 );
+
+    _te->trackedVariables[0] = first;
+    
+}
+
+int test_cpu_math_complement_const_8bit_tester( TestEnvironment * _te ) {
+
+    Variable * first = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+
+    return first->value == 0;
+
+}
+
+//===========================================================================
+
+void test_cpu_math_and_const_8bit_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * first = variable_define( e, "first", VT_BYTE, 0x42 );
+
+    cpu_math_and_const_8bit( e, first->realName, 0x00 );
+
+    _te->trackedVariables[0] = first;
+    
+}
+
+int test_cpu_math_and_const_8bit_tester( TestEnvironment * _te ) {
+
+    Variable * first = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+
+    return first->value == 0;
 
 }
 
@@ -1724,7 +1844,7 @@ void test_cpu( ) {
     // create_test( "cpu_logical_not_8bit", &test_cpu_logical_not_8bit_payload, &test_cpu_logical_not_8bit_tester );    
     // create_test( "cpu_bit_check_extended", &test_cpu_bit_check_extended_payload, &test_cpu_bit_check_extended_tester );    
     // create_test( "cpu_bit_check_extended B", &test_cpu_bit_check_extended_payloadB, &test_cpu_bit_check_extended_testerB );
-    create_test( "cpu_less_than_8bit", &test_cpu_less_than_8bit_payload, &test_cpu_less_than_8bit_tester );    
+    // create_test( "cpu_less_than_8bit", &test_cpu_less_than_8bit_payload, &test_cpu_less_than_8bit_tester );    
     // create_test( "cpu_less_than_16bit A", &test_cpu_less_than_16bit_payload, &test_cpu_less_than_16bit_tester );    
     // create_test( "cpu_less_than_16bit B", &test_cpu_less_than_16bit_payloadB, &test_cpu_less_than_16bit_testerB );    
     // create_test( "cpu_less_than_32bit", &test_cpu_less_than_32bit_payload, &test_cpu_less_than_32bit_tester );    
@@ -1748,10 +1868,14 @@ void test_cpu( ) {
     // create_test( "cpu_math_mul2_const_8bit", &test_cpu_math_mul2_const_8bit_payload, &test_cpu_math_mul2_const_8bit_tester );
     // create_test( "cpu_number_to_string_payload", &test_cpu_number_to_string_payload, &test_cpu_number_to_string_tester );
     // create_test( "cpu_number_to_string_payloadB", &test_cpu_number_to_string_payloadB, &test_cpu_number_to_string_testerB );
-    create_test( "cpu_peek", &test_cpu_peek_payload, &test_cpu_peek_tester );
-    create_test( "cpu_poke", &test_cpu_poke_payload, &test_cpu_poke_tester );
-    create_test( "cpu_fill_blocks", &test_cpu_fill_blocks_payload, &test_cpu_fill_blocks_tester );
-    create_test( "cpu_fill", &test_cpu_fill_payload, &test_cpu_fill_tester );
-    create_test( "cpu_compare_8bit", &test_cpu_compare_8bit_payload, &test_cpu_compare_8bit_tester );
+    // create_test( "cpu_peek", &test_cpu_peek_payload, &test_cpu_peek_tester );
+    // create_test( "cpu_poke", &test_cpu_poke_payload, &test_cpu_poke_tester );
+    // create_test( "cpu_fill_blocks", &test_cpu_fill_blocks_payload, &test_cpu_fill_blocks_tester );
+    // create_test( "cpu_fill", &test_cpu_fill_payload, &test_cpu_fill_tester );
+    // create_test( "cpu_compare_8bit", &test_cpu_compare_8bit_payload, &test_cpu_compare_8bit_tester );
+    // create_test( "cpu_math_add_8bit", &test_cpu_math_add_8bit_payload, &test_cpu_math_add_8bit_tester );
+    // create_test( "cpu_math_sub_8bit", &test_cpu_math_sub_8bit_payload, &test_cpu_math_sub_8bit_tester );
+    create_test( "cpu_math_complement_const_8bit", &test_cpu_math_complement_const_8bit_payload, &test_cpu_math_complement_const_8bit_tester );
+    create_test( "cpu_math_and_const_8bit", &test_cpu_math_and_const_8bit_payload, &test_cpu_math_and_const_8bit_tester );
 
 }
