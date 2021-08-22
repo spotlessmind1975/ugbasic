@@ -54,7 +54,7 @@ void target_initialization( Environment * _environment ) {
     variable_import( _environment, "FREE_STRING", VT_WORD );
     variable_global( _environment, "FREE_STRING" );    
 
-    outline0("ORG 20000");
+    outline0("ORG $1c00");
     deploy( varsDeployed, src_hw_d32_vars_asm);
     variable_define( _environment, "stringsAddress", VT_ADDRESS, 0x4200 );
     variable_global( _environment, "stringsAddress" );

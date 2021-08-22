@@ -56,6 +56,12 @@
  */
 void cpu6809_beq( Environment * _environment, char * _label ) {
     
+    MAKE_LABEL
+
+    outline1("BNE %s", label);
+    outline1("JMP %s", _label);    
+    outhead1("%s", label);
+
 }
 
 /**
@@ -66,25 +72,49 @@ void cpu6809_beq( Environment * _environment, char * _label ) {
  */
 void cpu6809_bneq( Environment * _environment, char * _label ) {
     
+    MAKE_LABEL
+
+    outline1("BEQ %s", label);
+    outline1("JMP %s", _label);    
+    outhead1("%s", label);
+
 }
 
 void cpu6809_bveq( Environment * _environment, char * _value, char * _label ) {
+
+    outline1("LDA %s", _value);
+    outline0("CMPA #0");
+    cpu6809_beq( _environment,  _label );
 
 }
 
 void cpu6809_bvneq( Environment * _environment, char * _value, char * _label ) {
 
+    outline1("LDA %s", _value);
+    outline0("CMPA #0");
+    cpu6809_bneq( _environment,  _label );
+    
 }
 
 void cpu6809_label( Environment * _environment, char * _label ) {
+
+    outhead1("%s", _label);
 
 }
 
 void cpu6809_peek( Environment * _environment, char * _address, char * _target ) {
 
+    outline1("LDX %s", _address);
+    outline0("LDA , X");
+    outline1("STA %s", _target);
+
 }
 
 void cpu6809_poke( Environment * _environment, char * _address, char * _source ) {
+
+    outline1("LDA %s", _source );
+    outline1("LDX %s", _address);
+    outline0("STA ,X");
 
 }
 
@@ -103,6 +133,26 @@ void cpu6809_poke( Environment * _environment, char * _address, char * _source )
  */
 void cpu6809_fill_blocks( Environment * _environment, char * _address, char * _blocks, char * _pattern ) {
 
+    MAKE_LABEL
+
+    outline1("LDY %s", _blocks);
+    outline0("TFR Y,D");
+    outline0("LEAY D,Y");
+    outline1("LDA %s", _pattern );
+    outline1("LDX %s", _address);
+    outhead1("%s", label);
+    outline0("LDB #$7f");
+    outhead1("%sinner", label);
+    outline0("STA B,X");
+    outline0("DECB");
+    outline0("CMPB #$ff");
+    outline1("BNE %sinner", label);
+    outline0("LEAX 127,X");
+    outline0("LEAX 1,X");
+    outline0("LEAY -1,Y");
+    outline0("CMPY #$0");
+    outline1("BNE %s", label);
+
 }
 
 /**
@@ -120,6 +170,20 @@ void cpu6809_fill_blocks( Environment * _environment, char * _address, char * _b
  */
 void cpu6809_fill( Environment * _environment, char * _address, char * _bytes, char * _pattern ) {
 
+    MAKE_LABEL
+
+    outline1("LDB %s", _bytes);
+    outline0("LDA #0");
+    outline0("LEAY D,Y");
+    outline1("LDA %s", _pattern );
+    outline1("LDX %s", _address);
+    outhead1("%s", label);
+    outhead1("%sinner", label);
+    outline0("DECB");
+    outline0("STA B,X");
+    outline0("CMPB #$ff");
+    outline1("BNE %sinner", label);
+
 }
 
 /*****************************************************************************
@@ -135,6 +199,11 @@ void cpu6809_fill( Environment * _environment, char * _address, char * _bytes, c
  */
 void cpu6809_move_8bit( Environment * _environment, char *_source, char *_destination ) {
 
+    outline1("LDX %s", _source);
+    outline0("LDA ,X");
+    outline1("LDX %s", _destination);
+    outline0("STA ,X");
+
 }
 
 /**
@@ -146,6 +215,9 @@ void cpu6809_move_8bit( Environment * _environment, char *_source, char *_destin
  */
 void cpu6809_store_8bit( Environment * _environment, char *_destination, int _value ) {
 
+    outline1("LDA #$%2.2x", _value );
+    outline1("STA %s", _destination );
+    
 }
 
 /**
@@ -159,6 +231,27 @@ void cpu6809_store_8bit( Environment * _environment, char *_destination, int _va
  */
 void cpu6809_compare_8bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _positive ) {
 
+    MAKE_LABEL
+
+    outline1("LDA %s", _source);
+    outline1("CMPA %s", _destination);
+    outline1("BEQ %seq", label);
+    outline1("LDA #$%2.2x", ( _positive ) ? 0x00 : 0xff );
+    if ( _other ) {
+        outline1("STA %s", _other);
+    } else {
+        outline1("STA %s", _destination);
+    }
+    outline1("JMP %sdone", label);
+    outhead1("%seq", label );
+    outline1("LDA #$%2.2x", ( _positive ) ? 0xff : 0x00 );
+    if ( _other ) {
+        outline1("STA %s", _other);
+    } else {
+        outline1("STA %s", _destination);
+    }
+    outhead1("%sdone", label );
+
 }
 
 /**
@@ -171,6 +264,38 @@ void cpu6809_compare_8bit( Environment * _environment, char *_source, char *_des
  * @param _equal True if equal
  */
 void cpu6809_less_than_8bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed ) {
+
+    MAKE_LABEL
+
+    outline1("LDA %s", _source);
+    outline1("CMPA %s", _destination);
+    if ( _signed ) {
+        if ( _equal ) {
+            outline1("BEQ %seq", label);
+        }
+        outline1("BCC %seq", label);    
+    } else {
+        if ( _equal ) {
+            outline1("BLS %seq", label);
+        } else {
+            outline1("BLO %seq", label);    
+        }
+    }
+    outline1("LDA #$%2.2x", 0x00 );
+    if ( _other ) {
+        outline1("STA %s", _other);
+    } else {
+        outline1("STA %s", _destination);
+    }
+    outline1("JMP %sdone", label);
+    outhead1("%seq", label );
+    outline1("LDA #$%2.2x", 0xff );
+    if ( _other ) {
+        outline1("STA %s", _other);
+    } else {
+        outline1("STA %s", _destination);
+    }
+    outhead1("%sdone", label );
 
 }
 
@@ -320,6 +445,10 @@ void cpu6809_addressof_16bit( Environment * _environment, char *_source, char *_
  * @param _value Value to store
  */
 void cpu6809_store_16bit( Environment * _environment, char *_destination, int _value ) {
+
+    outline1("LDA #$%2.2x", (unsigned char)(_value >> 8 ) );
+    outline1("LDB #$%2.2x", (unsigned char)( _value & 0xff ) );
+    outline1("STD %s", _destination );
 
 }
 
@@ -630,6 +759,8 @@ void cpu6809_combine_nibbles( Environment * _environment, char * _low_nibble, ch
 }
 
 void cpu6809_jump( Environment * _environment, char * _label ) {
+
+    outline1( "JMP %s", _label );
 
 }
 
