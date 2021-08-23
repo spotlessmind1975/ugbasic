@@ -50,7 +50,7 @@ EMPTYTILE           fcb     32
 TMPPTR equ $22    ; $23
 TMPPTR2 equ $24    ; $25
 
-MATHPTR0 equ $FE
+MATHPTR0 equ $F6
 MATHPTR1 equ $F7
 MATHPTR2 equ $F8
 MATHPTR3 equ $F9
