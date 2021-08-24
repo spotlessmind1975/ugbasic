@@ -913,6 +913,179 @@ void cpu6809_math_mul_16bit_to_32bit( Environment * _environment, char *_source,
 
 void cpu6809_math_div_16bit_to_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, char * _other_remainder, int _signed ) {
 
+    MAKE_LABEL
+
+    // MATHPTR0, MATHPTR1 : dividendo
+    // MATHPTR2, MATHPTR3 : divisore
+    // MATHPTR4, MATHPTR5 : copia del divisore
+    // MATHPTR6..MATHPTR8 : temporaneo
+
+    outline0("LDD #0" );
+    outline1("STD %s", _other );
+    outline0("STA MATHPTR8" );
+
+    outline1("LDA %s", _source );
+    outline0("ANDA #$80" );
+    outline0("STA MATHPTR8" );
+    outline1("BEQ %spos1", label );
+    outline0("ANDCC #$FE" );
+    outline1("LDA %s+1", _source );
+    outline0("EORA #$FF" );
+    outline0("STA MATHPTR1" );
+    outline1("LDA %s", _destination );
+    outline0("EORA #$FF" );
+    outline0("STA MATHPTR0" );
+    outline0("LDX MATHPTR0" );
+    outline0("LEAX 1,X" );
+    outline0("STX MATHPTR0" );
+    outline1("JMP %sdone1", label );
+
+    outhead1("%spos1", label );
+    outline1("LDX %s", _source );
+    outline0("STX MATHPTR0" );
+
+    outhead1("%sdone1", label );
+
+    outline1("LDA %s", _destination );
+    outline0("ANDA #$80" );
+    outline1("BEQ %spos2", label );
+    outline0("ANDCC #$FE" );
+    outline1("LDA %s+1", _destination );
+    outline0("EORA #$FF" );
+    outline0("STA MATHPTR3" );
+    outline1("LDA %s", _destination );
+    outline0("EORA #$FF" );
+    outline0("STA MATHPTR2" );
+    outline0("LDX MATHPTR2" );
+    outline0("LEAX 1,X" );
+    outline0("STX MATHPTR2" );
+    outline1("JMP %sdone2", label );
+
+    outhead1("%spos2", label );
+
+    outline1("LDX %s", _destination );
+    outline0("STX MATHPTR2" );
+
+    outhead1("%sdone2", label );
+    outline1("LDA %s", _destination );
+    outline0("ANDA #$80" );
+    outline0("EORA MATHPTR8" );
+    outline0("STA MATHPTR8" );
+
+    // outline0("LDB #1" );
+    // outline0("LDY #16" );
+    // outhead1("%sloop0", label );
+
+    // outline0("LDA MATHPTR3" );
+    // outline0("ORA MATHPTR1" );
+    // outline0("ANDA #$1" );
+    // outline1("BNE %sready", label );
+    // outline0("LEAY -1, Y" );
+    // outline0("CMPY #0" );
+    // outline1("BEQ %sready", label );
+    // outline0("ANDCC #$FE" );
+    // outline0("ASLB" );
+    // outline0("RORA" );
+    // outline0("ANDCC #$FE" );
+    // outline0("ASR MATHPTR2" );
+    // outline0("ROR MATHPTR3" );
+    // outline0("ANDCC #$FE" );
+    // outline0("ASR MATHPTR0" );
+    // outline0("ROR MATHPTR1" );
+    // outline1("JMP %sloop0", label );
+
+    outhead1("%sready", label );
+    
+    // X = DIVISORE
+    outline0("LDX MATHPTR2" );
+
+    // Y = DIVIDENDO
+    outline0("LDY MATHPTR0" );
+
+    // WHILE Y > X
+
+    outhead1("%sloop", label );
+
+    outline0("STX TMPPTR" );
+    outline0("CMPY TMPPTR" );
+    outline1("BLO %sdone", label );
+
+        // B = 1
+        outline0("LDB #$1" );
+        outline0("LDA #$0" );
+
+        // WHILE Y > X
+        outhead1("%sloop2", label );
+        outline0("STX MATHPTR6");
+        outline0("CMPY MATHPTR6" );
+        outline1("BLO %sdonex2", label );
+
+            outline0("STX MATHPTR4");
+
+            // X = X * 2
+            outline0("STA MATHPTR6");
+            outline0("STB MATHPTR7");
+            outline0("TFR X, D");
+            outline0("LEAX D, X");
+            outline0("LDB MATHPTR6");
+            outline0("LDA MATHPTR7");
+
+            //  B = B * 2
+            outline0("ANDCC #$FE");
+            outline0("ASLB");
+            outline0("ROLA");
+
+        // WEND 
+        outline1("JMP %sloop2", label );
+
+        outhead1("%sdonex2", label );
+
+        // X = X / 2
+        outline0("LDX MATHPTR4");
+
+        // B = B / 2
+        outline0("ASRA");
+        outline0("RORB");
+
+        // R = R + B
+        outline1("ADDD %s", _other );
+        outline1("STD %s", _other );
+
+        // Y = Y - X
+        outline0("TFR X, D");
+        outline0("EORA #$ff");
+        outline0("EORB #$ff");
+        outline0("ADDD #1");
+        outline0("LEAY D, Y");
+
+        // X = DIVISORE
+        outline0("LDX MATHPTR2");
+
+    // WEND
+    outline1("JMP %sloop", label );
+
+    outhead1("%sdone", label );
+
+    outline1("STY %s", _other_remainder );
+
+    outline0("LDA MATHPTR7" );
+    outline0("ANDA #$80" );
+    outline1("BEQ %spos3", label );
+    outline0("ANDCC #$FE" );
+    outline1("LDA %s+1", _other );
+    outline0("EORA #$FF" );
+    outline0("STA MATHPTR3" );
+    outline1("LDA %s", _other );
+    outline0("EORA #$FF" );
+    outline0("STA MATHPTR2" );
+    outline0("LDX MATHPTR2" );
+    outline0("LEAX 1,X" );
+    outline0("STX MATHPTR2" );
+    outline1("JMP %sdone3", label );
+
+    outhead1("%spos3", label );
+    outhead1("%sdone3", label );
+
 }
 
 /**
