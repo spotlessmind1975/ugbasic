@@ -1175,6 +1175,11 @@ int test_cpu_math_div_16bit_to_16bit_tester( TestEnvironment * _te ) {
     Variable * remainderu = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
     Variable * remainders = variable_retrieve( &_te->environment, _te->trackedVariables[3]->name );
 
+    printf("resultu = %4.4x (%d) [expected 0x2]\n", resultu->value, resultu->value );
+    printf("remainderu = %4.4x (%d) [expected 0x101]\n", remainderu->value, remainderu->value );
+    printf("results = %4.4x (%d) [expected 0x0]\n", results->value, results->value );
+    printf("remainders = %4.4x (%d) [expected 0x0008]\n", remainders->value, remainders->value );
+    
     return  resultu->value == 0x2 &&
             remainderu->value == 0x101 && 
             results->value == 0x0 && 
@@ -1213,6 +1218,12 @@ int test_cpu_math_div_16bit_to_16bit_testerB( TestEnvironment * _te ) {
     Variable * results = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
     Variable * remainderu = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
     Variable * remainders = variable_retrieve( &_te->environment, _te->trackedVariables[3]->name );
+
+
+    printf("resultu = %4.4x (%d) [expected 160]\n", resultu->value, resultu->value );
+    printf("remainderu = %4.4x (%d) [expected 0]\n", remainderu->value, remainderu->value );
+    printf("results = %4.4x (%d) [expected 160]\n", results->value, results->value );
+    printf("remainders = %4.4x (%d) [expected 0]\n", remainders->value, remainders->value );
 
     return  resultu->value == 160 &&
             remainderu->value == 0 && 
@@ -2054,7 +2065,7 @@ void test_cpu( ) {
     // create_test( "cpu_math_double_32bit", &test_cpu_math_double_32bit_payload, &test_cpu_math_double_32bit_tester );
     // create_test( "cpu_math_double_8bit", &test_cpu_math_double_8bit_payload, &test_cpu_math_double_8bit_tester );
     // create_test( "cpu_math_mul_8bit_to_16bit", &test_cpu_math_mul_8bit_to_16bit_payload, &test_cpu_math_mul_8bit_to_16bit_tester );
-    create_test( "cpu_math_mul_16bit_to_32bit", &test_cpu_math_mul_16bit_to_32bit_payload, &test_cpu_math_mul_16bit_to_32bit_tester );
+    // create_test( "cpu_math_mul_16bit_to_32bit", &test_cpu_math_mul_16bit_to_32bit_payload, &test_cpu_math_mul_16bit_to_32bit_tester );
     // create_test( "cpu_math_div_8bit_to_8bit", &test_cpu_math_div_8bit_to_8bit_payload, &test_cpu_math_div_8bit_to_8bit_tester );
     // create_test( "cpu_math_div_16bit_to_16bit A", &test_cpu_math_div_16bit_to_16bit_payload, &test_cpu_math_div_16bit_to_16bit_tester );
     // create_test( "cpu_math_div_16bit_to_16bit B", &test_cpu_math_div_16bit_to_16bit_payloadB, &test_cpu_math_div_16bit_to_16bit_testerB );
