@@ -1098,9 +1098,38 @@ void cpu6809_math_div_16bit_to_16bit( Environment * _environment, char *_source,
  */
 void cpu6809_math_sub_16bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
 
+    outline1("LDD %s", _destination );
+    outline0("ANDCC #$FE" );
+    outline0("EORA #$FF" );
+    outline0("EORB #$FF" );
+    outline0("ADDD #1" );
+
+    outline1("LDY %s", _source );
+    outline0("LEAY D, Y" );
+    if ( _other ) {
+        outline1("STY %s", _other );
+    } else {
+        outline1("STY %s", _destination );
+    }
+
 }
 
 void cpu6809_math_sub_16bit_with_8bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
+
+    outline1("LDB %s", _destination );
+    outline0("LDA #0" );
+    outline0("ANDCC #$FE" );
+    outline0("EORA #$FF" );
+    outline0("EORB #$FF" );
+    outline0("ADDD #1" );
+
+    outline1("LDY %s", _source );
+    outline0("LEAY D, Y" );
+    if ( _other ) {
+        outline1("STY %s", _other );
+    } else {
+        outline1("STY %s", _destination );
+    }
 
 }
 
@@ -1113,6 +1142,15 @@ void cpu6809_math_sub_16bit_with_8bit( Environment * _environment, char *_source
  */
 void cpu6809_math_complement_const_16bit( Environment * _environment, char *_source, int _value ) {
 
+    outline1("LDX #$%2.2x", _value);
+    outline1("LDD %s", _source );
+    outline0("ANDCC #$FE" );
+    outline0("EORA #$FF" );
+    outline0("EORB #$FF" );
+    outline0("ADDD #1" );
+    outline0("LEAX D, X");
+    outline1("STX %s", _source);
+
 }
 
 /**
@@ -1123,6 +1161,70 @@ void cpu6809_math_complement_const_16bit( Environment * _environment, char *_sou
  * @param _steps Times to halves
  */
 void cpu6809_math_div2_const_16bit( Environment * _environment, char *_source, int _steps, int _signed ) {
+
+    MAKE_LABEL
+
+    if ( _signed ) {
+
+        outline1("LDA %s", _source);
+        outline0("ANDA #$80");
+        outline1("BEQ %spos", label );
+        
+        outline1("LDD %s", _source );
+        outline0("ANDCC #$FE" );
+        outline0("EORA #$FF" );
+        outline0("EORB #$FF" );
+        outline0("ADDD #1" );
+
+        outline1("JMP %sdone", label );
+
+        outhead1("%spos", label );
+        outline1("LDD %s", _source );
+
+        outhead1("%sdone", label );
+
+        outline1("LDX #$%2.2x", _steps );
+        outhead1("%sloop", label );
+        outline0("ANDCC #$FE" );
+        outline0("ASRA" );
+        outline0("RORB" );
+        outline0("LEAX -1, X");
+        outline0("CMPX #0");
+        outline1("BNE %sloop", label );
+
+        outline0("STD MATHPTR0");
+
+        outline1("LDA %s", _source);
+        outline0("ANDA #$80");
+        outline1("BEQ %spos2", label );
+
+        outline0("LDD MATHPTR0");
+        outline0("ANDCC #$FE" );
+        outline0("EORA #$FF" );
+        outline0("EORB #$FF" );
+        outline0("ADDD #1" );
+
+        outline1("JMP %sdone2", label );
+
+        outhead1("%spos2", label );
+        outline0("LDD MATHPTR0");
+        outhead1("%sdone2", label );
+        outline1("STD %s", _source );
+
+    } else {
+
+        outline1("LDD %s", _source );
+        outline1("LDX #$%2.2x", _steps );
+        outhead1("%sloop", label );
+        outline0("ANDCC #$FE" );
+        outline0("ASRA" );
+        outline0("RORB" );
+        outline0("LEAX -1, X");
+        outline0("CMPX #0");
+        outline1("BNE %sloop", label );
+        outline1("STD %s", _source );
+
+    }
 
 }
 
@@ -1135,6 +1237,70 @@ void cpu6809_math_div2_const_16bit( Environment * _environment, char *_source, i
  */
 void cpu6809_math_mul2_const_16bit( Environment * _environment, char *_source, int _steps, int _signed ) {
 
+    MAKE_LABEL
+
+    if ( _signed ) {
+
+        outline1("LDA %s", _source);
+        outline0("ANDA #$80");
+        outline1("BEQ %spos", label );
+        
+        outline1("LDD %s", _source );
+        outline0("ANDCC #$FE" );
+        outline0("EORA #$FF" );
+        outline0("EORB #$FF" );
+        outline0("ADDD #1" );
+
+        outline1("JMP %sdone", label );
+
+        outhead1("%spos", label );
+        outline1("LDD %s", _source );
+
+        outhead1("%sdone", label );
+
+        outline1("LDX #$%2.2x", _steps );
+        outhead1("%sloop", label );
+        outline0("ANDCC #$FE" );
+        outline0("ASLB" );
+        outline0("ROLA" );
+        outline0("LEAX -1, X");
+        outline0("CMPX #0");
+        outline1("BNE %sloop", label );
+
+        outline0("STD MATHPTR0");
+
+        outline1("LDA %s", _source);
+        outline0("ANDA #$80");
+        outline1("BEQ %spos2", label );
+
+        outline0("LDD MATHPTR0");
+        outline0("ANDCC #$FE" );
+        outline0("EORA #$FF" );
+        outline0("EORB #$FF" );
+        outline0("ADDD #1" );
+
+        outline1("JMP %sdone2", label );
+
+        outhead1("%spos2", label );
+        outline0("LDD MATHPTR0");
+        outhead1("%sdone2", label );
+        outline1("STD %s", _source );
+
+    } else {
+
+        outline1("LDD %s", _source );
+        outline1("LDX #$%2.2x", _steps );
+        outhead1("%sloop", label );
+        outline0("ANDCC #$FE" );
+        outline0("ASLB" );
+        outline0("ROLA" );
+        outline0("LEAX -1, X");
+        outline0("CMPX #0");
+        outline1("BNE %sloop", label );
+        outline1("STD %s", _source );
+
+    }
+
 }
 
 /**
@@ -1145,6 +1311,11 @@ void cpu6809_math_mul2_const_16bit( Environment * _environment, char *_source, i
  * @param _mask Mask to use
  */
 void cpu6809_math_and_const_16bit( Environment * _environment, char *_source, int _mask ) {
+
+    outline1("LDD %s", _source );
+    outline1("ANDA #$%2.2x", ( _mask >> 8 ) & 0xff );
+    outline1("ANDB #$%2.2x", ( _mask & 0xff ) );
+    outline1("STD %s", _source );
 
 }
 
@@ -1161,6 +1332,11 @@ void cpu6809_math_and_const_16bit( Environment * _environment, char *_source, in
  */
 void cpu6809_move_32bit( Environment * _environment, char *_source, char *_destination ) {
 
+    outline1("LDD %s", _source );
+    outline1("STD %s", _destination );
+    outline1("LDD %s+2", _source );
+    outline1("STD %s+2", _destination );
+
 }
 
 /**
@@ -1171,6 +1347,11 @@ void cpu6809_move_32bit( Environment * _environment, char *_source, char *_desti
  * @param _value Value to store
  */
 void cpu6809_store_32bit( Environment * _environment, char *_destination, int _value ) {
+
+    outline1("LDD #$%4.4x", ( _value >> 16 ) & 0xffff );
+    outline1("STD %s", _destination );
+    outline1("LDD #$%4.4x", ( _value & 0xffff ) );
+    outline1("STD %s+2", _destination );
 
 }
 
