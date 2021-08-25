@@ -2207,6 +2207,150 @@ int test_cpu_store_32bit_tester( TestEnvironment * _te ) {
 
 }
 
+//===========================================================================
+
+void test_cpu_compare_32bit_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * dword1 = variable_define( e, "dword1", VT_DWORD, 0x55662142 );
+    Variable * dword2 = variable_define( e, "dword2", VT_DWORD, 0x22331042 );
+    Variable * result12p = variable_define( e, "result12p", VT_BYTE, 0x42 );
+    Variable * result12n = variable_define( e, "result12n", VT_BYTE, 0x42 );
+    Variable * result11p = variable_define( e, "result11p", VT_BYTE, 0x42 );
+    Variable * result11n = variable_define( e, "result11n", VT_BYTE, 0x42 );
+
+    cpu_compare_8bit( e, dword1->realName, dword2->realName, result12p->realName, 1 );
+    cpu_compare_8bit( e, dword1->realName, dword2->realName, result12n->realName, 0 );
+    cpu_compare_8bit( e, dword1->realName, dword1->realName, result11p->realName, 1 );
+    cpu_compare_8bit( e, dword1->realName, dword1->realName, result11n->realName, 0 );
+
+    _te->trackedVariables[0] = dword1;
+    _te->trackedVariables[1] = dword2;
+    _te->trackedVariables[2] = result12p;
+    _te->trackedVariables[3] = result12n;
+    _te->trackedVariables[4] = result11p;
+    _te->trackedVariables[5] = result11n;
+    
+}
+
+int test_cpu_compare_32bit_tester( TestEnvironment * _te ) {
+
+    Variable * dword1 = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * dword2 = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+    Variable * result12p = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
+    Variable * result12n = variable_retrieve( &_te->environment, _te->trackedVariables[3]->name );
+    Variable * result11p = variable_retrieve( &_te->environment, _te->trackedVariables[4]->name );
+    Variable * result11n = variable_retrieve( &_te->environment, _te->trackedVariables[5]->name );
+
+    // printf( "byte1 = %2.2x\n", byte1->value );
+    // printf( "byte2 = %2.2x\n", byte2->value );
+    // printf( "result12p = %2.2x\n", result12p->value );
+    // printf( "result12n = %2.2x\n", result12n->value );
+    // printf( "result11p = %2.2x\n", result11p->value );
+    // printf( "result11n = %2.2x\n", result11n->value );
+
+    return dword1->value == 0x55662142 && 
+            dword2->value == 0x22331042 && 
+            result12p->value == 0x00 && 
+            result12n->value == 0xff && 
+            result11p->value == 0xff &&
+            result11n->value == 0x00;
+
+}
+
+//===========================================================================
+
+void test_cpu_math_add_32bit_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * dword1 = variable_define( e, "dword1", VT_DWORD, 0x1122A142 );
+    Variable * dword2 = variable_define( e, "dword2", VT_DWORD, 0x1122B042 );
+    Variable * result = variable_define( e, "result12p", VT_DWORD, 0x42 );
+
+    cpu_math_add_32bit( e, dword1->realName, dword2->realName, result->realName );
+
+    _te->trackedVariables[0] = dword1;
+    _te->trackedVariables[1] = dword2;
+    _te->trackedVariables[2] = result;
+    
+}
+
+int test_cpu_math_add_32bit_tester( TestEnvironment * _te ) {
+
+    Variable * dword1 = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * dword2 = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+    Variable * result = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
+
+    printf( "dword1 = %8.8x (%d) [expected 0x1122A142]\n", dword1->value, dword1->value );
+    printf( "dword2 = %8.8x (%d) [expected 0x1122B042]\n", dword2->value, dword2->value );
+    printf( "result = %8.8x (%d) [expected 0x22455184]\n", result->value, result->value );
+
+    return dword1->value == 0x1122A142 && 
+            dword2->value == 0x1122B042 && 
+            result->value == dword1->value + dword2->value;
+
+}
+
+//===========================================================================
+
+void test_cpu_math_sub_32bit_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * dword1 = variable_define( e, "dword1", VT_DWORD, 0x1122B142 );
+    Variable * dword2 = variable_define( e, "dword2", VT_DWORD, 0x1122A042 );
+    Variable * result = variable_define( e, "result12p", VT_DWORD, 0x42 );
+
+    cpu_math_sub_32bit( e, dword1->realName, dword2->realName, result->realName );
+
+    _te->trackedVariables[0] = dword1;
+    _te->trackedVariables[1] = dword2;
+    _te->trackedVariables[2] = result;
+    
+}
+
+int test_cpu_math_sub_32bit_tester( TestEnvironment * _te ) {
+
+    Variable * dword1 = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * dword2 = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+    Variable * result = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
+
+    printf( "dword1 = %8.8x (%d) [expected 0x1122B142]\n", dword1->value, dword1->value );
+    printf( "dword2 = %8.8x (%d) [expected 0x1122A042]\n", dword2->value, dword2->value );
+    printf( "result = %8.8x (%d) [expected %8.8x]\n", result->value, result->value, ( dword1->value - dword2->value ) );
+
+    return dword1->value == 0x1122B142 && 
+            dword2->value == 0x1122A042 && 
+            result->value == dword1->value - dword2->value;
+
+}
+
+//===========================================================================
+
+void test_cpu_math_complement_const_32bit_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * dword1 = variable_define( e, "dword1", VT_DWORD, 0x02000000 );
+
+    cpu_math_complement_const_32bit( e, dword1->realName, 0x03000000 );
+
+    _te->trackedVariables[0] = dword1;
+    
+}
+
+int test_cpu_math_complement_const_32bit_tester( TestEnvironment * _te ) {
+
+    Variable * dword1 = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+
+    printf( "dword1 = %8.8x (%d) [expected 0x01000000]\n", dword1->value, dword1->value );
+
+    return dword1->value == 0x01000000;
+
+}
+
 void test_cpu( ) {
 
     // create_test( "cpu_bits_to_string", &test_cpu_bits_to_string_payload, &test_cpu_bits_to_string_tester );    
@@ -2261,7 +2405,11 @@ void test_cpu( ) {
     // create_test( "cpu_math_sub_16bit_with_8bit", &test_cpu_math_sub_16bit_with_8bit_payload, &test_cpu_math_sub_16bit_with_8bit_tester );
     // create_test( "cpu_math_complement_const_16bit", &test_cpu_math_complement_const_16bit_payload, &test_cpu_math_complement_const_16bit_tester );
     // create_test( "cpu_math_and_const_16bit", &test_cpu_math_and_const_16bit_payload, &test_cpu_math_and_const_16bit_tester );
-    create_test( "cpu_move_32bit", &test_cpu_move_32bit_payload, &test_cpu_move_32bit_tester );
-    create_test( "cpu_store_32bit", &test_cpu_store_32bit_payload, &test_cpu_store_32bit_tester );
+    // create_test( "cpu_move_32bit", &test_cpu_move_32bit_payload, &test_cpu_move_32bit_tester );
+    // create_test( "cpu_store_32bit", &test_cpu_store_32bit_payload, &test_cpu_store_32bit_tester );
+    // create_test( "cpu_compare_32bit", &test_cpu_compare_32bit_payload, &test_cpu_compare_32bit_tester );
+    // create_test( "cpu_math_add_32bit", &test_cpu_math_add_32bit_payload, &test_cpu_math_add_32bit_tester );
+    // create_test( "cpu_math_sub_32bit", &test_cpu_math_sub_32bit_payload, &test_cpu_math_sub_32bit_tester );
+    create_test( "cpu_math_complement_const_32bit", &test_cpu_math_complement_const_32bit_payload, &test_cpu_math_complement_const_32bit_tester );
 
 }
