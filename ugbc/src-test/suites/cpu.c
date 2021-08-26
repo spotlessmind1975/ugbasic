@@ -2965,6 +2965,159 @@ int test_cpu_less_than_memory_size_tester( TestEnvironment * _te ) {
 
 }
 
+//===========================================================================
+
+void test_cpu_greater_than_memory_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    int i=0;
+    char buffer1[160]; 
+    char buffer2[160];
+    char buffer3[160];
+    for(i=0;i<160; ++i ) {
+        buffer1[i] = i;
+        buffer2[i] = i;
+        buffer3[i] = i+1;
+    }
+
+    Variable * source = variable_define( e, "source", VT_BUFFER, 0x0 );
+    Variable * same = variable_define( e, "same", VT_BUFFER, 0x0 );
+    Variable * different = variable_define( e, "different", VT_BUFFER, 0x0 );
+    Variable * asource = variable_define( e, "asource", VT_ADDRESS, 0x4000 );
+    Variable * asame = variable_define( e, "asame", VT_ADDRESS, 0x4100 );
+    Variable * adifferent = variable_define( e, "adifferent", VT_ADDRESS, 0x4200 );
+    Variable * size = variable_define( e, "size", VT_BYTE, 160 );
+
+    Variable * resultsame0 = variable_define( e, "resultsame0", VT_BYTE, 0x42 );
+    Variable * resultsame1 = variable_define( e, "resultsame1", VT_BYTE, 0x42 );
+    Variable * resultdifferent0 = variable_define( e, "resultdifferent0", VT_BYTE, 0x42 );
+    Variable * resultdifferent1 = variable_define( e, "resultdifferent1", VT_BYTE, 0x42 );
+
+    variable_store_buffer( e, source->name, buffer1, 160, 0x4000 );
+    variable_store_buffer( e, same->name, buffer2, 160, 0x4100 );
+    variable_store_buffer( e, different->name, buffer3, 160, 0x4200 );
+
+    cpu_greater_than_memory( e, asource->realName, asame->realName, size->realName, resultsame1->realName, 1 );
+    cpu_greater_than_memory( e, asource->realName, asame->realName, size->realName, resultsame0->realName, 0 );
+    cpu_greater_than_memory( e, asource->realName, adifferent->realName, size->realName, resultdifferent1->realName, 1 );
+    cpu_greater_than_memory( e, asource->realName, adifferent->realName, size->realName, resultdifferent0->realName, 0 );
+
+    _te->debug.inspections[_te->debug.inspections_count].name="buffer1";
+    _te->debug.inspections[_te->debug.inspections_count].address=0x4000;
+    _te->debug.inspections[_te->debug.inspections_count].size=160;
+    ++_te->debug.inspections_count;
+    _te->debug.inspections[_te->debug.inspections_count].name="buffer2";
+    _te->debug.inspections[_te->debug.inspections_count].address=0x4100;
+    _te->debug.inspections[_te->debug.inspections_count].size=160;
+    ++_te->debug.inspections_count;
+    _te->debug.inspections[_te->debug.inspections_count].name="buffer3";
+    _te->debug.inspections[_te->debug.inspections_count].address=0x4200;
+    _te->debug.inspections[_te->debug.inspections_count].size=160;
+    ++_te->debug.inspections_count;
+
+    _te->trackedVariables[0] = resultsame0;
+    _te->trackedVariables[1] = resultsame1;
+    _te->trackedVariables[2] = resultdifferent0;
+    _te->trackedVariables[3] = resultdifferent1;
+
+}
+
+int test_cpu_greater_than_memory_tester( TestEnvironment * _te ) {
+
+    Variable * resultsame0 = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * resultsame1 = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+    Variable * resultdifferent0 = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
+    Variable * resultdifferent1 = variable_retrieve( &_te->environment, _te->trackedVariables[3]->name );
+
+    printf("resultsame0 = %2.2x [expected 0x00]\n", resultsame0->value );
+    printf("resultsame1 = %2.2x [expected 0xff]\n", resultsame1->value );
+    printf("resultdifferent0 = %2.2x [expected 0x00]\n", resultdifferent0->value );
+    printf("resultdifferent1 = %2.2x [expected 0x00]\n", resultdifferent1->value );
+    
+    return resultsame0->value == 0x00 && 
+            resultsame1->value == 0xff && 
+            resultdifferent0->value == 0x00 && 
+            resultdifferent1->value == 0x00;
+
+}
+
+//===========================================================================
+
+void test_cpu_greater_than_memory_size_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    int i=0;
+    char buffer1[160]; 
+    char buffer2[160];
+    char buffer3[160];
+    for(i=0;i<160; ++i ) {
+        buffer1[i] = i;
+        buffer2[i] = i;
+        buffer3[i] = i+1;
+    }
+
+    Variable * source = variable_define( e, "source", VT_BUFFER, 0x0 );
+    Variable * same = variable_define( e, "same", VT_BUFFER, 0x0 );
+    Variable * different = variable_define( e, "different", VT_BUFFER, 0x0 );
+    Variable * asource = variable_define( e, "asource", VT_ADDRESS, 0x4000 );
+    Variable * asame = variable_define( e, "asame", VT_ADDRESS, 0x4100 );
+    Variable * adifferent = variable_define( e, "adifferent", VT_ADDRESS, 0x4200 );
+
+    Variable * resultsame0 = variable_define( e, "resultsame0", VT_BYTE, 0x42 );
+    Variable * resultsame1 = variable_define( e, "resultsame1", VT_BYTE, 0x42 );
+    Variable * resultdifferent0 = variable_define( e, "resultdifferent0", VT_BYTE, 0x42 );
+    Variable * resultdifferent1 = variable_define( e, "resultdifferent1", VT_BYTE, 0x42 );
+
+    variable_store_buffer( e, source->name, buffer1, 160, 0x4000 );
+    variable_store_buffer( e, same->name, buffer2, 160, 0x4100 );
+    variable_store_buffer( e, different->name, buffer3, 160, 0x4200 );
+
+    cpu_greater_than_memory_size( e, asource->realName, asame->realName, 160, resultsame1->realName, 1 );
+    cpu_greater_than_memory_size( e, asource->realName, asame->realName, 160, resultsame0->realName, 0 );
+    cpu_greater_than_memory_size( e, asource->realName, adifferent->realName, 160, resultdifferent1->realName, 1 );
+    cpu_greater_than_memory_size( e, asource->realName, adifferent->realName, 160, resultdifferent0->realName, 0 );
+
+    _te->debug.inspections[_te->debug.inspections_count].name="buffer1";
+    _te->debug.inspections[_te->debug.inspections_count].address=0x4000;
+    _te->debug.inspections[_te->debug.inspections_count].size=160;
+    ++_te->debug.inspections_count;
+    _te->debug.inspections[_te->debug.inspections_count].name="buffer2";
+    _te->debug.inspections[_te->debug.inspections_count].address=0x4100;
+    _te->debug.inspections[_te->debug.inspections_count].size=160;
+    ++_te->debug.inspections_count;
+    _te->debug.inspections[_te->debug.inspections_count].name="buffer3";
+    _te->debug.inspections[_te->debug.inspections_count].address=0x4200;
+    _te->debug.inspections[_te->debug.inspections_count].size=160;
+    ++_te->debug.inspections_count;
+
+    _te->trackedVariables[0] = resultsame0;
+    _te->trackedVariables[1] = resultsame1;
+    _te->trackedVariables[2] = resultdifferent0;
+    _te->trackedVariables[3] = resultdifferent1;
+
+}
+
+int test_cpu_greater_than_memory_size_tester( TestEnvironment * _te ) {
+
+    Variable * resultsame0 = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * resultsame1 = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+    Variable * resultdifferent0 = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
+    Variable * resultdifferent1 = variable_retrieve( &_te->environment, _te->trackedVariables[3]->name );
+
+    printf("resultsame0 = %2.2x [expected 0x00]\n", resultsame0->value );
+    printf("resultsame1 = %2.2x [expected 0xff]\n", resultsame1->value );
+    printf("resultdifferent0 = %2.2x [expected 0x00]\n", resultdifferent0->value );
+    printf("resultdifferent1 = %2.2x [expected 0x00]\n", resultdifferent1->value );
+    
+    return resultsame0->value == 0x00 && 
+            resultsame1->value == 0xff && 
+            resultdifferent0->value == 0x00 && 
+            resultdifferent1->value == 0x00;
+
+}
+
 void test_cpu( ) {
 
     // create_test( "cpu_bits_to_string", &test_cpu_bits_to_string_payload, &test_cpu_bits_to_string_tester );    
@@ -3034,7 +3187,9 @@ void test_cpu( ) {
     // create_test( "cpu_mem_move_direct_indirect_size", &test_cpu_mem_move_direct_indirect_size_payload, &test_cpu_mem_move_direct_indirect_size_tester );
     // create_test( "cpu_compare_memory", &test_cpu_compare_memory_payload, &test_cpu_compare_memory_tester );
     // create_test( "cpu_compare_memory_size", &test_cpu_compare_memory_size_payload, &test_cpu_compare_memory_size_tester );
-    // create_test( "cpu_less_than_memory", &test_cpu_less_than_memory_payload, &test_cpu_less_than_memory_tester );
+    create_test( "cpu_less_than_memory", &test_cpu_less_than_memory_payload, &test_cpu_less_than_memory_tester );
     create_test( "cpu_less_than_memory_size", &test_cpu_less_than_memory_size_payload, &test_cpu_less_than_memory_size_tester );
+    create_test( "cpu_greater_than_memory", &test_cpu_greater_than_memory_payload, &test_cpu_greater_than_memory_tester );
+    create_test( "cpu_greater_than_memory_size", &test_cpu_greater_than_memory_size_payload, &test_cpu_greater_than_memory_size_tester );
 
 }
