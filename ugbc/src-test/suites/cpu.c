@@ -2118,7 +2118,7 @@ void test_cpu_math_complement_const_16bit_payload( TestEnvironment * _te ) {
 
     Variable * word1 = variable_define( e, "word1", VT_WORD, 0x1000 );
 
-    cpu_math_complement_const_16bit( e, word1->realName, 0X2000 );
+    cpu_math_complement_const_16bit( e, word1->realName, 0x4000 );
 
     _te->trackedVariables[0] = word1;
     
@@ -2413,7 +2413,7 @@ void test_cpu_mem_move_payload( TestEnvironment * _te ) {
     int i=0;
     char buffer1[160]; 
     for(i=0;i<160; ++i ) {
-        buffer1[1] = i;
+        buffer1[i] = i;
     }
     char buffer2[160]; memset( buffer2, 0x24, 160 );
 
@@ -2421,20 +2421,20 @@ void test_cpu_mem_move_payload( TestEnvironment * _te ) {
     Variable * destination = variable_define( e, "destination", VT_BUFFER, 0x0 );
     Variable * size = variable_define( e, "size", VT_BYTE, 160 );
 
-    variable_store_buffer( e, source->name, buffer1, 160, 0x2000 );
-    variable_store_buffer( e, destination->name, buffer2, 160, 0x2100 );
+    variable_store_buffer( e, source->name, buffer1, 160, 0x4000 );
+    variable_store_buffer( e, destination->name, buffer2, 160, 0x4100 );
 
-    Variable * asource = variable_define( e, "asource", VT_ADDRESS, 0X2000 );
-    Variable * adestination = variable_define( e, "adestination", VT_ADDRESS, 0X2100 );
+    Variable * asource = variable_define( e, "asource", VT_ADDRESS, 0x4000 );
+    Variable * adestination = variable_define( e, "adestination", VT_ADDRESS, 0x4100 );
 
     cpu_mem_move( e, asource->realName, adestination->realName, size->realName );
 
     _te->debug.inspections[_te->debug.inspections_count].name="buffer1";
-    _te->debug.inspections[_te->debug.inspections_count].address=0x2000;
+    _te->debug.inspections[_te->debug.inspections_count].address=0x4000;
     _te->debug.inspections[_te->debug.inspections_count].size=160;
     ++_te->debug.inspections_count;
     _te->debug.inspections[_te->debug.inspections_count].name="buffer2";
-    _te->debug.inspections[_te->debug.inspections_count].address=0x2100;
+    _te->debug.inspections[_te->debug.inspections_count].address=0x4100;
     _te->debug.inspections[_te->debug.inspections_count].size=160;
     ++_te->debug.inspections_count;
 
@@ -2467,27 +2467,27 @@ void test_cpu_mem_move_size_payload( TestEnvironment * _te ) {
     int i=0;
     char buffer1[160]; 
     for(i=0;i<160; ++i ) {
-        buffer1[1] = i;
+        buffer1[i] = i;
     }
     char buffer2[160]; memset( buffer2, 0x24, 160 );
 
     Variable * source = variable_define( e, "source", VT_BUFFER, 0x0 );
     Variable * destination = variable_define( e, "destination", VT_BUFFER, 0x0 );
 
-    variable_store_buffer( e, source->name, buffer1, 160, 0x2000 );
-    variable_store_buffer( e, destination->name, buffer2, 160, 0x2100 );
+    variable_store_buffer( e, source->name, buffer1, 160, 0x4000 );
+    variable_store_buffer( e, destination->name, buffer2, 160, 0x4100 );
 
-    Variable * asource = variable_define( e, "asource", VT_ADDRESS, 0X2000 );
-    Variable * adestination = variable_define( e, "adestination", VT_ADDRESS, 0X2100 );
+    Variable * asource = variable_define( e, "asource", VT_ADDRESS, 0x4000 );
+    Variable * adestination = variable_define( e, "adestination", VT_ADDRESS, 0x4100 );
 
     cpu_mem_move_size( e, asource->realName, adestination->realName, 160 );
 
     _te->debug.inspections[_te->debug.inspections_count].name="buffer1";
-    _te->debug.inspections[_te->debug.inspections_count].address=0x2000;
+    _te->debug.inspections[_te->debug.inspections_count].address=0x4000;
     _te->debug.inspections[_te->debug.inspections_count].size=160;
     ++_te->debug.inspections_count;
     _te->debug.inspections[_te->debug.inspections_count].name="buffer2";
-    _te->debug.inspections[_te->debug.inspections_count].address=0x2100;
+    _te->debug.inspections[_te->debug.inspections_count].address=0x4100;
     _te->debug.inspections[_te->debug.inspections_count].size=160;
     ++_te->debug.inspections_count;
     
@@ -2516,7 +2516,7 @@ void test_cpu_mem_move_direct_payload( TestEnvironment * _te ) {
     int i=0;
     char buffer1[160]; 
     for(i=0;i<160; ++i ) {
-        buffer1[1] = i;
+        buffer1[i] = i;
     }
     char buffer2[160]; memset( buffer2, 0x24, 160 );
 
@@ -2524,22 +2524,22 @@ void test_cpu_mem_move_direct_payload( TestEnvironment * _te ) {
     Variable * destination = variable_define( e, "destination", VT_BUFFER, 0x0 );
     Variable * size = variable_define( e, "size", VT_BYTE, 160 );
 
-    variable_store_buffer( e, source->name, buffer1, 160, 0x2000 );
-    variable_store_buffer( e, destination->name, buffer2, 160, 0x2100 );
+    variable_store_buffer( e, source->name, buffer1, 160, 0x4000 );
+    variable_store_buffer( e, destination->name, buffer2, 160, 0x4100 );
 
     cpu_mem_move_direct( e, source->realName, destination->realName, size->realName );
 
     _te->debug.inspections[_te->debug.inspections_count].name="buffer1";
-    _te->debug.inspections[_te->debug.inspections_count].address=0x2000;
+    _te->debug.inspections[_te->debug.inspections_count].address=0x4000;
     _te->debug.inspections[_te->debug.inspections_count].size=160;
     ++_te->debug.inspections_count;
     _te->debug.inspections[_te->debug.inspections_count].name="buffer2";
-    _te->debug.inspections[_te->debug.inspections_count].address=0x2100;
+    _te->debug.inspections[_te->debug.inspections_count].address=0x4100;
     _te->debug.inspections[_te->debug.inspections_count].size=160;
     ++_te->debug.inspections_count;
 
     _te->trackedVariables[0] = size;
-    
+
 }
 
 int test_cpu_mem_move_direct_tester( TestEnvironment * _te ) {
@@ -2567,24 +2567,24 @@ void test_cpu_mem_move_direct_size_payload( TestEnvironment * _te ) {
     int i=0;
     char buffer1[160]; 
     for(i=0;i<160; ++i ) {
-        buffer1[1] = i;
+        buffer1[i] = i;
     }
     char buffer2[160]; memset( buffer2, 0x24, 160 );
 
     Variable * source = variable_define( e, "source", VT_BUFFER, 0x0 );
     Variable * destination = variable_define( e, "destination", VT_BUFFER, 0x0 );
 
-    variable_store_buffer( e, source->name, buffer1, 160, 0x2000 );
-    variable_store_buffer( e, destination->name, buffer2, 160, 0x2100 );
+    variable_store_buffer( e, source->name, buffer1, 160, 0x4000 );
+    variable_store_buffer( e, destination->name, buffer2, 160, 0x4100 );
 
     cpu_mem_move_direct_size( e, source->realName, destination->realName, 160 );
 
     _te->debug.inspections[_te->debug.inspections_count].name="buffer1";
-    _te->debug.inspections[_te->debug.inspections_count].address=0x2000;
+    _te->debug.inspections[_te->debug.inspections_count].address=0x4000;
     _te->debug.inspections[_te->debug.inspections_count].size=160;
     ++_te->debug.inspections_count;
     _te->debug.inspections[_te->debug.inspections_count].name="buffer2";
-    _te->debug.inspections[_te->debug.inspections_count].address=0x2100;
+    _te->debug.inspections[_te->debug.inspections_count].address=0x4100;
     _te->debug.inspections[_te->debug.inspections_count].size=160;
     ++_te->debug.inspections_count;
 
@@ -2603,6 +2603,135 @@ int test_cpu_mem_move_direct_size_tester( TestEnvironment * _te ) {
     return 1;
 
 }
+
+//===========================================================================
+
+void test_cpu_mem_move_direct_indirect_size_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    int i=0;
+    char buffer1[160]; 
+    for(i=0;i<160; ++i ) {
+        buffer1[i] = i;
+    }
+    char buffer2[160]; memset( buffer2, 0x24, 160 );
+
+    Variable * source = variable_define( e, "source", VT_BUFFER, 0x0 );
+    Variable * destination = variable_define( e, "destination", VT_BUFFER, 0x0 );
+    Variable * adestination = variable_define( e, "adestination", VT_ADDRESS, 0x4100 );
+
+    variable_store_buffer( e, source->name, buffer1, 160, 0x4000 );
+    variable_store_buffer( e, destination->name, buffer2, 160, 0x4100 );
+
+    cpu_mem_move_direct_indirect_size( e, source->realName, adestination->realName, 160 );
+
+    _te->debug.inspections[_te->debug.inspections_count].name="buffer1";
+    _te->debug.inspections[_te->debug.inspections_count].address=0x4000;
+    _te->debug.inspections[_te->debug.inspections_count].size=160;
+    ++_te->debug.inspections_count;
+    _te->debug.inspections[_te->debug.inspections_count].name="buffer2";
+    _te->debug.inspections[_te->debug.inspections_count].address=0x4100;
+    _te->debug.inspections[_te->debug.inspections_count].size=160;
+    ++_te->debug.inspections_count;
+
+}
+
+int test_cpu_mem_move_direct_indirect_size_tester( TestEnvironment * _te ) {
+
+    int i = 0;
+    for( i=0; i<160; ++i ) {
+        if ( _te->debug.inspections[1].memory[i] != _te->debug.inspections[1].memory[0] ) {
+            printf( "\nError (1) at position %4.4x/%4.4x: %2.2x\n", i, 160, _te->debug.inspections[1].memory[i] );
+            return 0;
+        }
+    }
+
+    return 1;
+
+}
+
+//===========================================================================
+
+void test_cpu_compare_memory_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    int i=0;
+    char buffer1[160]; 
+    char buffer2[160];
+    char buffer3[160];
+    for(i=0;i<160; ++i ) {
+        buffer1[i] = i;
+        buffer2[i] = i;
+        if ( i < 100 ) {
+            buffer3[i] = i;
+        } else {
+            buffer3[i] = 0x42;
+        }
+    }
+
+    Variable * source = variable_define( e, "source", VT_BUFFER, 0x0 );
+    Variable * same = variable_define( e, "same", VT_BUFFER, 0x0 );
+    Variable * different = variable_define( e, "different", VT_BUFFER, 0x0 );
+    Variable * asource = variable_define( e, "asource", VT_ADDRESS, 0x4000 );
+    Variable * asame = variable_define( e, "asame", VT_ADDRESS, 0x4100 );
+    Variable * adifferent = variable_define( e, "adifferent", VT_ADDRESS, 0x4200 );
+    Variable * size = variable_define( e, "size", VT_BYTE, 160 );
+
+    Variable * resultsame0 = variable_define( e, "resultsame0", VT_BYTE, 0x42 );
+    Variable * resultsame1 = variable_define( e, "resultsame1", VT_BYTE, 0x42 );
+    Variable * resultdifferent0 = variable_define( e, "resultdifferent0", VT_BYTE, 0x42 );
+    Variable * resultdifferent1 = variable_define( e, "resultdifferent1", VT_BYTE, 0x42 );
+
+    variable_store_buffer( e, source->name, buffer1, 160, 0x4000 );
+    variable_store_buffer( e, same->name, buffer2, 160, 0x4100 );
+    variable_store_buffer( e, different->name, buffer3, 160, 0x4200 );
+
+    cpu_compare_memory( e, asource->realName, asame->realName, size->realName, resultsame1->realName, 1 );
+    cpu_compare_memory( e, asource->realName, asame->realName, size->realName, resultsame0->realName, 0 );
+    cpu_compare_memory( e, asource->realName, adifferent->realName, size->realName, resultdifferent1->realName, 1 );
+    cpu_compare_memory( e, asource->realName, adifferent->realName, size->realName, resultdifferent0->realName, 0 );
+
+    _te->debug.inspections[_te->debug.inspections_count].name="buffer1";
+    _te->debug.inspections[_te->debug.inspections_count].address=0x4000;
+    _te->debug.inspections[_te->debug.inspections_count].size=160;
+    ++_te->debug.inspections_count;
+    _te->debug.inspections[_te->debug.inspections_count].name="buffer2";
+    _te->debug.inspections[_te->debug.inspections_count].address=0x4100;
+    _te->debug.inspections[_te->debug.inspections_count].size=160;
+    ++_te->debug.inspections_count;
+    _te->debug.inspections[_te->debug.inspections_count].name="buffer3";
+    _te->debug.inspections[_te->debug.inspections_count].address=0x4200;
+    _te->debug.inspections[_te->debug.inspections_count].size=160;
+    ++_te->debug.inspections_count;
+
+    _te->trackedVariables[0] = resultsame0;
+    _te->trackedVariables[1] = resultsame1;
+    _te->trackedVariables[2] = resultdifferent0;
+    _te->trackedVariables[3] = resultdifferent1;
+
+}
+
+int test_cpu_compare_memory_tester( TestEnvironment * _te ) {
+
+    Variable * resultsame0 = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * resultsame1 = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+    Variable * resultdifferent0 = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
+    Variable * resultdifferent1 = variable_retrieve( &_te->environment, _te->trackedVariables[3]->name );
+
+    printf("resultsame0 = %2.2x [expected 0x00]\n", resultsame0->value );
+    printf("resultsame1 = %2.2x [expected 0xff]\n", resultsame1->value );
+    printf("resultdifferent0 = %2.2x [expected 0xff]\n", resultdifferent0->value );
+    printf("resultdifferent1 = %2.2x [expected 0x00]\n", resultdifferent1->value );
+    
+    return resultsame0->value == 0x00 && 
+            resultsame1->value == 0xff && 
+            resultdifferent0->value == 0xff && 
+            resultdifferent1->value == 0x00;
+
+}
+
 
 void test_cpu( ) {
 
@@ -2666,9 +2795,11 @@ void test_cpu( ) {
     // create_test( "cpu_math_complement_const_32bit", &test_cpu_math_complement_const_32bit_payload, &test_cpu_math_complement_const_32bit_tester );
     // create_test( "cpu_math_and_const_32bit", &test_cpu_math_and_const_32bit_payload, &test_cpu_math_and_const_32bit_tester );
     // create_test( "cpu_combine_nibbles", &test_cpu_combine_nibbles_payload, &test_cpu_combine_nibbles_tester );
-    create_test( "cpu_mem_move", &test_cpu_mem_move_payload, &test_cpu_mem_move_tester );
-    create_test( "cpu_mem_move_size", &test_cpu_mem_move_size_payload, &test_cpu_mem_move_size_tester );
-    create_test( "cpu_mem_move_direct", &test_cpu_mem_move_direct_payload, &test_cpu_mem_move_direct_tester );
-    create_test( "cpu_mem_move_direct_size", &test_cpu_mem_move_direct_size_payload, &test_cpu_mem_move_direct_size_tester );
+    // create_test( "cpu_mem_move", &test_cpu_mem_move_payload, &test_cpu_mem_move_tester );
+    // create_test( "cpu_mem_move_size", &test_cpu_mem_move_size_payload, &test_cpu_mem_move_size_tester );
+    // create_test( "cpu_mem_move_direct", &test_cpu_mem_move_direct_payload, &test_cpu_mem_move_direct_tester );
+    // create_test( "cpu_mem_move_direct_size", &test_cpu_mem_move_direct_size_payload, &test_cpu_mem_move_direct_size_tester );
+    // create_test( "cpu_mem_move_direct_indirect_size", &test_cpu_mem_move_direct_indirect_size_payload, &test_cpu_mem_move_direct_indirect_size_tester );
+    create_test( "cpu_compare_memory", &test_cpu_compare_memory_payload, &test_cpu_compare_memory_tester );
 
 }
