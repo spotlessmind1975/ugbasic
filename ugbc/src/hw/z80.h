@@ -115,7 +115,6 @@ void z80_less_than_memory( Environment * _environment, char *_source, char *_des
 void z80_less_than_memory_size( Environment * _environment, char *_source, char *_destination, int _size, char * _result, int _equal );
 void z80_greater_than_memory( Environment * _environment, char *_source, char *_destination, char *_size, char * _result, int _equal );
 void z80_greater_than_memory_size( Environment * _environment, char *_source, char *_destination, int _size, char * _result, int _equal );
-void z80_store_8bit_indirect( Environment * _environment, char *_source, int _value );
 void z80_inc_16bit( Environment * _environment, char * _variable );
 void z80_dec_16bit( Environment * _environment, char * _variable );
 void z80_inc_32bit( Environment * _environment, char * _variable );
@@ -243,7 +242,6 @@ void z80_sqroot( Environment * _environment, char * _number, char * _result );
 #define cpu_less_than_memory_size( _environment, _source, _destination, _size, _result, _equal ) z80_less_than_memory_size( _environment, _source, _destination,  _size, _result, _equal )
 #define cpu_greater_than_memory( _environment, _source, _destination, _size, _result, _equal ) z80_greater_than_memory( _environment, _source, _destination, _size, _result, _equal )
 #define cpu_greater_than_memory_size( _environment, _source, _destination, _size, _result, _equal ) z80_greater_than_memory_size( _environment, _source, _destination, _size, _result, _equal )
-#define cpu_store_8bit_indirect( _environment, _source, _value ) z80_store_8bit_indirect( _environment, _source, _value )
 #define cpu_inc_16bit( _environment, _variable ) z80_inc_16bit( _environment, _variable )
 #define cpu_dec_16bit( _environment, _variable ) z80_dec_16bit( _environment, _variable )
 #define cpu_inc_32bit( _environment, _variable ) z80_inc_32bit( _environment, _variable )

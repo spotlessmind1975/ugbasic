@@ -111,7 +111,6 @@ void cpu6502_random_8bit( Environment * _environment, char * _seed, char * _entr
 void cpu6502_store_16bit( Environment * _environment, char *_source, int _value );
 void cpu6502_store_32bit( Environment * _environment, char *_source, int _value );
 void cpu6502_store_8bit( Environment * _environment, char *_source, int _value );
-void cpu6502_store_8bit_indirect( Environment * _environment, char *_source, int _value );
 void cpu6502_mem_move( Environment * _environment, char *_source, char *_destination,  char *_size );
 void cpu6502_mem_move_direct( Environment * _environment, char *_source, char *_destination,  char *_size );
 void cpu6502_mem_move_size( Environment * _environment, char *_source, char *_destination, int _size );
@@ -244,7 +243,6 @@ void cpu6502_sqroot( Environment * _environment, char * _number, char * _result 
 #define cpu_store_16bit( _environment, _source, _value  ) cpu6502_store_16bit( _environment, _source, _value  )
 #define cpu_store_32bit( _environment, _source, _value  ) cpu6502_store_32bit( _environment, _source, _value  )
 #define cpu_store_8bit( _environment, _source, _value  ) cpu6502_store_8bit( _environment, _source, _value  )
-#define cpu_store_8bit_indirect( _environment, _source, _value ) cpu6502_store_8bit_indirect( _environment, _source, _value )
 #define cpu_mem_move( _environment, _source, _destination, _size ) cpu6502_mem_move( _environment, _source, _destination, _size )
 #define cpu_mem_move_direct( _environment, _source, _destination, _size ) cpu6502_mem_move_direct( _environment, _source, _destination, _size )
 #define cpu_mem_move_size( _environment, _source, _destination, _size ) cpu6502_mem_move_size( _environment, _source, _destination, _size )
