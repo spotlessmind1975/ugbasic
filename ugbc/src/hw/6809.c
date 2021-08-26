@@ -2656,9 +2656,129 @@ void cpu6809_less_than_memory_size( Environment * _environment, char *_source, c
 
 void cpu6809_greater_than_memory( Environment * _environment, char *_source, char *_destination, char *_size, char * _result, int _equal ) {
 
+    MAKE_LABEL
+
+    outline1("LDA %s", _size );
+    outline1("BEQ %sequal", label );
+
+    outline1("LDY %s", _destination );
+    outline1("LDX %s", _source );
+
+    outline1("LDA %s", _size );
+    outline0("ANDA #$80" );
+    outline1("BEQ %ssecond", label );
+
+    outhead1("%sfirst", label );
+    outline0("LDA #0" );
+    outhead1("%sloop", label );
+    outline0("LDB A,X" );
+    outline0("CMPB A,Y" );
+    if ( _equal ) {
+        outline1("BLO %sdiff", label);
+    } else {
+        outline1("BLS %sdiff", label);    
+    }
+    outline0("ADDA #1" );
+    outline0("CMPA #$7F" );
+    outline1("BNE %sloop", label );
+    outline0("LEAY 127,Y" );
+    outline0("LEAX 127,X" );
+    outline0("LEAY 1,Y" );
+    outline0("LEAX 1,X" );
+
+    outhead1("%ssecond", label );
+    outline1("LDA %s", _size );
+    outline0("ANDA #$7f" );
+    outline0("STA MATHPTR0" );
+    outline0("LDA #0" );
+    outhead1("%sloop2", label );
+    outline0("LDB A,X" );
+    outline0("CMPB A,Y" );
+    if ( _equal ) {
+        outline1("BLO %sdiff", label);
+    } else {
+        outline1("BLS %sdiff", label);    
+    }
+    outline0("ADDA #1" );
+    outline0("CMPA MATHPTR0" );
+    outline1("BNE %sloop2", label );
+
+    outhead1("%sequal", label );
+    outline0("LDA #$FF");
+    outline1("STA %s", _result );
+    outline1("JMP %sfinal", label );
+
+    outhead1("%sdiff", label );
+    outline0("LDA #$0");
+    outline1("STA %s", _result );
+    outhead1("%sfinal", label );
+
 }
 
 void cpu6809_greater_than_memory_size( Environment * _environment, char *_source, char *_destination, int _size, char * _result, int _equal ) {
+
+    MAKE_LABEL
+
+    if ( _size ) {
+
+        outline1("LDY %s", _destination );
+        outline1("LDX %s", _source );
+            
+        if ( _size >= 0x7f ) {
+
+            outhead1("%sfirst", label );
+            outline0("LDA #0" );
+            outhead1("%sloop", label );
+            outline0("LDB A,X" );
+            outline0("CMPB A,Y" );
+            if ( _equal ) {
+                outline1("BLO %sdiff", label);
+            } else {
+                outline1("BLS %sdiff", label);    
+            }
+            outline0("ADDA #1" );
+            outline0("CMPA #$7F" );
+            outline1("BNE %sloop", label );
+            outline0("LEAY 127,Y" );
+            outline0("LEAX 127,X" );
+            outline0("LEAY 1,Y" );
+            outline0("LEAX 1,X" );
+
+            _size -= 0x7f;
+
+        }
+
+        if ( _size ) {
+
+            outhead1("%ssecond", label );
+            outline1("LDA #$%2.2x", _size );
+            outline0("STA MATHPTR0" );
+            outline0("LDA #0" );
+            outhead1("%sloop2", label );
+            outline0("LDB A,X" );
+            outline0("CMPB A,Y" );
+            if ( _equal ) {
+                outline1("BLO %sdiff", label);
+            } else {
+                outline1("BLS %sdiff", label);    
+            }
+            outline0("ADDA #1" );
+            outline0("CMPA MATHPTR0" );
+            outline1("BNE %sloop2", label );
+
+        }
+
+        outhead1("%sequal", label );
+        outline0("LDA #$FF");
+        outline1("STA %s", _result );
+        outline1("JMP %sfinal", label );
+
+        outhead1("%sdiff", label );
+        outline0("LDA #$0");
+        outline1("STA %s", _result );
+        outhead1("%sfinal", label );
+
+    }
 
 }
 
