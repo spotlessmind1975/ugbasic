@@ -113,7 +113,7 @@ void variable_cleanup( Environment * _environment ) {
                                 } else {
                                     outhead2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
                                     if ( variable->valueBuffer ) {
-                                        out1("%scopy: fcb ", variable->realName);
+                                        out1("%scopy fcb ", variable->realName);
                                         int i=0;
                                         for (i=0; i<(variable->size-1); ++i ) {
                                             out1("%d,", variable->valueBuffer[i]);
@@ -207,7 +207,7 @@ void variable_cleanup( Environment * _environment ) {
                                 } else {
                                     outhead2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
                                     if ( variable->valueBuffer ) {
-                                        out1("%scopy: fcb ", variable->realName);
+                                        out1("%scopy fcb ", variable->realName);
                                         int i=0;
                                         for (i=0; i<(variable->size-1); ++i ) {
                                             out1("%d,", variable->valueBuffer[i]);
