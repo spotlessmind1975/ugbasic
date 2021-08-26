@@ -926,6 +926,9 @@ int test_cpu_math_div2_const_32bit_tester( TestEnvironment * _te ) {
     Variable * ua = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
     Variable * sa = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
 
+    printf("ua = %8.8x (%d) [expected 0x10909090]\n", ua->value, ua->value );
+    printf("sa = %8.8x (%d) [expected -4]\n", sa->value, sa->value );
+
     return  ua->value == 0x10909090 && 
             sa->value == -4;
 
@@ -2351,6 +2354,161 @@ int test_cpu_math_complement_const_32bit_tester( TestEnvironment * _te ) {
 
 }
 
+//===========================================================================
+
+void test_cpu_math_and_const_32bit_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * dword1 = variable_define( e, "dword1", VT_DWORD, 0xff5555ff );
+
+    cpu_math_and_const_32bit( e, dword1->realName, 0x55555555 );
+
+    _te->trackedVariables[0] = dword1;
+    
+}
+
+int test_cpu_math_and_const_32bit_tester( TestEnvironment * _te ) {
+
+    Variable * dword1 = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+
+    printf( "dword1: %8.8x (%d) [expected: 0x55555555]\n", dword1->value, dword1->value );
+
+    return dword1->value == 0x55555555;
+
+}
+
+//===========================================================================
+
+void test_cpu_combine_nibbles_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * low = variable_define( e, "low", VT_BYTE, 0x0a );
+    Variable * hi = variable_define( e, "hi", VT_BYTE, 0x01 );
+    Variable * result = variable_define( e, "result", VT_BYTE, 0x00 );
+
+    cpu_combine_nibbles( e, low->realName, hi->realName, result->realName );
+
+    _te->trackedVariables[0] = result;
+    
+}
+
+int test_cpu_combine_nibbles_tester( TestEnvironment * _te ) {
+
+    Variable * result = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+
+    printf( "result: %2.2x (%d) [expected: 0x1a]\n", result->value, result->value );
+
+    return result->value == 0x1a;
+
+}
+
+//===========================================================================
+
+void test_cpu_mem_move_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    int i=0;
+    char buffer1[160]; 
+    for(i=0;i<160; ++i ) {
+        buffer1[1] = i;
+    }
+    char buffer2[160]; memset( buffer2, 0x24, 160 );
+
+    Variable * source = variable_define( e, "source", VT_BUFFER, 0x0 );
+    Variable * destination = variable_define( e, "destination", VT_BUFFER, 0x0 );
+    Variable * size = variable_define( e, "size", VT_BYTE, 160 );
+
+    variable_store_buffer( e, source->name, buffer1, 160, 0x2000 );
+    variable_store_buffer( e, destination->name, buffer2, 160, 0x2100 );
+
+    Variable * asource = variable_define( e, "asource", VT_ADDRESS, 0X2000 );
+    Variable * adestination = variable_define( e, "adestination", VT_ADDRESS, 0X2100 );
+
+    cpu_mem_move( e, asource->realName, adestination->realName, size->realName );
+
+    _te->debug.inspections[_te->debug.inspections_count].name="buffer1";
+    _te->debug.inspections[_te->debug.inspections_count].address=0x2000;
+    _te->debug.inspections[_te->debug.inspections_count].size=160;
+    ++_te->debug.inspections_count;
+    _te->debug.inspections[_te->debug.inspections_count].name="buffer2";
+    _te->debug.inspections[_te->debug.inspections_count].address=0x2100;
+    _te->debug.inspections[_te->debug.inspections_count].size=160;
+    ++_te->debug.inspections_count;
+
+    _te->trackedVariables[0] = size;
+    
+}
+
+int test_cpu_mem_move_tester( TestEnvironment * _te ) {
+
+    Variable * size = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+
+    int i = 0;
+    for( i=0; i<size->value; ++i ) {
+        if ( _te->debug.inspections[1].memory[i] != _te->debug.inspections[1].memory[0] ) {
+            printf( "\nError (1) at position %4.4x/%4.4x: %2.2x\n", i, size->value, _te->debug.inspections[1].memory[i] );
+            return 0;
+        }
+    }
+
+    return size->value == 160;
+
+}
+
+//===========================================================================
+
+void test_cpu_mem_move_direct_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    int i=0;
+    char buffer1[160]; 
+    for(i=0;i<160; ++i ) {
+        buffer1[1] = i;
+    }
+    char buffer2[160]; memset( buffer2, 0x24, 160 );
+
+    Variable * source = variable_define( e, "source", VT_BUFFER, 0x0 );
+    Variable * destination = variable_define( e, "destination", VT_BUFFER, 0x0 );
+    Variable * size = variable_define( e, "size", VT_BYTE, 160 );
+
+    variable_store_buffer( e, source->name, buffer1, 160, 0x2000 );
+    variable_store_buffer( e, destination->name, buffer2, 160, 0x2100 );
+
+    cpu_mem_move_direct( e, source->realName, destination->realName, size->realName );
+
+    _te->debug.inspections[_te->debug.inspections_count].name="buffer1";
+    _te->debug.inspections[_te->debug.inspections_count].address=0x2000;
+    _te->debug.inspections[_te->debug.inspections_count].size=160;
+    ++_te->debug.inspections_count;
+    _te->debug.inspections[_te->debug.inspections_count].name="buffer2";
+    _te->debug.inspections[_te->debug.inspections_count].address=0x2100;
+    _te->debug.inspections[_te->debug.inspections_count].size=160;
+    ++_te->debug.inspections_count;
+
+    _te->trackedVariables[0] = size;
+    
+}
+
+int test_cpu_mem_move_direct_tester( TestEnvironment * _te ) {
+
+    Variable * size = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+
+    int i = 0;
+    for( i=0; i<size->value; ++i ) {
+        if ( _te->debug.inspections[1].memory[i] != _te->debug.inspections[1].memory[0] ) {
+            printf( "\nError (1) at position %4.4x/%4.4x: %2.2x\n", i, size->value, _te->debug.inspections[1].memory[i] );
+            return 0;
+        }
+    }
+
+    return size->value == 160;
+
+}
+
 void test_cpu( ) {
 
     // create_test( "cpu_bits_to_string", &test_cpu_bits_to_string_payload, &test_cpu_bits_to_string_tester );    
@@ -2410,6 +2568,10 @@ void test_cpu( ) {
     // create_test( "cpu_compare_32bit", &test_cpu_compare_32bit_payload, &test_cpu_compare_32bit_tester );
     // create_test( "cpu_math_add_32bit", &test_cpu_math_add_32bit_payload, &test_cpu_math_add_32bit_tester );
     // create_test( "cpu_math_sub_32bit", &test_cpu_math_sub_32bit_payload, &test_cpu_math_sub_32bit_tester );
-    create_test( "cpu_math_complement_const_32bit", &test_cpu_math_complement_const_32bit_payload, &test_cpu_math_complement_const_32bit_tester );
+    // create_test( "cpu_math_complement_const_32bit", &test_cpu_math_complement_const_32bit_payload, &test_cpu_math_complement_const_32bit_tester );
+    // create_test( "cpu_math_and_const_32bit", &test_cpu_math_and_const_32bit_payload, &test_cpu_math_and_const_32bit_tester );
+    // create_test( "cpu_combine_nibbles", &test_cpu_combine_nibbles_payload, &test_cpu_combine_nibbles_tester );
+    create_test( "cpu_mem_move", &test_cpu_mem_move_payload, &test_cpu_mem_move_tester );
+    create_test( "cpu_mem_move_direct", &test_cpu_mem_move_direct_payload, &test_cpu_mem_move_direct_tester );
 
 }
