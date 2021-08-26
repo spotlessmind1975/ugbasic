@@ -2207,11 +2207,7 @@ void cpu6809_mem_move( Environment * _environment, char *_source, char *_destina
     outline1("BEQ %sdone", label );
 
     outline1("LDY %s", _source );
-    outline0("LDD ,Y" );
-    outline0("TFR D,Y" );
     outline1("LDX %s", _destination );
-    outline0("LDD ,X" );
-    outline0("TFR D,X" );
 
     outline0("ANDA #$80" );
     outline1("BEQ %sloop2", label );
@@ -2250,8 +2246,8 @@ void cpu6809_mem_move_direct( Environment * _environment, char *_source, char *_
     outline1("LDB %s", _size );
     outline1("BEQ %sdone", label );
 
-    outline1("LDY %s", _source );
-    outline1("LDX %s", _destination );
+    outline1("LDY #%s", _source );
+    outline1("LDX #%s", _destination );
 
     outline0("ANDA #$80" );
     outline1("BEQ %sloop2", label );
@@ -2290,11 +2286,7 @@ void cpu6809_mem_move_size( Environment * _environment, char *_source, char *_de
     if ( _size ) {
 
         outline1("LDY %s", _source );
-        outline0("LDD ,Y" );
-        outline0("TFR D,Y" );
         outline1("LDX %s", _destination );
-        outline0("LDD ,X" );
-        outline0("TFR D,X" );
 
         if ( _size >= 0x7f ) {
 
@@ -2338,8 +2330,8 @@ void cpu6809_mem_move_direct_size( Environment * _environment, char *_source, ch
 
     if ( _size ) {
 
-        outline1("LDY %s", _source );
-        outline1("LDX %s", _destination );
+        outline1("LDY #%s", _source );
+        outline1("LDX #%s", _destination );
 
         if ( _size >= 0x7f ) {
 
@@ -2383,10 +2375,8 @@ void cpu6809_mem_move_direct_indirect_size( Environment * _environment, char *_s
 
     if ( _size ) {
 
-        outline1("LDY %s", _source );
+        outline1("LDY #%s", _source );
         outline1("LDX %s", _destination );
-        outline0("LDD ,X" );
-        outline0("TFR D,X" );
 
         if ( _size >= 0x7f ) {
 
@@ -2425,6 +2415,55 @@ void cpu6809_mem_move_direct_indirect_size( Environment * _environment, char *_s
 }
 
 void cpu6809_compare_memory( Environment * _environment, char *_source, char *_destination, char *_size, char * _result, int _equal ) {
+
+    MAKE_LABEL
+
+    outline1("LDA %s", _size );
+    outline1("BEQ %sequal", label );
+
+    outline1("LDY %s", _source );
+    outline1("LDX %s", _destination );
+
+    outline1("LDA %s", _size );
+    outline0("ANDA #$80" );
+    outline1("BEQ %ssecond", label );
+
+    outhead1("%sfirst", label );
+    outline0("LDA #0" );
+    outhead1("%sloop", label );
+    outline0("LDB A,X" );
+    outline0("CMPB A,Y" );
+    outline1("BNE %sdiff", label );
+    outline0("ADDA #1" );
+    outline0("CMPA #$7F" );
+    outline1("BNE %sloop", label );
+    outline0("LEAY 127,Y" );
+    outline0("LEAX 127,X" );
+    outline0("LEAY 1,Y" );
+    outline0("LEAX 1,X" );
+
+    outhead1("%ssecond", label );
+    outline1("LDA %s", _size );
+    outline0("ANDA #$7f" );
+    outline0("STA MATHPTR0" );
+    outline0("LDA #0" );
+    outhead1("%sloop2", label );
+    outline0("LDB A,X" );
+    outline0("CMPB A,Y" );
+    outline1("BNE %sdiff", label );
+    outline0("ADDA #1" );
+    outline0("CMPA MATHPTR0" );
+    outline1("BNE %sloop2", label );
+
+    outhead1("%sequal", label );
+    outline1("LDA #$%2.2x", _equal ? 0xff : 0x00 );
+    outline1("STA %s", _result );
+    outline1("JMP %sfinal", label );
+
+    outhead1("%sdiff", label );
+    outline1("LDA #$%2.2x", _equal ? 0x00 : 0xff );
+    outline1("STA %s", _result );
+    outhead1("%sfinal", label );
 
 }
 
