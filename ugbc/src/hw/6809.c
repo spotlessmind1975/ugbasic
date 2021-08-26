@@ -2847,26 +2847,87 @@ void cpu6809_move_8bit_indirect_with_offset2( Environment * _environment, char *
 
 void cpu6809_move_8bit_with_offset2( Environment * _environment, char *_source, char * _value, char * _offset ) {
 
+    MAKE_LABEL
+
+    outline1("LDX %s", _value);
+
+    outline1("LDA %s", _offset);
+    outline0("ANDA #$80");
+    outline1("BEQ %ssimple", label);
+
+    outline0("LEAX 127,X" );
+    outline0("LEAX 1,X" );
+    outline1("LDA %s", _offset);
+    outline0("ANDA #$7f");
+    outline0("LEAX A,X" );
+    outline1("JMP %sdone", label);
+
+    outhead1("%ssimple", label);
+    outline1("LDA %s", _offset);
+    outline0("ANDA #$7f");
+    outline0("LEAX A,X" );
+
+    outhead1("%sdone", label);
+
+    outline1("LDA %s", _source);
+    outline0("STA ,X");
+
 }
 
 void cpu6809_move_8bit_indirect2( Environment * _environment, char * _value, char *_source ) {
+
+    MAKE_LABEL
+
+    outline1("LDX %s", _value);
+    outline0("LDA ,X");
+    outline1("STA %s", _source );
 
 }
 
 void cpu6809_move_16bit_indirect( Environment * _environment, char *_source, char * _value ) {
 
+    MAKE_LABEL
+
+    outline1("LDX %s", _value);
+    outline0("LDD ,X");
+    outline1("STD %s", _source );
+
 }
 
 void cpu6809_move_16bit_indirect2( Environment * _environment, char * _value, char *_source ) {
+
+    MAKE_LABEL
+
+    outline1("LDX %s", _value);
+    outline0("LDD ,X");
+    outline1("STD %s", _source );
 
 }
 
 void cpu6809_move_32bit_indirect( Environment * _environment, char *_source, char * _value ) {
 
+    MAKE_LABEL
+
+    outline1("LDX %s", _value);
+    outline0("LDD ,X");
+    outline1("STD %s", _source );
+    outline0("LEAX 2,X");
+    outline0("LDD ,X");
+    outline1("STD %s+2", _source );
+
 }
 
 void cpu6809_move_32bit_indirect2( Environment * _environment, char * _value, char *_source ) {
 
+    MAKE_LABEL
+
+    outline1("LDX %s", _value);
+    outline0("LDD ,X");
+    outline1("STD %s", _source );
+    outline0("LEAX 2,X");
+    outline0("LDD ,X");
+    outline1("STD %s+2", _source );
+    
 }
 
 void cpu6809_uppercase( Environment * _environment, char *_source, char *_size, char *_result ) {
