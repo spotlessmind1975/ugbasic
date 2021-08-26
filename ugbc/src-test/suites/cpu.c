@@ -3118,6 +3118,116 @@ int test_cpu_greater_than_memory_size_tester( TestEnvironment * _te ) {
 
 }
 
+//===========================================================================
+
+void test_cpu_move_8bit_indirect_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * asource = variable_define( e, "asource", VT_ADDRESS, 0x4000 );
+    Variable * value = variable_define( e, "value", VT_BYTE, 0x42 );
+
+    cpu_move_8bit_indirect( e, value->realName, asource->realName );
+
+    _te->debug.inspections[_te->debug.inspections_count].name="buffer1";
+    _te->debug.inspections[_te->debug.inspections_count].address=0x4000;
+    _te->debug.inspections[_te->debug.inspections_count].size=1;
+    ++_te->debug.inspections_count;
+    
+}
+
+int test_cpu_move_8bit_indirect_tester( TestEnvironment * _te ) {
+
+    if ( _te->debug.inspections[0].memory[0] != 0x42 ) {
+        return 0;
+    }
+    return 1;
+
+}
+
+//===========================================================================
+
+void test_cpu_move_8bit_indirect_with_offset_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * asource = variable_define( e, "asource", VT_ADDRESS, 0x4000 );
+    Variable * value = variable_define( e, "value", VT_BYTE, 0x42 );
+
+    cpu_move_8bit_indirect_with_offset( e, value->realName, asource->realName, 159 );
+
+    _te->debug.inspections[_te->debug.inspections_count].name="buffer1";
+    _te->debug.inspections[_te->debug.inspections_count].address=0x4000;
+    _te->debug.inspections[_te->debug.inspections_count].size=320;
+    ++_te->debug.inspections_count;
+    
+}
+
+int test_cpu_move_8bit_indirect_with_offset_tester( TestEnvironment * _te ) {
+
+    if ( _te->debug.inspections[0].memory[159] != 0x42 ) {
+        return 0;
+    }
+    return 1;
+
+}
+
+//===========================================================================
+
+void test_cpu_move_8bit_with_offset_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * asource = variable_define( e, "asource", VT_ADDRESS, 0x4000 );
+    Variable * value = variable_define( e, "value", VT_BYTE, 0x42 );
+
+    cpu_move_8bit_with_offset( e, value->realName, asource->realName, 1 );
+
+    _te->debug.inspections[_te->debug.inspections_count].name="buffer1";
+    _te->debug.inspections[_te->debug.inspections_count].address=0x4000;
+    _te->debug.inspections[_te->debug.inspections_count].size=320;
+    ++_te->debug.inspections_count;
+    
+    _te->trackedVariables[0] = asource;
+
+}
+
+int test_cpu_move_8bit_with_offset_tester( TestEnvironment * _te ) {
+
+    Variable * asource = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+
+    return asource->value = 0x4042;
+
+}
+
+//===========================================================================
+
+void test_cpu_move_8bit_indirect_with_offset2_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * asource = variable_define( e, "asource", VT_ADDRESS, 0x4000 );
+    Variable * value = variable_define( e, "value", VT_BYTE, 0x42 );
+    Variable * size = variable_define( e, "value", VT_BYTE, 159 );
+
+    cpu_move_8bit_indirect_with_offset2( e, value->realName, asource->realName, size->realName );
+
+    _te->debug.inspections[_te->debug.inspections_count].name="buffer1";
+    _te->debug.inspections[_te->debug.inspections_count].address=0x4000;
+    _te->debug.inspections[_te->debug.inspections_count].size=320;
+    ++_te->debug.inspections_count;
+    
+}
+
+int test_cpu_move_8bit_indirect_with_offset2_tester( TestEnvironment * _te ) {
+
+    if ( _te->debug.inspections[0].memory[159] != 0x42 ) {
+        return 0;
+    }
+    return 1;
+
+}
+
 void test_cpu( ) {
 
     // create_test( "cpu_bits_to_string", &test_cpu_bits_to_string_payload, &test_cpu_bits_to_string_tester );    
@@ -3187,9 +3297,13 @@ void test_cpu( ) {
     // create_test( "cpu_mem_move_direct_indirect_size", &test_cpu_mem_move_direct_indirect_size_payload, &test_cpu_mem_move_direct_indirect_size_tester );
     // create_test( "cpu_compare_memory", &test_cpu_compare_memory_payload, &test_cpu_compare_memory_tester );
     // create_test( "cpu_compare_memory_size", &test_cpu_compare_memory_size_payload, &test_cpu_compare_memory_size_tester );
-    create_test( "cpu_less_than_memory", &test_cpu_less_than_memory_payload, &test_cpu_less_than_memory_tester );
-    create_test( "cpu_less_than_memory_size", &test_cpu_less_than_memory_size_payload, &test_cpu_less_than_memory_size_tester );
-    create_test( "cpu_greater_than_memory", &test_cpu_greater_than_memory_payload, &test_cpu_greater_than_memory_tester );
-    create_test( "cpu_greater_than_memory_size", &test_cpu_greater_than_memory_size_payload, &test_cpu_greater_than_memory_size_tester );
+    // create_test( "cpu_less_than_memory", &test_cpu_less_than_memory_payload, &test_cpu_less_than_memory_tester );
+    // create_test( "cpu_less_than_memory_size", &test_cpu_less_than_memory_size_payload, &test_cpu_less_than_memory_size_tester );
+    // create_test( "cpu_greater_than_memory", &test_cpu_greater_than_memory_payload, &test_cpu_greater_than_memory_tester );
+    // create_test( "cpu_greater_than_memory_size", &test_cpu_greater_than_memory_size_payload, &test_cpu_greater_than_memory_size_tester );
+    // create_test( "cpu_move_8bit_indirect", &test_cpu_move_8bit_indirect_payload, &test_cpu_move_8bit_indirect_tester );
+    // create_test( "cpu_move_8bit_indirect_with_offset", &test_cpu_move_8bit_indirect_with_offset_payload, &test_cpu_move_8bit_indirect_with_offset_tester );
+    // create_test( "cpu_move_8bit_with_offset", &test_cpu_move_8bit_with_offset_payload, &test_cpu_move_8bit_with_offset_tester );
+    create_test( "cpu_move_8bit_indirect_with_offset2", &test_cpu_move_8bit_indirect_with_offset2_payload, &test_cpu_move_8bit_indirect_with_offset2_tester );
 
 }
