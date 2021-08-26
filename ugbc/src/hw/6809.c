@@ -2377,10 +2377,6 @@ void cpu6809_mem_move_direct_size( Environment * _environment, char *_source, ch
 
 }
 
-void cpu6809_mem_move_direct_with_offset_size( Environment * _environment, char *_source, int _offset, char *_destination, int _size ) {
-
-}
-
 void cpu6809_mem_move_direct_indirect_size( Environment * _environment, char *_source, char *_destination, int _size ) {
 
 }
