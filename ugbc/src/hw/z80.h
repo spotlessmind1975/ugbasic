@@ -143,7 +143,6 @@ void z80_bit_check_extended( Environment * _environment, char *_value, char * _p
 void z80_number_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits, int _signed );
 void z80_move_8bit_indirect_with_offset( Environment * _environment, char *_source, char * _value, int _offset );
 void z80_move_8bit_indirect_with_offset2( Environment * _environment, char *_source, char * _value, char * _offset );
-void z80_store_8bit_indirect_with_offset( Environment * _environment, char *_source, int _value, int _offset );
 void z80_dsdefine( Environment * _environment, char * _string, char * _index );
 void z80_dsalloc( Environment * _environment, char * _size, char * _index );
 void z80_dsfree( Environment * _environment, char * _index );
@@ -272,7 +271,6 @@ void z80_sqroot( Environment * _environment, char * _number, char * _result );
 #define cpu_number_to_string( _environment, _number, _string, _string_size, _bits, _signed ) z80_number_to_string( _environment, _number, _string, _string_size, _bits, _signed )
 #define cpu_move_8bit_indirect_with_offset( _environment, _source, _value, _offset ) z80_move_8bit_indirect_with_offset( _environment, _source, _value, _offset )
 #define cpu_move_8bit_indirect_with_offset2( _environment, _source, _value, _offset ) z80_move_8bit_indirect_with_offset2( _environment, _source, _value, _offset )
-#define cpu_store_8bit_indirect_with_offset( _environment, _source, _value, _offset ) z80_store_8bit_indirect_with_offset( _environment, _source, _value, _offset )
 #define cpu_store_8bit_with_offset( _environment, _source, _value, _offset ) z80_store_8bit_with_offset( _environment, _source, _value, _offset )
 #define cpu_move_8bit_with_offset( _environment, _source, _destination, _offset ) z80_move_8bit_with_offset( _environment, _source, _destination, _offset )
 #define cpu_dsdefine( _environment, _string, _index ) z80_dsdefine( _environment, _string, _index )

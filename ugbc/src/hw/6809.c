@@ -2782,10 +2782,6 @@ void cpu6809_greater_than_memory_size( Environment * _environment, char *_source
 
 }
 
-void cpu6809_store_8bit_indirect_with_offset( Environment * _environment, char *_source, int _value, int _offset ) {
-
-}
-
 void cpu6809_move_8bit_indirect( Environment * _environment, char *_source, char * _value ) {
 }
 

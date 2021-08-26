@@ -2588,19 +2588,6 @@ void cpu6502_greater_than_memory_size( Environment * _environment, char *_source
 
 }
 
-void cpu6502_store_8bit_indirect_with_offset( Environment * _environment, char *_source, int _value, int _offset ) {
-
-    outline1("LDA %s", _source);
-    outline0("STA TMPPTR");
-    outline1("LDA %s+1", _source);
-    outline0("STA TMPPTR+1");
-    outline1("LDA #$%2.2x", (_value & 0xff));
-    outline1("LDy #$%2.2x", (_offset & 0xff));
-    outline0("STA (TMPPTR),Y");
-
-}
-
-
 void cpu6502_move_8bit_indirect( Environment * _environment, char *_source, char * _value ) {
 
     outline1("LDA %s", _value);

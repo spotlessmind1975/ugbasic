@@ -2111,16 +2111,6 @@ void z80_greater_than_memory_size( Environment * _environment, char *_source, ch
 
 }
 
-void z80_store_8bit_indirect_with_offset( Environment * _environment, char *_source, int _value, int _offset ) {
-
-    outline1("LD HL,(%s)", _source);
-    outline1("LD DE,%2.2x", ( _offset & 0xff ) );
-    outline0("ADD HL, DE");
-    outline1("LD A, $%2.2x", (_value & 0xff));
-    outline0("LD (HL), A" );
-
-}
-
 void z80_math_add_16bit_with_8bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
 
     outline1("LD HL, (%s)", _source );
