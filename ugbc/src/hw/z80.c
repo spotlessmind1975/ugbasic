@@ -1936,17 +1936,6 @@ void z80_mem_move_direct_indirect_size( Environment * _environment, char *_sourc
 
 }
 
-void z80_mem_move_displacement(  Environment * _environment, char *_source, char *_destination, char * _displacement, char *_size ) {
-
-    outline1("LD HL,(%s)", _source);
-    outline1("LD DE,(%s)", _destination);
-    outline1("ADD DE,(%s)", _size);
-    outline1("LD C,%s", _size);
-    outline0("LD B, 0");
-    outline0("LDIR");
-
-}
-
 void z80_compare_memory( Environment * _environment, char *_source, char *_destination, char *_size, char * _result, int _equal ) {
 
     MAKE_LABEL

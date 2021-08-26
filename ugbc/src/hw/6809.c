@@ -2379,9 +2379,48 @@ void cpu6809_mem_move_direct_size( Environment * _environment, char *_source, ch
 
 void cpu6809_mem_move_direct_indirect_size( Environment * _environment, char *_source, char *_destination, int _size ) {
 
-}
+    MAKE_LABEL
 
-void cpu6809_mem_move_displacement(  Environment * _environment, char *_source, char *_destination, char * _displacement, char *_size ) {
+    if ( _size ) {
+
+        outline1("LDY %s", _source );
+        outline1("LDX %s", _destination );
+        outline0("LDD ,X" );
+        outline0("TFR D,X" );
+
+        if ( _size >= 0x7f ) {
+
+            outline0("LDB #$7F" );
+            outline0("DECB" );
+            outhead1("%s", label );
+            outline0("LDA B,Y" );
+            outline0("STA B,X" );
+            outline0("DECB" );
+            outline0("CMPB #$FF" );
+            outline1("BNE %s", label );
+            outline0("LEAY 127,Y" );
+            outline0("LEAX 127,X" );
+            outline0("LEAY 1,Y" );
+            outline0("LEAX 1,X" );
+
+            _size -= 0x7f;
+
+        }
+
+        if ( _size ) {
+
+            outline1("LDB #$%2.2x", ( _size & 0xff ) );
+            outline0("DECB" );
+            outhead1("%s_2", label );
+            outline0("LDA B,Y" );
+            outline0("STA B,X" );
+            outline0("DECB" );
+            outline0("CMPB #$FF" );
+            outline1("BNE %s_2", label );
+
+        }
+
+    }
 
 }
 

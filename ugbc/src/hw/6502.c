@@ -2389,32 +2389,6 @@ void cpu6502_mem_move_direct_indirect_size( Environment * _environment, char *_s
 
 }
 
-void cpu6502_mem_move_displacement(  Environment * _environment, char *_source, char *_destination, char * _displacement, char *_size ) {
-
-    MAKE_LABEL
-
-    outline1("LDY %s", _size );
-    outline1("BEQ %sdone", label );
-    outline0("LDY #$0" );
-    outline1("LDA %s+1", _source );
-    outline0("STA TMPPTR+1" );
-    outline1("LDA %s", _source );
-    outline1("ADC %s", _displacement );
-    outline0("STA TMPPTR" );
-    outline1("LDA %s+1", _destination );
-    outline0("STA TMPPTR2+1" );
-    outline1("LDA %s", _destination );
-    outline0("STA TMPPTR2" );
-    outhead1("%s:", label );
-    outline0("LDA (TMPPTR2), Y" );
-    outline0("STA (TMPPTR), Y" );
-    outline0("INY" );
-    outline1("CPY %s", _size );
-    outline1("BNE %s", label );
-    outhead1("%sdone:", label );
-
-}
-
 void cpu6502_compare_memory( Environment * _environment, char *_source, char *_destination, char *_size, char * _result, int _equal ) {
     
     MAKE_LABEL
