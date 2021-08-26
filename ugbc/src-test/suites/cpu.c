@@ -3228,6 +3228,170 @@ int test_cpu_move_8bit_indirect_with_offset2_tester( TestEnvironment * _te ) {
 
 }
 
+//===========================================================================
+
+void test_cpu_move_8bit_with_offset2_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * asource = variable_define( e, "asource", VT_ADDRESS, 0x4000 );
+    Variable * value = variable_define( e, "value", VT_BYTE, 0x42 );
+    Variable * offset = variable_define( e, "offset", VT_BYTE, 0x1 );
+
+    cpu_move_8bit_with_offset2( e, value->realName, asource->realName, offset->realName );
+
+    _te->debug.inspections[_te->debug.inspections_count].name="buffer1";
+    _te->debug.inspections[_te->debug.inspections_count].address=0x4000;
+    _te->debug.inspections[_te->debug.inspections_count].size=320;
+    ++_te->debug.inspections_count;
+    
+    _te->trackedVariables[0] = asource;
+
+}
+
+int test_cpu_move_8bit_with_offset2_tester( TestEnvironment * _te ) {
+
+    Variable * asource = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+
+    return asource->value = 0x4042;
+
+}
+
+//===========================================================================
+
+void test_cpu_move_8bit_indirect2_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    char buffer[10]; buffer[0] = 0x21;
+
+    Variable * b = variable_define( e, "b", VT_BUFFER, 0x00 );
+    Variable * value = variable_define( e, "value", VT_BYTE, 0x00 );
+
+    variable_store_buffer( e, b->name, buffer, 10, 0x0 );
+
+    cpu_move_8bit_indirect2( e, b->realName, value->realName );
+
+    _te->trackedVariables[0] = value;
+
+}
+
+int test_cpu_move_8bit_indirect2_tester( TestEnvironment * _te ) {
+
+    Variable * asource = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+
+    return asource->value = 0x21;
+
+}
+
+//===========================================================================
+
+void test_cpu_move_16bit_indirect_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    char buffer[10]; buffer[0] = 0x21; buffer[1] = 0x33;
+
+    Variable * b = variable_define( e, "b", VT_BUFFER, 0x00 );
+    Variable * value = variable_define( e, "value", VT_WORD, 0x0000 );
+
+    variable_store_buffer( e, b->name, buffer, 10, 0x0 );
+    
+    cpu_move_16bit_indirect( e, b->realName, value->realName );
+
+    _te->trackedVariables[0] = value;
+
+}
+
+int test_cpu_move_16bit_indirect_tester( TestEnvironment * _te ) {
+
+    Variable * asource = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+
+    return asource->value = 0x2133;
+
+}
+
+//===========================================================================
+
+void test_cpu_move_16bit_indirect2_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    char buffer[10]; buffer[0] = 0x21; buffer[1] = 0x33;
+
+    Variable * b = variable_define( e, "b", VT_BUFFER, 0x00 );
+    Variable * value = variable_define( e, "value", VT_WORD, 0x0000 );
+
+    variable_store_buffer( e, b->name, buffer, 10, 0x0 );
+    
+    cpu_move_16bit_indirect2( e, b->realName, value->realName );
+
+    _te->trackedVariables[0] = value;
+
+}
+
+int test_cpu_move_16bit_indirect2_tester( TestEnvironment * _te ) {
+
+    Variable * asource = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+
+    return asource->value = 0x2133;
+
+}
+
+//===========================================================================
+
+void test_cpu_move_32bit_indirect_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    char buffer[10]; buffer[0] = 0x21; buffer[1] = 0x33; buffer[2] = 0x44; buffer[3] = 0x55;
+
+    Variable * b = variable_define( e, "b", VT_BUFFER, 0x00 );
+    Variable * value = variable_define( e, "value", VT_WORD, 0x0000 );
+
+    variable_store_buffer( e, b->name, buffer, 10, 0x0 );
+    
+    cpu_move_16bit_indirect( e, b->realName, value->realName );
+
+    _te->trackedVariables[0] = value;
+
+}
+
+int test_cpu_move_32bit_indirect_tester( TestEnvironment * _te ) {
+
+    Variable * asource = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+
+    return asource->value = 0x21334455;
+
+}
+
+//===========================================================================
+
+void test_cpu_move_32bit_indirect2_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    char buffer[10]; buffer[0] = 0x21; buffer[1] = 0x33; buffer[2] = 0x44; buffer[3] = 0x55;
+
+    Variable * b = variable_define( e, "b", VT_BUFFER, 0x00 );
+    Variable * value = variable_define( e, "value", VT_WORD, 0x0000 );
+
+    variable_store_buffer( e, b->name, buffer, 10, 0x0 );
+    
+    cpu_move_32bit_indirect2( e, b->realName, value->realName );
+
+    _te->trackedVariables[0] = value;
+
+}
+
+int test_cpu_move_32bit_indirect2_tester( TestEnvironment * _te ) {
+
+    Variable * asource = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+
+    return asource->value = 0x21333355;
+
+}
+
 void test_cpu( ) {
 
     // create_test( "cpu_bits_to_string", &test_cpu_bits_to_string_payload, &test_cpu_bits_to_string_tester );    
@@ -3304,6 +3468,12 @@ void test_cpu( ) {
     // create_test( "cpu_move_8bit_indirect", &test_cpu_move_8bit_indirect_payload, &test_cpu_move_8bit_indirect_tester );
     // create_test( "cpu_move_8bit_indirect_with_offset", &test_cpu_move_8bit_indirect_with_offset_payload, &test_cpu_move_8bit_indirect_with_offset_tester );
     // create_test( "cpu_move_8bit_with_offset", &test_cpu_move_8bit_with_offset_payload, &test_cpu_move_8bit_with_offset_tester );
-    create_test( "cpu_move_8bit_indirect_with_offset2", &test_cpu_move_8bit_indirect_with_offset2_payload, &test_cpu_move_8bit_indirect_with_offset2_tester );
+    // create_test( "cpu_move_8bit_indirect_with_offset2", &test_cpu_move_8bit_indirect_with_offset2_payload, &test_cpu_move_8bit_indirect_with_offset2_tester );
+    // create_test( "cpu_move_8bit_with_offset2", &test_cpu_move_8bit_with_offset2_payload, &test_cpu_move_8bit_with_offset2_tester );
+    // create_test( "cpu_move_8bit_indirect2_payload", &test_cpu_move_8bit_indirect2_payload, &test_cpu_move_8bit_indirect2_tester );
+    // create_test( "cpu_move_16bit_indirect", &test_cpu_move_16bit_indirect_payload, &test_cpu_move_16bit_indirect_tester );
+    // create_test( "cpu_move_16bit_indirect2", &test_cpu_move_16bit_indirect2_payload, &test_cpu_move_16bit_indirect2_tester );
+    create_test( "cpu_move_32bit_indirect", &test_cpu_move_32bit_indirect_payload, &test_cpu_move_32bit_indirect_tester );
+    create_test( "cpu_move_32bit_indirect2", &test_cpu_move_32bit_indirect2_payload, &test_cpu_move_32bit_indirect2_tester );
 
 }
