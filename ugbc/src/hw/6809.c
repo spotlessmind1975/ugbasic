@@ -3041,6 +3041,26 @@ void cpu6809_convert_string_into_16bit( Environment * _environment, char * _stri
 }
 
 void cpu6809_flip( Environment * _environment, char * _source, char * _size, char * _destination ) {
+
+    MAKE_LABEL
+
+    outline1("LDX %s", _source);
+    outline1("LDY %s", _destination);
+    outline1("LDB %s", _size);
+    outline0("LEAY B, Y");
+    outline0("LEAY -1, Y");
+    outline0("LDB #0");
+
+    outhead1("%sx", label);
+    outline1("CMPB %s", _size);
+    outline1("BEQ %sdone", label);
+    outline0("LDA B,X");
+    outline0("STA ,Y");
+    outline0("LEAY -1, Y");
+    outline0("INCB");
+    outline1("JMP %sx", label);
+    outhead1("%sdone", label);
+
 }
 
 void cpu6809_bit_check( Environment * _environment, char * _value, int _position, char *_result ) {
