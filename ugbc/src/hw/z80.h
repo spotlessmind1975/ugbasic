@@ -127,7 +127,6 @@ void z80_math_add_16bit_with_8bit( Environment * _environment, char *_source, ch
 void z80_math_sub_16bit_with_8bit( Environment * _environment, char *_source, char *_destination,  char *_other );
 void z80_uppercase( Environment * _environment, char *_source, char *_size, char *_result );
 void z80_lowercase( Environment * _environment, char *_source, char *_size, char *_result );
-void z80_convert_bcd_to_digits( Environment * _environment, char * _source, char * _dest );
 void z80_convert_string_into_16bit( Environment * _environment, char * _string, char * _len, char * _value );
 void z80_fill_indirect( Environment * _environment, char * _address, char * _size, char * _pattern );
 void z80_flip( Environment * _environment, char * _source, char * _size, char * _destination );
@@ -252,7 +251,6 @@ void z80_sqroot( Environment * _environment, char * _number, char * _result );
 #define cpu_math_sub_16bit_with_8bit( _environment, _source, _destination, _other ) z80_math_sub_16bit_with_8bit( _environment, _source, _destination, _other )
 #define cpu_uppercase( _environment, _source, _size, _result ) z80_uppercase( _environment, _source, _size, _result )
 #define cpu_lowercase( _environment, _source, _size, _result ) z80_lowercase( _environment, _source, _size, _result )
-#define cpu_convert_bcd_to_digits( _environment, _source, _dest ) z80_convert_bcd_to_digits( _environment, _source, _dest )
 #define cpu_convert_string_into_16bit( _environment, _string, _len, _value ) z80_convert_string_into_16bit( _environment, _string, _len, _value )
 #define cpu_fill_indirect( _environment, _address, _size, _pattern ) z80_fill_indirect( _environment, _address, _size, _pattern )
 #define cpu_flip( _environment, _source, _size, _destination ) z80_flip( _environment, _source, _size, _destination )
