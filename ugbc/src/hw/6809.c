@@ -2994,6 +2994,50 @@ void cpu6809_lowercase( Environment * _environment, char *_source, char *_size, 
 
 void cpu6809_convert_string_into_16bit( Environment * _environment, char * _string, char * _len, char * _value ) {
 
+    MAKE_LABEL
+
+    // Y = 0
+    outline0("LDY #0");
+
+    outline0("LDB #0");
+    outline1("LDX %s", _string );
+
+    outhead1("%sloop", label );
+
+    // stringa finita? -> fine
+    outline1("CMPB %s", _len );
+    outline1("BEQ %sdone", label );
+
+    // leggo carattere
+    outline0("LDA B,X" );
+
+    // numero? no -> fine
+    outline0("CMPA #48" );
+    outline1("BLO %sdone", label );
+    outline0("CMPA #57" );
+    outline1("BHI %sdone", label );
+
+    // aggiungo il numero al registro Y
+    outline0("SUBA #48" );
+    outline0("LEAY A, Y" );
+
+    // moltiplico Y per 10
+    outline0("TFR Y, D" );
+    outline0("LEAY D, Y" );
+    outline0("LEAY D, Y" );
+    outline0("LEAY D, Y" );
+    outline0("LEAY D, Y" );
+    outline0("TFR Y, D" );
+    outline0("LEAY D, Y" );
+
+    // ripeti
+    outline0("DECB" );
+    outline1("JMP %sloop", label );
+
+    outhead1("%sdone", label );
+
+    outline1("STY %s", _value );
+
 }
 
 void cpu6809_fill_indirect( Environment * _environment, char * _address, char * _size, char * _pattern ) {
@@ -3011,6 +3055,8 @@ void cpu6809_bit_check_extended( Environment * _environment, char * _value, char
 }
 
 void cpu6809_number_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits, int _signed ) {
+
+
 }
 
 void cpu6809_bits_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits ) {
