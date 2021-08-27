@@ -3472,6 +3472,35 @@ int test_cpu_lowercase_tester( TestEnvironment * _te ) {
 
 }
 
+//===========================================================================
+
+void test_cpu_convert_string_into_16bit_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    char buffer[32]; sprintf(buffer, "1975" );
+
+    Variable * original = variable_define( e, "original", VT_BUFFER, 0x00 );
+    Variable * value = variable_define( e, "value", VT_WORD, 0x00 );
+    Variable * size = variable_define( e, "size", VT_BYTE, strlen( buffer ) );
+    Variable * aoriginal = variable_define( e, "aoriginal", VT_ADDRESS, 0x4000 );
+
+    variable_store_buffer( e, original->name, buffer, strlen(buffer), 0x4000 );
+    
+    cpu_convert_string_into_16bit( e, aoriginal->realName, size->realName, value->realName );
+
+    _te->trackedVariables[0] = value;
+
+}
+
+int test_cpu_convert_string_into_16bit_tester( TestEnvironment * _te ) {
+
+    Variable * value = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+
+    return value->value = 1975;
+
+}
+
 void test_cpu( ) {
 
     // create_test( "cpu_bits_to_string", &test_cpu_bits_to_string_payload, &test_cpu_bits_to_string_tester );    
@@ -3556,6 +3585,7 @@ void test_cpu( ) {
     // create_test( "cpu_move_32bit_indirect", &test_cpu_move_32bit_indirect_payload, &test_cpu_move_32bit_indirect_tester );
     // create_test( "cpu_move_32bit_indirect2", &test_cpu_move_32bit_indirect2_payload, &test_cpu_move_32bit_indirect2_tester );
     // create_test( "cpu_uppercase", &test_cpu_uppercase_payload, &test_cpu_uppercase_tester );
-    create_test( "cpu_lowercase", &test_cpu_lowercase_payload, &test_cpu_lowercase_tester );
+    // create_test( "cpu_lowercase", &test_cpu_lowercase_payload, &test_cpu_lowercase_tester );
+    create_test( "cpu_convert_string_into_16bit", &test_cpu_convert_string_into_16bit_payload, &test_cpu_convert_string_into_16bit_tester );
 
 }
