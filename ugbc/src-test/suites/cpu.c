@@ -3501,6 +3501,52 @@ int test_cpu_convert_string_into_16bit_tester( TestEnvironment * _te ) {
 
 }
 
+//===========================================================================
+
+void test_cpu_flip_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    char buffer[32]; sprintf(buffer, "ugbasic" );
+    char buffer2[32]; sprintf(buffer2, "       " );
+
+    Variable * original = variable_define( e, "original", VT_BUFFER, 0x00 );
+    Variable * flipped = variable_define( e, "flipped", VT_BUFFER, 0x00 );
+    Variable * size = variable_define( e, "size", VT_BYTE, strlen( buffer ) );
+    Variable * aoriginal = variable_define( e, "aoriginal", VT_ADDRESS, 0x4000 );
+    Variable * aflipped = variable_define( e, "aflipped", VT_ADDRESS, 0x4100 );
+
+    variable_store_buffer( e, original->name, buffer, strlen(buffer), 0x4000 );
+    variable_store_buffer( e, flipped->name, buffer2, strlen(buffer2), 0x4100 );
+    
+    cpu_flip( e, aoriginal->realName, size->realName, aflipped->realName );
+
+    _te->debug.inspections[_te->debug.inspections_count].name="original";
+    _te->debug.inspections[_te->debug.inspections_count].address=0x4000;
+    _te->debug.inspections[_te->debug.inspections_count].size=64;
+    ++_te->debug.inspections_count;
+
+    _te->debug.inspections[_te->debug.inspections_count].name="flipped";
+    _te->debug.inspections[_te->debug.inspections_count].address=0x4100;
+    _te->debug.inspections[_te->debug.inspections_count].size=64;
+    ++_te->debug.inspections_count;
+
+    _te->trackedVariables[0] = size;
+
+}
+
+int test_cpu_flip_tester( TestEnvironment * _te ) {
+
+    Variable * size = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+
+    _te->debug.inspections[1].memory[size->value] = 0;
+
+printf( "%s\n", _te->debug.inspections[1].memory );
+
+    return strcmp( _te->debug.inspections[1].memory, "cisabgu" ) == 0;
+
+}
+
 void test_cpu( ) {
 
     // create_test( "cpu_bits_to_string", &test_cpu_bits_to_string_payload, &test_cpu_bits_to_string_tester );    
@@ -3586,6 +3632,7 @@ void test_cpu( ) {
     // create_test( "cpu_move_32bit_indirect2", &test_cpu_move_32bit_indirect2_payload, &test_cpu_move_32bit_indirect2_tester );
     // create_test( "cpu_uppercase", &test_cpu_uppercase_payload, &test_cpu_uppercase_tester );
     // create_test( "cpu_lowercase", &test_cpu_lowercase_payload, &test_cpu_lowercase_tester );
-    create_test( "cpu_convert_string_into_16bit", &test_cpu_convert_string_into_16bit_payload, &test_cpu_convert_string_into_16bit_tester );
+    // create_test( "cpu_convert_string_into_16bit", &test_cpu_convert_string_into_16bit_payload, &test_cpu_convert_string_into_16bit_tester );
+    create_test( "cpu_flip_payload", &test_cpu_flip_payload, &test_cpu_flip_tester );
 
 }
