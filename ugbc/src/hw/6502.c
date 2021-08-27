@@ -2907,10 +2907,12 @@ void cpu6502_flip( Environment * _environment, char * _source, char * _size, cha
 
 }
 
-void cpu6502_bit_check( Environment * _environment, char * _value, int _position, char *_result ) {
+void cpu6502_bit_check( Environment * _environment, char * _value, int _position, char *_result, int _bitwidth ) {
 
     MAKE_LABEL
 
+    _bitwidth = 0;
+    
     outline1("LDA #$%2.2x", 1 << ( ( _position ) & 0x07 ) );
     outline0("STA TMPPTR" );
     switch( _position ) {

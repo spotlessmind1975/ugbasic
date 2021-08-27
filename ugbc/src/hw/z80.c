@@ -2686,10 +2686,12 @@ void z80_math_div_8bit_to_8bit( Environment * _environment, char *_source, char 
     }
 }
 
-void z80_bit_check( Environment * _environment, char *_value, int _position, char * _result ) {
+void z80_bit_check( Environment * _environment, char *_value, int _position, char * _result, int _bitwidth ) {
 
     MAKE_LABEL
 
+    _bitwidth = 0;
+    
     outline1("LD HL, %s", _value);
     switch( _position ) {
         case 31: case 30: case 29: case 28: case 27: case 26: case 25: case 24: 

@@ -90,7 +90,7 @@ Variable * sign( Environment * _environment, char * _value ) {
         case 16:
         case 8:
             if ( VT_SIGNED( value->type ) ) {
-                cpu_bit_check( _environment, value->realName, VT_BITWIDTH( value->type ) - 1, result->realName );
+                cpu_bit_check( _environment, value->realName, VT_BITWIDTH( value->type ) - 1, result->realName, VT_BITWIDTH( value->type ) );
                 cpu_bveq( _environment, result->realName, positiveLabel );
 
                 cpu_label( _environment, negativeLabel );

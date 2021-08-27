@@ -84,7 +84,7 @@ Variable * absolute( Environment * _environment, char * _value ) {
     switch( VT_BITWIDTH( value->type ) ) {
         case 32:
             if ( VT_SIGNED( value->type ) ) {
-                cpu_bit_check( _environment, value->realName, VT_BITWIDTH( value->type ) - 1, result->realName );
+                cpu_bit_check( _environment, value->realName, VT_BITWIDTH( value->type ) - 1, result->realName, VT_BITWIDTH( value->type ) );
                 cpu_bveq( _environment, result->realName, positiveLabel );
 
                 cpu_label( _environment, negativeLabel );
@@ -101,7 +101,7 @@ Variable * absolute( Environment * _environment, char * _value ) {
             break;
         case 16:
             if ( VT_SIGNED( value->type ) ) {
-                cpu_bit_check( _environment, value->realName, VT_BITWIDTH( value->type ) - 1, result->realName );
+                cpu_bit_check( _environment, value->realName, VT_BITWIDTH( value->type ) - 1, result->realName, VT_BITWIDTH( value->type ) );
                 cpu_bveq( _environment, result->realName, positiveLabel );
 
                 cpu_label( _environment, negativeLabel );
@@ -118,7 +118,7 @@ Variable * absolute( Environment * _environment, char * _value ) {
             break;
         case 8:
             if ( VT_SIGNED( value->type ) ) {
-                cpu_bit_check( _environment, value->realName, VT_BITWIDTH( value->type ) - 1, result->realName );
+                cpu_bit_check( _environment, value->realName, VT_BITWIDTH( value->type ) - 1, result->realName, VT_BITWIDTH( value->type ) );
                 cpu_bveq( _environment, result->realName, positiveLabel );
 
                 cpu_label( _environment, negativeLabel );
