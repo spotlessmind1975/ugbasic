@@ -2812,36 +2812,6 @@ void cpu6502_lowercase( Environment * _environment, char *_source, char *_size, 
 
 }
 
-void cpu6502_convert_upto_24bit_bcd( Environment * _environment, char * _source, char * _dest, int _bits ) {
-
-    MAKE_LABEL
-
-    outline0("SED");
-    outline0("LDA #0");
-    outline1("STA %s+0", _dest);
-    outline1("STA %s+1", _dest);
-    outline1("STA %s+2", _dest);
-    outline1("LDX #%d", _bits );
-
-    outhead1("%sCNVBIT:", label );
-
-    outline1("ASL %s+0", _source );
-    outline1("ROL %s+1", _source );
-    outline1("LDA %s+0", _dest);
-    outline1("ADC %s+0", _dest);
-    outline1("STA %s+0", _dest);
-    outline1("LDA %s+1", _dest);
-    outline1("ADC %s+1", _dest);
-    outline1("STA %s+1", _dest);
-    outline1("LDA %s+2", _dest);
-    outline1("ADC %s+2", _dest);
-    outline1("STA %s+2", _dest);
-    outline0("DEX");
-    outline1("BNE %sCNVBIT", label);
-    outline0("CLD");
-
-}
-
 void cpu6502_convert_bcd_to_digits( Environment * _environment, char * _source, char * _dest ) {
 
     MAKE_LABEL

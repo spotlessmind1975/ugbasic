@@ -2992,10 +2992,6 @@ void cpu6809_lowercase( Environment * _environment, char *_source, char *_size, 
 
 }
 
-void cpu6809_convert_upto_24bit_bcd( Environment * _environment, char * _source, char * _dest, int _bits ) {
-
-}
-
 void cpu6809_convert_bcd_to_digits( Environment * _environment, char * _source, char * _dest ) {
 
 }

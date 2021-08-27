@@ -2209,64 +2209,6 @@ void z80_lowercase( Environment * _environment, char *_source, char *_size, char
 
 }
 
-void z80_convert_upto_24bit_bcd( Environment * _environment, char * _source, char * _dest, int _bits ) {
-
-    MAKE_LABEL
-
-    outline1("LD HL, (%s)", _source );
-    outline1("LD A, (%s+2)", _source );
-    outline0("LD E, A" );
-
-    outline0("LD C,E");
-    outline0("PUSH HL");
-    outline0("POP IX");
-    outline0("LD HL,1");
-    outline0("LD D,H");
-    outline0("LD E,H");
-    outline1("LD B,%d", _bits );
-
-    outhead1("%sFIND1:", label );
-
-    outline0("ADD IX,IX");
-    outline0("RL C");
-    outline1("JR C,%sNEXTBIT", label );
-    outline1("DJNZ %sFIND1", label );
-
-    outline0("RES 0,L");
-    outline1("JMP %send", label );
-
-    outhead1("%sDBLLOOP:", label );
-    
-    outline0("LD A,L");
-    outline0("ADD A,A");
-    outline0("DAA");
-    outline0("LD L,A");
-    outline0("LD A,H");
-    outline0("ADC A,A");
-    outline0("DAA");
-    outline0("LD H,A");
-    outline0("LD A,E");
-    outline0("ADC A,A");
-    outline0("DAA");
-    outline0("LD E,A");
-    outline0("LD A,D");
-    outline0("ADC A,A");
-    outline0("DAA");
-    outline0("LD D,A");
-    outline0("ADD IX,IX");
-    outline0("RL C");
-    outline1("JR NC,%sNEXTBIT", label );
-    outline0("SET 0,L");
-    outhead1("%sNEXTBIT:", label );
-    
-    outline1("DJNZ %sDBLLOOP", label );
-    outline1("JMP %send", label );
-
-    outhead1("%send:", label );
-    outline1("LD (%s+1), DE", _dest );
-    outline1("LD (%s), HL", _dest );
-
-}
 
 void z80_convert_bcd_to_digits( Environment * _environment, char * _source, char * _dest ) {
 
