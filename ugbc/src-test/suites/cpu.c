@@ -3547,6 +3547,36 @@ printf( "%s\n", _te->debug.inspections[1].memory );
 
 }
 
+//===========================================================================
+
+void test_cpu_bit_check_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * value = variable_define( e, "value", VT_WORD, 0x4280 );
+    Variable * result1 = variable_define( e, "result1", VT_BYTE, 0x00 );
+    Variable * result0 = variable_define( e, "result0", VT_BYTE, 0x42 );
+
+    cpu_bit_check( e, value->realName, 7, result1->realName, VT_BITWIDTH( value->type ) );
+    cpu_bit_check( e, value->realName, 8, result0->realName, VT_BITWIDTH( value->type ) );
+
+    _te->trackedVariables[0] = result1;
+    _te->trackedVariables[1] = result0;
+
+}
+
+int test_cpu_bit_check_tester( TestEnvironment * _te ) {
+
+    Variable * result1 = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * result0 = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+
+// printf( "result1 = %2.2x [expected 0xff]\n", result1->value );
+// printf( "result0 = %2.2x [expected 0x00]\n", result0->value );
+
+    return result0->value == 0x00 && result1->value == 0xff;
+
+}
+
 void test_cpu( ) {
 
     // create_test( "cpu_bits_to_string", &test_cpu_bits_to_string_payload, &test_cpu_bits_to_string_tester );    
@@ -3633,6 +3663,7 @@ void test_cpu( ) {
     // create_test( "cpu_uppercase", &test_cpu_uppercase_payload, &test_cpu_uppercase_tester );
     // create_test( "cpu_lowercase", &test_cpu_lowercase_payload, &test_cpu_lowercase_tester );
     // create_test( "cpu_convert_string_into_16bit", &test_cpu_convert_string_into_16bit_payload, &test_cpu_convert_string_into_16bit_tester );
-    create_test( "cpu_flip_payload", &test_cpu_flip_payload, &test_cpu_flip_tester );
+    // create_test( "cpu_flip_payload", &test_cpu_flip_payload, &test_cpu_flip_tester );
+    create_test( "cpu_bit_check", &test_cpu_bit_check_payload, &test_cpu_bit_check_tester );
 
 }
