@@ -2836,10 +2836,10 @@ void test_cpu_less_than_memory_payload( TestEnvironment * _te ) {
     Variable * adifferent = variable_define( e, "adifferent", VT_ADDRESS, 0x4200 );
     Variable * size = variable_define( e, "size", VT_BYTE, 160 );
 
-    // Variable * resultsame0 = variable_define( e, "resultsame0", VT_BYTE, 0x42 );
-    // Variable * resultsame1 = variable_define( e, "resultsame1", VT_BYTE, 0x42 );
-    // Variable * resultdifferent0 = variable_define( e, "resultdifferent0", VT_BYTE, 0x42 );
-    // Variable * resultdifferent1 = variable_define( e, "resultdifferent1", VT_BYTE, 0x42 );
+    Variable * resultsame0 = variable_define( e, "resultsame0", VT_BYTE, 0x42 );
+    Variable * resultsame1 = variable_define( e, "resultsame1", VT_BYTE, 0x42 );
+    Variable * resultdifferent0 = variable_define( e, "resultdifferent0", VT_BYTE, 0x42 );
+    Variable * resultdifferent1 = variable_define( e, "resultdifferent1", VT_BYTE, 0x42 );
 
     variable_store_buffer( e, source->name, buffer1, 160, 0x4000 );
     variable_store_buffer( e, same->name, buffer2, 160, 0x4100 );
@@ -3432,6 +3432,46 @@ int test_cpu_uppercase_tester( TestEnvironment * _te ) {
 
 }
 
+//===========================================================================
+
+void test_cpu_lowercase_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    char buffer[32]; sprintf(buffer, "AlFaBeTaGaMmA" );
+
+    Variable * original = variable_define( e, "original", VT_BUFFER, 0x00 );
+    Variable * lowercased = variable_define( e, "lowercased", VT_BUFFER, 0x00 );
+    Variable * size = variable_define( e, "size", VT_BYTE, strlen( buffer ) );
+    Variable * aoriginal = variable_define( e, "aoriginal", VT_ADDRESS, 0x4000 );
+    Variable * alowercased = variable_define( e, "alowercased", VT_ADDRESS, 0x4100 );
+
+    variable_store_buffer( e, original->name, buffer, strlen(buffer), 0x4000 );
+    variable_store_buffer( e, lowercased->name, buffer, strlen(buffer), 0x4100 );
+    
+    cpu_lowercase( e, aoriginal->realName, size->realName, alowercased->realName );
+
+    _te->debug.inspections[_te->debug.inspections_count].name="lowercased";
+    _te->debug.inspections[_te->debug.inspections_count].address=0x4100;
+    _te->debug.inspections[_te->debug.inspections_count].size=64;
+    ++_te->debug.inspections_count;
+    
+    _te->trackedVariables[0] = size;
+
+}
+
+int test_cpu_lowercase_tester( TestEnvironment * _te ) {
+
+    Variable * size = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+
+    _te->debug.inspections[0].memory[size->value] = 0;
+
+    // printf( "%s", _te->debug.inspections[0].memory );
+
+    return strcmp( _te->debug.inspections[0].memory, "alfabetagamma" ) == 0;
+
+}
+
 void test_cpu( ) {
 
     // create_test( "cpu_bits_to_string", &test_cpu_bits_to_string_payload, &test_cpu_bits_to_string_tester );    
@@ -3515,6 +3555,7 @@ void test_cpu( ) {
     // create_test( "cpu_move_16bit_indirect2", &test_cpu_move_16bit_indirect2_payload, &test_cpu_move_16bit_indirect2_tester );
     // create_test( "cpu_move_32bit_indirect", &test_cpu_move_32bit_indirect_payload, &test_cpu_move_32bit_indirect_tester );
     // create_test( "cpu_move_32bit_indirect2", &test_cpu_move_32bit_indirect2_payload, &test_cpu_move_32bit_indirect2_tester );
-    create_test( "cpu_uppercase", &test_cpu_uppercase_payload, &test_cpu_uppercase_tester );
+    // create_test( "cpu_uppercase", &test_cpu_uppercase_payload, &test_cpu_uppercase_tester );
+    create_test( "cpu_lowercase", &test_cpu_lowercase_payload, &test_cpu_lowercase_tester );
 
 }
