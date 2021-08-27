@@ -2932,6 +2932,33 @@ void cpu6809_move_32bit_indirect2( Environment * _environment, char * _value, ch
 
 void cpu6809_uppercase( Environment * _environment, char *_source, char *_size, char *_result ) {
 
+    MAKE_LABEL
+
+    outline0("LDB #0" );
+    outline1("LDX %s", _source );
+    if ( _result ) {
+        outline1("LDY %s", _result );
+    } else {
+        outline1("LDY %s", _source );
+    }
+    outhead1("%supper", label );
+    outline0("LDA B, X" );
+    
+    outline0("CMPA #97");
+    outline1("BLO %snext", label);
+
+    outline0("CMPA #122");
+    outline1("BHI %snext", label);
+
+    outline0("ANDCC #$FE");
+    outline0("SUBA #32");
+
+    outhead1("%snext", label );
+    outline0("STA B, Y" );
+    outline0("ADDB #1" );
+    outline1("CMPB %s", _size );
+    outline1("BNE %supper", label );
+
 }
 
 void cpu6809_lowercase( Environment * _environment, char *_source, char *_size, char *_result ) {
