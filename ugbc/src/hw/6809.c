@@ -3040,10 +3040,6 @@ void cpu6809_convert_string_into_16bit( Environment * _environment, char * _stri
 
 }
 
-void cpu6809_fill_indirect( Environment * _environment, char * _address, char * _size, char * _pattern ) {
-
-}
-
 void cpu6809_flip( Environment * _environment, char * _source, char * _size, char * _destination ) {
 }
 
@@ -3055,7 +3051,6 @@ void cpu6809_bit_check_extended( Environment * _environment, char * _value, char
 }
 
 void cpu6809_number_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits, int _signed ) {
-
 
 }
 

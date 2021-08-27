@@ -2276,26 +2276,6 @@ void z80_convert_string_into_16bit( Environment * _environment, char * _string, 
   
 }
 
-void z80_fill_indirect( Environment * _environment, char * _address, char * _size, char * _pattern ) {
-
-    MAKE_LABEL
-
-    // Use the current bitmap address as starting address for filling routine.
-    outline1("LD DE, (%s)", _address);
-    outline1("LD HL, (%s)", _pattern);
-
-    // Fill the bitmap with the given pattern.
-    outline1("LD A, (%s)", _size);
-    outline0("LD C, A" );
-    outhead1("%sx:", label);
-    outline0("LD A, (HL)");
-    outline0("LD (DE),A");
-    outline0("INC DE");
-    outline0("DEC C");
-    outline1("JR NZ,%sx", label);
-
-}
-
 void z80_flip( Environment * _environment, char * _source, char * _size, char * _destination ) {
 
     MAKE_LABEL
