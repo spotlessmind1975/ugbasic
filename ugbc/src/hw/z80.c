@@ -2716,9 +2716,11 @@ void z80_bit_check( Environment * _environment, char *_value, int _position, cha
 
 }
 
-void z80_bit_check_extended( Environment * _environment, char *_value, char * _position, char * _result ) {
+void z80_bit_check_extended( Environment * _environment, char *_value, char * _position, char * _result, int _bitwidth ) {
 
     MAKE_LABEL
+
+    _bitwidth = 0;
 
     outline1("LD HL, %s", _value);
     outline1("LD A, (%s)", _position);

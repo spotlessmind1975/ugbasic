@@ -3068,6 +3068,7 @@ void cpu6809_bit_check( Environment * _environment, char * _value, int _position
     MAKE_LABEL
 
     outline1("LDB #$%2.2x", 1 << ( ( _position ) & 0x07 ) );
+    outline0("STB MATHPTR0" );
     switch( _position ) {
         case 31: case 30: case 29: case 28: case 27: case 26: case 25: case 24: 
             outline1("LDA %s", _value);
@@ -3082,7 +3083,7 @@ void cpu6809_bit_check( Environment * _environment, char * _value, int _position
             outline2("LDA %s+%d", _value, ( _bitwidth / 8 ) - 1 );
             break;
     }
-    outline0("ANDA B" );
+    outline0("ANDA MATHPTR0" );
     outline0("CMPA #0" );
     outline1("BEQ %szero", label);
     outhead1("%sone", label)
@@ -3095,10 +3096,167 @@ void cpu6809_bit_check( Environment * _environment, char * _value, int _position
 
 }
 
-void cpu6809_bit_check_extended( Environment * _environment, char * _value, char * _position, char *_result ) {
+void cpu6809_bit_check_extended( Environment * _environment, char * _value, char * _position, char *_result, int _bitwidth ) {
+
+    MAKE_LABEL
+
+    outline0("LDA #1" );
+    outline1("LDB %s", _position );
+    outline0("ANDB #$07" );
+    outhead1("%s", label );
+    outline0("CMPB #0" );
+    outline1("BEQ %sdone", label );
+    outline0("LSLA" );
+    outline0("DECB" );
+    outline1("JMP %s", label );
+
+    outhead1("%sdone", label );
+    outline0("STA MATHPTR0" );
+
+    outline1("LDB %s", _position );
+    outline0("CMPB #24" );
+    outline1("BLO %s_24", label );
+
+    // 32-24
+    outline1("LDA %s", _value );
+    outline1("JMP %seval", label );
+
+    outhead1("%s_24", label );
+    outline0("CMPB #16" );
+    outline1("BLO %s_16", label );
+
+    // 24-16
+    outline1("LDA %s+1", _value );
+    outline1("JMP %seval", label );
+
+    outhead1("%s_16", label );
+    outline0("CMPB #8" );
+    outline1("BLO %s_8", label );
+
+    // 16-8
+    outline2("LDA %s+%d", _value, ( _bitwidth / 8 ) - 2  );
+    outline1("JMP %seval", label );
+
+    outhead1("%s_8", label );
+
+    // 8-0
+    outline2("LDA %s+%d", _value, ( _bitwidth / 8 ) - 1  );
+    outline1("JMP %seval", label );
+
+    outhead1("%seval", label );
+    outline0("ANDA MATHPTR0" );
+    outline0("CMPA #0" );
+    outline1("BEQ %szero", label);
+    outhead1("%sone", label)
+    outline0("LDA #$ff");
+    outline1("JMP %send", label );
+    outhead1("%szero", label)
+    outline0("LDA #$0");
+    outhead1("%send", label)
+    outline1("STA %s", _result);
+
 }
 
 void cpu6809_number_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits, int _signed ) {
+
+    MAKE_LABEL
+
+    deploy( numberToStringDeployed, src_hw_6809_number_to_string_asm );
+
+    outline1("LDX %s", _string );
+    outline0("STX TMPPTR");
+
+    outline0("LDA #0");
+    outline0("STA MATHPTR0");
+    outline0("STA MATHPTR3");
+    outline0("STA MATHPTR2");
+    outline0("STA MATHPTR1");
+    outline0("STA MATHPTR4");
+
+    switch( _bits ) {
+        case 32:
+            outline1("LDA %s", _number );
+            if ( _signed && _bits == 32 ) {
+                outline0("AND #$80");
+                outline0("STA MATHPTR4");
+                outline1("LDA %s", _number );
+            }
+            outline0("STA MATHPTR0");
+            outline1("LDA %s+1", _number );
+            outline0("STA MATHPTR1");
+            outline1("LDA %s+2", _number );    
+            outline0("STA MATHPTR2");
+            outline1("LDA %s+3", _number );
+            outline0("STA MATHPTR3");
+            break;
+        case 16:
+            outline0("LDA #0" );
+            outline0("STA MATHPTR0");
+            outline0("STA MATHPTR1");
+            outline1("LDA %s", _number );    
+            if ( _signed && _bits == 16 ) {
+                outline0("ANDA #$80");
+                outline0("STA MATHPTR4");
+                outline1("LDA %s", _number );
+            }
+            outline0("STA MATHPTR2");
+            outline1("LDA %s+1", _number );
+            outline0("STA MATHPTR3");
+            break;
+        case 8:
+            outline0("LDA #0" );
+            outline0("STA MATHPTR0");
+            outline0("STA MATHPTR1");
+            outline0("STA MATHPTR2");
+            outline1("LDA %s", _number );    
+            if ( _signed && _bits == 16 ) {
+                outline0("ANDA #$80");
+                outline0("STA MATHPTR4");
+                outline1("LDA %s", _number );
+            }
+            outline0("STA MATHPTR3");
+            break;
+    }
+
+    outline0("LDA MATHPTR4");
+    outline0("ANDA #$80" );
+    outline1("BEQ %spositive", label );
+
+    outline0("LDA MATHPTR0" );
+    outline0("EORA #$ff" );
+    outline0("STA MATHPTR0" );
+    outline0("LDA MATHPTR1" );
+    outline0("EORA #$ff" );
+    outline0("STA MATHPTR1" );
+    outline0("LDA MATHPTR2" );
+    outline0("EORA #$ff" );
+    outline0("STA MATHPTR2" );
+    outline0("LDA MATHPTR3" );
+    outline0("EORA #$ff" );
+    outline0("STA MATHPTR3" );
+
+    outline0("ANDCC #$FE" );
+    outline0("LDA #$01" );
+    outline0("ADDA MATHPTR3" );
+    outline0("STA MATHPTR3" );
+    outline0("LDA #$00" );
+    outline0("ADDA MATHPTR2" );
+    outline0("STA MATHPTR2" );
+    outline0("LDA #$00" );
+    outline0("ADDA MATHPTR1" );
+    outline0("STA MATHPTR1" );
+    outline0("LDA #$00" );
+    outline0("ADDA MATHPTR0" );
+    outline0("STA MATHPTR0" );
+
+    outhead1("%spositive", label );
+    outline1("LDA #$%2.2X", _bits );
+    outline0("STA MATHPTR5");
+
+    outline0("JSR N2STRING");
+
+    outline0("LDA MATHPTR5" );
+    outline1("STA %s", _string_size);
 
 }
 

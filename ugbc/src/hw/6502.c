@@ -2941,10 +2941,12 @@ void cpu6502_bit_check( Environment * _environment, char * _value, int _position
 
 }
 
-void cpu6502_bit_check_extended( Environment * _environment, char * _value, char * _position, char *_result ) {
+void cpu6502_bit_check_extended( Environment * _environment, char * _value, char * _position, char *_result, int _bitwidth ) {
 
     MAKE_LABEL
 
+    _bitwidth = 0;
+    
     outline1("LDA %s", _position );
     outline0("AND #$07" );
     outline1("BEQ %sl3", label );
