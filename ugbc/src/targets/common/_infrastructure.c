@@ -3459,7 +3459,7 @@ Variable * variable_bit( Environment * _environment, char * _value, char * _posi
         case 32:
         case 16:
         case 8:
-            cpu_bit_check_extended( _environment, value->realName, position->realName, result->realName );
+            cpu_bit_check_extended( _environment, value->realName, position->realName, result->realName, VT_BITWIDTH( value->type ) );
             cpu_bveq( _environment, result->realName, unsetLabel );
 
             cpu_label( _environment, setLabel );
