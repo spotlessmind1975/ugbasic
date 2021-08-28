@@ -50,7 +50,7 @@ test: paths-test tester
 # Motorola 6809
 
 MODULES_6809 := $(wildcard src/hw/6809/*.asm)
-SOURCES_6502 := $(subst src/hw/6809/,src-generated/6809_,$(MODULES_6809:.asm=.c))
+SOURCES_6809 := $(subst src/hw/6809/,src-generated/6809_,$(MODULES_6809:.asm=.c))
 
 src-generated/6809_%.c: $(MODULES_6809)
 	@xxd -i $(subst src-generated/6809_,src/hw/6809/,$(@:.c=.asm)) >$@
