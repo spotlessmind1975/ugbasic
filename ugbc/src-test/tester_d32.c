@@ -62,7 +62,7 @@ void create_test( char *_name, void (*_payload)(TestEnvironment *), int (*_teste
     fclose(handleIns);
 
     system("asm6809 -H -e 7168 /tmp/out.asm -o /tmp/out.hex -s /tmp/out.sym -l /tmp/out.lis");
-    system("usim -t -i /tmp/out.lis -R 1C00 -L /tmp/out.sym -Li /tmp/out.ins -l 1C00 /tmp/out.hex -O /tmp/out.out");
+    system("usim -i /tmp/out.lis -R 1C00 -L /tmp/out.sym -Li /tmp/out.ins -l 1C00 /tmp/out.hex -O /tmp/out.out");
     FILE * handle = fopen( "/tmp/out.out", "rt" );
     fscanf(handle, "%x %x %x %x %x %x %x %x", 
     	&t.state.a,
@@ -128,7 +128,9 @@ void create_test( char *_name, void (*_payload)(TestEnvironment *), int (*_teste
           if ( strcmp( realname, "USING") == 0 ) {
             fscanf(handle, "%x", &t.state.xusing );
             Variable * v = variable_retrieve_by_realname( &t.environment, "USING" );
-            v->value = t.state.xusing;
+            if ( v ) {
+                v->value = t.state.xusing;
+            }
           }
         } else {
             int i=0;
