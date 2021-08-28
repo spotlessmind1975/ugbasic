@@ -3262,6 +3262,39 @@ void cpu6809_number_to_string( Environment * _environment, char * _number, char 
 
 void cpu6809_bits_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits ) {
 
+    deploy( bitsToStringDeployed, src_hw_6809_bits_to_string_asm );
+
+    switch( _bits ) {
+        case 32:
+            outline1("LDD %s", _number );
+            outline0("STD MATHPTR0" );
+            outline1("LDD %s+2", _number );
+            outline0("STD MATHPTR2" );
+            break;
+        case 16:
+            outline0("LDD #0" );
+            outline0("STD MATHPTR0" );
+            outline1("LDD %s", _number );
+            outline0("STD MATHPTR2" );
+            break;
+        case 8:        
+            outline0("LDD #0" );
+            outline0("STD MATHPTR0" );
+            outline0("LDA #0" );
+            outline0("STA MATHPTR2" );
+            outline1("LDA %s", _number );
+            outline0("STA MATHPTR3" );
+            break;
+    }
+
+    outline1("LDB #$%2.2x", _bits );
+    outline0("JSR BINSTR");
+
+    cpu6809_mem_move_direct_indirect_size( _environment, "BINSTRBUF", _string, _bits );    
+
+    outline1("LDB #$%2.2x", _bits );
+    outline1("STB %s", _string_size );
+
 }
 
 void cpu6809_dsdefine( Environment * _environment, char * _string, char * _index ) {
