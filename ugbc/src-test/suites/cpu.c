@@ -43,24 +43,36 @@ void test_cpu_bits_to_string_payload( TestEnvironment * _te ) {
 
     Environment * e = &_te->environment;
 
+    char buffer[9]; 
+    memset( buffer, 0, 9 );
+
     Variable * number = variable_define( e, "number", VT_BYTE, 2 );
-    Variable * string = variable_define( e, "string", VT_DSTRING, 0 );
-    Variable * address = variable_define( e, "address", VT_ADDRESS, 0 );
+    Variable * string = variable_define( e, "string", VT_BUFFER, 0 );
+    Variable * address = variable_define( e, "address", VT_ADDRESS, 0x4100 );
     Variable * size = variable_define( e, "size", VT_BYTE, 0 );
-    cpu_dsalloc_size( e, 8, string->realName );
-    cpu_dsdescriptor( e, string->realName, address->realName, size->realName );
+
+    variable_store_buffer( e, string->name, buffer, 9, 0x4100 );
+    
     cpu_bits_to_string( e, number->realName, address->realName, size->realName, 8 );
 
-    _te->trackedVariables[0] = string;
+    _te->debug.inspections[0].name="string";
+    _te->debug.inspections[0].address=0x4100;
+    _te->debug.inspections[0].size=32;
+    ++_te->debug.inspections_count;
+    
+    _te->trackedVariables[0] = size;
 
 }
 
 int test_cpu_bits_to_string_tester( TestEnvironment * _te ) {
 
-    Variable * string = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * size = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
 
-    return strcmp( string->valueString, "00000000000000000000000000000010" ) == 0 ||
-            strcmp( string->valueString, "00000010" ) == 0;
+    _te->debug.inspections[0].memory[size->value] = 0;
+
+// printf("memory = %s\n", _te->debug.inspections[0].memory );
+
+    return strcmp( _te->debug.inspections[0].memory, "00000010" ) == 0;
 
 }
 
@@ -70,24 +82,37 @@ void test_cpu_bits_to_string32_payload( TestEnvironment * _te ) {
 
     Environment * e = &_te->environment;
 
+    char buffer[33]; 
+    memset( buffer, 0, 33 );
+
     Variable * number = variable_define( e, "number", VT_DWORD, 0x00000055 );
-    Variable * string = variable_define( e, "string", VT_DSTRING, 0 );
-    Variable * address = variable_define( e, "address", VT_ADDRESS, 0 );
+    Variable * string = variable_define( e, "string", VT_BUFFER, 0 );
+    Variable * address = variable_define( e, "address", VT_ADDRESS, 0x4100 );
     Variable * size = variable_define( e, "size", VT_BYTE, 0 );
-    cpu_dsalloc_size( e, 32, string->realName );
-    cpu_dsdescriptor( e, string->realName, address->realName, size->realName );
+
+    variable_store_buffer( e, string->name, buffer, 9, 0x4100 );
+
     cpu_bits_to_string( e, number->realName, address->realName, size->realName, 32 );
 
-    _te->trackedVariables[0] = string;
+    _te->debug.inspections[0].name="string";
+    _te->debug.inspections[0].address=0x4100;
+    _te->debug.inspections[0].size=32;
+    ++_te->debug.inspections_count;
+    
+    _te->trackedVariables[0] = size;
 
 }
 
 int test_cpu_bits_to_string32_tester( TestEnvironment * _te ) {
 
-    Variable * string = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * size = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
 
-    return strcmp( string->valueString, "00000000000000000000000001010101" ) == 0 ||
-            strcmp( string->valueString, "01010101" ) == 0;
+    _te->debug.inspections[0].memory[size->value] = 0;
+
+// printf("memory = %s\n", _te->debug.inspections[0].memory );
+
+    return strcmp( _te->debug.inspections[0].memory, "00000000000000000000000001010101" ) == 0 ||
+            strcmp( _te->debug.inspections[0].memory, "01010101" ) == 0;
 
 }
 
@@ -3651,8 +3676,8 @@ int test_cpu_bit_check_testerB( TestEnvironment * _te ) {
 
 void test_cpu( ) {
 
-    // create_test( "cpu_bits_to_string", &test_cpu_bits_to_string_payload, &test_cpu_bits_to_string_tester );    
-    // create_test( "cpu_bits_to_string32", &test_cpu_bits_to_string32_payload, &test_cpu_bits_to_string32_tester );    
+    create_test( "cpu_bits_to_string", &test_cpu_bits_to_string_payload, &test_cpu_bits_to_string_tester );    
+    create_test( "cpu_bits_to_string32", &test_cpu_bits_to_string32_payload, &test_cpu_bits_to_string32_tester );    
     // create_test( "cpu_dswrite", &test_cpu_dswrite_payload, &test_cpu_dswrite_tester );    
     // create_test( "cpu_dsgc A", &test_cpu_dsgc_payloadA, &test_cpu_dsgc_testerA );    
     // create_test( "cpu_dsgc B", &test_cpu_dsgc_payloadB, &test_cpu_dsgc_testerB );    
@@ -3682,7 +3707,7 @@ void test_cpu( ) {
     // create_test( "cpu_math_mul2_const_16bit", &test_cpu_math_mul2_const_16bit_payload, &test_cpu_math_mul2_const_16bit_tester );
     // create_test( "cpu_math_mul2_const_32bit", &test_cpu_math_mul2_const_32bit_payload, &test_cpu_math_mul2_const_32bit_tester );
     // create_test( "cpu_math_mul2_const_8bit", &test_cpu_math_mul2_const_8bit_payload, &test_cpu_math_mul2_const_8bit_tester );
-    create_test( "cpu_number_to_string_payload", &test_cpu_number_to_string_payload, &test_cpu_number_to_string_tester );
+    // create_test( "cpu_number_to_string_payload", &test_cpu_number_to_string_payload, &test_cpu_number_to_string_tester );
     // create_test( "cpu_number_to_string_payloadB", &test_cpu_number_to_string_payloadB, &test_cpu_number_to_string_testerB );
     // create_test( "cpu_peek", &test_cpu_peek_payload, &test_cpu_peek_tester );
     // create_test( "cpu_poke", &test_cpu_poke_payload, &test_cpu_poke_tester );
