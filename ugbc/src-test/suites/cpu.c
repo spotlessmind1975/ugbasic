@@ -438,14 +438,14 @@ void test_cpu_bit_check_extended_payload( TestEnvironment * _te ) {
     Variable * result6 = variable_define( e, "result6", VT_BYTE, 0x06 );
     Variable * result7 = variable_define( e, "result7", VT_BYTE, 0x07 );
 
-    cpu_bit_check_extended( e, value->realName, pos0->realName, result0->realName );
-    cpu_bit_check_extended( e, value->realName, pos1->realName, result1->realName );
-    cpu_bit_check_extended( e, value->realName, pos2->realName, result2->realName );
-    cpu_bit_check_extended( e, value->realName, pos3->realName, result3->realName );
-    cpu_bit_check_extended( e, value->realName, pos4->realName, result4->realName );
-    cpu_bit_check_extended( e, value->realName, pos5->realName, result5->realName );
-    cpu_bit_check_extended( e, value->realName, pos6->realName, result6->realName );
-    cpu_bit_check_extended( e, value->realName, pos7->realName, result7->realName );
+    cpu_bit_check_extended( e, value->realName, pos0->realName, result0->realName, VT_BITWIDTH( value->type ) );
+    cpu_bit_check_extended( e, value->realName, pos1->realName, result1->realName, VT_BITWIDTH( value->type ) );
+    cpu_bit_check_extended( e, value->realName, pos2->realName, result2->realName, VT_BITWIDTH( value->type ) );
+    cpu_bit_check_extended( e, value->realName, pos3->realName, result3->realName, VT_BITWIDTH( value->type ) );
+    cpu_bit_check_extended( e, value->realName, pos4->realName, result4->realName, VT_BITWIDTH( value->type ) );
+    cpu_bit_check_extended( e, value->realName, pos5->realName, result5->realName, VT_BITWIDTH( value->type ) );
+    cpu_bit_check_extended( e, value->realName, pos6->realName, result6->realName, VT_BITWIDTH( value->type ) );
+    cpu_bit_check_extended( e, value->realName, pos7->realName, result7->realName, VT_BITWIDTH( value->type ) );
     
     _te->trackedVariables[0] = result0;
     _te->trackedVariables[1] = result1;
@@ -468,6 +468,15 @@ int test_cpu_bit_check_extended_tester( TestEnvironment * _te ) {
     Variable * result5 = variable_retrieve( &_te->environment, _te->trackedVariables[5]->name );
     Variable * result6 = variable_retrieve( &_te->environment, _te->trackedVariables[6]->name );
     Variable * result7 = variable_retrieve( &_te->environment, _te->trackedVariables[7]->name );
+
+    printf("result0: %2.2x [expected 0xff]\n", result0->value );
+    printf("result1: %2.2x [expected 0x00]\n", result1->value );
+    printf("result2: %2.2x [expected 0xff]\n", result2->value );
+    printf("result3: %2.2x [expected 0x00]\n", result3->value );
+    printf("result4: %2.2x [expected 0xff]\n", result4->value );
+    printf("result5: %2.2x [expected 0x00]\n", result5->value );
+    printf("result6: %2.2x [expected 0xff]\n", result6->value );
+    printf("result7: %2.2x [expected 0x00]\n", result7->value );
 
     return  result0->value == 0xff && 
             result1->value == 0x00 &&
@@ -1382,7 +1391,7 @@ void test_cpu_bit_check_extended_payloadB( TestEnvironment * _te ) {
         char buffer[MAX_TEMPORARY_STORAGE];
         sprintf( buffer, "result%d", i );
         result[i] = variable_define( e, buffer, VT_BYTE, 0x55 );
-        cpu_bit_check_extended( e, value->realName, position[i]->realName, result[i]->realName );
+        cpu_bit_check_extended( e, value->realName, position[i]->realName, result[i]->realName, VT_BITWIDTH( value->type ) );
     }
 
     for( i=0; i<16; ++i ) {
@@ -1398,6 +1407,10 @@ int test_cpu_bit_check_extended_testerB( TestEnvironment * _te ) {
     int i = 0;
     for( i=0; i<16; ++i ) {
         result[i] = variable_retrieve( &_te->environment, _te->trackedVariables[i]->name );
+    }
+
+    for( i=0; i<16; ++i ) {
+        printf( "result[%d] = %2.2x [expected %2.2x]\n", i, result[i]->value, ( i % 2 ) == 0 ? 0x00 : 0xff );
     }
 
     for( i=0; i<16; ++i ) {
@@ -1422,28 +1435,36 @@ void test_cpu_number_to_string_payload( TestEnvironment * _te ) {
 
     Environment * e = &_te->environment;
 
+    char buffer[128]; sprintf(buffer, "                                  ");
+
     Variable * value = variable_define( e, "e", VT_BYTE, 42 );
     Variable * address = variable_temporary( e, VT_ADDRESS, "(temporary for PRINT)");
     Variable * size = variable_temporary( e, VT_BYTE, "(temporary for PRINT)");
-    Variable * tmp = variable_temporary( e, VT_DSTRING, "(temporary for PRINT)");
-    variable_store_string( e, tmp->name, "          " );
+    Variable * tmp = variable_temporary( e, VT_BUFFER, "(temporary for PRINT)");
+    Variable * atmp = variable_define( e, "atmp", VT_ADDRESS, 0x4100);
 
-    cpu_dswrite( e, tmp->realName );
-    cpu_dsdescriptor( e, tmp->realName, address->realName, size->realName );
+    variable_store_buffer( e, tmp->name, buffer, 32, 0x4100 );
 
-    cpu_number_to_string( e, value->realName, address->realName, size->realName, VT_BITWIDTH( value->type ), VT_SIGNED( value->type ) );
+    cpu_number_to_string( e, value->realName, atmp->realName, size->realName, VT_BITWIDTH( value->type ), VT_SIGNED( value->type ) );
 
-    cpu_dsresize( e, tmp->realName, size->realName );
-
-    _te->trackedVariables[0] = tmp;
+    _te->debug.inspections[0].name="tmp";
+    _te->debug.inspections[0].address=0x4100;
+    _te->debug.inspections[0].size=32;
+    ++_te->debug.inspections_count;
+    
+    _te->trackedVariables[0] = size;
 
 }
 
 int test_cpu_number_to_string_tester( TestEnvironment * _te ) {
 
-    Variable * tmp = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * size = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
 
-    return strcmp( tmp->valueString, "42" ) == 0;
+    _te->debug.inspections[0].memory[size->value] = 0;
+
+printf("memory = %s\n", _te->debug.inspections[0].memory );
+
+    return strcmp( _te->debug.inspections[0].memory, "42" ) == 0;
 
 }
 
@@ -3577,6 +3598,57 @@ int test_cpu_bit_check_tester( TestEnvironment * _te ) {
 
 }
 
+//===========================================================================
+
+void test_cpu_bit_check_payloadB( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+    Variable *result[16];
+
+    Variable * value = variable_define( e, "value", VT_WORD, 0x5555 );
+
+    int i=0;
+    for( i=0; i<16; ++i ) {
+        char buffer[MAX_TEMPORARY_STORAGE]; sprintf(buffer, "result%d", i );
+        result[i] = variable_define( e, buffer, VT_BYTE, 0x55 );
+        cpu_bit_check( e, value->realName, i, result[i]->realName, VT_BITWIDTH( value->type ) );
+    }
+
+    for( i=0; i<16; ++i ) {
+        _te->trackedVariables[i] = result[i];
+    }
+
+}
+
+int test_cpu_bit_check_testerB( TestEnvironment * _te ) {
+
+    Variable *result[16];
+
+    int i = 0;
+    for( i=0; i<16; ++i ) {
+        result[i] = variable_retrieve( &_te->environment, _te->trackedVariables[i]->name );
+    }
+
+    for( i=0; i<16; ++i ) {
+        printf( "result[%d] = %2.2x [expected %2.2x]\n", i, result[i]->value, ( i % 2 ) == 0 ? 0x00 : 0xff );
+    }
+
+    for( i=0; i<16; ++i ) {
+        if ( ( i % 2 ) == 0 ) {
+            if ( result[i]->value == 0x00 ) {
+                return 0;
+            }
+        } else {
+            if ( result[i]->value == 0xff ) {
+                return 0;
+            }
+        }
+    }
+
+    return 1;
+
+}
+
 void test_cpu( ) {
 
     // create_test( "cpu_bits_to_string", &test_cpu_bits_to_string_payload, &test_cpu_bits_to_string_tester );    
@@ -3610,7 +3682,7 @@ void test_cpu( ) {
     // create_test( "cpu_math_mul2_const_16bit", &test_cpu_math_mul2_const_16bit_payload, &test_cpu_math_mul2_const_16bit_tester );
     // create_test( "cpu_math_mul2_const_32bit", &test_cpu_math_mul2_const_32bit_payload, &test_cpu_math_mul2_const_32bit_tester );
     // create_test( "cpu_math_mul2_const_8bit", &test_cpu_math_mul2_const_8bit_payload, &test_cpu_math_mul2_const_8bit_tester );
-    // create_test( "cpu_number_to_string_payload", &test_cpu_number_to_string_payload, &test_cpu_number_to_string_tester );
+    create_test( "cpu_number_to_string_payload", &test_cpu_number_to_string_payload, &test_cpu_number_to_string_tester );
     // create_test( "cpu_number_to_string_payloadB", &test_cpu_number_to_string_payloadB, &test_cpu_number_to_string_testerB );
     // create_test( "cpu_peek", &test_cpu_peek_payload, &test_cpu_peek_tester );
     // create_test( "cpu_poke", &test_cpu_poke_payload, &test_cpu_poke_tester );
@@ -3664,6 +3736,7 @@ void test_cpu( ) {
     // create_test( "cpu_lowercase", &test_cpu_lowercase_payload, &test_cpu_lowercase_tester );
     // create_test( "cpu_convert_string_into_16bit", &test_cpu_convert_string_into_16bit_payload, &test_cpu_convert_string_into_16bit_tester );
     // create_test( "cpu_flip_payload", &test_cpu_flip_payload, &test_cpu_flip_tester );
-    create_test( "cpu_bit_check", &test_cpu_bit_check_payload, &test_cpu_bit_check_tester );
+    // create_test( "cpu_bit_check", &test_cpu_bit_check_payload, &test_cpu_bit_check_tester );
+    // create_test( "cpu_bit_checkB", &test_cpu_bit_check_payloadB, &test_cpu_bit_check_testerB );
 
 }
