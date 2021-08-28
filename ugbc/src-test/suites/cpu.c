@@ -152,6 +152,35 @@ int test_cpu_dswrite_tester( TestEnvironment * _te ) {
 
 //===========================================================================
 
+void test_cpu_dsgc_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * using = variable_import( e, "USING", VT_BYTE );
+
+    Variable * st = variable_define( e, "st", VT_STRING, 0 );
+    Variable * dy = variable_define( e, "dy", VT_DSTRING, 0 );
+
+    variable_store_string( e, st->name, "test");
+    cpu_dsdefine( e, st->realName, dy->realName );
+    cpu_dsgc( e );
+
+    _te->trackedVariables[0] = using;
+
+}
+
+int test_cpu_dsgc_tester( TestEnvironment * _te ) {
+
+    Variable * using = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+
+printf( "using = %2.2x (%d) [expected 0xff]\n", using->value, using->value );
+
+    return using->value == 0xff;
+
+}
+
+//===========================================================================
+
 void test_cpu_dsgc_payloadA( TestEnvironment * _te ) {
 
     Environment * e = &_te->environment;
@@ -3674,11 +3703,227 @@ int test_cpu_bit_check_testerB( TestEnvironment * _te ) {
 
 }
 
+//===========================================================================
+
+void test_cpu_dsdefine_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * string = variable_define( e, "string", VT_STRING, 0 );
+    Variable * index = variable_define( e, "index", VT_DSTRING, 1 );
+    Variable * address = variable_define( e, "address", VT_ADDRESS, 0x4242 );
+    Variable * size = variable_define( e, "size", VT_BYTE, 0x00 );
+    Variable * address2 = variable_define( e, "address2", VT_ADDRESS, 0x4100 );
+
+    variable_store_string( e, string->name, "Prova" );
+
+    cpu_dsdefine( e, string->realName, index->realName );
+    cpu_dsdescriptor( e, index->realName, address->realName, size->realName );
+    cpu_mem_move( e, address->realName, address2->realName, size->realName );
+
+    _te->debug.inspections[_te->debug.inspections_count].name="address2";
+    _te->debug.inspections[_te->debug.inspections_count].address=0x4100;
+    _te->debug.inspections[_te->debug.inspections_count].size=64;
+    ++_te->debug.inspections_count;
+    
+    _te->trackedVariables[0] = string;
+    _te->trackedVariables[1] = index;
+    _te->trackedVariables[2] = address;
+    _te->trackedVariables[3] = size;
+    _te->trackedVariables[4] = address2;
+
+}
+
+int test_cpu_dsdefine_tester( TestEnvironment * _te ) {
+
+    Variable * string = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * index = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+    Variable * address = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
+    Variable * size = variable_retrieve( &_te->environment, _te->trackedVariables[3]->name );
+    Variable * address2 = variable_retrieve( &_te->environment, _te->trackedVariables[4]->name );
+
+    _te->debug.inspections[0].memory[size->value] = 0;
+
+// printf( "string = %s [expected 'Prova']\n", string->valueString );
+// printf( "index = %2.2x (%d) [expected: 0x01]\n", index->value, index->value );
+// printf( "address = %4.4x (%d) [expected: != 0x4242]\n", address->value, address->value );
+// printf( "size = %2.2x (%d) [expected: 5]\n", size->value, size->value );
+// printf( "address2 = %4.4x (%d) [expected: 0x4100]\n", address2->value, address2->value );
+// printf( "memory = %s [expected 'Prova']\n", _te->debug.inspections[0].memory );
+
+    return 
+        strcmp( _te->debug.inspections[0].memory, "Prova" ) == 0 &&
+        strcmp( string->valueString, "Prova" ) == 0 &&
+        index->value == 1 &&
+        address->value != 0x4242 &&
+        size->value == 5 &&
+        address2->value == 0x4100;
+
+}
+
+//===========================================================================
+
+void test_cpu_dsalloc_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * index = variable_define( e, "index", VT_DSTRING, 1 );
+    Variable * address = variable_define( e, "address", VT_ADDRESS, 0x4242 );
+    Variable * size = variable_define( e, "size", VT_BYTE, 0x42 );
+
+    cpu_dsalloc( e, size->realName, index->realName );
+    cpu_dsdescriptor( e, index->realName, address->realName, size->realName );
+
+    _te->trackedVariables[0] = index;
+    _te->trackedVariables[1] = address;
+    _te->trackedVariables[2] = size;
+
+}
+
+int test_cpu_dsalloc_tester( TestEnvironment * _te ) {
+
+    Variable * index = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * address = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+    Variable * size = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
+
+printf( "index = %2.2x (%d) [expected: 0x01]\n", index->value, index->value );
+printf( "address = %4.4x (%d) [expected: != 0x4242]\n", address->value, address->value );
+printf( "size = %2.2x (%d) [expected: 42]\n", size->value, size->value );
+
+    return 
+        index->value == 1 &&
+        address->value != 0x4242 &&
+        size->value == 0x42;
+
+}
+
+//===========================================================================
+
+void test_cpu_dsfree_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * index1 = variable_define( e, "index1", VT_DSTRING, 1 );
+    Variable * address1 = variable_define( e, "address1", VT_ADDRESS, 0x4242 );
+    Variable * size1 = variable_define( e, "size1", VT_BYTE, 0x42 );
+    Variable * size1c = variable_define( e, "size1c", VT_BYTE, 0x00 );
+    Variable * index2 = variable_define( e, "index2", VT_DSTRING, 1 );
+    Variable * address2 = variable_define( e, "address2", VT_ADDRESS, 0x4242 );
+    Variable * size2 = variable_define( e, "size2", VT_BYTE, 0x64 );
+    Variable * size2c = variable_define( e, "size2c", VT_BYTE, 0x00 );
+
+    cpu_dsalloc( e, size1->realName, index1->realName );
+    cpu_dsdescriptor( e, index1->realName, address1->realName, size1c->realName );
+    cpu_dsfree( e, index1->realName );
+    cpu_dsalloc( e, size2->realName, index2->realName );
+    cpu_dsdescriptor( e, index2->realName, address2->realName, size2c->realName );
+
+    _te->trackedVariables[0] = index1;
+    _te->trackedVariables[1] = address1;
+    _te->trackedVariables[2] = size1;
+    _te->trackedVariables[3] = size1c;
+
+    _te->trackedVariables[4] = index2;
+    _te->trackedVariables[5] = address2;
+    _te->trackedVariables[6] = size2;
+    _te->trackedVariables[7] = size2c;
+
+}
+
+int test_cpu_dsfree_tester( TestEnvironment * _te ) {
+
+    Variable * index1 = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * address1 = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+    Variable * size1 = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
+    Variable * size1c = variable_retrieve( &_te->environment, _te->trackedVariables[3]->name );
+
+    Variable * index2 = variable_retrieve( &_te->environment, _te->trackedVariables[4]->name );
+    Variable * address2 = variable_retrieve( &_te->environment, _te->trackedVariables[5]->name );
+    Variable * size2 = variable_retrieve( &_te->environment, _te->trackedVariables[6]->name );
+    Variable * size2c = variable_retrieve( &_te->environment, _te->trackedVariables[7]->name );
+
+printf( "index1 = %2.2x (%d) [expected: 0x01]\n", index1->value, index1->value );
+printf( "address1 = %4.4x (%d) [expected: != 0x4242]\n", address1->value, address1->value );
+printf( "size1 = %2.2x (%d) [expected: 42]\n", size1->value, size1->value );
+printf( "size1c = %2.2x (%d) [expected: 42]\n", size1c->value, size1c->value );
+
+printf( "index2 = %2.2x (%d) [expected: 0x01]\n", index2->value, index2->value );
+printf( "address2 = %4.4x (%d) [expected: != 0x4242]\n", address2->value, address2->value );
+printf( "size2 = %2.2x (%d) [expected: 64]\n", size2->value, size2->value );
+printf( "size2c = %2.2x (%d) [expected: 64]\n", size2c->value, size2c->value );
+
+    return 
+        index1->value == 1 &&
+        address1->value != 0x4242 &&
+        size1->value == 0x42 &&
+        size1c->value == size1->value &&
+        index2->value == 1 &&
+        address2->value != 0x4242 &&
+        size2->value == 0x64 &&
+        size2c->value == size2->value;
+
+}
+
+//===========================================================================
+
+void test_cpu_dswrite_payloadB( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * index1 = variable_define( e, "index1", VT_DSTRING, 1 );
+    Variable * address1 = variable_define( e, "address1", VT_ADDRESS, 0x4242 );
+    Variable * size1c = variable_define( e, "size1c", VT_BYTE, 0x00 );
+    Variable * address2 = variable_define( e, "address2", VT_ADDRESS, 0x4242 );
+    Variable * size2c = variable_define( e, "size2c", VT_BYTE, 0x00 );
+
+    Variable * string = variable_define( e, "string", VT_STRING, 0 );
+
+    variable_store_string( e, string->name, "Prova" );
+
+    cpu_dsdefine( e, string->realName, index1->realName );
+    cpu_dsdescriptor( e, index1->realName, address1->realName, size1c->realName );
+    cpu_dswrite( e, index1->realName );
+    cpu_dsdescriptor( e, index1->realName, address2->realName, size2c->realName );
+
+    _te->trackedVariables[0] = index1;
+    _te->trackedVariables[1] = address1;
+    _te->trackedVariables[2] = size1c;
+
+    _te->trackedVariables[3] = address2;
+    _te->trackedVariables[4] = size2c;
+
+}
+
+int test_cpu_dswrite_testerB( TestEnvironment * _te ) {
+
+    Variable * index1 = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * address1 = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+    Variable * size1c = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
+
+    Variable * address2 = variable_retrieve( &_te->environment, _te->trackedVariables[3]->name );
+    Variable * size2c = variable_retrieve( &_te->environment, _te->trackedVariables[4]->name );
+
+printf( "index1 = %2.2x (%d) [expected: 0x01]\n", index1->value, index1->value );
+printf( "address1 = %4.4x (%d) [expected: != 0x4242]\n", address1->value, address1->value );
+printf( "size1c = %2.2x (%d) [expected: 5]\n", size1c->value, size1c->value );
+
+printf( "address2 = %4.4x (%d) [expected: != 0x4242]\n", address2->value, address2->value );
+printf( "size2c = %2.2x (%d) [expected: 5]\n", size2c->value, size2c->value );
+
+    return 
+        index1->value == 1 &&
+        address1->value != 0x4242 &&
+        address2->value != address1->value &&
+        size2c->value == size1c->value;
+
+}
+
 void test_cpu( ) {
 
-    create_test( "cpu_bits_to_string", &test_cpu_bits_to_string_payload, &test_cpu_bits_to_string_tester );    
-    create_test( "cpu_bits_to_string32", &test_cpu_bits_to_string32_payload, &test_cpu_bits_to_string32_tester );    
+    // create_test( "cpu_bits_to_string", &test_cpu_bits_to_string_payload, &test_cpu_bits_to_string_tester );    
+    // create_test( "cpu_bits_to_string32", &test_cpu_bits_to_string32_payload, &test_cpu_bits_to_string32_tester );    
     // create_test( "cpu_dswrite", &test_cpu_dswrite_payload, &test_cpu_dswrite_tester );    
+    create_test( "cpu_dsgc", &test_cpu_dsgc_payload, &test_cpu_dsgc_tester );    
     // create_test( "cpu_dsgc A", &test_cpu_dsgc_payloadA, &test_cpu_dsgc_testerA );    
     // create_test( "cpu_dsgc B", &test_cpu_dsgc_payloadB, &test_cpu_dsgc_testerB );    
     // create_test( "cpu_logical_and_8bit", &test_cpu_logical_and_8bit_payload, &test_cpu_logical_and_8bit_tester );    
@@ -3763,5 +4008,9 @@ void test_cpu( ) {
     // create_test( "cpu_flip_payload", &test_cpu_flip_payload, &test_cpu_flip_tester );
     // create_test( "cpu_bit_check", &test_cpu_bit_check_payload, &test_cpu_bit_check_tester );
     // create_test( "cpu_bit_checkB", &test_cpu_bit_check_payloadB, &test_cpu_bit_check_testerB );
+    // create_test( "cpu_dsdefine", &test_cpu_dsdefine_payload, &test_cpu_dsdefine_tester );
+    // create_test( "cpu_dsalloc", &test_cpu_dsalloc_payload, &test_cpu_dsalloc_tester );
+    // create_test( "cpu_dsfree", &test_cpu_dsfree_payload, &test_cpu_dsfree_tester );
+    // create_test( "cpu_dswrite B", &test_cpu_dswrite_payloadB, &test_cpu_dswrite_testerB );
 
 }
