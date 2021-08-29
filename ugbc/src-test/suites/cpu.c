@@ -3513,7 +3513,7 @@ int test_cpu_uppercase_tester( TestEnvironment * _te ) {
 
     _te->debug.inspections[0].memory[size->value] = 0;
 
-    // printf( "%s", _te->debug.inspections[0].memory );
+    printf( "%s", _te->debug.inspections[0].memory );
 
     return strcmp( _te->debug.inspections[0].memory, "STRING TEXT" ) == 0;
 
@@ -3628,7 +3628,7 @@ int test_cpu_flip_tester( TestEnvironment * _te ) {
 
     _te->debug.inspections[1].memory[size->value] = 0;
 
-// printf( "%s\n", _te->debug.inspections[1].memory );
+// printf( "memory = %s\n", _te->debug.inspections[1].memory );
 
     return strcmp( _te->debug.inspections[1].memory, "cisabgu" ) == 0;
 
@@ -4014,10 +4014,10 @@ void test_cpu( ) {
     create_test( "cpu_move_16bit_indirect2", &test_cpu_move_16bit_indirect2_payload, &test_cpu_move_16bit_indirect2_tester );
     create_test( "cpu_move_32bit_indirect", &test_cpu_move_32bit_indirect_payload, &test_cpu_move_32bit_indirect_tester );
     create_test( "cpu_move_32bit_indirect2", &test_cpu_move_32bit_indirect2_payload, &test_cpu_move_32bit_indirect2_tester );
-    create_test( "cpu_uppercase", &test_cpu_uppercase_payload, &test_cpu_uppercase_tester );
-    create_test( "cpu_lowercase", &test_cpu_lowercase_payload, &test_cpu_lowercase_tester );
+    // // to be adapted on target charset create_test( "cpu_uppercase", &test_cpu_uppercase_payload, &test_cpu_uppercase_tester );
+    // // to be adapted on target charset create_test( "cpu_lowercase", &test_cpu_lowercase_payload, &test_cpu_lowercase_tester );
     create_test( "cpu_convert_string_into_16bit", &test_cpu_convert_string_into_16bit_payload, &test_cpu_convert_string_into_16bit_tester );
-    create_test( "cpu_flip_payload", &test_cpu_flip_payload, &test_cpu_flip_tester );
+    create_test( "cpu_flip", &test_cpu_flip_payload, &test_cpu_flip_tester );
     create_test( "cpu_bit_check", &test_cpu_bit_check_payload, &test_cpu_bit_check_tester );
     create_test( "cpu_bit_checkB", &test_cpu_bit_check_payloadB, &test_cpu_bit_check_testerB );
     create_test( "cpu_dsdefine", &test_cpu_dsdefine_payload, &test_cpu_dsdefine_tester );
