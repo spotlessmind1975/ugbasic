@@ -2068,13 +2068,16 @@ void test_cpu_math_add_16bit_with_16bit_payload( TestEnvironment * _te ) {
 
     Variable * word1 = variable_define( e, "word1", VT_WORD, 0x2142 );
     Variable * word2 = variable_define( e, "word2", VT_WORD, 0x1042 );
+    Variable * aword2 = variable_define( e, "aword2", VT_ADDRESS, 0x0000 );
     Variable * result = variable_define( e, "result12p", VT_WORD, 0x42 );
 
+    cpu_addressof_16bit( e, word2->realName, aword2->realName );
     cpu_math_add_16bit_with_16bit( e, word1->realName, word2->realName, result->realName );
 
     _te->trackedVariables[0] = word1;
     _te->trackedVariables[1] = word2;
     _te->trackedVariables[2] = result;
+    _te->trackedVariables[3] = aword2;
     
 }
 
@@ -2083,10 +2086,16 @@ int test_cpu_math_add_16bit_with_16bit_tester( TestEnvironment * _te ) {
     Variable * word1 = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
     Variable * word2 = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
     Variable * result = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
+    Variable * aword2 = variable_retrieve( &_te->environment, _te->trackedVariables[3]->name );
+
+// printf( "word1 = %4.4x (%d) [expected 0x2142]\n", word1->value, word1->value );
+// printf( "word2 = %4.4x (%d) [expected 0x1042]\n", word2->value, word2->value );
+// printf( "aword2 = %4.4x (%d) [expected ??????]\n", aword2->value, aword2->value );
+// printf( "result = %4.4x (%d) [expected %4.4x]\n", result->value, result->value, word1->value + aword2->value );
 
     return word1->value == 0x2142 && 
             word2->value == 0x1042 && 
-            result->value == word1->value + word2->value;
+            result->value == word1->value + aword2->value;
 
 }
 
