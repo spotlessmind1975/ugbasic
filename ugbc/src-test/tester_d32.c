@@ -177,7 +177,7 @@ void create_test( char *_name, void (*_payload)(TestEnvironment *), int (*_teste
 
     }
     if ( ! _tester( &t ) ) {
-        printf("%s : ", _name);
+        printf("\n%s : ", _name);
         printf("\e[31mFAILED\e[0m");
         printf("\n");
     } else {
