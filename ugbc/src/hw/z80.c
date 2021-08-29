@@ -1700,7 +1700,15 @@ void z80_math_and_const_32bit( Environment * _environment, char *_source, int _m
  */
 void z80_combine_nibbles( Environment * _environment, char * _low_nibble, char * _hi_nibble, char * _byte ) {
 
-    // TODO: z80_combine_nibbles
+    outline1("LD A, (%s)", _hi_nibble );
+    outline0("SLA A" );
+    outline0("SLA A" );
+    outline0("SLA A" );
+    outline0("SLA A" );
+    outline0("LD B, A" );
+    outline1("LD A, (%s)", _low_nibble );
+    outline0("OR A, B" );
+    outline1("LD (%s), A", _byte );
 
 }
 
