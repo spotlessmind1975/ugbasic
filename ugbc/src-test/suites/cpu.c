@@ -70,7 +70,7 @@ int test_cpu_bits_to_string_tester( TestEnvironment * _te ) {
 
     _te->debug.inspections[0].memory[size->value] = 0;
 
-// printf("memory = %s\n", _te->debug.inspections[0].memory );
+//  printf("memory = %s\n", _te->debug.inspections[0].memory );
 
     return strcmp( _te->debug.inspections[0].memory, "00000010" ) == 0;
 
