@@ -1678,7 +1678,18 @@ void z80_math_mul2_const_32bit( Environment * _environment, char *_source, int _
  */
 void z80_math_and_const_32bit( Environment * _environment, char *_source, int _mask ) {
 
-    // TODO: z80_math_and_const_32bit
+    outline1("LD A, (%s)", _source );
+    outline1("AND $%2.2x", ( _mask & 0xff ) );
+    outline1("LD (%s), A", _source );
+    outline1("LD A, (%s+1)", _source );
+    outline1("AND $%2.2x", ( ( _mask >> 8 ) & 0xff ) );
+    outline1("LD (%s+1), a", _source );
+    outline1("LD A, (%s+2)", _source );
+    outline1("AND $%2.2x", ( ( _mask >> 16 ) & 0xff ) );
+    outline1("LD (%s+2), a", _source );
+    outline1("LD A, (%s+3)", _source );
+    outline1("AND $%2.2x", ( ( _mask >> 24 ) & 0xff ) );
+    outline1("LD (%s+3), a", _source );
 
 }
 
