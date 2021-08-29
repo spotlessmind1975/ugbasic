@@ -2891,6 +2891,7 @@ void cpu6502_flip( Environment * _environment, char * _source, char * _size, cha
     outline1("LDA %s+1", _destination);
     outline0("STA TMPPTR2+1");
 
+    outline0("CLC");
     outline1("LDA %s", _size);
     outline0("ADC TMPPTR2");
     outline0("STA TMPPTR2");
