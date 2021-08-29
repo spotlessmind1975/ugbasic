@@ -442,10 +442,59 @@ void cpu6809_math_mul_8bit_to_16bit( Environment * _environment, char *_source, 
 
     MAKE_LABEL
 
-    outline1("LDA %s", _source );
-    outline1("LDB %s", _destination );
+    if ( _signed ) {
+
+        outline0("LDA #0" );
+        outline0("STA MATHPTR0" );
+        outline1("LDA %s", _source );
+        outline1("EORA %s", _destination );
+        outline0("ANDA #$80" );
+        outline1("BEQ %ssamesign", label );
+        outline0("STA MATHPTR0" );
+        outhead1("%ssamesign", label );
+
+        outline1("LDA %s", _source );
+        outline0("ANDA #$80" );
+        outline1("BEQ %spositive1", label );
+        outline1("LDA %s", _source );
+        outline0("EORA #$FF" );
+        outline0("ADDA #1" );
+        outline1("JMP %spositive1b", label );
+
+        outhead1("%spositive1", label );
+        outline1("LDA %s", _source );
+        outhead1("%spositive1b", label );
+        outline1("LDB %s", _destination );
+        outline0("ANDB #$80" );
+        outline1("BEQ %spositive2", label );
+        outline1("LDB %s", _destination );
+        outline0("EORB #$FF" );
+        outline0("ADDB #1" );
+        outline1("JMP %spositive2b", label );
+
+        outhead1("%spositive2", label );
+        outline1("LDB %s", _destination );
+        outhead1("%spositive2b", label );
+    } else {
+        outline1("LDA %s", _source );
+        outline1("LDB %s", _destination );
+    }
+
     outline0("MUL" );
+
     outline1("STD %s", _other );
+
+    if ( _signed ) {
+        outline0("LDA MATHPTR0" );
+        outline0("CMPA #0" );
+        outline1("BEQ %sdone", label );
+        outline1("LDD %s", _other );
+        outline0("EORA #$FF" );
+        outline0("EORB #$FF" );
+        outline0("ADDD #1" );
+        outline1("STD %s", _other );
+        outhead1("%sdone", label );
+    }
 
 }
 
