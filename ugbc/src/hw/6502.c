@@ -770,7 +770,7 @@ void cpu6502_compare_16bit( Environment * _environment, char *_source, char *_de
     outline1("LDA %s+1", _source);
     outline1("CMP %s+1", _destination);
     outline1("BNE %s", label);
-    outline1("LDA #$%2.2x", 0xff*_positive );
+    outline1("LDA #$%2.2x", ( _positive ) ? 0xff : 0x00  );
     if ( _other ) {
         outline1("STA %s", _other);
     } else {
@@ -778,7 +778,7 @@ void cpu6502_compare_16bit( Environment * _environment, char *_source, char *_de
     }
     outline1("JMP %s_2", label);
     outhead1("%s:", label);
-    outline1("LDA #$%2.2x", 0xff*(1-_positive) );
+    outline1("LDA #$%2.2x", ( _positive ) ? 0x00 : 0xff );
     if ( _other ) {
         outline1("STA %s", _other);
     } else {
