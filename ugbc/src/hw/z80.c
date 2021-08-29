@@ -1065,8 +1065,16 @@ void z80_math_sub_16bit( Environment * _environment, char *_source, char *_desti
 void z80_math_complement_const_16bit( Environment * _environment, char *_source, int _value ) {
 
     outline1("LD HL, $%4.4x", _value );
-    outline1("SUB HL, (%s)", _source );
-    outline1("LD (%s), A", _source );
+    outline1("LD DE, (%s)", _source );
+    outline0("LD A, E" );
+    outline0("XOR $FF" );
+    outline0("LD E, A" );
+    outline0("LD A, D" );
+    outline0("XOR $FF" );
+    outline0("LD D, A" );
+    outline0("INC DE" );
+    outline0("ADD HL, DE" );
+    outline1("LD (%s), HL", _source );
 
 }
 
