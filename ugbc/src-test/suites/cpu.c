@@ -1658,7 +1658,7 @@ void test_cpu_fill_blocks_payload( TestEnvironment * _te ) {
 
     Environment * e = &_te->environment;
 
-    Variable * address = variable_define( e, "address", VT_ADDRESS, 0x1000 );
+    Variable * address = variable_define( e, "address", VT_ADDRESS, 0x4000 );
     Variable * blocks1 = variable_define( e, "blocks1", VT_WORD, 2 );
     Variable * blocks2 = variable_define( e, "blocks2", VT_WORD, 4 );
     Variable * pattern1 = variable_define( e, "pattern1", VT_BYTE, 0x42 );
@@ -1668,7 +1668,7 @@ void test_cpu_fill_blocks_payload( TestEnvironment * _te ) {
     cpu_fill_blocks( e, address->realName, blocks1->realName, pattern1->realName );
 
     _te->debug.inspections[0].name="target";
-    _te->debug.inspections[0].address=0x1000;
+    _te->debug.inspections[0].address=0x4000;
     _te->debug.inspections[0].size=blocks2->value*256;
     ++_te->debug.inspections_count;
 
@@ -1692,19 +1692,19 @@ int test_cpu_fill_blocks_tester( TestEnvironment * _te ) {
 
     for( i=0; i<blocks1->value*256; ++i ) {
         if ( _te->debug.inspections[0].memory[i] != pattern1->value ) {
-            // printf( "\nError (1) at position %4.4x/%4.4x: %2.2x\n", i, (blocks1->value*256), _te->debug.inspections[0].memory[i] );
+            printf( "\nError (1) at position %4.4x/%4.4x: %2.2x\n", i, (blocks1->value*256), _te->debug.inspections[0].memory[i] );
             return 0;
         }
     }
 
     for( i=blocks1->value*256; i<blocks2->value*256; ++i ) {
         if ( _te->debug.inspections[0].memory[i] != pattern2->value ) {
-            // printf( "\nError (2) at position %4.4x: %2.2x\n", i, _te->debug.inspections[0].memory[i] );
+            printf( "\nError (2) at position %4.4x: %2.2x\n", i, _te->debug.inspections[0].memory[i] );
             return 0;
         }
     }
 
-    return address->value == 0x1000 && blocks1->value == 2 && pattern1->value == 0x42 && blocks2->value == 4 && pattern2->value == 0x00;
+    return address->value == 0x4000 && blocks1->value == 2 && pattern1->value == 0x42 && blocks2->value == 4 && pattern2->value == 0x00;
 
 }
 
@@ -3756,12 +3756,12 @@ int test_cpu_dsdefine_tester( TestEnvironment * _te ) {
 
     _te->debug.inspections[0].memory[size->value] = 0;
 
-// printf( "string = %s [expected 'Prova']\n", string->valueString );
+// // printf( "string = %s [expected 'Prova']\n", string->valueString );
 // printf( "index = %2.2x (%d) [expected: 0x01]\n", index->value, index->value );
 // printf( "address = %4.4x (%d) [expected: != 0x4242]\n", address->value, address->value );
 // printf( "size = %2.2x (%d) [expected: 5]\n", size->value, size->value );
 // printf( "address2 = %4.4x (%d) [expected: 0x4100]\n", address2->value, address2->value );
-// printf( "memory = %s [expected 'Prova']\n", _te->debug.inspections[0].memory );
+// // printf( "memory = %s [expected 'Prova']\n", _te->debug.inspections[0].memory );
 
     return 
         // // to be adapter on charset of target strcmp( _te->debug.inspections[0].memory, "Prova" ) == 0 &&
@@ -3934,7 +3934,7 @@ void test_cpu( ) {
 
     create_test( "cpu_bits_to_string", &test_cpu_bits_to_string_payload, &test_cpu_bits_to_string_tester );    
     create_test( "cpu_bits_to_string32", &test_cpu_bits_to_string32_payload, &test_cpu_bits_to_string32_tester );    
-    create_test( "cpu_dswrite", &test_cpu_dswrite_payload, &test_cpu_dswrite_tester );    
+    // // to be adapted not using DSTRING create_test( "cpu_dswrite", &test_cpu_dswrite_payload, &test_cpu_dswrite_tester );    
     create_test( "cpu_dsgc", &test_cpu_dsgc_payload, &test_cpu_dsgc_tester );    
     // // to be adapted not using DSTRING  create_test( "cpu_dsgc A", &test_cpu_dsgc_payloadA, &test_cpu_dsgc_testerA );    
     // // to be adapted not using DSTRING  create_test( "cpu_dsgc B", &test_cpu_dsgc_payloadB, &test_cpu_dsgc_testerB );    
