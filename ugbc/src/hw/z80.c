@@ -2094,10 +2094,14 @@ void z80_less_than_memory( Environment * _environment, char *_source, char *_des
     outline0("LD B, A");
     outline0("LD A, (HL)");
     outline0("CP B");
+    if ( _equal ) {
+        outline1("JR Z, %seq", label);
+    }
+    outline1("JR NC, %sdiff", label);
     if ( ! _equal ) {
         outline1("JR Z, %sdiff", label);
     }
-    outline1("JR C, %sdiff", label);
+    outhead1("%seq:", label );
     outline0("INC DE");
     outline0("INC HL");
     outline0("DEC C");
@@ -2125,10 +2129,14 @@ void z80_less_than_memory_size( Environment * _environment, char *_source, char 
     outline0("LD B, A");
     outline0("LD A, (HL)");
     outline0("CP B");
+    if ( _equal ) {
+        outline1("JR Z, %seq", label);
+    }
+    outline1("JR NC, %sdiff", label);
     if ( ! _equal ) {
         outline1("JR Z, %sdiff", label);
     }
-    outline1("JR C, %sdiff", label);
+    outhead1("%seq:", label );
     outline0("INC DE");
     outline0("INC HL");
     outline0("DEC C");
