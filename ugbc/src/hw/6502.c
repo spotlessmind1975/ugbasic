@@ -112,8 +112,13 @@ void cpu6502_peek( Environment * _environment, char * _address, char * _target )
 
 void cpu6502_poke( Environment * _environment, char * _address, char * _source ) {
 
+    outline1("LDA %s", _address);
+    outline0("STA TMPPTR");
+    outline1("LDA %s+1", _address);
+    outline0("STA TMPPTR+1");
+    outline0("LDY #0");
     outline1("LDA %s", _source);
-    outline1("STA %s", _address);
+    outline0("STA (TMPPTR),Y");    
 
 }
 
