@@ -2790,8 +2790,6 @@ void cpu6809_greater_than_memory_size( Environment * _environment, char *_source
             outline1("BNE %sloop", label );
             outline0("LEAY 127,Y" );
             outline0("LEAX 127,X" );
-            outline0("LEAY 1,Y" );
-            outline0("LEAX 1,X" );
 
             _size -= 0x7f;
 
