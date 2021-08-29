@@ -40,6 +40,7 @@ test:
 	@cd ugbc; make target=$(target) test
 	@echo "--- START TEST ---"
 	@ugbc/exe-test/ugbc.$(target)
+	@echo
 	@echo "--- END TEST ---"
 
 generated/c64/asm/%.asm:
