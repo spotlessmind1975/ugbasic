@@ -173,7 +173,7 @@ int test_cpu_dsgc_tester( TestEnvironment * _te ) {
 
     Variable * using = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
 
-printf( "using = %2.2x (%d) [expected 0xff]\n", using->value, using->value );
+// printf( "using = %2.2x (%d) [expected 0xff]\n", using->value, using->value );
 
     return using->value == 0xff;
 
@@ -523,14 +523,14 @@ int test_cpu_bit_check_extended_tester( TestEnvironment * _te ) {
     Variable * result6 = variable_retrieve( &_te->environment, _te->trackedVariables[6]->name );
     Variable * result7 = variable_retrieve( &_te->environment, _te->trackedVariables[7]->name );
 
-    printf("result0: %2.2x [expected 0xff]\n", result0->value );
-    printf("result1: %2.2x [expected 0x00]\n", result1->value );
-    printf("result2: %2.2x [expected 0xff]\n", result2->value );
-    printf("result3: %2.2x [expected 0x00]\n", result3->value );
-    printf("result4: %2.2x [expected 0xff]\n", result4->value );
-    printf("result5: %2.2x [expected 0x00]\n", result5->value );
-    printf("result6: %2.2x [expected 0xff]\n", result6->value );
-    printf("result7: %2.2x [expected 0x00]\n", result7->value );
+    // printf("result0: %2.2x [expected 0xff]\n", result0->value );
+    // printf("result1: %2.2x [expected 0x00]\n", result1->value );
+    // printf("result2: %2.2x [expected 0xff]\n", result2->value );
+    // printf("result3: %2.2x [expected 0x00]\n", result3->value );
+    // printf("result4: %2.2x [expected 0xff]\n", result4->value );
+    // printf("result5: %2.2x [expected 0x00]\n", result5->value );
+    // printf("result6: %2.2x [expected 0xff]\n", result6->value );
+    // printf("result7: %2.2x [expected 0x00]\n", result7->value );
 
     return  result0->value == 0xff && 
             result1->value == 0x00 &&
@@ -989,8 +989,8 @@ int test_cpu_math_div2_const_32bit_tester( TestEnvironment * _te ) {
     Variable * ua = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
     Variable * sa = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
 
-    printf("ua = %8.8x (%d) [expected 0x10909090]\n", ua->value, ua->value );
-    printf("sa = %8.8x (%d) [expected -4]\n", sa->value, sa->value );
+    // printf("ua = %8.8x (%d) [expected 0x10909090]\n", ua->value, ua->value );
+    // printf("sa = %8.8x (%d) [expected -4]\n", sa->value, sa->value );
 
     return  ua->value == 0x10909090 && 
             sa->value == -4;
@@ -1131,8 +1131,8 @@ int test_cpu_math_mul_16bit_to_32bit_tester( TestEnvironment * _te ) {
     Variable * resultu = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
     Variable * results = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
 
-    printf( "resultu = %8.8x (%d) [expected 0x2142210]\n", resultu->value, resultu->value );
-    printf( "results = %8.8x (%d) [expected 0x80]\n", results->value, results->value );
+    // printf( "resultu = %8.8x (%d) [expected 0x2142210]\n", resultu->value, resultu->value );
+    // printf( "results = %8.8x (%d) [expected 0x80]\n", results->value, results->value );
     
     return  resultu->value == 0x2142210 && 
             results->value == 0x80;
@@ -1164,6 +1164,9 @@ int test_cpu_math_mul_8bit_to_16bit_tester( TestEnvironment * _te ) {
 
     Variable * resultu = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
     Variable * results = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+
+// printf( "resultu = %4.4x (%d) [expected 0x210]\n", resultu->value, resultu->value );
+// printf( "results = %4.4x (%d) [expected 128]\n", results->value, results->value );
 
     return  resultu->value == 0X210 && 
             results->value == 128;
@@ -1241,10 +1244,10 @@ int test_cpu_math_div_16bit_to_16bit_tester( TestEnvironment * _te ) {
     Variable * remainderu = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
     Variable * remainders = variable_retrieve( &_te->environment, _te->trackedVariables[3]->name );
 
-    printf("resultu = %4.4x (%d) [expected 0x2]\n", resultu->value, resultu->value );
-    printf("remainderu = %4.4x (%d) [expected 0x101]\n", remainderu->value, remainderu->value );
-    printf("results = %4.4x (%d) [expected 0x0]\n", results->value, results->value );
-    printf("remainders = %4.4x (%d) [expected 0x0008]\n", remainders->value, remainders->value );
+    // printf("resultu = %4.4x (%d) [expected 0x2]\n", resultu->value, resultu->value );
+    // printf("remainderu = %4.4x (%d) [expected 0x101]\n", remainderu->value, remainderu->value );
+    // printf("results = %4.4x (%d) [expected 0x0]\n", results->value, results->value );
+    // printf("remainders = %4.4x (%d) [expected 0x0008]\n", remainders->value, remainders->value );
     
     return  resultu->value == 0x2 &&
             remainderu->value == 0x101 && 
@@ -1286,10 +1289,10 @@ int test_cpu_math_div_16bit_to_16bit_testerB( TestEnvironment * _te ) {
     Variable * remainders = variable_retrieve( &_te->environment, _te->trackedVariables[3]->name );
 
 
-    printf("resultu = %4.4x (%d) [expected 160]\n", resultu->value, resultu->value );
-    printf("remainderu = %4.4x (%d) [expected 0]\n", remainderu->value, remainderu->value );
-    printf("results = %4.4x (%d) [expected 160]\n", results->value, results->value );
-    printf("remainders = %4.4x (%d) [expected 0]\n", remainders->value, remainders->value );
+    // printf("resultu = %4.4x (%d) [expected 160]\n", resultu->value, resultu->value );
+    // printf("remainderu = %4.4x (%d) [expected 0]\n", remainderu->value, remainderu->value );
+    // printf("results = %4.4x (%d) [expected 160]\n", results->value, results->value );
+    // printf("remainders = %4.4x (%d) [expected 0]\n", remainders->value, remainders->value );
 
     return  resultu->value == 160 &&
             remainderu->value == 0 && 
@@ -1330,10 +1333,10 @@ int test_cpu_math_div_8bit_to_8bit_tester( TestEnvironment * _te ) {
     Variable * remainderu = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
     Variable * remainders = variable_retrieve( &_te->environment, _te->trackedVariables[3]->name );
 
-    printf("resultu = %2.2x (%d) [expected 0x2 (2)]\n", resultu->value, resultu->value );
-    printf("remainderu = %2.2x (%d) [expected 0x1 (1)]\n", remainderu->value, remainderu->value );
-    printf("results = %2.2x (%d) [expected 0x0 (0)]\n", results->value, results->value );
-    printf("remainders = %2.2x (%d) [expected 0x8 (8)]\n", remainders->value, remainders->value );
+    // printf("resultu = %2.2x (%d) [expected 0x2 (2)]\n", resultu->value, resultu->value );
+    // printf("remainderu = %2.2x (%d) [expected 0x1 (1)]\n", remainderu->value, remainderu->value );
+    // printf("results = %2.2x (%d) [expected 0x0 (0)]\n", results->value, results->value );
+    // printf("remainders = %2.2x (%d) [expected 0x8 (8)]\n", remainders->value, remainders->value );
 
     return  resultu->value == 0x2 &&
             remainderu->value == 0x1 && 
@@ -1464,7 +1467,7 @@ int test_cpu_bit_check_extended_testerB( TestEnvironment * _te ) {
     }
 
     for( i=0; i<16; ++i ) {
-        printf( "result[%d] = %2.2x [expected %2.2x]\n", i, result[i]->value, ( i % 2 ) == 0 ? 0x00 : 0xff );
+        // printf( "result[%d] = %2.2x [expected %2.2x]\n", i, result[i]->value, ( i % 2 ) == 0 ? 0x00 : 0xff );
     }
 
     for( i=0; i<16; ++i ) {
@@ -1516,7 +1519,7 @@ int test_cpu_number_to_string_tester( TestEnvironment * _te ) {
 
     _te->debug.inspections[0].memory[size->value] = 0;
 
-printf("memory = %s\n", _te->debug.inspections[0].memory );
+// printf("memory = %s\n", _te->debug.inspections[0].memory );
 
     return strcmp( _te->debug.inspections[0].memory, "42" ) == 0;
 
@@ -1689,14 +1692,14 @@ int test_cpu_fill_blocks_tester( TestEnvironment * _te ) {
 
     for( i=0; i<blocks1->value*256; ++i ) {
         if ( _te->debug.inspections[0].memory[i] != pattern1->value ) {
-            printf( "\nError (1) at position %4.4x/%4.4x: %2.2x\n", i, (blocks1->value*256), _te->debug.inspections[0].memory[i] );
+            // printf( "\nError (1) at position %4.4x/%4.4x: %2.2x\n", i, (blocks1->value*256), _te->debug.inspections[0].memory[i] );
             return 0;
         }
     }
 
     for( i=blocks1->value*256; i<blocks2->value*256; ++i ) {
         if ( _te->debug.inspections[0].memory[i] != pattern2->value ) {
-            printf( "\nError (2) at position %4.4x: %2.2x\n", i, _te->debug.inspections[0].memory[i] );
+            // printf( "\nError (2) at position %4.4x: %2.2x\n", i, _te->debug.inspections[0].memory[i] );
             return 0;
         }
     }
@@ -1745,14 +1748,14 @@ int test_cpu_fill_tester( TestEnvironment * _te ) {
 
     for( i=0; i<bytes1->value; ++i ) {
         if ( _te->debug.inspections[0].memory[i] != pattern1->value ) {
-            printf( "\nError (1) at position %4.4x/%4.4x: %2.2x\n", i, bytes1->value, _te->debug.inspections[0].memory[i] );
+            // printf( "\nError (1) at position %4.4x/%4.4x: %2.2x\n", i, bytes1->value, _te->debug.inspections[0].memory[i] );
             return 0;
         }
     }
 
     for( i=bytes1->value; i<bytes2->value; ++i ) {
         if ( _te->debug.inspections[0].memory[i] != pattern2->value ) {
-            printf( "\nError (2) at position %4.4x: %2.2x\n", i, _te->debug.inspections[0].memory[i] );
+            // printf( "\nError (2) at position %4.4x: %2.2x\n", i, _te->debug.inspections[0].memory[i] );
             return 0;
         }
     }
@@ -2141,9 +2144,9 @@ int test_cpu_math_sub_16bit_tester( TestEnvironment * _te ) {
     Variable * word2 = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
     Variable * result = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
 
-    printf( "word1: %4.4x (%d) [expected: 0x2142]\n", word1->value, word1->value );
-    printf( "word2: %4.4x (%d) [expected: 0x1010]\n", word2->value, word2->value );
-    printf( "result: %4.4x (%d) [expected: 0x1132]\n", result->value, result->value );
+    // printf( "word1: %4.4x (%d) [expected: 0x2142]\n", word1->value, word1->value );
+    // printf( "word2: %4.4x (%d) [expected: 0x1010]\n", word2->value, word2->value );
+    // printf( "result: %4.4x (%d) [expected: 0x1132]\n", result->value, result->value );
 
     return word1->value == 0x2142 && 
             word2->value == 0x1010 && 
@@ -2175,9 +2178,9 @@ int test_cpu_math_sub_16bit_with_8bit_tester( TestEnvironment * _te ) {
     Variable * byte2 = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
     Variable * result = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
 
-    printf( "word1: %4.4x (%d) [expected: 0x2142]\n", word1->value, word1->value );
-    printf( "byte2: %2.2x (%d) [expected: 0x10]\n", byte2->value, byte2->value );
-    printf( "result: %4.4x (%d) [expected: 0x2132]\n", result->value, result->value );
+    // printf( "word1: %4.4x (%d) [expected: 0x2142]\n", word1->value, word1->value );
+    // printf( "byte2: %2.2x (%d) [expected: 0x10]\n", byte2->value, byte2->value );
+    // printf( "result: %4.4x (%d) [expected: 0x2132]\n", result->value, result->value );
 
     return word1->value == 0x2142 && 
             byte2->value == 0x10 && 
@@ -2203,9 +2206,9 @@ int test_cpu_math_complement_const_16bit_tester( TestEnvironment * _te ) {
 
     Variable * word1 = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
 
-    printf( "word1: %4.4x (%d) [expected: 0x2142]\n", word1->value, word1->value );
+    // printf( "word1: %4.4x (%d) [expected: 0x2142]\n", word1->value, word1->value );
 
-    return word1->value == 0x1000;
+    return word1->value == 0x3000;
 
 }
 
@@ -2227,7 +2230,7 @@ int test_cpu_math_and_const_16bit_tester( TestEnvironment * _te ) {
 
     Variable * word1 = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
 
-    printf( "word1: %4.4x (%d) [expected: 0x5555]\n", word1->value, word1->value );
+    // printf( "word1: %4.4x (%d) [expected: 0x5555]\n", word1->value, word1->value );
 
     return word1->value == 0x5555;
 
@@ -2254,8 +2257,8 @@ int test_cpu_move_32bit_tester( TestEnvironment * _te ) {
     Variable * word1 = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
     Variable * word2 = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
 
-    printf( "word1: %4.4x (%d) [expected: 0x55ff55ff]\n", word1->value, word1->value );
-    printf( "word2: %4.4x (%d) [expected: 0x55ff55ff]\n", word2->value, word2->value );
+    // printf( "word1: %4.4x (%d) [expected: 0x55ff55ff]\n", word1->value, word1->value );
+    // printf( "word2: %4.4x (%d) [expected: 0x55ff55ff]\n", word2->value, word2->value );
 
     return word1->value == word2->value;
 
@@ -2279,7 +2282,7 @@ int test_cpu_store_32bit_tester( TestEnvironment * _te ) {
 
     Variable * word1 = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
 
-    printf( "word1: %4.4x (%d) [expected: 0xff00ff00]\n", word1->value, word1->value );
+    // printf( "word1: %4.4x (%d) [expected: 0xff00ff00]\n", word1->value, word1->value );
 
     return word1->value == 0xff00ff00;
 
@@ -2523,8 +2526,8 @@ int test_cpu_mem_move_tester( TestEnvironment * _te ) {
 
     int i = 0;
     for( i=0; i<size->value; ++i ) {
-        if ( _te->debug.inspections[1].memory[i] != _te->debug.inspections[1].memory[0] ) {
-            printf( "\nError (1) at position %4.4x/%4.4x: %2.2x\n", i, size->value, _te->debug.inspections[1].memory[i] );
+        if ( _te->debug.inspections[0].memory[i] != _te->debug.inspections[1].memory[i] ) {
+            // printf( "\nError (1) at position %4.4x/%4.4x: %2.2x\n", i, size->value, _te->debug.inspections[1].memory[i] );
             return 0;
         }
     }
@@ -2572,8 +2575,8 @@ int test_cpu_mem_move_size_tester( TestEnvironment * _te ) {
 
     int i = 0;
     for( i=0; i<160; ++i ) {
-        if ( _te->debug.inspections[1].memory[i] != _te->debug.inspections[1].memory[0] ) {
-            printf( "\nError (1) at position %4.4x/%4.4x: %2.2x\n", i, 160, _te->debug.inspections[1].memory[i] );
+        if ( _te->debug.inspections[1].memory[i] != _te->debug.inspections[1].memory[i] ) {
+            printf( "\nError (1) at position %4.4x/%4.4x: %2.2x != %2.2x\n", i, 160, _te->debug.inspections[0].memory[i], _te->debug.inspections[1].memory[i] );
             return 0;
         }
     }
@@ -2623,8 +2626,8 @@ int test_cpu_mem_move_direct_tester( TestEnvironment * _te ) {
 
     int i = 0;
     for( i=0; i<size->value; ++i ) {
-        if ( _te->debug.inspections[1].memory[i] != _te->debug.inspections[1].memory[0] ) {
-            printf( "\nError (1) at position %4.4x/%4.4x: %2.2x\n", i, size->value, _te->debug.inspections[1].memory[i] );
+        if ( _te->debug.inspections[1].memory[i] != _te->debug.inspections[1].memory[i] ) {
+            // printf( "\nError (1) at position %4.4x/%4.4x: %2.2x\n", i, size->value, _te->debug.inspections[1].memory[i] );
             return 0;
         }
     }
@@ -2669,8 +2672,8 @@ int test_cpu_mem_move_direct_size_tester( TestEnvironment * _te ) {
 
     int i = 0;
     for( i=0; i<160; ++i ) {
-        if ( _te->debug.inspections[1].memory[i] != _te->debug.inspections[1].memory[0] ) {
-            printf( "\nError (1) at position %4.4x/%4.4x: %2.2x\n", i, 160, _te->debug.inspections[1].memory[i] );
+        if ( _te->debug.inspections[1].memory[i] != _te->debug.inspections[1].memory[i] ) {
+            // printf( "\nError (1) at position %4.4x/%4.4x: %2.2x\n", i, 160, _te->debug.inspections[1].memory[i] );
             return 0;
         }
     }
@@ -2716,8 +2719,8 @@ int test_cpu_mem_move_direct_indirect_size_tester( TestEnvironment * _te ) {
 
     int i = 0;
     for( i=0; i<160; ++i ) {
-        if ( _te->debug.inspections[1].memory[i] != _te->debug.inspections[1].memory[0] ) {
-            printf( "\nError (1) at position %4.4x/%4.4x: %2.2x\n", i, 160, _te->debug.inspections[1].memory[i] );
+        if ( _te->debug.inspections[1].memory[i] != _te->debug.inspections[1].memory[i] ) {
+            // printf( "\nError (1) at position %4.4x/%4.4x: %2.2x\n", i, 160, _te->debug.inspections[1].memory[i] );
             return 0;
         }
     }
@@ -3283,7 +3286,7 @@ void test_cpu_move_8bit_indirect_with_offset2_payload( TestEnvironment * _te ) {
 
     Variable * asource = variable_define( e, "asource", VT_ADDRESS, 0x4000 );
     Variable * value = variable_define( e, "value", VT_BYTE, 0x42 );
-    Variable * size = variable_define( e, "value", VT_BYTE, 159 );
+    Variable * size = variable_define( e, "size", VT_BYTE, 159 );
 
     cpu_move_8bit_indirect_with_offset2( e, value->realName, asource->realName, size->realName );
 
@@ -3616,7 +3619,7 @@ int test_cpu_flip_tester( TestEnvironment * _te ) {
 
     _te->debug.inspections[1].memory[size->value] = 0;
 
-printf( "%s\n", _te->debug.inspections[1].memory );
+// printf( "%s\n", _te->debug.inspections[1].memory );
 
     return strcmp( _te->debug.inspections[1].memory, "cisabgu" ) == 0;
 
@@ -3684,7 +3687,7 @@ int test_cpu_bit_check_testerB( TestEnvironment * _te ) {
     }
 
     for( i=0; i<16; ++i ) {
-        printf( "result[%d] = %2.2x [expected %2.2x]\n", i, result[i]->value, ( i % 2 ) == 0 ? 0x00 : 0xff );
+        // printf( "result[%d] = %2.2x [expected %2.2x]\n", i, result[i]->value, ( i % 2 ) == 0 ? 0x00 : 0xff );
     }
 
     for( i=0; i<16; ++i ) {
@@ -3786,9 +3789,9 @@ int test_cpu_dsalloc_tester( TestEnvironment * _te ) {
     Variable * address = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
     Variable * size = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
 
-printf( "index = %2.2x (%d) [expected: 0x01]\n", index->value, index->value );
-printf( "address = %4.4x (%d) [expected: != 0x4242]\n", address->value, address->value );
-printf( "size = %2.2x (%d) [expected: 42]\n", size->value, size->value );
+// printf( "index = %2.2x (%d) [expected: 0x01]\n", index->value, index->value );
+// printf( "address = %4.4x (%d) [expected: != 0x4242]\n", address->value, address->value );
+// printf( "size = %2.2x (%d) [expected: 42]\n", size->value, size->value );
 
     return 
         index->value == 1 &&
@@ -3842,15 +3845,15 @@ int test_cpu_dsfree_tester( TestEnvironment * _te ) {
     Variable * size2 = variable_retrieve( &_te->environment, _te->trackedVariables[6]->name );
     Variable * size2c = variable_retrieve( &_te->environment, _te->trackedVariables[7]->name );
 
-printf( "index1 = %2.2x (%d) [expected: 0x01]\n", index1->value, index1->value );
-printf( "address1 = %4.4x (%d) [expected: != 0x4242]\n", address1->value, address1->value );
-printf( "size1 = %2.2x (%d) [expected: 42]\n", size1->value, size1->value );
-printf( "size1c = %2.2x (%d) [expected: 42]\n", size1c->value, size1c->value );
+// printf( "index1 = %2.2x (%d) [expected: 0x01]\n", index1->value, index1->value );
+// printf( "address1 = %4.4x (%d) [expected: != 0x4242]\n", address1->value, address1->value );
+// printf( "size1 = %2.2x (%d) [expected: 42]\n", size1->value, size1->value );
+// printf( "size1c = %2.2x (%d) [expected: 42]\n", size1c->value, size1c->value );
 
-printf( "index2 = %2.2x (%d) [expected: 0x01]\n", index2->value, index2->value );
-printf( "address2 = %4.4x (%d) [expected: != 0x4242]\n", address2->value, address2->value );
-printf( "size2 = %2.2x (%d) [expected: 64]\n", size2->value, size2->value );
-printf( "size2c = %2.2x (%d) [expected: 64]\n", size2c->value, size2c->value );
+// printf( "index2 = %2.2x (%d) [expected: 0x01]\n", index2->value, index2->value );
+// printf( "address2 = %4.4x (%d) [expected: != 0x4242]\n", address2->value, address2->value );
+// printf( "size2 = %2.2x (%d) [expected: 64]\n", size2->value, size2->value );
+// printf( "size2c = %2.2x (%d) [expected: 64]\n", size2c->value, size2c->value );
 
     return 
         index1->value == 1 &&
@@ -3903,12 +3906,12 @@ int test_cpu_dswrite_testerB( TestEnvironment * _te ) {
     Variable * address2 = variable_retrieve( &_te->environment, _te->trackedVariables[3]->name );
     Variable * size2c = variable_retrieve( &_te->environment, _te->trackedVariables[4]->name );
 
-printf( "index1 = %2.2x (%d) [expected: 0x01]\n", index1->value, index1->value );
-printf( "address1 = %4.4x (%d) [expected: != 0x4242]\n", address1->value, address1->value );
-printf( "size1c = %2.2x (%d) [expected: 5]\n", size1c->value, size1c->value );
+// printf( "index1 = %2.2x (%d) [expected: 0x01]\n", index1->value, index1->value );
+// printf( "address1 = %4.4x (%d) [expected: != 0x4242]\n", address1->value, address1->value );
+// printf( "size1c = %2.2x (%d) [expected: 5]\n", size1c->value, size1c->value );
 
-printf( "address2 = %4.4x (%d) [expected: != 0x4242]\n", address2->value, address2->value );
-printf( "size2c = %2.2x (%d) [expected: 5]\n", size2c->value, size2c->value );
+// printf( "address2 = %4.4x (%d) [expected: != 0x4242]\n", address2->value, address2->value );
+// printf( "size2c = %2.2x (%d) [expected: 5]\n", size2c->value, size2c->value );
 
     return 
         index1->value == 1 &&
@@ -3920,97 +3923,97 @@ printf( "size2c = %2.2x (%d) [expected: 5]\n", size2c->value, size2c->value );
 
 void test_cpu( ) {
 
-    // create_test( "cpu_bits_to_string", &test_cpu_bits_to_string_payload, &test_cpu_bits_to_string_tester );    
-    // create_test( "cpu_bits_to_string32", &test_cpu_bits_to_string32_payload, &test_cpu_bits_to_string32_tester );    
-    // create_test( "cpu_dswrite", &test_cpu_dswrite_payload, &test_cpu_dswrite_tester );    
+    create_test( "cpu_bits_to_string", &test_cpu_bits_to_string_payload, &test_cpu_bits_to_string_tester );    
+    create_test( "cpu_bits_to_string32", &test_cpu_bits_to_string32_payload, &test_cpu_bits_to_string32_tester );    
+    create_test( "cpu_dswrite", &test_cpu_dswrite_payload, &test_cpu_dswrite_tester );    
     create_test( "cpu_dsgc", &test_cpu_dsgc_payload, &test_cpu_dsgc_tester );    
-    // create_test( "cpu_dsgc A", &test_cpu_dsgc_payloadA, &test_cpu_dsgc_testerA );    
-    // create_test( "cpu_dsgc B", &test_cpu_dsgc_payloadB, &test_cpu_dsgc_testerB );    
-    // create_test( "cpu_logical_and_8bit", &test_cpu_logical_and_8bit_payload, &test_cpu_logical_and_8bit_tester );    
-    // create_test( "cpu_logical_not_8bit", &test_cpu_logical_not_8bit_payload, &test_cpu_logical_not_8bit_tester );    
-    // create_test( "cpu_bit_check_extended", &test_cpu_bit_check_extended_payload, &test_cpu_bit_check_extended_tester );    
-    // create_test( "cpu_bit_check_extended B", &test_cpu_bit_check_extended_payloadB, &test_cpu_bit_check_extended_testerB );
-    // create_test( "cpu_less_than_8bit", &test_cpu_less_than_8bit_payload, &test_cpu_less_than_8bit_tester );    
-    // create_test( "cpu_less_than_16bit A", &test_cpu_less_than_16bit_payload, &test_cpu_less_than_16bit_tester );    
-    // create_test( "cpu_less_than_16bit B", &test_cpu_less_than_16bit_payloadB, &test_cpu_less_than_16bit_testerB );    
-    // create_test( "cpu_less_than_32bit", &test_cpu_less_than_32bit_payload, &test_cpu_less_than_32bit_tester );    
-    // create_test( "cpu_greater_than_8bit", &test_cpu_greater_than_8bit_payload, &test_cpu_greater_than_8bit_tester );    
-    // create_test( "cpu_greater_than_16bit", &test_cpu_greater_than_16bit_payload, &test_cpu_greater_than_16bit_tester );    
-    // create_test( "cpu_greater_than_32bit", &test_cpu_greater_than_32bit_payload, &test_cpu_greater_than_32bit_tester );    
-    // create_test( "cpu_math_div2_8bit", &test_cpu_math_div2_8bit_payload, &test_cpu_math_div2_8bit_tester );
-    // create_test( "cpu_math_div2_const_16bit", &test_cpu_math_div2_const_16bit_payload, &test_cpu_math_div2_const_16bit_tester );
-    // create_test( "cpu_math_div2_const_32bit", &test_cpu_math_div2_const_32bit_payload, &test_cpu_math_div2_const_32bit_tester );
-    // create_test( "cpu_math_div2_const_8bit", &test_cpu_math_div2_const_8bit_payload, &test_cpu_math_div2_const_8bit_tester );
-    // create_test( "cpu_math_double_16bit", &test_cpu_math_double_16bit_payload, &test_cpu_math_double_16bit_tester );
-    // create_test( "cpu_math_double_32bit", &test_cpu_math_double_32bit_payload, &test_cpu_math_double_32bit_tester );
-    // create_test( "cpu_math_double_8bit", &test_cpu_math_double_8bit_payload, &test_cpu_math_double_8bit_tester );
-    // create_test( "cpu_math_mul_8bit_to_16bit", &test_cpu_math_mul_8bit_to_16bit_payload, &test_cpu_math_mul_8bit_to_16bit_tester );
-    // create_test( "cpu_math_mul_16bit_to_32bit", &test_cpu_math_mul_16bit_to_32bit_payload, &test_cpu_math_mul_16bit_to_32bit_tester );
-    // create_test( "cpu_math_div_8bit_to_8bit", &test_cpu_math_div_8bit_to_8bit_payload, &test_cpu_math_div_8bit_to_8bit_tester );
-    // create_test( "cpu_math_div_16bit_to_16bit A", &test_cpu_math_div_16bit_to_16bit_payload, &test_cpu_math_div_16bit_to_16bit_tester );
-    // create_test( "cpu_math_div_16bit_to_16bit B", &test_cpu_math_div_16bit_to_16bit_payloadB, &test_cpu_math_div_16bit_to_16bit_testerB );
-    // create_test( "cpu_math_mul2_const_16bit", &test_cpu_math_mul2_const_16bit_payload, &test_cpu_math_mul2_const_16bit_tester );
-    // create_test( "cpu_math_mul2_const_32bit", &test_cpu_math_mul2_const_32bit_payload, &test_cpu_math_mul2_const_32bit_tester );
-    // create_test( "cpu_math_mul2_const_8bit", &test_cpu_math_mul2_const_8bit_payload, &test_cpu_math_mul2_const_8bit_tester );
-    // create_test( "cpu_number_to_string_payload", &test_cpu_number_to_string_payload, &test_cpu_number_to_string_tester );
-    // create_test( "cpu_number_to_string_payloadB", &test_cpu_number_to_string_payloadB, &test_cpu_number_to_string_testerB );
-    // create_test( "cpu_peek", &test_cpu_peek_payload, &test_cpu_peek_tester );
-    // create_test( "cpu_poke", &test_cpu_poke_payload, &test_cpu_poke_tester );
-    // create_test( "cpu_fill_blocks", &test_cpu_fill_blocks_payload, &test_cpu_fill_blocks_tester );
-    // create_test( "cpu_fill", &test_cpu_fill_payload, &test_cpu_fill_tester );
-    // create_test( "cpu_compare_8bit", &test_cpu_compare_8bit_payload, &test_cpu_compare_8bit_tester );
-    // create_test( "cpu_math_add_8bit", &test_cpu_math_add_8bit_payload, &test_cpu_math_add_8bit_tester );
-    // create_test( "cpu_math_sub_8bit", &test_cpu_math_sub_8bit_payload, &test_cpu_math_sub_8bit_tester );
-    // create_test( "cpu_math_complement_const_8bit", &test_cpu_math_complement_const_8bit_payload, &test_cpu_math_complement_const_8bit_tester );
-    // create_test( "cpu_math_and_const_8bit", &test_cpu_math_and_const_8bit_payload, &test_cpu_math_and_const_8bit_tester );
-    // create_test( "cpu_move_16bit", &test_cpu_move_16bit_payload, &test_cpu_move_16bit_tester );
-    // create_test( "cpu_addressof_16bit", &test_cpu_addressof_16bit_payload, &test_cpu_addressof_16bit_tester );
-    // create_test( "cpu_compare_16bit", &test_cpu_compare_16bit_payload, &test_cpu_compare_16bit_tester );
-    // create_test( "cpu_math_add_16bit", &test_cpu_math_add_16bit_payload, &test_cpu_math_add_16bit_tester );
-    // create_test( "cpu_math_add_16bit_with_16bit", &test_cpu_math_add_16bit_with_16bit_payload, &test_cpu_math_add_16bit_with_16bit_tester );
-    // create_test( "cpu_math_add_16bit_with_8bit", &test_cpu_math_add_16bit_with_8bit_payload, &test_cpu_math_add_16bit_with_8bit_tester );
-    // create_test( "cpu_math_sub_16bit", &test_cpu_math_sub_16bit_payload, &test_cpu_math_sub_16bit_tester );
-    // create_test( "cpu_math_sub_16bit_with_8bit", &test_cpu_math_sub_16bit_with_8bit_payload, &test_cpu_math_sub_16bit_with_8bit_tester );
-    // create_test( "cpu_math_complement_const_16bit", &test_cpu_math_complement_const_16bit_payload, &test_cpu_math_complement_const_16bit_tester );
-    // create_test( "cpu_math_and_const_16bit", &test_cpu_math_and_const_16bit_payload, &test_cpu_math_and_const_16bit_tester );
-    // create_test( "cpu_move_32bit", &test_cpu_move_32bit_payload, &test_cpu_move_32bit_tester );
-    // create_test( "cpu_store_32bit", &test_cpu_store_32bit_payload, &test_cpu_store_32bit_tester );
-    // create_test( "cpu_compare_32bit", &test_cpu_compare_32bit_payload, &test_cpu_compare_32bit_tester );
-    // create_test( "cpu_math_add_32bit", &test_cpu_math_add_32bit_payload, &test_cpu_math_add_32bit_tester );
-    // create_test( "cpu_math_sub_32bit", &test_cpu_math_sub_32bit_payload, &test_cpu_math_sub_32bit_tester );
-    // create_test( "cpu_math_complement_const_32bit", &test_cpu_math_complement_const_32bit_payload, &test_cpu_math_complement_const_32bit_tester );
-    // create_test( "cpu_math_and_const_32bit", &test_cpu_math_and_const_32bit_payload, &test_cpu_math_and_const_32bit_tester );
-    // create_test( "cpu_combine_nibbles", &test_cpu_combine_nibbles_payload, &test_cpu_combine_nibbles_tester );
-    // create_test( "cpu_mem_move", &test_cpu_mem_move_payload, &test_cpu_mem_move_tester );
-    // create_test( "cpu_mem_move_size", &test_cpu_mem_move_size_payload, &test_cpu_mem_move_size_tester );
-    // create_test( "cpu_mem_move_direct", &test_cpu_mem_move_direct_payload, &test_cpu_mem_move_direct_tester );
-    // create_test( "cpu_mem_move_direct_size", &test_cpu_mem_move_direct_size_payload, &test_cpu_mem_move_direct_size_tester );
-    // create_test( "cpu_mem_move_direct_indirect_size", &test_cpu_mem_move_direct_indirect_size_payload, &test_cpu_mem_move_direct_indirect_size_tester );
-    // create_test( "cpu_compare_memory", &test_cpu_compare_memory_payload, &test_cpu_compare_memory_tester );
-    // create_test( "cpu_compare_memory_size", &test_cpu_compare_memory_size_payload, &test_cpu_compare_memory_size_tester );
-    // create_test( "cpu_less_than_memory", &test_cpu_less_than_memory_payload, &test_cpu_less_than_memory_tester );
-    // create_test( "cpu_less_than_memory_size", &test_cpu_less_than_memory_size_payload, &test_cpu_less_than_memory_size_tester );
-    // create_test( "cpu_greater_than_memory", &test_cpu_greater_than_memory_payload, &test_cpu_greater_than_memory_tester );
-    // create_test( "cpu_greater_than_memory_size", &test_cpu_greater_than_memory_size_payload, &test_cpu_greater_than_memory_size_tester );
-    // create_test( "cpu_move_8bit_indirect", &test_cpu_move_8bit_indirect_payload, &test_cpu_move_8bit_indirect_tester );
-    // create_test( "cpu_move_8bit_indirect_with_offset", &test_cpu_move_8bit_indirect_with_offset_payload, &test_cpu_move_8bit_indirect_with_offset_tester );
-    // create_test( "cpu_move_8bit_with_offset", &test_cpu_move_8bit_with_offset_payload, &test_cpu_move_8bit_with_offset_tester );
-    // create_test( "cpu_move_8bit_indirect_with_offset2", &test_cpu_move_8bit_indirect_with_offset2_payload, &test_cpu_move_8bit_indirect_with_offset2_tester );
-    // create_test( "cpu_move_8bit_with_offset2", &test_cpu_move_8bit_with_offset2_payload, &test_cpu_move_8bit_with_offset2_tester );
-    // create_test( "cpu_move_8bit_indirect2_payload", &test_cpu_move_8bit_indirect2_payload, &test_cpu_move_8bit_indirect2_tester );
-    // create_test( "cpu_move_16bit_indirect", &test_cpu_move_16bit_indirect_payload, &test_cpu_move_16bit_indirect_tester );
-    // create_test( "cpu_move_16bit_indirect2", &test_cpu_move_16bit_indirect2_payload, &test_cpu_move_16bit_indirect2_tester );
-    // create_test( "cpu_move_32bit_indirect", &test_cpu_move_32bit_indirect_payload, &test_cpu_move_32bit_indirect_tester );
-    // create_test( "cpu_move_32bit_indirect2", &test_cpu_move_32bit_indirect2_payload, &test_cpu_move_32bit_indirect2_tester );
-    // create_test( "cpu_uppercase", &test_cpu_uppercase_payload, &test_cpu_uppercase_tester );
-    // create_test( "cpu_lowercase", &test_cpu_lowercase_payload, &test_cpu_lowercase_tester );
-    // create_test( "cpu_convert_string_into_16bit", &test_cpu_convert_string_into_16bit_payload, &test_cpu_convert_string_into_16bit_tester );
-    // create_test( "cpu_flip_payload", &test_cpu_flip_payload, &test_cpu_flip_tester );
-    // create_test( "cpu_bit_check", &test_cpu_bit_check_payload, &test_cpu_bit_check_tester );
-    // create_test( "cpu_bit_checkB", &test_cpu_bit_check_payloadB, &test_cpu_bit_check_testerB );
-    // create_test( "cpu_dsdefine", &test_cpu_dsdefine_payload, &test_cpu_dsdefine_tester );
-    // create_test( "cpu_dsalloc", &test_cpu_dsalloc_payload, &test_cpu_dsalloc_tester );
-    // create_test( "cpu_dsfree", &test_cpu_dsfree_payload, &test_cpu_dsfree_tester );
-    // create_test( "cpu_dswrite B", &test_cpu_dswrite_payloadB, &test_cpu_dswrite_testerB );
+    // // to be adapted not using DSTRING  create_test( "cpu_dsgc A", &test_cpu_dsgc_payloadA, &test_cpu_dsgc_testerA );    
+    // // to be adapted not using DSTRING  create_test( "cpu_dsgc B", &test_cpu_dsgc_payloadB, &test_cpu_dsgc_testerB );    
+    create_test( "cpu_logical_and_8bit", &test_cpu_logical_and_8bit_payload, &test_cpu_logical_and_8bit_tester );    
+    create_test( "cpu_logical_not_8bit", &test_cpu_logical_not_8bit_payload, &test_cpu_logical_not_8bit_tester );    
+    create_test( "cpu_bit_check_extended", &test_cpu_bit_check_extended_payload, &test_cpu_bit_check_extended_tester );    
+    create_test( "cpu_bit_check_extended B", &test_cpu_bit_check_extended_payloadB, &test_cpu_bit_check_extended_testerB );
+    create_test( "cpu_less_than_8bit", &test_cpu_less_than_8bit_payload, &test_cpu_less_than_8bit_tester );    
+    create_test( "cpu_less_than_16bit A", &test_cpu_less_than_16bit_payload, &test_cpu_less_than_16bit_tester );    
+    create_test( "cpu_less_than_16bit B", &test_cpu_less_than_16bit_payloadB, &test_cpu_less_than_16bit_testerB );    
+    create_test( "cpu_less_than_32bit", &test_cpu_less_than_32bit_payload, &test_cpu_less_than_32bit_tester );    
+    create_test( "cpu_greater_than_8bit", &test_cpu_greater_than_8bit_payload, &test_cpu_greater_than_8bit_tester );    
+    create_test( "cpu_greater_than_16bit", &test_cpu_greater_than_16bit_payload, &test_cpu_greater_than_16bit_tester );    
+    create_test( "cpu_greater_than_32bit", &test_cpu_greater_than_32bit_payload, &test_cpu_greater_than_32bit_tester );    
+    create_test( "cpu_math_div2_8bit", &test_cpu_math_div2_8bit_payload, &test_cpu_math_div2_8bit_tester );
+    create_test( "cpu_math_div2_const_16bit", &test_cpu_math_div2_const_16bit_payload, &test_cpu_math_div2_const_16bit_tester );
+    create_test( "cpu_math_div2_const_32bit", &test_cpu_math_div2_const_32bit_payload, &test_cpu_math_div2_const_32bit_tester );
+    create_test( "cpu_math_div2_const_8bit", &test_cpu_math_div2_const_8bit_payload, &test_cpu_math_div2_const_8bit_tester );
+    create_test( "cpu_math_double_16bit", &test_cpu_math_double_16bit_payload, &test_cpu_math_double_16bit_tester );
+    create_test( "cpu_math_double_32bit", &test_cpu_math_double_32bit_payload, &test_cpu_math_double_32bit_tester );
+    create_test( "cpu_math_double_8bit", &test_cpu_math_double_8bit_payload, &test_cpu_math_double_8bit_tester );
+    create_test( "cpu_math_mul_8bit_to_16bit", &test_cpu_math_mul_8bit_to_16bit_payload, &test_cpu_math_mul_8bit_to_16bit_tester );
+    create_test( "cpu_math_mul_16bit_to_32bit", &test_cpu_math_mul_16bit_to_32bit_payload, &test_cpu_math_mul_16bit_to_32bit_tester );
+    create_test( "cpu_math_div_8bit_to_8bit", &test_cpu_math_div_8bit_to_8bit_payload, &test_cpu_math_div_8bit_to_8bit_tester );
+    create_test( "cpu_math_div_16bit_to_16bit A", &test_cpu_math_div_16bit_to_16bit_payload, &test_cpu_math_div_16bit_to_16bit_tester );
+    create_test( "cpu_math_div_16bit_to_16bit B", &test_cpu_math_div_16bit_to_16bit_payloadB, &test_cpu_math_div_16bit_to_16bit_testerB );
+    create_test( "cpu_math_mul2_const_16bit", &test_cpu_math_mul2_const_16bit_payload, &test_cpu_math_mul2_const_16bit_tester );
+    create_test( "cpu_math_mul2_const_32bit", &test_cpu_math_mul2_const_32bit_payload, &test_cpu_math_mul2_const_32bit_tester );
+    create_test( "cpu_math_mul2_const_8bit", &test_cpu_math_mul2_const_8bit_payload, &test_cpu_math_mul2_const_8bit_tester );
+    create_test( "cpu_number_to_string_payload", &test_cpu_number_to_string_payload, &test_cpu_number_to_string_tester );
+    // // to be adapted not using DSTRING create_test( "cpu_number_to_string_payloadB", &test_cpu_number_to_string_payloadB, &test_cpu_number_to_string_testerB );
+    create_test( "cpu_peek", &test_cpu_peek_payload, &test_cpu_peek_tester );
+    create_test( "cpu_poke", &test_cpu_poke_payload, &test_cpu_poke_tester );
+    create_test( "cpu_fill_blocks", &test_cpu_fill_blocks_payload, &test_cpu_fill_blocks_tester );
+    create_test( "cpu_fill", &test_cpu_fill_payload, &test_cpu_fill_tester );
+    create_test( "cpu_compare_8bit", &test_cpu_compare_8bit_payload, &test_cpu_compare_8bit_tester );
+    create_test( "cpu_math_add_8bit", &test_cpu_math_add_8bit_payload, &test_cpu_math_add_8bit_tester );
+    create_test( "cpu_math_sub_8bit", &test_cpu_math_sub_8bit_payload, &test_cpu_math_sub_8bit_tester );
+    create_test( "cpu_math_complement_const_8bit", &test_cpu_math_complement_const_8bit_payload, &test_cpu_math_complement_const_8bit_tester );
+    create_test( "cpu_math_and_const_8bit", &test_cpu_math_and_const_8bit_payload, &test_cpu_math_and_const_8bit_tester );
+    create_test( "cpu_move_16bit", &test_cpu_move_16bit_payload, &test_cpu_move_16bit_tester );
+    create_test( "cpu_addressof_16bit", &test_cpu_addressof_16bit_payload, &test_cpu_addressof_16bit_tester );
+    create_test( "cpu_compare_16bit", &test_cpu_compare_16bit_payload, &test_cpu_compare_16bit_tester );
+    create_test( "cpu_math_add_16bit", &test_cpu_math_add_16bit_payload, &test_cpu_math_add_16bit_tester );
+    create_test( "cpu_math_add_16bit_with_16bit", &test_cpu_math_add_16bit_with_16bit_payload, &test_cpu_math_add_16bit_with_16bit_tester );
+    create_test( "cpu_math_add_16bit_with_8bit", &test_cpu_math_add_16bit_with_8bit_payload, &test_cpu_math_add_16bit_with_8bit_tester );
+    create_test( "cpu_math_sub_16bit", &test_cpu_math_sub_16bit_payload, &test_cpu_math_sub_16bit_tester );
+    create_test( "cpu_math_sub_16bit_with_8bit", &test_cpu_math_sub_16bit_with_8bit_payload, &test_cpu_math_sub_16bit_with_8bit_tester );
+    create_test( "cpu_math_complement_const_16bit", &test_cpu_math_complement_const_16bit_payload, &test_cpu_math_complement_const_16bit_tester );
+    create_test( "cpu_math_and_const_16bit", &test_cpu_math_and_const_16bit_payload, &test_cpu_math_and_const_16bit_tester );
+    create_test( "cpu_move_32bit", &test_cpu_move_32bit_payload, &test_cpu_move_32bit_tester );
+    create_test( "cpu_store_32bit", &test_cpu_store_32bit_payload, &test_cpu_store_32bit_tester );
+    create_test( "cpu_compare_32bit", &test_cpu_compare_32bit_payload, &test_cpu_compare_32bit_tester );
+    create_test( "cpu_math_add_32bit", &test_cpu_math_add_32bit_payload, &test_cpu_math_add_32bit_tester );
+    create_test( "cpu_math_sub_32bit", &test_cpu_math_sub_32bit_payload, &test_cpu_math_sub_32bit_tester );
+    create_test( "cpu_math_complement_const_32bit", &test_cpu_math_complement_const_32bit_payload, &test_cpu_math_complement_const_32bit_tester );
+    create_test( "cpu_math_and_const_32bit", &test_cpu_math_and_const_32bit_payload, &test_cpu_math_and_const_32bit_tester );
+    create_test( "cpu_combine_nibbles", &test_cpu_combine_nibbles_payload, &test_cpu_combine_nibbles_tester );
+    create_test( "cpu_mem_move", &test_cpu_mem_move_payload, &test_cpu_mem_move_tester );
+    create_test( "cpu_mem_move_size", &test_cpu_mem_move_size_payload, &test_cpu_mem_move_size_tester );
+    create_test( "cpu_mem_move_direct", &test_cpu_mem_move_direct_payload, &test_cpu_mem_move_direct_tester );
+    create_test( "cpu_mem_move_direct_size", &test_cpu_mem_move_direct_size_payload, &test_cpu_mem_move_direct_size_tester );
+    create_test( "cpu_mem_move_direct_indirect_size", &test_cpu_mem_move_direct_indirect_size_payload, &test_cpu_mem_move_direct_indirect_size_tester );
+    create_test( "cpu_compare_memory", &test_cpu_compare_memory_payload, &test_cpu_compare_memory_tester );
+    create_test( "cpu_compare_memory_size", &test_cpu_compare_memory_size_payload, &test_cpu_compare_memory_size_tester );
+    create_test( "cpu_less_than_memory", &test_cpu_less_than_memory_payload, &test_cpu_less_than_memory_tester );
+    create_test( "cpu_less_than_memory_size", &test_cpu_less_than_memory_size_payload, &test_cpu_less_than_memory_size_tester );
+    create_test( "cpu_greater_than_memory", &test_cpu_greater_than_memory_payload, &test_cpu_greater_than_memory_tester );
+    create_test( "cpu_greater_than_memory_size", &test_cpu_greater_than_memory_size_payload, &test_cpu_greater_than_memory_size_tester );
+    create_test( "cpu_move_8bit_indirect", &test_cpu_move_8bit_indirect_payload, &test_cpu_move_8bit_indirect_tester );
+    create_test( "cpu_move_8bit_indirect_with_offset", &test_cpu_move_8bit_indirect_with_offset_payload, &test_cpu_move_8bit_indirect_with_offset_tester );
+    create_test( "cpu_move_8bit_with_offset", &test_cpu_move_8bit_with_offset_payload, &test_cpu_move_8bit_with_offset_tester );
+    create_test( "cpu_move_8bit_indirect_with_offset2", &test_cpu_move_8bit_indirect_with_offset2_payload, &test_cpu_move_8bit_indirect_with_offset2_tester );
+    create_test( "cpu_move_8bit_with_offset2", &test_cpu_move_8bit_with_offset2_payload, &test_cpu_move_8bit_with_offset2_tester );
+    create_test( "cpu_move_8bit_indirect2_payload", &test_cpu_move_8bit_indirect2_payload, &test_cpu_move_8bit_indirect2_tester );
+    create_test( "cpu_move_16bit_indirect", &test_cpu_move_16bit_indirect_payload, &test_cpu_move_16bit_indirect_tester );
+    create_test( "cpu_move_16bit_indirect2", &test_cpu_move_16bit_indirect2_payload, &test_cpu_move_16bit_indirect2_tester );
+    create_test( "cpu_move_32bit_indirect", &test_cpu_move_32bit_indirect_payload, &test_cpu_move_32bit_indirect_tester );
+    create_test( "cpu_move_32bit_indirect2", &test_cpu_move_32bit_indirect2_payload, &test_cpu_move_32bit_indirect2_tester );
+    create_test( "cpu_uppercase", &test_cpu_uppercase_payload, &test_cpu_uppercase_tester );
+    create_test( "cpu_lowercase", &test_cpu_lowercase_payload, &test_cpu_lowercase_tester );
+    create_test( "cpu_convert_string_into_16bit", &test_cpu_convert_string_into_16bit_payload, &test_cpu_convert_string_into_16bit_tester );
+    create_test( "cpu_flip_payload", &test_cpu_flip_payload, &test_cpu_flip_tester );
+    create_test( "cpu_bit_check", &test_cpu_bit_check_payload, &test_cpu_bit_check_tester );
+    create_test( "cpu_bit_checkB", &test_cpu_bit_check_payloadB, &test_cpu_bit_check_testerB );
+    create_test( "cpu_dsdefine", &test_cpu_dsdefine_payload, &test_cpu_dsdefine_tester );
+    create_test( "cpu_dsalloc", &test_cpu_dsalloc_payload, &test_cpu_dsalloc_tester );
+    create_test( "cpu_dsfree", &test_cpu_dsfree_payload, &test_cpu_dsfree_tester );
+    create_test( "cpu_dswrite B", &test_cpu_dswrite_payloadB, &test_cpu_dswrite_testerB );
 
 }
