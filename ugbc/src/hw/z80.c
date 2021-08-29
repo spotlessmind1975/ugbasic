@@ -140,8 +140,20 @@ void z80_fill_blocks( Environment * _environment, char * _address, char * _block
     outline0("LD D,H");
     outline0("INC DE");
     outline0("LD (DE),A")
-    outline0("LD C,255");
+    outline0("LD C,0");
     outline1("LD A,(%s)", _blocks);
+    outline0("DEC A");
+    outline0("LD B,A");
+    outline0("LDIR");
+
+    outline1("LD A,(%s)", _pattern);
+    outline0("LD (HL),A")
+    outline0("LD E,L");
+    outline0("LD D,H");
+    outline0("INC DE");
+    outline0("LD (DE),A")
+    outline0("LD C,255");
+    outline0("LD A,0");
     outline0("LD B,A");
     outline0("LDIR");
 
