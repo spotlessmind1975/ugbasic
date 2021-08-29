@@ -839,7 +839,14 @@ void cpu6809_math_add_16bit( Environment * _environment, char *_source, char *_d
  */
 void cpu6809_math_add_16bit_with_16bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
 
-    cpu6809_math_add_16bit(  _environment, _source, _destination, _other );
+    outline1("LDX %s", _source);
+    outline1("LDD #%s", _destination);
+    outline0("LEAX D, X");
+    if ( _other ) {
+        outline1("STX %s", _other);
+    } else {
+        outline1("STX %s", _destination);
+    }
 
 }
 
