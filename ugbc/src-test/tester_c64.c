@@ -62,8 +62,8 @@ void create_test( char *_name, void (*_payload)(TestEnvironment *), int (*_teste
     }
     fclose(handleIns);
     
-    system("cl65 -Ln /tmp/out.lbl -g -o /tmp/out.prg -C /tmp/out.cfg -u __EXEHDR__ -t c64 /tmp/out.asm");
-    system("run6502 -L /tmp/out.lbl -Li /tmp/out.ins -X 0000 -R 080d -l 07ff /tmp/out.prg -O /tmp/out.out");
+    system("cl65 -l /tmp/out.lis -Ln /tmp/out.lbl -g -o /tmp/out.prg -C /tmp/out.cfg -u __EXEHDR__ -t c64 /tmp/out.asm");
+    system("run6502 -L /tmp/out.lbl -Li /tmp/out.ins -X 0000 -R 080d -l 07ff /tmp/out.prg -O /tmp/out.out -u /tmp/out.lis");
     FILE * handle = fopen( "/tmp/out.out", "rt" );
     fscanf(handle, "%x %x %x %x %x %x", &t.state.a, &t.state.x, &t.state.y, &t.state.p, &t.state.s, &t.state.pc );
     while( !feof(handle) ) {
