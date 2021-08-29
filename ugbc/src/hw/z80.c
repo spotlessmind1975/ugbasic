@@ -1176,11 +1176,12 @@ void z80_math_mul2_const_16bit( Environment * _environment, char *_source, int _
  */
 void z80_math_and_const_16bit( Environment * _environment, char *_source, int _mask ) {
 
-    outline1("LD HL, (%s)", _source );
-    outline0("LD AF, HL" );
-    outline1("AND $%4.4x", _mask );
-    outline0("LD HL, AF" );
-    outline1("LD (%s), HL", _source );
+    outline1("LD A, (%s)", _source );
+    outline1("AND $%2.2x", ( _mask & 0xff ) );
+    outline1("LD (%s), A", _source );
+    outline1("LD A, (%s+1)", _source );
+    outline1("AND $%2.2x", ( ( _mask >> 8 ) & 0xff ) );
+    outline1("LD (%s+1), a", _source );
 
 }
 
