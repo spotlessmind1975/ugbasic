@@ -2130,7 +2130,7 @@ void test_cpu_math_sub_16bit_payload( TestEnvironment * _te ) {
     Variable * word2 = variable_define( e, "word2", VT_WORD, 0x1010 );
     Variable * result = variable_define( e, "result", VT_WORD, 0x0 );
 
-    cpu6809_math_sub_16bit( e, word1->realName, word2->realName, result->realName );
+    cpu_math_sub_16bit( e, word1->realName, word2->realName, result->realName );
 
     _te->trackedVariables[0] = word1;
     _te->trackedVariables[1] = word2;
