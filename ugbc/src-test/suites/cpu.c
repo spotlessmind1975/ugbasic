@@ -1991,10 +1991,10 @@ void test_cpu_compare_16bit_payload( TestEnvironment * _te ) {
     Variable * result11p = variable_define( e, "result11p", VT_BYTE, 0x42 );
     Variable * result11n = variable_define( e, "result11n", VT_BYTE, 0x42 );
 
-    cpu_compare_8bit( e, word1->realName, word2->realName, result12p->realName, 1 );
-    cpu_compare_8bit( e, word1->realName, word2->realName, result12n->realName, 0 );
-    cpu_compare_8bit( e, word1->realName, word1->realName, result11p->realName, 1 );
-    cpu_compare_8bit( e, word1->realName, word1->realName, result11n->realName, 0 );
+    cpu_compare_16bit( e, word1->realName, word2->realName, result12p->realName, 1 );
+    cpu_compare_16bit( e, word1->realName, word2->realName, result12n->realName, 0 );
+    cpu_compare_16bit( e, word1->realName, word1->realName, result11p->realName, 1 );
+    cpu_compare_16bit( e, word1->realName, word1->realName, result11n->realName, 0 );
 
     _te->trackedVariables[0] = word1;
     _te->trackedVariables[1] = word2;
@@ -2014,12 +2014,12 @@ int test_cpu_compare_16bit_tester( TestEnvironment * _te ) {
     Variable * result11p = variable_retrieve( &_te->environment, _te->trackedVariables[4]->name );
     Variable * result11n = variable_retrieve( &_te->environment, _te->trackedVariables[5]->name );
 
-    // printf( "byte1 = %2.2x\n", byte1->value );
-    // printf( "byte2 = %2.2x\n", byte2->value );
-    // printf( "result12p = %2.2x\n", result12p->value );
-    // printf( "result12n = %2.2x\n", result12n->value );
-    // printf( "result11p = %2.2x\n", result11p->value );
-    // printf( "result11n = %2.2x\n", result11n->value );
+    // printf( "word1 = %2.2x [expected 0x2142]\n", word1->value );
+    // printf( "word2 = %2.2x [expected 0x1042]\n", word2->value );
+    // printf( "result12p = %2.2x [expected 0x00]\n", result12p->value );
+    // printf( "result12n = %2.2x [expected 0xff]\n", result12n->value );
+    // printf( "result11p = %2.2x [expected 0xff]\n", result11p->value );
+    // printf( "result11n = %2.2x [expected 0x00]\n", result11n->value );
 
     return word1->value == 0x2142 && 
             word2->value == 0x1042 && 
