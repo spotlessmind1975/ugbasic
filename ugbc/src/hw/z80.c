@@ -2375,7 +2375,7 @@ void z80_flip( Environment * _environment, char * _source, char * _size, char * 
     outline1("LD HL, (%s)", _size);
     outline0("LD H, 0");
     outline1("LD DE, (%s)", _destination);
-    outline0("ADC HL, DE");
+    outline0("ADD HL, DE");
     outline0("LD DE, HL");
 
     outline1("LD HL, (%s)", _source);
