@@ -1974,7 +1974,7 @@ int test_cpu_addressof_16bit_tester( TestEnvironment * _te ) {
     Variable * first = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
     Variable * second = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
 
-    return first->value != second->value && second->value >= 0x1c00;
+    return first->value != second->value && second->value != 0x84;
 
 }
 
