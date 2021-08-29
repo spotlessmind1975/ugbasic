@@ -673,8 +673,10 @@ void z80_math_mul2_const_8bit( Environment * _environment, char *_source, int _s
  */
 void z80_math_complement_const_8bit( Environment * _environment, char *_source, int _value ) {
 
+    outline1("LD A, (%s)", _source );
+    outline0("LD B, A" );
     outline1("LD A, $%2.2x", _value );
-    outline1("SUB A, (%s)", _source );
+    outline0("SUB A, B" );
     outline1("LD (%s), A", _source );
 
 }
