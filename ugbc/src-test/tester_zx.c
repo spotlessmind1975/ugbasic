@@ -62,7 +62,7 @@ void create_test( char *_name, void (*_payload)(TestEnvironment *), int (*_teste
     fclose(handleIns);
 
     system("z88dk-z80asm -l -s -b /tmp/out.asm");
-    system("runz80 -R 8000 -L /tmp/out.sym -Li /tmp/out.ins -l 8000 /tmp/out.bin -O /tmp/out.out");
+    system("runz80 -R 8000 -L /tmp/out.sym -Li /tmp/out.ins -l 8000 /tmp/out.bin -O /tmp/out.out -u /tmp/out.lis");
     FILE * handle = fopen( "/tmp/out.out", "rt" );
     fscanf(handle, "%x %x %x %x %x %x %x %x", &t.state.a, &t.state.b, &t.state.c, &t.state.d, &t.state.e, &t.state.f, &t.state.h, &t.state.l );
     while( !feof(handle) ) {
