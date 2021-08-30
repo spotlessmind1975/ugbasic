@@ -33,40 +33,6 @@
 
 #include "../ugbc.h"
 
-#define COLOR_BLACK					0
-#define COLOR_WHITE					7
-#define COLOR_RED					2
-#define COLOR_CYAN					5
-#define COLOR_VIOLET				2 /* alias */
-#define COLOR_GREEN					4
-#define COLOR_BLUE					3  /* alias */
-#define COLOR_YELLOW				6
-#define COLOR_ORANGE				2 /* alias */
-#define COLOR_BROWN					2 /* alias */
-#define COLOR_LIGHT_RED				2 /* alias */
-#define COLOR_DARK_GREY				0 /* alias */
-#define COLOR_GREY					7 /* alias */
-#define COLOR_LIGHT_GREEN			4 /* alias */
-#define COLOR_LIGHT_BLUE			5 /* alias */
-#define COLOR_LIGHT_GREY			7 /* alias */
-#define COLOR_DARK_BLUE				3 /* alias */
-#define COLOR_MAGENTA				3
-#define COLOR_PURPLE				2 /* alias */
-#define COLOR_LAVENDER       		2 /* alias */
-#define COLOR_GOLD       			6 /* alias */
-#define COLOR_TURQUOISE       		5 /* alias */
-#define COLOR_TAN       		    5 /* alias */
-#define COLOR_YELLOW_GREEN       	6 /* alias */
-#define COLOR_OLIVE_GREEN       	4 /* alias */
-#define COLOR_PINK       			2 /* alias */
-#define COLOR_PEACH       			2 /* alias */
-#define COLOR_COUNT                 16
-
-#define PORT_COLOR_BORDER           254
-
-#define TEXT_COLUMNS_COUNT          32
-#define TEXT_ROWS_COUNT             24
-
 #define KEY_NONE					64
 #define KEY_0						35
 #define KEY_1						56
@@ -164,31 +130,6 @@
 #define KEY_RIGHT                    151
 #define KEY_DIVISION                 154
 
-#define SCREEN_CAPABILITIES         ( ( 1<<BITMAP_NATIVE ) )
-
-#define BITMAP_MODE_STANDARD        1           // Standard Bitmap Mode     192 x 256 x 2
-#define TILEMAP_MODE_STANDARD       0           // Standard Character Mode  32 x 25 x 8
-
-int d32_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode );
-
-void d32_initialization( Environment * _environment );
-
-void d32_color_border( Environment * _environment, char * _color );
-void d32_bitmap_enable( Environment * _environment, int _width, int _height, int _colors );
-void d32_tilemap_enable( Environment * _environment, int _width, int _height, int _colors );
-void d32_vscroll( Environment * _environment, int _displacement );
-void d32_text_at( Environment * _environment, char * _x, char * _y, char * _text, char * _text_size, char * _pen, char * _paper, char * _ww );
-void d32_cls( Environment * _environment, char * _pen, char * _paper );
-void d32_inkey( Environment * _environment, char * _pressed, char * _key );
-void d32_scancode( Environment * _environment, char * _pressed, char * _scacode );
-void d32_scanshift( Environment * _environment, char * _shifts );
-void d32_keyshift( Environment * _environment, char * _shifts );
-void d32_clear_key( Environment * _environment );
-void d32_back( Environment * _environment );
-
 #define         JOY_COUNT           0
-
-Variable * d32_image_converter( Environment * _environment, char * _data, int _width, int _height, int _mode );
-void d32_put_image( Environment * _environment, char * _image, char * _x, char * _y );
 
 #endif

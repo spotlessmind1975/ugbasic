@@ -1641,6 +1641,7 @@ Variable *              ypen( Environment * _environment );
 #elif __d32__
     #include "../src-generated/modules_d32.h"
     #include "hw/6809.h"
+    #include "hw/6847.h"
     #include "hw/d32.h"
 #endif
 
