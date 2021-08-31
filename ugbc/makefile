@@ -55,6 +55,14 @@ SOURCES_6809 := $(subst src/hw/6809/,src-generated/6809_,$(MODULES_6809:.asm=.c)
 src-generated/6809_%.c: $(MODULES_6809)
 	@xxd -i $(subst src-generated/6809_,src/hw/6809/,$(@:.c=.asm)) >$@
 
+# Motorola 6847
+
+MODULES_6847 := $(wildcard src/hw/6847/*.asm)
+SOURCES_6847 := $(subst src/hw/6847/,src-generated/6847_,$(MODULES_6847:.asm=.c))
+
+src-generated/6847_%.c: $(MODULES_6847)
+	@xxd -i $(subst src-generated/6847_,src/hw/6847/,$(@:.c=.asm)) >$@
+
 # MOS Technology 6502/6510
 
 MODULES_6502 := $(wildcard src/hw/6502/*.asm)
@@ -156,8 +164,8 @@ SOURCES_D32 := $(subst src/hw/d32/,src-generated/d32_,$(MODULES_D32:.asm=.c))
 src-generated/d32_%.c: $(MODULES_D32)
 	@xxd -i $(subst src-generated/d32_,src/hw/d32/,$(@:.c=.asm)) >$@
 
-src-generated/modules_d32.c: $(SOURCES_6809) $(SOURCES_D32)
-	@cat $(SOURCES_6809) $(SOURCES_D32) >src-generated/modules_d32.c
+src-generated/modules_d32.c: $(SOURCES_6809) $(SOURCES_6847) $(SOURCES_D32)
+	@cat $(SOURCES_6809) $(SOURCES_6847) $(SOURCES_D32) >src-generated/modules_d32.c
 	@grep "src" src-generated/modules_d32.c | awk -f modules.awk >src-generated/modules_d32.h
 
 # ZX Spectrum
