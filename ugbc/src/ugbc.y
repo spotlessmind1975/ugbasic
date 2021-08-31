@@ -2561,7 +2561,7 @@ statement:
   }
   | WRITING writing_definition
   | Identifier OP_COLON {
-      outhead1("%s:", $1);
+      cpu_label( _environment, $1 );
   } 
   | LOAD String OP_COMMA Integer {
     load( _environment, $2, NULL, $4 );
@@ -2701,7 +2701,9 @@ statements_no_linenumbers:
 statements_with_linenumbers:
       Integer {
         outhead1("; BEGIN LINE %d OF BASIC PROGRAM", $1);
-        outhead1("_linenumber%d:", $1);
+        char lineNumber[MAX_TEMPORARY_STORAGE];
+        sprintf(lineNumber, "_linenumber%d", $1 );
+        cpu_label( _environment, lineNumber);
     } statements_no_linenumbers { 
         ((Environment *)_environment)->yylineno = yylineno;
     };
