@@ -132,4 +132,6 @@
 
 #define         JOY_COUNT           0
 
+#define SCREEN_CAPABILITIES         ( ( 1<<TILEMAP_NATIVE ) | ( 1<<BITMAP_NATIVE ) )
+
 #endif

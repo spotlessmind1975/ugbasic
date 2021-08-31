@@ -354,9 +354,84 @@ void c6847_scroll_text( Environment * _environment, int _direction ) {
 
 void c6847_text_at( Environment * _environment, char * _x, char * _y, char * _text, char * _text_size, char * _pen, char *_ww ) {
 
+    deploy( c6847varsDeployed, src_hw_6847_vars_asm);
+    // deploy( vScrollTextDeployed, src_hw_6847_vscroll_text_asm );
+    deploy( textEncodedAtDeployed, src_hw_6847_text_at_asm );
+
+    outline1("LDY %s", _text);
+    outline0("STY TEXTPTR" );
+    outline0("LDY TEXTADDRESS" );
+    outline0("STY COPYOFTEXTADDRESS" );
+    outline1("LDA %s", _x );
+    outline0("STA XCURSYS" );
+    outline1("LDA %s", _y );
+    outline0("STA YCURSYS" );
+    outline1("LDA %s", _text_size);
+    outline0("STA TEXTSIZE" );
+    outline0("LDA #0" );
+    outline0("STA TABSTODRAW" );
+    outline1("LDA %s", _ww );
+    outline0("STA TEXTWW" );
+    outline1("LDA %s", _pen );
+    outline0("STA TEXTPEN" );
+    outline0("LDA _PAPER" );
+    outline0("STA TEXTPAPER" );
+
+    outline0("JSR TEXTAT");
+
+    outline0("LDA YCURSYS" );
+    outline1("STA %s", _y );
+    outline0("LDA XCURSYS");
+    outline1("STA %s", _x );
+
 }
 
 void c6847_initialization( Environment * _environment ) {
+
+    deploy( c6847varsDeployed, src_hw_6847_vars_asm );
+    deploy( c6847startupDeployed, src_hw_6847_startup_asm );
+    // src_hw_chipset_mob_asm = src_hw_c6847_mob_asm;
+    // src_hw_chipset_mob_asm_len = src_hw_c6847_mob_asm_len;
+
+    // SCREEN_MODE_DEFINE( BITMAP_MODE_STANDARD, 1, 320, 200, 2, "Standard Bitmap Mode" );
+    // SCREEN_MODE_DEFINE( BITMAP_MODE_MULTICOLOR, 1, 160, 200, 4, "Multicolor Bitmap Mode"  );
+    // SCREEN_MODE_DEFINE( TILEMAP_MODE_STANDARD, 0, 40, 25, 2, "Standard Character Mode" );
+    // SCREEN_MODE_DEFINE( TILEMAP_MODE_MULTICOLOR, 0, 40, 25, 16, "Multicolor Character Mode" );
+    // SCREEN_MODE_DEFINE( TILEMAP_MODE_EXTENDED, 0, 40, 25, 20, "Extended Multicolor Character Mode" );
+
+    SCREEN_MODE_DEFINE( TILEMAP_MODE_INTERNAL, 0, 32, 16, 2, "Alphanumeric Internal");
+    SCREEN_MODE_DEFINE( TILEMAP_MODE_EXTERNAL, 1, 32, 16, 2, "Alphanumeric External");
+    SCREEN_MODE_DEFINE( TILEMAP_MODE_SEMIGRAPHICS4, 2, 64, 32, 8, "Semigraphics 4" );
+    SCREEN_MODE_DEFINE( TILEMAP_MODE_SEMIGRAPHICS6, 3, 64, 48, 4, "Semigraphics 6" );
+
+    SCREEN_MODE_DEFINE( BITMAP_MODE_COLOR1, 4, 64, 64, 4, "Color Graphics 1" );
+    SCREEN_MODE_DEFINE( BITMAP_MODE_RESOLUTION1, 5, 128, 64, 2, "Resolution Graphics 1" );
+    SCREEN_MODE_DEFINE( BITMAP_MODE_COLOR2, 6, 128, 64, 4, "Color Graphics 2" );
+    SCREEN_MODE_DEFINE( BITMAP_MODE_RESOLUTION2, 7, 128, 96, 2, "Resolution Graphics 2" );
+    SCREEN_MODE_DEFINE( BITMAP_MODE_COLOR3, 8, 128, 96, 4, "Color Graphics 3" );
+    SCREEN_MODE_DEFINE( BITMAP_MODE_RESOLUTION3, 9, 128, 192, 2, "Resolution Graphics 3" );
+    SCREEN_MODE_DEFINE( BITMAP_MODE_COLOR6, 10, 128, 192, 4, "Color Graphics 6" );
+    SCREEN_MODE_DEFINE( BITMAP_MODE_RESOLUTION6, 11, 256, 192, 2, "Resolution Graphics 6" );
+
+    outline0("JSR C6847STARTUP");
+
+    variable_import( _environment, "XGR", VT_POSITION );
+    variable_global( _environment, "XGR" );
+    variable_import( _environment, "YGR", VT_POSITION );
+    variable_global( _environment, "YGR" );
+    variable_import( _environment, "LINE", VT_WORD );
+    variable_global( _environment, "LINE" );
+
+    variable_import( _environment, "CLIPX1", VT_POSITION );
+    variable_global( _environment, "CLIPX1" );
+    variable_import( _environment, "CLIPX2", VT_POSITION );
+    variable_global( _environment, "CLIPX2" );
+    variable_import( _environment, "CLIPY1", VT_POSITION );
+    variable_global( _environment, "CLIPY1" );
+    variable_import( _environment, "CLIPY2", VT_POSITION );
+    variable_global( _environment, "CLIPY2" );
+
+    // c6847_cls( _environment );
 
 }
 

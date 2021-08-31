@@ -65,9 +65,19 @@
 #define TEXT_COLUMNS_COUNT          40
 #define TEXT_ROWS_COUNT             25
 
-#define BITMAP_MODE_STANDARD        2           // Standard Bitmap Mode
+#define TILEMAP_MODE_INTERNAL       0       // Alphanumeric Internal	32 × 16	2	512
+#define TILEMAP_MODE_EXTERNAL       1       // Alphanumeric External	32 × 16	2	512
+#define TILEMAP_MODE_SEMIGRAPHICS4  2       // Semigraphics 4	        64 × 32	8	512
+#define TILEMAP_MODE_SEMIGRAPHICS6  3       // Semigraphics 6	        64 × 48	4	512
 
-#define TILEMAP_MODE_STANDARD       0           // Standard Character Mode        40 x 25 x 16
+#define BITMAP_MODE_COLOR1          4       // Color Graphics 1	64 × 64	4	1024
+#define BITMAP_MODE_RESOLUTION1     5       // Resolution Graphics 1	128 × 64	1 + Black	1024
+#define BITMAP_MODE_COLOR2          6       // Color Graphics 2	128 × 64	4	2048
+#define BITMAP_MODE_RESOLUTION2	    7       // Resolution Graphics 2 128 × 96	1 + Black	1536
+#define BITMAP_MODE_COLOR3          8       // Color Graphics 3	128 × 96	4	3072
+#define BITMAP_MODE_RESOLUTION3     9       // Resolution Graphics 3	128 × 192	1 + Black	3072
+#define BITMAP_MODE_COLOR6          10      // Color Graphics 6	128 × 192	4	6144
+#define BITMAP_MODE_RESOLUTION6     11      // Resolution Graphics 6	256 × 192	1 + Black	614
 
 int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode );
 
