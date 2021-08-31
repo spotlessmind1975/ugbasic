@@ -1434,7 +1434,6 @@ void cpu6809_compare_32bit( Environment * _environment, char *_source, char *_de
 
     if ( _positive ) {
 
-
         cpu6809_compare_16bit( _environment, _source, _destination, _other, _positive );
 
         outline1("LDA %s", _other );
