@@ -51,4 +51,6 @@
 </usermanual> */
 Variable * image_get_height( Environment * _environment, char * _image ) {
 
+    FUNCTION_STUB( VT_WORD )
+
 }

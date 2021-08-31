@@ -65,6 +65,8 @@ void target_initialization( Environment * _environment ) {
 
     setup_text_variables( _environment );
 
+    c6847_initialization( _environment );
+
 }
 
 void target_linkage( Environment * _environment ) {

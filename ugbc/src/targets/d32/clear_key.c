@@ -42,4 +42,6 @@ extern char DATATYPE_AS_STRING[][16];
 
 Variable * clear_key( Environment * _environment ) {
 
+    FUNCTION_STUB( VT_WORD )
+
 }

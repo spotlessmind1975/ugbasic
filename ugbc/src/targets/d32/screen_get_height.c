@@ -40,8 +40,6 @@
 
 Variable * screen_get_height( Environment * _environment ) {
 
-    Variable * height = variable_temporary( _environment, VT_POSITION, "(result of get height)");
-
-    return height;
+    FUNCTION_STUB( VT_POSITION )
 
 }

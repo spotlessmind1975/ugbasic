@@ -58,9 +58,7 @@
 </usermanual> */
 Variable * hit_to( Environment * _environment, int _sprite ) {
 
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(hit)" );
-
-    return result;
+    FUNCTION_STUB( VT_BYTE )
 
 }
 
@@ -82,9 +80,7 @@ Variable * hit_to( Environment * _environment, int _sprite ) {
 </usermanual> */
 Variable * hit_to_vars( Environment * _environment, char * _sprite ) {
 
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(hit)" );
-
-    return result;
+    FUNCTION_STUB( VT_BYTE )
 
 }
 

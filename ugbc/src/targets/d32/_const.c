@@ -45,9 +45,9 @@ void const_emit( Environment * _environment, char * _name ) {
     if ( c ) {
             if ( !c->imported ) {
                 if ( c->valueString ) {
-                    outline2("%s equ \"%s\"", c->name, c->valueString)
+                    outhead2("%s equ \"%s\"", c->name, c->valueString)
                 } else {
-                    outline2("%s equ $%4.4x", c->name, c->value);
+                    outhead2("%s equ $%4.4x", c->name, c->value);
                 }
 
             }

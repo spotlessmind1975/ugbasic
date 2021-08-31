@@ -40,8 +40,6 @@
 
 Variable * screen_get_width( Environment * _environment ) {
 
-    Variable * width = variable_temporary( _environment, VT_POSITION, "(result of get width)");
-
-    return width;
+    FUNCTION_STUB( VT_POSITION )
 
 }

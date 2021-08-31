@@ -40,9 +40,7 @@
 
 Variable * get_timer( Environment * _environment ) {
 
-    Variable * result = variable_temporary( _environment, VT_WORD, "(result of get timer)");
-
-    return result;
+    FUNCTION_STUB( VT_WORD )
     
 }
 

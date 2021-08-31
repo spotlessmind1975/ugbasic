@@ -40,8 +40,6 @@
 
 Variable * joy_direction( Environment * _environment, char * _port, int _direction ) {
 
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of J*)" );
-
-    return result;
+    FUNCTION_STUB( VT_BYTE )
 
 }

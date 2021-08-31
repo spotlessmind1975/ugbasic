@@ -53,8 +53,6 @@
 
 Variable * get_at( Environment * _environment, char * _x, char * _y ) {
     
-    Variable * result = variable_temporary( _environment, VT_DSTRING, 0 );
-
-    return result;
+    FUNCTION_STUB( VT_DSTRING )
 
 }

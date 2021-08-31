@@ -40,4 +40,6 @@
 
 Variable * image_converter( Environment * _environment, char * _data, int _width, int _height, int _mode ) {
 
+    FUNCTION_STUB( VT_IMAGE )
+
 }

@@ -40,8 +40,6 @@
 
 Variable * joy( Environment * _environment, char * _port ) {
 
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of JOY)" );
-
-    return result;
+    FUNCTION_STUB( VT_BYTE )
 
 }

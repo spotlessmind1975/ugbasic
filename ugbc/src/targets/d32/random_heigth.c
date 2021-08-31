@@ -49,4 +49,6 @@
 </usermanual> */
 Variable * random_height( Environment * _environment ) {
 
+    FUNCTION_STUB( VT_POSITION )
+
 }
