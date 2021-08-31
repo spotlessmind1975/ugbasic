@@ -742,6 +742,18 @@ typedef struct _Environment {
     int varsDeployed;
 
     /**
+     * Deployed the startup for Motorola 6847
+     */
+
+    int c6847startupDeployed;
+
+    /**
+     * Deployed the vars for Motorola 6847
+     */
+
+    int c6847varsDeployed;
+
+    /**
      * Deployed the startup for VIC-II
      */
 
@@ -1217,6 +1229,8 @@ void setup_text_variables( Environment * _environment );
 ScreenMode * find_screen_mode_by_suggestion( Environment * _environment, int _bitmap, int _width, int _height, int _colors );
 ScreenMode * find_screen_mode_by_id( Environment * _environment, int _id );
 Bank * bank_find( Bank * _first, char * _name );
+
+#define FUNCTION_STUB( t )   Variable * result = variable_temporary( _environment, t, "(stub)" ); return result;
 
 //----------------------------------------------------------------------------
 // *A*
