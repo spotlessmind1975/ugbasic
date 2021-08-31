@@ -200,10 +200,8 @@ void cpu6809_fill( Environment * _environment, char * _address, char * _bytes, c
  */
 void cpu6809_move_8bit( Environment * _environment, char *_source, char *_destination ) {
 
-    outline1("LDX %s", _source);
-    outline0("LDA ,X");
-    outline1("LDX %s", _destination);
-    outline0("STA ,X");
+    outline1("LDA %s", _source);
+    outline1("STA %s", _destination);
 
 }
 
@@ -1436,21 +1434,22 @@ void cpu6809_compare_32bit( Environment * _environment, char *_source, char *_de
 
     if ( _positive ) {
 
-        cpu6809_compare_16bit( _environment, sourceEffective, destinationEffective, _other, _positive );
-
-        outline1("LDA %s", _other );
-        outline1("BNE %sdone", _other );
 
         cpu6809_compare_16bit( _environment, _source, _destination, _other, _positive );
-
-    } else {
-
-        cpu6809_compare_16bit( _environment, sourceEffective, destinationEffective, _other, _positive );
 
         outline1("LDA %s", _other );
         outline1("BEQ %sdone", _other );
 
+        cpu6809_compare_16bit( _environment, sourceEffective, destinationEffective, _other, _positive );
+
+    } else {
+
         cpu6809_compare_16bit( _environment, _source, _destination, _other, _positive );
+
+        outline1("LDA %s", _other );
+        outline1("BNE %sdone", _other );
+
+        cpu6809_compare_16bit( _environment, sourceEffective, destinationEffective, _other, _positive );
 
     }
 
