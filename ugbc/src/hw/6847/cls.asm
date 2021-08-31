@@ -29,66 +29,91 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                      INTERNAL VARIABLES FOR C64 TARGET                      *
+;*                       CLEAR SCREEN ROUTINE FOR 6847                         *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-TEXTADDRESS         fdb     $0400
-BITMAPADDRESS       fdb     $a000
-COLORMAPADDRESS     fdb     $a000
-MOBADDRESS          fdb     $a000
-CURRENTMODE         fcb     $0
+CLS
+    LDA CURRENTMODE
+    CMPA #4
+    BHS CLS0X
+    JMP CLST
+CLS0X
+    JMP CLSG
 
-TABCOUNT            fcb     4
-XCURS               fcb     0
-YCURS               fcb     0
-LOCALWW             fcb     3
-EMPTYTILE           fcb     $60
+CLSG
+;     LDA BITMAPADDRESS
+;     STA COPYOFBITMAPADDRESS
+;     LDA BITMAPADDRESS+1
+;     STA COPYOFBITMAPADDRESS+1
+;     LDX #31
+;     LDY #0
+;     LDA #$0
+; CLSGY:
+;     STA (COPYOFBITMAPADDRESS),Y
+;     INY
+;     BNE CLSGY
+;     INC COPYOFBITMAPADDRESS+1
+;     DEX
+;     BNE CLSGY
+;     LDX #64
+; CLSGY2:
+;     STA (COPYOFBITMAPADDRESS),Y
+;     INY
+;     DEX
+;     BNE CLSGY2
 
-TMPPTR equ $22    ; $23
-TMPPTR2 equ $24    ; $25
+;     LDA COLORMAPADDRESS
+;     STA COPYOFCOLORMAPADDRESS
+;     LDA COLORMAPADDRESS+1
+;     STA COPYOFCOLORMAPADDRESS+1
+;     LDX #3
+;     LDY #0
+;     LDA _PEN
+;     ASL A
+;     ASL A
+;     ASL A
+;     ASL A
+;     ORA _PAPER
+; CLGC:
+;     STA (COPYOFCOLORMAPADDRESS),Y
+;     INY
+;     BNE CLGC
+;     INC COPYOFCOLORMAPADDRESS+1
+;     CPX #1
+;     BNE CLGCNB
+; CLGC2:
+;     STA (COPYOFCOLORMAPADDRESS),Y
+;     INY
+;     CPY #232
+;     BNE CLGC2
+; CLGCNB:
+;     DEX
+;     BNE CLGC
 
-MATHPTR0 equ $F6
-MATHPTR1 equ $F7
-MATHPTR2 equ $F8
-MATHPTR3 equ $F9
-MATHPTR4 equ $FA
-MATHPTR5 equ $FB
-MATHPTR6 equ $FC
-MATHPTR7 equ $FD
-MATHPTR8 equ $FF
-MATHPTRB0 equ $ED
-MATHPTRB1 equ $EE
-MATHPTRB2 equ $EF
-MATHPTRB3 equ $F0
-MATHPTRB4 equ $F1
-MATHPTRB5 equ $F2
-MATHPTRB6 equ $F3
-MATHPTRB7 equ $F4
-MATHPTRB8 equ $F5
+;     LDA #$37
+;     STA $01
+;     CLI
 
-DSSTATUS equ $20
-DSSIZE equ $21
-DSADDRLO equ $22
-DSADDRHI equ $23
-DSBANKLO equ $30
-DSBANKHI equ $31
+    RTS
 
-COPYOFTEXTADDRESS equ $25
-COPYOFBITMAPADDRESS equ $25
-COPYOFCOLORMAPADDRESS equ $2F
-COPYOFTEXTADDRESS2 equ $2D
-COPYOFCOLORMAPADDRESS2 equ $2B
+CLST
+    LDX TEXTADDRESS
+    STX COPYOFTEXTADDRESS
+    LDY #5
+    LDB #$7F
+    LDA EMPTYTILE
+CLST2
+    STA , X
+    LEAX 1, X
+    DECB
+    CMPB #$7F
+    BNE CLST2
+    LDB #$7F
+    LEAY -1, Y
+    CMPY #0 
+    BNE CLST2
 
-DIRECTION equ $20
-PATTERN equ $20
-CHARACTERS equ $25
-CLINEX equ $32
-CLINEY equ $33
-
-BITSTOCONVERT equ $25
-
-XCURSYS equ $D3
-YCURSYS equ $D6
+    RTS

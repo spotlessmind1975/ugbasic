@@ -346,6 +346,10 @@ void c6847_get_height( Environment * _environment, char *_result ) {
 
 void c6847_cls( Environment * _environment ) {
 
+    deploy( clsDeployed, src_hw_6847_cls_asm );
+
+    outline0("JSR CLS");
+
 }
 
 void c6847_scroll_text( Environment * _environment, int _direction ) {
@@ -431,7 +435,7 @@ void c6847_initialization( Environment * _environment ) {
     variable_import( _environment, "CLIPY2", VT_POSITION );
     variable_global( _environment, "CLIPY2" );
 
-    // c6847_cls( _environment );
+    c6847_cls( _environment );
 
 }
 
