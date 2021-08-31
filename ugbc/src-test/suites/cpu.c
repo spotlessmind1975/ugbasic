@@ -2333,12 +2333,12 @@ int test_cpu_compare_32bit_tester( TestEnvironment * _te ) {
     Variable * result11p = variable_retrieve( &_te->environment, _te->trackedVariables[4]->name );
     Variable * result11n = variable_retrieve( &_te->environment, _te->trackedVariables[5]->name );
 
-    // printf( "dword1 = %2.2x [expected 0x55662142]\n", dword1->value );
-    // printf( "dword2 = %2.2x [expected 0x22331042]\n", dword2->value );
-    // printf( "result12p = %2.2x [expected 0x00]\n", result12p->value );
-    // printf( "result12n = %2.2x [expected 0xff]\n", result12n->value );
-    // printf( "result11p = %2.2x [expected 0xff]\n", result11p->value );
-    // printf( "result11n = %2.2x [expected 0x00]\n", result11n->value );
+    printf( "dword1 = %2.2x [expected 0x55662142]\n", dword1->value );
+    printf( "dword2 = %2.2x [expected 0x22331042]\n", dword2->value );
+    printf( "result12p = %2.2x [expected 0x00]\n", result12p->value );
+    printf( "result12n = %2.2x [expected 0xff]\n", result12n->value );
+    printf( "result11p = %2.2x [expected 0xff]\n", result11p->value );
+    printf( "result11n = %2.2x [expected 0x00]\n", result11n->value );
 
     return dword1->value == 0x55662142 && 
             dword2->value == 0x22331042 && 
@@ -3906,6 +3906,33 @@ void test_cpu_dswrite_payloadB( TestEnvironment * _te ) {
 
 }
 
+//===========================================================================
+
+void test_cpu_move_8bit_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * first = variable_define( e, "first", VT_BYTE, 0x42 );
+    Variable * second = variable_define( e, "second", VT_BYTE, 0x84 );
+
+    cpu_move_8bit( e, first->realName, second->realName );
+
+    _te->trackedVariables[0] = first;
+    _te->trackedVariables[1] = second;
+    
+}
+
+int test_cpu_move_8bit_tester( TestEnvironment * _te ) {
+
+    Variable * first = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * second = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+
+    return first->value == second->value && second->value == 0x42;
+
+}
+
+//===========================================================================
+
 int test_cpu_dswrite_testerB( TestEnvironment * _te ) {
 
     Variable * index1 = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
@@ -3968,6 +3995,7 @@ void test_cpu( ) {
     // // to be adapted not using DSTRING create_test( "cpu_number_to_string_payloadB", &test_cpu_number_to_string_payloadB, &test_cpu_number_to_string_testerB );
     create_test( "cpu_peek", &test_cpu_peek_payload, &test_cpu_peek_tester );
     create_test( "cpu_poke", &test_cpu_poke_payload, &test_cpu_poke_tester );
+    create_test( "cpu_move_8bit", &test_cpu_move_8bit_payload, &test_cpu_move_8bit_tester );
     create_test( "cpu_fill_blocks", &test_cpu_fill_blocks_payload, &test_cpu_fill_blocks_tester );
     create_test( "cpu_fill", &test_cpu_fill_payload, &test_cpu_fill_tester );
     create_test( "cpu_compare_8bit", &test_cpu_compare_8bit_payload, &test_cpu_compare_8bit_tester );
