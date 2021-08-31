@@ -1,0 +1,4 @@
+C6847STARTUP
+    LDA $03
+    STA $FF98
+    RTS
