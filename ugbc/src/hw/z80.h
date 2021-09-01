@@ -293,4 +293,6 @@ extern unsigned int src_hw_chipset_mob_asm_len;
 #define cpu_mobrender( _environment, _on_vbl ) z80_mobrender( _environment, _on_vbl )
 #define cpu_sqroot( _environment, _number, _result ) z80_sqroot( _environment, _number, _result )
 
+#define     CPU_LITTLE_ENDIAN      1
+
 #endif

@@ -292,4 +292,6 @@ extern unsigned int src_hw_chipset_mob_asm_len;
 #define cpu_mobrender( _environment, _on_vbl ) cpu6809_mobrender( _environment, _on_vbl )
 #define cpu_sqroot( _environment, _number, _result ) cpu6809_sqroot( _environment, _number, _result )
 
+#define     CPU_BIG_ENDIAN      1
+
 #endif
