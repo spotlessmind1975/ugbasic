@@ -440,6 +440,9 @@ Variable * variable_retrieve_or_define( Environment * _environment, char * _name
     Variable * var = variable_find( _environment->tempVariables, _name );
 
     if ( var ){
+        if ( var->type != _type && VT_BITWIDTH( _type ) > 0 && VT_BITWIDTH( var->type ) > 0 ) {
+            var = variable_cast( _environment, var->name, _type );
+        }
         return var;
     }
 
@@ -447,6 +450,9 @@ Variable * variable_retrieve_or_define( Environment * _environment, char * _name
         char parameterName[MAX_TEMPORARY_STORAGE]; sprintf( parameterName, "%s__%s", _environment->procedureName, _name );
         var = variable_find( _environment->variables, parameterName );
         if ( var ) {
+            if ( var->type != _type && VT_BITWIDTH( _type ) > 0 && VT_BITWIDTH( var->type ) > 0 ) {
+                var = variable_cast( _environment, var->name, _type );
+            }
             return var;
         }
     }
@@ -489,6 +495,10 @@ Variable * variable_retrieve_or_define( Environment * _environment, char * _name
     }
     if (!var) {
         CRITICAL_VARIABLE( _name );
+    } else {
+        if ( var->type != _type && VT_BITWIDTH( _type ) > 0 && VT_BITWIDTH( var->type ) > 0 ) {
+            var = variable_cast( _environment, var->name, _type );
+        }
     }
     return var;
 }
@@ -624,11 +634,25 @@ Variable * variable_cast( Environment * _environment, char * _source, VariableTy
                     break;
                 case 16:
                     WARNING_DOWNCAST( _source, target->name );
-                    cpu_move_16bit( _environment, source->realName, target->realName );
+                    #ifdef CPU_BIG_ENDIAN
+                        {
+                            char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s+2", source->realName );
+                            cpu_move_16bit( _environment, sourceRealName, target->realName );
+                        }
+                    #else
+                        cpu_move_16bit( _environment, source->realName, target->realName );
+                    #endif
                     break;
                 case 8:
                     WARNING_DOWNCAST( _source, target->name );
-                    cpu_move_8bit( _environment, source->realName, target->realName );
+                    #ifdef CPU_BIG_ENDIAN
+                        {
+                            char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s+3", source->realName );
+                            cpu_move_8bit( _environment, sourceRealName, target->realName );
+                        }
+                    #else
+                        cpu_move_8bit( _environment, source->realName, target->realName );
+                    #endif
                     break;
                 case 0:
                     CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
@@ -637,12 +661,28 @@ Variable * variable_cast( Environment * _environment, char * _source, VariableTy
         case 16:
             switch( VT_BITWIDTH( target->type ) ) {
                 case 32:
+                    #ifdef CPU_BIG_ENDIAN
+                        {
+                            char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s+2", target->realName );
+                            cpu_move_16bit( _environment, source->realName, targetRealName );
+                        }
+                    #else
+                        cpu_move_16bit( _environment, source->realName, target->realName );
+                    #endif
+                    break;
                 case 16:
                     cpu_move_16bit( _environment, source->realName, target->realName );
                     break;
                 case 8:
                     WARNING_DOWNCAST( _source, target->name );
-                    cpu_move_8bit( _environment, source->realName, target->realName );
+                    #ifdef CPU_BIG_ENDIAN
+                        {
+                            char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s+1", source->realName );
+                            cpu_move_8bit( _environment, sourceRealName, target->realName );
+                        }
+                    #else
+                        cpu_move_8bit( _environment, source->realName, target->realName );
+                    #endif
                     break;
                 case 0:
                     CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
@@ -651,7 +691,25 @@ Variable * variable_cast( Environment * _environment, char * _source, VariableTy
         case 8:
             switch( VT_BITWIDTH( target->type ) ) {
                 case 32:
+                    #ifdef CPU_BIG_ENDIAN
+                        {
+                            char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s+3", source->realName );
+                            cpu_move_8bit( _environment, source->realName, targetRealName );
+                        }
+                    #else
+                        cpu_move_8bit( _environment, source->realName, target->realName );
+                    #endif
+                    break;
                 case 16:
+                    #ifdef CPU_BIG_ENDIAN
+                        {
+                            char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s+1", source->realName );
+                            cpu_move_8bit( _environment, source->realName, targetRealName );
+                        }
+                    #else
+                        cpu_move_8bit( _environment, source->realName, target->realName );
+                    #endif
+                    break;
                 case 8:
                     cpu_move_8bit( _environment, source->realName, target->realName );
                     break;
@@ -3038,7 +3096,7 @@ stampabili sullo schermo. Altri sono usati internamente come codici di controllo
  </usermanual> */
 Variable * variable_string_chr( Environment * _environment, char * _ascii  ) {
 
-    Variable * ascii = variable_retrieve( _environment, _ascii );
+    Variable * ascii = variable_retrieve_or_define( _environment, _ascii, VT_BYTE, 0 );
 
     Variable * result = variable_temporary( _environment, VT_DSTRING, "(result of CHR)");
     Variable * address = variable_temporary( _environment, VT_ADDRESS, "(result of val)" );
