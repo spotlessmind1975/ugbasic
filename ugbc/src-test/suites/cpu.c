@@ -1567,14 +1567,75 @@ void test_cpu_number_to_string_payloadB( TestEnvironment * _te ) {
     cpu_dsresize( e, tmp->realName, size->realName );
 
     _te->trackedVariables[0] = tmp;
+    _te->trackedVariables[1] = size;
 
 }
 
 int test_cpu_number_to_string_testerB( TestEnvironment * _te ) {
 
     Variable * tmp = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * size = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
 
-    return strcmp( tmp->valueString, "42" ) == 0;
+    // printf( "size = %d\n", size->value );
+    // printf( "memory = %s\n", tmp->valueString );
+
+    return size->value == 2 && strcmp( tmp->valueString, "42" ) == 0;
+
+}
+
+//===========================================================================
+
+void test_cpu_number_to_string_payloadC( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    int i;
+
+    Variable * value[10], * result[10];
+    
+    for(i=0; i<10;++i) {
+        char valueName[MAX_TEMPORARY_STORAGE]; sprintf(valueName, "value%i", i );
+        value[i] = variable_define( e, valueName, VT_BYTE, i+6 );
+    } 
+
+    for(i=0; i<10;++i) {
+        char resultName[MAX_TEMPORARY_STORAGE]; sprintf(resultName, "result%i", i );
+        result[i] = variable_define( e, resultName, VT_DSTRING, 0 );
+    } 
+
+    Variable * address = variable_temporary( e, VT_ADDRESS, "(temporary for PRINT)");
+    Variable * size = variable_temporary( e, VT_BYTE, "(temporary for PRINT)");
+
+    for(i=0; i<10;++i) {
+        variable_store_string( e, result[i]->name, "          " );
+        cpu_dswrite( e, result[i]->realName );
+        cpu_dsdescriptor( e, result[i]->realName, address->realName, size->realName );
+        cpu_number_to_string( e, value[i]->realName, address->realName, size->realName, VT_BITWIDTH( value[i]->type ), VT_SIGNED( value[i]->type ) );
+        cpu_dsresize( e, result[i]->realName, size->realName );
+    }
+
+    for(i=0; i<10;++i) {
+        _te->trackedVariables[i] = result[i];
+    }
+
+}
+
+int test_cpu_number_to_string_testerC( TestEnvironment * _te ) {
+
+    int i;
+    Variable * result[10];
+    char expected[MAX_TEMPORARY_STORAGE];
+
+    for(i=0; i<10;++i) {
+        result[i] = variable_retrieve( &_te->environment, _te->trackedVariables[i]->name );
+        sprintf(expected, "%d", i+6 );
+        // printf( "result[%d] = %s\n", i, result[i]->valueString );
+        if ( strcmp( result[i]->valueString, expected ) != 0 ) {
+            return 0;
+        }
+    }
+
+    return 1;
 
 }
 
@@ -2333,12 +2394,12 @@ int test_cpu_compare_32bit_tester( TestEnvironment * _te ) {
     Variable * result11p = variable_retrieve( &_te->environment, _te->trackedVariables[4]->name );
     Variable * result11n = variable_retrieve( &_te->environment, _te->trackedVariables[5]->name );
 
-    printf( "dword1 = %2.2x [expected 0x55662142]\n", dword1->value );
-    printf( "dword2 = %2.2x [expected 0x22331042]\n", dword2->value );
-    printf( "result12p = %2.2x [expected 0x00]\n", result12p->value );
-    printf( "result12n = %2.2x [expected 0xff]\n", result12n->value );
-    printf( "result11p = %2.2x [expected 0xff]\n", result11p->value );
-    printf( "result11n = %2.2x [expected 0x00]\n", result11n->value );
+    // printf( "dword1 = %2.2x [expected 0x55662142]\n", dword1->value );
+    // printf( "dword2 = %2.2x [expected 0x22331042]\n", dword2->value );
+    // printf( "result12p = %2.2x [expected 0x00]\n", result12p->value );
+    // printf( "result12n = %2.2x [expected 0xff]\n", result12n->value );
+    // printf( "result11p = %2.2x [expected 0xff]\n", result11p->value );
+    // printf( "result11n = %2.2x [expected 0x00]\n", result11n->value );
 
     return dword1->value == 0x55662142 && 
             dword2->value == 0x22331042 && 
@@ -3931,8 +3992,6 @@ int test_cpu_move_8bit_tester( TestEnvironment * _te ) {
 
 }
 
-//===========================================================================
-
 int test_cpu_dswrite_testerB( TestEnvironment * _te ) {
 
     Variable * index1 = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
@@ -3954,6 +4013,40 @@ int test_cpu_dswrite_testerB( TestEnvironment * _te ) {
         address1->value != 0x4242 &&
         address2->value != address1->value &&
         size2c->value == size1c->value;
+
+}
+
+//===========================================================================
+
+void test_cpu_dsresize_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * string = variable_define( e, "string", VT_STRING, 0 );
+    Variable * dstring = variable_define( e, "dstring", VT_DSTRING, 0 );
+    Variable * address = variable_define( e, "address", VT_ADDRESS, 0 );
+    Variable * size = variable_define( e, "size", VT_BYTE, 0 );
+    Variable * resize = variable_define( e, "resize", VT_BYTE, 1 );
+
+    variable_store_string( e, string->name, "Caparezza" );
+
+    cpu_dsdefine( e, string->realName, dstring->realName );
+
+    cpu_dswrite( e, dstring->realName );
+
+    cpu_dsdescriptor( e, dstring->realName, address->realName, size->realName );
+
+    cpu_dsresize( e, dstring->realName, resize->realName );
+
+    _te->trackedVariables[0] = dstring;
+    
+}
+
+int test_cpu_dsresize_tester( TestEnvironment * _te ) {
+
+    Variable * dstring = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+
+    return strcmp( dstring->valueString, "C" ) == 0 ;
 
 }
 
@@ -3992,7 +4085,8 @@ void test_cpu( ) {
     create_test( "cpu_math_mul2_const_32bit", &test_cpu_math_mul2_const_32bit_payload, &test_cpu_math_mul2_const_32bit_tester );
     create_test( "cpu_math_mul2_const_8bit", &test_cpu_math_mul2_const_8bit_payload, &test_cpu_math_mul2_const_8bit_tester );
     create_test( "cpu_number_to_string_payload", &test_cpu_number_to_string_payload, &test_cpu_number_to_string_tester );
-    // // to be adapted not using DSTRING create_test( "cpu_number_to_string_payloadB", &test_cpu_number_to_string_payloadB, &test_cpu_number_to_string_testerB );
+    create_test( "cpu_number_to_string_payloadB", &test_cpu_number_to_string_payloadB, &test_cpu_number_to_string_testerB );
+    create_test( "cpu_number_to_string_payloadC", &test_cpu_number_to_string_payloadC, &test_cpu_number_to_string_testerC );
     create_test( "cpu_peek", &test_cpu_peek_payload, &test_cpu_peek_tester );
     create_test( "cpu_poke", &test_cpu_poke_payload, &test_cpu_poke_tester );
     create_test( "cpu_move_8bit", &test_cpu_move_8bit_payload, &test_cpu_move_8bit_tester );
@@ -4042,8 +4136,8 @@ void test_cpu( ) {
     create_test( "cpu_move_16bit_indirect2", &test_cpu_move_16bit_indirect2_payload, &test_cpu_move_16bit_indirect2_tester );
     create_test( "cpu_move_32bit_indirect", &test_cpu_move_32bit_indirect_payload, &test_cpu_move_32bit_indirect_tester );
     create_test( "cpu_move_32bit_indirect2", &test_cpu_move_32bit_indirect2_payload, &test_cpu_move_32bit_indirect2_tester );
-    // // to be adapted on target charset create_test( "cpu_uppercase", &test_cpu_uppercase_payload, &test_cpu_uppercase_tester );
-    // // to be adapted on target charset create_test( "cpu_lowercase", &test_cpu_lowercase_payload, &test_cpu_lowercase_tester );
+    // // // to be adapted on target charset create_test( "cpu_uppercase", &test_cpu_uppercase_payload, &test_cpu_uppercase_tester );
+    // // // to be adapted on target charset create_test( "cpu_lowercase", &test_cpu_lowercase_payload, &test_cpu_lowercase_tester );
     create_test( "cpu_convert_string_into_16bit", &test_cpu_convert_string_into_16bit_payload, &test_cpu_convert_string_into_16bit_tester );
     create_test( "cpu_flip", &test_cpu_flip_payload, &test_cpu_flip_tester );
     create_test( "cpu_bit_check", &test_cpu_bit_check_payload, &test_cpu_bit_check_tester );
@@ -4052,5 +4146,6 @@ void test_cpu( ) {
     create_test( "cpu_dsalloc", &test_cpu_dsalloc_payload, &test_cpu_dsalloc_tester );
     create_test( "cpu_dsfree", &test_cpu_dsfree_payload, &test_cpu_dsfree_tester );
     create_test( "cpu_dswrite B", &test_cpu_dswrite_payloadB, &test_cpu_dswrite_testerB );
+    create_test( "cpu_dsresize", &test_cpu_dsresize_payload, &test_cpu_dsresize_tester );
 
 }
