@@ -3489,15 +3489,18 @@ Variable * variable_bin( Environment * _environment, char * _value, char * _digi
         Variable * size2 = variable_temporary( _environment, VT_BYTE, "(padding/truncating)" );
         Variable * zero = variable_temporary( _environment, VT_BYTE, "(0)" );
 
+        cpu_store_8bit( _environment, zero->realName, '0' );
+
         cpu_less_than_8bit( _environment, size->realName, digits->realName, pad->realName, 0, 0 );
 
-        cpu_bveq( _environment, pad->realName, truncateLabel );
+        cpu_bvneq( _environment, pad->realName, truncateLabel );
 
         cpu_label( _environment, padLabel );
 
         cpu_dsalloc( _environment, digits->realName, result2->realName );
         cpu_dsdescriptor( _environment, result2->realName, address2->realName, size2->realName );
         cpu_fill( _environment, address2->realName, digits->realName, zero->realName );
+        
         cpu_math_add_16bit_with_8bit( _environment, address2->realName, digits->realName, address2->realName );
         cpu_math_sub_16bit_with_8bit( _environment, address2->realName, size->realName, address2->realName );
         cpu_mem_move( _environment, address->realName, address2->realName, size->realName );
