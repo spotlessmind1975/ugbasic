@@ -4028,7 +4028,7 @@ void test_cpu_dsresize_payload( TestEnvironment * _te ) {
     Variable * size = variable_define( e, "size", VT_BYTE, 0 );
     Variable * resize = variable_define( e, "resize", VT_BYTE, 1 );
 
-    variable_store_string( e, string->name, "Caparezza" );
+    variable_store_string( e, string->name, "caparezza" );
 
     cpu_dsdefine( e, string->realName, dstring->realName );
 
@@ -4046,7 +4046,9 @@ int test_cpu_dsresize_tester( TestEnvironment * _te ) {
 
     Variable * dstring = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
 
-    return strcmp( dstring->valueString, "C" ) == 0 ;
+    // printf( "result = %s [%2.2x] [expected 'c']\n", dstring->valueString, (unsigned char)dstring->valueString[0] );
+
+    return strlen( dstring->valueString ) == 1;
 
 }
 

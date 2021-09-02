@@ -364,7 +364,7 @@ void test_variable_string_asc_payload( TestEnvironment * _te ) {
 
     Variable * data = variable_define( e, "data", VT_STRING, 0x0 );
 
-    variable_store_string( e, data->name, "\x42" );
+    variable_store_string( e, data->name, "\x01" );
 
     Variable * result = variable_string_asc( e, data->name );
 
@@ -376,7 +376,7 @@ int test_variable_string_asc_tester( TestEnvironment * _te ) {
 
     Variable * result = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
 
-    return  result->value == 0x42;
+    return  result->value == 0x01;
 
 }
 
