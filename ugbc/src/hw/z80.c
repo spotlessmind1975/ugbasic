@@ -2486,11 +2486,20 @@ void z80_move_32bit_indirect( Environment * _environment, char *_source, char * 
 void z80_move_32bit_indirect2( Environment * _environment, char * _value, char *_source ) {
 
     outline1("LD DE, (%s)", _value);
-    outline0("LD HL, (DE)");
+    outline0("LD A, (DE)");
+    outline0("LD L, A");
+    outline0("INC DE");
+    outline0("LD A, (DE)");
+    outline0("LD H, A");
+    outline0("INC DE");
     outline1("LD (%s), HL", _source);
+    outline1("LD DE, (%s+2)", _value);
+    outline0("LD A, (DE)");
+    outline0("LD L, A");
     outline0("INC DE");
+    outline0("LD A, (DE)");
+    outline0("LD H, A");
     outline0("INC DE");
-    outline0("LD HL, (DE)");
     outline1("LD (%s+2), HL", _source);
 
 }
