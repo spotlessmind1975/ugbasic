@@ -3526,8 +3526,8 @@ Variable * variable_bin( Environment * _environment, char * _value, char * _digi
 }
 
 Variable * variable_bit( Environment * _environment, char * _value, char * _position ) {
-    Variable * value = variable_retrieve_or_define( _environment, _value, VT_WORD, 0 );
-    Variable * position = variable_retrieve_or_define( _environment, _position, VT_WORD, 1 );
+    Variable * value = variable_retrieve_or_define( _environment, _value, VT_DWORD, 0 );
+    Variable * position = variable_retrieve_or_define( _environment, _position, VT_BYTE, 1 );
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of BIT)");
 
     MAKE_LABEL
