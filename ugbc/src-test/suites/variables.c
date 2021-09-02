@@ -96,12 +96,35 @@ int test_variables_greater_than_tester( TestEnvironment * _te ) {
 
 //===========================================================================
 
-void test_variables_bin_payload( TestEnvironment * _te ) {
+void test_variables_bin_payload0( TestEnvironment * _te ) {
 
     Environment * e = &_te->environment;
 
     Variable * fiftyfive = variable_define( e, "fiftyfive", VT_BYTE, 0x55 );
     Variable * five = variable_define( e, "five", VT_WORD, 5 );
+    Variable * b = variable_bin( e, fiftyfive->name, NULL );
+
+    _te->trackedVariables[0] = b;
+
+}
+
+int test_variables_bin_tester0( TestEnvironment * _te ) {
+
+    Variable * b = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+
+// printf( "b = %s [expected 01010101]\n", b->valueString );
+
+    return strcmp( b->valueString, "01010101" ) == 0;
+
+}
+//===========================================================================
+
+void test_variables_bin_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * fiftyfive = variable_define( e, "fiftyfive", VT_BYTE, 0x55 );
+    Variable * five = variable_define( e, "five", VT_BYTE, 5 );
     Variable * b = variable_bin( e, fiftyfive->name, five->name );
 
     _te->trackedVariables[0] = b;
@@ -112,7 +135,9 @@ int test_variables_bin_tester( TestEnvironment * _te ) {
 
     Variable * b = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
 
-    return strcmp( b->valueString, "01010101" ) == 0;
+    // printf( "b = %s [expected 10101]\n", b->valueString );
+
+    return strcmp( b->valueString, "10101" ) == 0;
 
 }
 
@@ -329,10 +354,71 @@ int test_variables_bit_tester( TestEnvironment * _te ) {
 
 }
 
+//===========================================================================
+
+void test_variable_string_asc_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * data = variable_define( e, "data", VT_STRING, 0x0 );
+
+    variable_store_string( e, data->name, "\x42" );
+
+    Variable * result = variable_string_asc( e, data->name );
+
+    _te->trackedVariables[0] = result;
+
+}
+
+int test_variable_string_asc_tester( TestEnvironment * _te ) {
+
+    Variable * result = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+
+    return  result->value == 0x42;
+
+}
+
+//===========================================================================
+
+void test_variable_string_asc2_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * data = variable_define( e, "data", VT_STRING, 0x0 );
+
+    variable_store_string( e, data->name, "\x42" );
+
+    Variable * value = variable_string_asc( e, data->name );
+    Variable * address = variable_temporary( e, VT_ADDRESS, "(temporary for PRINT)");
+    Variable * size = variable_temporary( e, VT_BYTE, "(temporary for PRINT)");
+    Variable * tmp = variable_temporary( e, VT_DSTRING, "(temporary for PRINT)");
+    variable_store_string( e, tmp->name, "          " );
+
+    cpu_dswrite( e, tmp->realName );
+
+    cpu_dsdescriptor( e, tmp->realName, address->realName, size->realName );
+
+    cpu_number_to_string( e, value->realName, address->realName, size->realName, VT_BITWIDTH( value->type ), VT_SIGNED( value->type ) );
+
+    cpu_dsresize( e, tmp->realName, size->realName );
+
+    _te->trackedVariables[0] = tmp;
+
+}
+
+int test_variable_string_asc2_tester( TestEnvironment * _te ) {
+
+    Variable * result = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+
+    return strcmp( result->valueString, "42" );
+    
+}
+
 void test_variables( ) {
 
     create_test( "variables_add01", &test_variables_add01_payload, &test_variables_add01_tester );    
     create_test( "variables_greater", &test_variables_greater_than_payload, &test_variables_greater_than_tester );    
+    create_test( "variables_bin0", &test_variables_bin_payload0, &test_variables_bin_tester0 );    
     create_test( "variables_bin", &test_variables_bin_payload, &test_variables_bin_tester );    
     create_test( "variables_bin2", &test_variables_bin2_payload, &test_variables_bin2_tester );    
     create_test( "variables_and", &test_variables_and_payload, &test_variables_and_tester );
@@ -340,5 +426,7 @@ void test_variables( ) {
     create_test( "variables_cast", &test_variables_not_payload, &test_variables_not_tester );
     create_test( "variables_compare_not", &test_variable_compare_not_payload, &test_variable_compare_not_tester );
     create_test( "variables_bit", &test_variables_bit_payload, &test_variables_bit_tester );
+    create_test( "variable_string_asc", &test_variable_string_asc_payload, &test_variable_string_asc_tester );
+    create_test( "variable_string_asc2", &test_variable_string_asc2_payload, &test_variable_string_asc2_tester );
 
 }
