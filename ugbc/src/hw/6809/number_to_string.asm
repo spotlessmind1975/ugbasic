@@ -69,6 +69,7 @@ N2STRINGF
     LEAY 1, Y
 
 NSSTRINGL2
+    LDB , X
     ADDB #$30
     STB , X
     LEAX 1, X
