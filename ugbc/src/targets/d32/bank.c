@@ -51,5 +51,7 @@ extern char BANK_TYPE_AS_STRING[][16];
  * @todo The data upload should be customized.
  */
 void bank_cleanup( Environment * _environment ) {
- 
+     
+     // TODO: implementation
+
 }

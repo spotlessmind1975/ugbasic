@@ -57,6 +57,8 @@
 </usermanual> */
 Variable * peek_var( Environment * _environment, char * _location ) {
 
+    // TODO: implementation
+
     FUNCTION_STUB( VT_BYTE )
 
 }

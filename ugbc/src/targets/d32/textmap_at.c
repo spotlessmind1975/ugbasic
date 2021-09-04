@@ -63,6 +63,8 @@
 </usermanual> */
 void textmap_at( Environment * _environment, int _address ) {
 
+    // TODO: implementation
+
 }
 
 /**
@@ -84,5 +86,7 @@ void textmap_at( Environment * _environment, int _address ) {
 @keyword TEXTMAP AT
 </usermanual> */
 void textmap_at_var( Environment * _environment, char * _address ) {
+
+    // TODO: implementation
 
 }

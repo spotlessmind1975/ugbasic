@@ -52,4 +52,6 @@
 </usermanual> */
 void randomize( Environment * _environment, char * _ext_seed ) {
 
+    // TODO: implementation
+
 }

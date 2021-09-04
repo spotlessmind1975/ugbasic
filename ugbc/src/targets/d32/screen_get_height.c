@@ -40,6 +40,8 @@
 
 Variable * screen_get_height( Environment * _environment ) {
 
+    // TODO: implementation
+
     FUNCTION_STUB( VT_POSITION )
 
 }

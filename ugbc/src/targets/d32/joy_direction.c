@@ -40,6 +40,8 @@
 
 Variable * joy_direction( Environment * _environment, char * _port, int _direction ) {
 
+    // TODO: implementation
+
     FUNCTION_STUB( VT_BYTE )
 
 }

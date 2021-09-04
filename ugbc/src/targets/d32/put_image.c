@@ -55,4 +55,6 @@
 </usermanual> */
 void put_image( Environment * _environment, char * _image, char * _x, char * _y ) {
 
+    // TODO: implementation
+
 }

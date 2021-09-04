@@ -40,6 +40,8 @@
 
 Variable * point( Environment * _environment, char * _x, char * _y ) {
 
+    // TODO: implementation
+
     FUNCTION_STUB( VT_COLOR )
 
 }

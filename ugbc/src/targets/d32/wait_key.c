@@ -42,4 +42,6 @@ extern char DATATYPE_AS_STRING[][16];
 
 void wait_key( Environment * _environment ) {
 
+    // TODO: implementation
+
 }

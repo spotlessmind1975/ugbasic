@@ -40,6 +40,8 @@
 
 Variable * joy( Environment * _environment, char * _port ) {
 
+    // TODO: implementation
+
     FUNCTION_STUB( VT_BYTE )
 
 }

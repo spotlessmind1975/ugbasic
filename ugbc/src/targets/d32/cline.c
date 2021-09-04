@@ -51,4 +51,6 @@
 </usermanual> */
 void cline( Environment * _environment, char * _characters ) {
 
+    // TODO: implementation
+
 }

@@ -61,6 +61,8 @@
 </usermanual> */
 void bitmap_at( Environment * _environment, int _address ) {
 
+    // TODO: implementation
+
 }
 
 /**
@@ -83,5 +85,7 @@ void bitmap_at( Environment * _environment, int _address ) {
 @keyword BITMAP AT
 </usermanual> */
 void bitmap_at_var( Environment * _environment, char * _address ) {
+
+    // TODO: implementation
 
 }

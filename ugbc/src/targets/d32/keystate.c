@@ -42,6 +42,8 @@ extern char DATATYPE_AS_STRING[][16];
 
 Variable * keystate( Environment * _environment, char * _scancode ) {
 
+    // TODO: implementation
+
     FUNCTION_STUB( VT_BYTE )
 
 }

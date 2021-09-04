@@ -53,6 +53,8 @@
 </usermanual> */
 void sprite_expand_vertical( Environment * _environment, int _sprite ) {
 
+    // TODO: implementation
+
 }
 
 /**
@@ -68,6 +70,8 @@ void sprite_expand_vertical( Environment * _environment, int _sprite ) {
 @keyword SPRITE EXPAND
 </usermanual> */
 void sprite_expand_vertical_var( Environment * _environment, char * _sprite ) {
+
+    // TODO: implementation
 
 }
 

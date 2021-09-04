@@ -50,6 +50,8 @@
 @keyword SCREEN
 </usermanual> */
 void screen_mode( Environment * _environment, int _mode ) {
-    
+
+       // TODO: implementation
+ 
 }
 

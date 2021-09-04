@@ -50,6 +50,7 @@
 @keyword WAIT
 </usermanual> */
 void wait_milliseconds( Environment * _environment, int _timing ) {
+    // TODO: implementation
 
 }
 
@@ -65,6 +66,7 @@ void wait_milliseconds( Environment * _environment, int _timing ) {
 @keyword WAIT
 </usermanual> */
 void wait_milliseconds_var( Environment * _environment, char * _timing ) {
-   
+       // TODO: implementation
+
 }
 

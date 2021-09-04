@@ -64,6 +64,8 @@
 </usermanual> */
 Variable * random_value( Environment * _environment, VariableType _type ) {
 
+    // TODO: implementation
+
     FUNCTION_STUB( _type )
 
 }

@@ -40,4 +40,6 @@
 
 void text_hscroll_screen( Environment * _environment, int _direction ) {
     
+        // TODO: implementation
+
 }

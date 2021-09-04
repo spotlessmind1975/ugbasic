@@ -51,5 +51,7 @@
 </usermanual> */
 void tilemap_enable( Environment * _environment, int _width, int _height, int _colors ) {
 
+    // TODO: implementation
+
 }
 

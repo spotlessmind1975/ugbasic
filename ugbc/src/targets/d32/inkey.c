@@ -42,6 +42,8 @@ extern char DATATYPE_AS_STRING[][16];
 
 Variable * inkey( Environment * _environment ) {
 
+    // TODO: implementation
+
     FUNCTION_STUB( VT_DSTRING )
 
 }

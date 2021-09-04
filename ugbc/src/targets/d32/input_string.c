@@ -42,6 +42,8 @@ extern char DATATYPE_AS_STRING[][16];
 
 Variable * input_string( Environment * _environment, char * _size ) {
 
+    // TODO: implementation
+
     FUNCTION_STUB( VT_DSTRING )
 
 }

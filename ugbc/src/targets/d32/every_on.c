@@ -50,4 +50,6 @@
 </usermanual> */
 void every_on( Environment * _environment ) {
 
+    // TODO: implementation
+
 }

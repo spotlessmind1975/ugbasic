@@ -40,4 +40,6 @@
 
 void plot( Environment * _environment, char * _x, char * _y, char *_c ) {
 
+    // TODO: implementation
+
 }

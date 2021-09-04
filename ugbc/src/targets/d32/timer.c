@@ -40,11 +40,14 @@
 
 Variable * get_timer( Environment * _environment ) {
 
+    // TODO: implementation
+
     FUNCTION_STUB( VT_WORD )
     
 }
 
 
 void set_timer( Environment * _environment, char * _value ) {
-        
+// TODO: implementation
+
 }

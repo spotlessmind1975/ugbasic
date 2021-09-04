@@ -42,5 +42,6 @@ extern char DATATYPE_AS_STRING[][16];
 
 void input( Environment * _environment, char * _variable ) {
 
+    // TODO: implementation
 
 }

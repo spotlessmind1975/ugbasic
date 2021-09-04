@@ -59,6 +59,8 @@
 </usermanual> */
 void tiles_at( Environment * _environment, int _address ) {
 
+    // TODO: implementation
+
 }
 
 /**
@@ -81,6 +83,8 @@ void tiles_at( Environment * _environment, int _address ) {
 @keyword TILES AT
 </usermanual> */
 void tiles_at_var( Environment * _environment, char * _address ) {
+
+    // TODO: implementation
 
 }
 

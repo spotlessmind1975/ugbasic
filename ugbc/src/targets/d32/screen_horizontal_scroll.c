@@ -57,6 +57,8 @@
 </usermanual> */
 void screen_horizontal_scroll( Environment * _environment, int _displacement ) {
 
+    // TODO: implementation
+
 }
 
 /**
@@ -76,5 +78,6 @@ void screen_horizontal_scroll( Environment * _environment, int _displacement ) {
 </usermanual> */
 void screen_horizontal_scroll_var( Environment * _environment, char * _displacement ) {
 
+    // TODO: implementation
 
 }

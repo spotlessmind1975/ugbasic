@@ -53,6 +53,8 @@
 </usermanual> */
 Variable * random_width( Environment * _environment ) {
 
+    // TODO: implementation
+
     FUNCTION_STUB( VT_POSITION )
 
 }

@@ -60,6 +60,8 @@
 </usermanual> */
 void bitmap_clear_with( Environment * _environment, int _pattern ) {
 
+    // TODO: implementation
+
 }
 
 /**
@@ -81,6 +83,8 @@ void bitmap_clear_with( Environment * _environment, int _pattern ) {
 </usermanual> */
 void bitmap_clear_with_vars( Environment * _environment, char * _pattern ) {
 
+    // TODO: implementation
+
 }
 
 /**
@@ -101,5 +105,7 @@ void bitmap_clear_with_vars( Environment * _environment, char * _pattern ) {
 @keyword BITMAP CLEAR
 </usermanual> */
 void bitmap_clear( Environment * _environment ) {
+
+    // TODO: implementation
 
 }

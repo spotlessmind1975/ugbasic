@@ -59,6 +59,8 @@
 </usermanual> */
 void colormap_clear_with( Environment * _environment, int _foreground, int _background ) {
 
+    // TODO: implementation
+
 }
 
 /**
@@ -80,6 +82,8 @@ void colormap_clear_with( Environment * _environment, int _foreground, int _back
 </usermanual> */
 void colormap_clear_with_vars( Environment * _environment, char * _foreground, char * _background ) {
 
+    // TODO: implementation
+
 }
 
 /**
@@ -97,5 +101,7 @@ void colormap_clear_with_vars( Environment * _environment, char * _foreground, c
 @keyword COLORMAP CLEAR
 </usermanual> */
 void colormap_clear( Environment * _environment ) {
+
+    // TODO: implementation
 
 }

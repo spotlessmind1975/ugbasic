@@ -51,6 +51,8 @@
 </usermanual> */
 Variable * image_get_width( Environment * _environment, char * _image ) {
 
+    // TODO: implementation
+
     FUNCTION_STUB( VT_WORD )
 
 }

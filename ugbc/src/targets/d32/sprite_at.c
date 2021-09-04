@@ -57,6 +57,8 @@
 </usermanual> */
 void sprite_at( Environment * _environment, int _sprite, int _x, int _y ) {
 
+    // TODO: implementation
+
 }
 
 /**
@@ -75,6 +77,8 @@ void sprite_at( Environment * _environment, int _sprite, int _x, int _y ) {
 @keyword SPRITE AT
 </usermanual> */
 void sprite_at_vars( Environment * _environment, char * _sprite, char * _x, char * _y ) {
+
+    // TODO: implementation
 
 }
 

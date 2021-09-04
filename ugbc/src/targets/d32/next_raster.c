@@ -53,4 +53,7 @@
 @target d32
 </usermanual> */
 void next_raster( Environment * _environment ) {
+
+    // TODO: implementation
+
 }

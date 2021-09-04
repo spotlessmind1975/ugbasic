@@ -50,5 +50,7 @@
 </usermanual> */
 void cls( Environment * _environment, char * _paper ) {
 
+    // TODO: implementation
+
 }
 

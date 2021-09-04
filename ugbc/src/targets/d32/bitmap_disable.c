@@ -52,4 +52,6 @@
 </usermanual> */
 void bitmap_disable( Environment * _environment ) {
 
+    // TODO: implementation
+
 }

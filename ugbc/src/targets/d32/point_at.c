@@ -58,6 +58,8 @@
 </usermanual> */
 void point_at( Environment * _environment, int _x, int _y ) {
 
+    // TODO: implementation
+
 }
 
 /**
@@ -82,5 +84,7 @@ void point_at( Environment * _environment, int _x, int _y ) {
 @keyword POINT AT
 </usermanual> */
 void point_at_vars( Environment * _environment, char * _x, char * _y ) {
+
+    // TODO: implementation
 
 }

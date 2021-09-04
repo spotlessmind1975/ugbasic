@@ -61,6 +61,8 @@
 </usermanual> */
 void colormap_at( Environment * _environment, int _address ) {
 
+    // TODO: implementation
+
 }
 
 /**
@@ -82,5 +84,7 @@ void colormap_at( Environment * _environment, int _address ) {
 @keyword COLORMAP AT
 </usermanual> */
 void colormap_at_var( Environment * _environment, char * _address ) {
+
+    // TODO: implementation
 
 }

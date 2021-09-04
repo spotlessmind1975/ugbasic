@@ -50,6 +50,7 @@
 @keyword WAIT
 </usermanual> */
 void wait_ticks( Environment * _environment, int _timing ) {
+    // TODO: implementation
 
 }
 
@@ -65,5 +66,6 @@ void wait_ticks( Environment * _environment, int _timing ) {
 @keyword WAIT
 </usermanual> */
 void wait_ticks_var( Environment * _environment, char * _timing ) {
+    // TODO: implementation
 
 }

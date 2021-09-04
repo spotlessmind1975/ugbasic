@@ -51,4 +51,6 @@
 </usermanual> */
 void paper( Environment * _environment, char * _color ) {
 
+    // TODO: implementation
+
 }

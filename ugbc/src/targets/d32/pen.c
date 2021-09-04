@@ -51,5 +51,7 @@
 </usermanual> */
 
 void pen( Environment * _environment, char * _color ) {
-    
+
+    // TODO: implementation
+
 }

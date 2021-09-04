@@ -50,6 +50,8 @@
 </usermanual> */
 Variable * get_paper( Environment * _environment, char * _color ) {
 
+    // TODO: implementation
+
     FUNCTION_STUB( VT_DSTRING )
 
 }
