@@ -42,8 +42,6 @@ extern char DATATYPE_AS_STRING[][16];
 
 Variable * clear_key( Environment * _environment ) {
 
-    // TODO: implementation
-
-    FUNCTION_STUB( VT_WORD )
+    d32_clear_key( _environment );
 
 }

@@ -109,6 +109,13 @@ void d32_keyshift( Environment * _environment, char * _shifts ) {
 
 void d32_clear_key( Environment * _environment ) {
 
+    outline0("LDA #$0");
+    outline0("LDX $35");
+    outline0("STA ,X");
+
+    outline0("LDA #$0");
+    outline0("sta $87");
+
 }
 
 void d32_initialization( Environment * _environment ) {
