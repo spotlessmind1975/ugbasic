@@ -50,7 +50,12 @@
 </usermanual> */
 void cls( Environment * _environment, char * _paper ) {
 
-    // TODO: implementation
+    if ( _paper ) {
+        paper( _environment, _paper );
+    }
+
+    c6847_cls( _environment );
+
+    outline0("JSR CLS");
 
 }
-
