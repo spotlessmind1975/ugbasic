@@ -354,12 +354,19 @@ void c6847_cls( Environment * _environment ) {
 
 void c6847_scroll_text( Environment * _environment, int _direction ) {
 
+    deploy( vScrollTextDeployed, src_hw_6847_vscroll_text_asm );
+
+    outline1("LDA #$%2.2x", ( _direction & 0xff ) );
+    outline0("STA DIRECTION" );
+
+    outline0("JSR VSCROLLT");
+
 }
 
 void c6847_text_at( Environment * _environment, char * _x, char * _y, char * _text, char * _text_size, char * _pen, char *_ww ) {
 
     deploy( c6847varsDeployed, src_hw_6847_vars_asm);
-    // deploy( vScrollTextDeployed, src_hw_6847_vscroll_text_asm );
+    deploy( vScrollTextDeployed, src_hw_6847_vscroll_text_asm );
     deploy( textEncodedAtDeployed, src_hw_6847_text_at_asm );
 
     outline1("LDY %s", _text);

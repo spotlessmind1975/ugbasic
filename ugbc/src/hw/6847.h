@@ -62,8 +62,8 @@
 #define COLOR_PEACH       			COLOR_PINK
 #define COLOR_COUNT                 16
 
-#define TEXT_COLUMNS_COUNT          40
-#define TEXT_ROWS_COUNT             25
+#define TEXT_COLUMNS_COUNT          32
+#define TEXT_ROWS_COUNT             16
 
 #define TILEMAP_MODE_INTERNAL       0       // Alphanumeric Internal	32 × 16	2	512
 #define TILEMAP_MODE_EXTERNAL       1       // Alphanumeric External	32 × 16	2	512

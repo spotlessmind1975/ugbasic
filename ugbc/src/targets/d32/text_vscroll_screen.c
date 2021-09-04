@@ -40,4 +40,6 @@
 
 void text_vscroll_screen( Environment * _environment, int _direction ) {
 
+    c6847_scroll_text( _environment, _direction );
+
 }
