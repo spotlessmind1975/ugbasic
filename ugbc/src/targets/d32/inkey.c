@@ -42,8 +42,38 @@ extern char DATATYPE_AS_STRING[][16];
 
 Variable * inkey( Environment * _environment ) {
 
-    // TODO: implementation
+    Variable * result = variable_temporary( _environment, VT_DSTRING, "(result of INKEY$)");
+    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of temporary string)");
+    Variable * size = variable_temporary( _environment, VT_BYTE, "(size)");
+    Variable * pressed = variable_temporary( _environment, VT_BYTE, "(key pressed?)");
+    Variable * key = variable_temporary( _environment, VT_BYTE, "(key pressed)");
 
-    FUNCTION_STUB( VT_DSTRING )
+    char resultString[MAX_TEMPORARY_STORAGE]; sprintf( resultString, " " );
 
+    variable_store_string(_environment, result->name, resultString );
+    cpu_dswrite( _environment, result->realName );
+    cpu_dsdescriptor( _environment, result->realName, address->realName, size->realName );
+
+    MAKE_LABEL
+
+    char noKeyPressedLabel[MAX_TEMPORARY_STORAGE]; sprintf(noKeyPressedLabel, "%snokeyPressed", label );
+    char finishedLabel[MAX_TEMPORARY_STORAGE]; sprintf(finishedLabel, "%sfinished", label );
+
+    d32_inkey( _environment, pressed->realName, key->realName );
+
+    cpu_bveq( _environment, pressed->realName, noKeyPressedLabel );
+
+    cpu_move_8bit_indirect(_environment, key->realName, address->realName );
+    cpu_dsresize_size(_environment, result->realName, 1 );
+
+    cpu_jump( _environment, finishedLabel );
+
+    cpu_label( _environment, noKeyPressedLabel );
+
+    cpu_dsresize_size(_environment, result->realName, 0 );
+
+    cpu_label( _environment, finishedLabel );
+    
+    return result;
+    
 }
