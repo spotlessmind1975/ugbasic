@@ -51,6 +51,12 @@
 </usermanual> */
 void cline( Environment * _environment, char * _characters ) {
 
-    // TODO: implementation
+    if ( _characters ) {
+        Variable * characters = NULL;
+        characters = variable_retrieve( _environment, _characters );
+        c6847_cline( _environment, characters->realName );
+    } else {
+        c6847_cline( _environment, NULL );
+    }
 
 }

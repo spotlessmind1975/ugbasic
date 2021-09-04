@@ -591,8 +591,21 @@ void c6847_back( Environment * _environment ) {
 
 void c6847_cline( Environment * _environment, char * _characters ) {
 
-    // TODO: implementation
-    
+    deploy( textClineDeployed, src_hw_6847_cline_asm );
+    Variable * x = variable_retrieve( _environment, "windowCX" );
+    Variable * y = variable_retrieve( _environment, "windowCY" );
+
+    if ( _characters ) {
+        outline1("LDA %s", _characters);
+    } else {
+        outline0("LDA #0");
+    }
+    outline0("STA CHARACTERS");
+    outline1("LDA %s", x->realName );
+    outline0("STA CLINEX" );
+    outline1("LDA %s", y->realName );
+    outline0("STA CLINEY");
+    outline0("JSR CLINE");
 
 }
 
