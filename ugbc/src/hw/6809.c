@@ -3440,18 +3440,26 @@ void cpu6809_dsdescriptor( Environment * _environment, char * _index, char * _ad
 
 void cpu6809_store_8bit_with_offset( Environment * _environment, char *_destination, int _value, int _offset ) {
 
+    // TODO: implementation
+
 }
 
 void cpu6809_complement2_8bit( Environment * _environment, char * _source, char * _destination ) {
 
+    // TODO: implementation
+    
 }
 
 void cpu6809_complement2_16bit( Environment * _environment, char * _source, char * _destination ) {
 
+    // TODO: implementation
+    
 }
 
 void cpu6809_complement2_32bit( Environment * _environment, char * _source, char * _destination ) {
 
+    // TODO: implementation
+    
 }
 
 char * src_hw_chipset_mob_asm;
@@ -3459,27 +3467,38 @@ unsigned int src_hw_chipset_mob_asm_len;
 
 void cpu6809_mobinit( Environment * _environment, char * _index, char *_x, char *_y,  char *_draw) {
 
+    // TODO: implementation
+    
 }
 
 void cpu6809_mobshow( Environment * _environment, char * _index ) {
 
+    // TODO: implementation
+    
 }
 
 void cpu6809_mobhide( Environment * _environment, char * _index ) {
 
+    // TODO: implementation
+    
 }
 
 void cpu6809_mobat( Environment * _environment, char * _index, char *_x, char *_y ) {
 
+    // TODO: implementation
+    
 }
 
 void cpu6809_mobrender( Environment * _environment, int _on_vbl ) {
 
+    // TODO: implementation
+    
 }
 
 void cpu6809_sqroot( Environment * _environment, char * _number, char * _result ) {
 
+    // TODO: implementation
+    
 }
-
 
 #endif
