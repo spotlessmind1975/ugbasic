@@ -86,16 +86,28 @@ void d32_inkey( Environment * _environment, char * _pressed, char * _key ) {
     outline1("STA %s", _key );
 
     outline0("LDA $87");
-    outline0("CPX #$0");
+    outline0("CMPA #$0");
     outline1("BEQ %snokey", label );
 
     outline1("STA %s", _key );
     outline0("LDA #$FF");
     outline1("STA %s", _pressed );
+    outhead1("%snokey", label );
 
 }
 
 void d32_scancode( Environment * _environment, char * _pressed, char * _scancode ) {
+
+    // TODO: stub!
+
+    MAKE_LABEL
+
+    outline0("LDA $FF00");
+    outline0("EORA #$FF");
+    outline1("STA %s", _scancode );
+
+    outline0("LDA #$FF");
+    outline1("STA %s", _pressed );
 
 }
 
