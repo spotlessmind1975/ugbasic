@@ -1439,6 +1439,7 @@ void                    plot( Environment * _environment, char * _x, char * _y, 
 Variable *              point( Environment * _environment, char * _x, char * _y );
 void                    point_at( Environment * _environment, int _x, int _y );
 void                    point_at_vars( Environment * _environment, char * _x, char * _y );
+void                    poke_var( Environment * _environment, char * _address, char * _value );
 void                    pop( Environment * _environment );
 Variable *              powering( Environment * _environment, char * _source, char * _dest );
 void                    print( Environment * _environment, char * _text, int _new_line );
