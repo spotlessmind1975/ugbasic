@@ -78,7 +78,7 @@ SCANCODEE
 
 SCANCODEMATRIX
     fcb '0','8','@','H','P','X',$0d,$00     ; // UNUSED
-    fcb '1','9','A','I','Q','Y',$00,$00     ; // CLR, UNUSED
+    fcb '1','9','A','I','Q','Y',$F9,$00     ; // CLR, UNUSED
     fcb '2','*','B','J','R','Z',$00,$00     ; // BRK, UNUSED
     fcb '3',',','C','K','S',$FA,$00,$00     ; // UP, UNUSED, UNUSED
     fcb '4','-','D','L','T',$FB,$00,$00     ; // DOWN, UNUSED, UNUSED
