@@ -106,7 +106,7 @@ void exit_loop_if( Environment * _environment, char * _expression, int _number )
 
     unsigned char newLabel[MAX_TEMPORARY_STORAGE]; sprintf(newLabel, "%sbis", loop->label );
 
-    Variable * expression = variable_retrieve( _environment, expression->name );
+    Variable * expression = variable_retrieve( _environment, _expression );
 
     cpu_bvneq( _environment,  expression->realName, newLabel );
        
