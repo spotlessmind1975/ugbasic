@@ -143,6 +143,7 @@ DSGCLOOP
     BEQ DSGCLOOP1
     LDY 1, X
     LDA , X
+    JSR DSUSING
     JSR DSMALLOC
     LDU 1, X
     LDA , X
