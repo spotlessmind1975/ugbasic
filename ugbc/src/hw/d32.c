@@ -80,34 +80,35 @@ void d32_inkey( Environment * _environment, char * _pressed, char * _key ) {
 
     MAKE_LABEL
 
-    outline0("LDA #$0");
-    outline1("STA %s", _pressed );
-    outline0("LDA #$0");
-    outline1("STA %s", _key );
+    d32_scancode( _environment, _pressed, _key );
 
-    outline0("LDA $87");
-    outline0("CMPA #$0");
-    outline1("BEQ %snokey", label );
-
+    outline1("LDA %s", _key );
+    outline0("ANDA #$80" );
+    outline0("CMPA #0" );
+    outline1("BEQ %sascii", label );
+    outline0("LDA #0" );
     outline1("STA %s", _key );
-    outline0("LDA #$FF");
-    outline1("STA %s", _pressed );
-    outhead1("%snokey", label );
+    outhead1("%sascii", label );
 
 }
 
 void d32_scancode( Environment * _environment, char * _pressed, char * _scancode ) {
 
-    // TODO: stub!
-
     MAKE_LABEL
 
-    outline0("LDA $FF00");
-    outline0("EORA #$FF");
+    deploy( scancodeDeployed, src_hw_d32_scancode_asm );
+
+    outline0("LDA #0" );
+    outline1("STA %s", _pressed );
     outline1("STA %s", _scancode );
 
-    outline0("LDA #$FF");
+    outline0("JSR SCANCODE" );
+    outline0("CMPA #0" );
+    outline1("BEQ %snokey", label );
+    outline1("STA %s", _scancode );
+    outline0("LDA #$FF" );
     outline1("STA %s", _pressed );
+    outhead1("%snokey", label );
 
 }
 
