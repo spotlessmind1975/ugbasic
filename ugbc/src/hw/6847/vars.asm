@@ -34,9 +34,9 @@
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-PLOTDEST equ $28 ; $29
-PLOTCDEST equ $26 ; $27
-PLOTC2DEST equ $24 ; $25
+PLOTDEST equ $0b ; $29
+PLOTCDEST equ $0d ; $27
+PLOTC2DEST equ $0f ; $25
 
 XGR    fdb 0
 YGR    fdb 0

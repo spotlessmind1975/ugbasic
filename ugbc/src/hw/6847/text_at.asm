@@ -35,13 +35,13 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-TEXTPTR equ $20
-TEXTSIZE equ $24
-TABSTODRAW equ $36
-TEXTWW equ $2C
-TEXTPEN equ $2B
-TEXTPAPER equ $2D
-SCREENCODE equ $2E
+TEXTPTR equ $01
+TEXTSIZE equ $03
+TABSTODRAW equ $04
+TEXTWW equ $05
+TEXTPEN equ $06
+TEXTPAPER equ $07
+SCREENCODE equ $08
 
 TEXTATDECODE
     CMPA #$1F
