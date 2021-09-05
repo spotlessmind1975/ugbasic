@@ -975,57 +975,68 @@ void cpu6809_math_div_16bit_to_16bit( Environment * _environment, char *_source,
     // MATHPTR4, MATHPTR5 : copia del divisore
     // MATHPTR6..MATHPTR8 : temporaneo
 
-    outline0("LDD #0" );
-    outline1("STD %s", _other );
-    outline0("STA MATHPTR8" );
+    if ( _signed ) {
 
-    outline1("LDA %s", _source );
-    outline0("ANDA #$80" );
-    outline0("STA MATHPTR8" );
-    outline1("BEQ %spos1", label );
-    outline0("ANDCC #$FE" );
-    outline1("LDA %s+1", _source );
-    outline0("EORA #$FF" );
-    outline0("STA MATHPTR1" );
-    outline1("LDA %s", _destination );
-    outline0("EORA #$FF" );
-    outline0("STA MATHPTR0" );
-    outline0("LDX MATHPTR0" );
-    outline0("LEAX 1,X" );
-    outline0("STX MATHPTR0" );
-    outline1("JMP %sdone1", label );
+        outline0("LDD #0" );
+        outline1("STD %s", _other );
+        outline0("STA MATHPTR8" );
 
-    outhead1("%spos1", label );
-    outline1("LDX %s", _source );
-    outline0("STX MATHPTR0" );
+        outline1("LDA %s", _source );
+        outline0("ANDA #$80" );
+        outline0("STA MATHPTR8" );
+        outline1("BEQ %spos1", label );
+        outline0("ANDCC #$FE" );
+        outline1("LDA %s+1", _source );
+        outline0("EORA #$FF" );
+        outline0("STA MATHPTR1" );
+        outline1("LDA %s", _destination );
+        outline0("EORA #$FF" );
+        outline0("STA MATHPTR0" );
+        outline0("LDX MATHPTR0" );
+        outline0("LEAX 1,X" );
+        outline0("STX MATHPTR0" );
+        outline1("JMP %sdone1", label );
 
-    outhead1("%sdone1", label );
+        outhead1("%spos1", label );
+        outline1("LDX %s", _source );
+        outline0("STX MATHPTR0" );
 
-    outline1("LDA %s", _destination );
-    outline0("ANDA #$80" );
-    outline1("BEQ %spos2", label );
-    outline0("ANDCC #$FE" );
-    outline1("LDA %s+1", _destination );
-    outline0("EORA #$FF" );
-    outline0("STA MATHPTR3" );
-    outline1("LDA %s", _destination );
-    outline0("EORA #$FF" );
-    outline0("STA MATHPTR2" );
-    outline0("LDX MATHPTR2" );
-    outline0("LEAX 1,X" );
-    outline0("STX MATHPTR2" );
-    outline1("JMP %sdone2", label );
+        outhead1("%sdone1", label );
 
-    outhead1("%spos2", label );
+        outline1("LDA %s", _destination );
+        outline0("ANDA #$80" );
+        outline1("BEQ %spos2", label );
+        outline0("ANDCC #$FE" );
+        outline1("LDA %s+1", _destination );
+        outline0("EORA #$FF" );
+        outline0("STA MATHPTR3" );
+        outline1("LDA %s", _destination );
+        outline0("EORA #$FF" );
+        outline0("STA MATHPTR2" );
+        outline0("LDX MATHPTR2" );
+        outline0("LEAX 1,X" );
+        outline0("STX MATHPTR2" );
+        outline1("JMP %sdone2", label );
 
-    outline1("LDX %s", _destination );
-    outline0("STX MATHPTR2" );
+        outhead1("%spos2", label );
 
-    outhead1("%sdone2", label );
-    outline1("LDA %s", _destination );
-    outline0("ANDA #$80" );
-    outline0("EORA MATHPTR8" );
-    outline0("STA MATHPTR8" );
+        outline1("LDX %s", _destination );
+        outline0("STX MATHPTR2" );
+
+        outhead1("%sdone2", label );
+        outline1("LDA %s", _destination );
+        outline0("ANDA #$80" );
+        outline0("EORA MATHPTR8" );
+        outline0("STA MATHPTR8" );
+
+    } else {
+
+        outline1("LDX %s", _source );
+        outline0("STX MATHPTR0" );
+        outline1("LDX %s", _destination );
+        outline0("STX MATHPTR2" );        
+
+    }
 
     // outline0("LDB #1" );
     // outline0("LDY #16" );
@@ -1082,8 +1093,8 @@ void cpu6809_math_div_16bit_to_16bit( Environment * _environment, char *_source,
             outline0("STB MATHPTR7");
             outline0("TFR X, D");
             outline0("LEAX D, X");
-            outline0("LDB MATHPTR6");
-            outline0("LDA MATHPTR7");
+            outline0("LDA MATHPTR6");
+            outline0("LDB MATHPTR7");
 
             //  B = B * 2
             outline0("ANDCC #$FE");
@@ -1123,23 +1134,27 @@ void cpu6809_math_div_16bit_to_16bit( Environment * _environment, char *_source,
 
     outline1("STY %s", _other_remainder );
 
-    outline0("LDA MATHPTR7" );
-    outline0("ANDA #$80" );
-    outline1("BEQ %spos3", label );
-    outline0("ANDCC #$FE" );
-    outline1("LDA %s+1", _other );
-    outline0("EORA #$FF" );
-    outline0("STA MATHPTR3" );
-    outline1("LDA %s", _other );
-    outline0("EORA #$FF" );
-    outline0("STA MATHPTR2" );
-    outline0("LDX MATHPTR2" );
-    outline0("LEAX 1,X" );
-    outline0("STX MATHPTR2" );
-    outline1("JMP %sdone3", label );
+    if ( _signed ) {
 
-    outhead1("%spos3", label );
-    outhead1("%sdone3", label );
+        outline0("LDA MATHPTR7" );
+        outline0("ANDA #$80" );
+        outline1("BEQ %spos3", label );
+        outline0("ANDCC #$FE" );
+        outline1("LDA %s+1", _other );
+        outline0("EORA #$FF" );
+        outline0("STA MATHPTR3" );
+        outline1("LDA %s", _other );
+        outline0("EORA #$FF" );
+        outline0("STA MATHPTR2" );
+        outline0("LDX MATHPTR2" );
+        outline0("LEAX 1,X" );
+        outline0("STX MATHPTR2" );
+        outline1("JMP %sdone3", label );
+        outhead1("%spos3", label );
+        outhead1("%sdone3", label );
+
+    }
+
 
 }
 
