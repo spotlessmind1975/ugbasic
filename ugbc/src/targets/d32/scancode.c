@@ -42,8 +42,12 @@ extern char DATATYPE_AS_STRING[][16];
 
 Variable * scancode( Environment * _environment ) {
 
-    // TODO: implementation
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of SCANCODE)");
 
-    FUNCTION_STUB( VT_BYTE )
+    Variable * pressed = variable_temporary( _environment, VT_BYTE, "(key pressed?)");
 
+    d32_scancode( _environment, pressed->realName, result->realName );
+
+    return result;
+    
 }
