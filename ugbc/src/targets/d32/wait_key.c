@@ -52,7 +52,7 @@ void wait_key( Environment * _environment ) {
 
     cpu_label( _environment, repeatLabel );
 
-    c32_scancode( _environment, pressed->realName, result->realName );
+    d32_scancode( _environment, pressed->realName, result->realName );
 
     cpu_bveq( _environment, pressed->realName, repeatLabel );
 

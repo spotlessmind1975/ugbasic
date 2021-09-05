@@ -62,7 +62,7 @@ void create_test( char *_name, void (*_payload)(TestEnvironment *), int (*_teste
     fclose(handleIns);
 
     system("asm6809 -H -e 7168 /tmp/out.asm -o /tmp/out.hex -s /tmp/out.sym -l /tmp/out.lis");
-    system("usim -i /tmp/out.lis -R 1C00 -L /tmp/out.sym -Li /tmp/out.ins -l 1C00 /tmp/out.hex -O /tmp/out.out");
+    system("usim -t -i /tmp/out.lis -R 1C00 -L /tmp/out.sym -Li /tmp/out.ins -l 1C00 /tmp/out.hex -O /tmp/out.out");
     FILE * handle = fopen( "/tmp/out.out", "rt" );
     fscanf(handle, "%x %x %x %x %x %x %x %x", 
     	&t.state.a,
@@ -176,13 +176,13 @@ void create_test( char *_name, void (*_payload)(TestEnvironment *), int (*_teste
         }
 
     }
+    printf("\n%s : ", _name);
     if ( ! _tester( &t ) ) {
-        printf("\n%s : ", _name);
         printf("\e[31mFAILED\e[0m");
-        printf("\n");
     } else {
         printf("\e[0m.\e[0m");
     };
+        printf("\n");
 
 }
 
