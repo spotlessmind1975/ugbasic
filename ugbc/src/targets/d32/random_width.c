@@ -53,8 +53,10 @@
 </usermanual> */
 Variable * random_width( Environment * _environment ) {
 
-    // TODO: implementation
+    Variable * result = random_value( _environment, VT_POSITION );
 
-    FUNCTION_STUB( VT_POSITION )
+    cpu6809_limit_16bit( _environment, result->realName, 32 );
+   
+    return result;
 
 }
