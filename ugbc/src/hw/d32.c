@@ -136,6 +136,8 @@ void d32_scancode( Environment * _environment, char * _pressed, char * _scancode
 
 void d32_scanshift( Environment * _environment, char * _shifts ) {
 
+    d32_keyshift( _environment, _shifts );
+    
 }
 
 void d32_keyshift( Environment * _environment, char * _shifts ) {

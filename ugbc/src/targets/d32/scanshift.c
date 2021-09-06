@@ -42,8 +42,10 @@ extern char DATATYPE_AS_STRING[][16];
 
 Variable * scanshift( Environment * _environment ) {
 
-    // TODO: implementation
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of SCANSHIFT)");
 
-    FUNCTION_STUB( VT_BYTE )
+    d32_scanshift( _environment, result->realName );
+
+    return result;
 
 }
