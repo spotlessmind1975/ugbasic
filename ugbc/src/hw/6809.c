@@ -1113,8 +1113,8 @@ void cpu6809_math_div_16bit_to_16bit( Environment * _environment, char *_source,
         outline0("ASRA");
         outline0("RORB");
 
-        // R = R + B
-        outline1("ADDD %s", _other );
+        // R = B
+        // outline1("ADDD %s", _other );
         outline1("STD %s", _other );
 
         // Y = Y - X
@@ -3359,7 +3359,6 @@ void cpu6809_bits_to_string( Environment * _environment, char * _number, char * 
 
     cpu6809_mem_move_direct_indirect_size( _environment, "BINSTRBUF", _string, _bits );    
 
-    outline1("LDB #$%2.2x", _bits );
     outline1("STB %s", _string_size );
 
 }
