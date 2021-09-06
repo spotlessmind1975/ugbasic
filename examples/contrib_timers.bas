@@ -13,5 +13,5 @@ TI = 0
 
 DO
     HOME
-    PRINT "TI = ";TI
+    PRINT "TI = ";TI;" (";(TI/60);" secs)"
 LOOP
