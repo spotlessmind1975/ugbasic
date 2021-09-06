@@ -42,9 +42,13 @@ extern char DATATYPE_AS_STRING[][16];
 
 Variable * keystate( Environment * _environment, char * _scancode ) {
 
-    // TODO: implementation
+    Variable * s = variable_retrieve_or_define( _environment, _scancode, VT_BYTE, 0 );
 
-    FUNCTION_STUB( VT_BYTE )
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of KEY STATE)");
+
+    Variable * key = scancode( _environment );
+
+    return variable_compare( _environment, s->name, key->name );
 
 }
 

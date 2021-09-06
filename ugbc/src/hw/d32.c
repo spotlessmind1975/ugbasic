@@ -140,6 +140,23 @@ void d32_scanshift( Environment * _environment, char * _shifts ) {
 
 void d32_keyshift( Environment * _environment, char * _shifts ) {
 
+    MAKE_LABEL
+
+    Variable * scancode = d32_scancode( _environment );
+
+    outline1("LDA %s", scancode->realName );
+    outline1("CMPA #$%2.2x", (unsigned char) KEY_SHIFT);
+    outline0("BEQ %sshift");
+    outline0("LDA #0");
+    outline1("STA %s", _shifts);
+    outline1("JMP %sdone", label );
+    outhead1("%sshift", label);
+    outline0("LDA #3");
+    outline1("STA %s", _shifts);
+    outline1("JMP %sdone", label );
+    outhead1("%sdone", label );
+
+
 }
 
 void d32_clear_key( Environment * _environment ) {
