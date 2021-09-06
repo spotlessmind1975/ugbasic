@@ -415,7 +415,7 @@ void d32_busy_wait( Environment * _environment, char * _timing ) {
     outline1("LDA %s", _timing );
     outline0("LDX $0112");
     outline0("LEAX A, X");
-    outhead1("%sfirst:", label );
+    outhead1("%sfirst", label );
     outline0("CMPX $0112");
     outline1("BLT %sfirst", label);
 }

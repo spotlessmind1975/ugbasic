@@ -46,9 +46,9 @@ Variable * joy( Environment * _environment, char * _port ) {
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of JOY)" );
 
     outline1("LDA %s", port->realName );
-    outline0("CMP #0" );
+    outline0("CMPA #0" );
     outline1("BEQ %sjoy0", label );
-    outline0("CMP #1" );
+    outline0("CMPA #1" );
     outline1("BEQ %sjoy1", label );
     outline1("JMP %send2", label );
 

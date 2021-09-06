@@ -49,17 +49,17 @@ Variable * joy( Environment * _environment, char * _port ) {
     outline1("STA %s", result->realName );
 
     outline1("LDA %s", port->realName );
-    outline0("CMP #0" );
+    outline0("CMPA #0" );
     outline1("BEQ %sjoy0", label );
-    outline0("CMP #1" );
+    outline0("CMPA #1" );
     outline1("BEQ %sjoy1", label );
-    outline1("JMP %send2", label );
+    outline1("JMP %send", label );
 
     outhead1("%sjoy0", label );
 
     outhead1("%sjoy0x", label );
     outline0("LDA $015a");
-    outline0("CMP #0");
+    outline0("CMPA #0");
     outline1("BEQ %sjoy0y", label );
     outline1("BGT %sjoy0right", label );
 
@@ -75,7 +75,7 @@ Variable * joy( Environment * _environment, char * _port ) {
 
     outhead1("%sjoy0y", label );
     outline0("LDA $015b");
-    outline0("CMP #0");
+    outline0("CMPA #0");
     outline1("BEQ %send", label );
     outline1("BGT %sjoy0down", label );
 
@@ -93,7 +93,7 @@ Variable * joy( Environment * _environment, char * _port ) {
 
     outhead1("%sjoy1x", label );
     outline0("LDA $015a");
-    outline0("CMP #0");
+    outline0("CMPA #0");
     outline1("BEQ %sjoy1y", label );
     outline1("BGT %sjoy1right", label );
 
@@ -109,7 +109,7 @@ Variable * joy( Environment * _environment, char * _port ) {
 
     outhead1("%sjoy1y", label );
     outline0("LDA $015b");
-    outline0("CMP #0");
+    outline0("CMPA #0");
     outline1("BEQ %send", label );
     outline1("BGT %sjoy1down", label );
 
