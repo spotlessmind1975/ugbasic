@@ -142,9 +142,14 @@ void d32_keyshift( Environment * _environment, char * _shifts ) {
 
     MAKE_LABEL
 
-    Variable * scancode = d32_scancode( _environment );
+    Variable * pressed = variable_temporary( _environment, VT_BYTE, "(pressed)" );
+    Variable * scancode = variable_temporary( _environment, VT_BYTE, "(scancode)" );
 
-    outline1("LDA %s", scancode->realName );
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(result)");
+    
+    d32_scancode( _environment, pressed->realName, scancode->realName );
+
+    outline1("LDA %s", result->realName );
     outline1("CMPA #$%2.2x", (unsigned char) KEY_SHIFT);
     outline0("BEQ %sshift");
     outline0("LDA #0");
