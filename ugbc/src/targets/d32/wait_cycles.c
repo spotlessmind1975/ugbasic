@@ -51,7 +51,11 @@
 </usermanual> */
 void wait_cycles( Environment * _environment, int _timing ) {
 
-    // TODO: implementation
+    outline1("; WAIT %d", _timing);
+
+    char timingString[MAX_TEMPORARY_STORAGE]; sprintf(timingString, "#$%2.2x", _timing );
+
+    cpu6809_busy_wait( _environment, timingString );
 
 }
 
@@ -68,6 +72,12 @@ void wait_cycles( Environment * _environment, int _timing ) {
 </usermanual> */
 void wait_cycles_var( Environment * _environment, char * _timing ) {
 
-    // TODO: implementation
+    outline1("; WAIT %s", _timing);
+
+    MAKE_LABEL
+
+    Variable * timing = variable_retrieve( _environment, _timing );
+    
+    cpu6809_busy_wait( _environment, timing->realName );
 
 }
