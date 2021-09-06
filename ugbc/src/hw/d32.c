@@ -60,6 +60,28 @@ static RGBi SYSTEM_PALETTE[] = {
 
 #ifdef __d32__
 
+void d32_xpen( Environment * _environment, char * _destination ) {
+
+    MAKE_LABEL
+
+    outline0("LDA $FF60");    
+    outline1("STA %s+1", _destination);
+    outline0("LDA #0");
+    outline1("STA %s", _destination);
+
+}
+
+void d32_ypen( Environment * _environment, char * _destination ) {
+
+    MAKE_LABEL
+
+    outline0("LDA $FF61");    
+    outline1("STA %s+1", _destination);
+    outline0("LDA #0");
+    outline1("STA %s", _destination);
+   
+}
+
 void d32_color_border( Environment * _environment, char * _color ) {
 
 }

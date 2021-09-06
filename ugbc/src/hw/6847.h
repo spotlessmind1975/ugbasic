@@ -77,7 +77,7 @@
 #define BITMAP_MODE_COLOR3          8       // Color Graphics 3	128 × 96	4	3072
 #define BITMAP_MODE_RESOLUTION3     9       // Resolution Graphics 3	128 × 192	1 + Black	3072
 #define BITMAP_MODE_COLOR6          10      // Color Graphics 6	128 × 192	4	6144
-#define BITMAP_MODE_RESOLUTION6     11      // Resolution Graphics 6	256 × 192	1 + Black	614
+#define BITMAP_MODE_RESOLUTION6     11      // Resolution Graphics 6	256 × 192	1 + Black	6144
 
 int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode );
 

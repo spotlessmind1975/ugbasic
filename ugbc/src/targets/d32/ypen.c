@@ -53,9 +53,13 @@
 </usermanual> */
 Variable * ypen( Environment * _environment ) {
 
-    // TODO: implementation
+    outline0("; = YPEN");
 
-    FUNCTION_STUB( VT_POSITION )
+    Variable * result = variable_temporary( _environment, VT_POSITION, "(result)" );
+
+    d32_ypen( _environment, result->realName );
+    
+    return result;
 
 }
 
