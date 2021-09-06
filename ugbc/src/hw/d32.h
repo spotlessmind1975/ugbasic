@@ -130,7 +130,15 @@
 #define KEY_RIGHT                    0xfd
 #define KEY_DIVISION                 '/'
 
-#define         JOY_COUNT           0
+#define         JOY_COUNT           2
+#define JOYSTICK_0					0
+#define JOYSTICK_1					1
+#define JOYSTICK_COUNT				2
+#define JOYSTICK_UP					2
+#define JOYSTICK_DOWN				4
+#define JOYSTICK_LEFT				8
+#define JOYSTICK_RIGHT				16
+#define JOYSTICK_FIRE				1
 
 #define SCREEN_CAPABILITIES         ( ( 1<<TILEMAP_NATIVE ) | ( 1<<BITMAP_NATIVE ) )
 

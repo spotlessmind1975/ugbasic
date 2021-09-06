@@ -40,8 +40,13 @@
 
 Variable * joy_direction( Environment * _environment, char * _port, int _direction ) {
 
-    // TODO: implementation
+    MAKE_LABEL
 
-    FUNCTION_STUB( VT_BYTE )
+    Variable * value = joy( _environment, _port );
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of J*)" );
+
+    cpu_bit_check( _environment, value->realName, _direction, result->realName, VT_BITWIDTH( value->type ) );
+
+    return result;
 
 }
