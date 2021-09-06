@@ -141,5 +141,6 @@ void d32_scancode( Environment * _environment, char * _pressed, char * _scacode 
 void d32_scanshift( Environment * _environment, char * _shifts );
 void d32_keyshift( Environment * _environment, char * _shifts );
 void d32_clear_key( Environment * _environment );
+void d32_busy_wait( Environment * _environment, char * _timing );
 
 #endif

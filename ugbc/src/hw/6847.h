@@ -122,7 +122,6 @@ void c6847_sprite_monocolor( Environment * _environment, char * _sprite );
 void c6847_sprite_color( Environment * _environment, char * _sprite, char * _color );
 void c6847_vertical_scroll( Environment * _environment, char * _displacement );
 void c6847_horizontal_scroll( Environment * _environment, char * _displacement );
-void c6847_busy_wait( Environment * _environment, char * _timing );
 
 void c6847_get_width( Environment * _environment, char * _result );
 void c6847_get_height( Environment * _environment, char * _result );

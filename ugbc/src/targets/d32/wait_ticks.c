@@ -50,7 +50,10 @@
 @keyword WAIT
 </usermanual> */
 void wait_ticks( Environment * _environment, int _timing ) {
-    // TODO: implementation
+
+    char timingString[MAX_TEMPORARY_STORAGE]; sprintf(timingString, "#$%2.2x", _timing );
+
+    d32_busy_wait( _environment, timingString );
 
 }
 
@@ -66,6 +69,13 @@ void wait_ticks( Environment * _environment, int _timing ) {
 @keyword WAIT
 </usermanual> */
 void wait_ticks_var( Environment * _environment, char * _timing ) {
-    // TODO: implementation
+
+    outline1("; WAIT %s", _timing);
+
+    MAKE_LABEL
+
+    Variable * timing = variable_retrieve( _environment, _timing );
+    
+    d32_busy_wait( _environment, timing->realName );
 
 }

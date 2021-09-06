@@ -445,13 +445,6 @@ void c6847_horizontal_scroll( Environment * _environment, char * _displacement )
 
 }
 
-void c6847_busy_wait( Environment * _environment, char * _timing ) {
-
-    // TODO: implementation
-    
-
-}
-
 void c6847_get_width( Environment * _environment, char *_result ) {
 
     // TODO: implementation

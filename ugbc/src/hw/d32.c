@@ -386,4 +386,17 @@ void d32_put_image( Environment * _environment, char * _image, char * _x, char *
 
 }
 
+void d32_busy_wait( Environment * _environment, char * _timing ) {
+
+    MAKE_LABEL
+
+    outline1("LDA %s", _timing );
+    outline0("LDX $0112");
+    outline0("LEAX A, X");
+    outhead1("%sfirst:", label );
+    outline0("CMPX $0112");
+    outline1("BLT %sfirst", label);
+}
+
+
 #endif
