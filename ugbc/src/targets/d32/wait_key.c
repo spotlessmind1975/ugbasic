@@ -49,6 +49,13 @@ void wait_key( Environment * _environment ) {
     Variable * pressed = variable_temporary( _environment, VT_BYTE, "(key pressed?)");
 
     char repeatLabel[MAX_TEMPORARY_STORAGE]; sprintf(repeatLabel, "%srepeat", label );
+    char repeatLabel2[MAX_TEMPORARY_STORAGE]; sprintf(repeatLabel2, "%srepeatx", label );
+
+    cpu_label( _environment, repeatLabel2 );
+
+    d32_scancode( _environment, pressed->realName, result->realName );
+
+    cpu_bvneq( _environment, pressed->realName, repeatLabel2 );
 
     cpu_label( _environment, repeatLabel );
 
