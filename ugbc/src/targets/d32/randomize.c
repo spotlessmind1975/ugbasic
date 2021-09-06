@@ -52,6 +52,11 @@
 </usermanual> */
 void randomize( Environment * _environment, char * _ext_seed ) {
 
-    // TODO: implementation
+    Variable * seed = variable_retrieve_or_define( _environment, "seed", VT_DWORD, 0Xffffffff );
 
+    if ( _ext_seed ) {
+        Variable * external_seed = variable_retrieve( _environment, _ext_seed );
+        variable_move( _environment, external_seed->name, seed->name );
+    }
+    
 }
