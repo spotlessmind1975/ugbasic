@@ -36,6 +36,14 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 CLINE
+    LDA CURRENTMODE
+    CMPA #2
+    BHS CLS0X
+    JMP CLINET
+CLS0X
+    RTS
+
+CLINET
     LDX TEXTADDRESS
     STX COPYOFTEXTADDRESS
 
