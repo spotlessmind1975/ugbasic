@@ -37,7 +37,7 @@
 
 CLS
     LDA CURRENTMODE
-    CMPA #4
+    CMPA #2
     BHS CLS0X
     JMP CLST
 CLS0X

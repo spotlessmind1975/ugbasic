@@ -36,6 +36,14 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 VSCROLLT
+    LDA CURRENTMODE
+    CMPA #2
+    BHS VSCROLLTX
+    JMP VSCROLLT
+VSCROLLTX
+    RTS
+
+VSCROLLTT
     PSHS D,X,Y,U
     LDA DIRECTION
     CMPA #0
