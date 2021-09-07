@@ -258,29 +258,311 @@ void c6847_bank_select( Environment * _environment, int _bank ) {
 
 int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
 
-    // TODO: implementation
-    
+    deploy( C6847varsDeployed, src_hw_6847_vars_asm );
+
+    switch( _screen_mode->id ) {
+        // ALPHANUMERIC DISPLAY MODES – All alphanumeric modes occupy an 8 x 12 
+        // dot character matrix box and there are 32 x 16 character boxes per TV frame. 
+        // Each horizontal dot (dot-clock) corresponds to one half the period duration of
+        // the 3.58 MHz clock and each vertical dot is one scan line. One of two colors 
+        // for the lighted dots may be selected by the color set select pin (pin 39). 
+        // An internal ROM will generate 64 ASCII display characters in a standard 5 x 7 box. 
+        // Six bits of the eight-bit data word are used for the ASCII character generator 
+        // and the two bits not used are used to implement inverse video and mode 
+        // switching to semigraphics – 4, – 8, – 12, or – 24.
+        case TILEMAP_MODE_INTERNAL:         // Alphanumeric Internal	32 × 16	2	512
+            // Internal alphanumeric 0 X X 0 0 0 0 32x16 ( 5x7 pixel ch)
+            VDG_TEXT;
+            SAM_V2_CLR;
+            SAM_V1_CLR;
+            SAM_V0_CLR;
+            GM2_CLR;
+            GM1_CLR;
+            GM0_CLR;
+            cpu_store_16bit( _environment, "CURRENTWIDTH", 32 );
+            cpu_store_16bit( _environment, "CURRENTHEIGHT", 16 );
+            cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
+            cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 32 );
+            cpu_store_8bit( _environment, "CURRENTSL", 32 );
+            break;
+        case TILEMAP_MODE_EXTERNAL:         // Alphanumeric External	32 × 16	2	512
+            // External alphanumeric 0 X X 1 0 0 0 32x16 (8x12 pixel ch)
+            VDG_TEXT;
+            SAM_V2_CLR;
+            SAM_V1_CLR;
+            SAM_V0_CLR;
+            GM2_CLR;
+            GM1_CLR;
+            GM0_SET;
+            cpu_store_16bit( _environment, "CURRENTWIDTH", 32 );
+            cpu_store_16bit( _environment, "CURRENTHEIGHT", 16 );
+            cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
+            cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 32 );
+            cpu_store_8bit( _environment, "CURRENTSL", 32 );
+            break;
+        // The ALPHA SEMIGRAPHICS – 4 mode translates bits 0 through 3 into a 4 x 6 dot 
+        // element in the standard 8 x 12 dot box. Three data bits may be used to select
+        // one of eight colors for the entire character box. The extra bit is used to 
+        // switch to alphanumeric. A 512 byte display memory is required. A density of 
+        // 64 x 32 elements is available in the display area. The element area is four
+        // dot-clocks wide by six lines high.
+        case TILEMAP_MODE_SEMIGRAPHICS4:    // Semigraphics 4	        64 × 32	8	512
+            // Semigraphic-4 0 X X 0 0 0 0 32x16 ch, 64x32 pixels
+            VDG_TEXT;
+            SAM_V2_CLR;
+            SAM_V1_CLR;
+            SAM_V0_CLR;
+            GM2_CLR;
+            GM1_CLR;
+            GM0_CLR;
+            cpu_store_16bit( _environment, "CURRENTWIDTH", 64 );
+            cpu_store_16bit( _environment, "CURRENTHEIGHT", 32 );
+            cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
+            cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 32 );
+            cpu_store_8bit( _environment, "CURRENTSL", 32 );
+            break;
+        // The ALPHA SEMIGRAPHICS – 6 mode maps six 4 x 4 dot elements into the standard
+        // 8 x 12 dot alphanumeric box, a screen density of 64 x 48 elements is available. 
+        // Six bits are used to generate this map and two data bits may be used to select 
+        // one of four colors in the display box. A 512 byte display memory is required. 
+        // The element area is four dot-clocks wide by four lines high.
+        case TILEMAP_MODE_SEMIGRAPHICS6:    // Semigraphics 6	        64 × 48	4	512
+            // Semigraphic-6 0 X X 1 0 0 0 64x48 pixels
+            VDG_TEXT;
+            SAM_V2_CLR;
+            SAM_V1_CLR;
+            SAM_V0_CLR;
+            GM2_CLR;
+            GM1_CLR;
+            GM0_SET;
+            cpu_store_16bit( _environment, "CURRENTWIDTH", 64 );
+            cpu_store_16bit( _environment, "CURRENTHEIGHT", 48 );
+            cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
+            cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 32 );
+            cpu_store_8bit( _environment, "CURRENTSL", 32 );
+            break;
+        // The ALPHA SEMIGRAPHICS – 8 mode maps eight 4 x 3 dot elements into the 
+        // standard 8 x 12 dot box. This mode requires four memory locations per box 
+        // and each memory location may specify one of eight colors or black. 
+        // A 2048 byte display memory is required. A density of 64 x 64 elements is 
+        // available in the display area. The element area is four dot-clocks wide 
+        // by three lines high.
+        case TILEMAP_MODE_SEMIGRAPHICS8:    // Semigraphics 8	        64 × 64	2	512
+            cpu_store_16bit( _environment, "CURRENTWIDTH", 64 );
+            cpu_store_16bit( _environment, "CURRENTHEIGHT", 64 );
+            cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
+            cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 32 );
+            cpu_store_8bit( _environment, "CURRENTSL", 32 );
+            break;
+        // The ALPHA SEMIGRAPHICS – 12 mode maps twelve 4 x 2 dot elements into the 
+        // standard 8 x 12 dot box. This mode requires six memory locations per box and 
+        // each memory location may specify one of eight colors or black. A 3072 byte 
+        // display memory is required. A density of 64 x 96 elements is available in the
+        // display area. The element area is four dot-clocks wide by two lineshigh.
+        case TILEMAP_MODE_SEMIGRAPHICS12:    // Semigraphics 6	        64 × 96 1	3072
+            cpu_store_16bit( _environment, "CURRENTWIDTH", 64 );
+            cpu_store_16bit( _environment, "CURRENTHEIGHT", 96 );
+            cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
+            cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 32 );
+            cpu_store_8bit( _environment, "CURRENTSL", 32 );
+            break;
+        // The ALPHA SEMIGRAPHICS – 24 mode maps twenty-four 4 x 1 dot elements into 
+        // the standard 8 x 12 dot box. This mode requires twelve memory locations 
+        // per box and each memory location may specify one of eight colors or black. 
+        // A 6144 byte display memory is required. A density of 64 x 192
+        // elements is available in the display are. The element area is four 
+        // dot-clocks wide by one line high.
+        case TILEMAP_MODE_SEMIGRAPHICS24:    // Semigraphics 6	        64 × 96 1	3072
+            cpu_store_16bit( _environment, "CURRENTWIDTH", 64 );
+            cpu_store_16bit( _environment, "CURRENTHEIGHT", 192 );
+            cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
+            cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 32 );
+            cpu_store_8bit( _environment, "CURRENTSL", 32 );
+            break
+        // The 64 x 64 Color Graphics mode generates a display matrix of 64 
+        // elements wide by 64 elements high. Each element may be one of four 
+        // colors. A 1K x 8 display memory is required. Each pixel equals 
+        // four dot-clocks by three scan lines.
+        case BITMAP_MODE_COLOR1:            // Color Graphics 1	64 × 64	4	1024
+            // Full graphic 1-C 1 0 0 0 0 0 1 64x64x4 $400(1024)
+            VDG_GRAPH;
+            SAM_V2_CLR;
+            SAM_V1_CLR;
+            SAM_V0_SET;
+            GM2_CLR;
+            GM1_CLR;
+            GM0_CLR;
+            cpu_store_16bit( _environment, "CURRENTWIDTH", 64 );
+            cpu_store_16bit( _environment, "CURRENTHEIGHT", 64 );
+            cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
+            cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 32 );
+            cpu_store_8bit( _environment, "CURRENTSL", 32 );
+            break;
+        // The 128 x 64 Graphics Mode generates a matrix 128 elements wide 
+        // by 64 elements high. Each element may be either ON or OFF. However, 
+        // the entire display may be one of two colors, selected by using the 
+        // color set select pin. A 1K x 8 display memory is required. Each 
+        // pixel equals two dotclocks by three scan lines.
+        case BITMAP_MODE_RESOLUTION1:       // Resolution Graphics 1	128 × 64	1 + Black	1024
+            // Full graphic 1-R 1 0 0 1 0 0 1 128x64x2 $400(1024)
+            VDG_GRAPH;
+            SAM_V2_CLR;
+            SAM_V1_CLR;
+            SAM_V0_SET;
+            GM2_CLR;
+            GM1_CLR;
+            GM0_SET;
+            cpu_store_16bit( _environment, "CURRENTWIDTH", 64 );
+            cpu_store_16bit( _environment, "CURRENTHEIGHT", 64 );
+            cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
+            cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 32 );
+            cpu_store_8bit( _environment, "CURRENTSL", 32 );
+            break;
+        // The 128 x 64 Color Graphics mode generates a display matrix 128 
+        // elements wide by 64 elements high. Each element may be one of four 
+        // colors. A 2K x 8 display memory is required. Each pixel equals
+        // two dot-clocks by three scan lines.
+        case BITMAP_MODE_COLOR2:            // Color Graphics 2	128 × 64	4	2048
+            // Full graphic 2-C 1 0 1 0 0 1 0 128x64x4 $800(2048)
+            VDG_GRAPH;
+            SAM_V2_CLR;
+            SAM_V1_SET;
+            SAM_V0_CLR;
+            GM2_CLR;
+            GM1_SET;
+            GM0_CLR;
+            cpu_store_16bit( _environment, "CURRENTWIDTH", 128 );
+            cpu_store_16bit( _environment, "CURRENTHEIGHT", 64 );
+            cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
+            cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 32 );
+            cpu_store_8bit( _environment, "CURRENTSL", 32 );
+            break;
+        // The 128 x 96 Graphics mode generates a display matrix 128 
+        // elements wide by 96 elements high. Each element may be either 
+        // ON or OFF. However, the entire display may be one of two colors
+        // selected by using the color select pin. A 2K x 8 display memory 
+        // is required. Each pixel equals two dot-clocks by two scan lines.
+        case BITMAP_MODE_RESOLUTION2:       // Resolution Graphics 2 128 × 96	1 + Black	1536
+            // Full graphic 2-R 1 0 1 1 0 1 1 128x96x2 $600(1536)
+            VDG_GRAPH;
+            SAM_V2_CLR;
+            SAM_V1_SET;
+            SAM_V0_SET;
+            GM2_CLR;
+            GM1_SET;
+            GM0_SET;
+            cpu_store_16bit( _environment, "CURRENTWIDTH", 128 );
+            cpu_store_16bit( _environment, "CURRENTHEIGHT", 96 );
+            cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
+            cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 32 );
+            cpu_store_8bit( _environment, "CURRENTSL", 32 );
+            break;
+        // The 128 x 96 Color Graphics mode generates a display 128 elements 
+        // wide by 96 elements high. Each element may be one of four colors. 
+        // A 3K x 8 display memory is required. Each pixel equals two 
+        // dot-clocks by two scan lines.
+        case BITMAP_MODE_COLOR3:            // Color Graphics 3	128 × 96	4	3072
+            // Full graphic 3-C 1 1 0 0 1 0 0 128x96x4 $C00(3072)
+            VDG_GRAPH;
+            SAM_V2_SET;
+            SAM_V1_CLR;
+            SAM_V0_CLR;
+            GM2_SET;
+            GM1_CLR;
+            GM0_CLR;
+            cpu_store_16bit( _environment, "CURRENTWIDTH", 128 );
+            cpu_store_16bit( _environment, "CURRENTHEIGHT", 96 );
+            cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
+            cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 32 );
+            cpu_store_8bit( _environment, "CURRENTSL", 32 );
+            break;
+        // The 128 x 192 Graphics mode generates a display matrix 128 elements 
+        // wide by 192 elements high. Each element may be either ON or OFF,
+        // but the ON elements may be one of two colors selected with color 
+        // set select pin. A 3K x 8 display memory is required. Each pixel 
+        // equals two dot-clocks by one scan line.
+        case BITMAP_MODE_RESOLUTION3:       // Resolution Graphics 3	128 × 192	1 + Black	3072
+            // Full graphic 3-R 1 1 0 1 1 0 1 128x192x2 $C00(3072)
+            VDG_GRAPH;
+            SAM_V2_SET;
+            SAM_V1_CLR;
+            SAM_V0_SET;
+            GM2_SET;
+            GM1_CLR;
+            GM0_SET;
+            cpu_store_16bit( _environment, "CURRENTWIDTH", 128 );
+            cpu_store_16bit( _environment, "CURRENTHEIGHT", 96 );
+            cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
+            cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 32 );
+            cpu_store_8bit( _environment, "CURRENTSL", 32 );
+            break;
+        // The 128 x 192 Color Graphics mode generates a display 128 elements 
+        // wide by 192 elements high. Each element may be one of four colors.
+        // A 6K x 8 display memory is required. Each pixel equals two dot-clocks 
+        // by one scan line.
+        case BITMAP_MODE_COLOR6:            // Color Graphics 6	128 × 192	4	6144
+            // Full graphic 6-C 1 1 1 0 1 1 0 128x192x4 $1800(6144)
+            VDG_GRAPH;
+            SAM_V2_SET;
+            SAM_V1_SET;
+            SAM_V0_CLR;
+            cpu_store_16bit( _environment, "CURRENTWIDTH", 128 );
+            cpu_store_16bit( _environment, "CURRENTHEIGHT", 192 );
+            cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
+            cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 32 );
+            cpu_store_8bit( _environment, "CURRENTSL", 32 );
+            break;
+        // The 256 x 192 Graphics mode generates a display 256 elements wide by 
+        // 192 elements high. Each element may be either ON or OFF, but the ON 
+        // element may be one of two colors selected with the color set select pin. 
+        // A 6K x 8 display memory is required. Each pixel equals one 
+        // dot-clock by one scan line.
+        case BITMAP_MODE_RESOLUTION6:       // Resolution Graphics 6	256 × 192	1 + Black	6144            break;
+            // Full graphic 6-R 1 1 1 1 1 1 0 256x192x2 $1800(6144)
+            VDG_GRAPH;
+            SAM_V2_SET;
+            SAM_V1_SET;
+            SAM_V0_CLR;
+            SAM_V2_SET;
+            SAM_V1_SET;
+            SAM_V0_SET;
+            cpu_store_16bit( _environment, "CURRENTWIDTH", 128 );
+            cpu_store_16bit( _environment, "CURRENTHEIGHT", 192 );
+            cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
+            cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 32 );
+            cpu_store_8bit( _environment, "CURRENTSL", 32 );
+            break;
+        default:
+            CRITICAL_SCREEN_UNSUPPORTED( _screen_mode->id );
+    }
 
 }
 
 void c6847_bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {
 
-    // TODO: implementation
+    ScreenMode * mode = find_screen_mode_by_suggestion( _environment, 1, _width, _height, _colors );
+
+    c6847_screen_mode_enable( _environment, mode );
+
+    cpu_store_8bit( _environment, "CURRENTMODE", mode->id );
     
+    _environment->currentMode = mode->id;
 
 }
 
-void c6847_bitmap_disable( Environment * _environment ) {
-
-    // TODO: implementation
-    
+void c6847_bitmap_disable( Environment * _environment ) {    
 
 }
 
 void c6847_tilemap_enable( Environment * _environment, int _width, int _height, int _colors ) {
 
-    // TODO: implementation
-    
+    ScreenMode * mode = find_screen_mode_by_suggestion( _environment, 0, _width, _height, _colors );
+
+    vic2_screen_mode_enable( _environment, mode );
+
+    _environment->currentMode = mode->id;
+
+    cpu_store_8bit( _environment, "CURRENTMODE", mode->id );    
 
 }
 

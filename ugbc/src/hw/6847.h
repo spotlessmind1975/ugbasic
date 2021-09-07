@@ -67,17 +67,89 @@
 
 #define TILEMAP_MODE_INTERNAL       0       // Alphanumeric Internal	32 × 16	2	512
 #define TILEMAP_MODE_EXTERNAL       1       // Alphanumeric External	32 × 16	2	512
+
 #define TILEMAP_MODE_SEMIGRAPHICS4  2       // Semigraphics 4	        64 × 32	8	512
 #define TILEMAP_MODE_SEMIGRAPHICS6  3       // Semigraphics 6	        64 × 48	4	512
+#define TILEMAP_MODE_SEMIGRAPHICS8  4       // Semigraphics 8	        64 × 64	2	2048
+#define TILEMAP_MODE_SEMIGRAPHICS12  5       // Semigraphics 12	        64 × 96	1	3072
+#define TILEMAP_MODE_SEMIGRAPHICS24  6       // Semigraphics 24	        64 × 192	1	6144
 
-#define BITMAP_MODE_COLOR1          4       // Color Graphics 1	64 × 64	4	1024
-#define BITMAP_MODE_RESOLUTION1     5       // Resolution Graphics 1	128 × 64	1 + Black	1024
-#define BITMAP_MODE_COLOR2          6       // Color Graphics 2	128 × 64	4	2048
-#define BITMAP_MODE_RESOLUTION2	    7       // Resolution Graphics 2 128 × 96	1 + Black	1536
-#define BITMAP_MODE_COLOR3          8       // Color Graphics 3	128 × 96	4	3072
-#define BITMAP_MODE_RESOLUTION3     9       // Resolution Graphics 3	128 × 192	1 + Black	3072
-#define BITMAP_MODE_COLOR6          10      // Color Graphics 6	128 × 192	4	6144
-#define BITMAP_MODE_RESOLUTION6     11      // Resolution Graphics 6	256 × 192	1 + Black	6144
+#define BITMAP_MODE_COLOR1          7       // Color Graphics 1	64 × 64	4	1024
+#define BITMAP_MODE_RESOLUTION1     8       // Resolution Graphics 1	128 × 64	1 + Black	1024
+#define BITMAP_MODE_COLOR2          9       // Color Graphics 2	128 × 64	4	2048
+#define BITMAP_MODE_RESOLUTION2	    10       // Resolution Graphics 2 128 × 96	1 + Black	1536
+#define BITMAP_MODE_COLOR3          11       // Color Graphics 3	128 × 96	4	3072
+#define BITMAP_MODE_RESOLUTION3     12      // Resolution Graphics 3	128 × 192	1 + Black	3072
+#define BITMAP_MODE_COLOR6          13      // Color Graphics 6	128 × 192	4	6144
+#define BITMAP_MODE_RESOLUTION6     14      // Resolution Graphics 6	256 × 192	1 + Black	6144
+
+// (2) SAM_Vx are three pairs of addresses (V0-V2), and poking any value to
+// EVEN addresses sets bit Vx off (0) in Video Display Generator (VDG)
+// circuitry. Poking a value to ODD addresses sets bit on (1) in VDG circuit.
+
+#define SAM_V0_CLR outline0("STA $FFC0")
+#define SAM_V0_SET outline0("STA $FFC1")
+#define SAM_V1_CLR outline0("STA $FFC2")
+#define SAM_V2_SET outline0("STA $FFC3")
+#define SAM_V3_CLR outline0("STA $FFC4")
+#define SAM_V4_SET outline0("STA $FFC5")
+
+#define GM0_SET     outline0("LDA $FF22"); outline0("ORA #$10"); outline0("STA $FF22");
+#define GM0_CLR     outline0("LDA $FF22"); outline0("ANDA #$EF"); outline0("STA $FF22");
+#define GM1_SET     outline0("LDA $FF22"); outline0("ORA #$20"); outline0("STA $FF22");
+#define GM1_CLR     outline0("LDA $FF22"); outline0("ANDA #$DF"); outline0("STA $FF22");
+#define GM2_SET     outline0("LDA $FF22"); outline0("ORA #$40"); outline0("STA $FF22");
+#define GM2_CLR     outline0("LDA $FF22"); outline0("ANDA #$BF"); outline0("STA $FF22");
+
+// (3) These registers work with $FF22 for setting modes, and should match up
+
+#define VDG_GRAPH  outline0("LDA $FF22"); outline0("ORA #$80"); outline0("STA $FF22");  
+#define VDG_TEXT   outline0("LDA $FF22"); outline0("ANDA #$7F"); outline0("STA $FF22");  
+
+// (4) Default screen mode is semigraphic-4
+// (5) Mode correspondence between the SAM and the VDG:
+// Mode VDG Settings SAM
+// A/G GM2 GM1 GM0 V2/V1/V0 Desc. RAM used
+// x,y,clrs in hex(dec)
+// Internal alphanumeric 0 X X 0 0 0 0 32x16 ( 5x7 pixel ch)
+// External alphanumeric 0 X X 1 0 0 0 32x16 (8x12 pixel ch)
+// Semigraphic-4 0 X X 0 0 0 0 32x16 ch, 64x32 pixels
+// Semigraphic-6 0 X X 1 0 0 0 64x48 pixels
+// Full graphic 1-C 1 0 0 0 0 0 1 64x64x4 $400(1024)
+// Full graphic 1-R 1 0 0 1 0 0 1 128x64x2 $400(1024)
+// Full graphic 2-C 1 0 1 0 0 1 0 128x64x4 $800(2048)
+// Full graphic 2-R 1 0 1 1 0 1 1 128x96x2 $600(1536)
+// Full graphic 3-C 1 1 0 0 1 0 0 128x96x4 $C00(3072)
+// Full graphic 3-R 1 1 0 1 1 0 1 128x192x2 $C00(3072)
+// Full graphic 6-C 1 1 1 0 1 1 0 128x192x4 $1800(6144)
+// Full graphic 6-R 1 1 1 1 1 1 0 256x192x2 $1800(6144)
+// Direct memory access X X X X 1 1 1
+// (6) Notes:
+// - The graphic modes with -C are 4 color, -R is 2 color.
+// - 2 color mode - 8 pixels per byte (each bit denotes on/off)
+// 4 color mode - 4 pixels per byte (each 2 bits denotes color)
+// - CSS (in FF22) is the color select bit:
+// Color set 0: 0 = black, 1 = green for -R modes
+// 00 = green, 01 = yellow for -C modes
+// 10 = blue, 11 = red for -C modes
+// Color set 1: 0 = black, 1 = buff for -R modes
+// Color Computer 1/2/3 Hardware Programming, Chris Lomont, v0.82
+// 71
+// 00 = buff, 01 = cyan, for -C modes
+// 10 = magenta, 11 = orange for -C modes
+// In semigraphic-4 mode, each byte is a char or 4 pixels:
+// bit 7 = 0 -> text char in following 7 bits
+// bit 7 = 1 -> graphic: 3 bit color code, then 4 bits for 4 quads of color
+// colors 000-cyan, yellow, blue, red, buff, cyan, magenta, orange=111
+// quad bits orientation UL, UR, LL, LR
+// In semigraphic-6 mode, each byte is 6 pixels:
+// bit 7-6 = C1-C0 color from 4 color sets above
+// bit 5-0 = 6 pixels in 2x3 block, each on/off
+// TODO - orientation
+// Example: To set 6-C color set 0, lda #$E0, sta in $FF22, $FFC3, $FFC5
+// To return to text mode, clra, sta in $FF22, $FFC2, $FFC4
+// (7) In the CoCo 3, The SAM is mostly CoCo 1/2 compatible Write-Only registers
+
 
 int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode );
 
