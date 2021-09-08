@@ -24,5 +24,6 @@ REM
      ENDIF
      IF y == 1 THEN : x = x + 1 : ELSE : x = x - 1 : ENDIF
      COLOR BORDER y + x
+     LOCATE 10,10: PRINT "x = ";x;" y = ";y;"    "
      WAIT x * 50 MS
      GOTO start
