@@ -75,8 +75,12 @@ void end_for( Environment * _environment ) {
 
     loop->index->locked = 0;
     loop->to->locked = 0;
-    loop->step->locked = 0;
-    loop->zero->locked = 0;
+    if ( loop->step ) {
+        loop->step->locked = 0;
+    }
+    if ( loop->zero ) {
+        loop->zero->locked = 0;
+    }
 
     _environment->loops = _environment->loops->next;
 
