@@ -39,7 +39,7 @@ TEXTADDRESS         fdb     $0400
 BITMAPADDRESS       fdb     $a000
 COLORMAPADDRESS     fdb     $a000
 MOBADDRESS          fdb     $a000
-CURRENTMODE         fcb     $0
+CURRENTMODE         fcb     $2
 
 TABCOUNT            fcb     4
 XCURS               fcb     0
