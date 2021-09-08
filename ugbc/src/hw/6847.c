@@ -258,7 +258,7 @@ void c6847_bank_select( Environment * _environment, int _bank ) {
 
 int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
 
-    deploy( C6847varsDeployed, src_hw_6847_vars_asm );
+    deploy( c6847varsDeployed, src_hw_6847_vars_asm );
 
     switch( _screen_mode->id ) {
         // ALPHANUMERIC DISPLAY MODES – All alphanumeric modes occupy an 8 x 12 
@@ -378,7 +378,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 32 );
             cpu_store_8bit( _environment, "CURRENTSL", 32 );
-            break
+            break;
         // The 64 x 64 Color Graphics mode generates a display matrix of 64 
         // elements wide by 64 elements high. Each element may be one of four 
         // colors. A 1K x 8 display memory is required. Each pixel equals 
@@ -558,7 +558,7 @@ void c6847_tilemap_enable( Environment * _environment, int _width, int _height, 
 
     ScreenMode * mode = find_screen_mode_by_suggestion( _environment, 0, _width, _height, _colors );
 
-    vic2_screen_mode_enable( _environment, mode );
+    c6847_screen_mode_enable( _environment, mode );
 
     _environment->currentMode = mode->id;
 

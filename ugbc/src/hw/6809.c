@@ -2023,12 +2023,13 @@ void cpu6809_random( Environment * _environment, char * _seed, char * _entropy )
     outline1("JMP %s", label);
     outhead5("%sseed fcb %d, %d, %d, %d", label, rand() & 0xff, rand() & 0xff, rand() & 0xff, rand() & 0xff);
     outhead1("%s", label);
-    outhead1("LDD %sseed", label);
+    outline1("LDD %sseed", label);
     outline0("ASLB");
     outline0("ASLB");
     outline0("ROLA");
     outline1("ADDD %sseed+2", label);
-    outline1("SRD %sseed", label);
+    outline1("LSR %sseed", label);
+    outline1("ROR %sseed+1", label);
     outline0("ASLB");
     outline0("ROLA");
     outline1("ADDA %s", _entropy);
@@ -2039,9 +2040,9 @@ void cpu6809_random( Environment * _environment, char * _seed, char * _entropy )
     outline1("ADDD %sseed+1", label);
     outline1("STD %sseed+1", label);
 
-    outhead1("LDD %sseed", label);
+    outline1("LDD %sseed", label);
     outline1("STD %s", _seed);
-    outhead1("LDD %sseed+2", label);
+    outline1("LDD %sseed+2", label);
     outline1("STD %s+2", _seed);
 
 }
