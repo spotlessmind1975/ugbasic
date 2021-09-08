@@ -50,6 +50,13 @@
 </usermanual> */
 void every_on( Environment * _environment ) {
 
-    // TODO: implementation
+    outline0("; EVERY ON");
 
+    if ( ! _environment->everyStatus ) {
+        _environment->everyStatus = variable_temporary( _environment, VT_BYTE, "(every status)");
+        _environment->everyStatus->locked = 1;
+    }
+
+    variable_store( _environment, _environment->everyStatus->name, 0xff );
+    
 }

@@ -48,6 +48,12 @@
 </usermanual> */
 void every_off( Environment * _environment ) {
    
-    // TODO: implementation
+    outline0("; EVERY OFF");
+
+    if ( ! _environment->everyStatus ) {
+        CRITICAL("EVERY OFF without EVERY definition");
+    }
+
+    variable_store( _environment, _environment->everyStatus->name, 0x0 );
 
 }

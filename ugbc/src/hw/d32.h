@@ -150,5 +150,7 @@ void d32_scanshift( Environment * _environment, char * _shifts );
 void d32_keyshift( Environment * _environment, char * _shifts );
 void d32_clear_key( Environment * _environment );
 void d32_busy_wait( Environment * _environment, char * _timing );
+void d32_irq_at( Environment * _environment, char * _label );
+void d32_follow_irq( Environment * _environment );
 
 #endif
