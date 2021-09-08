@@ -28,15 +28,19 @@ REM
 
    DO
       COLOR BORDER YELLOW
+      HOME: PRINT "YELLOW"
       WAIT 500 MS
       COLOR BORDER BLACK
+      HOME: PRINT "BLACK "
       WAIT 500 MS
       DO
          COLOR BORDER RED
+         HOME: PRINT "RED   "
          WAIT 1000 MS
          EXIT
          REM The border will never be green!
          COLOR BORDER GREEN
+         HOME: PRINT "GREEN "
          WAIT 1000 MS
       LOOP
    LOOP

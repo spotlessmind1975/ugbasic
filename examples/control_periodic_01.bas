@@ -34,6 +34,8 @@ changeBorderColor:
 
    COLOR BORDER colorIndex
 
+   HOME: PRINT colorIndex
+   
    colorIndex = colorIndex + 1
 
    IF colorIndex == COLOR COUNT THEN
