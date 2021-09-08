@@ -15,7 +15,9 @@
 114 REM determinato periodo di tempo verrà utilizzato il comando ''WAIT'', con l'unità di tempo ''MS'' (millisecondi).
 115 REM
 120 COLOR BORDER YELLOW
+125 HOME: PRINT "YELLOW"
 130 WAIT 100 MS
 140 COLOR BORDER BLACK
+145 HOME: PRINT "BLACK "
 150 WAIT 100 MS
 160 GOTO 120

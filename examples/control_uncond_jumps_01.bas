@@ -17,8 +17,10 @@ REM
 
 label: 
     COLOR BORDER YELLOW
+    HOME: PRINT "YELLOW"
     WAIT 100 MS
     COLOR BORDER BLACK
+    HOME: PRINT "BLACK "
     WAIT 100 MS
     GOTO label
     
