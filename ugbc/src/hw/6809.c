@@ -2155,13 +2155,9 @@ void cpu6809_logical_not_8bit( Environment * _environment, char * _value, char *
 
 void cpu6809_di( Environment * _environment ) {
 
-    outline0( "ANDCC #$6f" );
-
 }
 
 void cpu6809_ei( Environment * _environment ) {
-
-    outline0( "ORCC #$80" );
 
 }
 
