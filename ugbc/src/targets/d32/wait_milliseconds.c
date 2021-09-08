@@ -76,10 +76,10 @@ void wait_milliseconds_var( Environment * _environment, char * _timing ) {
     MAKE_LABEL
 
     Variable * timing = variable_retrieve( _environment, _timing );
-    Variable * zero = variable_temporary( _environment, VT_BYTE, "(0)" );
+    Variable * zero = variable_temporary( _environment, VT_WORD, "(0)" );
     variable_store( _environment, zero->name, 0 );
 
-    Variable * temp = variable_cast( _environment, timing->name, VT_BYTE );
+    Variable * temp = variable_cast( _environment, timing->name, VT_WORD );
 
     variable_div2_const( _environment, temp->name, 2 );
 

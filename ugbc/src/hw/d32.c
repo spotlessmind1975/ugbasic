@@ -436,9 +436,9 @@ void d32_busy_wait( Environment * _environment, char * _timing ) {
 
     MAKE_LABEL
 
-    outline1("LDA %s", _timing );
+    outline1("LDD %s", _timing );
     outline0("LDX $0112");
-    outline0("LEAX A, X");
+    outline0("LEAX D, X");
     outhead1("%sfirst", label );
     outline0("CMPX $0112");
     outline1("BGT %sfirst", label);
