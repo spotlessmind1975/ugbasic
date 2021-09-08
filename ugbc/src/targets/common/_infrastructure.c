@@ -1433,11 +1433,25 @@ Variable * variable_compare( Environment * _environment, char * _source, char * 
                     break;
                 case 16:
                     WARNING_BITWIDTH( _source, _destination );
-                    cpu_compare_16bit( _environment, source->realName, target->realName, result->realName, 1 );
+                    #ifdef CPU_BIG_ENDIAN
+                        {
+                            char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s+2", source->realName );
+                            cpu_compare_16bit( _environment, sourceRealName, target->realName, result->realName, 1 );
+                        }
+                    #else
+                        cpu_compare_16bit( _environment, source->realName, target->realName, result->realName, 1 );
+                    #endif
                     break;
                 case 8:
                     WARNING_BITWIDTH( _source, _destination );
-                    cpu_compare_8bit( _environment, source->realName, target->realName, result->realName, 1 );
+                    #ifdef CPU_BIG_ENDIAN
+                        {
+                            char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s+3", source->realName );
+                            cpu_compare_8bit( _environment, sourceRealName, target->realName, result->realName, 1 );
+                        }
+                    #else
+                        cpu_compare_8bit( _environment, source->realName, target->realName, result->realName, 1 );
+                    #endif
                     break;
                 case 0:
                     CRITICAL_CANNOT_COMPARE(DATATYPE_AS_STRING[source->type],DATATYPE_AS_STRING[target->type]);
@@ -1447,12 +1461,28 @@ Variable * variable_compare( Environment * _environment, char * _source, char * 
             switch( VT_BITWIDTH( target->type ) ) {
                 case 32:
                     WARNING_BITWIDTH( _source, _destination );
+                    #ifdef CPU_BIG_ENDIAN
+                        {
+                            char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s+2", target->realName );
+                        cpu_compare_16bit( _environment, source->realName, targetRealName, result->realName, 1 );
+                        }
+                    #else
+                        cpu_compare_16bit( _environment, source->realName, target->realName, result->realName, 1 );
+                    #endif
+                    break;
                 case 16:
                     cpu_compare_16bit( _environment, source->realName, target->realName, result->realName, 1 );
                     break;
                 case 8:
                     WARNING_BITWIDTH( _source, _destination );
-                    cpu_compare_8bit( _environment, source->realName, target->realName, result->realName, 1 );
+                    #ifdef CPU_BIG_ENDIAN
+                        {
+                            char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s+1", source->realName );
+                            cpu_compare_8bit( _environment, sourceRealName, target->realName, result->realName, 1 );
+                        }
+                    #else                      
+                        cpu_compare_8bit( _environment, source->realName, target->realName, result->realName, 1 );
+                    #endif
                     break;
                 case 0:
                     CRITICAL_CANNOT_COMPARE(DATATYPE_AS_STRING[source->type],DATATYPE_AS_STRING[target->type]);
@@ -1461,8 +1491,27 @@ Variable * variable_compare( Environment * _environment, char * _source, char * 
         case 8:
             switch( VT_BITWIDTH( target->type ) ) {
                 case 32:
+                    WARNING_BITWIDTH( _source, _destination );
+                    #ifdef CPU_BIG_ENDIAN
+                        {
+                            char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s+3", target->realName );
+                            cpu_compare_8bit( _environment, source->realName, targetRealName, result->realName, 1 );
+                        }
+                    #else                      
+                        cpu_compare_8bit( _environment, source->realName, target->realName, result->realName, 1 );
+                    #endif
+                    break;
                 case 16:
                     WARNING_BITWIDTH( _source, _destination );
+                    #ifdef CPU_BIG_ENDIAN
+                        {
+                            char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s+1", target->realName );
+                            cpu_compare_8bit( _environment, source->realName, targetRealName, result->realName, 1 );
+                        }
+                    #else                      
+                        cpu_compare_8bit( _environment, source->realName, target->realName, result->realName, 1 );
+                    #endif
+                    break;
                 case 8:
                     cpu_compare_8bit( _environment, source->realName, target->realName, result->realName, 1 );
                     break;
@@ -1784,17 +1833,25 @@ Variable * variable_less_than( Environment * _environment, char * _source, char 
                     break;
                 case 16:
                     WARNING_BITWIDTH( _source, _destination );
-                    if ( VT_SIGNED( source->type ) ) {
-                        CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
-                    }
-                    cpu_less_than_16bit( _environment, source->realName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
+                    #ifdef CPU_BIG_ENDIAN
+                        {
+                            char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s+2", source->realName );
+                            cpu_less_than_16bit( _environment, sourceRealName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
+                        }
+                    #else                      
+                        cpu_less_than_16bit( _environment, source->realName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
+                    #endif
                     break;
                 case 8:
                     WARNING_BITWIDTH( _source, _destination );
-                    if ( VT_SIGNED( source->type ) ) {
-                        CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
-                    }
-                    cpu_less_than_8bit( _environment, source->realName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
+                    #ifdef CPU_BIG_ENDIAN
+                        {
+                            char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s+3", source->realName );
+                            cpu_less_than_8bit( _environment, sourceRealName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
+                        }
+                    #else                      
+                        cpu_less_than_8bit( _environment, source->realName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
+                    #endif
                     break;
                 case 0:
                     CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
@@ -1804,18 +1861,28 @@ Variable * variable_less_than( Environment * _environment, char * _source, char 
             switch( VT_BITWIDTH( target->type ) ) {
                 case 32:
                     WARNING_BITWIDTH( _source, _destination );
-                    if ( VT_SIGNED( source->type ) ) {
-                        CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
-                    }
+                    #ifdef CPU_BIG_ENDIAN
+                        {
+                            char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s+2", target->realName );
+                            cpu_less_than_16bit( _environment, source->realName, targetRealName, result->realName, _equal, VT_SIGNED( source->type ) );
+                        }
+                    #else                      
+                        cpu_less_than_16bit( _environment, source->realName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
+                    #endif
+                    break;
                 case 16:
                     cpu_less_than_16bit( _environment, source->realName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
                     break;
                 case 8:
                     WARNING_BITWIDTH( _source, _destination );
-                    if ( VT_SIGNED( source->type ) ) {
-                        CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
-                    }
-                    cpu_less_than_8bit( _environment, source->realName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
+                    #ifdef CPU_BIG_ENDIAN
+                        {
+                            char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s+1", source->realName );
+                            cpu_less_than_8bit( _environment, sourceRealName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
+                        }
+                    #else                      
+                        cpu_less_than_8bit( _environment, source->realName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
+                    #endif
                     break;
                 case 0:
                     CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
@@ -1973,17 +2040,25 @@ Variable * variable_greater_than( Environment * _environment, char * _source, ch
                     break;
                 case 16:
                     WARNING_BITWIDTH( _source, _destination );
-                    // if ( VT_SIGNED( source->type ) ) {
-                    //     CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
-                    // }
-                    cpu_greater_than_16bit( _environment, source->realName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
+                    #ifdef CPU_BIG_ENDIAN
+                        {
+                            char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s+2", source->realName );
+                            cpu_greater_than_16bit( _environment, sourceRealName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
+                        }
+                    #else                      
+                        cpu_greater_than_16bit( _environment, source->realName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
+                    #endif
                     break;
                 case 8:
                     WARNING_BITWIDTH( _source, _destination );
-                    // if ( VT_SIGNED( source->type ) ) {
-                    //     CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
-                    // }
-                    cpu_greater_than_8bit( _environment, source->realName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
+                    #ifdef CPU_BIG_ENDIAN
+                        {
+                            char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s+3", source->realName );
+                            cpu_greater_than_8bit( _environment, sourceRealName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
+                        }
+                    #else                      
+                        cpu_greater_than_8bit( _environment, source->realName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
+                    #endif
                     break;
                 case 0:
                     CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );        
@@ -1993,18 +2068,28 @@ Variable * variable_greater_than( Environment * _environment, char * _source, ch
             switch( VT_BITWIDTH( target->type) ) {
                 case 32:
                     WARNING_BITWIDTH( _source, _destination );
-                    // if ( VT_SIGNED( source->type ) ) {
-                    //     CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
-                    // }
+                    #ifdef CPU_BIG_ENDIAN
+                        {
+                            char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s+2", target->realName );
+                            cpu_greater_than_16bit( _environment, source->realName, targetRealName, result->realName, _equal, VT_SIGNED( source->type ) );
+                        }
+                    #else                      
+                        cpu_greater_than_16bit( _environment, source->realName, targetRealName, result->realName, _equal, VT_SIGNED( source->type ) );
+                    #endif
+                    break;
                 case 16:
                     cpu_greater_than_16bit( _environment, source->realName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
                     break;
                 case 8:
                     WARNING_BITWIDTH( _source, _destination );
-                    // if ( VT_SIGNED( source->type ) ) {
-                    //     CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
-                    // }
-                    cpu_greater_than_8bit( _environment, source->realName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
+                    #ifdef CPU_BIG_ENDIAN
+                        {
+                            char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s+1", source->realName );
+                            cpu_greater_than_8bit( _environment, sourceRealName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
+                        }
+                    #else                      
+                        cpu_greater_than_8bit( _environment, source->realName, targetRealName, result->realName, _equal, VT_SIGNED( source->type ) );
+                    #endif
                     break;
                 case 0:
                     CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );        
@@ -2014,17 +2099,26 @@ Variable * variable_greater_than( Environment * _environment, char * _source, ch
             switch( VT_BITWIDTH( target->type) ) {
                 case 32:
                     WARNING_BITWIDTH( _source, _destination );
-                    // if ( VT_SIGNED( source->type ) ) {
-                    //     CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
-                    // }
+                    #ifdef CPU_BIG_ENDIAN
+                        {
+                            char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s+3", target->realName );
+                            cpu_greater_than_8bit( _environment, source->realName, targetRealName, result->realName, _equal, VT_SIGNED( source->type ) );
+                        }
+                    #else                      
+                        cpu_greater_than_8bit( _environment, source->realName, targetRealName, result->realName, _equal, VT_SIGNED( source->type ) );
+                    #endif
+                    break;
                 case 16:
-                    cpu_greater_than_16bit( _environment, source->realName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
+                    #ifdef CPU_BIG_ENDIAN
+                        {
+                            char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s+1", target->realName );
+                            cpu_greater_than_8bit( _environment, source->realName, targetRealName, result->realName, _equal, VT_SIGNED( source->type ) );
+                        }
+                    #else                      
+                        cpu_greater_than_8bit( _environment, source->realName, targetRealName, result->realName, _equal, VT_SIGNED( source->type ) );
+                    #endif
                     break;
                 case 8:
-                    WARNING_BITWIDTH( _source, _destination );
-                    // if ( VT_SIGNED( source->type ) ) {
-                    //     CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
-                    // }
                     cpu_greater_than_8bit( _environment, source->realName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
                     break;
                 case 0:
