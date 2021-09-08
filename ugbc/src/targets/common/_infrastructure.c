@@ -1417,6 +1417,11 @@ Variable * variable_compare( Environment * _environment, char * _source, char * 
     Variable * source = variable_retrieve( _environment, _source );
     Variable * target = variable_retrieve( _environment, _destination );
 
+    if ( VT_SIGNED( source->type ) != VT_SIGNED( target->type ) ) {
+        source = variable_cast( _environment, source->name, VT_SIGN( source->type ) );
+        target = variable_cast( _environment, target->name, VT_SIGN( target->type ) );
+    }
+
     MAKE_LABEL
 
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of compare)" );
@@ -1764,9 +1769,9 @@ Variable * variable_less_than( Environment * _environment, char * _source, char 
 
     if ( VT_SIGNED( source->type ) != VT_SIGNED( target->type ) ) {
         if ( VT_SIGNED( source->type ) ) {
-            source = variable_cast( _environment, _destination, VT_SIGN( source->type ) );
+            target = variable_cast( _environment, target->name, VT_SIGN( source->type ) );
         } else {
-            target = variable_cast( _environment, _destination, VT_SIGN( target->type ) );
+            target = variable_cast( _environment, target->name, VT_UNSIGN( target->type ) );
         }
     }
 
@@ -1955,11 +1960,8 @@ Variable * variable_greater_than( Environment * _environment, char * _source, ch
     Variable * target = variable_retrieve( _environment, _destination );
 
     if ( VT_SIGNED( source->type ) != VT_SIGNED( target->type ) ) {
-        if ( VT_SIGNED( source->type ) ) {
-            source = variable_cast( _environment, _destination, VT_SIGN( source->type ) );
-        } else {
-            target = variable_cast( _environment, _destination, VT_SIGN( target->type ) );
-        }
+        source = variable_cast( _environment, source->name, VT_SIGN( source->type ) );
+        target = variable_cast( _environment, target->name, VT_SIGN( target->type ) );
     }
 
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of compare)" );
@@ -1971,16 +1973,16 @@ Variable * variable_greater_than( Environment * _environment, char * _source, ch
                     break;
                 case 16:
                     WARNING_BITWIDTH( _source, _destination );
-                    if ( VT_SIGNED( source->type ) ) {
-                        CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
-                    }
+                    // if ( VT_SIGNED( source->type ) ) {
+                    //     CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
+                    // }
                     cpu_greater_than_16bit( _environment, source->realName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
                     break;
                 case 8:
                     WARNING_BITWIDTH( _source, _destination );
-                    if ( VT_SIGNED( source->type ) ) {
-                        CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
-                    }
+                    // if ( VT_SIGNED( source->type ) ) {
+                    //     CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
+                    // }
                     cpu_greater_than_8bit( _environment, source->realName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
                     break;
                 case 0:
@@ -1991,17 +1993,17 @@ Variable * variable_greater_than( Environment * _environment, char * _source, ch
             switch( VT_BITWIDTH( target->type) ) {
                 case 32:
                     WARNING_BITWIDTH( _source, _destination );
-                    if ( VT_SIGNED( source->type ) ) {
-                        CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
-                    }
+                    // if ( VT_SIGNED( source->type ) ) {
+                    //     CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
+                    // }
                 case 16:
                     cpu_greater_than_16bit( _environment, source->realName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
                     break;
                 case 8:
                     WARNING_BITWIDTH( _source, _destination );
-                    if ( VT_SIGNED( source->type ) ) {
-                        CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
-                    }
+                    // if ( VT_SIGNED( source->type ) ) {
+                    //     CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
+                    // }
                     cpu_greater_than_8bit( _environment, source->realName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
                     break;
                 case 0:
@@ -2012,17 +2014,17 @@ Variable * variable_greater_than( Environment * _environment, char * _source, ch
             switch( VT_BITWIDTH( target->type) ) {
                 case 32:
                     WARNING_BITWIDTH( _source, _destination );
-                    if ( VT_SIGNED( source->type ) ) {
-                        CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
-                    }
+                    // if ( VT_SIGNED( source->type ) ) {
+                    //     CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
+                    // }
                 case 16:
                     cpu_greater_than_16bit( _environment, source->realName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
                     break;
                 case 8:
                     WARNING_BITWIDTH( _source, _destination );
-                    if ( VT_SIGNED( source->type ) ) {
-                        CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
-                    }
+                    // if ( VT_SIGNED( source->type ) ) {
+                    //     CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
+                    // }
                     cpu_greater_than_8bit( _environment, source->realName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
                     break;
                 case 0:
