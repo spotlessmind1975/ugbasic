@@ -30,8 +30,10 @@ start:
 
 yellowBorder:
     COLOR BORDER YELLOW
+    HOME: PRINT "YELLOW"
     RETURN
 
 blackBorder:
     COLOR BORDER BLACK
+    HOME: PRINT "BLACK "
     RETURN

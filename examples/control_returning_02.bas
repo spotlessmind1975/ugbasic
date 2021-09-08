@@ -27,6 +27,7 @@ REM
 start:
     GOSUB incrementX
     COLOR BORDER x
+    HOME: PRINT x
     WAIT 500 MS
     GOTO start
 

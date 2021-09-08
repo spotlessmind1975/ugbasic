@@ -28,6 +28,7 @@ REM
 start:
    x = x + 1
    COLOR BORDER x + y
+   HOME: PRINT x + y;"   "
    GOSUB incrementX
    GOTO start
 
