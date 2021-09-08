@@ -73,11 +73,14 @@ void begin_for_step( Environment * _environment, char * _index, char * _from, ch
 
     outline0( "; FOR ... ");
 
-    Variable * index = variable_retrieve_or_define( _environment, _index, VT_WORD, 0 );
+    Variable * index = variable_retrieve_or_define( _environment, _index, VT_SWORD, 0 );
     Variable * from = variable_retrieve( _environment, _from );
     Variable * to = variable_retrieve( _environment, _to );
     Variable * step = variable_retrieve( _environment, _step );
-    
+
+    Variable * zero = variable_temporary( _environment, VT_WORD, "(zero)" );
+    variable_store( _environment, zero->name, 0 );
+
     MAKE_LABEL
 
     Loop * loop = malloc( sizeof( Loop ) );
@@ -91,15 +94,36 @@ void begin_for_step( Environment * _environment, char * _index, char * _from, ch
     loop->step->locked = 1;
     loop->to = to;
     loop->to->locked = 1;
+    loop->zero = zero;
+    loop->zero->locked = 1;
     _environment->loops = loop;
 
     variable_move( _environment, from->name, index->name );
 
     unsigned char beginFor[MAX_TEMPORARY_STORAGE]; sprintf(beginFor, "%sbf", loop->label );
     unsigned char endFor[MAX_TEMPORARY_STORAGE]; sprintf(endFor, "%sbis", loop->label );
+    unsigned char forwardFor[MAX_TEMPORARY_STORAGE]; sprintf(forwardFor, "%sfor", loop->label );
+    unsigned char backwardFor[MAX_TEMPORARY_STORAGE]; sprintf(backwardFor, "%sback", loop->label );
+    unsigned char continueFor[MAX_TEMPORARY_STORAGE]; sprintf(continueFor, "%scont", loop->label );
+
+    outline0("NOP");
 
     cpu_label( _environment, beginFor );
 
+    cpu_bvneq( _environment, variable_greater_than( _environment, loop->step->name, zero->name, 0)->realName, forwardFor );
+
+    cpu_jump( _environment, backwardFor );
+
+    cpu_label( _environment, forwardFor );
+
     cpu_bvneq( _environment, variable_greater_than( _environment, index->name, variable_add( _environment, loop->to->name, loop->step->name )->name, 0 )->realName, endFor );
+
+    cpu_jump( _environment, continueFor );
+
+    cpu_label( _environment, backwardFor );
+
+    cpu_bvneq( _environment, variable_less_than( _environment, index->name, variable_add( _environment, loop->to->name, loop->step->name )->name, 1 )->realName, endFor );
+
+    cpu_label( _environment, continueFor );
 
 }
