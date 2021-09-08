@@ -86,7 +86,7 @@ void else_if_then( Environment * _environment, char * _expression ) {
         conditional->expression = variable_cast( _environment, expression->name, expression->type );
         conditional->expression->locked = 1;
 
-        cpu_bveq( _environment, expression->realName, elseLabel );
+        cpu_bvneq( _environment, expression->realName, elseLabel );
 
     }
     
