@@ -53,7 +53,7 @@ void wait_milliseconds( Environment * _environment, int _timing ) {
 
     outline1("; WAIT %d MILLISECONDS", _timing);
 
-    char timingString[MAX_TEMPORARY_STORAGE]; sprintf(timingString, "#$%2.2x", _timing >> 2 );
+    char timingString[MAX_TEMPORARY_STORAGE]; sprintf(timingString, "#$%2.2x", _timing >> 4 );
 
     d32_busy_wait( _environment, timingString );
 }
@@ -81,7 +81,7 @@ void wait_milliseconds_var( Environment * _environment, char * _timing ) {
 
     Variable * temp = variable_cast( _environment, timing->name, VT_WORD );
 
-    variable_div2_const( _environment, temp->name, 2 );
+    variable_div2_const( _environment, temp->name, 4 );
 
     if_then( _environment, variable_compare_not( _environment, temp->name, zero->name )->name );
         d32_busy_wait( _environment, temp->realName );
