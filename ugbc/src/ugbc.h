@@ -440,6 +440,9 @@ typedef struct _Loop {
     /** Variable with step. */
     Variable *step;
 
+    /** Variable with zero (0). */
+    Variable *zero;
+
     /** Next conditional */
     struct _Loop * next;
 
