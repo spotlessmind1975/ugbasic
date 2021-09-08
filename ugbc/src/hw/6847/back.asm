@@ -35,24 +35,6 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-#define TILEMAP_MODE_INTERNAL       0       ; Alphanumeric Internal	32 × 16	2	512
-#define TILEMAP_MODE_EXTERNAL       1       ; Alphanumeric External	32 × 16	2	512
-
-#define TILEMAP_MODE_SEMIGRAPHICS4  2       ; Semigraphics 4	        64 × 32	8	512
-#define TILEMAP_MODE_SEMIGRAPHICS6  3       ; Semigraphics 6	        64 × 48	4	512
-#define TILEMAP_MODE_SEMIGRAPHICS8  4       ; Semigraphics 8	        64 × 64	2	2048
-#define TILEMAP_MODE_SEMIGRAPHICS12  5       ; Semigraphics 12	        64 × 96	1	3072
-#define TILEMAP_MODE_SEMIGRAPHICS24  6       ; Semigraphics 24	        64 × 192	1	6144
-
-#define BITMAP_MODE_COLOR1          7       ; Color Graphics 1	64 × 64	4	1024
-#define BITMAP_MODE_RESOLUTION1     8       ; Resolution Graphics 1	128 × 64	1 + Black	1024
-#define BITMAP_MODE_COLOR2          9       ; Color Graphics 2	128 × 64	4	2048
-#define BITMAP_MODE_RESOLUTION2	    10       ; Resolution Graphics 2 128 × 96	1 + Black	1536
-#define BITMAP_MODE_COLOR3          11       ; Color Graphics 3	128 × 96	4	3072
-#define BITMAP_MODE_RESOLUTION3     12      ; Resolution Graphics 3	128 × 192	1 + Black	3072
-#define BITMAP_MODE_COLOR6          13      ; Color Graphics 6	128 × 192	4	6144
-#define BITMAP_MODE_RESOLUTION6     14      ; Resolution Graphics 6	256 × 192	1 + Black	6144
-
 BACKCDR:
     LDA _PAPER
     CMPA #0         ; #define COLOR_BLACK					0
