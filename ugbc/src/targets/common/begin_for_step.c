@@ -106,8 +106,6 @@ void begin_for_step( Environment * _environment, char * _index, char * _from, ch
     unsigned char backwardFor[MAX_TEMPORARY_STORAGE]; sprintf(backwardFor, "%sback", loop->label );
     unsigned char continueFor[MAX_TEMPORARY_STORAGE]; sprintf(continueFor, "%scont", loop->label );
 
-    outline0("NOP");
-
     cpu_label( _environment, beginFor );
 
     cpu_bvneq( _environment, variable_greater_than( _environment, loop->step->name, zero->name, 0)->realName, forwardFor );
