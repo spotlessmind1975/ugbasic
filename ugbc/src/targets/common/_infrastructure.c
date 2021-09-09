@@ -77,11 +77,14 @@ Bank * bank_find( Bank * _first, char * _name ) {
     return actual;
 }
 
-static void variable_reset_pool( Variable * _pool ) {
+static void variable_reset_pool( Environment * _environment, Variable * _pool ) {
     Variable * actual = _pool;
     while( actual ) {
         if ( actual->locked == 0 ) {
-            actual->used = 0;            
+            actual->used = 0;       
+            if ( actual->type == VT_DSTRING ) {
+                cpu_dsfree( _environment, actual->realName );
+            }     
         }
         actual = actual->next;
     }
@@ -512,7 +515,7 @@ Variable * variable_retrieve_or_define( Environment * _environment, char * _name
  * @param _environment Current calling environment
  */
 void variable_reset( Environment * _environment ) {
-    variable_reset_pool( _environment->tempVariables );        
+    variable_reset_pool( _environment, _environment->tempVariables );        
 }
 
 Variable * variable_array_type( Environment * _environment, char *_name, VariableType _type ) {
@@ -3039,8 +3042,6 @@ Variable * variable_string_string( Environment * _environment, char * _string, c
     Variable * address2 = variable_temporary( _environment, VT_ADDRESS, "(result of LOWER)" );
     Variable * size2 = variable_temporary( _environment, VT_BYTE, "(result of LOWER)" );
 
-    outline0("; STRING(...)");
-
     cpu_dsfree( _environment, result->realName );
     cpu_dsalloc( _environment, repetitions->realName, result->realName );
     cpu_dsdescriptor( _environment, result->realName, address2->realName, size2->realName );
@@ -3061,8 +3062,6 @@ Variable * variable_string_string( Environment * _environment, char * _string, c
     }
 
     cpu_fill( _environment, address2->realName, size2->realName, address->realName );
-
-    outline0("; -- STRING(...)");
 
     return result;
     
@@ -3548,7 +3547,7 @@ Variable * variable_bin( Environment * _environment, char * _value, char * _digi
     Variable * originalValue = variable_retrieve( _environment, _value );
     Variable * digits = NULL;
     if ( _digits ) {
-        digits = variable_retrieve( _environment, _digits );
+        digits = variable_retrieve_or_define( _environment, _digits, VT_BYTE, 8 );
     }
     Variable * result = variable_temporary( _environment, VT_DSTRING, "(result of BIN)" );
     Variable * pad = variable_temporary( _environment, VT_BYTE, "(is padding needed?)");
@@ -3590,10 +3589,10 @@ Variable * variable_bin( Environment * _environment, char * _value, char * _digi
         cpu_less_than_8bit( _environment, size->realName, digits->realName, pad->realName, 0, 0 );
 
         cpu_bvneq( _environment, pad->realName, truncateLabel );
+        cpu_dsalloc( _environment, digits->realName, result2->realName );
 
         cpu_label( _environment, padLabel );
 
-        cpu_dsalloc( _environment, digits->realName, result2->realName );
         cpu_dsdescriptor( _environment, result2->realName, address2->realName, size2->realName );
         cpu_fill( _environment, address2->realName, digits->realName, zero->realName );
         
@@ -3601,17 +3600,18 @@ Variable * variable_bin( Environment * _environment, char * _value, char * _digi
         cpu_math_sub_16bit_with_8bit( _environment, address2->realName, size->realName, address2->realName );
         cpu_mem_move( _environment, address->realName, address2->realName, size->realName );
 
-        cpu_jump( _environment, truncateLabel );
+        cpu_jump( _environment, finishedLabel );
 
         cpu_label( _environment, truncateLabel );
         
-        cpu_dsalloc( _environment, digits->realName, result2->realName );
         cpu_dsdescriptor( _environment, result2->realName, address2->realName, size2->realName );
         cpu_math_add_16bit_with_8bit( _environment, address->realName, size->realName, address->realName );
         cpu_math_sub_16bit_with_8bit( _environment, address->realName, digits->realName, address->realName );
         cpu_mem_move( _environment, address->realName, address2->realName, digits->realName );
 
         cpu_label( _environment, finishedLabel );
+
+        cpu_dsfree( _environment, result->realName );
 
         result = result2;
 
