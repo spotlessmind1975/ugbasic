@@ -3270,12 +3270,16 @@ void cpu6809_bits_to_string( Environment * _environment, char * _number, char * 
             outline0("STD MATHPTR0" );
             outline1("LDD %s+2", _number );
             outline0("STD MATHPTR2" );
+            outline0("LDB #32" );
+            outline1("STB %s", _string_size );
             break;
         case 16:
             outline0("LDD #0" );
             outline0("STD MATHPTR0" );
             outline1("LDD %s", _number );
             outline0("STD MATHPTR2" );
+            outline0("LDB #16" );
+            outline1("STB %s", _string_size );
             break;
         case 8:        
             outline0("LDD #0" );
@@ -3284,6 +3288,8 @@ void cpu6809_bits_to_string( Environment * _environment, char * _number, char * 
             outline0("STA MATHPTR2" );
             outline1("LDA %s", _number );
             outline0("STA MATHPTR3" );
+            outline0("LDB #8" );
+            outline1("STB %s", _string_size );
             break;
     }
 
@@ -3291,8 +3297,6 @@ void cpu6809_bits_to_string( Environment * _environment, char * _number, char * 
     outline0("JSR BINSTR");
 
     cpu6809_mem_move_direct_indirect_size( _environment, "BINSTRBUF", _string, _bits );    
-
-    outline1("STB %s", _string_size );
 
 }
 
