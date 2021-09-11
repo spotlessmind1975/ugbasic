@@ -3391,26 +3391,90 @@ void cpu6809_dsdescriptor( Environment * _environment, char * _index, char * _ad
 
 void cpu6809_store_8bit_with_offset( Environment * _environment, char *_destination, int _value, int _offset ) {
 
-    // TODO: implementation
+    outline1("LDB $%2.2x", _offset);
+    outline1("LDX #%s", _destination);
+    outline1("LDA $%2.2x", _value);
+    outline0("STA B,X");
 
 }
 
 void cpu6809_complement2_8bit( Environment * _environment, char * _source, char * _destination ) {
 
-    // TODO: implementation
-    
+    outline1( "LDA %s", _source );
+    outline0( "EORA #$FF" );
+    if ( _destination ) {
+        outline1( "STA %s", _destination );
+    } else {
+        outline1( "STA %s", _source );
+    }
+    if ( _destination ) {
+        cpu6809_inc( _environment, _destination );
+    } else {
+        cpu6809_inc( _environment, _source );
+    }
+
 }
 
 void cpu6809_complement2_16bit( Environment * _environment, char * _source, char * _destination ) {
 
-    // TODO: implementation
-    
+    outline1( "LDA %s", _source );
+    outline0( "EORA #$FF" );
+    if ( _destination ) {
+        outline1( "STA %s", _destination );
+    } else {
+        outline1( "STA %s", _source );
+    }
+    outline1( "LDA %s+1", _source );
+    outline0( "EORA #$FF" );
+    if ( _destination ) {
+        outline1( "STA %s+1", _destination );
+    } else {
+        outline1( "STA %s+1", _source );
+    }
+    if ( _destination ) {
+        cpu6809_inc_16bit( _environment, _destination );
+    } else {
+        cpu6809_inc_16bit( _environment, _source );
+    }    
+
 }
 
 void cpu6809_complement2_32bit( Environment * _environment, char * _source, char * _destination ) {
 
-    // TODO: implementation
-    
+    outline1( "LDA %s", _source );
+    outline0( "EOR #$FF" );
+    if ( _destination ) {
+        outline1( "STA %s", _destination );
+    } else {
+        outline1( "STA %s", _source );
+    }
+    outline1( "LDA %s+1", _source );
+    outline0( "EOR #$FF" );
+    if ( _destination ) {
+        outline1( "STA %s+1", _destination );
+    } else {
+        outline1( "STA %s+1", _source );
+    }
+    outline1( "LDA %s+2", _source );
+    outline0( "EOR #$FF" );
+    if ( _destination ) {
+        outline1( "STA %s+2", _destination );
+    } else {
+        outline1( "STA %s+2", _source );
+    }
+    outline1( "LDA %s+3", _source );
+    outline0( "EOR #$FF" );
+    if ( _destination ) {
+        outline1( "STA %s+3", _destination );
+    } else {
+        outline1( "STA %s+3", _source );
+    }
+    if ( _destination ) {
+        cpu6809_inc_32bit( _environment, _destination );
+    } else {
+        cpu6809_inc_32bit( _environment, _source );
+    }
+
 }
 
 char * src_hw_chipset_mob_asm;
