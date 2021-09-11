@@ -57,11 +57,14 @@ void target_initialization( Environment * _environment ) {
     outline0("ORG $1c00");
     outline0("LDS #$7000");
     deploy( varsDeployed, src_hw_d32_vars_asm);
+    deploy( startupDeployed, src_hw_d32_startup_asm);
     variable_define( _environment, "stringsAddress", VT_ADDRESS, 0x4200 );
     variable_global( _environment, "stringsAddress" );
     bank_define( _environment, "STRINGS", BT_STRINGS, 0x4200, NULL );
     variable_define( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0xD800 );
     variable_global( _environment, "COLORMAPADDRESS" );
+
+    outline0( "JSR D32STARTUP" );
 
     setup_text_variables( _environment );
 

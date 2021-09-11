@@ -745,6 +745,12 @@ typedef struct _Environment {
     int varsDeployed;
 
     /**
+     * Deployed the startup for target
+     */
+
+    int startupDeployed;
+
+    /**
      * Deployed the startup for Motorola 6847
      */
 

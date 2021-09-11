@@ -104,13 +104,32 @@ void d32_inkey( Environment * _environment, char * _pressed, char * _key ) {
 
     d32_scancode( _environment, _pressed, _key );
 
+    outline1("LDA %s", _pressed );
+    outline0("CMPA #0" );
+    outline1("BEQ %sskip", label );
     outline1("LDA %s", _key );
     outline0("ANDA #$80" );
     outline0("CMPA #0" );
+    outline1("BNE %snoascii", label );
+    outline1("LDA %s", _key );
+    outline0("CMPA $011d" );
+    outline1("BNE %sdifferent", label );
+    outline0("INC $011f" );
+    outline0("CMPB #$7f" );
     outline1("BEQ %sascii", label );
     outline0("LDA #0" );
+    outline1("STA %s", _pressed );
+    outline1("JMP %sskip", label );
+    outhead1("%snoascii", label );
+    outline0("LDA #0" );
     outline1("STA %s", _key );
+    outline1("JMP %sskip", label );
+    outhead1("%sdifferent", label );
+    outline0("STA $011d" );
     outhead1("%sascii", label );
+    outline0("LDB #0" );
+    outline0("STB $011f" );
+    outhead1("%sskip", label );
 
 }
 
