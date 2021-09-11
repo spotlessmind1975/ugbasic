@@ -416,6 +416,31 @@ int test_variable_string_asc2_tester( TestEnvironment * _te ) {
     
 }
 
+//===========================================================================
+
+void test_powering_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * base = variable_define( e, "base", VT_WORD, 5 );
+    Variable * exponent = variable_define( e, "exponent", VT_WORD, 2 );
+
+    Variable * result = powering( e, base->name, exponent->name );
+
+    _te->trackedVariables[0] = result;
+
+}
+
+int test_powering_tester( TestEnvironment * _te ) {
+
+    Variable * result = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+
+printf( "result = %2.2x (%d) [expected 25]\n", result->value, result->value );
+
+    return result->value == 25;
+    
+}
+
 void test_variables( ) {
 
     create_test( "variables_add01", &test_variables_add01_payload, &test_variables_add01_tester );    
@@ -430,5 +455,7 @@ void test_variables( ) {
     create_test( "variables_bit", &test_variables_bit_payload, &test_variables_bit_tester );
     create_test( "variable_string_asc", &test_variable_string_asc_payload, &test_variable_string_asc_tester );
     create_test( "variable_string_asc2", &test_variable_string_asc2_payload, &test_variable_string_asc2_tester );
+
+    create_test( "powering", &test_powering_payload, &test_powering_tester );
 
 }
