@@ -4259,6 +4259,31 @@ int test_cpu_dsresize_tester( TestEnvironment * _te ) {
 
 }
 
+//===========================================================================
+
+void test_cpu_sqroot_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * value = variable_define( e, "value", VT_WORD, 81 );
+    Variable * result = variable_define( e, "result", VT_BYTE, 0 );
+
+    cpu_sqroot( e, value->realName, result->realName );
+
+    _te->trackedVariables[0] = result;
+    
+}
+
+int test_cpu_sqroot_tester( TestEnvironment * _te ) {
+
+    Variable * result = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+
+printf( "result = %2.2x (%d) [expected 9]\n", result->value, result->value );
+
+    return result->value == 9;
+
+}
+
 void test_cpu( ) {
 
     create_test( "cpu_bits_to_string", &test_cpu_bits_to_string_payload, &test_cpu_bits_to_string_tester );    
@@ -4361,5 +4386,6 @@ void test_cpu( ) {
     create_test( "cpu_dswrite B", &test_cpu_dswrite_payloadB, &test_cpu_dswrite_testerB );
     create_test( "cpu_dswrite C", &test_cpu_dswrite_payloadC, &test_cpu_dswrite_testerC );
     create_test( "cpu_dsresize", &test_cpu_dsresize_payload, &test_cpu_dsresize_tester );
+    create_test( "cpu_sqroot", &test_cpu_sqroot_payload, &test_cpu_sqroot_tester );
 
 }
