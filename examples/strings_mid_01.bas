@@ -12,6 +12,11 @@ REM Questo esempio mostra come si estrare una stringa da un'altra stringa, inizi
 REM da una posizione specifica e per un certo numero di caratteri. La funzione utilizzata è ''MID''.
 REM In modo analogo, la stessa funzione può essere usata per iniettare una stringa.
 
+    PRINT "MID(ugBASIC,1) = ";MID("ugBASIC",1)
+    PRINT "MID(ugBASIC,2) = ";MID("ugBASIC",2)
+    PRINT "MID(ugBASIC,3) = ";MID("ugBASIC",3)
+    PRINT "MID(ugBASIC,4) = ";MID("ugBASIC",4)
+    PRINT "MID(ugBASIC,5) = ";MID("ugBASIC",5)
     PRINT "MID(ugBASIC,6) = ";MID("ugBASIC",6)
 
     a = "ugBASIC"
