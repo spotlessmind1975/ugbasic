@@ -3209,7 +3209,7 @@ void cpu6809_number_to_string( Environment * _environment, char * _number, char 
             outline0("STA MATHPTR1");
             outline0("STA MATHPTR2");
             outline1("LDA %s", _number );    
-            if ( _signed && _bits == 16 ) {
+            if ( _signed && _bits == 8 ) {
                 outline0("ANDA #$80");
                 outline0("STA MATHPTR4");
                 outline1("LDA %s", _number );
@@ -3222,32 +3222,65 @@ void cpu6809_number_to_string( Environment * _environment, char * _number, char 
     outline0("ANDA #$80" );
     outline1("BEQ %spositive", label );
 
-    outline0("LDA MATHPTR0" );
-    outline0("EORA #$ff" );
-    outline0("STA MATHPTR0" );
-    outline0("LDA MATHPTR1" );
-    outline0("EORA #$ff" );
-    outline0("STA MATHPTR1" );
-    outline0("LDA MATHPTR2" );
-    outline0("EORA #$ff" );
-    outline0("STA MATHPTR2" );
-    outline0("LDA MATHPTR3" );
-    outline0("EORA #$ff" );
-    outline0("STA MATHPTR3" );
+    switch( _bits ) {
+        case 32:
+            outline0("LDA MATHPTR0" );
+            outline0("EORA #$ff" );
+            outline0("STA MATHPTR0" );
+            outline0("LDA MATHPTR1" );
+            outline0("EORA #$ff" );
+            outline0("STA MATHPTR1" );
+            outline0("LDA MATHPTR2" );
+            outline0("EORA #$ff" );
+            outline0("STA MATHPTR2" );
+            outline0("LDA MATHPTR3" );
+            outline0("EORA #$ff" );
+            outline0("STA MATHPTR3" );
 
-    outline0("ANDCC #$FE" );
-    outline0("LDA #$01" );
-    outline0("ADDA MATHPTR3" );
-    outline0("STA MATHPTR3" );
-    outline0("LDA #$00" );
-    outline0("ADDA MATHPTR2" );
-    outline0("STA MATHPTR2" );
-    outline0("LDA #$00" );
-    outline0("ADDA MATHPTR1" );
-    outline0("STA MATHPTR1" );
-    outline0("LDA #$00" );
-    outline0("ADDA MATHPTR0" );
-    outline0("STA MATHPTR0" );
+            outline0("ANDCC #$FE" );
+            outline0("LDA #$01" );
+            outline0("ADDA MATHPTR3" );
+            outline0("STA MATHPTR3" );
+            outline0("LDA #$00" );
+            outline0("ADDA MATHPTR2" );
+            outline0("STA MATHPTR2" );
+            outline0("LDA #$00" );
+            outline0("ADDA MATHPTR1" );
+            outline0("STA MATHPTR1" );
+            outline0("LDA #$00" );
+            outline0("ADDA MATHPTR0" );
+            outline0("STA MATHPTR0" );
+            break;
+        case 16:
+            outline0("LDA MATHPTR2" );
+            outline0("EORA #$ff" );
+            outline0("STA MATHPTR2" );
+            outline0("LDA MATHPTR3" );
+            outline0("EORA #$ff" );
+            outline0("STA MATHPTR3" );
+
+            outline0("ANDCC #$FE" );
+            outline0("LDA #$01" );
+            outline0("ADDA MATHPTR3" );
+            outline0("STA MATHPTR3" );
+            outline0("LDA #$00" );
+            outline0("ADDA MATHPTR2" );
+            outline0("STA MATHPTR2" );
+            break;
+        case 8:
+            outline0("LDA MATHPTR3" );
+            outline0("EORA #$ff" );
+            outline0("STA MATHPTR3" );
+
+            outline0("ANDCC #$FE" );
+            outline0("LDA #$01" );
+            outline0("ADDA MATHPTR3" );
+            outline0("STA MATHPTR3" );
+            break;
+    }
+
+    outline0("LDX MATHPTR2" );
+    outline0("NOP" );
 
     outhead1("%spositive", label );
     outline1("LDA #$%2.2X", _bits );
