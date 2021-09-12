@@ -2077,7 +2077,7 @@ Variable * variable_greater_than( Environment * _environment, char * _source, ch
                             cpu_greater_than_16bit( _environment, source->realName, targetRealName, result->realName, _equal, VT_SIGNED( source->type ) );
                         }
                     #else                      
-                        cpu_greater_than_16bit( _environment, source->realName, targetRealName, result->realName, _equal, VT_SIGNED( source->type ) );
+                        cpu_greater_than_16bit( _environment, source->realName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
                     #endif
                     break;
                 case 16:
@@ -2091,7 +2091,7 @@ Variable * variable_greater_than( Environment * _environment, char * _source, ch
                             cpu_greater_than_8bit( _environment, sourceRealName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
                         }
                     #else                      
-                        cpu_greater_than_8bit( _environment, source->realName, targetRealName, result->realName, _equal, VT_SIGNED( source->type ) );
+                        cpu_greater_than_8bit( _environment, source->realName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
                     #endif
                     break;
                 case 0:
@@ -2108,7 +2108,7 @@ Variable * variable_greater_than( Environment * _environment, char * _source, ch
                             cpu_greater_than_8bit( _environment, source->realName, targetRealName, result->realName, _equal, VT_SIGNED( source->type ) );
                         }
                     #else                      
-                        cpu_greater_than_8bit( _environment, source->realName, targetRealName, result->realName, _equal, VT_SIGNED( source->type ) );
+                        cpu_greater_than_8bit( _environment, source->realName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
                     #endif
                     break;
                 case 16:
@@ -2118,7 +2118,7 @@ Variable * variable_greater_than( Environment * _environment, char * _source, ch
                             cpu_greater_than_8bit( _environment, source->realName, targetRealName, result->realName, _equal, VT_SIGNED( source->type ) );
                         }
                     #else                      
-                        cpu_greater_than_8bit( _environment, source->realName, targetRealName, result->realName, _equal, VT_SIGNED( source->type ) );
+                        cpu_greater_than_8bit( _environment, source->realName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
                     #endif
                     break;
                 case 8:
@@ -2291,7 +2291,7 @@ Il secondo utilizzo è sostituire il numero di caratteri più a sinistra:
  </usermanual> */
 Variable * variable_string_left( Environment * _environment, char * _string, char * _position ) {
     Variable * string = variable_retrieve( _environment, _string );
-    Variable * position = variable_retrieve( _environment, _position );
+    Variable * position = variable_retrieve_or_define( _environment, _position, VT_BYTE, 0 );
     Variable * result = variable_temporary( _environment, VT_DSTRING, "(result of left)" );
     Variable * address = variable_temporary( _environment, VT_ADDRESS, "(result of left)" );
     Variable * size = variable_temporary( _environment, VT_BYTE, "(result of left)" );
@@ -2343,7 +2343,7 @@ Variable * variable_string_left( Environment * _environment, char * _string, cha
  </usermanual> */
 void variable_string_left_assign( Environment * _environment, char * _string, char * _position, char * _expression ) {
     Variable * string = variable_retrieve( _environment, _string );
-    Variable * position = variable_retrieve( _environment, _position );
+    Variable * position = variable_retrieve_or_define( _environment, _position, VT_BYTE, 0 );
     Variable * expression = variable_cast( _environment, _expression, VT_DSTRING );
     switch( string->type ) {
         case VT_STRING: {            
@@ -2403,7 +2403,7 @@ Il secondo utilizzo è sostituire il numero di caratteri più a destra.
  </usermanual> */
 Variable * variable_string_right( Environment * _environment, char * _string, char * _position ) {
     Variable * string = variable_retrieve( _environment, _string );
-    Variable * position = variable_retrieve( _environment, _position );
+    Variable * position = variable_retrieve_or_define( _environment, _position, VT_BYTE, 0 );
     Variable * result = variable_temporary( _environment, VT_DSTRING, "(result of right)" );
 
     switch( string->type ) {
@@ -2469,7 +2469,7 @@ Variable * variable_string_right( Environment * _environment, char * _string, ch
  </usermanual> */
 void variable_string_right_assign( Environment * _environment, char * _string, char * _position, char * _expression ) {
     Variable * string = variable_retrieve( _environment, _string );
-    Variable * position = variable_retrieve( _environment, _position );
+    Variable * position = variable_retrieve_or_define( _environment, _position, VT_BYTE, 0 );
     Variable * expression = variable_cast( _environment, _expression, VT_DSTRING );
     Variable * address = variable_temporary( _environment, VT_ADDRESS, "(result of right)" );
     Variable * size = variable_temporary( _environment, VT_BYTE, "(result of right)" );
@@ -2533,10 +2533,10 @@ utilizzo di questa funzione è sostituire il numero medio di caratteri.
  </usermanual> */
 Variable * variable_string_mid( Environment * _environment, char * _string, char * _position, char * _len ) {
     Variable * string = variable_retrieve( _environment, _string );
-    Variable * position = variable_retrieve( _environment, _position );
+    Variable * position = variable_retrieve_or_define( _environment, _position, VT_BYTE, 0 );
     Variable * len;
     if ( _len ) {
-        len = variable_retrieve( _environment, _len );
+        len = variable_retrieve_or_define( _environment, _len, VT_BYTE, 0 );
     } else {
         len = variable_temporary( _environment, VT_BYTE, "(calculated MID len)");
         variable_store( _environment, len->name, 0 );
@@ -2618,11 +2618,11 @@ Variable * variable_string_mid( Environment * _environment, char * _string, char
  </usermanual> */
 void variable_string_mid_assign( Environment * _environment, char * _string, char * _position, char * _len, char * _expression ) {
     Variable * string = variable_retrieve( _environment, _string );
-    Variable * position = variable_retrieve( _environment, _position );
+    Variable * position = variable_retrieve_or_define( _environment, _position, VT_BYTE, 0 );
     Variable * expression = variable_cast( _environment, _expression, VT_DSTRING );
     Variable * len;
     if ( _len ) {
-        len = variable_retrieve( _environment, _len );
+        len = variable_retrieve_or_define( _environment, _len, VT_BYTE, 0 );
     } else {
         len = variable_temporary( _environment, VT_BYTE, "(calculated MID len)");
         variable_store( _environment, len->name, 0 );
