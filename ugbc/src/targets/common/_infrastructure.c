@@ -2553,6 +2553,7 @@ Variable * variable_string_mid( Environment * _environment, char * _string, char
             cpu_addressof_16bit( _environment, string->realName, address->realName );
             cpu_inc_16bit( _environment, address->realName );
             cpu_math_add_16bit_with_8bit( _environment, address->realName, position->realName, address->realName );
+            cpu_dec_16bit( _environment, address->realName );
 
             if ( _len ) {
                 cpu_dsfree( _environment, result->realName );
@@ -2562,6 +2563,7 @@ Variable * variable_string_mid( Environment * _environment, char * _string, char
             } else {
                 cpu_move_8bit( _environment, size->realName, len->realName );
                 cpu_math_sub_8bit( _environment, len->realName, position->realName, len->realName );
+                cpu_inc( _environment, len->realName );
                 cpu_dsfree( _environment, result->realName );
                 cpu_dsalloc( _environment, len->realName, result->realName );
                 cpu_dsdescriptor( _environment, result->realName, address2->realName, size2->realName );
@@ -2576,6 +2578,7 @@ Variable * variable_string_mid( Environment * _environment, char * _string, char
             Variable * size2 = variable_temporary( _environment, VT_BYTE, "(result of mid)" );
             cpu_dsdescriptor( _environment, result->realName, address->realName, size->realName );
             cpu_math_add_16bit_with_8bit( _environment, address->realName, position->realName, address->realName );
+            cpu_dec_16bit( _environment, address->realName );
             if ( _len ) {
                 cpu_dsfree( _environment, result->realName );
                 cpu_dsalloc( _environment, len->realName, result->realName );
@@ -2584,6 +2587,7 @@ Variable * variable_string_mid( Environment * _environment, char * _string, char
             } else {
                 cpu_move_8bit( _environment, size->realName, len->realName );
                 cpu_math_sub_8bit( _environment, len->realName, position->realName, len->realName );
+                cpu_inc( _environment, len->realName );
                 cpu_dsfree( _environment, result->realName );
                 cpu_dsalloc( _environment, len->realName, result->realName );
                 cpu_dsdescriptor( _environment, result->realName, address2->realName, size2->realName );
@@ -2639,6 +2643,8 @@ void variable_string_mid_assign( Environment * _environment, char * _string, cha
 
             cpu_dsdescriptor( _environment, string->realName, address2->realName, size2->realName );
             cpu_dsdescriptor( _environment, expression->realName, address->realName, size->realName );
+
+            cpu_math_add_16bit_with_8bit( _environment, address2->realName, position->realName, address2->realName );
 
             if ( _len ) {
 
