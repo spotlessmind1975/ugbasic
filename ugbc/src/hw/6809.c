@@ -3008,6 +3008,17 @@ void cpu6809_convert_string_into_16bit( Environment * _environment, char * _stri
     outline1("CMPB %s", _len );
     outline1("BEQ %sdone", label );
 
+    // moltiplico Y per 10
+    outline0("PSHS D" );
+    outline0("TFR Y, D" );
+    outline0("LEAY D, Y" );
+    outline0("LEAY D, Y" );
+    outline0("LEAY D, Y" );
+    outline0("LEAY D, Y" );
+    outline0("TFR Y, D" );
+    outline0("LEAY D, Y" );
+    outline0("PULS D" );
+
     // leggo carattere
     outline0("LDA B,X" );
 
@@ -3021,21 +3032,13 @@ void cpu6809_convert_string_into_16bit( Environment * _environment, char * _stri
     outline0("SUBA #48" );
     outline0("LEAY A, Y" );
 
-    // moltiplico Y per 10
-    outline0("TFR Y, D" );
-    outline0("LEAY D, Y" );
-    outline0("LEAY D, Y" );
-    outline0("LEAY D, Y" );
-    outline0("LEAY D, Y" );
-    outline0("TFR Y, D" );
-    outline0("LEAY D, Y" );
-
     // ripeti
-    outline0("DECB" );
+    outline0("INCB" );
     outline1("JMP %sloop", label );
 
     outhead1("%sdone", label );
 
+    outline0("NOP" );
     outline1("STY %s", _value );
 
 }
