@@ -40,8 +40,13 @@
 
 Variable * screen_get_width( Environment * _environment ) {
 
-    // TODO: implementation
+    Variable * width = variable_temporary( _environment, VT_POSITION, "(result of get width)");
 
-    FUNCTION_STUB( VT_POSITION )
+    MAKE_LABEL
+    
+    c6847_get_width( _environment, width->realName );
+
+    return width;
+
 
 }

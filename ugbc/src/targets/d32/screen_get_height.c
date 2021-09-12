@@ -40,8 +40,12 @@
 
 Variable * screen_get_height( Environment * _environment ) {
 
-    // TODO: implementation
+    Variable * height = variable_temporary( _environment, VT_POSITION, "(result of get height)");
 
-    FUNCTION_STUB( VT_POSITION )
+    MAKE_LABEL
+    
+    c6847_get_height( _environment, height->realName );
+   
+    return height;
 
 }

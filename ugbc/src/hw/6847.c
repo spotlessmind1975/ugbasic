@@ -729,15 +729,15 @@ void c6847_horizontal_scroll( Environment * _environment, char * _displacement )
 
 void c6847_get_width( Environment * _environment, char *_result ) {
 
-    // TODO: implementation
-    
+    outline0("LDX CURRENTWIDTH" );
+    outline1("STX %s", _result );
 
 }
 
 void c6847_get_height( Environment * _environment, char *_result ) {
 
-    // TODO: implementation
-    
+    outline0("LDX CURRENTHEIGHT" );
+    outline1("STX %s", _result );
 
 }
 

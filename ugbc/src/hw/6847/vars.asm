@@ -47,8 +47,8 @@ CLIPY1    fdb 0
 CLIPX2    fdb 319
 CLIPY2    fdb 199
 LASTCOLOR fcb 0
-CURRENTWIDTH      fdb 40
-CURRENTHEIGHT      fdb 25
+CURRENTWIDTH      fdb 32
+CURRENTHEIGHT      fdb 16
 CURRENTSL          fcb 0
 
 ; ------------------------------------------------------------------------------
