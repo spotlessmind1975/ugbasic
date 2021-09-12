@@ -2707,7 +2707,7 @@ Variable * variable_string_instr( Environment * _environment, char * _search, ch
     Variable * searched = variable_retrieve( _environment, _searched );
     Variable * start = NULL;
     if ( _start ) {
-        start = variable_retrieve( _environment, _start );
+        start = variable_retrieve_or_define( _environment, _start, VT_BYTE, 0 );
     }
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of INSTR)" );
 
