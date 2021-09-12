@@ -3040,7 +3040,7 @@ della stringa in ingresso.
 Variable * variable_string_string( Environment * _environment, char * _string, char * _repetitions  ) {
 
     Variable * string = variable_retrieve( _environment, _string );
-    Variable * repetitions = variable_retrieve( _environment, _repetitions );
+    Variable * repetitions = variable_retrieve_or_define( _environment, _repetitions, VT_BYTE, 0 );
     Variable * result = variable_temporary( _environment, VT_DSTRING, "(result of STRING)");
 
     Variable * address = variable_temporary( _environment, VT_ADDRESS, "(result of LOWER)" );
@@ -3067,7 +3067,7 @@ Variable * variable_string_string( Environment * _environment, char * _string, c
             CRITICAL_STRING_UNSUPPORTED( _string, DATATYPE_AS_STRING[string->type]);
     }
 
-    cpu_fill( _environment, address2->realName, size2->realName, address->realName );
+    cpu_fill_indirect( _environment, address2->realName, size2->realName, address->realName );
 
     return result;
     

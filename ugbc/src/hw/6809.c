@@ -3042,6 +3042,21 @@ void cpu6809_convert_string_into_16bit( Environment * _environment, char * _stri
 
 void cpu6809_fill_indirect( Environment * _environment, char * _address, char * _size, char * _pattern ) {
 
+    MAKE_LABEL
+
+    outline1("LDB %s", _size);
+    outline0("LDA #0");
+    outline0("LEAY D,Y");
+    outline1("LDX %s", _pattern );
+    outline0("LDA ,X" );
+    outline1("LDX %s", _address);
+    outhead1("%s", label);
+    outhead1("%sinner", label);
+    outline0("DECB");
+    outline0("STA B,X");
+    outline0("CMPB #$ff");
+    outline1("BNE %sinner", label);
+
 }
 
 void cpu6809_flip( Environment * _environment, char * _source, char * _size, char * _destination ) {

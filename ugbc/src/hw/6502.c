@@ -2894,14 +2894,11 @@ void cpu6502_fill_indirect( Environment * _environment, char * _address, char * 
 
     // Fill the bitmap with the given pattern.
     outline1("LDX %s", _size );
-    outhead1("%sx:", label);
-    outline0("LDY #$0");
+    outline0("LDY #0");
     outline0("LDA (TMPPTR2),Y");
-    outhead1("%sy:", label);
-    outline0("STA (TMPPTR),y");
+    outhead1("%sx:", label);
+    outline0("STA (TMPPTR),Y");
     outline0("INY");
-    outline1("BNE %sy", label);
-    outline0("INC TMPPTR+1");
     outline0("DEX");
     outline1("BNE %sx", label);
 
