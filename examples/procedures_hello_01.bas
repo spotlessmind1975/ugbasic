@@ -15,5 +15,7 @@ REM di questo esempio è... nulla!
    PROCEDURE hello
       PRINT "HELLO I AM A PROCEDURE!"
    END PROC
-   
+
+   PRINT "(nothing to show)"
+      
    HALT

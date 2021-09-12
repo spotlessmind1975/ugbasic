@@ -20,9 +20,12 @@ REM a livello globale, anche se hanno lo stesso nome.
    b = 84
 
    PROCEDURE example
-      PRINT "a in example = ";a
-      PRINT "b in example = ";b
+      PRINT "a (local) in example = ";a
+      PRINT "b (local) in example = ";b
    END PROC
+
+   PRINT "a (global) = ";a
+   PRINT "b (global) = ";b
 
    example
 

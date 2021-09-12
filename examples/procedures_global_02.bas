@@ -17,6 +17,6 @@ REM Questo esempio mostrerà come definire le variabili globali usando le "wildc
     a = 42
     PRINT "before call, a = ";a
     test
-    PRINT "after call, a = ";a
+    PRINT "after call, a = ";a;" (should be 43)"
 
     HALT

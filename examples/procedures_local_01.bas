@@ -20,7 +20,7 @@ REM rimarrà sempre il medesimo.
 
    PROCEDURE plus
       a = a + 1
-      PRINT "a after plus = ";a
+      PRINT "a (local) after plus = ";a
    END PROC
 
    plus
