@@ -1777,6 +1777,42 @@ printf("size = %2.2x (%d) [expected 2]\n", size->value, size->value );
 
 //===========================================================================
 
+void test_cpu_number_to_string_payloadE( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * a = variable_define( e, "a", VT_SBYTE, 0xff );
+
+    Variable * string = variable_define( e, "string", VT_DSTRING, 0 );
+    Variable * size = variable_define( e, "size", VT_BYTE, 0 );
+    Variable * address = variable_define( e, "address", VT_ADDRESS, 0 );
+    Variable * size2 = variable_define( e, "size2", VT_BYTE, 0 );
+
+    char buffer[16]; memset( buffer, 32, 16 );
+    variable_store_string( e, string->name, buffer );
+
+    cpu_dswrite( e, string->realName );
+    cpu_dsdescriptor( e, string->realName, address->realName, size->realName );
+
+    cpu_number_to_string( e, a->realName, address->realName, size2->realName, VT_BITWIDTH( a->type ), VT_SIGNED( a->type ) );
+    cpu_dsresize( e, string->realName, size2->realName );
+
+    _te->trackedVariables[0] = string;
+
+}
+
+int test_cpu_number_to_string_testerE( TestEnvironment * _te ) {
+
+    Variable * string = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+
+// printf("string = %s [expected '-1']\n", string->valueString );
+
+    return strcmp( string->valueString, "-1" ) == 0; 
+
+}
+
+//===========================================================================
+
 void test_cpu_peek_payload( TestEnvironment * _te ) {
 
     Environment * e = &_te->environment;
@@ -4263,6 +4299,7 @@ void test_cpu( ) {
     create_test( "cpu_number_to_string_payloadB", &test_cpu_number_to_string_payloadB, &test_cpu_number_to_string_testerB );
     create_test( "cpu_number_to_string_payloadC", &test_cpu_number_to_string_payloadC, &test_cpu_number_to_string_testerC );
     create_test( "cpu_number_to_string_payloadD", &test_cpu_number_to_string_payloadD, &test_cpu_number_to_string_testerD );
+    create_test( "cpu_number_to_string_payloadE", &test_cpu_number_to_string_payloadE, &test_cpu_number_to_string_testerE );
     create_test( "cpu_peek", &test_cpu_peek_payload, &test_cpu_peek_tester );
     create_test( "cpu_poke", &test_cpu_poke_payload, &test_cpu_poke_tester );
     create_test( "cpu_move_8bit", &test_cpu_move_8bit_payload, &test_cpu_move_8bit_tester );
