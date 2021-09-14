@@ -845,15 +845,26 @@ void c6847_initialization( Environment * _environment ) {
 
 void c6847_hscroll_line( Environment * _environment, int _direction ) {
 
-    // TODO: implementation
-    
+    deploy( textHScrollDeployed, src_hw_6847_hscroll_text_asm );
+
+    Variable * y = variable_retrieve( _environment, "windowCY" );
+    outline1("LDA #$%2.2x", ( _direction & 0xff ) );
+    outline0("STA DIRECTION" );
+    outline1("LDA %s", y->realName );
+    outline0("STA CLINEY");
+
+    outline0("JSR HSCROLLLT");    
 
 }
 
 void c6847_hscroll_screen( Environment * _environment, int _direction ) {
 
-    // TODO: implementation
-    
+    deploy( textHScrollDeployed, src_hw_6847_hscroll_text_asm );
+
+    outline1("LDA #$%2.2x", ( _direction & 0xff ) );
+    outline0("STA DIRECTION" );
+
+    outline0("JSR HSCROLLST");    
 
 }
 
