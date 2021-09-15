@@ -107,7 +107,7 @@ void cmove( Environment * _environment, char * _dx, char * _dy ) {
         Variable * windowCY = variable_retrieve( _environment, "windowCY" );
         Variable * windowY = variable_retrieve( _environment, "windowY" );
         Variable * windowY2 = variable_retrieve( _environment, "windowY2" );
-        Variable * dy = variable_retrieve_or_define( _environment, _dy, VT_BYTE, 0 );
+        Variable * dy = variable_retrieve_or_define( _environment, _dy, VT_SBYTE, 0 );
         add_complex( _environment, windowCY->name, dy->name, windowY->name, windowY2->name );
     }
 

@@ -2805,7 +2805,7 @@ void cpu6809_move_8bit_indirect_with_offset( Environment * _environment, char *_
 
 void cpu6809_move_8bit_with_offset( Environment * _environment, char *_source, char * _value, int _offset ) {
 
-    outline1("LDX #%s", _value);
+    outline1("LDX %s", _value);
     if ( _offset >= 0x7f ) {
         outline0("LEAX 127,X" );
         _offset -= 0x7f;
