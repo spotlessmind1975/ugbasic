@@ -53,8 +53,25 @@
 
 Variable * get_at( Environment * _environment, char * _x, char * _y ) {
     
-    // TODO: implementation
+    Variable * x = variable_retrieve_or_define( _environment, _x, VT_BYTE, 0 );
+    Variable * y = variable_retrieve_or_define( _environment, _y, VT_BYTE, 0 );
 
-    FUNCTION_STUB( VT_DSTRING )
+    Variable * result = variable_temporary( _environment, VT_DSTRING, 0 );
+
+    char resultString[MAX_TEMPORARY_STORAGE]; sprintf( resultString, "\x4  " );
+
+    variable_store_string(_environment, result->name, resultString );
+
+    cpu_dswrite( _environment, result->realName );
+    
+    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
+    Variable * size = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
+    cpu_dsdescriptor( _environment, result->realName, address->realName, size->realName );
+
+    cpu_move_8bit_with_offset(_environment, x->realName, address->realName, 1 );
+    cpu_move_8bit_with_offset(_environment, y->realName, address->realName, 2 );
+        
+    return result;
+
 
 }
