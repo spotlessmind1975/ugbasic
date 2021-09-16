@@ -2889,8 +2889,8 @@ void cpu6809_move_16bit_indirect( Environment * _environment, char *_source, cha
     MAKE_LABEL
 
     outline1("LDX %s", _value);
-    outline0("LDD ,X");
-    outline1("STD %s", _source );
+    outline1("LDD %s", _source);
+    outline0("STD ,X");
 
 }
 

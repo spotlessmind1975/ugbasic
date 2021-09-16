@@ -3334,9 +3334,9 @@ static Variable * calculate_offset_in_array( Environment * _environment, char * 
         CRITICAL_ARRAY_SIZE_MISMATCH( _array );
     }
 
-    Variable * base = variable_temporary( _environment, VT_DWORD, "(base in array)");
-    Variable * size = variable_temporary( _environment, VT_DWORD, "(size in array)");
-    Variable * offset = variable_temporary( _environment, VT_DWORD, "(offset in array)");
+    Variable * base = variable_temporary( _environment, VT_WORD, "(base in array)");
+    Variable * size = variable_temporary( _environment, VT_WORD, "(size in array)");
+    Variable * offset = variable_temporary( _environment, VT_WORD, "(offset in array)");
 
     variable_store( _environment, offset->name, 0 );
 
