@@ -727,6 +727,12 @@ typedef struct _Environment {
     VariableType parametersTypeEach[MAX_PARAMETERS];
 
     /**
+     * Deployed joystick
+     */
+
+    int joystickDeployed;
+
+    /**
      * Deployed sqr
      */
 
