@@ -2732,7 +2732,23 @@ program :
 
 void show_usage_and_exit( int _argc, char *_argv[] ) {
 
-    printf("ugBASIC Compiler v1.2-beta\n");
+    char version[MAX_TEMPORARY_STORAGE] = "v1.3-beta";
+    
+#if defined(__atari__) 
+    char target[MAX_TEMPORARY_STORAGE] = "ATARI 400/800";
+#elif defined(__atarixl__) 
+    char target[MAX_TEMPORARY_STORAGE] = "ATARI XL";
+#elif __c64__
+    char target[MAX_TEMPORARY_STORAGE] = "Commodore 64";
+#elif __plus4__
+    char target[MAX_TEMPORARY_STORAGE] = "Commodore PLUS/4";
+#elif __zx__
+    char target[MAX_TEMPORARY_STORAGE] = "ZX Spectrum 48K";
+#elif __d32__
+    char target[MAX_TEMPORARY_STORAGE] = "Dragon 32";
+#endif
+
+    printf("ugBASIC Compiler %s [target: %s]\n", target);
     printf("---------------------\n");
     printf("Copyright 2021 Marco Spedaletti (asimov@mclink.it)\n\n");
     printf("Licensed under the Apache License, Version 2.0 (the \"License\");\n");
