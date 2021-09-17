@@ -116,7 +116,6 @@ CLS13
     ANDA #$03
     LDB #$aa
     MUL
-TUTORE
     JMP CLSG
 
 CLS8
