@@ -40,6 +40,10 @@
 
 void plot( Environment * _environment, char * _x, char * _y, char *_c ) {
 
-    // TODO: implementation
+    if ( _c ) {
+        pen( _environment, _c );
+    }
+
+    c6847_point_at_vars( _environment, _x, _y );
 
 }
