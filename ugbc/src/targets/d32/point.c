@@ -40,8 +40,10 @@
 
 Variable * point( Environment * _environment, char * _x, char * _y ) {
 
-    // TODO: implementation
+    Variable * result = variable_temporary( _environment, VT_COLOR, "(point's result)");
 
-    FUNCTION_STUB( VT_COLOR )
+    c6847_point( _environment, _x, _y, result->name );
+
+    return result;
 
 }

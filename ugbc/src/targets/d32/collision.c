@@ -58,8 +58,6 @@
 </usermanual> */
 Variable * collision_to( Environment * _environment, int _sprite ) {
 
-    // TODO: implementation
-
     FUNCTION_STUB( VT_BYTE )
 
 }
@@ -85,8 +83,6 @@ Variable * collision_to( Environment * _environment, int _sprite ) {
 @example = COLLISION(newValue+1)
 </usermanual> */
 Variable * collision_to_vars( Environment * _environment, char * _sprite ) {
-
-    // TODO: implementation
 
     FUNCTION_STUB( VT_BYTE )
 

@@ -624,13 +624,13 @@ void c6847_bitmap_at( Environment * _environment, char * _address ) {
     outline0("RORA");
     outline1("BCC %s_bit0", label);
     outline0("STA 1,X");
-    outline0("BRA %s_next", label);
+    outline1("BRA %s_next", label);
     outhead1("%s_bit0", label);
     outline0("STA ,X");
     outhead1("%s_next", label);
     outline0("LEAX 2,X");
     outline0("DECB");
-    outline1("BNE %s");
+    outline1("BNE %s", label );
 
 }
 

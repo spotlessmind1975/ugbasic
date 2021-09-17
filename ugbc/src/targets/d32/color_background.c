@@ -52,8 +52,6 @@
 </usermanual> */
 void color_background( Environment * _environment, int _index, int _background_color ) {
     
-    // TODO: implementation
-
 }
 
 /**
@@ -70,7 +68,5 @@ void color_background( Environment * _environment, int _index, int _background_c
 @keyword COLOR BACKGROUND
 </usermanual> */
 void color_background_vars( Environment * _environment, char * _index, char * _background_color ) {
-
-    // TODO: implementation
 
 }

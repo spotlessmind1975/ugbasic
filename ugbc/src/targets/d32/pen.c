@@ -52,6 +52,9 @@
 
 void pen( Environment * _environment, char * _color ) {
 
-    // TODO: implementation
+    Variable * pen = variable_retrieve_or_define( _environment, "PEN", VT_COLOR, COLOR_GREEN );
+    Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_GREEN );
+
+    variable_move( _environment, color->name, pen->name );
 
 }

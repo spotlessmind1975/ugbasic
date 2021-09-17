@@ -50,8 +50,6 @@
 </usermanual> */
 void color_border( Environment * _environment, int _color ) {
 
-    // TODO: implementation
-
 }
 
 /**
@@ -67,7 +65,5 @@ void color_border( Environment * _environment, int _color ) {
 @keyword COLOR BORDER
 </usermanual> */
 void color_border_var( Environment * _environment, char * _color ) {
-
-    // TODO: implementation
 
 }

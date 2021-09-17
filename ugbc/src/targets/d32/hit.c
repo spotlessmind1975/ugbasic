@@ -58,8 +58,6 @@
 </usermanual> */
 Variable * hit_to( Environment * _environment, int _sprite ) {
 
-    // TODO: implementation
-
     FUNCTION_STUB( VT_BYTE )
 
 }
@@ -81,8 +79,6 @@ Variable * hit_to( Environment * _environment, int _sprite ) {
 @keyword HIT
 </usermanual> */
 Variable * hit_to_vars( Environment * _environment, char * _sprite ) {
-
-    // TODO: implementation
 
     FUNCTION_STUB( VT_BYTE )
 

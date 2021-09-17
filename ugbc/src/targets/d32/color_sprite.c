@@ -51,8 +51,6 @@
 </usermanual> */
 void color_sprite( Environment * _environment, int _index, int _common_color ) {
 
-    // TODO: implementation
-
 }
 
 /**
@@ -69,7 +67,5 @@ void color_sprite( Environment * _environment, int _index, int _common_color ) {
 @keyword COLOR SPRITE
 </usermanual> */
 void color_sprite_vars( Environment * _environment, char * _index, char * _common_color ) {
-
-    // TODO: implementation
 
 }

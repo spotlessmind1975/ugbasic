@@ -57,8 +57,14 @@
 </usermanual> */
 Variable * peek_var( Environment * _environment, char * _location ) {
 
-    // TODO: implementation
+    outline1("; PEEK(%s)", _location);
 
-    FUNCTION_STUB( VT_BYTE )
+    Variable * location = variable_retrieve_or_define( _environment, _location, VT_WORD, 0 );
+
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(result)" );
+
+    cpu6809_peek( _environment, location->realName, result->realName );
+
+    return result;
 
 }
