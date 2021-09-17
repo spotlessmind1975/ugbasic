@@ -63,7 +63,14 @@
 </usermanual> */
 void textmap_at( Environment * _environment, int _address ) {
 
-    // TODO: implementation
+    // Let's define the special variable bitmapAddress, and update
+    // it with the requested value.
+    Variable * bitmapAddress = variable_retrieve( _environment, "TEXTADDRESS" );
+    variable_store( _environment, "TEXTADDRESS", ( ( _address >> 10 ) ) * 0x200 );
+
+    char addressString[MAX_TEMPORARY_STORAGE]; sprintf(addressString, "#$%2.2x", ( _address >> 10 ) );
+
+    c6847_textmap_at( _environment, addressString );
 
 }
 
@@ -87,6 +94,15 @@ void textmap_at( Environment * _environment, int _address ) {
 </usermanual> */
 void textmap_at_var( Environment * _environment, char * _address ) {
 
-    // TODO: implementation
+    // Let's define the special variable bitmapAddress, and update
+    // it with the requested value.    
+    Variable * bitmapAddress = variable_retrieve( _environment, "TEXTADDRESS" );
+    Variable * address = variable_retrieve( _environment, _address );
+
+    variable_move_naked( _environment, address->name, bitmapAddress->name );
+
+    char addressString[MAX_TEMPORARY_STORAGE]; sprintf(addressString, "%s", address->realName );
+
+    c6847_textmap_at( _environment, addressString );
 
 }
