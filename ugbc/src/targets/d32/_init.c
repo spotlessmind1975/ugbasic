@@ -54,7 +54,7 @@ void target_initialization( Environment * _environment ) {
     variable_import( _environment, "FREE_STRING", VT_WORD );
     variable_global( _environment, "FREE_STRING" );    
 
-    outline0("ORG $1c00");
+    outline0("ORG $2800");
     outline0("LDS #$7000");
     deploy( varsDeployed, src_hw_d32_vars_asm);
     deploy( startupDeployed, src_hw_d32_startup_asm);

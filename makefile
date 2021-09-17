@@ -85,7 +85,7 @@ generated/d32/asm/%.asm:
 	@ugbc/exe/ugbc.d32 $(subst generated/d32/asm/,examples/,$(@:.asm=.bas)) $@
 
 generated/d32/exe/%.bin: $(subst /exe/,/asm/,$(@:.bin=.asm))
-	@asm6809 -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -D -e 7168 -o $@ $(subst /exe/,/asm/,$(@:.bin=.asm))
+	@asm6809 -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -D -e 10240 -o $@ $(subst /exe/,/asm/,$(@:.bin=.asm))
 	
 paths:
 	@mkdir -p generated
