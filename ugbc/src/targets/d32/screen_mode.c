@@ -51,7 +51,19 @@
 </usermanual> */
 void screen_mode( Environment * _environment, int _mode ) {
 
-       // TODO: implementation
+    ScreenMode * mode = find_screen_mode_by_id( _environment, _mode );
+
+    if ( mode ) {
+           
+        c6847_screen_mode_enable( _environment, mode );    
+
+        _environment->currentMode = mode->id;
+
+        cpu_store_8bit( _environment, "CURRENTMODE", mode->id );
+        
+    } else {
+        WARNING_SCREEN_MODE( _mode );
+    }
  
 }
 
