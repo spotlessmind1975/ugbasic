@@ -945,10 +945,8 @@ void c6847_hscroll_screen( Environment * _environment, int _direction ) {
 
 void c6847_back( Environment * _environment ) {
 
-    deploy( backDeployed, src_hw_6847_back_asm );
-
-    outline0("JSR BACK");
-
+    // TODO: implementation
+    
 }
 
 void c6847_cline( Environment * _environment, char * _characters ) {
