@@ -615,8 +615,22 @@ void c6847_tilemap_enable( Environment * _environment, int _width, int _height, 
 
 void c6847_bitmap_at( Environment * _environment, char * _address ) {
 
-    // TODO: implementation
-    
+    MAKE_LABEL
+
+    outline1("LDA %s", _address);
+    outline0("LDB #$07");
+    outline0("LDX #$FFC6");
+    outhead1("%s", label);
+    outline0("RORA");
+    outline1("BCC %s_bit0", label);
+    outline0("STA 1,X");
+    outline0("BRA %s_next", label);
+    outhead1("%s_bit0", label);
+    outline0("STA ,X");
+    outhead1("%s_next", label);
+    outline0("LEAX 2,X");
+    outline0("DECB");
+    outline1("BNE %s");
 
 }
 
@@ -946,7 +960,7 @@ void c6847_hscroll_screen( Environment * _environment, int _direction ) {
 void c6847_back( Environment * _environment ) {
 
     // TODO: implementation
-    
+
 }
 
 void c6847_cline( Environment * _environment, char * _characters ) {
