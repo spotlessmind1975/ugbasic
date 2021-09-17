@@ -58,7 +58,7 @@ void target_install( Environment * _environment ) {
         if (answer == 'Y' || answer == 'y'){
 
             mkdir("asm6809");
-            mkdir("asm6809/bin")
+            mkdir("asm6809\\bin");
 
             printf("Downloading: asm6809 assembler\n\n");
             system( "curl https://ugbasic.iwashere.eu/download/asm6809.exe --output asm6809\\bin\\asm6809.exe" );
