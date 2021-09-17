@@ -412,7 +412,7 @@ int test_variable_string_asc2_tester( TestEnvironment * _te ) {
 
     Variable * result = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
 
-    return strcmp( result->valueString, "42" );
+    return strcmp( result->valueString, "42" ) == 0;
     
 }
 
@@ -441,6 +441,56 @@ printf( "result = %2.2x (%d) [expected 25]\n", result->value, result->value );
     
 }
 
+//===========================================================================
+
+void test_variable_string_left_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * source = variable_define( e, "source", VT_STRING, 0x0 );
+    Variable * size = variable_define( e, "size", VT_WORD, 5 );
+
+    variable_store_string( e, source->name, "chinatown" );
+
+    Variable * result = variable_string_left( e, source->name, size->name );
+
+    _te->trackedVariables[0] = result;
+
+}
+
+int test_variable_string_left_tester( TestEnvironment * _te ) {
+
+    Variable * result = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+
+    return strcmp( result->valueString, "china" ) == 0;
+    
+}
+
+//===========================================================================
+
+void test_variable_string_right_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * source = variable_define( e, "source", VT_STRING, 0x0 );
+    Variable * size = variable_define( e, "size", VT_WORD, 4 );
+
+    variable_store_string( e, source->name, "chinatown" );
+
+    Variable * result = variable_string_right( e, source->name, size->name );
+
+    _te->trackedVariables[0] = result;
+
+}
+
+int test_variable_string_right_tester( TestEnvironment * _te ) {
+
+    Variable * result = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+
+    return strcmp( result->valueString, "town" ) == 0;
+    
+}
+
 void test_variables( ) {
 
     create_test( "variables_add01", &test_variables_add01_payload, &test_variables_add01_tester );    
@@ -455,7 +505,8 @@ void test_variables( ) {
     create_test( "variables_bit", &test_variables_bit_payload, &test_variables_bit_tester );
     create_test( "variable_string_asc", &test_variable_string_asc_payload, &test_variable_string_asc_tester );
     create_test( "variable_string_asc2", &test_variable_string_asc2_payload, &test_variable_string_asc2_tester );
-
     create_test( "powering", &test_powering_payload, &test_powering_tester );
+    create_test( "variable_string_left", &test_variable_string_left_payload, &test_variable_string_left_tester );
+    create_test( "variable_string_right", &test_variable_string_right_payload, &test_variable_string_right_tester );
 
 }
