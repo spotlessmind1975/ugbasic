@@ -74,4 +74,23 @@ void target_initialization( Environment * _environment ) {
 
 void target_linkage( Environment * _environment ) {
 
+    char commandLine[MAX_TEMPORARY_STORAGE];
+    char executableName[32];
+    
+    if( access( "asm6809\\bin\\asm6809.exe", F_OK ) == 0 ) {
+        sprintf(executableName, "%s", "asm6809\\bin\\asm6809.exe" );
+    } else {
+        sprintf(executableName, "%s", "asm6809" );
+    }
+
+    sprintf( commandLine, "%s -o %s -D -e 10240 %s",
+        executableName,
+        _environment->exeFileName, 
+        _environment->asmFileName );
+
+    if ( system( commandLine ) ) {
+        printf("The compilation of assembly program failed.\n\n");
+        printf("Please use option '-I' to install chain tool.\n\n");
+    }; 
+
 }

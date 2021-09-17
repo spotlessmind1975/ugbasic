@@ -40,4 +40,39 @@
 
 void target_install( Environment * _environment ) {
 
+    char answer;
+
+    printf("\nYou have requested to install the chaintool for the Dragon 32 target.\n"); 
+
+    #ifdef _WIN32
+        printf("This implies that \"asm6809 assembler\"\n");
+        printf("will be downloaded from the ugBASIC site, and it will be run automatically.\n");
+        printf("The size of the self-extracting executable is of about 155 KB.n\n\n");
+
+        printf("Do you want to continue [y/N] ?");
+
+        scanf(" %c", &answer);
+
+        printf("\n\n");
+
+        if (answer == 'Y' || answer == 'y'){
+
+            mkdir("asm6809");
+            mkdir("asm6809/bin")
+
+            printf("Downloading: asm6809 assembler\n\n");
+            system( "curl https://ugbasic.iwashere.eu/download/asm6809.exe --output asm6809\\bin\\asm6809.exe" );
+
+            printf("\n\nInstalling: asm6809 assembler\n\n");
+
+            unlink( "cc65-win32.exe" );
+
+    }
+
+    #else
+        printf("This implies that \"asm6809 assembler\"\n");
+        printf("must be installed from the standard GitHub repository:\n\n");
+        printf("https://www.6809.org.uk/git/asm6809.git/\n\n");
+    #endif
+
 }
