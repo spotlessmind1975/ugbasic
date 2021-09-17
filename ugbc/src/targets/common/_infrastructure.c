@@ -443,7 +443,7 @@ Variable * variable_retrieve_or_define( Environment * _environment, char * _name
     Variable * var = variable_find( _environment->tempVariables, _name );
 
     if ( var ){
-        if ( var->type != _type && VT_BITWIDTH( _type ) > 0 && VT_BITWIDTH( var->type ) > 0 ) {
+        if ( VT_BITWIDTH( var->type ) != VT_BITWIDTH( _type ) && VT_BITWIDTH( _type ) > 0 && VT_BITWIDTH( var->type ) > 0 ) {
             var = variable_cast( _environment, var->name, _type );
         }
         return var;
@@ -453,7 +453,7 @@ Variable * variable_retrieve_or_define( Environment * _environment, char * _name
         char parameterName[MAX_TEMPORARY_STORAGE]; sprintf( parameterName, "%s__%s", _environment->procedureName, _name );
         var = variable_find( _environment->variables, parameterName );
         if ( var ) {
-            if ( var->type != _type && VT_BITWIDTH( _type ) > 0 && VT_BITWIDTH( var->type ) > 0 ) {
+            if ( VT_BITWIDTH( var->type ) != VT_BITWIDTH( _type ) && VT_BITWIDTH( _type ) > 0 && VT_BITWIDTH( var->type ) > 0 ) {
                 var = variable_cast( _environment, var->name, _type );
             }
             return var;
@@ -499,7 +499,7 @@ Variable * variable_retrieve_or_define( Environment * _environment, char * _name
     if (!var) {
         CRITICAL_VARIABLE( _name );
     } else {
-        if ( var->type != _type && VT_BITWIDTH( _type ) > 0 && VT_BITWIDTH( var->type ) > 0 ) {
+        if ( VT_BITWIDTH( var->type ) != VT_BITWIDTH( _type ) && VT_BITWIDTH( _type ) > 0 && VT_BITWIDTH( var->type ) > 0 ) {
             var = variable_cast( _environment, var->name, _type );
         }
     }
