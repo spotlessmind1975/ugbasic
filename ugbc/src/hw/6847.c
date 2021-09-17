@@ -75,8 +75,6 @@ static RGBi SYSTEM_PALETTE[] = {
  * @param _result Where to store the result
  */
 void c6847_collision( Environment * _environment, char * _sprite_mask, char * _result ) {
-
-    // TODO: implementation
     
 }
 
@@ -93,8 +91,6 @@ void c6847_collision( Environment * _environment, char * _sprite_mask, char * _r
  */
 void c6847_hit( Environment * _environment, char * _sprite_mask, char * _result ) {
 
-    // TODO: implementation
-    
 }
 
 /**
@@ -108,8 +104,6 @@ void c6847_hit( Environment * _environment, char * _sprite_mask, char * _result 
  */
 void c6847_border_color( Environment * _environment, char * _border_color ) {
 
-    // TODO: implementation
-    
 }
 
 /**
@@ -123,8 +117,6 @@ void c6847_border_color( Environment * _environment, char * _border_color ) {
  * @param _background_color Background color to use
  */
 void c6847_background_color( Environment * _environment, char * _index, char * _background_color ) {
-
-    // TODO: implementation
 
 }
 
@@ -140,8 +132,6 @@ void c6847_background_color( Environment * _environment, char * _index, char * _
  */
 void c6847_sprite_common_color( Environment * _environment, char * _index, char * _common_color ) {
 
-    // TODO: implementation
-    
 }
 
 /**
@@ -161,8 +151,6 @@ void c6847_sprite_common_color( Environment * _environment, char * _index, char 
  */
 void c6847_raster_at( Environment * _environment, char * _label, char * _positionlo, char * _positionhi ) {
 
-    // TODO: implementation
-    
 }
 
 /**
@@ -177,8 +165,6 @@ void c6847_raster_at( Environment * _environment, char * _label, char * _positio
  */
 void c6847_next_raster( Environment * _environment ) {
 
-    // TODO: implementation
-    
 }
 
 /**
@@ -196,9 +182,6 @@ void c6847_next_raster( Environment * _environment ) {
  */
 void c6847_next_raster_at( Environment * _environment, char * _label, char * _positionlo, char * _positionhi ) {
 
-    // TODO: implementation
-    
-
 }
 
 /**
@@ -207,9 +190,6 @@ void c6847_next_raster_at( Environment * _environment, char * _label, char * _po
  * @param _environment Current calling environment
  */
 void c6847_enable_ecm( Environment * _environment ) {
-
-    // TODO: implementation
-    
 
 }
 
@@ -220,9 +200,6 @@ void c6847_enable_ecm( Environment * _environment ) {
  */
 void c6847_disable_ecm( Environment * _environment ) {
 
-    // TODO: implementation
-    
-
 }
 
 /**
@@ -231,9 +208,6 @@ void c6847_disable_ecm( Environment * _environment ) {
  * @param _environment Current calling environment
  */
 void c6847_enable_mcm( Environment * _environment ) {
-
-    // TODO: implementation
-    
 
 }
 
@@ -244,15 +218,9 @@ void c6847_enable_mcm( Environment * _environment ) {
  */
 void c6847_disable_mcm( Environment * _environment ) {
 
-    // TODO: implementation
-    
-
 }
 
 void c6847_bank_select( Environment * _environment, int _bank ) {
-
-    // TODO: implementation
-    
 
 }
 
@@ -716,120 +684,69 @@ void c6847_point( Environment * _environment, char *_x, char *_y, char * _result
 
 void c6847_screen_on( Environment * _environment ) {
 
-    // TODO: implementation
-    
-
 }
 
 void c6847_screen_off( Environment * _environment ) {
-
-    // TODO: implementation
-    
 
 }
 
 void c6847_screen_rows( Environment * _environment, char * _rows ) {
 
-    // TODO: implementation
-    
-
 }
 
 void c6847_sprite_data_from( Environment * _environment, char * _sprite, char * _address ) {
-
-    // TODO: implementation
-    
 
 }
 
 void c6847_sprite_enable( Environment * _environment, char * _sprite ) {
 
-    // TODO: implementation
-    
-
 }
 
 void c6847_sprite_disable( Environment * _environment, char * _sprite ) {
-
-    // TODO: implementation
-    
 
 }
 
 void c6847_sprite_at( Environment * _environment, char * _sprite, char * _x, char * _y ) {
 
-    // TODO: implementation
-    
-
 }
 
 void c6847_sprite_expand_vertical( Environment * _environment, char * _sprite ) {
-
-    // TODO: implementation
-    
 
 }
 
 void c6847_sprite_expand_horizontal( Environment * _environment, char * _sprite ) {
 
-    // TODO: implementation
-    
-
 }
 
 void c6847_sprite_compress_vertical( Environment * _environment, char * _sprite ) {
-
-    // TODO: implementation
-    
 
 }
 
 void c6847_sprite_compress_horizontal( Environment * _environment, char * _sprite ) {
 
-    // TODO: implementation
-    
-
 }
 
 void c6847_sprite_multicolor( Environment * _environment, char * _sprite ) {
-
-    // TODO: implementation
-    
 
 }
 
 void c6847_sprite_monocolor( Environment * _environment, char * _sprite ) {
 
-    // TODO: implementation
-    
-
 }
 
 void c6847_sprite_color( Environment * _environment, char * _sprite, char * _color ) {
-
-    // TODO: implementation
-    
 
 }
 
 void c6847_tiles_at( Environment * _environment, char * _address ) {
 
-    // TODO: implementation
-    
-
 }
 
 void c6847_vertical_scroll( Environment * _environment, char * _displacement ) {
 
-    // TODO: implementation
-    
-
 }
 
 void c6847_horizontal_scroll( Environment * _environment, char * _displacement ) {
-
-    // TODO: implementation
-    
 
 }
 
@@ -969,8 +886,6 @@ void c6847_hscroll_screen( Environment * _environment, int _direction ) {
 }
 
 void c6847_back( Environment * _environment ) {
-
-    // TODO: implementation
 
 }
 
