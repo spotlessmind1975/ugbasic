@@ -61,6 +61,6 @@
 </usermanual> */
 void bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {
 
-    // TODO: implementation
+    c6847_bitmap_enable( _environment, _width, _height, _colors );
 
 }

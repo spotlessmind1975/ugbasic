@@ -49,7 +49,7 @@ CLIPY2    fdb 199
 LASTCOLOR fcb 0
 CURRENTWIDTH      fdb 32
 CURRENTHEIGHT      fdb 16
-CURRENTSL          fcb 0
+CURRENTFRAMESIZE   fdb 32*16
 
 ; ------------------------------------------------------------------------------
 ; BITMAP MODE (MODE #2)
