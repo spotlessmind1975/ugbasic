@@ -2755,7 +2755,7 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     printf("Licensed under the Apache License, Version 2.0 (the \"License\");\n");
     printf("you may not use this program except in compliance with the License.\n\n");
 
-    printf("usage: %s [-c <file>] <source> [<asm>]\n\n", _argv[0] );
+    printf("usage: %s [options] <source>\n\n", _argv[0] );
 
     printf("Options and parameters:\n" );
     printf("\t<source>     Input filename with ugBASIC source code\n" );
