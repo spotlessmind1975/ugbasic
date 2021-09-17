@@ -96,6 +96,21 @@
 #define SAM_V2_CLR outline0("STA $FFC4")
 #define SAM_V2_SET outline0("STA $FFC5")
 
+#define SAM_F0_CLR outline0("STA $FFC6")
+#define SAM_F0_SET outline0("STA $FFC7")
+#define SAM_F1_CLR outline0("STA $FFC8")
+#define SAM_F1_SET outline0("STA $FFC9")
+#define SAM_F2_CLR outline0("STA $FFCA")
+#define SAM_F2_SET outline0("STA $FFCB")
+#define SAM_F3_CLR outline0("STA $FFCC")
+#define SAM_F3_SET outline0("STA $FFCD")
+#define SAM_F4_CLR outline0("STA $FFCE")
+#define SAM_F4_SET outline0("STA $FFCF")
+#define SAM_F5_CLR outline0("STA $FFD0")
+#define SAM_F5_SET outline0("STA $FFD1")
+#define SAM_F6_CLR outline0("STA $FFD2")
+#define SAM_F6_SET outline0("STA $FFD3")
+
 #define GM0_SET     outline0("LDA $FF22"); outline0("ORA #$10"); outline0("STA $FF22");
 #define GM0_CLR     outline0("LDA $FF22"); outline0("ANDA #$EF"); outline0("STA $FF22");
 #define GM1_SET     outline0("LDA $FF22"); outline0("ORA #$20"); outline0("STA $FF22");

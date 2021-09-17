@@ -256,6 +256,10 @@ void c6847_bank_select( Environment * _environment, int _bank ) {
 
 }
 
+#define SET_VIDEOAT_400     SAM_F0_CLR; SAM_F1_CLR; SAM_F2_CLR; SAM_F3_CLR; SAM_F4_CLR; SAM_F5_CLR; SAM_F6_CLR; SAM_F1_SET;
+#define SET_VIDEOAT_600     SAM_F0_CLR; SAM_F1_CLR; SAM_F2_CLR; SAM_F3_CLR; SAM_F4_CLR; SAM_F5_CLR; SAM_F6_CLR; SAM_F0_SET; SAM_F1_SET; 
+#define SET_VIDEOAT_C00     SAM_F0_CLR; SAM_F1_CLR; SAM_F2_CLR; SAM_F3_CLR; SAM_F4_CLR; SAM_F5_CLR; SAM_F6_CLR; SAM_F1_SET; SAM_F2_SET; 
+
 int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
 
     deploy( c6847varsDeployed, src_hw_6847_vars_asm );
@@ -272,6 +276,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
         // switching to semigraphics – 4, – 8, – 12, or – 24.
         case TILEMAP_MODE_INTERNAL:         // Alphanumeric Internal	32 × 16	2	512
             // Internal alphanumeric 0 X X 0 0 0 0 32x16 ( 5x7 pixel ch)
+            SET_VIDEOAT_400;
             VDG_TEXT;
             SAM_V2_CLR;
             SAM_V1_CLR;
@@ -279,14 +284,17 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             GM2_CLR;
             GM1_CLR;
             GM0_CLR;
+            cpu_store_16bit( _environment, "CLIPX1", 0 );
+            cpu_store_16bit( _environment, "CLIPX2", 31 );
+            cpu_store_16bit( _environment, "CLIPY1", 0 );
+            cpu_store_16bit( _environment, "CLIPY2", 15 );
             cpu_store_16bit( _environment, "CURRENTWIDTH", 32 );
             cpu_store_16bit( _environment, "CURRENTHEIGHT", 16 );
-            cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
-            cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 32 );
             cpu_store_8bit( _environment, "CURRENTSL", 32 );
             break;
         case TILEMAP_MODE_EXTERNAL:         // Alphanumeric External	32 × 16	2	512
             // External alphanumeric 0 X X 1 0 0 0 32x16 (8x12 pixel ch)
+            SET_VIDEOAT_400;
             VDG_TEXT;
             SAM_V2_CLR;
             SAM_V1_CLR;
@@ -294,10 +302,12 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             GM2_CLR;
             GM1_CLR;
             GM0_SET;
+            cpu_store_16bit( _environment, "CLIPX1", 0 );
+            cpu_store_16bit( _environment, "CLIPX2", 31 );
+            cpu_store_16bit( _environment, "CLIPY1", 0 );
+            cpu_store_16bit( _environment, "CLIPY2", 15 );
             cpu_store_16bit( _environment, "CURRENTWIDTH", 32 );
             cpu_store_16bit( _environment, "CURRENTHEIGHT", 16 );
-            cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
-            cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 32 );
             cpu_store_8bit( _environment, "CURRENTSL", 32 );
             break;
         // The ALPHA SEMIGRAPHICS – 4 mode translates bits 0 through 3 into a 4 x 6 dot 
@@ -308,6 +318,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
         // dot-clocks wide by six lines high.
         case TILEMAP_MODE_SEMIGRAPHICS4:    // Semigraphics 4	        64 × 32	8	512
             // Semigraphic-4 0 X X 0 0 0 0 32x16 ch, 64x32 pixels
+            SET_VIDEOAT_400;
             VDG_TEXT;
             SAM_V2_CLR;
             SAM_V1_CLR;
@@ -315,10 +326,12 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             GM2_CLR;
             GM1_CLR;
             GM0_CLR;
+            cpu_store_16bit( _environment, "CLIPX1", 0 );
+            cpu_store_16bit( _environment, "CLIPX2", 63 );
+            cpu_store_16bit( _environment, "CLIPY1", 0 );
+            cpu_store_16bit( _environment, "CLIPY2", 31 );
             cpu_store_16bit( _environment, "CURRENTWIDTH", 64 );
             cpu_store_16bit( _environment, "CURRENTHEIGHT", 32 );
-            cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
-            cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 32 );
             cpu_store_8bit( _environment, "CURRENTSL", 32 );
             break;
         // The ALPHA SEMIGRAPHICS – 6 mode maps six 4 x 4 dot elements into the standard
@@ -328,6 +341,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
         // The element area is four dot-clocks wide by four lines high.
         case TILEMAP_MODE_SEMIGRAPHICS6:    // Semigraphics 6	        64 × 48	4	512
             // Semigraphic-6 0 X X 1 0 0 0 64x48 pixels
+            SET_VIDEOAT_400;
             VDG_TEXT;
             SAM_V2_CLR;
             SAM_V1_CLR;
@@ -335,10 +349,12 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             GM2_CLR;
             GM1_CLR;
             GM0_SET;
+            cpu_store_16bit( _environment, "CLIPX1", 0 );
+            cpu_store_16bit( _environment, "CLIPX2", 63 );
+            cpu_store_16bit( _environment, "CLIPY1", 0 );
+            cpu_store_16bit( _environment, "CLIPY2", 47 );
             cpu_store_16bit( _environment, "CURRENTWIDTH", 64 );
             cpu_store_16bit( _environment, "CURRENTHEIGHT", 48 );
-            cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
-            cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 32 );
             cpu_store_8bit( _environment, "CURRENTSL", 32 );
             break;
         // The ALPHA SEMIGRAPHICS – 8 mode maps eight 4 x 3 dot elements into the 
@@ -348,10 +364,12 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
         // available in the display area. The element area is four dot-clocks wide 
         // by three lines high.
         case TILEMAP_MODE_SEMIGRAPHICS8:    // Semigraphics 8	        64 × 64	2	512
+            cpu_store_16bit( _environment, "CLIPX1", 0 );
+            cpu_store_16bit( _environment, "CLIPX2", 63 );
+            cpu_store_16bit( _environment, "CLIPY1", 0 );
+            cpu_store_16bit( _environment, "CLIPY2", 63 );
             cpu_store_16bit( _environment, "CURRENTWIDTH", 64 );
             cpu_store_16bit( _environment, "CURRENTHEIGHT", 64 );
-            cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
-            cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 32 );
             cpu_store_8bit( _environment, "CURRENTSL", 32 );
             break;
         // The ALPHA SEMIGRAPHICS – 12 mode maps twelve 4 x 2 dot elements into the 
@@ -360,10 +378,12 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
         // display memory is required. A density of 64 x 96 elements is available in the
         // display area. The element area is four dot-clocks wide by two lineshigh.
         case TILEMAP_MODE_SEMIGRAPHICS12:    // Semigraphics 6	        64 × 96 1	3072
+            cpu_store_16bit( _environment, "CLIPX1", 0 );
+            cpu_store_16bit( _environment, "CLIPX2", 63 );
+            cpu_store_16bit( _environment, "CLIPY1", 0 );
+            cpu_store_16bit( _environment, "CLIPY2", 95 );
             cpu_store_16bit( _environment, "CURRENTWIDTH", 64 );
             cpu_store_16bit( _environment, "CURRENTHEIGHT", 96 );
-            cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
-            cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 32 );
             cpu_store_8bit( _environment, "CURRENTSL", 32 );
             break;
         // The ALPHA SEMIGRAPHICS – 24 mode maps twenty-four 4 x 1 dot elements into 
@@ -373,10 +393,12 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
         // elements is available in the display are. The element area is four 
         // dot-clocks wide by one line high.
         case TILEMAP_MODE_SEMIGRAPHICS24:    // Semigraphics 6	        64 × 96 1	3072
+            cpu_store_16bit( _environment, "CLIPX1", 0 );
+            cpu_store_16bit( _environment, "CLIPX2", 63 );
+            cpu_store_16bit( _environment, "CLIPY1", 0 );
+            cpu_store_16bit( _environment, "CLIPY2", 191 );
             cpu_store_16bit( _environment, "CURRENTWIDTH", 64 );
             cpu_store_16bit( _environment, "CURRENTHEIGHT", 192 );
-            cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
-            cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 32 );
             cpu_store_8bit( _environment, "CURRENTSL", 32 );
             break;
         // The 64 x 64 Color Graphics mode generates a display matrix of 64 
@@ -385,6 +407,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
         // four dot-clocks by three scan lines.
         case BITMAP_MODE_COLOR1:            // Color Graphics 1	64 × 64	4	1024
             // Full graphic 1-C 1 0 0 0 0 0 1 64x64x4 $400(1024)
+            SET_VIDEOAT_C00;
             VDG_GRAPH;
             SAM_V2_CLR;
             SAM_V1_CLR;
@@ -392,10 +415,12 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             GM2_CLR;
             GM1_CLR;
             GM0_CLR;
+            cpu_store_16bit( _environment, "CLIPX1", 0 );
+            cpu_store_16bit( _environment, "CLIPX2", 63 );
+            cpu_store_16bit( _environment, "CLIPY1", 0 );
+            cpu_store_16bit( _environment, "CLIPY2", 63 );
             cpu_store_16bit( _environment, "CURRENTWIDTH", 64 );
             cpu_store_16bit( _environment, "CURRENTHEIGHT", 64 );
-            cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
-            cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 32 );
             cpu_store_8bit( _environment, "CURRENTSL", 32 );
             break;
         // The 128 x 64 Graphics Mode generates a matrix 128 elements wide 
@@ -405,6 +430,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
         // pixel equals two dotclocks by three scan lines.
         case BITMAP_MODE_RESOLUTION1:       // Resolution Graphics 1	128 × 64	1 + Black	1024
             // Full graphic 1-R 1 0 0 1 0 0 1 128x64x2 $400(1024)
+            SET_VIDEOAT_C00;
             VDG_GRAPH;
             SAM_V2_CLR;
             SAM_V1_CLR;
@@ -412,10 +438,12 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             GM2_CLR;
             GM1_CLR;
             GM0_SET;
+            cpu_store_16bit( _environment, "CLIPX1", 0 );
+            cpu_store_16bit( _environment, "CLIPX2", 63 );
+            cpu_store_16bit( _environment, "CLIPY1", 0 );
+            cpu_store_16bit( _environment, "CLIPY2", 63 );
             cpu_store_16bit( _environment, "CURRENTWIDTH", 64 );
             cpu_store_16bit( _environment, "CURRENTHEIGHT", 64 );
-            cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
-            cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 32 );
             cpu_store_8bit( _environment, "CURRENTSL", 32 );
             break;
         // The 128 x 64 Color Graphics mode generates a display matrix 128 
@@ -424,6 +452,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
         // two dot-clocks by three scan lines.
         case BITMAP_MODE_COLOR2:            // Color Graphics 2	128 × 64	4	2048
             // Full graphic 2-C 1 0 1 0 0 1 0 128x64x4 $800(2048)
+            SET_VIDEOAT_C00;
             VDG_GRAPH;
             SAM_V2_CLR;
             SAM_V1_SET;
@@ -431,10 +460,12 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             GM2_CLR;
             GM1_SET;
             GM0_CLR;
+            cpu_store_16bit( _environment, "CLIPX1", 0 );
+            cpu_store_16bit( _environment, "CLIPX2", 127 );
+            cpu_store_16bit( _environment, "CLIPY1", 0 );
+            cpu_store_16bit( _environment, "CLIPY2", 63 );
             cpu_store_16bit( _environment, "CURRENTWIDTH", 128 );
             cpu_store_16bit( _environment, "CURRENTHEIGHT", 64 );
-            cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
-            cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 32 );
             cpu_store_8bit( _environment, "CURRENTSL", 32 );
             break;
         // The 128 x 96 Graphics mode generates a display matrix 128 
@@ -444,6 +475,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
         // is required. Each pixel equals two dot-clocks by two scan lines.
         case BITMAP_MODE_RESOLUTION2:       // Resolution Graphics 2 128 × 96	1 + Black	1536
             // Full graphic 2-R 1 0 1 1 0 1 1 128x96x2 $600(1536)
+            SET_VIDEOAT_C00;
             VDG_GRAPH;
             SAM_V2_CLR;
             SAM_V1_SET;
@@ -451,10 +483,12 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             GM2_CLR;
             GM1_SET;
             GM0_SET;
+            cpu_store_16bit( _environment, "CLIPX1", 0 );
+            cpu_store_16bit( _environment, "CLIPX2", 127 );
+            cpu_store_16bit( _environment, "CLIPY1", 0 );
+            cpu_store_16bit( _environment, "CLIPY2", 95 );
             cpu_store_16bit( _environment, "CURRENTWIDTH", 128 );
             cpu_store_16bit( _environment, "CURRENTHEIGHT", 96 );
-            cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
-            cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 32 );
             cpu_store_8bit( _environment, "CURRENTSL", 32 );
             break;
         // The 128 x 96 Color Graphics mode generates a display 128 elements 
@@ -463,6 +497,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
         // dot-clocks by two scan lines.
         case BITMAP_MODE_COLOR3:            // Color Graphics 3	128 × 96	4	3072
             // Full graphic 3-C 1 1 0 0 1 0 0 128x96x4 $C00(3072)
+            SET_VIDEOAT_C00;
             VDG_GRAPH;
             SAM_V2_SET;
             SAM_V1_CLR;
@@ -470,10 +505,12 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             GM2_SET;
             GM1_CLR;
             GM0_CLR;
+            cpu_store_16bit( _environment, "CLIPX1", 0 );
+            cpu_store_16bit( _environment, "CLIPX2", 127 );
+            cpu_store_16bit( _environment, "CLIPY1", 0 );
+            cpu_store_16bit( _environment, "CLIPY2", 95 );
             cpu_store_16bit( _environment, "CURRENTWIDTH", 128 );
             cpu_store_16bit( _environment, "CURRENTHEIGHT", 96 );
-            cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
-            cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 32 );
             cpu_store_8bit( _environment, "CURRENTSL", 32 );
             break;
         // The 128 x 192 Graphics mode generates a display matrix 128 elements 
@@ -483,6 +520,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
         // equals two dot-clocks by one scan line.
         case BITMAP_MODE_RESOLUTION3:       // Resolution Graphics 3	128 × 192	1 + Black	3072
             // Full graphic 3-R 1 1 0 1 1 0 1 128x192x2 $C00(3072)
+            SET_VIDEOAT_C00;
             VDG_GRAPH;
             SAM_V2_SET;
             SAM_V1_CLR;
@@ -490,10 +528,12 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             GM2_SET;
             GM1_CLR;
             GM0_SET;
+            cpu_store_16bit( _environment, "CLIPX1", 0 );
+            cpu_store_16bit( _environment, "CLIPX2", 127 );
+            cpu_store_16bit( _environment, "CLIPY1", 0 );
+            cpu_store_16bit( _environment, "CLIPY2", 95 );
             cpu_store_16bit( _environment, "CURRENTWIDTH", 128 );
             cpu_store_16bit( _environment, "CURRENTHEIGHT", 96 );
-            cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
-            cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 32 );
             cpu_store_8bit( _environment, "CURRENTSL", 32 );
             break;
         // The 128 x 192 Color Graphics mode generates a display 128 elements 
@@ -502,14 +542,17 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
         // by one scan line.
         case BITMAP_MODE_COLOR6:            // Color Graphics 6	128 × 192	4	6144
             // Full graphic 6-C 1 1 1 0 1 1 0 128x192x4 $1800(6144)
+            SET_VIDEOAT_C00;
             VDG_GRAPH;
             SAM_V2_SET;
             SAM_V1_SET;
             SAM_V0_CLR;
+            cpu_store_16bit( _environment, "CLIPX1", 0 );
+            cpu_store_16bit( _environment, "CLIPX2", 127 );
+            cpu_store_16bit( _environment, "CLIPY1", 0 );
+            cpu_store_16bit( _environment, "CLIPY2", 191 );
             cpu_store_16bit( _environment, "CURRENTWIDTH", 128 );
             cpu_store_16bit( _environment, "CURRENTHEIGHT", 192 );
-            cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
-            cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 32 );
             cpu_store_8bit( _environment, "CURRENTSL", 32 );
             break;
         // The 256 x 192 Graphics mode generates a display 256 elements wide by 
@@ -519,6 +562,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
         // dot-clock by one scan line.
         case BITMAP_MODE_RESOLUTION6:       // Resolution Graphics 6	256 × 192	1 + Black	6144            break;
             // Full graphic 6-R 1 1 1 1 1 1 0 256x192x2 $1800(6144)
+            SET_VIDEOAT_C00;
             VDG_GRAPH;
             SAM_V2_SET;
             SAM_V1_SET;
@@ -526,15 +570,18 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             SAM_V2_SET;
             SAM_V1_SET;
             SAM_V0_SET;
+            cpu_store_16bit( _environment, "CLIPX1", 0 );
+            cpu_store_16bit( _environment, "CLIPX2", 127 );
+            cpu_store_16bit( _environment, "CLIPY1", 0 );
+            cpu_store_16bit( _environment, "CLIPY2", 191 );
             cpu_store_16bit( _environment, "CURRENTWIDTH", 128 );
             cpu_store_16bit( _environment, "CURRENTHEIGHT", 192 );
-            cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
-            cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 32 );
             cpu_store_8bit( _environment, "CURRENTSL", 32 );
             break;
         default:
             CRITICAL_SCREEN_UNSUPPORTED( _screen_mode->id );
     }
+
 
 }
 
@@ -589,22 +636,56 @@ void c6847_textmap_at( Environment * _environment, char * _address ) {
 
 void c6847_point_at_int( Environment * _environment, int _x, int _y ) {
 
-    // TODO: implementation
+    deploy( c6847varsDeployed, src_hw_6847_vars_asm );
+    deploy( plotDeployed, src_hw_6847_plot_asm );
+    
+    outline1("LDX %2.2x", (_x & 0xffff ) );
+    outline0("STX PLOTX");
+    outline1("LDA %2.2x", ( _y & 0xff ) );
+    outline0("STA PLOTY");
+    outline0("LDA #1");
+    outline0("STA PLOTM");
+    outline0("JSR PLOT");
     
 
 }
 
 void c6847_point_at_vars( Environment * _environment, char *_x, char *_y ) {
 
-    // TODO: implementation
+    Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
+    Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
+
+    deploy( c6847varsDeployed, src_hw_6847_vars_asm );
+    deploy( plotDeployed, src_hw_6847_plot_asm );
     
+    outline1("LDX %s", x->realName );
+    outline0("STX PLOTX");
+    outline1("LDD %s", y->realName );
+    outline0("STB PLOTY");
+    outline0("LDA #1");
+    outline0("STA PLOTM");
+    outline0("JSR PLOT");
 
 }
 
 void c6847_point( Environment * _environment, char *_x, char *_y, char * _result ) {
 
-    // TODO: implementation
+    Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
+    Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
+    Variable * result = variable_retrieve_or_define( _environment, _result, VT_BYTE, 0 );
+
+    deploy( c6847varsDeployed, src_hw_6847_vars_asm );
+    deploy( plotDeployed, src_hw_6847_plot_asm );
     
+    outline1("LDD %s", x->realName );
+    outline0("STD PLOTX");
+    outline1("LDD %s", y->realName );
+    outline0("STB PLOTY");
+    outline0("LDA #3");
+    outline0("STA PLOTM");
+    outline0("JSR PLOT");
+    outline0("LDA PLOTM");
+    outline1("STA %s", result->realName );    
 
 }
 
