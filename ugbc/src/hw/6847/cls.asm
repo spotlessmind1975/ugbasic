@@ -114,17 +114,9 @@ CLS11
 CLS13
     LDA _PAPER
     ANDA #$03
-    TFR A, B
-    LSLA
-    LSLA
-    ORB A
-    LSLA
-    LSLA
-    ORB A
-    LSLA
-    LSLA
-    ORB A
-    TFR B, A
+    LDB #$aa
+    MUL
+TUTORE
     JMP CLSG
 
 CLS8
