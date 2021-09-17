@@ -57,8 +57,6 @@
 </usermanual> */
 void screen_vertical_scroll( Environment * _environment, int _displacement ) {
 
-    // TODO: implementation
-
 }
 
 /**
@@ -77,7 +75,5 @@ void screen_vertical_scroll( Environment * _environment, int _displacement ) {
 @keyword SCREEN VERTICAL SCROLL
 </usermanual> */
 void screen_vertical_scroll_var( Environment * _environment, char * _displacement ) {
-
-    // TODO: implementation
 
 }

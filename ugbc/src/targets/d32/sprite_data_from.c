@@ -56,8 +56,6 @@
 </usermanual> */
 void sprite_data_from( Environment * _environment, int _sprite, int _address ) {
 
-    // TODO: implementation
-
 }
 
 /**
@@ -75,8 +73,6 @@ void sprite_data_from( Environment * _environment, int _sprite, int _address ) {
 @keyword SPRITE DATA FROM
 </usermanual> */
 void sprite_data_from_vars( Environment * _environment, char * _sprite, char * _address ) {
-
-    // TODO: implementation
 
 }
 

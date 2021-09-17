@@ -54,8 +54,6 @@
 </usermanual> */
 void sprite_disable( Environment * _environment, int _sprite ) {
 
-    // TODO: implementation
-
 }
 
 /**
@@ -71,7 +69,5 @@ void sprite_disable( Environment * _environment, int _sprite ) {
 @keyword SPRITE DISABLE
 </usermanual> */
 void sprite_disable_var( Environment * _environment, char * _sprite ) {
-
-    // TODO: implementation
 
 }

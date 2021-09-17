@@ -55,8 +55,6 @@
 </usermanual> */
 void sprite_color( Environment * _environment, int _sprite, int _color ) {
 
-    // TODO: implementation
-
 }
 
 /**
@@ -75,7 +73,5 @@ void sprite_color( Environment * _environment, int _sprite, int _color ) {
 @target d32
 </usermanual> */
 void sprite_color_vars( Environment * _environment, char * _sprite, char * _color ) {
-
-    // TODO: implementation
 
 }

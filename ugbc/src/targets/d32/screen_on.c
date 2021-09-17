@@ -52,7 +52,5 @@
 </usermanual> */
 void screen_on( Environment * _environment ) {
 
-    // TODO: implementation
-
 }
 

@@ -50,8 +50,21 @@
 </usermanual> */
 Variable * get_pen( Environment * _environment, char * _color ) {
 
-    // TODO: implementation
+    Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_WHITE );
 
-    FUNCTION_STUB( VT_DSTRING )
+    Variable * result = variable_temporary( _environment, VT_DSTRING, 0 );
+    Variable * address = variable_temporary( _environment, VT_ADDRESS, 0 );
+    Variable * size = variable_temporary( _environment, VT_BYTE, 0 );
+
+    char resultString[MAX_TEMPORARY_STORAGE]; sprintf( resultString, "\x1 " );
+
+    variable_store_string(_environment, result->name, resultString );
+
+    cpu_dswrite( _environment, result->realName );
+    cpu_dsdescriptor( _environment, result->realName, address->realName, size->realName );
+
+    cpu_move_8bit_with_offset(_environment, color->realName, address->realName, 1 );
+        
+    return result;
 
 }

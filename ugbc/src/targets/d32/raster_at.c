@@ -59,8 +59,6 @@
 </usermanual> */
 void raster_at( Environment * _environment, char * _label, int _position ) {
 
-    // TODO: implementation
-
 }
 
 /**
@@ -81,8 +79,6 @@ void raster_at( Environment * _environment, char * _label, int _position ) {
 @keyword RASTER AT
 </usermanual> */
 void raster_at_var( Environment * _environment, char * _label, char * _position ) {
-
-    // TODO: implementation
 
 }
 

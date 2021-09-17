@@ -55,7 +55,5 @@ Turn off the screen.
 </usermanual> */
 void screen_off( Environment * _environment ) {
 
-    // TODO: implementation
-
 }
 

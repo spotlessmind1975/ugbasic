@@ -56,8 +56,6 @@
 </usermanual> */
 void screen_rows( Environment * _environment, int _rows ) {
 
-    // TODO: implementation
-
 }
 
 /**
@@ -75,7 +73,5 @@ void screen_rows( Environment * _environment, int _rows ) {
 @keyword SCREEN ROWS
 </usermanual> */
 void screen_rows_var( Environment * _environment, char * _rows ) {
-
-    // TODO: implementation
 
 }

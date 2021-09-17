@@ -54,8 +54,6 @@
 </usermanual> */
 void sprite_compress_vertical( Environment * _environment, int _sprite ) {
 
-    // TODO: implementation
-
 }
 
 /**
@@ -71,7 +69,5 @@ void sprite_compress_vertical( Environment * _environment, int _sprite ) {
 @keyword SPRITE COMPRESS
 </usermanual> */
 void sprite_compress_vertical_var( Environment * _environment, char * _sprite ) {
-
-    // TODO: implementation
 
 }
