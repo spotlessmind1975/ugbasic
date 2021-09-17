@@ -74,9 +74,9 @@ Variable * sqroot( Environment * _environment, char * _value ) {
         case 32:
             CRITICAL_SQR_UNSUPPORTED( _value, DATATYPE_AS_STRING[value->type] );
         case 16:
-            if ( VT_SIGNED( value->type ) ) {
-                CRITICAL_SQR_UNSUPPORTED( _value, DATATYPE_AS_STRING[value->type] );
-            }
+            // if ( VT_SIGNED( value->type ) ) {
+            //     CRITICAL_SQR_UNSUPPORTED( _value, DATATYPE_AS_STRING[value->type] );
+            // }
             cpu_sqroot( _environment, value->realName, result->realName );
             break;
         case 8:
