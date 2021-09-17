@@ -65,6 +65,7 @@ extern char DATATYPE_AS_STRING[][16];
 %token <string> BufferDefinition
 
 %type <string> expr term modula factor exponential expr_math
+%type <integer> const_expr const_term const_modula const_factor const_expr_math
 %type <integer> direct_integer
 %type <string> random_definition_simple random_definition
 %type <string> color_enumeration
@@ -87,6 +88,81 @@ extern char DATATYPE_AS_STRING[][16];
 %left AND OR OP_EQUAL OP_DISEQUAL OP_LT OP_LTE OP_GT OP_GTE
 
 %%
+
+const_expr : 
+      const_expr_math
+    | const_expr_math AND const_expr_math {        
+        $$ = ( $1 && $3 );
+    } 
+    | const_expr_math OR const_expr_math {
+        $$ = ( $1 || $3 );
+    } 
+    | const_expr_math OP_EQUAL const_expr_math {
+        $$ = ( $1 == $3 );
+    }
+    | const_expr_math OP_DISEQUAL const_expr_math {
+        $$ = ( $1 != $3 );
+    }
+    | const_expr_math OP_LT const_expr_math {
+        $$ = ( $1 < $3 );
+    }
+    | const_expr_math OP_LTE const_expr_math {
+        $$ = ( $1 <= $3 );
+    }
+    | const_expr_math OP_GT const_expr_math {
+        $$ = ( $1 > $3 );
+    }
+    | const_expr_math OP_GTE const_expr_math {
+        $$ = ( $1 >= $3 );
+    }
+    | NOT expr {
+        $$ = ( ! $2 );
+    }
+    ;
+    
+const_expr_math: 
+      const_term
+    | const_expr_math OP_PLUS const_term {
+        $$ = $1 + $3;
+    }
+    | const_expr_math OP_MINUS const_term {
+        $$ = $1 - $3;
+    }
+    ;
+
+const_term:
+      const_modula
+    | const_term MOD const_modula {
+        $$ = ( $1 % $3 );
+    }
+    ;
+
+const_modula: 
+      const_factor
+    | const_modula OP_MULTIPLICATION const_factor {
+        $$ = $1 * $3;
+    } 
+    | const_modula OP_DIVISION const_factor {
+        $$ = $1 / $3;
+    } 
+    ;
+
+const_factor: 
+        Integer
+      | OP const_expr CP {
+          $$ = $2;
+      }
+      | Identifier {
+          Constant * c = constant_find( ((Environment *)_environment)->constants, $1 );
+          if ( c == NULL ) {
+              CRITICAL_UNDEFINED_CONSTANT( $1 );
+          }
+          if ( c->valueString != NULL ) {
+              CRITICAL_TYPE_MISMATCH_CONSTANT_NUMERIC( $1 );
+          }
+          $$ = c->value;
+      }
+      ;
 
 expr : 
       expr_math
@@ -2519,6 +2595,9 @@ statement:
   | END PROC {
       end_procedure( _environment, NULL );
   }
+  | END PROCEDURE {
+      end_procedure( _environment, NULL );
+  }
   | END PROC OSP expr CSP {
       end_procedure( _environment, $4 );
   }
@@ -2618,11 +2697,11 @@ statement:
         variable_string_mid_assign( _environment, $3, $5, $7, $10 );
   }
   | DIM dim_definitions
-  | CONST Identifier OP_ASSIGN Integer {
-        const_define_numeric( _environment, $2, $4 );
-  }
   | CONST Identifier OP_ASSIGN String {
         const_define_string( _environment, $2, $4 );
+  }
+  | CONST Identifier OP_ASSIGN const_expr {
+        const_define_numeric( _environment, $2, $4 );
   }
   | TI OP_ASSIGN expr {
         set_timer( _environment, $3 );
