@@ -439,10 +439,10 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             GM1_CLR;
             GM0_SET;
             cpu_store_16bit( _environment, "CLIPX1", 0 );
-            cpu_store_16bit( _environment, "CLIPX2", 63 );
+            cpu_store_16bit( _environment, "CLIPX2", 127 );
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 63 );
-            cpu_store_16bit( _environment, "CURRENTWIDTH", 64 );
+            cpu_store_16bit( _environment, "CURRENTWIDTH", 128 );
             cpu_store_16bit( _environment, "CURRENTHEIGHT", 64 );
             cpu_store_8bit( _environment, "CURRENTSL", 32 );
             break;
@@ -531,9 +531,9 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             cpu_store_16bit( _environment, "CLIPX1", 0 );
             cpu_store_16bit( _environment, "CLIPX2", 127 );
             cpu_store_16bit( _environment, "CLIPY1", 0 );
-            cpu_store_16bit( _environment, "CLIPY2", 95 );
+            cpu_store_16bit( _environment, "CLIPY2", 191 );
             cpu_store_16bit( _environment, "CURRENTWIDTH", 128 );
-            cpu_store_16bit( _environment, "CURRENTHEIGHT", 96 );
+            cpu_store_16bit( _environment, "CURRENTHEIGHT", 192 );
             cpu_store_8bit( _environment, "CURRENTSL", 32 );
             break;
         // The 128 x 192 Color Graphics mode generates a display 128 elements 
@@ -571,10 +571,10 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             SAM_V1_SET;
             SAM_V0_SET;
             cpu_store_16bit( _environment, "CLIPX1", 0 );
-            cpu_store_16bit( _environment, "CLIPX2", 127 );
+            cpu_store_16bit( _environment, "CLIPX2", 255 );
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 191 );
-            cpu_store_16bit( _environment, "CURRENTWIDTH", 128 );
+            cpu_store_16bit( _environment, "CURRENTWIDTH", 256 );
             cpu_store_16bit( _environment, "CURRENTHEIGHT", 192 );
             cpu_store_8bit( _environment, "CURRENTSL", 32 );
             break;
@@ -639,10 +639,10 @@ void c6847_point_at_int( Environment * _environment, int _x, int _y ) {
     deploy( c6847varsDeployed, src_hw_6847_vars_asm );
     deploy( plotDeployed, src_hw_6847_plot_asm );
     
-    outline1("LDX %2.2x", (_x & 0xffff ) );
+    outline1("LDX %4.4x", (_x & 0xffff ) );
     outline0("STX PLOTX");
-    outline1("LDA %2.2x", ( _y & 0xff ) );
-    outline0("STA PLOTY");
+    outline1("LDD %4.4x", ( _y & 0xffff ) );
+    outline0("STD PLOTY");
     outline0("LDA #1");
     outline0("STA PLOTM");
     outline0("JSR PLOT");
@@ -661,7 +661,7 @@ void c6847_point_at_vars( Environment * _environment, char *_x, char *_y ) {
     outline1("LDX %s", x->realName );
     outline0("STX PLOTX");
     outline1("LDD %s", y->realName );
-    outline0("STB PLOTY");
+    outline0("STD PLOTY");
     outline0("LDA #1");
     outline0("STA PLOTM");
     outline0("JSR PLOT");
@@ -680,7 +680,7 @@ void c6847_point( Environment * _environment, char *_x, char *_y, char * _result
     outline1("LDD %s", x->realName );
     outline0("STD PLOTX");
     outline1("LDD %s", y->realName );
-    outline0("STB PLOTY");
+    outline0("STD PLOTY");
     outline0("LDA #3");
     outline0("STA PLOTM");
     outline0("JSR PLOT");

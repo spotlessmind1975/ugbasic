@@ -8,39 +8,22 @@ PLOTAMA EQU $47
 
 PLOT
 
-    LDA PLOTY
-    CMPA CLIPY2+1
-    BLT PLOTCLIP2
-    BEQ PLOTCLIP2
+    LDD PLOTY
+    CMPD CLIPY2
+    BLE PLOTCLIP2
     JMP PLOTP
 PLOTCLIP2
-    CMPA CLIPY1+1
-    BEQ PLOTCLIP3
-    BGT PLOTCLIP3
+    CMPD CLIPY1
+    BGE PLOTCLIP3
     JMP PLOTP
 PLOTCLIP3
-    LDA PLOTX
-    CMPA CLIPX2
-    BLT PLOTCLIP4
-    BEQ PLOTCLIP3B
-    JMP PLOTP
-PLOTCLIP3B
-    LDA PLOTX+1
-    CMPA CLIPX2+1
-    BLT PLOTCLIP4
-    BEQ PLOTCLIP4
+    LDD PLOTX
+    CMPD CLIPX2
+    BLE PLOTCLIP4
     JMP PLOTP
 PLOTCLIP4
-    LDA PLOTX
-    CMPA CLIPX1
-    BGT PLOTCLIP5
-    BEQ PLOTCLIP4B
-    JMP PLOTP
-PLOTCLIP4B
-    LDA PLOTX+1
-    CMPA CLIPX1+1
-    BGT PLOTCLIP5
-    BEQ PLOTCLIP5
+    CMPD CLIPX1
+    BGE PLOTCLIP5
     JMP PLOTP
 PLOTCLIP5
 
@@ -162,8 +145,7 @@ PLOT6
 PLOT7
 
     LDX BITMAPADDRESS
-    LDB PLOTY
-    LDA #0
+    LDD PLOTY
     LSLB
     ROLA
     LSLB
@@ -196,13 +178,283 @@ PLOT7
 
     JMP PLOTCOMMON
 
+; The 128 x 64 Graphics Mode generates a matrix 128 elements wide 
+; by 64 elements high. Each element may be either ON or OFF. However, 
+; the entire display may be one of two colors, selected by using the 
+; color set select pin. A 1K x 8 display memory is required. Each 
+; pixel equals two dotclocks by three scan lines.
 PLOT8
+    LDX BITMAPADDRESS
+    LDD PLOTY
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LEAX D, X
+
+    LDD PLOTX
+    LSRA
+    RORB
+    LSRA
+    RORB
+    LSRA
+    RORB
+    LEAX D, X
+
+    LDY #PLOTORBIT
+    LDB PLOTX+1
+    ANDB #$07
+    LEAY B, Y
+
+    LDU #PLOTANDBIT
+    LEAU B, U
+
+    JMP PLOTCOMMON
+
+; The 128 x 64 Color Graphics mode generates a display matrix 128 
+; elements wide by 64 elements high. Each element may be one of four 
+; colors. A 2K x 8 display memory is required. Each pixel equals
+; two dot-clocks by three scan lines.
 PLOT9
+
+    LDX BITMAPADDRESS
+    LDD PLOTY
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LEAX D, X
+
+    LDD PLOTX
+    LSRA
+    RORB
+    LSRA
+    RORB
+    LEAX D, X
+
+    LDY #PLOTORBIT40
+    LDB _PEN
+    ANDB #$03
+    LSLB
+    LSLB
+    LEAY B, Y
+    LDB PLOTX+1
+    ANDB #$03
+    LEAY B, Y
+
+    LDU #PLOTANDBIT4
+    LEAU B, U
+
+    JMP PLOTCOMMON
+
+; The 128 x 96 Graphics mode generates a display matrix 128 
+; elements wide by 96 elements high. Each element may be either 
+; ON or OFF. However, the entire display may be one of two colors
+; selected by using the color select pin. A 2K x 8 display memory 
+; is required. Each pixel equals two dot-clocks by two scan lines.
 PLOT10
+
+    LDX BITMAPADDRESS
+    LDD PLOTY
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LEAX D, X
+
+    LDD PLOTX
+    LSRA
+    RORB
+    LSRA
+    RORB
+    LSRA
+    RORB
+    LEAX D, X
+
+    LDY #PLOTORBIT
+    LDB PLOTX+1
+    ANDB #$07
+    LEAY B, Y
+
+    LDU #PLOTANDBIT
+    LEAU B, U
+
+    JMP PLOTCOMMON
+
+; The 128 x 96 Color Graphics mode generates a display 128 elements 
+; wide by 96 elements high. Each element may be one of four colors. 
+; A 3K x 8 display memory is required. Each pixel equals two 
+; dot-clocks by two scan lines.
 PLOT11
+
+    LDX BITMAPADDRESS
+    LDD PLOTY
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LEAX D, X
+
+    LDD PLOTX
+    LSRA
+    RORB
+    LSRA
+    RORB
+    LEAX D, X
+
+    LDY #PLOTORBIT40
+    LDB _PEN
+    ANDB #$03
+    LSLB
+    LSLB
+    LEAY B, Y
+    LDB PLOTX+1
+    ANDB #$03
+    LEAY B, Y
+
+    LDU #PLOTANDBIT4
+    LEAU B, U
+
+    JMP PLOTCOMMON
+
+; The 128 x 192 Graphics mode generates a display matrix 128 elements 
+; wide by 192 elements high. Each element may be either ON or OFF,
+; but the ON elements may be one of two colors selected with color 
+; set select pin. A 3K x 8 display memory is required. Each pixel 
+; equals two dot-clocks by one scan line.
 PLOT12
+
+    LDX BITMAPADDRESS
+    LDD PLOTY
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LEAX D, X
+
+    LDD PLOTX
+    LSRA
+    RORB
+    LSRA
+    RORB
+    LSRA
+    RORB
+    LEAX D, X
+
+    LDY #PLOTORBIT
+    LDB PLOTX+1
+    ANDB #$07
+    LEAY B, Y
+
+    LDU #PLOTANDBIT
+    LEAU B, U
+
+    JMP PLOTCOMMON
+
+;  The 128 x 192 Color Graphics mode generates a display 128 elements 
+;  wide by 192 elements high. Each element may be one of four colors.
+;  A 6K x 8 display memory is required. Each pixel equals two dot-clocks 
+;  by one scan line.
 PLOT13
+
+    LDX BITMAPADDRESS
+    LDD PLOTY
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LEAX D, X
+
+    LDD PLOTX
+    LSRA
+    RORB
+    LSRA
+    RORB
+    LEAX D, X
+
+    LDY #PLOTORBIT40
+    LDB _PEN
+    ANDB #$03
+    LSLB
+    LSLB
+    LEAY B, Y
+    LDB PLOTX+1
+    ANDB #$03
+    LEAY B, Y
+
+    LDU #PLOTANDBIT4
+    LEAU B, U
+
+    JMP PLOTCOMMON
+
+; The 256 x 192 Graphics mode generates a display 256 elements wide by 
+; 192 elements high. Each element may be either ON or OFF, but the ON 
+; element may be one of two colors selected with the color set select pin. 
+; A 6K x 8 display memory is required. Each pixel equals one 
+; dot-clock by one scan line.
 PLOT14
+
+    LDX BITMAPADDRESS
+    LDD PLOTY
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LEAX D, X
+
+    LDD PLOTX
+    LSRA
+    RORB
+    LSRA
+    RORB
+    LSRA
+    RORB
+    LEAX D, X
+
+    LDY #PLOTORBIT
+    LDB PLOTX+1
+    ANDB #$07
+    LEAY B, Y
+
+    LDU #PLOTANDBIT
+    LEAU B, U
+
+    JMP PLOTCOMMON
+
     RTS
 
 PLOTCOMMON
