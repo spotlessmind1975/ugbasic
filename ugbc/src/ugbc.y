@@ -115,7 +115,7 @@ const_expr :
     | const_expr_math OP_GTE const_expr_math {
         $$ = ( $1 >= $3 );
     }
-    | NOT expr {
+    | NOT const_expr {
         $$ = ( ! $2 );
     }
     ;
@@ -2126,6 +2126,14 @@ dim_definition :
         variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
         variable_array_type( _environment, $1, VT_WORD );
     }
+    | Identifier WITH const_expr {
+          memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
+          ((struct _Environment *)_environment)->arrayDimensions = 0;
+      } OP dimensions CP {
+        Variable * var = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
+        variable_array_type( _environment, $1, VT_WORD );
+        var->value = $3;
+      }
     | Identifier {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
           ((struct _Environment *)_environment)->arrayDimensions = 0;
@@ -2140,6 +2148,14 @@ dim_definition :
         variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
         variable_array_type( _environment, $1, $2 );
     }
+    | Identifier datatype WITH const_expr {
+          memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
+          ((struct _Environment *)_environment)->arrayDimensions = 0;
+      } OP dimensions CP {
+        Variable * var = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
+        variable_array_type( _environment, $1, $2 );
+        var->value = $4;
+      }
     | Identifier AS datatype {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
           ((struct _Environment *)_environment)->arrayDimensions = 0;
@@ -2147,6 +2163,14 @@ dim_definition :
         variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
         variable_array_type( _environment, $1, $3 );
     }
+    | Identifier AS datatype WITH const_expr {
+          memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
+          ((struct _Environment *)_environment)->arrayDimensions = 0;
+      } OP dimensions CP {
+        Variable * var = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
+        variable_array_type( _environment, $1, $3 );
+        var->value = $5;
+      }
     ;
 
 dim_definitions :
