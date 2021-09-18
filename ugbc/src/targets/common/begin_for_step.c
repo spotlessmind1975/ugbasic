@@ -78,7 +78,7 @@ void begin_for_step( Environment * _environment, char * _index, char * _from, ch
     Variable * to = variable_retrieve( _environment, _to );
     Variable * step = variable_retrieve( _environment, _step );
 
-    Variable * zero = variable_temporary( _environment, VT_WORD, "(zero)" );
+    Variable * zero = variable_resident( _environment, VT_WORD, "(zero)" );
     variable_store( _environment, zero->name, 0 );
 
     MAKE_LABEL

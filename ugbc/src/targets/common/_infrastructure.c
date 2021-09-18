@@ -376,6 +376,9 @@ Variable * variable_retrieve_by_realname( Environment * _environment, char * _na
 
     Variable * var = variable_find_by_realname( _environment->tempVariables, _name );
     if ( ! var ) {
+        Variable * var = variable_find_by_realname( _environment->tempResidentVariables, _name );
+    }
+    if ( ! var ) {
         var = variable_find_by_realname( _environment->procedureVariables, _name );
     }
     if ( ! var ) {
@@ -409,6 +412,9 @@ Variable * variable_retrieve( Environment * _environment, char * _name ) {
     int isGlobal = 0;
     Variable * var = variable_find( _environment->tempVariables, _name );
     if ( ! var ) {
+        Variable * var = variable_find( _environment->tempResidentVariables, _name );
+    }
+    if ( ! var ) {
         Pattern * current = _environment->globalVariablePatterns;
         if ( _environment->procedureName ) {
             if ( strstr( _name, "__" ) != NULL ) {
@@ -441,7 +447,9 @@ Variable * variable_retrieve( Environment * _environment, char * _name ) {
 Variable * variable_retrieve_or_define( Environment * _environment, char * _name, VariableType _type, int _value ) {
 
     Variable * var = variable_find( _environment->tempVariables, _name );
-
+    if ( !var ) {
+        var = variable_find( _environment->tempResidentVariables, _name )
+    }
     if ( var ){
         if ( VT_BITWIDTH( var->type ) != VT_BITWIDTH( _type ) && VT_BITWIDTH( _type ) > 0 && VT_BITWIDTH( var->type ) > 0 ) {
             var = variable_cast( _environment, var->name, _type );
@@ -601,6 +609,40 @@ Variable * variable_temporary( Environment * _environment, VariableType _type, c
     var->used = 1;
     return var;
 }
+
+Variable * variable_resident( Environment * _environment, VariableType _type, char * _meaning ) {
+    char * name = malloc(MAX_TEMPORARY_STORAGE);
+    var = malloc( sizeof( Variable ) );
+    memset( var, 0, sizeof( Variable ) );
+    if ( _type == VT_STRING ) {
+        sprintf(name, "Tstr%d", UNIQUE_ID);
+    } else if ( _type == VT_BUFFER ) {
+        sprintf(name, "Tbuf%d", UNIQUE_ID);
+    } else if ( _type == VT_IMAGE ) {
+        sprintf(name, "Timg%d", UNIQUE_ID);
+    } else {
+        sprintf(name, "Ttmp%d", UNIQUE_ID);
+    }
+    var->name = name;
+    var->realName = malloc( strlen( var->name ) + 2 ); strcpy( var->realName, "_" ); strcat( var->realName, var->name );
+    var->meaningName = _meaning;
+    var->type = _type;
+    var->bank = _environment->banks[BT_TEMPORARY];
+    Variable * varLast = _environment->tempResidentVariables;
+    if ( varLast ) {
+        while( varLast->next ) {
+            varLast = varLast->next;
+        }
+        varLast->next = var;
+    } else {
+        _environment->tempResidentVariables = var;
+    }
+    if ( var->meaningName ) {
+        outline2("; %s <-> %s (resident)", var->realName, var->meaningName );
+    }
+    return var;
+}
+
 
 /**
  * @brief Cast a variable from a type to another

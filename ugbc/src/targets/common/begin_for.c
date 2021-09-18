@@ -84,7 +84,7 @@ void begin_for( Environment * _environment, char * _index, char * _from, char * 
     Variable * index = variable_retrieve_or_define( _environment, _index, VT_WORD, 0 );
     Variable * from = variable_retrieve( _environment, _from );
     Variable * to = variable_retrieve( _environment, _to );
-    Variable * step = variable_temporary( _environment, VT_WORD, "(step 1)" );
+    Variable * step = variable_resident( _environment, VT_WORD, "(step 1)" );
 
     variable_store( _environment, step->name, 1 );
     

@@ -118,7 +118,7 @@ void on_gosub_index( Environment * _environment, char * _label ) {
         CRITICAL("ON ... GOSUB");
     }
 
-    Variable * index = variable_temporary( _environment, VT_BYTE, "(index)");
+    Variable * index = variable_resident( _environment, VT_BYTE, "(index)");
     
     variable_store( _environment, index->name, conditional->index );
 
