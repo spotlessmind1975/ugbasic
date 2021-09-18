@@ -96,7 +96,7 @@ void call_procedure( Environment * _environment, char * _name ) {
     }
 
     if ( _environment->parameters != procedure->parameters ) {
-        CRITICAL_PROCEDURE_PARAMETERS_MISMATCH(_name);
+        CRITICAL_PROCEDURE_PARAMETERS_MISMATCH(_name, procedure->parameters, _environment->parameters );
     }
 
     int i=0;

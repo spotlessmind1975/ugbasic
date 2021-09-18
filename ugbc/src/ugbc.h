@@ -990,7 +990,7 @@ typedef struct _Environment {
 #define CRITICAL_PROCEDURE_NESTED_UNSUPPORTED( n ) CRITICAL2("E037 - cannot define a nested procedure (a procedure inside a procedure)", n ); 
 #define CRITICAL_PROCEDURE_NOT_OPENED() CRITICAL("E038 - END PROC outside a procedure" ); 
 #define CRITICAL_PROCEDURE_MISSING( n ) CRITICAL2("E039 - call to an undefined procedure", n ); 
-#define CRITICAL_PROCEDURE_PARAMETERS_MISMATCH( n ) CRITICAL2("E040 - wrong number of parameters on procedure call", n ); 
+#define CRITICAL_PROCEDURE_PARAMETERS_MISMATCH( n, d1, d2 ) CRITICAL4si("E040 - wrong number of parameters on procedure call", n, d1, d2 ); 
 #define CRITICAL_SHARED_ONLY_IN_PROCEDURES() CRITICAL("E041 - SHARED can be used only inside a PROCEDURE");
 #define CRITICAL_GLOBAL_ONLY_OUTSIDE_PROCEDURES() CRITICAL("E042 - GLOBAL can be used only outside a PROCEDURE");
 #define CRITICAL_PRINT_UNSUPPORTED(v, t) CRITICAL3("E043 - PRINT unsupported for variable of given datatype", v, t );
