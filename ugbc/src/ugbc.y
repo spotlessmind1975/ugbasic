@@ -2599,6 +2599,12 @@ statement:
   | POP PROC {
       exit_procedure( _environment );
   }
+  | EXIT PROC IF expr {
+      exit_proc_if( _environment, $4 );  
+  }
+  | EXIT PROCEDURE IF expr {
+      exit_proc_if( _environment, $4 );  
+  }
   | EXIT IF expr {
       exit_loop_if( _environment, $3, 0 );  
   }
