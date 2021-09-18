@@ -41,6 +41,98 @@
 extern char BANK_TYPE_AS_STRING[][16];
 extern char DATATYPE_AS_STRING[][16];
 
+static void variable_cleanup_entry( Environment * _environment, Variable * _first ) {
+
+    Variable * variable = _first;
+
+    while( variable ) {
+
+        if ( !variable->imported ) {
+
+        switch( variable->type ) {
+            case VT_BYTE:
+            case VT_SBYTE:
+            case VT_COLOR:
+                outline1("%s: .res 1", variable->realName);
+                break;
+            case VT_WORD:
+            case VT_SWORD:
+            case VT_POSITION:
+            case VT_ADDRESS:
+                outline1("%s: .res 2", variable->realName);
+                break;
+            case VT_DWORD:
+            case VT_SDWORD:
+                outline1("%s: .res 4", variable->realName);
+                break;
+            case VT_STRING:
+                if ( ! variable->valueString ) {
+                    printf("%s", variable->realName);
+                    exit(EXIT_FAILURE);
+                }
+                outline3("%s: .byte %d,\"%s\"", variable->realName, (int)strlen(variable->valueString), variable->valueString );
+                break;
+            case VT_DSTRING:
+                outline1("%s: .res 1", variable->realName);
+                break;
+            case VT_MOB:
+                outline1("%s: .res 1", variable->realName);
+                break;
+            case VT_IMAGE:
+            case VT_BUFFER:
+                if ( ! variable->absoluteAddress ) {
+                    if ( variable->valueBuffer ) {
+                        out1("%s: .byte ", variable->realName);
+                        int i=0;
+                        for (i=0; i<(variable->size-1); ++i ) {
+                            out1("%d,", variable->valueBuffer[i]);
+                        }
+                        outline1("%d", variable->valueBuffer[(variable->size-1)]);
+                    } else {
+                        outline2("%s: .res %d", variable->realName, variable->size);
+                    }
+                } else {
+                    outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
+                    if ( variable->valueBuffer ) {
+                        out1("%scopy: .byte ", variable->realName);
+                        int i=0;
+                        for (i=0; i<(variable->size-1); ++i ) {
+                            out1("%d,", variable->valueBuffer[i]);
+                        }
+                        outline1("%d", variable->valueBuffer[(variable->size-1)]);
+                    }
+                }
+                break;
+            case VT_ARRAY: {
+                int i=0,size=1;
+                for( i=0; i<variable->arrayDimensions; ++i ) {
+                    size *= variable->arrayDimensionsEach[i];
+                }
+                if ( VT_BITWIDTH( variable->arrayType ) > 0 ) {
+                    size *= ( VT_BITWIDTH( variable->arrayType ) >> 3 );
+                } else if ( variable->arrayType == VT_DSTRING ) {
+                    size *= 1;
+                } else if ( variable->arrayType == VT_MOB ) {
+                    size *= 1;
+                } else {
+                    CRITICAL_DATATYPE_UNSUPPORTED("array(1)", DATATYPE_AS_STRING[variable->arrayType]);
+                }
+                if ( variable->value ) {
+                    outline3("%s: .res %d, $%2.2x", variable->realName, size, (unsigned char)(variable->value&0xff));
+                } else {
+                    outline2("%s: .res %d", variable->realName, size);
+                }
+                break;
+            }
+        }
+    }
+        
+        variable = variable->next;
+
+    }
+
+}
+
 /**
  * @brief Emit source and configuration lines for variables
  * 
@@ -61,89 +153,8 @@ void variable_cleanup( Environment * _environment ) {
                 // outhead1(".segment \"%s\"", actual->name);
                 Variable * variable = _environment->variables;
                 
-                while( variable ) {
+                variable_cleanup_entry( _environment, variable );
 
-                    if ( !variable->imported ) {
-
-                        switch( variable->type ) {
-                            case VT_BYTE:
-                            case VT_SBYTE:
-                            case VT_COLOR:
-                                outline1("%s: .res 1", variable->realName);
-                                break;
-                            case VT_WORD:
-                            case VT_SWORD:
-                            case VT_POSITION:
-                            case VT_ADDRESS:
-                                outline1("%s: .res 2", variable->realName);
-                                break;
-                            case VT_DWORD:
-                            case VT_SDWORD:
-                                outline1("%s: .res 4", variable->realName);
-                                break;
-                            case VT_STRING:
-                                if ( ! variable->valueString ) {
-                                    printf("%s", variable->realName);
-                                    exit(EXIT_FAILURE);
-                                }
-                                outline3("%s: .byte %d,\"%s\"", variable->realName, (int)strlen(variable->valueString), variable->valueString );
-                                break;
-                            case VT_DSTRING:
-                                outline1("%s: .res 1", variable->realName);
-                                break;
-                            case VT_MOB:
-                                outline1("%s: .res 1", variable->realName);
-                                break;
-                            case VT_IMAGE:
-                            case VT_BUFFER:
-                                if ( ! variable->absoluteAddress ) {
-                                    if ( variable->valueBuffer ) {
-                                        out1("%s: .byte ", variable->realName);
-                                        int i=0;
-                                        for (i=0; i<(variable->size-1); ++i ) {
-                                            out1("%d,", variable->valueBuffer[i]);
-                                        }
-                                        outline1("%d", variable->valueBuffer[(variable->size-1)]);
-                                    } else {
-                                        outline2("%s: .res %d", variable->realName, variable->size);
-                                    }
-                                } else {
-                                    outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
-                                    if ( variable->valueBuffer ) {
-                                        out1("%scopy: .byte ", variable->realName);
-                                        int i=0;
-                                        for (i=0; i<(variable->size-1); ++i ) {
-                                            out1("%d,", variable->valueBuffer[i]);
-                                        }
-                                        outline1("%d", variable->valueBuffer[(variable->size-1)]);
-                                    }
-                                }
-                                break;
-                            case VT_ARRAY: {
-                                int i=0,size=1;
-                                for( i=0; i<variable->arrayDimensions; ++i ) {
-                                    size *= variable->arrayDimensionsEach[i];
-                                }
-                                if ( VT_BITWIDTH( variable->arrayType ) > 0 ) {
-                                    size *= ( VT_BITWIDTH( variable->arrayType ) >> 3 );
-                                } else if ( variable->arrayType == VT_DSTRING ) {
-                                    size *= 1;
-                                } else if ( variable->arrayType == VT_MOB ) {
-                                    size *= 1;
-                                } else {
-                                    CRITICAL_DATATYPE_UNSUPPORTED("array(1)", DATATYPE_AS_STRING[variable->arrayType]);
-                                }
-                                if ( variable->value ) {
-                                    outline3("%s: .res %d, $%2.2x", variable->realName, size, (unsigned char)(variable->value&0xff));
-                                } else {
-                                    outline2("%s: .res %d", variable->realName, size);
-                                }
-                                break;
-                            }
-                        }
-                    }
-                    variable = variable->next;
-                }
             } else if ( actual->type == BT_TEMPORARY ) {
                 // cfgline3("# BANK %s %s AT $%4.4x", BANK_TYPE_AS_STRING[actual->type], actual->name, actual->address);
                 // cfgline2("%s:   load = MAIN,     type = ro,  optional = yes, start = $%4.4x;", actual->name, actual->address);
@@ -157,87 +168,8 @@ void variable_cleanup( Environment * _environment ) {
                 }
                 Variable * variable = _environment->tempVariables;
 
-                while( variable ) {
-                    if ( !variable->imported ) {
+                variable_cleanup_entry( _environment, variable );
 
-                        switch( variable->type ) {
-                            case VT_BYTE:
-                            case VT_SBYTE:
-                            case VT_COLOR:
-                                outline1("%s: .res 1", variable->realName);
-                                break;
-                            case VT_WORD:
-                            case VT_SWORD:
-                            case VT_POSITION:
-                            case VT_ADDRESS:
-                                outline1("%s: .res 2", variable->realName);
-                                break;
-                            case VT_DWORD:
-                            case VT_SDWORD:
-                                outline1("%s: .res 4", variable->realName);
-                                break;
-                            case VT_STRING:
-                                if ( ! variable->valueString ) {
-                                    printf("%s", variable->realName);
-                                    exit(EXIT_FAILURE);
-                                }
-                                outline3("%s: .byte %d,\"%s\"", variable->realName, (int)strlen(variable->valueString), variable->valueString );
-                                break;
-                            case VT_DSTRING:
-                                outline1("%s: .res 1", variable->realName);
-                                break;
-                            case VT_MOB:
-                                outline1("%s: .res 1", variable->realName);
-                                break;
-                            case VT_IMAGE:
-                            case VT_BUFFER:
-                                if ( ! variable->absoluteAddress ) {
-                                    if ( variable->valueBuffer ) {
-                                        out1("%s: .byte ", variable->realName);
-                                        int i=0;
-                                        for (i=0; i<(variable->size-1); ++i ) {
-                                            out1("%d,", variable->valueBuffer[i]);
-                                        }
-                                        outline1("%d", variable->valueBuffer[(variable->size-1)]);
-                                    } else {
-                                        outline2("%s: .res %d", variable->realName, variable->size);
-                                    }
-                                } else {
-                                    outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
-                                    if ( variable->valueBuffer ) {
-                                        out1("%scopy: .byte ", variable->realName);
-                                        int i=0;
-                                        for (i=0; i<(variable->size-1); ++i ) {
-                                            out1("%d,", variable->valueBuffer[i]);
-                                        }
-                                        outline1("%d", variable->valueBuffer[(variable->size-1)]);
-                                    }
-                                }                                break;
-                            case VT_ARRAY: {
-                                int i=0,size=1;
-                                for( i=0; i<variable->arrayDimensions; ++i ) {
-                                    size *= variable->arrayDimensionsEach[i];
-                                }
-                                if ( VT_BITWIDTH( variable->arrayType ) > 0 ) {
-                                    size *= ( VT_BITWIDTH( variable->arrayType ) >> 3 );
-                                } else if ( variable->arrayType == VT_DSTRING ) {
-                                    size *= 1;
-                                } else if ( variable->arrayType == VT_MOB ) {
-                                    size *= 1;
-                                } else {
-                                    CRITICAL_DATATYPE_UNSUPPORTED("array(2)", DATATYPE_AS_STRING[variable->arrayType]);
-                                }
-                                if ( variable->value ) {
-                                    outline3("%s: .res %d, $%2.2x", variable->realName, size, (unsigned char)(variable->value&0xff));
-                                } else {
-                                    outline2("%s: .res %d", variable->realName, size);
-                                }
-                                break;
-                            }
-                        }
-                    }
-                    variable = variable->next;
-                }
             } else if ( actual->type == BT_STRINGS ) {
                 // cfgline3("# BANK %s %s AT $%4.4x", BANK_TYPE_AS_STRING[actual->type], actual->name, actual->address);
                 // cfgline2("%s:   load = MAIN,     type = ro,  optional = yes, start = $%4.4x;", actual->name, actual->address);

@@ -613,7 +613,12 @@ typedef struct _Environment {
     ScreenMode * screenModes;
 
     /**
-     * List of temporary (and reused) variables.
+     * List of temporary (but not reusable) variables.
+     */
+    Variable * tempResidentVariables;
+
+    /**
+     * List of temporary (and reusable) variables.
      */
     Variable * tempVariables;
 
