@@ -160,6 +160,7 @@ typedef enum _VariableType {
 #define MAX_ARRAY_DIMENSIONS            256
 #define MAX_PARAMETERS                  256
 #define MAX_PALETTE                     256
+#define MAX_NESTED_ARRAYS               16
 
 #define VT_BW_8BIT( t, v )              ( ( (t) == (v) ) ? 8 : 0 )
 #define VT_BW_16BIT( t, v )             ( ( (t) == (v) ) ? 16 : 0 )
@@ -697,14 +698,19 @@ typedef struct _Environment {
     int arrayDimensionsEach[MAX_ARRAY_DIMENSIONS];
 
     /**
-     * Temporary storage for array access
+     * Actual index of nested array access
      */
-    int arrayIndexes;
+    int arrayNestedIndex;
 
     /**
      * Temporary storage for array access
      */
-    char * arrayIndexesEach[MAX_ARRAY_DIMENSIONS];
+    int arrayIndexes[MAX_NESTED_ARRAYS];
+
+    /**
+     * Temporary storage for array access
+     */
+    char * arrayIndexesEach[MAX_NESTED_ARRAYS][MAX_ARRAY_DIMENSIONS];
 
     /**
      * Current procedure
@@ -943,6 +949,7 @@ typedef struct _Environment {
 #define CRITICAL2( s, v ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, ((struct _Environment *)_environment)->yylineno ); exit( EXIT_FAILURE );
 #define CRITICAL2i( s, v ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%d) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, ((struct _Environment *)_environment)->yylineno ); exit( EXIT_FAILURE );
 #define CRITICAL3( s, v1, v2 ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%s, %s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v1, v2, ((struct _Environment *)_environment)->yylineno ); exit( EXIT_FAILURE );
+#define CRITICAL4si( s, v, d1, d2 ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%s, %d, %d) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, d1, d2, ((struct _Environment *)_environment)->yylineno ); exit( EXIT_FAILURE );
 #define CRITICAL_UNIMPLEMENTED( v ) CRITICAL2("E000 - Internal method not implemented:", v );
 #define CRITICAL_TEMPORARY2( v ) CRITICAL2("E001 - Unable to create space for temporary variable", v );
 #define CRITICAL_VARIABLE( v ) CRITICAL2("E002 - Using of an undefined variable", v );
@@ -978,7 +985,7 @@ typedef struct _Environment {
 #define CRITICAL_SGN_UNSUPPORTED( v, t ) CRITICAL3("E032 - SGN unsupported for variable of given datatype", v, t );
 #define CRITICAL_ABS_UNSUPPORTED( v, t ) CRITICAL3("E033 - ABS unsupported for variable of given datatype", v, t );
 #define CRITICAL_DEBUG_UNSUPPORTED( v, t ) CRITICAL3("E034 - DEBUG unsupported for variable of given datatype", v, t );
-#define CRITICAL_ARRAY_SIZE_MISMATCH( v ) CRITICAL2("E035 - number of indexes different from array dimensions", v );
+#define CRITICAL_ARRAY_SIZE_MISMATCH( v, d1, d2 ) CRITICAL4si("E035 - number of indexes different from array dimensions", v, d1, d2 );
 #define CRITICAL_NOT_ARRAY( v ) CRITICAL2("E036 - accessing with indexes on a non array variable", v );
 #define CRITICAL_PROCEDURE_NESTED_UNSUPPORTED( n ) CRITICAL2("E037 - cannot define a nested procedure (a procedure inside a procedure)", n ); 
 #define CRITICAL_PROCEDURE_NOT_OPENED() CRITICAL("E038 - END PROC outside a procedure" ); 

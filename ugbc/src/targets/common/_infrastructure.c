@@ -3335,8 +3335,8 @@ static Variable * calculate_offset_in_array( Environment * _environment, char * 
 
     Variable * array = variable_retrieve( _environment, _array );
 
-    if ( array->arrayDimensions != _environment->arrayIndexes ) {
-        CRITICAL_ARRAY_SIZE_MISMATCH( _array );
+    if ( array->arrayDimensions != _environment->arrayIndexes[_environment->arrayNestedIndex] ) {
+        CRITICAL_ARRAY_SIZE_MISMATCH( _array, array->arrayDimensions, _environment->arrayIndexes[_environment->arrayNestedIndex] );
     }
 
     Variable * base = variable_temporary( _environment, VT_WORD, "(base in array)");
@@ -3347,13 +3347,13 @@ static Variable * calculate_offset_in_array( Environment * _environment, char * 
 
     int i,j;
 
-    for( i = 0; i<_environment->arrayIndexes; ++i ) {
+    for( i = 0; i<_environment->arrayIndexes[_environment->arrayNestedIndex]; ++i ) {
         variable_store( _environment, base->name, 1 );
-        for( j=(i+1); j<_environment->arrayIndexes; ++j ) {
+        for( j=(i+1); j<_environment->arrayIndexes[_environment->arrayNestedIndex]; ++j ) {
             variable_store( _environment, size->name, array->arrayDimensionsEach[j] );
             base = variable_mul( _environment, base->name, size->name );
         }
-        offset = variable_add( _environment, offset->name, variable_mul( _environment, variable_retrieve( _environment, _environment->arrayIndexesEach[i])->name, base->name )->name );
+        offset = variable_add( _environment, offset->name, variable_mul( _environment, variable_retrieve( _environment, _environment->arrayIndexesEach[_environment->arrayNestedIndex][i])->name, base->name )->name );
     }
 
     return offset;
@@ -3366,8 +3366,8 @@ void variable_move_array( Environment * _environment, char * _array, char * _val
 
     Variable * array = variable_retrieve( _environment, _array );
 
-    if ( array->arrayDimensions != _environment->arrayIndexes ) {
-        CRITICAL_ARRAY_SIZE_MISMATCH( _array );
+    if ( array->arrayDimensions != _environment->arrayIndexes[_environment->arrayNestedIndex] ) {
+        CRITICAL_ARRAY_SIZE_MISMATCH( _array, array->arrayDimensions, _environment->arrayIndexes[_environment->arrayNestedIndex] );
     }
 
     if ( array->arrayType == 0 ) {
@@ -3404,8 +3404,8 @@ void variable_move_array_string( Environment * _environment, char * _array, char
     Variable * array = variable_retrieve( _environment, _array );
     Variable * string = variable_retrieve( _environment, _string );
 
-    if ( array->arrayDimensions != _environment->arrayIndexes ) {
-        CRITICAL_ARRAY_SIZE_MISMATCH( _array );
+    if ( array->arrayDimensions != _environment->arrayIndexes[_environment->arrayNestedIndex] ) {
+        CRITICAL_ARRAY_SIZE_MISMATCH( _array, array->arrayDimensions, _environment->arrayIndexes[_environment->arrayNestedIndex] );
     }
 
     Variable * offset = calculate_offset_in_array( _environment, _array);
@@ -3447,8 +3447,8 @@ Variable * variable_move_from_array( Environment * _environment, char * _array )
 
     Variable * array = variable_retrieve( _environment, _array );
 
-    if ( array->arrayDimensions != _environment->arrayIndexes ) {
-        CRITICAL_ARRAY_SIZE_MISMATCH( _array );
+    if ( array->arrayDimensions != _environment->arrayIndexes[_environment->arrayNestedIndex] ) {
+        CRITICAL_ARRAY_SIZE_MISMATCH( _array, array->arrayDimensions, _environment->arrayIndexes[_environment->arrayNestedIndex] );
     }
 
     Variable * offset = calculate_offset_in_array( _environment, _array);

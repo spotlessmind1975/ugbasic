@@ -710,8 +710,9 @@ key_scancode_definition :
 
 exponential:
     Identifier {
-        memset( ((struct _Environment *)_environment)->arrayIndexesEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
-        ((struct _Environment *)_environment)->arrayIndexes = 0;
+        ++((struct _Environment *)_environment)->arrayNestedIndex;
+        memset( ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex], 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
+        ((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex] = 0;
     }
       OP indexes CP {
         Variable * array = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
@@ -719,10 +720,12 @@ exponential:
             CRITICAL_NOT_ARRAY( $1 );
         }
         $$ = variable_move_from_array( _environment, $1 )->name;
+        --((struct _Environment *)_environment)->arrayNestedIndex;
     }
     | Identifier OP_DOLLAR {
-        memset( ((struct _Environment *)_environment)->arrayIndexesEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
-        ((struct _Environment *)_environment)->arrayIndexes = 0;
+        ++((struct _Environment *)_environment)->arrayNestedIndex;
+        memset( ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex], 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
+        ((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex] = 0;
      } 
       OP indexes CP {
         Variable * array = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
@@ -730,6 +733,7 @@ exponential:
             CRITICAL_NOT_ARRAY( $1 );
         }
         $$ = variable_move_from_array( _environment, $1 )->name;
+        --((struct _Environment *)_environment)->arrayNestedIndex;
     }
     | Identifier {
         Constant * c = constant_find( ((struct _Environment *)_environment)->constants, $1 );
@@ -2152,12 +2156,12 @@ dim_definitions :
 
 indexes :
       expr {
-          ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayIndexes] = strdup( $1 );
-          ++((struct _Environment *)_environment)->arrayIndexes;
+          ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex][((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex]] = strdup( $1 );
+          ++((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex];
     }
     | expr OP_COMMA indexes {
-          ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayIndexes] = strdup( $1 );
-          ++((struct _Environment *)_environment)->arrayIndexes;
+          ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex][((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex]] = strdup( $1 );
+          ++((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex];
     }
     ;
 
@@ -2746,8 +2750,9 @@ statement:
         outline2("; moved %s -> %s ", $4, $1 );
   }
   | Identifier {
-        memset( ((struct _Environment *)_environment)->arrayIndexesEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
-        ((struct _Environment *)_environment)->arrayIndexes = 0;
+        ++((struct _Environment *)_environment)->arrayNestedIndex;
+        memset( ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex], 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
+        ((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex] = 0;
     }
       OP indexes CP OP_ASSIGN expr {
         Variable * expr = variable_retrieve( _environment, $7 );
@@ -2756,10 +2761,12 @@ statement:
             CRITICAL_NOT_ARRAY( $1 );
         }
         variable_move_array( _environment, $1, expr->name );
+        --((struct _Environment *)_environment)->arrayNestedIndex;
   }
   | Identifier OP_DOLLAR {
-        memset( ((struct _Environment *)_environment)->arrayIndexesEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
-        ((struct _Environment *)_environment)->arrayIndexes = 0;
+        ++((struct _Environment *)_environment)->arrayNestedIndex;
+        memset( ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex], 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
+        ((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex] = 0;
     } OP indexes CP OP_ASSIGN expr {
         Variable * x = variable_retrieve( _environment, $8 );
         Variable * a = variable_retrieve( _environment, $1 );
@@ -2773,10 +2780,12 @@ statement:
             CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[a->arrayType], DATATYPE_AS_STRING[VT_DSTRING] );
         }
         variable_move_array_string( _environment, $1, x->name );
+        --((struct _Environment *)_environment)->arrayNestedIndex;
   }
   | Identifier {
-        memset( ((struct _Environment *)_environment)->arrayIndexesEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
-        ((struct _Environment *)_environment)->arrayIndexes = 0;
+        ++((struct _Environment *)_environment)->arrayNestedIndex;
+        memset( ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex], 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
+        ((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex] = 0;
     } datatype OP indexes CP OP_ASSIGN expr {
         Variable * x = variable_retrieve( _environment, $8 );
         Variable * a = variable_retrieve( _environment, $1 );
@@ -2790,6 +2799,7 @@ statement:
             CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[a->arrayType], DATATYPE_AS_STRING[$3] );
         }
         variable_move_array( _environment, $1, x->name );
+        --((struct _Environment *)_environment)->arrayNestedIndex;
   }
   | Remark
   |
