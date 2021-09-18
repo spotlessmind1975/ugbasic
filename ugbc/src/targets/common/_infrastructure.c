@@ -1648,6 +1648,11 @@ Variable * variable_compare_not( Environment * _environment, char * _source, cha
  * @throw EXIT_FAILURE "Destination variable does not exist"
  */
 Variable * variable_mul2_const( Environment * _environment, char * _destination, int _steps ) {
+
+    if ( _steps < 0 ) {
+        CRITICAL_MUL2_INVALID_STEPS( _destination );
+    }
+
     Variable * destination = variable_retrieve( _environment, _destination );
     switch( VT_BITWIDTH( destination->type ) ) {
         case 32:
@@ -3365,6 +3370,11 @@ void variable_move_array( Environment * _environment, char * _array, char * _val
         CRITICAL_ARRAY_SIZE_MISMATCH( _array );
     }
 
+    if ( array->arrayType == 0 ) {
+        WARNING_USE_OF_UNDEFINED_ARRAY( array->name );
+        array->arrayType = VT_WORD;
+    }
+
     Variable * offset = calculate_offset_in_array( _environment, _array);
 
     variable_mul2_const( _environment, offset->name, ( VT_BITWIDTH( array->arrayType ) >> 3 ) - 1 );
@@ -3478,6 +3488,11 @@ Variable * variable_move_from_array( Environment * _environment, char * _array )
 
         default: {
 
+            if ( array->arrayType == 0 ) {
+                WARNING_USE_OF_UNDEFINED_ARRAY( array->name );
+                array->arrayType = VT_WORD;
+            }
+    
             variable_mul2_const( _environment, offset->name, ( VT_BITWIDTH( array->arrayType ) >> 3 ) - 1 );
 
             cpu_math_add_16bit_with_16bit( _environment, offset->realName, array->realName, offset->realName );
