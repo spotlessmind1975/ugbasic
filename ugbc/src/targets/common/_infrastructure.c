@@ -337,7 +337,7 @@ Variable * variable_define_local( Environment * _environment, char * _name, Vari
         var = malloc( sizeof( Variable ) );
         memset( var, 0, sizeof( Variable ) );
         var->name = strdup( _name );
-        var->realName = malloc( strlen( _name ) + strlen( _environment->procedureName ) + 2 ); strcpy( var->realName, "_" ); strcat( var->realName, _environment->procedureName ); strcat( var->realName, "_" ); strcat( var->realName, _name );
+        var->realName = malloc( strlen( _name ) + strlen( _environment->procedureName ) + 3 ); strcpy( var->realName, "_" ); strcat( var->realName, _environment->procedureName ); strcat( var->realName, "_" ); strcat( var->realName, _name );
         var->type = _type;
         var->value = _value;
         var->bank = _environment->banks[BT_VARIABLES];
