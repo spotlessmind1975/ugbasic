@@ -376,7 +376,7 @@ Variable * variable_retrieve_by_realname( Environment * _environment, char * _na
 
     Variable * var = variable_find_by_realname( _environment->tempVariables, _name );
     if ( ! var ) {
-        Variable * var = variable_find_by_realname( _environment->tempResidentVariables, _name );
+        var = variable_find_by_realname( _environment->tempResidentVariables, _name );
     }
     if ( ! var ) {
         var = variable_find_by_realname( _environment->procedureVariables, _name );
@@ -412,7 +412,7 @@ Variable * variable_retrieve( Environment * _environment, char * _name ) {
     int isGlobal = 0;
     Variable * var = variable_find( _environment->tempVariables, _name );
     if ( ! var ) {
-        Variable * var = variable_find( _environment->tempResidentVariables, _name );
+        var = variable_find( _environment->tempResidentVariables, _name );
     }
     if ( ! var ) {
         Pattern * current = _environment->globalVariablePatterns;
@@ -448,7 +448,7 @@ Variable * variable_retrieve_or_define( Environment * _environment, char * _name
 
     Variable * var = variable_find( _environment->tempVariables, _name );
     if ( !var ) {
-        var = variable_find( _environment->tempResidentVariables, _name )
+        var = variable_find( _environment->tempResidentVariables, _name );
     }
     if ( var ){
         if ( VT_BITWIDTH( var->type ) != VT_BITWIDTH( _type ) && VT_BITWIDTH( _type ) > 0 && VT_BITWIDTH( var->type ) > 0 ) {
@@ -612,7 +612,7 @@ Variable * variable_temporary( Environment * _environment, VariableType _type, c
 
 Variable * variable_resident( Environment * _environment, VariableType _type, char * _meaning ) {
     char * name = malloc(MAX_TEMPORARY_STORAGE);
-    var = malloc( sizeof( Variable ) );
+    Variable * var = malloc( sizeof( Variable ) );
     memset( var, 0, sizeof( Variable ) );
     if ( _type == VT_STRING ) {
         sprintf(name, "Tstr%d", UNIQUE_ID);

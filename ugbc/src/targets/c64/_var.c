@@ -168,7 +168,7 @@ void variable_cleanup( Environment * _environment ) {
 
                 variable_cleanup_entry( _environment, variable );
 
-                Variable * variable = _environment->tempResidentVariables;
+                variable = _environment->tempResidentVariables;
 
                 variable_cleanup_entry( _environment, variable );
 
