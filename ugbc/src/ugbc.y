@@ -1004,6 +1004,11 @@ exponential:
       call_procedure( _environment, $1 );
       $$ = param_procedure( _environment, $1 )->name;
     }
+    | Identifier OSP CSP {
+      ((struct _Environment *)_environment)->parameters = 0;
+      call_procedure( _environment, $1 );
+      $$ = param_procedure( _environment, $1 )->name;
+    }
     | SGN OP expr CP {
         $$ = sign( _environment, $3 )->name;
     }
@@ -2676,6 +2681,10 @@ statement:
     } values CSP {
       call_procedure( _environment, $1 );
   }
+  | Identifier OSP CSP {
+      ((struct _Environment *)_environment)->parameters = 0;
+      call_procedure( _environment, $1 );
+  }
   | PROC Identifier OSP {
       ((struct _Environment *)_environment)->parameters = 0;
     } values CSP {
@@ -2684,6 +2693,10 @@ statement:
   | CALL Identifier OSP {
       ((struct _Environment *)_environment)->parameters = 0;
     } values CSP {
+      call_procedure( _environment, $2 );
+  }
+  | CALL Identifier OSP CSP {
+      ((struct _Environment *)_environment)->parameters = 0;
       call_procedure( _environment, $2 );
   }
   | PEN expr {
