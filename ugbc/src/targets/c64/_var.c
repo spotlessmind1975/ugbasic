@@ -168,6 +168,10 @@ void variable_cleanup( Environment * _environment ) {
 
                 variable_cleanup_entry( _environment, variable );
 
+                Variable * variable = _environment->tempResidentVariables;
+
+                variable_cleanup_entry( _environment, variable );
+
             } else if ( actual->type == BT_STRINGS ) {
                 cfgline3("# BANK %s %s AT $%4.4x", BANK_TYPE_AS_STRING[actual->type], actual->name, actual->address);
                 cfgline2("%s:   load = MAIN,     type = ro,  optional = yes, start = $%4.4x;", actual->name, actual->address);

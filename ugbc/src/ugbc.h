@@ -1632,6 +1632,7 @@ Variable *              variable_string_upper( Environment * _environment, char 
 Variable *              variable_string_val( Environment * _environment, char * _value );
 Variable *              variable_sub( Environment * _environment, char * _source, char * _dest );
 Variable *              variable_temporary( Environment * _environment, VariableType _type, char * _meaning );
+Variable *              variable_resident( Environment * _environment, VariableType _type, char * _meaning );
 
 //----------------------------------------------------------------------------
 // *W*
