@@ -86,6 +86,9 @@ void begin_for( Environment * _environment, char * _index, char * _from, char * 
     Variable * to = variable_retrieve( _environment, _to );
     Variable * step = variable_resident( _environment, VT_WORD, "(step 1)" );
 
+    Variable * toResident = variable_resident( _environment, to->type, "(resident to)" );
+    variable_move_naked( _environment, to->name, toResident->name );
+    
     variable_store( _environment, step->name, 1 );
     
     MAKE_LABEL
@@ -99,7 +102,7 @@ void begin_for( Environment * _environment, char * _index, char * _from, char * 
     loop->index->locked = 1;
     loop->step = step;
     loop->step->locked = 1;
-    loop->to = to;
+    loop->to = toResident;
     loop->to->locked = 1;
     _environment->loops = loop;
 
