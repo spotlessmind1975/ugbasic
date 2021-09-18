@@ -137,7 +137,7 @@ void variable_cleanup( Environment * _environment ) {
                                     CRITICAL_DATATYPE_UNSUPPORTED("array(1)", DATATYPE_AS_STRING[variable->arrayType]);
                                 }
                                 if ( variable->value ) {
-                                    outhead3("%s rzb %d, %d", variable->realName, size, variable->value);
+                                    outhead3("%s rzb %d, $%2.2x", variable->realName, size, (unsigned char)(variable->value&0xff));
                                 } else {
                                     outhead2("%s rzb %d", variable->realName, size);
                                 }
@@ -235,7 +235,7 @@ void variable_cleanup( Environment * _environment ) {
                                     CRITICAL_DATATYPE_UNSUPPORTED("array(1)", DATATYPE_AS_STRING[variable->arrayType]);
                                 }
                                 if ( variable->value ) {
-                                    outhead3("%s rzb %d, %d", variable->realName, size, variable->value);
+                                    outhead3("%s rzb %d, $%2.2x", variable->realName, size, (unsigned char)(variable->value&0xff));
                                 } else {
                                     outhead2("%s rzb %d", variable->realName, size);
                                 }

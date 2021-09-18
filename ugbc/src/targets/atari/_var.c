@@ -134,7 +134,7 @@ void variable_cleanup( Environment * _environment ) {
                                     CRITICAL_DATATYPE_UNSUPPORTED("array(1)", DATATYPE_AS_STRING[variable->arrayType]);
                                 }
                                 if ( variable->value ) {
-                                    outline3("%s: .res %d, %d", variable->realName, size, variable->value);
+                                    outline3("%s: .res %d, $%2.2x", variable->realName, size, (unsigned char)(variable->value&0xff));
                                 } else {
                                     outline2("%s: .res %d", variable->realName, size);
                                 }
@@ -227,7 +227,11 @@ void variable_cleanup( Environment * _environment ) {
                                 } else {
                                     CRITICAL_DATATYPE_UNSUPPORTED("array(2)", DATATYPE_AS_STRING[variable->arrayType]);
                                 }
-                                outline2("%s: .res %d", variable->realName, size);
+                                if ( variable->value ) {
+                                    outline3("%s: .res %d, $%2.2x", variable->realName, size, (unsigned char)(variable->value&0xff));
+                                } else {
+                                    outline2("%s: .res %d", variable->realName, size);
+                                }
                                 break;
                             }
                         }

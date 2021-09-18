@@ -149,6 +149,9 @@ const_modula:
 
 const_factor: 
         Integer
+      | OP_MINUS Integer {
+          $$ = -$2;
+      }
       | OP const_expr CP {
           $$ = $2;
       }
