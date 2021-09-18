@@ -3349,11 +3349,13 @@ static Variable * calculate_offset_in_array( Environment * _environment, char * 
 
     for( i = 0; i<_environment->arrayIndexes[_environment->arrayNestedIndex]; ++i ) {
         variable_store( _environment, base->name, 1 );
-        for( j=(i+1); j<_environment->arrayIndexes[_environment->arrayNestedIndex]; ++j ) {
+        for( j=0; j<i; ++j ) {
             variable_store( _environment, size->name, array->arrayDimensionsEach[j] );
             base = variable_mul( _environment, base->name, size->name );
         }
-        offset = variable_add( _environment, offset->name, variable_mul( _environment, variable_retrieve( _environment, _environment->arrayIndexesEach[_environment->arrayNestedIndex][i])->name, base->name )->name );
+        Variable * index = variable_retrieve( _environment, _environment->arrayIndexesEach[_environment->arrayNestedIndex][array->arrayDimensions-i-1]);
+        Variable * additionalOffset = variable_mul( _environment, index->name, base->name );
+        offset = variable_add( _environment, offset->name, additionalOffset->name );
     }
 
     return offset;
