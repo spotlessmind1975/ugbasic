@@ -2136,6 +2136,13 @@ dim_definition :
         variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
         variable_array_type( _environment, $1, $2 );
     }
+    | Identifier AS datatype {
+          memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
+          ((struct _Environment *)_environment)->arrayDimensions = 0;
+      } OP dimensions CP {
+        variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
+        variable_array_type( _environment, $1, $3 );
+    }
     ;
 
 dim_definitions :
@@ -2790,7 +2797,7 @@ statement:
 
 statements_no_linenumbers:
       statement { ((Environment *)_environment)->yylineno = yylineno; variable_reset( _environment ); }
-    | statement OP_COLON { ((Environment *)_environment)->yylineno = yylineno; variable_reset( _environment ); } statements_no_linenumbers
+    | statement OP_COLON { ((Environment *)_environment)->yylineno = yylineno; variable_reset( _environment );  } statements_no_linenumbers { }
     ;
 
 statements_with_linenumbers:
