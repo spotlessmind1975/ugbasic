@@ -2073,35 +2073,13 @@ add_definition :
     ;
 
 dimensions :
-      Integer {
+      const_expr {
           ((struct _Environment *)_environment)->arrayDimensionsEach[((struct _Environment *)_environment)->arrayDimensions] = $1;
           ++((struct _Environment *)_environment)->arrayDimensions;
     }
-    | Identifier  {
-        Constant * c = constant_find( ((struct _Environment *)_environment)->constants, $1 );
-        if ( !c ) {
-            CRITICAL_UNDEFINED_CONSTANT( $1 );
-        }
-        if ( c->valueString ) {
-            CRITICAL_TYPE_MISMATCH_CONSTANT_NUMERIC( $1 );
-        }
-        ((struct _Environment *)_environment)->arrayDimensionsEach[((struct _Environment *)_environment)->arrayDimensions] = c->value;
-        ++((struct _Environment *)_environment)->arrayDimensions;
-    }
-    | Integer OP_COMMA dimensions {
+    | const_expr OP_COMMA dimensions {
           ((struct _Environment *)_environment)->arrayDimensionsEach[((struct _Environment *)_environment)->arrayDimensions] = $1;
           ++((struct _Environment *)_environment)->arrayDimensions;
-    }
-    | Identifier OP_COMMA dimensions {
-        Constant * c = constant_find( ((struct _Environment *)_environment)->constants, $1 );
-        if ( !c ) {
-            CRITICAL_UNDEFINED_CONSTANT( $1 );
-        }
-        if ( c->valueString ) {
-            CRITICAL_TYPE_MISMATCH_CONSTANT_NUMERIC( $1 );
-        }
-        ((struct _Environment *)_environment)->arrayDimensionsEach[((struct _Environment *)_environment)->arrayDimensions] = c->value;
-        ++((struct _Environment *)_environment)->arrayDimensions;
     }
     ;
 
