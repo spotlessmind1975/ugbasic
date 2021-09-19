@@ -2907,7 +2907,7 @@ int main( int _argc, char *_argv[] ) {
     _environment->embedded.cpu_math_div2_8bit = 1;
     _environment->embedded.cpu_math_mul_8bit_to_16bit = 1;
     _environment->embedded.cpu_math_div_8bit_to_8bit = 1;
-    _environment->embedded.cpu_math_div2_const_8bitv
+    _environment->embedded.cpu_math_div2_const_8bit = 1;
 
     _environment->warningsEnabled = 0;
 

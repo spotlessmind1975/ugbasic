@@ -33,18 +33,20 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+CPUMATHDIV2CONST8BITD:      .byte   $80
+
 CPUMATHDIV2CONST8BIT:
     CPX #0
     BEQ CPUMATHDIV2CONST8BIT2
     CLC
-    RORA
+    ROR A
     DEX
     JMP CPUMATHDIV2CONST8BIT 
 CPUMATHDIV2CONST8BIT2:
     RTS
 
 CPUMATHDIV2CONST8BIT_SIGNED:
-    BIT #$80
+    BIT CPUMATHDIV2CONST8BITD
     BEQ CPUMATHDIV2CONST8BIT
     JSR CPUMATHDIV2CONST8BIT
     ORA #$80

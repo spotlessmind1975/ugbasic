@@ -32,6 +32,7 @@
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+CPUMATHDIV28BITD:       .byte   $80
 
 CPUMATHDIV28BIT:
     CPX #0
@@ -43,7 +44,7 @@ CPUMATHDIV28BITDONE:
     RTS
 
 CPUMATHDIV28BIT_SIGNED:
-    BIT #$80
+    BIT CPUMATHDIV28BITD
     BEQ CPUMATHDIV28BIT
     JSR CPUMATHDIV28BIT
     ORA #$80
