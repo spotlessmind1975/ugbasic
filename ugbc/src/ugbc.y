@@ -1429,8 +1429,10 @@ wait_definition_simple:
     }
     | KEY {
       wait_key( _environment );
+    }
+    | VBL {
+      wait_vbl( _environment );
     };
-;
 
 wait_definition_expression:
       expr CYCLES {

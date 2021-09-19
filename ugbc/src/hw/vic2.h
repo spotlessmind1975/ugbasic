@@ -162,5 +162,6 @@ void vic2_cline( Environment * _environment, char * _characters );
 
 Variable * vic2_image_converter( Environment * _environment, char * _data, int _width, int _height, int _mode );
 void vic2_put_image( Environment * _environment, char * _image, char * _x, char * _y );
+void vic2_wait_vbl( Environment * _environment );
 
 #endif

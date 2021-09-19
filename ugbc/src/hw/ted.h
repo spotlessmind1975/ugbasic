@@ -131,5 +131,6 @@ void ted_text_at( Environment * _environment, char * _x, char * _y, char * _text
 
 Variable * ted_image_converter( Environment * _environment, char * _data, int _width, int _height, int _mode );
 void ted_put_image( Environment * _environment, char * _image, char * _x, char * _y );
+void ted_wait_vbl( Environment * _environment );
 
 #endif

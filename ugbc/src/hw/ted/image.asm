@@ -143,9 +143,8 @@ PUTIMAGE2:
     ADC PLOTCVBASEHI,Y          ;do the high byte
     STA PLOTCDEST+1
 
-    SEI
-    LDA #$36
-    STA $01
+    TYA
+    JSR PUTIMAGEWAITLINE
 
     LDA IMAGEW
     TAY
@@ -440,4 +439,9 @@ PUTIMAGE3E:
     LDA #$37
     STA $01
     CLI
+    RTS
+
+PUTIMAGEWAITLINE:
+    CMP $FF1D
+    BCS PUTIMAGEWAITLINE
     RTS

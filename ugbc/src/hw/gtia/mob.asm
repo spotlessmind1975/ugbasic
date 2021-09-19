@@ -1892,17 +1892,6 @@ MOBATCS_DONE:
 
     RTS
 
-MOBWAITLINE:
-MOBWAITVBL:
-    LDA #0
-    STA ANTICVBL
-MOBWAITVBL2:
-    LDA ANTICVBL
-    BEQ MOBWAITVBL2
-    LDA #0
-    STA MOBWAITVBL
-    RTS
-
 ; Mask for bit selection / unselection on a single cell
 ; during drawing operations.
 MOBDRAW2_MASKX:

@@ -1496,4 +1496,13 @@ void vic2_put_image( Environment * _environment, char * _image, char * _x, char 
     outline0("JSR PUTIMAGE");
 
 }
+
+void vic2_wait_vbl( Environment * _environment ) {
+
+    deploy( vblDeployed, src_hw_vic2_vbl_asm);
+
+    outline0("JSR VBL");
+
+}
+
 #endif

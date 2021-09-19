@@ -222,7 +222,7 @@ MOBRENDER:
 
     LD A, (MOBI)
     JR Z, MOBRENDERC
-    JP MOBWAITVBL
+    JP VBL
     
 MOBRENDERC:
     ; X = 0

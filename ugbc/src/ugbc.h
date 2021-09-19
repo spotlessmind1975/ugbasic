@@ -738,6 +738,12 @@ typedef struct _Environment {
     VariableType parametersTypeEach[MAX_PARAMETERS];
 
     /**
+     * Deployed vbl
+     */
+
+    int vblDeployed;
+
+    /**
      * Deployed joystick
      */
 
@@ -1645,6 +1651,7 @@ void                    wait_milliseconds( Environment * _environment, int _timi
 void                    wait_milliseconds_var( Environment * _environment, char * _timing );
 void                    wait_ticks( Environment * _environment, int _timing );
 void                    wait_ticks_var( Environment * _environment, char * _timing );
+void                    wait_vbl( Environment * _environment );
 void                    writing( Environment * _environment, char * _mode, char * _parts );
 
 //----------------------------------------------------------------------------
