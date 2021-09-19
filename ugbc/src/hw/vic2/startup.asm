@@ -55,5 +55,9 @@ VIC2STARTUPL1:
     AND #$f1
     ORA #$04
     STA $d018
-        
+
+    ; DISABLE BASIC ROM    
+    LDA #$36
+    STA $01
+            
     RTS

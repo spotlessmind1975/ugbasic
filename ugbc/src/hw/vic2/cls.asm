@@ -38,10 +38,6 @@
 
 
 CLS:
-    SEI
-    LDA #$36
-    STA $01
-
     LDA $D011
     AND #$20
     BEQ CLST
@@ -97,10 +93,6 @@ CLGCNB:
     DEX
     BNE CLGC
 
-    LDA #$37
-    STA $01
-    CLI
-
     RTS
 
 CLST:
@@ -149,9 +141,5 @@ CLSTC2:
 CLSTCNB:
     DEX
     BNE CLSTC
-
-    LDA #$37
-    STA $01
-    CLI
 
     RTS

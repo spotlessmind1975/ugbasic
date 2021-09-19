@@ -1120,10 +1120,6 @@ MOBSAVE2_INC:
 ; in standard BITMAP MODE (2).
 MOBSAVE2:
 
-    SEI
-    LDA #$36
-    STA $01
-
     LDX MOBI
 
     LDA MOBDESCRIPTORS_SIZEL,X
@@ -1310,10 +1306,6 @@ MOBSAVE2L2AX:
 
 MOBSAVE2L3:
 
-    LDA #$37
-    STA $01
-    CLI
-
 MOBSAVE2E:
 
     RTS
@@ -1374,10 +1366,6 @@ MOBRESTORE2_INCL:
 ; This entry point is needed do save the screen into the reserved area,
 ; in standard BITMAP MODE (2).
 MOBRESTORE2:
-
-    SEI
-    LDA #$36
-    STA $01
 
     LDX MOBI
 
@@ -1537,10 +1525,6 @@ MOBRESTORE2L3:
     STA MOBDESCRIPTORS_SL, X
     LDA #0
     STA MOBDESCRIPTORS_SH, X
-
-    LDA #$37
-    STA $01
-    SEI
 
 MOBRESTORE2E:
     RTS
@@ -1741,10 +1725,6 @@ MOBDRAW2_INCL:
 ; This entry point is needed do draw the image over the screen,
 ; in standard BITMAP MODE (2).
 MOBDRAW2:
-
-    SEI
-    LDA #$36
-    STA $01
 
     STX MOBI
 
@@ -2139,10 +2119,6 @@ MOBDRAW2L9B:
     JSR MOBDRAW2_NOP2
 
 MOBDRAW2E:
-
-    LDA #$37
-    STA $01
-    CLI
 
     RTS
 

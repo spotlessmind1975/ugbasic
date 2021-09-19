@@ -223,9 +223,6 @@ PUTIMAGE2L2:
     JMP PUTIMAGE2L2
 
 PUTIMAGE2E:
-    LDA #$37
-    STA $01
-    CLI
     RTS
 
 ;;;;;;;;;;;;;;;;;
@@ -304,10 +301,6 @@ PUTIMAGE3:
     LDA #0
     ADC PLOTC2VBASEHI,Y          ;do the high byte
     STA PLOTC2DEST+1
-
-    SEI
-    LDA #$36
-    STA $01
 
     LDA IMAGEW
     ASL
@@ -437,9 +430,6 @@ PUTIMAGE3E:
     LDA (TMPPTR),Y
     STA $FF16
 
-    LDA #$37
-    STA $01
-    CLI
     RTS
 
 PUTIMAGEWAITLINE:

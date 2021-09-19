@@ -394,9 +394,6 @@ PLOTD:
     ;---------
     ;set point
     ;---------
-    SEI
-    LDA #$36
-    STA $01
     LDA (PLOTDEST),y           ;get row with point in it
     AND PLOTAMA
     ORA PLOTOMA              ;isolate AND set the point
@@ -416,28 +413,18 @@ PLOTD:
     ORA (PLOTCDEST),y          ;write back to $A000    
     STA (PLOTCDEST),y          ;write back to $A000    
 PLOTDE:
-    LDA #$37
-    STA $01
-    CLI
     JMP PLOTP                  ;skip the erase-point section
 
     ;-----------
     ;erase point
     ;-----------
 PLOTE:                          ;handled same way as setting a point
-    LDA #$36
-    STA $01
     LDA (PLOTDEST),y            ;just with opposite bit-mask
     AND PLOTAMA             ;isolate AND erase the point
     STA (PLOTDEST),y            ;write back to $A000
-    LDA #$37
-    STA $01
     JMP PLOTP
 
 PLOTG:      
-    SEI
-    LDA #$36
-    STA $01
     LDA (PLOTDEST),y            
     AND PLOTOMA            
     CMP #0
@@ -445,22 +432,13 @@ PLOTG:
 PLOTG1:
     LDA #$ff
     STA PLOTM
-    LDA #$37
-    STA $01    
-    CLI
     JMP PLOTP
 PLOTG0:
     LDA #$0
     STA PLOTM
-    LDA #$37
-    STA $01    
-    CLI
     JMP PLOTP            
 
 PLOTC:                          
-    SEI
-    LDA #$36
-    STA $01
     LDY #0
     LDA CURRENTMODE
     CMP #$3
@@ -529,9 +507,6 @@ PLOTC3C3:
     JMP PLOTCE
 
 PLOTCE:
-    LDA #$37
-    STA $01    
-    CLI
     JMP PLOTP            
 
 PLOTP:
