@@ -171,11 +171,9 @@ expr :
       expr_math
     | expr_math AND expr_math {        
         $$ = variable_and( _environment, $1, $3 )->name;
-        outline3("; %s = %s AND %s", $$, $1, $3 );
     } 
     | expr_math OR expr_math {
         $$ = variable_or( _environment, $1, $3 )->name;
-        outline3("; %s = %s OR %s", $$, $1, $3 );
     } 
     | expr_math OP_EQUAL expr_math {
         $$ = variable_compare( _environment, $1, $3 )->name;
@@ -207,7 +205,6 @@ expr_math:
     }
     | expr_math OP_MINUS term {
         $$ = variable_sub( _environment, $1, $3 )->name;
-        outline3("; %s = %s - %s", $$, $1, $3 );
     }
     ;
 
@@ -222,11 +219,9 @@ modula:
       factor
     | modula OP_MULTIPLICATION factor {
         $$ = variable_mul( _environment, $1, $3 )->name;
-        outline3("; %s = %s * %s", $$, $1, $3 );
     } 
     | modula OP_DIVISION factor {
         $$ = variable_div( _environment, $1, $3 )->name;
-        outline3("; %s = %s / %s", $$, $1, $3 );
     } 
     ;
 
@@ -234,11 +229,9 @@ factor:
         exponential
       | factor OP_POW exponential {
         $$ = powering( _environment, $1, $3 )->name;
-        outline3("; %s = %s ^ %s", $$, $1, $3 );
       }
       | POWERING OP factor OP_COMMA exponential CP {
         $$ = powering( _environment, $3, $5 )->name;
-        outline3("; %s = %s ^ %s", $$, $3, $5 );
       }
       | factor HAS BIT exponential {
         $$ = variable_bit( _environment, $1, $4 )->name;
@@ -769,11 +762,8 @@ exponential:
         variable_store( _environment, $$, -$2 );
       }
     | String { 
-        outline1("; (expr string: \"%s\")", $1 );
         $$ = variable_temporary( _environment, VT_STRING, "(string value)" )->name;
-        outline1("; %s", $$ );
         variable_store_string( _environment, $$, $1 );
-        outline2("; variable stored: %s = %s", $$, $1 );
       }
     | OP BYTE CP Integer { 
         $$ = variable_temporary( _environment, VT_BYTE, "(BYTE value)" )->name;
@@ -2772,22 +2762,14 @@ statement:
         set_timer( _environment, $3 );
   }
   | Identifier OP_ASSIGN expr {
-        outline2("; %s = %s", $1, $3 );
         Variable * expr = variable_retrieve( _environment, $3 );
-        outline1("; retrieved %s ", $3 );
         variable_retrieve_or_define( _environment, $1, expr->type, 0 )->name;
-        outline1("; defined %s ", $1 );
         variable_move( _environment, $3, $1 );
-        outline2("; moved %s -> %s ", $3, $1 );
   }
   | Identifier OP_DOLLAR OP_ASSIGN expr {
-        outline2("; %s = %s", $1, $4 );
         Variable * expr = variable_retrieve( _environment, $4 );
-        outline1("; retrieved %s ", $4 );
         variable_retrieve_or_define( _environment, $1, VT_DSTRING, 0 )->name;
-        outline1("; defined %s ", $1 );
         variable_move( _environment, $4, $1 );
-        outline2("; moved %s -> %s ", $4, $1 );
   }
   | Identifier {
         ++((struct _Environment *)_environment)->arrayNestedIndex;
