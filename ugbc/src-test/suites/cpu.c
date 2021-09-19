@@ -1289,10 +1289,10 @@ int test_cpu_math_div_16bit_to_16bit_testerB( TestEnvironment * _te ) {
     Variable * remainders = variable_retrieve( &_te->environment, _te->trackedVariables[3]->name );
 
 
-    printf("resultu = %4.4x (%d) [expected 160]\n", resultu->value, resultu->value );
-    printf("remainderu = %4.4x (%d) [expected 0]\n", remainderu->value, remainderu->value );
-    printf("results = %4.4x (%d) [expected 160]\n", results->value, results->value );
-    printf("remainders = %4.4x (%d) [expected 0]\n", remainders->value, remainders->value );
+    // printf("resultu = %4.4x (%d) [expected 160]\n", resultu->value, resultu->value );
+    // printf("remainderu = %4.4x (%d) [expected 0]\n", remainderu->value, remainderu->value );
+    // printf("results = %4.4x (%d) [expected 160]\n", results->value, results->value );
+    // printf("remainders = %4.4x (%d) [expected 0]\n", remainders->value, remainders->value );
 
     return  resultu->value == 160 &&
             remainderu->value == 0 && 
@@ -1333,10 +1333,10 @@ int test_cpu_math_div_16bit_to_16bit_testerC( TestEnvironment * _te ) {
     Variable * remainderu = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
     Variable * remainders = variable_retrieve( &_te->environment, _te->trackedVariables[3]->name );
 
-    printf("resultu = %4.4x (%d) [expected 1]\n", resultu->value, resultu->value );
-    printf("remainderu = %4.4x (%d) [expected30]\n", remainderu->value, remainderu->value );
-    printf("results = %4.4x (%d) [expected 2]\n", results->value, results->value );
-    printf("remainders = %4.4x (%d) [expected 10]\n", remainders->value, remainders->value );
+    // printf("resultu = %4.4x (%d) [expected 1]\n", resultu->value, resultu->value );
+    // printf("remainderu = %4.4x (%d) [expected30]\n", remainderu->value, remainderu->value );
+    // printf("results = %4.4x (%d) [expected 2]\n", results->value, results->value );
+    // printf("remainders = %4.4x (%d) [expected 10]\n", remainders->value, remainders->value );
     
     return  resultu->value == 1 &&
             remainderu->value == 30 && 
@@ -1377,10 +1377,10 @@ int test_cpu_math_div_16bit_to_16bit_testerD( TestEnvironment * _te ) {
     Variable * remainderu = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
     Variable * remainders = variable_retrieve( &_te->environment, _te->trackedVariables[3]->name );
 
-    printf("resultu = %4.4x (%d) [expected 1]\n", resultu->value, resultu->value );
-    printf("remainderu = %4.4x (%d) [expected 2]\n", remainderu->value, remainderu->value );
-    printf("results = %4.4x (%d) [expected 1]\n", results->value, results->value );
-    printf("remainders = %4.4x (%d) [expected 2]\n", remainders->value, remainders->value );
+    // printf("resultu = %4.4x (%d) [expected 1]\n", resultu->value, resultu->value );
+    // printf("remainderu = %4.4x (%d) [expected 2]\n", remainderu->value, remainderu->value );
+    // printf("results = %4.4x (%d) [expected 1]\n", results->value, results->value );
+    // printf("remainders = %4.4x (%d) [expected 2]\n", remainders->value, remainders->value );
     
     return  resultu->value == 1 &&
             remainderu->value == 2 && 
@@ -1766,10 +1766,10 @@ int test_cpu_number_to_string_testerD( TestEnvironment * _te ) {
     Variable * string = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
     Variable * size = variable_retrieve( &_te->environment, _te->trackedVariables[3]->name );
 
-printf("c = %4.4x (%d) [expected 20]\n", c->value, c->value );
-printf("d = %4.4x (%d) [expected 1]\n", d->value, d->value );
-printf("string = %s [expected '20']\n", string->valueString );
-printf("size = %2.2x (%d) [expected 2]\n", size->value, size->value );
+// printf("c = %4.4x (%d) [expected 20]\n", c->value, c->value );
+// printf("d = %4.4x (%d) [expected 1]\n", d->value, d->value );
+// printf("string = %s [expected '20']\n", string->valueString );
+// printf("size = %2.2x (%d) [expected 2]\n", size->value, size->value );
 
     return c->value == 20 && d->value == 10 && strcmp( string->valueString, "20" ) == 0 && size->value == 2; 
 
@@ -3746,7 +3746,7 @@ int test_cpu_uppercase_tester( TestEnvironment * _te ) {
 
     _te->debug.inspections[0].memory[size->value] = 0;
 
-    printf( "%s", _te->debug.inspections[0].memory );
+    // printf( "%s", _te->debug.inspections[0].memory );
 
     return strcmp( _te->debug.inspections[0].memory, "STRING TEXT" ) == 0;
 
@@ -4278,7 +4278,7 @@ int test_cpu_sqroot_tester( TestEnvironment * _te ) {
 
     Variable * result = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
 
-printf( "result = %2.2x (%d) [expected 9]\n", result->value, result->value );
+// printf( "result = %2.2x (%d) [expected 9]\n", result->value, result->value );
 
     return result->value == 9;
 

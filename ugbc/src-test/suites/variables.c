@@ -435,7 +435,7 @@ int test_powering_tester( TestEnvironment * _te ) {
 
     Variable * result = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
 
-printf( "result = %2.2x (%d) [expected 25]\n", result->value, result->value );
+// printf( "result = %2.2x (%d) [expected 25]\n", result->value, result->value );
 
     return result->value == 25;
     
