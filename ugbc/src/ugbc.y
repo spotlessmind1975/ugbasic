@@ -2575,13 +2575,18 @@ statement:
       if_then( _environment, $2 );  
   }
   | ELSE {
+      else_if_then_label( _environment );  
       else_if_then( _environment, NULL );  
   }
-  | ELSE IF expr THEN {
-      else_if_then( _environment, $3 );  
+  | ELSE IF {
+      else_if_then_label( _environment );  
+   }  expr THEN {
+      else_if_then( _environment, $4 );  
   }
-  | ELSEIF expr THEN {
-      else_if_then( _environment, $2 );  
+  | ELSEIF {
+      else_if_then_label( _environment );  
+   } expr THEN {
+      else_if_then( _environment, $3 );  
   }
   | ENDIF {
       end_if_then( _environment );  

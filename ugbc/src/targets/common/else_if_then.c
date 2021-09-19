@@ -50,9 +50,9 @@
 /* <usermanual>
 @keyword IF...THEN...ELSE...ENDIF
 </usermanual> */
-void else_if_then( Environment * _environment, char * _expression ) {
+void else_if_then_label( Environment * _environment ) {
 
-    outline1( "; IF %s THEN ... ELSE ...", _expression);
+    outline0( "; ... (finalizing) IF ...");
 
     Conditional * conditional = _environment->conditionals;
 
@@ -70,6 +70,37 @@ void else_if_then( Environment * _environment, char * _expression ) {
     cpu_jump( _environment, endifLabel );
 
     cpu_label( _environment, elseLabel );
+    
+}
+
+/**
+ * @brief Emit ASM code for <b>... ELSE [IF] ...</b>
+ * 
+ * This function outputs the code to implement the alternative for a
+ * conditional if.
+ * 
+ * @param _environment Current calling environment
+ * @param _expression Expression with the true / false condition
+ */
+/* <usermanual>
+@keyword IF...THEN...ELSE...ENDIF
+</usermanual> */
+void else_if_then( Environment * _environment, char * _expression ) {
+
+    outline1( "; ... ELSE IF %s ...", _expression);
+
+    Conditional * conditional = _environment->conditionals;
+
+    if ( ! conditional ) {
+        CRITICAL("ELSE without IF");
+    }
+
+    if ( conditional->type != CT_IF ) {
+        CRITICAL("ELSE outside IF");
+    }
+
+    char endifLabel[MAX_TEMPORARY_STORAGE]; sprintf(endifLabel, "%sf", conditional->label );
+    char elseLabel[MAX_TEMPORARY_STORAGE]; sprintf(elseLabel, "%se%d", conditional->label, conditional->index );
 
     ++conditional->index;
     sprintf(elseLabel, "%se%d", conditional->label, conditional->index );
@@ -86,7 +117,7 @@ void else_if_then( Environment * _environment, char * _expression ) {
         conditional->expression = variable_cast( _environment, expression->name, expression->type );
         conditional->expression->locked = 1;
 
-        cpu_bvneq( _environment, expression->realName, elseLabel );
+        cpu_bveq( _environment, expression->realName, elseLabel );
 
     }
     

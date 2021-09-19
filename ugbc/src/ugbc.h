@@ -1341,6 +1341,7 @@ void                    draw( Environment * _environment, char * _x0, char * _y0
 
 void                    ellipse( Environment * _environment, char * _x, char * _y, char * _rx, char * _ry, char * _c );
 void                    else_if_then( Environment * _environment, char * _expression );
+void                    else_if_then_label( Environment * _environment );
 void                    end( Environment * _environment );
 void                    end_for( Environment * _environment );
 void                    end_gameloop( Environment * _environment );

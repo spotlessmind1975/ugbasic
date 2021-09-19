@@ -108,6 +108,7 @@ void circle( Environment * _environment, char * _x, char * _y, char * _r, char *
         if_then( _environment, variable_less_than( _environment, p->name, zero->name, 1 )->name );
             variable_move( _environment, variable_add( _environment, variable_mul( _environment, two->name, y->name )->name, p->name )->name, p->name );
             variable_increment( _environment, p->name );
+        else_if_then_label( _environment );              
         else_if_then( _environment, NULL );              
             variable_decrement( _environment, x->name );
             variable_move( _environment, variable_add( _environment, variable_mul( _environment, two->name, y->name )->name, p->name )->name, p->name );

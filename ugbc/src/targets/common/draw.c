@@ -120,12 +120,14 @@ void draw( Environment * _environment, char * _x0, char * _y0, char * _x1, char 
     if_then( _environment, variable_less_than( _environment, dy->name, zero->name, 0 )->name );
         variable_move( _environment, variable_sub( _environment, zero->name, dy->name )->name, dy->name );
         variable_store( _environment, stepy->name, -1 );
+    else_if_then_label( _environment );
     else_if_then( _environment, NULL );
        variable_store( _environment, stepy->name, 1 );
     end_if_then( _environment );
     if_then( _environment, variable_less_than( _environment, dx->name, zero->name, 0 )->name );
         variable_move( _environment, variable_sub( _environment, zero->name, dx->name )->name, dx->name );
         variable_store( _environment, stepx->name, -1 );
+    else_if_then_label( _environment );
     else_if_then( _environment, NULL );
         variable_store( _environment, stepx->name, 1 );
     end_if_then( _environment );
@@ -158,6 +160,7 @@ void draw( Environment * _environment, char * _x0, char * _y0, char * _x1, char 
                 variable_store( _environment, bit->name, 0 );
             end_if_then( _environment );
         end_while( _environment );
+    else_if_then_label( _environment );
     else_if_then( _environment, NULL );
         variable_move( _environment, variable_sub( _environment, dx2->name, dy->name)->name, fraction->name);
         begin_while( _environment );

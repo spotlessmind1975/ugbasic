@@ -63,16 +63,10 @@ void end_if_then( Environment * _environment ) {
     }
 
     char elseLabel[MAX_TEMPORARY_STORAGE]; sprintf(elseLabel, "%se%d", conditional->label, conditional->index );
+    char endifLabel[MAX_TEMPORARY_STORAGE]; sprintf(endifLabel, "%sf", conditional->label );
 
-    if ( conditional->index ) {
-        char endifLabel[MAX_TEMPORARY_STORAGE]; sprintf(endifLabel, "%sf", conditional->label );
-
-        cpu_label( _environment, endifLabel );
-    } else {
-        char elseLabel[MAX_TEMPORARY_STORAGE]; sprintf(elseLabel, "%se%d", conditional->label, conditional->index );
-
-        cpu_label( _environment, elseLabel );
-    }
+    cpu_label( _environment, endifLabel );
+    cpu_label( _environment, elseLabel );
 
     _environment->conditionals->expression->locked = 0;
 
