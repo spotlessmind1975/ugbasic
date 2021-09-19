@@ -55,7 +55,7 @@ void linker_setup( Environment * _environment ) {
     cfghead0("MEMORY {");
     cfgline0("ZP:       file = \"\", start = $0002,  size = $001A,      define = yes;");
     cfgline0("LOADADDR: file = %O, start = %S - 2, size = $0002;");
-    cfgline0("MAIN:     file = %O, start = %S,     size = $FD00 - %S;");
+    cfgline0("MAIN:     file = %O, start = %S,     size = $6000 - %S;");
     cfghead0("}");
     cfghead0("SEGMENTS {");
     cfgline0("ZEROPAGE: load = ZP,       type = zp,  optional = yes;");
