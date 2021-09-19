@@ -47,6 +47,14 @@ void create_test( char *_name, void (*_payload)(TestEnvironment *), int (*_teste
 
     Environment * _environment = &t.environment;
 
+
+    _environment->embedded.cpu_fill_blocks = 1;
+    _environment->embedded.cpu_fill = 1;
+    _environment->embedded.cpu_math_div2_8bit = 1;
+    _environment->embedded.cpu_math_mul_8bit_to_16bit = 1;
+    _environment->embedded.cpu_math_div_8bit_to_8bit = 1;
+    _environment->embedded.cpu_math_div2_const_8bit = 1;
+
     t.environment.sourceFileName = strdup("/tmp/out.bas");
     t.environment.asmFileName = strdup("/tmp/out.asm");
     t.environment.configurationFileName = strdup("/tmp/out.cfg");
