@@ -1724,6 +1724,15 @@ screen_definition:
   | screen_definition_expression;
 
 var_definition_simple:
+   Identifier {
+      variable_retrieve_or_define( _environment, $1, VT_WORD, 0 );
+  }
+  | Identifier AS datatype {
+      variable_retrieve_or_define( _environment, $1, $3, 0 );
+  }
+  | Identifier AS datatype OP_ASSIGN const_expr {
+      variable_retrieve_or_define( _environment, $1, $3, $5 );
+  }
   | Identifier ON Identifier {
       variable_retrieve_or_define( _environment, $1, VT_BYTE, 0 );
   }
