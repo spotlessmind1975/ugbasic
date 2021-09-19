@@ -3392,7 +3392,7 @@ static Variable * calculate_offset_in_array( Environment * _environment, char * 
     for( i = 0; i<_environment->arrayIndexes[_environment->arrayNestedIndex]; ++i ) {
         variable_store( _environment, base->name, 1 );
         for( j=0; j<i; ++j ) {
-            variable_store( _environment, size->name, array->arrayDimensionsEach[j] );
+            variable_store( _environment, size->name, array->arrayDimensionsEach[array->arrayDimensions-j-1] );
             base = variable_mul( _environment, base->name, size->name );
         }
         Variable * index = variable_retrieve( _environment, _environment->arrayIndexesEach[_environment->arrayNestedIndex][array->arrayDimensions-i-1]);
