@@ -2905,7 +2905,7 @@ int main( int _argc, char *_argv[] ) {
 
     _environment->warningsEnabled = 0;
 
-    while ((opt = getopt(_argc, _argv, "e:c:Wo:I")) != -1) {
+    while ((opt = getopt(_argc, _argv, "e:c:Wo:Ie:")) != -1) {
         switch (opt) {
                 case 'c':
                     _environment->configurationFileName = strdup(optarg);
@@ -2918,6 +2918,144 @@ int main( int _argc, char *_argv[] ) {
                     break;
                 case 'I':
                     _environment->installChainTool = 1;
+                    break;
+                case 'e': {
+                    char * p = strtok(optarg, ",");
+                    while (p) {
+
+                        parse_embedded( p, cpu_beq );
+                        parse_embedded( p, cpu_beq );
+                        parse_embedded( p, cpu_bneq );
+                        parse_embedded( p, cpu_busy_wait );
+                        parse_embedded( p, cpu_bveq );
+                        parse_embedded( p, cpu_bvneq );
+                        parse_embedded( p, cpu_combine_nibbles );
+                        parse_embedded( p, cpu_compare_16bit );
+                        parse_embedded( p, cpu_compare_32bit );
+                        parse_embedded( p, cpu_compare_8bit );
+                        parse_embedded( p, cpu_di );
+                        parse_embedded( p, cpu_ei );
+                        parse_embedded( p, cpu_inc );
+                        parse_embedded( p, cpu_inc_16bit );
+                        parse_embedded( p, cpu_inc_32bit );
+                        parse_embedded( p, cpu_dec );
+                        parse_embedded( p, cpu_dec_16bit );
+                        parse_embedded( p, cpu_less_than_16bit );
+                        parse_embedded( p, cpu_less_than_32bit );
+                        parse_embedded( p, cpu_less_than_8bit );
+                        parse_embedded( p, cpu_greater_than_16bit );
+                        parse_embedded( p, cpu_greater_than_32bit );
+                        parse_embedded( p, cpu_greater_than_8bit );
+                        parse_embedded( p, cpu_fill );
+                        parse_embedded( p, cpu_fill_blocks );
+                        parse_embedded( p, cpu_halt );
+                        parse_embedded( p, cpu_end );
+                        parse_embedded( p, cpu_jump );
+                        parse_embedded( p, cpu_call );
+                        parse_embedded( p, cpu_return );
+                        parse_embedded( p, cpu_pop );
+                        parse_embedded( p, cpu_label );
+                        parse_embedded( p, cpu_limit_16bit );
+                        parse_embedded( p, cpu_logical_not_8bit );
+                        parse_embedded( p, cpu_logical_and_8bit );
+                        parse_embedded( p, cpu_logical_or_8bit );
+                        parse_embedded( p, cpu_math_add_16bit );
+                        parse_embedded( p, cpu_math_add_16bit_with_16bit );
+                        parse_embedded( p, cpu_math_add_16bit_with_8bit );
+                        parse_embedded( p, cpu_math_add_32bit );
+                        parse_embedded( p, cpu_math_add_8bit );
+                        parse_embedded( p, cpu_math_and_const_16bit );
+                        parse_embedded( p, cpu_math_and_const_32bit );
+                        parse_embedded( p, cpu_math_and_const_8bit );
+                        parse_embedded( p, cpu_math_complement_const_16bit );
+                        parse_embedded( p, cpu_math_complement_const_32bit );
+                        parse_embedded( p, cpu_math_complement_const_8bit );
+                        parse_embedded( p, cpu_math_div2_8bit );
+                        parse_embedded( p, cpu_math_div2_const_16bit );
+                        parse_embedded( p, cpu_math_div2_const_32bit );
+                        parse_embedded( p, cpu_math_div2_const_8bit );
+                        parse_embedded( p, cpu_math_double_16bit );
+                        parse_embedded( p, cpu_math_double_32bit );
+                        parse_embedded( p, cpu_math_double_8bit );
+                        parse_embedded( p, cpu_math_mul_16bit_to_32bit );
+                        parse_embedded( p, cpu_math_mul_8bit_to_16bit );
+                        parse_embedded( p, cpu_math_div_32bit_to_16bit );
+                        parse_embedded( p, cpu_math_div_16bit_to_16bit );
+                        parse_embedded( p, cpu_math_div_8bit_to_8bit );
+                        parse_embedded( p, cpu_math_mul2_const_16bit );
+                        parse_embedded( p, cpu_math_mul2_const_32bit );
+                        parse_embedded( p, cpu_math_mul2_const_8bit );
+                        parse_embedded( p, cpu_math_sub_16bit );
+                        parse_embedded( p, cpu_math_sub_32bit );
+                        parse_embedded( p, cpu_math_sub_8bit );
+                        parse_embedded( p, cpu_math_sub_16bit_with_8bit );
+                        parse_embedded( p, cpu_move_16bit );
+                        parse_embedded( p, cpu_addressof_16bit );
+                        parse_embedded( p, cpu_move_32bit );
+                        parse_embedded( p, cpu_move_8bit );
+                        parse_embedded( p, cpu_peek );
+                        parse_embedded( p, cpu_poke );
+                        parse_embedded( p, cpu_random );
+                        parse_embedded( p, cpu_random_16bit );
+                        parse_embedded( p, cpu_random_32bit );
+                        parse_embedded( p, cpu_random_8bit );
+                        parse_embedded( p, cpu_store_16bit );
+                        parse_embedded( p, cpu_store_32bit );
+                        parse_embedded( p, cpu_store_8bit );
+                        parse_embedded( p, cpu_mem_move );
+                        parse_embedded( p, cpu_mem_move_direct );
+                        parse_embedded( p, cpu_mem_move_size );
+                        parse_embedded( p, cpu_mem_move_direct_size );
+                        parse_embedded( p, cpu_mem_move_direct_indirect_size );
+                        parse_embedded( p, cpu_compare_memory );
+                        parse_embedded( p, cpu_compare_memory_size );
+                        parse_embedded( p, cpu_less_than_memory );
+                        parse_embedded( p, cpu_less_than_memory_size );
+                        parse_embedded( p, cpu_greater_than_memory );
+                        parse_embedded( p, cpu_greater_than_memory_size );
+                        parse_embedded( p, cpu_uppercase );
+                        parse_embedded( p, cpu_lowercase );
+                        parse_embedded( p, cpu_convert_string_into_16bit );
+                        parse_embedded( p, cpu_fill_indirect );
+                        parse_embedded( p, cpu_flip );
+                        parse_embedded( p, cpu_move_8bit_indirect );
+                        parse_embedded( p, cpu_move_8bit_indirect2 );
+                        parse_embedded( p, cpu_move_16bit_indirect );
+                        parse_embedded( p, cpu_move_16bit_indirect2 );
+                        parse_embedded( p, cpu_move_32bit_indirect );
+                        parse_embedded( p, cpu_move_32bit_indirect2 );
+                        parse_embedded( p, cpu_bit_check );
+                        parse_embedded( p, cpu_number_to_string );
+                        parse_embedded( p, cpu_move_8bit_indirect_with_offset );
+                        parse_embedded( p, cpu_bits_to_string );
+                        parse_embedded( p, cpu_bit_check_extended );
+                        parse_embedded( p, cpu_move_8bit_indirect_with_offset2 );
+                        parse_embedded( p, cpu_dsdefine );
+                        parse_embedded( p, cpu_dsalloc );
+                        parse_embedded( p, cpu_dsfree );
+                        parse_embedded( p, cpu_dswrite );
+                        parse_embedded( p, cpu_dsresize );
+                        parse_embedded( p, cpu_dsresize_size );
+                        parse_embedded( p, cpu_dsgc );
+                        parse_embedded( p, cpu_dsdescriptor );
+                        parse_embedded( p, cpu_move_8bit_with_offset );
+                        parse_embedded( p, cpu_move_8bit_with_offset2 );
+                        parse_embedded( p, cpu_store_8bit_with_offset );
+                        parse_embedded( p, cpu_dsalloc_size );
+                        parse_embedded( p, cpu_complement2_8bit );
+                        parse_embedded( p, cpu_complement2_16bit );
+                        parse_embedded( p, cpu_complement2_32bit );
+                        parse_embedded( p, cpu_mobinit );
+                        parse_embedded( p, cpu_mobshow );
+                        parse_embedded( p, cpu_mobhide );
+                        parse_embedded( p, cpu_mobat );
+                        parse_embedded( p, cpu_mobrender );
+                        parse_embedded( p, cpu_sqroot );
+
+                        p = strtok(NULL, ",");
+                    }
+
+                    }
                     break;
                 default: /* '?' */
                     show_usage_and_exit( _argc, _argv );

@@ -540,6 +540,138 @@ typedef struct _RGBi {
     unsigned char index;
 } RGBi;
 
+typedef struct _Embedded {
+
+    int cpu_beq;
+    int cpu_bneq;
+    int cpu_busy_wait;
+    int cpu_bveq;
+    int cpu_bvneq;
+    int cpu_combine_nibbles;
+    int cpu_compare_16bit;
+    int cpu_compare_32bit;
+    int cpu_compare_8bit;
+    int cpu_di;
+    int cpu_ei;
+    int cpu_inc;
+    int cpu_inc_16bit;
+    int cpu_inc_32bit;
+    int cpu_dec;
+    int cpu_dec_16bit;
+    int cpu_less_than_16bit;
+    int cpu_less_than_32bit;
+    int cpu_less_than_8bit;
+    int cpu_greater_than_16bit;
+    int cpu_greater_than_32bit;
+    int cpu_greater_than_8bit;
+    int cpu_fill;
+    int cpu_fill_blocks;
+    int cpu_halt;
+    int cpu_end;
+    int cpu_jump;
+    int cpu_call;
+    int cpu_return;
+    int cpu_pop;
+    int cpu_label;
+    int cpu_limit_16bit;
+    int cpu_logical_not_8bit;
+    int cpu_logical_and_8bit;
+    int cpu_logical_or_8bit;
+    int cpu_math_add_16bit;
+    int cpu_math_add_16bit_with_16bit;
+    int cpu_math_add_16bit_with_8bit;
+    int cpu_math_add_32bit;
+    int cpu_math_add_8bit;
+    int cpu_math_and_const_16bit;
+    int cpu_math_and_const_32bit;
+    int cpu_math_and_const_8bit;
+    int cpu_math_complement_const_16bit;
+    int cpu_math_complement_const_32bit;
+    int cpu_math_complement_const_8bit;
+    int cpu_math_div2_8bit;
+    int cpu_math_div2_const_16bit;
+    int cpu_math_div2_const_32bit;
+    int cpu_math_div2_const_8bit;
+    int cpu_math_double_16bit;
+    int cpu_math_double_32bit;
+    int cpu_math_double_8bit;
+    int cpu_math_mul_16bit_to_32bit;
+    int cpu_math_mul_8bit_to_16bit;
+    int cpu_math_div_32bit_to_16bit;
+    int cpu_math_div_16bit_to_16bit;
+    int cpu_math_div_8bit_to_8bit;
+    int cpu_math_mul2_const_16bit;
+    int cpu_math_mul2_const_32bit;
+    int cpu_math_mul2_const_8bit;
+    int cpu_math_sub_16bit;
+    int cpu_math_sub_32bit;
+    int cpu_math_sub_8bit;
+    int cpu_math_sub_16bit_with_8bit;
+    int cpu_move_16bit;
+    int cpu_addressof_16bit;
+    int cpu_move_32bit;
+    int cpu_move_8bit;
+    int cpu_peek;
+    int cpu_poke;
+    int cpu_random;
+    int cpu_random_16bit;
+    int cpu_random_32bit;
+    int cpu_random_8bit;
+    int cpu_store_16bit;
+    int cpu_store_32bit;
+    int cpu_store_8bit;
+    int cpu_mem_move;
+    int cpu_mem_move_direct;
+    int cpu_mem_move_size;
+    int cpu_mem_move_direct_size;
+    int cpu_mem_move_direct_indirect_size;
+    int cpu_compare_memory;
+    int cpu_compare_memory_size;
+    int cpu_less_than_memory;
+    int cpu_less_than_memory_size;
+    int cpu_greater_than_memory;
+    int cpu_greater_than_memory_size;
+    int cpu_uppercase;
+    int cpu_lowercase;
+    int cpu_convert_string_into_16bit;
+    int cpu_fill_indirect;
+    int cpu_flip;
+    int cpu_move_8bit_indirect;
+    int cpu_move_8bit_indirect2;
+    int cpu_move_16bit_indirect;
+    int cpu_move_16bit_indirect2;
+    int cpu_move_32bit_indirect;
+    int cpu_move_32bit_indirect2;
+    int cpu_bit_check;
+    int cpu_number_to_string;
+    int cpu_move_8bit_indirect_with_offset;
+    int cpu_bits_to_string;
+    int cpu_bit_check_extended;
+    int cpu_move_8bit_indirect_with_offset2;
+    int cpu_dsdefine;
+    int cpu_dsalloc;
+    int cpu_dsfree;
+    int cpu_dswrite;
+    int cpu_dsresize;
+    int cpu_dsresize_size;
+    int cpu_dsgc;
+    int cpu_dsdescriptor;
+    int cpu_move_8bit_with_offset;
+    int cpu_move_8bit_with_offset2;
+    int cpu_store_8bit_with_offset;
+    int cpu_dsalloc_size;
+    int cpu_complement2_8bit;
+    int cpu_complement2_16bit;
+    int cpu_complement2_32bit;
+    int cpu_mobinit;
+    int cpu_mobshow;
+    int cpu_mobhide;
+    int cpu_mobat;
+    int cpu_mobrender;
+    int cpu_sqroot;
+
+} Embedded;
+
 /**
  * @brief Structure of compilation environment
  * 
@@ -583,6 +715,11 @@ typedef struct _Environment {
      * Enable the installation of chain tool.
      */
     int installChainTool;
+
+    /**
+     * List of embedded methods
+     */
+    Embedded embedded;
 
     /* --------------------------------------------------------------------- */
     /* INTERNAL STRUCTURES                                                   */
@@ -1028,6 +1165,8 @@ typedef struct _Environment {
 #define CRITICAL_IMAGE_CONVERTER_INVALID_HEIGHT( h ) CRITICAL2i("E064 - invalid height for image, must be multiple of 8 pixels", h );
 #define CRITICAL_BIN_UNSUPPORTED( v, t ) CRITICAL3("E065 - BIN unsupported for variable of given datatype", v, t );
 #define CRITICAL_MUL2_INVALID_STEPS( v ) CRITICAL2("E066 - invalid steps for multiplication by 2", v );
+#define CRITICAL_UNABLE_TO_EMBED( v ) CRITICAL2("E067 - unable to embed library, only inline available", v );
+#define CRITICAL_UNABLE_TO_INLINE( v ) CRITICAL2("E068 - unable to inline call, only library available", v );
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
 #define WARNING2i( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%i) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -1225,6 +1364,28 @@ typedef struct _Environment {
             cpu_label( _environment, #s "_after" ); \
             _environment->s = 1; \
         }
+
+#define inline(s) \
+        if ( !_environment->embedded.s ) {
+
+#define no_inline(s) \
+        if ( !_environment->embedded.s ) { \
+            CRITICAL_UNABLE_TO_INLINE(#s); \
+
+#define no_embedded(s) \
+        } else { \
+            CRITICAL_UNABLE_TO_EMBED(#s); \
+        }
+
+#define embedded(s,e) \
+        } else { \
+            deploy(s,e) \
+        }
+
+#define parse_embedded(p, s) \
+    if ( strcmp( p, #s ) == 0 ) { \
+        _environment->embedded.s = 1; \
+    }
 
 #define MAX_TEMPORARY_STORAGE   1024
 
