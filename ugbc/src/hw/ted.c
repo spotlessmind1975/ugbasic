@@ -1128,7 +1128,7 @@ void ted_put_image( Environment * _environment, char * _image, char * _x, char *
 
 }
 
-void gtia_wait_vbl( Environment * _environment ) {
+void ted_wait_vbl( Environment * _environment ) {
 
     deploy( vblDeployed, src_hw_ted_vbl_asm);
 
