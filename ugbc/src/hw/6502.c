@@ -58,10 +58,14 @@ void cpu6502_beq( Environment * _environment, char * _label ) {
     
     MAKE_LABEL
 
-    outline1("BNE %s", label);
-    outline1("JMP %s", _label);    
-    outline1("%s:", label);
-    
+    inline( cpu_beq )
+
+        outline1("BNE %s", label);
+        outline1("JMP %s", _label);    
+        outline1("%s:", label);
+
+    no_embedded( cpu_beq );
+
 }
 
 /**
@@ -74,51 +78,77 @@ void cpu6502_bneq( Environment * _environment, char * _label ) {
     
     MAKE_LABEL
 
-    outline1("BEQ %s", label);
-    outline1("JMP %s", _label);    
-    outline1("%s:", label);
-    
+    inline( cpu_bneq )
+
+        outline1("BEQ %s", label);
+        outline1("JMP %s", _label);    
+        outline1("%s:", label);
+
+    no_embedded( cpu_bneq );
+
 }
 
 void cpu6502_bveq( Environment * _environment, char * _value, char * _label ) {
 
-    outline1("LDA %s", _value);
-    cpu6502_beq( _environment,  _label );
+    inline( cpu_bveq )
+
+        outline1("LDA %s", _value);
+        cpu6502_beq( _environment,  _label );
+
+    no_embedded( cpu_bveq );
 
 }
 
 void cpu6502_bvneq( Environment * _environment, char * _value, char * _label ) {
 
-    outline1("LDA %s", _value);
-    cpu6502_bneq( _environment,  _label );
+    inline( cpu_bvneq )
+
+        outline1("LDA %s", _value);
+        cpu6502_bneq( _environment,  _label );
+
+    no_embedded( cpu_bvneq );
 
 }
 
 void cpu6502_label( Environment * _environment, char * _label ) {
-    outhead1("%s:", _label);
+
+    inline( cpu_label )
+
+        outhead1("%s:", _label);
+
+    no_embedded( cpu_label );
+
 }
 
 void cpu6502_peek( Environment * _environment, char * _address, char * _target ) {
 
-    outline1("LDA %s", _address);
-    outline0("STA TMPPTR");
-    outline1("LDA %s+1", _address);
-    outline0("STA TMPPTR+1");
-    outline0("LDY #0");
-    outline0("LDA (TMPPTR),Y");
-    outline1("STA %s", _target);
+    inline( cpu_peek )
+
+        outline1("LDA %s", _address);
+        outline0("STA TMPPTR");
+        outline1("LDA %s+1", _address);
+        outline0("STA TMPPTR+1");
+        outline0("LDY #0");
+        outline0("LDA (TMPPTR),Y");
+        outline1("STA %s", _target);
+
+    no_embedded( cpu_peek );
 
 }
 
 void cpu6502_poke( Environment * _environment, char * _address, char * _source ) {
 
-    outline1("LDA %s", _address);
-    outline0("STA TMPPTR");
-    outline1("LDA %s+1", _address);
-    outline0("STA TMPPTR+1");
-    outline0("LDY #0");
-    outline1("LDA %s", _source);
-    outline0("STA (TMPPTR),Y");    
+    inline( cpu_poke )
+
+        outline1("LDA %s", _address);
+        outline0("STA TMPPTR");
+        outline1("LDA %s+1", _address);
+        outline0("STA TMPPTR+1");
+        outline0("LDY #0");
+        outline1("LDA %s", _source);
+        outline0("STA (TMPPTR),Y");    
+
+    no_embedded( cpu_poke );
 
 }
 
@@ -139,24 +169,39 @@ void cpu6502_fill_blocks( Environment * _environment, char * _address, char * _b
 
     MAKE_LABEL
 
-    // Use the current bitmap address as starting address for filling routine.
-    outline1("LDA %s", _address);
-    outline0("STA TMPPTR");
-    outline1("LDA %s+1", _address);
-    outline0("STA TMPPTR+1");
+    inline( cpu_fill_blocks )
 
-    // Fill the bitmap with the given pattern.
-    outline1("LDX %s", _blocks );
-    outhead1("%sx:", label);
-    outline0("LDY #0");
-    outline1("LDA %s", _pattern );
-    outhead1("%sy:", label);
-    outline0("STA (TMPPTR),y");
-    outline0("INY");
-    outline1("BNE %sy", label);
-    outline0("INC TMPPTR+1");
-    outline0("DEX");
-    outline1("BNE %sx", label);
+        // Use the current bitmap address as starting address for filling routine.
+        outline1("LDA %s", _address);
+        outline0("STA TMPPTR");
+        outline1("LDA %s+1", _address);
+        outline0("STA TMPPTR+1");
+
+        // Fill the bitmap with the given pattern.
+        outline1("LDX %s", _blocks );
+        outhead1("%sx:", label);
+        outline0("LDY #0");
+        outline1("LDA %s", _pattern );
+        outhead1("%sy:", label);
+        outline0("STA (TMPPTR),y");
+        outline0("INY");
+        outline1("BNE %sy", label);
+        outline0("INC TMPPTR+1");
+        outline0("DEX");
+        outline1("BNE %sx", label);
+
+    embedded( cpu_fill_blocks, src_hw_6502_cpu_fill_blocks_asm );
+
+        outline1("LDA %s", _address);
+        outline0("STA TMPPTR");
+        outline1("LDA %s+1", _address);
+        outline0("STA TMPPTR+1");
+        outline1("LDX %s", _blocks );
+        outline1("LDA %s", _pattern );
+
+        outline0("JSR CPUFILLBLOCKS");
+
+    done()
 
 }
 
@@ -3029,7 +3074,7 @@ void cpu6502_number_to_string( Environment * _environment, char * _number, char 
 
     MAKE_LABEL
 
-    deploy( numberToStringDeployed, src_hw_6502_number_to_string_asm );
+    deploy( numberToString, src_hw_6502_number_to_string_asm );
 
     outline1("LDA %s", _string );
     outline0("STA TMPPTR");
@@ -3123,7 +3168,7 @@ void cpu6502_bits_to_string( Environment * _environment, char * _number, char * 
 
     MAKE_LABEL
 
-    deploy( bitsToStringDeployed, src_hw_6502_bits_to_string_asm );
+    deploy( bitsToString, src_hw_6502_bits_to_string_asm );
 
     outline1("LDA #$%2.2x", _bits);
     outline0("STA BITSTOCONVERT");
@@ -3151,7 +3196,7 @@ void cpu6502_bits_to_string( Environment * _environment, char * _number, char * 
 
 void cpu6502_dsdefine( Environment * _environment, char * _string, char * _index ) {
 
-    deploy( dstringDeployed, src_hw_6502_dstring_asm );
+    deploy( dstring, src_hw_6502_dstring_asm );
 
     outline1( "LDA #<%s", _string );
     outline0( "STA DSADDRLO" );
@@ -3164,7 +3209,7 @@ void cpu6502_dsdefine( Environment * _environment, char * _string, char * _index
 
 void cpu6502_dsalloc( Environment * _environment, char * _size, char * _index ) {
 
-    deploy( dstringDeployed, src_hw_6502_dstring_asm );
+    deploy( dstring, src_hw_6502_dstring_asm );
 
     outline1( "LDA %s", _size );
     outline0( "STA DSSIZE" );
@@ -3175,7 +3220,7 @@ void cpu6502_dsalloc( Environment * _environment, char * _size, char * _index ) 
 
 void cpu6502_dsalloc_size( Environment * _environment, int _size, char * _index ) {
 
-    deploy( dstringDeployed, src_hw_6502_dstring_asm );
+    deploy( dstring, src_hw_6502_dstring_asm );
 
     outline1( "LDA #$%2.2x", _size );
     outline0( "STA DSSIZE" );
@@ -3186,7 +3231,7 @@ void cpu6502_dsalloc_size( Environment * _environment, int _size, char * _index 
 
 void cpu6502_dsfree( Environment * _environment, char * _index ) {
 
-    deploy( dstringDeployed, src_hw_6502_dstring_asm );
+    deploy( dstring, src_hw_6502_dstring_asm );
 
     outline1( "LDX %s", _index );
     outline0( "JSR DSFREE" );
@@ -3195,7 +3240,7 @@ void cpu6502_dsfree( Environment * _environment, char * _index ) {
 
 void cpu6502_dswrite( Environment * _environment, char * _index ) {
 
-    deploy( dstringDeployed, src_hw_6502_dstring_asm );
+    deploy( dstring, src_hw_6502_dstring_asm );
 
     outline1( "LDX %s", _index );
     outline0( "JSR DSWRITE" );
@@ -3204,7 +3249,7 @@ void cpu6502_dswrite( Environment * _environment, char * _index ) {
 
 void cpu6502_dsresize( Environment * _environment, char * _index, char * _resize ) {
 
-    deploy( dstringDeployed, src_hw_6502_dstring_asm );
+    deploy( dstring, src_hw_6502_dstring_asm );
 
     outline1( "LDX %s", _index );
     outline1( "LDA %s", _resize );
@@ -3215,7 +3260,7 @@ void cpu6502_dsresize( Environment * _environment, char * _index, char * _resize
 
 void cpu6502_dsresize_size( Environment * _environment, char * _index, int _resize ) {
 
-    deploy( dstringDeployed,src_hw_6502_dstring_asm );
+    deploy( dstring,src_hw_6502_dstring_asm );
 
     outline1( "LDX %s", _index );
     outline1( "LDA #$%2.2x", _resize );
@@ -3226,7 +3271,7 @@ void cpu6502_dsresize_size( Environment * _environment, char * _index, int _resi
 
 void cpu6502_dsgc( Environment * _environment ) {
 
-    deploy( dstringDeployed,src_hw_6502_dstring_asm );
+    deploy( dstring,src_hw_6502_dstring_asm );
 
     outline0( "JSR DSGC" );
 
@@ -3234,7 +3279,7 @@ void cpu6502_dsgc( Environment * _environment ) {
 
 void cpu6502_dsdescriptor( Environment * _environment, char * _index, char * _address, char * _size ) {
 
-    deploy( dstringDeployed,src_hw_6502_dstring_asm );
+    deploy( dstring,src_hw_6502_dstring_asm );
 
     outline1( "LDX %s", _index );
     outline0( "JSR DSDESCRIPTOR" );
@@ -3338,8 +3383,8 @@ unsigned int src_hw_chipset_mob_asm_len;
 
 void cpu6502_mobinit( Environment * _environment, char * _index, char *_x, char *_y,  char *_draw) {
 
-    deploy( mobDeployed, src_hw_6502_mob_asm );
-    deploy( mobcsDeployed, src_hw_chipset_mob_asm );
+    deploy( mob, src_hw_6502_mob_asm );
+    deploy( mobcs, src_hw_chipset_mob_asm );
     
     outline1("LDX %s", _index );
     outline1("LDA %s", _x );
@@ -3372,8 +3417,8 @@ void cpu6502_mobinit( Environment * _environment, char * _index, char *_x, char 
 
 void cpu6502_mobshow( Environment * _environment, char * _index ) {
 
-    deploy( mobDeployed, src_hw_6502_mob_asm );
-    deploy( mobcsDeployed, src_hw_chipset_mob_asm );
+    deploy( mob, src_hw_6502_mob_asm );
+    deploy( mobcs, src_hw_chipset_mob_asm );
 
     outline1("LDX %s", _index );
 
@@ -3383,8 +3428,8 @@ void cpu6502_mobshow( Environment * _environment, char * _index ) {
 
 void cpu6502_mobhide( Environment * _environment, char * _index ) {
 
-    deploy( mobDeployed, src_hw_6502_mob_asm );
-    deploy( mobcsDeployed, src_hw_chipset_mob_asm );
+    deploy( mob, src_hw_6502_mob_asm );
+    deploy( mobcs, src_hw_chipset_mob_asm );
 
     outline1("LDX %s", _index );
 
@@ -3394,8 +3439,8 @@ void cpu6502_mobhide( Environment * _environment, char * _index ) {
 
 void cpu6502_mobat( Environment * _environment, char * _index, char *_x, char *_y ) {
 
-    deploy( mobDeployed, src_hw_6502_mob_asm );
-    deploy( mobcsDeployed, src_hw_chipset_mob_asm );
+    deploy( mob, src_hw_6502_mob_asm );
+    deploy( mobcs, src_hw_chipset_mob_asm );
 
     outline1("LDX %s", _index );
 
@@ -3415,8 +3460,8 @@ void cpu6502_mobat( Environment * _environment, char * _index, char *_x, char *_
 
 void cpu6502_mobrender( Environment * _environment, int _on_vbl ) {
 
-    deploy( mobDeployed, src_hw_6502_mob_asm );
-    deploy( mobcsDeployed, src_hw_chipset_mob_asm );
+    deploy( mob, src_hw_6502_mob_asm );
+    deploy( mobcs, src_hw_chipset_mob_asm );
 
     outline1("LDA #$%2.2x", (_on_vbl) ? 0xff : 0x00 );
     outline0("STA MOBVBL" );
@@ -3426,7 +3471,7 @@ void cpu6502_mobrender( Environment * _environment, int _on_vbl ) {
 
 void cpu6502_sqroot( Environment * _environment, char * _number, char * _result ) {
 
-    deploy( sqrDeployed, src_hw_6502_sqr_asm );
+    deploy( sqr, src_hw_6502_sqr_asm );
 
     outline1("LDA %s", _number );
     outline0("STA Numberl" );

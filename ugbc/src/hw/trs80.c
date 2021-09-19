@@ -72,8 +72,8 @@ void trs80_vscroll( Environment * _environment, int _displacement ) {
 
     outline1("LD A, $%2.2x", ( _displacement & 0xff ) );
 
-    deploy( varsDeployed,src_hw_trs80_vars_asm);
-    deploy( vScrollDeployed,src_hw_trs80_vscroll_asm );
+    deploy( vars,src_hw_trs80_vars_asm);
+    deploy( vScroll,src_hw_trs80_vscroll_asm );
 
     outline0("CALL VSCROLL");
 
@@ -81,9 +81,9 @@ void trs80_vscroll( Environment * _environment, int _displacement ) {
 
 void trs80_text_at( Environment * _environment, char * _x, char * _y, char * _text, char * _text_size, char * _pen, char * _paper, char * _ww ) {
 
-    deploy( varsDeployed,src_hw_trs80_vars_asm);
-    deploy( vScrollDeployed, src_hw_trs80_vscroll_asm );
-    deploy( textEncodedAtDeployed, src_hw_trs80_text_at_asm );
+    deploy( vars,src_hw_trs80_vars_asm);
+    deploy( vScroll, src_hw_trs80_vscroll_asm );
+    deploy( textEncodedAt, src_hw_trs80_text_at_asm );
 
     z80_move_8bit( _environment, _x, "XCURS");
     z80_move_8bit( _environment, _y, "YCURS");
@@ -105,8 +105,8 @@ void trs80_text_at( Environment * _environment, char * _x, char * _y, char * _te
 
 void trs80_cls( Environment * _environment, char * _pen, char * _paper ) {
 
-    deploy( varsDeployed,src_hw_trs80_vars_asm);
-    deploy( clsDeployed, src_hw_trs80_cls_asm );
+    deploy( vars,src_hw_trs80_vars_asm);
+    deploy( cls, src_hw_trs80_cls_asm );
 
     if ( _pen ) {
         z80_move_8bit( _environment, _pen, "_PEN");
@@ -142,7 +142,7 @@ void trs80_scancode( Environment * _environment, char * _pressed, char * _scanco
 
     MAKE_LABEL
 
-    deploy( scancodeDeployed, src_hw_trs80_scancode_asm );
+    deploy( scancode, src_hw_trs80_scancode_asm );
 
     outline0("LD A, 0");
     outline1("LD (%s), A", _scancode );
@@ -171,7 +171,7 @@ void trs80_scanshift( Environment * _environment, char * _shifts ) {
 
     MAKE_LABEL
 
-    deploy( scancodeDeployed, src_hw_trs80_scancode_asm );
+    deploy( scancode, src_hw_trs80_scancode_asm );
 
     outline0("CALL SCANCODE");
     outline0("CP $f1");
@@ -190,7 +190,7 @@ void trs80_keyshift( Environment * _environment, char * _shifts ) {
 
     MAKE_LABEL
 
-    deploy( scancodeDeployed, src_hw_trs80_scancode_asm );
+    deploy( scancode, src_hw_trs80_scancode_asm );
 
     outline0("CALL SCANCODE");
     outline0("CP $f1");
@@ -242,7 +242,7 @@ void trs80_tilemap_enable( Environment * _environment, int _width, int _height, 
 
 void trs80_back( Environment * _environment ) {
 
-    deploy( backDeployed, src_hw_trs80_back_asm );
+    deploy( back, src_hw_trs80_back_asm );
 
     outline0("CALL BACK");
 
@@ -493,8 +493,8 @@ Variable * trs80_image_converter( Environment * _environment, char * _data, int 
 
 void trs80_put_image( Environment * _environment, char * _image, char * _x, char * _y ) {
 
-    deploy( trs80varsDeployed, src_hw_trs80_vars_asm);
-    deploy( imageDeployed, src_hw_trs80_image_asm );
+    deploy( trs80vars, src_hw_trs80_vars_asm);
+    deploy( image, src_hw_trs80_image_asm );
 
     outline1("LD HL, (%s)", _image );
     outline1("LD A, %s", _x );

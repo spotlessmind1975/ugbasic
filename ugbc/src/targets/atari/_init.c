@@ -70,7 +70,7 @@ void target_initialization( Environment * _environment ) {
     outhead0(".include \"atari.inc\"");
     outhead0(".segment \"CODE\"");
     outhead0(".proc MAINENTRY");
-    deploy( varsDeployed, src_hw_atari_vars_asm);
+    deploy( vars_atari_vars_asm);
 
     variable_define( _environment, "stringsAddress", VT_ADDRESS, 0x4200 );
     variable_global( _environment, "stringsAddress" );

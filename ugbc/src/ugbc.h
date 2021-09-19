@@ -672,6 +672,47 @@ typedef struct _Embedded {
 
 } Embedded;
 
+typedef struct _Deployed {
+
+    int vbl;
+    int joystick;
+    int sqr;
+    int back;
+    int vars;
+    int startup;
+    int c6847startup;
+    int c6847vars;
+    int vicstartup;
+    int vic2vars;
+    int tedstartup;
+    int tedvars;
+    int anticstartup;
+    int gtiastartup;
+    int gtiavars;
+    int zxvars;
+    int plot;
+    int dstring;
+    int scancode;
+    int textEncodedAt;
+    int numberToString;
+    int bitsToString;
+    int vScroll;
+    int vScrollText;
+    int textVScrollScreen;
+    int cls;
+    int textCline;
+    int textHScroll;
+    int textHScrollLine;
+    int textHScrollScreen;
+    int raster;
+    int image;
+    int mob;
+    int mobcs;
+
+    Embedded embedded;
+
+} Deployed;
+
 /**
  * @brief Structure of compilation environment
  * 
@@ -875,205 +916,9 @@ typedef struct _Environment {
     VariableType parametersTypeEach[MAX_PARAMETERS];
 
     /**
-     * Deployed vbl
+     * Deployed modules.
      */
-
-    int vblDeployed;
-
-    /**
-     * Deployed joystick
-     */
-
-    int joystickDeployed;
-
-    /**
-     * Deployed sqr
-     */
-
-    int sqrDeployed;
-
-    /**
-     * Deployed back
-     */
-
-    int backDeployed;
-
-    /**
-     * Deployed the vars
-     */
-
-    int varsDeployed;
-
-    /**
-     * Deployed the startup for target
-     */
-
-    int startupDeployed;
-
-    /**
-     * Deployed the startup for Motorola 6847
-     */
-
-    int c6847startupDeployed;
-
-    /**
-     * Deployed the vars for Motorola 6847
-     */
-
-    int c6847varsDeployed;
-
-    /**
-     * Deployed the startup for VIC-II
-     */
-
-    int vicstartupDeployed;
-
-    /**
-     * Deployed the vars for VIC-II
-     */
-
-    int vic2varsDeployed;
-
-    /**
-     * Deployed the startup for TED
-     */
-
-    int tedstartupDeployed;
-
-    /**
-     * Deployed the vars for TED
-     */
-
-    int tedvarsDeployed;
-
-    /**
-     * Deployed the startup for ANTIC
-     */
-
-    int anticstartupDeployed;
-
-    /**
-     * Deployed the startup for GTIA
-     */
-
-    int gtiastartupDeployed;
-
-    /**
-     * Deployed the vars for GTIA
-     */
-
-    int gtiavarsDeployed;
-
-    /**
-     * Deployed the vars for ZX
-     */
-
-    int zxvarsDeployed;
-
-    /**
-     * Deployed plotting routine
-     */
-
-    int plotDeployed;
-
-    /**
-     * Deployed the dynamic string support
-     */
-
-    int dstringDeployed;
-
-    /**
-     * Deployed the scancode routine
-     */
-
-    int scancodeDeployed;
-
-    /**
-     * Deployed the text_encoded_at routine
-     */
-
-    int textEncodedAtDeployed;
-
-    /**
-     * Deployed the number to string routine
-     */
-
-    int numberToStringDeployed;
-
-    /**
-     * Deployed the bits to string routine
-     */
-
-    int bitsToStringDeployed;
-
-    /**
-     * Deployed the vertical scroll routine
-     */
-
-    int vScrollDeployed;
-
-    /**
-     * Deployed the vertical scroll text routine
-     */
-
-    int vScrollTextDeployed;
-
-    /**
-     * Deployed the vertical scroll text routine
-     */
-
-    int textVScrollScreenDeployed;
-
-    /**
-     * Deployed the cls text routine
-     */
-
-    int clsDeployed;
-
-    /**
-     * Deployed the cline text routine
-     */
-
-    int textClineDeployed;
-
-    /**
-     *  Deployed the code for horizontal line scrolling
-     */
-    int textHScrollDeployed;
-
-    /**
-     *  Deployed the code for horizontal line scrolling
-     */
-    int textHScrollLineDeployed;
-
-    /**
-     *  Deployed the code for horizontal line scrolling
-     */
-    int textHScrollScreenDeployed;
-
-    /**
-     * Deployed the raster routine
-     */
-
-    int rasterDeployed;
-
-    /**
-     * Deployed the image routines
-     */
-
-    int imageDeployed;
-
-    /**
-     * Deployed the mob routines
-     */
-
-    int mobDeployed;
-
-    /**
-     * Deployed the mob routines for specific chipset
-     */
-
-    int mobcsDeployed;
+    Deployed deployed;
 
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
@@ -1358,11 +1203,19 @@ typedef struct _Environment {
 #define cfg5(s,a,b,c,d,e)       cfgline5n(0, s, a, b, c, d, e, 0)
 
 #define deploy(s,e)  \
-        if ( ! _environment->s ) { \
+        if ( ! _environment->deployed.s ) { \
             cpu_jump( _environment, #s "_after" ); \
             outembedded0(e); \
             cpu_label( _environment, #s "_after" ); \
-            _environment->s = 1; \
+            _environment->deployed.s = 1; \
+        }
+
+#define deploy_embedded(s,e)  \
+        if ( ! _environment->deployed.embedded.s ) { \
+            cpu_jump( _environment, #s "_after" ); \
+            outembedded0(e); \
+            cpu_label( _environment, #s "_after" ); \
+            _environment->deployed.embedded.s = 1; \
         }
 
 #define inline(s) \
@@ -1379,7 +1232,9 @@ typedef struct _Environment {
 
 #define embedded(s,e) \
         } else { \
-            deploy(s,e) \
+            deploy_embedded(s,e) \
+
+#define done() \
         }
 
 #define parse_embedded(p, s) \

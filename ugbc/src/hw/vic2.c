@@ -622,8 +622,8 @@ void vic2_textmap_at( Environment * _environment, char * _address ) {
 
 void vic2_point_at_int( Environment * _environment, int _x, int _y ) {
 
-    deploy( vic2varsDeployed, src_hw_vic2_vars_asm);
-    deploy( plotDeployed, src_hw_vic2_plot_asm );
+    deploy( vic2vars, src_hw_vic2_vars_asm);
+    deploy( plot, src_hw_vic2_plot_asm );
     
     outline1("LDA %2.2x", (_x & 0xff ) );
     outline0("STA PLOTX");
@@ -642,8 +642,8 @@ void vic2_point_at_vars( Environment * _environment, char *_x, char *_y ) {
     Variable * x = variable_retrieve( _environment, _x );
     Variable * y = variable_retrieve( _environment, _y );
 
-    deploy( vic2varsDeployed, src_hw_vic2_vars_asm);
-    deploy( plotDeployed, src_hw_vic2_plot_asm );
+    deploy( vic2vars, src_hw_vic2_vars_asm);
+    deploy( plot, src_hw_vic2_plot_asm );
     
     outline1("LDA %s", x->realName );
     outline0("STA PLOTX");
@@ -663,8 +663,8 @@ void vic2_point( Environment * _environment, char *_x, char *_y, char * _result 
     Variable * y = variable_retrieve( _environment, _y );
     Variable * result = variable_retrieve( _environment, _result );
 
-    deploy( vic2varsDeployed, src_hw_vic2_vars_asm);
-    deploy( plotDeployed, src_hw_vic2_plot_asm );
+    deploy( vic2vars, src_hw_vic2_vars_asm);
+    deploy( plot, src_hw_vic2_plot_asm );
     
     outline1("LDA %s", x->realName );
     outline0("STA PLOTX");
@@ -918,7 +918,7 @@ void vic2_get_height( Environment * _environment, char *_result ) {
 
 void vic2_cls( Environment * _environment ) {
     
-    deploy( clsDeployed, src_hw_vic2_cls_asm );
+    deploy( cls, src_hw_vic2_cls_asm );
 
     outline0("JSR CLS");
 
@@ -926,7 +926,7 @@ void vic2_cls( Environment * _environment ) {
 
 void vic2_scroll_text( Environment * _environment, int _direction ) {
 
-    deploy( vScrollTextDeployed, src_hw_vic2_vscroll_text_asm );
+    deploy( vScrollText, src_hw_vic2_vscroll_text_asm );
 
     outline1("LDA #$%2.2x", ( _direction & 0xff ) );
     outline0("STA DIRECTION" );
@@ -937,9 +937,9 @@ void vic2_scroll_text( Environment * _environment, int _direction ) {
 
 void vic2_text_at( Environment * _environment, char * _x, char * _y, char * _text, char * _text_size, char * _pen, char *_ww ) {
 
-    deploy( vic2varsDeployed, src_hw_vic2_vars_asm);
-    deploy( vScrollTextDeployed, src_hw_vic2_vscroll_text_asm );
-    deploy( textEncodedAtDeployed, src_hw_vic2_text_at_asm );
+    deploy( vic2vars, src_hw_vic2_vars_asm);
+    deploy( vScrollText, src_hw_vic2_vscroll_text_asm );
+    deploy( textEncodedAt, src_hw_vic2_text_at_asm );
 
     outline1("LDA %s", _text);
     outline0("STA TEXTPTR" );
@@ -979,8 +979,8 @@ void vic2_text_at( Environment * _environment, char * _x, char * _y, char * _tex
 
 void vic2_initialization( Environment * _environment ) {
 
-    deploy( vic2varsDeployed, src_hw_vic2_vars_asm );
-    deploy( vicstartupDeployed, src_hw_vic2_startup_asm );
+    deploy( vic2vars, src_hw_vic2_vars_asm );
+    deploy( vicstartup, src_hw_vic2_startup_asm );
     src_hw_chipset_mob_asm = src_hw_vic2_mob_asm;
     src_hw_chipset_mob_asm_len = src_hw_vic2_mob_asm_len;
 
@@ -1014,7 +1014,7 @@ void vic2_initialization( Environment * _environment ) {
 
 void vic2_hscroll_line( Environment * _environment, int _direction ) {
 
-    deploy( textHScrollDeployed, src_hw_vic2_hscroll_text_asm );
+    deploy( textHScroll, src_hw_vic2_hscroll_text_asm );
 
     Variable * y = variable_retrieve( _environment, "windowCY" );
     outline1("LDA #$%2.2x", ( _direction & 0xff ) );
@@ -1028,7 +1028,7 @@ void vic2_hscroll_line( Environment * _environment, int _direction ) {
 
 void vic2_hscroll_screen( Environment * _environment, int _direction ) {
 
-    deploy( textHScrollDeployed, src_hw_vic2_hscroll_text_asm );
+    deploy( textHScroll, src_hw_vic2_hscroll_text_asm );
 
     outline1("LDA #$%2.2x", ( _direction & 0xff ) );
     outline0("STA DIRECTION" );
@@ -1038,7 +1038,7 @@ void vic2_hscroll_screen( Environment * _environment, int _direction ) {
 
 void vic2_back( Environment * _environment ) {
 
-    deploy( backDeployed, src_hw_vic2_back_asm );
+    deploy( back, src_hw_vic2_back_asm );
 
     outline0("JSR BACK");
 
@@ -1046,7 +1046,7 @@ void vic2_back( Environment * _environment ) {
 
 void vic2_cline( Environment * _environment, char * _characters ) {
 
-    deploy( textClineDeployed, src_hw_vic2_cline_asm );
+    deploy( textCline, src_hw_vic2_cline_asm );
     Variable * x = variable_retrieve( _environment, "windowCX" );
     Variable * y = variable_retrieve( _environment, "windowCY" );
 
@@ -1477,8 +1477,8 @@ Variable * vic2_image_converter( Environment * _environment, char * _data, int _
 
 void vic2_put_image( Environment * _environment, char * _image, char * _x, char * _y ) {
 
-    deploy( vic2varsDeployed, src_hw_vic2_vars_asm);
-    deploy( imageDeployed, src_hw_vic2_image_asm );
+    deploy( vic2vars, src_hw_vic2_vars_asm);
+    deploy( image, src_hw_vic2_image_asm );
 
     outline1("LDA #<%s", _image );
     outline0("STA TMPPTR" );
@@ -1499,7 +1499,7 @@ void vic2_put_image( Environment * _environment, char * _image, char * _x, char 
 
 void vic2_wait_vbl( Environment * _environment ) {
 
-    deploy( vblDeployed, src_hw_vic2_vbl_asm);
+    deploy( vbl, src_hw_vic2_vbl_asm);
 
     outline0("JSR VBL");
 

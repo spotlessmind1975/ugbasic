@@ -68,7 +68,7 @@ void target_initialization( Environment * _environment ) {
     linker_setup( _environment );
 
     outhead0(".segment \"CODE\"");
-    deploy( varsDeployed, src_hw_plus4_vars_asm);
+    deploy( vars, src_hw_plus4_vars_asm);
     variable_define( _environment, "stringsAddress", VT_ADDRESS, 0x4200 );
     variable_global( _environment, "stringsAddress" );
     bank_define( _environment, "STRINGS", BT_STRINGS, 0x4200, NULL );

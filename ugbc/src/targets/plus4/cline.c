@@ -60,7 +60,7 @@ void cline( Environment * _environment, char * _characters ) {
     }
     outline0("STA CHARACTERS");
 
-    if ( !_environment->textClineDeployed ) {
+    if ( !_environment->deployed.textCline ) {
 
         Variable * colormapAddress = variable_retrieve( _environment, "COLORMAPADDRESS" );
         Variable * TEXTADDRESS = variable_retrieve( _environment, "TEXTADDRESS" );
@@ -193,7 +193,7 @@ void cline( Environment * _environment, char * _characters ) {
 
         outhead0("lib_cline_after:");
 
-        _environment->textClineDeployed = 1;
+        _environment->deployed.textCline = 1;
 
     }
 

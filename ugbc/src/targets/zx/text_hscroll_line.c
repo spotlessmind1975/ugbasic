@@ -45,7 +45,7 @@ void text_hscroll_line( Environment * _environment, int _direction ) {
     outline0("LD B, A" );
     outline1("LD A, $%2.2x", ( _direction & 0xff ) );
 
-    if ( !_environment->textHScrollLineDeployed ) {
+    if ( !_environment->deployed.textHScrollLine ) {
 
         Variable * bitmapAddress = variable_retrieve( _environment, "BITMAPADDRESS" );
 
@@ -101,7 +101,7 @@ void text_hscroll_line( Environment * _environment, int _direction ) {
 
         outhead0("lib_text_hscroll_line_after:");
 
-        _environment->textHScrollLineDeployed = 1;
+        _environment->deployed.textHScrollLine = 1;
 
     }
 

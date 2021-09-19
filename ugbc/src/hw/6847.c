@@ -230,7 +230,7 @@ void c6847_bank_select( Environment * _environment, int _bank ) {
 
 int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
 
-    deploy( c6847varsDeployed, src_hw_6847_vars_asm );
+    deploy( c6847vars, src_hw_6847_vars_asm );
 
     switch( _screen_mode->id ) {
         // ALPHANUMERIC DISPLAY MODES – All alphanumeric modes occupy an 8 x 12 
@@ -629,8 +629,8 @@ void c6847_textmap_at( Environment * _environment, char * _address ) {
 
 void c6847_point_at_int( Environment * _environment, int _x, int _y ) {
 
-    deploy( c6847varsDeployed, src_hw_6847_vars_asm );
-    deploy( plotDeployed, src_hw_6847_plot_asm );
+    deploy( c6847vars, src_hw_6847_vars_asm );
+    deploy( plot, src_hw_6847_plot_asm );
     
     outline1("LDX %4.4x", (_x & 0xffff ) );
     outline0("STX PLOTX");
@@ -648,8 +648,8 @@ void c6847_point_at_vars( Environment * _environment, char *_x, char *_y ) {
     Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
     Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
 
-    deploy( c6847varsDeployed, src_hw_6847_vars_asm );
-    deploy( plotDeployed, src_hw_6847_plot_asm );
+    deploy( c6847vars, src_hw_6847_vars_asm );
+    deploy( plot, src_hw_6847_plot_asm );
     
     outline1("LDX %s", x->realName );
     outline0("STX PLOTX");
@@ -667,8 +667,8 @@ void c6847_point( Environment * _environment, char *_x, char *_y, char * _result
     Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
     Variable * result = variable_retrieve_or_define( _environment, _result, VT_BYTE, 0 );
 
-    deploy( c6847varsDeployed, src_hw_6847_vars_asm );
-    deploy( plotDeployed, src_hw_6847_plot_asm );
+    deploy( c6847vars, src_hw_6847_vars_asm );
+    deploy( plot, src_hw_6847_plot_asm );
     
     outline1("LDD %s", x->realName );
     outline0("STD PLOTX");
@@ -766,7 +766,7 @@ void c6847_get_height( Environment * _environment, char *_result ) {
 
 void c6847_cls( Environment * _environment ) {
 
-    deploy( clsDeployed, src_hw_6847_cls_asm );
+    deploy( cls, src_hw_6847_cls_asm );
 
     outline0("JSR CLS");
 
@@ -774,7 +774,7 @@ void c6847_cls( Environment * _environment ) {
 
 void c6847_scroll_text( Environment * _environment, int _direction ) {
 
-    deploy( vScrollTextDeployed, src_hw_6847_vscroll_text_asm );
+    deploy( vScrollText, src_hw_6847_vscroll_text_asm );
 
     outline1("LDA #$%2.2x", ( _direction & 0xff ) );
     outline0("STA DIRECTION" );
@@ -785,9 +785,9 @@ void c6847_scroll_text( Environment * _environment, int _direction ) {
 
 void c6847_text_at( Environment * _environment, char * _x, char * _y, char * _text, char * _text_size, char * _pen, char *_ww ) {
 
-    deploy( c6847varsDeployed, src_hw_6847_vars_asm);
-    deploy( vScrollTextDeployed, src_hw_6847_vscroll_text_asm );
-    deploy( textEncodedAtDeployed, src_hw_6847_text_at_asm );
+    deploy( c6847vars, src_hw_6847_vars_asm);
+    deploy( vScrollText, src_hw_6847_vscroll_text_asm );
+    deploy( textEncodedAt, src_hw_6847_text_at_asm );
 
     outline1("LDY %s", _text);
     outline0("STY TEXTPTR" );
@@ -819,8 +819,8 @@ void c6847_text_at( Environment * _environment, char * _x, char * _y, char * _te
 
 void c6847_initialization( Environment * _environment ) {
 
-    deploy( c6847varsDeployed, src_hw_6847_vars_asm );
-    deploy( c6847startupDeployed, src_hw_6847_startup_asm );
+    deploy( c6847vars, src_hw_6847_vars_asm );
+    deploy( c6847startup, src_hw_6847_startup_asm );
     // src_hw_chipset_mob_asm = src_hw_c6847_mob_asm;
     // src_hw_chipset_mob_asm_len = src_hw_c6847_mob_asm_len;
 
@@ -862,7 +862,7 @@ void c6847_initialization( Environment * _environment ) {
 
 void c6847_hscroll_line( Environment * _environment, int _direction ) {
 
-    deploy( textHScrollDeployed, src_hw_6847_hscroll_text_asm );
+    deploy( textHScroll, src_hw_6847_hscroll_text_asm );
 
     Variable * y = variable_retrieve( _environment, "windowCY" );
     outline1("LDA #$%2.2x", ( _direction & 0xff ) );
@@ -876,7 +876,7 @@ void c6847_hscroll_line( Environment * _environment, int _direction ) {
 
 void c6847_hscroll_screen( Environment * _environment, int _direction ) {
 
-    deploy( textHScrollDeployed, src_hw_6847_hscroll_text_asm );
+    deploy( textHScroll, src_hw_6847_hscroll_text_asm );
 
     outline1("LDA #$%2.2x", ( _direction & 0xff ) );
     outline0("STA DIRECTION" );
@@ -891,7 +891,7 @@ void c6847_back( Environment * _environment ) {
 
 void c6847_cline( Environment * _environment, char * _characters ) {
 
-    deploy( textClineDeployed, src_hw_6847_cline_asm );
+    deploy( textCline, src_hw_6847_cline_asm );
     Variable * x = variable_retrieve( _environment, "windowCX" );
     Variable * y = variable_retrieve( _environment, "windowCY" );
 

@@ -157,7 +157,7 @@ void variable_cleanup( Environment * _environment ) {
                     outhead0("BITMASK: defm $01,$02,$04,$08,$10,$20,$40,$80");
                     outhead0("BITMASKN: defm $fe,$fd,$fb,$f7,$ef,$df,$bf,$7f");
                 }
-                if ( _environment->dstringDeployed ) {
+                if ( _environment->deployed.dstring ) {
                     outhead0("max_free_string = 4");
                 }
 

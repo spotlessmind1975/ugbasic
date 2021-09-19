@@ -137,7 +137,7 @@ void d32_scancode( Environment * _environment, char * _pressed, char * _scancode
 
     MAKE_LABEL
 
-    deploy( scancodeDeployed, src_hw_d32_scancode_asm );
+    deploy( scancode, src_hw_d32_scancode_asm );
 
     outline0("LDA #0" );
     outline1("STA %s", _pressed );

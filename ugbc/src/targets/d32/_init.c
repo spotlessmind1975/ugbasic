@@ -56,8 +56,8 @@ void target_initialization( Environment * _environment ) {
 
     outline0("ORG $2800");
     outline0("LDS #$7000");
-    deploy( varsDeployed, src_hw_d32_vars_asm);
-    deploy( startupDeployed, src_hw_d32_startup_asm);
+    deploy( vars, src_hw_d32_vars_asm);
+    deploy( startup, src_hw_d32_startup_asm);
     variable_define( _environment, "stringsAddress", VT_ADDRESS, 0x4200 );
     variable_global( _environment, "stringsAddress" );
     bank_define( _environment, "STRINGS", BT_STRINGS, 0x4200, NULL );

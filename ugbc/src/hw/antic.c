@@ -58,7 +58,7 @@
  */
 void antic_raster_at( Environment * _environment, char * _label, char * _positionlo, char * _positionhi ) {
 
-    deploy( rasterDeployed, src_hw_antic_raster_asm );
+    deploy( raster, src_hw_antic_raster_asm );
 
     outline1("LDA %s", _positionlo);
     outline0("STA RASTERLO");
@@ -103,7 +103,7 @@ void antic_next_raster( Environment * _environment ) {
  */
 void antic_next_raster_at( Environment * _environment, char * _label, char * _positionlo, char * _positionhi ) {
 
-    deploy( rasterDeployed, src_hw_antic_raster_asm );
+    deploy( raster, src_hw_antic_raster_asm );
 
     outline1("LDA %s", _positionlo);
     outline0("STA RASTERLO");
@@ -120,7 +120,7 @@ void antic_next_raster_at( Environment * _environment, char * _label, char * _po
 
 void antic_initialization( Environment * _environment ) {
 
-    deploy( anticstartupDeployed, src_hw_antic_startup_asm );
+    deploy( anticstartup, src_hw_antic_startup_asm );
 
     outline0("JSR ANTICSTARTUP");
 

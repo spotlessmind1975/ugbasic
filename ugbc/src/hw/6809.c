@@ -3183,7 +3183,7 @@ void cpu6809_number_to_string( Environment * _environment, char * _number, char 
 
     MAKE_LABEL
 
-    deploy( numberToStringDeployed, src_hw_6809_number_to_string_asm );
+    deploy( numberToString, src_hw_6809_number_to_string_asm );
 
     outline1("LDX %s", _string );
     outline0("STX TMPPTR");
@@ -3317,7 +3317,7 @@ void cpu6809_number_to_string( Environment * _environment, char * _number, char 
 
 void cpu6809_bits_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits ) {
 
-    deploy( bitsToStringDeployed, src_hw_6809_bits_to_string_asm );
+    deploy( bitsToString, src_hw_6809_bits_to_string_asm );
 
     switch( _bits ) {
         case 32:
@@ -3357,7 +3357,7 @@ void cpu6809_bits_to_string( Environment * _environment, char * _number, char * 
 
 void cpu6809_dsdefine( Environment * _environment, char * _string, char * _index ) {
     
-    deploy( dstringDeployed, src_hw_6809_dstring_asm );
+    deploy( dstring, src_hw_6809_dstring_asm );
 
     outline1( "LDY #%s", _string );
     outline0( "JSR DSDEFINE" );
@@ -3367,7 +3367,7 @@ void cpu6809_dsdefine( Environment * _environment, char * _string, char * _index
 
 void cpu6809_dsalloc( Environment * _environment, char * _size, char * _index ) {
 
-    deploy( dstringDeployed, src_hw_6809_dstring_asm );
+    deploy( dstring, src_hw_6809_dstring_asm );
 
     outline1( "LDA %s", _size );
     outline0( "JSR DSALLOC" );
@@ -3377,7 +3377,7 @@ void cpu6809_dsalloc( Environment * _environment, char * _size, char * _index ) 
 
 void cpu6809_dsalloc_size( Environment * _environment, int _size, char * _index ) {
 
-    deploy( dstringDeployed, src_hw_6809_dstring_asm );
+    deploy( dstring, src_hw_6809_dstring_asm );
 
     outline1( "LDA #$%2.2x", _size );
     outline0( "JSR DSALLOC" );
@@ -3387,7 +3387,7 @@ void cpu6809_dsalloc_size( Environment * _environment, int _size, char * _index 
 
 void cpu6809_dsfree( Environment * _environment, char * _index ) {
 
-    deploy( dstringDeployed, src_hw_6809_dstring_asm );
+    deploy( dstring, src_hw_6809_dstring_asm );
 
     outline1( "LDB %s", _index );
     outline0( "JSR DSFREE" );
@@ -3396,7 +3396,7 @@ void cpu6809_dsfree( Environment * _environment, char * _index ) {
 
 void cpu6809_dswrite( Environment * _environment, char * _index ) {
 
-    deploy( dstringDeployed, src_hw_6809_dstring_asm );
+    deploy( dstring, src_hw_6809_dstring_asm );
 
     outline1( "LDB %s", _index );
     outline0( "JSR DSWRITE" );
@@ -3405,7 +3405,7 @@ void cpu6809_dswrite( Environment * _environment, char * _index ) {
 
 void cpu6809_dsresize( Environment * _environment, char * _index, char * _resize ) {
 
-    deploy( dstringDeployed, src_hw_6809_dstring_asm );
+    deploy( dstring, src_hw_6809_dstring_asm );
 
     outline1( "LDB %s", _index );
     outline1( "LDA %s", _resize );
@@ -3415,7 +3415,7 @@ void cpu6809_dsresize( Environment * _environment, char * _index, char * _resize
 
 void cpu6809_dsresize_size( Environment * _environment, char * _index, int _resize ) {
 
-    deploy( dstringDeployed, src_hw_6809_dstring_asm );
+    deploy( dstring, src_hw_6809_dstring_asm );
 
     outline1( "LDB %s", _index );
     outline1( "LDA #$%2.2X", _resize );
@@ -3425,7 +3425,7 @@ void cpu6809_dsresize_size( Environment * _environment, char * _index, int _resi
 
 void cpu6809_dsgc( Environment * _environment ) {
 
-    deploy( dstringDeployed, src_hw_6809_dstring_asm );
+    deploy( dstring, src_hw_6809_dstring_asm );
 
     outline0( "JSR DSGC" );
 
@@ -3433,7 +3433,7 @@ void cpu6809_dsgc( Environment * _environment ) {
 
 void cpu6809_dsdescriptor( Environment * _environment, char * _index, char * _address, char * _size ) {
 
-    deploy( dstringDeployed,src_hw_6809_dstring_asm );
+    deploy( dstring,src_hw_6809_dstring_asm );
 
     outline1( "LDB %s", _index );
     outline0( "JSR DSDESCRIPTOR" );
@@ -3567,7 +3567,7 @@ void cpu6809_mobrender( Environment * _environment, int _on_vbl ) {
 
 void cpu6809_sqroot( Environment * _environment, char * _number, char * _result ) {
 
-    deploy( sqrDeployed, src_hw_6809_sqr_asm );
+    deploy( sqr, src_hw_6809_sqr_asm );
 
     outline1("LDA %s", _number );
     outline0("STA Numberh" );
