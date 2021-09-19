@@ -828,12 +828,12 @@ void cpu6502_math_div2_const_8bit( Environment * _environment, char *_source, in
 
         if ( _signed ) {
             outline1("LDA %s", _source);
-            outline1("LDX $%2.2x", _steps );
+            outline1("LDX #$%2.2x", _steps );
             outline0("JSR CPUMATHDIV2CONST8BIT_SIGNED")
             outline1("STA %s", _source);
         } else {
             outline1("LDA %s", _source);
-            outline1("LDX $%2.2x", _steps );
+            outline1("LDX #$%2.2x", _steps );
             outline0("JSR CPUMATHDIV2CONST8BIT")
             outline1("STA %s", _source);
         }
