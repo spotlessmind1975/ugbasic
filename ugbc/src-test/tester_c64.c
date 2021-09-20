@@ -54,6 +54,9 @@ void create_test( char *_name, void (*_payload)(TestEnvironment *), int (*_teste
     _environment->embedded.cpu_math_mul_8bit_to_16bit = 1;
     _environment->embedded.cpu_math_div_8bit_to_8bit = 1;
     _environment->embedded.cpu_math_div2_const_8bit = 1;
+    _environment->embedded.cpu_math_mul2_const_8bit = 1;
+    _environment->embedded.cpu_math_mul_16bit_to_32bit = 1;
+    _environment->embedded.cpu_math_div_16bit_to_16bit = 1;
 
     t.environment.sourceFileName = strdup("/tmp/out.bas");
     t.environment.asmFileName = strdup("/tmp/out.asm");
@@ -70,7 +73,10 @@ void create_test( char *_name, void (*_payload)(TestEnvironment *), int (*_teste
     }
     fclose(handleIns);
     
-    system("cl65 -l /tmp/out.lis -Ln /tmp/out.lbl -g -o /tmp/out.prg -C /tmp/out.cfg -u __EXEHDR__ -t c64 /tmp/out.asm");
+    if ( system("cl65 -l /tmp/out.lis -Ln /tmp/out.lbl -g -o /tmp/out.prg -C /tmp/out.cfg -u __EXEHDR__ -t c64 /tmp/out.asm") ) {
+        printf( "Error on %s\n", _name);
+        exit(0);
+    };
     system("run6502 -L /tmp/out.lbl -Li /tmp/out.ins -X 0000 -R 080d -l 07ff /tmp/out.prg -O /tmp/out.out -u /tmp/out.lis");
     FILE * handle = fopen( "/tmp/out.out", "rt" );
     fscanf(handle, "%x %x %x %x %x %x", &t.state.a, &t.state.x, &t.state.y, &t.state.p, &t.state.s, &t.state.pc );

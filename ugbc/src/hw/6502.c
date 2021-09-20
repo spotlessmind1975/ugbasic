@@ -1460,7 +1460,6 @@ void cpu6502_math_mul_16bit_to_32bit( Environment * _environment, char *_source,
 
      embedded( cpu_math_mul_16bit_to_32bit, src_hw_6502_cpu_math_mul_16bit_to_32bit_asm )
 
-        int i=0;
         if ( _signed ) {
             outline1("LDA %s", _source );
             outline0("STA CPUMATHMUL16BITTO32BIT_SOURCE");
@@ -1507,142 +1506,185 @@ void cpu6502_math_div_16bit_to_16bit( Environment * _environment, char *_source,
 
     MAKE_LABEL
 
-    if ( _signed ) {
+    inline( cpu_math_div_16bit_to_16bit )
 
-        outline1("LDA %s+1", _source );
-        outline1("EOR %s+1", _destination );
-        outline0("AND #$80" );
-        outline0("PHA");
+        if ( _signed ) {
 
-        outline1("LDA %s+1", _source );
-        outline0("AND #$80" );
-        outline1("BEQ %ssecond", label );
-        outline0("CLC" );
-        outline1("LDA %s", _source );
-        outline0("EOR #$ff" );
-        outline0("STA MATHPTR0" );
-        outline1("LDA %s+1", _source );
-        outline0("EOR #$ff" );
-        outline0("STA MATHPTR1" );
-        outline0("CLC" );
-        outline0("LDA MATHPTR0" );
-        outline0("ADC #1" );
-        outline0("STA MATHPTR0" );
-        outline0("LDA MATHPTR1" );
-        outline0("ADC #0" );
-        outline0("STA MATHPTR1" );        
-        outline1("JMP %ssecond2", label );
-        outhead1("%ssecond:", label );
-        outline1("LDA %s", _source );
-        outline0("STA MATHPTR0");
-        outline1("LDA %s+1", _source );
-        outline0("STA MATHPTR1");
-        outline1("JMP %ssecond2", label );
+            outline1("LDA %s+1", _source );
+            outline1("EOR %s+1", _destination );
+            outline0("AND #$80" );
+            outline0("PHA");
 
-        outhead1("%ssecond2:", label );
-        outline1("LDA %s+1", _destination );
-        outline0("AND #$80" );
-        outline1("BEQ %sthird", label );
-        outline0("CLC" );
-        outline1("LDA %s", _destination );
-        outline0("EOR #$ff" );
-        outline0("STA MATHPTR2" );
-        outline1("LDA %s+1", _destination );
-        outline0("EOR #$ff" );
-        outline0("STA MATHPTR3" );
-        outline0("CLC" );
-        outline0("LDA MATHPTR2" );
-        outline0("ADC #1" );
-        outline0("STA MATHPTR2" );
-        outline0("LDA MATHPTR3" );
-        outline0("ADC #0" );
-        outline0("STA MATHPTR3" );        
-        outline1("JMP %sthird2", label );
-        outhead1("%sthird:", label );
-        outline1("LDA %s", _destination );
-        outline0("STA MATHPTR2");
-        outline1("LDA %s+1", _destination );
-        outline0("STA MATHPTR3");
-        outline1("JMP %sthird2", label );
+            outline1("LDA %s+1", _source );
+            outline0("AND #$80" );
+            outline1("BEQ %ssecond", label );
+            outline0("CLC" );
+            outline1("LDA %s", _source );
+            outline0("EOR #$ff" );
+            outline0("STA MATHPTR0" );
+            outline1("LDA %s+1", _source );
+            outline0("EOR #$ff" );
+            outline0("STA MATHPTR1" );
+            outline0("CLC" );
+            outline0("LDA MATHPTR0" );
+            outline0("ADC #1" );
+            outline0("STA MATHPTR0" );
+            outline0("LDA MATHPTR1" );
+            outline0("ADC #0" );
+            outline0("STA MATHPTR1" );        
+            outline1("JMP %ssecond2", label );
+            outhead1("%ssecond:", label );
+            outline1("LDA %s", _source );
+            outline0("STA MATHPTR0");
+            outline1("LDA %s+1", _source );
+            outline0("STA MATHPTR1");
+            outline1("JMP %ssecond2", label );
 
-        outhead1("%sthird2:", label );
+            outhead1("%ssecond2:", label );
+            outline1("LDA %s+1", _destination );
+            outline0("AND #$80" );
+            outline1("BEQ %sthird", label );
+            outline0("CLC" );
+            outline1("LDA %s", _destination );
+            outline0("EOR #$ff" );
+            outline0("STA MATHPTR2" );
+            outline1("LDA %s+1", _destination );
+            outline0("EOR #$ff" );
+            outline0("STA MATHPTR3" );
+            outline0("CLC" );
+            outline0("LDA MATHPTR2" );
+            outline0("ADC #1" );
+            outline0("STA MATHPTR2" );
+            outline0("LDA MATHPTR3" );
+            outline0("ADC #0" );
+            outline0("STA MATHPTR3" );        
+            outline1("JMP %sthird2", label );
+            outhead1("%sthird:", label );
+            outline1("LDA %s", _destination );
+            outline0("STA MATHPTR2");
+            outline1("LDA %s+1", _destination );
+            outline0("STA MATHPTR3");
+            outline1("JMP %sthird2", label );
 
-        outline0("LDA MATHPTR0" );
-        outline1("STA %s", _other );
-        outline0("LDA MATHPTR1" );
-        outline1("STA %s+1", _other );
+            outhead1("%sthird2:", label );
 
-        outline0("LDA #0" );
-        outline1("STA %s", _other_remainder );
-        outline1("STA %s+1", _other_remainder );
-        outline0("LDX #16" );
-        outhead1("%sL1:", label );
-        outline1("ASL %s", _other );
-        outline1("ROL %s+1", _other );
-        outline1("ROL %s", _other_remainder );
-        outline1("ROL %s+1", _other_remainder );
-        outline1("LDA %s", _other_remainder );
-        outline0("SEC" );
-        outline0("SBC MATHPTR2" );
-        outline0("TAY" );
-        outline1("LDA %s+1", _other_remainder );
-        outline0("SBC MATHPTR3" );
-        outline1("BCC %sL2", label );
-        outline1("STA %s+1", _other_remainder );
-        outline1("STY %s", _other_remainder );
-        outline1("INC %s", _other );
-        outhead1("%sL2:", label );
-        outline0("DEX" );
-        outhead1("BNE %sL1", label );        
+            outline0("LDA MATHPTR0" );
+            outline1("STA %s", _other );
+            outline0("LDA MATHPTR1" );
+            outline1("STA %s+1", _other );
 
-        outline0("PLA");
-        outline0("AND #$80");
-        outline1("BEQ %sdone", label);
-        outline1("LDA %s", _other );
-        outline0("EOR #$ff" );
-        outline1("STA %s", _other );
-        outline1("LDA %s+1", _other );
-        outline0("EOR #$ff" );
-        outline1("STA %s+1", _other );
-        outline0("CLC" );
-        outline1("LDA %s", _other );
-        outline0("ADC #1" );
-        outline1("STA %s", _other );
-        outline1("LDA %s+1", _other );
-        outline0("ADC #0" );
-        outline1("STA %s+1", _other );
-        outhead1("%sdone:", label );
-                
-    } else {
-        outline1("LDA %s", _source );
-        outline1("STA %s", _other );
-        outline1("LDA %s+1", _source );
-        outline1("STA %s+1", _other );
+            outline0("LDA #0" );
+            outline1("STA %s", _other_remainder );
+            outline1("STA %s+1", _other_remainder );
+            outline0("LDX #16" );
+            outhead1("%sL1:", label );
+            outline1("ASL %s", _other );
+            outline1("ROL %s+1", _other );
+            outline1("ROL %s", _other_remainder );
+            outline1("ROL %s+1", _other_remainder );
+            outline1("LDA %s", _other_remainder );
+            outline0("SEC" );
+            outline0("SBC MATHPTR2" );
+            outline0("TAY" );
+            outline1("LDA %s+1", _other_remainder );
+            outline0("SBC MATHPTR3" );
+            outline1("BCC %sL2", label );
+            outline1("STA %s+1", _other_remainder );
+            outline1("STY %s", _other_remainder );
+            outline1("INC %s", _other );
+            outhead1("%sL2:", label );
+            outline0("DEX" );
+            outhead1("BNE %sL1", label );        
 
-        outline0("LDA #0" );
-        outline1("STA %s", _other_remainder );
-        outline1("STA %s+1", _other_remainder );
-        outline0("LDX #16" );
-        outhead1("%sL1:", label );
-        outline1("ASL %s", _other );
-        outline1("ROL %s+1", _other );
-        outline1("ROL %s", _other_remainder );
-        outline1("ROL %s+1", _other_remainder );
-        outline1("LDA %s", _other_remainder );
-        outline0("SEC" );
-        outline1("SBC %s", _destination );
-        outline0("TAY" );
-        outline1("LDA %s+1", _other_remainder );
-        outline1("SBC %s+1", _destination );
-        outline1("BCC %sL2", label );
-        outline1("STA %s+1", _other_remainder );
-        outline1("STY %s", _other_remainder );
-        outline1("INC %s", _other );
-        outhead1("%sL2:", label );
-        outline0("DEX" );
-        outhead1("BNE %sL1", label );
-    }
+            outline0("PLA");
+            outline0("AND #$80");
+            outline1("BEQ %sdone", label);
+            outline1("LDA %s", _other );
+            outline0("EOR #$ff" );
+            outline1("STA %s", _other );
+            outline1("LDA %s+1", _other );
+            outline0("EOR #$ff" );
+            outline1("STA %s+1", _other );
+            outline0("CLC" );
+            outline1("LDA %s", _other );
+            outline0("ADC #1" );
+            outline1("STA %s", _other );
+            outline1("LDA %s+1", _other );
+            outline0("ADC #0" );
+            outline1("STA %s+1", _other );
+            outhead1("%sdone:", label );
+                    
+        } else {
+            outline1("LDA %s", _source );
+            outline1("STA %s", _other );
+            outline1("LDA %s+1", _source );
+            outline1("STA %s+1", _other );
 
+            outline0("LDA #0" );
+            outline1("STA %s", _other_remainder );
+            outline1("STA %s+1", _other_remainder );
+            outline0("LDX #16" );
+            outhead1("%sL1:", label );
+            outline1("ASL %s", _other );
+            outline1("ROL %s+1", _other );
+            outline1("ROL %s", _other_remainder );
+            outline1("ROL %s+1", _other_remainder );
+            outline1("LDA %s", _other_remainder );
+            outline0("SEC" );
+            outline1("SBC %s", _destination );
+            outline0("TAY" );
+            outline1("LDA %s+1", _other_remainder );
+            outline1("SBC %s+1", _destination );
+            outline1("BCC %sL2", label );
+            outline1("STA %s+1", _other_remainder );
+            outline1("STY %s", _other_remainder );
+            outline1("INC %s", _other );
+            outhead1("%sL2:", label );
+            outline0("DEX" );
+            outhead1("BNE %sL1", label );
+        }
+
+    embedded( cpu_math_div_16bit_to_16bit, src_hw_6502_cpu_math_div_16bit_to_16bit_asm )
+
+        if ( _signed ) {
+            outline1("LDA %s", _source );
+            outline0("STA CPUMATHDIV16BITTO16BIT_SOURCE");
+            outline1("LDA %s+1", _source );
+            outline0("STA CPUMATHDIV16BITTO16BIT_SOURCE+1");
+            outline1("LDA %s", _destination );
+            outline0("STA CPUMATHDIV16BITTO16BIT_DESTINATION");
+            outline1("LDA %s+1", _destination );
+            outline0("STA CPUMATHDIV16BITTO16BIT_DESTINATION+1");            
+            outline0("JSR CPUMATHDIV16BITTO16BIT_SIGNED");
+            outline0("LDA CPUMATHDIV16BITTO16BIT_OTHER");
+            outline1("STA %s", _other );
+            outline0("LDA CPUMATHDIV16BITTO16BIT_OTHER+1");
+            outline1("STA %s+1", _other );
+            outline0("LDA CPUMATHDIV16BITTO16BIT_OTHER_REMAINDER");
+            outline1("STA %s", _other_remainder );
+            outline0("LDA CPUMATHDIV16BITTO16BIT_OTHER_REMAINDER+1");
+            outline1("STA %s+1", _other_remainder );
+        } else {
+            outline1("LDA %s", _source );
+            outline0("STA CPUMATHDIV16BITTO16BIT_SOURCE");
+            outline1("LDA %s+1", _source );
+            outline0("STA CPUMATHDIV16BITTO16BIT_SOURCE+1");
+            outline1("LDA %s", _destination );
+            outline0("STA CPUMATHDIV16BITTO16BIT_DESTINATION");
+            outline1("LDA %s+1", _destination );
+            outline0("STA CPUMATHDIV16BITTO16BIT_DESTINATION+1");            
+            outline0("JSR CPUMATHDIV16BITTO16BIT");
+            outline0("LDA CPUMATHDIV16BITTO16BIT_OTHER");
+            outline1("STA %s", _other );
+            outline0("LDA CPUMATHDIV16BITTO16BIT_OTHER+1");
+            outline1("STA %s+1", _other );
+            outline0("LDA CPUMATHDIV16BITTO16BIT_OTHER_REMAINDER");
+            outline1("STA %s", _other_remainder );
+            outline0("LDA CPUMATHDIV16BITTO16BIT_OTHER_REMAINDER+1");
+            outline1("STA %s+1", _other_remainder );
+        }
+
+    done()
 
 }
 

@@ -2910,6 +2910,7 @@ int main( int _argc, char *_argv[] ) {
     _environment->embedded.cpu_math_div2_const_8bit = 1;
     _environment->embedded.cpu_math_mul2_const_8bit = 1;
     _environment->embedded.cpu_math_mul_16bit_to_32bit = 1;
+    _environment->embedded.cpu_math_div_16bit_to_16bit = 1;
 
     _environment->warningsEnabled = 0;
 
