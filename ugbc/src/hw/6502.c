@@ -2812,10 +2812,14 @@ void cpu6502_dec_16bit( Environment * _environment, char * _variable ) {
 
     MAKE_LABEL
 
-    outline1("DEC %s", _variable );
-    outline1("BNE %s", label );
-    outline1("DEC %s+1", _variable );
-    outhead1("%s:", label );
+    inline( cpu_dec_16bit )
+
+        outline1("DEC %s", _variable );
+        outline1("BNE %s", label );
+        outline1("DEC %s+1", _variable );
+        outhead1("%s:", label );
+
+    no_embedded( cpu_dec_16bit )
 
 }
 
@@ -2823,58 +2827,10 @@ void cpu6502_mem_move( Environment * _environment, char *_source, char *_destina
 
     MAKE_LABEL
 
-    outline1("LDY %s", _size );
-    outline1("BEQ %sdone", label );
-    outline0("LDY #$0" );
-    outline1("LDA %s+1", _source );
-    outline0("STA TMPPTR+1" );
-    outline1("LDA %s", _source );
-    outline0("STA TMPPTR" );
-    outline1("LDA %s+1", _destination );
-    outline0("STA TMPPTR2+1" );
-    outline1("LDA %s", _destination );
-    outline0("STA TMPPTR2" );
-    outhead1("%s:", label );
-    outline0("LDA (TMPPTR), Y" );
-    outline0("STA (TMPPTR2), Y" );
-    outline0("INY" );
-    outline1("CPY %s", _size );
-    outline1("BNE %s", label );
-    outhead1("%sdone:", label );
+    inline( cpu_mem_move )
 
-}
-
-void cpu6502_mem_move_direct( Environment * _environment, char *_source, char *_destination,  char *_size ) {
-
-    MAKE_LABEL
-
-    outline1("LDY %s", _size );
-    outline1("BEQ %sdone", label );
-    outline0("LDY #$0" );
-    outline1("LDA #>%s", _source );
-    outline0("STA TMPPTR+1" );
-    outline1("LDA #<%s", _source );
-    outline0("STA TMPPTR" );
-    outline1("LDA #>%s", _destination );
-    outline0("STA TMPPTR2+1" );
-    outline1("LDA #<%s", _destination );
-    outline0("STA TMPPTR2" );
-    outhead1("%s:", label );
-    outline0("LDA (TMPPTR), Y" );
-    outline0("STA (TMPPTR2), Y" );
-    outline0("INY" );
-    outline1("CPY %s", _size );
-    outline1("BNE %s", label );
-    outhead1("%sdone:", label );
-
-}
-
-void cpu6502_mem_move_size( Environment * _environment, char *_source, char *_destination, int _size ) {
-
-    if ( _size ) {
-
-        MAKE_LABEL
-
+        outline1("LDY %s", _size );
+        outline1("BEQ %sdone", label );
         outline0("LDY #$0" );
         outline1("LDA %s+1", _source );
         outline0("STA TMPPTR+1" );
@@ -2888,9 +2844,114 @@ void cpu6502_mem_move_size( Environment * _environment, char *_source, char *_de
         outline0("LDA (TMPPTR), Y" );
         outline0("STA (TMPPTR2), Y" );
         outline0("INY" );
-        outline1("CPY #$%2.2x", (_size & 0xff ) );
+        outline1("CPY %s", _size );
         outline1("BNE %s", label );
+        outhead1("%sdone:", label );
 
+    embedded( cpu_mem_move, src_hw_6502_cpu_mem_move_asm );
+
+        outline1("LDX %s", _size );
+        outline1("BEQ %sdone", label );
+        outline0("STX CPUMEMMOVE_SIZE" );
+        outline1("LDA %s+1", _source );
+        outline0("STA TMPPTR+1" );
+        outline1("LDA %s", _source );
+        outline0("STA TMPPTR" );
+        outline1("LDA %s+1", _destination );
+        outline0("STA TMPPTR2+1" );
+        outline1("LDA %s", _destination );
+        outline0("STA TMPPTR2" );
+        outline0("JSR CPUMEMMOVE" );
+        outhead1("%sdone:", label );
+
+    done()
+
+}
+
+void cpu6502_mem_move_direct( Environment * _environment, char *_source, char *_destination,  char *_size ) {
+
+    MAKE_LABEL
+
+    inline( cpu_mem_move ) // special case
+
+        outline1("LDY %s", _size );
+        outline1("BEQ %sdone", label );
+        outline0("LDY #$0" );
+        outline1("LDA #>%s", _source );
+        outline0("STA TMPPTR+1" );
+        outline1("LDA #<%s", _source );
+        outline0("STA TMPPTR" );
+        outline1("LDA #>%s", _destination );
+        outline0("STA TMPPTR2+1" );
+        outline1("LDA #<%s", _destination );
+        outline0("STA TMPPTR2" );
+        outhead1("%s:", label );
+        outline0("LDA (TMPPTR), Y" );
+        outline0("STA (TMPPTR2), Y" );
+        outline0("INY" );
+        outline1("CPY %s", _size );
+        outline1("BNE %s", label );
+        outhead1("%sdone:", label );
+
+    embedded( cpu_mem_move, src_hw_6502_cpu_mem_move_asm );
+
+        outline1("LDX %s", _size );
+        outline1("BEQ %sdone", label );
+        outline0("STX CPUMEMMOVE_SIZE" );
+        outline1("LDA #>%s", _source );
+        outline0("STA TMPPTR+1" );
+        outline1("LDA #<%s", _source );
+        outline0("STA TMPPTR" );
+        outline1("LDA #>%s", _destination );
+        outline0("STA TMPPTR2+1" );
+        outline1("LDA #<%s", _destination );
+        outline0("STA TMPPTR2" );
+        outline0("JSR CPUMEMMOVE" );
+        outhead1("%sdone:", label );
+
+    done()
+
+}
+
+void cpu6502_mem_move_size( Environment * _environment, char *_source, char *_destination, int _size ) {
+
+    if ( _size ) {
+
+        MAKE_LABEL
+
+        inline( cpu_mem_move )
+
+            outline0("LDY #$0" );
+            outline1("LDA %s+1", _source );
+            outline0("STA TMPPTR+1" );
+            outline1("LDA %s", _source );
+            outline0("STA TMPPTR" );
+            outline1("LDA %s+1", _destination );
+            outline0("STA TMPPTR2+1" );
+            outline1("LDA %s", _destination );
+            outline0("STA TMPPTR2" );
+            outhead1("%s:", label );
+            outline0("LDA (TMPPTR), Y" );
+            outline0("STA (TMPPTR2), Y" );
+            outline0("INY" );
+            outline1("CPY #$%2.2x", (_size & 0xff ) );
+            outline1("BNE %s", label );
+
+        embedded( cpu_mem_move, src_hw_6502_cpu_mem_move_asm );
+
+            outline1("LDX #$%2.2X", _size );
+            outline0("STX CPUMEMMOVE_SIZE" );
+            outline1("LDA %s+1", _source );
+            outline0("STA TMPPTR+1" );
+            outline1("LDA %s", _source );
+            outline0("STA TMPPTR" );
+            outline1("LDA %s+1", _destination );
+            outline0("STA TMPPTR2+1" );
+            outline1("LDA %s", _destination );
+            outline0("STA TMPPTR2" );
+            outline0("JSR CPUMEMMOVE" );
+
+        done()
     }
 
 }
@@ -2903,69 +2964,91 @@ void cpu6502_mem_move_direct_size( Environment * _environment, char *_source, ch
 
             MAKE_LABEL
 
-            outline0("LDY #$0" );
-            outline1("LDA #>%s", _source );
-            outline0("STA TMPPTR+1" );
-            outline1("LDA #<%s", _source );
-            outline0("STA TMPPTR" );
-            outline1("LDA #>%s", _destination );
-            outline0("STA TMPPTR2+1" );
-            outline1("LDA #<%s", _destination );
-            outline0("STA TMPPTR2" );
-            outhead1("%s:", label );
-            outline0("LDA (TMPPTR), Y" );
-            outline0("STA (TMPPTR2), Y" );
-            outline0("INY" );
-            outline1("CPY #$%2.2x", (_size & 0xff ) );
-            outline1("BNE %s", label );
+            inline( cpu_mem_move )
+
+                outline0("LDY #$0" );
+                outline1("LDA #>%s", _source );
+                outline0("STA TMPPTR+1" );
+                outline1("LDA #<%s", _source );
+                outline0("STA TMPPTR" );
+                outline1("LDA #>%s", _destination );
+                outline0("STA TMPPTR2+1" );
+                outline1("LDA #<%s", _destination );
+                outline0("STA TMPPTR2" );
+                outhead1("%s:", label );
+                outline0("LDA (TMPPTR), Y" );
+                outline0("STA (TMPPTR2), Y" );
+                outline0("INY" );
+                outline1("CPY #$%2.2x", (_size & 0xff ) );
+                outline1("BNE %s", label );
+
+            embedded( cpu_mem_move, src_hw_6502_cpu_mem_move_asm );
+
+                outline1("LDX #$%2.2X", _size );
+                outline0("STX CPUMEMMOVE_SIZE" );
+                outline1("LDA #>%s", _source );
+                outline0("STA TMPPTR+1" );
+                outline1("LDA #<%s", _source );
+                outline0("STA TMPPTR" );
+                outline1("LDA #>%s", _destination );
+                outline0("STA TMPPTR2+1" );
+                outline1("LDA #<%s", _destination );
+                outline0("STA TMPPTR2" );
+                outline0("JSR CPUMEMMOVE" );
+
+            done()
 
         } else {
 
             MAKE_LABEL
 
-            outline0("LDX #$0" );
-            outline0("LDY #$0" );
-            outline1("LDA #>%s", _source );
-            outline0("STA TMPPTR+1" );
-            outline1("LDA #<%s", _source );
-            outline0("STA TMPPTR" );
-            outline1("LDA #>%s", _destination );
-            outline0("STA TMPPTR2+1" );
-            outline1("LDA #<%s", _destination );
-            outline0("STA TMPPTR2" );
-            outhead1("%s:", label );
-            outline0("LDA (TMPPTR), Y" );
-            outline0("STA (TMPPTR2), Y" );
-            outline0("INY" );
-            outline0("CPY #$ff" );
-            outline1("BNE %s", label );
-            outline0("CLC" );
-            outline0("LDA TMPPTR" );
-            outline0("ADC #$FF" );
-            outline0("STA TMPPTR" );
-            outline0("LDA TMPPTR+1" );
-            outline0("ADC #0" );
-            outline0("STA TMPPTR+1" );
-            outline0("CLC" );
-            outline0("LDA TMPPTR2" );
-            outline0("ADC #$FF" );
-            outline0("STA TMPPTR2" );
-            outline0("LDA TMPPTR2+1" );
-            outline0("ADC #0" );
-            outline0("STA TMPPTR2+1" );
-            outline0("LDY #0" );
-            outline1("CPX #$%2.2x", ( ( ( _size >> 8 ) & 0xff ) ) - 1 );
-            outline1("BEQ %se", label );
-            outline0("INX" );
-            outline1("JMP %s", label );
-            outhead1("%se:", label );
-            outhead1("%sfinal:", label );
-            outline0("LDA (TMPPTR), Y" );
-            outline0("STA (TMPPTR2), Y" );
-            outline0("INY" );
-            outline1("CPY #$%2.2x", _size - ( ( ( ( _size >> 8 ) & 0xff ) ) ) * 0xff );
-            outline1("BNE %sfinal", label );
+            inline( cpu_mem_move_direct_size )
 
+                outline0("LDX #$0" );
+                outline0("LDY #$0" );
+                outline1("LDA #>%s", _source );
+                outline0("STA TMPPTR+1" );
+                outline1("LDA #<%s", _source );
+                outline0("STA TMPPTR" );
+                outline1("LDA #>%s", _destination );
+                outline0("STA TMPPTR2+1" );
+                outline1("LDA #<%s", _destination );
+                outline0("STA TMPPTR2" );
+                outhead1("%s:", label );
+                outline0("LDA (TMPPTR), Y" );
+                outline0("STA (TMPPTR2), Y" );
+                outline0("INY" );
+                outline0("CPY #$ff" );
+                outline1("BNE %s", label );
+                outline0("CLC" );
+                outline0("LDA TMPPTR" );
+                outline0("ADC #$FF" );
+                outline0("STA TMPPTR" );
+                outline0("LDA TMPPTR+1" );
+                outline0("ADC #0" );
+                outline0("STA TMPPTR+1" );
+                outline0("CLC" );
+                outline0("LDA TMPPTR2" );
+                outline0("ADC #$FF" );
+                outline0("STA TMPPTR2" );
+                outline0("LDA TMPPTR2+1" );
+                outline0("ADC #0" );
+                outline0("STA TMPPTR2+1" );
+                outline0("LDY #0" );
+                outline1("CPX #$%2.2x", ( ( ( _size >> 8 ) & 0xff ) ) - 1 );
+                outline1("BEQ %se", label );
+                outline0("INX" );
+                outline1("JMP %s", label );
+                outhead1("%se:", label );
+                outhead1("%sfinal:", label );
+                outline0("LDA (TMPPTR), Y" );
+                outline0("STA (TMPPTR2), Y" );
+                outline0("INY" );
+                outline1("CPY #$%2.2x", _size - ( ( ( ( _size >> 8 ) & 0xff ) ) ) * 0xff );
+                outline1("BNE %sfinal", label );
+            
+            no_embedded( cpu_mem_move_direct_size )
+            
         }
 
     }
@@ -2978,21 +3061,39 @@ void cpu6502_mem_move_direct_indirect_size( Environment * _environment, char *_s
 
         MAKE_LABEL
 
-        outline0("LDY #$0" );
-        outline1("LDA #>%s", _source );
-        outline0("STA TMPPTR+1" );
-        outline1("LDA #<%s", _source );
-        outline0("STA TMPPTR" );
-        outline1("LDA %s+1", _destination );
-        outline0("STA TMPPTR2+1" );
-        outline1("LDA %s", _destination );
-        outline0("STA TMPPTR2" );
-        outhead1("%s:", label );
-        outline0("LDA (TMPPTR), Y" );
-        outline0("STA (TMPPTR2), Y" );
-        outline0("INY" );
-        outline1("CPY #$%2.2x", (_size & 0xff ) );
-        outline1("BNE %s", label );
+        inline( cpu_mem_move )
+
+            outline0("LDY #$0" );
+            outline1("LDA #>%s", _source );
+            outline0("STA TMPPTR+1" );
+            outline1("LDA #<%s", _source );
+            outline0("STA TMPPTR" );
+            outline1("LDA %s+1", _destination );
+            outline0("STA TMPPTR2+1" );
+            outline1("LDA %s", _destination );
+            outline0("STA TMPPTR2" );
+            outhead1("%s:", label );
+            outline0("LDA (TMPPTR), Y" );
+            outline0("STA (TMPPTR2), Y" );
+            outline0("INY" );
+            outline1("CPY #$%2.2x", (_size & 0xff ) );
+            outline1("BNE %s", label );
+
+        embedded( cpu_mem_move, src_hw_6502_cpu_mem_move_asm );
+
+            outline1("LDX #$%2.2X", _size );
+            outline0("STX CPUMEMMOVE_SIZE" );
+            outline1("LDA #>%s", _source );
+            outline0("STA TMPPTR+1" );
+            outline1("LDA #<%s", _source );
+            outline0("STA TMPPTR" );
+            outline1("LDA %s+1", _destination );
+            outline0("STA TMPPTR2+1" );
+            outline1("LDA %s", _destination );
+            outline0("STA TMPPTR2" );
+            outline0("JSR CPUMEMMOVE" );
+
+        done()
 
     }
 
@@ -3002,62 +3103,70 @@ void cpu6502_compare_memory( Environment * _environment, char *_source, char *_d
     
     MAKE_LABEL
 
-    outline1("LDA %s", _size );
-    outline1("BEQ %sequal", label );
-    outline0("LDY #$0" );
-    outline1("LDA %s+1", _source );
-    outline0("STA TMPPTR+1" );
-    outline1("LDA %s", _source );
-    outline0("STA TMPPTR" );
-    outline1("LDA %s+1", _destination );
-    outline0("STA TMPPTR2+1" );
-    outline1("LDA %s", _destination );
-    outline0("STA TMPPTR2" );
-    outhead1("%sloop:", label );
-    outline0("LDA (TMPPTR2), Y" );
-    outline0("CMP (TMPPTR), Y" );
-    outline1("BNE %sdiff", label );
-    outline0("INY" );
-    outline1("CPY %s", _size );
-    outline1("BNE %sloop", label );
-    outhead1("%sequal:", label );
-    outline1("LDA #%d", _equal ? 255 : 0 );
-    outline1("STA %s", _result );
-    outline1("JMP %sfinal", label );
-    outhead1("%sdiff:", label );
-    outline1("LDA #%d", _equal ? 0 : 255 );
-    outline1("STA %s", _result );
-    outhead1("%sfinal:", label );
+    inline( cpu_compare_memory )
 
+        outline1("LDA %s", _size );
+        outline1("BEQ %sequal", label );
+        outline0("LDY #$0" );
+        outline1("LDA %s+1", _source );
+        outline0("STA TMPPTR+1" );
+        outline1("LDA %s", _source );
+        outline0("STA TMPPTR" );
+        outline1("LDA %s+1", _destination );
+        outline0("STA TMPPTR2+1" );
+        outline1("LDA %s", _destination );
+        outline0("STA TMPPTR2" );
+        outhead1("%sloop:", label );
+        outline0("LDA (TMPPTR2), Y" );
+        outline0("CMP (TMPPTR), Y" );
+        outline1("BNE %sdiff", label );
+        outline0("INY" );
+        outline1("CPY %s", _size );
+        outline1("BNE %sloop", label );
+        outhead1("%sequal:", label );
+        outline1("LDA #%d", _equal ? 255 : 0 );
+        outline1("STA %s", _result );
+        outline1("JMP %sfinal", label );
+        outhead1("%sdiff:", label );
+        outline1("LDA #%d", _equal ? 0 : 255 );
+        outline1("STA %s", _result );
+        outhead1("%sfinal:", label );
+
+    no_embedded( cpu_compare_memory )
+    
 }
 
 void cpu6502_compare_memory_size( Environment * _environment, char *_source, char *_destination, int _size, char * _result, int _equal ) {
     
     MAKE_LABEL
 
-    outline0("LDY #$0" );
-    outline1("LDA %s+1", _source );
-    outline0("STA TMPPTR+1" );
-    outline1("LDA %s", _source );
-    outline0("STA TMPPTR" );
-    outline1("LDA %s+1", _destination );
-    outline0("STA TMPPTR2+1" );
-    outline1("LDA %s", _destination );
-    outline0("STA TMPPTR2" );
-    outhead1("%sloop:", label );
-    outline0("LDA (TMPPTR2), Y" );
-    outline0("CMP (TMPPTR), Y" );
-    outline1("BNE %sdiff", label );
-    outline0("INY" );
-    outline1("CPY #$%2.2x", _size );
-    outline1("BNE %sloop", label );
-    outline1("LDA #%d", _equal ? 255 : 0 );
-    outline1("STA %s", _result );
-    outline1("JMP %sfinal", label );
-    outhead1("%sdiff:", label );
-    outline1("LDA #%d", _equal ? 0 : 255 );
-    outline1("STA %s", _result );
-    outhead1("%sfinal:", label );
+    inline( cpu_compare_memory_size )
+
+        outline0("LDY #$0" );
+        outline1("LDA %s+1", _source );
+        outline0("STA TMPPTR+1" );
+        outline1("LDA %s", _source );
+        outline0("STA TMPPTR" );
+        outline1("LDA %s+1", _destination );
+        outline0("STA TMPPTR2+1" );
+        outline1("LDA %s", _destination );
+        outline0("STA TMPPTR2" );
+        outhead1("%sloop:", label );
+        outline0("LDA (TMPPTR2), Y" );
+        outline0("CMP (TMPPTR), Y" );
+        outline1("BNE %sdiff", label );
+        outline0("INY" );
+        outline1("CPY #$%2.2x", _size );
+        outline1("BNE %sloop", label );
+        outline1("LDA #%d", _equal ? 255 : 0 );
+        outline1("STA %s", _result );
+        outline1("JMP %sfinal", label );
+        outhead1("%sdiff:", label );
+        outline1("LDA #%d", _equal ? 0 : 255 );
+        outline1("STA %s", _result );
+        outhead1("%sfinal:", label );
+
+    no_embedded( cpu_compare_memory_size )
 
 }
 
@@ -3065,33 +3174,37 @@ void cpu6502_less_than_memory( Environment * _environment, char *_source, char *
     
     MAKE_LABEL
 
-    outline0("LDY #$0" );
-    outline1("LDA %s+1", _source );
-    outline0("STA TMPPTR+1" );
-    outline1("LDA %s", _source );
-    outline0("STA TMPPTR" );
-    outline1("LDA %s+1", _destination );
-    outline0("STA TMPPTR2+1" );
-    outline1("LDA %s", _destination );
-    outline0("STA TMPPTR2" );    
-    outhead1("%sloop:", label );
-    outline0("LDA (TMPPTR2), Y" );
-    outline0("CMP (TMPPTR), Y" );
-    if ( ! _equal ) {
-        outline1("BEQ %sfalse", label);
-    }
-    outline1("BCS %strue", label);
-    outline0("INY" );
-    outline1("CPY %s", _size );
-    outline1("BNE %sloop", label );
-    outhead1("%sfalse:", label );
-    outline0("LDA #0" );
-    outline1("STA %s", _result );
-    outline1("JMP %sfinal", label );
-    outhead1("%strue:", label );
-    outline0("LDA #$FF" );
-    outline1("STA %s", _result );
-    outhead1("%sfinal:", label );
+    inline( cpu_less_than_memory )
+
+        outline0("LDY #$0" );
+        outline1("LDA %s+1", _source );
+        outline0("STA TMPPTR+1" );
+        outline1("LDA %s", _source );
+        outline0("STA TMPPTR" );
+        outline1("LDA %s+1", _destination );
+        outline0("STA TMPPTR2+1" );
+        outline1("LDA %s", _destination );
+        outline0("STA TMPPTR2" );    
+        outhead1("%sloop:", label );
+        outline0("LDA (TMPPTR2), Y" );
+        outline0("CMP (TMPPTR), Y" );
+        if ( ! _equal ) {
+            outline1("BEQ %sfalse", label);
+        }
+        outline1("BCS %strue", label);
+        outline0("INY" );
+        outline1("CPY %s", _size );
+        outline1("BNE %sloop", label );
+        outhead1("%sfalse:", label );
+        outline0("LDA #0" );
+        outline1("STA %s", _result );
+        outline1("JMP %sfinal", label );
+        outhead1("%strue:", label );
+        outline0("LDA #$FF" );
+        outline1("STA %s", _result );
+        outhead1("%sfinal:", label );
+
+    no_embedded( cpu_less_than_memory )
 
 }
 
@@ -3099,33 +3212,37 @@ void cpu6502_less_than_memory_size( Environment * _environment, char *_source, c
     
     MAKE_LABEL
 
-    outline0("LDY #$0" );
-    outline1("LDA %s+1", _source );
-    outline0("STA TMPPTR+1" );
-    outline1("LDA %s", _source );
-    outline0("STA TMPPTR" );
-    outline1("LDA %s+1", _destination );
-    outline0("STA TMPPTR2+1" );
-    outline1("LDA %s", _destination );
-    outline0("STA TMPPTR2" );    
-    outhead1("%sloop:", label );
-    outline0("LDA (TMPPTR2), Y" );
-    outline0("CMP (TMPPTR), Y" );
-    if ( ! _equal ) {
-        outline1("BEQ %sfalse", label);
-    }
-    outline1("BCS %strue", label);
-    outline0("INY" );
-    outline1("CPY #$%2.2x", _size );
-    outline1("BNE %sloop", label );
-    outhead1("%sfalse:", label );
-    outline0("LDA #0" );
-    outline1("STA %s", _result );
-    outline1("JMP %sfinal", label );
-    outhead1("%strue:", label );
-    outline0("LDA #$FF" );
-    outline1("STA %s", _result );
-    outhead1("%sfinal:", label );
+    inline( cpu_less_than_memory_size )
+
+        outline0("LDY #$0" );
+        outline1("LDA %s+1", _source );
+        outline0("STA TMPPTR+1" );
+        outline1("LDA %s", _source );
+        outline0("STA TMPPTR" );
+        outline1("LDA %s+1", _destination );
+        outline0("STA TMPPTR2+1" );
+        outline1("LDA %s", _destination );
+        outline0("STA TMPPTR2" );    
+        outhead1("%sloop:", label );
+        outline0("LDA (TMPPTR2), Y" );
+        outline0("CMP (TMPPTR), Y" );
+        if ( ! _equal ) {
+            outline1("BEQ %sfalse", label);
+        }
+        outline1("BCS %strue", label);
+        outline0("INY" );
+        outline1("CPY #$%2.2x", _size );
+        outline1("BNE %sloop", label );
+        outhead1("%sfalse:", label );
+        outline0("LDA #0" );
+        outline1("STA %s", _result );
+        outline1("JMP %sfinal", label );
+        outhead1("%strue:", label );
+        outline0("LDA #$FF" );
+        outline1("STA %s", _result );
+        outhead1("%sfinal:", label );
+
+    no_embedded( cpu_less_than_memory_size )
 
 }
 
@@ -3133,33 +3250,37 @@ void cpu6502_greater_than_memory( Environment * _environment, char *_source, cha
     
     MAKE_LABEL
 
-    outline0("LDY #$0" );
-    outline1("LDA %s+1", _source );
-    outline0("STA TMPPTR+1" );
-    outline1("LDA %s", _source );
-    outline0("STA TMPPTR" );
-    outline1("LDA %s+1", _destination );
-    outline0("STA TMPPTR2+1" );
-    outline1("LDA %s", _destination );
-    outline0("STA TMPPTR2" );    
-    outhead1("%sloop:", label );
-    outline0("LDA (TMPPTR), Y" );
-    outline0("CMP (TMPPTR2), Y" );
-    if ( ! _equal ) {
-        outline1("BEQ %sfalse", label);
-    }
-    outline1("BCC %sfalse", label);
-    outline0("INY" );
-    outline1("CPY %s", _size );
-    outline1("BNE %sloop", label );
-    outhead1("%strue:", label );
-    outline0("LDA #$FF" );
-    outline1("STA %s", _result );
-    outline1("JMP %sfinal", label );
-    outhead1("%sfalse:", label );
-    outline0("LDA #0" );
-    outline1("STA %s", _result );
-    outhead1("%sfinal:", label );
+    inline( cpu_greater_than_memory )
+
+        outline0("LDY #$0" );
+        outline1("LDA %s+1", _source );
+        outline0("STA TMPPTR+1" );
+        outline1("LDA %s", _source );
+        outline0("STA TMPPTR" );
+        outline1("LDA %s+1", _destination );
+        outline0("STA TMPPTR2+1" );
+        outline1("LDA %s", _destination );
+        outline0("STA TMPPTR2" );    
+        outhead1("%sloop:", label );
+        outline0("LDA (TMPPTR), Y" );
+        outline0("CMP (TMPPTR2), Y" );
+        if ( ! _equal ) {
+            outline1("BEQ %sfalse", label);
+        }
+        outline1("BCC %sfalse", label);
+        outline0("INY" );
+        outline1("CPY %s", _size );
+        outline1("BNE %sloop", label );
+        outhead1("%strue:", label );
+        outline0("LDA #$FF" );
+        outline1("STA %s", _result );
+        outline1("JMP %sfinal", label );
+        outhead1("%sfalse:", label );
+        outline0("LDA #0" );
+        outline1("STA %s", _result );
+        outhead1("%sfinal:", label );
+
+    no_embedded( cpu_greater_than_memory )
 
 }
 
@@ -3167,93 +3288,117 @@ void cpu6502_greater_than_memory_size( Environment * _environment, char *_source
     
     MAKE_LABEL
 
-    outline0("LDY #$0" );
-    outline1("LDA %s+1", _source );
-    outline0("STA TMPPTR+1" );
-    outline1("LDA %s", _source );
-    outline0("STA TMPPTR" );
-    outline1("LDA %s+1", _destination );
-    outline0("STA TMPPTR2+1" );
-    outline1("LDA %s", _destination );
-    outline0("STA TMPPTR2" );    
-    outhead1("%sloop:", label );
-    outline0("LDA (TMPPTR), Y" );
-    outline0("CMP (TMPPTR2), Y" );
-    if ( ! _equal ) {
-        outline1("BEQ %sfalse", label);
-    }
-    outline1("BCC %sfalse", label);
-    outline0("INY" );
-    outline1("CPY #$%2.2x", _size );
-    outline1("BNE %sloop", label );
-    outhead1("%strue:", label );
-    outline0("LDA #$FF" );
-    outline1("STA %s", _result );
-    outline1("JMP %sfinal", label );
-    outhead1("%sfalse:", label );
-    outline0("LDA #0" );
-    outline1("STA %s", _result );
-    outhead1("%sfinal:", label );
+    inline( cpu_greater_than_memory_size )
+
+        outline0("LDY #$0" );
+        outline1("LDA %s+1", _source );
+        outline0("STA TMPPTR+1" );
+        outline1("LDA %s", _source );
+        outline0("STA TMPPTR" );
+        outline1("LDA %s+1", _destination );
+        outline0("STA TMPPTR2+1" );
+        outline1("LDA %s", _destination );
+        outline0("STA TMPPTR2" );    
+        outhead1("%sloop:", label );
+        outline0("LDA (TMPPTR), Y" );
+        outline0("CMP (TMPPTR2), Y" );
+        if ( ! _equal ) {
+            outline1("BEQ %sfalse", label);
+        }
+        outline1("BCC %sfalse", label);
+        outline0("INY" );
+        outline1("CPY #$%2.2x", _size );
+        outline1("BNE %sloop", label );
+        outhead1("%strue:", label );
+        outline0("LDA #$FF" );
+        outline1("STA %s", _result );
+        outline1("JMP %sfinal", label );
+        outhead1("%sfalse:", label );
+        outline0("LDA #0" );
+        outline1("STA %s", _result );
+        outhead1("%sfinal:", label );
+
+    no_embedded( cpu_greater_than_memory_size )
 
 }
 
 void cpu6502_move_8bit_indirect( Environment * _environment, char *_source, char * _value ) {
 
-    outline1("LDA %s", _value);
-    outline0("STA TMPPTR");
-    outline1("LDA %s+1", _value);
-    outline0("STA TMPPTR+1");
-    outline1("LDA %s", _source);
-    outline0("LDY #$0" );
-    outline0("STA (TMPPTR),Y");
+    inline( cpu_move_8bit_indirect )
+
+        outline1("LDA %s", _value);
+        outline0("STA TMPPTR");
+        outline1("LDA %s+1", _value);
+        outline0("STA TMPPTR+1");
+        outline1("LDA %s", _source);
+        outline0("LDY #$0" );
+        outline0("STA (TMPPTR),Y");
+
+    no_embedded( cpu_move_8bit_indirect )
 
 }
 
 void cpu6502_move_8bit_indirect_with_offset( Environment * _environment, char *_source, char * _value, int _offset ) {
 
-    outline1("LDA %s", _value);
-    outline0("STA TMPPTR");
-    outline1("LDA %s+1", _value);
-    outline0("STA TMPPTR+1");
-    outline1("LDA %s", _source);
-    outline1("LDY #$%2.2x", (_offset & 0xff ) );
-    outline0("STA (TMPPTR),Y");
+    inline( cpu_move_8bit_indirect_with_offset )
+
+        outline1("LDA %s", _value);
+        outline0("STA TMPPTR");
+        outline1("LDA %s+1", _value);
+        outline0("STA TMPPTR+1");
+        outline1("LDA %s", _source);
+        outline1("LDY #$%2.2x", (_offset & 0xff ) );
+        outline0("STA (TMPPTR),Y");
+
+    no_embedded( cpu_move_8bit_indirect_with_offset )
 
 }
 
 void cpu6502_move_8bit_with_offset( Environment * _environment, char *_source, char * _value, int _offset ) {
 
-    outline1("LDA %s", _value);
-    outline0("STA TMPPTR");
-    outline1("LDA %s+1", _value);
-    outline0("STA TMPPTR+1");
-    outline1("LDA %s", _source);
-    outline1("LDY #$%2.2x", (_offset & 0xff ) );
-    outline0("STA (TMPPTR),Y");
+    inline( cpu_move_8bit_with_offset )
+
+        outline1("LDA %s", _value);
+        outline0("STA TMPPTR");
+        outline1("LDA %s+1", _value);
+        outline0("STA TMPPTR+1");
+        outline1("LDA %s", _source);
+        outline1("LDY #$%2.2x", (_offset & 0xff ) );
+        outline0("STA (TMPPTR),Y");
+
+    no_embedded( cpu_move_8bit_with_offset )
 
 }
 
 void cpu6502_move_8bit_indirect_with_offset2( Environment * _environment, char *_source, char * _value, char * _offset ) {
 
-    outline1("LDA %s", _value);
-    outline0("STA TMPPTR");
-    outline1("LDA %s+1", _value);
-    outline0("STA TMPPTR+1");
-    outline1("LDA %s", _source);
-    outline1("LDY %s", _offset );
-    outline0("STA (TMPPTR),Y");
+    inline( cpu_move_8bit_indirect_with_offset2 )
+
+        outline1("LDA %s", _value);
+        outline0("STA TMPPTR");
+        outline1("LDA %s+1", _value);
+        outline0("STA TMPPTR+1");
+        outline1("LDA %s", _source);
+        outline1("LDY %s", _offset );
+        outline0("STA (TMPPTR),Y");
+
+    no_embedded( cpu_move_8bit_indirect_with_offset2 )
 
 }
 
 void cpu6502_move_8bit_with_offset2( Environment * _environment, char *_source, char * _value, char * _offset ) {
 
-    outline1("LDA #<%s", _value);
-    outline0("STA TMPPTR");
-    outline1("LDA #>%s", _value);
-    outline0("STA TMPPTR+1");
-    outline1("LDA %s", _source);
-    outline1("LDY %s", _offset );
-    outline0("STA (TMPPTR),Y");
+    inline( cpu_move_8bit_with_offset2 )
+
+        outline1("LDA #<%s", _value);
+        outline0("STA TMPPTR");
+        outline1("LDA #>%s", _value);
+        outline0("STA TMPPTR+1");
+        outline1("LDA %s", _source);
+        outline1("LDY %s", _offset );
+        outline0("STA (TMPPTR),Y");
+
+    no_embedded( cpu_move_8bit_with_offset2 )
 
 }
 
