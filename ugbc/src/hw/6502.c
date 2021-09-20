@@ -556,10 +556,12 @@ void cpu6502_math_div2_8bit( Environment * _environment, char *_source, int _ste
         int i=0;
         if ( _signed ) {
             outline1("LDA %s", _source);
+            outline1("LDX #$%2.2X", _steps);
             outline0("JSR CPUMATHDIV28BIT_SIGNED");
             outline1("STA %s", _source);
         } else {
             outline1("LDA %s", _source);
+            outline1("LDX #$%2.2X", _steps);
             outline0("JSR CPUMATHDIV28BIT");
             outline1("STA %s", _source);
         }
@@ -767,7 +769,6 @@ void cpu6502_math_div_8bit_to_8bit( Environment * _environment, char *_source, c
     embedded( cpu_math_div_8bit_to_8bit, src_hw_6502_cpu_math_div_8bit_to_8bit_asm )
 
         if ( _signed ) {
-            
             outline1("LDA %s", _source);
             outline0("STA CPUMATHDIV8BITTO8BIT_SOURCE");
             outline1("LDA %s", _destination);
@@ -851,25 +852,63 @@ void cpu6502_math_div2_const_8bit( Environment * _environment, char *_source, in
  */
 void cpu6502_math_mul2_const_8bit( Environment * _environment, char *_source, int _steps, int _signed ) {
 
-    if ( _signed ) {
-        outline1("LDA %s", _source);
-        outline0("AND #$80" );
-        outline0("TAX");
-        while( _steps ) {
-            outline0("CLC");
-            outline1("ASL %s", _source);
-            --_steps;
+    inline( cpu_math_mul2_const_8bit )
+
+        if ( _signed ) {
+            outline1("LDA %s", _source);
+            outline0("AND #$80" );
+            outline0("TAX");
+            while( _steps ) {
+                outline0("CLC");
+                outline1("ASL %s", _source);
+                --_steps;
+            }
+            outline0("TXA");
+            outline1("ORA %s", _source);
+            outline1("STA %s", _source);
+        } else {
+            while( _steps ) {
+                outline0("CLC");
+                outline1("ASL %s", _source);
+                --_steps;
+            }
         }
-        outline0("TXA");
-        outline1("ORA %s", _source);
-        outline1("STA %s", _source);
-    } else {
-        while( _steps ) {
-            outline0("CLC");
-            outline1("ASL %s", _source);
-            --_steps;
+
+    embedded( cpu_math_mul2_const_8bit, src_hw_6502_cpu_math_mul2_const_8bit_asm )
+
+        if ( _signed ) {
+            outline1("LDA %s", _source);
+            outline0("AND #$80" );
+            outline0("TAX");
+            while( _steps ) {
+                outline0("CLC");
+                outline1("ASL %s", _source);
+                --_steps;
+            }
+            outline0("TXA");
+            outline1("ORA %s", _source);
+            outline1("STA %s", _source);
+        } else {
+            while( _steps ) {
+                outline0("CLC");
+                outline1("ASL %s", _source);
+                --_steps;
+            }
         }
-    }
+
+        if ( _signed ) {
+            outline1("LDA %s", _source);
+            outline1("LDX #$%2.2x", _steps );
+            outline0("JSR CPUMATHMUL2CONST8BIT_SIGNED")
+            outline1("STA %s", _source);
+        } else {
+            outline1("LDA %s", _source);
+            outline1("LDX #$%2.2x", _steps );
+            outline0("JSR CPUMATHMUL2CONST8BIT")
+            outline1("STA %s", _source);
+        }
+
+    done()
 
 }
 
@@ -882,10 +921,14 @@ void cpu6502_math_mul2_const_8bit( Environment * _environment, char *_source, in
  */
 void cpu6502_math_complement_const_8bit( Environment * _environment, char *_source, int _value ) {
 
-    outline0("SEC");
-    outline1("LDA #$%2.2x", ( _value & 0xff ) );
-    outline1("SBC %s", _source);
-    outline1("STA %s", _source );
+    inline( cpu_math_complement_const_8bit )
+
+        outline0("SEC");
+        outline1("LDA #$%2.2x", ( _value & 0xff ) );
+        outline1("SBC %s", _source);
+        outline1("STA %s", _source );
+
+    no_embedded( cpu_math_complement_const_8bit )
 
 }
 
@@ -898,9 +941,13 @@ void cpu6502_math_complement_const_8bit( Environment * _environment, char *_sour
  */
 void cpu6502_math_and_const_8bit( Environment * _environment, char *_source, int _mask ) {
 
-    outline1("LDA %s", _source);
-    outline1("AND #$%2.2x", (_mask & 0xff));
-    outline1("STA %s", _source);
+    inline( cpu_math_and_const_8bit )
+
+        outline1("LDA %s", _source);
+        outline1("AND #$%2.2x", (_mask & 0xff));
+        outline1("STA %s", _source);
+
+    no_embedded( cpu_math_and_const_8bit )
 
 }
 
@@ -916,17 +963,29 @@ void cpu6502_math_and_const_8bit( Environment * _environment, char *_source, int
  * @param _destination Destination of movement
  */
 void cpu6502_move_16bit( Environment * _environment, char *_source, char *_destination ) {
-    outline1("LDA %s", _source);
-    outline1("STA %s", _destination);
-    outline1("LDA %s+1", _source);
-    outline1("STA %s+1", _destination);
+
+    inline( cpu_move_16bit )
+
+        outline1("LDA %s", _source);
+        outline1("STA %s", _destination);
+        outline1("LDA %s+1", _source);
+        outline1("STA %s+1", _destination);
+
+    no_embedded( cpu_move_16bit )
+
 }
 
 void cpu6502_addressof_16bit( Environment * _environment, char *_source, char *_destination ) {
-    outline1("LDA #<%s", _source);
-    outline1("STA %s", _destination);
-    outline1("LDA #>%s", _source);
-    outline1("STA %s+1", _destination);
+
+    inline( cpu_move_16bit )
+
+        outline1("LDA #<%s", _source);
+        outline1("STA %s", _destination);
+        outline1("LDA #>%s", _source);
+        outline1("STA %s+1", _destination);
+
+    no_embedded( cpu_move_16bit )
+
 }
 
 /**
@@ -937,11 +996,16 @@ void cpu6502_addressof_16bit( Environment * _environment, char *_source, char *_
  * @param _value Value to store
  */
 void cpu6502_store_16bit( Environment * _environment, char *_destination, int _value ) {
-    outline0(";; variable store 16 bit");
-    outline1("LDA #$%2.2x", ( _value & 0xff ) );
-    outline1("STA %s", _destination);
-    outline1("LDA #$%2.2x", ( ( _value >> 8 ) & 0xff ) );
-    outline1("STA %s+1", _destination);
+
+    inline( cpu_store_16bit )
+
+        outline1("LDA #$%2.2x", ( _value & 0xff ) );
+        outline1("STA %s", _destination);
+        outline1("LDA #$%2.2x", ( ( _value >> 8 ) & 0xff ) );
+        outline1("STA %s+1", _destination);
+
+    no_embedded( cpu_store_16bit )
+
 }
 
 /**
@@ -957,28 +1021,32 @@ void cpu6502_compare_16bit( Environment * _environment, char *_source, char *_de
 
     MAKE_LABEL
 
-    outline1("LDA %s", _source);
-    outline1("CMP %s", _destination);
-    outline1("BNE %s", label);
-    outline1("LDA %s+1", _source);
-    outline1("CMP %s+1", _destination);
-    outline1("BNE %s", label);
-    outline1("LDA #$%2.2x", ( _positive ) ? 0xff : 0x00  );
-    if ( _other ) {
-        outline1("STA %s", _other);
-    } else {
-        outline1("STA %s", _destination);
-    }
-    outline1("JMP %s_2", label);
-    outhead1("%s:", label);
-    outline1("LDA #$%2.2x", ( _positive ) ? 0x00 : 0xff );
-    if ( _other ) {
-        outline1("STA %s", _other);
-    } else {
-        outline1("STA %s", _destination);
-    }
-    outhead1("%s_2:", label);
-    
+    inline( cpu_compare_16bit )
+
+        outline1("LDA %s", _source);
+        outline1("CMP %s", _destination);
+        outline1("BNE %s", label);
+        outline1("LDA %s+1", _source);
+        outline1("CMP %s+1", _destination);
+        outline1("BNE %s", label);
+        outline1("LDA #$%2.2x", ( _positive ) ? 0xff : 0x00  );
+        if ( _other ) {
+            outline1("STA %s", _other);
+        } else {
+            outline1("STA %s", _destination);
+        }
+        outline1("JMP %s_2", label);
+        outhead1("%s:", label);
+        outline1("LDA #$%2.2x", ( _positive ) ? 0x00 : 0xff );
+        if ( _other ) {
+            outline1("STA %s", _other);
+        } else {
+            outline1("STA %s", _destination);
+        }
+        outhead1("%s_2:", label);
+
+    no_embedded( cpu_compare_16bit )
+
 }
 
 /**
@@ -994,71 +1062,75 @@ void cpu6502_less_than_16bit( Environment * _environment, char *_source, char *_
 
     MAKE_LABEL
 
-    if ( _signed ) {
+    inline( cpu_less_than_16bit )
 
-        outline0("SEC");
-        outline1("LDA %s+1", _source );
-        outline1("SBC %s+1", _destination );
-        outline1("BVC %sLABEL1", label);
-        outline0("EOR #$80" );
-        outhead1("%sLABEL1:", label );
-        outline1("BMI %sLABEL4", label );
-        outline1("BVC %sLABEL2", label );
-        outline0("EOR #$80" );
-        outhead1("%sLABEL2:", label );
-        outline1("BNE %sLABEL3", label );
-        outline1("LDA %s", _source );
-        outline1("SBC %s", _destination );
-        if ( _equal ) {
-            outline1("BEQ %sLABEL4", label );
-        }
-        outline1("BCC %sLABEL4", label );
-        outhead1("%sLABEL3:", label );
-        outline0("LDA #0" );
-        if ( _other ) {
-            outline1("STA %s", _other);
+        if ( _signed ) {
+
+            outline0("SEC");
+            outline1("LDA %s+1", _source );
+            outline1("SBC %s+1", _destination );
+            outline1("BVC %sLABEL1", label);
+            outline0("EOR #$80" );
+            outhead1("%sLABEL1:", label );
+            outline1("BMI %sLABEL4", label );
+            outline1("BVC %sLABEL2", label );
+            outline0("EOR #$80" );
+            outhead1("%sLABEL2:", label );
+            outline1("BNE %sLABEL3", label );
+            outline1("LDA %s", _source );
+            outline1("SBC %s", _destination );
+            if ( _equal ) {
+                outline1("BEQ %sLABEL4", label );
+            }
+            outline1("BCC %sLABEL4", label );
+            outhead1("%sLABEL3:", label );
+            outline0("LDA #0" );
+            if ( _other ) {
+                outline1("STA %s", _other);
+            } else {
+                outline1("STA %s", _destination);
+            }
+            outline1("JMP %sen", label );
+            outhead1("%sLABEL4:", label );
+            outline0("LDA #$ff" );
+            if ( _other ) {
+                outline1("STA %s", _other);
+            } else {
+                outline1("STA %s", _destination);
+            }
+            outhead1("%sen:", label);
         } else {
-            outline1("STA %s", _destination);
+            outline1("LDA %s+1", _source);
+            outline1("CMP %s+1", _destination );
+            outline1("BEQ %s_1", label);
+            outline1("BCC %s", label);
+            outline1("BCS %s_0", label);
+            outhead1("%s_1:", label);
+            outline1("LDA %s", _source);
+            outline1("CMP %s", _destination );
+            if ( _equal ) {
+                outline1("BEQ %s", label);
+            }
+            outline1("BCC %s", label);
+            outhead1("%s_0:", label);
+            outline0("LDA #0" );
+            if ( _other ) {
+                outline1("STA %s", _other);
+            } else {
+                outline1("STA %s", _destination);
+            }
+            outline1("JMP %s_2", label);
+            outhead1("%s:", label);
+            outline0("LDA #$FF" );
+            if ( _other ) {
+                outline1("STA %s", _other);
+            } else {
+                outline1("STA %s", _destination);
+            }
+            outhead1("%s_2:", label);
         }
-        outline1("JMP %sen", label );
-        outhead1("%sLABEL4:", label );
-        outline0("LDA #$ff" );
-        if ( _other ) {
-            outline1("STA %s", _other);
-        } else {
-            outline1("STA %s", _destination);
-        }
-        outhead1("%sen:", label);
-    } else {
-        outline1("LDA %s+1", _source);
-        outline1("CMP %s+1", _destination );
-        outline1("BEQ %s_1", label);
-        outline1("BCC %s", label);
-        outline1("BCS %s_0", label);
-        outhead1("%s_1:", label);
-        outline1("LDA %s", _source);
-        outline1("CMP %s", _destination );
-        if ( _equal ) {
-            outline1("BEQ %s", label);
-        }
-        outline1("BCC %s", label);
-        outhead1("%s_0:", label);
-        outline0("LDA #0" );
-        if ( _other ) {
-            outline1("STA %s", _other);
-        } else {
-            outline1("STA %s", _destination);
-        }
-        outline1("JMP %s_2", label);
-        outhead1("%s:", label);
-        outline0("LDA #$FF" );
-        if ( _other ) {
-            outline1("STA %s", _other);
-        } else {
-            outline1("STA %s", _destination);
-        }
-        outhead1("%s_2:", label);
-    }
+
+    no_embedded( cpu_less_than_16bit )
 
 }
 
@@ -1073,12 +1145,16 @@ void cpu6502_less_than_16bit( Environment * _environment, char *_source, char *_
  */
 void cpu6502_greater_than_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed ) {
 
-    cpu6502_less_than_16bit( _environment, _source, _destination, _other, !_equal, _signed );
-    if ( _other ) {
-        cpu6502_logical_not_8bit( _environment, _other, _other );
-    } else {
-        cpu6502_logical_not_8bit( _environment, _destination, _destination );
-    }
+    inline( cpu_greater_than_16bit )
+
+        cpu6502_less_than_16bit( _environment, _source, _destination, _other, !_equal, _signed );
+        if ( _other ) {
+            cpu6502_logical_not_8bit( _environment, _other, _other );
+        } else {
+            cpu6502_logical_not_8bit( _environment, _destination, _destination );
+        }
+
+    no_embedded( cpu_greater_than_16bit )
 
 }
 
@@ -1091,21 +1167,27 @@ void cpu6502_greater_than_16bit( Environment * _environment, char *_source, char
  * @param _other Destination address for result
  */
 void cpu6502_math_add_16bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
-    outline0("CLC");
-    outline1("LDA %s", _source);
-    outline1("ADC %s", _destination);
-    if ( _other ) {
-        outline1("STA %s", _other);
-    } else {
-        outline1("STA %s", _destination);
-    }
-    outline1("LDA %s+1", _source);
-    outline1("ADC %s+1", _destination);
-    if ( _other ) {
-        outline1("STA %s+1", _other);
-    } else {
-        outline1("STA %s+1", _destination);
-    }
+
+    inline( cpu_math_add_16bit )
+
+        outline0("CLC");
+        outline1("LDA %s", _source);
+        outline1("ADC %s", _destination);
+        if ( _other ) {
+            outline1("STA %s", _other);
+        } else {
+            outline1("STA %s", _destination);
+        }
+        outline1("LDA %s+1", _source);
+        outline1("ADC %s+1", _destination);
+        if ( _other ) {
+            outline1("STA %s+1", _other);
+        } else {
+            outline1("STA %s+1", _destination);
+        }
+
+    no_embedded( cpu_math_add_16bit )
+
 }
 
 /**
@@ -1117,31 +1199,43 @@ void cpu6502_math_add_16bit( Environment * _environment, char *_source, char *_d
  * @param _other Destination address for result
  */
 void cpu6502_math_add_16bit_with_16bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
-    outline0("CLC");
-    outline1("LDA %s", _source);
-    outline1("ADC #<%s", _destination);
-    outline1("STA %s", _other);
-    outline1("LDA %s+1", _source);
-    outline1("ADC #>%s", _destination);
-    outline1("STA %s+1", _other);
+
+    inline( cpu_math_add_16bit_with_16bit )
+
+        outline0("CLC");
+        outline1("LDA %s", _source);
+        outline1("ADC #<%s", _destination);
+        outline1("STA %s", _other);
+        outline1("LDA %s+1", _source);
+        outline1("ADC #>%s", _destination);
+        outline1("STA %s+1", _other);
+
+    no_embedded( cpu_math_add_16bit_with_16bit )
+    
 }
 
 void cpu6502_math_add_16bit_with_8bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
-    outline0("CLC");
-    outline1("LDA %s", _source);
-    outline1("ADC %s", _destination);
-    if ( _other ) {
-        outline1("STA %s", _other);
-    } else {
-        outline1("STA %s", _destination);
-    }
-    outline1("LDA %s+1", _source);
-    outline0("ADC #$0");
-    if ( _other ) {
-        outline1("STA %s+1", _other);
-    } else {
-        outline1("STA %s+1", _destination);
-    }
+
+    inline( cpu_math_add_16bit_with_8bit )
+
+        outline0("CLC");
+        outline1("LDA %s", _source);
+        outline1("ADC %s", _destination);
+        if ( _other ) {
+            outline1("STA %s", _other);
+        } else {
+            outline1("STA %s", _destination);
+        }
+        outline1("LDA %s+1", _source);
+        outline0("ADC #$0");
+        if ( _other ) {
+            outline1("STA %s+1", _other);
+        } else {
+            outline1("STA %s+1", _destination);
+        }
+
+    no_embedded( cpu_math_add_16bit_with_8bit )
+
 }
 
 /**
@@ -1152,20 +1246,27 @@ void cpu6502_math_add_16bit_with_8bit( Environment * _environment, char *_source
  * @param _other Destination address for result
  */
 void cpu6502_math_double_16bit( Environment * _environment, char *_source, char *_other, int _signed ) {
-    outline1("LDA %s", _source);
-    outline0("ASL A");
-    if ( _other ) {
-        outline1("STA %s", _other);
-    } else {
-        outline1("STA %s", _source);
-    }
-    outline1("LDA %s+1", _source);
-    outline0("ROL A");
-    if ( _other ) {
-        outline1("STA %s+1", _other);
-    } else {
-        outline1("STA %s+1", _source);
-    }
+
+    inline( cpu_math_double_16bit )
+
+        outline1("LDA %s", _source);
+        outline0("ASL A");
+        if ( _other ) {
+            outline1("STA %s", _other);
+        } else {
+            outline1("STA %s", _source);
+        }
+        outline1("LDA %s+1", _source);
+        outline0("ROL A");
+        if ( _other ) {
+            outline1("STA %s+1", _other);
+        } else {
+            outline1("STA %s+1", _source);
+        }
+
+    no_embedded( cpu_math_double_16bit )
+
+    
 }
 
 /**
@@ -1180,181 +1281,225 @@ void cpu6502_math_mul_16bit_to_32bit( Environment * _environment, char *_source,
 
     MAKE_LABEL
 
-    if ( _signed ) {
+    inline( cpu_math_mul_16bit_to_32bit )
 
-        outline1("LDA %s+1", _source );
-        outline1("EOR %s+1", _destination );
-        outline0("AND #$80" );
-        outline0("PHA");
+        if ( _signed ) {
 
-        outline1("LDA %s+1", _source );
-        outline0("AND #$80" );
-        outline1("BEQ %ssecond", label );
-        outline0("CLC" );
-        outline1("LDA %s", _source );
-        outline0("EOR #$ff" );
-        outline0("STA MATHPTR0" );
-        outline1("LDA %s+1", _source );
-        outline0("EOR #$ff" );
-        outline0("STA MATHPTR1" );
-        outline0("CLC" );
-        outline0("LDA MATHPTR0" );
-        outline0("ADC #1" );
-        outline0("STA MATHPTR0" );
-        outline0("LDA MATHPTR1" );
-        outline0("ADC #0" );
-        outline0("STA MATHPTR1" );        
-        outline1("JMP %ssecond2", label );
-        outhead1("%ssecond:", label );
-        outline1("LDA %s", _source );
-        outline0("STA MATHPTR0");
-        outline1("LDA %s+1", _source );
-        outline0("STA MATHPTR1");
-        outline1("JMP %ssecond2", label );
+            outline1("LDA %s+1", _source );
+            outline1("EOR %s+1", _destination );
+            outline0("AND #$80" );
+            outline0("PHA");
 
-        outhead1("%ssecond2:", label );
-        outline1("LDA %s+1", _destination );
-        outline0("AND #$80" );
-        outline1("BEQ %sthird", label );
-        outline0("CLC" );
-        outline1("LDA %s", _destination );
-        outline0("EOR #$ff" );
-        outline0("STA MATHPTR2" );
-        outline1("LDA %s+1", _destination );
-        outline0("EOR #$ff" );
-        outline0("STA MATHPTR3" );
-        outline0("CLC" );
-        outline0("LDA MATHPTR2" );
-        outline0("ADC #1" );
-        outline0("STA MATHPTR2" );
-        outline0("LDA MATHPTR3" );
-        outline0("ADC #0" );
-        outline0("STA MATHPTR3" );        
-        outline1("JMP %sthird2", label );
-        outhead1("%sthird:", label );
-        outline1("LDA %s", _destination );
-        outline0("STA MATHPTR2");
-        outline1("LDA %s+1", _destination );
-        outline0("STA MATHPTR3");
-        outline1("JMP %sthird2", label );
+            outline1("LDA %s+1", _source );
+            outline0("AND #$80" );
+            outline1("BEQ %ssecond", label );
+            outline0("CLC" );
+            outline1("LDA %s", _source );
+            outline0("EOR #$ff" );
+            outline0("STA MATHPTR0" );
+            outline1("LDA %s+1", _source );
+            outline0("EOR #$ff" );
+            outline0("STA MATHPTR1" );
+            outline0("CLC" );
+            outline0("LDA MATHPTR0" );
+            outline0("ADC #1" );
+            outline0("STA MATHPTR0" );
+            outline0("LDA MATHPTR1" );
+            outline0("ADC #0" );
+            outline0("STA MATHPTR1" );        
+            outline1("JMP %ssecond2", label );
+            outhead1("%ssecond:", label );
+            outline1("LDA %s", _source );
+            outline0("STA MATHPTR0");
+            outline1("LDA %s+1", _source );
+            outline0("STA MATHPTR1");
+            outline1("JMP %ssecond2", label );
 
-        outhead1("%sthird2:", label );
-        outline0("LDA #$00");
-        outline0("STA MATHPTR4");
-        outline0("STA MATHPTR5");
-        outline0("STA MATHPTR6");
-        outline0("STA MATHPTR7");
-        outline0("LDX #$10");
+            outhead1("%ssecond2:", label );
+            outline1("LDA %s+1", _destination );
+            outline0("AND #$80" );
+            outline1("BEQ %sthird", label );
+            outline0("CLC" );
+            outline1("LDA %s", _destination );
+            outline0("EOR #$ff" );
+            outline0("STA MATHPTR2" );
+            outline1("LDA %s+1", _destination );
+            outline0("EOR #$ff" );
+            outline0("STA MATHPTR3" );
+            outline0("CLC" );
+            outline0("LDA MATHPTR2" );
+            outline0("ADC #1" );
+            outline0("STA MATHPTR2" );
+            outline0("LDA MATHPTR3" );
+            outline0("ADC #0" );
+            outline0("STA MATHPTR3" );        
+            outline1("JMP %sthird2", label );
+            outhead1("%sthird:", label );
+            outline1("LDA %s", _destination );
+            outline0("STA MATHPTR2");
+            outline1("LDA %s+1", _destination );
+            outline0("STA MATHPTR3");
+            outline1("JMP %sthird2", label );
 
-        outhead1("%s:", label);
-        outline0("LSR MATHPTR1");
-        outline0("ROR MATHPTR0");
-        outline1("BCC %s_2", label);
-        outline0("LDA MATHPTR6");
-        outline0("CLC");
-        outline0("ADC MATHPTR2");
-        outline0("STA MATHPTR6");
-        outline0("LDA MATHPTR7");
-        outline0("ADC MATHPTR3");
+            outhead1("%sthird2:", label );
+            outline0("LDA #$00");
+            outline0("STA MATHPTR4");
+            outline0("STA MATHPTR5");
+            outline0("STA MATHPTR6");
+            outline0("STA MATHPTR7");
+            outline0("LDX #$10");
 
-        outhead1("%s_2:", label);
-        outline0("ROR");
-        outline0("STA MATHPTR7");
-        outline0("ROR MATHPTR6");
-        outline0("ROR MATHPTR5");
-        outline0("ROR MATHPTR4");
-        outline0("DEX");
-        outline1("BNE %s", label);
+            outhead1("%s:", label);
+            outline0("LSR MATHPTR1");
+            outline0("ROR MATHPTR0");
+            outline1("BCC %s_2", label);
+            outline0("LDA MATHPTR6");
+            outline0("CLC");
+            outline0("ADC MATHPTR2");
+            outline0("STA MATHPTR6");
+            outline0("LDA MATHPTR7");
+            outline0("ADC MATHPTR3");
 
-        outline0("LDA MATHPTR4");
-        outline1("STA %s", _other );
-        outline0("LDA MATHPTR5");
-        outline1("STA %s+1", _other );
-        outline0("LDA MATHPTR6");
-        outline1("STA %s+2", _other );
-        outline0("LDA MATHPTR7");
-        outline1("STA %s+3", _other );
+            outhead1("%s_2:", label);
+            outline0("ROR");
+            outline0("STA MATHPTR7");
+            outline0("ROR MATHPTR6");
+            outline0("ROR MATHPTR5");
+            outline0("ROR MATHPTR4");
+            outline0("DEX");
+            outline1("BNE %s", label);
 
-        outline0("PLA");
-        outline0("AND #$80");
-        outline1("BEQ %sdone", label);
-        outline1("LDA %s", _other );
-        outline0("EOR #$ff" );
-        outline1("STA %s", _other );
-        outline1("LDA %s+1", _other );
-        outline0("EOR #$ff" );
-        outline1("STA %s+1", _other );
-        outline1("LDA %s+2", _other );
-        outline0("EOR #$ff" );
-        outline1("STA %s+2", _other );
-        outline1("LDA %s+3", _other );
-        outline0("EOR #$ff" );
-        outline1("STA %s+3", _other );
-        outline0("CLC" );
-        outline1("LDA %s", _other );
-        outline0("ADC #1" );
-        outline1("STA %s", _other );
-        outline1("LDA %s+1", _other );
-        outline0("ADC #0" );
-        outline1("STA %s+1", _other );
-        outline1("LDA %s+2", _other );
-        outline0("ADC #0" );
-        outline1("STA %s+2", _other );
-        outline1("LDA %s+3", _other );
-        outline0("ADC #0" );
-        outline1("STA %s+3", _other );
-        outhead1("%sdone:", label );
+            outline0("LDA MATHPTR4");
+            outline1("STA %s", _other );
+            outline0("LDA MATHPTR5");
+            outline1("STA %s+1", _other );
+            outline0("LDA MATHPTR6");
+            outline1("STA %s+2", _other );
+            outline0("LDA MATHPTR7");
+            outline1("STA %s+3", _other );
+
+            outline0("PLA");
+            outline0("AND #$80");
+            outline1("BEQ %sdone", label);
+            outline1("LDA %s", _other );
+            outline0("EOR #$ff" );
+            outline1("STA %s", _other );
+            outline1("LDA %s+1", _other );
+            outline0("EOR #$ff" );
+            outline1("STA %s+1", _other );
+            outline1("LDA %s+2", _other );
+            outline0("EOR #$ff" );
+            outline1("STA %s+2", _other );
+            outline1("LDA %s+3", _other );
+            outline0("EOR #$ff" );
+            outline1("STA %s+3", _other );
+            outline0("CLC" );
+            outline1("LDA %s", _other );
+            outline0("ADC #1" );
+            outline1("STA %s", _other );
+            outline1("LDA %s+1", _other );
+            outline0("ADC #0" );
+            outline1("STA %s+1", _other );
+            outline1("LDA %s+2", _other );
+            outline0("ADC #0" );
+            outline1("STA %s+2", _other );
+            outline1("LDA %s+3", _other );
+            outline0("ADC #0" );
+            outline1("STA %s+3", _other );
+            outhead1("%sdone:", label );
 
 
-    } else {
+        } else {
 
-        outline1("LDA %s", _source );
-        outline0("STA MATHPTR0");
-        outline1("LDA %s+1", _source );
-        outline0("STA MATHPTR1");
-        outline1("LDA %s", _destination );
-        outline0("STA MATHPTR2");
-        outline1("LDA %s+1", _destination );
-        outline0("STA MATHPTR3");
+            outline1("LDA %s", _source );
+            outline0("STA MATHPTR0");
+            outline1("LDA %s+1", _source );
+            outline0("STA MATHPTR1");
+            outline1("LDA %s", _destination );
+            outline0("STA MATHPTR2");
+            outline1("LDA %s+1", _destination );
+            outline0("STA MATHPTR3");
 
-        outline0("LDA #$00");
-        outline0("STA MATHPTR4");
-        outline0("STA MATHPTR5");
-        outline0("STA MATHPTR6");
-        outline0("STA MATHPTR7");
-        outline0("LDX #$10");
+            outline0("LDA #$00");
+            outline0("STA MATHPTR4");
+            outline0("STA MATHPTR5");
+            outline0("STA MATHPTR6");
+            outline0("STA MATHPTR7");
+            outline0("LDX #$10");
 
-        outhead1("%s:", label);
-        outline0("LSR MATHPTR1");
-        outline0("ROR MATHPTR0");
-        outline1("BCC %s_2", label);
-        outline0("LDA MATHPTR6");
-        outline0("CLC");
-        outline0("ADC MATHPTR2");
-        outline0("STA MATHPTR6");
-        outline0("LDA MATHPTR7");
-        outline0("ADC MATHPTR3");
+            outhead1("%s:", label);
+            outline0("LSR MATHPTR1");
+            outline0("ROR MATHPTR0");
+            outline1("BCC %s_2", label);
+            outline0("LDA MATHPTR6");
+            outline0("CLC");
+            outline0("ADC MATHPTR2");
+            outline0("STA MATHPTR6");
+            outline0("LDA MATHPTR7");
+            outline0("ADC MATHPTR3");
 
-        outhead1("%s_2:", label);
-        outline0("ROR");
-        outline0("STA MATHPTR7");
-        outline0("ROR MATHPTR6");
-        outline0("ROR MATHPTR5");
-        outline0("ROR MATHPTR4");
-        outline0("DEX");
-        outline1("BNE %s", label);
+            outhead1("%s_2:", label);
+            outline0("ROR");
+            outline0("STA MATHPTR7");
+            outline0("ROR MATHPTR6");
+            outline0("ROR MATHPTR5");
+            outline0("ROR MATHPTR4");
+            outline0("DEX");
+            outline1("BNE %s", label);
 
-        outline0("LDA MATHPTR4");
-        outline1("STA %s", _other );
-        outline0("LDA MATHPTR5");
-        outline1("STA %s+1", _other );
-        outline0("LDA MATHPTR6");
-        outline1("STA %s+2", _other );
-        outline0("LDA MATHPTR7");
-        outline1("STA %s+3", _other );
+            outline0("LDA MATHPTR4");
+            outline1("STA %s", _other );
+            outline0("LDA MATHPTR5");
+            outline1("STA %s+1", _other );
+            outline0("LDA MATHPTR6");
+            outline1("STA %s+2", _other );
+            outline0("LDA MATHPTR7");
+            outline1("STA %s+3", _other );
 
-    }
-    
+        }
+
+     embedded( cpu_math_mul_16bit_to_32bit, src_hw_6502_cpu_math_mul_16bit_to_32bit_asm )
+
+        int i=0;
+        if ( _signed ) {
+            outline1("LDA %s", _source );
+            outline0("STA CPUMATHMUL16BITTO32BIT_SOURCE");
+            outline1("LDA %s+1", _source );
+            outline0("STA CPUMATHMUL16BITTO32BIT_SOURCE+1");
+            outline1("LDA %s", _destination );
+            outline0("STA CPUMATHMUL16BITTO32BIT_DESTINATION");
+            outline1("LDA %s+1", _destination );
+            outline0("STA CPUMATHMUL16BITTO32BIT_DESTINATION+1");            
+            outline0("JSR CPUMATHMUL16BITTO32BIT_SIGNED");
+            outline0("LDA CPUMATHMUL16BITTO32BIT_OTHER");
+            outline1("STA %s", _other );
+            outline0("LDA CPUMATHMUL16BITTO32BIT_OTHER+1");
+            outline1("STA %s+1", _other );
+            outline0("LDA CPUMATHMUL16BITTO32BIT_OTHER+2");
+            outline1("STA %s+2", _other );
+            outline0("LDA CPUMATHMUL16BITTO32BIT_OTHER+3");
+            outline1("STA %s+3", _other );
+        } else {
+            outline1("LDA %s", _source );
+            outline0("STA CPUMATHMUL16BITTO32BIT_SOURCE");
+            outline1("LDA %s+1", _source );
+            outline0("STA CPUMATHMUL16BITTO32BIT_SOURCE+1");
+            outline1("LDA %s", _destination );
+            outline0("STA CPUMATHMUL16BITTO32BIT_DESTINATION");
+            outline1("LDA %s+1", _destination );
+            outline0("STA CPUMATHMUL16BITTO32BIT_DESTINATION+1");            
+            outline0("JSR CPUMATHMUL16BITTO32BIT");
+            outline0("LDA CPUMATHMUL16BITTO32BIT_OTHER");
+            outline1("STA %s", _other );
+            outline0("LDA CPUMATHMUL16BITTO32BIT_OTHER+1");
+            outline1("STA %s+1", _other );
+            outline0("LDA CPUMATHMUL16BITTO32BIT_OTHER+2");
+            outline1("STA %s+2", _other );
+            outline0("LDA CPUMATHMUL16BITTO32BIT_OTHER+3");
+            outline1("STA %s+3", _other );
+        }
+
+    done()
 
 }
 

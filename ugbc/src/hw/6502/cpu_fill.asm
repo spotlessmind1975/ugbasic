@@ -42,3 +42,4 @@ CPUFILL2:
     INY
     DEX
     BNE CPUFILL2
+    RTS
