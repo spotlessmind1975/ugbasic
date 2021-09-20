@@ -3637,90 +3637,127 @@ void cpu6502_convert_string_into_16bit( Environment * _environment, char * _stri
 
     MAKE_LABEL
 
-    outline0("LDA #$0" );
-    outline1("STA %s", _value );
-    outline1("STA %s+1", _value );
+    inline( cpu_convert_string_into_16bit )
 
-    outline1("LDA %s+1", _string );
-    outline0("STA TMPPTR+1" );
-    outline1("LDA %s", _string  );
-    outline0("STA TMPPTR" );
+        outline0("LDA #$0" );
+        outline1("STA %s", _value );
+        outline1("STA %s+1", _value );
 
-    outline0("LDY #$0"); // mine
+        outline1("LDA %s+1", _string );
+        outline0("STA TMPPTR+1" );
+        outline1("LDA %s", _string  );
+        outline0("STA TMPPTR" );
 
-    outhead1("%srepeat:", label );
+        outline0("LDY #$0"); // mine
 
-    outline0("LDA (TMPPTR),Y" );
-    outline0("CMP #$39" );
-    outline1("BCS %send", label);
-    outline0("CMP #$30" );
-    outline1("BCC %send", label);
-    outline0("SBC #$30" );
+        outhead1("%srepeat:", label );
 
-    outline0("CLC");
-    outline1("ADC %s", _value);
-    outline1("STA %s", _value);
-    outline0("LDA #$0");
-    outline1("ADC %s+1", _value);
-    outline1("STA %s+1", _value);
+        outline0("LDA (TMPPTR),Y" );
+        outline0("CMP #$39" );
+        outline1("BCS %send", label);
+        outline0("CMP #$30" );
+        outline1("BCC %send", label);
+        outline0("SBC #$30" );
 
-    outline1("LDA %s+1", _value );
-    outline0("STA TMPPTR2+1" );
-    outline1("LDA %s", _value  );
-    outline0("STA TMPPTR2" );
+        outline0("CLC");
+        outline1("ADC %s", _value);
+        outline1("STA %s", _value);
+        outline0("LDA #$0");
+        outline1("ADC %s+1", _value);
+        outline1("STA %s+1", _value);
 
-    outline0("INY");
-    outline1("CPY %s", _len );
-    outline1("BEQ %send", label );
+        outline1("LDA %s+1", _value );
+        outline0("STA TMPPTR2+1" );
+        outline1("LDA %s", _value  );
+        outline0("STA TMPPTR2" );
 
-    outline0("LDA TMPPTR2" );
-    outline1("STA %s", _value );
-    outline0("LDA TMPPTR2+1" );
-    outline1("STA %s+1", _value );
-    outline1("ASL %s", _value );
-    outline1("ROL %s+1", _value );
-    outline1("ASL %s", _value );
-    outline1("ROL %s+1", _value );
-    outline0("CLC" );
-    outline0("LDA TMPPTR2" );
-    outline1("ADC %s", _value );
-    outline1("STA %s", _value );
-    outline0("LDA TMPPTR2+1" );
-    outline1("ADC %s+1", _value );
-    outline1("STA %s+1", _value );
-    outline1("ASL %s", _value );
-    outline1("ROL %s+1", _value );
+        outline0("INY");
+        outline1("CPY %s", _len );
+        outline1("BEQ %send", label );
 
-    outline1("JMP %srepeat", label );
+        outline0("LDA TMPPTR2" );
+        outline1("STA %s", _value );
+        outline0("LDA TMPPTR2+1" );
+        outline1("STA %s+1", _value );
+        outline1("ASL %s", _value );
+        outline1("ROL %s+1", _value );
+        outline1("ASL %s", _value );
+        outline1("ROL %s+1", _value );
+        outline0("CLC" );
+        outline0("LDA TMPPTR2" );
+        outline1("ADC %s", _value );
+        outline1("STA %s", _value );
+        outline0("LDA TMPPTR2+1" );
+        outline1("ADC %s+1", _value );
+        outline1("STA %s+1", _value );
+        outline1("ASL %s", _value );
+        outline1("ROL %s+1", _value );
 
-    outhead1("%send:", label );
+        outline1("JMP %srepeat", label );
 
+        outhead1("%send:", label );
+
+    embedded( cpu_convert_string_into_16bit, src_hw_6502_cpu_convert_string_into_16bit_asm );
+
+        outline1("LDA %s+1", _string );
+        outline0("STA TMPPTR+1" );
+        outline1("LDA %s", _string  );
+        outline0("STA TMPPTR" );
+        outline1("LDX %s", _len );
+        outline0("JSR CPUCONVERTSTRINGINTO16BIT" );
+        outline0("LDA CPUCONVERTSTRINGINTO16BIT_VALUE" );
+        outline1("STA %s", _value );
+        outline1("STA %s+1", _value );
+
+    done()
 }
 
 void cpu6502_fill_indirect( Environment * _environment, char * _address, char * _size, char * _pattern ) {
 
     MAKE_LABEL
 
-    // Use the current bitmap address as starting address for filling routine.
-    outline1("LDA %s", _address);
-    outline0("STA TMPPTR");
-    outline1("LDA %s+1", _address);
-    outline0("STA TMPPTR+1");
+    inline( cpu_fill )
+        // Use the current bitmap address as starting address for filling routine.
+        outline1("LDA %s", _address);
+        outline0("STA TMPPTR");
+        outline1("LDA %s+1", _address);
+        outline0("STA TMPPTR+1");
 
-    outline1("LDA %s", _pattern);
-    outline0("STA TMPPTR2");
-    outline1("LDA %s+1", _pattern);
-    outline0("STA TMPPTR2+1");
+        outline1("LDA %s", _pattern);
+        outline0("STA TMPPTR2");
+        outline1("LDA %s+1", _pattern);
+        outline0("STA TMPPTR2+1");
 
-    // Fill the bitmap with the given pattern.
-    outline1("LDX %s", _size );
-    outline0("LDY #0");
-    outline0("LDA (TMPPTR2),Y");
-    outhead1("%sx:", label);
-    outline0("STA (TMPPTR),Y");
-    outline0("INY");
-    outline0("DEX");
-    outline1("BNE %sx", label);
+        // Fill the bitmap with the given pattern.
+        outline1("LDX %s", _size );
+        outline0("LDY #0");
+        outline0("LDA (TMPPTR2),Y");
+        outhead1("%sx:", label);
+        outline0("STA (TMPPTR),Y");
+        outline0("INY");
+        outline0("DEX");
+        outline1("BNE %sx", label);
+
+    embedded( cpu_fill, src_hw_6502_cpu_fill_asm );
+
+        // Use the current bitmap address as starting address for filling routine.
+        outline1("LDA %s", _address);
+        outline0("STA TMPPTR");
+        outline1("LDA %s+1", _address);
+        outline0("STA TMPPTR+1");
+
+        outline1("LDA %s", _pattern);
+        outline0("STA TMPPTR2");
+        outline1("LDA %s+1", _pattern);
+        outline0("STA TMPPTR2+1");
+        outline0("LDY #0");
+        outline0("LDA (TMPPTR2),Y");
+
+        outline1("LDX %s", _size );
+        outline1("LDA %s", _pattern);
+        outline0("JSR CPUFILL");
+
+    done()
 
 }
 
@@ -3728,31 +3765,35 @@ void cpu6502_flip( Environment * _environment, char * _source, char * _size, cha
 
     MAKE_LABEL
 
-    outline1("LDA %s", _source);
-    outline0("STA TMPPTR");
-    outline1("LDA %s+1", _source);
-    outline0("STA TMPPTR+1");
+    inline( cpu_flip )
 
-    outline1("LDA %s", _destination);
-    outline0("STA TMPPTR2");
-    outline1("LDA %s+1", _destination);
-    outline0("STA TMPPTR2+1");
+        outline1("LDA %s", _source);
+        outline0("STA TMPPTR");
+        outline1("LDA %s+1", _source);
+        outline0("STA TMPPTR+1");
 
-    outline0("CLC");
-    outline1("LDA %s", _size);
-    outline0("ADC TMPPTR2");
-    outline0("STA TMPPTR2");
-    outline0("DEC TMPPTR2");
+        outline1("LDA %s", _destination);
+        outline0("STA TMPPTR2");
+        outline1("LDA %s+1", _destination);
+        outline0("STA TMPPTR2+1");
 
-    outline1("LDX %s", _size );
-    outline0("LDY #$0");
-    outhead1("%sx:", label);
-    outline0("LDA (TMPPTR),Y");
-    outline0("STA (TMPPTR2),Y");
-    outline0("DEC TMPPTR2");
-    outline0("INC TMPPTR");
-    outline0("DEX");
-    outline1("BNE %sx", label);
+        outline0("CLC");
+        outline1("LDA %s", _size);
+        outline0("ADC TMPPTR2");
+        outline0("STA TMPPTR2");
+        outline0("DEC TMPPTR2");
+
+        outline1("LDX %s", _size );
+        outline0("LDY #$0");
+        outhead1("%sx:", label);
+        outline0("LDA (TMPPTR),Y");
+        outline0("STA (TMPPTR2),Y");
+        outline0("DEC TMPPTR2");
+        outline0("INC TMPPTR");
+        outline0("DEX");
+        outline1("BNE %sx", label);
+
+    no_embedded( cpu_flip )
 
 }
 
@@ -3760,33 +3801,37 @@ void cpu6502_bit_check( Environment * _environment, char * _value, int _position
 
     MAKE_LABEL
 
-    _bitwidth = 0;
-    
-    outline1("LDA #$%2.2x", 1 << ( ( _position ) & 0x07 ) );
-    outline0("STA TMPPTR" );
-    switch( _position ) {
-        case 31: case 30: case 29: case 28: case 27: case 26: case 25: case 24: 
-            outline1("LDA %s+3", _value);
-            break;
-        case 23: case 22: case 21: case 20: case 19: case 18: case 17: case 16:
-            outline1("LDA %s+2", _value);
-            break;
-        case 15: case 14: case 13: case 12: case 11: case 10: case 9: case 8:
-            outline1("LDA %s+1", _value);
-            break;
-        case 7:  case 6:  case 5:  case 4:  case 3:  case 2:  case 1: case 0:
-            outline1("LDA %s", _value);
-            break;
-    }
-    outline0("AND TMPPTR" );
-    outline1("BEQ %szero", label);
-    outhead1("%sone:", label)
-    outline0("LDA #$ff");
-    outline1("JMP %send", label );
-    outhead1("%szero:", label)
-    outline0("LDA #$0");
-    outhead1("%send:", label)
-    outline1("STA %s", _result);
+    inline( cpu_bit_check )
+
+        _bitwidth = 0;
+        
+        outline1("LDA #$%2.2x", 1 << ( ( _position ) & 0x07 ) );
+        outline0("STA TMPPTR" );
+        switch( _position ) {
+            case 31: case 30: case 29: case 28: case 27: case 26: case 25: case 24: 
+                outline1("LDA %s+3", _value);
+                break;
+            case 23: case 22: case 21: case 20: case 19: case 18: case 17: case 16:
+                outline1("LDA %s+2", _value);
+                break;
+            case 15: case 14: case 13: case 12: case 11: case 10: case 9: case 8:
+                outline1("LDA %s+1", _value);
+                break;
+            case 7:  case 6:  case 5:  case 4:  case 3:  case 2:  case 1: case 0:
+                outline1("LDA %s", _value);
+                break;
+        }
+        outline0("AND TMPPTR" );
+        outline1("BEQ %szero", label);
+        outhead1("%sone:", label)
+        outline0("LDA #$ff");
+        outline1("JMP %send", label );
+        outhead1("%szero:", label)
+        outline0("LDA #$0");
+        outhead1("%send:", label)
+        outline1("STA %s", _result);
+
+    no_embedded( cpu_bit_check )
 
 }
 
@@ -3794,54 +3839,58 @@ void cpu6502_bit_check_extended( Environment * _environment, char * _value, char
 
     MAKE_LABEL
 
-    _bitwidth = 0;
-    
-    outline1("LDA %s", _position );
-    outline0("AND #$07" );
-    outline1("BEQ %sl3", label );
-    outline0("TAX" );
-    outline0("LDA #$1" );
-    outhead1("%sl1:", label );
-    outline0("ASL A" );
-    outline0("DEX" );
-    outline1("BNE %sl1", label );
-    outhead1("JMP %sl2", label );
-    outhead1("%sl3:", label );
-    outline0("LDA #$1" );
-    outhead1("%sl2:", label );
-    outline0("STA TMPPTR" );
-    outline1("LDA %s", _position );
-    outline0("CMP #8" );
-    outline1("BCC %sb0", label );
-    outline0("CMP #16" );
-    outline1("BCC %sb1", label );
-    outline0("CMP #24" );
-    outline1("BCC %sb2", label );
-    outline1("JMP %sb3", label );
+    inline( cpu_bit_check_extended )
 
-    outhead1("%sb0:", label );
-    outline1("LDA %s", _value );
-    outline1("JMP %sbit", label );
-    outhead1("%sb1:", label );
-    outline1("LDA %s+1", _value );
-    outline1("JMP %sbit", label );
-    outhead1("%sb2:", label );
-    outline1("LDA %s+2", _value );
-    outline1("JMP %sbit", label );
-    outhead1("%sb3:", label );
-    outline1("LDA %s+3", _value );
-    outline1("JMP %sbit", label );
+        _bitwidth = 0;
+        
+        outline1("LDA %s", _position );
+        outline0("AND #$07" );
+        outline1("BEQ %sl3", label );
+        outline0("TAX" );
+        outline0("LDA #$1" );
+        outhead1("%sl1:", label );
+        outline0("ASL A" );
+        outline0("DEX" );
+        outline1("BNE %sl1", label );
+        outhead1("JMP %sl2", label );
+        outhead1("%sl3:", label );
+        outline0("LDA #$1" );
+        outhead1("%sl2:", label );
+        outline0("STA TMPPTR" );
+        outline1("LDA %s", _position );
+        outline0("CMP #8" );
+        outline1("BCC %sb0", label );
+        outline0("CMP #16" );
+        outline1("BCC %sb1", label );
+        outline0("CMP #24" );
+        outline1("BCC %sb2", label );
+        outline1("JMP %sb3", label );
 
-    outhead1("%sbit:", label );
-    outline0("AND TMPPTR" );
-    outline1("BEQ %szero", label);
-    outhead1("%sone:", label)
-    outline0("LDA #$ff");
-    outline1("JMP %send", label );
-    outhead1("%szero:", label)
-    outline0("LDA #$0");
-    outhead1("%send:", label)
-    outline1("STA %s", _result);
+        outhead1("%sb0:", label );
+        outline1("LDA %s", _value );
+        outline1("JMP %sbit", label );
+        outhead1("%sb1:", label );
+        outline1("LDA %s+1", _value );
+        outline1("JMP %sbit", label );
+        outhead1("%sb2:", label );
+        outline1("LDA %s+2", _value );
+        outline1("JMP %sbit", label );
+        outhead1("%sb3:", label );
+        outline1("LDA %s+3", _value );
+        outline1("JMP %sbit", label );
+
+        outhead1("%sbit:", label );
+        outline0("AND TMPPTR" );
+        outline1("BEQ %szero", label);
+        outhead1("%sone:", label)
+        outline0("LDA #$ff");
+        outline1("JMP %send", label );
+        outhead1("%szero:", label)
+        outline0("LDA #$0");
+        outhead1("%send:", label)
+        outline1("STA %s", _result);
+
+    no_embedded( cpu_bit_check_extended )
 
 }
 
