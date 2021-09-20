@@ -3404,85 +3404,105 @@ void cpu6502_move_8bit_with_offset2( Environment * _environment, char *_source, 
 
 void cpu6502_move_8bit_indirect2( Environment * _environment, char * _value, char *_source ) {
 
-    outline1("LDA %s", _value);
-    outline0("STA TMPPTR");
-    outline1("LDA %s+1", _value);
-    outline0("STA TMPPTR+1");
-    outline0("LDY #$0" );
-    outline0("LDA (TMPPTR),Y");
-    outline1("STA %s", _source);
+    inline( cpu_move_8bit_indirect2 )
+
+        outline1("LDA %s", _value);
+        outline0("STA TMPPTR");
+        outline1("LDA %s+1", _value);
+        outline0("STA TMPPTR+1");
+        outline0("LDY #$0" );
+        outline0("LDA (TMPPTR),Y");
+        outline1("STA %s", _source);
+
+    no_embedded( cpu_move_8bit_with_offset2 )
 
 }
 
 void cpu6502_move_16bit_indirect( Environment * _environment, char *_source, char * _value ) {
 
-    outline1("LDA %s", _value);
-    outline0("STA TMPPTR");
-    outline1("LDA %s+1", _value);
-    outline0("STA TMPPTR+1");
-    outline1("LDA %s", _source);
-    outline0("LDY #$0" );
-    outline0("STA (TMPPTR),Y");
-    outline1("LDA %s+1", _source);
-    outline0("LDY #$1" );
-    outline0("STA (TMPPTR),Y");
+    inline( cpu_move_16bit_indirect )
+
+        outline1("LDA %s", _value);
+        outline0("STA TMPPTR");
+        outline1("LDA %s+1", _value);
+        outline0("STA TMPPTR+1");
+        outline1("LDA %s", _source);
+        outline0("LDY #$0" );
+        outline0("STA (TMPPTR),Y");
+        outline1("LDA %s+1", _source);
+        outline0("LDY #$1" );
+        outline0("STA (TMPPTR),Y");
+
+    no_embedded( cpu_move_16bit_indirect )
 
 }
 
 void cpu6502_move_16bit_indirect2( Environment * _environment, char * _value, char *_source ) {
 
-    outline1("LDA %s", _value);
-    outline0("STA TMPPTR");
-    outline1("LDA %s+1", _value);
-    outline0("STA TMPPTR+1");
-    outline0("LDY #$0" );
-    outline0("LDA (TMPPTR),Y");
-    outline1("STA %s", _source);
-    outline0("LDY #$1" );
-    outline0("LDA (TMPPTR),Y");
-    outline1("STA %s+1", _source);
+    inline( cpu_move_16bit_indirect2 )
+
+        outline1("LDA %s", _value);
+        outline0("STA TMPPTR");
+        outline1("LDA %s+1", _value);
+        outline0("STA TMPPTR+1");
+        outline0("LDY #$0" );
+        outline0("LDA (TMPPTR),Y");
+        outline1("STA %s", _source);
+        outline0("LDY #$1" );
+        outline0("LDA (TMPPTR),Y");
+        outline1("STA %s+1", _source);
+
+    no_embedded( cpu_move_16bit_indirect2 )
 
 }
 
 void cpu6502_move_32bit_indirect( Environment * _environment, char *_source, char * _value ) {
 
-    outline1("LDA %s", _value);
-    outline0("STA TMPPTR");
-    outline1("LDA %s+1", _value);
-    outline0("STA TMPPTR+1");
-    outline1("LDA %s", _source);
-    outline0("LDY #$0" );
-    outline0("STA (TMPPTR),Y");
-    outline1("LDA %s+1", _source);
-    outline0("LDY #$1" );
-    outline0("STA (TMPPTR),Y");
-    outline1("LDA %s+2", _source);
-    outline0("LDY #$2" );
-    outline0("STA (TMPPTR),Y");
-    outline1("LDA %s+2", _source);
-    outline0("LDY #$2" );
-    outline0("STA (TMPPTR),Y");
+    inline( cpu_move_32bit_indirect )
+
+        outline1("LDA %s", _value);
+        outline0("STA TMPPTR");
+        outline1("LDA %s+1", _value);
+        outline0("STA TMPPTR+1");
+        outline1("LDA %s", _source);
+        outline0("LDY #$0" );
+        outline0("STA (TMPPTR),Y");
+        outline1("LDA %s+1", _source);
+        outline0("LDY #$1" );
+        outline0("STA (TMPPTR),Y");
+        outline1("LDA %s+2", _source);
+        outline0("LDY #$2" );
+        outline0("STA (TMPPTR),Y");
+        outline1("LDA %s+2", _source);
+        outline0("LDY #$2" );
+        outline0("STA (TMPPTR),Y");
+
+    no_embedded( cpu_move_32bit_indirect )
 
 }
 
 void cpu6502_move_32bit_indirect2( Environment * _environment, char * _value, char *_source ) {
 
-    outline1("LDA %s", _value);
-    outline0("STA TMPPTR");
-    outline1("LDA %s+1", _value);
-    outline0("STA TMPPTR+1");
-    outline0("LDY #$0" );
-    outline0("LDA (TMPPTR),Y");
-    outline1("STA %s", _source);
-    outline0("LDY #$1" );
-    outline0("LDA (TMPPTR),Y");
-    outline1("STA %s+1", _source);
-    outline0("LDY #$2" );
-    outline0("LDA (TMPPTR),Y");
-    outline1("STA %s+2", _source);
-    outline0("LDY #$3" );
-    outline0("LDA (TMPPTR),Y");
-    outline1("STA %s+3", _source);
+    inline( cpu_move_32bit_indirect2 )
+
+        outline1("LDA %s", _value);
+        outline0("STA TMPPTR");
+        outline1("LDA %s+1", _value);
+        outline0("STA TMPPTR+1");
+        outline0("LDY #$0" );
+        outline0("LDA (TMPPTR),Y");
+        outline1("STA %s", _source);
+        outline0("LDY #$1" );
+        outline0("LDA (TMPPTR),Y");
+        outline1("STA %s+1", _source);
+        outline0("LDY #$2" );
+        outline0("LDA (TMPPTR),Y");
+        outline1("STA %s+2", _source);
+        outline0("LDY #$3" );
+        outline0("LDA (TMPPTR),Y");
+        outline1("STA %s+3", _source);
+
+    no_embedded( cpu_move_32bit_indirect2 )
 
 }
 
@@ -3490,79 +3510,126 @@ void cpu6502_uppercase( Environment * _environment, char *_source, char *_size, 
 
     MAKE_LABEL
 
-    outline0("LDY #$0" );
-    outline1("LDA %s+1", _source );
-    outline0("STA TMPPTR+1" );
-    outline1("LDA %s", _source );
-    outline0("STA TMPPTR" );
-    if ( _result ) {
-        outline1("LDA %s+1", _result );
-        outline0("STA TMPPTR2+1" );
-        outline1("LDA %s", _result );
-        outline0("STA TMPPTR2" );
-    } else {
+    inline( cpu_uppercase )
+
+        outline0("LDY #$0" );
         outline1("LDA %s+1", _source );
-        outline0("STA TMPPTR2+1" );
+        outline0("STA TMPPTR+1" );
         outline1("LDA %s", _source );
-        outline0("STA TMPPTR2" );
-    }
-    outhead1("%supper:", label );
-    outline0("LDA (TMPPTR), Y" );
-    
-    outline0("CMP #65");
-    outline1("BCC %snext", label);
+        outline0("STA TMPPTR" );
+        if ( _result ) {
+            outline1("LDA %s+1", _result );
+            outline0("STA TMPPTR2+1" );
+            outline1("LDA %s", _result );
+            outline0("STA TMPPTR2" );
+        } else {
+            outline1("LDA %s+1", _source );
+            outline0("STA TMPPTR2+1" );
+            outline1("LDA %s", _source );
+            outline0("STA TMPPTR2" );
+        }
+        outhead1("%supper:", label );
+        outline0("LDA (TMPPTR), Y" );
+        
+        outline0("CMP #65");
+        outline1("BCC %snext", label);
 
-    outline0("CMP #90");
-    outline1("BCS %snext", label);
+        outline0("CMP #90");
+        outline1("BCS %snext", label);
 
-    outline0("CLC");
-    outline0("ADC #128");
+        outline0("CLC");
+        outline0("ADC #128");
 
-    outhead1("%snext:", label );
-    outline0("STA (TMPPTR2), Y" );
-    outline0("INY" );
-    outline1("CPY %s", _size );
-    outline1("BNE %supper", label );
+        outhead1("%snext:", label );
+        outline0("STA (TMPPTR2), Y" );
+        outline0("INY" );
+        outline1("CPY %s", _size );
+        outline1("BNE %supper", label );
 
+    embedded( cpu_uppercase, src_hw_6502_cpu_uppercase_asm );
+
+        outline1("LDX %s", _size );
+        outline1("LDA %s+1", _source );
+        outline0("STA TMPPTR+1" );
+        outline1("LDA %s", _source );
+        outline0("STA TMPPTR" );
+        if ( _result ) {
+            outline1("LDA %s+1", _result );
+            outline0("STA TMPPTR2+1" );
+            outline1("LDA %s", _result );
+            outline0("STA TMPPTR2" );
+        } else {
+            outline1("LDA %s+1", _source );
+            outline0("STA TMPPTR2+1" );
+            outline1("LDA %s", _source );
+            outline0("STA TMPPTR2" );
+        }
+        outline0("JSR CPUUPPERCASE" );
+
+    done()
 }
 
 void cpu6502_lowercase( Environment * _environment, char *_source, char *_size, char *_result ) {
 
     MAKE_LABEL
 
-    outline0("LDY #$0" );
-    outline1("LDA %s+1", _source );
-    outline0("STA TMPPTR+1" );
-    outline1("LDA %s", _source );
-    outline0("STA TMPPTR" );
-    if ( _result ) {
-        outline1("LDA %s+1", _result );
-        outline0("STA TMPPTR2+1" );
-        outline1("LDA %s", _result );
-        outline0("STA TMPPTR2" );
-    } else {
+    inline( cpu_lowercase )
+
+        outline0("LDY #$0" );
         outline1("LDA %s+1", _source );
-        outline0("STA TMPPTR2+1" );
+        outline0("STA TMPPTR+1" );
         outline1("LDA %s", _source );
-        outline0("STA TMPPTR2" );
-    }
-    outhead1("%slower:", label );
-    outline0("LDA (TMPPTR), Y" );
-    
-    outline0("CMP #193");
-    outline1("BCC %snext", label);
+        outline0("STA TMPPTR" );
+        if ( _result ) {
+            outline1("LDA %s+1", _result );
+            outline0("STA TMPPTR2+1" );
+            outline1("LDA %s", _result );
+            outline0("STA TMPPTR2" );
+        } else {
+            outline1("LDA %s+1", _source );
+            outline0("STA TMPPTR2+1" );
+            outline1("LDA %s", _source );
+            outline0("STA TMPPTR2" );
+        }
+        outhead1("%slower:", label );
+        outline0("LDA (TMPPTR), Y" );
+        
+        outline0("CMP #193");
+        outline1("BCC %snext", label);
 
-    outline0("CMP #218");
-    outline1("BCS %snext", label);
+        outline0("CMP #218");
+        outline1("BCS %snext", label);
 
-    outline0("SEC");
-    outline0("SBC #128");
+        outline0("SEC");
+        outline0("SBC #128");
 
-    outhead1("%snext:", label );
-    outline0("STA (TMPPTR2), Y" );
-    outline0("INY" );
-    outline1("CPY %s", _size );
-    outline1("BNE %slower", label );
+        outhead1("%snext:", label );
+        outline0("STA (TMPPTR2), Y" );
+        outline0("INY" );
+        outline1("CPY %s", _size );
+        outline1("BNE %slower", label );
+
+    embedded( cpu_lowercase, src_hw_6502_cpu_lowercase_asm );
+
+        outline1("LDX %s", _size );
+        outline1("LDA %s+1", _source );
+        outline0("STA TMPPTR+1" );
+        outline1("LDA %s", _source );
+        outline0("STA TMPPTR" );
+        if ( _result ) {
+            outline1("LDA %s+1", _result );
+            outline0("STA TMPPTR2+1" );
+            outline1("LDA %s", _result );
+            outline0("STA TMPPTR2" );
+        } else {
+            outline1("LDA %s+1", _source );
+            outline0("STA TMPPTR2+1" );
+            outline1("LDA %s", _source );
+            outline0("STA TMPPTR2" );
+        }
+        outline0("JSR CPULOWERCASE" );
+
+    done()
 
 }
 

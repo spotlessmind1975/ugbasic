@@ -2914,6 +2914,8 @@ int main( int _argc, char *_argv[] ) {
     _environment->embedded.cpu_math_div_32bit_to_16bit = 1;
     _environment->embedded.cpu_random = 1;
     _environment->embedded.cpu_mem_move = 1;
+    _environment->embedded.cpu_uppercase = 1;
+    _environment->embedded.cpu_lowercase = 1;
 
     _environment->warningsEnabled = 0;
 
