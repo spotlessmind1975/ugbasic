@@ -54,8 +54,6 @@
 </usermanual> */
 Variable * ypen( Environment * _environment ) {
 
-    outline0("; = YPEN");
-
     Variable * result = variable_temporary( _environment, VT_POSITION, "(result)" );
 
     atari_ypen( _environment, result->realName );

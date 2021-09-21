@@ -52,7 +52,7 @@
 </usermanual> */
 void wait_ticks( Environment * _environment, int _timing ) {
 
-    outline1("; WAIT %d TICKS", _timing);
+    
 
     char timingString[MAX_TEMPORARY_STORAGE]; sprintf(timingString, "#$%2.2x", _timing );
 
@@ -73,7 +73,7 @@ void wait_ticks( Environment * _environment, int _timing ) {
 </usermanual> */
 void wait_ticks_var( Environment * _environment, char * _timing ) {
 
-    outline1("; WAIT %s", _timing);
+    
 
     MAKE_LABEL
 

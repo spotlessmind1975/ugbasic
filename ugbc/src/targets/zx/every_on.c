@@ -45,6 +45,4 @@
  */
 void every_on( Environment * _environment ) {
    
-    outline0("; EVERY ON (ignored)");
-
 }

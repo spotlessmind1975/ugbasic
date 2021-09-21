@@ -116,8 +116,6 @@ void bitmap_enable( Environment * _environment, int _width, int _height, int _co
     // Let's define the special variable colormapAddress.
     Variable * colormapAddress = variable_retrieve_or_define( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0x8400 );
 
-    outline0("; BITMAP ENABLE");
-
     vic2_bitmap_enable( _environment, _width, _height, _colors );
 
 }

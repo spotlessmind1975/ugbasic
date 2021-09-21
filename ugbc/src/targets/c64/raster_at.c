@@ -75,7 +75,7 @@ schermo raggiunge il valore dato.
 </usermanual> */
 void raster_at( Environment * _environment, char * _label, int _position ) {
     
-    outline2("; RASTER AT %d WITH %s", _position, _label);
+    
 
     char positionlo[MAX_TEMPORARY_STORAGE]; sprintf( positionlo, "#$%2.2x", (unsigned char) ( _position & 0xff )  );
     char positionhi[MAX_TEMPORARY_STORAGE]; sprintf( positionhi, "#$%2.2x", (unsigned char) ( ( ( _position >> 8 ) & 0x01 ) << 8 ) );
@@ -107,7 +107,7 @@ void raster_at( Environment * _environment, char * _label, int _position ) {
 </usermanual> */
 void raster_at_var( Environment * _environment, char * _label, char * _position ) {
    
-    outline2("; RASTER AT %s WITH %s", _position, _label);
+    
 
     MAKE_LABEL
 

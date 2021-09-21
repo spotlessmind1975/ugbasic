@@ -539,7 +539,6 @@ void cpu6809_math_div_8bit_to_8bit( Environment * _environment, char *_source, c
     outhead1("%spos", label );
     outline0("LDA #$8");
     outline1("STA %s", _other_remainder);
-    outline0("; LDD $40" );
     outline0("LDA #$0" );
     outline0("LDB TMPPTR+1" );
     outhead1("%sdivide", label );

@@ -39,8 +39,6 @@
  ****************************************************************************/
 
 void remember( Environment * _environment ) {
-
-    outline0("; remember");
     
     setup_text_variables( _environment );
 

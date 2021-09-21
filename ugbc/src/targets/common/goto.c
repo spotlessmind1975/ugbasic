@@ -71,7 +71,7 @@ successivamente.
 </usermanual> */
 void goto_label( Environment * _environment, char * _label ) {
 
-    outline1("; GOTO %s", _label);
+    
 
     cpu_jump( _environment, _label );
 
@@ -99,7 +99,7 @@ void goto_label( Environment * _environment, char * _label ) {
 void goto_number( Environment * _environment, int _number ) {
 
    
-    outline1("; GOTO %d", _number);
+    
 
     char label[MAX_TEMPORARY_STORAGE]; sprintf( label, "_linenumber%d", _number );
 

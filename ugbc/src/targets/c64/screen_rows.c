@@ -70,7 +70,7 @@ accettabili.
 </usermanual> */
 void screen_rows( Environment * _environment, int _rows ) {
 
-    outline1("; SCREEN ROWS %d", _rows);
+    
 
     char rowsString[MAX_TEMPORARY_STORAGE]; sprintf( rowsString, "#$%2.2x", _rows );
 
@@ -98,7 +98,7 @@ void screen_rows( Environment * _environment, int _rows ) {
 </usermanual> */
 void screen_rows_var( Environment * _environment, char * _rows ) {
 
-    outline1("; SCREEN ROWS %s", _rows);
+    
 
     Variable * rows = variable_retrieve( _environment, _rows );
     vic2_screen_rows( _environment, rows->realName );

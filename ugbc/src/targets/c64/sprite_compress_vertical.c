@@ -64,7 +64,7 @@ Comprime un dato sprite, verticalmente oppure orizzontalmente.
 </usermanual> */
 void sprite_compress_vertical( Environment * _environment, int _sprite ) {
 
-    outline1("; SPRITE %d COMPRESS VERTICAL", _sprite);
+    
 
     char spriteString[MAX_TEMPORARY_STORAGE]; sprintf( spriteString, "#$%2.2x", _sprite );
 

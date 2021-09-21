@@ -106,7 +106,7 @@ non è detto che sia impostato esattamente con l'indirizzo specificato.
 </usermanual> */
 void textmap_at( Environment * _environment, int _address ) {
 
-    outline1("; TEXTMAP AT $%4.4x", _address);
+    
 
     // Let's define the special variable bitmapAddress, and update
     // it with the requested value.
@@ -145,7 +145,7 @@ void textmap_at( Environment * _environment, int _address ) {
 </usermanual> */
 void textmap_at_var( Environment * _environment, char * _address ) {
 
-    outline1("; TEXTMAP AT %s", _address);
+    
 
     Variable * TEXTADDRESS = variable_retrieve( _environment, "TEXTADDRESS" );
     Variable * address = variable_retrieve( _environment, _address );

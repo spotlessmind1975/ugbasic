@@ -66,8 +66,6 @@ codice riprenderà da dove era stato interrotto.
 </usermanual> */
 void next_raster( Environment * _environment ) {
 
-    outline0("; NEXT RASTER");
-
     vic2_next_raster( _environment );
 
 }

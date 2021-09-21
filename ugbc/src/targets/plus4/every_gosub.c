@@ -54,7 +54,7 @@
 </usermanual> */
 void every_ticks_gosub( Environment * _environment, char * _timing, char * _label ) {
 
-    outline2("; EVERY %s TICKS GOSUB %s", _timing, _label );
+    
 
     Variable * timing = variable_retrieve( _environment, _timing );
 

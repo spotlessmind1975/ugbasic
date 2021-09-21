@@ -653,7 +653,6 @@ void z80_math_mul2_const_8bit( Environment * _environment, char *_source, int _s
         outline1("LD (%s), A", _source );
 
     } else {
-        outline0("; variable_mul2_const");
         outline1("LD A, (%s)", _source );
         while( _steps ) {
             outline0("SLA A" );
@@ -891,7 +890,6 @@ void z80_greater_than_16bit( Environment * _environment, char *_source, char *_d
  */
 void z80_math_add_16bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
 
-    outline0("; z80_math_add_16bit");
     outline1("LD HL, (%s)", _source );
     outline1("LD DE, (%s)", _destination );
     outline0("ADD HL, DE" );
@@ -905,7 +903,6 @@ void z80_math_add_16bit( Environment * _environment, char *_source, char *_desti
 
 void z80_math_add_16bit_with_16bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
 
-    outline0("; z80_math_add_16bit");
     outline1("LD HL, (%s)", _source );
     outline1("LD DE, %s", _destination );
     outline0("ADD HL, DE" );

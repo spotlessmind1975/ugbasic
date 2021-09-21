@@ -50,8 +50,6 @@
 </usermanual> */
 void screen_on( Environment * _environment ) {
 
-    outline0("; SCREEN ON");
-
     gtia_screen_on( _environment );
 
 }

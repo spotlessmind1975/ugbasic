@@ -53,13 +53,9 @@
  */
 Variable * collision_to( Environment * _environment, int _sprite ) {
 
-    outline0("; = COLLISION(...)");
-
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result)" );
 
     char sprite[MAX_TEMPORARY_STORAGE]; sprintf(sprite, "$%2.2x", _sprite);
-
-    // TODO: implement zx/collision_to
 
     return result;
 
@@ -80,15 +76,11 @@ Variable * collision_to( Environment * _environment, int _sprite ) {
  */
 Variable * collision_to_vars( Environment * _environment, char * _sprite ) {
 
-    outline0("; = COLLISION(...)");
-
     // Safety check -- expression must exists (it should be always true)
     Variable * sprite = variable_retrieve( _environment, _sprite );
 
     // Safety check -- expression must exists (it should be always true)
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result)" );
-
-    // TODO: implement zx/collision_to_vars
 
     return result;
 

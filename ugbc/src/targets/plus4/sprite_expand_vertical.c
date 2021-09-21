@@ -44,7 +44,7 @@ void sprite_expand_vertical( Environment * _environment, int _sprite ) {
 
 void sprite_expand_vertical_var( Environment * _environment, char * _sprite ) {
 
-    outline1("; SPRITE %s EXPAND VERTICAL", _sprite);
+    
 
     _environment->bitmaskNeeded = 1;
     

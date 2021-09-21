@@ -68,8 +68,6 @@ funzioni continueranno senza problemi.
 </usermanual> */
 void halt( Environment * _environment ) {
 
-    outline0("; HALT");
-
     cpu_halt( _environment );
     
 }

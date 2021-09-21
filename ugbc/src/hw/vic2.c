@@ -314,8 +314,6 @@ void vic2_next_raster_at( Environment * _environment, char * _label, char * _pos
  */
 void vic2_enable_ecm( Environment * _environment ) {
 
-    outline0("; ENABLE ECM");
-
     outline0("LDA $D011" );
     outline0("ORA #%01000000");
     outline0("STA $D011" );
@@ -327,8 +325,6 @@ void vic2_enable_ecm( Environment * _environment ) {
  * @param _environment Current calling environment
  */
 void vic2_disable_ecm( Environment * _environment ) {
-
-    outline0("; DISABLE ECM");
 
     outline0("LDA $D011" );
     outline0("AND #%10111111");
@@ -342,8 +338,6 @@ void vic2_disable_ecm( Environment * _environment ) {
  */
 void vic2_enable_mcm( Environment * _environment ) {
 
-    outline0("; ENABLE MCM");
-
     outline0("LDA $D016" );
     outline0("ORA #%00001000");
     outline0("STA $D016" );
@@ -355,14 +349,14 @@ void vic2_enable_mcm( Environment * _environment ) {
  * @param _environment Current calling environment
  */
 void vic2_disable_mcm( Environment * _environment ) {
-    outline0("; DISABLE MCM");
+
     outline0("LDA $D016" );
     outline0("AND #%11110111");
     outline0("STA $D016" );
 }
 
 void vic2_bank_select( Environment * _environment, int _bank ) {
-    outline1("; BANK %d", _bank);
+    
     outline0("LDA $DD00" );
     outline0("AND #%11111100");
     outline1("ORA #%2.2x", ( ~_bank ) & 0x03 );

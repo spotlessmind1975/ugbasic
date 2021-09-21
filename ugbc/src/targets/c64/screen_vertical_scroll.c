@@ -73,7 +73,7 @@ si avrebbe uno scroll di 7 pixel verso l'alto.
 </usermanual> */
 void screen_vertical_scroll( Environment * _environment, int _displacement ) {
 
-    outline1("; SCREEN VERTICAL SCROLL %d", _displacement);
+    
 
     char displacementString[MAX_TEMPORARY_STORAGE]; sprintf( displacementString, "#$%2.2x", _displacement );
 
@@ -102,7 +102,7 @@ void screen_vertical_scroll( Environment * _environment, int _displacement ) {
 </usermanual> */
 void screen_vertical_scroll_var( Environment * _environment, char * _displacement ) {
 
-    outline1("; SCREEN VERTICAL SCROLL %s", _displacement );
+    
 
     Variable * displacement = variable_retrieve( _environment, _displacement );
 

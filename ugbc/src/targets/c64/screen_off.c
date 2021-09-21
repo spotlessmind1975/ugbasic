@@ -62,8 +62,6 @@ Spegni lo schermo.
 </usermanual> */
 void screen_off( Environment * _environment ) {
 
-    outline0("; SCREEN OFF");
-
     vic2_screen_off( _environment );
 
 }

@@ -54,8 +54,6 @@
 </usermanual> */
 void next_raster( Environment * _environment ) {
 
-    outline0("; NEXT RASTER");
-
     ted_next_raster( _environment );
 
 }

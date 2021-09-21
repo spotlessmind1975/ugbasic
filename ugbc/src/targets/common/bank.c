@@ -131,9 +131,9 @@ Bank * bank_define( Environment * _environment, char * _name, BankType _type, in
         }
     } else {
         if ( _filename ) {
-            outline4("; BANK %s %s AT $%4.4x WITH \"%s\"", BANK_TYPE_AS_STRING[_type], _name, _address, _filename);
+            
         } else {
-            outline3("; BANK %s %s AT $%4.4x", BANK_TYPE_AS_STRING[_type], _name, _address);
+            
         }
         bank = malloc( sizeof( Bank ) );
         memset( bank, 0, sizeof( Bank ) );

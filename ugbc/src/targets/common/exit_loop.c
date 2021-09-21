@@ -79,7 +79,7 @@ cicli annidati.
 </usermanual> */
 void exit_loop( Environment * _environment, int _number ) {
 
-    outline1( "; EXIT %d", _number );
+    
 
     Loop * loop = _environment->loops;
 

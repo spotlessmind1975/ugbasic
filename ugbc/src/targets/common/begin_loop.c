@@ -74,8 +74,6 @@ loop mentre la parola ''LOOP'' l'ultima istruzione del loop.
 </usermanual> */
 void begin_loop( Environment * _environment ) {
 
-    outline0( "; DO ... ");
-
     MAKE_LABEL
 
     Loop * loop = malloc( sizeof( Loop ) );

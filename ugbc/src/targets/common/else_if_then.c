@@ -52,8 +52,6 @@
 </usermanual> */
 void else_if_then_label( Environment * _environment ) {
 
-    outline0( "; ... (finalizing) IF ...");
-
     Conditional * conditional = _environment->conditionals;
 
     if ( ! conditional ) {
@@ -87,7 +85,7 @@ void else_if_then_label( Environment * _environment ) {
 </usermanual> */
 void else_if_then( Environment * _environment, char * _expression ) {
 
-    outline1( "; ... ELSE IF %s ...", _expression);
+    
 
     Conditional * conditional = _environment->conditionals;
 

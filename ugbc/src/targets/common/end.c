@@ -62,8 +62,6 @@ Interrompi tutti i processi a tempo indeterminato.
 </usermanual> */
 void end( Environment * _environment ) {
 
-    outline0("; HALT");
-
     cpu_end( _environment );
     
 }

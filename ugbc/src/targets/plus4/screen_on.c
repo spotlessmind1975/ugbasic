@@ -52,8 +52,6 @@
 </usermanual> */
 void screen_on( Environment * _environment ) {
 
-    outline0("; SCREEN ON");
-
     ted_screen_on( _environment );
 
 }

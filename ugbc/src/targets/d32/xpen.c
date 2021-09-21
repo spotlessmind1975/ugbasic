@@ -53,8 +53,6 @@
 </usermanual> */
 Variable * xpen( Environment * _environment ) {
 
-    outline0("; = XPEN");
-
     Variable * result = variable_temporary( _environment, VT_POSITION, "(result)" );
 
     d32_xpen( _environment, result->realName );

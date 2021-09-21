@@ -65,8 +65,6 @@ possibile usare un ''GOTO'' invece di un ''RETURN''.
 </usermanual> */
 void pop( Environment * _environment ) {
 
-    outline0("; POP");
-
     cpu_pop( _environment );
 
 }

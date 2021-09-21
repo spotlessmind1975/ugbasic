@@ -76,8 +76,6 @@ controllata di nuovo ad ogni ciclo, fino a quando non è più vera.
 </usermanual> */
 void begin_repeat( Environment * _environment ) {
 
-    outline0( "; REPEAT ... ");
-
     MAKE_LABEL
 
     Loop * loop = malloc( sizeof( Loop ) );

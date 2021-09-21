@@ -58,7 +58,7 @@
 </usermanual> */
 void sprite_expand_horizontal( Environment * _environment, int _sprite ) {
 
-    outline1("; SPRITE %d EXPAND HORIZONTAL", _sprite);
+    
 
     char spriteString[MAX_TEMPORARY_STORAGE]; sprintf( spriteString, "#$%2.2x", _sprite );
 
@@ -86,7 +86,7 @@ void sprite_expand_horizontal( Environment * _environment, int _sprite ) {
 </usermanual> */
 void sprite_expand_horizontal_var( Environment * _environment, char * _sprite ) {
 
-    outline1("; SPRITE %s EXPAND HORIZONTAL", _sprite);
+    
 
     _environment->bitmaskNeeded = 1;
     

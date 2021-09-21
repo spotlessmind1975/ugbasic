@@ -78,8 +78,6 @@ controllata di nuovo ad ogni ciclo, fino a quando non è più vera.
 
 void begin_while( Environment * _environment ) {
 
-    outline0( "; WHILE ... ");
-
     MAKE_LABEL
 
     Loop * loop = malloc( sizeof( Loop ) );
@@ -95,8 +93,6 @@ void begin_while( Environment * _environment ) {
 }
 
 void begin_while_condition( Environment * _environment, char * _expression ) {
-
-    outline0( "; WHILE condition ... ");
 
     Loop * loop = _environment->loops;
 

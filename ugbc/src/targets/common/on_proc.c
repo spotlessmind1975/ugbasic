@@ -78,7 +78,7 @@ maggiore della destinazione più alta possibile, non sarà eseguito alcun salto.
 </usermanual> */
 void on_proc( Environment * _environment, char * _expression ) {
 
-    outline1( "; ON %s PROC ...", _expression);
+    
 
     MAKE_LABEL
 

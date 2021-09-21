@@ -64,7 +64,7 @@ Abilita il multicolor per lo sprite dato.
 </usermanual> */
 void sprite_multicolor( Environment * _environment, int _sprite ) {
 
-    outline1("; SPRITE %d MULTICOLOR", _sprite);
+    
 
     char spriteString[MAX_TEMPORARY_STORAGE]; sprintf( spriteString, "#$%2.2x", _sprite );
 
@@ -92,7 +92,7 @@ void sprite_multicolor( Environment * _environment, int _sprite ) {
 </usermanual> */
 void sprite_multicolor_var( Environment * _environment, char * _sprite ) {
 
-    outline1("; SPRITE %s MULTICOLOR", _sprite);
+    
 
     _environment->bitmaskNeeded = 1;
     

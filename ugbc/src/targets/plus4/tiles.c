@@ -76,7 +76,7 @@ esattamente all'indirizzo specificato.
 </usermanual> */
 void tiles_at( Environment * _environment, int _address ) {
 
-    outline1("; TILES AT $%4.4x", _address);
+    
 
     // Let's define the special variable bitmapAddress, and update
     // it with the requested value.
@@ -117,7 +117,7 @@ void tiles_at( Environment * _environment, int _address ) {
 </usermanual> */
 void tiles_at_var( Environment * _environment, char * _address ) {
 
-    outline1("; TEXT AT %s", _address);
+    
 
     Variable * address = variable_retrieve( _environment, _address );
 

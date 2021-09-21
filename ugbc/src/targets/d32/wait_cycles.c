@@ -51,7 +51,7 @@
 </usermanual> */
 void wait_cycles( Environment * _environment, int _timing ) {
 
-    outline1("; WAIT %d", _timing);
+    
 
     char timingString[MAX_TEMPORARY_STORAGE]; sprintf(timingString, "#$%2.2x", _timing );
 
@@ -72,7 +72,7 @@ void wait_cycles( Environment * _environment, int _timing ) {
 </usermanual> */
 void wait_cycles_var( Environment * _environment, char * _timing ) {
 
-    outline1("; WAIT %s", _timing);
+    
 
     MAKE_LABEL
 

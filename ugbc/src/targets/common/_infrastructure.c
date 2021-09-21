@@ -604,7 +604,7 @@ Variable * variable_temporary( Environment * _environment, VariableType _type, c
         }
     }
     if ( var->meaningName ) {
-        outline2("; %s <-> %s", var->realName, var->meaningName );
+        
     }
     var->used = 1;
     return var;

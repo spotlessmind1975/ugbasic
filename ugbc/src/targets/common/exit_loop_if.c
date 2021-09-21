@@ -84,7 +84,7 @@ da cui uscire, altrimenti verrà interrotto solo il loop più interno.
 
 void exit_loop_if( Environment * _environment, char * _expression, int _number ) {
 
-    outline2( "; EXIT IF %s, %d", _expression, _number );
+    
 
     Loop * loop = _environment->loops;
 

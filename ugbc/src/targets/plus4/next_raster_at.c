@@ -57,7 +57,7 @@
 </usermanual> */
 void next_raster_at_with( Environment * _environment, int _position, char * _label ) {
     
-    outline2("; RASTER AT %d WITH %s", _position, _label);
+    
 
     char positionlo[MAX_TEMPORARY_STORAGE]; sprintf( positionlo, "%2.2x", (unsigned char) ( _position & 0xff )  );
     char positionhi[MAX_TEMPORARY_STORAGE]; sprintf( positionhi, "%2.2x", (unsigned char) ( ( ( _position >> 8 ) & 0x01 ) << 8 ) );
@@ -85,7 +85,7 @@ void next_raster_at_with( Environment * _environment, int _position, char * _lab
 </usermanual> */
 void next_raster_at_with_var( Environment * _environment, char * _position, char * _label ) {
 
-    outline2("; NEXT RASTER AT %s WITH %s", _position, _label);
+    
 
     MAKE_LABEL
 

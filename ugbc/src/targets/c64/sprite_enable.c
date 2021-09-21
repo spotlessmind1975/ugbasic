@@ -64,7 +64,7 @@ Abilita lo sprite.
 </usermanual> */
 void sprite_enable( Environment * _environment, int _sprite ) {
 
-    outline1("; SPRITE %d ENABLE", _sprite);
+    
 
     char spriteString[MAX_TEMPORARY_STORAGE]; sprintf( spriteString, "#$%2.2x", _sprite );
 
@@ -90,7 +90,7 @@ void sprite_enable( Environment * _environment, int _sprite ) {
 </usermanual> */
 void sprite_enable_var( Environment * _environment, char * _sprite ) {
 
-    outline1("; SPRITE %s ENABLE", _sprite);
+    
 
     Variable * sprite = variable_retrieve( _environment, _sprite );
 

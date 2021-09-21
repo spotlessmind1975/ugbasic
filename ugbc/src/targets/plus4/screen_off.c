@@ -52,8 +52,6 @@
 </usermanual> */
 void screen_off( Environment * _environment ) {
 
-    outline0("; SCREEN OFF");
-
     ted_screen_off( _environment );
 
 }

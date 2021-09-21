@@ -70,8 +70,6 @@ a quella chaimante.
 </usermanual> */
 void return_label( Environment * _environment ) {
 
-    outline0("; RETURN");
-
     cpu_return( _environment );
 
 }

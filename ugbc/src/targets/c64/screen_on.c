@@ -62,8 +62,6 @@ Riaccendi lo schermo.
 </usermanual> */
 void screen_on( Environment * _environment ) {
 
-    outline0("; SCREEN ON");
-
     vic2_screen_on( _environment );
 
 }

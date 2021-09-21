@@ -63,8 +63,6 @@ void bitmap_enable( Environment * _environment, int _width, int _height, int _co
 
     // Let's define the special variable colormapAddress.
     Variable * bitmap_enabled = variable_retrieve_or_define( _environment, "bitmap_enabled", VT_BYTE, 1 );
-
-    outline0("; BITMAP ENABLE (ignored)");
     
     variable_store( _environment, bitmap_enabled->name, 1 );
 

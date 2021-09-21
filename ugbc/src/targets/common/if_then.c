@@ -95,7 +95,7 @@ verrà eseguito il codice seguente (fino a ''ENDIF'').
 </usermanual> */
 void if_then( Environment * _environment, char * _expression ) {
 
-    outline1( "; IF %s THEN ...", _expression);
+    
 
     MAKE_LABEL
 

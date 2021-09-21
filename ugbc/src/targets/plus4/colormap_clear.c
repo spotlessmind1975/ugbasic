@@ -59,7 +59,7 @@
 </usermanual> */
 void colormap_clear_with( Environment * _environment, int _foreground, int _background ) {
 
-    outline2("; COLORMAP CLEAR WITH #$%2.2x AND #$%2.2x", _foreground, _background );
+    
 
     Variable * colormapAddress = variable_retrieve_or_define( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0x8400 );
 
@@ -91,7 +91,7 @@ void colormap_clear_with( Environment * _environment, int _foreground, int _back
 </usermanual> */
 void colormap_clear_with_vars( Environment * _environment, char * _foreground, char * _background ) {
 
-    outline2("; COLORMAP CLEAR WITH %s AND %s", _foreground, _background );
+    
 
     Variable * colormapAddress = variable_retrieve_or_define( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0x8400 );
     if ( ! colormapAddress ) {
@@ -127,9 +127,6 @@ void colormap_clear_with_vars( Environment * _environment, char * _foreground, c
 </usermanual> */
 void colormap_clear( Environment * _environment ) {
 
-    outline0("; COLORMAP CLEAR WITH BLACK ON WHIKE");
-
-    // Equals to: "COLORMAP CLEAR WITH 0 AND 1"
     colormap_clear_with( _environment, COLOR_WHITE, COLOR_BLACK );
 
 }

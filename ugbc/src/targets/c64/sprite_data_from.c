@@ -66,7 +66,7 @@ Imposta l'indirizzo iniziale dei dati grafici dello sprite.
 </usermanual> */
 void sprite_data_from( Environment * _environment, int _sprite, int _address ) {
 
-    outline2("; SPRITE %d DATA FROM $%4.4x", _sprite, _address);
+    
 
     char spriteString[MAX_TEMPORARY_STORAGE]; sprintf(spriteString, "#$%2.2x", _sprite );
     char addressString[MAX_TEMPORARY_STORAGE]; sprintf(addressString, "#$%2.2x", (unsigned char)( _address / 0x40 ) );
@@ -97,7 +97,7 @@ void sprite_data_from( Environment * _environment, int _sprite, int _address ) {
 </usermanual> */
 void sprite_data_from_vars( Environment * _environment, char * _sprite, char * _address ) {
 
-    outline2("; SPRITE %s DATA FROM %s", _sprite, _address);
+    
 
     Variable * sprite = variable_retrieve( _environment, _sprite );
 

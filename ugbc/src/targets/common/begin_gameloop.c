@@ -73,8 +73,6 @@ del programma o all'istruzione ''END GAMELOOP''.
 </usermanual> */
 void begin_gameloop( Environment * _environment ) {
 
-    outline0("; BEGIN GAMELOOP" );
-
     _environment->hasGameLoop = 1;
 
     cpu_label( _environment, "__ugbgameloop");

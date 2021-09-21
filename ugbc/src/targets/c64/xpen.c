@@ -65,8 +65,6 @@ Legge la posizione X (orizzontale) della penna elettronica collegata all'hardwar
 </usermanual> */
 Variable * xpen( Environment * _environment ) {
 
-    outline0("; = XPEN");
-
     Variable * result = variable_temporary( _environment, VT_POSITION, "(result)" );
 
     c64_xpen( _environment, result->realName );

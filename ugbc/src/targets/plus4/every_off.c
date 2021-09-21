@@ -51,8 +51,6 @@
 </usermanual> */
 void every_off( Environment * _environment ) {
    
-    outline0("; EVERY OFF");
-
     if ( ! _environment->everyStatus ) {
         CRITICAL("EVERY OFF without EVERY definition");
     }

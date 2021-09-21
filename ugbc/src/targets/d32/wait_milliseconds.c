@@ -51,7 +51,7 @@
 </usermanual> */
 void wait_milliseconds( Environment * _environment, int _timing ) {
 
-    outline1("; WAIT %d MILLISECONDS", _timing);
+    
 
     char timingString[MAX_TEMPORARY_STORAGE]; sprintf(timingString, "#$%2.2x", _timing >> 4 );
 
@@ -71,7 +71,7 @@ void wait_milliseconds( Environment * _environment, int _timing ) {
 </usermanual> */
 void wait_milliseconds_var( Environment * _environment, char * _timing ) {
 
-    outline1("; WAIT %s MILLISECONDS", _timing);
+    
 
     MAKE_LABEL
 

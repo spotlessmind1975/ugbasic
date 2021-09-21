@@ -45,6 +45,4 @@
  */
 void every_off( Environment * _environment ) {
    
-    outline0("; EVERY OFF (ignored)");
-
 }
