@@ -168,6 +168,18 @@ src-generated/modules_d32.c: $(SOURCES_6809) $(SOURCES_6847) $(SOURCES_D32)
 	@cat $(SOURCES_6809) $(SOURCES_6847) $(SOURCES_D32) >src-generated/modules_d32.c
 	@grep "src" src-generated/modules_d32.c | awk -f modules.awk >src-generated/modules_d32.h
 
+# Dragon 64
+
+MODULES_D64 := $(wildcard src/hw/d64/*.asm)
+SOURCES_D64 := $(subst src/hw/d64/,src-generated/d64_,$(MODULES_D64:.asm=.c))
+
+src-generated/d64_%.c: $(MODULES_D64)
+	@xxd -i $(subst src-generated/d64_,src/hw/d64/,$(@:.c=.asm)) >$@
+
+src-generated/modules_d64.c: $(SOURCES_6809) $(SOURCES_6847) $(SOURCES_D64)
+	@cat $(SOURCES_6809) $(SOURCES_6847) $(SOURCES_D64) >src-generated/modules_d64.c
+	@grep "src" src-generated/modules_d64.c | awk -f modules.awk >src-generated/modules_d64.h
+
 # ZX Spectrum
 
 MODULES_ZX := $(wildcard src/hw/zx/*.asm)
@@ -211,7 +223,7 @@ SOURCESTEST += $(wildcard src/hw/*.c)
 SOURCESTEST += $(wildcard src/targets/common/*.c)
 SOURCESTEST += $(wildcard src/targets/$(target)/*.c)
 SOURCESTEST += $(wildcard src-test/suites/*.c)
-SOURCESTEST += src-generated/modules_$(target).c src-test/tester.c src-test/tester_c64.c src-test/tester_plus4.c src-test/tester_atari.c src-test/tester_atarixl.c src-test/tester_zx.c src-test/tester_d32.c
+SOURCESTEST += src-generated/modules_$(target).c src-test/tester.c src-test/tester_c64.c src-test/tester_plus4.c src-test/tester_atari.c src-test/tester_atarixl.c src-test/tester_zx.c src-test/tester_d32.c src-test/tester_d64.c
 
 paths:
 	@mkdir -p src-generated

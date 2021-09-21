@@ -29,7 +29,7 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                      INTERNAL VARIABLES FOR C64 TARGET                      *
+;*                      INTERNAL VARIABLES FOR DRAGON 32/64 TARGET             *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *

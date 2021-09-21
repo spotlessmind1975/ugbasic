@@ -68,6 +68,8 @@ void test_print( );
     #include "tester_zx.h"
 #elif defined( __d32__ )
     #include "tester_d32.h"
+#elif defined( __d64__ )
+    #include "tester_d64.h"
 #endif
 
 #endif

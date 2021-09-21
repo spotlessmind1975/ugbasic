@@ -29,7 +29,7 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                    JOYSTICK MOVEMENT DETECTION ON DRAGON 32                 *
+;*                    JOYSTICK MOVEMENT DETECTION ON DRAGON 32/64              *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *

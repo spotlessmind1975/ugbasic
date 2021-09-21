@@ -29,7 +29,7 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                      KEYBOARD MATRIX DETECTION ON DRAGON 32                 *
+;*                      KEYBOARD MATRIX DETECTION ON DRAGON 32/64              *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
