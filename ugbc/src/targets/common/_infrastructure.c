@@ -664,12 +664,17 @@ Variable * variable_resident( Environment * _environment, VariableType _type, ch
 Variable * variable_cast( Environment * _environment, char * _source, VariableType _type ) {
 
     Variable * source = variable_retrieve( _environment, _source );
-
+    
     if ( _type == VT_STRING ) {
         _type = VT_DSTRING;
     }
 
+    if ( source->type == _type ) {
+        return source;
+    }
+
     Variable * target = variable_temporary( _environment, _type, "(generated for cast)" );
+
 
     switch( VT_BITWIDTH( source->type ) ) {
         case 32:
