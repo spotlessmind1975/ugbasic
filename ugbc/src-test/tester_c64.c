@@ -66,6 +66,7 @@ void create_test( char *_name, void (*_payload)(TestEnvironment *), int (*_teste
     t.environment.sourceFileName = strdup("/tmp/out.bas");
     t.environment.asmFileName = strdup("/tmp/out.asm");
     t.environment.configurationFileName = strdup("/tmp/out.cfg");
+    t.environment.debuggerLabelsFileName = strdup("/tmp/out.lb2");
     begin_compilation( &t.environment );    
     _payload( &t );
     outline0("BRK");
@@ -82,7 +83,7 @@ void create_test( char *_name, void (*_payload)(TestEnvironment *), int (*_teste
         printf( "Error on %s\n", _name);
         exit(0);
     };
-    system("run6502 -L /tmp/out.lbl -Li /tmp/out.ins -X 0000 -R 080d -l 07ff /tmp/out.prg -O /tmp/out.out -u /tmp/out.lis");
+    system("run6502 -L2 /tmp/out.lb2 -L /tmp/out.lbl -Li /tmp/out.ins -X 0000 -R 080d -l 07ff /tmp/out.prg -O /tmp/out.out -u /tmp/out.lis");
     FILE * handle = fopen( "/tmp/out.out", "rt" );
     fscanf(handle, "%x %x %x %x %x %x", &t.state.a, &t.state.x, &t.state.y, &t.state.p, &t.state.s, &t.state.pc );
     while( !feof(handle) ) {

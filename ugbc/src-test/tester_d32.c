@@ -49,6 +49,7 @@ void create_test( char *_name, void (*_payload)(TestEnvironment *), int (*_teste
 
     t.environment.sourceFileName = strdup("/tmp/out.bas");
     t.environment.asmFileName = strdup("/tmp/out.asm");
+    t.environment.debuggerLabelsFileName = strdup("/tmp/out.lb2");
     begin_compilation( &t.environment );    
     _payload( &t );
     outline0("SYNC");
@@ -62,7 +63,7 @@ void create_test( char *_name, void (*_payload)(TestEnvironment *), int (*_teste
     fclose(handleIns);
 
     system("asm6809 -H -e 7168 /tmp/out.asm -o /tmp/out.hex -s /tmp/out.sym -l /tmp/out.lis");
-    system("usim -t -i /tmp/out.lis -R 1C00 -L /tmp/out.sym -Li /tmp/out.ins -l 1C00 /tmp/out.hex -O /tmp/out.out");
+    system("usim -t -i /tmp/out.lis -R 1C00 -L2 /tmp/out.lb2 -L /tmp/out.sym -Li /tmp/out.ins -l 1C00 /tmp/out.hex -O /tmp/out.out");
     FILE * handle = fopen( "/tmp/out.out", "rt" );
     fscanf(handle, "%x %x %x %x %x %x %x %x", 
     	&t.state.a,
