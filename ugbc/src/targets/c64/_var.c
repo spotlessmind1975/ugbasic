@@ -141,7 +141,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     } else {
                         CRITICAL_DATATYPE_UNSUPPORTED("array(1)", DATATYPE_AS_STRING[variable->arrayType]);
                     }
-                    if ( variable->memoryArea ) {
+                    if ( variable->memoryArea && ! variable->value ) {
                         outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
                         if ( variable->value ) {

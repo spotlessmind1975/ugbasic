@@ -68,7 +68,18 @@ char DATATYPE_AS_STRING[][16] = {
 
 void memory_area_assign( MemoryArea * _first, Variable * _variable ) {
 
-    int neededSpace = VT_BITWIDTH( _variable->type ) ? ( VT_BITWIDTH( _variable->type ) >> 3 ) : _variable->size;
+    int neededSpace = 0;
+
+    if ( _variable->type == VT_ARRAY ) {
+        int dimensions = 1;
+        int i = 0;
+        for( i=0; i<_variable->arrayDimensions; ++i ) {
+            dimensions *= _variable->arrayDimensionsEach[i];
+        }
+        neededSpace = ( VT_BITWIDTH( _variable->arrayType ) >> 3 ) * dimensions;
+    } else {
+        neededSpace = VT_BITWIDTH( _variable->type ) ? ( VT_BITWIDTH( _variable->type ) >> 3 ) : _variable->size;   
+    }
 
     if ( neededSpace == 0 ) return;
 
@@ -79,6 +90,7 @@ void memory_area_assign( MemoryArea * _first, Variable * _variable ) {
             _variable->memoryArea = actual;
             _variable->absoluteAddress = actual->start;
             actual->start += neededSpace;
+            printf( "%s: %d at %4.4x\n", _variable->realName, neededSpace, _variable->absoluteAddress );
             break;
         }
         actual = actual->next;
@@ -306,7 +318,6 @@ Variable * variable_import( Environment * _environment, char * _name, VariableTy
         } else {
             _environment->variables = var;
         }
-        memory_area_assign( _environment->memoryAreas, var );
     }
     var->imported = 1;
     var->used = 1;
@@ -556,6 +567,9 @@ Variable * variable_array_type( Environment * _environment, char *_name, Variabl
         CRITICAL_VARIABLE( _name );
     }
     var->arrayType = _type;
+    if ( ! var->memoryArea ) {
+        memory_area_assign( _environment->memoryAreas, var );
+    }
 }
 
 /**
