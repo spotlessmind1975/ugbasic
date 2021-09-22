@@ -215,6 +215,56 @@ typedef enum _VariableType {
 #define VARIABLE_TYPE_COUNT   16
 
 /**
+ * @brief Enum for memory area type
+ * 
+ * This enum will describe the kind of memory area, if it is
+ * accessible directly (so: it can be used for code and variable,
+ * without limits) or it is "gated" through a specific prologue
+ * and epilogue code.
+ */
+typedef enum _MemoryAreaType {
+
+    /**
+     * This memory area can be accessed directly. 
+     */
+    MAT_DIRECT = 1,
+
+    /**
+     * This memory area can be accessed only after calling a specific
+     * prologue and epilogue code. 
+     */
+    MAT_GATED = 2
+
+} MemoryAreaType;
+
+typedef struct _MemoryArea {
+
+    /**
+     * Starting address
+     */
+    int start;
+
+    /**
+     * Ending address
+     */
+    int end;
+
+    /**
+     * Current available size
+     */
+    int size;
+
+    /**
+     * Type
+     */
+    MemoryAreaType type;
+
+    /** Link to the next memory area (NULL if this is the last one) */
+    struct _MemoryArea * next;
+
+} MemoryArea;
+
+/**
  * @brief Structure of a single variable
  */
 typedef struct _Variable {
@@ -278,6 +328,11 @@ typedef struct _Variable {
      * Pointer to the bank where this variable belongs to.
      */
     Bank * bank;
+
+    /** 
+     * Pointer to the memory area where this variable belongs to.
+     */
+    MemoryArea * memoryArea;
 
     /**
      * Number of dimensions of this array
@@ -864,6 +919,11 @@ typedef struct _Environment {
      * "Every" timing
      */
     Variable * everyTiming;
+
+    /**
+     * Memory areas available for the specific platform
+     */
+    MemoryArea * memoryAreas;
 
     /**
      * Current graphical mode

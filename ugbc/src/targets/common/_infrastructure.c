@@ -66,6 +66,26 @@ char DATATYPE_AS_STRING[][16] = {
     "DYNAMIC STRING"   
 };
 
+void memory_area_assign( MemoryArea * _first, Variable * _variable ) {
+
+    int neededSpace = VT_BITWIDTH( _variable->type ) ? ( VT_BITWIDTH( _variable->type ) >> 3 ) : _variable->size;
+
+    if ( neededSpace == 0 ) return;
+
+    MemoryArea * actual = _first;
+    while( actual ) {
+        if ( actual->size > neededSpace ) {
+            actual->size -= neededSpace;
+            _variable->memoryArea = actual;
+            _variable->absoluteAddress = actual->start;
+            actual->start += neededSpace;
+            break;
+        }
+        actual = actual->next;
+    }
+
+}
+
 Bank * bank_find( Bank * _first, char * _name ) {
     Bank * actual = _first;
     while( actual ) {
@@ -255,6 +275,7 @@ Variable * variable_define( Environment * _environment, char * _name, VariableTy
             memcpy( var->arrayDimensionsEach, ((struct _Environment *)_environment)->arrayDimensionsEach, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
             var->arrayDimensions = ((struct _Environment *)_environment)->arrayDimensions;
         }
+        memory_area_assign( _environment->memoryAreas, var );
     }
     var->used = 1;
     var->locked = 0;
@@ -285,6 +306,7 @@ Variable * variable_import( Environment * _environment, char * _name, VariableTy
         } else {
             _environment->variables = var;
         }
+        memory_area_assign( _environment->memoryAreas, var );
     }
     var->imported = 1;
     var->used = 1;
@@ -319,6 +341,7 @@ Variable * variable_define_no_init( Environment * _environment, char * _name, Va
             memcpy( var->arrayDimensionsEach, ((struct _Environment *)_environment)->arrayDimensionsEach, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
             var->arrayDimensions = ((struct _Environment *)_environment)->arrayDimensions;
         }
+        memory_area_assign( _environment->memoryAreas, var );
     }
     var->used = 1;
     var->locked = 0;
@@ -365,6 +388,7 @@ Variable * variable_define_local( Environment * _environment, char * _name, Vari
             memcpy( var->arrayDimensionsEach, ((struct _Environment *)_environment)->arrayDimensionsEach, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
             var->arrayDimensions = ((struct _Environment *)_environment)->arrayDimensions;
         }
+        memory_area_assign( _environment->memoryAreas, var );
     }
     var->used = 1;
     var->locked = 0;
@@ -602,6 +626,7 @@ Variable * variable_temporary( Environment * _environment, VariableType _type, c
         } else {
             _environment->tempVariables = var;
         }
+        memory_area_assign( _environment->memoryAreas, var );
     }
     if ( var->meaningName ) {
         
@@ -637,6 +662,7 @@ Variable * variable_resident( Environment * _environment, VariableType _type, ch
     } else {
         _environment->tempResidentVariables = var;
     }
+    memory_area_assign( _environment->memoryAreas, var );
     if ( var->meaningName ) {
         outline2("; %s <-> %s (resident)", var->realName, var->meaningName );
     }
