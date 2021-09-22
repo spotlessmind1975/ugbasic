@@ -426,6 +426,11 @@ int test_cpu_logical_and_8bit_tester( TestEnvironment * _te ) {
     Variable * and10 = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
     Variable * and11 = variable_retrieve( &_te->environment, _te->trackedVariables[3]->name );
 
+// printf("and00 = %2.2x (%d) [expected 0x00]\n", and00->value, and00->value );
+// printf("and01 = %2.2x (%d) [expected 0x00]\n", and01->value, and01->value );
+// printf("and10 = %2.2x (%d) [expected 0x00]\n", and10->value, and10->value );
+// printf("and11 = %2.2x (%d) [expected 0xff]\n", and11->value, and11->value );
+
     return  and00->value == 0x00 && 
             and01->value == 0x00 && 
             and10->value == 0x00 && 
