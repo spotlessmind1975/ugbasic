@@ -2894,6 +2894,7 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     printf("\t-I           Install needed chaintool for this target\n" );
     printf("\t-c <file>    Output filename with linker configuration\n" );
     printf("\t-o <exe>     Output filename with final executable file for target\n" );
+    printf("\t-l <name>    Output filename with list of variables defined\n" );
     printf("\t-W           Enable warnings during compilation\n" );
     exit(EXIT_FAILURE);
 }
@@ -2921,7 +2922,7 @@ int main( int _argc, char *_argv[] ) {
 
     _environment->warningsEnabled = 0;
 
-    while ((opt = getopt(_argc, _argv, "e:c:Wo:Ie:")) != -1) {
+    while ((opt = getopt(_argc, _argv, "e:c:Wo:Ie:l:")) != -1) {
         switch (opt) {
                 case 'c':
                     _environment->configurationFileName = strdup(optarg);
@@ -2934,6 +2935,9 @@ int main( int _argc, char *_argv[] ) {
                     break;
                 case 'I':
                     _environment->installChainTool = 1;
+                    break;
+                case 'l':
+                    _environment->debuggerLabelsFileName = strdup(optarg);
                     break;
                 case 'e': {
                     char * p = strtok(optarg, ",");

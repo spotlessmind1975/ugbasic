@@ -46,6 +46,14 @@ void begin_compilation( Environment * _environment ) {
         exit(EXIT_FAILURE);
     }
 
+    if ( _environment->debuggerLabelsFileName ) {
+        _environment->debuggerLabelsFile = fopen( _environment->debuggerLabelsFileName, "wt");
+        if ( ! _environment->debuggerLabelsFile ) {
+            fprintf(stderr, "Unable to open labels file: %s\n", _environment->debuggerLabelsFileName );
+            exit(EXIT_FAILURE);
+        }
+    }
+
     target_initialization( _environment );
 
 }

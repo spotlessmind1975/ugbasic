@@ -72,6 +72,10 @@ void end_compilation( Environment * _environment ) {
         fclose(_environment->configurationFile);
     }
 
+    if ( _environment->debuggerLabelsFile ) {
+        fclose(_environment->debuggerLabelsFile);
+    }
+
     fclose(_environment->asmFile);
 
 }

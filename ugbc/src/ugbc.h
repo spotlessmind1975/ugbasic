@@ -264,6 +264,27 @@ typedef struct _MemoryArea {
 
 } MemoryArea;
 
+#define MEMORY_AREA_DEFINE( _type, _start, _end ) \
+    { \
+        MemoryArea * memoryArea = malloc( sizeof( MemoryArea ) ); \
+        memset( memoryArea, 0, sizeof( MemoryArea ) ) ; \
+        memoryArea->start = _start; \
+        memoryArea->end = _end; \
+        memoryArea->size = (_end-_start); \
+        memoryArea->type = _type; \
+        memoryArea->next = NULL; \
+        MemoryArea * last = _environment->memoryAreas; \
+        if ( last ) { \
+            while( last->next ) { \
+                last = last->next; \
+            } \
+            last->next = memoryArea; \
+        } else { \
+            _environment->memoryAreas = memoryArea; \
+        } \
+    }
+
+
 /**
  * @brief Structure of a single variable
  */
@@ -803,6 +824,11 @@ typedef struct _Environment {
     char * configurationFileName;
 
     /**
+     * Filename of debugger's labels file (*.lb2) 
+     */
+    char * debuggerLabelsFileName;
+
+    /**
      * Enable the visualization of warnings during compilation.
      */
     int warningsEnabled;
@@ -993,6 +1019,11 @@ typedef struct _Environment {
      * Handle to the file opened to write the linker configuration file (*.cfg).
      */
     FILE * configurationFile;
+
+    /**
+     * Handle to the file opened to write the list of labels (*.lb2).
+     */
+    FILE * debuggerLabelsFile;
 
 } Environment;
 

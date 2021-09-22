@@ -49,34 +49,58 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
 
         if ( !variable->imported ) {
 
+            if ( variable->memoryArea ) {
+                fprintf( _environment->debuggerLabelsFile, "%4.4x %s\r\n", variable->absoluteAddress, variable->realName );
+            }
+
             switch( variable->type ) {
                 case VT_BYTE:
                 case VT_SBYTE:
                 case VT_COLOR:
-                    outline1("%s: .res 1", variable->realName);
+                    if ( variable->memoryArea ) {
+                        outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
+                    } else {
+                        outline1("%s: .res 1", variable->realName);
+                    }        
                     break;
                 case VT_WORD:
                 case VT_SWORD:
                 case VT_POSITION:
                 case VT_ADDRESS:
-                    outline1("%s: .res 2", variable->realName);
+                    if ( variable->memoryArea ) {
+                        outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
+                    } else {
+                        outline1("%s: .res 2", variable->realName);
+                    }
                     break;
                 case VT_DWORD:
                 case VT_SDWORD:
-                    outline1("%s: .res 4", variable->realName);
+                    if ( variable->memoryArea ) {
+                        outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
+                    } else {
+                        outline1("%s: .res 4", variable->realName);
+                    }
                     break;
                 case VT_STRING:
-                    if ( ! variable->valueString ) {
-                        printf("%s", variable->realName);
-                        exit(EXIT_FAILURE);
+                    if ( variable->memoryArea ) {
+                        outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
+                    } else {
+                        outline3("%s: .byte %d,\"%s\"", variable->realName, (int)strlen(variable->valueString), variable->valueString );
                     }
-                    outline3("%s: .byte %d,\"%s\"", variable->realName, (int)strlen(variable->valueString), variable->valueString );
                     break;
                 case VT_DSTRING:
-                    outline1("%s: .res 1", variable->realName);
+                    if ( variable->memoryArea ) {
+                        outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
+                    } else {
+                        outline1("%s: .res 1", variable->realName);
+                    }
                     break;
                 case VT_MOB:
-                    outline1("%s: .res 1", variable->realName);
+                    if ( variable->memoryArea ) {
+                        outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
+                    } else {
+                        outline1("%s: .res 1", variable->realName);
+                    }
                     break;
                 case VT_IMAGE:
                 case VT_BUFFER:
@@ -117,10 +141,14 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     } else {
                         CRITICAL_DATATYPE_UNSUPPORTED("array(1)", DATATYPE_AS_STRING[variable->arrayType]);
                     }
-                    if ( variable->value ) {
-                        outline3("%s: .res %d, $%2.2x", variable->realName, size, (unsigned char)(variable->value&0xff));
+                    if ( variable->memoryArea ) {
+                        outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline2("%s: .res %d", variable->realName, size);
+                        if ( variable->value ) {
+                            outline3("%s: .res %d, $%2.2x", variable->realName, size, (unsigned char)(variable->value&0xff));
+                        } else {
+                            outline2("%s: .res %d", variable->realName, size);
+                        }
                     }
                     break;
                 }
