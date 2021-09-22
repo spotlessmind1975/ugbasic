@@ -212,7 +212,7 @@ typedef enum _VariableType {
 /**
  * @brief Maximum number of variable types
  */
-#define VARIABLE_TYPE_COUNT   8
+#define VARIABLE_TYPE_COUNT   16
 
 /**
  * @brief Structure of a single variable
