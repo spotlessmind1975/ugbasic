@@ -90,7 +90,6 @@ void memory_area_assign( MemoryArea * _first, Variable * _variable ) {
             _variable->memoryArea = actual;
             _variable->absoluteAddress = actual->start;
             actual->start += neededSpace;
-            printf( "%s: %d at %4.4x\n", _variable->realName, neededSpace, _variable->absoluteAddress );
             break;
         }
         actual = actual->next;
