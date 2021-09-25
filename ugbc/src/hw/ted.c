@@ -1062,8 +1062,8 @@ static Variable * ted_image_converter_multicolor_mode_standard( Environment * _e
                     break;
                 case 1:
                 case 2:
-                    *(buffer + 2 + ( ( _width >> 2 ) * _height ) + offsetc ) |= ( ( palette[0].index & 0x0f ) << 4 ) | ( ( palette[1].index & 0x0f ) );
-                    *(buffer + 2 + ( ( _width >> 2 ) * _height ) + ( _width >> 2 ) * ( _height >> 3 ) + offsetc ) |= ( ( palette[0].index & 0xf0 ) ) | ( ( palette[1].index & 0xf0 ) >> 4 );
+                    *(buffer + 2 + ( ( _width >> 2 ) * _height ) + offsetc ) |= ( ( palette[1].index & 0xf0 ) << 4 ) | ( ( palette[2].index & 0xf0 ) );
+                    *(buffer + 2 + ( ( _width >> 2 ) * _height ) + ( _width >> 2 ) * ( _height >> 3 ) + offsetc ) |= ( ( palette[1].index & 0x0f ) ) | ( ( palette[2].index & 0x0f ) >> 4 );
                     break;
                 case 3:
                     *(buffer + 2 + ( ( _width >> 2 ) * _height ) + 2 * ( _width >> 2 ) * ( _height >> 3 ) + 1 ) = palette[colorIndex].index;
