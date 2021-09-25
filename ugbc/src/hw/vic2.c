@@ -1381,6 +1381,8 @@ static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _
 
             colorIndex = i;
 
+            // printf( "%1.1x", colorIndex );
+
             bitmask = colorIndex << (6 - ((image_x & 0x3) * 2));
 
             switch( colorIndex ) {
@@ -1388,12 +1390,12 @@ static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _
                     *(buffer + 2 + ( ( _width >> 2 ) * _height ) + 2 * ( _width >> 2 ) * ( _height >> 3 ) ) = palette[colorIndex].index;
                     break;
                 case 1:
-                    *(buffer + 2 + ( ( _width >> 2 ) * _height ) + offsetc ) &= 0xf0;
-                    *(buffer + 2 + ( ( _width >> 2 ) * _height ) + offsetc ) |= palette[colorIndex].index;
-                    break;
-                case 2:
                     *(buffer + 2 + ( ( _width >> 2 ) * _height ) + offsetc ) &= 0x0f;
                     *(buffer + 2 + ( ( _width >> 2 ) * _height ) + offsetc ) |= ( palette[colorIndex].index << 4 );
+                    break;
+                case 2:
+                    *(buffer + 2 + ( ( _width >> 2 ) * _height ) + offsetc ) &= 0xf0;
+                    *(buffer + 2 + ( ( _width >> 2 ) * _height ) + offsetc ) |= palette[colorIndex].index;
                     break;
                 case 3:
                     *(buffer + 2 + ( ( _width >> 2 ) * _height ) + ( _width >> 2 ) * ( _height >> 3 ) + offsetc ) = palette[colorIndex].index;
@@ -1408,8 +1410,14 @@ static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _
         }
 
         // printf("\n" );
-
     }
+
+    // for(i=0; i<4; ++i ) {
+    //     printf( "%1.1x = %2.2x\n", i, palette[i].index );
+    // }
+
+    // printf("\n" );
+    // printf("\n" );
 
     variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
 
