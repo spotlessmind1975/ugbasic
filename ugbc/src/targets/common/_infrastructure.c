@@ -714,200 +714,8 @@ Variable * variable_cast( Environment * _environment, char * _source, VariableTy
 
     Variable * target = variable_temporary( _environment, _type, "(generated for cast)" );
 
+    variable_move( _environment, source->name, target->name );
 
-    switch( VT_BITWIDTH( source->type ) ) {
-        case 32:
-            switch( VT_BITWIDTH( target->type ) ) {
-                case 32:
-                    cpu_move_32bit( _environment, source->realName, target->realName );
-                    break;
-                case 16:
-                    WARNING_DOWNCAST( _source, target->name );
-                    #ifdef CPU_BIG_ENDIAN
-                        {
-                            char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s+2", source->realName );
-                            cpu_move_16bit( _environment, sourceRealName, target->realName );
-                        }
-                    #else
-                        cpu_move_16bit( _environment, source->realName, target->realName );
-                    #endif
-                    break;
-                case 8:
-                    WARNING_DOWNCAST( _source, target->name );
-                    #ifdef CPU_BIG_ENDIAN
-                        {
-                            char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s+3", source->realName );
-                            cpu_move_8bit( _environment, sourceRealName, target->realName );
-                        }
-                    #else
-                        cpu_move_8bit( _environment, source->realName, target->realName );
-                    #endif
-                    break;
-                case 0:
-                    CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
-            }
-            break;
-        case 16:
-            switch( VT_BITWIDTH( target->type ) ) {
-                case 32:
-                    #ifdef CPU_BIG_ENDIAN
-                        {
-                            char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s+2", target->realName );
-                            cpu_move_16bit( _environment, source->realName, targetRealName );
-                        }
-                    #else
-                        cpu_move_16bit( _environment, source->realName, target->realName );
-                    #endif
-                    break;
-                case 16:
-                    cpu_move_16bit( _environment, source->realName, target->realName );
-                    break;
-                case 8:
-                    WARNING_DOWNCAST( _source, target->name );
-                    #ifdef CPU_BIG_ENDIAN
-                        {
-                            char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s+1", source->realName );
-                            cpu_move_8bit( _environment, sourceRealName, target->realName );
-                        }
-                    #else
-                        cpu_move_8bit( _environment, source->realName, target->realName );
-                    #endif
-                    break;
-                case 0:
-                    CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
-            }
-            break;
-        case 8:
-            switch( VT_BITWIDTH( target->type ) ) {
-                case 32:
-                    #ifdef CPU_BIG_ENDIAN
-                        {
-                            char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s+3", target->realName );
-                            cpu_move_8bit( _environment, source->realName, targetRealName );
-                        }
-                    #else
-                        cpu_move_8bit( _environment, source->realName, target->realName );
-                    #endif
-                    break;
-                case 16:
-                    #ifdef CPU_BIG_ENDIAN
-                        {
-                            char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s+1", target->realName );
-                            cpu_move_8bit( _environment, source->realName, targetRealName );
-                        }
-                    #else
-                        cpu_move_8bit( _environment, source->realName, target->realName );
-                    #endif
-                    break;
-                case 8:
-                    cpu_move_8bit( _environment, source->realName, target->realName );
-                    break;
-                case 0:
-                    CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
-            }
-            break;
-        case 0:
-            switch( VT_BITWIDTH( target->type ) ) {
-                case 32:
-                case 16:
-                case 8:
-                    CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
-                case 0:
-                    switch( source->type ) {
-                        case VT_STRING:
-                            switch( target->type ) {
-                                case VT_DSTRING: {
-                                    cpu_dsfree( _environment, target->realName );
-                                    cpu_dsdefine( _environment, source->realName, target->realName );
-                                    break;
-                                }
-                                default:
-                                    CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
-                                    break;
-                            }
-                            break;
-                        case VT_DSTRING:
-                            switch( target->type ) {
-                                case VT_DSTRING: {
-                                    Variable * sourceAddress = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
-                                    Variable * sourceSize = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
-                                    Variable * targetAddress = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
-                                    Variable * targetSize = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
-                                    cpu_dsdescriptor( _environment, source->realName, sourceAddress->realName, sourceSize->realName );
-                                    cpu_dsfree( _environment, target->realName );
-                                    cpu_dsalloc( _environment, sourceSize->realName, target->realName );
-                                    cpu_dsdescriptor( _environment, target->realName, targetAddress->realName, targetSize->realName );
-                                    cpu_mem_move( _environment, sourceAddress->realName, targetAddress->realName, sourceSize->realName );
-                                    break;
-                                }
-                                default:
-                                    CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
-                                    break;
-                            }
-                            break;
-                        case VT_MOB:
-                            switch( target->type ) {
-                                case VT_MOB: {
-                                    cpu_move_8bit( _environment, source->realName, target->realName );
-                                    break;
-                                }
-                                default:
-                                    CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
-                                    break;
-                            }
-                            break;
-                        case VT_IMAGE:
-                            switch( target->type ) {
-                                case VT_IMAGE:
-                                case VT_BUFFER:
-                                    if ( target->size == 0 ) {
-                                        target->size = source->size;
-                                    }
-                                    if ( source->size <= target->size ) {
-                                        cpu_mem_move_direct_size( _environment, source->realName, target->realName, source->size );
-                                    } else {
-                                        CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
-                                    }
-                                    break;
-                                default:
-                                    CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
-                            }
-                            break;
-                        case VT_BUFFER:
-                            switch( target->type ) {
-                                case VT_DSTRING: {
-                                    if ( source->size > 255 ) {
-                                        CRITICAL_CANNOT_CAST_BUFFER_STRING_SIZE( source->name, target->name );
-                                    }
-                                    cpu_dsfree( _environment, target->realName );
-                                    cpu_dsalloc_size( _environment, source->size, target->realName );
-                                    Variable * targetAddress = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
-                                    Variable * targetSize = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
-                                    cpu_dsdescriptor( _environment, target->realName, targetAddress->realName, targetSize->realName );
-                                    cpu_mem_move_direct_indirect_size( _environment, source->realName, targetAddress->realName, source->size );
-                                    break;
-                                }
-                                case VT_STRING:
-                                    CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
-                                case VT_IMAGE:
-                                case VT_BUFFER:
-                                    if ( target->size == 0 ) {
-                                        target->size = source->size;
-                                    }
-                                    if ( source->size <= target->size ) {
-                                        cpu_mem_move_direct_size( _environment, source->realName, target->realName, source->size );
-                                    } else {
-                                        CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
-                                    }
-                                    break;
-                            }
-                            break;
-                    }
-                    break;
-
-            }
-            break;
-    }
     return target;
 }
 
@@ -1050,61 +858,212 @@ Variable * variable_store_buffer( Environment * _environment, char * _destinatio
  */
 Variable * variable_move( Environment * _environment, char * _source, char * _destination ) {
 
+    Variable * source = variable_retrieve( _environment, _source );
+
     Variable * target = variable_retrieve( _environment, _destination );
 
-    Variable * source = variable_cast( _environment, _source, target->type );
-
-    switch( VT_BITWIDTH( target->type ) ) {
+    switch( VT_BITWIDTH( source->type ) ) {
         case 32:
-            cpu_move_32bit( _environment, source->realName, target->realName );
+            switch( VT_BITWIDTH( target->type ) ) {
+                case 32:
+                    cpu_move_32bit( _environment, source->realName, target->realName );
+                    break;
+                case 16:
+                    WARNING_BITWIDTH( _source, _destination );
+                    #ifdef CPU_BIG_ENDIAN
+                        {
+                            char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s+2", source->realName );
+                            cpu_move_16bit( _environment, sourceRealName, target->realName );
+                        }
+                    #else
+                        cpu_move_16bit( _environment, source->realName, target->realName );
+                    #endif
+                    break;
+                case 8:
+                    WARNING_DOWNCAST( _source, target->name );
+                    #ifdef CPU_BIG_ENDIAN
+                        {
+                            char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s+3", source->realName );
+                            cpu_move_8bit( _environment, sourceRealName, target->realName );
+                        }
+                    #else
+                        cpu_move_8bit( _environment, source->realName, target->realName );
+                    #endif
+                    break;
+                case 0:
+                    CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
+            }
             break;
         case 16:
-            cpu_move_16bit( _environment, source->realName, target->realName );
+            switch( VT_BITWIDTH( target->type ) ) {
+                case 32:
+                    #ifdef CPU_BIG_ENDIAN
+                        {
+                            cpu_store_16bit( _environment, target->realName, 0 );
+                            char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s+2", target->realName );
+                            cpu_move_16bit( _environment, source->realName, targetRealName );
+                        }
+                    #else
+                        {
+                            char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s+2", target->realName );
+                            cpu_move_16bit( _environment, source->realName, target->realName );
+                            cpu_store_16bit( _environment, targetRealName, 0 );
+                        }
+                    #endif
+                    break;
+                case 16:
+                    cpu_move_16bit( _environment, source->realName, target->realName );
+                    break;
+                case 8:
+                    WARNING_DOWNCAST( _source, target->name );
+                    #ifdef CPU_BIG_ENDIAN
+                        {
+                            char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s+1", source->realName );
+                            cpu_move_8bit( _environment, sourceRealName, target->realName );
+                        }
+                    #else
+                        cpu_move_8bit( _environment, source->realName, target->realName );
+                    #endif
+                    break;
+                case 0:
+                    CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
+            }
             break;
         case 8:
-            cpu_move_8bit( _environment, source->realName, target->realName );
+            switch( VT_BITWIDTH( target->type ) ) {
+                case 32:
+                    cpu_store_32bit( _environment, target->realName, 0 );
+                    #ifdef CPU_BIG_ENDIAN
+                        {
+                            char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s+3", target->realName );
+                            cpu_move_8bit( _environment, source->realName, targetRealName );
+                        }
+                    #else
+                        cpu_move_8bit( _environment, source->realName, target->realName );
+                    #endif
+                    break;
+                case 16:
+                    cpu_store_16bit( _environment, target->realName, 0 );
+                    #ifdef CPU_BIG_ENDIAN
+                        {
+                            char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s+1", target->realName );
+                            cpu_move_8bit( _environment, source->realName, targetRealName );
+                        }
+                    #else
+                        cpu_move_8bit( _environment, source->realName, target->realName );
+                    #endif
+                    break;
+                case 8:
+                    cpu_move_8bit( _environment, source->realName, target->realName );
+                    break;
+                case 0:
+                    CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
+            }
             break;
         case 0:
-            switch( target->type ) {
-                case VT_DSTRING: {
-                    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
-                    Variable * size = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
-                    Variable * address2 = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
-                    Variable * size2 = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
-                    //cpu_dsdescriptor( _environment, target->realName, address2->realName, size2->realName );
-                    cpu_dsdescriptor( _environment, source->realName, address->realName, size->realName );
-                    cpu_dsfree( _environment, target->realName );
-                    cpu_dsalloc( _environment, size->realName, target->realName );
-                    cpu_dsdescriptor( _environment, target->realName, address2->realName, size2->realName );
-                    cpu_mem_move( _environment, address->realName, address2->realName, size->realName );
-                    break;
-                }
-                case VT_MOB:
-                    switch( target->type ) {
-                        case VT_MOB: {
-                            cpu_move_8bit( _environment, source->realName, target->realName );
+            switch( VT_BITWIDTH( target->type ) ) {
+                case 32:
+                case 16:
+                case 8:
+                    CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
+                case 0:
+                    switch( source->type ) {
+                        case VT_STRING:
+                            switch( target->type ) {
+                                case VT_DSTRING: {
+                                    cpu_dsfree( _environment, target->realName );
+                                    cpu_dsdefine( _environment, source->realName, target->realName );
+                                    break;
+                                }
+                                default:
+                                    CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
+                                    break;
+                            }
                             break;
-                        }
-                        default:
-                            CRITICAL_MOVE_UNSUPPORTED( DATATYPE_AS_STRING[target->type]);
+                        case VT_DSTRING:
+                            switch( target->type ) {
+                                case VT_DSTRING: {
+                                    Variable * sourceAddress = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
+                                    Variable * sourceSize = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
+                                    Variable * targetAddress = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
+                                    Variable * targetSize = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
+                                    cpu_dsdescriptor( _environment, source->realName, sourceAddress->realName, sourceSize->realName );
+                                    cpu_dsfree( _environment, target->realName );
+                                    cpu_dsalloc( _environment, sourceSize->realName, target->realName );
+                                    cpu_dsdescriptor( _environment, target->realName, targetAddress->realName, targetSize->realName );
+                                    cpu_mem_move( _environment, sourceAddress->realName, targetAddress->realName, sourceSize->realName );
+                                    break;
+                                }
+                                default:
+                                    CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
+                                    break;
+                            }
+                            break;
+                        case VT_MOB:
+                            switch( target->type ) {
+                                case VT_MOB: {
+                                    cpu_move_8bit( _environment, source->realName, target->realName );
+                                    break;
+                                }
+                                default:
+                                    CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
+                                    break;
+                            }
+                            break;
+                        case VT_IMAGE:
+                            switch( target->type ) {
+                                case VT_IMAGE:
+                                case VT_BUFFER:
+                                    if ( target->size == 0 ) {
+                                        target->size = source->size;
+                                    }
+                                    if ( source->size <= target->size ) {
+                                        cpu_mem_move_direct_size( _environment, source->realName, target->realName, source->size );
+                                    } else {
+                                        CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
+                                    }
+                                    break;
+                                default:
+                                    CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
+                            }
+                            break;
+                        case VT_BUFFER:
+                            switch( target->type ) {
+                                case VT_DSTRING: {
+                                    if ( source->size > 255 ) {
+                                        CRITICAL_CANNOT_CAST_BUFFER_STRING_SIZE( source->name, target->name );
+                                    }
+                                    cpu_dsfree( _environment, target->realName );
+                                    cpu_dsalloc_size( _environment, source->size, target->realName );
+                                    Variable * targetAddress = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
+                                    Variable * targetSize = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
+                                    cpu_dsdescriptor( _environment, target->realName, targetAddress->realName, targetSize->realName );
+                                    cpu_mem_move_direct_indirect_size( _environment, source->realName, targetAddress->realName, source->size );
+                                    break;
+                                }
+                                case VT_STRING:
+                                    CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
+                                case VT_IMAGE:
+                                case VT_BUFFER:
+                                    if ( target->size == 0 ) {
+                                        target->size = source->size;
+                                    }
+                                    if ( source->size <= target->size ) {
+                                        cpu_mem_move_direct_size( _environment, source->realName, target->realName, source->size );
+                                    } else {
+                                        CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
+                                    }
+                                    break;
+                            }
                             break;
                     }
                     break;
-                case VT_IMAGE:
-                case VT_BUFFER: {
-                    if ( target->size == 0 ) {
-                        target->size = source->size;
-                    }
-                    if ( source->size != target->size ) {
-                        CRITICAL_BUFFER_SIZE_MISMATCH(_source, _destination);
-                    }
-                    cpu_mem_move_direct_size( _environment, source->realName, target->realName, source->size );
-                    break;
-                }
-                default:
-                    CRITICAL_MOVE_UNSUPPORTED(DATATYPE_AS_STRING[target->type]);
+
             }
+            break;
     }
+
+
     return target;
 }
 
@@ -1358,15 +1317,19 @@ Variable * variable_complement_const( Environment * _environment, char * _destin
  * @throw EXIT_FAILURE "Source variable does not exist"
  */
 Variable * variable_mul( Environment * _environment, char * _source, char * _destination ) {
+
     Variable * source = variable_retrieve( _environment, _source );
-    Variable * target = variable_cast( _environment, _destination, source->type );
+    Variable * target = variable_retrieve( _environment, _destination );
 
     if ( VT_SIGNED( source->type ) != VT_SIGNED( target->type ) ) {
         if ( VT_SIGNED( source->type ) ) {
-            source = variable_cast( _environment, _destination, VT_SIGN( source->type ) );
+            target = variable_cast( _environment, _destination, source->type );
         } else {
-            target = variable_cast( _environment, _destination, VT_SIGN( target->type ) );
+            source = variable_cast( _environment, _source, VT_SIGN( source->type ) );
+            target = variable_cast( _environment, _destination, VT_SIGN( source->type ) );
         }
+    } else {
+        target = variable_cast( _environment, _destination, source->type );
     }
 
     Variable * result = NULL;
@@ -1402,16 +1365,18 @@ Variable * variable_mul( Environment * _environment, char * _source, char * _des
  */
 Variable * variable_div( Environment * _environment, char * _source, char * _destination ) {
     Variable * source = variable_retrieve( _environment, _source );
-    Variable * target = variable_cast( _environment, _destination, source->type );
+    Variable * target = variable_retrieve( _environment, _destination );
 
     if ( VT_SIGNED( source->type ) != VT_SIGNED( target->type ) ) {
         if ( VT_SIGNED( source->type ) ) {
-            source = variable_cast( _environment, _destination, VT_SIGN( source->type ) );
+            target = variable_cast( _environment, _destination, source->type );
         } else {
-            target = variable_cast( _environment, _destination, VT_SIGN( target->type ) );
+            source = variable_cast( _environment, _source, VT_SIGN( source->type ) );
+            target = variable_cast( _environment, _destination, VT_SIGN( source->type ) );
         }
+    } else {
+        target = variable_cast( _environment, _destination, source->type );
     }
-
 
     Variable * result = NULL;
     Variable * remainder = NULL;
@@ -1507,8 +1472,14 @@ Variable * variable_compare( Environment * _environment, char * _source, char * 
     Variable * target = variable_retrieve( _environment, _destination );
 
     if ( VT_SIGNED( source->type ) != VT_SIGNED( target->type ) ) {
-        source = variable_cast( _environment, source->name, VT_SIGN( source->type ) );
-        target = variable_cast( _environment, target->name, VT_SIGN( target->type ) );
+        if ( VT_SIGNED( source->type ) ) {
+            target = variable_cast( _environment, _destination, source->type );
+        } else {
+            source = variable_cast( _environment, _source, VT_SIGN( source->type ) );
+            target = variable_cast( _environment, _destination, VT_SIGN( source->type ) );
+        }
+    } else {
+        target = variable_cast( _environment, _destination, source->type );
     }
 
     MAKE_LABEL
@@ -1912,10 +1883,13 @@ Variable * variable_less_than( Environment * _environment, char * _source, char 
 
     if ( VT_SIGNED( source->type ) != VT_SIGNED( target->type ) ) {
         if ( VT_SIGNED( source->type ) ) {
-            target = variable_cast( _environment, target->name, VT_SIGN( source->type ) );
+            target = variable_cast( _environment, _destination, source->type );
         } else {
-            target = variable_cast( _environment, target->name, VT_UNSIGN( target->type ) );
+            source = variable_cast( _environment, _source, VT_SIGN( source->type ) );
+            target = variable_cast( _environment, _destination, VT_SIGN( source->type ) );
         }
+    } else {
+        target = variable_cast( _environment, _destination, source->type );
     }
 
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of compare)" );
@@ -2121,8 +2095,14 @@ Variable * variable_greater_than( Environment * _environment, char * _source, ch
     Variable * target = variable_retrieve( _environment, _destination );
 
     if ( VT_SIGNED( source->type ) != VT_SIGNED( target->type ) ) {
-        source = variable_cast( _environment, source->name, VT_SIGN( source->type ) );
-        target = variable_cast( _environment, target->name, VT_SIGN( target->type ) );
+        if ( VT_SIGNED( source->type ) ) {
+            target = variable_cast( _environment, _destination, source->type );
+        } else {
+            source = variable_cast( _environment, _source, VT_SIGN( source->type ) );
+            target = variable_cast( _environment, _destination, VT_SIGN( source->type ) );
+        }
+    } else {
+        target = variable_cast( _environment, _destination, source->type );
     }
 
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of compare)" );
@@ -3828,15 +3808,19 @@ ScreenMode * find_screen_mode_by_id( Environment * _environment, int _id ) {
 }
 
 Variable * variable_mod( Environment * _environment, char * _source, char * _destination ) {
+    
     Variable * source = variable_retrieve( _environment, _source );
-    Variable * target = variable_cast( _environment, _destination, source->type );
+    Variable * target = variable_retrieve( _environment, _destination );
 
     if ( VT_SIGNED( source->type ) != VT_SIGNED( target->type ) ) {
         if ( VT_SIGNED( source->type ) ) {
-            source = variable_cast( _environment, _destination, VT_SIGN( source->type ) );
+            target = variable_cast( _environment, _destination, source->type );
         } else {
-            target = variable_cast( _environment, _destination, VT_SIGN( target->type ) );
+            source = variable_cast( _environment, _source, VT_SIGN( source->type ) );
+            target = variable_cast( _environment, _destination, VT_SIGN( source->type ) );
         }
+    } else {
+        target = variable_cast( _environment, _destination, source->type );
     }
 
     Variable * result = NULL;
