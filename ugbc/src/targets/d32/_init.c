@@ -83,7 +83,7 @@ void target_linkage( Environment * _environment ) {
         sprintf(executableName, "%s", "asm6809" );
     }
 
-    sprintf( commandLine, "%s -o %s -D -e 10240 %s",
+    sprintf( commandLine, "%s -l main.lst -o %s -D -e 10240 %s",
         executableName,
         _environment->exeFileName, 
         _environment->asmFileName );

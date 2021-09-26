@@ -51,8 +51,13 @@
 </usermanual> */
 Variable * image_get_width( Environment * _environment, char * _image ) {
 
-    // TODO: implementation
+    Variable * image = variable_retrieve( _environment, _image );
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(image width)" );
 
-    FUNCTION_STUB( VT_WORD )
+    outline1("LDY #%s", image->realName );
+    outline0("LDA ,Y" );
+    outline1("STA %s", result->realName );
+
+    return result;
 
 }
