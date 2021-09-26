@@ -109,7 +109,7 @@ void else_if_then( Environment * _environment, char * _expression ) {
 
     } else {
 
-        Variable * expression = variable_retrieve( _environment, _expression );
+        Variable * expression = variable_retrieve_or_define( _environment, _expression, VT_BYTE, 0 );
 
         conditional->expression->locked = 0;
         conditional->expression = variable_cast( _environment, expression->name, expression->type );

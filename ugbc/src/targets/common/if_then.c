@@ -99,7 +99,7 @@ void if_then( Environment * _environment, char * _expression ) {
 
     MAKE_LABEL
 
-    Variable * expression = variable_retrieve( _environment, _expression );
+    Variable * expression = variable_retrieve_or_define( _environment, _expression, VT_BYTE, 0 );
 
     Conditional * conditional = malloc( sizeof( Conditional ) );
     memset( conditional, 0, sizeof( Conditional ) );
