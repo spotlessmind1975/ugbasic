@@ -87,15 +87,49 @@ Variable * image_load( Environment * _environment, char * _filename, char * _ali
     int height = 0;
     int depth = 3;
 
-    FILE * file = fopen( _filename, "rb" );
+    char lookedFilename[MAX_TEMPORARY_STORAGE];
+    char lookedExtension[MAX_TEMPORARY_STORAGE];
+    strcpy( lookedFilename, _filename );
+    char * c = strchr( lookedFilename, '.' );
+    if ( c ) {
+        strcpy( lookedExtension, c );
+    } else {
+        strcpy( lookedExtension, "" );
+    }
+    *c = 0;
+#if defined(__atari__) 
+    strcat( lookedFilename, "_atari" );
+#elif defined(__atarixl__) 
+    strcat( lookedFilename, "_atarixl" );
+#elif __c64__
+    strcat( lookedFilename, "_c64" );
+#elif __plus4__
+    strcat( lookedFilename, "_plus4" );
+#elif __zx__
+    strcat( lookedFilename, "_zx" );
+#elif __d32__ 
+    strcat( lookedFilename, "_d32" );
+#elif __d64__ 
+    strcat( lookedFilename, "_64" );
+#endif
+    strcat( lookedFilename, lookedExtension );
+
+    FILE * file = fopen( lookedFilename, "rb" );
 
     if ( !file ) {
-        CRITICAL_IMAGE_LOAD_MISSING_FILE( _filename );
+
+        strcpy( lookedFilename, _filename );
+
+        file = fopen( lookedFilename, "rb" );
+
+        if ( !file ) {
+            CRITICAL_IMAGE_LOAD_MISSING_FILE( lookedFilename );
+        }
     }
-    
+
     fclose( file );
 
-    unsigned char* source = stbi_load(_filename, &width, &height, &depth, 0);
+    unsigned char* source = stbi_load(lookedFilename, &width, &height, &depth, 0);
 
     if ( !source ) {
         CRITICAL_IMAGE_LOAD_UNKNOWN_FORMAT( _filename );
