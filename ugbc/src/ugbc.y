@@ -847,6 +847,9 @@ exponential:
     | IMAGE LOAD OP String AS String CP {
         $$ = image_load( _environment, $4, $6, ((struct _Environment *)_environment)->currentMode )->name;
       }
+    | IMAGE LOAD OP String OP_COMMA Integer CP {
+        $$ = image_load( _environment, $4, NULL, $6 )->name;
+      }
     | IMAGE LOAD OP String AS String OP_COMMA Integer CP {
         $$ = image_load( _environment, $4, $6, $8 )->name;
       }
