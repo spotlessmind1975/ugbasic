@@ -390,6 +390,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             cpu_store_16bit( _environment, "CURRENTWIDTH", 64 );
             cpu_store_16bit( _environment, "CURRENTHEIGHT", 64 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 1024 );
+            cpu_store_8bit( _environment, "CURRENTSL", 64 / 4 );            
             break;
         // The 128 x 64 Graphics Mode generates a matrix 128 elements wide 
         // by 64 elements high. Each element may be either ON or OFF. However, 
@@ -413,6 +414,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             cpu_store_16bit( _environment, "CURRENTWIDTH", 128 );
             cpu_store_16bit( _environment, "CURRENTHEIGHT", 64 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 1024 );
+            cpu_store_8bit( _environment, "CURRENTSL", 128 / 8 );            
             break;
         // The 128 x 64 Color Graphics mode generates a display matrix 128 
         // elements wide by 64 elements high. Each element may be one of four 
@@ -435,6 +437,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             cpu_store_16bit( _environment, "CURRENTWIDTH", 128 );
             cpu_store_16bit( _environment, "CURRENTHEIGHT", 64 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 2048 );
+            cpu_store_8bit( _environment, "CURRENTSL", 128 / 4 );
             break;
         // The 128 x 96 Graphics mode generates a display matrix 128 
         // elements wide by 96 elements high. Each element may be either 
@@ -458,6 +461,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             cpu_store_16bit( _environment, "CURRENTWIDTH", 128 );
             cpu_store_16bit( _environment, "CURRENTHEIGHT", 96 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 1536 );
+            cpu_store_8bit( _environment, "CURRENTSL", 128 / 8 );
             break;
         // The 128 x 96 Color Graphics mode generates a display 128 elements 
         // wide by 96 elements high. Each element may be one of four colors. 
@@ -480,6 +484,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             cpu_store_16bit( _environment, "CURRENTWIDTH", 128 );
             cpu_store_16bit( _environment, "CURRENTHEIGHT", 96 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 3072 );
+            cpu_store_8bit( _environment, "CURRENTSL", 128 / 4 );
             break;
         // The 128 x 192 Graphics mode generates a display matrix 128 elements 
         // wide by 192 elements high. Each element may be either ON or OFF,
@@ -503,6 +508,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             cpu_store_16bit( _environment, "CURRENTWIDTH", 128 );
             cpu_store_16bit( _environment, "CURRENTHEIGHT", 192 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 3072 );
+            cpu_store_8bit( _environment, "CURRENTSL", 128 / 8 );
             break;
         // The 128 x 192 Color Graphics mode generates a display 128 elements 
         // wide by 192 elements high. Each element may be one of four colors.
@@ -522,6 +528,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             cpu_store_16bit( _environment, "CURRENTWIDTH", 128 );
             cpu_store_16bit( _environment, "CURRENTHEIGHT", 192 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 6144 );
+            cpu_store_8bit( _environment, "CURRENTSL", 128 / 4 );
             break;
         // The 256 x 192 Graphics mode generates a display 256 elements wide by 
         // 192 elements high. Each element may be either ON or OFF, but the ON 
@@ -545,6 +552,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             cpu_store_16bit( _environment, "CURRENTWIDTH", 256 );
             cpu_store_16bit( _environment, "CURRENTHEIGHT", 192 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 6144 );
+            cpu_store_8bit( _environment, "CURRENTSL", 256 / 8 );
             break;
         default:
             CRITICAL_SCREEN_UNSUPPORTED( _screen_mode->id );
@@ -1013,29 +1021,266 @@ static int extract_color_palette(unsigned char* _source, int _width, int _height
 
 static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height ) {
 
+    if ( _width % 8 ) {
+        CRITICAL_IMAGE_CONVERTER_INVALID_WIDTH( _width );
+    }
 
-    // TODO: implementation
+    if ( _height % 8 ) {
+        CRITICAL_IMAGE_CONVERTER_INVALID_HEIGHT( _height );
+    }
+
+    RGBi palette[MAX_PALETTE];
+
+    int colorUsed = extract_color_palette(_source, _width, _height, palette, MAX_PALETTE);
+
+    if (colorUsed > 2) {
+        CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
+    }
+
+    int i, j, k;
+
+    for( i=0; i<colorUsed; ++i ) {
+        int minDistance = 0xffff;
+        int colorIndex = 0;
+        for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
+            int distance = calculate_distance(SYSTEM_PALETTE[j], palette[i]);
+            // printf("%d <-> %d [%d] = %d [min = %d]\n", i, j, SYSTEM_PALETTE[j].index, distance, minDistance );
+            if (distance < minDistance) {
+                // printf(" candidated...\n" );
+                for( k=0; k<i; ++k ) {
+                    if ( palette[k].index == SYSTEM_PALETTE[j].index ) {
+                        // printf(" ...used!\n" );
+                        break;
+                    }
+                }
+                if ( k>=i ) {
+                    // printf(" ...ok! (%d)\n", SYSTEM_PALETTE[j].index );
+                    minDistance = distance;
+                    colorIndex = j;
+                }
+            }
+        }
+        palette[i].index = SYSTEM_PALETTE[colorIndex].index;
+        // printf("%d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
+    }
+
+    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
+ 
+    int bufferSize = 2 + ( ( _width >> 3 ) * _height );
+    // printf("bufferSize = %d\n", bufferSize );
+
+    char * buffer = malloc ( bufferSize );
+    memset( buffer, 0, bufferSize );
+
+    // Position of the pixel in the original image
+    int image_x, image_y;
     
+    // Position of the pixel, in terms of tiles
+    int tile_x, tile_y;
+    
+    // Position of the pixel, in terms of offset and bitmask
+    int offset, bitmask;
 
-    return NULL;
+    // Color of the pixel to convert
+    RGBi rgb;
+
+    *(buffer) = _width;
+    *(buffer+1) = _height;
+
+    // Loop for all the source surface.
+    for (image_y = 0; image_y < _height; ++image_y) {
+        for (image_x = 0; image_x < _width; ++image_x) {
+
+            // Take the color of the pixel
+            rgb.red = *_source;
+            rgb.green = *(_source + 1);
+            rgb.blue = *(_source + 2);
+
+            for( i=0; i<colorUsed; ++i ) {
+                if ( palette[i].red == rgb.red && palette[i].green == rgb.green && palette[i].blue == rgb.blue ) {
+                    break;
+                }
+            }
+
+            // printf("%d", i );
+
+            // Calculate the offset starting from the tile surface area
+            // and the bit to set.
+            offset = ( image_y * ( _width >> 3 ) ) + ( image_x >> 3 );
+            bitmask = 1 << ( 7 - (image_x & 0x7) );
+
+            // If the pixes has enough luminance value, it must be 
+            // considered as "on"; otherwise, it is "off".
+            // int luminance = calculate_luminance(rgb);
+
+            if ( i == 1 ) {
+                *( buffer + offset + 2) |= bitmask;
+                printf("*");
+            } else {
+                *( buffer + offset + 2) &= ~bitmask;
+                printf(" ");
+            }
+
+            _source += 3;
+
+        }
+
+        printf("\n" );
+
+    }
+
+    // printf("----\n");
+
+    variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
+
+    // printf("----\n");
+
+    return result;
 
 }
 
 static Variable * c6847_image_converter_multicolor_mode_standard( Environment * _environment, char * _source, int _width, int _height ) {
 
+    if ( _width % 8 ) {
+        CRITICAL_IMAGE_CONVERTER_INVALID_WIDTH( _width );
+    }
 
-    // TODO: implementation
+    if ( _height % 8 ) {
+        CRITICAL_IMAGE_CONVERTER_INVALID_HEIGHT( _height );
+    }
+
+    RGBi palette[MAX_PALETTE];
+
+    int colorUsed = extract_color_palette(_source, _width, _height, palette, MAX_PALETTE);
+
+    if (colorUsed > 4) {
+        CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
+    }
+
+    int i, j, k;
+
+    for( i=0; i<colorUsed; ++i ) {
+        int minDistance = 0xffff;
+        int colorIndex = 0;
+        for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
+            int distance = calculate_distance(SYSTEM_PALETTE[j], palette[i]);
+            // printf("%d <-> %d [%d] = %d [min = %d]\n", i, j, SYSTEM_PALETTE[j].index, distance, minDistance );
+            if (distance < minDistance) {
+                // printf(" candidated...\n" );
+                for( k=0; k<i; ++k ) {
+                    if ( palette[k].index == SYSTEM_PALETTE[j].index ) {
+                        // printf(" ...used!\n" );
+                        break;
+                    }
+                }
+                if ( k>=i ) {
+                    // printf(" ...ok! (%d)\n", SYSTEM_PALETTE[j].index );
+                    minDistance = distance;
+                    colorIndex = j;
+                }
+            }
+        }
+        palette[i].index = SYSTEM_PALETTE[colorIndex].index;
+        // printf("%d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
+    }
+
+    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
+ 
+    int bufferSize = 2 + ( ( _width >> 2 ) * _height );
     
+    char * buffer = malloc ( bufferSize );
+    memset( buffer, 0, bufferSize );
 
-    return NULL;
+    // Position of the pixel in the original image
+    int image_x, image_y;
+    
+    // Position of the pixel, in terms of tiles
+    int tile_x, tile_y;
+    
+    // Position of the pixel, in terms of offset and bitmask
+    int offset, offsetc, bitmask;
+
+    // Color of the pixel to convert
+    RGBi rgb;
+
+    *(buffer) = _width;
+    *(buffer+1) = _height;
+
+    // Loop for all the source surface.
+    for (image_y = 0; image_y < _height; ++image_y) {
+        for (image_x = 0; image_x < _width; ++image_x) {
+
+            // Take the color of the pixel
+            rgb.red = *_source;
+            rgb.green = *(_source + 1);
+            rgb.blue = *(_source + 2);
+
+            offset = ( image_y * ( _width >> 2 ) ) + ( image_x >> 2 );
+
+            int minDistance = 0xffff;
+            int colorIndex = 0;
+
+            for( i=0; i<colorUsed; ++i ) {
+                if ( palette[i].red == rgb.red && palette[i].green == rgb.green && palette[i].blue == rgb.blue ) {
+                    break;
+                }
+            }
+
+            colorIndex = i;
+
+            printf( "%1.1x", colorIndex );
+
+            bitmask = colorIndex << (6 - ((image_x & 0x3) * 2));
+
+            *(buffer + 2 + offset) |= bitmask;
+
+            _source += 3;
+
+        }
+
+        printf("\n" );
+    }
+
+    // for(i=0; i<4; ++i ) {
+    //     printf( "%1.1x = %2.2x\n", i, palette[i].index );
+    // }
+
+    // printf("\n" );
+    // printf("\n" );
+
+    variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
+
+    return result;
 
 }
 
 Variable * c6847_image_converter( Environment * _environment, char * _data, int _width, int _height, int _mode ) {
 
+    switch( _mode ) {
+        case TILEMAP_MODE_INTERNAL:         // Alphanumeric Internal	32 × 16	2	512
+        case TILEMAP_MODE_EXTERNAL:         // Alphanumeric External	32 × 16	2	512
+        case TILEMAP_MODE_SEMIGRAPHICS4:    // Semigraphics 4	        64 × 32	8	512
+        case TILEMAP_MODE_SEMIGRAPHICS6:    // Semigraphics 6	        64 × 48	4	512
+        case TILEMAP_MODE_SEMIGRAPHICS8:    // Semigraphics 8	        64 × 64	2	512
+        case TILEMAP_MODE_SEMIGRAPHICS12:    // Semigraphics 6	        64 × 96 1	3072
+        case TILEMAP_MODE_SEMIGRAPHICS24:    // Semigraphics 6	        64 × 96 1	3072
+            break;
+        case BITMAP_MODE_COLOR1:            // Color Graphics 1	64 × 64	4	1024
+        case BITMAP_MODE_COLOR2:            // Color Graphics 2	128 × 64	4	2048
+        case BITMAP_MODE_COLOR3:            // Color Graphics 3	128 × 96	4	3072
+        case BITMAP_MODE_COLOR6:            // Color Graphics 6	128 × 192	4	6144
 
-    // TODO: implementation
-    
+            return c6847_image_converter_multicolor_mode_standard( _environment, _data, _width, _height );
+            break;
+
+        case BITMAP_MODE_RESOLUTION1:       // Resolution Graphics 1	128 × 64	1 + Black	1024
+        case BITMAP_MODE_RESOLUTION2:       // Resolution Graphics 2 128 × 96	1 + Black	1536
+        case BITMAP_MODE_RESOLUTION3:       // Resolution Graphics 3	128 × 192	1 + Black	3072
+        case BITMAP_MODE_RESOLUTION6:       // Resolution Graphics 6	256 × 192	1 + Black	6144            break;
+
+            return c6847_image_converter_bitmap_mode_standard( _environment, _data, _width, _height );
+
+    }
 
     CRITICAL_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
 
@@ -1043,10 +1288,17 @@ Variable * c6847_image_converter( Environment * _environment, char * _data, int 
 
 void c6847_put_image( Environment * _environment, char * _image, char * _x, char * _y ) {
 
+    deploy( c6847vars, src_hw_6847_vars_asm);
+    deploy( image, src_hw_6847_image_asm );
 
-    // TODO: implementation
+    outline1("LDY #%s", _image );
+    outline1("LDD %s", _x );
+    outline0("STD IMAGEX" );
+    outline1("LDD %s", _y );
+    outline0("STD IMAGEY" );
+
+    outline0("JSR PUTIMAGE");
     
-
 }
 
 #endif

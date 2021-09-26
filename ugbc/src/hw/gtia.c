@@ -1682,7 +1682,7 @@ Variable * gtia_image_converter( Environment * _environment, char * _data, int _
         // register #4. Each pixel is one scan line high and one color clock wide. This mode's advantages are that it 
         // only uses 4K of screen memory and doesn't have artifacting problems.
         case BITMAP_MODE_ANTIC12:
-            return gtia_image_converter_bitmap_mode_standard( _environment, _data, _width, _height );
+            return gtia_image_converter_multicolor_mode_standard( _environment, _data, _width, _height );
 
         // Antic E (Graphics 15-XL computers only)
         // This four-color, bit-mapped mode is sometimes known as BASIC 7 1/2. Its resolution is 160 x 192 or twice that of 

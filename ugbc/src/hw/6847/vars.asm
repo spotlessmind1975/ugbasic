@@ -50,6 +50,7 @@ LASTCOLOR fcb 0
 CURRENTWIDTH      fdb 32
 CURRENTHEIGHT      fdb 16
 CURRENTFRAMESIZE   fdb 32*16
+CURRENTSL          fdb 32
 
 ; ------------------------------------------------------------------------------
 ; BITMAP MODE (MODE #2)
