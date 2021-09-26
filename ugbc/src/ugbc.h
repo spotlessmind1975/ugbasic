@@ -1690,6 +1690,7 @@ void                    tiles_at_var( Environment * _environment, char * _addres
 Variable *              variable_add( Environment * _environment, char * _source, char * _dest );
 Variable *              variable_and( Environment * _environment, char * _left, char * _right );
 Variable *              variable_and_const( Environment * _environment, char * _source, int _mask );
+void                    variable_array_fill( Environment * _environment, char * _name, int _value );
 Variable *              variable_array_type( Environment * _environment, char *_name, VariableType _type );
 Variable *              variable_bin( Environment * _environment, char * _value, char * _digits );
 Variable *              variable_bit( Environment * _environment, char * _value, char * _position );

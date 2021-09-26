@@ -94,7 +94,7 @@ void target_linkage( Environment * _environment ) {
         sprintf(executableName, "%s", "cl65" );
     }
 
-    sprintf( commandLine, "%s -o %s -u __EXEHDR__ -t c64 -C %s %s",
+    sprintf( commandLine, "%s -g -Ln main.lbl -l main.lst -o %s -u __EXEHDR__ -t c64 -C %s %s",
         executableName,
         _environment->exeFileName, 
         _environment->configurationFileName, 

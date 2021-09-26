@@ -187,6 +187,161 @@ void cpu6809_fill( Environment * _environment, char * _address, char * _bytes, c
 
 }
 
+/**
+ * @brief <i>CPU 6809</i>: emit code to fill up a memory area
+ * 
+ * This function can be used to output a piece of code that fills a given 
+ * memory area with a given pattern (pattern size: 1 byte). The starting 
+ * address must be contained in a variable, while the area must be a multiple 
+ * of 256 bytes.
+ * 
+ * @param _environment Current calling environment
+ * @param _address Starting address
+ * @param _bytes Number of bytes to fill
+ * @param _pattern Pattern to use
+ */
+void cpu6809_fill_size( Environment * _environment, char * _address, int _bytes, char * _pattern ) {
+
+    MAKE_LABEL
+
+    outline1("LDB #$%2.2x", _bytes);
+    outline0("LDA #0");
+    outline0("LEAY D,Y");
+    outline1("LDA %s", _pattern );
+    outline1("LDX %s", _address);
+    outhead1("%s", label);
+    outhead1("%sinner", label);
+    outline0("DECB");
+    outline0("STA B,X");
+    outline0("CMPB #$ff");
+    outline1("BNE %sinner", label);
+
+}
+
+/**
+ * @brief <i>CPU 6809</i>: emit code to fill up a memory area
+ * 
+ * This function can be used to output a piece of code that fills a given 
+ * memory area with a given pattern (pattern size: 1 byte). The starting 
+ * address must be contained in a variable, while the area must be a multiple 
+ * of 256 bytes.
+ * 
+ * @param _environment Current calling environment
+ * @param _address Starting address
+ * @param _bytes Number of bytes to fill
+ * @param _pattern Pattern to use
+ */
+void cpu6809_fill_size_value( Environment * _environment, char * _address, int _bytes, int _pattern ) {
+
+    MAKE_LABEL
+
+    outline1("LDB #$%2.2x", _bytes);
+    outline0("LDA #0");
+    outline0("LEAY D,Y");
+    outline1("LDA #$%2.2x", _pattern );
+    outline1("LDX %s", _address);
+    outhead1("%s", label);
+    outhead1("%sinner", label);
+    outline0("DECB");
+    outline0("STA B,X");
+    outline0("CMPB #$ff");
+    outline1("BNE %sinner", label);
+
+}
+
+/**
+ * @brief <i>CPU 6809</i>: emit code to fill up a memory area
+ * 
+ * This function can be used to output a piece of code that fills a given 
+ * memory area with a given pattern (pattern size: 1 byte). The starting 
+ * address must be contained in a variable, while the area must be a multiple 
+ * of 256 bytes.
+ * 
+ * @param _environment Current calling environment
+ * @param _address Starting address
+ * @param _bytes Number of bytes to fill
+ * @param _pattern Pattern to use
+ */
+void cpu6809_fill_direct( Environment * _environment, char * _address, char * _bytes, char * _pattern ) {
+
+    MAKE_LABEL
+
+    outline1("LDB %s", _bytes);
+    outline0("LDA #0");
+    outline0("LEAY D,Y");
+    outline1("LDA %s", _pattern );
+    outline1("LDX #%s", _address);
+    outhead1("%s", label);
+    outhead1("%sinner", label);
+    outline0("DECB");
+    outline0("STA B,X");
+    outline0("CMPB #$ff");
+    outline1("BNE %sinner", label);
+
+}
+
+/**
+ * @brief <i>CPU 6809</i>: emit code to fill up a memory area
+ * 
+ * This function can be used to output a piece of code that fills a given 
+ * memory area with a given pattern (pattern size: 1 byte). The starting 
+ * address must be contained in a variable, while the area must be a multiple 
+ * of 256 bytes.
+ * 
+ * @param _environment Current calling environment
+ * @param _address Starting address
+ * @param _bytes Number of bytes to fill
+ * @param _pattern Pattern to use
+ */
+void cpu6809_fill_direct_size( Environment * _environment, char * _address, int _bytes, char * _pattern ) {
+
+    MAKE_LABEL
+
+    outline1("LDB #$%2.2x", _bytes);
+    outline0("LDA #0");
+    outline0("LEAY D,Y");
+    outline1("LDA %s", _pattern );
+    outline1("LDX #%s", _address);
+    outhead1("%s", label);
+    outhead1("%sinner", label);
+    outline0("DECB");
+    outline0("STA B,X");
+    outline0("CMPB #$ff");
+    outline1("BNE %sinner", label);
+
+}
+
+/**
+ * @brief <i>CPU 6809</i>: emit code to fill up a memory area
+ * 
+ * This function can be used to output a piece of code that fills a given 
+ * memory area with a given pattern (pattern size: 1 byte). The starting 
+ * address must be contained in a variable, while the area must be a multiple 
+ * of 256 bytes.
+ * 
+ * @param _environment Current calling environment
+ * @param _address Starting address
+ * @param _bytes Number of bytes to fill
+ * @param _pattern Pattern to use
+ */
+void cpu6809_fill_direct_size_value( Environment * _environment, char * _address, int _bytes, int _pattern ) {
+
+    MAKE_LABEL
+
+    outline1("LDB #$%2.2x", _bytes);
+    outline0("LDA #0");
+    outline0("LEAY D,Y");
+    outline1("LDA #$%2.2x", _pattern );
+    outline1("LDX #%s", _address);
+    outhead1("%s", label);
+    outhead1("%sinner", label);
+    outline0("DECB");
+    outline0("STA B,X");
+    outline0("CMPB #$ff");
+    outline1("BNE %sinner", label);
+
+}
+
 /*****************************************************************************
  * 8 BIT MANIPULATION
  ****************************************************************************/

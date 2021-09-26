@@ -3915,3 +3915,25 @@ void const_define_string( Environment * _environment, char * _name, char * _valu
     }
 
 }
+
+void variable_array_fill( Environment * _environment, char * _name, int _value ) {
+    
+    Variable * array = variable_retrieve( _environment, _name );
+
+    if ( array->type != VT_ARRAY ) {
+        CRITICAL_NOT_ARRAY( array->name );
+    }
+
+    int i, bytes = 1;
+    for( i=0; i<array->arrayDimensions; ++i ) {
+        bytes *= array->arrayDimensionsEach[i];
+    }
+    bytes *= VT_BITWIDTH( array->arrayType ) >> 3;
+
+    if ( bytes > 0 ) {
+        cpu_fill_direct_size_value( _environment, array->realName, bytes, _value );
+    } else {
+        CRITICAL_NOT_SUPPORTED( array->name );
+    }
+
+}

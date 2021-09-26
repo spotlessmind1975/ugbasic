@@ -255,6 +255,256 @@ void cpu6502_fill( Environment * _environment, char * _address, char * _bytes, c
 
 }
 
+/**
+ * @brief <i>CPU 6502</i>: emit code to fill up a memory area
+ * 
+ * This function can be used to output a piece of code that fills a given 
+ * memory area with a given pattern (pattern size: 1 byte). The starting 
+ * address must be contained in a variable, while the area must be a multiple 
+ * of 256 bytes.
+ * 
+ * @param _environment Current calling environment
+ * @param _address Starting address
+ * @param _bytes Number of bytes to fill
+ * @param _pattern Pattern to use
+ */
+void cpu6502_fill_size( Environment * _environment, char * _address, int _bytes, char * _pattern ) {
+
+    MAKE_LABEL
+
+    inline( cpu_fill )
+
+        // Use the current bitmap address as starting address for filling routine.
+        outline1("LDA %s", _address);
+        outline0("STA TMPPTR");
+        outline1("LDA %s+1", _address);
+        outline0("STA TMPPTR+1");
+
+        outline1("LDA %s", _pattern);
+
+        // Fill the bitmap with the given pattern.
+        outline1("LDX #$%2.2x", _bytes );
+        outline0("LDY #0");
+        outhead1("%sx:", label);
+        outline0("STA (TMPPTR),Y");
+        outline0("INY");
+        outline0("DEX");
+        outline1("BNE %sx", label);
+
+    embedded( cpu_fill, src_hw_6502_cpu_fill_asm );
+
+        outline1("LDA %s", _address);
+        outline0("STA TMPPTR");
+        outline1("LDA %s+1", _address);
+        outline0("STA TMPPTR+1");
+        outline1("LDX #$%2.2x", _bytes );
+        outline1("LDA %s", _pattern);
+        outline0("JSR CPUFILL");
+
+    done()
+
+}
+
+/**
+ * @brief <i>CPU 6502</i>: emit code to fill up a memory area
+ * 
+ * This function can be used to output a piece of code that fills a given 
+ * memory area with a given pattern (pattern size: 1 byte). The starting 
+ * address must be contained in a variable, while the area must be a multiple 
+ * of 256 bytes.
+ * 
+ * @param _environment Current calling environment
+ * @param _address Starting address
+ * @param _bytes Number of bytes to fill
+ * @param _pattern Pattern to use
+ */
+void cpu6502_fill_size_value( Environment * _environment, char * _address, int _bytes, int _pattern ) {
+
+    MAKE_LABEL
+
+    inline( cpu_fill )
+
+        // Use the current bitmap address as starting address for filling routine.
+        outline1("LDA %s", _address);
+        outline0("STA TMPPTR");
+        outline1("LDA %s+1", _address);
+        outline0("STA TMPPTR+1");
+
+        outline1("LDA #$%2.2x", _pattern);
+
+        // Fill the bitmap with the given pattern.
+        outline1("LDX #$%2.2x", _bytes );
+        outline0("LDY #0");
+        outhead1("%sx:", label);
+        outline0("STA (TMPPTR),Y");
+        outline0("INY");
+        outline0("DEX");
+        outline1("BNE %sx", label);
+
+    embedded( cpu_fill, src_hw_6502_cpu_fill_asm );
+
+        outline1("LDA %s", _address);
+        outline0("STA TMPPTR");
+        outline1("LDA %s+1", _address);
+        outline0("STA TMPPTR+1");
+        outline1("LDX #$%2.2x", _bytes );
+        outline1("LDA #$%2.2x", _pattern);
+        outline0("JSR CPUFILL");
+
+    done()
+
+}
+
+/**
+ * @brief <i>CPU 6502</i>: emit code to fill up a memory area
+ * 
+ * This function can be used to output a piece of code that fills a given 
+ * memory area with a given pattern (pattern size: 1 byte). The starting 
+ * address must be contained in a variable, while the area must be a multiple 
+ * of 256 bytes.
+ * 
+ * @param _environment Current calling environment
+ * @param _address Starting address
+ * @param _bytes Number of bytes to fill
+ * @param _pattern Pattern to use
+ */
+void cpu6502_fill_direct( Environment * _environment, char * _address, char * _bytes, char * _pattern ) {
+
+    MAKE_LABEL
+
+    inline( cpu_fill )
+
+        // Use the current bitmap address as starting address for filling routine.
+        outline1("LDA <#%s", _address);
+        outline0("STA TMPPTR");
+        outline1("LDA >#%s", _address);
+        outline0("STA TMPPTR+1");
+
+        outline1("LDA %s", _pattern);
+
+        // Fill the bitmap with the given pattern.
+        outline1("LDX %s", _bytes );
+        outline0("LDY #0");
+        outhead1("%sx:", label);
+        outline0("STA (TMPPTR),Y");
+        outline0("INY");
+        outline0("DEX");
+        outline1("BNE %sx", label);
+
+    embedded( cpu_fill, src_hw_6502_cpu_fill_asm );
+
+        outline1("LDA #<%s", _address);
+        outline0("STA TMPPTR");
+        outline1("LDA #>%s", _address);
+        outline0("STA TMPPTR+1");
+        outline1("LDX %s", _bytes );
+        outline1("LDA %s", _pattern);
+        outline0("JSR CPUFILL");
+
+    done()
+
+}
+
+/**
+ * @brief <i>CPU 6502</i>: emit code to fill up a memory area
+ * 
+ * This function can be used to output a piece of code that fills a given 
+ * memory area with a given pattern (pattern size: 1 byte). The starting 
+ * address must be contained in a variable, while the area must be a multiple 
+ * of 256 bytes.
+ * 
+ * @param _environment Current calling environment
+ * @param _address Starting address
+ * @param _bytes Number of bytes to fill
+ * @param _pattern Pattern to use
+ */
+void cpu6502_fill_direct_size( Environment * _environment, char * _address, int _bytes, char * _pattern ) {
+
+    MAKE_LABEL
+
+    inline( cpu_fill )
+
+        // Use the current bitmap address as starting address for filling routine.
+        outline1("LDA #<%s", _address);
+        outline0("STA TMPPTR");
+        outline1("LDA #>%s", _address);
+        outline0("STA TMPPTR+1");
+
+        outline1("LDA %s", _pattern);
+
+        // Fill the bitmap with the given pattern.
+        outline1("LDX #$%2.2x", _bytes );
+        outline0("LDY #0");
+        outhead1("%sx:", label);
+        outline0("STA (TMPPTR),Y");
+        outline0("INY");
+        outline0("DEX");
+        outline1("BNE %sx", label);
+
+    embedded( cpu_fill, src_hw_6502_cpu_fill_asm );
+
+        outline1("LDA #<%s", _address);
+        outline0("STA TMPPTR");
+        outline1("LDA #>%s", _address);
+        outline0("STA TMPPTR+1");
+        outline1("LDX #$%2.2x", _bytes );
+        outline1("LDA %s", _pattern);
+        outline0("JSR CPUFILL");
+
+    done()
+
+}
+
+/**
+ * @brief <i>CPU 6502</i>: emit code to fill up a memory area
+ * 
+ * This function can be used to output a piece of code that fills a given 
+ * memory area with a given pattern (pattern size: 1 byte). The starting 
+ * address must be contained in a variable, while the area must be a multiple 
+ * of 256 bytes.
+ * 
+ * @param _environment Current calling environment
+ * @param _address Starting address
+ * @param _bytes Number of bytes to fill
+ * @param _pattern Pattern to use
+ */
+void cpu6502_fill_direct_size_value( Environment * _environment, char * _address, int _bytes, int _pattern ) {
+
+    MAKE_LABEL
+
+    inline( cpu_fill )
+
+        // Use the current bitmap address as starting address for filling routine.
+        outline1("LDA #<%s", _address);
+        outline0("STA TMPPTR");
+        outline1("LDA #>%s", _address);
+        outline0("STA TMPPTR+1");
+
+        outline1("LDA #$%2.2x", _pattern);
+
+        // Fill the bitmap with the given pattern.
+        outline1("LDX #$%2.2x", _bytes );
+        outline0("LDY #0");
+        outhead1("%sx:", label);
+        outline0("STA (TMPPTR),Y");
+        outline0("INY");
+        outline0("DEX");
+        outline1("BNE %sx", label);
+
+    embedded( cpu_fill, src_hw_6502_cpu_fill_asm );
+
+        outline1("LDA #<%s", _address);
+        outline0("STA TMPPTR");
+        outline1("LDA #>%s", _address);
+        outline0("STA TMPPTR+1");
+        outline1("LDX #$%2.2x", _bytes );
+        outline1("LDA #$%2.2x", _pattern);
+        outline0("JSR CPUFILL");
+
+    done()
+
+}
+
 /*****************************************************************************
  * 8 BIT MANIPULATION
  ****************************************************************************/

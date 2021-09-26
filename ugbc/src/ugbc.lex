@@ -140,6 +140,7 @@ F5 { return (F5); }
 F6 { return (F6); }
 F7 { return (F7); }
 F8 { return (F8); }
+FILL { return (FILL); }
 FIRE { return(FIRE); }
 FLIP { return(FLIP); }
 FLIP\$ { return(FLIP); }
