@@ -1228,7 +1228,7 @@ static Variable * c6847_image_converter_multicolor_mode_standard( Environment * 
 
             colorIndex = i;
 
-            printf( "%1.1x", colorIndex );
+            // printf( "%1.1x", colorIndex );
 
             bitmask = colorIndex << (6 - ((image_x & 0x3) * 2));
 
@@ -1238,7 +1238,7 @@ static Variable * c6847_image_converter_multicolor_mode_standard( Environment * 
 
         }
 
-        printf("\n" );
+        // printf("\n" );
     }
 
     // for(i=0; i<4; ++i ) {
