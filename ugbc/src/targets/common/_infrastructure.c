@@ -1711,6 +1711,11 @@ Variable * variable_mul2_const( Environment * _environment, char * _destination,
     }
 
     Variable * destination = variable_retrieve( _environment, _destination );
+
+    if ( _steps == 0 ) {
+        return destination;
+    }
+
     switch( VT_BITWIDTH( destination->type ) ) {
         case 32:
             cpu_math_mul2_const_32bit( _environment, destination->realName, _steps, VT_SIGNED( destination->type ) );
