@@ -227,6 +227,7 @@ N { return (N); }
 NEXT { return (NEXT); }
 NORMAL { return(NORMAL); }
 NONE { return(NONE); }
+NOP { return(NOP); }
 NOT { return(NOT); }
 O { return (O); }
 OF { return (OF); }

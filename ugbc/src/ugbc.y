@@ -50,7 +50,7 @@ extern char DATATYPE_AS_STRING[][16];
 %token POUND RUNSTOP RUN STOP SEMICOLON SLASH KEY STATE KEYSTATE KEYSHIFT CAPSLOCK CAPS LOCK ALT
 %token INPUT FREE TILEMAP EMPTY TILE EMPTYTILE PLOT GR CIRCLE DRAW LINE BOX POLYLINE ELLIPSE CLIP
 %token BACK DEBUG CAN ELSEIF BUFFER LOAD SIZE MOB IMAGE PUT VISIBLE HIDDEN HIDE SHOW RENDER
-%token SQR TI CONST VBL POKE
+%token SQR TI CONST VBL POKE NOP
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -2427,7 +2427,7 @@ poke_definition :
       expr OP_COMMA expr {
         poke_var( _environment, $1, $3 );
     };
-
+  
 statement:
     BANK bank_definition
   | RASTER raster_definition
@@ -2468,6 +2468,9 @@ statement:
   }
   | ADD add_definition
   | POKE poke_definition
+  | NOP {
+      outline0( "NOP" );
+  }
   | PRINT print_definition
   | PRINT {
       print_newline( _environment );
