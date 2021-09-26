@@ -2815,6 +2815,7 @@ void cpu6502_dec_16bit( Environment * _environment, char * _variable ) {
     inline( cpu_dec_16bit )
 
         outline1("DEC %s", _variable );
+        outline0("CMP #$FF" );
         outline1("BNE %s", label );
         outline1("DEC %s+1", _variable );
         outhead1("%s:", label );
