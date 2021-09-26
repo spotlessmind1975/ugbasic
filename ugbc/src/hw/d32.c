@@ -115,6 +115,7 @@ void d32_inkey( Environment * _environment, char * _pressed, char * _key ) {
     outline0("CMPA $011d" );
     outline1("BNE %sdifferent", label );
     outline0("INC $011f" );
+    outline0("LDB $011f" );
     outline0("CMPB #$7f" );
     outline1("BEQ %sascii", label );
     outline0("LDA #0" );
