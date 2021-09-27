@@ -79,6 +79,7 @@ DSALLOCOK:
 DSFREE:
     LDA #$0
     STA DESCRIPTORS_STATUS,X
+    STA DESCRIPTORS_SIZE,X
     RTS
 
 ; DSWRITE(X)
@@ -144,7 +145,7 @@ DSGW:
     LDA #>WORKING
     STA DSBANKHI
     RTS
-    
+
 ; DSGC()
 DSGC:
     LDA #<max_free_string
