@@ -18,6 +18,7 @@
 "," { return(OP_COMMA); }
 "=" { return(OP_ASSIGN); }
 "==" { return(OP_EQUAL); }
+":=" { return(OP_ASSIGN_DIRECT); }
 "+" { return(OP_PLUS); }
 "-" { return(OP_MINUS); }
 "++" { return(OP_INC); }

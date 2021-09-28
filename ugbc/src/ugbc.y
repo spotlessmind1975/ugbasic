@@ -30,7 +30,7 @@ extern char DATATYPE_AS_STRING[][16];
 %token Remark
 %token NewLine 
 %token OP_SEMICOLON OP_COLON OP_COMMA OP_PLUS OP_MINUS OP_INC OP_DEC OP_EQUAL OP_ASSIGN OP_LT OP_LTE OP_GT OP_GTE 
-%token OP_DISEQUAL OP_MULTIPLICATION OP_DOLLAR OP_DIVISION QM HAS IS OF OP_HASH OP_POW 
+%token OP_DISEQUAL OP_MULTIPLICATION OP_DOLLAR OP_DIVISION QM HAS IS OF OP_HASH OP_POW OP_ASSIGN_DIRECT
 
 %token RASTER DONE AT COLOR BORDER WAIT NEXT WITH BANK SPRITE DATA FROM OP CP 
 %token ENABLE DISABLE HALT ECM BITMAP SCREEN ON OFF ROWS VERTICAL SCROLL VAR AS TEMPORARY 
@@ -78,7 +78,7 @@ extern char DATATYPE_AS_STRING[][16];
 %right Integer String CP 
 %left OP_DOLLAR
 %left OP
-%right THEN ELSE
+%right THEN ELSE OP_ASSIGN_DIRECT
 %left OP_POW
 %left OP_MULTIPLICATION OP_DIVISION
 %left MOD
@@ -2786,6 +2786,25 @@ statement:
         Variable * expr = variable_retrieve( _environment, $3 );
         variable_retrieve_or_define( _environment, $1, expr->type, 0 )->name;
         variable_move( _environment, $3, $1 );
+  }
+  | Identifier OP_ASSIGN_DIRECT expr  {
+        Variable * expr = variable_retrieve( _environment, $3 );
+        Variable * var = variable_retrieve_or_define( _environment, $1, expr->type, 0 );
+        var->value = expr->value;
+        if ( expr->valueString ) {
+            var->valueString = strdup( expr->valueString );
+        }
+        var->size = expr->size;
+        if ( expr->valueBuffer ) {
+            var->valueBuffer = malloc( expr->size );
+            memcpy( var->valueBuffer, expr->valueBuffer, expr->size );
+        }
+        var->absoluteAddress = expr->absoluteAddress;
+        var->bank = expr->bank;
+        var->memoryArea = expr->memoryArea;
+        var->arrayDimensions = expr->arrayDimensions;
+        memcpy( var->arrayDimensionsEach, expr->arrayDimensionsEach, MAX_ARRAY_DIMENSIONS * sizeof( int ) );
+        var->arrayType = expr->arrayType;
   }
   | Identifier OP_DOLLAR OP_ASSIGN expr {
         Variable * expr = variable_retrieve( _environment, $4 );
