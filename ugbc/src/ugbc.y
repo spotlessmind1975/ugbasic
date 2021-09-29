@@ -2907,7 +2907,7 @@ program :
 
 void show_usage_and_exit( int _argc, char *_argv[] ) {
 
-    char version[MAX_TEMPORARY_STORAGE] = "v1.3-beta";
+    char version[MAX_TEMPORARY_STORAGE] = "v1.3.1-beta";
 
 #if defined(__atari__) 
     char target[MAX_TEMPORARY_STORAGE] = "ATARI 400/800";
