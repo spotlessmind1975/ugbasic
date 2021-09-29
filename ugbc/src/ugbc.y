@@ -2609,10 +2609,16 @@ statement:
       exit_procedure( _environment );
   }
   | EXIT PROC IF expr {
-      exit_proc_if( _environment, $4 );  
+      exit_proc_if( _environment, $4, NULL );  
   }
   | EXIT PROCEDURE IF expr {
-      exit_proc_if( _environment, $4 );  
+      exit_proc_if( _environment, $4, NULL );  
+  }
+  | EXIT PROC WITH expr IF expr {
+      exit_proc_if( _environment, $6, $4 );  
+  }
+  | EXIT PROCEDURE WITH expr IF expr {
+      exit_proc_if( _environment, $6, $4 );  
   }
   | EXIT IF expr {
       exit_loop_if( _environment, $3, 0 );  

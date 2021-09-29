@@ -69,7 +69,7 @@ in base a delle condizioni: tale istruzione uscirà
 @target all
 </usermanual> */
 
-void exit_proc_if( Environment * _environment, char * _expression ) {
+void exit_proc_if( Environment * _environment, char * _expression, char * _value ) {
 
     MAKE_LABEL
 
@@ -77,7 +77,11 @@ void exit_proc_if( Environment * _environment, char * _expression ) {
 
     cpu_bveq( _environment,  expression->realName, label );
 
-    cpu_return( _environment );
+    if ( _value ) {
+        return_procedure( _environment, _value );
+    } else {
+        cpu_return( _environment );
+    }
 
     cpu_label( _environment, label );
 

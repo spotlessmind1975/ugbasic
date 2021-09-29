@@ -1471,7 +1471,7 @@ void                    every_ticks_call( Environment * _environment, char * _ti
 void                    every_ticks_gosub( Environment * _environment, char * _timing, char * _label );
 void                    exit_loop( Environment * _environment, int _number );
 void                    exit_loop_if( Environment * _environment, char * _expression, int _number );
-void                    exit_proc_if( Environment * _environment, char * _expression );
+void                    exit_proc_if( Environment * _environment, char * _expression, char * _value );
 void                    exit_procedure( Environment * _environment );
 
 //----------------------------------------------------------------------------
