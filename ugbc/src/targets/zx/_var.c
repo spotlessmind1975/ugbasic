@@ -113,7 +113,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         CRITICAL_DATATYPE_UNSUPPORTED("array(5)", DATATYPE_AS_STRING[variable->arrayType]);
                     }
                     if ( variable->value ) {
-                        outline2("%s: defs %d, $%2.2x", variable->realName, size, (unsigned char)(variable->value&0xff));
+                        outline3("%s: defs %d, $%2.2x", variable->realName, size, (unsigned char)(variable->value&0xff));
                     } else {
                         outline2("%s: defs %d", variable->realName, size);
                     }
