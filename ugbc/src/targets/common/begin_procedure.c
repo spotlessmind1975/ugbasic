@@ -130,6 +130,7 @@ void begin_procedure( Environment * _environment, char * _name ) {
 
     _environment->procedureName = strdup( _name );
     _environment->procedureVariables = NULL;
+    ++_environment->currentProcedure;
 
     char procedureAfterLabel[MAX_TEMPORARY_STORAGE]; sprintf(procedureAfterLabel, "%safter", _environment->procedureName );
     char procedureLabel[MAX_TEMPORARY_STORAGE]; sprintf(procedureLabel, "%s", _environment->procedureName );

@@ -161,6 +161,7 @@ typedef enum _VariableType {
 #define MAX_PARAMETERS                  256
 #define MAX_PALETTE                     256
 #define MAX_NESTED_ARRAYS               16
+#define MAX_PROCEDURES                  4096
 
 #define VT_BW_8BIT( t, v )              ( ( (t) == (v) ) ? 8 : 0 )
 #define VT_BW_16BIT( t, v )             ( ( (t) == (v) ) ? 16 : 0 )
@@ -877,9 +878,15 @@ typedef struct _Environment {
     Variable * tempResidentVariables;
 
     /**
-     * List of temporary (and reusable) variables.
+     * Current procedure (for temporary variables),
+     * 0 = main program
      */
-    Variable * tempVariables;
+    int currentProcedure;
+    
+    /**
+     * List of temporary (and reusable) variables (per procedure).
+     */
+    Variable * tempVariables[MAX_PROCEDURES];
 
     /**
      * List of constants defined in the program.

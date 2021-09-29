@@ -408,7 +408,13 @@ Variable * variable_define_local( Environment * _environment, char * _name, Vari
 
 Variable * variable_retrieve_by_realname( Environment * _environment, char * _name ) {
 
-    Variable * var = variable_find_by_realname( _environment->tempVariables, _name );
+    Variable * var = NULL;
+    if ( _environment->procedureName ) {
+        var = variable_find_by_realname( _environment->tempVariables[_environment->currentProcedure], _name );
+    } else {
+        var = variable_find_by_realname( _environment->tempVariables[0], _name );
+    }
+
     if ( ! var ) {
         var = variable_find_by_realname( _environment->tempResidentVariables, _name );
     }
@@ -444,7 +450,12 @@ Variable * variable_retrieve( Environment * _environment, char * _name ) {
     }
 
     int isGlobal = 0;
-    Variable * var = variable_find( _environment->tempVariables, _name );
+    Variable * var = NULL;
+    if ( _environment->procedureName ) {
+        var = variable_find( _environment->tempVariables[_environment->currentProcedure], _name );
+    } else {
+        var = variable_find( _environment->tempVariables[0], _name );
+    }
     if ( ! var ) {
         var = variable_find( _environment->tempResidentVariables, _name );
     }
@@ -480,7 +491,12 @@ Variable * variable_retrieve( Environment * _environment, char * _name ) {
 
 Variable * variable_retrieve_or_define( Environment * _environment, char * _name, VariableType _type, int _value ) {
 
-    Variable * var = variable_find( _environment->tempVariables, _name );
+    Variable * var = NULL;
+    if ( _environment->procedureName ) {
+        var = variable_find( _environment->tempVariables[_environment->currentProcedure], _name );
+    } else {
+        var = variable_find( _environment->tempVariables[0], _name );
+    }
     if ( !var ) {
         var = variable_find( _environment->tempResidentVariables, _name );
     }
@@ -557,7 +573,11 @@ Variable * variable_retrieve_or_define( Environment * _environment, char * _name
  * @param _environment Current calling environment
  */
 void variable_reset( Environment * _environment ) {
-    variable_reset_pool( _environment, _environment->tempVariables );        
+    if ( _environment->procedureName ) {
+        variable_reset_pool( _environment, _environment->tempVariables[_environment->currentProcedure] );
+    } else {
+        variable_reset_pool( _environment, _environment->tempVariables[0] );
+    }    
 }
 
 Variable * variable_array_type( Environment * _environment, char *_name, VariableType _type ) {
@@ -605,7 +625,12 @@ Variable * variable_array_type( Environment * _environment, char *_name, Variabl
  * @return Variable* The variable definition
  */
 Variable * variable_temporary( Environment * _environment, VariableType _type, char * _meaning ) {
-    Variable * var = variable_find_first_unused( _environment->tempVariables, _type );
+    Variable * var = NULL;
+    if ( _environment->procedureName ) {
+        var = variable_find_first_unused( _environment->tempVariables[_environment->currentProcedure], _type );
+    } else {
+        var = variable_find_first_unused( _environment->tempVariables[0], _type );
+    }    
     if ( var ) {
         var->meaningName = _meaning;
     } else {
@@ -630,14 +655,23 @@ Variable * variable_temporary( Environment * _environment, VariableType _type, c
         var->meaningName = _meaning;
         var->type = _type;
         var->bank = _environment->banks[BT_TEMPORARY];
-        Variable * varLast = _environment->tempVariables;
+        Variable * varLast = NULL;
+        if ( _environment->procedureName ) {
+            varLast = _environment->tempVariables[_environment->currentProcedure];
+        } else {
+            varLast = _environment->tempVariables[0];
+        }        
         if ( varLast ) {
             while( varLast->next ) {
                 varLast = varLast->next;
             }
             varLast->next = var;
         } else {
-            _environment->tempVariables = var;
+            if ( _environment->procedureName ) {
+                _environment->tempVariables[_environment->currentProcedure] = var;
+            } else {
+                _environment->tempVariables[0] = var;
+            }                
         }
         memory_area_assign( _environment->memoryAreas, var );
     }

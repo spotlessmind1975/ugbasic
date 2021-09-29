@@ -161,11 +161,12 @@ void variable_cleanup( Environment * _environment ) {
                     outhead0("max_free_string = 4");
                 }
 
-                Variable * variable = _environment->tempVariables;
+                for( i=0; i< (_environment->currentProcedure+1); ++i ) {
+                    Variable * variable = _environment->tempVariables[i];
+                    variable_cleanup_entry( _environment, variable );
+                } 
 
-                variable_cleanup_entry( _environment, variable );
-
-                variable = _environment->tempResidentVariables;
+                Variable * variable = _environment->tempResidentVariables;
 
                 variable_cleanup_entry( _environment, variable );
 
