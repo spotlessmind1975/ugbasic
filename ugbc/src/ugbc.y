@@ -169,28 +169,28 @@ const_factor:
 
 expr : 
       expr_math
-    | expr_math AND expr_math {        
+    | expr_math AND expr {        
         $$ = variable_and( _environment, $1, $3 )->name;
     } 
-    | expr_math OR expr_math {
+    | expr_math OR expr {
         $$ = variable_or( _environment, $1, $3 )->name;
     } 
-    | expr_math OP_EQUAL expr_math {
+    | expr_math OP_EQUAL expr {
         $$ = variable_compare( _environment, $1, $3 )->name;
     }
-    | expr_math OP_DISEQUAL expr_math {
+    | expr_math OP_DISEQUAL expr {
         $$ = variable_compare_not( _environment, $1, $3 )->name;
     }
-    | expr_math OP_LT expr_math {
+    | expr_math OP_LT expr {
         $$ = variable_less_than( _environment, $1, $3, 0 )->name;
     }
-    | expr_math OP_LTE expr_math {
+    | expr_math OP_LTE expr {
         $$ = variable_less_than( _environment, $1, $3, 1 )->name;
     }
-    | expr_math OP_GT expr_math {
+    | expr_math OP_GT expr {
         $$ = variable_greater_than( _environment, $1, $3, 0 )->name;
     }
-    | expr_math OP_GTE expr_math {
+    | expr_math OP_GTE expr {
         $$ = variable_greater_than( _environment, $1, $3, 0 )->name;
     }
     | NOT expr {
