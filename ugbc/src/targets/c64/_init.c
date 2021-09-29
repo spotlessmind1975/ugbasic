@@ -50,6 +50,8 @@ void target_initialization( Environment * _environment ) {
     variable_global( _environment, "TEXTADDRESS" );    
     variable_import( _environment, "EMPTYTILE", VT_BYTE );
     variable_global( _environment, "EMPTYTILE" );    
+    variable_import( _environment, "CPURANDOM_INTERNALSEED", VT_DWORD );
+    variable_global( _environment, "CPURANDOM_INTERNALSEED" );
 
     bank_define( _environment, "VARIABLES", BT_VARIABLES, 0x5000, NULL );
     bank_define( _environment, "TEMPORARY", BT_TEMPORARY, 0x5100, NULL );
