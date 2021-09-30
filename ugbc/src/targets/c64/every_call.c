@@ -44,11 +44,8 @@ void every_ticks_call( Environment * _environment, char * _timing, char * _label
 
     Variable * timing = variable_retrieve( _environment, _timing );
 
-    if ( ! _environment->everyStatus ) {
-        _environment->everyStatus = variable_temporary( _environment, VT_BYTE, "(every status)");
-        _environment->everyStatus->locked = 1;
-    }
-
+    _environment->everyStatus = variable_retrieve( _environment, "EVERYSTATUS");
+    _environment->everyStatus->locked = 1;
     _environment->everyCounter = variable_temporary( _environment, VT_WORD, "(every counter)");
     _environment->everyCounter->locked = 1;
     _environment->everyTiming = variable_cast( _environment, timing->name, VT_WORD );

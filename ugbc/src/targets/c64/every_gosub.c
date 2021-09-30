@@ -88,10 +88,8 @@ void every_ticks_gosub( Environment * _environment, char * _timing, char * _labe
 
     Variable * timing = variable_retrieve( _environment, _timing );
 
-    if ( ! _environment->everyStatus ) {
-        _environment->everyStatus = variable_temporary( _environment, VT_BYTE, "(every status)");
-        _environment->everyStatus->locked = 1;
-    }
+    _environment->everyStatus = variable_retrieve( _environment, "EVERYSTATUS");
+    _environment->everyStatus->locked = 1;
 
     _environment->everyCounter = variable_temporary( _environment, VT_WORD, "(every counter)");
     _environment->everyCounter->locked = 1;

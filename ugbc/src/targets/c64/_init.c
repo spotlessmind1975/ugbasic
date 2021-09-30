@@ -42,6 +42,9 @@ void target_initialization( Environment * _environment ) {
 
     MEMORY_AREA_DEFINE( MAT_DIRECT, 0xc000, 0xcfff );
 
+    variable_import( _environment, "EVERYSTATUS", VT_BYTE );
+    variable_global( _environment, "EVERYSTATUS" );
+
     variable_import( _environment, "BITMAPADDRESS", VT_ADDRESS );
     variable_global( _environment, "BITMAPADDRESS" );
     variable_import( _environment, "COLORMAPADDRESS", VT_ADDRESS );
