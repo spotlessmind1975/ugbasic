@@ -18,6 +18,4 @@ TEDSTARTUP:
     LDA #$0
     STA $FF15
 
-    SEI
-
     RTS
