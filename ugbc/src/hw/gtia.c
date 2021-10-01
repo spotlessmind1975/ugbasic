@@ -195,6 +195,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         // register encoded in the bit pattern to plot the color.        
         // 40x20, 4 colors
         case BITMAP_MODE_ANTIC8:
+            _environment->screenWidth = 40;
+            _environment->screenHeight = 24;
             // 112	Blank 8 scan lines to provide for overscan
             DLI_BLANK( dliListCurrent, 8 );
             // 112
@@ -221,10 +223,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             DLI_JVB( dliListCurrent, 39968 );
             dliListStartOffset = dliListCurrent - dliListStart - 2;
 
-            currentHeight = 24;
             scanline = 10;
-            cpu_store_16bit( _environment, "CURRENTWIDTH", 40 );
-            cpu_store_16bit( _environment, "CURRENTHEIGHT", currentHeight );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 40 );
             cpu_store_8bit( _environment, "CURRENTSL", scanline );
@@ -239,6 +238,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         // memory is needed for a display of similiar-sized pixels.
         // 80x48, 2 colors
         case BITMAP_MODE_ANTIC9:
+            _environment->screenWidth = 80;
+            _environment->screenHeight = 48;
             // 112	Blank 8 scan lines to provide for overscan
             DLI_BLANK( dliListCurrent, 8 );
             // 112
@@ -265,10 +266,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             DLI_JVB( dliListCurrent, 39968 );
             dliListStartOffset = dliListCurrent - dliListStart - 2;
 
-            currentHeight = 48;
             scanline = 10;
-            cpu_store_16bit( _environment, "CURRENTWIDTH", 80 );
-            cpu_store_16bit( _environment, "CURRENTHEIGHT", currentHeight );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 40 );
             cpu_store_8bit( _environment, "CURRENTSL", scanline );
@@ -280,6 +278,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         // about 1K.
         // 80x48, 4 colors
         case BITMAP_MODE_ANTIC10:
+            _environment->screenWidth = 80;
+            _environment->screenHeight = 48;
             // 112	Blank 8 scan lines to provide for overscan
             DLI_BLANK( dliListCurrent, 8 );
             // 112
@@ -308,8 +308,6 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             currentHeight = 48;
             scanline = 20;
-            cpu_store_16bit( _environment, "CURRENTWIDTH", 80 );
-            cpu_store_16bit( _environment, "CURRENTHEIGHT", currentHeight );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 40 );
             cpu_store_8bit( _environment, "CURRENTSL", scanline );
@@ -320,6 +318,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         // on a full screen. Although only a single bit is used to encode the color, screen memory still requires approximately 2K.
         // 160x96, 2 colors
         case BITMAP_MODE_ANTIC11: 
+            _environment->screenWidth = 160;
+            _environment->screenHeight = 96;
             // 112	Blank 8 scan lines to provide for overscan
             DLI_BLANK( dliListCurrent, 8 );
             // 112
@@ -348,8 +348,6 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             currentHeight = 96;
             scanline = 20;
-            cpu_store_16bit( _environment, "CURRENTWIDTH", 160 );
-            cpu_store_16bit( _environment, "CURRENTHEIGHT", 96 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 40 );
             cpu_store_8bit( _environment, "CURRENTSL", scanline );
@@ -362,6 +360,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         // with another 104 bytes for the display list.
         // 160x96, 4 colors
         case BITMAP_MODE_ANTIC13:
+            _environment->screenWidth = 160;
+            _environment->screenHeight = 96;
             // 112	Blank 8 scan lines to provide for overscan
             DLI_BLANK( dliListCurrent, 8 );
             // 112
@@ -390,8 +390,6 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             currentHeight = 96;
             scanline = 40;
-            cpu_store_16bit( _environment, "CURRENTWIDTH", 160 );
-            cpu_store_16bit( _environment, "CURRENTHEIGHT", currentHeight );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 40 );
             cpu_store_8bit( _environment, "CURRENTSL", scanline );
@@ -411,6 +409,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         // on background color and luminance.
         // 320x192, 3 colors
         case BITMAP_MODE_ANTIC15:
+            _environment->screenWidth = 320;
+            _environment->screenHeight = 192;
             // 112	Blank 8 scan lines to provide for overscan
             DLI_BLANK( dliListCurrent, 8 );
             // 112
@@ -446,10 +446,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             DLI_JVB( dliListCurrent, 39968 );
             dliListStartOffset = dliListCurrent - dliListStart - 2;
 
-            currentHeight = 192;
             scanline = 40;
-            cpu_store_16bit( _environment, "CURRENTWIDTH", 320 );
-            cpu_store_16bit( _environment, "CURRENTHEIGHT", currentHeight );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 40 );
             cpu_store_8bit( _environment, "CURRENTSL", scanline );
@@ -465,6 +462,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         // only uses 4K of screen memory and doesn't have artifacting problems.
         // 320x192, 2 colors
         case BITMAP_MODE_ANTIC12:
+            _environment->screenWidth = 320;
+            _environment->screenHeight = 192;
             // 112	Blank 8 scan lines to provide for overscan
             DLI_BLANK( dliListCurrent, 8 );
             // 112
@@ -491,10 +490,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             DLI_JVB( dliListCurrent, 39968 );
             dliListStartOffset = dliListCurrent - dliListStart - 2;
 
-            currentHeight = 192;
             scanline = 40;
-            cpu_store_16bit( _environment, "CURRENTWIDTH", 320 );
-            cpu_store_16bit( _environment, "CURRENTHEIGHT", currentHeight );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 40 );
             cpu_store_8bit( _environment, "CURRENTSL", scanline );
@@ -507,6 +503,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         // more control, but this mode uses a lot more memory, approximately
         // 160x192, 4 colors
         case BITMAP_MODE_ANTIC14:
+            _environment->screenWidth = 160;
+            _environment->screenHeight = 192;
             // 112	Blank 8 scan lines to provide for overscan
             DLI_BLANK( dliListCurrent, 8 );
             // 112
@@ -533,10 +531,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             DLI_JVB( dliListCurrent, 39968 );
             dliListStartOffset = dliListCurrent - dliListStart - 2;
 
-            currentHeight = 192;
             scanline = 20;
-            cpu_store_16bit( _environment, "CURRENTWIDTH", 160 );
-            cpu_store_16bit( _environment, "CURRENTHEIGHT", currentHeight );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 40 );
             cpu_store_8bit( _environment, "CURRENTSL", scanline );
@@ -553,6 +548,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         // depend on whether the computer has a CTIA or GTIA chip, and the color of the background.
         // 40x24, 1 color
         case TILEMAP_MODE_ANTIC2:
+            _environment->screenWidth = 40;
+            _environment->screenHeight = 24;
             // 112	Blank 8 scan lines to provide for overscan
             DLI_BLANK( dliListCurrent, 8 );
             // 112
@@ -579,8 +576,6 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             DLI_JVB( dliListCurrent, 39968 );
             dliListStartOffset = dliListCurrent - dliListStart - 2;
 
-            cpu_store_16bit( _environment, "CURRENTWIDTH", 40 );
-            cpu_store_16bit( _environment, "CURRENTHEIGHT", 24 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 152 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 192 );
             cpu_store_8bit( _environment, "CURRENTSL", scanline );
@@ -598,6 +593,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         // (Internal # 97-122) are signed to register #1.
         // 20x24, 4 color
         case TILEMAP_MODE_ANTIC6:
+            _environment->screenWidth = 20;
+            _environment->screenHeight = 24;
             // 112	Blank 8 scan lines to provide for overscan
             DLI_BLANK( dliListCurrent, 8 );
             // 112
@@ -624,8 +621,6 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             DLI_JVB( dliListCurrent, 39968 );
             dliListStartOffset = dliListCurrent - dliListStart - 2;
 
-            cpu_store_16bit( _environment, "CURRENTWIDTH", 20 );
-            cpu_store_16bit( _environment, "CURRENTHEIGHT", 24 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 204 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 224 );
             cpu_store_8bit( _environment, "CURRENTSL", scanline );
@@ -636,6 +631,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         // Thus 12 rows of 20 characters are displayed on a full screen. Only ten rows fit on a split screen.
         // 20x12, 4 color
         case TILEMAP_MODE_ANTIC7:
+            _environment->screenWidth = 20;
+            _environment->screenHeight = 12;
             // 112	Blank 8 scan lines to provide for overscan
             DLI_BLANK( dliListCurrent, 8 );
             // 112
@@ -662,8 +659,6 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             DLI_JVB( dliListCurrent, 39968 );
             dliListStartOffset = dliListCurrent - dliListStart - 2;
 
-            cpu_store_16bit( _environment, "CURRENTWIDTH", 20 );
-            cpu_store_16bit( _environment, "CURRENTHEIGHT", 12 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 204 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 224 );
             cpu_store_8bit( _environment, "CURRENTSL", scanline );
@@ -676,6 +671,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         // allowing you to create lowercase characters with descenders.
         // 40x24, 4 color
         case TILEMAP_MODE_ANTIC3:
+            _environment->screenWidth = 40;
+            _environment->screenHeight = 24;
             // 112	Blank 8 scan lines to provide for overscan
             DLI_BLANK( dliListCurrent, 8 );
             // 112
@@ -702,8 +699,6 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             DLI_JVB( dliListCurrent, 39968 );
             dliListStartOffset = dliListCurrent - dliListStart - 2;
 
-            cpu_store_16bit( _environment, "CURRENTWIDTH", 40 );
-            cpu_store_16bit( _environment, "CURRENTHEIGHT", 24 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 152 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 192 );
             cpu_store_8bit( _environment, "CURRENTSL", scanline );
@@ -719,6 +714,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         // to form these characters.
         // 20x24, 4 color
         case TILEMAP_MODE_ANTIC4:
+            _environment->screenWidth = 20;
+            _environment->screenHeight = 24;
             // 112	Blank 8 scan lines to provide for overscan
             DLI_BLANK( dliListCurrent, 8 );
             // 112
@@ -745,8 +742,6 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             DLI_JVB( dliListCurrent, 39968 );
             dliListStartOffset = dliListCurrent - dliListStart - 2;
 
-            cpu_store_16bit( _environment, "CURRENTWIDTH", 40 );
-            cpu_store_16bit( _environment, "CURRENTHEIGHT", 24 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 152 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 192 );
             cpu_store_8bit( _environment, "CURRENTSL", scanline );
@@ -757,6 +752,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         // The character set data is still eight bytes high so ANTIC double plots each scan line.
         // 20x24, 4 color  
         case TILEMAP_MODE_ANTIC5:
+            _environment->screenWidth = 20;
+            _environment->screenHeight = 24;
             // 112	Blank 8 scan lines to provide for overscan
             DLI_BLANK( dliListCurrent, 8 );
             // 112
@@ -783,8 +780,6 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             DLI_JVB( dliListCurrent, 39968 );
             dliListStartOffset = dliListCurrent - dliListStart - 2;
 
-            cpu_store_16bit( _environment, "CURRENTWIDTH", 40 );
-            cpu_store_16bit( _environment, "CURRENTHEIGHT", 24 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 152 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 192 );
             cpu_store_8bit( _environment, "CURRENTSL", scanline );
@@ -793,6 +788,9 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         default:
             CRITICAL_SCREEN_UNSUPPORTED( _screen_mode->id );
     }
+
+    cpu_store_16bit( _environment, "CURRENTWIDTH", _environment->screenWidth );
+    cpu_store_16bit( _environment, "CURRENTHEIGHT", _environment->screenHeight );
 
     cpu_store_16bit( _environment, "CLIPX1", 0) ;
     cpu_store_16bit( _environment, "CLIPY2", 0) ;

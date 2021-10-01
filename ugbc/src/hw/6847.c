@@ -243,6 +243,8 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
         // and the two bits not used are used to implement inverse video and mode 
         // switching to semigraphics – 4, – 8, – 12, or – 24.
         case TILEMAP_MODE_INTERNAL:         // Alphanumeric Internal	32 × 16	2	512
+            _environment->screenWidth = 32;
+            _environment->screenHeight = 16;
             // Internal alphanumeric 0 X X 0 0 0 0 32x16 ( 5x7 pixel ch)
             SET_VIDEOAT_400;
             VDG_TEXT;
@@ -256,11 +258,11 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             cpu_store_16bit( _environment, "CLIPX2", 31 );
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 15 );
-            cpu_store_16bit( _environment, "CURRENTWIDTH", 32 );
-            cpu_store_16bit( _environment, "CURRENTHEIGHT", 16 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 32*16 );
             break;
         case TILEMAP_MODE_EXTERNAL:         // Alphanumeric External	32 × 16	2	512
+            _environment->screenWidth = 32;
+            _environment->screenHeight = 16;
             // External alphanumeric 0 X X 1 0 0 0 32x16 (8x12 pixel ch)
             SET_VIDEOAT_400;
             VDG_TEXT;
@@ -274,8 +276,6 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             cpu_store_16bit( _environment, "CLIPX2", 31 );
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 15 );
-            cpu_store_16bit( _environment, "CURRENTWIDTH", 32 );
-            cpu_store_16bit( _environment, "CURRENTHEIGHT", 16 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 32*16 );
             break;
         // The ALPHA SEMIGRAPHICS – 4 mode translates bits 0 through 3 into a 4 x 6 dot 
@@ -285,6 +285,8 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
         // 64 x 32 elements is available in the display area. The element area is four
         // dot-clocks wide by six lines high.
         case TILEMAP_MODE_SEMIGRAPHICS4:    // Semigraphics 4	        64 × 32	8	512
+            _environment->screenWidth = 64;
+            _environment->screenHeight = 32;
             // Semigraphic-4 0 X X 0 0 0 0 32x16 ch, 64x32 pixels
             SET_VIDEOAT_400;
             VDG_TEXT;
@@ -298,8 +300,6 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             cpu_store_16bit( _environment, "CLIPX2", 63 );
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 31 );
-            cpu_store_16bit( _environment, "CURRENTWIDTH", 64 );
-            cpu_store_16bit( _environment, "CURRENTHEIGHT", 32 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 512 );
             break;
         // The ALPHA SEMIGRAPHICS – 6 mode maps six 4 x 4 dot elements into the standard
@@ -308,6 +308,8 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
         // one of four colors in the display box. A 512 byte display memory is required. 
         // The element area is four dot-clocks wide by four lines high.
         case TILEMAP_MODE_SEMIGRAPHICS6:    // Semigraphics 6	        64 × 48	4	512
+            _environment->screenWidth = 64;
+            _environment->screenHeight = 48;
             // Semigraphic-6 0 X X 1 0 0 0 64x48 pixels
             SET_VIDEOAT_400;
             VDG_TEXT;
@@ -321,8 +323,6 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             cpu_store_16bit( _environment, "CLIPX2", 63 );
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 47 );
-            cpu_store_16bit( _environment, "CURRENTWIDTH", 64 );
-            cpu_store_16bit( _environment, "CURRENTHEIGHT", 48 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 512 );
             break;
         // The ALPHA SEMIGRAPHICS – 8 mode maps eight 4 x 3 dot elements into the 
@@ -332,12 +332,12 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
         // available in the display area. The element area is four dot-clocks wide 
         // by three lines high.
         case TILEMAP_MODE_SEMIGRAPHICS8:    // Semigraphics 8	        64 × 64	2	512
+            _environment->screenWidth = 64;
+            _environment->screenHeight = 64;
             cpu_store_16bit( _environment, "CLIPX1", 0 );
             cpu_store_16bit( _environment, "CLIPX2", 63 );
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 63 );
-            cpu_store_16bit( _environment, "CURRENTWIDTH", 64 );
-            cpu_store_16bit( _environment, "CURRENTHEIGHT", 64 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 2048 );
             break;
         // The ALPHA SEMIGRAPHICS – 12 mode maps twelve 4 x 2 dot elements into the 
@@ -346,12 +346,12 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
         // display memory is required. A density of 64 x 96 elements is available in the
         // display area. The element area is four dot-clocks wide by two lineshigh.
         case TILEMAP_MODE_SEMIGRAPHICS12:    // Semigraphics 6	        64 × 96 1	3072
+            _environment->screenWidth = 64;
+            _environment->screenHeight = 96;
             cpu_store_16bit( _environment, "CLIPX1", 0 );
             cpu_store_16bit( _environment, "CLIPX2", 63 );
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 95 );
-            cpu_store_16bit( _environment, "CURRENTWIDTH", 64 );
-            cpu_store_16bit( _environment, "CURRENTHEIGHT", 96 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 3072 );
             break;
         // The ALPHA SEMIGRAPHICS – 24 mode maps twenty-four 4 x 1 dot elements into 
@@ -361,12 +361,12 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
         // elements is available in the display are. The element area is four 
         // dot-clocks wide by one line high.
         case TILEMAP_MODE_SEMIGRAPHICS24:    // Semigraphics 6	        64 × 96 1	3072
+            _environment->screenWidth = 64;
+            _environment->screenHeight = 96;
             cpu_store_16bit( _environment, "CLIPX1", 0 );
             cpu_store_16bit( _environment, "CLIPX2", 63 );
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 191 );
-            cpu_store_16bit( _environment, "CURRENTWIDTH", 64 );
-            cpu_store_16bit( _environment, "CURRENTHEIGHT", 192 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 6144 );
             break;
         // The 64 x 64 Color Graphics mode generates a display matrix of 64 
@@ -374,6 +374,8 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
         // colors. A 1K x 8 display memory is required. Each pixel equals 
         // four dot-clocks by three scan lines.
         case BITMAP_MODE_COLOR1:            // Color Graphics 1	64 × 64	4	1024
+            _environment->screenWidth = 64;
+            _environment->screenHeight = 64;
             // Full graphic 1-C 1 0 0 0 0 0 1 64x64x4 $400(1024)
             SET_VIDEOAT_C00;
             VDG_GRAPH;
@@ -387,8 +389,6 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             cpu_store_16bit( _environment, "CLIPX2", 63 );
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 63 );
-            cpu_store_16bit( _environment, "CURRENTWIDTH", 64 );
-            cpu_store_16bit( _environment, "CURRENTHEIGHT", 64 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 1024 );
             cpu_store_8bit( _environment, "CURRENTSL", 64 / 4 );            
             break;
@@ -398,6 +398,8 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
         // color set select pin. A 1K x 8 display memory is required. Each 
         // pixel equals two dotclocks by three scan lines.
         case BITMAP_MODE_RESOLUTION1:       // Resolution Graphics 1	128 × 64	1 + Black	1024
+            _environment->screenWidth = 128;
+            _environment->screenHeight = 64;
             // Full graphic 1-R 1 0 0 1 0 0 1 128x64x2 $400(1024)
             SET_VIDEOAT_C00;
             VDG_GRAPH;
@@ -411,8 +413,6 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             cpu_store_16bit( _environment, "CLIPX2", 127 );
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 63 );
-            cpu_store_16bit( _environment, "CURRENTWIDTH", 128 );
-            cpu_store_16bit( _environment, "CURRENTHEIGHT", 64 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 1024 );
             cpu_store_8bit( _environment, "CURRENTSL", 128 / 8 );            
             break;
@@ -421,6 +421,8 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
         // colors. A 2K x 8 display memory is required. Each pixel equals
         // two dot-clocks by three scan lines.
         case BITMAP_MODE_COLOR2:            // Color Graphics 2	128 × 64	4	2048
+            _environment->screenWidth = 128;
+            _environment->screenHeight = 64;
             // Full graphic 2-C 1 0 1 0 0 1 0 128x64x4 $800(2048)
             SET_VIDEOAT_C00;
             VDG_GRAPH;
@@ -434,8 +436,6 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             cpu_store_16bit( _environment, "CLIPX2", 127 );
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 63 );
-            cpu_store_16bit( _environment, "CURRENTWIDTH", 128 );
-            cpu_store_16bit( _environment, "CURRENTHEIGHT", 64 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 2048 );
             cpu_store_8bit( _environment, "CURRENTSL", 128 / 4 );
             break;
@@ -445,6 +445,8 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
         // selected by using the color select pin. A 2K x 8 display memory 
         // is required. Each pixel equals two dot-clocks by two scan lines.
         case BITMAP_MODE_RESOLUTION2:       // Resolution Graphics 2 128 × 96	1 + Black	1536
+            _environment->screenWidth = 128;
+            _environment->screenHeight = 96;
             // Full graphic 2-R 1 0 1 1 0 1 1 128x96x2 $600(1536)
             SET_VIDEOAT_C00;
             VDG_GRAPH;
@@ -458,8 +460,6 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             cpu_store_16bit( _environment, "CLIPX2", 127 );
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 95 );
-            cpu_store_16bit( _environment, "CURRENTWIDTH", 128 );
-            cpu_store_16bit( _environment, "CURRENTHEIGHT", 96 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 1536 );
             cpu_store_8bit( _environment, "CURRENTSL", 128 / 8 );
             break;
@@ -468,6 +468,8 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
         // A 3K x 8 display memory is required. Each pixel equals two 
         // dot-clocks by two scan lines.
         case BITMAP_MODE_COLOR3:            // Color Graphics 3	128 × 96	4	3072
+            _environment->screenWidth = 128;
+            _environment->screenHeight = 96;
             // Full graphic 3-C 1 1 0 0 1 0 0 128x96x4 $C00(3072)
             SET_VIDEOAT_C00;
             VDG_GRAPH;
@@ -481,8 +483,6 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             cpu_store_16bit( _environment, "CLIPX2", 127 );
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 95 );
-            cpu_store_16bit( _environment, "CURRENTWIDTH", 128 );
-            cpu_store_16bit( _environment, "CURRENTHEIGHT", 96 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 3072 );
             cpu_store_8bit( _environment, "CURRENTSL", 128 / 4 );
             break;
@@ -492,6 +492,8 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
         // set select pin. A 3K x 8 display memory is required. Each pixel 
         // equals two dot-clocks by one scan line.
         case BITMAP_MODE_RESOLUTION3:       // Resolution Graphics 3	128 × 192	1 + Black	3072
+            _environment->screenWidth = 128;
+            _environment->screenHeight = 192;
             // Full graphic 3-R 1 1 0 1 1 0 1 128x192x2 $C00(3072)
             SET_VIDEOAT_C00;
             VDG_GRAPH;
@@ -505,8 +507,6 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             cpu_store_16bit( _environment, "CLIPX2", 127 );
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 191 );
-            cpu_store_16bit( _environment, "CURRENTWIDTH", 128 );
-            cpu_store_16bit( _environment, "CURRENTHEIGHT", 192 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 3072 );
             cpu_store_8bit( _environment, "CURRENTSL", 128 / 8 );
             break;
@@ -515,6 +515,8 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
         // A 6K x 8 display memory is required. Each pixel equals two dot-clocks 
         // by one scan line.
         case BITMAP_MODE_COLOR6:            // Color Graphics 6	128 × 192	4	6144
+            _environment->screenWidth = 128;
+            _environment->screenHeight = 192;
             // Full graphic 6-C 1 1 1 0 1 1 0 128x192x4 $1800(6144)
             SET_VIDEOAT_C00;
             VDG_GRAPH;
@@ -525,8 +527,6 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             cpu_store_16bit( _environment, "CLIPX2", 127 );
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 191 );
-            cpu_store_16bit( _environment, "CURRENTWIDTH", 128 );
-            cpu_store_16bit( _environment, "CURRENTHEIGHT", 192 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 6144 );
             cpu_store_8bit( _environment, "CURRENTSL", 128 / 4 );
             break;
@@ -536,6 +536,8 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
         // A 6K x 8 display memory is required. Each pixel equals one 
         // dot-clock by one scan line.
         case BITMAP_MODE_RESOLUTION6:       // Resolution Graphics 6	256 × 192	1 + Black	6144            break;
+            _environment->screenWidth = 256;
+            _environment->screenHeight = 192;
             // Full graphic 6-R 1 1 1 1 1 1 0 256x192x2 $1800(6144)
             SET_VIDEOAT_C00;
             VDG_GRAPH;
@@ -549,8 +551,6 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             cpu_store_16bit( _environment, "CLIPX2", 255 );
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 191 );
-            cpu_store_16bit( _environment, "CURRENTWIDTH", 256 );
-            cpu_store_16bit( _environment, "CURRENTHEIGHT", 192 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 6144 );
             cpu_store_8bit( _environment, "CURRENTSL", 256 / 8 );
             break;
@@ -558,6 +558,8 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             CRITICAL_SCREEN_UNSUPPORTED( _screen_mode->id );
     }
 
+    cpu_store_16bit( _environment, "CURRENTWIDTH", _environment->screenWidth );
+    cpu_store_16bit( _environment, "CURRENTHEIGHT", _environment->screenHeight );
 
 }
 

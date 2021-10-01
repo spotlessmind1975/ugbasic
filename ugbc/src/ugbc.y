@@ -155,6 +155,32 @@ const_factor:
       | OP const_expr CP {
           $$ = $2;
       }
+      | WIDTH {
+          $$ = ((Environment *)_environment)->screenWidth;
+      }
+      | SCREEN WIDTH {
+          $$ = ((Environment *)_environment)->screenWidth;
+      }
+      | IMAGE WIDTH OP expr CP {
+          Variable * v = variable_retrieve( _environment, $4 );
+          if ( v->type != VT_IMAGE ) {
+              CRITICAL_NOT_IMAGE( v->name );
+          }
+          $$ = v->valueBuffer[0];
+      }
+      | HEIGHT {
+          $$ = ((Environment *)_environment)->screenHeight;
+      }
+      | SCREEN HEIGHT {
+          $$ = ((Environment *)_environment)->screenHeight;
+      }
+      | IMAGE HEIGHT OP expr CP {
+          Variable * v = variable_retrieve( _environment, $4 );
+          if ( v->type != VT_IMAGE ) {
+              CRITICAL_NOT_IMAGE( v->name );
+          }
+          $$ = v->valueBuffer[1];
+      }
       | Identifier {
           Constant * c = constant_find( ((Environment *)_environment)->constants, $1 );
           if ( c == NULL ) {

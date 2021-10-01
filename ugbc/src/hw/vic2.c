@@ -369,6 +369,8 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
     switch( _screen_mode->id ) {
         case BITMAP_MODE_STANDARD:
+            _environment->screenWidth = 320;
+            _environment->screenHeight = 200;
             // This fix is necessary to set the starting address of the bitmap 
             // to $A000 (which is an address available on C=64).
             outline0("LDA $D018" );
@@ -392,11 +394,11 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             cpu_store_16bit( _environment, "CLIPX2", 319 );
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 199 );
-            cpu_store_16bit( _environment, "CURRENTWIDTH", 320 );
-            cpu_store_16bit( _environment, "CURRENTHEIGHT", 200 );
 
             break;
         case BITMAP_MODE_MULTICOLOR:
+            _environment->screenWidth = 160;
+            _environment->screenHeight = 200;
             // This fix is necessary to set the starting address of the bitmap 
             // to $A000 (which is an address available on C=64) instead of the 
             // address $8000.
@@ -422,11 +424,11 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             cpu_store_16bit( _environment, "CLIPX2", 159 );
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 199 );
-            cpu_store_16bit( _environment, "CURRENTWIDTH", 160 );
-            cpu_store_16bit( _environment, "CURRENTHEIGHT", 200 );
             
             break;
         case TILEMAP_MODE_STANDARD:
+            _environment->screenWidth = 40;
+            _environment->screenHeight = 25;
             // Let's disable graphics!
             outline0("LDA $D011" );
             outline0("AND #%11011111");
@@ -449,11 +451,11 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             cpu_store_16bit( _environment, "CLIPX2", 39 );
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 24 );
-            cpu_store_16bit( _environment, "CURRENTWIDTH", 40 );
-            cpu_store_16bit( _environment, "CURRENTHEIGHT", 25 );
 
             break;
         case TILEMAP_MODE_MULTICOLOR:
+            _environment->screenWidth = 40;
+            _environment->screenHeight = 25;
             // Let's disable graphics!
             outline0("LDA $D011" );
             outline0("AND #%11011111");
@@ -475,11 +477,11 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             cpu_store_16bit( _environment, "CLIPX2", 39 );
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 24 );
-            cpu_store_16bit( _environment, "CURRENTWIDTH", 40 );
-            cpu_store_16bit( _environment, "CURRENTHEIGHT", 25 );
 
             break;
         case TILEMAP_MODE_EXTENDED:
+            _environment->screenWidth = 40;
+            _environment->screenHeight = 25;
             // Let's disable graphics!
             outline0("LDA $D011" );
             outline0("AND #%11011111");
@@ -502,13 +504,14 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             cpu_store_16bit( _environment, "CLIPX2", 39 );
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 24 );
-            cpu_store_16bit( _environment, "CURRENTWIDTH", 40 );
-            cpu_store_16bit( _environment, "CURRENTHEIGHT", 25 );
 
             break;
         default:
             CRITICAL_SCREEN_UNSUPPORTED( _screen_mode->id );
     }
+
+    cpu_store_16bit( _environment, "CURRENTWIDTH", _environment->screenWidth );
+    cpu_store_16bit( _environment, "CURRENTHEIGHT", _environment->screenHeight );
 
 }
 
