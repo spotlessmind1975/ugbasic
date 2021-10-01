@@ -90,7 +90,7 @@ Variable * image_load( Environment * _environment, char * _filename, char * _ali
     char lookedFilename[MAX_TEMPORARY_STORAGE];
     char lookedExtension[MAX_TEMPORARY_STORAGE];
     strcpy( lookedFilename, _filename );
-    char * c = strchr( lookedFilename, '.' );
+    char * c = strrchr( lookedFilename, '/' );
     if ( c ) {
         strcpy( lookedExtension, c );
     } else {
@@ -98,19 +98,19 @@ Variable * image_load( Environment * _environment, char * _filename, char * _ali
     }
     *c = 0;
 #if defined(__atari__) 
-    strcat( lookedFilename, "_atari" );
+    strcat( lookedFilename, "/atari" );
 #elif defined(__atarixl__) 
-    strcat( lookedFilename, "_atarixl" );
+    strcat( lookedFilename, "/atarixl" );
 #elif __c64__
-    strcat( lookedFilename, "_c64" );
+    strcat( lookedFilename, "/c64" );
 #elif __plus4__
-    strcat( lookedFilename, "_plus4" );
+    strcat( lookedFilename, "/plus4" );
 #elif __zx__
-    strcat( lookedFilename, "_zx" );
+    strcat( lookedFilename, "/zx" );
 #elif __d32__ 
-    strcat( lookedFilename, "_d32" );
+    strcat( lookedFilename, "/d32" );
 #elif __d64__ 
-    strcat( lookedFilename, "_64" );
+    strcat( lookedFilename, "/d64" );
 #endif
     strcat( lookedFilename, lookedExtension );
 
