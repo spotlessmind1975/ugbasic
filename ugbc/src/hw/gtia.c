@@ -95,6 +95,8 @@ static RGBi SYSTEM_PALETTE[] = {
         { 0x00, 0x00, 0x80, 0x60 }
 };
 
+static RGBi * commonPalette;
+
 /****************************************************************************
  * CODE SECTION
  ****************************************************************************/
@@ -886,6 +888,8 @@ void gtia_bitmap_enable( Environment * _environment, int _width, int _height, in
 
     gtia_screen_mode_enable( _environment, mode );
 
+    // printf( "%d\n", mode->id);
+
     cpu_store_8bit( _environment, "CURRENTMODE", mode->id );
     
     _environment->currentMode = mode->id;
@@ -1357,6 +1361,7 @@ static int extract_color_palette(unsigned char* _source, int _width, int _height
                 _palette[usedPalette].red = rgb.red;
                 _palette[usedPalette].green = rgb.green;
                 _palette[usedPalette].blue = rgb.blue;
+                // printf( "%d == %2.2x%2.2x%2.2x\n", usedPalette, _palette[usedPalette].red, _palette[usedPalette].green, _palette[usedPalette].blue );
                 ++usedPalette;
                 if (usedPalette > _palette_size) {
                     break;
@@ -1368,6 +1373,8 @@ static int extract_color_palette(unsigned char* _source, int _width, int _height
             break;
         }
     }
+
+    // printf( "\n" );
 
     return usedPalette;
 
@@ -1494,39 +1501,45 @@ static Variable * gtia_image_converter_multicolor_mode_standard( Environment * _
         CRITICAL_IMAGE_CONVERTER_INVALID_WIDTH( _width );
     }
 
-    RGBi palette[MAX_PALETTE];
+    if ( ! commonPalette ) {
 
-    int colorUsed = extract_color_palette(_source, _width, _height, palette, MAX_PALETTE);
+        RGBi * palette = malloc( sizeof( RGBi ) * MAX_PALETTE );
 
-    if (colorUsed > 4) {
-        CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
-    }
+        int colorUsed = extract_color_palette(_source, _width, _height, palette, MAX_PALETTE);
 
-    int i, j, k;
+        if (colorUsed > 4) {
+            CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
+        }
 
-    for( i=0; i<colorUsed; ++i ) {
-        int minDistance = 0xffff;
-        int colorIndex = 0;
-        for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
-            int distance = calculate_distance(SYSTEM_PALETTE[j], palette[i]);
-            // printf("%d <-> %d [%d] = %d [min = %d]\n", i, j, SYSTEM_PALETTE[j].index, distance, minDistance );
-            if (distance < minDistance) {
-                // printf(" candidated...\n" );
-                for( k=0; k<i; ++k ) {
-                    if ( palette[k].index == SYSTEM_PALETTE[j].index ) {
-                        // printf(" ...used!\n" );
-                        break;
+        int i, j, k;
+
+        for( i=0; i<colorUsed; ++i ) {
+            int minDistance = 0xffff;
+            int colorIndex = 0;
+            for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
+                int distance = calculate_distance(SYSTEM_PALETTE[j], palette[i]);
+                // printf("%d (%2.2x%2.2x%2.2x) <-> %d (%2.2x%2.2x%2.2x) [%d] = %d [min = %d]\n", i, SYSTEM_PALETTE[j].red, SYSTEM_PALETTE[j].green, SYSTEM_PALETTE[j].blue, j, palette[i].red, palette[i].green, palette[i].blue, SYSTEM_PALETTE[j].index, distance, minDistance );
+                if (distance < minDistance) {
+                    // printf(" candidated...\n" );
+                    for( k=0; k<i; ++k ) {
+                        if ( palette[k].index == SYSTEM_PALETTE[j].index ) {
+                            // printf(" ...used!\n" );
+                            break;
+                        }
+                    }
+                    if ( k>=i ) {
+                        // printf(" ...ok! (%d)\n", SYSTEM_PALETTE[j].index );
+                        minDistance = distance;
+                        colorIndex = j;
                     }
                 }
-                if ( k>=i ) {
-                    // printf(" ...ok! (%d)\n", SYSTEM_PALETTE[j].index );
-                    minDistance = distance;
-                    colorIndex = j;
-                }
             }
+            palette[i].index = SYSTEM_PALETTE[colorIndex].index;
+            // printf("%d) %d * %d %2.2x%2.2x%2.2x\n", i, colorIndex, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
         }
-        palette[i].index = SYSTEM_PALETTE[colorIndex].index;
-        // printf("%d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
+
+        commonPalette = palette;
+
     }
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
@@ -1564,13 +1577,16 @@ static Variable * gtia_image_converter_multicolor_mode_standard( Environment * _
             // and the bit to set.
             offset = (image_y * ( _width >> 2 ) ) + (image_x>>2);
 
-            for( i=0; i<colorUsed; ++i ) {
-                if ( palette[i].red == rgb.red && palette[i].green == rgb.green && palette[i].blue == rgb.blue ) {
-                    break;
+            int colorIndex = 0;
+
+            int minDistance = 9999;
+            for( int i=0; i<4; ++i ) {
+                int distance = calculate_distance(commonPalette[i], rgb );
+                if ( distance < minDistance ) {
+                    minDistance = distance;
+                    colorIndex = i;
                 }
             }
-
-            int colorIndex = i;
 
             // printf("%d", colorIndex );
 
@@ -1585,29 +1601,12 @@ static Variable * gtia_image_converter_multicolor_mode_standard( Environment * _
         // printf("\n" );
     }
 
-    if ( colorUsed > 3 ) {
-        *(buffer + 2 + ( ( _width >> 2 ) * _height ) + 3 ) = palette[3].index;
-    } else {
-        *(buffer + 2 + ( ( _width >> 2 ) * _height ) + 3 ) = 0;
-    }
+    // printf("\n" );
 
-    if ( colorUsed > 2 ) {
-        *(buffer + 2 + ( ( _width >> 2 ) * _height ) + 2 ) = palette[2].index;
-    } else {
-        *(buffer + 2 + ( ( _width >> 2 ) * _height ) + 2 ) = 0;
-    }
-
-    if ( colorUsed > 1 ) {
-        *(buffer + 2 + ( ( _width >> 2 ) * _height ) + 1 ) = palette[1].index;
-    } else {
-        *(buffer + 2 + ( ( _width >> 2 ) * _height ) + 1 ) = 0;
-    }
-
-    if ( colorUsed > 0 ) {
-        *(buffer + 2 + ( ( _width >> 2 ) * _height ) ) = palette[0].index;
-    } else {
-        *(buffer + 2 + ( ( _width >> 2 ) * _height ) ) = 0;
-    }
+    *(buffer + 2 + ( ( _width >> 2 ) * _height ) + 3 ) = commonPalette[3].index;
+    *(buffer + 2 + ( ( _width >> 2 ) * _height ) + 2 ) = commonPalette[2].index;
+    *(buffer + 2 + ( ( _width >> 2 ) * _height ) + 1 ) = commonPalette[1].index;
+    *(buffer + 2 + ( ( _width >> 2 ) * _height ) ) = commonPalette[0].index;
 
     variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
 
