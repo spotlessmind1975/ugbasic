@@ -40,7 +40,7 @@ BITMAPADDRESS       fdb     $0c00
 COLORMAPADDRESS     fdb     $a000
 MOBADDRESS          fdb     $a000
 CURRENTMODE         fcb     $2
-EVERYSTATUS:        fcb     0
+EVERYSTATUS        fcb     0
 
 TABCOUNT            fcb     4
 XCURS               fcb     0
