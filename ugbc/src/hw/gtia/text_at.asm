@@ -124,6 +124,8 @@ TEXTATANTIC8:
     ;calc Y-cell
     ;-------------------------
     LDA YCURSYS
+    CLC
+    ADC #1
     ASL A
     ASL A
     ASL A
@@ -156,6 +158,8 @@ TEXTATANTIC9:
     ;calc Y-cell
     ;-------------------------
     LDA YCURSYS
+    CLC
+    ADC #1
     ASL A
     ASL A
     ASL A
@@ -188,6 +192,8 @@ TEXTATANTIC10:
     ;calc Y-cell
     ;-------------------------
     LDA YCURSYS
+    CLC
+    ADC #1
     ASL A
     ASL A
     ASL A
@@ -220,6 +226,8 @@ TEXTATANTIC11:
     ;calc Y-cell
     ;-------------------------
     LDA YCURSYS
+    CLC
+    ADC #1
     ASL A
     ASL A
     ASL A
@@ -252,6 +260,8 @@ TEXTATANTIC12:
     ;calc Y-cell
     ;-------------------------
     LDA YCURSYS
+    CLC
+    ADC #1
     ASL A
     ASL A
     ASL A
@@ -284,6 +294,8 @@ TEXTATANTIC13:
     ;calc Y-cell
     ;-------------------------
     LDA YCURSYS
+    CLC
+    ADC #1
     ASL A
     ASL A
     ASL A
@@ -316,6 +328,8 @@ TEXTATANTIC14:
     ;calc Y-cell
     ;-------------------------
     LDA YCURSYS
+    CLC
+    ADC #1
     ASL A
     ASL A
     ASL A
@@ -348,6 +362,8 @@ TEXTATANTIC15:
     ;calc Y-cell
     ;-------------------------
     LDA YCURSYS
+    CLC
+    ADC #1
     ASL A
     ASL A
     ASL A
