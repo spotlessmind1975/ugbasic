@@ -427,8 +427,8 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             
             break;
         case TILEMAP_MODE_STANDARD:
-            _environment->screenWidth = 40;
-            _environment->screenHeight = 25;
+            _environment->screenWidth = 320;
+            _environment->screenHeight = 200;
             // Let's disable graphics!
             outline0("LDA $D011" );
             outline0("AND #%11011111");
@@ -454,8 +454,8 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             break;
         case TILEMAP_MODE_MULTICOLOR:
-            _environment->screenWidth = 40;
-            _environment->screenHeight = 25;
+            _environment->screenWidth = 320;
+            _environment->screenHeight = 200;
             // Let's disable graphics!
             outline0("LDA $D011" );
             outline0("AND #%11011111");
@@ -480,8 +480,8 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             break;
         case TILEMAP_MODE_EXTENDED:
-            _environment->screenWidth = 40;
-            _environment->screenHeight = 25;
+            _environment->screenWidth = 320;
+            _environment->screenHeight = 200;
             // Let's disable graphics!
             outline0("LDA $D011" );
             outline0("AND #%11011111");
@@ -512,9 +512,9 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
     cpu_store_16bit( _environment, "CURRENTWIDTH", _environment->screenWidth );
     cpu_store_16bit( _environment, "CURRENTHEIGHT", _environment->screenHeight );
-    _environment->screenTilesWidth = _environment->screenWidth / 8;
+    _environment->screenTilesWidth = 40;
     cpu_store_8bit( _environment, "CURRENTTILESWIDTH", _environment->screenTilesWidth );
-    _environment->screenTilesHeight = _environment->screenHeight / 8;
+    _environment->screenTilesHeight = 25;
     cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight / 8 );
 
 }
