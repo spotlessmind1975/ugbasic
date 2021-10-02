@@ -36,7 +36,7 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 TEXTPTR = $90
-TEXTSIZE = $92
+TEXTSIZE = $98
 TABSTODRAW = $93
 TEXTWW = $94
 TEXTPEN = $95
@@ -114,6 +114,9 @@ TEXTATANTIC15X:
 
 TEXTATANTIC8:
 
+    LDA #2
+    STA PATTERN
+
     LDA XCURSYS
     TAX                        ;tbl_8,x index
 
@@ -121,6 +124,9 @@ TEXTATANTIC8:
     ;calc Y-cell
     ;-------------------------
     LDA YCURSYS
+    ASL A
+    ASL A
+    ASL A
     TAY                         ;tbl_8,y index
 
     ;----------------------------------
@@ -140,6 +146,9 @@ TEXTATANTIC8:
 
 TEXTATANTIC9:
 
+    LDA #0
+    STA PATTERN
+
     LDA XCURSYS
     TAX                        ;tbl_8,x index
 
@@ -147,6 +156,9 @@ TEXTATANTIC9:
     ;calc Y-cell
     ;-------------------------
     LDA YCURSYS
+    ASL A
+    ASL A
+    ASL A
     TAY                         ;tbl_8,y index
 
     ;----------------------------------
@@ -166,6 +178,9 @@ TEXTATANTIC9:
 
 TEXTATANTIC10:
 
+    LDA #2
+    STA PATTERN
+
     LDA XCURSYS
     TAX                        ;tbl_8,x index
 
@@ -173,6 +188,9 @@ TEXTATANTIC10:
     ;calc Y-cell
     ;-------------------------
     LDA YCURSYS
+    ASL A
+    ASL A
+    ASL A
     TAY                         ;tbl_8,y index
 
     ;----------------------------------
@@ -192,6 +210,9 @@ TEXTATANTIC10:
 
 TEXTATANTIC11:
 
+    LDA #0
+    STA PATTERN
+
     LDA XCURSYS
     TAX                        ;tbl_8,x index
 
@@ -199,6 +220,9 @@ TEXTATANTIC11:
     ;calc Y-cell
     ;-------------------------
     LDA YCURSYS
+    ASL A
+    ASL A
+    ASL A
     TAY                         ;tbl_8,y index
 
     ;----------------------------------
@@ -218,6 +242,9 @@ TEXTATANTIC11:
 
 TEXTATANTIC12:
 
+    LDA #2
+    STA PATTERN
+
     LDA XCURSYS
     TAX                        ;tbl_8,x index
 
@@ -225,6 +252,9 @@ TEXTATANTIC12:
     ;calc Y-cell
     ;-------------------------
     LDA YCURSYS
+    ASL A
+    ASL A
+    ASL A
     TAY                         ;tbl_8,y index
 
     ;----------------------------------
@@ -244,6 +274,9 @@ TEXTATANTIC12:
 
 TEXTATANTIC13:
 
+    LDA #2
+    STA PATTERN
+
     LDA XCURSYS
     TAX                        ;tbl_8,x index
 
@@ -251,6 +284,9 @@ TEXTATANTIC13:
     ;calc Y-cell
     ;-------------------------
     LDA YCURSYS
+    ASL A
+    ASL A
+    ASL A
     TAY                         ;tbl_8,y index
 
     ;----------------------------------
@@ -270,6 +306,9 @@ TEXTATANTIC13:
 
 TEXTATANTIC14:
 
+    LDA #2
+    STA PATTERN
+
     LDA XCURSYS
     TAX                        ;tbl_8,x index
 
@@ -277,6 +316,9 @@ TEXTATANTIC14:
     ;calc Y-cell
     ;-------------------------
     LDA YCURSYS
+    ASL A
+    ASL A
+    ASL A
     TAY                         ;tbl_8,y index
 
     ;----------------------------------
@@ -296,6 +338,9 @@ TEXTATANTIC14:
 
 TEXTATANTIC15:
 
+    LDA #0
+    STA PATTERN
+
     LDA XCURSYS
     TAX                        ;tbl_8,x index
 
@@ -303,6 +348,9 @@ TEXTATANTIC15:
     ;calc Y-cell
     ;-------------------------
     LDA YCURSYS
+    ASL A
+    ASL A
+    ASL A
     TAY                         ;tbl_8,y index
 
     ;----------------------------------
@@ -441,9 +489,12 @@ TEXTATBMAT:
 
 TEXTATBMSP0:
 
+    TXA
+    PHA
+
     TYA
     PHA
-    
+
     LDY #0
 
     LDA SCREENCODE
@@ -477,18 +528,82 @@ TEXTATBMSP0L1:
     LDA CURRENTMODE
     CMP #10
     BEQ TEXTATBMSP0L1M
+    CMP #11
+    BEQ TEXTATBMSP0L1M
+    CMP #13
+    BEQ TEXTATBMSP0L1M
 
     LDA (TMPPTR),Y
+    STA (TMPPTR2),Y
     JMP TEXTATBMSP0L1M2
 
 TEXTATBMSP0L1M:
+
+    TXA
+    PHA
+
+    TYA
+    PHA
+
     LDA (TMPPTR),Y
-    ASL A
-    ORA (TMPPTR),Y
-    JMP TEXTATBMSP0L1M2
-    
-TEXTATBMSP0L1M2:
+
+    AND #$F0
+    LSR A
+    LSR A
+    LSR A
+    LSR A
+
+    TAY
+    LDA TEXTATBMC, Y
+
+    TAX
+
+    PLA
+    TAY
+
+    TXA
+
     STA (TMPPTR2),Y
+
+    PLA
+    TAX
+
+    CLC
+    LDA TMPPTR2
+    ADC #1
+    STA TMPPTR2
+    LDA TMPPTR2+1
+    ADC #0
+    STA TMPPTR2+1
+
+    TXA
+    PHA
+
+    TYA
+    PHA
+
+    LDA (TMPPTR),Y
+
+    AND #$0F
+
+    TAY
+    LDA TEXTATBMC, Y
+
+    TAX
+
+    PLA
+    TAY
+
+    TXA
+
+    STA (TMPPTR2),Y
+
+    PLA
+    TAX
+
+    JMP TEXTATBMSP0L1M2
+
+TEXTATBMSP0L1M2:
     
     CLC
     LDA TMPPTR2
@@ -500,7 +615,7 @@ TEXTATBMSP0L1M2:
     
     SEC
     LDA TMPPTR2
-    SBC #1
+    SBC PATTERN
     STA TMPPTR2
     LDA TMPPTR2+1
     SBC #0
@@ -528,7 +643,7 @@ TEXTATBMSP0L1M2:
 
     CLC
     LDA PLOTDEST
-    ADC #1
+    ADC PATTERN
     STA PLOTDEST
     LDA PLOTDEST+1
     ADC #0
@@ -536,6 +651,10 @@ TEXTATBMSP0L1M2:
 
     PLA
     TAY
+
+    PLA
+    TAX
+    
     JMP TEXTATBMINCX
 
 TEXTATBMSKIPTAB:
@@ -893,3 +1012,21 @@ TEXTATXLOOP2:
     JMP TEXTATLOOP2
 TEXTATEND:
     RTS
+
+TEXTATBMC:
+    .BYTE   %00000000
+    .BYTE   %00000001
+    .BYTE   %00000100
+    .BYTE   %00000101
+    .BYTE   %00010000
+    .BYTE   %00010001
+    .BYTE   %00010100
+    .BYTE   %00010101
+    .BYTE   %01000000
+    .BYTE   %01000001
+    .BYTE   %01000100
+    .BYTE   %01000101
+    .BYTE   %01010000
+    .BYTE   %01010001
+    .BYTE   %01010100
+    .BYTE   %01010101
