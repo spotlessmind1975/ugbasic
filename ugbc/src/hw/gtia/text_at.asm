@@ -78,20 +78,34 @@ TEXTATANTIC5X:
     BNE TEXTATANTIC8X
     JMP TEXTATANTIC8
 TEXTATANTIC8X:
-    ; CMP #9
-    ; BEQ PLOTANTIC9
-    ; CMP #10
-    ; BEQ PLOTANTIC10
-    ; CMP #11
-    ; BEQ PLOTANTIC11
-    ; CMP #13
-    ; BEQ PLOTANTIC13
-    ; CMP #15
-    ; BEQ PLOTANTIC15
-    ; CMP #12
-    ; BEQ PLOTANTIC12
-    ; CMP #14
-    ; BEQ PLOTANTIC14
+    CMP #9
+    BNE TEXTATANTIC9X
+    JMP TEXTATANTIC9
+TEXTATANTIC9X:
+    CMP #10
+    BNE TEXTATANTIC10X
+    JMP TEXTATANTIC10
+TEXTATANTIC10X:
+    CMP #11
+    BNE TEXTATANTIC11X
+    JMP TEXTATANTIC11
+TEXTATANTIC11X:
+    CMP #12
+    BNE TEXTATANTIC12X
+    JMP TEXTATANTIC12
+TEXTATANTIC12X:
+    CMP #13
+    BNE TEXTATANTIC13X
+    JMP TEXTATANTIC13
+TEXTATANTIC13X:
+    CMP #14
+    BNE TEXTATANTIC14X
+    JMP TEXTATANTIC14
+TEXTATANTIC14X:
+    CMP #15
+    BNE TEXTATANTIC15X
+    JMP TEXTATANTIC15
+TEXTATANTIC15X:
     RTS
     
 ;-----------------------------------------------------------------------------
@@ -100,19 +114,213 @@ TEXTATANTIC8X:
 
 TEXTATANTIC8:
 
-    LDX XCURSYS
-    LDY YCURSYS
+    LDA XCURSYS
+    TAX                        ;tbl_8,x index
 
+    ;-------------------------
+    ;calc Y-cell
+    ;-------------------------
+    LDA YCURSYS
+    TAY                         ;tbl_8,y index
+
+    ;----------------------------------
+    ;add x & y to calc cell point is in
+    ;----------------------------------
     CLC
 
-    LDA PLOTVBASELO,Y          ;table of $A000 row base addresses
-    ADC PLOT8LO,X              ;+ (8 * Xcell)
+    LDA PLOT4VBASELO,Y          ;table of $9C40 row base addresses
+    ; ADC PLOT4LO,X              ;+ (4 * Xcell)
     STA PLOTDEST               ;= cell address
 
-    LDA PLOTVBASEHI,Y          ;do the high byte
-    ADC PLOT8HI,X
+    LDA PLOT4VBASEHI,Y          ;do the high byte
+    ; ADC PLOT4HI,X
     STA PLOTDEST+1
 
+    JMP TEXTATBMCOMMON
+
+TEXTATANTIC9:
+
+    LDA XCURSYS
+    TAX                        ;tbl_8,x index
+
+    ;-------------------------
+    ;calc Y-cell
+    ;-------------------------
+    LDA YCURSYS
+    TAY                         ;tbl_8,y index
+
+    ;----------------------------------
+    ;add x & y to calc cell point is in
+    ;----------------------------------
+    CLC
+
+    TXA
+    ADC PLOT4VBASELO,Y          ;table of $9C40 row base addresses
+    STA PLOTDEST               ;= cell address
+
+    LDA #0
+    ADC PLOT4VBASEHI,Y          ;do the high byte
+    STA PLOTDEST+1
+
+    JMP TEXTATBMCOMMON
+
+TEXTATANTIC10:
+
+    LDA XCURSYS
+    TAX                        ;tbl_8,x index
+
+    ;-------------------------
+    ;calc Y-cell
+    ;-------------------------
+    LDA YCURSYS
+    TAY                         ;tbl_8,y index
+
+    ;----------------------------------
+    ;add x & y to calc cell point is in
+    ;----------------------------------
+    CLC
+
+    TXA
+    ADC PLOT5VBASELO,Y          ;table of $9C40 row base addresses
+    STA PLOTDEST               ;= cell address
+
+    LDA #0
+    ADC PLOT5VBASEHI,Y          ;do the high byte
+    STA PLOTDEST+1
+
+    JMP TEXTATBMCOMMON
+
+TEXTATANTIC11:
+
+    LDA XCURSYS
+    TAX                        ;tbl_8,x index
+
+    ;-------------------------
+    ;calc Y-cell
+    ;-------------------------
+    LDA YCURSYS
+    TAY                         ;tbl_8,y index
+
+    ;----------------------------------
+    ;add x & y to calc cell point is in
+    ;----------------------------------
+    CLC
+
+    TXA
+    ADC PLOT5VBASELO,Y          ;table of $9C40 row base addresses
+    STA PLOTDEST               ;= cell address
+
+    LDA #0
+    ADC PLOT5VBASEHI,Y          ;do the high byte
+    STA PLOTDEST+1
+
+    JMP TEXTATBMCOMMON
+
+TEXTATANTIC12:
+
+    LDA XCURSYS
+    TAX                        ;tbl_8,x index
+
+    ;-------------------------
+    ;calc Y-cell
+    ;-------------------------
+    LDA YCURSYS
+    TAY                         ;tbl_8,y index
+
+    ;----------------------------------
+    ;add x & y to calc cell point is in
+    ;----------------------------------
+    CLC
+
+    TXA
+    ADC PLOT5VBASELO,Y          ;table of $9C40 row base addresses
+    STA PLOTDEST               ;= cell address
+
+    LDA #0
+    ADC PLOT5VBASEHI,Y          ;do the high byte
+    STA PLOTDEST+1
+    
+    JMP TEXTATBMCOMMON
+
+TEXTATANTIC13:
+
+    LDA XCURSYS
+    TAX                        ;tbl_8,x index
+
+    ;-------------------------
+    ;calc Y-cell
+    ;-------------------------
+    LDA YCURSYS
+    TAY                         ;tbl_8,y index
+
+    ;----------------------------------
+    ;add x & y to calc cell point is in
+    ;----------------------------------
+    CLC
+
+    TXA
+    ADC PLOT6VBASELO,Y          ;table of $9C40 row base addresses
+    STA PLOTDEST               ;= cell address
+
+    LDA #0
+    ADC PLOT6VBASEHI,Y          ;do the high byte
+    STA PLOTDEST+1
+
+    JMP TEXTATBMCOMMON
+
+TEXTATANTIC14:
+
+    LDA XCURSYS
+    TAX                        ;tbl_8,x index
+
+    ;-------------------------
+    ;calc Y-cell
+    ;-------------------------
+    LDA YCURSYS
+    TAY                         ;tbl_8,y index
+
+    ;----------------------------------
+    ;add x & y to calc cell point is in
+    ;----------------------------------
+    CLC
+
+    TXA
+    ADC PLOT5VBASELO,Y          ;table of $9C40 row base addresses
+    STA PLOTDEST               ;= cell address
+
+    LDA #0
+    ADC PLOT5VBASEHI,Y          ;do the high byte
+    STA PLOTDEST+1
+
+    JMP TEXTATBMCOMMON
+
+TEXTATANTIC15:
+
+    LDA XCURSYS
+    TAX                        ;tbl_8,x index
+
+    ;-------------------------
+    ;calc Y-cell
+    ;-------------------------
+    LDA YCURSYS
+    TAY                         ;tbl_8,y index
+
+    ;----------------------------------
+    ;add x & y to calc cell point is in
+    ;----------------------------------
+    CLC
+
+    TXA
+    ADC PLOT6VBASELO,Y          ;table of $9C40 row base addresses
+    STA PLOTDEST               ;= cell address
+
+    LDA #0
+    ADC PLOT6VBASEHI,Y          ;do the high byte
+    STA PLOTDEST+1
+
+    JMP TEXTATBMCOMMON
+
+TEXTATBMCOMMON:
     LDX TEXTSIZE
     LDY #$0
 TEXTATBMLOOP2:
@@ -123,6 +331,7 @@ TEXTATBMLOOP2:
 
 TEXTATBMNSKIPTAB:
     LDA (TEXTPTR),Y
+    STA SCREENCODE
 
     CMP #$7f
     BEQ TEXTATBMTAB
@@ -131,6 +340,7 @@ TEXTATBMNSKIPTAB:
     JMP TEXTATBMCC
 
 TEXTATBMXCC:
+    JSR TEXTATDECODE
     JMP TEXTATBMSP0
 
 TEXTATBMTAB:
@@ -233,31 +443,7 @@ TEXTATBMSP0:
 
     TYA
     PHA
-
-    TXA
-    PHA
-
-    LDX XCURSYS
-    LDY YCURSYS
-
-    CLC
-
-    LDA PLOTVBASELO,Y          ;table of $A000 row base addresses
-    ADC PLOT8LO,X              ;+ (8 * Xcell)
-    STA PLOTDEST               ;= cell address
-
-    LDA PLOTVBASEHI,Y          ;do the high byte
-    ADC PLOT8HI,X
-    STA PLOTDEST+1
-
-    PLA
-    TAX
     
-    PLA
-    TAY
-
-    TYA
-    PHA
     LDY #0
 
     LDA SCREENCODE
@@ -282,9 +468,44 @@ TEXTATBMSP0:
     LDA #$E0
     ADC TMPPTR+1
     STA TMPPTR+1
+
+    LDA PLOTDEST
+    STA TMPPTR2
+    LDA PLOTDEST+1
+    STA TMPPTR2+1
 TEXTATBMSP0L1:
+    LDA CURRENTMODE
+    CMP #10
+    BEQ TEXTATBMSP0L1M
+
     LDA (TMPPTR),Y
-    STA (PLOTDEST),Y
+    JMP TEXTATBMSP0L1M2
+
+TEXTATBMSP0L1M:
+    LDA (TMPPTR),Y
+    ASL A
+    ORA (TMPPTR),Y
+    JMP TEXTATBMSP0L1M2
+    
+TEXTATBMSP0L1M2:
+    STA (TMPPTR2),Y
+    
+    CLC
+    LDA TMPPTR2
+    ADC CURRENTSL
+    STA TMPPTR2
+    LDA TMPPTR2+1
+    ADC #0
+    STA TMPPTR2+1
+    
+    SEC
+    LDA TMPPTR2
+    SBC #1
+    STA TMPPTR2
+    LDA TMPPTR2+1
+    SBC #0
+    STA TMPPTR2+1
+
     INY
     CPY #8
     BNE TEXTATBMSP0L1
@@ -304,6 +525,15 @@ TEXTATBMSP0L1:
 ;     ORA TEXTPAPER
 ;     STA (PLOTCDEST),Y
 ; TEXTATBMCNOPAPER:
+
+    CLC
+    LDA PLOTDEST
+    ADC #1
+    STA PLOTDEST
+    LDA PLOTDEST+1
+    ADC #0
+    STA PLOTDEST+1
+
     PLA
     TAY
     JMP TEXTATBMINCX
