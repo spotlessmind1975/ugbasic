@@ -50,7 +50,7 @@ extern char DATATYPE_AS_STRING[][16];
 %token POUND RUNSTOP RUN STOP SEMICOLON SLASH KEY STATE KEYSTATE KEYSHIFT CAPSLOCK CAPS LOCK ALT
 %token INPUT FREE TILEMAP EMPTY TILE EMPTYTILE PLOT GR CIRCLE DRAW LINE BOX POLYLINE ELLIPSE CLIP
 %token BACK DEBUG CAN ELSEIF BUFFER LOAD SIZE MOB IMAGE PUT VISIBLE HIDDEN HIDE SHOW RENDER
-%token SQR TI CONST VBL POKE NOP FILL
+%token SQR TI CONST VBL POKE NOP FILL IN
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -161,6 +161,9 @@ const_factor:
       | SCREEN WIDTH {
           $$ = ((Environment *)_environment)->screenWidth;
       }
+      | SCREEN TILES WIDTH {
+          $$ = ((Environment *)_environment)->screenTilesWidth;
+      }
       | IMAGE WIDTH OP expr CP {
           Variable * v = variable_retrieve( _environment, $4 );
           if ( v->type != VT_IMAGE ) {
@@ -173,6 +176,9 @@ const_factor:
       }
       | SCREEN HEIGHT {
           $$ = ((Environment *)_environment)->screenHeight;
+      }
+      | SCREEN TILES HEIGHT {
+          $$ = ((Environment *)_environment)->screenTilesHeight;
       }
       | IMAGE HEIGHT OP expr CP {
           Variable * v = variable_retrieve( _environment, $4 );
@@ -1088,6 +1094,9 @@ exponential:
     | SCREEN WIDTH {
         $$ = screen_get_width( _environment )->name;
     }
+    | SCREEN TILES WIDTH {
+        $$ = screen_tiles_get_width( _environment )->name;
+    }
     | IMAGE WIDTH OP expr CP {
         $$ = image_get_width( _environment, $4 )->name;
     }
@@ -1096,6 +1105,9 @@ exponential:
     }
     | SCREEN HEIGHT {
         $$ = screen_get_height( _environment )->name;
+    }
+    | SCREEN TILES HEIGHT {
+        $$ = screen_tiles_get_height( _environment )->name;
     }
     | IMAGE HEIGHT OP expr CP {
         $$ = image_get_height( _environment, $4 )->name;

@@ -40,22 +40,23 @@
 
 void cmove_direct( Environment * _environment, int _dx, int _dy ) {
 
+    Variable * zero = variable_temporary( _environment, VT_BYTE, "(zero)" );
+    variable_store( _environment, zero->name, 0 );
+
     if ( _dx ) {
         Variable * windowCX = variable_retrieve( _environment, "windowCX" );
-        Variable * windowX = variable_retrieve( _environment, "windowX" );
-        Variable * windowX2 = variable_retrieve( _environment, "windowX2" );
         Variable * dx = variable_temporary( _environment, VT_SBYTE, "(cmove hz)" );
         variable_store( _environment, dx->name, _dx );
-        add_complex( _environment, windowCX->name, dx->name, windowX->name, windowX2->name );
+        Variable * screenWidth = variable_retrieve( _environment, "CURRENTTILESWIDTH" );
+        add_complex( _environment, windowCX->name, dx->name, zero->name, screenWidth->name );
     }
 
     if ( _dy ) {
         Variable * windowCY = variable_retrieve( _environment, "windowCY" );
-        Variable * windowY = variable_retrieve( _environment, "windowY" );
-        Variable * windowY2 = variable_retrieve( _environment, "windowY2" );
         Variable * dy = variable_temporary( _environment, VT_SBYTE, "(cmove vt)" );
         variable_store( _environment, dy->name, _dy );
-        add_complex( _environment, windowCY->name, dy->name, windowY->name, windowY2->name );
+        Variable * screenHeight = variable_retrieve( _environment, "CURRENTTILESHEIGHT" );
+        add_complex( _environment, windowCY->name, dy->name, zero->name, screenHeight->name );
     }
 
 }
@@ -95,20 +96,21 @@ e offset positivi.
 </usermanual> */
 void cmove( Environment * _environment, char * _dx, char * _dy ) {
 
+    Variable * zero = variable_temporary( _environment, VT_WORD, "(zero)");
+    variable_store( _environment, zero->name, 0 );
+
     if ( _dx ) {
         Variable * windowCX = variable_retrieve( _environment, "windowCX" );
-        Variable * windowX = variable_retrieve( _environment, "windowX" );
-        Variable * windowX2 = variable_retrieve( _environment, "windowX2" );
         Variable * dx = variable_retrieve_or_define( _environment, _dx, VT_SBYTE, 0 );
-        add_complex( _environment, windowCX->name, dx->name, windowX->name, windowX2->name );
+        Variable * screenWidth = variable_retrieve( _environment, "CURRENTTILESWIDTH" );        
+        add_complex( _environment, windowCX->name, dx->name, zero->name, screenWidth->name );
     }
 
     if ( _dy ) {
         Variable * windowCY = variable_retrieve( _environment, "windowCY" );
-        Variable * windowY = variable_retrieve( _environment, "windowY" );
-        Variable * windowY2 = variable_retrieve( _environment, "windowY2" );
         Variable * dy = variable_retrieve_or_define( _environment, _dy, VT_SBYTE, 0 );
-        add_complex( _environment, windowCY->name, dy->name, windowY->name, windowY2->name );
+        Variable * screenHeight = variable_retrieve( _environment, "CURRENTTILESHEIGHT" );        
+        add_complex( _environment, windowCY->name, dy->name, zero->name, screenHeight->name );
     }
 
 }

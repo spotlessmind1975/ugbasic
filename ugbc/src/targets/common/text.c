@@ -57,11 +57,11 @@ void text_newline( Environment * _environment ) {
 
     Variable * x = variable_retrieve( _environment, "windowCX" );
     Variable * y = variable_retrieve( _environment, "windowCY" );
-    Variable * y2 = variable_retrieve( _environment, "windowY2" );
+    Variable * screenHeight = variable_retrieve( _environment, "CURRENTHEIGHT" );
 
     cpu_store_8bit( _environment, x->realName, 0 );    
 
-    Variable * result = variable_compare( _environment, y->name, y2->name );    
+    Variable * result = variable_compare( _environment, y->name, screenHeight->name );    
 
     char endLabel[MAX_TEMPORARY_STORAGE]; sprintf(endLabel, "%send", label);
     char scrollLabel[MAX_TEMPORARY_STORAGE]; sprintf(scrollLabel, "%sscroll", label);

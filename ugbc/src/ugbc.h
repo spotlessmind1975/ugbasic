@@ -1009,14 +1009,24 @@ typedef struct _Environment {
     VariableType parametersTypeEach[MAX_PARAMETERS];
 
     /**
-     * Screen width (statically determined)
+     * Screen width in pixels (statically determined)
      */
     int screenWidth;
 
     /**
-     * Screen height (statically determined)
+     * Screen height in pixels (statically determined)
      */
     int screenHeight;
+
+    /**
+     * Screen width in characters (statically determined)
+     */
+    int screenTilesWidth;
+
+    /**
+     * Screen height in characters (statically determined)
+     */
+    int screenTilesHeight;
 
     /**
      * Deployed modules.
@@ -1646,6 +1656,8 @@ void                    screen_off( Environment * _environment );
 void                    screen_on( Environment * _environment );
 void                    screen_rows( Environment * _environment, int _rows );
 void                    screen_rows_var( Environment * _environment, char * _rows );
+Variable *              screen_tiles_get_height( Environment * _environment );
+Variable *              screen_tiles_get_width( Environment * _environment );
 void                    screen_vertical_scroll( Environment * _environment, int _displacement );
 void                    screen_vertical_scroll_var( Environment * _environment, char * _displacement );
 void                    set_timer( Environment * _environment, char * _value );

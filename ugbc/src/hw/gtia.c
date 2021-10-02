@@ -791,6 +791,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
     cpu_store_16bit( _environment, "CURRENTWIDTH", _environment->screenWidth );
     cpu_store_16bit( _environment, "CURRENTHEIGHT", _environment->screenHeight );
+    cpu_store_8bit( _environment, "CURRENTTILESWIDTH", _environment->screenWidth / 8 );
+    cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenHeight / 8 );
 
     cpu_store_16bit( _environment, "CLIPX1", 0) ;
     cpu_store_16bit( _environment, "CLIPY2", 0) ;
@@ -1080,12 +1082,26 @@ void gtia_get_width( Environment * _environment, char *_result ) {
 
 }
 
+void gtia_tiles_get_width( Environment * _environment, char *_result ) {
+
+    outline0("LDA CURRENTTILESWIDTH" );
+    outline1("STA %s", _result );
+
+}
+
 void gtia_get_height( Environment * _environment, char *_result ) {
 
     outline0("LDA CURRENTHEIGHT" );
     outline1("STA %s", _result );
     outline0("LDA CURRENTHEIGHT+1" );
     outline1("STA %s+1", _result );
+
+}
+
+void gtia_tiles_get_height( Environment * _environment, char *_result ) {
+
+    outline0("LDA CURRENTHEIGHT" );
+    outline1("STA %s", _result );
 
 }
 
@@ -1168,6 +1184,15 @@ void gtia_initialization( Environment * _environment ) {
     deploy( gtiastartup, src_hw_gtia_startup_asm );
     src_hw_chipset_mob_asm = src_hw_gtia_mob_asm;
     src_hw_chipset_mob_asm_len = src_hw_gtia_mob_asm_len;
+
+    variable_import( _environment, "CURRENTWIDTH", VT_POSITION );
+    variable_global( _environment, "CURRENTWIDTH" );
+    variable_import( _environment, "CURRENTHEIGHT", VT_POSITION  );
+    variable_global( _environment, "CURRENTHEIGHT" );
+    variable_import( _environment, "CURRENTTILESWIDTH", VT_BYTE );
+    variable_global( _environment, "CURRENTTILESWIDTH" );
+    variable_import( _environment, "CURRENTTILESHEIGHT", VT_BYTE );
+    variable_global( _environment, "CURRENTTILESHEIGHT" );
 
 #ifdef __atarixl__
     SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC12, 1, 320, 192, 4, "Antic C (Graphics 14-XL computers only)"  );

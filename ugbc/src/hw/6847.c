@@ -560,6 +560,8 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
 
     cpu_store_16bit( _environment, "CURRENTWIDTH", _environment->screenWidth );
     cpu_store_16bit( _environment, "CURRENTHEIGHT", _environment->screenHeight );
+    cpu_store_8bit( _environment, "CURRENTTILESWIDTH", _environment->screenWidth / 8 );
+    cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenHeight / 8 );
 
 }
 
@@ -767,10 +769,24 @@ void c6847_get_width( Environment * _environment, char *_result ) {
 
 }
 
+void c6847_tiles_get_width( Environment * _environment, char *_result ) {
+
+    outline0("LDA CURRENTTILESWIDTH" );
+    outline1("STA %s", _result );
+
+}
+
 void c6847_get_height( Environment * _environment, char *_result ) {
 
     outline0("LDX CURRENTHEIGHT" );
     outline1("STX %s", _result );
+
+}
+
+void c6847_tiles_get_height( Environment * _environment, char *_result ) {
+
+    outline0("LDA CURRENTTILESHEIGHT" );
+    outline1("STA %s", _result );
 
 }
 
@@ -833,6 +849,15 @@ void c6847_initialization( Environment * _environment ) {
     deploy( c6847startup, src_hw_6847_startup_asm );
     // src_hw_chipset_mob_asm = src_hw_c6847_mob_asm;
     // src_hw_chipset_mob_asm_len = src_hw_c6847_mob_asm_len;
+
+    variable_import( _environment, "CURRENTWIDTH", VT_POSITION );
+    variable_global( _environment, "CURRENTWIDTH" );
+    variable_import( _environment, "CURRENTHEIGHT", VT_POSITION  );
+    variable_global( _environment, "CURRENTHEIGHT" );
+    variable_import( _environment, "CURRENTTILESWIDTH", VT_BYTE );
+    variable_global( _environment, "CURRENTTILESWIDTH" );
+    variable_import( _environment, "CURRENTTILESHEIGHT", VT_BYTE );
+    variable_global( _environment, "CURRENTTILESHEIGHT" );
 
     SCREEN_MODE_DEFINE( TILEMAP_MODE_INTERNAL, 0, 32, 16, 2, "Alphanumeric Internal");
     SCREEN_MODE_DEFINE( TILEMAP_MODE_EXTERNAL, 0, 32, 16, 2, "Alphanumeric External");

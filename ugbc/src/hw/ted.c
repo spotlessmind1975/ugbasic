@@ -334,6 +334,8 @@ int ted_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
 
     cpu_store_16bit( _environment, "CURRENTWIDTH", _environment->screenWidth );
     cpu_store_16bit( _environment, "CURRENTHEIGHT", _environment->screenHeight );
+    cpu_store_8bit( _environment, "CURRENTTILESWIDTH", _environment->screenWidth / 8 );
+    cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenHeight / 8 );
 
 }
 
@@ -563,54 +565,33 @@ void ted_busy_wait( Environment * _environment, char * _timing ) {
 
 void ted_get_width( Environment * _environment, char *_result ) {
 
-    MAKE_LABEL
+    outline0("LDA CURRENTWIDTH" );
+    outline1("STA %s", _result );
+    outline0("LDA CURRENTWIDTH+1" );
+    outline1("STA %s+1", _result );
 
-    outline0("LDA $FF06" );
-    outline0("AND #%00100000");
-    outline1("BNE %sbitmap", label );
-    outhead1("%stext:", label );
-    outline0("LDA #40" );
+}
+
+void ted_tiles_get_width( Environment * _environment, char *_result ) {
+
+    outline0("LDA CURRENTTILESWIDTH" );
     outline1("STA %s", _result );
-    outline0("LDA #0" );
-    outline1("STA %s+1", _result );
-    outline1("JMP %send", label );
-    outhead1("%sbitmap:", label );
-    outline0("LDA #$40" );
-    outline1("STA %s", _result );
-    outline0("LDA #$1" );
-    outline1("STA %s+1", _result );
-    outhead1("%send:", label );
 
 }
 
 void ted_get_height( Environment * _environment, char *_result ) {
 
-    MAKE_LABEL
+    outline0("LDA CURRENTHEIGHT" );
+    outline1("STA %s", _result );
+    outline0("LDA CURRENTHEIGHT+1" );
+    outline1("STA %s+1", _result );
 
-    outline0("LDA $FF06" );
-    outline0("AND #%00100000");
-    outline1("BNE %sbitmap", label );
-    outhead1("%stext:", label );
-    outline0("LDA $FF06" );
-    outline0("AND #%00001000");
-    outline1("BNE %s_25", label );
-    outline0("LDA #24" );
+}
+
+void ted_tiles_get_height( Environment * _environment, char *_result ) {
+
+    outline0("LDA CURRENTTILESHEIGHT" );
     outline1("STA %s", _result );
-    outline0("LDA #0" );
-    outline1("STA %s+1", _result );
-    outline1("JMP %send", label );
-    outhead1("%s_25:", label );
-    outline0("LDA #25" );
-    outline1("STA %s", _result );
-    outline0("LDA #0" );
-    outline1("STA %s+1", _result );
-    outline1("JMP %send", label );
-    outhead1("%sbitmap:", label );
-    outline0("LDA #200" );
-    outline1("STA %s", _result );
-    outline0("LDA #0" );
-    outline1("STA %s+1", _result );
-    outhead1("%send:", label );
 
 }
 
@@ -681,6 +662,15 @@ void ted_initialization( Environment * _environment ) {
     deploy( vicstartup, src_hw_ted_startup_asm );
     src_hw_chipset_mob_asm = src_hw_ted_mob_asm;
     src_hw_chipset_mob_asm_len = src_hw_ted_mob_asm_len;
+
+    variable_import( _environment, "CURRENTWIDTH", VT_POSITION );
+    variable_global( _environment, "CURRENTWIDTH" );
+    variable_import( _environment, "CURRENTHEIGHT", VT_POSITION  );
+    variable_global( _environment, "CURRENTHEIGHT" );
+    variable_import( _environment, "CURRENTTILESWIDTH", VT_BYTE );
+    variable_global( _environment, "CURRENTTILESWIDTH" );
+    variable_import( _environment, "CURRENTTILESHEIGHT", VT_BYTE );
+    variable_global( _environment, "CURRENTTILESHEIGHT" );
 
     SCREEN_MODE_DEFINE( BITMAP_MODE_STANDARD, 1, 320, 200, 2, "Standard Bitmap Mode" );
     SCREEN_MODE_DEFINE( BITMAP_MODE_MULTICOLOR, 1, 160, 200, 4, "Multicolor Bitmap Mode"  );

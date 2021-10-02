@@ -38,48 +38,14 @@
  * CODE SECTION 
  ****************************************************************************/
 
-/**
- * @brief Emit code for <strong>CENTRE ...</strong>
- * 
- * @param _environment Current calling environment
- * @param _string String to center
- */
-/* <usermanual>
-@keyword CENTRE
+Variable * screen_get_width( Environment * _environment ) {
 
-@english
-The ''CENTRE'' (or ''CENTER'') command can be used to position text in the 
-centre of the screen, and to save you the effort of calculating the text 
-coordinates in order to achieve this. The CENTRE command takes a string 
-of characters and prints it in the middle of the line currently occupied 
-by the cursor.
+    Variable * width = variable_temporary( _environment, VT_BYTE, "(result of get tiles width)");
 
-@italian
-Il comando ''CENTRE'' (o ''CENTER'') può essere utilizzato per posizionare
-il testo al centro dello schermo e per risparmiare lo sforzo di 
-calcolare le coordinate del testo per ottenere ciò. Il comando ''CENTER''
-prende una stringa di caratteri e la stampa al centro della riga 
-attualmente occupata dal cursore.
+    MAKE_LABEL
+    
+    ted_tiles_get_width( _environment, width->realName );
 
-@syntax CENTRE [expression]
-
-@example CENTRE "HELLO!"
-
-@usedInExample texts_position_07.bas
-
-@target all
-</usermanual> */
-void center( Environment * _environment, char * _string ) {
-
-    setup_text_variables( _environment );
-
-    Variable * y = variable_retrieve( _environment, "windowCY" );
-    Variable * string = variable_retrieve( _environment, _string );
-    Variable * currentWidth = variable_retrieve( _environment, "CURRENTTILESWIDTH");
-
-    Variable * w = variable_sub( _environment, currentWidth->name, variable_string_len( _environment, _string)->name );
-    variable_div2_const( _environment, w->name, 1 );
-
-    text_at( _environment, w->name, y->name, string->name );
+    return width;
 
 }
