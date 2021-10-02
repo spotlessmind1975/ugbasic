@@ -169,6 +169,9 @@ const_factor:
           if ( v->type != VT_IMAGE ) {
               CRITICAL_NOT_IMAGE( v->name );
           }
+          if ( !v->valueBuffer ) {
+              CRITICAL_NOT_ASSIGNED_IMAGE( v->name );
+          }
           $$ = v->valueBuffer[0];
       }
       | HEIGHT {
