@@ -375,7 +375,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
-            for( i=1; i<95; ++i ) {
+            for( i=1; i<(96+16); ++i ) {
                 // 8	\Display ANTIC mode 13 for second mode line
                 DLI_MODE( dliListCurrent, 13 );
             }
@@ -385,7 +385,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 65	\JVB-Jump and wait for Vertical Blank
             // 32	|to display list address which starts
             // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) + 16
-            DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) + 16 );
+            DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) );
             dliListStartOffset = dliListCurrent - dliListStart - 2;
 
             currentHeight = 96;
@@ -791,8 +791,10 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
     cpu_store_16bit( _environment, "CURRENTWIDTH", _environment->screenWidth );
     cpu_store_16bit( _environment, "CURRENTHEIGHT", _environment->screenHeight );
-    cpu_store_8bit( _environment, "CURRENTTILESWIDTH", _environment->screenWidth / 8 );
-    cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenHeight / 8 );
+    _environment->screenTilesWidth = _environment->screenWidth / 8;
+    cpu_store_8bit( _environment, "CURRENTTILESWIDTH", _environment->screenTilesWidth );
+    _environment->screenTilesHeight = _environment->screenHeight / 8;
+    cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight / 8 );
 
     cpu_store_16bit( _environment, "CLIPX1", 0) ;
     cpu_store_16bit( _environment, "CLIPY2", 0) ;
