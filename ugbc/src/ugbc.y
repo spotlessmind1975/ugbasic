@@ -149,6 +149,13 @@ const_modula:
 
 const_factor: 
         Integer
+      | IF OP const_expr OP_COMMA const_expr OP_COMMA const_expr CP {
+          if ( $3 ) {
+              $$ = $5;
+          } else {
+              $$ = $7;
+          }
+      }
       | OP_MINUS Integer {
           $$ = -$2;
       }
