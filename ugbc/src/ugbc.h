@@ -324,6 +324,12 @@ typedef struct _Variable {
     int imported;
 
     /** 
+     * This flag mark if this variable has been assigned.
+     * If it is temporary MUST not be outputed as value.
+     */
+    int assigned;
+
+    /** 
      * The initial value of the variable, as given by last (re)definition.
      */
     int value;

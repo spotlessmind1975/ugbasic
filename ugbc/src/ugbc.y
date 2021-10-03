@@ -2930,6 +2930,7 @@ statement:
         var->arrayDimensions = expr->arrayDimensions;
         memcpy( var->arrayDimensionsEach, expr->arrayDimensionsEach, MAX_ARRAY_DIMENSIONS * sizeof( int ) );
         var->arrayType = expr->arrayType;
+        expr->assigned = 1;
   }
   | Identifier OP_DOLLAR OP_ASSIGN expr {
         Variable * expr = variable_retrieve( _environment, $4 );

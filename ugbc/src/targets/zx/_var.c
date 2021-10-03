@@ -47,7 +47,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
 
     while( variable ) {
 
-        if ( !variable->imported ) {
+        if ( !variable->assigned && !variable->imported ) {
             switch( variable->type ) {
                 case VT_BYTE:
                 case VT_SBYTE:

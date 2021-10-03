@@ -172,7 +172,9 @@ void variable_cleanup( Environment * _environment ) {
 
                 for( int j=0; j< (_environment->currentProcedure+1); ++j ) {
                     Variable * variable = _environment->tempVariables[j];
-                    variable_cleanup_entry( _environment, variable );
+                    if ( ! variable->assigned ) {
+                        variable_cleanup_entry( _environment, variable );
+                    }
                 } 
 
                 Variable * variable = _environment->tempResidentVariables;
