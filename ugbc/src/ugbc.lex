@@ -253,6 +253,7 @@ PLUS { return(PLUS); }
 POINT { return (POINT); }
 POKE { return (POKE); }
 POLYLINE { return (POLYLINE); }
+POSITIVE { return (POSITIVE); }
 POUND { return (POUND); }
 POP { return (POP); }
 POSITION { return (POSITION); }
