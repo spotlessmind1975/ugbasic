@@ -104,7 +104,7 @@ void d64_inkey( Environment * _environment, char * _pressed, char * _key ) {
 
     d64_scancode( _environment, _pressed, _key );
 
-    outline1("LDA %s", _pressed );
+outline1("LDA %s", _pressed );
     outline0("CMPA #0" );
     outline1("BEQ %sskip", label );
     outline1("LDA %s", _key );
@@ -120,18 +120,20 @@ void d64_inkey( Environment * _environment, char * _pressed, char * _key ) {
     outline1("BEQ %sascii", label );
     outline0("LDA #0" );
     outline1("STA %s", _pressed );
-    outline1("JMP %sskip", label );
+    outline1("JMP %sdone", label );
     outhead1("%snoascii", label );
     outline0("LDA #0" );
     outline1("STA %s", _key );
-    outline1("JMP %sskip", label );
+    outline1("JMP %sdone", label );
     outhead1("%sdifferent", label );
     outline0("STA $011d" );
     outhead1("%sascii", label );
     outline0("LDB #0" );
     outline0("STB $011f" );
     outhead1("%sskip", label );
-
+    outline0("LDA #0" );
+    outline0("STA $011d" );
+    outhead1("%sdone", label );
 }
 
 void d64_scancode( Environment * _environment, char * _pressed, char * _scancode ) {
