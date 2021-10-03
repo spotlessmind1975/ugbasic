@@ -50,7 +50,7 @@ extern char DATATYPE_AS_STRING[][16];
 %token POUND RUNSTOP RUN STOP SEMICOLON SLASH KEY STATE KEYSTATE KEYSHIFT CAPSLOCK CAPS LOCK ALT
 %token INPUT FREE TILEMAP EMPTY TILE EMPTYTILE PLOT GR CIRCLE DRAW LINE BOX POLYLINE ELLIPSE CLIP
 %token BACK DEBUG CAN ELSEIF BUFFER LOAD SIZE MOB IMAGE PUT VISIBLE HIDDEN HIDE SHOW RENDER
-%token SQR TI CONST VBL POKE NOP FILL IN
+%token SQR TI CONST VBL POKE NOP FILL IN POSITIVE
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -2822,6 +2822,54 @@ statement:
   }
   | CONST Identifier OP_ASSIGN const_expr {
         const_define_numeric( _environment, $2, $4 );
+  }
+  | CONST POSITIVE Identifier OP_ASSIGN const_expr {
+        if ( $5 < 0 ) {
+            CRITICAL_NEGATIVE_CONSTANT( $3 );
+        }
+        const_define_numeric( _environment, $3, $5 );
+  }
+  | POSITIVE CONST Identifier OP_ASSIGN const_expr {
+        if ( $5 < 0 ) {
+            CRITICAL_NEGATIVE_CONSTANT( $3 );
+        }
+        const_define_numeric( _environment, $3, $5 );
+  }
+  | CONST Identifier IN OP const_expr OP_COMMA const_expr CP OP_ASSIGN const_expr  {
+        if ( $10 < $5 ) {
+            CRITICAL_TOO_LITTLE_CONSTANT( $2 );
+        }
+        if ( $10 > $5 ) {
+            CRITICAL_TOO_BIG_CONSTANT( $2 );
+        }
+        const_define_numeric( _environment, $2, $10 );
+  }
+  | CONST Identifier IN OSP const_expr OP_COMMA const_expr CP OP_ASSIGN const_expr  {
+        if ( $10 <= $5 ) {
+            CRITICAL_TOO_LITTLE_CONSTANT( $2 );
+        }
+        if ( $10 > $5 ) {
+            CRITICAL_TOO_BIG_CONSTANT( $2 );
+        }
+        const_define_numeric( _environment, $2, $10 );
+  }
+  | CONST Identifier IN OP const_expr OP_COMMA const_expr CSP OP_ASSIGN const_expr  {
+        if ( $10 < $5 ) {
+            CRITICAL_TOO_LITTLE_CONSTANT( $2 );
+        }
+        if ( $10 >= $5 ) {
+            CRITICAL_TOO_BIG_CONSTANT( $2 );
+        }
+        const_define_numeric( _environment, $2, $10 );
+  }
+  | CONST Identifier IN OSP const_expr OP_COMMA const_expr CSP OP_ASSIGN const_expr {
+        if ( $10 <= $5 ) {
+            CRITICAL_TOO_LITTLE_CONSTANT( $2 );
+        }
+        if ( $10 >= $5 ) {
+            CRITICAL_TOO_BIG_CONSTANT( $2 );
+        }
+        const_define_numeric( _environment, $2, $10 );
   }
   | TI OP_ASSIGN expr {
         set_timer( _environment, $3 );
