@@ -3192,7 +3192,6 @@ void cpu6809_convert_string_into_16bit( Environment * _environment, char * _stri
 
     outhead1("%sdone", label );
 
-    outline0("NOP" );
     outline1("STY %s", _value );
 
 }
@@ -3456,7 +3455,6 @@ void cpu6809_number_to_string( Environment * _environment, char * _number, char 
     }
 
     outline0("LDX MATHPTR2" );
-    outline0("NOP" );
 
     outhead1("%spositive", label );
     outline1("LDA #$%2.2X", _bits );

@@ -79,10 +79,6 @@ Variable * get_cmove( Environment * _environment, char * _x, char * _y ) {
     variable_store_string(_environment, result->name, resultString );
     cpu_dswrite( _environment, result->realName );
     cpu_dsdescriptor( _environment, result->realName, address->realName, size->realName );
-    
-    outline0("NOP" );
-    outline0("NOP" );
-    outline0("NOP" );
 
     cpu_move_8bit_with_offset(_environment, x->realName, address->realName, 1 );
     cpu_move_8bit_with_offset(_environment, y->realName, address->realName, 2 );
