@@ -104,7 +104,7 @@ void begin_while_condition( Environment * _environment, char * _expression ) {
         CRITICAL("Internal error on WHILE...WEND (2)");
     }
 
-    Variable * expression = variable_retrieve( _environment, _expression );
+    Variable * expression = variable_retrieve_or_define( _environment, _expression, VT_BYTE, 0 );
 
     unsigned char endWhile[MAX_TEMPORARY_STORAGE]; sprintf(endWhile, "%sbis", loop->label );
 

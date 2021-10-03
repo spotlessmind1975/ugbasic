@@ -63,7 +63,7 @@ void end_repeat( Environment * _environment, char * _expression ) {
 
     _environment->loops = _environment->loops->next;
 
-    Variable * expression = variable_retrieve( _environment, _expression );
+    Variable * expression = variable_retrieve_or_define( _environment, _expression, VT_BYTE, 0 );
 
     cpu_bveq( _environment,  expression->realName, loop->label );
 
