@@ -2846,7 +2846,7 @@ statement:
         if ( $10 < $5 ) {
             CRITICAL_TOO_LITTLE_CONSTANT( $2 );
         }
-        if ( $10 > $5 ) {
+        if ( $10 > $7 ) {
             CRITICAL_TOO_BIG_CONSTANT( $2 );
         }
         const_define_numeric( _environment, $2, $10 );
@@ -2855,7 +2855,7 @@ statement:
         if ( $10 <= $5 ) {
             CRITICAL_TOO_LITTLE_CONSTANT( $2 );
         }
-        if ( $10 > $5 ) {
+        if ( $10 > $7 ) {
             CRITICAL_TOO_BIG_CONSTANT( $2 );
         }
         const_define_numeric( _environment, $2, $10 );
@@ -2864,7 +2864,7 @@ statement:
         if ( $10 < $5 ) {
             CRITICAL_TOO_LITTLE_CONSTANT( $2 );
         }
-        if ( $10 >= $5 ) {
+        if ( $10 >= $7 ) {
             CRITICAL_TOO_BIG_CONSTANT( $2 );
         }
         const_define_numeric( _environment, $2, $10 );
@@ -2873,7 +2873,7 @@ statement:
         if ( $10 <= $5 ) {
             CRITICAL_TOO_LITTLE_CONSTANT( $2 );
         }
-        if ( $10 >= $5 ) {
+        if ( $10 >= $7 ) {
             CRITICAL_TOO_BIG_CONSTANT( $2 );
         }
         const_define_numeric( _environment, $2, $10 );
