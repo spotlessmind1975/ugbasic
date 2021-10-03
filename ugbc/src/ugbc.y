@@ -50,7 +50,7 @@ extern char DATATYPE_AS_STRING[][16];
 %token POUND RUNSTOP RUN STOP SEMICOLON SLASH KEY STATE KEYSTATE KEYSHIFT CAPSLOCK CAPS LOCK ALT
 %token INPUT FREE TILEMAP EMPTY TILE EMPTYTILE PLOT GR CIRCLE DRAW LINE BOX POLYLINE ELLIPSE CLIP
 %token BACK DEBUG CAN ELSEIF BUFFER LOAD SIZE MOB IMAGE PUT VISIBLE HIDDEN HIDE SHOW RENDER
-%token SQR TI CONST VBL POKE NOP FILL IN POSITIVE
+%token SQR TI CONST VBL POKE NOP FILL IN POSITIVE DEFINE
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -2493,6 +2493,24 @@ poke_definition :
         poke_var( _environment, $1, $3 );
     };
   
+define_definition :
+      STRING COUNT const_expr {
+        if ( $3 <= 0 ) {
+            CRITICAL_INVALID_STRING_COUNT( $3 );
+        }
+        ((struct _Environment *)_environment)->dstring.count = $3;
+    }
+    | STRING SPACE const_expr {
+        if ( $3 <= 0 ) {
+            CRITICAL_INVALID_STRING_SPACE( $3 );
+        }
+        ((struct _Environment *)_environment)->dstring.space = $3;
+    };
+
+define_definitions :
+      define_definition
+    | define_definition OP_COMMA define_definitions;
+
 statement:
     BANK bank_definition
   | RASTER raster_definition
@@ -2822,6 +2840,7 @@ statement:
   | MID OP expr OP_COMMA expr OP_COMMA expr CP OP_ASSIGN expr {
         variable_string_mid_assign( _environment, $3, $5, $7, $10 );
   }
+  | DEFINE define_definitions
   | DIM dim_definitions
   | FILL fill_definitions
   | CONST Identifier OP_ASSIGN String {

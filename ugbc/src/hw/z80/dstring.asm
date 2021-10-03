@@ -276,13 +276,7 @@ DSDESCRIPTOR:
 OUT_OF_MEMORY:
     JMP OUT_OF_MEMORY
 
-MAXSTRINGS:             DB    255
-DESCRIPTORS:            DEFS    1024
-WORKING:                DEFS    1024
-TEMPORARY:              DEFS    1024
 USING:                  DB    0
     
-FREE_STRING:            DB $ff, (max_free_string-1)
-
 primo:                  DB 0
 secondo:                DB 0

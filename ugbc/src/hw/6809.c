@@ -3509,7 +3509,7 @@ void cpu6809_bits_to_string( Environment * _environment, char * _number, char * 
 
 void cpu6809_dsdefine( Environment * _environment, char * _string, char * _index ) {
     
-    deploy( dstring, src_hw_6809_dstring_asm );
+    deploy_with_vars( dstring, src_hw_6809_dstring_asm, cpu_dstring_vars );
 
     outline1( "LDY #%s", _string );
     outline0( "JSR DSDEFINE" );
@@ -3519,7 +3519,7 @@ void cpu6809_dsdefine( Environment * _environment, char * _string, char * _index
 
 void cpu6809_dsalloc( Environment * _environment, char * _size, char * _index ) {
 
-    deploy( dstring, src_hw_6809_dstring_asm );
+    deploy_with_vars( dstring, src_hw_6809_dstring_asm, cpu_dstring_vars );
 
     outline1( "LDA %s", _size );
     outline0( "JSR DSALLOC" );
@@ -3529,7 +3529,7 @@ void cpu6809_dsalloc( Environment * _environment, char * _size, char * _index ) 
 
 void cpu6809_dsalloc_size( Environment * _environment, int _size, char * _index ) {
 
-    deploy( dstring, src_hw_6809_dstring_asm );
+    deploy_with_vars( dstring, src_hw_6809_dstring_asm, cpu_dstring_vars );
 
     outline1( "LDA #$%2.2x", _size );
     outline0( "JSR DSALLOC" );
@@ -3539,7 +3539,7 @@ void cpu6809_dsalloc_size( Environment * _environment, int _size, char * _index 
 
 void cpu6809_dsfree( Environment * _environment, char * _index ) {
 
-    deploy( dstring, src_hw_6809_dstring_asm );
+    deploy_with_vars( dstring, src_hw_6809_dstring_asm, cpu_dstring_vars );
 
     outline1( "LDB %s", _index );
     outline0( "JSR DSFREE" );
@@ -3548,7 +3548,7 @@ void cpu6809_dsfree( Environment * _environment, char * _index ) {
 
 void cpu6809_dswrite( Environment * _environment, char * _index ) {
 
-    deploy( dstring, src_hw_6809_dstring_asm );
+    deploy_with_vars( dstring, src_hw_6809_dstring_asm, cpu_dstring_vars );
 
     outline1( "LDB %s", _index );
     outline0( "JSR DSWRITE" );
@@ -3557,7 +3557,7 @@ void cpu6809_dswrite( Environment * _environment, char * _index ) {
 
 void cpu6809_dsresize( Environment * _environment, char * _index, char * _resize ) {
 
-    deploy( dstring, src_hw_6809_dstring_asm );
+    deploy_with_vars( dstring, src_hw_6809_dstring_asm, cpu_dstring_vars );
 
     outline1( "LDB %s", _index );
     outline1( "LDA %s", _resize );
@@ -3567,7 +3567,7 @@ void cpu6809_dsresize( Environment * _environment, char * _index, char * _resize
 
 void cpu6809_dsresize_size( Environment * _environment, char * _index, int _resize ) {
 
-    deploy( dstring, src_hw_6809_dstring_asm );
+    deploy_with_vars( dstring, src_hw_6809_dstring_asm, cpu_dstring_vars );
 
     outline1( "LDB %s", _index );
     outline1( "LDA #$%2.2X", _resize );
@@ -3577,7 +3577,7 @@ void cpu6809_dsresize_size( Environment * _environment, char * _index, int _resi
 
 void cpu6809_dsgc( Environment * _environment ) {
 
-    deploy( dstring, src_hw_6809_dstring_asm );
+    deploy_with_vars( dstring, src_hw_6809_dstring_asm, cpu_dstring_vars );
 
     outline0( "JSR DSGC" );
 
@@ -3585,7 +3585,7 @@ void cpu6809_dsgc( Environment * _environment ) {
 
 void cpu6809_dsdescriptor( Environment * _environment, char * _index, char * _address, char * _size ) {
 
-    deploy( dstring,src_hw_6809_dstring_asm );
+    deploy_with_vars( dstring,src_hw_6809_dstring_asm, cpu_dstring_vars );
 
     outline1( "LDB %s", _index );
     outline0( "JSR DSDESCRIPTOR" );
@@ -3731,6 +3731,19 @@ void cpu6809_sqroot( Environment * _environment, char * _number, char * _result 
     outline0("LDA Root" );
     outline1("STA %s", _result );
     
+}
+
+void cpu6809_dstring_vars( Environment * _environment ) {
+
+    int count = _environment->dstring.count == 0 ? DSTRING_DEFAULT_COUNT : _environment->dstring.count;
+    int space = _environment->dstring.space == 0 ? DSTRING_DEFAULT_SPACE : _environment->dstring.space;
+
+    outhead1("MAXSTRINGS                    equ %d", count );
+    outhead1("DESCRIPTORS                   rzb %d", count * 4 );
+    outhead1("WORKING                       rzb %d", space );
+    outhead1("TEMPORARY                     rzb %d", space );
+    outhead1("FREE_STRING                   fdb %d", (space-1) );
+
 }
 
 #endif

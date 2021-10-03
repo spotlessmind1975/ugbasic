@@ -165,6 +165,7 @@ void cpu6809_mobhide( Environment * _environment, char * _index );
 void cpu6809_mobat( Environment * _environment, char * _index, char *_x, char *_y );
 void cpu6809_mobrender( Environment * _environment, int _on_vbl );
 void cpu6809_sqroot( Environment * _environment, char * _number, char * _result );
+void cpu6809_dstring_vars( Environment * _environment );
 
 #define cpu_beq( _environment,  _label  ) cpu6809_beq( _environment,  _label  )
 #define cpu_bneq( _environment,  _label  ) cpu6809_beq( _environment,  _label  )
@@ -303,6 +304,8 @@ extern unsigned int src_hw_chipset_mob_asm_len;
 #define cpu_mobat( _environment, _index, _x, _y ) cpu6809_mobat( _environment, _index, _x, _y )
 #define cpu_mobrender( _environment, _on_vbl ) cpu6809_mobrender( _environment, _on_vbl )
 #define cpu_sqroot( _environment, _number, _result ) cpu6809_sqroot( _environment, _number, _result )
+
+#define cpu_dstring_vars( _environment ) cpu6809_dstring_vars( _environment )
 
 #define     CPU_BIG_ENDIAN      1
 

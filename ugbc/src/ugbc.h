@@ -162,6 +162,8 @@ typedef enum _VariableType {
 #define MAX_PALETTE                     256
 #define MAX_NESTED_ARRAYS               16
 #define MAX_PROCEDURES                  4096
+#define DSTRING_DEFAULT_COUNT           255
+#define DSTRING_DEFAULT_SPACE           1024
 
 #define VT_BW_8BIT( t, v )              ( ( (t) == (v) ) ? 8 : 0 )
 #define VT_BW_16BIT( t, v )             ( ( (t) == (v) ) ? 16 : 0 )
@@ -790,6 +792,13 @@ typedef struct _Deployed {
 
 } Deployed;
 
+typedef struct _DString {
+
+    int count;
+    int space;
+
+} DString;
+
 /**
  * @brief Structure of compilation environment
  * 
@@ -843,6 +852,11 @@ typedef struct _Environment {
      * List of embedded methods
      */
     Embedded embedded;
+
+    /**
+     * 
+     */
+    DString dstring;
 
     /* --------------------------------------------------------------------- */
     /* INTERNAL STRUCTURES                                                   */
@@ -1135,6 +1149,8 @@ typedef struct _Environment {
 #define CRITICAL_NEGATIVE_CONSTANT( v ) CRITICAL2("E071 - negative constant is not allowed", v);
 #define CRITICAL_TOO_LITTLE_CONSTANT( v ) CRITICAL2("E072 - constant value under the minimum limit", v);
 #define CRITICAL_TOO_BIG_CONSTANT( v ) CRITICAL2("E073 - constant value over the maximum limit", v);
+#define CRITICAL_INVALID_STRING_COUNT( d ) CRITICAL2i("E074 - invalid maximum number of strings", d);
+#define CRITICAL_INVALID_STRING_SPACE( d ) CRITICAL2i("E075 - invalid maximum space occupied by strings", d);
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
 #define WARNING2i( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%i) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -1329,6 +1345,15 @@ typedef struct _Environment {
         if ( ! _environment->deployed.s ) { \
             cpu_jump( _environment, #s "_after" ); \
             outembedded0(e); \
+            cpu_label( _environment, #s "_after" ); \
+            _environment->deployed.s = 1; \
+        }
+
+#define deploy_with_vars(s,e,v)  \
+        if ( ! _environment->deployed.s ) { \
+            cpu_jump( _environment, #s "_after" ); \
+            outembedded0(e); \
+            v(_environment);\
             cpu_label( _environment, #s "_after" ); \
             _environment->deployed.s = 1; \
         }

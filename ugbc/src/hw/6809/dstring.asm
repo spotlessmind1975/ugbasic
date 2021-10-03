@@ -261,10 +261,5 @@ DSDESCRIPTOR
 OUT_OF_MEMORY
     JMP OUT_OF_MEMORY
 
-MAXSTRINGS          equ 255
-DESCRIPTORS         rzb 1024
-WORKING             rzb 1024
-TEMPORARY           rzb 1024
 USING               fcb 0
     
-FREE_STRING         fcb max_free_string-1, $ff

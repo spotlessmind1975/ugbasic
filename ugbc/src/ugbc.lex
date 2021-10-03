@@ -109,6 +109,7 @@ DATA { return (DATA); }
 DEBUG { return (DEBUG); }
 DEC { return (OP_DEC); }
 DEFAULT { return (DEFAULT); }
+DEFINE { return (DEFINE); }
 DELETE { return (DELETE); }
 DIM { return (DIM); }
 DISABLE { return (DISABLE); }

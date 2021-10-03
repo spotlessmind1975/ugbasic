@@ -3171,7 +3171,7 @@ void z80_bits_to_string( Environment * _environment, char * _number, char * _str
 
 void z80_dsdefine( Environment * _environment, char * _string, char * _index ) {
 
-    deploy( dstring,src_hw_z80_dstring_asm );
+    deploy_with_vars( dstring,src_hw_z80_dstring_asm, cpu_dstring_vars );
 
     outline1( "LD HL, %s", _string );
     outline0( "CALL DSDEFINE" );
@@ -3182,7 +3182,7 @@ void z80_dsdefine( Environment * _environment, char * _string, char * _index ) {
 
 void z80_dsalloc( Environment * _environment, char * _size, char * _index ) {
 
-    deploy( dstring,src_hw_z80_dstring_asm );
+    deploy_with_vars( dstring,src_hw_z80_dstring_asm, cpu_dstring_vars );
 
     outline1( "LD A, (%s)", _size );
     outline0( "LD C, A" );
@@ -3194,7 +3194,7 @@ void z80_dsalloc( Environment * _environment, char * _size, char * _index ) {
 
 void z80_dsalloc_size( Environment * _environment, int _size, char * _index ) {
 
-    deploy( dstring,src_hw_z80_dstring_asm );
+    deploy_with_vars( dstring,src_hw_z80_dstring_asm, cpu_dstring_vars );
 
     outline1( "LD A, $%2.2x", _size );
     outline0( "LD C, A" );
@@ -3206,7 +3206,7 @@ void z80_dsalloc_size( Environment * _environment, int _size, char * _index ) {
 
 void z80_dsfree( Environment * _environment, char * _index ) {
 
-    deploy( dstring,src_hw_z80_dstring_asm );
+    deploy_with_vars( dstring,src_hw_z80_dstring_asm, cpu_dstring_vars );
 
     outline1( "LD A, (%s)", _index );
     outline0( "LD B, A" );
@@ -3216,7 +3216,7 @@ void z80_dsfree( Environment * _environment, char * _index ) {
 
 void z80_dswrite( Environment * _environment, char * _index ) {
 
-    deploy( dstring,src_hw_z80_dstring_asm );
+    deploy_with_vars( dstring,src_hw_z80_dstring_asm, cpu_dstring_vars );
 
     outline1( "LD A, (%s)", _index );
     outline0( "LD B, A" );
@@ -3226,7 +3226,7 @@ void z80_dswrite( Environment * _environment, char * _index ) {
 
 void z80_dsresize( Environment * _environment, char * _index, char * _resize ) {
 
-    deploy( dstring,src_hw_z80_dstring_asm );
+    deploy_with_vars( dstring,src_hw_z80_dstring_asm, cpu_dstring_vars );
 
     outline1( "LD A, (%s)", _index );
     outline0( "LD B, A" );
@@ -3238,7 +3238,7 @@ void z80_dsresize( Environment * _environment, char * _index, char * _resize ) {
 
 void z80_dsresize_size( Environment * _environment, char * _index, int _resize ) {
 
-    deploy( dstring,src_hw_z80_dstring_asm );
+    deploy_with_vars( dstring,src_hw_z80_dstring_asm, cpu_dstring_vars );
 
     outline1( "LD A, (%s)", _index );
     outline0( "LD B, A" );
@@ -3250,7 +3250,7 @@ void z80_dsresize_size( Environment * _environment, char * _index, int _resize )
 
 void z80_dsgc( Environment * _environment ) {
 
-    deploy( dstring,src_hw_z80_dstring_asm );
+    deploy_with_vars( dstring,src_hw_z80_dstring_asm, cpu_dstring_vars );
 
     outline0( "CALL DSGC" );
 
@@ -3258,7 +3258,7 @@ void z80_dsgc( Environment * _environment ) {
 
 void z80_dsdescriptor( Environment * _environment, char * _index, char * _address, char * _size ) {
 
-    deploy( dstring,src_hw_z80_dstring_asm );
+    deploy_with_vars( dstring,src_hw_z80_dstring_asm, cpu_dstring_vars );
 
     outline1( "LD A, (%s)", _index );
     outline0( "LD B, A" );
@@ -3391,6 +3391,19 @@ void z80_sqroot( Environment * _environment, char * _number, char * _result ) {
 
     outline1("LD (%s),A", _result );
 
+}
+
+void z80_dstring_vars( Environment * _environment ) {
+
+    int count = _environment->dstring.count == 0 ? DSTRING_DEFAULT_COUNT : _environment->dstring.count;
+    int space = _environment->dstring.space == 0 ? DSTRING_DEFAULT_SPACE : _environment->dstring.space;
+
+    outhead1("MAXSTRINGS:                   DB %d", count );
+    outhead1("DESCRIPTORS:                  DEFS %d", count * 4 );
+    outhead1("WORKING:                      DEFS %d", space );
+    outhead1("TEMPORARY:                    DEFS %d", space );
+    outhead1("FREE_STRING:                  DB $ff, $%2.2x", ((space-1)>>8)& 0xff );
+    
 }
 
 #endif
