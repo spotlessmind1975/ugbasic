@@ -59,6 +59,8 @@ static RGBi SYSTEM_PALETTE[] = {
         { 0xa1, 0x68, 0x3c, 8 }
 };
 
+static RGBi * commonPalette;
+
 /****************************************************************************
  * CODE SECTION
  ****************************************************************************/
@@ -1209,39 +1211,45 @@ static Variable * c6847_image_converter_multicolor_mode_standard( Environment * 
         CRITICAL_IMAGE_CONVERTER_INVALID_HEIGHT( _height );
     }
 
-    RGBi palette[MAX_PALETTE];
+    if ( ! commonPalette ) {
 
-    int colorUsed = extract_color_palette(_source, _width, _height, palette, MAX_PALETTE);
+        RGBi * palette = malloc( sizeof( RGBi ) * MAX_PALETTE );
 
-    if (colorUsed > 4) {
-        CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
-    }
+        int colorUsed = extract_color_palette(_source, _width, _height, palette, MAX_PALETTE);
 
-    int i, j, k;
+        if (colorUsed > 4) {
+            CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
+        }
 
-    for( i=0; i<colorUsed; ++i ) {
-        int minDistance = 0xffff;
-        int colorIndex = 0;
-        for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
-            int distance = calculate_distance(SYSTEM_PALETTE[j], palette[i]);
-            // printf("%d <-> %d [%d] = %d [min = %d]\n", i, j, SYSTEM_PALETTE[j].index, distance, minDistance );
-            if (distance < minDistance) {
-                // printf(" candidated...\n" );
-                for( k=0; k<i; ++k ) {
-                    if ( palette[k].index == SYSTEM_PALETTE[j].index ) {
-                        // printf(" ...used!\n" );
-                        break;
+        int i, j, k;
+
+        for( i=0; i<colorUsed; ++i ) {
+            int minDistance = 0xffff;
+            int colorIndex = 0;
+            for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
+                int distance = calculate_distance(SYSTEM_PALETTE[j], palette[i]);
+                // printf("%d (%2.2x%2.2x%2.2x) <-> %d (%2.2x%2.2x%2.2x) [%d] = %d [min = %d]\n", i, SYSTEM_PALETTE[j].red, SYSTEM_PALETTE[j].green, SYSTEM_PALETTE[j].blue, j, palette[i].red, palette[i].green, palette[i].blue, SYSTEM_PALETTE[j].index, distance, minDistance );
+                if (distance < minDistance) {
+                    // printf(" candidated...\n" );
+                    for( k=0; k<i; ++k ) {
+                        if ( palette[k].index == SYSTEM_PALETTE[j].index ) {
+                            // printf(" ...used!\n" );
+                            break;
+                        }
+                    }
+                    if ( k>=i ) {
+                        // printf(" ...ok! (%d)\n", SYSTEM_PALETTE[j].index );
+                        minDistance = distance;
+                        colorIndex = j;
                     }
                 }
-                if ( k>=i ) {
-                    // printf(" ...ok! (%d)\n", SYSTEM_PALETTE[j].index );
-                    minDistance = distance;
-                    colorIndex = j;
-                }
             }
+            palette[i].index = SYSTEM_PALETTE[colorIndex].index;
+            // printf("%d) %d * %d %2.2x%2.2x%2.2x\n", i, colorIndex, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
         }
-        palette[i].index = SYSTEM_PALETTE[colorIndex].index;
-        // printf("%d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
+
+        commonPalette = palette;
+
     }
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
@@ -1277,16 +1285,16 @@ static Variable * c6847_image_converter_multicolor_mode_standard( Environment * 
 
             offset = ( image_y * ( _width >> 2 ) ) + ( image_x >> 2 );
 
-            int minDistance = 0xffff;
             int colorIndex = 0;
 
-            for( i=0; i<colorUsed; ++i ) {
-                if ( palette[i].red == rgb.red && palette[i].green == rgb.green && palette[i].blue == rgb.blue ) {
-                    break;
+            int minDistance = 9999;
+            for( int i=0; i<4; ++i ) {
+                int distance = calculate_distance(commonPalette[i], rgb );
+                if ( distance < minDistance ) {
+                    minDistance = distance;
+                    colorIndex = i;
                 }
             }
-
-            colorIndex = i;
 
             // printf( "%1.1x", colorIndex );
 
