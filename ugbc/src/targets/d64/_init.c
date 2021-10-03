@@ -58,7 +58,7 @@ void target_initialization( Environment * _environment ) {
     variable_global( _environment, "FREE_STRING" );    
 
     outline0("ORG $2800");
-    outline0("LDS #$7000");
+    outline0("LDS #$8000");
     deploy( vars, src_hw_d64_vars_asm);
     deploy( startup, src_hw_d64_startup_asm);
     variable_define( _environment, "stringsAddress", VT_ADDRESS, 0x4200 );
