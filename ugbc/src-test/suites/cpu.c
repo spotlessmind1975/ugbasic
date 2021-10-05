@@ -3205,10 +3205,10 @@ int test_cpu_less_than_memory_tester( TestEnvironment * _te ) {
     Variable * resultdifferent0 = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
     Variable * resultdifferent1 = variable_retrieve( &_te->environment, _te->trackedVariables[3]->name );
 
-    // printf("resultsame0 = %2.2x [expected 0x00]\n", resultsame0->value );
-    // printf("resultsame1 = %2.2x [expected 0xff]\n", resultsame1->value );
-    // printf("resultdifferent0 = %2.2x [expected 0xff]\n", resultdifferent0->value );
-    // printf("resultdifferent1 = %2.2x [expected 0xff]\n", resultdifferent1->value );
+// printf("resultsame0 = %2.2x [expected 0x00]\n", resultsame0->value );
+// printf("resultsame1 = %2.2x [expected 0xff]\n", resultsame1->value );
+// printf("resultdifferent0 = %2.2x [expected 0xff]\n", resultdifferent0->value );
+// printf("resultdifferent1 = %2.2x [expected 0xff]\n", resultdifferent1->value );
     
     return resultsame0->value == 0x00 && 
             resultsame1->value == 0xff && 
@@ -4382,8 +4382,8 @@ void test_cpu( ) {
     create_test( "cpu_move_16bit_indirect2", &test_cpu_move_16bit_indirect2_payload, &test_cpu_move_16bit_indirect2_tester );
     create_test( "cpu_move_32bit_indirect", &test_cpu_move_32bit_indirect_payload, &test_cpu_move_32bit_indirect_tester );
     create_test( "cpu_move_32bit_indirect2", &test_cpu_move_32bit_indirect2_payload, &test_cpu_move_32bit_indirect2_tester );
-    // // // to be adapted on target charset create_test( "cpu_uppercase", &test_cpu_uppercase_payload, &test_cpu_uppercase_tester );
-    // // // to be adapted on target charset create_test( "cpu_lowercase", &test_cpu_lowercase_payload, &test_cpu_lowercase_tester );
+    // // // // to be adapted on target charset create_test( "cpu_uppercase", &test_cpu_uppercase_payload, &test_cpu_uppercase_tester );
+    // // // // to be adapted on target charset create_test( "cpu_lowercase", &test_cpu_lowercase_payload, &test_cpu_lowercase_tester );
     create_test( "cpu_convert_string_into_16bit", &test_cpu_convert_string_into_16bit_payload, &test_cpu_convert_string_into_16bit_tester );
     create_test( "cpu_flip", &test_cpu_flip_payload, &test_cpu_flip_tester );
     create_test( "cpu_bit_check", &test_cpu_bit_check_payload, &test_cpu_bit_check_tester );
