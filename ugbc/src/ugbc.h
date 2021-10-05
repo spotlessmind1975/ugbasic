@@ -1409,7 +1409,7 @@ typedef struct _Environment {
     }
 
 #define stats_embedded(s) \
-    printf("%s: %d (%s)\n", #s, _environment->embeddedStats.s, _environment->embedded.s ? "inline" : "embedded" );
+    printf("%s:\t%d\t%s\t\n", #s, _environment->embeddedStats.s, _environment->embedded.s ? "embedded" : "inline" );
 
 #define MAX_TEMPORARY_STORAGE   1024
 
@@ -1438,6 +1438,7 @@ void begin_compilation( Environment * _environment );
 void target_initialization( Environment *_environment );
 void target_finalization( Environment * _environment );
 void end_compilation( Environment * _environment );
+void target_peephole_optimizer( Environment * _environment );
 void begin_build( Environment * _environment );
 void target_linkage( Environment *_environment );
 void target_cleanup( Environment *_environment );
