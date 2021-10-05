@@ -852,22 +852,16 @@ void c6847_text_at( Environment * _environment, char * _x, char * _y, char * _te
 
     outline1("LDY %s", _text);
     outline0("STY TEXTPTR" );
-    outline0("LDY TEXTADDRESS" );
-    outline0("STY COPYOFTEXTADDRESS" );
     outline1("LDA %s", _x );
     outline0("STA XCURSYS" );
     outline1("LDA %s", _y );
     outline0("STA YCURSYS" );
     outline1("LDA %s", _text_size);
     outline0("STA TEXTSIZE" );
-    outline0("LDA #0" );
-    outline0("STA TABSTODRAW" );
     outline1("LDA %s", _ww );
     outline0("STA TEXTWW" );
     outline1("LDA %s", _pen );
     outline0("STA TEXTPEN" );
-    outline0("LDA _PAPER" );
-    outline0("STA TEXTPAPER" );
 
     outline0("JSR TEXTAT");
 
