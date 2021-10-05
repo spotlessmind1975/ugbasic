@@ -1311,13 +1311,12 @@ void cpu6809_math_add_16bit_with_16bit( Environment * _environment, char *_sourc
 
     inline( cpu_math_add_16bit_with_16bit )
 
-        outline1("LDX %s", _source);
-        outline1("LDD #%s", _destination);
-        outline0("LEAX D, X");
+        outline1("LDD %s", _source);
+        outline1("ADDD #%s", _destination);
         if ( _other ) {
-            outline1("STX %s", _other);
+            outline1("STD %s", _other);
         } else {
-            outline1("STX %s", _destination);
+            outline1("STD %s", _destination);
         }
 
     no_embedded( cpu_math_add_16bit_with_16bit )
