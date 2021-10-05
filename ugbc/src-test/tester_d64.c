@@ -47,6 +47,21 @@ void create_test( char *_name, void (*_payload)(TestEnvironment *), int (*_teste
 
     Environment * _environment = &t.environment;
 
+    _environment->embedded.cpu_fill_blocks = 1;
+    _environment->embedded.cpu_fill = 1;
+    _environment->embedded.cpu_math_div2_8bit = 1;
+    _environment->embedded.cpu_math_mul_8bit_to_16bit = 1;
+    _environment->embedded.cpu_math_div_8bit_to_8bit = 1;
+    _environment->embedded.cpu_math_div2_const_8bit = 1;
+    _environment->embedded.cpu_math_mul2_const_8bit = 1;
+    _environment->embedded.cpu_math_mul_16bit_to_32bit = 1;
+    _environment->embedded.cpu_math_div_16bit_to_16bit = 1;
+    _environment->embedded.cpu_math_div_32bit_to_16bit = 1;
+    _environment->embedded.cpu_random = 1;
+    _environment->embedded.cpu_mem_move = 1;
+    _environment->embedded.cpu_uppercase = 1;
+    _environment->embedded.cpu_lowercase = 1;
+    
     t.environment.sourceFileName = strdup("/tmp/out.bas");
     t.environment.asmFileName = strdup("/tmp/out.asm");
     t.environment.debuggerLabelsFileName = strdup("/tmp/out.lb2");
@@ -63,7 +78,7 @@ void create_test( char *_name, void (*_payload)(TestEnvironment *), int (*_teste
     fclose(handleIns);
 
     system("asm6809 -H -e 7168 /tmp/out.asm -o /tmp/out.hex -s /tmp/out.sym -l /tmp/out.lis");
-    system("usim -t -i /tmp/out.lis -R 1C00 -L2 /tmp/out.lb2 -L /tmp/out.sym -Li /tmp/out.ins -l 0000 /tmp/out.hex -O /tmp/out.out");
+    system("usim -t -i /tmp/out.lis -R 2800 -L2 /tmp/out.lb2 -L /tmp/out.sym -Li /tmp/out.ins -l 0000 /tmp/out.hex -O /tmp/out.out");
     FILE * handle = fopen( "/tmp/out.out", "rt" );
     fscanf(handle, "%x %x %x %x %x %x %x %x", 
     	&t.state.a,
