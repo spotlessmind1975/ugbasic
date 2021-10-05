@@ -3061,6 +3061,8 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     printf("\t-c <file>    Output filename with linker configuration\n" );
     printf("\t-o <exe>     Output filename with final executable file for target\n" );
     printf("\t-l <name>    Output filename with list of variables defined\n" );
+    printf("\t-e <modules> Embed specified modules instead of inline code\n" );
+    printf("\t-E           Show stats of embedded modules\n" );
     printf("\t-W           Enable warnings during compilation\n" );
     exit(EXIT_FAILURE);
 }
@@ -3076,7 +3078,7 @@ int main( int _argc, char *_argv[] ) {
 
     _environment->warningsEnabled = 0;
 
-    while ((opt = getopt(_argc, _argv, "e:c:Wo:Ie:l:")) != -1) {
+    while ((opt = getopt(_argc, _argv, "e:c:Wo:Ie:l:E")) != -1) {
         switch (opt) {
                 case 'c':
                     _environment->configurationFileName = strdup(optarg);
@@ -3092,6 +3094,9 @@ int main( int _argc, char *_argv[] ) {
                     break;
                 case 'l':
                     _environment->debuggerLabelsFileName = strdup(optarg);
+                    break;
+                case 'E':
+                    _environment->embeddedStatsEnabled = 1;
                     break;
                 case 'e': {
                     char * p = strtok(optarg, ",");
@@ -3274,6 +3279,137 @@ int main( int _argc, char *_argv[] ) {
     if ( _environment->exeFileName ) {
         begin_build( _environment );
         end_build( _environment );
+    }
+
+    if ( _environment->embeddedStatsEnabled ) {
+        printf( "Stats of embedded modules:\n");
+        stats_embedded( cpu_beq );
+        stats_embedded( cpu_bneq );
+        stats_embedded( cpu_busy_wait );
+        stats_embedded( cpu_bveq );
+        stats_embedded( cpu_bvneq );
+        stats_embedded( cpu_combine_nibbles );
+        stats_embedded( cpu_compare_16bit );
+        stats_embedded( cpu_compare_32bit );
+        stats_embedded( cpu_compare_8bit );
+        stats_embedded( cpu_di );
+        stats_embedded( cpu_ei );
+        stats_embedded( cpu_inc );
+        stats_embedded( cpu_inc_16bit );
+        stats_embedded( cpu_inc_32bit );
+        stats_embedded( cpu_dec );
+        stats_embedded( cpu_dec_16bit );
+        stats_embedded( cpu_less_than_16bit );
+        stats_embedded( cpu_less_than_32bit );
+        stats_embedded( cpu_less_than_8bit );
+        stats_embedded( cpu_greater_than_16bit );
+        stats_embedded( cpu_greater_than_32bit );
+        stats_embedded( cpu_greater_than_8bit );
+        stats_embedded( cpu_fill );
+        stats_embedded( cpu_fill_blocks );
+        stats_embedded( cpu_halt );
+        stats_embedded( cpu_end );
+        stats_embedded( cpu_jump );
+        stats_embedded( cpu_call );
+        stats_embedded( cpu_return );
+        stats_embedded( cpu_pop );
+        stats_embedded( cpu_label );
+        stats_embedded( cpu_limit_16bit );
+        stats_embedded( cpu_logical_not_8bit );
+        stats_embedded( cpu_logical_and_8bit );
+        stats_embedded( cpu_logical_or_8bit );
+        stats_embedded( cpu_math_add_16bit );
+        stats_embedded( cpu_math_add_16bit_with_16bit );
+        stats_embedded( cpu_math_add_16bit_with_8bit );
+        stats_embedded( cpu_math_add_32bit );
+        stats_embedded( cpu_math_add_8bit );
+        stats_embedded( cpu_math_and_const_16bit );
+        stats_embedded( cpu_math_and_const_32bit );
+        stats_embedded( cpu_math_and_const_8bit );
+        stats_embedded( cpu_math_complement_const_16bit );
+        stats_embedded( cpu_math_complement_const_32bit );
+        stats_embedded( cpu_math_complement_const_8bit );
+        stats_embedded( cpu_math_div2_8bit );
+        stats_embedded( cpu_math_div2_const_16bit );
+        stats_embedded( cpu_math_div2_const_32bit );
+        stats_embedded( cpu_math_div2_const_8bit );
+        stats_embedded( cpu_math_double_16bit );
+        stats_embedded( cpu_math_double_32bit );
+        stats_embedded( cpu_math_double_8bit );
+        stats_embedded( cpu_math_mul_16bit_to_32bit );
+        stats_embedded( cpu_math_mul_8bit_to_16bit );
+        stats_embedded( cpu_math_div_32bit_to_16bit );
+        stats_embedded( cpu_math_div_16bit_to_16bit );
+        stats_embedded( cpu_math_div_8bit_to_8bit );
+        stats_embedded( cpu_math_mul2_const_16bit );
+        stats_embedded( cpu_math_mul2_const_32bit );
+        stats_embedded( cpu_math_mul2_const_8bit );
+        stats_embedded( cpu_math_sub_16bit );
+        stats_embedded( cpu_math_sub_32bit );
+        stats_embedded( cpu_math_sub_8bit );
+        stats_embedded( cpu_math_sub_16bit_with_8bit );
+        stats_embedded( cpu_move_16bit );
+        stats_embedded( cpu_addressof_16bit );
+        stats_embedded( cpu_move_32bit );
+        stats_embedded( cpu_move_8bit );
+        stats_embedded( cpu_peek );
+        stats_embedded( cpu_poke );
+        stats_embedded( cpu_random );
+        stats_embedded( cpu_random_16bit );
+        stats_embedded( cpu_random_32bit );
+        stats_embedded( cpu_random_8bit );
+        stats_embedded( cpu_store_16bit );
+        stats_embedded( cpu_store_32bit );
+        stats_embedded( cpu_store_8bit );
+        stats_embedded( cpu_mem_move );
+        stats_embedded( cpu_mem_move_direct );
+        stats_embedded( cpu_mem_move_size );
+        stats_embedded( cpu_mem_move_direct_size );
+        stats_embedded( cpu_mem_move_direct_indirect_size );
+        stats_embedded( cpu_compare_memory );
+        stats_embedded( cpu_compare_memory_size );
+        stats_embedded( cpu_less_than_memory );
+        stats_embedded( cpu_less_than_memory_size );
+        stats_embedded( cpu_greater_than_memory );
+        stats_embedded( cpu_greater_than_memory_size );
+        stats_embedded( cpu_uppercase );
+        stats_embedded( cpu_lowercase );
+        stats_embedded( cpu_convert_string_into_16bit );
+        stats_embedded( cpu_fill_indirect );
+        stats_embedded( cpu_flip );
+        stats_embedded( cpu_move_8bit_indirect );
+        stats_embedded( cpu_move_8bit_indirect2 );
+        stats_embedded( cpu_move_16bit_indirect );
+        stats_embedded( cpu_move_16bit_indirect2 );
+        stats_embedded( cpu_move_32bit_indirect );
+        stats_embedded( cpu_move_32bit_indirect2 );
+        stats_embedded( cpu_bit_check );
+        stats_embedded( cpu_number_to_string );
+        stats_embedded( cpu_move_8bit_indirect_with_offset );
+        stats_embedded( cpu_bits_to_string );
+        stats_embedded( cpu_bit_check_extended );
+        stats_embedded( cpu_move_8bit_indirect_with_offset2 );
+        stats_embedded( cpu_dsdefine );
+        stats_embedded( cpu_dsalloc );
+        stats_embedded( cpu_dsfree );
+        stats_embedded( cpu_dswrite );
+        stats_embedded( cpu_dsresize );
+        stats_embedded( cpu_dsresize_size );
+        stats_embedded( cpu_dsgc );
+        stats_embedded( cpu_dsdescriptor );
+        stats_embedded( cpu_move_8bit_with_offset );
+        stats_embedded( cpu_move_8bit_with_offset2 );
+        stats_embedded( cpu_store_8bit_with_offset );
+        stats_embedded( cpu_dsalloc_size );
+        stats_embedded( cpu_complement2_8bit );
+        stats_embedded( cpu_complement2_16bit );
+        stats_embedded( cpu_complement2_32bit );
+        stats_embedded( cpu_mobinit );
+        stats_embedded( cpu_mobshow );
+        stats_embedded( cpu_mobhide );
+        stats_embedded( cpu_mobat );
+        stats_embedded( cpu_mobrender );
+        stats_embedded( cpu_sqroot );
     }
 
 }

@@ -860,6 +860,11 @@ typedef struct _Environment {
     Embedded embedded;
 
     /**
+     * Stats about usage of embedded methods
+     */
+    Embedded embeddedStats;
+
+    /**
      * 
      */
     DString dstring;
@@ -1052,6 +1057,12 @@ typedef struct _Environment {
      * Deployed modules.
      */
     Deployed deployed;
+
+    /**
+     * Enable stats of embedded modules
+     */
+
+    int embeddedStatsEnabled;
 
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
@@ -1373,6 +1384,7 @@ typedef struct _Environment {
         }
 
 #define inline(s) \
+        _environment->embeddedStats.s++; \
         if ( !_environment->embedded.s ) {
 
 #define no_inline(s) \
@@ -1395,6 +1407,9 @@ typedef struct _Environment {
     if ( strcmp( p, #s ) == 0 ) { \
         _environment->embedded.s = 1; \
     }
+
+#define stats_embedded(s) \
+    printf("%s: %d (%s)\n", #s, _environment->embeddedStats.s, _environment->embedded.s ? "inline" : "embedded" );
 
 #define MAX_TEMPORARY_STORAGE   1024
 
