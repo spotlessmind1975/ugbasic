@@ -38,6 +38,25 @@
  * CODE SECTION 
  ****************************************************************************/
 
+void setup_embedded( Environment * _environment ) {
+
+    _environment->embedded.cpu_fill_blocks = 1;
+    _environment->embedded.cpu_fill = 1;
+    _environment->embedded.cpu_math_div2_8bit = 1;
+    _environment->embedded.cpu_math_mul_8bit_to_16bit = 1;
+    _environment->embedded.cpu_math_div_8bit_to_8bit = 1;
+    _environment->embedded.cpu_math_div2_const_8bit = 1;
+    _environment->embedded.cpu_math_mul2_const_8bit = 1;
+    _environment->embedded.cpu_math_mul_16bit_to_32bit = 1;
+    _environment->embedded.cpu_math_div_16bit_to_16bit = 1;
+    _environment->embedded.cpu_math_div_32bit_to_16bit = 1;
+    _environment->embedded.cpu_random = 1;
+    _environment->embedded.cpu_mem_move = 1;
+    _environment->embedded.cpu_uppercase = 1;
+    _environment->embedded.cpu_lowercase = 1;
+
+}
+
 void target_initialization( Environment * _environment ) {
 
     variable_import( _environment, "EVERYSTATUS", VT_BYTE );

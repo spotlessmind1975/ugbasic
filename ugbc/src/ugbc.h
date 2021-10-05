@@ -1417,6 +1417,7 @@ typedef struct _Environment {
 #define TILEMAP_NATIVE      0
 #define BITMAP_NATIVE       1
 
+void setup_embedded( Environment *_environment );
 void target_install( Environment *_environment );
 void begin_compilation( Environment * _environment );
 void target_initialization( Environment *_environment );
