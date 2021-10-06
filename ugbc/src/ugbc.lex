@@ -152,6 +152,7 @@ FILL { return (FILL); }
 FIRE { return(FIRE); }
 FLIP { return(FLIP); }
 FLIP\$ { return(FLIP); }
+FONT { return(FONT); }
 FOR { return(FOR); }
 FREE { return (FREE); }
 FROM { return (FROM); }

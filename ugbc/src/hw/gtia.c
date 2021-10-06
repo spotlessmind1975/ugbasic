@@ -185,6 +185,9 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     
     Variable * dli = variable_retrieve_or_define( _environment, "DLI", VT_BUFFER, 0 );
 
+    _environment->fontWidth = 8;
+    _environment->fontHeight = 8;
+
     switch( _screen_mode->id ) {
         // Graphics 3 (ANTIC 8)
         // This four-color graphics mode turns a split screen into 20 rows of 40 graphics cells or pixels. 

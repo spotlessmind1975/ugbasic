@@ -195,7 +195,7 @@ void variable_cleanup( Environment * _environment ) {
                     outhead0("BITMASKN fcb $fe,$fd,$fb,$f7,$ef,$df,$bf,$7f");
                 }
                 if ( _environment->deployed.dstring ) {
-                    outhead1("max_free_string = %4.4x", _environment->dstring.space );
+                    outhead1("max_free_string equ $%4.4x", _environment->dstring.space );
                 }
 
                 for( int j=0; j< (_environment->currentProcedure+1); ++j ) {

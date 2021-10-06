@@ -245,6 +245,8 @@ int ted_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
 
     switch( _screen_mode->id ) {
         case BITMAP_MODE_STANDARD:
+            _environment->fontWidth = 8;
+            _environment->fontHeight = 8;
             _environment->screenWidth = 320;
             _environment->screenHeight = 200;
             // Enable graphics.
@@ -268,6 +270,8 @@ int ted_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
             
             break;
         case BITMAP_MODE_MULTICOLOR:
+            _environment->fontWidth = 4;
+            _environment->fontHeight = 8;
             _environment->screenWidth = 160;
             _environment->screenHeight = 200;
             // Enable graphics.

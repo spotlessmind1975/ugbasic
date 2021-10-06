@@ -1054,6 +1054,16 @@ typedef struct _Environment {
     int screenTilesHeight;
 
     /**
+     * Font width in pixels (statically determined)
+     */
+    int fontWidth;
+
+    /**
+     * Font height in pixels (statically determined)
+     */
+    int fontHeight;
+
+    /**
      * Deployed modules.
      */
     Deployed deployed;

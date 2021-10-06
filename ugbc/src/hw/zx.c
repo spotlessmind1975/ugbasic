@@ -240,6 +240,8 @@ void zx_initialization( Environment * _environment ) {
 int zx_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
     _environment->screenWidth = 256;
     _environment->screenHeight = 192;
+    _environment->fontWidth = 8;
+    _environment->fontHeight = 8;
 }
 
 void zx_bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {

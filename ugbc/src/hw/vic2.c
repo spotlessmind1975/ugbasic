@@ -367,6 +367,8 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
     Variable * colormapAddress = variable_retrieve( _environment, "COLORMAPADDRESS" );
 
+    _environment->fontWidth = 8;
+    _environment->fontHeight = 8;
     switch( _screen_mode->id ) {
         case BITMAP_MODE_STANDARD:
             _environment->screenWidth = 320;
@@ -397,6 +399,7 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             break;
         case BITMAP_MODE_MULTICOLOR:
+            _environment->fontWidth = 4;
             _environment->screenWidth = 160;
             _environment->screenHeight = 200;
             // This fix is necessary to set the starting address of the bitmap 

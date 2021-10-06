@@ -50,7 +50,8 @@ extern char DATATYPE_AS_STRING[][16];
 %token POUND RUNSTOP RUN STOP SEMICOLON SLASH KEY STATE KEYSTATE KEYSHIFT CAPSLOCK CAPS LOCK ALT
 %token INPUT FREE TILEMAP EMPTY TILE EMPTYTILE PLOT GR CIRCLE DRAW LINE BOX POLYLINE ELLIPSE CLIP
 %token BACK DEBUG CAN ELSEIF BUFFER LOAD SIZE MOB IMAGE PUT VISIBLE HIDDEN HIDE SHOW RENDER
-%token SQR TI CONST VBL POKE NOP FILL IN POSITIVE DEFINE ATARI ATARIXL C64 DRAGON DRAGON32 DRAGON64 PLUS4 ZX
+%token SQR TI CONST VBL POKE NOP FILL IN POSITIVE DEFINE ATARI ATARIXL C64 DRAGON DRAGON32 DRAGON64 PLUS4 ZX 
+%token FONT
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -172,6 +173,9 @@ const_factor:
       | SCREEN TILES WIDTH {
           $$ = ((Environment *)_environment)->screenTilesWidth;
       }
+      | FONT WIDTH {
+          $$ = ((Environment *)_environment)->fontWidth;
+      }
       | IMAGE WIDTH OP expr CP {
           Variable * v = variable_retrieve( _environment, $4 );
           if ( v->type != VT_IMAGE ) {
@@ -190,6 +194,9 @@ const_factor:
       }
       | SCREEN TILES HEIGHT {
           $$ = ((Environment *)_environment)->screenTilesHeight;
+      }
+      | FONT HEIGHT {
+          $$ = ((Environment *)_environment)->fontHeight;
       }
       | IMAGE HEIGHT OP expr CP {
           Variable * v = variable_retrieve( _environment, $4 );
@@ -1128,6 +1135,10 @@ exponential:
     | SCREEN TILES WIDTH {
         $$ = screen_tiles_get_width( _environment )->name;
     }
+    | FONT WIDTH {
+        $$ = variable_temporary( _environment, VT_POSITION, "(FONT WIDTH)" )->name;
+        variable_store( _environment, $$, ((struct _Environment *)_environment)->fontWidth );
+    }
     | IMAGE WIDTH OP expr CP {
         $$ = image_get_width( _environment, $4 )->name;
     }
@@ -1139,6 +1150,10 @@ exponential:
     }
     | SCREEN TILES HEIGHT {
         $$ = screen_tiles_get_height( _environment )->name;
+    }
+    | FONT HEIGHT {
+        $$ = variable_temporary( _environment, VT_POSITION, "(FONT HEIGHT)" )->name;
+        variable_store( _environment, $$, ((struct _Environment *)_environment)->fontHeight );
     }
     | IMAGE HEIGHT OP expr CP {
         $$ = image_get_height( _environment, $4 )->name;
