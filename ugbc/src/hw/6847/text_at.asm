@@ -163,7 +163,14 @@ TEXTAT7
     STA PATTERN
 
     LDX BITMAPADDRESS
-    LDD YCURSYS
+    LDB YCURSYS
+    LDA #0
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
     LSLB
     ROLA
     LSLB
@@ -174,7 +181,8 @@ TEXTAT7
     ROLA
     LEAX D, X
 
-    LDD XCURSYS
+    LDB XCURSYS
+    LDA #0
     LSRA
     RORB
     LSRA
@@ -194,7 +202,14 @@ TEXTAT8
     STA PATTERN
 
     LDX BITMAPADDRESS
-    LDD YCURSYS
+    LDB YCURSYS
+    LDA #0
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
     LSLB
     ROLA
     LSLB
@@ -205,7 +220,8 @@ TEXTAT8
     ROLA
     LEAX D, X
 
-    LDD XCURSYS
+    LDB XCURSYS
+    LDA #0
     LSRA
     RORB
     LSRA
@@ -226,7 +242,14 @@ TEXTAT9
     STA PATTERN
 
     LDX BITMAPADDRESS
-    LDD YCURSYS
+    LDB YCURSYS
+    LDA #0
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
     LSLB
     ROLA
     LSLB
@@ -239,7 +262,8 @@ TEXTAT9
     ROLA
     LEAX D, X
 
-    LDD XCURSYS
+    LDB XCURSYS
+    LDA #0
     LSRA
     RORB
     LSRA
@@ -259,7 +283,14 @@ TEXTAT10
     STA PATTERN
 
     LDX BITMAPADDRESS
-    LDD YCURSYS
+    LDB YCURSYS
+    LDA #0
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
     LSLB
     ROLA
     LSLB
@@ -270,7 +301,8 @@ TEXTAT10
     ROLA
     LEAX D, X
 
-    LDD XCURSYS
+    LDB XCURSYS
+    LDA #0
     LSRA
     RORB
     LSRA
@@ -291,7 +323,14 @@ TEXTAT11
     STA PATTERN
 
     LDX BITMAPADDRESS
-    LDD YCURSYS
+    LDB YCURSYS
+    LDA #0
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
     LSLB
     ROLA
     LSLB
@@ -304,7 +343,8 @@ TEXTAT11
     ROLA
     LEAX D, X
 
-    LDD XCURSYS
+    LDB XCURSYS
+    LDA #0
     LSRA
     RORB
     LSRA
@@ -324,7 +364,14 @@ TEXTAT12
     STA PATTERN
 
     LDX BITMAPADDRESS
-    LDD YCURSYS
+    LDB YCURSYS
+    LDA #0
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
     LSLB
     ROLA
     LSLB
@@ -335,7 +382,8 @@ TEXTAT12
     ROLA
     LEAX D, X
 
-    LDD XCURSYS
+    LDB XCURSYS
+    LDA #0
     LSRA
     RORB
     LSRA
@@ -356,7 +404,14 @@ TEXTAT13
     STA PATTERN
 
     LDX BITMAPADDRESS
-    LDD YCURSYS
+    LDB YCURSYS
+    LDA #0
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
     LSLB
     ROLA
     LSLB
@@ -369,7 +424,8 @@ TEXTAT13
     ROLA
     LEAX D, X
 
-    LDD XCURSYS
+    LDB XCURSYS
+    LDA #0
     LSRA
     RORB
     LSRA
@@ -389,7 +445,8 @@ TEXTAT14
     STA PATTERN
 
     LDX BITMAPADDRESS
-    LDD YCURSYS
+    LDB YCURSYS
+    LDA #0
     LSLB
     ROLA
     LSLB
@@ -400,7 +457,8 @@ TEXTAT14
     ROLA
     LEAX D, X
 
-    LDD XCURSYS
+    LDB XCURSYS
+    LDA #0
     LSRA
     RORB
     LSRA
@@ -565,7 +623,7 @@ TEXTATBMAT
 
 TEXTATBMSP0
 
-    PSHS D,Y
+    PSHS D,Y,X
 
     LDU #0
     LDY #TEXTATFONT
@@ -647,10 +705,11 @@ TEXTATBMSP0L1M2
     JMP TEXTATBMSP0L1
 
 TEXTATBMSP0L1X
-    LDA PATTERN
-    LEAY A, X 
 
-    PULS D,Y
+    PULS D,Y,X
+
+    LDA PATTERN
+    LEAX A, X 
 
     JMP TEXTATBMINCX
 
