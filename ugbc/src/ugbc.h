@@ -1173,6 +1173,7 @@ typedef struct _Environment {
 #define CRITICAL_TOO_BIG_CONSTANT( v ) CRITICAL2("E073 - constant value over the maximum limit", v);
 #define CRITICAL_INVALID_STRING_COUNT( d ) CRITICAL2i("E074 - invalid maximum number of strings", d);
 #define CRITICAL_INVALID_STRING_SPACE( d ) CRITICAL2i("E075 - invalid maximum space occupied by strings", d);
+#define CRITICAL_TYPE_MISMATCH_CONSTANT_STRING( c ) CRITICAL2("E076 - use of an wrong type constant (string expected, numeric used)", c );
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
 #define WARNING2i( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%i) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }

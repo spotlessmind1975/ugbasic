@@ -198,6 +198,26 @@ const_factor:
           }
           $$ = v->valueBuffer[1];
       }
+      | LEN OP Identifier CP {
+          Constant * c = constant_find( ((Environment *)_environment)->constants, $3 );
+          if ( c == NULL ) {
+              CRITICAL_UNDEFINED_CONSTANT( $3 );
+          }
+          if ( c->valueString == NULL ) {
+              CRITICAL_TYPE_MISMATCH_CONSTANT_STRING( $3 );
+          }
+          $$ = strlen( c->valueString );
+      }
+      | LEN OP String CP {
+          $$ = strlen( $3 );
+      }
+      | LEN OP IF OP const_expr OP_COMMA String OP_COMMA String CP CP {
+          if ( $5 ) {
+              $$ = strlen( $7 );
+          } else {
+              $$ = strlen( $9 );
+          }
+      }      
       | Identifier {
           Constant * c = constant_find( ((Environment *)_environment)->constants, $1 );
           if ( c == NULL ) {
