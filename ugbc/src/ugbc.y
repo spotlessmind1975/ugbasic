@@ -50,7 +50,7 @@ extern char DATATYPE_AS_STRING[][16];
 %token POUND RUNSTOP RUN STOP SEMICOLON SLASH KEY STATE KEYSTATE KEYSHIFT CAPSLOCK CAPS LOCK ALT
 %token INPUT FREE TILEMAP EMPTY TILE EMPTYTILE PLOT GR CIRCLE DRAW LINE BOX POLYLINE ELLIPSE CLIP
 %token BACK DEBUG CAN ELSEIF BUFFER LOAD SIZE MOB IMAGE PUT VISIBLE HIDDEN HIDE SHOW RENDER
-%token SQR TI CONST VBL POKE NOP FILL IN POSITIVE DEFINE
+%token SQR TI CONST VBL POKE NOP FILL IN POSITIVE DEFINE ATARI ATARIXL C64 DRAGON DRAGON32 DRAGON64 PLUS4 ZX
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -74,6 +74,7 @@ extern char DATATYPE_AS_STRING[][16];
 %type <integer> datatype
 %type <integer> optional_integer
 %type <string> optional_expr optional_x optional_y
+%type <integer> target targets
 
 %right Integer String CP 
 %left OP_DOLLAR
@@ -2511,6 +2512,63 @@ define_definitions :
       define_definition
     | define_definition OP_COMMA define_definitions;
 
+target : 
+    ATARI {
+        #ifdef __atari__
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }
+    |
+    ATARIXL {
+        #ifdef __atarixl__
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }
+    |
+    C64 {
+        #ifdef __c64__
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }
+    |
+    DRAGON {
+        #if defined(__d32__) || defined(__d64__)
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }
+    |
+    DRAGON32 {
+        #ifdef __d32__
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }
+    |
+    DRAGON64 {
+        #ifdef __d64__
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    };
+
+targets :
+     target {
+         $$ = $1;
+     }
+     | target OP_COMMA targets {
+        $$ = $1 || $3;
+     };
+
 statement:
     BANK bank_definition
   | RASTER raster_definition
@@ -2717,6 +2775,11 @@ statement:
       ((struct _Environment *)_environment)->parameters = 0;
       begin_procedure( _environment, $2 );
   }
+  | PROCEDURE Identifier ON targets {
+        ((struct _Environment *)_environment)->parameters = 0;
+        begin_procedure( _environment, $2 );
+        ((struct _Environment *)_environment)->emptyProcedure = !$4;
+  }
   | PROCEDURE Identifier {
       ((struct _Environment *)_environment)->parameters = 0;
     } OSP parameters CSP {
@@ -2729,12 +2792,15 @@ statement:
       global( _environment );
   }
   | END PROC {
+      ((struct _Environment *)_environment)->emptyProcedure = 0;
       end_procedure( _environment, NULL );
   }
   | END PROCEDURE {
+      ((struct _Environment *)_environment)->emptyProcedure = 0;
       end_procedure( _environment, NULL );
   }
   | END PROC OSP expr CSP {
+      ((struct _Environment *)_environment)->emptyProcedure = 0;
       end_procedure( _environment, $4 );
   }
   | FOR Identifier OP_ASSIGN expr TO expr STEP expr {
@@ -2845,6 +2911,13 @@ statement:
   | FILL fill_definitions
   | CONST Identifier OP_ASSIGN String {
         const_define_string( _environment, $2, $4 );
+  }
+  | CONST Identifier OP_ASSIGN IF OP const_expr OP_COMMA String OP_COMMA String CP {
+        if ( $6 ) {
+            const_define_string( _environment, $2, $8 );
+        } else {
+            const_define_string( _environment, $2, $10 );
+        }
   }
   | CONST Identifier OP_ASSIGN const_expr {
         const_define_numeric( _environment, $2, $4 );

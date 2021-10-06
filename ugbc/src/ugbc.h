@@ -1064,6 +1064,11 @@ typedef struct _Environment {
 
     int embeddedStatsEnabled;
 
+    /**
+     * If true, the body of procedure will not be produced
+     */
+    int emptyProcedure;
+
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */
@@ -1182,6 +1187,9 @@ typedef struct _Environment {
         int outsi; \
         for(outsi=0; outsi<n; ++outsi) \
             fputs("\t", ((Environment *)_environment)->asmFile); \
+        if ( ((Environment *)_environment)->emptyProcedure ) { \
+            fputs("\t; (excluded by ON target) : ", ((Environment *)_environment)->asmFile); \
+        } \
         fputs(s,((Environment *)_environment)->asmFile); \
         if ( r ) \
             fputs("\n", ((Environment *)_environment)->asmFile); \
@@ -1192,6 +1200,9 @@ typedef struct _Environment {
         int outsi; \
         for(outsi=0; outsi<n; ++outsi) \
             fputs("\t", ((Environment *)_environment)->asmFile); \
+        if ( ((Environment *)_environment)->emptyProcedure ) { \
+            fputs("\t; (excluded by ON target) : ", ((Environment *)_environment)->asmFile); \
+        } \
         fprintf(((Environment *)_environment)->asmFile, s, a); \
         if ( r ) \
             fputs("\n", ((Environment *)_environment)->asmFile); \
@@ -1202,6 +1213,9 @@ typedef struct _Environment {
         int outsi; \
         for(outsi=0; outsi<n; ++outsi) \
             fputs("\t", ((Environment *)_environment)->asmFile); \
+        if ( ((Environment *)_environment)->emptyProcedure ) { \
+            fputs("\t; (excluded by ON target) : ", ((Environment *)_environment)->asmFile); \
+        } \
         fprintf(((Environment *)_environment)->asmFile, s, a, b); \
         if ( r ) \
             fputs("\n", ((Environment *)_environment)->asmFile); \
@@ -1212,6 +1226,9 @@ typedef struct _Environment {
         int outsi; \
         for(outsi=0; outsi<n; ++outsi) \
             fputs("\t", ((Environment *)_environment)->asmFile); \
+        if ( ((Environment *)_environment)->emptyProcedure ) { \
+            fputs("\t; (excluded by ON target) : ", ((Environment *)_environment)->asmFile); \
+        } \
         fprintf(((Environment *)_environment)->asmFile, s, a, b, c); \
         if ( r ) \
             fputs("\n", ((Environment *)_environment)->asmFile); \
@@ -1222,6 +1239,9 @@ typedef struct _Environment {
         int outsi; \
         for(outsi=0; outsi<n; ++outsi) \
             fputs("\t", ((Environment *)_environment)->asmFile); \
+        if ( ((Environment *)_environment)->emptyProcedure ) { \
+            fputs("\t; (excluded by ON target) : ", ((Environment *)_environment)->asmFile); \
+        } \
         fprintf(((Environment *)_environment)->asmFile, s, a, b, c, d); \
         if ( r ) \
             fputs("\n", ((Environment *)_environment)->asmFile); \
@@ -1232,6 +1252,9 @@ typedef struct _Environment {
         int outsi; \
         for(outsi=0; outsi<n; ++outsi) \
             fputs("\t", ((Environment *)_environment)->asmFile); \
+        if ( ((Environment *)_environment)->emptyProcedure ) { \
+            fputs("\t; (excluded by ON target) : ", ((Environment *)_environment)->asmFile); \
+        } \
         fprintf(((Environment *)_environment)->asmFile, s, a, b, c, d, e); \
         if ( r ) \
             fputs("\n", ((Environment *)_environment)->asmFile); \

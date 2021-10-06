@@ -48,6 +48,8 @@ AS { return (AS); }
 ASC { return (ASC); }
 ASTERISK { return (ASTERISK); }
 AT { return (AT); }
+ATARI { return (ATARI); }
+ATARIXL { return (ATARIXL); }
 ADD { return (ADD); }
 ADDRESS { return (ADDRESS); }
 AND { return (AND); }
@@ -69,6 +71,7 @@ BYTE { return (BYTE); }
 BORDER { return (BORDER); }
 BUFFER { return (BUFFER); }
 C { return (C); }
+C64 { return (C64); }
 CALL { return (CALL); }
 CAN { return (CAN); }
 CAPS { return (CAPS); }
@@ -117,6 +120,9 @@ DONE { return (DONE); }
 DO { return (DO); }
 DOWN { return (DOWN); }
 DRAW { return (DRAW); }
+DRAGON { return (DRAGON); }
+DRAGON32 { return (DRAGON32); }
+DRAGON64 { return (DRAGON64); }
 DWORD { return (DWORD); }
 E { return (E); }
 ECM { return(ECM); }
@@ -251,6 +257,7 @@ PERIOD { return (PERIOD); }
 PINK { return(PINK); }
 PLOT { return(PLOT); }
 PLUS { return(PLUS); }
+PLUS4 { return (PLUS4); }
 POINT { return (POINT); }
 POKE { return (POKE); }
 POLYLINE { return (POLYLINE); }
@@ -357,6 +364,7 @@ YCURS { return (YCURS); }
 YELLOW { return(YELLOW); }
 YPEN { return (YPEN); }
 Z { return (Z); }
+ZX { return (ZX); }
 
 "REM"[^\n\r]* { return(Remark);  }
 "' "[^\n\r]* { return(Remark);  }
