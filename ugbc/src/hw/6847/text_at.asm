@@ -183,10 +183,8 @@ TEXTAT7
 
     LDB XCURSYS
     LDA #0
-    LSRA
-    RORB
-    LSRA
-    RORB
+    LSLB
+    ROLA
     LEAX D, X
 
     JMP TEXTATCOMMON
@@ -222,12 +220,10 @@ TEXTAT8
 
     LDB XCURSYS
     LDA #0
-    LSRA
-    RORB
-    LSRA
-    RORB
-    LSRA
-    RORB
+    LSLB
+    ROLA
+    LSLB
+    ROLA
     LEAX D, X
 
     JMP TEXTATCOMMON
@@ -264,10 +260,8 @@ TEXTAT9
 
     LDB XCURSYS
     LDA #0
-    LSRA
-    RORB
-    LSRA
-    RORB
+    LSLB
+    ROLA
     LEAX D, X
 
     JMP TEXTATCOMMON
@@ -303,12 +297,8 @@ TEXTAT10
 
     LDB XCURSYS
     LDA #0
-    LSRA
-    RORB
-    LSRA
-    RORB
-    LSRA
-    RORB
+    LSLB
+    ROLA
     LEAX D, X
 
     JMP TEXTATCOMMON
@@ -345,10 +335,8 @@ TEXTAT11
 
     LDB XCURSYS
     LDA #0
-    LSRA
-    RORB
-    LSRA
-    RORB
+    LSLB
+    ROLA
     LEAX D, X
 
     JMP TEXTATCOMMON
@@ -384,12 +372,10 @@ TEXTAT12
 
     LDB XCURSYS
     LDA #0
-    LSRA
-    RORB
-    LSRA
-    RORB
-    LSRA
-    RORB
+    LSLB
+    ROLA
+    LSLB
+    ROLA
     LEAX D, X
 
     JMP TEXTATCOMMON
@@ -426,10 +412,8 @@ TEXTAT13
 
     LDB XCURSYS
     LDA #0
-    LSRA
-    RORB
-    LSRA
-    RORB
+    LSLB
+    ROLA
     LEAX D, X
 
     JMP TEXTATCOMMON
@@ -459,12 +443,12 @@ TEXTAT14
 
     LDB XCURSYS
     LDA #0
-    LSRA
-    RORB
-    LSRA
-    RORB
-    LSRA
-    RORB
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
     LEAX D, X
 
     JMP TEXTATCOMMON
