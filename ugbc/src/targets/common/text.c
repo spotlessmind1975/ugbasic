@@ -57,9 +57,11 @@ void text_newline( Environment * _environment ) {
 
     Variable * x = variable_retrieve( _environment, "windowCX" );
     Variable * y = variable_retrieve( _environment, "windowCY" );
-    Variable * screenHeight = variable_retrieve( _environment, "CURRENTHEIGHT" );
+    Variable * screenHeight = variable_retrieve( _environment, "CURRENTTILESHEIGHT" );
 
     cpu_store_8bit( _environment, x->realName, 0 );    
+
+    cpu_inc( _environment, y->realName );
 
     Variable * result = variable_compare( _environment, y->name, screenHeight->name );    
 
@@ -67,8 +69,6 @@ void text_newline( Environment * _environment ) {
     char scrollLabel[MAX_TEMPORARY_STORAGE]; sprintf(scrollLabel, "%sscroll", label);
 
     cpu_bvneq( _environment, result->realName, scrollLabel );
-
-    cpu_inc( _environment, y->realName );
 
     cpu_jump( _environment, endLabel );
 
