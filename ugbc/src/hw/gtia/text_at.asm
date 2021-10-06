@@ -131,6 +131,7 @@ TEXTATANTIC8:
     STA PATTERN
 
     LDA XCURSYS
+    ASL A
     TAX                        ;tbl_8,x index
 
     ;-------------------------
@@ -199,6 +200,7 @@ TEXTATANTIC10:
     STA PATTERN
 
     LDA XCURSYS
+    ASL A
     TAX                        ;tbl_8,x index
 
     ;-------------------------
@@ -267,6 +269,7 @@ TEXTATANTIC12:
     STA PATTERN
 
     LDA XCURSYS
+    ASL A
     TAX                        ;tbl_8,x index
 
     ;-------------------------
@@ -301,6 +304,7 @@ TEXTATANTIC13:
     STA PATTERN
 
     LDA XCURSYS
+    ASL A
     TAX                        ;tbl_8,x index
 
     ;-------------------------
@@ -335,6 +339,7 @@ TEXTATANTIC14:
     STA PATTERN
 
     LDA XCURSYS
+    ASL A
     TAX                        ;tbl_8,x index
 
     ;-------------------------
