@@ -116,10 +116,8 @@ DSRESIZE:
 DSGC:
     PUSH IX
     LD HL, FREE_STRING
-    LD (HL), 0
-    INC HL
-    LD A, max_free_string
-    LD (HL), A
+    LD DE, max_free_string
+    LD (HL), DE
     LD A, (USING)
     CMP 0
     JR Z, DSGT

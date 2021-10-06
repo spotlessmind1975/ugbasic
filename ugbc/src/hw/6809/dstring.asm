@@ -116,8 +116,7 @@ DSRESIZE
 ; DSGC()
 DSGC
     PSHS X
-    LDA #(max_free_string-1)
-    LDB #0
+    LDD #(max_free_string-1)
     STD FREE_STRING
 
     LDA USING
