@@ -47,39 +47,67 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
 
     while( variable ) {
 
-        if ( !variable->imported ) {
+        if ( !variable->assigned && !variable->imported ) {
+
+            if ( variable->memoryArea && _environment->debuggerLabelsFile ) {
+                fprintf( _environment->debuggerLabelsFile, "%4.4x %s\r\n", variable->absoluteAddress, variable->realName );
+            }
 
             switch( variable->type ) {
                 case VT_BYTE:
                 case VT_SBYTE:
                 case VT_COLOR:
-                    outhead1("%s rzb 1", variable->realName);
+                    if ( variable->memoryArea ) {
+                        outline2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
+                    } else {
+                        outhead1("%s rzb 1", variable->realName);
+                    }   
                     break;
                 case VT_WORD:
                 case VT_SWORD:
                 case VT_POSITION:
                 case VT_ADDRESS:
-                    outhead1("%s rzb 2", variable->realName);
+                    if ( variable->memoryArea ) {
+                        outline2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
+                    } else {
+                        outhead1("%s rzb 2", variable->realName);
+                    }   
                     break;
                 case VT_DWORD:
                 case VT_SDWORD:
-                    outhead1("%s rzb 4", variable->realName);
+                    if ( variable->memoryArea ) {
+                        outline2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
+                    } else {
+                        outhead1("%s rzb 4", variable->realName);
+                    }   
                     break;
                 case VT_STRING:
                     if ( ! variable->valueString ) {
                         printf("%s", variable->realName);
                         exit(EXIT_FAILURE);
                     }
-                    outhead2("%s fcb %d", variable->realName, (int)strlen(variable->valueString) );
-                    if ( strlen( variable->valueString ) > 0 ) {
-                        outhead1("   fcc \"%s\"", variable->valueString );
-                    } 
+                    if ( variable->memoryArea ) {
+                        outline2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
+                    } else {
+                        outhead2("%s fcb %d", variable->realName, (int)strlen(variable->valueString) );
+                        if ( strlen( variable->valueString ) > 0 ) {
+                            outhead1("   fcc \"%s\"", variable->valueString );
+                        } 
+                    }   
                     break;
                 case VT_DSTRING:
-                    outhead1("%s rzb 1", variable->realName);
+                    if ( variable->memoryArea ) {
+                        outline2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
+                    } else {
+                        outhead1("%s rzb 1", variable->realName);
+                    }   
                     break;
                 case VT_MOB:
-                    outhead1("%s rzb 1", variable->realName);
+                    if ( variable->memoryArea ) {
+                        outline2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
+                    } else {
+                        outhead1("%s rzb 1", variable->realName);
+                    }   
                     break;
                 case VT_IMAGE:
                 case VT_BUFFER:
@@ -172,11 +200,9 @@ void variable_cleanup( Environment * _environment ) {
 
                 for( int j=0; j< (_environment->currentProcedure+1); ++j ) {
                     Variable * variable = _environment->tempVariables[j];
-                    if ( ! variable->assigned ) {
-                        variable_cleanup_entry( _environment, variable );
-                    }
+                    variable_cleanup_entry( _environment, variable );
                 } 
-
+                
                 Variable * variable = _environment->tempResidentVariables;
 
                 variable_cleanup_entry( _environment, variable );
