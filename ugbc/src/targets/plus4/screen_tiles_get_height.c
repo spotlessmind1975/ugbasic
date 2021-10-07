@@ -38,7 +38,7 @@
  * CODE SECTION 
  ****************************************************************************/
 
-Variable * screen_get_height( Environment * _environment ) {
+Variable * screen_tiles_get_height( Environment * _environment ) {
 
     Variable * height = variable_temporary( _environment, VT_BYTE, "(result of get tiles height)");
 
