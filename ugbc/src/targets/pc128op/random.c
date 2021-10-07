@@ -1,6 +1,3 @@
-#ifndef __UGBASICTESTER__
-#define __UGBASICTESTER__
-
 /*****************************************************************************
  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
  *****************************************************************************
@@ -35,43 +32,54 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <limits.h>
-#include <unistd.h>
-
-#include "../src/ugbc.h"
+#include "../../ugbc.h"
 
 /****************************************************************************
- * DECLARATIONS AND DEFINITIONS SECTION 
+ * CODE SECTION 
  ****************************************************************************/
 
-void test_cpu( );
-void test_variables( );
-void test_conditionals( );
-void test_loops( );
-void test_ons( );
-void test_controls( );
-void test_examples( );
-void test_print( );
+/**
+ * @brief Emit ASM code for <b>= RANDOM</b>
+ * 
+ * This function outputs a code suitable for calculating a random value, 
+ * the range of which depends on the type of data passed as a parameter:
+ * 
+ * - `VT_BYTE` (<b>BYTE</b>) : 0...255
+ * - `VT_COLOR` (<b>COLOR</b>) : 0...15
+ * - `VT_WORD` (<b>WORD</b>) : 0...65.535
+ * - `VT_ADDRESS` (<b>ADDRESS</b>) : 0...65.535
+ * - `VT_POSITION` (<b>POSITION</b>) : 0...65.535
+ * - `VT_DWORD` (<b>DWORD</b>) : 0...4.294.967.295
+ * 
+ * The random value is passed back into a temporary variable.
+ * 
+ * @param _environment Current calling environment
+ * @param _type Type of random number to generate
+ * @return Variable* The random value calculated
+ */
+/* <usermanual>
+@keyword RANDOM
 
-#if defined( __c64__ )
-    #include "tester_c64.h"
-#elif defined( __plus4__ )
-    #include "tester_plus4.h"
-#elif defined( __atari__ )
-    #include "tester_atari.h"
-#elif defined( __atarixl__ )
-    #include "tester_atarixl.h"
-#elif defined( __zx__ )
-    #include "tester_zx.h"
-#elif defined( __d32__ )
-    #include "tester_d32.h"
-#elif defined( __d64__ )
-    #include "tester_d64.h"
-#elif defined( __pc128op__ )
-    #include "tester_pc128op.h"
-#endif
+@target pc128op
+</usermanual> */
+Variable * random_value( Environment * _environment, VariableType _type ) {
 
-#endif
+    Variable * seed = variable_retrieve_or_define( _environment, "seed", VT_DWORD, 0Xffffffff );
+
+    Variable * result = variable_temporary( _environment, _type, "(random value)" );
+
+    switch( VT_BITWIDTH( _type ) ) {
+        case 8:
+            cpu6809_random_8bit( _environment, seed->realName, "$0112", result->realName );
+            break;
+        case 16:
+            cpu6809_random_16bit( _environment, seed->realName, "$0112", result->realName );
+            break;
+        case 32:
+            cpu6809_random_32bit( _environment, seed->realName, "$0112", result->realName );
+            break;
+    }
+
+    return result;
+
+}

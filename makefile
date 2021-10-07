@@ -93,6 +93,12 @@ generated/d64/asm/%.asm:
 generated/d64/exe/%.bin: $(subst /exe/,/asm/,$(@:.bin=.asm))
 	@asm6809 -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -D -e 10240 -o $@ $(subst /exe/,/asm/,$(@:.bin=.asm))
 
+generated/pc128op/asm/%.asm:
+	@ugbc/exe/ugbc.pc128op $(subst generated/pc128op/asm/,examples/,$(@:.asm=.bas)) $@
+
+generated/pc128op/exe/%.bin: $(subst /exe/,/asm/,$(@:.bin=.asm))
+	@asm6809 -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -D -e 10240 -o $@ $(subst /exe/,/asm/,$(@:.bin=.asm))
+
 paths:
 	@mkdir -p generated
 	@mkdir -p generated/$(target)/asm

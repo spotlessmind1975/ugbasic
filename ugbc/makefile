@@ -63,6 +63,14 @@ SOURCES_6847 := $(subst src/hw/6847/,src-generated/6847_,$(MODULES_6847:.asm=.c)
 src-generated/6847_%.c: $(MODULES_6847)
 	@xxd -i $(subst src-generated/6847_,src/hw/6847/,$(@:.c=.asm)) >$@
 
+# Thomson EF936x
+
+MODULES_EF936X := $(wildcard src/hw/ef936x/*.asm)
+SOURCES_EF936X := $(subst src/hw/ef936x/,src-generated/ef936x_,$(MODULES_EF936X:.asm=.c))
+
+src-generated/ef936x_%.c: $(MODULES_EF936X)
+	@xxd -i $(subst src-generated/ef936x_,src/hw/ef936x/,$(@:.c=.asm)) >$@
+
 # MOS Technology 6502/6510
 
 MODULES_6502 := $(wildcard src/hw/6502/*.asm)
@@ -180,6 +188,18 @@ src-generated/modules_d64.c: $(SOURCES_6809) $(SOURCES_6847) $(SOURCES_D64)
 	@cat $(SOURCES_6809) $(SOURCES_6847) $(SOURCES_D64) >src-generated/modules_d64.c
 	@grep "src" src-generated/modules_d64.c | awk -f modules.awk >src-generated/modules_d64.h
 
+# Olivetti Prodest PC 128
+
+MODULES_PC128OP := $(wildcard src/hw/pc128op/*.asm)
+SOURCES_PC128OP := $(subst src/hw/pc128op/,src-generated/pc128op_,$(MODULES_PC128OP:.asm=.c))
+
+src-generated/pc128op_%.c: $(MODULES_PC128OP)
+	@xxd -i $(subst src-generated/pc128op_,src/hw/pc128op/,$(@:.c=.asm)) >$@
+
+src-generated/modules_pc128op.c: $(SOURCES_6809) $(SOURCES_EF936X) $(SOURCES_PC128OP)
+	@cat $(SOURCES_6809) $(SOURCES_EF936X) $(SOURCES_PC128OP) >src-generated/modules_pc128op.c
+	@grep "src" src-generated/modules_pc128op.c | awk -f modules.awk >src-generated/modules_pc128op.h
+
 # ZX Spectrum
 
 MODULES_ZX := $(wildcard src/hw/zx/*.asm)
@@ -223,7 +243,7 @@ SOURCESTEST += $(wildcard src/hw/*.c)
 SOURCESTEST += $(wildcard src/targets/common/*.c)
 SOURCESTEST += $(wildcard src/targets/$(target)/*.c)
 SOURCESTEST += $(wildcard src-test/suites/*.c)
-SOURCESTEST += src-generated/modules_$(target).c src-test/tester.c src-test/tester_c64.c src-test/tester_plus4.c src-test/tester_atari.c src-test/tester_atarixl.c src-test/tester_zx.c src-test/tester_d32.c src-test/tester_d64.c
+SOURCESTEST += src-generated/modules_$(target).c src-test/tester.c src-test/tester_c64.c src-test/tester_plus4.c src-test/tester_atari.c src-test/tester_atarixl.c src-test/tester_zx.c src-test/tester_d32.c src-test/tester_d64.c src-test/tester_pc128op.c
 
 paths:
 	@mkdir -p src-generated

@@ -3151,6 +3151,8 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     char target[MAX_TEMPORARY_STORAGE] = "Dragon 32";
 #elif __d64__
     char target[MAX_TEMPORARY_STORAGE] = "Dragon 64";
+#elif __pc128op__
+    char target[MAX_TEMPORARY_STORAGE] = "PC128 Olivetti Prodest";
 #endif
 
     printf("--------------------------------------------------\n");

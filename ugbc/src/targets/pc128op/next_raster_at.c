@@ -1,6 +1,3 @@
-#ifndef __UGBASICTESTER__
-#define __UGBASICTESTER__
-
 /*****************************************************************************
  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
  *****************************************************************************
@@ -35,43 +32,48 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <limits.h>
-#include <unistd.h>
-
-#include "../src/ugbc.h"
+#include "../../ugbc.h"
 
 /****************************************************************************
- * DECLARATIONS AND DEFINITIONS SECTION 
+ * CODE SECTION 
  ****************************************************************************/
 
-void test_cpu( );
-void test_variables( );
-void test_conditionals( );
-void test_loops( );
-void test_ons( );
-void test_controls( );
-void test_examples( );
-void test_print( );
+/**
+ * @brief Emit ASM code for <b>NEXT RASTER AT [int] WITH [label]</b>
+ * 
+ * This function outputs a code that puts the raster routine on hold for the 
+ * vertical raster to arrive at a new _position with the execution of a different 
+ * code from the previous one. This function is particularly useful when the 
+ * position is communicated is given as an integer.
+ * 
+ * @param _environment Current calling environment
+ * @param _label Label to jump to when vertical raster reach the value given
+ * @param _position The vertical position to wait for
+ */
+/* <usermanual>
+@keyword NEXT RASTER AT
 
-#if defined( __c64__ )
-    #include "tester_c64.h"
-#elif defined( __plus4__ )
-    #include "tester_plus4.h"
-#elif defined( __atari__ )
-    #include "tester_atari.h"
-#elif defined( __atarixl__ )
-    #include "tester_atarixl.h"
-#elif defined( __zx__ )
-    #include "tester_zx.h"
-#elif defined( __d32__ )
-    #include "tester_d32.h"
-#elif defined( __d64__ )
-    #include "tester_d64.h"
-#elif defined( __pc128op__ )
-    #include "tester_pc128op.h"
-#endif
+@target pc128op
+</usermanual> */
+void next_raster_at_with( Environment * _environment, int _position, char * _label ) {
 
-#endif
+}
+
+/**
+ * @brief Emit ASM code for <b>NEXT RASTER AT [expresssion] WITH label</b>
+ * 
+ * This function outputs a code that puts the raster routine on hold for the 
+ * vertical raster to arrive at a new _position with the execution of a different 
+ * code from the previous one. This function is particularly useful when the 
+ * position is communicated is given as an expression.
+ * 
+ * @param _environment Current calling environment
+ * @param _label Label to jump to when vertical raster reach the value given
+ * @param _position The vertical position to wait for
+ */
+/* <usermanual>
+@keyword NEXT RASTER AT
+</usermanual> */
+void next_raster_at_with_var( Environment * _environment, char * _position, char * _label ) {
+
+}

@@ -1,0 +1,10 @@
+PLOTX   EQU $41 ; $42
+PLOTY   EQU $43
+PLOTM   EQU $45
+PLOTOMA EQU $46
+PLOTAMA EQU $47
+
+;--------------
+
+PLOT
+    RTS

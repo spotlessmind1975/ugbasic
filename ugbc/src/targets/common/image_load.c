@@ -111,6 +111,8 @@ Variable * image_load( Environment * _environment, char * _filename, char * _ali
     strcat( lookedFilename, "/d32" );
 #elif __d64__ 
     strcat( lookedFilename, "/d64" );
+#elif __pc128op__ 
+    strcat( lookedFilename, "/pc128op" );
 #endif
     strcat( lookedFilename, lookedExtension );
 

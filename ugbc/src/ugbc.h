@@ -775,6 +775,8 @@ typedef struct _Deployed {
     int gtiastartup;
     int gtiavars;
     int zxvars;
+    int ef936xvars;
+    int ef936xstartup;
     int plot;
     int dstring;
     int scancode;
@@ -1927,6 +1929,11 @@ Variable *              ypen( Environment * _environment );
     #include "hw/6809.h"
     #include "hw/6847.h"
     #include "hw/d64.h"
+#elif __pc128op__ 
+    #include "../src-generated/modules_pc128op.h"
+    #include "hw/6809.h"
+    #include "hw/ef936x.h"
+    #include "hw/pc128op.h"
 #endif
 
 #endif

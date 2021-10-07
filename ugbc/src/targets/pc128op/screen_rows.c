@@ -1,6 +1,3 @@
-#ifndef __UGBASICTESTER__
-#define __UGBASICTESTER__
-
 /*****************************************************************************
  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
  *****************************************************************************
@@ -35,43 +32,46 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <limits.h>
-#include <unistd.h>
-
-#include "../src/ugbc.h"
+#include "../../ugbc.h"
 
 /****************************************************************************
- * DECLARATIONS AND DEFINITIONS SECTION 
+ * CODE SECTION 
  ****************************************************************************/
 
-void test_cpu( );
-void test_variables( );
-void test_conditionals( );
-void test_loops( );
-void test_ons( );
-void test_controls( );
-void test_examples( );
-void test_print( );
+/**
+ * @brief Emit ASM code for <b>SCREEN ROWS [integer]</b>
+ * 
+ * This function changes the number of lines that can be displayed. 
+ * Depending on the hardware, the effect can be different as different 
+ * are the acceptable values. This version is the one called when an 
+ * integer number of lines is given in the program.
+ * 
+ * @param _environment Current calling environment
+ * @param _rows Number of rows
+ */
+/* <usermanual>
+@keyword SCREEN ROWS
 
-#if defined( __c64__ )
-    #include "tester_c64.h"
-#elif defined( __plus4__ )
-    #include "tester_plus4.h"
-#elif defined( __atari__ )
-    #include "tester_atari.h"
-#elif defined( __atarixl__ )
-    #include "tester_atarixl.h"
-#elif defined( __zx__ )
-    #include "tester_zx.h"
-#elif defined( __d32__ )
-    #include "tester_d32.h"
-#elif defined( __d64__ )
-    #include "tester_d64.h"
-#elif defined( __pc128op__ )
-    #include "tester_pc128op.h"
-#endif
+@target pc128op
+</usermanual> */
+void screen_rows( Environment * _environment, int _rows ) {
 
-#endif
+}
+
+/**
+ * @brief Emit ASM code for <b>SCREEN ROWS [int]x</b>
+ * 
+ * This function changes the number of lines that can be displayed. 
+ * Depending on the hardware, the effect can be different as different 
+ * are the acceptable values. This version is the one called when an 
+ * expression is given in the program.
+ * 
+ * @param _environment Current calling environment
+ * @param _rows Number of rows
+ */
+/* <usermanual>
+@keyword SCREEN ROWS
+</usermanual> */
+void screen_rows_var( Environment * _environment, char * _rows ) {
+
+}
