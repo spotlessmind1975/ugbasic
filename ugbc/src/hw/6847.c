@@ -1173,17 +1173,17 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
 
             if ( i == 1 ) {
                 *( buffer + offset + 2) |= bitmask;
-                printf("*");
+                // printf("*");
             } else {
                 *( buffer + offset + 2) &= ~bitmask;
-                printf(" ");
+                // printf(" ");
             }
 
             _source += 3;
 
         }
 
-        printf("\n" );
+        // printf("\n" );
 
     }
 
