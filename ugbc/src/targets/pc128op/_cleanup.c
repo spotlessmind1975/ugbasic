@@ -254,7 +254,7 @@ int convertbintok7(Environment * _environment)
 
 void target_cleanup( Environment * _environment ) {
 
-    // convertbintok7( _environment );
+    convertbintok7( _environment );
 
     unlink( _environment->asmFileName );
 
