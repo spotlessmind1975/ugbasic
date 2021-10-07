@@ -4,6 +4,10 @@ ugBASIC contains algorithms and software written
 by third parts, as follows. Please refer to the following
 conditions if you wish to reproduce or reuse this software.
 
+[CONVERT BINARY TO K7 TAPE FILE FOR THOMSON MO6 / PC128 OLIVETTI PRODEST](https://github.com/spotlessmind1975/ugbasic/blob/main/ugbc/src/targets/pc128op/_cleanup.c)^M
+
+This code was originally present in the repository ["PC 128 Olivetti Prodest (Thomson MO6) tools collection"](https://github.com/dinoflorenzi/PC128OP) by [Dino Florenzi](https://github.com/dinoflorenzi), and it has been used with his permission. For any uses other than integration with ugBASIC, please consult the author.
+
 [CONVERT 32-BIT BINARY TO ASCII NUMBER STRING](https://github.com/spotlessmind1975/ugbasic/blob/main/ugbc/src/hw/6502/bits_to_string.asm)
 
 Copyright (C)1985 by BCS Technology Limited.  All rights reserved.
