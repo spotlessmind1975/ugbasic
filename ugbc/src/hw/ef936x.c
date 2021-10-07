@@ -229,7 +229,8 @@ int ef936x_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 32*16 );
             break;
         default:
-            CRITICAL_SCREEN_UNSUPPORTED( _screen_mode->id );
+            ;
+            // CRITICAL_SCREEN_UNSUPPORTED( _screen_mode->id );
     }
 
     cpu_store_16bit( _environment, "CURRENTWIDTH", _environment->screenWidth );
