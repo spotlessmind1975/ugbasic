@@ -57,7 +57,7 @@ void setup_embedded( Environment * _environment ) {
 
 void target_initialization( Environment * _environment ) {
 
-    MEMORY_AREA_DEFINE( MAT_DIRECT, 0xc000, 0xdfff );
+    MEMORY_AREA_DEFINE( MAT_DIRECT, 0x8000, 0x9fff );
 
     variable_import( _environment, "EVERYSTATUS", VT_BYTE );
     variable_global( _environment, "EVERYSTATUS" );
@@ -76,7 +76,7 @@ void target_initialization( Environment * _environment ) {
     variable_import( _environment, "FREE_STRING", VT_WORD );
     variable_global( _environment, "FREE_STRING" );    
 
-    outline0("ORG $2800");
+    outline0("ORG $6000");
     outline0("LDS #$8000");
     deploy( vars, src_hw_pc128op_vars_asm);
     deploy( startup, src_hw_pc128op_startup_asm);
@@ -86,7 +86,7 @@ void target_initialization( Environment * _environment ) {
     variable_define( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0xD800 );
     variable_global( _environment, "COLORMAPADDRESS" );
 
-    outline0( "JSR pc128opSTARTUP" );
+    outline0( "JSR PC128OPSTARTUP" );
 
     setup_text_variables( _environment );
 
