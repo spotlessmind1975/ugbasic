@@ -58,7 +58,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_SBYTE:
                 case VT_COLOR:
                     if ( variable->memoryArea ) {
-                        outline2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
+                        outhead2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
                         outhead1("%s rzb 1", variable->realName);
                     }   
@@ -68,7 +68,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_POSITION:
                 case VT_ADDRESS:
                     if ( variable->memoryArea ) {
-                        outline2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
+                        outhead2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
                         outhead1("%s rzb 2", variable->realName);
                     }   
@@ -76,7 +76,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_DWORD:
                 case VT_SDWORD:
                     if ( variable->memoryArea ) {
-                        outline2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
+                        outhead2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
                         outhead1("%s rzb 4", variable->realName);
                     }   
@@ -87,7 +87,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         exit(EXIT_FAILURE);
                     }
                     if ( variable->memoryArea ) {
-                        outline2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
+                        outhead2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
                         outhead2("%s fcb %d", variable->realName, (int)strlen(variable->valueString) );
                         if ( strlen( variable->valueString ) > 0 ) {
@@ -97,14 +97,14 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     break;
                 case VT_DSTRING:
                     if ( variable->memoryArea ) {
-                        outline2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
+                        outhead2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
                         outhead1("%s rzb 1", variable->realName);
                     }   
                     break;
                 case VT_MOB:
                     if ( variable->memoryArea ) {
-                        outline2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
+                        outhead2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
                         outhead1("%s rzb 1", variable->realName);
                     }   
