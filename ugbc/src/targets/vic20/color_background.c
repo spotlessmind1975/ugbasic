@@ -61,8 +61,6 @@ Modifica il colore dello sfondo tra quelli disponibili.
 @target vic20
 </usermanual> */
 void color_background( Environment * _environment, int _index, int _background_color ) {
-    
-    
 
     char index[MAX_TEMPORARY_STORAGE]; sprintf(index, "#$%2.2x", _index );
     char background_color[MAX_TEMPORARY_STORAGE]; sprintf(background_color, "#$%2.2x", _background_color );
