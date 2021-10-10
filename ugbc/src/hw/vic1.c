@@ -518,9 +518,9 @@ int vic1_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
     cpu_store_16bit( _environment, "CURRENTWIDTH", _environment->screenWidth );
     cpu_store_16bit( _environment, "CURRENTHEIGHT", _environment->screenHeight );
-    _environment->screenTilesWidth = 40;
+    _environment->screenTilesWidth = 22;
     cpu_store_8bit( _environment, "CURRENTTILESWIDTH", _environment->screenTilesWidth );
-    _environment->screenTilesHeight = 25;
+    _environment->screenTilesHeight = 23;
     cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight / 8 );
 
 }
@@ -901,10 +901,10 @@ void vic1_busy_wait( Environment * _environment, char * _timing ) {
     outhead1("%sfirst:", label );
     outline0("LDA #$01");
     outhead1("%ssecond:", label );
-    outline0("CMP $D012");
+    outline0("CMP $9004");
     outline1("BNE %ssecond", label);
     outhead1("%sthird:", label );
-    outline0("CMP $D012");
+    outline0("CMP $9004");
     outline1("BEQ %sthird", label);
     outline0("INC TMPPTR");
     outline0("LDA TMPPTR");
