@@ -3818,11 +3818,13 @@ ScreenMode * find_screen_mode_by_suggestion( Environment * _environment, int _bi
     screenMode = _environment->screenModes;
     bestMode = firstMode;
 
-    while ( screenMode ) {
-        if ( screenMode->score > bestMode->score ) {
-            bestMode = screenMode;
+    if ( firstMode ) {
+        while ( screenMode ) {
+            if ( screenMode->score > bestMode->score ) {
+                bestMode = screenMode;
+            }
+            screenMode = screenMode->next;
         }
-        screenMode = screenMode->next;
     }
    
     return bestMode;

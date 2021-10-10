@@ -526,12 +526,15 @@ void vic2_bitmap_enable( Environment * _environment, int _width, int _height, in
 
     ScreenMode * mode = find_screen_mode_by_suggestion( _environment, 1, _width, _height, _colors );
 
-    vic2_screen_mode_enable( _environment, mode );
+    if ( mode ) {
+        vic2_screen_mode_enable( _environment, mode );
 
-    cpu_store_8bit( _environment, "CURRENTMODE", mode->id );
-    
-    _environment->currentMode = mode->id;
-
+        cpu_store_8bit( _environment, "CURRENTMODE", mode->id );
+        
+        _environment->currentMode = mode->id;
+    } else {
+        WARNING_SCREEN_MODE( -1 );
+    }
 }
 
 void vic2_bitmap_disable( Environment * _environment ) {
@@ -554,12 +557,15 @@ void vic2_tilemap_enable( Environment * _environment, int _width, int _height, i
 
     ScreenMode * mode = find_screen_mode_by_suggestion( _environment, 0, _width, _height, _colors );
 
-    vic2_screen_mode_enable( _environment, mode );
+    if ( mode ) {
+        vic2_screen_mode_enable( _environment, mode );
 
-    _environment->currentMode = mode->id;
+        _environment->currentMode = mode->id;
 
-    cpu_store_8bit( _environment, "CURRENTMODE", mode->id );
-    
+        cpu_store_8bit( _environment, "CURRENTMODE", mode->id );
+    } else {
+        WARNING_SCREEN_MODE( -1 );
+    }
 
 }
 
@@ -986,7 +992,7 @@ void vic2_text_at( Environment * _environment, char * _x, char * _y, char * _tex
 void vic2_initialization( Environment * _environment ) {
 
     deploy( vic2vars, src_hw_vic2_vars_asm );
-    deploy( vicstartup, src_hw_vic2_startup_asm );
+    deploy( vic2startup, src_hw_vic2_startup_asm );
     src_hw_chipset_mob_asm = src_hw_vic2_mob_asm;
     src_hw_chipset_mob_asm_len = src_hw_vic2_mob_asm_len;
 

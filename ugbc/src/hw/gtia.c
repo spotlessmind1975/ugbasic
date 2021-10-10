@@ -891,13 +891,14 @@ void gtia_bitmap_enable( Environment * _environment, int _width, int _height, in
     
     ScreenMode * mode = find_screen_mode_by_suggestion( _environment, 1, _width, _height, _colors );
 
-    gtia_screen_mode_enable( _environment, mode );
-
-    // printf( "%d\n", mode->id);
-
-    cpu_store_8bit( _environment, "CURRENTMODE", mode->id );
-    
-    _environment->currentMode = mode->id;
+    if ( mode ) {
+        gtia_screen_mode_enable( _environment, mode );
+        // printf( "%d\n", mode->id);
+        cpu_store_8bit( _environment, "CURRENTMODE", mode->id );    
+        _environment->currentMode = mode->id;
+    } else {
+        WARNING_SCREEN_MODE( -1 );
+    }
 
 }
 
@@ -909,14 +910,18 @@ void gtia_tilemap_enable( Environment * _environment, int _width, int _height, i
 
     ScreenMode * mode = find_screen_mode_by_suggestion( _environment, 0, _width, _height, _colors );
 
-    gtia_screen_mode_enable( _environment, mode );
+    if ( mode ) {
+        gtia_screen_mode_enable( _environment, mode );
 
-    cpu_store_8bit( _environment, "_PEN", 0x01 );
-    cpu_store_8bit( _environment, "_PAPER", 0x00 );
+        cpu_store_8bit( _environment, "_PEN", 0x01 );
+        cpu_store_8bit( _environment, "_PAPER", 0x00 );
 
-    cpu_store_8bit( _environment, "CURRENTMODE", mode->id );
+        cpu_store_8bit( _environment, "CURRENTMODE", mode->id );
 
-    _environment->currentMode = mode->id;
+        _environment->currentMode = mode->id;
+    } else {
+        WARNING_SCREEN_MODE( -1 );
+    }
 
 }
 

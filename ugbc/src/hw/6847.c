@@ -606,11 +606,15 @@ void c6847_bitmap_enable( Environment * _environment, int _width, int _height, i
 
     ScreenMode * mode = find_screen_mode_by_suggestion( _environment, 1, _width, _height, _colors );
 
-    c6847_screen_mode_enable( _environment, mode );
+    if ( mode ) {
+        c6847_screen_mode_enable( _environment, mode );
 
-    cpu_store_8bit( _environment, "CURRENTMODE", mode->id );
-    
-    _environment->currentMode = mode->id;
+        cpu_store_8bit( _environment, "CURRENTMODE", mode->id );
+        
+        _environment->currentMode = mode->id;
+    } else {
+        WARNING_SCREEN_MODE( -1 );
+    }
 
 }
 
@@ -622,11 +626,15 @@ void c6847_tilemap_enable( Environment * _environment, int _width, int _height, 
 
     ScreenMode * mode = find_screen_mode_by_suggestion( _environment, 0, _width, _height, _colors );
 
-    c6847_screen_mode_enable( _environment, mode );
+    if ( mode ) {
+        c6847_screen_mode_enable( _environment, mode );
 
-    _environment->currentMode = mode->id;
+        _environment->currentMode = mode->id;
 
-    cpu_store_8bit( _environment, "CURRENTMODE", mode->id );    
+        cpu_store_8bit( _environment, "CURRENTMODE", mode->id );    
+    } else {
+        WARNING_SCREEN_MODE( -1 );
+    }
 
 }
 

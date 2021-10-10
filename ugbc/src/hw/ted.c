@@ -349,11 +349,15 @@ void ted_bitmap_enable( Environment * _environment, int _width, int _height, int
 
     ScreenMode * mode = find_screen_mode_by_suggestion( _environment, 1, _width, _height, _colors );
 
-    ted_screen_mode_enable( _environment, mode );
+    if ( mode ) {
+        ted_screen_mode_enable( _environment, mode );
 
-    cpu_store_8bit( _environment, "CURRENTMODE", mode->id );
+        cpu_store_8bit( _environment, "CURRENTMODE", mode->id );
 
-    _environment->currentMode = mode->id;
+        _environment->currentMode = mode->id;
+    } else {
+        WARNING_SCREEN_MODE( -1 );
+    }
 
 }
 
@@ -374,11 +378,15 @@ void ted_tilemap_enable( Environment * _environment, int _width, int _height, in
 
     ScreenMode * mode = find_screen_mode_by_suggestion( _environment, 0, _width, _height, _colors );
 
-    ted_screen_mode_enable( _environment, mode );
+    if ( mode ) {
+        ted_screen_mode_enable( _environment, mode );
 
-    cpu_store_8bit( _environment, "CURRENTMODE", mode->id );
+        cpu_store_8bit( _environment, "CURRENTMODE", mode->id );
 
-    _environment->currentMode = mode->id;
+        _environment->currentMode = mode->id;
+    } else {
+        WARNING_SCREEN_MODE( -1 );
+    }
 
 }
 
@@ -653,7 +661,7 @@ void ted_text_at( Environment * _environment, char * _x, char * _y, char * _text
 void ted_initialization( Environment * _environment ) {
 
     deploy( tedvars, src_hw_ted_vars_asm );
-    deploy( vicstartup, src_hw_ted_startup_asm );
+    deploy( tedstartup, src_hw_ted_startup_asm );
     src_hw_chipset_mob_asm = src_hw_ted_mob_asm;
     src_hw_chipset_mob_asm_len = src_hw_ted_mob_asm_len;
 
