@@ -4005,7 +4005,6 @@ void cpu6502_fill_indirect( Environment * _environment, char * _address, char * 
         outline0("LDA (TMPPTR2),Y");
 
         outline1("LDX %s", _size );
-        outline1("LDA %s", _pattern);
         outline0("JSR CPUFILL");
 
     done()
