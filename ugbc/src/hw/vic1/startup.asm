@@ -4,7 +4,7 @@ VIC1STARTUP:
     ; bits 0-2 select border color
     ; bit 3 selects inverted or normal mode
 
-    LDA $08
+    LDA #$08
     STA $900F
 
     ; Lowercase font
