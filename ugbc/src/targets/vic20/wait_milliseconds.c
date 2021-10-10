@@ -55,8 +55,6 @@
 </usermanual> */
 void wait_milliseconds( Environment * _environment, int _timing ) {
 
-    
-
     char timingString[MAX_TEMPORARY_STORAGE]; sprintf(timingString, "#$%2.2x", _timing >> 2 );
 
     vic1_busy_wait( _environment, timingString );
