@@ -52,20 +52,15 @@ Variable * joy( Environment * _environment, char * _port ) {
 // sure that they restore the DDR to the original condition.
 
     outline0("SEI" );
-    outline0("LDA $9113" );
-    outline0("PHA" );
-    outline0("LDA $9122" );
-    outline0("PHA" );
     outline0("LDA #0" );
-    outline0("STA $9122" );
     outline0("STA $9113" );
+    outline0("LDA #127" );
+    outline0("STA $9122" );
     outline0("LDA $9111" );
     outline0("ORA $9120" );
     outline1("STA %s", result->realName );
-    outline0("PLA" );
+    outline0("LDA #255" );
     outline0("STA $9122" );
-    outline0("PLA" );
-    outline0("STA $9113" );
     outline0("CLI" );
 
     return result;
