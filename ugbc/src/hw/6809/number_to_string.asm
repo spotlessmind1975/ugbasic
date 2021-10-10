@@ -35,7 +35,7 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-; MATHPTR2...MATHPTR3 holds the number
+; <MATHPTR2...<MATHPTR3 holds the number
 
 N2STRING
     LDY #0
@@ -54,9 +54,9 @@ NSSTRINGLC
     LDB #0
 N2STRINGL1
     ORCC #$01
-    LDD MATHPTR2
+    LDD <MATHPTR2
     SUBD , U
-    STD MATHPTR2
+    STD <MATHPTR2
 N2STRINGL1C
     ANDA #$80
     CMPA #0
@@ -66,9 +66,9 @@ N2STRINGL1C
 
 N2STRINGF
     ANDCC #$FE
-    LDD MATHPTR2
+    LDD <MATHPTR2
     ADDD , U
-    STD MATHPTR2
+    STD <MATHPTR2
 
     CMPY #0
     BNE NSSTRINGL2
@@ -99,19 +99,19 @@ NSSTRINGL3
     STB , X
     INCB
 NSSTRINGL3B
-    STB MATHPTR5
+    STB <MATHPTR5
 
-    LDY TMPPTR
+    LDY <TMPPTR
     LDX #RESBUFFER
 
-    LDA MATHPTR4
+    LDA <MATHPTR4
     ANDA #$80
     BEQ NSSTRINGA
 
     LDA #'-'
     STA , Y
     LEAY 1, Y
-    INC MATHPTR5
+    INC <MATHPTR5
 
 NSSTRINGA
     DECB
