@@ -58,6 +58,7 @@ Variable * joy( Environment * _environment, char * _port ) {
     outline0("STA $9122" );
     outline0("LDA $9111" );
     outline0("ORA $9120" );
+    outline0("EOR #$FF" );
     outline1("STA %s", result->realName );
     outline0("LDA #255" );
     outline0("STA $9122" );
