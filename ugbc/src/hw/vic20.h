@@ -33,7 +33,14 @@
 
 #include "../ugbc.h"
 
-#define         JOY_COUNT           2
+#define         JOY_COUNT           1
+#define JOYSTICK_0					0
+#define JOYSTICK_COUNT				1
+#define JOYSTICK_UP					4
+#define JOYSTICK_DOWN				8
+#define JOYSTICK_LEFT				16
+#define JOYSTICK_RIGHT				128
+#define JOYSTICK_FIRE				32
 
 #define KEY_NONE					64
 #define KEY_0						35
