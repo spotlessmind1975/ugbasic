@@ -76,6 +76,8 @@ void text_newline( Environment * _environment ) {
 
     text_vscroll_screen( _environment, -1 );
 
+    cpu_dec( _environment, y->realName );
+
     cpu_label( _environment, endLabel );
 
 }
