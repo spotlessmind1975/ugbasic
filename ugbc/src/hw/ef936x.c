@@ -525,7 +525,7 @@ void ef936x_hscroll_line( Environment * _environment, int _direction ) {
 
     Variable * y = variable_retrieve( _environment, "windowCY" );
     outline1("LDA #$%2.2x", ( _direction & 0xff ) );
-    outline0("STA <<DIRECTION" );
+    outline0("STA <DIRECTION" );
     outline1("LDA %s", y->realName );
     outline0("STA <CLINEY");
 
