@@ -151,14 +151,14 @@ void cpu6809_poke( Environment * _environment, char * _address, char * _source )
  * @brief <i>CPU 6809</i>: emit code to fill up a memory area
  * 
  * This function can be used to output a piece of code that fills a given 
- * memory area with a given pattern (pattern size: 1 byte). The starting 
+ * memory area with a given <PATTERN (<PATTERN size: 1 byte). The starting 
  * address must be contained in a variable, while the area must be a multiple 
  * of 256 bytes.
  * 
  * @param _environment Current calling environment
  * @param _address Starting address
  * @param _blocks Number of 256 bytes blocks to fill
- * @param _pattern Pattern to use
+ * @param _<PATTERN <PATTERN to use
  */
 void cpu6809_fill_blocks( Environment * _environment, char * _address, char * _blocks, char * _pattern ) {
 
@@ -201,14 +201,14 @@ void cpu6809_fill_blocks( Environment * _environment, char * _address, char * _b
  * @brief <i>CPU 6809</i>: emit code to fill up a memory area
  * 
  * This function can be used to output a piece of code that fills a given 
- * memory area with a given pattern (pattern size: 1 byte). The starting 
+ * memory area with a given <PATTERN (<PATTERN size: 1 byte). The starting 
  * address must be contained in a variable, while the area must be a multiple 
  * of 256 bytes.
  * 
  * @param _environment Current calling environment
  * @param _address Starting address
  * @param _bytes Number of bytes to fill
- * @param _pattern Pattern to use
+ * @param _<PATTERN <PATTERN to use
  */
 void cpu6809_fill( Environment * _environment, char * _address, char * _bytes, char * _pattern ) {
 
@@ -245,14 +245,14 @@ void cpu6809_fill( Environment * _environment, char * _address, char * _bytes, c
  * @brief <i>CPU 6809</i>: emit code to fill up a memory area
  * 
  * This function can be used to output a piece of code that fills a given 
- * memory area with a given pattern (pattern size: 1 byte). The starting 
+ * memory area with a given <PATTERN (<PATTERN size: 1 byte). The starting 
  * address must be contained in a variable, while the area must be a multiple 
  * of 256 bytes.
  * 
  * @param _environment Current calling environment
  * @param _address Starting address
  * @param _bytes Number of bytes to fill
- * @param _pattern Pattern to use
+ * @param _<PATTERN <PATTERN to use
  */
 void cpu6809_fill_size( Environment * _environment, char * _address, int _bytes, char * _pattern ) {
 
@@ -289,14 +289,14 @@ void cpu6809_fill_size( Environment * _environment, char * _address, int _bytes,
  * @brief <i>CPU 6809</i>: emit code to fill up a memory area
  * 
  * This function can be used to output a piece of code that fills a given 
- * memory area with a given pattern (pattern size: 1 byte). The starting 
+ * memory area with a given <PATTERN (<PATTERN size: 1 byte). The starting 
  * address must be contained in a variable, while the area must be a multiple 
  * of 256 bytes.
  * 
  * @param _environment Current calling environment
  * @param _address Starting address
  * @param _bytes Number of bytes to fill
- * @param _pattern Pattern to use
+ * @param _<PATTERN <PATTERN to use
  */
 void cpu6809_fill_size_value( Environment * _environment, char * _address, int _bytes, int _pattern ) {
 
@@ -333,14 +333,14 @@ void cpu6809_fill_size_value( Environment * _environment, char * _address, int _
  * @brief <i>CPU 6809</i>: emit code to fill up a memory area
  * 
  * This function can be used to output a piece of code that fills a given 
- * memory area with a given pattern (pattern size: 1 byte). The starting 
+ * memory area with a given <PATTERN (<PATTERN size: 1 byte). The starting 
  * address must be contained in a variable, while the area must be a multiple 
  * of 256 bytes.
  * 
  * @param _environment Current calling environment
  * @param _address Starting address
  * @param _bytes Number of bytes to fill
- * @param _pattern Pattern to use
+ * @param _<PATTERN <PATTERN to use
  */
 void cpu6809_fill_direct( Environment * _environment, char * _address, char * _bytes, char * _pattern ) {
 
@@ -377,14 +377,14 @@ void cpu6809_fill_direct( Environment * _environment, char * _address, char * _b
  * @brief <i>CPU 6809</i>: emit code to fill up a memory area
  * 
  * This function can be used to output a piece of code that fills a given 
- * memory area with a given pattern (pattern size: 1 byte). The starting 
+ * memory area with a given <PATTERN (<PATTERN size: 1 byte). The starting 
  * address must be contained in a variable, while the area must be a multiple 
  * of 256 bytes.
  * 
  * @param _environment Current calling environment
  * @param _address Starting address
  * @param _bytes Number of bytes to fill
- * @param _pattern Pattern to use
+ * @param _<PATTERN <PATTERN to use
  */
 void cpu6809_fill_direct_size( Environment * _environment, char * _address, int _bytes, char * _pattern ) {
 
@@ -421,14 +421,14 @@ void cpu6809_fill_direct_size( Environment * _environment, char * _address, int 
  * @brief <i>CPU 6809</i>: emit code to fill up a memory area
  * 
  * This function can be used to output a piece of code that fills a given 
- * memory area with a given pattern (pattern size: 1 byte). The starting 
+ * memory area with a given <PATTERN (<PATTERN size: 1 byte). The starting 
  * address must be contained in a variable, while the area must be a multiple 
  * of 256 bytes.
  * 
  * @param _environment Current calling environment
  * @param _address Starting address
  * @param _bytes Number of bytes to fill
- * @param _pattern Pattern to use
+ * @param _<PATTERN <PATTERN to use
  */
 void cpu6809_fill_direct_size_value( Environment * _environment, char * _address, int _bytes, int _pattern ) {
 
@@ -729,12 +729,12 @@ void cpu6809_math_div2_8bit( Environment * _environment, char *_source, int _ste
 
         if ( _signed ) {
             outline0("LDA #0");
-            outline0("STA MATHPTR0");
+            outline0("STA <MATHPTR0");
             outline1("LDA %s", _source);
             outline0("AND #$80");
             outline1("BEQ %spos", label);
             outline0("LDA #1");
-            outline0("STA MATHPTR0");
+            outline0("STA <MATHPTR0");
             outline0("EOR #$FF");
             outline0("ADDA #1");
             outhead1("%spos", label);
@@ -752,7 +752,7 @@ void cpu6809_math_div2_8bit( Environment * _environment, char *_source, int _ste
         outhead1("%sdone", label);
         if ( _signed ) {
             outline0("PSHS A");
-            outline0("LDA MATHPTR0");
+            outline0("LDA <MATHPTR0");
             outline1("BEQ %spos2", label);
             outline0("PULS A");
             outline0("EOR #$FF");
@@ -793,12 +793,12 @@ void cpu6809_math_mul_8bit_to_16bit( Environment * _environment, char *_source, 
         if ( _signed ) {
 
             outline0("LDA #0" );
-            outline0("STA MATHPTR0" );
+            outline0("STA <MATHPTR0" );
             outline1("LDA %s", _source );
             outline1("EORA %s", _destination );
             outline0("ANDA #$80" );
             outline1("BEQ %ssamesign", label );
-            outline0("STA MATHPTR0" );
+            outline0("STA <MATHPTR0" );
             outhead1("%ssamesign", label );
 
             outline1("LDA %s", _source );
@@ -833,7 +833,7 @@ void cpu6809_math_mul_8bit_to_16bit( Environment * _environment, char *_source, 
         outline1("STD %s", _other );
 
         if ( _signed ) {
-            outline0("LDA MATHPTR0" );
+            outline0("LDA <MATHPTR0" );
             outline0("CMPA #0" );
             outline1("BEQ %sdone", label );
             outline1("LDD %s", _other );
@@ -848,9 +848,9 @@ void cpu6809_math_mul_8bit_to_16bit( Environment * _environment, char *_source, 
 
         if ( _signed ) {
             outline1("LDA %s", _source );
-            outline0("STA MATHPTR1" );
+            outline0("STA <MATHPTR1" );
             outline1("LDB %s", _destination );
-            outline0("STB MATHPTR2" );
+            outline0("STB <MATHPTR2" );
             outline0("JSR CPUMATHMUL8BITTO16BIT_SIGNED" );
             outline1("STD %s", _other );
         } else {
@@ -879,14 +879,14 @@ void cpu6809_math_div_8bit_to_8bit( Environment * _environment, char *_source, c
             outline1("LDA %s", _destination);
             outline0("EORA #$FF");
             outline0("ADDA #$1");
-            outline0("STA TMPPTR");
+            outline0("STA <TMPPTR");
             outline1("JMP %sdone1", label);
             outhead1("%spos1", label );
-            outline0("STA TMPPTR");
+            outline0("STA <TMPPTR");
             outline1("JMP %sdone1", label);
             outhead1("%sdone1", label );
         } else {
-            outline0("STA TMPPTR");
+            outline0("STA <TMPPTR");
         }
         outline1("LDA %s", _source);
         if ( _signed ) {
@@ -897,26 +897,26 @@ void cpu6809_math_div_8bit_to_8bit( Environment * _environment, char *_source, c
             outline1("LDA %s", _source);
             outline0("EORA #$FF");
             outline0("ADDA #$1");
-            outline0("STA TMPPTR+1");
+            outline0("STA <TMPPTR+1");
             outline1("JMP %sdone2", label);
             outhead1("%spos2", label );
-            outline0("STA TMPPTR+1");
+            outline0("STA <TMPPTR+1");
             outline1("JMP %sdone2", label);
             outhead1("%sdone2", label );
         } else {
-            outline0("STA TMPPTR+1");
+            outline0("STA <TMPPTR+1");
         }
         outhead1("%spos", label );
         outline0("LDA #$8");
         outline1("STA %s", _other_remainder);
         outline0("LDA #$0" );
-        outline0("LDB TMPPTR+1" );
+        outline0("LDB <TMPPTR+1" );
         outhead1("%sdivide", label );
         outline0("ASLB" );
         outline0("ROLA" );
-        outline0("CMPA TMPPTR");
+        outline0("CMPA <TMPPTR");
         outline1("BCS %schkcnt", label );
-        outline0("SUBA TMPPTR" );
+        outline0("SUBA <TMPPTR" );
         outline0("INCB" );
         outhead1("%schkcnt", label );
         outline1("DEC %s", _other_remainder );
@@ -932,17 +932,17 @@ void cpu6809_math_div_8bit_to_8bit( Environment * _environment, char *_source, c
 
         outline0("LDX #$0");
         outline1("LDA %s", _source);
-        outline0("STA MATHPTR0");
+        outline0("STA <MATHPTR0");
         outline1("LDA %s", _destination);
-        outline0("STA MATHPTR1");
+        outline0("STA <MATHPTR1");
         if ( _signed ) {
             outline0("JSR CPUMATHDIV8BITTO8BIT_SIGNED");
         } else {
             outline0("JSR CPUMATHDIV8BITTO8BIT");
         }
-        outline0("LDA MATHPTR2");
+        outline0("LDA <MATHPTR2");
         outline1("STA %s", _other);
-        outline0("LDA MATHPTR3");
+        outline0("LDA <MATHPTR3");
         outline1("STA %s", _other_remainder);
 
     done( )
@@ -964,14 +964,14 @@ void cpu6809_math_div2_const_8bit( Environment * _environment, char *_source, in
 
         if ( _signed ) {
             outline0("LDA #0");
-            outline0("STA MATHPTR0");
+            outline0("STA <MATHPTR0");
             outline1("LDA %s", _source);
             outline0("ANDA #$80");
             outline1("BEQ %spos", label);
             outline0("EORA #$FF");
             outline0("ADDA #1");
             outline0("LDA #1");
-            outline0("STA MATHPTR0");
+            outline0("STA <MATHPTR0");
             outhead1("%spos", label);
         }
         outline1("LDA %s", _source);
@@ -985,7 +985,7 @@ void cpu6809_math_div2_const_8bit( Environment * _environment, char *_source, in
         outline1("BNE %sloop", label);
         outhead1("%sdone", label);
         if ( _signed ) {
-            outline0("LDA MATHPTR0");
+            outline0("LDA <MATHPTR0");
             outline1("BEQ %spos2", label);
             outline0("EORA #$FF");
             outline0("ADDA #1");
@@ -1381,12 +1381,12 @@ void cpu6809_math_mul_16bit_to_32bit( Environment * _environment, char *_source,
 
         if ( _signed ) {
             outline0("LDA #0" );
-            outline0("STA TMPPTR" );
+            outline0("STA <TMPPTR" );
             outline1("LDA %s", _source );
             outline1("EORA %s", _destination );
             outline0("ANDA #$80" );
             outline1("BEQ %ssamesign", label );
-            outline0("STA TMPPTR" );
+            outline0("STA <TMPPTR" );
             outhead1("%ssamesign", label );
 
             outline1("LDA %s", _source );
@@ -1394,17 +1394,17 @@ void cpu6809_math_mul_16bit_to_32bit( Environment * _environment, char *_source,
             outline1("BEQ %spos1", label );
             outline1("LDA %s+1", _source );
             outline0("EORA #$FF" );
-            outline0("STA MATHPTR1" );
+            outline0("STA <MATHPTR1" );
             outline1("LDA %s", _source );
             outline0("EORA #$FF" );
-            outline0("STA MATHPTR0" );
-            outline0("LDX MATHPTR0" );
+            outline0("STA <MATHPTR0" );
+            outline0("LDX <MATHPTR0" );
             outline0("LEAX 1,X" );
-            outline0("STX MATHPTR0" );
+            outline0("STX <MATHPTR0" );
             outline1("JMP %sdone1", label );
             outhead1("%spos1", label );
             outline1("LDX %s", _source );
-            outline0("STX MATHPTR0" );
+            outline0("STX <MATHPTR0" );
             outhead1("%sdone1", label );
 
             outline1("LDA %s", _destination );
@@ -1412,41 +1412,41 @@ void cpu6809_math_mul_16bit_to_32bit( Environment * _environment, char *_source,
             outline1("BEQ %spos2", label );
             outline1("LDA %s+1", _destination );
             outline0("EORA #$FF" );
-            outline0("STA MATHPTR3" );
+            outline0("STA <MATHPTR3" );
             outline1("LDA %s", _destination );
             outline0("EORA #$FF" );
-            outline0("STA MATHPTR2" );
-            outline0("LDX MATHPTR2" );
+            outline0("STA <MATHPTR2" );
+            outline0("LDX <MATHPTR2" );
             outline0("LEAX 1,X" );
-            outline0("STX MATHPTR2" );
+            outline0("STX <MATHPTR2" );
             outline1("JMP %sdone2", label );
             outhead1("%spos2", label );
             outline1("LDX %s", _destination );
-            outline0("STX MATHPTR2" );
+            outline0("STX <MATHPTR2" );
             outhead1("%sdone2", label );
         } else {
             outline1("LDX %s", _source );
-            outline0("STX MATHPTR0" );
+            outline0("STX <MATHPTR0" );
             outline1("LDX %s", _destination );
-            outline0("STX MATHPTR2" );
+            outline0("STX <MATHPTR2" );
         }
-        outline0("LDA MATHPTR0" );
-        outline0("LDB MATHPTR2" );
+        outline0("LDA <MATHPTR0" );
+        outline0("LDB <MATHPTR2" );
         outline0("MUL");
         outline1("STD %s", _other );
 
-        outline0("LDA MATHPTR1" );
-        outline0("LDB MATHPTR3" );
+        outline0("LDA <MATHPTR1" );
+        outline0("LDB <MATHPTR3" );
         outline0("MUL" );
         outline1("STD %s+2", _other );
 
-        outline0("LDA MATHPTR1" ); 
-        outline0("LDB MATHPTR2" );
+        outline0("LDA <MATHPTR1" ); 
+        outline0("LDB <MATHPTR2" );
         outline0("MUL" );
         outline0("TFR D, X" );
 
-        outline0("LDA MATHPTR0" );
-        outline0("LDB MATHPTR3" );
+        outline0("LDA <MATHPTR0" );
+        outline0("LDB <MATHPTR3" );
         outline0("MUL" );
         outline0("LEAX D, X" );
 
@@ -1459,7 +1459,7 @@ void cpu6809_math_mul_16bit_to_32bit( Environment * _environment, char *_source,
         outline1("STA %s+1", _other );
 
         if ( _signed ) {
-            outline0("LDA TMPPTR" );
+            outline0("LDA <TMPPTR" );
             outline0("CMPA #0" );
             outline1("BEQ %sdonex", label );
             outline1("LDA %s", _other );
@@ -1492,9 +1492,9 @@ void cpu6809_math_mul_16bit_to_32bit( Environment * _environment, char *_source,
     embedded( cpu_math_mul_16bit_to_32bit, src_hw_6809_cpu_math_mul_16bit_to_32bit_asm );
 
         outline1("LDX %s", _source );
-        outline0("STX MATHPTR0" );
+        outline0("STX <MATHPTR0" );
         outline1("LDX %s", _destination );
-        outline0("STX MATHPTR2" );
+        outline0("STX <MATHPTR2" );
 
         if ( _signed ) {
             outline0("JSR CPUMATHMUL16BITTO32BIT_SIGNED" );
@@ -1502,9 +1502,9 @@ void cpu6809_math_mul_16bit_to_32bit( Environment * _environment, char *_source,
             outline0("JSR CPUMATHMUL16BITTO32BIT" );
         }
 
-        outline0("LDX MATHPTR4" );
+        outline0("LDX <MATHPTR4" );
         outline1("STX %s", _other );
-        outline0("LDX MATHPTR6" );
+        outline0("LDX <MATHPTR6" );
         outline1("STX %s+2", _other );
 
     done( )
@@ -1530,18 +1530,18 @@ void cpu6809_math_div_16bit_to_16bit( Environment * _environment, char *_source,
             outline0("ANDCC #$FE" );
             outline1("LDA %s", _source );
             outline0("EORA #$ff" );
-            outline0("STA MATHPTR0" );
+            outline0("STA <MATHPTR0" );
             outline1("LDA %s+1", _source );
             outline0("EORA #$ff" );
-            outline0("STA MATHPTR1" );
+            outline0("STA <MATHPTR1" );
             outline0("ANDCC #$FE" );
-            outline0("LDD MATHPTR0" );
+            outline0("LDD <MATHPTR0" );
             outline0("ADDD #1" );
-            outline0("STD MATHPTR0" );        
+            outline0("STD <MATHPTR0" );        
             outline1("JMP %ssecond2", label );
             outhead1("%ssecond", label );
             outline1("LDD %s", _source );
-            outline0("STD MATHPTR0");
+            outline0("STD <MATHPTR0");
             outline1("JMP %ssecond2", label );
 
             outhead1("%ssecond2", label );
@@ -1551,24 +1551,24 @@ void cpu6809_math_div_16bit_to_16bit( Environment * _environment, char *_source,
             outline0("ANDCC #$FE" );
             outline1("LDA %s", _destination );
             outline0("EORA #$ff" );
-            outline0("STA MATHPTR2" );
+            outline0("STA <MATHPTR2" );
             outline1("LDA %s+1", _destination );
             outline0("EORA #$ff" );
-            outline0("STA MATHPTR3" );
+            outline0("STA <MATHPTR3" );
             outline0("ANDCC #$FE" );
-            outline0("LDD MATHPTR2" );
+            outline0("LDD <MATHPTR2" );
             outline0("ADDD #1" );
-            outline0("STD MATHPTR2" );
+            outline0("STD <MATHPTR2" );
             outline1("JMP %sthird2", label );
             outhead1("%sthird", label );
             outline1("LDD %s", _destination );
-            outline0("STD MATHPTR2");
+            outline0("STD <MATHPTR2");
             outline1("JMP %sthird2", label );
 
             outhead1("%sthird2", label );
 
-            outline0("LDX MATHPTR0" );
-            outline0("LDY MATHPTR2" );
+            outline0("LDX <MATHPTR0" );
+            outline0("LDY <MATHPTR2" );
 
             outhead1("%sDIVXY", label);
             outline0("PSHS Y,X,D,CC" );
@@ -1773,13 +1773,13 @@ void cpu6809_math_div2_const_16bit( Environment * _environment, char *_source, i
             outline0("CMPX #0");
             outline1("BNE %sloop", label );
 
-            outline0("STD MATHPTR0");
+            outline0("STD <MATHPTR0");
 
             outline1("LDA %s", _source);
             outline0("ANDA #$80");
             outline1("BEQ %spos2", label );
 
-            outline0("LDD MATHPTR0");
+            outline0("LDD <MATHPTR0");
             outline0("ANDCC #$FE" );
             outline0("EORA #$FF" );
             outline0("EORB #$FF" );
@@ -1788,7 +1788,7 @@ void cpu6809_math_div2_const_16bit( Environment * _environment, char *_source, i
             outline1("JMP %sdone2", label );
 
             outhead1("%spos2", label );
-            outline0("LDD MATHPTR0");
+            outline0("LDD <MATHPTR0");
             outhead1("%sdone2", label );
             outline1("STD %s", _source );
 
@@ -1864,13 +1864,13 @@ void cpu6809_math_mul2_const_16bit( Environment * _environment, char *_source, i
             outline0("CMPX #0");
             outline1("BNE %sloop", label );
 
-            outline0("STD MATHPTR0");
+            outline0("STD <MATHPTR0");
 
             outline1("LDA %s", _source);
             outline0("ANDA #$80");
             outline1("BEQ %spos2", label );
 
-            outline0("LDD MATHPTR0");
+            outline0("LDD <MATHPTR0");
             outline0("ANDCC #$FE" );
             outline0("EORA #$FF" );
             outline0("EORB #$FF" );
@@ -1879,7 +1879,7 @@ void cpu6809_math_mul2_const_16bit( Environment * _environment, char *_source, i
             outline1("JMP %sdone2", label );
 
             outhead1("%spos2", label );
-            outline0("LDD MATHPTR0");
+            outline0("LDD <MATHPTR0");
             outhead1("%sdone2", label );
             outline1("STD %s", _source );
 
@@ -2215,7 +2215,7 @@ void cpu6809_math_add_32bit( Environment * _environment, char *_source, char *_d
         }
         outline1("BCC %snocarry", label);
         outline0("LDA #1");
-        outline0("STA MATHPTR0");
+        outline0("STA <MATHPTR0");
         outhead1("%snocarry", label);
         outline1("LDD %s", _source);
         outline1("ADDD %s", _destination);
@@ -2224,7 +2224,7 @@ void cpu6809_math_add_32bit( Environment * _environment, char *_source, char *_d
         } else {
             outline1("STD %s", _destination);
         }
-        outline0("LDA MATHPTR0");
+        outline0("LDA <MATHPTR0");
         outline0("CMPA #1");
         outline1("BNE %snocarry2", label);
         if ( _other ) {
@@ -2285,7 +2285,7 @@ void cpu6809_math_sub_32bit( Environment * _environment, char *_source, char *_d
         }
         outline1("BCC %snocarry", label);
         outline0("LDA #1");
-        outline0("STA MATHPTR0");
+        outline0("STA <MATHPTR0");
         outhead1("%snocarry", label);
         outline1("LDD %s", _source);
         outline1("SUBD %s", _destination);
@@ -2294,7 +2294,7 @@ void cpu6809_math_sub_32bit( Environment * _environment, char *_source, char *_d
         } else {
             outline1("STD %s", _destination);
         }
-        outline0("LDA MATHPTR0");
+        outline0("LDA <MATHPTR0");
         outline0("CMPA #1");
         outline1("BNE %snocarry2", label);
         if ( _other ) {
@@ -2333,12 +2333,12 @@ void cpu6809_math_complement_const_32bit( Environment * _environment, char *_sou
         outline1("STD %s+2", _source);
         outline1("BCC %snocarry", label);
         outline0("LDA #1");
-        outline0("STA MATHPTR0");
+        outline0("STA <MATHPTR0");
         outhead1("%snocarry", label);
         outline1("LDD #$%4.4x", ( _value>>16 ) & 0xffff );
         outline1("SUBD %s", _source);
         outline1("STD %s", _source);
-        outline0("LDA MATHPTR0");
+        outline0("LDA <MATHPTR0");
         outline0("CMPA #1");
         outline1("BNE %snocarry2", label);
         outline1("LDD %s", _source);
@@ -2373,37 +2373,37 @@ void cpu6809_math_div2_const_32bit( Environment * _environment, char *_source, i
             outline0("ANDCC #$FE" );
             outline0("EORA #$FF" );
             outline0("EORB #$FF" );
-            outline0("STD MATHPTR2" );
+            outline0("STD <MATHPTR2" );
             outline1("LDD %s", _source );
             outline0("ANDCC #$FE" );
             outline0("EORA #$FF" );
             outline0("EORB #$FF" );
-            outline0("STD MATHPTR0" );
-            outline0("LDD MATHPTR2" );
+            outline0("STD <MATHPTR0" );
+            outline0("LDD <MATHPTR2" );
             outline0("ANDCC #$FE" );
             outline0("ADDD #1" );
-            outline0("STD MATHPTR2" );
-            outline0("LDD MATHPTR0" );
+            outline0("STD <MATHPTR2" );
+            outline0("LDD <MATHPTR0" );
             outline0("ADDD #0" );
-            outline0("STD MATHPTR0" );
+            outline0("STD <MATHPTR0" );
 
             outline1("JMP %sdone", label );
 
             outhead1("%spos", label );
             outline1("LDD %s", _source );
-            outline0("STD MATHPTR0" );
+            outline0("STD <MATHPTR0" );
             outline1("LDD %s+2", _source );
-            outline0("STD MATHPTR2" );
+            outline0("STD <MATHPTR2" );
 
             outhead1("%sdone", label );
 
             outline1("LDX #$%2.2x", _steps );
             outhead1("%sloop", label );
             outline0("ANDCC #$FE" );
-            outline0("ASR MATHPTR0" );
-            outline0("ROR MATHPTR1" );
-            outline0("ROR MATHPTR2" );
-            outline0("ROR MATHPTR3" );
+            outline0("ASR <MATHPTR0" );
+            outline0("ROR <MATHPTR1" );
+            outline0("ROR <MATHPTR2" );
+            outline0("ROR <MATHPTR3" );
             outline0("LEAX -1, X");
             outline0("CMPX #0");
             outline1("BNE %sloop", label );
@@ -2413,59 +2413,59 @@ void cpu6809_math_div2_const_32bit( Environment * _environment, char *_source, i
             outline1("BEQ %spos2", label );
 
             outline0("ANDCC #$FE" );
-            outline0("LDD MATHPTR2" );
+            outline0("LDD <MATHPTR2" );
             outline0("EORA #$FF" );
             outline0("EORB #$FF" );
-            outline0("STD MATHPTR2" );
-            outline0("LDD MATHPTR0" );
+            outline0("STD <MATHPTR2" );
+            outline0("LDD <MATHPTR0" );
             outline0("EORA #$FF" );
             outline0("EORB #$FF" );
-            outline0("STD MATHPTR0" );
+            outline0("STD <MATHPTR0" );
 
             outline0("ANDCC #$FE" );
-            outline0("LDD MATHPTR2" );
+            outline0("LDD <MATHPTR2" );
             outline0("ADDD #1" );
             outline1("STD %s+2", _source );
-            outline0("LDD MATHPTR0" );
+            outline0("LDD <MATHPTR0" );
             outline0("ADDD #0" );
             outline1("STD %s", _source );
 
             outline1("JMP %sdone2", label );
 
             outhead1("%spos2", label );
-            outline0("LDD MATHPTR3" );
+            outline0("LDD <MATHPTR3" );
             outline1("STD %s+3", _source );
-            outline0("LDD MATHPTR2" );
+            outline0("LDD <MATHPTR2" );
             outline1("STD %s+2", _source );
-            outline0("LDD MATHPTR1" );
+            outline0("LDD <MATHPTR1" );
             outline1("STD %s+1", _source );
-            outline0("LDD MATHPTR0" );
+            outline0("LDD <MATHPTR0" );
             outline1("STD %s", _source );
             outhead1("%sdone2", label );
 
         } else {
 
             outline1("LDD %s", _source );
-            outline0("STD MATHPTR0" );
+            outline0("STD <MATHPTR0" );
             outline1("LDD %s+2", _source );
-            outline0("STD MATHPTR2" );
+            outline0("STD <MATHPTR2" );
 
             outhead1("%sdone", label );
 
             outline1("LDX #$%2.2x", _steps );
             outhead1("%sloop", label );
             outline0("ANDCC #$FE" );
-            outline0("LSR MATHPTR0" );
-            outline0("ROR MATHPTR1" );
-            outline0("ROR MATHPTR2" );
-            outline0("ROR MATHPTR3" );
+            outline0("LSR <MATHPTR0" );
+            outline0("ROR <MATHPTR1" );
+            outline0("ROR <MATHPTR2" );
+            outline0("ROR <MATHPTR3" );
             outline0("LEAX -1, X");
             outline0("CMPX #0");
             outline1("BNE %sloop", label );
 
-            outline0("LDD MATHPTR2" );
+            outline0("LDD <MATHPTR2" );
             outline1("STD %s+2", _source );
-            outline0("LDD MATHPTR0" );
+            outline0("LDD <MATHPTR0" );
             outline1("STD %s", _source );
 
         }
@@ -2497,37 +2497,37 @@ void cpu6809_math_mul2_const_32bit( Environment * _environment, char *_source, i
             outline0("ANDCC #$FE" );
             outline0("EORA #$FF" );
             outline0("EORB #$FF" );
-            outline0("STD MATHPTR2" );
+            outline0("STD <MATHPTR2" );
             outline1("LDD %s", _source );
             outline0("ANDCC #$FE" );
             outline0("EORA #$FF" );
             outline0("EORB #$FF" );
-            outline0("STD MATHPTR0" );
-            outline0("LDD MATHPTR2" );
+            outline0("STD <MATHPTR0" );
+            outline0("LDD <MATHPTR2" );
             outline0("ANDCC #$FE" );
             outline0("ADDD #1" );
-            outline0("STD MATHPTR2" );
-            outline0("LDD MATHPTR0" );
+            outline0("STD <MATHPTR2" );
+            outline0("LDD <MATHPTR0" );
             outline0("ADDD #0" );
-            outline0("STD MATHPTR0" );
+            outline0("STD <MATHPTR0" );
 
             outline1("JMP %sdone", label );
 
             outhead1("%spos", label );
             outline1("LDD %s", _source );
-            outline0("STD MATHPTR0" );
+            outline0("STD <MATHPTR0" );
             outline1("LDD %s+2", _source );
-            outline0("STD MATHPTR2" );
+            outline0("STD <MATHPTR2" );
 
             outhead1("%sdone", label );
 
             outline1("LDX #$%2.2x", _steps );
             outhead1("%sloop", label );
             outline0("ANDCC #$FE" );
-            outline0("LSL MATHPTR3" );
-            outline0("ROL MATHPTR2" );
-            outline0("ROL MATHPTR1" );
-            outline0("ROL MATHPTR0" );
+            outline0("LSL <MATHPTR3" );
+            outline0("ROL <MATHPTR2" );
+            outline0("ROL <MATHPTR1" );
+            outline0("ROL <MATHPTR0" );
             outline0("LEAX -1, X");
             outline0("CMPX #0");
             outline1("BNE %sloop", label );
@@ -2537,59 +2537,59 @@ void cpu6809_math_mul2_const_32bit( Environment * _environment, char *_source, i
             outline1("BEQ %spos2", label );
 
             outline0("ANDCC #$FE" );
-            outline0("LDD MATHPTR2" );
+            outline0("LDD <MATHPTR2" );
             outline0("EORA #$FF" );
             outline0("EORB #$FF" );
-            outline0("STD MATHPTR2" );
-            outline0("LDD MATHPTR0" );
+            outline0("STD <MATHPTR2" );
+            outline0("LDD <MATHPTR0" );
             outline0("EORA #$FF" );
             outline0("EORB #$FF" );
-            outline0("STD MATHPTR0" );
+            outline0("STD <MATHPTR0" );
 
             outline0("ANDCC #$FE" );
-            outline0("LDD MATHPTR2" );
+            outline0("LDD <MATHPTR2" );
             outline0("ADDD #1" );
             outline1("STD %s+2", _source );
-            outline0("LDD MATHPTR0" );
+            outline0("LDD <MATHPTR0" );
             outline0("ADDD #0" );
             outline1("STD %s", _source );
 
             outline1("JMP %sdone2", label );
 
             outhead1("%spos2", label );
-            outline0("LDD MATHPTR3" );
+            outline0("LDD <MATHPTR3" );
             outline1("STD %s+3", _source );
-            outline0("LDD MATHPTR2" );
+            outline0("LDD <MATHPTR2" );
             outline1("STD %s+2", _source );
-            outline0("LDD MATHPTR1" );
+            outline0("LDD <MATHPTR1" );
             outline1("STD %s+1", _source );
-            outline0("LDD MATHPTR0" );
+            outline0("LDD <MATHPTR0" );
             outline1("STD %s", _source );
             outhead1("%sdone2", label );
 
         } else {
 
             outline1("LDD %s", _source );
-            outline0("STD MATHPTR0" );
+            outline0("STD <MATHPTR0" );
             outline1("LDD %s+2", _source );
-            outline0("STD MATHPTR2" );
+            outline0("STD <MATHPTR2" );
 
             outhead1("%sdone", label );
 
             outline1("LDX #$%2.2x", _steps );
             outhead1("%sloop", label );
             outline0("ANDCC #$FE" );
-            outline0("LSL MATHPTR3" );
-            outline0("ROL MATHPTR2" );
-            outline0("ROL MATHPTR1" );
-            outline0("ROL MATHPTR0" );
+            outline0("LSL <MATHPTR3" );
+            outline0("ROL <MATHPTR2" );
+            outline0("ROL <MATHPTR1" );
+            outline0("ROL <MATHPTR0" );
             outline0("LEAX -1, X");
             outline0("CMPX #0");
             outline1("BNE %sloop", label );
 
-            outline0("LDD MATHPTR2" );
+            outline0("LDD <MATHPTR2" );
             outline1("STD %s+2", _source );
-            outline0("LDD MATHPTR0" );
+            outline0("LDD <MATHPTR0" );
             outline1("STD %s", _source );
 
         }
@@ -2740,11 +2740,11 @@ void cpu6809_random( Environment * _environment, char * _seed, char * _entropy )
     embedded( cpu_random, src_hw_6809_cpu_random_asm );
 
         outline1( "LDA %s", _entropy );
-        outline0( "STA PATTERN" );
+        outline0( "STA <PATTERN" );
         outline0( "JSR CPURANDOM0" );
-        outline0( "LDD CPURANDOMSEED" );
+        outline0( "LDD <CPURANDOMSEED" );
         outline1( "STD %s", _seed );
-        outline0( "LDD CPURANDOMSEED+2" );
+        outline0( "LDD <CPURANDOMSEED+2" );
         outline1( "STD %s+2", _seed );
 
     done( )
@@ -3247,14 +3247,14 @@ void cpu6809_compare_memory( Environment * _environment, char *_source, char *_d
         outhead1("%ssecond", label );
         outline1("LDA %s", _size );
         outline0("ANDA #$7f" );
-        outline0("STA MATHPTR0" );
+        outline0("STA <MATHPTR0" );
         outline0("LDA #0" );
         outhead1("%sloop2", label );
         outline0("LDB A,X" );
         outline0("CMPB A,Y" );
         outline1("BNE %sdiff", label );
         outline0("ADDA #1" );
-        outline0("CMPA MATHPTR0" );
+        outline0("CMPA <MATHPTR0" );
         outline1("BNE %sloop2", label );
 
         outhead1("%sequal", label );
@@ -3306,14 +3306,14 @@ void cpu6809_compare_memory_size( Environment * _environment, char *_source, cha
 
                 outhead1("%ssecond", label );
                 outline1("LDA #$%2.2x", _size );
-                outline0("STA MATHPTR0" );
+                outline0("STA <MATHPTR0" );
                 outline0("LDA #0" );
                 outhead1("%sloop2", label );
                 outline0("LDB A,X" );
                 outline0("CMPB A,Y" );
                 outline1("BNE %sdiff", label );
                 outline0("ADDA #1" );
-                outline0("CMPA MATHPTR0" );
+                outline0("CMPA <MATHPTR0" );
                 outline1("BNE %sloop2", label );
 
             }
@@ -3371,7 +3371,7 @@ void cpu6809_less_than_memory( Environment * _environment, char *_source, char *
         outhead1("%ssecond", label );
         outline1("LDA %s", _size );
         outline0("ANDA #$7f" );
-        outline0("STA MATHPTR0" );
+        outline0("STA <MATHPTR0" );
         outline0("LDA #0" );
         outhead1("%sloop2", label );
         outline0("LDB A,X" );
@@ -3382,7 +3382,7 @@ void cpu6809_less_than_memory( Environment * _environment, char *_source, char *
             outline1("BHS %sdiff", label);    
         }
         outline0("ADDA #1" );
-        outline0("CMPA MATHPTR0" );
+        outline0("CMPA <MATHPTR0" );
         outline1("BNE %sloop2", label );
 
         outhead1("%sequal", label );
@@ -3438,7 +3438,7 @@ void cpu6809_less_than_memory_size( Environment * _environment, char *_source, c
 
                 outhead1("%ssecond", label );
                 outline1("LDA #$%2.2x", _size );
-                outline0("STA MATHPTR0" );
+                outline0("STA <MATHPTR0" );
                 outline0("LDA #0" );
                 outhead1("%sloop2", label );
                 outline0("LDB A,X" );
@@ -3449,7 +3449,7 @@ void cpu6809_less_than_memory_size( Environment * _environment, char *_source, c
                     outline1("BHS %sdiff", label);    
                 }
                 outline0("ADDA #1" );
-                outline0("CMPA MATHPTR0" );
+                outline0("CMPA <MATHPTR0" );
                 outline1("BNE %sloop2", label );
 
             }
@@ -3507,7 +3507,7 @@ void cpu6809_greater_than_memory( Environment * _environment, char *_source, cha
         outhead1("%ssecond", label );
         outline1("LDA %s", _size );
         outline0("ANDA #$7f" );
-        outline0("STA MATHPTR0" );
+        outline0("STA <MATHPTR0" );
         outline0("LDA #0" );
         outhead1("%sloop2", label );
         outline0("LDB A,X" );
@@ -3518,7 +3518,7 @@ void cpu6809_greater_than_memory( Environment * _environment, char *_source, cha
             outline1("BLS %sdiff", label);    
         }
         outline0("ADDA #1" );
-        outline0("CMPA MATHPTR0" );
+        outline0("CMPA <MATHPTR0" );
         outline1("BNE %sloop2", label );
 
         outhead1("%sequal", label );
@@ -3572,7 +3572,7 @@ void cpu6809_greater_than_memory_size( Environment * _environment, char *_source
 
                 outhead1("%ssecond", label );
                 outline1("LDA #$%2.2x", _size );
-                outline0("STA MATHPTR0" );
+                outline0("STA <MATHPTR0" );
                 outline0("LDA #0" );
                 outhead1("%sloop2", label );
                 outline0("LDB A,X" );
@@ -3583,7 +3583,7 @@ void cpu6809_greater_than_memory_size( Environment * _environment, char *_source
                     outline1("BLS %sdiff", label);    
                 }
                 outline0("ADDA #1" );
-                outline0("CMPA MATHPTR0" );
+                outline0("CMPA <MATHPTR0" );
                 outline1("BNE %sloop2", label );
 
             }
@@ -3974,7 +3974,7 @@ void cpu6809_bit_check( Environment * _environment, char * _value, int _position
         MAKE_LABEL
 
         outline1("LDB #$%2.2x", 1 << ( ( _position ) & 0x07 ) );
-        outline0("STB MATHPTR0" );
+        outline0("STB <MATHPTR0" );
         switch( _position ) {
             case 31: case 30: case 29: case 28: case 27: case 26: case 25: case 24: 
                 outline1("LDA %s", _value);
@@ -3989,7 +3989,7 @@ void cpu6809_bit_check( Environment * _environment, char * _value, int _position
                 outline2("LDA %s+%d", _value, ( _bitwidth / 8 ) - 1 );
                 break;
         }
-        outline0("ANDA MATHPTR0" );
+        outline0("ANDA <MATHPTR0" );
         outline0("CMPA #0" );
         outline1("BEQ %szero", label);
         outhead1("%sone", label)
@@ -4021,7 +4021,7 @@ void cpu6809_bit_check_extended( Environment * _environment, char * _value, char
         outline1("JMP %s", label );
 
         outhead1("%sdone", label );
-        outline0("STA MATHPTR0" );
+        outline0("STA <MATHPTR0" );
 
         outline1("LDB %s", _position );
         outline0("CMPB #24" );
@@ -4054,7 +4054,7 @@ void cpu6809_bit_check_extended( Environment * _environment, char * _value, char
         outline1("JMP %seval", label );
 
         outhead1("%seval", label );
-        outline0("ANDA MATHPTR0" );
+        outline0("ANDA <MATHPTR0" );
         outline0("CMPA #0" );
         outline1("BEQ %szero", label);
         outhead1("%sone", label)
@@ -4076,130 +4076,130 @@ void cpu6809_number_to_string( Environment * _environment, char * _number, char 
     deploy( numberToString, src_hw_6809_number_to_string_asm );
 
     outline1("LDX %s", _string );
-    outline0("STX TMPPTR");
+    outline0("STX <TMPPTR");
 
     outline0("LDA #0");
-    outline0("STA MATHPTR0");
-    outline0("STA MATHPTR3");
-    outline0("STA MATHPTR2");
-    outline0("STA MATHPTR1");
-    outline0("STA MATHPTR4");
+    outline0("STA <MATHPTR0");
+    outline0("STA <MATHPTR3");
+    outline0("STA <MATHPTR2");
+    outline0("STA <MATHPTR1");
+    outline0("STA <MATHPTR4");
 
     switch( _bits ) {
         case 32:
             outline1("LDA %s", _number );
             if ( _signed && _bits == 32 ) {
                 outline0("AND #$80");
-                outline0("STA MATHPTR4");
+                outline0("STA <MATHPTR4");
                 outline1("LDA %s", _number );
             }
-            outline0("STA MATHPTR0");
+            outline0("STA <MATHPTR0");
             outline1("LDA %s+1", _number );
-            outline0("STA MATHPTR1");
+            outline0("STA <MATHPTR1");
             outline1("LDA %s+2", _number );    
-            outline0("STA MATHPTR2");
+            outline0("STA <MATHPTR2");
             outline1("LDA %s+3", _number );
-            outline0("STA MATHPTR3");
+            outline0("STA <MATHPTR3");
             break;
         case 16:
             outline0("LDA #0" );
-            outline0("STA MATHPTR0");
-            outline0("STA MATHPTR1");
+            outline0("STA <MATHPTR0");
+            outline0("STA <MATHPTR1");
             outline1("LDA %s", _number );    
             if ( _signed && _bits == 16 ) {
                 outline0("ANDA #$80");
-                outline0("STA MATHPTR4");
+                outline0("STA <MATHPTR4");
                 outline1("LDA %s", _number );
             }
-            outline0("STA MATHPTR2");
+            outline0("STA <MATHPTR2");
             outline1("LDA %s+1", _number );
-            outline0("STA MATHPTR3");
+            outline0("STA <MATHPTR3");
             break;
         case 8:
             outline0("LDA #0" );
-            outline0("STA MATHPTR0");
-            outline0("STA MATHPTR1");
-            outline0("STA MATHPTR2");
+            outline0("STA <MATHPTR0");
+            outline0("STA <MATHPTR1");
+            outline0("STA <MATHPTR2");
             outline1("LDA %s", _number );    
             if ( _signed && _bits == 8 ) {
                 outline0("ANDA #$80");
-                outline0("STA MATHPTR4");
+                outline0("STA <MATHPTR4");
                 outline1("LDA %s", _number );
             }
-            outline0("STA MATHPTR3");
+            outline0("STA <MATHPTR3");
             break;
     }
 
-    outline0("LDA MATHPTR4");
+    outline0("LDA <MATHPTR4");
     outline0("ANDA #$80" );
     outline1("BEQ %spositive", label );
 
     switch( _bits ) {
         case 32:
-            outline0("LDA MATHPTR0" );
+            outline0("LDA <MATHPTR0" );
             outline0("EORA #$ff" );
-            outline0("STA MATHPTR0" );
-            outline0("LDA MATHPTR1" );
+            outline0("STA <MATHPTR0" );
+            outline0("LDA <MATHPTR1" );
             outline0("EORA #$ff" );
-            outline0("STA MATHPTR1" );
-            outline0("LDA MATHPTR2" );
+            outline0("STA <MATHPTR1" );
+            outline0("LDA <MATHPTR2" );
             outline0("EORA #$ff" );
-            outline0("STA MATHPTR2" );
-            outline0("LDA MATHPTR3" );
+            outline0("STA <MATHPTR2" );
+            outline0("LDA <MATHPTR3" );
             outline0("EORA #$ff" );
-            outline0("STA MATHPTR3" );
+            outline0("STA <MATHPTR3" );
 
             outline0("ANDCC #$FE" );
             outline0("LDA #$01" );
-            outline0("ADDA MATHPTR3" );
-            outline0("STA MATHPTR3" );
+            outline0("ADDA <MATHPTR3" );
+            outline0("STA <MATHPTR3" );
             outline0("LDA #$00" );
-            outline0("ADDA MATHPTR2" );
-            outline0("STA MATHPTR2" );
+            outline0("ADDA <MATHPTR2" );
+            outline0("STA <MATHPTR2" );
             outline0("LDA #$00" );
-            outline0("ADDA MATHPTR1" );
-            outline0("STA MATHPTR1" );
+            outline0("ADDA <MATHPTR1" );
+            outline0("STA <MATHPTR1" );
             outline0("LDA #$00" );
-            outline0("ADDA MATHPTR0" );
-            outline0("STA MATHPTR0" );
+            outline0("ADDA <MATHPTR0" );
+            outline0("STA <MATHPTR0" );
             break;
         case 16:
-            outline0("LDA MATHPTR2" );
+            outline0("LDA <MATHPTR2" );
             outline0("EORA #$ff" );
-            outline0("STA MATHPTR2" );
-            outline0("LDA MATHPTR3" );
+            outline0("STA <MATHPTR2" );
+            outline0("LDA <MATHPTR3" );
             outline0("EORA #$ff" );
-            outline0("STA MATHPTR3" );
+            outline0("STA <MATHPTR3" );
 
             outline0("ANDCC #$FE" );
             outline0("LDA #$01" );
-            outline0("ADDA MATHPTR3" );
-            outline0("STA MATHPTR3" );
+            outline0("ADDA <MATHPTR3" );
+            outline0("STA <MATHPTR3" );
             outline0("LDA #$00" );
-            outline0("ADDA MATHPTR2" );
-            outline0("STA MATHPTR2" );
+            outline0("ADDA <MATHPTR2" );
+            outline0("STA <MATHPTR2" );
             break;
         case 8:
-            outline0("LDA MATHPTR3" );
+            outline0("LDA <MATHPTR3" );
             outline0("EORA #$ff" );
-            outline0("STA MATHPTR3" );
+            outline0("STA <MATHPTR3" );
 
             outline0("ANDCC #$FE" );
             outline0("LDA #$01" );
-            outline0("ADDA MATHPTR3" );
-            outline0("STA MATHPTR3" );
+            outline0("ADDA <MATHPTR3" );
+            outline0("STA <MATHPTR3" );
             break;
     }
 
-    outline0("LDX MATHPTR2" );
+    outline0("LDX <MATHPTR2" );
 
     outhead1("%spositive", label );
     outline1("LDA #$%2.2X", _bits );
-    outline0("STA MATHPTR5");
+    outline0("STA <MATHPTR5");
 
     outline0("JSR N2STRING");
 
-    outline0("LDA MATHPTR5" );
+    outline0("LDA <MATHPTR5" );
     outline1("STA %s", _string_size);
 
 }
@@ -4211,27 +4211,27 @@ void cpu6809_bits_to_string( Environment * _environment, char * _number, char * 
     switch( _bits ) {
         case 32:
             outline1("LDD %s", _number );
-            outline0("STD MATHPTR0" );
+            outline0("STD <MATHPTR0" );
             outline1("LDD %s+2", _number );
-            outline0("STD MATHPTR2" );
+            outline0("STD <MATHPTR2" );
             outline0("LDB #32" );
             outline1("STB %s", _string_size );
             break;
         case 16:
             outline0("LDD #0" );
-            outline0("STD MATHPTR0" );
+            outline0("STD <MATHPTR0" );
             outline1("LDD %s", _number );
-            outline0("STD MATHPTR2" );
+            outline0("STD <MATHPTR2" );
             outline0("LDB #16" );
             outline1("STB %s", _string_size );
             break;
         case 8:        
             outline0("LDD #0" );
-            outline0("STD MATHPTR0" );
+            outline0("STD <MATHPTR0" );
             outline0("LDA #0" );
-            outline0("STA MATHPTR2" );
+            outline0("STA <MATHPTR2" );
             outline1("LDA %s", _number );
-            outline0("STA MATHPTR3" );
+            outline0("STA <MATHPTR3" );
             outline0("LDB #8" );
             outline1("STB %s", _string_size );
             break;

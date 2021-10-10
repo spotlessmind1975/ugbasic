@@ -286,11 +286,11 @@ void ef936x_point_at_int( Environment * _environment, int _x, int _y ) {
     deploy( plot, src_hw_ef936x_plot_asm );
     
     outline1("LDX %4.4x", (_x & 0xffff ) );
-    outline0("STX PLOTX");
+    outline0("STX <PLOTX");
     outline1("LDD %4.4x", ( _y & 0xffff ) );
-    outline0("STD PLOTY");
+    outline0("STD <PLOTY");
     outline0("LDA #1");
-    outline0("STA PLOTM");
+    outline0("STA <PLOTM");
     outline0("JSR PLOT");
     
 
@@ -305,11 +305,11 @@ void ef936x_point_at_vars( Environment * _environment, char *_x, char *_y ) {
     deploy( plot, src_hw_ef936x_plot_asm );
     
     outline1("LDX %s", x->realName );
-    outline0("STX PLOTX");
+    outline0("STX <PLOTX");
     outline1("LDD %s", y->realName );
-    outline0("STD PLOTY");
+    outline0("STD <PLOTY");
     outline0("LDA #1");
-    outline0("STA PLOTM");
+    outline0("STA <PLOTM");
     outline0("JSR PLOT");
 
 }
@@ -324,13 +324,13 @@ void ef936x_point( Environment * _environment, char *_x, char *_y, char * _resul
     deploy( plot, src_hw_ef936x_plot_asm );
     
     outline1("LDD %s", x->realName );
-    outline0("STD PLOTX");
+    outline0("STD <PLOTX");
     outline1("LDD %s", y->realName );
-    outline0("STD PLOTY");
+    outline0("STD <PLOTY");
     outline0("LDA #3");
-    outline0("STA PLOTM");
+    outline0("STA <PLOTM");
     outline0("JSR PLOT");
-    outline0("LDA PLOTM");
+    outline0("LDA <PLOTM");
     outline1("STA %s", result->realName );    
 
 }
@@ -444,7 +444,7 @@ void ef936x_scroll_text( Environment * _environment, int _direction ) {
     deploy( vScrollText, src_hw_ef936x_vscroll_text_asm );
 
     outline1("LDA #$%2.2x", ( _direction & 0xff ) );
-    outline0("STA DIRECTION" );
+    outline0("STA <DIRECTION" );
 
     outline0("JSR VSCROLLT");
 
@@ -457,23 +457,23 @@ void ef936x_text_at( Environment * _environment, char * _x, char * _y, char * _t
     deploy( textEncodedAt, src_hw_ef936x_text_at_asm );
 
     outline1("LDY %s", _text);
-    outline0("STY TEXTPTR" );
+    outline0("STY <TEXTPTR" );
     outline1("LDA %s", _x );
-    outline0("STA XCURSYS" );
+    outline0("STA <XCURSYS" );
     outline1("LDA %s", _y );
-    outline0("STA YCURSYS" );
+    outline0("STA <YCURSYS" );
     outline1("LDA %s", _text_size);
-    outline0("STA TEXTSIZE" );
+    outline0("STA <TEXTSIZE" );
     outline1("LDA %s", _ww );
-    outline0("STA TEXTWW" );
+    outline0("STA <TEXTWW" );
     outline1("LDA %s", _pen );
-    outline0("STA TEXTPEN" );
+    outline0("STA <TEXTPEN" );
 
     outline0("JSR TEXTAT");
 
-    outline0("LDA YCURSYS" );
+    outline0("LDA <YCURSYS" );
     outline1("STA %s", _y );
-    outline0("LDA XCURSYS");
+    outline0("LDA <XCURSYS");
     outline1("STA %s", _x );
 
 }
@@ -525,9 +525,9 @@ void ef936x_hscroll_line( Environment * _environment, int _direction ) {
 
     Variable * y = variable_retrieve( _environment, "windowCY" );
     outline1("LDA #$%2.2x", ( _direction & 0xff ) );
-    outline0("STA DIRECTION" );
+    outline0("STA <<DIRECTION" );
     outline1("LDA %s", y->realName );
-    outline0("STA CLINEY");
+    outline0("STA <CLINEY");
 
     outline0("JSR HSCROLLLT");    
 
@@ -538,7 +538,7 @@ void ef936x_hscroll_screen( Environment * _environment, int _direction ) {
     deploy( textHScroll, src_hw_ef936x_hscroll_text_asm );
 
     outline1("LDA #$%2.2x", ( _direction & 0xff ) );
-    outline0("STA DIRECTION" );
+    outline0("STA <DIRECTION" );
 
     outline0("JSR HSCROLLST");    
 
@@ -559,11 +559,11 @@ void ef936x_cline( Environment * _environment, char * _characters ) {
     } else {
         outline0("LDA #0");
     }
-    outline0("STA CHARACTERS");
+    outline0("STA <CHARACTERS");
     outline1("LDA %s", x->realName );
-    outline0("STA CLINEX" );
+    outline0("STA <CLINEX" );
     outline1("LDA %s", y->realName );
-    outline0("STA CLINEY");
+    outline0("STA <CLINEY");
     outline0("JSR CLINE");
 
 }
@@ -935,9 +935,9 @@ void ef936x_put_image( Environment * _environment, char * _image, char * _x, cha
 
     outline1("LDY #%s", _image );
     outline1("LDD %s", _x );
-    outline0("STD IMAGEX" );
+    outline0("STD <IMAGEX" );
     outline1("LDD %s", _y );
-    outline0("STD IMAGEY" );
+    outline0("STD <IMAGEY" );
 
     outline0("JSR PUTIMAGE");
     
