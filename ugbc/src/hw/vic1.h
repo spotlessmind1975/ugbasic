@@ -60,10 +60,10 @@
 #define COLOR_OLIVE_GREEN       	COLOR_GREEN
 #define COLOR_PINK       			COLOR_LIGHT_RED
 #define COLOR_PEACH       			COLOR_PINK
-#define COLOR_COUNT                 16
+#define COLOR_COUNT                 8
 
-#define TEXT_COLUMNS_COUNT          40
-#define TEXT_ROWS_COUNT             25
+#define TEXT_COLUMNS_COUNT          22
+#define TEXT_ROWS_COUNT             23
 
 #define BITMAP_MODE_STANDARD        2           // Standard Bitmap Mode     320 x 200 x 2
 #define BITMAP_MODE_MULTICOLOR      3           // Multicolor Bitmap Mode   160 x 200 x 4
