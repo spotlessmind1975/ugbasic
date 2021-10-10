@@ -37,6 +37,6 @@
 
 PC128OPSTARTUP
 
-    LDA $20
+    LDA #$20
     TFR A, DP
     RTS
