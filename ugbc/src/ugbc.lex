@@ -342,6 +342,7 @@ V { return (V); }
 VAL { return (VAL); }
 VAR { return (VAR); }
 VBL { return (VBL); }
+VIC20 { return (VIC20); }
 VARIABLES { return (VARIABLES); }
 VERTICAL { return (VERTICAL); }
 VIOLET { return(VIOLET); }

@@ -1,0 +1,74 @@
+/*****************************************************************************
+ * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
+ *****************************************************************************
+ * Copyright 2021 Marco Spedaletti (asimov@mclink.it)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *----------------------------------------------------------------------------
+ * Concesso in licenza secondo i termini della Licenza Apache, versione 2.0
+ * (la "Licenza"); è proibito usare questo file se non in conformità alla
+ * Licenza. Una copia della Licenza è disponibile all'indirizzo:
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Se non richiesto dalla legislazione vigente o concordato per iscritto,
+ * il software distribuito nei termini della Licenza è distribuito
+ * "COSÌ COM'È", SENZA GARANZIE O CONDIZIONI DI ALCUN TIPO, esplicite o
+ * implicite. Consultare la Licenza per il testo specifico che regola le
+ * autorizzazioni e le limitazioni previste dalla medesima.
+ ****************************************************************************/
+
+/****************************************************************************
+ * INCLUDE SECTION 
+ ****************************************************************************/
+
+#include "../../ugbc.h"
+
+/****************************************************************************
+ * CODE SECTION 
+ ****************************************************************************/
+
+/**
+ * @brief Emit ASM code for <b>PUT IMAGE [image] AT [int],[int]</b>
+ * 
+ * This function outputs a code that draws an image on a bitmap. 
+ * 
+ * @param _environment Current calling environment
+ * @param _image Image to draw
+ * @param _x Abscissa of the point to draw
+ * @param _y Ordinate of the point
+ */
+/* <usermanual>
+@keyword PUT IMAGE
+
+@english
+This function draws an image at a specific position on the screen.
+
+@italian
+Questa funzione disegna una immagine in una specifica posizione dello schermo.
+
+@syntax PUT IMAGE [image] AT [x],[y]
+
+@example PUT IMAGE airplane AT 10,10
+
+@target all
+</usermanual> */
+void put_image( Environment * _environment, char * _image, char * _x, char * _y ) {
+
+    Variable * image = variable_retrieve( _environment, _image );
+    Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
+    Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
+
+    vic1_put_image( _environment, image->realName, x->realName, y->realName );
+
+}

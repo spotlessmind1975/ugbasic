@@ -38,7 +38,7 @@
  * CODE SECTION
  ****************************************************************************/
 
-#if defined(__c64__) || defined(__plus4__) || defined(__atari__) || defined(__atarixl__)
+#if defined(__c64__) || defined(__plus4__) || defined(__atari__) || defined(__atarixl__) || defined(__vic20__)
 
 /**
  * @brief <i>CPU 6502</i>: emit code to make long conditional jump

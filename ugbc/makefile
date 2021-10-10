@@ -96,6 +96,14 @@ SOURCES_GTIA := $(subst src/hw/gtia/,src-generated/gtia_,$(MODULES_GTIA:.asm=.c)
 src-generated/gtia_%.c: $(MODULES_GTIA)
 	@xxd -i $(subst src-generated/gtia_,src/hw/gtia/,$(@:.c=.asm)) >$@
 
+# MOS Technology VIC-I
+
+MODULES_VIC1 := $(wildcard src/hw/vic1/*.asm)
+SOURCES_VIC1 := $(subst src/hw/vic1/,src-generated/vic1_,$(MODULES_VIC1:.asm=.c))
+
+src-generated/vic1_%.c: $(MODULES_VIC1)
+	@xxd -i $(subst src-generated/vic1_,src/hw/vic1/,$(@:.c=.asm)) >$@
+
 # MOS Technology VIC-II
 
 MODULES_VIC2 := $(wildcard src/hw/vic2/*.asm)
@@ -151,6 +159,18 @@ src-generated/c64_%.c: $(MODULES_C64)
 src-generated/modules_c64.c: $(SOURCES_6502) $(SOURCES_C64) $(SOURCES_VIC2)
 	@cat $(SOURCES_6502) $(SOURCES_C64) $(SOURCES_VIC2) >src-generated/modules_c64.c
 	@grep "src" src-generated/modules_c64.c | awk -f modules.awk >src-generated/modules_c64.h
+
+# Commodore VIC-20
+
+MODULES_VIC20 := $(wildcard src/hw/vic20/*.asm)
+SOURCES_VIC20 := $(subst src/hw/vic20/,src-generated/vic20_,$(MODULES_VIC20:.asm=.c))
+
+src-generated/vic20_%.c: $(MODULES_VIC20)
+	@xxd -i $(subst src-generated/vic20_,src/hw/vic20/,$(@:.c=.asm)) >$@
+
+src-generated/modules_vic20.c: $(SOURCES_6502) $(SOURCES_VIC20) $(SOURCES_VIC1)
+	@cat $(SOURCES_6502) $(SOURCES_VIC20) $(SOURCES_VIC1) >src-generated/modules_vic20.c
+	@grep "src" src-generated/modules_vic20.c | awk -f modules.awk >src-generated/modules_vic20.h
 
 # Commodore PLUS/4
 

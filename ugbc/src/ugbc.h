@@ -767,10 +767,12 @@ typedef struct _Deployed {
     int startup;
     int c6847startup;
     int c6847vars;
-    int vicstartup;
+    int vic1vars;
+    int vic1startup;
     int vic2vars;
-    int tedstartup;
+    int vic2startup;
     int tedvars;
+    int tedstartup;
     int anticstartup;
     int gtiastartup;
     int gtiavars;
@@ -1935,6 +1937,11 @@ Variable *              ypen( Environment * _environment );
     #include "hw/6809.h"
     #include "hw/ef936x.h"
     #include "hw/pc128op.h"
+#elif __vic20__
+    #include "../src-generated/modules_vic20.h"
+    #include "hw/6502.h"
+    #include "hw/vic1.h"
+    #include "hw/vic20.h"
 #endif
 
 #endif

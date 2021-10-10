@@ -51,7 +51,7 @@ extern char DATATYPE_AS_STRING[][16];
 %token INPUT FREE TILEMAP EMPTY TILE EMPTYTILE PLOT GR CIRCLE DRAW LINE BOX POLYLINE ELLIPSE CLIP
 %token BACK DEBUG CAN ELSEIF BUFFER LOAD SIZE MOB IMAGE PUT VISIBLE HIDDEN HIDE SHOW RENDER
 %token SQR TI CONST VBL POKE NOP FILL IN POSITIVE DEFINE ATARI ATARIXL C64 DRAGON DRAGON32 DRAGON64 PLUS4 ZX 
-%token FONT
+%token FONT VIC20
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -2572,6 +2572,14 @@ target :
         #endif
     }
     |
+    VIC20 {
+        #ifdef __vic20__
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }
+    |
     DRAGON {
         #if defined(__d32__) || defined(__d64__)
             $$ = 1;
@@ -3153,6 +3161,8 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     char target[MAX_TEMPORARY_STORAGE] = "Dragon 64";
 #elif __pc128op__
     char target[MAX_TEMPORARY_STORAGE] = "PC128 Olivetti Prodest";
+#elif __vic20__
+    char target[MAX_TEMPORARY_STORAGE] = "Commodore VIC-20";
 #endif
 
     printf("--------------------------------------------------\n");
