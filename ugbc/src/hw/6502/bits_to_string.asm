@@ -374,7 +374,7 @@ facbcd08:pla                   ;operand
 ;PER RADIX CONVERSION TABLES
 ;
 bitstab:  .byte 4,1,3,4         ;bits per numeral
-lzsttab:  .byte 2,9,2,3         ;leading zero suppression thresholds
+lzsttab:  .byte 2,32,2,3         ;leading zero suppression thresholds
 numstab:  .byte 12,48,16,12     ;maximum numerals
 radxtab:  .byte 0,37,64,36         ;recognized symbols
 ;
