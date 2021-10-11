@@ -4254,6 +4254,7 @@ void cpu6502_bits_to_string( Environment * _environment, char * _number, char * 
 
     outline0("STX TMPPTR");
     outline0("STY TMPPTR+1");
+    outline1("LDA #$%2.2x", _bits);
     outline1("STA %s", _string_size);
     outline0("TAY");
     outline1("LDA %s", _string);
@@ -4571,7 +4572,7 @@ void cpu6502_dstring_vars( Environment * _environment ) {
     outhead1("DESCRIPTORS_SIZE:             .RES %d", count );
     outhead1("WORKING:                      .RES %d", space );
     outhead1("TEMPORARY:                    .RES %d", space );
-    outhead1("FREE_STRING:                  .WORD %d", (space-1) );
+    outhead1("FREE_STRING:                  .WORD %d", space );
 
 }
 

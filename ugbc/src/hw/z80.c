@@ -3402,7 +3402,7 @@ void z80_dstring_vars( Environment * _environment ) {
     outhead1("DESCRIPTORS:                  DEFS %d", count * 4 );
     outhead1("WORKING:                      DEFS %d", space );
     outhead1("TEMPORARY:                    DEFS %d", space );
-    outhead1("FREE_STRING:                  DB $ff, $%2.2x", ((space-1)>>8)& 0xff );
+    outhead1("FREE_STRING:                  DB $ff, $%2.2x", ((space)>>8)& 0xff );
     
 }
 

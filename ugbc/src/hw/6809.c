@@ -4479,7 +4479,7 @@ void cpu6809_dstring_vars( Environment * _environment ) {
     outhead1("DESCRIPTORS                   rzb %d", count * 4 );
     outhead1("WORKING                       rzb %d", space );
     outhead1("TEMPORARY                     rzb %d", space );
-    outhead1("FREE_STRING                   fdb %d", (space-1) );
+    outhead1("FREE_STRING                   fdb %d", space );
 
 }
 
