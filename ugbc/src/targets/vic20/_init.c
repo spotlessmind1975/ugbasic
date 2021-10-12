@@ -95,6 +95,8 @@ void target_initialization( Environment * _environment ) {
 
     linker_setup( _environment );
 
+    outhead0(".segment \"BASIC\"");
+    outline0(".byte $01, $12, $0B, $12, $00, $00, $9E, $38, $31, $39, $32, $00, $00, $00, $00");
     outhead0(".segment \"CODE\"");
     deploy( vars, src_hw_vic20_vars_asm);
     variable_define( _environment, "stringsAddress", VT_ADDRESS, 0x4200 );
@@ -120,7 +122,7 @@ void target_linkage( Environment * _environment ) {
         sprintf(executableName, "%s", "cl65" );
     }
 
-    sprintf( commandLine, "%s -g -Ln main.lbl -l main.lst -o %s -u __EXEHDR__ -t vic20 -C %s %s",
+    sprintf( commandLine, "%s -g -Ln main.lbl -l main.lst -o %s -t vic20 -C %s %s",
         executableName,
         _environment->exeFileName, 
         _environment->configurationFileName, 

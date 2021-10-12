@@ -46,23 +46,24 @@
  * @param _environment Current calling environment
  */
 void linker_setup( Environment * _environment ) {
-    cfghead0("SYMBOLS {");
-    cfgline0("__LOADADDR__: type = import;");
+
+    cfghead0("FEATURES {");
+    cfgline0("STARTADDRESS: default = $11FF;");
     cfghead0("}");
+
     cfghead0("MEMORY {");
-    cfgline0("ZP:       file = \"\", start = $0002,  size = $001A;");
-    cfgline0("LOADADDR: file = %O, start = $11FF, size = $0002;");
-    cfgline0("HEADER:   file = %O, start = $1201, size = $000C;");
-    cfgline0("MAIN:     file = %O, define = yes, start = $1201, size = $6DF3;");
+    cfgline0("ZP:    start = $0000, size = $0100, type = rw;");
+    cfgline0("RAM0:  start = $0400, size = $0C00, type = rw;");
+    cfgline0("MAIN:  start = $11FF, size = $4E01, type = rw, fill = yes, fillVal = $00;");
     cfghead0("}");
+
     cfghead0("SEGMENTS {");
-    cfgline0("ZEROPAGE: load = ZP,       type = zp,  optional = yes;");
-    cfgline0("LOADADDR: load = LOADADDR, type = ro;");
-    cfgline0("EXEHDR:   load = MAIN,     type = ro,  optional = yes;");
-    cfgline0("CODE:     load = MAIN,     type = rw;");
-    cfgline0("RODATA:   load = MAIN,     type = ro,  optional = yes;");
-    cfgline0("DATA:     load = MAIN,     type = rw,  optional = yes;");
-    cfgline0("BSS:      load = MAIN,     type = bss, optional = yes, define = yes;");
+    cfgline0("ZEROPAGE: load = ZP,   type = zp,  optional = yes;");
+    cfgline0("BASIC:    load = MAIN,  type = rw,  optional = no ;");
+    cfgline0("DATA:     load = MAIN,  type = rw,  optional = yes;");
+    cfgline0("BSS:      load = MAIN,  type = bss, optional = yes;");
+    cfgline0("CODE:     load = MAIN,  type = overwrite,  optional = yes, start = $2000;");
+
 }
 
 /**
