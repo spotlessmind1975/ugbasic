@@ -297,19 +297,9 @@ PLOTD:
     ORA PLOTOMA              ;isolate AND set the point
     STA (PLOTDEST),y           ;write back to $A000
     LDA CURRENTMODE
-    CMP #$2
-    BNE PLOTDE
     LDY #0
-    LDA (PLOTCDEST),y          ;get row with point in it
-    AND #$0f                   ;isolate AND set the point
-    STA (PLOTCDEST),y          ;get row with point in it
     LDA _PEN
-    ASL
-    ASL
-    ASL
-    ASL
-    ORA (PLOTCDEST),y          ;write back to $A000    
-    STA (PLOTCDEST),y          ;write back to $A000    
+    STA (PLOTCDEST),y          ;get row with point in it
 PLOTDE:
     JMP PLOTP                  ;skip the erase-point section
 
