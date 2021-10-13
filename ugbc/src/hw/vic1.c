@@ -77,7 +77,7 @@ static RGBi SYSTEM_PALETTE[] = {
  ****************************************************************************/
 
 /**
- * @brief <i>VIC-II</i>: emit code to check for collision
+ * @brief <i>VIC</i>: emit code to check for collision
  * 
  * This function can be used to issue code aimed at verifying if a sprite has 
  * had a collision with another sprite. The result (0 = no collision, 1 = 
@@ -89,27 +89,10 @@ static RGBi SYSTEM_PALETTE[] = {
  */
 void vic1_collision( Environment * _environment, char * _sprite_mask, char * _result ) {
 
-    // Generate unique label for ASM code.
-    MAKE_LABEL
-
-    // Check for collision using VIC-II registers
-    outline0("LDA $D01E");
-    outline1("AND %s", _sprite_mask);
-    cpu6502_beq(_environment, label);
-
-    outline0("LDA #$1");
-    outline1("STA %s", _result);
-    outline1("JMP %s_2", label);
-
-    outhead1("%s:", label);
-    outline0("LDA #0");
-    outline1("STA %s", _result);
-    outhead1("%s_2:", label);
-
 }
 
 /**
- * @brief <i>VIC-II</i>: emit code to check for collision
+ * @brief <i>VIC</i>: emit code to check for collision
  * 
  * This function can be used to issue code aimed at verifying if a sprite has 
  * had a collision with a tile. The result (0 = no collision, 1 = 
@@ -121,27 +104,10 @@ void vic1_collision( Environment * _environment, char * _sprite_mask, char * _re
  */
 void vic1_hit( Environment * _environment, char * _sprite_mask, char * _result ) {
 
-    // Generate unique label for ASM code.
-    MAKE_LABEL
-
-    // Check for collision using VIC-II registers
-    outline0("LDA $D01F");
-    outline1("AND %s", _sprite_mask);
-    cpu6502_beq(_environment, label);
-
-    outline0("LDA #$1");
-    outline1("STA %s", _result);
-    outline1("JMP %s_2", label);
-
-    outhead1("%s:", label);
-    outline0("LDA #0");
-    outline1("STA %s", _result);
-    outhead1("%s_2:", label);
-
 }
 
 /**
- * @brief <i>VIC-II</i>: emit code to change border color
+ * @brief <i>VIC</i>: emit code to change border color
  * 
  * This function can be used to issue code aimed at changing the
  * border color of the screen.
@@ -152,13 +118,13 @@ void vic1_hit( Environment * _environment, char * _sprite_mask, char * _result )
 void vic1_border_color( Environment * _environment, char * _border_color ) {
 
     outline1("LDA %s", _border_color );
-    outline0("AND #$0f" );
-    outline0("STA $D020");
+    outline0("AND #$07" );
+    outline0("STA $900F");
 
 }
 
 /**
- * @brief <i>VIC-II</i>: emit code to change background color
+ * @brief <i>VIC</i>: emit code to change background color
  * 
  * This function can be used to issue code aimed at changing the
  * background color of the screen.
@@ -182,7 +148,7 @@ void vic1_background_color( Environment * _environment, char * _index, char * _b
 }
 
 /**
- * @brief <i>VIC-II</i>: emit code to change common sprite's color 
+ * @brief <i>VIC</i>: emit code to change common sprite's color 
  * 
  * This function can be used to issue code aimed at changing the
  * common color of the sprites.
@@ -193,17 +159,10 @@ void vic1_background_color( Environment * _environment, char * _index, char * _b
  */
 void vic1_sprite_common_color( Environment * _environment, char * _index, char * _common_color ) {
  
-    outline1("LDA %s", _index);
-    outline0("AND #$03");
-    outline0("TAX");
-    outline1("LDA %s", _common_color );
-    outline0("AND #$0f" );
-    outline0("STA $D025,X" );
-
 }
 
 /**
- * @brief <i>VIC-II</i>: emit code to set raster irq
+ * @brief <i>VIC</i>: emit code to set raster irq
  * 
  * This function outputs assembly code needed to initialize a raster routine. 
  * In other words, asynchronously and in parallel with the execution of the 
@@ -219,41 +178,10 @@ void vic1_sprite_common_color( Environment * _environment, char * _index, char *
  */
 void vic1_raster_at( Environment * _environment, char * _label, char * _positionlo, char * _positionhi ) {
 
-    MAKE_LABEL
-
-    outline0("LDA #%01111111"); // switch off CIA-1
-    outline0("STA $DC0D");
-    outline0("AND $D011");
-    outline0("STA $D011");
-    outline0("LDA $DC0D"); // acknowledge CIA-1
-    outline0("LDA $DD0D"); // acknowledge CIA-2
-    outline1("LDA #<%s", _label);
-    outline0("STA $0314");
-    outline1("LDA #>%s", _label);
-    outline0("STA $0315");
-    outline0("LDA #%00000001"); // enable raster interrupt signals from VIC
-    outline0("STA $D01A");
-    outline1("LDA %s", _positionlo );
-    outline0("STA $D012");
-    outline1("LDA %s", _positionhi );
-    outline0("AND #%00000001" );
-    cpu6502_beq(_environment, label);
-    outline0("LDA $D011" );
-    outline0("AND #%01111111" );
-    outline0("ORA #%10000000" );
-    outline0("STA $D011");
-    outline1("JMP %s_2", label );
-    outhead1("%s:", label );
-    outline0("LDA $D011" );
-    outline0("AND #%01111111" );
-    outline0("STA $D011");
-    outhead1("%s_2:", label );
-    outline0("CLI");
-
 }
 
 /**
- * @brief <i>VIC-II</i>: emit code to wait for next raster irq
+ * @brief <i>VIC</i>: emit code to wait for next raster irq
  * 
  * This function outputs assembly code needed to wait for the
  * next raster. Meanwhile, the execution of the main code will resume 
@@ -264,13 +192,10 @@ void vic1_raster_at( Environment * _environment, char * _label, char * _position
  */
 void vic1_next_raster( Environment * _environment ) {
 
-    outline0("ASL $D019"); // acknowledge
-    outline0("JMP $EA31"); // KERNAL's standard interrupt service routine
-
 }
 
 /**
- * @brief <i>VIC-II</i>: emit code to wait for next raster irq at different position
+ * @brief <i>VIC</i>: emit code to wait for next raster irq at different position
  * 
  * This function outputs assembly code needed to wait for the
  * next raster on a different position with a different code to
@@ -284,243 +209,103 @@ void vic1_next_raster( Environment * _environment ) {
  */
 void vic1_next_raster_at( Environment * _environment, char * _label, char * _positionlo, char * _positionhi ) {
 
-    MAKE_LABEL
-
-    outline1("LDA %s", _positionlo);
-    outline0("STA $D012");
-    outline1("LDA %s", _positionhi );
-    outline0("AND #%00000001" );
-    cpu6502_beq(_environment, label);
-    outline0("LDA $D011" );
-    outline0("AND #%01111111" );
-    outline0("ORA #%10000000" );
-    outline0("STA $D011");
-    outline1("JMP %s_2", label );
-    outhead1("%s:", label );
-    outline0("LDA $D011" );
-    outline0("AND #%01111111" );
-    outline0("STA $D011");
-    outhead1("%s_2:", label );
-    outline1("LDA #<%s", _label);
-    outline0("STA $0314");
-    outline1("LDA #>%s", _label);
-    outline0("STA $0315");
-
-    vic1_next_raster( _environment );
-
 }
 
 /**
- * @brief <i>VIC-II</i>: emit code to enable ECM
+ * @brief <i>VIC</i>: emit code to enable ECM
  * 
  * @param _environment Current calling environment
  */
 void vic1_enable_ecm( Environment * _environment ) {
 
-    outline0("LDA $D011" );
-    outline0("ORA #%01000000");
-    outline0("STA $D011" );
 }
 
 /**
- * @brief <i>VIC-II</i>: emit code to disable ECM
+ * @brief <i>VIC</i>: emit code to disable ECM
  * 
  * @param _environment Current calling environment
  */
 void vic1_disable_ecm( Environment * _environment ) {
 
-    outline0("LDA $D011" );
-    outline0("AND #%10111111");
-    outline0("STA $D011" );
 }
 
 /**
- * @brief <i>VIC-II</i>: emit code to enable MCM
+ * @brief <i>VIC</i>: emit code to enable MCM
  * 
  * @param _environment Current calling environment
  */
 void vic1_enable_mcm( Environment * _environment ) {
 
-    outline0("LDA $D016" );
-    outline0("ORA #%00001000");
-    outline0("STA $D016" );
 }
 
 /**
- * @brief <i>VIC-II</i>: emit code to disable ECM
+ * @brief <i>VIC</i>: emit code to disable ECM
  * 
  * @param _environment Current calling environment
  */
 void vic1_disable_mcm( Environment * _environment ) {
 
-    outline0("LDA $D016" );
-    outline0("AND #%11110111");
-    outline0("STA $D016" );
 }
 
 void vic1_bank_select( Environment * _environment, int _bank ) {
     
-    outline0("LDA $DD00" );
-    outline0("AND #%11111100");
-    outline1("ORA #%2.2x", ( ~_bank ) & 0x03 );
-    outline0("STA $DD00" );
 }
 
 int vic1_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
 
+    deploy( bitmap, src_hw_vic1_bitmap_asm );
     Variable * colormapAddress = variable_retrieve( _environment, "COLORMAPADDRESS" );
 
     _environment->fontWidth = 8;
     _environment->fontHeight = 8;
     switch( _screen_mode->id ) {
         case BITMAP_MODE_STANDARD:
-            _environment->screenWidth = 320;
-            _environment->screenHeight = 200;
-            // This fix is necessary to set the starting address of the bitmap 
-            // to $A000 (which is an address available on C=64).
-            outline0("LDA $D018" );
-            outline0("AND #%11110111");
-            outline0("ORA #%00001000" );
-            outline0("STA $D018" );
+            _environment->screenTilesWidth = 16;
+            _environment->screenTilesHeight = 16;
 
-            // Let's enable monocolor graphics!
-            outline0("LDA $D011" );
-            outline0("ORA #%00100000");
-            outline0("STA $D011" );
-            outline0("LDA $D016" );
-            outline0("AND #%11101111");
-            outline0("STA $D016" );
-
-            cpu_store_16bit( _environment, colormapAddress->realName, 0x8400 );
+            outline0("JSR BITMAPON1" );
 
             cpu_store_8bit( _environment, "_PEN", 0X01 );
             cpu_store_8bit( _environment, "_PAPER", 0x00 );
             cpu_store_16bit( _environment, "CLIPX1", 0 );
-            cpu_store_16bit( _environment, "CLIPX2", 319 );
+            cpu_store_16bit( _environment, "CLIPX2", (_environment->screenTilesWidth*8)-1 );
             cpu_store_16bit( _environment, "CLIPY1", 0 );
-            cpu_store_16bit( _environment, "CLIPY2", 199 );
+            cpu_store_16bit( _environment, "CLIPY2", (_environment->screenTilesHeight*8)-1 );
 
             break;
-        case BITMAP_MODE_MULTICOLOR:
-            _environment->fontWidth = 4;
-            _environment->screenWidth = 160;
-            _environment->screenHeight = 200;
-            // This fix is necessary to set the starting address of the bitmap 
-            // to $A000 (which is an address available on C=64) instead of the 
-            // address $8000.
-            outline0("LDA $D018" );
-            outline0("AND #%11110111");
-            outline0("ORA #%00001000" );
-            outline0("STA $D018" );
+        case BITMAP_MODE_EXTENDED:
+            _environment->screenTilesWidth = 22;
+            _environment->screenTilesHeight = 22;
 
-            // Let's enable multicolor graphics!
-            outline0("LDA $D011" );
-            outline0("ORA #%00100000");
-            outline0("STA $D011" );
-            outline0("LDA $D016" );
-            outline0("ORA #%00010000");
-            outline0("STA $D016" );
-
-            cpu_store_16bit( _environment, colormapAddress->realName, 0x8400 );
+            outline0("JSR BITMAPON2" );
 
             cpu_store_8bit( _environment, "_PEN", 0X01 );
             cpu_store_8bit( _environment, "_PAPER", 0x00 );
-
             cpu_store_16bit( _environment, "CLIPX1", 0 );
-            cpu_store_16bit( _environment, "CLIPX2", 159 );
+            cpu_store_16bit( _environment, "CLIPX2", (_environment->screenTilesWidth*8)-1 );
             cpu_store_16bit( _environment, "CLIPY1", 0 );
-            cpu_store_16bit( _environment, "CLIPY2", 199 );
-            
+            cpu_store_16bit( _environment, "CLIPY2", (_environment->screenTilesHeight*8)-1 );
+
             break;
         case TILEMAP_MODE_STANDARD:
-            _environment->screenWidth = 320;
-            _environment->screenHeight = 200;
-            // Let's disable graphics!
-            outline0("LDA $D011" );
-            outline0("AND #%11011111");
-            outline0("STA $D011" );
-            outline0("LDA $D016" );
-            outline0("AND #%11101111");
-            outline0("STA $D016" );
+            _environment->screenTilesWidth = 23;
+            _environment->screenTilesHeight = 22;
 
-            // This fix is necessary to reset the lookup for rom character.
-            outline0("LDA $D018" );
-            outline0("AND #%11110111");
-            outline0("STA $D018" );
+            outline0("JSR BITMAPOFF" );
 
-            cpu_store_16bit( _environment, colormapAddress->realName, 0xd800 );
-
-            cpu_store_8bit( _environment, "_PEN", 0x01 );
-            cpu_store_8bit( _environment, "_PAPER", 0x00 );
-
-            cpu_store_16bit( _environment, "CLIPX1", 0 );
-            cpu_store_16bit( _environment, "CLIPX2", 39 );
-            cpu_store_16bit( _environment, "CLIPY1", 0 );
-            cpu_store_16bit( _environment, "CLIPY2", 24 );
-
-            break;
-        case TILEMAP_MODE_MULTICOLOR:
-            _environment->screenWidth = 320;
-            _environment->screenHeight = 200;
-            // Let's disable graphics!
-            outline0("LDA $D011" );
-            outline0("AND #%11011111");
-            outline0("STA $D011" );
-            outline0("LDA $D016" );
-            outline0("ORA #%00010000");
-            outline0("STA $D016" );
-
-            // This fix is necessary to reset the lookup for rom character.
-            outline0("LDA $D018" );
-            outline0("AND #%11110111");
-            outline0("STA $D018" );
-
-            cpu_store_16bit( _environment, colormapAddress->realName, 0xd800 );
-
-            cpu_store_8bit( _environment, "_PEN", 0x01 );
-            cpu_store_8bit( _environment, "_PAPER", 0x00 );
-            cpu_store_16bit( _environment, "CLIPX1", 0 );
-            cpu_store_16bit( _environment, "CLIPX2", 39 );
-            cpu_store_16bit( _environment, "CLIPY1", 0 );
-            cpu_store_16bit( _environment, "CLIPY2", 24 );
-
-            break;
-        case TILEMAP_MODE_EXTENDED:
-            _environment->screenWidth = 320;
-            _environment->screenHeight = 200;
-            // Let's disable graphics!
-            outline0("LDA $D011" );
-            outline0("AND #%11011111");
-            outline0("ORA #%01000000");
-            outline0("STA $D011" );
-            outline0("LDA $D016" );
-            outline0("AND #%11101111");
-            outline0("STA $D016" );
-
-            // This fix is necessary to reset the lookup for rom character.
-            outline0("LDA $D018" );
-            outline0("AND #%11110111");
-            outline0("STA $D018" );
-            
-            cpu_store_16bit( _environment, colormapAddress->realName, 0xd800 );
-
-            cpu_store_8bit( _environment, "_PEN", 0x01 );
-            cpu_store_8bit( _environment, "_PAPER", 0x00 );
-            cpu_store_16bit( _environment, "CLIPX1", 0 );
-            cpu_store_16bit( _environment, "CLIPX2", 39 );
-            cpu_store_16bit( _environment, "CLIPY1", 0 );
-            cpu_store_16bit( _environment, "CLIPY2", 24 );
+            vic1_cls( _environment );
 
             break;
         default:
             CRITICAL_SCREEN_UNSUPPORTED( _screen_mode->id );
     }
 
+    _environment->screenWidth = _environment->screenTilesWidth * 8;
+    _environment->screenHeight = _environment->screenTilesHeight * 8;
+
     cpu_store_16bit( _environment, "CURRENTWIDTH", _environment->screenWidth );
     cpu_store_16bit( _environment, "CURRENTHEIGHT", _environment->screenHeight );
-    _environment->screenTilesWidth = 22;
     cpu_store_8bit( _environment, "CURRENTTILESWIDTH", _environment->screenTilesWidth );
-    _environment->screenTilesHeight = 23;
     cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight / 8 );
 
 }
@@ -543,18 +328,6 @@ void vic1_bitmap_enable( Environment * _environment, int _width, int _height, in
 
 void vic1_bitmap_disable( Environment * _environment ) {
 
-    Variable * colormapAddress = variable_retrieve( _environment, "COLORMAPADDRESS" );
-
-    // Let's disable graphics!
-    outline0("LDA $D011" );
-    outline0("AND #%11011111");
-    outline0("STA $D011" );
-    outline0("LDA $D016" );
-    outline0("AND #%11101111");
-    outline0("STA $D016" );
-
-    cpu_store_16bit( _environment, colormapAddress->realName, 0xd800 );
-
 }
 
 void vic1_tilemap_enable( Environment * _environment, int _width, int _height, int _colors ) {
@@ -576,62 +349,13 @@ void vic1_tilemap_enable( Environment * _environment, int _width, int _height, i
 
 void vic1_bitmap_at( Environment * _environment, char * _address ) {
 
-    outline1("LDA %s", _address );
-    outline0("LSR");
-    outline0("LSR");
-    outline0("LSR");
-    outline0("LSR");
-    outline0("LSR");
-    outline0("LSR");
-    outline0("AND #%00000001");
-    outline0("ASL" );
-    outline0("ASL" );
-    outline0("ASL" );
-    outline0("STA TMPPTR" );
-    outline0("LDA $D018" );
-    outline0("AND #%11110111");
-    outline0("ORA TMPPTR" );
-    outline0("STA $D018" );
-
 }
 
 void vic1_colormap_at( Environment * _environment, char * _address ) {
 
-    // Create a unique variabled for ASM code.
-    MAKE_LABEL
-
-    // Let's check if we are in ECM mode.
-    outline0("LDA $D011");
-    outline0("BIT #%00100000");
-    cpu6502_beq(_environment, label);
-
-    // Change the colormap address that is the text address.
-    vic1_textmap_at( _environment, _address );
-
-    // If not, we are unable to change the colormap address.
-    outline1("%s:", label);
-
-
 }
 
 void vic1_textmap_at( Environment * _environment, char * _address ) {
-
-    // Create a unique variabled for ASM code.
-    MAKE_LABEL
-
-    outline1("LDA %s", _address );
-    outline0("LSR");
-    outline0("LSR");
-    outline0("AND #$0f");
-    outline0("ASL");
-    outline0("ASL");
-    outline0("ASL");
-    outline0("ASL");
-    outline0("STA TMPPTR");
-    outline0("LDA $D018");
-    outline0("AND #%00001111");
-    outline0("ORA TMPPTR" );
-    outline0("STA $D018");
 
 }
 
@@ -697,198 +421,69 @@ void vic1_point( Environment * _environment, char *_x, char *_y, char * _result 
 
 void vic1_screen_on( Environment * _environment ) {
 
-    outline0("LDA $D011" );
-    outline0("ORA #%00010000");
-    outline0("STA $D011" );
-
 }
 
 void vic1_screen_off( Environment * _environment ) {
-    
-    outline0("LDA $D011" );
-    outline0("AND #%11101111");
-    outline0("STA $D011" );
 
 }
 
 void vic1_screen_rows( Environment * _environment, char * _rows ) {
 
-    MAKE_LABEL
-
-    outline1("LDA %s", _rows);
-    outline0("CMP #24");
-    outline1("BEQ %s", label);
-    outline0("LDA $D011" );
-    outline0("ORA #%00001000");
-    outline0("STA $D011" );
-    outline1("JMP %s_2", label);
-    outhead1("%s:", label );
-    outline0("LDA $D011" );
-    outline0("AND #%11110111");
-    outline0("STA $D011" );
-    outline1("JMP %s_2", label);
-    outhead1("%s_2:", label );
-
 }
 
 void vic1_sprite_data_from( Environment * _environment, char * _sprite, char * _address ) {
-
-    outline1("LDA %s", _address );
-    outline0("LSR"  );
-    outline0("LSR"  );
-    outline0("LSR"  );
-    outline0("LSR"  );
-    outline0("LSR"  );
-    outline0("LSR"  );
-    outline0("LSR"  );
-    outline1("LDX %s", _sprite );
-    outline0("STA $07F8, X" );
 
 }
 
 void vic1_sprite_enable( Environment * _environment, char * _sprite ) {
 
-    _environment->bitmaskNeeded = 1;
-
-    outline0("LDA $D015" );
-    outline1("LDX %s", _sprite );
-    outline0("ORA BITMASK,X");
-    outline0("STA $D015" );
-
 }
 
 void vic1_sprite_disable( Environment * _environment, char * _sprite ) {
-
-    outline0("LDA $D015" );
-    outline1("LDX %s", _sprite );
-    outline0("AND BITMASKN,X");
-    outline0("STA $D015" );
 
 }
 
 void vic1_sprite_at( Environment * _environment, char * _sprite, char * _x, char * _y ) {
 
-    MAKE_LABEL
-
-    _environment->bitmaskNeeded = 1;
-    
-    outline1("LDA %s", _sprite );
-    outline0("ASL A" );
-    outline0("TAX");
-    outline1("LDA %s", _x);
-    outline0("STA $D000, X");
-    outline1("LDA %s+1", _x);
-    outline1("BEQ %s", label);
-    outline0("LDA $D010");
-    outline0("ORA BITMASK,X");
-    outline0("STA $D010" );
-    outline1("JMP %s_2", label);
-    outhead1("%s:", label);
-    outline0("LDA $D010");
-    outline0("AND BITMASKN,X");
-    outline0("STA $D010" );
-    outhead1("%s_2:", label);
-    outline0("INX");
-    outline1("LDA %s", _y);
-    outline0("STA $D000, X");
-    outline1("LDA %s+1", _y);
-
 }
 
 void vic1_sprite_expand_vertical( Environment * _environment, char * _sprite ) {
-
-    outline1("LDX %s", _sprite);
-    outline0("LDA $D017" );
-    outline0("ORA BITMASK,X");
-    outline0("STA $D017" );
 
 }
 
 void vic1_sprite_expand_horizontal( Environment * _environment, char * _sprite ) {
 
-    outline1("LDX %s", _sprite );
-    outline0("LDA $D01D" );
-    outline0("ORA BITMASK,X");
-    outline0("STA $D01D" );
-
 }
 
 void vic1_sprite_compress_vertical( Environment * _environment, char * _sprite ) {
-
-    outline1("LDX _%s", _sprite );
-    outline0("LDA $D017" );
-    outline0("AND BITMASKN,X");
-    outline0("STA $D017" );
 
 }
 
 void vic1_sprite_compress_horizontal( Environment * _environment, char * _sprite ) {
 
-    outline1("LDX %s", _sprite );
-    outline0("LDA $D01D" );
-    outline0("AND BITMASKN,X");
-    outline0("STA $D01D" );
-
 }
 
 void vic1_sprite_multicolor( Environment * _environment, char * _sprite ) {
-
-    outline1("LDX %s", _sprite );
-    outline0("LDA $D01C" );
-    outline0("ORA BITMASK,X");
-    outline0("STA $D01C" );
 
 }
 
 void vic1_sprite_monocolor( Environment * _environment, char * _sprite ) {
 
-    outline1("LDX %s", _sprite );
-    outline0("LDA $D01C" );
-    outline0("AND BITMASKN, X");
-    outline0("STA $D01C" );
-
 }
 
 void vic1_sprite_color( Environment * _environment, char * _sprite, char * _color ) {
-
-    outline1("LDX %s", _sprite);
-    outline1("LDA %s", _color);
-    outline0("AND #$0f" );
-    outline0("STA D027, X" );
 
 }
 
 void vic1_tiles_at( Environment * _environment, char * _address ) {
 
-    outline1("LDA %s", _address);
-    outline0("LSR");
-    outline0("LSR");
-    outline0("LSR");
-    outline0("AND #$07");
-    outline0("ASL");
-    outline0("STA TMPPTR");
-    outline0("LDA $D018");
-    outline0("AND #%00001111");
-    outline0("ORA TMPPTR");
-    outline0("STA $D018");
-
 }
 
 void vic1_vertical_scroll( Environment * _environment, char * _displacement ) {
 
-    outline0("LDA $D011" );
-    outline0("AND #%11111000");
-    outline1("ORA %s", _displacement );
-    outline0("STA $D011" );
-
 }
 
 void vic1_horizontal_scroll( Environment * _environment, char * _displacement ) {
-
-    outline0("LDA $D016" );
-    outline0("AND #%11111000");
-    outline1("ORA %s", _displacement );
-    outline0("STA $D016" );
 
 }
 
@@ -1011,6 +606,8 @@ void vic1_initialization( Environment * _environment ) {
     variable_global( _environment, "CURRENTTILESHEIGHT" );
 
     SCREEN_MODE_DEFINE( TILEMAP_MODE_STANDARD, 0, 40, 25, 2, "Standard Character Mode" );
+    SCREEN_MODE_DEFINE( BITMAP_MODE_STANDARD, 1, 128, 64, 8, "Standard Bitmap Mode" );
+    // SCREEN_MODE_DEFINE( BITMAP_MODE_EXTENDED, 1, 128, 128, 8, "Extended Bitmap Mode" );
 
     outline0("JSR VIC1STARTUP");
 

@@ -65,42 +65,10 @@
 #define TEXT_COLUMNS_COUNT          22
 #define TEXT_ROWS_COUNT             23
 
-#define BITMAP_MODE_STANDARD        2           // Standard Bitmap Mode     320 x 200 x 2
-#define BITMAP_MODE_MULTICOLOR      3           // Multicolor Bitmap Mode   160 x 200 x 4
-#define BITMAP_MODE_AH              5           // Advanced HiRes           320 x 200 x 16 (w/l)
-#define BITMAP_MODE_AIFLI	        6           
-#define BITMAP_MODE_ASSLACE         7
-#define BITMAP_MODE_ECI             8
-#define BITMAP_MODE_IAFLI           9
-#define BITMAP_MODE_IH	           10
-#define BITMAP_MODE_MRFLI          11
-#define BITMAP_MODE_MUCSUFLI       12
-#define BITMAP_MODE_MUCSUH         13
-#define BITMAP_MODE_MUFLI          14
-#define BITMAP_MODE_MUIFLI         15
-#define BITMAP_MODE_NUFLI          16
-#define BITMAP_MODE_NUIFLI         17
-#define BITMAP_MODE_SH             18
-#define BITMAP_MODE_SHFLI          19
-#define BITMAP_MODE_SHI	           20
-#define BITMAP_MODE_SHIFLI         21
-#define BITMAP_MODE_SHIFXL         22
-#define BITMAP_MODE_UFLI           23
-#define BITMAP_MODE_UIFLI          24
-#define BITMAP_MODE_TRIFLI         25
-#define BITMAP_MODE_XFLI           26
-#define BITMAP_MODE_XIFLI          27
-#define BITMAP_MODE_FLI            28
-#define BITMAP_MODE_HCB	           29
-#define BITMAP_MODE_IFLI           30
-#define BITMAP_MODE_MUCSU          31
-#define BITMAP_MODE_MCI            32
-#define BITMAP_MODE_MEGATEXT       33
-#define BITMAP_MODE_PRS            34
+#define BITMAP_MODE_STANDARD        1           // Standard Bitmap Mode     128 x 64 x 8
+#define BITMAP_MODE_EXTENDED        2           // Extended Bitmap Mode     128 x 128 x 8
 
-#define TILEMAP_MODE_STANDARD       0           // Standard Character Mode        40 x 25 x 16
-#define TILEMAP_MODE_MULTICOLOR     1           // Multicolor Character Mode      40 x 25 x 16
-#define TILEMAP_MODE_EXTENDED       4           // Extended Background Color Mode 40 x 25 x 20
+#define TILEMAP_MODE_STANDARD       0           // Standard Character Mode        22 x 23 x 8
 
 int vic1_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode );
 
