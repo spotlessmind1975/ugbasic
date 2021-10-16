@@ -36,4 +36,23 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 CLS
+    LDA CURRENTMODE
+    CMPA #0
+    BNE CLS0X
+    JMP CLS0
+CLS0X
+    RTS
+
+CLS0
+CLSG
+    LDA #$0
+    LDY BITMAPADDRESS
+    LDX CURRENTFRAMESIZE
+CLSGL1
+    STA , Y+
+    LEAX -1, X
+    CMPX #0
+    BNE CLSGL1
+    RTS
+
     RTS
