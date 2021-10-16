@@ -151,7 +151,7 @@ void test_variables_bin2_payload( TestEnvironment * _te ) {
 
     Variable * j = variable_define( e, "j", VT_BYTE, 0 );
     Variable * one = variable_define( e, "one", VT_WORD, 1 );
-    Variable * limit = variable_define( e, "limit", VT_WORD, 100 );
+    Variable * limit = variable_define( e, "limit", VT_WORD, 1000 );
     Variable * five = variable_define( e, "five", VT_BYTE, 5 );
     Variable * times = variable_define( e, "times", VT_WORD, 0 );
     Variable * b = variable_define( e, "b", VT_DSTRING, 42 );
