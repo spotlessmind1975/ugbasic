@@ -115,10 +115,33 @@ TEXTAT0
     ROLA
     LSLB
     ROLA
+
     LSLB
     ROLA
     LSLB
     ROLA
+    LSLB
+    ROLA
+    TFR D, Y
+
+    LDB <YCURSYS
+    LDA #0
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+
+    LSLB
+    ROLA
+
+    LEAY D, Y
+    TFR Y, D
     LEAX D, X
 
     LDB <XCURSYS
@@ -136,24 +159,16 @@ TEXTATCOMMON
     BEQ TEXTATBMCNOPEN
 
     LDA _PEN
-    CMPA #0 ; COLOR_BLACK
-    BEQ TEXTATC2
-    CMPA #1 ; COLOR_GREEN
-
-TEXTATC1
-    LDD #TEXTATBMC1
-    STD <MATHPTR5
-    JMP TEXTATBMCNOPEN
-
-TEXTATC2
-    LDD #TEXTATBMC2
-    STD <MATHPTR5
-    JMP TEXTATBMCNOPEN
-
-TEXTATC3
-    LDD #TEXTATBMC3
-    STD <MATHPTR5
-    JMP TEXTATBMCNOPEN
+    ANDA #$0F
+    ASLA
+    ASLA
+    ASLA
+    ASLA
+    STA <MATHPTR5
+    LDA _PAPER
+    ANDA #$0F
+    ORA <MATHPTR5
+    STA <MATHPTR5
 
 TEXTATBMCNOPEN
 
@@ -279,18 +294,21 @@ TEXTATBMSP0
     LEAY D, Y
 
 TEXTATBMSP0L1
-    LDA CURRENTMODE
-    CMPA #7
-    BEQ TEXTATBMSP0L1M
-    CMPA #9
-    BEQ TEXTATBMSP0L1M
-    CMPA #11
-    BEQ TEXTATBMSP0L1M
-    CMPA #13
-    BEQ TEXTATBMSP0L1M
+
+    LDA $a7c0
+    ORA #$01
+    STA $a7c0
 
     LDA ,Y
     STA ,X
+
+    LDA $a7c0
+    ANDA #$fe
+    STA $a7c0
+
+    LDA <MATHPTR5
+    STA ,X
+
     JMP TEXTATBMSP0L1M2
 
 TEXTATBMSP0L1M
@@ -907,57 +925,3 @@ TEXTATFONT
    fcb $e7, $e7, $e7, $07, $07, $ff, $ff, $ff
    fcb $0f, $0f, $0f, $0f, $ff, $ff, $ff, $ff
    fcb $0f, $0f, $0f, $0f, $f0, $f0, $f0, $f0
-
-TEXTATBMC1
-    fcb   %00000000
-    fcb   %00000001
-    fcb   %00000100
-    fcb   %00000101
-    fcb   %00010000
-    fcb   %00010001
-    fcb   %00010100
-    fcb   %00010101
-    fcb   %01000000
-    fcb   %01000001
-    fcb   %01000100
-    fcb   %01000101
-    fcb   %01010000
-    fcb   %01010001
-    fcb   %01010100
-    fcb   %01010101
-
-TEXTATBMC2
-    fcb   %00000000
-    fcb   %00000010
-    fcb   %00001000
-    fcb   %00001010
-    fcb   %00100000
-    fcb   %00100010
-    fcb   %00101000
-    fcb   %00101010
-    fcb   %10000000
-    fcb   %10000010
-    fcb   %10001000
-    fcb   %10001010
-    fcb   %10100000
-    fcb   %10100010
-    fcb   %10101000
-    fcb   %10101010
-
-TEXTATBMC3
-    fcb   %00000000
-    fcb   %00000011
-    fcb   %00001100
-    fcb   %00001111
-    fcb   %00110000
-    fcb   %00110011
-    fcb   %00111100
-    fcb   %00111111
-    fcb   %11000000
-    fcb   %11000011
-    fcb   %11001100
-    fcb   %11001111
-    fcb   %11110000
-    fcb   %11110011
-    fcb   %11111100
-    fcb   %11111111

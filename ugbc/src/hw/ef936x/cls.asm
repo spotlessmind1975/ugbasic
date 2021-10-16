@@ -29,7 +29,7 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                       CLEAR SCREEN ROUTINE FOR 6847                         *
+;*                       CLEAR SCREEN ROUTINE FOR EF936X                       *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
@@ -45,11 +45,37 @@ CLS0X
 
 CLS0
 CLSG
-    LDA #$0
+
+    LDA _PEN
+    ANDA #$0F
+    ASLA
+    ASLA
+    ASLA
+    ASLA
+    STA <MATHPTR5
+    LDA _PAPER
+    ANDA #$0F
+    ORA <MATHPTR5
+    STA <MATHPTR5
+
     LDY BITMAPADDRESS
     LDX CURRENTFRAMESIZE
 CLSGL1
+
+    LDA $a7c0
+    ORA #$01
+    STA $a7c0
+
+    LDA #$0
+    STA , Y
+
+    LDA $a7c0
+    ANDA #$fe
+    STA $a7c0
+
+    LDA <MATHPTR5
     STA , Y+
+
     LEAX -1, X
     CMPX #0
     BNE CLSGL1
