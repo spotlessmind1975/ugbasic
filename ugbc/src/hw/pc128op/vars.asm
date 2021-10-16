@@ -35,11 +35,11 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-TEXTADDRESS         fdb     $0400
-BITMAPADDRESS       fdb     $0c00
-COLORMAPADDRESS     fdb     $a000
+TEXTADDRESS         fdb     $0000
+BITMAPADDRESS       fdb     $0000
+COLORMAPADDRESS     fdb     $0000
 MOBADDRESS          fdb     $a000
-CURRENTMODE         fcb     $2
+CURRENTMODE         fcb     $0
 EVERYSTATUS        fcb     0
 
 TABCOUNT            fcb     4
