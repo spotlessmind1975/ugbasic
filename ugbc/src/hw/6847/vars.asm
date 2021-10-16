@@ -52,7 +52,7 @@ CURRENTHEIGHT      fdb 16
 CURRENTTILESWIDTH      fdb 32
 CURRENTTILESHEIGHT      fdb 16
 CURRENTFRAMESIZE   fdb 32*16
-CURRENTSL          fdb 32
+CURRENTSL          fcb 32
 
 ; ------------------------------------------------------------------------------
 ; BITMAP MODE (MODE #2)
