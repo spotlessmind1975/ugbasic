@@ -222,31 +222,40 @@ int ef936x_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
             _environment->screenHeight = 200;
             _environment->screenTilesWidth = 40;
             _environment->screenTilesHeight = 25;
+            outline0("LDA #%00000000");
+            outline0("STA $A7DC");
             break;
-
         case BITMAP_MODE_80_COLUMN:
             _environment->screenWidth = 640;
             _environment->screenHeight = 200;
             _environment->screenTilesWidth = 80;
             _environment->screenTilesHeight = 25;
+            outline0("LDA #%00101010");
+            outline0("STA $A7DC");
             break;
         case BITMAP_MODE_BITMAP_4:
             _environment->screenWidth = 320;
             _environment->screenHeight = 200;
             _environment->screenTilesWidth = 40;
             _environment->screenTilesHeight = 25;
+            outline0("LDA #%00100001");
+            outline0("STA $A7DC");
             break;
         case BITMAP_MODE_BITMAP_16:
             _environment->screenWidth = 160;
             _environment->screenHeight = 200;
             _environment->screenTilesWidth = 20;
             _environment->screenTilesHeight = 25;
+            outline0("LDA #%01111011");
+            outline0("STA $A7DC");
             break;
         case BITMAP_MODE_PAGE:
             _environment->screenWidth = 320;
             _environment->screenHeight = 200;
             _environment->screenTilesWidth = 40;
             _environment->screenTilesHeight = 25;
+            outline0("LDA #%00100100");
+            outline0("STA $A7DC");
             break;
         default:
             CRITICAL_SCREEN_UNSUPPORTED( _screen_mode->id );
