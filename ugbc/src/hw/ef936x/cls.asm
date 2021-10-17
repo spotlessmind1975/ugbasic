@@ -41,9 +41,14 @@ CLS
     BNE CLS0X
     JMP CLS0
 CLS0X
+    CMPA #1
+    BNE CLS1X
+    JMP CLS1
+CLS1X
     RTS
 
 CLS0
+CLS1
 CLSG
 
     LDA _PEN
