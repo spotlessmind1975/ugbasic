@@ -49,8 +49,8 @@ CLIPY2:    .word 199
 LASTCOLOR: .byte 0
 CURRENTWIDTH:      .word 176
 CURRENTHEIGHT:      .word 184
-CURRENTTILESWIDTH:      .word 22
-CURRENTTILESHEIGHT:      .word 23
+CURRENTTILESWIDTH:      .byte 22
+CURRENTTILESHEIGHT:      .byte 23
 CURRENTSL:          .byte 0
 
 ; ------------------------------------------------------------------------------
