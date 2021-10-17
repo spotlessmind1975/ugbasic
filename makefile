@@ -106,6 +106,9 @@ generated/pc128op/asm/%.asm:
 generated/pc128op/exe/%.k7:
 	@ugbc/exe/ugbc.pc128op $(subst generated/pc128op/exe/,examples/,$(@:.k7=.bas)) -o $@
 
+generated/pc128op/exe/%.bin:
+	@asm6809 -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -D -e 10240 -o $@ $(subst /exe/,/asm/,$(@:.bin=.asm))
+
 paths:
 	@mkdir -p generated
 	@mkdir -p generated/$(target)/asm
