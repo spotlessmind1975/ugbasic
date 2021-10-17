@@ -40,7 +40,37 @@
 
 static RGBi SYSTEM_PALETTE[] = {
     // { "BLACK", 
-        { 0x00, 0x00, 0x00, 0 }
+        { 0x00, 0x00, 0x00, 0 },        
+    // { "WHITE", 
+        { 0xff, 0xff, 0xff, 1 },
+    // { "RED", 
+        { 0x88, 0x00, 0x00, 2 },
+    // { "CYAN", 
+        { 0xaa, 0xff, 0xe6, 3 },
+    // { "VIOLET", 
+        { 0xcc, 0x44, 0xcc, 4 },
+    // { "GREEN", 
+        { 0x00, 0xcc, 0x55, 5 },
+    // { "BLUE", 
+        { 0x00, 0x00, 0xaa, 6 },
+    // { "YELLOW", 
+        { 0xee, 0xee, 0x77, 7 },
+    // { "ORANGE", 
+        { 0xa1, 0x68, 0x3c, 8 },
+    // { "BROWN", 
+        { 0xdd, 0x88, 0x65, 9 },
+    // { "LIGHT_RED", 
+        { 0xff, 0x77, 0x77, 10 },
+    // { "DARK_GREY", 
+        { 0x33, 0x33, 0x33, 11 },
+    // { "GREY", 
+        { 0x77, 0x77, 0x77, 12 },
+    // { "LIGHT_GREEN", 
+        { 0xaa, 0xff, 0x66, 13 },
+    // { "LIGHT_BLUE", 
+        { 0x00, 0x88, 0xff, 14 },
+    // { "LIGHT_GREY", 
+        { 0xbb, 0xbb, 0xbb, 15 }
 };
 
 static RGBi * commonPalette;
