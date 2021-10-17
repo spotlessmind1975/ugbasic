@@ -216,22 +216,32 @@ int ef936x_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
 
     _environment->fontWidth = 8;
     _environment->fontHeight = 8;
-    switch( _screen_mode->id ) {
-        case TILEMAP_MODE_INTERNAL:         // Alphanumeric Internal	32 × 16	2	512
-            _environment->screenWidth = 32*8;
-            _environment->screenHeight = 16*12;
-            _environment->screenTilesWidth = 32;
-            _environment->screenTilesHeight = 16;
-            cpu_store_16bit( _environment, "CLIPX1", 0 );
-            cpu_store_16bit( _environment, "CLIPX2", 31 );
-            cpu_store_16bit( _environment, "CLIPY1", 0 );
-            cpu_store_16bit( _environment, "CLIPY2", 15 );
-            cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 32*16 );
-            break;
-        default:
-            ;
-            // CRITICAL_SCREEN_UNSUPPORTED( _screen_mode->id );
-    }
+    // switch( _screen_mode->id ) {
+    //     case TILEMAP_MODE_INTERNAL:         // Alphanumeric Internal	32 × 16	2	512
+    //         _environment->screenWidth = 32*8;
+    //         _environment->screenHeight = 16*12;
+    //         _environment->screenTilesWidth = 32;
+    //         _environment->screenTilesHeight = 16;
+    //         cpu_store_16bit( _environment, "CLIPX1", 0 );
+    //         cpu_store_16bit( _environment, "CLIPX2", 31 );
+    //         cpu_store_16bit( _environment, "CLIPY1", 0 );
+    //         cpu_store_16bit( _environment, "CLIPY2", 15 );
+    //         cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 32*16 );
+    //         break;
+    //     default:
+    //         ;
+    //         // CRITICAL_SCREEN_UNSUPPORTED( _screen_mode->id );
+    // }
+
+    _environment->screenWidth = 320;
+    _environment->screenHeight = 200;
+    _environment->screenTilesWidth = 40;
+    _environment->screenTilesHeight = 25;
+    cpu_store_16bit( _environment, "CLIPX1", 0 );
+    cpu_store_16bit( _environment, "CLIPX2", _environment->screenWidth-1 );
+    cpu_store_16bit( _environment, "CLIPY1", 0 );
+    cpu_store_16bit( _environment, "CLIPY2", _environment->screenHeight-1 );
+    cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 40*200 );
 
     cpu_store_16bit( _environment, "CURRENTWIDTH", _environment->screenWidth );
     cpu_store_16bit( _environment, "CURRENTHEIGHT", _environment->screenHeight );

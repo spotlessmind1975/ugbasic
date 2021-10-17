@@ -65,7 +65,7 @@
 #define COLOR_COUNT                 8
 
 #define TILEMAP_MODE_INTERNAL       0
-#define BITMAP_MODE_COLOR1          7
+#define BITMAP_MODE_COLOR1          1
 
 int ef936x_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode );
 

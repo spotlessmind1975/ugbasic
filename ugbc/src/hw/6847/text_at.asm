@@ -15,7 +15,7 @@
 ;  * See the License for the specific language governing permissions and
 ;  * limitations under the License.
 ;  *----------------------------------------------------------------------------
-;  * Concesso in licenza ANDCC #$01ondo i termini della Licenza Apache, versione 2.0
+;  * Concesso in licenza secondo i termini della Licenza Apache, versione 2.0
 ;  * (la "Licenza"); è proibito usare questo file se non in conformità alla
 ;  * Licenza. Una copia della Licenza è disponibile all'indirizzo
 ;  *
