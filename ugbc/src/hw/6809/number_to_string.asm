@@ -94,9 +94,13 @@ NSSTRINGL3
 
     CMPB #0
     BNE NSSTRINGL3B
+
+    PSHS B
     LDB , X
     ADDB #$30
     STB , X
+    PULS B
+    
     INCB
 NSSTRINGL3B
     STB <MATHPTR5
