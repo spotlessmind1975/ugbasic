@@ -29,11 +29,164 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                          VERTICAL SCROLL ON 6847                            *
+;*                          VERTICAL SCROLL ON EF936X                          *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 VSCROLLT
+
+    ANDCC #$FE
+    LDA _PEN
+    ANDA #$0F
+    ASLA
+    ASLA
+    ASLA
+    ASLA
+    STA <MATHPTR5
+    LDA _PAPER
+    ANDA #$0F
+    ORA <MATHPTR5
+    STA <MATHPTR5
+
+    LDA CURRENTMODE
+    CMPA #0
+    BNE VSCROLLT0X
+    JMP VSCROLLT0
+VSCROLLT0X
+    CMPA #1
+    BNE VSCROLLT1X
+    JMP VSCROLLT1
+VSCROLLT1X
+    CMPA #2
+    BNE VSCROLLT2X
+    JMP VSCROLLT2
+VSCROLLT2X
+    CMPA #3
+    BNE VSCROLLT3X
+    JMP VSCROLLT3
+VSCROLLT3X
+    CMPA #4
+    BNE VSCROLLT4X
+    JMP VSCROLLT4
+VSCROLLT4X
+    RTS
+
+VSCROLLT0
+VSCROLLT1
+VSCROLLT2
+VSCROLLT3
+VSCROLLT4
+    PSHS A,B,X,Y,U
+    LDA <DIRECTION
+    CMPA #0
+    BGT VSCROLLTDOWN
+
+VSCROLLTUP
+    LDX BITMAPADDRESS
+    LDY BITMAPADDRESS
+    LDA CURRENTSL
+    LEAY A, Y
+    LEAY A, Y
+    LEAY A, Y
+    LEAY A, Y
+    LEAY A, Y
+    LEAY A, Y
+    LEAY A, Y
+    LEAY A, Y
+    
+VSCROLLTUPYSCR
+
+    LDA $a7c0
+    ORA #$01
+    STA $a7c0
+
+VSCROLLTUPYSCR1
+    LDA ,Y+
+    STA ,X+
+    CMPY CURRENTFRAMESIZE
+    BNE VSCROLLTUPYSCR1
+    LDA #0
+VSCROLLTUPREFILL
+    STA ,X+
+    CMPX CURRENTFRAMESIZE
+    BNE VSCROLLTUPREFILL
+
+    LDA $a7c0
+    ANDA #$fe
+    STA $a7c0
+
+    LDX BITMAPADDRESS
+    LDY BITMAPADDRESS
+    LDA CURRENTSL
+    LEAY A, Y
+    LEAY A, Y
+    LEAY A, Y
+    LEAY A, Y
+    LEAY A, Y
+    LEAY A, Y
+    LEAY A, Y
+    LEAY A, Y
+
+VSCROLLTUPYSCR1C
+    LDA ,Y+
+    STA ,X+
+    CMPY CURRENTFRAMESIZE
+    BNE VSCROLLTUPYSCR1C
+    LDA <MATHPTR5
+VSCROLLTUPREFILLC
+    STA ,X+
+    CMPX CURRENTFRAMESIZE
+    BNE VSCROLLTUPREFILLC
+
+    JMP VSCROLLTE
+
+VSCROLLTDOWN
+    LDX BITMAPADDRESS
+    LDY BITMAPADDRESS
+    LDA CURRENTFRAMESIZE
+    LEAY A, Y
+    LEAX A, X
+    
+    LDA CURRENTSL
+    COMA
+    LEAX A, X
+
+VSCROLLTDOWNYSCR
+
+    LDA $a7c0
+    ORA #$01
+    STA $a7c0
+
+VSCROLLTDOWNYSCR1
+    LDA ,-X
+    STA ,-Y
+    CMPX #$0
+    BNE VSCROLLTDOWNYSCR1
+    LDA #0
+VSCROLLTDOWNREFILL
+    STA ,-Y
+    CMPY #$0
+    BNE VSCROLLTDOWNREFILL
+
+    LDA $a7c0
+    ANDA #$fe
+    STA $a7c0
+
+VSCROLLTDOWNYSCR1C
+    LDA ,-X
+    STA ,-Y
+    CMPX #$0
+    BNE VSCROLLTDOWNYSCR1C
+    LDA <MATHPTR5
+VSCROLLTDOWNREFILLC
+    STA ,-Y
+    CMPY #$0
+    BNE VSCROLLTDOWNREFILLC
+
+    JMP VSCROLLTE
+
+VSCROLLTE
+    PULS A,B,X,Y,U
     RTS
