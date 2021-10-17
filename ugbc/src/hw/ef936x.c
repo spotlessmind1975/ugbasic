@@ -216,27 +216,42 @@ int ef936x_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
 
     _environment->fontWidth = 8;
     _environment->fontHeight = 8;
-    // switch( _screen_mode->id ) {
-    //     case TILEMAP_MODE_INTERNAL:         // Alphanumeric Internal	32 × 16	2	512
-    //         _environment->screenWidth = 32*8;
-    //         _environment->screenHeight = 16*12;
-    //         _environment->screenTilesWidth = 32;
-    //         _environment->screenTilesHeight = 16;
-    //         cpu_store_16bit( _environment, "CLIPX1", 0 );
-    //         cpu_store_16bit( _environment, "CLIPX2", 31 );
-    //         cpu_store_16bit( _environment, "CLIPY1", 0 );
-    //         cpu_store_16bit( _environment, "CLIPY2", 15 );
-    //         cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 32*16 );
-    //         break;
-    //     default:
-    //         ;
-    //         // CRITICAL_SCREEN_UNSUPPORTED( _screen_mode->id );
-    // }
+    switch( _screen_mode->id ) {
+        case BITMAP_MODE_40_COLUMN:
+            _environment->screenWidth = 320;
+            _environment->screenHeight = 200;
+            _environment->screenTilesWidth = 40;
+            _environment->screenTilesHeight = 25;
+            break;
 
-    _environment->screenWidth = 320;
-    _environment->screenHeight = 200;
-    _environment->screenTilesWidth = 40;
-    _environment->screenTilesHeight = 25;
+        case BITMAP_MODE_80_COLUMN:
+            _environment->screenWidth = 640;
+            _environment->screenHeight = 200;
+            _environment->screenTilesWidth = 80;
+            _environment->screenTilesHeight = 25;
+            break;
+        case BITMAP_MODE_BITMAP_4:
+            _environment->screenWidth = 320;
+            _environment->screenHeight = 200;
+            _environment->screenTilesWidth = 40;
+            _environment->screenTilesHeight = 25;
+            break;
+        case BITMAP_MODE_BITMAP_16:
+            _environment->screenWidth = 160;
+            _environment->screenHeight = 200;
+            _environment->screenTilesWidth = 20;
+            _environment->screenTilesHeight = 25;
+            break;
+        case BITMAP_MODE_PAGE:
+            _environment->screenWidth = 320;
+            _environment->screenHeight = 200;
+            _environment->screenTilesWidth = 40;
+            _environment->screenTilesHeight = 25;
+            break;
+        default:
+            CRITICAL_SCREEN_UNSUPPORTED( _screen_mode->id );
+    }
+
     cpu_store_16bit( _environment, "CLIPX1", 0 );
     cpu_store_16bit( _environment, "CLIPX2", _environment->screenWidth-1 );
     cpu_store_16bit( _environment, "CLIPY1", 0 );
@@ -254,11 +269,13 @@ void ef936x_bitmap_enable( Environment * _environment, int _width, int _height, 
 
     ScreenMode * mode = find_screen_mode_by_suggestion( _environment, 1, _width, _height, _colors );
 
-    ef936x_screen_mode_enable( _environment, mode );
-
-    cpu_store_8bit( _environment, "CURRENTMODE", mode->id );
-    
-    _environment->currentMode = mode->id;
+    if ( mode ) {
+        ef936x_screen_mode_enable( _environment, mode );
+        cpu_store_8bit( _environment, "CURRENTMODE", mode->id );
+        _environment->currentMode = mode->id;
+    } else {
+        WARNING_SCREEN_MODE( -1 );
+    }
 
 }
 
@@ -270,11 +287,13 @@ void ef936x_tilemap_enable( Environment * _environment, int _width, int _height,
 
     ScreenMode * mode = find_screen_mode_by_suggestion( _environment, 0, _width, _height, _colors );
 
-    ef936x_screen_mode_enable( _environment, mode );
-
-    _environment->currentMode = mode->id;
-
-    cpu_store_8bit( _environment, "CURRENTMODE", mode->id );    
+    if ( mode ) {
+        ef936x_screen_mode_enable( _environment, mode );
+        cpu_store_8bit( _environment, "CURRENTMODE", mode->id );
+        _environment->currentMode = mode->id;
+    } else {
+        WARNING_SCREEN_MODE( -1 );
+    }
 
 }
 
@@ -504,8 +523,11 @@ void ef936x_initialization( Environment * _environment ) {
     variable_import( _environment, "CURRENTTILESHEIGHT", VT_BYTE );
     variable_global( _environment, "CURRENTTILESHEIGHT" );
 
-    SCREEN_MODE_DEFINE( TILEMAP_MODE_INTERNAL, 0, 32, 16, 2, "Alphanumeric Internal");
-    SCREEN_MODE_DEFINE( BITMAP_MODE_COLOR1, 1, 64, 64, 4, "Color Graphics 1" );
+    SCREEN_MODE_DEFINE( BITMAP_MODE_40_COLUMN, 1, 320, 200, 4, "BITMAP MODE 40 COLUMN" );
+    SCREEN_MODE_DEFINE( BITMAP_MODE_80_COLUMN, 1, 640, 200, 2, "BITMAP MODE 80 COLUMN" );
+    SCREEN_MODE_DEFINE( BITMAP_MODE_BITMAP_4, 1, 320, 200, 4, "BITMAP MODE BITMAP 4" );
+    SCREEN_MODE_DEFINE( BITMAP_MODE_BITMAP_16, 1, 160, 200, 16, "BITMAP MODE BITMAP 16" );
+    SCREEN_MODE_DEFINE( BITMAP_MODE_PAGE, 1, 320, 200, 4, "BITMAP MODE PAGE" );
 
     outline0("JSR EF936XSTARTUP");
 
@@ -924,17 +946,25 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
 Variable * ef936x_image_converter( Environment * _environment, char * _data, int _width, int _height, int _mode ) {
 
     switch( _mode ) {
-        case TILEMAP_MODE_INTERNAL:         // Alphanumeric Internal	32 × 16	2	512
+        case BITMAP_MODE_40_COLUMN:
+        case BITMAP_MODE_80_COLUMN:
+        case BITMAP_MODE_BITMAP_4:
+        case BITMAP_MODE_BITMAP_16:
+        case BITMAP_MODE_PAGE:
             break;
-        case BITMAP_MODE_COLOR1:            // Color Graphics 1	64 × 64	4	1024
-            return ef936x_image_converter_multicolor_mode_standard( _environment, _data, _width, _height );
-            break;
+        // case BITMAP_MODE_COLOR1:            // Color Graphics 1	64 × 64	4	1024
+        //     return ef936x_image_converter_multicolor_mode_standard( _environment, _data, _width, _height );
+        //     break;
         // case BITMAP_MODE_RESOLUTION1:       // Resolution Graphics 1	128 × 64	1 + Black	1024
         //    return ef936x_image_converter_bitmap_mode_standard( _environment, _data, _width, _height );
 
     }
 
-    CRITICAL_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
+    // CRITICAL_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
+
+    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
+    
+    return result;
 
 }
 
