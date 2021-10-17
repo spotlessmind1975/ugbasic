@@ -35,7 +35,21 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+PC128TIMER      fdb $0
+PC128IRQO       fdb $0
+
+PC128IRQ
+    LDD PC128TIMER
+    ADDD #1
+    STD PC128TIMER
+    JMP [PC128IRQO]
+
 PC128OPSTARTUP
+
+    LDX $2061
+    STX PC128IRQO
+    LDX #PC128IRQ
+    STX $2061
 
     LDA #$20
     TFR A, DP
