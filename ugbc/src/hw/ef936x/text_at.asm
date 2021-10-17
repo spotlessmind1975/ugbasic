@@ -15,7 +15,7 @@
 ;  * See the License for the specific language governing permissions and
 ;  * limitations under the License.
 ;  *----------------------------------------------------------------------------
-;  * Concesso in licenza ANDCC #$01ondo i termini della Licenza Apache, versione 2.0
+;  * Concesso in licenza secondo i termini della Licenza Apache, versione 2.0
 ;  * (la "Licenza"); è proibito usare questo file se non in conformità alla
 ;  * Licenza. Una copia della Licenza è disponibile all'indirizzo
 ;  *
@@ -89,6 +89,9 @@ TEXTATGO
     BNE TEXTAT0X
     JMP TEXTAT0
 TEXTAT0X
+    CMPA #1
+    BNE TEXTAT1X
+TEXTAT1X
     RTS
     
 ;-----------------------------------------------------------------------------
@@ -98,11 +101,10 @@ TEXTAT0X
 TEXTATBITMAPMODE
 
 TEXTAT0
-
-    LDA #0
-    STA <PATTERN
+TEXTAT1
 
     LDX BITMAPADDRESS
+    ANDCC #$FE
     LDB <YCURSYS
     LDA #0
     LSLB
@@ -124,6 +126,7 @@ TEXTAT0
     ROLA
     TFR D, Y
 
+    ANDCC #$FE
     LDB <YCURSYS
     LDA #0
     LSLB
@@ -146,8 +149,6 @@ TEXTAT0
 
     LDB <XCURSYS
     LDA #0
-    LSLB
-    ROLA
     LEAX D, X
 
     JMP TEXTATCOMMON
@@ -158,6 +159,7 @@ TEXTATCOMMON
     ANDA #$2
     BEQ TEXTATBMCNOPEN
 
+    ANDCC #$FE
     LDA _PEN
     ANDA #$0F
     ASLA
@@ -354,12 +356,6 @@ TEXTATBMSP0L1M2
     LDA CURRENTSL
     LEAX A, X 
 
-    ANDCC #$FE
-    LDA <PATTERN
-    EORA #$FF
-    ADDA #1
-    LEAX A, X 
-        
     LEAY 1, Y
 
     LEAU 1, U
@@ -371,9 +367,7 @@ TEXTATBMSP0L1X
 
     PULS D,Y,X
 
-    LDA <PATTERN
-    LEAX A, X 
-    LEAX A, X 
+    LEAX 1, X
 
     JMP TEXTATBMINCX
 
