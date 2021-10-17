@@ -91,7 +91,20 @@ TEXTATGO
 TEXTAT0X
     CMPA #1
     BNE TEXTAT1X
+    JMP TEXTAT1
 TEXTAT1X
+    CMPA #2
+    BNE TEXTAT2X
+    JMP TEXTAT2
+TEXTAT2X
+    CMPA #3
+    BNE TEXTAT3X
+    JMP TEXTAT3
+TEXTAT3X
+    CMPA #4
+    BNE TEXTAT4X
+    JMP TEXTAT4
+TEXTAT4X
     RTS
     
 ;-----------------------------------------------------------------------------
@@ -102,6 +115,9 @@ TEXTATBITMAPMODE
 
 TEXTAT0
 TEXTAT1
+TEXTAT2
+TEXTAT3
+TEXTAT4
 
     LDX BITMAPADDRESS
     ANDCC #$FE
