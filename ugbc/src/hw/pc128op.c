@@ -90,7 +90,7 @@ void pc128op_inkey( Environment * _environment, char * _pressed, char * _key ) {
 
     pc128op_scancode( _environment, _pressed, _key );
 
-outline1("LDA %s", _pressed );
+    outline1("LDA %s", _pressed );
     outline0("CMPA #0" );
     outline1("BEQ %sskip", label );
     outline1("LDA %s", _key );
@@ -132,7 +132,9 @@ void pc128op_scancode( Environment * _environment, char * _pressed, char * _scan
     outline1("STA %s", _pressed );
     outline1("STA %s", _scancode );
 
-    outline0("JSR SCANCODE" );
+    outline0("SWI" );
+    outline0("fcb 10" );
+    outline0("TFR B,A" );
     outline0("CMPA #0" );
     outline1("BEQ %snokey", label );
     outline1("STA %s", _scancode );
@@ -159,29 +161,9 @@ void pc128op_keyshift( Environment * _environment, char * _shifts ) {
     
     pc128op_scancode( _environment, pressed->realName, scancode->realName );
 
-    outline1("LDA %s", result->realName );
-    outline1("CMPA #$%2.2x", (unsigned char) KEY_SHIFT);
-    outline0("BEQ %sshift");
-    outline0("LDA #0");
-    outline1("STA %s", _shifts);
-    outline1("JMP %sdone", label );
-    outhead1("%sshift", label);
-    outline0("LDA #3");
-    outline1("STA %s", _shifts);
-    outline1("JMP %sdone", label );
-    outhead1("%sdone", label );
-
-
 }
 
 void pc128op_clear_key( Environment * _environment ) {
-
-    outline0("LDA #$0");
-    outline0("LDX $35");
-    outline0("STA ,X");
-
-    outline0("LDA #$0");
-    outline0("sta $87");
 
 }
 
