@@ -563,10 +563,10 @@ void ef936x_initialization( Environment * _environment ) {
     variable_global( _environment, "CURRENTTILESHEIGHT" );
 
     SCREEN_MODE_DEFINE( BITMAP_MODE_40_COLUMN, 1, 320, 200, 4, "BITMAP MODE 40 COLUMN" );
-    SCREEN_MODE_DEFINE( BITMAP_MODE_80_COLUMN, 1, 640, 200, 2, "BITMAP MODE 80 COLUMN" );
-    SCREEN_MODE_DEFINE( BITMAP_MODE_BITMAP_4, 1, 320, 200, 4, "BITMAP MODE BITMAP 4" );
-    SCREEN_MODE_DEFINE( BITMAP_MODE_BITMAP_16, 1, 160, 200, 16, "BITMAP MODE BITMAP 16" );
-    SCREEN_MODE_DEFINE( BITMAP_MODE_PAGE, 1, 320, 200, 4, "BITMAP MODE PAGE" );
+    // SCREEN_MODE_DEFINE( BITMAP_MODE_80_COLUMN, 1, 640, 200, 2, "BITMAP MODE 80 COLUMN" );
+    // SCREEN_MODE_DEFINE( BITMAP_MODE_BITMAP_4, 1, 320, 200, 4, "BITMAP MODE BITMAP 4" );
+    // SCREEN_MODE_DEFINE( BITMAP_MODE_BITMAP_16, 1, 160, 200, 16, "BITMAP MODE BITMAP 16" );
+    // SCREEN_MODE_DEFINE( BITMAP_MODE_PAGE, 1, 320, 200, 4, "BITMAP MODE PAGE" );
 
     outline0("JSR EF936XSTARTUP");
 
@@ -871,13 +871,15 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
         CRITICAL_IMAGE_CONVERTER_INVALID_HEIGHT( _height );
     }
 
+    int colorUsed;
+
     if ( ! commonPalette ) {
 
         RGBi * palette = malloc( sizeof( RGBi ) * MAX_PALETTE );
 
-        int colorUsed = extract_color_palette(_source, _width, _height, palette, MAX_PALETTE);
+        colorUsed = extract_color_palette(_source, _width, _height, palette, MAX_PALETTE);
 
-        if (colorUsed > 4) {
+        if (colorUsed > 16) {
             CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
         }
 
@@ -914,7 +916,7 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
  
-    int bufferSize = 2 + ( ( _width >> 2 ) * _height );
+    int bufferSize = 2 + 2 * ( ( _width >> 3 ) * _height );
     
     char * buffer = malloc ( bufferSize );
     memset( buffer, 0, bufferSize );
@@ -943,12 +945,10 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
             rgb.green = *(_source + 1);
             rgb.blue = *(_source + 2);
 
-            offset = ( image_y * ( _width >> 2 ) ) + ( image_x >> 2 );
-
             int colorIndex = 0;
 
             int minDistance = 9999;
-            for( int i=0; i<4; ++i ) {
+            for( int i=0; i<colorUsed; ++i ) {
                 int distance = calculate_distance(commonPalette[i], rgb );
                 if ( distance < minDistance ) {
                     minDistance = distance;
@@ -956,11 +956,28 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
                 }
             }
 
+            offset = ( image_y * ( _width >> 3 ) ) + ( image_x >> 3 );
+            bitmask = 1 << ( 7 - (image_x & 0x7) );
+
+            // If the pixes has enough luminance value, it must be 
+            // considered as "on"; otherwise, it is "off".
+            // int luminance = calculate_luminance(rgb);
+
+            if ( colorIndex ) {
+                *( buffer + offset + 2) |= bitmask;
+                // printf("*");
+            } else {
+                *( buffer + offset + 2) &= ~bitmask;
+                // printf(" ");
+            }
+
+            offset = ( image_y * ( _width >> 3 ) ) + ( image_x >> 3 );
+
             // printf( "%1.1x", colorIndex );
 
-            bitmask = colorIndex << (6 - ((image_x & 0x3) * 2));
+            bitmask = colorIndex << 4;
 
-            *(buffer + 2 + offset) |= bitmask;
+            *(buffer + 2 + ( ( _width >> 3 ) * _height ) + offset) |= bitmask;
 
             _source += 3;
 
@@ -986,20 +1003,14 @@ Variable * ef936x_image_converter( Environment * _environment, char * _data, int
 
     switch( _mode ) {
         case BITMAP_MODE_40_COLUMN:
+            return ef936x_image_converter_multicolor_mode_standard( _environment, _data, _width, _height );
         case BITMAP_MODE_80_COLUMN:
         case BITMAP_MODE_BITMAP_4:
         case BITMAP_MODE_BITMAP_16:
         case BITMAP_MODE_PAGE:
+            CRITICAL_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
             break;
-        // case BITMAP_MODE_COLOR1:            // Color Graphics 1	64 × 64	4	1024
-        //     return ef936x_image_converter_multicolor_mode_standard( _environment, _data, _width, _height );
-        //     break;
-        // case BITMAP_MODE_RESOLUTION1:       // Resolution Graphics 1	128 × 64	1 + Black	1024
-        //    return ef936x_image_converter_bitmap_mode_standard( _environment, _data, _width, _height );
-
     }
-
-    // CRITICAL_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     
