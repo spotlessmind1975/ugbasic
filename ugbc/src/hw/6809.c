@@ -3093,7 +3093,7 @@ void cpu6809_mem_move_size( Environment * _environment, char *_source, char *_de
 
     embedded( cpu_mem_move, src_hw_6809_cpu_mem_move_asm )
 
-        outline1("LDB #$%2.2x", _size );
+        outline1("LDU #$%4.4x", _size );
         outline1("LDY %s", _source );
         outline1("LDX %s", _destination );
         outline0("JSR CPUMEMMOVE" );
@@ -3149,7 +3149,7 @@ void cpu6809_mem_move_direct_size( Environment * _environment, char *_source, ch
 
     embedded( cpu_mem_move, src_hw_6809_cpu_mem_move_asm )
 
-        outline1("LDB #$%2.2x", _size );
+        outline1("LDU #$%4.4x", _size );
         outline1("LDY #%s", _source );
         outline1("LDX #%s", _destination );
         outline0("JSR CPUMEMMOVE" );
@@ -3205,7 +3205,7 @@ void cpu6809_mem_move_direct_indirect_size( Environment * _environment, char *_s
 
     embedded( cpu_mem_move, src_hw_6809_cpu_mem_move_asm )
 
-        outline1("LDB #$%2.2x", _size );
+        outline1("LDU #$%4.4x", _size );
         outline1("LDY #%s", _source );
         outline1("LDX %s", _destination );
         outline0("JSR CPUMEMMOVE" );

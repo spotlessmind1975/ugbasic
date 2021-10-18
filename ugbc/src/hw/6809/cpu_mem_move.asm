@@ -29,33 +29,13 @@
 ;  ****************************************************************************/
 
 CPUMEMMOVE
-    CMPB #0
+    CMPU #0
     BEQ CPUMEMMOVEDONE
-    PSHS B
-    ANDB #$80
-    BEQ CPUMEMMOVEL2
-    LDB #$7F
-    DECB
 CPUMEMMOVEL1
-    LDA B,Y
-    STA B,X
-    DECB
-    CMPB #$FF
-    BNE %s
-    LEAY 127,Y
-    LEAX 127,X
-    LEAY 1,Y
-    LEAX 1,X
-CPUMEMMOVEL2
-    PULS B
-    ANDB #$7F
-    BEQ CPUMEMMOVEDONE
-    DECB
-CPUMEMMOVEL3
-    LDA B,Y
-    STA B,X
-    DECB
-    CMPB #$FF
-    BNE CPUMEMMOVEL3
+    LDA ,Y+
+    STA ,X+
+    LEAU -1,U
+    CMPU #$0
+    BNE CPUMEMMOVEL1
 CPUMEMMOVEDONE
     RTS
