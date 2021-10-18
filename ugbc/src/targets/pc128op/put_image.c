@@ -55,6 +55,10 @@
 </usermanual> */
 void put_image( Environment * _environment, char * _image, char * _x, char * _y ) {
 
-    // TODO: implementation
+    Variable * image = variable_retrieve( _environment, _image );
+    Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
+    Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
+
+    ef936x_put_image( _environment, image->realName, x->realName, y->realName );
 
 }

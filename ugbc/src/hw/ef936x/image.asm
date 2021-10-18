@@ -29,7 +29,7 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                          IMAGES ROUTINE FOR 6847                            *
+;*                          IMAGES ROUTINE FOR OLIVETTI PC128 PRODEST          *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
@@ -41,9 +41,163 @@ IMAGEW EQU $45
 IMAGEH EQU $46
 IMAGEH2 EQU $47
 
-; ----------------------------------------------------------------------------
-; - Put image on bitmap
-; ----------------------------------------------------------------------------
+;--------------
 
 PUTIMAGE
+    LDA CURRENTMODE
+    CMPA #0
+    BNE PUTIMAGE0X
+    JMP PUTIMAGE0
+PUTIMAGE0X
+    CMPA #1
+    BNE PUTIMAGE1X
+    JMP PUTIMAGE1
+PUTIMAGE1X
+    CMPA #2
+    BNE PUTIMAGE2X
+    JMP PUTIMAGE2
+PUTIMAGE2X
+    CMPA #3
+    BNE PUTIMAGE3X
+    JMP PUTIMAGE3
+PUTIMAGE3X
+    CMPA #4
+    BNE PUTIMAGE4X
+    JMP PUTIMAGE4
+PUTIMAGE4X
+    RTS
+
+PUTIMAGE1
+PUTIMAGE2
+PUTIMAGE3
+PUTIMAGE4
+    RTS
+
+PUTIMAGE0
+
+    PSHS Y
+
+    LDX BITMAPADDRESS
+
+    ANDCC #$FE
+    LDD <IMAGEY
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+
+    LSLB
+    ROLA
+
+    TFR D, Y
+
+    ANDCC #$FE
+    LDD <IMAGEY
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+
+    LEAY D, Y
+    TFR Y, D
+    LEAX D, X
+
+    ANDCC #$FE
+    LDD <IMAGEX
+    LSRA
+    RORB
+    LSRA
+    RORB
+    LSRA
+    RORB
+    LEAX D, X
+
+    PULS Y
+
+    LDA ,Y
+    LSRA
+    LSRA
+    LSRA
+    STA <IMAGEW
+    LDA 1,Y
+    STA <IMAGEH
+    STA <IMAGEH2
+
+    LEAY 2,Y
+
+    LDA <IMAGEW
+    LDB <IMAGEH
+    PSHS X,D
+
+    LDA $a7c0
+    ORA #$01
+    STA $a7c0
+
+    LDB <IMAGEW
+    DECB
+PUTIMAGE2L1
+    LDA B,Y
+    STA B,X
+    DECB
+    CMPB #0
+    BGE PUTIMAGE2L1
+
+    LDB <IMAGEW
+    LEAY B, Y
+
+    LDB CURRENTSL
+    LEAX B, X
+
+    DEC <IMAGEH
+    LDB <IMAGEH
+    CMPB #0
+    BEQ PUTIMAGECOMMONE2
+
+    LDB <IMAGEW
+    DECB
+    JMP PUTIMAGE2L1
+
+PUTIMAGECOMMONE2
+
+    PULS X,D
+
+    STA <IMAGEW
+    STB <IMAGEH
+
+    LDA $a7c0
+    ANDA #$fe
+    STA $a7c0
+
+    LDB <IMAGEW
+    DECB
+PUTIMAGE2L12
+    LDA B,Y
+    STA B,X
+    DECB
+    CMPB #0
+    BGE PUTIMAGE2L12
+
+    LDB <IMAGEW
+    LEAY B, Y
+
+    LDB CURRENTSL
+    LEAX B, X
+
+    DEC <IMAGEH
+    LDB <IMAGEH
+    CMPB #0
+    BEQ PUTIMAGECOMMONE
+
+    LDB <IMAGEW
+    DECB
+    JMP PUTIMAGE2L12
+
+PUTIMAGECOMMONE
     RTS
