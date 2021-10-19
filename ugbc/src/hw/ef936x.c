@@ -871,11 +871,11 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
         CRITICAL_IMAGE_CONVERTER_INVALID_HEIGHT( _height );
     }
 
-    int colorUsed;
-
     if ( ! commonPalette ) {
 
-        RGBi * palette = malloc( sizeof( RGBi ) * MAX_PALETTE );
+        int colorUsed;
+
+        RGBi * palette = malloc( sizeof(SYSTEM_PALETTE) );
 
         colorUsed = extract_color_palette(_source, _width, _height, palette, MAX_PALETTE);
 
@@ -948,7 +948,7 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
             int colorIndex = 0;
 
             int minDistance = 9999;
-            for( int i=0; i<colorUsed; ++i ) {
+            for( int i=0; i<sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++i ) {
                 int distance = calculate_distance(commonPalette[i], rgb );
                 if ( distance < minDistance ) {
                     minDistance = distance;
