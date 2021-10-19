@@ -76,7 +76,7 @@ void target_initialization( Environment * _environment ) {
     variable_import( _environment, "FREE_STRING", VT_WORD );
     variable_global( _environment, "FREE_STRING" );    
 
-    outline0("ORG $6000");
+    outline0("ORG $3000");
     outline0("LDS #$9FFF");
     deploy( vars, src_hw_pc128op_vars_asm);
     deploy( startup, src_hw_pc128op_startup_asm);
@@ -105,7 +105,7 @@ void target_linkage( Environment * _environment ) {
         sprintf(executableName, "%s", "asm6809" );
     }
 
-    sprintf( commandLine, "%s -o %s -B -e 10240 %s",
+    sprintf( commandLine, "%s -l main.lst -o %s -B -e 10240 %s",
         executableName,
         _environment->exeFileName, 
         _environment->asmFileName );

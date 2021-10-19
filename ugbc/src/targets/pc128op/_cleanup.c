@@ -124,9 +124,9 @@ int convertbintok7(Environment * _environment)
 	// 	);
 	// 	return -1;
 	// }
-	unsigned short start=0x6000;
+	unsigned short start=0x3000;
 	unsigned short size;
-	unsigned short runaddr=0x6000;
+	unsigned short runaddr=0x3000;
 	FILE *fr,*fw;
 	char nome[12];
 	char nomecod[12];
