@@ -1400,26 +1400,35 @@ typedef struct _Environment {
 
 #define deploy(s,e)  \
         if ( ! _environment->deployed.s ) { \
+            int ignoreEmptyProcedure = _environment->emptyProcedure; \
+            _environment->emptyProcedure = 0; \
             cpu_jump( _environment, #s "_after" ); \
             outembedded0(e); \
             cpu_label( _environment, #s "_after" ); \
+            _environment->emptyProcedure = ignoreEmptyProcedure; \
             _environment->deployed.s = 1; \
         }
 
 #define deploy_with_vars(s,e,v)  \
         if ( ! _environment->deployed.s ) { \
+            int ignoreEmptyProcedure = _environment->emptyProcedure; \
+            _environment->emptyProcedure = 0; \
             cpu_jump( _environment, #s "_after" ); \
             outembedded0(e); \
             v(_environment);\
             cpu_label( _environment, #s "_after" ); \
+            _environment->emptyProcedure = ignoreEmptyProcedure; \
             _environment->deployed.s = 1; \
         }
 
 #define deploy_embedded(s,e)  \
         if ( ! _environment->deployed.embedded.s ) { \
+            int ignoreEmptyProcedure = _environment->emptyProcedure; \
+            _environment->emptyProcedure = 0; \
             cpu_jump( _environment, #s "_after" ); \
             outembedded0(e); \
             cpu_label( _environment, #s "_after" ); \
+            _environment->emptyProcedure = ignoreEmptyProcedure; \
             _environment->deployed.embedded.s = 1; \
         }
 
