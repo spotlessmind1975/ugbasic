@@ -952,7 +952,7 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
                 int distance = calculate_distance(commonPalette[i], rgb );
                 if ( distance < minDistance ) {
                     minDistance = distance;
-                    colorIndex = i;
+                    colorIndex = commonPalette[i].index;
                 }
             }
 
