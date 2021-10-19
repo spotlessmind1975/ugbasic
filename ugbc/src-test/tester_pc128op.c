@@ -38,7 +38,7 @@
  * CODE SECTION
  ****************************************************************************/
 
-#ifdef __pc128op_
+#ifdef __pc128op__
 
 void create_test( char *_name, void (*_payload)(TestEnvironment *), int (*_tester)(TestEnvironment *) ) {
 
