@@ -562,9 +562,9 @@ void ef936x_initialization( Environment * _environment ) {
     variable_import( _environment, "CURRENTTILESHEIGHT", VT_BYTE );
     variable_global( _environment, "CURRENTTILESHEIGHT" );
 
-    SCREEN_MODE_DEFINE( BITMAP_MODE_40_COLUMN, 1, 320, 200, 4, "BITMAP MODE 40 COLUMN" );
+    SCREEN_MODE_DEFINE( BITMAP_MODE_BITMAP_4, 1, 320, 200, 4, "BITMAP MODE BITMAP 4" );
+    SCREEN_MODE_DEFINE( BITMAP_MODE_40_COLUMN, 1, 320, 200, 2, "BITMAP MODE 40 COLUMN" );
     // SCREEN_MODE_DEFINE( BITMAP_MODE_80_COLUMN, 1, 640, 200, 2, "BITMAP MODE 80 COLUMN" );
-    // SCREEN_MODE_DEFINE( BITMAP_MODE_BITMAP_4, 1, 320, 200, 4, "BITMAP MODE BITMAP 4" );
     // SCREEN_MODE_DEFINE( BITMAP_MODE_BITMAP_16, 1, 160, 200, 16, "BITMAP MODE BITMAP 16" );
     // SCREEN_MODE_DEFINE( BITMAP_MODE_PAGE, 1, 320, 200, 4, "BITMAP MODE PAGE" );
 
@@ -875,7 +875,7 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
 
         int colorUsed;
 
-        RGBi * palette = malloc( sizeof(SYSTEM_PALETTE) );
+        RGBi * palette = malloc( MAX_PALETTE * sizeof(RGBi) );
 
         colorUsed = extract_color_palette(_source, _width, _height, palette, MAX_PALETTE);
 
@@ -999,16 +999,153 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
 
 }
 
+static Variable * ef936x_image_converter_multicolor_mode4( Environment * _environment, char * _source, int _width, int _height ) {
+
+    if ( _width % 8 ) {
+        CRITICAL_IMAGE_CONVERTER_INVALID_WIDTH( _width );
+    }
+
+    if ( _height % 8 ) {
+        CRITICAL_IMAGE_CONVERTER_INVALID_HEIGHT( _height );
+    }
+
+    int i, j, k;
+
+    if ( ! commonPalette ) {
+
+        RGBi * palette = malloc( MAX_PALETTE * sizeof(RGBi) );
+
+        int colorUsed = extract_color_palette(_source, _width, _height, palette, MAX_PALETTE);
+
+        if (colorUsed > 4) {
+            CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
+        }
+
+        for( i=0; i<colorUsed; ++i ) {
+            int minDistance = 0xffff;
+            int colorIndex = 0;
+            for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
+                int distance = calculate_distance(SYSTEM_PALETTE[j], palette[i]);
+                // printf("%d <-> %d [%d] = %d [min = %d]\n", i, j, SYSTEM_PALETTE[j].index, distance, minDistance );
+                if (distance < minDistance) {
+                    // printf(" candidated...\n" );
+                    for( k=0; k<i; ++k ) {
+                        if ( palette[k].index == SYSTEM_PALETTE[j].index ) {
+                            // printf(" ...used!\n" );
+                            break;
+                        }
+                    }
+                    if ( k>=i ) {
+                        // printf(" ...ok! (%d)\n", SYSTEM_PALETTE[j].index );
+                        minDistance = distance;
+                        colorIndex = j;
+                    }
+                }
+            }
+            palette[i].index = SYSTEM_PALETTE[colorIndex].index;
+            // printf("%d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
+        }
+
+        commonPalette = palette;
+
+    }
+
+    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
+ 
+    int bufferSize = 2 + 2 * ( ( _width >> 3 ) * _height ) + 8;
+    
+    char * buffer = malloc ( bufferSize );
+    memset( buffer, 0, bufferSize );
+
+    // Position of the pixel in the original image
+    int image_x, image_y;
+    
+    // Position of the pixel, in terms of tiles
+    int tile_x, tile_y;
+    
+    // Position of the pixel, in terms of offset and bitmask
+    int offset, offsetc, bitmask;
+
+    // Color of the pixel to convert
+    RGBi rgb;
+
+    *(buffer) = _width;
+    *(buffer+1) = _height;
+
+    // Loop for all the source surface.
+    for (image_y = 0; image_y < _height; ++image_y) {
+        for (image_x = 0; image_x < _width; ++image_x) {
+
+            // Take the color of the pixel
+            rgb.red = *_source;
+            rgb.green = *(_source + 1);
+            rgb.blue = *(_source + 2);
+
+            int minDistance = 0xffff;
+            int colorIndex = 0;
+
+            colorIndex = 0;
+            for( i=0; i<4; ++i ) {
+                int distance = calculate_distance(commonPalette[i], rgb);
+                if ( minDistance > distance ) {
+                    minDistance = distance;
+                    colorIndex = i;
+                }
+            }
+            // printf( "%1.1x", colorIndex );
+
+            bitmask = 1 << ( 7 - (image_x & 0x7) );
+
+            *(buffer + 2 + ( image_x >> 3 ) + ( ( _width >> 3 ) * image_y ) ) |= ( ( colorIndex & 0x02 ) == 0x02 ) ? bitmask : 0;
+            *(buffer + 2 + ( ( _width >> 3 ) * _height ) + ( ( image_x >> 3 ) + ( _width >> 3 ) * image_y ) ) |= ( ( colorIndex & 0x01 ) == 0x01 ) ? bitmask : 0;
+
+            _source += 3;
+
+        }
+
+        // printf("\n" );
+    }
+
+    RGBi * color = &SYSTEM_PALETTE[commonPalette[0].index];
+    *(buffer + 2 + 2 * ( ( _width >> 3 ) * _height ) + 1 ) = ( color->green & 0xf0 ) | ( ( color->red & 0xf0 ) >> 4 );
+    *(buffer + 2 + 2 * ( ( _width >> 3 ) * _height ) ) = ( ( color->blue & 0xf0 ) >> 4 );
+    
+    color = &SYSTEM_PALETTE[commonPalette[1].index];
+    *(buffer + 2 + 2 * ( ( _width >> 3 ) * _height ) + 3 ) = ( color->green & 0xf0 ) | ( ( color->red & 0xf0 ) >> 4 );
+    *(buffer + 2 + 2 * ( ( _width >> 3 ) * _height ) + 2 ) = ( ( color->blue & 0xf0 ) >> 4 );
+
+    color = &SYSTEM_PALETTE[commonPalette[2].index];
+    *(buffer + 2 + 2 * ( ( _width >> 3 ) * _height ) + 5 ) = ( color->green & 0xf0 ) | ( ( color->red & 0xf0 ) >> 4 );
+    *(buffer + 2 + 2 * ( ( _width >> 3 ) * _height ) + 4 ) = ( ( color->blue & 0xf0 ) >> 4 );
+
+    color = &SYSTEM_PALETTE[commonPalette[3].index];
+    *(buffer + 2 + 2 * ( ( _width >> 3 ) * _height ) + 7 ) = ( color->green & 0xf0 ) | ( ( color->red & 0xf0 ) >> 4 );
+    *(buffer + 2 + 2 * ( ( _width >> 3 ) * _height ) + 6 ) = ( ( color->blue & 0xf0 ) >> 4 );
+
+    // for(i=0; i<4; ++i ) {
+    //     printf( "%1.1x = %2.2x\n", i, palette[i].index );
+    // }
+
+    // printf("\n" );
+    // printf("\n" );
+
+    variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
+
+    return result;
+
+}
+
 Variable * ef936x_image_converter( Environment * _environment, char * _data, int _width, int _height, int _mode ) {
 
     switch( _mode ) {
         case BITMAP_MODE_40_COLUMN:
             return ef936x_image_converter_multicolor_mode_standard( _environment, _data, _width, _height );
-        case BITMAP_MODE_80_COLUMN:
         case BITMAP_MODE_BITMAP_4:
+            return ef936x_image_converter_multicolor_mode4( _environment, _data, _width, _height );
+        case BITMAP_MODE_80_COLUMN:
         case BITMAP_MODE_BITMAP_16:
         case BITMAP_MODE_PAGE:
-            CRITICAL_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
+            // CRITICAL_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
             break;
     }
 

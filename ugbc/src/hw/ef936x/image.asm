@@ -68,12 +68,12 @@ PUTIMAGE4X
     RTS
 
 PUTIMAGE1
-PUTIMAGE2
 PUTIMAGE3
 PUTIMAGE4
     RTS
 
 PUTIMAGE0
+PUTIMAGE2
 
     PSHS Y
 
@@ -193,11 +193,49 @@ PUTIMAGE2L12
     DEC <IMAGEH
     LDB <IMAGEH
     CMPB #0
-    BEQ PUTIMAGECOMMONE
+    BEQ PUTIMAGECOMMONE5
 
     LDB <IMAGEW
     DECB
     JMP PUTIMAGE2L12
+
+PUTIMAGECOMMONE5
+    ; // { "BLACK", 
+    ;     { 0x00, 0x00, 0x00, 0 },        
+    LDA #0
+    ; LSLA
+    STA $A7DB
+    LDD ,Y
+    LEAY 2,Y
+    STB $A7DA
+    STA $A7DA
+    ; // { "WHITE", 
+    ;     { 0xff, 0xff, 0xff, 1 },
+    ; LDA #1
+    ; LSLA
+    ; STA $A7DB
+    LDD ,Y
+    LEAY 2,Y
+    STB $A7DA
+    STA $A7DA
+    ; // { "RED", 
+    ;     { 0x88, 0x00, 0x00, 2 },
+    ; LDA #2
+    ; LSLA
+    ; STA $A7DB
+    LDD ,Y
+    LEAY 2,Y
+    STB $A7DA
+    STA $A7DA
+    ; // { "CYAN", 
+    ;     { 0xaa, 0xff, 0xe6, 3 },
+    ; LDA #3
+    ; LSLA
+    ; STA $A7DB
+    LDD ,Y
+    LEAY 2,Y
+    STB $A7DA
+    STA $A7DA
 
 PUTIMAGECOMMONE
     RTS

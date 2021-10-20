@@ -61,7 +61,6 @@ CLS4X
 
 CLS0
 CLS1
-CLS2
 CLS3
 CLS4
 CLSG
@@ -100,5 +99,36 @@ CLSGL1
     CMPX #0
     BNE CLSGL1
     RTS
+
+CLS2
+
+    LDA _PAPER
+    ANDA #$03
+    LDB $55
+    MUL
+    ANDA #$03
+    STA <MATHPTR5
+
+    LDY BITMAPADDRESS
+    LDX CURRENTFRAMESIZE
+CLSGL2
+
+    LDA $a7c0
+    ORA #$01
+    STA $a7c0
+
+    LDA <MATHPTR5
+    STA , Y
+
+    LDA $a7c0
+    ANDA #$fe
+    STA $a7c0
+
+    LDA <MATHPTR5
+    STA , Y+
+
+    LEAX -1, X
+    CMPX #0
+    BNE CLSGL2
 
     RTS
