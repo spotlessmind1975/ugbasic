@@ -114,6 +114,10 @@ TEXTAT4X
 TEXTATCALCPOS
     PSHS D,Y
 
+    LDA CURRENTMODE
+    CMPA #3
+    BEQ TEXTATCALCPOS3
+
     LDX BITMAPADDRESS
     ANDCC #$FE
     LDB <YCURSYS
@@ -161,6 +165,32 @@ TEXTATCALCPOS
     LDB <XCURSYS
     LDA #0
     LEAX D, X
+
+    PULS D,Y
+
+    RTS
+
+TEXTATCALCPOS3
+
+    LDB <(YCURSYS)
+    LDA #0
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    ADDD #PLOTVBASE
+    TFR D, X
+    LDD , X
+    TFR D, X
+
+    LDB <(XCURSYS)
+    LDA #0
+    LSRB
+    LEAX B, X
 
     PULS D,Y
 
@@ -347,7 +377,6 @@ TEXTATBMSP04X
 
 TEXTATBMSP00
 TEXTATBMSP01
-TEXTATBMSP03
 TEXTATBMSP04
 
 TEXTATBMSP0L1
@@ -419,6 +448,7 @@ TEXTATBMSP0L1M2
     JMP TEXTATBMSP0L1
 
 TEXTATBMSP0L1X
+    LDA #1
     JMP TEXTATBMSP0E
 
 TEXTATBMSP02
@@ -472,13 +502,104 @@ TEXTATBMSP02L2DONE
     JMP TEXTATBMSP02L1
 
 TEXTATBMSP02L1X
+    LDA #1
     JMP TEXTATBMSP0E
+
+;
+
+TEXTATBMSP03
+
+    LDA ,Y
+    STA <MATHPTR0
+
+    PSHS U
+    LDU #2
+
+TEXTATBMSP03L1
+
+    LDA <MATHPTR0
+    ANDA #$03
+
+    PSHS Y
+    LDY #TEXTATBITMASK
+    LDB A, Y
+    LDA _PEN
+    ANDA #$0F
+    MUL
+    TFR B, A
+    PULS Y
+
+    LDB $a7c0
+    ORB #$01
+    STB $a7c0
+
+    STA ,X
+
+    LDA <MATHPTR0
+    LSRA
+    LSRA
+    STA <MATHPTR0
+    ANDA #$03
+
+    PSHS Y
+    LDY #TEXTATBITMASK
+    LDB A, Y
+    LDA _PEN
+    ANDA #$0F
+    MUL
+    TFR B, A
+    PULS Y
+
+    LDB $a7c0
+    ANDB #$fe
+    STB $a7c0
+
+    STA ,X+
+
+    LDA <MATHPTR0
+    LSRA
+    LSRA
+    STA <MATHPTR0
+
+    LEAU -1, U
+
+    CMPU #0
+    BNE TEXTATBMSP03L1
+
+    LEAX -2, X 
+
+    PULS U
+    
+    LDA CURRENTSL
+    LEAX A, X 
+
+    LEAY 1, Y
+
+    LEAU 1, U
+    CMPU #8
+    BEQ TEXTATBMSP03L1X
+    JMP TEXTATBMSP03
+
+TEXTATBMSP03L1X
+    LDA #2
+    JMP TEXTATBMSP0E
+
+;
 
 TEXTATBMSP0E
 
     PULS D,Y,X
 
+    LDA CURRENTMODE
+    CMPA #3
+    BEQ TEXTATBMSP0E3
+
     LEAX 1, X
+
+    JMP TEXTATBMINCX
+
+TEXTATBMSP0E3
+    LEAX 2, X
 
     JMP TEXTATBMINCX
 
@@ -1049,3 +1170,6 @@ TEXTATFONT
    fcb $e7, $e7, $e7, $07, $07, $ff, $ff, $ff
    fcb $0f, $0f, $0f, $0f, $ff, $ff, $ff, $ff
    fcb $0f, $0f, $0f, $0f, $f0, $f0, $f0, $f0
+
+TEXTATBITMASK
+    fcb $00, $10, $01, $11

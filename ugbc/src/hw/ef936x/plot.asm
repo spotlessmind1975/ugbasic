@@ -26,36 +26,6 @@ PLOTCLIP4
     JMP PLOTP
 PLOTCLIP5
 
-PLOTMODE
-    LDA CURRENTMODE
-    CMPA #0
-    BNE PLOT0X
-    JMP PLOT0
-PLOT0X
-    CMPA #1
-    BNE PLOT1X
-    JMP PLOT1
-PLOT1X
-    CMPA #2
-    BNE PLOT2X
-    JMP PLOT2
-PLOT2X
-    CMPA #3
-    BNE PLOT3X
-    JMP PLOT3
-PLOT3X
-    CMPA #4
-    BNE PLOT4X
-    JMP PLOT4
-PLOT4X
-    RTS
-
-PLOT0
-PLOT1
-PLOT2
-PLOT3
-PLOT4
-
     LDX BITMAPADDRESS
 
     ANDCC #$FE
@@ -88,6 +58,35 @@ PLOT4
     TFR Y, D
     LEAX D, X
 
+PLOTMODE
+    LDA CURRENTMODE
+    CMPA #0
+    BNE PLOT0X
+    JMP PLOT0
+PLOT0X
+    CMPA #1
+    BNE PLOT1X
+    JMP PLOT1
+PLOT1X
+    CMPA #2
+    BNE PLOT2X
+    JMP PLOT2
+PLOT2X
+    CMPA #3
+    BNE PLOT3X
+    JMP PLOT3
+PLOT3X
+    CMPA #4
+    BNE PLOT4X
+    JMP PLOT4
+PLOT4X
+    RTS
+
+PLOT0
+PLOT1
+PLOT2
+PLOT4
+
     ANDCC #$FE
     LDD <PLOTX
     LSRA
@@ -105,6 +104,53 @@ PLOT4
 
     LDU #PLOTANDBIT
     LEAU B, U
+
+    JMP PLOTCOMMON
+
+PLOT3
+
+    LDD <(PLOTY)
+    LSLB
+    ROLA
+    ADDD #PLOTVBASE
+    TFR D, X
+    LDD , X
+    TFR D, X
+
+    LDB <(PLOTX+1)
+    LSRB
+    LSRB
+    LEAX B, X
+
+    LDB <(PLOTX+1)
+    ANDB #$03
+    COMB
+    LDY #3
+    LEAY B, Y
+    TFR Y, D
+    LSRB
+
+    ANDB #$01
+    CMPB #$01
+    BEQ PLOT3PAGE1
+
+PLOT3PAGE0
+
+    LDA $a7c0
+    ORA #$01
+    STA $a7c0
+
+    JMP PLOT3PAGEF
+
+PLOT3PAGE1
+
+    LDA $a7c0
+    ANDA #$fe
+    STA $a7c0
+
+    JMP PLOT3PAGEF
+
+PLOT3PAGEF
 
     JMP PLOTCOMMON
 
@@ -152,10 +198,10 @@ PLOTD2X
     BNE PLOTD3X
     JMP PLOTD3
 PLOTD3X
+    JMP PLOTP
 
 PLOTD0
 PLOTD1
-PLOTD3
 PLOTD4
 
     ANDCC #$FE
@@ -249,6 +295,44 @@ PLOTD24
 PLOTD25
     JMP PLOTP                  ;skip the erase-point section
 
+PLOTD3
+
+    LDA _PEN
+    ANDA #$0F
+    STA <MATHPTR5
+
+    ;---------
+    ;set point
+    ;---------
+
+    LDB <(PLOTX+1)
+    ANDB #$01
+    CMPB #$01
+    BEQ PLOTD3LO
+
+PLOTD3HI
+
+    LDA <MATHPTR5
+    ASLA
+    ASLA
+    ASLA
+    ASLA
+    STA <MATHPTR5
+    LDA , X
+    ORA <MATHPTR5
+    STA , X
+    JMP PLOTD3F
+
+PLOTD3LO
+
+    LDA , X
+    ORA <MATHPTR5
+    STA , X
+    JMP PLOTD3F
+
+PLOTD3F
+    JMP PLOTP                  ;skip the erase-point section
+
     ;-----------
     ;erase point
     ;-----------
@@ -320,32 +404,22 @@ PLOTANDBIT
     fcb %11111101
     fcb %11111110
 
-PLOTORBIT40
-    fcb %00000000
-    fcb %00000000
-    fcb %00000000
-    fcb %00000000
-
-PLOTORBIT41
-    fcb %01000000
-    fcb %00010000
-    fcb %00000100
+PLOTORBIT4
     fcb %00000001
-
-PLOTORBIT42
-    fcb %10000000
-    fcb %00100000
-    fcb %00001000
+    fcb %00010000
     fcb %00000010
-
-PLOTORBIT43
-    fcb %11000000
-    fcb %00110000
-    fcb %00001100
-    fcb %00000011
+    fcb %00100000
+    fcb %00000100
+    fcb %01000000
+    fcb %00001000
+    fcb %10000000
 
 PLOTANDBIT4
-    fcb %00111111
-    fcb %11001111
-    fcb %11110011
-    fcb %11111100
+    fcb %11111110
+    fcb %11101111
+    fcb %11111101
+    fcb %11011111
+    fcb %11111011
+    fcb %10111111
+    fcb %11110111
+    fcb %01111111
