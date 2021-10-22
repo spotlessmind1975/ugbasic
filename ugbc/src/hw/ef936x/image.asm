@@ -68,7 +68,6 @@ PUTIMAGE4X
     RTS
 
 PUTIMAGE1
-PUTIMAGE3
 PUTIMAGE4
     RTS
 
@@ -136,6 +135,44 @@ PUTIMAGE2
     LDB <IMAGEH
     PSHS X,D
 
+    JMP PUTIMAGE2Y
+
+PUTIMAGE3
+
+    PSHS Y
+
+    LDD <(IMAGEY)
+    LSLB
+    ROLA
+    ADDD #PLOTVBASE
+    TFR D, X
+    LDD , X
+    TFR D, X
+
+    LDB <(IMAGEX+1)
+    LSRB
+    LSRB
+    LEAX B, X
+
+    PULS Y
+
+    LDA ,Y
+    LSRA
+    LSRA
+    STA <IMAGEW
+    LDA 1,Y
+    STA <IMAGEH
+    STA <IMAGEH2
+
+    LEAY 2,Y
+
+    LDA <IMAGEW
+    LDB <IMAGEH
+    PSHS X,D
+
+    JMP PUTIMAGE2Y
+
+PUTIMAGE2Y
     LDA $a7c0
     ORA #$01
     STA $a7c0
@@ -200,42 +237,29 @@ PUTIMAGE2L12
     JMP PUTIMAGE2L12
 
 PUTIMAGECOMMONE5
-    ; // { "BLACK", 
-    ;     { 0x00, 0x00, 0x00, 0 },        
-    LDA #0
-    ; LSLA
-    STA $A7DB
-    LDD ,Y
-    LEAY 2,Y
-    STB $A7DA
-    STA $A7DA
-    ; // { "WHITE", 
-    ;     { 0xff, 0xff, 0xff, 1 },
-    ; LDA #1
-    ; LSLA
-    ; STA $A7DB
-    LDD ,Y
-    LEAY 2,Y
-    STB $A7DA
-    STA $A7DA
-    ; // { "RED", 
-    ;     { 0x88, 0x00, 0x00, 2 },
-    ; LDA #2
-    ; LSLA
-    ; STA $A7DB
-    LDD ,Y
-    LEAY 2,Y
-    STB $A7DA
-    STA $A7DA
-    ; // { "CYAN", 
-    ;     { 0xaa, 0xff, 0xe6, 3 },
-    ; LDA #3
-    ; LSLA
-    ; STA $A7DB
-    LDD ,Y
-    LEAY 2,Y
-    STB $A7DA
-    STA $A7DA
+    LDA CURRENTMODE
+    CMPA #3
+    BEQ PUTIMAGECOMMONE53
+    LDU #4
+    JMP PUTIMAGECOMMONE50
+PUTIMAGECOMMONE53
+    LDU #16
+    JMP PUTIMAGECOMMONE50
+
+PUTIMAGECOMMONE50
+;     ; // { "BLACK", 
+;     ;     { 0x00, 0x00, 0x00, 0 },        
+;     LDA #0
+;     ; LSLA
+;     STA $A7DB
+; PUTIMAGECOMMONE50L1
+;     LDD ,Y
+;     LEAY 2,Y
+;     STB $A7DA
+;     STA $A7DA
+;     LEAU -1, U
+;     CMPU #$FFFF
+;     BNE PUTIMAGECOMMONE50L1
 
 PUTIMAGECOMMONE
     RTS

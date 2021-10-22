@@ -1135,6 +1135,130 @@ static Variable * ef936x_image_converter_multicolor_mode4( Environment * _enviro
 
 }
 
+static Variable * ef936x_image_converter_multicolor_mode16( Environment * _environment, char * _source, int _width, int _height ) {
+
+    if ( _width % 8 ) {
+        CRITICAL_IMAGE_CONVERTER_INVALID_WIDTH( _width );
+    }
+
+    if ( _height % 8 ) {
+        CRITICAL_IMAGE_CONVERTER_INVALID_HEIGHT( _height );
+    }
+
+    int i, j, k;
+
+    if ( ! commonPalette ) {
+
+        RGBi * palette = malloc( MAX_PALETTE * sizeof(RGBi) );
+
+        int colorUsed = extract_color_palette(_source, _width, _height, palette, MAX_PALETTE);
+
+        if (colorUsed > 16) {
+            CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
+        }
+
+        for( i=0; i<colorUsed; ++i ) {
+            int minDistance = 0xffff;
+            int colorIndex = 0;
+            for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
+                int distance = calculate_distance(SYSTEM_PALETTE[j], palette[i]);
+                // printf("%d <-> %d [%d] = %d [min = %d]\n", i, j, SYSTEM_PALETTE[j].index, distance, minDistance );
+                if (distance < minDistance) {
+                    // printf(" candidated...\n" );
+                    for( k=0; k<i; ++k ) {
+                        if ( palette[k].index == SYSTEM_PALETTE[j].index ) {
+                            // printf(" ...used!\n" );
+                            break;
+                        }
+                    }
+                    if ( k>=i ) {
+                        // printf(" ...ok! (%d)\n", SYSTEM_PALETTE[j].index );
+                        minDistance = distance;
+                        colorIndex = j;
+                    }
+                }
+            }
+            palette[i].index = SYSTEM_PALETTE[colorIndex].index;
+            // printf("%d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
+        }
+
+        commonPalette = palette;
+
+    }
+
+    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
+ 
+    int bufferSize = 2 + 2 * ( ( _width >> 2 ) * _height ) + 16 * 2;
+    
+    char * buffer = malloc ( bufferSize );
+    memset( buffer, 0, bufferSize );
+
+    // Position of the pixel in the original image
+    int image_x, image_y;
+    
+    // Position of the pixel, in terms of tiles
+    int tile_x, tile_y;
+    
+    // Position of the pixel, in terms of offset and bitmask
+    int offset, offsetc, bitmask;
+
+    // Color of the pixel to convert
+    RGBi rgb;
+
+    *(buffer) = _width;
+    *(buffer+1) = _height;
+
+    // Loop for all the source surface.
+    for (image_y = 0; image_y < _height; ++image_y) {
+        for (image_x = 0; image_x < _width; ++image_x) {
+
+            // Take the color of the pixel
+            rgb.red = *_source;
+            rgb.green = *(_source + 1);
+            rgb.blue = *(_source + 2);
+
+            int minDistance = 0xffff;
+            int colorIndex = 0;
+
+            colorIndex = 0;
+            for( i=0; i<16; ++i ) {
+                int distance = calculate_distance(commonPalette[i], rgb);
+                if ( minDistance > distance ) {
+                    minDistance = distance;
+                    colorIndex = i;
+                }
+            }
+            // printf( "%1.1x", colorIndex );
+
+            bitmask = colorIndex << ( 4 * ( 1 - (image_x & 0x1) ) );
+
+            printf( "%2.2x", bitmask );
+
+            if ( ( ( image_x & 0x03 ) < 0x02 ) ) {
+                *(buffer + 2 + ( image_x >> 2 ) + ( ( _width >> 2 ) * image_y ) ) |= bitmask;
+            } else {
+                *(buffer + 2 + ( ( _width >> 2 ) * _height ) + ( ( image_x >> 2 ) + ( _width >> 2 ) * image_y ) ) |= bitmask;
+            }
+
+            _source += 3;
+
+        }
+
+        printf("\n" );
+    }
+
+    for (i=0; i<16; ++i ) {
+        RGBi * color = &SYSTEM_PALETTE[commonPalette[i].index];
+        *(buffer + 2 + 2 * ( ( _width >> 2 ) * _height ) + 2*i + 1 ) = ( color->green & 0xf0 ) | ( ( color->red & 0xf0 ) >> 4 );
+        *(buffer + 2 + 2 * ( ( _width >> 2 ) * _height ) + 2*i ) = ( ( color->blue & 0xf0 ) >> 4 );
+    }
+    
+    variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
+
+    return result;
+
+}
+
 Variable * ef936x_image_converter( Environment * _environment, char * _data, int _width, int _height, int _mode ) {
 
     switch( _mode ) {
@@ -1144,6 +1268,7 @@ Variable * ef936x_image_converter( Environment * _environment, char * _data, int
             return ef936x_image_converter_multicolor_mode4( _environment, _data, _width, _height );
         case BITMAP_MODE_80_COLUMN:
         case BITMAP_MODE_BITMAP_16:
+            return ef936x_image_converter_multicolor_mode16( _environment, _data, _width, _height );
         case BITMAP_MODE_PAGE:
             // CRITICAL_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
             break;
