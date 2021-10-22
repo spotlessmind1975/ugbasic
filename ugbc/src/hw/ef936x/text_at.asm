@@ -510,7 +510,31 @@ TEXTATBMSP02L1X
 TEXTATBMSP03
 
     LDA ,Y
+
+    PSHS Y,A
+    LDY #TEXTATFLIP
+    ANDA #$0F
+    LEAY A, Y
+    LDA , Y
+    ASLA
+    ASLA
+    ASLA
+    ASLA
     STA <MATHPTR0
+    PULS Y,A
+
+    PSHS Y,A
+    LDY #TEXTATFLIP
+    ANDA #$F0
+    LSRA
+    LSRA
+    LSRA
+    LSRA
+    LEAY A, Y
+    LDA , Y
+    ORA <MATHPTR0
+    STA <MATHPTR0
+    PULS Y,A
 
     PSHS U
     LDU #2
@@ -1173,3 +1197,7 @@ TEXTATFONT
 
 TEXTATBITMASK
     fcb $00, $10, $01, $11
+
+TEXTATFLIP
+    fcb $0, $8, $4, $c, $2, $a, $6, $e
+    fcb $1, $9, $5, $d, $3, $b, $7, $f
