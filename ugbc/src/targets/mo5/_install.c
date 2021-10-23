@@ -1,6 +1,3 @@
-#ifndef __UGBASICTESTER__
-#define __UGBASICTESTER__
-
 /*****************************************************************************
  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
  *****************************************************************************
@@ -35,45 +32,47 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <limits.h>
-#include <unistd.h>
-
-#include "../src/ugbc.h"
+#include "../../ugbc.h"
 
 /****************************************************************************
- * DECLARATIONS AND DEFINITIONS SECTION 
+ * CODE SECTION 
  ****************************************************************************/
 
-void test_cpu( );
-void test_variables( );
-void test_conditionals( );
-void test_loops( );
-void test_ons( );
-void test_controls( );
-void test_examples( );
-void test_print( );
+void target_install( Environment * _environment ) {
 
-#if defined( __c64__ )
-    #include "tester_c64.h"
-#elif defined( __plus4__ )
-    #include "tester_plus4.h"
-#elif defined( __atari__ )
-    #include "tester_atari.h"
-#elif defined( __atarixl__ )
-    #include "tester_atarixl.h"
-#elif defined( __zx__ )
-    #include "tester_zx.h"
-#elif defined( __d32__ )
-    #include "tester_d32.h"
-#elif defined( __d64__ )
-    #include "tester_d64.h"
-#elif defined( __pc128op__ )
-    #include "tester_pc128op.h"
-#elif defined( __mo5__ )
-    #include "tester_mo5.h"
-#endif
+    char answer;
 
-#endif
+    printf("\nYou have requested to install the chaintool for the Dragon 32 target.\n"); 
+
+    #ifdef _WIN32
+        printf("This implies that \"asm6809 assembler\"\n");
+        printf("will be downloaded from the ugBASIC site, and it will be run automatically.\n");
+        printf("The size of the self-extracting executable is of about 155 KB.n\n\n");
+
+        printf("Do you want to continue [y/N] ?");
+
+        scanf(" %c", &answer);
+
+        printf("\n\n");
+
+        if (answer == 'Y' || answer == 'y'){
+
+            mkdir("asm6809");
+            mkdir("asm6809\\bin");
+
+            printf("Downloading: asm6809 assembler\n\n");
+            system( "curl https://ugbasic.iwashere.eu/download/asm6809.exe --output asm6809\\bin\\asm6809.exe" );
+
+            printf("\n\nInstalling: asm6809 assembler\n\n");
+
+            unlink( "cc65-win32.exe" );
+
+    }
+
+    #else
+        printf("This implies that \"asm6809 assembler\"\n");
+        printf("must be installed from the standard GitHub repository:\n\n");
+        printf("https://www.6809.org.uk/git/asm6809.git/\n\n");
+    #endif
+
+}

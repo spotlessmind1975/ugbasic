@@ -3171,7 +3171,7 @@ program :
 
 void show_usage_and_exit( int _argc, char *_argv[] ) {
 
-    char version[MAX_TEMPORARY_STORAGE] = "v1.3.2-beta";
+    char version[MAX_TEMPORARY_STORAGE] = "v1.4";
 
 #if defined(__atari__) 
     char target[MAX_TEMPORARY_STORAGE] = "ATARI 400/800";
@@ -3188,7 +3188,9 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
 #elif __d64__
     char target[MAX_TEMPORARY_STORAGE] = "Dragon 64";
 #elif __pc128op__
-    char target[MAX_TEMPORARY_STORAGE] = "PC128 Olivetti Prodest";
+    char target[MAX_TEMPORARY_STORAGE] = "PC128 Olivetti Prodest / Thomson MO6";
+#elif __mo5__
+    char target[MAX_TEMPORARY_STORAGE] = "Thomson MO5";
 #elif __vic20__
     char target[MAX_TEMPORARY_STORAGE] = "Commodore VIC-20";
 #endif

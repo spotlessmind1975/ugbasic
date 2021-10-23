@@ -1,6 +1,3 @@
-#ifndef __UGBASICTESTER__
-#define __UGBASICTESTER__
-
 /*****************************************************************************
  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
  *****************************************************************************
@@ -35,45 +32,28 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <limits.h>
-#include <unistd.h>
+#include "../../ugbc.h"
 
-#include "../src/ugbc.h"
+/**
+ * @brief Emit ASM code to fill background color
+ * 
+ * This function can be called to fill the screen background with the given
+ * color. Depending on the mode selected (TILEMAP vs BITMAP) it can fill
+ * the screen in a different way.
+ * 
+ * @param _environment Current calling environment
+ * @param _color Index of color to use to fill the screen
+ */
+/* <usermanual>
+@keyword COLOR BACK
 
-/****************************************************************************
- * DECLARATIONS AND DEFINITIONS SECTION 
- ****************************************************************************/
+@target mo5
 
-void test_cpu( );
-void test_variables( );
-void test_conditionals( );
-void test_loops( );
-void test_ons( );
-void test_controls( );
-void test_examples( );
-void test_print( );
+</usermanual> */
+void back( Environment * _environment, char * _color ) {
+                    
+    paper( _environment, _color );
 
-#if defined( __c64__ )
-    #include "tester_c64.h"
-#elif defined( __plus4__ )
-    #include "tester_plus4.h"
-#elif defined( __atari__ )
-    #include "tester_atari.h"
-#elif defined( __atarixl__ )
-    #include "tester_atarixl.h"
-#elif defined( __zx__ )
-    #include "tester_zx.h"
-#elif defined( __d32__ )
-    #include "tester_d32.h"
-#elif defined( __d64__ )
-    #include "tester_d64.h"
-#elif defined( __pc128op__ )
-    #include "tester_pc128op.h"
-#elif defined( __mo5__ )
-    #include "tester_mo5.h"
-#endif
+    ef936x_cls( _environment );
 
-#endif
+}

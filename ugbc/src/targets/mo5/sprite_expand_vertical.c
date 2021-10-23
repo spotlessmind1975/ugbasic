@@ -1,6 +1,3 @@
-#ifndef __UGBASICTESTER__
-#define __UGBASICTESTER__
-
 /*****************************************************************************
  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
  *****************************************************************************
@@ -35,45 +32,42 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <limits.h>
-#include <unistd.h>
-
-#include "../src/ugbc.h"
+#include "../../ugbc.h"
 
 /****************************************************************************
- * DECLARATIONS AND DEFINITIONS SECTION 
+ * CODE SECTION 
  ****************************************************************************/
 
-void test_cpu( );
-void test_variables( );
-void test_conditionals( );
-void test_loops( );
-void test_ons( );
-void test_controls( );
-void test_examples( );
-void test_print( );
+/**
+ * @brief Emit ASM code for <b>SPRITE [int] EXPAND VERTICAL</b>
+ * 
+ * This function emits a code capable of expanding vertically a given sprite.
+ * The index of sprite is given as a direct integer.
+ * 
+ * @param _environment Current calling environment
+ * @param _sprite Index of the sprite to expand vertically (0...7)
+ */
+/* <usermanual>
+@keyword SPRITE EXPAND
+@target mo5
+</usermanual> */
+void sprite_expand_vertical( Environment * _environment, int _sprite ) {
 
-#if defined( __c64__ )
-    #include "tester_c64.h"
-#elif defined( __plus4__ )
-    #include "tester_plus4.h"
-#elif defined( __atari__ )
-    #include "tester_atari.h"
-#elif defined( __atarixl__ )
-    #include "tester_atarixl.h"
-#elif defined( __zx__ )
-    #include "tester_zx.h"
-#elif defined( __d32__ )
-    #include "tester_d32.h"
-#elif defined( __d64__ )
-    #include "tester_d64.h"
-#elif defined( __pc128op__ )
-    #include "tester_pc128op.h"
-#elif defined( __mo5__ )
-    #include "tester_mo5.h"
-#endif
+}
 
-#endif
+/**
+ * @brief Emit ASM code for <b>SPRITE [expression] EXPAND VERTICAL</b>
+ * 
+ * This function emits a code capable of expanding vertically a given sprite.
+ * The index of sprite is given as an expression.
+ * 
+ * @param _environment Current calling environment
+ * @param _sprite Expression with the index of the sprite to expand vertically (0...7)
+ */
+/* <usermanual>
+@keyword SPRITE EXPAND
+</usermanual> */
+void sprite_expand_vertical_var( Environment * _environment, char * _sprite ) {
+
+}
+

@@ -1,6 +1,3 @@
-#ifndef __UGBASICTESTER__
-#define __UGBASICTESTER__
-
 /*****************************************************************************
  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
  *****************************************************************************
@@ -35,45 +32,39 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <limits.h>
-#include <unistd.h>
-
-#include "../src/ugbc.h"
+#include "../../ugbc.h"
 
 /****************************************************************************
- * DECLARATIONS AND DEFINITIONS SECTION 
+ * CODE SECTION 
  ****************************************************************************/
 
-void test_cpu( );
-void test_variables( );
-void test_conditionals( );
-void test_loops( );
-void test_ons( );
-void test_controls( );
-void test_examples( );
-void test_print( );
+/**
+ * @brief Emit ASM code for <b>PEEK(...)</b>
+ * 
+ * This function outputs valid code to retrieve a byte from memory, 
+ * and returns it as a temporary variable. This version is valid 
+ * for use where the location to be read is an expression
+ * 
+ * @param _environment Current calling environment
+ * @param _location Expression with the location to read from.
+ * @return Variable* Temporary variable with the content of the location (1 byte).
+ */
+/* <usermanual>
+@keyword PEEK
 
-#if defined( __c64__ )
-    #include "tester_c64.h"
-#elif defined( __plus4__ )
-    #include "tester_plus4.h"
-#elif defined( __atari__ )
-    #include "tester_atari.h"
-#elif defined( __atarixl__ )
-    #include "tester_atarixl.h"
-#elif defined( __zx__ )
-    #include "tester_zx.h"
-#elif defined( __d32__ )
-    #include "tester_d32.h"
-#elif defined( __d64__ )
-    #include "tester_d64.h"
-#elif defined( __pc128op__ )
-    #include "tester_pc128op.h"
-#elif defined( __mo5__ )
-    #include "tester_mo5.h"
-#endif
+@target mo5
 
-#endif
+</usermanual> */
+Variable * peek_var( Environment * _environment, char * _location ) {
+
+    outline1("; PEEK(%s)", _location);
+
+    Variable * location = variable_retrieve_or_define( _environment, _location, VT_WORD, 0 );
+
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(result)" );
+
+    cpu6809_peek( _environment, location->realName, result->realName );
+
+    return result;
+
+}

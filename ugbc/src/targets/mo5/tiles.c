@@ -1,6 +1,3 @@
-#ifndef __UGBASICTESTER__
-#define __UGBASICTESTER__
-
 /*****************************************************************************
  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
  *****************************************************************************
@@ -35,45 +32,59 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <limits.h>
-#include <unistd.h>
-
-#include "../src/ugbc.h"
+#include "../../ugbc.h"
 
 /****************************************************************************
- * DECLARATIONS AND DEFINITIONS SECTION 
+ * CODE SECTION 
  ****************************************************************************/
 
-void test_cpu( );
-void test_variables( );
-void test_conditionals( );
-void test_loops( );
-void test_ons( );
-void test_controls( );
-void test_examples( );
-void test_print( );
+/**
+ * @brief Emit ASM code for <b>TILES AT [int]xx</b>
+ * 
+ * This function allows you to set the starting address, in memory, for the 
+ * tiles (for textual mode) and it is the version that is used when the memory 
+ * is given as a direct number (i.e.: $8400). The input parameter is decoded 
+ * and declined according to the hardware limits. So it is not said that 
+ * exactly the given address is set.
+ * 
+ * On some machine calling this instruction will define the special variable:
+ * 
+ *  * `tilees_address` (VT_ADDRESS) - the starting address of text memory
+ * 
+ * @param _environment Current calling environment
+ * @param _address Address to use
+ */
+/* <usermanual>
+@keyword TILES AT
+</usermanual> */
+void tiles_at( Environment * _environment, int _address ) {
 
-#if defined( __c64__ )
-    #include "tester_c64.h"
-#elif defined( __plus4__ )
-    #include "tester_plus4.h"
-#elif defined( __atari__ )
-    #include "tester_atari.h"
-#elif defined( __atarixl__ )
-    #include "tester_atarixl.h"
-#elif defined( __zx__ )
-    #include "tester_zx.h"
-#elif defined( __d32__ )
-    #include "tester_d32.h"
-#elif defined( __d64__ )
-    #include "tester_d64.h"
-#elif defined( __pc128op__ )
-    #include "tester_pc128op.h"
-#elif defined( __mo5__ )
-    #include "tester_mo5.h"
-#endif
+    // TODO: implementation
 
-#endif
+}
+
+/**
+ * @brief Emit ASM code for <b>TILES AT [expression]</b>
+ * 
+ * This function allows you to set the starting address, in memory, for the 
+ * tiles (for textual mode) and it is the version that is used when the memory 
+ * is given as an expression. The input parameter is decoded 
+ * and declined according to the hardware limits. So it is not said that 
+ * exactly the given address is set.
+ * 
+ * On some machine calling this instruction will define the special variable:
+ * 
+ *  * `tiles_address` (VT_ADDRESS) - the starting address of text memory
+ * 
+ * @param _environment Current calling environment
+ * @param _address Address to use
+ */
+/* <usermanual>
+@keyword TILES AT
+</usermanual> */
+void tiles_at_var( Environment * _environment, char * _address ) {
+
+    // TODO: implementation
+
+}
+

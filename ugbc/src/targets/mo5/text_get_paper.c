@@ -1,6 +1,3 @@
-#ifndef __UGBASICTESTER__
-#define __UGBASICTESTER__
-
 /*****************************************************************************
  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
  *****************************************************************************
@@ -35,45 +32,41 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <limits.h>
-#include <unistd.h>
-
-#include "../src/ugbc.h"
+#include "../../ugbc.h"
 
 /****************************************************************************
- * DECLARATIONS AND DEFINITIONS SECTION 
+ * CODE SECTION 
  ****************************************************************************/
 
-void test_cpu( );
-void test_variables( );
-void test_conditionals( );
-void test_loops( );
-void test_ons( );
-void test_controls( );
-void test_examples( );
-void test_print( );
+/**
+ * @brief Emit code for the <strong>PAPER$(...)</strong>
+ * 
+ * @param _environment 
+ * @param _color 
+ * @return Variable* 
+ */
+/* <usermanual>
+@keyword PAPER$
+</usermanual> */
+Variable * get_paper( Environment * _environment, char * _color ) {
 
-#if defined( __c64__ )
-    #include "tester_c64.h"
-#elif defined( __plus4__ )
-    #include "tester_plus4.h"
-#elif defined( __atari__ )
-    #include "tester_atari.h"
-#elif defined( __atarixl__ )
-    #include "tester_atarixl.h"
-#elif defined( __zx__ )
-    #include "tester_zx.h"
-#elif defined( __d32__ )
-    #include "tester_d32.h"
-#elif defined( __d64__ )
-    #include "tester_d64.h"
-#elif defined( __pc128op__ )
-    #include "tester_pc128op.h"
-#elif defined( __mo5__ )
-    #include "tester_mo5.h"
-#endif
+    Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_BLACK );
 
-#endif
+    Variable * result = variable_temporary( _environment, VT_DSTRING, 0 );
+
+    char resultString[MAX_TEMPORARY_STORAGE]; sprintf( resultString, "\x2 " );
+
+    variable_store_string(_environment, result->name, resultString );
+
+    cpu_dswrite( _environment, result->realName );
+
+    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
+    Variable * size = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
+    cpu_dsdescriptor( _environment, result->realName, address->realName, size->realName );
+
+    cpu_move_8bit_with_offset(_environment, color->realName, address->realName, 1 );
+        
+    return result;
+
+}
+

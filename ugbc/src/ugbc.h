@@ -1948,6 +1948,11 @@ Variable *              ypen( Environment * _environment );
     #include "hw/6809.h"
     #include "hw/ef936x.h"
     #include "hw/pc128op.h"
+#elif __mo5__ 
+    #include "../src-generated/modules_mo5.h"
+    #include "hw/6809.h"
+    #include "hw/ef936x.h"
+    #include "hw/mo5.h"
 #elif __vic20__
     #include "../src-generated/modules_vic20.h"
     #include "hw/6502.h"

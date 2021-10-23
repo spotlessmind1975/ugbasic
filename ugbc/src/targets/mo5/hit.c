@@ -1,6 +1,3 @@
-#ifndef __UGBASICTESTER__
-#define __UGBASICTESTER__
-
 /*****************************************************************************
  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
  *****************************************************************************
@@ -35,45 +32,55 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <limits.h>
-#include <unistd.h>
-
-#include "../src/ugbc.h"
+#include "../../ugbc.h"
 
 /****************************************************************************
- * DECLARATIONS AND DEFINITIONS SECTION 
+ * CODE SECTION 
  ****************************************************************************/
 
-void test_cpu( );
-void test_variables( );
-void test_conditionals( );
-void test_loops( );
-void test_ons( );
-void test_controls( );
-void test_examples( );
-void test_print( );
+/**
+ * @brief Emit ASM code for <b>= HIT([int]x)</b>
+ * 
+ * This function can be used to issue code aimed at verifying if a sprite has 
+ * had a collision with a tile. The result (0 = no collision, 1 = 
+ * collision occurred) is returned in the output variable. This function
+ * is used when a direct integer is used.
+ * 
+ * @param _environment Current calling environment
+ * @param _sprite Integer with the bitmask of the sprites
+ * @return Variable* Temporary variable with the result of hit (0 = no 
+ *                      hit, 1 = hit occurred)
+ */
+/* <usermanual>
+@keyword HIT
 
-#if defined( __c64__ )
-    #include "tester_c64.h"
-#elif defined( __plus4__ )
-    #include "tester_plus4.h"
-#elif defined( __atari__ )
-    #include "tester_atari.h"
-#elif defined( __atarixl__ )
-    #include "tester_atarixl.h"
-#elif defined( __zx__ )
-    #include "tester_zx.h"
-#elif defined( __d32__ )
-    #include "tester_d32.h"
-#elif defined( __d64__ )
-    #include "tester_d64.h"
-#elif defined( __pc128op__ )
-    #include "tester_pc128op.h"
-#elif defined( __mo5__ )
-    #include "tester_mo5.h"
-#endif
+@target mo5
+</usermanual> */
+Variable * hit_to( Environment * _environment, int _sprite ) {
 
-#endif
+    FUNCTION_STUB( VT_BYTE )
+
+}
+
+/**
+ * @brief Emit ASM code for <b>= HIT([expression])</b>
+ * 
+ * This function can be used to issue code aimed at verifying if a sprite has 
+ * had a hit with another sprite. The result (0 = no collision, 1 = 
+ * collision occurred) is returned in the output variable. This function
+ * is used when an expression is used.
+ * 
+ * @param _environment Current calling environment
+ * @param _sprite Expression with the bitmask of the sprites
+ * @return Variable* Temporary variable with the result of hit (0 = no 
+ *                      hit, 1 = hit occurred)
+ */
+/* <usermanual>
+@keyword HIT
+</usermanual> */
+Variable * hit_to_vars( Environment * _environment, char * _sprite ) {
+
+    FUNCTION_STUB( VT_BYTE )
+
+}
+

@@ -39,7 +39,7 @@
  * CODE SECTION
  ****************************************************************************/
 
-#if defined(__d32__) || defined(__d64__) || defined(__pc128op__)
+#if defined(__d32__) || defined(__d64__) || defined(__pc128op__) || defined(__mo5__)
 
 /**
  * @brief <i>CPU 6809</i>: emit code to make long conditional jump

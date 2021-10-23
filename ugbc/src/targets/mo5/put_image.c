@@ -1,6 +1,3 @@
-#ifndef __UGBASICTESTER__
-#define __UGBASICTESTER__
-
 /*****************************************************************************
  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
  *****************************************************************************
@@ -35,45 +32,33 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <limits.h>
-#include <unistd.h>
-
-#include "../src/ugbc.h"
+#include "../../ugbc.h"
 
 /****************************************************************************
- * DECLARATIONS AND DEFINITIONS SECTION 
+ * CODE SECTION 
  ****************************************************************************/
 
-void test_cpu( );
-void test_variables( );
-void test_conditionals( );
-void test_loops( );
-void test_ons( );
-void test_controls( );
-void test_examples( );
-void test_print( );
+/**
+ * @brief Emit ASM code for <b>PUT IMAGE [image] AT [int],[int]</b>
+ * 
+ * This function outputs a code that draws an image on a bitmap. 
+ * 
+ * @param _environment Current calling environment
+ * @param _image Image to draw
+ * @param _x Abscissa of the point to draw
+ * @param _y Ordinate of the point
+ */
+/* <usermanual>
+@keyword PUT IMAGE
 
-#if defined( __c64__ )
-    #include "tester_c64.h"
-#elif defined( __plus4__ )
-    #include "tester_plus4.h"
-#elif defined( __atari__ )
-    #include "tester_atari.h"
-#elif defined( __atarixl__ )
-    #include "tester_atarixl.h"
-#elif defined( __zx__ )
-    #include "tester_zx.h"
-#elif defined( __d32__ )
-    #include "tester_d32.h"
-#elif defined( __d64__ )
-    #include "tester_d64.h"
-#elif defined( __pc128op__ )
-    #include "tester_pc128op.h"
-#elif defined( __mo5__ )
-    #include "tester_mo5.h"
-#endif
+@target mo5
+</usermanual> */
+void put_image( Environment * _environment, char * _image, char * _x, char * _y ) {
 
-#endif
+    Variable * image = variable_retrieve( _environment, _image );
+    Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
+    Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
+
+    ef936x_put_image( _environment, image->realName, x->realName, y->realName );
+
+}

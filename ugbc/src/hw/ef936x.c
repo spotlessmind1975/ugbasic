@@ -32,7 +32,7 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#if defined(__pc128op__)
+#if defined(__pc128op__) || defined(__mo5__)
 
 #include "../ugbc.h"
 #include "6809.h"
@@ -563,8 +563,10 @@ void ef936x_initialization( Environment * _environment ) {
     variable_import( _environment, "CURRENTTILESHEIGHT", VT_BYTE );
     variable_global( _environment, "CURRENTTILESHEIGHT" );
 
+#if !defined(__mo5__)
     SCREEN_MODE_DEFINE( BITMAP_MODE_BITMAP_16, 1, 160, 200, 16, "BITMAP MODE BITMAP 16" );
     SCREEN_MODE_DEFINE( BITMAP_MODE_BITMAP_4, 1, 320, 200, 4, "BITMAP MODE BITMAP 4" );
+#endif
     SCREEN_MODE_DEFINE( BITMAP_MODE_40_COLUMN, 1, 320, 200, 2, "BITMAP MODE 40 COLUMN" );
     // SCREEN_MODE_DEFINE( BITMAP_MODE_80_COLUMN, 1, 640, 200, 2, "BITMAP MODE 80 COLUMN" );
     // SCREEN_MODE_DEFINE( BITMAP_MODE_PAGE, 1, 320, 200, 4, "BITMAP MODE PAGE" );
