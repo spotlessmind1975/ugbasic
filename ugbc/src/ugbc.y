@@ -2519,7 +2519,8 @@ input_definition :
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
         print( _environment, string->name, 0 );
-        input( _environment, $3 );
+        Variable * var = variable_retrieve_or_define( _environment, $3, VT_DSTRING, 0 );
+        input( _environment, var->name );
         print_newline( _environment );
     }
     | String OP_SEMICOLON Identifier OP_SEMICOLON {
@@ -2532,7 +2533,8 @@ input_definition :
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
         print( _environment, string->name, 0 );
-        input( _environment, $3 );
+        Variable * var = variable_retrieve_or_define( _environment, $3, VT_DSTRING, 0 );
+        input( _environment, var->name );
     }
     | String OP_SEMICOLON Identifier OP_SEMICOLON {
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
@@ -2544,7 +2546,8 @@ input_definition :
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
         print( _environment, string->name, 0 );
-        input( _environment, $3 );
+        Variable * var = variable_retrieve_or_define( _environment, $3, VT_DSTRING, 0 );
+        input( _environment, var->name );
     }  input_definition2
     | input_definition2
   ;
