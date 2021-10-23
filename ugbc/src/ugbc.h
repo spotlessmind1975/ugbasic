@@ -623,6 +623,7 @@ typedef struct _RGBi {
     unsigned char green;
     unsigned char blue;
     unsigned char index;
+    unsigned char used;
 } RGBi;
 
 typedef struct _Embedded {

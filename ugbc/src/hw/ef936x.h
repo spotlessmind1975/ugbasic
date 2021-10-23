@@ -71,6 +71,7 @@
 int ef936x_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode );
 
 void ef936x_initialization( Environment * _environment );
+void ef936x_finalization( Environment * _environment );
 
 void ef936x_back( Environment * _environment );
 void ef936x_background_color( Environment * _environment, char * _index, char * _background_color );

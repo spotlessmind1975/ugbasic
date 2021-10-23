@@ -74,6 +74,7 @@ static RGBi SYSTEM_PALETTE[] = {
 };
 
 static RGBi * commonPalette;
+int lastUsedSlotInCommonPalette = 0;
 
 /****************************************************************************
  * CODE SECTION
@@ -590,6 +591,30 @@ void ef936x_initialization( Environment * _environment ) {
 
 }
 
+extern RGBi * commonPalette;
+
+void ef936x_finalization( Environment * _environment ) {
+
+    int i;
+
+    outhead0("COMMONPALETTE");
+    out0("      fdb ");
+
+    RGBi * palette;
+
+    if ( commonPalette ) {
+        palette = commonPalette;
+    } else {
+        palette = SYSTEM_PALETTE;
+    }
+
+    for( i=0; i<15; ++i ) {
+        out4("$%1.1x%1.1x%1.1x%1.1x, ", 0, ( palette[i].blue >> 4 ) & 0x0f, ( palette[i].green >> 4 ) & 0x0f, ( palette[i].red >> 4 ) & 0x0f );
+    }
+    outline4("$%1.1x%1.1x%1.1x%1.1x", 0, ( palette[15].blue >> 4 ) & 0x0f, ( palette[15].green >> 4 ) & 0x0f, ( palette[15].red >> 4 ) & 0x0f );
+
+}
+
 void ef936x_hscroll_line( Environment * _environment, int _direction ) {
 
     deploy( textHScroll, src_hw_ef936x_hscroll_text_asm );
@@ -1052,7 +1077,7 @@ static Variable * ef936x_image_converter_multicolor_mode4( Environment * _enviro
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
  
-    int bufferSize = 2 + 2 * ( ( _width >> 3 ) * _height ) + 8;
+    int bufferSize = 2 + 2 * ( ( _width >> 3 ) * _height ) /*+ 8*/;
     
     char * buffer = malloc ( bufferSize );
     memset( buffer, 0, bufferSize );
@@ -1106,21 +1131,21 @@ static Variable * ef936x_image_converter_multicolor_mode4( Environment * _enviro
         // printf("\n" );
     }
 
-    RGBi * color = &SYSTEM_PALETTE[commonPalette[0].index];
-    *(buffer + 2 + 2 * ( ( _width >> 3 ) * _height ) + 1 ) = ( color->green & 0xf0 ) | ( ( color->red & 0xf0 ) >> 4 );
-    *(buffer + 2 + 2 * ( ( _width >> 3 ) * _height ) ) = ( ( color->blue & 0xf0 ) >> 4 );
+    // RGBi * color = &SYSTEM_PALETTE[commonPalette[0].index];
+    // *(buffer + 2 + 2 * ( ( _width >> 3 ) * _height ) + 1 ) = ( color->green & 0xf0 ) | ( ( color->red & 0xf0 ) >> 4 );
+    // *(buffer + 2 + 2 * ( ( _width >> 3 ) * _height ) ) = ( ( color->blue & 0xf0 ) >> 4 );
     
-    color = &SYSTEM_PALETTE[commonPalette[1].index];
-    *(buffer + 2 + 2 * ( ( _width >> 3 ) * _height ) + 3 ) = ( color->green & 0xf0 ) | ( ( color->red & 0xf0 ) >> 4 );
-    *(buffer + 2 + 2 * ( ( _width >> 3 ) * _height ) + 2 ) = ( ( color->blue & 0xf0 ) >> 4 );
+    // color = &SYSTEM_PALETTE[commonPalette[1].index];
+    // *(buffer + 2 + 2 * ( ( _width >> 3 ) * _height ) + 3 ) = ( color->green & 0xf0 ) | ( ( color->red & 0xf0 ) >> 4 );
+    // *(buffer + 2 + 2 * ( ( _width >> 3 ) * _height ) + 2 ) = ( ( color->blue & 0xf0 ) >> 4 );
 
-    color = &SYSTEM_PALETTE[commonPalette[2].index];
-    *(buffer + 2 + 2 * ( ( _width >> 3 ) * _height ) + 5 ) = ( color->green & 0xf0 ) | ( ( color->red & 0xf0 ) >> 4 );
-    *(buffer + 2 + 2 * ( ( _width >> 3 ) * _height ) + 4 ) = ( ( color->blue & 0xf0 ) >> 4 );
+    // color = &SYSTEM_PALETTE[commonPalette[2].index];
+    // *(buffer + 2 + 2 * ( ( _width >> 3 ) * _height ) + 5 ) = ( color->green & 0xf0 ) | ( ( color->red & 0xf0 ) >> 4 );
+    // *(buffer + 2 + 2 * ( ( _width >> 3 ) * _height ) + 4 ) = ( ( color->blue & 0xf0 ) >> 4 );
 
-    color = &SYSTEM_PALETTE[commonPalette[3].index];
-    *(buffer + 2 + 2 * ( ( _width >> 3 ) * _height ) + 7 ) = ( color->green & 0xf0 ) | ( ( color->red & 0xf0 ) >> 4 );
-    *(buffer + 2 + 2 * ( ( _width >> 3 ) * _height ) + 6 ) = ( ( color->blue & 0xf0 ) >> 4 );
+    // color = &SYSTEM_PALETTE[commonPalette[3].index];
+    // *(buffer + 2 + 2 * ( ( _width >> 3 ) * _height ) + 7 ) = ( color->green & 0xf0 ) | ( ( color->red & 0xf0 ) >> 4 );
+    // *(buffer + 2 + 2 * ( ( _width >> 3 ) * _height ) + 6 ) = ( ( color->blue & 0xf0 ) >> 4 );
 
     // for(i=0; i<4; ++i ) {
     //     printf( "%1.1x = %2.2x\n", i, palette[i].index );
@@ -1150,6 +1175,7 @@ static Variable * ef936x_image_converter_multicolor_mode16( Environment * _envir
     if ( ! commonPalette ) {
 
         RGBi * palette = malloc( MAX_PALETTE * sizeof(RGBi) );
+        memset( palette, 0, MAX_PALETTE * sizeof(RGBi) );
 
         int colorUsed = extract_color_palette(_source, _width, _height, palette, MAX_PALETTE);
 
@@ -1179,16 +1205,88 @@ static Variable * ef936x_image_converter_multicolor_mode16( Environment * _envir
                 }
             }
             palette[i].index = SYSTEM_PALETTE[colorIndex].index;
-            // printf("%d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
+            palette[i].red = SYSTEM_PALETTE[colorIndex].red;
+            palette[i].green = SYSTEM_PALETTE[colorIndex].green;
+            palette[i].blue = SYSTEM_PALETTE[colorIndex].blue;
+            palette[i].used = 1;
+            // printf("[*] %d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
         }
 
         commonPalette = palette;
+        lastUsedSlotInCommonPalette = colorUsed;
+
+    } else {
+
+        RGBi * palette = malloc( MAX_PALETTE * sizeof(RGBi) );
+
+        int colorUsed = extract_color_palette(_source, _width, _height, palette, MAX_PALETTE);
+
+        if (colorUsed > 16) {
+            CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
+        }
+
+        // for (j = 0; j < lastUsedSlotInCommonPalette; ++j) {
+        //     printf("[§] common %d) %d %2.2x%2.2x%2.2x\n", j, commonPalette[j].index, commonPalette[j].red, commonPalette[j].green, commonPalette[j].blue);
+        // }
+
+        for( i=0; i<colorUsed; ++i ) {
+            // printf("[-] palette %d) %2.2x%2.2x%2.2x\n", i, palette[i].red, palette[i].green, palette[i].blue);
+            for (j = 0; j < lastUsedSlotInCommonPalette; ++j) {
+                // printf("[+] common %d) %d %2.2x%2.2x%2.2x\n", j, commonPalette[j].index, commonPalette[j].red, commonPalette[j].green, commonPalette[j].blue);
+                if ( commonPalette[j].used ) {
+                    int distance = calculate_distance(commonPalette[j], palette[i]);
+                    // printf("    (%d<->%d) >> %2.2x%2.2x%2.2x <-> %2.2x%2.2x%2.2x (%d)\n", j, i, commonPalette[j].red, commonPalette[j].green, commonPalette[j].blue, palette[i].red, palette[i].green, palette[i].blue, distance);
+                    if (distance < 5 ) {
+                        palette[i].used = 1;
+                        // printf("    (-------) >> %d = %d) %d %2.2x%2.2x%2.2x\n", j, i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
+                        break;
+                    }
+                }
+            }
+            // printf("\n");
+        }
+
+        for( i=0; i<colorUsed; ++i ) {
+            // printf("[*] %d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
+            if ( palette[i].used ) continue;
+            int minDistance = 0xffff;
+            int colorIndex = 0;
+            for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
+                int distance = calculate_distance(SYSTEM_PALETTE[j], palette[i]);
+                // printf("%d <-> %d [%d] = %d [min = %d]\n", i, j, SYSTEM_PALETTE[j].index, distance, minDistance );
+                if (distance < minDistance) {
+                    // printf(" candidated...\n" );
+                    for( k=0; k<lastUsedSlotInCommonPalette; ++k ) {
+                        if ( commonPalette[k].index == SYSTEM_PALETTE[j].index ) {
+                            // printf(" ...used!\n" );
+                            break;
+                        }
+                    }
+                    if ( k>=lastUsedSlotInCommonPalette ) {
+                        // printf(" ...ok! (%d)\n", SYSTEM_PALETTE[j].index );
+                        minDistance = distance;
+                        colorIndex = j;
+                    }
+                }
+            }
+            commonPalette[lastUsedSlotInCommonPalette].index = SYSTEM_PALETTE[colorIndex].index;
+            commonPalette[lastUsedSlotInCommonPalette].red = SYSTEM_PALETTE[colorIndex].red;
+            commonPalette[lastUsedSlotInCommonPalette].green = SYSTEM_PALETTE[colorIndex].green;
+            commonPalette[lastUsedSlotInCommonPalette].blue = SYSTEM_PALETTE[colorIndex].blue;
+            commonPalette[lastUsedSlotInCommonPalette].used = 1;
+            ++lastUsedSlotInCommonPalette;
+            // printf("#> %d) %d %2.2x%2.2x%2.2x\n", i, commonPalette[i].index, commonPalette[i].red, commonPalette[i].green, commonPalette[i].blue);
+        }
+
+        // for (j = 0; j < lastUsedSlotInCommonPalette; ++j) {
+        //     printf("[@] common %d) %d %2.2x%2.2x%2.2x\n", j, commonPalette[j].index, commonPalette[j].red, commonPalette[j].green, commonPalette[j].blue);
+        // }
 
     }
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
  
-    int bufferSize = 2 + 2 * ( ( _width >> 2 ) * _height ) + 16 * 2;
+    int bufferSize = 2 + 2 * ( ( _width >> 2 ) * _height ) /* + 16 * 2 */;
     
     char * buffer = malloc ( bufferSize );
     memset( buffer, 0, bufferSize );
@@ -1232,7 +1330,7 @@ static Variable * ef936x_image_converter_multicolor_mode16( Environment * _envir
 
             bitmask = colorIndex << ( 4 * ( 1 - (image_x & 0x1) ) );
 
-            printf( "%2.2x", bitmask );
+            // printf( "%2.2x", bitmask );
 
             if ( ( ( image_x & 0x03 ) < 0x02 ) ) {
                 *(buffer + 2 + ( image_x >> 2 ) + ( ( _width >> 2 ) * image_y ) ) |= bitmask;
@@ -1244,14 +1342,14 @@ static Variable * ef936x_image_converter_multicolor_mode16( Environment * _envir
 
         }
 
-        printf("\n" );
+        // printf("\n" );
     }
 
-    for (i=0; i<16; ++i ) {
-        RGBi * color = &SYSTEM_PALETTE[commonPalette[i].index];
-        *(buffer + 2 + 2 * ( ( _width >> 2 ) * _height ) + 2*i + 1 ) = ( color->green & 0xf0 ) | ( ( color->red & 0xf0 ) >> 4 );
-        *(buffer + 2 + 2 * ( ( _width >> 2 ) * _height ) + 2*i ) = ( ( color->blue & 0xf0 ) >> 4 );
-    }
+    // for (i=0; i<16; ++i ) {
+    //     RGBi * color = &SYSTEM_PALETTE[commonPalette[i].index];
+    //     *(buffer + 2 + 2 * ( ( _width >> 2 ) * _height ) + 2*i + 1 ) = ( color->green & 0xf0 ) | ( ( color->red & 0xf0 ) >> 4 );
+    //     *(buffer + 2 + 2 * ( ( _width >> 2 ) * _height ) + 2*i ) = ( ( color->blue & 0xf0 ) >> 4 );
+    // }
     
     variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
 
