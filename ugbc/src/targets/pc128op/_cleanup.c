@@ -40,6 +40,8 @@
 
 void target_finalization( Environment * _environment ) {
 
+    ef936x_finalization( _environment );
+
 }
 
 // -------------------------------------------------------------------------
