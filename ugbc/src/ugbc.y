@@ -2509,16 +2509,41 @@ input_definition2 :
 
 input_definition :
       String OP_SEMICOLON Identifier {
-        print( _environment, $1, 0 );
+        Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
+        variable_store_string( _environment, string->name, $1 );
+        print( _environment, string->name, 0 );
+        input( _environment, $3 );
+        print_newline( _environment );
+    }
+    | String OP_SEMICOLON Identifier OP_DOLLAR {
+        Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
+        variable_store_string( _environment, string->name, $1 );
+        print( _environment, string->name, 0 );
         input( _environment, $3 );
         print_newline( _environment );
     }
     | String OP_SEMICOLON Identifier OP_SEMICOLON {
-        print( _environment, $1, 0 );
+        Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
+        variable_store_string( _environment, string->name, $1 );
+        print( _environment, string->name, 0 );
+        input( _environment, $3 );
+    }
+    | String OP_SEMICOLON Identifier OP_DOLLAR OP_SEMICOLON {
+        Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
+        variable_store_string( _environment, string->name, $1 );
+        print( _environment, string->name, 0 );
         input( _environment, $3 );
     }
     | String OP_SEMICOLON Identifier OP_SEMICOLON {
-        print( _environment, $1, 0 );
+        Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
+        variable_store_string( _environment, string->name, $1 );
+        print( _environment, string->name, 0 );
+        input( _environment, $3 );
+    }  input_definition2
+    | String OP_SEMICOLON Identifier OP_DOLLAR OP_SEMICOLON {
+        Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
+        variable_store_string( _environment, string->name, $1 );
+        print( _environment, string->name, 0 );
         input( _environment, $3 );
     }  input_definition2
     | input_definition2
