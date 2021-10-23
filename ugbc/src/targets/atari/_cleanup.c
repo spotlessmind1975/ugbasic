@@ -40,6 +40,8 @@
 
 void target_finalization( Environment * _environment ) {
 
+    gtia_finalization( _environment );
+
     outhead0(".segment \"CODE\"");
     outhead0("MAINEND:");
     outhead0(".endproc");

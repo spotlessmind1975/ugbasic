@@ -105,6 +105,7 @@
 int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode );
 
 void vic2_initialization( Environment * _environment );
+void vic2_finalization( Environment * _environment );
 
 void vic2_back( Environment * _environment );
 void vic2_background_color( Environment * _environment, char * _index, char * _background_color );

@@ -126,4 +126,8 @@ void antic_initialization( Environment * _environment ) {
 
 }
 
+void antic_finalization( Environment * _environment ) {
+
+}
+
 #endif

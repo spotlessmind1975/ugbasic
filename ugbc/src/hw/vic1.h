@@ -73,6 +73,7 @@
 int vic1_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode );
 
 void vic1_initialization( Environment * _environment );
+void vic1_finalization( Environment * _environment );
 
 void vic1_back( Environment * _environment );
 void vic1_background_color( Environment * _environment, char * _index, char * _background_color );

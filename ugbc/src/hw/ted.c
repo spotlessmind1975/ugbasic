@@ -701,6 +701,10 @@ void ted_initialization( Environment * _environment ) {
 
 }
 
+void ted_finalization( Environment * _environment ) {
+
+}
+
 void ted_hscroll_line( Environment * _environment, int _direction ) {
 
     deploy( textHScroll, src_hw_ted_hscroll_text_asm );

@@ -171,6 +171,7 @@
 int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode );
 
 void c6847_initialization( Environment * _environment );
+void c6847_finalization( Environment * _environment );
 
 void c6847_back( Environment * _environment );
 void c6847_background_color( Environment * _environment, char * _index, char * _background_color );

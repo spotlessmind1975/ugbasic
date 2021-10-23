@@ -1244,6 +1244,10 @@ void gtia_initialization( Environment * _environment ) {
 
 }
 
+void gtia_finalization( Environment * _environment ) {
+
+}
+
 void gtia_hscroll_line( Environment * _environment, int _direction ) {
 
     deploy( textHScroll, src_hw_gtia_hscroll_text_asm );

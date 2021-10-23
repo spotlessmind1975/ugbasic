@@ -631,6 +631,10 @@ void vic1_initialization( Environment * _environment ) {
 
 }
 
+void vic1_finalization( Environment * _environment ) {
+
+}
+
 void vic1_hscroll_line( Environment * _environment, int _direction ) {
 
     deploy( textHScroll, src_hw_vic1_hscroll_text_asm );

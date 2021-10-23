@@ -75,6 +75,7 @@
 int ted_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode );
 
 void ted_initialization( Environment * _environment );
+void ted_finalization( Environment * _environment );
 
 void ted_back( Environment * _environment );
 void ted_background_color( Environment * _environment, char * _index, char * _background_color );

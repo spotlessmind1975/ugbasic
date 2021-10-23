@@ -40,6 +40,8 @@
 
 void target_finalization( Environment * _environment ) {
 
+    zx_finalization( _environment );
+
 }
 
 void target_cleanup( Environment * _environment ) {

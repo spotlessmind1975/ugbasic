@@ -185,6 +185,7 @@
 int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode );
 
 void gtia_initialization( Environment * _environment );
+void gtia_finalization( Environment * _environment );
 
 void gtia_back( Environment * _environment );
 void gtia_clear( Environment * _environment, char * _pattern );

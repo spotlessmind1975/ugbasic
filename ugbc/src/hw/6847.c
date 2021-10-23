@@ -934,6 +934,10 @@ void c6847_initialization( Environment * _environment ) {
 
 }
 
+void c6847_finalization( Environment * _environment ) {
+
+}
+
 void c6847_hscroll_line( Environment * _environment, int _direction ) {
 
     deploy( textHScroll, src_hw_6847_hscroll_text_asm );

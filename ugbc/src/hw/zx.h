@@ -172,6 +172,7 @@
 int zx_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode );
 
 void zx_initialization( Environment * _environment );
+void zx_finalization( Environment * _environment );
 
 void zx_color_border( Environment * _environment, char * _color );
 void zx_bitmap_enable( Environment * _environment, int _width, int _height, int _colors );

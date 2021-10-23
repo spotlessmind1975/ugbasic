@@ -237,6 +237,10 @@ void zx_initialization( Environment * _environment ) {
 
 }
 
+void zx_finalization( Environment * _environment ) {
+
+}
+
 int zx_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
     _environment->screenWidth = 256;
     _environment->screenHeight = 192;
