@@ -93,7 +93,7 @@ void input( Environment * _environment, char * _variable ) {
 
     cpu_label( _environment, finishedLabel );
 
-    cpu_dsresize( _environment, temporary->realName, size->realName );
+    cpu_dsresize( _environment, temporary->realName, offset->realName );
 
     switch( VT_BITWIDTH( result->type ) ) {
         case 8:
