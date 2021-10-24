@@ -124,8 +124,8 @@ PLOT3
 
     LDB <(PLOTX+1)
     ANDB #$03
-    COMB
-    LDY #3
+    ; COMB
+    ; LDY #3
     LEAY B, Y
     TFR Y, D
     LSRB
