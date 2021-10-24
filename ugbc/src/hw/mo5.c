@@ -427,17 +427,17 @@ void mo5_busy_wait( Environment * _environment, char * _timing ) {
     MAKE_LABEL
 
     outline1("LDD %s", _timing );
-    outline0("LDX $0112");
+    outline0("LDX MO5TIMER");
     outline0("LEAX D, X");
     outhead1("%sfirst", label );
-    outline0("CMPX $0112");
+    outline0("CMPX MO5TIMER");
     outline1("BGT %sfirst", label);
 }
 
 void mo5_irq_at( Environment * _environment, char * _label ) {
 
     outline1("LDX #%s", _label );
-    outline0("STX PC128IRQN" );
+    outline0("STX MO5IRQN" );
     
 }
 

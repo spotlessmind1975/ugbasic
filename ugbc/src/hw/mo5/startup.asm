@@ -35,28 +35,28 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-PC128TIMER      fdb $0
-PC128IRQO       fdb $0
-PC128IRQN       fdb $0
+MO5TIMER      fdb $0
+MO5IRQO       fdb $0
+MO5IRQN       fdb $0
 
-PC128IRQ
+MO5IRQ
     PSHS D, X
-    LDD PC128TIMER
+    LDD MO5TIMER
     ADDD #1
-    STD PC128TIMER
-    LDX PC128IRQN
-    BEQ PC128IRQ2
+    STD MO5TIMER
+    LDX MO5IRQN
+    BEQ MO5IRQ2
     PULS D, X
-    JSR [PC128IRQN]
-PC128IRQ2
+    JSR [MO5IRQN]
+MO5IRQ2
     PULS D, X
-    JMP [PC128IRQO]
+    JMP [MO5IRQO]
 
 MO5STARTUP
 
     LDX $2061
-    STX PC128IRQO
-    LDX #PC128IRQ
+    STX MO5IRQO
+    LDX #MO5IRQ
     STX $2061
 
     LDA #$20
