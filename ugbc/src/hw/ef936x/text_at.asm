@@ -189,7 +189,8 @@ TEXTATCALCPOS3
 
     LDB <(XCURSYS)
     LDA #0
-    LSRB
+    LSLB
+    ROLA
     LEAX B, X
 
     PULS D,Y
