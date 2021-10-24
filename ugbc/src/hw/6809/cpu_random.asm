@@ -28,8 +28,7 @@
 ;  * autorizzazioni e le limitazioni previste dalla medesima.
 ;  ****************************************************************************/
 
-CPURANDOMSEED              equ MATHPTR0; <MATHPTR1 <MATHPTR2 <MATHPTR2
-CPURANDOMENTROPY           equ <MATHPTR3
+CPURANDOMSEED              equ MATHPTR0
 CPURANDOMINTERNALSEED      fcb $42, $45, $20, $21
 
 CPURANDOM0
@@ -47,9 +46,10 @@ CPURANDOM
     ROR <CPURANDOMSEED+1
     ASLB
     ROLA
-    ADDA PATTERN ; (entropy)
+    EORA <PATTERN ; (entropy)
     ASLB
     ROLA
+    EORB <PATTERN ; (entropy)
     ASLB
     ROLA
     ADDD <CPURANDOMSEED+1

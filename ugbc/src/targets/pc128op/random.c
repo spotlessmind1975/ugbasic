@@ -70,13 +70,13 @@ Variable * random_value( Environment * _environment, VariableType _type ) {
 
     switch( VT_BITWIDTH( _type ) ) {
         case 8:
-            cpu6809_random_8bit( _environment, seed->realName, "$0112", result->realName );
+            cpu6809_random_8bit( _environment, seed->realName, "(PC128TIMER+1)", result->realName );
             break;
         case 16:
-            cpu6809_random_16bit( _environment, seed->realName, "$0112", result->realName );
+            cpu6809_random_16bit( _environment, seed->realName, "(PC128TIMER+1)", result->realName );
             break;
         case 32:
-            cpu6809_random_32bit( _environment, seed->realName, "$0112", result->realName );
+            cpu6809_random_32bit( _environment, seed->realName, "(PC128TIMER+1)", result->realName );
             break;
     }
 
