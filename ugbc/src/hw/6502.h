@@ -167,6 +167,15 @@ void cpu6502_mobrender( Environment * _environment, int _on_vbl );
 void cpu6502_sqroot( Environment * _environment, char * _number, char * _result );
 void cpu6502_dstring_vars( Environment * _environment );
 
+void cpu6502_protothread_loop( Environment * _environment );
+void cpu6502_protothread_register_at( Environment * _environment, char * _index, char * _label );
+void cpu6502_protothread_register( Environment * _environment, char * _label, char * _index );
+void cpu6502_protothread_unregister( Environment * _environment, char * _index );
+void cpu6502_protothread_save( Environment * _environment, char * _index, int _step );
+void cpu6502_protothread_restore( Environment * _environment, char * _index, char * _step );
+void cpu6502_protothread_set_state( Environment * _environment, char * _index, int _state );
+void cpu6502_protothread_get_state( Environment * _environment, char * _index, char * _state );
+
 #define cpu_beq( _environment,  _label  ) cpu6502_beq( _environment,  _label  )
 #define cpu_bneq( _environment,  _label  ) cpu6502_beq( _environment,  _label  )
 #define cpu_busy_wait( _environment,  _timing  ) cpu6502_busy_wait( _environment,  _timing  )
@@ -306,6 +315,15 @@ extern unsigned int src_hw_chipset_mob_asm_len;
 #define cpu_sqroot( _environment, _number, _result ) cpu6502_sqroot( _environment, _number, _result )
 
 #define cpu_dstring_vars( _environment ) cpu6502_dstring_vars( _environment )
+
+#define cpu_protothread_loop( _environment ) cpu6502_protothread_loop( _environment )
+#define cpu_protothread_register( _environment, _label, _index ) cpu6502_protothread_register( _environment, _label, _index )
+#define cpu_protothread_register_at( _environment, _index, _label ) cpu6502_protothread_register_at( _environment, _index, _label )
+#define cpu_protothread_unregister(_environment, _index ) cpu6502_protothread_unregister(_environment, _index )
+#define cpu_protothread_save( _environment, _index, _step ) cpu6502_protothread_save( _environment, _index, _step )
+#define cpu_protothread_restore( _environment, _index, _step ) cpu6502_protothread_restore( _environment, _index, _step )
+#define cpu_protothread_set_state( _environment, _index, _state ) cpu6502_protothread_set_state( _environment, _index, _state )
+#define cpu_protothread_get_state( _environment, _index, _state ) cpu6502_protothread_get_state( _environment, _index, _state )
 
 #define     CPU_LITTLE_ENDIAN      1
 

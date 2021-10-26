@@ -121,6 +121,9 @@ void begin_procedure( Environment * _environment, char * _name ) {
     }
 
     procedure->parameters = _environment->parameters;
+    procedure->protothread = _environment->protothread;
+    _environment->protothreadStep = 0;
+
     memcpy( &procedure->parametersEach, &_environment->parametersEach, sizeof( char * ) * _environment->parameters );
     memcpy( &procedure->parametersTypeEach, &_environment->parametersTypeEach, sizeof( VariableType ) * _environment->parameters );
     _environment->parameters = 0;
@@ -138,5 +141,14 @@ void begin_procedure( Environment * _environment, char * _name ) {
     cpu_jump( _environment, procedureAfterLabel  );
 
     cpu_label( _environment, procedureLabel );
+
+    if ( procedure->protothread ) {
+        char procedureParallelDispatch[MAX_TEMPORARY_STORAGE]; sprintf(procedureParallelDispatch, "%sdispatch", _environment->procedureName );
+        cpu_jump( _environment, procedureParallelDispatch  );
+        cpu_protothread_set_state( _environment, "PROTOTHREADCT", PROTOTHREAD_STATUS_RUNNING );
+        char protothreadLabel[MAX_TEMPORARY_STORAGE]; sprintf(protothreadLabel, "%spt%d", _environment->procedureName, _environment->protothreadStep );
+        cpu_label( _environment, protothreadLabel );        
+        ++_environment->protothreadStep;
+    }
 
 }

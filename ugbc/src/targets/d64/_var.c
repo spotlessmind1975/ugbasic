@@ -57,6 +57,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_BYTE:
                 case VT_SBYTE:
                 case VT_COLOR:
+                case VT_THREAD:
                     if ( variable->memoryArea ) {
                         outhead2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {

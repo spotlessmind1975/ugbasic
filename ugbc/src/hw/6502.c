@@ -4627,5 +4627,97 @@ void cpu6502_dstring_vars( Environment * _environment ) {
 
 }
 
+void cpu6502_protothread_loop( Environment * _environment ) {
+
+    deploy( protothread, src_hw_6502_protothread_asm );
+
+    outline0("JSR PROTOTHREADLOOP" );
+
+}
+
+void cpu6502_protothread_register_at( Environment * _environment, char * _index, char * _label ) {
+
+    deploy( protothread, src_hw_6502_protothread_asm );
+
+    outline1("LDA #<%s", _label );
+    outline0("STA TMPPTR" );
+    outline1("LDA #>%s", _label );
+    outline0("STA TMPPTR+1" );
+    outline1("LDY %s", _index );
+
+    outline0("JSR PROTOTHREADREGAT" );
+
+}
+
+void cpu6502_protothread_register( Environment * _environment, char * _label, char * _index ) {
+
+    deploy( protothread, src_hw_6502_protothread_asm );
+
+    outline1("LDA #<%s", _label );
+    outline0("STA TMPPTR" );
+    outline1("LDA #>%s", _label );
+    outline0("STA TMPPTR+1" );
+
+    outline0("JSR PROTOTHREADREG" );
+
+    outline1("STY %s", _index );
+
+}
+
+void cpu6502_protothread_unregister( Environment * _environment, char * _index ) {
+
+    deploy( protothread, src_hw_6502_protothread_asm );
+
+    outline1("LDY %s", _index );
+
+    outline0("JSR PROTOTHREADUNREG" );
+
+}
+
+void cpu6502_protothread_save( Environment * _environment, char * _index, int _step ) {
+
+    deploy( protothread, src_hw_6502_protothread_asm );
+
+    outline1("LDY %s", _index );
+    outline1("LDX #$%2.2x", _step );
+
+    outline0("JSR PROTOTHREADSAVE" );
+
+}
+
+void cpu6502_protothread_restore( Environment * _environment, char * _index, char * _step ) {
+
+    deploy( protothread, src_hw_6502_protothread_asm );
+
+    outline1("LDY %s", _index );
+
+    outline0("JSR PROTOTHREADRESTORE" );
+
+    outline1("STX %s", _step );
+    
+}
+
+void cpu6502_protothread_set_state( Environment * _environment, char * _index, int _state ) {
+
+    deploy( protothread, src_hw_6502_protothread_asm );
+
+    outline1("LDY %s", _index );
+    outline1("LDX #$%2.2x", _state );
+
+    outline0("JSR PROTOTHREADSETSTATE" );
+
+}
+
+void cpu6502_protothread_get_state( Environment * _environment, char * _index, char * _state ) {
+
+    deploy( protothread, src_hw_6502_protothread_asm );
+
+    outline1("LDY %s", _index );
+
+    outline0("JSR PROTOTHREADGETSTATE" );
+
+    outline1("STX %s", _state );
+
+}
 
 #endif

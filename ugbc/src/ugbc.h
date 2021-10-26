@@ -153,7 +153,10 @@ typedef enum _VariableType {
     VT_MOB = 14,
 
     /** IMAGEs (static pictures) */
-    VT_IMAGE = 15
+    VT_IMAGE = 15,
+
+    /** THREAD ID */
+    VT_THREAD = 16
 
 } VariableType;
 
@@ -170,7 +173,7 @@ typedef enum _VariableType {
 #define VT_BW_32BIT( t, v )             ( ( (t) == (v) ) ? 32 : 0 )
 
 #define VT_BITWIDTH( t ) \
-        ( VT_BW_8BIT( t, VT_BYTE ) + VT_BW_8BIT( t, VT_SBYTE ) + VT_BW_8BIT( t, VT_COLOR ) + \
+        ( VT_BW_8BIT( t, VT_BYTE ) + VT_BW_8BIT( t, VT_SBYTE ) + VT_BW_8BIT( t, VT_COLOR ) + VT_BW_8BIT( t, VT_THREAD ) + \
         VT_BW_16BIT( t, VT_WORD ) + VT_BW_16BIT( t, VT_SWORD ) + VT_BW_16BIT( t, VT_ADDRESS ) + VT_BW_16BIT( t, VT_POSITION ) + \
         VT_BW_32BIT( t, VT_DWORD ) + VT_BW_32BIT( t, VT_SDWORD ) )
 
@@ -432,6 +435,11 @@ typedef struct _Procedure {
      * Parameters definition
      */
     VariableType parametersTypeEach[MAX_PARAMETERS];
+
+    /**
+     * Is a protothread?
+     */
+    int protothread;
 
     /** Link to the next procedure (NULL if this is the last one) */
     struct _Procedure * next;
@@ -799,6 +807,7 @@ typedef struct _Deployed {
     int image;
     int mob;
     int mobcs;
+    int protothread;
 
     Embedded embedded;
 
@@ -1040,6 +1049,16 @@ typedef struct _Environment {
     VariableType parametersTypeEach[MAX_PARAMETERS];
 
     /**
+     * Temporary storage for protothread definition
+     */
+    int protothread;
+
+    /**
+     * Step when resuming the protothread
+     */
+    int protothreadStep;
+    
+    /**
      * Screen width in pixels (statically determined)
      */
     int screenWidth;
@@ -1191,6 +1210,8 @@ typedef struct _Environment {
 #define CRITICAL_INVALID_STRING_SPACE( d ) CRITICAL2i("E075 - invalid maximum space occupied by strings", d);
 #define CRITICAL_TYPE_MISMATCH_CONSTANT_STRING( c ) CRITICAL2("E076 - use of an wrong type constant (string expected, numeric used)", c );
 #define CRITICAL_CANNOT_OPEN_EXECUTABLE_FILE( c )  CRITICAL2("E077 - cannot open executable file for post elaboration", c );
+#define CRITICAL_PARALLEL_PROCEDURE_CANNOT_BE_CALLED( c ) CRITICAL2("E078 - cannot CALL a PARALLEL PROCEDURE: use INVOKE instead", c );
+#define CRITICAL_PROCEDURE_CANNOT_BE_INVOKED( c ) CRITICAL2("E078 - cannot INVOKE a PROCEDURE: use CALL instead", c );
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
 #define WARNING2i( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%i) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -1482,6 +1503,12 @@ typedef struct _Environment {
 #define TILEMAP_NATIVE      0
 #define BITMAP_NATIVE       1
 
+#define PROTOTHREAD_STATUS_WAITING		0
+#define PROTOTHREAD_STATUS_RUNNING		1
+#define PROTOTHREAD_STATUS_YIELDED		2
+#define PROTOTHREAD_STATUS_EXITED		3
+#define PROTOTHREAD_STATUS_ENDED		4
+
 void setup_embedded( Environment *_environment );
 void target_install( Environment *_environment );
 void begin_compilation( Environment * _environment );
@@ -1640,6 +1667,7 @@ Variable *              image_get_height( Environment * _environment, char * _im
 Variable *              image_get_width( Environment * _environment, char * _image );
 void                    ink( Environment * _environment, char * _expression );
 Variable *              inkey( Environment * _environment );
+Variable *              invoke_procedure( Environment * _environment, char * _name );
 void                    input( Environment * _environment, char * _variable );
 Variable *              input_string( Environment * _environment, char * _size );
 
@@ -1741,6 +1769,7 @@ void                    repeat( Environment * _environment, char *_label );
 void                    return_label( Environment * _environment );
 void                    return_procedure( Environment * _environment, char * _value );
 Variable *              rnd( Environment * _environment, char * _value );
+void                    run_parallel( Environment * _environment );
 
 //----------------------------------------------------------------------------
 // *S*
@@ -1893,6 +1922,11 @@ void                    wait_milliseconds_var( Environment * _environment, char 
 void                    wait_ticks( Environment * _environment, int _timing );
 void                    wait_ticks_var( Environment * _environment, char * _timing );
 void                    wait_vbl( Environment * _environment );
+void                    wait_until( Environment * _environment );
+void                    wait_until_condition( Environment * _environment, char * _condition );
+void                    wait_while( Environment * _environment );
+void                    wait_while_condition( Environment * _environment, char * _condition );
+void                    wait_parallel( Environment * _environment, char * _thread );
 void                    writing( Environment * _environment, char * _mode, char * _parts );
 
 //----------------------------------------------------------------------------
@@ -1905,6 +1939,7 @@ Variable *              xpen( Environment * _environment );
 // *Y*
 //----------------------------------------------------------------------------
 
+void                    yield( Environment * _environment );
 Variable *              ypen( Environment * _environment );
 
 #if defined(__atari__) 

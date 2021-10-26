@@ -79,7 +79,33 @@ void end_procedure( Environment * _environment, char * _value ) {
 
     char procedureAfterLabel[MAX_TEMPORARY_STORAGE]; sprintf(procedureAfterLabel, "%safter", _environment->procedureName );
 
+    cpu_protothread_set_state( _environment, "PROTOTHREADCT", PROTOTHREAD_STATUS_ENDED );
+
     cpu_return( _environment );
+
+    if ( _environment->protothread ) {
+
+        char procedureParallelDispatch[MAX_TEMPORARY_STORAGE]; sprintf(procedureParallelDispatch, "%sdispatch", _environment->procedureName );
+        cpu_label( _environment, procedureParallelDispatch  );
+
+        if ( _environment->protothreadStep > 1 ) {
+            Variable * step = variable_temporary( _environment, VT_BYTE, "(dispatch)");
+            Variable * index = variable_temporary( _environment, VT_BYTE, "(index)");
+            cpu_protothread_restore( _environment, "PROTOTHREADCT", step->realName );
+
+            int i = 0;
+
+            for(i=1;i<_environment->protothreadStep; ++i) {
+                char protothreadLabel[MAX_TEMPORARY_STORAGE]; sprintf(protothreadLabel, "%spt%d", _environment->procedureName, i );
+                variable_store( _environment, index->name, i );
+                cpu_bvneq( _environment, variable_compare( _environment, step->name, index->name )->realName, protothreadLabel );
+            }
+            cpu_protothread_save( _environment, "PROTOTHREADCT", 1 );
+            char protothreadLabel[MAX_TEMPORARY_STORAGE]; sprintf(protothreadLabel, "%spt%d", _environment->procedureName, 0 );
+            cpu_jump( _environment, protothreadLabel );
+        }
+
+    }
 
     cpu_label( _environment, procedureAfterLabel );
 

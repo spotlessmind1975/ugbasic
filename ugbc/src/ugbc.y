@@ -51,7 +51,7 @@ extern char DATATYPE_AS_STRING[][16];
 %token INPUT FREE TILEMAP EMPTY TILE EMPTYTILE PLOT GR CIRCLE DRAW LINE BOX POLYLINE ELLIPSE CLIP
 %token BACK DEBUG CAN ELSEIF BUFFER LOAD SIZE MOB IMAGE PUT VISIBLE HIDDEN HIDE SHOW RENDER
 %token SQR TI CONST VBL POKE NOP FILL IN POSITIVE DEFINE ATARI ATARIXL C64 DRAGON DRAGON32 DRAGON64 PLUS4 ZX 
-%token FONT VIC20
+%token FONT VIC20 PARALLEL INVOKE YIELD
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -76,6 +76,7 @@ extern char DATATYPE_AS_STRING[][16];
 %type <integer> optional_integer
 %type <string> optional_expr optional_x optional_y
 %type <integer> target targets
+%type <integer> protothread_definition
 
 %right Integer String CP 
 %left OP_DOLLAR
@@ -1072,6 +1073,19 @@ exponential:
       call_procedure( _environment, $1 );
       $$ = param_procedure( _environment, $1 )->name;
     }
+    | INVOKE Identifier {
+      ((struct _Environment *)_environment)->parameters = 0;
+      $$ = invoke_procedure( _environment, $2 )->name;
+    }
+    | INVOKE Identifier OSP {
+        ((struct _Environment *)_environment)->parameters = 0;
+        } values CSP {
+      $$ = invoke_procedure( _environment, $2 )->name;
+    }
+    | INVOKE Identifier OSP CSP {
+        ((struct _Environment *)_environment)->parameters = 0;
+      $$ = invoke_procedure( _environment, $2 )->name;
+    }
     | SGN OP expr CP {
         $$ = sign( _environment, $3 )->name;
     }
@@ -1520,6 +1534,19 @@ wait_definition_expression:
     }
     | expr milliseconds {
       wait_milliseconds_var( _environment, $1 );
+    }
+    | UNTIL { 
+        wait_until( _environment );  
+    } expr {
+        wait_until_condition( _environment, $3 );  
+    }
+    | WHILE { 
+        wait_while( _environment );  
+    } expr {
+        wait_while_condition( _environment, $3 );  
+    }
+    | PARALLEL expr { 
+        wait_parallel( _environment, $2 );  
     }
     ;
 
@@ -2640,6 +2667,14 @@ targets :
         $$ = $1 || $3;
      };
 
+protothread_definition: 
+    PARALLEL {
+        $$ = 1;
+    }
+    | {
+        $$ = 0;
+    };
+
 statement:
     BANK bank_definition
   | RASTER raster_definition
@@ -2842,19 +2877,22 @@ statement:
   | NEXT {
       end_for( _environment );
   }
-  | PROCEDURE Identifier {
+  | protothread_definition PROCEDURE Identifier {
       ((struct _Environment *)_environment)->parameters = 0;
-      begin_procedure( _environment, $2 );
+      ((struct _Environment *)_environment)->protothread = $1;
+      begin_procedure( _environment, $3 );
   }
-  | PROCEDURE Identifier ON targets {
+  | protothread_definition PROCEDURE Identifier ON targets {
         ((struct _Environment *)_environment)->parameters = 0;
-        begin_procedure( _environment, $2 );
-        ((struct _Environment *)_environment)->emptyProcedure = !$4;
+      ((struct _Environment *)_environment)->protothread = $1;
+        begin_procedure( _environment, $3 );
+        ((struct _Environment *)_environment)->emptyProcedure = !$5;
   }
-  | PROCEDURE Identifier {
+  | protothread_definition PROCEDURE Identifier {
       ((struct _Environment *)_environment)->parameters = 0;
+      ((struct _Environment *)_environment)->protothread = $1;
     } OSP parameters CSP {
-      begin_procedure( _environment, $2 );
+      begin_procedure( _environment, $3 );
   }
   | SHARED parameters_expr {
       shared( _environment );
@@ -2912,6 +2950,22 @@ statement:
       ((struct _Environment *)_environment)->parameters = 0;
       call_procedure( _environment, $2 );
   }
+  | INVOKE Identifier {
+      ((struct _Environment *)_environment)->parameters = 0;
+      invoke_procedure( _environment, $2 );
+  }
+  | INVOKE Identifier OSP {
+      ((struct _Environment *)_environment)->parameters = 0;
+    } values CSP {
+      invoke_procedure( _environment, $2 );
+  }
+  | INVOKE Identifier OSP CSP {
+      ((struct _Environment *)_environment)->parameters = 0;
+      invoke_procedure( _environment, $2 );
+  }
+  | YIELD {
+      yield( _environment );
+  }
   | PEN expr {
       pen( _environment, $2 );
   }
@@ -2933,6 +2987,9 @@ statement:
   }
   | LOAD String AS String OP_COMMA Integer {
     load( _environment, $2, $4, $6 );
+  }
+  | RUN PARALLEL {
+      run_parallel( _environment );
   }
   | BEG GAMELOOP {
       begin_gameloop( _environment );

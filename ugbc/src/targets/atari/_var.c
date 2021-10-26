@@ -53,6 +53,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
             case VT_BYTE:
             case VT_SBYTE:
             case VT_COLOR:
+            case VT_THREAD:
                 outline1("%s: .res 1", variable->realName);
                 break;
             case VT_WORD:

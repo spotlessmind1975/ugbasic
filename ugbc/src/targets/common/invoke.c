@@ -39,48 +39,30 @@
  ****************************************************************************/
 
 /**
- * @brief Emit code for <strong>CALL/PROC ...</strong>
+ * @brief Emit code for <strong>INVOKE ...</strong>
  * 
  * @param _environment Current calling environment
  * @param _name Name of the procedure
  */
 /* <usermanual>
-@keyword CALL
+@keyword INVOKE
 
 @english
-This keyword will invoke a procedure. 
+This keyword will invoke a (parallel) procedure. 
 
 @italian
-Questa parola chiave invoca una funzione.
+Questa parola chiave invoca una funzione affinché sia eseguita
+in parallelo.
 
-@syntax CALL [name][{[parameter],{[parameter],....}}]
+@syntax INVOKE [name][{[parameter],{[parameter],....}}]
 
-@example CALL factorial(42)
-
-@usedInExample procedures_param_01.bas
-@usedInExample procedures_param_02.bas
+@example INVOKE factorial(42)
 
 @target all
 </usermanual> */
-/* <usermanual>
-@keyword PROC
+Variable * invoke_procedure( Environment * _environment, char * _name ) {
 
-@english
-This keyword will invoke a procedure. 
-
-@italian
-Questa parola chiave invoca una funzione.
-
-@syntax PROC [name][{[parameter],{[parameter],....}}]
-
-@example PROC factorial(42)
-
-@usedInExample procedures_param_01.bas
-@usedInExample procedures_param_02.bas
-
-@target all
-</usermanual> */
-void call_procedure( Environment * _environment, char * _name ) {
+    Variable * threadId = variable_temporary( _environment, VT_THREAD, "(thread)");
 
     Procedure * procedure = _environment->procedures;
 
@@ -95,8 +77,8 @@ void call_procedure( Environment * _environment, char * _name ) {
         CRITICAL_PROCEDURE_MISSING(_name);
     }
 
-    if ( procedure->protothread ) {
-        CRITICAL_PARALLEL_PROCEDURE_CANNOT_BE_CALLED(_name);
+    if ( !procedure->protothread ) {
+        CRITICAL_PROCEDURE_CANNOT_BE_INVOKED(_name);
     }
 
     if ( _environment->parameters != procedure->parameters ) {
@@ -114,7 +96,10 @@ void call_procedure( Environment * _environment, char * _name ) {
 
     char procedureLabel[MAX_TEMPORARY_STORAGE]; sprintf(procedureLabel, "%s", _name );
 
-    cpu_call( _environment, procedureLabel );
-    
+    cpu_protothread_register( _environment, procedureLabel, threadId->realName );
+    cpu_protothread_set_state( _environment, threadId->realName, PROTOTHREAD_STATUS_WAITING );
+
+    return threadId;
+
 }
 

@@ -191,6 +191,7 @@ INPUT { return (INPUT); }
 INSERT { return (INSERT); }
 INVERSE { return (INVERSE); }
 INSTR { return (INSTR); }
+INVOKE { return (INVOKE); }
 IS { return (IS); }
 J { return (J); }
 JDOWN { return (JDOWN); }
@@ -250,6 +251,7 @@ OR { return (OR); }
 ORANGE { return(ORANGE); }
 P { return (P); }
 PAPER { return(PAPER); }
+PARALLEL { return(PARALLEL); }
 PARAM { return(PARAM); }
 PEACH { return(PEACH); }
 PEEK { return (PEEK); }
@@ -364,6 +366,7 @@ XPEN { return (XPEN); }
 Y { return (Y); }
 YCURS { return (YCURS); }
 YELLOW { return(YELLOW); }
+YIELD { return(YIELD); }
 YPEN { return (YPEN); }
 Z { return (Z); }
 ZX { return (ZX); }
