@@ -11,7 +11,7 @@ REM
     PARALLEL PROCEDURE example
         DO
             [x] = [x] + 1
-            PRINT [x];" ";
+            PRINT THREAD;"-> ";[x];" ";
             YIELD
         LOOP
     END PROC

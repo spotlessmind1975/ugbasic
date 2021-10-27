@@ -10,6 +10,7 @@ REM
 
     PARALLEL PROCEDURE example
         DO
+            PRINT "*";THREAD;"*"
             x(THREAD) = x(THREAD) + 1
             PRINT x(THREAD);" ";
             YIELD

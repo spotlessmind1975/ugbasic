@@ -4487,4 +4487,100 @@ void cpu6809_dstring_vars( Environment * _environment ) {
 
 }
 
+void cpu6809_protothread_loop( Environment * _environment ) {
+
+    deploy( protothread, src_hw_6809_protothread_asm );
+
+    outline0("JSR PROTOTHREADLOOP" );
+
+}
+
+void cpu6809_protothread_register_at( Environment * _environment, char * _index, char * _label ) {
+
+    deploy( protothread, src_hw_6809_protothread_asm );
+
+    outline1("LDY #%s", _label );
+    outline1("LDB %s", _index );
+
+    outline0("JSR PROTOTHREADREGAT" );
+
+}
+
+void cpu6809_protothread_register( Environment * _environment, char * _label, char * _index ) {
+
+    deploy( protothread, src_hw_6809_protothread_asm );
+
+    outline1("LDY #%s", _label );
+
+    outline0("JSR PROTOTHREADREG" );
+
+    outline1("STB %s", _index );
+
+}
+
+void cpu6809_protothread_unregister( Environment * _environment, char * _index ) {
+
+    deploy( protothread, src_hw_6809_protothread_asm );
+
+    outline1("LDB %s", _index );
+
+    outline0("JSR PROTOTHREADUNREG" );
+
+}
+
+void cpu6809_protothread_save( Environment * _environment, char * _index, int _step ) {
+
+    deploy( protothread, src_hw_6809_protothread_asm );
+
+    outline1("LDB %s", _index );
+    outline1("LDA #$%2.2x", _step );
+
+    outline0("JSR PROTOTHREADSAVE" );
+
+}
+
+void cpu6809_protothread_restore( Environment * _environment, char * _index, char * _step ) {
+
+    deploy( protothread, src_hw_6809_protothread_asm );
+
+    outline1("LDB %s", _index );
+
+    outline0("JSR PROTOTHREADRESTORE" );
+
+    outline1("STA %s", _step );
+    
+}
+
+void cpu6809_protothread_set_state( Environment * _environment, char * _index, int _state ) {
+
+    deploy( protothread, src_hw_6809_protothread_asm );
+
+    outline1("LDB %s", _index );
+    outline1("LDA #$%2.2x", _state );
+
+    outline0("JSR PROTOTHREADSETSTATE" );
+
+}
+
+void cpu6809_protothread_get_state( Environment * _environment, char * _index, char * _state ) {
+
+    deploy( protothread, src_hw_6809_protothread_asm );
+
+    outline1("LDB %s", _index );
+
+    outline0("JSR PROTOTHREADGETSTATE" );
+
+    outline1("STA %s", _state );
+
+}
+
+void cpu6809_protothread_current( Environment * _environment, char * _current ) {
+
+    deploy( protothread, src_hw_6809_protothread_asm );
+
+    outline0("LDX PROTOTHREADCT" );
+    outline1("STX %s", _current );
+
+}
+
 #endif

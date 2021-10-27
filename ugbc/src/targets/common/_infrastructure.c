@@ -802,7 +802,7 @@ Variable * variable_store( Environment * _environment, char * _destination, unsi
                     CRITICAL_DATATYPE_UNSUPPORTED("array(1)", DATATYPE_AS_STRING[destination->arrayType]);
                 }
                 printf("Filling array with %d bytes of value %2.2x\n", size, _value );
-                cpu6502_fill_direct_size_value( _environment, destination->realName, size, _value );
+                cpu_fill_direct_size_value( _environment, destination->realName, size, _value );
             } else {
                 CRITICAL_STORE_UNSUPPORTED(DATATYPE_AS_STRING[destination->type]);
             }
