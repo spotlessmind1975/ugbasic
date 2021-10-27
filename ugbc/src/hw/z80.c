@@ -2145,9 +2145,9 @@ void z80_mem_move_size( Environment * _environment, char *_source, char *_destin
 
     outline1("LD HL,(%s)", _source);
     outline1("LD DE,(%s)", _destination);
-    outline1("LD A, $%2.2x", _size);
+    outline1("LD A, $%2.2x", ( _size & 0xff ) );
     outline0("LD C, A");
-    outline0("LD B, 0");
+    outline1("LD B, $%2.2x", ( _size >> 8 ) & 0xff );
     outline0("LDIR");
 
 }
@@ -2156,9 +2156,9 @@ void z80_mem_move_direct_size( Environment * _environment, char *_source, char *
 
     outline1("LD HL,%s", _source);
     outline1("LD DE,%s", _destination);
-    outline1("LD A, $%2.2x", _size);
+    outline1("LD A, $%2.2x", ( _size & 0xff ) );
     outline0("LD C, A");
-    outline0("LD B, 0");
+    outline1("LD B, $%2.2x", ( _size >> 8 ) & 0xff );
     outline0("LDIR");
 
 }
@@ -2167,9 +2167,9 @@ void z80_mem_move_direct_indirect_size( Environment * _environment, char *_sourc
 
     outline1("LD HL,%s", _source);
     outline1("LD DE,(%s)", _destination);
-    outline1("LD A, $%2.2x", _size);
+    outline1("LD A, $%2.2x", ( _size & 0xff ) );
     outline0("LD C, A");
-    outline0("LD B, 0");
+    outline1("LD B, $%2.2x", ( _size >> 8 ) & 0xff );
     outline0("LDIR");
 
 }
@@ -3404,6 +3404,109 @@ void z80_dstring_vars( Environment * _environment ) {
     outhead1("TEMPORARY:                    DEFS %d", space );
     outhead1("FREE_STRING:                  DB $ff, $%2.2x", ((space)>>8)& 0xff );
     
+}
+
+void z80_protothread_loop( Environment * _environment ) {
+
+    deploy( protothread, src_hw_z80_protothread_asm );
+
+    outline0("CALL PROTOTHREADLOOP" );
+
+}
+
+void z80_protothread_register_at( Environment * _environment, char * _index, char * _label ) {
+
+    deploy( protothread, src_hw_z80_protothread_asm );
+
+    outline1("LD HL, %s", _label );
+    outline1("LD A, (%s)", _index );
+    outline0("LD B, A");
+
+    outline0("CALL PROTOTHREADREGAT" );
+
+}
+
+void z80_protothread_register( Environment * _environment, char * _label, char * _index ) {
+
+    deploy( protothread, src_hw_z80_protothread_asm );
+
+    outline1("LD HL, %s", _label );
+
+    outline0("CALL PROTOTHREADREG" );
+
+    outline0("LD A, B" );
+    outline1("LD (%s), A", _index );
+
+}
+
+void z80_protothread_unregister( Environment * _environment, char * _index ) {
+
+    deploy( protothread, src_hw_z80_protothread_asm );
+
+    outline1("LD A, (%s)", _index );
+    outline0("LD B, A" );
+
+    outline0("CALL PROTOTHREADUNREG" );
+
+}
+
+void z80_protothread_save( Environment * _environment, char * _index, int _step ) {
+
+    deploy( protothread, src_hw_z80_protothread_asm );
+
+    outline1("LD A, (%s)", _index );
+    outline0("LD B, A" );
+    outline1("LD A, $%2.2x", _step );
+
+    outline0("CALL PROTOTHREADSAVE" );
+
+}
+
+void z80_protothread_restore( Environment * _environment, char * _index, char * _step ) {
+
+    deploy( protothread, src_hw_z80_protothread_asm );
+
+    outline1("LD A, (%s)", _index );
+    outline0("LD B, A" );
+
+    outline0("CALL PROTOTHREADRESTORE" );
+
+    outline1("LD (%s), A", _step );
+    
+}
+
+void z80_protothread_set_state( Environment * _environment, char * _index, int _state ) {
+
+    deploy( protothread, src_hw_z80_protothread_asm );
+
+    outline1("LD A, (%s)", _index );
+    outline0("LD B, A" );
+    outline1("LD A, $%2.2x", _state );
+
+    outline0("CALL PROTOTHREADSETSTATE" );
+
+}
+
+void z80_protothread_get_state( Environment * _environment, char * _index, char * _state ) {
+
+    deploy( protothread, src_hw_z80_protothread_asm );
+
+    outline1("LD A, (%s)", _index );
+    outline0("LD B, A" );
+
+    outline0("CALL PROTOTHREADGETSTATE" );
+
+    outline1("LD (%s), A", _state );
+
+}
+
+void z80_protothread_current( Environment * _environment, char * _current ) {
+
+    deploy( protothread, src_hw_z80_protothread_asm );
+
+    outline0("LD A, (PROTOTHREADCT)" );
+    outline1("LD (%s), A", _current );
+
 }
 
 #endif

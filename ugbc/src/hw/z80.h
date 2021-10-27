@@ -1,5 +1,5 @@
-#ifndef __UGBC_z80__
-#define __UGBC_z80__
+#ifndef __UGBC_Z80__
+#define __UGBC_Z80__
 
 /*****************************************************************************
  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
@@ -169,6 +169,16 @@ void z80_mobrender( Environment * _environment, int _on_vbl );
 void z80_sqroot( Environment * _environment, char * _number, char * _result );
 void z80_dstring_vars( Environment * _environment );
 
+void z80_protothread_loop( Environment * _environment );
+void z80_protothread_register_at( Environment * _environment, char * _index, char * _label );
+void z80_protothread_register( Environment * _environment, char * _label, char * _index );
+void z80_protothread_unregister( Environment * _environment, char * _index );
+void z80_protothread_save( Environment * _environment, char * _index, int _step );
+void z80_protothread_restore( Environment * _environment, char * _index, char * _step );
+void z80_protothread_set_state( Environment * _environment, char * _index, int _state );
+void z80_protothread_get_state( Environment * _environment, char * _index, char * _state );
+void z80_protothread_current( Environment * _environment, char * _current );
+
 #define cpu_beq( _environment,  _label  ) z80_beq( _environment,  _label  )
 #define cpu_bneq( _environment,  _label  ) z80_beq( _environment,  _label  )
 #define cpu_busy_wait( _environment,  _timing  ) z80_busy_wait( _environment,  _timing  )
@@ -306,6 +316,16 @@ extern unsigned int src_hw_chipset_mob_asm_len;
 #define cpu_mobrender( _environment, _on_vbl ) z80_mobrender( _environment, _on_vbl )
 #define cpu_sqroot( _environment, _number, _result ) z80_sqroot( _environment, _number, _result )
 #define cpu_dstring_vars( _environment ) z80_dstring_vars( _environment )
+
+#define cpu_protothread_loop( _environment ) z80_protothread_loop( _environment )
+#define cpu_protothread_register( _environment, _label, _index ) z80_protothread_register( _environment, _label, _index )
+#define cpu_protothread_register_at( _environment, _index, _label ) z80_protothread_register_at( _environment, _index, _label )
+#define cpu_protothread_unregister(_environment, _index ) z80_protothread_unregister(_environment, _index )
+#define cpu_protothread_save( _environment, _index, _step ) z80_protothread_save( _environment, _index, _step )
+#define cpu_protothread_restore( _environment, _index, _step ) z80_protothread_restore( _environment, _index, _step )
+#define cpu_protothread_set_state( _environment, _index, _state ) z80_protothread_set_state( _environment, _index, _state )
+#define cpu_protothread_get_state( _environment, _index, _state ) z80_protothread_get_state( _environment, _index, _state )
+#define cpu_protothread_current( _environment, _current ) z80_protothread_current( _environment, _current )
 
 #define     CPU_LITTLE_ENDIAN      1
 

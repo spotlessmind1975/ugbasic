@@ -250,6 +250,8 @@ int zx_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode
 
 void zx_bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {
 
+    deploy( vars, src_hw_zx_vars_asm );
+
 }
 
 void zx_tilemap_enable( Environment * _environment, int _width, int _height, int _colors ) {
@@ -496,10 +498,10 @@ Variable * zx_image_converter( Environment * _environment, char * _data, int _wi
     switch( _mode ) {
 
         case BITMAP_MODE_STANDARD:
+        case TILEMAP_MODE_STANDARD:
 
             return zx_image_converter_bitmap_mode_standard( _environment, _data, _width, _height );
 
-        case TILEMAP_MODE_STANDARD:
             break;
     }
 
@@ -509,13 +511,13 @@ Variable * zx_image_converter( Environment * _environment, char * _data, int _wi
 
 void zx_put_image( Environment * _environment, char * _image, char * _x, char * _y ) {
 
-    deploy( zxvars, src_hw_zx_vars_asm);
+    deploy( vars, src_hw_zx_vars_asm);
     deploy( image, src_hw_zx_image_asm );
 
     outline1("LD HL, (%s)", _image );
-    outline1("LD A, %s", _x );
+    outline1("LD A, (%s)", _x );
     outline0("LD (IMAGEX), A" );
-    outline1("LD A, %s", _y );
+    outline1("LD A, (%s)", _y );
     outline0("LD (IMAGEY), A" );
 
     outline0("CALL PUTIMAGE");
