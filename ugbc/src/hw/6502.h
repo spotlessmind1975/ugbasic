@@ -175,6 +175,7 @@ void cpu6502_protothread_save( Environment * _environment, char * _index, int _s
 void cpu6502_protothread_restore( Environment * _environment, char * _index, char * _step );
 void cpu6502_protothread_set_state( Environment * _environment, char * _index, int _state );
 void cpu6502_protothread_get_state( Environment * _environment, char * _index, char * _state );
+void cpu6502_protothread_current( Environment * _environment, char * _current );
 
 #define cpu_beq( _environment,  _label  ) cpu6502_beq( _environment,  _label  )
 #define cpu_bneq( _environment,  _label  ) cpu6502_beq( _environment,  _label  )
@@ -324,6 +325,7 @@ extern unsigned int src_hw_chipset_mob_asm_len;
 #define cpu_protothread_restore( _environment, _index, _step ) cpu6502_protothread_restore( _environment, _index, _step )
 #define cpu_protothread_set_state( _environment, _index, _state ) cpu6502_protothread_set_state( _environment, _index, _state )
 #define cpu_protothread_get_state( _environment, _index, _state ) cpu6502_protothread_get_state( _environment, _index, _state )
+#define cpu_protothread_current( _environment, _current ) cpu6502_protothread_current( _environment, _current )
 
 #define     CPU_LITTLE_ENDIAN      1
 

@@ -191,7 +191,6 @@ INPUT { return (INPUT); }
 INSERT { return (INSERT); }
 INVERSE { return (INVERSE); }
 INSTR { return (INSTR); }
-INVOKE { return (INVOKE); }
 IS { return (IS); }
 J { return (J); }
 JDOWN { return (JDOWN); }
@@ -309,6 +308,7 @@ SIGNED { return (SIGNED); }
 SIZE { return (SIZE); }
 SLASH { return (SLASH); }
 SPACE { return (SPACE); }
+SPAWN { return (SPAWN); }
 SPRITE { return (SPRITE); }
 SQR { return (SQR); }
 STATE { return (STATE); }
@@ -326,6 +326,7 @@ TEXT { return (TEXT); }
 TEXTMAP { return (TEXTMAP); }
 TEXTADDRESS { return (TEXTADDRESS); }
 THEN { return (THEN); }
+THREAD { return (THREAD); }
 TICKS { return (TICKS); }
 TILEMAP { return (TILEMAP); }
 TILE { return (TILE); }

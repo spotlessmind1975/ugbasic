@@ -15,12 +15,12 @@ REM
     END PROC
 
     PARALLEL PROCEDURE example2
-        t = INVOKE example1
+        t = SPAWN example1
         WAIT PARALLEL t
         PRINT "example2"
     END PROC
 
-    INVOKE example2
+    SPAWN example2
 
    DO
         RUN PARALLEL

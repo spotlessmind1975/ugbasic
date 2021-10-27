@@ -39,13 +39,13 @@
  ****************************************************************************/
 
 /**
- * @brief Emit code for <strong>INVOKE ...</strong>
+ * @brief Emit code for <strong>SPAWN ...</strong>
  * 
  * @param _environment Current calling environment
  * @param _name Name of the procedure
  */
 /* <usermanual>
-@keyword INVOKE
+@keyword SPAWN
 
 @english
 This keyword will invoke a (parallel) procedure. 
@@ -54,13 +54,13 @@ This keyword will invoke a (parallel) procedure.
 Questa parola chiave invoca una funzione affinché sia eseguita
 in parallelo.
 
-@syntax INVOKE [name][{[parameter],{[parameter],....}}]
+@syntax SPAWN [name][{[parameter],{[parameter],....}}]
 
-@example INVOKE factorial(42)
+@example SPAWN factorial(42)
 
 @target all
 </usermanual> */
-Variable * invoke_procedure( Environment * _environment, char * _name ) {
+Variable * spawn_procedure( Environment * _environment, char * _name ) {
 
     Variable * threadId = variable_temporary( _environment, VT_THREAD, "(thread)");
 

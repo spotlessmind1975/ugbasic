@@ -51,7 +51,7 @@ extern char DATATYPE_AS_STRING[][16];
 %token INPUT FREE TILEMAP EMPTY TILE EMPTYTILE PLOT GR CIRCLE DRAW LINE BOX POLYLINE ELLIPSE CLIP
 %token BACK DEBUG CAN ELSEIF BUFFER LOAD SIZE MOB IMAGE PUT VISIBLE HIDDEN HIDE SHOW RENDER
 %token SQR TI CONST VBL POKE NOP FILL IN POSITIVE DEFINE ATARI ATARIXL C64 DRAGON DRAGON32 DRAGON64 PLUS4 ZX 
-%token FONT VIC20 PARALLEL INVOKE YIELD
+%token FONT VIC20 PARALLEL YIELD SPAWN THREAD
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -1073,18 +1073,18 @@ exponential:
       call_procedure( _environment, $1 );
       $$ = param_procedure( _environment, $1 )->name;
     }
-    | INVOKE Identifier {
+    | SPAWN Identifier {
       ((struct _Environment *)_environment)->parameters = 0;
-      $$ = invoke_procedure( _environment, $2 )->name;
+      $$ = spawn_procedure( _environment, $2 )->name;
     }
-    | INVOKE Identifier OSP {
+    | SPAWN Identifier OSP {
         ((struct _Environment *)_environment)->parameters = 0;
         } values CSP {
-      $$ = invoke_procedure( _environment, $2 )->name;
+      $$ = spawn_procedure( _environment, $2 )->name;
     }
-    | INVOKE Identifier OSP CSP {
+    | SPAWN Identifier OSP CSP {
         ((struct _Environment *)_environment)->parameters = 0;
-      $$ = invoke_procedure( _environment, $2 )->name;
+      $$ = spawn_procedure( _environment, $2 )->name;
     }
     | SGN OP expr CP {
         $$ = sign( _environment, $3 )->name;
@@ -1111,6 +1111,11 @@ exponential:
     | COLOR COUNT {
         $$ = variable_temporary( _environment, VT_COLOR, "(COLORS COUNT)" )->name;
         variable_store( _environment, $$, COLOR_COUNT );
+    }
+    | THREAD {
+        Variable * var = variable_temporary( _environment, VT_THREAD, "(THREAD)" );
+        cpu_protothread_current( _environment, var->realName );
+        $$ = var->name;
     }
     | SCREEN COLORS {
         $$ = variable_temporary( _environment, VT_COLOR, "(SCREEN COLORS)" )->name;
@@ -1855,7 +1860,8 @@ var_definition_simple:
       Variable * v = variable_retrieve( _environment, $6 );
       Variable * d = variable_retrieve_or_define( _environment, $1, VT_DSTRING, 0 );
       variable_move( _environment, v->name, d->name );
-  };
+  }
+  ;
 
 goto_definition:
     Identifier {
@@ -2232,9 +2238,9 @@ dim_definition :
           ((struct _Environment *)_environment)->arrayDimensions = 0;
       } OP dimensions CP {
         Variable * var = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
-        variable_array_type( _environment, $1, VT_WORD );
         var->value = $3;
-      }
+        variable_array_type( _environment, $1, VT_WORD );
+    }
     | Identifier {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
           ((struct _Environment *)_environment)->arrayDimensions = 0;
@@ -2254,8 +2260,8 @@ dim_definition :
           ((struct _Environment *)_environment)->arrayDimensions = 0;
       } OP dimensions CP {
         Variable * var = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
-        variable_array_type( _environment, $1, $2 );
         var->value = $4;
+        variable_array_type( _environment, $1, $2 );
       }
     | Identifier AS datatype {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
@@ -2269,9 +2275,9 @@ dim_definition :
           ((struct _Environment *)_environment)->arrayDimensions = 0;
       } OP dimensions CP {
         Variable * var = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
-        variable_array_type( _environment, $1, $3 );
         var->value = $5;
-      }
+        variable_array_type( _environment, $1, $3 );
+    }
     ;
 
 dim_definitions :
@@ -2873,7 +2879,7 @@ statement:
   }
   | FOR Identifier OP_ASSIGN expr TO expr {
       begin_for( _environment, $2, $4, $6 );  
-  }
+  } 
   | NEXT {
       end_for( _environment );
   }
@@ -2950,18 +2956,18 @@ statement:
       ((struct _Environment *)_environment)->parameters = 0;
       call_procedure( _environment, $2 );
   }
-  | INVOKE Identifier {
+  | SPAWN Identifier {
       ((struct _Environment *)_environment)->parameters = 0;
-      invoke_procedure( _environment, $2 );
+      spawn_procedure( _environment, $2 );
   }
-  | INVOKE Identifier OSP {
+  | SPAWN Identifier OSP {
       ((struct _Environment *)_environment)->parameters = 0;
     } values CSP {
-      invoke_procedure( _environment, $2 );
+      spawn_procedure( _environment, $2 );
   }
-  | INVOKE Identifier OSP CSP {
+  | SPAWN Identifier OSP CSP {
       ((struct _Environment *)_environment)->parameters = 0;
-      invoke_procedure( _environment, $2 );
+      spawn_procedure( _environment, $2 );
   }
   | YIELD {
       yield( _environment );

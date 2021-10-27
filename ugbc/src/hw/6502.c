@@ -330,10 +330,10 @@ void cpu6502_fill_size_value( Environment * _environment, char * _address, int _
         outline1("LDA %s+1", _address);
         outline0("STA TMPPTR+1");
 
-        outline1("LDA #$%2.2x", _pattern);
+        outline1("LDA #$%2.2x", (_pattern & 0xff ) );
 
         // Fill the bitmap with the given pattern.
-        outline1("LDX #$%2.2x", _bytes );
+        outline1("LDX #$%2.2x", ( _bytes & 0xff ) );
         outline0("LDY #0");
         outhead1("%sx:", label);
         outline0("STA (TMPPTR),Y");
@@ -347,8 +347,8 @@ void cpu6502_fill_size_value( Environment * _environment, char * _address, int _
         outline0("STA TMPPTR");
         outline1("LDA %s+1", _address);
         outline0("STA TMPPTR+1");
-        outline1("LDX #$%2.2x", _bytes );
-        outline1("LDA #$%2.2x", _pattern);
+        outline1("LDX #$%2.2x", ( _bytes & 0xff ) );
+        outline1("LDA #$%2.2x", (_pattern & 0xff ) );
         outline0("JSR CPUFILL");
 
     done()
@@ -480,10 +480,10 @@ void cpu6502_fill_direct_size_value( Environment * _environment, char * _address
         outline1("LDA #>%s", _address);
         outline0("STA TMPPTR+1");
 
-        outline1("LDA #$%2.2x", _pattern);
+        outline1("LDA #$%2.2x", ( _pattern & 0xff ) );
 
         // Fill the bitmap with the given pattern.
-        outline1("LDX #$%2.2x", _bytes );
+        outline1("LDX #$%2.2x", ( _bytes & 0xff ) );
         outline0("LDY #0");
         outhead1("%sx:", label);
         outline0("STA (TMPPTR),Y");
@@ -497,8 +497,8 @@ void cpu6502_fill_direct_size_value( Environment * _environment, char * _address
         outline0("STA TMPPTR");
         outline1("LDA #>%s", _address);
         outline0("STA TMPPTR+1");
-        outline1("LDX #$%2.2x", _bytes );
-        outline1("LDA #$%2.2x", _pattern);
+        outline1("LDX #$%2.2x", ( _bytes & 0xff ) );
+        outline1("LDA #$%2.2x", ( _pattern & 0xff ) );
         outline0("JSR CPUFILL");
 
     done()
@@ -4717,6 +4717,15 @@ void cpu6502_protothread_get_state( Environment * _environment, char * _index, c
     outline0("JSR PROTOTHREADGETSTATE" );
 
     outline1("STX %s", _state );
+
+}
+
+void cpu6502_protothread_current( Environment * _environment, char * _current ) {
+
+    deploy( protothread, src_hw_6502_protothread_asm );
+
+    outline0("LDX PROTOTHREADCT" );
+    outline1("STX %s", _current );
 
 }
 

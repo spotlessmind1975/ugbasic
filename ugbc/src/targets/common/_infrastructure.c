@@ -589,6 +589,10 @@ Variable * variable_array_type( Environment * _environment, char *_name, Variabl
     if ( ! var->memoryArea ) {
         memory_area_assign( _environment->memoryAreas, var );
     }
+    if ( var->memoryArea ) {
+        variable_store( _environment, var->name, var->value );
+    }
+
 }
 
 /**
@@ -783,7 +787,25 @@ Variable * variable_store( Environment * _environment, char * _destination, unsi
             cpu_store_8bit( _environment, destination->realName, VT_ESIGN_8BIT( destination->type, _value ) );
             break;
         case 0:
-            CRITICAL_STORE_UNSUPPORTED(DATATYPE_AS_STRING[destination->type]);
+            if ( destination->type == VT_ARRAY ) {
+                int i=0,size=1;
+                for( i=0; i<destination->arrayDimensions; ++i ) {
+                    size *= destination->arrayDimensionsEach[i];
+                }
+                if ( VT_BITWIDTH( destination->arrayType ) > 0 ) {
+                    size *= ( VT_BITWIDTH( destination->arrayType ) >> 3 );
+                } else if ( destination->arrayType == VT_DSTRING ) {
+                    size *= 1;
+                } else if ( destination->arrayType == VT_MOB ) {
+                    size *= 1;
+                } else {
+                    CRITICAL_DATATYPE_UNSUPPORTED("array(1)", DATATYPE_AS_STRING[destination->arrayType]);
+                }
+                printf("Filling array with %d bytes of value %2.2x\n", size, _value );
+                cpu6502_fill_direct_size_value( _environment, destination->realName, size, _value );
+            } else {
+                CRITICAL_STORE_UNSUPPORTED(DATATYPE_AS_STRING[destination->type]);
+            }
             break;
     }
     return destination;

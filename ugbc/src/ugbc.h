@@ -380,6 +380,9 @@ typedef struct _Variable {
     /** Variable type */
     VariableType arrayType;
 
+    /** Is threaded? */
+    int threaded;
+
     /** Link to the next variable (NULL if this is the last one) */
     struct _Variable * next;
 
@@ -1210,8 +1213,9 @@ typedef struct _Environment {
 #define CRITICAL_INVALID_STRING_SPACE( d ) CRITICAL2i("E075 - invalid maximum space occupied by strings", d);
 #define CRITICAL_TYPE_MISMATCH_CONSTANT_STRING( c ) CRITICAL2("E076 - use of an wrong type constant (string expected, numeric used)", c );
 #define CRITICAL_CANNOT_OPEN_EXECUTABLE_FILE( c )  CRITICAL2("E077 - cannot open executable file for post elaboration", c );
-#define CRITICAL_PARALLEL_PROCEDURE_CANNOT_BE_CALLED( c ) CRITICAL2("E078 - cannot CALL a PARALLEL PROCEDURE: use INVOKE instead", c );
-#define CRITICAL_PROCEDURE_CANNOT_BE_INVOKED( c ) CRITICAL2("E078 - cannot INVOKE a PROCEDURE: use CALL instead", c );
+#define CRITICAL_PARALLEL_PROCEDURE_CANNOT_BE_CALLED( c ) CRITICAL2("E078 - cannot CALL a PARALLEL PROCEDURE: use SPAWN instead", c );
+#define CRITICAL_PROCEDURE_CANNOT_BE_INVOKED( c ) CRITICAL2("E078 - cannot SPAWN a PROCEDURE: use CALL instead", c );
+#define CRITICAL_LOCAL_VARIABLE_OUTSIDE_PROCEDURE( c )  CRITICAL2("E079 - cannot define LOCAL vars outside PARALLEL PROCEDURE", c );
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
 #define WARNING2i( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%i) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -1667,7 +1671,6 @@ Variable *              image_get_height( Environment * _environment, char * _im
 Variable *              image_get_width( Environment * _environment, char * _image );
 void                    ink( Environment * _environment, char * _expression );
 Variable *              inkey( Environment * _environment );
-Variable *              invoke_procedure( Environment * _environment, char * _name );
 void                    input( Environment * _environment, char * _variable );
 Variable *              input_string( Environment * _environment, char * _size );
 
@@ -1794,6 +1797,7 @@ void                    screen_vertical_scroll_var( Environment * _environment, 
 void                    set_timer( Environment * _environment, char * _value );
 void                    shared( Environment * _environment );
 Variable *              sign( Environment * _environment, char * _value );
+Variable *              spawn_procedure( Environment * _environment, char * _name );
 void                    sprite_color( Environment * _environment, int _sprite, int _color );
 void                    sprite_color_vars( Environment * _environment, char * _sprite, char * _color );
 void                    sprite_compress_horizontal( Environment * _environment, int _sprite );

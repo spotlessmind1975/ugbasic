@@ -21,8 +21,8 @@ REM
         LOOP
     END PROC
 
-   INVOKE example1
-   INVOKE example2
+   SPAWN example1
+   SPAWN example2
 
    DO
         RUN PARALLEL

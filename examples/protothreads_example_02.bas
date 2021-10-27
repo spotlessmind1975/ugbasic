@@ -19,8 +19,8 @@ REM
         PRINT "example2"
     END PROC
 
-   t = INVOKE example1
-   INVOKE example2
+   t = SPAWN example1
+   SPAWN example2
 
    DO
         RUN PARALLEL
