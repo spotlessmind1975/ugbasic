@@ -393,7 +393,7 @@ MOBDRAW2_SHIFTUPLAB:
 
 MOBDRAW2_SHIFTUPL0X:
 
-    RTS
+    RET
 
 ; ---------------------------------------------------------------------------
 ; MODE 2 (BITMAP STANDARD)
@@ -768,13 +768,13 @@ MOBINITCS2A:
 
 MOBINITCS2B:
 
-    RTS
+    RET
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ; MOBSAVE(X:indeX) -> chipset
 MOBSAVE:
-    LDA CURRENTMODE
+    LDA (CURRENTMODE)
     CMP #8
     BNE MOBSAVE8X
     JMP MOBSAVE8
@@ -807,7 +807,7 @@ MOBSAVE12X:
     BNE MOBSAVE14X
     JMP MOBSAVE14
 MOBSAVE14X:
-    RTS
+    RET
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; SAVE MODE 2
@@ -831,13 +831,13 @@ MOBSAVE2_INC:
     LDA PLOTDEST+1
     ADC #0
     STA PLOTDEST+1
-    RTS
+    RET
 
 MOBSAVE8:
 MOBSAVE10:
 MOBSAVE13:
 MOBSAVE14:
-    RTS
+    RET
 
 ; This entry point is needed do save the screen into the reserved area,
 ; in standard BITMAP MODE (2).
@@ -1056,11 +1056,11 @@ MOBSAVE2L2AX:
 
 MOBSAVE2L3:
 
-    RTS
+    RET
 
 ; MOBRESTORE(X:indeX) -> chipset
 MOBRESTORE:
-    LDA CURRENTMODE
+    LDA (CURRENTMODE)
     CMP #8
     BNE MOBRESTORE8X
     JMP MOBRESTORE8
@@ -1093,7 +1093,7 @@ MOBRESTORE12X:
     BNE MOBRESTORE14X
     JMP MOBRESTORE14
 MOBRESTORE14X:
-    RTS
+    RET
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; RESTORE MODE 2
@@ -1106,7 +1106,7 @@ MOBRESTORE2_COPY:
     LDA (MOBADDR),Y       ; S
     ; LDA #$AA
     STA (PLOTDEST),Y       ; D
-    RTS
+    RET
 
 ; This routine will increment the position of the operation to the
 ; next byte (row) of the current cell.
@@ -1126,7 +1126,7 @@ MOBRESTORE2_INC:
     LDA PLOTDEST+1
     ADC #0
     STA PLOTDEST+1
-    RTS
+    RET
 
 MOBRESTORE2_INCL:
     CLC
@@ -1145,13 +1145,13 @@ MOBRESTORE2_INCL:
     SBC #0
     STA PLOTDEST+1
 
-    RTS
+    RET
 
 MOBRESTORE8:
 MOBRESTORE10:
 MOBRESTORE13:
 MOBRESTORE14:
-    RTS
+    RET
 
 ; This entry point is needed do save the screen into the reserved area,
 ; in standard BITMAP MODE (2).
@@ -1356,7 +1356,7 @@ MOBRESTORE2L3:
     LDA #0
     STA MOBDESCRIPTORS_SH, X
 
-    RTS
+    RET
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Chipset specific drawing routine
@@ -1364,7 +1364,7 @@ MOBRESTORE2L3:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 MOBDRAW:
-    LDA CURRENTMODE
+    LDA (CURRENTMODE)
     CMP #8
     BNE MOBDRAW8X
     JMP MOBDRAW8
@@ -1397,7 +1397,7 @@ MOBDRAW12X:
     BNE MOBDRAW14X
     JMP MOBDRAW14
 MOBDRAW14X:
-    RTS
+    RET
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; DRAW MODE 2
@@ -1428,7 +1428,7 @@ MOBDRAW2_NOPL1:
     DEC MOBDRAW_TMP
     BNE MOBDRAW2_NOPL1
 MOBDRAW2_NOPE:
-    RTS
+    RET
 
 ; This routine will do nothing, by skipping the
 ; number of bytes (rows in a cell) given by 
@@ -1449,7 +1449,7 @@ MOBDRAW2_NOP2:
     LDA PLOTDEST+1
     ADC #0
     STA PLOTDEST+1
-    RTS
+    RET
 
 ; This routine will do a "left mask", by taking the original pixels
 ; from the drawing, protecting the first MOBDRAW_DX pixels and
@@ -1467,7 +1467,7 @@ MOBDRAW2_LEFTMASK:
     AND (MOBADDR),Y           ; S & maskX
     ORA MOBDRAW_TMP
     STA (PLOTDEST),Y
-    RTS
+    RET
 
 ; This routine will do a "right mask", by taking the original pixels
 ; from the drawing, protecting the last MOBDRAW_DX pixels and
@@ -1485,7 +1485,7 @@ MOBDRAW2_RIGHTMASK:
     AND (MOBADDR),Y           ; S & ~ maskX
     ORA MOBDRAW_TMP
     STA (PLOTDEST),Y
-    RTS
+    RET
 
 ; This routine will do a simple copy of the drawing pixels over the
 ; original one, replacing them.
@@ -1493,7 +1493,7 @@ MOBDRAW2_COPY:
     LDY #0
     LDA (MOBADDR),Y       ; S
     STA (PLOTDEST),Y       ; D
-    RTS
+    RET
 
 ; This routine will increment the position of the operation to the
 ; next byte (row) of the current cell.
@@ -1513,7 +1513,7 @@ MOBDRAW2_INC:
     LDA PLOTDEST+1
     ADC #0
     STA PLOTDEST+1
-    RTS
+    RET
 
 MOBDRAW2_INCL:
     CLC
@@ -1532,7 +1532,7 @@ MOBDRAW2_INCL:
     SBC #$0
     STA PLOTDEST+1
 
-    RTS
+    RET
 
 MOBDRAW2:
 
@@ -1540,7 +1540,7 @@ MOBDRAW8:
 MOBDRAW10:
 MOBDRAW13:
 MOBDRAW14:
-    RTS
+    RET
 
 ; This entry point is needed do draw the image over the screen,
 ; in standard BITMAP MODE (2).
@@ -1778,7 +1778,7 @@ MOBDRAW2L6:
 
 MOBDRAW2E:
 
-    RTS
+    RET
 
 MOBATCS:
 
@@ -1865,7 +1865,7 @@ MOBATCS_UP:
 
 MOBATCS_DONE:
 
-    RTS
+    RET
 
 ; Mask for bit selection / unselection on a single cell
 ; during drawing operations.

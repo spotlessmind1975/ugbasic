@@ -117,9 +117,11 @@ DSGC:
     PUSH IX
     LD HL, FREE_STRING
     LD DE, max_free_string
-    LD (HL), DE
+    LD (HL), E
+    INC HL
+    LD (HL), D
     LD A, (USING)
-    CMP 0
+    CP 0
     JR Z, DSGT
     JMP DSGW
 DSGT:
@@ -160,7 +162,9 @@ DSGCLOOP2:
 DSGCLOOP3:
     POP BC
     INC B
-    CPB MAXSTRINGS
+    LD A, B
+	LD HL, MAXSTRINGS
+    CP (HL)
     JR NZ, DSGCLOOP
 DSGCEND:
     LD A,(USING)
@@ -178,7 +182,9 @@ DSFINDFREEL:
     AND $40
     JR Z, DSFINDFREEN
     INC B
-    CPB MAXSTRINGS
+    LD A, B
+	LD HL, MAXSTRINGS
+    CP (HL)
     JR NZ, DSFINDFREEL
     JMP OUT_OF_MEMORY   
 DSFINDFREEN:

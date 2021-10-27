@@ -46,7 +46,7 @@ IMAGEH2:    DB 0
 ; ----------------------------------------------------------------------------
 
 PUTIMAGE:
-    LD A,CURRENTMODE
+    LD A, (CURRENTMODE)
     ; BITMAP_MODE_STANDARD
     CP 0
     JR NZ, PUTIMAGE0X
@@ -57,10 +57,10 @@ PUTIMAGE0X:
     JR NZ, PUTIMAGE1X
     JMP PUTIMAGE1
 PUTIMAGE1X:
-    RTS
+    RET
 
 PUTIMAGE1:
-    RTS
+    RET
 
 PUTIMAGE0:
     LD A, (HL)
@@ -122,11 +122,13 @@ PUTIMAGE0B:
     POP DE
     POP HL
 
-    LD C, IMAGEH
+    LD A, (IMAGEH)
+    LD C, A
     SLA C
     SLA C
     SLA C
-    LD B, IMAGEW
+    LD A, (IMAGEW)
+    LD B, A
 PUTIMAGE0CP:
     LD A, (HL)
     LD (DE), A
@@ -134,7 +136,8 @@ PUTIMAGE0CP:
     INC DE
     DEC B
     JR NZ, PUTIMAGE0CP
-    LD B, IMAGEW
+    LD A, (IMAGEW)
+    LD B, A
 
     PUSH HL
     
@@ -203,29 +206,32 @@ PUTIMAGE0CP:
     POP DE
     POP HL
 
-    LD C, IMAGEH
-    LD B, IMAGEW
-PUTIMAGE0CP:
+    LD A, (IMAGEH)
+    LD C, A
+    LD A, (IMAGEW)
+    LD B, A
+PUTIMAGE00CP:
     LD A, (HL)
     LD (DE), A
     INC HL
     INC DE
     DEC B
-    JR NZ, PUTIMAGE0CP
-    LD B, IMAGEW
+    JR NZ, PUTIMAGE00CP
+    LD A, (IMAGEW)
+    LD B, A
 
     PUSH HL
 
-    LD A, IMAGEW
+    LD A, (IMAGEW)
     LD C, A
     LD A, 0
     LD B, A
 
-    ADD HL, #64
+    ADD HL, 64
     SUB HL, BC
 
     DEC C
-    JR NZ, PUTIMAGE0CP
+    JR NZ, PUTIMAGE00CP
 
     RET
 
