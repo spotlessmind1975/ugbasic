@@ -4578,8 +4578,8 @@ void cpu6809_protothread_current( Environment * _environment, char * _current ) 
 
     deploy( protothread, src_hw_6809_protothread_asm );
 
-    outline0("LDX PROTOTHREADCT" );
-    outline1("STX %s", _current );
+    outline0("LDB PROTOTHREADCT" );
+    outline1("STB %s", _current );
 
 }
 
