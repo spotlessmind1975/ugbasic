@@ -802,6 +802,33 @@ exponential:
         $$ = variable_move_from_array( _environment, $1 )->name;
         --((struct _Environment *)_environment)->arrayNestedIndex;
     }
+    | OSP Identifier CSP {
+        ++((struct _Environment *)_environment)->arrayNestedIndex;
+        memset( ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex], 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
+        ((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex] = 0;
+        ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex][((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex]] = strdup( "PROTOTHREADCT" );
+        ++((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex];
+
+        Variable * array = variable_retrieve_or_define( _environment, $2, VT_ARRAY, 0 );
+        if ( array->type != VT_ARRAY ) {
+            CRITICAL_NOT_ARRAY( $2 );
+        }
+        $$ = variable_move_from_array( _environment, $2 )->name;
+        --((struct _Environment *)_environment)->arrayNestedIndex;
+    }
+    | OSP Identifier OP_DOLLAR CSP {
+        ++((struct _Environment *)_environment)->arrayNestedIndex;
+        memset( ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex], 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
+        ((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex] = 0;
+        ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex][((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex]] = strdup( "PROTOTHREADCT" );
+        ++((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex];
+        Variable * array = variable_retrieve_or_define( _environment, $2, VT_ARRAY, 0 );
+        if ( array->type != VT_ARRAY ) {
+            CRITICAL_NOT_ARRAY( $2 );
+        }
+        $$ = variable_move_from_array( _environment, $2 )->name;
+        --((struct _Environment *)_environment)->arrayNestedIndex;
+    }
     | Identifier {
         Constant * c = constant_find( ((struct _Environment *)_environment)->constants, $1 );
         if ( c ) {
@@ -3194,6 +3221,65 @@ statement:
             CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[a->arrayType], DATATYPE_AS_STRING[$3] );
         }
         variable_move_array( _environment, $1, x->name );
+        --((struct _Environment *)_environment)->arrayNestedIndex;
+  }
+  | OSP Identifier CSP {
+        ++((struct _Environment *)_environment)->arrayNestedIndex;
+        memset( ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex], 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
+        ((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex] = 0;
+    }
+      OP_ASSIGN expr {
+        ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex][((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex]] = strdup( "PROTOTHREADCT" );
+        ++((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex];
+        Variable * expr = variable_retrieve( _environment, $6 );
+        Variable * array = variable_retrieve( _environment, $2 );
+        if ( array->type != VT_ARRAY ) {
+            CRITICAL_NOT_ARRAY( $2 );
+        }
+        variable_move_array( _environment, $2, expr->name );
+        --((struct _Environment *)_environment)->arrayNestedIndex;
+  }
+  | OSP Identifier OP_DOLLAR CSP {
+        ++((struct _Environment *)_environment)->arrayNestedIndex;
+        memset( ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex], 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
+        ((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex] = 0;
+    } OP_ASSIGN expr {
+        ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex][((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex]] = strdup( "PROTOTHREADCT" );
+        ++((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex];
+        Variable * x = variable_retrieve( _environment, $7 );
+        Variable * a = variable_retrieve( _environment, $2 );
+        if ( x->type != VT_STRING && x->type != VT_DSTRING ) {
+            CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[x->type], DATATYPE_AS_STRING[VT_DSTRING] );
+        }
+        if ( a->type != VT_ARRAY ) {
+            CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[a->type], DATATYPE_AS_STRING[VT_ARRAY] );
+        }
+        if ( a->arrayType != VT_DSTRING ) {
+            CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[a->arrayType], DATATYPE_AS_STRING[VT_DSTRING] );
+        }
+        variable_move_array_string( _environment, $2, x->name );
+        --((struct _Environment *)_environment)->arrayNestedIndex;
+  }
+  | OSP Identifier CSP {
+        ++((struct _Environment *)_environment)->arrayNestedIndex;
+        memset( ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex], 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
+        ((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex] = 0;
+    } datatype OP_ASSIGN expr {
+        ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex][((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex]] = strdup( "PROTOTHREADCT" );
+        ++((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex];
+
+        Variable * x = variable_retrieve( _environment, $7 );
+        Variable * a = variable_retrieve( _environment, $2 );
+        if ( x->type != $5 ) {
+            CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[x->type], DATATYPE_AS_STRING[$5] );
+        }
+        if ( a->type != VT_ARRAY ) {
+            CRITICAL_NOT_ARRAY( $2 );
+        }
+        if ( a->arrayType != $5 ) {
+            CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[a->arrayType], DATATYPE_AS_STRING[$5] );
+        }
+        variable_move_array( _environment, $2, x->name );
         --((struct _Environment *)_environment)->arrayNestedIndex;
   }
   | Remark

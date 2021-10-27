@@ -10,8 +10,8 @@ REM
 
     PARALLEL PROCEDURE example
         DO
-            x(THREAD) = x(THREAD) + 1
-            PRINT x(THREAD);" ";
+            [x] = [x] + 1
+            PRINT [x];" ";
             YIELD
         LOOP
     END PROC

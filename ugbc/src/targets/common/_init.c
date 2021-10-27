@@ -92,5 +92,7 @@ void setup_text_variables( Environment * _environment ) {
     variable_global( _environment, "windowMX" );
     variable_define( _environment, "windowMY", VT_BYTE, 0 );                
     variable_global( _environment, "windowMY" );
+    variable_import( _environment, "PROTOTHREADCT", VT_BYTE );
+    variable_global( _environment, "PROTOTHREADCT" );
 
 }
