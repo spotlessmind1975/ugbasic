@@ -1149,6 +1149,32 @@ int test_cpu_math_mul_16bit_to_32bit_tester( TestEnvironment * _te ) {
 
 //===========================================================================
 
+void test_cpu_math_mul_16bit_to_32bit_payloadB( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * sa = variable_define( e, "sa", VT_WORD, 0xffff );
+    Variable * sb = variable_define( e, "sb", VT_WORD, 0x0008 );
+    Variable * results = variable_temporary( e, VT_DWORD, "(result signed)" );
+
+    cpu_math_mul_16bit_to_32bit( e, sa->realName, sb->realName, results->realName, 1 );
+
+    _te->trackedVariables[0] = results;
+
+}
+
+int test_cpu_math_mul_16bit_to_32bit_testerB( TestEnvironment * _te ) {
+
+    Variable * results = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+
+printf( "results = %8.8x (%d) [expected -8]\n", results->value, results->value );
+    
+    return  results->value == -8;
+
+}
+
+//===========================================================================
+
 void test_cpu_math_mul_8bit_to_16bit_payload( TestEnvironment * _te ) {
 
     Environment * e = &_te->environment;
@@ -4319,7 +4345,8 @@ void test_cpu( ) {
     create_test( "cpu_math_double_32bit", &test_cpu_math_double_32bit_payload, &test_cpu_math_double_32bit_tester );
     create_test( "cpu_math_double_8bit", &test_cpu_math_double_8bit_payload, &test_cpu_math_double_8bit_tester );
     create_test( "cpu_math_mul_8bit_to_16bit", &test_cpu_math_mul_8bit_to_16bit_payload, &test_cpu_math_mul_8bit_to_16bit_tester );
-    create_test( "cpu_math_mul_16bit_to_32bit", &test_cpu_math_mul_16bit_to_32bit_payload, &test_cpu_math_mul_16bit_to_32bit_tester );
+    create_test( "cpu_math_mul_16bit_to_32bit A", &test_cpu_math_mul_16bit_to_32bit_payload, &test_cpu_math_mul_16bit_to_32bit_tester );
+    create_test( "cpu_math_mul_16bit_to_32bit B", &test_cpu_math_mul_16bit_to_32bit_payloadB, &test_cpu_math_mul_16bit_to_32bit_testerB );
     create_test( "cpu_math_div_8bit_to_8bit", &test_cpu_math_div_8bit_to_8bit_payload, &test_cpu_math_div_8bit_to_8bit_tester );
     create_test( "cpu_math_div_16bit_to_16bit A", &test_cpu_math_div_16bit_to_16bit_payload, &test_cpu_math_div_16bit_to_16bit_tester );
     create_test( "cpu_math_div_16bit_to_16bit B", &test_cpu_math_div_16bit_to_16bit_payloadB, &test_cpu_math_div_16bit_to_16bit_testerB );
