@@ -735,7 +735,7 @@ void cpu6809_math_div2_8bit( Environment * _environment, char *_source, int _ste
             outline1("BEQ %spos", label);
             outline0("LDA #1");
             outline0("STA <MATHPTR0");
-            outline0("EOR #$FF");
+            outline0("EORA #$FF");
             outline0("ADDA #1");
             outhead1("%spos", label);
         } else {
@@ -755,7 +755,7 @@ void cpu6809_math_div2_8bit( Environment * _environment, char *_source, int _ste
             outline0("LDA <MATHPTR0");
             outline1("BEQ %spos2", label);
             outline0("PULS A");
-            outline0("EOR #$FF");
+            outline0("EORA #$FF");
             outline0("ADDA #1");
             outhead1("%spos2", label);
         }
@@ -4390,28 +4390,28 @@ void cpu6809_complement2_16bit( Environment * _environment, char * _source, char
 void cpu6809_complement2_32bit( Environment * _environment, char * _source, char * _destination ) {
 
     outline1( "LDA %s", _source );
-    outline0( "EOR #$FF" );
+    outline0( "EORA #$FF" );
     if ( _destination ) {
         outline1( "STA %s", _destination );
     } else {
         outline1( "STA %s", _source );
     }
     outline1( "LDA %s+1", _source );
-    outline0( "EOR #$FF" );
+    outline0( "EORA #$FF" );
     if ( _destination ) {
         outline1( "STA %s+1", _destination );
     } else {
         outline1( "STA %s+1", _source );
     }
     outline1( "LDA %s+2", _source );
-    outline0( "EOR #$FF" );
+    outline0( "EORA #$FF" );
     if ( _destination ) {
         outline1( "STA %s+2", _destination );
     } else {
         outline1( "STA %s+2", _source );
     }
     outline1( "LDA %s+3", _source );
-    outline0( "EOR #$FF" );
+    outline0( "EORA #$FF" );
     if ( _destination ) {
         outline1( "STA %s+3", _destination );
     } else {
