@@ -63,6 +63,10 @@ void end_loop( Environment * _environment ) {
 
     _environment->loops = _environment->loops->next;
 
+    if ( _environment->procedureName && _environment->protothread ) {
+        yield( _environment );
+    }
+
     cpu_jump( _environment, loop->label );
 
     unsigned char newLabel[MAX_TEMPORARY_STORAGE]; sprintf(newLabel, "%sbis", loop->label );

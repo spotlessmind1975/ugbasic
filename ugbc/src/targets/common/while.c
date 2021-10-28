@@ -132,6 +132,10 @@ void end_while( Environment * _environment ) {
         CRITICAL("WEND outside a WHILE loop");
     }
 
+    if ( _environment->procedureName && _environment->protothread ) {
+        yield( _environment );
+    }
+    
     cpu_jump( _environment, loop->label );
 
     unsigned char endWhile[MAX_TEMPORARY_STORAGE]; sprintf(endWhile, "%sbis", loop->label );

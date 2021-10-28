@@ -69,6 +69,10 @@ void end_for( Environment * _environment ) {
 
     variable_move_naked( _environment, incrementedIndex->name, loop->index->name );
 
+    if ( _environment->procedureName && _environment->protothread ) {
+        yield( _environment );
+    }
+    
     cpu_jump( _environment, beginFor );
 
     cpu_label( _environment, endFor );

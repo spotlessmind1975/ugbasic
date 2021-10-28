@@ -1,18 +1,20 @@
 REM @english
 REM MULTI TASKING FOR DUMMIES (4)
 REM
+REM This example will show how to use a separate variable for each task.
+REM
 REM @italian
 REM USARE IL MULTITASKING CON UN ESEMPIO (4)
 REM
+REM Questo esempio mostrerà come usare variabili separate per ogni task.
 
-    DIM x WITH 0 (3), i WITH 0 (3)
-    GLOBAL x, i
+    DIM x WITH 0 (3)
+    GLOBAL x
 
     PARALLEL PROCEDURE example
         DO
             [x] = [x] + 1
-            PRINT THREAD;"-> ";[x];" ";
-            YIELD
+            PRINT [x];" ";
         LOOP
     END PROC
 
@@ -20,8 +22,8 @@ REM
     SPAWN example
     SPAWN example
 
-   DO
-        RUN PARALLEL
-   LOOP
+    DO
+            RUN PARALLEL
+    LOOP
 
-   HALT
+    HALT
