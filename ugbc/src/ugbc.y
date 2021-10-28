@@ -51,7 +51,7 @@ extern char DATATYPE_AS_STRING[][16];
 %token INPUT FREE TILEMAP EMPTY TILE EMPTYTILE PLOT GR CIRCLE DRAW LINE BOX POLYLINE ELLIPSE CLIP
 %token BACK DEBUG CAN ELSEIF BUFFER LOAD SIZE MOB IMAGE PUT VISIBLE HIDDEN HIDE SHOW RENDER
 %token SQR TI CONST VBL POKE NOP FILL IN POSITIVE DEFINE ATARI ATARIXL C64 DRAGON DRAGON32 DRAGON64 PLUS4 ZX 
-%token FONT VIC20 PARALLEL YIELD SPAWN THREAD
+%token FONT VIC20 PARALLEL YIELD SPAWN THREAD TASK
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -1141,6 +1141,11 @@ exponential:
     }
     | THREAD {
         Variable * var = variable_temporary( _environment, VT_THREAD, "(THREAD)" );
+        cpu_protothread_current( _environment, var->realName );
+        $$ = var->name;
+    }
+    | TASK {
+        Variable * var = variable_temporary( _environment, VT_THREAD, "(TASK)" );
         cpu_protothread_current( _environment, var->realName );
         $$ = var->name;
     }
