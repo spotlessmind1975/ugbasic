@@ -677,6 +677,12 @@ typedef struct _Embedded {
     int cpu_not_8bit;
     int cpu_and_8bit;
     int cpu_or_8bit;
+    int cpu_not_16bit;
+    int cpu_and_16bit;
+    int cpu_or_16bit;
+    int cpu_not_32bit;
+    int cpu_and_32bit;
+    int cpu_or_32bit;
     int cpu_math_add_16bit;
     int cpu_math_add_16bit_with_16bit;
     int cpu_math_add_16bit_with_8bit;
@@ -1219,6 +1225,8 @@ typedef struct _Environment {
 #define CRITICAL_PARALLEL_PROCEDURE_CANNOT_BE_CALLED( c ) CRITICAL2("E078 - cannot CALL a PARALLEL PROCEDURE: use SPAWN instead", c );
 #define CRITICAL_PROCEDURE_CANNOT_BE_INVOKED( c ) CRITICAL2("E078 - cannot SPAWN a PROCEDURE: use CALL instead", c );
 #define CRITICAL_LOCAL_VARIABLE_OUTSIDE_PROCEDURE( c )  CRITICAL2("E079 - cannot define LOCAL vars outside PARALLEL PROCEDURE", c );
+#define CRITICAL_OR_UNSUPPORTED( v, t ) CRITICAL3("E080 - Bitwise OR unsupported for variable of given datatype", v, t );
+#define CRITICAL_NOT_UNSUPPORTED( v, t ) CRITICAL3("E081 - Bitwise NOT unsupported for variable of given datatype", v, t );
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
 #define WARNING2i( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%i) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }

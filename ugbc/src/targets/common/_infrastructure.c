@@ -1873,10 +1873,29 @@ Variable * variable_and_const( Environment * _environment, char * _destination, 
  * @return Variable* The result of operation
  */
 Variable * variable_and( Environment * _environment, char * _left, char * _right ) {
-    Variable * left = variable_cast( _environment, _left, VT_BYTE );
-    Variable * right = variable_cast( _environment, _right, VT_BYTE );
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of AND)");
-    cpu_and_8bit( _environment, left->realName, right->realName, result->realName );
+
+    Variable * source = variable_retrieve( _environment, _left );
+    Variable * target = variable_cast( _environment, _right, source->type );
+    if ( ! target ) {
+        CRITICAL_VARIABLE(_right);
+    }
+
+    Variable * result = variable_temporary( _environment, source->type, "(result of OR)" );
+
+    switch( VT_BITWIDTH( source->type ) ) {
+        case 32:
+            cpu_and_32bit( _environment, source->realName, target->realName, result->realName );
+            break;
+        case 16:
+            cpu_and_16bit( _environment, source->realName, target->realName, result->realName );
+            break;
+        case 8:
+            cpu_and_8bit( _environment, source->realName, target->realName, result->realName );
+            break;
+        case 0:
+            CRITICAL_AND_UNSUPPORTED( _left, DATATYPE_AS_STRING[source->type]);
+    }
+
     return result;
 }
 
@@ -1893,11 +1912,31 @@ Variable * variable_and( Environment * _environment, char * _left, char * _right
  * @return Variable* The result of operation
  */
 Variable * variable_or( Environment * _environment, char * _left, char * _right ) {
-    Variable * left = variable_cast( _environment, _left, VT_BYTE );
-    Variable * right = variable_cast( _environment, _right, VT_BYTE );
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of OR)");
-    cpu_or_8bit( _environment, left->realName, right->realName, result->realName );
+
+    Variable * source = variable_retrieve( _environment, _left );
+    Variable * target = variable_cast( _environment, _right, source->type );
+    if ( ! target ) {
+        CRITICAL_VARIABLE(_right);
+    }
+
+    Variable * result = variable_temporary( _environment, source->type, "(result of OR)" );
+
+    switch( VT_BITWIDTH( source->type ) ) {
+        case 32:
+            cpu_or_32bit( _environment, source->realName, target->realName, result->realName );
+            break;
+        case 16:
+            cpu_or_16bit( _environment, source->realName, target->realName, result->realName );
+            break;
+        case 8:
+            cpu_or_8bit( _environment, source->realName, target->realName, result->realName );
+            break;
+        case 0:
+            CRITICAL_OR_UNSUPPORTED( _left, DATATYPE_AS_STRING[source->type]);
+    }
+
     return result;
+
 }
 
 /**
@@ -1912,10 +1951,27 @@ Variable * variable_or( Environment * _environment, char * _left, char * _right 
  * @return Variable* The result of operation
  */
 Variable * variable_not( Environment * _environment, char * _value ) {
-    Variable * value = variable_cast( _environment, _value, VT_BYTE );
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of NOT)");
-    cpu_not_8bit( _environment, value->realName, result->realName );
+
+    Variable * source = variable_retrieve( _environment, _value );
+
+    Variable * result = variable_temporary( _environment, source->type, "(result of OR)" );
+
+    switch( VT_BITWIDTH( source->type ) ) {
+        case 32:
+            cpu_not_32bit( _environment, source->realName, result->realName );
+            break;
+        case 16:
+            cpu_not_16bit( _environment, source->realName, result->realName );
+            break;
+        case 8:
+            cpu_not_8bit( _environment, source->realName, result->realName );
+            break;
+        case 0:
+            CRITICAL_NOT_UNSUPPORTED( _value, DATATYPE_AS_STRING[source->type]);
+    }
+
     return result;
+
 }
 
 /**

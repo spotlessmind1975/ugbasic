@@ -2852,6 +2852,40 @@ void cpu6809_and_8bit( Environment * _environment, char * _left, char * _right, 
 
 }
 
+void cpu6809_and_16bit( Environment * _environment, char * _left, char * _right, char * _result ) {
+
+    inline( cpu_and_16bit )
+
+        MAKE_LABEL
+
+        outline1("LDD %s", _left );
+        outline1("ANDA %s", _right );
+        outline1("ANDB %s+1", _right );
+        outline1("STD %s", _result);
+
+    no_embedded( cpu_and_16bit )
+
+}
+
+void cpu6809_and_32bit( Environment * _environment, char * _left, char * _right, char * _result ) {
+
+    inline( cpu_and_32bit )
+
+        MAKE_LABEL
+
+        outline1("LDD %s", _left );
+        outline1("ANDA %s", _right );
+        outline1("ANDB %s+1", _right );
+        outline1("STD %s", _result);
+        outline1("LDD %s+2", _left );
+        outline1("ANDA %s+2", _right );
+        outline1("ANDB %s+3", _right );
+        outline1("STD %s+2", _result);
+
+    no_embedded( cpu_and_16bit )
+
+}
+
 void cpu6809_logical_or_8bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
     inline( cpu_logical_or_8bit )
@@ -2892,6 +2926,40 @@ void cpu6809_or_8bit( Environment * _environment, char * _left, char * _right, c
 
 }
 
+void cpu6809_or_16bit( Environment * _environment, char * _left, char * _right, char * _result ) {
+
+    inline( cpu_or_16bit )
+
+        MAKE_LABEL
+
+        outline1("LDD %s", _left );
+        outline1("ORA %s", _right );
+        outline1("ORB %s+1", _right );
+        outline1("STD %s", _result);
+
+    no_embedded( cpu_or_16bit )
+
+}
+
+void cpu6809_or_32bit( Environment * _environment, char * _left, char * _right, char * _result ) {
+
+    inline( cpu_or_32bit )
+
+        MAKE_LABEL
+
+        outline1("LDD %s", _left );
+        outline1("ORA %s", _right );
+        outline1("ORB %s+1", _right );
+        outline1("STD %s", _result);
+        outline1("LDD %s+2", _left );
+        outline1("ORA %s+2", _right );
+        outline1("ORB %s+3", _right );
+        outline1("STD %s+2", _result);
+
+    no_embedded( cpu_or_32bit )
+
+}
+
 void cpu6809_logical_not_8bit( Environment * _environment, char * _value, char * _result ) {
 
     inline( cpu_logical_not_8bit )
@@ -2913,6 +2981,42 @@ void cpu6809_not_8bit( Environment * _environment, char * _value, char * _result
         outline1("STA %s", _result );
 
     no_embedded( cpu_not_8bit )
+
+}
+
+void cpu6809_not_16bit( Environment * _environment, char * _value, char * _result ) {
+
+    inline( cpu_not_16bit )
+
+        outline1("LDA %s", _value );
+        outline0("EORA #$FF" );
+        outline1("STA %s", _result );
+        outline1("LDA %s+1", _value );
+        outline0("EORA #$FF" );
+        outline1("STA %s+1", _result );
+
+    no_embedded( cpu_not_16bit )
+
+}
+
+void cpu6809_not_32bit( Environment * _environment, char * _value, char * _result ) {
+
+    inline( cpu_not_32bit )
+
+        outline1("LDA %s", _value );
+        outline0("EORA #$FF" );
+        outline1("STA %s", _result );
+        outline1("LDA %s+1", _value );
+        outline0("EORA #$FF" );
+        outline1("STA %s+1", _result );
+        outline1("LDA %s+2", _value );
+        outline0("EORA #$FF" );
+        outline1("STA %s+2", _result );
+        outline1("LDA %s+3", _value );
+        outline0("EORA #$FF" );
+        outline1("STA %s+3", _result );
+
+    no_embedded( cpu_not_32bit )
 
 }
 

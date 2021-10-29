@@ -2032,9 +2032,58 @@ void z80_and_8bit( Environment * _environment, char * _left, char * _right, char
 
     MAKE_LABEL
 
-    outline1("LD A, (%s)", _left );
-    outline1("AND A, (%s)", _right );
-    outline1("LD (%s), A", _result );
+    outline1("LD HL, %s", _left );
+    outline1("LD IX, %s", _right );
+    outline1("LD DE, %s", _result );
+    outline0("LD A, (HL)" );
+    outline0("AND (IX)" );
+    outline0("LD (DE), A" );
+
+}
+
+void z80_and_16bit( Environment * _environment, char * _left, char * _right, char * _result ) {
+
+    MAKE_LABEL
+
+    outline1("LD HL, %s", _left );
+    outline1("LD IX, %s", _right );
+    outline1("LD DE, %s", _result );
+    outline0("LD A, (HL)" );
+    outline0("AND (IX)" );
+    outline0("LD (DE), A" );
+    outline0("INC HL" );
+    outline0("INC DE" );
+    outline0("LD A, (HL)" );
+    outline0("AND (IX+1)" );
+    outline0("LD (DE), A" );
+
+}
+
+void z80_and_32bit( Environment * _environment, char * _left, char * _right, char * _result ) {
+
+    MAKE_LABEL
+
+    outline1("LD HL, %s", _left );
+    outline1("LD IX, %s", _right );
+    outline1("LD DE, %s", _result );
+    outline0("LD A, (HL)" );
+    outline0("AND (IX)" );
+    outline0("LD (DE), A" );
+    outline0("INC HL" );
+    outline0("INC DE" );
+    outline0("LD A, (HL)" );
+    outline0("AND (IX+1)" );
+    outline0("LD (DE), A" );
+    outline0("INC HL" );
+    outline0("INC DE" );
+    outline0("LD A, (HL)" );
+    outline0("AND (IX+2)" );
+    outline0("LD (DE), A" );
+    outline0("INC HL" );
+    outline0("INC DE" );
+    outline0("LD A, (HL)" );
+    outline0("AND (IX+3)" );
+    outline0("LD (DE), A" );
 
 }
 
@@ -2061,9 +2110,60 @@ void z80_or_8bit( Environment * _environment, char * _left, char * _right, char 
 
     MAKE_LABEL
 
-    outline1("LD A, (%s)", _left );
-    outline1("OR A, (%s)", _right );
-    outline1("LD (%s), A", _result );
+    outline1("LD HL, %s", _left );
+    outline1("LD IX, %s", _right );
+    outline1("LD DE, %s", _result );
+    outline0("LD A, (HL)" );
+    outline0("OR (IX)" );
+    outline0("LD (DE), A" );
+
+}
+
+void z80_or_16bit( Environment * _environment, char * _left, char * _right, char * _result ) {
+
+    MAKE_LABEL
+
+    outline1("LD HL, %s", _left );
+    outline1("LD IX, %s", _right );
+    outline1("LD DE, %s", _result );
+    outline0("LD A, (HL)" );
+    outline0("OR (IX)" );
+    outline0("LD (DE), A" );
+    outline0("INC HL" );
+    outline0("INC DE" );
+    outline0("LD A, (HL)" );
+    outline0("OR (IX+1)" );
+    outline0("LD (DE), A" );
+    outline0("INC HL" );
+    outline0("INC DE" );
+
+}
+
+void z80_or_32bit( Environment * _environment, char * _left, char * _right, char * _result ) {
+
+    MAKE_LABEL
+
+    outline1("LD HL, %s", _left );
+    outline1("LD IX, %s", _right );
+    outline1("LD DE, %s", _result );
+    outline0("LD A, (HL)" );
+    outline0("OR (IX)" );
+    outline0("LD (DE), A" );
+    outline0("INC HL" );
+    outline0("INC DE" );
+    outline0("LD A, (HL)" );
+    outline0("OR (IX+1)" );
+    outline0("LD (DE), A" );
+    outline0("INC HL" );
+    outline0("INC DE" );
+    outline0("LD A, (HL)" );
+    outline0("OR (IX+2)" );
+    outline0("LD (DE), A" );
+    outline0("INC HL" );
+    outline0("INC DE" );
+    outline0("LD A, (HL)" );
+    outline0("OR (IX+3)" );
+    outline0("LD (DE), A" );
 
 }
 
@@ -2080,6 +2180,46 @@ void z80_not_8bit( Environment * _environment, char * _value, char * _result ) {
     outline1("LD A, (%s)", _value );
     outline0("XOR $FF" );
     outline1("LD (%s), A", _result );
+
+}
+
+void z80_not_16bit( Environment * _environment, char * _value, char * _result ) {
+
+    outline1("LD HL, %s", _value );
+    outline1("LD DE, %s", _result );
+    outline0("LD A, (HL)" );
+    outline0("XOR $FF" );
+    outline0("LD (DE), A" );
+    outline0("INC HL" );
+    outline0("INC DE" );
+    outline0("LD A, (HL)" );
+    outline0("XOR $FF" );
+    outline0("LD (DE), A" );
+
+}
+
+void z80_not_32bit( Environment * _environment, char * _value, char * _result ) {
+
+    outline1("LD HL, %s", _value );
+    outline1("LD DE, %s", _result );
+    outline0("LD A, (HL)" );
+    outline0("XOR $FF" );
+    outline0("LD (DE), A" );
+    outline0("INC HL" );
+    outline0("INC DE" );
+    outline0("LD A, (HL)" );
+    outline0("XOR $FF" );
+    outline0("LD (DE), A" );
+    outline0("INC HL" );
+    outline0("INC DE" );
+    outline0("LD A, (HL)" );
+    outline0("XOR $FF" );
+    outline0("LD (DE), A" );
+    outline0("INC HL" );
+    outline0("INC DE" );
+    outline0("LD A, (HL)" );
+    outline0("XOR $FF" );
+    outline0("LD (DE), A" );
 
 }
 

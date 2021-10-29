@@ -76,6 +76,12 @@ void cpu6809_logical_not_8bit( Environment * _environment, char * _value, char *
 void cpu6809_and_8bit( Environment * _environment, char * _left, char * _right, char * _result );
 void cpu6809_or_8bit( Environment * _environment, char * _left, char * _right, char * _result );
 void cpu6809_not_8bit( Environment * _environment, char * _value, char * _result );
+void cpu6809_and_16bit( Environment * _environment, char * _left, char * _right, char * _result );
+void cpu6809_or_16bit( Environment * _environment, char * _left, char * _right, char * _result );
+void cpu6809_not_16bit( Environment * _environment, char * _value, char * _result );
+void cpu6809_and_32bit( Environment * _environment, char * _left, char * _right, char * _result );
+void cpu6809_or_32bit( Environment * _environment, char * _left, char * _right, char * _result );
+void cpu6809_not_32bit( Environment * _environment, char * _value, char * _result );
 void cpu6809_math_add_16bit( Environment * _environment, char *_source, char *_destination,  char *_name );
 void cpu6809_math_add_16bit_with_16bit( Environment * _environment, char *_source, char *_destination,  char *_name );
 void cpu6809_math_add_16bit_with_8bit( Environment * _environment, char *_source, char *_destination,  char *_name );
@@ -223,6 +229,12 @@ void cpu6809_protothread_current( Environment * _environment, char * _current );
 #define cpu_not_8bit( _environment, _value, _result ) cpu6809_not_8bit( _environment, _value, _result )
 #define cpu_and_8bit( _environment, _left, _right,  _result ) cpu6809_and_8bit( _environment, _left, _right,  _result )
 #define cpu_or_8bit( _environment, _left, _right,  _result ) cpu6809_or_8bit( _environment, _left, _right,  _result )
+#define cpu_not_16bit( _environment, _value, _result ) cpu6809_not_16bit( _environment, _value, _result )
+#define cpu_and_16bit( _environment, _left, _right,  _result ) cpu6809_and_16bit( _environment, _left, _right,  _result )
+#define cpu_or_16bit( _environment, _left, _right,  _result ) cpu6809_or_16bit( _environment, _left, _right,  _result )
+#define cpu_not_32bit( _environment, _value, _result ) cpu6809_not_32bit( _environment, _value, _result )
+#define cpu_and_32bit( _environment, _left, _right,  _result ) cpu6809_and_32bit( _environment, _left, _right,  _result )
+#define cpu_or_32bit( _environment, _left, _right,  _result ) cpu6809_or_32bit( _environment, _left, _right,  _result )
 #define cpu_math_add_16bit( _environment, _source, _destination,  _name  ) cpu6809_math_add_16bit( _environment, _source, _destination,  _name  )
 #define cpu_math_add_16bit_with_16bit( _environment, _source, _destination,  _name  ) cpu6809_math_add_16bit_with_16bit( _environment, _source, _destination,  _name  )
 #define cpu_math_add_16bit_with_8bit( _environment, _source, _destination,  _name  ) cpu6809_math_add_16bit_with_8bit( _environment, _source, _destination,  _name  )

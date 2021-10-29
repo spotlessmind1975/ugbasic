@@ -2960,6 +2960,46 @@ void cpu6502_and_8bit( Environment * _environment, char * _left, char * _right, 
 
 }
 
+void cpu6502_and_16bit( Environment * _environment, char * _left, char * _right, char * _result ) {
+
+    MAKE_LABEL
+
+    inline( cpu_and_16bit )
+
+        outline1("LDA %s", _left );
+        outline1("AND %s", _right );
+        outline1("STA %s", _result);
+        outline1("LDA %s+1", _left );
+        outline1("AND %s+1", _right );
+        outline1("STA %s+1", _result);
+
+    no_embedded( cpu_and_16bit )
+
+}
+
+void cpu6502_and_32bit( Environment * _environment, char * _left, char * _right, char * _result ) {
+
+    MAKE_LABEL
+
+    inline( cpu_and_16bit )
+
+        outline1("LDA %s", _left );
+        outline1("AND %s", _right );
+        outline1("STA %s", _result);
+        outline1("LDA %s+1", _left );
+        outline1("AND %s+1", _right );
+        outline1("STA %s+1", _result);
+        outline1("LDA %s+2", _left );
+        outline1("AND %s+2", _right );
+        outline1("STA %s+2", _result);
+        outline1("LDA %s+3", _left );
+        outline1("AND %s+3", _right );
+        outline1("STA %s+3", _result);
+
+    no_embedded( cpu_and_8bit )
+
+}
+
 void cpu6502_logical_or_8bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
     MAKE_LABEL
@@ -2998,6 +3038,46 @@ void cpu6502_or_8bit( Environment * _environment, char * _left, char * _right, c
 
 }
 
+void cpu6502_or_16bit( Environment * _environment, char * _left, char * _right, char * _result ) {
+
+    MAKE_LABEL
+
+    inline( cpu_or_16bit )
+
+        outline1("LDA %s", _left );
+        outline1("ORA %s", _right );
+        outline1("STA %s", _result);
+        outline1("LDA %s+1", _left );
+        outline1("ORA %s+1", _right );
+        outline1("STA %s+1", _result);
+
+    no_embedded( cpu_or_16bit )
+
+}
+
+void cpu6502_or_32bit( Environment * _environment, char * _left, char * _right, char * _result ) {
+
+    MAKE_LABEL
+
+    inline( cpu_or_32bit )
+
+        outline1("LDA %s", _left );
+        outline1("ORA %s", _right );
+        outline1("STA %s", _result);
+        outline1("LDA %s+1", _left );
+        outline1("ORA %s+1", _right );
+        outline1("STA %s+1", _result);
+        outline1("LDA %s+2", _left );
+        outline1("ORA %s+2", _right );
+        outline1("STA %s+2", _result);
+        outline1("LDA %s+3", _left );
+        outline1("ORA %s+3", _right );
+        outline1("STA %s+3", _result);
+
+    no_embedded( cpu_or_32bit )
+
+}
+
 void cpu6502_logical_not_8bit( Environment * _environment, char * _value, char * _result ) {
 
     MAKE_LABEL
@@ -3023,6 +3103,46 @@ void cpu6502_not_8bit( Environment * _environment, char * _value, char * _result
         outline1("STA %s", _result );
 
     no_embedded( cpu_not_8bit )
+
+}
+
+void cpu6502_not_16bit( Environment * _environment, char * _value, char * _result ) {
+
+    MAKE_LABEL
+
+    inline( cpu_not_16bit )
+
+        outline1("LDA %s", _value );
+        outline0("EOR #$FF" );
+        outline1("STA %s", _result );
+        outline1("LDA %s+1", _value );
+        outline0("EOR #$FF" );
+        outline1("STA %s+1", _result );
+
+    no_embedded( cpu_not_16bit )
+
+}
+
+void cpu6502_not_32bit( Environment * _environment, char * _value, char * _result ) {
+
+    MAKE_LABEL
+
+    inline( cpu_not_32bit )
+
+        outline1("LDA %s", _value );
+        outline0("EOR #$FF" );
+        outline1("STA %s", _result );
+        outline1("LDA %s+1", _value );
+        outline0("EOR #$FF" );
+        outline1("STA %s+1", _result );
+        outline1("LDA %s+2", _value );
+        outline0("EOR #$FF" );
+        outline1("STA %s+2", _result );
+        outline1("LDA %s+3", _value );
+        outline0("EOR #$FF" );
+        outline1("STA %s+3", _result );
+
+    no_embedded( cpu_not_32bit )
 
 }
 
