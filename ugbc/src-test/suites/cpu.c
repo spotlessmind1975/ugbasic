@@ -515,6 +515,231 @@ int test_cpu_and_8bit_tester( TestEnvironment * _te ) {
 
 //===========================================================================
 
+void test_cpu_and_16bit_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * true = variable_define( e, "true", VT_WORD, 0x5555 );
+    Variable * false = variable_define( e, "false", VT_WORD, 0xffff );
+
+    Variable * and00 = variable_define( e, "and00", VT_WORD, 0x00 );
+    Variable * and01 = variable_define( e, "and01", VT_WORD, 0x00 );
+    Variable * and10 = variable_define( e, "and10", VT_WORD, 0x00 );
+    Variable * and11 = variable_define( e, "and11", VT_WORD, 0x00 );
+
+    cpu_and_16bit( e, false->realName, false->realName, and00->realName );
+    cpu_and_16bit( e, false->realName, true->realName, and01->realName );
+    cpu_and_16bit( e, true->realName, false->realName, and10->realName );
+    cpu_and_16bit( e, true->realName, true->realName, and11->realName );
+
+    _te->trackedVariables[0] = and00;
+    _te->trackedVariables[1] = and01;
+    _te->trackedVariables[2] = and10;
+    _te->trackedVariables[3] = and11;
+
+}
+
+int test_cpu_and_16bit_tester( TestEnvironment * _te ) {
+
+    Variable * and00 = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * and01 = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+    Variable * and10 = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
+    Variable * and11 = variable_retrieve( &_te->environment, _te->trackedVariables[3]->name );
+
+// printf("and00 = %4.4x (%d) [expected 0xffff]\n", and00->value, and00->value );
+// printf("and01 = %4.4x (%d) [expected 0x5555]\n", and01->value, and01->value );
+// printf("and10 = %4.4x (%d) [expected 0x5555]\n", and10->value, and10->value );
+// printf("and11 = %4.4x (%d) [expected 0x5555]\n", and11->value, and11->value );
+
+    return  and00->value == 0xffff && 
+            and01->value == 0x5555 && 
+            and10->value == 0x5555 && 
+            and11->value == 0x5555;
+
+}
+
+//===========================================================================
+
+void test_cpu_and_32bit_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * true = variable_define( e, "true", VT_DWORD, 0x55555555 );
+    Variable * false = variable_define( e, "false", VT_DWORD, 0xffffffff );
+
+    Variable * and00 = variable_define( e, "and00", VT_DWORD, 0x00 );
+    Variable * and01 = variable_define( e, "and01", VT_DWORD, 0x00 );
+    Variable * and10 = variable_define( e, "and10", VT_DWORD, 0x00 );
+    Variable * and11 = variable_define( e, "and11", VT_DWORD, 0x00 );
+
+    cpu_and_32bit( e, false->realName, false->realName, and00->realName );
+    cpu_and_32bit( e, false->realName, true->realName, and01->realName );
+    cpu_and_32bit( e, true->realName, false->realName, and10->realName );
+    cpu_and_32bit( e, true->realName, true->realName, and11->realName );
+
+    _te->trackedVariables[0] = and00;
+    _te->trackedVariables[1] = and01;
+    _te->trackedVariables[2] = and10;
+    _te->trackedVariables[3] = and11;
+
+}
+
+int test_cpu_and_32bit_tester( TestEnvironment * _te ) {
+
+    Variable * and00 = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * and01 = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+    Variable * and10 = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
+    Variable * and11 = variable_retrieve( &_te->environment, _te->trackedVariables[3]->name );
+
+// printf("and00 = %8.8x (%d) [expected 0xffffffff]\n", and00->value, and00->value );
+// printf("and01 = %8.8x (%d) [expected 0x55555555]\n", and01->value, and01->value );
+// printf("and10 = %8.8x (%d) [expected 0x55555555]\n", and10->value, and10->value );
+// printf("and11 = %8.8x (%d) [expected 0x55555555]\n", and11->value, and11->value );
+
+    return  and00->value == 0xffffffff && 
+            and01->value == 0x55555555 && 
+            and10->value == 0x55555555 && 
+            and11->value == 0x55555555;
+
+}
+
+//===========================================================================
+
+void test_cpu_or_8bit_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * true = variable_define( e, "true", VT_BYTE, 0x55 );
+    Variable * false = variable_define( e, "false", VT_BYTE, 0xff );
+
+    Variable * or00 = variable_define( e, "or00", VT_BYTE, 0x00 );
+    Variable * or01 = variable_define( e, "or01", VT_BYTE, 0x00 );
+    Variable * or10 = variable_define( e, "or10", VT_BYTE, 0x00 );
+    Variable * or11 = variable_define( e, "or11", VT_BYTE, 0x00 );
+
+    cpu_or_8bit( e, false->realName, false->realName, or00->realName );
+    cpu_or_8bit( e, false->realName, true->realName, or01->realName );
+    cpu_or_8bit( e, true->realName, false->realName, or10->realName );
+    cpu_or_8bit( e, true->realName, true->realName, or11->realName );
+
+    _te->trackedVariables[0] = or00;
+    _te->trackedVariables[1] = or01;
+    _te->trackedVariables[2] = or10;
+    _te->trackedVariables[3] = or11;
+
+}
+
+int test_cpu_or_8bit_tester( TestEnvironment * _te ) {
+
+    Variable * or00 = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * or01 = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+    Variable * or10 = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
+    Variable * or11 = variable_retrieve( &_te->environment, _te->trackedVariables[3]->name );
+
+// printf("or00 = %2.2x (%d) [expected 0xff]\n", or00->value, or00->value );
+// printf("or01 = %2.2x (%d) [expected 0xff]\n", or01->value, or01->value );
+// printf("or10 = %2.2x (%d) [expected 0xff]\n", or10->value, or10->value );
+// printf("or11 = %2.2x (%d) [expected 0xff]\n", or11->value, or11->value );
+
+    return  or00->value == 0xff && 
+            or01->value == 0xff && 
+            or10->value == 0xff && 
+            or11->value == 0x55;
+
+}
+
+//===========================================================================
+
+void test_cpu_or_16bit_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * true = variable_define( e, "true", VT_WORD, 0x5555 );
+    Variable * false = variable_define( e, "false", VT_WORD, 0xffff );
+
+    Variable * or00 = variable_define( e, "or00", VT_WORD, 0x00 );
+    Variable * or01 = variable_define( e, "or01", VT_WORD, 0x00 );
+    Variable * or10 = variable_define( e, "or10", VT_WORD, 0x00 );
+    Variable * or11 = variable_define( e, "or11", VT_WORD, 0x00 );
+
+    cpu_or_16bit( e, false->realName, false->realName, or00->realName );
+    cpu_or_16bit( e, false->realName, true->realName, or01->realName );
+    cpu_or_16bit( e, true->realName, false->realName, or10->realName );
+    cpu_or_16bit( e, true->realName, true->realName, or11->realName );
+
+    _te->trackedVariables[0] = or00;
+    _te->trackedVariables[1] = or01;
+    _te->trackedVariables[2] = or10;
+    _te->trackedVariables[3] = or11;
+
+}
+
+int test_cpu_or_16bit_tester( TestEnvironment * _te ) {
+
+    Variable * or00 = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * or01 = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+    Variable * or10 = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
+    Variable * or11 = variable_retrieve( &_te->environment, _te->trackedVariables[3]->name );
+
+// printf("or00 = %4.4x (%d) [expected 0xffff]\n", or00->value, or00->value );
+// printf("or01 = %4.4x (%d) [expected 0xffff]\n", or01->value, or01->value );
+// printf("or10 = %4.4x (%d) [expected 0xffff]\n", or10->value, or10->value );
+// printf("or11 = %4.4x (%d) [expected 0x5555]\n", or11->value, or11->value );
+
+    return  or00->value == 0xffff && 
+            or01->value == 0xffff && 
+            or10->value == 0xffff && 
+            or11->value == 0x5555;
+
+}
+
+//===========================================================================
+
+void test_cpu_or_32bit_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * true = variable_define( e, "true", VT_DWORD, 0x55555555 );
+    Variable * false = variable_define( e, "false", VT_DWORD, 0xffffffff );
+
+    Variable * or00 = variable_define( e, "or00", VT_DWORD, 0x00 );
+    Variable * or01 = variable_define( e, "or01", VT_DWORD, 0x00 );
+    Variable * or10 = variable_define( e, "or10", VT_DWORD, 0x00 );
+    Variable * or11 = variable_define( e, "or11", VT_DWORD, 0x00 );
+
+    cpu_or_32bit( e, false->realName, false->realName, or00->realName );
+    cpu_or_32bit( e, false->realName, true->realName, or01->realName );
+    cpu_or_32bit( e, true->realName, false->realName, or10->realName );
+    cpu_or_32bit( e, true->realName, true->realName, or11->realName );
+
+    _te->trackedVariables[0] = or00;
+    _te->trackedVariables[1] = or01;
+    _te->trackedVariables[2] = or10;
+    _te->trackedVariables[3] = or11;
+
+}
+
+int test_cpu_or_32bit_tester( TestEnvironment * _te ) {
+
+    Variable * or00 = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * or01 = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+    Variable * or10 = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
+    Variable * or11 = variable_retrieve( &_te->environment, _te->trackedVariables[3]->name );
+
+// printf("or00 = %8.8x (%d) [expected 0xffffffff]\n", or00->value, or00->value );
+// printf("or01 = %8.8x (%d) [expected 0xffffffff]\n", or01->value, or01->value );
+// printf("or10 = %8.8x (%d) [expected 0xffffffff]\n", or10->value, or10->value );
+// printf("or11 = %8.8x (%d) [expected 0xffffffff]\n", or11->value, or11->value );
+
+    return  or00->value == 0xffffffff && 
+            or01->value == 0xffffffff && 
+            or10->value == 0xffffffff && 
+            or11->value == 0x55555555;
+
+}
+
+//===========================================================================
+
 void test_cpu_not_8bit_payload( TestEnvironment * _te ) {
 
     Environment * e = &_te->environment;
@@ -538,11 +763,77 @@ int test_cpu_not_8bit_tester( TestEnvironment * _te ) {
     Variable * not0 = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
     Variable * not1 = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
 
-// printf("not0 = %2.2x (%d) [expected 0x00]\n", not0->value, not0->value );
-// printf("not1 = %2.2x (%d) [expected 0xaa]\n", not1->value, not1->value );
+// printf("not0 = %2.2x (%d) [expected 0xaa]\n", not0->value, not0->value );
+// printf("not1 = %2.2x (%d) [expected 0x00]\n", not1->value, not1->value );
 
     return  not0->value == 0xaa && 
             not1->value == 0x00;
+
+}
+
+//===========================================================================
+
+void test_cpu_not_16bit_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * true = variable_define( e, "true", VT_WORD, 0xffff );
+    Variable * false = variable_define( e, "false", VT_WORD, 0x5555 );
+
+    Variable * not0 = variable_define( e, "not0", VT_WORD, 0x00 );
+    Variable * not1 = variable_define( e, "not1", VT_WORD, 0x00 );
+
+    cpu_not_16bit( e, false->realName, not0->realName );
+    cpu_not_16bit( e, true->realName, not1->realName );
+
+    _te->trackedVariables[0] = not0;
+    _te->trackedVariables[1] = not1;
+
+}
+
+int test_cpu_not_16bit_tester( TestEnvironment * _te ) {
+
+    Variable * not0 = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * not1 = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+
+// printf("not0 = %4.4x (%d) [expected 0xaaaa]\n", not0->value, not0->value );
+// printf("not1 = %4.4x (%d) [expected 0x0000]\n", not1->value, not1->value );
+
+    return  not0->value == 0xaaaa && 
+            not1->value == 0x0000;
+
+}
+
+//===========================================================================
+
+void test_cpu_not_32bit_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * true = variable_define( e, "true", VT_DWORD, 0xffffffff );
+    Variable * false = variable_define( e, "false", VT_DWORD, 0x55555555 );
+
+    Variable * not0 = variable_define( e, "not0", VT_DWORD, 0x00 );
+    Variable * not1 = variable_define( e, "not1", VT_DWORD, 0x00 );
+
+    cpu_not_32bit( e, false->realName, not0->realName );
+    cpu_not_32bit( e, true->realName, not1->realName );
+
+    _te->trackedVariables[0] = not0;
+    _te->trackedVariables[1] = not1;
+
+}
+
+int test_cpu_not_32bit_tester( TestEnvironment * _te ) {
+
+    Variable * not0 = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * not1 = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+
+printf("not0 = %8.8x (%d) [expected 0x00000000]\n", not0->value, not0->value );
+printf("not1 = %8.8x (%d) [expected 0xaaaaaaaa]\n", not1->value, not1->value );
+
+    return  not0->value == 0x00000000 && 
+            not1->value == 0xaaaaaaaa;
 
 }
 
@@ -1245,7 +1536,7 @@ int test_cpu_math_mul_16bit_to_32bit_testerB( TestEnvironment * _te ) {
 
     Variable * results = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
 
-printf( "results = %8.8x (%d) [expected -8]\n", results->value, results->value );
+// printf( "results = %8.8x (%d) [expected -8]\n", results->value, results->value );
     
     return  results->value == -8;
 
@@ -4407,7 +4698,14 @@ void test_cpu( ) {
     create_test( "cpu_logical_and_8bit", &test_cpu_logical_and_8bit_payload, &test_cpu_logical_and_8bit_tester );    
     create_test( "cpu_logical_not_8bit", &test_cpu_logical_not_8bit_payload, &test_cpu_logical_not_8bit_tester );    
     create_test( "cpu_and_8bit", &test_cpu_and_8bit_payload, &test_cpu_and_8bit_tester );    
+    create_test( "cpu_or_8bit", &test_cpu_or_8bit_payload, &test_cpu_or_8bit_tester );    
     create_test( "cpu_not_8bit", &test_cpu_not_8bit_payload, &test_cpu_not_8bit_tester );    
+    create_test( "cpu_and_16bit", &test_cpu_and_16bit_payload, &test_cpu_and_16bit_tester );    
+    create_test( "cpu_or_16bit", &test_cpu_or_16bit_payload, &test_cpu_or_16bit_tester );    
+    create_test( "cpu_not_16bit", &test_cpu_not_16bit_payload, &test_cpu_not_16bit_tester );    
+    create_test( "cpu_and_32bit", &test_cpu_and_32bit_payload, &test_cpu_and_32bit_tester );    
+    create_test( "cpu_or_32bit", &test_cpu_or_32bit_payload, &test_cpu_or_32bit_tester );    
+    create_test( "cpu_not_32bit", &test_cpu_not_16bit_payload, &test_cpu_not_16bit_tester );    
     create_test( "cpu_bit_check_extended", &test_cpu_bit_check_extended_payload, &test_cpu_bit_check_extended_tester );    
     create_test( "cpu_bit_check_extended B", &test_cpu_bit_check_extended_payloadB, &test_cpu_bit_check_extended_testerB );
     create_test( "cpu_less_than_8bit", &test_cpu_less_than_8bit_payload, &test_cpu_less_than_8bit_tester );    
