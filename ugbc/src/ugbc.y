@@ -3441,6 +3441,9 @@ int main( int _argc, char *_argv[] ) {
                         parse_embedded( p, cpu_logical_not_8bit );
                         parse_embedded( p, cpu_logical_and_8bit );
                         parse_embedded( p, cpu_logical_or_8bit );
+                        parse_embedded( p, cpu_not_8bit );
+                        parse_embedded( p, cpu_and_8bit );
+                        parse_embedded( p, cpu_or_8bit );
                         parse_embedded( p, cpu_math_add_16bit );
                         parse_embedded( p, cpu_math_add_16bit_with_16bit );
                         parse_embedded( p, cpu_math_add_16bit_with_8bit );
@@ -3624,6 +3627,9 @@ int main( int _argc, char *_argv[] ) {
         stats_embedded( cpu_logical_not_8bit );
         stats_embedded( cpu_logical_and_8bit );
         stats_embedded( cpu_logical_or_8bit );
+        stats_embedded( cpu_not_8bit );
+        stats_embedded( cpu_and_8bit );
+        stats_embedded( cpu_or_8bit );
         stats_embedded( cpu_math_add_16bit );
         stats_embedded( cpu_math_add_16bit_with_16bit );
         stats_embedded( cpu_math_add_16bit_with_8bit );

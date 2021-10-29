@@ -674,6 +674,9 @@ typedef struct _Embedded {
     int cpu_logical_not_8bit;
     int cpu_logical_and_8bit;
     int cpu_logical_or_8bit;
+    int cpu_not_8bit;
+    int cpu_and_8bit;
+    int cpu_or_8bit;
     int cpu_math_add_16bit;
     int cpu_math_add_16bit_with_16bit;
     int cpu_math_add_16bit_with_8bit;

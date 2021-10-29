@@ -470,6 +470,84 @@ int test_cpu_logical_not_8bit_tester( TestEnvironment * _te ) {
 
 //===========================================================================
 
+void test_cpu_and_8bit_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * true = variable_define( e, "true", VT_BYTE, 0x55 );
+    Variable * false = variable_define( e, "false", VT_BYTE, 0xff );
+
+    Variable * and00 = variable_define( e, "and00", VT_BYTE, 0x00 );
+    Variable * and01 = variable_define( e, "and01", VT_BYTE, 0x00 );
+    Variable * and10 = variable_define( e, "and10", VT_BYTE, 0x00 );
+    Variable * and11 = variable_define( e, "and11", VT_BYTE, 0x00 );
+
+    cpu_and_8bit( e, false->realName, false->realName, and00->realName );
+    cpu_and_8bit( e, false->realName, true->realName, and01->realName );
+    cpu_and_8bit( e, true->realName, false->realName, and10->realName );
+    cpu_and_8bit( e, true->realName, true->realName, and11->realName );
+
+    _te->trackedVariables[0] = and00;
+    _te->trackedVariables[1] = and01;
+    _te->trackedVariables[2] = and10;
+    _te->trackedVariables[3] = and11;
+
+}
+
+int test_cpu_and_8bit_tester( TestEnvironment * _te ) {
+
+    Variable * and00 = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * and01 = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+    Variable * and10 = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
+    Variable * and11 = variable_retrieve( &_te->environment, _te->trackedVariables[3]->name );
+
+// printf("and00 = %2.2x (%d) [expected 0x00]\n", and00->value, and00->value );
+// printf("and01 = %2.2x (%d) [expected 0x00]\n", and01->value, and01->value );
+// printf("and10 = %2.2x (%d) [expected 0x00]\n", and10->value, and10->value );
+// printf("and11 = %2.2x (%d) [expected 0xff]\n", and11->value, and11->value );
+
+    return  and00->value == 0xff && 
+            and01->value == 0x55 && 
+            and10->value == 0x55 && 
+            and11->value == 0x55;
+
+}
+
+//===========================================================================
+
+void test_cpu_not_8bit_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * true = variable_define( e, "true", VT_BYTE, 0xff );
+    Variable * false = variable_define( e, "false", VT_BYTE, 0x55 );
+
+    Variable * not0 = variable_define( e, "not0", VT_BYTE, 0x00 );
+    Variable * not1 = variable_define( e, "not1", VT_BYTE, 0x00 );
+
+    cpu_not_8bit( e, false->realName, not0->realName );
+    cpu_not_8bit( e, true->realName, not1->realName );
+
+    _te->trackedVariables[0] = not0;
+    _te->trackedVariables[1] = not1;
+
+}
+
+int test_cpu_not_8bit_tester( TestEnvironment * _te ) {
+
+    Variable * not0 = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * not1 = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+
+// printf("not0 = %2.2x (%d) [expected 0x00]\n", not0->value, not0->value );
+// printf("not1 = %2.2x (%d) [expected 0xaa]\n", not1->value, not1->value );
+
+    return  not0->value == 0xaa && 
+            not1->value == 0x00;
+
+}
+
+//===========================================================================
+
 void test_cpu_bit_check_extended_payload( TestEnvironment * _te ) {
 
     Environment * e = &_te->environment;
@@ -4328,6 +4406,8 @@ void test_cpu( ) {
     // to be adapted not using DSTRING  create_test( "cpu_dsgc B", &test_cpu_dsgc_payloadB, &test_cpu_dsgc_testerB );    
     create_test( "cpu_logical_and_8bit", &test_cpu_logical_and_8bit_payload, &test_cpu_logical_and_8bit_tester );    
     create_test( "cpu_logical_not_8bit", &test_cpu_logical_not_8bit_payload, &test_cpu_logical_not_8bit_tester );    
+    create_test( "cpu_and_8bit", &test_cpu_and_8bit_payload, &test_cpu_and_8bit_tester );    
+    create_test( "cpu_not_8bit", &test_cpu_not_8bit_payload, &test_cpu_not_8bit_tester );    
     create_test( "cpu_bit_check_extended", &test_cpu_bit_check_extended_payload, &test_cpu_bit_check_extended_tester );    
     create_test( "cpu_bit_check_extended B", &test_cpu_bit_check_extended_payloadB, &test_cpu_bit_check_extended_testerB );
     create_test( "cpu_less_than_8bit", &test_cpu_less_than_8bit_payload, &test_cpu_less_than_8bit_tester );    

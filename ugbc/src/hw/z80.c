@@ -510,9 +510,9 @@ void z80_greater_than_8bit( Environment * _environment, char *_source, char *_de
 
     z80_less_than_8bit( _environment, _source, _destination, _other, !_equal, _signed );
     if ( _other ) {
-        z80_logical_not_8bit( _environment, _other, _other );
+        z80_not_8bit( _environment, _other, _other );
     } else {
-        z80_logical_not_8bit( _environment, _destination, _destination );
+        z80_not_8bit( _environment, _destination, _destination );
     }
 
 }
@@ -1028,9 +1028,9 @@ void z80_greater_than_16bit( Environment * _environment, char *_source, char *_d
 
     z80_less_than_16bit( _environment, _source, _destination, _other, !_equal, _signed );
     if ( _other ) {
-        z80_logical_not_8bit( _environment, _other, _other );
+        z80_not_8bit( _environment, _other, _other );
     } else {
-        z80_logical_not_8bit( _environment, _destination, _destination );
+        z80_not_8bit( _environment, _destination, _destination );
     }
 
 }
@@ -1575,9 +1575,9 @@ void z80_greater_than_32bit( Environment * _environment, char *_source, char *_d
 
     z80_less_than_32bit( _environment, _source, _destination, _other, !_equal, _signed );
     if ( _other ) {
-        z80_logical_not_8bit( _environment, _other, _other );
+        z80_not_8bit( _environment, _other, _other );
     } else {
-        z80_logical_not_8bit( _environment, _destination, _destination );
+        z80_not_8bit( _environment, _destination, _destination );
     }
 
 }
@@ -2028,6 +2028,16 @@ void z80_logical_and_8bit( Environment * _environment, char * _left, char * _rig
 
 }
 
+void z80_and_8bit( Environment * _environment, char * _left, char * _right, char * _result ) {
+
+    MAKE_LABEL
+
+    outline1("LD A, (%s)", _left );
+    outline1("AND A, (%s)", _right );
+    outline1("LD (%s), A", _result );
+
+}
+
 void z80_logical_or_8bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
     MAKE_LABEL
@@ -2047,7 +2057,25 @@ void z80_logical_or_8bit( Environment * _environment, char * _left, char * _righ
 
 }
 
+void z80_or_8bit( Environment * _environment, char * _left, char * _right, char * _result ) {
+
+    MAKE_LABEL
+
+    outline1("LD A, (%s)", _left );
+    outline1("OR A, (%s)", _right );
+    outline1("LD (%s), A", _result );
+
+}
+
 void z80_logical_not_8bit( Environment * _environment, char * _value, char * _result ) {
+
+    outline1("LD A, (%s)", _value );
+    outline0("XOR $FF" );
+    outline1("LD (%s), A", _result );
+
+}
+
+void z80_not_8bit( Environment * _environment, char * _value, char * _result ) {
 
     outline1("LD A, (%s)", _value );
     outline0("XOR $FF" );

@@ -1875,8 +1875,8 @@ Variable * variable_and_const( Environment * _environment, char * _destination, 
 Variable * variable_and( Environment * _environment, char * _left, char * _right ) {
     Variable * left = variable_cast( _environment, _left, VT_BYTE );
     Variable * right = variable_cast( _environment, _right, VT_BYTE );
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of logical AND)");
-    cpu_logical_and_8bit( _environment, left->realName, right->realName, result->realName );
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of AND)");
+    cpu_and_8bit( _environment, left->realName, right->realName, result->realName );
     return result;
 }
 
@@ -1895,8 +1895,8 @@ Variable * variable_and( Environment * _environment, char * _left, char * _right
 Variable * variable_or( Environment * _environment, char * _left, char * _right ) {
     Variable * left = variable_cast( _environment, _left, VT_BYTE );
     Variable * right = variable_cast( _environment, _right, VT_BYTE );
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of logical OR)");
-    cpu_logical_or_8bit( _environment, left->realName, right->realName, result->realName );
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of OR)");
+    cpu_or_8bit( _environment, left->realName, right->realName, result->realName );
     return result;
 }
 
@@ -1913,8 +1913,8 @@ Variable * variable_or( Environment * _environment, char * _left, char * _right 
  */
 Variable * variable_not( Environment * _environment, char * _value ) {
     Variable * value = variable_cast( _environment, _value, VT_BYTE );
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of logical NOT)");
-    cpu_logical_not_8bit( _environment, value->realName, result->realName );
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of NOT)");
+    cpu_not_8bit( _environment, value->realName, result->realName );
     return result;
 }
 

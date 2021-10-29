@@ -2838,6 +2838,20 @@ void cpu6809_logical_and_8bit( Environment * _environment, char * _left, char * 
 
 }
 
+void cpu6809_and_8bit( Environment * _environment, char * _left, char * _right, char * _result ) {
+
+    inline( cpu_and_8bit )
+
+        MAKE_LABEL
+
+        outline1("LDA %s", _left );
+        outline1("ANDA %s", _right );
+        outline1("STA %s", _result);
+
+    no_embedded( cpu_and_8bit )
+
+}
+
 void cpu6809_logical_or_8bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
     inline( cpu_logical_or_8bit )
@@ -2860,7 +2874,21 @@ void cpu6809_logical_or_8bit( Environment * _environment, char * _left, char * _
         outline1("STA %s", _result);
         outhead1("%sx", label);
 
-    no_embedded( cpu_logical_and_8bit )
+    no_embedded( cpu_logical_or_8bit )
+
+}
+
+void cpu6809_or_8bit( Environment * _environment, char * _left, char * _right, char * _result ) {
+
+    inline( cpu_or_8bit )
+
+        MAKE_LABEL
+
+        outline1("LDA %s", _left );
+        outline1("ORA %s", _right );
+        outline1("STA %s", _result);
+
+    no_embedded( cpu_or_8bit )
 
 }
 
@@ -2873,6 +2901,18 @@ void cpu6809_logical_not_8bit( Environment * _environment, char * _value, char *
         outline1("STA %s", _result );
 
     no_embedded( cpu_logical_not_8bit )
+
+}
+
+void cpu6809_not_8bit( Environment * _environment, char * _value, char * _result ) {
+
+    inline( cpu_not_8bit )
+
+        outline1("LDA %s", _value );
+        outline0("EORA #$FF" );
+        outline1("STA %s", _result );
+
+    no_embedded( cpu_not_8bit )
 
 }
 

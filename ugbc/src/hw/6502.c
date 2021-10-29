@@ -668,9 +668,9 @@ void cpu6502_greater_than_8bit( Environment * _environment, char *_source, char 
 
         cpu6502_less_than_8bit( _environment, _source, _destination, _other, !_equal, _signed );
         if ( _other ) {
-            cpu6502_logical_not_8bit( _environment, _other, _other );
+            cpu6502_not_8bit( _environment, _other, _other );
         } else {
-            cpu6502_logical_not_8bit( _environment, _destination, _destination );
+            cpu6502_not_8bit( _environment, _destination, _destination );
         }
 
     no_embedded( cpu_greater_than_8bit )
@@ -1399,9 +1399,9 @@ void cpu6502_greater_than_16bit( Environment * _environment, char *_source, char
 
         cpu6502_less_than_16bit( _environment, _source, _destination, _other, !_equal, _signed );
         if ( _other ) {
-            cpu6502_logical_not_8bit( _environment, _other, _other );
+            cpu6502_not_8bit( _environment, _other, _other );
         } else {
-            cpu6502_logical_not_8bit( _environment, _destination, _destination );
+            cpu6502_not_8bit( _environment, _destination, _destination );
         }
 
     no_embedded( cpu_greater_than_16bit )
@@ -2421,9 +2421,9 @@ void cpu6502_greater_than_32bit( Environment * _environment, char *_source, char
 
         cpu6502_less_than_32bit( _environment, _source, _destination, _other, !_equal, _signed );
         if ( _other ) {
-            cpu6502_logical_not_8bit( _environment, _other, _other );
+            cpu6502_not_8bit( _environment, _other, _other );
         } else {
-            cpu6502_logical_not_8bit( _environment, _destination, _destination );
+            cpu6502_not_8bit( _environment, _destination, _destination );
         }
 
     no_embedded( cpu_greater_than_32bit )
@@ -2946,6 +2946,20 @@ void cpu6502_logical_and_8bit( Environment * _environment, char * _left, char * 
 
 }
 
+void cpu6502_and_8bit( Environment * _environment, char * _left, char * _right, char * _result ) {
+
+    MAKE_LABEL
+
+    inline( cpu_and_8bit )
+
+        outline1("LDA %s", _left );
+        outline1("AND %s", _right );
+        outline1("STA %s", _result);
+
+    no_embedded( cpu_and_8bit )
+
+}
+
 void cpu6502_logical_or_8bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
     MAKE_LABEL
@@ -2970,6 +2984,20 @@ void cpu6502_logical_or_8bit( Environment * _environment, char * _left, char * _
 
 }
 
+void cpu6502_or_8bit( Environment * _environment, char * _left, char * _right, char * _result ) {
+
+    MAKE_LABEL
+
+    inline( cpu_or_8bit )
+
+        outline1("LDA %s", _left );
+        outline1("ORA %s", _right );
+        outline1("STA %s", _result);
+
+    no_embedded( cpu_or_8bit )
+
+}
+
 void cpu6502_logical_not_8bit( Environment * _environment, char * _value, char * _result ) {
 
     MAKE_LABEL
@@ -2981,6 +3009,20 @@ void cpu6502_logical_not_8bit( Environment * _environment, char * _value, char *
         outline1("STA %s", _result );
 
     no_embedded( cpu_logical_not_8bit )
+
+}
+
+void cpu6502_not_8bit( Environment * _environment, char * _value, char * _result ) {
+
+    MAKE_LABEL
+
+    inline( cpu_not_8bit )
+
+        outline1("LDA %s", _value );
+        outline0("EOR #$FF" );
+        outline1("STA %s", _result );
+
+    no_embedded( cpu_not_8bit )
 
 }
 
