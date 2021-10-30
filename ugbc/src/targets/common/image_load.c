@@ -87,49 +87,7 @@ Variable * image_load( Environment * _environment, char * _filename, char * _ali
     int height = 0;
     int depth = 3;
 
-    char lookedFilename[MAX_TEMPORARY_STORAGE];
-    char lookedExtension[MAX_TEMPORARY_STORAGE];
-    strcpy( lookedFilename, _filename );
-    char * c = strrchr( lookedFilename, '/' );
-    if ( c ) {
-        strcpy( lookedExtension, c );
-    } else {
-        strcpy( lookedExtension, "" );
-    }
-    *c = 0;
-#if defined(__atari__) 
-    strcat( lookedFilename, "/atari" );
-#elif defined(__atarixl__) 
-    strcat( lookedFilename, "/atarixl" );
-#elif __c64__
-    strcat( lookedFilename, "/c64" );
-#elif __plus4__
-    strcat( lookedFilename, "/plus4" );
-#elif __zx__
-    strcat( lookedFilename, "/zx" );
-#elif __d32__ 
-    strcat( lookedFilename, "/d32" );
-#elif __d64__ 
-    strcat( lookedFilename, "/d64" );
-#elif __pc128op__ 
-    strcat( lookedFilename, "/pc128op" );
-#endif
-    strcat( lookedFilename, lookedExtension );
-
-    FILE * file = fopen( lookedFilename, "rb" );
-
-    if ( !file ) {
-
-        strcpy( lookedFilename, _filename );
-
-        file = fopen( lookedFilename, "rb" );
-
-        if ( !file ) {
-            CRITICAL_IMAGE_LOAD_MISSING_FILE( lookedFilename );
-        }
-    }
-
-    fclose( file );
+    char * lookedFilename = image_load_asserts( _filename );
 
     unsigned char* source = stbi_load(lookedFilename, &width, &height, &depth, 0);
 
