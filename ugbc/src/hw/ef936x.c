@@ -768,15 +768,9 @@ static int extract_color_palette(unsigned char* _source, int _width, int _height
 
 }
 
-static Variable * ef936x_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height ) {
+static Variable * ef936x_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height ) {
 
-    if ( _width % 8 ) {
-        CRITICAL_IMAGE_CONVERTER_INVALID_WIDTH( _width );
-    }
-
-    if ( _height % 8 ) {
-        CRITICAL_IMAGE_CONVERTER_INVALID_HEIGHT( _height );
-    }
+    image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
     RGBi palette[MAX_PALETTE];
 
@@ -815,7 +809,7 @@ static Variable * ef936x_image_converter_bitmap_mode_standard( Environment * _en
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
  
-    int bufferSize = 2 + ( ( _width >> 3 ) * _height );
+    int bufferSize = 2 + ( ( _frame_width >> 3 ) * _frame_height );
     // printf("bufferSize = %d\n", bufferSize );
 
     char * buffer = malloc ( bufferSize );
@@ -833,12 +827,14 @@ static Variable * ef936x_image_converter_bitmap_mode_standard( Environment * _en
     // Color of the pixel to convert
     RGBi rgb;
 
-    *(buffer) = _width;
-    *(buffer+1) = _height;
+    *(buffer) = _frame_width;
+    *(buffer+1) = _frame_height;
+
+    *_source += ( ( _offset_y * _width ) + _offset_x ) * 3;
 
     // Loop for all the source surface.
-    for (image_y = 0; image_y < _height; ++image_y) {
-        for (image_x = 0; image_x < _width; ++image_x) {
+    for (image_y = _offet_y; image_y < _frame_height; ++image_y) {
+        for (image_x = _offet_x; image_x < _frame_width; ++image_x) {
 
             // Take the color of the pixel
             rgb.red = *_source;
@@ -855,7 +851,7 @@ static Variable * ef936x_image_converter_bitmap_mode_standard( Environment * _en
 
             // Calculate the offset starting from the tile surface area
             // and the bit to set.
-            offset = ( image_y * ( _width >> 3 ) ) + ( image_x >> 3 );
+            offset = ( image_y * ( _frame_width >> 3 ) ) + ( image_x >> 3 );
             bitmask = 1 << ( 7 - (image_x & 0x7) );
 
             // If the pixes has enough luminance value, it must be 
@@ -874,6 +870,8 @@ static Variable * ef936x_image_converter_bitmap_mode_standard( Environment * _en
 
         }
 
+        _source += ( _width - _frame_width ) * 3;
+
         // printf("\n" );
 
     }
@@ -888,15 +886,9 @@ static Variable * ef936x_image_converter_bitmap_mode_standard( Environment * _en
 
 }
 
-static Variable * ef936x_image_converter_multicolor_mode_standard( Environment * _environment, char * _source, int _width, int _height ) {
+static Variable * ef936x_image_converter_multicolor_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height ) {
 
-    if ( _width % 8 ) {
-        CRITICAL_IMAGE_CONVERTER_INVALID_WIDTH( _width );
-    }
-
-    if ( _height % 8 ) {
-        CRITICAL_IMAGE_CONVERTER_INVALID_HEIGHT( _height );
-    }
+    image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
     if ( ! commonPalette ) {
 
@@ -943,7 +935,7 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
  
-    int bufferSize = 2 + 2 * ( ( _width >> 3 ) * _height );
+    int bufferSize = 2 + 2 * ( ( _frame_width >> 3 ) * _frame_height );
     
     char * buffer = malloc ( bufferSize );
     memset( buffer, 0, bufferSize );
@@ -960,12 +952,14 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
     // Color of the pixel to convert
     RGBi rgb;
 
-    *(buffer) = _width;
-    *(buffer+1) = _height;
+    *(buffer) = _frame_width;
+    *(buffer+1) = _frame_height;
+
+    *_source += ( ( _offset_y * _width ) + _offset_x ) * 3;
 
     // Loop for all the source surface.
-    for (image_y = 0; image_y < _height; ++image_y) {
-        for (image_x = 0; image_x < _width; ++image_x) {
+    for (image_y = _offset_y; image_y < _frame_height; ++image_y) {
+        for (image_x = _offet_x; image_x < _frame_width; ++image_x) {
 
             // Take the color of the pixel
             rgb.red = *_source;
@@ -983,7 +977,7 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
                 }
             }
 
-            offset = ( image_y * ( _width >> 3 ) ) + ( image_x >> 3 );
+            offset = ( image_y * ( _frame_width >> 3 ) ) + ( image_x >> 3 );
             bitmask = 1 << ( 7 - (image_x & 0x7) );
 
             // If the pixes has enough luminance value, it must be 
@@ -998,17 +992,19 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
                 // printf(" ");
             }
 
-            offset = ( image_y * ( _width >> 3 ) ) + ( image_x >> 3 );
+            offset = ( image_y * ( _frame_width >> 3 ) ) + ( image_x >> 3 );
 
             // printf( "%1.1x", colorIndex );
 
             bitmask = colorIndex << 4;
 
-            *(buffer + 2 + ( ( _width >> 3 ) * _height ) + offset) |= bitmask;
+            *(buffer + 2 + ( ( _frame_width >> 3 ) * _frame_height ) + offset) |= bitmask;
 
             _source += 3;
 
         }
+
+        _source += ( _width - _frame_width ) * 3;
 
         // printf("\n" );
     }
@@ -1026,15 +1022,9 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
 
 }
 
-static Variable * ef936x_image_converter_multicolor_mode4( Environment * _environment, char * _source, int _width, int _height ) {
+static Variable * ef936x_image_converter_multicolor_mode4( Environment * _environment, char * _source, int _width, int _height, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height ) {
 
-    if ( _width % 8 ) {
-        CRITICAL_IMAGE_CONVERTER_INVALID_WIDTH( _width );
-    }
-
-    if ( _height % 8 ) {
-        CRITICAL_IMAGE_CONVERTER_INVALID_HEIGHT( _height );
-    }
+    image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
     int i, j, k;
 
@@ -1079,7 +1069,7 @@ static Variable * ef936x_image_converter_multicolor_mode4( Environment * _enviro
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
  
-    int bufferSize = 2 + 2 * ( ( _width >> 3 ) * _height ) /*+ 8*/;
+    int bufferSize = 2 + 2 * ( ( _frame_width >> 3 ) * _frame_height ) /*+ 8*/;
     
     char * buffer = malloc ( bufferSize );
     memset( buffer, 0, bufferSize );
@@ -1096,12 +1086,14 @@ static Variable * ef936x_image_converter_multicolor_mode4( Environment * _enviro
     // Color of the pixel to convert
     RGBi rgb;
 
-    *(buffer) = _width;
-    *(buffer+1) = _height;
+    *(buffer) = _frame_width;
+    *(buffer+1) = _frame_height;
+
+    *_source += ( ( _offset_y * _width ) + _offset_x ) * 3;
 
     // Loop for all the source surface.
-    for (image_y = 0; image_y < _height; ++image_y) {
-        for (image_x = 0; image_x < _width; ++image_x) {
+    for (image_y = _offset_y; image_y < _frame_height; ++image_y) {
+        for (image_x = _offset_x; image_x < _frame_width; ++image_x) {
 
             // Take the color of the pixel
             rgb.red = *_source;
@@ -1123,12 +1115,14 @@ static Variable * ef936x_image_converter_multicolor_mode4( Environment * _enviro
 
             bitmask = 1 << ( 7 - (image_x & 0x7) );
 
-            *(buffer + 2 + ( image_x >> 3 ) + ( ( _width >> 3 ) * image_y ) ) |= ( ( colorIndex & 0x02 ) == 0x02 ) ? bitmask : 0;
-            *(buffer + 2 + ( ( _width >> 3 ) * _height ) + ( ( image_x >> 3 ) + ( _width >> 3 ) * image_y ) ) |= ( ( colorIndex & 0x01 ) == 0x01 ) ? bitmask : 0;
+            *(buffer + 2 + ( image_x >> 3 ) + ( ( _frame_width >> 3 ) * image_y ) ) |= ( ( colorIndex & 0x02 ) == 0x02 ) ? bitmask : 0;
+            *(buffer + 2 + ( ( _frame_width >> 3 ) * _frame_height ) + ( ( image_x >> 3 ) + ( _frame_width >> 3 ) * image_y ) ) |= ( ( colorIndex & 0x01 ) == 0x01 ) ? bitmask : 0;
 
             _source += 3;
 
         }
+
+        _source += ( _width - _frame_width ) * 3;
 
         // printf("\n" );
     }
@@ -1162,15 +1156,9 @@ static Variable * ef936x_image_converter_multicolor_mode4( Environment * _enviro
 
 }
 
-static Variable * ef936x_image_converter_multicolor_mode16( Environment * _environment, char * _source, int _width, int _height ) {
+static Variable * ef936x_image_converter_multicolor_mode16( Environment * _environment, char * _source, int _width, int _height, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height ) {
 
-    if ( _width % 8 ) {
-        CRITICAL_IMAGE_CONVERTER_INVALID_WIDTH( _width );
-    }
-
-    if ( _height % 8 ) {
-        CRITICAL_IMAGE_CONVERTER_INVALID_HEIGHT( _height );
-    }
+    image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
     int i, j, k;
 
@@ -1288,7 +1276,7 @@ static Variable * ef936x_image_converter_multicolor_mode16( Environment * _envir
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
  
-    int bufferSize = 2 + 2 * ( ( _width >> 2 ) * _height ) /* + 16 * 2 */;
+    int bufferSize = 2 + 2 * ( ( _frame_width >> 2 ) * _frame_height ) /* + 16 * 2 */;
     
     char * buffer = malloc ( bufferSize );
     memset( buffer, 0, bufferSize );
@@ -1305,12 +1293,14 @@ static Variable * ef936x_image_converter_multicolor_mode16( Environment * _envir
     // Color of the pixel to convert
     RGBi rgb;
 
-    *(buffer) = _width;
-    *(buffer+1) = _height;
+    *(buffer) = _frame_width;
+    *(buffer+1) = _frame_height;
+
+    *_source += ( ( _offset_y * _width ) + _offset_x ) * 3;
 
     // Loop for all the source surface.
-    for (image_y = 0; image_y < _height; ++image_y) {
-        for (image_x = 0; image_x < _width; ++image_x) {
+    for (image_y = _offset_y; image_y < _frame_height; ++image_y) {
+        for (image_x = _offset_x; image_x < _frame_width; ++image_x) {
 
             // Take the color of the pixel
             rgb.red = *_source;
@@ -1335,14 +1325,16 @@ static Variable * ef936x_image_converter_multicolor_mode16( Environment * _envir
             // printf( "%2.2x", bitmask );
 
             if ( ( ( image_x & 0x03 ) < 0x02 ) ) {
-                *(buffer + 2 + ( image_x >> 2 ) + ( ( _width >> 2 ) * image_y ) ) |= bitmask;
+                *(buffer + 2 + ( image_x >> 2 ) + ( ( _frame_width >> 2 ) * image_y ) ) |= bitmask;
             } else {
-                *(buffer + 2 + ( ( _width >> 2 ) * _height ) + ( ( image_x >> 2 ) + ( _width >> 2 ) * image_y ) ) |= bitmask;
+                *(buffer + 2 + ( ( _frame_width >> 2 ) * _frame_height ) + ( ( image_x >> 2 ) + ( _frame_width >> 2 ) * image_y ) ) |= bitmask;
             }
 
             _source += 3;
 
         }
+
+        _source += ( _width - _frame_widh ) * 3;
 
         // printf("\n" );
     }
@@ -1359,16 +1351,16 @@ static Variable * ef936x_image_converter_multicolor_mode16( Environment * _envir
 
 }
 
-Variable * ef936x_image_converter( Environment * _environment, char * _data, int _width, int _height, int _mode ) {
+Variable * ef936x_image_converter( Environment * _environment, char * _data, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode ) {
 
     switch( _mode ) {
         case BITMAP_MODE_40_COLUMN:
-            return ef936x_image_converter_multicolor_mode_standard( _environment, _data, _width, _height );
+            return ef936x_image_converter_multicolor_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height );
         case BITMAP_MODE_BITMAP_4:
-            return ef936x_image_converter_multicolor_mode4( _environment, _data, _width, _height );
+            return ef936x_image_converter_multicolor_mode4( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height );
         case BITMAP_MODE_80_COLUMN:
         case BITMAP_MODE_BITMAP_16:
-            return ef936x_image_converter_multicolor_mode16( _environment, _data, _width, _height );
+            return ef936x_image_converter_multicolor_mode16( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height );
         case BITMAP_MODE_PAGE:
             // CRITICAL_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
             break;

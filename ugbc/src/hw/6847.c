@@ -1089,15 +1089,9 @@ static int extract_color_palette(unsigned char* _source, int _width, int _height
 
 }
 
-static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height ) {
+static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height ) {
 
-    if ( _width % 8 ) {
-        CRITICAL_IMAGE_CONVERTER_INVALID_WIDTH( _width );
-    }
-
-    if ( _height % 8 ) {
-        CRITICAL_IMAGE_CONVERTER_INVALID_HEIGHT( _height );
-    }
+    image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
     RGBi palette[MAX_PALETTE];
 
@@ -1136,7 +1130,7 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
  
-    int bufferSize = 2 + ( ( _width >> 3 ) * _height );
+    int bufferSize = 2 + ( ( _frame_width >> 3 ) * _frame_height );
     // printf("bufferSize = %d\n", bufferSize );
 
     char * buffer = malloc ( bufferSize );
@@ -1154,12 +1148,14 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
     // Color of the pixel to convert
     RGBi rgb;
 
-    *(buffer) = _width;
-    *(buffer+1) = _height;
+    *(buffer) = _frame_width;
+    *(buffer+1) = _frame_height;
+
+    *_source += ( ( _offset_y * _width ) + _offset_x ) * 3;
 
     // Loop for all the source surface.
-    for (image_y = 0; image_y < _height; ++image_y) {
-        for (image_x = 0; image_x < _width; ++image_x) {
+    for (image_y = _offset_y; image_y < _frame_height; ++image_y) {
+        for (image_x = _offset_x; image_x < _frame_width; ++image_x) {
 
             // Take the color of the pixel
             rgb.red = *_source;
@@ -1176,7 +1172,7 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
 
             // Calculate the offset starting from the tile surface area
             // and the bit to set.
-            offset = ( image_y * ( _width >> 3 ) ) + ( image_x >> 3 );
+            offset = ( image_y * ( _frame_width >> 3 ) ) + ( image_x >> 3 );
             bitmask = 1 << ( 7 - (image_x & 0x7) );
 
             // If the pixes has enough luminance value, it must be 
@@ -1195,6 +1191,8 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
 
         }
 
+        _source += ( _width - _frame_width ) * 3;
+
         // printf("\n" );
 
     }
@@ -1209,15 +1207,9 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
 
 }
 
-static Variable * c6847_image_converter_multicolor_mode_standard( Environment * _environment, char * _source, int _width, int _height ) {
+static Variable * c6847_image_converter_multicolor_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height ) {
 
-    if ( _width % 8 ) {
-        CRITICAL_IMAGE_CONVERTER_INVALID_WIDTH( _width );
-    }
-
-    if ( _height % 8 ) {
-        CRITICAL_IMAGE_CONVERTER_INVALID_HEIGHT( _height );
-    }
+    image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
     if ( ! commonPalette ) {
 
@@ -1262,7 +1254,7 @@ static Variable * c6847_image_converter_multicolor_mode_standard( Environment * 
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
  
-    int bufferSize = 2 + ( ( _width >> 2 ) * _height );
+    int bufferSize = 2 + ( ( _frame_width >> 2 ) * _frame_height );
     
     char * buffer = malloc ( bufferSize );
     memset( buffer, 0, bufferSize );
@@ -1279,19 +1271,20 @@ static Variable * c6847_image_converter_multicolor_mode_standard( Environment * 
     // Color of the pixel to convert
     RGBi rgb;
 
-    *(buffer) = _width;
-    *(buffer+1) = _height;
+    *(buffer) = _frame_width;
+    *(buffer+1) = _frame_height;
+    *_source += ( ( _offset_y * _width ) + _offset_x ) * 3;
 
     // Loop for all the source surface.
-    for (image_y = 0; image_y < _height; ++image_y) {
-        for (image_x = 0; image_x < _width; ++image_x) {
+    for (image_y = _offset_y; image_y < _frame_height; ++image_y) {
+        for (image_x = _offset_x; image_x < _frame_width; ++image_x) {
 
             // Take the color of the pixel
             rgb.red = *_source;
             rgb.green = *(_source + 1);
             rgb.blue = *(_source + 2);
 
-            offset = ( image_y * ( _width >> 2 ) ) + ( image_x >> 2 );
+            offset = ( image_y * ( _frame_width >> 2 ) ) + ( image_x >> 2 );
 
             int colorIndex = 0;
 
@@ -1314,6 +1307,8 @@ static Variable * c6847_image_converter_multicolor_mode_standard( Environment * 
 
         }
 
+        _source += ( _width - _frame_width ) * 3;
+
         // printf("\n" );
     }
 
@@ -1330,7 +1325,7 @@ static Variable * c6847_image_converter_multicolor_mode_standard( Environment * 
 
 }
 
-Variable * c6847_image_converter( Environment * _environment, char * _data, int _width, int _height, int _mode ) {
+Variable * c6847_image_converter( Environment * _environment, char * _data, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode ) {
 
     switch( _mode ) {
         case TILEMAP_MODE_INTERNAL:         // Alphanumeric Internal	32 × 16	2	512
@@ -1346,7 +1341,8 @@ Variable * c6847_image_converter( Environment * _environment, char * _data, int 
         case BITMAP_MODE_COLOR3:            // Color Graphics 3	128 × 96	4	3072
         case BITMAP_MODE_COLOR6:            // Color Graphics 6	128 × 192	4	6144
 
-            return c6847_image_converter_multicolor_mode_standard( _environment, _data, _width, _height );
+            return c6847_image_converter_multicolor_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height );
+
             break;
 
         case BITMAP_MODE_RESOLUTION1:       // Resolution Graphics 1	128 × 64	1 + Black	1024
@@ -1354,7 +1350,7 @@ Variable * c6847_image_converter( Environment * _environment, char * _data, int 
         case BITMAP_MODE_RESOLUTION3:       // Resolution Graphics 3	128 × 192	1 + Black	3072
         case BITMAP_MODE_RESOLUTION6:       // Resolution Graphics 6	256 × 192	1 + Black	6144            break;
 
-            return c6847_image_converter_bitmap_mode_standard( _environment, _data, _width, _height );
+            return c6847_image_converter_bitmap_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height );
 
     }
 

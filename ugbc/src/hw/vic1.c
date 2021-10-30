@@ -789,15 +789,9 @@ static int extract_color_palette(unsigned char* _source, int _width, int _height
 
 }
 
-static Variable * vic1_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height ) {
+static Variable * vic1_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height ) {
 
-    if ( _width % 8 ) {
-        CRITICAL_IMAGE_CONVERTER_INVALID_WIDTH( _width );
-    }
-
-    if ( _height % 8 ) {
-        CRITICAL_IMAGE_CONVERTER_INVALID_HEIGHT( _height );
-    }
+    image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
     RGBi palette[MAX_PALETTE];
 
@@ -836,7 +830,7 @@ static Variable * vic1_image_converter_bitmap_mode_standard( Environment * _envi
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
  
-    int bufferSize = 2 + ( ( _width >> 3 ) * _height ) + ( ( _width >> 3 ) * ( _height >> 3 ) );
+    int bufferSize = 2 + ( ( _frame_width >> 3 ) * _height ) + ( ( _frame_width >> 3 ) * ( _frame_height >> 3 ) );
     // printf("bufferSize = %d\n", bufferSize );
 
     char * buffer = malloc ( bufferSize );
@@ -854,12 +848,14 @@ static Variable * vic1_image_converter_bitmap_mode_standard( Environment * _envi
     // Color of the pixel to convert
     RGBi rgb;
 
-    *(buffer) = _width;
-    *(buffer+1) = _height;
+    *(buffer) = _frame_width;
+    *(buffer+1) = _frame_height;
+
+    *_source += ( ( _offset_y * _frame_width ) + _offset_x ) * 3;
 
     // Loop for all the source surface.
-    for (image_y = 0; image_y < _height; ++image_y) {
-        for (image_x = 0; image_x < _width; ++image_x) {
+    for (image_y = _offset_y; image_y < _height; ++image_y) {
+        for (image_x = _offset_x; image_x < _width; ++image_x) {
 
             // Take the color of the pixel
             rgb.red = *_source;
@@ -880,7 +876,7 @@ static Variable * vic1_image_converter_bitmap_mode_standard( Environment * _envi
             
             // Calculate the offset starting from the tile surface area
             // and the bit to set.
-            offset = (tile_y * 8 *( _width >> 3 ) ) + (tile_x * 8) + (image_y & 0x07);
+            offset = (tile_y * 8 *( _frame_width >> 3 ) ) + (tile_x * 8) + (image_y & 0x07);
             bitmask = 1 << ( 7 - (image_x & 0x7) );
 
             // If the pixes has enough luminance value, it must be 
@@ -893,12 +889,14 @@ static Variable * vic1_image_converter_bitmap_mode_standard( Environment * _envi
                 *( buffer + offset + 2) &= ~bitmask;
             }
 
-            offset = tile_y * ( _width >> 3 ) + tile_x;
-            *( buffer + 2 + ( ( _width >> 3 ) * _height ) + offset ) = ( palette[1].index << 4 ) | palette[0].index; 
+            offset = tile_y * ( _frame_width >> 3 ) + tile_x;
+            *( buffer + 2 + ( ( _frame_width >> 3 ) * _frame_height ) + offset ) = ( palette[1].index << 4 ) | palette[0].index; 
 
             _source += 3;
 
         }
+
+        _source += ( _width - _frame_width ) * 3;
 
         // printf("\n" );
 
@@ -914,15 +912,9 @@ static Variable * vic1_image_converter_bitmap_mode_standard( Environment * _envi
 
 }
 
-static Variable * vic1_image_converter_multicolor_mode_standard( Environment * _environment, char * _source, int _width, int _height ) {
+static Variable * vic1_image_converter_multicolor_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height ) {
 
-    if ( _width % 8 ) {
-        CRITICAL_IMAGE_CONVERTER_INVALID_WIDTH( _width );
-    }
-
-    if ( _height % 8 ) {
-        CRITICAL_IMAGE_CONVERTER_INVALID_HEIGHT( _height );
-    }
+    image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
     RGBi palette[MAX_PALETTE];
 
@@ -961,7 +953,7 @@ static Variable * vic1_image_converter_multicolor_mode_standard( Environment * _
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
  
-    int bufferSize = 2 + ( ( _width >> 2 ) * _height ) + 2 * ( ( _width >> 2 ) * ( _height >> 3 ) ) + 1;
+    int bufferSize = 2 + ( ( _frame_width >> 2 ) * _frame_height ) + 2 * ( ( _frame_width >> 2 ) * ( _frame_height >> 3 ) ) + 1;
     
     char * buffer = malloc ( bufferSize );
     memset( buffer, 0, bufferSize );
@@ -981,9 +973,11 @@ static Variable * vic1_image_converter_multicolor_mode_standard( Environment * _
     *(buffer) = _width;
     *(buffer+1) = _height;
 
+    *_source += ( ( _offset_y * _width ) + _offset_x ) * 3;
+
     // Loop for all the source surface.
-    for (image_y = 0; image_y < _height; ++image_y) {
-        for (image_x = 0; image_x < _width; ++image_x) {
+    for (image_y = _offset_y; image_y < _height; ++image_y) {
+        for (image_x = _offset_x; image_x < _width; ++image_x) {
 
             // Take the color of the pixel
             rgb.red = *_source;
@@ -996,8 +990,8 @@ static Variable * vic1_image_converter_multicolor_mode_standard( Environment * _
 
             // Calculate the offset starting from the tile surface area
             // and the bit to set.
-            offset = (tile_y * 8 *( _width >> 2 ) ) + (tile_x * 8) + (image_y & 0x07);
-            offsetc = (tile_y * ( _width >> 2 ) ) + (tile_x);
+            offset = (tile_y * 8 *( _frame_width >> 2 ) ) + (tile_x * 8) + (image_y & 0x07);
+            offsetc = (tile_y * ( _frame_width >> 2 ) ) + (tile_x);
 
             int minDistance = 0xffff;
             int colorIndex = 0;
@@ -1016,18 +1010,18 @@ static Variable * vic1_image_converter_multicolor_mode_standard( Environment * _
 
             switch( colorIndex ) {
                 case 0:
-                    *(buffer + 2 + ( ( _width >> 2 ) * _height ) + 2 * ( _width >> 2 ) * ( _height >> 3 ) ) = palette[colorIndex].index;
+                    *(buffer + 2 + ( ( _frame_width >> 2 ) * _frame_height ) + 2 * ( _frame_width >> 2 ) * ( _frame_height >> 3 ) ) = palette[colorIndex].index;
                     break;
                 case 1:
-                    *(buffer + 2 + ( ( _width >> 2 ) * _height ) + offsetc ) &= 0x0f;
-                    *(buffer + 2 + ( ( _width >> 2 ) * _height ) + offsetc ) |= ( palette[colorIndex].index << 4 );
+                    *(buffer + 2 + ( ( _frame_width >> 2 ) * _frame_height ) + offsetc ) &= 0x0f;
+                    *(buffer + 2 + ( ( _frame_width >> 2 ) * _frame_height ) + offsetc ) |= ( palette[colorIndex].index << 4 );
                     break;
                 case 2:
-                    *(buffer + 2 + ( ( _width >> 2 ) * _height ) + offsetc ) &= 0xf0;
-                    *(buffer + 2 + ( ( _width >> 2 ) * _height ) + offsetc ) |= palette[colorIndex].index;
+                    *(buffer + 2 + ( ( _frame_width >> 2 ) * _frame_height ) + offsetc ) &= 0xf0;
+                    *(buffer + 2 + ( ( _frame_width >> 2 ) * _frame_height ) + offsetc ) |= palette[colorIndex].index;
                     break;
                 case 3:
-                    *(buffer + 2 + ( ( _width >> 2 ) * _height ) + ( _width >> 2 ) * ( _height >> 3 ) + offsetc ) = palette[colorIndex].index;
+                    *(buffer + 2 + ( ( _frame_width >> 2 ) * _frame_height ) + ( _frame_width >> 2 ) * ( _frame_height >> 3 ) + offsetc ) = palette[colorIndex].index;
                     break;
 
             }
@@ -1037,6 +1031,8 @@ static Variable * vic1_image_converter_multicolor_mode_standard( Environment * _
             _source += 3;
 
         }
+
+        _source += ( _width - _frame_width ) * 3;
 
         // printf("\n" );
     }
@@ -1054,7 +1050,7 @@ static Variable * vic1_image_converter_multicolor_mode_standard( Environment * _
 
 }
 
-Variable * vic1_image_converter( Environment * _environment, char * _data, int _width, int _height, int _mode ) {
+Variable * vic1_image_converter( Environment * _environment, char * _data, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode ) {
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
 

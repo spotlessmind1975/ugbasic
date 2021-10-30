@@ -4051,3 +4051,31 @@ void variable_array_fill( Environment * _environment, char * _name, int _value )
     }
 
 }
+
+void image_converter_asserts( Environment * _environment, int _width, int _height, int _offset_x, int _offset_y, int * _frame_width, int * _frame_height ) {
+
+    if ( _width % 8 ) {
+        CRITICAL_IMAGE_CONVERTER_INVALID_WIDTH( _width );
+    }
+
+    if ( *_frame_width == 0 ) {
+        *_frame_width = _width;
+    }
+
+    if ( (_offset_x < 0) || (_offset_x >= _width) || ( ( _offset_x + (*_frame_width ) ) > _width ) ) {
+        CRITICAL_IMAGE_CONVERTER_INVALID_OFFSET_X( _offset_x );
+    }
+
+    if ( _height % 8 ) {
+        CRITICAL_IMAGE_CONVERTER_INVALID_HEIGHT( _height );
+    }
+
+    if ( *_frame_height == 0 ) {
+        *_frame_height = _height;
+    }
+
+    if ( (_offset_y < 0) || (_offset_y >= _height) || ( ( _offset_y + ( *_frame_height )) > _height ) ) {
+        CRITICAL_IMAGE_CONVERTER_INVALID_OFFSET_Y( _offset_y );
+    }
+
+}

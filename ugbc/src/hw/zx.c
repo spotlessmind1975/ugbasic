@@ -368,15 +368,9 @@ static int extract_color_palette(unsigned char* _source, int _width, int _height
 
 }
 
-static Variable * zx_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height ) {
+static Variable * zx_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height ) {
 
-    if ( _width % 8 ) {
-        CRITICAL_IMAGE_CONVERTER_INVALID_WIDTH( _width );
-    }
-
-    if ( _height % 8 ) {
-        CRITICAL_IMAGE_CONVERTER_INVALID_HEIGHT( _height );
-    }
+    image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
     RGBi palette[MAX_PALETTE];
 
@@ -415,7 +409,7 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
  
-    int bufferSize = 2 + ( ( _width >> 3 ) * _height ) + ( ( _width >> 3 ) * ( _height >> 3 ) );
+    int bufferSize = 2 + ( ( _frame_width >> 3 ) * _frame_height ) + ( ( _frame_width >> 3 ) * ( _frame_height >> 3 ) );
     // printf("bufferSize = %d\n", bufferSize );
 
     char * buffer = malloc ( bufferSize );
@@ -433,12 +427,14 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
     // Color of the pixel to convert
     RGBi rgb;
 
-    *(buffer) = _width;
-    *(buffer+1) = _height;
+    *(buffer) = _frame_width;
+    *(buffer+1) = _frame_height;
+
+    *_source += ( ( _offset_y * _width ) + _offset_x ) * 3;
 
     // Loop for all the source surface.
-    for (image_y = 0; image_y < _height; ++image_y) {
-        for (image_x = 0; image_x < _width; ++image_x) {
+    for (image_y = _offset_y; image_y < _frame_height; ++image_y) {
+        for (image_x = _offset_x; image_x < _frame_width; ++image_x) {
 
             // Take the color of the pixel
             rgb.red = *_source;
@@ -459,7 +455,7 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
             
             // Calculate the offset starting from the tile surface area
             // and the bit to set.
-            offset = (tile_y * 8 *( _width >> 3 ) ) + (tile_x * 8) + (image_y & 0x07);
+            offset = (tile_y * 8 *( _frame_width >> 3 ) ) + (tile_x * 8) + (image_y & 0x07);
             bitmask = 1 << ( 7 - (image_x & 0x7) );
 
             // If the pixes has enough luminance value, it must be 
@@ -472,12 +468,14 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
                 *( buffer + offset + 2) &= ~bitmask;
             }
 
-            offset = tile_y * ( _width >> 3 ) + tile_x;
-            *( buffer + 2 + ( ( _width >> 3 ) * _height ) + offset ) = ( palette[1].index << 3 ) | ( palette[0].index ); 
+            offset = tile_y * ( _frame_width >> 3 ) + tile_x;
+            *( buffer + 2 + ( ( _frame_width >> 3 ) * _height ) + offset ) = ( palette[1].index << 3 ) | ( palette[0].index ); 
 
             _source += 3;
 
         }
+
+        _source += 3 * ( _width - _frame_width );
 
         // printf("\n" );
 
@@ -493,14 +491,14 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
 
 }
 
-Variable * zx_image_converter( Environment * _environment, char * _data, int _width, int _height, int _mode ) {
+Variable * zx_image_converter( Environment * _environment, char * _data, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode ) {
 
     switch( _mode ) {
 
         case BITMAP_MODE_STANDARD:
         case TILEMAP_MODE_STANDARD:
 
-            return zx_image_converter_bitmap_mode_standard( _environment, _data, _width, _height );
+            return zx_image_converter_bitmap_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height );
 
             break;
     }

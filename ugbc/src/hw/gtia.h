@@ -241,7 +241,7 @@ void gtia_hscroll_screen( Environment * _environment, int _direction );
 void gtia_text_at( Environment * _environment, char * _x, char * _y, char * _text, char * _text_size, char * _pen, char *_ww );
 void gtia_cline( Environment * _environment, char * _characters );
 
-Variable * gtia_image_converter( Environment * _environment, char * _data, int _width, int _height, int _mode );
+Variable * gtia_image_converter( Environment * _environment, char * _data, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode );
 void gtia_put_image( Environment * _environment, char * _image, char * _x, char * _y );
 void gtia_wait_vbl( Environment * _environment );
 

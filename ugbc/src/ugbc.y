@@ -51,7 +51,7 @@ extern char DATATYPE_AS_STRING[][16];
 %token INPUT FREE TILEMAP EMPTY TILE EMPTYTILE PLOT GR CIRCLE DRAW LINE BOX POLYLINE ELLIPSE CLIP
 %token BACK DEBUG CAN ELSEIF BUFFER LOAD SIZE MOB IMAGE PUT VISIBLE HIDDEN HIDE SHOW RENDER
 %token SQR TI CONST VBL POKE NOP FILL IN POSITIVE DEFINE ATARI ATARIXL C64 DRAGON DRAGON32 DRAGON64 PLUS4 ZX 
-%token FONT VIC20 PARALLEL YIELD SPAWN THREAD TASK
+%token FONT VIC20 PARALLEL YIELD SPAWN THREAD TASK IMAGES
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -179,7 +179,7 @@ const_factor:
       }
       | IMAGE WIDTH OP expr CP {
           Variable * v = variable_retrieve( _environment, $4 );
-          if ( v->type != VT_IMAGE ) {
+          if ( v->type != VT_IMAGE && v->type != VT_IMAGES ) {
               CRITICAL_NOT_IMAGE( v->name );
           }
           if ( !v->valueBuffer ) {
@@ -201,7 +201,7 @@ const_factor:
       }
       | IMAGE HEIGHT OP expr CP {
           Variable * v = variable_retrieve( _environment, $4 );
-          if ( v->type != VT_IMAGE ) {
+          if ( v->type != VT_IMAGE && v->type != VT_IMAGES ) {
               CRITICAL_NOT_IMAGE( v->name );
           }
           $$ = v->valueBuffer[1];
@@ -922,6 +922,19 @@ exponential:
             buffer[i>>1] = strtol(hexdigits,0,16);
         }
         $$ = variable_temporary( _environment, VT_IMAGE, "(buffer)" )->name;
+        variable_store_buffer( _environment, $$, buffer, strlen( $4 ) / 2, 0 );
+      }      
+    | OP IMAGES CP BufferDefinition { 
+        char * buffer = malloc( strlen( $4 ) / 2 );
+        char hexdigits[3];
+        int i = 0, c = 0;
+        for( i = 1, c = strlen( $4 ); i<(c-1); i += 2 ) {
+            hexdigits[0] = $4[i];
+            hexdigits[1] = $4[i+1];
+            hexdigits[2] = 0;
+            buffer[i>>1] = strtol(hexdigits,0,16);
+        }
+        $$ = variable_temporary( _environment, VT_IMAGES, "(buffer)" )->name;
         variable_store_buffer( _environment, $$, buffer, strlen( $4 ) / 2, 0 );
       }      
     | SQR OP factor CP {

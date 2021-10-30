@@ -137,7 +137,7 @@ Variable * image_load( Environment * _environment, char * _filename, char * _ali
         CRITICAL_IMAGE_LOAD_UNKNOWN_FORMAT( _filename );
     }
 
-    Variable * result = image_converter( _environment, source, width, height, _mode );
+    Variable * result = image_converter( _environment, source, width, height, 0, 0, 0, 0, _mode );
 
     stbi_image_free(source);
 

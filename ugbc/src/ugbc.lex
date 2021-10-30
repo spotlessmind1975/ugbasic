@@ -182,6 +182,7 @@ I { return (I); }
 IF { return (IF); }
 IGNORE { return (IGNORE); }
 IMAGE { return (IMAGE); }
+IMAGES { return (IMAGES); }
 IN { return (IN); }
 INC { return (OP_INC); }
 INK { return (INK); }

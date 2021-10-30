@@ -839,17 +839,11 @@ static int extract_color_palette(unsigned char* _source, int _width, int _height
 
 }
 
-static Variable * ted_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height ) {
+static Variable * ted_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height ) {
 
-    if ( _width % 8 ) {
-        CRITICAL_IMAGE_CONVERTER_INVALID_WIDTH( _width );
-    }
-
-    if ( _height % 8 ) {
-        CRITICAL_IMAGE_CONVERTER_INVALID_HEIGHT( _height );
-    }
-
-RGBi palette[MAX_PALETTE];
+    image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
+    
+    RGBi palette[MAX_PALETTE];
 
     int colorUsed = extract_color_palette(_source, _width, _height, palette, MAX_PALETTE);
 
@@ -886,7 +880,7 @@ RGBi palette[MAX_PALETTE];
     
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
  
-    int bufferSize = 2 + ( ( _width >> 3 ) * _height ) + ( ( _width >> 3 ) * ( _height >> 3 ) );
+    int bufferSize = 2 + ( ( _frame_width >> 3 ) * _frame_height ) + ( ( _frame_width >> 3 ) * ( _frame_height >> 3 ) );
     // printf("bufferSize = %d\n", bufferSize );
 
     char * buffer = malloc ( bufferSize );
@@ -904,12 +898,14 @@ RGBi palette[MAX_PALETTE];
     // Color of the pixel to convert
     RGBi rgb;
 
-    *(buffer) = _width;
-    *(buffer+1) = _height;
+    *(buffer) = _frame_width;
+    *(buffer+1) = _frame_height;
+
+    *_source += ( ( _offset_y * _width ) + _offset_x ) * 3;
 
     // Loop for all the source surface.
-    for (image_y = 0; image_y < _height; ++image_y) {
-        for (image_x = 0; image_x < _width; ++image_x) {
+    for (image_y = _offset_y; image_y < _frame_height; ++image_y) {
+        for (image_x = _offset_x; image_x < _frame_width; ++image_x) {
 
             // Take the color of the pixel
             rgb.red = *_source;
@@ -928,7 +924,7 @@ RGBi palette[MAX_PALETTE];
             
             // Calculate the offset starting from the tile surface area
             // and the bit to set.
-            offset = (tile_y * 8 *( _width >> 3 ) ) + (tile_x * 8) + (image_y & 0x07);
+            offset = (tile_y * 8 *( _frame_width >> 3 ) ) + (tile_x * 8) + (image_y & 0x07);
             bitmask = 1 << ( 7 - (image_x & 0x7) );
 
             // If the pixes has enough luminance value, it must be 
@@ -941,12 +937,14 @@ RGBi palette[MAX_PALETTE];
                 *( buffer + offset + 2) &= ~bitmask;
             }
 
-            offset = tile_y * ( _width >> 3 ) + tile_x;
-            *( buffer + 2 + ( ( _width >> 3 ) * _height ) + offset ) = ( palette[1].index << 4 ) | palette[0].index; 
+            offset = tile_y * ( _frame_width >> 3 ) + tile_x;
+            *( buffer + 2 + ( ( _frame_width >> 3 ) * _frame_height ) + offset ) = ( palette[1].index << 4 ) | palette[0].index; 
 
             _source += 3;
 
         }
+
+        _source += ( _width - _frame_width ) * 3;
 
     }
 
@@ -957,15 +955,9 @@ RGBi palette[MAX_PALETTE];
 }
 
 
-static Variable * ted_image_converter_multicolor_mode_standard( Environment * _environment, char * _source, int _width, int _height ) {
+static Variable * ted_image_converter_multicolor_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height ) {
 
-    if ( _width % 8 ) {
-        CRITICAL_IMAGE_CONVERTER_INVALID_WIDTH( _width );
-    }
-    
-    if ( _height % 8 ) {
-        CRITICAL_IMAGE_CONVERTER_INVALID_HEIGHT( _height );
-    }
+    image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
     RGBi palette[MAX_PALETTE];
 
@@ -1004,7 +996,7 @@ static Variable * ted_image_converter_multicolor_mode_standard( Environment * _e
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
  
-    int bufferSize = 2 + ( ( _width >> 2 ) * _height ) + 2 * ( ( _width >> 2 ) * ( _height >> 3 ) ) + 2;
+    int bufferSize = 2 + ( ( _frame_width >> 2 ) * _frame_height ) + 2 * ( ( _frame_width >> 2 ) * ( _frame_height >> 3 ) ) + 2;
     
     char * buffer = malloc ( bufferSize );
     memset( buffer, 0, bufferSize );
@@ -1021,12 +1013,14 @@ static Variable * ted_image_converter_multicolor_mode_standard( Environment * _e
     // Color of the pixel to convert
     RGBi rgb;
 
-    *(buffer) = _width;
-    *(buffer+1) = _height;
+    *(buffer) = _frame_width;
+    *(buffer+1) = _frame_height;
+
+    *_source += ( ( _offset_y * _frame_width ) + _offset_x ) * 3;
 
     // Loop for all the source surface.
-    for (image_y = 0; image_y < _height; ++image_y) {
-        for (image_x = 0; image_x < _width; ++image_x) {
+    for (image_y = _offset_y; image_y < _frame_height; ++image_y) {
+        for (image_x = _offset_x; image_x < _frame_width; ++image_x) {
 
             // Take the color of the pixel
             rgb.red = *_source;
@@ -1039,8 +1033,8 @@ static Variable * ted_image_converter_multicolor_mode_standard( Environment * _e
 
             // Calculate the offset starting from the tile surface area
             // and the bit to set.
-            offset = (tile_y * 8 *( _width >> 2 ) ) + (tile_x * 8) + (image_y & 0x07);
-            offsetc = (tile_y * ( _width >> 2 ) ) + (tile_x);
+            offset = (tile_y * 8 *( _frame_width >> 2 ) ) + (tile_x * 8) + (image_y & 0x07);
+            offsetc = (tile_y * ( _frame_width >> 2 ) ) + (tile_x);
 
             int minDistance = 0xffff;
             int colorIndex = 0;
@@ -1057,15 +1051,15 @@ static Variable * ted_image_converter_multicolor_mode_standard( Environment * _e
 
             switch( colorIndex ) {
                 case 0:
-                    *(buffer + 2 + ( ( _width >> 2 ) * _height ) + 2 * ( _width >> 2 ) * ( _height >> 3 ) ) = palette[colorIndex].index;
+                    *(buffer + 2 + ( ( _frame_width >> 2 ) * _frame_height ) + 2 * ( _frame_width >> 2 ) * ( _frame_height >> 3 ) ) = palette[colorIndex].index;
                     break;
                 case 1:
                 case 2:
-                    *(buffer + 2 + ( ( _width >> 2 ) * _height ) + offsetc ) |= ( ( palette[1].index & 0xf0 ) << 4 ) | ( ( palette[2].index & 0xf0 ) );
-                    *(buffer + 2 + ( ( _width >> 2 ) * _height ) + ( _width >> 2 ) * ( _height >> 3 ) + offsetc ) |= ( ( palette[1].index & 0x0f ) ) | ( ( palette[2].index & 0x0f ) >> 4 );
+                    *(buffer + 2 + ( ( _frame_width >> 2 ) * _frame_height ) + offsetc ) |= ( ( palette[1].index & 0xf0 ) << 4 ) | ( ( palette[2].index & 0xf0 ) );
+                    *(buffer + 2 + ( ( _frame_width >> 2 ) * _frame_height ) + ( _frame_width >> 2 ) * ( _frame_height >> 3 ) + offsetc ) |= ( ( palette[1].index & 0x0f ) ) | ( ( palette[2].index & 0x0f ) >> 4 );
                     break;
                 case 3:
-                    *(buffer + 2 + ( ( _width >> 2 ) * _height ) + 2 * ( _width >> 2 ) * ( _height >> 3 ) + 1 ) = palette[colorIndex].index;
+                    *(buffer + 2 + ( ( _frame_width >> 2 ) * _frame_height ) + 2 * ( _frame_width >> 2 ) * ( _frame_height >> 3 ) + 1 ) = palette[colorIndex].index;
                     break;
             }
 
@@ -1074,6 +1068,8 @@ static Variable * ted_image_converter_multicolor_mode_standard( Environment * _e
             _source += 3;
 
         }
+
+        _source += ( _width - _frame_width ) * 3;
         // printf("\n" );
 
     }
@@ -1084,16 +1080,16 @@ static Variable * ted_image_converter_multicolor_mode_standard( Environment * _e
 
 }
 
-Variable * ted_image_converter( Environment * _environment, char * _data, int _width, int _height, int _mode ) {
+Variable * ted_image_converter( Environment * _environment, char * _data, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode ) {
 
     switch( _mode ) {
         case BITMAP_MODE_STANDARD:
 
-            return ted_image_converter_bitmap_mode_standard( _environment, _data, _width, _height );
+            return ted_image_converter_bitmap_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height );
 
         case BITMAP_MODE_MULTICOLOR:
 
-            return ted_image_converter_multicolor_mode_standard( _environment, _data, _width, _height );
+            return ted_image_converter_multicolor_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height );
 
         case TILEMAP_MODE_STANDARD:
         case TILEMAP_MODE_MULTICOLOR:
