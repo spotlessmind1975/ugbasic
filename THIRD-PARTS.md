@@ -1,6 +1,6 @@
 # THIRD PARTS ATTRIBUTIONS AND LICENSES
 
-ugBASIC contains algorithms and software written
+ugBASIC contains algorithms, software and graphics produced
 by third parts, as follows. Please refer to the following
 conditions if you wish to reproduce or reuse this software.
 
@@ -26,3 +26,6 @@ Source code originally published by Alwin Henseler on [MSX forum development](ht
 [PLOTTING PIXELS ON COMMODORE 64 (VIC-II)](https://github.com/spotlessmind1975/ugbasic/blob/main/ugbc/src/hw/vic2/plot.asm)
 
 Source code originally published by satpro on [C= FORUM](https://www.lemon64.com/forum/viewtopic.php?p=599219#599219), and adapted by Marco Spedaletti for ca65 assembler.
+
+[Animated Rat and Bat](https://github.com/spotlessmind1975/ugbasic/blob/main/examples/bat.png)
+Animated Rat and Bat by [Calciumtrice](https://opengameart.org/content/animated-rat-and-bat), usable under Creative Commons Attribution 3.0 license.
