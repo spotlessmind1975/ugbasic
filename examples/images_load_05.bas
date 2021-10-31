@@ -23,13 +23,6 @@ CLS
 
 bat := IMAGES LOAD("examples/bat.png" ) FRAME SIZE (32,32)
 
-frame = (BYTE) 0
-
-DO
-    PUT IMAGE bat FRAME frame AT 0,0
-    WAIT 100 MS
-    ADD frame,1,0 TO FRAMES(bat)
-LOOP
-
+PUT IMAGE bat AT 0,0
 
 
