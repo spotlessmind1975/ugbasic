@@ -1372,6 +1372,7 @@ void c6847_put_image( Environment * _environment, char * _image, char * _x, char
             outline1("LDB %s", _frame );
             outline0("LDA #0" );
             outline0("LEAX D, X" );
+            outline0("LEAX D, X" );
             outline0("LDD ,X" );
             outline0("LEAY D, Y" );
         }
