@@ -87,7 +87,7 @@ Variable * image_load( Environment * _environment, char * _filename, char * _ali
     int height = 0;
     int depth = 3;
 
-    char * lookedFilename = image_load_asserts( _filename );
+    char * lookedFilename = image_load_asserts( _environment, _filename );
 
     unsigned char* source = stbi_load(lookedFilename, &width, &height, &depth, 0);
 
