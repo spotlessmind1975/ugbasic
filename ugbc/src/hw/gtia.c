@@ -1776,7 +1776,7 @@ Variable * gtia_image_converter( Environment * _environment, char * _data, int _
 
 }
 
-void gtia_put_image( Environment * _environment, char * _image, char * _x, char * _y ) {
+void gtia_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame ) {
 
     deploy( gtiavars, src_hw_gtia_vars_asm);
     deploy( image, src_hw_gtia_image_asm );
@@ -1785,6 +1785,17 @@ void gtia_put_image( Environment * _environment, char * _image, char * _x, char 
     outline0("STA TMPPTR" );
     outline1("LDA #>%s", _image );
     outline0("STA TMPPTR+1" );
+    if ( _frame ) {
+        if ( strlen(_frame) == 0 ) {
+            outline0("CLC" );
+            outline0("LDA TMPPTR" );
+            outline0("ADC #2" );
+            outline0("STA TMPPTR" );
+            outline0("LDA TMPPTR+1" );
+            outline0("ADC #0" );
+            outline0("STA TMPPTR+1" );
+        }
+    }
     outline1("LDA %s", _x );
     outline0("STA IMAGEX" );
     outline1("LDA %s+1", _x );

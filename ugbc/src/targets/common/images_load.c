@@ -116,8 +116,17 @@ Variable * images_load( Environment * _environment, char * _filename, char * _al
         }
     }
 
-    char * buffer = malloc( bufferSize );
+    char * buffer = malloc( bufferSize + 2 );
     char * ptr = buffer;
+    #if CPU_LITTLE_ENDIAN
+        ptr[0] = bufferSize & 0xff;
+        ptr[1] = ( bufferSize >> 8 ) & 0xff;
+    #else
+        ptr[0] = ( bufferSize >> 8 ) & 0xff;
+        ptr[1] = bufferSize & 0xff;
+    #endif
+
+    ptr += 2;
     for(i=0; i<wc*hc; ++i ) {
         memcpy( ptr, result[i]->valueBuffer, result[i]->size );
         ptr += result[i]->size;

@@ -38,6 +38,8 @@
  * CODE SECTION 
  ****************************************************************************/
 
+extern char DATATYPE_AS_STRING[][16];
+
 /**
  * @brief Emit ASM code for <b>PUT IMAGE [image] AT [int],[int]</b>
  * 
@@ -57,6 +59,15 @@ void put_image( Environment * _environment, char * _image, char * _x, char * _y 
     Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
     Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
 
-    ted_put_image( _environment, image->realName, x->realName, y->realName );
-
+    switch( image->type ) {
+        case VT_IMAGES:
+            ted_put_image( _environment, image->realName, x->realName, y->realName, "" );
+            break;
+        case VT_IMAGE:
+            ted_put_image( _environment, image->realName, x->realName, y->realName, NULL );
+            break;
+        default:
+            CRITICAL_PUT_IMAGE_UNSUPPORTED( _image, DATATYPE_AS_STRING[image->type] );
+    }
+    
 }

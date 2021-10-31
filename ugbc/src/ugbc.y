@@ -2058,12 +2058,20 @@ mob_definition:
 
 put_definition_expression:
       IMAGE expr AT optional_y OP_COMMA optional_x {
-        put_image( _environment, $2, $4, $6 );
+        put_image( _environment, $2, $4, $6, NULL );
         gr_locate( _environment, $4, $6 );
     }
+    |  IMAGE expr FRAME expr AT optional_y OP_COMMA optional_x {
+        put_image( _environment, $2, $6, $8, $4 );
+        gr_locate( _environment, $6, $8 );
+    }
     | IMAGE expr {
-        put_image( _environment, $2, "XGR", "YGR" );
-    };
+        put_image( _environment, $2, "XGR", "YGR", NULL );
+    }
+    | IMAGE expr FRAME expr {
+        put_image( _environment, $2, "XGR", "YGR", $4 );
+    }
+    ;
 
 put_definition:
     put_definition_expression;

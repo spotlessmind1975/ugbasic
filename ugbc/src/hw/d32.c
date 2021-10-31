@@ -220,10 +220,6 @@ void d32_back( Environment * _environment ) {
 
 }
 
-void d32_put_image( Environment * _environment, char * _image, char * _x, char * _y ) {
-
-}
-
 void d32_busy_wait( Environment * _environment, char * _timing ) {
 
     MAKE_LABEL

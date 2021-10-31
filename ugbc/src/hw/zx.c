@@ -507,12 +507,18 @@ Variable * zx_image_converter( Environment * _environment, char * _data, int _wi
 
 }
 
-void zx_put_image( Environment * _environment, char * _image, char * _x, char * _y ) {
+void zx_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame ) {
 
     deploy( vars, src_hw_zx_vars_asm);
     deploy( image, src_hw_zx_image_asm );
 
     outline1("LD HL, (%s)", _image );
+    if ( _frame ) {
+        if ( strlen(_frame) == 0 ) {
+            outline0("INC HL" );
+            outline0("INC HL" );
+        }
+    }
     outline1("LD A, (%s)", _x );
     outline0("LD (IMAGEX), A" );
     outline1("LD A, (%s)", _y );

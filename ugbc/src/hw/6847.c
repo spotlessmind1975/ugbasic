@@ -1358,12 +1358,17 @@ Variable * c6847_image_converter( Environment * _environment, char * _data, int 
 
 }
 
-void c6847_put_image( Environment * _environment, char * _image, char * _x, char * _y ) {
+void c6847_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame ) {
 
     deploy( c6847vars, src_hw_6847_vars_asm);
     deploy( image, src_hw_6847_image_asm );
 
     outline1("LDY #%s", _image );
+    if ( _frame ) {
+        if ( strlen(_frame) == 0 ) {
+            outline0("LEAY 2,y" );
+        }
+    }
     outline1("LDD %s", _x );
     outline0("STD IMAGEX" );
     outline1("LDD %s", _y );

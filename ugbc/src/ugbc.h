@@ -1236,6 +1236,7 @@ typedef struct _Environment {
 #define CRITICAL_IMAGE_CONVERTER_INVALID_OFFSET_Y( y ) CRITICAL2i("E085 - invalid offset y for image, must be >= 0 and < height", y );
 #define CRITICAL_IMAGES_LOAD_INVALID_FRAME_WIDTH( w ) CRITICAL2i("E086 - invalid frame width, not multiple of width", w );
 #define CRITICAL_IMAGES_LOAD_INVALID_FRAME_HEIGHT( h ) CRITICAL2i("E087 - invalid frame height, not multiple of height", h );
+#define CRITICAL_PUT_IMAGE_UNSUPPORTED( v, t ) CRITICAL3("E088 - PUT IMAGE unsupported for given datatype", v, t );
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
 #define WARNING2i( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%i) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -1774,7 +1775,7 @@ void                    print( Environment * _environment, char * _text, int _ne
 void                    print_newline( Environment * _environment );
 void                    print_question_mark( Environment * _environment );
 void                    print_tab( Environment * _environment, int _new_line );
-void                    put_image( Environment * _environment, char * _image, char * _x, char * _y );
+void                    put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame );
 
 //----------------------------------------------------------------------------
 // *Q*

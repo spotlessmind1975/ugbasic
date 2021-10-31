@@ -1372,12 +1372,17 @@ Variable * ef936x_image_converter( Environment * _environment, char * _data, int
 
 }
 
-void ef936x_put_image( Environment * _environment, char * _image, char * _x, char * _y ) {
+void ef936x_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame ) {
 
     deploy( ef936xvars, src_hw_ef936x_vars_asm);
     deploy( image, src_hw_ef936x_image_asm );
 
     outline1("LDY #%s", _image );
+    if ( _frame ) {
+        if ( strlen(_frame) == 0 ) {
+            outline0("LEAY 2,y" );
+        }
+    }
     outline1("LDD %s", _x );
     outline0("STD <IMAGEX" );
     outline1("LDD %s", _y );
