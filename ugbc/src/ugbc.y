@@ -51,7 +51,7 @@ extern char DATATYPE_AS_STRING[][16];
 %token INPUT FREE TILEMAP EMPTY TILE EMPTYTILE PLOT GR CIRCLE DRAW LINE BOX POLYLINE ELLIPSE CLIP
 %token BACK DEBUG CAN ELSEIF BUFFER LOAD SIZE MOB IMAGE PUT VISIBLE HIDDEN HIDE SHOW RENDER
 %token SQR TI CONST VBL POKE NOP FILL IN POSITIVE DEFINE ATARI ATARIXL C64 DRAGON DRAGON32 DRAGON64 PLUS4 ZX 
-%token FONT VIC20 PARALLEL YIELD SPAWN THREAD TASK IMAGES
+%token FONT VIC20 PARALLEL YIELD SPAWN THREAD TASK IMAGES FRAME
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -951,6 +951,9 @@ exponential:
       }
     | LOAD OP String AS String OP_COMMA Integer CP {
         $$ = load( _environment, $3, $5, $7 )->name;
+      }
+    | IMAGES LOAD OP String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP {        
+        $$ = images_load( _environment, $4, NULL, ((struct _Environment *)_environment)->currentMode, $9, $11 )->name;
       }
     | IMAGE LOAD OP String CP {
         $$ = image_load( _environment, $4, NULL, ((struct _Environment *)_environment)->currentMode )->name;

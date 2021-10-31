@@ -159,7 +159,7 @@ typedef enum _VariableType {
     VT_THREAD = 16,
 
     /** IMAGES (static pictures) */
-    VT_IMAGES = 15
+    VT_IMAGES = 17
 
 } VariableType;
 
@@ -1234,6 +1234,8 @@ typedef struct _Environment {
 #define CRITICAL_IMAGE_CONVERTER_INVALID_FRAME_HEIGHT( h ) CRITICAL2i("E083 - invalid height for framed image, must be multiple of 8 pixels", h );
 #define CRITICAL_IMAGE_CONVERTER_INVALID_OFFSET_X( x ) CRITICAL2i("E084 - invalid offset x for image, must be >= 0 and < width", x );
 #define CRITICAL_IMAGE_CONVERTER_INVALID_OFFSET_Y( y ) CRITICAL2i("E085 - invalid offset y for image, must be >= 0 and < height", y );
+#define CRITICAL_IMAGES_LOAD_INVALID_FRAME_WIDTH( w ) CRITICAL2i("E086 - invalid frame width, not multiple of width", w );
+#define CRITICAL_IMAGES_LOAD_INVALID_FRAME_HEIGHT( h ) CRITICAL2i("E087 - invalid frame height, not multiple of height", h );
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
 #define WARNING2i( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%i) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -1684,10 +1686,12 @@ void                    home( Environment * _environment );
 
 void                    if_then( Environment * _environment, char * _expression );
 Variable *              image_load( Environment * _environment, char * _filename, char * _alias, int _mode );
+char *                  image_load_asserts( Environment * _environment, char * _filename );
 Variable *              image_converter( Environment * _environment, char * _data, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode );
 void                    image_converter_asserts( Environment * _environment, int _width, int _height, int _offset_x, int _offset_y, int * _frame_width, int * _frame_height );
 Variable *              image_get_height( Environment * _environment, char * _image );
 Variable *              image_get_width( Environment * _environment, char * _image );
+Variable *              images_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _frame_width, int _frame_height );
 void                    ink( Environment * _environment, char * _expression );
 Variable *              inkey( Environment * _environment );
 void                    input( Environment * _environment, char * _variable );
@@ -1904,6 +1908,7 @@ Variable *              variable_mul2_const( Environment * _environment, char * 
 Variable *              variable_not( Environment * _environment, char * _value );
 Variable *              variable_or( Environment * _environment, char * _left, char * _right );
 Variable *              variable_or( Environment * _environment, char * _source, char * _dest );
+void                    variable_temporary_remove( Environment * _environment, char * _name );
 void                    variable_reset( Environment * _environment );
 Variable *              variable_resize_buffer( Environment * _environment, char * _destination, int _size );
 Variable *              variable_retrieve( Environment * _environment, char * _name );
