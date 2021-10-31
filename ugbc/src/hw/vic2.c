@@ -1253,11 +1253,11 @@ static Variable * vic2_image_converter_bitmap_mode_standard( Environment * _envi
     *(buffer) = _frame_width;
     *(buffer+1) = _frame_height;
 
-    *_source += ( ( _offset_y * _width ) + _offset_x ) * 3;
+    _source += ( ( _offset_y * _width ) + _offset_x ) * 3;
 
     // Loop for all the source surface.
-    for (image_y = _offset_y; image_y < _frame_height; ++image_y) {
-        for (image_x = _offset_x; image_x < _frame_width; ++image_x) {
+    for (image_y = 0; image_y < _frame_height; ++image_y) {
+        for (image_x = 0; image_x < _frame_width; ++image_x) {
 
             // Take the color of the pixel
             rgb.red = *_source;
@@ -1375,11 +1375,11 @@ static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _
     *(buffer) = _frame_width;
     *(buffer+1) = _frame_height;
 
-    *_source += ( ( _offset_y * _width ) + _offset_x ) * 3;
+    _source += ( ( _offset_y * _width ) + _offset_x ) * 3;
 
     // Loop for all the source surface.
-    for (image_y = _offset_y; image_y < _frame_height; ++image_y) {
-        for (image_x = _offset_x; image_x < _frame_width; ++image_x) {
+    for (image_y = 0; image_y < _frame_height; ++image_y) {
+        for (image_x = 0; image_x < _frame_width; ++image_x) {
 
             // Take the color of the pixel
             rgb.red = *_source;
@@ -1406,7 +1406,7 @@ static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _
 
             colorIndex = i;
 
-            // printf( "%1.1x", colorIndex );
+            printf( "%1.1x", colorIndex );
 
             bitmask = colorIndex << (6 - ((image_x & 0x3) * 2));
 
@@ -1436,8 +1436,11 @@ static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _
 
         _source += 3 * ( _width - _frame_width );
 
-        // printf("\n" );
+        printf("\n" );
     }
+
+    printf("\n" );
+    printf("\n" );
 
     // for(i=0; i<4; ++i ) {
     //     printf( "%1.1x = %2.2x\n", i, palette[i].index );
@@ -1504,23 +1507,43 @@ Variable * vic2_image_converter( Environment * _environment, char * _data, int _
 
 }
 
-void vic2_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame ) {
+void vic2_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _frame_size ) {
 
     deploy( vic2vars, src_hw_vic2_vars_asm);
     deploy( image, src_hw_vic2_image_asm );
 
+    MAKE_LABEL
+
+    outhead1("putimage%s:", label);
     outline1("LDA #<%s", _image );
     outline0("STA TMPPTR" );
     outline1("LDA #>%s", _image );
     outline0("STA TMPPTR+1" );
     if ( _frame ) {
+        outline0("CLC" );
+        outline0("LDA TMPPTR" );
+        outline0("ADC #2" );
+        outline0("STA TMPPTR" );
+        outline0("LDA TMPPTR+1" );
+        outline0("ADC #0" );
+        outline0("STA TMPPTR+1" );
         if ( strlen(_frame) == 0 ) {
+
+        } else {
+            outline1("LDA #<OFFSETS%4.4x", _frame_size );
+            outline0("STA TMPPTR2" );
+            outline1("LDA #>OFFSETS%4.4x", _frame_size );
+            outline0("STA TMPPTR2+1" );
             outline0("CLC" );
+            outline1("LDA %s", _frame );
+            outline0("ASL" );
+            outline0("TAY" );
             outline0("LDA TMPPTR" );
-            outline0("ADC #2" );
+            outline0("ADC (TMPPTR2), Y" );
             outline0("STA TMPPTR" );
+            outline0("INY" );
             outline0("LDA TMPPTR+1" );
-            outline0("ADC #0" );
+            outline0("ADC (TMPPTR2), Y" );
             outline0("STA TMPPTR+1" );
         }
     }

@@ -126,14 +126,17 @@ Variable * images_load( Environment * _environment, char * _filename, char * _al
         ptr[1] = bufferSize & 0xff;
     #endif
 
+    offsetting_size_count( _environment, result[0]->size, wc*hc );
+
     ptr += 2;
     for(i=0; i<wc*hc; ++i ) {
         memcpy( ptr, result[i]->valueBuffer, result[i]->size );
         ptr += result[i]->size;
     }
     Variable * final = variable_temporary( _environment, VT_IMAGES, 0 );
-
     variable_store_buffer( _environment, final->name, buffer, bufferSize, 0 );
+    final->frameSize = result[0]->size;
+    final->frameCount = wc * hc;
 
     for(i=0; i<wc*hc; ++i ) {
         variable_temporary_remove( _environment, result[i]->name );

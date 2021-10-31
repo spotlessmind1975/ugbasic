@@ -172,6 +172,39 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
  */
 void variable_cleanup( Environment * _environment ) {
     int i=0;
+
+    if ( _environment->offsetting ) {
+        Offsetting * actual = _environment->offsetting;
+        while( actual ) {
+            out1("OFFSETS%4.4x: .word ", actual->size );
+            for( i=0; i<actual->count; ++i ) {
+                out1("$%4.4x", i * actual->size );
+                if ( i < ( actual->count - 1 ) ) {
+                    out0(",");
+                } else {
+                    outline0("");
+                }
+            }
+            actual = actual->next;
+        }
+    }
+    
+    if ( _environment->offsetting ) {
+        Offsetting * actual = _environment->offsetting;
+        while( actual ) {
+            out1("OFFSETS%4.4x: .word ", actual->size );
+            for( i=0; i<actual->count; ++i ) {
+                out1("$%4.4x", i * actual->size );
+                if ( i < ( actual->count - 1 ) ) {
+                    out0(",");
+                } else {
+                    outline0("");
+                }
+            }
+            actual = actual->next;
+        }
+    }
+
     for(i=0; i<BANK_TYPE_COUNT; ++i) {
         Bank * actual = _environment->banks[i];
         while( actual ) {

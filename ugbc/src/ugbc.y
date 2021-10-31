@@ -51,7 +51,7 @@ extern char DATATYPE_AS_STRING[][16];
 %token INPUT FREE TILEMAP EMPTY TILE EMPTYTILE PLOT GR CIRCLE DRAW LINE BOX POLYLINE ELLIPSE CLIP
 %token BACK DEBUG CAN ELSEIF BUFFER LOAD SIZE MOB IMAGE PUT VISIBLE HIDDEN HIDE SHOW RENDER
 %token SQR TI CONST VBL POKE NOP FILL IN POSITIVE DEFINE ATARI ATARIXL C64 DRAGON DRAGON32 DRAGON64 PLUS4 ZX 
-%token FONT VIC20 PARALLEL YIELD SPAWN THREAD TASK IMAGES FRAME
+%token FONT VIC20 PARALLEL YIELD SPAWN THREAD TASK IMAGES FRAME FRAMES
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -186,6 +186,36 @@ const_factor:
               CRITICAL_NOT_ASSIGNED_IMAGE( v->name );
           }
           $$ = v->valueBuffer[0];
+      }
+      | FRAMES OP expr CP {
+          Variable * v = variable_retrieve( _environment, $3 );
+          if ( v->type != VT_IMAGES ) {
+              CRITICAL_NOT_IMAGES( v->name );
+          }
+          if ( !v->valueBuffer ) {
+              CRITICAL_NOT_ASSIGNED_IMAGE( v->name );
+          }
+          $$ = v->frameCount;
+      }
+      | IMAGES COUNT OP expr CP {
+          Variable * v = variable_retrieve( _environment, $4 );
+          if ( v->type != VT_IMAGES ) {
+              CRITICAL_NOT_IMAGES( v->name );
+          }
+          if ( !v->valueBuffer ) {
+              CRITICAL_NOT_ASSIGNED_IMAGE( v->name );
+          }
+          $$ = v->frameCount;
+      }
+      | FRAMES COUNT OP expr CP {
+          Variable * v = variable_retrieve( _environment, $4 );
+          if ( v->type != VT_IMAGES ) {
+              CRITICAL_NOT_IMAGES( v->name );
+          }
+          if ( !v->valueBuffer ) {
+              CRITICAL_NOT_ASSIGNED_IMAGE( v->name );
+          }
+          $$ = v->frameCount;
       }
       | HEIGHT {
           $$ = ((Environment *)_environment)->screenHeight;
@@ -1206,6 +1236,39 @@ exponential:
         $$ = variable_temporary( _environment, VT_POSITION, "(FONT WIDTH)" )->name;
         variable_store( _environment, $$, ((struct _Environment *)_environment)->fontWidth );
     }
+    | IMAGES COUNT OP expr CP {
+        Variable * v = variable_retrieve( _environment, $4 );
+        if ( v->type != VT_IMAGES ) {
+            CRITICAL_NOT_IMAGES( v->name );
+        }
+        if ( !v->valueBuffer ) {
+            CRITICAL_NOT_ASSIGNED_IMAGE( v->name );
+        }
+        $$ = variable_temporary( _environment, VT_BYTE, "(frame count)" )->name;
+        variable_store( _environment, $$, v->frameCount );
+    }
+    | FRAME COUNT OP expr CP {
+        Variable * v = variable_retrieve( _environment, $4 );
+        if ( v->type != VT_IMAGES ) {
+            CRITICAL_NOT_IMAGES( v->name );
+        }
+        if ( !v->valueBuffer ) {
+            CRITICAL_NOT_ASSIGNED_IMAGE( v->name );
+        }
+        $$ = variable_temporary( _environment, VT_BYTE, "(frame count)" )->name;
+        variable_store( _environment, $$, v->frameCount );
+    }
+    | FRAMES OP expr CP {
+        Variable * v = variable_retrieve( _environment, $3 );
+        if ( v->type != VT_IMAGES ) {
+            CRITICAL_NOT_IMAGES( v->name );
+        }
+        if ( !v->valueBuffer ) {
+            CRITICAL_NOT_ASSIGNED_IMAGE( v->name );
+        }
+        $$ = variable_temporary( _environment, VT_BYTE, "(frame count)" )->name;
+        variable_store( _environment, $$, v->frameCount );
+    }
     | IMAGE WIDTH OP expr CP {
         $$ = image_get_width( _environment, $4 )->name;
     }
@@ -2057,11 +2120,11 @@ mob_definition:
     mob_definition_expression;
 
 put_definition_expression:
-      IMAGE expr AT optional_y OP_COMMA optional_x {
+      IMAGE expr AT optional_x OP_COMMA optional_y {
         put_image( _environment, $2, $4, $6, NULL );
         gr_locate( _environment, $4, $6 );
     }
-    |  IMAGE expr FRAME expr AT optional_y OP_COMMA optional_x {
+    |  IMAGE expr FRAME expr AT optional_x OP_COMMA optional_y {
         put_image( _environment, $2, $6, $8, $4 );
         gr_locate( _environment, $6, $8 );
     }
@@ -3193,6 +3256,8 @@ statement:
         var->arrayDimensions = expr->arrayDimensions;
         memcpy( var->arrayDimensionsEach, expr->arrayDimensionsEach, MAX_ARRAY_DIMENSIONS * sizeof( int ) );
         var->arrayType = expr->arrayType;
+        var->frameSize = expr->frameSize;
+        var->frameCount = expr->frameCount;
         expr->assigned = 1;
   }
   | Identifier OP_DOLLAR OP_ASSIGN expr {

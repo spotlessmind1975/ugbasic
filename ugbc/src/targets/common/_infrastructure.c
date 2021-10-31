@@ -185,6 +185,36 @@ Constant * constant_find( Constant * _first, char * _name ) {
     return actual;
 }
 
+static Offsetting * offsetting_by_size( Offsetting * _first, int _size ) {
+
+    Offsetting * actual = _first;
+    while( actual ) {
+        if ( actual->size == _size ) {
+            break;
+        }
+        actual = actual->next;
+    }
+    return actual;
+}
+
+void offsetting_size_count( Environment * _environment, int _size, int _count ) {
+
+    Offsetting * actual = offsetting_by_size( _environment->offsetting, _size );
+    if ( ! actual ) {
+        actual = malloc( sizeof( Offsetting ) );
+        memset( actual, 0, sizeof( Offsetting ) );
+        actual->size = _size;
+        actual->count = _count;
+        actual->next = _environment->offsetting;
+        _environment->offsetting = actual;
+    } else {
+        if ( actual->count < _count ) {
+            actual->count = _count;
+        }
+    }
+
+}
+
 void variable_global( Environment * _environment, char * _pattern ) {
 
     Pattern * pattern = malloc( sizeof( Pattern ) ) ;

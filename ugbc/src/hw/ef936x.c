@@ -830,11 +830,11 @@ static Variable * ef936x_image_converter_bitmap_mode_standard( Environment * _en
     *(buffer) = _frame_width;
     *(buffer+1) = _frame_height;
 
-    *_source += ( ( _offset_y * _width ) + _offset_x ) * 3;
+    _source += ( ( _offset_y * _width ) + _offset_x ) * 3;
 
     // Loop for all the source surface.
-    for (image_y = _offet_y; image_y < _frame_height; ++image_y) {
-        for (image_x = _offet_x; image_x < _frame_width; ++image_x) {
+    for (image_y = 0; image_y < _frame_height; ++image_y) {
+        for (image_x = 0; image_x < _frame_width; ++image_x) {
 
             // Take the color of the pixel
             rgb.red = *_source;
@@ -886,7 +886,7 @@ static Variable * ef936x_image_converter_bitmap_mode_standard( Environment * _en
 
 }
 
-static Variable * ef936x_image_converter_multicolor_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height ) {
+static Variable * ef936x_image_converter_multicolor_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height ) {
 
     image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
@@ -955,11 +955,11 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
     *(buffer) = _frame_width;
     *(buffer+1) = _frame_height;
 
-    *_source += ( ( _offset_y * _width ) + _offset_x ) * 3;
+    _source += ( ( _offset_y * _width ) + _offset_x ) * 3;
 
     // Loop for all the source surface.
-    for (image_y = _offset_y; image_y < _frame_height; ++image_y) {
-        for (image_x = _offet_x; image_x < _frame_width; ++image_x) {
+    for (image_y = 0; image_y < _frame_height; ++image_y) {
+        for (image_x = 0; image_x < _frame_width; ++image_x) {
 
             // Take the color of the pixel
             rgb.red = *_source;
@@ -1022,7 +1022,7 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
 
 }
 
-static Variable * ef936x_image_converter_multicolor_mode4( Environment * _environment, char * _source, int _width, int _height, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height ) {
+static Variable * ef936x_image_converter_multicolor_mode4( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height ) {
 
     image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
@@ -1089,11 +1089,11 @@ static Variable * ef936x_image_converter_multicolor_mode4( Environment * _enviro
     *(buffer) = _frame_width;
     *(buffer+1) = _frame_height;
 
-    *_source += ( ( _offset_y * _width ) + _offset_x ) * 3;
+    _source += ( ( _offset_y * _width ) + _offset_x ) * 3;
 
     // Loop for all the source surface.
-    for (image_y = _offset_y; image_y < _frame_height; ++image_y) {
-        for (image_x = _offset_x; image_x < _frame_width; ++image_x) {
+    for (image_y = 0; image_y < _frame_height; ++image_y) {
+        for (image_x = 0; image_x < _frame_width; ++image_x) {
 
             // Take the color of the pixel
             rgb.red = *_source;
@@ -1156,7 +1156,7 @@ static Variable * ef936x_image_converter_multicolor_mode4( Environment * _enviro
 
 }
 
-static Variable * ef936x_image_converter_multicolor_mode16( Environment * _environment, char * _source, int _width, int _height, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height ) {
+static Variable * ef936x_image_converter_multicolor_mode16( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height ) {
 
     image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
@@ -1296,11 +1296,11 @@ static Variable * ef936x_image_converter_multicolor_mode16( Environment * _envir
     *(buffer) = _frame_width;
     *(buffer+1) = _frame_height;
 
-    *_source += ( ( _offset_y * _width ) + _offset_x ) * 3;
+    _source += ( ( _offset_y * _width ) + _offset_x ) * 3;
 
     // Loop for all the source surface.
-    for (image_y = _offset_y; image_y < _frame_height; ++image_y) {
-        for (image_x = _offset_x; image_x < _frame_width; ++image_x) {
+    for (image_y = 0; image_y < _frame_height; ++image_y) {
+        for (image_x = 0; image_x < _frame_width; ++image_x) {
 
             // Take the color of the pixel
             rgb.red = *_source;
@@ -1334,7 +1334,7 @@ static Variable * ef936x_image_converter_multicolor_mode16( Environment * _envir
 
         }
 
-        _source += ( _width - _frame_widh ) * 3;
+        _source += ( _width - _frame_width ) * 3;
 
         // printf("\n" );
     }
@@ -1372,15 +1372,22 @@ Variable * ef936x_image_converter( Environment * _environment, char * _data, int
 
 }
 
-void ef936x_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame ) {
+void ef936x_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _frame_size ) {
 
     deploy( ef936xvars, src_hw_ef936x_vars_asm);
     deploy( image, src_hw_ef936x_image_asm );
 
     outline1("LDY #%s", _image );
     if ( _frame ) {
+        outline0("LEAY 2,y" );
         if ( strlen(_frame) == 0 ) {
-            outline0("LEAY 2,y" );
+        } else {
+            outline1("LDX #OFFSETS%4.4x", _frame_size );
+            outline1("LDB %s", _frame );
+            outline0("LDA #0" );
+            outline0("LEAX D, X" );
+            outline0("LDD ,X" );
+            outline0("LEAY D, Y" );
         }
     }
     outline1("LDD %s", _x );

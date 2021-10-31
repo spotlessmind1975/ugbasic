@@ -430,11 +430,11 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
     *(buffer) = _frame_width;
     *(buffer+1) = _frame_height;
 
-    *_source += ( ( _offset_y * _width ) + _offset_x ) * 3;
+    _source += ( ( _offset_y * _width ) + _offset_x ) * 3;
 
     // Loop for all the source surface.
-    for (image_y = _offset_y; image_y < _frame_height; ++image_y) {
-        for (image_x = _offset_x; image_x < _frame_width; ++image_x) {
+    for (image_y = 0; image_y < _frame_height; ++image_y) {
+        for (image_x = 0; image_x < _frame_width; ++image_x) {
 
             // Take the color of the pixel
             rgb.red = *_source;
@@ -507,17 +507,31 @@ Variable * zx_image_converter( Environment * _environment, char * _data, int _wi
 
 }
 
-void zx_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame ) {
+void zx_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _frame_size ) {
 
     deploy( vars, src_hw_zx_vars_asm);
     deploy( image, src_hw_zx_image_asm );
 
     outline1("LD HL, (%s)", _image );
     if ( _frame ) {
+        outline0("INC HL" );
+        outline0("INC HL" );
         if ( strlen(_frame) == 0 ) {
-            outline0("INC HL" );
-            outline0("INC HL" );
+
+        } else {
+
+            outline1("LD DE, OFFSETS%4.4x", _frame_size );
+            outline1("LD A, (%s)", _frame );
+            outline0("CMP 0" );
+            outline1("JR Z, %sdone", label );
+            outhead1("%sloop", label );
+            outline0("INC DE" );
+            outline0("DEC B" );
+            outline0("CMP 0" );
+            outline1("JR NZ, %sloop", label );
+            outline0("ADD HL, DE" );
         }
+
     }
     outline1("LD A, (%s)", _x );
     outline0("LD (IMAGEX), A" );

@@ -1151,11 +1151,11 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
     *(buffer) = _frame_width;
     *(buffer+1) = _frame_height;
 
-    *_source += ( ( _offset_y * _width ) + _offset_x ) * 3;
+    _source += ( ( _offset_y * _width ) + _offset_x ) * 3;
 
     // Loop for all the source surface.
-    for (image_y = _offset_y; image_y < _frame_height; ++image_y) {
-        for (image_x = _offset_x; image_x < _frame_width; ++image_x) {
+    for (image_y = 0; image_y < _frame_height; ++image_y) {
+        for (image_x = 0; image_x < _frame_width; ++image_x) {
 
             // Take the color of the pixel
             rgb.red = *_source;
@@ -1273,11 +1273,11 @@ static Variable * c6847_image_converter_multicolor_mode_standard( Environment * 
 
     *(buffer) = _frame_width;
     *(buffer+1) = _frame_height;
-    *_source += ( ( _offset_y * _width ) + _offset_x ) * 3;
+    _source += ( ( _offset_y * _width ) + _offset_x ) * 3;
 
     // Loop for all the source surface.
-    for (image_y = _offset_y; image_y < _frame_height; ++image_y) {
-        for (image_x = _offset_x; image_x < _frame_width; ++image_x) {
+    for (image_y = 0; image_y < _frame_height; ++image_y) {
+        for (image_x = 0; image_x < _frame_width; ++image_x) {
 
             // Take the color of the pixel
             rgb.red = *_source;
@@ -1358,15 +1358,22 @@ Variable * c6847_image_converter( Environment * _environment, char * _data, int 
 
 }
 
-void c6847_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame ) {
+void c6847_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _frame_size ) {
 
     deploy( c6847vars, src_hw_6847_vars_asm);
     deploy( image, src_hw_6847_image_asm );
 
     outline1("LDY #%s", _image );
     if ( _frame ) {
+        outline0("LEAY 2,y" );
         if ( strlen(_frame) == 0 ) {
-            outline0("LEAY 2,y" );
+        } else {
+            outline1("LDX #OFFSETS%4.4x", _frame_size );
+            outline1("LDB %s", _frame );
+            outline0("LDA #0" );
+            outline0("LEAX D, X" );
+            outline0("LDD ,X" );
+            outline0("LEAY D, Y" );
         }
     }
     outline1("LDD %s", _x );

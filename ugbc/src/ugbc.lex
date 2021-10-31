@@ -155,6 +155,7 @@ FLIP\$ { return(FLIP); }
 FONT { return(FONT); }
 FOR { return(FOR); }
 FRAME { return (FRAME); }
+FRAMES { return (FRAMES); }
 FREE { return (FREE); }
 FROM { return (FROM); }
 FUNCTION { return (FUNCTION); }

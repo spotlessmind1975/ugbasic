@@ -55,18 +55,26 @@ extern char DATATYPE_AS_STRING[][16];
 
 @target d32
 </usermanual> */
-void put_image( Environment * _environment, char * _image, char * _x, char * _y ) {
+void put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame ) {
 
     Variable * image = variable_retrieve( _environment, _image );
     Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
     Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
+    Variable * frame = NULL;
+    if ( _frame) {
+        frame = variable_retrieve_or_define( _environment, _frame, VT_BYTE, 0 );
+    }
 
     switch( image->type ) {
         case VT_IMAGES:
-            c6847_put_image( _environment, image->realName, x->realName, y->realName, "" );
+            if ( !frame ) {
+                c6847_put_image( _environment, image->realName, x->realName, y->realName, "", image->frameSize );
+            } else {
+                c6847_put_image( _environment, image->realName, x->realName, y->realName, frame->realName, image->frameSize );
+            }
             break;
         case VT_IMAGE:
-            c6847_put_image( _environment, image->realName, x->realName, y->realName, NULL );
+            c6847_put_image( _environment, image->realName, x->realName, y->realName, NULL, 0 );
             break;
         default:
             CRITICAL_PUT_IMAGE_UNSUPPORTED( _image, DATATYPE_AS_STRING[image->type] );

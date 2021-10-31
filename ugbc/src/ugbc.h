@@ -386,6 +386,12 @@ typedef struct _Variable {
     /** Is threaded? */
     int threaded;
 
+    /** size of single frame (if IMAGES) */
+    int frameSize;
+
+    /** count of frames (if IMAGES) */
+    int frameCount;
+
     /** Link to the next variable (NULL if this is the last one) */
     struct _Variable * next;
 
@@ -451,6 +457,23 @@ typedef struct _Procedure {
     struct _Procedure * next;
 
 } Procedure;
+
+typedef struct _Offsetting {
+
+    /**
+     * Size of an element
+     */
+    int size;
+
+    /**
+     * Count of elements
+     */
+    int count;
+
+    /** Link to the next offsetting */
+    struct _Offsetting * next;
+
+} Offsetting;
 
 /**
  * @brief Types of conditional jumps supported.
@@ -1119,6 +1142,11 @@ typedef struct _Environment {
      */
     int emptyProcedure;
 
+    /**
+     * List of offset table to generate.
+     */
+    Offsetting * offsetting;
+
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */
@@ -1237,6 +1265,8 @@ typedef struct _Environment {
 #define CRITICAL_IMAGES_LOAD_INVALID_FRAME_WIDTH( w ) CRITICAL2i("E086 - invalid frame width, not multiple of width", w );
 #define CRITICAL_IMAGES_LOAD_INVALID_FRAME_HEIGHT( h ) CRITICAL2i("E087 - invalid frame height, not multiple of height", h );
 #define CRITICAL_PUT_IMAGE_UNSUPPORTED( v, t ) CRITICAL3("E088 - PUT IMAGE unsupported for given datatype", v, t );
+#define CRITICAL_NOT_IMAGES( v ) CRITICAL2("E089 - variable is not an collection of images", v );
+#define CRITICAL_NOT_ASSIGNED_IMAGES( v ) CRITICAL2("E090 - variable is not a loaded collection of images, please use assign operator", v );
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
 #define WARNING2i( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%i) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -1745,6 +1775,7 @@ void                    next_raster_at_with_var( Environment * _environment, cha
 // *O*
 //----------------------------------------------------------------------------
 
+void                    offsetting_size_count( Environment * _environment, int _size, int _count );
 void                    on_gosub( Environment * _environment, char * _expression );
 void                    on_gosub_end( Environment * _environment );
 void                    on_gosub_index( Environment * _environment, char * _label );
