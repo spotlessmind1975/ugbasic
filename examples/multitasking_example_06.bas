@@ -9,7 +9,7 @@ REM @italian
 REM USARE IL MULTITASKING CON UN ESEMPIO (6)
 REM
 REM Questo esempio mostrerà come usare il multitasking per
-REM realizzare una semplice animazione di varii pipistrelli
+REM realizzare una semplice animazione di vari pipistrelli
 REM sullo schermo.
 
 BITMAP ENABLE (16)
@@ -35,9 +35,9 @@ PARALLEL PROCEDURE moveBat
 END PROC
 
 FOR i=0 TO (batCount-1)
-    x(i) = i * 32
-    y(i) = i * 32
-    f(i) = 0
+    x(i) = i * (SCREEN WIDTH / batCount)
+    y(i) = i * (SCREEN HEIGHT / batCount)
+    f(i) = i MOD (batCount-1)
     SPAWN moveBat
 NEXT
 
