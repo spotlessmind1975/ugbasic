@@ -1405,7 +1405,7 @@ static int extract_color_palette(unsigned char* _source, int _width, int _height
 
 }
 
-static Variable * gtia_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height ) {
+static Variable * gtia_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height ) {
 
     image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
@@ -1522,7 +1522,7 @@ static Variable * gtia_image_converter_bitmap_mode_standard( Environment * _envi
 }
 
 
-static Variable * gtia_image_converter_multicolor_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height ) {
+static Variable * gtia_image_converter_multicolor_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height ) {
 
     image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
@@ -1654,7 +1654,7 @@ Variable * gtia_image_converter( Environment * _environment, char * _data, int _
         // When the CTIA/GTIA chip interprets the data for the four adjacent pixels stored within the byte, it refers to the color 
         // register encoded in the bit pattern to plot the color.
         case BITMAP_MODE_ANTIC8:
-            return gtia_image_converter_multicolor_mode_standard( _environment, _data, _width, _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height );
+            return gtia_image_converter_multicolor_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height );
 
         // Graphics 4 (ANTIC 9)
         // This is a two-color graphics mode with four times the resolution of GRAPHICS 3. The pixels are 4 x 4, and 48 rows of 80 
@@ -1663,20 +1663,20 @@ Variable * gtia_image_converter( Environment * _environment, char * _data, int _
         // Only one bit is used for the color, so eight adjacent pixels are encoded within one byte, and only half as much screen 
         // memory is needed for a display of similiar-sized pixels.
         case BITMAP_MODE_ANTIC9:
-            return gtia_image_converter_bitmap_mode_standard( _environment, _data, _width, _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height );
+            return gtia_image_converter_bitmap_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height );
 
         // Graphics 5 (ANTIC A or 10)
         // This is the four color equivalent of GRAPHICS 4 sized pixels. The pixels are 4 x 4, but two bits are required to address 
         // the four color registers. With only four adjacent pixels encoded within a byte, the screen uses twice as much memory, 
         // about 1K.
         case BITMAP_MODE_ANTIC10:
-            return gtia_image_converter_multicolor_mode_standard( _environment, _data, _width, _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height );
+            return gtia_image_converter_multicolor_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height );
 
         // Graphics 6 (ANTIC B or 11)
         // This two color graphics mode has reasonably fine resolution. The 2 x 2 sized pixels allow 96 rows of 160 pixels to fit 
         // on a full screen. Although only a single bit is used to encode the color, screen memory still requires approximately 2K.
         case BITMAP_MODE_ANTIC11:
-            return gtia_image_converter_bitmap_mode_standard( _environment, _data, _width, _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height );
+            return gtia_image_converter_bitmap_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height );
 
         // Graphics 7 (ANTIC D or 13)
         // This is the four color equivalent to GRAPHICS mode 6. It is the finest resolution four color mode and naturally the
@@ -1684,7 +1684,7 @@ Variable * gtia_image_converter( Environment * _environment, char * _data, int _
         // of course is much greater as there are 96 rows of 160 - 2 x 2 sized pixels. It requires 3840 bytes of screen memory
         // with another 104 bytes for the display list.
         case BITMAP_MODE_ANTIC13:
-            return gtia_image_converter_multicolor_mode_standard( _environment, _data, _width, _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height );
+            return gtia_image_converter_multicolor_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height );
 
         // Graphics 8 (ANTIC F or 15)
         // This mode is definitely the finest resolution available on the Atari. Individual dot-sized pixels can be addressed in 
@@ -1699,7 +1699,7 @@ Variable * gtia_image_converter( Environment * _environment, char * _data, int _
         // staggering the pixel patterns, you can achieve three colors. This method is called artifacting. This all depends
         // on background color and luminance.
         case BITMAP_MODE_ANTIC15:
-            return gtia_image_converter_bitmap_mode_standard( _environment, _data, _width, _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height );
+            return gtia_image_converter_bitmap_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height );
 
         // The following five graphics modes have no equivalent in BASIC on older machine but if indicated do correspond to
         // an equivalent graphics mode on the newer XL models.
@@ -1710,7 +1710,7 @@ Variable * gtia_image_converter( Environment * _environment, char * _data, int _
         // register #4. Each pixel is one scan line high and one color clock wide. This mode's advantages are that it 
         // only uses 4K of screen memory and doesn't have artifacting problems.
         case BITMAP_MODE_ANTIC12:
-            return gtia_image_converter_multicolor_mode_standard( _environment, _data, _width, _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height );
+            return gtia_image_converter_multicolor_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height );
 
         // Antic E (Graphics 15-XL computers only)
         // This four-color, bit-mapped mode is sometimes known as BASIC 7 1/2. Its resolution is 160 x 192 or twice that of 
@@ -1718,7 +1718,7 @@ Variable * gtia_image_converter( Environment * _environment, char * _data, int _
         // particular color register. The screen data, however, is not character data but individual bytes. The user has a lot
         // more control, but this mode uses a lot more memory, approximately
         case BITMAP_MODE_ANTIC14:
-            return gtia_image_converter_multicolor_mode_standard( _environment, _data, _width, _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height );
+            return gtia_image_converter_multicolor_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height );
 
         // Graphics Mode 0 (ANTIC 2)
         // This is the normal-sized character or text mode that the computer defaults to on start up. 

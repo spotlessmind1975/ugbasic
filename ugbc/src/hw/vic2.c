@@ -1406,7 +1406,7 @@ static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _
 
             colorIndex = i;
 
-            printf( "%1.1x", colorIndex );
+            // printf( "%1.1x", colorIndex );
 
             bitmask = colorIndex << (6 - ((image_x & 0x3) * 2));
 
@@ -1436,11 +1436,11 @@ static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _
 
         _source += 3 * ( _width - _frame_width );
 
-        printf("\n" );
+        // printf("\n" );
     }
 
-    printf("\n" );
-    printf("\n" );
+    // printf("\n" );
+    // printf("\n" );
 
     // for(i=0; i<4; ++i ) {
     //     printf( "%1.1x = %2.2x\n", i, palette[i].index );
