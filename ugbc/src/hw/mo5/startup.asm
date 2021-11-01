@@ -29,40 +29,39 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                          STARTUP ROUTINE ON DRAGON 32                       *
+;*                          STARTUP ROUTINE ON MO5                             *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-MO5TIMER      fdb $0
-MO5IRQO       fdb MO5IRQ3
-MO5IRQN       fdb $0
-
+; TIMER service routine
 MO5IRQ
-    LDD   MO5TIMER
-    ADDD  #1
-    STD   MO5TIMER
-    LDX   MO5IRQN
-    BEQ   MO5IRQ2
-    JSR   ,X
+    LDD   #1          ; increment 
+    ADDD  #0          ; add value of TI variable
+MO5TIMER  set *-2     ; (variable within code)
+    STD   MO5TIMER    ; write result to TI variable
+    LDX   #0          ; get next ISR
+MO5IRQN   set *-2     ; (variable within code)
+    BEQ   MO5IRQ2     ; any defined ?
+    JSR   ,X          ; yes ==> call it
 MO5IRQ2
-    JMP   [MO5IRQO]
-MO5IRQ3
-    RTI
+    JMP   >MO5IRQEND  ; no ==> jmp to the old one
+MO5IRQO   set *-2     ; (variable within code)
+MO5IRQEND
+    RTI               ;  by defaut do RTI
     
 MO5STARTUP
     LDX   #$2061
-    LDA   2,X
-    BEQ   MO5STARTUP2
-    LDD   ,X
-    STD   MO5IRQO
+    LDA   2,X         ; Is previous TIMERPT enable ?
+    BEQ   MO5STARTUP2 ; no ==> keep default return code (RTI)
+    LDD   ,X          ; yes ==> backup previous ISR
+    STD   MO5IRQO     ;         and chain it at the end of our own
 MO5STARTUP2    
-    LDD   #MO5IRQ
+    LDD   #MO5IRQ     ; install our own ISR
     STD   ,X
-;   LDA   #1   <== any non zero will do, but since $00xx point to video ram, we know for sure that A=highbyte(MO5IRQ) will never be 0 ;)
-    STA   2,X
+    LDA   #$20        ; any non-zero value will do, let's use the one that'll go to DP
+    STA   2,X         ; enable the ISR
 
-    LDA   #$20
-    TFR   A,DP
+    TFR   A,DP       
     RTS
