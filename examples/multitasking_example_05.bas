@@ -2,11 +2,13 @@ REM @english
 REM MULTI TASKING FOR DUMMIES (5)
 REM
 REM This example will draw, separately, the four angles of a square.
+REM This example has been taken from [[https://www.facebook.com/groups/28618623481/posts/10159544654308482/|this post]] by Dino Florenzi.
 REM
 REM @italian
 REM USARE IL MULTITASKING CON UN ESEMPIO (5)
 REM
 REM Questo esempio disegnerà, separatamente, i quattro angoli di un quadrato.
+REM Questo esempio è stato preso da [[https://www.facebook.com/groups/28618623481/posts/10159544654308482/|questo post]] by Dino Florenzi.
 
 BITMAP ENABLE (16)
 CLS
