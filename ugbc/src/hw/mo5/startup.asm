@@ -36,29 +36,33 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 MO5TIMER      fdb $0
-MO5IRQO       fdb $0
+MO5IRQO       fdb MO5IRQ3
 MO5IRQN       fdb $0
 
 MO5IRQ
-    PSHS D, X
-    LDD MO5TIMER
-    ADDD #1
-    STD MO5TIMER
-    LDX MO5IRQN
-    BEQ MO5IRQ2
-    PULS D, X
-    JSR [MO5IRQN]
+    LDD   MO5TIMER
+    ADDD  #1
+    STD   MO5TIMER
+    LDX   MO5IRQN
+    BEQ   MO5IRQ2
+    JSR   ,X
 MO5IRQ2
-    PULS D, X
-    JMP [MO5IRQO]
-
+    JMP   [MO5IRQO]
+MO5IRQ3
+    RTI
+    
 MO5STARTUP
+    LDX   #$2061
+    LDA   2,X
+    BEQ   MO5STARTUP2
+    LDD   ,X
+    STD   MO5IRQO
+MO5STARTUP2    
+    LDD   #MO5IRQ
+    STD   ,X
+;   LDA   #1   <== any non zero will do, but since $00xx point to video ram, we know for sure that A=highbyte(MO5IRQ) will never be 0 ;)
+    STA   2,X
 
-    LDX $2061
-    STX MO5IRQO
-    LDX #MO5IRQ
-    STX $2061
-
-    LDA #$20
-    TFR A, DP
+    LDA   #$20
+    TFR   A,DP
     RTS

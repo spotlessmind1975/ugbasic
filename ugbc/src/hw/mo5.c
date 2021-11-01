@@ -310,7 +310,7 @@ void mo5_irq_at( Environment * _environment, char * _label ) {
 
 void mo5_follow_irq( Environment * _environment ) {
 
-    outline0("JMP [PC128IRQO]" );
+    outline0("JMP [MO5IRQO]" );
     
 }
 #endif
