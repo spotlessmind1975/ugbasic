@@ -206,6 +206,9 @@ int convertbintok7(Environment * _environment)
     // printf("n blocks: %d\n",nblock);
     // printf("size: %d\n",size);
     rest=size+12-nblock*254;
+
+	// Fix #187
+	unsigned char restByte = (unsigned char)rest;
     
     rewind(fr);
     swapen(&size);
@@ -230,8 +233,9 @@ int convertbintok7(Environment * _environment)
 	else
 	{
 			fwrite(&u,sizeof(u),1,fw);
-	        fwrite(&rest,1,1,fw);
-	        fwrite(&z,sizeof(z),1,fw);
+			// Fix #187
+	        fwrite(&restByte,1,1,fw);
+			fwrite(&z,sizeof(z),1,fw);
 	}
 	cnt++;
 	fwrite(&size,sizeof(size),1,fw);
@@ -253,8 +257,9 @@ int convertbintok7(Environment * _environment)
 			else
 			{
 					fwrite(&u,sizeof(u),1,fw);
-				    fwrite(&rest,1,1,fw);
-				    // printf("*****\n");
+					// Fix #187
+					fwrite(&restByte,1,1,fw);
+					// printf("*****\n");
 			}
 			cnt=0;
 		    
