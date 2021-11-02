@@ -629,6 +629,13 @@ void vic1_initialization( Environment * _environment ) {
 
     vic1_cls( _environment );
 
+    _environment->fontWidth = 8;
+    _environment->fontHeight = 8;
+    _environment->screenTilesWidth = 23;
+    _environment->screenTilesHeight = 22;
+    _environment->screenWidth = _environment->screenTilesWidth * 8;
+    _environment->screenHeight = _environment->screenTilesHeight * 8;
+
 }
 
 void vic1_finalization( Environment * _environment ) {
@@ -1172,19 +1179,19 @@ static Variable * vic1_image_converter_tilemap_mode_standard( Environment * _env
                     if (colorUsed == 2 ) {
                         if ( colorIndex ) {
                             tileData[offset] |= bitmask;
-                            printf("*" );
+                            // printf("*" );
                         } else {
                             tileData[offset] &= ~bitmask;
-                            printf(" " );
+                            // printf(" " );
                         }
                     } else {
                         if ( colorIndex ) {
                             mostFrequentColor[palette[i].index]++;
                             tileData[offset] |= bitmask;
-                            printf("x" );
+                            // printf("x" );
                         } else {
                             tileData[offset] &= ~bitmask;
-                            printf(" " );
+                            // printf(" " );
                         }
                     }
 
@@ -1194,7 +1201,7 @@ static Variable * vic1_image_converter_tilemap_mode_standard( Environment * _env
 
                 source += 3 * ( _width - 8 );
 
-                printf("\n" );
+                // printf("\n" );
 
             }
 
@@ -1219,10 +1226,10 @@ static Variable * vic1_image_converter_tilemap_mode_standard( Environment * _env
                 *(buffer + 2 + ( ( _frame_width >> 3 ) * ( _frame_height >> 3 ) ) + (cy * ( _frame_width >> 3 ) ) + cx ) = ( ( mostFrequentColorIndex & 0x07 ) );
             }
 
-            printf("\ntile: %2.2x\n", tile );
+            // printf("\ntile: %2.2x\n", tile );
 
         }
-        printf("\n");
+        // printf("\n");
     }
 
     if ( colorUsed <= 2 ) {

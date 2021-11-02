@@ -185,7 +185,7 @@ const_factor:
           if ( !v->valueBuffer ) {
               CRITICAL_NOT_ASSIGNED_IMAGE( v->name );
           }
-          $$ = v->valueBuffer[0];
+          $$ = ( v->valueBuffer[0] & 0x7f );
       }
       | FRAMES OP expr CP {
           Variable * v = variable_retrieve( _environment, $3 );
