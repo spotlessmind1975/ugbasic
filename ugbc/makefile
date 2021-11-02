@@ -43,6 +43,17 @@ test: paths-test tester
 # ----------------------------------------------------------------------------
 # ----------------------------------------------------------------------------
 
+
+# ----------------------------------------------------------------------------
+# DEFAULT FONT
+# ----------------------------------------------------------------------------
+
+src-generated/fontvic1.c:
+	@xxd -i $(subst src-generated/,data/,$(@:.c=.bin)) >$@
+
+src-generated/fontvic2.c:
+	@xxd -i $(subst src-generated/,data/,$(@:.c=.bin)) >$@
+
 # ----------------------------------------------------------------------------
 # Components and chipsets
 # ----------------------------------------------------------------------------
@@ -99,7 +110,7 @@ src-generated/gtia_%.c: $(MODULES_GTIA)
 # MOS Technology VIC-I
 
 MODULES_VIC1 := $(wildcard src/hw/vic1/*.asm)
-SOURCES_VIC1 := $(subst src/hw/vic1/,src-generated/vic1_,$(MODULES_VIC1:.asm=.c))
+SOURCES_VIC1 := $(subst src/hw/vic1/,src-generated/vic1_,$(MODULES_VIC1:.asm=.c)) src-generated/fontvic1.c
 
 src-generated/vic1_%.c: $(MODULES_VIC1)
 	@xxd -i $(subst src-generated/vic1_,src/hw/vic1/,$(@:.c=.asm)) >$@
@@ -107,7 +118,7 @@ src-generated/vic1_%.c: $(MODULES_VIC1)
 # MOS Technology VIC-II
 
 MODULES_VIC2 := $(wildcard src/hw/vic2/*.asm)
-SOURCES_VIC2 := $(subst src/hw/vic2/,src-generated/vic2_,$(MODULES_VIC2:.asm=.c))
+SOURCES_VIC2 := $(subst src/hw/vic2/,src-generated/vic2_,$(MODULES_VIC2:.asm=.c)) src-generated/fontvic2.c
 
 src-generated/vic2_%.c: $(MODULES_VIC2)
 	@xxd -i $(subst src-generated/vic2_,src/hw/vic2/,$(@:.c=.asm)) >$@
@@ -143,10 +154,12 @@ src-generated/atari_%.c: $(MODULES_ATARI)
 src-generated/modules_atari.c: $(SOURCES_6502) $(SOURCES_ANTIC) $(SOURCES_ATARI) $(SOURCES_GTIA)
 	@cat $(SOURCES_6502) $(SOURCES_ANTIC) $(SOURCES_ATARI) $(SOURCES_GTIA) >src-generated/modules_atari.c
 	@grep "src" src-generated/modules_atari.c | awk -f modules.awk >src-generated/modules_atari.h
+	@grep "data" src-generated/modules_atari.c | awk -f modules.awk >>src-generated/modules_atari.h
 
 src-generated/modules_atarixl.c: $(SOURCES_6502) $(SOURCES_ANTIC) $(SOURCES_ATARI) $(SOURCES_GTIA)
 	@cat $(SOURCES_6502) $(SOURCES_ANTIC) $(SOURCES_ATARI) $(SOURCES_GTIA) >src-generated/modules_atarixl.c
 	@grep "src" src-generated/modules_atarixl.c | awk -f modules.awk >src-generated/modules_atarixl.h
+	@grep "data" src-generated/modules_atarixl.c | awk -f modules.awk >>src-generated/modules_atarixl.h
 
 # Commodore 64
 
@@ -159,6 +172,7 @@ src-generated/c64_%.c: $(MODULES_C64)
 src-generated/modules_c64.c: $(SOURCES_6502) $(SOURCES_C64) $(SOURCES_VIC2)
 	@cat $(SOURCES_6502) $(SOURCES_C64) $(SOURCES_VIC2) >src-generated/modules_c64.c
 	@grep "src" src-generated/modules_c64.c | awk -f modules.awk >src-generated/modules_c64.h
+	@grep "data" src-generated/modules_c64.c | awk -f modules.awk >>src-generated/modules_c64.h
 
 # Commodore VIC-20
 
@@ -171,6 +185,7 @@ src-generated/vic20_%.c: $(MODULES_VIC20)
 src-generated/modules_vic20.c: $(SOURCES_6502) $(SOURCES_VIC20) $(SOURCES_VIC1)
 	@cat $(SOURCES_6502) $(SOURCES_VIC20) $(SOURCES_VIC1) >src-generated/modules_vic20.c
 	@grep "src" src-generated/modules_vic20.c | awk -f modules.awk >src-generated/modules_vic20.h
+	@grep "data" src-generated/modules_vic20.c | awk -f modules.awk >>src-generated/modules_vic20.h
 
 # Commodore PLUS/4
 
@@ -183,6 +198,7 @@ src-generated/plus4_%.c: $(MODULES_PLUS4)
 src-generated/modules_plus4.c: $(SOURCES_6502) $(SOURCES_PLUS4) $(SOURCES_TED)
 	@cat $(SOURCES_6502) $(SOURCES_PLUS4) $(SOURCES_TED) >src-generated/modules_plus4.c
 	@grep "src" src-generated/modules_plus4.c | awk -f modules.awk >src-generated/modules_plus4.h
+	@grep "data" src-generated/modules_plus4.c | awk -f modules.awk >>src-generated/modules_plus4.h
 
 # Dragon 32
 
@@ -195,6 +211,7 @@ src-generated/d32_%.c: $(MODULES_D32)
 src-generated/modules_d32.c: $(SOURCES_6809) $(SOURCES_6847) $(SOURCES_D32)
 	@cat $(SOURCES_6809) $(SOURCES_6847) $(SOURCES_D32) >src-generated/modules_d32.c
 	@grep "src" src-generated/modules_d32.c | awk -f modules.awk >src-generated/modules_d32.h
+	@grep "data" src-generated/modules_d32.c | awk -f modules.awk >>src-generated/modules_d32.h
 
 # Dragon 64
 
@@ -207,6 +224,7 @@ src-generated/d64_%.c: $(MODULES_D64)
 src-generated/modules_d64.c: $(SOURCES_6809) $(SOURCES_6847) $(SOURCES_D64)
 	@cat $(SOURCES_6809) $(SOURCES_6847) $(SOURCES_D64) >src-generated/modules_d64.c
 	@grep "src" src-generated/modules_d64.c | awk -f modules.awk >src-generated/modules_d64.h
+	@grep "data" src-generated/modules_d64.c | awk -f modules.awk >>src-generated/modules_d64.h
 
 # Olivetti Prodest PC 128
 # Thomson MO6 serie U
@@ -222,6 +240,7 @@ src-generated/pc128op_%.c: $(MODULES_PC128OP)
 src-generated/modules_pc128op.c: $(SOURCES_6809) $(SOURCES_EF936X) $(SOURCES_PC128OP)
 	@cat $(SOURCES_6809) $(SOURCES_EF936X) $(SOURCES_PC128OP) >src-generated/modules_pc128op.c
 	@grep "src" src-generated/modules_pc128op.c | awk -f modules.awk >src-generated/modules_pc128op.h
+	@grep "data" src-generated/modules_pc128op.c | awk -f modules.awk >>src-generated/modules_pc128op.h
 
 # Thomson MO5 v1.0
 # Thomson MO5 v1.2
@@ -240,6 +259,7 @@ src-generated/mo5_%.c: $(MODULES_MO5)
 src-generated/modules_mo5.c: $(SOURCES_6809) $(SOURCES_EF936X) $(SOURCES_MO5)
 	@cat $(SOURCES_6809) $(SOURCES_EF936X) $(SOURCES_MO5) >src-generated/modules_mo5.c
 	@grep "src" src-generated/modules_mo5.c | awk -f modules.awk >src-generated/modules_mo5.h
+	@grep "data" src-generated/modules_mo5.c | awk -f modules.awk >>src-generated/modules_mo5.h
 
 # ZX Spectrum
 
@@ -252,6 +272,7 @@ src-generated/zx_%.c: $(MODULES_ZX)
 src-generated/modules_zx.c: $(SOURCES_Z80) $(SOURCES_ZX)
 	@cat $(SOURCES_Z80) $(SOURCES_ZX) >src-generated/modules_zx.c
 	@grep "src" src-generated/modules_zx.c | awk -f modules.awk >src-generated/modules_zx.h
+	@grep "data" src-generated/modules_zx.c | awk -f modules.awk >>src-generated/modules_zx.h
 
 # ----------------------------------------------------------------------------
 # ----------------------------------------------------------------------------
@@ -284,7 +305,7 @@ SOURCESTEST += $(wildcard src/hw/*.c)
 SOURCESTEST += $(wildcard src/targets/common/*.c)
 SOURCESTEST += $(wildcard src/targets/$(target)/*.c)
 SOURCESTEST += $(wildcard src-test/suites/*.c)
-SOURCESTEST += src-generated/modules_$(target).c src-test/tester.c src-test/tester_c64.c src-test/tester_plus4.c src-test/tester_atari.c src-test/tester_atarixl.c src-test/tester_zx.c src-test/tester_d32.c src-test/tester_d64.c src-test/tester_pc128op.c  src-test/tester_mo5.c
+SOURCESTEST += src-generated/fontc64.c src-generated/modules_$(target).c src-test/tester.c src-test/tester_c64.c src-test/tester_plus4.c src-test/tester_atari.c src-test/tester_atarixl.c src-test/tester_zx.c src-test/tester_d32.c src-test/tester_d64.c src-test/tester_pc128op.c  src-test/tester_mo5.c 
 
 paths:
 	@mkdir -p src-generated

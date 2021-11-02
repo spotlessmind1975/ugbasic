@@ -75,6 +75,208 @@ PUTIMAGE4X:
     RTS
 
 PUTIMAGE0:
+    LDA #0
+    STA MATHPTR2
+    LDY #0
+    LDA (TMPPTR),Y
+    AND #$80
+    BEQ PUTIMAGE02C
+    LDA #1
+    STA MATHPTR2
+PUTIMAGE02C:
+    LDA (TMPPTR),Y
+    AND #$7F
+    STA IMAGEW
+    LSR
+    LSR
+    LSR
+    STA IMAGEW
+    LDY #1
+    LDA (TMPPTR),Y
+    LSR
+    LSR
+    LSR
+    STA IMAGEH
+    STA IMAGEH2
+
+    CLC
+    LDA TMPPTR
+    ADC #2
+    STA TMPPTR
+    LDA TMPPTR+1
+    ADC #0
+    STA TMPPTR+1
+
+    ;-------------------------
+    ;calc Y-cell, divide by 8
+    ;y/8 is y-cell table index
+    ;-------------------------
+    LDA IMAGEY
+    LSR                         ;/ 2
+    LSR                         ;/ 4
+    LSR                         ;/ 8
+    TAY                         ;tbl_8,y index
+
+    CLC
+
+    ;------------------------
+    ;calc X-cell, divide by 8
+    ;divide 2-byte PLOTX / 8
+    ;------------------------
+    LDA IMAGEX
+    ROR IMAGEX+1                ;rotate the high byte into carry flag
+    ROR                        ;lo byte / 2 (rotate C into low byte)
+    LSR                        ;lo byte / 4
+    LSR                        ;lo byte / 8
+    STA MATHPTR0               ;tbl_8,x index
+
+    ;----------------------------------
+    ;add x & y to calc cell point is in
+    ;----------------------------------
+    CLC
+
+    LDA PLOTCVBASELO,Y          ;table of $A000 row base addresses
+    ADC MATHPTR0               ;+ (8 * Xcell)
+    STA PLOTDEST               ;= cell address
+
+    LDA PLOTCVBASEHI,Y          ;do the high byte
+    ADC #0
+    STA PLOTDEST+1
+
+    LDA PLOTC2VBASELO,Y          ;table of $A000 row base addresses
+    ADC MATHPTR0               ;+ (8 * Xcell)
+    STA PLOTCDEST               ;= cell address
+
+    LDA PLOTC2VBASEHI,Y          ;do the high byte
+    ADC #0
+    STA PLOTCDEST+1
+
+    TYA
+    ADC IMAGEH
+    
+    LDA IMAGEW
+    TAY
+    DEY
+PUTIMAGE0L1:
+    LDA (TMPPTR),Y
+    STA (PLOTDEST),Y
+    DEY
+    CPY #255
+    BNE PUTIMAGE0L1
+
+    CLC
+    LDA TMPPTR
+    ADC IMAGEW
+    STA TMPPTR
+    LDA TMPPTR+1
+    ADC #0
+    STA TMPPTR+1
+
+    CLC
+    LDA PLOTDEST
+    ADC #40
+    STA PLOTDEST
+    LDA PLOTDEST+1
+    ADC #$0
+    STA PLOTDEST+1
+
+    DEC IMAGEH
+    BEQ PUTIMAGE0C
+
+    LDA IMAGEW
+    TAY
+    DEY
+    JMP PUTIMAGE0L1
+
+PUTIMAGE0C:
+    LDA MATHPTR2
+    BEQ PUTIMAGE0C2
+    JMP PUTIMAGE0C16
+
+PUTIMAGE0C2:
+    LDY #0
+    LDA (TMPPTR),Y
+    STA MATHPTR1
+
+    LDA IMAGEH2
+    STA IMAGEH
+    LDA IMAGEW
+    TAY
+    DEY
+    LDA MATHPTR1
+PUTIMAGE02L2:
+    STA (PLOTCDEST),Y
+    DEY
+    CPY #255
+    BNE PUTIMAGE02L2
+
+    DEC IMAGEH
+    BEQ PUTIMAGE0E
+
+    CLC
+    LDA TMPPTR
+    ADC IMAGEW
+    STA TMPPTR
+    LDA TMPPTR+1
+    ADC #0
+    STA TMPPTR+1
+
+    CLC
+    LDA PLOTCDEST
+    ADC #40
+    STA PLOTCDEST
+    LDA PLOTCDEST+1
+    ADC #0
+    STA PLOTCDEST+1
+
+    LDA IMAGEW
+    TAY
+    DEY
+    LDA MATHPTR1
+    JMP PUTIMAGE02L2
+
+PUTIMAGE0C16:
+    LDA IMAGEH2
+    STA IMAGEH
+    LDA IMAGEW
+    TAY
+    DEY
+    LDA MATHPTR1
+PUTIMAGE016L2:
+    LDA (TMPPTR),Y
+    STA (PLOTCDEST),Y
+    DEY
+    CPY #255
+    BNE PUTIMAGE016L2
+
+    DEC IMAGEH
+    BEQ PUTIMAGE0E
+
+    CLC
+    LDA TMPPTR
+    ADC IMAGEW
+    STA TMPPTR
+    LDA TMPPTR+1
+    ADC #0
+    STA TMPPTR+1
+
+    CLC
+    LDA PLOTCDEST
+    ADC #40
+    STA PLOTCDEST
+    LDA PLOTCDEST+1
+    ADC #0
+    STA PLOTCDEST+1
+
+    LDA IMAGEW
+    TAY
+    DEY
+    JMP PUTIMAGE016L2
+
+PUTIMAGE0E:
+    RTS
+
+
 PUTIMAGE1:
 PUTIMAGE4:
     RTS

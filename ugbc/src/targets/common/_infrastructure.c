@@ -4219,3 +4219,121 @@ void variable_temporary_remove( Environment * _environment, char * _name ) {
     }
 
 }
+
+int calculate_white_area( char * _tileData ) {
+    int i=0, j=0;
+    int actual = 0;
+    for(i=0;i<8;++i) {
+        for(j=0;j<8;++j) {
+            if ( _tileData[j] & ( 1 << i ) ) {
+                ++actual;
+            }
+        }
+    }
+    return actual;
+}
+
+int calculate_horizontal_edges( char * _tileData, int _position ) {
+    int edges = 0;
+    int i=0;
+    int actual = 0;
+    for(i=0;i<8;++i) {
+        if ( _tileData[_position] & ( 1 << i ) ) {
+            if ( !actual ) {
+                ++edges;
+                actual = 1;
+            }
+        } else {
+            if ( actual ) {
+                ++edges;
+                actual = 0;
+            }
+        }
+    }
+    return edges;
+}
+
+int calculate_vertical_edges( char * _tileData, int _position ) {
+    int edges = 0;
+    int i=0;
+    int actual = 0;
+    for(i=0;i<8;++i) {
+        if ( _tileData[i] & ( 1 << _position ) ) {
+            if ( !actual ) {
+                ++edges;
+                actual = 1;
+            }
+        } else {
+            if ( actual ) {
+                ++edges;
+                actual = 0;
+            }
+        }
+    }
+    return edges;
+}
+
+TileDescriptor * calculate_tile_descriptor( char * _tileData ) {
+
+    TileDescriptor * tileDescriptor = malloc( sizeof( TileDescriptor ) );
+
+    int i=0;
+
+    tileDescriptor->whiteArea = calculate_white_area( _tileData );
+    for(i=0;i<8;++i) {
+        tileDescriptor->horizontalEdges[i] = calculate_horizontal_edges( _tileData, i );
+        tileDescriptor->verticalEdges[i] = calculate_vertical_edges( _tileData, i );
+    }
+
+    return tileDescriptor;
+
+}
+
+TileDescriptors * precalculate_tile_descriptors_for_font( char * _fontData ) {
+
+    TileDescriptors * tileDescriptors = malloc( sizeof( TileDescriptors ) );
+
+    int i=0;
+
+    for(i=0;i<256;++i) {
+        tileDescriptors->descriptor[i] = calculate_tile_descriptor( &_fontData[8*i] );
+    }
+
+    return tileDescriptors;
+
+}
+
+int calculate_tile_affinity( TileDescriptor * _first, TileDescriptor * _second ) {
+
+    int affinity = 0;
+    int i=0;
+
+    affinity += abs( _first->whiteArea - _second->whiteArea );
+    for(i=0;i<8;++i) {
+        affinity += abs( _first->horizontalEdges[i] - _second->horizontalEdges[i] );
+        affinity += abs( _first->verticalEdges[i] - _second->verticalEdges[i] );
+    }
+
+    return affinity;
+
+}
+
+int calculate_nearest_tile( TileDescriptor * _tile, TileDescriptors * _tiles ) {
+
+    int minAffinity = 0xffffff;
+    int nearestTileIndex = -1;
+    int i;
+
+    for(i=0;i<256;++i) {
+        int affinity = calculate_tile_affinity( _tile, _tiles->descriptor[i] );
+        if ( minAffinity > affinity ) {
+            minAffinity = affinity;
+            nearestTileIndex = i;
+        }
+    }
+
+    return nearestTileIndex;
+
+}
+
+

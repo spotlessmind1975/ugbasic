@@ -1168,6 +1168,20 @@ typedef struct _Environment {
 
 } Environment;
 
+typedef struct _TileDescriptor {
+
+    int whiteArea;
+    int horizontalEdges[8];
+    int verticalEdges[8];
+
+} TileDescriptor;
+
+typedef struct _TileDescriptors {
+
+    TileDescriptor * descriptor[256];
+
+} TileDescriptors;
+
 #define UNIQUE_ID   _environment->uniqueId++
 #define MAKE_LABEL  char label[12]; sprintf( label, "_label%d", UNIQUE_ID);
 #define CRITICAL( s ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); exit( EXIT_FAILURE );
@@ -1621,6 +1635,9 @@ void                    box( Environment * _environment, char * _x1, char * _y1,
 // *C*
 //----------------------------------------------------------------------------
 
+int                     calculate_nearest_tile( TileDescriptor * _tile, TileDescriptors * _tiles );
+int                     calculate_tile_affinity( TileDescriptor * _first, TileDescriptor * _second );
+TileDescriptor *        calculate_tile_descriptor( char * _tileData );
 void                    call_procedure( Environment * _environment, char * _name );
 void                    center( Environment * _environment, char * _string );
 void                    circle( Environment * _environment, char * _x, char * _y, char * _r, char *_c );
@@ -1802,6 +1819,7 @@ void                    point_at_vars( Environment * _environment, char * _x, ch
 void                    poke_var( Environment * _environment, char * _address, char * _value );
 void                    pop( Environment * _environment );
 Variable *              powering( Environment * _environment, char * _source, char * _dest );
+TileDescriptors *       precalculate_tile_descriptors_for_font( char * _fontData );
 void                    print( Environment * _environment, char * _text, int _new_line );
 void                    print_newline( Environment * _environment );
 void                    print_question_mark( Environment * _environment );

@@ -1455,6 +1455,189 @@ static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _
 
 }
 
+static Variable * vic2_image_converter_tilemap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height ) {
+
+    image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
+
+    RGBi palette[MAX_PALETTE];
+
+    int colorUsed = extract_color_palette(_source, _width, _height, palette, MAX_PALETTE);
+
+    int i, j, k;
+
+    for( i=0; i<colorUsed; ++i ) {
+        int minDistance = 0xffff;
+        int colorIndex = 0;
+        for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
+            int distance = calculate_distance(SYSTEM_PALETTE[j], palette[i]);
+            // printf("%d <-> %d [%d] = %d [min = %d]\n", i, j, SYSTEM_PALETTE[j].index, distance, minDistance );
+            if (distance < minDistance) {
+                // printf(" candidated...\n" );
+                for( k=0; k<i; ++k ) {
+                    if ( palette[k].index == SYSTEM_PALETTE[j].index ) {
+                        // printf(" ...used!\n" );
+                        break;
+                    }
+                }
+                if ( k>=i ) {
+                    // printf(" ...ok! (%d)\n", SYSTEM_PALETTE[j].index );
+                    minDistance = distance;
+                    colorIndex = j;
+                }
+            }
+        }
+        palette[i].index = SYSTEM_PALETTE[colorIndex].index;
+        // printf("%d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
+    }
+
+    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
+ 
+    int bufferSize;
+    
+    if ( colorUsed == 2 ) {
+        bufferSize = 2 + ( ( _frame_width >> 3 ) * ( _frame_height >> 3 ) ) + 1;
+    } else {
+        bufferSize = 2 + 2* ( ( _frame_width >> 3 ) * ( _frame_height >> 3 ) );
+    } 
+
+    // printf("bufferSize = %d\n", bufferSize );
+
+    char * buffer = malloc ( bufferSize );
+    memset( buffer, 0, bufferSize );
+
+    // Position of the pixel in the original image
+    int image_x, image_y;
+    
+    // Position of the pixel, in terms of tiles
+    int tile_x, tile_y;
+    
+    // Position of the pixel, in terms of offset and bitmask
+    int offset, bitmask;
+
+    // Color of the pixel to convert
+    RGBi rgb;
+
+    *(buffer) = _frame_width;
+    *(buffer+1) = _frame_height;
+
+    if ( colorUsed > 2 ) {
+        *(buffer) = *(buffer) | 0x80;
+    }
+
+    int cx=0,cy=0;
+
+    _source += ( ( _offset_y * _width ) + _offset_x ) * 3;
+
+    TileDescriptors * descriptors = precalculate_tile_descriptors_for_font( data_fontvic2_bin );
+
+    for( cy=0; cy<(_frame_height >> 3);++cy) {
+        for( cx=0; cx<(_frame_width >> 3);++cx) {
+
+            char *source = _source + ( ( cy * 8 * _width ) + cx * 8 ) * 3;
+
+            char tileData[8];
+            memset(&tileData[0],0,8);
+
+            int mostFrequentColor[16];
+            memset(&mostFrequentColor[0],0,sizeof(int)*16);
+
+            // Loop for all the source surface.
+            for (image_y = 0; image_y < 8; ++image_y) {
+                for (image_x = 0; image_x < 8; ++image_x) {
+
+                    // Take the color of the pixel
+                    rgb.red = *source;
+                    rgb.green = *(source + 1);
+                    rgb.blue = *(source + 2);
+
+                    for( i=0; i<colorUsed; ++i ) {
+                        if ( palette[i].red == rgb.red && palette[i].green == rgb.green && palette[i].blue == rgb.blue ) {
+                            break;
+                        }
+                    }
+
+                    // printf("%d", i );
+
+                    // Calculate the relative tile
+                    
+                    // Calculate the offset starting from the tile surface area
+                    // and the bit to set.
+                    offset = (image_y & 0x07);
+                    bitmask = 1 << ( 7 - (image_x & 0x7) );
+
+                    // If the pixes has enough luminance value, it must be 
+                    // considered as "on"; otherwise, it is "off".
+                    // int luminance = calculate_luminance(rgb);
+
+                    if (colorUsed == 2 ) {
+                        if ( i == 1 ) {
+                            tileData[offset] |= bitmask;
+                            // printf("*" );
+                        } else {
+                            tileData[offset] &= ~bitmask;
+                            // printf(" " );
+                        }
+                    } else {
+                        if ( palette[i].index ) {
+                            mostFrequentColor[palette[i].index]++;
+                            tileData[offset] |= bitmask;
+                            // printf("*" );
+                        } else {
+                            tileData[offset] &= ~bitmask;
+                            // printf(" " );
+                        }
+                    }
+
+                    source += 3;
+
+                }
+
+                source += 3 * ( _width - 8 );
+
+                // printf("\n" );
+
+            }
+
+            TileDescriptor * t = calculate_tile_descriptor( tileData );
+
+            int tile = calculate_nearest_tile( t, descriptors );
+
+            if ( tile == -1 ) {
+                CRITICAL("AIUTO!!");
+            }
+
+            *(buffer + 2 + (cy * ( _frame_width >> 3 ) ) + cx ) = tile;
+            if ( colorUsed > 2 ) {
+                int mostFrequentColorIndex = 1;
+                int mostFrequentColorCount = 0;
+                for(i=0;i<colorUsed;++i) {
+                    if ( mostFrequentColorCount < mostFrequentColor[palette[i].index] ) {
+                        mostFrequentColorCount = mostFrequentColor[palette[i].index];
+                        mostFrequentColorIndex = palette[i].index;
+                    }
+                }
+                *(buffer + 2 + ( ( _frame_width >> 3 ) * ( _frame_height >> 3 ) ) + (cy * ( _frame_width >> 3 ) ) + cx ) = ( mostFrequentColorIndex );
+            }
+
+            printf("\ntile: %2.2x\n", tile );
+
+        }
+        printf("\n");
+    }
+
+    if ( colorUsed <= 2 ) {
+        *(buffer + 2 + ( ( _frame_width >> 3 ) * ( _frame_height >> 3 ) ) ) = ( palette[1].index << 4 ) | ( palette[0].index );
+    }
+    // printf("----\n");
+
+    variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
+
+    // printf("----\n");
+
+    return result;
+
+}
+
 Variable * vic2_image_converter( Environment * _environment, char * _data, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode ) {
 
     switch( _mode ) {
@@ -1498,6 +1681,7 @@ Variable * vic2_image_converter( Environment * _environment, char * _data, int _
         case BITMAP_MODE_MEGATEXT:
         case BITMAP_MODE_PRS:
         case TILEMAP_MODE_STANDARD:
+            return vic2_image_converter_tilemap_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height );
         case TILEMAP_MODE_MULTICOLOR:
         case TILEMAP_MODE_EXTENDED:
             break;
