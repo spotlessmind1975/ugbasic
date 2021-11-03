@@ -2802,7 +2802,7 @@ protothread_definition:
     };
 
 on_targets: 
-      { $$ = 0; }
+      { $$ = 1; }
     | ON targets {
         $$ = $2;
     };
