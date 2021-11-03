@@ -942,7 +942,7 @@ void c6847_hscroll_line( Environment * _environment, int _direction ) {
 
     deploy( textHScroll, src_hw_6847_hscroll_text_asm );
 
-    Variable * y = variable_retrieve( _environment, "windowCY" );
+    Variable * y = variable_retrieve( _environment, "YCURSYS" );
     outline1("LDA #$%2.2x", ( _direction & 0xff ) );
     outline0("STA DIRECTION" );
     outline1("LDA %s", y->realName );
@@ -970,8 +970,8 @@ void c6847_back( Environment * _environment ) {
 void c6847_cline( Environment * _environment, char * _characters ) {
 
     deploy( textCline, src_hw_6847_cline_asm );
-    Variable * x = variable_retrieve( _environment, "windowCX" );
-    Variable * y = variable_retrieve( _environment, "windowCY" );
+    Variable * x = variable_retrieve( _environment, "XCURSYS" );
+    Variable * y = variable_retrieve( _environment, "YCURSYS" );
 
     if ( _characters ) {
         outline1("LDA %s", _characters);

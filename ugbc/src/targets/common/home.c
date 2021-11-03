@@ -67,8 +67,8 @@ dello schermo in fretta.
 </usermanual> */
 void home( Environment * _environment ) {
 
-    Variable * x = variable_retrieve( _environment, "windowCX" );
-    Variable * y = variable_retrieve( _environment, "windowCY" );
+    Variable * x = variable_retrieve( _environment, "XCURSYS" );
+    Variable * y = variable_retrieve( _environment, "YCURSYS" );
 
     variable_store( _environment, x->name, 0 );
     variable_store( _environment, y->name, 0 );

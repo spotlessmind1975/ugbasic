@@ -621,7 +621,7 @@ void ef936x_hscroll_line( Environment * _environment, int _direction ) {
 
     deploy( textHScroll, src_hw_ef936x_hscroll_text_asm );
 
-    Variable * y = variable_retrieve( _environment, "windowCY" );
+    Variable * y = variable_retrieve( _environment, "YCURSYS" );
     outline1("LDA #$%2.2x", ( _direction & 0xff ) );
     outline0("STA <DIRECTION" );
     outline1("LDA %s", y->realName );
@@ -649,8 +649,8 @@ void ef936x_back( Environment * _environment ) {
 void ef936x_cline( Environment * _environment, char * _characters ) {
 
     deploy( textCline, src_hw_ef936x_cline_asm );
-    Variable * x = variable_retrieve( _environment, "windowCX" );
-    Variable * y = variable_retrieve( _environment, "windowCY" );
+    Variable * x = variable_retrieve( _environment, "XCURSYS" );
+    Variable * y = variable_retrieve( _environment, "YCURSYS" );
 
     if ( _characters ) {
         outline1("LDA %s", _characters);

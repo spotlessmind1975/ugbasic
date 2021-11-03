@@ -66,10 +66,10 @@ void begin_build( Environment * _environment ) {
 
 void setup_text_variables( Environment * _environment ) {
 
-    variable_define( _environment, "windowCX", VT_BYTE, 0 );
-    variable_global( _environment, "windowCX" );
-    variable_define( _environment, "windowCY", VT_BYTE, 0 );
-    variable_global( _environment, "windowCY" );
+    variable_import( _environment, "XCURSYS", VT_BYTE );
+    variable_global( _environment, "XCURSYS" );
+    variable_import( _environment, "YCURSYS", VT_BYTE );
+    variable_global( _environment, "YCURSYS" );
     variable_define( _environment, "PEN", VT_COLOR, COLOR_WHITE );
     variable_global( _environment, "PEN" );
     variable_define( _environment, "PAPER", VT_COLOR, COLOR_BLACK );

@@ -41,8 +41,8 @@
 void text_text( Environment * _environment, char * _text ) {
 
     Variable * text = variable_retrieve( _environment, _text );
-    Variable * x = variable_retrieve( _environment, "windowCX" );
-    Variable * y = variable_retrieve( _environment, "windowCY" );
+    Variable * x = variable_retrieve( _environment, "XCURSYS" );
+    Variable * y = variable_retrieve( _environment, "YCURSYS" );
     Variable * pen = variable_retrieve( _environment, "PEN" );
     Variable * paper = variable_retrieve( _environment, "PAPER" );
     Variable * ww = variable_retrieve( _environment, "windowWW" );
@@ -55,8 +55,8 @@ void text_newline( Environment * _environment ) {
 
     MAKE_LABEL
 
-    Variable * x = variable_retrieve( _environment, "windowCX" );
-    Variable * y = variable_retrieve( _environment, "windowCY" );
+    Variable * x = variable_retrieve( _environment, "XCURSYS" );
+    Variable * y = variable_retrieve( _environment, "YCURSYS" );
     Variable * screenHeight = variable_retrieve( _environment, "CURRENTTILESHEIGHT" );
 
     cpu_store_8bit( _environment, x->realName, 0 );    
@@ -132,13 +132,13 @@ void text_under( Environment * _environment, int _value ) {
 
 Variable * text_get_xcurs( Environment * _environment ) {
     
-    return variable_retrieve( _environment, "windowCX");
+    return variable_retrieve( _environment, "XCURSYS");
 
 }
 
 Variable * text_get_ycurs( Environment * _environment ) {
     
-    return variable_retrieve( _environment, "windowCY");
+    return variable_retrieve( _environment, "YCURSYS");
 
 }
 

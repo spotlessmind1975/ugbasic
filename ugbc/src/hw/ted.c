@@ -709,7 +709,7 @@ void ted_hscroll_line( Environment * _environment, int _direction ) {
 
     deploy( textHScroll, src_hw_ted_hscroll_text_asm );
 
-    Variable * y = variable_retrieve( _environment, "windowCY" );
+    Variable * y = variable_retrieve( _environment, "YCURSYS" );
     outline1("LDA #$%2.2x", ( _direction & 0xff ) );
     outline0("STA DIRECTION" );
     outline1("LDA %s", y->realName );

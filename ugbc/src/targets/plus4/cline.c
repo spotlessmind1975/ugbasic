@@ -64,8 +64,8 @@ void cline( Environment * _environment, char * _characters ) {
 
         Variable * colormapAddress = variable_retrieve( _environment, "COLORMAPADDRESS" );
         Variable * TEXTADDRESS = variable_retrieve( _environment, "TEXTADDRESS" );
-        Variable * x = variable_retrieve( _environment, "windowCX" );
-        Variable * y = variable_retrieve( _environment, "windowCY" );
+        Variable * x = variable_retrieve( _environment, "XCURSYS" );
+        Variable * y = variable_retrieve( _environment, "YCURSYS" );
 
         outline0("JMP lib_cline_after");
 

@@ -42,8 +42,8 @@ void memorize( Environment * _environment ) {
 
     setup_text_variables( _environment );
 
-    Variable * x = variable_retrieve( _environment, "windowCX" );
-    Variable * y = variable_retrieve( _environment, "windowCY" );
+    Variable * x = variable_retrieve( _environment, "XCURSYS" );
+    Variable * y = variable_retrieve( _environment, "YCURSYS" );
     Variable * mx = variable_retrieve( _environment, "windowMX" );
     Variable * my = variable_retrieve( _environment, "windowMY" );
 
