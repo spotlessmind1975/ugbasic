@@ -525,6 +525,56 @@ Variable * variable_retrieve( Environment * _environment, char * _name ) {
     return var;
 }
 
+int variable_exists( Environment * _environment, char * _name ) {
+    if ( _environment->procedureName && strstr( _name, "__" ) == NULL ) {
+        char parameterName[MAX_TEMPORARY_STORAGE]; sprintf( parameterName, "%s__%s", _environment->procedureName, _name );
+        Variable * var = variable_find( _environment->variables, parameterName );
+        if ( var ) {
+            return 1;
+        }
+    }
+
+    int isGlobal = 0;
+    Variable * var = NULL;
+    if ( _environment->procedureName ) {
+        var = variable_find( _environment->tempVariables[_environment->currentProcedure], _name );
+    } else {
+        var = variable_find( _environment->tempVariables[0], _name );
+    }
+    if ( ! var ) {
+        var = variable_find( _environment->tempResidentVariables, _name );
+    }
+    if ( ! var ) {
+        Pattern * current = _environment->globalVariablePatterns;
+        if ( _environment->procedureName ) {
+            if ( strstr( _name, "__" ) != NULL ) {
+                isGlobal = 1;
+            } else {
+                while( current ) {
+                    if ( pattern_match( current->pattern, _name ) == 0 ) {
+                        isGlobal = 1;
+                        break;
+                    }
+                    current = current->next;
+                }
+            }
+        } else {
+            isGlobal = 1;
+        }
+        if ( isGlobal ) {
+            var = variable_find( _environment->variables, _name );
+        } else {
+            var = variable_find( _environment->procedureVariables, _name );
+        }
+        // _environment->globalVariablePatterns;
+    }
+    if ( ! var ) {
+        return 0;
+    }
+    return 1;
+
+}
+
 Variable * variable_retrieve_or_define( Environment * _environment, char * _name, VariableType _type, int _value ) {
 
     Variable * var = NULL;

@@ -3238,7 +3238,9 @@ statement:
         variable_move( _environment, $3, $1 );
   }
   | Identifier OP_ASSIGN OP_HASH const_expr {
-        variable_retrieve_or_define( _environment, $1, VT_WORD, $4 );
+        if ( !variable_exists( _environment, $1 ) ) {
+            variable_retrieve_or_define( _environment, $1, VT_WORD, $4 );
+        }
         variable_store( _environment, $1, $4 );
   }
   | Identifier OP_ASSIGN_DIRECT expr  {
