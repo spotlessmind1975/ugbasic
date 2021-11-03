@@ -48,7 +48,6 @@ void test_vic2_text_payloadA( TestEnvironment * _te ) {
     Variable * textd = variable_define( e, "textd", VT_DSTRING, 0 );
 
     Variable * pen = variable_define( e, "pen", VT_BYTE, 0 );
-    Variable * ww = variable_define( e, "ww", VT_BYTE, 0 );
     Variable * address = variable_temporary( e, VT_ADDRESS, "(text address)" );
     Variable * size = variable_temporary( e, VT_BYTE, "(text size)" );
     Variable * address2 = variable_temporary( e, VT_ADDRESS, "(text address)" );
@@ -61,11 +60,11 @@ void test_vic2_text_payloadA( TestEnvironment * _te ) {
     cpu_addressof_16bit( e, texts->realName, address->realName );
     cpu_inc_16bit( e, address->realName );
 
-    vic2_text( e, address->realName, size->realName, pen->realName, ww->realName );
+    vic2_text( e, address->realName, size->realName, pen->realName );
 
     cpu_dsdescriptor( e, textd->realName, address2->realName, size2->realName );
 
-    vic2_text( e, address2->realName, size2->realName, pen->realName, ww->realName );
+    vic2_text( e, address2->realName, size2->realName, pen->realName );
 
 }
 
@@ -790,7 +789,6 @@ void test_vic2_text_payloadB( TestEnvironment * _te ) {
 
     Variable * text = variable_define( e, "text", VT_DSTRING, 0 );
     Variable * c = variable_define( e, "c", VT_COLOR, COLOR_RED );
-    Variable * ww = variable_define( e, "ww", VT_BYTE, WW_PEN | WW_PAPER );
 
     variable_store_string( e, text->name, "abcde" );
 
@@ -809,7 +807,7 @@ void test_vic2_text_payloadB( TestEnvironment * _te ) {
     _te->debug.inspections[1].size=1000;
     ++_te->debug.inspections_count;
 
-    vic2_text( e, address->realName, size->realName, c->realName, ww->realName );
+    vic2_text( e, address->realName, size->realName, c->realName );
 
 }
 
@@ -837,7 +835,6 @@ void test_vic2_text_payloadC( TestEnvironment * _te ) {
 
     Variable * text = variable_define( e, "text", VT_DSTRING, 0 );
     Variable * c = variable_define( e, "c", VT_COLOR, COLOR_RED );
-    Variable * ww = variable_define( e, "ww", VT_BYTE, WW_PEN | WW_PAPER );
 
     char sequence[MAX_TEMPORARY_STORAGE]; sprintf(sequence, "abcde%s%s%sabcde", "\x4","\x4", "\x4" );
 
@@ -858,7 +855,7 @@ void test_vic2_text_payloadC( TestEnvironment * _te ) {
     _te->debug.inspections[1].size=1000;
     ++_te->debug.inspections_count;
 
-    vic2_text( e, address->realName, size->realName, c->realName, ww->realName );
+    vic2_text( e, address->realName, size->realName, c->realName );
 
 }
 
