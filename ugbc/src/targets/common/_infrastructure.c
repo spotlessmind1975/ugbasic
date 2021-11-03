@@ -665,6 +665,7 @@ Variable * variable_array_type( Environment * _environment, char *_name, Variabl
  * @return Variable* The variable definition
  */
 Variable * variable_temporary( Environment * _environment, VariableType _type, char * _meaning ) {
+
     Variable * var = NULL;
     if ( _environment->procedureName ) {
         var = variable_find_first_unused( _environment->tempVariables[_environment->currentProcedure], _type );
@@ -865,7 +866,11 @@ Variable * variable_store_string( Environment * _environment, char * _destinatio
 
     switch( destination->type ) {
         case VT_STRING: {
-            destination->valueString = strdup( _value );
+            if ( !_environment->emptyProcedure ) {
+                destination->valueString = strdup( _value );
+            } else {
+                destination->valueString = strdup( "" );
+            }
             break;
         }
         case VT_DSTRING: {
