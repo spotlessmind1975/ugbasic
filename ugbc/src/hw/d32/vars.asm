@@ -45,7 +45,6 @@ EVERYSTATUS        fcb     0
 TABCOUNT            fcb     4
 XCURS               fcb     0
 YCURS               fcb     0
-LOCALWW             fcb     3
 EMPTYTILE           fcb     $60
 
 TMPPTR equ $10    ; $23

@@ -53,6 +53,7 @@ CURRENTHEIGHT:      .word 25
 CURRENTTILESWIDTH:      .byte 40
 CURRENTTILESHEIGHT:      .byte 25
 CURRENTSL:          .byte 0
+TEXTWW:             .byte 3
 
 PLOTVBASELO:
     .byte <($6000+(0*320)),<($6000+(1*320)),<($6000+(2*320)),<($6000+(3*320))

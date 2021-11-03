@@ -82,8 +82,8 @@ void setup_text_variables( Environment * _environment ) {
     variable_global( _environment, "windowW" );
     variable_define( _environment, "windowT", VT_BYTE, 4 );
     variable_global( _environment, "windowT" );
-    variable_define( _environment, "windowWW", VT_BYTE, WW_PEN | WW_PAPER );
-    variable_global( _environment, "windowWW" );
+    variable_import( _environment, "TEXTWW", VT_BYTE );
+    variable_global( _environment, "TEXTWW" );
     variable_define( _environment, "TAB", VT_STRING, 0 );
     variable_store_string( _environment, "TAB", "\t");
     variable_global( _environment, "TAB" );

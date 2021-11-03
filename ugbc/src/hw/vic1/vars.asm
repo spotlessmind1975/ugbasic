@@ -52,6 +52,7 @@ CURRENTHEIGHT:      .word 184
 CURRENTTILESWIDTH:      .byte 22
 CURRENTTILESHEIGHT:      .byte 23
 CURRENTSL:          .byte 0
+TEXTWW:             .byte 3
 
 ; ; ------------------------------------------------------------------------------
 ; ; BITMAP MODE (MODE #1)

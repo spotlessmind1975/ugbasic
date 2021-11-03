@@ -959,7 +959,7 @@ void vic2_scroll_text( Environment * _environment, int _direction ) {
 
 }
 
-void vic2_text( Environment * _environment, char * _text, char * _text_size, char * _pen, char *_ww ) {
+void vic2_text( Environment * _environment, char * _text, char * _text_size, char * _pen ) {
 
     deploy( vic2vars, src_hw_vic2_vars_asm);
     deploy( vScrollText, src_hw_vic2_vscroll_text_asm );
@@ -971,8 +971,6 @@ void vic2_text( Environment * _environment, char * _text, char * _text_size, cha
     outline0("STA TEXTPTR+1" );
     outline1("LDA %s", _text_size);
     outline0("STA TEXTSIZE" );
-    outline1("LDA %s", _ww );
-    outline0("STA TEXTWW" );
     outline1("LDA %s", _pen );
     outline0("STA TEXTPEN" );
 

@@ -45,7 +45,6 @@ EVERYSTATUS:        .BYTE   0
 TABCOUNT:   .BYTE    4
 XCURS:      .BYTE    0
 YCURS:      .BYTE    0
-LOCALWW:    .BYTE    3
 EMPTYTILE:  .BYTE   32
 
 

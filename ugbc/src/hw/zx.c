@@ -79,7 +79,7 @@ void zx_vscroll( Environment * _environment, int _displacement ) {
 
 }
 
-void zx_text( Environment * _environment, char * _text, char * _text_size, char * _pen, char * _paper, char * _ww ) {
+void zx_text( Environment * _environment, char * _text, char * _text_size, char * _pen, char * _paper ) {
 
     deploy( vars,src_hw_zx_vars_asm);
     deploy( vScroll, src_hw_zx_vscroll_asm );
@@ -87,7 +87,6 @@ void zx_text( Environment * _environment, char * _text, char * _text_size, char 
 
     z80_move_8bit( _environment, _pen, "_PEN");
     z80_move_8bit( _environment, _paper, "_PAPER");
-    z80_move_8bit( _environment, _ww, "LOCALWW");
     // z80_move_8bit( _environment, _tab, "TABCOUNT");
 
     outline1("LD A, (%s)", _text_size );
@@ -505,7 +504,7 @@ Variable * zx_image_converter( Environment * _environment, char * _data, int _wi
 void zx_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _frame_size ) {
 
     MAKE_LABEL
-    
+
     deploy( vars, src_hw_zx_vars_asm);
     deploy( image, src_hw_zx_image_asm );
 

@@ -225,7 +225,7 @@ void c6847_cls( Environment * _environment );
 void c6847_scroll_text( Environment * _environment, int _direction );
 void c6847_hscroll_line( Environment * _environment, int _direction );
 void c6847_hscroll_screen( Environment * _environment, int _direction );
-void c6847_text( Environment * _environment, char * _text, char * _text_size, char * _pen, char *_ww );
+void c6847_text( Environment * _environment, char * _text, char * _text_size, char * _pen );
 void c6847_cline( Environment * _environment, char * _characters );
 
 Variable * c6847_image_converter( Environment * _environment, char * _data, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode );

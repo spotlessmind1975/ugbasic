@@ -329,3 +329,4 @@ CURRENTTILESHEIGHT:      .byte 24
 TEXTBLOCKREMAIN:      .byte 152
 TEXTBLOCKREMAINPW:      .byte 192
 CURRENTSL:          .byte 0
+TEXTWW:             .byte 3

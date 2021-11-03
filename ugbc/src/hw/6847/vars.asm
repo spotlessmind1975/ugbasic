@@ -53,6 +53,7 @@ CURRENTTILESWIDTH      fcb 32
 CURRENTTILESHEIGHT      fcb 16
 CURRENTFRAMESIZE   fdb 32*16
 CURRENTSL          fcb 32
+TEXTWW      fcb 3
 
 ; ------------------------------------------------------------------------------
 ; BITMAP MODE (MODE #2)

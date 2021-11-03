@@ -628,7 +628,7 @@ void ted_scroll_text( Environment * _environment, int _direction ) {
 
 }
 
-void ted_text( Environment * _environment, char * _text, char * _text_size, char * _pen, char *_ww ) {
+void ted_text( Environment * _environment, char * _text, char * _text_size, char * _pen ) {
 
     deploy( tedvars, src_hw_ted_vars_asm );
     deploy( vScrollText, src_hw_ted_vscroll_text_asm );
@@ -640,8 +640,6 @@ void ted_text( Environment * _environment, char * _text, char * _text_size, char
     outline0("STA TEXTPTR+1" );
     outline1("LDA %s", _text_size);
     outline0("STA TEXTSIZE" );
-    outline1("LDA %s", _ww );
-    outline0("STA TEXTWW" );
     outline1("LDA %s", _pen );
     outline0("STA TEXTPEN" );
 

@@ -43,9 +43,8 @@ void text_text( Environment * _environment, char * _text ) {
     Variable * text = variable_retrieve( _environment, _text );
     Variable * pen = variable_retrieve( _environment, "PEN" );
     Variable * paper = variable_retrieve( _environment, "PAPER" );
-    Variable * ww = variable_retrieve( _environment, "windowWW" );
 
-    text_encoded( _environment, text->name, pen->name, paper->name, ww->name );
+    text_encoded( _environment, text->name, pen->name, paper->name );
     
 }
 

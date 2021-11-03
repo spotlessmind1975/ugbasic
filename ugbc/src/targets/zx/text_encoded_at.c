@@ -38,12 +38,11 @@
  * CODE SECTION 
  ****************************************************************************/
 
-void text_encoded( Environment * _environment, char * _text, char * _pen, char * _paper, char * _ww  ) {
+void text_encoded( Environment * _environment, char * _text, char * _pen, char * _paper  ) {
 
     Variable * text = variable_retrieve( _environment, _text );
     Variable * pen = variable_retrieve( _environment, _pen );
     Variable * paper = variable_retrieve( _environment, _paper );
-    Variable * ww = variable_retrieve( _environment, _ww );
 
     Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
     Variable * size = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
@@ -61,6 +60,6 @@ void text_encoded( Environment * _environment, char * _text, char * _pen, char *
         }
     }
 
-    zx_text( _environment, address->realName, size->realName, pen->realName, paper->realName, ww->realName );
+    zx_text( _environment, address->realName, size->realName, pen->realName, paper->realName );
 
 }

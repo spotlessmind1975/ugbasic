@@ -1905,7 +1905,7 @@ Variable *              sqroot( Environment * _environment, char * _value );
 //----------------------------------------------------------------------------
 
 void                    text_at( Environment * _environment, char * _x, char * _y, char * _text );
-void                    text_encoded( Environment * _environment, char * _text, char * _pen, char * _paper, char * _ww );
+void                    text_encoded( Environment * _environment, char * _text, char * _pen, char * _paper );
 Variable *              text_get_xcurs( Environment * _environment );
 Variable *              text_get_ycurs( Environment * _environment );
 void                    text_hscroll_line( Environment * _environment, int _direction );

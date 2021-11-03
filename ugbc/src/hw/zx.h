@@ -178,7 +178,7 @@ void zx_color_border( Environment * _environment, char * _color );
 void zx_bitmap_enable( Environment * _environment, int _width, int _height, int _colors );
 void zx_tilemap_enable( Environment * _environment, int _width, int _height, int _colors );
 void zx_vscroll( Environment * _environment, int _displacement );
-void zx_text( Environment * _environment, char * _text, char * _text_size, char * _pen, char * _paper, char * _ww );
+void zx_text( Environment * _environment, char * _text, char * _text_size, char * _pen, char * _paper );
 void zx_cls( Environment * _environment, char * _pen, char * _paper );
 void zx_inkey( Environment * _environment, char * _pressed, char * _key );
 void zx_scancode( Environment * _environment, char * _pressed, char * _scacode );

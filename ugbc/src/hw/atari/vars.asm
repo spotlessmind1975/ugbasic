@@ -44,7 +44,6 @@ EVERYSTATUS:         .BYTE   $00
 TABCOUNT:   .BYTE    4
 XCURS:      .BYTE    0
 YCURS:      .BYTE    0
-LOCALWW:    .BYTE    3
 EMPTYTILE:  .BYTE   0
 CURRENTMODE:    .BYTE   2
 LASTCOLOR:      .BYTE   0

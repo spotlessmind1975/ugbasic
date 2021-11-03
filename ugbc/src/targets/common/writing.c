@@ -104,7 +104,7 @@ void writing( Environment * _environment, char * _mode, char * _parts ) {
 
     setup_text_variables( _environment );
 
-    Variable * ww = variable_retrieve( _environment, "windowWW" );
+    Variable * ww = variable_retrieve( _environment, "TEXTWW" );
     Variable * mode = variable_retrieve_or_define( _environment, _mode, VT_BYTE, WRITING_REPLACE );
     Variable * parts = variable_retrieve_or_define( _environment, _parts, VT_BYTE, WRITING_NORMAL );
 

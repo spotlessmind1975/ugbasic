@@ -76,7 +76,7 @@ void pc128op_vscroll( Environment * _environment, int _displacement ) {
 
 }
 
-void pc128op_text_at( Environment * _environment, char * _text, char * _text_size, char * _pen, char * _paper, char * _ww ) {
+void pc128op_text_at( Environment * _environment, char * _text, char * _text_size, char * _pen, char * _paper ) {
 
 }
 

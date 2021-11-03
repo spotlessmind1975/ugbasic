@@ -196,7 +196,7 @@ TEXTATROW:
     LD A, (HL)
     AND $38
     LD B, A
-    LD A, (LOCALWW)
+    LD A, (TEXTWW)
     AND 1
     JP Z, TEXTATPC3
     LD A, (_PAPER)
@@ -206,7 +206,7 @@ TEXTATROW:
     SLA A
     LD B, A
 TEXTATPC3:
-    LD A, (LOCALWW)
+    LD A, (TEXTWW)
     AND 2
     JP Z, TEXTATPC4
     LD A, (_PEN)
