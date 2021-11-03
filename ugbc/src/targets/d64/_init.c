@@ -78,9 +78,7 @@ void target_initialization( Environment * _environment ) {
     outline0("LDS #$8000");
     deploy( vars, src_hw_d64_vars_asm);
     deploy( startup, src_hw_d64_startup_asm);
-    variable_define( _environment, "stringsAddress", VT_ADDRESS, 0x4200 );
-    variable_global( _environment, "stringsAddress" );
-    bank_define( _environment, "STRINGS", BT_STRINGS, 0x4200, NULL );
+    // bank_define( _environment, "STRINGS", BT_STRINGS, 0x4200, NULL );
     variable_define( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0xD800 );
     variable_global( _environment, "COLORMAPADDRESS" );
 

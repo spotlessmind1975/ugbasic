@@ -97,8 +97,6 @@ void target_initialization( Environment * _environment ) {
 
     deploy( vars, src_hw_c64_vars_asm);
     outhead0(".segment \"CODE\"");
-    variable_define( _environment, "stringsAddress", VT_ADDRESS, 0x4200 );
-    variable_global( _environment, "stringsAddress" );
     bank_define( _environment, "STRINGS", BT_STRINGS, 0x4200, NULL );
     variable_define( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0xD800 );
     variable_global( _environment, "COLORMAPADDRESS" );

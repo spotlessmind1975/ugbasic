@@ -141,9 +141,9 @@ Bank * bank_define( Environment * _environment, char * _name, BankType _type, in
         bank->type = _type;
         bank->filename = _filename;
         bank->address = _address;
-        if ( bank->type == BT_STRINGS ) {
-            variable_store( _environment, "stringsAddress", bank->address );
-        }
+        // if ( bank->type == BT_STRINGS ) {
+        //     variable_store( _environment, "stringsAddress", bank->address );
+        // }
         bank->next = _environment->banks[_type]; 
         _environment->banks[_type] = bank;
     }

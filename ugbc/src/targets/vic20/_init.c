@@ -99,9 +99,7 @@ void target_initialization( Environment * _environment ) {
     outline0(".byte $01, $12, $0B, $12, $00, $00, $9E, $38, $31, $39, $32, $00, $00, $00, $00");
     outhead0(".segment \"CODE\"");
     deploy( vars, src_hw_vic20_vars_asm);
-    variable_define( _environment, "stringsAddress", VT_ADDRESS, 0x4200 );
-    variable_global( _environment, "stringsAddress" );
-    bank_define( _environment, "STRINGS", BT_STRINGS, 0x4200, NULL );
+    // bank_define( _environment, "STRINGS", BT_STRINGS, 0x4200, NULL );
     variable_define( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0xD800 );
     variable_global( _environment, "COLORMAPADDRESS" );
 

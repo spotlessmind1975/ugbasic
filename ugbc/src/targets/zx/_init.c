@@ -75,8 +75,6 @@ void target_initialization( Environment * _environment ) {
     variable_global( _environment, "FREE_STRING" );    
 
     outhead0("org 32768");
-    variable_define( _environment, "stringsAddress", VT_ADDRESS, 0xa000 );
-    variable_global( _environment, "stringsAddress" );
     variable_define( _environment, "bitmap_enabled", VT_BYTE, 0 );
     variable_global( _environment, "bitmap_enabled" );
     variable_define( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0x5800 );
