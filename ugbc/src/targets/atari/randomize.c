@@ -51,11 +51,13 @@
 </usermanual> */
 void randomize( Environment * _environment, char * _ext_seed ) {
 
-    Variable * seed = variable_retrieve_or_define( _environment, "seed", VT_DWORD, 0Xffffffff );
+    Variable * seed = variable_retrieve( _environment, "CPURANDOM_SEED" );
 
     if ( _ext_seed ) {
         Variable * external_seed = variable_retrieve( _environment, _ext_seed );
         variable_move( _environment, external_seed->name, seed->name );
+    } else {
+        variable_store( _environment, seed->name, 0xf0f0f0f0 );
     }
 
 }

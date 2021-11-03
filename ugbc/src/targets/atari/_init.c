@@ -77,7 +77,7 @@ void target_initialization( Environment * _environment ) {
     bank_define( _environment, "TEMPORARY", BT_TEMPORARY, 0x8100, NULL );
     variable_import( _environment, "FREE_STRING", VT_WORD );
     variable_global( _environment, "FREE_STRING" );    
-
+    
     if ( !_environment->configurationFileName ) {
         char configurationFileName[MAX_TEMPORARY_STORAGE];
         sprintf( configurationFileName, "%s.cfg", tmpnam(NULL) );

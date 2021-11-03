@@ -94,5 +94,7 @@ void setup_text_variables( Environment * _environment ) {
     variable_global( _environment, "windowMY" );
     variable_import( _environment, "PROTOTHREADCT", VT_BYTE );
     variable_global( _environment, "PROTOTHREADCT" );
-
+    variable_import( _environment, "CPURANDOM_SEED", VT_DWORD );
+    variable_global( _environment, "CPURANDOM_SEED" );
+    
 }
