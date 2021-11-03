@@ -519,7 +519,7 @@ void ef936x_scroll_text( Environment * _environment, int _direction ) {
 
 }
 
-void ef936x_text_at( Environment * _environment, char * _x, char * _y, char * _text, char * _text_size, char * _pen, char *_ww ) {
+void ef936x_text( Environment * _environment, char * _text, char * _text_size, char * _pen, char *_ww ) {
 
     deploy( ef936xvars, src_hw_ef936x_vars_asm);
     deploy( vScrollText, src_hw_ef936x_vscroll_text_asm );
@@ -527,10 +527,6 @@ void ef936x_text_at( Environment * _environment, char * _x, char * _y, char * _t
 
     outline1("LDY %s", _text);
     outline0("STY <TEXTPTR" );
-    outline1("LDA %s", _x );
-    outline0("STA <XCURSYS" );
-    outline1("LDA %s", _y );
-    outline0("STA <YCURSYS" );
     outline1("LDA %s", _text_size);
     outline0("STA <TEXTSIZE" );
     outline1("LDA %s", _ww );
@@ -539,11 +535,6 @@ void ef936x_text_at( Environment * _environment, char * _x, char * _y, char * _t
     outline0("STA <TEXTPEN" );
 
     outline0("JSR TEXTAT");
-
-    outline0("LDA <YCURSYS" );
-    outline1("STA %s", _y );
-    outline0("LDA <XCURSYS");
-    outline1("STA %s", _x );
 
 }
 

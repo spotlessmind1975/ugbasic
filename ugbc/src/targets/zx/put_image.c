@@ -53,7 +53,7 @@ extern char DATATYPE_AS_STRING[][16];
 /* <usermanual>
 @keyword PUT IMAGE
 </usermanual> */
-void put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _frame ) {
+void put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame ) {
 
     Variable * image = variable_retrieve( _environment, _image );
     Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );

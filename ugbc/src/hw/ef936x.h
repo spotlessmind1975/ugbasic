@@ -125,7 +125,7 @@ void ef936x_cls( Environment * _environment );
 void ef936x_scroll_text( Environment * _environment, int _direction );
 void ef936x_hscroll_line( Environment * _environment, int _direction );
 void ef936x_hscroll_screen( Environment * _environment, int _direction );
-void ef936x_text_at( Environment * _environment, char * _x, char * _y, char * _text, char * _text_size, char * _pen, char *_ww );
+void ef936x_text( Environment * _environment, char * _text, char * _text_size, char * _pen, char *_ww );
 void ef936x_cline( Environment * _environment, char * _characters );
 
 Variable * ef936x_image_converter( Environment * _environment, char * _data, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode );

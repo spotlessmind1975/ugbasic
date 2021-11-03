@@ -41,13 +41,11 @@
 void text_text( Environment * _environment, char * _text ) {
 
     Variable * text = variable_retrieve( _environment, _text );
-    Variable * x = variable_retrieve( _environment, "XCURSYS" );
-    Variable * y = variable_retrieve( _environment, "YCURSYS" );
     Variable * pen = variable_retrieve( _environment, "PEN" );
     Variable * paper = variable_retrieve( _environment, "PAPER" );
     Variable * ww = variable_retrieve( _environment, "windowWW" );
 
-    text_encoded_at( _environment, x->name, y->name, text->name, pen->name, paper->name, ww->name );
+    text_encoded( _environment, text->name, pen->name, paper->name, ww->name );
     
 }
 

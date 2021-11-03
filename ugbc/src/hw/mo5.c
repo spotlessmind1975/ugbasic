@@ -76,7 +76,7 @@ void mo5_vscroll( Environment * _environment, int _displacement ) {
 
 }
 
-void mo5_text_at( Environment * _environment, char * _x, char * _y, char * _text, char * _text_size, char * _pen, char * _paper, char * _ww ) {
+void mo5_text_at( Environment * _environment, char * _text, char * _text_size, char * _pen, char * _paper, char * _ww ) {
 
 }
 

@@ -38,11 +38,9 @@
  * CODE SECTION 
  ****************************************************************************/
 
-void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _text, char * _pen, char * _paper, char *_ww ) {
+void text_encoded( Environment * _environment, char * _text, char * _pen, char * _paper, char *_ww ) {
 
     Variable * text = variable_retrieve( _environment, _text );
-    Variable * x = variable_retrieve( _environment, _x );
-    Variable * y = variable_retrieve( _environment, _y );
     Variable * pen = variable_retrieve( _environment, _pen );
     Variable * ww = variable_retrieve( _environment, _ww );
     Variable * address = variable_temporary( _environment, VT_ADDRESS, "(text address)" );
@@ -61,6 +59,6 @@ void text_encoded_at( Environment * _environment, char * _x, char * _y, char * _
 
     MAKE_LABEL
 
-    ted_text_at( _environment, x->realName, y->realName, address->realName, size->realName, pen->realName, ww->realName );
+    ted_text( _environment, address->realName, size->realName, pen->realName, ww->realName );
 
 }

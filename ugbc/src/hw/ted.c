@@ -628,7 +628,7 @@ void ted_scroll_text( Environment * _environment, int _direction ) {
 
 }
 
-void ted_text_at( Environment * _environment, char * _x, char * _y, char * _text, char * _text_size, char * _pen, char *_ww ) {
+void ted_text( Environment * _environment, char * _text, char * _text_size, char * _pen, char *_ww ) {
 
     deploy( tedvars, src_hw_ted_vars_asm );
     deploy( vScrollText, src_hw_ted_vscroll_text_asm );
@@ -638,10 +638,6 @@ void ted_text_at( Environment * _environment, char * _x, char * _y, char * _text
     outline0("STA TEXTPTR" );
     outline1("LDA %s+1", _text);
     outline0("STA TEXTPTR+1" );
-    outline1("LDA %s", _x );
-    outline0("STA XCURSYS" );
-    outline1("LDA %s", _y );
-    outline0("STA YCURSYS" );
     outline1("LDA %s", _text_size);
     outline0("STA TEXTSIZE" );
     outline1("LDA %s", _ww );
@@ -650,11 +646,6 @@ void ted_text_at( Environment * _environment, char * _x, char * _y, char * _text
     outline0("STA TEXTPEN" );
 
     outline0("JSR TEXTAT");
-
-    outline0("LDA YCURSYS" );
-    outline1("STA %s", _y );
-    outline0("LDA XCURSYS");
-    outline1("STA %s", _x );
 
 }
 
