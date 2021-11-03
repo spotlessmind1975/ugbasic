@@ -77,6 +77,7 @@ extern char DATATYPE_AS_STRING[][16];
 %type <string> optional_expr optional_x optional_y
 %type <integer> target targets
 %type <integer> protothread_definition
+%type <integer> on_targets
 
 %right Integer String CP 
 %left OP_DOLLAR
@@ -2800,6 +2801,12 @@ protothread_definition:
         $$ = 0;
     };
 
+on_targets: 
+      { $$ = 0; }
+    | ON targets {
+        $$ = $2;
+    };
+
 statement:
     BANK bank_definition
   | RASTER raster_definition
@@ -3002,22 +3009,18 @@ statement:
   | NEXT {
       end_for( _environment );
   }
-  | protothread_definition PROCEDURE Identifier {
-      ((struct _Environment *)_environment)->parameters = 0;
-      ((struct _Environment *)_environment)->protothread = $1;
-      begin_procedure( _environment, $3 );
-  }
-  | protothread_definition PROCEDURE Identifier ON targets {
+  | protothread_definition PROCEDURE Identifier on_targets {
         ((struct _Environment *)_environment)->parameters = 0;
       ((struct _Environment *)_environment)->protothread = $1;
         begin_procedure( _environment, $3 );
-        ((struct _Environment *)_environment)->emptyProcedure = !$5;
+        ((struct _Environment *)_environment)->emptyProcedure = !$4;
   }
   | protothread_definition PROCEDURE Identifier {
       ((struct _Environment *)_environment)->parameters = 0;
       ((struct _Environment *)_environment)->protothread = $1;
-    } OSP parameters CSP {
+    } OSP parameters CSP on_targets {
       begin_procedure( _environment, $3 );
+      ((struct _Environment *)_environment)->emptyProcedure = !$8;
   }
   | SHARED parameters_expr {
       shared( _environment );
