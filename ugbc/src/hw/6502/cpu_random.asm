@@ -33,7 +33,7 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-CPURANDOM_SEED              = MATHPTR0; MATHPTR1 MATHPTR2 MATHPTR2
+CPURANDOM_SEED:              .BYTE $ff, $ff, $ff, $ff
 CPURANDOM_ENTROPY           = MATHPTR3
 CPURANDOM_INTERNALSEED:     .BYTE $42, $45, $20, $21
 
