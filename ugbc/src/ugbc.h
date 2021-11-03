@@ -1092,6 +1092,11 @@ typedef struct _Environment {
     int protothread;
 
     /**
+     * Has at least one parallel procedure?
+     */
+    int anyProtothread;
+
+    /**
      * Step when resuming the protothread
      */
     int protothreadStep;

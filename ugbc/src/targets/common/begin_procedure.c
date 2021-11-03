@@ -143,6 +143,7 @@ void begin_procedure( Environment * _environment, char * _name ) {
     cpu_label( _environment, procedureLabel );
 
     if ( procedure->protothread ) {
+        _environment->anyProtothread = 1;
         char procedureParallelDispatch[MAX_TEMPORARY_STORAGE]; sprintf(procedureParallelDispatch, "%sdispatch", _environment->procedureName );
         cpu_jump( _environment, procedureParallelDispatch  );
         cpu_protothread_set_state( _environment, "PROTOTHREADCT", PROTOTHREAD_STATUS_RUNNING );

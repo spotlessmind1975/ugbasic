@@ -62,16 +62,20 @@ di un nuovo quanto di tempo.
 </usermanual> */
 void yield( Environment * _environment ) {
 
-    char protothreadLabel[MAX_TEMPORARY_STORAGE]; sprintf(protothreadLabel, "%spt%d", _environment->procedureName, _environment->protothreadStep );
+    if ( _environment->anyProtothread ) {
 
-    cpu_protothread_save( _environment, "PROTOTHREADCT", _environment->protothreadStep );
-    cpu_protothread_set_state( _environment, "PROTOTHREADCT", PROTOTHREAD_STATUS_YIELDED );
+        char protothreadLabel[MAX_TEMPORARY_STORAGE]; sprintf(protothreadLabel, "%spt%d", _environment->procedureName, _environment->protothreadStep );
 
-    cpu_return( _environment );
-    cpu_label( _environment, protothreadLabel );
-    cpu_protothread_set_state( _environment, "PROTOTHREADCT", PROTOTHREAD_STATUS_RUNNING );
+        cpu_protothread_save( _environment, "PROTOTHREADCT", _environment->protothreadStep );
+        cpu_protothread_set_state( _environment, "PROTOTHREADCT", PROTOTHREAD_STATUS_YIELDED );
 
-    ++_environment->protothreadStep;
+        cpu_return( _environment );
+        cpu_label( _environment, protothreadLabel );
+        cpu_protothread_set_state( _environment, "PROTOTHREADCT", PROTOTHREAD_STATUS_RUNNING );
+
+        ++_environment->protothreadStep;
+
+    }
 
 }
 

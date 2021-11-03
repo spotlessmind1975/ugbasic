@@ -67,6 +67,8 @@ void wait_while( Environment * _environment ) {
 
 void wait_while_condition( Environment * _environment, char * _condition ) {
 
+    _environment->anyProtothread = 1;
+
     MAKE_LABEL
 
     char protothreadLabel[MAX_TEMPORARY_STORAGE]; sprintf(protothreadLabel, "%spt%d", _environment->procedureName, _environment->protothreadStep );

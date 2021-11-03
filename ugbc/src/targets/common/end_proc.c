@@ -79,8 +79,10 @@ void end_procedure( Environment * _environment, char * _value ) {
 
     char procedureAfterLabel[MAX_TEMPORARY_STORAGE]; sprintf(procedureAfterLabel, "%safter", _environment->procedureName );
 
-    cpu_protothread_set_state( _environment, "PROTOTHREADCT", PROTOTHREAD_STATUS_ENDED );
-
+    if ( _environment->protothread ) {
+        cpu_protothread_set_state( _environment, "PROTOTHREADCT", PROTOTHREAD_STATUS_ENDED );
+    }
+    
     cpu_return( _environment );
 
     if ( _environment->protothread ) {

@@ -62,6 +62,8 @@ finisce un altro thread.
 </usermanual> */
 void wait_parallel( Environment * _environment, char * _thread ) {
 
+    _environment->anyProtothread = 1;
+
     yield( _environment );
 
     MAKE_LABEL

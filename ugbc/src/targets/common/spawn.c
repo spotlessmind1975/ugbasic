@@ -96,6 +96,8 @@ Variable * spawn_procedure( Environment * _environment, char * _name ) {
 
     char procedureLabel[MAX_TEMPORARY_STORAGE]; sprintf(procedureLabel, "%s", _name );
 
+    _environment->anyProtothread = 1;
+
     cpu_protothread_register( _environment, procedureLabel, threadId->realName );
     cpu_protothread_set_state( _environment, threadId->realName, PROTOTHREAD_STATUS_WAITING );
 
