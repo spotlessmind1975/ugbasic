@@ -40,15 +40,13 @@
  * CODE SECTION
  ****************************************************************************/
 
-void test_zx_text_at_payload( TestEnvironment * _te ) {
+void test_zx_text_payload( TestEnvironment * _te ) {
 
     Environment * e = &_te->environment;
 
     Variable * texts = variable_define( e, "texts", VT_STRING, 0 );
     Variable * textd = variable_define( e, "textd", VT_DSTRING, 0 );
 
-    Variable * x = variable_define( e, "x", VT_WORD, 0 );
-    Variable * y = variable_define( e, "y", VT_WORD, 0 );
     Variable * pen = variable_define( e, "pen", VT_BYTE, 0 );
     Variable * paper = variable_define( e, "paper", VT_BYTE, 0 );
     Variable * ww = variable_define( e, "ww", VT_BYTE, 0 );
@@ -64,15 +62,15 @@ void test_zx_text_at_payload( TestEnvironment * _te ) {
     cpu_addressof_16bit( e, texts->realName, address->realName );
     cpu_inc_16bit( e, address->realName );
 
-    zx_text_at( e, x->realName, y->realName, address->realName, size->realName, pen->realName, paper->realName, ww->realName );
+    zx_text( e, address->realName, size->realName, pen->realName, paper->realName, ww->realName );
 
     cpu_dsdescriptor( e, textd->realName, address2->realName, size2->realName );
 
-    zx_text_at( e, x->realName, y->realName, address2->realName, size2->realName, pen->realName, paper->realName, ww->realName );
+    zx_text( e, address2->realName, size2->realName, pen->realName, paper->realName, ww->realName );
 
 }
 
-int test_zx_text_at_tester( TestEnvironment * _te ) {
+int test_zx_text_tester( TestEnvironment * _te ) {
 
     return 1;
 
@@ -325,7 +323,7 @@ int test_zx_cls3_tester( TestEnvironment * _te ) {
 
 void test_zx( ) {
 
-    create_test( "zx_text_at", &test_zx_text_at_payload, &test_zx_text_at_tester );    
+    create_test( "zx_text", &test_zx_text_payload, &test_zx_text_tester );    
     create_test( "zx_bitmap_enabled", &test_zx_bitmap_enable_payload, &test_zx_bitmap_enable_tester );    
     create_test( "zx_tilemap_enabled", &test_zx_bitmap_enable_payload, &test_zx_bitmap_enable_tester );    
     create_test( "zx_cls", &test_zx_cls_payload, &test_zx_cls_tester );

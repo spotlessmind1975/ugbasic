@@ -40,15 +40,13 @@
  * CODE SECTION
  ****************************************************************************/
 
-void test_vic2_text_at_payloadA( TestEnvironment * _te ) {
+void test_vic2_text_payloadA( TestEnvironment * _te ) {
 
     Environment * e = &_te->environment;
 
     Variable * texts = variable_define( e, "texts", VT_STRING, 0 );
     Variable * textd = variable_define( e, "textd", VT_DSTRING, 0 );
 
-    Variable * x = variable_define( e, "x", VT_WORD, 0 );
-    Variable * y = variable_define( e, "y", VT_WORD, 0 );
     Variable * pen = variable_define( e, "pen", VT_BYTE, 0 );
     Variable * ww = variable_define( e, "ww", VT_BYTE, 0 );
     Variable * address = variable_temporary( e, VT_ADDRESS, "(text address)" );
@@ -63,15 +61,15 @@ void test_vic2_text_at_payloadA( TestEnvironment * _te ) {
     cpu_addressof_16bit( e, texts->realName, address->realName );
     cpu_inc_16bit( e, address->realName );
 
-    vic2_text_at( e, x->realName, y->realName, address->realName, size->realName, pen->realName, ww->realName );
+    vic2_text( e, address->realName, size->realName, pen->realName, ww->realName );
 
     cpu_dsdescriptor( e, textd->realName, address2->realName, size2->realName );
 
-    vic2_text_at( e, x->realName, y->realName, address2->realName, size2->realName, pen->realName, ww->realName );
+    vic2_text( e, address2->realName, size2->realName, pen->realName, ww->realName );
 
 }
 
-int test_vic2_text_at_testerA( TestEnvironment * _te ) {
+int test_vic2_text_testerA( TestEnvironment * _te ) {
 
     return 1;
 
@@ -786,12 +784,10 @@ int test_vic2_point_tester( TestEnvironment * _te ) {
 
 //============================================================================
 
-void test_vic2_text_at_payloadB( TestEnvironment * _te ) {
+void test_vic2_text_payloadB( TestEnvironment * _te ) {
 
     Environment * e = &_te->environment;
 
-    Variable * x = variable_define( e, "x", VT_POSITION, 0 );
-    Variable * y = variable_define( e, "y", VT_POSITION, 0 );
     Variable * text = variable_define( e, "text", VT_DSTRING, 0 );
     Variable * c = variable_define( e, "c", VT_COLOR, COLOR_RED );
     Variable * ww = variable_define( e, "ww", VT_BYTE, WW_PEN | WW_PAPER );
@@ -813,11 +809,11 @@ void test_vic2_text_at_payloadB( TestEnvironment * _te ) {
     _te->debug.inspections[1].size=1000;
     ++_te->debug.inspections_count;
 
-    vic2_text_at( e, x->realName, y->realName, address->realName, size->realName, c->realName, ww->realName );
+    vic2_text( e, address->realName, size->realName, c->realName, ww->realName );
 
 }
 
-int test_vic2_text_at_testerB( TestEnvironment * _te ) {
+int test_vic2_text_testerB( TestEnvironment * _te ) {
 
     int x = 1;
 
@@ -835,12 +831,10 @@ int test_vic2_text_at_testerB( TestEnvironment * _te ) {
 
 //============================================================================
 
-void test_vic2_text_at_payloadC( TestEnvironment * _te ) {
+void test_vic2_text_payloadC( TestEnvironment * _te ) {
 
     Environment * e = &_te->environment;
 
-    Variable * x = variable_define( e, "x", VT_POSITION, 0 );
-    Variable * y = variable_define( e, "y", VT_POSITION, 0 );
     Variable * text = variable_define( e, "text", VT_DSTRING, 0 );
     Variable * c = variable_define( e, "c", VT_COLOR, COLOR_RED );
     Variable * ww = variable_define( e, "ww", VT_BYTE, WW_PEN | WW_PAPER );
@@ -864,11 +858,11 @@ void test_vic2_text_at_payloadC( TestEnvironment * _te ) {
     _te->debug.inspections[1].size=1000;
     ++_te->debug.inspections_count;
 
-    vic2_text_at( e, x->realName, y->realName, address->realName, size->realName, c->realName, ww->realName );
+    vic2_text( e, address->realName, size->realName, c->realName, ww->realName );
 
 }
 
-int test_vic2_text_at_testerC( TestEnvironment * _te ) {
+int test_vic2_text_testerC( TestEnvironment * _te ) {
 
     int x = 1, i = 0;
 
@@ -897,9 +891,9 @@ int test_vic2_text_at_testerC( TestEnvironment * _te ) {
 
 void test_vic2( ) {
 
-    create_test( "vic2_text_at A", &test_vic2_text_at_payloadA, &test_vic2_text_at_testerA );    
-    create_test( "vic2_text_at B", &test_vic2_text_at_payloadB, &test_vic2_text_at_testerB );
-    create_test( "vic2_text_at C", &test_vic2_text_at_payloadC, &test_vic2_text_at_testerC );
+    create_test( "vic2_text A", &test_vic2_text_payloadA, &test_vic2_text_testerA );    
+    create_test( "vic2_text B", &test_vic2_text_payloadB, &test_vic2_text_testerB );
+    create_test( "vic2_text C", &test_vic2_text_payloadC, &test_vic2_text_testerC );
     create_test( "vic2_bitmap_enabled", &test_vic2_bitmap_enable_payload, &test_vic2_bitmap_enable_tester );    
     create_test( "vic2_tilemap_enabled", &test_vic2_bitmap_enable_payload, &test_vic2_bitmap_enable_tester );
     create_test( "vic2_cls", &test_vic2_cls_payload, &test_vic2_cls_tester );
