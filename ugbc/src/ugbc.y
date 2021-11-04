@@ -67,6 +67,7 @@ extern char DATATYPE_AS_STRING[][16];
 
 %type <string> expr term modula factor exponential expr_math
 %type <integer> const_expr const_term const_modula const_factor const_expr_math
+%type <string> const_expr_string
 %type <integer> direct_integer
 %type <string> random_definition_simple random_definition
 %type <string> color_enumeration
@@ -92,6 +93,18 @@ extern char DATATYPE_AS_STRING[][16];
 %left AND OR OP_EQUAL OP_DISEQUAL OP_LT OP_LTE OP_GT OP_GTE
 
 %%
+
+const_expr_string :
+    String {
+        $$ = $1;
+    }
+    | IF OP const_expr OP_COMMA const_expr_string OP_COMMA const_expr_string CP {
+        if ( $3 ) {
+            $$ = $5;
+        } else {
+            $$ = $7;
+        }
+  };
 
 const_expr : 
       const_expr_math
@@ -186,7 +199,7 @@ const_factor:
           if ( !v->valueBuffer ) {
               CRITICAL_NOT_ASSIGNED_IMAGE( v->name );
           }
-          $$ = ( v->valueBuffer[0] & 0x7f );
+          $$ = v->valueBuffer[0];
       }
       | FRAMES OP expr CP {
           Variable * v = variable_retrieve( _environment, $3 );
@@ -3165,15 +3178,8 @@ statement:
   | DEFINE define_definitions
   | DIM dim_definitions
   | FILL fill_definitions
-  | CONST Identifier OP_ASSIGN String {
+  | CONST Identifier OP_ASSIGN const_expr_string {
         const_define_string( _environment, $2, $4 );
-  }
-  | CONST Identifier OP_ASSIGN IF OP const_expr OP_COMMA String OP_COMMA String CP {
-        if ( $6 ) {
-            const_define_string( _environment, $2, $8 );
-        } else {
-            const_define_string( _environment, $2, $10 );
-        }
   }
   | CONST Identifier OP_ASSIGN const_expr {
         const_define_numeric( _environment, $2, $4 );
