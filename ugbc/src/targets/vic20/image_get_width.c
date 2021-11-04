@@ -73,7 +73,6 @@ Variable * image_get_width( Environment * _environment, char * _image ) {
     outline0("STA TMPPTR+1" );
     outline0("LDY #0" );
     outline0("LDA (TMPPTR),Y" );
-    outline0("AND #$7F" );
     outline1("STA %s", result->realName );
 
     return result;

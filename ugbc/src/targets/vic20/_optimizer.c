@@ -92,18 +92,18 @@ void target_peephole_optimizer( Environment * _environment ) {
                 }
             }            
         }
-        if ( strstr( buffer[0], "\tSTA " ) != NULL && strstr( buffer[2], "\tLDA " ) != NULL ) {
-            char * variable1 = strchr( buffer[0], '_' );
-            // printf("PO: %s %s %s\n", buffer[0], buffer[1], variable1 );
-            if (variable1) {
-                char * variable2 = strchr( buffer[2], '_' );
-                if ( variable2 ) {
-                    if ( strcmp( variable1, variable2 ) == 0 ) {
-                        strcpy( buffer[2], "; peephole: rule #2 (STA x ... LDA x -> STA x)\n");
-                    }            
-                }
-            }            
-        }
+        // if ( strstr( buffer[0], "\tSTA " ) != NULL && strstr( buffer[2], "\tLDA " ) != NULL ) {
+        //     char * variable1 = strchr( buffer[0], '_' );
+        //     // printf("PO: %s %s %s\n", buffer[0], buffer[1], variable1 );
+        //     if (variable1) {
+        //         char * variable2 = strchr( buffer[2], '_' );
+        //         if ( variable2 ) {
+        //             if ( strcmp( variable1, variable2 ) == 0 ) {
+        //                 strcpy( buffer[2], "; peephole: rule #2 (STA x ... LDA x -> STA x)\n");
+        //             }            
+        //         }
+        //     }            
+        // }
         // if ( strstr( buffer[0], "#<" ) == NULL && strstr( buffer[0], "\tLDA " ) != NULL && strstr( buffer[1], "\tSTA " ) != NULL && strstr( buffer[2], "\tLDA " ) != NULL ) {
         //     char * variable1 = strchr( buffer[0], '_' );
         //     // printf("PO: %s %s %s\n", buffer[0], buffer[1], variable1 );

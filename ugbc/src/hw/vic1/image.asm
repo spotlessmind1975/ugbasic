@@ -138,6 +138,7 @@ PUTIMAGE02C:
     ADC #0
     STA PLOTDEST+1
 
+    CLC
     LDA PLOTC2VBASELO,Y          ;table of $A000 row base addresses
     ADC MATHPTR0               ;+ (8 * Xcell)
     STA PLOTCDEST               ;= cell address

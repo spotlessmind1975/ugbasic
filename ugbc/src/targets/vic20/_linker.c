@@ -54,7 +54,7 @@ void linker_setup( Environment * _environment ) {
     cfghead0("MEMORY {");
     cfgline0("ZP:    start = $0000, size = $0100, type = rw;");
     cfgline0("RAM0:  start = $0400, size = $0C00, type = rw;");
-    cfgline0("MAIN:  start = $11FF, size = $4E01, type = rw, fill = yes, fillVal = $00;");
+    cfgline0("MAIN:  start = $11FF, size = $5E01, type = rw, fill = yes, fillVal = $00;");
     cfghead0("}");
 
     cfghead0("SEGMENTS {");
@@ -62,7 +62,7 @@ void linker_setup( Environment * _environment ) {
     cfgline0("BASIC:    load = MAIN,  type = rw,  optional = no ;");
     cfgline0("DATA:     load = MAIN,  type = rw,  optional = yes;");
     cfgline0("BSS:      load = MAIN,  type = bss, optional = yes;");
-    cfgline0("UDCCHAR:  load = MAIN, type = overwrite,  optional = yes, start = $1C00;");
+    cfgline0("UDCCHAR:  load = MAIN, type = overwrite,  optional = yes, start = $1800;");
     cfgline0("CODE:     load = MAIN,  type = overwrite,  optional = yes, start = $2000;");
 
 }

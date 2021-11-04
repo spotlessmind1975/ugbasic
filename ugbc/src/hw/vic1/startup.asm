@@ -145,7 +145,7 @@ VIC1STARTUP:
     ; Lowercase font
     LDA $9005
     AND #$F0
-    ORA #$0F
+    ORA #$0E
     STA $9005
 
     LDA #$0
