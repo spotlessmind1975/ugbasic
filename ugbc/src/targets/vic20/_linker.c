@@ -62,6 +62,7 @@ void linker_setup( Environment * _environment ) {
     cfgline0("BASIC:    load = MAIN,  type = rw,  optional = no ;");
     cfgline0("DATA:     load = MAIN,  type = rw,  optional = yes;");
     cfgline0("BSS:      load = MAIN,  type = bss, optional = yes;");
+    cfgline0("UDCCHAR:  load = MAIN, type = overwrite,  optional = yes, start = $1C00;");
     cfgline0("CODE:     load = MAIN,  type = overwrite,  optional = yes, start = $2000;");
 
 }

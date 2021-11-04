@@ -624,6 +624,8 @@ void vic1_initialization( Environment * _environment ) {
     _environment->screenTilesHeight = 22;
     _environment->screenWidth = _environment->screenTilesWidth * 8;
     _environment->screenHeight = _environment->screenTilesHeight * 8;
+    _environment->tileDataIndex = 0;
+    _environment->tileData = data_fontvic1_bin;
 
 }
 

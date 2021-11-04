@@ -229,5 +229,16 @@ void variable_cleanup( Environment * _environment ) {
             }
            actual = actual->next;
         }
+    }
+
+    if ( _environment->tileData ) {
+        outhead0(".segment \"UDCCHAR\"" );
+        out0(".byte " );
+        int i=0;
+        for(i=0;i<255;++i) {
+            out1("$%2.2x,", ((unsigned char)_environment->tileData[i]) );
+        }
+        outline1("$%2.2x", ((unsigned char)_environment->tileData[i]) );
     }    
+
 }

@@ -1152,6 +1152,16 @@ typedef struct _Environment {
      */
     Offsetting * offsetting;
 
+    /**
+     * Tile data.
+     */
+    char * tileData;
+
+    /**
+     * Tile data replaced index
+     */
+    int tileDataIndex;
+
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */
