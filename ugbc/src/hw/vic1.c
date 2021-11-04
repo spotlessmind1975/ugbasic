@@ -1180,10 +1180,10 @@ static Variable * vic1_image_converter_tilemap_mode_standard( Environment * _env
                         if ( colorIndex > 1 ) {
                             mostFrequentColor[palette[i].index]++;
                             tileData.data[offset] |= bitmask;
-                            printf("%1.1x", colorIndex );
+                            // printf("%1.1x", colorIndex );
                         } else {
                             tileData.data[offset] &= ~bitmask;
-                            printf(" " );
+                            // printf(" " );
                         }
                     }
 
@@ -1193,7 +1193,7 @@ static Variable * vic1_image_converter_tilemap_mode_standard( Environment * _env
 
                 source += 3 * ( _width - 8 );
 
-                printf("\n" );
+                // printf("\n" );
 
             }
 
