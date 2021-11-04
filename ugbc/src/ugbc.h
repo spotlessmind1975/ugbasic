@@ -858,6 +858,29 @@ typedef struct _DString {
 
 } DString;
 
+typedef struct _TileDescriptor {
+
+    int whiteArea;
+    int horizontalEdges[8];
+    int verticalEdges[8];
+
+} TileDescriptor;
+
+typedef struct _TileData {
+
+    char data[8];
+
+} TileData;
+
+typedef struct _TileDescriptors {
+
+    int                 count;
+
+    TileDescriptor *    descriptor[256];
+    TileData            data[256];
+
+} TileDescriptors;
+
 /**
  * @brief Structure of compilation environment
  * 
@@ -1152,15 +1175,7 @@ typedef struct _Environment {
      */
     Offsetting * offsetting;
 
-    /**
-     * Tile data.
-     */
-    char * tileData;
-
-    /**
-     * Tile data replaced index
-     */
-    int tileDataIndex;
+    TileDescriptors * descriptors;
 
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
@@ -1182,20 +1197,6 @@ typedef struct _Environment {
     FILE * debuggerLabelsFile;
 
 } Environment;
-
-typedef struct _TileDescriptor {
-
-    int whiteArea;
-    int horizontalEdges[8];
-    int verticalEdges[8];
-
-} TileDescriptor;
-
-typedef struct _TileDescriptors {
-
-    TileDescriptor * descriptor[256];
-
-} TileDescriptors;
 
 #define UNIQUE_ID   _environment->uniqueId++
 #define MAKE_LABEL  char label[12]; sprintf( label, "_label%d", UNIQUE_ID);
@@ -1651,8 +1652,9 @@ void                    box( Environment * _environment, char * _x1, char * _y1,
 //----------------------------------------------------------------------------
 
 int                     calculate_nearest_tile( TileDescriptor * _tile, TileDescriptors * _tiles );
+int                     calculate_exact_tile( TileDescriptor * _tile, TileDescriptors * _tiles );
 int                     calculate_tile_affinity( TileDescriptor * _first, TileDescriptor * _second );
-TileDescriptor *        calculate_tile_descriptor( char * _tileData );
+TileDescriptor *        calculate_tile_descriptor( TileData * _tileData );
 void                    call_procedure( Environment * _environment, char * _name );
 void                    center( Environment * _environment, char * _string );
 void                    circle( Environment * _environment, char * _x, char * _y, char * _r, char *_c );

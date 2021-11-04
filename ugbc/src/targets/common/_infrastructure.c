@@ -4275,12 +4275,12 @@ void variable_temporary_remove( Environment * _environment, char * _name ) {
 
 }
 
-int calculate_white_area( char * _tileData ) {
+int calculate_white_area( TileData * _tileData ) {
     int i=0, j=0;
     int actual = 0;
     for(i=0;i<8;++i) {
         for(j=0;j<8;++j) {
-            if ( _tileData[j] & ( 1 << i ) ) {
+            if ( _tileData->data[j] & ( 1 << i ) ) {
                 ++actual;
             }
         }
@@ -4288,12 +4288,12 @@ int calculate_white_area( char * _tileData ) {
     return actual;
 }
 
-int calculate_horizontal_edges( char * _tileData, int _position ) {
+int calculate_horizontal_edges( TileData * _tileData, int _position ) {
     int edges = 0;
     int i=0;
     int actual = 0;
     for(i=0;i<8;++i) {
-        if ( _tileData[_position] & ( 1 << i ) ) {
+        if ( _tileData->data[_position] & ( 1 << i ) ) {
             if ( !actual ) {
                 ++edges;
                 actual = 1;
@@ -4308,12 +4308,12 @@ int calculate_horizontal_edges( char * _tileData, int _position ) {
     return edges;
 }
 
-int calculate_vertical_edges( char * _tileData, int _position ) {
+int calculate_vertical_edges( TileData * _tileData, int _position ) {
     int edges = 0;
     int i=0;
     int actual = 0;
     for(i=0;i<8;++i) {
-        if ( _tileData[i] & ( 1 << _position ) ) {
+        if ( _tileData->data[i] & ( 1 << _position ) ) {
             if ( !actual ) {
                 ++edges;
                 actual = 1;
@@ -4328,7 +4328,7 @@ int calculate_vertical_edges( char * _tileData, int _position ) {
     return edges;
 }
 
-TileDescriptor * calculate_tile_descriptor( char * _tileData ) {
+TileDescriptor * calculate_tile_descriptor( TileData * _tileData ) {
 
     TileDescriptor * tileDescriptor = malloc( sizeof( TileDescriptor ) );
 
@@ -4347,12 +4347,18 @@ TileDescriptor * calculate_tile_descriptor( char * _tileData ) {
 TileDescriptors * precalculate_tile_descriptors_for_font( char * _fontData ) {
 
     TileDescriptors * tileDescriptors = malloc( sizeof( TileDescriptors ) );
+    memset( tileDescriptors, 0, sizeof( TileDescriptors ) );
+    
+    int i=0,j=0;
 
-    int i=0;
-
-    for(i=0;i<256;++i) {
-        tileDescriptors->descriptor[i] = calculate_tile_descriptor( &_fontData[8*i] );
+    for(i=0;i<128;++i) {
+        for(j=0;j<8;++j) {
+            tileDescriptors->data[i].data[j] = *(_fontData + i*8 + j);
+        }
+        tileDescriptors->descriptor[i] = calculate_tile_descriptor( &tileDescriptors->data[i] );
     }
+
+    tileDescriptors->count = 0;
 
     return tileDescriptors;
 
@@ -4391,4 +4397,19 @@ int calculate_nearest_tile( TileDescriptor * _tile, TileDescriptors * _tiles ) {
 
 }
 
+int calculate_exact_tile( TileDescriptor * _tile, TileDescriptors * _tiles ) {
+
+    int i=0;
+
+    for(i=0;i<256;++i) {
+        if ( _tiles->descriptor[i] ) {
+            if ( calculate_tile_affinity( _tile, _tiles->descriptor[i] ) == 0 ) {
+                return i;
+            };
+        }
+    }
+
+    return -1;
+
+}
 

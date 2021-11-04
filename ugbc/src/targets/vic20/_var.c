@@ -231,14 +231,17 @@ void variable_cleanup( Environment * _environment ) {
         }
     }
 
-    if ( _environment->tileData ) {
+    if ( _environment->descriptors ) {
         outhead0(".segment \"UDCCHAR\"" );
-        out0(".byte " );
-        int i=0;
-        for(i=0;i<255;++i) {
-            out1("$%2.2x,", ((unsigned char)_environment->tileData[i]) );
+        int i=0,j=0;
+        for(i=0;i<256;++i) {
+            outline1("; $%2.2x ", i);
+            out0(".byte " );
+            for(j=0;j<7;++j) {
+                out1("$%2.2x,", ((unsigned char)_environment->descriptors->data[i].data[j]) );
+            }
+            outline1("$%2.2x", ((unsigned char)_environment->descriptors->data[i].data[j]) );
         }
-        outline1("$%2.2x", ((unsigned char)_environment->tileData[i]) );
     }    
 
 }

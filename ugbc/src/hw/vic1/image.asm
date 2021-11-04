@@ -75,17 +75,12 @@ PUTIMAGE:
 ;     RTS
 
 PUTIMAGE0:
-    LDA #0
-    STA MATHPTR2
-    LDY #0
+    LDY #2
     LDA (TMPPTR),Y
-    AND #$80
-    BEQ PUTIMAGE02C
-    LDA #1
     STA MATHPTR2
 PUTIMAGE02C:
+    LDY #0
     LDA (TMPPTR),Y
-    AND #$7F
     STA IMAGEW
     LSR
     LSR
@@ -101,7 +96,7 @@ PUTIMAGE02C:
 
     CLC
     LDA TMPPTR
-    ADC #2
+    ADC #3
     STA TMPPTR
     LDA TMPPTR+1
     ADC #0
