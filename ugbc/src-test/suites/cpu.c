@@ -4687,118 +4687,152 @@ int test_cpu_sqroot_tester( TestEnvironment * _te ) {
 
 }
 
+//===========================================================================
+
+void test_cpu_random_8bit_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * entropy = variable_define( e, "entropy", VT_BYTE, 0x42 );
+    Variable * result1 = variable_temporary( e, VT_BYTE, "(result1)" );
+    Variable * result2 = variable_temporary( e, VT_BYTE, "(result2)" );
+
+    cpu_random_8bit( e, entropy->realName, result1->realName );
+    cpu_random_8bit( e, entropy->realName, result2->realName );
+
+    _te->trackedVariables[0] = result1;
+    _te->trackedVariables[1] = result2;
+
+}
+
+int test_cpu_random_8bit_tester( TestEnvironment * _te ) {
+
+    Variable * result1 = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * result2 = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+
+printf("result1 = %2.2x (%d) [expected != 0x00]\n", result1->value, result1->value );
+printf("result2 = %2.2x (%d) [expected != 0x00]\n", result2->value, result2->value );
+    
+    return  result1->value != result2->value &&
+            result1->value != 0 &&
+            result2->value != 0;
+
+}
+
 void test_cpu( ) {
 
-    // to be adapted (false negative) create_test( "cpu_bits_to_string", &test_cpu_bits_to_string_payload, &test_cpu_bits_to_string_tester );    
-    // to be adapted (false negative) create_test( "cpu_bits_to_string32", &test_cpu_bits_to_string32_payload, &test_cpu_bits_to_string32_tester );    
-    create_test( "cpu_dswrite", &test_cpu_dswrite_payload, &test_cpu_dswrite_tester );    
-    create_test( "cpu_dsgc", &test_cpu_dsgc_payload, &test_cpu_dsgc_tester );    
-    // to be adapted not using DSTRING  create_test( "cpu_dsgc A", &test_cpu_dsgc_payloadA, &test_cpu_dsgc_testerA );    
-    // to be adapted not using DSTRING  create_test( "cpu_dsgc B", &test_cpu_dsgc_payloadB, &test_cpu_dsgc_testerB );    
-    create_test( "cpu_logical_and_8bit", &test_cpu_logical_and_8bit_payload, &test_cpu_logical_and_8bit_tester );    
-    create_test( "cpu_logical_not_8bit", &test_cpu_logical_not_8bit_payload, &test_cpu_logical_not_8bit_tester );    
-    create_test( "cpu_and_8bit", &test_cpu_and_8bit_payload, &test_cpu_and_8bit_tester );    
-    create_test( "cpu_or_8bit", &test_cpu_or_8bit_payload, &test_cpu_or_8bit_tester );    
-    create_test( "cpu_not_8bit", &test_cpu_not_8bit_payload, &test_cpu_not_8bit_tester );    
-    create_test( "cpu_and_16bit", &test_cpu_and_16bit_payload, &test_cpu_and_16bit_tester );    
-    create_test( "cpu_or_16bit", &test_cpu_or_16bit_payload, &test_cpu_or_16bit_tester );    
-    create_test( "cpu_not_16bit", &test_cpu_not_16bit_payload, &test_cpu_not_16bit_tester );    
-    create_test( "cpu_and_32bit", &test_cpu_and_32bit_payload, &test_cpu_and_32bit_tester );    
-    create_test( "cpu_or_32bit", &test_cpu_or_32bit_payload, &test_cpu_or_32bit_tester );    
-    create_test( "cpu_not_32bit", &test_cpu_not_16bit_payload, &test_cpu_not_16bit_tester );    
-    create_test( "cpu_bit_check_extended", &test_cpu_bit_check_extended_payload, &test_cpu_bit_check_extended_tester );    
-    create_test( "cpu_bit_check_extended B", &test_cpu_bit_check_extended_payloadB, &test_cpu_bit_check_extended_testerB );
-    create_test( "cpu_less_than_8bit", &test_cpu_less_than_8bit_payload, &test_cpu_less_than_8bit_tester );    
-    create_test( "cpu_less_than_16bit A", &test_cpu_less_than_16bit_payload, &test_cpu_less_than_16bit_tester );    
-    create_test( "cpu_less_than_16bit B", &test_cpu_less_than_16bit_payloadB, &test_cpu_less_than_16bit_testerB );    
-    create_test( "cpu_less_than_32bit", &test_cpu_less_than_32bit_payload, &test_cpu_less_than_32bit_tester );    
-    create_test( "cpu_greater_than_8bit", &test_cpu_greater_than_8bit_payload, &test_cpu_greater_than_8bit_tester );    
-    create_test( "cpu_greater_than_16bit", &test_cpu_greater_than_16bit_payload, &test_cpu_greater_than_16bit_tester );    
-    create_test( "cpu_greater_than_32bit", &test_cpu_greater_than_32bit_payload, &test_cpu_greater_than_32bit_tester );    
-    create_test( "cpu_math_div2_8bit", &test_cpu_math_div2_8bit_payload, &test_cpu_math_div2_8bit_tester );
-    create_test( "cpu_math_div2_const_16bit", &test_cpu_math_div2_const_16bit_payload, &test_cpu_math_div2_const_16bit_tester );
-    create_test( "cpu_math_div2_const_32bit", &test_cpu_math_div2_const_32bit_payload, &test_cpu_math_div2_const_32bit_tester );
-    create_test( "cpu_math_div2_const_8bit", &test_cpu_math_div2_const_8bit_payload, &test_cpu_math_div2_const_8bit_tester );
-    create_test( "cpu_math_double_16bit", &test_cpu_math_double_16bit_payload, &test_cpu_math_double_16bit_tester );
-    create_test( "cpu_math_double_32bit", &test_cpu_math_double_32bit_payload, &test_cpu_math_double_32bit_tester );
-    create_test( "cpu_math_double_8bit", &test_cpu_math_double_8bit_payload, &test_cpu_math_double_8bit_tester );
-    create_test( "cpu_math_mul_8bit_to_16bit", &test_cpu_math_mul_8bit_to_16bit_payload, &test_cpu_math_mul_8bit_to_16bit_tester );
-    create_test( "cpu_math_mul_16bit_to_32bit A", &test_cpu_math_mul_16bit_to_32bit_payload, &test_cpu_math_mul_16bit_to_32bit_tester );
-    create_test( "cpu_math_mul_16bit_to_32bit B", &test_cpu_math_mul_16bit_to_32bit_payloadB, &test_cpu_math_mul_16bit_to_32bit_testerB );
-    create_test( "cpu_math_div_8bit_to_8bit", &test_cpu_math_div_8bit_to_8bit_payload, &test_cpu_math_div_8bit_to_8bit_tester );
-    create_test( "cpu_math_div_16bit_to_16bit A", &test_cpu_math_div_16bit_to_16bit_payload, &test_cpu_math_div_16bit_to_16bit_tester );
-    create_test( "cpu_math_div_16bit_to_16bit B", &test_cpu_math_div_16bit_to_16bit_payloadB, &test_cpu_math_div_16bit_to_16bit_testerB );
-    create_test( "cpu_math_div_16bit_to_16bit C", &test_cpu_math_div_16bit_to_16bit_payloadC, &test_cpu_math_div_16bit_to_16bit_testerC );
-    create_test( "cpu_math_div_16bit_to_16bit D", &test_cpu_math_div_16bit_to_16bit_payloadD, &test_cpu_math_div_16bit_to_16bit_testerD );
-    create_test( "cpu_math_mul2_const_16bit", &test_cpu_math_mul2_const_16bit_payload, &test_cpu_math_mul2_const_16bit_tester );
-    create_test( "cpu_math_mul2_const_32bit", &test_cpu_math_mul2_const_32bit_payload, &test_cpu_math_mul2_const_32bit_tester );
-    create_test( "cpu_math_mul2_const_8bit", &test_cpu_math_mul2_const_8bit_payload, &test_cpu_math_mul2_const_8bit_tester );
-    create_test( "cpu_number_to_string_payload", &test_cpu_number_to_string_payload, &test_cpu_number_to_string_tester );
-    create_test( "cpu_number_to_string_payloadB", &test_cpu_number_to_string_payloadB, &test_cpu_number_to_string_testerB );
-    create_test( "cpu_number_to_string_payloadC", &test_cpu_number_to_string_payloadC, &test_cpu_number_to_string_testerC );
-    create_test( "cpu_number_to_string_payloadD", &test_cpu_number_to_string_payloadD, &test_cpu_number_to_string_testerD );
-    create_test( "cpu_number_to_string_payloadE", &test_cpu_number_to_string_payloadE, &test_cpu_number_to_string_testerE );
-    create_test( "cpu_peek", &test_cpu_peek_payload, &test_cpu_peek_tester );
-    create_test( "cpu_poke", &test_cpu_poke_payload, &test_cpu_poke_tester );
-    create_test( "cpu_move_8bit", &test_cpu_move_8bit_payload, &test_cpu_move_8bit_tester );
-    create_test( "cpu_fill_blocks", &test_cpu_fill_blocks_payload, &test_cpu_fill_blocks_tester );
-    create_test( "cpu_fill", &test_cpu_fill_payload, &test_cpu_fill_tester );
-    create_test( "cpu_compare_8bit", &test_cpu_compare_8bit_payload, &test_cpu_compare_8bit_tester );
-    create_test( "cpu_math_add_8bit", &test_cpu_math_add_8bit_payload, &test_cpu_math_add_8bit_tester );
-    create_test( "cpu_math_sub_8bit", &test_cpu_math_sub_8bit_payload, &test_cpu_math_sub_8bit_tester );
-    create_test( "cpu_math_complement_const_8bit", &test_cpu_math_complement_const_8bit_payload, &test_cpu_math_complement_const_8bit_tester );
-    create_test( "cpu_math_and_const_8bit", &test_cpu_math_and_const_8bit_payload, &test_cpu_math_and_const_8bit_tester );
-    create_test( "cpu_move_16bit", &test_cpu_move_16bit_payload, &test_cpu_move_16bit_tester );
-    create_test( "cpu_addressof_16bit", &test_cpu_addressof_16bit_payload, &test_cpu_addressof_16bit_tester );
-    create_test( "cpu_compare_16bit", &test_cpu_compare_16bit_payload, &test_cpu_compare_16bit_tester );
-    create_test( "cpu_math_add_16bit", &test_cpu_math_add_16bit_payload, &test_cpu_math_add_16bit_tester );
-    create_test( "cpu_math_add_16bit_with_16bit", &test_cpu_math_add_16bit_with_16bit_payload, &test_cpu_math_add_16bit_with_16bit_tester );
-    create_test( "cpu_math_add_16bit_with_8bit", &test_cpu_math_add_16bit_with_8bit_payload, &test_cpu_math_add_16bit_with_8bit_tester );
-    create_test( "cpu_math_sub_16bit", &test_cpu_math_sub_16bit_payload, &test_cpu_math_sub_16bit_tester );
-    create_test( "cpu_math_sub_16bit_with_8bit", &test_cpu_math_sub_16bit_with_8bit_payload, &test_cpu_math_sub_16bit_with_8bit_tester );
-    create_test( "cpu_math_complement_const_16bit", &test_cpu_math_complement_const_16bit_payload, &test_cpu_math_complement_const_16bit_tester );
-    create_test( "cpu_math_and_const_16bit", &test_cpu_math_and_const_16bit_payload, &test_cpu_math_and_const_16bit_tester );
-    create_test( "cpu_move_32bit", &test_cpu_move_32bit_payload, &test_cpu_move_32bit_tester );
-    create_test( "cpu_store_32bit", &test_cpu_store_32bit_payload, &test_cpu_store_32bit_tester );
-    create_test( "cpu_compare_32bit", &test_cpu_compare_32bit_payload, &test_cpu_compare_32bit_tester );
-    create_test( "cpu_math_add_32bit", &test_cpu_math_add_32bit_payload, &test_cpu_math_add_32bit_tester );
-    create_test( "cpu_math_sub_32bit", &test_cpu_math_sub_32bit_payload, &test_cpu_math_sub_32bit_tester );
-    create_test( "cpu_math_complement_const_32bit", &test_cpu_math_complement_const_32bit_payload, &test_cpu_math_complement_const_32bit_tester );
-    create_test( "cpu_math_and_const_32bit", &test_cpu_math_and_const_32bit_payload, &test_cpu_math_and_const_32bit_tester );
-    create_test( "cpu_combine_nibbles", &test_cpu_combine_nibbles_payload, &test_cpu_combine_nibbles_tester );
-    create_test( "cpu_mem_move", &test_cpu_mem_move_payload, &test_cpu_mem_move_tester );
-    create_test( "cpu_mem_move_size", &test_cpu_mem_move_size_payload, &test_cpu_mem_move_size_tester );
-    create_test( "cpu_mem_move_direct", &test_cpu_mem_move_direct_payload, &test_cpu_mem_move_direct_tester );
-    create_test( "cpu_mem_move_direct_size", &test_cpu_mem_move_direct_size_payload, &test_cpu_mem_move_direct_size_tester );
-    create_test( "cpu_mem_move_direct_indirect_size", &test_cpu_mem_move_direct_indirect_size_payload, &test_cpu_mem_move_direct_indirect_size_tester );
-    create_test( "cpu_compare_memory", &test_cpu_compare_memory_payload, &test_cpu_compare_memory_tester );
-    create_test( "cpu_compare_memory_size", &test_cpu_compare_memory_size_payload, &test_cpu_compare_memory_size_tester );
-    create_test( "cpu_less_than_memory", &test_cpu_less_than_memory_payload, &test_cpu_less_than_memory_tester );
-    create_test( "cpu_less_than_memory_size", &test_cpu_less_than_memory_size_payload, &test_cpu_less_than_memory_size_tester );
-    create_test( "cpu_greater_than_memory", &test_cpu_greater_than_memory_payload, &test_cpu_greater_than_memory_tester );
-    create_test( "cpu_greater_than_memory_size", &test_cpu_greater_than_memory_size_payload, &test_cpu_greater_than_memory_size_tester );
-    create_test( "cpu_move_8bit_indirect", &test_cpu_move_8bit_indirect_payload, &test_cpu_move_8bit_indirect_tester );
-    create_test( "cpu_move_8bit_indirect_with_offset", &test_cpu_move_8bit_indirect_with_offset_payload, &test_cpu_move_8bit_indirect_with_offset_tester );
-    create_test( "cpu_move_8bit_with_offset", &test_cpu_move_8bit_with_offset_payload, &test_cpu_move_8bit_with_offset_tester );
-    create_test( "cpu_move_8bit_indirect_with_offset2", &test_cpu_move_8bit_indirect_with_offset2_payload, &test_cpu_move_8bit_indirect_with_offset2_tester );
-    create_test( "cpu_move_8bit_with_offset2", &test_cpu_move_8bit_with_offset2_payload, &test_cpu_move_8bit_with_offset2_tester );
-    create_test( "cpu_move_8bit_indirect2_payload", &test_cpu_move_8bit_indirect2_payload, &test_cpu_move_8bit_indirect2_tester );
-    create_test( "cpu_move_16bit_indirect", &test_cpu_move_16bit_indirect_payload, &test_cpu_move_16bit_indirect_tester );
-    create_test( "cpu_move_16bit_indirect2", &test_cpu_move_16bit_indirect2_payload, &test_cpu_move_16bit_indirect2_tester );
-    create_test( "cpu_move_32bit_indirect", &test_cpu_move_32bit_indirect_payload, &test_cpu_move_32bit_indirect_tester );
-    create_test( "cpu_move_32bit_indirect2", &test_cpu_move_32bit_indirect2_payload, &test_cpu_move_32bit_indirect2_tester );
-    // // // // to be adapted on target charset create_test( "cpu_uppercase", &test_cpu_uppercase_payload, &test_cpu_uppercase_tester );
-    // // // // to be adapted on target charset create_test( "cpu_lowercase", &test_cpu_lowercase_payload, &test_cpu_lowercase_tester );
-    create_test( "cpu_convert_string_into_16bit", &test_cpu_convert_string_into_16bit_payload, &test_cpu_convert_string_into_16bit_tester );
-    create_test( "cpu_flip", &test_cpu_flip_payload, &test_cpu_flip_tester );
-    create_test( "cpu_bit_check", &test_cpu_bit_check_payload, &test_cpu_bit_check_tester );
-    create_test( "cpu_bit_checkB", &test_cpu_bit_check_payloadB, &test_cpu_bit_check_testerB );
-    create_test( "cpu_dsdefine", &test_cpu_dsdefine_payload, &test_cpu_dsdefine_tester );
-    create_test( "cpu_dsalloc", &test_cpu_dsalloc_payload, &test_cpu_dsalloc_tester );
-    create_test( "cpu_dsfree", &test_cpu_dsfree_payload, &test_cpu_dsfree_tester );
-    create_test( "cpu_dswrite B", &test_cpu_dswrite_payloadB, &test_cpu_dswrite_testerB );
-    create_test( "cpu_dswrite C", &test_cpu_dswrite_payloadC, &test_cpu_dswrite_testerC );
-    create_test( "cpu_dsresize", &test_cpu_dsresize_payload, &test_cpu_dsresize_tester );
-    create_test( "cpu_sqroot", &test_cpu_sqroot_payload, &test_cpu_sqroot_tester );
+    // // to be adapted (false negative) create_test( "cpu_bits_to_string", &test_cpu_bits_to_string_payload, &test_cpu_bits_to_string_tester );    
+    // // to be adapted (false negative) create_test( "cpu_bits_to_string32", &test_cpu_bits_to_string32_payload, &test_cpu_bits_to_string32_tester );    
+    // create_test( "cpu_dswrite", &test_cpu_dswrite_payload, &test_cpu_dswrite_tester );    
+    // create_test( "cpu_dsgc", &test_cpu_dsgc_payload, &test_cpu_dsgc_tester );    
+    // // to be adapted not using DSTRING  create_test( "cpu_dsgc A", &test_cpu_dsgc_payloadA, &test_cpu_dsgc_testerA );    
+    // // to be adapted not using DSTRING  create_test( "cpu_dsgc B", &test_cpu_dsgc_payloadB, &test_cpu_dsgc_testerB );    
+    // create_test( "cpu_logical_and_8bit", &test_cpu_logical_and_8bit_payload, &test_cpu_logical_and_8bit_tester );    
+    // create_test( "cpu_logical_not_8bit", &test_cpu_logical_not_8bit_payload, &test_cpu_logical_not_8bit_tester );    
+    // create_test( "cpu_and_8bit", &test_cpu_and_8bit_payload, &test_cpu_and_8bit_tester );    
+    // create_test( "cpu_or_8bit", &test_cpu_or_8bit_payload, &test_cpu_or_8bit_tester );    
+    // create_test( "cpu_not_8bit", &test_cpu_not_8bit_payload, &test_cpu_not_8bit_tester );    
+    // create_test( "cpu_and_16bit", &test_cpu_and_16bit_payload, &test_cpu_and_16bit_tester );    
+    // create_test( "cpu_or_16bit", &test_cpu_or_16bit_payload, &test_cpu_or_16bit_tester );    
+    // create_test( "cpu_not_16bit", &test_cpu_not_16bit_payload, &test_cpu_not_16bit_tester );    
+    // create_test( "cpu_and_32bit", &test_cpu_and_32bit_payload, &test_cpu_and_32bit_tester );    
+    // create_test( "cpu_or_32bit", &test_cpu_or_32bit_payload, &test_cpu_or_32bit_tester );    
+    // create_test( "cpu_not_32bit", &test_cpu_not_16bit_payload, &test_cpu_not_16bit_tester );    
+    // create_test( "cpu_bit_check_extended", &test_cpu_bit_check_extended_payload, &test_cpu_bit_check_extended_tester );    
+    // create_test( "cpu_bit_check_extended B", &test_cpu_bit_check_extended_payloadB, &test_cpu_bit_check_extended_testerB );
+    // create_test( "cpu_less_than_8bit", &test_cpu_less_than_8bit_payload, &test_cpu_less_than_8bit_tester );    
+    // create_test( "cpu_less_than_16bit A", &test_cpu_less_than_16bit_payload, &test_cpu_less_than_16bit_tester );    
+    // create_test( "cpu_less_than_16bit B", &test_cpu_less_than_16bit_payloadB, &test_cpu_less_than_16bit_testerB );    
+    // create_test( "cpu_less_than_32bit", &test_cpu_less_than_32bit_payload, &test_cpu_less_than_32bit_tester );    
+    // create_test( "cpu_greater_than_8bit", &test_cpu_greater_than_8bit_payload, &test_cpu_greater_than_8bit_tester );    
+    // create_test( "cpu_greater_than_16bit", &test_cpu_greater_than_16bit_payload, &test_cpu_greater_than_16bit_tester );    
+    // create_test( "cpu_greater_than_32bit", &test_cpu_greater_than_32bit_payload, &test_cpu_greater_than_32bit_tester );    
+    // create_test( "cpu_math_div2_8bit", &test_cpu_math_div2_8bit_payload, &test_cpu_math_div2_8bit_tester );
+    // create_test( "cpu_math_div2_const_16bit", &test_cpu_math_div2_const_16bit_payload, &test_cpu_math_div2_const_16bit_tester );
+    // create_test( "cpu_math_div2_const_32bit", &test_cpu_math_div2_const_32bit_payload, &test_cpu_math_div2_const_32bit_tester );
+    // create_test( "cpu_math_div2_const_8bit", &test_cpu_math_div2_const_8bit_payload, &test_cpu_math_div2_const_8bit_tester );
+    // create_test( "cpu_math_double_16bit", &test_cpu_math_double_16bit_payload, &test_cpu_math_double_16bit_tester );
+    // create_test( "cpu_math_double_32bit", &test_cpu_math_double_32bit_payload, &test_cpu_math_double_32bit_tester );
+    // create_test( "cpu_math_double_8bit", &test_cpu_math_double_8bit_payload, &test_cpu_math_double_8bit_tester );
+    // create_test( "cpu_math_mul_8bit_to_16bit", &test_cpu_math_mul_8bit_to_16bit_payload, &test_cpu_math_mul_8bit_to_16bit_tester );
+    // create_test( "cpu_math_mul_16bit_to_32bit A", &test_cpu_math_mul_16bit_to_32bit_payload, &test_cpu_math_mul_16bit_to_32bit_tester );
+    // create_test( "cpu_math_mul_16bit_to_32bit B", &test_cpu_math_mul_16bit_to_32bit_payloadB, &test_cpu_math_mul_16bit_to_32bit_testerB );
+    // create_test( "cpu_math_div_8bit_to_8bit", &test_cpu_math_div_8bit_to_8bit_payload, &test_cpu_math_div_8bit_to_8bit_tester );
+    // create_test( "cpu_math_div_16bit_to_16bit A", &test_cpu_math_div_16bit_to_16bit_payload, &test_cpu_math_div_16bit_to_16bit_tester );
+    // create_test( "cpu_math_div_16bit_to_16bit B", &test_cpu_math_div_16bit_to_16bit_payloadB, &test_cpu_math_div_16bit_to_16bit_testerB );
+    // create_test( "cpu_math_div_16bit_to_16bit C", &test_cpu_math_div_16bit_to_16bit_payloadC, &test_cpu_math_div_16bit_to_16bit_testerC );
+    // create_test( "cpu_math_div_16bit_to_16bit D", &test_cpu_math_div_16bit_to_16bit_payloadD, &test_cpu_math_div_16bit_to_16bit_testerD );
+    // create_test( "cpu_math_mul2_const_16bit", &test_cpu_math_mul2_const_16bit_payload, &test_cpu_math_mul2_const_16bit_tester );
+    // create_test( "cpu_math_mul2_const_32bit", &test_cpu_math_mul2_const_32bit_payload, &test_cpu_math_mul2_const_32bit_tester );
+    // create_test( "cpu_math_mul2_const_8bit", &test_cpu_math_mul2_const_8bit_payload, &test_cpu_math_mul2_const_8bit_tester );
+    // create_test( "cpu_number_to_string_payload", &test_cpu_number_to_string_payload, &test_cpu_number_to_string_tester );
+    // create_test( "cpu_number_to_string_payloadB", &test_cpu_number_to_string_payloadB, &test_cpu_number_to_string_testerB );
+    // create_test( "cpu_number_to_string_payloadC", &test_cpu_number_to_string_payloadC, &test_cpu_number_to_string_testerC );
+    // create_test( "cpu_number_to_string_payloadD", &test_cpu_number_to_string_payloadD, &test_cpu_number_to_string_testerD );
+    // create_test( "cpu_number_to_string_payloadE", &test_cpu_number_to_string_payloadE, &test_cpu_number_to_string_testerE );
+    // create_test( "cpu_peek", &test_cpu_peek_payload, &test_cpu_peek_tester );
+    // create_test( "cpu_poke", &test_cpu_poke_payload, &test_cpu_poke_tester );
+    // create_test( "cpu_move_8bit", &test_cpu_move_8bit_payload, &test_cpu_move_8bit_tester );
+    // create_test( "cpu_fill_blocks", &test_cpu_fill_blocks_payload, &test_cpu_fill_blocks_tester );
+    // create_test( "cpu_fill", &test_cpu_fill_payload, &test_cpu_fill_tester );
+    // create_test( "cpu_compare_8bit", &test_cpu_compare_8bit_payload, &test_cpu_compare_8bit_tester );
+    // create_test( "cpu_math_add_8bit", &test_cpu_math_add_8bit_payload, &test_cpu_math_add_8bit_tester );
+    // create_test( "cpu_math_sub_8bit", &test_cpu_math_sub_8bit_payload, &test_cpu_math_sub_8bit_tester );
+    // create_test( "cpu_math_complement_const_8bit", &test_cpu_math_complement_const_8bit_payload, &test_cpu_math_complement_const_8bit_tester );
+    // create_test( "cpu_math_and_const_8bit", &test_cpu_math_and_const_8bit_payload, &test_cpu_math_and_const_8bit_tester );
+    // create_test( "cpu_move_16bit", &test_cpu_move_16bit_payload, &test_cpu_move_16bit_tester );
+    // create_test( "cpu_addressof_16bit", &test_cpu_addressof_16bit_payload, &test_cpu_addressof_16bit_tester );
+    // create_test( "cpu_compare_16bit", &test_cpu_compare_16bit_payload, &test_cpu_compare_16bit_tester );
+    // create_test( "cpu_math_add_16bit", &test_cpu_math_add_16bit_payload, &test_cpu_math_add_16bit_tester );
+    // create_test( "cpu_math_add_16bit_with_16bit", &test_cpu_math_add_16bit_with_16bit_payload, &test_cpu_math_add_16bit_with_16bit_tester );
+    // create_test( "cpu_math_add_16bit_with_8bit", &test_cpu_math_add_16bit_with_8bit_payload, &test_cpu_math_add_16bit_with_8bit_tester );
+    // create_test( "cpu_math_sub_16bit", &test_cpu_math_sub_16bit_payload, &test_cpu_math_sub_16bit_tester );
+    // create_test( "cpu_math_sub_16bit_with_8bit", &test_cpu_math_sub_16bit_with_8bit_payload, &test_cpu_math_sub_16bit_with_8bit_tester );
+    // create_test( "cpu_math_complement_const_16bit", &test_cpu_math_complement_const_16bit_payload, &test_cpu_math_complement_const_16bit_tester );
+    // create_test( "cpu_math_and_const_16bit", &test_cpu_math_and_const_16bit_payload, &test_cpu_math_and_const_16bit_tester );
+    // create_test( "cpu_move_32bit", &test_cpu_move_32bit_payload, &test_cpu_move_32bit_tester );
+    // create_test( "cpu_store_32bit", &test_cpu_store_32bit_payload, &test_cpu_store_32bit_tester );
+    // create_test( "cpu_compare_32bit", &test_cpu_compare_32bit_payload, &test_cpu_compare_32bit_tester );
+    // create_test( "cpu_math_add_32bit", &test_cpu_math_add_32bit_payload, &test_cpu_math_add_32bit_tester );
+    // create_test( "cpu_math_sub_32bit", &test_cpu_math_sub_32bit_payload, &test_cpu_math_sub_32bit_tester );
+    // create_test( "cpu_math_complement_const_32bit", &test_cpu_math_complement_const_32bit_payload, &test_cpu_math_complement_const_32bit_tester );
+    // create_test( "cpu_math_and_const_32bit", &test_cpu_math_and_const_32bit_payload, &test_cpu_math_and_const_32bit_tester );
+    // create_test( "cpu_combine_nibbles", &test_cpu_combine_nibbles_payload, &test_cpu_combine_nibbles_tester );
+    // create_test( "cpu_mem_move", &test_cpu_mem_move_payload, &test_cpu_mem_move_tester );
+    // create_test( "cpu_mem_move_size", &test_cpu_mem_move_size_payload, &test_cpu_mem_move_size_tester );
+    // create_test( "cpu_mem_move_direct", &test_cpu_mem_move_direct_payload, &test_cpu_mem_move_direct_tester );
+    // create_test( "cpu_mem_move_direct_size", &test_cpu_mem_move_direct_size_payload, &test_cpu_mem_move_direct_size_tester );
+    // create_test( "cpu_mem_move_direct_indirect_size", &test_cpu_mem_move_direct_indirect_size_payload, &test_cpu_mem_move_direct_indirect_size_tester );
+    // create_test( "cpu_compare_memory", &test_cpu_compare_memory_payload, &test_cpu_compare_memory_tester );
+    // create_test( "cpu_compare_memory_size", &test_cpu_compare_memory_size_payload, &test_cpu_compare_memory_size_tester );
+    // create_test( "cpu_less_than_memory", &test_cpu_less_than_memory_payload, &test_cpu_less_than_memory_tester );
+    // create_test( "cpu_less_than_memory_size", &test_cpu_less_than_memory_size_payload, &test_cpu_less_than_memory_size_tester );
+    // create_test( "cpu_greater_than_memory", &test_cpu_greater_than_memory_payload, &test_cpu_greater_than_memory_tester );
+    // create_test( "cpu_greater_than_memory_size", &test_cpu_greater_than_memory_size_payload, &test_cpu_greater_than_memory_size_tester );
+    // create_test( "cpu_move_8bit_indirect", &test_cpu_move_8bit_indirect_payload, &test_cpu_move_8bit_indirect_tester );
+    // create_test( "cpu_move_8bit_indirect_with_offset", &test_cpu_move_8bit_indirect_with_offset_payload, &test_cpu_move_8bit_indirect_with_offset_tester );
+    // create_test( "cpu_move_8bit_with_offset", &test_cpu_move_8bit_with_offset_payload, &test_cpu_move_8bit_with_offset_tester );
+    // create_test( "cpu_move_8bit_indirect_with_offset2", &test_cpu_move_8bit_indirect_with_offset2_payload, &test_cpu_move_8bit_indirect_with_offset2_tester );
+    // create_test( "cpu_move_8bit_with_offset2", &test_cpu_move_8bit_with_offset2_payload, &test_cpu_move_8bit_with_offset2_tester );
+    // create_test( "cpu_move_8bit_indirect2_payload", &test_cpu_move_8bit_indirect2_payload, &test_cpu_move_8bit_indirect2_tester );
+    // create_test( "cpu_move_16bit_indirect", &test_cpu_move_16bit_indirect_payload, &test_cpu_move_16bit_indirect_tester );
+    // create_test( "cpu_move_16bit_indirect2", &test_cpu_move_16bit_indirect2_payload, &test_cpu_move_16bit_indirect2_tester );
+    // create_test( "cpu_move_32bit_indirect", &test_cpu_move_32bit_indirect_payload, &test_cpu_move_32bit_indirect_tester );
+    // create_test( "cpu_move_32bit_indirect2", &test_cpu_move_32bit_indirect2_payload, &test_cpu_move_32bit_indirect2_tester );
+    // // // // // to be adapted on target charset create_test( "cpu_uppercase", &test_cpu_uppercase_payload, &test_cpu_uppercase_tester );
+    // // // // // to be adapted on target charset create_test( "cpu_lowercase", &test_cpu_lowercase_payload, &test_cpu_lowercase_tester );
+    // create_test( "cpu_convert_string_into_16bit", &test_cpu_convert_string_into_16bit_payload, &test_cpu_convert_string_into_16bit_tester );
+    // create_test( "cpu_flip", &test_cpu_flip_payload, &test_cpu_flip_tester );
+    // create_test( "cpu_bit_check", &test_cpu_bit_check_payload, &test_cpu_bit_check_tester );
+    // create_test( "cpu_bit_checkB", &test_cpu_bit_check_payloadB, &test_cpu_bit_check_testerB );
+    // create_test( "cpu_dsdefine", &test_cpu_dsdefine_payload, &test_cpu_dsdefine_tester );
+    // create_test( "cpu_dsalloc", &test_cpu_dsalloc_payload, &test_cpu_dsalloc_tester );
+    // create_test( "cpu_dsfree", &test_cpu_dsfree_payload, &test_cpu_dsfree_tester );
+    // create_test( "cpu_dswrite B", &test_cpu_dswrite_payloadB, &test_cpu_dswrite_testerB );
+    // create_test( "cpu_dswrite C", &test_cpu_dswrite_payloadC, &test_cpu_dswrite_testerC );
+    // create_test( "cpu_dsresize", &test_cpu_dsresize_payload, &test_cpu_dsresize_tester );
+    // create_test( "cpu_sqroot", &test_cpu_sqroot_payload, &test_cpu_sqroot_tester );
+    create_test( "cpu_random_8bit", &test_cpu_random_8bit_payload, &test_cpu_random_8bit_tester );
+
 
 }
