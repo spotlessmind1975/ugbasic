@@ -90,5 +90,5 @@ CLINEY equ $4c
 
 BITSTOCONVERT equ $4a
 
-XCURSYS equ $D3
-YCURSYS equ $D6
+XCURSYS fcb 0
+YCURSYS fcb 0
