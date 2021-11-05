@@ -15,6 +15,5 @@ REM Questo esempio è stato aggiunto per controllare il fix #188.
       x=RND(SCREEN WIDTH)
       y=RND(SCREEN HEIGHT)
       c=RND(SCREEN COLORS)
-      PRINT x,y,c
       PLOT x,y,c
    LOOP
