@@ -2742,9 +2742,9 @@ void cpu6809_random( Environment * _environment, char * _seed, char * _entropy )
         outline1( "LDA %s", _entropy );
         outline0( "STA <PATTERN" );
         outline0( "JSR CPURANDOM0" );
-        outline0( "LDD <CPURANDOMSEED" );
+        outline0( "LDD <CPURANDOM_SEED" );
         outline1( "STD %s", _seed );
-        outline0( "LDD <CPURANDOMSEED+2" );
+        outline0( "LDD <CPURANDOM_SEED+2" );
         outline1( "STD %s+2", _seed );
 
     done( )
