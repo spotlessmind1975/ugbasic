@@ -230,4 +230,18 @@ void variable_cleanup( Environment * _environment ) {
            actual = actual->next;
         }
     }    
+
+    if ( _environment->descriptors ) {
+        outhead0(".segment \"UDCCHAR\"" );
+        int i=0,j=0;
+        for(i=0;i<256;++i) {
+            outline1("; $%2.2x ", i);
+            out0(".byte " );
+            for(j=0;j<7;++j) {
+                out1("$%2.2x,", ((unsigned char)_environment->descriptors->data[i].data[j]) );
+            }
+            outline1("$%2.2x", ((unsigned char)_environment->descriptors->data[i].data[j]) );
+        }
+    }    
+
 }
