@@ -53,7 +53,7 @@ VIC2STARTUPL1:
     ; SET_CHARSET(MR_TILESET_DEFAULT);
     LDA $d018
     AND #$f1
-    ORA #$04
+    ORA #$08
     STA $d018
 
     ; DISABLE BASIC ROM    
