@@ -93,7 +93,7 @@ int frmt( Environment * _environment, char * ptr, char size,char* out)
 }
 
 // FIX #173
-#if defined(__BYTE_ORDER) && __BYTE_ORDER == __BIG_ENDIAN || \
+#if ( defined(__BYTE_ORDER) && __BYTE_ORDER == __BIG_ENDIAN ) || \
     defined(__BIG_ENDIAN__) || \
     defined(__ARMEB__) || \
     defined(__THUMBEB__) || \
@@ -105,12 +105,7 @@ int frmt( Environment * _environment, char * ptr, char size,char* out)
 		return *num;
 	}
 
-#elif defined(__BYTE_ORDER) && __BYTE_ORDER == __LITTLE_ENDIAN || \
-    defined(__LITTLE_ENDIAN__) || \
-    defined(__ARMEL__) || \
-    defined(__THUMBEL__) || \
-    defined(__AARCH64EL__) || \
-    defined(_MIPSEL) || defined(__MIPSEL) || defined(__MIPSEL__)
+#else 
 
 	void swapen(unsigned short *num)
 	{
@@ -119,10 +114,6 @@ int frmt( Environment * _environment, char * ptr, char size,char* out)
 	*num=swapped;
 	}
 
-#else
-
-	#error "Cannot define swapen() since the byte ordering is unknown!"
-	
 #endif
 
 void crc ( unsigned char * data, int l,unsigned int   * old)
