@@ -115,10 +115,10 @@ void z80_move_8bit_with_offset( Environment * _environment, char *_source, char 
 void z80_peek( Environment * _environment, char * _address, char * _target );
 void z80_poke( Environment * _environment, char * _address, char * _value );
 void z80_port_out( Environment * _environment, char * _port, char * _value );
-void z80_random( Environment * _environment, char * _seed, char * _entropy );
-void z80_random_16bit( Environment * _environment, char * _seed, char * _entropy, char * _result );
-void z80_random_32bit( Environment * _environment, char * _seed, char * _entropy, char * _result );
-void z80_random_8bit( Environment * _environment, char * _seed, char * _entropy, char * _result );
+void z80_random( Environment * _environment, char * _entropy );
+void z80_random_16bit( Environment * _environment, char * _entropy, char * _result );
+void z80_random_32bit( Environment * _environment, char * _entropy, char * _result );
+void z80_random_8bit( Environment * _environment, char * _entropy, char * _result );
 void z80_store_16bit( Environment * _environment, char *_source, int _value );
 void z80_store_32bit( Environment * _environment, char *_source, int _value );
 void z80_store_8bit( Environment * _environment, char *_source, int _value );
@@ -265,10 +265,10 @@ void z80_protothread_current( Environment * _environment, char * _current );
 #define cpu_move_8bit( _environment, _source, _destination  ) z80_move_8bit( _environment, _source, _destination  )
 #define cpu_peek( _environment,  _address,  _target  ) z80_peek( _environment,  _address,  _target  )
 #define cpu_poke( _environment,  _address,  _value  ) z80_poke( _environment,  _address,  _value  )
-#define cpu_random( _environment,  _seed,  _entropy  ) z80_random( _environment,  _seed,  _entropy  )
-#define cpu_random_16bit( _environment,  _seed,  _entropy,  _result  ) z80_random_16bit( _environment,  _seed,  _entropy,  _result  )
-#define cpu_random_32bit( _environment,  _seed,  _entropy,  _result  ) z80_random_32bit( _environment,  _seed,  _entropy,  _result  )
-#define cpu_random_8bit( _environment,  _seed,  _entropy,  _result  ) z80_random_8bit( _environment,  _seed,  _entropy,  _result  )
+#define cpu_random( _environment,  _entropy  ) z80_random( _environment,  _entropy  )
+#define cpu_random_16bit( _environment,  _entropy,  _result  ) z80_random_16bit( _environment,  _entropy,  _result  )
+#define cpu_random_32bit( _environment,  _entropy,  _result  ) z80_random_32bit( _environment,  _entropy,  _result  )
+#define cpu_random_8bit( _environment,  _entropy,  _result  ) z80_random_8bit( _environment,  _entropy,  _result  )
 #define cpu_store_16bit( _environment, _source, _value  ) z80_store_16bit( _environment, _source, _value  )
 #define cpu_store_32bit( _environment, _source, _value  ) z80_store_32bit( _environment, _source, _value  )
 #define cpu_store_8bit( _environment, _source, _value  ) z80_store_8bit( _environment, _source, _value  )

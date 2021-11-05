@@ -85,13 +85,13 @@ Variable * random_value( Environment * _environment, VariableType _type ) {
 
     switch( VT_BITWIDTH( _type ) ) {
         case 8:
-            cpu6502_random_8bit( _environment, seed->realName, "$FF1D", result->realName );
+            cpu6502_random_8bit( _environment, "$FF1D", result->realName );
             break;
         case 16:
-            cpu6502_random_16bit( _environment, seed->realName, "$FF1D", result->realName );
+            cpu6502_random_16bit( _environment, "$FF1D", result->realName );
             break;
         case 32:
-            cpu6502_random_32bit( _environment, seed->realName, "$FF1D", result->realName );
+            cpu6502_random_32bit( _environment, "$FF1D", result->realName );
             break;
     }
 

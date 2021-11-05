@@ -118,10 +118,10 @@ void cpu6809_move_32bit( Environment * _environment, char *_source, char *_desti
 void cpu6809_move_8bit( Environment * _environment, char *_source, char *_destination );
 void cpu6809_peek( Environment * _environment, char * _address, char * _target );
 void cpu6809_poke( Environment * _environment, char * _address, char * _value );
-void cpu6809_random( Environment * _environment, char * _seed, char * _entropy );
-void cpu6809_random_16bit( Environment * _environment, char * _seed, char * _entropy, char * _result );
-void cpu6809_random_32bit( Environment * _environment, char * _seed, char * _entropy, char * _result );
-void cpu6809_random_8bit( Environment * _environment, char * _seed, char * _entropy, char * _result );
+void cpu6809_random( Environment * _environment, char * _entropy );
+void cpu6809_random_16bit( Environment * _environment, char * _entropy, char * _result );
+void cpu6809_random_32bit( Environment * _environment, char * _entropy, char * _result );
+void cpu6809_random_8bit( Environment * _environment, char * _entropy, char * _result );
 void cpu6809_store_16bit( Environment * _environment, char *_source, int _value );
 void cpu6809_store_32bit( Environment * _environment, char *_source, int _value );
 void cpu6809_store_8bit( Environment * _environment, char *_source, int _value );
@@ -272,10 +272,10 @@ void cpu6809_protothread_current( Environment * _environment, char * _current );
 #define cpu_move_8bit( _environment, _source, _destination  ) cpu6809_move_8bit( _environment, _source, _destination  )
 #define cpu_peek( _environment,  _address,  _target  ) cpu6809_peek( _environment,  _address,  _target  )
 #define cpu_poke( _environment,  _address,  _value  ) cpu6809_poke( _environment,  _address,  _value  )
-#define cpu_random( _environment,  _seed,  _entropy  ) cpu6809_random( _environment,  _seed,  _entropy  )
-#define cpu_random_16bit( _environment,  _seed,  _entropy,  _result  ) cpu6809_random_16bit( _environment,  _seed,  _entropy,  _result  )
-#define cpu_random_32bit( _environment,  _seed,  _entropy,  _result  ) cpu6809_random_32bit( _environment,  _seed,  _entropy,  _result  )
-#define cpu_random_8bit( _environment,  _seed,  _entropy,  _result  ) cpu6809_random_8bit( _environment,  _seed,  _entropy,  _result  )
+#define cpu_random( _environment,  _entropy  ) cpu6809_random( _environment,  _entropy  )
+#define cpu_random_16bit( _environment,  _entropy,  _result  ) cpu6809_random_16bit( _environment,  _entropy,  _result  )
+#define cpu_random_32bit( _environment,  _entropy,  _result  ) cpu6809_random_32bit( _environment,  _entropy,  _result  )
+#define cpu_random_8bit( _environment,  _entropy,  _result  ) cpu6809_random_8bit( _environment,  _entropy,  _result  )
 #define cpu_store_16bit( _environment, _source, _value  ) cpu6809_store_16bit( _environment, _source, _value  )
 #define cpu_store_32bit( _environment, _source, _value  ) cpu6809_store_32bit( _environment, _source, _value  )
 #define cpu_store_8bit( _environment, _source, _value  ) cpu6809_store_8bit( _environment, _source, _value  )

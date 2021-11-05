@@ -1904,9 +1904,9 @@ void z80_end( Environment * _environment ) {
 
 }
 
-void z80_random( Environment * _environment, char * _seed, char * _entropy ) {
+void z80_random( Environment * _environment, char * _entropy ) {
 
-    outline1("LD HL, (%s)", _seed);
+    outline0("LD HL, CPURANDOM_SEED");
     outline0("LD B, (HL)");
     outline0("INC HL");
     outline0("LD A, (HL)");
@@ -1922,47 +1922,47 @@ void z80_random( Environment * _environment, char * _seed, char * _entropy ) {
     outline0("RL D");
     outline0("INC L");
     outline0("ADD HL, BC");
-    outline1("LD (%s), HL", _seed);
-    outline1("LD HL, (%s+2)", _seed);
+    outline0("LD CPURANDOM_SEED, HL");
+    outline0("LD HL, CPURANDOM_SEED+2");
     outline0("ADD HL, DE");
-    outline1("LD (%s+1), HL", _seed);
+    outline0("LD CPURANDOM_SEED+1, HL");
     outline0("EX DE, HL");
-    outline1("LD HL, (%s)", _seed);
+    outline0("LD HL, CPURANDOM_SEED");
     outline1("LD DE, (%s)", _entropy);
     outline0("ADD HL, HL");
     outline0("RL C");
     outline0("RL B");
-    outline1("LD (%s+1), BC", _seed);
+    outline0("LD CPURANDOM_SEED+1, BC");
     outline0("SBC A, A");
     outline0("AND %11000101");
     outline0("XOR L");
     outline0("LD L, A");
-    outline1("LD (%s+1), HL", _seed);
+    outline0("LD CPURANDOM_SEED+1, HL");
     outline0("EX DE, HL");
     outline0("ADD HL, BC");
 
 }
 
-void z80_random_8bit( Environment * _environment, char * _seed, char * _entropy, char * _result ) {
+void z80_random_8bit( Environment * _environment, char * _entropy, char * _result ) {
 
-    z80_random( _environment, _seed, _entropy );
+    z80_random( _environment, _entropy );
 
     outline0("LD A, H" );
     outline1("LD (%s), A", _result );
 
 }
 
-void z80_random_16bit( Environment * _environment, char * _seed, char * _entropy, char * _result ) {
+void z80_random_16bit( Environment * _environment, char * _entropy, char * _result ) {
 
-    z80_random( _environment, _seed, _entropy );
+    z80_random( _environment, _entropy );
 
     outline1("LD (%s), HL", _result );
 
 }
 
-void z80_random_32bit( Environment * _environment, char * _seed, char * _entropy, char * _result ) {
+void z80_random_32bit( Environment * _environment, char * _entropy, char * _result ) {
 
-    z80_random( _environment, _seed, _entropy );
+    z80_random( _environment, _entropy );
 
     outline1("LD (%s), HL", _result );
     outline1("LD (%s+2), BC", _result );

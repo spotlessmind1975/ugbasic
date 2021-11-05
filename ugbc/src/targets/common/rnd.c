@@ -77,7 +77,7 @@ Variable * rnd( Environment * _environment, char * _value ) {
 
     Variable * value = variable_retrieve( _environment, _value );
 
-    Variable * result = random_value( _environment, value->type );
+    Variable * result;
 
     Variable * bresult = variable_temporary( _environment, VT_BYTE, "(temporary for RND)");
 
@@ -86,7 +86,7 @@ Variable * rnd( Environment * _environment, char * _value ) {
 
     Variable * zero = variable_temporary( _environment, value->type, "(0)" );
     variable_store( _environment, zero->name, 0 );
-    
+
     MAKE_LABEL
 
     char endLabel[MAX_TEMPORARY_STORAGE]; sprintf(endLabel, "%send", label );
@@ -95,6 +95,8 @@ Variable * rnd( Environment * _environment, char * _value ) {
     if_then( _environment, variable_compare( _environment, value->name, zero->name )->name );
         cpu_jump( _environment, lastRandomLabel );
     end_if_then( _environment );
+
+    result = random_value( _environment, value->type );
 
     switch( VT_BITWIDTH( value->type ) ) {
         case 32:
