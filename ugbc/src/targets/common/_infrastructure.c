@@ -3606,6 +3606,7 @@ Questa funzione restituisce il numero di caratteri memorizzato in una stringa.
 @syntax = LEN( [text] )
 
 @example x = LEN( "TEST" )
+
 @usedInExample strings_len_01.bas
 
 @target all
@@ -3949,6 +3950,148 @@ Variable * variable_bin( Environment * _environment, char * _value, char * _digi
     
 }
 
+/**
+ * @brief Emit code for <b>HAS BIT / BIT(...)</b>
+ * 
+ * @param _environment Current calling environment
+ * @param _value Value to check at bit level
+ * @param _position Position to check at bit level
+ * @return Variable* Bit value for that position
+ */
+/* <usermanual>
+@keyword HAS BIT
+
+@english
+This instruction allows you to check if a certain bit in a certain position (0 based)
+in a variable or expression is set to 0 or to 1. If that certain bit is set to 0, 
+the instruction will return the value `FALSE`. Otherwise, the statement will return `TRUE`.
+
+@italian
+Questa istruzione permette di verificare se un certo bit in una certa posizione 
+(0 based) in una variabile o un'espressione è impostato su 0 oppure a 1. 
+Se quel certo bit è impostato su 0, l'istruzione restituirà il valore `FALSE`. 
+Altrimenti, l'istruzione restituirà il valore `TRUE`.
+
+@syntax = value HAS BIT position
+
+@example IF x HAS BIT 2 THEN: PRINT "bit 2 is 1!": ENDIF
+
+@usedInExample controls_joy_02.bas
+@usedInExample controls_keyboard_06.bas
+@usedInExample screens_bitmap_01.bas
+@usedInExample screens_tilemap_01.bas
+
+@seeAlso HAS NOT BIT
+@seeAlso IS
+@seeAlso IS NOT
+
+@target all
+ </usermanual> */
+/* <usermanual>
+@keyword HAS NOT BIT
+
+@english
+This instruction allows you to check if a certain bit in a certain position (0 based)
+in a variable or expression is set to 0 or to 1. If that certain bit is set to 0, 
+the instruction will return the value `TRUE`. Otherwise, the statement will return `FALSE`.
+
+@italian
+Questa istruzione permette di verificare se un certo bit in una certa posizione 
+(0 based) in una variabile o un'espressione è impostato su 0 oppure a 1. 
+Se quel certo bit è impostato su 0, l'istruzione restituirà il valore `TRUE`. 
+Altrimenti, l'istruzione restituirà il valore `FALSE`.
+
+@syntax = value HAS NOT BIT position
+
+@example IF x HAS NOT BIT 2 THEN: PRINT "bit 2 is 0": ENDIF
+
+@usedInExample controls_joy_02.bas
+@usedInExample controls_keyboard_05.bas
+
+@seeAlso HAS NOT BIT
+@seeAlso IS
+@seeAlso IS NOT
+
+@target all
+ </usermanual> */
+/* <usermanual>
+@keyword IS
+
+@english
+This instruction allows you to check if a certain bit in a certain position (0 based)
+in a variable or expression is set to 0 or to 1. If that certain bit is set to 0, 
+the instruction will return the value `FALSE`. Otherwise, the statement will return `TRUE`.
+
+@italian
+Questa istruzione permette di verificare se un certo bit in una certa posizione 
+(0 based) in una variabile o un'espressione è impostato su 0 oppure a 1. 
+Se quel certo bit è impostato su 0, l'istruzione restituirà il valore `FALSE`. 
+Altrimenti, l'istruzione restituirà il valore `TRUE`.
+
+@syntax = value IS position
+
+@example IF x IS 2 THEN: PRINT "bit 2 is 1!": ENDIF
+
+@usedInExample controls_joy_02.bas
+@usedInExample controls_keyboard_03.bas
+
+@seeAlso IS NOT
+@seeAlso HAS BIT
+@seeAlso HAS NOT BIT
+
+@target all
+ </usermanual> */
+/* <usermanual>
+@keyword IS NOT
+
+@english
+This instruction allows you to check if a certain bit in a certain position (0 based)
+in a variable or expression is set to 0 or to 1. If that certain bit is set to 0, 
+the instruction will return the value `TRUE`. Otherwise, the statement will return `FALSE`.
+
+@italian
+Questa istruzione permette di verificare se un certo bit in una certa posizione 
+(0 based) in una variabile o un'espressione è impostato su 0 oppure a 1. 
+Se quel certo bit è impostato su 0, l'istruzione restituirà il valore `TRUE`. 
+Altrimenti, l'istruzione restituirà il valore `FALSE`.
+
+@syntax = value IS NOT position
+
+@example IF x IS NOT 2 THEN: PRINT "bit 2 is 0": ENDIF
+
+@usedInExample controls_joy_02.bas
+@usedInExample controls_keyboard_05.bas
+
+@seeAlso IS BIT
+@seeAlso HAS BIT
+@seeAlso HAS NOT BIT
+
+@target all
+ </usermanual> */
+/* <usermanual>
+@keyword BIT...OF
+
+@english
+This instruction allows you to check if a certain bit in a certain position (0 based)
+in a variable or expression is set to 0 or to 1. If that certain bit is set to 0, 
+the instruction will return the value `FALSE`. Otherwise, the statement will return `TRUE`.
+
+@italian
+Questa istruzione permette di verificare se un certo bit in una certa posizione 
+(0 based) in una variabile o un'espressione è impostato su 0 oppure a 1. 
+Se quel certo bit è impostato su 0, l'istruzione restituirà il valore `FALSE`. 
+Altrimenti, l'istruzione restituirà il valore `TRUE`.
+
+@syntax = BIT position OF value
+
+@example IF BIT 2 OF x THEN: PRINT "bit 2 is 1!": ENDIF
+
+@seeAlso IS NOT
+@seeAlso HAS BIT
+@seeAlso HAS NOT BIT
+
+@target all
+ </usermanual> */
 Variable * variable_bit( Environment * _environment, char * _value, char * _position ) {
     Variable * value = variable_retrieve_or_define( _environment, _value, VT_DWORD, 0 );
     Variable * position = variable_retrieve_or_define( _environment, _position, VT_BYTE, 1 );
@@ -4230,6 +4373,8 @@ char * image_load_asserts( Environment * _environment, char * _filename ) {
     strcat( lookedFilename, "/d64" );
 #elif __pc128op__ 
     strcat( lookedFilename, "/pc128op" );
+#elif __vic20__ 
+    strcat( lookedFilename, "/vic20" );
 #endif
     strcat( lookedFilename, lookedExtension );
 
