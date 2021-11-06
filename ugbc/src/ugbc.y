@@ -205,34 +205,13 @@ const_factor:
           $$ = v->valueBuffer[0];
       }
       | FRAMES OP expr CP {
-          Variable * v = variable_retrieve( _environment, $3 );
-          if ( v->type != VT_IMAGES ) {
-              CRITICAL_NOT_IMAGES( v->name );
-          }
-          if ( !v->valueBuffer ) {
-              CRITICAL_NOT_ASSIGNED_IMAGE( v->name );
-          }
-          $$ = v->frameCount;
+          $$ = frames( _environment, $3 );
       }
       | IMAGES COUNT OP expr CP {
-          Variable * v = variable_retrieve( _environment, $4 );
-          if ( v->type != VT_IMAGES ) {
-              CRITICAL_NOT_IMAGES( v->name );
-          }
-          if ( !v->valueBuffer ) {
-              CRITICAL_NOT_ASSIGNED_IMAGE( v->name );
-          }
-          $$ = v->frameCount;
+          $$ = frames( _environment, $4 );
       }
       | FRAMES COUNT OP expr CP {
-          Variable * v = variable_retrieve( _environment, $4 );
-          if ( v->type != VT_IMAGES ) {
-              CRITICAL_NOT_IMAGES( v->name );
-          }
-          if ( !v->valueBuffer ) {
-              CRITICAL_NOT_ASSIGNED_IMAGE( v->name );
-          }
-          $$ = v->frameCount;
+          $$ = frames( _environment, $4 );
       }
       | HEIGHT {
           $$ = ((Environment *)_environment)->screenHeight;
@@ -1257,37 +1236,16 @@ exponential:
         variable_store( _environment, $$, ((struct _Environment *)_environment)->fontWidth );
     }
     | IMAGES COUNT OP expr CP {
-        Variable * v = variable_retrieve( _environment, $4 );
-        if ( v->type != VT_IMAGES ) {
-            CRITICAL_NOT_IMAGES( v->name );
-        }
-        if ( !v->valueBuffer ) {
-            CRITICAL_NOT_ASSIGNED_IMAGE( v->name );
-        }
         $$ = variable_temporary( _environment, VT_BYTE, "(frame count)" )->name;
-        variable_store( _environment, $$, v->frameCount );
+        variable_store( _environment, $$, frames( _environment, $4 ) );
     }
     | FRAME COUNT OP expr CP {
-        Variable * v = variable_retrieve( _environment, $4 );
-        if ( v->type != VT_IMAGES ) {
-            CRITICAL_NOT_IMAGES( v->name );
-        }
-        if ( !v->valueBuffer ) {
-            CRITICAL_NOT_ASSIGNED_IMAGE( v->name );
-        }
         $$ = variable_temporary( _environment, VT_BYTE, "(frame count)" )->name;
-        variable_store( _environment, $$, v->frameCount );
+        variable_store( _environment, $$, frames( _environment, $4 ) );
     }
     | FRAMES OP expr CP {
-        Variable * v = variable_retrieve( _environment, $3 );
-        if ( v->type != VT_IMAGES ) {
-            CRITICAL_NOT_IMAGES( v->name );
-        }
-        if ( !v->valueBuffer ) {
-            CRITICAL_NOT_ASSIGNED_IMAGE( v->name );
-        }
         $$ = variable_temporary( _environment, VT_BYTE, "(frame count)" )->name;
-        variable_store( _environment, $$, v->frameCount );
+        variable_store( _environment, $$, frames( _environment, $3 ) );
     }
     | IMAGE WIDTH OP expr CP {
         $$ = image_get_width( _environment, $4 )->name;
