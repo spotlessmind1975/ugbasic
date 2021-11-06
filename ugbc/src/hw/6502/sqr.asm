@@ -15,6 +15,9 @@
 ; variables - must be in RAM
 ; Originally published on http://6502.org/source/integers/root.htm 
 ; Adapted by Marco Spedaletti for ugBASIC   
+;
+; @thirdparts Lee Davison                                       *                                                                             *
+
 
 Numberl		= $F0		; number to find square root of low byte
 Numberh		= Numberl+1	; number to find square root of high byte

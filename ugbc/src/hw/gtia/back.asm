@@ -29,7 +29,7 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                      FILL BACKGROUND COLOR SCREEN  FOR GTIA                 *
+;*                      FILL BACKGROUND COLOR SCREEN FOR GTIA                  *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *

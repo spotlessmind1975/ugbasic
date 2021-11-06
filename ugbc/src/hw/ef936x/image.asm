@@ -29,7 +29,7 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                          IMAGES ROUTINE FOR OLIVETTI PC128 PRODEST          *
+;*                           IMAGES ROUTINE FOR EF936X                         *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *

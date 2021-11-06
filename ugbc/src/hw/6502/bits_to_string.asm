@@ -24,6 +24,7 @@
 ;* Originally published on http://6502.org/source/strings/32bit-to-ascii.html  *
 ;* Adapted by Marco Spedaletti for ugBASIC                                     *
 ;*                                                                             *
+;* @thirdparts BCS Technology Limited                                          *                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;
 ;	CALLING SYNTAX:

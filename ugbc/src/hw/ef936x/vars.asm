@@ -29,7 +29,7 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                       INTERNAL VARIABLES FOR 6847 HARDWARE                  *
+;*                       INTERNAL VARIABLES FOR EF936X HARDWARE                *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
