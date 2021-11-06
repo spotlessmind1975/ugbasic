@@ -42,17 +42,29 @@
  * @brief Emit code for <strong>IMAGE HEIGHT(...)</strong>
  * 
  * @param _environment Current calling environment
- * @param Image to measure.
+ * @param _image Image to measure.
+ * @return The height of the image, in pixels
  */
 /* <usermanual>
 @keyword IMAGE HEIGHT
 
 @english
-The ''IMAGE HEIGHT'' function will allow you to obtain the height of an
-image (in pixels).
+This function allows you to obtain the height of a given ''IMAGE'' or a given
+set of ''IMAGES''. The height is expressed in pixels.
+
+There is also a compile-level function for this keyword, which is called when the value 
+is used to initialize a constant. In this case, the value is that taken from inspecting 
+the instructions at the time of compilation.
 
 @italian
-La funzione ''IMAGE HEIGHT'' permette di ottenere l'altezza di una immagine (in pixel).
+Questa funzione permette di ottenere l'altezza dell'immagine (''IMAGE'') 
+o delle immagini (''IMAGES'') date, espressa in pixel. L'altezza dipende 
+dall'attuale modalità grafica selezionata, e può cambiare in sede di esecuzione.
+
+Di questa parola chiave esiste anche una funzione a livello di compilazione, 
+che viene richiamata quando il valore viene utilizzato per inizializzare una 
+costante. In tal caso, il valore è quello desunto dall'ispezione delle 
+istruzioni al momento della compilazione.
 
 @syntax = IMAGE HEIGHT([image])
 

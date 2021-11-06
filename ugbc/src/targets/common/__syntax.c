@@ -52,3 +52,58 @@ istruzioni al momento della compilazione.
 @target all
 </usermanual> */
 
+/* <usermanual>
+@keyword FONT HEIGHT
+
+@english
+This function allows you to obtain the height of the current font, expressed in pixels. 
+The height depends on the currently selected graphics mode, and it can change at runtime.
+
+There is also a compile-level function for this keyword, which is called when the value 
+is used to initialize a constant. In this case, the value is that taken from inspecting 
+the instructions at the time of compilation.
+
+@italian
+Questa funzione permette di ottenere l'altezza del font corrente, 
+espressa in pixels. L'altezza dipende dall'attuale modalità grafica 
+selezionata, e può cambiare in sede di esecuzione.
+
+Di questa parola chiave esiste anche una funzione a livello di compilazione, 
+che viene richiamata quando il valore viene utilizzato per inizializzare una 
+costante. In tal caso, il valore è quello desunto dall'ispezione delle 
+istruzioni al momento della compilazione.
+
+@syntax = FONT HEIGHT
+
+@example fontSize = FONT HEIGHT
+
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword hash (operator)
+
+@english
+In general, the hash operator (`#`) allows you to indicate the will to refer, 
+explicitly, to a constant rather than to a value mediated by a variable. 
+Without this operator, ugBASIC may decide to make a temporary copy of the 
+value before using it. This can be inefficient. Therefore it is possible to 
+indicate the will to actually refer to the equivalent value. 
+For this reason, this operator works only if it is used with a constant value 
+(eg: an integer) or with the name of a constant.
+
+@italian
+In generale, l'operatore hash (`#`) permette di indicare la volontà di fare riferimento, 
+in modo esplicito, ad una costante piuttosto che ad un valore mediato da una variabile. 
+Senza questo operatore, ugBASIC potrebbe decidere di fare una copia temporanea del valore
+prima di usarlo. Questo può essere inefficiente. Pertanto è possibile indicare la volontà 
+di riferirsi effettivamente al valore. Per questo motivo questo operatore funziona solo 
+se utilizzato con un valore costante (es: un intero) o con il nome di una costante.
+
+@syntax = # [constant]
+
+@example fontSize = #constantSize
+@example fontSize = #42
+
+@target all
+</usermanual> */
