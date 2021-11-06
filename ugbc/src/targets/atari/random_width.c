@@ -38,18 +38,6 @@
  * CODE SECTION 
  ****************************************************************************/
 
-/**
- * @brief Emit ASM code for <b>= RANDOM WIDTH</b>
- * 
- * This function outputs a code suitable for calculating a random width.
- * 
- * @param _environment Current calling environment
- * @return Variable* The random value calculated
- */
-/* <usermanual>
-@keyword RANDOM WIDTH
-@target atari
-</usermanual> */
 Variable * random_width( Environment * _environment ) {
  
     Variable * result1 = random_value( _environment, VT_POSITION );

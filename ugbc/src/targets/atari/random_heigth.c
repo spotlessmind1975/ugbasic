@@ -34,18 +34,6 @@
 
 #include "../../ugbc.h"
 
-/**
- * @brief Emit ASM code for <b>= RANDOM HEIGHT</b>
- * 
- * This function outputs a code suitable for calculating a random height.
- * 
- * @param _environment Current calling environment
- * @return Variable* The random value calculated
- */
-/* <usermanual>
-@keyword RANDOM HEIGHT
-@target atari
-</usermanual> */
 Variable * random_height( Environment * _environment ) {
 
     Variable * result = random_value( _environment, VT_POSITION );

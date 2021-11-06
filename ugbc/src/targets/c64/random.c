@@ -44,12 +44,12 @@
  * This function outputs a code suitable for calculating a random value, 
  * the range of which depends on the type of data passed as a parameter:
  * 
- * - `VT_BYTE` (<b>BYTE</b>) : 0...255
- * - `VT_COLOR` (<b>COLOR</b>) : 0...15
- * - `VT_WORD` (<b>WORD</b>) : 0...65.535
- * - `VT_ADDRESS` (<b>ADDRESS</b>) : 0...65.535
- * - `VT_POSITION` (<b>POSITION</b>) : 0...65.535
- * - `VT_DWORD` (<b>DWORD</b>) : 0...4.294.967.295
+ * - ''VT_BYTE'' (<b>BYTE</b>) : 0...255
+ * - ''VT_COLOR'' (<b>COLOR</b>) : 0...15
+ * - ''VT_WORD'' (<b>WORD</b>) : 0...65.535
+ * - ''VT_ADDRESS'' (<b>ADDRESS</b>) : 0...65.535
+ * - ''VT_POSITION'' (<b>POSITION</b>) : 0...65.535
+ * - ''VT_DWORD'' (<b>DWORD</b>) : 0...4.294.967.295
  * 
  * The random value is passed back into a temporary variable.
  * 
@@ -61,21 +61,51 @@
 @keyword RANDOM
 
 @english
-Calculate a random value.
+This function allows you to calculate a random number, in the range
+that can be represented by the type of data indicated as a parameter,
+or as data type conversion.
+
+The supported data types are as follows:
+
+^ DATA TYPE       ^ MINIMUM         ^ MAXIMUM         ^
+| ''BYTE''        | 0               | 255             |
+| ''SIGNED BYTE'' | -127            | 127             |
+| ''COLOR''       | 0               | ''COLOR COUNT'' |
+| ''WORD''        | 0               | 65.535          |
+| ''SIGNED WORD'' | -32.767         | 32.767          |
+| ''ADDRESS''     | 0               | 65.535          |
+| ''POSITION''    | 0               | 65.535          |
+| ''DWORD''       | 0               | 4.294.967.295   |
+| ''SIGNED DWORD''| -2.147.483.647  | 2.147.483.647   |
 
 @italian
-Calcola un valore casuale.
+Questa funzione permette di calcolare un numero casuale, compreso tra 0 e 
+il massimo numero rappresentabile dal tipo di dato indicato come parametro,
+or come conversione di tipo.
 
-@syntax = (BYTE) RANDOM
-@syntax = (COLOR) RANDOM
-@syntax = (WORD) RANDOM
-@syntax = (ADDRESS) RANDOM
-@syntax = (POSITION) RANDOM
-@syntax = (DWORD) RANDOM
+I tipi di dato supportati sono:
 
-@example randomX = (POSITION) RANDOM
+^ DATA TYPE       ^ MINIMUM         ^ MAXIMUM         ^
+| ''BYTE''        | 0               | 255             |
+| ''SIGNED BYTE'' | -127            | 127             |
+| ''COLOR''       | 0               | ''COLOR COUNT'' |
+| ''WORD''        | 0               | 65.535          |
+| ''SIGNED WORD'' | -32.767         | 32.767          |
+| ''ADDRESS''     | 0               | 65.535          |
+| ''POSITION''    | 0               | 65.535          |
+| ''DWORD''       | 0               | 4.294.967.295   |
+| ''SIGNED DWORD''| -2.147.483.647  | 2.147.483.647   |
 
-@target c64
+
+@syntax = RANDOM [datatype]
+@syntax = ([datatype]) RANDOM
+
+@example randomScore = RANDOM BYTE
+@example randomColor = (COLOR) RANDOM
+
+@seeAlso RND
+
+@target all
 </usermanual> */
 Variable * random_value( Environment * _environment, VariableType _type ) {
 

@@ -60,21 +60,6 @@
 /* <usermanual>
 @keyword RANDOM
 
-@english
-Calculate a random value.
-
-@italian
-Calcola un valore casuale.
-
-@syntax = (BYTE) RANDOM
-@syntax = (COLOR) RANDOM
-@syntax = (WORD) RANDOM
-@syntax = (ADDRESS) RANDOM
-@syntax = (POSITION) RANDOM
-@syntax = (DWORD) RANDOM
-
-@example randomX = (POSITION) RANDOM
-
 @target vic20
 </usermanual> */
 Variable * random_value( Environment * _environment, VariableType _type ) {

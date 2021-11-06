@@ -39,7 +39,7 @@
  ****************************************************************************/
 
 /**
- * @brief Emit ASM code for <b>= RANDOM</b>
+ * @brief Emit ASM code for <b>= RANDOM ...</b>
  * 
  * This function outputs a code suitable for calculating a random value, 
  * the range of which depends on the type of data passed as a parameter:
@@ -60,7 +60,7 @@
 /* <usermanual>
 @keyword RANDOM
 
-@target d64
+@target atari
 </usermanual> */
 Variable * random_value( Environment * _environment, VariableType _type ) {
 
