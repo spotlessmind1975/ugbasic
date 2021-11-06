@@ -38,6 +38,62 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/**
+ * @brief Emit ASM code for <b>SCREEN WIDTH</b> or <b>WIDTH</b>
+ * 
+ * This function return the current screen width, in terms of pixels.
+ * 
+ * @param _environment Current calling environment
+ * @return Variable* the current width
+ */
+/* <usermanual>
+@keyword SCREEN TILES WIDTH
+
+@english
+This function allows you to obtain the width of the current screen, expressed in tiles. 
+A tile is a box of pixels that can be addressed elementary by a specific screen code.
+Normally, it is used in "text mode", since each box is a character. 
+The width depends on the currently selected graphics mode, and it can change at runtime.
+
+There is also a compile-level function for this keyword, which is called when the value 
+is used to initialize a constant. In this case, the value is that taken from inspecting 
+the instructions at the time of compilation.
+
+It can also be abbreviated to the statement ''TILES WIDTH''.
+
+@italian
+Questa funzione permette di ottenere la larghezza dello schermo corrente, 
+espressa in tile. Il tile è un box di pixel che può essere individuato in modo elementare,
+per mezzo di uno specifico codice schermo. Normalmente, è usato nella "modalità testo",
+dato che ogni box rappresenta un carattere. La larghezza dipende dall'attuale modalità grafica 
+selezionata, e può cambiare in sede di esecuzione.
+
+Di questa parola chiave esiste anche una funzione a livello di compilazione, 
+che viene richiamata quando il valore viene utilizzato per inizializzare una 
+costante. In tal caso, il valore è quello desunto dall'ispezione delle 
+istruzioni al momento della compilazione.
+
+Da notare che può essere abbreviato anche con l'istruzione ''TILES WIDTH''. 
+
+@syntax = SCREEN TILES WIDTH
+
+@example currentWidth = SCREEN TILES WIDTH
+
+@target all
+</usermanual> */
+/* <usermanual>
+@keyword TILES WIDTH
+
+@english
+Alias for ''SCREEN TILES WIDTH''.
+
+@italian
+Alias per ''SCREEN TILES WIDTH''.
+
+@seeAlso SCREEN TILES WIDTH
+
+@target all
+</usermanual> */
 Variable * screen_tiles_get_width( Environment * _environment ) {
 
     Variable * width = variable_temporary( _environment, VT_BYTE, "(result of get tiles width)");

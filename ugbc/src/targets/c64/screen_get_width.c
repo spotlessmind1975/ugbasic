@@ -38,6 +38,62 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/**
+ * @brief Emit ASM code for <b>SCREEN WIDTH</b> or <b>WIDTH</b>
+ * 
+ * This function return the current screen width, in terms of pixels.
+ * 
+ * @param _environment Current calling environment
+ * @return Variable* the current width
+ */
+/* <usermanual>
+@keyword SCREEN WIDTH
+
+@english
+This function allows you to obtain the width of the current screen, expressed in pixels. 
+The width depends on the currently selected graphics mode, and can change at runtime.
+
+There is also a compile-level function for this keyword, which is called when the value 
+is used to initialize a constant. In this case, the value is that taken from inspecting 
+the instructions at the time of compilation.
+
+It can also be abbreviated to the statement ''WIDTH''.
+
+@italian
+Questa funzione permette di ottenere la larghezza dello schermo corrente, 
+espressa in pixel. La larghezza dipende dall'attuale modalità grafica 
+selezionata, e può cambiare in sede di esecuzione.
+
+Di questa parola chiave esiste anche una funzione a livello di compilazione, 
+che viene richiamata quando il valore viene utilizzato per inizializzare una 
+costante. In tal caso, il valore è quello desunto dall'ispezione delle 
+istruzioni al momento della compilazione.
+
+Da notare che può essere abbreviato anche con l'istruzione ''WIDTH''. 
+
+@syntax = SCREEN WIDTH
+
+@example currentWidth = SCREEN WIDTH
+
+@usedInExample graphics_plot_01.bas
+@usedInExample graphics_plot_02.bas
+@usedInExample graphics_plot_03.bas
+
+@target all
+</usermanual> */
+/* <usermanual>
+@keyword WIDTH
+
+@english
+Alias for ''SCREEN WIDTH''.
+
+@italian
+Alias per ''SCREEN WIDTH''.
+
+@seeAlso SCREEN WIDTH
+
+@target all
+</usermanual> */
 Variable * screen_get_width( Environment * _environment ) {
 
     Variable * width = variable_temporary( _environment, VT_POSITION, "(result of get width)");

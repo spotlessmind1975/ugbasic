@@ -47,19 +47,6 @@
 /* <usermanual>
 @keyword IMAGE WIDTH
 
-@english
-The ''IMAGE WIDTH'' function will allow you to obtain the width of an
-image (in pixels).
-
-@italian
-La funzione ''IMAGE WIDTH'' permette di ottenere la larghezza di una immagine (in pixel).
-
-@syntax = IMAGE WIDTH([image])
-
-@example starshipWidth = IMAGE WIDTH( IMAGE LOAD("starship.png") )
-
-@usedInExample mobs_example_01.bas
-
 @target all
 </usermanual> */
 Variable * image_get_width( Environment * _environment, char * _image ) {
