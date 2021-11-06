@@ -33,8 +33,6 @@
  ****************************************************************************/
 
 #include "../../ugbc.h"
-#define STB_IMAGE_IMPLEMENTATION
-#include "../../stb_image.h"
 
 /****************************************************************************
  * CODE SECTION 
@@ -110,7 +108,7 @@ Alias per ''FRAMES''.
 </usermanual> */
 int frames( Environment * _environment, char * _image ) {
 
-    Variable * v = variable_retrieve( _environment, $3 );
+    Variable * v = variable_retrieve( _environment, _image );
     switch( v->type ) {
         case VT_IMAGES:
             if ( !v->valueBuffer ) {
