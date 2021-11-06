@@ -104,7 +104,7 @@ const_expr_string :
         } else {
             $$ = $7;
         }
-  };
+      };
 
 const_expr : 
       const_expr_math
@@ -186,6 +186,9 @@ const_factor:
           $$ = ((Environment *)_environment)->screenWidth;
       }
       | SCREEN TILES WIDTH {
+          $$ = ((Environment *)_environment)->screenTilesWidth;
+      }
+      | TILES WIDTH {
           $$ = ((Environment *)_environment)->screenTilesWidth;
       }
       | FONT WIDTH {
@@ -1244,6 +1247,9 @@ exponential:
         $$ = screen_get_width( _environment )->name;
     }
     | SCREEN TILES WIDTH {
+        $$ = screen_tiles_get_width( _environment )->name;
+    }
+    | TILES WIDTH {
         $$ = screen_tiles_get_width( _environment )->name;
     }
     | FONT WIDTH {
