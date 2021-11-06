@@ -7,7 +7,8 @@
 ;
 ; Originally published on https://wikiti.brandonw.net/index.php?title=Z80_Routines:Math:Square_root 
 ; Adapted by Marco Spedaletti for ugBASIC   
-
+;
+; @thirdparts Square Root Calculator written by Zeda
 
 ;
 SQROOT:

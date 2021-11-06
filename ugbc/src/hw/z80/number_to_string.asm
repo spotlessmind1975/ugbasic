@@ -22,6 +22,8 @@
 ; Source code originally published by Alwin Henseler on:
 ; https://www.msx.org/forum/development/msx-development/32-bit-long-ascii
 ; Adapted by Marco Spedaletti for z88sdk compiler
+;
+; @thirdparts Alwin Henseler
 ; -------------------------------------------------------------------------------
 
 N2D8:    LD H,0

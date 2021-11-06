@@ -29,7 +29,7 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                      FILL SCREEN BACKGROUND FOR ZX SPECTRUM                   *
+;*                      FILL SCREEN BACKGROUND FOR ZX SPECTRUM                 *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
