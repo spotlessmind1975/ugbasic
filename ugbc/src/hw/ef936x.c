@@ -35,7 +35,6 @@
 #if defined(__pc128op__) || defined(__mo5__)
 
 #include "../ugbc.h"
-#include "6809.h"
 #include <math.h>
 
 static RGBi SYSTEM_PALETTE[] = {

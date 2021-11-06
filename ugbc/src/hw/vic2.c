@@ -35,7 +35,6 @@
 #ifdef __c64__
 
 #include "../ugbc.h"
-#include "6502.h"
 #include <math.h>
 
 static RGBi SYSTEM_PALETTE[] = {
