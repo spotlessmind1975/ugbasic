@@ -29,7 +29,7 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                  MOVABLE OBJECTS UNDER VIC-II (specific algorithms)         *
+;*                  MOVABLE OBJECTS UNDER VIC-I (specific algorithms)         *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *

@@ -11,6 +11,8 @@
 ; https://www.lemon64.com/forum/viewtopic.php?p=599219#599219
 ;
 ; Adapted by Marco Spedaletti for ugbasic
+;
+; @thirdparts satpro on lemon64.com
 ;--------------------------------------------------------------------
 
 PLOTX    = $F7 ; $F8

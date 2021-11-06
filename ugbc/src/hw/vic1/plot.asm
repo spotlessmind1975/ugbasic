@@ -1,17 +1,39 @@
-;--------------------------------------------------------------------
-;This routine sets or erases a point on the hires $A000 based
-;on coordinates AND PLOTM determined before-hand.  you can change
-;"$A000" to wherever your hires $A000 is located.
-;plotPoint works by first determining which 8x8 cell the point is
-;located in AND uses tables to figure that out.
-;The in-cell offset is determined by just isolating the lowest 3 bits
-;of each point (0-7).  The pixel masking uses tables, too.
-;
-; Originally posted by satpro on:
-; https://www.lemon64.com/forum/viewtopic.php?p=599219#599219
-;
-; Adapted by Marco Spedaletti for ugbasic
-;--------------------------------------------------------------------
+; /*****************************************************************************
+;  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
+;  *****************************************************************************
+;  * Copyright 2021 Marco Spedaletti (asimov@mclink.it)
+;  *
+;  * Licensed under the Apache License, Version 2.0 (the "License");
+;  * you may not use this file eXcept in compliance with the License.
+;  * You may obtain a copy of the License at
+;  *
+;  * http://www.apache.org/licenses/LICENSE-2.0
+;  *
+;  * Unless required by applicable law or agreed to in writing, software
+;  * distributed under the License is distributed on an "AS IS" BASIS,
+;  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either eXpress or implied.
+;  * See the License for the specific language governing permissions and
+;  * limitations under the License.
+;  *----------------------------------------------------------------------------
+;  * Concesso in licenza secondo i termini della Licenza Apache, versione 2.0
+;  * (la "Licenza"); è proibito usare questo file se non in conformità alla
+;  * Licenza. Una copia della Licenza è disponibile all'indirizzo:
+;  *
+;  * http://www.apache.org/licenses/LICENSE-2.0
+;  *
+;  * Se non richiesto dalla legislazione vigente o concordato per iscritto,
+;  * il software distribuito nei termini della Licenza è distribuito
+;  * "COSì COM'è", SENZA GARANZIE O CONDIZIONI DI ALCUN TIPO, esplicite o
+;  * implicite. Consultare la Licenza per il testo specifico che regola le
+;  * autorizzazioni e le limitazioni previste dalla medesima.
+;  ****************************************************************************/
+;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+;*                                                                             *
+;*                           PLOT ROUTINE ON VIC-I                             *
+;*                                                                             *
+;*                             by Marco Spedaletti                             *
+;*                                                                             *
+;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 PLOTX    = $F7 ; $F8
 PLOTY    = $F9

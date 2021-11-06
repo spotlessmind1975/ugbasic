@@ -29,7 +29,7 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                          STARTUP ROUTINE ON DRAGON 32                       *
+;*           STARTUP ROUTINE ON THOMSON MO6/OLLIVETTI PC128 PRODEST            *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *

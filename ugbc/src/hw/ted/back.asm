@@ -29,7 +29,7 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                      FILL BACKGROUND COLOR SCREEN  FOR TED                  *
+;*                      FILL BACKGROUND COLOR SCREEN FOR TED                   *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *

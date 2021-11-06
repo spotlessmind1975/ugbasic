@@ -29,7 +29,7 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                      KEYBOARD MATRIX DETECTION ON DRAGON 32/64              *
+;*                      KEYBOARD MATRIX DETECTION ON THOMSON MO5/MO6           *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *

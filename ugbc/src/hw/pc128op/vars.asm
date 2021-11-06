@@ -29,7 +29,7 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                      INTERNAL VARIABLES FOR DRAGON 32/64 TARGET             *
+;*    INTERNAL VARIABLES FOR THOMSON MO6/OLIVETTI PRODEST PC128 TARGET         *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *

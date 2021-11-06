@@ -34,6 +34,7 @@
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
 PLOTDEST = $8a ; $8b
 PLOTCDEST= $8c ; $8d
 PLOTLDEST= $8e ; $8f
