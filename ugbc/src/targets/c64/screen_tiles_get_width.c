@@ -39,9 +39,9 @@
  ****************************************************************************/
 
 /**
- * @brief Emit ASM code for <b>SCREEN WIDTH</b> or <b>WIDTH</b>
+ * @brief Emit ASM code for <b>SCREEN TILES WIDTH</b> or <b>TILES WIDTH</b>
  * 
- * This function return the current screen width, in terms of pixels.
+ * This function return the current screen width, in terms of tiles.
  * 
  * @param _environment Current calling environment
  * @return Variable* the current width

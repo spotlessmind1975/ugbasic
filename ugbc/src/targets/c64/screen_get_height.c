@@ -38,6 +38,62 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/**
+ * @brief Emit ASM code for <b>SCREEN HEIGHT</b> or <b>HEIGHT</b>
+ * 
+ * This function return the current screen height, in terms of pixels.
+ * 
+ * @param _environment Current calling environment
+ * @return Variable* the current height
+ */
+/* <usermanual>
+@keyword SCREEN HEIGHT
+
+@english
+This function allows you to obtain the height of the current screen, expressed in pixels. 
+The height depends on the currently selected graphics mode, and can change at runtime.
+
+There is also a compile-level function for this keyword, which is called when the value 
+is used to initialize a constant. In this case, the value is that taken from inspecting 
+the instructions at the time of compilation.
+
+It can also be abbreviated to the statement ''HEIGHT''.
+
+@italian
+Questa funzione permette di ottenere l'altezza dello schermo corrente, 
+espressa in pixel. L'altezza dipende dall'attuale modalità grafica 
+selezionata, e può cambiare in sede di esecuzione.
+
+Di questa parola chiave esiste anche una funzione a livello di compilazione, 
+che viene richiamata quando il valore viene utilizzato per inizializzare una 
+costante. In tal caso, il valore è quello desunto dall'ispezione delle 
+istruzioni al momento della compilazione.
+
+Da notare che può essere abbreviato anche con l'istruzione ''HEIGHT''. 
+
+@syntax = SCREEN HEIGHT
+
+@example currentWidth = SCREEN HEIGHT
+
+@usedInExample graphics_plot_01.bas
+@usedInExample graphics_plot_02.bas
+@usedInExample graphics_plot_03.bas
+
+@target all
+</usermanual> */
+/* <usermanual>
+@keyword HEIGHT
+
+@english
+Alias for ''SCREEN HEIGHT''.
+
+@italian
+Alias per ''SCREEN HEIGHT''.
+
+@seeAlso SCREEN HEIGHT
+
+@target all
+</usermanual> */
 Variable * screen_get_height( Environment * _environment ) {
 
     Variable * height = variable_temporary( _environment, VT_POSITION, "(result of get height)");
