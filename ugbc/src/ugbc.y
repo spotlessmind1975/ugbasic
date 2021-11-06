@@ -245,12 +245,8 @@ const_factor:
       | LEN OP String CP {
           $$ = strlen( $3 );
       }
-      | LEN OP IF OP const_expr OP_COMMA String OP_COMMA String CP CP {
-          if ( $5 ) {
-              $$ = strlen( $7 );
-          } else {
-              $$ = strlen( $9 );
-          }
+      | LEN OP IF OP const_expr_string CP {
+          $$ = strlen( $5 );
       }      
       | Identifier {
           Constant * c = constant_find( ((Environment *)_environment)->constants, $1 );
