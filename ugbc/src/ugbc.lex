@@ -9,6 +9,7 @@
 %%
 
 "#["[a-fA-F0-9]+"]" { yylval.string = strdup(yytext); return(BufferDefinition); }
+"#["[a-fA-F0-9]+ { yylval.string = strdup(yytext); return(BufferDefinition); }
 
 [\n\r]+ { return(NewLine);}
 ";" { return(OP_SEMICOLON); }
