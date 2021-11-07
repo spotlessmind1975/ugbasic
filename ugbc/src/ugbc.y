@@ -1014,6 +1014,16 @@ exponential:
       }
    | SIZE OP expr CP {
         Variable * v = variable_retrieve( _environment, $3 );
+        switch( v->type ) {
+            case VT_IMAGE:
+            case VT_IMAGES:
+            case VT_BUFFER:
+            case VT_STRING: 
+                break;
+            default:
+                CRITICAL_SIZE_UNSUPPORTED( $3, DATATYPE_AS_STRING[v->type] );
+                break;
+        }
         $$ = variable_temporary( _environment, VT_WORD, "(size)" )->name;
         variable_store( _environment, $$, v->size );
       }
