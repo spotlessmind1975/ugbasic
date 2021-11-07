@@ -985,6 +985,9 @@ exponential:
     | IMAGES LOAD OP String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP {        
         $$ = images_load( _environment, $4, NULL, ((struct _Environment *)_environment)->currentMode, $9, $11 )->name;
       }
+    | LOAD IMAGES OP String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP {        
+        $$ = images_load( _environment, $4, NULL, ((struct _Environment *)_environment)->currentMode, $9, $11 )->name;
+      }
     | IMAGE LOAD OP String CP {
         $$ = image_load( _environment, $4, NULL, ((struct _Environment *)_environment)->currentMode )->name;
       }
