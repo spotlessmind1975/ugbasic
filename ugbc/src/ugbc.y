@@ -821,6 +821,9 @@ exponential:
         if ( array->type != VT_ARRAY ) {
             CRITICAL_NOT_ARRAY( $1 );
         }
+        if ( array->arrayType != VT_STRING || array->arrayType != VT_DSTRING ) {
+            CRITICAL_NOT_STRING_ARRAY( $1 );
+        }        
         $$ = variable_move_from_array( _environment, $1 )->name;
         --((struct _Environment *)_environment)->arrayNestedIndex;
     }
@@ -830,7 +833,6 @@ exponential:
         ((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex] = 0;
         ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex][((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex]] = strdup( "PROTOTHREADCT" );
         ++((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex];
-
         Variable * array = variable_retrieve_or_define( _environment, $2, VT_ARRAY, 0 );
         if ( array->type != VT_ARRAY ) {
             CRITICAL_NOT_ARRAY( $2 );
@@ -848,6 +850,9 @@ exponential:
         if ( array->type != VT_ARRAY ) {
             CRITICAL_NOT_ARRAY( $2 );
         }
+        if ( array->arrayType != VT_STRING || array->arrayType != VT_DSTRING ) {
+            CRITICAL_NOT_STRING_ARRAY( $1 );
+        }        
         $$ = variable_move_from_array( _environment, $2 )->name;
         --((struct _Environment *)_environment)->arrayNestedIndex;
     }
