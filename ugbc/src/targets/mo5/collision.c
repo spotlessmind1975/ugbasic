@@ -53,8 +53,6 @@
  */
 /* <usermanual>
 @keyword COLLISION
-
-@target mo5
 </usermanual> */
 Variable * collision_to( Environment * _environment, int _sprite ) {
 

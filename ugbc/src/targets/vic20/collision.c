@@ -53,23 +53,6 @@
  */
 /* <usermanual>
 @keyword COLLISION
-
-@english
-Verify if a sprite has had a collision with another sprite. The result 
-(0 = no collision, 1 = collision occurred) is returned as result.
-
-@italian
-Verifica se uno sprite ha avuto una collisione con un altro sprite. Il risultato
-(0 = nessuna collisione, 1 = si è verificata una collisione) viene restituito
-come risultato.
-
-@syntax = COLLISION(# [integer] )
-
-@example = COLLISION(#1)
-
-@seeAlso HIT
-
-@target vic20
 </usermanual> */
 Variable * collision_to( Environment * _environment, int _sprite ) {
 

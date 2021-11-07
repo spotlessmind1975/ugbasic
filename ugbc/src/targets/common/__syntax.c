@@ -923,3 +923,100 @@ compilazione, per evitare di far riferimento a una variabile di tipo numerico.
 
 @target all
 </usermanual> */
+
+/* <usermanual>
+@keyword casting operator
+
+@english
+ugBASIC is a loosely typed language. However, there are occasions when the use of certain
+types is not permitted without the explicit consent of the programmer. For this purpose, 
+a "type casting" mechanism has been integrated very similar to that available in other 
+programming languages, such as C. 
+
+In a nutshell, it is possible to add an expression in brackets as a prefix an expression 
+(enclosed by brackets) or an integer, which represents the type conversion you want to make. 
+Conversion from one type to another always generates a temporary variable, which 
+is why it is not possible to change the original value directly. This mechanism, 
+therefore, has the sole purpose of ensuring that conversions always 
+take place correctly.
+
+@italian
+ugBASIC è un linguaggio lascamente tipizzato. Tuttavia, vi sono delle occasioni in cui 
+l'utilizzo di determinati tipi non è permesso senza l'esplicito consenso da parte 
+del programmatore. A tale scopo è stato integrato un meccanismo di "type casting" 
+molto simile a quello disponibile in altri linguaggi di programmazione, come il C. 
+
+In estrema sintesi, è possibile aggiungere, come prefisso ad una espressione (racchiusa
+tra parentesi) oppure a un intero, una espressione tra parentesi che rappresenta 
+la conversione di tipo che si desidera effettuare. La conversione da un tipo ad un 
+altro genera sempre una variabile temporanea, ragion per cui non è possibile modificare 
+direttamente il valore originale. Questo meccanismo, quindi, ha il solo scopo di garantire 
+che le conversioni avvengano sempre correttamente.
+
+@syntax ... = ( [type] ) [number]
+@syntax ... = ( [type] ) ( ... )
+
+@example y = (POSITION) 42
+@example x = 42: y = (POSITION) ( x )
+
+@usedInExample multitasking_example_06.bas
+
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword buffer definition
+
+@english
+ugBASIC is able to define a byte buffer "in line", ie directly in the code. 
+This can be useful in those occasions where it is necessary to include 
+binary data, not being able to access an external file. 
+
+The definition of a buffer occurs with the sequence of the hash operator (''#'') 
+followed by the opening square bracket (''[''), by the hexadecimal couples and, 
+optionally, terminated by the closing square bracket.
+
+@italian
+ugBASIC è in grado di definire un buffer di byte "in linea", cioè direttamente nel codice. 
+Questo può essere utile in quelle occasioni dove sia necessario includere un dato binario, 
+non potendo accedere a un file esterno. 
+
+La definizione di un buffer avviene con la sequenza dell'operatore hash (''#'') seguita 
+dalla parentesi quadra aperta (''[''), dalle coppie esadecimali e, opzionalmente, 
+terminata dalla parentesi quadra chiusa.
+
+@syntax ... = #[xx...
+@syntax ... = #[xx...]
+
+@example y = #[424280
+@example x = #[424280]
+
+@usedInExample buffers_definition_01.bas
+
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword SIZE
+
+@english
+To get the (static) size of a buffer you can use the ''SIZE'' command. This command 
+will restore, in bytes, the size of the given buffer. It is possible to apply this 
+command to any type of static data, such as ''BUFFER'', ''IMAGE'', ''IMAGES'' and 
+constant strings.
+
+@italian
+Per ottenere la dimensione (statica) di un buffer è possibile utilizzare il comando ''SIZE''. 
+Tale comando ripristinare, in bytes, la dimensione del buffer dato. E' possibile applicare 
+questo comando a qualsiasi tipo di dato statico, quali ''BUFFER'', ''IMAGE'', ''IMAGES'' e
+stringe costanti.
+
+@syntax ... = SIZE([resource])
+
+@example PRINT SIZE(image)
+
+@usedInExample buffers_definition_02.bas
+@usedInExample buffers_definition_03.bas
+
+@target all
+</usermanual> */

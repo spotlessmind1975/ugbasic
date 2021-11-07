@@ -37,7 +37,9 @@
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
-
+/* <usermanual>
+@keyword COLLISION
+</usermanual> */
 Variable * collision_to( Environment * _environment, int _sprite ) {
 
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result)" );
