@@ -1829,6 +1829,7 @@ void                    on_proc_index( Environment * _environment, char * _label
 
 void                    paper( Environment * _environment, char * _paper );
 Variable *              param_procedure( Environment * _environment, char * _name );
+Variable *              parse_buffer_definition( Environment * _environment, char * _buffer, VariableType _type );
 Variable *              peek( Environment * _environment, int _location );
 Variable *              peek_var( Environment * _environment, char * _location );
 void                    pen( Environment * _environment, char * _color );

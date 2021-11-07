@@ -4558,3 +4558,20 @@ int calculate_exact_tile( TileDescriptor * _tile, TileDescriptors * _tiles ) {
 
 }
 
+Variable * parse_buffer_definition( Environment * _environment, char * _buffer, VariableType _type ) {
+
+    char * buffer = malloc( strlen( _buffer ) / 2 );
+    char hexdigits[3];
+    int i = 0, c = 0;
+    for( i = 1, c = strlen( _buffer ); i<(c-1); i += 2 ) {
+        hexdigits[0] = _buffer[i];
+        hexdigits[1] = _buffer[i+1];
+        hexdigits[2] = 0;
+        buffer[i>>1] = strtol(hexdigits,0,16);
+    }
+    Variable * result = variable_temporary( _environment, _type, "(buffer)" );
+    variable_store_buffer( _environment, result->name, buffer, strlen( _buffer ) / 2, 0 );
+
+    return result;
+
+}

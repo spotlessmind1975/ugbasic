@@ -959,43 +959,13 @@ exponential:
         $$ = variable_cast( _environment, $4, VT_DSTRING )->name;        
       }
     | BufferDefinition { 
-        char * buffer = malloc( strlen( $1 ) / 2 );
-        char hexdigits[3];
-        int i = 0, c = 0;
-        for( i = 1, c = strlen( $1 ); i<(c-1); i += 2 ) {
-            hexdigits[0] = $1[i];
-            hexdigits[1] = $1[i+1];
-            hexdigits[2] = 0;
-            buffer[i>>1] = strtol(hexdigits,0,16);
-        }
-        $$ = variable_temporary( _environment, VT_BUFFER, "(buffer)" )->name;
-        variable_store_buffer( _environment, $$, buffer, strlen( $1 ) / 2, 0 );
+        $$ = parse_buffer_definition( _environment, $1, VT_BUFFER )->name;
       }
     | OP IMAGE CP BufferDefinition { 
-        char * buffer = malloc( strlen( $4 ) / 2 );
-        char hexdigits[3];
-        int i = 0, c = 0;
-        for( i = 1, c = strlen( $4 ); i<(c-1); i += 2 ) {
-            hexdigits[0] = $4[i];
-            hexdigits[1] = $4[i+1];
-            hexdigits[2] = 0;
-            buffer[i>>1] = strtol(hexdigits,0,16);
-        }
-        $$ = variable_temporary( _environment, VT_IMAGE, "(buffer)" )->name;
-        variable_store_buffer( _environment, $$, buffer, strlen( $4 ) / 2, 0 );
+        $$ = parse_buffer_definition( _environment, $4, VT_IMAGE )->name;
       }      
     | OP IMAGES CP BufferDefinition { 
-        char * buffer = malloc( strlen( $4 ) / 2 );
-        char hexdigits[3];
-        int i = 0, c = 0;
-        for( i = 1, c = strlen( $4 ); i<(c-1); i += 2 ) {
-            hexdigits[0] = $4[i];
-            hexdigits[1] = $4[i+1];
-            hexdigits[2] = 0;
-            buffer[i>>1] = strtol(hexdigits,0,16);
-        }
-        $$ = variable_temporary( _environment, VT_IMAGES, "(buffer)" )->name;
-        variable_store_buffer( _environment, $$, buffer, strlen( $4 ) / 2, 0 );
+        $$ = parse_buffer_definition( _environment, $4, VT_IMAGES )->name;
       }      
     | SQR OP factor CP {
         $$ = sqroot( _environment, $3 )->name;
