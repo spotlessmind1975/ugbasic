@@ -383,6 +383,7 @@ ZX { return (ZX); }
 \"(\\.|[^"\\])*\" { yylval.string = strdup(yytext); memcpy(yylval.string,yylval.string+1,strlen(yylval.string)); yylval.string[strlen(yylval.string)-1]=0; return(String);  }
 \$[a-fA-F0-9]+ { yylval.integer = strtol(yytext+1,0,16); return(Integer); }
 &H[a-fA-F0-9]+ { yylval.integer = strtol(yytext+2,0,16); return(Integer); }
+0x[a-fA-F0-9]+ { yylval.integer = strtol(yytext+2,0,16); return(Integer); }
 %[0-1]+ { yylval.integer = strtol(yytext+1,0,2); return(Integer); }
 \s[-][0-9]+ { yylval.integer = atoi(yytext); return(Integer);  }
 [0-9]+ { yylval.integer = atoi(yytext); return(Integer);  }
