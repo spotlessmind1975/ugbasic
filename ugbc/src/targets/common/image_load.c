@@ -52,18 +52,62 @@
 
 @english
 The ''IMAGE LOAD'' command allows you to load an image and to convert it into
-a BUFFER. The second parameter is the mode to use to convert
+an ''IMAGE''. The second parameter is the mode to use to convert
 the given data (by default, it is equal to current mode)
+
+The command support a set of modern image format, like:
+
+  * JPEG baseline & progressive
+  * PNG 1/2/4/8/16-bit-per-channel
+  * TGA
+  * BMP (non-1bpp, non-RLE)
+  * PSD (composited view only, no extra channels, 8/16 bit-per-channel)
+  * GIF
+  * HDR (radiance rgbE format)
+  * PIC (Softimage PIC)
+  * PNM (PPM and PGM binary only)
+
+The image will be converted into a way that can be efficiently drawn
+on the screen. It could be converted into indexed palette, and can be
+rescaled as well.
+
+Since it is possible to load only one file of the same type at a time, it is necessary 
+to be able to indicate an "alias" with which to exceed this limit. In this regard, there is also
+the ''AS'' syntax, which allows you to load the same file several times but with different names.
 
 @italian
 Il comando ''IMAGE LOAD'' permette di caricare un file immagine, e di convertirlo
-in un BUFFER. Il secondo parametro è la modalità grafica da usare
+in una ''IMAGE''. Il secondo parametro è la modalità grafica da usare
 per convertire il dato (per default, è il modo corrente).
 
+Il comando supporta una serie di formati moderni:
+
+  * JPEG baseline & progressive
+  * PNG 1/2/4/8/16-bit-per-canale
+  * TGA
+  * BMP (non-1bpp, non-RLE)
+  * PSD (vista composita, nessun canale extra, 8/16 bit-per-canale)
+  * GIF
+  * HDR (formato radiance rgbE)
+  * PIC (Softimage PIC)
+  * PNM (solo formato binario PPM e PGM)
+
+L'immagine verrà convertita in un modo che possa essere disegnata in modo efficiente
+sullo schermo. Potrebbe essere convertita in una tavolozza indicizzata, e potrebbe essere
+anche ridimensionata.
+
+Dal momento in cui è possibile caricare un solo file dello stesso tipo alla volta, 
+è necessario poter indicare un "alias" con cui superare questo limite. A tal riguardo 
+esiste anche la sintassi ''AS'', che permette di caricare più volte lo stesso file 
+ma con nomi diversi.
+
 @syntax = IMAGE LOAD([filename]{,[mode]})
+@syntax = IMAGE LOAD([filename] AS [alias]{,[mode]})
 
 @example starship = IMAGE LOAD("starship.png")
+@example starship2 = IMAGE LOAD("starship.png" AS "starship2")
 @example alienAt11 = IMAGE LOAD("alien.jpg",11)
+@example alien2 = IMAGE LOAD("alien.jpg" AS "alien2",11)
 
 @usedInExample image_loading_01.bas
 
