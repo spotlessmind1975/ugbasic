@@ -821,7 +821,7 @@ exponential:
         if ( array->type != VT_ARRAY ) {
             CRITICAL_NOT_ARRAY( $1 );
         }
-        if ( array->arrayType != VT_STRING || array->arrayType != VT_DSTRING ) {
+        if ( array->arrayType != VT_STRING && array->arrayType != VT_DSTRING ) {
             CRITICAL_NOT_STRING_ARRAY( $1 );
         }        
         $$ = variable_move_from_array( _environment, $1 )->name;
@@ -850,8 +850,8 @@ exponential:
         if ( array->type != VT_ARRAY ) {
             CRITICAL_NOT_ARRAY( $2 );
         }
-        if ( array->arrayType != VT_STRING || array->arrayType != VT_DSTRING ) {
-            CRITICAL_NOT_STRING_ARRAY( $1 );
+        if ( array->arrayType != VT_STRING && array->arrayType != VT_DSTRING ) {
+            CRITICAL_NOT_STRING_ARRAY( $2 );
         }        
         $$ = variable_move_from_array( _environment, $2 )->name;
         --((struct _Environment *)_environment)->arrayNestedIndex;
@@ -871,7 +871,16 @@ exponential:
         }
     }
     | Identifier OP_DOLLAR { 
-        $$ = variable_retrieve_or_define( _environment, $1, VT_DSTRING, 0 )->name;
+        Constant * c = constant_find( ((struct _Environment *)_environment)->constants, $1 );
+        if ( c ) {
+            if ( !c->valueString ) {
+                CRITICAL_TYPE_MISMATCH_CONSTANT_STRING( $1 );
+            }
+            $$ = variable_temporary( _environment,  VT_STRING, "(constant)" )->name;
+            variable_store_string( _environment, $$, c->valueString );
+        } else {
+            $$ = variable_retrieve_or_define( _environment, $1, VT_DSTRING, 0 )->name;
+        }
       }
     | Integer { 
         if ( $1 < 0 ) {
