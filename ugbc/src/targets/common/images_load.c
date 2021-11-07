@@ -111,7 +111,7 @@ ma con nomi diversi.
 
 @target all
 </usermanual> */
-Variable * images_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _frame_width, int _frame_height ) {
+Variable * images_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _frame_width, int _frame_height, int _flags ) {
 
     LoadedFile * first = _environment->loadedFiles;
     char *lookfor = _filename;
@@ -149,13 +149,26 @@ Variable * images_load( Environment * _environment, char * _filename, char * _al
     int hc = ( height / _frame_height );
 
     Variable * result[MAX_TEMPORARY_STORAGE];
-    int i=0,x=0,y=0;
+    int i,di,x=0,y=0;
     int bufferSize = 0;
+
+    if( _flags & FLIP_X ) {
+        source = image_flip_x( _environment, source, width, height );
+        i = (hc*wc)-1;
+        di = -1;
+    } else {
+        i = 0;
+        di = 1;
+    }
+    if( _flags & FLIP_Y ) {
+        source = image_flip_y( _environment, source, width, height );
+    }
+
     for( y=0; y<height; y+=_frame_height ) {
         for( x=0; x<width; x+=_frame_width ) {
             result[i] = image_converter( _environment, source, width, height, x, y, _frame_width, _frame_height, _mode );
             bufferSize += result[i]->size;
-            ++i;
+            i += di;
         }
     }
 

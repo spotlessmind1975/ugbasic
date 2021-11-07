@@ -4608,3 +4608,69 @@ Variable * parse_buffer_definition( Environment * _environment, char * _buffer, 
     return result;
 
 }
+
+char * image_flip_x( Environment * _environment, char * _source, int _width, int _height ) {
+
+    int x,y;
+
+    for( y=0; y<_height; ++y ) {
+        for( x=0; x<( _width >> 1 ); ++x ) {
+            char * pixel1r = _source + ( y * _width * 3 ) + ( x * 3 );
+            char * pixel1g = _source + ( y * _width * 3 ) + ( x * 3 ) + 1;
+            char * pixel1b = _source + ( y * _width * 3 ) + ( x * 3 ) + 2;
+            char * pixel2r = _source + ( y * _width * 3 ) + ( ( _width - x - 1 ) * 3 );
+            char * pixel2g = _source + ( y * _width * 3 ) + ( ( _width - x - 1 ) * 3 ) + 1;
+            char * pixel2b = _source + ( y * _width * 3 ) + ( ( _width - x - 1 ) * 3 ) + 2;
+            
+            char t;
+            
+            t = *pixel1r;
+            *pixel1r = *pixel2r;
+            *pixel2r = t;
+
+            t = *pixel1g;
+            *pixel1g = *pixel2g;
+            *pixel2g = t;
+
+            t = *pixel1b;
+            *pixel1b = *pixel2b;
+            *pixel2b = t;
+        }
+    }
+
+    return _source;
+
+}
+
+char * image_flip_y( Environment * _environment, char * _source, int _width, int _height ) {
+
+    int x,y;
+
+    for( x=0; x<_width; ++x ) {
+        for( y=0; y<( _height >> 1 ); ++y ) {
+            char * pixel1r = _source + ( y * _width * 3 ) + ( x * 3 );
+            char * pixel1g = _source + ( y * _width * 3 ) + ( x * 3 ) + 1;
+            char * pixel1b = _source + ( y * _width * 3 ) + ( x * 3 ) + 2;
+            char * pixel2r = _source + ( ( _height - y - 1) * _width * 3 ) + ( x * 3 );
+            char * pixel2g = _source + ( ( _height - y - 1) * _width * 3 ) + ( x * 3 ) + 1;
+            char * pixel2b = _source + ( ( _height - y - 1) * _width * 3 ) + ( x * 3 ) + 2;
+            
+            char t;
+            
+            t = *pixel1r;
+            *pixel1r = *pixel2r;
+            *pixel2r = t;
+
+            t = *pixel1g;
+            *pixel1g = *pixel2g;
+            *pixel2g = t;
+
+            t = *pixel1b;
+            *pixel1b = *pixel2b;
+            *pixel2b = t;
+        }
+    }
+
+    return _source;
+    
+}

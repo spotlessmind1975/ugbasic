@@ -365,10 +365,12 @@ WHITE { return(WHITE); }
 WRITING { return(WRITING); }
 WORD { return (WORD); }
 X { return (X); }
+XY { return (XY); }
 XOR { return (XOR); }
 XCURS { return (XCURS); }
 XPEN { return (XPEN); }
 Y { return (Y); }
+YX { return (YX); }
 YCURS { return (YCURS); }
 YELLOW { return(YELLOW); }
 YIELD { return(YIELD); }

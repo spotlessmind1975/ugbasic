@@ -113,7 +113,7 @@ ma con nomi diversi.
 
 @target all
 </usermanual> */
-Variable * image_load( Environment * _environment, char * _filename, char * _alias, int _mode ) {
+Variable * image_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _flags ) {
 
     LoadedFile * first = _environment->loadedFiles;
     char *lookfor = _filename;
@@ -137,6 +137,13 @@ Variable * image_load( Environment * _environment, char * _filename, char * _ali
 
     if ( !source ) {
         CRITICAL_IMAGE_LOAD_UNKNOWN_FORMAT( _filename );
+    }
+
+    if( _flags & FLIP_X ) {
+        source = image_flip_x( _environment, source, width, height );
+    }
+    if( _flags & FLIP_Y ) {
+        source = image_flip_y( _environment, source, width, height );
     }
 
     Variable * result = image_converter( _environment, source, width, height, 0, 0, 0, 0, _mode );

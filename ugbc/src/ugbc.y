@@ -51,7 +51,7 @@ extern char DATATYPE_AS_STRING[][16];
 %token INPUT FREE TILEMAP EMPTY TILE EMPTYTILE PLOT GR CIRCLE DRAW LINE BOX POLYLINE ELLIPSE CLIP
 %token BACK DEBUG CAN ELSEIF BUFFER LOAD SIZE MOB IMAGE PUT VISIBLE HIDDEN HIDE SHOW RENDER
 %token SQR TI CONST VBL POKE NOP FILL IN POSITIVE DEFINE ATARI ATARIXL C64 DRAGON DRAGON32 DRAGON64 PLUS4 ZX 
-%token FONT VIC20 PARALLEL YIELD SPAWN THREAD TASK IMAGES FRAME FRAMES
+%token FONT VIC20 PARALLEL YIELD SPAWN THREAD TASK IMAGES FRAME FRAMES XY YX
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -79,6 +79,7 @@ extern char DATATYPE_AS_STRING[][16];
 %type <integer> target targets
 %type <integer> protothread_definition
 %type <integer> on_targets
+%type <integer> image_load_flags
 
 %right Integer String CP 
 %left OP_DOLLAR
@@ -356,6 +357,22 @@ direct_integer:
             CRITICAL_TYPE_MISMATCH_CONSTANT_NUMERIC($2);
         }
         $$ = c->value;
+    };
+
+image_load_flags : {
+        $$ = 0;
+    }
+    | FLIP X {
+        $$ = FLIP_X;
+    }
+    | FLIP Y {
+        $$ = FLIP_Y;
+    }
+    | FLIP XY {
+        $$ = FLIP_X | FLIP_Y;
+    }
+    | FLIP YX {
+        $$ = FLIP_X | FLIP_Y;
     };
 
 random_definition_simple:
@@ -982,35 +999,41 @@ exponential:
     | LOAD OP String AS String OP_COMMA Integer CP {
         $$ = load( _environment, $3, $5, $7 )->name;
       }
-    | IMAGES LOAD OP String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP {        
-        $$ = images_load( _environment, $4, NULL, ((struct _Environment *)_environment)->currentMode, $9, $11 )->name;
+    | IMAGES LOAD OP String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP image_load_flags {        
+        $$ = images_load( _environment, $4, NULL, ((struct _Environment *)_environment)->currentMode, $9, $11, $13 )->name;
       }
-    | LOAD IMAGES OP String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP {        
-        $$ = images_load( _environment, $4, NULL, ((struct _Environment *)_environment)->currentMode, $9, $11 )->name;
+    | IMAGES LOAD OP String AS String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP image_load_flags {        
+        $$ = images_load( _environment, $4, $6, ((struct _Environment *)_environment)->currentMode, $11, $13, $15 )->name;
       }
-    | IMAGE LOAD OP String CP {
-        $$ = image_load( _environment, $4, NULL, ((struct _Environment *)_environment)->currentMode )->name;
+    | LOAD IMAGES OP String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP image_load_flags {        
+        $$ = images_load( _environment, $4, NULL, ((struct _Environment *)_environment)->currentMode, $9, $11, $13 )->name;
       }
-    | IMAGE LOAD OP String AS String CP {
-        $$ = image_load( _environment, $4, $6, ((struct _Environment *)_environment)->currentMode )->name;
+    | LOAD IMAGES OP String AS String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP image_load_flags {        
+        $$ = images_load( _environment, $4, $6, ((struct _Environment *)_environment)->currentMode, $11, $13, $15 )->name;
       }
-    | IMAGE LOAD OP String OP_COMMA Integer CP {
-        $$ = image_load( _environment, $4, NULL, $6 )->name;
+    | IMAGE LOAD OP String CP image_load_flags {
+        $$ = image_load( _environment, $4, NULL, ((struct _Environment *)_environment)->currentMode, $6 )->name;
       }
-    | IMAGE LOAD OP String AS String OP_COMMA Integer CP {
-        $$ = image_load( _environment, $4, $6, $8 )->name;
+    | IMAGE LOAD OP String AS String CP image_load_flags {
+        $$ = image_load( _environment, $4, $6, ((struct _Environment *)_environment)->currentMode, $8 )->name;
       }
-    | LOAD IMAGE OP String CP {
-        $$ = image_load( _environment, $4, NULL, ((struct _Environment *)_environment)->currentMode )->name;
+    | IMAGE LOAD OP String OP_COMMA Integer CP image_load_flags {
+        $$ = image_load( _environment, $4, NULL, $6, $8 )->name;
       }
-    | LOAD IMAGE OP String AS String CP {
-        $$ = image_load( _environment, $4, $6, ((struct _Environment *)_environment)->currentMode )->name;
+    | IMAGE LOAD OP String AS String OP_COMMA Integer CP image_load_flags {
+        $$ = image_load( _environment, $4, $6, $8, $10 )->name;
       }
-    | LOAD IMAGE OP String OP_COMMA Integer CP {
-        $$ = image_load( _environment, $4, NULL, $6 )->name;
+    | LOAD IMAGE OP String CP image_load_flags {
+        $$ = image_load( _environment, $4, NULL, ((struct _Environment *)_environment)->currentMode, $6 )->name;
       }
-    | LOAD IMAGE OP String AS String OP_COMMA Integer CP {
-        $$ = image_load( _environment, $4, $6, $8 )->name;
+    | LOAD IMAGE OP String AS String CP image_load_flags {
+        $$ = image_load( _environment, $4, $6, ((struct _Environment *)_environment)->currentMode, $8 )->name;
+      }
+    | LOAD IMAGE OP String OP_COMMA Integer CP image_load_flags {
+        $$ = image_load( _environment, $4, NULL, $6, $8 )->name;
+      }
+    | LOAD IMAGE OP String AS String OP_COMMA Integer CP image_load_flags {
+        $$ = image_load( _environment, $4, $6, $8, $10 )->name;
       }
    | SIZE OP expr CP {
         Variable * v = variable_retrieve( _environment, $3 );

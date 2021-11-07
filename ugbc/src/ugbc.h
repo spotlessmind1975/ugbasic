@@ -1596,6 +1596,9 @@ typedef struct _Environment {
 #define PROTOTHREAD_STATUS_EXITED		3
 #define PROTOTHREAD_STATUS_ENDED		4
 
+#define FLIP_X        1
+#define FLIP_Y        2
+
 void setup_embedded( Environment *_environment );
 void target_install( Environment *_environment );
 void begin_compilation( Environment * _environment );
@@ -1754,13 +1757,15 @@ void                    home( Environment * _environment );
 //----------------------------------------------------------------------------
 
 void                    if_then( Environment * _environment, char * _expression );
-Variable *              image_load( Environment * _environment, char * _filename, char * _alias, int _mode );
+char *                  image_flip_x( Environment * _environment, char * _source, int _width, int _height );
+char *                  image_flip_y( Environment * _environment, char * _source, int _width, int _height );
+Variable *              image_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _flags );
 char *                  image_load_asserts( Environment * _environment, char * _filename );
 Variable *              image_converter( Environment * _environment, char * _data, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode );
 void                    image_converter_asserts( Environment * _environment, int _width, int _height, int _offset_x, int _offset_y, int * _frame_width, int * _frame_height );
 Variable *              image_get_height( Environment * _environment, char * _image );
 Variable *              image_get_width( Environment * _environment, char * _image );
-Variable *              images_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _frame_width, int _frame_height );
+Variable *              images_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _frame_width, int _frame_height, int _flags );
 void                    ink( Environment * _environment, char * _expression );
 Variable *              inkey( Environment * _environment );
 void                    input( Environment * _environment, char * _variable );
