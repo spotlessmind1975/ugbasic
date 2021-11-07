@@ -58,7 +58,8 @@ La funzione ''PARAM'' recupera il risultato di un'espressione in un'istruzione '
 (o da un'istruzione ''RETURN'') e la restituisce. Se la variabile di interesse
 è una stringa, è possibile utilizzare il carattere ''$'' (ma non è obbligatorio).
 
-@syntax PARAM([name])
+@syntax = PARAM([name])
+@syntax = PARAM$([name])
 
 @example CALL factorial
 @example x = PARAM(factorial)

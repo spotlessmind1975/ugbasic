@@ -38,6 +38,35 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/**
+ * @brief Emit code for <strong>POINT(...)</strong>
+ * 
+ * Emit code to get the color at a given point.
+ * 
+ * @param _environment Current calling environment
+ * @param _x Abscissa of the pixel.
+ * @param _y Coordinate of the pixel.
+ * @return Variable* Color at the given coordinates 
+ */
+/* <usermanual>
+@keyword POINT
+
+@english
+This function allows you to get the color presents a certain 
+coordinate of the screen.
+
+@italian
+Questa funzione permette di ottenere il colore presenta una certa 
+coordinata dello schermo.
+
+@syntax = POINT( [x], [y] )
+
+@example c = POINT (42, 42)
+
+@usedInExample graphics_plot_03.bas
+
+@target c64
+ </usermanual> */
 Variable * point( Environment * _environment, char * _x, char * _y ) {
 
     Variable * result = variable_temporary( _environment, VT_COLOR, "(point's result)");
