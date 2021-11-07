@@ -903,33 +903,57 @@ exponential:
         $$ = variable_temporary( _environment, VT_BYTE, "(BYTE value)" )->name;
         variable_store( _environment, $$, $4 );
       }
+    | OP BYTE CP OP expr CP { 
+        $$ = variable_cast( _environment, $5, VT_BYTE )->name;
+      }
     | OP SIGNED BYTE CP Integer { 
         $$ = variable_temporary( _environment, VT_SBYTE, "(signed BYTE value)" )->name;
         variable_store( _environment, $$, $5 );
+      }
+    | OP SIGNED BYTE CP OP expr CP { 
+        $$ = variable_cast( _environment, $6, VT_SBYTE )->name;
       }
     | OP WORD CP Integer { 
         $$ = variable_temporary( _environment, VT_WORD, "(WORD value)" )->name;
         variable_store( _environment, $$, $4 );
       }
+    | OP WORD CP OP expr CP { 
+        $$ = variable_cast( _environment, $5, VT_WORD )->name;
+      }
     | OP SIGNED WORD CP Integer { 
         $$ = variable_temporary( _environment, VT_WORD, "(signed WORD value)" )->name;
         variable_store( _environment, $$, $5 );
+      }
+    | OP SIGNED WORD CP OP expr CP { 
+        $$ = variable_cast( _environment, $6, VT_SWORD )->name;
       }
     | OP DWORD CP Integer { 
         $$ = variable_temporary( _environment, VT_DWORD, "(DWORD value)" )->name;
         variable_store( _environment, $$, $4 );
       }
+    | OP DWORD CP OP expr CP { 
+        $$ = variable_cast( _environment, $5, VT_DWORD )->name;
+      }
     | OP SIGNED DWORD CP Integer { 
         $$ = variable_temporary( _environment, VT_DWORD, "(DWORD value)" )->name;
         variable_store( _environment, $$, $5 );
+      }
+    | OP SIGNED DWORD CP OP expr CP { 
+        $$ = variable_cast( _environment, $6, VT_SDWORD )->name;
       }
     | OP POSITION CP Integer { 
         $$ = variable_temporary( _environment, VT_POSITION, "(POSITION value)" )->name;
         variable_store( _environment, $$, $4 );
       }
+    | OP POSITION CP OP expr CP { 
+        $$ = variable_cast( _environment, $5, VT_POSITION )->name;
+      }
     | OP COLOR CP Integer { 
         $$ = variable_temporary( _environment, VT_COLOR, "(COLOR value)" )->name;
         variable_store( _environment, $$, $4 );
+      }
+    | OP COLOR CP OP expr CP { 
+        $$ = variable_cast( _environment, $5, VT_COLOR )->name;
       }
     | OP STRING CP Identifier { 
         $$ = variable_cast( _environment, $4, VT_DSTRING )->name;        
