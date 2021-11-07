@@ -67,6 +67,17 @@ come risultato.
 
 @example = COLLISION(#1)
 
+@target c64
+</usermanual> */
+/* <usermanual>
+@keyword HIT
+
+@english
+Alias for ''COLLISION''.
+
+@italian
+Alias per ''COLLISION''.
+
 @seeAlso HIT
 
 @target c64

@@ -39,16 +39,34 @@
  ****************************************************************************/
 
 /**
- * @brief Emit ASM code for <b>SCREEN [mode]</b>
+ * @brief Emit ASM code for <b>CAN SCREEN [mode]</b>
  * 
- * This function outputs assembly code to change the current mode.
+ * This function outputs assembly code to check if the given mode is available.
  * 
  * @param _environment Current calling environment
- * @param _mode Mode to change to
+ * @param _mode Mode to check
  */
 /* <usermanual>
 @keyword CAN SCREEN
-</usermanual> */
+
+@english
+This instruction allows you to check if a certain screen mode is available or
+not. If that mode is available, the instruction will return the value ''TRUE''. 
+Otherwise, the statement will return ''FALSE''.
+
+@italian
+Questa istruzione consente di verificare se una determinata modalità dello 
+schermo è disponibile o meno. Se lo è, l'istruzione restituirà il valore ''TRUE''.
+In caso contrario, l'istruzione restituirà ''FALSE''.
+
+@syntax = CAN SCREEN [mode]
+
+@example IF CAN SCREEN 2 THEN : PRINT "mode 2 is available": ENDIF
+
+@usedInExample screens_cls_03.bas
+
+@target all
+ </usermanual> */
 Variable * screen_can( Environment * _environment, int _mode ) {
 
     ScreenMode * mode = find_screen_mode_by_id( _environment, _mode );

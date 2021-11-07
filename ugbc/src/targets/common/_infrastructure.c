@@ -3869,6 +3869,39 @@ int pattern_match( char * _pattern, char * _value ) {
     return result;
 }
 
+/**
+ * @brief Emit code for <string>BIN(...)</strong>
+ * 
+ * Emit the code to convert the given value in a binary string.
+ * 
+ * @param _environment Current calling environment
+ * @param _value Value to convert into string
+ * @param _digits Number of digits to represent
+ * @return Variable* String with the binary representation
+ */
+/* <usermanual>
+@keyword BIN
+
+@english
+This function converts a number into a string of bits, from the most significant
+to the least significant. It is also possible to indicate the number of digits 
+to be represented. If this parameter is omitted, the minimum number of digits 
+for that data format (8, 16 or 32 digits) will be used.
+
+@italian
+Questa funzione converte un numero in una stringa di bit, dal più significativo 
+al meno significativo. E' possibile indicare anche il numero di cifre da 
+rappresentare. Se questo parametro viene omesso, sarà utilizzato il numero di 
+cifre minimo per quel formato di dati (8, 16 o 32 cifre).
+
+@syntax = BIN( [value] )
+@syntax = BIN( [value], [digits] )
+
+@example x = BIN(42)
+@example z = BIN(42, 5)
+
+@target all
+ </usermanual> */
 Variable * variable_bin( Environment * _environment, char * _value, char * _digits ) {
 
     MAKE_LABEL

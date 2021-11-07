@@ -1020,3 +1020,97 @@ stringe costanti.
 
 @target all
 </usermanual> */
+
+/* <usermanual>
+@keyword FREE
+
+@english
+Retrieves the free space still available for strings, in terms of bytes. 
+This is how many characters are still available to be stored. The maximum 
+value when calling this function is that indicated by the 
+''DEFINE STRING SPACE'' statement. The default value for string 
+storage is 1024 bytes.
+
+@italian
+Recupera lo spazio libero ancora disponibile per le stringhe, in termini di bytes. 
+Equivale a quanti caratteri sono ancora disponibili per essere memorizzati. Il 
+valore massimo, nel richiamare questa funzione, è quello indicato 
+dall'istruzione ''DEFINE STRING SPACE'', ed è pari a 1024 bytes se non viene
+impostato diversamente.
+
+@syntax ... = FREE
+
+@example PRINT FREE
+
+@seeAlso DEFINE STRING SPACE
+
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword SCREEN
+
+@english
+Retrieves a bitmask with screen characteristics, such as whether or 
+not TILE or BITMAP mode is available.
+
+^ BIT POSITION ^ SYMBOL  ^ MEANING            ^
+| 0            | TILEMAP | Is tilemap native? |
+| 1            | BITMAP  | Is bitmap native?  |
+
+This can be verified with a simple bitwise comparison.
+
+@italian
+Recupera una maschera di bit con le caratteristiche dello schermo, quali la 
+disponibilità o meno della modalità TILE o BITMAP.
+
+^ POSIZIONE BIT ^ SIMBOLO  ^ SIGNIFICATO                 ^
+| 0             | TILEMAP  | Supporto al tilemap nativo? |
+| 1             | BITMAP   | Supporto al bitmap nativo?  |
+
+Si può verificare con un semplice confronto bit a bit.
+
+@syntax ... = SCREEN
+
+@example IF SCREEN IS TILEMAP THEN: PRINT "tilemap is native!": ENDIF
+
+@usedInExample screens_bitmap_01.bas
+
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword TILEMAP
+
+@english
+This is the bitmask used to select the TILE mode.
+
+@italian
+Questa è la maschera di bit per indicare la modalità TILE.
+
+@syntax ... = TILEMAP
+
+@example IF SCREEN IS TILEMAP THEN: PRINT "tilemap is native!": ENDIF
+
+@usedInExample screens_bitmap_01.bas
+
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword BITMAP
+
+@english
+This is the bitmask used to select the BITMAP mode.
+
+@italian
+Questa è la maschera di bit per indicare la modalità BITMAP.
+
+@syntax ... = BITMAP
+
+@example IF SCREEN IS BITMAP THEN: PRINT "bitmap is native!": ENDIF
+
+@usedInExample screens_bitmap_01.bas
+
+@target all
+</usermanual> */
