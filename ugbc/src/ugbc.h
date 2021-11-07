@@ -1298,6 +1298,7 @@ typedef struct _Environment {
 #define CRITICAL_NOT_IMAGES( v ) CRITICAL2("E089 - variable is not an collection of images", v );
 #define CRITICAL_NOT_ASSIGNED_IMAGES( v ) CRITICAL2("E090 - variable is not a loaded collection of images, please use assign operator", v );
 #define CRITICAL_NOT_STRING_ARRAY( v ) CRITICAL2("E091 - accessing as a string array on a non string array", v );
+#define CRITICAL_SIZE_UNSUPPORTED( v, t ) CRITICAL3("E092 - SIZE unsupported for variable of given datatype", v, t );
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
 #define WARNING2i( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%i) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
