@@ -1596,8 +1596,9 @@ typedef struct _Environment {
 #define PROTOTHREAD_STATUS_EXITED		3
 #define PROTOTHREAD_STATUS_ENDED		4
 
-#define FLIP_X        1
-#define FLIP_Y        2
+#define FLAG_FLIP_X        1
+#define FLAG_FLIP_Y        2
+#define FLAG_ROLL_X        4
 
 void setup_embedded( Environment *_environment );
 void target_install( Environment *_environment );
@@ -1765,6 +1766,8 @@ Variable *              image_converter( Environment * _environment, char * _dat
 void                    image_converter_asserts( Environment * _environment, int _width, int _height, int _offset_x, int _offset_y, int * _frame_width, int * _frame_height );
 Variable *              image_get_height( Environment * _environment, char * _image );
 Variable *              image_get_width( Environment * _environment, char * _image );
+char *                  image_roll_x_left( Environment * _environment, char * _source, int _width, int _height );
+char *                  image_roll_x_right( Environment * _environment, char * _source, int _width, int _height );
 Variable *              images_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _frame_width, int _frame_height, int _flags );
 void                    ink( Environment * _environment, char * _expression );
 Variable *              inkey( Environment * _environment );
