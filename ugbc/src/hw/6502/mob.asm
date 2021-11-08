@@ -45,6 +45,7 @@ MOBH: .word 0
 MOBADDR = $03
 MOBSIZE: .word 0
 MOBLASTX: .byte 0
+MOBCOUNT: .byte 0
 
 ; Generic initialization
 ; MOBINIT(X:indeX,X,y,w,h,draw)

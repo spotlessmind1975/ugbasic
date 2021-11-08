@@ -4737,6 +4737,16 @@ void cpu6502_mobrender( Environment * _environment, int _on_vbl ) {
 
 }
 
+void cpu6502_mobcount( Environment * _environment, char * _index ) {
+
+    deploy( mob, src_hw_6502_mob_asm );
+    deploy( mobcs, src_hw_chipset_mob_asm );
+    
+    outline0("LDX MOBCOUNT" );
+    outline1("STX %s", _index );
+
+}
+
 void cpu6502_sqroot( Environment * _environment, char * _number, char * _result ) {
 
     deploy( sqr, src_hw_6502_sqr_asm );

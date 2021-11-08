@@ -1805,7 +1805,7 @@ void                    memorize( Environment * _environment );
 Variable *              minimum( Environment * _environment, char * _source, char * _dest );
 void                    mob_at( Environment * _environment, char * _index, char * _x, char * _y );
 void                    mob_hide( Environment * _environment, char * _index );
-void                    mob_init( Environment * _environment, char * _index, char * _image, char * _x, char * _y );
+Variable *              mob_init( Environment * _environment, char * _image, char * _x, char * _y );
 void                    mob_render( Environment * _environment, int _on_vbl );
 void                    mob_show( Environment * _environment, char * _index );
 
