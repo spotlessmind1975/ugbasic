@@ -60,12 +60,6 @@ void target_finalization( Environment * _environment ) {
 #include<stdio.h>
 #include<math.h>
 
-unsigned int sum=0;
-unsigned char chk=0;
-unsigned short l;
-int nblock;
-int rest;
-int cnt=0;
 int frmt( Environment * _environment, char * ptr, char size,char* out)
 {
 	memset(out,0x20,11);
@@ -92,65 +86,52 @@ int frmt( Environment * _environment, char * ptr, char size,char* out)
 		return 0;
 }
 
-// FIX #173
-#if ( defined(__BYTE_ORDER) && __BYTE_ORDER == __BIG_ENDIAN ) || \
-    defined(__BIG_ENDIAN__) || \
-    defined(__ARMEB__) || \
-    defined(__THUMBEB__) || \
-    defined(__AARCH64EB__) || \
-    defined(_MIBSEB) || defined(__MIBSEB) || defined(__MIBSEB__)
-
-	void swapen(unsigned short *num)
-	{
-		return *num;
-	}
-
-#else
-
-	void swapen(unsigned short *num)
-	{
-	unsigned short swapped;
-	swapped = (*num>>8) | (*num<<8);
-	*num=swapped;
-	}
-
-#endif
-
-void crc ( unsigned char * data, int l,unsigned int   * old)
-{ 
-
-   cnt+=l;
-	for (int i= 0;i<l;i++)
-	{
-	(*old)+=data[i];
-
-	}
+/* http://dcmoto.free.fr/documentation/moniteur-mo5-casst/moniteur-mo5-casst_src.txt */
+static unsigned char blk[257];
+static void new_blk(int type) 
+{
+    blk[0] = type;                  /* set type ok k7 block: 0=file-name, 1=file-data, 0xFF=end-of-file */
+    blk[1] = 0;                     /* len = 0 */
+    blk[256] = 0;                   /* checksum = 0 */
+}
+static void out_blk(FILE *f) 
+{
+    static unsigned char hdr[]={1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0x3c,0x5a}; /* k7 block-header */
+    int pos = 2 + blk[1];	    /* get checksum pos */
+    blk[1] = pos;		    /* update block len */
+    blk[pos] = 256 - blk[256];      /* complement checksum */
+    fwrite(hdr, sizeof(hdr), 1, f); /* write block header */
+    fwrite(blk, pos+1, 1, f);       /* then block content */
+    new_blk(blk[0]);                /* prepare a new block of the same kind */
 }
 
-unsigned char cmpl(unsigned int n)
+static void write_byte(FILE *f, int byte) 
 {
-	return 0x100- ((unsigned char)n);
+    blk[256] += (unsigned char)byte;/* update checksum */
+    blk[2 + blk[1]++] = byte;       /* update index & store byte */
+    if(254 == blk[1]) out_blk(f);   /* when block is full, write it */
+}
+static void write_word(FILE *f, int word) 
+{
+    write_byte(f, word >> 8);
+    write_byte(f, word & 255);
+}
+static void write_bytes(FILE *f, void *array, int len) 
+{
+    unsigned char *ptr = array;
+    size_t cnt = len;
+    while(cnt--) write_byte(f, *ptr++);
 }
 
 int convertbintok7(Environment * _environment)
 {
-	// if(argc==1)
-	// {
-	// 	printf("Missing arguments !!!!!!\n"
-	// 	"bin2k7 source pc128_filename K7_filename\n"
-	// 	"load and exec address is set to &H0000.\n"
-	// 	"Use offset to load to any address. EX: LOADM\"CASS:\",&H6000 will load starting to &H6000\n"
-	// 	);
-	// 	return -1;
-	// }
-	unsigned short start=0x3000;
-	unsigned short size;
-	unsigned short runaddr=0x3000;
-	FILE *fr,*fw;
-	char nome[12];
-	char nomecod[12];
-	char source[20];
-	char destin[100];
+    unsigned short start=0x3000;
+    unsigned short size;
+    unsigned short runaddr=0x3000;
+    FILE *fr,*fw;
+    char nome[12];
+    char source[20];
+    char destin[100];
 
     // Rename the output file into a temporary filename
     char temporaryFileName[MAX_TEMPORARY_STORAGE];
@@ -158,122 +139,55 @@ int convertbintok7(Environment * _environment)
     rename( _environment->exeFileName, temporaryFileName );
     
     fr=fopen(temporaryFileName,"rb");
-	if(!fr) 
-	{	
+    if(!fr) 
+    {   
         CRITICAL_CANNOT_OPEN_EXECUTABLE_FILE( temporaryFileName );
-		// printf("source file not found!!!!");
-		// return -1;
-	}
+    }
 
-	if(frmt(_environment, "main.exe",strlen("main.exe"),nome))
-	{
-		CRITICAL("abort");
-	}
+    if(frmt(_environment, "main.exe",strlen("main.exe"),nome))
+    {
+        CRITICAL("abort");
+    }
 
-	unsigned char byt;
-	unsigned short l;
-	unsigned char h[]={1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0x3c,0x5a};
-    unsigned char h1[]={1,0,0};
-    unsigned char h2[]={1,0};
-	unsigned char n[]={0x00,0x10};
-	unsigned char n1[]={0x02,0x00,0x00};
-	unsigned char end[]={0xff,0x02,0x00};
-	unsigned char z=0;
-	unsigned char u=1;
-	unsigned char preend[]={0xff,0x00,0x00};
-	fr=fopen(temporaryFileName,"rb");
-	// if(argv[3]==NULL)
-	// {
-		strcpy(destin,_environment->exeFileName);
-		// strcat(destin,".K7");
-	// }
-	// else
-	// strcpy(destin,argv[3]);
-	fw=fopen(destin,"wb");
-	fseek(fr, 0L, SEEK_END);
+    unsigned char file_type[]={0x02,0x00,0x00}; /* binary k7 file */
+
+    fr=fopen(temporaryFileName,"rb");
+
+    strcpy(destin,_environment->exeFileName);
+    fw=fopen(destin,"wb");
+
+    fseek(fr, 0L, SEEK_END);
     size = ftell(fr);
-    l=size;
-    nblock=floor((size+12)/254);
-    // printf("n blocks: %d\n",nblock);
-    // printf("size: %d\n",size);
-    rest=size+12-nblock*254;
-
-	// Fix #187
-	unsigned char restByte = (unsigned char)rest;
-    
     rewind(fr);
-    swapen(&size);
-    swapen(&start);
-    swapen(&runaddr);
-	fwrite(&h,sizeof(h),1,fw);
-	fwrite(&n,sizeof(n),1,fw);
-	fwrite(&nome,sizeof(nome)-1,1,fw);
-	fwrite(&n1,3,1,fw);
-	crc(nome,11,&sum);
-	crc(n1,1,&sum);
-	
-	chk=cmpl(sum);
-	sum=0;
-	cnt=0;
-	fwrite(&chk,1,1,fw);
-	fwrite(&h,sizeof(h),1,fw);
-	if(nblock>0)
-	{
-    	fwrite(&h1,sizeof(h1),1,fw);
-	}
-	else
-	{
-			fwrite(&u,sizeof(u),1,fw);
-			// Fix #187
-	        fwrite(&restByte,1,1,fw);
-	        fwrite(&z,sizeof(z),1,fw);
-	}
-	cnt++;
-	fwrite(&size,sizeof(size),1,fw);
-	fwrite(&start,sizeof(start),1,fw);
-	crc((unsigned char *)&size,sizeof(size),&sum);
-	crc((unsigned char *)&start,sizeof(start),&sum);
-	for (int i=0;i<l;i++)
-	{
-		if(cnt>253)
-		{
-			nblock--;
-			chk=cmpl(sum);
-			sum=0;
-			//printf("%d\n",chk);
-	    	fwrite(&chk,1,1,fw);
-			fwrite(&h,sizeof(h),1,fw);
-			if(nblock>0)
-			fwrite(&h2,sizeof(h2),1,fw);
-			else
-			{
-					fwrite(&u,sizeof(u),1,fw);
-					// Fix #187
-					fwrite(&restByte,1,1,fw);
-				    // printf("*****\n");
-			}
-			cnt=0;
-		    
-		}
-		fread(&byt,1,1,fr);
-		crc(&byt,1,&sum);
-		fwrite(&byt,1,1,fw);
-	}
-		crc((unsigned char *)&preend,3,&sum);
-		fwrite(&preend,3,1,fw);
-		crc((unsigned char *)&runaddr,2,&sum);
-		fwrite(&runaddr,2,1,fw);
-		chk=cmpl(sum);
-		sum=0;
-		fwrite(&chk,1,1,fw);
-		fwrite(&h,sizeof(h),1,fw);
-		fwrite(&end,sizeof(end),1,fw);
-		// printf("chk %x rest %x block %d\n",chk,rest,nblock);
-		
-	fclose(fr);
-	fclose(fw);
-	
-	return 0;
+
+    new_blk(0); /* k7 block 0: file name + type */
+    write_bytes(fw, &nome[0], sizeof(nome)-1); /* file name */
+    write_bytes(fw, &file_type[0], 3); /* file type */
+    out_blk(fw); /* done with block 0 */
+    
+    new_blk(1); /* k7 block 1: content of file */
+    write_byte(fw, 0); /* binary chunk */
+    write_word(fw, size); /* size of chunk */
+    write_word(fw, start); /* load address */
+    for (int i=0;i<size;i++)
+    {
+        unsigned char byt;
+        fread(&byt,1,1,fr);
+        write_byte(fw, byt); /* data */
+    }
+    
+    write_byte(fw, 0xff); /* execution chunk */
+    write_word(fw, 0x0000); /* len = 0 */
+    write_word(fw, runaddr); /* exec address */
+    out_blk(fw); /* done with k7 block 1 */
+    
+    new_blk(0xff); /* k7 block 0xff : end of k7 file */
+    out_blk(fw); /* done with it */
+        
+    fclose(fr);
+    fclose(fw);
+    
+    return 0;
 }
 
 void target_cleanup( Environment * _environment ) {
