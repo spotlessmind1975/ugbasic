@@ -30,6 +30,9 @@
 
 FLEX_OPTIONS=--8bit 
 BISON_OPTIONS=--locations -d -Wcounterexamples
+CFLAGS=-O3 -g -fomit-frame-pointer
+LFLAGS=-g
+LIBS=-lm
 
 .PHONY: paths clean all
 
@@ -299,6 +302,8 @@ SOURCES += $(wildcard src/targets/common/*.c)
 SOURCES += $(wildcard src/targets/$(target)/*.c)
 SOURCES += src-generated/ugbc.yy.c src-generated/ugbc.tab.c src-generated/modules_$(target).c
 
+OBJS = $(SOURCES:%.c=objs.$(target)/%.o)
+
 SOURCESTEST := $(wildcard src/*.c)
 SOURCESTEST += $(wildcard src/targets/*.c)
 SOURCESTEST += $(wildcard src/hw/*.c)
@@ -314,13 +319,18 @@ paths:
 paths-test:
 	@mkdir -p exe-test
 
-compiler: $(SOURCES)
-	@cc -D__$(target)__ -g $(SOURCES) -o exe/ugbc.$(target) -lm
+compiler: $(OBJS)
+	@$(CC) $(LFLAGS) $^ -o exe/ugbc.$(target) $(LIBS)
+	
+objs.$(target)/%.o: %.c src-generated/modules_$(target).c
+	@mkdir -p $(dir $@)
+	@$(CC) $(CFLAGS) -D__$(target)__  -c $< -o $@
 
 tester: $(SOURCESTEST)
-	@cc -D__$(target)__ -g $(SOURCESTEST) -o exe-test/ugbc.$(target) -lm
+	@$(CC) $(CFLAGS) -D__$(target)__ $(SOURCESTEST) -o exe-test/ugbc.$(target) -lm
 
 clean:
+	@rm -rf objs.$(target)/*
 	@rm -f exe/ugbc.*
 	@rm -f src-generated/*.c
 	@rm -f src-generated/*.h

@@ -37,7 +37,7 @@ EXECUTABLES := $(subst /asm/,/exe/,$(COMPILED:.asm=.$(output)))
 all: paths compiler $(COMPILED) $(EXECUTABLES)
 
 test:
-	@cd ugbc; make target=$(target) test
+	@cd ugbc && $(MAKE) target=$(target) test
 	@echo "--- START TEST ---"
 	@ugbc/exe-test/ugbc.$(target)
 	@echo
@@ -88,34 +88,34 @@ generated/zx/exe/%.tap:
 	@z88dk-appmake +zx --org 32768 -b $(@:.tap=.bin)
 	@rm -f $(@:.tap=.bin) $(@:.tap=_*.bin)
 
-generated/d32/asm/%.asm:
+generated/d32/asm/%.asm: compiler
 	@ugbc/exe/ugbc.d32 $(subst generated/d32/asm/,examples/,$(@:.asm=.bas)) $@
 
 generated/d32/exe/%.bin: $(subst /exe/,/asm/,$(@:.bin=.asm))
 	@asm6809 -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -D -e 10240 -o $@ $(subst /exe/,/asm/,$(@:.bin=.asm))
 
-generated/d64/asm/%.asm:
+generated/d64/asm/%.asm: compiler
 	@ugbc/exe/ugbc.d64 $(subst generated/d64/asm/,examples/,$(@:.asm=.bas)) $@
 
 generated/d64/exe/%.bin: $(subst /exe/,/asm/,$(@:.bin=.asm))
 	@asm6809 -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -D -e 10240 -o $@ $(subst /exe/,/asm/,$(@:.bin=.asm))
 
-generated/pc128op/asm/%.asm:
+generated/pc128op/asm/%.asm: compiler
 	@ugbc/exe/ugbc.pc128op $(subst generated/pc128op/asm/,examples/,$(@:.asm=.bas)) $@
 
-generated/pc128op/exe/%.k7:
+generated/pc128op/exe/%.k7: compiler
 	@ugbc/exe/ugbc.pc128op $(subst generated/pc128op/exe/,examples/,$(@:.k7=.bas)) -o $@
 
-generated/pc128op/exe/%.bin:
+generated/pc128op/exe/%.bin: compiler
 	@asm6809 -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -D -e 10240 -o $@ $(subst /exe/,/asm/,$(@:.bin=.asm))
 
-generated/mo5/asm/%.asm:
+generated/mo5/asm/%.asm: compiler
 	@ugbc/exe/ugbc.mo5 $(subst generated/mo5/asm/,examples/,$(@:.asm=.bas)) $@
 
-generated/mo5/exe/%.k7:
+generated/mo5/exe/%.k7: compiler
 	@ugbc/exe/ugbc.mo5 $(subst generated/mo5/exe/,examples/,$(@:.k7=.bas)) -o $@
 
-generated/mo5/exe/%.bin:
+generated/mo5/exe/%.bin: compiler
 	@asm6809 -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -D -e 10240 -o $@ $(subst /exe/,/asm/,$(@:.bin=.asm))
 
 paths:
@@ -125,10 +125,10 @@ paths:
 	@mkdir -p generated/$(target)/exe
 
 compiler:
-	@cd ugbc; make target=$(target) all
+	@cd ugbc && $(MAKE) target=$(target) all
 
 clean:
-	@cd ugbc; make clean
+	@cd ugbc && $(MAKE) clean
 	@rm -f -r generated
 
 runc64: generated/c64/asm/$(example).asm generated/c64/exe/$(example).$(output)
