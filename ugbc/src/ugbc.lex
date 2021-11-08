@@ -224,6 +224,7 @@ LOWER { return (LOWER); }
 LOWER\$ { return (LOWER); }
 M { return (M); }
 MAGENTA { return(MAGENTA); }
+MASKED { return(MASKED); }
 MAX { return(MAX); }
 MCM { return(MCM); }
 MEMORIZE { return(MEMORIZE); }
@@ -291,6 +292,7 @@ RETURN { return (RETURN); }
 RIGHT { return (RIGHT); }
 RIGHT\$ { return (RIGHT); }
 RND { return (RND); }
+ROLL { return (ROLL); }
 ROWS { return (ROWS); }
 RUNSTOP { return (RUNSTOP); }
 RUN { return (RUN); }

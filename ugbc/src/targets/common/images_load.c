@@ -147,54 +147,63 @@ Variable * images_load( Environment * _environment, char * _filename, char * _al
 
     int wc = ( width / _frame_width );
     int hc = ( height / _frame_height );
+    int a = 1;
 
     Variable * result[MAX_TEMPORARY_STORAGE];
-    int i,di,x=0,y=0;
+    int i,di,x=0,y=0,z=0;
     int bufferSize = 0;
 
-    if( _flags & FLIP_X ) {
-        source = image_flip_x( _environment, source, width, height );
-        i = (hc*wc)-1;
-        di = -1;
-    } else {
-        i = 0;
-        di = 1;
+    if( _flags & FLAG_ROLL_X ) {
+        a = (_frame_width - 1);
     }
-    if( _flags & FLIP_Y ) {
+
+    int realFramesCount = (a*hc*wc);
+    i = 0;
+    di = 1;
+
+    if( _flags & FLAG_FLIP_X ) {
+        source = image_flip_x( _environment, source, width, height );
+    }
+    if( _flags & FLAG_FLIP_Y ) {
         source = image_flip_y( _environment, source, width, height );
     }
 
-    for( y=0; y<height; y+=_frame_height ) {
-        for( x=0; x<width; x+=_frame_width ) {
-            result[i] = image_converter( _environment, source, width, height, x, y, _frame_width, _frame_height, _mode );
-            bufferSize += result[i]->size;
-            i += di;
+    int base = ( 3*width*height ) - 6;
+    for( z=0; z<a; ++z ) {
+        for( y=0; y<height; y+=_frame_height ) {
+            for( x=0; x<width; x+=_frame_width ) {
+                result[i] = image_converter( _environment, source, width, height, x, y, _frame_width, _frame_height, _mode );
+                bufferSize += result[i]->size;
+                i += di;
+            }
+        }
+        if( _flags & FLAG_ROLL_X ) {
+            if ( _flags & FLAG_FLIP_X ) {
+                source = image_roll_x_left( _environment, source, width, height );
+            } else {
+                source = image_roll_x_right( _environment, source, width, height );
+            }
         }
     }
 
     char * buffer = malloc( bufferSize + 2 );
     char * ptr = buffer;
-    #if CPU_LITTLE_ENDIAN
-        ptr[0] = bufferSize & 0xff;
-        ptr[1] = ( bufferSize >> 8 ) & 0xff;
-    #else
-        ptr[0] = ( bufferSize >> 8 ) & 0xff;
-        ptr[1] = bufferSize & 0xff;
-    #endif
+    ptr[0] = wc*hc;
+    ptr[1] = _frame_width;
 
-    offsetting_size_count( _environment, result[0]->size, wc*hc );
+    offsetting_size_count( _environment, result[0]->size, realFramesCount );
 
     ptr += 2;
-    for(i=0; i<wc*hc; ++i ) {
+    for(i=0; i<realFramesCount; ++i ) {
         memcpy( ptr, result[i]->valueBuffer, result[i]->size );
         ptr += result[i]->size;
     }
     Variable * final = variable_temporary( _environment, VT_IMAGES, 0 );
     variable_store_buffer( _environment, final->name, buffer, bufferSize, 0 );
     final->frameSize = result[0]->size;
-    final->frameCount = wc * hc;
+    final->frameCount = realFramesCount;
 
-    for(i=0; i<wc*hc; ++i ) {
+    for(i=0; i<realFramesCount; ++i ) {
         variable_temporary_remove( _environment, result[i]->name );
     }
 
