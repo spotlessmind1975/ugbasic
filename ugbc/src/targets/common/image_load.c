@@ -139,10 +139,10 @@ Variable * image_load( Environment * _environment, char * _filename, char * _ali
         CRITICAL_IMAGE_LOAD_UNKNOWN_FORMAT( _filename );
     }
 
-    if( _flags & FLIP_X ) {
+    if( _flags & FLAG_FLIP_X ) {
         source = image_flip_x( _environment, source, width, height );
     }
-    if( _flags & FLIP_Y ) {
+    if( _flags & FLAG_FLIP_Y ) {
         source = image_flip_y( _environment, source, width, height );
     }
 
