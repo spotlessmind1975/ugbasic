@@ -80,6 +80,7 @@ extern char DATATYPE_AS_STRING[][16];
 %type <integer> protothread_definition
 %type <integer> on_targets
 %type <integer> image_load_flags image_load_flags1 image_load_flag
+%type <integer> images_load_flags images_load_flags1 images_load_flag
 
 %right Integer String CP 
 %left OP_DOLLAR
@@ -371,6 +372,20 @@ image_load_flag :
     }
     | FLIP YX {
         $$ = FLAG_FLIP_X | FLAG_FLIP_Y;
+    };
+
+images_load_flag :
+    FLIP X {
+        $$ = FLAG_FLIP_X;
+    }
+    | FLIP Y {
+        $$ = FLAG_FLIP_Y;
+    }
+    | FLIP XY {
+        $$ = FLAG_FLIP_X | FLAG_FLIP_Y;
+    }
+    | FLIP YX {
+        $$ = FLAG_FLIP_X | FLAG_FLIP_Y;
     }
     | ROLL X {
         $$ = FLAG_ROLL_X;
@@ -385,12 +400,27 @@ image_load_flags1 :
         $$ = $1 | $2;
     };
 
+images_load_flags1 :
+    images_load_flag {
+        $$ = $1;
+    }
+    | images_load_flag images_load_flags1 {
+        $$ = $1 | $2;
+    };
 
 image_load_flags :
     {
         $$ = 0;    
     } 
     | image_load_flags1 {
+        $$ = $1;
+    };
+
+images_load_flags :
+    {
+        $$ = 0;    
+    } 
+    | images_load_flags1 {
         $$ = $1;
     };
 
@@ -1018,16 +1048,16 @@ exponential:
     | LOAD OP String AS String OP_COMMA Integer CP {
         $$ = load( _environment, $3, $5, $7 )->name;
       }
-    | IMAGES LOAD OP String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP image_load_flags {        
+    | IMAGES LOAD OP String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP images_load_flags {        
         $$ = images_load( _environment, $4, NULL, ((struct _Environment *)_environment)->currentMode, $9, $11, $13 )->name;
       }
-    | IMAGES LOAD OP String AS String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP image_load_flags {        
+    | IMAGES LOAD OP String AS String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP images_load_flags {        
         $$ = images_load( _environment, $4, $6, ((struct _Environment *)_environment)->currentMode, $11, $13, $15 )->name;
       }
-    | LOAD IMAGES OP String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP image_load_flags {        
+    | LOAD IMAGES OP String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP images_load_flags {        
         $$ = images_load( _environment, $4, NULL, ((struct _Environment *)_environment)->currentMode, $9, $11, $13 )->name;
       }
-    | LOAD IMAGES OP String AS String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP image_load_flags {        
+    | LOAD IMAGES OP String AS String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP images_load_flags {        
         $$ = images_load( _environment, $4, $6, ((struct _Environment *)_environment)->currentMode, $11, $13, $15 )->name;
       }
     | IMAGE LOAD OP String CP image_load_flags {
