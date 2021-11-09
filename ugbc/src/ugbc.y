@@ -3535,6 +3535,29 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     printf("\t-c <file>    Output filename with linker configuration\n" );
     printf("\t-o <exe>     Output filename with final executable file for target\n" );
     printf("\t-O <type>    Output file format for target:\n" );
+#if defined(__atari__) 
+    printf("\t                xex - executable binary file\n" );
+#elif defined(__atarixl__) 
+    printf("\t                xex - executable binary file\n" );
+#elif __c64__
+    printf("\t                prg - program binary file\n" );
+#elif __plus4__
+    printf("\t                prg - program binary file\n" );
+#elif __zx__
+    printf("\t                tap - tape file\n" );
+#elif __d32__
+    printf("\t                bin - dragon dos binary file\n" );
+#elif __d64__
+    printf("\t                bin - dragon dos binary file\n" );
+#elif __pc128op__
+    printf("\t                k7o - K7 format (original algorithm)\n" );
+    printf("\t                k7 - K7 format\n" );
+#elif __mo5__
+    printf("\t                k7o - K7 format (original algorithm)\n" );
+    printf("\t                k7 - K7 format\n" );
+#elif __vic20__
+    printf("\t                prg - program binary file\n" );
+#endif
     printf("\t-l <name>    Output filename with list of variables defined\n" );
     printf("\t-e <modules> Embed specified modules instead of inline code\n" );
     printf("\t-E           Show stats of embedded modules\n" );
