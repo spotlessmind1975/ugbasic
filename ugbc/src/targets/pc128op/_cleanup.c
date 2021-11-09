@@ -66,7 +66,7 @@ unsigned short l;
 int nblock;
 int rest;
 int cnt=0;
-int frmt( Environment * _environment, char * ptr, char size,char* out)
+static int frmt( Environment * _environment, char * ptr, char size,char* out)
 {
 	memset(out,0x20,11);
 	char * point=".";
