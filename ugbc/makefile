@@ -322,7 +322,7 @@ paths-test:
 compiler: $(OBJS)
 	@$(CC) $(LFLAGS) $^ -o exe/ugbc.$(target) $(LIBS)
 	
-objs.$(target)/%.o: %.c src-generated/modules_$(target).c
+objs.$(target)/%.o: %.c src-generated/ugbc.yy.c src-generated/ugbc.tab.c src-generated/modules_$(target).c
 	@mkdir -p $(dir $@)
 	@$(CC) $(CFLAGS) -D__$(target)__  -c $< -o $@
 
