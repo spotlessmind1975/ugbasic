@@ -16,8 +16,7 @@ airplaneImage = IMAGE LOAD("examples/air_attack_airplane.png")
 h = SCREEN HEIGHT - IMAGE HEIGHT(airplaneImage)
 w = SCREEN WIDTH - IMAGE WIDTH(airplaneImage)
 
-airplane1 = 1
-MOB airplane1, airplaneImage
+airplane1 = MOB(airplaneImage)
 MOB SHOW airplane1
 MOB RENDER ON VBL
 WAIT KEY
