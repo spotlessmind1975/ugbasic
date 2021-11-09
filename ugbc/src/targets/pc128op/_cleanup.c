@@ -278,8 +278,12 @@ int convertbintok7(Environment * _environment)
 
 void target_cleanup( Environment * _environment ) {
 
-    convertbintok7( _environment );
-
+	if ( _environment->outputFileType == OUTPUT_FILE_TYPE_K7_NEW ) {
+	    convertbintok7( _environment );
+	} else {
+	    pc128op_convertbintok7_original( _environment );
+	}
+	
     unlink( _environment->asmFileName );
 
 }
