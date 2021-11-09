@@ -4309,7 +4309,7 @@ void const_define_string( Environment * _environment, char * _name, char * _valu
 
     Constant * c = constant_find( _environment->constants, _name );
     if ( c ) {
-        if ( c->valueString ) {
+        if ( ! c->valueString ) {
             CRITICAL( "Constant redefined with a different type (string -> numeric)");
         }
         if ( strcmp( c->valueString , _value ) != 0 ) {
