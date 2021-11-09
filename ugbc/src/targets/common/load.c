@@ -114,7 +114,7 @@ Variable * load( Environment * _environment, char * _filename, char * _alias, in
 
     char * buffer = malloc( size );
 
-    fread( buffer, size, 1, file );
+    (void)!fread( buffer, size, 1, file );
 
     fclose( file );
 

@@ -172,7 +172,7 @@ int convertbintok7(Environment * _environment)
     for (int i=0;i<size;i++)
     {
         unsigned char byt;
-        fread(&byt,1,1,fr);
+        (void)!fread(&byt,1,1,fr);
         write_byte(fw, byt); /* data */
     }
     

@@ -255,7 +255,7 @@ int convertbintok7(Environment * _environment)
 			cnt=0;
 		    
 		}
-		fread(&byt,1,1,fr);
+		(void)!fread(&byt,1,1,fr);
 		crc(&byt,1,&sum);
 		fwrite(&byt,1,1,fw);
 	}
