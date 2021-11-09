@@ -70,6 +70,15 @@ char DATATYPE_AS_STRING[][16] = {
     "IMAGES"
 };
 
+char OUTPUT_FILE_TYPE_AS_STRING[][16] = {
+    "bin",
+    "prg",
+    "xex",
+    "k7 (original)",
+    "k7 (new)",
+    "tap"
+};
+
 void memory_area_assign( MemoryArea * _first, Variable * _variable ) {
 
     int neededSpace = 0;

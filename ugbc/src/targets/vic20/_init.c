@@ -38,6 +38,8 @@
  * CODE SECTION 
  ****************************************************************************/
 
+extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
+
 void setup_embedded( Environment * _environment ) {
 
     _environment->embedded.cpu_fill_blocks = 1;
@@ -114,6 +116,10 @@ void target_linkage( Environment * _environment ) {
     char commandLine[MAX_TEMPORARY_STORAGE];
     char executableName[32];
     
+    if ( _environment->outputFileType != OUTPUT_FILE_TYPE_PRG ) {
+        CRITICAL_UNSUPPORTED_OUTPUT_FILE_TYPE( OUTPUT_FILE_TYPE_AS_STRING[_environment->outputFileType] );
+    }
+
     if( access( "cc65\\bin\\cl65.exe", F_OK ) == 0 ) {
         sprintf(executableName, "%s", "cc65\\bin\\cl65.exe" );
     } else {

@@ -11,6 +11,7 @@ extern int yylineno;
 int yywrap() { return 1; }
  
 extern char DATATYPE_AS_STRING[][16];
+extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 
 %}
 
@@ -3533,6 +3534,7 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     printf("\t-I           Install needed chaintool for this target\n" );
     printf("\t-c <file>    Output filename with linker configuration\n" );
     printf("\t-o <exe>     Output filename with final executable file for target\n" );
+    printf("\t-O <type>    Output file format for target:\n" );
     printf("\t-l <name>    Output filename with list of variables defined\n" );
     printf("\t-e <modules> Embed specified modules instead of inline code\n" );
     printf("\t-E           Show stats of embedded modules\n" );
@@ -3551,6 +3553,28 @@ int main( int _argc, char *_argv[] ) {
 
     _environment->warningsEnabled = 0;
 
+#if defined(__atari__) 
+    _environment->outputFileType = OUTPUT_FILE_TYPE_XEX;
+#elif defined(__atarixl__) 
+    _environment->outputFileType = OUTPUT_FILE_TYPE_XEX;
+#elif __c64__
+    _environment->outputFileType = OUTPUT_FILE_TYPE_PRG;
+#elif __plus4__
+    _environment->outputFileType = OUTPUT_FILE_TYPE_PRG;
+#elif __zx__
+    _environment->outputFileType = OUTPUT_FILE_TYPE_TAP;
+#elif __d32__
+    _environment->outputFileType = OUTPUT_FILE_TYPE_BIN;
+#elif __d64__
+    _environment->outputFileType = OUTPUT_FILE_TYPE_BIN;
+#elif __pc128op__
+    _environment->outputFileType = OUTPUT_FILE_TYPE_K7_NEW;
+#elif __mo5__
+    _environment->outputFileType = OUTPUT_FILE_TYPE_K7_NEW;
+#elif __vic20__
+    _environment->outputFileType = OUTPUT_FILE_TYPE_PRG;
+#endif
+
     while ((opt = getopt(_argc, _argv, "e:c:Wo:Ie:l:E")) != -1) {
         switch (opt) {
                 case 'c':
@@ -3558,6 +3582,21 @@ int main( int _argc, char *_argv[] ) {
                     break;
                 case 'o':
                     _environment->exeFileName = strdup(optarg);
+                    break;
+                case 'O':
+                    if ( strcmp( optarg, "bin") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_BIN;
+                    } else if ( strcmp( optarg, "prg") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_PRG;
+                    } else if ( strcmp( optarg, "xex") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_XEX;
+                    } else if ( strcmp( optarg, "k7o") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_K7_ORIGINAL;
+                    } else if ( strcmp( optarg, "k7") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_K7_NEW;
+                    } else if ( strcmp( optarg, "tap") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_K7_NEW;
+                    }
                     break;
                 case 'W':
                     _environment->warningsEnabled = 1;

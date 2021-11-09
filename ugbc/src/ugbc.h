@@ -104,6 +104,17 @@ typedef struct _Bank {
 
 } Bank;
 
+typedef enum _OutputFileType {
+
+    OUTPUT_FILE_TYPE_BIN = 0,
+    OUTPUT_FILE_TYPE_PRG = 1,
+    OUTPUT_FILE_TYPE_XEX = 2,
+    OUTPUT_FILE_TYPE_K7_ORIGINAL = 3,
+    OUTPUT_FILE_TYPE_K7_NEW = 4,
+    OUTPUT_FILE_TYPE_TAP = 5
+
+} OutputFileType;
+
 /**
  * @brief Type of variables
  * 
@@ -945,6 +956,11 @@ typedef struct _Environment {
      */
     DString dstring;
 
+    /**
+     * Type of output. 
+     */
+    OutputFileType outputFileType;
+
     /* --------------------------------------------------------------------- */
     /* INTERNAL STRUCTURES                                                   */
     /* --------------------------------------------------------------------- */
@@ -1299,6 +1315,7 @@ typedef struct _Environment {
 #define CRITICAL_NOT_ASSIGNED_IMAGES( v ) CRITICAL2("E090 - variable is not a loaded collection of images, please use assign operator", v );
 #define CRITICAL_NOT_STRING_ARRAY( v ) CRITICAL2("E091 - accessing as a string array on a non string array", v );
 #define CRITICAL_SIZE_UNSUPPORTED( v, t ) CRITICAL3("E092 - SIZE unsupported for variable of given datatype", v, t );
+#define CRITICAL_UNSUPPORTED_OUTPUT_FILE_TYPE( t ) CRITICAL2("E093 - output file type format unsupported for this type of executable", t );
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
 #define WARNING2i( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%i) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
