@@ -77,7 +77,7 @@ void target_peephole_optimizer( Environment * _environment ) {
         strcpy( buffer[0], buffer[1] );
         strcpy( buffer[1], buffer[2] );
         do {
-            (void!)fgets( buffer[2], MAX_TEMPORARY_STORAGE, fileAsm );
+            (void)!fgets( buffer[2], MAX_TEMPORARY_STORAGE, fileAsm );
         } while( isAComment( buffer[2] ) && !feof( fileAsm ) );
 
         // if ( strstr( buffer[0], "\tSTA " ) != NULL && strstr( buffer[1], "\tLDA " ) != NULL ) {
