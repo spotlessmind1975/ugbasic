@@ -4562,7 +4562,8 @@ unsigned int src_hw_chipset_mob_asm_len;
 
 void cpu6809_mobinit( Environment * _environment, char * _index, char *_x, char *_y,  char *_draw) {
 
-    // TODO: implementation
+    deploy( mob, src_hw_6809_mob_asm );
+    // deploy( mobcs, src_hw_chipset_mob_asm );
     
 }
 
