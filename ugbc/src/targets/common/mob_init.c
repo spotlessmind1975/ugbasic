@@ -73,9 +73,9 @@ sintassi aggiuntive.
 
 @target all
 </usermanual> */
-void mob_init( Environment * _environment, char * _index, char * _image, char * _x, char * _y ) {
+Variable * mob_init( Environment * _environment, char * _image, char * _x, char * _y ) {
 
-    Variable * index = variable_retrieve_or_define( _environment, _index, VT_BYTE, 0 );
+    Variable * index = variable_temporary( _environment, VT_MOB, "(mob index)" );
     Variable * image = variable_retrieve( _environment, _image );
     Variable * x = variable_temporary( _environment, VT_POSITION, "(x)" );
     Variable * y = variable_temporary( _environment, VT_POSITION, "(y)" );
@@ -94,6 +94,10 @@ void mob_init( Environment * _environment, char * _index, char * _image, char * 
         variable_store( _environment, y->name, 0 );
     }    
 
+    cpu_inc( _environment, "MOBCOUNT" );
+    cpu_mobcount( _environment, index->realName );
     cpu_mobinit( _environment, index->realName, x->realName, y->realName, image->realName );
+
+    return index;
 
 }

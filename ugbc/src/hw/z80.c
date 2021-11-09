@@ -3549,6 +3549,11 @@ void z80_mobrender( Environment * _environment, int _on_vbl ) {
 
 }
 
+void z80_mobcount( Environment * _environment, char * _index) {
+
+
+}
+
 void z80_sqroot( Environment * _environment, char * _number, char * _result ) {
 
     deploy( sqr, src_hw_z80_sqr_asm );

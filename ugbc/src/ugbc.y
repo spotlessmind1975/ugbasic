@@ -1325,6 +1325,16 @@ exponential:
     | IMAGE HEIGHT OP expr CP {
         $$ = image_get_height( _environment, $4 )->name;
     }
+    | MOB OP expr CP {
+        $$ = mob_init( _environment, $3, NULL, NULL )->name;
+    }
+    | MOB OP expr OP_COMMA VISIBLE CP {
+        $$ = mob_init( _environment, $3, NULL, NULL )->name;
+        mob_show( _environment, $$ );
+    }
+    | MOB OP expr OP_COMMA HIDDEN CP {
+        $$ = mob_init( _environment, $3, NULL, NULL )->name;
+    }
     | TI {
         $$ = get_timer( _environment )->name;
     }
@@ -2124,30 +2134,36 @@ mob_definition_expression:
     | RENDER ON VBL {
         mob_render( _environment, 1 );
     }
-    | expr OP_COMMA expr AT optional_x OP_COMMA optional_y VISIBLE {
-        mob_init( _environment, $1, $3, $5, $7 );
+    | Identifier OP_COMMA expr AT optional_x OP_COMMA optional_y VISIBLE {
+        Variable * var = mob_init( _environment, $3, $5, $7 );
+        variable_move_naked( _environment, $1, var->name );
         mob_show( _environment, $1 );
         gr_locate( _environment, $5, $7 );
     }
-    | expr OP_COMMA expr AT optional_x OP_COMMA optional_y HIDDEN {
-        mob_init( _environment, $1, $3, $5, $7 );
+    | Identifier OP_COMMA expr AT optional_x OP_COMMA optional_y HIDDEN {
+        Variable * var = mob_init( _environment, $3, $5, $7 );
+        variable_move_naked( _environment, $1, var->name );
         mob_hide( _environment, $1 );
     }
-    | expr OP_COMMA expr AT optional_x OP_COMMA optional_y {
-        mob_init( _environment, $1, $3, $5, $7 );
+    | Identifier OP_COMMA expr AT optional_x OP_COMMA optional_y {
+        Variable * var = mob_init( _environment, $3, $5, $7 );
+        variable_move_naked( _environment, $1, var->name );
         gr_locate( _environment, $5, $7 );
     }
-    | expr OP_COMMA expr {
-        mob_init( _environment, $1, $3, NULL, NULL );
+    | Identifier OP_COMMA expr {
+        Variable * var = mob_init( _environment, $3, NULL, NULL );
+        variable_move_naked( _environment, $1, var->name );
     }
-    | expr OP_COMMA expr VISIBLE {
-        mob_init( _environment, $1, $3, NULL, NULL );
+    | Identifier OP_COMMA expr VISIBLE {
+        Variable * var = mob_init( _environment, $3, NULL, NULL );
+        variable_move_naked( _environment, $1, var->name );
         mob_show( _environment, $1 );
     }
-    | expr OP_COMMA expr HIDDEN {
-        mob_init( _environment, $1, $3, NULL, NULL );
+    | Identifier OP_COMMA expr HIDDEN {
+        Variable * var = mob_init( _environment, $3, NULL, NULL );
+        variable_move_naked( _environment, $1, var->name );
     }
-    | expr AT optional_x OP_COMMA optional_y {
+    | Identifier AT optional_x OP_COMMA optional_y {
         mob_at( _environment, $1, $3, $5 );
         gr_locate( _environment, $3, $5 );
     }

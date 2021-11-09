@@ -4590,6 +4590,12 @@ void cpu6809_mobrender( Environment * _environment, int _on_vbl ) {
     
 }
 
+void cpu6809_mobcount( Environment * _environment, char * _index) {
+
+    // TODO: implementation
+    
+}
+
 void cpu6809_sqroot( Environment * _environment, char * _number, char * _result ) {
 
     deploy( sqr, src_hw_6809_sqr_asm );

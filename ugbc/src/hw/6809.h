@@ -173,6 +173,7 @@ void cpu6809_mobshow( Environment * _environment, char * _index );
 void cpu6809_mobhide( Environment * _environment, char * _index );
 void cpu6809_mobat( Environment * _environment, char * _index, char *_x, char *_y );
 void cpu6809_mobrender( Environment * _environment, int _on_vbl );
+void cpu6809_mobcount( Environment * _environment, char * _index);
 void cpu6809_sqroot( Environment * _environment, char * _number, char * _result );
 void cpu6809_dstring_vars( Environment * _environment );
 
@@ -331,6 +332,7 @@ extern unsigned int src_hw_chipset_mob_asm_len;
 #define cpu_mobhide( _environment, _index ) cpu6809_mobhide( _environment, _index )
 #define cpu_mobat( _environment, _index, _x, _y ) cpu6809_mobat( _environment, _index, _x, _y )
 #define cpu_mobrender( _environment, _on_vbl ) cpu6809_mobrender( _environment, _on_vbl )
+#define cpu_mobcount( _environment, _index ) cpu6809_mobcount( _environment, _index )
 #define cpu_sqroot( _environment, _number, _result ) cpu6809_sqroot( _environment, _number, _result )
 
 #define cpu_dstring_vars( _environment ) cpu6809_dstring_vars( _environment )
