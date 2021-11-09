@@ -64,16 +64,16 @@ void target_install( Environment * _environment ) {
         #ifdef _WIN32
 
             printf("Downloading: CC65 - a freeware C compiler for 6502 based systems\n\n");
-            system( "curl https://ugbasic.iwashere.eu/download/cc65-win32.exe --output cc65-win32.exe" );
+            (void)!system(system( "curl https://ugbasic.iwashere.eu/download/cc65-win32.exe --output cc65-win32.exe" );
 
             printf("\n\nInstalling: CC65 - a freeware C compiler for 6502 based systems\n\n");
-            system( "cc65-win32.exe" );
+            (void)!system( "cc65-win32.exe" );
 
             unlink( "cc65-win32.exe" );
 
         #else
             printf("\n\nInstalling: CC65 - a freeware C compiler for 6502 based systems\n\n");
-            system( "sudo apt-get install cc65" );
+            (void)!system( "sudo apt-get install cc65" );
         #endif
 
     }
