@@ -51,7 +51,7 @@ void target_install( Environment * _environment ) {
 
         printf("Do you want to continue [y/N] ?");
 
-        scanf(" %c", &answer);
+        (void)!scanf(" %c", &answer);
 
         printf("\n\n");
 
