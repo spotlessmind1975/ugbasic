@@ -107,7 +107,6 @@ void target_linkage( Environment * _environment ) {
     sprintf( commandLine, "%s -l -b %s",
         executableName,
         _environment->asmFileName );
-    (void)!system( commandLine ); 
 
     if ( system( commandLine ) ) {
         printf("The compilation of assembly program failed.\n\n");
