@@ -3598,7 +3598,7 @@ int main( int _argc, char *_argv[] ) {
     _environment->outputFileType = OUTPUT_FILE_TYPE_PRG;
 #endif
 
-    while ((opt = getopt(_argc, _argv, "e:c:Wo:Ie:l:E")) != -1) {
+    while ((opt = getopt(_argc, _argv, "e:c:Wo:Ie:l:EO:")) != -1) {
         switch (opt) {
                 case 'c':
                     _environment->configurationFileName = strdup(optarg);
