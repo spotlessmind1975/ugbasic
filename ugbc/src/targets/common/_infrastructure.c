@@ -4400,6 +4400,8 @@ char * image_load_asserts( Environment * _environment, char * _filename ) {
     strcat( lookedFilename, "/d64" );
 #elif __pc128op__ 
     strcat( lookedFilename, "/pc128op" );
+#elif __mo5__ 
+    strcat( lookedFilename, "/mo5" );
 #elif __vic20__ 
     strcat( lookedFilename, "/vic20" );
 #endif
