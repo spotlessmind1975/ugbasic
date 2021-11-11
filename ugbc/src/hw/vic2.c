@@ -1189,6 +1189,9 @@ static int extract_color_palette(unsigned char* _source, int _width, int _height
 
 static Variable * vic2_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _background_color ) {
 
+    // currently ignored
+    (void)!_background_color;
+
     image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
     RGBi palette[MAX_PALETTE];
@@ -1349,6 +1352,44 @@ static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _
         // printf("%d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
     }
 
+    if ( _background_color != -1 ) {
+        if ( colorUsed < 4 ) {
+            for( i=0;i<COLOR_COUNT;++i) {
+                if ( SYSTEM_PALETTE[i].index == _background_color ) {
+                    RGBi tmp;
+                    palette[colorUsed].red = palette[0].red;
+                    palette[colorUsed].green = palette[0].green;
+                    palette[colorUsed].blue = palette[0].blue;
+                    palette[colorUsed++].index = palette[0].index;
+                    palette[0].red = SYSTEM_PALETTE[i].red;
+                    palette[0].green = SYSTEM_PALETTE[i].green;
+                    palette[0].blue = SYSTEM_PALETTE[i].blue;
+                    palette[0].index = SYSTEM_PALETTE[i].index;                    
+                    break;
+                }
+            }
+        } else {
+            for(i=0;i<4;++i) {
+                if ( palette[i].index == _background_color ) {
+                    RGBi tmp;
+                    tmp.red = palette[i].red;
+                    tmp.green = palette[i].green;
+                    tmp.blue = palette[i].blue;
+                    tmp.index = palette[i].index;
+                    palette[i].red = palette[0].red;
+                    palette[i].green = palette[0].green;
+                    palette[i].blue = palette[0].blue;
+                    palette[i].index = palette[0].index;
+                    palette[0].red = tmp.red;
+                    palette[0].green = tmp.green;
+                    palette[0].blue = tmp.blue;
+                    palette[0].index = tmp.index;
+                    break;
+                }
+            }
+        }
+    }
+
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
  
     int bufferSize = 2 + ( ( _frame_width >> 2 ) * _frame_height ) + 2 * ( ( _frame_width >> 2 ) * ( _frame_height >> 3 ) ) + 1;
@@ -1452,6 +1493,9 @@ static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _
 }
 
 static Variable * vic2_image_converter_tilemap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _background_color ) {
+
+    // currently ignored
+    (void)!_background_color;
 
     image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 

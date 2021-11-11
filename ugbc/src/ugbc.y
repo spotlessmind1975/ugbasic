@@ -498,7 +498,7 @@ images_load_flags1 :
 
 image_load_ons :
     {
-        $$ = 0;    
+        $$ = -1;    
     } 
     | USING BACKGROUND const_color_enumeration {
         $$ = $3;
@@ -514,7 +514,7 @@ image_load_flags :
 
 images_load_ons :
     {
-        $$ = 0;    
+        $$ = -1;    
     } 
     | USING BACKGROUND const_color_enumeration {
         $$ = $3;
