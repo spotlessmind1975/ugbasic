@@ -347,6 +347,7 @@ UNTIL { return (UNTIL); }
 UP { return (UP); }
 UPPER { return (UPPER); }
 UPPER\$ { return (UPPER); }
+USING { return (USING); }
 V { return (V); }
 VAL { return (VAL); }
 VAR { return (VAR); }

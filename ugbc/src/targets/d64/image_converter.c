@@ -38,8 +38,8 @@
  * CODE SECTION 
  ****************************************************************************/
 
-Variable * image_converter( Environment * _environment, char * _data, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode ) {
+Variable * image_converter( Environment * _environment, char * _data, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _background_color ) {
 
-    return c6847_image_converter( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height, _mode );
+    return c6847_image_converter( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height, _mode, _background_color );
 
 }
