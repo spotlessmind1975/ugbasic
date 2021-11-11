@@ -3836,47 +3836,32 @@ Variable * variable_move_from_array( Environment * _environment, char * _array )
 
 }
 
-int pattern_match( char * _pattern, char * _value ) {
+int pattern_match(char *_pattern, char * _value)
+{
+    // If we reach at the end of both strings, we are done
+    if (*_pattern == '\0' && *_value == '\0')
+        return 1;
+ 
+    // Make sure that the characters after '*' are present
+    // in second string. This function assumes that the first
+    // string will not contain two consecutive '*'
+    if (*_pattern == '*' && *(_pattern+1) != '\0' && *_value == '\0')
+        return 1;
+ 
+    // If the first string contains '?', or current characters
+    // of both strings match
+    if (*_pattern == '?' || *_pattern == *_value)
+        return pattern_match(_pattern+1, _value+1);
+ 
+    // If there is *, then there are two possibilities
+    // a) We consider current character of second string
+    // b) We ignore current character of second string.
+    if (*_pattern == '*')
+        return pattern_match(_pattern+1, _value) || pattern_match(_pattern, _value+1);
+    return 0;
 
-    int n = strlen( _value );
-    int m = strlen( _pattern );
-
-    if (m == 0)
-        return (n == 0);
- 
-    char * lookup = malloc( ( n + 1 ) * ( m + 1 ) );
- 
-    memset(lookup, 0, ( n + 1 ) * ( m + 1 ));
- 
-    lookup[0] = 1;
- 
-    int i=0,j=0;
-
-    for (j = 1; j <= m; j++)
-        if (_pattern[j - 1] == '*')
-            lookup[0+(j*n)] = lookup[0+(j-1)*n];
- 
-    for (i = 1; i <= n; i++) {
-        for (j = 1; j <= m; j++) {
-            if (_pattern[j-1] == '*')
-                lookup[i+(j*m)]
-                    = lookup[i+(j-1)*n] || lookup[(i-1)+(j*n)];
- 
-            else if (_pattern[j-1] == '?'
-                     || _value[i-1] == _pattern[j-1])
-                lookup[i+j*n] = lookup[(i-1)+(j-1)*n];
- 
-            else
-                lookup[i+j*n] = 0;
-        }
-    }
- 
-    char result = ( lookup[n+m*n] == 0 );
-
-    free(lookup);
-
-    return result;
 }
+
 
 /**
  * @brief Emit code for <string>BIN(...)</strong>
