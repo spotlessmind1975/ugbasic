@@ -2529,6 +2529,15 @@ datatype :
     }
     | STRING {
         $$ = VT_DSTRING;
+    }
+    | IMAGE {
+        $$ = VT_IMAGE;
+    }
+    | IMAGES {
+        $$ = VT_IMAGE;
+    }
+    | BUFFER {
+        $$ = VT_BUFFER;
     };
     
 dim_definition :
