@@ -37,228 +37,194 @@
 
 ; DSDEFINE(Y) -> B
 DSDEFINE
-    JSR DSFINDFREE
-    JSR DSDESCRIPTOR
-    LDA , Y
-    LEAY 1, Y
-    STA , X
-    STY 1, X
-    LDA #$C0
-    STA 3, X
+    BSR   DSFINDFREE
+    BSR   DSDESCRIPTOR
+    LDA   ,Y+
+    STA   ,X
+    STY   1,X
+    LDA   #$C0
+    STA   3,X
     RTS
 
-; DSALLOC(A) -> B
-DSALLOC
-    PSHS A
-    JSR DSFINDFREE
-    JSR DSDESCRIPTOR
-    LDA 3, X
-    ORA #$40
-    STA 3, X
-    PULS A
-    JSR DSCHECKFREE
-DSALLOCOK
-    JSR DSUSING
-    JSR DSMALLOC
-    RTS
+OUT_OF_MEMORY
+    BRA   OUT_OF_MEMORY
 
 ; DSFREE(B)
 DSFREE
-    JSR DSDESCRIPTOR
-    LDA #0
-    STA 3, X
-    LDA #0
-    STA , X
+    BSR   DSDESCRIPTOR
+    CLRA
+    STA   3,X
+    STA   ,X
     RTS
 
 ; DSWRITE(B)
 DSWRITE
-    JSR DSDESCRIPTOR
-    LDA 3, X
-    ANDA #$80
-    CMPA #0
-    BEQ DSWRITED
-    LDA 3, X
-    ANDA #$7F
-    STA 3, X
-    LDA , X
-    JSR DSCHECKFREE
+    BSR   DSDESCRIPTOR
+    LDA   3,X
+    BPL   DSWRITED
+    ANDA  #$7F
+    STA   3,X
+    LDA   ,X
+    BSR   DSCHECKFREE
 DSWRITEOK
-    LDY 1, X
-    PSHS Y
-    JSR DSUSING
-    JSR DSMALLOC
-    PULS Y
-    LDU 1, X
+    LDY   1,X
+    PSHS  Y
+    JSR   DSUSINGALLOC
+    PULS  Y
+    LDU   1,X
 DSCOPY
-    LDA , X
+    LDA   ,X
+    
 DSWRITECOPY
-    CMPA #0
-    BEQ DSWRITED
-    PSHS B
-    DECA
+    BEQ   DSWRITED
+    PSHS  B
 DSWRITECOPYL
-    LDB A,Y
-    STB A,U 
+    LDB   ,Y+
+    STB   ,U+
     DECA
-    CMPA #$FF
-    BNE DSWRITECOPYL 
-    PULS B
+    BNE   DSWRITECOPYL
+    PULS  B,PC
 DSWRITED
     RTS
 
 ; DSRESIZE(B,A)
 DSRESIZE
-    JSR DSDESCRIPTOR
-    STA , X
+    BSR   DSDESCRIPTOR
+    STA   ,X
     RTS
-
-; DSGC()
-DSGC
-    PSHS X
-    LDD #(max_free_string-1)
-    STD FREE_STRING
-
-    LDA USING
-    CMPA #0
-    BEQ DSGT
-    JMP DSGW
-DSGT
-    LDU #TEMPORARY
-    JMP BSGCLOOP0
-DSGW
-    LDU #WORKING
-    JMP BSGCLOOP0
-BSGCLOOP0
-    LDB #1
-DSGCLOOP
-    PSHS A,B
-    JSR DSDESCRIPTOR
-    LDA 3, X
-    ANDA #$80
-    BNE DSGCLOOP2
-    LDA 3, X
-    ANDA #$40
-    BEQ DSGCLOOP1
-    LDY 1, X
-    LDA , X
-    JSR DSUSING
-    JSR DSMALLOC
-    LDU 1, X
-    LDA , X
-    JSR DSWRITECOPY
-    JMP DSGCLOOP3
-DSGCLOOP1
-    LDA #0
-    STA , X
-    JMP DSGCLOOP3
-DSGCLOOP2
-    ; LDA #0
-    ; STA , X
-    JMP DSGCLOOP3
-DSGCLOOP3
-    PULS A,B
-    INCB
-    CMPB #MAXSTRINGS
-    BNE DSGCLOOP
-DSGCEND
-    LDA USING
-    EORA #$FF
-    STA USING
-    PULS X
-    RTS
-
+    
 ; DSFINDFREE() -> B
 DSFINDFREE
-    PSHS A
-    LDB #1; // fix denote 0 as "unused slot"
+    PSHS  A
+    LDB   #1; // fix denote 0 as "unused slot"
 DSFINDFREEL
-    JSR DSDESCRIPTOR
-    LDA 3, X
-    ANDA #$40
-    CMPA #0
-    BEQ DSFINDFREEN
+    BSR   DSDESCRIPTOR
+    LDA   3,X
+    ANDA  #$40
+    BEQ   DSFINDFREEN
     INCB
-    CMPB #MAXSTRINGS
-    BNE DSFINDFREEL
-    JMP OUT_OF_MEMORY   
+    CMPB  #MAXSTRINGS
+    BNE   DSFINDFREEL
+    BRA   OUT_OF_MEMORY   
 DSFINDFREEN
-    PULS A
-    RTS
+    PULS  A,PC
 
-OUT_OF_MEMORY2
-    SYNC
-    JMP OUT_OF_MEMORY
-
-; DSMALLOC(U,A,B)
-DSMALLOC
-    PSHS U,Y
-    JSR DSDESCRIPTOR
-    STA , X
-    PSHS A,B
-    TFR A, B
-    LDA #0
-    ANDCC #$FE
-    EORA #$FF
-    EORB #$FF
-    ANDCC #$FE
-    ADDD #1
-    LDY FREE_STRING
-    LEAY D, Y
-    STY FREE_STRING
-    TFR U, D
-    LEAY D, Y
-    PULS A,B
-    STY 1, X
-    PULS U,Y
+; DSDESCRIPTOR(B) -> X
+DSDESCRIPTOR
+    LDX   #DESCRIPTORS
+    ABX
+    ABX
+    ABX
+    ABX
     RTS
 
 ; DSCHECKFREE()
 DSCHECKFREE
-    PSHS A,B
-    TFR A, B
-    LDA #0
-    STD <MATHPTR0
+    PSHS  A,B
+    STA   DSCHECKFREE2x
 DSCHECKFREE2
-    LDD FREE_STRING
-    CMPD <MATHPTR0
-    BLT DSCHECKFREEKO
-    JMP DSCHECKFREEOK
+    LDD   FREE_STRING
+    CMPD  #$0000
+DSCHECKFREE2x SET *-1
+    BGE   DSCHECKFREEOK
 DSCHECKFREEKO
-    JSR DSGC
-    JMP DSCHECKFREE2
+    BSR   DSGC
+    BRA   DSCHECKFREE2
 DSCHECKFREEOK
-    PULS A,B
-    RTS
+    PULS  A,B,PC
+
+; DSGC()
+DSGC
+    PSHS  X
+    LDD   #(max_free_string-1)
+    STD   FREE_STRING
+
+    LDA   USING
+    BNE   DSGW
+DSGT
+    LDU   #TEMPORARY
+    BRA   BSGCLOOP0
+DSGW
+    LDU   #WORKING
+BSGCLOOP0
+    LDB   #1
+DSGCLOOP
+    PSHS  A,B
+    BSR   DSDESCRIPTOR
+    LDA   3,X
+    BMI   DSGCLOOP2
+    ANDA  #$40
+    BEQ   DSGCLOOP1
+    LDY   1,X
+    LDA   ,X
+    BSR   DSUSINGALLOC
+    LDU   1,X
+    LDA   ,X
+    BSR   DSWRITECOPY
+    BRA   DSGCLOOP3
+DSGCLOOP1
+;    CLRA       (A already = 0 here)
+    STA   ,X
+;    BRA   DSGCLOOP3
+DSGCLOOP2
+    ; LDA #0
+    ; STA , X
+DSGCLOOP3
+    PULS  A,B
+    INCB
+    CMPB  #MAXSTRINGS
+    BNE   DSGCLOOP
+DSGCEND
+    COM   USING
+    PULS  X,PC
+
+;OUT_OF_MEMORY2
+;    SYNC
+;    BRA OUT_OF_MEMORY
+
+; DSALLOC(A) -> B
+DSALLOC
+    PSHS  A
+    BSR   DSFINDFREE
+    BSR   DSDESCRIPTOR
+    LDA   3,X
+    ORA   #$40
+    STA   3,X
+    PULS  A
+    BSR   DSCHECKFREE
+DSALLOCOK
+
+DSUSINGALLOC
+    BSR   DSUSING
+;    BRA   DSMALLOC
+
+; DSMALLOC(U,A,B)
+DSMALLOC
+    BSR   DSDESCRIPTOR
+    STA   ,X
+    
+    PSHS  D
+
+    TFR   A,B
+    LDA   #255
+    NEGB
+    ADDD  FREE_STRING
+    STD   FREE_STRING
+    ADDD  ,S
+    STD   1,X
+    
+    PULS  D,PC
 
 ; DSUSING() -> U
 DSUSING
-    PSHS A
-    LDA USING
-    CMPA #0
-    BEQ DSUSINGW
-    JMP DSUSINGT
-DSUSINGT
-    LDU #TEMPORARY
-    PULS A
+    TST   USING
+    BEQ   DSUSINGW
+    LDU   #TEMPORARY
     RTS
 DSUSINGW
-    LDU #WORKING
-    PULS A
+    LDU   #WORKING
     RTS
 
-; DSDESCRIPTOR(B) -> X
-DSDESCRIPTOR
-    PSHS A,B
-    LDX #DESCRIPTORS
-    LDA #4
-    MUL
-    LEAX D, X
-    PULS A,B
-    RTS
-
-OUT_OF_MEMORY
-    JMP OUT_OF_MEMORY
-
-USING               fcb 0
+USING 
+    FCB   0
     
