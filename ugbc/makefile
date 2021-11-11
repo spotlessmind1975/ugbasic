@@ -312,14 +312,14 @@ SOURCESTEST += $(wildcard src/targets/$(target)/*.c)
 SOURCESTEST += $(wildcard src-test/suites/*.c)
 SOURCESTEST += src-generated/modules_$(target).c src-test/tester.c src-test/tester_c64.c src-test/tester_plus4.c src-test/tester_atari.c src-test/tester_atarixl.c src-test/tester_zx.c src-test/tester_d32.c src-test/tester_d64.c src-test/tester_pc128op.c src-test/tester_mo5.c src-test/tester_vic20.c
 
-paths:
+paths: 
 	@mkdir -p src-generated
 	@mkdir -p exe
 
 paths-test:
 	@mkdir -p exe-test
 
-compiler: $(OBJS)
+compiler: $(OBJS) 
 	@$(CC) $(LFLAGS) $^ -o exe/ugbc.$(target) $(LIBS)
 	
 objs.$(target)/%.o: %.c src-generated/ugbc.yy.c src-generated/ugbc.tab.c src-generated/modules_$(target).c

@@ -930,20 +930,15 @@ void cpu6809_math_div_8bit_to_8bit( Environment * _environment, char *_source, c
 
     embedded( cpu_math_div_8bit_to_8bit, src_hw_6809_cpu_math_div_8bit_to_8bit_asm );
 
-        outline0("LDX #$0");
         outline1("LDA %s", _source);
-        outline0("STA <MATHPTR0");
-        outline1("LDA %s", _destination);
-        outline0("STA <MATHPTR1");
+        outline1("LDB %s", _destination);
         if ( _signed ) {
             outline0("JSR CPUMATHDIV8BITTO8BIT_SIGNED");
         } else {
             outline0("JSR CPUMATHDIV8BITTO8BIT");
         }
-        outline0("LDA <MATHPTR2");
         outline1("STA %s", _other);
-        outline0("LDA <MATHPTR3");
-        outline1("STA %s", _other_remainder);
+        outline1("STB %s", _other_remainder);
 
     done( )
 
@@ -1641,15 +1636,15 @@ void cpu6809_math_div_16bit_to_16bit( Environment * _environment, char *_source,
 
     embedded( cpu_math_div_16bit_to_16bit, src_hw_6809_cpu_math_div_16bit_to_16bit_asm );
 
-        outline1("LDX %s", _source );
-        outline1("LDY %s", _destination );
+        outline1("LDD %s", _source );
+        outline1("LDX %s", _destination );
         if ( _signed ) {
             outline0("JSR CPUMATHDIV16BITTO16BIT_SIGNED" );
         } else {
             outline0("JSR CPUMATHDIV16BITTO16BIT" );
         }
-        outline1("STX %s", _other );
-        outline1("STY %s", _other_remainder );
+        outline1("STD %s", _other );
+        outline1("STX %s", _other_remainder );
 
     done( )
     
@@ -1903,11 +1898,8 @@ void cpu6809_math_mul2_const_16bit( Environment * _environment, char *_source, i
         outline1("LDD %s", _source );
         outline1("LDX #$%2.2x", _steps );
 
-        if ( _signed ) {
-            outline0("JSR CPUMATHMUL2CONST16BIT_SIGNED");
-        } else {
-            outline0("JSR CPUMATHMUL2CONST16BIT");
-        }
+		/* there is no difference between signed and unsigned with shift */
+        outline0("JSR CPUMATHMUL2CONST16BIT");
         outline1("STD %s", _source );
 
     done( )
