@@ -84,8 +84,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> images_load_flags images_load_flags1 images_load_flag
 %type <integer> put_image_flags put_image_flags1 put_image_flag
 %type <integer> const_color_enumeration
-%type <integer> image_load_ons
-%type <integer> images_load_ons
+%type <integer> using_transparency
 
 %right Integer String CP 
 %left OP_DOLLAR
@@ -510,11 +509,11 @@ images_load_flags1 :
         $$ = $1 | $2;
     };
 
-image_load_ons :
+using_transparency :
     {
         $$ = -1;    
     } 
-    | USING BACKGROUND const_color_enumeration {
+    | USING TRANSPARENCY const_color_enumeration {
         $$ = $3;
     };
 
@@ -532,14 +531,6 @@ put_image_flags :
     } 
     | put_image_flags1 {
         $$ = $1;
-    };
-
-images_load_ons :
-    {
-        $$ = -1;    
-    } 
-    | USING BACKGROUND const_color_enumeration {
-        $$ = $3;
     };
 
 images_load_flags :
@@ -1174,40 +1165,40 @@ exponential:
     | LOAD OP String AS String OP_COMMA Integer CP {
         $$ = load( _environment, $3, $5, $7 )->name;
       }
-    | IMAGES LOAD OP String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP images_load_flags images_load_ons {        
+    | IMAGES LOAD OP String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP images_load_flags using_transparency {        
         $$ = images_load( _environment, $4, NULL, ((struct _Environment *)_environment)->currentMode, $9, $11, $13, $14 )->name;
       }
-    | IMAGES LOAD OP String AS String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP images_load_flags images_load_ons {        
+    | IMAGES LOAD OP String AS String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP images_load_flags using_transparency {        
         $$ = images_load( _environment, $4, $6, ((struct _Environment *)_environment)->currentMode, $11, $13, $15, $16 )->name;
       }
-    | LOAD IMAGES OP String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP images_load_flags images_load_ons {        
+    | LOAD IMAGES OP String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP images_load_flags using_transparency {        
         $$ = images_load( _environment, $4, NULL, ((struct _Environment *)_environment)->currentMode, $9, $11, $13, $14 )->name;
       }
-    | LOAD IMAGES OP String AS String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP images_load_flags images_load_ons{
+    | LOAD IMAGES OP String AS String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP images_load_flags using_transparency{
         $$ = images_load( _environment, $4, $6, ((struct _Environment *)_environment)->currentMode, $11, $13, $15, $16 )->name;
       }
-    | IMAGE LOAD OP String CP image_load_flags image_load_ons {
+    | IMAGE LOAD OP String CP image_load_flags using_transparency {
         $$ = image_load( _environment, $4, NULL, ((struct _Environment *)_environment)->currentMode, $6, $7 )->name;
       }
-    | IMAGE LOAD OP String AS String CP image_load_flags image_load_ons {
+    | IMAGE LOAD OP String AS String CP image_load_flags using_transparency {
         $$ = image_load( _environment, $4, $6, ((struct _Environment *)_environment)->currentMode, $8, $9 )->name;
       }
-    | IMAGE LOAD OP String OP_COMMA Integer CP image_load_flags image_load_ons {
+    | IMAGE LOAD OP String OP_COMMA Integer CP image_load_flags using_transparency {
         $$ = image_load( _environment, $4, NULL, $6, $8, $9 )->name;
       }
-    | IMAGE LOAD OP String AS String OP_COMMA Integer CP image_load_flags image_load_ons {
+    | IMAGE LOAD OP String AS String OP_COMMA Integer CP image_load_flags using_transparency {
         $$ = image_load( _environment, $4, $6, $8, $10, $11 )->name;
       }
-    | LOAD IMAGE OP String CP image_load_flags image_load_ons {
+    | LOAD IMAGE OP String CP image_load_flags using_transparency {
         $$ = image_load( _environment, $4, NULL, ((struct _Environment *)_environment)->currentMode, $6, $7 )->name;
       }
-    | LOAD IMAGE OP String AS String CP image_load_flags image_load_ons {
+    | LOAD IMAGE OP String AS String CP image_load_flags using_transparency {
         $$ = image_load( _environment, $4, $6, ((struct _Environment *)_environment)->currentMode, $8, $9 )->name;
       }
-    | LOAD IMAGE OP String OP_COMMA Integer CP image_load_flags image_load_ons {
+    | LOAD IMAGE OP String OP_COMMA Integer CP image_load_flags using_transparency {
         $$ = image_load( _environment, $4, NULL, $6, $8, $9 )->name;
       }
-    | LOAD IMAGE OP String AS String OP_COMMA Integer CP image_load_flags image_load_ons {
+    | LOAD IMAGE OP String AS String OP_COMMA Integer CP image_load_flags using_transparency {
         $$ = image_load( _environment, $4, $6, $8, $10, $11 )->name;
       }
    | SIZE OP expr CP {
