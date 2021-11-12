@@ -1187,7 +1187,7 @@ static int extract_color_palette(unsigned char* _source, int _width, int _height
 
 }
 
-static Variable * vic2_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _background_color ) {
+static Variable * vic2_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _background_color ) {
 
     // currently ignored
     (void)!_background_color;
@@ -1313,7 +1313,7 @@ static Variable * vic2_image_converter_bitmap_mode_standard( Environment * _envi
 
 }
 
-static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _background_color ) {
+static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _background_color ) {
 
     image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
@@ -1352,10 +1352,10 @@ static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _
         // printf("%d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
     }
 
-    if ( _background_color != -1 ) {
+    if ( _transparent_color != -1 ) {
         if ( colorUsed < 4 ) {
             for( i=0;i<COLOR_COUNT;++i) {
-                if ( SYSTEM_PALETTE[i].index == _background_color ) {
+                if ( SYSTEM_PALETTE[i].index == _transparent_color ) {
                     RGBi tmp;
                     palette[colorUsed].red = palette[0].red;
                     palette[colorUsed].green = palette[0].green;
@@ -1370,7 +1370,7 @@ static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _
             }
         } else {
             for(i=0;i<4;++i) {
-                if ( palette[i].index == _background_color ) {
+                if ( palette[i].index == _transparent_color ) {
                     RGBi tmp;
                     tmp.red = palette[i].red;
                     tmp.green = palette[i].green;
@@ -1492,10 +1492,11 @@ static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _
 
 }
 
-static Variable * vic2_image_converter_tilemap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _background_color ) {
+static Variable * vic2_image_converter_tilemap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _background_color ) {
 
     // currently ignored
     (void)!_background_color;
+    (void)!_transparent_color;
 
     image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
@@ -1697,17 +1698,17 @@ static Variable * vic2_image_converter_tilemap_mode_standard( Environment * _env
 
 }
 
-Variable * vic2_image_converter( Environment * _environment, char * _data, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _background_color ) {
+Variable * vic2_image_converter( Environment * _environment, char * _data, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _background_color ) {
 
     switch( _mode ) {
 
         case BITMAP_MODE_STANDARD:
 
-            return vic2_image_converter_bitmap_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height, _background_color );
+            return vic2_image_converter_bitmap_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _background_color );
 
         case BITMAP_MODE_MULTICOLOR:
 
-            return vic2_image_converter_multicolor_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height, _background_color );
+            return vic2_image_converter_multicolor_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _background_color );
 
         case BITMAP_MODE_AH:
         case BITMAP_MODE_AIFLI:
@@ -1740,7 +1741,7 @@ Variable * vic2_image_converter( Environment * _environment, char * _data, int _
         case BITMAP_MODE_MEGATEXT:
         case BITMAP_MODE_PRS:
         case TILEMAP_MODE_STANDARD:
-            return vic2_image_converter_tilemap_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height, _background_color );
+            return vic2_image_converter_tilemap_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _background_color );
         case TILEMAP_MODE_MULTICOLOR:
         case TILEMAP_MODE_EXTENDED:
             break;

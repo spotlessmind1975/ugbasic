@@ -1077,10 +1077,11 @@ static int extract_color_palette(unsigned char* _source, int _width, int _height
 
 }
 
-static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _background_color ) {
+static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _background_color ) {
 
     // ignored on bitmap mode
     (void)!_background_color;
+    (void)!_transparent_color;
 
     image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
@@ -1198,11 +1199,12 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
 
 }
 
-static Variable * c6847_image_converter_multicolor_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _background_color ) {
+static Variable * c6847_image_converter_multicolor_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _background_color ) {
 
     // ignored on bitmap mode
     (void)!_background_color;
-
+    (void)!_transparent_color;
+    
     image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
     if ( ! commonPalette ) {
@@ -1319,7 +1321,7 @@ static Variable * c6847_image_converter_multicolor_mode_standard( Environment * 
 
 }
 
-Variable * c6847_image_converter( Environment * _environment, char * _data, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _background_color ) {
+Variable * c6847_image_converter( Environment * _environment, char * _data, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _background_color ) {
 
     switch( _mode ) {
         case TILEMAP_MODE_INTERNAL:         // Alphanumeric Internal	32 × 16	2	512
@@ -1335,7 +1337,7 @@ Variable * c6847_image_converter( Environment * _environment, char * _data, int 
         case BITMAP_MODE_COLOR3:            // Color Graphics 3	128 × 96	4	3072
         case BITMAP_MODE_COLOR6:            // Color Graphics 6	128 × 192	4	6144
 
-            return c6847_image_converter_multicolor_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height, _background_color );
+            return c6847_image_converter_multicolor_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _background_color );
 
             break;
 
@@ -1344,7 +1346,7 @@ Variable * c6847_image_converter( Environment * _environment, char * _data, int 
         case BITMAP_MODE_RESOLUTION3:       // Resolution Graphics 3	128 × 192	1 + Black	3072
         case BITMAP_MODE_RESOLUTION6:       // Resolution Graphics 6	256 × 192	1 + Black	6144            break;
 
-            return c6847_image_converter_bitmap_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height, _background_color );
+            return c6847_image_converter_bitmap_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _background_color );
 
     }
 
