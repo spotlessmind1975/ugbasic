@@ -512,7 +512,7 @@ images_load_flags1 :
 
 using_transparency :
     {
-        $$ = -1;    
+        $$ = 0;    
     } 
     | TRANSPARENCY const_color_enumeration {
         $$ = $2;
