@@ -1095,11 +1095,13 @@ Variable * ted_image_converter( Environment * _environment, char * _data, int _w
 
 }
 
-void ted_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _frame_size ) {
+void ted_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _frame_size, int _flags ) {
 
     deploy( tedvars, src_hw_ted_vars_asm);
     deploy( image, src_hw_ted_image_asm );
 
+    outline1("LDA #$%2.2x", _flags );
+    outline0("STA IMAGET" );
     outline1("LDA #<%s", _image );
     outline0("STA TMPPTR" );
     outline1("LDA #>%s", _image );

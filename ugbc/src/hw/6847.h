@@ -229,6 +229,6 @@ void c6847_text( Environment * _environment, char * _text, char * _text_size, ch
 void c6847_cline( Environment * _environment, char * _characters );
 
 Variable * c6847_image_converter( Environment * _environment, char * _data, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _background_color );
-void c6847_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _frame_size );
+void c6847_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _frame_size, int _flags );
 
 #endif

@@ -1613,9 +1613,11 @@ typedef struct _Environment {
 #define PROTOTHREAD_STATUS_EXITED		3
 #define PROTOTHREAD_STATUS_ENDED		4
 
-#define FLAG_FLIP_X        1
-#define FLAG_FLIP_Y        2
-#define FLAG_ROLL_X        4
+#define FLAG_FLIP_X         1
+#define FLAG_FLIP_Y         2
+#define FLAG_ROLL_X         4
+
+#define FLAG_TRANSPARENCY   1
 
 void setup_embedded( Environment *_environment );
 void target_install( Environment *_environment );
@@ -1871,7 +1873,7 @@ void                    print( Environment * _environment, char * _text, int _ne
 void                    print_newline( Environment * _environment );
 void                    print_question_mark( Environment * _environment );
 void                    print_tab( Environment * _environment, int _new_line );
-void                    put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame );
+void                    put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _flags );
 
 //----------------------------------------------------------------------------
 // *Q*

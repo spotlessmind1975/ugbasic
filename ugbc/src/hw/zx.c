@@ -504,7 +504,10 @@ Variable * zx_image_converter( Environment * _environment, char * _data, int _wi
 
 }
 
-void zx_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _frame_size ) {
+void zx_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _frame_size, int _flags ) {
+
+    // currently unused
+    (void)!_flags;
 
     MAKE_LABEL
 

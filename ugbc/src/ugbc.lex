@@ -341,6 +341,7 @@ TI { return (TI); }
 TIMER { return (TIMER); }
 TO { return (TO); }
 TURQUOISE { return(TURQUOISE); }
+TRANSPARENCY { return(TRANSPARENCY); }
 TRUE { return(TRUE); }
 U { return (U); }
 UNTIL { return (UNTIL); }

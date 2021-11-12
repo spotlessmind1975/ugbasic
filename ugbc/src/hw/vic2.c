@@ -1750,7 +1750,7 @@ Variable * vic2_image_converter( Environment * _environment, char * _data, int _
 
 }
 
-void vic2_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _frame_size ) {
+void vic2_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _frame_size, int _flags ) {
 
     deploy( vic2vars, src_hw_vic2_vars_asm);
     deploy( image, src_hw_vic2_image_asm );
@@ -1758,6 +1758,8 @@ void vic2_put_image( Environment * _environment, char * _image, char * _x, char 
     MAKE_LABEL
 
     outhead1("putimage%s:", label);
+    outline1("LDA #$%2.2x", _flags );
+    outline0("STA IMAGET" );
     outline1("LDA #<%s", _image );
     outline0("STA TMPPTR" );
     outline1("LDA #>%s", _image );

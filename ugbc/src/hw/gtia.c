@@ -1578,11 +1578,11 @@ static Variable * gtia_image_converter_multicolor_mode_standard( Environment * _
                         tmp.blue = commonPalette[i].blue;
                         tmp.index = commonPalette[i].index;
                         commonPalette[i].red = commonPalette[0].red;
-                        commonPalette[i].green = commonPalette[0].green
+                        commonPalette[i].green = commonPalette[0].green;
                         commonPalette[i].blue = commonPalette[0].blue;
                         commonPalette[i].index = commonPalette[0].index;
                         commonPalette[0].red = tmp.red;
-                        commonPalette[0].green = tmp.green
+                        commonPalette[0].green = tmp.green;
                         commonPalette[0].blue = tmp.blue;
                         commonPalette[0].index = tmp.index;
                         break;
@@ -1801,11 +1801,17 @@ Variable * gtia_image_converter( Environment * _environment, char * _data, int _
 
 }
 
-void gtia_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _frame_size ) {
+void gtia_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _frame_size, int _flags ) {
+
+    // currently unused
+    (void)!_flags;
 
     deploy( gtiavars, src_hw_gtia_vars_asm);
     deploy( image, src_hw_gtia_image_asm );
 
+    outline1("LDA #$%2.2x", _flags );
+    outline0("STA IMAGET" );
+    outline1("LDA #<%s", _image );
     outline1("LDA #<%s", _image );
     outline0("STA TMPPTR" );
     outline1("LDA #>%s", _image );
