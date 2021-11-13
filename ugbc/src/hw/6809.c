@@ -134,8 +134,7 @@ void cpu6809_peek( Environment * _environment, char * _address, char * _target )
 
     inline( cpu_peek )
 
-        outline1("LDX %s", _address);
-        outline0("LDA , X");
+        outline1("LDA [%s]", _address);
         outline1("STA %s", _target);
 
     no_embedded( cpu_peek )
@@ -147,8 +146,7 @@ void cpu6809_poke( Environment * _environment, char * _address, char * _source )
     inline( cpu_poke )
 
         outline1("LDA %s", _source );
-        outline1("LDX %s", _address);
-        outline0("STA ,X");
+        outline1("STA [%s]", _address);
 
     no_embedded( cpu_poke )
 
