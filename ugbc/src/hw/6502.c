@@ -3782,7 +3782,7 @@ void cpu6502_move_8bit_indirect( Environment * _environment, char *_source, char
 
 }
 
-void cpu6502_move_8bit_with_offset( Environment * _environment, char *_source, char * _value, int _offset ) {
+void cpu6502_move_8bit_indirect_with_offset( Environment * _environment, char *_source, char * _value, int _offset ) {
 
     inline( cpu_move_8bit_with_offset )
 
