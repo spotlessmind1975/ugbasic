@@ -60,82 +60,76 @@ do { /* x-y+128<0 or 127-x+y<0 */													\
 
 /* Helper for 8/16 bits comparison */
 static void cpu6809_compare( Environment * _environment, char *_source, char *_destination,  char *_other, int _positive, int _bits) {
-    char REG = _bits==16 ? 'D' : 'A';
+    char REG = _bits==16 ? 'X' : 'B';
 
 	MAKE_LABEL
 
+	outline0("CLRA");
 	outline2("LD%c %s",  REG, _source);
-	outline2("SUB%c %s", REG, _destination);
+	outline2("CMP%c %s", REG, _destination);
 
 	if(_positive) {
-		outline1("BNE %seq", label);
-		outline0("LDA #$FF");
-		outline0("FCB $81"); /* CMPA #n = SKIP1 = jump over next 1-byte instruction in 1 byte and 2 cycles */
-		outhead1("%seq", label );
-		outline0("CLRA");
+		outline1("BNE %s", label);
+		outline0("DECA");
 	} else {
-		outline1("BEQ %seq", label);
-		outline0("LDA #$FF");
-		outhead1("%seq", label );
+		outline1("BEQ %s", label);
+		outline0("DECA");
 	}
 
+	outhead1("%s", label );
 	outline1("STA %s", _other ? _other : _destination );
 }
 static void cpu6809_less_than( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed, int _bits) {
-    char REG = _bits==16 ? 'D' : 'A';
+    char REG = _bits==16 ? 'X' : 'B';
 
 	MAKE_LABEL
 
+	outline0("CLRA");
 	outline2("LD%c %s",  REG, _source);
-	outline2("SUB%c %s", REG, _destination);
+	outline2("CMP%c %s", REG, _destination);
 
 	if ( _signed ) {
 		if ( _equal ) {
-			outline1("BGT %seq", label);
+			outline1("BGT %s", label);
 		} else {
-			outline1("BGE %seq", label);
+			outline1("BGE %s", label);
 		}
 	} else {
 		if ( _equal ) {
-			outline1("BHI %seq", label);
+			outline1("BHI %s", label);
 		} else {
-			outline1("BHS %seq", label);
+			outline1("BHS %s", label);
 		}
 	}
 
-	outline0("LDA #$FF");
-	outline0("FCB $81"); /* CMPA #n = SKIP1 = jump over next 1-byte instruction in 1 byte and 2 cycles */
-	outhead1("%seq", label );
-	outline0("CLRA");
-
+	outline0("DECA");
+	outhead1("%s", label );
 	outline1("STA %s", _other ? _other : _destination);
 }
 static void cpu6809_greater_than( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed, int _bits ) {
-    char REG = _bits==16 ? 'D' : 'A';
+    char REG = _bits==16 ? 'X' : 'B';
 
 	MAKE_LABEL
 
+	outline0("CLRA");
 	outline2("LD%c %s",  REG, _source);
-	outline2("SUB%c %s", REG, _destination);
+	outline2("CMP%c %s", REG, _destination);
 	if ( _signed ) {
 		if ( _equal ) {
-			outline1("BLT %seq", label);
+			outline1("BLT %s", label);
 		} else {
-			outline1("BLE %seq", label);
+			outline1("BLE %s", label);
 		}
 	} else {
 		if ( _equal ) {
-			outline1("BLO %seq", label);
+			outline1("BLO %s", label);
 		} else {
-			outline1("BLS %seq", label);
+			outline1("BLS %s", label);
 		}
 	}
 
-	outline0("LDA #$FF");
-	outline0("FCB $81"); /* CMPA #n = SKIP1 = jump over next 1-byte instruction in 1 byte and 2 cycles */
-	outhead1("%seq", label );
-	outline0("CLRA");
-
+	outline0("DECA");
+	outhead1("%s", label );
 	outline1("STA %s", _other ? _other : _destination );
 }
 
