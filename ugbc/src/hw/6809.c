@@ -58,6 +58,87 @@ do { /* x-y+128<0 or 127-x+y<0 */													\
 	outline0("ENDIF");                                                              \
 } while(0)
 
+/* Helper for 8/16 bits comparison */
+static void cpu6809_compare( Environment * _environment, char *_source, char *_destination,  char *_other, int _positive, int _bits) {
+    char REG = _bits==16 ? 'D' : 'A';
+
+	MAKE_LABEL
+
+	outline2("LD%c %s",  REG, _source);
+	outline2("SUB%c %s", REG, _destination);
+
+	if(_positive) {
+		outline1("BNE %seq", label);
+		outline0("LDA #$FF");
+		outline0("FCB $81"); /* CMPA #n = SKIP1 = jump over next 1-byte instruction in 1 byte and 2 cycles */
+		outhead1("%seq", label );
+		outline0("CLRA");
+	} else {
+		outline1("BEQ %seq", label);
+		outline0("LDA #$FF");
+		outhead1("%seq", label );
+	}
+
+	outline1("STA %s", _other ? _other : _destination );
+}
+static void cpu6809_less_than( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed, int _bits) {
+    char REG = _bits==16 ? 'D' : 'A';
+
+	MAKE_LABEL
+
+	outline2("LD%c %s",  REG, _source);
+	outline2("SUB%c %s", REG, _destination);
+
+	if ( _signed ) {
+		if ( _equal ) {
+			outline1("BGT %seq", label);
+		} else {
+			outline1("BGE %seq", label);
+		}
+	} else {
+		if ( _equal ) {
+			outline1("BHI %seq", label);
+		} else {
+			outline1("BHS %seq", label);
+		}
+	}
+
+	outline0("LDA #$FF");
+	outline0("FCB $81"); /* CMPA #n = SKIP1 = jump over next 1-byte instruction in 1 byte and 2 cycles */
+	outhead1("%seq", label );
+	outline0("CLRA");
+
+	outline1("STA %s", _other ? _other : _destination);
+}
+static void cpu6809_greater_than( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed, int _bits ) {
+    char REG = _bits==16 ? 'D' : 'A';
+
+	MAKE_LABEL
+
+	outline2("LD%c %s",  REG, _source);
+	outline2("SUB%c %s", REG, _destination);
+	if ( _signed ) {
+		if ( _equal ) {
+			outline1("BLT %seq", label);
+		} else {
+			outline1("BLE %seq", label);
+		}
+	} else {
+		if ( _equal ) {
+			outline1("BLO %seq", label);
+		} else {
+			outline1("BLS %seq", label);
+		}
+	}
+
+	outline0("LDA #$FF");
+	outline0("FCB $81"); /* CMPA #n = SKIP1 = jump over next 1-byte instruction in 1 byte and 2 cycles */
+	outhead1("%seq", label );
+	outline0("CLRA");
+
+	outline1("STA %s", _other ? _other : _destination );
+}
+
 /**
  * @brief <i>CPU 6809</i>: emit code to make long conditional jump
  * 
@@ -523,26 +604,7 @@ void cpu6809_compare_8bit( Environment * _environment, char *_source, char *_des
 
     inline( cpu_compare_8bit )
 
-        MAKE_LABEL
-
-        outline1("LDA %s", _source);
-        outline1("CMPA %s", _destination);
-        outline1("BEQ %seq", label);
-        outline1("LDA #$%2.2x", ( _positive ) ? 0x00 : 0xff );
-        if ( _other ) {
-            outline1("STA %s", _other);
-        } else {
-            outline1("STA %s", _destination);
-        }
-        outline1("JMP %sdone", label);
-        outhead1("%seq", label );
-        outline1("LDA #$%2.2x", ( _positive ) ? 0xff : 0x00 );
-        if ( _other ) {
-            outline1("STA %s", _other);
-        } else {
-            outline1("STA %s", _destination);
-        }
-        outhead1("%sdone", label );
+        cpu6809_compare(_environment,_source, _destination, _other, _positive, 8);
 
     no_embedded( cpu_compare_8bit )
 
@@ -561,38 +623,7 @@ void cpu6809_less_than_8bit( Environment * _environment, char *_source, char *_d
 
     inline( cpu_less_than_8bit )
 
-        MAKE_LABEL
-
-        outline1("LDA %s", _source);
-        outline1("CMPA %s", _destination);
-        if ( _signed ) {
-            if ( _equal ) {
-                outline1("BLE %seq", label);
-            } else {
-                outline1("BLT %seq", label);
-            }
-        } else {
-            if ( _equal ) {
-                outline1("BLS %seq", label);
-            } else {
-                outline1("BLO %seq", label);    
-            }
-        }
-        outline1("LDA #$%2.2x", 0x00 );
-        if ( _other ) {
-            outline1("STA %s", _other);
-        } else {
-            outline1("STA %s", _destination);
-        }
-        outline1("JMP %sdone", label);
-        outhead1("%seq", label );
-        outline1("LDA #$%2.2x", 0xff );
-        if ( _other ) {
-            outline1("STA %s", _other);
-        } else {
-            outline1("STA %s", _destination);
-        }
-        outhead1("%sdone", label );
+        cpu6809_less_than(_environment, _source, _destination, _other, _equal, _signed, 8);
 
     no_embedded( cpu_less_than_8bit )
 
@@ -611,38 +642,7 @@ void cpu6809_greater_than_8bit( Environment * _environment, char *_source, char 
 
     inline( cpu_greater_than_8bit )
 
-        MAKE_LABEL
-
-        outline1("LDA %s", _source);
-        outline1("CMPA %s", _destination);
-        if ( _signed ) {
-            if ( _equal ) {
-                outline1("BGE %seq", label);
-            } else {
-                outline1("BGT %seq", label);
-            }
-        } else {
-            if ( _equal ) {
-                outline1("BHS %seq", label);
-            } else {
-                outline1("BHI %seq", label);    
-            }
-        }
-        outline1("LDA #$%2.2x", 0x00 );
-        if ( _other ) {
-            outline1("STA %s", _other);
-        } else {
-            outline1("STA %s", _destination);
-        }
-        outline1("JMP %sdone", label);
-        outhead1("%seq", label );
-        outline1("LDA #$%2.2x", 0xff );
-        if ( _other ) {
-            outline1("STA %s", _other);
-        } else {
-            outline1("STA %s", _destination);
-        }
-        outhead1("%sdone", label );
+        cpu6809_greater_than(_environment, _source, _destination, _other, _equal, _signed, 8);
 
     no_embedded( cpu_greater_than_8bit )
 
@@ -668,7 +668,7 @@ void cpu6809_math_add_8bit( Environment * _environment, char *_source, char *_de
             outline1("STA %s", _destination);
         }
 
-    no_embedded( cpu_greater_than_8bit )
+    no_embedded( cpu_math_add_8bit )
 
 }
 
@@ -1150,26 +1150,7 @@ void cpu6809_compare_16bit( Environment * _environment, char *_source, char *_de
 
     inline( cpu_compare_16bit )
 
-        MAKE_LABEL
-
-        outline1("LDX %s", _source);
-        outline1("CMPX %s", _destination);
-        outline1("BEQ %seq", label);
-        outline1("LDA #$%2.2x", ( _positive ) ? 0x00 : 0xff );
-        if ( _other ) {
-            outline1("STA %s", _other);
-        } else {
-            outline1("STA %s", _destination);
-        }
-        outline1("JMP %sdone", label);
-        outhead1("%seq", label );
-        outline1("LDA #$%2.2x", ( _positive ) ? 0xff : 0x00 );
-        if ( _other ) {
-            outline1("STA %s", _other);
-        } else {
-            outline1("STA %s", _destination);
-        }
-        outhead1("%sdone", label );
+        cpu6809_compare( _environment, _source, _destination, _other, _positive, 16 );
 
     no_embedded( cpu_compare_16bit )
 
@@ -1188,38 +1169,7 @@ void cpu6809_less_than_16bit( Environment * _environment, char *_source, char *_
 
     inline( cpu_less_than_16bit )
 
-        MAKE_LABEL
-
-        outline1("LDX %s", _source);
-        outline1("CMPX %s", _destination);
-        if ( _signed ) {
-            if ( _equal ) {
-                outline1("BLE %seq", label);
-            } else {
-                outline1("BLT %seq", label);
-            }
-        } else {
-            if ( _equal ) {
-                outline1("BLS %seq", label);
-            } else {
-                outline1("BLO %seq", label);    
-            }
-        }
-        outline1("LDA #$%2.2x", 0x00 );
-        if ( _other ) {
-            outline1("STA %s", _other);
-        } else {
-            outline1("STA %s", _destination);
-        }
-        outline1("JMP %sdone", label);
-        outhead1("%seq", label );
-        outline1("LDA #$%2.2x", 0xff );
-        if ( _other ) {
-            outline1("STA %s", _other);
-        } else {
-            outline1("STA %s", _destination);
-        }
-        outhead1("%sdone", label );
+        cpu6809_less_than( _environment, _source, _destination,  _other, _equal, _signed, 16 );
 
     no_embedded( cpu_compare_16bit )
 
@@ -1238,38 +1188,7 @@ void cpu6809_greater_than_16bit( Environment * _environment, char *_source, char
 
     inline( cpu_greater_than_16bit )
 
-        MAKE_LABEL
-
-        outline1("LDX %s", _source);
-        outline1("CMPX %s", _destination);
-        if ( _signed ) {
-            if ( _equal ) {
-                outline1("BGE %seq", label);
-            } else {
-                outline1("BGT %seq", label);
-            }
-        } else {
-            if ( _equal ) {
-                outline1("BHS %seq", label);
-            } else {
-                outline1("BHI %seq", label);    
-            }
-        }
-        outline1("LDA #$%2.2x", 0x00 );
-        if ( _other ) {
-            outline1("STA %s", _other);
-        } else {
-            outline1("STA %s", _destination);
-        }
-        outline1("JMP %sdone", label);
-        outhead1("%seq", label );
-        outline1("LDA #$%2.2x", 0xff );
-        if ( _other ) {
-            outline1("STA %s", _other);
-        } else {
-            outline1("STA %s", _destination);
-        }
-        outhead1("%sdone", label );
+		cpu6809_greater_than( _environment, _source, _destination,  _other, _equal, _signed, 16 );
 
     no_embedded( cpu_greater_than_16bit )
 
