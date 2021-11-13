@@ -33,6 +33,7 @@
  ****************************************************************************/
 
 #include "../../ugbc.h"
+#include <math.h>
 
 /****************************************************************************
  * CODE SECTION 
@@ -4778,5 +4779,32 @@ char * image_roll_x_left( Environment * _environment, char * _source, int _width
     // fclose( f );
 
     return _source;
+
+}
+
+void rgbi_move( RGBi * _source, RGBi * _destination ) {
+    memcpy( _destination, _source, sizeof( RGBi ) );
+}
+
+/**
+ * @brief Calculate the distance between two colors
+ *
+ * This function calculates the color distance between two colors(_a and _b).
+ * By "distance" we mean the geometric distance between two points in a 
+ * three-dimensional space, where each dimension corresponds to one of the 
+ * components (red, green and blue). The returned value is normalized to 
+ * the nearest 8-bit value. 
+ * 
+ * @param _e1 First color 
+ * @param _e2 Second color
+ * @return int distance
+ */
+int rgbi_distance( RGBi * _e1, RGBi * _e2 ) {
+
+    long rmean = ( (long)_e1->red + (long)_e2->red ) / 2;
+    long r = (long)_e1->red - (long)_e2->red;
+    long g = (long)_e1->green - (long)_e2->green;
+    long b = (long)_e1->blue - (long)_e2->blue;
+    return (int)( sqrt((((512+rmean)*r*r)>>8) + 4*g*g + (((767-rmean)*b*b)>>8)) );
 
 }

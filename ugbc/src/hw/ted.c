@@ -736,31 +736,6 @@ static int calculate_luminance(RGBi _a) {
 
 }
 
-
-/**
- * @brief Calculate the distance between two colors
- *
- * This function calculates the color distance between two colors(_a and _b).
- * By "distance" we mean the geometric distance between two points in a 
- * three-dimensional space, where each dimension corresponds to one of the 
- * components (red, green and blue). The returned value is normalized to 
- * the nearest 8-bit value. 
- * 
- * @param _a First color 
- * @param _b Second color
- * @return int distance
- */
-
-static int calculate_distance(RGBi e1, RGBi e2) {
-
-    long rmean = ( (long)e1.red + (long)e2.red ) / 2;
-    long r = (long)e1.red - (long)e2.red;
-    long g = (long)e1.green - (long)e2.green;
-    long b = (long)e1.blue - (long)e2.blue;
-    return (int)( sqrt((((512+rmean)*r*r)>>8) + 4*g*g + (((767-rmean)*b*b)>>8)) );
-
-}
-
 /**
  * @brief Extract the color palette from the given image
  * 
@@ -832,7 +807,7 @@ static Variable * ted_image_converter_bitmap_mode_standard( Environment * _envir
         int minDistance = 0xffff;
         int colorIndex = 0;
         for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
-            int distance = calculate_distance(SYSTEM_PALETTE[j], palette[i]);
+            int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
             // printf("%d <-> %d [%d] = %d [min = %d]\n", i, j, SYSTEM_PALETTE[j].index, distance, minDistance );
             if (distance < minDistance) {
                 // printf(" candidated...\n" );
@@ -951,7 +926,7 @@ static Variable * ted_image_converter_multicolor_mode_standard( Environment * _e
         int minDistance = 0xffff;
         int colorIndex = 0;
         for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
-            int distance = calculate_distance(SYSTEM_PALETTE[j], palette[i]);
+            int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
             //printf("%d <-> %d [%d] = %d [min = %d]\n", i, j, SYSTEM_PALETTE[j].index, distance, minDistance );
             if (distance < minDistance) {
                 //printf(" candidated...\n" );

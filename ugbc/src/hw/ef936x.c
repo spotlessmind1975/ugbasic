@@ -665,31 +665,6 @@ static int calculate_luminance(RGBi _a) {
 
 }
 
-
-/**
- * @brief Calculate the distance between two colors
- *
- * This function calculates the color distance between two colors(_a and _b).
- * By "distance" we mean the geometric distance between two points in a 
- * three-dimensional space, where each dimension corresponds to one of the 
- * components (red, green and blue). The returned value is normalized to 
- * the nearest 8-bit value. 
- * 
- * @param _a First color 
- * @param _b Second color
- * @return int distance
- */
-
-static int calculate_distance(RGBi e1, RGBi e2) {
-
-    long rmean = ( (long)e1.red + (long)e2.red ) / 2;
-    long r = (long)e1.red - (long)e2.red;
-    long g = (long)e1.green - (long)e2.green;
-    long b = (long)e1.blue - (long)e2.blue;
-    return (int)( sqrt((((512+rmean)*r*r)>>8) + 4*g*g + (((767-rmean)*b*b)>>8)) );
-
-}
-
 /**
  * @brief Extract the color palette from the given image
  * 
@@ -762,7 +737,7 @@ static Variable * ef936x_image_converter_bitmap_mode_standard( Environment * _en
         int minDistance = 0xffff;
         int colorIndex = 0;
         for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
-            int distance = calculate_distance(SYSTEM_PALETTE[j], palette[i]);
+            int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
             // printf("%d <-> %d [%d] = %d [min = %d]\n", i, j, SYSTEM_PALETTE[j].index, distance, minDistance );
             if (distance < minDistance) {
                 // printf(" candidated...\n" );
@@ -888,7 +863,7 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
             int minDistance = 0xffff;
             int colorIndex = 0;
             for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
-                int distance = calculate_distance(SYSTEM_PALETTE[j], palette[i]);
+                int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
                 // printf("%d (%2.2x%2.2x%2.2x) <-> %d (%2.2x%2.2x%2.2x) [%d] = %d [min = %d]\n", i, SYSTEM_PALETTE[j].red, SYSTEM_PALETTE[j].green, SYSTEM_PALETTE[j].blue, j, palette[i].red, palette[i].green, palette[i].blue, SYSTEM_PALETTE[j].index, distance, minDistance );
                 if (distance < minDistance) {
                     // printf(" candidated...\n" );
@@ -950,7 +925,7 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
 
             int minDistance = 9999;
             for( int i=0; i<sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++i ) {
-                int distance = calculate_distance(commonPalette[i], rgb );
+                int distance = rgbi_distance(&commonPalette[i], &rgb );
                 if ( distance < minDistance ) {
                     minDistance = distance;
                     colorIndex = commonPalette[i].index;
@@ -1026,7 +1001,7 @@ static Variable * ef936x_image_converter_multicolor_mode4( Environment * _enviro
             int minDistance = 0xffff;
             int colorIndex = 0;
             for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
-                int distance = calculate_distance(SYSTEM_PALETTE[j], palette[i]);
+                int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
                 // printf("%d <-> %d [%d] = %d [min = %d]\n", i, j, SYSTEM_PALETTE[j].index, distance, minDistance );
                 if (distance < minDistance) {
                     // printf(" candidated...\n" );
@@ -1089,7 +1064,7 @@ static Variable * ef936x_image_converter_multicolor_mode4( Environment * _enviro
 
             colorIndex = 0;
             for( i=0; i<4; ++i ) {
-                int distance = calculate_distance(commonPalette[i], rgb);
+                int distance = rgbi_distance(&commonPalette[i], &rgb);
                 if ( minDistance > distance ) {
                     minDistance = distance;
                     colorIndex = i;
@@ -1165,7 +1140,7 @@ static Variable * ef936x_image_converter_multicolor_mode16( Environment * _envir
             int minDistance = 0xffff;
             int colorIndex = 0;
             for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
-                int distance = calculate_distance(SYSTEM_PALETTE[j], palette[i]);
+                int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
                 // printf("%d <-> %d [%d] = %d [min = %d]\n", i, j, SYSTEM_PALETTE[j].index, distance, minDistance );
                 if (distance < minDistance) {
                     // printf(" candidated...\n" );
@@ -1212,7 +1187,7 @@ static Variable * ef936x_image_converter_multicolor_mode16( Environment * _envir
             for (j = 0; j < lastUsedSlotInCommonPalette; ++j) {
                 // printf("[+] common %d) %d %2.2x%2.2x%2.2x\n", j, commonPalette[j].index, commonPalette[j].red, commonPalette[j].green, commonPalette[j].blue);
                 if ( commonPalette[j].used ) {
-                    int distance = calculate_distance(commonPalette[j], palette[i]);
+                    int distance = rgbi_distance(&commonPalette[j], &palette[i]);
                     // printf("    (%d<->%d) >> %2.2x%2.2x%2.2x <-> %2.2x%2.2x%2.2x (%d)\n", j, i, commonPalette[j].red, commonPalette[j].green, commonPalette[j].blue, palette[i].red, palette[i].green, palette[i].blue, distance);
                     if (distance < 5 ) {
                         palette[i].used = 1;
@@ -1230,7 +1205,7 @@ static Variable * ef936x_image_converter_multicolor_mode16( Environment * _envir
             int minDistance = 0xffff;
             int colorIndex = 0;
             for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
-                int distance = calculate_distance(SYSTEM_PALETTE[j], palette[i]);
+                int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
                 // printf("%d <-> %d [%d] = %d [min = %d]\n", i, j, SYSTEM_PALETTE[j].index, distance, minDistance );
                 if (distance < minDistance) {
                     // printf(" candidated...\n" );
@@ -1300,7 +1275,7 @@ static Variable * ef936x_image_converter_multicolor_mode16( Environment * _envir
 
             colorIndex = 0;
             for( i=0; i<16; ++i ) {
-                int distance = calculate_distance(commonPalette[i], rgb);
+                int distance = rgbi_distance(&commonPalette[i], &rgb);
                 if ( minDistance > distance ) {
                     minDistance = distance;
                     colorIndex = i;
