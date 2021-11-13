@@ -705,6 +705,7 @@ static Variable * ef936x_image_converter_bitmap_mode_standard( Environment * _en
             }
         }
         palette[i].index = SYSTEM_PALETTE[colorIndex].index;
+        strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
         // printf("%d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
     }
 
@@ -831,6 +832,7 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
                 }
             }
             palette[i].index = SYSTEM_PALETTE[colorIndex].index;
+            strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
             // printf("%d) %d * %d %2.2x%2.2x%2.2x\n", i, colorIndex, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
         }
 
@@ -969,6 +971,7 @@ static Variable * ef936x_image_converter_multicolor_mode4( Environment * _enviro
                 }
             }
             palette[i].index = SYSTEM_PALETTE[colorIndex].index;
+            strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
             // printf("%d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
         }
 
