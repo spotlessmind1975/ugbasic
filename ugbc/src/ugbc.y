@@ -3676,6 +3676,7 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     printf("\t<source>     Input filename with ugBASIC source code\n" );
     printf("\t<asm>        Output filename with ASM source code (optional if '-o' given)\n" );
     printf("\t-I           Install needed chaintool for this target\n" );
+    printf("\t-d           Enable debugging of IMAGE LOAD\n" );
     printf("\t-c <file>    Output filename with linker configuration\n" );
     printf("\t-o <exe>     Output filename with final executable file for target\n" );
     printf("\t-O <type>    Output file format for target:\n" );
@@ -3742,13 +3743,16 @@ int main( int _argc, char *_argv[] ) {
     _environment->outputFileType = OUTPUT_FILE_TYPE_PRG;
 #endif
 
-    while ((opt = getopt(_argc, _argv, "e:c:Wo:Ie:l:EO:")) != -1) {
+    while ((opt = getopt(_argc, _argv, "e:c:Wo:Ie:l:EO:d")) != -1) {
         switch (opt) {
                 case 'c':
                     _environment->configurationFileName = strdup(optarg);
                     break;
                 case 'o':
                     _environment->exeFileName = strdup(optarg);
+                    break;
+                case 'd':
+                    _environment->debugImageLoad = 1;
                     break;
                 case 'O':
                     if ( strcmp( optarg, "bin") == 0 ) {

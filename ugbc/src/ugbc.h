@@ -1195,6 +1195,11 @@ typedef struct _Environment {
 
     TileDescriptors * descriptors;
 
+    /**
+     * Debug during LOAD IMAGE.
+     */
+    int debugImageLoad;
+    
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */

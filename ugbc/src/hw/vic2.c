@@ -1364,7 +1364,9 @@ static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _
 
             colorIndex = i;
 
-            printf( "%1.1x", colorIndex );
+            if ( _environment->debugImageLoad ) {
+                printf( "%1.1x", colorIndex );
+            }
 
             bitmask = colorIndex << (6 - ((image_x & 0x3) * 2));
 
@@ -1394,23 +1396,27 @@ static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _
 
         _source += 3 * ( _width - _frame_width );
 
+        if ( _environment->debugImageLoad ) {
+            printf("\n" );
+        }
+    }
+
+    if ( _environment->debugImageLoad ) {
+        printf("\n" );
+    
+        printf("PALETTE:\n" );
+        if ( ( _flags & FLAG_OVERLAYED ) == 0 ) {
+            printf("  background  (00) = %2.2x (%s)\n", palette[0].index, palette[0].description );
+        } else {
+            printf("  background  (00) = %2.2x (%s) [currently ignored since it can be overlayed]\n", palette[0].index, palette[0].description );
+        }
+        printf("  low screen  (01) = %2.2x (%s)\n", palette[1].index, palette[1].description );
+        printf("  high screen (10) = %2.2x (%s)\n", palette[2].index, palette[2].description );
+        printf("  colormap    (11) = %2.2x (%s)\n", palette[3].index, palette[3].description );
+        printf("\n" );
         printf("\n" );
     }
-
-    printf("\n" );
-
-    printf("PALETTE:\n" );
-    if ( ( _flags & FLAG_OVERLAYED ) == 0 ) {
-        printf("  background  (00) = %2.2x (%s)\n", palette[0].index, palette[0].description );
-    } else {
-        printf("  background  (00) = %2.2x (%s) [currently ignored since it can be overlayed]\n", palette[0].index, palette[0].description );
-    }
-    printf("  low screen  (01) = %2.2x (%s)\n", palette[1].index, palette[1].description );
-    printf("  high screen (10) = %2.2x (%s)\n", palette[2].index, palette[2].description );
-    printf("  colormap    (11) = %2.2x (%s)\n", palette[3].index, palette[3].description );
-    printf("\n" );
-    printf("\n" );
-
+    
     variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
 
     return result;
