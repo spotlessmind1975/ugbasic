@@ -671,6 +671,7 @@ typedef struct _RGBi {
     unsigned char green;
     unsigned char blue;
     unsigned char index;
+    char description[64];
     unsigned char used;
 } RGBi;
 

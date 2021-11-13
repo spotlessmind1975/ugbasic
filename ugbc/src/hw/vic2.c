@@ -38,38 +38,22 @@
 #include <math.h>
 
 static RGBi SYSTEM_PALETTE[] = {
-    // { "BLACK", 
-        { 0x00, 0x00, 0x00, 0 },        
-    // { "WHITE", 
-        { 0xff, 0xff, 0xff, 1 },
-    // { "RED", 
-        { 0x88, 0x00, 0x00, 2 },
-    // { "CYAN", 
-        { 0xaa, 0xff, 0xe6, 3 },
-    // { "VIOLET", 
-        { 0xcc, 0x44, 0xcc, 4 },
-    // { "GREEN", 
-        { 0x00, 0xcc, 0x55, 5 },
-    // { "BLUE", 
-        { 0x00, 0x00, 0xaa, 6 },
-    // { "YELLOW", 
-        { 0xee, 0xee, 0x77, 7 },
-    // { "ORANGE", 
-        { 0xa1, 0x68, 0x3c, 8 },
-    // { "BROWN", 
-        { 0xdd, 0x88, 0x65, 9 },
-    // { "LIGHT_RED", 
-        { 0xff, 0x77, 0x77, 10 },
-    // { "DARK_GREY", 
-        { 0x33, 0x33, 0x33, 11 },
-    // { "GREY", 
-        { 0x77, 0x77, 0x77, 12 },
-    // { "LIGHT_GREEN", 
-        { 0xaa, 0xff, 0x66, 13 },
-    // { "LIGHT_BLUE", 
-        { 0x00, 0x88, 0xff, 14 },
-    // { "LIGHT_GREY", 
-        { 0xbb, 0xbb, 0xbb, 15 }
+        { 0x00, 0x00, 0x00, 0, "BLACK" },
+        { 0xff, 0xff, 0xff, 1, "WHITE" },
+        { 0x88, 0x00, 0x00, 2, "RED" },
+        { 0xaa, 0xff, 0xe6, 3, "CYAN" },
+        { 0xcc, 0x44, 0xcc, 4, "VIOLET" },
+        { 0x00, 0xcc, 0x55, 5, "GREEN" },
+        { 0x00, 0x00, 0xaa, 6, "BLUE" },
+        { 0xee, 0xee, 0x77, 7, "YELLOW" },
+        { 0xa1, 0x68, 0x3c, 8, "ORANGE" },
+        { 0xdd, 0x88, 0x65, 9, "BROWN" },
+        { 0xff, 0x77, 0x77, 10, "LIGHT_RED" },
+        { 0x33, 0x33, 0x33, 11, "DARK_GREY" },
+        { 0x77, 0x77, 0x77, 12, "GREY" },
+        { 0xaa, 0xff, 0x66, 13, "LIGHT GREEN" },
+        { 0x00, 0x88, 0xff, 14, "LIGHT BLUE" },
+        { 0xbb, 0xbb, 0xbb, 15, "LIGHT GREY" }
 };
 
 /****************************************************************************
@@ -1443,7 +1427,7 @@ static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _
 
             colorIndex = i;
 
-            // printf( "%1.1x", colorIndex );
+            printf( "%1.1x", colorIndex );
 
             bitmask = colorIndex << (6 - ((image_x & 0x3) * 2));
 
@@ -1473,18 +1457,18 @@ static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _
 
         _source += 3 * ( _width - _frame_width );
 
-        // printf("\n" );
+        printf("\n" );
     }
 
-    // printf("\n" );
-    // printf("\n" );
+    printf("\n" );
 
-    // for(i=0; i<4; ++i ) {
-    //     printf( "%1.1x = %2.2x\n", i, palette[i].index );
-    // }
-
-    // printf("\n" );
-    // printf("\n" );
+    printf("PALETTE:\n" );
+    printf("  background  (00) = %2.2x (%s)\n", palette[0].index, palette[0].description );
+    printf("  low screen  (01) = %2.2x (%s)\n", palette[1].index, palette[1].description );
+    printf("  high screen (10) = %2.2x (%s)\n", palette[2].index, palette[2].description );
+    printf("  colormap    (11) = %2.2x (%s)\n", palette[3].index, palette[3].description );
+    printf("\n" );
+    printf("\n" );
 
     variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
 
