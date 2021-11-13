@@ -141,7 +141,6 @@ DSGC
 
     LDA   USING
     BNE   DSGW
-DSGT
     LDU   #TEMPORARY
     BRA   BSGCLOOP0
 DSGW
@@ -200,20 +199,20 @@ DSUSINGALLOC
 
 ; DSMALLOC(U,A,B)
 DSMALLOC
+    PSHS  U
     BSR   DSDESCRIPTOR
     STA   ,X
     
     PSHS  D
 
-    TFR   A,B
-    LDA   #255
-    NEGB
-    ADDD  FREE_STRING
+    LDD   FREE_STRING
+    SUBB  ,S
+    SBCA  #0
     STD   FREE_STRING
-    ADDD  ,S
+    ADDD  2,S
     STD   1,X
     
-    PULS  D,PC
+    PULS  U,D,PC
 
 ; DSUSING() -> U
 DSUSING
