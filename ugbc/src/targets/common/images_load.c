@@ -172,7 +172,7 @@ Variable * images_load( Environment * _environment, char * _filename, char * _al
     for( z=0; z<a; ++z ) {
         for( y=0; y<height; y+=_frame_height ) {
             for( x=0; x<width; x+=_frame_width ) {
-                result[i] = image_converter( _environment, source, width, height, x, y, _frame_width, _frame_height, _mode, _transparent_color, _background_color );
+                result[i] = image_converter( _environment, source, width, height, x, y, _frame_width, _frame_height, _mode, _transparent_color, _flags );
                 bufferSize += result[i]->size;
                 i += di;
             }

@@ -253,6 +253,7 @@ ON { return (ON); }
 ONLY { return (ONLY); }
 OR { return (OR); }
 ORANGE { return(ORANGE); }
+OVERLAYED { return(OVERLAYED); }
 P { return (P); }
 PAPER { return(PAPER); }
 PARALLEL { return(PARALLEL); }

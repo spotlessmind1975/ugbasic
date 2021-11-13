@@ -1096,10 +1096,7 @@ static int calculate_luminance(RGBi _a) {
 
 }
 
-static Variable * vic2_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _background_color ) {
-
-    // currently ignored
-    (void)!_background_color;
+static Variable * vic2_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
 
     image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
@@ -1223,7 +1220,7 @@ static Variable * vic2_image_converter_bitmap_mode_standard( Environment * _envi
 
 }
 
-static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _background_color ) {
+static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
 
     image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
@@ -1231,28 +1228,30 @@ static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _
 
     int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
 
-    if (colorUsed > 4) {
-        CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
-    }
-
     int i, j, k;
+
+    if ( ( _flags & FLAG_OVERLAYED ) || ( _flags & FLAG_TRANSPARENCY ) ) {
+        if (colorUsed > 3) {
+            CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
+        }
+    } else {
+        if (colorUsed > 4) {
+            CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
+        }
+    }
 
     for( i=0; i<colorUsed; ++i ) {
         int minDistance = 0xffff;
         int colorIndex = 0;
         for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
             int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
-            // printf("%d <-> %d [%d] = %d [min = %d]\n", i, j, SYSTEM_PALETTE[j].index, distance, minDistance );
             if (distance < minDistance) {
-                // printf(" candidated...\n" );
                 for( k=0; k<i; ++k ) {
                     if ( palette[k].index == SYSTEM_PALETTE[j].index ) {
-                        // printf(" ...used!\n" );
                         break;
                     }
                 }
                 if ( k>=i ) {
-                    // printf(" ...ok! (%d)\n", SYSTEM_PALETTE[j].index );
                     minDistance = distance;
                     colorIndex = j;
                 }
@@ -1260,7 +1259,12 @@ static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _
         }
         palette[i].index = SYSTEM_PALETTE[colorIndex].index;
         strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
-        // printf("%d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
+    }
+
+    if ( _flags & FLAG_OVERLAYED ) {
+        rgbi_move( &palette[0], &palette[colorUsed] );
+        rgbi_move( &SYSTEM_PALETTE[0], &palette[0] );
+        ++colorUsed;
     }
 
     if ( _transparent_color != -1 ) {
@@ -1331,7 +1335,7 @@ static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _
             int minDistance = 0xffff;
             int colorIndex = 0;
 
-            for( i=0; i<colorUsed; ++i ) {
+            for( i= ( _flags & FLAG_OVERLAYED ) ? 1 : 0; i<colorUsed; ++i ) {
                 if ( rgbi_equals_rgb( &palette[i], &rgb ) ) {
                     break;
                 }
@@ -1375,7 +1379,11 @@ static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _
     printf("\n" );
 
     printf("PALETTE:\n" );
-    printf("  background  (00) = %2.2x (%s)\n", palette[0].index, palette[0].description );
+    if ( ( _flags & FLAG_OVERLAYED ) == 0 ) {
+        printf("  background  (00) = %2.2x (%s)\n", palette[0].index, palette[0].description );
+    } else {
+        printf("  background  (00) = %2.2x (%s) [currently ignored since it can be overlayed]\n", palette[0].index, palette[0].description );
+    }
     printf("  low screen  (01) = %2.2x (%s)\n", palette[1].index, palette[1].description );
     printf("  high screen (10) = %2.2x (%s)\n", palette[2].index, palette[2].description );
     printf("  colormap    (11) = %2.2x (%s)\n", palette[3].index, palette[3].description );
@@ -1388,11 +1396,7 @@ static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _
 
 }
 
-static Variable * vic2_image_converter_tilemap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _background_color ) {
-
-    // currently ignored
-    (void)!_background_color;
-    (void)!_transparent_color;
+static Variable * vic2_image_converter_tilemap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
 
     image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
@@ -1595,17 +1599,17 @@ static Variable * vic2_image_converter_tilemap_mode_standard( Environment * _env
 
 }
 
-Variable * vic2_image_converter( Environment * _environment, char * _data, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _background_color ) {
+Variable * vic2_image_converter( Environment * _environment, char * _data, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags ) {
 
     switch( _mode ) {
 
         case BITMAP_MODE_STANDARD:
 
-            return vic2_image_converter_bitmap_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _background_color );
+            return vic2_image_converter_bitmap_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
 
         case BITMAP_MODE_MULTICOLOR:
 
-            return vic2_image_converter_multicolor_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _background_color );
+            return vic2_image_converter_multicolor_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
 
         case BITMAP_MODE_AH:
         case BITMAP_MODE_AIFLI:
@@ -1638,7 +1642,7 @@ Variable * vic2_image_converter( Environment * _environment, char * _data, int _
         case BITMAP_MODE_MEGATEXT:
         case BITMAP_MODE_PRS:
         case TILEMAP_MODE_STANDARD:
-            return vic2_image_converter_tilemap_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _background_color );
+            return vic2_image_converter_tilemap_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
         case TILEMAP_MODE_MULTICOLOR:
         case TILEMAP_MODE_EXTENDED:
             break;

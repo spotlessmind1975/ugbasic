@@ -53,6 +53,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token BACK DEBUG CAN ELSEIF BUFFER LOAD SIZE MOB IMAGE PUT VISIBLE HIDDEN HIDE SHOW RENDER
 %token SQR TI CONST VBL POKE NOP FILL IN POSITIVE DEFINE ATARI ATARIXL C64 DRAGON DRAGON32 DRAGON64 PLUS4 ZX 
 %token FONT VIC20 PARALLEL YIELD SPAWN THREAD TASK IMAGES FRAME FRAMES XY YX ROLL MASKED USING TRANSPARENCY
+%token OVERLAYED
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -461,6 +462,9 @@ image_load_flag :
     }
     | FLIP YX {
         $$ = FLAG_FLIP_X | FLAG_FLIP_Y;
+    }
+    | OVERLAYED {
+        $$ = FLAG_OVERLAYED;
     };
 
 put_image_flag :
@@ -483,6 +487,9 @@ images_load_flag :
     }
     | ROLL X {
         $$ = FLAG_ROLL_X;
+    }
+    | OVERLAYED {
+        $$ = FLAG_OVERLAYED;
     }
     ;
 
@@ -512,7 +519,7 @@ images_load_flags1 :
 
 using_transparency :
     {
-        $$ = 0;    
+        $$ = -1;    
     } 
     | TRANSPARENCY const_color_enumeration {
         $$ = $2;
