@@ -2610,8 +2610,8 @@ void cpu6809_math_and_const_32bit( Environment * _environment, char *_source, in
     inline( cpu_math_and_const_32bit )
 
         outline1("LDD %s", _source );
-        outline1("ANDA #$%2.2x", ( _mask >> 8 ) & 0xff );
-        outline1("ANDB #$%2.2x", ( _mask & 0xff ) );
+        outline1("ANDA #$%2.2x", ( _mask >> 24 ) & 0xff );
+        outline1("ANDB #$%2.2x", ( _mask >> 16 ) & 0xff );
         outline1("STD %s", _source );
         outline1("LDD %s+2", _source );
         outline1("ANDA #$%2.2x", ( _mask >> 8 ) & 0xff );
