@@ -318,7 +318,7 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
                 }
             }
         }
-        rgbi_move( &SYSTEM_PALETTE[colorIndex], &palette[i] );
+        palette[i].index = SYSTEM_PALETTE[colorIndex].index;
         // printf("%d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
     }
 
