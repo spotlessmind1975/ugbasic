@@ -41,6 +41,23 @@
 
 #if defined(__d32__) || defined(__d64__) || defined(__pc128op__) || defined(__mo5__)
 
+/* output code that is the best "JUMP" version between "small" and "long" branch.
+   LBRA and LBSR are transformed into JMP and JSR respectively. */
+#define B(code, label)																\
+do { /* x-y+128<0 or 127-x+y<0 */													\
+	outline2("IF ((128+%s-(*+2))|(127-%s+(*+2))&0x8000)", label, label);			\
+	if(!strcmp(#code,"RA")) {                                                       \
+		outline1("JMP %s", (label));                                                \
+	} else if(!strcmp(#code,"SR")) {                                                \
+		outline1("JSR %s", (label));                                                \
+	} else {                                                                        \
+		outline2("LB%s %s", #code, (label));                                        \
+    }                                                                               \
+	outline0("ELSE");                                                               \
+	outline2("B%s %s", #code, (label));                                             \
+	outline0("ENDIF");                                                              \
+} while(0)
+
 /**
  * @brief <i>CPU 6809</i>: emit code to make long conditional jump
  * 
@@ -57,13 +74,9 @@
  */
 void cpu6809_beq( Environment * _environment, char * _label ) {
     
-    MAKE_LABEL
-
     inline( cpu_beq )
 
-        outline1("BNE %s", label);
-        outline1("JMP %s", _label);    
-        outhead1("%s", label);
+        B(EQ, _label);
 
     no_embedded( cpu_beq )
 
@@ -77,13 +90,9 @@ void cpu6809_beq( Environment * _environment, char * _label ) {
  */
 void cpu6809_bneq( Environment * _environment, char * _label ) {
     
-    MAKE_LABEL
-
     inline( cpu_bneq )
 
-        outline1("BEQ %s", label);
-        outline1("JMP %s", _label);    
-        outhead1("%s", label);
+        B(NE, _label);
 
     no_embedded( cpu_bneq )
 
@@ -94,8 +103,7 @@ void cpu6809_bveq( Environment * _environment, char * _value, char * _label ) {
     inline( cpu_bveq )
 
         outline1("LDA %s", _value);
-        outline0("CMPA #0");
-        cpu6809_beq( _environment,  _label );
+        B(EQ, _label);
 
     no_embedded( cpu_bveq )
 
@@ -106,8 +114,7 @@ void cpu6809_bvneq( Environment * _environment, char * _value, char * _label ) {
     inline( cpu_bveq )
 
         outline1("LDA %s", _value);
-        outline0("CMPA #0");
-        cpu6809_bneq( _environment,  _label );
+        B(NE, _label);
 
     no_embedded( cpu_bvneq )
     
