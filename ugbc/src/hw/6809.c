@@ -43,19 +43,19 @@
 
 /* output code that is the best "JUMP" version between "small" and "long" branch.
    LBRA and LBSR are transformed into JMP and JSR respectively. */
-#define B(code, label)                                                   \
-do { /* x-y+128<0 or 127-x+y<0 */                                        \
-    outline2("IF ((128+%s-(*+2))|(127-%s+(*+2))&0x8000)", label, label); \
-    if(!strcmp(#code,"RA")) {                                            \
-        outline1("JMP %s", (label));                                     \
-    } else if(!strcmp(#code,"SR")) {                                     \
-        outline1("JSR %s", (label));                                     \
-    } else {                                                             \
-        outline2("LB%s %s", #code, (label));                             \
-    }                                                                    \
-    outline0("ELSE");                                                    \
-    outline2("B%s %s", #code, (label));                                  \
-    outline0("ENDIF");                                                   \
+#define B(code, label)                                                       \
+do { /* x-y+128<0 or 127-x+y<0 */                                            \
+    outline2("IF (((128+%s-(*+2))|(127-%s+(*+2)))&0x8000)",(label),(label)); \
+    if(!strcmp(#code,"RA")) {                                                \
+        outline1("JMP %s", (label));                                         \
+    } else if(!strcmp(#code,"SR")) {                                         \
+        outline1("JSR %s", (label));                                         \
+    } else {                                                                 \
+        outline2("LB%s %s", #code, (label));                                 \
+    }                                                                        \
+    outline0("ELSE");                                                        \
+    outline2("B%s %s", #code, (label));                                      \
+    outline0("ENDIF");                                                       \
 } while(0)
 
 /* Helper for 8/16 bits comparison */
