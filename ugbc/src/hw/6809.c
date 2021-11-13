@@ -43,94 +43,94 @@
 
 /* output code that is the best "JUMP" version between "small" and "long" branch.
    LBRA and LBSR are transformed into JMP and JSR respectively. */
-#define B(code, label)																\
-do { /* x-y+128<0 or 127-x+y<0 */													\
-	outline2("IF ((128+%s-(*+2))|(127-%s+(*+2))&0x8000)", label, label);			\
-	if(!strcmp(#code,"RA")) {                                                       \
-		outline1("JMP %s", (label));                                                \
-	} else if(!strcmp(#code,"SR")) {                                                \
-		outline1("JSR %s", (label));                                                \
-	} else {                                                                        \
-		outline2("LB%s %s", #code, (label));                                        \
-    }                                                                               \
-	outline0("ELSE");                                                               \
-	outline2("B%s %s", #code, (label));                                             \
-	outline0("ENDIF");                                                              \
+#define B(code, label)                                                   \
+do { /* x-y+128<0 or 127-x+y<0 */                                        \
+    outline2("IF ((128+%s-(*+2))|(127-%s+(*+2))&0x8000)", label, label); \
+    if(!strcmp(#code,"RA")) {                                            \
+        outline1("JMP %s", (label));                                     \
+    } else if(!strcmp(#code,"SR")) {                                     \
+        outline1("JSR %s", (label));                                     \
+    } else {                                                             \
+        outline2("LB%s %s", #code, (label));                             \
+    }                                                                    \
+    outline0("ELSE");                                                    \
+    outline2("B%s %s", #code, (label));                                  \
+    outline0("ENDIF");                                                   \
 } while(0)
 
 /* Helper for 8/16 bits comparison */
 static void cpu6809_compare( Environment * _environment, char *_source, char *_destination,  char *_other, int _positive, int _bits) {
     char REG = _bits==16 ? 'X' : 'B';
 
-	MAKE_LABEL
+    MAKE_LABEL
 
-	outline0("CLRA");
-	outline2("LD%c %s",  REG, _source);
-	outline2("CMP%c %s", REG, _destination);
+    outline0("CLRA");
+    outline2("LD%c %s",  REG, _source);
+    outline2("CMP%c %s", REG, _destination);
 
-	if(_positive) {
-		outline1("BNE %s", label);
-		outline0("DECA");
-	} else {
-		outline1("BEQ %s", label);
-		outline0("DECA");
-	}
+    if(_positive) {
+        outline1("BNE %s", label);
+        outline0("DECA");
+    } else {
+        outline1("BEQ %s", label);
+        outline0("DECA");
+    }
 
-	outhead1("%s", label );
-	outline1("STA %s", _other ? _other : _destination );
+    outhead1("%s", label );
+    outline1("STA %s", _other ? _other : _destination );
 }
 static void cpu6809_less_than( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed, int _bits) {
     char REG = _bits==16 ? 'X' : 'B';
 
-	MAKE_LABEL
+    MAKE_LABEL
 
-	outline0("CLRA");
-	outline2("LD%c %s",  REG, _source);
-	outline2("CMP%c %s", REG, _destination);
+    outline0("CLRA");
+    outline2("LD%c %s",  REG, _source);
+    outline2("CMP%c %s", REG, _destination);
 
-	if ( _signed ) {
-		if ( _equal ) {
-			outline1("BGT %s", label);
-		} else {
-			outline1("BGE %s", label);
-		}
-	} else {
-		if ( _equal ) {
-			outline1("BHI %s", label);
-		} else {
-			outline1("BHS %s", label);
-		}
-	}
+    if ( _signed ) {
+        if ( _equal ) {
+            outline1("BGT %s", label);
+        } else {
+            outline1("BGE %s", label);
+        }
+    } else {
+        if ( _equal ) {
+            outline1("BHI %s", label);
+        } else {
+            outline1("BHS %s", label);
+        }
+    }
 
-	outline0("DECA");
-	outhead1("%s", label );
-	outline1("STA %s", _other ? _other : _destination);
+    outline0("DECA");
+    outhead1("%s", label );
+    outline1("STA %s", _other ? _other : _destination);
 }
 static void cpu6809_greater_than( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed, int _bits ) {
     char REG = _bits==16 ? 'X' : 'B';
 
-	MAKE_LABEL
+    MAKE_LABEL
 
-	outline0("CLRA");
-	outline2("LD%c %s",  REG, _source);
-	outline2("CMP%c %s", REG, _destination);
-	if ( _signed ) {
-		if ( _equal ) {
-			outline1("BLT %s", label);
-		} else {
-			outline1("BLE %s", label);
-		}
-	} else {
-		if ( _equal ) {
-			outline1("BLO %s", label);
-		} else {
-			outline1("BLS %s", label);
-		}
-	}
+    outline0("CLRA");
+    outline2("LD%c %s",  REG, _source);
+    outline2("CMP%c %s", REG, _destination);
+    if ( _signed ) {
+        if ( _equal ) {
+            outline1("BLT %s", label);
+        } else {
+            outline1("BLE %s", label);
+        }
+    } else {
+        if ( _equal ) {
+            outline1("BLO %s", label);
+        } else {
+            outline1("BLS %s", label);
+        }
+    }
 
-	outline0("DECA");
-	outhead1("%s", label );
-	outline1("STA %s", _other ? _other : _destination );
+    outline0("DECA");
+    outhead1("%s", label );
+    outline1("STA %s", _other ? _other : _destination );
 }
 
 /**
@@ -1182,7 +1182,7 @@ void cpu6809_greater_than_16bit( Environment * _environment, char *_source, char
 
     inline( cpu_greater_than_16bit )
 
-		cpu6809_greater_than( _environment, _source, _destination,  _other, _equal, _signed, 16 );
+        cpu6809_greater_than( _environment, _source, _destination,  _other, _equal, _signed, 16 );
 
     no_embedded( cpu_greater_than_16bit )
 
@@ -1202,11 +1202,7 @@ void cpu6809_math_add_16bit( Environment * _environment, char *_source, char *_d
 
         outline1("LDD %s", _source);
         outline1("ADDD %s", _destination);
-        if ( _other ) {
-            outline1("STD %s", _other);
-        } else {
-            outline1("STD %s", _destination);
-        }
+        outline1("STD %s", _other ? _other : _destination);
 
     no_embedded( cpu_math_add_16bit )
 
@@ -1226,11 +1222,7 @@ void cpu6809_math_add_16bit_with_16bit( Environment * _environment, char *_sourc
 
         outline1("LDD %s", _source);
         outline1("ADDD #%s", _destination);
-        if ( _other ) {
-            outline1("STD %s", _other);
-        } else {
-            outline1("STD %s", _destination);
-        }
+        outline1("STD %s", _other ? _other : _destination);
 
     no_embedded( cpu_math_add_16bit_with_16bit )
 
@@ -1242,13 +1234,8 @@ void cpu6809_math_add_16bit_with_8bit( Environment * _environment, char *_source
 
         outline1("LDX %s", _source);
         outline1("LDB %s", _destination);
-        outline0("LDA #$0");
-        outline0("LEAX D, X");
-        if ( _other ) {
-            outline1("STX %s", _other);
-        } else {
-            outline1("STX %s", _destination);
-        }
+        outline0("ABX");
+        outline1("STX %s", _other ? _other : _destination );
 
     no_embedded( cpu_math_add_16bit_with_8bit )
 
@@ -1265,14 +1252,10 @@ void cpu6809_math_double_16bit( Environment * _environment, char *_source, char 
 
     inline( cpu_math_double_16bit )
 
-        outline1("LDX %s", _source);
-        outline0("TFR X, D");
-        outline0("LEAX D, X");
-        if ( _other ) {
-            outline1("STX %s", _other);
-        } else {
-            outline1("STX %s", _source);
-        }
+        outline1("LDD %s", _source);
+        outline0("LSLB");
+        outline0("ROLA");
+        outline1("STD %s", _other ? _other : _destination );
 
     no_embedded( cpu_math_double_16bit )
 
@@ -1580,19 +1563,9 @@ void cpu6809_math_sub_16bit( Environment * _environment, char *_source, char *_d
 
     inline( cpu_math_sub_16bit )
 
-        outline1("LDD %s", _destination );
-        outline0("ANDCC #$FE" );
-        outline0("EORA #$FF" );
-        outline0("EORB #$FF" );
-        outline0("ADDD #1" );
-
-        outline1("LDY %s", _source );
-        outline0("LEAY D, Y" );
-        if ( _other ) {
-            outline1("STY %s", _other );
-        } else {
-            outline1("STY %s", _destination );
-        }
+        outline1("LDD %s", _source );
+        outline1("SUBD %s", _destination);
+        outline1("STD %s", _other ? _other : _destination );
 
     no_embedded( cpu_math_sub_16bit );
 
@@ -1602,20 +1575,10 @@ void cpu6809_math_sub_16bit_with_8bit( Environment * _environment, char *_source
 
     inline( cpu_math_sub_16bit_with_8bit )
 
-        outline1("LDB %s", _destination );
-        outline0("LDA #0" );
-        outline0("ANDCC #$FE" );
-        outline0("EORA #$FF" );
-        outline0("EORB #$FF" );
-        outline0("ADDD #1" );
-
-        outline1("LDY %s", _source );
-        outline0("LEAY D, Y" );
-        if ( _other ) {
-            outline1("STY %s", _other );
-        } else {
-            outline1("STY %s", _destination );
-        }
+        outline1("LDD %s", _source );
+        outline1("SUBB %s", _destination);
+        outline0("SBCA #0");
+        outline1("STD %s", _other ? _other : _destination );
 
     no_embedded( cpu_math_sub_16bit_with_8bit );
 
@@ -1632,14 +1595,9 @@ void cpu6809_math_complement_const_16bit( Environment * _environment, char *_sou
 
     inline( cpu_math_complement_const_16bit )
 
-        outline1("LDX #$%2.2x", _value);
-        outline1("LDD %s", _source );
-        outline0("ANDCC #$FE" );
-        outline0("EORA #$FF" );
-        outline0("EORB #$FF" );
-        outline0("ADDD #1" );
-        outline0("LEAX D, X");
-        outline1("STX %s", _source);
+        outline1("LDD #$%2.2x", _value);
+        outline1("SUBD %s", _source );
+        outline1("STD %s", _source);
 
     no_embedded( cpu_math_complement_const_16bit );
 
@@ -1816,7 +1774,7 @@ void cpu6809_math_mul2_const_16bit( Environment * _environment, char *_source, i
         outline1("LDD %s", _source );
         outline1("LDX #$%2.2x", _steps );
 
-		/* there is no difference between signed and unsigned with shift */
+        /* there is no difference between signed and unsigned with shift */
         outline0("JSR CPUMATHMUL2CONST16BIT");
         outline1("STD %s", _source );
 
@@ -2115,40 +2073,18 @@ void cpu6809_math_add_32bit( Environment * _environment, char *_source, char *_d
 
         MAKE_LABEL
 
-        outline0("ANDCC #$FF");
+        outline1("LDX #%s", _destination);
         outline1("LDD %s+2", _source);
-        outline1("ADDD %s+2", _destination);
+        outline0("ADDD 2,X");
         if ( _other ) {
             outline1("STD %s+2", _other);
         } else {
-            outline1("STD %s+2", _destination);
+            outline0("STD 2,X");
         }
-        outline1("BCC %snocarry", label);
-        outline0("LDA #1");
-        outline0("STA <MATHPTR0");
-        outhead1("%snocarry", label);
         outline1("LDD %s", _source);
-        outline1("ADDD %s", _destination);
-        if ( _other ) {
-            outline1("STD %s", _other);
-        } else {
-            outline1("STD %s", _destination);
-        }
-        outline0("LDA <MATHPTR0");
-        outline0("CMPA #1");
-        outline1("BNE %snocarry2", label);
-        if ( _other ) {
-            outline1("LDD %s", _other);
-        } else {
-            outline1("LDD %s", _destination);
-        }
-        outline0("ADDD #1");
-        if ( _other ) {
-            outline1("STD %s", _other);
-        } else {
-            outline1("STD %s", _destination);
-        }
-        outhead1("%snocarry2", label);
+        outline0("ADCB 1,X");
+        outline0("ADCA ,X");
+        outline1("STD %s", _other: ? _other : ",X" );
 
     no_embedded( cpu_math_add_32bit )
 
@@ -2165,7 +2101,22 @@ void cpu6809_math_double_32bit( Environment * _environment, char *_source, char 
 
     inline( cpu_math_double_32bit )
 
-    cpu6809_math_add_32bit( _environment, _source, _source, _other );
+        if(_other) {
+            outline1("LDD %s+2", _source);
+            outline0("LSLB");
+            outline0("ROLA");
+            outline1("STD %s+2", _other);
+            outline1("LDD %s", _source);
+            outline0("ROLB");
+            outline0("ROLA");
+            outline1("STD %s", _other);
+        } else {
+            outline1("LDX #%s", _source);
+            outline0("LSL 3,X");
+            outline0("ROL 2,X");
+            outline0("ROL 1,X");
+            outline0("ROL ,X");
+        }
 
     no_embedded( cpu_math_double_32bit )
 
@@ -2183,42 +2134,22 @@ void cpu6809_math_sub_32bit( Environment * _environment, char *_source, char *_d
 
     inline( cpu_math_sub_32bit )
 
-        MAKE_LABEL
-
-        outline0("ANDCC #$FF");
+        outline1("LDX #%s", _destination);
         outline1("LDD %s+2", _source);
-        outline1("SUBD %s+2", _destination);
+        outline0("SUBD 2,X");
         if ( _other ) {
             outline1("STD %s+2", _other);
         } else {
-            outline1("STD %s+2", _destination);
+            outline0("STD 2,X");
         }
-        outline1("BCC %snocarry", label);
-        outline0("LDA #1");
-        outline0("STA <MATHPTR0");
-        outhead1("%snocarry", label);
         outline1("LDD %s", _source);
-        outline1("SUBD %s", _destination);
+        outline0("SBCB 1,X");
+        outline0("SBCA ,X");
         if ( _other ) {
             outline1("STD %s", _other);
         } else {
-            outline1("STD %s", _destination);
+            outline0("STD ,X");
         }
-        outline0("LDA <MATHPTR0");
-        outline0("CMPA #1");
-        outline1("BNE %snocarry2", label);
-        if ( _other ) {
-            outline1("LDD %s", _other);
-        } else {
-            outline1("LDD %s", _destination);
-        }
-        outline0("SUBD #1");
-        if ( _other ) {
-            outline1("STD %s", _other);
-        } else {
-            outline1("STD %s", _destination);
-        }
-        outhead1("%snocarry2", label);
     
     no_embedded( cpu_math_sub_32bit )
 
@@ -2235,26 +2166,14 @@ void cpu6809_math_complement_const_32bit( Environment * _environment, char *_sou
 
     inline( cpu_math_complement_const_32bit )
 
-        MAKE_LABEL
-
-        outline0("ANDCC #$FF");
+        outline1("LDX #%s", _source);
         outline1("LDD #$%4.4x", ( _value ) & 0xffff );
-        outline1("SUBD %s+2", _source);
-        outline1("STD %s+2", _source);
-        outline1("BCC %snocarry", label);
-        outline0("LDA #1");
-        outline0("STA <MATHPTR0");
-        outhead1("%snocarry", label);
+        outline0("SUBD 2,X");
+        outline0("STD 2,X");
         outline1("LDD #$%4.4x", ( _value>>16 ) & 0xffff );
-        outline1("SUBD %s", _source);
-        outline1("STD %s", _source);
-        outline0("LDA <MATHPTR0");
-        outline0("CMPA #1");
-        outline1("BNE %snocarry2", label);
-        outline1("LDD %s", _source);
-        outline0("SUBD #1");
-        outline1("STD %s", _source);
-        outhead1("%snocarry2", label);
+        outline0("SBCB 1,X");
+        outline0("SBCA ,X");
+        outline0("STD ,X");
 
     no_embedded( cpu_math_complement_const_32bit )
 
@@ -2519,14 +2438,23 @@ void cpu6809_math_and_const_32bit( Environment * _environment, char *_source, in
 
     inline( cpu_math_and_const_32bit )
 
-        outline1("LDD %s", _source );
+		outline1("LDX #%s", _source );
+		if(_mask & 0xffff0000) {
+			outline0("LDD ,X");
+			outline1("ANDA #$%2.2x", ( _mask >> 24 ) & 0xff );
+			outline1("ANDB #$%2.2x", ( _mask >> 16 ) & 0xff );
+		} else {
+			outline0("LDD #0");
+		}
+        outline0("STD ,X");
+		if(_mask & 0x0000ffff) {
+			outline0("LDD 2,X");
         outline1("ANDA #$%2.2x", ( _mask >> 8 ) & 0xff );
-        outline1("ANDB #$%2.2x", ( _mask & 0xff ) );
-        outline1("STD %s", _source );
-        outline1("LDD %s+2", _source );
-        outline1("ANDA #$%2.2x", ( _mask >> 8 ) & 0xff );
-        outline1("ANDB #$%2.2x", ( _mask & 0xff ) );
-        outline1("STD %s+2", _source );
+			outline1("ANDB #$%2.2x", ( _mask >> 0 ) & 0xff );
+		} else {
+			outline0("LDD #0");
+		}
+        outline0("STD 2,X");
 
     no_embedded( cpu_math_and_const_32bit )
 
@@ -2940,9 +2868,18 @@ void cpu6809_inc_16bit( Environment * _environment, char * _variable ) {
 
     inline( cpu_inc_16bit )
 
-        outline1("LDD %s", _variable );
-        outline0("ADDD #1" );
-        outline1("STD %s", _variable );
+        // 16 cycles all times
+        // outline1("LDD %s", _variable );
+        // outline0("ADDD #1" );
+        // outline1("STD %s", _variable );
+        
+        MAKE_LABEL
+        
+        // 10 cycles 255 times out of 256 and 17 one out of 256
+        outline1("INC %s+1", _variable);
+        outline1("BNE %s", label):
+        outline1("INC %s", _variable);
+        outhead1("%s", label)
 
     no_embedded( cpu_inc_16bit )
 
@@ -2952,13 +2889,24 @@ void cpu6809_inc_32bit( Environment * _environment, char * _variable ) {
 
     inline( cpu_inc_32bit )
 
-        outline0("ANDCC #$fe" );
-        outline1("LDD %s+2", _variable );
-        outline0("ADDD #1" );
-        outline1("STD %s+2", _variable );
-        outline1("LDD %s", _variable );
-        outline0("ADDD #0" );
-        outline1("STD %s", _variable );
+        // outline1("LDD %s+2", _variable );
+        // outline0("ADDD #1" );
+        // outline1("STD %s+2", _variable );
+        // outline1("LDD %s", _variable );
+        // outline0("ADCB #0" );
+        // outline0("ADCA #0" );
+        // outline1("STD %s", _variable );
+
+        MAKE_LABEL
+        
+        outline1("INC %s+3", _variable);
+        outline1("BNE %s", label):
+        outline1("INC %s+2", _variable);
+        outline1("BNE %s", label):
+        outline1("INC %s+1", _variable);
+        outline1("BNE %s", label):
+        outline1("INC %s", _variable);
+        outhead1("%s", label)
 
     no_embedded( cpu_inc_32bit )
 
@@ -2978,9 +2926,17 @@ void cpu6809_dec_16bit( Environment * _environment, char * _variable ) {
 
     inline( cpu_dec_16bit )
 
-        outline1("LDD %s", _variable );
-        outline0("SUBD #1" );
-        outline1("STD %s", _variable );
+        // outline1("LDD %s", _variable );
+        // outline0("SUBD #1" );
+        // outline1("STD %s", _variable );
+
+        MAKE_LABEL
+        
+        // 10 cycles 255 times out of 256 and 17 one out of 256
+        outline1("DEC %s+1", _variable);
+        outline1("BNE %s", label):
+        outline1("DEC %s", _variable);
+        outhead1("%s", label)
 
     no_embedded( cpu_dec_16bit )
 
