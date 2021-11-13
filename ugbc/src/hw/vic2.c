@@ -1230,7 +1230,11 @@ static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _
 
     int i, j, k;
 
-    if ( ( _flags & FLAG_OVERLAYED ) || ( _flags & FLAG_TRANSPARENCY ) ) {
+    if ( ( _flags & FLAG_TRANSPARENCY ) ) {
+        if (colorUsed > 3) {
+            CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
+        }
+    } else if ( ( _flags & FLAG_OVERLAYED ) ) {
         if (colorUsed > 3) {
             CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
         }
@@ -1262,8 +1266,25 @@ static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _
     }
 
     if ( _flags & FLAG_OVERLAYED ) {
-        rgbi_move( &palette[0], &palette[colorUsed] );
+        rgbi_move( &palette[2], &palette[3] );
+        rgbi_move( &palette[1], &palette[2] );
+        rgbi_move( &palette[0], &palette[1] );
         rgbi_move( &SYSTEM_PALETTE[0], &palette[0] );
+        ++colorUsed;
+    }
+
+    if ( _flags & FLAG_TRANSPARENCY ) {
+        if ( palette[0].index == SYSTEM_PALETTE[0].index ) {
+            rgbi_move( &palette[2], &palette[3] );
+            rgbi_move( &palette[1], &palette[2] );
+            rgbi_move( &SYSTEM_PALETTE[0], &palette[0] );
+            rgbi_move( &SYSTEM_PALETTE[0], &palette[1] );
+        } else {
+            rgbi_move( &palette[1], &palette[3] );
+            rgbi_move( &palette[0], &palette[2] );
+            rgbi_move( &SYSTEM_PALETTE[0], &palette[0] );
+            rgbi_move( &SYSTEM_PALETTE[0], &palette[1] );
+        }
         ++colorUsed;
     }
 

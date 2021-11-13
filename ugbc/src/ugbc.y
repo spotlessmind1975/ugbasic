@@ -521,6 +521,9 @@ using_transparency :
     {
         $$ = -1;    
     } 
+    | TRANSPARENCY {
+        $$ = COLOR_BLACK;
+    }
     | TRANSPARENCY const_color_enumeration {
         $$ = $2;
     };

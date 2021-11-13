@@ -4813,6 +4813,15 @@ int rgbi_distance( RGBi * _e1, RGBi * _e2 ) {
 
 }
 
+static int rgbi_qsort_compare(const void * _first, const void * _second ) {
+
+    RGBi * first = (RGBi *) _first;
+    RGBi * second = (RGBi *) _second;
+
+    return ( first->count <= second->count );
+
+}
+
 /**
  * @brief Extract the color palette from the given image
  * 
@@ -4825,6 +4834,8 @@ int rgbi_extract_palette( unsigned char* _source, int _width, int _height, RGBi 
 
     RGBi rgb;
 
+    memset( _palette, 0, sizeof( RGBi ) * _palette_size );
+    
     int image_x, image_y;
 
     int usedPalette = 0;
@@ -4836,6 +4847,7 @@ int rgbi_extract_palette( unsigned char* _source, int _width, int _height, RGBi 
             rgb.red = *source;
             rgb.green = *(source + 1);
             rgb.blue = *(source + 2);
+            rgb.count = 0;
 
             for (i = 0; i < usedPalette; ++i) {
                 if (rgbi_equals_rgb( &_palette[i], &rgb )) {
@@ -4849,12 +4861,26 @@ int rgbi_extract_palette( unsigned char* _source, int _width, int _height, RGBi 
                 if (usedPalette > _palette_size) {
                     break;
                 }
+            } else {
+                ++_palette[i].count;
             }
             source += 3;
         }
         if (usedPalette > _palette_size) {
             break;
         }
+    }
+
+    printf("PALETTE:\n" );
+    for(i=0;i<8;++i) {
+        printf("  %i) %2.2x%2.2x%2.2x (%d)\n", i, _palette[i].red, _palette[i].green, _palette[i].blue, _palette[i].count );
+    }
+
+    qsort( _palette, _palette_size, sizeof( RGBi ), rgbi_qsort_compare );
+
+    printf("QSORT:\n" );
+    for(i=0;i<8;++i) {
+        printf("  %i) %2.2x%2.2x%2.2x (%d)\n", i, _palette[i].red, _palette[i].green, _palette[i].blue, _palette[i].count );
     }
 
     return usedPalette;

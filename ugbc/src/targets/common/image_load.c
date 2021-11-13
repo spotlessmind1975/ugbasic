@@ -146,6 +146,10 @@ Variable * image_load( Environment * _environment, char * _filename, char * _ali
         source = image_flip_y( _environment, source, width, height );
     }
 
+    if ( _transparent_color != -1 ) {
+        _flags |= FLAG_TRANSPARENCY;
+    }
+    
     Variable * result = image_converter( _environment, source, width, height, 0, 0, 0, 0, _mode, _transparent_color, _flags );
 
     stbi_image_free(source);

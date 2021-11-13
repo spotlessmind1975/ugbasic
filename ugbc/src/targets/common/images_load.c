@@ -167,6 +167,10 @@ Variable * images_load( Environment * _environment, char * _filename, char * _al
     if( _flags & FLAG_FLIP_Y ) {
         source = image_flip_y( _environment, source, width, height );
     }
+    
+    if ( _transparent_color != -1 ) {
+        _flags |= FLAG_TRANSPARENCY;
+    }
 
     int base = ( 3*width*height ) - 6;
     for( z=0; z<a; ++z ) {

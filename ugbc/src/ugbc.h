@@ -673,6 +673,7 @@ typedef struct _RGBi {
     unsigned char index;
     char description[64];
     unsigned char used;
+    int count;
 } RGBi;
 
 typedef struct _Embedded {
