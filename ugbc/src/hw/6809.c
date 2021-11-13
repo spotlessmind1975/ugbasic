@@ -1252,10 +1252,15 @@ void cpu6809_math_double_16bit( Environment * _environment, char *_source, char 
 
     inline( cpu_math_double_16bit )
 
-        outline1("LDD %s", _source);
-        outline0("LSLB");
-        outline0("ROLA");
-        outline1("STD %s", _other ? _other : _destination );
+        if(_other) {
+            outline1("LDD %s", _source);
+            outline0("LSLB");
+            outline0("ROLA");
+            outline1("STD %s", _other);
+        } else {
+            outline1("LSL %s+1", _source);
+            outline1("ROL %s",   _source);
+        }
 
     no_embedded( cpu_math_double_16bit )
 
@@ -2018,7 +2023,7 @@ void cpu6809_math_add_32bit( Environment * _environment, char *_source, char *_d
         outline1("LDD %s", _source);
         outline0("ADCB 1,X");
         outline0("ADCA ,X");
-        outline1("STD %s", _other: ? _other : ",X" );
+        outline1("STD %s", _other ? _other : ",X" );
 
     no_embedded( cpu_math_add_32bit )
 
@@ -2811,7 +2816,7 @@ void cpu6809_inc_16bit( Environment * _environment, char * _variable ) {
 
         // 10 cycles 255 times out of 256 and 17 one out of 256
         outline1("INC %s+1", _variable);
-        outline1("BNE %s", label):
+        outline1("BNE %s", label);
         outline1("INC %s", _variable);
         outhead1("%s", label)
 
@@ -2834,11 +2839,11 @@ void cpu6809_inc_32bit( Environment * _environment, char * _variable ) {
         MAKE_LABEL
 
         outline1("INC %s+3", _variable);
-        outline1("BNE %s", label):
+        outline1("BNE %s", label);
         outline1("INC %s+2", _variable);
-        outline1("BNE %s", label):
+        outline1("BNE %s", label);
         outline1("INC %s+1", _variable);
-        outline1("BNE %s", label):
+        outline1("BNE %s", label);
         outline1("INC %s", _variable);
         outhead1("%s", label)
 
@@ -2868,7 +2873,7 @@ void cpu6809_dec_16bit( Environment * _environment, char * _variable ) {
 
         // 10 cycles 255 times out of 256 and 17 one out of 256
         outline1("DEC %s+1", _variable);
-        outline1("BNE %s", label):
+        outline1("BNE %s", label);
         outline1("DEC %s", _variable);
         outhead1("%s", label)
 
