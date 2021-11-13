@@ -1457,14 +1457,9 @@ static Variable * gtia_image_converter_multicolor_mode_standard( Environment * _
                 for( i=0;i<COLOR_COUNT;++i) {
                     if ( SYSTEM_PALETTE[i].index == _transparent_color ) {
                         RGBi tmp;
-                        palette[colorUsed].red = palette[0].red;
-                        palette[colorUsed].green = palette[0].green;
-                        palette[colorUsed].blue = palette[0].blue;
-                        palette[colorUsed++].index = palette[0].index;
-                        palette[0].red = SYSTEM_PALETTE[i].red;
-                        palette[0].green = SYSTEM_PALETTE[i].green;
-                        palette[0].blue = SYSTEM_PALETTE[i].blue;
-                        palette[0].index = SYSTEM_PALETTE[i].index;                    
+                        rgbi_move(&palette[0], &palette[colorUsed] );
+                        ++colorUsed;
+                        rgbi_move(&SYSTEM_PALETTE[i], &palette[0] );
                         break;
                     }
                 }
@@ -1472,18 +1467,9 @@ static Variable * gtia_image_converter_multicolor_mode_standard( Environment * _
                 for(i=0;i<4;++i) {
                     if ( commonPalette[i].index == _transparent_color ) {
                         RGBi tmp;
-                        tmp.red = commonPalette[i].red;
-                        tmp.green = commonPalette[i].green;
-                        tmp.blue = commonPalette[i].blue;
-                        tmp.index = commonPalette[i].index;
-                        commonPalette[i].red = commonPalette[0].red;
-                        commonPalette[i].green = commonPalette[0].green;
-                        commonPalette[i].blue = commonPalette[0].blue;
-                        commonPalette[i].index = commonPalette[0].index;
-                        commonPalette[0].red = tmp.red;
-                        commonPalette[0].green = tmp.green;
-                        commonPalette[0].blue = tmp.blue;
-                        commonPalette[0].index = tmp.index;
+                        rgbi_move(&commonPalette[i], &tmp );
+                        rgbi_move(&commonPalette[0], &commonPalette[i] );
+                        rgbi_move(&tmp, &commonPalette[0] );
                         break;
                     }
                 }

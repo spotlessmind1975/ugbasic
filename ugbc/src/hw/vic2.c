@@ -1265,15 +1265,9 @@ static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _
         if ( colorUsed < 4 ) {
             for( i=0;i<COLOR_COUNT;++i) {
                 if ( SYSTEM_PALETTE[i].index == _transparent_color ) {
-                    RGBi tmp;
-                    palette[colorUsed].red = palette[0].red;
-                    palette[colorUsed].green = palette[0].green;
-                    palette[colorUsed].blue = palette[0].blue;
-                    palette[colorUsed++].index = palette[0].index;
-                    palette[0].red = SYSTEM_PALETTE[i].red;
-                    palette[0].green = SYSTEM_PALETTE[i].green;
-                    palette[0].blue = SYSTEM_PALETTE[i].blue;
-                    palette[0].index = SYSTEM_PALETTE[i].index;                    
+                    rgbi_move(&palette[0], &palette[colorUsed]);
+                    ++colorUsed;
+                    rgbi_move(&SYSTEM_PALETTE[i], &palette[0]);
                     break;
                 }
             }
@@ -1281,18 +1275,9 @@ static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _
             for(i=0;i<4;++i) {
                 if ( palette[i].index == _transparent_color ) {
                     RGBi tmp;
-                    tmp.red = palette[i].red;
-                    tmp.green = palette[i].green;
-                    tmp.blue = palette[i].blue;
-                    tmp.index = palette[i].index;
-                    palette[i].red = palette[0].red;
-                    palette[i].green = palette[0].green;
-                    palette[i].blue = palette[0].blue;
-                    palette[i].index = palette[0].index;
-                    palette[0].red = tmp.red;
-                    palette[0].green = tmp.green;
-                    palette[0].blue = tmp.blue;
-                    palette[0].index = tmp.index;
+                    rgbi_move(&palette[i], &tmp);
+                    rgbi_move(&palette[0], &palette[i]);
+                    rgbi_move(&tmp, &palette[0]);
                     break;
                 }
             }

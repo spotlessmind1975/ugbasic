@@ -1107,10 +1107,7 @@ static Variable * ef936x_image_converter_multicolor_mode16( Environment * _envir
                     }
                 }
             }
-            palette[i].index = SYSTEM_PALETTE[colorIndex].index;
-            palette[i].red = SYSTEM_PALETTE[colorIndex].red;
-            palette[i].green = SYSTEM_PALETTE[colorIndex].green;
-            palette[i].blue = SYSTEM_PALETTE[colorIndex].blue;
+            rgbi_move(&SYSTEM_PALETTE[colorIndex], &palette[i] );
             palette[i].used = 1;
             // printf("[*] %d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
         }
@@ -1172,10 +1169,7 @@ static Variable * ef936x_image_converter_multicolor_mode16( Environment * _envir
                     }
                 }
             }
-            commonPalette[lastUsedSlotInCommonPalette].index = SYSTEM_PALETTE[colorIndex].index;
-            commonPalette[lastUsedSlotInCommonPalette].red = SYSTEM_PALETTE[colorIndex].red;
-            commonPalette[lastUsedSlotInCommonPalette].green = SYSTEM_PALETTE[colorIndex].green;
-            commonPalette[lastUsedSlotInCommonPalette].blue = SYSTEM_PALETTE[colorIndex].blue;
+            rgbi_move(&SYSTEM_PALETTE[colorIndex], &commonPalette[lastUsedSlotInCommonPalette]);
             commonPalette[lastUsedSlotInCommonPalette].used = 1;
             ++lastUsedSlotInCommonPalette;
             // printf("#> %d) %d %2.2x%2.2x%2.2x\n", i, commonPalette[i].index, commonPalette[i].red, commonPalette[i].green, commonPalette[i].blue);

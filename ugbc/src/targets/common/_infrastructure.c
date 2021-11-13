@@ -4844,9 +4844,7 @@ int rgbi_extract_palette( unsigned char* _source, int _width, int _height, RGBi 
             }
 
             if (i >= usedPalette) {
-                _palette[usedPalette].red = rgb.red;
-                _palette[usedPalette].green = rgb.green;
-                _palette[usedPalette].blue = rgb.blue;
+                rgbi_move( &rgb, &_palette[usedPalette] );
                 ++usedPalette;
                 if (usedPalette > _palette_size) {
                     break;
