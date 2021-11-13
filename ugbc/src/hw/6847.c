@@ -1032,7 +1032,7 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
                 }
             }
         }
-        palette[i].index = SYSTEM_PALETTE[colorIndex].index;
+        rgbi_move( &SYSTEM_PALETTE[colorIndex], &palette[i] );
         // printf("%d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
     }
 
@@ -1156,7 +1156,7 @@ static Variable * c6847_image_converter_multicolor_mode_standard( Environment * 
                     }
                 }
             }
-            palette[i].index = SYSTEM_PALETTE[colorIndex].index;
+            rgbi_move( &SYSTEM_PALETTE[colorIndex], &palette[i] );
             // printf("%d) %d * %d %2.2x%2.2x%2.2x\n", i, colorIndex, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
         }
 

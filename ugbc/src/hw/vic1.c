@@ -733,7 +733,7 @@ static Variable * vic1_image_converter_bitmap_mode_standard( Environment * _envi
                 }
             }
         }
-        palette[i].index = SYSTEM_PALETTE[colorIndex].index;
+        rgbi_move( &SYSTEM_PALETTE[colorIndex], &palette[i] );
         // printf("%d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
     }
 
@@ -859,7 +859,7 @@ static Variable * vic1_image_converter_multicolor_mode_standard( Environment * _
                 }
             }
         }
-        palette[i].index = SYSTEM_PALETTE[colorIndex].index;
+        rgbi_move( &SYSTEM_PALETTE[colorIndex], &palette[i] );
         // printf("%d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
     }
 
@@ -996,7 +996,7 @@ static Variable * vic1_image_converter_tilemap_mode_standard( Environment * _env
                 }
             }
         }
-        palette[i].index = SYSTEM_PALETTE[colorIndex].index;
+        rgbi_move( &SYSTEM_PALETTE[colorIndex], &palette[i] );
         // printf("%d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
     }
 
