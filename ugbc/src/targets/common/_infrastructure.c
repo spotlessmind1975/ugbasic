@@ -4782,6 +4782,10 @@ char * image_roll_x_left( Environment * _environment, char * _source, int _width
 
 }
 
+int rgbi_equals_rgb( RGBi * _first, RGBi * _second ) {
+    return _first->red == _second->red && _first->green == _second->green && _first->blue == _second->blue;
+}
+
 void rgbi_move( RGBi * _source, RGBi * _destination ) {
     memcpy( _destination, _source, sizeof( RGBi ) );
 }
@@ -4834,7 +4838,7 @@ int rgbi_extract_palette( unsigned char* _source, int _width, int _height, RGBi 
             rgb.blue = *(source + 2);
 
             for (i = 0; i < usedPalette; ++i) {
-                if (_palette[i].red == rgb.red && _palette[i].green == rgb.green && _palette[i].blue == rgb.blue) {
+                if (rgbi_equals_rgb( &_palette[i], &rgb )) {
                     break;
                 }
             }

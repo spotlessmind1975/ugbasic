@@ -357,7 +357,7 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
             rgb.blue = *(_source + 2);
 
             for( i=0; i<colorUsed; ++i ) {
-                if ( palette[i].red == rgb.red && palette[i].green == rgb.green && palette[i].blue == rgb.blue ) {
+                if ( rgbi_equals_rgb( &palette[i], &rgb ) ) {
                     break;
                 }
             }
