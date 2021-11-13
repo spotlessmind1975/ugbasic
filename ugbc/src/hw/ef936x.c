@@ -665,56 +665,6 @@ static int calculate_luminance(RGBi _a) {
 
 }
 
-/**
- * @brief Extract the color palette from the given image
- * 
- * @param _source 
- * @param _palette 
- * @param _palette_size 
- * @return int 
- */
-static int extract_color_palette(unsigned char* _source, int _width, int _height, RGBi _palette[], int _palette_size) {
-
-    RGBi rgb;
-
-    int image_x, image_y;
-
-    int usedPalette = 0;
-    int i = 0;
-    unsigned char* source = _source;
-
-    for (image_y = 0; image_y < _height; ++image_y) {
-        for (image_x = 0; image_x < _width; ++image_x) {
-            rgb.red = *source;
-            rgb.green = *(source + 1);
-            rgb.blue = *(source + 2);
-
-            for (i = 0; i < usedPalette; ++i) {
-                if (_palette[i].red == rgb.red && _palette[i].green == rgb.green && _palette[i].blue == rgb.blue) {
-                    break;
-                }
-            }
-
-            if (i >= usedPalette) {
-                _palette[usedPalette].red = rgb.red;
-                _palette[usedPalette].green = rgb.green;
-                _palette[usedPalette].blue = rgb.blue;
-                ++usedPalette;
-                if (usedPalette > _palette_size) {
-                    break;
-                }
-            }
-            source += 3;
-        }
-        if (usedPalette > _palette_size) {
-            break;
-        }
-    }
-
-    return usedPalette;
-
-}
-
 static Variable * ef936x_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _background_color ) {
 
     // ignored on bitmap mode
@@ -725,7 +675,7 @@ static Variable * ef936x_image_converter_bitmap_mode_standard( Environment * _en
 
     RGBi palette[MAX_PALETTE];
 
-    int colorUsed = extract_color_palette(_source, _width, _height, palette, MAX_PALETTE);
+    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
 
     if (colorUsed > 2) {
         CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
@@ -851,7 +801,7 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
 
         RGBi * palette = malloc( MAX_PALETTE * sizeof(RGBi) );
 
-        colorUsed = extract_color_palette(_source, _width, _height, palette, MAX_PALETTE);
+        colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
 
         if (colorUsed > 16) {
             CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
@@ -991,7 +941,7 @@ static Variable * ef936x_image_converter_multicolor_mode4( Environment * _enviro
 
         RGBi * palette = malloc( MAX_PALETTE * sizeof(RGBi) );
 
-        int colorUsed = extract_color_palette(_source, _width, _height, palette, MAX_PALETTE);
+        int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
 
         if (colorUsed > 4) {
             CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
@@ -1130,7 +1080,7 @@ static Variable * ef936x_image_converter_multicolor_mode16( Environment * _envir
         RGBi * palette = malloc( MAX_PALETTE * sizeof(RGBi) );
         memset( palette, 0, MAX_PALETTE * sizeof(RGBi) );
 
-        int colorUsed = extract_color_palette(_source, _width, _height, palette, MAX_PALETTE);
+        int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
 
         if (colorUsed > 16) {
             CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
@@ -1172,7 +1122,7 @@ static Variable * ef936x_image_converter_multicolor_mode16( Environment * _envir
 
         RGBi * palette = malloc( MAX_PALETTE * sizeof(RGBi) );
 
-        int colorUsed = extract_color_palette(_source, _width, _height, palette, MAX_PALETTE);
+        int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
 
         if (colorUsed > 16) {
             CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );

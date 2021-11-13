@@ -1894,6 +1894,7 @@ void                    remember( Environment * _environment );
 void                    repeat( Environment * _environment, char *_label );
 void                    return_label( Environment * _environment );
 void                    return_procedure( Environment * _environment, char * _value );
+int                     rgbi_extract_palette( unsigned char* _source, int _width, int _height, RGBi _palette[], int _palette_size);
 void                    rgbi_move( RGBi * _source, RGBi * _destination );
 int                     rgbi_distance( RGBi * _source, RGBi * _destination );
 Variable *              rnd( Environment * _environment, char * _value );
