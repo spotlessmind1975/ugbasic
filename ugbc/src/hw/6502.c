@@ -3782,22 +3782,6 @@ void cpu6502_move_8bit_indirect( Environment * _environment, char *_source, char
 
 }
 
-void cpu6502_move_8bit_indirect_with_offset( Environment * _environment, char *_source, char * _value, int _offset ) {
-
-    inline( cpu_move_8bit_indirect_with_offset )
-
-        outline1("LDA %s", _value);
-        outline0("STA TMPPTR");
-        outline1("LDA %s+1", _value);
-        outline0("STA TMPPTR+1");
-        outline1("LDA %s", _source);
-        outline1("LDY #$%2.2x", (_offset & 0xff ) );
-        outline0("STA (TMPPTR),Y");
-
-    no_embedded( cpu_move_8bit_indirect_with_offset )
-
-}
-
 void cpu6502_move_8bit_with_offset( Environment * _environment, char *_source, char * _value, int _offset ) {
 
     inline( cpu_move_8bit_with_offset )

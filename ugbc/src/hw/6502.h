@@ -150,7 +150,6 @@ void cpu6502_move_32bit_indirect2( Environment * _environment, char * _value, ch
 void cpu6502_bit_check( Environment * _environment, char * _value, int _position, char *_result, int _bitwidth );
 void cpu6502_bit_check_extended( Environment * _environment, char * _value, char * _position, char *_result, int _bitwidth );
 void cpu6502_number_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits, int _Signed );
-void cpu6502_move_8bit_indirect_with_offset( Environment * _environment, char *_source, char * _value, int _offset );
 void cpu6502_bits_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits );
 void cpu6502_move_8bit_indirect_with_offset2( Environment * _environment, char *_source, char * _value, char * _offset );
 void cpu6502_dsdefine( Environment * _environment, char * _string, char * _index );
@@ -304,7 +303,6 @@ void cpu6502_protothread_current( Environment * _environment, char * _current );
 #define cpu_move_32bit_indirect2( _environment, _value, _source ) cpu6502_move_32bit_indirect2( _environment, _value, _source )
 #define cpu_bit_check( _environment, _value, _position, _result, _bitwidth ) cpu6502_bit_check( _environment, _value, _position, _result, _bitwidth )
 #define cpu_number_to_string( _environment, _number, _string, _string_size, _bits, _signed ) cpu6502_number_to_string( _environment, _number, _string, _string_size, _bits, _signed )
-#define cpu_move_8bit_indirect_with_offset( _environment, _source, _value, _offset ) cpu6502_move_8bit_indirect_with_offset( _environment, _source, _value, _offset )
 #define cpu_bits_to_string( _environment, _number, _string, _string_size, _bits ) cpu6502_bits_to_string( _environment, _number, _string, _string_size, _bits )
 #define cpu_bit_check_extended( _environment, _value, _position, _result, _bitwidth ) cpu6502_bit_check_extended( _environment, _value, _position, _result, _bitwidth )
 #define cpu_move_8bit_indirect_with_offset2( _environment, _source, _value, _offset ) cpu6502_move_8bit_indirect_with_offset2( _environment, _source, _value, _offset )
