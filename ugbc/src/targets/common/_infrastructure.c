@@ -4835,7 +4835,7 @@ int rgbi_extract_palette( unsigned char* _source, int _width, int _height, RGBi 
     RGBi rgb;
 
     memset( _palette, 0, sizeof( RGBi ) * _palette_size );
-    
+
     int image_x, image_y;
 
     int usedPalette = 0;
@@ -4871,17 +4871,17 @@ int rgbi_extract_palette( unsigned char* _source, int _width, int _height, RGBi 
         }
     }
 
-    printf("PALETTE:\n" );
-    for(i=0;i<8;++i) {
-        printf("  %i) %2.2x%2.2x%2.2x (%d)\n", i, _palette[i].red, _palette[i].green, _palette[i].blue, _palette[i].count );
-    }
+    // printf("PALETTE:\n" );
+    // for(i=0;i<8;++i) {
+    //     printf("  %i) %2.2x%2.2x%2.2x (%d)\n", i, _palette[i].red, _palette[i].green, _palette[i].blue, _palette[i].count );
+    // }
 
     qsort( _palette, _palette_size, sizeof( RGBi ), rgbi_qsort_compare );
 
-    printf("QSORT:\n" );
-    for(i=0;i<8;++i) {
-        printf("  %i) %2.2x%2.2x%2.2x (%d)\n", i, _palette[i].red, _palette[i].green, _palette[i].blue, _palette[i].count );
-    }
+    // printf("QSORT:\n" );
+    // for(i=0;i<8;++i) {
+    //     printf("  %i) %2.2x%2.2x%2.2x (%d)\n", i, _palette[i].red, _palette[i].green, _palette[i].blue, _palette[i].count );
+    // }
 
     return usedPalette;
 
