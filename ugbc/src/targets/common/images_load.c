@@ -167,7 +167,7 @@ Variable * images_load( Environment * _environment, char * _filename, char * _al
     if( _flags & FLAG_FLIP_Y ) {
         source = image_flip_y( _environment, source, width, height );
     }
-    
+
     if ( _transparent_color != -1 ) {
         _flags |= FLAG_TRANSPARENCY;
     }
@@ -219,6 +219,10 @@ Variable * images_load( Environment * _environment, char * _filename, char * _al
     loaded->fileName = lookfor;
     _environment->loadedFiles = loaded;
 
+    if ( _alias ) {
+        const_define_numeric( _environment, _alias, UNIQUE_ID );
+    }
+    
     return final;
 
 }

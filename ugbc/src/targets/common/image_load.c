@@ -160,6 +160,10 @@ Variable * image_load( Environment * _environment, char * _filename, char * _ali
     loaded->fileName = lookfor;
     _environment->loadedFiles = loaded;
 
+    if ( _alias ) {
+        const_define_numeric( _environment, _alias, UNIQUE_ID );
+    }
+    
     return result;
 
 }
