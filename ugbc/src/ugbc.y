@@ -2572,58 +2572,110 @@ datatype :
         $$ = VT_BUFFER;
     };
     
+ array_assign: {
+        if ( ! ((struct _Environment *)_environment)->currentArray->memoryArea ) {
+            memory_area_assign( ((struct _Environment *)_environment)->memoryAreas, ((struct _Environment *)_environment)->currentArray );
+        }
+        if ( ((struct _Environment *)_environment)->currentArray->memoryArea ) {
+            variable_store( _environment, ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->value );
+        }
+    }
+    | OP_ASSIGN BufferDefinition {
+        int size = ( strlen( $2 ) - 3 ) / 2;
+        if ( size != ((struct _Environment *)_environment)->currentArray->size ) {
+            CRITICAL_BUFFER_SIZE_MISMATCH_ARRAY_SIZE( ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->size, size );
+        }
+        char * buffer = malloc( size );
+        char hexdigits[3];
+        int i = 0, c = 0, j = 0;
+        for( i = 2, c = strlen( $2 ); i<(c-2); i += 2 ) {
+            hexdigits[0] = $2[i];
+            hexdigits[1] = $2[i+1];
+            hexdigits[2] = 0;
+            buffer[j] = strtol(hexdigits,0,16);
+            ++j;
+        }
+        ((struct _Environment *)_environment)->currentArray->valueBuffer = buffer;
+        ((struct _Environment *)_environment)->currentArray->memoryArea = NULL;
+        ((struct _Environment *)_environment)->currentArray = NULL;
+    };
+
 dim_definition :
       Identifier {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
           ((struct _Environment *)_environment)->arrayDimensions = 0;
       } OP dimensions CP {
-        variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
+        ((struct _Environment *)_environment)->currentArray = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
         variable_array_type( _environment, $1, VT_WORD );
-    }
+    } array_assign;
     | Identifier WITH const_expr {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
           ((struct _Environment *)_environment)->arrayDimensions = 0;
       } OP dimensions CP {
-        Variable * var = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
-        var->value = $3;
+        ((struct _Environment *)_environment)->currentArray = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
+        ((struct _Environment *)_environment)->currentArray->value = $3;
         variable_array_type( _environment, $1, VT_WORD );
+        if ( ! ((struct _Environment *)_environment)->currentArray->memoryArea ) {
+            memory_area_assign( ((struct _Environment *)_environment)->memoryAreas, ((struct _Environment *)_environment)->currentArray );
+        }
+        if ( ((struct _Environment *)_environment)->currentArray->memoryArea ) {
+            variable_store( _environment, ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->value );
+        }
     }
     | Identifier {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
           ((struct _Environment *)_environment)->arrayDimensions = 0;
       } OP_DOLLAR OP dimensions CP {
-        variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
+        ((struct _Environment *)_environment)->currentArray = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
         variable_array_type( _environment, $1, VT_DSTRING );
+        if ( ! ((struct _Environment *)_environment)->currentArray->memoryArea ) {
+            memory_area_assign( ((struct _Environment *)_environment)->memoryAreas, ((struct _Environment *)_environment)->currentArray );
+        }
+        if ( ((struct _Environment *)_environment)->currentArray->memoryArea ) {
+            variable_store( _environment, ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->value );
+        }
     }
     | Identifier datatype {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
           ((struct _Environment *)_environment)->arrayDimensions = 0;
       } OP dimensions CP {
-        variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
+        ((struct _Environment *)_environment)->currentArray = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
         variable_array_type( _environment, $1, $2 );
-    }
+    } array_assign;
     | Identifier datatype WITH const_expr {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
           ((struct _Environment *)_environment)->arrayDimensions = 0;
       } OP dimensions CP {
-        Variable * var = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
-        var->value = $4;
+        ((struct _Environment *)_environment)->currentArray = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
+        ((struct _Environment *)_environment)->currentArray->value = $4;
         variable_array_type( _environment, $1, $2 );
+        if ( ! ((struct _Environment *)_environment)->currentArray->memoryArea ) {
+            memory_area_assign( ((struct _Environment *)_environment)->memoryAreas, ((struct _Environment *)_environment)->currentArray );
+        }
+        if ( ((struct _Environment *)_environment)->currentArray->memoryArea ) {
+            variable_store( _environment, ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->value );
+        }
       }
     | Identifier AS datatype {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
           ((struct _Environment *)_environment)->arrayDimensions = 0;
       } OP dimensions CP {
-        variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
+        ((struct _Environment *)_environment)->currentArray = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
         variable_array_type( _environment, $1, $3 );
-    }
+    } array_assign;
     | Identifier AS datatype WITH const_expr {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
           ((struct _Environment *)_environment)->arrayDimensions = 0;
       } OP dimensions CP {
-        Variable * var = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
-        var->value = $5;
+        ((struct _Environment *)_environment)->currentArray = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
+        ((struct _Environment *)_environment)->currentArray->value = $5;
         variable_array_type( _environment, $1, $3 );
+        if ( ! ((struct _Environment *)_environment)->currentArray->memoryArea ) {
+            memory_area_assign( ((struct _Environment *)_environment)->memoryAreas, ((struct _Environment *)_environment)->currentArray );
+        }
+        if ( ((struct _Environment *)_environment)->currentArray->memoryArea ) {
+            variable_store( _environment, ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->value );
+        }
     }
     ;
 
