@@ -574,13 +574,9 @@ void cpu6809_store_8bit( Environment * _environment, char *_destination, int _va
 
     inline( cpu_store_8bit )
 
-        if ( _value ) {
-            outline1("LDA #$%2.2x", _value );
-            outline1("STA %s", _destination );
-        } else {
-            outline1("CLR %s", _destination );
-        }
-
+        outline1(_value ? "LDA #$%2.2x" : "CLRA", _value );
+        outline1("STA %s", _destination );
+        
     no_embedded( cpu_move_8bit )
 
 }
@@ -1119,13 +1115,13 @@ void cpu6809_store_16bit( Environment * _environment, char *_destination, int _v
 
     inline( cpu_store_16bit )
 
-        if ( _value ) {
+        // if ( _value ) {
             outline1("LDD #$%4.4x", (unsigned int)( _value & 0xffff ) );
             outline1("STD %s", _destination );
-        } else {
-            outline1("CLR %s", _destination );
-            outline1("CLR %s+1", _destination );
-        }
+        // } else {
+            // outline1("CLR %s", _destination );
+            // outline1("CLR %s+1", _destination );
+        // }
 
     no_embedded( cpu_store_16bit )
 
@@ -1848,10 +1844,9 @@ void cpu6809_store_32bit( Environment * _environment, char *_destination, int _v
             outline1("LDD #$%4.4x", ( _value & 0xffff ) );
             outline1("STD %s+2", _destination );
         } else {
-            outline1("CLR %s", _destination );
-            outline1("CLR %s+1", _destination );
-            outline1("CLR %s+2", _destination );
-            outline1("CLR %s+3", _destination );
+			outline0("LDD #0");
+            outline1("STD %s", _destination );
+            outline1("STD %s+2", _destination );
         }
 
     no_embedded( cpu_store_32bit );
