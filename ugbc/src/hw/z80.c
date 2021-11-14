@@ -2760,7 +2760,7 @@ void z80_move_8bit_with_offset2( Environment * _environment, char *_source, char
 
 }
 
-void z80_move_8bit_with_offset( Environment * _environment, char *_source, char * _value, int _offset ) {
+void z80_move_8bit_indirect_with_offset( Environment * _environment, char *_source, char * _value, int _offset ) {
 
     outline1("LD HL, %s", _value);
     outline1("LD DE, $%2.2x", ( _offset & 0xff ) );
