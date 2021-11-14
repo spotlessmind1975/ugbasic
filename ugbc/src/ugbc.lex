@@ -77,6 +77,7 @@ CALL { return (CALL); }
 CAN { return (CAN); }
 CAPS { return (CAPS); }
 CAPSLOCK { return (CAPSLOCK); }
+CASE { return (CASE); }
 CDOWN { return (CDOWN); }
 CENTER { return (CENTER); }
 CENTRE { return (CENTRE); }
@@ -134,6 +135,7 @@ EMPTY { return(EMPTY); }
 EMPTYTILE { return(EMPTYTILE); }
 END { return (END); }
 ENDIF { return (ENDIF); }
+ENDSELECT { return (ENDSELECT); }
 ENABLE { return (ENABLE); }
 EQUAL { return (EQUAL); }
 EXIT { return (EXIT); }

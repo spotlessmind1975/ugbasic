@@ -500,14 +500,17 @@ typedef enum _ConditionalType {
     CT_ON_GOSUB = 2,
 
     /** ON ... PROC ... */
-    CT_ON_PROC = 3
+    CT_ON_PROC = 3,
+
+    /** SELECT ... CASE ... */
+    CT_SELECT_CASE = 4
 
 } ConditionalType;
 
 /**
  * @brief Maximum number of conditional types
  */
-#define CONDITIONAL_TYPE_COUNT   1
+#define CONDITIONAL_TYPE_COUNT   5
 
 /**
  * @brief Structure of a single conditional jump.
@@ -525,6 +528,9 @@ typedef struct _Conditional {
 
     /** Incremental index for forced jumps. */
     int index;
+
+    /** In case of CT_SELECT_CASE, case else has been emitted?. */
+    int caseElse;
 
     /** Next conditional */
     struct _Conditional * next;
@@ -1689,6 +1695,9 @@ int                     calculate_exact_tile( TileDescriptor * _tile, TileDescri
 int                     calculate_tile_affinity( TileDescriptor * _first, TileDescriptor * _second );
 TileDescriptor *        calculate_tile_descriptor( TileData * _tileData );
 void                    call_procedure( Environment * _environment, char * _name );
+void                    case_else( Environment * _environment );
+void                    case_equals( Environment * _environment, char * _value );
+void                    case_equals_label( Environment * _environment );
 void                    center( Environment * _environment, char * _string );
 void                    circle( Environment * _environment, char * _x, char * _y, char * _r, char *_c );
 Variable *              clear_key( Environment * _environment );
@@ -1735,6 +1744,7 @@ void                    end_if_then( Environment * _environment  );
 void                    end_loop( Environment * _environment );
 void                    end_procedure( Environment * _environment, char * _value );
 void                    end_repeat( Environment * _environment, char * _expression );
+void                    end_select_case( Environment * _environment );
 void                    end_while( Environment * _environment );
 void                    every_cleanup( Environment * _environment );
 void                    every_off( Environment * _environment );
@@ -1928,6 +1938,7 @@ Variable *              screen_tiles_get_height( Environment * _environment );
 Variable *              screen_tiles_get_width( Environment * _environment );
 void                    screen_vertical_scroll( Environment * _environment, int _displacement );
 void                    screen_vertical_scroll_var( Environment * _environment, char * _displacement );
+void                    select_case( Environment * _environment, char * _expression );
 void                    set_timer( Environment * _environment, char * _value );
 void                    shared( Environment * _environment );
 Variable *              sign( Environment * _environment, char * _value );
