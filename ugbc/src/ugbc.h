@@ -1114,6 +1114,11 @@ typedef struct _Environment {
     char * arrayIndexesEach[MAX_NESTED_ARRAYS][MAX_ARRAY_DIMENSIONS];
 
     /**
+     * Temporary storage for current array
+     */
+    Variable * currentArray;
+
+    /**
      * Current procedure
      */
     char * procedureName;
@@ -1841,6 +1846,7 @@ void                    loop( Environment * _environment, char *_label );
 
 Variable *              maximum( Environment * _environment, char * _source, char * _dest );
 void                    memorize( Environment * _environment );
+void                    memory_area_assign( MemoryArea * _first, Variable * _variable );
 Variable *              minimum( Environment * _environment, char * _source, char * _dest );
 void                    mob_at( Environment * _environment, char * _index, char * _x, char * _y );
 void                    mob_hide( Environment * _environment, char * _index );

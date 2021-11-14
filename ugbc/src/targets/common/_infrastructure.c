@@ -691,13 +691,6 @@ Variable * variable_array_type( Environment * _environment, char *_name, Variabl
         CRITICAL_DATATYPE_UNSUPPORTED("array(1)", DATATYPE_AS_STRING[var->arrayType]);
     }
     var->size = size;
-    if ( ! var->memoryArea ) {
-        memory_area_assign( _environment->memoryAreas, var );
-    }
-    if ( var->memoryArea ) {
-        variable_store( _environment, var->name, var->value );
-    }
-
 }
 
 /**
