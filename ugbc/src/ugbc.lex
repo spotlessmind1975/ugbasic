@@ -36,6 +36,8 @@
 "/" { return(OP_DIVISION); }
 "[" { return(OSP); }
 "]" { return(CSP); }
+"{" { return(OGP); }
+"}" { return(CGP); }
 "?" { return(QM); }
 
 8BIT { return (BYTE); }
@@ -45,6 +47,7 @@
 A { return (A); }
 ABS { return (ABS); }
 ALT { return (ALT); }
+ARRAY { return (ARRAY); }
 AS { return (AS); }
 ASC { return (ASC); }
 ASTERISK { return (ASTERISK); }

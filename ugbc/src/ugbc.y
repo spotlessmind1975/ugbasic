@@ -53,7 +53,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token BACK DEBUG CAN ELSEIF BUFFER LOAD SIZE MOB IMAGE PUT VISIBLE HIDDEN HIDE SHOW RENDER
 %token SQR TI CONST VBL POKE NOP FILL IN POSITIVE DEFINE ATARI ATARIXL C64 DRAGON DRAGON32 DRAGON64 PLUS4 ZX 
 %token FONT VIC20 PARALLEL YIELD SPAWN THREAD TASK IMAGES FRAME FRAMES XY YX ROLL MASKED USING TRANSPARENCY
-%token OVERLAYED CASE ENDSELECT
+%token OVERLAYED CASE ENDSELECT OGP CGP ARRAY
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -2571,8 +2571,38 @@ datatype :
     | BUFFER {
         $$ = VT_BUFFER;
     };
-    
- array_assign: {
+
+const_array_definition :
+    const_expr {
+        Variable *currentArray = ((struct _Environment *)_environment)->currentArray;
+        Constant * first = currentArray->arrayInitialization;
+        Constant * c = malloc( sizeof( Constant ) );
+        c->value = $1;
+        if ( first ) {
+            while( first->next ) {
+                first = first->next;
+            }
+            first->next = c;
+        } else {
+            currentArray->arrayInitialization = c;
+        }        
+    }
+
+const_array_definitions1:
+    const_array_definition {
+
+    }
+    | const_array_definition OP_COMMA const_array_definitions1 {
+
+    };
+
+const_array_definitions : 
+    {
+
+    }
+    | const_array_definitions1;
+
+array_assign: {
         if ( ! ((struct _Environment *)_environment)->currentArray->memoryArea ) {
             memory_area_assign( ((struct _Environment *)_environment)->memoryAreas, ((struct _Environment *)_environment)->currentArray );
         }
@@ -2598,7 +2628,123 @@ datatype :
         ((struct _Environment *)_environment)->currentArray->valueBuffer = buffer;
         ((struct _Environment *)_environment)->currentArray->memoryArea = NULL;
         ((struct _Environment *)_environment)->currentArray = NULL;
+    }
+    | OP_ASSIGN {
+        Variable *currentArray = ((struct _Environment *)_environment)->currentArray;
+        currentArray->arrayInitialization = NULL;
+    } OP_HASH OGP const_array_definitions CGP {
+        Variable *currentArray = ((struct _Environment *)_environment)->currentArray;
+        char * buffer = malloc( currentArray->size ), * ptr = buffer;
+        int i=0;
+        Constant * initializationValues = currentArray->arrayInitialization;
+        while(initializationValues) {
+            switch( VT_BITWIDTH(currentArray->arrayType) ) {
+                case 8:
+                    *ptr = (initializationValues->value) & 0xff;
+                    ++ptr;
+                    break;
+                case 16:
+                    #ifdef CPU_BIG_ENDIAN
+                        *ptr = ( initializationValues->value >> 8 ) & 0xff;
+                        *(ptr+1) = ( initializationValues->value ) & 0xff;
+                    #else
+                        *(ptr+1) = ( initializationValues->value >> 8 ) & 0xff;
+                        *ptr = ( initializationValues->value ) & 0xff;
+                    #endif
+                    ptr += 2;
+                    break;
+                case 32:
+                    #ifdef CPU_BIG_ENDIAN
+                        *ptr = ( initializationValues->value >> 24 ) & 0xff;
+                        *(ptr+1) = ( initializationValues->value >> 16 ) & 0xff;
+                        *(ptr+2) = ( initializationValues->value >> 8 ) & 0xff;
+                        *(ptr+3) = ( initializationValues->value ) & 0xff;
+                    #else
+                        *(ptr+3) = ( initializationValues->value >> 24 ) & 0xff;
+                        *(ptr+2) = ( initializationValues->value >> 16 ) & 0xff;
+                        *(ptr+1) = ( initializationValues->value >> 8 ) & 0xff;
+                        *ptr = ( initializationValues->value ) & 0xff;
+                    #endif
+                    ptr += 4;
+                    break;
+            }
+            initializationValues = initializationValues->next;
+        }
+        if ( ( ptr - buffer ) != currentArray->size ) {
+            CRITICAL_BUFFER_SIZE_MISMATCH_ARRAY_SIZE( currentArray->name, currentArray->size, (int)(ptr-buffer));
+        }
+        ((struct _Environment *)_environment)->currentArray->valueBuffer = buffer;
+        ((struct _Environment *)_environment)->currentArray->memoryArea = NULL;
+        ((struct _Environment *)_environment)->currentArray = NULL;
     };
+
+array_reassign:
+    BufferDefinition {
+        int size = ( strlen( $1 ) - 3 ) / 2;
+        if ( size != ((struct _Environment *)_environment)->currentArray->size ) {
+            CRITICAL_BUFFER_SIZE_MISMATCH_ARRAY_SIZE( ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->size, size );
+        }
+        char * buffer = malloc( size );
+        char hexdigits[3];
+        int i = 0, c = 0, j = 0;
+        for( i = 2, c = strlen( $1 ); i<(c-2); i += 2 ) {
+            hexdigits[0] = $1[i];
+            hexdigits[1] = $1[i+1];
+            hexdigits[2] = 0;
+            buffer[j] = strtol(hexdigits,0,16);
+            ++j;
+        }
+        variable_store_array( _environment, ((struct _Environment *)_environment)->currentArray->name, buffer, size, 0 );
+        ((struct _Environment *)_environment)->currentArray = NULL;
+    }
+    | {
+        Variable *currentArray = ((struct _Environment *)_environment)->currentArray;
+        currentArray->arrayInitialization = NULL;
+    } OP_HASH OGP const_array_definitions CGP {
+        Variable *currentArray = ((struct _Environment *)_environment)->currentArray;
+        int size = currentArray->size;
+        char * buffer = malloc( currentArray->size ), * ptr = buffer;
+        int i=0;
+        Constant * initializationValues = currentArray->arrayInitialization;
+        while(initializationValues) {
+            switch( VT_BITWIDTH(currentArray->arrayType) ) {
+                case 8:
+                    *ptr = (initializationValues->value) & 0xff;
+                    ++ptr;
+                    break;
+                case 16:
+                    #ifdef CPU_BIG_ENDIAN
+                        *ptr = ( initializationValues->value >> 8 ) & 0xff;
+                        *(ptr+1) = ( initializationValues->value ) & 0xff;
+                    #else
+                        *(ptr+1) = ( initializationValues->value >> 8 ) & 0xff;
+                        *ptr = ( initializationValues->value ) & 0xff;
+                    #endif
+                    ptr += 2;
+                    break;
+                case 32:
+                    #ifdef CPU_BIG_ENDIAN
+                        *ptr = ( initializationValues->value >> 24 ) & 0xff;
+                        *(ptr+1) = ( initializationValues->value >> 16 ) & 0xff;
+                        *(ptr+2) = ( initializationValues->value >> 8 ) & 0xff;
+                        *(ptr+3) = ( initializationValues->value ) & 0xff;
+                    #else
+                        *(ptr+3) = ( initializationValues->value >> 24 ) & 0xff;
+                        *(ptr+2) = ( initializationValues->value >> 16 ) & 0xff;
+                        *(ptr+1) = ( initializationValues->value >> 8 ) & 0xff;
+                        *ptr = ( initializationValues->value ) & 0xff;
+                    #endif
+                    ptr += 4;
+                    break;
+            }
+            initializationValues = initializationValues->next;
+        }
+        if ( ( ptr - buffer ) != currentArray->size ) {
+            CRITICAL_BUFFER_SIZE_MISMATCH_ARRAY_SIZE( currentArray->name, currentArray->size, (int)(ptr-buffer));
+        }
+        variable_store_array( _environment, ((struct _Environment *)_environment)->currentArray->name, buffer, size, 0 );
+        ((struct _Environment *)_environment)->currentArray = NULL;
+    };    
 
 dim_definition :
       Identifier {
@@ -3560,6 +3706,24 @@ statement:
         var->frameCount = expr->frameCount;
         expr->assigned = 1;
   }
+  | ARRAY Identifier {
+      
+    } OP_ASSIGN {
+      Variable * var = variable_retrieve( _environment, $2 );
+      if ( var->type != VT_ARRAY ) {
+          CRITICAL_NOT_ARRAY( $2 );
+      }
+      ((struct _Environment *)_environment)->currentArray = var;
+  } array_reassign 
+  | ARRAY Identifier {
+      
+    } OP_ASSIGN_DIRECT {
+      Variable * var = variable_retrieve( _environment, $2 );
+      if ( var->type != VT_ARRAY ) {
+          CRITICAL_NOT_ARRAY( $2 );
+      }
+      ((struct _Environment *)_environment)->currentArray = var;
+  } array_reassign
   | Identifier OP_DOLLAR OP_ASSIGN expr {
         Variable * expr = variable_retrieve( _environment, $4 );
         variable_retrieve_or_define( _environment, $1, VT_DSTRING, 0 )->name;
