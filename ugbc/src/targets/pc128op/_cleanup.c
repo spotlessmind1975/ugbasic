@@ -66,7 +66,7 @@ unsigned short l;
 int nblock;
 int rest;
 int cnt=0;
-int frmt( Environment * _environment, char * ptr, char size,char* out)
+static int frmt( Environment * _environment, char * ptr, char size,char* out)
 {
 	memset(out,0x20,11);
 	char * point=".";
@@ -255,7 +255,7 @@ int convertbintok7(Environment * _environment)
 			cnt=0;
 		    
 		}
-		fread(&byt,1,1,fr);
+		(void)!fread(&byt,1,1,fr);
 		crc(&byt,1,&sum);
 		fwrite(&byt,1,1,fw);
 	}
@@ -278,8 +278,12 @@ int convertbintok7(Environment * _environment)
 
 void target_cleanup( Environment * _environment ) {
 
-    convertbintok7( _environment );
-
+	if ( _environment->outputFileType == OUTPUT_FILE_TYPE_K7_NEW ) {
+	    convertbintok7( _environment );
+	} else {
+	    pc128op_convertbintok7_original( _environment );
+	}
+	
     unlink( _environment->asmFileName );
 
 }

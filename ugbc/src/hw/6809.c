@@ -3552,23 +3552,6 @@ void cpu6809_move_8bit_indirect( Environment * _environment, char *_source, char
 
 }
 
-void cpu6809_move_8bit_indirect_with_offset( Environment * _environment, char *_source, char * _value, int _offset ) {
-
-    inline( cpu_move_8bit_indirect_with_offset )
-
-        outline1("LDX %s", _value);
-        if ( _offset >= 0x7f ) {
-            outline0("LEAX 127,X" );
-            _offset -= 0x7f;
-        }
-        outline1("LEAX %d,X", ( _offset & 0x7f ) );
-        outline1("LDA %s", _source);
-        outline0("STA ,X");
-
-    no_embedded( cpu_move_8bit_indirect_with_offset )
-
-}
-
 void cpu6809_move_8bit_with_offset( Environment * _environment, char *_source, char * _value, int _offset ) {
 
     inline( cpu_move_8bit_with_offset )
@@ -4362,8 +4345,9 @@ unsigned int src_hw_chipset_mob_asm_len;
 
 void cpu6809_mobinit( Environment * _environment, char * _index, char *_x, char *_y,  char *_draw) {
 
-    // TODO: implementation
-
+    deploy( mob, src_hw_6809_mob_asm );
+    // deploy( mobcs, src_hw_chipset_mob_asm );
+    
 }
 
 void cpu6809_mobshow( Environment * _environment, char * _index ) {

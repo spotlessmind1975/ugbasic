@@ -33,6 +33,7 @@
  ****************************************************************************/
 
 #include "../../ugbc.h"
+#include <math.h>
 
 /****************************************************************************
  * CODE SECTION 
@@ -70,17 +71,21 @@ char DATATYPE_AS_STRING[][16] = {
     "IMAGES"
 };
 
+char OUTPUT_FILE_TYPE_AS_STRING[][16] = {
+    "bin",
+    "prg",
+    "xex",
+    "k7 (original)",
+    "k7 (new)",
+    "tap"
+};
+
 void memory_area_assign( MemoryArea * _first, Variable * _variable ) {
 
     int neededSpace = 0;
 
     if ( _variable->type == VT_ARRAY ) {
-        int dimensions = 1;
-        int i = 0;
-        for( i=0; i<_variable->arrayDimensions; ++i ) {
-            dimensions *= _variable->arrayDimensionsEach[i];
-        }
-        neededSpace = ( VT_BITWIDTH( _variable->arrayType ) >> 3 ) * dimensions;
+        neededSpace = _variable->size;
     } else {
         neededSpace = VT_BITWIDTH( _variable->type ) ? ( VT_BITWIDTH( _variable->type ) >> 3 ) : _variable->size;   
     }
@@ -672,6 +677,20 @@ Variable * variable_array_type( Environment * _environment, char *_name, Variabl
         CRITICAL_VARIABLE( _name );
     }
     var->arrayType = _type;
+    int i=0,size=1;
+    for( i=0; i<var->arrayDimensions; ++i ) {
+        size *= var->arrayDimensionsEach[i];
+    }
+    if ( VT_BITWIDTH( var->arrayType ) > 0 ) {
+        size *= ( VT_BITWIDTH( var->arrayType ) >> 3 );
+    } else if ( var->arrayType == VT_DSTRING ) {
+        size *= 1;
+    } else if ( var->arrayType == VT_MOB ) {
+        size *= 1;
+    } else {
+        CRITICAL_DATATYPE_UNSUPPORTED("array(1)", DATATYPE_AS_STRING[var->arrayType]);
+    }
+    var->size = size;
     if ( ! var->memoryArea ) {
         memory_area_assign( _environment->memoryAreas, var );
     }
@@ -963,6 +982,38 @@ Variable * variable_store_buffer( Environment * _environment, char * _destinatio
         case VT_IMAGE:
         case VT_IMAGES:
         case VT_BUFFER:
+            if ( ! destination->valueBuffer ) {
+                destination->valueBuffer = malloc( _size );
+                memcpy( destination->valueBuffer, _buffer, _size );
+                destination->size = _size;
+                if ( _at ) {
+                    destination->absoluteAddress = _at;
+                    char bufferCopy[MAX_TEMPORARY_STORAGE]; sprintf( bufferCopy, "%scopy", destination->realName );
+                    cpu_mem_move_direct_size( _environment, bufferCopy, destination->realName, _size );
+                }
+            } else {
+                Variable * temporary = variable_temporary( _environment, destination->type, "(copy of buffer/image)");
+                temporary->valueBuffer = malloc( _size );
+                memcpy( temporary->valueBuffer, _buffer, _size );
+                temporary->size = _size;
+                if ( destination->size < _size ) {
+                    destination->valueBuffer = realloc( destination->valueBuffer, _size );
+                    memset( destination->valueBuffer + destination->size, 0, ( _size - destination->size ) );
+                    destination->size = _size;
+                }
+                variable_move_naked( _environment, temporary->name, destination->name );                
+            }
+            break;
+        default:
+            CRITICAL_STORE_UNSUPPORTED(DATATYPE_AS_STRING[destination->type]);
+    }
+    return destination;
+}
+
+Variable * variable_store_array( Environment * _environment, char * _destination, unsigned char * _buffer, int _size, int _at ) {
+    Variable * destination = variable_retrieve( _environment, _destination );
+    switch( destination->type ) {
+        case VT_ARRAY:
             if ( ! destination->valueBuffer ) {
                 destination->valueBuffer = malloc( _size );
                 memcpy( destination->valueBuffer, _buffer, _size );
@@ -1297,6 +1348,7 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
                     break;
                 case VT_IMAGE:
                 case VT_IMAGES:
+                case VT_ARRAY:
                 case VT_BUFFER: {
                     if ( target->size == 0 ) {
                         target->size = source->size;
@@ -3827,47 +3879,32 @@ Variable * variable_move_from_array( Environment * _environment, char * _array )
 
 }
 
-int pattern_match( char * _pattern, char * _value ) {
+int pattern_match(char *_pattern, char * _value)
+{
+    // If we reach at the end of both strings, we are done
+    if (*_pattern == '\0' && *_value == '\0')
+        return 1;
+ 
+    // Make sure that the characters after '*' are present
+    // in second string. This function assumes that the first
+    // string will not contain two consecutive '*'
+    if (*_pattern == '*' && *(_pattern+1) != '\0' && *_value == '\0')
+        return 1;
+ 
+    // If the first string contains '?', or current characters
+    // of both strings match
+    if (*_pattern == '?' || *_pattern == *_value)
+        return pattern_match(_pattern+1, _value+1);
+ 
+    // If there is *, then there are two possibilities
+    // a) We consider current character of second string
+    // b) We ignore current character of second string.
+    if (*_pattern == '*')
+        return pattern_match(_pattern+1, _value) || pattern_match(_pattern, _value+1);
+    return 0;
 
-    int n = strlen( _value );
-    int m = strlen( _pattern );
-
-    if (m == 0)
-        return (n == 0);
- 
-    char * lookup = malloc( ( n + 1 ) * ( m + 1 ) );
- 
-    memset(lookup, 0, ( n + 1 ) * ( m + 1 ));
- 
-    lookup[0] = 1;
- 
-    int i=0,j=0;
-
-    for (j = 1; j <= m; j++)
-        if (_pattern[j - 1] == '*')
-            lookup[0+(j*n)] = lookup[0+(j-1)*n];
- 
-    for (i = 1; i <= n; i++) {
-        for (j = 1; j <= m; j++) {
-            if (_pattern[j-1] == '*')
-                lookup[i+(j*m)]
-                    = lookup[i+(j-1)*n] || lookup[(i-1)+(j*n)];
- 
-            else if (_pattern[j-1] == '?'
-                     || _value[i-1] == _pattern[j-1])
-                lookup[i+j*n] = lookup[(i-1)+(j-1)*n];
- 
-            else
-                lookup[i+j*n] = 0;
-        }
-    }
- 
-    char result = ( lookup[n+m*n] == 0 );
-
-    free(lookup);
-
-    return result;
 }
+
 
 /**
  * @brief Emit code for <string>BIN(...)</strong>
@@ -4300,7 +4337,7 @@ void const_define_string( Environment * _environment, char * _name, char * _valu
 
     Constant * c = constant_find( _environment->constants, _name );
     if ( c ) {
-        if ( c->valueString ) {
+        if ( ! c->valueString ) {
             CRITICAL( "Constant redefined with a different type (string -> numeric)");
         }
         if ( strcmp( c->valueString , _value ) != 0 ) {
@@ -4336,14 +4373,8 @@ void variable_array_fill( Environment * _environment, char * _name, int _value )
         CRITICAL_NOT_ARRAY( array->name );
     }
 
-    int i, bytes = 1;
-    for( i=0; i<array->arrayDimensions; ++i ) {
-        bytes *= array->arrayDimensionsEach[i];
-    }
-    bytes *= VT_BITWIDTH( array->arrayType ) >> 3;
-
-    if ( bytes > 0 ) {
-        cpu_fill_direct_size_value( _environment, array->realName, bytes, _value );
+    if ( array->size > 0 ) {
+        cpu_fill_direct_size_value( _environment, array->realName, array->size, _value );
     } else {
         CRITICAL_NOT_SUPPORTED( array->name );
     }
@@ -4406,6 +4437,8 @@ char * image_load_asserts( Environment * _environment, char * _filename ) {
     strcat( lookedFilename, "/d64" );
 #elif __pc128op__ 
     strcat( lookedFilename, "/pc128op" );
+#elif __mo5__ 
+    strcat( lookedFilename, "/mo5" );
 #elif __vic20__ 
     strcat( lookedFilename, "/vic20" );
 #endif
@@ -4782,5 +4815,110 @@ char * image_roll_x_left( Environment * _environment, char * _source, int _width
     // fclose( f );
 
     return _source;
+
+}
+
+int rgbi_equals_rgb( RGBi * _first, RGBi * _second ) {
+    return _first->red == _second->red && _first->green == _second->green && _first->blue == _second->blue;
+}
+
+void rgbi_move( RGBi * _source, RGBi * _destination ) {
+    memcpy( _destination, _source, sizeof( RGBi ) );
+}
+
+/**
+ * @brief Calculate the distance between two colors
+ *
+ * This function calculates the color distance between two colors(_a and _b).
+ * By "distance" we mean the geometric distance between two points in a 
+ * three-dimensional space, where each dimension corresponds to one of the 
+ * components (red, green and blue). The returned value is normalized to 
+ * the nearest 8-bit value. 
+ * 
+ * @param _e1 First color 
+ * @param _e2 Second color
+ * @return int distance
+ */
+int rgbi_distance( RGBi * _e1, RGBi * _e2 ) {
+
+    long rmean = ( (long)_e1->red + (long)_e2->red ) / 2;
+    long r = (long)_e1->red - (long)_e2->red;
+    long g = (long)_e1->green - (long)_e2->green;
+    long b = (long)_e1->blue - (long)_e2->blue;
+    return (int)( sqrt((((512+rmean)*r*r)>>8) + 4*g*g + (((767-rmean)*b*b)>>8)) );
+
+}
+
+static int rgbi_qsort_compare(const void * _first, const void * _second ) {
+
+    RGBi * first = (RGBi *) _first;
+    RGBi * second = (RGBi *) _second;
+
+    return ( first->count <= second->count );
+
+}
+
+/**
+ * @brief Extract the color palette from the given image
+ * 
+ * @param _source 
+ * @param _palette 
+ * @param _palette_size 
+ * @return int 
+ */
+int rgbi_extract_palette( unsigned char* _source, int _width, int _height, RGBi _palette[], int _palette_size) {
+
+    RGBi rgb;
+
+    memset( _palette, 0, sizeof( RGBi ) * _palette_size );
+
+    int image_x, image_y;
+
+    int usedPalette = 0;
+    int i = 0;
+    unsigned char* source = _source;
+
+    for (image_y = 0; image_y < _height; ++image_y) {
+        for (image_x = 0; image_x < _width; ++image_x) {
+            rgb.red = *source;
+            rgb.green = *(source + 1);
+            rgb.blue = *(source + 2);
+            rgb.count = 0;
+
+            for (i = 0; i < usedPalette; ++i) {
+                if (rgbi_equals_rgb( &_palette[i], &rgb )) {
+                    break;
+                }
+            }
+
+            if (i >= usedPalette) {
+                rgbi_move( &rgb, &_palette[usedPalette] );
+                ++usedPalette;
+                if (usedPalette > _palette_size) {
+                    break;
+                }
+            } else {
+                ++_palette[i].count;
+            }
+            source += 3;
+        }
+        if (usedPalette > _palette_size) {
+            break;
+        }
+    }
+
+    // printf("PALETTE:\n" );
+    // for(i=0;i<8;++i) {
+    //     printf("  %i) %2.2x%2.2x%2.2x (%d)\n", i, _palette[i].red, _palette[i].green, _palette[i].blue, _palette[i].count );
+    // }
+
+    qsort( _palette, _palette_size, sizeof( RGBi ), rgbi_qsort_compare );
+
+    // printf("QSORT:\n" );
+    // for(i=0;i<8;++i) {
+    //     printf("  %i) %2.2x%2.2x%2.2x (%d)\n", i, _palette[i].red, _palette[i].green, _palette[i].blue, _palette[i].count );
+    // }
+
+    return usedPalette;
 
 }

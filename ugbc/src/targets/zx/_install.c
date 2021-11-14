@@ -51,17 +51,17 @@ void target_install( Environment * _environment ) {
 
         printf("Do you want to continue [y/N] ?");
 
-        scanf(" %c", &answer);
+        (void)!scanf(" %c", &answer);
 
         printf("\n\n");
 
         if (answer == 'Y' || answer == 'y'){
 
             printf("Downloading: Z88DK - The Development Kit for Z80 Computers\n\n");
-            system( "curl https://ugbasic.iwashere.eu/download/z88dk-win32.exe --output z88dk-win32.exe" );
+            (void)!system( "curl https://ugbasic.iwashere.eu/download/z88dk-win32.exe --output z88dk-win32.exe" );
 
             printf("\n\nInstalling: Z88DK - The Development Kit for Z80 Computers\n\n");
-            system( "z88dk-win32.exe" );
+            (void)!system( "z88dk-win32.exe" );
 
             unlink( "z88dk-win32.exe" );
 

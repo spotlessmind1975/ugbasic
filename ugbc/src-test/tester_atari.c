@@ -63,15 +63,15 @@ void create_test( char *_name, void (*_payload)(TestEnvironment *), int (*_teste
     }
     fclose(handleIns);
     
-    system("cl65 -l /tmp/out.lis -Ln /tmp/out.lbl -g -Os -t atari -C /tmp/out.cfg /tmp/out.asm -o /tmp/out.xex");
-    system("run6502 -c atari -L2 /tmp/out.lb2 -L /tmp/out.lbl -Li /tmp/out.ins -X 0000 -R 2000 -l 1ffa /tmp/out.xex -O /tmp/out.out -u /tmp/out.lis");
+    (void)!system("cl65 -l /tmp/out.lis -Ln /tmp/out.lbl -g -Os -t atari -C /tmp/out.cfg /tmp/out.asm -o /tmp/out.xex");
+    (void)!system("run6502 -c atari -L2 /tmp/out.lb2 -L /tmp/out.lbl -Li /tmp/out.ins -X 0000 -R 2000 -l 1ffa /tmp/out.xex -O /tmp/out.out -u /tmp/out.lis");
     FILE * handle = fopen( "/tmp/out.out", "rt" );
-    fscanf(handle, "%x %x %x %x %x %x", &t.state.a, &t.state.x, &t.state.y, &t.state.p, &t.state.s, &t.state.pc );
+    f(void)!scanf(handle, "%x %x %x %x %x %x", &t.state.a, &t.state.x, &t.state.y, &t.state.p, &t.state.s, &t.state.pc );
     while( !feof(handle) ) {
         char realname[MAX_TEMPORARY_STORAGE];
         int address;
         unsigned int memory[4];
-        fscanf(handle, "%s", realname);        
+        f(void)!scanf(handle, "%s", realname);        
 
         if ( feof(handle) ) {
             break;
@@ -82,7 +82,7 @@ void create_test( char *_name, void (*_payload)(TestEnvironment *), int (*_teste
                 t.debug.inspections[i].memory = malloc(t.debug.inspections[i].size);
                 for(j=0; j<t.debug.inspections[i].size; ++j ) {
                     int v;
-                    fscanf(handle, "%x", &v );
+                    f(void)!scanf(handle, "%x", &v );
                     t.debug.inspections[i].memory[j] = ( v & 0xff ) ;
                 }
                 break;
@@ -101,44 +101,44 @@ void create_test( char *_name, void (*_payload)(TestEnvironment *), int (*_teste
         ) {
           if ( strcmp( realname, "WORKING") == 0 ) {
               int i=0;
-              fscanf(handle, "%x", &t.state.working_base_address );
+              f(void)!scanf(handle, "%x", &t.state.working_base_address );
               for( i=0; i<1024; ++i ) {
-                  fscanf(handle, "%x", &t.state.working[i] );
+                  f(void)!scanf(handle, "%x", &t.state.working[i] );
               }
           }
           if ( strcmp( realname, "TEMPORARY") == 0 ) {
               int i=0;
-              fscanf(handle, "%x", &t.state.temporary_base_address );
+              f(void)!scanf(handle, "%x", &t.state.temporary_base_address );
               for( i=0; i<1024; ++i ) {
-                  fscanf(handle, "%x", &t.state.temporary[i] );
+                  f(void)!scanf(handle, "%x", &t.state.temporary[i] );
               }
           }
           if ( strcmp( realname, "DESCRIPTORS_STATUS") == 0 ) {
               int i=0;
               for( i=0; i<255; ++i ) {
-                  fscanf(handle, "%x", &t.state.descriptors_status[i] );
+                  f(void)!scanf(handle, "%x", &t.state.descriptors_status[i] );
               }
           }
           if ( strcmp( realname, "DESCRIPTORS_ADDRESS_LO") == 0 ) {
               int i=0;
               for( i=0; i<255; ++i ) {
-                  fscanf(handle, "%x", &t.state.descriptors_address_lo[i] );
+                  f(void)!scanf(handle, "%x", &t.state.descriptors_address_lo[i] );
               }
           }
           if ( strcmp( realname, "DESCRIPTORS_ADDRESS_HI") == 0 ) {
               int i=0;
               for( i=0; i<255; ++i ) {
-                  fscanf(handle, "%x", &t.state.descriptors_address_hi[i] );
+                  f(void)!scanf(handle, "%x", &t.state.descriptors_address_hi[i] );
               }
           }
           if ( strcmp( realname, "DESCRIPTORS_SIZE") == 0 ) {
               int i=0;
               for( i=0; i<255; ++i ) {
-                  fscanf(handle, "%x", &t.state.descriptors_size[i] );
+                  f(void)!scanf(handle, "%x", &t.state.descriptors_size[i] );
               }
           }
           if ( strcmp( realname, "USING") == 0 ) {
-            fscanf(handle, "%x", &t.state.xusing );
+            f(void)!scanf(handle, "%x", &t.state.xusing );
             Variable * v = variable_retrieve_by_realname( &t.environment, "USING" );
             if ( v ) {
                 v->value = t.state.xusing;
@@ -146,7 +146,7 @@ void create_test( char *_name, void (*_payload)(TestEnvironment *), int (*_teste
           }
         } else {
             int i=0;
-            fscanf(handle, "%x %x %x %x %x", &address, &memory[0], &memory[1], &memory[2], &memory[3]);
+            f(void)!scanf(handle, "%x %x %x %x %x", &address, &memory[0], &memory[1], &memory[2], &memory[3]);
             Variable * v = variable_retrieve_by_realname( &t.environment, &realname[0] );
             if ( v ) {
                 switch( VT_BITWIDTH( v->type ) ) {

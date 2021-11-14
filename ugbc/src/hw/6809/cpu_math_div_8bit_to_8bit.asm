@@ -28,7 +28,6 @@
 ;  * autorizzazioni e le limitazioni previste dalla medesima.
 ;  ****************************************************************************/
 
-
 ; unsigned 8 bit division A=A/B B=A.mod.A
 ; http://www.logicielsmoto.com/phpBB/viewtopic.php?p=1098#p1098
 

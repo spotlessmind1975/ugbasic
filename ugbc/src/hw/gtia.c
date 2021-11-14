@@ -38,60 +38,33 @@
 #include <math.h>
 
 static RGBi SYSTEM_PALETTE[] = {
-    // { "BLACK", 
-        { 0x00, 0x00, 0x00, 0 },        
-    // { "WHITE", 
-        { 0xff, 0xff, 0xff, 0x0f },
-    // { "RED", 
-        { 0x88, 0x00, 0x00, 0x27 },
-    // { "CYAN", 
-        { 0xaa, 0xff, 0xe6, 3 },
-    // { "VIOLET", 
-        { 0xcc, 0x44, 0xcc, 0x44 },
-    // { "GREEN", 
-        { 0x00, 0xcc, 0x55, 0xa2 },
-    // { "BLUE", 
-        { 0x00, 0x00, 0xaa, 0x62 },
-    // { "YELLOW", 
-        { 0xee, 0xee, 0x77, 0xda },
-    // { "ORANGE", 
-        { 0xa1, 0x68, 0x3c, 0x2a },
-    // { "BROWN", 
-        { 0xdd, 0x88, 0x65, 0x14 },
-    // { "LIGHT_RED", 
-        { 0xff, 0x77, 0x77, 0x2f },
-    // { "DARK_GREY", 
-        { 0x33, 0x33, 0x33, 0x04 },
-    // { "GREY", 
-        { 0x77, 0x77, 0x77, 0x08 },
-    // { "LIGHT_GREEN", 
-        { 0xaa, 0xff, 0x66, 0xa8 },
-    // { "LIGHT_BLUE", 
-        { 0x00, 0x88, 0xff, 0x68 },
-    // { "LIGHT_GREY", 
-        { 0xbb, 0xbb, 0xbb, 0x0b },
-    // MAGENTA
-        { 0xf9, 0x84, 0xe5, 0x1e },
-    // LAVENDER
-        { 0xdc, 0xd0, 0xff, 0x55 },
-    // GOLD
-        { 0xFF, 0xd7, 0x00, 0xd6 },
-    // TURQUOISE
-        { 0x40, 0xe0, 0xd0, 0x78 },
-    // TAN
-        { 0xdc, 0xca, 0x98, 0x65 },
-    // YELLOW_GREEN
-        { 0x9a, 0xcd, 0x32, 0xaa },
-    // OLIVE_GREEN
-        { 0x4b, 0x53, 0x20, 0xa6 },
-    // PINK
-        { 0xff, 0xc0, 0xcb, 0x3a },
-    // PEACH
-        { 0xff, 0xcb, 0xa4, 0x38 },
-    // CYAN
-        { 0x00, 0xff, 0xff, 0x6a },
-    // DARK BLUE
-        { 0x00, 0x00, 0x80, 0x60 }
+        { 0x00, 0x00, 0x00, 0, "BLACK" },        
+        { 0xff, 0xff, 0xff, 0x0f, "WHITE" },
+        { 0x88, 0x00, 0x00, 0x27, "RED" },
+        { 0xaa, 0xff, 0xe6, 3, "CYAN" },
+        { 0xcc, 0x44, 0xcc, 0x44, "VIOLET" },
+        { 0x00, 0xcc, 0x55, 0xa2, "GREEN" },
+        { 0x00, 0x00, 0xaa, 0x62, "BLUE" },
+        { 0xee, 0xee, 0x77, 0xda, "YELLOW" },
+        { 0xa1, 0x68, 0x3c, 0x2a, "ORANGE" },
+        { 0xdd, 0x88, 0x65, 0x14, "BROWN" },
+        { 0xff, 0x77, 0x77, 0x2f,"LIGHT RED" },
+        { 0x33, 0x33, 0x33, 0x04, "DARK GREY" },
+        { 0x77, 0x77, 0x77, 0x08, "GREY" },
+        { 0xaa, 0xff, 0x66, 0xa8, "LIGHT GREEN" },
+        { 0x00, 0x88, 0xff, 0x68, "LIGHT BLUE" },
+        { 0xbb, 0xbb, 0xbb, 0x0b, "LIGHT GREY" },
+        { 0xf9, 0x84, 0xe5, 0x1e, "MAGENTA" },
+        { 0xdc, 0xd0, 0xff, 0x55, "LAVENDER" },
+        { 0xFF, 0xd7, 0x00, 0xd6, "GOLD" },
+        { 0x40, 0xe0, 0xd0, 0x78, "TURQUOISE" },
+        { 0xdc, 0xca, 0x98, 0x65, "TAN" },
+        { 0x9a, 0xcd, 0x32, 0xaa, "YELLOW GREEN" },
+        { 0x4b, 0x53, 0x20, 0xa6, "OLIVE GREEN" },
+        { 0xff, 0xc0, 0xcb, 0x3a, "PINK" },
+        { 0xff, 0xcb, 0xa4, 0x38, "PEACH" },
+        { 0x00, 0xff, 0xff, 0x6a, "CYAN" },
+        { 0x00, 0x00, 0x80, 0x60, "DARK BLUE" }
 };
 
 static RGBi * commonPalette;
@@ -1315,91 +1288,16 @@ static int calculate_luminance(RGBi _a) {
 
 }
 
+static Variable * gtia_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
 
-/**
- * @brief Calculate the distance between two colors
- *
- * This function calculates the color distance between two colors(_a and _b).
- * By "distance" we mean the geometric distance between two points in a 
- * three-dimensional space, where each dimension corresponds to one of the 
- * components (red, green and blue). The returned value is normalized to 
- * the nearest 8-bit value. 
- * 
- * @param _a First color 
- * @param _b Second color
- * @return int distance
- */
-
-static int calculate_distance(RGBi e1, RGBi e2) {
-
-    long rmean = ( (long)e1.red + (long)e2.red ) / 2;
-    long r = (long)e1.red - (long)e2.red;
-    long g = (long)e1.green - (long)e2.green;
-    long b = (long)e1.blue - (long)e2.blue;
-    return (int)( sqrt((((512+rmean)*r*r)>>8) + 4*g*g + (((767-rmean)*b*b)>>8)) );
-
-}
-
-/**
- * @brief Extract the color palette from the given image
- * 
- * @param _source 
- * @param _palette 
- * @param _palette_size 
- * @return int 
- */
-static int extract_color_palette(unsigned char* _source, int _width, int _height, RGBi _palette[], int _palette_size) {
-
-    RGBi rgb;
-
-    int image_x, image_y;
-
-    int usedPalette = 0;
-    int i = 0;
-    unsigned char* source = _source;
-
-    for (image_y = 0; image_y < _height; ++image_y) {
-        for (image_x = 0; image_x < _width; ++image_x) {
-            rgb.red = *source;
-            rgb.green = *(source + 1);
-            rgb.blue = *(source + 2);
-
-            for (i = 0; i < usedPalette; ++i) {
-                if (_palette[i].red == rgb.red && _palette[i].green == rgb.green && _palette[i].blue == rgb.blue) {
-                    break;
-                }
-            }
-
-            if (i >= usedPalette) {
-                _palette[usedPalette].red = rgb.red;
-                _palette[usedPalette].green = rgb.green;
-                _palette[usedPalette].blue = rgb.blue;
-                // printf( "%d == %2.2x%2.2x%2.2x\n", usedPalette, _palette[usedPalette].red, _palette[usedPalette].green, _palette[usedPalette].blue );
-                ++usedPalette;
-                if (usedPalette > _palette_size) {
-                    break;
-                }
-            }
-            source += 3;
-        }
-        if (usedPalette > _palette_size) {
-            break;
-        }
-    }
-
-    // printf( "\n" );
-
-    return usedPalette;
-
-}
-
-static Variable * gtia_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height ) {
+    // ignored on bitmap mode
+    (void)!_transparent_color;
 
     image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
     RGBi palette[MAX_PALETTE];
 
-    int colorUsed = extract_color_palette(_source, _width, _height, palette, MAX_PALETTE);
+    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
 
     if (colorUsed > 2) {
         CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
@@ -1411,7 +1309,7 @@ static Variable * gtia_image_converter_bitmap_mode_standard( Environment * _envi
         int minDistance = 0xffff;
         int colorIndex = 0;
         for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
-            int distance = calculate_distance(SYSTEM_PALETTE[j], palette[i]);
+            int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
             if (distance < minDistance) {
                 for( k=0; k<i; ++k ) {
                     if ( palette[k].index == SYSTEM_PALETTE[j].index ) {
@@ -1425,6 +1323,7 @@ static Variable * gtia_image_converter_bitmap_mode_standard( Environment * _envi
             }
         }
         palette[i].index = SYSTEM_PALETTE[colorIndex].index;
+        strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
     }
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
@@ -1459,7 +1358,7 @@ static Variable * gtia_image_converter_bitmap_mode_standard( Environment * _envi
             rgb.blue = *(_source + 2);
 
             for( i=0; i<colorUsed; ++i ) {
-                if ( palette[i].red == rgb.red && palette[i].green == rgb.green && palette[i].blue == rgb.blue ) {
+                if ( rgbi_equals_rgb( &palette[i], &rgb ) ) {
                     break;
                 }
             }
@@ -1510,7 +1409,7 @@ static Variable * gtia_image_converter_bitmap_mode_standard( Environment * _envi
 }
 
 
-static Variable * gtia_image_converter_multicolor_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height ) {
+static Variable * gtia_image_converter_multicolor_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
 
     image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
@@ -1518,7 +1417,7 @@ static Variable * gtia_image_converter_multicolor_mode_standard( Environment * _
 
         RGBi * palette = malloc( sizeof( RGBi ) * MAX_PALETTE );
 
-        int colorUsed = extract_color_palette(_source, _width, _height, palette, MAX_PALETTE);
+        int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
 
         if (colorUsed > 4) {
             CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
@@ -1530,7 +1429,7 @@ static Variable * gtia_image_converter_multicolor_mode_standard( Environment * _
             int minDistance = 0xffff;
             int colorIndex = 0;
             for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
-                int distance = calculate_distance(SYSTEM_PALETTE[j], palette[i]);
+                int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
                 // printf("%d (%2.2x%2.2x%2.2x) <-> %d (%2.2x%2.2x%2.2x) [%d] = %d [min = %d]\n", i, SYSTEM_PALETTE[j].red, SYSTEM_PALETTE[j].green, SYSTEM_PALETTE[j].blue, j, palette[i].red, palette[i].green, palette[i].blue, SYSTEM_PALETTE[j].index, distance, minDistance );
                 if (distance < minDistance) {
                     // printf(" candidated...\n" );
@@ -1548,11 +1447,35 @@ static Variable * gtia_image_converter_multicolor_mode_standard( Environment * _
                 }
             }
             palette[i].index = SYSTEM_PALETTE[colorIndex].index;
+            strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
             // printf("%d) %d * %d %2.2x%2.2x%2.2x\n", i, colorIndex, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
         }
 
         commonPalette = palette;
 
+        if ( _transparent_color != -1 ) {
+            if ( colorUsed < 4 ) {
+                for( i=0;i<COLOR_COUNT;++i) {
+                    if ( SYSTEM_PALETTE[i].index == _transparent_color ) {
+                        RGBi tmp;
+                        rgbi_move(&palette[0], &palette[colorUsed] );
+                        ++colorUsed;
+                        rgbi_move(&SYSTEM_PALETTE[i], &palette[0] );
+                        break;
+                    }
+                }
+            } else {
+                for(i=0;i<4;++i) {
+                    if ( commonPalette[i].index == _transparent_color ) {
+                        RGBi tmp;
+                        rgbi_move(&commonPalette[i], &tmp );
+                        rgbi_move(&commonPalette[0], &commonPalette[i] );
+                        rgbi_move(&tmp, &commonPalette[0] );
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
@@ -1596,7 +1519,7 @@ static Variable * gtia_image_converter_multicolor_mode_standard( Environment * _
 
             int minDistance = 9999;
             for( int i=0; i<4; ++i ) {
-                int distance = calculate_distance(commonPalette[i], rgb );
+                int distance = rgbi_distance(&commonPalette[i], &rgb );
                 if ( distance < minDistance ) {
                     minDistance = distance;
                     colorIndex = i;
@@ -1631,7 +1554,7 @@ static Variable * gtia_image_converter_multicolor_mode_standard( Environment * _
 
 }
 
-Variable * gtia_image_converter( Environment * _environment, char * _data, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode ) {
+Variable * gtia_image_converter( Environment * _environment, char * _data, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags ) {
 
     switch( _mode ) {
         // Graphics 3 (ANTIC 8)
@@ -1642,7 +1565,7 @@ Variable * gtia_image_converter( Environment * _environment, char * _data, int _
         // When the CTIA/GTIA chip interprets the data for the four adjacent pixels stored within the byte, it refers to the color 
         // register encoded in the bit pattern to plot the color.
         case BITMAP_MODE_ANTIC8:
-            return gtia_image_converter_multicolor_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height );
+            return gtia_image_converter_multicolor_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height , _transparent_color, _flags );
 
         // Graphics 4 (ANTIC 9)
         // This is a two-color graphics mode with four times the resolution of GRAPHICS 3. The pixels are 4 x 4, and 48 rows of 80 
@@ -1651,20 +1574,20 @@ Variable * gtia_image_converter( Environment * _environment, char * _data, int _
         // Only one bit is used for the color, so eight adjacent pixels are encoded within one byte, and only half as much screen 
         // memory is needed for a display of similiar-sized pixels.
         case BITMAP_MODE_ANTIC9:
-            return gtia_image_converter_bitmap_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height );
+            return gtia_image_converter_bitmap_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height , _transparent_color, _flags );
 
         // Graphics 5 (ANTIC A or 10)
         // This is the four color equivalent of GRAPHICS 4 sized pixels. The pixels are 4 x 4, but two bits are required to address 
         // the four color registers. With only four adjacent pixels encoded within a byte, the screen uses twice as much memory, 
         // about 1K.
         case BITMAP_MODE_ANTIC10:
-            return gtia_image_converter_multicolor_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height );
+            return gtia_image_converter_multicolor_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height , _transparent_color, _flags );
 
         // Graphics 6 (ANTIC B or 11)
         // This two color graphics mode has reasonably fine resolution. The 2 x 2 sized pixels allow 96 rows of 160 pixels to fit 
         // on a full screen. Although only a single bit is used to encode the color, screen memory still requires approximately 2K.
         case BITMAP_MODE_ANTIC11:
-            return gtia_image_converter_bitmap_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height );
+            return gtia_image_converter_bitmap_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height , _transparent_color, _flags );
 
         // Graphics 7 (ANTIC D or 13)
         // This is the four color equivalent to GRAPHICS mode 6. It is the finest resolution four color mode and naturally the
@@ -1672,7 +1595,7 @@ Variable * gtia_image_converter( Environment * _environment, char * _data, int _
         // of course is much greater as there are 96 rows of 160 - 2 x 2 sized pixels. It requires 3840 bytes of screen memory
         // with another 104 bytes for the display list.
         case BITMAP_MODE_ANTIC13:
-            return gtia_image_converter_multicolor_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height );
+            return gtia_image_converter_multicolor_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height , _transparent_color, _flags );
 
         // Graphics 8 (ANTIC F or 15)
         // This mode is definitely the finest resolution available on the Atari. Individual dot-sized pixels can be addressed in 
@@ -1687,7 +1610,7 @@ Variable * gtia_image_converter( Environment * _environment, char * _data, int _
         // staggering the pixel patterns, you can achieve three colors. This method is called artifacting. This all depends
         // on background color and luminance.
         case BITMAP_MODE_ANTIC15:
-            return gtia_image_converter_bitmap_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height );
+            return gtia_image_converter_bitmap_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height , _transparent_color, _flags );
 
         // The following five graphics modes have no equivalent in BASIC on older machine but if indicated do correspond to
         // an equivalent graphics mode on the newer XL models.
@@ -1698,7 +1621,7 @@ Variable * gtia_image_converter( Environment * _environment, char * _data, int _
         // register #4. Each pixel is one scan line high and one color clock wide. This mode's advantages are that it 
         // only uses 4K of screen memory and doesn't have artifacting problems.
         case BITMAP_MODE_ANTIC12:
-            return gtia_image_converter_multicolor_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height );
+            return gtia_image_converter_multicolor_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height , _transparent_color, _flags );
 
         // Antic E (Graphics 15-XL computers only)
         // This four-color, bit-mapped mode is sometimes known as BASIC 7 1/2. Its resolution is 160 x 192 or twice that of 
@@ -1706,7 +1629,7 @@ Variable * gtia_image_converter( Environment * _environment, char * _data, int _
         // particular color register. The screen data, however, is not character data but individual bytes. The user has a lot
         // more control, but this mode uses a lot more memory, approximately
         case BITMAP_MODE_ANTIC14:
-            return gtia_image_converter_multicolor_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height );
+            return gtia_image_converter_multicolor_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height , _transparent_color, _flags );
 
         // Graphics Mode 0 (ANTIC 2)
         // This is the normal-sized character or text mode that the computer defaults to on start up. 
@@ -1764,11 +1687,17 @@ Variable * gtia_image_converter( Environment * _environment, char * _data, int _
 
 }
 
-void gtia_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _frame_size ) {
+void gtia_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _frame_size, int _flags ) {
+
+    // currently unused
+    (void)!_flags;
 
     deploy( gtiavars, src_hw_gtia_vars_asm);
     deploy( image, src_hw_gtia_image_asm );
 
+    outline1("LDA #$%2.2x", _flags );
+    outline0("STA IMAGET" );
+    outline1("LDA #<%s", _image );
     outline1("LDA #<%s", _image );
     outline0("STA TMPPTR" );
     outline1("LDA #>%s", _image );

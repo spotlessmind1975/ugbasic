@@ -38,6 +38,8 @@
  * CODE SECTION 
  ****************************************************************************/
 
+extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
+
 void setup_embedded( Environment * _environment ) {
 
     _environment->embedded.cpu_fill_blocks = 1;
@@ -92,6 +94,10 @@ void target_linkage( Environment * _environment ) {
     char executableName[64];
     char binaryName[64];
     
+    if ( _environment->outputFileType != OUTPUT_FILE_TYPE_TAP ) {
+        CRITICAL_UNSUPPORTED_OUTPUT_FILE_TYPE( OUTPUT_FILE_TYPE_AS_STRING[_environment->outputFileType] );
+    }
+
     if( access( "z88dk\\z88dk\\bin\\z88dk-z80asm.exe", F_OK ) == 0 ) {
         sprintf(executableName, "%s", "z88dk\\z88dk\\bin\\z88dk-z80asm.exe" );
     } else {
@@ -101,7 +107,6 @@ void target_linkage( Environment * _environment ) {
     sprintf( commandLine, "%s -l -b %s",
         executableName,
         _environment->asmFileName );
-    system( commandLine ); 
 
     if ( system( commandLine ) ) {
         printf("The compilation of assembly program failed.\n\n");

@@ -53,7 +53,7 @@ extern char DATATYPE_AS_STRING[][16];
 /* <usermanual>
 @keyword PUT IMAGE
 </usermanual> */
-void put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame ) {
+void put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _flags ) {
 
     Variable * image = variable_retrieve( _environment, _image );
     Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
@@ -66,13 +66,13 @@ void put_image( Environment * _environment, char * _image, char * _x, char * _y,
     switch( image->type ) {
         case VT_IMAGES:
             if ( !frame ) {
-                zx_put_image( _environment, image->realName, x->realName, y->realName, "", image->frameSize );
+                zx_put_image( _environment, image->realName, x->realName, y->realName, "", image->frameSize, _flags );
             } else {
-                zx_put_image( _environment, image->realName, x->realName, y->realName, frame->realName, image->frameSize );
+                zx_put_image( _environment, image->realName, x->realName, y->realName, frame->realName, image->frameSize, _flags );
             }
             break;
         case VT_IMAGE:
-            zx_put_image( _environment, image->realName, x->realName, y->realName, NULL, 0 );
+            zx_put_image( _environment, image->realName, x->realName, y->realName, NULL, 0, _flags );
             break;
         default:
             CRITICAL_PUT_IMAGE_UNSUPPORTED( _image, DATATYPE_AS_STRING[image->type] );

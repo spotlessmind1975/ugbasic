@@ -111,7 +111,7 @@ ma con nomi diversi.
 
 @target all
 </usermanual> */
-Variable * images_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _frame_width, int _frame_height, int _flags ) {
+Variable * images_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _frame_width, int _frame_height, int _flags, int _transparent_color, int _background_color ) {
 
     LoadedFile * first = _environment->loadedFiles;
     char *lookfor = _filename;
@@ -168,11 +168,15 @@ Variable * images_load( Environment * _environment, char * _filename, char * _al
         source = image_flip_y( _environment, source, width, height );
     }
 
+    if ( _transparent_color != -1 ) {
+        _flags |= FLAG_TRANSPARENCY;
+    }
+
     int base = ( 3*width*height ) - 6;
     for( z=0; z<a; ++z ) {
         for( y=0; y<height; y+=_frame_height ) {
             for( x=0; x<width; x+=_frame_width ) {
-                result[i] = image_converter( _environment, source, width, height, x, y, _frame_width, _frame_height, _mode );
+                result[i] = image_converter( _environment, source, width, height, x, y, _frame_width, _frame_height, _mode, _transparent_color, _flags );
                 bufferSize += result[i]->size;
                 i += di;
             }
@@ -215,6 +219,10 @@ Variable * images_load( Environment * _environment, char * _filename, char * _al
     loaded->fileName = lookfor;
     _environment->loadedFiles = loaded;
 
+    if ( _alias ) {
+        const_define_numeric( _environment, _alias, UNIQUE_ID );
+    }
+    
     return final;
 
 }

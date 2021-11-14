@@ -80,8 +80,8 @@ Variable * get_cmove( Environment * _environment, char * _x, char * _y ) {
     cpu_dswrite( _environment, result->realName );
     cpu_dsdescriptor( _environment, result->realName, address->realName, size->realName );
 
-    cpu_move_8bit_with_offset(_environment, x->realName, address->realName, 1 );
-    cpu_move_8bit_with_offset(_environment, y->realName, address->realName, 2 );
+    cpu_move_8bit_indirect_with_offset(_environment, x->realName, address->realName, 1 );
+    cpu_move_8bit_indirect_with_offset(_environment, y->realName, address->realName, 2 );
         
     return result;
 

@@ -38,6 +38,8 @@
  * CODE SECTION 
  ****************************************************************************/
 
+extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
+
 void setup_embedded( Environment * _environment ) {
 
     _environment->embedded.cpu_fill_blocks = 1;
@@ -95,6 +97,10 @@ void target_linkage( Environment * _environment ) {
     char commandLine[MAX_TEMPORARY_STORAGE];
     char executableName[32];
     
+    if ( _environment->outputFileType != OUTPUT_FILE_TYPE_BIN ) {
+        CRITICAL_UNSUPPORTED_OUTPUT_FILE_TYPE( OUTPUT_FILE_TYPE_AS_STRING[_environment->outputFileType] );
+    }
+
     if( access( "asm6809\\bin\\asm6809.exe", F_OK ) == 0 ) {
         sprintf(executableName, "%s", "asm6809\\bin\\asm6809.exe" );
     } else {
