@@ -3469,15 +3469,7 @@ statement:
   }
   | Identifier OP_ASSIGN expr {
         Variable * expr = variable_retrieve( _environment, $3 );
-        Variable * variable = variable_retrieve_or_define( _environment, $1, expr->type, 0 );
-        if ( variable->type == VT_ARRAY ) {
-            if ( expr->type != VT_BUFFER ) {
-                CRITICAL_CANNOT_ASSIGN_TO_ARRAY( $1, DATATYPE_AS_STRING[expr->type] );
-            }
-            if ( expr->size != variable->size ) {
-                CRITICAL_BUFFER_SIZE_MISMATCH_ARRAY_SIZE( $1, expr->size, variable->size );
-            }
-        }
+        variable_retrieve_or_define( _environment, $1, expr->type, 0 )->name;
         variable_move( _environment, $3, $1 );
   }
   | Identifier OP_ASSIGN OP_HASH const_expr {

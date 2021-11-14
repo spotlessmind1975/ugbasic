@@ -85,7 +85,12 @@ void memory_area_assign( MemoryArea * _first, Variable * _variable ) {
     int neededSpace = 0;
 
     if ( _variable->type == VT_ARRAY ) {
-        neededSpace = _variable->size;
+        int dimensions = 1;
+        int i = 0;
+        for( i=0; i<_variable->arrayDimensions; ++i ) {
+            dimensions *= _variable->arrayDimensionsEach[i];
+        }
+        neededSpace = ( VT_BITWIDTH( _variable->arrayType ) >> 3 ) * dimensions;
     } else {
         neededSpace = VT_BITWIDTH( _variable->type ) ? ( VT_BITWIDTH( _variable->type ) >> 3 ) : _variable->size;   
     }
@@ -677,20 +682,6 @@ Variable * variable_array_type( Environment * _environment, char *_name, Variabl
         CRITICAL_VARIABLE( _name );
     }
     var->arrayType = _type;
-    int i=0,size=1;
-    for( i=0; i<var->arrayDimensions; ++i ) {
-        size *= var->arrayDimensionsEach[i];
-    }
-    if ( VT_BITWIDTH( var->arrayType ) > 0 ) {
-        size *= ( VT_BITWIDTH( var->arrayType ) >> 3 );
-    } else if ( var->arrayType == VT_DSTRING ) {
-        size *= 1;
-    } else if ( var->arrayType == VT_MOB ) {
-        size *= 1;
-    } else {
-        CRITICAL_DATATYPE_UNSUPPORTED("array(1)", DATATYPE_AS_STRING[var->arrayType]);
-    }
-    var->size = size;
     if ( ! var->memoryArea ) {
         memory_area_assign( _environment->memoryAreas, var );
     }
@@ -982,38 +973,6 @@ Variable * variable_store_buffer( Environment * _environment, char * _destinatio
         case VT_IMAGE:
         case VT_IMAGES:
         case VT_BUFFER:
-            if ( ! destination->valueBuffer ) {
-                destination->valueBuffer = malloc( _size );
-                memcpy( destination->valueBuffer, _buffer, _size );
-                destination->size = _size;
-                if ( _at ) {
-                    destination->absoluteAddress = _at;
-                    char bufferCopy[MAX_TEMPORARY_STORAGE]; sprintf( bufferCopy, "%scopy", destination->realName );
-                    cpu_mem_move_direct_size( _environment, bufferCopy, destination->realName, _size );
-                }
-            } else {
-                Variable * temporary = variable_temporary( _environment, destination->type, "(copy of buffer/image)");
-                temporary->valueBuffer = malloc( _size );
-                memcpy( temporary->valueBuffer, _buffer, _size );
-                temporary->size = _size;
-                if ( destination->size < _size ) {
-                    destination->valueBuffer = realloc( destination->valueBuffer, _size );
-                    memset( destination->valueBuffer + destination->size, 0, ( _size - destination->size ) );
-                    destination->size = _size;
-                }
-                variable_move_naked( _environment, temporary->name, destination->name );                
-            }
-            break;
-        default:
-            CRITICAL_STORE_UNSUPPORTED(DATATYPE_AS_STRING[destination->type]);
-    }
-    return destination;
-}
-
-Variable * variable_store_array( Environment * _environment, char * _destination, unsigned char * _buffer, int _size, int _at ) {
-    Variable * destination = variable_retrieve( _environment, _destination );
-    switch( destination->type ) {
-        case VT_ARRAY:
             if ( ! destination->valueBuffer ) {
                 destination->valueBuffer = malloc( _size );
                 memcpy( destination->valueBuffer, _buffer, _size );
@@ -1348,7 +1307,6 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
                     break;
                 case VT_IMAGE:
                 case VT_IMAGES:
-                case VT_ARRAY:
                 case VT_BUFFER: {
                     if ( target->size == 0 ) {
                         target->size = source->size;
@@ -4373,8 +4331,14 @@ void variable_array_fill( Environment * _environment, char * _name, int _value )
         CRITICAL_NOT_ARRAY( array->name );
     }
 
-    if ( array->size > 0 ) {
-        cpu_fill_direct_size_value( _environment, array->realName, array->size, _value );
+    int i, bytes = 1;
+    for( i=0; i<array->arrayDimensions; ++i ) {
+        bytes *= array->arrayDimensionsEach[i];
+    }
+    bytes *= VT_BITWIDTH( array->arrayType ) >> 3;
+
+    if ( bytes > 0 ) {
+        cpu_fill_direct_size_value( _environment, array->realName, bytes, _value );
     } else {
         CRITICAL_NOT_SUPPORTED( array->name );
     }

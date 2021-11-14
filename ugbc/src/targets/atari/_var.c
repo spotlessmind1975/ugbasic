@@ -105,18 +105,24 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     }
                 }
                 break;
-            case VT_ARRAY: {                
-                if ( variable->valueBuffer ) {
-                    out1("%s: .byte ", variable->realName);
-                    int i=0;
-                    for (i=0; i<(variable->size-1); ++i ) {
-                        out1("%d,", variable->valueBuffer[i]);
-                    }
-                    outline1("%d", variable->valueBuffer[(variable->size-1)]);
-                } else if ( variable->value ) {
-                    outline3("%s: .res %d, $%2.2x", variable->realName, variable->size, (unsigned char)(variable->value&0xff));
+            case VT_ARRAY: {
+                int i=0,size=1;
+                for( i=0; i<variable->arrayDimensions; ++i ) {
+                    size *= variable->arrayDimensionsEach[i];
+                }
+                if ( VT_BITWIDTH( variable->arrayType ) > 0 ) {
+                    size *= ( VT_BITWIDTH( variable->arrayType ) >> 3 );
+                } else if ( variable->arrayType == VT_DSTRING ) {
+                    size *= 1;
+                } else if ( variable->arrayType == VT_MOB ) {
+                    size *= 1;
                 } else {
-                    outline2("%s: .res %d", variable->realName, variable->size);
+                    CRITICAL_DATATYPE_UNSUPPORTED("array(1)", DATATYPE_AS_STRING[variable->arrayType]);
+                }
+                if ( variable->value ) {
+                    outline3("%s: .res %d, $%2.2x", variable->realName, size, (unsigned char)(variable->value&0xff));
+                } else {
+                    outline2("%s: .res %d", variable->realName, size);
                 }
                 break;
             }
