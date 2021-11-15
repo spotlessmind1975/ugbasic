@@ -55,6 +55,13 @@ CURRENTTILESHEIGHT:      .byte 25
 CURRENTSL:          .byte 0
 TEXTWW:             .byte 3
 
+IMAGEX = $34
+IMAGEY = $36
+IMAGEW = $32
+IMAGEH = $33
+IMAGEH2 = $31
+IMAGET = $30
+
 ; ------------------------------------------------------------------------------
 ; BITMAP MODE (MODE #2)
 ; ------------------------------------------------------------------------------

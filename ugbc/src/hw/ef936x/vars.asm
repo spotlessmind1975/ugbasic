@@ -55,6 +55,13 @@ CURRENTFRAMESIZE   fdb 40*200
 CURRENTSL          fcb 40
 TEXTWW      fcb 3
 
+IMAGEX EQU $41 ; $42
+IMAGEY EQU $43 ; $44
+IMAGEW EQU $45
+IMAGEH EQU $46
+IMAGEH2 EQU $47
+IMAGET EQU $48
+
 ; ------------------------------------------------------------------------------
 ; BITMAP MODE 16 (MODE #3)
 ; ------------------------------------------------------------------------------
