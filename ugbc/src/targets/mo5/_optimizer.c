@@ -67,6 +67,10 @@ int _strcmp(char *s, char *t) {
 	return *s - *t;
 }
 
+static inline char _toUpper(char a) {
+	return (a>='a' && a<='z') ? a-'a'+'A' : a;
+}
+
 /* match a string: 
 	space maches any '\t' or ' ' 
 	* matches any non space
@@ -84,13 +88,14 @@ char *match(char *s, char *p) {
 			while(*p=='*') ++p;
 			if(*s==' ' || *s=='\t') {r = NULL; break;}
 			r = s; do ++s; while(*s && *s!=' ' && *s!='\t');
-		} else if(*s++ != *p++) {r = NULL; break;}
+		} else if(_toUpper(*s++) != _toUpper(*p++)) {r = NULL; break;}
 	}
 	// printf("match '%s' '%s'==%d\n", _p, _s, *p=='\0' && r!=NULL);
 	return *p=='\0' ? r : NULL;
 }
 
-int canChgLD00xx(char *opcode) {
+/* can this opcode make A non zero */
+int can_nzA(char *opcode) {
 	if(opcode==NULL) return 1;
 	if(match(opcode, "ADDA ")) return 1;
 	if(match(opcode, "ADDD ")) return 1;
@@ -117,6 +122,33 @@ int canChgLD00xx(char *opcode) {
 	return 0;
 }
 
+/* can this opcode make B non zero */
+int can_nzB(char *opcode) {
+	if(opcode==NULL) return 1;
+	if(match(opcode, "ADDB ")) return 1;
+	if(match(opcode, "ADDD ")) return 1;
+	if(match(opcode, "BSR ")) return 1;
+	if(match(opcode, "COMB")) return 1;
+	if(match(opcode, "DECB")) return 1;
+	if(match(opcode, "EORB ")) return 1;
+	if(match(opcode, "EXG ")) return 1;
+	if(match(opcode, "JSR ")) return 1;
+	if(match(opcode, "LDB ")) return 1;
+	if(match(opcode, "LDD ")) return 1;
+	if(match(opcode, "ORB ")) return 1;
+	if(match(opcode, "PULS ")) return 1;
+	if(match(opcode, "PULU ")) return 1;
+	if(match(opcode, "ROLB")) return 1;
+	if(match(opcode, "RORB")) return 1;
+	if(match(opcode, "RTI")) return 1;
+	if(match(opcode, "RTS")) return 1;
+	if(match(opcode, "SBCB ")) return 1;
+	if(match(opcode, "SUBB ")) return 1;
+	if(match(opcode, "SUBD ")) return 1;
+	if(match(opcode, "TFR")) return 1;
+	return 0;
+}
+
 static int change;
 static void optim(char *buffer, char *rule, char *repl) {
 	char tmp[MAX_TEMPORARY_STORAGE];
@@ -131,8 +163,25 @@ static void optim(char *buffer, char *rule, char *repl) {
 	++change;
 }
 
-void target_peephole_optimizer( Environment * _environment ) {
+static char *chkLDD(char *buffer, char *xxyy) {
+	char *s = match( buffer, " LDD #$*");
+	return s && 
+		strlen(s)>=4 && 
+		(xxyy[0]=='-' || xxyy[0]==s[0]) &&
+		(xxyy[1]=='-' || xxyy[1]==s[1]) &&
+		(xxyy[2]=='-' || xxyy[2]==s[2]) &&
+		(xxyy[3]=='-' || xxyy[3]==s[3]) ? s : NULL;
+}
 
+static int isZero(char *buf) {
+	if(buf==NULL) return 0;
+	if(*buf == '$') ++buf;
+	while(*buf=='0') ++buf;
+	return *buf=='\0' || *buf=='\t' || *buf==' ' || *buf=='\r' || *buf=='\n';
+}
+
+void target_peephole_optimizer( Environment * _environment ) {
+	int unsafe = 1;
     char fileNameOptimized[MAX_TEMPORARY_STORAGE];
 
     sprintf( fileNameOptimized, "%s.asm", tmpnam(NULL) );
@@ -145,7 +194,7 @@ void target_peephole_optimizer( Environment * _environment ) {
 		FILE * fileOptimized = fopen( fileNameOptimized, "wt" );
 
 		int line = 0;	
-		int LDD00xx = 0;
+		int zA = 0, zB = 0;
 		
 		*buffer[0] = *buffer[1] = *buffer[2] = *buffer[3] = change = 0;
 		++pass;
@@ -190,55 +239,64 @@ void target_peephole_optimizer( Environment * _environment ) {
 			}
 			if ( match(buffer[0], " LDA #0") 
 		    ||   match(buffer[0], " LDA #$00")) {
-				optim(buffer[0],"rule #5 (LDA #0->CLRA)", "\tCLRA\n");
+				optim(buffer[0],"rule #5 (LDr #0->CLRr)", "\tCLRA\n");
 			}
-			if(LDD00xx) {
-				if (match( buffer[0], " CLRA")) {
-					optim( buffer[0], "rule #6 (A already 0)", NULL);
-				} else
-				if ((variable1=match( buffer[0], " LDD #$00*"))!=NULL && strlen(variable1)>=2) {
-					char buf[MAX_TEMPORARY_STORAGE];
-					sprintf(buf, "\tLDB #$%c%c\n", variable1[0], variable1[1]);
-					optim(buffer[0], "rule #7 (A already 0)", buf);
-				} else {
-					if(!isAComment(buffer[0]) && canChgLD00xx(match(buffer[0], " *"))) {
-						// printf("A!=0 %s\n", buffer[0]);
-						LDD00xx = 0; 
-					}
-				}
-			} else if ( match( buffer[0], " LDD #$00")
-				   ||   match( buffer[0], " LDD #0")
-			       ||   match( buffer[0], " CLRA") ) {
-				// printf("A==0 %s\n", buffer[0]);
-				LDD00xx = 1;
+			if ( match(buffer[0], " LDB #0") 
+		    ||   match(buffer[0], " LDB #$00")) {
+				optim(buffer[0],"rule #5 (LDr #0->CLRr)", "\tCLRB\n");
 			}
-			
 			if ( (variable1 = match( buffer[0], " LD* *" ))!=NULL 
 			&&                match( buffer[1], " ST*")
             &&   (variable2 = match( buffer[2], " LD* *" ))!=NULL
 			&&   _strcmp(variable1, variable2)==0) {
-				optim( buffer[2], "rule #8 (LD* Z->ST*->LD* Z)", NULL);
+				optim( buffer[2], "rule #6 (LD* Z->ST*->LD* Z)", NULL);
 				++change;
 			}
 			if ( (variable1 = match(buffer[0], " ST* *"))!=NULL
 			&&   (variable2 = match(buffer[1], " LD* *"))!=NULL
 			&& _strcmp(variable1, variable2)!=0
 		    && _strcmp(buffer[0],buffer[2])==0 ) {
-				optim(buffer[0], "rule #10 (STr Z->LD*->STr Z)", NULL);
+				optim(buffer[0], "rule #7 (STr Z->LD*->STr Z)", NULL);
 			}
 			if ( (variable1 = match(buffer[0], " LD* "))!=NULL
 			&&   (variable2 = match(buffer[1], " LD* "))!=NULL
 			&&    *variable1 == *variable2) {
-				optim(buffer[0], "rule #11 (LDr->LDr)", NULL);
+				optim(buffer[0], "rule #8 (LDr->LDr)", NULL);
 			}
 			if ( match(buffer[0], " ST* *")
 			&& _strcmp(buffer[0], buffer[1])==0) {
-				optim(buffer[1], "rule #12 (STr *->STr *)", NULL);
+				optim(buffer[1], "rule #9 (STr *->STr *)", NULL);
 			}
 			if ( (variable1=match(buffer[0], " EOR* #$ff"))!=NULL ) {
 				char buf[8]; sprintf(buf, "\tCOM%c\n", *variable1);
-				optim(buffer[0], "rule #13 (EORr #$FF-->COMr)", buf);
+				optim(buffer[0], "rule #10 (EORr #$FF-->COMr)", buf);
 			}
+
+			if(        match(buffer[0], " LDD ")
+			&&  isZero(match(buffer[1], " CMPD #*"))) {
+				optim(buffer[1], "rule #11 (LDr->CMPr #0)", NULL);
+			}
+			if(        match(buffer[0], " LDX ")
+			&&  isZero(match(buffer[1], " CMPX #*"))) {
+				optim(buffer[1], "rule #11 (LDr->CMPr #0)", NULL);
+			}
+			if(        match(buffer[0], " LDY ")
+			&&  isZero(match(buffer[1], " CMPY #*"))) {
+				optim(buffer[1], "rule #11 (LDr->CMPr #0)", NULL);
+			}
+			if(        match(buffer[0], " LDU ")
+			&&  isZero(match(buffer[1], " CMPU #*"))) {
+				optim(buffer[31], "rule #11 (LDr->CMPr #0)", NULL);
+			}
+			if(        match(buffer[0], " LDA ")
+			&&  isZero(match(buffer[1], " CMPA #*"))) {
+				optim(buffer[1], "rule #11 (LDr->CMPr #0)", NULL);
+			}
+			if(        match(buffer[0], " LDB ")
+			&&  isZero(match(buffer[1], " CMPB #*"))) {
+				optim(buffer[1], "rule #11 (LDr->CMPr #0)", NULL);
+			}
+
 			if ( (variable1=match(buffer[0], " LDD *"))!=NULL
 			&&   (variable2=match(buffer[1], " STD _Ttmp*"))!=NULL
 			&&              match(buffer[2], " LDX ")
@@ -248,30 +306,64 @@ void target_peephole_optimizer( Environment * _environment ) {
 				sprintf(buf, "\tCMPX %s", variable1); 
 				for(s=buf+6; *s  && *s!=' ' && *s!='\t'; ++s); 
 				*s = '\0';
-				// optim(buffer[0], "test", NULL);
-				// optim(buffer[1], "test", NULL);
-				optim(buffer[3], "rule #14 (LDD *->STD Z->LDX *->CMPX Z)", buf);
+				if(unsafe) optim(buffer[0], "unsafe", NULL);
+				if(unsafe) optim(buffer[1], "unsafe", NULL);
+				optim(buffer[3], "rule #12 (LDD *->STD <tmp>->LDX *->CMPX <tmp>)", buf);
 			}
-			if( match(buffer[0], " LDX ")
-			&&  match(buffer[1], " CMPX #$0000")) {
-				optim(buffer[1], "rule #15 (LDr->CMPr #0)", NULL);
+			if ( (variable1=match(buffer[0], " LDD *"))!=NULL
+			&&   (variable2=match(buffer[1], " STD _Ttmp*"))!=NULL
+			&&              match(buffer[2], " LDD ")
+			&&   (variable3=match(buffer[3], " ADDD _Ttmp*"))!=NULL
+			&& _strcmp(variable2, variable3)==0) {
+				char buf[MAX_TEMPORARY_STORAGE], *s;
+				sprintf(buf, "\tADDD %s", variable1); 
+				for(s=buf+6; *s  && *s!=' ' && *s!='\t'; ++s); 
+				*s = '\0';
+				if(unsafe) optim(buffer[0], "unsafe", NULL);
+				if(unsafe) optim(buffer[1], "unsafe", NULL);
+				optim(buffer[3], "rule #13 (LDD *->STD <tmp>->LDD *->ADDD <tmp>)", buf);
 			}
-			if( match(buffer[0], " LDY ")
-			&&  match(buffer[1], " CMPY #$0000")) {
-				optim(buffer[1], "rule #15 (LDr->CMPr #0)", NULL);
+			
+
+			
+			if(zA) {
+				if (match( buffer[0], " CLRA")) {
+					optim( buffer[0], "rule #16 (A already 0)", NULL);
+				} else if (match( buffer[0], " LDA #$ff")) {
+					optim( buffer[0], "rule #17 (A was 0)", "\tDECA\n");
+				} else if (match( buffer[0], " LDA #$01")) {
+					optim( buffer[0], "rule #18 (A was 0)", "\tINCA\n");
+				} else if ( (variable1=chkLDD( buffer[0], "00--"))!=NULL ) {
+					char buf[MAX_TEMPORARY_STORAGE];
+					sprintf(buf, "\tLDB #$%c%c\n", variable1[2], variable1[3]);
+					optim(buffer[0], "rule #19 (A already 0)", buf);
+					zB = 0;
+				} else if(!isAComment(buffer[0]) && can_nzA(match(buffer[0], " *"))) {
+					zA = 0;
+				}
+			} else if ( chkLDD(buffer[0], "00--") || match( buffer[0], " LDD #0") || match( buffer[0], " CLRA") ) {
+				zA = 1;
 			}
-			if( match(buffer[0], " LDU ")
-			&&  match(buffer[1], " CMPU #$0000")) {
-				optim(buffer[31], "rule #15 (LDr->CMPr #0)", NULL);
+
+			if(zB) {
+				if (match( buffer[0], " CLRB")) {
+					optim( buffer[0], "rule #320 (B already 0)", NULL);
+				} else if (match( buffer[0], " LDB #$ff")) {
+					optim( buffer[0], "rule #21 (B was 0)", "\tDECB\n");
+				} else if (match( buffer[0], " LDB #$01")) {
+					optim( buffer[0], "rule #22 (B was 0)", "\tINCB\n");
+				} else if ( (variable1=chkLDD(buffer[0], "--00"))!=NULL ) {
+					char buf[MAX_TEMPORARY_STORAGE];
+					sprintf(buf, "\tLDA #$%c%c\n", variable1[0], variable1[1]);
+					optim(buffer[0], "rule #23 (B already 0)", buf);
+					zA = 0;
+				} else if(!isAComment(buffer[0]) && can_nzB(match(buffer[0], " *"))) {
+					zB = 0;
+				}
+			} else if ( chkLDD(buffer[0], "--00") || match( buffer[0], " LDD #0") || match( buffer[0], " CLRB") ) {
+				zB = 1;
 			}
-			if( match(buffer[0], " LDA ")
-			&&  match(buffer[1], " CMPA #$00")) {
-				optim(buffer[1], "rule #15 (LDr->CMPr #0)", NULL);
-			}
-			if( match(buffer[0], " LDB ")
-			&&  match(buffer[1], " CMPB #$00")) {
-				optim(buffer[1], "rule #15 (LDr->CMPr #0)", NULL);
-			}
+
 			++line;
 		}
 

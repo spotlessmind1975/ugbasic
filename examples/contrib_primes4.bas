@@ -35,7 +35,7 @@ REM
 95 REM stampo il contatore dei numeri primi e il tempo trascorso 
 100 REM PRINT:PRINT "contaprimi: ";np
 110 REM PRINT "ti ";TI
-115 ct=(TI/60)
-120 IF ct>60 THEN : ct=ct-60 : m=m+1 : GOTO 120 : ENDIF
+115 ct=(TI/50)
+120 IF ct>50 THEN : ct=ct-50 : m=m+1 : GOTO 120 : ENDIF
 130 PRINT:PRINT "time: ";m;" min ";ct;" s"
-140 PRINT CHR$(126);"(";c;") =";np
+140 PRINT CHR$(126);"(";maxn;") =";np
