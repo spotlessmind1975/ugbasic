@@ -993,6 +993,34 @@ static int calculate_luminance(RGBi _a) {
 
 }
 
+static int calculate_image_size( Environment * _environment, int _width, int _height, int _mode ) {
+
+    switch( _mode ) {
+        case TILEMAP_MODE_INTERNAL:         // Alphanumeric Internal	32 × 16	2	512
+        case TILEMAP_MODE_EXTERNAL:         // Alphanumeric External	32 × 16	2	512
+        case TILEMAP_MODE_SEMIGRAPHICS4:    // Semigraphics 4	        64 × 32	8	512
+        case TILEMAP_MODE_SEMIGRAPHICS6:    // Semigraphics 6	        64 × 48	4	512
+        case TILEMAP_MODE_SEMIGRAPHICS8:    // Semigraphics 8	        64 × 64	2	512
+        case TILEMAP_MODE_SEMIGRAPHICS12:    // Semigraphics 6	        64 × 96 1	3072
+        case TILEMAP_MODE_SEMIGRAPHICS24:    // Semigraphics 6	        64 × 96 1	3072
+            break;
+        case BITMAP_MODE_COLOR1:            // Color Graphics 1	64 × 64	4	1024
+        case BITMAP_MODE_COLOR2:            // Color Graphics 2	128 × 64	4	2048
+        case BITMAP_MODE_COLOR3:            // Color Graphics 3	128 × 96	4	3072
+        case BITMAP_MODE_COLOR6:            // Color Graphics 6	128 × 192	4	6144
+            return 2 + ( ( _width >> 2 ) * _height );
+        case BITMAP_MODE_RESOLUTION1:       // Resolution Graphics 1	128 × 64	1 + Black	1024
+        case BITMAP_MODE_RESOLUTION2:       // Resolution Graphics 2 128 × 96	1 + Black	1536
+        case BITMAP_MODE_RESOLUTION3:       // Resolution Graphics 3	128 × 192	1 + Black	3072
+        case BITMAP_MODE_RESOLUTION6:       // Resolution Graphics 6	256 × 192	1 + Black	6144            break;
+            return 2 + ( _width >> 3 ) * _height );
+
+    }
+
+    return 0;
+
+}
+
 static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
 
     // ignored on bitmap mode
@@ -1033,7 +1061,7 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
  
-    int bufferSize = 2 + ( ( _frame_width >> 3 ) * _frame_height );
+    int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_RESOLUTION1 );
     // printf("bufferSize = %d\n", bufferSize );
 
     char * buffer = malloc ( bufferSize );
@@ -1161,7 +1189,7 @@ static Variable * c6847_image_converter_multicolor_mode_standard( Environment * 
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
  
-    int bufferSize = 2 + ( ( _frame_width >> 2 ) * _frame_height );
+    int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_COLOR1 );
     
     char * buffer = malloc ( bufferSize );
     memset( buffer, 0, bufferSize );
@@ -1298,29 +1326,17 @@ void c6847_put_image( Environment * _environment, char * _image, char * _x, char
 
 Variable * c6847_new_image( Environment * _environment, int _width, int _height, int _mode ) {
 
-    switch( _mode ) {
-        case TILEMAP_MODE_INTERNAL:         // Alphanumeric Internal	32 × 16	2	512
-        case TILEMAP_MODE_EXTERNAL:         // Alphanumeric External	32 × 16	2	512
-        case TILEMAP_MODE_SEMIGRAPHICS4:    // Semigraphics 4	        64 × 32	8	512
-        case TILEMAP_MODE_SEMIGRAPHICS6:    // Semigraphics 6	        64 × 48	4	512
-        case TILEMAP_MODE_SEMIGRAPHICS8:    // Semigraphics 8	        64 × 64	2	512
-        case TILEMAP_MODE_SEMIGRAPHICS12:    // Semigraphics 6	        64 × 96 1	3072
-        case TILEMAP_MODE_SEMIGRAPHICS24:    // Semigraphics 6	        64 × 96 1	3072
-            break;
-        case BITMAP_MODE_COLOR1:            // Color Graphics 1	64 × 64	4	1024
-        case BITMAP_MODE_COLOR2:            // Color Graphics 2	128 × 64	4	2048
-        case BITMAP_MODE_COLOR3:            // Color Graphics 3	128 × 96	4	3072
-        case BITMAP_MODE_COLOR6:            // Color Graphics 6	128 × 192	4	6144
-            break;
+    int size = calculate_image_size( _environment, _width, _height, _mode );
 
-        case BITMAP_MODE_RESOLUTION1:       // Resolution Graphics 1	128 × 64	1 + Black	1024
-        case BITMAP_MODE_RESOLUTION2:       // Resolution Graphics 2 128 × 96	1 + Black	1536
-        case BITMAP_MODE_RESOLUTION3:       // Resolution Graphics 3	128 × 192	1 + Black	3072
-        case BITMAP_MODE_RESOLUTION6:       // Resolution Graphics 6	256 × 192	1 + Black	6144            break;
-            break;
+    if ( ! size ) {
+        CRITICAL_NEW_IMAGE_UNSUPPORTED_MODE( _mode );
     }
 
-    CRITICAL_NEW_IMAGE_UNSUPPORTED_MODE( _mode );
+    Variable * result = variable_temporary( _environment, VT_IMAGE, "(new image)" );
+
+    result->size = size;
+    
+    return result;
 
 }
 

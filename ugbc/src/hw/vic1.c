@@ -695,6 +695,18 @@ static int calculate_luminance(RGBi _a) {
 
 }
 
+static int calculate_image_size( Environment * _environment, int _width, int _height, int _mode ) {
+
+   switch( _mode ) {
+
+        case TILEMAP_MODE_STANDARD:
+            break;
+    }
+
+    return 0;
+
+}
+
 static Variable * vic1_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
 
     image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
@@ -1237,13 +1249,17 @@ void vic1_wait_vbl( Environment * _environment ) {
 
 Variable * vic1_new_image( Environment * _environment, int _width, int _height, int _mode ) {
 
-   switch( _mode ) {
-        case TILEMAP_MODE_STANDARD:
-            break;
+    int size = calculate_image_size( _environment, _width, _height, _mode );
+
+    if ( ! size ) {
+        CRITICAL_NEW_IMAGE_UNSUPPORTED_MODE( _mode );
     }
 
-    CRITICAL_NEW_IMAGE_UNSUPPORTED_MODE( _mode );
+    Variable * result = variable_temporary( _environment, VT_IMAGE, "(new image)" );
 
+    result->size = size;
+    
+    return result;
 }
 
 #endif

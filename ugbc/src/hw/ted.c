@@ -736,6 +736,27 @@ static int calculate_luminance(RGBi _a) {
 
 }
 
+static int calculate_image_size( Environment * _environment, int _width, int _height, int _mode ) {
+
+    switch( _mode ) {
+        case BITMAP_MODE_STANDARD:
+
+            return 2 + ( ( _frame_width >> 3 ) * _frame_height ) + ( ( _frame_width >> 3 ) * ( _frame_height >> 3 ) );
+
+        case BITMAP_MODE_MULTICOLOR:
+
+            return 2 + ( ( _frame_width >> 2 ) * _frame_height ) + 2 * ( ( _frame_width >> 2 ) * ( _frame_height >> 3 ) ) + 2;
+
+        case TILEMAP_MODE_STANDARD:
+        case TILEMAP_MODE_MULTICOLOR:
+        case TILEMAP_MODE_EXTENDED:
+            break;
+    }
+
+    CRITICAL_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
+
+}
+
 static Variable * ted_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
 
     image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
@@ -778,7 +799,7 @@ static Variable * ted_image_converter_bitmap_mode_standard( Environment * _envir
     
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
  
-    int bufferSize = 2 + ( ( _frame_width >> 3 ) * _frame_height ) + ( ( _frame_width >> 3 ) * ( _frame_height >> 3 ) );
+    int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_STANDARD );
     // printf("bufferSize = %d\n", bufferSize );
 
     char * buffer = malloc ( bufferSize );
@@ -895,7 +916,7 @@ static Variable * ted_image_converter_multicolor_mode_standard( Environment * _e
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
  
-    int bufferSize = 2 + ( ( _frame_width >> 2 ) * _frame_height ) + 2 * ( ( _frame_width >> 2 ) * ( _frame_height >> 3 ) ) + 2;
+    int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_MULTICOLOR );
     
     char * buffer = malloc ( bufferSize );
     memset( buffer, 0, bufferSize );
@@ -1062,16 +1083,17 @@ void ted_wait_vbl( Environment * _environment ) {
 
 Variable * ted_new_image( Environment * _environment, int _width, int _height, int _mode ) {
 
-    switch( _mode ) {
-        case BITMAP_MODE_STANDARD:
-        case BITMAP_MODE_MULTICOLOR:
-        case TILEMAP_MODE_STANDARD:
-        case TILEMAP_MODE_MULTICOLOR:
-        case TILEMAP_MODE_EXTENDED:
-            break;
+    int size = calculate_image_size( _environment, _width, _height, _mode );
+
+    if ( ! size ) {
+        CRITICAL_NEW_IMAGE_UNSUPPORTED_MODE( _mode );
     }
 
-    CRITICAL_NEW_IMAGE_UNSUPPORTED_MODE( _mode );
+    Variable * result = variable_temporary( _environment, VT_IMAGE, "(new image)" );
+
+    result->size = size;
+    
+    return result;
 
 }
 
