@@ -244,5 +244,6 @@ void gtia_cline( Environment * _environment, char * _characters );
 Variable * gtia_image_converter( Environment * _environment, char * _data, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags );
 void gtia_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _frame_size, int _flags );
 void gtia_wait_vbl( Environment * _environment );
+Variable * gtia_new_image( Environment * _environment, int _width, int _height, int _mode );
 
 #endif

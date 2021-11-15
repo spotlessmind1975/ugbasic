@@ -53,7 +53,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token BACK DEBUG CAN ELSEIF BUFFER LOAD SIZE MOB IMAGE PUT VISIBLE HIDDEN HIDE SHOW RENDER
 %token SQR TI CONST VBL POKE NOP FILL IN POSITIVE DEFINE ATARI ATARIXL C64 DRAGON DRAGON32 DRAGON64 PLUS4 ZX 
 %token FONT VIC20 PARALLEL YIELD SPAWN THREAD TASK IMAGES FRAME FRAMES XY YX ROLL MASKED USING TRANSPARENCY
-%token OVERLAYED CASE ENDSELECT OGP CGP ARRAY
+%token OVERLAYED CASE ENDSELECT OGP CGP ARRAY NEW GET
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -1171,6 +1171,9 @@ exponential:
       }      
     | SQR OP factor CP {
         $$ = sqroot( _environment, $3 )->name;
+      }
+    | NEW IMAGE OP const_expr OP_COMMA const_expr CP {        
+        $$ = new_image( _environment, $4, $6, ((struct _Environment *)_environment)->currentMode )->name;
       }
     | LOAD OP String CP {
         $$ = load( _environment, $3, NULL, 0 )->name;
@@ -2355,8 +2358,17 @@ put_definition_expression:
     }
     ;
 
+get_definition_expression:
+      IMAGE Identifier FROM optional_x OP_COMMA optional_y  {
+        // get_image( _environment, $2, $4, $6 );
+        gr_locate( _environment, $4, $6 );
+    };
+
 put_definition:
     put_definition_expression;
+
+get_definition:
+    get_definition_expression;
 
 draw_definition_expression:
       optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
@@ -2577,6 +2589,7 @@ const_array_definition :
         Variable *currentArray = ((struct _Environment *)_environment)->currentArray;
         Constant * first = currentArray->arrayInitialization;
         Constant * c = malloc( sizeof( Constant ) );
+        memset( c, 0, sizeof( Constant ) );
         c->value = $1;
         if ( first ) {
             while( first->next ) {
@@ -2586,7 +2599,7 @@ const_array_definition :
         } else {
             currentArray->arrayInitialization = c;
         }        
-    }
+    };
 
 const_array_definitions1:
     const_array_definition {
@@ -2694,7 +2707,9 @@ array_reassign:
             buffer[j] = strtol(hexdigits,0,16);
             ++j;
         }
-        variable_store_array( _environment, ((struct _Environment *)_environment)->currentArray->name, buffer, size, 0 );
+        Variable * var = variable_temporary( _environment, VT_BUFFER, "(array reassign)" );
+        variable_store_buffer( _environment, var->name, buffer, size, 0 );
+        cpu_mem_move_direct_size( _environment, var->realName, ((struct _Environment *)_environment)->currentArray->realName, size );
         ((struct _Environment *)_environment)->currentArray = NULL;
     }
     | {
@@ -2742,7 +2757,9 @@ array_reassign:
         if ( ( ptr - buffer ) != currentArray->size ) {
             CRITICAL_BUFFER_SIZE_MISMATCH_ARRAY_SIZE( currentArray->name, currentArray->size, (int)(ptr-buffer));
         }
-        variable_store_array( _environment, ((struct _Environment *)_environment)->currentArray->name, buffer, size, 0 );
+        Variable * var = variable_temporary( _environment, VT_BUFFER, "(array reassign)" );
+        variable_store_buffer( _environment, var->name, buffer, size, 0 );
+        cpu_mem_move_direct_size( _environment, var->realName, ((struct _Environment *)_environment)->currentArray->realName, size );
         ((struct _Environment *)_environment)->currentArray = NULL;
     };    
 
@@ -3252,6 +3269,7 @@ statement:
   | ELLIPSE ellipse_definition
   | DRAW draw_definition
   | PUT put_definition
+  | GET get_definition
   | MOB mob_definition
   | BOX box_definition
   | POLYLINE polyline_definition

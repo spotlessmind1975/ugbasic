@@ -55,6 +55,13 @@ CURRENTTILESHEIGHT:      .byte 25
 CURRENTSL:          .byte 0
 TEXTWW:             .byte 3
 
+IMAGEX = $17
+IMAGEY = $19
+IMAGEW = $21
+IMAGEH = $23
+IMAGEH2 = $24
+IMAGET = $25
+
 PLOTVBASELO:
     .byte <($6000+(0*320)),<($6000+(1*320)),<($6000+(2*320)),<($6000+(3*320))
     .byte <($6000+(4*320)),<($6000+(5*320)),<($6000+(6*320)),<($6000+(7*320))

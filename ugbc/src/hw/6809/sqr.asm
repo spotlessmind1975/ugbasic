@@ -45,58 +45,58 @@ Root		equ $20		; square root
 
 SQROOT
 	LDA	#$00		; clear A
-	STA	Reml		; clear remainder low byte
-	STA	Remh		; clear remainder high byte
-	STA	Root		; clear Root
+	STA	<Reml		; clear remainder low byte
+	STA	<Remh		; clear remainder high byte
+	STA	<Root		; clear Root
 	LDU	#$08		; 8 pairs of bits to do
 SQROOTL1
-	LSL	Root		; Root = Root * 2
+	LSL	<Root		; Root = Root * 2
 
-	LSL	Numberl		; shift highest bit of number ..
-	ROL	Numberh		;
-    LDB Numberl
-    LDB Numberh
-    LDB Root
-	ROL	Reml		; .. into remainder
-	ROL	Remh		;
+	LSL	<Numberl		; shift highest bit of number ..
+	ROL	<Numberh		;
+    LDB <Numberl
+    LDB <Numberh
+    LDB <Root
+	ROL	<Reml		; .. into remainder
+	ROL	<Remh		;
 
-	LSL	Numberl		; shift highest bit of number ..
-	ROL	Numberh		;
-	ROL	Reml		; .. into remainder
-	ROL	Remh		;
+	LSL	<Numberl		; shift highest bit of number ..
+	ROL	<Numberh		;
+	ROL	<Reml		; .. into remainder
+	ROL	<Remh		;
 
-	LDA	Root		; copy Root ..
-	STA	templ		; .. to templ
+	LDA	<Root		; copy Root ..
+	STA	<templ		; .. to templ
 	LDA	#$00		; clear byte
-	STA	temph		; clear temp high byte
+	STA	<temph		; clear temp high byte
 
 	ORCC #$01    	; +1
-	ROL templ		; temp = temp * 2 + 1
-	ROL temph		;
+	ROL <templ		; temp = temp * 2 + 1
+	ROL <temph		;
 
-	LDA	 Remh		; get remainder high byte
-	CMPA temph		; comapre with partial high byte
+	LDA	 <Remh		; get remainder high byte
+	CMPA <temph		; comapre with partial high byte
 
 	BLT	SQROOTNX		; skip sub if remainder high byte smaller
 
 	BNE	SQROOTSB		; do sub if <> (must be remainder>partial !)
 
-	LDA	Reml		; get remainder low byte
-	CMPA	templ		; comapre with partial low byte
+	LDA	<Reml		; get remainder low byte
+	CMPA	<templ		; comapre with partial low byte
 
 	BLT	SQROOTNX		; skip sub if remainder low byte smaller
 
 				; else remainder>=partial so subtract then
 				; and add 1 to root. carry is always set here
 SQROOTSB
-	LDA	Reml		; get remainder low byte
-	SUBA	templ		; subtract partial low byte
-	STA	Reml		; save remainder low byte
-	LDA	Remh		; get remainder high byte
-	SUBA	temph		; subtract partial high byte
-	STA	Remh		; save remainder high byte
+	LDA	<Reml		; get remainder low byte
+	SUBA	<templ		; subtract partial low byte
+	STA	<Reml		; save remainder low byte
+	LDA	<Remh		; get remainder high byte
+	SUBA	<temph		; subtract partial high byte
+	STA	<Remh		; save remainder high byte
 
-	INC	Root		; increment Root
+	INC	<Root		; increment Root
 SQROOTNX
 	LEAU -1, U			; decrement bit pair count
     CMPU #0
