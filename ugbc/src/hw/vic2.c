@@ -1742,4 +1742,50 @@ void vic2_wait_vbl( Environment * _environment ) {
 
 }
 
+Variable * vic2_new_image( Environment * _environment, int _width, int _height, int _mode ) {
+
+    switch( _mode ) {
+
+        case BITMAP_MODE_STANDARD:
+        case BITMAP_MODE_MULTICOLOR:
+        case BITMAP_MODE_AH:
+        case BITMAP_MODE_AIFLI:
+        case BITMAP_MODE_ASSLACE:
+        case BITMAP_MODE_ECI:
+        case BITMAP_MODE_IAFLI:
+        case BITMAP_MODE_IH:
+        case BITMAP_MODE_MRFLI:
+        case BITMAP_MODE_MUCSUFLI:
+        case BITMAP_MODE_MUCSUH:
+        case BITMAP_MODE_MUFLI:
+        case BITMAP_MODE_MUIFLI:
+        case BITMAP_MODE_NUFLI:
+        case BITMAP_MODE_NUIFLI:
+        case BITMAP_MODE_SH:
+        case BITMAP_MODE_SHFLI:
+        case BITMAP_MODE_SHI:
+        case BITMAP_MODE_SHIFLI:
+        case BITMAP_MODE_SHIFXL:
+        case BITMAP_MODE_UFLI:
+        case BITMAP_MODE_UIFLI:
+        case BITMAP_MODE_TRIFLI:
+        case BITMAP_MODE_XFLI:
+        case BITMAP_MODE_XIFLI:
+        case BITMAP_MODE_FLI:
+        case BITMAP_MODE_HCB:
+        case BITMAP_MODE_IFLI:
+        case BITMAP_MODE_MUCSU:
+        case BITMAP_MODE_MCI:
+        case BITMAP_MODE_MEGATEXT:
+        case BITMAP_MODE_PRS:
+        case TILEMAP_MODE_STANDARD:
+        case TILEMAP_MODE_MULTICOLOR:
+        case TILEMAP_MODE_EXTENDED:
+            break;
+    }
+
+    CRITICAL_NEW_IMAGE_UNSUPPORTED_MODE( _mode );
+
+}
+
 #endif

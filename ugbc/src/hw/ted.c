@@ -1060,4 +1060,19 @@ void ted_wait_vbl( Environment * _environment ) {
 
 }
 
+Variable * ted_new_image( Environment * _environment, int _width, int _height, int _mode ) {
+
+    switch( _mode ) {
+        case BITMAP_MODE_STANDARD:
+        case BITMAP_MODE_MULTICOLOR:
+        case TILEMAP_MODE_STANDARD:
+        case TILEMAP_MODE_MULTICOLOR:
+        case TILEMAP_MODE_EXTENDED:
+            break;
+    }
+
+    CRITICAL_NEW_IMAGE_UNSUPPORTED_MODE( _mode );
+
+}
+
 #endif

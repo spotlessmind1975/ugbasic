@@ -1235,4 +1235,15 @@ void vic1_wait_vbl( Environment * _environment ) {
 
 }
 
+Variable * vic1_new_image( Environment * _environment, int _width, int _height, int _mode ) {
+
+   switch( _mode ) {
+        case TILEMAP_MODE_STANDARD:
+            break;
+    }
+
+    CRITICAL_NEW_IMAGE_UNSUPPORTED_MODE( _mode );
+
+}
+
 #endif

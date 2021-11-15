@@ -1308,4 +1308,20 @@ void ef936x_put_image( Environment * _environment, char * _image, char * _x, cha
     
 }
 
+Variable * ef936x_new_image( Environment * _environment, int _width, int _height, int _mode ) {
+
+    switch( _mode ) {
+        case BITMAP_MODE_40_COLUMN:
+        case BITMAP_MODE_BITMAP_4:
+        case BITMAP_MODE_80_COLUMN:
+        case BITMAP_MODE_BITMAP_16:
+        case BITMAP_MODE_PAGE:
+            break;
+    }
+
+    CRITICAL_NEW_IMAGE_UNSUPPORTED_MODE( _mode );
+    
+}
+
+
 #endif
