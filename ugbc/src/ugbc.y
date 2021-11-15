@@ -2577,6 +2577,7 @@ const_array_definition :
         Variable *currentArray = ((struct _Environment *)_environment)->currentArray;
         Constant * first = currentArray->arrayInitialization;
         Constant * c = malloc( sizeof( Constant ) );
+        memset( c, 0, sizeof( Constant ) );
         c->value = $1;
         if ( first ) {
             while( first->next ) {
@@ -2586,7 +2587,7 @@ const_array_definition :
         } else {
             currentArray->arrayInitialization = c;
         }        
-    }
+    };
 
 const_array_definitions1:
     const_array_definition {
@@ -2694,7 +2695,9 @@ array_reassign:
             buffer[j] = strtol(hexdigits,0,16);
             ++j;
         }
-        variable_store_array( _environment, ((struct _Environment *)_environment)->currentArray->name, buffer, size, 0 );
+        Variable * var = variable_temporary( _environment, VT_BUFFER, "(array reassign)" );
+        variable_store_buffer( _environment, var->name, buffer, size, 0 );
+        cpu_mem_move_direct_size( _environment, var->realName, ((struct _Environment *)_environment)->currentArray->realName, size );
         ((struct _Environment *)_environment)->currentArray = NULL;
     }
     | {
@@ -2742,7 +2745,9 @@ array_reassign:
         if ( ( ptr - buffer ) != currentArray->size ) {
             CRITICAL_BUFFER_SIZE_MISMATCH_ARRAY_SIZE( currentArray->name, currentArray->size, (int)(ptr-buffer));
         }
-        variable_store_array( _environment, ((struct _Environment *)_environment)->currentArray->name, buffer, size, 0 );
+        Variable * var = variable_temporary( _environment, VT_BUFFER, "(array reassign)" );
+        variable_store_buffer( _environment, var->name, buffer, size, 0 );
+        cpu_mem_move_direct_size( _environment, var->realName, ((struct _Environment *)_environment)->currentArray->realName, size );
         ((struct _Environment *)_environment)->currentArray = NULL;
     };    
 
