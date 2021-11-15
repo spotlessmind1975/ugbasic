@@ -306,7 +306,6 @@ void target_peephole_optimizer( Environment * _environment ) {
 				sprintf(buf, "\tCMPX %s", variable1); 
 				for(s=buf+6; *s  && *s!=' ' && *s!='\t'; ++s); 
 				*s = '\0';
-				if(unsafe) optim(buffer[0], "unsafe", NULL);
 				if(unsafe) optim(buffer[1], "unsafe", NULL);
 				optim(buffer[3], "rule #12 (LDD *->STD <tmp>->LDX *->CMPX <tmp>)", buf);
 			}
@@ -319,12 +318,21 @@ void target_peephole_optimizer( Environment * _environment ) {
 				sprintf(buf, "\tADDD %s", variable1); 
 				for(s=buf+6; *s  && *s!=' ' && *s!='\t'; ++s); 
 				*s = '\0';
-				if(unsafe) optim(buffer[0], "unsafe", NULL);
-				if(unsafe) optim(buffer[1], "unsafe", NULL);
+				if(unsafe) optim(buffer[1], "rule #13 (unsafe)", NULL);
 				optim(buffer[3], "rule #13 (LDD *->STD <tmp>->LDD *->ADDD <tmp>)", buf);
 			}
-			
-
+			if ( (variable1=match(buffer[0], " STD *"))!=NULL
+			&&   (variable2=match(buffer[1], " LDX *"))!=NULL
+			&&   _strcmp(variable1,variable2)==0) {
+				if(unsafe && match(variable1, "_Ttmp")) 
+				optim(buffer[0], "rule #14 (unsafe)", NULL);
+				optim(buffer[1], "rule #14 (STD <tmp>->LDX <tmp>)", "\tTFR D,X\n");
+			}
+			// if ( match(buffer[0], " LDD ,X")
+			// &&   match(buffer[1], " TFR D,X")) {
+				// optim(buffer[0], "rule #15 (unsafe)", NULL);
+				// optim(buffer[1], "rule #15 (LDD ,X->TFR D,X", "\tLDX ,X\n");
+			// }
 			
 			if(zA) {
 				if (match( buffer[0], " CLRA")) {

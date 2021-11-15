@@ -1005,22 +1005,15 @@ void cpu6809_math_div2_const_8bit( Environment * _environment, char *_source, in
  * @param _steps Times to double
  */
 void cpu6809_math_mul2_const_8bit( Environment * _environment, char *_source, int _steps, int _signed ) {
-
+	int i;
+	
     inline( cpu_math_mul2_const_8bit )
 
-        MAKE_LABEL
-
-        outline1("LDA %s", _source);
-        outline1("LDB #$%2.2x", _steps);
-        outline0("CMPB #0");
-        outline1("BEQ %sdone", label);
-        outhead1("%sloop", label);
-        outline0("ASLA");
-        outline0("DECB");
-        outline0("CMPB #0");
-        outline1("BNE %sloop", label);
-        outhead1("%sdone", label);
-        outline1("STA %s", _source);
+  		outline1("LDA %s", _source );			
+		for(i=0;i<_steps;++i) {
+			outline0("LSLA" );
+		}
+		outline1("STA %s", _source );
 
     embedded( cpu_math_mul2_const_8bit, src_hw_6809_cpu_math_mul2_const_8bit_asm );
 
@@ -1703,72 +1696,17 @@ void cpu6809_math_div2_const_16bit( Environment * _environment, char *_source, i
  * @param _steps Times to halves
  */
 void cpu6809_math_mul2_const_16bit( Environment * _environment, char *_source, int _steps, int _signed ) {
+	int i;
 
     inline( cpu_math_mul2_const_16bit )
 
-        MAKE_LABEL
 
-        if ( _signed ) {
-
-            outline1("LDA %s", _source);
-            outline0("ANDA #$80");
-            outline1("BEQ %spos", label );
-
-            outline1("LDD %s", _source );
-            outline0("ANDCC #$FE" );
-            outline0("EORA #$FF" );
-            outline0("EORB #$FF" );
-            outline0("ADDD #1" );
-
-            outline1("JMP %sdone", label );
-
-            outhead1("%spos", label );
-            outline1("LDD %s", _source );
-
-            outhead1("%sdone", label );
-
-            outline1("LDX #$%2.2x", _steps );
-            outhead1("%sloop", label );
-            outline0("ANDCC #$FE" );
-            outline0("ASLB" );
-            outline0("ROLA" );
-            outline0("LEAX -1, X");
-            outline0("CMPX #0");
-            outline1("BNE %sloop", label );
-
-            outline0("STD <MATHPTR0");
-
-            outline1("LDA %s", _source);
-            outline0("ANDA #$80");
-            outline1("BEQ %spos2", label );
-
-            outline0("LDD <MATHPTR0");
-            outline0("ANDCC #$FE" );
-            outline0("EORA #$FF" );
-            outline0("EORB #$FF" );
-            outline0("ADDD #1" );
-
-            outline1("JMP %sdone2", label );
-
-            outhead1("%spos2", label );
-            outline0("LDD <MATHPTR0");
-            outhead1("%sdone2", label );
-            outline1("STD %s", _source );
-
-        } else {
-
-            outline1("LDD %s", _source );
-            outline1("LDX #$%2.2x", _steps );
-            outhead1("%sloop", label );
-            outline0("ANDCC #$FE" );
-            outline0("ASLB" );
-            outline0("ROLA" );
-            outline0("LEAX -1, X");
-            outline0("CMPX #0");
-            outline1("BNE %sloop", label );
-            outline1("STD %s", _source );
-
-        }
+		outline1("LDD %s", _source );			
+		for(i=0;i<_steps;++i) {
+			outline0("LSLB" );
+			outline0("ROLA" );
+		}
+		outline1("STD %s", _source );
 
     embedded( cpu_math_mul2_const_16bit, src_hw_6809_cpu_math_mul2_const_16bit_asm );
 
