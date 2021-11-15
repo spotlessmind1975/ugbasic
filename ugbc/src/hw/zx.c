@@ -430,7 +430,7 @@ void zx_put_image( Environment * _environment, char * _image, char * _x, char * 
     MAKE_LABEL
 
     deploy( vars, src_hw_zx_vars_asm);
-    deploy( image, src_hw_zx_image_asm );
+    deploy( image, src_hw_zx_put_image_asm );
 
     outline1("LD HL, (%s)", _image );
     if ( _frame ) {

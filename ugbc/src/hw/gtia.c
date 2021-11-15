@@ -1693,7 +1693,7 @@ void gtia_put_image( Environment * _environment, char * _image, char * _x, char 
     (void)!_flags;
 
     deploy( gtiavars, src_hw_gtia_vars_asm);
-    deploy( image, src_hw_gtia_image_asm );
+    deploy( image, src_hw_gtia_put_image_asm );
 
     outline1("LDA #$%2.2x", _flags );
     outline0("STA IMAGET" );

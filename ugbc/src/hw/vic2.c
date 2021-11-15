@@ -1682,7 +1682,7 @@ Variable * vic2_image_converter( Environment * _environment, char * _data, int _
 void vic2_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _frame_size, int _flags ) {
 
     deploy( vic2vars, src_hw_vic2_vars_asm);
-    deploy( image, src_hw_vic2_image_asm );
+    deploy( image, src_hw_vic2_put_image_asm );
 
     MAKE_LABEL
 

@@ -1271,7 +1271,7 @@ void c6847_put_image( Environment * _environment, char * _image, char * _x, char
     (void)!_flags;
 
     deploy( c6847vars, src_hw_6847_vars_asm);
-    deploy( image, src_hw_6847_image_asm );
+    deploy( image, src_hw_6847_put_image_asm );
 
     outline1("LDY #%s", _image );
     if ( _frame ) {
