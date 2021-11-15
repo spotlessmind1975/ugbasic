@@ -137,7 +137,7 @@ void target_peephole_optimizer( Environment * _environment ) {
 
     sprintf( fileNameOptimized, "%s.asm", tmpnam(NULL) );
 
-    char buffer[3][MAX_TEMPORARY_STORAGE];
+    char buffer[4][MAX_TEMPORARY_STORAGE];
 	int pass = 0;
 	
 	for(change=1; change;) {
@@ -147,23 +147,24 @@ void target_peephole_optimizer( Environment * _environment ) {
 		int line = 0;	
 		int LDD00xx = 0;
 		
-		*buffer[0] = *buffer[1] = *buffer[2] = change = 0;
+		*buffer[0] = *buffer[1] = *buffer[2] = *buffer[3] = change = 0;
 		++pass;
     
 		while( !feof( fileAsm ) ) {
-			char *variable1, *variable2;
+			char *variable1, *variable2, *variable3;
 			
-			if ( line > 2 ) {
+			if ( line > 3 ) {
 				fputs( buffer[0], fileOptimized );
 			}
 			strcpy( buffer[0], buffer[1] );
 			strcpy( buffer[1], buffer[2] );
+			strcpy( buffer[2], buffer[3] );
 			do {
-				fgets( buffer[2], MAX_TEMPORARY_STORAGE, fileAsm );
+				fgets( buffer[3], MAX_TEMPORARY_STORAGE, fileAsm );
 				/* merge comment with previous line */
-				if(isAComment(buffer[2]) && strlen(buffer[1]) + strlen(buffer[2]) + 1 <= MAX_TEMPORARY_STORAGE) {
-					strcat(buffer[1], buffer[2]);
-					buffer[2][0] = '\0';
+				if(isAComment(buffer[3]) && strlen(buffer[2]) + strlen(buffer[3]) + 1 <= MAX_TEMPORARY_STORAGE) {
+					strcat(buffer[2], buffer[3]);
+					buffer[3][0] = '\0';
 				} else break;
 			} while(!feof( fileAsm ) );
 
@@ -238,12 +239,45 @@ void target_peephole_optimizer( Environment * _environment ) {
 				char buf[8]; sprintf(buf, "\tCOM%c\n", *variable1);
 				optim(buffer[0], "rule #13 (EORr #$FF-->COMr)", buf);
 			}
+			if ( (variable1=match(buffer[0], " LDD *"))!=NULL
+			&&   (variable2=match(buffer[1], " STD _Ttmp*"))!=NULL
+			&&              match(buffer[2], " LDX ")
+			&&   (variable3=match(buffer[3], " CMPX _Ttmp*"))!=NULL
+			&& _strcmp(variable2, variable3)==0) {
+				char buf[MAX_TEMPORARY_STORAGE], *s;
+				sprintf(buf, "\tCMPX %s", variable1); 
+				for(s=buf+6; *s  && *s!=' ' && *s!='\t'; ++s); 
+				*s = '\0';
+				// optim(buffer[0], "test", NULL);
+				// optim(buffer[1], "test", NULL);
+				optim(buffer[3], "rule #14 (LDD *->STD Z->LDX *->CMPX Z)", buf);
+			}
+			if( match(buffer[0], " LDX ")
+			&&  match(buffer[1], " CMPX #$0000")) {
+				optim(buffer[1], "rule #15 (LDr->CMPr #0)", NULL);
+			}
+			if( match(buffer[0], " LDY ")
+			&&  match(buffer[1], " CMPY #$0000")) {
+				optim(buffer[1], "rule #15 (LDr->CMPr #0)", NULL);
+			}
+			if( match(buffer[0], " LDU ")
+			&&  match(buffer[1], " CMPU #$0000")) {
+				optim(buffer[31], "rule #15 (LDr->CMPr #0)", NULL);
+			}
+			if( match(buffer[0], " LDA ")
+			&&  match(buffer[1], " CMPA #$00")) {
+				optim(buffer[1], "rule #15 (LDr->CMPr #0)", NULL);
+			}
+			if( match(buffer[0], " LDB ")
+			&&  match(buffer[1], " CMPB #$00")) {
+				optim(buffer[1], "rule #15 (LDr->CMPr #0)", NULL);
+			}
 			++line;
 		}
 
 		fputs( buffer[0], fileOptimized );
 		fputs( buffer[1], fileOptimized );
-		// fputs( buffer[2], fileOptimized );
+		fputs( buffer[2], fileOptimized );
 		fprintf(fileOptimized, "; peephole: pass %d, %d change%s.\n", pass, change, change>1 ?"s":"");
 
 		fclose( fileAsm );

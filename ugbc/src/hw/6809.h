@@ -307,7 +307,6 @@ void cpu6809_protothread_current( Environment * _environment, char * _current );
 #define cpu_bit_check_extended( _environment, _value, _position, _result, _bitwidth ) cpu6809_bit_check_extended( _environment, _value, _position, _result, _bitwidth )
 #define cpu_move_8bit_indirect_with_offset( _environment, _source, _value, _offset ) cpu6809_move_8bit_indirect_with_offset( _environment, _source, _value, _offset )
 #define cpu_move_8bit_indirect_with_offset2( _environment, _source, _value, _offset ) cpu6809_move_8bit_indirect_with_offset2( _environment, _source, _value, _offset )
-#define cpu_move_8bit_indirect_with_offset( _environment, _source, _value, _offset ) cpu6809_move_8bit_with_offset( _environment, _source, _value, _offset )
 #define cpu_dsdefine( _environment, _string, _index ) cpu6809_dsdefine( _environment, _string, _index )
 #define cpu_dsalloc( _environment, _size, _index ) cpu6809_dsalloc( _environment, _size, _index )
 #define cpu_dsfree( _environment, _index ) cpu6809_dsfree( _environment, _index )
