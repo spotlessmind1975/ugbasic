@@ -11,6 +11,7 @@
 "#["[a-fA-F0-9]+"]" { yylval.string = strdup(yytext); return(BufferDefinition); }
 "#["[a-fA-F0-9]+ { yylval.string = strdup(yytext); return(BufferDefinition); }
 
+_[\n\r]+
 [\n\r]+ { return(NewLine);}
 ";" { return(OP_SEMICOLON); }
 ":" { return(OP_COLON); }
@@ -36,6 +37,8 @@
 "/" { return(OP_DIVISION); }
 "[" { return(OSP); }
 "]" { return(CSP); }
+"{" { return(OGP); }
+"}" { return(CGP); }
 "?" { return(QM); }
 
 8BIT { return (BYTE); }
@@ -45,6 +48,7 @@
 A { return (A); }
 ABS { return (ABS); }
 ALT { return (ALT); }
+ARRAY { return (ARRAY); }
 AS { return (AS); }
 ASC { return (ASC); }
 ASTERISK { return (ASTERISK); }
@@ -77,6 +81,7 @@ CALL { return (CALL); }
 CAN { return (CAN); }
 CAPS { return (CAPS); }
 CAPSLOCK { return (CAPSLOCK); }
+CASE { return (CASE); }
 CDOWN { return (CDOWN); }
 CENTER { return (CENTER); }
 CENTRE { return (CENTRE); }
@@ -134,6 +139,7 @@ EMPTY { return(EMPTY); }
 EMPTYTILE { return(EMPTYTILE); }
 END { return (END); }
 ENDIF { return (ENDIF); }
+ENDSELECT { return (ENDSELECT); }
 ENABLE { return (ENABLE); }
 EQUAL { return (EQUAL); }
 EXIT { return (EXIT); }
@@ -253,6 +259,7 @@ ON { return (ON); }
 ONLY { return (ONLY); }
 OR { return (OR); }
 ORANGE { return(ORANGE); }
+OVERLAYED { return(OVERLAYED); }
 P { return (P); }
 PAPER { return(PAPER); }
 PARALLEL { return(PARALLEL); }
@@ -341,12 +348,14 @@ TI { return (TI); }
 TIMER { return (TIMER); }
 TO { return (TO); }
 TURQUOISE { return(TURQUOISE); }
+TRANSPARENCY { return(TRANSPARENCY); }
 TRUE { return(TRUE); }
 U { return (U); }
 UNTIL { return (UNTIL); }
 UP { return (UP); }
 UPPER { return (UPPER); }
 UPPER\$ { return (UPPER); }
+USING { return (USING); }
 V { return (V); }
 VAL { return (VAL); }
 VAR { return (VAR); }

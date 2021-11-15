@@ -56,7 +56,7 @@ Variable * get_paper( Environment * _environment, char * _color ) {
 
     variable_store_string(_environment, result->name, resultString );
 
-    cpu_move_8bit_with_offset(_environment, color->realName, address->realName, 1 );
+    cpu_move_8bit_indirect_with_offset(_environment, color->realName, address->realName, 1 );
         
     return result;
 

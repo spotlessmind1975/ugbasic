@@ -2610,8 +2610,8 @@ void cpu6809_math_and_const_32bit( Environment * _environment, char *_source, in
     inline( cpu_math_and_const_32bit )
 
         outline1("LDD %s", _source );
-        outline1("ANDA #$%2.2x", ( _mask >> 8 ) & 0xff );
-        outline1("ANDB #$%2.2x", ( _mask & 0xff ) );
+        outline1("ANDA #$%2.2x", ( _mask >> 24 ) & 0xff );
+        outline1("ANDB #$%2.2x", ( _mask >> 16 ) & 0xff );
         outline1("STD %s", _source );
         outline1("LDD %s+2", _source );
         outline1("ANDA #$%2.2x", ( _mask >> 8 ) & 0xff );
@@ -3754,23 +3754,6 @@ void cpu6809_move_8bit_indirect( Environment * _environment, char *_source, char
 
 void cpu6809_move_8bit_indirect_with_offset( Environment * _environment, char *_source, char * _value, int _offset ) {
 
-    inline( cpu_move_8bit_indirect_with_offset )
-
-        outline1("LDX %s", _value);
-        if ( _offset >= 0x7f ) {
-            outline0("LEAX 127,X" );
-            _offset -= 0x7f;
-        }
-        outline1("LEAX %d,X", ( _offset & 0x7f ) );
-        outline1("LDA %s", _source);
-        outline0("STA ,X");
-
-    no_embedded( cpu_move_8bit_indirect_with_offset )
-
-}
-
-void cpu6809_move_8bit_with_offset( Environment * _environment, char *_source, char * _value, int _offset ) {
-
     inline( cpu_move_8bit_with_offset )
 
         outline1("LDX %s", _value);
@@ -4562,7 +4545,8 @@ unsigned int src_hw_chipset_mob_asm_len;
 
 void cpu6809_mobinit( Environment * _environment, char * _index, char *_x, char *_y,  char *_draw) {
 
-    // TODO: implementation
+    deploy( mob, src_hw_6809_mob_asm );
+    // deploy( mobcs, src_hw_chipset_mob_asm );
     
 }
 

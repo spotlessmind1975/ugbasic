@@ -3904,7 +3904,7 @@ void test_cpu_move_8bit_with_offset_payload( TestEnvironment * _te ) {
     Variable * asource = variable_define( e, "asource", VT_ADDRESS, 0x4000 );
     Variable * value = variable_define( e, "value", VT_BYTE, 0x42 );
 
-    cpu_move_8bit_with_offset( e, value->realName, asource->realName, 1 );
+    cpu_move_8bit_indirect_with_offset( e, value->realName, asource->realName, 1 );
 
     _te->debug.inspections[_te->debug.inspections_count].name="buffer1";
     _te->debug.inspections[_te->debug.inspections_count].address=0x4000;

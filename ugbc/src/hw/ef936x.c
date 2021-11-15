@@ -38,38 +38,22 @@
 #include <math.h>
 
 static RGBi SYSTEM_PALETTE[] = {
-    // { "BLACK", 
-        { 0x00, 0x00, 0x00, 0 },        
-    // { "WHITE", 
-        { 0xff, 0xff, 0xff, 1 },
-    // { "RED", 
-        { 0x88, 0x00, 0x00, 2 },
-    // { "CYAN", 
-        { 0xaa, 0xff, 0xe6, 3 },
-    // { "VIOLET", 
-        { 0xcc, 0x44, 0xcc, 4 },
-    // { "GREEN", 
-        { 0x00, 0xcc, 0x55, 5 },
-    // { "BLUE", 
-        { 0x00, 0x00, 0xaa, 6 },
-    // { "YELLOW", 
-        { 0xee, 0xee, 0x77, 7 },
-    // { "ORANGE", 
-        { 0xa1, 0x68, 0x3c, 8 },
-    // { "BROWN", 
-        { 0xdd, 0x88, 0x65, 9 },
-    // { "LIGHT_RED", 
-        { 0xff, 0x77, 0x77, 10 },
-    // { "DARK_GREY", 
-        { 0x33, 0x33, 0x33, 11 },
-    // { "GREY", 
-        { 0x77, 0x77, 0x77, 12 },
-    // { "LIGHT_GREEN", 
-        { 0xaa, 0xff, 0x66, 13 },
-    // { "LIGHT_BLUE", 
-        { 0x00, 0x88, 0xff, 14 },
-    // { "LIGHT_GREY", 
-        { 0xbb, 0xbb, 0xbb, 15 }
+        { 0x00, 0x00, 0x00, 0, "BLACK" },        
+        { 0xff, 0xff, 0xff, 1, "WHITE" },
+        { 0x88, 0x00, 0x00, 2, "RED" },
+        { 0xaa, 0xff, 0xe6, 3, "CYAN" },
+        { 0xcc, 0x44, 0xcc, 4, "VIOLET" },
+        { 0x00, 0xcc, 0x55, 5, "GREEN" },
+        { 0x00, 0x00, 0xaa, 6, "BLUE" },
+        { 0xee, 0xee, 0x77, 7, "YELLOW" },
+        { 0xa1, 0x68, 0x3c, 8, "ORANGE" },
+        { 0xdd, 0x88, 0x65, 9, "BROWN" },
+        { 0xff, 0x77, 0x77, 10, "LIGHT RED" },
+        { 0x33, 0x33, 0x33, 11, "DARK GREY" },
+        { 0x77, 0x77, 0x77, 12, "GREY" },
+        { 0xaa, 0xff, 0x66, 13, "LIGHT GREEN" },
+        { 0x00, 0x88, 0xff, 14, "LIGHT BLUE" },
+        { 0xbb, 0xbb, 0xbb, 15, "LIGHT GREY" }
 };
 
 static RGBi * commonPalette;
@@ -681,88 +665,16 @@ static int calculate_luminance(RGBi _a) {
 
 }
 
+static Variable * ef936x_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
 
-/**
- * @brief Calculate the distance between two colors
- *
- * This function calculates the color distance between two colors(_a and _b).
- * By "distance" we mean the geometric distance between two points in a 
- * three-dimensional space, where each dimension corresponds to one of the 
- * components (red, green and blue). The returned value is normalized to 
- * the nearest 8-bit value. 
- * 
- * @param _a First color 
- * @param _b Second color
- * @return int distance
- */
-
-static int calculate_distance(RGBi e1, RGBi e2) {
-
-    long rmean = ( (long)e1.red + (long)e2.red ) / 2;
-    long r = (long)e1.red - (long)e2.red;
-    long g = (long)e1.green - (long)e2.green;
-    long b = (long)e1.blue - (long)e2.blue;
-    return (int)( sqrt((((512+rmean)*r*r)>>8) + 4*g*g + (((767-rmean)*b*b)>>8)) );
-
-}
-
-/**
- * @brief Extract the color palette from the given image
- * 
- * @param _source 
- * @param _palette 
- * @param _palette_size 
- * @return int 
- */
-static int extract_color_palette(unsigned char* _source, int _width, int _height, RGBi _palette[], int _palette_size) {
-
-    RGBi rgb;
-
-    int image_x, image_y;
-
-    int usedPalette = 0;
-    int i = 0;
-    unsigned char* source = _source;
-
-    for (image_y = 0; image_y < _height; ++image_y) {
-        for (image_x = 0; image_x < _width; ++image_x) {
-            rgb.red = *source;
-            rgb.green = *(source + 1);
-            rgb.blue = *(source + 2);
-
-            for (i = 0; i < usedPalette; ++i) {
-                if (_palette[i].red == rgb.red && _palette[i].green == rgb.green && _palette[i].blue == rgb.blue) {
-                    break;
-                }
-            }
-
-            if (i >= usedPalette) {
-                _palette[usedPalette].red = rgb.red;
-                _palette[usedPalette].green = rgb.green;
-                _palette[usedPalette].blue = rgb.blue;
-                ++usedPalette;
-                if (usedPalette > _palette_size) {
-                    break;
-                }
-            }
-            source += 3;
-        }
-        if (usedPalette > _palette_size) {
-            break;
-        }
-    }
-
-    return usedPalette;
-
-}
-
-static Variable * ef936x_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height ) {
+    // ignored on bitmap mode
+    (void)!_transparent_color;
 
     image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
     RGBi palette[MAX_PALETTE];
 
-    int colorUsed = extract_color_palette(_source, _width, _height, palette, MAX_PALETTE);
+    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
 
     if (colorUsed > 2) {
         CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
@@ -774,7 +686,7 @@ static Variable * ef936x_image_converter_bitmap_mode_standard( Environment * _en
         int minDistance = 0xffff;
         int colorIndex = 0;
         for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
-            int distance = calculate_distance(SYSTEM_PALETTE[j], palette[i]);
+            int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
             // printf("%d <-> %d [%d] = %d [min = %d]\n", i, j, SYSTEM_PALETTE[j].index, distance, minDistance );
             if (distance < minDistance) {
                 // printf(" candidated...\n" );
@@ -792,6 +704,7 @@ static Variable * ef936x_image_converter_bitmap_mode_standard( Environment * _en
             }
         }
         palette[i].index = SYSTEM_PALETTE[colorIndex].index;
+        strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
         // printf("%d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
     }
 
@@ -830,7 +743,7 @@ static Variable * ef936x_image_converter_bitmap_mode_standard( Environment * _en
             rgb.blue = *(_source + 2);
 
             for( i=0; i<colorUsed; ++i ) {
-                if ( palette[i].red == rgb.red && palette[i].green == rgb.green && palette[i].blue == rgb.blue ) {
+                if ( rgbi_equals_rgb( &palette[i], &rgb ) ) {
                     break;
                 }
             }
@@ -874,7 +787,10 @@ static Variable * ef936x_image_converter_bitmap_mode_standard( Environment * _en
 
 }
 
-static Variable * ef936x_image_converter_multicolor_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height ) {
+static Variable * ef936x_image_converter_multicolor_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
+
+    // ignored on bitmap mode
+    (void)!_transparent_color;
 
     image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
@@ -884,7 +800,7 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
 
         RGBi * palette = malloc( MAX_PALETTE * sizeof(RGBi) );
 
-        colorUsed = extract_color_palette(_source, _width, _height, palette, MAX_PALETTE);
+        colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
 
         if (colorUsed > 16) {
             CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
@@ -896,7 +812,7 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
             int minDistance = 0xffff;
             int colorIndex = 0;
             for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
-                int distance = calculate_distance(SYSTEM_PALETTE[j], palette[i]);
+                int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
                 // printf("%d (%2.2x%2.2x%2.2x) <-> %d (%2.2x%2.2x%2.2x) [%d] = %d [min = %d]\n", i, SYSTEM_PALETTE[j].red, SYSTEM_PALETTE[j].green, SYSTEM_PALETTE[j].blue, j, palette[i].red, palette[i].green, palette[i].blue, SYSTEM_PALETTE[j].index, distance, minDistance );
                 if (distance < minDistance) {
                     // printf(" candidated...\n" );
@@ -914,6 +830,7 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
                 }
             }
             palette[i].index = SYSTEM_PALETTE[colorIndex].index;
+            strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
             // printf("%d) %d * %d %2.2x%2.2x%2.2x\n", i, colorIndex, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
         }
 
@@ -958,7 +875,7 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
 
             int minDistance = 9999;
             for( int i=0; i<sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++i ) {
-                int distance = calculate_distance(commonPalette[i], rgb );
+                int distance = rgbi_distance(&commonPalette[i], &rgb );
                 if ( distance < minDistance ) {
                     minDistance = distance;
                     colorIndex = commonPalette[i].index;
@@ -1010,7 +927,10 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
 
 }
 
-static Variable * ef936x_image_converter_multicolor_mode4( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height ) {
+static Variable * ef936x_image_converter_multicolor_mode4( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
+
+    // ignored on bitmap mode
+    (void)!_transparent_color;
 
     image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
@@ -1020,7 +940,7 @@ static Variable * ef936x_image_converter_multicolor_mode4( Environment * _enviro
 
         RGBi * palette = malloc( MAX_PALETTE * sizeof(RGBi) );
 
-        int colorUsed = extract_color_palette(_source, _width, _height, palette, MAX_PALETTE);
+        int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
 
         if (colorUsed > 4) {
             CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
@@ -1030,7 +950,7 @@ static Variable * ef936x_image_converter_multicolor_mode4( Environment * _enviro
             int minDistance = 0xffff;
             int colorIndex = 0;
             for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
-                int distance = calculate_distance(SYSTEM_PALETTE[j], palette[i]);
+                int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
                 // printf("%d <-> %d [%d] = %d [min = %d]\n", i, j, SYSTEM_PALETTE[j].index, distance, minDistance );
                 if (distance < minDistance) {
                     // printf(" candidated...\n" );
@@ -1048,6 +968,7 @@ static Variable * ef936x_image_converter_multicolor_mode4( Environment * _enviro
                 }
             }
             palette[i].index = SYSTEM_PALETTE[colorIndex].index;
+            strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
             // printf("%d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
         }
 
@@ -1093,7 +1014,7 @@ static Variable * ef936x_image_converter_multicolor_mode4( Environment * _enviro
 
             colorIndex = 0;
             for( i=0; i<4; ++i ) {
-                int distance = calculate_distance(commonPalette[i], rgb);
+                int distance = rgbi_distance(&commonPalette[i], &rgb);
                 if ( minDistance > distance ) {
                     minDistance = distance;
                     colorIndex = i;
@@ -1144,7 +1065,10 @@ static Variable * ef936x_image_converter_multicolor_mode4( Environment * _enviro
 
 }
 
-static Variable * ef936x_image_converter_multicolor_mode16( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height ) {
+static Variable * ef936x_image_converter_multicolor_mode16( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
+
+    // ignored on bitmap mode
+    (void)!_transparent_color;
 
     image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
@@ -1155,7 +1079,7 @@ static Variable * ef936x_image_converter_multicolor_mode16( Environment * _envir
         RGBi * palette = malloc( MAX_PALETTE * sizeof(RGBi) );
         memset( palette, 0, MAX_PALETTE * sizeof(RGBi) );
 
-        int colorUsed = extract_color_palette(_source, _width, _height, palette, MAX_PALETTE);
+        int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
 
         if (colorUsed > 16) {
             CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
@@ -1165,7 +1089,7 @@ static Variable * ef936x_image_converter_multicolor_mode16( Environment * _envir
             int minDistance = 0xffff;
             int colorIndex = 0;
             for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
-                int distance = calculate_distance(SYSTEM_PALETTE[j], palette[i]);
+                int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
                 // printf("%d <-> %d [%d] = %d [min = %d]\n", i, j, SYSTEM_PALETTE[j].index, distance, minDistance );
                 if (distance < minDistance) {
                     // printf(" candidated...\n" );
@@ -1182,10 +1106,7 @@ static Variable * ef936x_image_converter_multicolor_mode16( Environment * _envir
                     }
                 }
             }
-            palette[i].index = SYSTEM_PALETTE[colorIndex].index;
-            palette[i].red = SYSTEM_PALETTE[colorIndex].red;
-            palette[i].green = SYSTEM_PALETTE[colorIndex].green;
-            palette[i].blue = SYSTEM_PALETTE[colorIndex].blue;
+            rgbi_move(&SYSTEM_PALETTE[colorIndex], &palette[i] );
             palette[i].used = 1;
             // printf("[*] %d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
         }
@@ -1197,7 +1118,7 @@ static Variable * ef936x_image_converter_multicolor_mode16( Environment * _envir
 
         RGBi * palette = malloc( MAX_PALETTE * sizeof(RGBi) );
 
-        int colorUsed = extract_color_palette(_source, _width, _height, palette, MAX_PALETTE);
+        int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
 
         if (colorUsed > 16) {
             CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
@@ -1212,7 +1133,7 @@ static Variable * ef936x_image_converter_multicolor_mode16( Environment * _envir
             for (j = 0; j < lastUsedSlotInCommonPalette; ++j) {
                 // printf("[+] common %d) %d %2.2x%2.2x%2.2x\n", j, commonPalette[j].index, commonPalette[j].red, commonPalette[j].green, commonPalette[j].blue);
                 if ( commonPalette[j].used ) {
-                    int distance = calculate_distance(commonPalette[j], palette[i]);
+                    int distance = rgbi_distance(&commonPalette[j], &palette[i]);
                     // printf("    (%d<->%d) >> %2.2x%2.2x%2.2x <-> %2.2x%2.2x%2.2x (%d)\n", j, i, commonPalette[j].red, commonPalette[j].green, commonPalette[j].blue, palette[i].red, palette[i].green, palette[i].blue, distance);
                     if (distance < 5 ) {
                         palette[i].used = 1;
@@ -1230,7 +1151,7 @@ static Variable * ef936x_image_converter_multicolor_mode16( Environment * _envir
             int minDistance = 0xffff;
             int colorIndex = 0;
             for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
-                int distance = calculate_distance(SYSTEM_PALETTE[j], palette[i]);
+                int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
                 // printf("%d <-> %d [%d] = %d [min = %d]\n", i, j, SYSTEM_PALETTE[j].index, distance, minDistance );
                 if (distance < minDistance) {
                     // printf(" candidated...\n" );
@@ -1247,10 +1168,7 @@ static Variable * ef936x_image_converter_multicolor_mode16( Environment * _envir
                     }
                 }
             }
-            commonPalette[lastUsedSlotInCommonPalette].index = SYSTEM_PALETTE[colorIndex].index;
-            commonPalette[lastUsedSlotInCommonPalette].red = SYSTEM_PALETTE[colorIndex].red;
-            commonPalette[lastUsedSlotInCommonPalette].green = SYSTEM_PALETTE[colorIndex].green;
-            commonPalette[lastUsedSlotInCommonPalette].blue = SYSTEM_PALETTE[colorIndex].blue;
+            rgbi_move(&SYSTEM_PALETTE[colorIndex], &commonPalette[lastUsedSlotInCommonPalette]);
             commonPalette[lastUsedSlotInCommonPalette].used = 1;
             ++lastUsedSlotInCommonPalette;
             // printf("#> %d) %d %2.2x%2.2x%2.2x\n", i, commonPalette[i].index, commonPalette[i].red, commonPalette[i].green, commonPalette[i].blue);
@@ -1300,7 +1218,7 @@ static Variable * ef936x_image_converter_multicolor_mode16( Environment * _envir
 
             colorIndex = 0;
             for( i=0; i<16; ++i ) {
-                int distance = calculate_distance(commonPalette[i], rgb);
+                int distance = rgbi_distance(&commonPalette[i], &rgb);
                 if ( minDistance > distance ) {
                     minDistance = distance;
                     colorIndex = i;
@@ -1339,16 +1257,16 @@ static Variable * ef936x_image_converter_multicolor_mode16( Environment * _envir
 
 }
 
-Variable * ef936x_image_converter( Environment * _environment, char * _data, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode ) {
+Variable * ef936x_image_converter( Environment * _environment, char * _data, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags ) {
 
     switch( _mode ) {
         case BITMAP_MODE_40_COLUMN:
-            return ef936x_image_converter_multicolor_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height );
+            return ef936x_image_converter_multicolor_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
         case BITMAP_MODE_BITMAP_4:
-            return ef936x_image_converter_multicolor_mode4( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height );
+            return ef936x_image_converter_multicolor_mode4( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
         case BITMAP_MODE_80_COLUMN:
         case BITMAP_MODE_BITMAP_16:
-            return ef936x_image_converter_multicolor_mode16( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height );
+            return ef936x_image_converter_multicolor_mode16( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
         case BITMAP_MODE_PAGE:
             // CRITICAL_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
             break;
@@ -1360,11 +1278,13 @@ Variable * ef936x_image_converter( Environment * _environment, char * _data, int
 
 }
 
-void ef936x_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _frame_size ) {
+void ef936x_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _frame_size, int _flags ) {
 
     deploy( ef936xvars, src_hw_ef936x_vars_asm);
     deploy( image, src_hw_ef936x_image_asm );
 
+    outline1("LDA #$%2.2x", _flags );
+    outline0("STA <IMAGET" );
     outline1("LDY #%s", _image );
     if ( _frame ) {
         outline0("LEAY 2,y" );

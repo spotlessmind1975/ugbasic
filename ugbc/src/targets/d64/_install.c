@@ -51,7 +51,7 @@ void target_install( Environment * _environment ) {
 
         printf("Do you want to continue [y/N] ?");
 
-        scanf(" %c", &answer);
+        (void)!scanf(" %c", &answer);
 
         printf("\n\n");
 
@@ -61,7 +61,7 @@ void target_install( Environment * _environment ) {
             mkdir("asm6809\\bin");
 
             printf("Downloading: asm6809 assembler\n\n");
-            system( "curl https://ugbasic.iwashere.eu/download/asm6809.exe --output asm6809\\bin\\asm6809.exe" );
+            (void)!system( "curl https://ugbasic.iwashere.eu/download/asm6809.exe --output asm6809\\bin\\asm6809.exe" );
 
             printf("\n\nInstalling: asm6809 assembler\n\n");
 

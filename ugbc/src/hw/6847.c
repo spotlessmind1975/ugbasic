@@ -38,24 +38,15 @@
 #include <math.h>
 
 static RGBi SYSTEM_PALETTE[] = {
-    // { "BLACK", 
-        { 0x00, 0x00, 0x00, 0 },        
-    // { "GREEN", 
-        { 0x00, 0xcc, 0x55, 1 },
-    // { "YELLOW", 
-        { 0xee, 0xee, 0x77, 2 },
-    // { "BLUE", 
-        { 0x00, 0x00, 0xaa, 3 },
-    // { "RED", 
-        { 0x88, 0x00, 0x00, 4 },
-    // { "BUFF", 
-        { 0xf0, 0xf0, 0xf0, 5 },
-    // { "CYAN", 
-        { 0xaa, 0xff, 0xe6, 6 },
-    // { "MAGENTA", <- 
-        { 0xcc, 0x44, 0xcc, 7 },
-    // { "ORANGE", 
-        { 0xa1, 0x68, 0x3c, 8 }
+        { 0x00, 0x00, 0x00, 0, "BLACK" },        
+        { 0x00, 0xcc, 0x55, 1, "GREEN" },
+        { 0xee, 0xee, 0x77, 2, "YELLOW" },
+        { 0x00, 0x00, 0xaa, 3, "BLUE" },
+        { 0x88, 0x00, 0x00, 4, "RED" },
+        { 0xf0, 0xf0, 0xf0, 5, "BUFF" },
+        { 0xaa, 0xff, 0xe6, 6, "CYAN" },
+        { 0xcc, 0x44, 0xcc, 7, "MAGENTA" },
+        { 0xa1, 0x68, 0x3c, 8, "ORANGE" }
 };
 
 static RGBi * commonPalette;
@@ -1002,88 +993,16 @@ static int calculate_luminance(RGBi _a) {
 
 }
 
+static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
 
-/**
- * @brief Calculate the distance between two colors
- *
- * This function calculates the color distance between two colors(_a and _b).
- * By "distance" we mean the geometric distance between two points in a 
- * three-dimensional space, where each dimension corresponds to one of the 
- * components (red, green and blue). The returned value is normalized to 
- * the nearest 8-bit value. 
- * 
- * @param _a First color 
- * @param _b Second color
- * @return int distance
- */
-
-static int calculate_distance(RGBi e1, RGBi e2) {
-
-    long rmean = ( (long)e1.red + (long)e2.red ) / 2;
-    long r = (long)e1.red - (long)e2.red;
-    long g = (long)e1.green - (long)e2.green;
-    long b = (long)e1.blue - (long)e2.blue;
-    return (int)( sqrt((((512+rmean)*r*r)>>8) + 4*g*g + (((767-rmean)*b*b)>>8)) );
-
-}
-
-/**
- * @brief Extract the color palette from the given image
- * 
- * @param _source 
- * @param _palette 
- * @param _palette_size 
- * @return int 
- */
-static int extract_color_palette(unsigned char* _source, int _width, int _height, RGBi _palette[], int _palette_size) {
-
-    RGBi rgb;
-
-    int image_x, image_y;
-
-    int usedPalette = 0;
-    int i = 0;
-    unsigned char* source = _source;
-
-    for (image_y = 0; image_y < _height; ++image_y) {
-        for (image_x = 0; image_x < _width; ++image_x) {
-            rgb.red = *source;
-            rgb.green = *(source + 1);
-            rgb.blue = *(source + 2);
-
-            for (i = 0; i < usedPalette; ++i) {
-                if (_palette[i].red == rgb.red && _palette[i].green == rgb.green && _palette[i].blue == rgb.blue) {
-                    break;
-                }
-            }
-
-            if (i >= usedPalette) {
-                _palette[usedPalette].red = rgb.red;
-                _palette[usedPalette].green = rgb.green;
-                _palette[usedPalette].blue = rgb.blue;
-                ++usedPalette;
-                if (usedPalette > _palette_size) {
-                    break;
-                }
-            }
-            source += 3;
-        }
-        if (usedPalette > _palette_size) {
-            break;
-        }
-    }
-
-    return usedPalette;
-
-}
-
-static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height ) {
+    // ignored on bitmap mode
+    (void)!_transparent_color;
 
     image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
     RGBi palette[MAX_PALETTE];
 
-    int colorUsed = extract_color_palette(_source, _width, _height, palette, MAX_PALETTE);
+    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
 
     if (colorUsed > 2) {
         CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
@@ -1095,25 +1014,21 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
         int minDistance = 0xffff;
         int colorIndex = 0;
         for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
-            int distance = calculate_distance(SYSTEM_PALETTE[j], palette[i]);
-            // printf("%d <-> %d [%d] = %d [min = %d]\n", i, j, SYSTEM_PALETTE[j].index, distance, minDistance );
+            int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
             if (distance < minDistance) {
-                // printf(" candidated...\n" );
                 for( k=0; k<i; ++k ) {
                     if ( palette[k].index == SYSTEM_PALETTE[j].index ) {
-                        // printf(" ...used!\n" );
                         break;
                     }
                 }
                 if ( k>=i ) {
-                    // printf(" ...ok! (%d)\n", SYSTEM_PALETTE[j].index );
                     minDistance = distance;
                     colorIndex = j;
                 }
             }
         }
         palette[i].index = SYSTEM_PALETTE[colorIndex].index;
-        // printf("%d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
+        strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
     }
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
@@ -1151,7 +1066,7 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
             rgb.blue = *(_source + 2);
 
             for( i=0; i<colorUsed; ++i ) {
-                if ( palette[i].red == rgb.red && palette[i].green == rgb.green && palette[i].blue == rgb.blue ) {
+                if ( rgbi_equals_rgb( &palette[i], &rgb ) ) {
                     break;
                 }
             }
@@ -1195,15 +1110,18 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
 
 }
 
-static Variable * c6847_image_converter_multicolor_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height ) {
+static Variable * c6847_image_converter_multicolor_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
 
+    // ignored on bitmap mode
+    (void)!_transparent_color;
+    
     image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
     if ( ! commonPalette ) {
 
         RGBi * palette = malloc( sizeof( RGBi ) * MAX_PALETTE );
 
-        int colorUsed = extract_color_palette(_source, _width, _height, palette, MAX_PALETTE);
+        int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
 
         if (colorUsed > 4) {
             CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
@@ -1215,7 +1133,7 @@ static Variable * c6847_image_converter_multicolor_mode_standard( Environment * 
             int minDistance = 0xffff;
             int colorIndex = 0;
             for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
-                int distance = calculate_distance(SYSTEM_PALETTE[j], palette[i]);
+                int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
                 // printf("%d (%2.2x%2.2x%2.2x) <-> %d (%2.2x%2.2x%2.2x) [%d] = %d [min = %d]\n", i, SYSTEM_PALETTE[j].red, SYSTEM_PALETTE[j].green, SYSTEM_PALETTE[j].blue, j, palette[i].red, palette[i].green, palette[i].blue, SYSTEM_PALETTE[j].index, distance, minDistance );
                 if (distance < minDistance) {
                     // printf(" candidated...\n" );
@@ -1233,6 +1151,7 @@ static Variable * c6847_image_converter_multicolor_mode_standard( Environment * 
                 }
             }
             palette[i].index = SYSTEM_PALETTE[colorIndex].index;
+            strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
             // printf("%d) %d * %d %2.2x%2.2x%2.2x\n", i, colorIndex, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
         }
 
@@ -1278,7 +1197,7 @@ static Variable * c6847_image_converter_multicolor_mode_standard( Environment * 
 
             int minDistance = 9999;
             for( int i=0; i<4; ++i ) {
-                int distance = calculate_distance(commonPalette[i], rgb );
+                int distance = rgbi_distance(&commonPalette[i], &rgb );
                 if ( distance < minDistance ) {
                     minDistance = distance;
                     colorIndex = i;
@@ -1313,7 +1232,7 @@ static Variable * c6847_image_converter_multicolor_mode_standard( Environment * 
 
 }
 
-Variable * c6847_image_converter( Environment * _environment, char * _data, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode ) {
+Variable * c6847_image_converter( Environment * _environment, char * _data, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags ) {
 
     switch( _mode ) {
         case TILEMAP_MODE_INTERNAL:         // Alphanumeric Internal	32 × 16	2	512
@@ -1329,7 +1248,7 @@ Variable * c6847_image_converter( Environment * _environment, char * _data, int 
         case BITMAP_MODE_COLOR3:            // Color Graphics 3	128 × 96	4	3072
         case BITMAP_MODE_COLOR6:            // Color Graphics 6	128 × 192	4	6144
 
-            return c6847_image_converter_multicolor_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height );
+            return c6847_image_converter_multicolor_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
 
             break;
 
@@ -1338,7 +1257,7 @@ Variable * c6847_image_converter( Environment * _environment, char * _data, int 
         case BITMAP_MODE_RESOLUTION3:       // Resolution Graphics 3	128 × 192	1 + Black	3072
         case BITMAP_MODE_RESOLUTION6:       // Resolution Graphics 6	256 × 192	1 + Black	6144            break;
 
-            return c6847_image_converter_bitmap_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height );
+            return c6847_image_converter_bitmap_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
 
     }
 
@@ -1346,7 +1265,10 @@ Variable * c6847_image_converter( Environment * _environment, char * _data, int 
 
 }
 
-void c6847_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _frame_size ) {
+void c6847_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _frame_size, int _flags ) {
+
+    // currently unused
+    (void)!_flags;
 
     deploy( c6847vars, src_hw_6847_vars_asm);
     deploy( image, src_hw_6847_image_asm );

@@ -11,6 +11,7 @@ extern int yylineno;
 int yywrap() { return 1; }
  
 extern char DATATYPE_AS_STRING[][16];
+extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 
 %}
 
@@ -51,7 +52,8 @@ extern char DATATYPE_AS_STRING[][16];
 %token INPUT FREE TILEMAP EMPTY TILE EMPTYTILE PLOT GR CIRCLE DRAW LINE BOX POLYLINE ELLIPSE CLIP
 %token BACK DEBUG CAN ELSEIF BUFFER LOAD SIZE MOB IMAGE PUT VISIBLE HIDDEN HIDE SHOW RENDER
 %token SQR TI CONST VBL POKE NOP FILL IN POSITIVE DEFINE ATARI ATARIXL C64 DRAGON DRAGON32 DRAGON64 PLUS4 ZX 
-%token FONT VIC20 PARALLEL YIELD SPAWN THREAD TASK IMAGES FRAME FRAMES XY YX ROLL MASKED
+%token FONT VIC20 PARALLEL YIELD SPAWN THREAD TASK IMAGES FRAME FRAMES XY YX ROLL MASKED USING TRANSPARENCY
+%token OVERLAYED CASE ENDSELECT OGP CGP ARRAY
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -80,6 +82,11 @@ extern char DATATYPE_AS_STRING[][16];
 %type <integer> protothread_definition
 %type <integer> on_targets
 %type <integer> image_load_flags image_load_flags1 image_load_flag
+%type <integer> images_load_flags images_load_flags1 images_load_flag
+%type <integer> put_image_flags put_image_flags1 put_image_flag
+%type <integer> const_color_enumeration
+%type <integer> using_transparency
+%type <integer> using_background
 
 %right Integer String CP 
 %left OP_DOLLAR
@@ -164,6 +171,89 @@ const_modula:
         $$ = $1 / $3;
     } 
     ;
+
+const_color_enumeration:
+      BLACK {
+          $$ = COLOR_BLACK;
+      }
+      | WHITE {
+          $$ = COLOR_WHITE;
+      }
+      | RED {
+          $$ = COLOR_RED;
+      }
+      | CYAN {
+          $$ = COLOR_CYAN;
+      }
+      | VIOLET {
+          $$ = COLOR_VIOLET;
+      }
+      | GREEN {
+          $$ = COLOR_GREEN;
+      }
+      | BLUE {
+          $$ = COLOR_BLUE;
+      }
+      | YELLOW {
+          $$ = COLOR_YELLOW;
+      }
+      | ORANGE {
+          $$ = COLOR_ORANGE;
+      }
+      | BROWN {
+          $$ = COLOR_BROWN;
+      }
+      | LIGHT RED {
+          $$ = COLOR_LIGHT_RED;
+      }
+      | DARK GREY {
+          $$ = COLOR_DARK_GREY;
+      }
+      | GREY {
+          $$ = COLOR_GREY;
+      }
+      | LIGHT GREEN {
+          $$ = COLOR_LIGHT_GREEN;
+      }
+      | LIGHT BLUE {
+          $$ = COLOR_LIGHT_BLUE;
+      }
+      | LIGHT GREY {
+          $$ = COLOR_LIGHT_GREY;
+      }
+      | DARK BLUE {
+          $$ = COLOR_DARK_BLUE;
+      }
+      | MAGENTA {
+          $$ = COLOR_MAGENTA;
+      }
+      | PURPLE {
+          $$ = COLOR_PURPLE;
+      }
+      | LAVENDER {
+          $$ = COLOR_LAVENDER;
+      }
+      | GOLD {
+          $$ = COLOR_GOLD;
+      }
+      | TURQUOISE {
+          $$ = COLOR_TURQUOISE;
+      }
+      | TAN {
+          $$ = COLOR_TAN;
+      }
+      | YELLOW GREEN {
+          $$ = COLOR_YELLOW_GREEN;
+      }
+      | OLIVE GREEN {
+          $$ = COLOR_OLIVE_GREEN;
+      }
+      | PINK {
+          $$ = COLOR_PINK;
+      }
+      | PEACH {
+          $$ = COLOR_PEACH;
+      };
 
 const_factor: 
         Integer
@@ -259,6 +349,7 @@ const_factor:
           }
           $$ = c->value;
       }
+      | const_color_enumeration
       ;
 
 expr : 
@@ -372,10 +463,43 @@ image_load_flag :
     | FLIP YX {
         $$ = FLAG_FLIP_X | FLAG_FLIP_Y;
     }
+    | OVERLAYED {
+        $$ = FLAG_OVERLAYED;
+    };
+
+put_image_flag :
+    WITH TRANSPARENCY {
+        $$ = FLAG_TRANSPARENCY;
+    };
+
+images_load_flag :
+    FLIP X {
+        $$ = FLAG_FLIP_X;
+    }
+    | FLIP Y {
+        $$ = FLAG_FLIP_Y;
+    }
+    | FLIP XY {
+        $$ = FLAG_FLIP_X | FLAG_FLIP_Y;
+    }
+    | FLIP YX {
+        $$ = FLAG_FLIP_X | FLAG_FLIP_Y;
+    }
     | ROLL X {
         $$ = FLAG_ROLL_X;
     }
+    | OVERLAYED {
+        $$ = FLAG_OVERLAYED;
+    }
     ;
+
+put_image_flags1 :
+    put_image_flag {
+        $$ = $1;
+    }
+    | put_image_flag put_image_flags1 {
+        $$ = $1 | $2;
+    };
 
 image_load_flags1 :
     image_load_flag {
@@ -385,12 +509,54 @@ image_load_flags1 :
         $$ = $1 | $2;
     };
 
+images_load_flags1 :
+    images_load_flag {
+        $$ = $1;
+    }
+    | images_load_flag images_load_flags1 {
+        $$ = $1 | $2;
+    };
+
+using_transparency :
+    {
+        $$ = -1;    
+    } 
+    | TRANSPARENCY {
+        $$ = COLOR_BLACK;
+    }
+    | TRANSPARENCY const_color_enumeration {
+        $$ = $2;
+    };
+
+using_background :
+    {
+        $$ = -1;    
+    } 
+    | BACKGROUND const_color_enumeration {
+        $$ = $2;
+    };
 
 image_load_flags :
     {
         $$ = 0;    
     } 
     | image_load_flags1 {
+        $$ = $1;
+    };
+
+put_image_flags :
+    {
+        $$ = 0;    
+    } 
+    | put_image_flags1 {
+        $$ = $1;
+    };
+
+images_load_flags :
+    {
+        $$ = 0;    
+    } 
+    | images_load_flags1 {
         $$ = $1;
     };
 
@@ -1018,41 +1184,41 @@ exponential:
     | LOAD OP String AS String OP_COMMA Integer CP {
         $$ = load( _environment, $3, $5, $7 )->name;
       }
-    | IMAGES LOAD OP String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP image_load_flags {        
-        $$ = images_load( _environment, $4, NULL, ((struct _Environment *)_environment)->currentMode, $9, $11, $13 )->name;
+    | IMAGES LOAD OP String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP images_load_flags  using_transparency using_background  {        
+        $$ = images_load( _environment, $4, NULL, ((struct _Environment *)_environment)->currentMode, $9, $11, $13, $14, $15 )->name;
       }
-    | IMAGES LOAD OP String AS String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP image_load_flags {        
-        $$ = images_load( _environment, $4, $6, ((struct _Environment *)_environment)->currentMode, $11, $13, $15 )->name;
+    | IMAGES LOAD OP String AS String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP images_load_flags  using_transparency using_background  {        
+        $$ = images_load( _environment, $4, $6, ((struct _Environment *)_environment)->currentMode, $11, $13, $15, $16, $17 )->name;
       }
-    | LOAD IMAGES OP String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP image_load_flags {        
-        $$ = images_load( _environment, $4, NULL, ((struct _Environment *)_environment)->currentMode, $9, $11, $13 )->name;
+    | LOAD IMAGES OP String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP images_load_flags  using_transparency using_background  {        
+        $$ = images_load( _environment, $4, NULL, ((struct _Environment *)_environment)->currentMode, $9, $11, $13, $14, $15 )->name;
       }
-    | LOAD IMAGES OP String AS String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP image_load_flags {        
-        $$ = images_load( _environment, $4, $6, ((struct _Environment *)_environment)->currentMode, $11, $13, $15 )->name;
+    | LOAD IMAGES OP String AS String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP images_load_flags  using_transparency using_background {
+        $$ = images_load( _environment, $4, $6, ((struct _Environment *)_environment)->currentMode, $11, $13, $15, $16, $17 )->name;
       }
-    | IMAGE LOAD OP String CP image_load_flags {
-        $$ = image_load( _environment, $4, NULL, ((struct _Environment *)_environment)->currentMode, $6 )->name;
+    | IMAGE LOAD OP String CP image_load_flags  using_transparency using_background  {
+        $$ = image_load( _environment, $4, NULL, ((struct _Environment *)_environment)->currentMode, $6, $7, $8 )->name;
       }
-    | IMAGE LOAD OP String AS String CP image_load_flags {
-        $$ = image_load( _environment, $4, $6, ((struct _Environment *)_environment)->currentMode, $8 )->name;
+    | IMAGE LOAD OP String AS String CP image_load_flags  using_transparency using_background  {
+        $$ = image_load( _environment, $4, $6, ((struct _Environment *)_environment)->currentMode, $8, $9, $10 )->name;
       }
-    | IMAGE LOAD OP String OP_COMMA Integer CP image_load_flags {
-        $$ = image_load( _environment, $4, NULL, $6, $8 )->name;
+    | IMAGE LOAD OP String OP_COMMA Integer CP image_load_flags  using_transparency using_background  {
+        $$ = image_load( _environment, $4, NULL, $6, $8, $9, $10 )->name;
       }
-    | IMAGE LOAD OP String AS String OP_COMMA Integer CP image_load_flags {
-        $$ = image_load( _environment, $4, $6, $8, $10 )->name;
+    | IMAGE LOAD OP String AS String OP_COMMA Integer CP image_load_flags  using_transparency using_background  {
+        $$ = image_load( _environment, $4, $6, $8, $10, $11, $12 )->name;
       }
-    | LOAD IMAGE OP String CP image_load_flags {
-        $$ = image_load( _environment, $4, NULL, ((struct _Environment *)_environment)->currentMode, $6 )->name;
+    | LOAD IMAGE OP String CP image_load_flags  using_transparency using_background  {
+        $$ = image_load( _environment, $4, NULL, ((struct _Environment *)_environment)->currentMode, $6, $7, $8 )->name;
       }
-    | LOAD IMAGE OP String AS String CP image_load_flags {
-        $$ = image_load( _environment, $4, $6, ((struct _Environment *)_environment)->currentMode, $8 )->name;
+    | LOAD IMAGE OP String AS String CP image_load_flags  using_transparency using_background  {
+        $$ = image_load( _environment, $4, $6, ((struct _Environment *)_environment)->currentMode, $8, $9, $10 )->name;
       }
-    | LOAD IMAGE OP String OP_COMMA Integer CP image_load_flags {
-        $$ = image_load( _environment, $4, NULL, $6, $8 )->name;
+    | LOAD IMAGE OP String OP_COMMA Integer CP image_load_flags  using_transparency using_background  {
+        $$ = image_load( _environment, $4, NULL, $6, $8, $9, $10 )->name;
       }
-    | LOAD IMAGE OP String AS String OP_COMMA Integer CP image_load_flags {
-        $$ = image_load( _environment, $4, $6, $8, $10 )->name;
+    | LOAD IMAGE OP String AS String OP_COMMA Integer CP image_load_flags  using_transparency using_background  {
+        $$ = image_load( _environment, $4, $6, $8, $10, $11, $12 )->name;
       }
    | SIZE OP expr CP {
         Variable * v = variable_retrieve( _environment, $3 );
@@ -2173,19 +2339,19 @@ mob_definition:
     mob_definition_expression;
 
 put_definition_expression:
-      IMAGE expr AT optional_x OP_COMMA optional_y {
-        put_image( _environment, $2, $4, $6, NULL );
+      IMAGE expr AT optional_x OP_COMMA optional_y put_image_flags {
+        put_image( _environment, $2, $4, $6, NULL, $7 );
         gr_locate( _environment, $4, $6 );
     }
-    |  IMAGE expr FRAME expr AT optional_x OP_COMMA optional_y {
-        put_image( _environment, $2, $6, $8, $4 );
+    |  IMAGE expr FRAME expr AT optional_x OP_COMMA optional_y put_image_flags {
+        put_image( _environment, $2, $6, $8, $4, $9 );
         gr_locate( _environment, $6, $8 );
     }
-    | IMAGE expr {
-        put_image( _environment, $2, "XGR", "YGR", NULL );
+    | IMAGE expr put_image_flags {
+        put_image( _environment, $2, "XGR", "YGR", NULL, $3 );
     }
-    | IMAGE expr FRAME expr {
-        put_image( _environment, $2, "XGR", "YGR", $4 );
+    | IMAGE expr FRAME expr put_image_flags {
+        put_image( _environment, $2, "XGR", "YGR", $4, $5 );
     }
     ;
 
@@ -2395,60 +2561,267 @@ datatype :
     }
     | STRING {
         $$ = VT_DSTRING;
+    }
+    | IMAGE {
+        $$ = VT_IMAGE;
+    }
+    | IMAGES {
+        $$ = VT_IMAGE;
+    }
+    | BUFFER {
+        $$ = VT_BUFFER;
     };
-    
+
+const_array_definition :
+    const_expr {
+        Variable *currentArray = ((struct _Environment *)_environment)->currentArray;
+        Constant * first = currentArray->arrayInitialization;
+        Constant * c = malloc( sizeof( Constant ) );
+        c->value = $1;
+        if ( first ) {
+            while( first->next ) {
+                first = first->next;
+            }
+            first->next = c;
+        } else {
+            currentArray->arrayInitialization = c;
+        }        
+    }
+
+const_array_definitions1:
+    const_array_definition {
+
+    }
+    | const_array_definition OP_COMMA const_array_definitions1 {
+
+    };
+
+const_array_definitions : 
+    {
+
+    }
+    | const_array_definitions1;
+
+array_assign: {
+        if ( ! ((struct _Environment *)_environment)->currentArray->memoryArea ) {
+            memory_area_assign( ((struct _Environment *)_environment)->memoryAreas, ((struct _Environment *)_environment)->currentArray );
+        }
+        if ( ((struct _Environment *)_environment)->currentArray->memoryArea ) {
+            variable_store( _environment, ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->value );
+        }
+    }
+    | OP_ASSIGN BufferDefinition {
+        int size = ( strlen( $2 ) - 3 ) / 2;
+        if ( size != ((struct _Environment *)_environment)->currentArray->size ) {
+            CRITICAL_BUFFER_SIZE_MISMATCH_ARRAY_SIZE( ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->size, size );
+        }
+        char * buffer = malloc( size );
+        char hexdigits[3];
+        int i = 0, c = 0, j = 0;
+        for( i = 2, c = strlen( $2 ); i<(c-2); i += 2 ) {
+            hexdigits[0] = $2[i];
+            hexdigits[1] = $2[i+1];
+            hexdigits[2] = 0;
+            buffer[j] = strtol(hexdigits,0,16);
+            ++j;
+        }
+        ((struct _Environment *)_environment)->currentArray->valueBuffer = buffer;
+        ((struct _Environment *)_environment)->currentArray->memoryArea = NULL;
+        ((struct _Environment *)_environment)->currentArray = NULL;
+    }
+    | OP_ASSIGN {
+        Variable *currentArray = ((struct _Environment *)_environment)->currentArray;
+        currentArray->arrayInitialization = NULL;
+    } OP_HASH OGP const_array_definitions CGP {
+        Variable *currentArray = ((struct _Environment *)_environment)->currentArray;
+        char * buffer = malloc( currentArray->size ), * ptr = buffer;
+        int i=0;
+        Constant * initializationValues = currentArray->arrayInitialization;
+        while(initializationValues) {
+            switch( VT_BITWIDTH(currentArray->arrayType) ) {
+                case 8:
+                    *ptr = (initializationValues->value) & 0xff;
+                    ++ptr;
+                    break;
+                case 16:
+                    #ifdef CPU_BIG_ENDIAN
+                        *ptr = ( initializationValues->value >> 8 ) & 0xff;
+                        *(ptr+1) = ( initializationValues->value ) & 0xff;
+                    #else
+                        *(ptr+1) = ( initializationValues->value >> 8 ) & 0xff;
+                        *ptr = ( initializationValues->value ) & 0xff;
+                    #endif
+                    ptr += 2;
+                    break;
+                case 32:
+                    #ifdef CPU_BIG_ENDIAN
+                        *ptr = ( initializationValues->value >> 24 ) & 0xff;
+                        *(ptr+1) = ( initializationValues->value >> 16 ) & 0xff;
+                        *(ptr+2) = ( initializationValues->value >> 8 ) & 0xff;
+                        *(ptr+3) = ( initializationValues->value ) & 0xff;
+                    #else
+                        *(ptr+3) = ( initializationValues->value >> 24 ) & 0xff;
+                        *(ptr+2) = ( initializationValues->value >> 16 ) & 0xff;
+                        *(ptr+1) = ( initializationValues->value >> 8 ) & 0xff;
+                        *ptr = ( initializationValues->value ) & 0xff;
+                    #endif
+                    ptr += 4;
+                    break;
+            }
+            initializationValues = initializationValues->next;
+        }
+        if ( ( ptr - buffer ) != currentArray->size ) {
+            CRITICAL_BUFFER_SIZE_MISMATCH_ARRAY_SIZE( currentArray->name, currentArray->size, (int)(ptr-buffer));
+        }
+        ((struct _Environment *)_environment)->currentArray->valueBuffer = buffer;
+        ((struct _Environment *)_environment)->currentArray->memoryArea = NULL;
+        ((struct _Environment *)_environment)->currentArray = NULL;
+    };
+
+array_reassign:
+    BufferDefinition {
+        int size = ( strlen( $1 ) - 3 ) / 2;
+        if ( size != ((struct _Environment *)_environment)->currentArray->size ) {
+            CRITICAL_BUFFER_SIZE_MISMATCH_ARRAY_SIZE( ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->size, size );
+        }
+        char * buffer = malloc( size );
+        char hexdigits[3];
+        int i = 0, c = 0, j = 0;
+        for( i = 2, c = strlen( $1 ); i<(c-2); i += 2 ) {
+            hexdigits[0] = $1[i];
+            hexdigits[1] = $1[i+1];
+            hexdigits[2] = 0;
+            buffer[j] = strtol(hexdigits,0,16);
+            ++j;
+        }
+        variable_store_array( _environment, ((struct _Environment *)_environment)->currentArray->name, buffer, size, 0 );
+        ((struct _Environment *)_environment)->currentArray = NULL;
+    }
+    | {
+        Variable *currentArray = ((struct _Environment *)_environment)->currentArray;
+        currentArray->arrayInitialization = NULL;
+    } OP_HASH OGP const_array_definitions CGP {
+        Variable *currentArray = ((struct _Environment *)_environment)->currentArray;
+        int size = currentArray->size;
+        char * buffer = malloc( currentArray->size ), * ptr = buffer;
+        int i=0;
+        Constant * initializationValues = currentArray->arrayInitialization;
+        while(initializationValues) {
+            switch( VT_BITWIDTH(currentArray->arrayType) ) {
+                case 8:
+                    *ptr = (initializationValues->value) & 0xff;
+                    ++ptr;
+                    break;
+                case 16:
+                    #ifdef CPU_BIG_ENDIAN
+                        *ptr = ( initializationValues->value >> 8 ) & 0xff;
+                        *(ptr+1) = ( initializationValues->value ) & 0xff;
+                    #else
+                        *(ptr+1) = ( initializationValues->value >> 8 ) & 0xff;
+                        *ptr = ( initializationValues->value ) & 0xff;
+                    #endif
+                    ptr += 2;
+                    break;
+                case 32:
+                    #ifdef CPU_BIG_ENDIAN
+                        *ptr = ( initializationValues->value >> 24 ) & 0xff;
+                        *(ptr+1) = ( initializationValues->value >> 16 ) & 0xff;
+                        *(ptr+2) = ( initializationValues->value >> 8 ) & 0xff;
+                        *(ptr+3) = ( initializationValues->value ) & 0xff;
+                    #else
+                        *(ptr+3) = ( initializationValues->value >> 24 ) & 0xff;
+                        *(ptr+2) = ( initializationValues->value >> 16 ) & 0xff;
+                        *(ptr+1) = ( initializationValues->value >> 8 ) & 0xff;
+                        *ptr = ( initializationValues->value ) & 0xff;
+                    #endif
+                    ptr += 4;
+                    break;
+            }
+            initializationValues = initializationValues->next;
+        }
+        if ( ( ptr - buffer ) != currentArray->size ) {
+            CRITICAL_BUFFER_SIZE_MISMATCH_ARRAY_SIZE( currentArray->name, currentArray->size, (int)(ptr-buffer));
+        }
+        variable_store_array( _environment, ((struct _Environment *)_environment)->currentArray->name, buffer, size, 0 );
+        ((struct _Environment *)_environment)->currentArray = NULL;
+    };    
+
 dim_definition :
       Identifier {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
           ((struct _Environment *)_environment)->arrayDimensions = 0;
       } OP dimensions CP {
-        variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
+        ((struct _Environment *)_environment)->currentArray = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
         variable_array_type( _environment, $1, VT_WORD );
-    }
+    } array_assign;
     | Identifier WITH const_expr {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
           ((struct _Environment *)_environment)->arrayDimensions = 0;
       } OP dimensions CP {
-        Variable * var = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
-        var->value = $3;
+        ((struct _Environment *)_environment)->currentArray = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
+        ((struct _Environment *)_environment)->currentArray->value = $3;
         variable_array_type( _environment, $1, VT_WORD );
+        if ( ! ((struct _Environment *)_environment)->currentArray->memoryArea ) {
+            memory_area_assign( ((struct _Environment *)_environment)->memoryAreas, ((struct _Environment *)_environment)->currentArray );
+        }
+        if ( ((struct _Environment *)_environment)->currentArray->memoryArea ) {
+            variable_store( _environment, ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->value );
+        }
     }
     | Identifier {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
           ((struct _Environment *)_environment)->arrayDimensions = 0;
       } OP_DOLLAR OP dimensions CP {
-        variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
+        ((struct _Environment *)_environment)->currentArray = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
         variable_array_type( _environment, $1, VT_DSTRING );
+        if ( ! ((struct _Environment *)_environment)->currentArray->memoryArea ) {
+            memory_area_assign( ((struct _Environment *)_environment)->memoryAreas, ((struct _Environment *)_environment)->currentArray );
+        }
+        if ( ((struct _Environment *)_environment)->currentArray->memoryArea ) {
+            variable_store( _environment, ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->value );
+        }
     }
     | Identifier datatype {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
           ((struct _Environment *)_environment)->arrayDimensions = 0;
       } OP dimensions CP {
-        variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
+        ((struct _Environment *)_environment)->currentArray = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
         variable_array_type( _environment, $1, $2 );
-    }
+    } array_assign;
     | Identifier datatype WITH const_expr {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
           ((struct _Environment *)_environment)->arrayDimensions = 0;
       } OP dimensions CP {
-        Variable * var = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
-        var->value = $4;
+        ((struct _Environment *)_environment)->currentArray = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
+        ((struct _Environment *)_environment)->currentArray->value = $4;
         variable_array_type( _environment, $1, $2 );
+        if ( ! ((struct _Environment *)_environment)->currentArray->memoryArea ) {
+            memory_area_assign( ((struct _Environment *)_environment)->memoryAreas, ((struct _Environment *)_environment)->currentArray );
+        }
+        if ( ((struct _Environment *)_environment)->currentArray->memoryArea ) {
+            variable_store( _environment, ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->value );
+        }
       }
     | Identifier AS datatype {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
           ((struct _Environment *)_environment)->arrayDimensions = 0;
       } OP dimensions CP {
-        variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
+        ((struct _Environment *)_environment)->currentArray = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
         variable_array_type( _environment, $1, $3 );
-    }
+    } array_assign;
     | Identifier AS datatype WITH const_expr {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
           ((struct _Environment *)_environment)->arrayDimensions = 0;
       } OP dimensions CP {
-        Variable * var = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
-        var->value = $5;
+        ((struct _Environment *)_environment)->currentArray = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
+        ((struct _Environment *)_environment)->currentArray->value = $5;
         variable_array_type( _environment, $1, $3 );
+        if ( ! ((struct _Environment *)_environment)->currentArray->memoryArea ) {
+            memory_area_assign( ((struct _Environment *)_environment)->memoryAreas, ((struct _Environment *)_environment)->currentArray );
+        }
+        if ( ((struct _Environment *)_environment)->currentArray->memoryArea ) {
+            variable_store( _environment, ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->value );
+        }
     }
     ;
 
@@ -2993,6 +3366,21 @@ statement:
   | ENDIF {
       end_if_then( _environment );  
   }
+  | SELECT CASE expr {
+      select_case( _environment, $3 );  
+  }
+  | CASE {
+      case_equals_label( _environment );  
+  } expr {
+      case_equals( _environment, $3 );  
+  }
+  | CASE ELSE {
+      case_equals_label( _environment );  
+      case_else( _environment );  
+  }
+  | ENDSELECT {
+      end_select_case( _environment );  
+  }
   | DO {
       begin_loop( _environment );  
   }
@@ -3279,7 +3667,15 @@ statement:
   }
   | Identifier OP_ASSIGN expr {
         Variable * expr = variable_retrieve( _environment, $3 );
-        variable_retrieve_or_define( _environment, $1, expr->type, 0 )->name;
+        Variable * variable = variable_retrieve_or_define( _environment, $1, expr->type, 0 );
+        if ( variable->type == VT_ARRAY ) {
+            if ( expr->type != VT_BUFFER ) {
+                CRITICAL_CANNOT_ASSIGN_TO_ARRAY( $1, DATATYPE_AS_STRING[expr->type] );
+            }
+            if ( expr->size != variable->size ) {
+                CRITICAL_BUFFER_SIZE_MISMATCH_ARRAY_SIZE( $1, expr->size, variable->size );
+            }
+        }
         variable_move( _environment, $3, $1 );
   }
   | Identifier OP_ASSIGN OP_HASH const_expr {
@@ -3310,6 +3706,24 @@ statement:
         var->frameCount = expr->frameCount;
         expr->assigned = 1;
   }
+  | ARRAY Identifier {
+      
+    } OP_ASSIGN {
+      Variable * var = variable_retrieve( _environment, $2 );
+      if ( var->type != VT_ARRAY ) {
+          CRITICAL_NOT_ARRAY( $2 );
+      }
+      ((struct _Environment *)_environment)->currentArray = var;
+  } array_reassign 
+  | ARRAY Identifier {
+      
+    } OP_ASSIGN_DIRECT {
+      Variable * var = variable_retrieve( _environment, $2 );
+      if ( var->type != VT_ARRAY ) {
+          CRITICAL_NOT_ARRAY( $2 );
+      }
+      ((struct _Environment *)_environment)->currentArray = var;
+  } array_reassign
   | Identifier OP_DOLLAR OP_ASSIGN expr {
         Variable * expr = variable_retrieve( _environment, $4 );
         variable_retrieve_or_define( _environment, $1, VT_DSTRING, 0 )->name;
@@ -3501,8 +3915,33 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     printf("\t<source>     Input filename with ugBASIC source code\n" );
     printf("\t<asm>        Output filename with ASM source code (optional if '-o' given)\n" );
     printf("\t-I           Install needed chaintool for this target\n" );
+    printf("\t-d           Enable debugging of IMAGE LOAD\n" );
     printf("\t-c <file>    Output filename with linker configuration\n" );
     printf("\t-o <exe>     Output filename with final executable file for target\n" );
+    printf("\t-O <type>    Output file format for target:\n" );
+#if defined(__atari__) 
+    printf("\t                xex - executable binary file\n" );
+#elif defined(__atarixl__) 
+    printf("\t                xex - executable binary file\n" );
+#elif __c64__
+    printf("\t                prg - program binary file\n" );
+#elif __plus4__
+    printf("\t                prg - program binary file\n" );
+#elif __zx__
+    printf("\t                tap - tape file\n" );
+#elif __d32__
+    printf("\t                bin - dragon dos binary file\n" );
+#elif __d64__
+    printf("\t                bin - dragon dos binary file\n" );
+#elif __pc128op__
+    printf("\t                k7o - K7 format (original algorithm)\n" );
+    printf("\t                k7 - K7 format\n" );
+#elif __mo5__
+    printf("\t                k7o - K7 format (original algorithm)\n" );
+    printf("\t                k7 - K7 format\n" );
+#elif __vic20__
+    printf("\t                prg - program binary file\n" );
+#endif
     printf("\t-l <name>    Output filename with list of variables defined\n" );
     printf("\t-e <modules> Embed specified modules instead of inline code\n" );
     printf("\t-E           Show stats of embedded modules\n" );
@@ -3521,13 +3960,53 @@ int main( int _argc, char *_argv[] ) {
 
     _environment->warningsEnabled = 0;
 
-    while ((opt = getopt(_argc, _argv, "e:c:Wo:Ie:l:E")) != -1) {
+#if defined(__atari__) 
+    _environment->outputFileType = OUTPUT_FILE_TYPE_XEX;
+#elif defined(__atarixl__) 
+    _environment->outputFileType = OUTPUT_FILE_TYPE_XEX;
+#elif __c64__
+    _environment->outputFileType = OUTPUT_FILE_TYPE_PRG;
+#elif __plus4__
+    _environment->outputFileType = OUTPUT_FILE_TYPE_PRG;
+#elif __zx__
+    _environment->outputFileType = OUTPUT_FILE_TYPE_TAP;
+#elif __d32__
+    _environment->outputFileType = OUTPUT_FILE_TYPE_BIN;
+#elif __d64__
+    _environment->outputFileType = OUTPUT_FILE_TYPE_BIN;
+#elif __pc128op__
+    _environment->outputFileType = OUTPUT_FILE_TYPE_K7_NEW;
+#elif __mo5__
+    _environment->outputFileType = OUTPUT_FILE_TYPE_K7_NEW;
+#elif __vic20__
+    _environment->outputFileType = OUTPUT_FILE_TYPE_PRG;
+#endif
+
+    while ((opt = getopt(_argc, _argv, "e:c:Wo:Ie:l:EO:d")) != -1) {
         switch (opt) {
                 case 'c':
                     _environment->configurationFileName = strdup(optarg);
                     break;
                 case 'o':
                     _environment->exeFileName = strdup(optarg);
+                    break;
+                case 'd':
+                    _environment->debugImageLoad = 1;
+                    break;
+                case 'O':
+                    if ( strcmp( optarg, "bin") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_BIN;
+                    } else if ( strcmp( optarg, "prg") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_PRG;
+                    } else if ( strcmp( optarg, "xex") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_XEX;
+                    } else if ( strcmp( optarg, "k7o") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_K7_ORIGINAL;
+                    } else if ( strcmp( optarg, "k7") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_K7_NEW;
+                    } else if ( strcmp( optarg, "tap") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_K7_NEW;
+                    }
                     break;
                 case 'W':
                     _environment->warningsEnabled = 1;

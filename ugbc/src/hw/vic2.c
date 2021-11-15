@@ -38,38 +38,22 @@
 #include <math.h>
 
 static RGBi SYSTEM_PALETTE[] = {
-    // { "BLACK", 
-        { 0x00, 0x00, 0x00, 0 },        
-    // { "WHITE", 
-        { 0xff, 0xff, 0xff, 1 },
-    // { "RED", 
-        { 0x88, 0x00, 0x00, 2 },
-    // { "CYAN", 
-        { 0xaa, 0xff, 0xe6, 3 },
-    // { "VIOLET", 
-        { 0xcc, 0x44, 0xcc, 4 },
-    // { "GREEN", 
-        { 0x00, 0xcc, 0x55, 5 },
-    // { "BLUE", 
-        { 0x00, 0x00, 0xaa, 6 },
-    // { "YELLOW", 
-        { 0xee, 0xee, 0x77, 7 },
-    // { "ORANGE", 
-        { 0xa1, 0x68, 0x3c, 8 },
-    // { "BROWN", 
-        { 0xdd, 0x88, 0x65, 9 },
-    // { "LIGHT_RED", 
-        { 0xff, 0x77, 0x77, 10 },
-    // { "DARK_GREY", 
-        { 0x33, 0x33, 0x33, 11 },
-    // { "GREY", 
-        { 0x77, 0x77, 0x77, 12 },
-    // { "LIGHT_GREEN", 
-        { 0xaa, 0xff, 0x66, 13 },
-    // { "LIGHT_BLUE", 
-        { 0x00, 0x88, 0xff, 14 },
-    // { "LIGHT_GREY", 
-        { 0xbb, 0xbb, 0xbb, 15 }
+        { 0x00, 0x00, 0x00, 0, "BLACK" },
+        { 0xff, 0xff, 0xff, 1, "WHITE" },
+        { 0x88, 0x00, 0x00, 2, "RED" },
+        { 0xaa, 0xff, 0xe6, 3, "CYAN" },
+        { 0xcc, 0x44, 0xcc, 4, "VIOLET" },
+        { 0x00, 0xcc, 0x55, 5, "GREEN" },
+        { 0x00, 0x00, 0xaa, 6, "BLUE" },
+        { 0xee, 0xee, 0x77, 7, "YELLOW" },
+        { 0xa1, 0x68, 0x3c, 8, "ORANGE" },
+        { 0xdd, 0x88, 0x65, 9, "BROWN" },
+        { 0xff, 0x77, 0x77, 10, "LIGHT_RED" },
+        { 0x33, 0x33, 0x33, 11, "DARK_GREY" },
+        { 0x77, 0x77, 0x77, 12, "GREY" },
+        { 0xaa, 0xff, 0x66, 13, "LIGHT GREEN" },
+        { 0x00, 0x88, 0xff, 14, "LIGHT BLUE" },
+        { 0xbb, 0xbb, 0xbb, 15, "LIGHT GREY" }
 };
 
 /****************************************************************************
@@ -1112,88 +1096,13 @@ static int calculate_luminance(RGBi _a) {
 
 }
 
-
-/**
- * @brief Calculate the distance between two colors
- *
- * This function calculates the color distance between two colors(_a and _b).
- * By "distance" we mean the geometric distance between two points in a 
- * three-dimensional space, where each dimension corresponds to one of the 
- * components (red, green and blue). The returned value is normalized to 
- * the nearest 8-bit value. 
- * 
- * @param _a First color 
- * @param _b Second color
- * @return int distance
- */
-
-static int calculate_distance(RGBi e1, RGBi e2) {
-
-    long rmean = ( (long)e1.red + (long)e2.red ) / 2;
-    long r = (long)e1.red - (long)e2.red;
-    long g = (long)e1.green - (long)e2.green;
-    long b = (long)e1.blue - (long)e2.blue;
-    return (int)( sqrt((((512+rmean)*r*r)>>8) + 4*g*g + (((767-rmean)*b*b)>>8)) );
-
-}
-
-/**
- * @brief Extract the color palette from the given image
- * 
- * @param _source 
- * @param _palette 
- * @param _palette_size 
- * @return int 
- */
-static int extract_color_palette(unsigned char* _source, int _width, int _height, RGBi _palette[], int _palette_size) {
-
-    RGBi rgb;
-
-    int image_x, image_y;
-
-    int usedPalette = 0;
-    int i = 0;
-    unsigned char* source = _source;
-
-    for (image_y = 0; image_y < _height; ++image_y) {
-        for (image_x = 0; image_x < _width; ++image_x) {
-            rgb.red = *source;
-            rgb.green = *(source + 1);
-            rgb.blue = *(source + 2);
-
-            for (i = 0; i < usedPalette; ++i) {
-                if (_palette[i].red == rgb.red && _palette[i].green == rgb.green && _palette[i].blue == rgb.blue) {
-                    break;
-                }
-            }
-
-            if (i >= usedPalette) {
-                _palette[usedPalette].red = rgb.red;
-                _palette[usedPalette].green = rgb.green;
-                _palette[usedPalette].blue = rgb.blue;
-                ++usedPalette;
-                if (usedPalette > _palette_size) {
-                    break;
-                }
-            }
-            source += 3;
-        }
-        if (usedPalette > _palette_size) {
-            break;
-        }
-    }
-
-    return usedPalette;
-
-}
-
-static Variable * vic2_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height ) {
+static Variable * vic2_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
 
     image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
     RGBi palette[MAX_PALETTE];
 
-    int colorUsed = extract_color_palette(_source, _width, _height, palette, MAX_PALETTE);
+    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
 
     if (colorUsed > 2) {
         CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
@@ -1205,7 +1114,7 @@ static Variable * vic2_image_converter_bitmap_mode_standard( Environment * _envi
         int minDistance = 0xffff;
         int colorIndex = 0;
         for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
-            int distance = calculate_distance(SYSTEM_PALETTE[j], palette[i]);
+            int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
             // printf("%d <-> %d [%d] = %d [min = %d]\n", i, j, SYSTEM_PALETTE[j].index, distance, minDistance );
             if (distance < minDistance) {
                 // printf(" candidated...\n" );
@@ -1223,6 +1132,7 @@ static Variable * vic2_image_converter_bitmap_mode_standard( Environment * _envi
             }
         }
         palette[i].index = SYSTEM_PALETTE[colorIndex].index;
+        strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
         // printf("%d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
     }
 
@@ -1261,7 +1171,7 @@ static Variable * vic2_image_converter_bitmap_mode_standard( Environment * _envi
             rgb.blue = *(_source + 2);
 
             for( i=0; i<colorUsed; ++i ) {
-                if ( palette[i].red == rgb.red && palette[i].green == rgb.green && palette[i].blue == rgb.blue ) {
+                if ( rgbi_equals_rgb( &palette[i], &rgb ) ) {
                     break;
                 }
             }
@@ -1310,43 +1220,95 @@ static Variable * vic2_image_converter_bitmap_mode_standard( Environment * _envi
 
 }
 
-static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height ) {
+static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
 
     image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
     RGBi palette[MAX_PALETTE];
 
-    int colorUsed = extract_color_palette(_source, _width, _height, palette, MAX_PALETTE);
-
-    if (colorUsed > 4) {
-        CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
-    }
+    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
 
     int i, j, k;
+
+    if ( ( _flags & FLAG_TRANSPARENCY ) ) {
+        if (colorUsed > 3) {
+            CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
+        }
+    } else if ( ( _flags & FLAG_OVERLAYED ) ) {
+        if (colorUsed > 3) {
+            CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
+        }
+    } else {
+        if (colorUsed > 4) {
+            CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
+        }
+    }
 
     for( i=0; i<colorUsed; ++i ) {
         int minDistance = 0xffff;
         int colorIndex = 0;
         for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
-            int distance = calculate_distance(SYSTEM_PALETTE[j], palette[i]);
-            // printf("%d <-> %d [%d] = %d [min = %d]\n", i, j, SYSTEM_PALETTE[j].index, distance, minDistance );
+            int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
             if (distance < minDistance) {
-                // printf(" candidated...\n" );
                 for( k=0; k<i; ++k ) {
                     if ( palette[k].index == SYSTEM_PALETTE[j].index ) {
-                        // printf(" ...used!\n" );
                         break;
                     }
                 }
                 if ( k>=i ) {
-                    // printf(" ...ok! (%d)\n", SYSTEM_PALETTE[j].index );
                     minDistance = distance;
                     colorIndex = j;
                 }
             }
         }
         palette[i].index = SYSTEM_PALETTE[colorIndex].index;
-        // printf("%d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
+        strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
+    }
+
+    if ( _flags & FLAG_OVERLAYED ) {
+        rgbi_move( &palette[2], &palette[3] );
+        rgbi_move( &palette[1], &palette[2] );
+        rgbi_move( &palette[0], &palette[1] );
+        rgbi_move( &SYSTEM_PALETTE[0], &palette[0] );
+        ++colorUsed;
+    }
+
+    if ( _flags & FLAG_TRANSPARENCY ) {
+        if ( palette[0].index == SYSTEM_PALETTE[0].index ) {
+            rgbi_move( &palette[2], &palette[3] );
+            rgbi_move( &palette[1], &palette[2] );
+            rgbi_move( &SYSTEM_PALETTE[0], &palette[0] );
+            rgbi_move( &SYSTEM_PALETTE[0], &palette[1] );
+        } else {
+            rgbi_move( &palette[1], &palette[3] );
+            rgbi_move( &palette[0], &palette[2] );
+            rgbi_move( &SYSTEM_PALETTE[0], &palette[0] );
+            rgbi_move( &SYSTEM_PALETTE[0], &palette[1] );
+        }
+        ++colorUsed;
+    }
+
+    if ( _transparent_color != -1 ) {
+        if ( colorUsed < 4 ) {
+            for( i=0;i<COLOR_COUNT;++i) {
+                if ( SYSTEM_PALETTE[i].index == _transparent_color ) {
+                    rgbi_move(&palette[0], &palette[colorUsed]);
+                    ++colorUsed;
+                    rgbi_move(&SYSTEM_PALETTE[i], &palette[0]);
+                    break;
+                }
+            }
+        } else {
+            for(i=0;i<4;++i) {
+                if ( palette[i].index == _transparent_color ) {
+                    RGBi tmp;
+                    rgbi_move(&palette[i], &tmp);
+                    rgbi_move(&palette[0], &palette[i]);
+                    rgbi_move(&tmp, &palette[0]);
+                    break;
+                }
+            }
+        }
     }
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
@@ -1394,15 +1356,17 @@ static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _
             int minDistance = 0xffff;
             int colorIndex = 0;
 
-            for( i=0; i<colorUsed; ++i ) {
-                if ( palette[i].red == rgb.red && palette[i].green == rgb.green && palette[i].blue == rgb.blue ) {
+            for( i= ( _flags & FLAG_OVERLAYED ) ? 1 : 0; i<colorUsed; ++i ) {
+                if ( rgbi_equals_rgb( &palette[i], &rgb ) ) {
                     break;
                 }
             }
 
             colorIndex = i;
 
-            // printf( "%1.1x", colorIndex );
+            if ( _environment->debugImageLoad ) {
+                printf( "%1.1x", colorIndex );
+            }
 
             bitmask = colorIndex << (6 - ((image_x & 0x3) * 2));
 
@@ -1432,32 +1396,40 @@ static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _
 
         _source += 3 * ( _width - _frame_width );
 
-        // printf("\n" );
+        if ( _environment->debugImageLoad ) {
+            printf("\n" );
+        }
     }
 
-    // printf("\n" );
-    // printf("\n" );
-
-    // for(i=0; i<4; ++i ) {
-    //     printf( "%1.1x = %2.2x\n", i, palette[i].index );
-    // }
-
-    // printf("\n" );
-    // printf("\n" );
-
+    if ( _environment->debugImageLoad ) {
+        printf("\n" );
+    
+        printf("PALETTE:\n" );
+        if ( ( _flags & FLAG_OVERLAYED ) == 0 ) {
+            printf("  background  (00) = %2.2x (%s)\n", palette[0].index, palette[0].description );
+        } else {
+            printf("  background  (00) = %2.2x (%s) [currently ignored since it can be overlayed]\n", palette[0].index, palette[0].description );
+        }
+        printf("  low screen  (01) = %2.2x (%s)\n", palette[1].index, palette[1].description );
+        printf("  high screen (10) = %2.2x (%s)\n", palette[2].index, palette[2].description );
+        printf("  colormap    (11) = %2.2x (%s)\n", palette[3].index, palette[3].description );
+        printf("\n" );
+        printf("\n" );
+    }
+    
     variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
 
     return result;
 
 }
 
-static Variable * vic2_image_converter_tilemap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height ) {
+static Variable * vic2_image_converter_tilemap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
 
     image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
     RGBi palette[MAX_PALETTE];
 
-    int colorUsed = extract_color_palette(_source, _width, _height, palette, MAX_PALETTE);
+    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
 
     int i, j, k;
 
@@ -1465,7 +1437,7 @@ static Variable * vic2_image_converter_tilemap_mode_standard( Environment * _env
         int minDistance = 0xffff;
         int colorIndex = 0;
         for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
-            int distance = calculate_distance(SYSTEM_PALETTE[j], palette[i]);
+            int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
             // printf("%d <-> %d [%d] = %d [min = %d]\n", i, j, SYSTEM_PALETTE[j].index, distance, minDistance );
             if (distance < minDistance) {
                 // printf(" candidated...\n" );
@@ -1483,6 +1455,7 @@ static Variable * vic2_image_converter_tilemap_mode_standard( Environment * _env
             }
         }
         palette[i].index = SYSTEM_PALETTE[colorIndex].index;
+        strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
         // printf("%d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
     }
 
@@ -1552,7 +1525,7 @@ static Variable * vic2_image_converter_tilemap_mode_standard( Environment * _env
 
                     int minDistance = 9999;
                     for( int i=0; i<colorUsed; ++i ) {
-                        int distance = calculate_distance(palette[i], rgb );
+                        int distance = rgbi_distance(&palette[i], &rgb );
                         if ( distance < minDistance ) {
                             minDistance = distance;
                             colorIndex = palette[i].index;
@@ -1653,17 +1626,17 @@ static Variable * vic2_image_converter_tilemap_mode_standard( Environment * _env
 
 }
 
-Variable * vic2_image_converter( Environment * _environment, char * _data, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode ) {
+Variable * vic2_image_converter( Environment * _environment, char * _data, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags ) {
 
     switch( _mode ) {
 
         case BITMAP_MODE_STANDARD:
 
-            return vic2_image_converter_bitmap_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height );
+            return vic2_image_converter_bitmap_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
 
         case BITMAP_MODE_MULTICOLOR:
 
-            return vic2_image_converter_multicolor_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height );
+            return vic2_image_converter_multicolor_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
 
         case BITMAP_MODE_AH:
         case BITMAP_MODE_AIFLI:
@@ -1696,7 +1669,7 @@ Variable * vic2_image_converter( Environment * _environment, char * _data, int _
         case BITMAP_MODE_MEGATEXT:
         case BITMAP_MODE_PRS:
         case TILEMAP_MODE_STANDARD:
-            return vic2_image_converter_tilemap_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height );
+            return vic2_image_converter_tilemap_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
         case TILEMAP_MODE_MULTICOLOR:
         case TILEMAP_MODE_EXTENDED:
             break;
@@ -1706,7 +1679,7 @@ Variable * vic2_image_converter( Environment * _environment, char * _data, int _
 
 }
 
-void vic2_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _frame_size ) {
+void vic2_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _frame_size, int _flags ) {
 
     deploy( vic2vars, src_hw_vic2_vars_asm);
     deploy( image, src_hw_vic2_image_asm );
@@ -1714,6 +1687,8 @@ void vic2_put_image( Environment * _environment, char * _image, char * _x, char 
     MAKE_LABEL
 
     outhead1("putimage%s:", label);
+    outline1("LDA #$%2.2x", _flags );
+    outline0("STA IMAGET" );
     outline1("LDA #<%s", _image );
     outline0("STA TMPPTR" );
     outline1("LDA #>%s", _image );

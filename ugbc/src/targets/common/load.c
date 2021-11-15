@@ -114,7 +114,7 @@ Variable * load( Environment * _environment, char * _filename, char * _alias, in
 
     char * buffer = malloc( size );
 
-    fread( buffer, size, 1, file );
+    (void)!fread( buffer, size, 1, file );
 
     fclose( file );
 
@@ -126,6 +126,10 @@ Variable * load( Environment * _environment, char * _filename, char * _alias, in
     loaded->fileName = lookfor;
     _environment->loadedFiles = loaded;
 
+    if ( _alias ) {
+        const_define_numeric( _environment, _alias, UNIQUE_ID );
+    }
+    
     return result;
 
 }

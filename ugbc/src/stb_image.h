@@ -7090,7 +7090,7 @@ static float* stbi__hdr_load(stbi__context* s, int* x, int* y, int* comp, int re
     if (!valid)    return stbi__errpf("unsupported format", "Unsupported HDR format");
 
     // Parse width and height
-    // can't use sscanf() if we're not using stdio!
+    // can't use s(void)!scanf() if we're not using stdio!
     token = stbi__hdr_gettoken(s, buffer);
     if (strncmp(token, "-Y ", 3))  return stbi__errpf("unsupported data layout", "Unsupported HDR format");
     token += 3;

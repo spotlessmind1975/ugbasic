@@ -10,3 +10,4 @@ ugbc/exe-test
 tests/
 core
 vgcore*
+ugbc/objs*

@@ -113,7 +113,7 @@ ma con nomi diversi.
 
 @target all
 </usermanual> */
-Variable * image_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _flags ) {
+Variable * image_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _flags, int _transparent_color, int _background_color ) {
 
     LoadedFile * first = _environment->loadedFiles;
     char *lookfor = _filename;
@@ -146,7 +146,11 @@ Variable * image_load( Environment * _environment, char * _filename, char * _ali
         source = image_flip_y( _environment, source, width, height );
     }
 
-    Variable * result = image_converter( _environment, source, width, height, 0, 0, 0, 0, _mode );
+    if ( _transparent_color != -1 ) {
+        _flags |= FLAG_TRANSPARENCY;
+    }
+    
+    Variable * result = image_converter( _environment, source, width, height, 0, 0, 0, 0, _mode, _transparent_color, _flags );
 
     stbi_image_free(source);
 
@@ -156,6 +160,10 @@ Variable * image_load( Environment * _environment, char * _filename, char * _ali
     loaded->fileName = lookfor;
     _environment->loadedFiles = loaded;
 
+    if ( _alias ) {
+        const_define_numeric( _environment, _alias, UNIQUE_ID );
+    }
+    
     return result;
 
 }

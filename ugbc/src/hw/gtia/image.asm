@@ -29,7 +29,7 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                          IMAGES ROUTINE FOR GTIA                            *
+;*                          IMAGES ROUTINE FOR +A                            *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
@@ -40,6 +40,7 @@ IMAGEY = $F2
 IMAGEW = $F4
 IMAGEH = $F6
 IMAGEH2 = $F8
+IMAGET = $F9
 
 ; ----------------------------------------------------------------------------
 ; - Put image on bitmap
@@ -451,7 +452,63 @@ PUTIMAGECOMMONC:
     TAY
     DEY
 PUTIMAGECOMMONCL1:
+    LDA IMAGET
+    BEQ PUTIMAGE3L1DEFX
+    LDA #0
+    STA MATHPTR5
     LDA (TMPPTR),Y
+    ; 00 01 10 00
+    AND #$C0
+    ; -> 00 00 00 00
+    BEQ PUTIMAGE3L1P4X
+    LDA MATHPTR5
+    ORA #$C0
+    STA MATHPTR5
+PUTIMAGE3L1P4X:
+    LDA (TMPPTR),Y
+    ; 00 01 10 00
+    AND #$30
+    ; -> 00 01 00 00
+    BEQ PUTIMAGE3L1P3X
+    LDA MATHPTR5
+    ORA #$30
+    ; MATH PTR = 00 11 00 00
+    STA MATHPTR5
+PUTIMAGE3L1P3X:
+    LDA (TMPPTR),Y
+    ; 00 01 10 00
+    AND #$0C
+    ; -> 00 00 10 00
+    BEQ PUTIMAGE3L1P2X
+    LDA MATHPTR5
+    ORA #$0C
+    ; -> 00 11 11 00
+    STA MATHPTR5
+PUTIMAGE3L1P2X:
+    LDA (TMPPTR),Y
+    AND #$03
+    BEQ PUTIMAGE3L1P1X
+    LDA MATHPTR5
+    ORA #$03
+    STA MATHPTR5
+PUTIMAGE3L1P1X:
+    LDA MATHPTR5
+    ; 00 11 11 00
+    EOR #$FF
+    ; 11 00 00 11
+    STA MATHPTR6
+    LDA (PLOTDEST),Y
+    ; 00 00 00 00
+    AND MATHPTR6
+    STA MATHPTR6
+    ; 00 00 00 00
+    LDA (TMPPTR),Y
+    AND MATHPTR5
+    ORA MATHPTR6
+    JMP PUTIMAGE3L1FINALX
+PUTIMAGE3L1DEFX:
+    LDA (TMPPTR),Y
+PUTIMAGE3L1FINALX:
     STA (PLOTDEST),Y
     DEY
     CPY #255

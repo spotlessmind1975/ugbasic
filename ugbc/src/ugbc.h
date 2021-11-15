@@ -104,6 +104,17 @@ typedef struct _Bank {
 
 } Bank;
 
+typedef enum _OutputFileType {
+
+    OUTPUT_FILE_TYPE_BIN = 0,
+    OUTPUT_FILE_TYPE_PRG = 1,
+    OUTPUT_FILE_TYPE_XEX = 2,
+    OUTPUT_FILE_TYPE_K7_ORIGINAL = 3,
+    OUTPUT_FILE_TYPE_K7_NEW = 4,
+    OUTPUT_FILE_TYPE_TAP = 5
+
+} OutputFileType;
+
 /**
  * @brief Type of variables
  * 
@@ -293,6 +304,36 @@ typedef struct _MemoryArea {
         } \
     }
 
+/**
+ * @brief Structure of a single constant
+ */
+typedef struct _Constant {
+
+    /** Name of the constant (in the program) */
+    char * name;
+
+    /** Real name (used for source generation) */
+    char * realName;
+
+    /** 
+     * This flag mark if this variable is imported by external ASM
+     */
+    int imported;
+
+    /** 
+     * The initial (numeric) value of the variable, as given by last (re)definition.
+     */
+    int value;
+
+    /** 
+     * The initial (string) value of the variable, as given by last (re)definition.
+     */
+    char * valueString;
+
+    /** Link to the next constant (NULL if this is the last one) */
+    struct _Constant * next;
+
+} Constant;
 
 /**
  * @brief Structure of a single variable
@@ -380,6 +421,11 @@ typedef struct _Variable {
      */
     int arrayDimensionsEach[MAX_ARRAY_DIMENSIONS];
 
+    /**
+     * Initialization values
+     */
+    Constant * arrayInitialization;
+
     /** Variable type */
     VariableType arrayType;
 
@@ -396,37 +442,6 @@ typedef struct _Variable {
     struct _Variable * next;
 
 } Variable;
-
-/**
- * @brief Structure of a single constant
- */
-typedef struct _Constant {
-
-    /** Name of the constant (in the program) */
-    char * name;
-
-    /** Real name (used for source generation) */
-    char * realName;
-
-    /** 
-     * This flag mark if this variable is imported by external ASM
-     */
-    int imported;
-
-    /** 
-     * The initial (numeric) value of the variable, as given by last (re)definition.
-     */
-    int value;
-
-    /** 
-     * The initial (string) value of the variable, as given by last (re)definition.
-     */
-    char * valueString;
-
-    /** Link to the next constant (NULL if this is the last one) */
-    struct _Constant * next;
-
-} Constant;
 
 typedef struct _Procedure {
 
@@ -489,14 +504,17 @@ typedef enum _ConditionalType {
     CT_ON_GOSUB = 2,
 
     /** ON ... PROC ... */
-    CT_ON_PROC = 3
+    CT_ON_PROC = 3,
+
+    /** SELECT ... CASE ... */
+    CT_SELECT_CASE = 4
 
 } ConditionalType;
 
 /**
  * @brief Maximum number of conditional types
  */
-#define CONDITIONAL_TYPE_COUNT   1
+#define CONDITIONAL_TYPE_COUNT   5
 
 /**
  * @brief Structure of a single conditional jump.
@@ -514,6 +532,9 @@ typedef struct _Conditional {
 
     /** Incremental index for forced jumps. */
     int index;
+
+    /** In case of CT_SELECT_CASE, case else has been emitted?. */
+    int caseElse;
 
     /** Next conditional */
     struct _Conditional * next;
@@ -660,7 +681,9 @@ typedef struct _RGBi {
     unsigned char green;
     unsigned char blue;
     unsigned char index;
+    char description[64];
     unsigned char used;
+    int count;
 } RGBi;
 
 typedef struct _Embedded {
@@ -945,6 +968,11 @@ typedef struct _Environment {
      */
     DString dstring;
 
+    /**
+     * Type of output. 
+     */
+    OutputFileType outputFileType;
+
     /* --------------------------------------------------------------------- */
     /* INTERNAL STRUCTURES                                                   */
     /* --------------------------------------------------------------------- */
@@ -1090,6 +1118,11 @@ typedef struct _Environment {
     char * arrayIndexesEach[MAX_NESTED_ARRAYS][MAX_ARRAY_DIMENSIONS];
 
     /**
+     * Temporary storage for current array
+     */
+    Variable * currentArray;
+
+    /**
      * Current procedure
      */
     char * procedureName;
@@ -1177,6 +1210,11 @@ typedef struct _Environment {
 
     TileDescriptors * descriptors;
 
+    /**
+     * Debug during LOAD IMAGE.
+     */
+    int debugImageLoad;
+    
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */
@@ -1299,6 +1337,9 @@ typedef struct _Environment {
 #define CRITICAL_NOT_ASSIGNED_IMAGES( v ) CRITICAL2("E090 - variable is not a loaded collection of images, please use assign operator", v );
 #define CRITICAL_NOT_STRING_ARRAY( v ) CRITICAL2("E091 - accessing as a string array on a non string array", v );
 #define CRITICAL_SIZE_UNSUPPORTED( v, t ) CRITICAL3("E092 - SIZE unsupported for variable of given datatype", v, t );
+#define CRITICAL_UNSUPPORTED_OUTPUT_FILE_TYPE( t ) CRITICAL2("E093 - output file type format unsupported for this type of executable", t );
+#define CRITICAL_BUFFER_SIZE_MISMATCH_ARRAY_SIZE( v, d1, d2 ) CRITICAL4si("E094 - size of buffer mismatch the size of array", v, d1, d2 );
+#define CRITICAL_CANNOT_ASSIGN_TO_ARRAY( v, t ) CRITICAL3("E095 - cannot assign this type to array", v, t );
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
 #define WARNING2i( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%i) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -1596,9 +1637,12 @@ typedef struct _Environment {
 #define PROTOTHREAD_STATUS_EXITED		3
 #define PROTOTHREAD_STATUS_ENDED		4
 
-#define FLAG_FLIP_X        1
-#define FLAG_FLIP_Y        2
-#define FLAG_ROLL_X        4
+#define FLAG_FLIP_X         1
+#define FLAG_FLIP_Y         2
+#define FLAG_ROLL_X         4
+#define FLAG_OVERLAYED      8
+
+#define FLAG_TRANSPARENCY   1
 
 void setup_embedded( Environment *_environment );
 void target_install( Environment *_environment );
@@ -1662,6 +1706,9 @@ int                     calculate_exact_tile( TileDescriptor * _tile, TileDescri
 int                     calculate_tile_affinity( TileDescriptor * _first, TileDescriptor * _second );
 TileDescriptor *        calculate_tile_descriptor( TileData * _tileData );
 void                    call_procedure( Environment * _environment, char * _name );
+void                    case_else( Environment * _environment );
+void                    case_equals( Environment * _environment, char * _value );
+void                    case_equals_label( Environment * _environment );
 void                    center( Environment * _environment, char * _string );
 void                    circle( Environment * _environment, char * _x, char * _y, char * _r, char *_c );
 Variable *              clear_key( Environment * _environment );
@@ -1708,6 +1755,7 @@ void                    end_if_then( Environment * _environment  );
 void                    end_loop( Environment * _environment );
 void                    end_procedure( Environment * _environment, char * _value );
 void                    end_repeat( Environment * _environment, char * _expression );
+void                    end_select_case( Environment * _environment );
 void                    end_while( Environment * _environment );
 void                    every_cleanup( Environment * _environment );
 void                    every_off( Environment * _environment );
@@ -1760,15 +1808,15 @@ void                    home( Environment * _environment );
 void                    if_then( Environment * _environment, char * _expression );
 char *                  image_flip_x( Environment * _environment, char * _source, int _width, int _height );
 char *                  image_flip_y( Environment * _environment, char * _source, int _width, int _height );
-Variable *              image_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _flags );
+Variable *              image_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _flags, int _transparent_color, int _background_color );
 char *                  image_load_asserts( Environment * _environment, char * _filename );
-Variable *              image_converter( Environment * _environment, char * _data, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode );
+Variable *              image_converter( Environment * _environment, char * _data, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags );
 void                    image_converter_asserts( Environment * _environment, int _width, int _height, int _offset_x, int _offset_y, int * _frame_width, int * _frame_height );
 Variable *              image_get_height( Environment * _environment, char * _image );
 Variable *              image_get_width( Environment * _environment, char * _image );
 char *                  image_roll_x_left( Environment * _environment, char * _source, int _width, int _height );
 char *                  image_roll_x_right( Environment * _environment, char * _source, int _width, int _height );
-Variable *              images_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _frame_width, int _frame_height, int _flags );
+Variable *              images_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _frame_width, int _frame_height, int _flags, int _transparent_color, int _background_color );
 void                    ink( Environment * _environment, char * _expression );
 Variable *              inkey( Environment * _environment );
 void                    input( Environment * _environment, char * _variable );
@@ -1802,6 +1850,7 @@ void                    loop( Environment * _environment, char *_label );
 
 Variable *              maximum( Environment * _environment, char * _source, char * _dest );
 void                    memorize( Environment * _environment );
+void                    memory_area_assign( MemoryArea * _first, Variable * _variable );
 Variable *              minimum( Environment * _environment, char * _source, char * _dest );
 void                    mob_at( Environment * _environment, char * _index, char * _x, char * _y );
 void                    mob_hide( Environment * _environment, char * _index );
@@ -1854,7 +1903,7 @@ void                    print( Environment * _environment, char * _text, int _ne
 void                    print_newline( Environment * _environment );
 void                    print_question_mark( Environment * _environment );
 void                    print_tab( Environment * _environment, int _new_line );
-void                    put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame );
+void                    put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _flags );
 
 //----------------------------------------------------------------------------
 // *Q*
@@ -1874,6 +1923,10 @@ void                    remember( Environment * _environment );
 void                    repeat( Environment * _environment, char *_label );
 void                    return_label( Environment * _environment );
 void                    return_procedure( Environment * _environment, char * _value );
+int                     rgbi_equals_rgb( RGBi * _first, RGBi * _second );
+int                     rgbi_extract_palette( unsigned char* _source, int _width, int _height, RGBi _palette[], int _palette_size);
+void                    rgbi_move( RGBi * _source, RGBi * _destination );
+int                     rgbi_distance( RGBi * _source, RGBi * _destination );
 Variable *              rnd( Environment * _environment, char * _value );
 void                    run_parallel( Environment * _environment );
 
@@ -1897,6 +1950,7 @@ Variable *              screen_tiles_get_height( Environment * _environment );
 Variable *              screen_tiles_get_width( Environment * _environment );
 void                    screen_vertical_scroll( Environment * _environment, int _displacement );
 void                    screen_vertical_scroll_var( Environment * _environment, char * _displacement );
+void                    select_case( Environment * _environment, char * _expression );
 void                    set_timer( Environment * _environment, char * _value );
 void                    shared( Environment * _environment );
 Variable *              sign( Environment * _environment, char * _value );
@@ -1996,6 +2050,7 @@ Variable *              variable_retrieve( Environment * _environment, char * _n
 Variable *              variable_retrieve_by_realname( Environment * _environment, char * _name );
 Variable *              variable_retrieve_or_define( Environment * _environment, char * _name, VariableType _type, int _value );
 Variable *              variable_store( Environment * _environment, char * _source, unsigned int _value );
+Variable *              variable_store_array( Environment * _environment, char * _destination, unsigned char * _buffer, int _size, int _at );
 Variable *              variable_store_buffer( Environment * _environment, char * _destination, unsigned char * _buffer, int _size, int _at );
 Variable *              variable_store_string( Environment * _environment, char * _source, char * _string );
 Variable *              variable_string_asc( Environment * _environment, char * _char );
