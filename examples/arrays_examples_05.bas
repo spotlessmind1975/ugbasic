@@ -6,7 +6,7 @@ REM array, at compile time. This will reduce the footprint in terms of
 REM time and space.
 REM 
 REM @italian
-REM GESTIONE DEGLI ARRAY ACCESSO (1)
+REM GESTIONE DEGLI ARRAY INIZIALIZZAZIONE (1)
 REM
 REM Questo piccolo esempio mostra come inizializzare ogni elemento di
 REM un array, al momento della compilazione. Questo riduce l'ingombro
