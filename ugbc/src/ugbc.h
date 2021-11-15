@@ -304,6 +304,36 @@ typedef struct _MemoryArea {
         } \
     }
 
+/**
+ * @brief Structure of a single constant
+ */
+typedef struct _Constant {
+
+    /** Name of the constant (in the program) */
+    char * name;
+
+    /** Real name (used for source generation) */
+    char * realName;
+
+    /** 
+     * This flag mark if this variable is imported by external ASM
+     */
+    int imported;
+
+    /** 
+     * The initial (numeric) value of the variable, as given by last (re)definition.
+     */
+    int value;
+
+    /** 
+     * The initial (string) value of the variable, as given by last (re)definition.
+     */
+    char * valueString;
+
+    /** Link to the next constant (NULL if this is the last one) */
+    struct _Constant * next;
+
+} Constant;
 
 /**
  * @brief Structure of a single variable
@@ -391,6 +421,11 @@ typedef struct _Variable {
      */
     int arrayDimensionsEach[MAX_ARRAY_DIMENSIONS];
 
+    /**
+     * Initialization values
+     */
+    Constant * arrayInitialization;
+
     /** Variable type */
     VariableType arrayType;
 
@@ -407,37 +442,6 @@ typedef struct _Variable {
     struct _Variable * next;
 
 } Variable;
-
-/**
- * @brief Structure of a single constant
- */
-typedef struct _Constant {
-
-    /** Name of the constant (in the program) */
-    char * name;
-
-    /** Real name (used for source generation) */
-    char * realName;
-
-    /** 
-     * This flag mark if this variable is imported by external ASM
-     */
-    int imported;
-
-    /** 
-     * The initial (numeric) value of the variable, as given by last (re)definition.
-     */
-    int value;
-
-    /** 
-     * The initial (string) value of the variable, as given by last (re)definition.
-     */
-    char * valueString;
-
-    /** Link to the next constant (NULL if this is the last one) */
-    struct _Constant * next;
-
-} Constant;
 
 typedef struct _Procedure {
 

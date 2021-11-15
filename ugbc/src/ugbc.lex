@@ -11,6 +11,7 @@
 "#["[a-fA-F0-9]+"]" { yylval.string = strdup(yytext); return(BufferDefinition); }
 "#["[a-fA-F0-9]+ { yylval.string = strdup(yytext); return(BufferDefinition); }
 
+_[\n\r]+
 [\n\r]+ { return(NewLine);}
 ";" { return(OP_SEMICOLON); }
 ":" { return(OP_COLON); }
@@ -36,6 +37,8 @@
 "/" { return(OP_DIVISION); }
 "[" { return(OSP); }
 "]" { return(CSP); }
+"{" { return(OGP); }
+"}" { return(CGP); }
 "?" { return(QM); }
 
 8BIT { return (BYTE); }
@@ -45,6 +48,7 @@
 A { return (A); }
 ABS { return (ABS); }
 ALT { return (ALT); }
+ARRAY { return (ARRAY); }
 AS { return (AS); }
 ASC { return (ASC); }
 ASTERISK { return (ASTERISK); }
