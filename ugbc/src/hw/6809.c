@@ -4385,13 +4385,13 @@ void cpu6809_sqroot( Environment * _environment, char * _number, char * _result 
     deploy( sqr, src_hw_6809_sqr_asm );
 
     outline1("LDA %s", _number );
-    outline0("STA Numberh" );
+    outline0("STA <Numberh" );
     outline1("LDA %s+1", _number );
-    outline0("STA Numberl" );
+    outline0("STA <Numberl" );
 
     outline0("JSR SQROOT" );
 
-    outline0("LDA Root" );
+    outline0("LDA <Root" );
     outline1("STA %s", _result );
 
 }
