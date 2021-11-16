@@ -41,9 +41,9 @@
 extern char DATATYPE_AS_STRING[][16];
 
 /**
- * @brief Emit ASM code for <b>GET IMAGE [image] AT [int],[int] SIZE [int],[int]</b>
+ * @brief Emit ASM code for <b>GET IMAGE [image] AT [int],[int]</b>
  * 
- * This function outputs a code that draws an image on a bitmap. 
+ * This function outputs a code that save an image from a bitmap. 
  * 
  * @param _environment Current calling environment
  * @param _image Image to draw
