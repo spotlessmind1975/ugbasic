@@ -38,8 +38,8 @@
 ; TIMER service routine
 MO5IRQ
     LDD   #1          ; increment 
+MO5TIMER  set *+1     ; (variable within code)
     ADDD  #0          ; add value of TI variable
-MO5TIMER  set *-2     ; (variable within code)
     STD   MO5TIMER    ; write result to TI variable
     LDX   #0          ; get next ISR
 MO5IRQN   set *-2     ; (variable within code)

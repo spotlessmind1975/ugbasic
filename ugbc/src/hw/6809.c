@@ -1090,8 +1090,8 @@ void cpu6809_addressof_16bit( Environment * _environment, char *_source, char *_
 
     inline( cpu_addressof_16bit )
 
-        outline1("LDX #%s", _source);
-        outline1("STX %s", _destination);
+        outline1("LDD #%s", _source);
+        outline1("STD %s", _destination);
 
     no_embedded( cpu_addressof_16bit )
 
@@ -1315,10 +1315,10 @@ void cpu6809_math_mul_16bit_to_32bit( Environment * _environment, char *_source,
             outline0("STX <MATHPTR2" );
             outhead1("%sdone2", label );
         } else {
-            outline1("LDX %s", _source );
-            outline0("STX <MATHPTR0" );
-            outline1("LDX %s", _destination );
-            outline0("STX <MATHPTR2" );
+            outline1("LDD %s", _source );
+            outline0("STD <MATHPTR0" );
+            outline1("LDD %s", _destination );
+            outline0("STD <MATHPTR2" );
         }
         outline0("LDA <MATHPTR0" );
         outline0("LDB <MATHPTR2" );
@@ -1381,10 +1381,10 @@ void cpu6809_math_mul_16bit_to_32bit( Environment * _environment, char *_source,
 
     embedded( cpu_math_mul_16bit_to_32bit, src_hw_6809_cpu_math_mul_16bit_to_32bit_asm );
 
-        outline1("LDX %s", _source );
-        outline0("STX <MATHPTR0" );
-        outline1("LDX %s", _destination );
-        outline0("STX <MATHPTR2" );
+        outline1("LDD %s", _source );
+        outline0("STD <MATHPTR0" );
+        outline1("LDD %s", _destination );
+        outline0("STD <MATHPTR2" );
 
         if ( _signed ) {
             outline0("JSR CPUMATHMUL16BITTO32BIT_SIGNED" );
@@ -1392,10 +1392,10 @@ void cpu6809_math_mul_16bit_to_32bit( Environment * _environment, char *_source,
             outline0("JSR CPUMATHMUL16BITTO32BIT" );
         }
 
-        outline0("LDX <MATHPTR4" );
-        outline1("STX %s", _other );
-        outline0("LDX <MATHPTR6" );
-        outline1("STX %s+2", _other );
+        outline0("LDD <MATHPTR4" );
+        outline1("STD %s", _other );
+        outline0("LDD <MATHPTR6" );
+        outline1("STD %s+2", _other );
 
     done( )
 
@@ -1538,8 +1538,8 @@ void cpu6809_math_div_16bit_to_16bit( Environment * _environment, char *_source,
         } else {
             outline0("JSR CPUMATHDIV16BITTO16BIT" );
         }
-        outline1("STD %s", _other );
         outline1("STX %s", _other_remainder );
+        outline1("STD %s", _other );
 
     done( )
 
@@ -2740,18 +2740,18 @@ void cpu6809_inc_16bit( Environment * _environment, char * _variable ) {
 
     inline( cpu_inc_16bit )
 
-        // 16 cycles all times
-        // outline1("LDD %s", _variable );
-        // outline0("ADDD #1" );
-        // outline1("STD %s", _variable );
+        // 16 cycles all times, but extra possibilites for peephole
+        outline1("LDD %s", _variable );
+        outline0("ADDD #1" );
+        outline1("STD %s", _variable );
 
-        MAKE_LABEL
+        // MAKE_LABEL
 
         // 10 cycles 255 times out of 256 and 17 one out of 256
-        outline1("INC %s+1", _variable);
-        outline1("BNE %s", label);
-        outline1("INC %s", _variable);
-        outhead1("%s", label)
+        // outline1("INC %s+1", _variable);
+        // outline1("BNE %s", label);
+        // outline1("INC %s", _variable);
+        // outhead1("%s", label)
 
     no_embedded( cpu_inc_16bit )
 
@@ -3482,9 +3482,8 @@ void cpu6809_move_8bit_indirect( Environment * _environment, char *_source, char
 
     inline( cpu_move_8bit_indirect )
 
-        outline1("LDX %s", _value);
         outline1("LDA %s", _source);
-        outline0("STA ,X");
+        outline1("STA [%s]", _value);
 
     no_embedded( cpu_move_8bit_indirect )
 
@@ -3579,8 +3578,7 @@ void cpu6809_move_8bit_indirect2( Environment * _environment, char * _value, cha
 
         MAKE_LABEL
 
-        outline1("LDX %s", _value);
-        outline0("LDA ,X");
+        outline1("LDA [%s]", _value);
         outline1("STA %s", _source );
 
     no_embedded( cpu_move_8bit_indirect_with_offset2 )
@@ -3932,8 +3930,8 @@ void cpu6809_number_to_string( Environment * _environment, char * _number, char 
 
     deploy( numberToString, src_hw_6809_number_to_string_asm );
 
-    outline1("LDX %s", _string );
-    outline0("STX <TMPPTR");
+    outline1("LDD %s", _string );
+    outline0("STD <TMPPTR");
 
     outline0("LDA #0");
     outline0("STA <MATHPTR0");

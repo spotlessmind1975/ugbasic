@@ -325,7 +325,7 @@ void target_peephole_optimizer( Environment * _environment ) {
 			&&   (variable2=match(buffer[1], " LDX *"))!=NULL
 			&&   _strcmp(variable1,variable2)==0) {
 				if(unsafe && match(variable1, "_Ttmp")) 
-				optim(buffer[0], "rule #14 (unsafe)", NULL);
+				// optim(buffer[0], "rule #14 (unsafe)", NULL);
 				optim(buffer[1], "rule #14 (STD <tmp>->LDX <tmp>)", "\tTFR D,X\n");
 			}
 			// if ( match(buffer[0], " LDD ,X")
@@ -334,17 +334,64 @@ void target_peephole_optimizer( Environment * _environment ) {
 				// optim(buffer[1], "rule #15 (LDD ,X->TFR D,X", "\tLDX ,X\n");
 			// }
 			
+			if( (variable1=match(buffer[0], " STA *"))!=NULL
+			&&  (variable2=match(buffer[1], " STA *"))!=NULL
+			&&  _strcmp(variable1,variable2)==0) {
+				optim(buffer[0], "rule #15 (STr->...->STr)", NULL);
+			}
+			if( (variable1=match(buffer[0], " STA *"))!=NULL
+			&&  (variable2=match(buffer[2], " STA *"))!=NULL
+			&&  _strcmp(variable1,variable2)==0) {
+				optim(buffer[0], "rule #15 (STr->...->STr)", NULL);
+			}
+			if( (variable1=match(buffer[0], " STA *"))!=NULL
+			&&  (variable2=match(buffer[3], " STA *"))!=NULL
+			&&  _strcmp(variable1,variable2)==0) {
+				optim(buffer[0], "rule #15 (STr->...->STr)", NULL);
+			}
+			if( (variable1=match(buffer[0], " STD *"))!=NULL
+			&&  (variable2=match(buffer[1], " STD *"))!=NULL
+			&&  _strcmp(variable1,variable2)==0) {
+				optim(buffer[0], "rule #15 (STr->...->STr)", NULL);
+			}
+			if( (variable1=match(buffer[0], " STD *"))!=NULL
+			&&  (variable2=match(buffer[2], " STD *"))!=NULL
+			&&  _strcmp(variable1,variable2)==0) {
+				optim(buffer[0], "rule #15 (STr->...->STr)", NULL);
+			}
+			if( (variable1=match(buffer[0], " STD *"))!=NULL
+			&&  (variable2=match(buffer[3], " STD *"))!=NULL
+			&&  _strcmp(variable1,variable2)==0) {
+				optim(buffer[0], "rule #15 (STr->...->STr)", NULL);
+			}
+			
+			if ( (variable1=match(buffer[0], " LDD #*"))!=NULL
+			&&   (variable2=match(buffer[1], " ADDD #*"))!=NULL) {
+				char buf[MAX_TEMPORARY_STORAGE], *s = buf, *t;
+				strcpy(buf, "\tLDD #"); while(*s) ++s;
+				t = variable1;
+				while(*t && *t!=' ' && *t!='\t' && *t!='\n') *s++=*t++;
+				*s++ = '+';
+				t=variable2;
+				while(*t && *t!=' ' && *t!='\t' && *t!='\n') *s++=*t++;
+				*s++ = '\n';
+				*s='\0';
+				optim(buffer[0], "rule #16", NULL);
+				optim(buffer[1], "rule #16 (LDD#->ADD#)",buf);
+			}
+			
+			// more complex
 			if(zA) {
 				if (match( buffer[0], " CLRA")) {
-					optim( buffer[0], "rule #16 (A already 0)", NULL);
+					optim( buffer[0], "rule #17 (A already 0)", NULL);
 				} else if (match( buffer[0], " LDA #$ff")) {
-					optim( buffer[0], "rule #17 (A was 0)", "\tDECA\n");
+					optim( buffer[0], "rule #18 (A was 0)", "\tDECA\n");
 				} else if (match( buffer[0], " LDA #$01")) {
-					optim( buffer[0], "rule #18 (A was 0)", "\tINCA\n");
+					optim( buffer[0], "rule #19 (A was 0)", "\tINCA\n");
 				} else if ( (variable1=chkLDD( buffer[0], "00--"))!=NULL ) {
 					char buf[MAX_TEMPORARY_STORAGE];
 					sprintf(buf, "\tLDB #$%c%c\n", variable1[2], variable1[3]);
-					optim(buffer[0], "rule #19 (A already 0)", buf);
+					optim(buffer[0], "rule #20 (A already 0)", buf);
 					zB = 0;
 				} else if(!isAComment(buffer[0]) && can_nzA(match(buffer[0], " *"))) {
 					zA = 0;
@@ -355,15 +402,15 @@ void target_peephole_optimizer( Environment * _environment ) {
 
 			if(zB) {
 				if (match( buffer[0], " CLRB")) {
-					optim( buffer[0], "rule #320 (B already 0)", NULL);
+					optim( buffer[0], "rule #21 (B already 0)", NULL);
 				} else if (match( buffer[0], " LDB #$ff")) {
-					optim( buffer[0], "rule #21 (B was 0)", "\tDECB\n");
+					optim( buffer[0], "rule #22 (B was 0)", "\tDECB\n");
 				} else if (match( buffer[0], " LDB #$01")) {
-					optim( buffer[0], "rule #22 (B was 0)", "\tINCB\n");
+					optim( buffer[0], "rule #23 (B was 0)", "\tINCB\n");
 				} else if ( (variable1=chkLDD(buffer[0], "--00"))!=NULL ) {
 					char buf[MAX_TEMPORARY_STORAGE];
 					sprintf(buf, "\tLDA #$%c%c\n", variable1[0], variable1[1]);
-					optim(buffer[0], "rule #23 (B already 0)", buf);
+					optim(buffer[0], "rule #24 (B already 0)", buf);
 					zA = 0;
 				} else if(!isAComment(buffer[0]) && can_nzB(match(buffer[0], " *"))) {
 					zB = 0;
