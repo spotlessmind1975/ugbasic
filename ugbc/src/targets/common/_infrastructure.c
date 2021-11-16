@@ -3762,12 +3762,12 @@ void variable_move_array_string( Environment * _environment, char * _array, char
     }
 
     Variable * offset = calculate_offset_in_array( _environment, _array);
-
+    
     cpu_math_add_16bit_with_16bit( _environment, offset->realName, array->realName, offset->realName );
 
     Variable * dstring = variable_temporary( _environment, VT_DSTRING, "(array element)");
 
-    cpu_move_8bit( _environment, offset->realName, dstring->realName );
+    cpu_move_8bit_indirect2( _environment, offset->realName, dstring->realName );
 
     Variable * address = variable_temporary( _environment, VT_ADDRESS, "(result of array move)" );
     Variable * size = variable_temporary( _environment, VT_BYTE, "(result of array move)" );
@@ -3789,8 +3789,10 @@ void variable_move_array_string( Environment * _environment, char * _array, char
 
     cpu_dsfree( _environment, dstring->realName );
     cpu_dsalloc( _environment, size->realName, dstring->realName );
-    cpu_dsdescriptor( _environment, string->realName, address2->realName, size2->realName );
+    cpu_dsdescriptor( _environment, dstring->realName, address2->realName, size2->realName );
     cpu_mem_move(_environment, address->realName, address2->realName, size->realName );
+    cpu_move_8bit_indirect( _environment, dstring->realName, offset->realName );
+    cpu_store_8bit( _environment, dstring->realName, 0 );
 
 }
 
@@ -3823,7 +3825,7 @@ Variable * variable_move_from_array( Environment * _environment, char * _array )
 
             Variable * dstring = variable_temporary( _environment, VT_DSTRING, "(array element)");
 
-            cpu_move_8bit( _environment, offset->realName, dstring->realName );
+            cpu_move_8bit_indirect2( _environment, offset->realName, dstring->realName );
 
             Variable * address = variable_temporary( _environment, VT_ADDRESS, "(result of array move)" );
             Variable * size = variable_temporary( _environment, VT_BYTE, "(result of array move)" );
