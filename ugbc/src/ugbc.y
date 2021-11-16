@@ -1601,6 +1601,26 @@ exponential:
         $$ = variable_temporary( _environment, VT_BYTE, "(FIRE)" )->name;
         variable_store( _environment, $$, JOY_FIRE );
     }
+    | JOY UP {
+        $$ = variable_temporary( _environment, VT_BYTE, "(UP)" )->name;
+        variable_store( _environment, $$, 1 << JOY_UP );
+    }
+    | JOY DOWN {
+        $$ = variable_temporary( _environment, VT_BYTE, "(DOWN)" )->name;
+        variable_store( _environment, $$, 1 << JOY_DOWN );
+    }
+    | JOY LEFT {
+        $$ = variable_temporary( _environment, VT_BYTE, "(LEFT)" )->name;
+        variable_store( _environment, $$, 1 << JOY_LEFT );
+    }
+    | JOY RIGHT {
+        $$ = variable_temporary( _environment, VT_BYTE, "(RIGHT)" )->name;
+        variable_store( _environment, $$, 1 << JOY_RIGHT );
+    }
+    | JOY FIRE {
+        $$ = variable_temporary( _environment, VT_BYTE, "(FIRE)" )->name;
+        variable_store( _environment, $$, JOY_FIRE );
+    }
     | INPUT OP_DOLLAR OP expr CP {
         $$ = input_string( _environment, $4 )->name;
     }
