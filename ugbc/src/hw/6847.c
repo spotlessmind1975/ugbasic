@@ -571,9 +571,9 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             SAM_V2_SET;
             SAM_V1_SET;
             SAM_V0_CLR;
-            SAM_V2_SET;
-            SAM_V1_SET;
-            SAM_V0_SET;
+            GM2_SET;
+            GM1_SET;
+            GM0_SET;
             cpu_store_16bit( _environment, "CLIPX1", 0 );
             cpu_store_16bit( _environment, "CLIPX2", 255 );
             cpu_store_16bit( _environment, "CLIPY1", 0 );
@@ -601,6 +601,8 @@ void c6847_bitmap_enable( Environment * _environment, int _width, int _height, i
 
         cpu_store_8bit( _environment, "CURRENTMODE", mode->id );
         
+        printf( "current mode = %d\n", mode->id );
+
         _environment->currentMode = mode->id;
     } else {
         WARNING_SCREEN_MODE( -1 );
@@ -1013,7 +1015,7 @@ static int calculate_image_size( Environment * _environment, int _width, int _he
         case BITMAP_MODE_RESOLUTION2:       // Resolution Graphics 2 128 × 96	1 + Black	1536
         case BITMAP_MODE_RESOLUTION3:       // Resolution Graphics 3	128 × 192	1 + Black	3072
         case BITMAP_MODE_RESOLUTION6:       // Resolution Graphics 6	256 × 192	1 + Black	6144            break;
-            return 2 + ( _width >> 3 ) * _height );
+            return 2 + ( ( _width >> 3 ) * _height );
 
     }
 
@@ -1299,7 +1301,7 @@ void c6847_put_image( Environment * _environment, char * _image, char * _x, char
     (void)!_flags;
 
     deploy( c6847vars, src_hw_6847_vars_asm);
-    deploy( image, src_hw_6847_put_image_asm );
+    deploy( putimage, src_hw_6847_put_image_asm );
 
     outline1("LDY #%s", _image );
     if ( _frame ) {
@@ -1344,6 +1346,21 @@ Variable * c6847_new_image( Environment * _environment, int _width, int _height,
     result->size = size;
     
     return result;
+
+}
+
+void c6847_get_image( Environment * _environment, char * _image, char * _x, char * _y ) {
+
+    deploy( c6847vars, src_hw_6847_vars_asm);
+    deploy( getimage, src_hw_6847_get_image_asm );
+
+    outline1("LDY #%s", _image );
+    outline1("LDD %s", _x );
+    outline0("STD IMAGEX" );
+    outline1("LDD %s", _y );
+    outline0("STD IMAGEY" );
+
+    outline0("JSR GETIMAGE");
 
 }
 

@@ -865,7 +865,8 @@ typedef struct _Deployed {
     int textHScrollLine;
     int textHScrollScreen;
     int raster;
-    int image;
+    int putimage;
+    int getimage;
     int mob;
     int mobcs;
     int protothread;
@@ -1341,6 +1342,7 @@ typedef struct _Environment {
 #define CRITICAL_BUFFER_SIZE_MISMATCH_ARRAY_SIZE( v, d1, d2 ) CRITICAL4si("E094 - size of buffer mismatch the size of array", v, d1, d2 );
 #define CRITICAL_CANNOT_ASSIGN_TO_ARRAY( v, t ) CRITICAL3("E095 - cannot assign this type to array", v, t );
 #define CRITICAL_NEW_IMAGE_UNSUPPORTED_MODE(f) CRITICAL2i("E096 - NEW IMAGE unsupported for the given screen mode", f );
+#define CRITICAL_GET_IMAGE_UNSUPPORTED( v, t ) CRITICAL3("E097 - GET IMAGE unsupported for given datatype", v, t );
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
 #define WARNING2i( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%i) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }

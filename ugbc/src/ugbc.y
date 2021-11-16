@@ -2360,7 +2360,7 @@ put_definition_expression:
 
 get_definition_expression:
       IMAGE Identifier FROM optional_x OP_COMMA optional_y  {
-        // get_image( _environment, $2, $4, $6 );
+        get_image( _environment, $2, $4, $6 );
         gr_locate( _environment, $4, $6 );
     };
 
