@@ -1338,6 +1338,13 @@ Variable * ef936x_new_image( Environment * _environment, int _width, int _height
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, "(new image)" );
 
+    char * buffer = malloc ( size );
+    memset( buffer, 0, size );
+
+    *(buffer) = _width;
+    *(buffer+1) = _height;
+
+    result->valueBuffer = buffer;
     result->size = size;
     
     return result;
