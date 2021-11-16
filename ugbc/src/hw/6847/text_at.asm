@@ -438,6 +438,14 @@ TEXTAT14
     ROLA
     LSLB
     ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
     LEAX D, X
 
     LDB XCURSYS
