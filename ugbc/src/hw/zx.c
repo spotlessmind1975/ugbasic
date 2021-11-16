@@ -430,7 +430,7 @@ void zx_put_image( Environment * _environment, char * _image, char * _x, char * 
     MAKE_LABEL
 
     deploy( vars, src_hw_zx_vars_asm);
-    deploy( image, src_hw_zx_image_asm );
+    deploy( putimage, src_hw_zx_put_image_asm );
 
     outline1("LD HL, (%s)", _image );
     if ( _frame ) {
@@ -460,6 +460,23 @@ void zx_put_image( Environment * _environment, char * _image, char * _x, char * 
 
     outline0("CALL PUTIMAGE");
 
+}
+
+Variable * zx_new_image( Environment * _environment, int _width, int _height, int _mode ) {
+
+    switch( _mode ) {
+
+        case BITMAP_MODE_STANDARD:
+        case TILEMAP_MODE_STANDARD:
+            break;
+    }
+
+    CRITICAL_NEW_IMAGE_UNSUPPORTED_MODE( _mode );
+
+}
+
+void zx_get_image( Environment * _environment, char * _image, char * _x, char * _y ) {
+    
 }
 
 #endif

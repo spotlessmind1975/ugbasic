@@ -1096,6 +1096,58 @@ static int calculate_luminance(RGBi _a) {
 
 }
 
+static int calculate_image_size( Environment * _environment, int _width, int _height, int _mode ) {
+
+    switch( _mode ) {
+
+        case BITMAP_MODE_STANDARD:
+
+            return 2 + ( ( _width >> 3 ) * _height ) + ( ( _width >> 3 ) * ( _height >> 3 ) );
+
+        case BITMAP_MODE_MULTICOLOR:
+
+            return 2 + ( ( _width >> 2 ) * _height ) + 2 * ( ( _width >> 2 ) * ( _height >> 3 ) ) + 1;
+
+        case BITMAP_MODE_AH:
+        case BITMAP_MODE_AIFLI:
+        case BITMAP_MODE_ASSLACE:
+        case BITMAP_MODE_ECI:
+        case BITMAP_MODE_IAFLI:
+        case BITMAP_MODE_IH:
+        case BITMAP_MODE_MRFLI:
+        case BITMAP_MODE_MUCSUFLI:
+        case BITMAP_MODE_MUCSUH:
+        case BITMAP_MODE_MUFLI:
+        case BITMAP_MODE_MUIFLI:
+        case BITMAP_MODE_NUFLI:
+        case BITMAP_MODE_NUIFLI:
+        case BITMAP_MODE_SH:
+        case BITMAP_MODE_SHFLI:
+        case BITMAP_MODE_SHI:
+        case BITMAP_MODE_SHIFLI:
+        case BITMAP_MODE_SHIFXL:
+        case BITMAP_MODE_UFLI:
+        case BITMAP_MODE_UIFLI:
+        case BITMAP_MODE_TRIFLI:
+        case BITMAP_MODE_XFLI:
+        case BITMAP_MODE_XIFLI:
+        case BITMAP_MODE_FLI:
+        case BITMAP_MODE_HCB:
+        case BITMAP_MODE_IFLI:
+        case BITMAP_MODE_MUCSU:
+        case BITMAP_MODE_MCI:
+        case BITMAP_MODE_MEGATEXT:
+        case BITMAP_MODE_PRS:
+        case TILEMAP_MODE_STANDARD:
+        case TILEMAP_MODE_MULTICOLOR:
+        case TILEMAP_MODE_EXTENDED:
+            break;
+    }
+
+    return 0;
+
+}
+
 static Variable * vic2_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
 
     image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
@@ -1138,7 +1190,8 @@ static Variable * vic2_image_converter_bitmap_mode_standard( Environment * _envi
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
  
-    int bufferSize = 2 + ( ( _frame_width >> 3 ) * _frame_height ) + ( ( _frame_width >> 3 ) * ( _frame_height >> 3 ) );
+    int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_STANDARD );
+
     // printf("bufferSize = %d\n", bufferSize );
 
     char * buffer = malloc ( bufferSize );
@@ -1313,7 +1366,7 @@ static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
  
-    int bufferSize = 2 + ( ( _frame_width >> 2 ) * _frame_height ) + 2 * ( ( _frame_width >> 2 ) * ( _frame_height >> 3 ) ) + 1;
+    int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_MULTICOLOR );
     
     char * buffer = malloc ( bufferSize );
     memset( buffer, 0, bufferSize );
@@ -1682,7 +1735,7 @@ Variable * vic2_image_converter( Environment * _environment, char * _data, int _
 void vic2_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _frame_size, int _flags ) {
 
     deploy( vic2vars, src_hw_vic2_vars_asm);
-    deploy( image, src_hw_vic2_image_asm );
+    deploy( putimage, src_hw_vic2_put_image_asm );
 
     MAKE_LABEL
 
@@ -1739,6 +1792,54 @@ void vic2_wait_vbl( Environment * _environment ) {
     deploy( vbl, src_hw_vic2_vbl_asm);
 
     outline0("JSR VBL");
+
+}
+
+Variable * vic2_new_image( Environment * _environment, int _width, int _height, int _mode ) {
+
+    int size = calculate_image_size( _environment, _width, _height, _mode );
+
+    if ( ! size ) {
+        CRITICAL_NEW_IMAGE_UNSUPPORTED_MODE( _mode );
+    }
+
+    Variable * result = variable_temporary( _environment, VT_IMAGE, "(new image)" );
+
+    char * buffer = malloc ( size );
+    memset( buffer, 0, size );
+
+    *(buffer) = _width;
+    *(buffer+1) = _height;
+
+    result->valueBuffer = buffer;
+    result->size = size;
+    
+    return result;
+
+}
+
+void vic2_get_image( Environment * _environment, char * _image, char * _x, char * _y ) {
+
+    deploy( vic2vars, src_hw_vic2_vars_asm);
+    deploy( getimage, src_hw_vic2_get_image_asm );
+
+    MAKE_LABEL
+
+    outhead1("getimage%s:", label);
+    outline1("LDA #<%s", _image );
+    outline0("STA TMPPTR" );
+    outline1("LDA #>%s", _image );
+    outline0("STA TMPPTR+1" );
+    outline1("LDA %s", _x );
+    outline0("STA IMAGEX" );
+    outline1("LDA %s+1", _x );
+    outline0("STA IMAGEX+1" );
+    outline1("LDA %s", _y );
+    outline0("STA IMAGEY" );
+    outline1("LDA %s+1", _y );
+    outline0("STA IMAGEY+1" );
+
+    outline0("JSR GETIMAGE");
 
 }
 

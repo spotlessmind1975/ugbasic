@@ -665,6 +665,26 @@ static int calculate_luminance(RGBi _a) {
 
 }
 
+static int calculate_image_size( Environment * _environment, int _width, int _height, int _mode ) {
+
+    switch( _mode ) {
+        case BITMAP_MODE_40_COLUMN:
+            return 2 + 2 * ( ( _width >> 3 ) * _height );
+        case BITMAP_MODE_BITMAP_4:
+            return 2 + 2 * ( ( _width >> 3 ) * _height ) /*+ 8*/;
+        case BITMAP_MODE_80_COLUMN:
+        case BITMAP_MODE_BITMAP_16:
+            return 2 + 2 * ( ( _width >> 2 ) * _height ) /* + 16 * 2 */;
+        case BITMAP_MODE_PAGE:
+            // CRITICAL_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
+            break;
+    }
+
+    return 0;
+
+}
+
+
 static Variable * ef936x_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
 
     // ignored on bitmap mode
@@ -840,7 +860,7 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
  
-    int bufferSize = 2 + 2 * ( ( _frame_width >> 3 ) * _frame_height );
+    int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_40_COLUMN );
     
     char * buffer = malloc ( bufferSize );
     memset( buffer, 0, bufferSize );
@@ -978,7 +998,7 @@ static Variable * ef936x_image_converter_multicolor_mode4( Environment * _enviro
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
  
-    int bufferSize = 2 + 2 * ( ( _frame_width >> 3 ) * _frame_height ) /*+ 8*/;
+    int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_BITMAP_4 );
     
     char * buffer = malloc ( bufferSize );
     memset( buffer, 0, bufferSize );
@@ -1182,7 +1202,7 @@ static Variable * ef936x_image_converter_multicolor_mode16( Environment * _envir
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
  
-    int bufferSize = 2 + 2 * ( ( _frame_width >> 2 ) * _frame_height ) /* + 16 * 2 */;
+    int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_BITMAP_16 );
     
     char * buffer = malloc ( bufferSize );
     memset( buffer, 0, bufferSize );
@@ -1281,7 +1301,7 @@ Variable * ef936x_image_converter( Environment * _environment, char * _data, int
 void ef936x_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _frame_size, int _flags ) {
 
     deploy( ef936xvars, src_hw_ef936x_vars_asm);
-    deploy( image, src_hw_ef936x_image_asm );
+    deploy( putimage, src_hw_ef936x_put_image_asm );
 
     outline1("LDA #$%2.2x", _flags );
     outline0("STA <IMAGET" );
@@ -1305,6 +1325,44 @@ void ef936x_put_image( Environment * _environment, char * _image, char * _x, cha
     outline0("STD <IMAGEY" );
 
     outline0("JSR PUTIMAGE");
+    
+}
+
+Variable * ef936x_new_image( Environment * _environment, int _width, int _height, int _mode ) {
+
+    int size = calculate_image_size( _environment, _width, _height, _mode );
+
+    if ( ! size ) {
+        CRITICAL_NEW_IMAGE_UNSUPPORTED_MODE( _mode );
+    }
+
+    Variable * result = variable_temporary( _environment, VT_IMAGE, "(new image)" );
+
+    char * buffer = malloc ( size );
+    memset( buffer, 0, size );
+
+    *(buffer) = _width;
+    *(buffer+1) = _height;
+
+    result->valueBuffer = buffer;
+    result->size = size;
+    
+    return result;
+    
+}
+
+void ef936x_get_image( Environment * _environment, char * _image, char * _x, char * _y ) {
+
+    deploy( ef936xvars, src_hw_ef936x_vars_asm);
+    deploy( getimage, src_hw_ef936x_get_image_asm );
+
+    outline1("LDY #%s", _image );
+    outline1("LDD %s", _x );
+    outline0("STD <IMAGEX" );
+    outline1("LDD %s", _y );
+    outline0("STD <IMAGEY" );
+
+    outline0("JSR GETIMAGE");
     
 }
 

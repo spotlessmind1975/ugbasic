@@ -168,6 +168,7 @@ FROM { return (FROM); }
 FUNCTION { return (FUNCTION); }
 G { return (G); }
 GAMELOOP { return (GAMELOOP); }
+GET { return (GET); }
 GLOBAL { return (GLOBAL); }
 GOLD { return(GOLD); }
 GOTO { return (GOTO); }
@@ -247,6 +248,7 @@ MILLISECONDS { return (MILLISECONDS); }
 MULTICOLOR { return(MULTICOLOR); }
 N { return (N); }
 NEXT { return (NEXT); }
+NEW { return (NEW); }
 NORMAL { return(NORMAL); }
 NONE { return(NONE); }
 NOP { return(NOP); }

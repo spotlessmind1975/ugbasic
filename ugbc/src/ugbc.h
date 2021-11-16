@@ -865,7 +865,8 @@ typedef struct _Deployed {
     int textHScrollLine;
     int textHScrollScreen;
     int raster;
-    int image;
+    int putimage;
+    int getimage;
     int mob;
     int mobcs;
     int protothread;
@@ -1340,6 +1341,8 @@ typedef struct _Environment {
 #define CRITICAL_UNSUPPORTED_OUTPUT_FILE_TYPE( t ) CRITICAL2("E093 - output file type format unsupported for this type of executable", t );
 #define CRITICAL_BUFFER_SIZE_MISMATCH_ARRAY_SIZE( v, d1, d2 ) CRITICAL4si("E094 - size of buffer mismatch the size of array", v, d1, d2 );
 #define CRITICAL_CANNOT_ASSIGN_TO_ARRAY( v, t ) CRITICAL3("E095 - cannot assign this type to array", v, t );
+#define CRITICAL_NEW_IMAGE_UNSUPPORTED_MODE(f) CRITICAL2i("E096 - NEW IMAGE unsupported for the given screen mode", f );
+#define CRITICAL_GET_IMAGE_UNSUPPORTED( v, t ) CRITICAL3("E097 - GET IMAGE unsupported for given datatype", v, t );
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
 #define WARNING2i( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%i) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -1780,6 +1783,7 @@ int                     frames( Environment * _environment, char * _image );
 Variable *              get_at( Environment * _environment, char * _x, char * _y );
 Variable *              get_cmove( Environment * _environment, char * _x, char * _y );
 Variable *              get_cmove_direct( Environment * _environment, int _x, int _y );
+void                    get_image( Environment * _environment, char * _image, char * _x1, char * _y1 );
 Variable *              get_paper( Environment * _environment, char * _color );
 Variable *              get_pen( Environment * _environment, char * _color );
 Variable *              get_tab( Environment * _environment );
@@ -1865,6 +1869,7 @@ void                    mob_show( Environment * _environment, char * _index );
 void                    next_raster( Environment * _environment );
 void                    next_raster_at_with( Environment * _environment, int _at, char * _with );
 void                    next_raster_at_with_var( Environment * _environment, char * _var, char * _with );
+Variable *              new_image( Environment * _environment, int _width, int _height, int _mode );
 
 //----------------------------------------------------------------------------
 // *O*

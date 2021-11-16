@@ -736,6 +736,27 @@ static int calculate_luminance(RGBi _a) {
 
 }
 
+static int calculate_image_size( Environment * _environment, int _width, int _height, int _mode ) {
+
+    switch( _mode ) {
+        case BITMAP_MODE_STANDARD:
+
+            return 2 + ( ( _width >> 3 ) * _height ) + ( ( _width >> 3 ) * ( _height >> 3 ) );
+
+        case BITMAP_MODE_MULTICOLOR:
+
+            return 2 + ( ( _width >> 2 ) * _height ) + 2 * ( ( _width >> 2 ) * ( _height >> 3 ) ) + 2;
+
+        case TILEMAP_MODE_STANDARD:
+        case TILEMAP_MODE_MULTICOLOR:
+        case TILEMAP_MODE_EXTENDED:
+            break;
+    }
+
+    CRITICAL_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
+
+}
+
 static Variable * ted_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
 
     image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
@@ -778,7 +799,7 @@ static Variable * ted_image_converter_bitmap_mode_standard( Environment * _envir
     
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
  
-    int bufferSize = 2 + ( ( _frame_width >> 3 ) * _frame_height ) + ( ( _frame_width >> 3 ) * ( _frame_height >> 3 ) );
+    int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_STANDARD );
     // printf("bufferSize = %d\n", bufferSize );
 
     char * buffer = malloc ( bufferSize );
@@ -895,7 +916,7 @@ static Variable * ted_image_converter_multicolor_mode_standard( Environment * _e
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
  
-    int bufferSize = 2 + ( ( _frame_width >> 2 ) * _frame_height ) + 2 * ( ( _frame_width >> 2 ) * ( _frame_height >> 3 ) ) + 2;
+    int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_MULTICOLOR );
     
     char * buffer = malloc ( bufferSize );
     memset( buffer, 0, bufferSize );
@@ -1003,7 +1024,7 @@ Variable * ted_image_converter( Environment * _environment, char * _data, int _w
 void ted_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _frame_size, int _flags ) {
 
     deploy( tedvars, src_hw_ted_vars_asm);
-    deploy( image, src_hw_ted_image_asm );
+    deploy( putimage, src_hw_ted_put_image_asm );
 
     outline1("LDA #$%2.2x", _flags );
     outline0("STA IMAGET" );
@@ -1057,6 +1078,51 @@ void ted_wait_vbl( Environment * _environment ) {
     deploy( vbl, src_hw_ted_vbl_asm);
 
     outline0("JSR VBL");
+
+}
+
+Variable * ted_new_image( Environment * _environment, int _width, int _height, int _mode ) {
+
+    int size = calculate_image_size( _environment, _width, _height, _mode );
+
+    if ( ! size ) {
+        CRITICAL_NEW_IMAGE_UNSUPPORTED_MODE( _mode );
+    }
+
+    Variable * result = variable_temporary( _environment, VT_IMAGE, "(new image)" );
+
+    char * buffer = malloc ( size );
+    memset( buffer, 0, size );
+
+    *(buffer) = _width;
+    *(buffer+1) = _height;
+
+    result->valueBuffer = buffer;
+    result->size = size;
+    
+    return result;
+
+}
+
+void ted_get_image( Environment * _environment, char * _image, char * _x, char * _y ) {
+
+    deploy( tedvars, src_hw_ted_vars_asm);
+    deploy( getimage, src_hw_ted_get_image_asm );
+
+    outline1("LDA #<%s", _image );
+    outline0("STA TMPPTR" );
+    outline1("LDA #>%s", _image );
+    outline0("STA TMPPTR+1" );
+    outline1("LDA %s", _x );
+    outline0("STA IMAGEX" );
+    outline1("LDA %s+1", _x );
+    outline0("STA IMAGEX+1" );
+    outline1("LDA %s", _y );
+    outline0("STA IMAGEY" );
+    outline1("LDA %s+1", _y );
+    outline0("STA IMAGEY+1" );
+
+    outline0("JSR GETIMAGE");
 
 }
 
