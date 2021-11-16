@@ -671,10 +671,10 @@ static int calculate_image_size( Environment * _environment, int _width, int _he
         case BITMAP_MODE_40_COLUMN:
             return 2 + 2 * ( ( _width >> 3 ) * _height );
         case BITMAP_MODE_BITMAP_4:
-            return 2 + 2 * ( ( _frame_width >> 3 ) * _frame_height ) /*+ 8*/;
+            return 2 + 2 * ( ( _width >> 3 ) * _height ) /*+ 8*/;
         case BITMAP_MODE_80_COLUMN:
         case BITMAP_MODE_BITMAP_16:
-            return 2 + 2 * ( ( _frame_width >> 2 ) * _frame_height ) /* + 16 * 2 */;
+            return 2 + 2 * ( ( _width >> 2 ) * _height ) /* + 16 * 2 */;
         case BITMAP_MODE_PAGE:
             // CRITICAL_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
             break;
