@@ -1301,7 +1301,7 @@ Variable * ef936x_image_converter( Environment * _environment, char * _data, int
 void ef936x_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _frame_size, int _flags ) {
 
     deploy( ef936xvars, src_hw_ef936x_vars_asm);
-    deploy( image, src_hw_ef936x_put_image_asm );
+    deploy( putimage, src_hw_ef936x_put_image_asm );
 
     outline1("LDA #$%2.2x", _flags );
     outline0("STA <IMAGET" );
@@ -1338,11 +1338,32 @@ Variable * ef936x_new_image( Environment * _environment, int _width, int _height
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, "(new image)" );
 
+    char * buffer = malloc ( size );
+    memset( buffer, 0, size );
+
+    *(buffer) = _width;
+    *(buffer+1) = _height;
+
+    result->valueBuffer = buffer;
     result->size = size;
     
     return result;
     
 }
 
+void ef936x_get_image( Environment * _environment, char * _image, char * _x, char * _y ) {
+
+    deploy( ef936xvars, src_hw_ef936x_vars_asm);
+    deploy( getimage, src_hw_ef936x_get_image_asm );
+
+    outline1("LDY #%s", _image );
+    outline1("LDD %s", _x );
+    outline0("STD <IMAGEX" );
+    outline1("LDD %s", _y );
+    outline0("STD <IMAGEY" );
+
+    outline0("JSR GETIMAGE");
+    
+}
 
 #endif

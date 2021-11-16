@@ -741,11 +741,11 @@ static int calculate_image_size( Environment * _environment, int _width, int _he
     switch( _mode ) {
         case BITMAP_MODE_STANDARD:
 
-            return 2 + ( ( _frame_width >> 3 ) * _frame_height ) + ( ( _frame_width >> 3 ) * ( _frame_height >> 3 ) );
+            return 2 + ( ( _width >> 3 ) * _height ) + ( ( _width >> 3 ) * ( _height >> 3 ) );
 
         case BITMAP_MODE_MULTICOLOR:
 
-            return 2 + ( ( _frame_width >> 2 ) * _frame_height ) + 2 * ( ( _frame_width >> 2 ) * ( _frame_height >> 3 ) ) + 2;
+            return 2 + ( ( _width >> 2 ) * _height ) + 2 * ( ( _width >> 2 ) * ( _height >> 3 ) ) + 2;
 
         case TILEMAP_MODE_STANDARD:
         case TILEMAP_MODE_MULTICOLOR:
@@ -1024,7 +1024,7 @@ Variable * ted_image_converter( Environment * _environment, char * _data, int _w
 void ted_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _frame_size, int _flags ) {
 
     deploy( tedvars, src_hw_ted_vars_asm);
-    deploy( image, src_hw_ted_put_image_asm );
+    deploy( putimage, src_hw_ted_put_image_asm );
 
     outline1("LDA #$%2.2x", _flags );
     outline0("STA IMAGET" );
@@ -1091,9 +1091,38 @@ Variable * ted_new_image( Environment * _environment, int _width, int _height, i
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, "(new image)" );
 
+    char * buffer = malloc ( size );
+    memset( buffer, 0, size );
+
+    *(buffer) = _width;
+    *(buffer+1) = _height;
+
+    result->valueBuffer = buffer;
     result->size = size;
     
     return result;
+
+}
+
+void ted_get_image( Environment * _environment, char * _image, char * _x, char * _y ) {
+
+    deploy( tedvars, src_hw_ted_vars_asm);
+    deploy( getimage, src_hw_ted_get_image_asm );
+
+    outline1("LDA #<%s", _image );
+    outline0("STA TMPPTR" );
+    outline1("LDA #>%s", _image );
+    outline0("STA TMPPTR+1" );
+    outline1("LDA %s", _x );
+    outline0("STA IMAGEX" );
+    outline1("LDA %s+1", _x );
+    outline0("STA IMAGEX+1" );
+    outline1("LDA %s", _y );
+    outline0("STA IMAGEY" );
+    outline1("LDA %s+1", _y );
+    outline0("STA IMAGEY+1" );
+
+    outline0("JSR GETIMAGE");
 
 }
 

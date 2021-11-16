@@ -167,5 +167,6 @@ Variable * vic2_image_converter( Environment * _environment, char * _data, int _
 void vic2_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _frame_size, int _flags );
 void vic2_wait_vbl( Environment * _environment );
 Variable * vic2_new_image( Environment * _environment, int _width, int _height, int _mode );
+void vic2_get_image( Environment * _environment, char * _image, char * _x, char * _y );
 
 #endif

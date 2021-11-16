@@ -1192,7 +1192,7 @@ void vic1_put_image( Environment * _environment, char * _image, char * _x, char 
     (void)!_flags;
 
     deploy( vic1vars, src_hw_vic1_vars_asm);
-    deploy( image, src_hw_vic1_put_image_asm );
+    deploy( putimage, src_hw_vic1_put_image_asm );
 
     outline1("LDA #<%s", _image );
     outline0("STA TMPPTR" );
@@ -1260,6 +1260,10 @@ Variable * vic1_new_image( Environment * _environment, int _width, int _height, 
     result->size = size;
     
     return result;
+}
+
+void vic1_get_image( Environment * _environment, char * _image, char * _x, char * _y ) {
+    
 }
 
 #endif

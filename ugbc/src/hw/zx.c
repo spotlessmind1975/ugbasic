@@ -430,7 +430,7 @@ void zx_put_image( Environment * _environment, char * _image, char * _x, char * 
     MAKE_LABEL
 
     deploy( vars, src_hw_zx_vars_asm);
-    deploy( image, src_hw_zx_put_image_asm );
+    deploy( putimage, src_hw_zx_put_image_asm );
 
     outline1("LD HL, (%s)", _image );
     if ( _frame ) {
@@ -473,6 +473,10 @@ Variable * zx_new_image( Environment * _environment, int _width, int _height, in
 
     CRITICAL_NEW_IMAGE_UNSUPPORTED_MODE( _mode );
 
+}
+
+void zx_get_image( Environment * _environment, char * _image, char * _x, char * _y ) {
+    
 }
 
 #endif

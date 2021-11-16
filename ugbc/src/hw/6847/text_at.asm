@@ -438,6 +438,14 @@ TEXTAT14
     ROLA
     LSLB
     ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
     LEAX D, X
 
     LDB XCURSYS
@@ -693,7 +701,7 @@ TEXTATBMSP0L1X
 
     LDA PATTERN
     LEAX A, X 
-    LEAX A, X 
+    LEAX 1, X
 
     JMP TEXTATBMINCX
 

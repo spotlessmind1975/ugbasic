@@ -1811,7 +1811,7 @@ void gtia_put_image( Environment * _environment, char * _image, char * _x, char 
     (void)!_flags;
 
     deploy( gtiavars, src_hw_gtia_vars_asm);
-    deploy( image, src_hw_gtia_put_image_asm );
+    deploy( putimage, src_hw_gtia_put_image_asm );
 
     outline1("LDA #$%2.2x", _flags );
     outline0("STA IMAGET" );
@@ -1879,8 +1879,15 @@ Variable * gtia_new_image( Environment * _environment, int _width, int _height, 
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, "(new image)" );
 
+    char * buffer = malloc ( size );
+    memset( buffer, 0, size );
+
+    *(buffer) = _width;
+    *(buffer+1) = _height;
+
+    result->valueBuffer = buffer;
     result->size = size;
-    
+
     return result;
 
 }

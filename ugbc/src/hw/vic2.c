@@ -1735,7 +1735,7 @@ Variable * vic2_image_converter( Environment * _environment, char * _data, int _
 void vic2_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _frame_size, int _flags ) {
 
     deploy( vic2vars, src_hw_vic2_vars_asm);
-    deploy( image, src_hw_vic2_put_image_asm );
+    deploy( putimage, src_hw_vic2_put_image_asm );
 
     MAKE_LABEL
 
@@ -1805,9 +1805,41 @@ Variable * vic2_new_image( Environment * _environment, int _width, int _height, 
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, "(new image)" );
 
+    char * buffer = malloc ( size );
+    memset( buffer, 0, size );
+
+    *(buffer) = _width;
+    *(buffer+1) = _height;
+
+    result->valueBuffer = buffer;
     result->size = size;
     
     return result;
+
+}
+
+void vic2_get_image( Environment * _environment, char * _image, char * _x, char * _y ) {
+
+    deploy( vic2vars, src_hw_vic2_vars_asm);
+    deploy( getimage, src_hw_vic2_get_image_asm );
+
+    MAKE_LABEL
+
+    outhead1("getimage%s:", label);
+    outline1("LDA #<%s", _image );
+    outline0("STA TMPPTR" );
+    outline1("LDA #>%s", _image );
+    outline0("STA TMPPTR+1" );
+    outline1("LDA %s", _x );
+    outline0("STA IMAGEX" );
+    outline1("LDA %s+1", _x );
+    outline0("STA IMAGEX+1" );
+    outline1("LDA %s", _y );
+    outline0("STA IMAGEY" );
+    outline1("LDA %s+1", _y );
+    outline0("STA IMAGEY+1" );
+
+    outline0("JSR GETIMAGE");
 
 }
 
