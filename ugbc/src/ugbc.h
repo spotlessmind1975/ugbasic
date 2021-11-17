@@ -1742,6 +1742,7 @@ Constant *              constant_find( Constant * _constant, char * _name );
 // *D*
 //----------------------------------------------------------------------------
 
+Variable *              distance( Environment * _environment, char * _x1, char * _y1, char * _x2, char * _y2 );
 void                    draw( Environment * _environment, char * _x0, char * _y0, char * _x1, char * _y1, char * _c );
 
 //----------------------------------------------------------------------------
