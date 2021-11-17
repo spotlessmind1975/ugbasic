@@ -491,6 +491,31 @@ int test_variable_string_right_tester( TestEnvironment * _te ) {
     
 }
 
+//===========================================================================
+
+void test_distance_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * x1 = variable_define( e, "x1", VT_POSITION, 0 );
+    Variable * y1 = variable_define( e, "y1", VT_POSITION, 0 );
+    Variable * x2 = variable_define( e, "x2", VT_POSITION, 4 );
+    Variable * y2 = variable_define( e, "y2", VT_POSITION, 4 );
+
+    Variable * result = distance( e, x1->name, y1->name, x2->name, y2->name );
+
+    _te->trackedVariables[0] = result;
+
+}
+
+int test_distance_tester( TestEnvironment * _te ) {
+
+    Variable * result = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+
+    return result->value == 2;
+    
+}
+
 void test_variables( ) {
 
     create_test( "variables_add01", &test_variables_add01_payload, &test_variables_add01_tester );    
@@ -508,5 +533,6 @@ void test_variables( ) {
     create_test( "powering", &test_powering_payload, &test_powering_tester );
     create_test( "variable_string_left", &test_variable_string_left_payload, &test_variable_string_left_tester );
     create_test( "variable_string_right", &test_variable_string_right_payload, &test_variable_string_right_tester );
+    create_test( "distance", &test_distance_payload, &test_distance_tester );
 
 }
