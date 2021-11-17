@@ -78,6 +78,8 @@ Variable * distance( Environment * _environment, char * _x1, char * _y1, char * 
     Variable * x2 = variable_retrieve_or_define( _environment, _x2, VT_POSITION, 0 );
     Variable * y2 = variable_retrieve_or_define( _environment, _y2, VT_POSITION, 0 );
     Variable * two = variable_resident( _environment, VT_POSITION, "(two)");
+    
+    variable_store( _environment, two->name, 2 );
 
     Variable * sum = variable_add( 
                     _environment,
@@ -99,16 +101,16 @@ Variable * distance( Environment * _environment, char * _x1, char * _y1, char * 
 
     Variable * result = variable_cast( _environment, sum->name, VT_POSITION );
 
-    // MAKE_LABEL
+    MAKE_LABEL
 
-    // variable_move(
-    //         _environment,
-    //         sqroot(
-    //             _environment,
-    //             result->name                 
-    //         )->name,
-    //         result->name
-    // );
+    variable_move(
+            _environment,
+            sqroot(
+                _environment,
+                result->name                 
+            )->name,
+            result->name
+    );
 
     return result;
 }
