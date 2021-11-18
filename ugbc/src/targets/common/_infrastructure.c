@@ -2769,8 +2769,7 @@ Variable * variable_string_right( Environment * _environment, char * _string, ch
             cpu_move_8bit( _environment, string->realName, size->realName );
             cpu_addressof_16bit( _environment, string->realName, address->realName );
             cpu_inc_16bit( _environment, address->realName );
-            cpu_move_8bit( _environment, size->realName, size2->realName );
-            cpu_math_sub_8bit( _environment, size2->realName, position->realName, size2->realName );
+            cpu_move_8bit( _environment, position->realName, size2->realName );
             cpu_dsfree( _environment, result->realName );
             cpu_dsalloc( _environment, size2->realName, result->realName );
             cpu_dsdescriptor( _environment, result->realName, address2->realName, size2->realName );
@@ -2779,14 +2778,13 @@ Variable * variable_string_right( Environment * _environment, char * _string, ch
             cpu_mem_move( _environment, address->realName, address2->realName, size2->realName );
             break;
         }
-        case VT_DSTRING: {            
+        case VT_DSTRING: { 
             Variable * address = variable_temporary( _environment, VT_ADDRESS, "(result of right)" );
             Variable * size = variable_temporary( _environment, VT_BYTE, "(result of right)" );
             Variable * address2 = variable_temporary( _environment, VT_ADDRESS, "(result of right)" );
             Variable * size2 = variable_temporary( _environment, VT_BYTE, "(result of right)" );
             cpu_dsdescriptor( _environment, string->realName, address->realName, size->realName );
             cpu_move_8bit( _environment, size->realName, size2->realName );
-            cpu_math_sub_8bit( _environment, size2->realName, position->realName, size2->realName );
             cpu_dsfree( _environment, result->realName );
             cpu_dsalloc( _environment, size2->realName, result->realName );
             cpu_dsdescriptor( _environment, result->realName, address2->realName, size2->realName );
