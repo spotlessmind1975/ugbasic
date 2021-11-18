@@ -957,6 +957,11 @@ typedef struct _Environment {
     char * listingFileName;
 
     /**
+     * 
+     */
+    int analysis;
+
+    /**
      * Enable the visualization of warnings during compilation.
      */
     int warningsEnabled;
@@ -1677,6 +1682,7 @@ void target_install( Environment *_environment );
 void begin_compilation( Environment * _environment );
 void target_initialization( Environment *_environment );
 void target_finalization( Environment * _environment );
+void target_analysis( Environment * _environment );
 void end_compilation( Environment * _environment );
 void target_peephole_optimizer( Environment * _environment );
 void begin_build( Environment * _environment );

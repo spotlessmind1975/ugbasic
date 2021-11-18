@@ -4025,6 +4025,7 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     printf("Options and parameters:\n" );
     printf("\t<source>     Input filename with ugBASIC source code\n" );
     printf("\t<asm>        Output filename with ASM source code (optional if '-o' given)\n" );
+    printf("\t-a           Show statistics on assembly listing generated\n" );
     printf("\t-I           Install needed chaintool for this target\n" );
     printf("\t-d           Enable debugging of IMAGE LOAD\n" );
     printf("\t-c <file>    Output filename with linker configuration\n" );
@@ -4098,8 +4099,16 @@ int main( int _argc, char *_argv[] ) {
     _environment->outputFileType = OUTPUT_FILE_TYPE_PRG;
 #endif
 
-    while ((opt = getopt(_argc, _argv, "e:c:Wo:Ie:l:EO:dL:")) != -1) {
+    while ((opt = getopt(_argc, _argv, "ae:c:Wo:Ie:l:EO:dL:")) != -1) {
         switch (opt) {
+                case 'a':
+                    if ( ! _environment->listingFileName ) {
+                        char listingFileName[MAX_TEMPORARY_STORAGE];
+                        sprintf( listingFileName, "%s.lst", tmpnam(NULL) );
+                        _environment->listingFileName = strdup(listingFileName);
+                    }
+                    _environment->analysis = 1;
+                    break;
                 case 'c':
                     _environment->configurationFileName = strdup(optarg);
                     break;
