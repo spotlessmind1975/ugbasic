@@ -339,6 +339,7 @@ STRING\$ { return (STRING); }
 T { return (T); }
 TAB { return(TAB); }
 TAN { return(TAN); }
+TASK { return(TASK); }
 TEMPORARY { return (TEMPORARY); }
 TEXT { return (TEXT); }
 TEXTMAP { return (TEXTMAP); }

@@ -179,6 +179,7 @@ typedef enum _VariableType {
 #define MAX_PALETTE                     256
 #define MAX_NESTED_ARRAYS               16
 #define MAX_PROCEDURES                  4096
+#define PROTOTHREAD_DEFAULT_COUNT       16
 #define DSTRING_DEFAULT_COUNT           255
 #define DSTRING_DEFAULT_SPACE           1024
 
@@ -882,6 +883,12 @@ typedef struct _DString {
 
 } DString;
 
+typedef struct _ProtothreadConfig {
+
+    int count;
+
+} ProtothreadConfig;
+
 typedef struct _TileDescriptor {
 
     int whiteArea;
@@ -968,6 +975,11 @@ typedef struct _Environment {
      * 
      */
     DString dstring;
+
+    /**
+     * 
+     */
+    ProtothreadConfig protothreadConfig;
 
     /**
      * Type of output. 
@@ -1345,6 +1357,7 @@ typedef struct _Environment {
 #define CRITICAL_GET_IMAGE_UNSUPPORTED( v, t ) CRITICAL3("E097 - GET IMAGE unsupported for given datatype", v, t );
 #define CRITICAL_INVALID_DIVISOR2( d ) CRITICAL2i("E098 - invalid divisor for DIVISION2, must be power of two", d );
 #define CRITICAL_INVALID_MULTIPLICATOR2( d ) CRITICAL2i("E099 - invalid multiplicator for MULTIPLICATOR2, must be power of two", d );
+#define CRITICAL_INVALID_TASK_COUNT( d ) CRITICAL2i("E100 - invalid number of tasks for multitasking", d);
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
 #define WARNING2i( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%i) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }

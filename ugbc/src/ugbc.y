@@ -3251,6 +3251,12 @@ define_definition :
             CRITICAL_INVALID_STRING_SPACE( $3 );
         }
         ((struct _Environment *)_environment)->dstring.space = $3;
+    }
+    | TASK COUNT const_expr {
+        if ( $3 <= 0 ) {
+            CRITICAL_INVALID_TASK_COUNT( $3 );
+        }
+        ((struct _Environment *)_environment)->protothreadConfig.count = $3;
     };
 
 define_definitions :

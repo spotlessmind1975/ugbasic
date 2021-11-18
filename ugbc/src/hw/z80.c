@@ -3569,9 +3569,29 @@ void z80_dstring_vars( Environment * _environment ) {
     
 }
 
+void z80_protothread_vars( Environment * _environment ) {
+
+    int count = _environment->protothreadConfig.count == 0 ? PROTOTHREAD_DEFAULT_COUNT : _environment->protothreadConfig.count;
+
+    outhead1("PROTOTHREADLC:      DEFS        %d", count );
+    outhead1("PROTOTHREADST:      DEFS        %d", count );
+    outhead0("PROTOTHREADCT:      DEFB        0" );
+    outhead0("PROTOTHREADLOOP");
+
+    for( int i=0; i<count; ++i ) {
+        outline1("LD A, %d", i );
+        outline0("LD (PROTOTHREADCT), A" );
+        outline0("CALL PROTOTHREADVOID" );
+    }
+
+    outline0("RTS" );
+    
+}
+
+
 void z80_protothread_loop( Environment * _environment ) {
 
-    deploy( protothread, src_hw_z80_protothread_asm );
+    deploy_with_vars( protothread, src_hw_z80_protothread_asm, cpu_protothread_vars );
 
     outline0("CALL PROTOTHREADLOOP" );
 
@@ -3579,7 +3599,7 @@ void z80_protothread_loop( Environment * _environment ) {
 
 void z80_protothread_register_at( Environment * _environment, char * _index, char * _label ) {
 
-    deploy( protothread, src_hw_z80_protothread_asm );
+    deploy_with_vars( protothread, src_hw_z80_protothread_asm, cpu_protothread_vars );
 
     outline1("LD HL, %s", _label );
     outline1("LD A, (%s)", _index );
@@ -3591,7 +3611,7 @@ void z80_protothread_register_at( Environment * _environment, char * _index, cha
 
 void z80_protothread_register( Environment * _environment, char * _label, char * _index ) {
 
-    deploy( protothread, src_hw_z80_protothread_asm );
+    deploy_with_vars( protothread, src_hw_z80_protothread_asm, cpu_protothread_vars );
 
     outline1("LD HL, %s", _label );
 
@@ -3604,7 +3624,7 @@ void z80_protothread_register( Environment * _environment, char * _label, char *
 
 void z80_protothread_unregister( Environment * _environment, char * _index ) {
 
-    deploy( protothread, src_hw_z80_protothread_asm );
+    deploy_with_vars( protothread, src_hw_z80_protothread_asm, cpu_protothread_vars );
 
     outline1("LD A, (%s)", _index );
     outline0("LD B, A" );
@@ -3615,7 +3635,7 @@ void z80_protothread_unregister( Environment * _environment, char * _index ) {
 
 void z80_protothread_save( Environment * _environment, char * _index, int _step ) {
 
-    deploy( protothread, src_hw_z80_protothread_asm );
+    deploy_with_vars( protothread, src_hw_z80_protothread_asm, cpu_protothread_vars );
 
     outline1("LD A, (%s)", _index );
     outline0("LD B, A" );
@@ -3627,7 +3647,7 @@ void z80_protothread_save( Environment * _environment, char * _index, int _step 
 
 void z80_protothread_restore( Environment * _environment, char * _index, char * _step ) {
 
-    deploy( protothread, src_hw_z80_protothread_asm );
+    deploy_with_vars( protothread, src_hw_z80_protothread_asm, cpu_protothread_vars );
 
     outline1("LD A, (%s)", _index );
     outline0("LD B, A" );
@@ -3640,7 +3660,7 @@ void z80_protothread_restore( Environment * _environment, char * _index, char * 
 
 void z80_protothread_set_state( Environment * _environment, char * _index, int _state ) {
 
-    deploy( protothread, src_hw_z80_protothread_asm );
+    deploy_with_vars( protothread, src_hw_z80_protothread_asm, cpu_protothread_vars );
 
     outline1("LD A, (%s)", _index );
     outline0("LD B, A" );
@@ -3652,7 +3672,7 @@ void z80_protothread_set_state( Environment * _environment, char * _index, int _
 
 void z80_protothread_get_state( Environment * _environment, char * _index, char * _state ) {
 
-    deploy( protothread, src_hw_z80_protothread_asm );
+    deploy_with_vars( protothread, src_hw_z80_protothread_asm, cpu_protothread_vars );
 
     outline1("LD A, (%s)", _index );
     outline0("LD B, A" );
@@ -3665,7 +3685,7 @@ void z80_protothread_get_state( Environment * _environment, char * _index, char 
 
 void z80_protothread_current( Environment * _environment, char * _current ) {
 
-    deploy( protothread, src_hw_z80_protothread_asm );
+    deploy_with_vars( protothread, src_hw_z80_protothread_asm, cpu_protothread_vars );
 
     outline0("LD A, (PROTOTHREADCT)" );
     outline1("LD (%s), A", _current );

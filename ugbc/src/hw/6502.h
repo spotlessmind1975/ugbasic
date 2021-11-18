@@ -176,6 +176,7 @@ void cpu6502_mobcount( Environment * _environment, char * _index );
 void cpu6502_sqroot( Environment * _environment, char * _number, char * _result );
 void cpu6502_dstring_vars( Environment * _environment );
 
+void cpu6502_protothread_vars( Environment * _environment );
 void cpu6502_protothread_loop( Environment * _environment );
 void cpu6502_protothread_register_at( Environment * _environment, char * _index, char * _label );
 void cpu6502_protothread_register( Environment * _environment, char * _label, char * _index );
@@ -334,6 +335,7 @@ extern unsigned int src_hw_chipset_mob_asm_len;
 #define cpu_mobcount( _environment, _index ) cpu6502_mobcount( _environment, _index )
 
 #define cpu_dstring_vars( _environment ) cpu6502_dstring_vars( _environment )
+#define cpu_protothread_vars( _environment ) cpu6502_protothread_vars( _environment )
 
 #define cpu_protothread_loop( _environment ) cpu6502_protothread_loop( _environment )
 #define cpu_protothread_register( _environment, _label, _index ) cpu6502_protothread_register( _environment, _label, _index )
