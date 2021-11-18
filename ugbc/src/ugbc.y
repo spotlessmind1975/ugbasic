@@ -33,7 +33,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token Remark
 %token NewLine 
 %token OP_SEMICOLON OP_COLON OP_COMMA OP_PLUS OP_MINUS OP_INC OP_DEC OP_EQUAL OP_ASSIGN OP_LT OP_LTE OP_GT OP_GTE 
-%token OP_DISEQUAL OP_MULTIPLICATION OP_DOLLAR OP_DIVISION OP_DIVISION2 QM HAS IS OF OP_HASH OP_POW OP_ASSIGN_DIRECT
+%token OP_DISEQUAL OP_MULTIPLICATION OP_MULTIPLICATION2 OP_DOLLAR OP_DIVISION OP_DIVISION2 QM HAS IS OF OP_HASH OP_POW OP_ASSIGN_DIRECT
 
 %token RASTER DONE AT COLOR BORDER WAIT NEXT WITH BANK SPRITE DATA FROM OP CP 
 %token ENABLE DISABLE HALT ECM BITMAP SCREEN ON OFF ROWS VERTICAL SCROLL VAR AS TEMPORARY 
@@ -95,7 +95,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %left OP
 %right THEN ELSE OP_ASSIGN_DIRECT
 %left OP_POW
-%left OP_MULTIPLICATION OP_DIVISION OP_DIVISION2
+%left OP_MULTIPLICATION OP_MULTIPLICATION2 OP_DIVISION OP_DIVISION2
 %left MOD
 %left OP_PLUS OP_MINUS
 %left OF IS
@@ -169,11 +169,20 @@ const_modula:
     | const_modula OP_MULTIPLICATION const_factor {
         $$ = $1 * $3;
     } 
+    | const_modula OP_MULTIPLICATION2 direct_integer {
+        if ( log2($3) != (int)log2($3) ) {
+            CRITICAL_INVALID_MULTIPLICATOR2( $3 );
+        }
+        $$ = $1 << ((int)log2($3));
+    } 
     | const_modula OP_DIVISION const_factor {
         $$ = $1 / $3;
     } 
-    | const_modula OP_DIVISION2 const_factor {
-        $$ = $1 >> $3;
+    | const_modula OP_DIVISION2 direct_integer {
+        if ( log2($3) != (int)log2($3) ) {
+            CRITICAL_INVALID_DIVISOR2( $3 );
+        }
+        $$ = $1 >> ((int)log2($3));
     } 
     ;
 
@@ -409,6 +418,12 @@ modula:
       factor
     | modula OP_MULTIPLICATION factor {
         $$ = variable_mul( _environment, $1, $3 )->name;
+    } 
+    | modula OP_MULTIPLICATION2 direct_integer {
+        if ( log2($3) != (int)log2($3) ) {
+            CRITICAL_INVALID_MULTIPLICATOR2( $3 );
+        }
+        $$ = variable_mul2_const( _environment, $1, $3 )->name;
     } 
     | modula OP_DIVISION factor {
         $$ = variable_div( _environment, $1, $3 )->name;

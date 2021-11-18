@@ -32,6 +32,7 @@ _[\n\r]+
 ">=" { return(OP_GTE); }
 "<>" { return(OP_DISEQUAL); }
 "*" { return(OP_MULTIPLICATION); }
+"**" { return(OP_MULTIPLICATION2); }
 "$" { return(OP_DOLLAR); }
 "^" { return(OP_POW); }
 "/" { return(OP_DIVISION); }
