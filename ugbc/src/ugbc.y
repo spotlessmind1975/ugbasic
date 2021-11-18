@@ -4030,9 +4030,9 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     printf("\t-c <file>    Output filename with linker configuration\n" );
     printf("\t-o <exe>     Output filename with final executable file for target\n" );
     printf("\t-O <type>    Output file format for target:\n" );
-#if defined(__atari__) 
+#if __atari__ 
     printf("\t                xex - executable binary file\n" );
-#elif defined(__atarixl__) 
+#elif __atarixl__ 
     printf("\t                xex - executable binary file\n" );
 #elif __c64__
     printf("\t                prg - program binary file\n" );
@@ -4055,6 +4055,11 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
 #endif
     printf("\t-l <name>    Output filename with list of variables defined\n" );
     printf("\t-e <modules> Embed specified modules instead of inline code\n" );
+#if __zx__
+    printf("\t-L <ignored> Output filename with assembly listing file\n" );
+#else
+    printf("\t-L <listing> Output filename with assembly listing file\n" );
+#endif
     printf("\t-E           Show stats of embedded modules\n" );
     printf("\t-W           Enable warnings during compilation\n" );
     exit(EXIT_FAILURE);
@@ -4093,7 +4098,7 @@ int main( int _argc, char *_argv[] ) {
     _environment->outputFileType = OUTPUT_FILE_TYPE_PRG;
 #endif
 
-    while ((opt = getopt(_argc, _argv, "e:c:Wo:Ie:l:EO:d")) != -1) {
+    while ((opt = getopt(_argc, _argv, "e:c:Wo:Ie:l:EO:dL:")) != -1) {
         switch (opt) {
                 case 'c':
                     _environment->configurationFileName = strdup(optarg);
@@ -4127,6 +4132,9 @@ int main( int _argc, char *_argv[] ) {
                     break;
                 case 'l':
                     _environment->debuggerLabelsFileName = strdup(optarg);
+                    break;
+                case 'L':
+                    _environment->listingFileName = strdup(optarg);
                     break;
                 case 'E':
                     _environment->embeddedStatsEnabled = 1;

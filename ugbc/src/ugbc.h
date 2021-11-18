@@ -952,6 +952,11 @@ typedef struct _Environment {
     char * debuggerLabelsFileName;
 
     /**
+     * Filename of assembly listing file (*.lst) 
+     */
+    char * listingFileName;
+
+    /**
      * Enable the visualization of warnings during compilation.
      */
     int warningsEnabled;
@@ -1246,6 +1251,11 @@ typedef struct _Environment {
      * Handle to the file opened to write the list of labels (*.lb2).
      */
     FILE * debuggerLabelsFile;
+
+    /**
+     * Handle to the file opened to write the assembly listing.
+     */
+    FILE * listingFile;
 
 } Environment;
 
