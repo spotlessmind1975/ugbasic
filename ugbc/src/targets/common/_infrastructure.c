@@ -2784,7 +2784,7 @@ Variable * variable_string_right( Environment * _environment, char * _string, ch
             Variable * address2 = variable_temporary( _environment, VT_ADDRESS, "(result of right)" );
             Variable * size2 = variable_temporary( _environment, VT_BYTE, "(result of right)" );
             cpu_dsdescriptor( _environment, string->realName, address->realName, size->realName );
-            cpu_move_8bit( _environment, size->realName, size2->realName );
+            cpu_move_8bit( _environment, position->realName, size2->realName );
             cpu_dsfree( _environment, result->realName );
             cpu_dsalloc( _environment, size2->realName, result->realName );
             cpu_dsdescriptor( _environment, result->realName, address2->realName, size2->realName );
