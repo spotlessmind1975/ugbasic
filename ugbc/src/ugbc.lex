@@ -35,6 +35,7 @@ _[\n\r]+
 "$" { return(OP_DOLLAR); }
 "^" { return(OP_POW); }
 "/" { return(OP_DIVISION); }
+"\\" { return(OP_DIVISION2); }
 "[" { return(OSP); }
 "]" { return(CSP); }
 "{" { return(OGP); }
