@@ -13,6 +13,8 @@ int yywrap() { return 1; }
 extern char DATATYPE_AS_STRING[][16];
 extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 
+#include <math.h>
+
 %}
 
 %parse-param {void * _environment}
@@ -31,7 +33,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token Remark
 %token NewLine 
 %token OP_SEMICOLON OP_COLON OP_COMMA OP_PLUS OP_MINUS OP_INC OP_DEC OP_EQUAL OP_ASSIGN OP_LT OP_LTE OP_GT OP_GTE 
-%token OP_DISEQUAL OP_MULTIPLICATION OP_DOLLAR OP_DIVISION QM HAS IS OF OP_HASH OP_POW OP_ASSIGN_DIRECT
+%token OP_DISEQUAL OP_MULTIPLICATION OP_MULTIPLICATION2 OP_DOLLAR OP_DIVISION OP_DIVISION2 QM HAS IS OF OP_HASH OP_POW OP_ASSIGN_DIRECT
 
 %token RASTER DONE AT COLOR BORDER WAIT NEXT WITH BANK SPRITE DATA FROM OP CP 
 %token ENABLE DISABLE HALT ECM BITMAP SCREEN ON OFF ROWS VERTICAL SCROLL VAR AS TEMPORARY 
@@ -53,7 +55,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token BACK DEBUG CAN ELSEIF BUFFER LOAD SIZE MOB IMAGE PUT VISIBLE HIDDEN HIDE SHOW RENDER
 %token SQR TI CONST VBL POKE NOP FILL IN POSITIVE DEFINE ATARI ATARIXL C64 DRAGON DRAGON32 DRAGON64 PLUS4 ZX 
 %token FONT VIC20 PARALLEL YIELD SPAWN THREAD TASK IMAGES FRAME FRAMES XY YX ROLL MASKED USING TRANSPARENCY
-%token OVERLAYED CASE ENDSELECT OGP CGP ARRAY NEW GET
+%token OVERLAYED CASE ENDSELECT OGP CGP ARRAY NEW GET DISTANCE TYPE
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -93,7 +95,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %left OP
 %right THEN ELSE OP_ASSIGN_DIRECT
 %left OP_POW
-%left OP_MULTIPLICATION OP_DIVISION
+%left OP_MULTIPLICATION OP_MULTIPLICATION2 OP_DIVISION OP_DIVISION2
 %left MOD
 %left OP_PLUS OP_MINUS
 %left OF IS
@@ -167,8 +169,20 @@ const_modula:
     | const_modula OP_MULTIPLICATION const_factor {
         $$ = $1 * $3;
     } 
+    | const_modula OP_MULTIPLICATION2 direct_integer {
+        if ( log2($3) != (int)log2($3) ) {
+            CRITICAL_INVALID_MULTIPLICATOR2( $3 );
+        }
+        $$ = $1 << ((int)log2($3));
+    } 
     | const_modula OP_DIVISION const_factor {
         $$ = $1 / $3;
+    } 
+    | const_modula OP_DIVISION2 direct_integer {
+        if ( log2($3) != (int)log2($3) ) {
+            CRITICAL_INVALID_DIVISOR2( $3 );
+        }
+        $$ = $1 >> ((int)log2($3));
     } 
     ;
 
@@ -270,6 +284,12 @@ const_factor:
       | OP const_expr CP {
           $$ = $2;
       }
+      | FALSE {
+          $$ = 0x0;
+      }
+      | TRUE {
+          $$ = 0xffffffff;
+      }
       | WIDTH {
           $$ = ((Environment *)_environment)->screenWidth;
       }
@@ -349,6 +369,16 @@ const_factor:
           }
           $$ = c->value;
       }
+      | OP_HASH Identifier {
+          Constant * c = constant_find( ((Environment *)_environment)->constants, $2 );
+          if ( c == NULL ) {
+              CRITICAL_UNDEFINED_CONSTANT( $2 );
+          }
+          if ( c->valueString != NULL ) {
+              CRITICAL_TYPE_MISMATCH_CONSTANT_NUMERIC( $2 );
+          }
+          $$ = c->value;
+      }
       | const_color_enumeration
       ;
 
@@ -405,8 +435,26 @@ modula:
     | modula OP_MULTIPLICATION factor {
         $$ = variable_mul( _environment, $1, $3 )->name;
     } 
+    | modula OP_MULTIPLICATION2 direct_integer {
+        if ( log2($3) != (int)log2($3) ) {
+            CRITICAL_INVALID_MULTIPLICATOR2( $3 );
+        }
+        $$ = variable_mul2_const( _environment, $1, $3 )->name;
+    } 
     | modula OP_DIVISION factor {
         $$ = variable_div( _environment, $1, $3 )->name;
+    } 
+    | modula OP_DIVISION2 direct_integer {
+        if ( log2($3) != (int)log2($3) ) {
+            CRITICAL_INVALID_DIVISOR2( $3 );
+        }
+        $$ = variable_div2_const( _environment, $1, (int)log2($3) )->name;
+    } 
+    | modula OP_DIVISION2 Integer {
+        if ( log2($3) != (int)log2($3) ) {
+            CRITICAL_INVALID_DIVISOR2( $3 );
+        }
+        $$ = variable_div2_const( _environment, $1, (int)log2($3) )->name;
     } 
     ;
 
@@ -1065,11 +1113,11 @@ exponential:
                 $$ = variable_temporary( _environment,  VT_STRING, "(constant)" )->name;
                 variable_store_string( _environment, $$, c->valueString );
             } else {
-                $$ = variable_temporary( _environment,  VT_WORD, "(constant)" )->name;
+                $$ = variable_temporary( _environment,  ((struct _Environment *)_environment)->defaultVariableType, "(constant)" )->name;
                 variable_store( _environment, $$, c->value );
             }
         } else {
-            $$ = variable_retrieve_or_define( _environment, $1, VT_WORD, 0 )->name;
+            $$ = variable_retrieve_or_define( _environment, $1, ((struct _Environment *)_environment)->defaultVariableType, 0 )->name;
         }
     }
     | Identifier OP_DOLLAR { 
@@ -1089,7 +1137,7 @@ exponential:
             $$ = variable_temporary( _environment, VT_SWORD, "(signed integer value)" )->name;
             variable_store( _environment, $$, $1 );
         } else {
-            $$ = variable_temporary( _environment, VT_WORD, "(integer value)" )->name;
+            $$ = variable_temporary( _environment, ((struct _Environment *)_environment)->defaultVariableType, "(integer value)" )->name;
             variable_store( _environment, $$, $1 );
         }
       }
@@ -1105,10 +1153,18 @@ exponential:
         $$ = variable_temporary( _environment, VT_BYTE, "(BYTE value)" )->name;
         variable_store( _environment, $$, $4 );
       }
+    | OP BYTE CP direct_integer { 
+        $$ = variable_temporary( _environment, VT_BYTE, "(BYTE value)" )->name;
+        variable_store( _environment, $$, $4 );
+      }
     | OP BYTE CP OP expr CP { 
         $$ = variable_cast( _environment, $5, VT_BYTE )->name;
       }
     | OP SIGNED BYTE CP Integer { 
+        $$ = variable_temporary( _environment, VT_SBYTE, "(signed BYTE value)" )->name;
+        variable_store( _environment, $$, $5 );
+      }
+    | OP SIGNED BYTE CP direct_integer { 
         $$ = variable_temporary( _environment, VT_SBYTE, "(signed BYTE value)" )->name;
         variable_store( _environment, $$, $5 );
       }
@@ -1119,10 +1175,18 @@ exponential:
         $$ = variable_temporary( _environment, VT_WORD, "(WORD value)" )->name;
         variable_store( _environment, $$, $4 );
       }
+    | OP WORD CP direct_integer { 
+        $$ = variable_temporary( _environment, VT_WORD, "(WORD value)" )->name;
+        variable_store( _environment, $$, $4 );
+      }
     | OP WORD CP OP expr CP { 
         $$ = variable_cast( _environment, $5, VT_WORD )->name;
       }
     | OP SIGNED WORD CP Integer { 
+        $$ = variable_temporary( _environment, VT_WORD, "(signed WORD value)" )->name;
+        variable_store( _environment, $$, $5 );
+    }
+    | OP SIGNED WORD CP direct_integer { 
         $$ = variable_temporary( _environment, VT_WORD, "(signed WORD value)" )->name;
         variable_store( _environment, $$, $5 );
       }
@@ -1133,10 +1197,18 @@ exponential:
         $$ = variable_temporary( _environment, VT_DWORD, "(DWORD value)" )->name;
         variable_store( _environment, $$, $4 );
       }
+    | OP DWORD CP direct_integer { 
+        $$ = variable_temporary( _environment, VT_DWORD, "(DWORD value)" )->name;
+        variable_store( _environment, $$, $4 );
+      }
     | OP DWORD CP OP expr CP { 
         $$ = variable_cast( _environment, $5, VT_DWORD )->name;
       }
     | OP SIGNED DWORD CP Integer { 
+        $$ = variable_temporary( _environment, VT_DWORD, "(DWORD value)" )->name;
+        variable_store( _environment, $$, $5 );
+      }
+    | OP SIGNED DWORD CP direct_integer { 
         $$ = variable_temporary( _environment, VT_DWORD, "(DWORD value)" )->name;
         variable_store( _environment, $$, $5 );
       }
@@ -1147,10 +1219,18 @@ exponential:
         $$ = variable_temporary( _environment, VT_POSITION, "(POSITION value)" )->name;
         variable_store( _environment, $$, $4 );
       }
+    | OP POSITION CP direct_integer { 
+        $$ = variable_temporary( _environment, VT_POSITION, "(POSITION value)" )->name;
+        variable_store( _environment, $$, $4 );
+      }
     | OP POSITION CP OP expr CP { 
         $$ = variable_cast( _environment, $5, VT_POSITION )->name;
       }
     | OP COLOR CP Integer { 
+        $$ = variable_temporary( _environment, VT_COLOR, "(COLOR value)" )->name;
+        variable_store( _environment, $$, $4 );
+      }
+    | OP COLOR CP direct_integer { 
         $$ = variable_temporary( _environment, VT_COLOR, "(COLOR value)" )->name;
         variable_store( _environment, $$, $4 );
       }
@@ -1235,12 +1315,15 @@ exponential:
                 CRITICAL_SIZE_UNSUPPORTED( $3, DATATYPE_AS_STRING[v->type] );
                 break;
         }
-        $$ = variable_temporary( _environment, VT_WORD, "(size)" )->name;
+        $$ = variable_temporary( _environment, ((struct _Environment *)_environment)->defaultVariableType, "(size)" )->name;
         variable_store( _environment, $$, v->size );
       }
     | color_enumeration { 
         $$ = $1;
       }
+    | DISTANCE OP optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y CP {
+        $$ = distance( _environment, $3, $5, $7, $9 )->name;
+    }
     | PEEK OP expr CP {
         $$ = peek_var( _environment, $3 )->name;
       }
@@ -2181,7 +2264,7 @@ screen_definition:
 
 var_definition_simple:
    Identifier {
-      variable_retrieve_or_define( _environment, $1, VT_WORD, 0 );
+      variable_retrieve_or_define( _environment, $1, ((struct _Environment *)_environment)->defaultVariableType, 0 );
   }
   | Identifier AS datatype {
       variable_retrieve_or_define( _environment, $1, $3, 0 );
@@ -2789,7 +2872,7 @@ dim_definition :
           ((struct _Environment *)_environment)->arrayDimensions = 0;
       } OP dimensions CP {
         ((struct _Environment *)_environment)->currentArray = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
-        variable_array_type( _environment, $1, VT_WORD );
+        variable_array_type( _environment, $1, ((struct _Environment *)_environment)->defaultVariableType );
     } array_assign;
     | Identifier WITH const_expr {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
@@ -2797,7 +2880,7 @@ dim_definition :
       } OP dimensions CP {
         ((struct _Environment *)_environment)->currentArray = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
         ((struct _Environment *)_environment)->currentArray->value = $3;
-        variable_array_type( _environment, $1, VT_WORD );
+        variable_array_type( _environment, $1, ((struct _Environment *)_environment)->defaultVariableType );
         if ( ! ((struct _Environment *)_environment)->currentArray->memoryArea ) {
             memory_area_assign( ((struct _Environment *)_environment)->memoryAreas, ((struct _Environment *)_environment)->currentArray );
         }
@@ -2895,7 +2978,7 @@ indexes :
 parameters : 
       Identifier {
           ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
-          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_WORD;
+          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = ((struct _Environment *)_environment)->defaultVariableType;
           ++((struct _Environment *)_environment)->parameters;
     }
     | Identifier OP_DOLLAR {
@@ -2910,7 +2993,7 @@ parameters :
     }
     | Identifier OP_COMMA parameters {
           ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
-          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_WORD;
+          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = ((struct _Environment *)_environment)->defaultVariableType;
           ++((struct _Environment *)_environment)->parameters;
     }
     | Identifier OP_DOLLAR OP_COMMA parameters {
@@ -2928,7 +3011,7 @@ parameters :
 parameters_expr : 
       Identifier {
           ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
-          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_WORD;
+          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = ((struct _Environment *)_environment)->defaultVariableType;
           ++((struct _Environment *)_environment)->parameters;
     }
     | Identifier OP_DOLLAR {
@@ -2943,7 +3026,7 @@ parameters_expr :
     }
     | Identifier OP_COMMA parameters_expr {
           ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
-          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_WORD;
+          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = ((struct _Environment *)_environment)->defaultVariableType;
           ++((struct _Environment *)_environment)->parameters;
     }
     | Identifier OP_DOLLAR OP_COMMA parameters_expr {
@@ -3184,6 +3267,15 @@ define_definition :
             CRITICAL_INVALID_STRING_SPACE( $3 );
         }
         ((struct _Environment *)_environment)->dstring.space = $3;
+    }
+    | TASK COUNT const_expr {
+        if ( $3 <= 0 ) {
+            CRITICAL_INVALID_TASK_COUNT( $3 );
+        }
+        ((struct _Environment *)_environment)->protothreadConfig.count = $3;
+    }
+    | DEFAULT TYPE datatype {
+        ((struct _Environment *)_environment)->defaultVariableType = $3;
     };
 
 define_definitions :
@@ -3718,7 +3810,7 @@ statement:
   }
   | Identifier OP_ASSIGN OP_HASH const_expr {
         if ( !variable_exists( _environment, $1 ) ) {
-            variable_retrieve_or_define( _environment, $1, VT_WORD, $4 );
+            variable_retrieve_or_define( _environment, $1, ((struct _Environment *)_environment)->defaultVariableType, $4 );
         }
         variable_store( _environment, $1, $4 );
   }
@@ -3952,14 +4044,15 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     printf("Options and parameters:\n" );
     printf("\t<source>     Input filename with ugBASIC source code\n" );
     printf("\t<asm>        Output filename with ASM source code (optional if '-o' given)\n" );
+    printf("\t-a           Show statistics on assembly listing generated\n" );
     printf("\t-I           Install needed chaintool for this target\n" );
     printf("\t-d           Enable debugging of IMAGE LOAD\n" );
     printf("\t-c <file>    Output filename with linker configuration\n" );
     printf("\t-o <exe>     Output filename with final executable file for target\n" );
     printf("\t-O <type>    Output file format for target:\n" );
-#if defined(__atari__) 
+#if __atari__ 
     printf("\t                xex - executable binary file\n" );
-#elif defined(__atarixl__) 
+#elif __atarixl__ 
     printf("\t                xex - executable binary file\n" );
 #elif __c64__
     printf("\t                prg - program binary file\n" );
@@ -3982,6 +4075,11 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
 #endif
     printf("\t-l <name>    Output filename with list of variables defined\n" );
     printf("\t-e <modules> Embed specified modules instead of inline code\n" );
+#if __zx__
+    printf("\t-L <ignored> Output filename with assembly listing file\n" );
+#else
+    printf("\t-L <listing> Output filename with assembly listing file\n" );
+#endif
     printf("\t-E           Show stats of embedded modules\n" );
     printf("\t-W           Enable warnings during compilation\n" );
     exit(EXIT_FAILURE);
@@ -3997,6 +4095,8 @@ int main( int _argc, char *_argv[] ) {
     setup_embedded( _environment );
 
     _environment->warningsEnabled = 0;
+
+    _environment->defaultVariableType = VT_WORD;
 
 #if defined(__atari__) 
     _environment->outputFileType = OUTPUT_FILE_TYPE_XEX;
@@ -4020,8 +4120,16 @@ int main( int _argc, char *_argv[] ) {
     _environment->outputFileType = OUTPUT_FILE_TYPE_PRG;
 #endif
 
-    while ((opt = getopt(_argc, _argv, "e:c:Wo:Ie:l:EO:d")) != -1) {
+    while ((opt = getopt(_argc, _argv, "ae:c:Wo:Ie:l:EO:dL:")) != -1) {
         switch (opt) {
+                case 'a':
+                    if ( ! _environment->listingFileName ) {
+                        char listingFileName[MAX_TEMPORARY_STORAGE];
+                        sprintf( listingFileName, "%s.lst", tmpnam(NULL) );
+                        _environment->listingFileName = strdup(listingFileName);
+                    }
+                    _environment->analysis = 1;
+                    break;
                 case 'c':
                     _environment->configurationFileName = strdup(optarg);
                     break;
@@ -4054,6 +4162,9 @@ int main( int _argc, char *_argv[] ) {
                     break;
                 case 'l':
                     _environment->debuggerLabelsFileName = strdup(optarg);
+                    break;
+                case 'L':
+                    _environment->listingFileName = strdup(optarg);
                     break;
                 case 'E':
                     _environment->embeddedStatsEnabled = 1;

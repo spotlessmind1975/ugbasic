@@ -15,8 +15,8 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
 
 int main( int _argc, char *_argv[] ) {
 
-    test_cpu( );
-    // test_variables( );
+    // test_cpu( );
+    test_variables( );
     // test_conditionals( );
     // test_loops( );
     // test_ons( );

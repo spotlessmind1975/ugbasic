@@ -4334,9 +4334,28 @@ void cpu6809_dstring_vars( Environment * _environment ) {
 
 }
 
+void cpu6809_protothread_vars( Environment * _environment ) {
+
+    int count = _environment->protothreadConfig.count == 0 ? PROTOTHREAD_DEFAULT_COUNT : _environment->protothreadConfig.count;
+
+    outhead1("PROTOTHREADLC       rzb        %d", count );
+    outhead1("PROTOTHREADST       rzb        %d", count );
+    outhead0("PROTOTHREADCT       fcb        0" );
+    outhead0("PROTOTHREADLOOP");
+
+    for( int i=0; i<count; ++i ) {
+        outline1("LDB #%d", i );
+        outline0("STB PROTOTHREADCT" );
+        outline0("JSR PROTOTHREADVOID" );
+    }
+
+    outline0("RTS" );
+    
+}
+
 void cpu6809_protothread_loop( Environment * _environment ) {
 
-    deploy( protothread, src_hw_6809_protothread_asm );
+    deploy_with_vars( protothread, src_hw_6809_protothread_asm, cpu_protothread_vars );
 
     outline0("JSR PROTOTHREADLOOP" );
 
@@ -4344,7 +4363,7 @@ void cpu6809_protothread_loop( Environment * _environment ) {
 
 void cpu6809_protothread_register_at( Environment * _environment, char * _index, char * _label ) {
 
-    deploy( protothread, src_hw_6809_protothread_asm );
+    deploy_with_vars( protothread, src_hw_6809_protothread_asm, cpu_protothread_vars );
 
     outline1("LDY #%s", _label );
     outline1("LDB %s", _index );
@@ -4355,7 +4374,7 @@ void cpu6809_protothread_register_at( Environment * _environment, char * _index,
 
 void cpu6809_protothread_register( Environment * _environment, char * _label, char * _index ) {
 
-    deploy( protothread, src_hw_6809_protothread_asm );
+    deploy_with_vars( protothread, src_hw_6809_protothread_asm, cpu_protothread_vars );
 
     outline1("LDY #%s", _label );
 
@@ -4367,7 +4386,7 @@ void cpu6809_protothread_register( Environment * _environment, char * _label, ch
 
 void cpu6809_protothread_unregister( Environment * _environment, char * _index ) {
 
-    deploy( protothread, src_hw_6809_protothread_asm );
+    deploy_with_vars( protothread, src_hw_6809_protothread_asm, cpu_protothread_vars );
 
     outline1("LDB %s", _index );
 
@@ -4377,7 +4396,7 @@ void cpu6809_protothread_unregister( Environment * _environment, char * _index )
 
 void cpu6809_protothread_save( Environment * _environment, char * _index, int _step ) {
 
-    deploy( protothread, src_hw_6809_protothread_asm );
+    deploy_with_vars( protothread, src_hw_6809_protothread_asm, cpu_protothread_vars );
 
     outline1("LDB %s", _index );
     outline1("LDA #$%2.2x", _step );
@@ -4388,7 +4407,7 @@ void cpu6809_protothread_save( Environment * _environment, char * _index, int _s
 
 void cpu6809_protothread_restore( Environment * _environment, char * _index, char * _step ) {
 
-    deploy( protothread, src_hw_6809_protothread_asm );
+    deploy_with_vars( protothread, src_hw_6809_protothread_asm, cpu_protothread_vars );
 
     outline1("LDB %s", _index );
 
@@ -4400,7 +4419,7 @@ void cpu6809_protothread_restore( Environment * _environment, char * _index, cha
 
 void cpu6809_protothread_set_state( Environment * _environment, char * _index, int _state ) {
 
-    deploy( protothread, src_hw_6809_protothread_asm );
+    deploy_with_vars( protothread, src_hw_6809_protothread_asm, cpu_protothread_vars );
 
     outline1("LDB %s", _index );
     outline1("LDA #$%2.2x", _state );
@@ -4411,7 +4430,7 @@ void cpu6809_protothread_set_state( Environment * _environment, char * _index, i
 
 void cpu6809_protothread_get_state( Environment * _environment, char * _index, char * _state ) {
 
-    deploy( protothread, src_hw_6809_protothread_asm );
+    deploy_with_vars( protothread, src_hw_6809_protothread_asm, cpu_protothread_vars );
 
     outline1("LDB %s", _index );
 
@@ -4423,7 +4442,7 @@ void cpu6809_protothread_get_state( Environment * _environment, char * _index, c
 
 void cpu6809_protothread_current( Environment * _environment, char * _current ) {
 
-    deploy( protothread, src_hw_6809_protothread_asm );
+    deploy_with_vars( protothread, src_hw_6809_protothread_asm, cpu_protothread_vars );
 
     outline0("LDB PROTOTHREADCT" );
     outline1("STB %s", _current );

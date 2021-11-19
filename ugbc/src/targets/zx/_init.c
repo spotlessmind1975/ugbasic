@@ -90,7 +90,7 @@ void target_initialization( Environment * _environment ) {
 
 void target_linkage( Environment * _environment ) {
 
-    char commandLine[MAX_TEMPORARY_STORAGE];
+    char commandLine[2*MAX_TEMPORARY_STORAGE];
     char executableName[64];
     char binaryName[64];
     
@@ -104,8 +104,13 @@ void target_linkage( Environment * _environment ) {
         sprintf(executableName, "%s", "z88dk-z80asm" );
     }
 
-    sprintf( commandLine, "%s -l -b %s",
+    if ( _environment->listingFileName ) {
+        sprintf( listingFileName, "-l" );
+    }
+
+    sprintf( commandLine, "%s %s -b %s",
         executableName,
+        listingFileName,
         _environment->asmFileName );
 
     if ( system( commandLine ) ) {

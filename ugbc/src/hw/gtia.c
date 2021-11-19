@@ -1322,7 +1322,7 @@ static int calculate_image_size( Environment * _environment, int _width, int _he
         // particular color register. The screen data, however, is not character data but individual bytes. The user has a lot
         // more control, but this mode uses a lot more memory, approximately
         case BITMAP_MODE_ANTIC14:
-            return 2 + ( ( _frame_width >> 2 ) * _frame_height ) + 4
+            return 2 + ( ( _width >> 2 ) * _height ) + 4;
 
         // Graphics 4 (ANTIC 9)
         // This is a two-color graphics mode with four times the resolution of GRAPHICS 3. The pixels are 4 x 4, and 48 rows of 80 
@@ -1348,7 +1348,7 @@ static int calculate_image_size( Environment * _environment, int _width, int _he
         // staggering the pixel patterns, you can achieve three colors. This method is called artifacting. This all depends
         // on background color and luminance.
         case BITMAP_MODE_ANTIC15:
-            return 2 + ( ( _frame_width >> 3 ) * _frame_height ) + 2;
+            return 2 + ( ( _width >> 3 ) * _height ) + 2;
 
         // Graphics Mode 0 (ANTIC 2)
         // This is the normal-sized character or text mode that the computer defaults to on start up. 
@@ -1889,6 +1889,29 @@ Variable * gtia_new_image( Environment * _environment, int _width, int _height, 
     result->size = size;
 
     return result;
+
+}
+
+void gtia_get_image( Environment * _environment, char * _image, char * _x, char * _y ) {
+
+    deploy( gtiavars, src_hw_gtia_vars_asm);
+    deploy( getimage, src_hw_gtia_get_image_asm );
+
+    outline1("LDA #<%s", _image );
+    outline1("LDA #<%s", _image );
+    outline0("STA TMPPTR" );
+    outline1("LDA #>%s", _image );
+    outline0("STA TMPPTR+1" );
+    outline1("LDA %s", _x );
+    outline0("STA IMAGEX" );
+    outline1("LDA %s+1", _x );
+    outline0("STA IMAGEX+1" );
+    outline1("LDA %s", _y );
+    outline0("STA IMAGEY" );
+    outline1("LDA %s+1", _y );
+    outline0("STA IMAGEY+1" );
+
+    outline0("JSR GETIMAGE");
 
 }
 

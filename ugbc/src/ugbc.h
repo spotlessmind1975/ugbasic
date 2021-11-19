@@ -179,6 +179,7 @@ typedef enum _VariableType {
 #define MAX_PALETTE                     256
 #define MAX_NESTED_ARRAYS               16
 #define MAX_PROCEDURES                  4096
+#define PROTOTHREAD_DEFAULT_COUNT       16
 #define DSTRING_DEFAULT_COUNT           255
 #define DSTRING_DEFAULT_SPACE           1024
 
@@ -882,6 +883,12 @@ typedef struct _DString {
 
 } DString;
 
+typedef struct _ProtothreadConfig {
+
+    int count;
+
+} ProtothreadConfig;
+
 typedef struct _TileDescriptor {
 
     int whiteArea;
@@ -945,6 +952,16 @@ typedef struct _Environment {
     char * debuggerLabelsFileName;
 
     /**
+     * Filename of assembly listing file (*.lst) 
+     */
+    char * listingFileName;
+
+    /**
+     * 
+     */
+    int analysis;
+
+    /**
      * Enable the visualization of warnings during compilation.
      */
     int warningsEnabled;
@@ -968,6 +985,11 @@ typedef struct _Environment {
      * 
      */
     DString dstring;
+
+    /**
+     * 
+     */
+    ProtothreadConfig protothreadConfig;
 
     /**
      * Type of output. 
@@ -1216,6 +1238,11 @@ typedef struct _Environment {
      */
     int debugImageLoad;
     
+    /**
+     * Default type for variables.
+     */
+    VariableType defaultVariableType;
+
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */
@@ -1234,6 +1261,11 @@ typedef struct _Environment {
      * Handle to the file opened to write the list of labels (*.lb2).
      */
     FILE * debuggerLabelsFile;
+
+    /**
+     * Handle to the file opened to write the assembly listing.
+     */
+    FILE * listingFile;
 
 } Environment;
 
@@ -1343,6 +1375,9 @@ typedef struct _Environment {
 #define CRITICAL_CANNOT_ASSIGN_TO_ARRAY( v, t ) CRITICAL3("E095 - cannot assign this type to array", v, t );
 #define CRITICAL_NEW_IMAGE_UNSUPPORTED_MODE(f) CRITICAL2i("E096 - NEW IMAGE unsupported for the given screen mode", f );
 #define CRITICAL_GET_IMAGE_UNSUPPORTED( v, t ) CRITICAL3("E097 - GET IMAGE unsupported for given datatype", v, t );
+#define CRITICAL_INVALID_DIVISOR2( d ) CRITICAL2i("E098 - invalid divisor for DIVISION2, must be power of two", d );
+#define CRITICAL_INVALID_MULTIPLICATOR2( d ) CRITICAL2i("E099 - invalid multiplicator for MULTIPLICATOR2, must be power of two", d );
+#define CRITICAL_INVALID_TASK_COUNT( d ) CRITICAL2i("E100 - invalid number of tasks for multitasking", d);
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
 #define WARNING2i( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%i) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -1652,6 +1687,7 @@ void target_install( Environment *_environment );
 void begin_compilation( Environment * _environment );
 void target_initialization( Environment *_environment );
 void target_finalization( Environment * _environment );
+void target_analysis( Environment * _environment );
 void end_compilation( Environment * _environment );
 void target_peephole_optimizer( Environment * _environment );
 void begin_build( Environment * _environment );
@@ -1742,6 +1778,7 @@ Constant *              constant_find( Constant * _constant, char * _name );
 // *D*
 //----------------------------------------------------------------------------
 
+Variable *              distance( Environment * _environment, char * _x1, char * _y1, char * _x2, char * _y2 );
 void                    draw( Environment * _environment, char * _x0, char * _y0, char * _x1, char * _y1, char * _c );
 
 //----------------------------------------------------------------------------
