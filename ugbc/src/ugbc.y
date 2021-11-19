@@ -3810,7 +3810,7 @@ statement:
   }
   | Identifier OP_ASSIGN OP_HASH const_expr {
         if ( !variable_exists( _environment, $1 ) ) {
-            variable_retrieve_or_define( _environment, $1, ((struct _Environment *)_environment)->defaultVariableType, $4 );
+            variable_retrieve_or_define( _environment, $1, VT_WORD, $4 );
         }
         variable_store( _environment, $1, $4 );
   }
