@@ -284,6 +284,12 @@ const_factor:
       | OP const_expr CP {
           $$ = $2;
       }
+      | FALSE {
+          $$ = 0x0;
+      }
+      | TRUE {
+          $$ = 0xffffffff;
+      }
       | WIDTH {
           $$ = ((Environment *)_environment)->screenWidth;
       }
