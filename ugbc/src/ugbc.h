@@ -1238,11 +1238,6 @@ typedef struct _Environment {
      */
     int debugImageLoad;
     
-    /**
-     * Default type for variables.
-     */
-    VariableType defaultVariableType;
-
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */
