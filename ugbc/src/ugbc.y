@@ -2864,7 +2864,7 @@ dim_definition :
       } OP dimensions CP {
         ((struct _Environment *)_environment)->currentArray = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
         ((struct _Environment *)_environment)->currentArray->value = $3;
-        variable_array_type( _environment, $1, VT_WORD );
+        variable_array_type( _environment, $1, ((struct _Environment *)_environment)->defaultVariableType );
         if ( ! ((struct _Environment *)_environment)->currentArray->memoryArea ) {
             memory_area_assign( ((struct _Environment *)_environment)->memoryAreas, ((struct _Environment *)_environment)->currentArray );
         }
