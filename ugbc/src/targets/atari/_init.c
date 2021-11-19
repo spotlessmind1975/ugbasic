@@ -113,7 +113,7 @@ void target_initialization( Environment * _environment ) {
 
 void target_linkage( Environment * _environment ) {
 
-    char commandLine[MAX_TEMPORARY_STORAGE];
+    char commandLine[2*MAX_TEMPORARY_STORAGE];
     char executableName[32];
 
     if ( _environment->outputFileType != OUTPUT_FILE_TYPE_XEX ) {
@@ -126,8 +126,15 @@ void target_linkage( Environment * _environment ) {
         sprintf(executableName, "%s", "cl65" );
     }
 
-    sprintf( commandLine, "%s -o %s -t atari -C %s %s",
+    char listingFileName[MAX_TEMPORARY_STORAGE];
+    memset( listingFileName, 0, MAX_TEMPORARY_STORAGE );
+    if ( _environment->listingFileName ) {
+        sprintf( listingFileName, "-l %s", _environment->listingFileName );
+    }
+
+    sprintf( commandLine, "%s %s -o %s -t atari -C %s %s",
         executableName,
+        listingFileName,
         _environment->exeFileName, 
         _environment->configurationFileName, 
         _environment->asmFileName );

@@ -331,3 +331,9 @@ TEXTBLOCKREMAIN:      .byte 152
 TEXTBLOCKREMAINPW:      .byte 192
 CURRENTSL:          .byte 0
 TEXTWW:             .byte 3
+IMAGEX = $F0
+IMAGEY = $F2
+IMAGEW = $F4
+IMAGEH = $F6
+IMAGEH2 = $F8
+IMAGET = $F9

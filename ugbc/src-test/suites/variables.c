@@ -491,6 +491,82 @@ int test_variable_string_right_tester( TestEnvironment * _te ) {
     
 }
 
+//===========================================================================
+
+void test_distance_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * x1 = variable_define( e, "x1", VT_POSITION, 0 );
+    Variable * y1 = variable_define( e, "y1", VT_POSITION, 0 );
+    Variable * x2 = variable_define( e, "x2", VT_POSITION, 16 );
+    Variable * y2 = variable_define( e, "y2", VT_POSITION, 16 );
+    Variable * two = variable_resident( e, VT_POSITION, "(two)");
+    variable_store( e, two->name, 2 );
+    
+    Variable * sx = variable_sub( e,
+                            x1->name,
+                            x2->name
+                        );
+    Variable * sy = variable_sub( e,
+                            y1->name,
+                            y2->name
+                        );
+    Variable * px = powering( e, 
+                        sx->name, 
+                        two->name 
+                    );
+    Variable * py = powering( e, 
+                        sy->name, 
+                        two->name 
+                    );
+    Variable * sum = variable_add( 
+                    e,
+                    sx->name,
+                    sy->name
+                );
+
+    Variable * sum2 = variable_cast( e, sum->name, VT_POSITION );
+
+    Variable * sqr2 = sqroot( e, sum2->name )->name;
+
+    Variable * result = distance( e, x1->name, y1->name, x2->name, y2->name );
+
+    _te->trackedVariables[0] = result;
+    _te->trackedVariables[1] = sx;
+    _te->trackedVariables[2] = sy;
+    _te->trackedVariables[3] = px;
+    _te->trackedVariables[4] = py;
+    _te->trackedVariables[5] = sum;
+    _te->trackedVariables[6] = sum2;
+    _te->trackedVariables[7] = sqr2;
+
+}
+
+int test_distance_tester( TestEnvironment * _te ) {
+
+    Variable * result = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    // Variable * sx = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+    // Variable * sy = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
+    // Variable * px = variable_retrieve( &_te->environment, _te->trackedVariables[3]->name );
+    // Variable * py = variable_retrieve( &_te->environment, _te->trackedVariables[4]->name );
+    // Variable * sum = variable_retrieve( &_te->environment, _te->trackedVariables[5]->name );
+    // Variable * sum2 = variable_retrieve( &_te->environment, _te->trackedVariables[6]->name );
+    // Variable * sqr2 = variable_retrieve( &_te->environment, _te->trackedVariables[7]->name );
+
+    // printf( "result = %d (expected 4)\n", result->value );
+    // printf( "sx = %d (expected -16)\n", sx->value );
+    // printf( "sy = %d (expected -16)\n", sy->value );
+    // printf( "px = %d (expected 256)\n", px->value );
+    // printf( "py = %d (expected 256)\n", py->value );
+    // printf( "sum = %d (expected 512)\n", sum->value );
+    // printf( "sum2 = %d (expected 512)\n", sum2->value );
+    // printf( "sqr2 = %d (expected 22)\n", sqr2->value );
+    
+    return result->value == 22;
+    
+}
+
 void test_variables( ) {
 
     create_test( "variables_add01", &test_variables_add01_payload, &test_variables_add01_tester );    
@@ -508,5 +584,6 @@ void test_variables( ) {
     create_test( "powering", &test_powering_payload, &test_powering_tester );
     create_test( "variable_string_left", &test_variable_string_left_payload, &test_variable_string_left_tester );
     create_test( "variable_string_right", &test_variable_string_right_payload, &test_variable_string_right_tester );
+    create_test( "distance", &test_distance_payload, &test_distance_tester );
 
 }

@@ -33,34 +33,77 @@
 
 #include "../ugbc.h"
 
-#define COLOR_BLACK					0
-#define COLOR_WHITE					1
-#define COLOR_RED					2
-#define COLOR_CYAN					3
-#define COLOR_VIOLET				4
-#define COLOR_GREEN					5
-#define COLOR_BLUE					6
-#define COLOR_YELLOW				7
-#define COLOR_ORANGE				8
-#define COLOR_BROWN					9
-#define COLOR_LIGHT_RED				10
-#define COLOR_DARK_GREY				11
-#define COLOR_GREY					12
-#define COLOR_LIGHT_GREEN			13
-#define COLOR_LIGHT_BLUE			14
-#define COLOR_LIGHT_GREY			15
-#define COLOR_DARK_BLUE				6
-#define COLOR_MAGENTA				COLOR_RED
-#define COLOR_PURPLE				COLOR_VIOLET
-#define COLOR_LAVENDER       		COLOR_VIOLET
-#define COLOR_GOLD       			COLOR_YELLOW
-#define COLOR_TURQUOISE       		COLOR_LIGHT_BLUE
-#define COLOR_TAN       		    COLOR_BROWN
-#define COLOR_YELLOW_GREEN       	COLOR_YELLOW
-#define COLOR_OLIVE_GREEN       	COLOR_GREEN
-#define COLOR_PINK       			COLOR_LIGHT_RED
-#define COLOR_PEACH       			COLOR_PINK
-#define COLOR_COUNT                 16
+#if defined(__pc128op__)
+
+    #define COLOR_BLACK					0
+    #define COLOR_WHITE					1
+    #define COLOR_RED					2
+    #define COLOR_CYAN					3
+    #define COLOR_VIOLET				4
+    #define COLOR_GREEN					5
+    #define COLOR_BLUE					6
+    #define COLOR_YELLOW				7
+    #define COLOR_ORANGE				8
+    #define COLOR_BROWN					9
+    #define COLOR_LIGHT_RED				10
+    #define COLOR_DARK_GREY				11
+    #define COLOR_GREY					12
+    #define COLOR_LIGHT_GREEN			13
+    #define COLOR_LIGHT_BLUE			14
+    #define COLOR_LIGHT_GREY			15
+    #define COLOR_DARK_BLUE				6
+    #define COLOR_MAGENTA				COLOR_RED
+    #define COLOR_PURPLE				COLOR_VIOLET
+    #define COLOR_LAVENDER       		COLOR_VIOLET
+    #define COLOR_GOLD       			COLOR_YELLOW
+    #define COLOR_TURQUOISE       		COLOR_LIGHT_BLUE
+    #define COLOR_TAN       		    COLOR_BROWN
+    #define COLOR_YELLOW_GREEN       	COLOR_YELLOW
+    #define COLOR_OLIVE_GREEN       	COLOR_GREEN
+    #define COLOR_PINK       			COLOR_LIGHT_RED
+    #define COLOR_PEACH       			COLOR_PINK
+    #define COLOR_COUNT                 16
+
+#elif defined(__mo5__)
+
+    #define COLOR_BLACK					0
+    #define COLOR_RED					1
+    #define COLOR_GREEN					2
+    #define COLOR_YELLOW				3
+    #define COLOR_BLUE					4
+    #define COLOR_VIOLET				5
+    #define COLOR_CYAN					6
+    #define COLOR_WHITE					7
+    #define COLOR_GREY					8
+    #define COLOR_OLD_ROSE  			9
+    #define COLOR_LIGHT_GREEN			10
+    #define COLOR_SAND      			11
+    #define COLOR_SKY_BLUE  			12
+    #define COLOR_LIGHT_MAGENTA			13
+    #define COLOR_LIGHT_CYAN			14
+    #define COLOR_ORANGE    			15
+
+    #define COLOR_BROWN					COLOR_SAND
+
+    #define COLOR_LIGHT_RED				COLOR_OLD_ROSE
+    #define COLOR_DARK_GREY				COLOR_GREY
+    #define COLOR_LIGHT_BLUE			COLOR_SKY_BLUE
+    #define COLOR_LIGHT_GREY			COLOR_GREY
+    #define COLOR_DARK_BLUE				COLOR_BLUE
+    #define COLOR_PURPLE				COLOR_VIOLET
+    #define COLOR_LAVENDER       		COLOR_VIOLET
+    #define COLOR_GOLD       			COLOR_YELLOW
+    #define COLOR_TURQUOISE       		COLOR_LIGHT_BLUE
+    #define COLOR_TAN       		    COLOR_BROWN
+    #define COLOR_YELLOW_GREEN       	COLOR_YELLOW
+    #define COLOR_OLIVE_GREEN       	COLOR_GREEN
+    #define COLOR_PINK       			COLOR_LIGHT_RED
+    #define COLOR_PEACH       			COLOR_PINK
+    #define COLOR_MAGENTA       		COLOR_LIGHT_MAGENTA
+
+    #define COLOR_COUNT                 16
+
+#endif
 
 #define BITMAP_MODE_40_COLUMN       0
 #define BITMAP_MODE_80_COLUMN       1

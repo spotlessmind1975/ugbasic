@@ -96,7 +96,7 @@ void target_initialization( Environment * _environment ) {
 
 void target_linkage( Environment * _environment ) {
 
-    char commandLine[MAX_TEMPORARY_STORAGE];
+    char commandLine[2*MAX_TEMPORARY_STORAGE];
     char executableName[32];
     
     if ( _environment->outputFileType != OUTPUT_FILE_TYPE_K7_ORIGINAL && _environment->outputFileType != OUTPUT_FILE_TYPE_K7_NEW ) {
@@ -109,8 +109,15 @@ void target_linkage( Environment * _environment ) {
         sprintf(executableName, "%s", "asm6809" );
     }
 
-    sprintf( commandLine, "%s -l main.lst -o %s -B -e 10240 %s",
+    char listingFileName[MAX_TEMPORARY_STORAGE];
+    memset( listingFileName, 0, MAX_TEMPORARY_STORAGE );
+    if ( _environment->listingFileName ) {
+        sprintf( listingFileName, "-l %s", _environment->listingFileName );
+    }
+
+    sprintf( commandLine, "%s %s -o %s -B -e 10240 %s",
         executableName,
+        listingFileName,
         _environment->exeFileName, 
         _environment->asmFileName );
 

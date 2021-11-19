@@ -176,6 +176,7 @@ void cpu6809_mobcount( Environment * _environment, char * _index);
 void cpu6809_sqroot( Environment * _environment, char * _number, char * _result );
 void cpu6809_dstring_vars( Environment * _environment );
 
+void cpu6809_protothread_vars( Environment * _environment );
 void cpu6809_protothread_loop( Environment * _environment );
 void cpu6809_protothread_register_at( Environment * _environment, char * _index, char * _label );
 void cpu6809_protothread_register( Environment * _environment, char * _label, char * _index );
@@ -335,6 +336,7 @@ extern unsigned int src_hw_chipset_mob_asm_len;
 
 #define cpu_dstring_vars( _environment ) cpu6809_dstring_vars( _environment )
 
+#define cpu_protothread_vars( _environment ) cpu6809_protothread_vars( _environment )
 #define cpu_protothread_loop( _environment ) cpu6809_protothread_loop( _environment )
 #define cpu_protothread_register( _environment, _label, _index ) cpu6809_protothread_register( _environment, _label, _index )
 #define cpu_protothread_register_at( _environment, _index, _label ) cpu6809_protothread_register_at( _environment, _index, _label )

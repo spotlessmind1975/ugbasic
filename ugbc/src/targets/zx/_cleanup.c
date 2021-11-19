@@ -56,4 +56,12 @@ void target_cleanup( Environment * _environment ) {
     unlink( binFileName );
     unlink( _environment->asmFileName );
 
+    if ( _environment->analysis && _environment->listingFileName ) {
+        target_analysis( _environment );
+    }
+
+}
+
+void target_analysis( Environment * _environment ) {
+    
 }
