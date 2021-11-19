@@ -2856,7 +2856,7 @@ dim_definition :
           ((struct _Environment *)_environment)->arrayDimensions = 0;
       } OP dimensions CP {
         ((struct _Environment *)_environment)->currentArray = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
-        variable_array_type( _environment, $1, VT_WORD );
+        variable_array_type( _environment, $1, ((struct _Environment *)_environment)->defaultVariableType );
     } array_assign;
     | Identifier WITH const_expr {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
