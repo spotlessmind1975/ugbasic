@@ -369,6 +369,16 @@ const_factor:
           }
           $$ = c->value;
       }
+      | OP_HASH Identifier {
+          Constant * c = constant_find( ((Environment *)_environment)->constants, $2 );
+          if ( c == NULL ) {
+              CRITICAL_UNDEFINED_CONSTANT( $2 );
+          }
+          if ( c->valueString != NULL ) {
+              CRITICAL_TYPE_MISMATCH_CONSTANT_NUMERIC( $2 );
+          }
+          $$ = c->value;
+      }
       | const_color_enumeration
       ;
 
