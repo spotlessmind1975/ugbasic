@@ -1299,7 +1299,7 @@ exponential:
                 CRITICAL_SIZE_UNSUPPORTED( $3, DATATYPE_AS_STRING[v->type] );
                 break;
         }
-        $$ = variable_temporary( _environment, VT_WORD, "(size)" )->name;
+        $$ = variable_temporary( _environment, ((struct _Environment *)_environment)->defaultVariableType, "(size)" )->name;
         variable_store( _environment, $$, v->size );
       }
     | color_enumeration { 
