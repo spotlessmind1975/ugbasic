@@ -1121,7 +1121,7 @@ exponential:
             $$ = variable_temporary( _environment, VT_SWORD, "(signed integer value)" )->name;
             variable_store( _environment, $$, $1 );
         } else {
-            $$ = variable_temporary( _environment, VT_WORD, "(integer value)" )->name;
+            $$ = variable_temporary( _environment, ((struct _Environment *)_environment)->defaultVariableType, "(integer value)" )->name;
             variable_store( _environment, $$, $1 );
         }
       }
