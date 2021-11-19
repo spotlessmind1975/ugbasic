@@ -29,30 +29,34 @@
 ;  ****************************************************************************/
 
 CPUMATHMUL16BITTO32BIT
-    LDA   <MATHPTR0
+    PSHS  D,X
+    STD   <MATHPTR0
+    STX   <MATHPTR2
     LDB   <MATHPTR2
     MUL            
-    STD   <MATHPTR4
+    STD   ,S
 
     LDA   <MATHPTR1
     LDB   <MATHPTR3
     MUL
-    STD   <MATHPTR6
+    STD   2,S
 
     LDD   <MATHPTR1
     MUL
-    PSHS D
+    STD   CPUMATHMUL16BITTO32BIT1-2
     
     LDA   <MATHPTR0
     LDB   <MATHPTR3
     MUL
-    ADDD  ,S++
-    ADDD  <MATHPTR5
-    STD   <MATHPTR5
-    BCC   CPUMATHMUL16BITTO32BIT1
-    INC   <MATHPTR4
+    ADDD  #$5555
 CPUMATHMUL16BITTO32BIT1
-    RTS
+    BNE   CPUMATHMUL16BITTO32BIT2
+    INC   ,S
+    
+CPUMATHMUL16BITTO32BIT2
+    ADDD  1,S
+    STD   1,S
+    PULS  D,X,PC
 
 CPUMATHMUL16BITTO32BIT_SIGNED
     LDA   <MATHPTR0       

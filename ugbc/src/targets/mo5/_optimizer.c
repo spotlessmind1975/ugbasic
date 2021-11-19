@@ -104,6 +104,7 @@ int can_nzA(char *opcode) {
 	if(match(opcode, "DECA")) return 1;
 	if(match(opcode, "EORA ")) return 1;
 	if(match(opcode, "EXG ")) return 1;
+	if(match(opcode, "INCA")) return 1;
 	if(match(opcode, "JSR ")) return 1;
 	if(match(opcode, "LDA ")) return 1;
 	if(match(opcode, "LDD ")) return 1;
@@ -132,6 +133,7 @@ int can_nzB(char *opcode) {
 	if(match(opcode, "DECB")) return 1;
 	if(match(opcode, "EORB ")) return 1;
 	if(match(opcode, "EXG ")) return 1;
+	if(match(opcode, "INCB")) return 1;
 	if(match(opcode, "JSR ")) return 1;
 	if(match(opcode, "LDB ")) return 1;
 	if(match(opcode, "LDD ")) return 1;
@@ -379,15 +381,16 @@ void target_peephole_optimizer( Environment * _environment ) {
 				optim(buffer[0], "rule #16", NULL);
 				optim(buffer[1], "rule #16 (LDD#->ADD#)",buf);
 			}
-			
 			// more complex
 			if(zA) {
 				if (match( buffer[0], " CLRA")) {
 					optim( buffer[0], "rule #17 (A already 0)", NULL);
 				} else if (match( buffer[0], " LDA #$ff")) {
 					optim( buffer[0], "rule #18 (A was 0)", "\tDECA\n");
+					zA = 0;
 				} else if (match( buffer[0], " LDA #$01")) {
 					optim( buffer[0], "rule #19 (A was 0)", "\tINCA\n");
+					zA = 0;
 				} else if ( (variable1=chkLDD( buffer[0], "00--"))!=NULL ) {
 					char buf[MAX_TEMPORARY_STORAGE];
 					sprintf(buf, "\tLDB #$%c%c\n", variable1[2], variable1[3]);
@@ -399,14 +402,16 @@ void target_peephole_optimizer( Environment * _environment ) {
 			} else if ( chkLDD(buffer[0], "00--") || match( buffer[0], " LDD #0") || match( buffer[0], " CLRA") ) {
 				zA = 1;
 			}
-
+			
 			if(zB) {
 				if (match( buffer[0], " CLRB")) {
 					optim( buffer[0], "rule #21 (B already 0)", NULL);
 				} else if (match( buffer[0], " LDB #$ff")) {
 					optim( buffer[0], "rule #22 (B was 0)", "\tDECB\n");
+					zB = 0;
 				} else if (match( buffer[0], " LDB #$01")) {
 					optim( buffer[0], "rule #23 (B was 0)", "\tINCB\n");
+					zB = 0;
 				} else if ( (variable1=chkLDD(buffer[0], "--00"))!=NULL ) {
 					char buf[MAX_TEMPORARY_STORAGE];
 					sprintf(buf, "\tLDA #$%c%c\n", variable1[0], variable1[1]);
@@ -418,7 +423,6 @@ void target_peephole_optimizer( Environment * _environment ) {
 			} else if ( chkLDD(buffer[0], "--00") || match( buffer[0], " LDD #0") || match( buffer[0], " CLRB") ) {
 				zB = 1;
 			}
-
 			++line;
 		}
 
