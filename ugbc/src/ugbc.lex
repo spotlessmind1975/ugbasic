@@ -356,6 +356,7 @@ TO { return (TO); }
 TURQUOISE { return(TURQUOISE); }
 TRANSPARENCY { return(TRANSPARENCY); }
 TRUE { return(TRUE); }
+TYPE { return(TYPE); }
 U { return (U); }
 UNTIL { return (UNTIL); }
 UP { return (UP); }
