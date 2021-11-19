@@ -2978,7 +2978,7 @@ indexes :
 parameters : 
       Identifier {
           ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
-          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = ((struct _Environment *)_environment)->defaultVariableType;
+          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_WORD;
           ++((struct _Environment *)_environment)->parameters;
     }
     | Identifier OP_DOLLAR {
@@ -2993,7 +2993,7 @@ parameters :
     }
     | Identifier OP_COMMA parameters {
           ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
-          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = ((struct _Environment *)_environment)->defaultVariableType;
+          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_WORD;
           ++((struct _Environment *)_environment)->parameters;
     }
     | Identifier OP_DOLLAR OP_COMMA parameters {
@@ -3011,7 +3011,7 @@ parameters :
 parameters_expr : 
       Identifier {
           ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
-          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = ((struct _Environment *)_environment)->defaultVariableType;
+          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_WORD;
           ++((struct _Environment *)_environment)->parameters;
     }
     | Identifier OP_DOLLAR {
@@ -3026,7 +3026,7 @@ parameters_expr :
     }
     | Identifier OP_COMMA parameters_expr {
           ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
-          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = ((struct _Environment *)_environment)->defaultVariableType;
+          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_WORD;
           ++((struct _Environment *)_environment)->parameters;
     }
     | Identifier OP_DOLLAR OP_COMMA parameters_expr {
