@@ -1128,26 +1128,6 @@ void cpu6502_math_mul2_const_8bit( Environment * _environment, char *_source, in
 
         if ( _signed ) {
             outline1("LDA %s", _source);
-            outline0("AND #$80" );
-            outline0("TAX");
-            while( _steps ) {
-                outline0("CLC");
-                outline1("ASL %s", _source);
-                --_steps;
-            }
-            outline0("TXA");
-            outline1("ORA %s", _source);
-            outline1("STA %s", _source);
-        } else {
-            while( _steps ) {
-                outline0("CLC");
-                outline1("ASL %s", _source);
-                --_steps;
-            }
-        }
-
-        if ( _signed ) {
-            outline1("LDA %s", _source);
             outline1("LDX #$%2.2x", _steps );
             outline0("JSR CPUMATHMUL2CONST8BIT_SIGNED")
             outline1("STA %s", _source);

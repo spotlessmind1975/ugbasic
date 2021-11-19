@@ -55,7 +55,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token BACK DEBUG CAN ELSEIF BUFFER LOAD SIZE MOB IMAGE PUT VISIBLE HIDDEN HIDE SHOW RENDER
 %token SQR TI CONST VBL POKE NOP FILL IN POSITIVE DEFINE ATARI ATARIXL C64 DRAGON DRAGON32 DRAGON64 PLUS4 ZX 
 %token FONT VIC20 PARALLEL YIELD SPAWN THREAD TASK IMAGES FRAME FRAMES XY YX ROLL MASKED USING TRANSPARENCY
-%token OVERLAYED CASE ENDSELECT OGP CGP ARRAY NEW GET DISTANCE
+%token OVERLAYED CASE ENDSELECT OGP CGP ARRAY NEW GET DISTANCE TYPE
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -284,6 +284,12 @@ const_factor:
       | OP const_expr CP {
           $$ = $2;
       }
+      | FALSE {
+          $$ = 0x0;
+      }
+      | TRUE {
+          $$ = 0xffffffff;
+      }
       | WIDTH {
           $$ = ((Environment *)_environment)->screenWidth;
       }
@@ -360,6 +366,16 @@ const_factor:
           }
           if ( c->valueString != NULL ) {
               CRITICAL_TYPE_MISMATCH_CONSTANT_NUMERIC( $1 );
+          }
+          $$ = c->value;
+      }
+      | OP_HASH Identifier {
+          Constant * c = constant_find( ((Environment *)_environment)->constants, $2 );
+          if ( c == NULL ) {
+              CRITICAL_UNDEFINED_CONSTANT( $2 );
+          }
+          if ( c->valueString != NULL ) {
+              CRITICAL_TYPE_MISMATCH_CONSTANT_NUMERIC( $2 );
           }
           $$ = c->value;
       }
@@ -1097,11 +1113,11 @@ exponential:
                 $$ = variable_temporary( _environment,  VT_STRING, "(constant)" )->name;
                 variable_store_string( _environment, $$, c->valueString );
             } else {
-                $$ = variable_temporary( _environment,  VT_WORD, "(constant)" )->name;
+                $$ = variable_temporary( _environment,  ((struct _Environment *)_environment)->defaultVariableType, "(constant)" )->name;
                 variable_store( _environment, $$, c->value );
             }
         } else {
-            $$ = variable_retrieve_or_define( _environment, $1, VT_WORD, 0 )->name;
+            $$ = variable_retrieve_or_define( _environment, $1, ((struct _Environment *)_environment)->defaultVariableType, 0 )->name;
         }
     }
     | Identifier OP_DOLLAR { 
@@ -1121,7 +1137,7 @@ exponential:
             $$ = variable_temporary( _environment, VT_SWORD, "(signed integer value)" )->name;
             variable_store( _environment, $$, $1 );
         } else {
-            $$ = variable_temporary( _environment, VT_WORD, "(integer value)" )->name;
+            $$ = variable_temporary( _environment, ((struct _Environment *)_environment)->defaultVariableType, "(integer value)" )->name;
             variable_store( _environment, $$, $1 );
         }
       }
@@ -1299,7 +1315,7 @@ exponential:
                 CRITICAL_SIZE_UNSUPPORTED( $3, DATATYPE_AS_STRING[v->type] );
                 break;
         }
-        $$ = variable_temporary( _environment, VT_WORD, "(size)" )->name;
+        $$ = variable_temporary( _environment, ((struct _Environment *)_environment)->defaultVariableType, "(size)" )->name;
         variable_store( _environment, $$, v->size );
       }
     | color_enumeration { 
@@ -2248,7 +2264,7 @@ screen_definition:
 
 var_definition_simple:
    Identifier {
-      variable_retrieve_or_define( _environment, $1, VT_WORD, 0 );
+      variable_retrieve_or_define( _environment, $1, ((struct _Environment *)_environment)->defaultVariableType, 0 );
   }
   | Identifier AS datatype {
       variable_retrieve_or_define( _environment, $1, $3, 0 );
@@ -2856,7 +2872,7 @@ dim_definition :
           ((struct _Environment *)_environment)->arrayDimensions = 0;
       } OP dimensions CP {
         ((struct _Environment *)_environment)->currentArray = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
-        variable_array_type( _environment, $1, VT_WORD );
+        variable_array_type( _environment, $1, ((struct _Environment *)_environment)->defaultVariableType );
     } array_assign;
     | Identifier WITH const_expr {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
@@ -2864,7 +2880,7 @@ dim_definition :
       } OP dimensions CP {
         ((struct _Environment *)_environment)->currentArray = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
         ((struct _Environment *)_environment)->currentArray->value = $3;
-        variable_array_type( _environment, $1, VT_WORD );
+        variable_array_type( _environment, $1, ((struct _Environment *)_environment)->defaultVariableType );
         if ( ! ((struct _Environment *)_environment)->currentArray->memoryArea ) {
             memory_area_assign( ((struct _Environment *)_environment)->memoryAreas, ((struct _Environment *)_environment)->currentArray );
         }
@@ -2962,7 +2978,7 @@ indexes :
 parameters : 
       Identifier {
           ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
-          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_WORD;
+          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = ((struct _Environment *)_environment)->defaultVariableType;
           ++((struct _Environment *)_environment)->parameters;
     }
     | Identifier OP_DOLLAR {
@@ -2977,7 +2993,7 @@ parameters :
     }
     | Identifier OP_COMMA parameters {
           ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
-          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_WORD;
+          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = ((struct _Environment *)_environment)->defaultVariableType;
           ++((struct _Environment *)_environment)->parameters;
     }
     | Identifier OP_DOLLAR OP_COMMA parameters {
@@ -2995,7 +3011,7 @@ parameters :
 parameters_expr : 
       Identifier {
           ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
-          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_WORD;
+          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = ((struct _Environment *)_environment)->defaultVariableType;
           ++((struct _Environment *)_environment)->parameters;
     }
     | Identifier OP_DOLLAR {
@@ -3010,7 +3026,7 @@ parameters_expr :
     }
     | Identifier OP_COMMA parameters_expr {
           ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
-          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_WORD;
+          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = ((struct _Environment *)_environment)->defaultVariableType;
           ++((struct _Environment *)_environment)->parameters;
     }
     | Identifier OP_DOLLAR OP_COMMA parameters_expr {
@@ -3257,6 +3273,9 @@ define_definition :
             CRITICAL_INVALID_TASK_COUNT( $3 );
         }
         ((struct _Environment *)_environment)->protothreadConfig.count = $3;
+    }
+    | DEFAULT TYPE datatype {
+        ((struct _Environment *)_environment)->defaultVariableType = $3;
     };
 
 define_definitions :
@@ -3791,7 +3810,7 @@ statement:
   }
   | Identifier OP_ASSIGN OP_HASH const_expr {
         if ( !variable_exists( _environment, $1 ) ) {
-            variable_retrieve_or_define( _environment, $1, VT_WORD, $4 );
+            variable_retrieve_or_define( _environment, $1, ((struct _Environment *)_environment)->defaultVariableType, $4 );
         }
         variable_store( _environment, $1, $4 );
   }
@@ -4076,6 +4095,8 @@ int main( int _argc, char *_argv[] ) {
     setup_embedded( _environment );
 
     _environment->warningsEnabled = 0;
+
+    _environment->defaultVariableType = VT_WORD;
 
 #if defined(__atari__) 
     _environment->outputFileType = OUTPUT_FILE_TYPE_XEX;
