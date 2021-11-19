@@ -2248,7 +2248,7 @@ screen_definition:
 
 var_definition_simple:
    Identifier {
-      variable_retrieve_or_define( _environment, $1, VT_WORD, 0 );
+      variable_retrieve_or_define( _environment, $1, ((struct _Environment *)_environment)->defaultVariableType, 0 );
   }
   | Identifier AS datatype {
       variable_retrieve_or_define( _environment, $1, $3, 0 );
