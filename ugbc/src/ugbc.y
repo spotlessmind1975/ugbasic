@@ -1097,11 +1097,11 @@ exponential:
                 $$ = variable_temporary( _environment,  VT_STRING, "(constant)" )->name;
                 variable_store_string( _environment, $$, c->valueString );
             } else {
-                $$ = variable_temporary( _environment,  VT_WORD, "(constant)" )->name;
+                $$ = variable_temporary( _environment,  ((struct _Environment *)_environment)->defaultVariableType, "(constant)" )->name;
                 variable_store( _environment, $$, c->value );
             }
         } else {
-            $$ = variable_retrieve_or_define( _environment, $1, VT_WORD, 0 )->name;
+            $$ = variable_retrieve_or_define( _environment, $1, ((struct _Environment *)_environment)->defaultVariableType, 0 )->name;
         }
     }
     | Identifier OP_DOLLAR { 
