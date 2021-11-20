@@ -1928,27 +1928,30 @@ Variable * variable_mul2_const( Environment * _environment, char * _destination,
         CRITICAL_MUL2_INVALID_STEPS( _destination );
     }
 
-    Variable * destination = variable_retrieve( _environment, _destination );
+    Variable * destination = variable_retrieve( _environment, _destination );    
 
     if ( _steps == 0 ) {
         return destination;
     }
 
+    Variable * result = variable_temporary( _environment, destination->type, "(mul2)" );    
+    variable_move_naked( _environment, destination->name, result->name );
+
     switch( VT_BITWIDTH( destination->type ) ) {
         case 32:
-            cpu_math_mul2_const_32bit( _environment, destination->realName, _steps, VT_SIGNED( destination->type ) );
+            cpu_math_mul2_const_32bit( _environment, result->realName, _steps, VT_SIGNED( destination->type ) );
             break;
         case 16:
-            cpu_math_mul2_const_16bit( _environment, destination->realName, _steps, VT_SIGNED( destination->type ) );
+            cpu_math_mul2_const_16bit( _environment, result->realName, _steps, VT_SIGNED( destination->type ) );
             break;
         case 8:
-            cpu_math_mul2_const_8bit( _environment, destination->realName, _steps, VT_SIGNED( destination->type ) );
+            cpu_math_mul2_const_8bit( _environment, result->realName, _steps, VT_SIGNED( destination->type ) );
             break;
         case 0:
             CRITICAL_MUL2_UNSUPPORTED( _destination, DATATYPE_AS_STRING[destination->type] );
             break;
     }
-    return destination;
+    return result;
 }
 
 /**
