@@ -1578,7 +1578,7 @@ Variable * variable_mul( Environment * _environment, char * _source, char * _des
  * @param _destination Destination variable's name
  * @return Variable* The quotient of source and destination variable
  */
-Variable * variable_div( Environment * _environment, char * _source, char * _destination ) {
+Variable * variable_div( Environment * _environment, char * _source, char * _destination, char * _remainder ) {
     Variable * source = variable_retrieve( _environment, _source );
     Variable * target = variable_retrieve( _environment, _destination );
 
@@ -1615,6 +1615,11 @@ Variable * variable_div( Environment * _environment, char * _source, char * _des
             CRITICAL_DIV_UNSUPPORTED(_source, DATATYPE_AS_STRING[source->type]);
             break;
     }
+
+    if ( _remainder ) {
+        variable_move( _environment, remainder->name, _remainder );
+    }
+    
     return result;
 }
 

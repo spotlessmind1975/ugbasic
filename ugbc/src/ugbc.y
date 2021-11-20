@@ -55,7 +55,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token BACK DEBUG CAN ELSEIF BUFFER LOAD SIZE MOB IMAGE PUT VISIBLE HIDDEN HIDE SHOW RENDER
 %token SQR TI CONST VBL POKE NOP FILL IN POSITIVE DEFINE ATARI ATARIXL C64 DRAGON DRAGON32 DRAGON64 PLUS4 ZX 
 %token FONT VIC20 PARALLEL YIELD SPAWN THREAD TASK IMAGES FRAME FRAMES XY YX ROLL MASKED USING TRANSPARENCY
-%token OVERLAYED CASE ENDSELECT OGP CGP ARRAY NEW GET DISTANCE TYPE MUL
+%token OVERLAYED CASE ENDSELECT OGP CGP ARRAY NEW GET DISTANCE TYPE MUL DIV
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -442,7 +442,7 @@ modula:
         $$ = variable_mul2_const( _environment, $1, $3 )->name;
     } 
     | modula OP_DIVISION factor {
-        $$ = variable_div( _environment, $1, $3 )->name;
+        $$ = variable_div( _environment, $1, $3, NULL )->name;
     } 
     | modula OP_DIVISION2 direct_integer {
         if ( log2($3) != (int)log2($3) ) {
@@ -2650,6 +2650,18 @@ mul_definition :
     }
     ;
 
+div_definition :
+    Identifier OP_COMMA expr {
+        variable_move( _environment, variable_div( _environment, $1, $3, NULL )->name, $1 );
+    }
+    |
+    Identifier OP_COMMA expr OP_COMMA Identifier {
+        variable_retrieve_or_define( _environment, $5, ((struct _Environment *)_environment)->defaultVariableType, 0);
+        variable_move( _environment, variable_div( _environment, $1, $3, $5 )->name, $1 );
+    }
+    ;
+
+
 dimensions :
       const_expr {
           ((struct _Environment *)_environment)->arrayDimensionsEach[((struct _Environment *)_environment)->arrayDimensions] = $1;
@@ -3371,6 +3383,7 @@ statement:
   }
   | ADD add_definition
   | MUL mul_definition
+  | DIV div_definition
   | POKE poke_definition
   | NOP {
       outline0( "NOP" );

@@ -125,6 +125,7 @@ DELETE { return (DELETE); }
 DIM { return (DIM); }
 DISABLE { return (DISABLE); }
 DISTANCE { return (DISTANCE); }
+DIV { return (DIV); }
 DONE { return (DONE); }
 DO { return (DO); }
 DOWN { return (DOWN); }
