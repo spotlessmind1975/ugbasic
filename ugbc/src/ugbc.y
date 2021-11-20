@@ -1117,7 +1117,11 @@ exponential:
                 variable_store( _environment, $$, c->value );
             }
         } else {
-            $$ = variable_retrieve_or_define( _environment, $1, ((struct _Environment *)_environment)->defaultVariableType, 0 )->name;
+            if ( !variable_exists( _environment, $1 ) ) {
+                $$ = variable_retrieve_or_define( _environment, $1, ((struct _Environment *)_environment)->defaultVariableType, 0 )->name;
+            } else {
+                $$ = variable_retrieve( _environment, $1 )->name;
+            }
         }
     }
     | Identifier OP_DOLLAR { 
@@ -3749,6 +3753,7 @@ statement:
   | Identifier OP_ASSIGN expr {
         Variable * expr = variable_retrieve( _environment, $3 );
         Variable * variable = variable_retrieve_or_define( _environment, $1, expr->type, 0 );
+
         if ( variable->type == VT_ARRAY ) {
             if ( expr->type != VT_BUFFER ) {
                 CRITICAL_CANNOT_ASSIGN_TO_ARRAY( $1, DATATYPE_AS_STRING[expr->type] );
@@ -3757,7 +3762,14 @@ statement:
                 CRITICAL_BUFFER_SIZE_MISMATCH_ARRAY_SIZE( $1, expr->size, variable->size );
             }
         }
-        variable_move( _environment, $3, $1 );
+
+        if ( variable->type != expr->type ) {
+            Variable * casted = variable_cast( _environment, expr->name, variable->type );
+            variable_move( _environment, casted->name, variable->name );
+        } else {
+            variable_move( _environment, expr->name, variable->name );
+        }
+
   }
   | Identifier OP_ASSIGN OP_HASH const_expr as_datatype {
         if ( !variable_exists( _environment, $1 ) ) {
