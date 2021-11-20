@@ -1385,8 +1385,8 @@ void cpu6809_math_mul_16bit_to_32bit( Environment * _environment, char *_source,
             outline0("JSR CPUMATHMUL16BITTO32BIT" );
         }
 
-        outline1("STD %s", _other );
-        outline1("STX %s+2", _other );
+        outline1("STX %s", _other );
+        outline1("STD %s+2", _other );
 
     done( )
 
@@ -2345,7 +2345,7 @@ void cpu6809_jump( Environment * _environment, char * _label ) {
 
     inline( cpu_jump )
 
-        outline1( "JMP %s", _label );
+        B(RA, _label );
 
     no_embedded( cpu_jump )
 
@@ -2355,7 +2355,7 @@ void cpu6809_call( Environment * _environment, char * _label ) {
 
     inline( cpu_call )
 
-        outline1( "JSR %s", _label );
+        B(SR, _label );
 
     no_embedded( cpu_jump )
 
@@ -3595,7 +3595,7 @@ void cpu6809_move_16bit_indirect2( Environment * _environment, char * _value, ch
 
         MAKE_LABEL
 
-        outline1("LDD %s", _value);
+        outline1("LDD [%s]", _value);
         outline1("STD %s", _source );
 
     no_embedded( cpu_move_16bit_indirect2 )
