@@ -584,6 +584,35 @@ void cpu6502_compare_8bit( Environment * _environment, char *_source, char *_des
 }
 
 /**
+ * @brief <i>CPU 6502</i>: emit code to compare two 8 bit values and jump if they are equal/different
+ * 
+ * @param _environment Current calling environment
+ * @param _source First value to compare
+ * @param _destination Second value to compare
+ * @param _label Where to jump
+ * @param _positive Invert meaning of comparison
+ */
+void cpu6502_compare_and_branch_8bit_const( Environment * _environment, char *_source, int _destination,  char *_label, int _positive ) {
+
+    MAKE_LABEL
+
+    inline( cpu_compare_and_branch_8bit_const )
+
+        outline1("LDA %s", _source);
+        outline1("CMP #$%2.2x", _destination);
+        if ( _positive ) {
+            outline1("BNE %s", label);
+        } else {
+            outline1("BEQ %s", label);
+        }
+        outline1("JMP %s", _label);
+        outhead1("%s:", label);
+
+    no_embedded( cpu_compare_and_branch_8bit_const )
+
+}
+
+/**
  * @brief <i>CPU 6502</i>: emit code to compare two 8 bit values
  * 
  * @param _environment Current calling environment
@@ -1276,6 +1305,42 @@ void cpu6502_compare_16bit( Environment * _environment, char *_source, char *_de
         outhead1("%s_2:", label);
 
     no_embedded( cpu_compare_16bit )
+
+}
+
+/**
+ * @brief <i>CPU 6502</i>: emit code to compare two 16 bit values and jump if they are equal/different
+ * 
+ * @param _environment Current calling environment
+ * @param _source First value to compare
+ * @param _destination Second value to compare
+ * @param _label Where to jump
+ * @param _positive Invert meaning of comparison
+ */
+void cpu6502_compare_and_branch_16bit_const( Environment * _environment, char *_source, int _destination,  char *_label, int _positive ) {
+
+    MAKE_LABEL
+
+    inline( cpu_compare_and_branch_16bit_const )
+
+        outline1("LDA %s+1", _source);
+        outline1("CMP #$%2.2x", ( _destination >> 8 ) & 0xff );
+        if ( _positive ) {
+            outline1("BNE %s", label);
+        } else {
+            outline1("BEQ %s", label);
+        }
+        outline1("LDA %s", _source);
+        outline1("CMP #$%2.2x", ( _destination & 0xff ) );
+        if ( _positive ) {
+            outline1("BNE %s", label);
+        } else {
+            outline1("BEQ %s", label);
+        }
+        outline1("JMP %s", _label);
+        outhead1("%s:", label);
+
+    no_embedded( cpu_compare_and_branch_16bit_const )
 
 }
 
@@ -2289,6 +2354,56 @@ void cpu6502_compare_32bit( Environment * _environment, char *_source, char *_de
         outhead1("%s_2:", label);
     
     no_embedded( cpu_compare_32bit )
+
+}
+
+/**
+ * @brief <i>CPU 6502</i>: emit code to compare two 32 bit values and jump if they are equal/different
+ * 
+ * @param _environment Current calling environment
+ * @param _source First value to compare
+ * @param _destination Second value to compare
+ * @param _label Where to jump
+ * @param _positive Invert meaning of comparison
+ */
+void cpu6502_compare_and_branch_32bit_const( Environment * _environment, char *_source, int _destination,  char *_label, int _positive ) {
+
+    MAKE_LABEL
+
+    inline( cpu_compare_and_branch_32bit_const )
+
+        outline1("LDA %s+3", _source);
+        outline1("CMP #$%2.2x", ( _destination >> 24 ) & 0xff );
+        if ( _positive ) {
+            outline1("BNE %s", label);
+        } else {
+            outline1("BEQ %s", label);
+        }
+        outline1("LDA %s+2", _source);
+        outline1("CMP #$%2.2x", ( _destination >> 16 ) & 0xff );
+        if ( _positive ) {
+            outline1("BNE %s", label);
+        } else {
+            outline1("BEQ %s", label);
+        }
+        outline1("LDA %s+1", _source);
+        outline1("CMP #$%2.2x", ( _destination >> 8 ) & 0xff );
+        if ( _positive ) {
+            outline1("BNE %s", label);
+        } else {
+            outline1("BEQ %s", label);
+        }
+        outline1("LDA %s", _source);
+        outline1("CMP #$%2.2x", ( _destination & 0xff ) );
+        if ( _positive ) {
+            outline1("BNE %s", label);
+        } else {
+            outline1("BEQ %s", label);
+        }
+        outline1("JMP %s", _label);
+        outhead1("%s:", label);
+
+    no_embedded( cpu_compare_and_branch_32bit_const )
 
 }
 

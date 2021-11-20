@@ -424,6 +424,29 @@ void z80_compare_8bit( Environment * _environment, char *_source, char *_destina
 }
 
 /**
+ * @brief <i>Z80</i>: emit code to compare two 8 bit values and jump if they are equal/different
+ * 
+ * @param _environment Current calling environment
+ * @param _source First value to compare
+ * @param _destination Second value to compare
+ * @param _label Where to jump
+ * @param _positive Invert meaning of comparison
+ */
+void z80_compare_and_branch_8bit_const( Environment * _environment, char *_source, int _destination,  char *_label, int _positive ) {
+
+    inline( cpu_compare_and_branch_8bit_const )
+
+        MAKE_LABEL
+
+        outline1("LD A, (%s)", _source);
+        outline0("CP $%2.2x", _destination );
+        outline1("JP Z, %s", _label);
+
+    no_embedded( cpu_compare_and_branch_8bit_const )
+
+}
+
+/**
  * @brief <i>Z80</i>: emit code to compare two 8 bit values
  * 
  * @param _environment Current calling environment
@@ -934,6 +957,33 @@ void z80_compare_16bit( Environment * _environment, char *_source, char *_destin
 }
 
 /**
+ * @brief <i>Z80</i>: emit code to compare two 16 bit values and jump if they are equal/different
+ * 
+ * @param _environment Current calling environment
+ * @param _source First value to compare
+ * @param _destination Second value to compare
+ * @param _label Where to jump
+ * @param _positive Invert meaning of comparison
+ */
+void z80_compare_and_branch_16bit_const( Environment * _environment, char *_source, int _destination,  char *_label, int _positive ) {
+
+    inline( cpu_compare_and_branch_16bit_const )
+
+        MAKE_LABEL
+
+        outline1("LD A, (%s+1)", _source);
+        outline1("CP $%2.2x", ( _destination >> 8 ) & 0xff );
+        outline1("JP NZ, %s", label);
+        outline1("LD A, (%s)", _source);
+        outline1("CP $%2.2x", ( _destination & 0xff ) );
+        outline1("JP Z, %s", _label);
+        outhead1("%s:", label );
+
+    no_embedded( cpu_compare_and_branch_16bit_const )
+
+}
+
+/**
  * @brief <i>Z80</i>: emit code to compare two 8 bit values
  * 
  * @param _environment Current calling environment
@@ -1429,6 +1479,39 @@ void z80_compare_32bit( Environment * _environment, char *_source, char *_destin
         outline1("LD (%s), A", _destination);
     }
     outhead1("%s_2:", label);
+
+}
+
+/**
+ * @brief <i>Z80</i>: emit code to compare two 32 bit values and jump if they are equal/different
+ * 
+ * @param _environment Current calling environment
+ * @param _source First value to compare
+ * @param _destination Second value to compare
+ * @param _label Where to jump
+ * @param _positive Invert meaning of comparison
+ */
+void z80_compare_and_branch_32bit_const( Environment * _environment, char *_source, int _destination,  char *_label, int _positive ) {
+
+    inline( cpu_compare_and_branch_32bit_const )
+
+        MAKE_LABEL
+
+        outline1("LD A, (%s+3)", _source);
+        outline1("CP $%2.2x", ( _destination >> 24 ) & 0xff );
+        outline1("JP NZ, %s", label);
+        outline1("LD A, (%s+2)", _source);
+        outline1("CP $%2.2x", ( _destination >> 16 ) & 0xff );
+        outline1("JP NZ, %s", label);
+        outline1("LD A, (%s+1)", _source);
+        outline1("CP $%2.2x", ( _destination >> 8 ) & 0xff );
+        outline1("JP NZ, %s", label);
+        outline1("LD A, (%s)", _source);
+        outline1("CP $%2.2x", ( _destination & 0xff ) );
+        outline1("JP Z, %s", _label);
+        outhead1("%s:", label );
+
+    no_embedded( cpu_compare_and_branch_32bit_const )
 
 }
 

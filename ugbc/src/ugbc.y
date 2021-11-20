@@ -77,7 +77,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <string> color_enumeration
 %type <string> writing_mode_definition writing_part_definition
 %type <string> key_scancode_definition key_scancode_alphadigit key_scancode_function_digit
-%type <integer> datatype
+%type <integer> datatype as_datatype
 %type <integer> optional_integer
 %type <string> optional_expr optional_x optional_y
 %type <integer> target targets
@@ -1113,11 +1113,15 @@ exponential:
                 $$ = variable_temporary( _environment,  VT_STRING, "(constant)" )->name;
                 variable_store_string( _environment, $$, c->valueString );
             } else {
-                $$ = variable_temporary( _environment,  ((struct _Environment *)_environment)->defaultVariableType, "(constant)" )->name;
+                $$ = variable_temporary( _environment,  VT_WORD, "(constant)" )->name;
                 variable_store( _environment, $$, c->value );
             }
         } else {
-            $$ = variable_retrieve_or_define( _environment, $1, ((struct _Environment *)_environment)->defaultVariableType, 0 )->name;
+            if ( !variable_exists( _environment, $1 ) ) {
+                $$ = variable_retrieve_or_define( _environment, $1, ((struct _Environment *)_environment)->defaultVariableType, 0 )->name;
+            } else {
+                $$ = variable_retrieve( _environment, $1 )->name;
+            }
         }
     }
     | Identifier OP_DOLLAR { 
@@ -2262,15 +2266,20 @@ screen_definition:
     screen_definition_simple
   | screen_definition_expression;
 
+as_datatype : 
+    {
+        $$ = ((struct _Environment *)_environment)->defaultVariableType;
+    }
+    | AS datatype {
+        $$ = $2;
+    };
+
 var_definition_simple:
-   Identifier {
-      variable_retrieve_or_define( _environment, $1, ((struct _Environment *)_environment)->defaultVariableType, 0 );
+  Identifier as_datatype {
+      variable_retrieve_or_define( _environment, $1, $2, 0 );
   }
-  | Identifier AS datatype {
-      variable_retrieve_or_define( _environment, $1, $3, 0 );
-  }
-  | Identifier AS datatype OP_ASSIGN const_expr {
-      variable_retrieve_or_define( _environment, $1, $3, $5 );
+  | Identifier as_datatype OP_ASSIGN const_expr {
+      variable_retrieve_or_define( _environment, $1, $2, $4 );
   }
   | Identifier ON Identifier {
       variable_retrieve_or_define( _environment, $1, VT_BYTE, 0 );
@@ -2867,47 +2876,21 @@ array_reassign:
     };    
 
 dim_definition :
-      Identifier {
-          memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
-          ((struct _Environment *)_environment)->arrayDimensions = 0;
-      } OP dimensions CP {
-        ((struct _Environment *)_environment)->currentArray = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
-        variable_array_type( _environment, $1, ((struct _Environment *)_environment)->defaultVariableType );
-    } array_assign;
-    | Identifier WITH const_expr {
-          memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
-          ((struct _Environment *)_environment)->arrayDimensions = 0;
-      } OP dimensions CP {
-        ((struct _Environment *)_environment)->currentArray = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
-        ((struct _Environment *)_environment)->currentArray->value = $3;
-        variable_array_type( _environment, $1, ((struct _Environment *)_environment)->defaultVariableType );
-        if ( ! ((struct _Environment *)_environment)->currentArray->memoryArea ) {
-            memory_area_assign( ((struct _Environment *)_environment)->memoryAreas, ((struct _Environment *)_environment)->currentArray );
-        }
-        if ( ((struct _Environment *)_environment)->currentArray->memoryArea ) {
-            variable_store( _environment, ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->value );
-        }
-    }
-    | Identifier {
-          memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
-          ((struct _Environment *)_environment)->arrayDimensions = 0;
-      } OP_DOLLAR OP dimensions CP {
-        ((struct _Environment *)_environment)->currentArray = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
-        variable_array_type( _environment, $1, VT_DSTRING );
-        if ( ! ((struct _Environment *)_environment)->currentArray->memoryArea ) {
-            memory_area_assign( ((struct _Environment *)_environment)->memoryAreas, ((struct _Environment *)_environment)->currentArray );
-        }
-        if ( ((struct _Environment *)_environment)->currentArray->memoryArea ) {
-            variable_store( _environment, ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->value );
-        }
-    }
-    | Identifier datatype {
+    Identifier datatype {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
           ((struct _Environment *)_environment)->arrayDimensions = 0;
       } OP dimensions CP {
         ((struct _Environment *)_environment)->currentArray = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
         variable_array_type( _environment, $1, $2 );
-    } array_assign;
+    } array_assign
+    |
+    Identifier OP_DOLLAR {
+          memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
+          ((struct _Environment *)_environment)->arrayDimensions = 0;
+      } OP dimensions CP {
+        ((struct _Environment *)_environment)->currentArray = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
+        variable_array_type( _environment, $1, VT_DSTRING );
+    } array_assign
     | Identifier datatype WITH const_expr {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
           ((struct _Environment *)_environment)->arrayDimensions = 0;
@@ -2922,20 +2905,20 @@ dim_definition :
             variable_store( _environment, ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->value );
         }
       }
-    | Identifier AS datatype {
+    | Identifier as_datatype {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
           ((struct _Environment *)_environment)->arrayDimensions = 0;
       } OP dimensions CP {
         ((struct _Environment *)_environment)->currentArray = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
-        variable_array_type( _environment, $1, $3 );
+        variable_array_type( _environment, $1, $2 );
     } array_assign;
-    | Identifier AS datatype WITH const_expr {
+    | Identifier as_datatype WITH const_expr {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
           ((struct _Environment *)_environment)->arrayDimensions = 0;
       } OP dimensions CP {
         ((struct _Environment *)_environment)->currentArray = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
-        ((struct _Environment *)_environment)->currentArray->value = $5;
-        variable_array_type( _environment, $1, $3 );
+        ((struct _Environment *)_environment)->currentArray->value = $4;
+        variable_array_type( _environment, $1, $2 );
         if ( ! ((struct _Environment *)_environment)->currentArray->memoryArea ) {
             memory_area_assign( ((struct _Environment *)_environment)->memoryAreas, ((struct _Environment *)_environment)->currentArray );
         }
@@ -2976,24 +2959,14 @@ indexes :
     ;
 
 parameters : 
-      Identifier {
-          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
-          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = ((struct _Environment *)_environment)->defaultVariableType;
-          ++((struct _Environment *)_environment)->parameters;
-    }
-    | Identifier OP_DOLLAR {
+    Identifier OP_DOLLAR {
           ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
           ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_DSTRING;
           ++((struct _Environment *)_environment)->parameters;
     }
-    | Identifier AS datatype {
+    | Identifier as_datatype {
           ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
-          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = $3;
-          ++((struct _Environment *)_environment)->parameters;
-    }
-    | Identifier OP_COMMA parameters {
-          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
-          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = ((struct _Environment *)_environment)->defaultVariableType;
+          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = $2;
           ++((struct _Environment *)_environment)->parameters;
     }
     | Identifier OP_DOLLAR OP_COMMA parameters {
@@ -3001,32 +2974,22 @@ parameters :
           ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_DSTRING;
           ++((struct _Environment *)_environment)->parameters;
     }
-    | Identifier AS datatype OP_COMMA parameters {
+    | Identifier as_datatype OP_COMMA parameters {
           ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
-          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = $3;
+          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = $2;
           ++((struct _Environment *)_environment)->parameters;
     }
     ;
 
 parameters_expr : 
-      Identifier {
-          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
-          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = ((struct _Environment *)_environment)->defaultVariableType;
-          ++((struct _Environment *)_environment)->parameters;
-    }
-    | Identifier OP_DOLLAR {
+    Identifier OP_DOLLAR {
           ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
           ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_DSTRING;
           ++((struct _Environment *)_environment)->parameters;
     }
-    | Identifier AS datatype {
+    | Identifier as_datatype {
           ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
-          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = $3;
-          ++((struct _Environment *)_environment)->parameters;
-    }
-    | Identifier OP_COMMA parameters_expr {
-          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
-          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = ((struct _Environment *)_environment)->defaultVariableType;
+          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = $2;
           ++((struct _Environment *)_environment)->parameters;
     }
     | Identifier OP_DOLLAR OP_COMMA parameters_expr {
@@ -3034,9 +2997,9 @@ parameters_expr :
           ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_DSTRING;
           ++((struct _Environment *)_environment)->parameters;
     }
-    | Identifier AS datatype OP_COMMA parameters_expr {
+    | Identifier as_datatype OP_COMMA parameters_expr {
           ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
-          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = $3;
+          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = $2;
           ++((struct _Environment *)_environment)->parameters;
     }
     | String {
@@ -3501,8 +3464,13 @@ statement:
   }
   | CASE {
       case_equals_label( _environment );  
+  } OP_HASH const_expr {
+      case_equals( _environment, $4 );  
+  }
+  | CASE {
+      case_equals_label( _environment );  
   } expr {
-      case_equals( _environment, $3 );  
+      case_equals_var( _environment, $3 );  
   }
   | CASE ELSE {
       case_equals_label( _environment );  
@@ -3798,6 +3766,7 @@ statement:
   | Identifier OP_ASSIGN expr {
         Variable * expr = variable_retrieve( _environment, $3 );
         Variable * variable = variable_retrieve_or_define( _environment, $1, expr->type, 0 );
+
         if ( variable->type == VT_ARRAY ) {
             if ( expr->type != VT_BUFFER ) {
                 CRITICAL_CANNOT_ASSIGN_TO_ARRAY( $1, DATATYPE_AS_STRING[expr->type] );
@@ -3806,11 +3775,18 @@ statement:
                 CRITICAL_BUFFER_SIZE_MISMATCH_ARRAY_SIZE( $1, expr->size, variable->size );
             }
         }
-        variable_move( _environment, $3, $1 );
+
+        if ( variable->type != expr->type ) {
+            Variable * casted = variable_cast( _environment, expr->name, variable->type );
+            variable_move( _environment, casted->name, variable->name );
+        } else {
+            variable_move( _environment, expr->name, variable->name );
+        }
+
   }
-  | Identifier OP_ASSIGN OP_HASH const_expr {
+  | Identifier OP_ASSIGN OP_HASH const_expr as_datatype {
         if ( !variable_exists( _environment, $1 ) ) {
-            variable_retrieve_or_define( _environment, $1, ((struct _Environment *)_environment)->defaultVariableType, $4 );
+            variable_retrieve_or_define( _environment, $1, $5, $4 );
         }
         variable_store( _environment, $1, $4 );
   }
@@ -4182,6 +4158,9 @@ int main( int _argc, char *_argv[] ) {
                         parse_embedded( p, cpu_compare_16bit );
                         parse_embedded( p, cpu_compare_32bit );
                         parse_embedded( p, cpu_compare_8bit );
+                        parse_embedded( p, cpu_compare_and_branch_16bit_const );
+                        parse_embedded( p, cpu_compare_and_branch_32bit_const );
+                        parse_embedded( p, cpu_compare_and_branch_8bit_const );
                         parse_embedded( p, cpu_di );
                         parse_embedded( p, cpu_ei );
                         parse_embedded( p, cpu_inc );
@@ -4377,6 +4356,9 @@ int main( int _argc, char *_argv[] ) {
         stats_embedded( cpu_compare_16bit );
         stats_embedded( cpu_compare_32bit );
         stats_embedded( cpu_compare_8bit );
+        stats_embedded( cpu_compare_and_branch_16bit_const );
+        stats_embedded( cpu_compare_and_branch_32bit_const );
+        stats_embedded( cpu_compare_and_branch_8bit_const );
         stats_embedded( cpu_di );
         stats_embedded( cpu_ei );
         stats_embedded( cpu_inc );
