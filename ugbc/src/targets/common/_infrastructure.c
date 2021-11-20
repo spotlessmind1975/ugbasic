@@ -1969,21 +1969,24 @@ Variable * variable_mul2_const( Environment * _environment, char * _destination,
  */
 Variable * variable_div2_const( Environment * _environment, char * _destination, int _bits ) {
     Variable * destination = variable_retrieve( _environment, _destination );    
+    Variable * result = variable_temporary( _environment, destination->type, "(div2)" );    
+    variable_move_naked( _environment, destination->name, result->name );
+
     switch( VT_BITWIDTH( destination->type ) ) {
         case 32:
-            cpu_math_div2_const_32bit( _environment, destination->realName, _bits, VT_SIGNED( destination->type ) );
+            cpu_math_div2_const_32bit( _environment, result->realName, _bits, VT_SIGNED( destination->type ) );
             break;
         case 16:
-            cpu_math_div2_const_16bit( _environment, destination->realName, _bits, VT_SIGNED( destination->type ) );
+            cpu_math_div2_const_16bit( _environment, result->realName, _bits, VT_SIGNED( destination->type ) );
             break;
         case 8:
-            cpu_math_div2_const_8bit( _environment, destination->realName, _bits, VT_SIGNED( destination->type ) );
+            cpu_math_div2_const_8bit( _environment, result->realName, _bits, VT_SIGNED( destination->type ) );
             break;
         case 0:
             CRITICAL_DIV2_UNSUPPORTED( _destination, DATATYPE_AS_STRING[destination->type] );
             break;
     }
-    return destination;
+    return result;
 }
 
 /**

@@ -161,7 +161,7 @@ Variable * image_load( Environment * _environment, char * _filename, char * _ali
     _environment->loadedFiles = loaded;
 
     if ( _alias ) {
-        const_define_numeric( _environment, _alias, UNIQUE_ID );
+        const_define_numeric( _environment, _alias, UNIQUE_RESOURCE_ID );
     }
     
     return result;

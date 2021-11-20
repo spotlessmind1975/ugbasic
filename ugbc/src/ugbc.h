@@ -1020,6 +1020,12 @@ typedef struct _Environment {
     int uniqueId;
 
     /**
+     * Last unique identification number 
+     * (used for image and file resources)
+     */
+    int uniqueResourceId;
+
+    /**
      * Set of banks defined during compilation. 
      * It contains all the banks, divided by type.
      */
@@ -1272,7 +1278,8 @@ typedef struct _Environment {
 
 } Environment;
 
-#define UNIQUE_ID   _environment->uniqueId++
+#define UNIQUE_ID            _environment->uniqueId++
+#define UNIQUE_RESOURCE_ID   _environment->uniqueResourceId++
 #define MAKE_LABEL  char label[12]; sprintf( label, "_label%d", UNIQUE_ID);
 #define CRITICAL( s ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); exit( EXIT_FAILURE );
 #define CRITICAL2( s, v ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, ((struct _Environment *)_environment)->yylineno ); exit( EXIT_FAILURE );
