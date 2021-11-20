@@ -125,6 +125,7 @@ DELETE { return (DELETE); }
 DIM { return (DIM); }
 DISABLE { return (DISABLE); }
 DISTANCE { return (DISTANCE); }
+DIV { return (DIV); }
 DONE { return (DONE); }
 DO { return (DO); }
 DOWN { return (DOWN); }
@@ -248,6 +249,7 @@ MONOCOLOR { return(MONOCOLOR); }
 MS { return (MILLISECOND); }
 MILLISECOND { return (MILLISECOND); }
 MILLISECONDS { return (MILLISECONDS); }
+MUL { return(MUL); }
 MULTICOLOR { return(MULTICOLOR); }
 N { return (N); }
 NEXT { return (NEXT); }

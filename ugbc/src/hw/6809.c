@@ -544,6 +544,31 @@ void cpu6809_compare_8bit( Environment * _environment, char *_source, char *_des
 }
 
 /**
+ * @brief <i>CPU 6809</i>: emit code to compare two 8 bit values and jump if they are equal/different
+ * 
+ * @param _environment Current calling environment
+ * @param _source First value to compare
+ * @param _destination Second value to compare
+ * @param _label Where to jump
+ * @param _positive Invert meaning of comparison
+ */
+void cpu6809_compare_and_branch_8bit_const( Environment * _environment, char *_source, int _destination,  char *_label, int _positive ) {
+
+    inline( cpu_compare_and_branch_8bit_const )
+
+        outline1("LDA %s", _source);
+        outline1("CMPA #$%2.2x", _destination);
+        if ( _positive ) {
+            outline1("LBEQ %s", _label);
+        } else {
+            outline1("LBNE %s", _label);
+        }
+
+    no_embedded( cpu_compare_and_branch_8bit_const )
+
+}
+
+/**
  * @brief <i>CPU 6809</i>: emit code to compare two 8 bit values
  * 
  * @param _environment Current calling environment
@@ -1172,6 +1197,31 @@ void cpu6809_compare_16bit( Environment * _environment, char *_source, char *_de
         outhead1("%sdone", label );
 
     no_embedded( cpu_compare_16bit )
+
+}
+
+/**
+ * @brief <i>CPU 6809</i>: emit code to compare two 8 bit values and jump if they are equal/different
+ * 
+ * @param _environment Current calling environment
+ * @param _source First value to compare
+ * @param _destination Second value to compare
+ * @param _label Where to jump
+ * @param _positive Invert meaning of comparison
+ */
+void cpu6809_compare_and_branch_16bit_const( Environment * _environment, char *_source, int _destination,  char *_label, int _positive ) {
+
+    inline( cpu_compare_and_branch_16bit_const )
+
+        outline1("LDX %s", _source);
+        outline1("CMPX #$%4.4x", _destination);
+        if ( _positive ) {
+            outline1("LBEQ %s", _label);
+        } else {
+            outline1("LBNE %s", _label);
+        }
+
+    no_embedded( cpu_compare_and_branch_16bit_const )
 
 }
 
@@ -2032,6 +2082,42 @@ void cpu6809_compare_32bit( Environment * _environment, char *_source, char *_de
         outhead1("%sdone", _other );
 
     no_embedded( cpu_compare_32bit )
+
+}
+
+/**
+ * @brief <i>CPU 6809</i>: emit code to compare two 32 bit values and jump if they are equal/different
+ * 
+ * @param _environment Current calling environment
+ * @param _source First value to compare
+ * @param _destination Second value to compare
+ * @param _label Where to jump
+ * @param _positive Invert meaning of comparison
+ */
+void cpu6809_compare_and_branch_32bit_const( Environment * _environment, char *_source, int _destination,  char *_label, int _positive ) {
+
+    MAKE_LABEL
+
+    inline( cpu_compare_and_branch_32bit_const )
+
+        outline1("LDX %s", _source);
+        outline1("CMPX #$%4.4x", ( ( _destination >> 16 ) & 0xffff ) );
+        if ( _positive ) {
+            outline1("BNE %s", label);
+        } else {
+            outline1("BEQ %s", label);
+        }
+        outline1("LDX %s+2", _source);
+        outline1("CMPX #$%4.4x", ( _destination & 0xffff ) );
+        if ( _positive ) {
+            outline1("BNE %s", label);
+        } else {
+            outline1("BEQ %s", label);
+        }
+        outline1("JMP %s", _label);
+        outhead1("%s", label);
+
+    no_embedded( cpu_compare_and_branch_32bit_const )
 
 }
 
@@ -4454,9 +4540,9 @@ void cpu6809_dsdescriptor( Environment * _environment, char * _index, char * _ad
 
 void cpu6809_store_8bit_with_offset( Environment * _environment, char *_destination, int _value, int _offset ) {
 
-    outline1("LDB $%2.2x", _offset);
+    outline1("LDB #$%2.2x", _offset);
     outline1("LDX #%s", _destination);
-    outline1("LDA $%2.2x", _value);
+    outline1("LDA #$%2.2x", _value);
     outline0("STA B,X");
 
 }

@@ -75,7 +75,7 @@ void case_equals_label( Environment * _environment ) {
 
 @target all
 </usermanual> */
-void case_equals( Environment * _environment, char * _value ) {
+void case_equals_var( Environment * _environment, char * _value ) {
 
     Conditional * conditional = _environment->conditionals;
 
@@ -98,6 +98,58 @@ void case_equals( Environment * _environment, char * _value ) {
     Variable * result = variable_compare( _environment, conditional->expression->name, value->name );
 
     cpu_bveq( _environment, result->realName, elseLabel );
+
+    cpu_label( _environment, thenLabel );
+
+}
+
+/**
+ * @brief Emit ASM code for <b>CASE ...</b>
+ * 
+ * This function outputs the code to implement a single comparison of a 
+ * structured conditional jump. 
+ * 
+ * @param _environment Current calling environment
+ * @param _expression Expression with the true / false condition
+ */
+/* <usermanual>
+@keyword SELECT CASE...CASE...CASE ELSE...ENDSELECT
+
+@target all
+</usermanual> */
+void case_equals( Environment * _environment, int _value ) {
+
+    Conditional * conditional = _environment->conditionals;
+
+    if ( ! conditional ) {
+        CRITICAL("CASE without SELECT CASE");
+    }
+
+    if ( conditional->type != CT_SELECT_CASE ) {
+        CRITICAL("CASE outside SELECT CASE");
+    }
+
+    char thenLabel[MAX_TEMPORARY_STORAGE]; sprintf(thenLabel, "%st%d", conditional->label, conditional->index );
+    char elseLabel[MAX_TEMPORARY_STORAGE]; sprintf(elseLabel, "%se%d", conditional->label, conditional->index );
+
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(comparing)");
+
+    ++conditional->index;
+    sprintf(elseLabel, "%se%d", conditional->label, conditional->index );
+
+    switch( VT_BITWIDTH( conditional->expression->type ) ) {
+        case 8:
+            cpu_compare_and_branch_8bit_const( _environment, conditional->expression->realName, _value, elseLabel, 0 );
+            break;
+        case 16:
+            cpu_compare_and_branch_16bit_const( _environment, conditional->expression->realName, _value, elseLabel, 0 );
+            break;
+        case 32:
+            cpu_compare_and_branch_32bit_const( _environment, conditional->expression->realName, _value, elseLabel, 0 );
+            break;
+        default:
+            CRITICAL_CANNOT_COMPARE_WITH_CASE( conditional->expression->name );
+    }
 
     cpu_label( _environment, thenLabel );
 

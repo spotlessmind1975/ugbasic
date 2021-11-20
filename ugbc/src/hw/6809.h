@@ -42,6 +42,9 @@ void cpu6809_combine_nibbles( Environment * _environment, char * _low_nibble, ch
 void cpu6809_compare_16bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _positive );
 void cpu6809_compare_32bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _positive );
 void cpu6809_compare_8bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _positive );
+void cpu6809_compare_and_branch_16bit_const( Environment * _environment, char *_source, int _destination,  char *_name, int _positive );
+void cpu6809_compare_and_branch_32bit_const( Environment * _environment, char *_source, int _destination,  char *_name, int _positive );
+void cpu6809_compare_and_branch_8bit_const( Environment * _environment, char *_source, int _destination,  char *_name, int _positive );
 void cpu6809_di( Environment * _environment );
 void cpu6809_ei( Environment * _environment );
 void cpu6809_inc( Environment * _environment, char * _variable );
@@ -196,6 +199,9 @@ void cpu6809_protothread_current( Environment * _environment, char * _current );
 #define cpu_compare_16bit( _environment, _source, _destination, _name, _positive ) cpu6809_compare_16bit( _environment, _source, _destination, _name, _positive )
 #define cpu_compare_32bit( _environment, _source, _destination, _name, _positive ) cpu6809_compare_32bit( _environment, _source, _destination, _name, _positive )
 #define cpu_compare_8bit( _environment, _source, _destination, _name, _positive ) cpu6809_compare_8bit( _environment, _source, _destination, _name, _positive )
+#define cpu_compare_and_branch_16bit_const( _environment, _source, _destination, _name, _positive ) cpu6809_compare_and_branch_16bit_const( _environment, _source, _destination, _name, _positive )
+#define cpu_compare_and_branch_32bit_const( _environment, _source, _destination, _name, _positive ) cpu6809_compare_and_branch_32bit_const( _environment, _source, _destination, _name, _positive )
+#define cpu_compare_and_branch_8bit_const( _environment, _source, _destination, _name, _positive ) cpu6809_compare_and_branch_8bit_const( _environment, _source, _destination, _name, _positive )
 #define cpu_di( _environment ) cpu6809_di( _environment )
 #define cpu_ei( _environment ) cpu6809_ei( _environment )
 #define cpu_inc( _environment, _variable ) cpu6809_inc( _environment, _variable );

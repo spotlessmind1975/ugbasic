@@ -46,6 +46,9 @@ void z80_combine_nibbles( Environment * _environment, char * _low_nibble, char *
 void z80_compare_16bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _positive );
 void z80_compare_32bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _positive );
 void z80_compare_8bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _positive );
+void z80_compare_and_branch_16bit_const( Environment * _environment, char *_source, int _destination,  char *_name, int _positive );
+void z80_compare_and_branch_32bit_const( Environment * _environment, char *_source, int _destination,  char *_name, int _positive );
+void z80_compare_and_branch_8bit_const( Environment * _environment, char *_source, int _destination,  char *_name, int _positive );
 void z80_less_than_16bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _equal, int _signed );
 void z80_less_than_32bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _equal, int _signed );
 void z80_less_than_8bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _equal, int _signed );
@@ -197,6 +200,9 @@ void z80_protothread_current( Environment * _environment, char * _current );
 #define cpu_compare_16bit( _environment, _source, _destination, _name, _positive ) z80_compare_16bit( _environment, _source, _destination, _name, _positive )
 #define cpu_compare_32bit( _environment, _source, _destination, _name, _positive ) z80_compare_32bit( _environment, _source, _destination, _name, _positive )
 #define cpu_compare_8bit( _environment, _source, _destination, _name, _positive ) z80_compare_8bit( _environment, _source, _destination, _name, _positive )
+#define cpu_compare_and_branch_16bit_const( _environment, _source, _destination, _name, _positive ) z80_compare_and_branch_16bit_const( _environment, _source, _destination, _name, _positive )
+#define cpu_compare_and_branch_32bit_const( _environment, _source, _destination, _name, _positive ) z80_compare_and_branch_32bit_const( _environment, _source, _destination, _name, _positive )
+#define cpu_compare_and_branch_8bit_const( _environment, _source, _destination, _name, _positive ) z80_compare_and_branch_8bit_const( _environment, _source, _destination, _name, _positive )
 #define cpu_di( _environment  ) z80_di( _environment  )
 #define cpu_ei( _environment  ) z80_ei( _environment  )
 #define cpu_inc( _environment, _variable ) z80_inc( _environment, _variable );
