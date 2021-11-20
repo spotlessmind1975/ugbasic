@@ -3464,8 +3464,13 @@ statement:
   }
   | CASE {
       case_equals_label( _environment );  
+  } OP_HASH const_expr {
+      case_equals( _environment, $4 );  
+  }
+  | CASE {
+      case_equals_label( _environment );  
   } expr {
-      case_equals( _environment, $3 );  
+      case_equals_var( _environment, $3 );  
   }
   | CASE ELSE {
       case_equals_label( _environment );  
@@ -4153,6 +4158,9 @@ int main( int _argc, char *_argv[] ) {
                         parse_embedded( p, cpu_compare_16bit );
                         parse_embedded( p, cpu_compare_32bit );
                         parse_embedded( p, cpu_compare_8bit );
+                        parse_embedded( p, cpu_compare_and_branch_16bit_const );
+                        parse_embedded( p, cpu_compare_and_branch_32bit_const );
+                        parse_embedded( p, cpu_compare_and_branch_8bit_const );
                         parse_embedded( p, cpu_di );
                         parse_embedded( p, cpu_ei );
                         parse_embedded( p, cpu_inc );
@@ -4348,6 +4356,9 @@ int main( int _argc, char *_argv[] ) {
         stats_embedded( cpu_compare_16bit );
         stats_embedded( cpu_compare_32bit );
         stats_embedded( cpu_compare_8bit );
+        stats_embedded( cpu_compare_and_branch_16bit_const );
+        stats_embedded( cpu_compare_and_branch_32bit_const );
+        stats_embedded( cpu_compare_and_branch_8bit_const );
         stats_embedded( cpu_di );
         stats_embedded( cpu_ei );
         stats_embedded( cpu_inc );

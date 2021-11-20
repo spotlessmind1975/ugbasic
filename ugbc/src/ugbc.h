@@ -698,6 +698,9 @@ typedef struct _Embedded {
     int cpu_compare_16bit;
     int cpu_compare_32bit;
     int cpu_compare_8bit;
+    int cpu_compare_and_branch_16bit_const;
+    int cpu_compare_and_branch_32bit_const;
+    int cpu_compare_and_branch_8bit_const;
     int cpu_di;
     int cpu_ei;
     int cpu_inc;
@@ -1378,6 +1381,7 @@ typedef struct _Environment {
 #define CRITICAL_INVALID_DIVISOR2( d ) CRITICAL2i("E098 - invalid divisor for DIVISION2, must be power of two", d );
 #define CRITICAL_INVALID_MULTIPLICATOR2( d ) CRITICAL2i("E099 - invalid multiplicator for MULTIPLICATOR2, must be power of two", d );
 #define CRITICAL_INVALID_TASK_COUNT( d ) CRITICAL2i("E100 - invalid number of tasks for multitasking", d);
+#define CRITICAL_CANNOT_COMPARE_WITH_CASE( d ) CRITICAL2("E101 - cannot compare with case", d);
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
 #define WARNING2i( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%i) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -1746,7 +1750,8 @@ int                     calculate_tile_affinity( TileDescriptor * _first, TileDe
 TileDescriptor *        calculate_tile_descriptor( TileData * _tileData );
 void                    call_procedure( Environment * _environment, char * _name );
 void                    case_else( Environment * _environment );
-void                    case_equals( Environment * _environment, char * _value );
+void                    case_equals( Environment * _environment, int _value );
+void                    case_equals_var( Environment * _environment, char * _value );
 void                    case_equals_label( Environment * _environment );
 void                    center( Environment * _environment, char * _string );
 void                    circle( Environment * _environment, char * _x, char * _y, char * _r, char *_c );
