@@ -248,6 +248,7 @@ MONOCOLOR { return(MONOCOLOR); }
 MS { return (MILLISECOND); }
 MILLISECOND { return (MILLISECOND); }
 MILLISECONDS { return (MILLISECONDS); }
+MUL { return(MUL); }
 MULTICOLOR { return(MULTICOLOR); }
 N { return (N); }
 NEXT { return (NEXT); }
