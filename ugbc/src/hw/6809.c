@@ -616,9 +616,9 @@ void cpu6809_compare_and_branch_8bit_const( Environment * _environment, char *_s
         outline1("LDA %s", _source);
         outline1("CMPA #$%2.2x", _destination);
         if ( _positive ) {
-            outline1("LBEQ %s", _label);
+			B(EQ, _label);
         } else {
-            outline1("LBNE %s", _label);
+			B(NE, _label);
         }
 
     no_embedded( cpu_compare_and_branch_8bit_const )
@@ -1175,9 +1175,9 @@ void cpu6809_compare_and_branch_16bit_const( Environment * _environment, char *_
         outline1("LDX %s", _source);
         outline1("CMPX #$%4.4x", _destination);
         if ( _positive ) {
-            outline1("LBEQ %s", _label);
+			B(EQ, _label);
         } else {
-            outline1("LBNE %s", _label);
+			B(NE, _label);
         }
 
     no_embedded( cpu_compare_and_branch_16bit_const )
@@ -1900,18 +1900,17 @@ void cpu6809_compare_and_branch_32bit_const( Environment * _environment, char *_
         outline1("LDX %s", _source);
         outline1("CMPX #$%4.4x", ( ( _destination >> 16 ) & 0xffff ) );
         if ( _positive ) {
-            outline1("BNE %s", label);
+			B(NE, label);
         } else {
-            outline1("BEQ %s", label);
+			B(EQ, label);
         }
         outline1("LDX %s+2", _source);
         outline1("CMPX #$%4.4x", ( _destination & 0xffff ) );
         if ( _positive ) {
-            outline1("BNE %s", label);
+			B(EQ, _label);
         } else {
-            outline1("BEQ %s", label);
+			B(NE, _label);
         }
-        outline1("JMP %s", _label);
         outhead1("%s", label);
 
     no_embedded( cpu_compare_and_branch_32bit_const )
