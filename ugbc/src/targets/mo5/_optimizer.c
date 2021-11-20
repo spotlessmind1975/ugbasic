@@ -222,7 +222,12 @@ void target_peephole_optimizer( Environment * _environment ) {
 			if ( (variable1 = match( buffer[0], " STA *" ))!=NULL 
             &&   (variable2 = match( buffer[1], " LDA *" ))!=NULL
 			&&   _strcmp(variable1, variable2)==0) {
-				optim( buffer[1], "rule #1 (STA->LDA)", NULL);
+				optim( buffer[1], "rule #1 (STr->LDr)", NULL);
+			}
+			if ( (variable1 = match( buffer[0], " STB *" ))!=NULL 
+            &&   (variable2 = match( buffer[1], " LDB *" ))!=NULL
+			&&   _strcmp(variable1, variable2)==0) {
+				optim( buffer[1], "rule #1 (STr->LDr)", NULL);
 			}
 			if ( (variable1 = match( buffer[0], " STD *" ))!=NULL 
             &&   (variable2 = match( buffer[1], " LDD *" ))!=NULL
@@ -351,6 +356,22 @@ void target_peephole_optimizer( Environment * _environment ) {
 			&&  _strcmp(variable1,variable2)==0) {
 				optim(buffer[0], "rule #15 (STr->...->STr)", NULL);
 			}
+			if( (variable1=match(buffer[0], " STB *"))!=NULL
+			&&  (variable2=match(buffer[1], " STB *"))!=NULL
+			&&  _strcmp(variable1,variable2)==0) {
+				optim(buffer[0], "rule #15 (STr->...->STr)", NULL);
+			}
+			if( (variable1=match(buffer[0], " STB *"))!=NULL
+			&&  (variable2=match(buffer[2], " STB *"))!=NULL
+			&&  _strcmp(variable1,variable2)==0) {
+				optim(buffer[0], "rule #15 (STr->...->STr)", NULL);
+			}
+			if( (variable1=match(buffer[0], " STB *"))!=NULL
+			&&  (variable2=match(buffer[3], " STB *"))!=NULL
+			&&  _strcmp(variable1,variable2)==0) {
+				optim(buffer[0], "rule #15 (STr->...->STr)", NULL);
+			}
+			
 			if( (variable1=match(buffer[0], " STD *"))!=NULL
 			&&  (variable2=match(buffer[1], " STD *"))!=NULL
 			&&  _strcmp(variable1,variable2)==0) {
