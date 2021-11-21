@@ -3740,7 +3740,7 @@ void variable_move_array( Environment * _environment, char * _array, char * _val
 
     Variable * offset = calculate_offset_in_array( _environment, _array);
 
-    variable_mul2_const( _environment, offset->name, ( VT_BITWIDTH( array->arrayType ) >> 3 ) - 1 );
+    offset = variable_mul2_const( _environment, offset->name, ( VT_BITWIDTH( array->arrayType ) >> 3 ) - 1 );
 
     cpu_math_add_16bit_with_16bit( _environment, offset->realName, array->realName, offset->realName );
 
