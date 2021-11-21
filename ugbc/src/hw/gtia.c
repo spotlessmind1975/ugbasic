@@ -172,6 +172,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         case BITMAP_MODE_ANTIC8:
             _environment->screenWidth = 40;
             _environment->screenHeight = 24;
+            _environment->screenColors = 4;
             // 112	Blank 8 scan lines to provide for overscan
             DLI_BLANK( dliListCurrent, 8 );
             // 112
@@ -215,6 +216,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         case BITMAP_MODE_ANTIC9:
             _environment->screenWidth = 80;
             _environment->screenHeight = 48;
+            _environment->screenColors = 2;
             // 112	Blank 8 scan lines to provide for overscan
             DLI_BLANK( dliListCurrent, 8 );
             // 112
@@ -255,6 +257,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         case BITMAP_MODE_ANTIC10:
             _environment->screenWidth = 80;
             _environment->screenHeight = 48;
+            _environment->screenColors = 4;
             // 112	Blank 8 scan lines to provide for overscan
             DLI_BLANK( dliListCurrent, 8 );
             // 112
@@ -295,6 +298,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         case BITMAP_MODE_ANTIC11: 
             _environment->screenWidth = 160;
             _environment->screenHeight = 96;
+            _environment->screenColors = 2;
             // 112	Blank 8 scan lines to provide for overscan
             DLI_BLANK( dliListCurrent, 8 );
             // 112
@@ -337,6 +341,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         case BITMAP_MODE_ANTIC13:
             _environment->screenWidth = 160;
             _environment->screenHeight = 96;
+            _environment->screenColors = 4;
             // 112	Blank 8 scan lines to provide for overscan
             DLI_BLANK( dliListCurrent, 8 );
             // 112
@@ -386,6 +391,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         case BITMAP_MODE_ANTIC15:
             _environment->screenWidth = 320;
             _environment->screenHeight = 192;
+            _environment->screenColors = 2;
             // 112	Blank 8 scan lines to provide for overscan
             DLI_BLANK( dliListCurrent, 8 );
             // 112
@@ -439,6 +445,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         case BITMAP_MODE_ANTIC12:
             _environment->screenWidth = 320;
             _environment->screenHeight = 192;
+            _environment->screenColors = 2;
             // 112	Blank 8 scan lines to provide for overscan
             DLI_BLANK( dliListCurrent, 8 );
             // 112
@@ -480,6 +487,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         case BITMAP_MODE_ANTIC14:
             _environment->screenWidth = 160;
             _environment->screenHeight = 192;
+            _environment->screenColors = 4;
             // 112	Blank 8 scan lines to provide for overscan
             DLI_BLANK( dliListCurrent, 8 );
             // 112
@@ -525,6 +533,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         case TILEMAP_MODE_ANTIC2:
             _environment->screenWidth = 40;
             _environment->screenHeight = 24;
+            _environment->screenColors = 2;
             // 112	Blank 8 scan lines to provide for overscan
             DLI_BLANK( dliListCurrent, 8 );
             // 112
@@ -570,6 +579,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         case TILEMAP_MODE_ANTIC6:
             _environment->screenWidth = 20;
             _environment->screenHeight = 24;
+            _environment->screenColors = 2;
             // 112	Blank 8 scan lines to provide for overscan
             DLI_BLANK( dliListCurrent, 8 );
             // 112
@@ -608,6 +618,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         case TILEMAP_MODE_ANTIC7:
             _environment->screenWidth = 20;
             _environment->screenHeight = 12;
+            _environment->screenColors = 2;
             // 112	Blank 8 scan lines to provide for overscan
             DLI_BLANK( dliListCurrent, 8 );
             // 112
@@ -648,6 +659,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         case TILEMAP_MODE_ANTIC3:
             _environment->screenWidth = 40;
             _environment->screenHeight = 24;
+            _environment->screenColors = 2;
             // 112	Blank 8 scan lines to provide for overscan
             DLI_BLANK( dliListCurrent, 8 );
             // 112
@@ -691,6 +703,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         case TILEMAP_MODE_ANTIC4:
             _environment->screenWidth = 20;
             _environment->screenHeight = 24;
+            _environment->screenColors = 4;
             // 112	Blank 8 scan lines to provide for overscan
             DLI_BLANK( dliListCurrent, 8 );
             // 112
@@ -729,6 +742,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         case TILEMAP_MODE_ANTIC5:
             _environment->screenWidth = 20;
             _environment->screenHeight = 24;
+            _environment->screenColors = 4;
             // 112	Blank 8 scan lines to provide for overscan
             DLI_BLANK( dliListCurrent, 8 );
             // 112

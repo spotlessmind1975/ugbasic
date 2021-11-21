@@ -1205,6 +1205,11 @@ typedef struct _Environment {
     int screenHeight;
 
     /**
+     * Screen colors (statically determined)
+     */
+    int screenColors;
+
+    /**
      * Screen width in characters (statically determined)
      */
     int screenTilesWidth;
