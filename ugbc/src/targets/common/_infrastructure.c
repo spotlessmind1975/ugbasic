@@ -3858,7 +3858,7 @@ Variable * variable_move_from_array( Environment * _environment, char * _array )
                 array->arrayType = VT_WORD;
             }
     
-            variable_mul2_const( _environment, offset->name, ( VT_BITWIDTH( array->arrayType ) >> 3 ) - 1 );
+            offset = variable_mul2_const( _environment, offset->name, ( VT_BITWIDTH( array->arrayType ) >> 3 ) - 1 );
 
             cpu_math_add_16bit_with_16bit( _environment, offset->realName, array->realName, offset->realName );
 
