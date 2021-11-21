@@ -785,6 +785,7 @@ Variable * variable_temporary( Environment * _environment, VariableType _type, c
         
     }
     var->used = 1;
+    var->temporary = 1;
     return var;
 }
 
