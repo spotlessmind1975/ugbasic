@@ -354,6 +354,11 @@ typedef struct _Variable {
     VariableType type;
 
     /** 
+     * This flag mark if this variable is temporary or not 
+     */
+    int temporary;
+
+    /** 
      * This flag mark if this variable is used (1) or not (0); 
      * it is valid only for temporary one. 
      */
