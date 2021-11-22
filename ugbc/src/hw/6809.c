@@ -2469,7 +2469,7 @@ void cpu6809_end( Environment * _environment ) {
 
     inline( cpu_end )
 
-        outline0( "ANDCC #%6f" );
+        outline0( "ANDCC #$6f" );
         cpu6809_halt( _environment );
 
     no_embedded( cpu_end )
@@ -2782,17 +2782,17 @@ void cpu6809_inc_16bit( Environment * _environment, char * _variable ) {
     inline( cpu_inc_16bit )
 
         // 16 cycles all times, but extra possibilites for peephole
-        outline1("LDD %s", _variable );
-        outline0("ADDD #1" );
-        outline1("STD %s", _variable );
+        // outline0("LDD #1" );
+        // outline1("ADDD %s", _variable );
+        // outline1("STD %s", _variable );
 
-        // MAKE_LABEL
+        MAKE_LABEL
 
         // 10 cycles 255 times out of 256 and 17 one out of 256
-        // outline1("INC %s+1", _variable);
-        // outline1("BNE %s", label);
-        // outline1("INC %s", _variable);
-        // outhead1("%s", label)
+        outline1("INC %s+1", _variable);
+        outline1("BNE %s", label);
+        outline1("INC %s", _variable);
+        outhead1("%s", label)
 
     no_embedded( cpu_inc_16bit )
 

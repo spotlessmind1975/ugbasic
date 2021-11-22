@@ -38,8 +38,8 @@
 ; TIMER service routine
 PC128IRQ
     LDD   #1          ; increment 
+PC128TIMER  set *+1   ; (variable within code)
     ADDD  #0          ; add value of TI variable
-PC128TIMER  set *-2   ; (variable within code)
     STD   PC128TIMER  ; write result to TI variable
     LDX   #0          ; get next ISR
 PC128IRQN   set *-2   ; (variable within code)
