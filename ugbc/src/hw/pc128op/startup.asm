@@ -35,30 +35,38 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-PC128TIMER      fdb $0
-PC128IRQO       fdb $0
-PC128IRQN       fdb $0
-
+; TIMER service routine
 PC128IRQ
-    PSHS D, X
-    LDD PC128TIMER
-    ADDD #1
-    STD PC128TIMER
-    LDX PC128IRQN
-    BEQ PC128IRQ2
-    PULS D, X
-    JSR [PC128IRQN]
+    LDD   #1          ; increment 
+    ADDD  #0          ; add value of TI variable
+PC128TIMER  set *-2   ; (variable within code)
+    STD   PC128TIMER  ; write result to TI variable
+    LDX   #0          ; get next ISR
+PC128IRQN   set *-2   ; (variable within code)
+    BEQ   PC128IRQ2   ; any defined ?
+    JSR   ,X          ; yes ==> call it
 PC128IRQ2
-    PULS D, X
-    JMP [PC128IRQO]
-
+    JMP   >PC128IRQEND  ; no ==> jmp to the old one
+PC128IRQO   set *-2   ; (variable within code)
+PC128IRQEND
+    RTI               ;  by defaut do RTI
+    
 PC128OPSTARTUP
+    LDX   #$2061
+    LDA   2,X         ; Is previous TIMERPT enable ?
+    BEQ   PC128STARTUP2 ; no ==> keep default return code (RTI)
+    LDD   ,X          ; yes ==> backup previous ISR
+    STD   PC128IRQO   ;         and chain it at the end of our own
+PC128STARTUP2    
+    LDD   #PC128IRQ   ; install our own ISR
+    STD   ,X
+    LDA   #$20        ; any non-zero value will do, let's use the one that'll go to DP
+    STA   2,X         ; enable the ISR
 
-    LDX $2061
-    STX PC128IRQO
-    LDX #PC128IRQ
-    STX $2061
+    TFR   A,DP       
+    
+    LDB   #$14        ; shut down cursor
+    SWI
+    FCB   $02
 
-    LDA #$20
-    TFR A, DP
     RTS
