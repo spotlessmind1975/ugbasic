@@ -290,6 +290,12 @@ const_factor:
       | TRUE {
           $$ = 0xffffffff;
       }
+      | COLORS {
+          $$ = ((Environment *)_environment)->screenColors;
+      }
+      | SCREEN COLORS {
+          $$ = ((Environment *)_environment)->screenColors;
+      }
       | WIDTH {
           $$ = ((Environment *)_environment)->screenWidth;
       }

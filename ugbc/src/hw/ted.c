@@ -232,6 +232,7 @@ int ted_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
             _environment->fontHeight = 8;
             _environment->screenWidth = 320;
             _environment->screenHeight = 200;
+            _environment->screenColors = 2;
             // Enable graphics.
             outline0("LDA $FF06" );
             outline0("ORA #%00100000");
@@ -257,6 +258,7 @@ int ted_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
             _environment->fontHeight = 8;
             _environment->screenWidth = 160;
             _environment->screenHeight = 200;
+            _environment->screenColors = 4;
             // Enable graphics.
             outline0("LDA $FF06" );
             outline0("ORA #%00100000");
@@ -280,6 +282,7 @@ int ted_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
         case TILEMAP_MODE_STANDARD:
             _environment->screenWidth = 40;
             _environment->screenHeight = 25;
+            _environment->screenColors = 16;
             // Let's disable graphics (and extended color)!
             outline0("LDA $FF06" );
             outline0("AND #%10011111");
@@ -299,6 +302,7 @@ int ted_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
         case TILEMAP_MODE_EXTENDED:
             _environment->screenWidth = 40;
             _environment->screenHeight = 25;
+            _environment->screenColors = 16;
             // Let's disable graphics and enable extended color!
             outline0("LDA $FF06" );
             outline0("AND #%11011111");
