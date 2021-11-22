@@ -74,7 +74,7 @@ void wait_milliseconds_var( Environment * _environment, char * _timing ) {
 
     Variable * temp = variable_cast( _environment, timing->name, VT_BYTE );
 
-    variable_div2_const( _environment, temp->name, 4 );
+    temp = variable_div2_const( _environment, temp->name, 4 );
 
     wait_ticks_var( _environment, temp->name );
     

@@ -354,6 +354,11 @@ typedef struct _Variable {
     VariableType type;
 
     /** 
+     * This flag mark if this variable is temporary or not 
+     */
+    int temporary;
+
+    /** 
      * This flag mark if this variable is used (1) or not (0); 
      * it is valid only for temporary one. 
      */
@@ -1020,6 +1025,12 @@ typedef struct _Environment {
     int uniqueId;
 
     /**
+     * Last unique identification number 
+     * (used for image and file resources)
+     */
+    int uniqueResourceId;
+
+    /**
      * Set of banks defined during compilation. 
      * It contains all the banks, divided by type.
      */
@@ -1272,7 +1283,8 @@ typedef struct _Environment {
 
 } Environment;
 
-#define UNIQUE_ID   _environment->uniqueId++
+#define UNIQUE_ID            _environment->uniqueId++
+#define UNIQUE_RESOURCE_ID   _environment->uniqueResourceId++
 #define MAKE_LABEL  char label[12]; sprintf( label, "_label%d", UNIQUE_ID);
 #define CRITICAL( s ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); exit( EXIT_FAILURE );
 #define CRITICAL2( s, v ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, ((struct _Environment *)_environment)->yylineno ); exit( EXIT_FAILURE );
@@ -2071,7 +2083,7 @@ Variable *              variable_complement_const( Environment * _environment, c
 Variable *              variable_decrement( Environment * _environment, char * _source );
 Variable *              variable_define( Environment * _environment, char * _name, VariableType _type, int _value );
 Variable *              variable_define_no_init( Environment * _environment, char * _name, VariableType _type );
-Variable *              variable_div( Environment * _environment, char * _source, char * _dest );
+Variable *              variable_div( Environment * _environment, char * _source, char * _dest, char * _remainder );
 Variable *              variable_div2_const( Environment * _environment, char * _source, int _bits );
 void                    variable_global( Environment * _environment, char * _pattern );
 Variable *              variable_greater_than( Environment * _environment, char * _source, char * _dest, int _equal );

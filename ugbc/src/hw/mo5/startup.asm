@@ -64,4 +64,9 @@ MO5STARTUP2
     STA   2,X         ; enable the ISR
 
     TFR   A,DP       
+    
+    LDB   #$14        ; shut down cursor
+    SWI
+    FCB   $02
+    
     RTS

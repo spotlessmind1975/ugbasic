@@ -785,6 +785,7 @@ Variable * variable_temporary( Environment * _environment, VariableType _type, c
         
     }
     var->used = 1;
+    var->temporary = 1;
     return var;
 }
 
@@ -1578,7 +1579,7 @@ Variable * variable_mul( Environment * _environment, char * _source, char * _des
  * @param _destination Destination variable's name
  * @return Variable* The quotient of source and destination variable
  */
-Variable * variable_div( Environment * _environment, char * _source, char * _destination ) {
+Variable * variable_div( Environment * _environment, char * _source, char * _destination, char * _remainder ) {
     Variable * source = variable_retrieve( _environment, _source );
     Variable * target = variable_retrieve( _environment, _destination );
 
@@ -1615,6 +1616,11 @@ Variable * variable_div( Environment * _environment, char * _source, char * _des
             CRITICAL_DIV_UNSUPPORTED(_source, DATATYPE_AS_STRING[source->type]);
             break;
     }
+
+    if ( _remainder ) {
+        variable_move( _environment, remainder->name, _remainder );
+    }
+    
     return result;
 }
 
@@ -1928,27 +1934,30 @@ Variable * variable_mul2_const( Environment * _environment, char * _destination,
         CRITICAL_MUL2_INVALID_STEPS( _destination );
     }
 
-    Variable * destination = variable_retrieve( _environment, _destination );
+    Variable * destination = variable_retrieve( _environment, _destination );    
 
     if ( _steps == 0 ) {
         return destination;
     }
 
+    Variable * result = variable_temporary( _environment, destination->type, "(mul2)" );    
+    variable_move_naked( _environment, destination->name, result->name );
+
     switch( VT_BITWIDTH( destination->type ) ) {
         case 32:
-            cpu_math_mul2_const_32bit( _environment, destination->realName, _steps, VT_SIGNED( destination->type ) );
+            cpu_math_mul2_const_32bit( _environment, result->realName, _steps, VT_SIGNED( destination->type ) );
             break;
         case 16:
-            cpu_math_mul2_const_16bit( _environment, destination->realName, _steps, VT_SIGNED( destination->type ) );
+            cpu_math_mul2_const_16bit( _environment, result->realName, _steps, VT_SIGNED( destination->type ) );
             break;
         case 8:
-            cpu_math_mul2_const_8bit( _environment, destination->realName, _steps, VT_SIGNED( destination->type ) );
+            cpu_math_mul2_const_8bit( _environment, result->realName, _steps, VT_SIGNED( destination->type ) );
             break;
         case 0:
             CRITICAL_MUL2_UNSUPPORTED( _destination, DATATYPE_AS_STRING[destination->type] );
             break;
     }
-    return destination;
+    return result;
 }
 
 /**
@@ -1969,21 +1978,24 @@ Variable * variable_mul2_const( Environment * _environment, char * _destination,
  */
 Variable * variable_div2_const( Environment * _environment, char * _destination, int _bits ) {
     Variable * destination = variable_retrieve( _environment, _destination );    
+    Variable * result = variable_temporary( _environment, destination->type, "(div2)" );    
+    variable_move_naked( _environment, destination->name, result->name );
+
     switch( VT_BITWIDTH( destination->type ) ) {
         case 32:
-            cpu_math_div2_const_32bit( _environment, destination->realName, _bits, VT_SIGNED( destination->type ) );
+            cpu_math_div2_const_32bit( _environment, result->realName, _bits, VT_SIGNED( destination->type ) );
             break;
         case 16:
-            cpu_math_div2_const_16bit( _environment, destination->realName, _bits, VT_SIGNED( destination->type ) );
+            cpu_math_div2_const_16bit( _environment, result->realName, _bits, VT_SIGNED( destination->type ) );
             break;
         case 8:
-            cpu_math_div2_const_8bit( _environment, destination->realName, _bits, VT_SIGNED( destination->type ) );
+            cpu_math_div2_const_8bit( _environment, result->realName, _bits, VT_SIGNED( destination->type ) );
             break;
         case 0:
             CRITICAL_DIV2_UNSUPPORTED( _destination, DATATYPE_AS_STRING[destination->type] );
             break;
     }
-    return destination;
+    return result;
 }
 
 /**
@@ -3728,7 +3740,7 @@ void variable_move_array( Environment * _environment, char * _array, char * _val
 
     Variable * offset = calculate_offset_in_array( _environment, _array);
 
-    variable_mul2_const( _environment, offset->name, ( VT_BITWIDTH( array->arrayType ) >> 3 ) - 1 );
+    offset = variable_mul2_const( _environment, offset->name, ( VT_BITWIDTH( array->arrayType ) >> 3 ) - 1 );
 
     cpu_math_add_16bit_with_16bit( _environment, offset->realName, array->realName, offset->realName );
 
@@ -3846,7 +3858,7 @@ Variable * variable_move_from_array( Environment * _environment, char * _array )
                 array->arrayType = VT_WORD;
             }
     
-            variable_mul2_const( _environment, offset->name, ( VT_BITWIDTH( array->arrayType ) >> 3 ) - 1 );
+            offset = variable_mul2_const( _environment, offset->name, ( VT_BITWIDTH( array->arrayType ) >> 3 ) - 1 );
 
             cpu_math_add_16bit_with_16bit( _environment, offset->realName, array->realName, offset->realName );
 
