@@ -1514,7 +1514,7 @@ exponential:
     }
     | SCREEN COLORS {
         $$ = variable_temporary( _environment, VT_COLOR, "(SCREEN COLORS)" )->name;
-        variable_store( _environment, $$, COLOR_COUNT );
+        variable_store( _environment, $$, ((Environment *)_environment)->screenColors );
     }
     | PEN COLORS {
         $$ = variable_temporary( _environment, VT_COLOR, "(COLORS)" )->name;

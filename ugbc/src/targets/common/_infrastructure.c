@@ -4912,6 +4912,8 @@ int rgbi_extract_palette( unsigned char* _source, int _width, int _height, RGBi 
         }
     }
 
+    // printf("USED PALETTE: %d\n", usedPalette );
+
     // printf("PALETTE:\n" );
     // for(i=0;i<8;++i) {
     //     printf("  %i) %2.2x%2.2x%2.2x (%d)\n", i, _palette[i].red, _palette[i].green, _palette[i].blue, _palette[i].count );
