@@ -195,8 +195,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             // 65	\JVB-Jump and wait for Vertical Blank
             // 32	|to display list address which starts
-            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) + 16
-            DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) + 16 );
+            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) - 16
+            DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) - 16 );
             dliListStartOffset = dliListCurrent - dliListStart - 2;
 
             scanline = 10;
@@ -239,8 +239,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             // 65	\JVB-Jump and wait for Vertical Blank
             // 32	|to display list address which starts
-            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) + 16
-            DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) + 16 );
+            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) - 16
+            DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) - 16 );
             dliListStartOffset = dliListCurrent - dliListStart - 2;
 
             scanline = 10;
@@ -280,8 +280,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             // 65	\JVB-Jump and wait for Vertical Blank
             // 32	|to display list address which starts
-            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) + 16
-            DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) + 16 );
+            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) - 16
+            DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) - 16 );
             dliListStartOffset = dliListCurrent - dliListStart - 2;
 
             currentHeight = 48;
@@ -321,8 +321,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             // 65	\JVB-Jump and wait for Vertical Blank
             // 32	|to display list address which starts
-            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) + 16
-            DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) + 16 );
+            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) - 16
+            DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) - 16 );
             dliListStartOffset = dliListCurrent - dliListStart - 2;
 
             currentHeight = 96;
@@ -364,7 +364,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             // 65	\JVB-Jump and wait for Vertical Blank
             // 32	|to display list address which starts
-            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) + 16
+            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) - 16
             DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) );
             dliListStartOffset = dliListCurrent - dliListStart - 2;
 
@@ -423,8 +423,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             // 65	\JVB-Jump and wait for Vertical Blank
             // 32	|to display list address which starts
-            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) + 16
-            DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) + 16 );
+            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) - 16
+            DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) - 16 );
             dliListStartOffset = dliListCurrent - dliListStart - 2;
 
             scanline = 40;
@@ -468,8 +468,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             // 65	\JVB-Jump and wait for Vertical Blank
             // 32	|to display list address which starts
-            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) + 16
-            DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) + 16 );
+            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) - 16
+            DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) - 16 );
             dliListStartOffset = dliListCurrent - dliListStart - 2;
 
             scanline = 40;
@@ -510,8 +510,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             // 65	\JVB-Jump and wait for Vertical Blank
             // 32	|to display list address which starts
-            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) + 16
-            DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) + 16 );
+            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) - 16
+            DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) - 16 );
             dliListStartOffset = dliListCurrent - dliListStart - 2;
 
             scanline = 20;
@@ -556,8 +556,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             // 65	\JVB-Jump and wait for Vertical Blank
             // 32	|to display list address which starts
-            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) + 16
-            DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) + 16 );
+            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) - 16
+            DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) - 16 );
             dliListStartOffset = dliListCurrent - dliListStart - 2;
 
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 152 );
@@ -602,8 +602,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             
             // 65	\JVB-Jump and wait for Vertical Blank
             // 32	|to display list address which starts
-            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) + 16
-            DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) + 16 );
+            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) - 16
+            DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) - 16 );
             dliListStartOffset = dliListCurrent - dliListStart - 2;
 
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 204 );
@@ -641,8 +641,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             
             // 65	\JVB-Jump and wait for Vertical Blank
             // 32	|to display list address which starts
-            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) + 16
-            DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) + 16 );
+            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) - 16
+            DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) - 16 );
             dliListStartOffset = dliListCurrent - dliListStart - 2;
 
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 204 );
@@ -682,8 +682,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             // 65	\JVB-Jump and wait for Vertical Blank
             // 32	|to display list address which starts
-            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) + 16
-            DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) + 16 );
+            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) - 16
+            DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) - 16 );
             dliListStartOffset = dliListCurrent - dliListStart - 2;
 
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 152 );
@@ -726,8 +726,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             // 65	\JVB-Jump and wait for Vertical Blank
             // 32	|to display list address which starts
-            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) + 16
-            DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) + 16 );
+            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) - 16
+            DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) - 16 );
             dliListStartOffset = dliListCurrent - dliListStart - 2;
 
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 152 );
@@ -765,8 +765,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             // 65	\JVB-Jump and wait for Vertical Blank
             // 32	|to display list address which starts
-            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) + 16
-            DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) + 16 );
+            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) - 16
+            DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) - 16 );
             dliListStartOffset = dliListCurrent - dliListStart - 2;
 
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 152 );
@@ -790,7 +790,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     cpu_move_16bit( _environment, "CURRENTWIDTH", "CLIPX2");
     cpu_move_16bit( _environment, "CURRENTHEIGHT", "CLIPY2");
 
-    variable_store_buffer( _environment, dli->name, dliListStart, ( dliListCurrent - dliListStart ), 0xA000 - (dliListCurrent - dliListStart) + 16 );
+    variable_store_buffer( _environment, dli->name, dliListStart, ( dliListCurrent - dliListStart ), 0xA000 - (dliListCurrent - dliListStart) - 16 );
 
     if ( _screen_mode->bitmap ) {
         outline0("CLC" );
