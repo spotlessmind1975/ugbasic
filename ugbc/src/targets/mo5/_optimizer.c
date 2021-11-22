@@ -313,12 +313,6 @@ void target_peephole_optimizer( Environment * _environment ) {
 				sprintf(buf, "\tCMPX %s", variable1); 
 				for(s=buf+6; *s  && *s!=' ' && *s!='\t'; ++s); 
 				*s = '\0';
-				if(unsafe 
-				&& variable1[0]=='#'
-				&& variable1[1]=='$'
-				&& variable1[2]=='0'
-				&& variable1[3]=='0'
-				) optim(buffer[0], "unsafe", "CLRA");
 				if(unsafe) optim(buffer[1], "unsafe", NULL);
 				optim(buffer[3], "rule #12 (LDD *->STD <tmp>->LDX *->CMPX <tmp>)", buf);
 			}
