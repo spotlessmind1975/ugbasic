@@ -98,7 +98,7 @@ CLS4
     
 CLSG
     LDX BITMAPADDRESS
-    LEAX 16,X
+    LEAX 10,X
     PSHS D,U
     LDD CURRENTFRAMESIZE
     LEAU D,X
@@ -106,9 +106,6 @@ CLSG
     PULS D,U
 CLSGL1
     INC <$C0
-    STU -16,X
-    STU -14,X
-    STU -12,X
     STU -10,X
     STU -8,X
     STU -6,X
@@ -119,13 +116,7 @@ CLSGL1
     STU 4,X
     STU 6,X
     STU 8,X
-    STU 10,X
-    STU 12,X
-    STU 14,X
     DEC <$C0
-    STD -16,X
-    STD -14,X
-    STD -12,X
     STD -10,X
     STD -8,X
     STD -6,X
@@ -136,10 +127,7 @@ CLSGL1
     STD 4,X
     STD 6,X
     STD 8,X
-    STD 10,X
-    STD 12,X
-    STD 14,X
-    LEAX 32,X
+    LEAX 20,X
 CLSGL2
     CMPX #$5555
     BLO CLSGL1

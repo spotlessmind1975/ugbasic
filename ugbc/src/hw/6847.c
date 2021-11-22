@@ -241,6 +241,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             _environment->screenHeight = 16*12;
             _environment->screenTilesWidth = 32;
             _environment->screenTilesHeight = 16;
+            _environment->screenColors = 4;
             // Internal alphanumeric 0 X X 0 0 0 0 32x16 ( 5x7 pixel ch)
             SET_VIDEOAT_400;
             VDG_TEXT;
@@ -261,6 +262,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             _environment->screenHeight = 16*12;
             _environment->screenTilesWidth = 32;
             _environment->screenTilesHeight = 16;
+            _environment->screenColors = 4;
             // External alphanumeric 0 X X 1 0 0 0 32x16 (8x12 pixel ch)
             SET_VIDEOAT_400;
             VDG_TEXT;
@@ -287,6 +289,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             _environment->screenHeight = 32*6;
             _environment->screenTilesWidth = 64;
             _environment->screenTilesHeight = 32;
+            _environment->screenColors = 4;
             // Semigraphic-4 0 X X 0 0 0 0 32x16 ch, 64x32 pixels
             SET_VIDEOAT_400;
             VDG_TEXT;
@@ -312,6 +315,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             _environment->screenHeight = 48*12;
             _environment->screenTilesWidth = 64;
             _environment->screenTilesHeight = 48;
+            _environment->screenColors = 4;
             // Semigraphic-6 0 X X 1 0 0 0 64x48 pixels
             SET_VIDEOAT_400;
             VDG_TEXT;
@@ -338,6 +342,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             _environment->screenHeight = 64*12;
             _environment->screenTilesWidth = 64;
             _environment->screenTilesHeight = 64;
+            _environment->screenColors = 4;
             cpu_store_16bit( _environment, "CLIPX1", 0 );
             cpu_store_16bit( _environment, "CLIPX2", 63 );
             cpu_store_16bit( _environment, "CLIPY1", 0 );
@@ -354,6 +359,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             _environment->screenHeight = 96*12;
             _environment->screenTilesWidth = 64;
             _environment->screenTilesHeight = 96;
+            _environment->screenColors = 4;
             cpu_store_16bit( _environment, "CLIPX1", 0 );
             cpu_store_16bit( _environment, "CLIPX2", 63 );
             cpu_store_16bit( _environment, "CLIPY1", 0 );
@@ -371,6 +377,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             _environment->screenHeight = 96*12;
             _environment->screenTilesWidth = 64;
             _environment->screenTilesHeight = 96;
+            _environment->screenColors = 4;
             cpu_store_16bit( _environment, "CLIPX1", 0 );
             cpu_store_16bit( _environment, "CLIPX2", 63 );
             cpu_store_16bit( _environment, "CLIPY1", 0 );
@@ -386,6 +393,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             _environment->screenHeight = 64;
             _environment->screenTilesWidth = 64/8;
             _environment->screenTilesHeight = 96/12;
+            _environment->screenColors = 4;
             // Full graphic 1-C 1 0 0 0 0 0 1 64x64x4 $400(1024)
             SET_VIDEOAT_C00;
             VDG_GRAPH;
@@ -412,6 +420,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             _environment->screenHeight = 64;
             _environment->screenTilesWidth = 128/8;
             _environment->screenTilesHeight = 64/12;
+            _environment->screenColors = 2;
             // Full graphic 1-R 1 0 0 1 0 0 1 128x64x2 $400(1024)
             SET_VIDEOAT_C00;
             VDG_GRAPH;
@@ -437,6 +446,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             _environment->screenHeight = 64;
             _environment->screenTilesWidth = 128/8;
             _environment->screenTilesHeight = 64/12;
+            _environment->screenColors = 4;
             // Full graphic 2-C 1 0 1 0 0 1 0 128x64x4 $800(2048)
             SET_VIDEOAT_C00;
             VDG_GRAPH;
@@ -463,6 +473,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             _environment->screenHeight = 96;
             _environment->screenTilesWidth = 128/8;
             _environment->screenTilesHeight = 96/12;
+            _environment->screenColors = 2;
             // Full graphic 2-R 1 0 1 1 0 1 1 128x96x2 $600(1536)
             SET_VIDEOAT_C00;
             VDG_GRAPH;
@@ -488,6 +499,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             _environment->screenHeight = 96;
             _environment->screenTilesWidth = 128/8;
             _environment->screenTilesHeight = 96/12;
+            _environment->screenColors = 4;
             // Full graphic 3-C 1 1 0 0 1 0 0 128x96x4 $C00(3072)
             SET_VIDEOAT_C00;
             VDG_GRAPH;
@@ -514,6 +526,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             _environment->screenHeight = 192;
             _environment->screenTilesWidth = 128/8;
             _environment->screenTilesHeight = 192/12;
+            _environment->screenColors = 2;
             // Full graphic 3-R 1 1 0 1 1 0 1 128x192x2 $C00(3072)
             SET_VIDEOAT_C00;
             VDG_GRAPH;
@@ -539,6 +552,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             _environment->screenHeight = 192;
             _environment->screenTilesWidth = 128/8;
             _environment->screenTilesHeight = 192/12;
+            _environment->screenColors = 4;
             // Full graphic 6-C 1 1 1 0 1 1 0 128x192x4 $1800(6144)
             SET_VIDEOAT_C00;
             VDG_GRAPH;
@@ -565,6 +579,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             _environment->screenHeight = 192;
             _environment->screenTilesWidth = 256/8;
             _environment->screenTilesHeight = 192/12;
+            _environment->screenColors = 2;
             // Full graphic 6-R 1 1 1 1 1 1 0 256x192x2 $1800(6144)
             SET_VIDEOAT_C00;
             VDG_GRAPH;

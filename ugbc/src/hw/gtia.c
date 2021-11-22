@@ -68,6 +68,7 @@ static RGBi SYSTEM_PALETTE[] = {
 };
 
 static RGBi * commonPalette;
+int lastUsedSlotInCommonPalette = 0;
 
 /****************************************************************************
  * CODE SECTION
@@ -172,6 +173,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         case BITMAP_MODE_ANTIC8:
             _environment->screenWidth = 40;
             _environment->screenHeight = 24;
+            _environment->screenColors = 4;
             // 112	Blank 8 scan lines to provide for overscan
             DLI_BLANK( dliListCurrent, 8 );
             // 112
@@ -194,8 +196,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             // 65	\JVB-Jump and wait for Vertical Blank
             // 32	|to display list address which starts
-            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) + 16
-            DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) + 16 );
+            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) - 16
+            DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) - 16 );
             dliListStartOffset = dliListCurrent - dliListStart - 2;
 
             scanline = 10;
@@ -215,6 +217,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         case BITMAP_MODE_ANTIC9:
             _environment->screenWidth = 80;
             _environment->screenHeight = 48;
+            _environment->screenColors = 2;
             // 112	Blank 8 scan lines to provide for overscan
             DLI_BLANK( dliListCurrent, 8 );
             // 112
@@ -237,8 +240,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             // 65	\JVB-Jump and wait for Vertical Blank
             // 32	|to display list address which starts
-            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) + 16
-            DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) + 16 );
+            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) - 16
+            DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) - 16 );
             dliListStartOffset = dliListCurrent - dliListStart - 2;
 
             scanline = 10;
@@ -255,6 +258,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         case BITMAP_MODE_ANTIC10:
             _environment->screenWidth = 80;
             _environment->screenHeight = 48;
+            _environment->screenColors = 4;
             // 112	Blank 8 scan lines to provide for overscan
             DLI_BLANK( dliListCurrent, 8 );
             // 112
@@ -277,8 +281,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             // 65	\JVB-Jump and wait for Vertical Blank
             // 32	|to display list address which starts
-            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) + 16
-            DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) + 16 );
+            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) - 16
+            DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) - 16 );
             dliListStartOffset = dliListCurrent - dliListStart - 2;
 
             currentHeight = 48;
@@ -295,6 +299,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         case BITMAP_MODE_ANTIC11: 
             _environment->screenWidth = 160;
             _environment->screenHeight = 96;
+            _environment->screenColors = 2;
             // 112	Blank 8 scan lines to provide for overscan
             DLI_BLANK( dliListCurrent, 8 );
             // 112
@@ -317,8 +322,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             // 65	\JVB-Jump and wait for Vertical Blank
             // 32	|to display list address which starts
-            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) + 16
-            DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) + 16 );
+            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) - 16
+            DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) - 16 );
             dliListStartOffset = dliListCurrent - dliListStart - 2;
 
             currentHeight = 96;
@@ -337,6 +342,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         case BITMAP_MODE_ANTIC13:
             _environment->screenWidth = 160;
             _environment->screenHeight = 96;
+            _environment->screenColors = 4;
             // 112	Blank 8 scan lines to provide for overscan
             DLI_BLANK( dliListCurrent, 8 );
             // 112
@@ -359,7 +365,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             // 65	\JVB-Jump and wait for Vertical Blank
             // 32	|to display list address which starts
-            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) + 16
+            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) - 16
             DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) );
             dliListStartOffset = dliListCurrent - dliListStart - 2;
 
@@ -386,6 +392,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         case BITMAP_MODE_ANTIC15:
             _environment->screenWidth = 320;
             _environment->screenHeight = 192;
+            _environment->screenColors = 2;
             // 112	Blank 8 scan lines to provide for overscan
             DLI_BLANK( dliListCurrent, 8 );
             // 112
@@ -417,8 +424,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             // 65	\JVB-Jump and wait for Vertical Blank
             // 32	|to display list address which starts
-            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) + 16
-            DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) + 16 );
+            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) - 16
+            DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) - 16 );
             dliListStartOffset = dliListCurrent - dliListStart - 2;
 
             scanline = 40;
@@ -439,6 +446,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         case BITMAP_MODE_ANTIC12:
             _environment->screenWidth = 320;
             _environment->screenHeight = 192;
+            _environment->screenColors = 2;
             // 112	Blank 8 scan lines to provide for overscan
             DLI_BLANK( dliListCurrent, 8 );
             // 112
@@ -461,8 +469,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             // 65	\JVB-Jump and wait for Vertical Blank
             // 32	|to display list address which starts
-            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) + 16
-            DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) + 16 );
+            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) - 16
+            DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) - 16 );
             dliListStartOffset = dliListCurrent - dliListStart - 2;
 
             scanline = 40;
@@ -480,6 +488,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         case BITMAP_MODE_ANTIC14:
             _environment->screenWidth = 160;
             _environment->screenHeight = 192;
+            _environment->screenColors = 4;
             // 112	Blank 8 scan lines to provide for overscan
             DLI_BLANK( dliListCurrent, 8 );
             // 112
@@ -502,8 +511,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             // 65	\JVB-Jump and wait for Vertical Blank
             // 32	|to display list address which starts
-            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) + 16
-            DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) + 16 );
+            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) - 16
+            DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) - 16 );
             dliListStartOffset = dliListCurrent - dliListStart - 2;
 
             scanline = 20;
@@ -525,6 +534,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         case TILEMAP_MODE_ANTIC2:
             _environment->screenWidth = 40;
             _environment->screenHeight = 24;
+            _environment->screenColors = 2;
             // 112	Blank 8 scan lines to provide for overscan
             DLI_BLANK( dliListCurrent, 8 );
             // 112
@@ -547,8 +557,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             // 65	\JVB-Jump and wait for Vertical Blank
             // 32	|to display list address which starts
-            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) + 16
-            DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) + 16 );
+            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) - 16
+            DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) - 16 );
             dliListStartOffset = dliListCurrent - dliListStart - 2;
 
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 152 );
@@ -570,6 +580,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         case TILEMAP_MODE_ANTIC6:
             _environment->screenWidth = 20;
             _environment->screenHeight = 24;
+            _environment->screenColors = 2;
             // 112	Blank 8 scan lines to provide for overscan
             DLI_BLANK( dliListCurrent, 8 );
             // 112
@@ -592,8 +603,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             
             // 65	\JVB-Jump and wait for Vertical Blank
             // 32	|to display list address which starts
-            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) + 16
-            DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) + 16 );
+            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) - 16
+            DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) - 16 );
             dliListStartOffset = dliListCurrent - dliListStart - 2;
 
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 204 );
@@ -608,6 +619,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         case TILEMAP_MODE_ANTIC7:
             _environment->screenWidth = 20;
             _environment->screenHeight = 12;
+            _environment->screenColors = 2;
             // 112	Blank 8 scan lines to provide for overscan
             DLI_BLANK( dliListCurrent, 8 );
             // 112
@@ -630,8 +642,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             
             // 65	\JVB-Jump and wait for Vertical Blank
             // 32	|to display list address which starts
-            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) + 16
-            DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) + 16 );
+            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) - 16
+            DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) - 16 );
             dliListStartOffset = dliListCurrent - dliListStart - 2;
 
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 204 );
@@ -648,6 +660,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         case TILEMAP_MODE_ANTIC3:
             _environment->screenWidth = 40;
             _environment->screenHeight = 24;
+            _environment->screenColors = 2;
             // 112	Blank 8 scan lines to provide for overscan
             DLI_BLANK( dliListCurrent, 8 );
             // 112
@@ -670,8 +683,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             // 65	\JVB-Jump and wait for Vertical Blank
             // 32	|to display list address which starts
-            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) + 16
-            DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) + 16 );
+            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) - 16
+            DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) - 16 );
             dliListStartOffset = dliListCurrent - dliListStart - 2;
 
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 152 );
@@ -691,6 +704,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         case TILEMAP_MODE_ANTIC4:
             _environment->screenWidth = 20;
             _environment->screenHeight = 24;
+            _environment->screenColors = 4;
             // 112	Blank 8 scan lines to provide for overscan
             DLI_BLANK( dliListCurrent, 8 );
             // 112
@@ -713,8 +727,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             // 65	\JVB-Jump and wait for Vertical Blank
             // 32	|to display list address which starts
-            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) + 16
-            DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) + 16 );
+            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) - 16
+            DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) - 16 );
             dliListStartOffset = dliListCurrent - dliListStart - 2;
 
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 152 );
@@ -729,6 +743,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         case TILEMAP_MODE_ANTIC5:
             _environment->screenWidth = 20;
             _environment->screenHeight = 24;
+            _environment->screenColors = 4;
             // 112	Blank 8 scan lines to provide for overscan
             DLI_BLANK( dliListCurrent, 8 );
             // 112
@@ -751,8 +766,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             // 65	\JVB-Jump and wait for Vertical Blank
             // 32	|to display list address which starts
-            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) + 16
-            DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) + 16 );
+            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) - 16
+            DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) - 16 );
             dliListStartOffset = dliListCurrent - dliListStart - 2;
 
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 152 );
@@ -776,7 +791,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     cpu_move_16bit( _environment, "CURRENTWIDTH", "CLIPX2");
     cpu_move_16bit( _environment, "CURRENTHEIGHT", "CLIPY2");
 
-    variable_store_buffer( _environment, dli->name, dliListStart, ( dliListCurrent - dliListStart ), 0xA000 - (dliListCurrent - dliListStart) + 16 );
+    variable_store_buffer( _environment, dli->name, dliListStart, ( dliListCurrent - dliListStart ), 0xA000 - (dliListCurrent - dliListStart) - 16 );
 
     if ( _screen_mode->bitmap ) {
         outline0("CLC" );
@@ -1509,15 +1524,15 @@ static Variable * gtia_image_converter_bitmap_mode_standard( Environment * _envi
     }
 
     if ( colorUsed > 1 ) {
-        *(buffer + 2 + ( ( _width >> 3 ) * _height ) + 1 ) = palette[1].index;
+        *(buffer + 2 + ( ( _frame_width >> 3 ) * _frame_height ) + 1 ) = palette[1].index;
     } else {
-        *(buffer + 2 + ( ( _width >> 3 ) * _height ) + 1 ) = 0;
+        *(buffer + 2 + ( ( _frame_width >> 3 ) * _frame_height ) + 1 ) = 0;
     }
 
     if ( colorUsed > 0 ) {
-        *(buffer + 2 + ( ( _width >> 3 ) * _height ) ) = palette[0].index;
+        *(buffer + 2 + ( ( _frame_width >> 3 ) * _frame_height ) ) = palette[0].index;
     } else {
-        *(buffer + 2 + ( ( _width >> 3 ) * _height ) ) = 0;
+        *(buffer + 2 + ( ( _frame_width >> 3 ) * _frame_height ) ) = 0;
     }
 
     variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
@@ -1531,24 +1546,40 @@ static Variable * gtia_image_converter_multicolor_mode_standard( Environment * _
 
     image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
+    int i, j, k;
+
+    // printf( "%p %d %d %d %d", _source, _width, _height, _frame_width, _frame_height );
+
     if ( ! commonPalette ) {
 
-        RGBi * palette = malloc( sizeof( RGBi ) * MAX_PALETTE );
+        RGBi * palette = malloc( MAX_PALETTE * sizeof(RGBi) );
+        memset( palette, 0, MAX_PALETTE * sizeof(RGBi) );
 
         int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
 
         if (colorUsed > 4) {
+            // for( i=0; i<colorUsed; ++i) {
+            //     printf("%i : %s\n", i, palette[i].description );
+            // }
+
             CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
         }
 
-        int i, j, k;
-
-        for( i=0; i<colorUsed; ++i ) {
+        if ( _flags & FLAG_OVERLAYED ) {
+            rgbi_move( &palette[2], &palette[3] );
+            rgbi_move( &palette[1], &palette[2] );
+            rgbi_move( &palette[0], &palette[1] );
+            rgbi_move( &SYSTEM_PALETTE[0], &palette[0] );
+            palette[0].used = 1;
+            ++colorUsed;
+        }
+        
+        for( i=1; i<colorUsed; ++i ) {
             int minDistance = 0xffff;
             int colorIndex = 0;
             for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
                 int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
-                // printf("%d (%2.2x%2.2x%2.2x) <-> %d (%2.2x%2.2x%2.2x) [%d] = %d [min = %d]\n", i, SYSTEM_PALETTE[j].red, SYSTEM_PALETTE[j].green, SYSTEM_PALETTE[j].blue, j, palette[i].red, palette[i].green, palette[i].blue, SYSTEM_PALETTE[j].index, distance, minDistance );
+                // printf("%d <-> %d [%d] = %d [min = %d]\n", i, j, SYSTEM_PALETTE[j].index, distance, minDistance );
                 if (distance < minDistance) {
                     // printf(" candidated...\n" );
                     for( k=0; k<i; ++k ) {
@@ -1564,36 +1595,90 @@ static Variable * gtia_image_converter_multicolor_mode_standard( Environment * _
                     }
                 }
             }
-            palette[i].index = SYSTEM_PALETTE[colorIndex].index;
-            strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
-            // printf("%d) %d * %d %2.2x%2.2x%2.2x\n", i, colorIndex, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
+            rgbi_move(&SYSTEM_PALETTE[colorIndex], &palette[i] );
+            palette[i].used = 1;
+            // printf("[*] %d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
         }
 
         commonPalette = palette;
+        lastUsedSlotInCommonPalette = colorUsed;
+    
+    } else {
 
-        if ( _transparent_color != -1 ) {
-            if ( colorUsed < 4 ) {
-                for( i=0;i<COLOR_COUNT;++i) {
-                    if ( SYSTEM_PALETTE[i].index == _transparent_color ) {
-                        RGBi tmp;
-                        rgbi_move(&palette[0], &palette[colorUsed] );
-                        ++colorUsed;
-                        rgbi_move(&SYSTEM_PALETTE[i], &palette[0] );
-                        break;
-                    }
-                }
-            } else {
-                for(i=0;i<4;++i) {
-                    if ( commonPalette[i].index == _transparent_color ) {
-                        RGBi tmp;
-                        rgbi_move(&commonPalette[i], &tmp );
-                        rgbi_move(&commonPalette[0], &commonPalette[i] );
-                        rgbi_move(&tmp, &commonPalette[0] );
+        RGBi * palette = malloc( MAX_PALETTE * sizeof(RGBi) );
+
+        int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
+
+        if (colorUsed > 4) {
+            // for( i=0; i<colorUsed; ++i) {
+            //     printf("%i : %s\n", i, palette[i].index );
+            // }            
+            CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
+        }
+
+        if ( ( _flags & FLAG_OVERLAYED ) && ( palette[0].index != 0 ) ) {
+            rgbi_move( &palette[2], &palette[3] );
+            rgbi_move( &palette[1], &palette[2] );
+            rgbi_move( &palette[0], &palette[1] );
+            rgbi_move( &SYSTEM_PALETTE[0], &palette[0] );
+            palette[0].used = 1;
+            ++colorUsed;
+        }
+
+        // for (j = 0; j < lastUsedSlotInCommonPalette; ++j) {
+        //     printf("[§] common %d) %d %2.2x%2.2x%2.2x\n", j, commonPalette[j].index, commonPalette[j].red, commonPalette[j].green, commonPalette[j].blue);
+        // }
+
+        for( i=1; i<colorUsed; ++i ) {
+            // printf("[-] palette %d) %2.2x%2.2x%2.2x\n", i, palette[i].red, palette[i].green, palette[i].blue);
+            for (j = 0; j < lastUsedSlotInCommonPalette; ++j) {
+                // printf("[+] common %d) %d %2.2x%2.2x%2.2x\n", j, commonPalette[j].index, commonPalette[j].red, commonPalette[j].green, commonPalette[j].blue);
+                if ( commonPalette[j].used ) {
+                    int distance = rgbi_distance(&commonPalette[j], &palette[i]);
+                    // printf("    (%d<->%d) >> %2.2x%2.2x%2.2x <-> %2.2x%2.2x%2.2x (%d)\n", j, i, commonPalette[j].red, commonPalette[j].green, commonPalette[j].blue, palette[i].red, palette[i].green, palette[i].blue, distance);
+                    if (distance < 5 ) {
+                        palette[i].used = 1;
+                        // printf("    (-------) >> %d = %d) %d %2.2x%2.2x%2.2x\n", j, i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
                         break;
                     }
                 }
             }
+            // printf("\n");
         }
+
+        for( i=1; i<colorUsed; ++i ) {
+            // printf("[*] %d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
+            if ( palette[i].used ) continue;
+            int minDistance = 0xffff;
+            int colorIndex = 0;
+            for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
+                int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
+                // printf("%d <-> %d [%d] = %d [min = %d]\n", i, j, SYSTEM_PALETTE[j].index, distance, minDistance );
+                if (distance < minDistance) {
+                    // printf(" candidated...\n" );
+                    for( k=0; k<lastUsedSlotInCommonPalette; ++k ) {
+                        if ( commonPalette[k].index == SYSTEM_PALETTE[j].index ) {
+                            // printf(" ...used!\n" );
+                            break;
+                        }
+                    }
+                    if ( k>=lastUsedSlotInCommonPalette ) {
+                        // printf(" ...ok! (%d)\n", SYSTEM_PALETTE[j].index );
+                        minDistance = distance;
+                        colorIndex = j;
+                    }
+                }
+            }
+            rgbi_move(&SYSTEM_PALETTE[colorIndex], &commonPalette[lastUsedSlotInCommonPalette]);
+            commonPalette[lastUsedSlotInCommonPalette].used = 1;
+            ++lastUsedSlotInCommonPalette;
+            // printf("#> %d) %d %2.2x%2.2x%2.2x\n", i, commonPalette[i].index, commonPalette[i].red, commonPalette[i].green, commonPalette[i].blue);
+        }
+
+        // for (j = 0; j < lastUsedSlotInCommonPalette; ++j) {
+        //     printf("[@] common %d) %d %2.2x%2.2x%2.2x\n", j, commonPalette[j].index, commonPalette[j].red, commonPalette[j].green, commonPalette[j].blue);
+        // }
+
     }
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
@@ -1631,12 +1716,12 @@ static Variable * gtia_image_converter_multicolor_mode_standard( Environment * _
 
             // Calculate the offset starting from the tile surface area
             // and the bit to set.
-            offset = (image_y * ( _width >> 2 ) ) + (image_x>>2);
+            offset = (image_y * ( _frame_width >> 2 ) ) + (image_x>>2);
 
             int colorIndex = 0;
 
             int minDistance = 9999;
-            for( int i=0; i<4; ++i ) {
+            for( int i=0; i<lastUsedSlotInCommonPalette; ++i ) {
                 int distance = rgbi_distance(&commonPalette[i], &rgb );
                 if ( distance < minDistance ) {
                     minDistance = distance;
@@ -1644,7 +1729,9 @@ static Variable * gtia_image_converter_multicolor_mode_standard( Environment * _
                 }
             }
 
-            // printf("%d", colorIndex );
+            if ( _environment->debugImageLoad ) {
+                printf("%1.1x", colorIndex );
+            }
 
             bitmask = colorIndex << (6 - ((image_x & 0x3) * 2));
 
@@ -1656,15 +1743,31 @@ static Variable * gtia_image_converter_multicolor_mode_standard( Environment * _
 
         _source += ( _width - _frame_width ) * 3;
 
-        // printf("\n" );
+        if ( _environment->debugImageLoad ) {
+            printf("\n" );
+        }
     }
 
-    // printf("\n" );
+    if ( _environment->debugImageLoad ) {
+        printf("\n" );
+    
+        printf("PALETTE:\n" );
+        if ( ( _flags & FLAG_OVERLAYED ) == 0 ) {
+            printf("  background  (00) = %2.2x (%s)\n", commonPalette[0].index, commonPalette[0].description );
+        } else {
+            printf("  background  (00) = %2.2x (%s) [currently ignored since it can be overlayed]\n", commonPalette[0].index, commonPalette[0].description );
+        }
+        printf("  pen         (01) = %2.2x (%s)\n", commonPalette[1].index, commonPalette[1].description );
+        printf("  pen         (10) = %2.2x (%s)\n", commonPalette[2].index, commonPalette[2].description );
+        printf("  pen         (11) = %2.2x (%s)\n", commonPalette[3].index, commonPalette[3].description );
+        printf("\n" );
+        printf("\n" );
+    }
 
-    *(buffer + 2 + ( ( _width >> 2 ) * _height ) + 3 ) = commonPalette[3].index;
-    *(buffer + 2 + ( ( _width >> 2 ) * _height ) + 2 ) = commonPalette[2].index;
-    *(buffer + 2 + ( ( _width >> 2 ) * _height ) + 1 ) = commonPalette[1].index;
-    *(buffer + 2 + ( ( _width >> 2 ) * _height ) ) = commonPalette[0].index;
+    *(buffer + 2 + ( ( _frame_width >> 2 ) * _frame_height ) + 3 ) = commonPalette[3].index;
+    *(buffer + 2 + ( ( _frame_width >> 2 ) * _frame_height ) + 2 ) = commonPalette[2].index;
+    *(buffer + 2 + ( ( _frame_width >> 2 ) * _frame_height ) + 1 ) = commonPalette[1].index;
+    *(buffer + 2 + ( ( _frame_width >> 2 ) * _frame_height ) ) = commonPalette[0].index;
 
     variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
 

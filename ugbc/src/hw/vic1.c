@@ -286,6 +286,7 @@ int vic1_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
     _environment->screenWidth = _environment->screenTilesWidth * 8;
     _environment->screenHeight = _environment->screenTilesHeight * 8;
+    _environment->screenColors = 2;
 
     cpu_store_16bit( _environment, "CURRENTWIDTH", _environment->screenWidth );
     cpu_store_16bit( _environment, "CURRENTHEIGHT", _environment->screenHeight );
@@ -608,6 +609,7 @@ void vic1_initialization( Environment * _environment ) {
     _environment->screenTilesHeight = 23;
     _environment->screenWidth = _environment->screenTilesWidth * 8;
     _environment->screenHeight = _environment->screenTilesHeight * 8;
+    _environment->screenColors = 16;
     _environment->descriptors = precalculate_tile_descriptors_for_font( data_fontvic1_bin );
 
 }

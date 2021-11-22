@@ -356,6 +356,7 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         case BITMAP_MODE_STANDARD:
             _environment->screenWidth = 320;
             _environment->screenHeight = 200;
+            _environment->screenColors = 2;
             // This fix is necessary to set the starting address of the bitmap 
             // to $A000 (which is an address available on C=64).
             outline0("LDA $D018" );
@@ -385,6 +386,7 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             _environment->fontWidth = 4;
             _environment->screenWidth = 160;
             _environment->screenHeight = 200;
+            _environment->screenColors = 4;
             // This fix is necessary to set the starting address of the bitmap 
             // to $A000 (which is an address available on C=64) instead of the 
             // address $8000.
@@ -415,6 +417,7 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         case TILEMAP_MODE_STANDARD:
             _environment->screenWidth = 320;
             _environment->screenHeight = 200;
+            _environment->screenColors = 16;
             // Let's disable graphics!
             outline0("LDA $D011" );
             outline0("AND #%11011111");
@@ -442,6 +445,7 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         case TILEMAP_MODE_MULTICOLOR:
             _environment->screenWidth = 320;
             _environment->screenHeight = 200;
+            _environment->screenColors = 16;
             // Let's disable graphics!
             outline0("LDA $D011" );
             outline0("AND #%11011111");
@@ -468,6 +472,7 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         case TILEMAP_MODE_EXTENDED:
             _environment->screenWidth = 320;
             _environment->screenHeight = 200;
+            _environment->screenColors = 16;
             // Let's disable graphics!
             outline0("LDA $D011" );
             outline0("AND #%11011111");

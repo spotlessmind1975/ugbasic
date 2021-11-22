@@ -2839,17 +2839,9 @@ void cpu6809_dec_16bit( Environment * _environment, char * _variable ) {
 
     inline( cpu_dec_16bit )
 
-        // outline1("LDD %s", _variable );
-        // outline0("SUBD #1" );
-        // outline1("STD %s", _variable );
-
-        MAKE_LABEL
-
-        // 10 cycles 255 times out of 256 and 17 one out of 256
-        outline1("DEC %s+1", _variable);
-        outline1("BNE %s", label);
-        outline1("DEC %s", _variable);
-        outhead1("%s", label)
+        outline1("LDD %s", _variable );
+        outline0("SUBD #1" );
+        outline1("STD %s", _variable );
 
     no_embedded( cpu_dec_16bit )
 

@@ -290,6 +290,12 @@ const_factor:
       | TRUE {
           $$ = 0xffffffff;
       }
+      | COLORS {
+          $$ = ((Environment *)_environment)->screenColors;
+      }
+      | SCREEN COLORS {
+          $$ = ((Environment *)_environment)->screenColors;
+      }
       | WIDTH {
           $$ = ((Environment *)_environment)->screenWidth;
       }
@@ -1508,7 +1514,7 @@ exponential:
     }
     | SCREEN COLORS {
         $$ = variable_temporary( _environment, VT_COLOR, "(SCREEN COLORS)" )->name;
-        variable_store( _environment, $$, COLOR_COUNT );
+        variable_store( _environment, $$, ((Environment *)_environment)->screenColors );
     }
     | PEN COLORS {
         $$ = variable_temporary( _environment, VT_COLOR, "(COLORS)" )->name;
