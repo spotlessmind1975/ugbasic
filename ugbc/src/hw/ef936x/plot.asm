@@ -32,6 +32,7 @@
 ;*                           PLOT ROUTINE FOR EF936X                           *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
+;*                     mc6809 optimization by Samuel Devulder                  *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -43,381 +44,248 @@ PLOTAMA EQU $47
 
 ;--------------
 
-PLOT
-    LDD <PLOTY
-    CMPD CLIPY2
-    BLE PLOTCLIP2
-    JMP PLOTP
-PLOTCLIP2
-    CMPD CLIPY1
-    BGE PLOTCLIP3
-    JMP PLOTP
-PLOTCLIP3
-    LDD <PLOTX
-    CMPD CLIPX2
-    BLE PLOTCLIP4
-    JMP PLOTP
-PLOTCLIP4
-    CMPD CLIPX1
-    BGE PLOTCLIP5
-    JMP PLOTP
-PLOTCLIP5
-
-    LDX BITMAPADDRESS
-
-    ANDCC #$FE
-    LDD <PLOTY
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-
-    LSLB
-    ROLA
-
-    TFR D, Y
-
-    ANDCC #$FE
-    LDD <PLOTY
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-
-    LEAY D, Y
-    TFR Y, D
-    LEAX D, X
-
-PLOTMODE
-    LDA CURRENTMODE
-    CMPA #0
-    BNE PLOT0X
-    JMP PLOT0
-PLOT0X
-    CMPA #1
-    BNE PLOT1X
-    JMP PLOT1
-PLOT1X
-    CMPA #2
-    BNE PLOT2X
-    JMP PLOT2
-PLOT2X
-    CMPA #3
-    BNE PLOT3X
-    JMP PLOT3
-PLOT3X
-    CMPA #4
-    BNE PLOT4X
-    JMP PLOT4
-PLOT4X
+PLOTP
     RTS
 
-PLOT0
-PLOT1
-PLOT2
-PLOT4
+PLOT
+    LDX <PLOTY
+    CMPX CLIPY2   ; CMPX is faster than CMPD
+    BGT PLOTP
+    CMPX CLIPY1
+    BLT PLOTP
+    LDX <PLOTX
+    CMPX CLIPX2
+    BGT PLOTP
+    CMPX CLIPX1   ; check if plotting out of clipped area
+    BLT PLOTP     ; yes => return
 
-    ANDCC #$FE
-    LDD <PLOTX
-    LSRA
-    RORB
-    LSRA
-    RORB
-    LSRA
-    RORB
-    LEAX D, X
-
-    LDY #PLOTORBIT
-    LDB <(PLOTX+1)
-    ANDB #$07
-    LEAY B, Y
-
-    LDU #PLOTANDBIT
-    LEAU B, U
-
-    JMP PLOTCOMMON
-
-PLOT3
-
-    LDD <(PLOTY)
-    LSLB
-    ROLA
-    ADDD #PLOTVBASE
-    TFR D, X
-    LDD , X
-    TFR D, X
-
-    LDB <(PLOTX+1)
-    LSRB
-    LSRB
-    LEAX B, X
-
-    LDB <(PLOTX+1)
-    ANDB #$03
-    ; COMB
-    ; LDY #3
-    LEAY B, Y
-    TFR Y, D
-    LSRB
-
-    ANDB #$01
-    CMPB #$01
-    BEQ PLOT3PAGE1
-
-PLOT3PAGE0
-
-    LDA $a7c0
-    ORA #$01
-    STA $a7c0
-
-    JMP PLOT3PAGEF
-
-PLOT3PAGE1
-
-    LDA $a7c0
-    ANDA #$fe
-    STA $a7c0
-
-    JMP PLOT3PAGEF
-
-PLOT3PAGEF
-
-    JMP PLOTCOMMON
-
-PLOTCOMMON
-
-    ;----------------------------------------------
-    ;depending on PLOTM, routine draws or erases
-    ;----------------------------------------------
-
-    LDA <PLOTM                  ;(0 = erase, 1 = set, 2 = get pixel, 3 = get color)
-    CMPA #0
-    BNE PLOTEX                  ;if = 0 then branch to clear the point
-    JMP PLOTE
-PLOTEX
-    CMPA #1
-    BNE PLOTDX                  ;if = 1 then branch to draw the point
-    JMP PLOTD
-PLOTDX
-    CMPA #2
-    BEQ PLOTGX                  ;if = 2 then branch to get the point (0/1)
-    JMP PLOTG
-PLOTGX
-    CMPA #3
-    BEQ PLOTCX                  ;if = 3 then branch to get the color index (0...15)
-    JMP PLOTC
-PLOTCX
-    JMP PLOTP
-
-PLOTD
-
+    LDB <PLOTY+1  ; no => compute video adress
+    LDA #40
+    MUL
+    ADDD BITMAPADDRESS ; 7
+    TFR D,X ; 6
+    
+    LDU #$A7C0    ; that adress is handy
+    
+PLOTMODE
     LDA CURRENTMODE
-    CMPA #0
-    BNE PLOTD0X
-    JMP PLOTD0
-PLOTD0X
-    CMPA #1
-    BNE PLOTD1X
-    JMP PLOTD1
-PLOTD1X
+    CMPA #3       ; mode 3 ?
+    BNE PLOT0     ; no => goto common adress decoding
+
+PLOT3             ; yes
+    LDA ,U
+    ORA #1        ; prepare A for plane 1
+    
+    LDB <PLOTX+1
+    LSRB
+    LSRB          ; carry = bit2
+    ABX           ; adjust for X position
+
+    SBCA #0       ; chose plane 0/1 according bit 2 of X coordinate
+    STA ,U        ; select proper plane
+    
+    BRA PLOTCOMMON
+    
+PLOTD             ; plot draw (placed here to keep the jump small)
+    LDA CURRENTMODE
     CMPA #2
-    BNE PLOTD2X
-    JMP PLOTD2
-PLOTD2X
+    BEQ PLOTD2    ; plot in mode 2
     CMPA #3
-    BNE PLOTD3X
-    JMP PLOTD3
-PLOTD3X
-    JMP PLOTP
+    BEQ PLOTD3    ; plot in mode 3
 
 PLOTD0
 PLOTD1
-PLOTD4
-
-    ANDCC #$FE
-    LDA _PEN
+PLOTD4     
+    LDA _PEN      ; other modes - asked color
+    EORA ,X       ; compare with bg colo
     ANDA #$0F
-    ASLA
-    ASLA
-    ASLA
-    ASLA
-    STA <MATHPTR5
+    BEQ PLOTE     ; equal ? yes ==> erase pixel
+    
+    LDA _PEN      ; no ==> regular plot
+    LSLA          
+    LSLA
+    LSLA
+    LSLA
+    STA PLOTD4x+1 ; prepare paper colo
+    
+    LDA ,X        ; get color pair
+    ANDA #$0F     ; clear paper color
+PLOTD4x
+    ORA #0        ; add current paper color
+    STA ,X        ; set color
     
     ;---------
     ;set point
     ;---------
-
-    LDA $a7c0
-    ORA #$01
-    STA $a7c0
-
-    LDA , X           ;get row with point in it
-    ANDA , U
-    ORA , Y               ;isolate AND set the point
-    STA , X           ;write back to $A000
-
-    LDA $a7c0
-    ANDA #$fe
-    STA $a7c0
-
-    LDA , X           ;get row with point in it
-    ANDA #$0F
-    ORA <MATHPTR5
-    STA , X           ;write back to $A000
-
-    JMP PLOTP                  ;skip the erase-point section
-
-PLOTD2
-
-    LDA _PEN
-    ANDA #$03
-    STA <MATHPTR5
-
-    ;---------
-    ;set point
-    ;---------
-
-    LDA $a7c0
-    ORA #$01
-    STA $a7c0
-
-    LDA <MATHPTR5
-    ANDA #$02
-    CMPA #$02
-    BNE PLOTD21
-
-PLOTD20
-    LDA , X           ;get row with point in it
-    ANDA , U
-    ORA , Y               ;isolate AND set the point
-    STA , X           ;write back to $A000
-    JMP PLOTD22
-
-PLOTD21
-    LDA , X           ;get row with point in it
-    ANDA , U
-    STA , X           ;write back to $A000
-    JMP PLOTD22
-
-PLOTD22
-    LDA $a7c0
-    ANDA #$fe
-    STA $a7c0
-
-    LDA <MATHPTR5
-    ANDA #$01
-    CMPA #$01
-    BNE PLOTD24
-
-PLOTD23
-    LDA , X           ;get row with point in it
-    ANDA , U
-    ORA , Y               ;isolate AND set the point
-    STA , X           ;write back to $A000
-    JMP PLOTD25
-
-PLOTD24
-    LDA , X           ;get row with point in it
-    ANDA , U
-    STA , X           ;write back to $A000
-    JMP PLOTD25
-
-PLOTD25
-    JMP PLOTP                  ;skip the erase-point section
-
-PLOTD3
-
-    LDA _PEN
-    ANDA #$0F
-    STA <MATHPTR5
-
-    ;---------
-    ;set point
-    ;---------
-
-    LDB <(PLOTX+1)
-    ANDB #$01
-    CMPB #$01
-    BEQ PLOTD3LO
-
-PLOTD3HI
-
-    LDA <MATHPTR5
-    ASLA
-    ASLA
-    ASLA
-    ASLA
-    STA <MATHPTR5
-    LDA , X
-    ORA <MATHPTR5
-    STA , X
-    JMP PLOTD3F
-
-PLOTD3LO
-
-    LDA , X
-    ORA <MATHPTR5
-    STA , X
-    JMP PLOTD3F
-
-PLOTD3F
-    JMP PLOTP                  ;skip the erase-point section
+    INC ,U        ; form plane
+    LDA ,X        ; get byte
+    ORA ,Y        ; set bit
+    STA ,X        ; write back to video memory
+    RTS           ; done
 
     ;-----------
     ;erase point
     ;-----------
-PLOTE                          ;handled same way as setting a point
-    LDA $a7c0
-    ORA #$01
-    STA $a7c0
+PLOTE
+    INC ,U        ; form plane
+    LDA ,X        ; get bit mask
+    ANDA 8,Y      ; clear bit
+    STA ,X        ; write back to video memory
+    RTS           ; done
+   
+PLOT0
+PLOT1
+PLOT2
+PLOT4
+    LDD <PLOTX    ; common adress calculation for modes
+    LSRA          ; 0/1/2/4
+    RORB
+    LSRB
+    LSRB          ; B = PLOTX/8
+    ABX           ; adjust for X position
+    
+    LDY #PLOTORBIT
+    LDB <(PLOTX+1)
+    ANDB #$07
+    LEAY B,Y      ; Y point to "OR" bitmask, Y+8 to "AND" bitmask
 
-    LDA , X           ;get row with point in it
-    ANDA , U
-    STA , X           ;write back to $A000
+    LDB ,U        ; select color plane
+    ANDB #254
+    STB ,U
 
-    JMP PLOTP                  ;skip the erase-point section
-
-PLOTG      
-    LDA $a7c0
-    ORA #$01
-    STA $a7c0
-
-    LDA , X           ;get row with point in it
-    ANDA , U
-
-    CMPA #0
-    BEQ PLOTG0
-PLOTG1
-    LDA #$ff
-    STA PLOTM
-    JMP PLOTP
-PLOTG0
-    LDA #$0
-    STA PLOTM
-    JMP PLOTP            
-
-PLOTC
-    LDA $a7c0
-    ANDA #$fe
-    STA $a7c0
-
-    LDA , X           ;get row with point in it
-    LSRA
-    LSRA
-    LSRA
-    LSRA
-    STA PLOTM
-    JMP PLOTP
-
-PLOTP
+PLOTCOMMON
+    ;----------------------------------------------
+    ;depending on PLOTM, routine draws or erases
+    ;----------------------------------------------
+    LDA <PLOTM    ; (0 = erase, 1 = set, 2 = get pixel, 3 = get color)
+    BEQ PLOTE       
+    DECA            
+    BEQ PLOTD     ; if = 1 then branch to draw the point
+    DECA            
+    BEQ PLOTG     ; if = 2 then branch to get the point (0/1)
+    DECA            
+    BEQ PLOTC     ; if = 3 then branch to get the color index (0...15)
     RTS
+
+PLOTD2            ; Draw point with mode 2 (we are in plane0)
+    LDA ,X        ; get row with point in it
+    LDB _PEN      
+    LSRB          ; b0 of PEN set ?
+    BCC PLOTD21   ; no => clear bit
+    ORA ,Y        ; yes => set bit
+    BRA PLOTD22
+PLOTD21
+    ANDA 8,Y
+PLOTD22
+    STA ,X        ; write back to video memory
+
+    INC ,U        ; plane 1
+    LDA ,X        ; get mask with point in it
+    LSRB          ; b1 of PEN set ?
+    BCC PLOTD24   ; no => clear BIT
+    ORA ,Y        ; yes => set BIT
+    BRA PLOTD25
+PLOTD24
+    ANDA 8,Y
+PLOTD25
+    STA ,X        ; write back to video memory
+    RTS           ; done
+
+PLOTD3
+    LDA _PEN      ; Draw point in mode 3
+    ANDA #$0F     ; isolate color
+    LDB <(PLOTX+1)
+    LSRB          ; odd column ?
+    BCS PLOTD3LO  ; yes => set low nibble
+
+PLOTD3HI
+    ASLA          ; no => set high nibble
+    ASLA
+    ASLA
+    ASLA
+    STA PLOTD3nibble+1
+    LDA ,X
+    ANDA #$0F
+PLOTD3nibble
+    ORA #$55
+    STA ,X
+    RTS           ; done
+
+PLOTD3LO
+    STA PLOTD3nibble+1
+    LDA ,X
+    ANDA #$F0
+    BRA PLOTD3nibble
+
+PLOTG             ; get point $00=unset $ff=set
+    LDA CURRENTMODE
+    CMPA #2
+    BEQ PLOTG2
+    CMPA #3
+    BEQ PLOTG3
+    INC ,U        ; plane 1
+    LDA ,X        ; get row with point in it
+    ANDA ,Y       ; bit set ?
+PLOTG0
+    BEQ PLOTG1    ; no => return 0
+    LDA #$FF      ; yes => return true
+PLOTG1
+    STA <PLOTM
+    RTS
+PLOTG2
+PLOTG3
+    BSR PLOTC     ; get current color
+    EORA _PAPER   ; same as paper ?
+    ANDA #$0F     ; yes => return 0
+    BRA PLOTG0    ; no => return true
+
+; Get pixel color according to video mode
+PLOTC
+    LDA CURRENTMODE
+    CMPA #2
+    BEQ PLOT2C    ; mode 2 specific
+    CMPA #3
+    BEQ PLOT3C    ; mode 3 specific
+PLOT0C
+PLOT1C
+PLOT4C            ; modes 0/1/4
+    LDA ,X        ; get color byte
+    INC ,U        ; bitmask plane
+    LDB ,X        ; get pixels byte
+    ANDB ,Y       ; bit set ?
+    BEQ PLOTC01   ; no => get lowwer nibble
+PLOTC00    
+    LSRA          ; yes => get upper nibble
+    LSRA
+    LSRA
+    LSRA
+PLOTC01
+    ANDA #15
+    STA <PLOTM    ; store result (in A also)
+    RTS
+
+PLOT2C
+    CLRA          ; mode 2 - clear all bits
+    LDB ,X        ; get bitmask at plane0
+    ANDB ,Y       ; point set ?   
+    BEQ PLOT2C0   ; no => skip
+    INCA          ; yes => set b0
+PLOT2C0
+    INC ,U        ; bit plane 1
+    LDB ,X        ; get bitmask
+    ANDB ,Y       ; point set ?
+    BEQ PLOT2C1   ; no => skip
+    ORA #2        ; yes => set b1
+PLOT2C1    
+    STA <PLOTM    ; store result (in A also)
+    RTS
+
+PLOT3C
+    LDA ,X        ; mode 3 - get color pair
+    LDB <PLOTX+1
+    LSRB
+    BCS PLOTC01   ; odd column => lower nibble
+    BRA PLOTC00   ; even column => upper nibble
 
 ;----------------------------------------------------------------
 
@@ -441,22 +309,3 @@ PLOTANDBIT
     fcb %11111101
     fcb %11111110
 
-PLOTORBIT4
-    fcb %00000001
-    fcb %00010000
-    fcb %00000010
-    fcb %00100000
-    fcb %00000100
-    fcb %01000000
-    fcb %00001000
-    fcb %10000000
-
-PLOTANDBIT4
-    fcb %11111110
-    fcb %11101111
-    fcb %11111101
-    fcb %11011111
-    fcb %11111011
-    fcb %10111111
-    fcb %11110111
-    fcb %01111111
