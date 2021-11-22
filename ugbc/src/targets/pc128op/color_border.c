@@ -49,6 +49,10 @@
 @target pc128op
 </usermanual> */
 void color_border( Environment * _environment, int _color ) {
+	outline1("LDA #%d", _color&15);
+	/* emmit0("STA <$86"); to be compatible with ROM routines */
+	outline0("ORA $A7E4");
+	outline0("STA $A7DD");
 
 }
 
@@ -65,5 +69,11 @@ void color_border( Environment * _environment, int _color ) {
 @keyword COLOR BORDER
 </usermanual> */
 void color_border_var( Environment * _environment, char * _color ) {
-
+	 Variable * var = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_BLACK );
+	
+	outline1("LDA %s", var->realName);
+	outline0("ANDA #$0F");
+	/* emmit0("STA <$86"); to be compatible with ROM routines */
+	outline0("ORA $A7E4");
+	outline0("STA $A7DD");
 }
