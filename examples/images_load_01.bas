@@ -11,8 +11,6 @@ REM
 
 BITMAP ENABLE
 
-PRINT CURRENTMODE
-
 airplane = IMAGE LOAD("examples/air_attack_airplane.png")
 
 PRINT airplane
