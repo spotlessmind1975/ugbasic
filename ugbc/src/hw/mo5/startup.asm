@@ -60,7 +60,7 @@ MO5STARTUP
 MO5STARTUP2    
     LDD   #MO5IRQ     ; install our own ISR
     STD   ,X
-    LDA   #$20        ; any non-zero value will do, let's use the one that'll go to DP
+    LDA   #$21        ; any non-zero value will do, let's use the one that'll go to DP
     STA   2,X         ; enable the ISR
 
     TFR   A,DP       
