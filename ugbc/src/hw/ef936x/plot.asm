@@ -32,6 +32,7 @@
 ;*                           PLOT ROUTINE FOR EF936X                           *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
+;*                     mc6809 optimization by Samuel Devulder                  *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
