@@ -19,8 +19,8 @@ REM una serie di punti casuali sullo schermo.
    BITMAP ENABLE
    CLS BLACK
    DO
-      x = RND(SCREEN WIDTH)
-      y = RND(SCREEN HEIGHT)
-      c = RND(SCREEN COLORS)
+      x = RND(SCREEN WIDTH-1)
+      y = RND(SCREEN HEIGHT-1)
+      c = RND(SCREEN COLORS-1)
       PLOT x, y, c
    LOOP
