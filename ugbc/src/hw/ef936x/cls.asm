@@ -32,112 +32,104 @@
 ;*                       CLEAR SCREEN ROUTINE FOR EF936X                       *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
+;*                     mc6809 optimization by Samuel Devulder                  *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 CLS
+    PSHS  DP
+    LDA #$A7
+    TFR A,DP
+
+    LDA <$C0
+    ANDA #$FE
+    STA <$C0
+
     LDA CURRENTMODE
-    CMPA #0
-    BNE CLS0X
-    JMP CLS0
-CLS0X
-    CMPA #1
-    BNE CLS1X
-    JMP CLS1
-CLS1X
-    CMPA #2
-    BNE CLS2X
-    JMP CLS2
-CLS2X
-    CMPA #3
-    BNE CLS3X
-    JMP CLS3
-CLS3X
-    CMPA #4
-    BNE CLS4X
-    JMP CLS4
-CLS4X
-    RTS
+    BEQ CLS0
+    DECA
+    BEQ CLS1
+    DECA
+    BEQ CLS2
+    DECA
+    BEQ CLS3
+    DECA
+    BEQ CLS4
+    PULS DP,PC
+
+CLS2
+    CLRA
+    LDB _PAPER
+    LSRB
+    SBCA #0
+
+    LSRB
+    LDB #1-1 ; important not 0 or else the optimzer will CLRB which clears the carry
+    SBCB #0
+
+    LDU #0
+    LEAU B,U
+    TFR A,B
+    BRA CLSG
+
+CLS3
+    LDA _PAPER
+    ANDA #$0F
+    LDB #$11
+    MUL
+    TFR B,A
+    TFR D,U
+    BRA CLSG
 
 CLS0
 CLS1
 CLS4
-
     LDA _PEN
-    ANDA #$0F
     ASLA
     ASLA
     ASLA
     ASLA
-    STA <MATHPTR5
+    STA ,-S
     LDA _PAPER
     ANDA #$0F
-    ORA <MATHPTR5
-    STA <MATHPTR5
-
-    LDY BITMAPADDRESS
-    LDX CURRENTFRAMESIZE
-CLSGL1
-
-    LDA $a7c0
-    ORA #$01
-    STA $a7c0
-
-    LDA #$0
-    STA , Y
-
-    LDA $a7c0
-    ANDA #$fe
-    STA $a7c0
-
-    LDA <MATHPTR5
-    STA , Y+
-
-    LEAX -1, X
-    CMPX #0
-    BNE CLSGL1
-    RTS
-
-CLS2
-
-    LDA _PAPER
-    ANDA #$03
-    LDB $55
-    MUL
-    ANDA #$03
-    STA <MATHPTR5
-    JMP CLSG
-
-CLS3
-
-    LDA _PAPER
-    ANDA #$07
-    LDB $11
-    MUL
-    STA <MATHPTR5
-    JMP CLSG
-
+    ORA ,S+
+    TFR A,B
+    LDU #0
+    
 CLSG
-    LDY BITMAPADDRESS
-    LDX CURRENTFRAMESIZE
+    LDX BITMAPADDRESS
+    LEAX 10,X
+    PSHS D,U
+    LDD CURRENTFRAMESIZE
+    LEAU D,X
+    STU CLSGL2+1
+    PULS D,U
+CLSGL1
+    INC <$C0
+    STU -10,X
+    STU -8,X
+    STU -6,X
+    STU -4,X
+    STU -2,X
+    STU ,X
+    STU 2,X
+    STU 4,X
+    STU 6,X
+    STU 8,X
+    DEC <$C0
+    STD -10,X
+    STD -8,X
+    STD -6,X
+    STD -4,X
+    STD -2,X
+    STD ,X
+    STD 2,X
+    STD 4,X
+    STD 6,X
+    STD 8,X
+    LEAX 20,X
 CLSGL2
+    CMPX #$5555
+    BLO CLSGL1
+    PULS DP,PC
 
-    LDA $a7c0
-    ORA #$01
-    STA $a7c0
-
-    LDA <MATHPTR5
-    STA , Y
-
-    LDA $a7c0
-    ANDA #$fe
-    STA $a7c0
-
-    LDA <MATHPTR5
-    STA , Y+
-
-    LEAX -1, X
-    CMPX #0
-    BNE CLSGL2
-
-    RTS

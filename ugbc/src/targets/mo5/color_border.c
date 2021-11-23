@@ -50,6 +50,11 @@
 </usermanual> */
 void color_border( Environment * _environment, int _color ) {
 
+	outline0("LDA $A7C0");
+	outline0("ANDA #%11100001");
+	outline1("ORA #%d", (_color&15)<<1);
+	outline0("STA $A7C0");
+
 }
 
 /**
@@ -65,5 +70,15 @@ void color_border( Environment * _environment, int _color ) {
 @keyword COLOR BORDER
 </usermanual> */
 void color_border_var( Environment * _environment, char * _color ) {
+	 Variable * var = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_BLACK );
+	
+	outline1("LDA %s", var->realName);
+	outline0("LSLA");
+	outline0("ANDA #%00011110");
+	outline0("STA ,-S");
+	outline0("LDA $A7C0");
+	outline0("ANDA #%11100001");
+	outline0("ORA ,S+");
+	outline0("STA $A7C0");
 
 }
