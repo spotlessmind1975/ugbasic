@@ -1675,18 +1675,18 @@ Variable * variable_div( Environment * _environment, char * _source, char * _des
     Variable * remainder = NULL;
     switch( VT_BITWIDTH( source->type ) ) {
         case 32:
-            result = variable_temporary( _environment, VT_DWORD, "(result of division)" );
-            remainder = variable_temporary( _environment, VT_WORD, "(remainder of division)" );
+            result = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SWORD : VT_WORD, "(result of division)" );
+            remainder = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SWORD : VT_WORD, "(remainder of division)" );
             cpu_math_div_32bit_to_16bit( _environment, source->realName, target->realName, result->realName, remainder->realName, VT_SIGNED( source->type ) );
             break;
         case 16:
-            result = variable_temporary( _environment, VT_WORD, "(result of division)" );
-            remainder = variable_temporary( _environment, VT_WORD, "(remainder of division)" );
+            result = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SWORD : VT_WORD, "(result of division)" );
+            remainder = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SWORD : VT_WORD, "(remainder of division)" );
             cpu_math_div_16bit_to_16bit( _environment, source->realName, target->realName, result->realName, remainder->realName, VT_SIGNED( source->type ) );
             break;
         case 8:
-            result = variable_temporary( _environment, VT_BYTE, "(result of division)" );
-            remainder = variable_temporary( _environment, VT_BYTE, "(remainder of division)" );
+            result = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SBYTE : VT_BYTE, "(result of division)" );
+            remainder = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SBYTE : VT_BYTE, "(remainder of division)" );
             cpu_math_div_8bit_to_8bit( _environment, source->realName, target->realName, result->realName, remainder->realName, VT_SIGNED( source->type ) );
             break;
         case 0:
