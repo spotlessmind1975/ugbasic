@@ -3828,7 +3828,7 @@ void cpu6809_bit_check( Environment * _environment, char * _value, int _position
 
         MAKE_LABEL
 
-        outline0("STB <MATHPTR0" );
+        //outline0("STB <MATHPTR0" );
         switch( _position ) {
             case 31: case 30: case 29: case 28: case 27: case 26: case 25: case 24:
                 outline1("LDA %s", _value);
@@ -3855,65 +3855,47 @@ void cpu6809_bit_check( Environment * _environment, char * _value, int _position
 
 void cpu6809_bit_check_extended( Environment * _environment, char * _value, char * _position, char *_result, int _bitwidth ) {
 
+	static int shift_tab = 0;
+	
     inline( cpu_bit_check_extended )
 
         MAKE_LABEL
-
-        outline0("LDA #1" );
-        outline1("LDB %s", _position );
-        outline0("ANDB #$07" );
-        outhead1("%s", label );
-        outline0("CMPB #0" );
-        outline1("BEQ %sdone", label );
-        outline0("LSLA" );
-        outline0("DECB" );
-        outline1("JMP %s", label );
-
-        outhead1("%sdone", label );
-        outline0("STA <MATHPTR0" );
-
-        outline1("LDB %s", _position );
-        outline0("CMPB #24" );
-        outline1("BLO %s_24", label );
-
-        // 32-24
-        outline1("LDA %s", _value );
-        outline1("JMP %seval", label );
-
-        outhead1("%s_24", label );
-        outline0("CMPB #16" );
-        outline1("BLO %s_16", label );
-
-        // 24-16
-        outline1("LDA %s+1", _value );
-        outline1("JMP %seval", label );
-
-        outhead1("%s_16", label );
-        outline0("CMPB #8" );
-        outline1("BLO %s_8", label );
-
-        // 16-8
-        outline2("LDA %s+%d", _value, ( _bitwidth / 8 ) - 2  );
-        outline1("JMP %seval", label );
-
-        outhead1("%s_8", label );
-
-        // 8-0
-        outline2("LDA %s+%d", _value, ( _bitwidth / 8 ) - 1  );
-        outline1("JMP %seval", label );
-
+		
+		if(!shift_tab) {
+			shift_tab = 1;
+			outline0("BRA _bit_check_extended_tab_after");
+			outhead0("_bit_check_extended_tab");
+			outline0("fcb 1,2,4,8,16,32,64,128");
+			outhead0("_bit_check_extended_tab_after");
+		}
+		
+		outline2("LDA %s+%d", _value, ( _bitwidth / 8 ) - 1 );
+		outline1("LDB %s", _position);
+		if(_bitwidth>8) {
+			outline0("CMPB #8");
+			outline1("BLO %seval", label);
+			outline2("LDA %s+%d", _value, ( _bitwidth / 8 ) - 2 );
+		}
+		if(_bitwidth>16) {
+			outline0("CMPB #16");
+			outline1("BLO %seval", label);
+			outline1("LDA %s+1", _value);
+			outline0("CMPB #24");
+			outline1("BLO %seval", label);
+			outline1("LDA %s", _value);
+		}
+		
         outhead1("%seval", label );
-        outline0("ANDA <MATHPTR0" );
-        outline0("CMPA #0" );
-        outline1("BEQ %szero", label);
-        outhead1("%sone", label)
+		outline0("LDX #_bit_check_extended_tab");
+		outline1("LDB %s", _position);
+		outline0("ANDB #7");
+		outline0("ANDA B,X");
+		
+		outline1("BEQ %send", label);
         outline0("LDA #$ff");
-        outline1("JMP %send", label );
-        outhead1("%szero", label)
-        outline0("LDA #$0");
         outhead1("%send", label)
         outline1("STA %s", _result);
-
+		
     no_embedded( cpu_bit_check_extended )
 
 }
