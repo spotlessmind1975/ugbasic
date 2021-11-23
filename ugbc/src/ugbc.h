@@ -1399,6 +1399,8 @@ typedef struct _Environment {
 #define CRITICAL_INVALID_MULTIPLICATOR2( d ) CRITICAL2i("E099 - invalid multiplicator for MULTIPLICATOR2, must be power of two", d );
 #define CRITICAL_INVALID_TASK_COUNT( d ) CRITICAL2i("E100 - invalid number of tasks for multitasking", d);
 #define CRITICAL_CANNOT_COMPARE_WITH_CASE( d ) CRITICAL2("E101 - cannot compare with case", d);
+#define CRITICAL_ADD_INPLACE_UNSUPPORTED( v, t ) CRITICAL3("E102 - Add in place unsupported for variable of given datatype", v, t );
+#define CRITICAL_SUB_INPLACE_UNSUPPORTED( v, t ) CRITICAL3("E103 - Sub in place unsupported for variable of given datatype", v, t );
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
 #define WARNING2i( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%i) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -2074,6 +2076,7 @@ void                    tiles_at_var( Environment * _environment, char * _addres
 //----------------------------------------------------------------------------
 
 Variable *              variable_add( Environment * _environment, char * _source, char * _dest );
+void                    variable_add_inplace( Environment * _environment, char * _source, char * _dest );
 Variable *              variable_and( Environment * _environment, char * _left, char * _right );
 Variable *              variable_and_const( Environment * _environment, char * _source, int _mask );
 void                    variable_array_fill( Environment * _environment, char * _name, int _value );
@@ -2135,6 +2138,7 @@ Variable *              variable_string_string( Environment * _environment, char
 Variable *              variable_string_upper( Environment * _environment, char * _string );
 Variable *              variable_string_val( Environment * _environment, char * _value );
 Variable *              variable_sub( Environment * _environment, char * _source, char * _dest );
+void                    variable_sub_inplace( Environment * _environment, char * _source, char * _dest );
 Variable *              variable_temporary( Environment * _environment, VariableType _type, char * _meaning );
 Variable *              variable_resident( Environment * _environment, VariableType _type, char * _meaning );
 

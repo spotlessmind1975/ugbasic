@@ -1447,6 +1447,49 @@ Variable * variable_add( Environment * _environment, char * _source, char * _des
 }
 
 /**
+ * @brief Add two variable and return the sum of them on the first
+ * 
+ * This function allows you to sum the value of two variables. Note 
+ * that both variables must pre-exist before the operation, 
+ * under penalty of an exception.
+ * 
+ * @pre _source and _destination variables must exist
+ * 
+ * @param _environment Current calling environment
+ * @param _source Source variable's name and destination of sum
+ * @param _destination Value to sum
+ * @throw EXIT_FAILURE "Destination variable does not cast"
+ * @throw EXIT_FAILURE "Source variable does not exist"
+ */
+void variable_add_inplace( Environment * _environment, char * _source, char * _destination ) {
+
+    Variable * source = variable_retrieve( _environment, _source );
+    if ( source->type == VT_STRING ) {
+        source = variable_cast( _environment, _source, VT_DSTRING );
+    }
+
+    Variable * target = variable_cast( _environment, _destination, source->type );
+    if ( ! target ) {
+        CRITICAL_VARIABLE(_destination);
+    }
+
+    switch( VT_BITWIDTH( source->type ) ) {
+        case 32:
+            cpu_math_add_32bit( _environment, source->realName, target->realName, source->realName );
+            break;
+        case 16:
+            cpu_math_add_16bit( _environment, source->realName, target->realName, source->realName );
+            break;
+        case 8:
+            cpu_math_add_8bit( _environment, source->realName, target->realName, source->realName );
+            break;
+        case 0:
+            CRITICAL_ADD_INPLACE_UNSUPPORTED( _source, DATATYPE_AS_STRING[source->type]);
+    }
+
+}
+
+/**
  * @brief Make a differenze between two variable and return the difference of them
  * 
  * This function allows you to difference the value of two variables. Note 
@@ -1480,6 +1523,40 @@ Variable * variable_sub( Environment * _environment, char * _source, char * _des
             CRITICAL_SUB_UNSUPPORTED( _source, DATATYPE_AS_STRING[source->type]);
      }
     return result;
+}
+
+/**
+ * @brief Make a differenze between two variable and assign the difference of them to the first
+ * 
+ * This function allows you to difference the value of two variables. Note 
+ * that both variables must pre-exist before the operation, 
+ * under penalty of an exception.
+ * 
+ * @pre _source and _destination variables must exist
+ * 
+ * @param _environment Current calling environment
+ * @param _source Source variable's name and destination of the subtraction
+ * @param _destination Destination variable's name
+ * @throw EXIT_FAILURE "Destination variable does not cast"
+ * @throw EXIT_FAILURE "Source variable does not exist"
+ */
+void variable_sub_inplace( Environment * _environment, char * _source, char * _dest ) {
+    Variable * source = variable_retrieve( _environment, _source );
+    Variable * target = variable_cast( _environment, _dest, source->type );
+    switch( VT_BITWIDTH( source->type ) ) {
+        case 32:
+            cpu_math_sub_32bit( _environment, source->realName, target->realName, source->realName );
+            break;
+        case 16:
+            cpu_math_sub_16bit( _environment, source->realName, target->realName, source->realName );
+            break;
+        case 8:
+            cpu_math_sub_8bit( _environment, source->realName, target->realName, source->realName );
+            break;
+        case 0:
+            CRITICAL_SUB_INPLACE_UNSUPPORTED( _source, DATATYPE_AS_STRING[source->type]);
+     }
+
 }
 
 /**
@@ -3716,7 +3793,7 @@ static Variable * calculate_offset_in_array( Environment * _environment, char * 
         }
         Variable * index = variable_retrieve( _environment, _environment->arrayIndexesEach[_environment->arrayNestedIndex][array->arrayDimensions-i-1]);
         Variable * additionalOffset = variable_mul( _environment, index->name, base->name );
-        offset = variable_add( _environment, offset->name, additionalOffset->name );
+        variable_add_inplace( _environment, offset->name, additionalOffset->name );
     }
 
     return offset;

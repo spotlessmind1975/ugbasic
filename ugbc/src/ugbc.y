@@ -2643,7 +2643,7 @@ every_definition :
 
 add_definition :
     Identifier OP_COMMA expr {
-        variable_move_naked( _environment, variable_add( _environment, $1, $3 )->name, $1 );
+        variable_add_inplace( _environment, $1, $3 );
     }
     | Identifier OP_COMMA expr OP_COMMA expr TO expr {
         add_complex( _environment, $1, $3, $5, $7 );

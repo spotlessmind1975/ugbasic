@@ -90,7 +90,7 @@ void add_complex( Environment * _environment, char * _variable, char * _expressi
     char greaterThanLabel[MAX_TEMPORARY_STORAGE]; sprintf( greaterThanLabel, "%sg", label );
     char endLabel[MAX_TEMPORARY_STORAGE]; sprintf( endLabel, "%se", label );
     
-    variable_move_naked( _environment, variable_add( _environment, _variable, _expression )->name, _variable );
+    variable_add_inplace( _environment, _variable, _expression );
 
     Variable * less = variable_less_than( _environment, _variable, _limit_lower, 0 );
 
