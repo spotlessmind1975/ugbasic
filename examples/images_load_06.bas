@@ -20,6 +20,6 @@ frame = (BYTE) 0
 
 DO
     PUT IMAGE bat FRAME frame AT 0,0
-    ADD frame,1,0 TO FRAMES(bat)
+    ADD frame,1,0 TO FRAMES(bat)-1
 LOOP
 

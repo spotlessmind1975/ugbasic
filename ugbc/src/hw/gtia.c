@@ -1169,17 +1169,17 @@ void gtia_initialization( Environment * _environment ) {
     variable_global( _environment, "CURRENTTILESHEIGHT" );
 
 #ifdef __atarixl__
-    // still unsupported SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC12, 1, 320, 192, 4, "Antic C (Graphics 14-XL computers only)"  );
+    SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC14, 1, 160, 192, 4, "Antic E (Graphics 15-XL computers only)"  );
 #endif
     SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC13, 1, 160, 96, 4, "Graphics 7 (ANTIC D or 13)"  );
+#ifdef __atarixl__
+    SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC12, 1, 320, 192, 2, "Antic C (Graphics 14-XL computers only)"  );
+#endif
+    SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC15, 1, 320, 192, 1, "Graphics 8 (ANTIC F or 15)"  );
     SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC8, 1, 40, 24, 4, "Graphics 3 (ANTIC 8)" );
     SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC9, 1, 80, 48, 2, "Graphics 4 (ANTIC 9)"  );
     SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC10, 1, 80, 48, 4, "Graphics 5 (ANTIC A or 10)"  );
     SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC11, 1, 160, 96, 2, "Graphics 6 (ANTIC B or 11)"  );
-#ifdef __atarixl__
-    SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC14, 1, 160, 192, 4, "Antic E (Graphics 15-XL computers only)"  );
-#endif
-    SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC15, 1, 320, 192, 1, "Graphics 8 (ANTIC F or 15)"  );
 
     SCREEN_MODE_DEFINE( TILEMAP_MODE_ANTIC2, 0, 40, 24, 1, "Graphics Mode 0 (ANTIC 2)"  );
     SCREEN_MODE_DEFINE( TILEMAP_MODE_ANTIC6, 0, 20, 24, 4, "Graphics 1 (ANTIC 6)"  );
@@ -1325,12 +1325,6 @@ static int calculate_image_size( Environment * _environment, int _width, int _he
         // of course is much greater as there are 96 rows of 160 - 2 x 2 sized pixels. It requires 3840 bytes of screen memory
         // with another 104 bytes for the display list.
         case BITMAP_MODE_ANTIC13:
-        // Antic C (Graphics 14-XL computers only)
-        // This two-color, bit-mapped mode the eight bits correspond directly to the pixels on the screen. If a pixel is lit 
-        // it receives its color information from color register #0, otherwise the color is set to the background color 
-        // register #4. Each pixel is one scan line high and one color clock wide. This mode's advantages are that it 
-        // only uses 4K of screen memory and doesn't have artifacting problems.
-        case BITMAP_MODE_ANTIC12:
         // Antic E (Graphics 15-XL computers only)
         // This four-color, bit-mapped mode is sometimes known as BASIC 7 1/2. Its resolution is 160 x 192 or twice that of 
         // GRAPHIC 7. Each byte is divided into four pairs of bits. Like the character data in ANTIC 4, the bit pairs point to a
@@ -1363,6 +1357,12 @@ static int calculate_image_size( Environment * _environment, int _width, int _he
         // staggering the pixel patterns, you can achieve three colors. This method is called artifacting. This all depends
         // on background color and luminance.
         case BITMAP_MODE_ANTIC15:
+        // Antic C (Graphics 14-XL computers only)
+        // This two-color, bit-mapped mode the eight bits correspond directly to the pixels on the screen. If a pixel is lit 
+        // it receives its color information from color register #0, otherwise the color is set to the background color 
+        // register #4. Each pixel is one scan line high and one color clock wide. This mode's advantages are that it 
+        // only uses 4K of screen memory and doesn't have artifacting problems.
+        case BITMAP_MODE_ANTIC12:
             return 2 + ( ( _width >> 3 ) * _height ) + 2;
 
         // Graphics Mode 0 (ANTIC 2)
@@ -1842,7 +1842,7 @@ Variable * gtia_image_converter( Environment * _environment, char * _data, int _
         // register #4. Each pixel is one scan line high and one color clock wide. This mode's advantages are that it 
         // only uses 4K of screen memory and doesn't have artifacting problems.
         case BITMAP_MODE_ANTIC12:
-            return gtia_image_converter_multicolor_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height , _transparent_color, _flags );
+            return gtia_image_converter_bitmap_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height , _transparent_color, _flags );
 
         // Antic E (Graphics 15-XL computers only)
         // This four-color, bit-mapped mode is sometimes known as BASIC 7 1/2. Its resolution is 160 x 192 or twice that of 

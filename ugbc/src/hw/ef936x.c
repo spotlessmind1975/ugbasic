@@ -261,7 +261,7 @@ int ef936x_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
             _environment->screenHeight = 200;
             _environment->screenTilesWidth = 40;
             _environment->screenTilesHeight = 25;
-            _environment->screenColors = 4;
+            _environment->screenColors = 16;
             outline0("LDA #%00000000");
             outline0("STA $A7DC");
             break;
