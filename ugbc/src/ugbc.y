@@ -55,7 +55,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token BACK DEBUG CAN ELSEIF BUFFER LOAD SIZE MOB IMAGE PUT VISIBLE HIDDEN HIDE SHOW RENDER
 %token SQR TI CONST VBL POKE NOP FILL IN POSITIVE DEFINE ATARI ATARIXL C64 DRAGON DRAGON32 DRAGON64 PLUS4 ZX 
 %token FONT VIC20 PARALLEL YIELD SPAWN THREAD TASK IMAGES FRAME FRAMES XY YX ROLL MASKED USING TRANSPARENCY
-%token OVERLAYED CASE ENDSELECT OGP CGP ARRAY NEW GET DISTANCE TYPE MUL DIV RGB SHADES HEX
+%token OVERLAYED CASE ENDSELECT OGP CGP ARRAY NEW GET DISTANCE TYPE MUL DIV RGB SHADES
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -1411,9 +1411,6 @@ exponential:
     }
     | LOWER OP expr CP {
         $$ = variable_string_lower( _environment, $3 )->name;
-    }
-    | HEX OP expr CP {
-        $$ = variable_hex( _environment, $3 )->name;
     }
     | STR OP expr CP {
         $$ = variable_string_str( _environment, $3 )->name;
@@ -4381,7 +4378,6 @@ int main( int _argc, char *_argv[] ) {
                         parse_embedded( p, cpu_number_to_string );
                         parse_embedded( p, cpu_move_8bit_indirect_with_offset );
                         parse_embedded( p, cpu_bits_to_string );
-                        parse_embedded( p, cpu_hex_to_string );
                         parse_embedded( p, cpu_bit_check_extended );
                         parse_embedded( p, cpu_move_8bit_indirect_with_offset2 );
                         parse_embedded( p, cpu_dsdefine );
@@ -4577,7 +4573,6 @@ int main( int _argc, char *_argv[] ) {
         stats_embedded( cpu_number_to_string );
         stats_embedded( cpu_move_8bit_indirect_with_offset );
         stats_embedded( cpu_bits_to_string );
-        stats_embedded( cpu_hex_to_string );
         stats_embedded( cpu_bit_check_extended );
         stats_embedded( cpu_move_8bit_indirect_with_offset2 );
         stats_embedded( cpu_dsdefine );

@@ -4449,16 +4449,6 @@ void cpu6809_bits_to_string( Environment * _environment, char * _number, char * 
 
 }
 
-void cpu6809_hex_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits ) {
-
-    MAKE_LABEL
-
-    inline( cpu_hex_to_string )
-
-    no_embedded( cpu_hex_to_string )
-
-}
-
 void cpu6809_dsdefine( Environment * _environment, char * _string, char * _index ) {
     
     deploy_with_vars( dstring, src_hw_6809_dstring_asm, cpu_dstring_vars );
