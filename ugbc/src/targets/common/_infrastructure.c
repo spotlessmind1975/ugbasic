@@ -4260,7 +4260,6 @@ Variable * variable_bit( Environment * _environment, char * _value, char * _posi
         case 16:
         case 8:
             cpu_bit_check_extended( _environment, value->realName, position->realName, result->realName, VT_BITWIDTH( value->type ) );
-            cpu_bveq( _environment, result->realName, unsetLabel );
             break;
         case 0:
             CRITICAL_BIT_UNSUPPORTED( _value, DATATYPE_AS_STRING[value->type] );
