@@ -62,6 +62,7 @@ void create_test( char *_name, void (*_payload)(TestEnvironment *), int (*_teste
     _environment->embedded.cpu_mem_move = 1;
     _environment->embedded.cpu_uppercase = 1;
     _environment->embedded.cpu_lowercase = 1;
+    _environment->embedded.cpu_hex_to_string = 1;
 
     t.environment.sourceFileName = strdup("/tmp/out.bas");
     t.environment.asmFileName = strdup("/tmp/out.asm");
