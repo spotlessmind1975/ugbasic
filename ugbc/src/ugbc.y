@@ -55,7 +55,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token BACK DEBUG CAN ELSEIF BUFFER LOAD SIZE MOB IMAGE PUT VISIBLE HIDDEN HIDE SHOW RENDER
 %token SQR TI CONST VBL POKE NOP FILL IN POSITIVE DEFINE ATARI ATARIXL C64 DRAGON DRAGON32 DRAGON64 PLUS4 ZX 
 %token FONT VIC20 PARALLEL YIELD SPAWN THREAD TASK IMAGES FRAME FRAMES XY YX ROLL MASKED USING TRANSPARENCY
-%token OVERLAYED CASE ENDSELECT OGP CGP ARRAY NEW GET DISTANCE TYPE MUL DIV RGB
+%token OVERLAYED CASE ENDSELECT OGP CGP ARRAY NEW GET DISTANCE TYPE MUL DIV RGB SHADES
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -308,6 +308,12 @@ const_factor:
       }
       | SCREEN COLOURS {
           $$ = ((Environment *)_environment)->screenColors;
+      }
+      | SHADES {
+          $$ = ((Environment *)_environment)->screenShades;
+      }
+      | SCREEN SHADES {
+          $$ = ((Environment *)_environment)->screenShades;
       }
       | WIDTH {
           $$ = ((Environment *)_environment)->screenWidth;
@@ -1550,6 +1556,10 @@ exponential:
         Variable * var = variable_temporary( _environment, VT_THREAD, "(TASK)" );
         cpu_protothread_current( _environment, var->realName );
         $$ = var->name;
+    }
+    | SCREEN SHADES {
+        $$ = variable_temporary( _environment, VT_COLOR, "(SCREEN SHADES)" )->name;
+        variable_store( _environment, $$, ((Environment *)_environment)->screenShades );
     }
     | SCREEN COLORS {
         $$ = variable_temporary( _environment, VT_COLOR, "(SCREEN COLORS)" )->name;

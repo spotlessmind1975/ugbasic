@@ -716,6 +716,7 @@ void ted_initialization( Environment * _environment ) {
     ted_cls( _environment );
 
     _environment->currentRgbConverterFunction = rgbConverterFunction;
+    _environment->screenShades = 16;
 
 }
 

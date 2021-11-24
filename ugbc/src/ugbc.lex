@@ -326,6 +326,7 @@ SELECT { return (SELECT); }
 SEMICOLON { return (SEMICOLON); }
 SET { return (SET); }
 SGN { return (SGN); }
+SHADES { return (SHADES); }
 SHARED { return (SHARED); }
 SHIFT { return (SHIFT); }
 SHIFTS { return (SHIFTS); }

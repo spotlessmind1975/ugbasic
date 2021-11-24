@@ -1057,6 +1057,7 @@ void vic2_initialization( Environment * _environment ) {
     _environment->descriptors = precalculate_tile_descriptors_for_font( data_fontvic2_bin );
 
     _environment->currentRgbConverterFunction = rgbConverterFunction;
+    _environment->screenShades = 16;
 
 }
 
