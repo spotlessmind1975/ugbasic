@@ -4261,14 +4261,6 @@ Variable * variable_bit( Environment * _environment, char * _value, char * _posi
         case 8:
             cpu_bit_check_extended( _environment, value->realName, position->realName, result->realName, VT_BITWIDTH( value->type ) );
             cpu_bveq( _environment, result->realName, unsetLabel );
-
-            cpu_label( _environment, setLabel );
-            cpu_store_8bit( _environment, result->realName, 0xff );
-            cpu_jump( _environment, endLabel );
-
-            cpu_label( _environment, unsetLabel );
-            cpu_store_8bit( _environment, result->realName, 0 );
-            cpu_label( _environment, endLabel );
             break;
         case 0:
             CRITICAL_BIT_UNSUPPORTED( _value, DATATYPE_AS_STRING[value->type] );
