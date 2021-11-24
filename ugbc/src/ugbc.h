@@ -810,6 +810,7 @@ typedef struct _Embedded {
     int cpu_number_to_string;
     int cpu_move_8bit_indirect_with_offset;
     int cpu_bits_to_string;
+    int cpu_hex_to_string;
     int cpu_bit_check_extended;
     int cpu_move_8bit_indirect_with_offset2;
     int cpu_dsdefine;
@@ -1413,6 +1414,7 @@ typedef struct _Environment {
 #define CRITICAL_CANNOT_COMPARE_WITH_CASE( d ) CRITICAL2("E101 - cannot compare with case", d);
 #define CRITICAL_ADD_INPLACE_UNSUPPORTED( v, t ) CRITICAL3("E102 - Add in place unsupported for variable of given datatype", v, t );
 #define CRITICAL_SUB_INPLACE_UNSUPPORTED( v, t ) CRITICAL3("E103 - Sub in place unsupported for variable of given datatype", v, t );
+#define CRITICAL_HEX_UNSUPPORTED( v, t ) CRITICAL3("E104 - HEX unsupported for variable of given datatype", v, t );
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
 #define WARNING2i( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%i) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -2113,6 +2115,7 @@ Variable *              variable_div( Environment * _environment, char * _source
 Variable *              variable_div2_const( Environment * _environment, char * _source, int _bits );
 void                    variable_global( Environment * _environment, char * _pattern );
 Variable *              variable_greater_than( Environment * _environment, char * _source, char * _dest, int _equal );
+Variable *              variable_hex( Environment * _environment, char * _value );
 Variable *              variable_import( Environment * _environment, char * _name, VariableType _type );
 Variable *              variable_increment( Environment * _environment, char * _source );
 Variable *              variable_less_than( Environment * _environment, char * _source, char * _dest, int _equal );
