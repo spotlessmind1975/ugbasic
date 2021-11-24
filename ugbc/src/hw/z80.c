@@ -3410,6 +3410,17 @@ void z80_bits_to_string( Environment * _environment, char * _number, char * _str
 
 }
 
+void z80_hex_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits ) {
+
+    MAKE_LABEL
+
+    inline( cpu_hex_to_string )
+
+    no_embedded( cpu_hex_to_string )
+
+}
+
+
 void z80_dsdefine( Environment * _environment, char * _string, char * _index ) {
 
     deploy_with_vars( dstring,src_hw_z80_dstring_asm, cpu_dstring_vars );

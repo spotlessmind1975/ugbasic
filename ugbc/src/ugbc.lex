@@ -189,6 +189,7 @@ H { return (H); }
 HALT { return (HALT); }
 HAS { return (HAS); }
 HEIGHT { return (HEIGHT); }
+HEX { return (HEX); }
 HIDE { return (HIDE); }
 HIDDEN { return (HIDDEN); }
 HIT { return (HIT); }

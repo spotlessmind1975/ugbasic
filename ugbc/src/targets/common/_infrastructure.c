@@ -3452,6 +3452,67 @@ Variable * variable_string_val( Environment * _environment, char * _value ) {
 }
 
 /**
+ * @brief Emit code for <b>= HEX( ... )</b>
+ * 
+ * @param _environment Current calling environment
+ * @param _value  Number to convert to hexadecimal
+ * @return Variable* Result of conversion
+ */
+/* <usermanual>
+@keyword HEX
+
+@english
+This function converts a number into hexadecimal.
+
+@italian
+Questa funzione converte un numero in formato esadecimale.
+
+@syntax = HEX( [number] )
+
+@example x = HEX( 42 )
+
+@target all
+ </usermanual> */
+Variable * variable_hex( Environment * _environment, char * _value ) {
+
+    MAKE_LABEL
+
+    Variable * originalValue = variable_retrieve( _environment, _value );
+    Variable * digits = NULL;
+    Variable * result = variable_temporary( _environment, VT_DSTRING, "(result of BIN)" );
+    Variable * pad = variable_temporary( _environment, VT_BYTE, "(is padding needed?)");
+
+    switch( VT_BITWIDTH( originalValue->type ) ) {
+        case 0:
+            CRITICAL_HEX_UNSUPPORTED( _value, DATATYPE_AS_STRING[originalValue->type]);
+            break;
+        case 32:
+            variable_store_string( _environment, result->name, "        " );
+            break;
+        case 16:
+            variable_store_string( _environment, result->name, "    " );
+            break;
+        case 8:
+            variable_store_string( _environment, result->name, "  " );
+            break;
+    }
+
+    char finishedLabel[MAX_TEMPORARY_STORAGE]; sprintf(finishedLabel, "%send", label); 
+    char padLabel[MAX_TEMPORARY_STORAGE]; sprintf(padLabel, "%spad", label); 
+    char truncateLabel[MAX_TEMPORARY_STORAGE]; sprintf(truncateLabel, "%strunc", label); 
+
+    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(result of hex)" );
+    Variable * size = variable_temporary( _environment, VT_BYTE, "(result of hex)" );
+    cpu_dswrite( _environment, result->realName );
+    cpu_dsdescriptor( _environment, result->realName, address->realName, size->realName );
+
+    cpu_hex_to_string( _environment, originalValue->realName, address->realName, size->realName, VT_BITWIDTH( originalValue->type ) );
+
+    return result;
+    
+}
+
+/**
  * @brief Emit code for <b>= STRING( ..., ... )</b>
  *
  * @param _environment Current calling environment
@@ -4260,7 +4321,6 @@ Variable * variable_bit( Environment * _environment, char * _value, char * _posi
         case 16:
         case 8:
             cpu_bit_check_extended( _environment, value->realName, position->realName, result->realName, VT_BITWIDTH( value->type ) );
-            cpu_bveq( _environment, result->realName, unsetLabel );
             break;
         case 0:
             CRITICAL_BIT_UNSUPPORTED( _value, DATATYPE_AS_STRING[value->type] );
