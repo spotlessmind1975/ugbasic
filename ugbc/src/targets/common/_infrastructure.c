@@ -5006,3 +5006,19 @@ int rgbi_extract_palette( unsigned char* _source, int _width, int _height, RGBi 
     return usedPalette;
 
 }
+
+float max_of_two(float _x, float _y) {
+   return (_x > _y) ? _x : _y;
+}
+
+float max_of_three(float _m, float _n, float _p) {
+   return max_of_two(max_of_two(_m, _n), _p);
+}
+
+float min_of_two(float _x, float _y) {
+   return (_x < _y) ? _x : _y;
+}
+
+float min_of_three(float _m, float _n, float _p) {
+   return min_of_two(min_of_two(_m, _n), _p);
+}

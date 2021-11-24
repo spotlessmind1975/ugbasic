@@ -337,10 +337,11 @@ extern unsigned int src_hw_chipset_mob_asm_len;
 #define cpu_mobhide( _environment, _index ) z80_mobhide( _environment, _index )
 #define cpu_mobat( _environment, _index, _x, _y ) z80_mobat( _environment, _index, _x, _y )
 #define cpu_mobrender( _environment, _on_vbl ) z80_mobrender( _environment, _on_vbl )
-#define cpu_mobcount( _environment, _index ) z80_mobinit( _environment, _index )
+#define cpu_mobcount( _environment, _index ) z80_mobcount( _environment, _index )
 #define cpu_sqroot( _environment, _number, _result ) z80_sqroot( _environment, _number, _result )
 #define cpu_dstring_vars( _environment ) z80_dstring_vars( _environment )
 
+#define cpu_protothread_vars( _environment ) z80_protothread_vars( _environment )
 #define cpu_protothread_loop( _environment ) z80_protothread_loop( _environment )
 #define cpu_protothread_register( _environment, _label, _index ) z80_protothread_register( _environment, _label, _index )
 #define cpu_protothread_register_at( _environment, _index, _label ) z80_protothread_register_at( _environment, _index, _label )

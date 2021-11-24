@@ -191,6 +191,29 @@ void zx_clear_key( Environment * _environment ) {
 
 }
 
+static int rgbConverterFunction( int _red, int _green, int _blue ) {
+    
+    int colorIndex = 0;
+    int j = 0;
+    int minDistance = 0xffffffff;
+
+    RGBi rgb;
+    rgb.red = _red;
+    rgb.green = _green;
+    rgb.blue = _blue;
+
+    for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
+        int distance = rgbi_distance(&SYSTEM_PALETTE[j], &rgb);
+        if (distance < minDistance) {
+            minDistance = distance;
+            colorIndex = j;
+        }
+    }
+
+    return colorIndex;
+
+}
+
 void zx_initialization( Environment * _environment ) {
 
     variable_import( _environment, "CURRENTWIDTH", VT_POSITION );
@@ -220,6 +243,8 @@ void zx_initialization( Environment * _environment ) {
     variable_global( _environment, "CLIPY1" );
     variable_import( _environment, "CLIPY2", VT_POSITION );
     variable_global( _environment, "CLIPY2" );
+
+    _environment->currentRgbConverterFunction = rgbConverterFunction;
 
 }
 

@@ -920,6 +920,8 @@ typedef struct _TileDescriptors {
 
 } TileDescriptors;
 
+typedef int (*RgbConverterFunction)(int, int, int);
+
 /**
  * @brief Structure of compilation environment
  * 
@@ -1128,6 +1130,11 @@ typedef struct _Environment {
      * Current graphical mode
      */
     int currentMode;
+
+    /**
+     * Current RGB converter
+     */
+    RgbConverterFunction currentRgbConverterFunction;
 
     /**
      * Temporary storage for array definition
@@ -1782,6 +1789,8 @@ void                    cmove( Environment * _environment, char * _dx, char * _d
 void                    cmove_direct( Environment * _environment, int _dx, int _dy );
 Variable *              collision_to( Environment * _environment, int _sprite );
 Variable *              collision_to_vars( Environment * _environment, char * _sprite );
+void                    color( Environment * _environment, int _index, int _shade );
+void                    color_vars( Environment * _environment, char * _index, char * _shade );
 void                    color_background( Environment * _environment, int _index, int _background_color );
 void                    color_background_vars( Environment * _environment, char * _index, char * _background_color );
 void                    color_border( Environment * _environment, int _border_color );
@@ -1913,9 +1922,13 @@ void                    loop( Environment * _environment, char *_label );
 // *M*
 //----------------------------------------------------------------------------
 
+float                   max_of_two(float _x, float _y);
+float                   max_of_three(float _m, float _n, float _p);
 Variable *              maximum( Environment * _environment, char * _source, char * _dest );
 void                    memorize( Environment * _environment );
 void                    memory_area_assign( MemoryArea * _first, Variable * _variable );
+float                   min_of_two(float _x, float _y);
+float                   min_of_three(float _m, float _n, float _p);
 Variable *              minimum( Environment * _environment, char * _source, char * _dest );
 void                    mob_at( Environment * _environment, char * _index, char * _x, char * _y );
 void                    mob_hide( Environment * _environment, char * _index );

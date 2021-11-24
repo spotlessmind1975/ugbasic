@@ -141,8 +141,34 @@ void ef936x_border_color( Environment * _environment, char * _border_color ) {
  * @param _index Index of the background color
  * @param _background_color Background color to use
  */
-void ef936x_background_color( Environment * _environment, char * _index, char * _background_color ) {
+void ef936x_background_color( Environment * _environment, int _index, int _background_color ) {
 
+    outline1("LDA #$%2.2x", _index );
+    outline0("STA $A7DB" );
+    outline1("LDD #$%4.4x", _background_color );
+    outline0("STB $A7DA" );
+    outline0("STA $A7DA" );
+    
+}
+
+/**
+ * @brief <i>VIC-II</i>: emit code to change background color
+ * 
+ * This function can be used to issue code aimed at changing the
+ * background color of the screen.
+ * 
+ * @param _environment Current calling environment
+ * @param _index Index of the background color
+ * @param _background_color Background color to use
+ */
+void ef936x_background_color_vars( Environment * _environment, char * _index, char * _background_color ) {
+
+    outline1("LDA %s", _index );
+    outline0("STA $A7DB" );
+    outline1("LDD %s", _background_color );
+    outline0("STB $A7DA" );
+    outline0("STA $A7DA" );
+    
 }
 
 /**
@@ -549,6 +575,14 @@ void ef936x_text( Environment * _environment, char * _text, char * _text_size, c
 
 }
 
+static int rgbConverterFunction( int _red, int _green, int _blue ) {
+    
+    return ( ( ( _blue >> 4 ) & 0x0f ) << 16 ) ||
+            ( ( ( _green >> 4 ) & 0x0f ) << 8 ) || 
+            ( ( ( _red >> 4 ) & 0x0f ) );
+
+}
+
 void ef936x_initialization( Environment * _environment ) {
 
     deploy( ef936xvars, src_hw_ef936x_vars_asm );
@@ -592,6 +626,27 @@ void ef936x_initialization( Environment * _environment ) {
     variable_global( _environment, "CLIPY2" );
 
     ef936x_cls( _environment );
+
+    _environment->fontWidth = 8;
+    _environment->fontHeight = 8;
+    _environment->screenWidth = 320;
+    _environment->screenHeight = 200;
+    _environment->screenTilesWidth = 40;
+    _environment->screenTilesHeight = 25;
+    _environment->screenColors = 16;
+
+    cpu_store_16bit( _environment, "CLIPX1", 0 );
+    cpu_store_16bit( _environment, "CLIPX2", _environment->screenWidth-1 );
+    cpu_store_16bit( _environment, "CLIPY1", 0 );
+    cpu_store_16bit( _environment, "CLIPY2", _environment->screenHeight-1 );
+    cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 40*200 );
+
+    cpu_store_16bit( _environment, "CURRENTWIDTH", _environment->screenWidth );
+    cpu_store_16bit( _environment, "CURRENTHEIGHT", _environment->screenHeight );
+    cpu_store_8bit( _environment, "CURRENTTILESWIDTH", _environment->screenTilesWidth );
+    cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight );
+
+    _environment->currentRgbConverterFunction = rgbConverterFunction;
 
 }
 

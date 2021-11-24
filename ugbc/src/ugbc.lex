@@ -100,8 +100,11 @@ CODE { return (CODE); }
 COLLISION { return (COLLISION); }
 COLON { return (COLON); }
 COLOR { return (COLOR); }
+COLOUR { return (COLOUR); }
 COLORS { return (COLORS); }
+COLOURS { return (COLOURS); }
 COLORMAP { return (COLORMAP); }
+COLOURMAP { return (COLOURMAP); }
 COMMA { return (COMMA); }
 COMMODORE { return (COMMODORE); }
 COMPRESS { return (COMPRESS); }
@@ -246,11 +249,13 @@ MINUS { return(MINUS); }
 MOB { return(MOB); }
 MOD { return(MOD); }
 MONOCOLOR { return(MONOCOLOR); }
+MONOCOLOUR { return(MONOCOLOUR); }
 MS { return (MILLISECOND); }
 MILLISECOND { return (MILLISECOND); }
 MILLISECONDS { return (MILLISECONDS); }
 MUL { return(MUL); }
 MULTICOLOR { return(MULTICOLOR); }
+MULTICOLOUR { return(MULTICOLOUR); }
 N { return (N); }
 NEXT { return (NEXT); }
 NEW { return (NEW); }
@@ -303,6 +308,7 @@ RENDER { return(RENDER); }
 REPEAT { return (REPEAT); }
 REPLACE { return (REPLACE); }
 RETURN { return (RETURN); }
+RGB { return (RGB); }
 RIGHT { return (RIGHT); }
 RIGHT\$ { return (RIGHT); }
 RND { return (RND); }

@@ -108,7 +108,25 @@ void gtia_border_color( Environment * _environment, char * _border_color ) {
  * @param _index Index of the background color
  * @param _background_color Background color to use
  */
-void gtia_background_color( Environment * _environment, char * _index, char * _background_color ) {
+void gtia_background_color( Environment * _environment, int _index, int _background_color ) {
+ 
+    outline1("LDA #$%2.2x", _background_color );
+    outline0("AND #$0f" );
+    outline1("STA $02C5+%d", (_index & 0x07) )
+
+}
+
+/**
+ * @brief <i>GTIA</i>: emit code to change background color
+ * 
+ * This function can be used to issue code aimed at changing the
+ * background color of the screen.
+ * 
+ * @param _environment Current calling environment
+ * @param _index Index of the background color
+ * @param _background_color Background color to use
+ */
+void gtia_background_color_vars( Environment * _environment, char * _index, char * _background_color ) {
  
     outline1("LDA %s", _index);
     outline0("AND #$07");
@@ -141,6 +159,43 @@ void gtia_disable_mcm( Environment * _environment ) {
 
 void gtia_bank_select( Environment * _environment, int _bank ) {
 
+}
+
+static int rgbConverterFunction( int _red, int _green, int _blue ) {
+    
+    int j;
+
+    RGBi rgb;
+    rgb.red = _red;
+    rgb.green = _green;
+    rgb.blue = _blue;
+
+    double r = (double)rgb.red / (double)255;
+    double g = (double)rgb.green / (double)255;
+    double b = (double)rgb.blue / (double)255;
+
+    double max = max_of_three(r, g, b);
+    double min = min_of_three(r, g, b);
+    double h = 0, l = 0;
+
+    l = (0.2126*(rgb.red) + 0.7152*(rgb.green) + 0.0722*(rgb.blue));
+
+    if ( (max-min) == 0 ) {
+        h = 0;
+    } else {
+        if ( max == r ) {
+            h = (g-b)/(max-min);
+        } else if ( max == g ) {
+            h = 2.0f + (b-r)/(max-min);
+        } else if ( max == b ) {
+            h = 4.0f + (r-g)/(max-min);
+        } else {
+            h = 0;
+        }
+    }
+
+    return ( (((int)h)& 0x0f ) <<4 ) | ( (((int)l)& 0x0f )) ;
+    
 }
 
 int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
@@ -1217,6 +1272,8 @@ void gtia_initialization( Environment * _environment ) {
     variable_global( _environment, "CLIPY2" );
 
     gtia_cls( _environment );
+
+    _environment->currentRgbConverterFunction = rgbConverterFunction;
 
 }
 

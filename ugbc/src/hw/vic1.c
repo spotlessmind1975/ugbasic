@@ -117,7 +117,27 @@ void vic1_border_color( Environment * _environment, char * _border_color ) {
  * @param _index Index of the background color
  * @param _background_color Background color to use
  */
-void vic1_background_color( Environment * _environment, char * _index, char * _background_color ) {
+void vic1_background_color( Environment * _environment, int _index, int _background_color ) {
+ 
+    outline1("LDA #$%2.2x", ( _background_color >> 4 ) );
+    outline0("STA MATHPTR0");
+    outline0("LDA $900F");
+    outline0("AND #$0F");
+    outline0("ORA MATHPTR0");
+    outline0("STA $900F");
+}
+
+/**
+ * @brief <i>VIC</i>: emit code to change background color
+ * 
+ * This function can be used to issue code aimed at changing the
+ * background color of the screen.
+ * 
+ * @param _environment Current calling environment
+ * @param _index Index of the background color
+ * @param _background_color Background color to use
+ */
+void vic1_background_color_vars( Environment * _environment, char * _index, char * _background_color ) {
  
     outline1("LDA %s", _background_color );
     outline0("ASL A");
@@ -233,6 +253,29 @@ void vic1_disable_mcm( Environment * _environment ) {
 
 void vic1_bank_select( Environment * _environment, int _bank ) {
     
+}
+
+static int rgbConverterFunction( int _red, int _green, int _blue ) {
+    
+    int colorIndex = 0;
+    int minDistance = 0xffffffff;
+    int j;
+
+    RGBi rgb;
+    rgb.red = _red;
+    rgb.green = _green;
+    rgb.blue = _blue;
+
+    for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
+        int distance = rgbi_distance(&SYSTEM_PALETTE[j], &rgb);
+        if (distance < minDistance) {
+            minDistance = distance;
+            colorIndex = j;
+        }
+    }
+
+    return colorIndex;
+
 }
 
 int vic1_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
@@ -611,6 +654,8 @@ void vic1_initialization( Environment * _environment ) {
     _environment->screenHeight = _environment->screenTilesHeight * 8;
     _environment->screenColors = 16;
     _environment->descriptors = precalculate_tile_descriptors_for_font( data_fontvic1_bin );
+
+    _environment->currentRgbConverterFunction = rgbConverterFunction;
 
 }
 

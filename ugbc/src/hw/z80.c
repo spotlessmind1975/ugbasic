@@ -439,7 +439,7 @@ void z80_compare_and_branch_8bit_const( Environment * _environment, char *_sourc
         MAKE_LABEL
 
         outline1("LD A, (%s)", _source);
-        outline0("CP $%2.2x", _destination );
+        outline1("CP $%2.2x", _destination );
         outline1("JP Z, %s", _label);
 
     no_embedded( cpu_compare_and_branch_8bit_const )

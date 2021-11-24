@@ -35,15 +35,15 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token OP_SEMICOLON OP_COLON OP_COMMA OP_PLUS OP_MINUS OP_INC OP_DEC OP_EQUAL OP_ASSIGN OP_LT OP_LTE OP_GT OP_GTE 
 %token OP_DISEQUAL OP_MULTIPLICATION OP_MULTIPLICATION2 OP_DOLLAR OP_DIVISION OP_DIVISION2 QM HAS IS OF OP_HASH OP_POW OP_ASSIGN_DIRECT
 
-%token RASTER DONE AT COLOR BORDER WAIT NEXT WITH BANK SPRITE DATA FROM OP CP 
+%token RASTER DONE AT COLOR COLOUR BORDER WAIT NEXT WITH BANK SPRITE DATA FROM OP CP 
 %token ENABLE DISABLE HALT ECM BITMAP SCREEN ON OFF ROWS VERTICAL SCROLL VAR AS TEMPORARY 
 %token XPEN YPEN PEEK GOTO HORIZONTAL MCM COMPRESS EXPAND LOOP REPEAT WHILE TEXT TILES
-%token COLORMAP SELECT MONOCOLOR MULTICOLOR COLLISION IF THEN HIT BACKGROUND TO RANDOM
+%token COLORMAP COLOURMAP SELECT MONOCOLOR MONOCOLOUR MULTICOLOR MULTICOLOUR COLLISION IF THEN HIT BACKGROUND TO RANDOM
 %token BYTE WORD POSITION CODE VARIABLES MS CYCLES WIDTH HEIGHT DWORD PEN CLEAR
 %token BEG END GAMELOOP ENDIF UP DOWN LEFT RIGHT AND RANDOMIZE GRAPHIC TEXTMAP
 %token POINT GOSUB RETURN POP OR ELSE NOT TRUE FALSE DO EXIT WEND UNTIL FOR STEP EVERY
 %token MID INSTR UPPER LOWER STR VAL STRING SPACE FLIP CHR ASC LEN MOD ADD MIN MAX SGN
-%token SIGNED ABS RND COLORS INK TIMER POWERING DIM ADDRESS PROC PROCEDURE CALL OSP CSP
+%token SIGNED ABS RND COLORS COLOURS INK TIMER POWERING DIM ADDRESS PROC PROCEDURE CALL OSP CSP
 %token SHARED MILLISECOND MILLISECONDS TICKS GLOBAL PARAM PRINT DEFAULT USE
 %token PAPER INVERSE REPLACE XOR IGNORE NORMAL WRITING ONLY LOCATE CLS HOME CMOVE
 %token CENTER CENTRE TAB SET CUP CDOWN CLEFT CRIGHT CLINE XCURS YCURS MEMORIZE REMEMBER
@@ -55,7 +55,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token BACK DEBUG CAN ELSEIF BUFFER LOAD SIZE MOB IMAGE PUT VISIBLE HIDDEN HIDE SHOW RENDER
 %token SQR TI CONST VBL POKE NOP FILL IN POSITIVE DEFINE ATARI ATARIXL C64 DRAGON DRAGON32 DRAGON64 PLUS4 ZX 
 %token FONT VIC20 PARALLEL YIELD SPAWN THREAD TASK IMAGES FRAME FRAMES XY YX ROLL MASKED USING TRANSPARENCY
-%token OVERLAYED CASE ENDSELECT OGP CGP ARRAY NEW GET DISTANCE TYPE MUL DIV
+%token OVERLAYED CASE ENDSELECT OGP CGP ARRAY NEW GET DISTANCE TYPE MUL DIV RGB
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -290,10 +290,23 @@ const_factor:
       | TRUE {
           $$ = 0xffffffff;
       }
+      | RGB OP const_expr OP_COMMA const_expr OP_COMMA const_expr CP {
+          if ( ((Environment *)_environment)->currentRgbConverterFunction ) {
+            $$ = ((Environment *)_environment)->currentRgbConverterFunction( $3, $5, $7 );
+          } else {
+            $$ = 0;
+          }
+      }
       | COLORS {
           $$ = ((Environment *)_environment)->screenColors;
       }
+      | COLOURS {
+          $$ = ((Environment *)_environment)->screenColors;
+      }
       | SCREEN COLORS {
+          $$ = ((Environment *)_environment)->screenColors;
+      }
+      | SCREEN COLOURS {
           $$ = ((Environment *)_environment)->screenColors;
       }
       | WIDTH {
@@ -628,6 +641,9 @@ random_definition_simple:
         $$ = random_value( _environment, VT_POSITION )->name;
     }
     | COLOR {
+        $$ = random_value( _environment, VT_COLOR )->name;
+    }
+    | COLOUR {
         $$ = random_value( _environment, VT_COLOR )->name;
     }
     | WIDTH {
@@ -1247,6 +1263,17 @@ exponential:
     | OP COLOR CP OP expr CP { 
         $$ = variable_cast( _environment, $5, VT_COLOR )->name;
       }
+    | OP COLOUR CP Integer { 
+        $$ = variable_temporary( _environment, VT_COLOR, "(COLOR value)" )->name;
+        variable_store( _environment, $$, $4 );
+      }
+    | OP COLOUR CP direct_integer { 
+        $$ = variable_temporary( _environment, VT_COLOR, "(COLOR value)" )->name;
+        variable_store( _environment, $$, $4 );
+      }
+    | OP COLOUR CP OP expr CP { 
+        $$ = variable_cast( _environment, $5, VT_COLOR )->name;
+      }
     | OP STRING CP Identifier { 
         $$ = variable_cast( _environment, $4, VT_DSTRING )->name;        
       }
@@ -1502,6 +1529,18 @@ exponential:
         $$ = variable_temporary( _environment, VT_COLOR, "(COLORS COUNT)" )->name;
         variable_store( _environment, $$, COLOR_COUNT );
     }
+    | COLOURS {
+        $$ = variable_temporary( _environment, VT_COLOR, "(COLORS)" )->name;
+        variable_store( _environment, $$, COLOR_COUNT );
+    }
+    | COLOURS COUNT {
+        $$ = variable_temporary( _environment, VT_COLOR, "(COLORS COUNT)" )->name;
+        variable_store( _environment, $$, COLOR_COUNT );
+    }
+    | COLOUR COUNT {
+        $$ = variable_temporary( _environment, VT_COLOR, "(COLORS COUNT)" )->name;
+        variable_store( _environment, $$, COLOR_COUNT );
+    }
     | THREAD {
         Variable * var = variable_temporary( _environment, VT_THREAD, "(THREAD)" );
         cpu_protothread_current( _environment, var->realName );
@@ -1520,6 +1559,14 @@ exponential:
         $$ = variable_temporary( _environment, VT_COLOR, "(COLORS)" )->name;
         variable_store( _environment, $$, COLOR_COUNT );
     }
+    | SCREEN COLOURS {
+        $$ = variable_temporary( _environment, VT_COLOR, "(SCREEN COLORS)" )->name;
+        variable_store( _environment, $$, ((Environment *)_environment)->screenColors );
+    }
+    | PEN COLOURS {
+        $$ = variable_temporary( _environment, VT_COLOR, "(COLORS)" )->name;
+        variable_store( _environment, $$, COLOR_COUNT );
+    }
     | PEN DEFAULT {
         $$ = variable_temporary( _environment, VT_COLOR, "(COLORS)" )->name;
         variable_store( _environment, $$, COLOR_WHITE );
@@ -1529,6 +1576,10 @@ exponential:
         variable_store( _environment, $$, COLOR_WHITE );
     }
     | PAPER COLORS {
+        $$ = variable_temporary( _environment, VT_COLOR, "(COLORS)" )->name;
+        variable_store( _environment, $$, COLOR_COUNT );
+    }
+    | PAPER COLOURS {
         $$ = variable_temporary( _environment, VT_COLOR, "(COLORS)" )->name;
         variable_store( _environment, $$, COLOR_COUNT );
     }
@@ -2006,10 +2057,19 @@ sprite_definition_simple:
   | direct_integer MULTICOLOR {
       sprite_multicolor( _environment, $1 );
   }
+  | direct_integer MULTICOLOUR {
+      sprite_multicolor( _environment, $1 );
+  }
   | direct_integer MONOCOLOR {
       sprite_monocolor( _environment, $1 );
   }
+  | direct_integer MONOCOLOUR {
+      sprite_monocolor( _environment, $1 );
+  }
   | direct_integer COLOR direct_integer {
+      sprite_color( _environment, $1, $3 );
+  }
+  | direct_integer COLOUR direct_integer {
       sprite_color( _environment, $1, $3 );
   }
   | direct_integer position OP direct_integer OP_COMMA direct_integer CP {
@@ -2053,10 +2113,19 @@ sprite_definition_expression:
   | expr MULTICOLOR {
       sprite_multicolor_var( _environment, $1 );
   }
+  | expr MULTICOLOUR {
+      sprite_multicolor_var( _environment, $1 );
+  }
   | expr MONOCOLOR {
       sprite_monocolor_var( _environment, $1 );
   }
+  | expr MONOCOLOUR {
+      sprite_monocolor_var( _environment, $1 );
+  }
   | expr COLOR expr {
+      sprite_color_vars( _environment, $1, $3 );
+  }
+  | expr COLOUR expr {
       sprite_color_vars( _environment, $1, $3 );
   }
   | expr position OP expr OP_COMMA expr CP {
@@ -2707,6 +2776,9 @@ datatype :
     | COLOR {
         $$ = VT_COLOR;
     }
+    | COLOUR {
+        $$ = VT_COLOR;
+    }
     | STRING {
         $$ = VT_DSTRING;
     }
@@ -3353,6 +3425,7 @@ statement:
   | RASTER raster_definition
   | NEXT RASTER next_raster_definition
   | COLOR color_definition
+  | COLOUR color_definition
   | WAIT wait_definition
   | SPRITE sprite_definition
   | BITMAP bitmap_definition
@@ -3361,6 +3434,7 @@ statement:
   | TEXT text_definition
   | TILES tiles_definition
   | COLORMAP colormap_definition
+  | COLOURMAP colormap_definition
   | SCREEN screen_definition
   | POINT point_definition
   | PLOT plot_definition
