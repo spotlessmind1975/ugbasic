@@ -3,7 +3,7 @@ REM Starfield, by S.Devulder for ugBasic
 CONST numr  =  1000 : REM num of random position in pool 
 CONST nums  =    20 : REM number of stars in starfield
 CONST speed =     8 : REM speed of stars (smaller = faster)
-CONST clock =    50 : REM increment of TI per second
+CONST clock =    50 : REM Number of TI per second
 CONST bg    = BLACK : REM background color
 
 DIM xrnd AS POSITION (numr+1)
@@ -16,8 +16,8 @@ DIM ctab AS BYTE (nums+1)
 BITMAP ENABLE (320,200,2)
 REM BITMAP ENABLE(320,200,4)
 REM BITMAP ENABLE(160,200,16)
-COLOR BORDER bg 
 CLS bg
+COLOR BORDER bg 
 
 REM init pool of random position (faster than calling RND over and over again)
 FOR i=0 TO numr
@@ -39,6 +39,9 @@ NEXT
 VAR x0 AS SIGNED WORD = (SCREEN WIDTH / 2)
 VAR y0 AS SIGNED WORD = (SCREEN HEIGHT / 2)
 
+VAR x AS SIGNED WORD = 0
+VAR y AS SIGNED WORD = 0
+
 TI=0: frames = 0
 DO
 	INC frames
@@ -55,7 +58,7 @@ DO
 		t = ytab(i)	
 		y = t + (t - y0)/speed
 		
-		IF ((x OR y)<0) OR (y>=SCREEN HEIGHT) OR (x>=SCREEN WIDTH) THEN
+		IF (((x OR y)<0) OR (y>=SCREEN HEIGHT)) OR (x>=SCREEN WIDTH) THEN
 			REPEAT
 				x = xrnd(irnd)
 				y = yrnd(irnd)
