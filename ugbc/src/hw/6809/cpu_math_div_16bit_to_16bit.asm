@@ -119,26 +119,27 @@ CPUMATHDIV16BITTO16BITL2
     RTS
 
 CPUMATHDIV16BITTO16BIT_SIGNED
-    PSHS  D,X,Y   ; Y doesn't matter. It is just a placeholder for the sign
-    EORA  2,S     ; compute sign of result
-    STA   4,S     ; store it on stack
-    LDD   #0      ; D=-X
-    SUBD  2,S     ; X < 0 ?
+    STD   <MATHPTR0
+    STX   <MATHPTR2
+    EORA  <MATHPTR2 ; compute sign of result
+    STA   <MATHPTR5 ; store it on stack
+    LDD   #0        ; D=-X
+    SUBD  <MATHPTR2 ; X < 0 ?
     BMI   CPUMATHDIV16BITTO16BIT_SIGNED1
-    STD   2,S     ; yes ==> repmace with -X
+    STD   <MATHPTR2 ; yes ==> repmace with -X
 CPUMATHDIV16BITTO16BIT_SIGNED1
-    PULS  D,X
-    TSTA          ; D < 0 ?
+    LDX   <MATHPTR2
+    LDD   <MATHPTR0 ; D < 0 ?
     BPL   CPUMATHDIV16BITTO16BIT_SIGNED2
-    NEGA          ; yes => negate D
+    NEGA            ; yes => negate D
     NEGB
     SBCA  #0
 CPUMATHDIV16BITTO16BIT_SIGNED2    
     BSR   CPUMATHDIV16BITTO16BIT
-    TST   ,S++    ; get sign of result
+    TST   <MATHPTR5 ; get sign of result
     BPL   CPUMATHDIV16BITTO16BIT_SIGNED3    
-    NEGA          ; negative ? 
-    NEGB          ; yes => negate D
+    NEGA            ; negative ? 
+    NEGB            ; yes => negate D
     SBCA  #0
 CPUMATHDIV16BITTO16BIT_SIGNED3
     RTS
