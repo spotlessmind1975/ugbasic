@@ -810,6 +810,7 @@ typedef struct _Embedded {
     int cpu_number_to_string;
     int cpu_move_8bit_indirect_with_offset;
     int cpu_bits_to_string;
+    int cpu_hex_to_string;
     int cpu_bit_check_extended;
     int cpu_move_8bit_indirect_with_offset2;
     int cpu_dsdefine;
@@ -919,6 +920,8 @@ typedef struct _TileDescriptors {
     TileData            data[256];
 
 } TileDescriptors;
+
+typedef int (*RgbConverterFunction)(int, int, int);
 
 /**
  * @brief Structure of compilation environment
@@ -1130,6 +1133,11 @@ typedef struct _Environment {
     int currentMode;
 
     /**
+     * Current RGB converter
+     */
+    RgbConverterFunction currentRgbConverterFunction;
+
+    /**
      * Temporary storage for array definition
      */
     int arrayDimensions;
@@ -1203,6 +1211,11 @@ typedef struct _Environment {
      * Screen height in pixels (statically determined)
      */
     int screenHeight;
+
+    /**
+     * Screen shades (statically determined)
+     */
+    int screenShades;
 
     /**
      * Screen colors (statically determined)
@@ -1399,6 +1412,9 @@ typedef struct _Environment {
 #define CRITICAL_INVALID_MULTIPLICATOR2( d ) CRITICAL2i("E099 - invalid multiplicator for MULTIPLICATOR2, must be power of two", d );
 #define CRITICAL_INVALID_TASK_COUNT( d ) CRITICAL2i("E100 - invalid number of tasks for multitasking", d);
 #define CRITICAL_CANNOT_COMPARE_WITH_CASE( d ) CRITICAL2("E101 - cannot compare with case", d);
+#define CRITICAL_ADD_INPLACE_UNSUPPORTED( v, t ) CRITICAL3("E102 - Add in place unsupported for variable of given datatype", v, t );
+#define CRITICAL_SUB_INPLACE_UNSUPPORTED( v, t ) CRITICAL3("E103 - Sub in place unsupported for variable of given datatype", v, t );
+#define CRITICAL_HEX_UNSUPPORTED( v, t ) CRITICAL3("E104 - HEX unsupported for variable of given datatype", v, t );
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
 #define WARNING2i( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%i) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -1780,6 +1796,8 @@ void                    cmove( Environment * _environment, char * _dx, char * _d
 void                    cmove_direct( Environment * _environment, int _dx, int _dy );
 Variable *              collision_to( Environment * _environment, int _sprite );
 Variable *              collision_to_vars( Environment * _environment, char * _sprite );
+void                    color( Environment * _environment, int _index, int _shade );
+void                    color_vars( Environment * _environment, char * _index, char * _shade );
 void                    color_background( Environment * _environment, int _index, int _background_color );
 void                    color_background_vars( Environment * _environment, char * _index, char * _background_color );
 void                    color_border( Environment * _environment, int _border_color );
@@ -1911,9 +1929,13 @@ void                    loop( Environment * _environment, char *_label );
 // *M*
 //----------------------------------------------------------------------------
 
+float                   max_of_two(float _x, float _y);
+float                   max_of_three(float _m, float _n, float _p);
 Variable *              maximum( Environment * _environment, char * _source, char * _dest );
 void                    memorize( Environment * _environment );
 void                    memory_area_assign( MemoryArea * _first, Variable * _variable );
+float                   min_of_two(float _x, float _y);
+float                   min_of_three(float _m, float _n, float _p);
 Variable *              minimum( Environment * _environment, char * _source, char * _dest );
 void                    mob_at( Environment * _environment, char * _index, char * _x, char * _y );
 void                    mob_hide( Environment * _environment, char * _index );
@@ -2074,6 +2096,7 @@ void                    tiles_at_var( Environment * _environment, char * _addres
 //----------------------------------------------------------------------------
 
 Variable *              variable_add( Environment * _environment, char * _source, char * _dest );
+void                    variable_add_inplace( Environment * _environment, char * _source, char * _dest );
 Variable *              variable_and( Environment * _environment, char * _left, char * _right );
 Variable *              variable_and_const( Environment * _environment, char * _source, int _mask );
 void                    variable_array_fill( Environment * _environment, char * _name, int _value );
@@ -2092,6 +2115,7 @@ Variable *              variable_div( Environment * _environment, char * _source
 Variable *              variable_div2_const( Environment * _environment, char * _source, int _bits );
 void                    variable_global( Environment * _environment, char * _pattern );
 Variable *              variable_greater_than( Environment * _environment, char * _source, char * _dest, int _equal );
+Variable *              variable_hex( Environment * _environment, char * _value );
 Variable *              variable_import( Environment * _environment, char * _name, VariableType _type );
 Variable *              variable_increment( Environment * _environment, char * _source );
 Variable *              variable_less_than( Environment * _environment, char * _source, char * _dest, int _equal );
@@ -2135,6 +2159,7 @@ Variable *              variable_string_string( Environment * _environment, char
 Variable *              variable_string_upper( Environment * _environment, char * _string );
 Variable *              variable_string_val( Environment * _environment, char * _value );
 Variable *              variable_sub( Environment * _environment, char * _source, char * _dest );
+void                    variable_sub_inplace( Environment * _environment, char * _source, char * _dest );
 Variable *              variable_temporary( Environment * _environment, VariableType _type, char * _meaning );
 Variable *              variable_resident( Environment * _environment, VariableType _type, char * _meaning );
 

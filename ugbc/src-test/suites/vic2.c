@@ -509,7 +509,7 @@ void test_vic2_background_color_payload( TestEnvironment * _te ) {
     _te->debug.inspections[0].size=1;
     ++_te->debug.inspections_count;
 
-    vic2_background_color( e, "#0", red->realName );
+    vic2_background_color_vars( e, "#0", red->realName );
 
     _te->trackedVariables[0] = red;
 

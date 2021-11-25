@@ -1447,6 +1447,49 @@ Variable * variable_add( Environment * _environment, char * _source, char * _des
 }
 
 /**
+ * @brief Add two variable and return the sum of them on the first
+ * 
+ * This function allows you to sum the value of two variables. Note 
+ * that both variables must pre-exist before the operation, 
+ * under penalty of an exception.
+ * 
+ * @pre _source and _destination variables must exist
+ * 
+ * @param _environment Current calling environment
+ * @param _source Source variable's name and destination of sum
+ * @param _destination Value to sum
+ * @throw EXIT_FAILURE "Destination variable does not cast"
+ * @throw EXIT_FAILURE "Source variable does not exist"
+ */
+void variable_add_inplace( Environment * _environment, char * _source, char * _destination ) {
+
+    Variable * source = variable_retrieve( _environment, _source );
+    if ( source->type == VT_STRING ) {
+        source = variable_cast( _environment, _source, VT_DSTRING );
+    }
+
+    Variable * target = variable_cast( _environment, _destination, source->type );
+    if ( ! target ) {
+        CRITICAL_VARIABLE(_destination);
+    }
+
+    switch( VT_BITWIDTH( source->type ) ) {
+        case 32:
+            cpu_math_add_32bit( _environment, source->realName, target->realName, source->realName );
+            break;
+        case 16:
+            cpu_math_add_16bit( _environment, source->realName, target->realName, source->realName );
+            break;
+        case 8:
+            cpu_math_add_8bit( _environment, source->realName, target->realName, source->realName );
+            break;
+        case 0:
+            CRITICAL_ADD_INPLACE_UNSUPPORTED( _source, DATATYPE_AS_STRING[source->type]);
+    }
+
+}
+
+/**
  * @brief Make a differenze between two variable and return the difference of them
  * 
  * This function allows you to difference the value of two variables. Note 
@@ -1480,6 +1523,40 @@ Variable * variable_sub( Environment * _environment, char * _source, char * _des
             CRITICAL_SUB_UNSUPPORTED( _source, DATATYPE_AS_STRING[source->type]);
      }
     return result;
+}
+
+/**
+ * @brief Make a differenze between two variable and assign the difference of them to the first
+ * 
+ * This function allows you to difference the value of two variables. Note 
+ * that both variables must pre-exist before the operation, 
+ * under penalty of an exception.
+ * 
+ * @pre _source and _destination variables must exist
+ * 
+ * @param _environment Current calling environment
+ * @param _source Source variable's name and destination of the subtraction
+ * @param _destination Destination variable's name
+ * @throw EXIT_FAILURE "Destination variable does not cast"
+ * @throw EXIT_FAILURE "Source variable does not exist"
+ */
+void variable_sub_inplace( Environment * _environment, char * _source, char * _dest ) {
+    Variable * source = variable_retrieve( _environment, _source );
+    Variable * target = variable_cast( _environment, _dest, source->type );
+    switch( VT_BITWIDTH( source->type ) ) {
+        case 32:
+            cpu_math_sub_32bit( _environment, source->realName, target->realName, source->realName );
+            break;
+        case 16:
+            cpu_math_sub_16bit( _environment, source->realName, target->realName, source->realName );
+            break;
+        case 8:
+            cpu_math_sub_8bit( _environment, source->realName, target->realName, source->realName );
+            break;
+        case 0:
+            CRITICAL_SUB_INPLACE_UNSUPPORTED( _source, DATATYPE_AS_STRING[source->type]);
+     }
+
 }
 
 /**
@@ -1598,18 +1675,18 @@ Variable * variable_div( Environment * _environment, char * _source, char * _des
     Variable * remainder = NULL;
     switch( VT_BITWIDTH( source->type ) ) {
         case 32:
-            result = variable_temporary( _environment, VT_DWORD, "(result of division)" );
-            remainder = variable_temporary( _environment, VT_WORD, "(remainder of division)" );
+            result = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SWORD : VT_WORD, "(result of division)" );
+            remainder = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SWORD : VT_WORD, "(remainder of division)" );
             cpu_math_div_32bit_to_16bit( _environment, source->realName, target->realName, result->realName, remainder->realName, VT_SIGNED( source->type ) );
             break;
         case 16:
-            result = variable_temporary( _environment, VT_WORD, "(result of division)" );
-            remainder = variable_temporary( _environment, VT_WORD, "(remainder of division)" );
+            result = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SWORD : VT_WORD, "(result of division)" );
+            remainder = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SWORD : VT_WORD, "(remainder of division)" );
             cpu_math_div_16bit_to_16bit( _environment, source->realName, target->realName, result->realName, remainder->realName, VT_SIGNED( source->type ) );
             break;
         case 8:
-            result = variable_temporary( _environment, VT_BYTE, "(result of division)" );
-            remainder = variable_temporary( _environment, VT_BYTE, "(remainder of division)" );
+            result = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SBYTE : VT_BYTE, "(result of division)" );
+            remainder = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SBYTE : VT_BYTE, "(remainder of division)" );
             cpu_math_div_8bit_to_8bit( _environment, source->realName, target->realName, result->realName, remainder->realName, VT_SIGNED( source->type ) );
             break;
         case 0:
@@ -3375,6 +3452,67 @@ Variable * variable_string_val( Environment * _environment, char * _value ) {
 }
 
 /**
+ * @brief Emit code for <b>= HEX( ... )</b>
+ * 
+ * @param _environment Current calling environment
+ * @param _value  Number to convert to hexadecimal
+ * @return Variable* Result of conversion
+ */
+/* <usermanual>
+@keyword HEX
+
+@english
+This function converts a number into hexadecimal.
+
+@italian
+Questa funzione converte un numero in formato esadecimale.
+
+@syntax = HEX( [number] )
+
+@example x = HEX( 42 )
+
+@target all
+ </usermanual> */
+Variable * variable_hex( Environment * _environment, char * _value ) {
+
+    MAKE_LABEL
+
+    Variable * originalValue = variable_retrieve( _environment, _value );
+    Variable * digits = NULL;
+    Variable * result = variable_temporary( _environment, VT_DSTRING, "(result of BIN)" );
+    Variable * pad = variable_temporary( _environment, VT_BYTE, "(is padding needed?)");
+
+    switch( VT_BITWIDTH( originalValue->type ) ) {
+        case 0:
+            CRITICAL_HEX_UNSUPPORTED( _value, DATATYPE_AS_STRING[originalValue->type]);
+            break;
+        case 32:
+            variable_store_string( _environment, result->name, "        " );
+            break;
+        case 16:
+            variable_store_string( _environment, result->name, "    " );
+            break;
+        case 8:
+            variable_store_string( _environment, result->name, "  " );
+            break;
+    }
+
+    char finishedLabel[MAX_TEMPORARY_STORAGE]; sprintf(finishedLabel, "%send", label); 
+    char padLabel[MAX_TEMPORARY_STORAGE]; sprintf(padLabel, "%spad", label); 
+    char truncateLabel[MAX_TEMPORARY_STORAGE]; sprintf(truncateLabel, "%strunc", label); 
+
+    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(result of hex)" );
+    Variable * size = variable_temporary( _environment, VT_BYTE, "(result of hex)" );
+    cpu_dswrite( _environment, result->realName );
+    cpu_dsdescriptor( _environment, result->realName, address->realName, size->realName );
+
+    cpu_hex_to_string( _environment, originalValue->realName, address->realName, size->realName, VT_BITWIDTH( originalValue->type ) );
+
+    return result;
+    
+}
+
+/**
  * @brief Emit code for <b>= STRING( ..., ... )</b>
  *
  * @param _environment Current calling environment
@@ -3716,7 +3854,7 @@ static Variable * calculate_offset_in_array( Environment * _environment, char * 
         }
         Variable * index = variable_retrieve( _environment, _environment->arrayIndexesEach[_environment->arrayNestedIndex][array->arrayDimensions-i-1]);
         Variable * additionalOffset = variable_mul( _environment, index->name, base->name );
-        offset = variable_add( _environment, offset->name, additionalOffset->name );
+        variable_add_inplace( _environment, offset->name, additionalOffset->name );
     }
 
     return offset;
@@ -4183,15 +4321,6 @@ Variable * variable_bit( Environment * _environment, char * _value, char * _posi
         case 16:
         case 8:
             cpu_bit_check_extended( _environment, value->realName, position->realName, result->realName, VT_BITWIDTH( value->type ) );
-            cpu_bveq( _environment, result->realName, unsetLabel );
-
-            cpu_label( _environment, setLabel );
-            cpu_store_8bit( _environment, result->realName, 0xff );
-            cpu_jump( _environment, endLabel );
-
-            cpu_label( _environment, unsetLabel );
-            cpu_store_8bit( _environment, result->realName, 0 );
-            cpu_label( _environment, endLabel );
             break;
         case 0:
             CRITICAL_BIT_UNSUPPORTED( _value, DATATYPE_AS_STRING[value->type] );
@@ -4928,4 +5057,20 @@ int rgbi_extract_palette( unsigned char* _source, int _width, int _height, RGBi 
 
     return usedPalette;
 
+}
+
+float max_of_two(float _x, float _y) {
+   return (_x > _y) ? _x : _y;
+}
+
+float max_of_three(float _m, float _n, float _p) {
+   return max_of_two(max_of_two(_m, _n), _p);
+}
+
+float min_of_two(float _x, float _y) {
+   return (_x < _y) ? _x : _y;
+}
+
+float min_of_three(float _m, float _n, float _p) {
+   return min_of_two(min_of_two(_m, _n), _p);
 }

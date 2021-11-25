@@ -76,7 +76,8 @@ void vic1_initialization( Environment * _environment );
 void vic1_finalization( Environment * _environment );
 
 void vic1_back( Environment * _environment );
-void vic1_background_color( Environment * _environment, char * _index, char * _background_color );
+void vic1_background_color( Environment * _environment, int _index, int _background_color );
+void vic1_background_color_vars( Environment * _environment, char * _index, char * _background_color );
 void vic1_border_color( Environment * _environment, char * _border_color );
 void vic1_collision( Environment * _environment, char * _sprite_mask, char * _result );
 void vic1_hit( Environment * _environment, char * _sprite_mask, char * _result );
