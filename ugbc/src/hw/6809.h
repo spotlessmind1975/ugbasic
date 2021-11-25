@@ -154,6 +154,7 @@ void cpu6809_bit_check( Environment * _environment, char * _value, int _position
 void cpu6809_bit_check_extended( Environment * _environment, char * _value, char * _position, char *_result, int _bitwidth );
 void cpu6809_number_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits, int _Signed );
 void cpu6809_bits_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits );
+void cpu6809_hex_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits );
 void cpu6809_move_8bit_indirect_with_offset2( Environment * _environment, char *_source, char * _value, char * _offset );
 void cpu6809_dsdefine( Environment * _environment, char * _string, char * _index );
 void cpu6809_dsalloc( Environment * _environment, char * _size, char * _index );
@@ -311,6 +312,7 @@ void cpu6809_protothread_current( Environment * _environment, char * _current );
 #define cpu_bit_check( _environment, _value, _position, _result, _bitwidth ) cpu6809_bit_check( _environment, _value, _position, _result, _bitwidth )
 #define cpu_number_to_string( _environment, _number, _string, _string_size, _bits, _signed ) cpu6809_number_to_string( _environment, _number, _string, _string_size, _bits, _signed )
 #define cpu_bits_to_string( _environment, _number, _string, _string_size, _bits ) cpu6809_bits_to_string( _environment, _number, _string, _string_size, _bits )
+#define cpu_hex_to_string( _environment, _number, _string, _string_size, _bits ) cpu6809_hex_to_string( _environment, _number, _string, _string_size, _bits )
 #define cpu_bit_check_extended( _environment, _value, _position, _result, _bitwidth ) cpu6809_bit_check_extended( _environment, _value, _position, _result, _bitwidth )
 #define cpu_move_8bit_indirect_with_offset( _environment, _source, _value, _offset ) cpu6809_move_8bit_indirect_with_offset( _environment, _source, _value, _offset )
 #define cpu_move_8bit_indirect_with_offset2( _environment, _source, _value, _offset ) cpu6809_move_8bit_indirect_with_offset2( _environment, _source, _value, _offset )

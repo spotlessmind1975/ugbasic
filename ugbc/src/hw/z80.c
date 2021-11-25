@@ -439,7 +439,7 @@ void z80_compare_and_branch_8bit_const( Environment * _environment, char *_sourc
         MAKE_LABEL
 
         outline1("LD A, (%s)", _source);
-        outline0("CP $%2.2x", _destination );
+        outline1("CP $%2.2x", _destination );
         outline1("JP Z, %s", _label);
 
     no_embedded( cpu_compare_and_branch_8bit_const )
@@ -3409,6 +3409,17 @@ void z80_bits_to_string( Environment * _environment, char * _number, char * _str
     outline0("LD (HL), A" );
 
 }
+
+void z80_hex_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits ) {
+
+    MAKE_LABEL
+
+    inline( cpu_hex_to_string )
+
+    no_embedded( cpu_hex_to_string )
+
+}
+
 
 void z80_dsdefine( Environment * _environment, char * _string, char * _index ) {
 

@@ -65,9 +65,7 @@ void end_for( Environment * _environment ) {
     unsigned char beginFor[MAX_TEMPORARY_STORAGE]; sprintf(beginFor, "%sbf", loop->label );
     unsigned char endFor[MAX_TEMPORARY_STORAGE]; sprintf(endFor, "%sbis", loop->label );
 
-    Variable * incrementedIndex = variable_add( _environment, loop->index->name, loop->step->name );
-
-    variable_move_naked( _environment, incrementedIndex->name, loop->index->name );
+    variable_add_inplace( _environment, loop->index->name, loop->step->name );
 
     if ( _environment->procedureName && _environment->protothread ) {
         yield( _environment );

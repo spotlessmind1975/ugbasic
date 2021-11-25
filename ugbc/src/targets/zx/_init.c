@@ -93,6 +93,7 @@ void target_linkage( Environment * _environment ) {
     char commandLine[2*MAX_TEMPORARY_STORAGE];
     char executableName[64];
     char binaryName[64];
+    char listingFileName[64];
     
     if ( _environment->outputFileType != OUTPUT_FILE_TYPE_TAP ) {
         CRITICAL_UNSUPPORTED_OUTPUT_FILE_TYPE( OUTPUT_FILE_TYPE_AS_STRING[_environment->outputFileType] );

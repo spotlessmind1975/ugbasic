@@ -3302,6 +3302,7 @@ void cpu6502_dec_16bit( Environment * _environment, char * _variable ) {
     inline( cpu_dec_16bit )
 
         outline1("DEC %s", _variable );
+        outline1("LDA %s", _variable );
         outline0("CMP #$FF" );
         outline1("BNE %s", label );
         outline1("DEC %s+1", _variable );
@@ -4538,6 +4539,16 @@ void cpu6502_bits_to_string( Environment * _environment, char * _number, char * 
     outline0("STA (TMPPTR2),Y");
     outline0("DEY");
     outline1("BPL %sLOOP", label );
+
+}
+
+void cpu6502_hex_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits ) {
+
+    MAKE_LABEL
+
+    inline( cpu_hex_to_string )
+
+    no_embedded( cpu_hex_to_string )
 
 }
 

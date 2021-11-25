@@ -62,10 +62,7 @@ Modifica il colore dello sfondo tra quelli disponibili.
 </usermanual> */
 void color_background( Environment * _environment, int _index, int _background_color ) {
 
-    char index[MAX_TEMPORARY_STORAGE]; sprintf(index, "#$%2.2x", _index );
-    char background_color[MAX_TEMPORARY_STORAGE]; sprintf(background_color, "#$%2.2x", _background_color );
-
-    vic1_background_color( _environment, index, background_color );
+    vic1_background_color( _environment, _index, _background_color );
 
 }
 
@@ -94,6 +91,6 @@ void color_background_vars( Environment * _environment, char * _index, char * _b
 
     Variable * background_color = variable_retrieve( _environment, _background_color );
 
-    vic1_background_color( _environment, index->realName, background_color->realName );
+    vic1_background_color_vars( _environment, index->realName, background_color->realName );
 
 }

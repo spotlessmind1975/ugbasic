@@ -95,7 +95,24 @@ void ted_border_color( Environment * _environment, char * _border_color ) {
  * @param _index Index of the background color
  * @param _background_color Background color to use
  */
-void ted_background_color( Environment * _environment, char * _index, char * _background_color ) {
+void ted_background_color( Environment * _environment, int _index, int _background_color ) {
+ 
+    outline1("LDA %2.2x", _background_color);
+    outline0("AND #$0f");
+    outline1("STA $FF15+%d", ( _index & 0x03 ) );
+}
+
+/**
+ * @brief <i>TED</i>: emit code to change background color
+ * 
+ * This function can be used to issue code aimed at changing the
+ * background color of the screen.
+ * 
+ * @param _environment Current calling environment
+ * @param _index Index of the background color
+ * @param _background_color Background color to use
+ */
+void ted_background_color_vars( Environment * _environment, char * _index, char * _background_color ) {
  
     outline1("LDA %s", _index);
     outline0("AND #$03");
@@ -219,6 +236,29 @@ void ted_disable_mcm( Environment * _environment ) {
 }
 
 void ted_bank_select( Environment * _environment, int _bank ) {
+
+}
+
+static int rgbConverterFunction( int _red, int _green, int _blue ) {
+    
+    int colorIndex = 0;
+    int minDistance = 0xffffffff;
+    int j;
+
+    RGBi rgb;
+    rgb.red = _red;
+    rgb.green = _green;
+    rgb.blue = _blue;
+
+    for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
+        int distance = rgbi_distance(&SYSTEM_PALETTE[j], &rgb);
+        if (distance < minDistance) {
+            minDistance = distance;
+            colorIndex = j;
+        }
+    }
+
+    return colorIndex;
 
 }
 
@@ -674,6 +714,9 @@ void ted_initialization( Environment * _environment ) {
     variable_global( _environment, "CLIPY2" );
 
     ted_cls( _environment );
+
+    _environment->currentRgbConverterFunction = rgbConverterFunction;
+    _environment->screenShades = 16;
 
 }
 
