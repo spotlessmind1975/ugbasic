@@ -3,6 +3,7 @@ REM Starfield, by S.Devulder for ugBasic
 CONST numr  =  1000 : REM num of random position in pool 
 CONST nums  =    20 : REM number of stars in starfield
 CONST speed =     8 : REM speed of stars (smaller = faster)
+CONST clock =    50 : REM increment of TI per second
 CONST bg    = BLACK : REM background color
 
 DIM xrnd AS POSITION (numr+1)
@@ -38,10 +39,15 @@ NEXT
 VAR x0 AS SIGNED WORD = (SCREEN WIDTH / 2)
 VAR y0 AS SIGNED WORD = (SCREEN HEIGHT / 2)
 
-TI=0
+TI=0: frames = 0
 DO
+	INC frames
 	PLOT x0,y0,WHITE
-	LOCATE 0,0 : PRINT TI;"    "; : TI = 0
+	IF TI>=clock THEN 
+		LOCATE 0,0 : PRINT frames;"    ";
+		frames = 0 
+		TI = 0
+	ENDIF
 	FOR i=0 TO nums
 		z = xtab(i)
 		x = z + (z - x0)/speed
