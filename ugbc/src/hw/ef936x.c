@@ -172,6 +172,26 @@ void ef936x_background_color_vars( Environment * _environment, char * _index, ch
 }
 
 /**
+ * @brief <i>VIC-II</i>: emit code to change background color
+ * 
+ * This function can be used to issue code aimed at changing the
+ * background color of the screen.
+ * 
+ * @param _environment Current calling environment
+ * @param _index Index of the background color
+ * @param _background_color Background color to use
+ */
+void ef936x_background_color_get_vars( Environment * _environment, char * _index, char * _background_color ) {
+
+    outline1("LDA %s", _index );
+    outline0("STA $A7DB" );
+    outline0("LDB $A7DA" );
+    outline0("LDA $A7DA" );
+    outline1("STD %s", _background_color );
+    
+}
+
+/**
  * @brief <i>VIC-II</i>: emit code to change common sprite's color 
  * 
  * This function can be used to issue code aimed at changing the

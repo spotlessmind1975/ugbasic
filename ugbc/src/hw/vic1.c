@@ -152,6 +152,29 @@ void vic1_background_color_vars( Environment * _environment, char * _index, char
 }
 
 /**
+ * @brief <i>VIC</i>: emit code to retrieve background color
+ * 
+ * This function can be used to issue code aimed at retrieving the
+ * background color of the screen.
+ * 
+ * @param _environment Current calling environment
+ * @param _index Index of the background color
+ * @param _background_color Background color to use
+ */
+void vic1_background_color_get_vars( Environment * _environment, char * _index, char * _background_color ) {
+ 
+    outline0("LDA $900F");
+    outline0("AND #$F0");
+    outline0("LSR A");
+    outline0("LSR A");
+    outline0("LSR A");
+    outline0("LSR A");
+    outline1("STA %s", _background_color );
+
+}
+
+
+/**
  * @brief <i>VIC</i>: emit code to change common sprite's color 
  * 
  * This function can be used to issue code aimed at changing the

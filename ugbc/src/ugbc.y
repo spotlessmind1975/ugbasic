@@ -1607,6 +1607,9 @@ exponential:
     | WIDTH {
         $$ = screen_get_width( _environment )->name;
     }
+    | COLOR OP expr CP {
+        $$ = color_get_vars( _environment, $3 )->name;
+    }
     | SCREEN WIDTH {
         $$ = screen_get_width( _environment )->name;
     }
