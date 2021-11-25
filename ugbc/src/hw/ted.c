@@ -122,6 +122,27 @@ void ted_background_color_vars( Environment * _environment, char * _index, char 
     outline0("STA $FF15,X");
 }
 
+/**
+ * @brief <i>TED</i>: emit code to retrieve background color
+ * 
+ * This function can be used to issue code aimed at retrieving the
+ * background color of the screen.
+ * 
+ * @param _environment Current calling environment
+ * @param _index Index of the background color
+ * @param _background_color Background color to use
+ */
+void ted_background_color_get_vars( Environment * _environment, char * _index, char * _background_color ) {
+ 
+    outline1("LDA %s", _index);
+    outline0("AND #$03");
+    outline0("TAX");
+    outline0("LDA $FF15,X");
+    outline0("AND #$0f" );
+    outline1("STA %s", _background_color );
+    
+}
+
 void ted_sprite_common_color( Environment * _environment, char * _index, char * _common_color ) {
 
 }

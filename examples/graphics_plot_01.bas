@@ -16,7 +16,7 @@ REM utilizzando il comando ''BITMAP ENABLE''. Quindi, cancellerà lo schermo con
 REM colore nero. Infine, eseguirà un ciclo infinito (''DO...LOOP'') che disegnerà 
 REM una serie di punti casuali sullo schermo.
 
-   BITMAP ENABLE
+   BITMAP ENABLE(16)
    CLS BLACK
    DO
       x = RND(SCREEN WIDTH-1)

@@ -1797,6 +1797,7 @@ void                    cmove_direct( Environment * _environment, int _dx, int _
 Variable *              collision_to( Environment * _environment, int _sprite );
 Variable *              collision_to_vars( Environment * _environment, char * _sprite );
 void                    color( Environment * _environment, int _index, int _shade );
+Variable *              color_get_vars( Environment * _environment, char * _index );
 void                    color_vars( Environment * _environment, char * _index, char * _shade );
 void                    color_background( Environment * _environment, int _index, int _background_color );
 void                    color_background_vars( Environment * _environment, char * _index, char * _background_color );

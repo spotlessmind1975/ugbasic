@@ -1607,6 +1607,9 @@ exponential:
     | WIDTH {
         $$ = screen_get_width( _environment )->name;
     }
+    | COLOR OP expr CP {
+        $$ = color_get_vars( _environment, $3 )->name;
+    }
     | SCREEN WIDTH {
         $$ = screen_get_width( _environment )->name;
     }
@@ -1981,7 +1984,10 @@ next_raster_definition:
   | next_raster_definition_expression;
 
 color_definition_simple:
-    BORDER direct_integer {
+  expr OP_COMMA expr {
+      color_vars( _environment, $1, $3 );
+  }
+  | BORDER direct_integer {
       color_border( _environment, $2 );
   }
   | BACKGROUND direct_integer TO direct_integer {
