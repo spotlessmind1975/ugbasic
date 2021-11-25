@@ -168,6 +168,7 @@ void z80_dsdescriptor( Environment * _environment, char * _index, char * _addres
 void z80_move_8bit_indirect_with_offset( Environment * _environment, char *_source, char * _value, int _offset );
 void z80_dsalloc_size( Environment * _environment, int _size, char * _index );
 void z80_bits_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits );
+void z80_hex_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits );
 void z80_move_8bit_with_offset2( Environment * _environment, char *_source, char * _value, char * _offset );
 void z80_complement2_8bit( Environment * _environment, char * _source, char * _destination );
 void z80_complement2_16bit( Environment * _environment, char * _source, char * _destination );
@@ -324,6 +325,7 @@ void z80_protothread_current( Environment * _environment, char * _current );
 #define cpu_dsalloc_size( _environment, _size, _index ) z80_dsalloc_size( _environment, _size, _index ) 
 #define cpu_bit_check_extended( _environment, _value, _position, _result, _bitwidth ) z80_bit_check_extended( _environment, _value, _position, _result, _bitwidth )
 #define cpu_bits_to_string( _environment, _number, _string, _string_size, _bits ) z80_bits_to_string( _environment, _number, _string, _string_size, _bits )
+#define cpu_hex_to_string( _environment, _number, _string, _string_size, _bits ) z80_hex_to_string( _environment, _number, _string, _string_size, _bits )
 #define cpu_move_8bit_with_offset2( _environment, _source, _value, _offset ) z80_move_8bit_with_offset2( _environment, _source, _value, _offset ) 
 #define cpu_complement2_8bit( _environment, _source, _destination ) z80_complement2_8bit( _environment, _source, _destination )
 #define cpu_complement2_16bit( _environment, _source, _destination ) z80_complement2_16bit( _environment, _source, _destination )
@@ -337,10 +339,11 @@ extern unsigned int src_hw_chipset_mob_asm_len;
 #define cpu_mobhide( _environment, _index ) z80_mobhide( _environment, _index )
 #define cpu_mobat( _environment, _index, _x, _y ) z80_mobat( _environment, _index, _x, _y )
 #define cpu_mobrender( _environment, _on_vbl ) z80_mobrender( _environment, _on_vbl )
-#define cpu_mobcount( _environment, _index ) z80_mobinit( _environment, _index )
+#define cpu_mobcount( _environment, _index ) z80_mobcount( _environment, _index )
 #define cpu_sqroot( _environment, _number, _result ) z80_sqroot( _environment, _number, _result )
 #define cpu_dstring_vars( _environment ) z80_dstring_vars( _environment )
 
+#define cpu_protothread_vars( _environment ) z80_protothread_vars( _environment )
 #define cpu_protothread_loop( _environment ) z80_protothread_loop( _environment )
 #define cpu_protothread_register( _environment, _label, _index ) z80_protothread_register( _environment, _label, _index )
 #define cpu_protothread_register_at( _environment, _index, _label ) z80_protothread_register_at( _environment, _index, _label )

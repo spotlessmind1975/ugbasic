@@ -78,6 +78,45 @@ printf("memory = %s\n", _te->debug.inspections[0].memory );
 
 //===========================================================================
 
+void test_cpu_hex_to_string_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    char buffer[9]; 
+    memset( buffer, 0, 9 );
+
+    Variable * number = variable_define( e, "number", VT_BYTE, 127 );
+    Variable * string = variable_define( e, "string", VT_BUFFER, 0 );
+    Variable * address = variable_define( e, "address", VT_ADDRESS, 0x4100 );
+    Variable * size = variable_define( e, "size", VT_BYTE, 0 );
+
+    variable_store_buffer( e, string->name, buffer, 9, 0x4100 );
+    
+    cpu_hex_to_string( e, number->realName, address->realName, size->realName, 8 );
+
+    _te->debug.inspections[0].name="string";
+    _te->debug.inspections[0].address=0x4100;
+    _te->debug.inspections[0].size=3;
+    ++_te->debug.inspections_count;
+    
+    _te->trackedVariables[0] = size;
+
+}
+
+int test_cpu_bits_to_string_tester( TestEnvironment * _te ) {
+
+    Variable * size = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+
+    _te->debug.inspections[0].memory[size->value] = 0;
+
+printf("memory = %s\n", _te->debug.inspections[0].memory );
+
+    return strcmp( _te->debug.inspections[0].memory, "7f" ) == 0;
+
+}
+
+//===========================================================================
+
 void test_cpu_bits_to_string32_payload( TestEnvironment * _te ) {
 
     Environment * e = &_te->environment;

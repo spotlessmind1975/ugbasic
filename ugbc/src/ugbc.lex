@@ -100,8 +100,11 @@ CODE { return (CODE); }
 COLLISION { return (COLLISION); }
 COLON { return (COLON); }
 COLOR { return (COLOR); }
+COLOUR { return (COLOUR); }
 COLORS { return (COLORS); }
+COLOURS { return (COLOURS); }
 COLORMAP { return (COLORMAP); }
+COLOURMAP { return (COLOURMAP); }
 COMMA { return (COMMA); }
 COMMODORE { return (COMMODORE); }
 COMPRESS { return (COMPRESS); }
@@ -186,6 +189,7 @@ H { return (H); }
 HALT { return (HALT); }
 HAS { return (HAS); }
 HEIGHT { return (HEIGHT); }
+HEX { return (HEX); }
 HIDE { return (HIDE); }
 HIDDEN { return (HIDDEN); }
 HIT { return (HIT); }
@@ -246,11 +250,13 @@ MINUS { return(MINUS); }
 MOB { return(MOB); }
 MOD { return(MOD); }
 MONOCOLOR { return(MONOCOLOR); }
+MONOCOLOUR { return(MONOCOLOUR); }
 MS { return (MILLISECOND); }
 MILLISECOND { return (MILLISECOND); }
 MILLISECONDS { return (MILLISECONDS); }
 MUL { return(MUL); }
 MULTICOLOR { return(MULTICOLOR); }
+MULTICOLOUR { return(MULTICOLOUR); }
 N { return (N); }
 NEXT { return (NEXT); }
 NEW { return (NEW); }
@@ -303,6 +309,7 @@ RENDER { return(RENDER); }
 REPEAT { return (REPEAT); }
 REPLACE { return (REPLACE); }
 RETURN { return (RETURN); }
+RGB { return (RGB); }
 RIGHT { return (RIGHT); }
 RIGHT\$ { return (RIGHT); }
 RND { return (RND); }
@@ -320,6 +327,7 @@ SELECT { return (SELECT); }
 SEMICOLON { return (SEMICOLON); }
 SET { return (SET); }
 SGN { return (SGN); }
+SHADES { return (SHADES); }
 SHARED { return (SHARED); }
 SHIFT { return (SHIFT); }
 SHIFTS { return (SHIFTS); }
@@ -404,8 +412,9 @@ ZX { return (ZX); }
 [A-Za-z][A-Za-z0-9\_]* { yylval.string = strdup(yytext); return(Identifier);  }
 \"(\\.|[^"\\])*\" { yylval.string = strdup(yytext); memcpy(yylval.string,yylval.string+1,strlen(yylval.string)); yylval.string[strlen(yylval.string)-1]=0; return(String);  }
 \$[a-fA-F0-9]+ { yylval.integer = strtol(yytext+1,0,16); return(Integer); }
-&H[a-fA-F0-9]+ { yylval.integer = strtol(yytext+2,0,16); return(Integer); }
+&[Hh][a-fA-F0-9]+ { yylval.integer = strtol(yytext+2,0,16); return(Integer); }
 0x[a-fA-F0-9]+ { yylval.integer = strtol(yytext+2,0,16); return(Integer); }
+[a-fA-F0-9]+[hH] { int c = strlen(yytext); yytext[c-1] = 0; yylval.integer = strtol(yytext,0,16); return(Integer); }
 %[0-1]+ { yylval.integer = strtol(yytext+1,0,2); return(Integer); }
 \s[-][0-9]+ { yylval.integer = atoi(yytext); return(Integer);  }
 [0-9]+ { yylval.integer = atoi(yytext); return(Integer);  }
