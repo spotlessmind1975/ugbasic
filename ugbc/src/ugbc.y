@@ -3884,7 +3884,12 @@ statement:
   }
   | Identifier OP_ASSIGN expr {
         Variable * expr = variable_retrieve( _environment, $3 );
-        Variable * variable = variable_retrieve_or_define( _environment, $1, expr->type, 0 );
+        Variable * variable;
+        if ( variable_exists( _environment, $1 ) ) {
+            variable = variable_retrieve( _environment, $1 );
+        } else {
+            variable = variable_define( _environment, $1, expr->type, 0 );
+        }
 
         if ( variable->type == VT_ARRAY ) {
             if ( expr->type != VT_BUFFER ) {
