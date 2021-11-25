@@ -226,7 +226,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
 
     _environment->fontWidth = 8;
     _environment->fontHeight = 8;
-    _environment->screenShared = 4;
+    _environment->screenShades = 4;
     switch( _screen_mode->id ) {
         // ALPHANUMERIC DISPLAY MODES – All alphanumeric modes occupy an 8 x 12 
         // dot character matrix box and there are 32 x 16 character boxes per TV frame. 
@@ -617,8 +617,6 @@ void c6847_bitmap_enable( Environment * _environment, int _width, int _height, i
 
         cpu_store_8bit( _environment, "CURRENTMODE", mode->id );
         
-        printf( "current mode = %d\n", mode->id );
-
         _environment->currentMode = mode->id;
     } else {
         WARNING_SCREEN_MODE( -1 );

@@ -4081,7 +4081,18 @@ void cpu6809_hex_to_string( Environment * _environment, char * _number, char * _
 
     inline( cpu_hex_to_string )
 
-    no_embedded( cpu_hex_to_string )
+    embedded( cpu_hex_to_string, src_hw_6809_cpu_hex_to_string_asm );
+
+        outline1("LDB #$%2.2x", ( _bits >> 3 ) );
+        outline1("LDX #%s", _number );
+        outline1("LDY %s", _string );
+        
+        outline0("JSR H2STRING" );
+
+        outline1("LDB #$%2.2x", ( _bits >> 2 ) );
+        outline1("STB %s", _string_size );
+
+    done()
 
 }
 

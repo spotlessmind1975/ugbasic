@@ -121,10 +121,10 @@ static void variable_reset_pool( Environment * _environment, Variable * _pool ) 
     Variable * actual = _pool;
     while( actual ) {
         if ( actual->locked == 0 ) {
-            actual->used = 0;       
-            if ( actual->type == VT_DSTRING ) {
+            if ( actual->used && actual->type == VT_DSTRING ) {
                 cpu_dsfree( _environment, actual->realName );
             }     
+            actual->used = 0;       
         }
         actual = actual->next;
     }
