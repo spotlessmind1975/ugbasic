@@ -1082,7 +1082,12 @@ exponential:
         ((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex] = 0;
     }
       OP indexes CP {
-        Variable * array = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
+        Variable * array;
+        if ( variable_exists( _environment, $1 ) ) {
+            array = variable_retrieve( _environment, $1 );
+        } else {
+            array = variable_define( _environment, $1, VT_ARRAY, 0 );
+        }        
         if ( array->type != VT_ARRAY ) {
             CRITICAL_NOT_ARRAY( $1 );
         }
@@ -3884,7 +3889,12 @@ statement:
   }
   | Identifier OP_ASSIGN expr {
         Variable * expr = variable_retrieve( _environment, $3 );
-        Variable * variable = variable_retrieve_or_define( _environment, $1, expr->type, 0 );
+        Variable * variable;
+        if ( variable_exists( _environment, $1 ) ) {
+            variable = variable_retrieve( _environment, $1 );
+        } else {
+            variable = variable_define( _environment, $1, expr->type, 0 );
+        }
 
         if ( variable->type == VT_ARRAY ) {
             if ( expr->type != VT_BUFFER ) {
@@ -3911,7 +3921,12 @@ statement:
   }
   | Identifier OP_ASSIGN_DIRECT expr  {
         Variable * expr = variable_retrieve( _environment, $3 );
-        Variable * var = variable_retrieve_or_define( _environment, $1, expr->type, 0 );
+        Variable * var;
+        if ( variable_exists( _environment, $1 ) ) {
+            var = variable_retrieve( _environment, $1 );
+        } else {
+            var = variable_define( _environment, $1, expr->type, 0 );
+        }
         var->value = expr->value;
         if ( expr->valueString ) {
             var->valueString = strdup( expr->valueString );
@@ -3951,7 +3966,9 @@ statement:
   } array_reassign
   | Identifier OP_DOLLAR OP_ASSIGN expr {
         Variable * expr = variable_retrieve( _environment, $4 );
-        variable_retrieve_or_define( _environment, $1, VT_DSTRING, 0 )->name;
+        if ( !variable_exists( _environment, $1 ) ) {
+            variable_define( _environment, $1, VT_DSTRING, 0 );
+        }
         variable_move( _environment, $4, $1 );
   }
   | Identifier {
