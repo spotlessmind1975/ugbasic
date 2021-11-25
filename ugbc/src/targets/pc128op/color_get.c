@@ -51,9 +51,10 @@
 </usermanual> */
 Variable * color_get_vars( Environment * _environment, char * _index ) {
 
+    Variable * index = variable_retrieve_or_define( _environment, _index, VT_COLOR, COLOR_BLACK );
     Variable * result = variable_temporary( _environment, VT_COLOR, "(shade)" );
 
-    ef936x_background_color_get_vars( _environment, _index, result->name );
+    ef936x_background_color_get_vars( _environment, index->realName, result->realName );
 
     return result;
     
