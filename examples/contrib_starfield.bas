@@ -12,9 +12,9 @@ DIM xtab AS POSITION (nums+1)
 DIM ytab AS POSITION (nums+1)
 DIM ctab AS BYTE (nums+1)
 
-REM BITMAP ENABLE (320,200,16)
+BITMAP ENABLE (320,200,2)
 REM BITMAP ENABLE(320,200,4)
-BITMAP ENABLE(160,200,16)
+REM BITMAP ENABLE(160,200,16)
 COLOR BORDER bg 
 CLS bg
 
@@ -29,18 +29,19 @@ REM initial stars
 FOR i=0 TO nums
 	REPEAT : c = RND(SCREEN COLORS) : UNTIL c<>bg
 	xtab(i) = RND(SCREEN WIDTH)
-	ytab(i) = RND(SCREEN HEIGHT)
+	ytab(i) = RND(SCREEN HEIGHT) 
 	ctab(i) = c
 	
 	PLOT xtab(i),ytab(i),ctab(i)
 NEXT
 
+VAR x0 AS SIGNED WORD = (SCREEN WIDTH / 2)
+VAR y0 AS SIGNED WORD = (SCREEN HEIGHT / 2)
 
-x0 = (SCREEN WIDTH / 2)
-y0 = (SCREEN HEIGHT / 2)
-
+TI=0
 DO
 	PLOT x0,y0,WHITE
+	LOCATE 0,0 : PRINT TI;"    "; : TI = 0
 	FOR i=0 TO nums
 		z = xtab(i)
 		x = z + (z - x0)/speed
