@@ -126,6 +126,28 @@ static char *match(char *_s, char *_p, ...) {
 	return *p=='\0' ? ret : NULL;
 }
 
+int sets_flag(char *buf, char REG) {
+	char tmp[MAX_TEMPORARY_STORAGE];
+	
+	if(match(buf, " ADD* ", tmp) && _toUpper(*tmp)==REG) return 1;
+	if(match(buf, " ASL*",  tmp) && _toUpper(*tmp)==REG) return 1;
+	if(match(buf, " ASR*",  tmp) && _toUpper(*tmp)==REG) return 1;
+	if(match(buf, " COM*",  tmp) && _toUpper(*tmp)==REG) return 1;
+	if(match(buf, " DEC*",  tmp) && _toUpper(*tmp)==REG) return 1;
+	if(match(buf, " EOR* ", tmp) && _toUpper(*tmp)==REG) return 1;
+	if(match(buf, " INC* ", tmp) && _toUpper(*tmp)==REG) return 1;
+	if(match(buf, " LD* ",  tmp) && _toUpper(*tmp)==REG) return 1;
+	if(match(buf, " LSL*",  tmp) && _toUpper(*tmp)==REG) return 1;
+	if(match(buf, " LSR*",  tmp) && _toUpper(*tmp)==REG) return 1;
+	if(match(buf, " OR* ",  tmp) && _toUpper(*tmp)==REG) return 1;
+	if(match(buf, " ROL*",  tmp) && _toUpper(*tmp)==REG) return 1;
+	if(match(buf, " ROR*",  tmp) && _toUpper(*tmp)==REG) return 1;
+	if(match(buf, " SBC* ", tmp) && _toUpper(*tmp)==REG) return 1;
+	if(match(buf, " SUB* ", tmp) && _toUpper(*tmp)==REG) return 1;
+	
+	return 0;
+}
+
 /* can this opcode make A non zero */
 int can_nzA(char *buf) {
 	char *s;
@@ -188,6 +210,36 @@ int can_nzB(char *buf) {
 	return 0;
 }
 
+int is_Bcc(char * buf) {
+	if(match(buf, " BGT ")) return 1;
+	if(match(buf, " BLE ")) return 1;
+	if(match(buf, " BGE ")) return 1;
+	if(match(buf, " BLT ")) return 1;
+	if(match(buf, " BEQ ")) return 1;
+	if(match(buf, " BNE ")) return 1;
+	if(match(buf, " BHI ")) return 1;
+	if(match(buf, " BLS ")) return 1;
+	if(match(buf, " BHS ")) return 1;
+	if(match(buf, " BLO ")) return 1;
+	if(match(buf, " BMI ")) return 1;
+	if(match(buf, " BPL ")) return 1;
+		
+	if(match(buf, " LBGT ")) return 1;
+	if(match(buf, " LBLE ")) return 1;
+	if(match(buf, " LBGE ")) return 1;
+	if(match(buf, " LBLT ")) return 1;
+	if(match(buf, " LBEQ ")) return 1;
+	if(match(buf, " LBNE ")) return 1;
+	if(match(buf, " LBHI ")) return 1;
+	if(match(buf, " LBLS ")) return 1;
+	if(match(buf, " LBHS ")) return 1;
+	if(match(buf, " LBLO ")) return 1;
+	if(match(buf, " LBMI ")) return 1;
+	if(match(buf, " LBPL ")) return 1;
+
+	return 0;
+}
+
 static int change; /* number of lines changed */
 
 static void optim(char *buffer, char *rule, char *repl, ...) {
@@ -234,8 +286,8 @@ static int isZero(char *buf) {
 }
 
 void target_peephole_optimizer( Environment * _environment ) {
-	int unsafe = 1;
 	int keep_comments = 1;
+	int unsafe = 1;
     char fileNameOptimized[MAX_TEMPORARY_STORAGE];
 
     sprintf( fileNameOptimized, "%s.asm", tmpnam(NULL) );
@@ -280,12 +332,12 @@ void target_peephole_optimizer( Environment * _environment ) {
 			&&   strcmp(variable2, variable4)==0) {
 				if(unsafe && match(variable2, "_Ttmp") && !match(buffer[2], "*SR ") && !(*variable1=='D' && match(buffer[2], " IF "))) {
 					char *fmt = NULL;
-					if(match(buffer[2], " IF ")) fmt = *variable1=='X' ? "\tLEAX ,X" : "\tTST%c";
-					optim( buffer[0], "rule #1 (STORE*,LOAD*) (unsafe, presumed dead)", fmt, _toUpper(*variable1));
-					optim( buffer[1], NULL, NULL);
-				} else {
-					optim( buffer[1], "rule #1 (STORE*,LOAD*)", NULL);
+					/* in case flags are necessary (IF,LBcc), insert TST or LEAX */
+					if(match(buffer[2], " IF ") && match(buffer[3], " LB")) 
+						fmt = *variable1=='X' ? "\tLEAX ,X" : "\tTST%c";
+					optim( buffer[0], "(unsafe, presumed dead)", fmt, _toUpper(*variable1));
 				}
+				optim( buffer[1], "rule #1 (STORE*,LOAD*)", NULL);
 			}
 
 			if ( match( buffer[0], " CLR *", variable1 )
@@ -305,7 +357,7 @@ void target_peephole_optimizer( Environment * _environment ) {
 				optim(buffer[0], "rule #4 (EOR #$FF)", "\tCOM%c", _toUpper(*variable1));
 			}
 			
-			if ( (match(buffer[0], " LD* ", variable1) || match(buffer[0], " CLR* ", variable1))
+			if ( (match(buffer[0], " LD* ", variable1) || match(buffer[0], " CLR*", variable1))
 			&&   match(buffer[1], " LD* ", variable2)
 			&&   *variable1 == *variable2) {
 				optim(buffer[0], "rule #5 (LOAD/CLR,LOAD)", NULL);
@@ -356,7 +408,7 @@ void target_peephole_optimizer( Environment * _environment ) {
 					optim(buffer[0], "rule #10 (LDD,STD*,LDX,CMPX*)",  
 						variable1[0]=='#' && variable1[1]=='$' && variable1[2]=='0' && variable1[3]=='0'
 						? "\tCLRA" : NULL);
-					optim(buffer[1], NULL, NULL);
+					optim(buffer[1], "(unsafe, presumed dead)", NULL);
 					optim(buffer[3], NULL, "\tCMPX %s", variable1);
 				} else {
 					optim(buffer[3], "rule #10 (LDD,STD*,LDX,CMPX*)", "\tCMPX %s", variable1);
@@ -370,7 +422,7 @@ void target_peephole_optimizer( Environment * _environment ) {
 			&&  _strcmp(variable2, variable4)==0) {
 				if(unsafe) {
 					optim(buffer[0], "rule #11 (LDD,STD*,LDD,ADDD*)", NULL);
-					optim(buffer[1], NULL, NULL);
+					optim(buffer[1], "(unsafe, presumed dead)", NULL);
 					optim(buffer[3], NULL, "\tADDD %s", variable1);
 				} else {
 					optim(buffer[3], "rule #11 (LDD,STD*,LDD,ADDD*)", "\tADDD %s", variable1);
@@ -380,14 +432,14 @@ void target_peephole_optimizer( Environment * _environment ) {
 			if ( match(buffer[0], " STD *", variable1)
 			&&   match(buffer[1], " LDX *", variable2)
 			&&   _strcmp(variable1,variable2)==0) {
-				if(unsafe) optim(buffer[0], "(unsafe)", NULL);
+				if(unsafe) optim(buffer[0], "(unsafe, presumed dead)", NULL);
 				optim(buffer[1], "rule #12 (STD*,LDX*)", "\tTFR D,X");
 			}
 			
 			if ( match(buffer[0], " STD *", variable1)
 			&&   match(buffer[1], " LDA *+1", variable2)
 			&&   strcmp(variable1, variable2)==0) {
-				if(unsafe) optim(buffer[0], "(unsafe)", NULL);
+				if(unsafe) optim(buffer[0], "(unsafe, presumed dead)", NULL);
 				optim(buffer[1], "rule #13 (STD,LDA+1)", "\tTFR B,A");
 			}
 
@@ -401,7 +453,7 @@ void target_peephole_optimizer( Environment * _environment ) {
 			&&   match(buffer[1], " CLRA")
 			&&   match(buffer[2], " LDX *", variable2)
 			&&   _strcmp(variable1,variable2)==0) {
-				optim(buffer[0], "rule #14 (STX*,CLRA,LDX*)", NULL);
+				optim(buffer[0], "rule #15 (STX*,CLRA,LDX*)", NULL);
 				optim(buffer[2], NULL, "\tSTX %s", variable1);
 			}
 
@@ -409,39 +461,28 @@ void target_peephole_optimizer( Environment * _environment ) {
 			&&   match(buffer[1], " LDD *", variable2)
 			&&   match(buffer[2], " ADDD *", variable3)
 			&&   strcmp(variable1,variable3)==0) {
-				if(unsafe) {
-					optim(buffer[0], "rule #15 (STD*,LDD,ADD*) (unsafe)", NULL);
-					optim(buffer[1], NULL, NULL);
-					optim(buffer[2], NULL, "\tADDD %s", variable2);
-				} else {
-					optim(buffer[1], "rule #15 (STD*,LDD,ADD*)", NULL);
-					optim(buffer[2], NULL, "\tADDD %s", variable2);
-				}
+				if(unsafe) optim(buffer[0], "(unsafe, presumed dead)", NULL);
+				optim(buffer[1], "rule #16 (STD*,LDD,ADD*)", NULL);
+				optim(buffer[2], NULL, "\tADDD %s", variable2);
 			}
 
-			if ( match(buffer[0], " STA *", variable1)
+			if ( match(buffer[0], " STA *", variable1) 
 			&&   match(buffer[1], " LDA *", variable2)
 			&&   match(buffer[2], " *A *", variable3, variable4) 
 			&&   strcmp(variable1,variable4)==0
 			&&   (match(variable3, "OR") || match(variable3,"AND") || match(variable3,"EOR") || match(variable3,"ADD"))
 			) {
-				if(unsafe) {
-					optim(buffer[0], "rule #16 (STA*,LDA,ORA/ANDA/EORA/ADDA*) (unsafe)", NULL);
-					optim(buffer[1], NULL, NULL);
-					optim(buffer[2], NULL, "\t%sA %s", variable3, variable2);
-				} else {
-					optim(buffer[1], "rule #16 (STA*,LDA,ORA/ANDA/EORA/ADDA*)", NULL);
-					optim(buffer[2], NULL, "\tADDD %s", variable2);
-				}
+				if(unsafe) optim(buffer[0], "(unsafe, presumed dead)", NULL);
+				optim(buffer[1], "rule #17 (STA*,LDA,ORA/ANDA/EORA/ADDA*)", NULL);
+				optim(buffer[2], NULL, "\tADDD %s", variable2);
 			}
 
 
 			if ( match(buffer[0], " STD _Ttmp*", variable1)
 			&&   match(buffer[1], " LD* [_Ttmp*]", variable2, variable3)
-			&&   strcmp(variable1,variable3)==0
-			&&   unsafe) {
-				optim(buffer[0], "rule #17 (STD,LDD[])", "\tTFR D,X");
-				optim(buffer[1], NULL, "\tLD%c ,X", _toUpper(*variable2));
+			&&   strcmp(variable1,variable3)==0) {
+				if(unsafe) optim(buffer[0], "(unsafe, presumed dead)", NULL);
+				optim(buffer[1], "rule #18 (STD,LDD[])", "\tTFR D,X\n\tLD%c ,X", _toUpper(*variable2));
 			}
 
 			if ( match(buffer[0], " STD _Ttmp*", variable1)
@@ -450,11 +491,20 @@ void target_peephole_optimizer( Environment * _environment ) {
 			&&   *variable2==*variable3
 			&&   strcmp(variable1,variable4)==0
 			&&   unsafe) {
-				optim(buffer[0], "rule #18 (STD,LOAD,STORE[])", "\tTFR D,X");
-				optim(buffer[2], NULL, "\tST%c ,X", *variable2);
+				optim(buffer[0], "(unsafe, presumed dead)", "\tTFR D,X");
+				optim(buffer[2], "rule #19 (STD,LOAD,STORE[])", "\tST%c ,X", *variable2);
 			}
 			
+			if ( match(buffer[1], " TST*", variable1)
+			&&  sets_flag(buffer[0], *variable1)) {
+				optim(buffer[1], "rule #20 (FLAG-SET,TST)", NULL);
+			}
 			
+			// if ( match(buffer[0], " LDX ") && match(buffer[1], " CLRA")) {
+				// strcpy(buffer[1], buffer[0]);
+				// strcpy(buffer[0], "\tCLRA\n");
+			// }
+						
 			// more complex
 			if(zA) {
 				if (match( buffer[0], " CLRA")) {
@@ -487,6 +537,9 @@ void target_peephole_optimizer( Environment * _environment ) {
 				} else if ( chkLDD(buffer[0], "--00", variable1) ) {
 					optim(buffer[0], "rule #1007 (B=0)", "\tLDA #$%c%c", variable1[0], variable1[1]);
 					zA = 0;
+				} else if (match( buffer[0], " TFR B,A")) {
+					optim( buffer[0], "rule #1008 (B=0)", "\tCLRA");
+					zA = 1;
 				} else if(can_nzB(buffer[0])) {
 					zB = 0;
 				}
