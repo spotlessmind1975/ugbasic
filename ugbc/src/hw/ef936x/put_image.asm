@@ -114,20 +114,25 @@ PUTIMAGE2
 
     PULS Y
 
-    LDA ,Y
+    LDD ,Y
     LSRA
+    RORB
     LSRA
+    RORB
     LSRA
-    STA <IMAGEW
-    LDA 1,Y
+    RORB
+    STD <IMAGEW
+    LDA 2,Y
     STA <IMAGEH
     STA <IMAGEH2
 
-    LEAY 2,Y
+    LEAY 3,Y
 
-    LDA <IMAGEW
+    LDD <IMAGEW
+    PSHS D
     LDB <IMAGEH
-    PSHS X,D
+    PSHS D
+    PSHS X
 
     JMP PUTIMAGE2Y
 
@@ -150,19 +155,25 @@ PUTIMAGE3
 
     PULS Y
 
-    LDA ,Y
+    LDD ,Y
     LSRA
+    RORB
     LSRA
-    STA <IMAGEW
-    LDA 1,Y
+    RORB
+    LSRA
+    RORB
+    STD <IMAGEW
+    LDA 2,Y
     STA <IMAGEH
     STA <IMAGEH2
 
-    LEAY 2,Y
+    LEAY 3,Y
 
-    LDA <IMAGEW
+    LDD <IMAGEW
+    PSHS D
     LDB <IMAGEH
-    PSHS X,D
+    PSHS D
+    PSHS X
 
     JMP PUTIMAGE2Y
 
@@ -187,12 +198,12 @@ PUTIMAGE2YTRANS3
     ORA #$01
     STA $a7c0
 
-    LDB <IMAGEW
-    DECB
+    LDU <IMAGEW
+    LEAU -1, U
 PUTIMAGE2YTRANS3L1
     LDA #0
     STA <MATHPTR5
-    LDA B,Y
+    LDA ,Y
     ; 00 01 10 00
     ANDA #$F0
     ; -> 00 00 00 00
@@ -201,7 +212,7 @@ PUTIMAGE2YTRANS3L1
     ORA #$F0
     STA <MATHPTR5
 PUTIMAGE2YTRANS3L1P4X
-    LDA B,Y
+    LDA ,Y
     ; 00 01 10 00
     ANDA #$0F
     ; -> 00 01 00 00
@@ -216,22 +227,22 @@ PUTIMAGE2YTRANS3L1P3X
     EORA #$FF
     ; 11 00 00 11
     STA <MATHPTR6
-    LDA B,X
+    LDA ,X
     ; 00 00 00 00
     ANDA <MATHPTR6
     STA <MATHPTR6
     ; 00 00 00 00
-    LDA B,Y
+    LDA ,Y++
     ANDA <MATHPTR5
     ORA <MATHPTR6
-    STA B,X
+    STA ,X++
 
-    DECB
-    CMPB #0
+    LEAU -1, U
+    CMPU #0
     BGE PUTIMAGE2YTRANS3L1
 
-    LDB <IMAGEW
-    LEAY B, Y
+    LDD <IMAGEW
+    LEAY D, Y
 
     LDB CURRENTSL
     LEAX B, X
@@ -241,27 +252,28 @@ PUTIMAGE2YTRANS3L1P3X
     CMPB #0
     BEQ PUTIMAGE2YTRANS3COMMONE2
 
-    LDB <IMAGEW
-    DECB
+    LDU <IMAGEW
+    LEAU -1, U
     JMP PUTIMAGE2YTRANS3L1
 
 PUTIMAGE2YTRANS3COMMONE2
 
-    PULS X,D
-
-    STA <IMAGEW
+    PULS X
+    PULS D
     STB <IMAGEH
+    PULS D
+    STD <IMAGEW
 
     LDA $a7c0
     ANDA #$fe
     STA $a7c0
 
-    LDB <IMAGEW
-    DECB
+    LDU <IMAGEW
+    LEAU -1, U
 PUTIMAGE2YTRANS3L12
     LDA #0
     STA <MATHPTR5
-    LDA B,Y
+    LDA ,Y
     ; 00 01 10 00
     ANDA #$F0
     ; -> 00 00 00 00
@@ -270,7 +282,7 @@ PUTIMAGE2YTRANS3L12
     ORA #$F0
     STA <MATHPTR5
 PUTIMAGE2YTRANS3L12P4X
-    LDA B,Y
+    LDA ,Y
     ; 00 01 10 00
     ANDA #$0F
     ; -> 00 01 00 00
@@ -290,17 +302,17 @@ PUTIMAGE2YTRANS3L12P3X
     ANDA <MATHPTR6
     STA <MATHPTR6
     ; 00 00 00 00
-    LDA B,Y
+    LDA ,Y++
     ANDA <MATHPTR5
     ORA <MATHPTR6
-    STA B,X
+    STA ,X++
 
-    DECB
-    CMPB #0
+    LEAU -1, U
+    CMPU #0
     BGE PUTIMAGE2YTRANS3L12
 
-    LDB <IMAGEW
-    LEAY B, Y
+    LDD <IMAGEW
+    LEAY D, Y
 
     LDB CURRENTSL
     LEAX B, X
@@ -310,8 +322,8 @@ PUTIMAGE2YTRANS3L12P3X
     CMPB #0
     BEQ PUTIMAGECOMMONE5
 
-    LDB <IMAGEW
-    DECB
+    LDU <IMAGEW
+    LEAU -1, U
     JMP PUTIMAGE2YTRANS3L12
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -321,17 +333,17 @@ PUTIMAGE2YDEF
     ORA #$01
     STA $a7c0
 
-    LDB <IMAGEW
-    DECB
+    LDU <IMAGEW
+    LEAU -1, U
 PUTIMAGE2L1
-    LDA B,Y
-    STA B,X
-    DECB
-    CMPB #0
+    LDA ,Y++
+    STA ,X++
+    LEAU -1, U
+    CMPU #0
     BGE PUTIMAGE2L1
 
-    LDB <IMAGEW
-    LEAY B, Y
+    LDD <IMAGEW
+    LEAY D, Y
 
     LDB CURRENTSL
     LEAX B, X
@@ -341,32 +353,33 @@ PUTIMAGE2L1
     CMPB #0
     BEQ PUTIMAGECOMMONE2
 
-    LDB <IMAGEW
-    DECB
+    LDU <IMAGEW
+    LEAU -1, U
     JMP PUTIMAGE2L1
 
 PUTIMAGECOMMONE2
 
-    PULS X,D
-
-    STA <IMAGEW
+    PULS X
+    PULS D
     STB <IMAGEH
+    PULS D
+    STD <IMAGEW
 
     LDA $a7c0
     ANDA #$fe
     STA $a7c0
 
-    LDB <IMAGEW
-    DECB
+    LDU <IMAGEW
+    LEAU -1, U
 PUTIMAGE2L12
-    LDA B,Y
-    STA B,X
-    DECB
-    CMPB #0
+    LDA ,Y++
+    STA ,X++
+    LEAU -1, U
+    CMPU #0
     BGE PUTIMAGE2L12
 
-    LDB <IMAGEW
-    LEAY B, Y
+    LDD <IMAGEW
+    LEAY D, Y
 
     LDB CURRENTSL
     LEAX B, X
@@ -376,8 +389,8 @@ PUTIMAGE2L12
     CMPB #0
     BEQ PUTIMAGECOMMONE5
 
-    LDB <IMAGEW
-    DECB
+    LDU <IMAGEW
+    LEAU -1, U
     JMP PUTIMAGE2L12
 
 PUTIMAGECOMMONE5
