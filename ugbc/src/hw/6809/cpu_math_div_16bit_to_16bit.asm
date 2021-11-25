@@ -35,9 +35,9 @@
 CPUMATHDIV16BITTO16BIT_fast
     PSHS  X
     STB   ,S
-    DEC   1,S
-    LDB   #1
-    ANDB  1,S
+    LDB   1,S
+    DECB
+    BITB  #1
     BNE   CPUMATHDIV16BITTO16BIT_remainder
     
     LDB   ,S
@@ -46,7 +46,7 @@ CPUMATHDIV16BITTO16BIT_slow
     BRA   CPUMATHDIV16BITTO16BIT0  
 
 CPUMATHDIV16BITTO16BIT_remainder
-    ANDB  1,S
+    ANDB  ,S
     STB   1,S   
     LDB   ,S
     CLR   ,S
