@@ -65,6 +65,7 @@ B { return (B); }
 BACK { return (BACK); }
 BACKGROUND { return (BACKGROUND); }
 BANK { return (BANK); }
+BAR { return (BAR); }
 BEGIN { return (BEG); }
 BIN\$ { return (BIN); }
 BIT { return (BIT); }

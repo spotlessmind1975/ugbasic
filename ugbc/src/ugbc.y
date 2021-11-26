@@ -56,6 +56,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token SQR TI CONST VBL POKE NOP FILL IN POSITIVE DEFINE ATARI ATARIXL C64 DRAGON DRAGON32 DRAGON64 PLUS4 ZX 
 %token FONT VIC20 PARALLEL YIELD SPAWN THREAD TASK IMAGES FRAME FRAMES XY YX ROLL MASKED USING TRANSPARENCY
 %token OVERLAYED CASE ENDSELECT OGP CGP ARRAY NEW GET DISTANCE TYPE MUL DIV RGB SHADES HEX PALETTE
+%token BAR
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -2629,6 +2630,27 @@ box_definition_expression:
 box_definition:
     box_definition_expression;
 
+bar_definition_expression:
+      optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
+        bar( _environment, $1, $3, $5, $7, $9 );
+        gr_locate( _environment, $5, $7 );
+    }
+    | optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y  {
+        bar( _environment, $1, $3, $5, $7, NULL );
+        gr_locate( _environment, $5, $7 );
+    }
+    | TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
+        bar( _environment, "XGR", "YGR", $2, $4, $6 );
+        gr_locate( _environment, $2, $4 );
+    }
+    | TO optional_x OP_COMMA optional_y  {
+        bar( _environment, "XGR", "YGR", $2, $4, NULL );
+        gr_locate( _environment, $2, $4 );
+    };
+
+bar_definition:
+    bar_definition_expression;
+
 clip_definition_expression:
       expr OP_COMMA expr TO expr OP_COMMA expr {
         clip( _environment, $1, $3, $5, $7 );
@@ -3507,6 +3529,7 @@ statement:
   | GET get_definition
   | MOB mob_definition
   | BOX box_definition
+  | BAR bar_definition
   | POLYLINE polyline_definition
   | CLIP clip_definition
   | SET LINE expr {
