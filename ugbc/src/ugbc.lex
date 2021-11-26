@@ -395,11 +395,13 @@ WHITE { return(WHITE); }
 WRITING { return(WRITING); }
 WORD { return (WORD); }
 X { return (X); }
+XGRAPHIC { return (XGRAPHIC); }
 XY { return (XY); }
 XOR { return (XOR); }
 XCURS { return (XCURS); }
 XPEN { return (XPEN); }
 Y { return (Y); }
+YGRAPHIC { return (YGRAPHIC); }
 YX { return (YX); }
 YCURS { return (YCURS); }
 YELLOW { return(YELLOW); }

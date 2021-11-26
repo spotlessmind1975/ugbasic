@@ -1266,6 +1266,10 @@ void gtia_initialization( Environment * _environment ) {
     variable_global( _environment, "CURRENTTILESWIDTH" );
     variable_import( _environment, "CURRENTTILESHEIGHT", VT_BYTE );
     variable_global( _environment, "CURRENTTILESHEIGHT" );
+    variable_import( _environment, "FONTWIDTH", VT_BYTE );
+    variable_global( _environment, "FONTWIDTH" );
+    variable_import( _environment, "FONTHEIGHT", VT_BYTE );
+    variable_global( _environment, "FONTHEIGHT" );
 
 #ifdef __atarixl__
     SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC14, 1, 160, 192, 4, "Antic E (Graphics 15-XL computers only)"  );
