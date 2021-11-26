@@ -3502,6 +3502,7 @@ statement:
   | CIRCLE circle_definition
   | ELLIPSE ellipse_definition
   | DRAW draw_definition
+  | LINE draw_definition
   | PUT put_definition
   | GET get_definition
   | MOB mob_definition
