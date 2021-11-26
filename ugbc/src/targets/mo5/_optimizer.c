@@ -474,7 +474,7 @@ void target_peephole_optimizer( Environment * _environment ) {
 			) {
 				if(unsafe) optim(buffer[0], "(unsafe, presumed dead)", NULL);
 				optim(buffer[1], "rule #17 (STA*,LDA,ORA/ANDA/EORA/ADDA*)", NULL);
-				optim(buffer[2], NULL, "\tADDD %s", variable2);
+				optim(buffer[2], NULL, "\t%sA %s", variable3, variable2);
 			}
 
 

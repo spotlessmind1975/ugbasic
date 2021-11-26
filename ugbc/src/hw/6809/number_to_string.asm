@@ -32,6 +32,7 @@
 ;*                      CONVERT A NUMBER TO A STRING                           *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
+;*                     mc68089 optimizations by S.Devulder                     *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -41,89 +42,62 @@ N2STRING
     LDY #0
     LDX #RESBUFFER
 
-    LDB #10
-    LDA #0
-    DECB
+    LDD #9
 NSSTRINGLC
     STA B,X
     DECB
-    CMPB #$FF
-    BNE NSSTRINGLC
+    BGE NSSTRINGLC
 
     LDU #N2STRINGMASK
-    LDB #0
-N2STRINGL1
-    ORCC #$01
     LDD <MATHPTR2
-    SUBD , U
-    STD <MATHPTR2
-N2STRINGL1C
-    ANDA #$80
-    CMPA #0
-    BNE N2STRINGF
-    INC , X
-    JMP N2STRINGL1
+N2STRINGL1
+    SUBD ,U
+    BMI N2STRINGF
+    INC ,X
+    BRA N2STRINGL1
 
 N2STRINGF
-    ANDCC #$FE
-    LDD <MATHPTR2
-    ADDD , U
-    STD <MATHPTR2
+    ADDD ,U
 
-    CMPY #0
+    LEAY ,Y
     BNE NSSTRINGL2
-    LDB , X
-    CMPB #0
+    TST ,X
     BEQ NSSTRINGL3
-
-    LEAY 1, Y
+    LEAY 1,Y
 
 NSSTRINGL2
-    LDB , X
-    ADDB #$30
-    STB , X
-    LEAX 1, X
-
+    LEAX  1,X
+    
 NSSTRINGL3
-    LEAU 2, U
+    LEAU 2,U
     CMPU #N2STRINGMASKE
     BLE N2STRINGL1
 
-    TFR X, D
+    TFR X,D
     SUBD #RESBUFFER
-
-    CMPB #0
     BNE NSSTRINGL3B
 
-    PSHS B
-    LDB , X
-    ADDB #$30
-    STB , X
-    PULS B
-    
+    STB ,X
     INCB
-NSSTRINGL3B
-    STB <MATHPTR5
 
+NSSTRINGL3B
     LDY <TMPPTR
     LDX #RESBUFFER
 
     LDA <MATHPTR4
-    ANDA #$80
-    BEQ NSSTRINGA
+    BPL NSSTRINGA
 
     LDA #'-'
-    STA , Y
-    LEAY 1, Y
-    INC <MATHPTR5
+    STA , Y+
+    INCB
 
 NSSTRINGA
-    DECB
+    STB <MATHPTR5
 NSSTRINGL4
-    LDA B,X
-    STA B,Y
+    LDA ,X+
+    ADDA #$30
+    STA ,Y+
     DECB
-    CMPB #$FF
     BNE NSSTRINGL4
     RTS
 
