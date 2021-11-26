@@ -274,6 +274,7 @@ OR { return (OR); }
 ORANGE { return(ORANGE); }
 OVERLAYED { return(OVERLAYED); }
 P { return (P); }
+PALETTE { return(PALETTE); }
 PAPER { return(PAPER); }
 PARALLEL { return(PARALLEL); }
 PARAM { return(PARAM); }

@@ -68,6 +68,27 @@ void color( Environment * _environment, int _index, int _shade ) {
 /* <usermanual>
 @keyword COLOR
 </usermanual> */
+void color_semivars( Environment * _environment, int _index, char *_shade ) {
+
+    Variable * shade = variable_retrieve_or_define( _environment, _shade, VT_COLOR, 0 );
+    
+    ted_background_color_vars( _environment, _index, shade->realName );
+
+}
+
+/**
+ * @brief Emit ASM code for instruction <b>COLOR [expression], [expression]</b>
+ * 
+ * This function outputs the ASM code to change the common color, among 
+ * those available. It should be used where the command is invoked with expressions.
+ * 
+ * @param _environment Current calling environment
+ * @param _index Expression with the index of common color to set
+ * @param _common_color Expression with the index of the color to use
+ */
+/* <usermanual>
+@keyword COLOR
+</usermanual> */
 void color_vars( Environment * _environment, char *_index, char *_shade ) {
 
     Variable * index = variable_retrieve_or_define( _environment, _index, VT_BYTE, 0 );

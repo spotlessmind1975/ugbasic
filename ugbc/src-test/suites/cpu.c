@@ -103,7 +103,7 @@ void test_cpu_hex_to_string_payload( TestEnvironment * _te ) {
 
 }
 
-int test_cpu_bits_to_string_tester( TestEnvironment * _te ) {
+int test_cpu_hext_to_string_tester( TestEnvironment * _te ) {
 
     Variable * size = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
 

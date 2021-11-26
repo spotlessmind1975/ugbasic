@@ -528,7 +528,7 @@ void test_distance_payload( TestEnvironment * _te ) {
 
     Variable * sum2 = variable_cast( e, sum->name, VT_POSITION );
 
-    Variable * sqr2 = sqroot( e, sum2->name )->name;
+    Variable * sqr2 = sqroot( e, sum2->name );
 
     Variable * result = distance( e, x1->name, y1->name, x2->name, y2->name );
 
