@@ -90,7 +90,6 @@ void bar( Environment * _environment, char * _x0, char * _y0, char * _x1, char *
     Variable * y0 = variable_retrieve_or_define( _environment, _y0, VT_POSITION, 0 );
     Variable * x1 = variable_retrieve_or_define( _environment, _x1, VT_POSITION, 0 );
     Variable * y1 = variable_retrieve_or_define( _environment, _y1, VT_POSITION, 0 );
-    Variable * c = variable_retrieve_or_define( _environment, _c, VT_COLOR, COLOR_WHITE );
     Variable * yOrdered = variable_less_than( _environment, y0->name, y1->name, 1 );
     Variable * y = variable_temporary( _environment, VT_POSITION, "(y)" );
 
@@ -105,7 +104,7 @@ void bar( Environment * _environment, char * _x0, char * _y0, char * _x1, char *
     cpu_label( _environment, labelOrdered );
 
     begin_for( _environment, y->name, y0->name, y1->name );
-        draw( _environment, x0->name, y->name, x1->name, y->name, c->name );
+        draw( _environment, x0->name, y->name, x1->name, y->name, _c );
     end_for( _environment );
 
 }
