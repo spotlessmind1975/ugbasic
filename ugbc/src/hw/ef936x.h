@@ -118,6 +118,7 @@ void ef936x_finalization( Environment * _environment );
 
 void ef936x_back( Environment * _environment );
 void ef936x_background_color( Environment * _environment, int _index, int _background_color );
+void ef936x_background_color_semivars( Environment * _environment, int _index, char * _background_color );
 void ef936x_background_color_vars( Environment * _environment, char * _index, char * _background_color );
 void ef936x_background_color_get_vars( Environment * _environment, char * _index, char * _background_color );
 void ef936x_border_color( Environment * _environment, char * _border_color );

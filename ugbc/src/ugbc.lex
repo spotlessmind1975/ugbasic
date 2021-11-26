@@ -65,6 +65,7 @@ B { return (B); }
 BACK { return (BACK); }
 BACKGROUND { return (BACKGROUND); }
 BANK { return (BANK); }
+BAR { return (BAR); }
 BEGIN { return (BEG); }
 BIN\$ { return (BIN); }
 BIT { return (BIT); }
@@ -274,6 +275,7 @@ OR { return (OR); }
 ORANGE { return(ORANGE); }
 OVERLAYED { return(OVERLAYED); }
 P { return (P); }
+PALETTE { return(PALETTE); }
 PAPER { return(PAPER); }
 PARALLEL { return(PARALLEL); }
 PARAM { return(PARAM); }
