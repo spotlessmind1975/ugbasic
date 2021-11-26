@@ -500,6 +500,14 @@ void target_peephole_optimizer( Environment * _environment ) {
 				optim(buffer[1], "rule #20 (FLAG-SET,TST)", NULL);
 			}
 			
+			if ( match(buffer[0], " LDB #$01")
+			&&   match(buffer[1], " LDX *", variable1)
+			&&	 match(buffer[2], " JSR CPUMATHMUL16BITTO32*", NULL)) {
+				optim(buffer[0], "rule #21 (MUL#1)", "\tLDD %s", variable1);
+				optim(buffer[1], NULL, "\tLDX #0");
+				optim(buffer[2], NULL, NULL);
+			}
+			
 			// if ( match(buffer[0], " LDX ") && match(buffer[1], " CLRA")) {
 				// strcpy(buffer[1], buffer[0]);
 				// strcpy(buffer[0], "\tCLRA\n");
