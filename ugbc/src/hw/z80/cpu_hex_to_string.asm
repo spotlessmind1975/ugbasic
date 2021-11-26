@@ -29,34 +29,37 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                 INTERNAL VARIABLES FOR ZX SPECTRUM TARGET                   *
+;*                      CONVERT A NUMBER TO A HEXADECIMAL NUMBER               *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+;
+; Input: HL = number to convert, DE = location of ASCII string
+; Output: ASCII string at (DE)
 
-BITMAPADDRESS: DEFW $4000
-COLORMAPADDRESS: DEFW $5800
-TABCOUNT:   DEFB    4
-XCURS:      DEFB    0
-YCURS:      DEFB    0
-EMPTYTILE:  DEFB   32
-EVERYSTATUS:DEFB   0
-XCURSYS:      DEFB    0
-YCURSYS:      DEFB    0
+H2STRING:
+    LD A, H
+    CALL H2STRINGN1
+    LD A, H
+    CALL H2STRINGN2
+    LD A, L
+    CALL H2STRINGN1
+    LD A, L
+    JR H2STRINGN2
 
-XGR:    DEFW 0
-YGR:    DEFW 0
-LINE:   DEFB $ff, $ff
+H2STRINGN1:
+    RRA
+    RRA
+    RRA
+    RRA
 
-CLIPX1:    DEFW 0
-CLIPY1:    DEFW 0
-CLIPX2:    DEFW 255
-CLIPY2:    DEFW 191
-CURRENTWIDTH:   DEFW    256
-CURRENTHEIGHT:   DEFW    192
-CURRENTTILESWIDTH:   DEFB   32 
-CURRENTTILESHEIGHT:   DEFB    24
-CURRENTMODE:        DEFB 0
-TEXTWW:             DEFB 3
-CPURANDOM_SEED:     DEFB $FF, $FF, $FF, $FF
+H2STRINGN2:
+    OR  #$F0
+    DAA
+    ADD A, #$A0
+    ADC A, #$40
+
+    LD (DE),a
+    INC DE
+    RET

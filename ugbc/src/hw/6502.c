@@ -4548,8 +4548,24 @@ void cpu6502_hex_to_string( Environment * _environment, char * _number, char * _
 
     inline( cpu_hex_to_string )
 
-    no_embedded( cpu_hex_to_string )
+    embedded( cpu_hex_to_string, src_hw_6502_cpu_hex_to_string_asm );
 
+        outline1("LDX #$%2.2x", ( _bits >> 3 ) );
+        outline1("LDA #<%s", _number );
+        outline0("STA TMPPTR" );
+        outline1("LDA #>%s", _number );
+        outline0("STA TMPPTR+1" );
+        outline1("LDA %s", _string );
+        outline0("STA TMPPTR2" );
+        outline1("LDA %s+1", _string );
+        outline0("STA TMPPTR2+1" );
+        
+        outline0("JSR H2STRING" );
+
+        outline1("LDX #$%2.2x", ( _bits >> 2 ) );
+        outline1("STX %s", _string_size );
+
+    done()
 }
 
 void cpu6502_dsdefine( Environment * _environment, char * _string, char * _index ) {

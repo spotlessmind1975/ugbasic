@@ -1275,6 +1275,11 @@ typedef struct _Environment {
      */
     VariableType defaultVariableType;
 
+    /**
+     * Current palette index.
+     */
+    int paletteIndex;
+
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */
@@ -1756,6 +1761,7 @@ void                    add_complex( Environment * _environment, char * _variabl
 
 void                    back( Environment * _environment, char * _color );
 Bank *                  bank_define( Environment * _environment, char * _name, BankType _type, int _address, char * _filename );
+void                    bar( Environment * _environment, char * _x0, char * _y0, char * _x1, char * _y1, char * _c );
 void                    begin_for( Environment * _environment, char * _index, char * _from, char * _to );  
 void                    begin_for_step( Environment * _environment, char * _index, char * _from, char * _to, char * _step );  
 void                    begin_gameloop( Environment * _environment );
@@ -1797,6 +1803,8 @@ void                    cmove_direct( Environment * _environment, int _dx, int _
 Variable *              collision_to( Environment * _environment, int _sprite );
 Variable *              collision_to_vars( Environment * _environment, char * _sprite );
 void                    color( Environment * _environment, int _index, int _shade );
+Variable *              color_get_vars( Environment * _environment, char * _index );
+void                    color_semivars( Environment * _environment, int _index, char * _shade );
 void                    color_vars( Environment * _environment, char * _index, char * _shade );
 void                    color_background( Environment * _environment, int _index, int _background_color );
 void                    color_background_vars( Environment * _environment, char * _index, char * _background_color );

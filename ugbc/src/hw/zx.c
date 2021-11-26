@@ -470,12 +470,13 @@ void zx_put_image( Environment * _environment, char * _image, char * _x, char * 
             outline1("LD A, (%s)", _frame );
             outline0("CMP 0" );
             outline1("JR Z, %sdone", label );
-            outhead1("%sloop", label );
+            outhead1("%sloop:", label );
             outline0("INC DE" );
             outline0("DEC B" );
             outline0("CMP 0" );
             outline1("JR NZ, %sloop", label );
             outline0("ADD HL, DE" );
+            outhead1("%sdone:", label );
         }
 
     }
@@ -497,7 +498,11 @@ Variable * zx_new_image( Environment * _environment, int _width, int _height, in
             break;
     }
 
-    CRITICAL_NEW_IMAGE_UNSUPPORTED_MODE( _mode );
+    // CRITICAL_NEW_IMAGE_UNSUPPORTED_MODE( _mode );
+
+    Variable * result = variable_temporary( _environment, VT_IMAGE, "(new image)" );
+
+    return result;
 
 }
 

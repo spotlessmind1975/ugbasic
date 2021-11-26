@@ -1989,7 +1989,7 @@ void z80_end( Environment * _environment ) {
 
 void z80_random( Environment * _environment, char * _entropy ) {
 
-    outline0("LD HL, CPURANDOM_SEED");
+    outline0("LD HL, (CPURANDOM_SEED)");
     outline0("LD B, (HL)");
     outline0("INC HL");
     outline0("LD A, (HL)");
@@ -2005,22 +2005,22 @@ void z80_random( Environment * _environment, char * _entropy ) {
     outline0("RL D");
     outline0("INC L");
     outline0("ADD HL, BC");
-    outline0("LD CPURANDOM_SEED, HL");
-    outline0("LD HL, CPURANDOM_SEED+2");
+    outline0("LD (CPURANDOM_SEED), HL");
+    outline0("LD HL, (CPURANDOM_SEED+2)");
     outline0("ADD HL, DE");
-    outline0("LD CPURANDOM_SEED+1, HL");
+    outline0("LD (CPURANDOM_SEED+1), HL");
     outline0("EX DE, HL");
-    outline0("LD HL, CPURANDOM_SEED");
+    outline0("LD HL, (CPURANDOM_SEED)");
     outline1("LD DE, (%s)", _entropy);
     outline0("ADD HL, HL");
     outline0("RL C");
     outline0("RL B");
-    outline0("LD CPURANDOM_SEED+1, BC");
+    outline0("LD (CPURANDOM_SEED+1), BC");
     outline0("SBC A, A");
     outline0("AND %11000101");
     outline0("XOR L");
     outline0("LD L, A");
-    outline0("LD CPURANDOM_SEED+1, HL");
+    outline0("LD (CPURANDOM_SEED+1), HL");
     outline0("EX DE, HL");
     outline0("ADD HL, BC");
 
@@ -3416,7 +3416,55 @@ void z80_hex_to_string( Environment * _environment, char * _number, char * _stri
 
     inline( cpu_hex_to_string )
 
-    no_embedded( cpu_hex_to_string )
+    embedded( cpu_hex_to_string, src_hw_z80_cpu_hex_to_string_asm );
+
+        switch( _bits ) {
+            case 8:
+                outline1("LD HL, (%s)", _number );
+                outline0("LD DE, HL" );
+                outline0("LD HL, (DE)" );
+                outline0("LD H, 0" );
+                outline1("LD DE, (%s)", _string );
+
+                outline0("CALL H2STRING" );
+                break;
+            case 16:
+
+                outline1("LD HL, (%s)", _number );
+                outline0("LD DE, HL" );
+                outline0("LD HL, (DE)" );
+                outline1("LD DE, (%s)", _string );
+
+                outline0("CALL H2STRING" );
+                break;
+
+            case 32:
+
+                outline1("LD HL, (%s+2)", _number );
+                outline0("LD DE, HL" );
+                outline0("LD HL, (DE)" );
+                outline1("LD DE, (%s)", _string );
+
+                outline0("CALL H2STRING" );
+
+                outline1("LD HL, (%s)", _number );
+                outline0("LD DE, HL" );
+                outline0("LD HL, (DE)" );
+                outline1("LD DE, (%s)", _string );
+                outline0("INC DE" );
+                outline0("INC DE" );
+                outline0("INC DE" );
+                outline0("INC DE" );
+
+                outline0("CALL H2STRING" );
+                break;
+
+        }
+
+        outline1("LD A, #$%2.2x", ( _bits >> 2 ) );
+        outline1("LD (%s), A", _string_size );
+
+    done()
 
 }
 
@@ -3635,6 +3683,8 @@ void z80_mobrender( Environment * _environment, int _on_vbl ) {
 
 void z80_mobcount( Environment * _environment, char * _index) {
 
+    deploy( mob, src_hw_z80_mob_asm );
+    // deploy( mobcs, src_hw_chipset_mob_asm );
 
 }
 
@@ -3670,7 +3720,7 @@ void z80_protothread_vars( Environment * _environment ) {
     outhead1("PROTOTHREADLC:      DEFS        %d", count );
     outhead1("PROTOTHREADST:      DEFS        %d", count );
     outhead0("PROTOTHREADCT:      DEFB        0" );
-    outhead0("PROTOTHREADLOOP");
+    outhead0("PROTOTHREADLOOP:");
 
     for( int i=0; i<count; ++i ) {
         outline1("LD A, %d", i );
@@ -3678,7 +3728,7 @@ void z80_protothread_vars( Environment * _environment ) {
         outline0("CALL PROTOTHREADVOID" );
     }
 
-    outline0("RTS" );
+    outline0("RET" );
     
 }
 

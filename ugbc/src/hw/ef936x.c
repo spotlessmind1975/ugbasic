@@ -143,7 +143,7 @@ void ef936x_border_color( Environment * _environment, char * _border_color ) {
  */
 void ef936x_background_color( Environment * _environment, int _index, int _background_color ) {
 
-    outline1("LDA #$%2.2x", _index );
+    outline1("LDA #$%2.2x", ( _index & 0x0f ) * 2 );
     outline0("STA $A7DB" );
     outline1("LDD #$%4.4x", _background_color );
     outline0("STB $A7DA" );
@@ -164,10 +164,51 @@ void ef936x_background_color( Environment * _environment, int _index, int _backg
 void ef936x_background_color_vars( Environment * _environment, char * _index, char * _background_color ) {
 
     outline1("LDA %s", _index );
+    outline0("ASLA" );
     outline0("STA $A7DB" );
     outline1("LDD %s", _background_color );
     outline0("STB $A7DA" );
     outline0("STA $A7DA" );
+    
+}
+
+/**
+ * @brief <i>VIC-II</i>: emit code to change background color
+ * 
+ * This function can be used to issue code aimed at changing the
+ * background color of the screen.
+ * 
+ * @param _environment Current calling environment
+ * @param _index Index of the background color
+ * @param _background_color Background color to use
+ */
+void ef936x_background_color_semivars( Environment * _environment, int _index, char * _background_color ) {
+
+    outline1("LDA #$%2.2x", (_index*2) );
+    outline0("STA $A7DB" );
+    outline1("LDD %s", _background_color );
+    outline0("STB $A7DA" );
+    outline0("STA $A7DA" );
+    
+}
+
+/**
+ * @brief <i>VIC-II</i>: emit code to change background color
+ * 
+ * This function can be used to issue code aimed at changing the
+ * background color of the screen.
+ * 
+ * @param _environment Current calling environment
+ * @param _index Index of the background color
+ * @param _background_color Background color to use
+ */
+void ef936x_background_color_get_vars( Environment * _environment, char * _index, char * _background_color ) {
+
+    outline1("LDA %s", _index );
+    outline0("STA $A7DA" );
+    outline0("LDB $A7DB" );
+    outline0("LDA $A7DB" );
+    outline1("STD %s", _background_color );
     
 }
 
@@ -577,9 +618,11 @@ void ef936x_text( Environment * _environment, char * _text, char * _text_size, c
 
 static int rgbConverterFunction( int _red, int _green, int _blue ) {
     
-    return ( ( ( _blue >> 4 ) & 0x0f ) << 16 ) ||
-            ( ( ( _green >> 4 ) & 0x0f ) << 8 ) || 
+    int value = ( ( ( _blue >> 4 ) & 0x0f ) << 8 ) |
+            ( ( ( _green >> 4 ) & 0x0f ) << 4 ) |
             ( ( ( _red >> 4 ) & 0x0f ) );
+
+    return value;
 
 }
 

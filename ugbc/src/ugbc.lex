@@ -65,6 +65,7 @@ B { return (B); }
 BACK { return (BACK); }
 BACKGROUND { return (BACKGROUND); }
 BANK { return (BANK); }
+BAR { return (BAR); }
 BEGIN { return (BEG); }
 BIN\$ { return (BIN); }
 BIT { return (BIT); }
@@ -189,7 +190,7 @@ H { return (H); }
 HALT { return (HALT); }
 HAS { return (HAS); }
 HEIGHT { return (HEIGHT); }
-HEX { return (HEX); }
+HEX\$ { return (HEX); }
 HIDE { return (HIDE); }
 HIDDEN { return (HIDDEN); }
 HIT { return (HIT); }
@@ -274,6 +275,7 @@ OR { return (OR); }
 ORANGE { return(ORANGE); }
 OVERLAYED { return(OVERLAYED); }
 P { return (P); }
+PALETTE { return(PALETTE); }
 PAPER { return(PAPER); }
 PARALLEL { return(PARALLEL); }
 PARAM { return(PARAM); }

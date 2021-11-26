@@ -55,7 +55,8 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token BACK DEBUG CAN ELSEIF BUFFER LOAD SIZE MOB IMAGE PUT VISIBLE HIDDEN HIDE SHOW RENDER
 %token SQR TI CONST VBL POKE NOP FILL IN POSITIVE DEFINE ATARI ATARIXL C64 DRAGON DRAGON32 DRAGON64 PLUS4 ZX 
 %token FONT VIC20 PARALLEL YIELD SPAWN THREAD TASK IMAGES FRAME FRAMES XY YX ROLL MASKED USING TRANSPARENCY
-%token OVERLAYED CASE ENDSELECT OGP CGP ARRAY NEW GET DISTANCE TYPE MUL DIV RGB SHADES HEX
+%token OVERLAYED CASE ENDSELECT OGP CGP ARRAY NEW GET DISTANCE TYPE MUL DIV RGB SHADES HEX PALETTE
+%token BAR
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -1082,7 +1083,12 @@ exponential:
         ((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex] = 0;
     }
       OP indexes CP {
-        Variable * array = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
+        Variable * array;
+        if ( variable_exists( _environment, $1 ) ) {
+            array = variable_retrieve( _environment, $1 );
+        } else {
+            array = variable_define( _environment, $1, VT_ARRAY, 0 );
+        }        
         if ( array->type != VT_ARRAY ) {
             CRITICAL_NOT_ARRAY( $1 );
         }
@@ -1607,6 +1613,9 @@ exponential:
     | WIDTH {
         $$ = screen_get_width( _environment )->name;
     }
+    | COLOR OP expr CP {
+        $$ = color_get_vars( _environment, $3 )->name;
+    }
     | SCREEN WIDTH {
         $$ = screen_get_width( _environment )->name;
     }
@@ -1981,7 +1990,16 @@ next_raster_definition:
   | next_raster_definition_expression;
 
 color_definition_simple:
-    BORDER direct_integer {
+  expr OP_COMMA expr {
+      color_vars( _environment, $1, $3 );
+  }
+  | OP_HASH const_expr OP_COMMA expr {
+      color_semivars( _environment, $2, $4 );
+  }
+  | OP_HASH const_expr OP_COMMA OP_HASH const_expr {
+      color( _environment, $2, $5 );
+  }
+  | BORDER direct_integer {
       color_border( _environment, $2 );
   }
   | BACKGROUND direct_integer TO direct_integer {
@@ -2611,6 +2629,27 @@ box_definition_expression:
 
 box_definition:
     box_definition_expression;
+
+bar_definition_expression:
+      optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
+        bar( _environment, $1, $3, $5, $7, $9 );
+        gr_locate( _environment, $5, $7 );
+    }
+    | optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y  {
+        bar( _environment, $1, $3, $5, $7, NULL );
+        gr_locate( _environment, $5, $7 );
+    }
+    | TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
+        bar( _environment, "XGR", "YGR", $2, $4, $6 );
+        gr_locate( _environment, $2, $4 );
+    }
+    | TO optional_x OP_COMMA optional_y  {
+        bar( _environment, "XGR", "YGR", $2, $4, NULL );
+        gr_locate( _environment, $2, $4 );
+    };
+
+bar_definition:
+    bar_definition_expression;
 
 clip_definition_expression:
       expr OP_COMMA expr TO expr OP_COMMA expr {
@@ -3433,12 +3472,43 @@ on_targets:
         $$ = $2;
     };
 
+palette_definition:
+    OP_HASH const_expr {
+        color( _environment, ((struct _Environment *)_environment)->paletteIndex++, $2 );
+    }
+    | expr {
+        color_semivars( _environment, ((struct _Environment *)_environment)->paletteIndex++, $1 );
+    }
+    | RGB OP const_expr OP_COMMA const_expr OP_COMMA const_expr CP {
+        if ( ((Environment *)_environment)->currentRgbConverterFunction ) {
+            color( _environment, ((struct _Environment *)_environment)->paletteIndex++, ((Environment *)_environment)->currentRgbConverterFunction( $3, $5, $7 ) );
+        } else {
+            color( _environment, ((struct _Environment *)_environment)->paletteIndex++, 0 );
+        }
+    }
+    | OP_HASH const_expr {
+        color( _environment, ((struct _Environment *)_environment)->paletteIndex++, $2 );
+    } OP_COMMA palette_definition
+    | expr {
+        color_semivars( _environment, ((struct _Environment *)_environment)->paletteIndex++, $1 );
+    } OP_COMMA palette_definition
+    | RGB OP const_expr OP_COMMA const_expr OP_COMMA const_expr CP {
+        if ( ((Environment *)_environment)->currentRgbConverterFunction ) {
+            color( _environment, ((struct _Environment *)_environment)->paletteIndex++, ((Environment *)_environment)->currentRgbConverterFunction( $3, $5, $7 ) );
+        } else {
+            color( _environment, ((struct _Environment *)_environment)->paletteIndex++, 0 );
+        }
+    } OP_COMMA palette_definition;
+
 statement:
     BANK bank_definition
   | RASTER raster_definition
   | NEXT RASTER next_raster_definition
   | COLOR color_definition
   | COLOUR color_definition
+  | PALETTE {
+      ((struct _Environment *)_environment)->paletteIndex = 0;
+  } palette_definition
   | WAIT wait_definition
   | SPRITE sprite_definition
   | BITMAP bitmap_definition
@@ -3454,10 +3524,12 @@ statement:
   | CIRCLE circle_definition
   | ELLIPSE ellipse_definition
   | DRAW draw_definition
+  | LINE draw_definition
   | PUT put_definition
   | GET get_definition
   | MOB mob_definition
   | BOX box_definition
+  | BAR bar_definition
   | POLYLINE polyline_definition
   | CLIP clip_definition
   | SET LINE expr {
@@ -3878,7 +3950,12 @@ statement:
   }
   | Identifier OP_ASSIGN expr {
         Variable * expr = variable_retrieve( _environment, $3 );
-        Variable * variable = variable_retrieve_or_define( _environment, $1, expr->type, 0 );
+        Variable * variable;
+        if ( variable_exists( _environment, $1 ) ) {
+            variable = variable_retrieve( _environment, $1 );
+        } else {
+            variable = variable_define( _environment, $1, expr->type == VT_STRING ? VT_DSTRING : expr->type, 0 );
+        }
 
         if ( variable->type == VT_ARRAY ) {
             if ( expr->type != VT_BUFFER ) {
@@ -3905,7 +3982,12 @@ statement:
   }
   | Identifier OP_ASSIGN_DIRECT expr  {
         Variable * expr = variable_retrieve( _environment, $3 );
-        Variable * var = variable_retrieve_or_define( _environment, $1, expr->type, 0 );
+        Variable * var;
+        if ( variable_exists( _environment, $1 ) ) {
+            var = variable_retrieve( _environment, $1 );
+        } else {
+            var = variable_define( _environment, $1, expr->type == VT_STRING ? VT_DSTRING : expr->type, 0 );
+        }
         var->value = expr->value;
         if ( expr->valueString ) {
             var->valueString = strdup( expr->valueString );
@@ -3945,7 +4027,9 @@ statement:
   } array_reassign
   | Identifier OP_DOLLAR OP_ASSIGN expr {
         Variable * expr = variable_retrieve( _environment, $4 );
-        variable_retrieve_or_define( _environment, $1, VT_DSTRING, 0 )->name;
+        if ( !variable_exists( _environment, $1 ) ) {
+            variable_define( _environment, $1, VT_DSTRING, 0 );
+        }
         variable_move( _environment, $4, $1 );
   }
   | Identifier {
