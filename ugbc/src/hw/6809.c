@@ -1425,8 +1425,8 @@ void cpu6809_math_mul_16bit_to_32bit( Environment * _environment, char *_source,
 
     embedded( cpu_math_mul_16bit_to_32bit, src_hw_6809_cpu_math_mul_16bit_to_32bit_asm );
 
-        outline1("LDD %s", _source );
-        outline1("LDX %s", _destination );
+        outline1("LDD %s", _destination );
+        outline1("LDX %s", _source );
 
         if ( _signed ) {
             outline0("JSR CPUMATHMUL16BITTO32BIT_SIGNED" );
