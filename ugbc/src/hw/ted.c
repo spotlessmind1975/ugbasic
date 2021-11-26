@@ -123,6 +123,26 @@ void ted_background_color_vars( Environment * _environment, char * _index, char 
 }
 
 /**
+ * @brief <i>TED</i>: emit code to change background color
+ * 
+ * This function can be used to issue code aimed at changing the
+ * background color of the screen.
+ * 
+ * @param _environment Current calling environment
+ * @param _index Index of the background color
+ * @param _background_color Background color to use
+ */
+void ted_background_color_semivars( Environment * _environment, int _index, char * _background_color ) {
+ 
+    outline1("LDA #$%2.2x", _index);
+    outline0("AND #$03");
+    outline0("TAX");
+    outline1("LDA %s", _background_color );
+    outline0("AND #$0f" );
+    outline0("STA $FF15,X");
+}
+
+/**
  * @brief <i>TED</i>: emit code to retrieve background color
  * 
  * This function can be used to issue code aimed at retrieving the
