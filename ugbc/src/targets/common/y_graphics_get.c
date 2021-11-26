@@ -41,50 +41,50 @@
 extern char DATATYPE_AS_STRING[][16];
 
 /**
- * @brief Return the graphic abscissa for the given text abscissa
+ * @brief Return the graphic ordinate for the given text ordinate
  * 
  * @param _environment Current calling environment
- * @param _value Text abscissa
- * @return Variable* Screen abscissa
+ * @param _value Text ordinate
+ * @return Variable* Screen ordinate
  */
 /* <usermanual>
-@keyword X GRAPHIC
+@keyword Y GRAPHIC
 
 @english
-This function performs the conversion of text abscissa to graphic abscissa, and can be
+This function performs the conversion of text ordinate to graphic ordinate, and can be
 used to position text over an area of graphics on the screen.
 
 @italian
-Questa funzione esegue la conversione delle ascisse del formato testo in ascisse del formato grafico e può essere
+Questa funzione esegue la conversione delle ordinate del formato testo in ordinate del formato grafico e può essere
 utilizzato per posizionare il testo su un'area della grafica sullo schermo.
 
-@syntax = X GRAPHIC([x text])
+@syntax = Y GRAPHIC([x text])
 
-@example x = X GRAPHIC(10)
+@example x = Y GRAPHIC(10)
 
 @usedInExample graphics_text_01.bas
 
 @target all
 </usermanual> */
 /* <usermanual>
-@keyword XGRAPHIC
+@keyword YGRAPHIC
 
 @english
-Alias for ''X GRAPHIC''.
+Alias for ''Y GRAPHIC''.
 
 @italian
-Alias per ''X GRAPHIC''.
+Alias per ''Y GRAPHIC''.
 
-@seeAlso X GRAPHIC
+@seeAlso Y GRAPHIC
 
 @target all
 </usermanual> */
-Variable * x_graphic_get( Environment * _environment, char * _x ) {
+Variable * y_graphic_get( Environment * _environment, char * _y ) {
 
-    Variable * x = variable_retrieve( _environment, _x );
-    Variable * result = variable_temporary( _environment, VT_POSITION, "(x)" );
+    Variable * y = variable_retrieve( _environment, _y );
+    Variable * result = variable_temporary( _environment, VT_POSITION, "(y)" );
 
-    variable_move( _environment, variable_mul( _environment, x->name, "FONTWIDTH" )->name, result->name );
+    variable_move( _environment, variable_mul( _environment, y->name, "FONTHEIGHT" )->name, result->name );
 
     return result;
 

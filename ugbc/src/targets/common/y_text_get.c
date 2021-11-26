@@ -41,50 +41,51 @@
 extern char DATATYPE_AS_STRING[][16];
 
 /**
- * @brief Return the graphic abscissa for the given text abscissa
+ * @brief Return the text ordinate for the given graphic ordinate
  * 
  * @param _environment Current calling environment
- * @param _value Text abscissa
- * @return Variable* Screen abscissa
+ * @param _value Screen ordinate
+ * @return Variable* Text ordinate
  */
 /* <usermanual>
-@keyword X GRAPHIC
+@keyword Y TEXT
 
 @english
-This function performs the conversion of text abscissa to graphic abscissa, and can be
-used to position text over an area of graphics on the screen.
+This function performs the conversion of graphic ordinate to text ordinate, and it can be
+used to position an area of graphics on the screen, over the text.
 
 @italian
-Questa funzione esegue la conversione delle ascisse del formato testo in ascisse del formato grafico e può essere
-utilizzato per posizionare il testo su un'area della grafica sullo schermo.
+Questa funzione esegue la conversione delle ordinate del formato grafico in ordinate del 
+formato testo e può essere utilizzato per posizionare un'area della grafica 
+sul testo.
 
-@syntax = X GRAPHIC([x text])
+@syntax = Y TEXT([x graphics])
 
-@example x = X GRAPHIC(10)
+@example x = Y TEXT(100)
 
-@usedInExample graphics_text_01.bas
+@usedInExample graphics_text_03.bas
 
 @target all
 </usermanual> */
 /* <usermanual>
-@keyword XGRAPHIC
+@keyword YTEXT
 
 @english
-Alias for ''X GRAPHIC''.
+Alias for ''Y TEXT''.
 
 @italian
-Alias per ''X GRAPHIC''.
+Alias per ''Y TEXT''.
 
-@seeAlso X GRAPHIC
+@seeAlso Y TEXT
 
 @target all
 </usermanual> */
-Variable * x_graphic_get( Environment * _environment, char * _x ) {
+Variable * y_text_get( Environment * _environment, char * _y ) {
 
-    Variable * x = variable_retrieve( _environment, _x );
-    Variable * result = variable_temporary( _environment, VT_POSITION, "(x)" );
+    Variable * y = variable_retrieve( _environment, _y );
+    Variable * result = variable_temporary( _environment, VT_POSITION, "(y)" );
 
-    variable_move( _environment, variable_mul( _environment, x->name, "FONTWIDTH" )->name, result->name );
+    variable_move( _environment, variable_div( _environment, y->name, "FONTHEIGHT", NULL )->name, result->name );
 
     return result;
 

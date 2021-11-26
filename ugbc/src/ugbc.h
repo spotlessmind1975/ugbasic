@@ -2196,6 +2196,7 @@ void                    writing( Environment * _environment, char * _mode, char 
 
 Variable *              xpen( Environment * _environment );
 Variable *              x_graphic_get( Environment * _environment, char * _x );
+Variable *              x_text_get( Environment * _environment, char * _x );
 
 //----------------------------------------------------------------------------
 // *Y*
@@ -2204,6 +2205,7 @@ Variable *              x_graphic_get( Environment * _environment, char * _x );
 void                    yield( Environment * _environment );
 Variable *              ypen( Environment * _environment );
 Variable *              y_graphic_get( Environment * _environment, char * _y );
+Variable *              y_text_get( Environment * _environment, char * _y );
 
 #if defined(__atari__) 
     #include "../src-generated/modules_atari.h"
