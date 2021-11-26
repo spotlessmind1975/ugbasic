@@ -422,8 +422,6 @@ static int rgbConverterFunction( int _red, int _green, int _blue ) {
         }
     }
 
-    printf("RGB(%2.2x,%2.2x,%2.2x) = %2.2x\n", _red, _green, _blue, colorIndex );
-
     return colorIndex;
 
 }

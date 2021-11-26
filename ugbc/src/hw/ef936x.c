@@ -622,8 +622,6 @@ static int rgbConverterFunction( int _red, int _green, int _blue ) {
             ( ( ( _green >> 4 ) & 0x0f ) << 4 ) |
             ( ( ( _red >> 4 ) & 0x0f ) );
 
-    printf("RGB(%2.2x,%2.2x,%2.2x) = %4.4x\n", _red, _green, _blue, value );
-
     return value;
 
 }
