@@ -34,14 +34,14 @@
 #include "../ugbc.h"
 
 #define COLOR_BLACK					0
-#define COLOR_GREEN					1
-#define COLOR_YELLOW				2
-#define COLOR_BLUE					3
-#define COLOR_RED					4
-#define COLOR_WHITE					5
-#define COLOR_CYAN					6
-#define COLOR_MAGENTA				7
-#define COLOR_ORANGE				8
+#define COLOR_GREEN					COLOR_BLACK
+#define COLOR_YELLOW				1
+#define COLOR_BLUE					2
+#define COLOR_RED					3
+#define COLOR_WHITE					COLOR_YELLOW
+#define COLOR_CYAN					COLOR_BLUE
+#define COLOR_MAGENTA				COLOR_BLUE
+#define COLOR_ORANGE				COLOR_BLUE
 
 #define COLOR_VIOLET				COLOR_MAGENTA
 #define COLOR_BROWN					COLOR_ORANGE
@@ -62,7 +62,7 @@
 #define COLOR_PINK       			COLOR_LIGHT_RED
 #define COLOR_PEACH       			COLOR_PINK
 
-#define COLOR_COUNT                 8
+#define COLOR_COUNT                 4
 
 #define TEXT_COLUMNS_COUNT          32
 #define TEXT_ROWS_COUNT             16

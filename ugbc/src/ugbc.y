@@ -56,7 +56,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token SQR TI CONST VBL POKE NOP FILL IN POSITIVE DEFINE ATARI ATARIXL C64 DRAGON DRAGON32 DRAGON64 PLUS4 ZX 
 %token FONT VIC20 PARALLEL YIELD SPAWN THREAD TASK IMAGES FRAME FRAMES XY YX ROLL MASKED USING TRANSPARENCY
 %token OVERLAYED CASE ENDSELECT OGP CGP ARRAY NEW GET DISTANCE TYPE MUL DIV RGB SHADES HEX PALETTE
-%token BAR
+%token BAR XGRAPHIC YGRAPHIC XTEXT YTEXT
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -315,6 +315,30 @@ const_factor:
       }
       | SCREEN SHADES {
           $$ = ((Environment *)_environment)->screenShades;
+      }
+      | XTEXT OP const_expr CP {
+          $$ = $3 / ((Environment *)_environment)->fontWidth;
+      }
+      | X TEXT OP const_expr CP {
+          $$ = $4 / ((Environment *)_environment)->fontWidth;
+      }
+      | YTEXT OP const_expr CP {
+          $$ = $3 / ((Environment *)_environment)->fontHeight;
+      }
+      | Y TEXT OP const_expr CP {
+          $$ = $4 / ((Environment *)_environment)->fontHeight;
+      }
+      | XGRAPHIC OP const_expr CP {
+          $$ = $3 * ((Environment *)_environment)->fontWidth;
+      }
+      | X GRAPHIC OP const_expr CP {
+          $$ = $4 * ((Environment *)_environment)->fontWidth;
+      }
+      | YGRAPHIC OP const_expr CP {
+          $$ = $3 * ((Environment *)_environment)->fontHeight;
+      }
+      | Y GRAPHIC OP const_expr CP {
+          $$ = $4 * ((Environment *)_environment)->fontHeight;
       }
       | WIDTH {
           $$ = ((Environment *)_environment)->screenWidth;
@@ -1609,6 +1633,30 @@ exponential:
     | DEFAULT PAPER {
         $$ = variable_temporary( _environment, VT_COLOR, "(COLORS)" )->name;
         variable_store( _environment, $$, COLOR_BLACK );
+    }
+    | XTEXT OP expr CP {
+        $$ = x_text_get( _environment, $3 )->name;
+    }
+    | X TEXT OP expr CP {
+        $$ = x_text_get( _environment, $4 )->name;
+    }
+    | YTEXT OP expr CP {
+        $$ = y_text_get( _environment, $3 )->name;
+    }
+    | Y TEXT OP expr CP {
+        $$ = y_text_get( _environment, $4 )->name;
+    }
+    | XGRAPHIC OP expr CP {
+        $$ = x_graphic_get( _environment, $3 )->name;
+    }
+    | X GRAPHIC OP expr CP {
+        $$ = x_graphic_get( _environment, $4 )->name;
+    }
+    | YGRAPHIC OP expr CP {
+        $$ = y_graphic_get( _environment, $3 )->name;
+    }
+    | Y GRAPHIC OP expr CP {
+        $$ = y_graphic_get( _environment, $4 )->name;
     }
     | WIDTH {
         $$ = screen_get_width( _environment )->name;
