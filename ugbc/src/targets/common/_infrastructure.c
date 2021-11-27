@@ -3845,19 +3845,25 @@ static Variable * calculate_offset_in_array( Environment * _environment, char * 
 
     int i,j;
 
-    for( i = 0; i<_environment->arrayIndexes[_environment->arrayNestedIndex]; ++i ) {
-		int baseValue = 1;
-        for( j=0; j<i; ++j ) {
-			baseValue *= array->arrayDimensionsEach[array->arrayDimensions-j-1];
-        }
+    if ( _environment->arrayIndexes[_environment->arrayNestedIndex] == 1 ) {
         Variable * index = variable_retrieve( _environment, _environment->arrayIndexesEach[_environment->arrayNestedIndex][array->arrayDimensions-i-1]);
-		if(baseValue!=1) {
-			variable_store( _environment, base->name, baseValue );
-			Variable * additionalOffset = variable_mul( _environment, index->name, base->name );
-			variable_add_inplace( _environment, offset->name, additionalOffset->name );
-		} else {
-			variable_add_inplace( _environment, offset->name, index->name );
-		}
+        Variable * additionalOffset = variable_mul2_const( _environment, index->name, VT_BITWIDTH(array->arrayType) );
+        variable_add_inplace( _environment, offset->name, additionalOffset->name );
+    } else {
+        for( i = 0; i<_environment->arrayIndexes[_environment->arrayNestedIndex]; ++i ) {
+            int baseValue = 1;
+            for( j=0; j<i; ++j ) {
+                baseValue *= array->arrayDimensionsEach[array->arrayDimensions-j-1];
+            }
+            Variable * index = variable_retrieve( _environment, _environment->arrayIndexesEach[_environment->arrayNestedIndex][array->arrayDimensions-i-1]);
+            if(baseValue!=1) {
+                variable_store( _environment, base->name, baseValue );
+                Variable * additionalOffset = variable_mul( _environment, index->name, base->name );
+                variable_add_inplace( _environment, offset->name, additionalOffset->name );
+            } else {
+                variable_add_inplace( _environment, offset->name, index->name );
+            }
+        }
     }
 
     return offset;
