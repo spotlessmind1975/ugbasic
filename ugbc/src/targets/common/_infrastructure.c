@@ -3839,7 +3839,6 @@ static Variable * calculate_offset_in_array( Environment * _environment, char * 
     }
 
     Variable * base = variable_temporary( _environment, VT_WORD, "(base in array)");
-    Variable * size = variable_temporary( _environment, VT_WORD, "(size in array)");
     Variable * offset = variable_temporary( _environment, VT_WORD, "(offset in array)");
 
     variable_store( _environment, offset->name, 0 );
@@ -3847,14 +3846,18 @@ static Variable * calculate_offset_in_array( Environment * _environment, char * 
     int i,j;
 
     for( i = 0; i<_environment->arrayIndexes[_environment->arrayNestedIndex]; ++i ) {
-        variable_store( _environment, base->name, 1 );
+		int baseValue = 1;
         for( j=0; j<i; ++j ) {
-            variable_store( _environment, size->name, array->arrayDimensionsEach[array->arrayDimensions-j-1] );
-            base = variable_mul( _environment, base->name, size->name );
+			baseValue *= array->arrayDimensionsEach[array->arrayDimensions-j-1];
         }
         Variable * index = variable_retrieve( _environment, _environment->arrayIndexesEach[_environment->arrayNestedIndex][array->arrayDimensions-i-1]);
-        Variable * additionalOffset = variable_mul( _environment, index->name, base->name );
-        variable_add_inplace( _environment, offset->name, additionalOffset->name );
+		if(baseValue!=1) {
+			variable_store( _environment, base->name, baseValue );
+			Variable * additionalOffset = variable_mul( _environment, index->name, base->name );
+			variable_add_inplace( _environment, offset->name, additionalOffset->name );
+		} else {
+			variable_add_inplace( _environment, offset->name, index->name );
+		}
     }
 
     return offset;
