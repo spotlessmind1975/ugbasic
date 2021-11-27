@@ -80,6 +80,8 @@ void center( Environment * _environment, char * _string ) {
     Variable * w = variable_sub( _environment, currentWidth->name, variable_string_len( _environment, _string)->name );
     w = variable_div2_const( _environment, w->name, 1 );
 
-    text_at( _environment, w->name, y->name, string->name );
+    locate( _environment, w->name, y->name );
+
+    text_text( _environment, string->name );
 
 }
