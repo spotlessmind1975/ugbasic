@@ -3845,9 +3845,10 @@ static Variable * calculate_offset_in_array( Environment * _environment, char * 
 
     int i,j;
 
-    if ( _environment->arrayIndexes[_environment->arrayNestedIndex] == 1 ) {
-        Variable * index = variable_retrieve( _environment, _environment->arrayIndexesEach[_environment->arrayNestedIndex][array->arrayDimensions-i-1]);
-        Variable * additionalOffset = variable_mul2_const( _environment, index->name, VT_BITWIDTH(array->arrayType) );
+    if ( VT_BITWIDTH(array->arrayType) && _environment->arrayIndexes[_environment->arrayNestedIndex] == 1 ) {
+        printf("OPTIMIZATION!!\n");
+        Variable * index = variable_retrieve( _environment, _environment->arrayIndexesEach[_environment->arrayNestedIndex][0]);
+        Variable * additionalOffset = variable_mul2_const( _environment, index->name, ( ( VT_BITWIDTH(array->arrayType) >> 3 ) - 1 ) );
         variable_add_inplace( _environment, offset->name, additionalOffset->name );
     } else {
         for( i = 0; i<_environment->arrayIndexes[_environment->arrayNestedIndex]; ++i ) {
