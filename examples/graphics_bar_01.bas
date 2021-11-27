@@ -1,10 +1,10 @@
 REM @english
-REM GRAPHICS PRIMITIVES USING BAR
+REM GRAPHICS PRIMITIVES USING BAR (2)
 REM
 REM This example will draw two red bars.
 REM
 REM @italian
-REM PRIMITIVE DI GRAFICA CON L'USO DI BAR
+REM PRIMITIVE DI GRAFICA CON L'USO DI BAR (2)
 REM
 REM Questo esempio disegnerà due barre rosse.
 
