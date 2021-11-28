@@ -43,9 +43,9 @@ Variable * screen_tiles_get( Environment * _environment ) {
     Variable * tiles = variable_temporary( _environment, VT_BYTE, "(result of get tiles)");
 
     MAKE_LABEL
-    
-    zx_tiles_get( _environment, tiles->realName );
-   
+
+    variable_store( _environment, tiles->name, 255 );
+
     return tiles;
 
 }
