@@ -52,6 +52,7 @@ CURRENTWIDTH:      .word 40
 CURRENTHEIGHT:      .word 25
 CURRENTTILESWIDTH:      .byte 40
 CURRENTTILESHEIGHT:      .byte 25
+CURRENTTILES:      .byte 255
 CURRENTSL:          .byte 0
 TEXTWW:             .byte 3
 FONTWIDTH:          .byte 8

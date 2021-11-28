@@ -159,6 +159,7 @@ void ef936x_sprite_color( Environment * _environment, char * _sprite, char * _co
 void ef936x_vertical_scroll( Environment * _environment, char * _displacement );
 void ef936x_horizontal_scroll( Environment * _environment, char * _displacement );
 
+void ef936x_tiles_get( Environment * _environment, char * _result );
 void ef936x_get_width( Environment * _environment, char * _result );
 void ef936x_tiles_get_width( Environment * _environment, char * _result );
 void ef936x_get_height( Environment * _environment, char * _result );

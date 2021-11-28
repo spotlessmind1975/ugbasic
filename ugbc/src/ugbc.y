@@ -343,6 +343,9 @@ const_factor:
       | WIDTH {
           $$ = ((Environment *)_environment)->screenWidth;
       }
+      | TILES {
+          $$ = ((Environment *)_environment)->screenTiles;
+      }
       | SCREEN WIDTH {
           $$ = ((Environment *)_environment)->screenWidth;
       }
@@ -1688,6 +1691,9 @@ exponential:
     }
     | SCREEN TILES WIDTH {
         $$ = screen_tiles_get_width( _environment )->name;
+    }
+    | TILES {
+        $$ = screen_tiles_get( _environment )->name;
     }
     | TILES WIDTH {
         $$ = screen_tiles_get_width( _environment )->name;

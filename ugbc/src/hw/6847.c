@@ -227,6 +227,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
     _environment->fontWidth = 8;
     _environment->fontHeight = 8;
     _environment->screenShades = 4;
+    _environment->screenTiles = 128;
     switch( _screen_mode->id ) {
         // ALPHANUMERIC DISPLAY MODES – All alphanumeric modes occupy an 8 x 12 
         // dot character matrix box and there are 32 x 16 character boxes per TV frame. 
@@ -603,6 +604,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
 
     cpu_store_16bit( _environment, "CURRENTWIDTH", _environment->screenWidth );
     cpu_store_16bit( _environment, "CURRENTHEIGHT", _environment->screenHeight );
+    cpu_store_8bit( _environment, "CURRENTTILES", _environment->screenTiles );
     cpu_store_8bit( _environment, "CURRENTTILESWIDTH", _environment->screenTilesWidth );
     cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight );
 
@@ -820,6 +822,13 @@ void c6847_get_width( Environment * _environment, char *_result ) {
 
 }
 
+void c6847_tiles_get( Environment * _environment, char *_result ) {
+
+    outline0("LDA CURRENTTILES" );
+    outline1("STA %s", _result );
+
+}
+
 void c6847_tiles_get_width( Environment * _environment, char *_result ) {
 
     outline0("LDA CURRENTTILESWIDTH" );
@@ -892,6 +901,8 @@ void c6847_initialization( Environment * _environment ) {
     variable_global( _environment, "CURRENTTILESWIDTH" );
     variable_import( _environment, "CURRENTTILESHEIGHT", VT_BYTE );
     variable_global( _environment, "CURRENTTILESHEIGHT" );
+    variable_import( _environment, "CURRENTTILES", VT_BYTE );
+    variable_global( _environment, "CURRENTTILES" );
     variable_import( _environment, "FONTWIDTH", VT_BYTE );
     variable_global( _environment, "FONTWIDTH" );
     variable_import( _environment, "FONTHEIGHT", VT_BYTE );

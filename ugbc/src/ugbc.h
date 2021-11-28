@@ -1223,6 +1223,11 @@ typedef struct _Environment {
     int screenColors;
 
     /**
+     * Number of tiles accessible.
+     */
+    int screenTiles;
+
+    /**
      * Screen width in characters (statically determined)
      */
     int screenTilesWidth;
@@ -2040,6 +2045,7 @@ void                    screen_off( Environment * _environment );
 void                    screen_on( Environment * _environment );
 void                    screen_rows( Environment * _environment, int _rows );
 void                    screen_rows_var( Environment * _environment, char * _rows );
+Variable *              screen_tiles_get( Environment * _environment );
 Variable *              screen_tiles_get_height( Environment * _environment );
 Variable *              screen_tiles_get_width( Environment * _environment );
 void                    screen_vertical_scroll( Environment * _environment, int _displacement );

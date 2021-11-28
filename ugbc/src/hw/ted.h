@@ -121,6 +121,7 @@ void ted_vertical_scroll( Environment * _environment, char * _displacement );
 void ted_horizontal_scroll( Environment * _environment, char * _displacement );
 void ted_busy_wait( Environment * _environment, char * _timing );
 
+void ted_tiles_get( Environment * _environment, char * _result );
 void ted_get_width( Environment * _environment, char * _result );
 void ted_tiles_get_width( Environment * _environment, char * _result );
 void ted_get_height( Environment * _environment, char * _result );
