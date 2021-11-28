@@ -852,6 +852,7 @@ static void vars_optim(char buffer[LOOK_AHEAD][MAX_TEMPORARY_STORAGE]) {
     }
 }
 
+/* collapse all heading spaces into a single tabulation */
 static void out(FILE *f, char *_buf) {
 	char *s = _buf;
 	int tab = 0;
