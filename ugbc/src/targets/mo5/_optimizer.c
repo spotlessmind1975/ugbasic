@@ -852,6 +852,14 @@ static void vars_optim(char buffer[LOOK_AHEAD][MAX_TEMPORARY_STORAGE]) {
     }
 }
 
+static void out(FILE *f, char *_buf) {
+	char *s = _buf;
+	int tab = 0;
+	while(*s==' ' || *s=='\t') {tab = 1; ++s;}
+	if(tab) fputs("\t", f);
+	fputs(s, f);
+}
+
 /* main entry-point for this service */
 void target_peephole_optimizer( Environment * _environment ) {
     const int keep_comments = KEEP_COMMENTS;
@@ -881,7 +889,7 @@ void target_peephole_optimizer( Environment * _environment ) {
 
         while( !feof( fileAsm ) ) {
             /* print out oldest buffer */
-            if ( line >= LOOK_AHEAD ) fputs( buffer[0], fileOptimized );
+            if ( line >= LOOK_AHEAD ) out(fileOptimized, buffer[0]);
             /* shift the buffers */
             for(i=0; i<LOOK_AHEAD-1; ++i) strcpy(buffer[i], buffer[i+1]);
             /* read next line, merging adjacent comments */
@@ -911,7 +919,7 @@ void target_peephole_optimizer( Environment * _environment ) {
             ++line;
         }
 
-        for(i=0; i<LOOK_AHEAD; ++i) fputs( buffer[i], fileOptimized );
+        for(i=0; i<LOOK_AHEAD; ++i) out( fileOptimized, buffer[i]);
 
         /* log info at the end of the file */
         fprintf(fileOptimized, "; peephole: pass %d, %d change%s.\n", pass, change, change>1 ?"s":"");
