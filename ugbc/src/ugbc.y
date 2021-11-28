@@ -1573,27 +1573,27 @@ exponential:
     }
     | COLORS {
         $$ = variable_temporary( _environment, VT_COLOR, "(COLORS)" )->name;
-        variable_store( _environment, $$, COLOR_COUNT );
+        variable_store( _environment, $$, ((Environment *)_environment)->screenColors );
     }
     | COLORS COUNT {
         $$ = variable_temporary( _environment, VT_COLOR, "(COLORS COUNT)" )->name;
-        variable_store( _environment, $$, COLOR_COUNT );
+        variable_store( _environment, $$, ((Environment *)_environment)->screenColors );
     }
     | COLOR COUNT {
         $$ = variable_temporary( _environment, VT_COLOR, "(COLORS COUNT)" )->name;
-        variable_store( _environment, $$, COLOR_COUNT );
+        variable_store( _environment, $$, ((Environment *)_environment)->screenColors );
     }
     | COLOURS {
         $$ = variable_temporary( _environment, VT_COLOR, "(COLORS)" )->name;
-        variable_store( _environment, $$, COLOR_COUNT );
+        variable_store( _environment, $$, ((Environment *)_environment)->screenColors );
     }
     | COLOURS COUNT {
         $$ = variable_temporary( _environment, VT_COLOR, "(COLORS COUNT)" )->name;
-        variable_store( _environment, $$, COLOR_COUNT );
+        variable_store( _environment, $$, ((Environment *)_environment)->screenColors );
     }
     | COLOUR COUNT {
         $$ = variable_temporary( _environment, VT_COLOR, "(COLORS COUNT)" )->name;
-        variable_store( _environment, $$, COLOR_COUNT );
+        variable_store( _environment, $$, ((Environment *)_environment)->screenColors );
     }
     | THREAD {
         Variable * var = variable_temporary( _environment, VT_THREAD, "(THREAD)" );
@@ -1606,7 +1606,11 @@ exponential:
         $$ = var->name;
     }
     | SCREEN SHADES {
-        $$ = variable_temporary( _environment, VT_COLOR, "(SCREEN SHADES)" )->name;
+        $$ = variable_temporary( _environment, VT_WORD, "(SCREEN SHADES)" )->name;
+        variable_store( _environment, $$, ((Environment *)_environment)->screenShades );
+    }
+    | SHADES {
+        $$ = variable_temporary( _environment, VT_WORD, "(SCREEN SHADES)" )->name;
         variable_store( _environment, $$, ((Environment *)_environment)->screenShades );
     }
     | SCREEN COLORS {
