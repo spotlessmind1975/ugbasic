@@ -616,7 +616,7 @@ void c6847_bitmap_enable( Environment * _environment, int _width, int _height, i
         c6847_screen_mode_enable( _environment, mode );
 
         cpu_store_8bit( _environment, "CURRENTMODE", mode->id );
-        
+
         _environment->currentMode = mode->id;
     } else {
         WARNING_SCREEN_MODE( -1 );

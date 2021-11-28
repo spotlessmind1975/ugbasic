@@ -450,12 +450,6 @@ TEXTAT14
 
     LDB XCURSYS
     LDA #0
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
     LEAX D, X
 
     JMP TEXTATCOMMON
