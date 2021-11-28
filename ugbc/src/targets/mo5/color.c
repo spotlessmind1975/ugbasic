@@ -72,7 +72,7 @@ void color_semivars( Environment * _environment, int _index, char *_shade ) {
 
     Variable * shade = variable_retrieve_or_define( _environment, _shade, VT_COLOR, 0 );
     
-    ef936x_background_color_vars( _environment, _index, shade->realName );
+    ef936x_background_color_semivars( _environment, _index, shade->realName );
 
 }
 

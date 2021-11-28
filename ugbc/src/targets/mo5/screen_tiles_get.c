@@ -44,7 +44,7 @@ Variable * screen_tiles_get( Environment * _environment ) {
 
     MAKE_LABEL
     
-    mo5_tiles_get( _environment, tiles->realName );
+    ef936x_tiles_get( _environment, tiles->realName );
    
     return tiles;
 
