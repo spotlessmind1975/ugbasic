@@ -4148,8 +4148,8 @@ void cpu6809_dsresize( Environment * _environment, char * _index, char * _resize
 
     deploy_with_vars( dstring, src_hw_6809_dstring_asm, cpu_dstring_vars );
 
-    outline1( "LDB %s", _index );
     outline1( "LDA %s", _resize );
+    outline1( "LDB %s", _index );
     outline0( "JSR DSRESIZE" );
 
 }
@@ -4158,8 +4158,8 @@ void cpu6809_dsresize_size( Environment * _environment, char * _index, int _resi
 
     deploy_with_vars( dstring, src_hw_6809_dstring_asm, cpu_dstring_vars );
 
-    outline1( "LDB %s", _index );
     outline1( "LDA #$%2.2X", _resize );
+    outline1( "LDB %s", _index );
     outline0( "JSR DSRESIZE" );
 
 }
