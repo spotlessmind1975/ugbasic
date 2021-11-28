@@ -907,7 +907,7 @@ void target_peephole_optimizer( Environment * _environment ) {
                 } else break;
             } while(!feof( fileAsm ) );
             /* peephole phase */
-            if(vars_pass == 0) {
+            if((vars_pass&1) == 0) {
                 // simple
                 basic_peephole(buffer, zA, zB);
                 // complex
@@ -932,14 +932,16 @@ void target_peephole_optimizer( Environment * _environment ) {
             if(vars_pass == 0) {
                 int num_dp, num_inline;
                 /* yes ==> off we go! */
-                vars_pass = 1;
                 vars_dp(&num_dp, &num_inline);
                 /* log info at the end of the file */
                 fprintf(fileOptimized, "; peephole+: %d variable%s moved to direct-page, %d inlined.\n",
                     num_dp, num_dp>1 ?"s":"", num_inline);
                 /* redo peephole if the variable optimization gives any changes to optimize even more */
                 change = 1;
-            }
+            } else if(vars_pass == 1) {
+				change = 1;
+			}
+			++vars_pass;
         }
 
         fclose( fileAsm );

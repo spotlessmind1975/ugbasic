@@ -56,6 +56,4 @@ void cls( Environment * _environment, char * _paper ) {
 
     ef936x_cls( _environment );
 
-    outline0("JSR CLS");
-
 }
