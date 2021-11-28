@@ -258,7 +258,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     _environment->fontWidth = 8;
     _environment->fontHeight = 8;
 
-    _environment->screenShared = 256;
+    _environment->screenShades = 256;
     _environment->screenTiles = 255;
 
     switch( _screen_mode->id ) {
