@@ -55,7 +55,7 @@ CPUMATHDIV28BITL1
     
 ; singed A (unsigned B)
 ; this one ensure that -1/2 gives 0
-CPUMATHDIV28BIT_SIGNED_NEG
+CPUMATHDIV28BIT_NEG
     NEGA
     BSR CPUMATHDIV28BIT
     NEGA
