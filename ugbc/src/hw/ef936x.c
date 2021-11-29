@@ -322,6 +322,7 @@ int ef936x_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
 
     _environment->fontWidth = 8;
     _environment->fontHeight = 8;
+    _environment->screenTiles = 255;
     switch( _screen_mode->id ) {
         case BITMAP_MODE_40_COLUMN:
             _environment->screenWidth = 320;
@@ -380,6 +381,7 @@ int ef936x_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
 
     cpu_store_16bit( _environment, "CURRENTWIDTH", _environment->screenWidth );
     cpu_store_16bit( _environment, "CURRENTHEIGHT", _environment->screenHeight );
+    cpu_store_8bit( _environment, "CURRENTTILES", _environment->screenTiles );
     cpu_store_8bit( _environment, "CURRENTTILESWIDTH", _environment->screenTilesWidth );
     cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight );
 
@@ -559,6 +561,13 @@ void ef936x_get_width( Environment * _environment, char *_result ) {
 
 }
 
+void ef936x_tiles_get( Environment * _environment, char *_result ) {
+
+    outline0("LDA CURRENTTILES" );
+    outline1("STA %s", _result );
+
+}
+
 void ef936x_tiles_get_width( Environment * _environment, char *_result ) {
 
     outline0("LDA CURRENTTILESWIDTH" );
@@ -637,6 +646,8 @@ void ef936x_initialization( Environment * _environment ) {
     variable_global( _environment, "CURRENTWIDTH" );
     variable_import( _environment, "CURRENTHEIGHT", VT_POSITION  );
     variable_global( _environment, "CURRENTHEIGHT" );
+    variable_import( _environment, "CURRENTTILES", VT_BYTE );
+    variable_global( _environment, "CURRENTTILES" );
     variable_import( _environment, "CURRENTTILESWIDTH", VT_BYTE );
     variable_global( _environment, "CURRENTTILESWIDTH" );
     variable_import( _environment, "CURRENTTILESHEIGHT", VT_BYTE );
@@ -647,8 +658,8 @@ void ef936x_initialization( Environment * _environment ) {
     variable_global( _environment, "FONTHEIGHT" );
 
 #if !defined(__mo5__)
-    SCREEN_MODE_DEFINE( BITMAP_MODE_BITMAP_16, 1, 160, 200, 16, "BITMAP MODE BITMAP 16" );
     SCREEN_MODE_DEFINE( BITMAP_MODE_BITMAP_4, 1, 320, 200, 4, "BITMAP MODE BITMAP 4" );
+    SCREEN_MODE_DEFINE( BITMAP_MODE_BITMAP_16, 1, 160, 200, 16, "BITMAP MODE BITMAP 16" );
 #endif
     SCREEN_MODE_DEFINE( BITMAP_MODE_40_COLUMN, 1, 320, 200, 2, "BITMAP MODE 40 COLUMN" );
     // SCREEN_MODE_DEFINE( BITMAP_MODE_80_COLUMN, 1, 640, 200, 2, "BITMAP MODE 80 COLUMN" );

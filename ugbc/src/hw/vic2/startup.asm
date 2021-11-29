@@ -96,5 +96,11 @@ VIC2STARTUPL1:
     ; DISABLE BASIC ROM    
     LDA #$36
     STA $01
-            
+
+    ; SET STARTUP CURSOR POSITION    
+    LDA #0
+    STA $D3
+    LDA #0
+    STA $D6
+
     RTS

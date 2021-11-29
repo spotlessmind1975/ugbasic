@@ -151,6 +151,7 @@ void vic2_vertical_scroll( Environment * _environment, char * _displacement );
 void vic2_horizontal_scroll( Environment * _environment, char * _displacement );
 void vic2_busy_wait( Environment * _environment, char * _timing );
 
+void vic2_tiles_get( Environment * _environment, char * _result );
 void vic2_get_width( Environment * _environment, char * _result );
 void vic2_tiles_get_width( Environment * _environment, char * _result );
 void vic2_get_height( Environment * _environment, char * _result );

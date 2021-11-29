@@ -227,6 +227,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
     _environment->fontWidth = 8;
     _environment->fontHeight = 8;
     _environment->screenShades = 4;
+    _environment->screenTiles = 128;
     switch( _screen_mode->id ) {
         // ALPHANUMERIC DISPLAY MODES – All alphanumeric modes occupy an 8 x 12 
         // dot character matrix box and there are 32 x 16 character boxes per TV frame. 
@@ -392,8 +393,8 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
         case BITMAP_MODE_COLOR1:            // Color Graphics 1	64 × 64	4	1024
             _environment->screenWidth = 64;
             _environment->screenHeight = 64;
-            _environment->screenTilesWidth = 64/8;
-            _environment->screenTilesHeight = 96/12;
+            _environment->screenTilesWidth = _environment->screenWidth/_environment->fontWidth;
+            _environment->screenTilesHeight = _environment->screenHeight/_environment->fontHeight;
             _environment->screenColors = 4;
             // Full graphic 1-C 1 0 0 0 0 0 1 64x64x4 $400(1024)
             SET_VIDEOAT_C00;
@@ -419,8 +420,8 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
         case BITMAP_MODE_RESOLUTION1:       // Resolution Graphics 1	128 × 64	1 + Black	1024
             _environment->screenWidth = 128;
             _environment->screenHeight = 64;
-            _environment->screenTilesWidth = 128/8;
-            _environment->screenTilesHeight = 64/12;
+            _environment->screenTilesWidth = _environment->screenWidth/_environment->fontWidth;
+            _environment->screenTilesHeight = _environment->screenHeight/_environment->fontHeight;
             _environment->screenColors = 2;
             // Full graphic 1-R 1 0 0 1 0 0 1 128x64x2 $400(1024)
             SET_VIDEOAT_C00;
@@ -445,8 +446,8 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
         case BITMAP_MODE_COLOR2:            // Color Graphics 2	128 × 64	4	2048
             _environment->screenWidth = 128;
             _environment->screenHeight = 64;
-            _environment->screenTilesWidth = 128/8;
-            _environment->screenTilesHeight = 64/12;
+            _environment->screenTilesWidth = _environment->screenWidth/_environment->fontWidth;
+            _environment->screenTilesHeight = _environment->screenHeight/_environment->fontHeight;
             _environment->screenColors = 4;
             // Full graphic 2-C 1 0 1 0 0 1 0 128x64x4 $800(2048)
             SET_VIDEOAT_C00;
@@ -472,8 +473,8 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
         case BITMAP_MODE_RESOLUTION2:       // Resolution Graphics 2 128 × 96	1 + Black	1536
             _environment->screenWidth = 128;
             _environment->screenHeight = 96;
-            _environment->screenTilesWidth = 128/8;
-            _environment->screenTilesHeight = 96/12;
+            _environment->screenTilesWidth = _environment->screenWidth/_environment->fontWidth;
+            _environment->screenTilesHeight = _environment->screenHeight/_environment->fontHeight;
             _environment->screenColors = 2;
             // Full graphic 2-R 1 0 1 1 0 1 1 128x96x2 $600(1536)
             SET_VIDEOAT_C00;
@@ -498,8 +499,8 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
         case BITMAP_MODE_COLOR3:            // Color Graphics 3	128 × 96	4	3072
             _environment->screenWidth = 128;
             _environment->screenHeight = 96;
-            _environment->screenTilesWidth = 128/8;
-            _environment->screenTilesHeight = 96/12;
+            _environment->screenTilesWidth = _environment->screenWidth/_environment->fontWidth;
+            _environment->screenTilesHeight = _environment->screenHeight/_environment->fontHeight;
             _environment->screenColors = 4;
             // Full graphic 3-C 1 1 0 0 1 0 0 128x96x4 $C00(3072)
             SET_VIDEOAT_C00;
@@ -525,8 +526,8 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
         case BITMAP_MODE_RESOLUTION3:       // Resolution Graphics 3	128 × 192	1 + Black	3072
             _environment->screenWidth = 128;
             _environment->screenHeight = 192;
-            _environment->screenTilesWidth = 128/8;
-            _environment->screenTilesHeight = 192/12;
+            _environment->screenTilesWidth = _environment->screenWidth/_environment->fontWidth;
+            _environment->screenTilesHeight = _environment->screenHeight/_environment->fontHeight;
             _environment->screenColors = 2;
             // Full graphic 3-R 1 1 0 1 1 0 1 128x192x2 $C00(3072)
             SET_VIDEOAT_C00;
@@ -551,8 +552,8 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
         case BITMAP_MODE_COLOR6:            // Color Graphics 6	128 × 192	4	6144
             _environment->screenWidth = 128;
             _environment->screenHeight = 192;
-            _environment->screenTilesWidth = 128/8;
-            _environment->screenTilesHeight = 192/12;
+            _environment->screenTilesWidth = _environment->screenWidth/_environment->fontWidth;
+            _environment->screenTilesHeight = _environment->screenHeight/_environment->fontHeight;
             _environment->screenColors = 4;
             // Full graphic 6-C 1 1 1 0 1 1 0 128x192x4 $1800(6144)
             SET_VIDEOAT_C00;
@@ -578,8 +579,8 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
         case BITMAP_MODE_RESOLUTION6:       // Resolution Graphics 6	256 × 192	1 + Black	6144            break;
             _environment->screenWidth = 256;
             _environment->screenHeight = 192;
-            _environment->screenTilesWidth = 256/8;
-            _environment->screenTilesHeight = 192/12;
+            _environment->screenTilesWidth = _environment->screenWidth/_environment->fontWidth;
+            _environment->screenTilesHeight = _environment->screenHeight/_environment->fontHeight;
             _environment->screenColors = 2;
             // Full graphic 6-R 1 1 1 1 1 1 0 256x192x2 $1800(6144)
             SET_VIDEOAT_C00;
@@ -603,6 +604,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
 
     cpu_store_16bit( _environment, "CURRENTWIDTH", _environment->screenWidth );
     cpu_store_16bit( _environment, "CURRENTHEIGHT", _environment->screenHeight );
+    cpu_store_8bit( _environment, "CURRENTTILES", _environment->screenTiles );
     cpu_store_8bit( _environment, "CURRENTTILESWIDTH", _environment->screenTilesWidth );
     cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight );
 
@@ -616,7 +618,7 @@ void c6847_bitmap_enable( Environment * _environment, int _width, int _height, i
         c6847_screen_mode_enable( _environment, mode );
 
         cpu_store_8bit( _environment, "CURRENTMODE", mode->id );
-        
+
         _environment->currentMode = mode->id;
     } else {
         WARNING_SCREEN_MODE( -1 );
@@ -820,6 +822,13 @@ void c6847_get_width( Environment * _environment, char *_result ) {
 
 }
 
+void c6847_tiles_get( Environment * _environment, char *_result ) {
+
+    outline0("LDA CURRENTTILES" );
+    outline1("STA %s", _result );
+
+}
+
 void c6847_tiles_get_width( Environment * _environment, char *_result ) {
 
     outline0("LDA CURRENTTILESWIDTH" );
@@ -892,6 +901,8 @@ void c6847_initialization( Environment * _environment ) {
     variable_global( _environment, "CURRENTTILESWIDTH" );
     variable_import( _environment, "CURRENTTILESHEIGHT", VT_BYTE );
     variable_global( _environment, "CURRENTTILESHEIGHT" );
+    variable_import( _environment, "CURRENTTILES", VT_BYTE );
+    variable_global( _environment, "CURRENTTILES" );
     variable_import( _environment, "FONTWIDTH", VT_BYTE );
     variable_global( _environment, "FONTWIDTH" );
     variable_import( _environment, "FONTHEIGHT", VT_BYTE );
@@ -902,8 +913,8 @@ void c6847_initialization( Environment * _environment ) {
     SCREEN_MODE_DEFINE( TILEMAP_MODE_SEMIGRAPHICS4, 0, 64, 32, 8, "Semigraphics 4" );
     SCREEN_MODE_DEFINE( TILEMAP_MODE_SEMIGRAPHICS6, 0, 64, 48, 4, "Semigraphics 6" );
 
-    SCREEN_MODE_DEFINE( BITMAP_MODE_COLOR6, 1, 128, 192, 4, "Color Graphics 6" );
     SCREEN_MODE_DEFINE( BITMAP_MODE_RESOLUTION6, 1, 256, 192, 2, "Resolution Graphics 6" );
+    SCREEN_MODE_DEFINE( BITMAP_MODE_COLOR6, 1, 128, 192, 4, "Color Graphics 6" );
     SCREEN_MODE_DEFINE( BITMAP_MODE_RESOLUTION3, 1, 128, 192, 2, "Resolution Graphics 3" );
     SCREEN_MODE_DEFINE( BITMAP_MODE_COLOR3, 1, 128, 96, 4, "Color Graphics 3" );
     SCREEN_MODE_DEFINE( BITMAP_MODE_RESOLUTION2, 1, 128, 96, 2, "Resolution Graphics 2" );
