@@ -131,8 +131,8 @@ int _strcmp(char *s, char *t) {
 
 /* Matches a string:
     - ' ' maches anthing <= ' ' (eg 'r', \n', '\t' or ' ' )
-    - '*' matches at least one char up to the next one in the pattern. 
-          Matched content is copied into buffers passed as varargs. If 
+    - '*' matches at least one char up to the next one in the pattern.
+          Matched content is copied into buffers passed as varargs. If
           a buffer is NULL the matched content is not copied.
 
    returns NULL if string and pattern mismatch or the last matched '*' or _s.
@@ -143,7 +143,7 @@ static char *match(char *_string, char *_pattern, ...) {
     va_list ap;
 
     va_start(ap, _pattern);
-    
+
     while(!_eol(*s) && *p) {
         if(*p==' ') {while(*p==' ') ++p;
             if(!_eq(' ', *s)) {
@@ -153,22 +153,22 @@ static char *match(char *_string, char *_pattern, ...) {
             while(!_eol(*s) && _eq(' ', *s)) ++s;
         } else if(*p=='*') {
             char *m = va_arg(ap, char*); ++p;
-            if(*p && _eq(*p, *s)) { /* matches at lease one char */
+            ret = m == NULL ? s : m;
+            while(!_eol(*s) && !_eq(*p, *s)) {
+                if(m) *m++ = *s;
+                ++s;
+            }
+            if(!_eq(*p,*s)) {
                 ret = NULL;
                 break;
             }
-            ret = m == NULL ? s : m;
-            do {
-                if(m) *m++ = *s;
-                ++s;
-            } while(!_eol(*s) && !_eq(*p, *s));
             if(m) *m='\0';
         } else if(_toUpper(*s++) != _toUpper(*p++)) {
             ret = NULL;
             break;
         }
     }
-    
+
     va_end(ap);
 
     return *p=='\0' ? ret : NULL;
@@ -221,7 +221,7 @@ static int is_Bcc(char * buf) {
     if(match(buf, " BLO ")) return 1;
     if(match(buf, " BMI ")) return 1;
     if(match(buf, " BPL ")) return 1;
-    
+
     /* long jumps */
     if(match(buf, " LBGT ")) return 1;
     if(match(buf, " LBLE ")) return 1;
@@ -247,6 +247,34 @@ static int change;
 static void optim(char *buffer, char *rule, char *repl, ...) {
     char tmp[MAX_TEMPORARY_STORAGE], *s=tmp, *t = buffer;
 
+#if 1
+    /* add our own comment if any */
+    if(rule) {
+        char *t = "; peephole: ";
+        while((*s = *t)) {++s;++t;}
+        t = rule;
+        while((*s = *t)) {++s;++t;}
+        *s++ = '\n';
+    }
+
+    /* comment out line */
+    *s++ = ';';
+    while((*s = *t) && *s!='\n') {++s;++t;}
+    if(*s) {*++s = '\0';++t;}
+
+    /* insert replacement if provided */
+    if(repl) {
+        va_list ap;
+        va_start(ap, repl);
+        vsprintf(s, repl, ap);
+        va_end(ap);
+        while(*s) ++s;
+        *s++ = '\n';
+    }
+
+    /* copy remaining comments */
+    while((*s = *t)) {++s;++t;}
+#else
     *s = '\0';
 
     /* insert replacement if provided */
@@ -273,7 +301,7 @@ static void optim(char *buffer, char *rule, char *repl, ...) {
     /* comment out line */
     *s++ = ';';
     while((*s = *t)) {++s;++t;}
-
+#endif
     /* write result back into input buffer */
     strcpy(buffer, tmp);
 
@@ -284,7 +312,7 @@ static void optim(char *buffer, char *rule, char *repl, ...) {
 /* returns true if the buffer matches a zero value */
 static int isZero(char *_buf) {
     char *s = _buf;
-    
+
     if(s == NULL) return 0;
 
     if(*s == '$') ++s;
@@ -362,7 +390,7 @@ static void basic_peephole(char buffer[LOOK_AHEAD][MAX_TEMPORARY_STORAGE], int z
     && _strcmp(buffer[0], buffer[1])==0) {
         optim(buffer[0], "rule #8 (STORE*,STORE*)", NULL);
     }
-    if ((match(buffer[0], " ST* *+", NULL, variable1) || match(buffer[0], " ST* *", NULL, variable1))
+    if ( (match(buffer[0], " ST* *+", NULL, variable1) || match(buffer[0], " ST* *", NULL, variable1))
     &&   match(buffer[1], " * *", NULL, variable2) &&  strcmp(variable1, variable2) !=0
     && _strcmp(buffer[2], buffer[0])==0) {
         optim(buffer[0], "rule #8 (STORE*,?,STORE*)", NULL);
@@ -379,7 +407,7 @@ static void basic_peephole(char buffer[LOOK_AHEAD][MAX_TEMPORARY_STORAGE], int z
     &&  *variable1==*variable2) {
         optim(buffer[1], "rule #9 (LOAD/STORE,CMP #0)", NULL);
     }
-    
+
     if ( match(buffer[0], " LDD *", variable1)
     &&   match(buffer[1], " STD _Ttmp*", variable2)
     &&   match(buffer[2], " LDX *", variable3)
@@ -395,7 +423,7 @@ static void basic_peephole(char buffer[LOOK_AHEAD][MAX_TEMPORARY_STORAGE], int z
             optim(buffer[3], "rule #10 (LDD,STD*,LDX,CMPX*)", "\tCMPX %s", variable1);
         }
     }
-    
+
     if ( match(buffer[0], " LDD *", variable1)
     &&   match(buffer[1], " STD _Ttmp*", variable2)
     &&   match(buffer[2], " LDD *", variable3)
@@ -413,7 +441,7 @@ static void basic_peephole(char buffer[LOOK_AHEAD][MAX_TEMPORARY_STORAGE], int z
     if ( match(buffer[0], " STD *", variable1)
     &&   match(buffer[1], " LDX *", variable2)
     &&   _strcmp(variable1,variable2)==0) {
-        if(unsafe) optim(buffer[0], "(unsafe, presumed dead)", NULL);
+        //if(unsafe) optim(buffer[0], "(unsafe, presumed dead)", NULL);
         optim(buffer[1], "rule #12 (STD*,LDX*)", "\tTFR D,X");
     }
 
@@ -459,10 +487,10 @@ static void basic_peephole(char buffer[LOOK_AHEAD][MAX_TEMPORARY_STORAGE], int z
     }
 
 
-    if ( match(buffer[0], " STD _Ttmp*", variable1)
-    &&   match(buffer[1], " LD* [_Ttmp*]", variable2, variable3)
+    if ( match(buffer[0], " STD _Ttmp*", variable1)  // 6
+    &&   match(buffer[1], " LD* [_Ttmp*]", variable2, variable3) // 9
     &&   strcmp(variable1,variable3)==0) {
-        if(unsafe) optim(buffer[0], "(unsafe, presumed dead)", NULL);
+        //if(unsafe) optim(buffer[0], "(unsafe, presumed dead)", NULL);
         optim(buffer[1], "rule #18 (STD,LDD[])", "\tTFR D,X\n\tLD%c ,X", _toUpper(*variable2));
     }
 
@@ -470,10 +498,12 @@ static void basic_peephole(char buffer[LOOK_AHEAD][MAX_TEMPORARY_STORAGE], int z
     &&   match(buffer[1], " LD* ", variable2)
     &&   match(buffer[2], " ST* [_Ttmp*]", variable3, variable4)
     &&   *variable2==*variable3
-    &&   strcmp(variable1,variable4)==0
-    &&   unsafe) {
-        optim(buffer[0], "(unsafe, presumed dead)", "\tTFR D,X");
-        optim(buffer[2], "rule #19 (STD,LOAD,STORE[])", "\tST%c ,X", *variable2);
+    &&   strcmp(variable1,variable4)==0) {
+        if(unsafe)
+            optim(buffer[0], "rule #19 (STD,LOAD,STORE[])", "\tTFR D,X");
+        else
+            optim(buffer[0], "rule #19 (unsafe, presumed dead) (STD,LOAD,STORE[])", "\tSTD _Ttmp%s\n\tTFR D,X", variable1);
+        optim(buffer[2], NULL, "\tST%c ,X", *variable2);
     }
 
     if ( match(buffer[1], " TST*", variable1)
@@ -497,23 +527,22 @@ static void basic_peephole(char buffer[LOOK_AHEAD][MAX_TEMPORARY_STORAGE], int z
         optim(buffer[2], "rule #22 (STB*,STA,LDA*,STA)", NULL);
         optim(buffer[3], NULL, "\tSTB %s", variable3);
     }
-    
-    if(zA && zB
-    &&   match(buffer[1], " STD _Ttmp*", variable2)
-    &&   match(buffer[2], " LDX *", variable3)
-    &&   match(buffer[3], " CMPX _Ttmp*", variable4)
-    &&  _strcmp(variable2, variable4)==0) {
-        if(unsafe) optim(buffer[0], "(unsafe, presumed dead)", NULL);
-        optim(buffer[3], "rule #23 (D=0,STD*,LDX,CMPX*)", NULL);
-    }
-    
+
     if( match(buffer[0], " STD _Ttmp*", variable1)
     &&  match(buffer[1], " LDD _Ttmp*", variable2)
     &&  match(buffer[2], " LDX _Ttmp*", variable3)
     &&  strcmp(variable1,variable3)==0
     && !match(buffer[4], " IF ")
     &&  unsafe) {
-        optim(buffer[0], "rule #24 (STD*,LDD,CMPX*)", "\tTFR D,X");
+        optim(buffer[0], "rule #23 (STD*,LDD,LDX*)", "\tTFR D,X");
+        optim(buffer[2], NULL, NULL);
+    }
+
+    if( match(buffer[0], " LDD *", variable1)
+    &&  match(buffer[1], " STD *", variable2)
+    &&  match(buffer[2], " TFR D,X")) {
+        optim(buffer[0], "rule #24 (LDD,STD,D->X)", "\tLDX %s", variable1);
+		optim(buffer[1], NULL, "\tSTX %s", variable2);
         optim(buffer[2], NULL, NULL);
     }
 
@@ -550,15 +579,15 @@ static int can_nzA(char *buf) {
     if(match(buf, " ORA ")) return 1;
     if(match(buf, " PULS ")) return 1;
     if(match(buf, " PULU ")) return 1;
-    if(match(buf, " ROLA ")) return 1;
-    if(match(buf, " RORA ")) return 1;
+    if(match(buf, " ROLA")) return 1;
+    if(match(buf, " RORA")) return 1;
     if(match(buf, " RTI")) return 1;
     if(match(buf, " RTS")) return 1;
     if(match(buf, " SBCA ")) return 1;
     if(match(buf, " SEX")) return 1;
     if(match(buf, " SUBA ")) return 1;
     if(match(buf, " SUBD ")) return 1;
-    if(match(buf, " TFR ") && s[0]==',' && s[1]=='A') return 1;
+    if(match(buf, " TFR ") && s[0]==',' && (s[1]=='A' || s[1]=='D')) return 1;
 
     return 0;
 }
@@ -591,16 +620,20 @@ static int can_nzB(char *buf) {
     if(match(buf, " SBCB ")) return 1;
     if(match(buf, " SUBB ")) return 1;
     if(match(buf, " SUBD ")) return 1;
-    if(match(buf, " TFR ") && s[0]==',' && s[1]=='B') return 1;
+    if(match(buf, " TFR ") && s[0]==',' && (s[1]=='B' || s[1]=='D')) return 1;
 
     return 0;
 }
 
 /* optimizations related to A or B being zero */
-static void optim_zAB(char line[MAX_TEMPORARY_STORAGE], int *zA, int *zB) {
+static void optim_zAB(char buffer[LOOK_AHEAD][MAX_TEMPORARY_STORAGE], int *zA, int *zB) {
+    char *line = buffer[0];
     char tmp[MAX_TEMPORARY_STORAGE];
+    char variable2[MAX_TEMPORARY_STORAGE];
+    char variable3[MAX_TEMPORARY_STORAGE];
+    char variable4[MAX_TEMPORARY_STORAGE];
     int unsafe = ALLOW_UNSAFE;
-    
+
     if(*zA) {
         if (match( line, " CLRA")) {
             optim( line, "rule #1001 (A=0)", NULL);
@@ -613,6 +646,19 @@ static void optim_zAB(char line[MAX_TEMPORARY_STORAGE], int *zA, int *zB) {
         } else if ( chkLDD( line, "00--", tmp)) {
             optim(line, "rule #1004 (A=0)", "\tLDB #$%c%c", tmp[2], tmp[3]);
             *zB = 0;
+        } else if (match( line, " TFR A,B")) {
+            optim( line, "rule #1005 (B=0)", "\tCLRB");
+            *zB = 1;
+        } else if (*zB
+               &&  match(buffer[0], " ADDD *", variable2)) {
+            optim(buffer[0], "rule #1006 (D=0,ADD)", "\tLDD %s", variable2);
+        } else if (*zB
+               &&  match(buffer[0], " STD _Ttmp*", variable2)
+               &&  match(buffer[1], " LDX *", variable3)
+               &&  match(buffer[2], " CMPX _Ttmp*", variable4)
+               && _strcmp(variable2, variable4)==0) {
+            if(unsafe) optim(buffer[0], "(unsafe, presumed dead)", NULL);
+            optim(buffer[2], "rule #1007 (D=0,STD*,LDX,CMPX*)", NULL);
         } else if(can_nzA(line)) {
             *zA = 0;
         }
@@ -622,18 +668,18 @@ static void optim_zAB(char line[MAX_TEMPORARY_STORAGE], int *zA, int *zB) {
 
     if(*zB) {
         if (match( line, " CLRB")) {
-            optim( line, "rule #1005 (B=0)", NULL);
+            optim( line, "rule #1001 (B=0)", NULL);
         } else if (match( line, " LDB #$ff")) {
-            optim( line, "rule #1006 (B=0)", "\tDECB");
+            optim( line, "rule #1002 (B=0)", "\tDECB");
             *zB = 0;
         } else if (match( line, " LDB #$01")) {
-            optim( line, "rule #1007 (B=0)", "\tINCB");
+            optim( line, "rule #1003 (B=0)", "\tINCB");
             *zB = 0;
         } else if ( chkLDD( line, "--00", tmp) ) {
-            optim( line, "rule #1008 (B=0)", "\tLDA #$%c%c", tmp[0], tmp[1]);
+            optim( line, "rule #1004 (B=0)", "\tLDA #$%c%c", tmp[0], tmp[1]);
             *zA = 0;
         } else if (match( line, " TFR B,A")) {
-            optim( line, "rule #1009 (B=0)", "\tCLRA");
+            optim( line, "rule #1005 (B=0)", "\tCLRA");
             *zA = 1;
         } else if(can_nzB(line)) {
             *zB = 0;
@@ -649,6 +695,11 @@ static void optim_zAB(char line[MAX_TEMPORARY_STORAGE], int *zA, int *zB) {
 static struct {
     struct var {
         char *name;
+#define NO_REORG  1
+#define NO_DP     2
+#define NO_INLINE 4
+#define NO_REMOVE 8
+        int flags;
         int size;
         int nb_rd;
         int nb_wr;
@@ -687,6 +738,7 @@ struct var *vars_get(char *name) {
         }
         ret = &vars.tab[vars.size++];
         ret->name   = strdup(name);
+        ret->flags  = 0;
         ret->size   = 0;
         ret->nb_rd  = 0;
         ret->nb_wr  = 0;
@@ -702,11 +754,24 @@ static void vars_scan(char buffer[LOOK_AHEAD][MAX_TEMPORARY_STORAGE]) {
     char buf[MAX_TEMPORARY_STORAGE];
     char val[MAX_TEMPORARY_STORAGE];
 
-    if (match( buffer[0], " CLR _*", buf)
-    || match( buffer[0], " ST* _*", val, buf) ) {
+    // if( match( buffer[0], " * _*+", NULL, buf) ) {
+        // struct var *v = vars_get(buf);
+        // v->flags |= NO_INLINE;
+    // }
+
+    if( match( buffer[0], " * #_*", NULL, buf)
+    ||  match( buffer[0], " * [_*]", NULL, buf) ) {
+        struct var *v = vars_get(buf);
+        v->flags |= NO_REMOVE/*|NO_DP*/;
+        v->nb_rd++;
+    }
+
+    if( match( buffer[0], " CLR _*", buf)
+    ||  match( buffer[0], " ST* _*", val, buf) ) {
         struct var *v = vars_get(buf);
         v->nb_wr++;
     }
+
     if (match( buffer[0], " ADD* _*", NULL, buf)
     ||  match( buffer[0], " ADC* _*", NULL, buf)
     ||  match( buffer[0], " AND* _*", NULL, buf)
@@ -732,13 +797,13 @@ static void vars_scan(char buffer[LOOK_AHEAD][MAX_TEMPORARY_STORAGE]) {
         v->nb_wr++;
         v->nb_rd++;
     }
-    if(match(buffer[0], " * _*", buf, val) && alu_op(buffer[0], NULL) ) {
+    if( match(buffer[0], " * _*", buf, val)
+    ||  match(buffer[0], " * [_*]", buf, val) ) {
         struct var *v = vars_get(val);
-        v->offset = -1;
+        v->offset = -1; /* candidate for inlining */
     }
 
-    if( match( buffer[0], "_* rzb *", buf, val)
-    ||  match( buffer[0], "_* fcb *", buf, val)) {
+    if( match( buffer[0], "_* rzb *", buf, val) ) {
         struct var *v = vars_get(buf);
         v->size = atoi(val);
     }
@@ -760,64 +825,63 @@ static int vars_cmp(const void *_a, const void *_b) {
 }
 
 /* decide which variable goes in direct-page, which will be inlined */
-static int vars_dp(int *num_dp, int *num_inlined) {
+static void vars_decide(int *num_dp, int *num_inlined) {
     int i;
 
     *num_dp = *num_inlined = 0;
 
     qsort(vars.tab, vars.size, sizeof(*vars.tab), vars_cmp);
 
-    for(i = 0; i<vars.size && vars.page0_max < 255; ++i) {
+    for(i = 0; i<vars.size; ++i) {
         struct var *v = &vars.tab[i];
+        // printf("%s %d/%d %d %d %d\n", v->name, v->nb_rd, v->nb_wr, v->offset, v->size, vars.page0_max);
+        
+        /* skip over unknown size var  */
+        if(v->size == 0)  continue;
+        
+        /* skip over unread variables */
+        if(v->nb_rd == 0) continue;
 
-        if(v->offset == -1 && v->size>2) v->offset = 0; /* can't inline > 2 bytes */
+        /* can't inline */
+        if(v->flags & NO_INLINE) v->offset = 0;
 
-        // printf("%s %d %d %d %d\n", v->name, v->nb_rd+v->nb_wr, v->offset, v->size, vars.page0_max);
-        if(v->nb_rd>0
+        /* can't inline > 2 bytes */
+        if(v->offset == -1 && v->size>2) v->offset = 0;
+
+        /* check if inlining is good */
+        if(v->offset == -1) {
+            /* LDA: imm=2, dp=4, extended=5
+               LDD: imm=3, dp=5, extended=6 */
+            int dp_cost     = (3+v->size)*(v->nb_rd + v->nb_wr);
+            int inline_cost = (4+v->size)*(v->nb_rd + v->nb_wr - 1)+(1+v->size);
+            if( dp_cost < inline_cost ) {
+                v->offset = 0;
+            } else {
+                ++*num_inlined;
+            }
+        }
+
+        if(v->offset == 0
+        && 0==(v->flags && NO_DP)
+        && v->size<=4 /* not too big to let room for others */
         && vars.page0_max + v->size <= 256
-        && (v->offset == 0 && v->size<=4
-        ||  v->offset ==-1)
         //&& (match(v->name,"PEN") ||match(v->name,"PAPER") || match(v->name,"Ttmp") || (v->name[0]>='a'))
         // && !match(v->name, "Tstr")
         ) {
-            if(v->offset == -1) {
-                /* check if inlining is good */
-                /* LDA: imm=2, dp=4, extended=5
-                   LDD: imm=3, dp=5, extended=6 */
-                int dp_cost     = (3+v->size)*(v->nb_rd + v->nb_wr);
-                int inline_cost = (4+v->size)*(v->nb_rd + v->nb_wr - 1)+(1+v->size);
-                if( dp_cost < inline_cost ) {
-                    v->offset = 0;
-                } else {
-                    ++*num_inlined;
-                }
-            }
-
-            if(v->offset == 0) {
-                v->offset = vars.page0_max;
-                vars.page0_max += v->size;
-                ++*num_dp;
-            }
+            v->offset = vars.page0_max;
+            vars.page0_max += v->size;
+            ++*num_dp;
         }
     }
 }
 
 /* performs optimizations related to variables */
 static void vars_optim(char buffer[LOOK_AHEAD][MAX_TEMPORARY_STORAGE]) {
+    char REG[MAX_TEMPORARY_STORAGE];
     char buf[MAX_TEMPORARY_STORAGE];
     char op[MAX_TEMPORARY_STORAGE];
 
-    if(match( buffer[0], "_* rzb ", buf) ) {
-        struct var *v = vars_get(buf);
-        if(v->nb_rd==0 && v->size<=4) {
-            optim(buffer[0], "unread variable",NULL);
-        } else if(v->offset > 0) {
-            optim(buffer[0], "moved to diect-page", "_%s equ $%02X", buf, v->offset);
-        } else if(v->offset < 0) {
-            optim(buffer[0], "inlined", NULL);
-        }
-    }
-
+    /* code section */
     if(match( buffer[0], " ST* _*", op, buf) ) {
         struct var *v = vars_get(buf);
         if(v->nb_rd == 0) {
@@ -832,35 +896,53 @@ static void vars_optim(char buffer[LOOK_AHEAD][MAX_TEMPORARY_STORAGE]) {
 
     if(match( buffer[0], " * _*", op, buf) ) {
         struct var *v = vars_get(buf);
-
         if(v->offset > 0) {
-            optim(buffer[0], "moved to diect-page", "\t%s <_%s", op, buf);
-        } else if(v->offset == -1 && alu_op(buffer[0], NULL)) {
+            optim(buffer[0], "direct-page", "\t%s <_%s", op, buf);
+        } else if(v->offset == -1 && alu_op(buffer[0], REG) 
+               && (strchr("DXYU", *REG)!=NULL  && v->size==2 || v->size==1) ) {
             v->offset = -2;
-            optim(buffer[0], "inlined", "\t%s #-1\n_%s equ *-%d", op, buf, v->size);
+            optim(buffer[0], "inlined", "\t%s #_%s%s\n_%s equ *-%d", op, buf,
+										v->size==2 ? "" : "&$ff", buf, v->size);
         }
     }
+
     if(match( buffer[0], " * [_*]", op, buf) ) {
         struct var *v = vars_get(buf);
         if(v->offset > 0) {
-            optim(buffer[0], "moved to diect-page", "\t%s [$%04x+_%s]", op, DIRECT_PAGE, buf);
+            optim(buffer[0], "direct-page", "\t%s [_%s+$%04x]", op, buf, DIRECT_PAGE);
+        } else if(v->offset == -1 && strstr(buf,"+$")==NULL) {
+            v->offset = -2;
+            optim(buffer[0], "inlined", "\t%s >*\n_%s equ *-2", op, buf);
         }
     }
+
     if(match( buffer[0], " * #_*", op, buf) ) {
         struct var *v = vars_get(buf);
-        if(v->offset > 0) {
-            optim(buffer[0], "moved to diect-page", "\t%s #$%04x+_%s", op, DIRECT_PAGE, buf);
+        if(v->offset > 0 && strstr(buf,"+$")==NULL) {
+            optim(buffer[0], "direct-page", "\t%s #_%s+$%04x", op, buf, DIRECT_PAGE);
+        }
+    }
+
+    /* data section */
+    if(match( buffer[0], "_* rzb ", buf) ) {
+        struct var *v = vars_get(buf);
+        if(v->nb_rd==0 && v->size<=4 && 0==(v->flags & NO_REMOVE)) {
+            optim(buffer[0], "unread variable",NULL);
+        } else if(v->offset > 0) {
+            optim(buffer[0], "direct-page", "_%s equ $%02X", buf, v->offset);
+        } else if(v->offset == -2) {
+            optim(buffer[0], "inlined", NULL);
         }
     }
 }
 
 /* collapse all heading spaces into a single tabulation */
 static void out(FILE *f, char *_buf) {
-	char *s = _buf;
-	int tab = 0;
-	while(*s==' ' || *s=='\t') {tab = 1; ++s;}
-	if(tab) fputs("\t", f);
-	fputs(s, f);
+    char *s = _buf;
+    int tab = 0;
+    while(*s==' ' || *s=='\t') {tab = 1; ++s;}
+    if(tab) fputs("\t", f);
+    fputs(s, f);
 }
 
 /* main entry-point for this service */
@@ -874,13 +956,24 @@ void target_peephole_optimizer( Environment * _environment ) {
     int pass = 0;
     int vars_pass = 0;
 
-    for(change=1; change;) {
-        FILE * fileAsm = fopen( _environment->asmFileName, "rt" );
-        FILE * fileOptimized = fopen( fileNameOptimized, "wt" );
-
+    for(change = 1; change;) {
+        FILE * fileAsm;
+        FILE * fileOptimized;
         int line = 0;
         int zA = 0, zB = 0;
         int i;
+        
+        fileAsm = fopen( _environment->asmFileName, "rt" );
+        if(fileAsm == NULL) {
+            perror(_environment->asmFileName); 
+            exit(-1);
+        }
+        
+        fileOptimized = fopen( fileNameOptimized, "wt" );
+        if(fileOptimized == NULL) {
+            perror(fileNameOptimized);
+            exit(-1);
+        }
 
         /* clears our look-ahead buffers */
         for(i = LOOK_AHEAD; i--;) *buffer[i] = '\0';
@@ -888,13 +981,15 @@ void target_peephole_optimizer( Environment * _environment ) {
         ++pass; change = 0;
 
         /* reset database if it isn't time for variable optimizations */
-        if(vars_pass == 0) vars_clear();
+        if(vars_pass==0) vars_clear();
 
         while( !feof( fileAsm ) ) {
             /* print out oldest buffer */
             if ( line >= LOOK_AHEAD ) out(fileOptimized, buffer[0]);
+
             /* shift the buffers */
             for(i=0; i<LOOK_AHEAD-1; ++i) strcpy(buffer[i], buffer[i+1]);
+
             /* read next line, merging adjacent comments */
             do {
                 /* read next line */
@@ -906,42 +1001,57 @@ void target_peephole_optimizer( Environment * _environment ) {
                     buffer[LOOK_AHEAD-1][0] = '\0';
                 } else break;
             } while(!feof( fileAsm ) );
-            /* peephole phase */
-            if((vars_pass&1) == 0) {
-                // simple
+
+            switch(vars_pass) {
+                case 1: /* variable-optimization phase */
+                vars_optim(buffer);
+                break;
+
+                default: /* peephole phase */
                 basic_peephole(buffer, zA, zB);
-                // complex
-                optim_zAB(buffer[0], &zA, &zB);
+                optim_zAB(buffer, &zA, &zB);
                 // even more complex
                 if(change == 0) vars_scan(buffer);
-            /* variable-optimization phase */
-            } else {
-                vars_optim(buffer);
+                break;
             }
 
             ++line;
         }
 
-        for(i=0; i<LOOK_AHEAD; ++i) out( fileOptimized, buffer[i]);
+        for(i=0; i<LOOK_AHEAD-1; ++i) out( fileOptimized, buffer[i]);
 
         /* log info at the end of the file */
         fprintf(fileOptimized, "; peephole: pass %d, %d change%s.\n", pass, change, change>1 ?"s":"");
 
         /* variable optimization phase ? */
-        if(change == 0) {
-            if(vars_pass == 0) {
+        // printf("pass=%d change=%d\n", vars_pass, change);
+        switch(vars_pass) {
+            case 0:
+            case 2:
+            if(change == 0) {
                 int num_dp, num_inline;
                 /* yes ==> off we go! */
-                vars_dp(&num_dp, &num_inline);
+                vars_decide(&num_dp, &num_inline);
                 /* log info at the end of the file */
-                fprintf(fileOptimized, "; peephole+: %d variable%s moved to direct-page, %d inlined.\n",
-                    num_dp, num_dp>1 ?"s":"", num_inline);
+                fprintf(fileOptimized, "; variables: %d direct-page, %d inlined.\n",
+                    num_dp, num_inline);
                 /* redo peephole if the variable optimization gives any changes to optimize even more */
+                if(num_dp || num_inline) {
+                    change = 1;
+                    ++vars_pass;
+                }
+            }
+            break;
+
+            case  1:
+            if(change == 0) {
                 change = 1;
-            } else if(vars_pass == 1) {
-				change = 1;
-			}
-			++vars_pass;
+                ++vars_pass;
+            }
+            break;
+
+            default:
+            break;
         }
 
         fclose( fileAsm );
