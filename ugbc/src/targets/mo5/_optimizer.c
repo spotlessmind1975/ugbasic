@@ -250,9 +250,9 @@ static void optim(char *buffer, char *rule, char *repl, ...) {
 
     /* add our own comment if any */
     if(rule) {
-		*s = '\0';
-		sprintf(s, "; peephole(%d): %s\n", peephole_pass, rule);
-		while(*s) ++s;
+        *s = '\0';
+        sprintf(s, "; peephole(%d): %s\n", peephole_pass, rule);
+        while(*s) ++s;
     }
 
     /* comment out line */
@@ -495,7 +495,7 @@ static void basic_peephole(char buffer[LOOK_AHEAD][MAX_TEMPORARY_STORAGE], int z
     &&   match(buffer[2], " LDA *", variable2)
     &&   match(buffer[3], " STA *", variable3)
     &&   strcmp(variable1, variable2)==0
-	&&   unsafe /* A is considered dead after */) {
+    &&   unsafe /* A is considered dead after */) {
         optim(buffer[2], "rule #22 (STB*,STA,LDA*,STA+)->(STB*,STA,STB+)", NULL);
         optim(buffer[3], NULL, "\tSTB %s", variable3);
     }
@@ -848,7 +848,7 @@ static void vars_decide(int *num_dp, int *num_inlined) {
 
         /* flagged as not inline */
         if(v->flags & NO_INLINE) v->offset = 0;
-		
+
         /* can't inline > 2 bytes */
         if(v->offset == -1 && v->size>2) v->offset = 0;
 
@@ -954,6 +954,54 @@ static void out(FILE *f, char *_buf) {
     fputs(s, f);
 }
 
+/* remove space that is sometimes used in indexing mode and makes the optimized produce bad dcode */
+static void fixes_indexed_syntax(char *buffer) {
+    char *s = buffer;
+
+    /* not an instruction */
+    if(!_eq(' ', *s)) return;
+
+    /* skip over spaces */
+    do ++s; while(*s && _eq(' ', *s));
+
+    /* comment */
+    if(*s==';') return;
+
+    /* skip over instruction */
+    while(*s && !_eq(' ', *s)) ++s;
+    if(!*s) return;
+
+    /* skip over spaces */
+    do ++s; while(*s && _eq(' ', *s));
+    if(!*s) return;
+
+    /* process argment */
+    do ++s; while(*s && !_eq(' ', *s));
+    if(!*s) return;
+
+    /* space found check if case "LDA 1, X" */
+    if(s[-1]==',') {
+        char *t = s;
+        do ++t; while(*t && _eq(' ', *t));
+        switch(_toUpper(*t)) {
+            case 'X': case 'Y': case 'U': case 'S':
+                /* yes ==> move register after coma */
+                *s = *t;
+                *t = ' ';
+                break;
+            default:
+                break;
+        }
+    }
+}
+
+/*
+    while(*s) {
+        if(
+    }
+}
+
+
 /* main entry-point for this service */
 void target_peephole_optimizer( Environment * _environment ) {
     const int keep_comments = KEEP_COMMENTS;
@@ -963,8 +1011,8 @@ void target_peephole_optimizer( Environment * _environment ) {
 
     char buffer[LOOK_AHEAD][MAX_TEMPORARY_STORAGE];
     int vars_pass = 0;
-	peephole_pass = 0;
-	
+    peephole_pass = 0;
+
     for(change = 1; change;) {
         FILE * fileAsm;
         FILE * fileOptimized;
@@ -1003,6 +1051,7 @@ void target_peephole_optimizer( Environment * _environment ) {
             do {
                 /* read next line */
                 fgets( buffer[LOOK_AHEAD-1], MAX_TEMPORARY_STORAGE, fileAsm );
+                fixes_indexed_syntax(buffer[LOOK_AHEAD-1]);
                 /* merge comment with previous line if we do not overflow the buffer */
                 if(isAComment(buffer[LOOK_AHEAD-1])
                 && strlen(buffer[LOOK_AHEAD-2]) + strlen(buffer[LOOK_AHEAD-1]) + 1 <= MAX_TEMPORARY_STORAGE) {
