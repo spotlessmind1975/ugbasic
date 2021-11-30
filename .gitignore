@@ -12,3 +12,6 @@ core
 vgcore*
 ugbc/objs*
 *
+!ugbc
+!ugbc/**
+
