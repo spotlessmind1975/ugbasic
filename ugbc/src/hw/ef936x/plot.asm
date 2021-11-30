@@ -49,14 +49,18 @@ PLOTP
 
 PLOT
     LDX <PLOTY
-    CMPX CLIPY2   ; CMPX is faster than CMPD
+CLIPY2 equ *+1
+    CMPX #199     ; CMPX is faster than CMPD
     BGT PLOTP
-    CMPX CLIPY1
+CLIPY1 equ *+1
+    CMPX #1-1     ; 1-1 to avail peephole interfering
     BLT PLOTP
     LDX <PLOTX
-    CMPX CLIPX2
+CLIPX2 equ *+1
+    CMPX #319
     BGT PLOTP
-    CMPX CLIPX1   ; check if plotting out of clipped area
+CLIPX1 equ *+1
+    CMPX #1-1     ; check if plotting out of clipped area
     BLT PLOTP     ; yes => return
 
     LDB <PLOTY+1  ; no => compute video adress
