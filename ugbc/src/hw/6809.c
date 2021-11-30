@@ -2598,8 +2598,8 @@ void cpu6809_and_8bit( Environment * _environment, char * _left, char * _right, 
 
         MAKE_LABEL
 
-        outline1("LDA %s", _left );
-        outline1("ANDA %s", _right );
+        outline1("LDA %s", _right );
+        outline1("ANDA %s", _left );
         outline1("STA %s", _result);
 
     no_embedded( cpu_and_8bit )
@@ -2612,9 +2612,9 @@ void cpu6809_and_16bit( Environment * _environment, char * _left, char * _right,
 
         MAKE_LABEL
 
-        outline1("LDD %s", _left );
-        outline1("ANDA %s", _right );
-        outline1("ANDB %s+1", _right );
+        outline1("LDD %s", _right );
+        outline1("ANDA %s", _left );
+        outline1("ANDB %s+1", _left );
         outline1("STD %s", _result);
 
     no_embedded( cpu_and_16bit )
@@ -2663,8 +2663,8 @@ void cpu6809_or_8bit( Environment * _environment, char * _left, char * _right, c
 
         MAKE_LABEL
 
-        outline1("LDA %s", _left );
-        outline1("ORA %s", _right );
+        outline1("LDA %s", _right );
+        outline1("ORA %s", _left );
         outline1("STA %s", _result);
 
     no_embedded( cpu_or_8bit )
