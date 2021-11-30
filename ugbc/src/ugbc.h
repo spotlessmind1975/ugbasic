@@ -968,6 +968,11 @@ typedef struct _Environment {
     char * listingFileName;
 
     /**
+     * Filename of compiler 
+     */
+    char * compilerFileName;
+
+    /**
      * 
      */
     int analysis;

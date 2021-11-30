@@ -104,7 +104,9 @@ void target_linkage( Environment * _environment ) {
         CRITICAL_UNSUPPORTED_OUTPUT_FILE_TYPE( OUTPUT_FILE_TYPE_AS_STRING[_environment->outputFileType] );
     }
 
-    if( access( "asm6809\\bin\\asm6809.exe", F_OK ) == 0 ) {
+    if ( _environment->compilerFileName ) {
+        sprintf(executableName, "%s", _environment->compilerFileName );
+    } else if( access( "asm6809\\bin\\asm6809.exe", F_OK ) == 0 ) {
         sprintf(executableName, "%s", "asm6809\\bin\\asm6809.exe" );
     } else {
         sprintf(executableName, "%s", "asm6809" );

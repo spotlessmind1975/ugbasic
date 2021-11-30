@@ -120,7 +120,9 @@ void target_linkage( Environment * _environment ) {
         CRITICAL_UNSUPPORTED_OUTPUT_FILE_TYPE( OUTPUT_FILE_TYPE_AS_STRING[_environment->outputFileType] );
     }
 
-    if( access( "cc65\\bin\\cl65.exe", F_OK ) == 0 ) {
+    if ( _environment->compilerFileName ) {
+        sprintf(executableName, "%s", _environment->compilerFileName );
+    } else if( access( "cc65\\bin\\cl65.exe", F_OK ) == 0 ) {
         sprintf(executableName, "%s", "cc65\\bin\\cl65.exe" );
     } else {
         sprintf(executableName, "%s", "cl65" );

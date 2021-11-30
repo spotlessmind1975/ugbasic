@@ -4381,7 +4381,7 @@ int main( int _argc, char *_argv[] ) {
     _environment->outputFileType = OUTPUT_FILE_TYPE_PRG;
 #endif
 
-    while ((opt = getopt(_argc, _argv, "ae:c:Wo:Ie:l:EO:dL:")) != -1) {
+    while ((opt = getopt(_argc, _argv, "ae:c:Wo:Ie:l:EO:dL:C:")) != -1) {
         switch (opt) {
                 case 'a':
                     if ( ! _environment->listingFileName ) {
@@ -4393,6 +4393,12 @@ int main( int _argc, char *_argv[] ) {
                     break;
                 case 'c':
                     _environment->configurationFileName = strdup(optarg);
+                    break;
+                case 'C':
+                    _environment->compilerFileName = strdup(optarg);
+                    if( access( _environment->compilerFileName, F_OK ) != 0 ) {
+                        CRITICAL("Compiler no found.");
+                    }
                     break;
                 case 'o':
                     _environment->exeFileName = strdup(optarg);
