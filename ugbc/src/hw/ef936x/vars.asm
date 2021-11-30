@@ -42,6 +42,10 @@ XGR    fdb 0
 YGR    fdb 0
 LINE   fcb $ff, $ff
 
+CLIPX1    fdb 0
+CLIPY1    fdb 0
+CLIPX2    fdb 319
+CLIPY2    fdb 199
 LASTCOLOR fcb 0
 CURRENTWIDTH      fdb 320
 CURRENTHEIGHT      fdb 200
