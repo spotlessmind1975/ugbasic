@@ -35,37 +35,43 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+PAGE0 equ $21
+
 ; TIMER service routine
 PC128IRQ
-    LDD   #1          ; increment 
-    ADDD  #0          ; add value of TI variable
-PC128TIMER  set *-2   ; (variable within code)
-    STD   PC128TIMER  ; write result to TI variable
-    LDX   #0          ; get next ISR
-PC128IRQN   set *-2   ; (variable within code)
-    BEQ   PC128IRQ2   ; any defined ?
-    JSR   ,X          ; yes ==> call it
-PC128IRQ2
-    JMP   >PC128IRQEND  ; no ==> jmp to the old one
-PC128IRQO   set *-2   ; (variable within code)
-PC128IRQEND
-    RTI               ;  by defaut do RTI
-    
+    LDD   #0              ; TI variable
+PC128TIMER  set *-2       ; (variable within code)
+    ADDD  #1              ; increment
+    STD   PC128TIMER      ; write result to TI variable
+    LDA   #PAGE0          ; sets the direct page
+    TFR   A,DP            ; for ugbc routines
+    JMP   >PC128IRQDEF    ; jump to next ISR
+PC128IRQN   set *-2       ; (variable within code)
+
+; defaut service routine
+PC128IRQDEF
+    JMP   >PC128IRQEMPTY  ; jmp to the previous routine
+PC128IRQO   set *-2       ; (variable within code)
+
+; empty service routine
+PC128IRQEMPTY
+    RTI                   ;  by defaut do RTI
+
 PC128OPSTARTUP
     LDX   #$2061
-    LDA   2,X         ; Is previous TIMERPT enable ?
-    BEQ   PC128STARTUP2 ; no ==> keep default return code (RTI)
-    LDD   ,X          ; yes ==> backup previous ISR
-    STD   PC128IRQO   ;         and chain it at the end of our own
-PC128STARTUP2    
-    LDD   #PC128IRQ   ; install our own ISR
+    LDA   2,X             ; Is previous TIMERPT enable ?
+    BEQ   PC128STARTUP2   ; no ==> keep default return code (RTI)
+    LDD   ,X              ; yes ==> backup previous ISR
+    STD   PC128IRQO       ;         and chain it at the end of our own
+PC128STARTUP2
+    LDD   #PC128IRQ       ; install our own ISR
     STD   ,X
-    LDA   #$21        ; any non-zero value will do, let's use the one that'll go to DP
-    STA   2,X         ; enable the ISR
+    LDA   #PAGE0          ; any non-zero value will do, let's use the one that'll go to DP
+    STA   2,X             ; enable the ISR
 
-    TFR   A,DP       
-    
-    LDB   #$14        ; shut down cursor
+    TFR   A,DP
+
+    LDB   #$14            ; shut down cursor
     SWI
     FCB   $02
 
