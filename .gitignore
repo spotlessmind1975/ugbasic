@@ -11,3 +11,4 @@ tests/
 core
 vgcore*
 ugbc/objs*
+*
