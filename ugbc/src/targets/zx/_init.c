@@ -91,7 +91,7 @@ void target_initialization( Environment * _environment ) {
 void target_linkage( Environment * _environment ) {
 
     char commandLine[2*MAX_TEMPORARY_STORAGE];
-    char executableName[64];
+    char executableName[MAX_TEMPORARY_STORAGE];
     char binaryName[64];
     char listingFileName[64];
     
