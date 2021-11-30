@@ -35,6 +35,8 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+PAGE0 equ $21
+
 ; TIMER service routine
 MO5IRQ
     LDD   #1          ; increment 
@@ -44,7 +46,9 @@ MO5TIMER  set *+1     ; (variable within code)
     LDX   #0          ; get next ISR
 MO5IRQN   set *-2     ; (variable within code)
     BEQ   MO5IRQ2     ; any defined ?
-    JSR   ,X          ; yes ==> call it
+    LDA   #PAGE0        
+    TFR   A,DP        ; sets the basic DP    
+    JMP   ,X          ; yes ==> call it
 MO5IRQ2
     JMP   >MO5IRQEND  ; no ==> jmp to the old one
 MO5IRQO   set *-2     ; (variable within code)
@@ -61,7 +65,7 @@ MO5STARTUP2
     LDD   #MO5IRQ     ; install our own ISR
     STD   ,X
     
-    LDA   #$21        ; any non-zero value will do, let's use the one that'll go to DP
+    LDA   #PAGE0      ; any non-zero value will do, let's use the one that'll go to DP
     STA   2,X         ; enable the ISR
 
     TFR   A,DP        ; setup direct-page

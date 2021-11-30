@@ -35,6 +35,8 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+PAGE0 equ $21
+
 ; TIMER service routine
 PC128IRQ
     LDD   #1          ; increment 
@@ -44,7 +46,9 @@ PC128TIMER  set *+1   ; (variable within code)
     LDX   #0          ; get next ISR
 PC128IRQN   set *-2   ; (variable within code)
     BEQ   PC128IRQ2   ; any defined ?
-    JSR   ,X          ; yes ==> call it
+    LDA   #PAGE0
+    TFR   A,DP        ; sets the basic DP
+    JMP   ,X          ; yes ==> call it
 PC128IRQ2
     JMP   >PC128IRQEND  ; no ==> jmp to the old one
 PC128IRQO   set *-2   ; (variable within code)
@@ -60,7 +64,7 @@ PC128OPSTARTUP
 PC128STARTUP2    
     LDD   #PC128IRQ   ; install our own ISR
     STD   ,X
-    LDA   #$21        ; any non-zero value will do, let's use the one that'll go to DP
+    LDA   #PAGE0      ; any non-zero value will do, let's use the one that'll go to DP
     STA   2,X         ; enable the ISR
 
     TFR   A,DP        ; setup direct-page
