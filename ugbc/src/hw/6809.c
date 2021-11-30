@@ -1809,7 +1809,7 @@ void cpu6809_store_32bit( Environment * _environment, char *_destination, int _v
 
         outline1("LDD #$%4.4x", ( _value >> 16 ) & 0xffff );
         outline1("STD %s", _destination );
-		if(( _value >> 16 ) & 0xffff != ( _value & 0xffff ))
+		if((( _value >> 16 ) & 0xffff) != ( _value & 0xffff ))
         outline1("LDD #$%4.4x", ( _value & 0xffff ) );
         outline1("STD %s+2", _destination );
 
