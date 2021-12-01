@@ -205,9 +205,10 @@ void ef936x_background_color_semivars( Environment * _environment, int _index, c
 void ef936x_background_color_get_vars( Environment * _environment, char * _index, char * _background_color ) {
 
     outline1("LDA %s", _index );
-    outline0("STA $A7DA" );
-    outline0("LDB $A7DB" );
-    outline0("LDA $A7DB" );
+	outline0("LSLA");
+    outline0("STA $A7DB" );
+    outline0("LDB $A7DA" );
+    outline0("LDA $A7DA" );
     outline1("STD %s", _background_color );
     
 }
@@ -455,8 +456,8 @@ void ef936x_point_at_vars( Environment * _environment, char *_x, char *_y ) {
     deploy( ef936xvars, src_hw_ef936x_vars_asm );
     deploy( plot, src_hw_ef936x_plot_asm );
     
-    outline1("LDX %s", x->realName );
-    outline0("STX <PLOTX");
+    outline1("LDD %s", x->realName );
+    outline0("STD <PLOTX");
     outline1("LDD %s", y->realName );
     outline0("STD <PLOTY");
     outline0("LDA #1");
@@ -577,8 +578,8 @@ void ef936x_tiles_get_width( Environment * _environment, char *_result ) {
 
 void ef936x_get_height( Environment * _environment, char *_result ) {
 
-    outline0("LDX CURRENTHEIGHT" );
-    outline1("STX %s", _result );
+    outline0("LDD CURRENTHEIGHT" );
+    outline1("STD %s", _result );
 
 }
 
