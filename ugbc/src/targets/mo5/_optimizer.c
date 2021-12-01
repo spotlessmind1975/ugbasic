@@ -441,7 +441,7 @@ static void basic_peephole(char buffer[LOOK_AHEAD][MAX_TEMPORARY_STORAGE], int z
     &&   match(buffer[1], " LDD *", variable2)
     &&   match(buffer[2], " ADDD *", variable3)
     &&   strcmp(variable1,variable3)==0) {
-        if(unsafe) optim(buffer[0], "(unsafe, presumed dead)", NULL);
+        // if(unsafe) optim(buffer[0], "(unsafe, presumed dead)", NULL);
         optim(buffer[1], "rule #16 (STD*,LDD+,ADD*)->(STD*,ADD+)", NULL);
         optim(buffer[2], NULL, "\tADDD %s", variable2);
     }
@@ -512,7 +512,8 @@ static void basic_peephole(char buffer[LOOK_AHEAD][MAX_TEMPORARY_STORAGE], int z
 
     if( match(buffer[0], " LDD *", variable1)
     &&  match(buffer[1], " STD *", variable2)
-    &&  match(buffer[2], " TFR D,X")) {
+    &&  match(buffer[2], " TFR D,X")
+    && !match(buffer[3], " *SR ", NULL)) {
         optim(buffer[0], "rule #24 (LDD*,STD+,TDX)->(LDX*,STX+)", "\tLDX %s", variable1);
         optim(buffer[1], NULL, "\tSTX %s", variable2);
         optim(buffer[2], NULL, NULL);
