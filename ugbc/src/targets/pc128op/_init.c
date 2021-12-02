@@ -105,7 +105,7 @@ void target_linkage( Environment * _environment ) {
     }
 
     if ( _environment->compilerFileName ) {
-        sprintf(executableName, "%s", _environment->compilerFileName );
+        sprintf(executableName, "\"%s\"", _environment->compilerFileName );
     } else if( access( "asm6809\\bin\\asm6809.exe", F_OK ) == 0 ) {
         sprintf(executableName, "%s", "asm6809\\bin\\asm6809.exe" );
     } else {
