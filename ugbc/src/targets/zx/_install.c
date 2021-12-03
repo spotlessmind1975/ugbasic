@@ -63,7 +63,7 @@ void target_install( Environment * _environment ) {
             printf("\n\nInstalling: Z88DK - The Development Kit for Z80 Computers\n\n");
             (void)!system( "z88dk-win32.exe" );
 
-            unlink( "z88dk-win32.exe" );
+            remove( "z88dk-win32.exe" );
 
         }
 
