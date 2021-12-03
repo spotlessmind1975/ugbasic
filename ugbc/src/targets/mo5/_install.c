@@ -65,7 +65,7 @@ void target_install( Environment * _environment ) {
 
             printf("\n\nInstalling: asm6809 assembler\n\n");
 
-            unlink( "cc65-win32.exe" );
+            remove( "cc65-win32.exe" );
 
     }
 

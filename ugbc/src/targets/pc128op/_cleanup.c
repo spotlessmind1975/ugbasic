@@ -198,7 +198,7 @@ void target_cleanup( Environment * _environment ) {
 	    pc128op_convertbintok7_original( _environment );
 	}
 
-    unlink( _environment->asmFileName );
+    remove( _environment->asmFileName );
 
     if ( _environment->analysis && _environment->listingFileName ) {
         target_analysis( _environment );

@@ -69,7 +69,7 @@ void target_install( Environment * _environment ) {
             printf("\n\nInstalling: CC65 - a freeware C compiler for 6502 based systems\n\n");
             (void)!system( "cc65-win32.exe" );
 
-            unlink( "cc65-win32.exe" );
+            remove( "cc65-win32.exe" );
 
         #else
             printf("\n\nInstalling: CC65 - a freeware C compiler for 6502 based systems\n\n");
