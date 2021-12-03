@@ -46,7 +46,7 @@ void target_finalization( Environment * _environment ) {
 
 void target_cleanup( Environment * _environment ) {
 
-    unlink( _environment->asmFileName );
+    remove( _environment->asmFileName );
 
     if ( _environment->analysis && _environment->listingFileName ) {
         target_analysis( _environment );
