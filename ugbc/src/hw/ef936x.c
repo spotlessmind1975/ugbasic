@@ -205,9 +205,10 @@ void ef936x_background_color_semivars( Environment * _environment, int _index, c
 void ef936x_background_color_get_vars( Environment * _environment, char * _index, char * _background_color ) {
 
     outline1("LDA %s", _index );
-    outline0("STA $A7DA" );
-    outline0("LDB $A7DB" );
-    outline0("LDA $A7DB" );
+    outline0("ASLA" );
+    outline0("STA $A7DB" );
+    outline0("LDB $A7DA" );
+    outline0("LDA $A7DA" );
     outline1("STD %s", _background_color );
     
 }
