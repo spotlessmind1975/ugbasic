@@ -106,6 +106,7 @@ COLORS { return (COLORS); }
 COLOURS { return (COLOURS); }
 COLORMAP { return (COLORMAP); }
 COLOURMAP { return (COLOURMAP); }
+COLUMNS { return (COLUMNS); }
 COMMA { return (COMMA); }
 COMMODORE { return (COMMODORE); }
 COMPRESS { return (COMPRESS); }
@@ -395,15 +396,19 @@ WHITE { return(WHITE); }
 WRITING { return(WRITING); }
 WORD { return (WORD); }
 X { return (X); }
+XGRAPHIC { return (XGRAPHIC); }
 XY { return (XY); }
 XOR { return (XOR); }
 XCURS { return (XCURS); }
+XTEXT { return (XTEXT); }
 XPEN { return (XPEN); }
 Y { return (Y); }
+YGRAPHIC { return (YGRAPHIC); }
 YX { return (YX); }
 YCURS { return (YCURS); }
 YELLOW { return(YELLOW); }
 YIELD { return(YIELD); }
+YTEXT { return (YTEXT); }
 YPEN { return (YPEN); }
 Z { return (Z); }
 ZX { return (ZX); }

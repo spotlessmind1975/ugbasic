@@ -1,0 +1,20 @@
+
+REM @english
+REM GRAPHICS PRIMITIVES USING BOX
+REM
+REM This example will draw two boxes.
+REM
+REM @italian
+REM PRIMITIVE DI GRAFICA CON L'USO DI BOX
+REM
+REM Questo esempio disegnerà due rettangoli.
+
+    BITMAP ENABLE(16)
+    CLS
+    
+    BOX 0,0 TO SCREEN WIDTH / 10, SCREEN HEIGHT / 10
+    INK YELLOW
+    BOX 0,0 TO (SCREEN WIDTH-1), (SCREEN HEIGHT-1)
+    INK RED
+    BOX 2 * (SCREEN WIDTH/10), 2*(SCREEN HEIGHT/10) TO _
+        (SCREEN WIDTH-1), (SCREEN HEIGHT-1)

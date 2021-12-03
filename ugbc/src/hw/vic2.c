@@ -432,6 +432,7 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
     _environment->fontWidth = 8;
     _environment->fontHeight = 8;
+    _environment->screenTiles = 255;
     switch( _screen_mode->id ) {
         case BITMAP_MODE_STANDARD:
             _environment->screenWidth = 320;
@@ -583,10 +584,13 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
     cpu_store_16bit( _environment, "CURRENTWIDTH", _environment->screenWidth );
     cpu_store_16bit( _environment, "CURRENTHEIGHT", _environment->screenHeight );
+    cpu_store_8bit( _environment, "CURRENTTILES", _environment->screenTiles );
     _environment->screenTilesWidth = 40;
     cpu_store_8bit( _environment, "CURRENTTILESWIDTH", _environment->screenTilesWidth );
     _environment->screenTilesHeight = 25;
-    cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight / 8 );
+    cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight );
+    cpu_store_8bit( _environment, "FONTWIDTH", _environment->fontWidth );
+    cpu_store_8bit( _environment, "FONTHEIGHT", _environment->fontHeight );
 
 }
 
@@ -985,6 +989,13 @@ void vic2_get_width( Environment * _environment, char *_result ) {
 
 }
 
+void vic2_tiles_get( Environment * _environment, char *_result ) {
+
+    outline0("LDA CURRENTTILES" );
+    outline1("STA %s", _result );
+
+}
+
 void vic2_tiles_get_width( Environment * _environment, char *_result ) {
 
     outline0("LDA CURRENTTILESWIDTH" );
@@ -1057,10 +1068,16 @@ void vic2_initialization( Environment * _environment ) {
     variable_global( _environment, "CURRENTWIDTH" );
     variable_import( _environment, "CURRENTHEIGHT", VT_POSITION  );
     variable_global( _environment, "CURRENTHEIGHT" );
+    variable_import( _environment, "CURRENTTILES", VT_BYTE );
+    variable_global( _environment, "CURRENTTILES" );
     variable_import( _environment, "CURRENTTILESWIDTH", VT_BYTE );
     variable_global( _environment, "CURRENTTILESWIDTH" );
     variable_import( _environment, "CURRENTTILESHEIGHT", VT_BYTE );
     variable_global( _environment, "CURRENTTILESHEIGHT" );
+    variable_import( _environment, "FONTWIDTH", VT_BYTE );
+    variable_global( _environment, "FONTWIDTH" );
+    variable_import( _environment, "FONTHEIGHT", VT_BYTE );
+    variable_global( _environment, "FONTHEIGHT" );
 
     SCREEN_MODE_DEFINE( BITMAP_MODE_STANDARD, 1, 320, 200, 2, "Standard Bitmap Mode" );
     SCREEN_MODE_DEFINE( BITMAP_MODE_MULTICOLOR, 1, 160, 200, 4, "Multicolor Bitmap Mode"  );

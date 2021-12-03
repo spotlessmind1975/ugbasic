@@ -54,6 +54,9 @@ CURRENTTILESWIDTH:      .byte 40
 CURRENTTILESHEIGHT:      .byte 25
 CURRENTSL:          .byte 0
 TEXTWW:             .byte 3
+FONTWIDTH:          .byte 8
+FONTHEIGHT:         .byte 8
+CURRENTTILES:      .byte 255
 
 IMAGEX = $34
 IMAGEY = $36

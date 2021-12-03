@@ -62,11 +62,11 @@ void test_zx_text_payload( TestEnvironment * _te ) {
     cpu_addressof_16bit( e, texts->realName, address->realName );
     cpu_inc_16bit( e, address->realName );
 
-    zx_text( e, address->realName, size->realName, pen->realName, paper->realName, ww->realName );
+    zx_text( e, address->realName, size->realName, pen->realName, paper->realName );
 
     cpu_dsdescriptor( e, textd->realName, address2->realName, size2->realName );
 
-    zx_text( e, address2->realName, size2->realName, pen->realName, paper->realName, ww->realName );
+    zx_text( e, address2->realName, size2->realName, pen->realName, paper->realName );
 
 }
 

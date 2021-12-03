@@ -220,10 +220,16 @@ void zx_initialization( Environment * _environment ) {
     variable_global( _environment, "CURRENTWIDTH" );
     variable_import( _environment, "CURRENTHEIGHT", VT_POSITION  );
     variable_global( _environment, "CURRENTHEIGHT" );
+    variable_import( _environment, "CURRENTTILES", VT_BYTE );
+    variable_global( _environment, "CURRENTTILES" );
     variable_import( _environment, "CURRENTTILESWIDTH", VT_BYTE );
     variable_global( _environment, "CURRENTTILESWIDTH" );
     variable_import( _environment, "CURRENTTILESHEIGHT", VT_BYTE );
     variable_global( _environment, "CURRENTTILESHEIGHT" );
+    variable_import( _environment, "FONTWIDTH", VT_BYTE );
+    variable_global( _environment, "FONTWIDTH" );
+    variable_import( _environment, "FONTHEIGHT", VT_BYTE );
+    variable_global( _environment, "FONTHEIGHT" );
 
     SCREEN_MODE_DEFINE( BITMAP_MODE_STANDARD, 1, 192, 256, 2, "Standard Bitmap Mode" );
     SCREEN_MODE_DEFINE( TILEMAP_MODE_STANDARD, 0, 32, 25, 8, "(emulated) Standard Character Mode" );

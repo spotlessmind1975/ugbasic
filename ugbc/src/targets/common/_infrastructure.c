@@ -1630,7 +1630,15 @@ Variable * variable_mul( Environment * _environment, char * _source, char * _des
         case 32:
             WARNING_BITWIDTH(_source, _destination );
             result = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SDWORD : VT_DWORD, "(result of multiplication)" );
-            cpu_math_mul_16bit_to_32bit( _environment, source->realName, target->realName, result->realName, VT_SIGNED( source->type ) );
+            #ifdef CPU_BIG_ENDIAN
+                {
+                    char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s+2", source->realName );
+                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s+2", target->realName );
+                    cpu_math_mul_16bit_to_32bit( _environment, sourceRealName, targetRealName, result->realName, VT_SIGNED( source->type ) );
+                }
+            #else
+                cpu_math_mul_16bit_to_32bit( _environment, source->realName, target->realName, result->realName, VT_SIGNED( source->type ) );
+            #endif
             break;
         case 16:
             result = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SDWORD : VT_DWORD, "(result of multiplication)" );
@@ -3839,22 +3847,30 @@ static Variable * calculate_offset_in_array( Environment * _environment, char * 
     }
 
     Variable * base = variable_temporary( _environment, VT_WORD, "(base in array)");
-    Variable * size = variable_temporary( _environment, VT_WORD, "(size in array)");
     Variable * offset = variable_temporary( _environment, VT_WORD, "(offset in array)");
 
     variable_store( _environment, offset->name, 0 );
 
     int i,j;
 
-    for( i = 0; i<_environment->arrayIndexes[_environment->arrayNestedIndex]; ++i ) {
-        variable_store( _environment, base->name, 1 );
-        for( j=0; j<i; ++j ) {
-            variable_store( _environment, size->name, array->arrayDimensionsEach[array->arrayDimensions-j-1] );
-            base = variable_mul( _environment, base->name, size->name );
+    if ( _environment->arrayIndexes[_environment->arrayNestedIndex] == 1 ) {
+        Variable * index = variable_retrieve( _environment, _environment->arrayIndexesEach[_environment->arrayNestedIndex][0]);
+        variable_add_inplace( _environment, offset->name, index->name );
+    } else {
+        for( i = 0; i<_environment->arrayIndexes[_environment->arrayNestedIndex]; ++i ) {
+            int baseValue = 1;
+            for( j=0; j<i; ++j ) {
+                baseValue *= array->arrayDimensionsEach[array->arrayDimensions-j-1];
+            }
+            Variable * index = variable_retrieve( _environment, _environment->arrayIndexesEach[_environment->arrayNestedIndex][array->arrayDimensions-i-1]);
+            if(baseValue!=1) {
+                variable_store( _environment, base->name, baseValue );
+                Variable * additionalOffset = variable_mul( _environment, index->name, base->name );
+                variable_add_inplace( _environment, offset->name, additionalOffset->name );
+            } else {
+                variable_add_inplace( _environment, offset->name, index->name );
+            }
         }
-        Variable * index = variable_retrieve( _environment, _environment->arrayIndexesEach[_environment->arrayNestedIndex][array->arrayDimensions-i-1]);
-        Variable * additionalOffset = variable_mul( _environment, index->name, base->name );
-        variable_add_inplace( _environment, offset->name, additionalOffset->name );
     }
 
     return offset;

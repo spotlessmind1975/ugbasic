@@ -1,18 +1,17 @@
 REM @english
-REM GRAPHICS PRIMITIVES USING BOX AND PATTERNS (1)
+REM GRAPHICS PRIMITIVES USING DRAW (2)
 REM
-REM This example will draw two red segments.
+REM This example will draw random segments on the screen.
 REM
 REM @italian
-REM PRIMITIVE DI GRAFICA CON L'USO DI BOX E PATTERN (1)
+REM PRIMITIVE DI GRAFICA CON L'USO DI DRAW (2)
 REM
-REM Questo esempio disegnerà due segmenti rossi.
+REM Questo esempio disegnerà segmenti casuali sullo schermo.
 
-    BITMAP ENABLE
-    CLS
-    INK YELLOW
-    SET LINE $f0f0
-    BOX 50,100 TO 150,140
-    SET LINE %1100110011001100
-    BOX 60,110 TO 160,160
-    HALT
+  BITMAP ENABLE(16)
+  CLS
+  DO
+     INK RND(SCREEN COLORS-1)
+     DRAW RND(SCREEN WIDTH-1), RND( SCREEN HEIGHT-1) TO _
+           RND(SCREEN WIDTH-1), RND( SCREEN HEIGHT-1)
+  LOOP

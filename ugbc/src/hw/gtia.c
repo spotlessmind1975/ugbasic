@@ -258,7 +258,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     _environment->fontWidth = 8;
     _environment->fontHeight = 8;
 
-    _environment->screenShared = 256;
+    _environment->screenShades = 256;
+    _environment->screenTiles = 255;
 
     switch( _screen_mode->id ) {
         // Graphics 3 (ANTIC 8)
@@ -880,10 +881,11 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
     cpu_store_16bit( _environment, "CURRENTWIDTH", _environment->screenWidth );
     cpu_store_16bit( _environment, "CURRENTHEIGHT", _environment->screenHeight );
+    cpu_store_8bit( _environment, "CURRENTTILES", _environment->screenTiles );
     _environment->screenTilesWidth = _environment->screenWidth / 8;
     cpu_store_8bit( _environment, "CURRENTTILESWIDTH", _environment->screenTilesWidth );
     _environment->screenTilesHeight = _environment->screenHeight / 8;
-    cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight / 8 );
+    cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight );
 
     cpu_store_16bit( _environment, "CLIPX1", 0) ;
     cpu_store_16bit( _environment, "CLIPY2", 0) ;
@@ -1194,9 +1196,16 @@ void gtia_get_height( Environment * _environment, char *_result ) {
 
 }
 
+void gtia_tiles_get( Environment * _environment, char *_result ) {
+
+    outline0("LDA CURRENTTILES" );
+    outline1("STA %s", _result );
+
+}
+
 void gtia_tiles_get_height( Environment * _environment, char *_result ) {
 
-    outline0("LDA CURRENTHEIGHT" );
+    outline0("LDA CURRENTTILESHEIGHT" );
     outline1("STA %s", _result );
 
 }
@@ -1262,10 +1271,16 @@ void gtia_initialization( Environment * _environment ) {
     variable_global( _environment, "CURRENTWIDTH" );
     variable_import( _environment, "CURRENTHEIGHT", VT_POSITION  );
     variable_global( _environment, "CURRENTHEIGHT" );
+    variable_import( _environment, "CURRENTTILES", VT_BYTE );
+    variable_global( _environment, "CURRENTTILES" );
     variable_import( _environment, "CURRENTTILESWIDTH", VT_BYTE );
     variable_global( _environment, "CURRENTTILESWIDTH" );
     variable_import( _environment, "CURRENTTILESHEIGHT", VT_BYTE );
     variable_global( _environment, "CURRENTTILESHEIGHT" );
+    variable_import( _environment, "FONTWIDTH", VT_BYTE );
+    variable_global( _environment, "FONTWIDTH" );
+    variable_import( _environment, "FONTHEIGHT", VT_BYTE );
+    variable_global( _environment, "FONTHEIGHT" );
 
 #ifdef __atarixl__
     SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC14, 1, 160, 192, 4, "Antic E (Graphics 15-XL computers only)"  );

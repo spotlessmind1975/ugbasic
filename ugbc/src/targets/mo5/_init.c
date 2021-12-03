@@ -98,13 +98,15 @@ void target_initialization( Environment * _environment ) {
 void target_linkage( Environment * _environment ) {
 
     char commandLine[2*MAX_TEMPORARY_STORAGE];
-    char executableName[32];
+    char executableName[MAX_TEMPORARY_STORAGE];
 
     if ( _environment->outputFileType != OUTPUT_FILE_TYPE_K7_ORIGINAL && _environment->outputFileType != OUTPUT_FILE_TYPE_K7_NEW ) {
         CRITICAL_UNSUPPORTED_OUTPUT_FILE_TYPE( OUTPUT_FILE_TYPE_AS_STRING[_environment->outputFileType] );
     }
 
-    if( access( "asm6809\\bin\\asm6809.exe", F_OK ) == 0 ) {
+    if ( _environment->compilerFileName ) {
+        sprintf(executableName, "\"%s\"", _environment->compilerFileName );
+    } else if( access( "asm6809\\bin\\asm6809.exe", F_OK ) == 0 ) {
         sprintf(executableName, "%s", "asm6809\\bin\\asm6809.exe" );
     } else {
         sprintf(executableName, "%s", "asm6809" );

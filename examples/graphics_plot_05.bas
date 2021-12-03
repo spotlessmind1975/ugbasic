@@ -12,8 +12,8 @@ REM Questo esempio è stato aggiunto per controllare il fix #188.
    COLOR BORDER BLACK
    CLS BLACK
    DO
-      x=RND(SCREEN WIDTH)
-      y=RND(SCREEN HEIGHT)
-      c=RND(SCREEN COLORS)
+      x=RND(SCREEN WIDTH-1)
+      y=RND(SCREEN HEIGHT-1)
+      c=RND(SCREEN COLORS-1)
       PLOT x,y,c
    LOOP
