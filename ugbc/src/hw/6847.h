@@ -213,6 +213,7 @@ void c6847_sprite_color( Environment * _environment, char * _sprite, char * _col
 void c6847_vertical_scroll( Environment * _environment, char * _displacement );
 void c6847_horizontal_scroll( Environment * _environment, char * _displacement );
 
+void c6847_tiles_get( Environment * _environment, char * _result );
 void c6847_get_width( Environment * _environment, char * _result );
 void c6847_tiles_get_width( Environment * _environment, char * _result );
 void c6847_get_height( Environment * _environment, char * _result );

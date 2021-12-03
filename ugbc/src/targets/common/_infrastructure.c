@@ -1630,7 +1630,15 @@ Variable * variable_mul( Environment * _environment, char * _source, char * _des
         case 32:
             WARNING_BITWIDTH(_source, _destination );
             result = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SDWORD : VT_DWORD, "(result of multiplication)" );
-            cpu_math_mul_16bit_to_32bit( _environment, source->realName, target->realName, result->realName, VT_SIGNED( source->type ) );
+            #ifdef CPU_BIG_ENDIAN
+                {
+                    char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s+2", source->realName );
+                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s+2", target->realName );
+                    cpu_math_mul_16bit_to_32bit( _environment, sourceRealName, targetRealName, result->realName, VT_SIGNED( source->type ) );
+                }
+            #else
+                cpu_math_mul_16bit_to_32bit( _environment, source->realName, target->realName, result->realName, VT_SIGNED( source->type ) );
+            #endif
             break;
         case 16:
             result = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SDWORD : VT_DWORD, "(result of multiplication)" );

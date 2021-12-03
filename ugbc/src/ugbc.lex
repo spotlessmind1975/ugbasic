@@ -106,6 +106,7 @@ COLORS { return (COLORS); }
 COLOURS { return (COLOURS); }
 COLORMAP { return (COLORMAP); }
 COLOURMAP { return (COLOURMAP); }
+COLUMNS { return (COLUMNS); }
 COMMA { return (COMMA); }
 COMMODORE { return (COMMODORE); }
 COMPRESS { return (COMPRESS); }

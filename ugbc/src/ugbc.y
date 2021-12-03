@@ -56,7 +56,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token SQR TI CONST VBL POKE NOP FILL IN POSITIVE DEFINE ATARI ATARIXL C64 DRAGON DRAGON32 DRAGON64 PLUS4 ZX 
 %token FONT VIC20 PARALLEL YIELD SPAWN THREAD TASK IMAGES FRAME FRAMES XY YX ROLL MASKED USING TRANSPARENCY
 %token OVERLAYED CASE ENDSELECT OGP CGP ARRAY NEW GET DISTANCE TYPE MUL DIV RGB SHADES HEX PALETTE
-%token BAR XGRAPHIC YGRAPHIC XTEXT YTEXT
+%token BAR XGRAPHIC YGRAPHIC XTEXT YTEXT COLUMNS
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -343,6 +343,9 @@ const_factor:
       | WIDTH {
           $$ = ((Environment *)_environment)->screenWidth;
       }
+      | TILES {
+          $$ = ((Environment *)_environment)->screenTiles;
+      }
       | SCREEN WIDTH {
           $$ = ((Environment *)_environment)->screenWidth;
       }
@@ -350,6 +353,12 @@ const_factor:
           $$ = ((Environment *)_environment)->screenTilesWidth;
       }
       | TILES WIDTH {
+          $$ = ((Environment *)_environment)->screenTilesWidth;
+      }
+      | SCREEN COLUMNS {
+          $$ = ((Environment *)_environment)->screenTilesWidth;
+      }
+      | COLUMNS {
           $$ = ((Environment *)_environment)->screenTilesWidth;
       }
       | FONT WIDTH {
@@ -381,6 +390,15 @@ const_factor:
           $$ = ((Environment *)_environment)->screenHeight;
       }
       | SCREEN TILES HEIGHT {
+          $$ = ((Environment *)_environment)->screenTilesHeight;
+      }
+      | TILES HEIGHT {
+          $$ = ((Environment *)_environment)->screenTilesHeight;
+      }
+      | SCREEN ROWS {
+          $$ = ((Environment *)_environment)->screenTilesHeight;
+      }
+      | ROWS {
           $$ = ((Environment *)_environment)->screenTilesHeight;
       }
       | FONT HEIGHT {
@@ -1558,27 +1576,27 @@ exponential:
     }
     | COLORS {
         $$ = variable_temporary( _environment, VT_COLOR, "(COLORS)" )->name;
-        variable_store( _environment, $$, COLOR_COUNT );
+        variable_store( _environment, $$, ((Environment *)_environment)->screenColors );
     }
     | COLORS COUNT {
         $$ = variable_temporary( _environment, VT_COLOR, "(COLORS COUNT)" )->name;
-        variable_store( _environment, $$, COLOR_COUNT );
+        variable_store( _environment, $$, ((Environment *)_environment)->screenColors );
     }
     | COLOR COUNT {
         $$ = variable_temporary( _environment, VT_COLOR, "(COLORS COUNT)" )->name;
-        variable_store( _environment, $$, COLOR_COUNT );
+        variable_store( _environment, $$, ((Environment *)_environment)->screenColors );
     }
     | COLOURS {
         $$ = variable_temporary( _environment, VT_COLOR, "(COLORS)" )->name;
-        variable_store( _environment, $$, COLOR_COUNT );
+        variable_store( _environment, $$, ((Environment *)_environment)->screenColors );
     }
     | COLOURS COUNT {
         $$ = variable_temporary( _environment, VT_COLOR, "(COLORS COUNT)" )->name;
-        variable_store( _environment, $$, COLOR_COUNT );
+        variable_store( _environment, $$, ((Environment *)_environment)->screenColors );
     }
     | COLOUR COUNT {
         $$ = variable_temporary( _environment, VT_COLOR, "(COLORS COUNT)" )->name;
-        variable_store( _environment, $$, COLOR_COUNT );
+        variable_store( _environment, $$, ((Environment *)_environment)->screenColors );
     }
     | THREAD {
         Variable * var = variable_temporary( _environment, VT_THREAD, "(THREAD)" );
@@ -1591,7 +1609,11 @@ exponential:
         $$ = var->name;
     }
     | SCREEN SHADES {
-        $$ = variable_temporary( _environment, VT_COLOR, "(SCREEN SHADES)" )->name;
+        $$ = variable_temporary( _environment, VT_WORD, "(SCREEN SHADES)" )->name;
+        variable_store( _environment, $$, ((Environment *)_environment)->screenShades );
+    }
+    | SHADES {
+        $$ = variable_temporary( _environment, VT_WORD, "(SCREEN SHADES)" )->name;
         variable_store( _environment, $$, ((Environment *)_environment)->screenShades );
     }
     | SCREEN COLORS {
@@ -1670,7 +1692,16 @@ exponential:
     | SCREEN TILES WIDTH {
         $$ = screen_tiles_get_width( _environment )->name;
     }
+    | TILES {
+        $$ = screen_tiles_get( _environment )->name;
+    }
     | TILES WIDTH {
+        $$ = screen_tiles_get_width( _environment )->name;
+    }
+    | SCREEN COLUMNS {
+        $$ = screen_tiles_get_width( _environment )->name;
+    }
+    | COLUMNS {
         $$ = screen_tiles_get_width( _environment )->name;
     }
     | FONT WIDTH {
@@ -1699,6 +1730,15 @@ exponential:
         $$ = screen_get_height( _environment )->name;
     }
     | SCREEN TILES HEIGHT {
+        $$ = screen_tiles_get_height( _environment )->name;
+    }
+    | TILES HEIGHT {
+        $$ = screen_tiles_get_height( _environment )->name;
+    }
+    | SCREEN ROWS {
+        $$ = screen_tiles_get_height( _environment )->name;
+    }
+    | ROWS {
         $$ = screen_tiles_get_height( _environment )->name;
     }
     | FONT HEIGHT {
@@ -4227,9 +4267,9 @@ program :
 
 %%
 
-void show_usage_and_exit( int _argc, char *_argv[] ) {
+char version[MAX_TEMPORARY_STORAGE] = "1.6";
 
-    char version[MAX_TEMPORARY_STORAGE] = "v1.5";
+void show_usage_and_exit( int _argc, char *_argv[] ) {
 
 #if defined(__atari__) 
     char target[MAX_TEMPORARY_STORAGE] = "ATARI 400/800";
@@ -4254,7 +4294,7 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
 #endif
 
     printf("--------------------------------------------------\n");
-    printf("ugBASIC Compiler %s [target: %s]\n", version, target);
+    printf("ugBASIC Compiler v%s [target: %s]\n", version, target);
     printf("--------------------------------------------------\n");
     printf("Copyright 2021 Marco Spedaletti (asimov@mclink.it)\n\n");
     printf("Licensed under the Apache License, Version 2.0 (the \"License\");\n");
@@ -4303,6 +4343,7 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
 #endif
     printf("\t-E           Show stats of embedded modules\n" );
     printf("\t-W           Enable warnings during compilation\n" );
+    printf("\t-V           Output version (example: '%s')\n", version );
     exit(EXIT_FAILURE);
 }
 
@@ -4341,7 +4382,7 @@ int main( int _argc, char *_argv[] ) {
     _environment->outputFileType = OUTPUT_FILE_TYPE_PRG;
 #endif
 
-    while ((opt = getopt(_argc, _argv, "ae:c:Wo:Ie:l:EO:dL:")) != -1) {
+    while ((opt = getopt(_argc, _argv, "ae:c:Wo:Ie:l:EO:dL:C:V")) != -1) {
         switch (opt) {
                 case 'a':
                     if ( ! _environment->listingFileName ) {
@@ -4353,6 +4394,12 @@ int main( int _argc, char *_argv[] ) {
                     break;
                 case 'c':
                     _environment->configurationFileName = strdup(optarg);
+                    break;
+                case 'C':
+                    _environment->compilerFileName = strdup(optarg);
+                    if( access( _environment->compilerFileName, F_OK ) != 0 ) {
+                        CRITICAL("Compiler no found.");
+                    }
                     break;
                 case 'o':
                     _environment->exeFileName = strdup(optarg);
@@ -4389,6 +4436,10 @@ int main( int _argc, char *_argv[] ) {
                     break;
                 case 'E':
                     _environment->embeddedStatsEnabled = 1;
+                    break;
+                case 'V':
+                    fprintf(stderr, "%s", version );
+                    exit(0);
                     break;
                 case 'e': {
                     char * p = strtok(optarg, ",");

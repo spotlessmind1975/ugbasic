@@ -307,6 +307,7 @@ int ted_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
 
     Variable * colormapAddress = variable_retrieve( _environment, "COLORMAPADDRESS" );
 
+    _environment->screenTiles = 255;
     switch( _screen_mode->id ) {
         case BITMAP_MODE_STANDARD:
             _environment->fontWidth = 8;
@@ -406,10 +407,11 @@ int ted_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
 
     cpu_store_16bit( _environment, "CURRENTWIDTH", _environment->screenWidth );
     cpu_store_16bit( _environment, "CURRENTHEIGHT", _environment->screenHeight );
+    cpu_store_8bit( _environment, "CURRENTTILES", _environment->screenTiles );
     _environment->screenTilesWidth = _environment->screenWidth / 8;
     cpu_store_8bit( _environment, "CURRENTTILESWIDTH", _environment->screenTilesWidth );
     _environment->screenTilesHeight = _environment->screenHeight / 8;
-    cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight / 8 );
+    cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight );
     cpu_store_8bit( _environment, "FONTWIDTH", _environment->fontWidth );
     cpu_store_8bit( _environment, "FONTHEIGHT", _environment->fontHeight );
 
@@ -653,6 +655,13 @@ void ted_get_width( Environment * _environment, char *_result ) {
     outline1("STA %s", _result );
     outline0("LDA CURRENTWIDTH+1" );
     outline1("STA %s+1", _result );
+
+}
+
+void ted_tiles_get( Environment * _environment, char *_result ) {
+
+    outline0("LDA CURRENTTILES" );
+    outline1("STA %s", _result );
 
 }
 
