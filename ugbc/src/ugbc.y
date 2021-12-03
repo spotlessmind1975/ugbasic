@@ -4267,9 +4267,9 @@ program :
 
 %%
 
-void show_usage_and_exit( int _argc, char *_argv[] ) {
+char version[MAX_TEMPORARY_STORAGE] = "1.6";
 
-    char version[MAX_TEMPORARY_STORAGE] = "v1.6";
+void show_usage_and_exit( int _argc, char *_argv[] ) {
 
 #if defined(__atari__) 
     char target[MAX_TEMPORARY_STORAGE] = "ATARI 400/800";
@@ -4294,7 +4294,7 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
 #endif
 
     printf("--------------------------------------------------\n");
-    printf("ugBASIC Compiler %s [target: %s]\n", version, target);
+    printf("ugBASIC Compiler v%s [target: %s]\n", version, target);
     printf("--------------------------------------------------\n");
     printf("Copyright 2021 Marco Spedaletti (asimov@mclink.it)\n\n");
     printf("Licensed under the Apache License, Version 2.0 (the \"License\");\n");
@@ -4343,6 +4343,7 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
 #endif
     printf("\t-E           Show stats of embedded modules\n" );
     printf("\t-W           Enable warnings during compilation\n" );
+    printf("\t-V           Output version (example: '%s')\n", version );
     exit(EXIT_FAILURE);
 }
 
@@ -4381,7 +4382,7 @@ int main( int _argc, char *_argv[] ) {
     _environment->outputFileType = OUTPUT_FILE_TYPE_PRG;
 #endif
 
-    while ((opt = getopt(_argc, _argv, "ae:c:Wo:Ie:l:EO:dL:")) != -1) {
+    while ((opt = getopt(_argc, _argv, "ae:c:Wo:Ie:l:EO:dL:C:V")) != -1) {
         switch (opt) {
                 case 'a':
                     if ( ! _environment->listingFileName ) {
@@ -4393,6 +4394,12 @@ int main( int _argc, char *_argv[] ) {
                     break;
                 case 'c':
                     _environment->configurationFileName = strdup(optarg);
+                    break;
+                case 'C':
+                    _environment->compilerFileName = strdup(optarg);
+                    if( access( _environment->compilerFileName, F_OK ) != 0 ) {
+                        CRITICAL("Compiler no found.");
+                    }
                     break;
                 case 'o':
                     _environment->exeFileName = strdup(optarg);
@@ -4429,6 +4436,10 @@ int main( int _argc, char *_argv[] ) {
                     break;
                 case 'E':
                     _environment->embeddedStatsEnabled = 1;
+                    break;
+                case 'V':
+                    fprintf(stderr, "%s", version );
+                    exit(0);
                     break;
                 case 'e': {
                     char * p = strtok(optarg, ",");

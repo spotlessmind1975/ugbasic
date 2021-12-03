@@ -91,7 +91,7 @@ void target_initialization( Environment * _environment ) {
 void target_linkage( Environment * _environment ) {
 
     char commandLine[2*MAX_TEMPORARY_STORAGE];
-    char executableName[64];
+    char executableName[MAX_TEMPORARY_STORAGE];
     char binaryName[64];
     char listingFileName[64];
     
@@ -99,7 +99,9 @@ void target_linkage( Environment * _environment ) {
         CRITICAL_UNSUPPORTED_OUTPUT_FILE_TYPE( OUTPUT_FILE_TYPE_AS_STRING[_environment->outputFileType] );
     }
 
-    if( access( "z88dk\\z88dk\\bin\\z88dk-z80asm.exe", F_OK ) == 0 ) {
+    if ( _environment->compilerFileName ) {
+        sprintf(executableName, "\"%s\"", _environment->compilerFileName );
+    } else if( access( "z88dk\\z88dk\\bin\\z88dk-z80asm.exe", F_OK ) == 0 ) {
         sprintf(executableName, "%s", "z88dk\\z88dk\\bin\\z88dk-z80asm.exe" );
     } else {
         sprintf(executableName, "%s", "z88dk-z80asm" );
