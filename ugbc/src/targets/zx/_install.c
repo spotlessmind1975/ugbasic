@@ -58,12 +58,8 @@ void target_install( Environment * _environment ) {
         if (answer == 'Y' || answer == 'y'){
 
             printf("Downloading: Z88DK - The Development Kit for Z80 Computers\n\n");
-            (void)!system( "curl https://ugbasic.iwashere.eu/download/z88dk-win32.exe --output z88dk-win32.exe" );
-
-            printf("\n\nInstalling: Z88DK - The Development Kit for Z80 Computers\n\n");
-            (void)!system( "z88dk-win32.exe" );
-
-            remove( "z88dk-win32.exe" );
+            (void)!system( "curl https://ugbasic.iwashere.eu/download/z88dk-appmake.exe --output z88dk-appmake.exe" );
+            (void)!system( "curl https://ugbasic.iwashere.eu/download/z88dk-z80asm.exe --output z88dk-z80asm.exe" );
 
         }
 
