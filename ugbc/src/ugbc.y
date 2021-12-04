@@ -4798,8 +4798,7 @@ int main( int _argc, char *_argv[] ) {
 
 int yyerror (Environment * _ignored, const char *s) /* Called by yyparse on error */
 {
-        // TODO: better error message (like other compilers)
-      printf( "*** ERROR: %s at %d\n", s, yylineno);
+      fprintf(stderr,  "*** ERROR: %s at %d\n", s, yylineno);
       exit(EXIT_FAILURE);
 }
 
