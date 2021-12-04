@@ -973,6 +973,11 @@ typedef struct _Environment {
     char * compilerFileName;
 
     /**
+     * Filename of app maker 
+     */
+    char * appMakerFileName;
+
+    /**
      * 
      */
     int analysis;
