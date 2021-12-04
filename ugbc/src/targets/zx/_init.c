@@ -157,6 +157,8 @@ void target_linkage( Environment * _environment ) {
         return;
     }; 
 
+    remove( _environment->exeFileName );
+
     rename( binaryName, _environment->exeFileName );
 
 }
