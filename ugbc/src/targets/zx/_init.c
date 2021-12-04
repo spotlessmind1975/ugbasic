@@ -144,6 +144,13 @@ void target_linkage( Environment * _environment ) {
         executableName,
         binaryName );
 
+    char * p = strstr( binaryName, ".bin" );
+    if ( p ) {
+        *(p+1) = 't';
+        *(p+2) = 'a';
+        *(p+3) = 'p';
+    }
+
     if ( system( commandLine ) ) {
         printf("The compilation of assembly program failed.\n\n");
         printf("Please use option '-I' to install chain tool.\n\n");
