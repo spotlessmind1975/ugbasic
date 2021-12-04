@@ -144,7 +144,7 @@ void target_linkage( Environment * _environment ) {
         executableName,
         binaryName );
 
-    char * p = strstr( binaryName, ".bin" );
+    p = strstr( binaryName, ".bin" );
     if ( p ) {
         *(p+1) = 't';
         *(p+2) = 'a';
