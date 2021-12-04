@@ -110,7 +110,7 @@ void target_linkage( Environment * _environment ) {
     if ( _environment->listingFileName ) {
         sprintf( listingFileName, "-l" );
     } else {
-        sprintf( listingFileName, "" );
+        strcpy( listingFileName, "" );
     }
 
     sprintf( commandLine, "%s %s -b %s",
@@ -124,8 +124,8 @@ void target_linkage( Environment * _environment ) {
         return;
     }; 
 
-    strcpy( binaryName, _environment->exeFileName );
-    char * p = strstr( binaryName, ".tap" );
+    strcpy( binaryName, _environment->asmFileName );
+    char * p = strstr( binaryName, ".asm" );
     if ( p ) {
         *(p+1) = 'b';
         *(p+2) = 'i';
@@ -149,5 +149,7 @@ void target_linkage( Environment * _environment ) {
         printf("Please use option '-I' to install chain tool.\n\n");
         return;
     }; 
+
+    rename( binaryName, _environment->exeFileName );
 
 }

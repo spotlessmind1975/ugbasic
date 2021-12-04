@@ -4389,7 +4389,7 @@ int main( int _argc, char *_argv[] ) {
                 case 'a':
                     if ( ! _environment->listingFileName ) {
                         char listingFileName[MAX_TEMPORARY_STORAGE];
-                        sprintf( listingFileName, "%s.lst", tmpnam(NULL) );
+                        sprintf( listingFileName, "%s.lst", get_temporary_filename() );
                         _environment->listingFileName = strdup(listingFileName);
                     }
                     _environment->analysis = 1;
@@ -4623,7 +4623,7 @@ int main( int _argc, char *_argv[] ) {
 
     if ( _environment->exeFileName && !_argv[optind+1]) {
         char asmFileName[MAX_TEMPORARY_STORAGE];
-        sprintf( asmFileName, "%s.asm", tmpnam(NULL) );
+        sprintf( asmFileName, "%s.asm", get_temporary_filename() );
         _environment->asmFileName = strdup(asmFileName);
     } else {
         _environment->asmFileName = strdup(_argv[optind+1] );

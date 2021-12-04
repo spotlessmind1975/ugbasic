@@ -135,7 +135,7 @@ int convertbintok7(Environment * _environment)
 
     // Rename the output file into a temporary filename
     char temporaryFileName[MAX_TEMPORARY_STORAGE];
-    sprintf(temporaryFileName, "%s.bin", tmpnam(NULL) );
+    sprintf(temporaryFileName, "%s.bin", get_temporary_filename() );
     rename( _environment->exeFileName, temporaryFileName );
     
     fr=fopen(temporaryFileName,"rb");
