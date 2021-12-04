@@ -5097,7 +5097,7 @@ char * get_temporary_filename( ) {
 
     for(int i=0; i<strlen(temp); ++i ) {
         if ( temp[i] == '.' ) {
-            temp[1] = '0';
+            temp[i] = '0';
         }
     }
 
