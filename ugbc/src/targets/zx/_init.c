@@ -109,6 +109,8 @@ void target_linkage( Environment * _environment ) {
 
     if ( _environment->listingFileName ) {
         sprintf( listingFileName, "-l" );
+    } else {
+        sprintf( listingFileName, "" );
     }
 
     sprintf( commandLine, "%s %s -b %s",
