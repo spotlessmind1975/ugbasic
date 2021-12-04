@@ -12,7 +12,9 @@ REM
 TI = 0
 
 DO
-    HOMEr HOMEr
+    HOME
     PRINT "TI = ";TI;" (";(TI/60);" secs)"
 LOOP
+
+
 
