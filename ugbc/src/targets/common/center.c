@@ -73,6 +73,20 @@ riga successiva.
 
 @target all
 </usermanual> */
+/* <usermanual>
+@keyword CENTER
+
+@english
+Alias for ''CENTER''.
+
+@italian
+Alias per ''CENTRE''.
+
+@seeAlso CENTRE
+
+@target all
+</usermanual> */
+
 void center( Environment * _environment, char * _string, int _newline ) {
 
     setup_text_variables( _environment );
