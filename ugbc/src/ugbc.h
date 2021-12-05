@@ -2094,6 +2094,7 @@ void                    sprite_multicolor_var( Environment * _environment, char 
 void                    sprite_at( Environment * _environment, int _sprite, int _x, int _y );
 void                    sprite_at_vars( Environment * _environment, char * _sprite, char * _x, char * _y );
 Variable *              sqroot( Environment * _environment, char * _value );
+int                     system_call( Environment * _environment, char * _command );
 
 //----------------------------------------------------------------------------
 // *T*

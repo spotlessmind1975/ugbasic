@@ -124,7 +124,7 @@ void target_linkage( Environment * _environment ) {
         _environment->exeFileName, 
         _environment->asmFileName );
 
-    if ( system( commandLine ) ) {
+    if ( system_call( _environment,  commandLine ) ) {
         printf("The compilation of assembly program failed.\n\n");
         printf("Please use option '-I' to install chain tool.\n\n");
     }; 
