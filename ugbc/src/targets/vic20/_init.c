@@ -121,7 +121,7 @@ void target_linkage( Environment * _environment ) {
     }
 
     if ( _environment->compilerFileName ) {
-        sprintf(executableName, "%s", _environment->compilerFileName );
+        sprintf(executableName, "\"%s\"", _environment->compilerFileName );
     } else if( access( "cc65\\bin\\cl65.exe", F_OK ) == 0 ) {
         sprintf(executableName, "%s", "cc65\\bin\\cl65.exe" );
     } else {
