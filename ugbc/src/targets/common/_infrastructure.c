@@ -5125,7 +5125,7 @@ int system_call( Environment * _environment, char * _commandline ) {
         fprintf( fh, "@echo off\n%s\n", _commandline );
         fclose( fh );
 
-        int result = system_call( _environment,  batchFileName );
+        int result = system( batchFileName );
 
         remove( batchFileName );
 
