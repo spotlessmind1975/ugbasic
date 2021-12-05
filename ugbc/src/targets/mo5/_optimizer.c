@@ -1179,7 +1179,7 @@ void target_peephole_optimizer( Environment * _environment ) {
     char fileNameOptimized[MAX_TEMPORARY_STORAGE];
     int i;
 
-    sprintf( fileNameOptimized, "%s.asm", tmpnam(NULL) );
+    sprintf( fileNameOptimized, "%s.asm", get_temporary_filename() );
 
     buffer buf[LOOK_AHEAD];
     int vars_pass = 0;

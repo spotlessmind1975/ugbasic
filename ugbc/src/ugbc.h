@@ -973,6 +973,11 @@ typedef struct _Environment {
     char * compilerFileName;
 
     /**
+     * Filename of app maker 
+     */
+    char * appMakerFileName;
+
+    /**
      * 
      */
     int analysis;
@@ -1882,6 +1887,7 @@ void                    get_image( Environment * _environment, char * _image, ch
 Variable *              get_paper( Environment * _environment, char * _color );
 Variable *              get_pen( Environment * _environment, char * _color );
 Variable *              get_tab( Environment * _environment );
+char *                  get_temporary_filename( );
 Variable *              get_timer( Environment * _environment );
 void                    global( Environment * _environment );
 void                    gosub_label( Environment * _environment, char * _label );

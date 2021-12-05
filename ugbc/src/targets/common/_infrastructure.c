@@ -5084,3 +5084,17 @@ float min_of_two(float _x, float _y) {
 float min_of_three(float _m, float _n, float _p) {
    return min_of_two(min_of_two(_m, _n), _p);
 }
+
+char * get_temporary_filename( ) {
+
+    char * temp = tmpnam(NULL);
+
+    for(int i=0; i<strlen(temp); ++i ) {
+        if ( temp[i] == '.' ) {
+            temp[i] = '0';
+        }
+    }
+
+    return temp;
+
+}

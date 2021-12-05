@@ -39,30 +39,32 @@ PAGE0 equ $21
 
 ; TIMER service routine
 MO5IRQ
-    LDD   #1          ; increment 
-MO5TIMER  set *+1     ; (variable within code)
-    ADDD  #0          ; add value of TI variable
-    STD   MO5TIMER    ; write result to TI variable
-    LDX   #0          ; get next ISR
-MO5IRQN   set *-2     ; (variable within code)
-    BEQ   MO5IRQ2     ; any defined ?
-    LDA   #PAGE0        
-    TFR   A,DP        ; sets the basic DP    
-    JMP   ,X          ; yes ==> call it
-MO5IRQ2
-    JMP   >MO5IRQEND  ; no ==> jmp to the old one
-MO5IRQO   set *-2     ; (variable within code)
-MO5IRQEND
-    RTI               ;  by defaut do RTI
-    
+    LDD   #0            ; TI variable
+MO5TIMER  set *-2       ; (variable within code)
+    ADDD  #1            ; increment
+    STD   MO5TIMER      ; write result to TI variable
+    LDA   #PAGE0        ; sets the direct page
+    TFR   A,DP          ; for ugbc routines
+    JMP   >MO5IRQDEF    ; jump to next ISR
+MO5IRQN   set *-2       ; (variable within code)
+
+; defaut service routine
+MO5IRQDEF
+    JMP   >MO5IRQEMPTY  ; jmp to the previous routine
+MO5IRQO   set *-2       ; (variable within code)
+
+; empty service routine
+MO5IRQEMPTY
+    RTI                 ;  by defaut do RTI
+
 MO5STARTUP
     LDX   #$2061
-    LDA   2,X         ; Is previous TIMERPT enable ?
-    BEQ   MO5STARTUP2 ; no ==> keep default return code (RTI)
-    LDD   ,X          ; yes ==> backup previous ISR
-    STD   MO5IRQO     ;         and chain it at the end of our own
-MO5STARTUP2    
-    LDD   #MO5IRQ     ; install our own ISR
+    LDA   2,X           ; Is previous TIMERPT enable ?
+    BEQ   MO5STARTUP2   ; no ==> keep default return code (RTI)
+    LDD   ,X            ; yes ==> backup previous ISR
+    STD   MO5IRQO       ;         and chain it at the end of our own
+MO5STARTUP2
+    LDD   #MO5IRQ       ; install our own ISR
     STD   ,X
     
     LDA   #PAGE0      ; any non-zero value will do, let's use the one that'll go to DP
@@ -80,5 +82,5 @@ MO5STARTUP3
     LDB   #$14        ; shut down cursor
     SWI
     FCB   $02
-    
+
     RTS

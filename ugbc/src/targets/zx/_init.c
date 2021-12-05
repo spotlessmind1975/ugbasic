@@ -101,14 +101,16 @@ void target_linkage( Environment * _environment ) {
 
     if ( _environment->compilerFileName ) {
         sprintf(executableName, "\"%s\"", _environment->compilerFileName );
-    } else if( access( "z88dk\\z88dk\\bin\\z88dk-z80asm.exe", F_OK ) == 0 ) {
-        sprintf(executableName, "%s", "z88dk\\z88dk\\bin\\z88dk-z80asm.exe" );
+    } else if( access( "z88dk-z80asm.exe", F_OK ) == 0 ) {
+        sprintf(executableName, "%s", "z88dk-z80asm.exe" );
     } else {
         sprintf(executableName, "%s", "z88dk-z80asm" );
     }
 
     if ( _environment->listingFileName ) {
         sprintf( listingFileName, "-l" );
+    } else {
+        strcpy( listingFileName, "" );
     }
 
     sprintf( commandLine, "%s %s -b %s",
@@ -122,28 +124,41 @@ void target_linkage( Environment * _environment ) {
         return;
     }; 
 
-    strcpy( binaryName, _environment->exeFileName );
-    char * p = strstr( binaryName, ".tap" );
+    strcpy( binaryName, _environment->asmFileName );
+    char * p = strstr( binaryName, ".asm" );
     if ( p ) {
         *(p+1) = 'b';
         *(p+2) = 'i';
         *(p+3) = 'n';
     }
 
-    if( access( "z88dk\\z88dk\\bin\\z88dk-appmake.exe", F_OK ) == 0 ) {
-        sprintf(executableName, "%s", "z88dk\\z88dk\\bin\\z88dk-appmake.exe" );
+    if ( _environment->appMakerFileName ) {
+        sprintf(executableName, "\"%s\"", _environment->appMakerFileName );
+    } else if( access( "z88dk-appmake.exe", F_OK ) == 0 ) {
+        sprintf(executableName, "%s", "z88dk-appmake.exe" );
     } else {
         sprintf(executableName, "%s", "z88dk-appmake" );
     }
 
     sprintf( commandLine, "%s +zx --org 32768 -b %s",
         executableName,
-       binaryName );
+        binaryName );
+
+    p = strstr( binaryName, ".bin" );
+    if ( p ) {
+        *(p+1) = 't';
+        *(p+2) = 'a';
+        *(p+3) = 'p';
+    }
 
     if ( system( commandLine ) ) {
         printf("The compilation of assembly program failed.\n\n");
         printf("Please use option '-I' to install chain tool.\n\n");
         return;
     }; 
+
+    remove( _environment->exeFileName );
+
+    rename( binaryName, _environment->exeFileName );
 
 }

@@ -4308,6 +4308,8 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     printf("\t-a           Show statistics on assembly listing generated\n" );
     printf("\t-I           Install needed chaintool for this target\n" );
     printf("\t-d           Enable debugging of IMAGE LOAD\n" );
+    printf("\t-C <file>    Path to compiler\n" );
+    printf("\t-A <file>    Path to app maker\n" );
     printf("\t-c <file>    Output filename with linker configuration\n" );
     printf("\t-o <exe>     Output filename with final executable file for target\n" );
     printf("\t-O <type>    Output file format for target:\n" );
@@ -4382,12 +4384,12 @@ int main( int _argc, char *_argv[] ) {
     _environment->outputFileType = OUTPUT_FILE_TYPE_PRG;
 #endif
 
-    while ((opt = getopt(_argc, _argv, "ae:c:Wo:Ie:l:EO:dL:C:V")) != -1) {
+    while ((opt = getopt(_argc, _argv, "ae:c:Wo:Ie:l:EO:dL:C:VA:")) != -1) {
         switch (opt) {
                 case 'a':
                     if ( ! _environment->listingFileName ) {
                         char listingFileName[MAX_TEMPORARY_STORAGE];
-                        sprintf( listingFileName, "%s.lst", tmpnam(NULL) );
+                        sprintf( listingFileName, "%s.lst", get_temporary_filename() );
                         _environment->listingFileName = strdup(listingFileName);
                     }
                     _environment->analysis = 1;
@@ -4399,6 +4401,12 @@ int main( int _argc, char *_argv[] ) {
                     _environment->compilerFileName = strdup(optarg);
                     if( access( _environment->compilerFileName, F_OK ) != 0 ) {
                         CRITICAL("Compiler no found.");
+                    }
+                    break;
+                case 'A':
+                    _environment->appMakerFileName = strdup(optarg);
+                    if( access( _environment->appMakerFileName, F_OK ) != 0 ) {
+                        CRITICAL("App maker no found.");
                     }
                     break;
                 case 'o':
@@ -4615,7 +4623,7 @@ int main( int _argc, char *_argv[] ) {
 
     if ( _environment->exeFileName && !_argv[optind+1]) {
         char asmFileName[MAX_TEMPORARY_STORAGE];
-        sprintf( asmFileName, "%s.asm", tmpnam(NULL) );
+        sprintf( asmFileName, "%s.asm", get_temporary_filename() );
         _environment->asmFileName = strdup(asmFileName);
     } else {
         _environment->asmFileName = strdup(_argv[optind+1] );
@@ -4790,8 +4798,7 @@ int main( int _argc, char *_argv[] ) {
 
 int yyerror (Environment * _ignored, const char *s) /* Called by yyparse on error */
 {
-        // TODO: better error message (like other compilers)
-      printf( "*** ERROR: %s at %d\n", s, yylineno);
+      fprintf(stderr,  "*** ERROR: %s at %d\n", s, yylineno);
       exit(EXIT_FAILURE);
 }
 
