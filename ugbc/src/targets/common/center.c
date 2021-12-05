@@ -69,7 +69,7 @@ attualmente occupata dal cursore.
 
 @target all
 </usermanual> */
-void center( Environment * _environment, char * _string ) {
+void center( Environment * _environment, char * _string, int _newline ) {
 
     setup_text_variables( _environment );
 
@@ -83,5 +83,9 @@ void center( Environment * _environment, char * _string ) {
     locate( _environment, w->name, y->name );
 
     text_text( _environment, string->name );
+
+    if ( _newline ) {
+        text_newline( _environment );
+    }
 
 }

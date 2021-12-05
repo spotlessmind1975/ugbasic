@@ -1812,7 +1812,7 @@ void                    case_else( Environment * _environment );
 void                    case_equals( Environment * _environment, int _value );
 void                    case_equals_var( Environment * _environment, char * _value );
 void                    case_equals_label( Environment * _environment );
-void                    center( Environment * _environment, char * _string );
+void                    center( Environment * _environment, char * _string, int _newline );
 void                    circle( Environment * _environment, char * _x, char * _y, char * _r, char *_c );
 Variable *              clear_key( Environment * _environment );
 void                    cline( Environment * _environment, char * _characters );

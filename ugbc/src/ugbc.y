@@ -3682,11 +3682,17 @@ statement:
   | SET TAB expr {
       text_set_tab( _environment, $3 );
   }
+  | CENTER expr OP_SEMICOLON {
+      center( _environment, $2, 0 );
+  }
+  | CENTRE expr OP_SEMICOLON {
+      center( _environment, $2, 0 );
+  }
   | CENTER expr {
-      center( _environment, $2 );
+      center( _environment, $2, 1 );
   }
   | CENTRE expr {
-      center( _environment, $2 );
+      center( _environment, $2, 1 );
   }
   | CLS {
       cls( _environment, NULL );
