@@ -5119,7 +5119,7 @@ int system_call( Environment * _environment, char * _commandline ) {
 
         char batchFileName[MAX_TEMPORARY_STORAGE];
 
-        sprintf( batchFileName, "%s.bat", get_temporary_filename( _environment ) );
+        sprintf( batchFileName, "\"%s.bat\"", get_temporary_filename( _environment ) );
 
         FILE * fh = fopen( batchFileName, "w+t" );
         fprintf( fh, "@echo off\n%s\n", _commandline );
