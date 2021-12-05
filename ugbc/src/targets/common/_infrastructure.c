@@ -5102,7 +5102,7 @@ char * get_temporary_filename( Environment * _environment ) {
         }
     }
 
-    if ( temporaryFilename ) {
+    if ( _environment->temporaryPath ) {
         strcpy( temporaryFilename, _environment->temporaryPath );
         strcat( temporaryFilename, temp );
     } else {
