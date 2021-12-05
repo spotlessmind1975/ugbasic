@@ -1,1 +1,1 @@
-ugbc/src/targets/mo5/_optimizer.c
+../mo5/_optimizer.c
