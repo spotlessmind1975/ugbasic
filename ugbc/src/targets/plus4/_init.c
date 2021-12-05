@@ -115,7 +115,7 @@ void target_linkage( Environment * _environment ) {
     }
 
     if ( _environment->compilerFileName ) {
-        sprintf(executableName, "%s", _environment->compilerFileName );
+        sprintf(executableName, "\"%s\"", _environment->compilerFileName );
     } else if( access( "cc65\\bin\\cl65.exe", F_OK ) == 0 ) {
         sprintf(executableName, "%s", "cc65\\bin\\cl65.exe" );
     } else {
@@ -125,12 +125,10 @@ void target_linkage( Environment * _environment ) {
     char listingFileName[MAX_TEMPORARY_STORAGE];
     memset( listingFileName, 0, MAX_TEMPORARY_STORAGE );
     if ( _environment->listingFileName ) {
-        sprintf( listingFileName, "-l \"%s\"", _environment->listingFileName );
-    } else {
-        strcpy( listingFileName, "" );
+        sprintf( listingFileName, "-l %s", _environment->listingFileName );
     }
 
-    sprintf( commandLine, "\"%s\" %s -o \"%s\" -u __EXEHDR__ -t plus4 -C \"%s\" \"%s\"",
+    sprintf( commandLine, "%s %s -o %s -u __EXEHDR__ -t plus4 -C %s %s",
         executableName,
         listingFileName,
         _environment->exeFileName, 

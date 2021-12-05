@@ -103,7 +103,7 @@ void target_linkage( Environment * _environment ) {
     }
 
     if ( _environment->compilerFileName ) {
-        sprintf(executableName, "%s", _environment->compilerFileName );
+        sprintf(executableName, "\"%s\"", _environment->compilerFileName );
     } else if( access( "asm6809\\bin\\asm6809.exe", F_OK ) == 0 ) {
         sprintf(executableName, "%s", "asm6809\\bin\\asm6809.exe" );
     } else {
@@ -114,11 +114,9 @@ void target_linkage( Environment * _environment ) {
     memset( listingFileName, 0, MAX_TEMPORARY_STORAGE );
     if ( _environment->listingFileName ) {
         sprintf( listingFileName, "-l %s", _environment->listingFileName );
-    } else {
-        strcpy( listingFileName, "" );
     }
 
-    sprintf( commandLine, "\"%s\" %s -o \"%s\" -D -e 10240 \"%s\"",
+    sprintf( commandLine, "%s %s -o %s -D -e 10240 %s",
         executableName,
         listingFileName,
         _environment->exeFileName, 
