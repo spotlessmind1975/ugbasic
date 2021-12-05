@@ -85,7 +85,7 @@ void target_initialization( Environment * _environment ) {
     
     if ( !_environment->configurationFileName ) {
         char configurationFileName[MAX_TEMPORARY_STORAGE];
-        sprintf( configurationFileName, "%s.cfg", get_temporary_filename() );
+        sprintf( configurationFileName, "%s.cfg", get_temporary_filename( _environment ) );
         _environment->configurationFileName = strdup(configurationFileName);
     }
 
