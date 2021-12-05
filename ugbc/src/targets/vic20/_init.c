@@ -132,9 +132,11 @@ void target_linkage( Environment * _environment ) {
     memset( listingFileName, 0, MAX_TEMPORARY_STORAGE );
     if ( _environment->listingFileName ) {
         sprintf( listingFileName, "-l %s", _environment->listingFileName );
+    } else {
+        strcpy( listingFileName, "" );
     }
 
-    sprintf( commandLine, "%s -g -Ln main.lbl %s -o %s -t vic20 -C %s %s",
+    sprintf( commandLine, "\"%s\" -g -Ln main.lbl %s -o \"%s\" -t vic20 -C \"%s\" \"%s\"",
         executableName,
         listingFileName,
         _environment->exeFileName, 
