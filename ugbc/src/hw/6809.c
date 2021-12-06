@@ -4282,46 +4282,46 @@ void cpu6809_number_to_string( Environment * _environment, char * _number, char 
 
     switch( _bits ) {
         case 32:
-			outline1("LDD %s+2", _number );
-			outline0("STD <MATHPTR2");
-			outline1("LDD %s", _number );
-			outline0("STD <MATHPTR0");
-			if ( _signed ) {
-				outline0("STA <MATHPTR4");
-				outline1("BPL %spositive", label );
-				cpu6809_complement2_32bit( _environment, "<MATHPTR0", NULL);
-				outhead1("%spositive", label );
-			} else {
-				outline0("CLR <MATHPTR4");
-			}
-			break;
+            outline1("LDD %s+2", _number );
+            outline0("STD <MATHPTR2");
+            outline1("LDD %s", _number );
+            outline0("STD <MATHPTR0");
+            if ( _signed ) {
+                outline0("STA <MATHPTR4");
+                outline1("BPL %spositive", label );
+                cpu6809_complement2_32bit( _environment, "<MATHPTR0", NULL);
+                outhead1("%spositive", label );
+            } else {
+                outline0("CLR <MATHPTR4");
+            }
+            break;
         case 16:
-			outline1("LDD %s", _number );
-			outline0("STD <MATHPTR2");
-			if ( _signed ) {
-				outline0("STA <MATHPTR4");
-				outline1("BPL %spositive", label );
-				cpu6809_complement2_16bit( _environment, "<MATHPTR2", NULL);
-				outhead1("%spositive", label );
-			}
-			outline0("LDD #0");
-			outline0("STD <MATHPTR0");
-			if ( !_signed ) outline0("STA <MATHPTR4");
-			break;
+            outline1("LDD %s", _number );
+            outline0("STD <MATHPTR2");
+            if ( _signed ) {
+                outline0("STA <MATHPTR4");
+                outline1("BPL %spositive", label );
+                cpu6809_complement2_16bit( _environment, "<MATHPTR2", NULL);
+                outhead1("%spositive", label );
+            }
+            outline0("LDD #0");
+            outline0("STD <MATHPTR0");
+            if ( !_signed ) outline0("STA <MATHPTR4");
+            break;
         case 8:
-			outline1("LDB %s", _number );
-			outline0("CLRA");
-			outline0("STD <MATHPTR2");
-			if ( _signed && _bits == 8 ) {
-				outline0("STB <MATHPTR4");
-				outline1("BPL %spositive", label );
-				cpu6809_complement2_8bit( _environment, "<MATHPTR3", NULL);
-				outhead1("%spositive", label );
-			}
-			outline0("CLRB");
-			outline0("STD <MATHPTR0");
-			if ( !_signed ) outline0("STA <MATHPTR4");
-			break;
+            outline1("LDB %s", _number );
+            outline0("CLRA");
+            outline0("STD <MATHPTR2");
+            if ( _signed && _bits == 8 ) {
+                outline0("STB <MATHPTR4");
+                outline1("BPL %spositive", label );
+                cpu6809_complement2_8bit( _environment, "<MATHPTR3", NULL);
+                outhead1("%spositive", label );
+            }
+            outline0("CLRB");
+            outline0("STD <MATHPTR0");
+            if ( !_signed ) outline0("STA <MATHPTR4");
+            break;
     }
 
 
