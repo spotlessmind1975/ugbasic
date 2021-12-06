@@ -73,10 +73,10 @@ PC128STARTUP2
     CLRB
     TFR   D,X
     CLRA
-MO5STARTUP3 
+PC128STARTUP3 
     STB   ,X+         ; clear direct-page
     DECA
-    BNE   MO5STARTUP3
+    BNE   PC128STARTUP3
     
     LDB   #$14        ; shut down cursor
     SWI
