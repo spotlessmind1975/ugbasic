@@ -1362,9 +1362,9 @@ Variable * vic1_new_image( Environment * _environment, int _width, int _height, 
 
     int size = calculate_image_size( _environment, _width, _height, _mode );
 
-    if ( ! size ) {
-        CRITICAL_NEW_IMAGE_UNSUPPORTED_MODE( _mode );
-    }
+    // if ( ! size ) {
+    //     CRITICAL_NEW_IMAGE_UNSUPPORTED_MODE( _mode );
+    // }
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, "(new image)" );
 
