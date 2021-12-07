@@ -5141,3 +5141,37 @@ int system_call( Environment * _environment, char * _commandline ) {
     #endif
 
 }
+
+char * escape_newlines( char * _string ) {
+
+    char * result = malloc( 6 * strlen( _string ) + 1 );
+
+    memset( result, 0, 6 * strlen( _string ) + 1 );
+
+    char * p = _string, * q = result;
+
+    while( *p ) {
+        if ( *p == '\n' || *p == '\r' ) {
+            *q = '"';
+            ++q;
+            *q = ',';
+            ++q;
+            *q = '1';
+            ++q;
+            *q = '3';
+            ++q;
+            *q = ',';
+            ++q;
+            *q = '"';
+            ++q;
+            ++p;
+        } else {
+            *q++ = *p++;
+        }
+    }
+
+    *q = 0;
+
+    return result;
+
+}

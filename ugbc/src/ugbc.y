@@ -3259,6 +3259,26 @@ values :
     }
     ;
 
+print_buffer_definition :
+    expr {
+        print_buffer( _environment, $1, 1 );
+    }
+  | expr OP_COMMA {
+        print_buffer( _environment, $1, 0 );
+        print_tab( _environment, 0 );
+  }
+  | expr OP_SEMICOLON {
+        print_buffer( _environment, $1, 0 );
+  }
+  | expr OP_COMMA {
+        print_buffer( _environment, $1, 0 );
+        print_tab( _environment, 0 );
+  }  print_buffer_definition
+  | expr OP_SEMICOLON  {
+        print_buffer( _environment, $1, 0 );
+  } print_buffer_definition
+  ;
+
 print_definition :
     expr {
         print( _environment, $1, 1 );
@@ -3642,6 +3662,7 @@ statement:
       outline0( "NOP" );
   }
   | PRINT print_definition
+  | PRINT BUFFER print_buffer_definition
   | PRINT {
       print_newline( _environment );
   }

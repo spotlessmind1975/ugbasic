@@ -408,6 +408,11 @@ typedef struct _Variable {
     int absoluteAddress;
 
     /** 
+     * Is a printable buffer?
+     */
+    int printable;
+
+    /** 
      * Pointer to the bank where this variable belongs to.
      */
     Bank * bank;
@@ -1440,6 +1445,7 @@ typedef struct _Environment {
 #define CRITICAL_ADD_INPLACE_UNSUPPORTED( v, t ) CRITICAL3("E102 - Add in place unsupported for variable of given datatype", v, t );
 #define CRITICAL_SUB_INPLACE_UNSUPPORTED( v, t ) CRITICAL3("E103 - Sub in place unsupported for variable of given datatype", v, t );
 #define CRITICAL_HEX_UNSUPPORTED( v, t ) CRITICAL3("E104 - HEX unsupported for variable of given datatype", v, t );
+#define CRITICAL_PRINT_BUFFER_ON_A_NOT_BUFFER( v ) CRITICAL2("E105 - PRINT BUFFER not allowed for non buffer variables", v );
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
 #define WARNING2i( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%i) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -1866,6 +1872,7 @@ void                    end_procedure( Environment * _environment, char * _value
 void                    end_repeat( Environment * _environment, char * _expression );
 void                    end_select_case( Environment * _environment );
 void                    end_while( Environment * _environment );
+char *                  escape_newlines( char * _string );
 void                    every_cleanup( Environment * _environment );
 void                    every_off( Environment * _environment );
 void                    every_on( Environment * _environment );
@@ -2016,6 +2023,7 @@ void                    pop( Environment * _environment );
 Variable *              powering( Environment * _environment, char * _source, char * _dest );
 TileDescriptors *       precalculate_tile_descriptors_for_font( char * _fontData );
 void                    print( Environment * _environment, char * _text, int _new_line );
+void                    print_buffer( Environment * _environment, char * _buffer, int _new_line );
 void                    print_newline( Environment * _environment );
 void                    print_question_mark( Environment * _environment );
 void                    print_tab( Environment * _environment, int _new_line );

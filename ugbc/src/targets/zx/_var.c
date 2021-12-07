@@ -79,24 +79,38 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_BUFFER:
                     if ( ! variable->absoluteAddress ) {
                         if ( variable->valueBuffer ) {
-                            out1("%s: db ", variable->realName);
-                            int i=0;
-                            for (i=0; i<(variable->size-1); ++i ) {
-                                out1("%d,", variable->valueBuffer[i]);
+                            if ( variable->printable ) {
+                                char * string = malloc( variable->size + 1 );
+                                memset( string, 0, variable->size );
+                                memcpy( string, variable->valueBuffer, variable->size );
+                                outline2("%s: db \"%s\"", variable->realName, escape_newlines( string ) );
+                            } else {
+                                out1("%s: db ", variable->realName);
+                                int i=0;
+                                for (i=0; i<(variable->size-1); ++i ) {
+                                    out1("%d,", variable->valueBuffer[i]);
+                                }
+                                outline1("%d", variable->valueBuffer[(variable->size-1)]);
                             }
-                            outline1("%d", variable->valueBuffer[(variable->size-1)]);
                         } else {
                             outline2("%s: defs %d", variable->realName, variable->size);
                         }
                     } else {
                         outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                         if ( variable->valueBuffer ) {
-                            out1("%scopy: db ", variable->realName);
-                            int i=0;
-                            for (i=0; i<(variable->size-1); ++i ) {
-                                out1("%d,", variable->valueBuffer[i]);
+                            if ( variable->printable ) {
+                                char * string = malloc( variable->size + 1 );
+                                memset( string, 0, variable->size );
+                                memcpy( string, variable->valueBuffer, variable->size );
+                                outline2("%scopy: db \"%s\"", variable->realName, escape_newlines( string ) );
+                            } else {
+                                out1("%scopy: db ", variable->realName);
+                                int i=0;
+                                for (i=0; i<(variable->size-1); ++i ) {
+                                    out1("%d,", variable->valueBuffer[i]);
+                                }
+                                outline1("%d", variable->valueBuffer[(variable->size-1)]);
                             }
-                            outline1("%d", variable->valueBuffer[(variable->size-1)]);
                         }
                     }
                     break;
