@@ -107,6 +107,7 @@ void print_buffer( Environment * _environment, char * _value, int _new_line ) {
 
             bufferSize -= 127;
             offset += 127;
+
         }
 
         cpu_dsfree( _environment, dstring->realName );

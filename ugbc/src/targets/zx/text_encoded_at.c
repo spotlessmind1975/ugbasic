@@ -58,6 +58,10 @@ void text_encoded( Environment * _environment, char * _text, char * _pen, char *
             cpu_dsdescriptor( _environment, text->realName, address->realName, size->realName );
             break;
         }
+        case VT_CHAR:
+            cpu_addressof_16bit( _environment, text->realName, address->realName );
+            cpu_store_8bit( _environment, size->realName, 1 );
+            break;        
     }
 
     zx_text( _environment, address->realName, size->realName, pen->realName, paper->realName );

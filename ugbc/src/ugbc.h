@@ -170,7 +170,10 @@ typedef enum _VariableType {
     VT_THREAD = 16,
 
     /** IMAGES (static pictures) */
-    VT_IMAGES = 17
+    VT_IMAGES = 17,
+
+    /** CHAR (printable character) */
+    VT_CHAR = 18
 
 } VariableType;
 
@@ -188,7 +191,7 @@ typedef enum _VariableType {
 #define VT_BW_32BIT( t, v )             ( ( (t) == (v) ) ? 32 : 0 )
 
 #define VT_BITWIDTH( t ) \
-        ( VT_BW_8BIT( t, VT_BYTE ) + VT_BW_8BIT( t, VT_SBYTE ) + VT_BW_8BIT( t, VT_COLOR ) + VT_BW_8BIT( t, VT_THREAD ) + \
+        ( VT_BW_8BIT( t, VT_CHAR ) + VT_BW_8BIT( t, VT_BYTE ) + VT_BW_8BIT( t, VT_SBYTE ) + VT_BW_8BIT( t, VT_COLOR ) + VT_BW_8BIT( t, VT_THREAD ) + \
         VT_BW_16BIT( t, VT_WORD ) + VT_BW_16BIT( t, VT_SWORD ) + VT_BW_16BIT( t, VT_ADDRESS ) + VT_BW_16BIT( t, VT_POSITION ) + \
         VT_BW_32BIT( t, VT_DWORD ) + VT_BW_32BIT( t, VT_SDWORD ) )
 

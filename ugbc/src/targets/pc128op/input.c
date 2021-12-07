@@ -52,11 +52,11 @@ void input( Environment * _environment, char * _variable ) {
     Variable * temporary = variable_temporary( _environment, VT_DSTRING, "(temporary storage for input)");
     Variable * offset = variable_temporary( _environment, VT_BYTE, "(offset inside temporary storage)");
 
-    Variable * enter = variable_temporary( _environment, VT_BYTE, "(enter)" );
-    Variable * comma = variable_temporary( _environment, VT_BYTE, "(comma)" );
+    Variable * enter = variable_temporary( _environment, VT_CHAR, "(enter)" );
+    Variable * comma = variable_temporary( _environment, VT_CHAR, "(comma)" );
     Variable * size = variable_temporary( _environment, VT_BYTE, "(size max)" );
     Variable * pressed = variable_temporary( _environment, VT_BYTE, "(key pressed?)");
-    Variable * key = variable_temporary( _environment, VT_BYTE, "(key pressed)");
+    Variable * key = variable_temporary( _environment, VT_CHAR, "(key pressed)");
 
     Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
     cpu_dsfree( _environment, temporary->realName );
@@ -82,6 +82,8 @@ void input( Environment * _environment, char * _variable ) {
     cpu_compare_8bit( _environment, key->realName, enter->realName, pressed->realName, 1 );
 
     cpu_bvneq( _environment, pressed->realName, finishedLabel );
+
+    print( _environment, key->name, 0 );
 
     cpu_move_8bit_indirect_with_offset2( _environment, key->realName, address->realName, offset->realName );
 

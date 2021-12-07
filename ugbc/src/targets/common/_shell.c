@@ -63,6 +63,8 @@ void shell_injection( Environment * _environment ) {
 
         cpu_label( _environment, "SHELLPROMPT" );
 
+        print_newline( _environment );
+
         print( _environment, prompt->name, 1 );
 
         input( _environment, command->name );
@@ -79,11 +81,18 @@ void shell_injection( Environment * _environment ) {
 
         print( _environment, syntaxError->name, 1 );
 
+        cpu_dsfree( _environment, loweredCommand->realName );
+        cpu_dsfree( _environment, command->realName );
+
     end_loop( _environment );
 
     cpu_label( _environment, "PROGLIST" );
 
+    print_newline( _environment );
+
     print_buffer( _environment, source->name, 1 );
+
+    print_newline( _environment );
 
     cpu_jump( _environment, "SHELLPROMPT" );
 

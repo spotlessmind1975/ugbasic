@@ -103,7 +103,7 @@ void print( Environment * _environment, char * _value, int _new_line ) {
 
     Variable * value = variable_retrieve_or_define( _environment, _value, VT_DSTRING, 0 );
     
-    if ( value->type != VT_DSTRING && value->type != VT_STRING ) {
+    if ( value->type != VT_DSTRING && value->type != VT_STRING && value->type != VT_CHAR ) {
         switch( VT_BITWIDTH( value->type ) ) {
             case 32:
             case 16:

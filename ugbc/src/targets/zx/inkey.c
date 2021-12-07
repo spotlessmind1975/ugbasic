@@ -45,7 +45,7 @@ Variable * inkey( Environment * _environment ) {
     Variable * result = variable_temporary( _environment, VT_DSTRING, "(result of INKEY$)");
     Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of temporary string)");
     Variable * pressed = variable_temporary( _environment, VT_BYTE, "(key pressed?)");
-    Variable * key = variable_temporary( _environment, VT_BYTE, "(key pressed)");
+    Variable * key = variable_temporary( _environment, VT_CHAR, "(key pressed)");
 
     char resultString[MAX_TEMPORARY_STORAGE]; sprintf( resultString, " " );
 

@@ -241,6 +241,7 @@ void variable_global( Environment * _environment, char * _pattern ) {
  * 
  * Allowed types:
  * 
+ * - `VT_CHAR` (<b>CHAR</b>)
  * - `VT_BYTE` (<b>BYTE</b>)
  * - `VT_COLOR` (<b>COLOR</b>)
  * - `VT_WORD` (<b>WORD</b>)
