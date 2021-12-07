@@ -100,7 +100,7 @@ void target_linkage( Environment * _environment ) {
     }
 
     if ( _environment->compilerFileName ) {
-        sprintf(executableName, "\"%s\"", _environment->compilerFileName );
+        sprintf(executableName, "%s", _environment->compilerFileName );
     } else if( access( "z88dk-z80asm.exe", F_OK ) == 0 ) {
         sprintf(executableName, "%s", "z88dk-z80asm.exe" );
     } else {
@@ -113,12 +113,12 @@ void target_linkage( Environment * _environment ) {
         strcpy( listingFileName, "" );
     }
 
-    sprintf( commandLine, "%s %s -b %s",
+    sprintf( commandLine, "\"%s\" %s -b \"%s\"",
         executableName,
         listingFileName,
         _environment->asmFileName );
 
-    if ( system( commandLine ) ) {
+    if ( system_call( _environment,  commandLine ) ) {
         printf("The compilation of assembly program failed.\n\n");
         printf("Please use option '-I' to install chain tool.\n\n");
         return;
@@ -133,14 +133,14 @@ void target_linkage( Environment * _environment ) {
     }
 
     if ( _environment->appMakerFileName ) {
-        sprintf(executableName, "\"%s\"", _environment->appMakerFileName );
+        sprintf(executableName, "%s", _environment->appMakerFileName );
     } else if( access( "z88dk-appmake.exe", F_OK ) == 0 ) {
         sprintf(executableName, "%s", "z88dk-appmake.exe" );
     } else {
         sprintf(executableName, "%s", "z88dk-appmake" );
     }
 
-    sprintf( commandLine, "%s +zx --org 32768 -b %s",
+    sprintf( commandLine, "\"%s\" +zx --org 32768 -b \"%s\"",
         executableName,
         binaryName );
 
@@ -151,7 +151,7 @@ void target_linkage( Environment * _environment ) {
         *(p+3) = 'p';
     }
 
-    if ( system( commandLine ) ) {
+    if ( system_call( _environment,  commandLine ) ) {
         printf("The compilation of assembly program failed.\n\n");
         printf("Please use option '-I' to install chain tool.\n\n");
         return;

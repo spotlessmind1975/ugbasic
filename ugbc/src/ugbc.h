@@ -978,6 +978,11 @@ typedef struct _Environment {
     char * appMakerFileName;
 
     /**
+     * TemporaryPath 
+     */
+    char * temporaryPath;
+
+    /**
      * 
      */
     int analysis;
@@ -1807,7 +1812,7 @@ void                    case_else( Environment * _environment );
 void                    case_equals( Environment * _environment, int _value );
 void                    case_equals_var( Environment * _environment, char * _value );
 void                    case_equals_label( Environment * _environment );
-void                    center( Environment * _environment, char * _string );
+void                    center( Environment * _environment, char * _string, int _newline );
 void                    circle( Environment * _environment, char * _x, char * _y, char * _r, char *_c );
 Variable *              clear_key( Environment * _environment );
 void                    cline( Environment * _environment, char * _characters );
@@ -1887,7 +1892,7 @@ void                    get_image( Environment * _environment, char * _image, ch
 Variable *              get_paper( Environment * _environment, char * _color );
 Variable *              get_pen( Environment * _environment, char * _color );
 Variable *              get_tab( Environment * _environment );
-char *                  get_temporary_filename( );
+char *                  get_temporary_filename( Environment * _environment );
 Variable *              get_timer( Environment * _environment );
 void                    global( Environment * _environment );
 void                    gosub_label( Environment * _environment, char * _label );
@@ -2089,6 +2094,7 @@ void                    sprite_multicolor_var( Environment * _environment, char 
 void                    sprite_at( Environment * _environment, int _sprite, int _x, int _y );
 void                    sprite_at_vars( Environment * _environment, char * _sprite, char * _x, char * _y );
 Variable *              sqroot( Environment * _environment, char * _value );
+int                     system_call( Environment * _environment, char * _command );
 
 //----------------------------------------------------------------------------
 // *T*

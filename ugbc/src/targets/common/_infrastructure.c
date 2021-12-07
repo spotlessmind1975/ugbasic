@@ -5085,9 +5085,10 @@ float min_of_three(float _m, float _n, float _p) {
    return min_of_two(min_of_two(_m, _n), _p);
 }
 
-char * get_temporary_filename( ) {
+char * get_temporary_filename( Environment * _environment ) {
 
     char * temp = tmpnam(NULL);
+    char temporaryFilename[MAX_TEMPORARY_STORAGE];
 
     for(int i=0; i<strlen(temp); ++i ) {
         if ( temp[i] == '.' ) {
@@ -5095,6 +5096,42 @@ char * get_temporary_filename( ) {
         }
     }
 
-    return temp;
+    if ( _environment->temporaryPath ) {
+        strcpy( temporaryFilename, _environment->temporaryPath );
+        strcat( temporaryFilename, temp );
+    } else {
+        strcpy( temporaryFilename, temp );
+    }
+
+    return strdup( temporaryFilename );
+
+}
+
+int system_call( Environment * _environment, char * _commandline ) {
+
+    #ifdef _WIN32
+
+        char batchFileName[MAX_TEMPORARY_STORAGE];
+
+        sprintf( batchFileName, "%s.bat", get_temporary_filename( _environment ) );
+
+        FILE * fh = fopen( batchFileName, "w+t" );
+        fprintf( fh, "@echo off\n%s\n", _commandline );
+        fclose( fh );
+
+        char batchFileName2[MAX_TEMPORARY_STORAGE];
+        sprintf( batchFileName2, "\"%s\"", batchFileName );
+
+        int result = system( batchFileName2 );
+
+        remove( batchFileName );
+
+        return result;
+        
+    #else
+
+        return system( _commandline );
+        
+    #endif
 
 }

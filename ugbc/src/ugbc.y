@@ -3682,11 +3682,17 @@ statement:
   | SET TAB expr {
       text_set_tab( _environment, $3 );
   }
+  | CENTER expr OP_SEMICOLON {
+      center( _environment, $2, 0 );
+  }
+  | CENTRE expr OP_SEMICOLON {
+      center( _environment, $2, 0 );
+  }
   | CENTER expr {
-      center( _environment, $2 );
+      center( _environment, $2, 1 );
   }
   | CENTRE expr {
-      center( _environment, $2 );
+      center( _environment, $2, 1 );
   }
   | CLS {
       cls( _environment, NULL );
@@ -4267,7 +4273,7 @@ program :
 
 %%
 
-char version[MAX_TEMPORARY_STORAGE] = "1.6";
+char version[MAX_TEMPORARY_STORAGE] = "1.6.1";
 
 void show_usage_and_exit( int _argc, char *_argv[] ) {
 
@@ -4310,6 +4316,7 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     printf("\t-d           Enable debugging of IMAGE LOAD\n" );
     printf("\t-C <file>    Path to compiler\n" );
     printf("\t-A <file>    Path to app maker\n" );
+    printf("\t-T <path>    Path to temporary path\n" );
     printf("\t-c <file>    Output filename with linker configuration\n" );
     printf("\t-o <exe>     Output filename with final executable file for target\n" );
     printf("\t-O <type>    Output file format for target:\n" );
@@ -4384,12 +4391,12 @@ int main( int _argc, char *_argv[] ) {
     _environment->outputFileType = OUTPUT_FILE_TYPE_PRG;
 #endif
 
-    while ((opt = getopt(_argc, _argv, "ae:c:Wo:Ie:l:EO:dL:C:VA:")) != -1) {
+    while ((opt = getopt(_argc, _argv, "ae:c:Wo:Ie:l:EO:dL:C:VA:T:")) != -1) {
         switch (opt) {
                 case 'a':
                     if ( ! _environment->listingFileName ) {
                         char listingFileName[MAX_TEMPORARY_STORAGE];
-                        sprintf( listingFileName, "%s.lst", get_temporary_filename() );
+                        sprintf( listingFileName, "%s.lst", get_temporary_filename( _environment ) );
                         _environment->listingFileName = strdup(listingFileName);
                     }
                     _environment->analysis = 1;
@@ -4408,6 +4415,9 @@ int main( int _argc, char *_argv[] ) {
                     if( access( _environment->appMakerFileName, F_OK ) != 0 ) {
                         CRITICAL("App maker no found.");
                     }
+                    break;
+                case 'T':
+                    _environment->temporaryPath = strdup(optarg);
                     break;
                 case 'o':
                     _environment->exeFileName = strdup(optarg);
@@ -4623,7 +4633,7 @@ int main( int _argc, char *_argv[] ) {
 
     if ( _environment->exeFileName && !_argv[optind+1]) {
         char asmFileName[MAX_TEMPORARY_STORAGE];
-        sprintf( asmFileName, "%s.asm", get_temporary_filename() );
+        sprintf( asmFileName, "%s.asm", get_temporary_filename( _environment ) );
         _environment->asmFileName = strdup(asmFileName);
     } else {
         _environment->asmFileName = strdup(_argv[optind+1] );
