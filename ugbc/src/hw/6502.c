@@ -3625,6 +3625,8 @@ void cpu6502_mem_move_direct_indirect_size( Environment * _environment, char *_s
             outline0("STX CPUMEMMOVE_SIZE" );
             outline1("LDX #$%2.2X", ( _size >> 8 ) & 0xff );
             outline0("STX CPUMEMMOVE_SIZE+1" );
+            outline1("LDA #>%s", _source );
+            outline0("STA TMPPTR+1" );
             outline1("LDA #<%s", _source );
             outline0("STA TMPPTR" );
             outline1("LDA %s+1", _destination );
