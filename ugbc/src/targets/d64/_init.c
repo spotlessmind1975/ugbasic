@@ -79,6 +79,7 @@ void target_initialization( Environment * _environment ) {
 
     outline0("ORG $2800");
     outline0("LDS #$8000");
+
     deploy( vars, src_hw_d64_vars_asm);
     deploy( startup, src_hw_d64_startup_asm);
     // bank_define( _environment, "STRINGS", BT_STRINGS, 0x4200, NULL );
@@ -90,6 +91,11 @@ void target_initialization( Environment * _environment ) {
     setup_text_variables( _environment );
 
     c6847_initialization( _environment );
+
+    if ( _environment->sourceIncluded ) {
+        shell_injection( _environment );
+    }
+    cpu_label( _environment, "PROGSTART" );
 
 }
 

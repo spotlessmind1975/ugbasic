@@ -100,6 +100,7 @@ void target_initialization( Environment * _environment ) {
 
     deploy( vars, src_hw_c64_vars_asm);
     outhead0(".segment \"CODE\"");
+
     bank_define( _environment, "STRINGS", BT_STRINGS, 0x4200, NULL );
     variable_define( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0xD800 );
     variable_global( _environment, "COLORMAPADDRESS" );
@@ -107,6 +108,11 @@ void target_initialization( Environment * _environment ) {
     setup_text_variables( _environment );
 
     vic2_initialization( _environment );
+
+    if ( _environment->sourceIncluded ) {
+        shell_injection( _environment );
+    }
+    cpu_label( _environment, "PROGSTART" );
 
 }
 

@@ -1305,6 +1305,11 @@ typedef struct _Environment {
      */
     int paletteIndex;
 
+    /**
+     * Is original source included?
+     */
+    int sourceIncluded;
+
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */
@@ -1754,6 +1759,7 @@ void setup_embedded( Environment *_environment );
 void target_install( Environment *_environment );
 void begin_compilation( Environment * _environment );
 void target_initialization( Environment *_environment );
+void shell_injection( Environment * _environment );
 void target_finalization( Environment * _environment );
 void target_analysis( Environment * _environment );
 void end_compilation( Environment * _environment );
