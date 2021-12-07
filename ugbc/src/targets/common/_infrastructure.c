@@ -4747,10 +4747,12 @@ int calculate_nearest_tile( TileDescriptor * _tile, TileDescriptors * _tiles ) {
     int i;
 
     for(i=0;i<256;++i) {
-        int affinity = calculate_tile_affinity( _tile, _tiles->descriptor[i] );
-        if ( minAffinity > affinity ) {
-            minAffinity = affinity;
-            nearestTileIndex = i;
+        if ( _tiles->descriptor[i] ) {
+            int affinity = calculate_tile_affinity( _tile, _tiles->descriptor[i] );
+            if ( minAffinity > affinity ) {
+                minAffinity = affinity;
+                nearestTileIndex = i;
+            }
         }
     }
 
