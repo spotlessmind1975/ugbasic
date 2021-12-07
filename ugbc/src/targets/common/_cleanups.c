@@ -82,6 +82,8 @@ void end_compilation( Environment * _environment ) {
 
 void end_build( Environment * _environment ) {
 
+    target_finalize( _environment );
+
     target_cleanup( _environment );
     
 }

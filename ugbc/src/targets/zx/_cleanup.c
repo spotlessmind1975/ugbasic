@@ -44,6 +44,10 @@ void target_finalization( Environment * _environment ) {
 
 }
 
+void target_finalize( Environment * _environment ) {
+
+}
+
 void target_cleanup( Environment * _environment ) {
 
     char binFileName[MAX_TEMPORARY_STORAGE];

@@ -1754,6 +1754,7 @@ void end_compilation( Environment * _environment );
 void target_peephole_optimizer( Environment * _environment );
 void begin_build( Environment * _environment );
 void target_linkage( Environment *_environment );
+void target_finalize( Environment * _environment );
 void target_cleanup( Environment *_environment );
 void end_build( Environment * _environment );
 void bank_cleanup( Environment * _environment );
