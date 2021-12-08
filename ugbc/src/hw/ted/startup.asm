@@ -55,4 +55,10 @@ TEDSTARTUP:
     LDA #$0
     STA $FF15
 
+    ; SET STARTUP CURSOR POSITION    
+    LDA #0
+    STA $64
+    LDA #0
+    STA $66
+
     RTS
