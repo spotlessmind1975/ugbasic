@@ -4661,7 +4661,6 @@ int main( int _argc, char *_argv[] ) {
         fseek( fh, 0, SEEK_END );
         int sourceSize = ftell( fh );
         fseek( fh, 0, SEEK_SET );
-        printf( "Source file size = %d\n", sourceSize );
         char * sourceText = malloc( sourceSize + 1 );
         memset( sourceText, 0, sourceSize + 1 );
         (void)!fread( sourceText, 1, sourceSize, fh );
