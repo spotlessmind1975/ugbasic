@@ -1311,7 +1311,7 @@ typedef struct _Environment {
     /**
      * Is original source included?
      */
-    int sourceIncluded;
+    int tenLinerRulesEnforced;
 
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */

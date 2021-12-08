@@ -4339,7 +4339,9 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     printf("\t-A <file>    Path to app maker\n" );
     printf("\t-T <path>    Path to temporary path\n" );
     printf("\t-c <file>    Output filename with linker configuration\n" );
-    printf("\t-s           Include source code into the executable.\n" );
+    printf("\t-1           Include source code into the executable\n" );
+    printf("\t             and an execution shell. It enforces other.\n" );
+    printf("\t             10-liners rules.\n" );
     printf("\t-o <exe>     Output filename with final executable file for target\n" );
     printf("\t-O <type>    Output file format for target:\n" );
 #if __atari__ 
@@ -4413,7 +4415,7 @@ int main( int _argc, char *_argv[] ) {
     _environment->outputFileType = OUTPUT_FILE_TYPE_PRG;
 #endif
 
-    while ((opt = getopt(_argc, _argv, "ae:c:Wo:Ie:l:EO:dL:C:VA:T:s")) != -1) {
+    while ((opt = getopt(_argc, _argv, "ae:c:Wo:Ie:l:EO:dL:C:VA:T:1")) != -1) {
         switch (opt) {
                 case 'a':
                     if ( ! _environment->listingFileName ) {
@@ -4481,8 +4483,8 @@ int main( int _argc, char *_argv[] ) {
                     fprintf(stderr, "%s", version );
                     exit(0);
                     break;
-                case 's':
-                    _environment->sourceIncluded = 1;
+                case '1':
+                    _environment->tenLinerRulesEnforced = 1;
                     break;
                 case 'e': {
                     char * p = strtok(optarg, ",");
@@ -4656,7 +4658,7 @@ int main( int _argc, char *_argv[] ) {
 
     _environment->sourceFileName = strdup(_argv[optind] );
 
-    if ( _environment->sourceIncluded ) {
+    if ( _environment->tenLinerRulesEnforced ) {
         FILE * fh = fopen( _environment->sourceFileName, "rt" );
         fseek( fh, 0, SEEK_END );
         int sourceSize = ftell( fh );

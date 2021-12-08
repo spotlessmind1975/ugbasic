@@ -104,7 +104,7 @@ void target_initialization( Environment * _environment ) {
 
     ted_initialization( _environment );
 
-    if ( _environment->sourceIncluded ) {
+    if ( _environment->tenLinerRulesEnforced ) {
         shell_injection( _environment );
     }
 

@@ -111,7 +111,7 @@ void target_initialization( Environment * _environment ) {
     antic_initialization( _environment );
     gtia_initialization( _environment );
 
-    if ( _environment->sourceIncluded ) {
+    if ( _environment->tenLinerRulesEnforced ) {
         shell_injection( _environment );
     }
     
