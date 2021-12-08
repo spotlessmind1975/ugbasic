@@ -101,10 +101,6 @@ void target_initialization( Environment * _environment ) {
     outline0(".byte $01, $12, $0B, $12, $00, $00, $9E, $38, $31, $39, $32, $00, $00, $00, $00");
     outhead0(".segment \"CODE\"");
 
-    if ( _environment->sourceIncluded ) {
-        shell_injection( _environment );
-    }
-
     deploy( vars, src_hw_vic20_vars_asm);
     // bank_define( _environment, "STRINGS", BT_STRINGS, 0x4200, NULL );
     variable_define( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0xD800 );
@@ -113,6 +109,10 @@ void target_initialization( Environment * _environment ) {
     setup_text_variables( _environment );
 
     vic1_initialization( _environment );
+
+    if ( _environment->sourceIncluded ) {
+        shell_injection( _environment );
+    }
 
 }
 
