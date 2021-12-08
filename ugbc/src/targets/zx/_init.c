@@ -81,7 +81,6 @@ void target_initialization( Environment * _environment ) {
     if ( _environment->sourceIncluded ) {
         shell_injection( _environment );
     }
-    cpu_label( _environment, "PROGSTART" );
 
     variable_define( _environment, "bitmap_enabled", VT_BYTE, 0 );
     variable_global( _environment, "bitmap_enabled" );

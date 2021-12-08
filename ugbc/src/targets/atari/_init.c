@@ -114,7 +114,6 @@ void target_initialization( Environment * _environment ) {
     if ( _environment->sourceIncluded ) {
         shell_injection( _environment );
     }
-    cpu_label( _environment, "PROGSTART" );
     
 }
 

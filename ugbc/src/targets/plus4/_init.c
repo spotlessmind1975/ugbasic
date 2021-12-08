@@ -98,7 +98,6 @@ void target_initialization( Environment * _environment ) {
     if ( _environment->sourceIncluded ) {
         shell_injection( _environment );
     }
-    cpu_label( _environment, "PROGSTART" );
 
     deploy( vars, src_hw_plus4_vars_asm);
     // bank_define( _environment, "STRINGS", BT_STRINGS, 0x4200, NULL );
