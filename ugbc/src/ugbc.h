@@ -1454,6 +1454,7 @@ typedef struct _Environment {
 #define CRITICAL_SUB_INPLACE_UNSUPPORTED( v, t ) CRITICAL3("E103 - Sub in place unsupported for variable of given datatype", v, t );
 #define CRITICAL_HEX_UNSUPPORTED( v, t ) CRITICAL3("E104 - HEX unsupported for variable of given datatype", v, t );
 #define CRITICAL_PRINT_BUFFER_ON_A_NOT_BUFFER( v ) CRITICAL2("E105 - PRINT BUFFER not allowed for non buffer variables", v );
+#define CRITICAL_10_LINE_RULES_ENFORCED( v ) CRITICAL2("E106 - this command is not allowed on sources for 10 liner contest", v );
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
 #define WARNING2i( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%i) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }

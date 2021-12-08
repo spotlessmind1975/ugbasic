@@ -113,9 +113,9 @@ ma con nomi diversi.
 </usermanual> */
 Variable * images_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _frame_width, int _frame_height, int _flags, int _transparent_color, int _background_color ) {
 
-    // printf( "--------------------\n" );
-    // printf( "---- %s\n", _filename );
-    // printf( "--------------------\n" );
+    if ( _environment->tenLinerRulesEnforced ) {
+        CRITICAL_10_LINE_RULES_ENFORCED( "IMAGES LOAD");
+    }
 
     LoadedFile * first = _environment->loadedFiles;
     char *lookfor = _filename;
