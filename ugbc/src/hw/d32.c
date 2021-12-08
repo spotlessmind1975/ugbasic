@@ -111,6 +111,7 @@ void d32_inkey( Environment * _environment, char * _pressed, char * _key ) {
     outhead1("%sascii", label );
     outline0("LDB #0" );
     outline0("STB $011f" );
+    outline1("JMP %sdone", label );
     outhead1("%sskip", label );
     outline0("LDA #0" );
     outline0("STA $011d" );
