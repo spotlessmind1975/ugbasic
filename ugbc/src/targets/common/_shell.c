@@ -98,4 +98,8 @@ void shell_injection( Environment * _environment ) {
 
     cpu_jump( _environment, "SHELLPROMPT" );
 
+    cpu_label( _environment, "PROGSTART" );
+
+    cls( _environment, NULL );
+
 }
