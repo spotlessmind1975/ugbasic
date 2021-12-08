@@ -48,32 +48,48 @@ void input( Environment * _environment, char * _variable ) {
 
     char repeatLabel[MAX_TEMPORARY_STORAGE]; sprintf(repeatLabel, "%srepeat", label );
     char finishedLabel[MAX_TEMPORARY_STORAGE]; sprintf(finishedLabel, "%sfinished", label );
+    char backspaceLabel[MAX_TEMPORARY_STORAGE]; sprintf(backspaceLabel, "%sbackspace", label );
 
     Variable * temporary = variable_temporary( _environment, VT_DSTRING, "(temporary storage for input)");
     Variable * offset = variable_temporary( _environment, VT_BYTE, "(offset inside temporary storage)");
 
     Variable * enter = variable_temporary( _environment, VT_CHAR, "(enter)" );
     Variable * comma = variable_temporary( _environment, VT_CHAR, "(comma)" );
+    Variable * space = variable_temporary( _environment, VT_CHAR, "(space)" );
+    Variable * underscore = variable_temporary( _environment, VT_CHAR, "(underscore)" );
+    Variable * backspace = variable_temporary( _environment, VT_CHAR, "(backspace)" );
     Variable * size = variable_temporary( _environment, VT_BYTE, "(size max)" );
     Variable * pressed = variable_temporary( _environment, VT_BYTE, "(key pressed?)");
     Variable * key = variable_temporary( _environment, VT_CHAR, "(key pressed)");
+    Variable * zero = variable_temporary( _environment, VT_BYTE, "(zero)" );
+
+    cpu_store_8bit( _environment, comma->realName, ',' );
+    cpu_store_8bit( _environment, enter->realName, 13 );
+    cpu_store_8bit( _environment, offset->realName, 0 );
+    cpu_store_8bit( _environment, size->realName, 254 );
+    cpu_store_8bit( _environment, backspace->realName, 8 );
+    cpu_store_8bit( _environment, space->realName, 32 );
+    cpu_store_8bit( _environment, underscore->realName, 0x60 );
+    cpu_store_8bit( _environment, zero->realName, 0 );
 
     Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
     cpu_dsfree( _environment, temporary->realName );
     cpu_dsalloc( _environment, size->realName, temporary->realName );
     cpu_dsdescriptor( _environment, temporary->realName, address->realName, pressed->realName );
 
-    cpu_store_8bit( _environment, comma->realName, ',' );
-    cpu_store_8bit( _environment, enter->realName, 13 );
-    cpu_store_8bit( _environment, offset->realName, 0 );
-    cpu_store_8bit( _environment, size->realName, 254 );
-
     cpu_label( _environment, repeatLabel );
+
+    print( _environment, underscore->name, 0 );
+    cmove_direct( _environment, -1, 0 );
 
     d32_inkey( _environment, pressed->realName, key->realName );
 
     cpu_bveq( _environment, pressed->realName, repeatLabel );
     cpu_bveq( _environment, key->realName, repeatLabel );
+
+    cpu_compare_8bit( _environment, key->realName, backspace->realName, pressed->realName, 1 );
+
+    cpu_bvneq( _environment, pressed->realName, backspaceLabel );
 
     cpu_compare_8bit( _environment, key->realName, comma->realName, pressed->realName, 1 );
 
@@ -92,6 +108,26 @@ void input( Environment * _environment, char * _variable ) {
     cpu_compare_8bit( _environment, offset->realName, size->realName, pressed->realName, 1 );
 
     cpu_bveq( _environment, pressed->realName, repeatLabel );
+
+    cpu_jump( _environment, finishedLabel );
+
+    cpu_label( _environment, backspaceLabel );
+
+    cpu_compare_8bit( _environment, offset->realName, zero->realName, pressed->realName, 1 );
+    
+    cpu_bvneq( _environment, pressed->realName, repeatLabel );
+
+    cpu_dec( _environment, offset->realName );
+
+    print( _environment, space->name, 0 );
+
+    cmove_direct( _environment, -2, 0 );
+
+    print( _environment, space->name, 0 );
+
+    cmove_direct( _environment, -1, 0 );
+    
+    cpu_jump( _environment, repeatLabel );
 
     cpu_label( _environment, finishedLabel );
 
