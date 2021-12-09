@@ -916,6 +916,34 @@ Variable * variable_store( Environment * _environment, char * _destination, unsi
     return destination;
 }
 
+char * unescape_string( Environment * _environment, char * _value ) {
+
+    char * newValue = malloc(strlen( _value ) + 1 );
+
+    char * p = _value, * q = newValue;
+    int c = 0;
+
+    while( *p ) {
+        if ( *p == '{' ) {
+            c = 0;
+            while( *p && *p != '}' ) {
+                c = 10 * c + ( *p - '0' );
+                ++p;
+            }
+            *q = c;
+            ++q;
+            ++p;
+        } else {
+            *q = *p;
+            ++q;
+            ++p;
+        }
+    }
+
+    return newValue;
+
+}
+
 /**
  * @brief Store a string to a variable 
  * 
@@ -931,7 +959,7 @@ Variable * variable_store_string( Environment * _environment, char * _destinatio
     switch( destination->type ) {
         case VT_STRING: {
             if ( !_environment->emptyProcedure ) {
-                destination->valueString = strdup( _value );
+                destination->valueString = strdup( unescape_string( _environment, _value ) );
             } else {
                 destination->valueString = strdup( "" );
             }
