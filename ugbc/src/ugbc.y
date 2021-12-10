@@ -131,6 +131,9 @@ const_expr :
     | const_expr_math OP_EQUAL const_expr_math {
         $$ = ( $1 == $3 );
     }
+    | const_expr_math OP_ASSIGN const_expr_math {
+        $$ = ( $1 == $3 );
+    }
     | const_expr_math OP_DISEQUAL const_expr_math {
         $$ = ( $1 != $3 );
     }
@@ -462,6 +465,9 @@ expr :
         $$ = variable_or( _environment, $1, $3 )->name;
     } 
     | expr_math OP_EQUAL expr {
+        $$ = variable_compare( _environment, $1, $3 )->name;
+    }
+    | expr_math OP_ASSIGN expr {
         $$ = variable_compare( _environment, $1, $3 )->name;
     }
     | expr_math OP_DISEQUAL expr {
