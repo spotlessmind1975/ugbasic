@@ -869,7 +869,7 @@ void c6847_scroll_text( Environment * _environment, int _direction ) {
 
 }
 
-void c6847_text( Environment * _environment, char * _text, char * _text_size, char * _pen ) {
+void c6847_text( Environment * _environment, char * _text, char * _text_size ) {
 
     deploy( c6847vars, src_hw_6847_vars_asm);
     deploy( vScrollText, src_hw_6847_vscroll_text_asm );
@@ -880,8 +880,6 @@ void c6847_text( Environment * _environment, char * _text, char * _text_size, ch
     outline0("STY TEXTPTR" );
     outline1("LDA %s", _text_size);
     outline0("STA TEXTSIZE" );
-    outline1("LDA %s", _pen );
-    outline0("STA TEXTPEN" );
 
     outline0("JSR TEXTAT");
 

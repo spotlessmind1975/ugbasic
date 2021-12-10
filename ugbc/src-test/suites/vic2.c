@@ -60,11 +60,11 @@ void test_vic2_text_payloadA( TestEnvironment * _te ) {
     cpu_addressof_16bit( e, texts->realName, address->realName );
     cpu_inc_16bit( e, address->realName );
 
-    vic2_text( e, address->realName, size->realName, pen->realName );
+    vic2_text( e, address->realName, size->realName );
 
     cpu_dsdescriptor( e, textd->realName, address2->realName, size2->realName );
 
-    vic2_text( e, address2->realName, size2->realName, pen->realName );
+    vic2_text( e, address2->realName, size2->realName );
 
 }
 
@@ -855,7 +855,7 @@ void test_vic2_text_payloadC( TestEnvironment * _te ) {
     _te->debug.inspections[1].size=1000;
     ++_te->debug.inspections_count;
 
-    vic2_text( e, address->realName, size->realName, c->realName );
+    vic2_text( e, address->realName, size->realName );
 
 }
 

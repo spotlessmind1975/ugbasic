@@ -1241,7 +1241,7 @@ void gtia_scroll_text( Environment * _environment, int _direction ) {
 
 }
 
-void gtia_text( Environment * _environment, char * _text, char * _text_size, char * _pen ) {
+void gtia_text( Environment * _environment, char * _text, char * _text_size ) {
 
     deploy( gtiavars, src_hw_gtia_vars_asm );
     deploy( vScrollText, src_hw_gtia_vscroll_text_asm );
@@ -1254,8 +1254,6 @@ void gtia_text( Environment * _environment, char * _text, char * _text_size, cha
     outline0("STA TEXTPTR+1" );
     outline1("LDA %s", _text_size);
     outline0("STA TEXTSIZE" );
-    outline1("LDA %s", _pen );
-    outline0("STA TEXTPEN" );
 
     outline0("JSR TEXTAT");
 

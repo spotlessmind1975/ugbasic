@@ -62,6 +62,6 @@ void text_encoded( Environment * _environment, char * _text, char * _pen, char *
 
     MAKE_LABEL
 
-    ef936x_text( _environment, address->realName, size->realName, pen->realName );
+    ef936x_text( _environment, address->realName, size->realName );
 
 }

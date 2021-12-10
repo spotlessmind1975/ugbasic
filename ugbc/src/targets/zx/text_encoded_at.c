@@ -64,6 +64,6 @@ void text_encoded( Environment * _environment, char * _text, char * _pen, char *
             break;        
     }
 
-    zx_text( _environment, address->realName, size->realName, pen->realName, paper->realName );
+    zx_text( _environment, address->realName, size->realName );
 
 }
