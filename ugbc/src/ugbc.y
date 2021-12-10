@@ -8,6 +8,8 @@ int yydebug=0;
 int errors=0;
 extern int yylineno;
 
+int yycolno;
+
 int yywrap() { return 1; }
  
 extern char DATATYPE_AS_STRING[][16];
@@ -2969,7 +2971,8 @@ const_array_definitions :
     }
     | const_array_definitions1;
 
-array_assign: {
+array_assign:
+    {
         if ( ! ((struct _Environment *)_environment)->currentArray->memoryArea ) {
             memory_area_assign( ((struct _Environment *)_environment)->memoryAreas, ((struct _Environment *)_environment)->currentArray );
         }
@@ -4855,7 +4858,7 @@ int main( int _argc, char *_argv[] ) {
 
 int yyerror (Environment * _ignored, const char *s) /* Called by yyparse on error */
 {
-      fprintf(stderr,  "*** ERROR: %s at %d\n", s, yylineno);
+      fprintf(stderr,  "*** ERROR: %s at %d column %d\n", s, yylineno, (yycolno+1));
       exit(EXIT_FAILURE);
 }
 

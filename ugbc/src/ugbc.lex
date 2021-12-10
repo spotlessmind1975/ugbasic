@@ -2,705 +2,715 @@
 
 #include <string.h>
 #include "ugbc.tab.h" /* The tokens */
+
+#define RETURN(b, c)    \
+{\
+    yycolno = (yycolno + yyleng) * c; \
+    return b; \
+}
+
+extern int yycolno;
+
 %}
 
 %option yylineno
-      
+
+
 %%
 
-"#["[a-fA-F0-9]+"]" { yylval.string = strdup(yytext); return(BufferDefinition); }
-"#["[a-fA-F0-9]+ { yylval.string = strdup(yytext); return(BufferDefinition); }
+"#["[a-fA-F0-9]+"]" { yylval.string = strdup(yytext); RETURN(BufferDefinition,1); }
+"#["[a-fA-F0-9]+ { yylval.string = strdup(yytext); RETURN(BufferDefinition,1); }
 
-_[\n\r]+
-[\n\r]+ { return(NewLine);}
-";" { return(OP_SEMICOLON); }
-":" { return(OP_COLON); }
-"(" { return(OP); }
-")" { return(CP); }
-"," { return(OP_COMMA); }
-"=" { return(OP_ASSIGN); }
-"==" { return(OP_EQUAL); }
-":=" { return(OP_ASSIGN_DIRECT); }
-"+" { return(OP_PLUS); }
-"-" { return(OP_MINUS); }
-"++" { return(OP_INC); }
-"--" { return(OP_DEC); }
-"#" { return(OP_HASH); }
-"<" { return(OP_LT); }
-"<=" { return(OP_LTE); }
-">" { return(OP_GT); }
-">=" { return(OP_GTE); }
-"<>" { return(OP_DISEQUAL); }
-"*" { return(OP_MULTIPLICATION); }
-"**" { return(OP_MULTIPLICATION2); }
-"$" { return(OP_DOLLAR); }
-"^" { return(OP_POW); }
-"/" { return(OP_DIVISION); }
-"\\" { return(OP_DIVISION2); }
-"[" { return(OSP); }
-"]" { return(CSP); }
-"{" { return(OGP); }
-"}" { return(CGP); }
-"?" { return(QM); }
+_[\n\r]+ { yycolno = 0; }
+[\n\r]+ { RETURN(NewLine,0);}
+";" { RETURN(OP_SEMICOLON,1); }
+":" { RETURN(OP_COLON,1); }
+"(" { RETURN(OP,1); }
+")" { RETURN(CP,1); }
+"," { RETURN(OP_COMMA,1); }
+"=" { RETURN(OP_ASSIGN,1); }
+"==" { RETURN(OP_EQUAL,1); }
+":=" { RETURN(OP_ASSIGN_DIRECT,1); }
+"+" { RETURN(OP_PLUS,1); }
+"-" { RETURN(OP_MINUS,1); }
+"++" { RETURN(OP_INC,1); }
+"--" { RETURN(OP_DEC,1); }
+"#" { RETURN(OP_HASH,1); }
+"<" { RETURN(OP_LT,1); }
+"<=" { RETURN(OP_LTE,1); }
+">" { RETURN(OP_GT,1); }
+">=" { RETURN(OP_GTE,1); }
+"<>" { RETURN(OP_DISEQUAL,1); }
+"*" { RETURN(OP_MULTIPLICATION,1); }
+"**" { RETURN(OP_MULTIPLICATION2,1); }
+"$" { RETURN(OP_DOLLAR,1); }
+"^" { RETURN(OP_POW,1); }
+"/" { RETURN(OP_DIVISION,1); }
+"\\" { RETURN(OP_DIVISION2,1); }
+"[" { RETURN(OSP,1); }
+"]" { RETURN(CSP,1); }
+"{" { RETURN(OGP,1); }
+"}" { RETURN(CGP,1); }
+"?" { RETURN(QM,1); }
 
-8BIT { return (BYTE); }
-16BIT { return (WORD); }
-32BIT { return (DWORD); }
+8BIT { RETURN(BYTE,1); }
+16BIT { RETURN(WORD,1); }
+32BIT { RETURN(DWORD,1); }
 
-A { return (A); }
-ABS { return (ABS); }
-Ab { return (ABS); }
-ALT { return (ALT); }
-Al { return (ALT); }
-ARRAY { return (ARRAY); }
-Ar { return (ARRAY); }
-AS { return (AS); }
-ASC { return (ASC); }
-As { return (ASC); }
-ASTERISK { return (ASTERISK); }
-Ak { return (ASTERISK); }
-AT { return (AT); }
-ATARI { return (ATARI); }
-At { return (ATARI); }
-ATARIXL { return (ATARIXL); }
-Ax { return (ATARIXL); }
-ADD { return (ADD); }
-Ad { return (ADD); }
-ADDRESS { return (ADDRESS); }
-A# { return (ADDRESS); }
-AND { return (AND); }
-An { return (AND); }
-ARROW { return (ARROW); }
-Aw { return (ARROW); }
-B { return (B); }
-BACK { return (BACK); }
-Ba { return (BACK); }
-BACKGROUND { return (BACKGROUND); }
-Bg { return (BACKGROUND); }
-BANK { return (BANK); }
-Bk { return (BANK); }
-BAR { return (BAR); }
-Br { return (BAR); }
-BEGIN { return (BEG); }
-Be { return (BEG); }
-BIN\$ { return (BIN); }
-Bi { return (BIN); }
-BIT { return (BIT); }
-Bt { return (BIT); }
-BOTH { return (BOTH); }
-Bh { return (BOTH); }
-BOX { return (BOX); }
-Bx { return (BOX); }
-BITMAP { return (BITMAP); }
-Bm { return (BITMAP); }
-BLACK { return (BLACK); }
-Bl { return (BLACK); }
-BLUE { return (BLUE); }
-Bu { return (BLUE); }
-BROWN { return(BROWN); }
-Brn { return(BROWN); }
-BYTE { return (BYTE); }
-By { return (BYTE); }
-BORDER { return (BORDER); }
-Bo { return (BORDER); }
-BUFFER { return (BUFFER); }
-Bf { return (BUFFER); }
-C { return (C); }
-C64 { return (C64); }
-CALL { return (CALL); }
-Ca { return (CALL); }
-CAN { return (CAN); }
-Cn { return (CAN); }
-CAPS { return (CAPS); }
-Cp { return (CAPS); }
-CAPSLOCK { return (CAPSLOCK); }
-Cpl { return (CAPS); }
-CASE { return (CASE); }
-Cs { return (CASE); }
-CDOWN { return (CDOWN); }
-Cd { return (CDOWN); }
-CENTER { return (CENTER); }
-Ce { return (CENTER); }
-CENTRE { return (CENTRE); }
-CHR { return (CHR); }
-CHR\$ { return (CHR); }
-Ch { return (CHR); }
-CIRCLE { return (CIRCLE); }
-Ci { return (CIRCLE); }
-CLEAR { return (CLEAR); }
-Clr { return (CLEAR); }
-CLEFT { return (CLEFT); }
-Cle { return (CLEFT); }
-CLINE { return (CLINE); }
-Cln { return (CLINE); }
-CLIP { return (CLIP); }
-Cli { return (CLIP); }
-CLS { return (CLS); }
-Cl { return (CLS); }
-CMOVE { return (CMOVE); }
-Cm { return (CMOVE); }
-CODE { return (CODE); }
-Co { return (CODE); }
-COLLISION { return (COLLISION); }
-Col { return (COLLISION); }
-COLON { return (COLON); }
-COLOR { return (COLOR); }
-COLOUR { return (COLOUR); }
-Cr { return (COLOR); }
-COLORS { return (COLORS); }
-COLOURS { return (COLOURS); }
-Crs { return (COLORS); }
-COLORMAP { return (COLORMAP); }
-COLOURMAP { return (COLOURMAP); }
-Com { return (COLOURMAP); }
-COLUMNS { return (COLUMNS); }
-Cms { return (COLUMNS); }
-COMMA { return (COMMA); }
-COMMODORE { return (COMMODORE); }
-C= { return (COMMODORE); }
-COMPRESS { return (COMPRESS); }
-Cmp { return (COMPRESS); }
-CONST { return (CONST); }
-C# { return (CONST); }
-CONTROL { return (CONTROL); }
-Ctrl { return (CONTROL); }
-COUNT { return (COUNT); }
-C% { return (COUNT); }
-CRIGHT { return (CRIGHT); }
-Crg { return (CRIGHT); }
-CRSR { return (CRSR); }
-CUP { return (CUP); }
-Cu { return (CUP); }
-CURSOR { return (CURSOR); }
-Curs { return (CURSOR); }
-CYAN { return(CYAN); }
-Cy { return (CURSOR); }
-CYCLES { return (CYCLES); }
-Cyc { return (CYCLES); }
-D { return (D); }
-DARK { return(DARK); }
-Dk { return(DARK); }
-DATA { return (DATA); }
-Da { return (DATA); }
-DEBUG { return (DEBUG); }
-De { return (DEBUG); }
-DEC { return (OP_DEC); }
-Dc { return (OP_DEC); }
-DEFAULT { return (DEFAULT); }
-Dft { return (DEFAULT); }
-DEFINE { return (DEFINE); }
-Def { return (DEFINE); }
-DELETE { return (DELETE); }
-Del { return (DELETE); }
-DIM { return (DIM); }
-Di { return (DIM); }
-DISABLE { return (DISABLE); }
-Dx { return (DISABLE); }
-DISTANCE { return (DISTANCE); }
-Dst { return (DISTANCE); }
-DIV { return (DIV); }
-Dv { return (DIV); }
-DONE { return (DONE); }
-Do { return (DONE); }
-DO { return (DO); }
-DOWN { return (DOWN); }
-Dw { return (DOWN); }
-DRAW { return (DRAW); }
-Dr { return (DRAW); }
-DRAGON { return (DRAGON); }
-Dg { return (DRAGON); }
-DRAGON32 { return (DRAGON32); }
-Dg32 { return (DRAGON32); }
-DRAGON64 { return (DRAGON64); }
-Dg64 { return (DRAGON64); }
-DWORD { return (DWORD); }
-Dwd { return (DWORD); }
-E { return (E); }
-ECM { return(ECM); }
-ELLIPSE { return(ELLIPSE); }
-Ell { return(ELLIPSE); }
-ELSE { return(ELSE); }
-El { return(ELSE); }
-ELSEIF { return(ELSEIF); }
-Eif { return(ELSEIF); }
-EMPTY { return(EMPTY); }
-Em { return(EMPTY); }
-EMPTYTILE { return(EMPTYTILE); }
-Emt { return(EMPTYTILE); }
-END { return (END); }
-ENDIF { return (ENDIF); }
-Ei { return (ENDIF); }
-ENDSELECT { return (ENDSELECT); }
-Es { return (ENDSELECT); }
-ENABLE { return (ENABLE); }
-En { return (ENABLE); }
-EQUAL { return (EQUAL); }
-Eq { return (EQUAL); }
-EXIT { return (EXIT); }
-Ex { return (EXIT); }
-EXPAND { return (EXPAND); }
-Exp { return (EXPAND); }
-EVERY { return (EVERY); }
-Ev { return (EVERY); }
-FALSE { return(FALSE); }
-Fa { return(FALSE); }
-F { return (F); }
-F1 { return (F1); }
-F2 { return (F2); }
-F3 { return (F3); }
-F4 { return (F4); }
-F5 { return (F5); }
-F6 { return (F6); }
-F7 { return (F7); }
-F8 { return (F8); }
-FILL { return (FILL); }
-Fil { return (FILL); }
-FIRE { return(FIRE); }
-Fi { return(FIRE); }
-FLIP { return(FLIP); }
-FLIP\$ { return(FLIP); }
-Fl { return(FLIP); }
-FONT { return(FONT); }
-Fnt { return(FONT); }
-FOR { return(FOR); }
-Fo { return(FOR); }
-FRAME { return (FRAME); }
-Fr { return (FRAME); }
-FRAMES { return (FRAMES); }
-Frs { return (FRAMES); }
-FREE { return (FREE); }
-Fre { return (FREE); }
-FROM { return (FROM); }
-Fm { return (FROM); }
-FUNCTION { return (FUNCTION); }
-Fu { return (FUNCTION); }
-G { return (G); }
-GAMELOOP { return (GAMELOOP); }
-Gl { return (GAMELOOP); }
-GET { return (GET); }
-Ge { return (GET); }
-GLOBAL { return (GLOBAL); }
-Gb { return (GLOBAL); }
-GOLD { return(GOLD); }
-Gd { return(GOLD); }
-GOTO { return (GOTO); }
-Gt { return (GOTO); }
-GOSUB { return (GOSUB); }
-Gs { return (GOSUB); }
-GR { return (GR); }
-GRAPHIC { return (GRAPHIC); }
-Gr { return (GRAPHIC); }
-GRAY { return(GRAY); }
-Gy { return(GRAY); }
-GREEN { return(GREEN); }
-Gre { return(GREEN); }
-GREY { return(GREY); }
-H { return (H); }
-HALT { return (HALT); }
-Ht { return (HALT); }
-HAS { return (HAS); }
-HEIGHT { return (HEIGHT); }
-Hg { return (HEIGHT); }
-HEX\$ { return (HEX); }
-Hx { return (HEX); }
-HIDE { return (HIDE); }
-Hd { return (HIDE); }
-HIDDEN { return (HIDDEN); }
-Hdn { return (HIDDEN); }
-HIT { return (HIT); }
-HOME { return (HOME); }
-Hm { return (HOME); }
-HORIZONTAL { return (HORIZONTAL); }
-Hz { return (HORIZONTAL); }
-HSCROLL { return (HSCROLL); }
-Hs { return (HSCROLL); }
-I { return (I); }
-IF { return (IF); }
-IGNORE { return (IGNORE); }
-Ig { return (IGNORE); }
-IMAGE { return (IMAGE); }
-Im { return (IMAGE); }
-IMAGES { return (IMAGES); }
-Ims { return (IMAGES); }
-IN { return (IN); }
-INC { return (OP_INC); }
-In { return (OP_INC); }
-INK { return (INK); }
-Ik { return (INK); }
-INKEY { return (INKEY); }
-INKEY\$ { return (INKEY); }
-Iky { return (INKEY); }
-INPUT { return (INPUT); }
-Ip { return (INPUT); }
-INSERT { return (INSERT); }
-Ins { return (INSERT); }
-INVERSE { return (INVERSE); }
-Inv { return (INVERSE); }
-INSTR { return (INSTR); }
-Ist { return (INSTR); }
-IS { return (IS); }
-J { return (J); }
-JDOWN { return (JDOWN); }
-Jd { return (JDOWN); }
-JFIRE { return (JFIRE); }
-Jf { return (JFIRE); }
-JLEFT { return (JLEFT); }
-Jl { return (JLEFT); }
-JRIGHT { return (JRIGHT); }
-Jr { return (JRIGHT); }
-JUP { return (JUP); }
-Ju { return (JUP); }
-JOY { return (JOY); }
-Jy { return (JOY); }
-JOYCOUNT { return (JOYCOUNT); }
-Jyc { return (JOYCOUNT); }
-K { return (K); }
-KEY { return (KEY); }
-Ky { return (KEY); }
-KEYSHIFT { return (KEYSHIFT); }
-Ks { return (KEYSHIFT); }
-KEYSTATE { return (KEYSTATE); }
-Kt { return (KEYSTATE); }
-L { return (L); }
-LAVENDER { return(LAVENDER); }
-La { return(LAVENDER); }
-LEFT { return (LEFT); }
-Lf { return (LEFT); }
-LEFT\$ { return (LEFT); }
-LEN { return (LEN); }
-LETTER { return (LETTER); }
-Lt { return (LETTER); }
-LIGHT { return(LIGHT); }
-Li { return(LIGHT); }
-LINE { return(LINE); }
-Ln { return(LINE); }
-LOAD { return(LOAD); }
-Ld { return(LOAD); }
-LOCATE { return(LOCATE); }
-Lc { return(LOCATE); }
-LOCK { return (LOCK); }
-Lk { return (LOCK); }
-LOOP { return (LOOP); }
-Lp { return (LOOP); }
-LOWER { return (LOWER); }
-Lw { return (LOWER); }
-LOWER\$ { return (LOWER); }
-M { return (M); }
-MAGENTA { return(MAGENTA); }
-Mg { return(MAGENTA); }
-MASKED { return(MASKED); }
-Mk { return(MASKED); }
-MAX { return(MAX); }
-Mx { return(MAX); }
-MCM { return(MCM); }
-MEMORIZE { return(MEMORIZE); }
-Me { return(MEMORIZE); }
-MID { return(MID); }
-Md { return(MID); }
-MID\$ { return(MID); }
-MIN { return(MIN); }
-Mn { return(MIN); }
-MINUS { return(MINUS); }
-Min { return(MINUS); }
-MOB { return(MOB); }
-Mb { return(MOB); }
-MOD { return(MOD); }
-M% { return(MOD); }
-MONOCOLOR { return(MONOCOLOR); }
-MONOCOLOUR { return(MONOCOLOUR); }
-Mc { return(MONOCOLOR); }
-MS { return (MILLISECOND); }
-MILLISECOND { return (MILLISECOND); }
-MILLISECONDS { return (MILLISECONDS); }
-MUL { return(MUL); }
-Mu { return(MUL); }
-MULTICOLOR { return(MULTICOLOR); }
-Mcs { return(MULTICOLOR); }
-MULTICOLOUR { return(MULTICOLOUR); }
-N { return (N); }
-NEXT { return (NEXT); }
-Nx { return (NEXT); }
-NEW { return (NEW); }
-Nw { return (NEW); }
-NORMAL { return(NORMAL); }
-No { return(NORMAL); }
-NONE { return(NONE); }
-Nn { return(NONE); }
-NOP { return(NOP); }
-Np { return(NOP); }
-NOT { return(NOT); }
-Nt { return(NOT); }
-O { return (O); }
-OF { return (OF); }
-OFF { return (OFF); }
-Of { return (OFF); }
-OLIVE { return(OLIVE); }
-Ol { return(OLIVE); }
-ON { return (ON); }
-ONLY { return (ONLY); }
-On { return (ONLY); }
-OR { return (OR); }
-ORANGE { return(ORANGE); }
-Or { return(ORANGE); }
-OVERLAYED { return(OVERLAYED); }
-Ov { return(OVERLAYED); }
-P { return (P); }
-PALETTE { return(PALETTE); }
-Pal { return(PALETTE); }
-PAPER { return(PAPER); }
-Pa { return(PAPER); }
-PARALLEL { return(PARALLEL); }
-Pr { return(PARALLEL); }
-PARAM { return(PARAM); }
-Pm { return(PARAM); }
-PEACH { return(PEACH); }
-Pc { return(PEACH); }
-PEEK { return (PEEK); }
-Pk { return (PEEK); }
-PEN { return (PEN); }
-Pn { return (PEN); }
-PERIOD { return (PERIOD); }
-Per { return (PERIOD); }
-PINK { return(PINK); }
-Pik { return(PINK); }
-PLOT { return(PLOT); }
-Pl { return(PLOT); }
-PLUS { return(PLUS); }
-Plu { return(PLUS); }
-PLUS4 { return (PLUS4); }
-P4 { return (PLUS4); }
-POINT { return (POINT); }
-Pt { return (POINT); }
-POKE { return (POKE); }
-Po { return (POKE); }
-POLYLINE { return (POLYLINE); }
-Ply { return (POLYLINE); }
-POSITIVE { return (POSITIVE); }
-Pst { return (POSITIVE); }
-POUND { return (POUND); }
-Pnd { return (POUND); }
-POP { return (POP); }
-Pp { return (POP); }
-POSITION { return (POSITION); }
-Pos { return (POSITION); }
-POW { return (POWERING); }
-Pw { return (POWERING); }
-PRINT { return (PRINT); }
-PROC { return (PROC); }
-Prc { return (PROC); }
-PROCEDURE { return (PROCEDURE); }
-Prcd { return (PROCEDURE); }
-PURPLE { return(PURPLE); }
-Pur { return(PURPLE); }
-PUT { return(PUT); }
-Pu { return(PUT); }
-Q { return (Q); }
-R { return (R); }
-RANDOM { return (RANDOM); }
-Rd { return (RANDOM); }
-RANDOMIZE { return (RANDOMIZE); }
-Rdm { return (RANDOMIZE); }
-RASTER { return (RASTER); }
-Rst { return (RASTER); }
-RED { return(RED); }
-Re { return(RED); }
-REMEMBER { return(REMEMBER); }
-Rm { return(REMEMBER); }
-RENDER { return(RENDER); }
-Rend { return(RENDER); }
-REPEAT { return (REPEAT); }
-Rpt { return (REPEAT); }
-REPLACE { return (REPLACE); }
-Rep { return (REPLACE); }
-RETURN { return (RETURN); }
-Rt { return (RETURN); }
-RGB { return (RGB); }
-RIGHT { return (RIGHT); }
-RIGHT\$ { return (RIGHT); }
-Rg { return (RIGHT); }
-RND { return (RND); }
-ROLL { return (ROLL); }
-Rl { return (ROLL); }
-ROWS { return (ROWS); }
-Rws { return (ROWS); }
-RUNSTOP { return (RUNSTOP); }
-RUN { return (RUN); }
-S { return (S); }
-SCAN { return (SCAN); }
-Scn { return (SCAN); }
-SCANCODE { return (SCANCODE); }
-Scc { return (SCANCODE); }
-SCANSHIFT { return (SCANSHIFT); }
-Scs { return (SCANSHIFT); }
-SCREEN { return (SCREEN); }
-Sc { return (SCREEN); }
-SCROLL { return (SCROLL); }
-Scl { return (SCROLL); }
-SELECT { return (SELECT); }
-Se { return (SELECT); }
-SEMICOLON { return (SEMICOLON); }
-SET { return (SET); }
-St { return (SET); }
-SGN { return (SGN); }
-Sg { return (SGN); }
-SHADES { return (SHADES); }
-Sh { return (SHADES); }
-SHARED { return (SHARED); }
-Sr { return (SHARED); }
-SHIFT { return (SHIFT); }
-SHIFTS { return (SHIFTS); }
-SHOW { return (SHOW); }
-Sw { return (SHOW); }
-SIGNED { return (SIGNED); }
-Sgnd { return (SIGNED); }
-SIZE { return (SIZE); }
-Sz { return (SIZE); }
-SLASH { return (SLASH); }
-SPACE { return (SPACE); }
-Spc { return (SPACE); }
-SPAWN { return (SPAWN); }
-Sp { return (SPAWN); }
-SPRITE { return (SPRITE); }
-Spr { return (SPRITE); }
-SQR { return (SQR); }
-STATE { return (STATE); }
-Stt { return (STATE); }
-STEP { return (STEP); }
-Stp { return (STEP); }
-STOP { return (STOP); }
-STR { return (STR); }
-STR\$ { return (STR); }
-STRING { return (STRING); }
-STRING\$ { return (STRING); }
-T { return (T); }
-TAB { return(TAB); }
-Tb { return(TAB); }
-TAN { return(TAN); }
-Tn { return(TAN); }
-TASK { return(TASK); }
-Ts { return(TASK); }
-TEMPORARY { return (TEMPORARY); }
-Tmp { return (TEMPORARY); }
-TEXT { return (TEXT); }
-Tx { return (TEXT); }
-TEXTMAP { return (TEXTMAP); }
-Txm { return (TEXTMAP); }
-TEXTADDRESS { return (TEXTADDRESS); }
-Txa { return (TEXTADDRESS); }
-THEN { return (THEN); }
-Th { return (THEN); }
-THREAD { return (THREAD); }
-Thr { return (THREAD); }
-TICKS { return (TICKS); }
-Tk { return (TICKS); }
-TILEMAP { return (TILEMAP); }
-Tm { return (TILEMAP); }
-TILE { return (TILE); }
-Tl { return (TILE); }
-TILES { return (TILES); }
-Tls { return (TILES); }
-TI { return (TI); }
-TIMER { return (TIMER); }
-Tmr { return (TIMER); }
-TO { return (TO); }
-TURQUOISE { return(TURQUOISE); }
-Tu { return(TURQUOISE); }
-TRANSPARENCY { return(TRANSPARENCY); }
-Trs { return(TRANSPARENCY); }
-TRUE { return(TRUE); }
-Tr { return(TRUE); }
-TYPE { return(TYPE); }
-Ty { return(TYPE); }
-U { return (U); }
-UNTIL { return (UNTIL); }
-Un { return (UNTIL); }
-UP { return (UP); }
-UPPER { return (UPPER); }
-UPPER\$ { return (UPPER); }
-Up { return (UPPER); }
-USING { return (USING); }
-Us { return (USING); }
-V { return (V); }
-VAL { return (VAL); }
-Va { return (VAL); }
-VAR { return (VAR); }
-Vr { return (VAR); }
-VBL { return (VBL); }
-Vb { return (VBL); }
-VIC20 { return (VIC20); }
-V20 { return (VIC20); }
-VARIABLES { return (VARIABLES); }
-Vas { return (VARIABLES); }
-VERTICAL { return (VERTICAL); }
-Ve { return (VERTICAL); }
-VIOLET { return(VIOLET); }
-Vi { return(VIOLET); }
-VISIBLE { return(VISIBLE); }
-Vs { return(VISIBLE); }
-VSCROLL { return (VSCROLL); }
-Vscl { return (VSCROLL); }
-W { return (W); }
-WAIT { return (WAIT); }
-Wt { return (WAIT); }
-WEND { return (WEND); }
-We { return (WEND); }
-WITH { return (WITH); }
-Wi { return (WITH); }
-WIDTH { return (WIDTH); }
-Wd { return (WIDTH); }
-WHILE { return (WHILE); }
-Wh { return (WHILE); }
-WHITE { return(WHITE); }
-Wht { return(WHITE); }
-WRITING { return(WRITING); }
-Wrt { return(WRITING); }
-WORD { return (WORD); }
-Wo { return (WORD); }
-X { return (X); }
-XGR { return (XGR); }
-XGRAPHIC { return (XGRAPHIC); }
-Xg { return (XGRAPHIC); }
-XY { return (XY); }
-XOR { return (XOR); }
-Xr { return (XOR); }
-XCURS { return (XCURS); }
-Xcs { return (XCURS); }
-XTEXT { return (XTEXT); }
-Xt { return (XTEXT); }
-XPEN { return (XPEN); }
-Xp { return (XPEN); }
-Y { return (Y); }
-YGR { return (YGR); }
-YGRAPHIC { return (YGRAPHIC); }
-Yg { return (YGRAPHIC); }
-YX { return (YX); }
-YCURS { return (YCURS); }
-Ycs { return (YCURS); }
-YELLOW { return(YELLOW); }
-Ye { return(YELLOW); }
-YIELD { return(YIELD); }
-Yi { return(YIELD); }
-YTEXT { return (YTEXT); }
-Yt { return (YTEXT); }
-YPEN { return (YPEN); }
-Yp { return (YPEN); }
-Z { return (Z); }
-ZX { return (ZX); }
+A { RETURN(A,1); }
+ABS { RETURN(ABS,1); }
+Ab { RETURN(ABS,1); }
+ALT { RETURN(ALT,1); }
+Al { RETURN(ALT,1); }
+ARRAY { RETURN(ARRAY,1); }
+Ar { RETURN(ARRAY,1); }
+AS { RETURN(AS,1); }
+ASC { RETURN(ASC,1); }
+As { RETURN(ASC,1); }
+ASTERISK { RETURN(ASTERISK,1); }
+Ak { RETURN(ASTERISK,1); }
+AT { RETURN(AT,1); }
+ATARI { RETURN(ATARI,1); }
+At { RETURN(ATARI,1); }
+ATARIXL { RETURN(ATARIXL,1); }
+Ax { RETURN(ATARIXL,1); }
+ADD { RETURN(ADD,1); }
+Ad { RETURN(ADD,1); }
+ADDRESS { RETURN(ADDRESS,1); }
+A# { RETURN(ADDRESS,1); }
+AND { RETURN(AND,1); }
+An { RETURN(AND,1); }
+ARROW { RETURN(ARROW,1); }
+Aw { RETURN(ARROW,1); }
+B { RETURN(B,1); }
+BACK { RETURN(BACK,1); }
+Ba { RETURN(BACK,1); }
+BACKGROUND { RETURN(BACKGROUND,1); }
+Bg { RETURN(BACKGROUND,1); }
+BANK { RETURN(BANK,1); }
+Bk { RETURN(BANK,1); }
+BAR { RETURN(BAR,1); }
+Br { RETURN(BAR,1); }
+BEGIN { RETURN(BEG,1); }
+Be { RETURN(BEG,1); }
+BIN\$ { RETURN(BIN,1); }
+Bi { RETURN(BIN,1); }
+BIT { RETURN(BIT,1); }
+Bt { RETURN(BIT,1); }
+BOTH { RETURN(BOTH,1); }
+Bh { RETURN(BOTH,1); }
+BOX { RETURN(BOX,1); }
+Bx { RETURN(BOX,1); }
+BITMAP { RETURN(BITMAP,1); }
+Bm { RETURN(BITMAP,1); }
+BLACK { RETURN(BLACK,1); }
+Bl { RETURN(BLACK,1); }
+BLUE { RETURN(BLUE,1); }
+Bu { RETURN(BLUE,1); }
+BROWN { RETURN(BROWN,1); }
+Brn { RETURN(BROWN,1); }
+BYTE { RETURN(BYTE,1); }
+By { RETURN(BYTE,1); }
+BORDER { RETURN(BORDER,1); }
+Bo { RETURN(BORDER,1); }
+BUFFER { RETURN(BUFFER,1); }
+Bf { RETURN(BUFFER,1); }
+C { RETURN(C,1); }
+C64 { RETURN(C64,1); }
+CALL { RETURN(CALL,1); }
+Ca { RETURN(CALL,1); }
+CAN { RETURN(CAN,1); }
+Cn { RETURN(CAN,1); }
+CAPS { RETURN(CAPS,1); }
+Cp { RETURN(CAPS,1); }
+CAPSLOCK { RETURN(CAPSLOCK,1); }
+Cpl { RETURN(CAPS,1); }
+CASE { RETURN(CASE,1); }
+Cs { RETURN(CASE,1); }
+CDOWN { RETURN(CDOWN,1); }
+Cd { RETURN(CDOWN,1); }
+CENTER { RETURN(CENTER,1); }
+Ce { RETURN(CENTER,1); }
+CENTRE { RETURN(CENTRE,1); }
+CHR { RETURN(CHR,1); }
+CHR\$ { RETURN(CHR,1); }
+Ch { RETURN(CHR,1); }
+CIRCLE { RETURN(CIRCLE,1); }
+Ci { RETURN(CIRCLE,1); }
+CLEAR { RETURN(CLEAR,1); }
+Clr { RETURN(CLEAR,1); }
+CLEFT { RETURN(CLEFT,1); }
+Cle { RETURN(CLEFT,1); }
+CLINE { RETURN(CLINE,1); }
+Cln { RETURN(CLINE,1); }
+CLIP { RETURN(CLIP,1); }
+Cli { RETURN(CLIP,1); }
+CLS { RETURN(CLS,1); }
+Cl { RETURN(CLS,1); }
+CMOVE { RETURN(CMOVE,1); }
+Cm { RETURN(CMOVE,1); }
+CODE { RETURN(CODE,1); }
+Co { RETURN(CODE,1); }
+COLLISION { RETURN(COLLISION,1); }
+Col { RETURN(COLLISION,1); }
+COLON { RETURN(COLON,1); }
+COLOR { RETURN(COLOR,1); }
+COLOUR { RETURN(COLOUR,1); }
+Cr { RETURN(COLOR,1); }
+COLORS { RETURN(COLORS,1); }
+COLOURS { RETURN(COLOURS,1); }
+Crs { RETURN(COLORS,1); }
+COLORMAP { RETURN(COLORMAP,1); }
+COLOURMAP { RETURN(COLOURMAP,1); }
+Com { RETURN(COLOURMAP,1); }
+COLUMNS { RETURN(COLUMNS,1); }
+Cms { RETURN(COLUMNS,1); }
+COMMA { RETURN(COMMA,1); }
+COMMODORE { RETURN(COMMODORE,1); }
+C= { RETURN(COMMODORE,1); }
+COMPRESS { RETURN(COMPRESS,1); }
+Cmp { RETURN(COMPRESS,1); }
+CONST { RETURN(CONST,1); }
+C# { RETURN(CONST,1); }
+CONTROL { RETURN(CONTROL,1); }
+Ctrl { RETURN(CONTROL,1); }
+COUNT { RETURN(COUNT,1); }
+C% { RETURN(COUNT,1); }
+CRIGHT { RETURN(CRIGHT,1); }
+Crg { RETURN(CRIGHT,1); }
+CRSR { RETURN(CRSR,1); }
+CUP { RETURN(CUP,1); }
+Cu { RETURN(CUP,1); }
+CURSOR { RETURN(CURSOR,1); }
+Curs { RETURN(CURSOR,1); }
+CYAN { RETURN(CYAN,1); }
+Cy { RETURN(CURSOR,1); }
+CYCLES { RETURN(CYCLES,1); }
+Cyc { RETURN(CYCLES,1); }
+D { RETURN(D,1); }
+DARK { RETURN(DARK,1); }
+Dk { RETURN(DARK,1); }
+DATA { RETURN(DATA,1); }
+Da { RETURN(DATA,1); }
+DEBUG { RETURN(DEBUG,1); }
+De { RETURN(DEBUG,1); }
+DEC { RETURN(OP_DEC,1); }
+Dc { RETURN(OP_DEC,1); }
+DEFAULT { RETURN(DEFAULT,1); }
+Dft { RETURN(DEFAULT,1); }
+DEFINE { RETURN(DEFINE,1); }
+Def { RETURN(DEFINE,1); }
+DELETE { RETURN(DELETE,1); }
+Del { RETURN(DELETE,1); }
+DIM { RETURN(DIM,1); }
+Di { RETURN(DIM,1); }
+DISABLE { RETURN(DISABLE,1); }
+Dx { RETURN(DISABLE,1); }
+DISTANCE { RETURN(DISTANCE,1); }
+Dst { RETURN(DISTANCE,1); }
+DIV { RETURN(DIV,1); }
+Dv { RETURN(DIV,1); }
+DONE { RETURN(DONE,1); }
+Do { RETURN(DONE,1); }
+DO { RETURN(DO,1); }
+DOWN { RETURN(DOWN,1); }
+Dw { RETURN(DOWN,1); }
+DRAW { RETURN(DRAW,1); }
+Dr { RETURN(DRAW,1); }
+DRAGON { RETURN(DRAGON,1); }
+Dg { RETURN(DRAGON,1); }
+DRAGON32 { RETURN(DRAGON32,1); }
+Dg32 { RETURN(DRAGON32,1); }
+DRAGON64 { RETURN(DRAGON64,1); }
+Dg64 { RETURN(DRAGON64,1); }
+DWORD { RETURN(DWORD,1); }
+Dwd { RETURN(DWORD,1); }
+E { RETURN(E,1); }
+ECM { RETURN(ECM,1); }
+ELLIPSE { RETURN(ELLIPSE,1); }
+Ell { RETURN(ELLIPSE,1); }
+ELSE { RETURN(ELSE,1); }
+El { RETURN(ELSE,1); }
+ELSEIF { RETURN(ELSEIF,1); }
+Eif { RETURN(ELSEIF,1); }
+EMPTY { RETURN(EMPTY,1); }
+Em { RETURN(EMPTY,1); }
+EMPTYTILE { RETURN(EMPTYTILE,1); }
+Emt { RETURN(EMPTYTILE,1); }
+END { RETURN(END,1); }
+ENDIF { RETURN(ENDIF,1); }
+Ei { RETURN(ENDIF,1); }
+ENDSELECT { RETURN(ENDSELECT,1); }
+Es { RETURN(ENDSELECT,1); }
+ENABLE { RETURN(ENABLE,1); }
+En { RETURN(ENABLE,1); }
+EQUAL { RETURN(EQUAL,1); }
+Eq { RETURN(EQUAL,1); }
+EXIT { RETURN(EXIT,1); }
+Ex { RETURN(EXIT,1); }
+EXPAND { RETURN(EXPAND,1); }
+Exp { RETURN(EXPAND,1); }
+EVERY { RETURN(EVERY,1); }
+Ev { RETURN(EVERY,1); }
+FALSE { RETURN(FALSE,1); }
+Fa { RETURN(FALSE,1); }
+F { RETURN(F,1); }
+F1 { RETURN(F1,1); }
+F2 { RETURN(F2,1); }
+F3 { RETURN(F3,1); }
+F4 { RETURN(F4,1); }
+F5 { RETURN(F5,1); }
+F6 { RETURN(F6,1); }
+F7 { RETURN(F7,1); }
+F8 { RETURN(F8,1); }
+FILL { RETURN(FILL,1); }
+Fil { RETURN(FILL,1); }
+FIRE { RETURN(FIRE,1); }
+Fi { RETURN(FIRE,1); }
+FLIP { RETURN(FLIP,1); }
+FLIP\$ { RETURN(FLIP,1); }
+Fl { RETURN(FLIP,1); }
+FONT { RETURN(FONT,1); }
+Fnt { RETURN(FONT,1); }
+FOR { RETURN(FOR,1); }
+Fo { RETURN(FOR,1); }
+FRAME { RETURN(FRAME,1); }
+Fr { RETURN(FRAME,1); }
+FRAMES { RETURN(FRAMES,1); }
+Frs { RETURN(FRAMES,1); }
+FREE { RETURN(FREE,1); }
+Fre { RETURN(FREE,1); }
+FROM { RETURN(FROM,1); }
+Fm { RETURN(FROM,1); }
+FUNCTION { RETURN(FUNCTION,1); }
+Fu { RETURN(FUNCTION,1); }
+G { RETURN(G,1); }
+GAMELOOP { RETURN(GAMELOOP,1); }
+Gl { RETURN(GAMELOOP,1); }
+GET { RETURN(GET,1); }
+Ge { RETURN(GET,1); }
+GLOBAL { RETURN(GLOBAL,1); }
+Gb { RETURN(GLOBAL,1); }
+GOLD { RETURN(GOLD,1); }
+Gd { RETURN(GOLD,1); }
+GOTO { RETURN(GOTO,1); }
+Gt { RETURN(GOTO,1); }
+GOSUB { RETURN(GOSUB,1); }
+Gs { RETURN(GOSUB,1); }
+GR { RETURN(GR,1); }
+GRAPHIC { RETURN(GRAPHIC,1); }
+Gr { RETURN(GRAPHIC,1); }
+GRAY { RETURN(GRAY,1); }
+Gy { RETURN(GRAY,1); }
+GREEN { RETURN(GREEN,1); }
+Gre { RETURN(GREEN,1); }
+GREY { RETURN(GREY,1); }
+H { RETURN(H,1); }
+HALT { RETURN(HALT,1); }
+Ht { RETURN(HALT,1); }
+HAS { RETURN(HAS,1); }
+HEIGHT { RETURN(HEIGHT,1); }
+Hg { RETURN(HEIGHT,1); }
+HEX\$ { RETURN(HEX,1); }
+Hx { RETURN(HEX,1); }
+HIDE { RETURN(HIDE,1); }
+Hd { RETURN(HIDE,1); }
+HIDDEN { RETURN(HIDDEN,1); }
+Hdn { RETURN(HIDDEN,1); }
+HIT { RETURN(HIT,1); }
+HOME { RETURN(HOME,1); }
+Hm { RETURN(HOME,1); }
+HORIZONTAL { RETURN(HORIZONTAL,1); }
+Hz { RETURN(HORIZONTAL,1); }
+HSCROLL { RETURN(HSCROLL,1); }
+Hs { RETURN(HSCROLL,1); }
+I { RETURN(I,1); }
+IF { RETURN(IF,1); }
+IGNORE { RETURN(IGNORE,1); }
+Ig { RETURN(IGNORE,1); }
+IMAGE { RETURN(IMAGE,1); }
+Im { RETURN(IMAGE,1); }
+IMAGES { RETURN(IMAGES,1); }
+Ims { RETURN(IMAGES,1); }
+IN { RETURN(IN,1); }
+INC { RETURN(OP_INC,1); }
+In { RETURN(OP_INC,1); }
+INK { RETURN(INK,1); }
+Ik { RETURN(INK,1); }
+INKEY { RETURN(INKEY,1); }
+INKEY\$ { RETURN(INKEY,1); }
+Iky { RETURN(INKEY,1); }
+INPUT { RETURN(INPUT,1); }
+Ip { RETURN(INPUT,1); }
+INSERT { RETURN(INSERT,1); }
+Ins { RETURN(INSERT,1); }
+INVERSE { RETURN(INVERSE,1); }
+Inv { RETURN(INVERSE,1); }
+INSTR { RETURN(INSTR,1); }
+Ist { RETURN(INSTR,1); }
+IS { RETURN(IS,1); }
+J { RETURN(J,1); }
+JDOWN { RETURN(JDOWN,1); }
+Jd { RETURN(JDOWN,1); }
+JFIRE { RETURN(JFIRE,1); }
+Jf { RETURN(JFIRE,1); }
+JLEFT { RETURN(JLEFT,1); }
+Jl { RETURN(JLEFT,1); }
+JRIGHT { RETURN(JRIGHT,1); }
+Jr { RETURN(JRIGHT,1); }
+JUP { RETURN(JUP,1); }
+Ju { RETURN(JUP,1); }
+JOY { RETURN(JOY,1); }
+Jy { RETURN(JOY,1); }
+JOYCOUNT { RETURN(JOYCOUNT,1); }
+Jyc { RETURN(JOYCOUNT,1); }
+K { RETURN(K,1); }
+KEY { RETURN(KEY,1); }
+Ky { RETURN(KEY,1); }
+KEYSHIFT { RETURN(KEYSHIFT,1); }
+Ks { RETURN(KEYSHIFT,1); }
+KEYSTATE { RETURN(KEYSTATE,1); }
+Kt { RETURN(KEYSTATE,1); }
+L { RETURN(L,1); }
+LAVENDER { RETURN(LAVENDER,1); }
+La { RETURN(LAVENDER,1); }
+LEFT { RETURN(LEFT,1); }
+Lf { RETURN(LEFT,1); }
+LEFT\$ { RETURN(LEFT,1); }
+LEN { RETURN(LEN,1); }
+LETTER { RETURN(LETTER,1); }
+Lt { RETURN(LETTER,1); }
+LIGHT { RETURN(LIGHT,1); }
+Li { RETURN(LIGHT,1); }
+LINE { RETURN(LINE,1); }
+Ln { RETURN(LINE,1); }
+LOAD { RETURN(LOAD,1); }
+Ld { RETURN(LOAD,1); }
+LOCATE { RETURN(LOCATE,1); }
+Lc { RETURN(LOCATE,1); }
+LOCK { RETURN(LOCK,1); }
+Lk { RETURN(LOCK,1); }
+LOOP { RETURN(LOOP,1); }
+Lp { RETURN(LOOP,1); }
+LOWER { RETURN(LOWER,1); }
+Lw { RETURN(LOWER,1); }
+LOWER\$ { RETURN(LOWER,1); }
+M { RETURN(M,1); }
+MAGENTA { RETURN(MAGENTA,1); }
+Mg { RETURN(MAGENTA,1); }
+MASKED { RETURN(MASKED,1); }
+Mk { RETURN(MASKED,1); }
+MAX { RETURN(MAX,1); }
+Mx { RETURN(MAX,1); }
+MCM { RETURN(MCM,1); }
+MEMORIZE { RETURN(MEMORIZE,1); }
+Me { RETURN(MEMORIZE,1); }
+MID { RETURN(MID,1); }
+Md { RETURN(MID,1); }
+MID\$ { RETURN(MID,1); }
+MIN { RETURN(MIN,1); }
+Mn { RETURN(MIN,1); }
+MINUS { RETURN(MINUS,1); }
+Min { RETURN(MINUS,1); }
+MOB { RETURN(MOB,1); }
+Mb { RETURN(MOB,1); }
+MOD { RETURN(MOD,1); }
+M% { RETURN(MOD,1); }
+MONOCOLOR { RETURN(MONOCOLOR,1); }
+MONOCOLOUR { RETURN(MONOCOLOUR,1); }
+Mc { RETURN(MONOCOLOR,1); }
+MS { RETURN(MILLISECOND,1); }
+MILLISECOND { RETURN(MILLISECOND,1); }
+MILLISECONDS { RETURN(MILLISECONDS,1); }
+MUL { RETURN(MUL,1); }
+Mu { RETURN(MUL,1); }
+MULTICOLOR { RETURN(MULTICOLOR,1); }
+Mcs { RETURN(MULTICOLOR,1); }
+MULTICOLOUR { RETURN(MULTICOLOUR,1); }
+N { RETURN(N,1); }
+NEXT { RETURN(NEXT,1); }
+Nx { RETURN(NEXT,1); }
+NEW { RETURN(NEW,1); }
+Nw { RETURN(NEW,1); }
+NORMAL { RETURN(NORMAL,1); }
+No { RETURN(NORMAL,1); }
+NONE { RETURN(NONE,1); }
+Nn { RETURN(NONE,1); }
+NOP { RETURN(NOP,1); }
+Np { RETURN(NOP,1); }
+NOT { RETURN(NOT,1); }
+Nt { RETURN(NOT,1); }
+O { RETURN(O,1); }
+OF { RETURN(OF,1); }
+OFF { RETURN(OFF,1); }
+Of { RETURN(OFF,1); }
+OLIVE { RETURN(OLIVE,1); }
+Ol { RETURN(OLIVE,1); }
+ON { RETURN(ON,1); }
+ONLY { RETURN(ONLY,1); }
+On { RETURN(ONLY,1); }
+OR { RETURN(OR,1); }
+ORANGE { RETURN(ORANGE,1); }
+Or { RETURN(ORANGE,1); }
+OVERLAYED { RETURN(OVERLAYED,1); }
+Ov { RETURN(OVERLAYED,1); }
+P { RETURN(P,1); }
+PALETTE { RETURN(PALETTE,1); }
+Pal { RETURN(PALETTE,1); }
+PAPER { RETURN(PAPER,1); }
+Pa { RETURN(PAPER,1); }
+PARALLEL { RETURN(PARALLEL,1); }
+Pr { RETURN(PARALLEL,1); }
+PARAM { RETURN(PARAM,1); }
+Pm { RETURN(PARAM,1); }
+PEACH { RETURN(PEACH,1); }
+Pc { RETURN(PEACH,1); }
+PEEK { RETURN(PEEK,1); }
+Pk { RETURN(PEEK,1); }
+PEN { RETURN(PEN,1); }
+Pn { RETURN(PEN,1); }
+PERIOD { RETURN(PERIOD,1); }
+Per { RETURN(PERIOD,1); }
+PINK { RETURN(PINK,1); }
+Pik { RETURN(PINK,1); }
+PLOT { RETURN(PLOT,1); }
+Pl { RETURN(PLOT,1); }
+PLUS { RETURN(PLUS,1); }
+Plu { RETURN(PLUS,1); }
+PLUS4 { RETURN(PLUS4,1); }
+P4 { RETURN(PLUS4,1); }
+POINT { RETURN(POINT,1); }
+Pt { RETURN(POINT,1); }
+POKE { RETURN(POKE,1); }
+Po { RETURN(POKE,1); }
+POLYLINE { RETURN(POLYLINE,1); }
+Ply { RETURN(POLYLINE,1); }
+POSITIVE { RETURN(POSITIVE,1); }
+Pst { RETURN(POSITIVE,1); }
+POUND { RETURN(POUND,1); }
+Pnd { RETURN(POUND,1); }
+POP { RETURN(POP,1); }
+Pp { RETURN(POP,1); }
+POSITION { RETURN(POSITION,1); }
+Pos { RETURN(POSITION,1); }
+POW { RETURN(POWERING,1); }
+Pw { RETURN(POWERING,1); }
+PRINT { RETURN(PRINT,1); }
+PROC { RETURN(PROC,1); }
+Prc { RETURN(PROC,1); }
+PROCEDURE { RETURN(PROCEDURE,1); }
+Prcd { RETURN(PROCEDURE,1); }
+PURPLE { RETURN(PURPLE,1); }
+Pur { RETURN(PURPLE,1); }
+PUT { RETURN(PUT,1); }
+Pu { RETURN(PUT,1); }
+Q { RETURN(Q,1); }
+R { RETURN(R,1); }
+RANDOM { RETURN(RANDOM,1); }
+Rd { RETURN(RANDOM,1); }
+RANDOMIZE { RETURN(RANDOMIZE,1); }
+Rdm { RETURN(RANDOMIZE,1); }
+RASTER { RETURN(RASTER,1); }
+Rst { RETURN(RASTER,1); }
+RED { RETURN(RED,1); }
+Re { RETURN(RED,1); }
+REMEMBER { RETURN(REMEMBER,1); }
+Rm { RETURN(REMEMBER,1); }
+RENDER { RETURN(RENDER,1); }
+Rend { RETURN(RENDER,1); }
+REPEAT { RETURN(REPEAT,1); }
+Rpt { RETURN(REPEAT,1); }
+REPLACE { RETURN(REPLACE,1); }
+Rep { RETURN(REPLACE,1); }
+RETURN { RETURN(RETURN,1); }
+Rt { RETURN(RETURN,1); }
+RGB { RETURN(RGB,1); }
+RIGHT { RETURN(RIGHT,1); }
+RIGHT\$ { RETURN(RIGHT,1); }
+Rg { RETURN(RIGHT,1); }
+RND { RETURN(RND,1); }
+ROLL { RETURN(ROLL,1); }
+Rl { RETURN(ROLL,1); }
+ROWS { RETURN(ROWS,1); }
+Rws { RETURN(ROWS,1); }
+RUNSTOP { RETURN(RUNSTOP,1); }
+RUN { RETURN(RUN,1); }
+S { RETURN(S,1); }
+SCAN { RETURN(SCAN,1); }
+Scn { RETURN(SCAN,1); }
+SCANCODE { RETURN(SCANCODE,1); }
+Scc { RETURN(SCANCODE,1); }
+SCANSHIFT { RETURN(SCANSHIFT,1); }
+Scs { RETURN(SCANSHIFT,1); }
+SCREEN { RETURN(SCREEN,1); }
+Sc { RETURN(SCREEN,1); }
+SCROLL { RETURN(SCROLL,1); }
+Scl { RETURN(SCROLL,1); }
+SELECT { RETURN(SELECT,1); }
+Se { RETURN(SELECT,1); }
+SEMICOLON { RETURN(SEMICOLON,1); }
+SET { RETURN(SET,1); }
+St { RETURN(SET,1); }
+SGN { RETURN(SGN,1); }
+Sg { RETURN(SGN,1); }
+SHADES { RETURN(SHADES,1); }
+Sh { RETURN(SHADES,1); }
+SHARED { RETURN(SHARED,1); }
+Sr { RETURN(SHARED,1); }
+SHIFT { RETURN(SHIFT,1); }
+SHIFTS { RETURN(SHIFTS,1); }
+SHOW { RETURN(SHOW,1); }
+Sw { RETURN(SHOW,1); }
+SIGNED { RETURN(SIGNED,1); }
+Sgnd { RETURN(SIGNED,1); }
+SIZE { RETURN(SIZE,1); }
+Sz { RETURN(SIZE,1); }
+SLASH { RETURN(SLASH,1); }
+SPACE { RETURN(SPACE,1); }
+Spc { RETURN(SPACE,1); }
+SPAWN { RETURN(SPAWN,1); }
+Sp { RETURN(SPAWN,1); }
+SPRITE { RETURN(SPRITE,1); }
+Spr { RETURN(SPRITE,1); }
+SQR { RETURN(SQR,1); }
+STATE { RETURN(STATE,1); }
+Stt { RETURN(STATE,1); }
+STEP { RETURN(STEP,1); }
+Stp { RETURN(STEP,1); }
+STOP { RETURN(STOP,1); }
+STR { RETURN(STR,1); }
+STR\$ { RETURN(STR,1); }
+STRING { RETURN(STRING,1); }
+STRING\$ { RETURN(STRING,1); }
+T { RETURN(T,1); }
+TAB { RETURN(TAB,1); }
+Tb { RETURN(TAB,1); }
+TAN { RETURN(TAN,1); }
+Tn { RETURN(TAN,1); }
+TASK { RETURN(TASK,1); }
+Ts { RETURN(TASK,1); }
+TEMPORARY { RETURN(TEMPORARY,1); }
+Tmp { RETURN(TEMPORARY,1); }
+TEXT { RETURN(TEXT,1); }
+Tx { RETURN(TEXT,1); }
+TEXTMAP { RETURN(TEXTMAP,1); }
+Txm { RETURN(TEXTMAP,1); }
+TEXTADDRESS { RETURN(TEXTADDRESS,1); }
+Txa { RETURN(TEXTADDRESS,1); }
+THEN { RETURN(THEN,1); }
+Th { RETURN(THEN,1); }
+THREAD { RETURN(THREAD,1); }
+Thr { RETURN(THREAD,1); }
+TICKS { RETURN(TICKS,1); }
+Tk { RETURN(TICKS,1); }
+TILEMAP { RETURN(TILEMAP,1); }
+Tm { RETURN(TILEMAP,1); }
+TILE { RETURN(TILE,1); }
+Tl { RETURN(TILE,1); }
+TILES { RETURN(TILES,1); }
+Tls { RETURN(TILES,1); }
+TI { RETURN(TI,1); }
+TIMER { RETURN(TIMER,1); }
+Tmr { RETURN(TIMER,1); }
+TO { RETURN(TO,1); }
+TURQUOISE { RETURN(TURQUOISE,1); }
+Tu { RETURN(TURQUOISE,1); }
+TRANSPARENCY { RETURN(TRANSPARENCY,1); }
+Trs { RETURN(TRANSPARENCY,1); }
+TRUE { RETURN(TRUE,1); }
+Tr { RETURN(TRUE,1); }
+TYPE { RETURN(TYPE,1); }
+Ty { RETURN(TYPE,1); }
+U { RETURN(U,1); }
+UNTIL { RETURN(UNTIL,1); }
+Un { RETURN(UNTIL,1); }
+UP { RETURN(UP,1); }
+UPPER { RETURN(UPPER,1); }
+UPPER\$ { RETURN(UPPER,1); }
+Up { RETURN(UPPER,1); }
+USING { RETURN(USING,1); }
+Us { RETURN(USING,1); }
+V { RETURN(V,1); }
+VAL { RETURN(VAL,1); }
+Va { RETURN(VAL,1); }
+VAR { RETURN(VAR,1); }
+Vr { RETURN(VAR,1); }
+VBL { RETURN(VBL,1); }
+Vb { RETURN(VBL,1); }
+VIC20 { RETURN(VIC20,1); }
+V20 { RETURN(VIC20,1); }
+VARIABLES { RETURN(VARIABLES,1); }
+Vas { RETURN(VARIABLES,1); }
+VERTICAL { RETURN(VERTICAL,1); }
+Ve { RETURN(VERTICAL,1); }
+VIOLET { RETURN(VIOLET,1); }
+Vi { RETURN(VIOLET,1); }
+VISIBLE { RETURN(VISIBLE,1); }
+Vs { RETURN(VISIBLE,1); }
+VSCROLL { RETURN(VSCROLL,1); }
+Vscl { RETURN(VSCROLL,1); }
+W { RETURN(W,1); }
+WAIT { RETURN(WAIT,1); }
+Wt { RETURN(WAIT,1); }
+WEND { RETURN(WEND,1); }
+We { RETURN(WEND,1); }
+WITH { RETURN(WITH,1); }
+Wi { RETURN(WITH,1); }
+WIDTH { RETURN(WIDTH,1); }
+Wd { RETURN(WIDTH,1); }
+WHILE { RETURN(WHILE,1); }
+Wh { RETURN(WHILE,1); }
+WHITE { RETURN(WHITE,1); }
+Wht { RETURN(WHITE,1); }
+WRITING { RETURN(WRITING,1); }
+Wrt { RETURN(WRITING,1); }
+WORD { RETURN(WORD,1); }
+Wo { RETURN(WORD,1); }
+X { RETURN(X,1); }
+XGR { RETURN(XGR,1); }
+XGRAPHIC { RETURN(XGRAPHIC,1); }
+Xg { RETURN(XGRAPHIC,1); }
+XY { RETURN(XY,1); }
+XOR { RETURN(XOR,1); }
+Xr { RETURN(XOR,1); }
+XCURS { RETURN(XCURS,1); }
+Xcs { RETURN(XCURS,1); }
+XTEXT { RETURN(XTEXT,1); }
+Xt { RETURN(XTEXT,1); }
+XPEN { RETURN(XPEN,1); }
+Xp { RETURN(XPEN,1); }
+Y { RETURN(Y,1); }
+YGR { RETURN(YGR,1); }
+YGRAPHIC { RETURN(YGRAPHIC,1); }
+Yg { RETURN(YGRAPHIC,1); }
+YX { RETURN(YX,1); }
+YCURS { RETURN(YCURS,1); }
+Ycs { RETURN(YCURS,1); }
+YELLOW { RETURN(YELLOW,1); }
+Ye { RETURN(YELLOW,1); }
+YIELD { RETURN(YIELD,1); }
+Yi { RETURN(YIELD,1); }
+YTEXT { RETURN(YTEXT,1); }
+Yt { RETURN(YTEXT,1); }
+YPEN { RETURN(YPEN,1); }
+Yp { RETURN(YPEN,1); }
+Z { RETURN(Z,1); }
+ZX { RETURN(ZX,1); }
 
-"REM"[^\n\r]* { return(Remark);  }
-"' "[^\n\r]* { return(Remark);  }
+"REM"[^\n\r]* { RETURN(Remark,1);  }
+"' "[^\n\r]* { RETURN(Remark,1);  }
 
-[a-z][A-Za-z0-9\_]* { yylval.string = strdup(yytext); return(Identifier);  }
-\"(\\.|[^"\\])*\" { yylval.string = strdup(yytext); memcpy(yylval.string,yylval.string+1,strlen(yylval.string)); yylval.string[strlen(yylval.string)-1]=0; return(String);  }
-\$[a-fA-F0-9]+ { yylval.integer = strtol(yytext+1,0,16); return(Integer); }
-&[Hh][a-fA-F0-9]+ { yylval.integer = strtol(yytext+2,0,16); return(Integer); }
-0x[a-fA-F0-9]+ { yylval.integer = strtol(yytext+2,0,16); return(Integer); }
-[a-fA-F0-9]+[hH] { int c = strlen(yytext); yytext[c-1] = 0; yylval.integer = strtol(yytext,0,16); return(Integer); }
-%[0-1]+ { yylval.integer = strtol(yytext+1,0,2); return(Integer); }
-\s[-][0-9]+ { yylval.integer = atoi(yytext); return(Integer);  }
-[0-9]+ { yylval.integer = atoi(yytext); return(Integer);  }
+[a-z][A-Za-z0-9\_]* { yylval.string = strdup(yytext); RETURN(Identifier,1);  }
+\"(\\.|[^"\\])*\" { yylval.string = strdup(yytext); memcpy(yylval.string,yylval.string+1,strlen(yylval.string)); yylval.string[strlen(yylval.string)-1]=0; RETURN(String,1);  }
+\$[a-fA-F0-9]+ { yylval.integer = strtol(yytext+1,0,16); RETURN(Integer,1); }
+&[Hh][a-fA-F0-9]+ { yylval.integer = strtol(yytext+2,0,16); RETURN(Integer,1); }
+0x[a-fA-F0-9]+ { yylval.integer = strtol(yytext+2,0,16); RETURN(Integer,1); }
+[a-fA-F0-9]+[hH] { int c = strlen(yytext); yytext[c-1] = 0; yylval.integer = strtol(yytext,0,16); RETURN(Integer,1); }
+%[0-1]+ { yylval.integer = strtol(yytext+1,0,2); RETURN(Integer,1); }
+\s[-][0-9]+ { yylval.integer = atoi(yytext); RETURN(Integer,1);  }
+[0-9]+ { yylval.integer = atoi(yytext); RETURN(Integer,1);  }
 
-[ \t]+ 
-. { return(yytext[0]); }
+[ \t]+ { yycolno = (yycolno + yyleng); }
+. { yycolno++; return(yytext[0]); }
 
 %%
