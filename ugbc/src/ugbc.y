@@ -1511,6 +1511,11 @@ exponential:
     | OP expr CP {
         $$ = $2;
     }
+    | OP_MINUS OP expr CP {
+        Variable * expr = variable_retrieve( _environment, $3 );
+        Variable * zero = variable_temporary( _environment, VT_SIGN( expr->type ), "(zero)" );
+        $$ = variable_sub( _environment, zero->name, expr->name )->name;
+    }
     | FREE {
         cpu_dsgc( _environment );
         $$ = variable_retrieve( _environment, "FREE_STRING" )->name;
