@@ -3681,6 +3681,7 @@ statement:
   }
   | INPUT input_definition
   | QM print_definition
+  | QM
   | LOCATE locate_definition
   | GR LOCATE gr_locate_definition
   | MEMORIZE {
