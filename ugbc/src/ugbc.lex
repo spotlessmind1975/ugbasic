@@ -6,10 +6,12 @@
 #define RETURN(b, c)    \
 {\
     yycolno = (yycolno + yyleng) * c; \
+    yyposno = (yyposno + yyleng); \
     return b; \
 }
 
 extern int yycolno;
+extern int yyposno;
 
 %}
 
@@ -710,7 +712,7 @@ ZX { RETURN(ZX,1); }
 \s[-][0-9]+ { yylval.integer = atoi(yytext); RETURN(Integer,1);  }
 [0-9]+ { yylval.integer = atoi(yytext); RETURN(Integer,1);  }
 
-[ \t]+ { yycolno = (yycolno + yyleng); }
-. { yycolno++; return(yytext[0]); }
+[ \t]+ { yycolno = (yycolno + yyleng); yyposno = (yyposno + yyleng); }
+. { yycolno++; yyposno++; return(yytext[0]); }
 
 %%

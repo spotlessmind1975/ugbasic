@@ -9,6 +9,7 @@ int errors=0;
 extern int yylineno;
 
 int yycolno;
+int yyposno;
 
 int yywrap() { return 1; }
  
@@ -4858,7 +4859,7 @@ int main( int _argc, char *_argv[] ) {
 
 int yyerror (Environment * _ignored, const char *s) /* Called by yyparse on error */
 {
-      fprintf(stderr,  "*** ERROR: %s at %d column %d\n", s, yylineno, (yycolno+1));
+      fprintf(stderr,  "*** ERROR: %s at %d column %d (%d)\n", s, yylineno, (yycolno+1), (yyposno+1));
       exit(EXIT_FAILURE);
 }
 
