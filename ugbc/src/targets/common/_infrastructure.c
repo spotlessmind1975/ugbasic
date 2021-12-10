@@ -928,10 +928,9 @@ Variable * variable_store( Environment * _environment, char * _destination, unsi
 #define UNESCAPE_COLOR( c, d ) \
             else if ( strcmp_nocase( word, c ) == 0 ) { \
                             *q = 1; \
-                            ++q; \ 
+                            ++q; \
                             *q = COLOR_##d; \
                             ++q; \
-                            break; \
                     }
 
 char * unescape_string( Environment * _environment, char * _value ) {
