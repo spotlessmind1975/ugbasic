@@ -31,108 +31,99 @@
 ;*                                                                             *
 ;*                      CONVERT A NUMBER TO A STRING                           *
 ;*                                                                             *
-;*                             by Marco Spedaletti                             *
+;*                            by Samuel Devulder                               *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-; <MATHPTR2...<MATHPTR3 holds the number
+; input:
+; <MATHPTR0...<MATHPTR3 holds the number
+; <MATHPTR4 = sign
+; A = number of bits
+; X = result ptr
+
+; output:
+; A = string length
 
 N2STRING
-    LDY #0
-    LDX #RESBUFFER
+  STX   <TMPPTR
+  LDY   #0
+  LEAY  A,Y           ; number of bits
 
-    LDB #10
-    LDA #0
-    DECB
-NSSTRINGLC
-    STA B,X
-    DECB
-    CMPB #$FF
-    BNE NSSTRINGLC
+  LDX   #N2STRING_bcd
+  LDU   #N2STRING_pwr
+  LDD   #0            ; clear local data
+  STD   ,X
+  STD   2,X
+  STD   4,X
+  STD   6,X
+  INCB
+  STD   8,X           ; pwr=1
 
-    LDU #N2STRINGMASK
-    LDB #0
 N2STRINGL1
-    ORCC #$01
-    LDD <MATHPTR2
-    SUBD , U
-    STD <MATHPTR2
-N2STRINGL1C
-    ANDA #$80
-    CMPA #0
-    BNE N2STRINGF
-    INC , X
-    JMP N2STRINGL1
+  LSR   <MATHPTR0
+  ROR   <MATHPTR1
+  ROR   <MATHPTR2
+  ROR   <MATHPTR3
+  BCC   N2STRINGL2
+  LDX   #N2STRING_bcd ; bcd += pwr
+  BSR   N2STRING_add
+N2STRINGL2
+  LDX   #N2STRING_pwr ; pwr += pwr
+  BSR   N2STRING_add
+  LEAY  -1,Y          ; finished ?
+  BNE   N2STRINGL1    ; no=>loop
 
-N2STRINGF
-    ANDCC #$FE
-    LDD <MATHPTR2
-    ADDD , U
-    STD <MATHPTR2
+  LDX   <TMPPTR
+  LDA   #-5
+  LDU   #N2STRING_bcd+4
+  LDB   <MATHPTR4
+  BPL   N2STRINGL3
+  LDB   #'-
+  STB   ,X+
+; look for first non null digits
+N2STRINGL3
+  INCA
+  BGT   N2STRINGL5  ; result==0
+  LDB   A,U         ; LDB is faster than TST
+  BEQ   N2STRINGL3
+  BITB  #$F0
+  BEQ   N2STRINGL5
+N2STRINGL4
+  LDB   A,U
+  LSRB
+  LSRB
+  LSRB
+  LSRB
+  ADDB  #'0
+  STB   ,X+
+  LDB   A,U
+  ANDB  #15
+N2STRINGL5
+  ADDB  #'0
+  STB   ,X+
+  INCA
+  BLE   N2STRINGL4
 
-    CMPY #0
-    BNE NSSTRINGL2
-    LDB , X
-    CMPB #0
-    BEQ NSSTRINGL3
+  TFR   X,D
+  SUBD  <TMPPTR
+  TFR   B,A
+  RTS
 
-    LEAY 1, Y
+; *x += pwr
+N2STRING_add
+  LDB   #4
+  CLRA        ; C=0
+N2STRING_add1
+  LDA   B,U
+  ADCA  B,X
+  DAA
+  STA   B,X
+  DECB
+  BPL   N2STRING_add1
+  RTS
 
-NSSTRINGL2
-    LDB , X
-    ADDB #$30
-    STB , X
-    LEAX 1, X
-
-NSSTRINGL3
-    LEAU 2, U
-    CMPU #N2STRINGMASKE
-    BLE N2STRINGL1
-
-    TFR X, D
-    SUBD #RESBUFFER
-
-    CMPB #0
-    BNE NSSTRINGL3B
-
-    PSHS B
-    LDB , X
-    ADDB #$30
-    STB , X
-    PULS B
-    
-    INCB
-NSSTRINGL3B
-    STB <MATHPTR5
-
-    LDY <TMPPTR
-    LDX #RESBUFFER
-
-    LDA <MATHPTR4
-    ANDA #$80
-    BEQ NSSTRINGA
-
-    LDA #'-'
-    STA , Y
-    LEAY 1, Y
-    INC <MATHPTR5
-
-NSSTRINGA
-    DECB
-NSSTRINGL4
-    LDA B,X
-    STA B,Y
-    DECB
-    CMPB #$FF
-    BNE NSSTRINGL4
-    RTS
-
-N2STRINGMASK
-    fdb 10000
-    fdb 1000
-    fdb 100
-    fdb 10
-N2STRINGMASKE
-    fdb 1
-
-RESBUFFER  rzb    10
+; 2^32 is 10 digits long, so 5 BCD bytes are enough
+N2STRING_bcd
+  rzb 5       ; converted number in BCD
+N2STRING_pwr
+  rzb 5       ; powers of 2 in BCD
