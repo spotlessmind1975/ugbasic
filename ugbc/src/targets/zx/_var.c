@@ -67,7 +67,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     outline1("%s: defs 4", variable->realName);
                     break;
                 case VT_STRING:
-                    outline3("%s: db %d,\"%s\"", variable->realName, (int)strlen(variable->valueString), variable->valueString );
+                    outline3("%s: db %d,\"%s\"", variable->realName, (int)strlen(variable->valueString), escape_newlines( variable->valueString ) );
                     break;
                 case VT_DSTRING:
                     outline1("%s: db 0", variable->realName);

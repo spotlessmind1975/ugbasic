@@ -72,7 +72,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     printf("%s", variable->realName);
                     exit(EXIT_FAILURE);
                 }
-                outline3("%s: .byte %d,\"%s\"", variable->realName, (int)strlen(variable->valueString), variable->valueString );
+                outline3("%s: .byte %d,\"%s\"", variable->realName, (int)strlen(variable->valueString), escape_newlines( variable->valueString ) );
                 break;
             case VT_DSTRING:
                 outline1("%s: .res 1", variable->realName);

@@ -87,7 +87,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     if ( variable->memoryArea ) {
                         outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline3("%s: .byte %d,\"%s\"", variable->realName, (int)strlen(variable->valueString), variable->valueString );
+                        outline3("%s: .byte %d,\"%s\"", variable->realName, (int)strlen(variable->valueString), escape_newlines( variable->valueString ) );
                     }
                     break;
                 case VT_DSTRING:

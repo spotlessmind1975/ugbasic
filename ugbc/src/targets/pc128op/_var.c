@@ -93,7 +93,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     } else {
                         outhead2("%s fcb %d", variable->realName, (int)strlen(variable->valueString) );
                         if ( strlen( variable->valueString ) > 0 ) {
-                            outhead1("   fcc \"%s\"", variable->valueString );
+                            outhead1("   fcc \"%s\"", escape_newlines( variable->valueString ) );
                         } 
                     }   
                     break;
