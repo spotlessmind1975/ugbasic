@@ -2010,9 +2010,11 @@ void                    offsetting_size_count( Environment * _environment, int _
 void                    on_gosub( Environment * _environment, char * _expression );
 void                    on_gosub_end( Environment * _environment );
 void                    on_gosub_index( Environment * _environment, char * _label );
+void                    on_gosub_number( Environment * _environment, int _number );
 void                    on_goto( Environment * _environment, char * _expression );
 void                    on_goto_end( Environment * _environment );
 void                    on_goto_index( Environment * _environment, char * _label );
+void                    on_goto_number( Environment * _environment, int _number );
 void                    on_proc( Environment * _environment, char * _expression );
 void                    on_proc_end( Environment * _environment );
 void                    on_proc_index( Environment * _environment, char * _label );

@@ -2823,8 +2823,16 @@ on_goto_definition:
           on_goto_index( _environment, $1 );
           on_goto_end( _environment );
       }
+    |
+      Integer {
+          on_goto_number( _environment, $1 );
+          on_goto_end( _environment );
+      }
     | Identifier {
         on_goto_index( _environment, $1 );
+    } OP_COMMA on_goto_definition
+    | Integer {
+        on_goto_number( _environment, $1 );
     } OP_COMMA on_goto_definition;
 
 on_gosub_definition:
@@ -2832,8 +2840,15 @@ on_gosub_definition:
           on_gosub_index( _environment, $1 );
           on_gosub_end( _environment );
       }
+    | Integer {
+          on_gosub_number( _environment, $1 );
+          on_gosub_end( _environment );
+      }
     | Identifier {
           on_gosub_index( _environment, $1 );
+    } OP_COMMA on_gosub_definition
+    | Integer {
+          on_gosub_number( _environment, $1 );
     } OP_COMMA on_gosub_definition;
 
 on_proc_definition:

@@ -98,9 +98,6 @@ void goto_label( Environment * _environment, char * _label ) {
 </usermanual> */
 void goto_number( Environment * _environment, int _number ) {
 
-   
-    
-
     char label[MAX_TEMPORARY_STORAGE]; sprintf( label, "_linenumber%d", _number );
 
     cpu_jump( _environment, label );
