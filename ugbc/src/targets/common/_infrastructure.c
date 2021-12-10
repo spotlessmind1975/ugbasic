@@ -40,11 +40,7 @@
  * CODE SECTION 
  ****************************************************************************/
 
-#ifdef _WIN32
-    #define strcmp_nocase stricase
-#else
-    #define strcmp_nocase strcasecmp
-#endif
+#define strcmp_nocase strcasecmp
 
 extern RGBi SYSTEM_PALETTE[];
 
