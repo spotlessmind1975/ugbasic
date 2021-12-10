@@ -873,6 +873,7 @@ void c6847_text( Environment * _environment, char * _text, char * _text_size, ch
 
     deploy( c6847vars, src_hw_6847_vars_asm);
     deploy( vScrollText, src_hw_6847_vscroll_text_asm );
+    deploy( cls, src_hw_6847_cls_asm );
     deploy( textEncodedAt, src_hw_6847_text_at_asm );
 
     outline1("LDY %s", _text);

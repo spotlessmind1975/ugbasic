@@ -613,6 +613,7 @@ void ef936x_text( Environment * _environment, char * _text, char * _text_size, c
 
     deploy( ef936xvars, src_hw_ef936x_vars_asm);
     deploy( vScrollText, src_hw_ef936x_vscroll_text_asm );
+    deploy( cls, src_hw_ef936x_cls_asm );
     deploy( textEncodedAt, src_hw_ef936x_text_at_asm );
 
     outline1("LDY %s", _text);

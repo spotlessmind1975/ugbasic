@@ -648,6 +648,7 @@ void vic1_text( Environment * _environment, char * _text, char * _text_size, cha
 
     deploy( vic1vars, src_hw_vic1_vars_asm);
     deploy( vScrollText, src_hw_vic1_vscroll_text_asm );
+    deploy( cls, src_hw_vic1_cls_asm );
     deploy( textEncodedAt, src_hw_vic1_text_at_asm );
 
     outline1("LDA %s", _text);

@@ -711,6 +711,7 @@ void ted_text( Environment * _environment, char * _text, char * _text_size, char
 
     deploy( tedvars, src_hw_ted_vars_asm );
     deploy( vScrollText, src_hw_ted_vscroll_text_asm );
+    deploy( cls, src_hw_ted_cls_asm );
     deploy( textEncodedAt, src_hw_ted_text_at_asm );
 
     outline1("LDA %s", _text);

@@ -1245,6 +1245,7 @@ void gtia_text( Environment * _environment, char * _text, char * _text_size, cha
 
     deploy( gtiavars, src_hw_gtia_vars_asm );
     deploy( vScrollText, src_hw_gtia_vscroll_text_asm );
+    deploy( cls, src_hw_gtia_cls_asm );
     deploy( textEncodedAt, src_hw_gtia_text_at_asm );
 
     outline1("LDA %s", _text);
