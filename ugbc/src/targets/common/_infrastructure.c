@@ -34,10 +34,19 @@
 
 #include "../../ugbc.h"
 #include <math.h>
+#include <ctype.h>
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
+
+#ifdef _WIN32
+    #define strcmp_nocase stricase
+#else
+    #define strcmp_nocase strcasecmp
+#endif
+
+extern RGBi SYSTEM_PALETTE[];
 
 /**
  * @brief Description of BANK TYPE, in readable format
@@ -916,23 +925,86 @@ Variable * variable_store( Environment * _environment, char * _destination, unsi
     return destination;
 }
 
+#define UNESCAPE_COLOR( c, d ) \
+            else if ( strcmp_nocase( word, c ) == 0 ) { \
+                            *q = 1; \
+                            ++q; \ 
+                            *q = COLOR_##d; \
+                            ++q; \
+                            break; \
+                    }
+
 char * unescape_string( Environment * _environment, char * _value ) {
 
-    char * newValue = malloc(strlen( _value ) + 1 );
+    char * newValue = malloc( strlen( _value ) + 1 );
+    
+    memset( newValue, 0, strlen( _value ) + 1 );
 
     char * p = _value, * q = newValue;
     int c = 0;
 
     while( *p ) {
         if ( *p == '{' ) {
-            c = 0;
-            while( *p && *p != '}' ) {
-                c = 10 * c + ( *p - '0' );
-                ++p;
-            }
-            *q = c;
-            ++q;
             ++p;
+            if ( isdigit(*p) ) {
+                c = 0;
+                while( *p && *p != '}' ) {
+                    c = 10 * c + ( *p - '0' );
+                    ++p;
+                }
+                *q = c;
+                ++q;
+                ++p;
+            } else {
+                char * p2 = strchr(p+1, '}' );
+                if ( p2 ) {
+                    char word[MAX_TEMPORARY_STORAGE];
+                    memset( word, 0, MAX_TEMPORARY_STORAGE );
+                    memcpy( word, p, p2-p );
+                    p = p2+1;
+                    if ( strcmp_nocase( word, "clear" ) == 0 ) {
+                        *q = 5;
+                        ++q;
+                    } 
+                    UNESCAPE_COLOR( "black", BLACK )
+                    UNESCAPE_COLOR( "white", WHITE )
+                    UNESCAPE_COLOR( "red", RED )
+                    UNESCAPE_COLOR( "cyan", CYAN )
+                    UNESCAPE_COLOR( "violet", VIOLET )
+                    UNESCAPE_COLOR( "green", GREEN )
+                    UNESCAPE_COLOR( "blue", BLUE )
+                    UNESCAPE_COLOR( "yellow", YELLOW )
+                    UNESCAPE_COLOR( "orange", ORANGE )
+                    UNESCAPE_COLOR( "brown", BROWN )
+                    UNESCAPE_COLOR( "lt red", LIGHT_RED )
+                    UNESCAPE_COLOR( "light red", LIGHT_RED )
+                    UNESCAPE_COLOR( "dk grey", DARK_GREY )
+                    UNESCAPE_COLOR( "dark grey", DARK_GREY )
+                    UNESCAPE_COLOR( "grey", GREY )
+                    UNESCAPE_COLOR( "lt green", LIGHT_GREEN )
+                    UNESCAPE_COLOR( "light green", LIGHT_GREEN )
+                    UNESCAPE_COLOR( "lt blue", LIGHT_BLUE )
+                    UNESCAPE_COLOR( "light blue", LIGHT_BLUE )
+                    UNESCAPE_COLOR( "lt grey", LIGHT_GREY )
+                    UNESCAPE_COLOR( "light grey", LIGHT_GREY )
+                    UNESCAPE_COLOR( "dk blue", DARK_BLUE )
+                    UNESCAPE_COLOR( "dark blue", DARK_BLUE )
+                    UNESCAPE_COLOR( "magenta", MAGENTA )
+                    UNESCAPE_COLOR( "purple", PURPLE )
+                    UNESCAPE_COLOR( "lavender", LAVENDER )
+                    UNESCAPE_COLOR( "gold", GOLD )
+                    UNESCAPE_COLOR( "turquoise", TURQUOISE )
+                    UNESCAPE_COLOR( "tan", TAN )
+                    UNESCAPE_COLOR( "yellow green", YELLOW_GREEN )
+                    UNESCAPE_COLOR( "olive green", OLIVE_GREEN )
+                    UNESCAPE_COLOR( "pink", PINK )
+                    UNESCAPE_COLOR( "peach", PEACH )
+                } else {
+                    *q = *p;
+                    ++p;
+                    ++q;
+                }
+            }
         } else {
             *q = *p;
             ++q;
@@ -5194,6 +5266,26 @@ char * escape_newlines( char * _string ) {
             *q = '1';
             ++q;
             *q = '3';
+            ++q;
+            *q = ',';
+            ++q;
+            *q = '"';
+            ++q;
+            ++p;
+        } else if ( *p < 31 ) {
+            if ( (q-result) > 2 && ( *(q-1) == '"') && ( *(q-2) == ',') ) {
+                --q;
+            } else {
+                *q = '"';
+                ++q;
+                *q = ',';
+                ++q;
+            }
+            *q = '$';
+            ++q;
+            *q = ( ( (*p & 0xf0) >> 4 ) < 10 ) ? ( ( (*p & 0xf0) >> 4 ) + '0' ) : ( ( ( (*p & 0xf0) >> 4 ) - 10 ) + 'a' );
+            ++q;
+            *q = ( ( (*p & 0x0f) ) < 10 ) ? ( ( (*p & 0x0f) ) + '0' ) : ( ( ( (*p & 0x0f) ) - 10 ) + 'a' );
             ++q;
             *q = ',';
             ++q;
