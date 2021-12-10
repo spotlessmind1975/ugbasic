@@ -657,6 +657,7 @@ Wrt { return(WRITING); }
 WORD { return (WORD); }
 Wo { return (WORD); }
 X { return (X); }
+XGR { return (XGR); }
 XGRAPHIC { return (XGRAPHIC); }
 Xg { return (XGRAPHIC); }
 XY { return (XY); }
@@ -669,6 +670,7 @@ Xt { return (XTEXT); }
 XPEN { return (XPEN); }
 Xp { return (XPEN); }
 Y { return (Y); }
+YGR { return (YGR); }
 YGRAPHIC { return (YGRAPHIC); }
 Yg { return (YGRAPHIC); }
 YX { return (YX); }
