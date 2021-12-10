@@ -11,9 +11,9 @@ REM
 
     CLS
     PRINT "OK!"
-    DIM TST$(1)
-    TST$(0)="tst"
+    DIM tst$(1)
+    tst$(0)="tst"
     NOP
     ' PEN 2
-    PRINT TST$(0)
+    PRINT tst$(0)
     HALT
