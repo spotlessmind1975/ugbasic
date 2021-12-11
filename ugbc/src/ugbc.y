@@ -1237,6 +1237,7 @@ exponential:
     | OP_MINUS Identifier {
         Variable * expr = variable_retrieve_or_define( _environment, $2, VT_SWORD, 0 ); 
         Variable * zero = variable_temporary( _environment, expr->type, "(zero)" ); 
+        variable_store( _environment, zero->name, 0 );
         $$ = variable_sub( _environment, zero->name, expr->name )->name;
       }
     | String { 
@@ -1525,6 +1526,7 @@ exponential:
     | OP_MINUS OP expr CP {
         Variable * expr = variable_retrieve( _environment, $3 );
         Variable * zero = variable_temporary( _environment, VT_SIGN( expr->type ), "(zero)" );
+        variable_store( _environment, zero->name, 0 );
         $$ = variable_sub( _environment, zero->name, expr->name )->name;
     }
     | FREE {
