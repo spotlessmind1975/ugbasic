@@ -67,7 +67,17 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     outline1("%s: defs 4", variable->realName);
                     break;
                 case VT_STRING:
-                    outline3("%s: db %d,\"%s\"", variable->realName, (int)strlen(variable->valueString), escape_newlines( variable->valueString ) );
+                    if ( variable->printable ) {
+                        int c = strlen( variable->valueString );
+                        out2("%s: db %d,", variable->realName, c);
+                        int i=0;
+                        for (i=0; i<(c-1); ++i ) {
+                            out1("$%2.2x,", (unsigned char)variable->valueString[i]);
+                        }
+                        outline1("$%2.2x", variable->valueString[(c-1)]);                        
+                    } else {
+                        outline3("%s: db %d,\"%s\"", variable->realName, (int)strlen(variable->valueString), escape_newlines( variable->valueString ) );
+                    }
                     break;
                 case VT_DSTRING:
                     outline1("%s: db 0", variable->realName);

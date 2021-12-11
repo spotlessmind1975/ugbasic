@@ -70,7 +70,7 @@ caricato.
 
 @target all
 </usermanual> */
-void print_buffer( Environment * _environment, char * _value, int _new_line ) {
+void print_buffer( Environment * _environment, char * _value, int _new_line, int _printable ) {
 
     MAKE_LABEL
 
@@ -83,7 +83,7 @@ void print_buffer( Environment * _environment, char * _value, int _new_line ) {
         CRITICAL_PRINT_BUFFER_ON_A_NOT_BUFFER( _value );
     }
 
-    value->printable = 1;
+    value->printable = _printable;
 
     char sourceAddress[MAX_TEMPORARY_STORAGE]; 
 

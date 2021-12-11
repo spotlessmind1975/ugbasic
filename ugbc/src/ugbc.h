@@ -2039,7 +2039,7 @@ void                    pop( Environment * _environment );
 Variable *              powering( Environment * _environment, char * _source, char * _dest );
 TileDescriptors *       precalculate_tile_descriptors_for_font( char * _fontData );
 void                    print( Environment * _environment, char * _text, int _new_line );
-void                    print_buffer( Environment * _environment, char * _buffer, int _new_line );
+void                    print_buffer( Environment * _environment, char * _buffer, int _new_line, int _printable );
 void                    print_newline( Environment * _environment );
 void                    print_question_mark( Environment * _environment );
 void                    print_tab( Environment * _environment, int _new_line );

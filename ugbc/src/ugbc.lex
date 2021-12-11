@@ -548,6 +548,7 @@ RANDOMIZE { RETURN(RANDOMIZE,1); }
 Rdm { RETURN(RANDOMIZE,1); }
 RASTER { RETURN(RASTER,1); }
 Rst { RETURN(RASTER,1); }
+RAW { RETURN(RAW,1); }
 RED { RETURN(RED,1); }
 Re { RETURN(RED,1); }
 REMEMBER { RETURN(REMEMBER,1); }
@@ -753,6 +754,7 @@ ZX { RETURN(ZX,1); }
 "'"[^\n\r]* { RETURN(Remark,1);  }
 
 \"(\\.|[^"\\])*\" { yylval.string = strdup(yytext); memcpy(yylval.string,yylval.string+1,strlen(yylval.string)); yylval.string[strlen(yylval.string)-1]=0; RETURN(String,1);  }
+#\"(\\.|[^"\\])*\" { yylval.string = strdup(yytext); memcpy(yylval.string,yylval.string+2,strlen(yylval.string)); yylval.string[strlen(yylval.string)-2]=0; RETURN(RawString,1);  }
 \$[a-fA-F0-9]+ { yylval.integer = strtol(yytext+1,0,16); RETURN(Integer,1); }
 &[Hh][a-fA-F0-9]+ { yylval.integer = strtol(yytext+2,0,16); RETURN(Integer,1); }
 0x[a-fA-F0-9]+ { yylval.integer = strtol(yytext+2,0,16); RETURN(Integer,1); }

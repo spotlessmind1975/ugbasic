@@ -87,7 +87,17 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     if ( variable->memoryArea ) {
                         outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline3("%s: .byte %d,\"%s\"", variable->realName, (int)strlen(variable->valueString), escape_newlines( variable->valueString ) );
+                        if ( variable->printable ) {
+                            int c = strlen(variable->valueString);
+                            out1("%s: .byte %d,", variable->realName, c);
+                            int i=0;
+                            for (i=0; i<(c-1); ++i ) {
+                                out1("$%2.2x,", (unsigned char)variable->valueString[i]);
+                            }
+                            outline1("$%2.2x", variable->valueString[(c-1)]);                        
+                        } else {
+                            outline3("%s: .byte %d,\"%s\"", variable->realName, (int)strlen(variable->valueString), escape_newlines( variable->valueString ) );
+                        }
                     }
                     break;
                 case VT_DSTRING:

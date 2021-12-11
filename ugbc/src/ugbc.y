@@ -59,7 +59,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token SQR TI CONST VBL POKE NOP FILL IN POSITIVE DEFINE ATARI ATARIXL C64 DRAGON DRAGON32 DRAGON64 PLUS4 ZX 
 %token FONT VIC20 PARALLEL YIELD SPAWN THREAD TASK IMAGES FRAME FRAMES XY YX ROLL MASKED USING TRANSPARENCY
 %token OVERLAYED CASE ENDSELECT OGP CGP ARRAY NEW GET DISTANCE TYPE MUL DIV RGB SHADES HEX PALETTE
-%token BAR XGRAPHIC YGRAPHIC XTEXT YTEXT COLUMNS XGR YGR CHAR
+%token BAR XGRAPHIC YGRAPHIC XTEXT YTEXT COLUMNS XGR YGR CHAR RAW
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -72,6 +72,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token <string> String
 %token <integer> Integer
 %token <string> BufferDefinition
+%token <string> RawString
 
 %type <string> expr term modula factor exponential expr_math
 %type <integer> const_expr const_term const_modula const_factor const_expr_math
@@ -110,6 +111,9 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 
 const_expr_string :
     String {
+        $$ = $1;
+    }
+    | RawString {
         $$ = $1;
     }
     | IF OP const_expr OP_COMMA const_expr_string OP_COMMA const_expr_string CP {
@@ -1243,6 +1247,12 @@ exponential:
     | String { 
         $$ = variable_temporary( _environment, VT_STRING, "(string value)" )->name;
         variable_store_string( _environment, $$, $1 );
+      }
+    | RawString { 
+        Variable * variable = variable_temporary( _environment, VT_STRING, "(string value)" );
+        variable_store_string( _environment, variable->name, $1 );
+        variable->printable = 1;
+        $$ = variable->name;
       }
     | OP BYTE CP Integer { 
         $$ = variable_temporary( _environment, VT_BYTE, "(BYTE value)" )->name;
@@ -3285,7 +3295,15 @@ parameters_expr :
           ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
           ++((struct _Environment *)_environment)->parameters;
     }
+    | RawString {
+          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
+          ++((struct _Environment *)_environment)->parameters;
+    }
     | String OP_COMMA parameters_expr {
+          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
+          ++((struct _Environment *)_environment)->parameters;
+    }
+    | RawString OP_COMMA parameters_expr {
           ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
           ++((struct _Environment *)_environment)->parameters;
     }
@@ -3304,22 +3322,42 @@ values :
 
 print_buffer_definition :
     expr {
-        print_buffer( _environment, $1, 1 );
+        print_buffer( _environment, $1, 1, 1 );
     }
   | expr OP_COMMA {
-        print_buffer( _environment, $1, 0 );
+        print_buffer( _environment, $1, 0, 1 );
         print_tab( _environment, 0 );
   }
   | expr OP_SEMICOLON {
-        print_buffer( _environment, $1, 0 );
+        print_buffer( _environment, $1, 0, 1 );
   }
   | expr OP_COMMA {
-        print_buffer( _environment, $1, 0 );
+        print_buffer( _environment, $1, 0, 1 );
         print_tab( _environment, 0 );
   }  print_buffer_definition
   | expr OP_SEMICOLON  {
-        print_buffer( _environment, $1, 0 );
+        print_buffer( _environment, $1, 0, 0 );
   } print_buffer_definition
+  ;
+
+print_buffer_raw_definition :
+    expr {
+        print_buffer( _environment, $1, 1, 0 );
+    }
+  | expr OP_COMMA {
+        print_buffer( _environment, $1, 0, 0 );
+        print_tab( _environment, 0 );
+  }
+  | expr OP_SEMICOLON {
+        print_buffer( _environment, $1, 0, 0 );
+  }
+  | expr OP_COMMA {
+        print_buffer( _environment, $1, 0, 0 );
+        print_tab( _environment, 0 );
+  }  print_buffer_raw_definition
+  | expr OP_SEMICOLON  {
+        print_buffer( _environment, $1, 0, 0 );
+  } print_buffer_raw_definition
   ;
 
 print_definition :
@@ -3510,6 +3548,53 @@ input_definition :
         input( _environment, var->name );
     }  input_definition2
     | input_definition2
+    | RawString OP_SEMICOLON Identifier {
+        Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
+        variable_store_string( _environment, string->name, $1 );
+        string->printable = 1;
+        print( _environment, string->name, 0 );
+        input( _environment, $3 );
+        print_newline( _environment );
+    }
+    | RawString OP_SEMICOLON Identifier OP_DOLLAR {
+        Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
+        variable_store_string( _environment, string->name, $1 );
+        string->printable = 1;
+        print( _environment, string->name, 0 );
+        Variable * var = variable_retrieve_or_define( _environment, $3, VT_DSTRING, 0 );
+        input( _environment, var->name );
+        print_newline( _environment );
+    }
+    | RawString OP_SEMICOLON Identifier OP_SEMICOLON {
+        Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
+        variable_store_string( _environment, string->name, $1 );
+        string->printable = 1;
+        print( _environment, string->name, 0 );
+        input( _environment, $3 );
+    }
+    | RawString OP_SEMICOLON Identifier OP_DOLLAR OP_SEMICOLON {
+        Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
+        variable_store_string( _environment, string->name, $1 );
+        string->printable = 1;
+        print( _environment, string->name, 0 );
+        Variable * var = variable_retrieve_or_define( _environment, $3, VT_DSTRING, 0 );
+        input( _environment, var->name );
+    }
+    | RawString OP_SEMICOLON Identifier OP_SEMICOLON {
+        Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
+        variable_store_string( _environment, string->name, $1 );
+        string->printable = 1;
+        print( _environment, string->name, 0 );
+        input( _environment, $3 );
+    }  input_definition2
+    | RawString OP_SEMICOLON Identifier OP_DOLLAR OP_SEMICOLON {
+        Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
+        variable_store_string( _environment, string->name, $1 );
+        string->printable = 1;
+        print( _environment, string->name, 0 );
+        Variable * var = variable_retrieve_or_define( _environment, $3, VT_DSTRING, 0 );
+        input( _environment, var->name );
+    }  input_definition2
   ;
 
 poke_definition : 
@@ -3706,6 +3791,7 @@ statement:
   }
   | PRINT print_definition
   | PRINT BUFFER print_buffer_definition
+  | PRINT BUFFER RAW print_buffer_raw_definition
   | PRINT {
       print_newline( _environment );
   }

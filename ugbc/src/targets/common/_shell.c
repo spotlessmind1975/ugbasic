@@ -92,7 +92,7 @@ void shell_injection( Environment * _environment ) {
 
     print_newline( _environment );
 
-    print_buffer( _environment, source->name, 1 );
+    print_buffer( _environment, source->name, 1, 1 );
 
     print_newline( _environment );
 

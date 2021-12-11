@@ -5312,7 +5312,7 @@ char * escape_newlines( char * _string ) {
             *q = '"';
             ++q;
             ++p;
-        } else if ( *p < 31 || *p > 90 ) {
+        } else if ( *p < 31 ) {
             if ( (q-result) > 2 && ( *(q-1) == '"') && ( *(q-2) == ',') ) {
                 --q;
             } else {

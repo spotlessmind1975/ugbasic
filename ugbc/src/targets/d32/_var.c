@@ -91,10 +91,21 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     if ( variable->memoryArea ) {
                         outhead2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outhead2("%s fcb %d", variable->realName, (int)strlen(variable->valueString) );
-                        if ( strlen( variable->valueString ) > 0 ) {
-                            outhead1("   fcc \"%s\"", escape_newlines( variable->valueString ) );
-                        } 
+                        if ( variable->printable ) {
+                            int c = strlen( variable->valueString);
+                            out1("%s fcb %d,", variable->realName, c );
+                            int i=0;
+                            for (i=0; i<(c-1); ++i ) {
+                                out1("$%2.2x,", (unsigned char)variable->valueString[i]);
+                            }
+                            outline1("$%2.2x", variable->valueString[(c-1)]);                        
+                        } else {
+                            outhead2("%s fcb %d", variable->realName, (int)strlen(variable->valueString) );
+                            if ( strlen( variable->valueString ) > 0 ) {
+                                outhead1("   fcc \"%s\"", escape_newlines( variable->valueString ) );
+                            } 
+                        }
+
                     }   
                     break;
                 case VT_DSTRING:
