@@ -3836,4 +3836,25 @@ void z80_protothread_current( Environment * _environment, char * _current ) {
 
 }
 
+void z80_is_negative( Environment * _environment, char * _value, char * _result ) {
+
+    MAKE_LABEL
+
+    inline( cpu_is_negative )
+
+        outline1("LD A, (%s)", _value);
+        outline0("AND #$80");
+        outline1("JR Z,%s", label);
+        outline0("LD A, #$FF");
+        outline1("LD (%s), A", _result );
+        outline1("JMP %sdone", label);
+        outhead1("%s:", label);
+        outline0("LD A, #$0");
+        outline1("LD (%s), A", _result );
+        outhead1("%sdone:", label);
+
+    no_embedded( cpu_is_negative )
+
+}
+
 #endif
