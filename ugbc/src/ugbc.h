@@ -842,6 +842,7 @@ typedef struct _Embedded {
     int cpu_mobat;
     int cpu_mobrender;
     int cpu_sqroot;
+    int cpu_is_negative;
 
 } Embedded;
 
