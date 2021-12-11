@@ -763,7 +763,7 @@ ZX { RETURN(ZX,1); }
 
 [ \t]+ { yycolno = (yycolno + yyleng); yyposno = (yyposno + yyleng); }
 
-[a-z][a-z][A-Za-z0-9\_]* { yylval.string = strdup(yytext); RETURN(Identifier,1);  }
+[a-z\_][a-z0-9\_][A-Za-z0-9\_]* { yylval.string = strdup(yytext); RETURN(Identifier,1);  }
 [a-z] { yylval.string = strdup(yytext); RETURN(Identifier,1);  }
 
 . { yycolno++; yyposno++; return(yytext[0]); }
