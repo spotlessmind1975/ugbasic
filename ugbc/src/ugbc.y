@@ -1234,6 +1234,11 @@ exponential:
         $$ = variable_temporary( _environment, VT_SWORD, "(negative integer value)" )->name;
         variable_store( _environment, $$, -$2 );
       }
+    | OP_MINUS Identifier {
+        Variable * expr = variable_retrieve_or_define( _environment, $2, VT_SWORD, 0 ); 
+        Variable * zero = variable_temporary( _environment, expr->type, "(zero)" ); 
+        $$ = variable_sub( _environment, zero->name, expr->name )->name;
+      }
     | String { 
         $$ = variable_temporary( _environment, VT_STRING, "(string value)" )->name;
         variable_store_string( _environment, $$, $1 );
