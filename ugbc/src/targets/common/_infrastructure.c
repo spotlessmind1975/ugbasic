@@ -1151,6 +1151,11 @@ Variable * variable_store_array( Environment * _environment, char * _destination
 Variable * variable_move( Environment * _environment, char * _source, char * _destination ) {
 
     Variable * source = variable_retrieve( _environment, _source );
+    Variable * sign = variable_temporary( _environment, VT_BYTE, "(sign)" );
+
+    if ( ! VT_SIGNED( source->type ) ) {
+        variable_store( _environment, sign->name, 0 );
+    }
 
     Variable * target = variable_retrieve( _environment, _destination );
 
@@ -1189,17 +1194,27 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
         case 16:
             switch( VT_BITWIDTH( target->type ) ) {
                 case 32:
+                    if ( VT_SIGNED( source->type ) ) {
+                        cpu_is_negative( _environment, source->realName, sign->realName );
+                    }
                     #ifdef CPU_BIG_ENDIAN
                         {
-                            cpu_store_16bit( _environment, target->realName, 0 );
-                            char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s+2", target->realName );
+                            char targetRealName[MAX_TEMPORARY_STORAGE];
+                            sprintf( targetRealName, "%s", target->realName );
+                            cpu_move_8bit( _environment, sign->realName, targetRealName );
+                            sprintf( targetRealName, "%s+1", target->realName );
+                            cpu_move_8bit( _environment, sign->realName, targetRealName );
+                            sprintf( targetRealName, "%s+2", target->realName );
                             cpu_move_16bit( _environment, source->realName, targetRealName );
                         }
                     #else
                         {
-                            char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s+2", target->realName );
+                            char targetRealName[MAX_TEMPORARY_STORAGE];
+                            sprintf( targetRealName, "%s+3", target->realName );
+                            cpu_move_8bit( _environment, sign->realName, targetRealName );
+                            sprintf( targetRealName, "%s+2", target->realName );
+                            cpu_move_8bit( _environment, sign->realName, targetRealName );
                             cpu_move_16bit( _environment, source->realName, target->realName );
-                            cpu_store_16bit( _environment, targetRealName, 0 );
                         }
                     #endif
                     break;
@@ -1224,25 +1239,55 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
         case 8:
             switch( VT_BITWIDTH( target->type ) ) {
                 case 32:
-                    cpu_store_32bit( _environment, target->realName, 0 );
+                    if ( VT_SIGNED( source->type ) ) {
+                        cpu_is_negative( _environment, source->realName, sign->realName );
+                    }
                     #ifdef CPU_BIG_ENDIAN
                         {
-                            char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s+3", target->realName );
+                            char targetRealName[MAX_TEMPORARY_STORAGE];
+                            sprintf( targetRealName, "%s+3", target->realName );
                             cpu_move_8bit( _environment, source->realName, targetRealName );
+                            sprintf( targetRealName, "%s+2", target->realName );
+                            cpu_move_8bit( _environment, sign->realName, targetRealName );
+                            sprintf( targetRealName, "%s+1", target->realName );
+                            cpu_move_8bit( _environment, sign->realName, targetRealName );
+                            sprintf( targetRealName, "%s", target->realName );
+                            cpu_move_8bit( _environment, sign->realName, targetRealName );
                         }
                     #else
-                        cpu_move_8bit( _environment, source->realName, target->realName );
+                        {
+                            char targetRealName[MAX_TEMPORARY_STORAGE];
+                            sprintf( targetRealName, "%s", target->realName );
+                            cpu_move_8bit( _environment, source->realName, targetRealName );
+                            sprintf( targetRealName, "%s+1", target->realName );
+                            cpu_move_8bit( _environment, sign->realName, targetRealName );
+                            sprintf( targetRealName, "%s+2", target->realName );
+                            cpu_move_8bit( _environment, sign->realName, targetRealName );
+                            sprintf( targetRealName, "%s+3", target->realName );
+                            cpu_move_8bit( _environment, sign->realName, targetRealName );
+                        }
                     #endif
                     break;
                 case 16:
-                    cpu_store_16bit( _environment, target->realName, 0 );
+                    if ( VT_SIGNED( source->type ) ) {
+                        cpu_is_negative( _environment, source->realName, sign->realName );
+                    }
                     #ifdef CPU_BIG_ENDIAN
                         {
-                            char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s+1", target->realName );
+                            char targetRealName[MAX_TEMPORARY_STORAGE];
+                            sprintf( targetRealName, "%s+1", target->realName );
                             cpu_move_8bit( _environment, source->realName, targetRealName );
+                            sprintf( targetRealName, "%s", target->realName );
+                            cpu_move_8bit( _environment, sign->realName, targetRealName );
                         }
                     #else
-                        cpu_move_8bit( _environment, source->realName, target->realName );
+                        {
+                            char targetRealName[MAX_TEMPORARY_STORAGE];
+                            sprintf( targetRealName, "%s", target->realName );
+                            cpu_move_8bit( _environment, source->realName, targetRealName );
+                            sprintf( targetRealName, "%s+1", target->realName );
+                            cpu_move_8bit( _environment, sign->realName, targetRealName );
+                        }
                     #endif
                     break;
                 case 8:
