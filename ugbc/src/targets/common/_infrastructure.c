@@ -1886,7 +1886,7 @@ Variable * variable_compare( Environment * _environment, char * _source, char * 
 
     MAKE_LABEL
 
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of compare)" );
+    Variable * result = variable_temporary( _environment, VT_SBYTE, "(result of compare)" );
     switch( VT_BITWIDTH( source->type ) ) {
         case 32:
             switch( VT_BITWIDTH( target->type ) ) {
@@ -2364,7 +2364,7 @@ Variable * variable_less_than( Environment * _environment, char * _source, char 
         target = variable_cast( _environment, _destination, source->type );
     }
 
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of compare)" );
+    Variable * result = variable_temporary( _environment, VT_SBYTE, "(result of compare)" );
     switch( VT_BITWIDTH( source->type ) ) {
         case 32:
             switch( VT_BITWIDTH( target->type ) ) {
@@ -2579,7 +2579,7 @@ Variable * variable_greater_than( Environment * _environment, char * _source, ch
         target = variable_cast( _environment, _destination, source->type );
     }
 
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of compare)" );
+    Variable * result = variable_temporary( _environment, VT_SBYTE, "(result of compare)" );
     switch( VT_BITWIDTH( source->type ) ) {
         case 32:
             switch( VT_BITWIDTH( target->type) ) {
@@ -3122,7 +3122,7 @@ Variable * variable_string_mid( Environment * _environment, char * _string, char
             Variable * size = variable_temporary( _environment, VT_BYTE, "(result of mid)" );
             Variable * address2 = variable_temporary( _environment, VT_ADDRESS, "(result of mid)" );
             Variable * size2 = variable_temporary( _environment, VT_BYTE, "(result of mid)" );
-            cpu_dsdescriptor( _environment, result->realName, address->realName, size->realName );
+            cpu_dsdescriptor( _environment, string->realName, address->realName, size->realName );
             cpu_math_add_16bit_with_8bit( _environment, address->realName, position->realName, address->realName );
             cpu_dec_16bit( _environment, address->realName );
             if ( _len ) {
