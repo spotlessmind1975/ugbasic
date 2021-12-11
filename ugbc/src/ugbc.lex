@@ -752,8 +752,6 @@ ZX { RETURN(ZX,1); }
 "REM"[^\n\r]* { RETURN(Remark,1);  }
 "'"[^\n\r]* { RETURN(Remark,1);  }
 
-[a-z] { yylval.string = strdup(yytext); RETURN(Identifier,1);  }
-[a-z][^OI$][A-Za-z0-9\_]* { yylval.string = strdup(yytext); RETURN(Identifier,1);  }
 \"(\\.|[^"\\])*\" { yylval.string = strdup(yytext); memcpy(yylval.string,yylval.string+1,strlen(yylval.string)); yylval.string[strlen(yylval.string)-1]=0; RETURN(String,1);  }
 \$[a-fA-F0-9]+ { yylval.integer = strtol(yytext+1,0,16); RETURN(Integer,1); }
 &[Hh][a-fA-F0-9]+ { yylval.integer = strtol(yytext+2,0,16); RETURN(Integer,1); }
@@ -764,6 +762,11 @@ ZX { RETURN(ZX,1); }
 [0-9]+ { yylval.integer = atoi(yytext); RETURN(Integer,1);  }
 
 [ \t]+ { yycolno = (yycolno + yyleng); yyposno = (yyposno + yyleng); }
+
+[a-z][a-z][A-Za-z0-9\_]* { yylval.string = strdup(yytext); RETURN(Identifier,1);  }
+[a-z] { yylval.string = strdup(yytext); RETURN(Identifier,1);  }
+
 . { yycolno++; yyposno++; return(yytext[0]); }
+
 
 %%
