@@ -700,7 +700,7 @@ Z { RETURN(Z,1); }
 ZX { RETURN(ZX,1); }
 
 "REM"[^\n\r]* { RETURN(Remark,1);  }
-"' "[^\n\r]* { RETURN(Remark,1);  }
+"'"[^\n\r]* { RETURN(Remark,1);  }
 
 [a-z][A-Za-z0-9\_]* { yylval.string = strdup(yytext); RETURN(Identifier,1);  }
 \"(\\.|[^"\\])*\" { yylval.string = strdup(yytext); memcpy(yylval.string,yylval.string+1,strlen(yylval.string)); yylval.string[strlen(yylval.string)-1]=0; RETURN(String,1);  }
