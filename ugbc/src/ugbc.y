@@ -3786,6 +3786,11 @@ statement:
   | IF expr THEN {
       if_then( _environment, $2 );  
   }
+  | IF expr THEN Integer {
+      if_then( _environment, $2 );
+      goto_number( _environment, $4 );
+      end_if_then( _environment );  
+  }
   | ELSE {
       else_if_then_label( _environment );  
       else_if_then( _environment, NULL );  
