@@ -2439,7 +2439,7 @@ void cpu6502_less_than_32bit( Environment * _environment, char *_source, char *_
                 outline1("BEQ %smi", label );
             }
             outhead1("%spl:", label );
-            outline0("LDA #0" );
+            outline0("LDA #$FF" );
             if ( _other ) {
                 outline1("STA %s", _other);
             } else {
@@ -2447,7 +2447,7 @@ void cpu6502_less_than_32bit( Environment * _environment, char *_source, char *_
             }
             outline1("JMP %sen", label );
             outhead1("%smi:", label );
-            outline0("LDA #$ff" );
+            outline0("LDA #$00" );
             if ( _other ) {
                 outline1("STA %s", _other);
             } else {
