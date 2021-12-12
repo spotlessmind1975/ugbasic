@@ -958,6 +958,8 @@ char * unescape_string( Environment * _environment, char * _value ) {
                     memset( word, 0, MAX_TEMPORARY_STORAGE );
                     memcpy( word, p, p2-p );
                     p = p2+1;
+                    // printf( "checking '%s'\n", word );
+
                     if ( strcmp_nocase( word, "clear" ) == 0 ) {
                         *q = 5;
                         ++q;
@@ -976,13 +978,18 @@ char * unescape_string( Environment * _environment, char * _value ) {
                     UNESCAPE_COLOR( "light red", LIGHT_RED )
                     UNESCAPE_COLOR( "dk grey", DARK_GREY )
                     UNESCAPE_COLOR( "dark grey", DARK_GREY )
+                    UNESCAPE_COLOR( "dk gray", DARK_GREY )
+                    UNESCAPE_COLOR( "dark gray", DARK_GREY )
                     UNESCAPE_COLOR( "grey", GREY )
+                    UNESCAPE_COLOR( "gray", GREY )
                     UNESCAPE_COLOR( "lt green", LIGHT_GREEN )
                     UNESCAPE_COLOR( "light green", LIGHT_GREEN )
                     UNESCAPE_COLOR( "lt blue", LIGHT_BLUE )
                     UNESCAPE_COLOR( "light blue", LIGHT_BLUE )
                     UNESCAPE_COLOR( "lt grey", LIGHT_GREY )
                     UNESCAPE_COLOR( "light grey", LIGHT_GREY )
+                    UNESCAPE_COLOR( "lt gray", LIGHT_GREY )
+                    UNESCAPE_COLOR( "light gray", LIGHT_GREY )
                     UNESCAPE_COLOR( "dk blue", DARK_BLUE )
                     UNESCAPE_COLOR( "dark blue", DARK_BLUE )
                     UNESCAPE_COLOR( "magenta", MAGENTA )
@@ -1007,6 +1014,13 @@ char * unescape_string( Environment * _environment, char * _value ) {
             ++p;
         }
     }
+
+    // printf( "\"%s\" = { ", _value );
+    // int i=0;
+    // for( i=0; i<strlen(newValue); ++i ) {
+    //     printf( "$%2.2x, ", (unsigned char)*(newValue+i) );
+    // }
+    // printf( "}\n" );
 
     return newValue;
 
