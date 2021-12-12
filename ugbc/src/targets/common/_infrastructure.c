@@ -126,10 +126,11 @@ static void variable_reset_pool( Environment * _environment, Variable * _pool ) 
     Variable * actual = _pool;
     while( actual ) {
         if ( actual->locked == 0 ) {
-            if ( actual->used && actual->type == VT_DSTRING ) {
-                cpu_dsfree( _environment, actual->realName );
+            if ( actual->used && actual->type != VT_DSTRING ) {
+                // outline0("; variable reset pool");
+                actual->used = 0;       
+                // cpu_dsfree( _environment, actual->realName );
             }     
-            actual->used = 0;       
         }
         actual = actual->next;
     }
