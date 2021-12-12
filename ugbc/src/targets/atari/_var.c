@@ -79,7 +79,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     for (i=0; i<(c-1); ++i ) {
                         out1("$%2.2x,", (unsigned char)variable->valueString[i]);
                     }
-                    outline1("$%2.2x", variable->valueString[(c-1)]);                        
+                    outline1("$%2.2x", (unsigned char)variable->valueString[(c-1)]);                        
                 } else {
                     outline3("%s: .byte %d,\"%s\"", variable->realName, (int)strlen(variable->valueString), escape_newlines( variable->valueString ) );
                 }
