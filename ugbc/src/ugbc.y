@@ -3800,7 +3800,9 @@ statement:
   }
   | INPUT input_definition
   | QM print_definition
-  | QM
+  | QM {
+      print_newline( _environment );
+  }
   | LOCATE locate_definition
   | GR LOCATE gr_locate_definition
   | MEMORIZE {
