@@ -73,8 +73,8 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     exit(EXIT_FAILURE);
                 }
                 if ( variable->printable ) {
-                    c = strlen( variable->valueString );
-                    out1("%s: .byte %d,", variable->realName, c);
+                    int c = strlen( variable->valueString );
+                    out2("%s: .byte %d,", variable->realName, c);
                     int i=0;
                     for (i=0; i<(c-1); ++i ) {
                         out1("$%2.2x,", (unsigned char)variable->valueString[i]);
