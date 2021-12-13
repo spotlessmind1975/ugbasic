@@ -3140,71 +3140,113 @@ utilizzo di questa funzione è sostituire il numero medio di caratteri.
 Variable * variable_string_mid( Environment * _environment, char * _string, char * _position, char * _len ) {
     Variable * string = variable_retrieve( _environment, _string );
     Variable * position = variable_retrieve_or_define( _environment, _position, VT_BYTE, 0 );
-    Variable * len;
-    if ( _len ) {
-        len = variable_retrieve_or_define( _environment, _len, VT_BYTE, 0 );
-    } else {
-        len = variable_temporary( _environment, VT_BYTE, "(calculated MID len)");
-        variable_store( _environment, len->name, 0 );
-    }
     Variable * result = variable_temporary( _environment, VT_DSTRING, "(result of mid)" );
+    Variable * len;
+    Variable * copyofLen = variable_temporary( _environment, VT_BYTE, "(copy of len)" );
 
+    MAKE_LABEL
+
+    char emptyResultLabel[MAX_TEMPORARY_STORAGE]; sprintf( emptyResultLabel, "%sempty", label );
+
+    cpu_compare_and_branch_8bit_const( _environment, position->realName, 0, emptyResultLabel, 1 );
+    
     switch( string->type ) {
-        case VT_STRING: {            
+        case VT_STRING: {          
+            outline0("; VT_STRING")  ;
             Variable * address = variable_temporary( _environment, VT_ADDRESS, "(result of mid)" );
             Variable * size = variable_temporary( _environment, VT_BYTE, "(result of mid)" );
             Variable * address2 = variable_temporary( _environment, VT_ADDRESS, "(result of mid)" );
             Variable * size2 = variable_temporary( _environment, VT_BYTE, "(result of mid)" );
             cpu_move_8bit( _environment, string->realName, size->realName );
+
+            if ( _len ) {
+                len = variable_retrieve_or_define( _environment, _len, VT_BYTE, 0 );
+                cpu_move_8bit( _environment, len->realName, copyofLen->realName );
+                Variable * temp = variable_temporary( _environment, VT_BYTE, "(checker)");
+                cpu_move_8bit( _environment, copyofLen->realName, temp->realName );
+                cpu_math_add_8bit( _environment, position->realName, temp->realName, temp->realName );
+                cpu_greater_than_8bit( _environment, temp->realName, size->realName, temp->realName, 0, 0 );
+
+                char unlimitedLenLabel[MAX_TEMPORARY_STORAGE]; sprintf( unlimitedLenLabel, "%sunlim", label );
+                cpu_compare_and_branch_8bit_const( _environment, temp->realName, 0, unlimitedLenLabel, 1 );
+                cpu_move_8bit( _environment, size->realName, temp->realName );
+                cpu_math_sub_8bit( _environment, temp->realName, position->realName, copyofLen->realName );
+                cpu_inc( _environment, copyofLen->realName );
+                cpu_label( _environment, unlimitedLenLabel );
+            } else {
+                cpu_move_8bit( _environment, size->realName, copyofLen->realName );
+            }
+
+            cpu_greater_than_8bit( _environment, position->realName, size->realName, size2->realName, 0, 0 );
+            cpu_compare_and_branch_8bit_const( _environment, size2->realName, (unsigned char) 0xff, emptyResultLabel, 1 );
+
             cpu_addressof_16bit( _environment, string->realName, address->realName );
             cpu_inc_16bit( _environment, address->realName );
             cpu_math_add_16bit_with_8bit( _environment, address->realName, position->realName, address->realName );
             cpu_dec_16bit( _environment, address->realName );
 
-            if ( _len ) {
-                cpu_dsfree( _environment, result->realName );
-                cpu_dsalloc( _environment, len->realName, result->realName );
-                cpu_dsdescriptor( _environment, result->realName, address2->realName, size2->realName );
-                cpu_mem_move( _environment, address->realName, address2->realName, len->realName );
-            } else {
-                cpu_move_8bit( _environment, size->realName, len->realName );
-                cpu_math_sub_8bit( _environment, len->realName, position->realName, len->realName );
-                cpu_inc( _environment, len->realName );
-                cpu_dsfree( _environment, result->realName );
-                cpu_dsalloc( _environment, len->realName, result->realName );
-                cpu_dsdescriptor( _environment, result->realName, address2->realName, size2->realName );
-                cpu_mem_move( _environment, address->realName, address2->realName, size2->realName );
-            }
+            cpu_dsfree( _environment, result->realName );
+            cpu_dsalloc( _environment, copyofLen->realName, result->realName );
+            cpu_dsdescriptor( _environment, result->realName, address2->realName, size2->realName );
+            cpu_mem_move( _environment, address->realName, address2->realName, copyofLen->realName );
+
             break;
         }
         case VT_DSTRING: {            
+            outline0("; VT_DSTRING")  ;
             Variable * address = variable_temporary( _environment, VT_ADDRESS, "(result of mid)" );
             Variable * size = variable_temporary( _environment, VT_BYTE, "(result of mid)" );
             Variable * address2 = variable_temporary( _environment, VT_ADDRESS, "(result of mid)" );
             Variable * size2 = variable_temporary( _environment, VT_BYTE, "(result of mid)" );
             cpu_dsdescriptor( _environment, string->realName, address->realName, size->realName );
+
+            cpu_greater_than_8bit( _environment, position->realName, size->realName, size2->realName, 0, 0 );
+            cpu_compare_and_branch_8bit_const( _environment, size2->realName, 0, emptyResultLabel, 0 );
+
             cpu_math_add_16bit_with_8bit( _environment, address->realName, position->realName, address->realName );
             cpu_dec_16bit( _environment, address->realName );
             if ( _len ) {
-                cpu_dsfree( _environment, result->realName );
-                cpu_dsalloc( _environment, len->realName, result->realName );
-                cpu_dsdescriptor( _environment, result->realName, address2->realName, size2->realName );
-                cpu_mem_move( _environment, address->realName, address2->realName, len->realName );
+                len = variable_retrieve_or_define( _environment, _len, VT_BYTE, 0 );
+                Variable * temp = variable_temporary( _environment, VT_BYTE, "(checker)");
+                cpu_move_8bit( _environment, len->realName, temp->realName );
+                cpu_math_add_8bit( _environment, position->realName, temp->realName, temp->realName );
+                cpu_greater_than_8bit( _environment, temp->realName, size->realName, temp->realName, 0, 0 );
+
+                char unlimitedLenLabel[MAX_TEMPORARY_STORAGE]; sprintf( unlimitedLenLabel, "%sunlim", label );
+                cpu_compare_and_branch_8bit_const( _environment, temp->realName, 0, unlimitedLenLabel, 1 );
+                cpu_move_8bit( _environment, size->realName, temp->realName );
+                cpu_math_sub_8bit( _environment, temp->realName, position->realName, copyofLen->realName );
+                cpu_inc( _environment, copyofLen->realName );
+                cpu_label( _environment, unlimitedLenLabel );
             } else {
-                cpu_move_8bit( _environment, size->realName, len->realName );
-                cpu_math_sub_8bit( _environment, len->realName, position->realName, len->realName );
-                cpu_inc( _environment, len->realName );
-                cpu_dsfree( _environment, result->realName );
-                cpu_dsalloc( _environment, len->realName, result->realName );
-                cpu_dsdescriptor( _environment, result->realName, address2->realName, size2->realName );
-                cpu_mem_move( _environment, address->realName, address2->realName, size2->realName );
+                cpu_move_8bit( _environment, size->realName, copyofLen->realName );
             }
+
+            cpu_greater_than_8bit( _environment, position->realName, size->realName, size2->realName, 0, 0 );
+            cpu_compare_and_branch_8bit_const( _environment, size2->realName, (unsigned char) 0xff, emptyResultLabel, 1 );
+
+            cpu_dsfree( _environment, result->realName );
+            cpu_dsalloc( _environment, copyofLen->realName, result->realName );
+            cpu_dsdescriptor( _environment, result->realName, address2->realName, size2->realName );
+            cpu_mem_move( _environment, address->realName, address2->realName, copyofLen->realName );
             break;
         }
         default:
             CRITICAL_MID_UNSUPPORTED( _string, DATATYPE_AS_STRING[string->type]);
             break;
     }
+
+    char doneLabel[MAX_TEMPORARY_STORAGE]; sprintf( doneLabel, "%sdone", label );
+
+    cpu_jump( _environment, doneLabel );
+
+    cpu_label( _environment, emptyResultLabel );
+
+    cpu_dsfree( _environment, result->realName );
+    cpu_dsalloc( _environment, len->realName, result->realName );
+
+    cpu_label( _environment, doneLabel );
+
     return result;
 }
 
