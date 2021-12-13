@@ -1,5 +1,8 @@
 #include "tester.h"
 
+int yycolno;
+int yyposno;
+
 void show_usage_and_exit( int _argc, char *_argv[] ) {
 
     printf("ugBASIC Compiler TESTER v1.0\n");

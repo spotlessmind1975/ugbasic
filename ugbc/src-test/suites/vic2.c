@@ -807,7 +807,7 @@ void test_vic2_text_payloadB( TestEnvironment * _te ) {
     _te->debug.inspections[1].size=1000;
     ++_te->debug.inspections_count;
 
-    vic2_text( e, address->realName, size->realName, c->realName );
+    vic2_text( e, address->realName, size->realName );
 
 }
 
