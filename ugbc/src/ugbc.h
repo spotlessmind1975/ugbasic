@@ -860,6 +860,7 @@ typedef struct _Deployed {
     int vic1vars;
     int vic1startup;
     int vic2vars;
+    int vic2varsGraphic;
     int vic2startup;
     int tedvars;
     int tedstartup;
@@ -873,6 +874,8 @@ typedef struct _Deployed {
     int dstring;
     int scancode;
     int textEncodedAt;
+    int textEncodedAtText;
+    int textEncodedAtGraphic;
     int numberToString;
     int bitsToString;
     int vScroll;
