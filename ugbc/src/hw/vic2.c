@@ -1036,19 +1036,20 @@ void vic2_cls( Environment * _environment ) {
 
 void vic2_scroll_text( Environment * _environment, int _direction ) {
 
-    deploy( vScrollText, src_hw_vic2_vscroll_text_asm );
-
-    outline1("LDA #$%2.2x", ( _direction & 0xff ) );
-    outline0("STA DIRECTION" );
-
-    outline0("JSR VSCROLLT");
+    if ( _direction > 0 ) {
+        deploy( vScrollTextDown, src_hw_vic2_vscroll_text_down_asm );
+        outline0("JSR VSCROLLTDOWN");
+    } else {
+        deploy( vScrollTextUp, src_hw_vic2_vscroll_text_up_asm );
+        outline0("JSR VSCROLLTUP");
+    }
 
 }
 
 void vic2_text( Environment * _environment, char * _text, char * _text_size ) {
 
     deploy( vic2vars, src_hw_vic2_vars_asm);
-    deploy( vScrollText, src_hw_vic2_vscroll_text_asm );
+    deploy( vScrollTextUp, src_hw_vic2_vscroll_text_up_asm );
     deploy( textEncodedAt, src_hw_vic2_text_at_asm );
 
     outline1("LDA %s", _text);

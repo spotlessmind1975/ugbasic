@@ -880,6 +880,8 @@ typedef struct _Deployed {
     int bitsToString;
     int vScroll;
     int vScrollText;
+    int vScrollTextUp;
+    int vScrollTextDown;
     int textVScrollScreen;
     int cls;
     int clsText;

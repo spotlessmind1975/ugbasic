@@ -29,121 +29,60 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                      CLEAR LINE ROUTINE FOR VIC-II                          *
+;*                          VERTICAL SCROLL ON VIC-II                          *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-CLINE:
+VSCROLLTUP:
+    TXA
+    PHA
+    TYA
+    PHA
     LDA TEXTADDRESS
     STA COPYOFTEXTADDRESS
     LDA TEXTADDRESS+1
     STA COPYOFTEXTADDRESS+1
-    LDA COLORMAPADDRESS
-    STA COPYOFCOLORMAPADDRESS
-    LDA COLORMAPADDRESS+1
-    STA COPYOFCOLORMAPADDRESS+1
-
-    LDX CLINEY
-    BEQ CLINESKIP
-CLINEL1:
     CLC
-    LDA #40
-    ADC COPYOFTEXTADDRESS
-    STA COPYOFTEXTADDRESS
-    LDA #0
-    ADC COPYOFTEXTADDRESS+1
-    STA COPYOFTEXTADDRESS+1
+    LDA TEXTADDRESS
+    ADC #40
+    STA COPYOFTEXTADDRESS2
+    LDA TEXTADDRESS+1
+    ADC #0
+    STA COPYOFTEXTADDRESS2+1
 
-    DEX
-    BNE CLINEL1
-
-    LDX CLINEY
-CLINELC1:
-    CLC
-    LDA #40
-    ADC COPYOFCOLORMAPADDRESS
-    STA COPYOFCOLORMAPADDRESS
-    LDA #0
-    ADC COPYOFCOLORMAPADDRESS+1
-    STA COPYOFCOLORMAPADDRESS+1
-    DEX
-    BNE CLINELC1
-
-CLINESKIP:
-    LDA CHARACTERS
-    BEQ CLINEENTIRE
-
-    CLC
-    LDA CLINEX
-    ADC COPYOFTEXTADDRESS
-    STA COPYOFTEXTADDRESS
-    LDA #0
-    ADC COPYOFTEXTADDRESS+1
-    STA COPYOFTEXTADDRESS+1
-
-    CLC
-    LDA CLINEX
-    ADC COPYOFCOLORMAPADDRESS
-    STA COPYOFCOLORMAPADDRESS
-    LDA #0
-    ADC COPYOFCOLORMAPADDRESS+1
-    STA COPYOFCOLORMAPADDRESS+1
-
-    LDX CHARACTERS
+    LDX #3
     LDY #0
-
-CLINEINCX:
-    LDA #32
-    STA (COPYOFTEXTADDRESS),y
-        
-    INC CLINEX
-    LDA CLINEX
-    CMP #40
-    BNE CLINENEXT
-    LDA #0
-    STA CLINEX
-    INC CLINEY
-    LDA CLINEY
-    CMP #24
-    BNE CLINENEXT
-
-    JSR VSCROLLTUP
-
-    DEC CLINEY
-    SEC
-    LDA COPYOFTEXTADDRESS
-    SBC #40 
-    STA COPYOFTEXTADDRESS
-    LDA COPYOFTEXTADDRESS+1
-    SBC #0
-    STA COPYOFTEXTADDRESS+1
-
-    SEC
-    LDA COPYOFCOLORMAPADDRESS
-    SBC #40
-    STA COPYOFCOLORMAPADDRESS
-    LDA COPYOFCOLORMAPADDRESS+1
-    SBC #0
-    STA COPYOFCOLORMAPADDRESS+1
- 
-CLINENEXT:
+VSCROLLTUPYSCR:
+    LDA (COPYOFTEXTADDRESS2),Y
+    STA (COPYOFTEXTADDRESS),Y
     INY
+    BNE VSCROLLTUPYSCR
+    INC COPYOFTEXTADDRESS+1
+    INC COPYOFTEXTADDRESS2+1
+    CPX #1
+    BNE VSCROLLTUPYSCRNXT
+VSCROLLTUPYSCR2:
+    LDA (COPYOFTEXTADDRESS2),Y
+    STA (COPYOFTEXTADDRESS),Y
+    INY
+    CPY #192
+    BNE VSCROLLTUPYSCR2
+VSCROLLTUPYSCRNXT:
     DEX
-    BNE CLINEINCX
-    RTS
-
-CLINEENTIRE:
-    LDY #0
-
-CLINEINC2X:
+    BNE VSCROLLTUPYSCR
+    LDY #192
+VSCROLLTUPREFILL:
     LDA #32
-    STA (COPYOFTEXTADDRESS),y
-        
+    STA (COPYOFTEXTADDRESS),Y
     INY
-    INC CLINEX
-    LDA CLINEX
-    CMP #40
-    BNE CLINEINC2X
+    CPY #232
+    BNE VSCROLLTUPREFILL
+VSCROLLTUEND:
+
+    PLA
+    TAY
+    PLA
+    TAX
     RTS
