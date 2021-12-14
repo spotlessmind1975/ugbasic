@@ -3207,6 +3207,7 @@ Variable * variable_string_mid( Environment * _environment, char * _string, char
             cpu_dec_16bit( _environment, address->realName );
             if ( _len ) {
                 len = variable_retrieve_or_define( _environment, _len, VT_BYTE, 0 );
+                cpu_move_8bit( _environment, len->realName, copyofLen->realName );
                 Variable * temp = variable_temporary( _environment, VT_BYTE, "(checker)");
                 cpu_move_8bit( _environment, len->realName, temp->realName );
                 cpu_math_add_8bit( _environment, position->realName, temp->realName, temp->realName );
