@@ -138,7 +138,7 @@ TEXTATBMCLS:
     PHA
     TXA
     PHA
-    JSR CLS
+    JSR CLSG
     PLA
     TAX
     PLA

@@ -882,6 +882,8 @@ typedef struct _Deployed {
     int vScrollText;
     int textVScrollScreen;
     int cls;
+    int clsText;
+    int clsGraphic;
     int textCline;
     int textHScroll;
     int textHScrollLine;

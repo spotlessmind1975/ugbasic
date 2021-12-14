@@ -158,7 +158,7 @@ TEXTATCLS:
     PHA
     TXA
     PHA
-    JSR CLS
+    JSR CLST
     PLA
     TAX
     PLA
