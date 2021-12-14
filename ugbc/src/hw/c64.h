@@ -107,6 +107,10 @@
 #define KEY_Y						25
 #define KEY_Z						12
 
+#define INPUT_DEFAULT_SEPARATOR     ','
+#define INPUT_DEFAULT_SIZE          32
+#define INPUT_DEFAULT_CURSOR        185
+
 #define SCREEN_CAPABILITIES         ( ( 1<<TILEMAP_NATIVE ) | ( 1<<BITMAP_NATIVE ) )
 
 void c64_xpen( Environment * _environment, char * _destination );

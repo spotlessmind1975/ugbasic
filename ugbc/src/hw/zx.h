@@ -164,6 +164,10 @@
 #define KEY_RIGHT                    151
 #define KEY_DIVISION                 154
 
+#define INPUT_DEFAULT_SEPARATOR     ','
+#define INPUT_DEFAULT_SIZE          32
+#define INPUT_DEFAULT_CURSOR        0x60
+
 #define SCREEN_CAPABILITIES         ( ( 1<<BITMAP_NATIVE ) )
 
 #define BITMAP_MODE_STANDARD        1           // Standard Bitmap Mode     192 x 256 x 2

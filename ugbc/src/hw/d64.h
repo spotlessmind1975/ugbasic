@@ -140,6 +140,10 @@
 #define JOYSTICK_RIGHT				16
 #define JOYSTICK_FIRE				1
 
+#define INPUT_DEFAULT_SEPARATOR     ','
+#define INPUT_DEFAULT_SIZE          32
+#define INPUT_DEFAULT_CURSOR        0x60
+
 #define SCREEN_CAPABILITIES         ( ( 1<<TILEMAP_NATIVE ) | ( 1<<BITMAP_NATIVE ) )
 
 void d64_xpen( Environment * _environment, char * _destination );
