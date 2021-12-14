@@ -449,6 +449,7 @@ void test_variable_string_mid_payload( TestEnvironment * _te ) {
 
     Variable * source = variable_define( e, "source", VT_STRING, 0x0 );
     Variable * position0 = variable_define( e, "position0", VT_BYTE, 0 );
+    Variable * position1 = variable_define( e, "position1", VT_BYTE, 1 );
     Variable * position2 = variable_define( e, "position2", VT_BYTE, 2 );
     Variable * position20 = variable_define( e, "position20", VT_BYTE, 20 );
     Variable * size0 = variable_define( e, "size0", VT_BYTE, 0 );
@@ -466,6 +467,7 @@ void test_variable_string_mid_payload( TestEnvironment * _te ) {
     Variable * resultA2 = variable_string_mid( e, source->name, position20->name, size0->name );
     Variable * resultB2 = variable_string_mid( e, source->name, position20->name, size2->name );
     Variable * resultC2 = variable_string_mid( e, source->name, position20->name, size20->name );
+    Variable * resultP1 = variable_string_mid( e, source->name, position1->name, size2->name );
 
     _te->trackedVariables[0] = resultA0;
     _te->trackedVariables[1] = resultB0;
@@ -476,6 +478,7 @@ void test_variable_string_mid_payload( TestEnvironment * _te ) {
     _te->trackedVariables[6] = resultA2;
     _te->trackedVariables[7] = resultB2;
     _te->trackedVariables[8] = resultC2;
+    _te->trackedVariables[9] = resultP1;
 
 }
 
@@ -490,6 +493,7 @@ int test_variable_string_mid_tester( TestEnvironment * _te ) {
     Variable * resultA2 = variable_retrieve( &_te->environment, _te->trackedVariables[6]->name );
     Variable * resultB2 = variable_retrieve( &_te->environment, _te->trackedVariables[7]->name );
     Variable * resultC2 = variable_retrieve( &_te->environment, _te->trackedVariables[8]->name );
+    Variable * resultP1 = variable_retrieve( &_te->environment, _te->trackedVariables[9]->name );
 
 // printf("resultA0 = %s (expected '')\n", resultA0->valueString );
 // printf("resultB0 = %s (expected '')\n", resultB0->valueString );
@@ -513,7 +517,9 @@ int test_variable_string_mid_tester( TestEnvironment * _te ) {
 
         strcasecmp( resultA2->valueString, "" ) == 0 &&
         strcasecmp( resultB2->valueString, "" ) == 0 &&
-        strcasecmp( resultC2->valueString, "" ) == 0
+        strcasecmp( resultC2->valueString, "" ) == 0 &&
+
+        strcasecmp( resultP1->valueString, "ch" ) == 0
         ;
     
 }
