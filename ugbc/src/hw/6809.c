@@ -2064,7 +2064,7 @@ void cpu6809_compare_32bit( Environment * _environment, char *_source, char *_de
             cpu6809_compare_16bit( _environment, _source, _destination, _other, _positive );
 
             outline1("LDA %s", _other );
-            outline1("BEQ %sdone", _other );
+            outline1("BEQ %sdone", label );
 
             cpu6809_compare_16bit( _environment, sourceEffective, destinationEffective, _other, _positive );
 
@@ -2073,13 +2073,13 @@ void cpu6809_compare_32bit( Environment * _environment, char *_source, char *_de
             cpu6809_compare_16bit( _environment, _source, _destination, _other, _positive );
 
             outline1("LDA %s", _other );
-            outline1("BNE %sdone", _other );
+            outline1("BNE %sdone", label );
 
             cpu6809_compare_16bit( _environment, sourceEffective, destinationEffective, _other, _positive );
 
         }
 
-        outhead1("%sdone", _other );
+        outhead1("%sdone", label );
 
     no_embedded( cpu_compare_32bit )
 
@@ -4767,10 +4767,10 @@ void cpu6809_is_negative( Environment * _environment, char * _value, char * _res
         outline0("LDA #$FF");
         outline1("STA %s", _result );
         outline1("JMP %sdone", label);
-        outhead1("%s:", label);
+        outhead1("%s", label);
         outline0("LDA #$00");
         outline1("STA %s", _result );
-        outhead1("%sdone:", label);
+        outhead1("%sdone", label);
 
     no_embedded( cpu_is_negative )
 
