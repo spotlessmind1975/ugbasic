@@ -76,7 +76,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         }
                         outline1("$%2.2x", (unsigned char)variable->valueString[(c-1)]);                        
                     } else {
-                        outline3("%s: db %d,\"%s\"", variable->realName, (int)strlen(variable->valueString), escape_newlines( variable->valueString ) );
+                        outline3("%s: db %d,%s", variable->realName, (int)strlen(variable->valueString), escape_newlines( variable->valueString ) );
                     }
                     break;
                 case VT_DSTRING:
@@ -94,7 +94,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                 char * string = malloc( variable->size + 1 );
                                 memset( string, 0, variable->size );
                                 memcpy( string, variable->valueBuffer, variable->size );
-                                outline2("%s: db \"%s\"", variable->realName, escape_newlines( string ) );
+                                outline2("%s: db %s", variable->realName, escape_newlines( string ) );
                             } else {
                                 out1("%s: db ", variable->realName);
                                 int i=0;
@@ -113,7 +113,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                 char * string = malloc( variable->size + 1 );
                                 memset( string, 0, variable->size );
                                 memcpy( string, variable->valueBuffer, variable->size );
-                                outline2("%scopy: db \"%s\"", variable->realName, escape_newlines( string ) );
+                                outline2("%scopy: db %s", variable->realName, escape_newlines( string ) );
                             } else {
                                 out1("%scopy: db ", variable->realName);
                                 int i=0;

@@ -317,23 +317,23 @@ Variable * variable_define( Environment * _environment, char * _name, VariableTy
         } else {
             _environment->variables = var;
         }
-        switch( var->type ) {
-            case VT_STRING:
-            case VT_DSTRING:
-            case VT_MOB:
-            case VT_BUFFER:
-            case VT_IMAGE:
-            case VT_IMAGES:
-            case VT_ARRAY:
-                break;
-            default:
-                variable_store( _environment, var->name, _value );
-        }
         if ( var->type == VT_ARRAY ) {
             memcpy( var->arrayDimensionsEach, ((struct _Environment *)_environment)->arrayDimensionsEach, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
             var->arrayDimensions = ((struct _Environment *)_environment)->arrayDimensions;
         }
         memory_area_assign( _environment->memoryAreas, var );
+        // switch( var->type ) {
+        //     case VT_STRING:
+        //     case VT_DSTRING:
+        //     case VT_MOB:
+        //     case VT_BUFFER:
+        //     case VT_IMAGE:
+        //     case VT_IMAGES:
+        //     case VT_ARRAY:
+        //         break;
+        //     default:
+        //         // variable_store( _environment, var->name, _value );
+        // }
     }
     var->used = 1;
     var->locked = 0;
@@ -5414,6 +5414,44 @@ char * escape_newlines( char * _string ) {
     }
 
     *q = 0;
+    int escaped = 1;
+    if ( ( *result == '"' ) && ( *(result+1) == ',' ) ) {
+        memmove( result, result+2, strlen( result ) - 2 );
+        escaped = 0;
+    }
+
+    *(result+strlen( result ) - 2) = 0;
+
+    if ( ( *(result+strlen( result )-1) == '"' ) && ( *(result+strlen( result )-2) == ',' ) ) {
+        *(result+strlen( result )-2 ) = 0;
+    }
+
+    q = result;
+
+    int close_escaped = 0;
+    while(*q) {
+        if ( *q == '"' ) {
+            close_escaped = ! close_escaped;
+        }
+        ++q;
+    }
+
+    char result2[MAX_TEMPORARY_STORAGE];
+
+    if ( escaped ) {
+        sprintf( result2, "\"%s", result );
+        close_escaped = ! close_escaped;
+    } else {
+        strcpy( result2, result );
+    }
+    strcpy( result, result2 );
+
+    if ( close_escaped ) {
+        sprintf( result2, "%s\"", result );
+    } else {
+        strcpy( result2, result );
+    }
+    strcpy( result, result2 );
 
     return result;
 

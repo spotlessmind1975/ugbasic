@@ -113,6 +113,8 @@ void target_initialization( Environment * _environment ) {
         shell_injection( _environment );
     }
 
+    cpu_call( _environment, "VARINIT" );
+
 }
 
 void target_linkage( Environment * _environment ) {

@@ -96,7 +96,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                             }
                             outline1("$%2.2x", (unsigned char)variable->valueString[(c-1)]);                        
                         } else {
-                            outline3("%s: .byte %d,\"%s\"", variable->realName, (int)strlen(variable->valueString), escape_newlines( variable->valueString ) );
+                            outline3("%s: .byte %d,%s", variable->realName, (int)strlen(variable->valueString), escape_newlines( variable->valueString ) );
                         }
                     }
                     break;
@@ -123,7 +123,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                 char * string = malloc( variable->size + 1 );
                                 memset( string, 0, variable->size );
                                 memcpy( string, variable->valueBuffer, variable->size );
-                                outline2("%s: .byte \"%s\"", variable->realName, escape_newlines( string ) );
+                                outline2("%s: .byte %s", variable->realName, escape_newlines( string ) );
                             } else {
                                 out1("%s: .byte ", variable->realName);
                                 int i=0;
@@ -142,7 +142,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                 char * string = malloc( variable->size + 1 );
                                 memset( string, 0, variable->size );
                                 memcpy( string, variable->valueBuffer, variable->size );
-                                outline2("%scopy: .byte \"%s\"", variable->realName, escape_newlines( string ) );
+                                outline2("%scopy: .byte %s", variable->realName, escape_newlines( string ) );
                             } else {
                                 out1("%scopy: .byte ", variable->realName);
                                 int i=0;
@@ -249,6 +249,8 @@ void variable_cleanup( Environment * _environment ) {
            actual = actual->next;
         }
     }    
+
+    variable_on_memory_init( _environment );
 
     if ( _environment->descriptors ) {
         outhead0(".segment \"UDCCHAR\"" );

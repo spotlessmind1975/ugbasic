@@ -93,7 +93,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     } else {
                         if ( variable->printable ) {
                             int c = strlen( variable->valueString);
-                            out1("%s fcb %d,", variable->realName, c );
+                            out2("%s fcb %d,", variable->realName, c );
                             int i=0;
                             for (i=0; i<(c-1); ++i ) {
                                 out1("$%2.2x,", (unsigned char)variable->valueString[i]);
@@ -102,7 +102,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         } else {
                             outhead2("%s fcb %d", variable->realName, (int)strlen(variable->valueString) );
                             if ( strlen( variable->valueString ) > 0 ) {
-                                outhead1("   fcc \"%s\"", escape_newlines( variable->valueString ) );
+                                outhead1("   fcc %s", escape_newlines( variable->valueString ) );
                             } 
                         }
 
@@ -131,7 +131,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                 char * string = malloc( variable->size + 1 );
                                 memset( string, 0, variable->size );
                                 memcpy( string, variable->valueBuffer, variable->size );
-                                outhead2("%s    fcc \"%s\"", variable->realName, escape_newlines( string ) );
+                                outhead2("%s    fcc %s", variable->realName, escape_newlines( string ) );
                             } else {
                                 out1("%s fcb ", variable->realName);
                                 int i=0;
@@ -150,7 +150,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                 char * string = malloc( variable->size + 1 );
                                 memset( string, 0, variable->size );
                                 memcpy( string, variable->valueBuffer, variable->size );
-                                outhead2("%s    fcc \"%s\"", variable->realName, escape_newlines( string ) );
+                                outhead2("%s    fcc %s", variable->realName, escape_newlines( string ) );
                             } else {
                                 out1("%scopy fcb ", variable->realName);
                                 int i=0;
@@ -256,4 +256,7 @@ void variable_cleanup( Environment * _environment ) {
            actual = actual->next;
         }
     }    
+
+    variable_on_memory_init( _environment );
+
 }
