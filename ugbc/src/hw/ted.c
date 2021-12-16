@@ -721,7 +721,13 @@ void ted_text( Environment * _environment, char * _text, char * _text_size ) {
     outline1("LDA %s", _text_size);
     outline0("STA TEXTSIZE" );
 
-    outline0("JSR TEXTAT");
+    if ( _environment->currentMode == 2 || _environment->currentMode == 3 ) {
+        deploy( textEncodedAtGraphic, src_hw_ted_text_at_graphic_asm );
+        outline0("JSR TEXTATBITMAPMODE");
+    } else {
+        deploy( textEncodedAtText, src_hw_ted_text_at_text_asm );
+        outline0("JSR TEXTATTILEMODE");
+    }
 
 }
 
