@@ -863,6 +863,7 @@ typedef struct _Deployed {
     int vic2varsGraphic;
     int vic2startup;
     int tedvars;
+    int tedvarsGraphic;
     int tedstartup;
     int anticstartup;
     int gtiastartup;
