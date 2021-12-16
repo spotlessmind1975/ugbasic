@@ -5418,9 +5418,8 @@ char * escape_newlines( char * _string ) {
     if ( ( *result == '"' ) && ( *(result+1) == ',' ) ) {
         memmove( result, result+2, strlen( result ) - 2 );
         escaped = 0;
+        *(result+strlen( result ) - 2) = 0;
     }
-
-    *(result+strlen( result ) - 2) = 0;
 
     if ( ( *(result+strlen( result )-1) == '"' ) && ( *(result+strlen( result )-2) == ',' ) ) {
         *(result+strlen( result )-2 ) = 0;
