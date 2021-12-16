@@ -3244,7 +3244,7 @@ Variable * variable_string_mid( Environment * _environment, char * _string, char
     cpu_label( _environment, emptyResultLabel );
 
     cpu_dsfree( _environment, result->realName );
-    cpu_dsalloc( _environment, len->realName, result->realName );
+    cpu_dsalloc_size( _environment, 0, result->realName );
 
     cpu_label( _environment, doneLabel );
 
