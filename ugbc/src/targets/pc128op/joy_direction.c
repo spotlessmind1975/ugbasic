@@ -28,22 +28,4 @@
  * autorizzazioni e le limitazioni previste dalla medesima.
  ****************************************************************************/
 
-/****************************************************************************
- * INCLUDE SECTION 
- ****************************************************************************/
-
-#include "../../ugbc.h"
-
-/****************************************************************************
- * CODE SECTION 
- ****************************************************************************/
-
-Variable * joy_direction( Environment * _environment, char * _port, int _direction ) {
-
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of J*)" );
-
-    cpu_store_8bit( _environment, result->realName, 0 );
-
-    return result;
-
-}
+#include "../mo5/joy_direction.c"
