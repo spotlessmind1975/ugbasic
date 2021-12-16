@@ -134,11 +134,11 @@
 #define JOYSTICK_0					0
 #define JOYSTICK_1					1
 #define JOYSTICK_COUNT				2
-#define JOYSTICK_UP					2
-#define JOYSTICK_DOWN				4
-#define JOYSTICK_LEFT				8
-#define JOYSTICK_RIGHT				16
-#define JOYSTICK_FIRE				1
+#define JOYSTICK_UP					1
+#define JOYSTICK_DOWN				2
+#define JOYSTICK_LEFT				4
+#define JOYSTICK_RIGHT				8
+#define JOYSTICK_FIRE				16
 
 #define INPUT_DEFAULT_SEPARATOR     ','
 #define INPUT_DEFAULT_SIZE          32

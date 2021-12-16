@@ -66,12 +66,20 @@ MO5STARTUP
 MO5STARTUP2
     LDD   #MO5IRQ       ; install our own ISR
     STD   ,X
-    LDA   #PAGE0        ; any non-zero value will do, let's use the one that'll go to DP
-    STA   2,X           ; enable the ISR
+    
+    LDA   #PAGE0      ; any non-zero value will do, let's use the one that'll go to DP
+    STA   2,X         ; enable the ISR
 
-    TFR   A,DP
-
-    LDB   #$14          ; shut down cursor
+    TFR   A,DP        ; setup direct-page
+    CLRB
+    TFR   D,X
+    CLRA
+MO5STARTUP3 
+    STB   ,X+         ; clear direct-page
+    DECA
+    BNE   MO5STARTUP3
+    
+    LDB   #$14        ; shut down cursor
     SWI
     FCB   $02
 
