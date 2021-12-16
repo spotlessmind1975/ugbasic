@@ -689,10 +689,14 @@ void ted_tiles_get_height( Environment * _environment, char *_result ) {
 }
 
 void ted_cls( Environment * _environment ) {
-    
-    deploy( cls, src_hw_ted_cls_asm );
 
-    outline0("JSR CLS");
+    if ( _environment->currentMode == 2 || _environment->currentMode == 3 ) {
+        deploy( clsGraphic, src_hw_ted_cls_graphic_asm );
+        outline0("JSR CLSG");
+    } else {
+        deploy( clsText, src_hw_ted_cls_text_asm );
+        outline0("JSR CLST");
+    }
 
 }
 
@@ -711,7 +715,6 @@ void ted_text( Environment * _environment, char * _text, char * _text_size ) {
 
     deploy( tedvars, src_hw_ted_vars_asm );
     deploy( vScrollText, src_hw_ted_vscroll_text_asm );
-    deploy( cls, src_hw_ted_cls_asm );
     deploy( textEncodedAt, src_hw_ted_text_at_asm );
 
     outline1("LDA %s", _text);
@@ -722,9 +725,11 @@ void ted_text( Environment * _environment, char * _text, char * _text_size ) {
     outline0("STA TEXTSIZE" );
 
     if ( _environment->currentMode == 2 || _environment->currentMode == 3 ) {
+        deploy( clsGraphic, src_hw_ted_cls_graphic_asm );
         deploy( textEncodedAtGraphic, src_hw_ted_text_at_graphic_asm );
         outline0("JSR TEXTATBITMAPMODE");
     } else {
+        deploy( clsText, src_hw_ted_cls_text_asm );
         deploy( textEncodedAtText, src_hw_ted_text_at_text_asm );
         outline0("JSR TEXTATTILEMODE");
     }
