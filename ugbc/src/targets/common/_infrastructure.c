@@ -5429,7 +5429,7 @@ char * escape_newlines( char * _string ) {
         ++q;
     }
 
-    char result2[MAX_TEMPORARY_STORAGE];
+    char * result2 = malloc( 2 * strlen( result ) );
 
     if ( escaped ) {
         sprintf( result2, "\"%s", result );
@@ -5446,6 +5446,8 @@ char * escape_newlines( char * _string ) {
     }
     strcpy( result, result2 );
 
+    free( result2 );
+    
     return result;
 
 }
