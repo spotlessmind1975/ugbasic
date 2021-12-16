@@ -38,6 +38,12 @@
 
 CLS
     PSHS  DP
+    LDA #$A7
+    TFR A,DP
+
+    LDA <$C0
+    ANDA #$FE
+    STA <$C0
 
     LDA CURRENTMODE
     BEQ CLS0
@@ -97,13 +103,6 @@ CLSG
     LDD CURRENTFRAMESIZE
     LEAU D,X
     STU CLSGL2+1
-
-    LDA #$A7
-    TFR A,DP
-    LDA <$C0
-    ANDA #$FE
-    STA <$C0
-
     PULS D,U
 CLSGL1
     INC <$C0

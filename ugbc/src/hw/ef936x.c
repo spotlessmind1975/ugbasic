@@ -38,9 +38,9 @@
 #include <math.h>
 
 #if defined(__pc128op__)
-	/* values for C64: http://unusedino.de/ec64/technical/misc/vic656x/colors/ */
+
     static RGBi SYSTEM_PALETTE[] = {
-            { 0x00, 0x00, 0x00, 0, "BLACK" },
+            { 0x00, 0x00, 0x00, 0, "BLACK" },        
             { 0xff, 0xff, 0xff, 1, "WHITE" },
             { 0x88, 0x00, 0x00, 2, "RED" },
             { 0xaa, 0xff, 0xe6, 3, "CYAN" },
@@ -437,8 +437,8 @@ void ef936x_point_at_int( Environment * _environment, int _x, int _y ) {
     deploy( ef936xvars, src_hw_ef936x_vars_asm );
     deploy( plot, src_hw_ef936x_plot_asm );
     
-    outline1("LDD %4.4x", (_x & 0xffff ) );
-    outline0("STD <PLOTX");
+    outline1("LDX %4.4x", (_x & 0xffff ) );
+    outline0("STX <PLOTX");
     outline1("LDD %4.4x", ( _y & 0xffff ) );
     outline0("STD <PLOTY");
     outline0("LDA #1");
@@ -456,8 +456,8 @@ void ef936x_point_at_vars( Environment * _environment, char *_x, char *_y ) {
     deploy( ef936xvars, src_hw_ef936x_vars_asm );
     deploy( plot, src_hw_ef936x_plot_asm );
     
-    outline1("LDD %s", x->realName );
-    outline0("STD <PLOTX");
+    outline1("LDX %s", x->realName );
+    outline0("STX <PLOTX");
     outline1("LDD %s", y->realName );
     outline0("STD <PLOTY");
     outline0("LDA #1");
@@ -578,8 +578,8 @@ void ef936x_tiles_get_width( Environment * _environment, char *_result ) {
 
 void ef936x_get_height( Environment * _environment, char *_result ) {
 
-    outline0("LDD CURRENTHEIGHT" );
-    outline1("STD %s", _result );
+    outline0("LDX CURRENTHEIGHT" );
+    outline1("STX %s", _result );
 
 }
 
@@ -711,15 +711,8 @@ void ef936x_initialization( Environment * _environment ) {
 
 extern RGBi * commonPalette;
 
-/* converts a PC color to a thomson color for ef936 considering its very high gamma value */
-static int pc_to_ef936x(int _pc_color) {
-	// if(1) return (_pc_color>>4)&15;
-	double pc_color = _pc_color/255.0;
-	double ef936_color = 15*pow(pc_color, 1.67); /* gamma of 3 is possibly better */
-	return 0x0F & (int)(ef936_color + 0.5);
-}
-
 void ef936x_finalization( Environment * _environment ) {
+
     int i;
 
     outhead0("COMMONPALETTE");
@@ -733,13 +726,11 @@ void ef936x_finalization( Environment * _environment ) {
         palette = SYSTEM_PALETTE;
     }
 
-    for( i=0; i<16; ++i ) {
-        out4("$%x%x%x%s", 
-			 pc_to_ef936x(palette[i].blue),
-			 pc_to_ef936x(palette[i].green),
-			 pc_to_ef936x(palette[i].red),
-			 i == 15 ? "\n" : ",");
+    for( i=0; i<15; ++i ) {
+        out4("$%1.1x%1.1x%1.1x%1.1x, ", 0, ( palette[i].blue >> 4 ) & 0x0f, ( palette[i].green >> 4 ) & 0x0f, ( palette[i].red >> 4 ) & 0x0f );
     }
+    outline4("$%1.1x%1.1x%1.1x%1.1x", 0, ( palette[15].blue >> 4 ) & 0x0f, ( palette[15].green >> 4 ) & 0x0f, ( palette[15].red >> 4 ) & 0x0f );
+
 }
 
 void ef936x_hscroll_line( Environment * _environment, int _direction ) {

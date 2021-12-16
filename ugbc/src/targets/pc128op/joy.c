@@ -28,4 +28,22 @@
  * autorizzazioni e le limitazioni previste dalla medesima.
  ****************************************************************************/
 
-#include "../mo5/joy.c"
+/****************************************************************************
+ * INCLUDE SECTION 
+ ****************************************************************************/
+
+#include "../../ugbc.h"
+
+/****************************************************************************
+ * CODE SECTION 
+ ****************************************************************************/
+
+Variable * joy( Environment * _environment, char * _port ) {
+
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of JOY)" );
+
+    cpu_store_8bit( _environment, result->realName, 0 );
+
+    return result;
+
+}

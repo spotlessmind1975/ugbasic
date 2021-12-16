@@ -31,8 +31,7 @@
 ;*                                                                             *
 ;*                      CONVERT A NUMBER TO A STRING                           *
 ;*                                                                             *
-;*                             by Marco Spedaletti                             *
-;*                     mc68089 optimizations by S.Devulder                     *
+;*                            by Samuel Devulder                               *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -45,71 +44,86 @@
 ; output:
 ; A = string length
 
-    LDD #9
-NSSTRINGLC
-    STA B,X
-    DECB
-    BGE NSSTRINGLC
+N2STRING
+  STX   <TMPPTR
+  LDY   #0
+  LEAY  A,Y           ; number of bits
 
-    LDU #N2STRINGMASK
-    LDD <MATHPTR2
+  LDX   #N2STRING_bcd
+  LDU   #N2STRING_pwr
+  LDD   #0            ; clear local data
+  STD   ,X
+  STD   2,X
+  STD   4,X
+  STD   6,X
+  INCB
+  STD   8,X           ; pwr=1
+
 N2STRINGL1
-    SUBD ,U
-    BMI N2STRINGF
-    INC ,X
-    BRA N2STRINGL1
+  LSR   <MATHPTR0
+  ROR   <MATHPTR1
+  ROR   <MATHPTR2
+  ROR   <MATHPTR3
+  BCC   N2STRINGL2
+  LDX   #N2STRING_bcd ; bcd += pwr
+  BSR   N2STRING_add
+N2STRINGL2
+  LDX   #N2STRING_pwr ; pwr += pwr
+  BSR   N2STRING_add
+  LEAY  -1,Y          ; finished ?
+  BNE   N2STRINGL1    ; no=>loop
 
-N2STRINGF
-    ADDD ,U
+  LDX   <TMPPTR
+  LDA   #-5
+  LDU   #N2STRING_bcd+4
+  LDB   <MATHPTR4
+  BPL   N2STRINGL3
+  LDB   #'-
+  STB   ,X+
+; look for first non null digits
+N2STRINGL3
+  INCA
+  BGT   N2STRINGL5  ; result==0
+  LDB   A,U         ; LDB is faster than TST
+  BEQ   N2STRINGL3
+  BITB  #$F0
+  BEQ   N2STRINGL5
+N2STRINGL4
+  LDB   A,U
+  LSRB
+  LSRB
+  LSRB
+  LSRB
+  ADDB  #'0
+  STB   ,X+
+  LDB   A,U
+  ANDB  #15
+N2STRINGL5
+  ADDB  #'0
+  STB   ,X+
+  INCA
+  BLE   N2STRINGL4
 
-    LEAY ,Y
-    BNE NSSTRINGL2
-    TST ,X
-    BEQ NSSTRINGL3
-    LEAY 1,Y
+  TFR   X,D
+  SUBD  <TMPPTR
+  TFR   B,A
+  RTS
 
-NSSTRINGL2
-    LEAX  1,X
-    
-NSSTRINGL3
-    LEAU 2,U
-    CMPU #N2STRINGMASKE
-    BLE N2STRINGL1
+; *x += pwr
+N2STRING_add
+  LDB   #4
+  CLRA        ; C=0
+N2STRING_add1
+  LDA   B,U
+  ADCA  B,X
+  DAA
+  STA   B,X
+  DECB
+  BPL   N2STRING_add1
+  RTS
 
-    TFR X,D
-    SUBD #RESBUFFER
-    BNE NSSTRINGL3B
-
-    STB ,X
-    INCB
-
-NSSTRINGL3B
-    LDY <TMPPTR
-    LDX #RESBUFFER
-
-    LDA <MATHPTR4
-    BPL NSSTRINGA
-
-    LDA #'-'
-    STA , Y+
-    INCB
-
-NSSTRINGA
-    STB <MATHPTR5
-NSSTRINGL4
-    LDA ,X+
-    ADDA #$30
-    STA ,Y+
-    DECB
-    BNE NSSTRINGL4
-    RTS
-
-N2STRINGMASK
-    fdb 10000
-    fdb 1000
-    fdb 100
-    fdb 10
-N2STRINGMASKE
-    fdb 1
-
-RESBUFFER  rzb    10
+; 2^32 is 10 digits long, so 5 BCD bytes are enough
+N2STRING_bcd
+  rzb 5       ; converted number in BCD
+N2STRING_pwr
+  rzb 5       ; powers of 2 in BCD

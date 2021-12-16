@@ -28,13 +28,13 @@
 ;  * autorizzazioni e le limitazioni previste dalla medesima.
 ;  ****************************************************************************/
 
-; is this really used ? if so, migh use a jump table
 CPUMATHMUL2CONST8BIT
-    TSTB
+    CMPB #0
     BEQ CPUMATHMUL2CONST8BITL1
 CPUMATHMUL2CONST8BITL2
     ASLA
     DECB
+    CMPB #0
     BNE CPUMATHMUL2CONST8BITL2
 CPUMATHMUL2CONST8BITL1
     RTS

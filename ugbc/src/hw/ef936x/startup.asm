@@ -36,15 +36,21 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 EF936XSTARTUP
-    LDU #COMMONPALETTE
-    LDY #$A7DA
-    LDX #16
+
+    LDX #COMMONPALETTE
+    LDU #16
     LDA #0
-    STA 1,Y
+    STA $A7DB
+
 EF936XSTARTUPL1
-    PULU D
-    STB ,Y
-    STA ,Y
-    LEAX -1,X
+
+    LDD , X
+    STB $A7DA
+    STA $A7DA
+    LEAX 2, X
+    LEAU -1, U
+
+    CMPU #0
     BNE EF936XSTARTUPL1
+
     RTS
