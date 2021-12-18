@@ -117,6 +117,9 @@ void target_initialization( Environment * _environment ) {
 
     setup_text_variables( _environment );
 
+    deploy( startup, src_hw_c64_startup_asm);
+    cpu_call( _environment, "C64STARTUP" );
+
     vic2_initialization( _environment );
 
     if ( _environment->tenLinerRulesEnforced ) {
