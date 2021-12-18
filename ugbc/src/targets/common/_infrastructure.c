@@ -927,13 +927,21 @@ Variable * variable_store( Environment * _environment, char * _destination, unsi
 
 #define UNESCAPE_COLOR( c, d ) \
             else if ( strcmp_nocase( word, c ) == 0 ) { \
-                            *q = 1; \
+                            if ( _printing ) { \
+                                *q = '*'; \
+                            } else { \
+                                *q = 1; \
+                            } \
                             ++q; \
-                            *q = COLOR_##d; \
+                            if ( _printing ) { \
+                                *q = '*'; \
+                            } else { \
+                                *q = COLOR_##d; \
+                            } \
                             ++q; \
                     }
 
-char * unescape_string( Environment * _environment, char * _value ) {
+char * unescape_string( Environment * _environment, char * _value, int _printing ) {
 
     char * newValue = malloc( strlen( _value ) + 1 );
     
@@ -951,7 +959,11 @@ char * unescape_string( Environment * _environment, char * _value ) {
                     c = 10 * c + ( *p - '0' );
                     ++p;
                 }
-                *q = c;
+                if ( _printing ) {
+                    *q = '*';
+                } else {
+                    *q = c;
+                }
                 ++q;
                 ++p;
             } else {
@@ -964,7 +976,11 @@ char * unescape_string( Environment * _environment, char * _value ) {
                     // printf( "checking '%s'\n", word );
 
                     if ( strcmp_nocase( word, "clear" ) == 0 ) {
-                        *q = 5;
+                        if ( _printing ) {
+                            *q = '*';
+                        } else {
+                            *q = 5;
+                        }
                         ++q;
                     } 
                     UNESCAPE_COLOR( "black", BLACK )
@@ -1044,7 +1060,7 @@ Variable * variable_store_string( Environment * _environment, char * _destinatio
     switch( destination->type ) {
         case VT_STRING: {
             if ( !_environment->emptyProcedure ) {
-                destination->valueString = strdup( unescape_string( _environment, _value ) );
+                destination->valueString = strdup( unescape_string( _environment, _value, 0 ) );
                 destination->size = strlen( destination->valueString ) + 1;
                 memory_area_assign( _environment->memoryAreas, destination );
             } else {
