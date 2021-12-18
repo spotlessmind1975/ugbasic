@@ -4823,8 +4823,9 @@ int main( int _argc, char *_argv[] ) {
         memset( sourceText, 0, sourceSize + 1 );
         (void)!fread( sourceText, 1, sourceSize, fh );
         fclose( fh );
+        char * escapedSourceText = unescape_string( _environment, sourceText, 1 );
         Variable * source = variable_define( _environment, "SHELL_SOURCE", VT_BUFFER, 0 );
-        variable_store_buffer( _environment, source->name, sourceText, sourceSize, 0 );
+        variable_store_buffer( _environment, source->name, escapedSourceText, strlen(escapedSourceText), 0 );
         source->printable = 1;
     }
 

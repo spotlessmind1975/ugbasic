@@ -60,7 +60,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_COLOR:
                 case VT_THREAD:
                     if ( variable->memoryArea ) {
-                        outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
+                        // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
                         outline1("%s: .res 1", variable->realName);
                     }        
@@ -70,7 +70,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_POSITION:
                 case VT_ADDRESS:
                     if ( variable->memoryArea ) {
-                        outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
+                        // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
                         outline1("%s: .res 2", variable->realName);
                     }
@@ -78,14 +78,14 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_DWORD:
                 case VT_SDWORD:
                     if ( variable->memoryArea ) {
-                        outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
+                        // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
                         outline1("%s: .res 4", variable->realName);
                     }
                     break;
                 case VT_STRING:
                     if ( variable->memoryArea ) {
-                        outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
+                        // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
                         if ( variable->printable ) {
                             int c = strlen( variable->valueString );
@@ -102,14 +102,14 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     break;
                 case VT_DSTRING:
                     if ( variable->memoryArea ) {
-                        outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
+                        // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
                         outline1("%s: .res 1", variable->realName);
                     }
                     break;
                 case VT_MOB:
                     if ( variable->memoryArea ) {
-                        outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
+                        // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
                         outline1("%s: .res 1", variable->realName);
                     }
@@ -136,8 +136,8 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                             outline2("%s: .res %d", variable->realName, variable->size);
                         }
                     } else {
-                        outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
-                        if ( variable->valueBuffer ) {
+                        if ( ! variable->memoryArea && variable->valueBuffer ) {
+                            outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                             if ( variable->printable ) {
                                 char * string = malloc( variable->size + 1 );
                                 memset( string, 0, variable->size );
@@ -155,7 +155,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     }
                     break;
                 case VT_ARRAY: {
-                    if ( variable->valueBuffer ) {
+                    if ( ! variable->memoryArea && variable->valueBuffer ) {
                         out1("%s: .byte ", variable->realName);
                         int i=0;
                         for (i=0; i<(variable->size-1); ++i ) {
@@ -163,7 +163,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         }
                         outline1("%d", variable->valueBuffer[(variable->size-1)]);
                     } else if ( variable->memoryArea && ! variable->value ) {
-                        outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
+                        // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
                         if ( variable->value ) {
                             outline3("%s: .res %d, $%2.2x", variable->realName, variable->size, (unsigned char)(variable->value&0xff));
@@ -177,6 +177,90 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
         }
         variable = variable->next;
     }
+
+}
+
+static void variable_cleanup_memory_mapped( Environment * _environment, Variable * _variable ) {
+
+    outhead2("; %s (%4.4x)", _variable->realName, _variable->absoluteAddress );
+    outhead1("%s:", _variable->realName );
+
+    switch( _variable->type ) {
+        case VT_CHAR:
+        case VT_BYTE:
+        case VT_SBYTE:
+        case VT_COLOR:
+        case VT_THREAD:
+            outline1(" .byte $%1.1x", ( _variable->value & 0xff ) );
+            break;
+        case VT_WORD:
+        case VT_SWORD:
+        case VT_POSITION:
+        case VT_ADDRESS:
+            outline1(" .word $%2.2x", ( _variable->value & 0xffff ) );
+            break;
+        case VT_DWORD:
+        case VT_SDWORD:
+            outline1(" .dword $%4.4x", ( _variable->value & 0xffff ) );
+            break;
+        case VT_STRING:
+            if ( _variable->printable ) {
+                int c = strlen( _variable->valueString );
+                out1("   .byte %d,", c);
+                int i=0;
+                for (i=0; i<(c-1); ++i ) {
+                    out1("$%2.2x,", (unsigned char)_variable->valueString[i]);
+                }
+                outline1("$%2.2x", (unsigned char)_variable->valueString[(c-1)]);                        
+            } else {
+                outline2("   .byte %d,%s", (int)strlen(_variable->valueString), escape_newlines( _variable->valueString ) );
+            }
+            break;
+        case VT_DSTRING:
+        case VT_MOB:
+            outline0("   .byte 0" );
+            break;
+        case VT_IMAGE:
+        case VT_IMAGES:
+        case VT_BUFFER:
+            if ( _variable->valueBuffer ) {
+                if ( _variable->printable ) {
+                    char * string = malloc( _variable->size + 1 );
+                    memset( string, 0, _variable->size );
+                    memcpy( string, _variable->valueBuffer, _variable->size );
+                    outline1("    .byte %s", escape_newlines( string ) );
+                } else {
+                    out0("    .byte ");
+                    int i=0;
+                    for (i=0; i<(_variable->size-1); ++i ) {
+                        out1("%d,", _variable->valueBuffer[i]);
+                    }
+                    outline1("%d", _variable->valueBuffer[(_variable->size-1)]);
+                }
+            } else {
+                outline1(" .res %d", _variable->size);
+            }
+            break;
+        case VT_ARRAY: {
+            if ( _variable->valueBuffer ) {
+                out0("    .byte ");
+                int i=0;
+                for (i=0; i<(_variable->size-1); ++i ) {
+                    out1("%d,", _variable->valueBuffer[i]);
+                }
+                outline1("%d", _variable->valueBuffer[(_variable->size-1)]);
+            } else {
+                if ( _variable->value ) {
+                    outline2("    .res %d, $%2.2x", _variable->size, (unsigned char)(_variable->value&0xff));
+                } else {
+                    outline1("    .res %d", _variable->size);
+                }
+            }
+            break;
+        }
+    }
+
+    _variable->staticalInit = 1;
 
 }
 
@@ -250,8 +334,6 @@ void variable_cleanup( Environment * _environment ) {
         }
     }    
 
-    variable_on_memory_init( _environment );
-
     if ( _environment->descriptors ) {
         outhead0(".segment \"UDCCHAR\"" );
         int i=0,j=0;
@@ -264,5 +346,48 @@ void variable_cleanup( Environment * _environment ) {
             outline1("$%2.2x", ((unsigned char)_environment->descriptors->data[i].data[j]) );
         }
     }    
+
+    if ( _environment->memoryAreas ) {
+        MemoryArea * memoryArea = _environment->memoryAreas;
+        int id = 0;
+        while( memoryArea ) {
+            cfgline2("MA%3.3x:  load = MAIN, type = overwrite,  optional = yes, start = $%4.4x;", id, memoryArea->start);
+            outhead1(".segment \"MA%3.3x\"", id );
+            for( i=memoryArea->start; i<memoryArea->end; ++i ) {
+                Variable * variable = _environment->variables;
+                while( variable ) {
+                    if ( variable->memoryArea == memoryArea && variable->absoluteAddress == i ) {
+                        variable_cleanup_memory_mapped( _environment, variable );
+                        break;
+                    }
+                    variable = variable->next;
+                }
+                variable = _environment->tempVariables[0];
+                while( variable ) {
+                    if ( variable->memoryArea == memoryArea && variable->absoluteAddress == i ) {
+                        variable_cleanup_memory_mapped( _environment, variable );
+                        break;
+                    }
+                    variable = variable->next;
+                }
+                variable = _environment->tempResidentVariables;
+                while( variable ) {
+                    if ( variable->memoryArea == memoryArea && variable->absoluteAddress == i ) {
+                        variable_cleanup_memory_mapped( _environment, variable );
+                        break;
+                    }
+                    variable = variable->next;
+                }
+            }
+            ++id;
+            memoryArea = memoryArea->next;
+        }
+
+    }    
+
+    outhead0(".segment \"CODE\"" );
+
+    variable_on_memory_init( _environment );
+
 
 }

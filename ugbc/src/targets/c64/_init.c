@@ -64,6 +64,13 @@ void target_initialization( Environment * _environment ) {
 
     MEMORY_AREA_DEFINE( MAT_DIRECT, 0xc000, 0xcfff );
 
+    if ( _environment->tenLinerRulesEnforced ) {
+        Variable * source = variable_retrieve( _environment, "SHELL_SOURCE" );
+        if ( _environment->memoryAreas ) {
+            memory_area_assign( _environment->memoryAreas, source );
+        }
+    }
+
     variable_import( _environment, "EVERYSTATUS", VT_BYTE );
     variable_global( _environment, "EVERYSTATUS" );
 
@@ -98,10 +105,13 @@ void target_initialization( Environment * _environment ) {
 
     linker_setup( _environment );
 
-    deploy( vars, src_hw_c64_vars_asm);
+    outhead0(".segment \"BASIC\"");
+    outline0(".byte $01,$08,$0b,$08,$00,$00,$9e,$32,$30,$36,$31,$00,$00,$00" );
     outhead0(".segment \"CODE\"");
+    outline0("NOP");
+    outline0("NOP");
+    deploy( vars, src_hw_c64_vars_asm);
 
-    bank_define( _environment, "STRINGS", BT_STRINGS, 0x4200, NULL );
     variable_define( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0xD800 );
     variable_global( _environment, "COLORMAPADDRESS" );
 
@@ -114,7 +124,7 @@ void target_initialization( Environment * _environment ) {
     }
 
     cpu_call( _environment, "VARINIT" );
-
+    
 }
 
 void target_linkage( Environment * _environment ) {

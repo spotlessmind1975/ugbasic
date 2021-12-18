@@ -49,18 +49,26 @@ void linker_setup( Environment * _environment ) {
     cfghead0("FEATURES {");
     cfgline0("STARTADDRESS: default = $0801;");
     cfghead0("}");
-    cfghead0("SYMBOLS {");
-    cfgline0("__LOADADDR__: type = import;");
-    cfghead0("}");
     cfghead0("MEMORY {");
     cfgline0("ZP:       file = \"\", start = $0002,  size = $00FE,      define = yes;");
-    cfgline0("LOADADDR: file = %O, start = %S - 2, size = $0002;");
-    cfgline0("MAIN:     file = %O, start = %S,     size = $A800 - %S;");
+    // cfgline0("LOADADDR: file = %O, start = %S - 2, size = $0002;");
+
+    MemoryArea * actual = _environment->memoryAreas;
+    int maxAddress = 0xA800;
+    while( actual ) {
+        if ( actual->start + actual->size > maxAddress ) {
+            maxAddress = 0x800 + actual->start + actual->size;
+        }
+        actual = actual->next;
+    }
+
+    cfgline1("MAIN:     file = %%O, start = %%S-2,     size = $%4.4x - %%S;", (unsigned short)maxAddress);
     cfghead0("}");
     cfghead0("SEGMENTS {");
     cfgline0("ZEROPAGE: load = ZP,       type = zp,  optional = yes;");
-    cfgline0("LOADADDR: load = LOADADDR, type = ro;");
-    cfgline0("EXEHDR:   load = MAIN,     type = ro,  optional = yes;");
+    // cfgline0("LOADADDR: load = LOADADDR, type = ro;");
+    // cfgline0("EXEHDR:   load = MAIN,     type = ro,  optional = yes;");
+    cfgline0("BASIC:    load = MAIN,     type = ro,  optional = no;");
     cfgline0("CODE:     load = MAIN,     type = rw;");
     cfgline0("RODATA:   load = MAIN,     type = ro,  optional = yes;");
     cfgline0("DATA:     load = MAIN,     type = rw,  optional = yes;");
