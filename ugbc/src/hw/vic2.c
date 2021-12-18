@@ -1075,7 +1075,6 @@ void vic2_text( Environment * _environment, char * _text, char * _text_size ) {
 void vic2_initialization( Environment * _environment ) {
 
     deploy( vic2vars, src_hw_vic2_vars_asm );
-    deploy( vic2varsGraphic, src_hw_vic2_vars_graphic_asm );
     deploy( vic2startup, src_hw_vic2_startup_asm );
     src_hw_chipset_mob_asm = src_hw_vic2_mob_asm;
     src_hw_chipset_mob_asm_len = src_hw_vic2_mob_asm_len;
