@@ -4572,7 +4572,7 @@ void cpu6502_hex_to_string( Environment * _environment, char * _number, char * _
 
 void cpu6502_dsdefine( Environment * _environment, char * _string, char * _index ) {
 
-    deploy_with_vars( dstring, src_hw_6502_dstring_asm, cpu_dstring_vars );
+    deploy( dstring, src_hw_6502_dstring_asm );
 
     outline1( "LDA #<%s", _string );
     outline0( "STA DSADDRLO" );
@@ -4585,7 +4585,7 @@ void cpu6502_dsdefine( Environment * _environment, char * _string, char * _index
 
 void cpu6502_dsalloc( Environment * _environment, char * _size, char * _index ) {
 
-    deploy_with_vars( dstring, src_hw_6502_dstring_asm, cpu_dstring_vars );
+    deploy( dstring, src_hw_6502_dstring_asm );
 
     outline1( "LDA %s", _size );
     outline0( "STA DSSIZE" );
@@ -4596,7 +4596,7 @@ void cpu6502_dsalloc( Environment * _environment, char * _size, char * _index ) 
 
 void cpu6502_dsalloc_size( Environment * _environment, int _size, char * _index ) {
 
-    deploy_with_vars( dstring, src_hw_6502_dstring_asm, cpu_dstring_vars );
+    deploy( dstring, src_hw_6502_dstring_asm );
 
     outline1( "LDA #$%2.2x", _size );
     outline0( "STA DSSIZE" );
@@ -4607,7 +4607,7 @@ void cpu6502_dsalloc_size( Environment * _environment, int _size, char * _index 
 
 void cpu6502_dsfree( Environment * _environment, char * _index ) {
 
-    deploy_with_vars( dstring, src_hw_6502_dstring_asm, cpu_dstring_vars );
+    deploy( dstring, src_hw_6502_dstring_asm );
 
     outline1( "LDX %s", _index );
     outline0( "JSR DSFREE" );
@@ -4616,7 +4616,7 @@ void cpu6502_dsfree( Environment * _environment, char * _index ) {
 
 void cpu6502_dswrite( Environment * _environment, char * _index ) {
 
-    deploy_with_vars( dstring, src_hw_6502_dstring_asm, cpu_dstring_vars );
+    deploy( dstring, src_hw_6502_dstring_asm );
 
     outline1( "LDX %s", _index );
     outline0( "JSR DSWRITE" );
@@ -4625,7 +4625,7 @@ void cpu6502_dswrite( Environment * _environment, char * _index ) {
 
 void cpu6502_dsresize( Environment * _environment, char * _index, char * _resize ) {
 
-    deploy_with_vars( dstring, src_hw_6502_dstring_asm, cpu_dstring_vars );
+    deploy( dstring, src_hw_6502_dstring_asm );
 
     outline1( "LDX %s", _index );
     outline1( "LDA %s", _resize );
@@ -4636,7 +4636,7 @@ void cpu6502_dsresize( Environment * _environment, char * _index, char * _resize
 
 void cpu6502_dsresize_size( Environment * _environment, char * _index, int _resize ) {
 
-    deploy_with_vars( dstring,src_hw_6502_dstring_asm, cpu_dstring_vars );
+    deploy( dstring,src_hw_6502_dstring_asm );
 
     outline1( "LDX %s", _index );
     outline1( "LDA #$%2.2x", _resize );
@@ -4647,7 +4647,7 @@ void cpu6502_dsresize_size( Environment * _environment, char * _index, int _resi
 
 void cpu6502_dsgc( Environment * _environment ) {
 
-    deploy_with_vars( dstring,src_hw_6502_dstring_asm, cpu_dstring_vars );
+    deploy( dstring,src_hw_6502_dstring_asm );
 
     outline0( "JSR DSGC" );
 
@@ -4655,7 +4655,7 @@ void cpu6502_dsgc( Environment * _environment ) {
 
 void cpu6502_dsdescriptor( Environment * _environment, char * _index, char * _address, char * _size ) {
 
-    deploy_with_vars( dstring,src_hw_6502_dstring_asm, cpu_dstring_vars );
+    deploy( dstring,src_hw_6502_dstring_asm );
 
     outline1( "LDX %s", _index );
     outline0( "JSR DSDESCRIPTOR" );

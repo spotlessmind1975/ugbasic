@@ -264,9 +264,14 @@ typedef enum _MemoryAreaType {
 typedef struct _MemoryArea {
 
     /**
-     * Starting address
+     * Initial starting address
      */
     int start;
+
+    /**
+     * Starting address
+     */
+    int current;
 
     /**
      * Ending address
@@ -293,6 +298,7 @@ typedef struct _MemoryArea {
         MemoryArea * memoryArea = malloc( sizeof( MemoryArea ) ); \
         memset( memoryArea, 0, sizeof( MemoryArea ) ) ; \
         memoryArea->start = _start; \
+        memoryArea->current = _start; \
         memoryArea->end = _end; \
         memoryArea->size = (_end-_start); \
         memoryArea->type = _type; \
@@ -452,6 +458,8 @@ typedef struct _Variable {
     /** count of frames (if IMAGES) */
     int frameCount;
 
+    int staticalInit;
+    
     /** Link to the next variable (NULL if this is the last one) */
     struct _Variable * next;
 
@@ -1893,6 +1901,7 @@ Constant *              constant_find( Constant * _constant, char * _name );
 
 Variable *              distance( Environment * _environment, char * _x1, char * _y1, char * _x2, char * _y2 );
 void                    draw( Environment * _environment, char * _x0, char * _y0, char * _x1, char * _y1, char * _c );
+void                    dstring_cleanup( Environment * _Environment );
 
 //----------------------------------------------------------------------------
 // *E*
@@ -2175,7 +2184,7 @@ void                    tiles_at_var( Environment * _environment, char * _addres
 // *u*
 //----------------------------------------------------------------------------
 
-char *                  unescape_string( Environment * _environment, char * _value );
+char *                  unescape_string( Environment * _environment, char * _value, int _printing );
 
 //----------------------------------------------------------------------------
 // *V*
