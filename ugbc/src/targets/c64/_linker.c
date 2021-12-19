@@ -56,13 +56,23 @@ void linker_setup( Environment * _environment ) {
     MemoryArea * actual = _environment->memoryAreas;
     int maxAddress = 0xA800;
     while( actual ) {
-        if ( actual->start + actual->size > maxAddress ) {
-            maxAddress = 0x800 + actual->start + actual->size;
+        int realMaxAddress = 0x800 + actual->start + ( actual->end - actual->start ) - actual->size;
+        if ( actual->type != MAT_RAM && realMaxAddress > maxAddress ) {
+            maxAddress = realMaxAddress;
         }
         actual = actual->next;
     }
 
     cfgline1("MAIN:     file = %%O, start = %%S-2,     size = $%4.4x - %%S;", (unsigned short)maxAddress);
+
+    actual = _environment->memoryAreas;
+    while( actual ) {
+        if ( actual->type == MAT_RAM  ) {
+            cfgline3("RAM%3.3x:     file = \"\", start = $%4.4x,     size = $%4.4x;", actual->id, (unsigned short)actual->start, (unsigned short)(actual->end - actual->start) );
+        }
+        actual = actual->next;
+    }
+
     cfghead0("}");
     cfghead0("SEGMENTS {");
     cfgline0("ZEROPAGE: load = ZP,       type = zp,  optional = yes;");
