@@ -40,6 +40,9 @@ NMISVC:
     RTI
 
 IRQSVC:
+    JMP ($0314)    
+
+IRQSVC2:
     BIT $DC0D
     RTI
 
@@ -54,6 +57,11 @@ C64STARTUP:
     STA $FFFE
     LDA #>IRQSVC
     STA $FFFF
+
+    LDA #<IRQSVC2
+    STA $0314
+    LDA #>IRQSVC2
+    STA $0315
 
     ; DISABLE BASIC ROM & KERNAL ROM
     LDA #$35

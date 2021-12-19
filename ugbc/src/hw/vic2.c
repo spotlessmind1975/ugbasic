@@ -301,8 +301,8 @@ void vic2_raster_at( Environment * _environment, char * _label, char * _position
  */
 void vic2_next_raster( Environment * _environment ) {
 
-    outline0("ASL $D019"); // acknowledge
-    outline0("JMP $EA31"); // KERNAL's standard interrupt service routine
+    outline0("ASL $D019");
+    outline0("JMP IRQSVC2");
 
 }
 
