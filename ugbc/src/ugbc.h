@@ -249,7 +249,8 @@ typedef enum _VariableType {
 typedef enum _MemoryAreaType {
 
     /**
-     * This memory area can be accessed directly. 
+     * This memory area can be accessed directly,
+     * and can be initialized by compiler.
      */
     MAT_DIRECT = 1,
 
@@ -257,11 +258,19 @@ typedef enum _MemoryAreaType {
      * This memory area can be accessed only after calling a specific
      * prologue and epilogue code. 
      */
-    MAT_GATED = 2
+    MAT_GATED = 2,
+
+    /**
+     * This memory area can be accessed directly but it is not
+     * initialized directly -- only at runtime. 
+     */
+    MAT_RAM = 3
 
 } MemoryAreaType;
 
 typedef struct _MemoryArea {
+
+    int id;
 
     /**
      * Initial starting address
@@ -297,6 +306,7 @@ typedef struct _MemoryArea {
     { \
         MemoryArea * memoryArea = malloc( sizeof( MemoryArea ) ); \
         memset( memoryArea, 0, sizeof( MemoryArea ) ) ; \
+        memoryArea->id = UNIQUE_ID; \
         memoryArea->start = _start; \
         memoryArea->current = _start; \
         memoryArea->end = _end; \
