@@ -4871,19 +4871,57 @@ void cpu6502_sqroot( Environment * _environment, char * _number, char * _result 
 
 }
 
+void emit_segment_if_enough_space( Environment * _environment, int _space ) {
+    MemoryArea * actual = _environment->memoryAreas;
+    int id = 0;
+    while( actual ) {
+        if ( actual->size > _space ) {
+            outhead1(".segment \"MA%3.3x\"", id );
+            actual->size -= _space;
+            break;
+        }
+        actual = actual->next;
+        ++id;
+    }
+}
+
 void cpu6502_dstring_vars( Environment * _environment ) {
 
     int count = _environment->dstring.count == 0 ? DSTRING_DEFAULT_COUNT : _environment->dstring.count;
     int space = _environment->dstring.space == 0 ? DSTRING_DEFAULT_SPACE : _environment->dstring.space;
 
+    emit_segment_if_enough_space( _environment, 1 );
     outhead1("MAXSTRINGS:                   .BYTE %d", count );
+    outhead0(".segment \"CODE\"" );
+
+    emit_segment_if_enough_space( _environment, count );
     outhead1("DESCRIPTORS_STATUS:           .RES %d", count );
+    outhead0(".segment \"CODE\"" );
+
+    emit_segment_if_enough_space( _environment, count );
     outhead1("DESCRIPTORS_ADDRESS_LO:       .RES %d", count );
+    outhead0(".segment \"CODE\"" );
+
+    emit_segment_if_enough_space( _environment, count );
     outhead1("DESCRIPTORS_ADDRESS_HI:       .RES %d", count );
+    outhead0(".segment \"CODE\"" );
+
+    emit_segment_if_enough_space( _environment, count );
     outhead1("DESCRIPTORS_SIZE:             .RES %d", count );
+    outhead0(".segment \"CODE\"" );
+
+    emit_segment_if_enough_space( _environment, space );
     outhead1("WORKING:                      .RES %d", space );
+    outhead0(".segment \"CODE\"" );
+
+    emit_segment_if_enough_space( _environment, space );
     outhead1("TEMPORARY:                    .RES %d", space );
+    outhead0(".segment \"CODE\"" );
+
+    emit_segment_if_enough_space( _environment, 2 );
     outhead1("FREE_STRING:                  .WORD %d", space );
+    outhead0(".segment \"CODE\"" );
+
 
 }
 
