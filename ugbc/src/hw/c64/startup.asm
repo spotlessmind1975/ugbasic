@@ -35,10 +35,28 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+NMISVC:
+    BIT $DC0D
+    RTI
+
+IRQSVC:
+    BIT $DC0D
+    RTI
+
 C64STARTUP:
 
-    ; DISABLE BASIC ROM    
-    LDA #$36
+    LDA #<NMISVC
+    STA $FFFA
+    LDA #>NMISVC
+    STA $FFFB
+
+    LDA #<IRQSVC
+    STA $FFFE
+    LDA #>IRQSVC
+    STA $FFFF
+
+    ; DISABLE BASIC ROM & KERNAL ROM
+    LDA #$35
     STA $01
-    
+
     RTS

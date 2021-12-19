@@ -58,7 +58,7 @@ VIC2STARTUPL1:
     INC $FE
     DEX
     BNE VIC2STARTUPL1
-    LDA #$37
+    LDA #$35
     STA $01
     CLI
 
