@@ -63,6 +63,7 @@ void setup_embedded( Environment * _environment ) {
 void target_initialization( Environment * _environment ) {
 
     MEMORY_AREA_DEFINE( MAT_DIRECT, 0xc000, 0xcfff );
+    MEMORY_AREA_DEFINE( MAT_RAM, 0xe000, 0xff00 );
 
     if ( _environment->tenLinerRulesEnforced ) {
         Variable * source = variable_retrieve( _environment, "SHELL_SOURCE" );
