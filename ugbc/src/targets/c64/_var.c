@@ -260,8 +260,6 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
         }
     }
 
-    _variable->staticalInit = 1;
-
 }
 
 /**
@@ -361,6 +359,7 @@ void variable_cleanup( Environment * _environment ) {
                 while( variable ) {
                     if ( variable->memoryArea == memoryArea && variable->absoluteAddress == i ) {
                         variable_cleanup_memory_mapped( _environment, variable );
+                        variable->staticalInit = ( memoryArea->type == MAT_RAM ? 0 : 1 );
                         break;
                     }
                     variable = variable->next;
@@ -369,6 +368,7 @@ void variable_cleanup( Environment * _environment ) {
                 while( variable ) {
                     if ( variable->memoryArea == memoryArea && variable->absoluteAddress == i ) {
                         variable_cleanup_memory_mapped( _environment, variable );
+                        variable->staticalInit = ( memoryArea->type == MAT_RAM ? 0 : 1 );
                         break;
                     }
                     variable = variable->next;
@@ -377,6 +377,7 @@ void variable_cleanup( Environment * _environment ) {
                 while( variable ) {
                     if ( variable->memoryArea == memoryArea && variable->absoluteAddress == i ) {
                         variable_cleanup_memory_mapped( _environment, variable );
+                        variable->staticalInit = ( memoryArea->type == MAT_RAM ? 0 : 1 );
                         break;
                     }
                     variable = variable->next;
