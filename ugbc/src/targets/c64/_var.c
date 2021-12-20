@@ -47,7 +47,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
 
     while( variable ) {
 
-        if ( ( !variable->assigned || ( variable->assigned && !variable->temporary ) ) && !variable->imported ) {
+        if ( ( !variable->assigned || ( variable->assigned && !variable->temporary ) ) && !variable->imported && !variable->memoryArea ) {
 
             if ( variable->memoryArea && _environment->debuggerLabelsFile ) {
                 fprintf( _environment->debuggerLabelsFile, "%4.4x %s\r\n", variable->absoluteAddress, variable->realName );
@@ -357,25 +357,27 @@ void variable_cleanup( Environment * _environment ) {
             for( i=memoryArea->start; i<memoryArea->end; ++i ) {
                 Variable * variable = _environment->variables;
                 while( variable ) {
-                    if ( variable->memoryArea == memoryArea && variable->absoluteAddress == i ) {
+                    if ( !variable->assigned && variable->memoryArea == memoryArea && variable->absoluteAddress == i ) {
                         variable_cleanup_memory_mapped( _environment, variable );
                         variable->staticalInit = ( memoryArea->type == MAT_RAM ? 0 : 1 );
                         break;
                     }
                     variable = variable->next;
                 }
-                variable = _environment->tempVariables[0];
-                while( variable ) {
-                    if ( variable->memoryArea == memoryArea && variable->absoluteAddress == i ) {
-                        variable_cleanup_memory_mapped( _environment, variable );
-                        variable->staticalInit = ( memoryArea->type == MAT_RAM ? 0 : 1 );
-                        break;
+                for( int j=0; j< (_environment->currentProcedure+1); ++j ) {
+                    Variable * variable = _environment->tempVariables[j];
+                    while( variable ) {
+                        if ( !variable->assigned && variable->memoryArea == memoryArea && variable->absoluteAddress == i ) {
+                            variable_cleanup_memory_mapped( _environment, variable );
+                            variable->staticalInit = ( memoryArea->type == MAT_RAM ? 0 : 1 );
+                            break;
+                        }
+                        variable = variable->next;
                     }
-                    variable = variable->next;
                 }
                 variable = _environment->tempResidentVariables;
                 while( variable ) {
-                    if ( variable->memoryArea == memoryArea && variable->absoluteAddress == i ) {
+                    if ( !variable->assigned && variable->memoryArea == memoryArea && variable->absoluteAddress == i ) {
                         variable_cleanup_memory_mapped( _environment, variable );
                         variable->staticalInit = ( memoryArea->type == MAT_RAM ? 0 : 1 );
                         break;
