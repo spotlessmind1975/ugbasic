@@ -54,9 +54,9 @@ void linker_setup( Environment * _environment ) {
     // cfgline0("LOADADDR: file = %O, start = %S - 2, size = $0002;");
 
     MemoryArea * actual = _environment->memoryAreas;
-    int maxAddress = 0xA800;
+    int maxAddress = 0xA802;
     while( actual ) {
-        int realMaxAddress = 0x800 + actual->start + ( actual->end - actual->start ) - actual->size;
+        int realMaxAddress = 0x800 + actual->start + ( actual->end - actual->start );
         if ( actual->type != MAT_RAM && realMaxAddress > maxAddress ) {
             maxAddress = realMaxAddress;
         }
