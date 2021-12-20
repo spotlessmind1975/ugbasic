@@ -100,6 +100,8 @@ void shell_injection( Environment * _environment ) {
 
     cpu_label( _environment, "PROGSTART" );
 
+    home( _environment );
+
     cls( _environment, NULL );
 
 }
