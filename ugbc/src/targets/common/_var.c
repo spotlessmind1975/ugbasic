@@ -46,7 +46,7 @@ void variable_on_memory_init( Environment * _environment ) {
 
     Variable * variable = _environment->variables;
     while( variable ) {
-        if ( variable->absoluteAddress && ! variable->staticalInit ) {
+        if ( ! variable->staticalInit && ! variable->imported ) {
             switch( variable->type ) {
                 case VT_STRING:
                 case VT_DSTRING:
