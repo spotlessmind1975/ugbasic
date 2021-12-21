@@ -437,8 +437,8 @@ void ef936x_point_at_int( Environment * _environment, int _x, int _y ) {
     deploy( ef936xvars, src_hw_ef936x_vars_asm );
     deploy( plot, src_hw_ef936x_plot_asm );
     
-    outline1("LDX %4.4x", (_x & 0xffff ) );
-    outline0("STX <PLOTX");
+    outline1("LDD %4.4x", (_x & 0xffff ) );
+    outline0("STD <PLOTX");
     outline1("LDD %4.4x", ( _y & 0xffff ) );
     outline0("STD <PLOTY");
     outline0("LDA #1");
@@ -456,8 +456,8 @@ void ef936x_point_at_vars( Environment * _environment, char *_x, char *_y ) {
     deploy( ef936xvars, src_hw_ef936x_vars_asm );
     deploy( plot, src_hw_ef936x_plot_asm );
     
-    outline1("LDX %s", x->realName );
-    outline0("STX <PLOTX");
+    outline1("LDD %s", x->realName );
+    outline0("STD <PLOTX");
     outline1("LDD %s", y->realName );
     outline0("STD <PLOTY");
     outline0("LDA #1");
@@ -578,8 +578,8 @@ void ef936x_tiles_get_width( Environment * _environment, char *_result ) {
 
 void ef936x_get_height( Environment * _environment, char *_result ) {
 
-    outline0("LDX CURRENTHEIGHT" );
-    outline1("STX %s", _result );
+    outline0("LDD CURRENTHEIGHT" );
+    outline1("STD %s", _result );
 
 }
 
