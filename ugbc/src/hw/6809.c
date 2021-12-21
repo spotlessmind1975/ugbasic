@@ -2064,7 +2064,7 @@ void cpu6809_compare_32bit( Environment * _environment, char *_source, char *_de
             cpu6809_compare_16bit( _environment, _source, _destination, _other, _positive );
 
             outline1("LDA %s", _other );
-            outline1("BEQ %sdone", _other );
+            outline1("BEQ %sdone", label );
 
             cpu6809_compare_16bit( _environment, sourceEffective, destinationEffective, _other, _positive );
 
@@ -2073,13 +2073,13 @@ void cpu6809_compare_32bit( Environment * _environment, char *_source, char *_de
             cpu6809_compare_16bit( _environment, _source, _destination, _other, _positive );
 
             outline1("LDA %s", _other );
-            outline1("BNE %sdone", _other );
+            outline1("BNE %sdone", label );
 
             cpu6809_compare_16bit( _environment, sourceEffective, destinationEffective, _other, _positive );
 
         }
 
-        outhead1("%sdone", _other );
+        outhead1("%sdone", label );
 
     no_embedded( cpu_compare_32bit )
 
@@ -4280,131 +4280,55 @@ void cpu6809_number_to_string( Environment * _environment, char * _number, char 
 
     deploy( numberToString, src_hw_6809_number_to_string_asm );
 
-    outline1("LDX %s", _string );
-    outline0("STX <TMPPTR");
-
-    outline0("LDA #0");
-    outline0("STA <MATHPTR0");
-    outline0("STA <MATHPTR3");
-    outline0("STA <MATHPTR2");
-    outline0("STA <MATHPTR1");
-    outline0("STA <MATHPTR4");
-
     switch( _bits ) {
         case 32:
-            outline1("LDA %s", _number );
-            if ( _signed && _bits == 32 ) {
-                outline0("AND #$80");
+            outline1("LDD %s+2", _number );
+            outline0("STD <MATHPTR2");
+            outline1("LDD %s", _number );
+            outline0("STD <MATHPTR0");
+            if ( _signed ) {
                 outline0("STA <MATHPTR4");
-                outline1("LDA %s", _number );
+                outline1("BPL %spositive", label );
+                cpu6809_complement2_32bit( _environment, "<MATHPTR0", NULL);
+                outhead1("%spositive", label );
+            } else {
+                outline0("CLR <MATHPTR4");
             }
-            outline0("STA <MATHPTR0");
-            outline1("LDA %s+1", _number );
-            outline0("STA <MATHPTR1");
-            outline1("LDA %s+2", _number );    
-            outline0("STA <MATHPTR2");
-            outline1("LDA %s+3", _number );
-            outline0("STA <MATHPTR3");
             break;
         case 16:
-            outline0("LDA #0" );
-            outline0("STA <MATHPTR0");
-            outline0("STA <MATHPTR1");
-            outline1("LDA %s", _number );    
-            if ( _signed && _bits == 16 ) {
-                outline0("ANDA #$80");
+            outline1("LDD %s", _number );
+            outline0("STD <MATHPTR2");
+            if ( _signed ) {
                 outline0("STA <MATHPTR4");
-                outline1("LDA %s", _number );
+                outline1("BPL %spositive", label );
+                cpu6809_complement2_16bit( _environment, "<MATHPTR2", NULL);
+                outhead1("%spositive", label );
             }
-            outline0("STA <MATHPTR2");
-            outline1("LDA %s+1", _number );
-            outline0("STA <MATHPTR3");
+            outline0("LDD #0");
+            outline0("STD <MATHPTR0");
+            if ( !_signed ) outline0("STA <MATHPTR4");
             break;
         case 8:
-            outline0("LDA #0" );
-            outline0("STA <MATHPTR0");
-            outline0("STA <MATHPTR1");
-            outline0("STA <MATHPTR2");
-            outline1("LDA %s", _number );    
+            outline1("LDB %s", _number );
+            outline0("CLRA");
+            outline0("STD <MATHPTR2");
             if ( _signed && _bits == 8 ) {
-                outline0("ANDA #$80");
-                outline0("STA <MATHPTR4");
-                outline1("LDA %s", _number );
+                outline0("STB <MATHPTR4");
+                outline1("BPL %spositive", label );
+                cpu6809_complement2_8bit( _environment, "<MATHPTR3", NULL);
+                outhead1("%spositive", label );
             }
-            outline0("STA <MATHPTR3");
+            outline0("CLRB");
+            outline0("STD <MATHPTR0");
+            if ( !_signed ) outline0("STA <MATHPTR4");
             break;
     }
 
-    outline0("LDA <MATHPTR4");
-    outline0("ANDA #$80" );
-    outline1("BEQ %spositive", label );
 
-    switch( _bits ) {
-        case 32:
-            outline0("LDA <MATHPTR0" );
-            outline0("EORA #$ff" );
-            outline0("STA <MATHPTR0" );
-            outline0("LDA <MATHPTR1" );
-            outline0("EORA #$ff" );
-            outline0("STA <MATHPTR1" );
-            outline0("LDA <MATHPTR2" );
-            outline0("EORA #$ff" );
-            outline0("STA <MATHPTR2" );
-            outline0("LDA <MATHPTR3" );
-            outline0("EORA #$ff" );
-            outline0("STA <MATHPTR3" );
-
-            outline0("ANDCC #$FE" );
-            outline0("LDA #$01" );
-            outline0("ADDA <MATHPTR3" );
-            outline0("STA <MATHPTR3" );
-            outline0("LDA #$00" );
-            outline0("ADDA <MATHPTR2" );
-            outline0("STA <MATHPTR2" );
-            outline0("LDA #$00" );
-            outline0("ADDA <MATHPTR1" );
-            outline0("STA <MATHPTR1" );
-            outline0("LDA #$00" );
-            outline0("ADDA <MATHPTR0" );
-            outline0("STA <MATHPTR0" );
-            break;
-        case 16:
-            outline0("LDA <MATHPTR2" );
-            outline0("EORA #$ff" );
-            outline0("STA <MATHPTR2" );
-            outline0("LDA <MATHPTR3" );
-            outline0("EORA #$ff" );
-            outline0("STA <MATHPTR3" );
-
-            outline0("ANDCC #$FE" );
-            outline0("LDA #$01" );
-            outline0("ADDA <MATHPTR3" );
-            outline0("STA <MATHPTR3" );
-            outline0("LDA #$00" );
-            outline0("ADDA <MATHPTR2" );
-            outline0("STA <MATHPTR2" );
-            break;
-        case 8:
-            outline0("LDA <MATHPTR3" );
-            outline0("EORA #$ff" );
-            outline0("STA <MATHPTR3" );
-
-            outline0("ANDCC #$FE" );
-            outline0("LDA #$01" );
-            outline0("ADDA <MATHPTR3" );
-            outline0("STA <MATHPTR3" );
-            break;
-    }
-
-    outline0("LDX <MATHPTR2" );
-
-    outhead1("%spositive", label );
+    outline1("LDX %s", _string );
     outline1("LDA #$%2.2X", _bits );
-    outline0("STA <MATHPTR5");
-
     outline0("JSR N2STRING");
 
-    outline0("LDA <MATHPTR5" );
     outline1("STA %s", _string_size);
 
 }
@@ -4472,7 +4396,7 @@ void cpu6809_hex_to_string( Environment * _environment, char * _number, char * _
 
 void cpu6809_dsdefine( Environment * _environment, char * _string, char * _index ) {
     
-    deploy_with_vars( dstring, src_hw_6809_dstring_asm, cpu_dstring_vars );
+    deploy( dstring, src_hw_6809_dstring_asm );
 
     outline1( "LDY #%s", _string );
     outline0( "JSR DSDEFINE" );
@@ -4482,7 +4406,7 @@ void cpu6809_dsdefine( Environment * _environment, char * _string, char * _index
 
 void cpu6809_dsalloc( Environment * _environment, char * _size, char * _index ) {
 
-    deploy_with_vars( dstring, src_hw_6809_dstring_asm, cpu_dstring_vars );
+    deploy( dstring, src_hw_6809_dstring_asm );
 
     outline1( "LDA %s", _size );
     outline0( "JSR DSALLOC" );
@@ -4492,7 +4416,7 @@ void cpu6809_dsalloc( Environment * _environment, char * _size, char * _index ) 
 
 void cpu6809_dsalloc_size( Environment * _environment, int _size, char * _index ) {
 
-    deploy_with_vars( dstring, src_hw_6809_dstring_asm, cpu_dstring_vars );
+    deploy( dstring, src_hw_6809_dstring_asm );
 
     outline1( "LDA #$%2.2x", _size );
     outline0( "JSR DSALLOC" );
@@ -4502,7 +4426,7 @@ void cpu6809_dsalloc_size( Environment * _environment, int _size, char * _index 
 
 void cpu6809_dsfree( Environment * _environment, char * _index ) {
 
-    deploy_with_vars( dstring, src_hw_6809_dstring_asm, cpu_dstring_vars );
+    deploy( dstring, src_hw_6809_dstring_asm );
 
     outline1( "LDB %s", _index );
     outline0( "JSR DSFREE" );
@@ -4511,7 +4435,7 @@ void cpu6809_dsfree( Environment * _environment, char * _index ) {
 
 void cpu6809_dswrite( Environment * _environment, char * _index ) {
 
-    deploy_with_vars( dstring, src_hw_6809_dstring_asm, cpu_dstring_vars );
+    deploy( dstring, src_hw_6809_dstring_asm );
 
     outline1( "LDB %s", _index );
     outline0( "JSR DSWRITE" );
@@ -4520,7 +4444,7 @@ void cpu6809_dswrite( Environment * _environment, char * _index ) {
 
 void cpu6809_dsresize( Environment * _environment, char * _index, char * _resize ) {
 
-    deploy_with_vars( dstring, src_hw_6809_dstring_asm, cpu_dstring_vars );
+    deploy( dstring, src_hw_6809_dstring_asm );
 
     outline1( "LDB %s", _index );
     outline1( "LDA %s", _resize );
@@ -4530,7 +4454,7 @@ void cpu6809_dsresize( Environment * _environment, char * _index, char * _resize
 
 void cpu6809_dsresize_size( Environment * _environment, char * _index, int _resize ) {
 
-    deploy_with_vars( dstring, src_hw_6809_dstring_asm, cpu_dstring_vars );
+    deploy( dstring, src_hw_6809_dstring_asm );
 
     outline1( "LDB %s", _index );
     outline1( "LDA #$%2.2X", _resize );
@@ -4540,7 +4464,7 @@ void cpu6809_dsresize_size( Environment * _environment, char * _index, int _resi
 
 void cpu6809_dsgc( Environment * _environment ) {
 
-    deploy_with_vars( dstring, src_hw_6809_dstring_asm, cpu_dstring_vars );
+    deploy( dstring, src_hw_6809_dstring_asm );
 
     outline0( "JSR DSGC" );
 
@@ -4548,7 +4472,7 @@ void cpu6809_dsgc( Environment * _environment ) {
 
 void cpu6809_dsdescriptor( Environment * _environment, char * _index, char * _address, char * _size ) {
 
-    deploy_with_vars( dstring,src_hw_6809_dstring_asm, cpu_dstring_vars );
+    deploy( dstring,src_hw_6809_dstring_asm );
 
     outline1( "LDB %s", _index );
     outline0( "JSR DSDESCRIPTOR" );
@@ -4828,6 +4752,27 @@ void cpu6809_protothread_current( Environment * _environment, char * _current ) 
 
     outline0("LDB PROTOTHREADCT" );
     outline1("STB %s", _current );
+
+}
+
+void cpu6809_is_negative( Environment * _environment, char * _value, char * _result ) {
+
+    MAKE_LABEL
+
+    inline( cpu_is_negative )
+
+        outline1("LDA %s", _value);
+        outline0("ANDA #$80");
+        outline1("BEQ %s", label);
+        outline0("LDA #$FF");
+        outline1("STA %s", _result );
+        outline1("JMP %sdone", label);
+        outhead1("%s", label);
+        outline0("LDA #$00");
+        outline1("STA %s", _result );
+        outhead1("%sdone", label);
+
+    no_embedded( cpu_is_negative )
 
 }
 

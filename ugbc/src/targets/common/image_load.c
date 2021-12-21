@@ -115,6 +115,10 @@ ma con nomi diversi.
 </usermanual> */
 Variable * image_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _flags, int _transparent_color, int _background_color ) {
 
+    if ( _environment->tenLinerRulesEnforced ) {
+        CRITICAL_10_LINE_RULES_ENFORCED( "IMAGE LOAD");
+    }
+    
     LoadedFile * first = _environment->loadedFiles;
     char *lookfor = _filename;
     if ( _alias ) {

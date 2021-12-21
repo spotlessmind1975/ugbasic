@@ -3358,7 +3358,7 @@ void z80_number_to_string( Environment * _environment, char * _number, char * _s
                 outline0("EXX" );
                 outline0("ADD HL, DE" );
                 outline0("EXX" );
-                outhead1("%sp16:", label);
+                outhead1("%sp32:", label);
             }
             outline0("CALL N2D32");
             break;
@@ -3471,7 +3471,7 @@ void z80_hex_to_string( Environment * _environment, char * _number, char * _stri
 
 void z80_dsdefine( Environment * _environment, char * _string, char * _index ) {
 
-    deploy_with_vars( dstring,src_hw_z80_dstring_asm, cpu_dstring_vars );
+    deploy( dstring,src_hw_z80_dstring_asm );
 
     outline1( "LD HL, %s", _string );
     outline0( "CALL DSDEFINE" );
@@ -3482,7 +3482,7 @@ void z80_dsdefine( Environment * _environment, char * _string, char * _index ) {
 
 void z80_dsalloc( Environment * _environment, char * _size, char * _index ) {
 
-    deploy_with_vars( dstring,src_hw_z80_dstring_asm, cpu_dstring_vars );
+    deploy( dstring,src_hw_z80_dstring_asm );
 
     outline1( "LD A, (%s)", _size );
     outline0( "LD C, A" );
@@ -3494,7 +3494,7 @@ void z80_dsalloc( Environment * _environment, char * _size, char * _index ) {
 
 void z80_dsalloc_size( Environment * _environment, int _size, char * _index ) {
 
-    deploy_with_vars( dstring,src_hw_z80_dstring_asm, cpu_dstring_vars );
+    deploy( dstring,src_hw_z80_dstring_asm );
 
     outline1( "LD A, $%2.2x", _size );
     outline0( "LD C, A" );
@@ -3506,7 +3506,7 @@ void z80_dsalloc_size( Environment * _environment, int _size, char * _index ) {
 
 void z80_dsfree( Environment * _environment, char * _index ) {
 
-    deploy_with_vars( dstring,src_hw_z80_dstring_asm, cpu_dstring_vars );
+    deploy( dstring,src_hw_z80_dstring_asm );
 
     outline1( "LD A, (%s)", _index );
     outline0( "LD B, A" );
@@ -3516,7 +3516,7 @@ void z80_dsfree( Environment * _environment, char * _index ) {
 
 void z80_dswrite( Environment * _environment, char * _index ) {
 
-    deploy_with_vars( dstring,src_hw_z80_dstring_asm, cpu_dstring_vars );
+    deploy( dstring,src_hw_z80_dstring_asm );
 
     outline1( "LD A, (%s)", _index );
     outline0( "LD B, A" );
@@ -3526,7 +3526,7 @@ void z80_dswrite( Environment * _environment, char * _index ) {
 
 void z80_dsresize( Environment * _environment, char * _index, char * _resize ) {
 
-    deploy_with_vars( dstring,src_hw_z80_dstring_asm, cpu_dstring_vars );
+    deploy( dstring,src_hw_z80_dstring_asm );
 
     outline1( "LD A, (%s)", _index );
     outline0( "LD B, A" );
@@ -3538,7 +3538,7 @@ void z80_dsresize( Environment * _environment, char * _index, char * _resize ) {
 
 void z80_dsresize_size( Environment * _environment, char * _index, int _resize ) {
 
-    deploy_with_vars( dstring,src_hw_z80_dstring_asm, cpu_dstring_vars );
+    deploy( dstring,src_hw_z80_dstring_asm );
 
     outline1( "LD A, (%s)", _index );
     outline0( "LD B, A" );
@@ -3550,7 +3550,7 @@ void z80_dsresize_size( Environment * _environment, char * _index, int _resize )
 
 void z80_dsgc( Environment * _environment ) {
 
-    deploy_with_vars( dstring,src_hw_z80_dstring_asm, cpu_dstring_vars );
+    deploy( dstring,src_hw_z80_dstring_asm );
 
     outline0( "CALL DSGC" );
 
@@ -3558,7 +3558,7 @@ void z80_dsgc( Environment * _environment ) {
 
 void z80_dsdescriptor( Environment * _environment, char * _index, char * _address, char * _size ) {
 
-    deploy_with_vars( dstring,src_hw_z80_dstring_asm, cpu_dstring_vars );
+    deploy( dstring,src_hw_z80_dstring_asm );
 
     outline1( "LD A, (%s)", _index );
     outline0( "LD B, A" );
@@ -3833,6 +3833,27 @@ void z80_protothread_current( Environment * _environment, char * _current ) {
 
     outline0("LD A, (PROTOTHREADCT)" );
     outline1("LD (%s), A", _current );
+
+}
+
+void z80_is_negative( Environment * _environment, char * _value, char * _result ) {
+
+    MAKE_LABEL
+
+    inline( cpu_is_negative )
+
+        outline1("LD A, (%s)", _value);
+        outline0("AND $80");
+        outline1("JR Z,%s", label);
+        outline0("LD A, $FF");
+        outline1("LD (%s), A", _result );
+        outline1("JMP %sdone", label);
+        outhead1("%s:", label);
+        outline0("LD A, $0");
+        outline1("LD (%s), A", _result );
+        outhead1("%sdone:", label);
+
+    no_embedded( cpu_is_negative )
 
 }
 

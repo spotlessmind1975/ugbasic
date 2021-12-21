@@ -81,6 +81,7 @@ void target_initialization( Environment * _environment ) {
 
     outline0("ORG $3000");
     outline0("LDS #$9FFF");
+
     deploy( vars, src_hw_mo5_vars_asm);
     deploy( startup, src_hw_mo5_startup_asm);
     // bank_define( _environment, "STRINGS", BT_STRINGS, 0x4200, NULL );
@@ -92,6 +93,12 @@ void target_initialization( Environment * _environment ) {
     setup_text_variables( _environment );
 
     ef936x_initialization( _environment );
+
+    if ( _environment->tenLinerRulesEnforced ) {
+        shell_injection( _environment );
+    }
+
+    cpu_call( _environment, "VARINIT" );
 
 }
 
@@ -105,7 +112,7 @@ void target_linkage( Environment * _environment ) {
     }
 
     if ( _environment->compilerFileName ) {
-        sprintf(executableName, "\"%s\"", _environment->compilerFileName );
+        sprintf(executableName, "%s", _environment->compilerFileName );
     } else if( access( "asm6809\\bin\\asm6809.exe", F_OK ) == 0 ) {
         sprintf(executableName, "%s", "asm6809\\bin\\asm6809.exe" );
     } else {
@@ -116,15 +123,17 @@ void target_linkage( Environment * _environment ) {
     memset( listingFileName, 0, MAX_TEMPORARY_STORAGE );
     if ( _environment->listingFileName ) {
         sprintf( listingFileName, "-l %s", _environment->listingFileName );
+    } else {
+        strcpy( listingFileName, "" );
     }
 
-    sprintf( commandLine, "%s %s -o %s -B -e 10240 %s",
+    sprintf( commandLine, "\"%s\" %s -o \"%s\" -B -e 10240 \"%s\"",
         executableName,
         listingFileName,
         _environment->exeFileName, 
         _environment->asmFileName );
 
-    if ( system( commandLine ) ) {
+    if ( system_call( _environment,  commandLine ) ) {
         printf("The compilation of assembly program failed.\n\n");
         printf("Please use option '-I' to install chain tool.\n\n");
     }; 

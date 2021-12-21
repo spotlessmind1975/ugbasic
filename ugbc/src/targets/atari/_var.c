@@ -50,6 +50,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
         if ( ( !variable->assigned || ( variable->assigned && !variable->temporary ) ) && !variable->imported ) {
 
         switch( variable->type ) {
+            case VT_CHAR:
             case VT_BYTE:
             case VT_SBYTE:
             case VT_COLOR:
@@ -71,7 +72,17 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     printf("%s", variable->realName);
                     exit(EXIT_FAILURE);
                 }
-                outline3("%s: .byte %d,\"%s\"", variable->realName, (int)strlen(variable->valueString), variable->valueString );
+                if ( variable->printable ) {
+                    int c = strlen( variable->valueString );
+                    out2("%s: .byte %d,", variable->realName, c);
+                    int i=0;
+                    for (i=0; i<(c-1); ++i ) {
+                        out1("$%2.2x,", (unsigned char)variable->valueString[i]);
+                    }
+                    outline1("$%2.2x", (unsigned char)variable->valueString[(c-1)]);                        
+                } else {
+                    outline3("%s: .byte %d,%s", variable->realName, (int)strlen(variable->valueString), escape_newlines( variable->valueString ) );
+                }
                 break;
             case VT_DSTRING:
                 outline1("%s: .res 1", variable->realName);
@@ -84,24 +95,38 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
             case VT_BUFFER:
                 if ( ! variable->absoluteAddress ) {
                     if ( variable->valueBuffer ) {
-                        out1("%s: .byte ", variable->realName);
-                        int i=0;
-                        for (i=0; i<(variable->size-1); ++i ) {
-                            out1("%d,", variable->valueBuffer[i]);
+                        if ( variable->printable ) {
+                            char * string = malloc( variable->size + 1 );
+                            memset( string, 0, variable->size );
+                            memcpy( string, variable->valueBuffer, variable->size );
+                            outline2("%s: .byte %s", variable->realName, escape_newlines( string ) );
+                        } else {
+                            out1("%s: .byte ", variable->realName);
+                            int i=0;
+                            for (i=0; i<(variable->size-1); ++i ) {
+                                out1("%d,", variable->valueBuffer[i]);
+                            }
+                            outline1("%d", variable->valueBuffer[(variable->size-1)]);
                         }
-                        outline1("%d", variable->valueBuffer[(variable->size-1)]);
                     } else {
                         outline2("%s: .res %d", variable->realName, variable->size);
                     }
                 } else {
                     outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     if ( variable->valueBuffer ) {
-                        out1("%scopy: .byte ", variable->realName);
-                        int i=0;
-                        for (i=0; i<(variable->size-1); ++i ) {
-                            out1("%d,", variable->valueBuffer[i]);
+                        if ( variable->printable ) {
+                            char * string = malloc( variable->size + 1 );
+                            memset( string, 0, variable->size );
+                            memcpy( string, variable->valueBuffer, variable->size );
+                            outline2("%scopy: .byte %s", variable->realName, escape_newlines( string ) );
+                        } else {
+                            out1("%scopy: .byte ", variable->realName);
+                            int i=0;
+                            for (i=0; i<(variable->size-1); ++i ) {
+                                out1("%d,", variable->valueBuffer[i]);
+                            }
+                            outline1("%d", variable->valueBuffer[(variable->size-1)]);
                         }
-                        outline1("%d", variable->valueBuffer[(variable->size-1)]);
                     }
                 }
                 break;
@@ -197,5 +222,8 @@ void variable_cleanup( Environment * _environment ) {
             }
            actual = actual->next;
         }
-    }    
+    }   
+
+    variable_on_memory_init( _environment );
+
 }

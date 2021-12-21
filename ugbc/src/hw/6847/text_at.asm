@@ -38,8 +38,6 @@
 TEXTPTR equ $01
 TEXTSIZE equ $03
 TABSTODRAW equ $04
-TEXTPEN equ $06
-TEXTPAPER equ $07
 SCREENCODE equ $08
 
 TEXTATDECODE
@@ -79,8 +77,6 @@ TEXTATGO
     STY COPYOFTEXTADDRESS
     LDA #0
     STA TABSTODRAW
-    LDA _PAPER
-    STA TEXTPAPER
 
     LDY TEXTPTR
     LDA CURRENTMODE
@@ -145,7 +141,380 @@ TEXTAT13X
     JMP TEXTAT14
 TEXTAT14X
     RTS
-    
+
+CALCPOS
+    LDA CURRENTMODE
+    CMPA #0
+    BNE CALCPOS0X
+    JSR CALCPOS0
+    RTS
+CALCPOS0X
+    CMPA #1
+    BNE CALCPOS1X
+    JSR CALCPOS1
+    RTS
+CALCPOS1X
+    CMPA #2
+    BNE CALCPOS2X
+    JSR CALCPOS2
+    RTS
+CALCPOS2X
+    CMPA #3
+    BNE CALCPOS3X
+    JSR CALCPOS3
+    RTS
+CALCPOS3X
+    CMPA #4
+    BNE CALCPOS4X
+    JSR CALCPOS4
+    RTS
+CALCPOS4X
+    CMPA #5
+    BNE CALCPOS5X
+    JSR CALCPOS5
+    RTS
+CALCPOS5X
+    CMPA #6
+    BNE CALCPOS6X
+    JSR CALCPOS6
+    RTS
+CALCPOS6X
+    CMPA #7
+    BNE CALCPOS7X
+    JSR CALCPOS7
+    RTS
+CALCPOS7X
+    CMPA #8
+    BNE CALCPOS8X
+    JSR CALCPOS8
+    RTS
+CALCPOS8X
+    CMPA #9
+    BNE CALCPOS9X
+    JSR CALCPOS9
+    RTS
+CALCPOS9X
+    CMPA #10
+    BNE CALCPOS10X
+    JSR CALCPOS10
+    RTS
+CALCPOS10X
+    CMPA #11
+    BNE CALCPOS11X
+    JSR CALCPOS11
+    RTS
+CALCPOS11X
+    CMPA #12
+    BNE CALCPOS12X
+    JSR CALCPOS12
+    RTS
+CALCPOS12X
+    CMPA #13
+    BNE CALCPOS13X
+    JSR CALCPOS13
+    RTS
+CALCPOS13X
+    CMPA #14
+    BNE CALCPOS14X
+    JSR CALCPOS14
+    RTS
+CALCPOS14X
+    RTS
+
+CALCPOS0
+CALCPOS1
+CALCPOS2
+CALCPOS3
+CALCPOS4
+CALCPOS5
+CALCPOS6
+    LDX TEXTADDRESS
+    STX COPYOFTEXTADDRESS
+    LDB YCURSYS
+    BEQ CALCPOSSKIP
+CALCPOSLOOP1
+    ANDCC #$FE
+    LDX COPYOFTEXTADDRESS
+    LEAX 32, X
+    STX COPYOFTEXTADDRESS
+    DECB
+    BNE CALCPOSLOOP1
+
+CALCPOSSKIP
+    ANDCC #$FE
+    LDA #0
+    LDB XCURSYS
+    ADDD COPYOFTEXTADDRESS
+    STD COPYOFTEXTADDRESS
+    LDX COPYOFTEXTADDRESS
+    RTS
+
+CALCPOS7
+
+    LDA #1
+    STA PATTERN
+
+    LDX BITMAPADDRESS
+    LDB YCURSYS
+    LDA #0
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LEAX D, X
+
+    LDB XCURSYS
+    LDA #0
+    LSLB
+    ROLA
+    LEAX D, X
+
+    RTS
+
+CALCPOS8
+
+    LDA #0
+    STA PATTERN
+
+    LDX BITMAPADDRESS
+    LDB YCURSYS
+    LDA #0
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LEAX D, X
+
+    LDB XCURSYS
+    LDA #0
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LEAX D, X
+
+    RTS
+
+CALCPOS9
+
+    LDA #1
+    STA PATTERN
+
+    LDX BITMAPADDRESS
+    LDB YCURSYS
+    LDA #0
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LEAX D, X
+
+    LDB XCURSYS
+    LDA #0
+    LSLB
+    ROLA
+    LEAX D, X
+
+    RTS
+
+CALCPOS10
+
+    LDA #0
+    STA PATTERN
+
+    LDX BITMAPADDRESS
+    LDB YCURSYS
+    LDA #0
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LEAX D, X
+
+    LDB XCURSYS
+    LDA #0
+    LSLB
+    ROLA
+    LEAX D, X
+
+    RTS
+
+CALCPOS11
+
+    LDA #1
+    STA PATTERN
+
+    LDX BITMAPADDRESS
+    LDB YCURSYS
+    LDA #0
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LEAX D, X
+
+    LDB XCURSYS
+    LDA #0
+    LSLB
+    ROLA
+    LEAX D, X
+
+    RTS
+
+CALCPOS12
+
+    LDA #0
+    STA PATTERN
+
+    LDX BITMAPADDRESS
+    LDB YCURSYS
+    LDA #0
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LEAX D, X
+
+    LDB XCURSYS
+    LDA #0
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LEAX D, X
+
+    RTS
+
+CALCPOS13
+
+    LDA #1
+    STA PATTERN
+
+    LDX BITMAPADDRESS
+    LDB YCURSYS
+    LDA #0
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LEAX D, X
+
+    LDB XCURSYS
+    LDA #0
+    LSLB
+    ROLA
+    LEAX D, X
+
+    RTS
+
+CALCPOS14
+
+    LDA #0
+    STA PATTERN
+
+    LDX BITMAPADDRESS
+    LDB YCURSYS
+    LDA #0
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LEAX D, X
+
+    LDB XCURSYS
+    LDA #0
+    LEAX D, X
+
+    RTS
+
 ;-----------------------------------------------------------------------------
 ; BITMAP MODE
 ;-----------------------------------------------------------------------------
@@ -158,33 +527,7 @@ TEXTATBITMAPMODE
 ; four dot-clocks by three scan lines.
 TEXTAT7
 
-    LDA #1
-    STA PATTERN
-
-    LDX BITMAPADDRESS
-    LDB YCURSYS
-    LDA #0
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LEAX D, X
-
-    LDB XCURSYS
-    LDA #0
-    LSLB
-    ROLA
-    LEAX D, X
+    JSR CALCPOS7
 
     JMP TEXTATCOMMON
 
@@ -195,35 +538,7 @@ TEXTAT7
 ; pixel equals two dotclocks by three scan lines.
 TEXTAT8
 
-    LDA #0
-    STA PATTERN
-
-    LDX BITMAPADDRESS
-    LDB YCURSYS
-    LDA #0
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LEAX D, X
-
-    LDB XCURSYS
-    LDA #0
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LEAX D, X
+    JSR CALCPOS8
 
     JMP TEXTATCOMMON
 
@@ -233,35 +548,7 @@ TEXTAT8
 ; two dot-clocks by three scan lines.
 TEXTAT9
 
-    LDA #1
-    STA PATTERN
-
-    LDX BITMAPADDRESS
-    LDB YCURSYS
-    LDA #0
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LEAX D, X
-
-    LDB XCURSYS
-    LDA #0
-    LSLB
-    ROLA
-    LEAX D, X
+    JSR CALCPOS9
 
     JMP TEXTATCOMMON
 
@@ -272,33 +559,7 @@ TEXTAT9
 ; is required. Each pixel equals two dot-clocks by two scan lines.
 TEXTAT10
 
-    LDA #0
-    STA PATTERN
-
-    LDX BITMAPADDRESS
-    LDB YCURSYS
-    LDA #0
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LEAX D, X
-
-    LDB XCURSYS
-    LDA #0
-    LSLB
-    ROLA
-    LEAX D, X
+    JSR CALCPOS10
 
     JMP TEXTATCOMMON
 
@@ -308,35 +569,7 @@ TEXTAT10
 ; dot-clocks by two scan lines.
 TEXTAT11
 
-    LDA #1
-    STA PATTERN
-
-    LDX BITMAPADDRESS
-    LDB YCURSYS
-    LDA #0
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LEAX D, X
-
-    LDB XCURSYS
-    LDA #0
-    LSLB
-    ROLA
-    LEAX D, X
+    JSR CALCPOS11
 
     JMP TEXTATCOMMON
 
@@ -347,35 +580,7 @@ TEXTAT11
 ; equals two dot-clocks by one scan line.
 TEXTAT12
 
-    LDA #0
-    STA PATTERN
-
-    LDX BITMAPADDRESS
-    LDB YCURSYS
-    LDA #0
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LEAX D, X
-
-    LDB XCURSYS
-    LDA #0
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LEAX D, X
+    JSR CALCPOS12
 
     JMP TEXTATCOMMON
 
@@ -385,35 +590,7 @@ TEXTAT12
 ;  by one scan line.
 TEXTAT13
 
-    LDA #1
-    STA PATTERN
-
-    LDX BITMAPADDRESS
-    LDB YCURSYS
-    LDA #0
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LEAX D, X
-
-    LDB XCURSYS
-    LDA #0
-    LSLB
-    ROLA
-    LEAX D, X
+    JSR CALCPOS13
 
     JMP TEXTATCOMMON
 
@@ -424,33 +601,7 @@ TEXTAT13
 ; dot-clock by one scan line.
 TEXTAT14
 
-    LDA #0
-    STA PATTERN
-
-    LDX BITMAPADDRESS
-    LDB YCURSYS
-    LDA #0
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LEAX D, X
-
-    LDB XCURSYS
-    LDA #0
-    LEAX D, X
+    JSR CALCPOS14
 
     JMP TEXTATCOMMON
 
@@ -511,7 +662,7 @@ TEXTATBMNSKIPTAB
 
     CMPA #$7f
     BEQ TEXTATBMTAB
-    CMPA #10
+    CMPA #14
     BHI TEXTATBMXCC
     JMP TEXTATBMCC
 
@@ -534,6 +685,12 @@ TEXTATBMTAB3
     JMP TEXTATBMNEXT
 
 TEXTATBMCC
+    CMPA #13
+    BEQ TEXTATBMLF
+    CMPA #10
+    BEQ TEXTATBMLF
+    CMPA #09
+    BEQ TEXTATBMTAB
     CMPA #01
     BEQ TEXTATBMPEN
     CMPA #02
@@ -542,11 +699,28 @@ TEXTATBMCC
     BEQ TEXTATBMCMOVEPREPARE
     CMPA #04
     BEQ TEXTATBMXAT
+    CMPA #05
+    BEQ TEXTATBMCLS
+    JMP TEXTATBMNEXT
+
+TEXTATBMCLS
+    LEAY 1,Y
+    DECB
+    JSR CLS
     JMP TEXTATBMNEXT
 
 TEXTATBMXAT
     JMP TEXTATBMAT
 
+TEXTATBMLF
+    INC YCURSYS
+    LDA #0
+    STA XCURSYS
+    PSHS D,Y
+    JSR CALCPOS
+    PULS D,Y
+    JMP TEXTATBMNEXT2A
+    
 TEXTATBMPEN
     LEAY 1,Y
     DECB
@@ -558,7 +732,7 @@ TEXTATBMPEN
     ASL A
     ASL A
     ASL A
-    STA TEXTPEN
+    STA _PEN
 TEXTATBMPENDISABLED
     JMP TEXTATBMNEXT
 
@@ -569,7 +743,7 @@ TEXTATBMPAPER
     ANDA #$1
     BEQ TEXTATBMPAPERDISABLED
     LDA , Y
-    STA TEXTPAPER
+    STA _PAPER
 TEXTATBMPAPERDISABLED
     JMP TEXTATBMNEXT
 
@@ -716,6 +890,7 @@ TEXTATBMNEXT2
     LEAX 127, X
     LEAX 127, X
     LEAX 2, X
+TEXTATBMNEXT2A
     LDA YCURSYS
     CMPA CURRENTTILESHEIGHT
 
@@ -749,24 +924,8 @@ TEXTAT4
 TEXTAT5
 TEXTAT6
 TEXTATTILEMODE
-    LDB YCURSYS
-    BEQ TEXTATSKIP
-TEXTATLOOP1
-    ANDCC #$FE
-    LDX COPYOFTEXTADDRESS
-    LEAX 32, X
-    STX COPYOFTEXTADDRESS
-    DECB
-    BNE TEXTATLOOP1
+    JSR CALCPOS0
 
-TEXTATSKIP
-    ANDCC #$FE
-    LDA #0
-    LDB XCURSYS
-    ADDD COPYOFTEXTADDRESS
-    STD COPYOFTEXTADDRESS
-
-    LDX COPYOFTEXTADDRESS
     LDB TEXTSIZE
 TEXTATLOOP2
 
@@ -802,6 +961,10 @@ TEXTATTAB3
     JMP TEXTATNEXT
 
 TEXTATCC
+    CMPA #13
+    BEQ TEXTATLF
+    CMPA #10
+    BEQ TEXTATLF
     CMPA #09
     BEQ TEXTATTAB
     CMPA #01
@@ -812,10 +975,26 @@ TEXTATCC
     BEQ TEXTATCMOVEPREPARE
     CMPA #04
     BEQ TEXTATXAT
+    CMPA #05
+    BEQ TEXTATCLS
+    JMP TEXTATNEXT
+
+TEXTATCLS
+    LEAY 1,Y
+    DECB
+    JSR CLS
     JMP TEXTATNEXT
 
 TEXTATXAT
     JMP TEXTATAT
+
+TEXTATLF
+    LDA CURRENTTILESWIDTH
+    SUBA XCURSYS
+    SUBA #1
+    LEAX A,X
+    LEAY 1,Y
+    JMP TEXTATNEXT2
 
 TEXTATPEN
     LEAY 1,Y
@@ -824,7 +1003,7 @@ TEXTATPEN
     ANDA #$2
     BEQ TEXTATPENDISABLED
     LDA , Y
-    STA TEXTPEN
+    STA _PEN
 TEXTATPENDISABLED
     LEAY 1,Y
     DECB
@@ -914,7 +1093,7 @@ TEXTATSP0
     LDA TEXTWW
     ANDA #$2
     BEQ TEXTATCNOPEN
-    LDA TEXTPEN
+    LDA _PEN
     ; STA (COPYOFCOLORMAPADDRESS),Y
 TEXTATCNOPEN
     JMP TEXTATINCX

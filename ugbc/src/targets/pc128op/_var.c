@@ -54,6 +54,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
             }
 
             switch( variable->type ) {
+                case VT_CHAR:
                 case VT_BYTE:
                 case VT_SBYTE:
                 case VT_COLOR:
@@ -90,10 +91,20 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     if ( variable->memoryArea ) {
                         outhead2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outhead2("%s fcb %d", variable->realName, (int)strlen(variable->valueString) );
-                        if ( strlen( variable->valueString ) > 0 ) {
-                            outhead1("   fcc \"%s\"", variable->valueString );
-                        } 
+                        if ( variable->printable ) {
+                            int c = strlen( variable->valueString );
+                            out2("%s fcb %d,", variable->realName, c );
+                            int i=0;
+                            for (i=0; i<(c-1); ++i ) {
+                                out1("$%2.2x,", (unsigned char)variable->valueString[i]);
+                            }
+                            outline1("$%2.2x", (unsigned char)variable->valueString[(c-1)]);                        
+                        } else {
+                            outhead2("%s fcb %d", variable->realName, (int)strlen(variable->valueString) );
+                            if ( strlen( variable->valueString ) > 0 ) {
+                                outhead1("   fcc %s", escape_newlines( variable->valueString ) );
+                            } 
+                        }
                     }   
                     break;
                 case VT_DSTRING:
@@ -115,24 +126,38 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_BUFFER:
                     if ( ! variable->absoluteAddress ) {
                         if ( variable->valueBuffer ) {
-                            out1("%s fcb ", variable->realName);
-                            int i=0;
-                            for (i=0; i<(variable->size-1); ++i ) {
-                                out1("%d,", variable->valueBuffer[i]);
+                            if ( variable->printable ) {
+                                char * string = malloc( variable->size + 1 );
+                                memset( string, 0, variable->size );
+                                memcpy( string, variable->valueBuffer, variable->size );
+                                outhead2("%s    fcc %s", variable->realName, escape_newlines( string ) );
+                            } else {
+                                out1("%s fcb ", variable->realName);
+                                int i=0;
+                                for (i=0; i<(variable->size-1); ++i ) {
+                                    out1("%d,", variable->valueBuffer[i]);
+                                }
+                                outhead1("%d", variable->valueBuffer[(variable->size-1)]);
                             }
-                            outhead1("%d", variable->valueBuffer[(variable->size-1)]);
                         } else {
                             outhead2("%s rzb %d", variable->realName, variable->size);
                         }
                     } else {
                         outhead2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
                         if ( variable->valueBuffer ) {
-                            out1("%scopy fcb ", variable->realName);
-                            int i=0;
-                            for (i=0; i<(variable->size-1); ++i ) {
-                                out1("%d,", variable->valueBuffer[i]);
+                            if ( variable->printable ) {
+                                char * string = malloc( variable->size + 1 );
+                                memset( string, 0, variable->size );
+                                memcpy( string, variable->valueBuffer, variable->size );
+                                outhead2("%s    fcc %s", variable->realName, escape_newlines( string ) );
+                            } else {
+                                out1("%scopy fcb ", variable->realName);
+                                int i=0;
+                                for (i=0; i<(variable->size-1); ++i ) {
+                                    out1("%d,", variable->valueBuffer[i]);
+                                }
+                                outhead1("%d", variable->valueBuffer[(variable->size-1)]);
                             }
-                            outhead1("%d", variable->valueBuffer[(variable->size-1)]);
                         }
                     }
                     break;
@@ -230,4 +255,7 @@ void variable_cleanup( Environment * _environment ) {
            actual = actual->next;
         }
     }    
+
+    variable_on_memory_init( _environment );
+
 }

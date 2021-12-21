@@ -609,18 +609,17 @@ void ef936x_scroll_text( Environment * _environment, int _direction ) {
 
 }
 
-void ef936x_text( Environment * _environment, char * _text, char * _text_size, char * _pen ) {
+void ef936x_text( Environment * _environment, char * _text, char * _text_size ) {
 
     deploy( ef936xvars, src_hw_ef936x_vars_asm);
     deploy( vScrollText, src_hw_ef936x_vscroll_text_asm );
+    deploy( cls, src_hw_ef936x_cls_asm );
     deploy( textEncodedAt, src_hw_ef936x_text_at_asm );
 
     outline1("LDY %s", _text);
     outline0("STY <TEXTPTR" );
     outline1("LDA %s", _text_size);
     outline0("STA <TEXTSIZE" );
-    outline1("LDA %s", _pen );
-    outline0("STA <TEXTPEN" );
 
     outline0("JSR TEXTAT");
 

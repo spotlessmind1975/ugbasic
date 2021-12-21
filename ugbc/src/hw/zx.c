@@ -71,14 +71,12 @@ void zx_vscroll( Environment * _environment, int _displacement ) {
 
 }
 
-void zx_text( Environment * _environment, char * _text, char * _text_size, char * _pen, char * _paper ) {
+void zx_text( Environment * _environment, char * _text, char * _text_size ) {
 
     deploy( vars,src_hw_zx_vars_asm);
     deploy( vScroll, src_hw_zx_vscroll_asm );
     deploy( textEncodedAt, src_hw_zx_text_at_asm );
 
-    z80_move_8bit( _environment, _pen, "_PEN");
-    z80_move_8bit( _environment, _paper, "_PAPER");
     // z80_move_8bit( _environment, _tab, "TABCOUNT");
 
     outline1("LD A, (%s)", _text_size );

@@ -63,6 +63,14 @@ void setup_embedded( Environment * _environment ) {
 void target_initialization( Environment * _environment ) {
 
     MEMORY_AREA_DEFINE( MAT_DIRECT, 0xc000, 0xcfff );
+    MEMORY_AREA_DEFINE( MAT_RAM, 0xe000, 0xff00 );
+
+    if ( _environment->tenLinerRulesEnforced ) {
+        Variable * source = variable_retrieve( _environment, "SHELL_SOURCE" );
+        if ( _environment->memoryAreas ) {
+            memory_area_assign( _environment->memoryAreas, source );
+        }
+    }
 
     variable_import( _environment, "EVERYSTATUS", VT_BYTE );
     variable_global( _environment, "EVERYSTATUS" );
@@ -85,7 +93,7 @@ void target_initialization( Environment * _environment ) {
     
     if ( !_environment->configurationFileName ) {
         char configurationFileName[MAX_TEMPORARY_STORAGE];
-        sprintf( configurationFileName, "%s.cfg", tmpnam(NULL) );
+        sprintf( configurationFileName, "%s.cfg", get_temporary_filename( _environment ) );
         _environment->configurationFileName = strdup(configurationFileName);
     }
 
@@ -98,16 +106,29 @@ void target_initialization( Environment * _environment ) {
 
     linker_setup( _environment );
 
-    deploy( vars, src_hw_c64_vars_asm);
+    outhead0(".segment \"BASIC\"");
+    outline0(".byte $01,$08,$0b,$08,$00,$00,$9e,$32,$30,$36,$31,$00,$00,$00" );
     outhead0(".segment \"CODE\"");
-    bank_define( _environment, "STRINGS", BT_STRINGS, 0x4200, NULL );
+    outline0("NOP");
+    outline0("NOP");
+    deploy( vars, src_hw_c64_vars_asm);
+
     variable_define( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0xD800 );
     variable_global( _environment, "COLORMAPADDRESS" );
 
     setup_text_variables( _environment );
 
+    deploy( startup, src_hw_c64_startup_asm);
+    cpu_call( _environment, "C64STARTUP" );
+
     vic2_initialization( _environment );
 
+    if ( _environment->tenLinerRulesEnforced ) {
+        shell_injection( _environment );
+    }
+
+    cpu_call( _environment, "VARINIT" );
+    
 }
 
 void target_linkage( Environment * _environment ) {
@@ -120,7 +141,7 @@ void target_linkage( Environment * _environment ) {
     }
 
     if ( _environment->compilerFileName ) {
-        sprintf(executableName, "\"%s\"", _environment->compilerFileName );
+        sprintf(executableName, "%s", _environment->compilerFileName );
     } else if( access( "cc65\\bin\\cl65.exe", F_OK ) == 0 ) {
         sprintf(executableName, "%s", "cc65\\bin\\cl65.exe" );
     } else {
@@ -130,17 +151,19 @@ void target_linkage( Environment * _environment ) {
     char listingFileName[MAX_TEMPORARY_STORAGE];
     memset( listingFileName, 0, MAX_TEMPORARY_STORAGE );
     if ( _environment->listingFileName ) {
-        sprintf( listingFileName, "-l %s", _environment->listingFileName );
+        sprintf( listingFileName, "-l \"%s\"", _environment->listingFileName );
+    } else {
+        strcpy( listingFileName, "" );
     }
 
-    sprintf( commandLine, "%s -g -Ln main.lbl %s -o %s -u __EXEHDR__ -t c64 -C %s %s",
+    sprintf( commandLine, "\"%s\" -g -Ln main.lbl %s -o \"%s\" -u __EXEHDR__ -t c64 -C \"%s\" \"%s\"",
         executableName,
         listingFileName,
         _environment->exeFileName, 
         _environment->configurationFileName, 
         _environment->asmFileName );
 
-    if ( system( commandLine ) ) {
+    if ( system_call( _environment,  commandLine ) ) {
         printf("The compilation of assembly program failed.\n\n");
         printf("Please use option '-I' to install chain tool.\n\n");
     }; 

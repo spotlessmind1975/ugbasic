@@ -29,69 +29,11 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                      CLEAR SCREEN ROUTINE FOR TED                           *
+;*                      CLEAR SCREEN ROUTINE FOR VIC-II                        *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-
-CLS:
-    LDA $FF06
-    AND #%00100000
-    BEQ CLST
-    JMP CLSG
-    
-CLSG:
-    LDA BITMAPADDRESS
-    STA COPYOFBITMAPADDRESS
-    LDA BITMAPADDRESS+1
-    STA COPYOFBITMAPADDRESS+1
-    LDX #31
-    LDY #0
-    LDA #$0
-CLSGY:
-    STA (COPYOFBITMAPADDRESS),Y
-    INY
-    BNE CLSGY
-    INC COPYOFBITMAPADDRESS+1
-    DEX
-    BNE CLSGY
-    LDX #64
-CLSGY2:
-    STA (COPYOFBITMAPADDRESS),Y
-    INY
-    DEX
-    BNE CLSGY2
-
-    LDA COLORMAPADDRESS
-    STA COPYOFCOLORMAPADDRESS
-    LDA COLORMAPADDRESS+1
-    STA COPYOFCOLORMAPADDRESS+1
-    LDX #3
-    LDY #0
-    LDA _PEN
-    ASL A
-    ASL A
-    ASL A
-    ASL A
-    ORA _PAPER
-CLGC:
-    STA (COPYOFCOLORMAPADDRESS),Y
-    INY
-    BNE CLGC
-    INC COPYOFCOLORMAPADDRESS+1
-    CPX #1
-    BNE CLGCNB
-CLGC2:
-    STA (COPYOFCOLORMAPADDRESS),Y
-    INY
-    CPY #232
-    BNE CLGC2
-CLGCNB:
-    DEX
-    BNE CLGC
-
-    RTS
 
 CLST:
     LDA TEXTADDRESS

@@ -52,24 +52,42 @@ The ''CENTRE'' (or ''CENTER'') command can be used to position text in the
 centre of the screen, and to save you the effort of calculating the text 
 coordinates in order to achieve this. The CENTRE command takes a string 
 of characters and prints it in the middle of the line currently occupied 
-by the cursor.
+by the cursor. If the statement is followed by a semicolon, the cursor 
+will remain on the same line. Otherwise, it will move to the next line.
 
 @italian
 Il comando ''CENTRE'' (o ''CENTER'') può essere utilizzato per posizionare
 il testo al centro dello schermo e per risparmiare lo sforzo di 
 calcolare le coordinate del testo per ottenere ciò. Il comando ''CENTER''
 prende una stringa di caratteri e la stampa al centro della riga 
-attualmente occupata dal cursore.
+attualmente occupata dal cursore. Se l'istruzione è seguita dal punto e virgola, 
+il cursore rimarrà sulla medesima riga. Altrimenti, si sposterà nella 
+riga successiva.
 
-@syntax CENTRE [expression]
+@syntax CENTRE [expression] {;}
 
 @example CENTRE "HELLO!"
+@example CENTRE "HELLO!";
 
 @usedInExample texts_position_07.bas
 
 @target all
 </usermanual> */
-void center( Environment * _environment, char * _string ) {
+/* <usermanual>
+@keyword CENTER
+
+@english
+Alias for ''CENTER''.
+
+@italian
+Alias per ''CENTRE''.
+
+@seeAlso CENTRE
+
+@target all
+</usermanual> */
+
+void center( Environment * _environment, char * _string, int _newline ) {
 
     setup_text_variables( _environment );
 
@@ -83,5 +101,9 @@ void center( Environment * _environment, char * _string ) {
     locate( _environment, w->name, y->name );
 
     text_text( _environment, string->name );
+
+    if ( _newline ) {
+        text_newline( _environment );
+    }
 
 }

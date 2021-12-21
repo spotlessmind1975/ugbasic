@@ -131,6 +131,23 @@ void on_goto_index( Environment * _environment, char * _label ) {
 /**
  * @brief Emit ASM code for <b>... (of ON ... GOTO ...)</b>
  * 
+ * This function outputs the code to implement any specific
+ * indexed jump on forced jumps by expression.
+ * 
+ * @param _environment Current calling environment
+ * @param _number Line number to jump to
+ */
+void on_goto_number( Environment * _environment, int _number ) {
+
+    char label[MAX_TEMPORARY_STORAGE]; sprintf( label, "_linenumber%d", _number );
+
+    on_goto_index( _environment, label );
+
+};
+
+/**
+ * @brief Emit ASM code for <b>... (of ON ... GOTO ...)</b>
+ * 
  * This function outputs the code to implement the ending
  * of unconditional jump by expression.
  * 

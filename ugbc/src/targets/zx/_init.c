@@ -77,6 +77,13 @@ void target_initialization( Environment * _environment ) {
     variable_global( _environment, "FREE_STRING" );    
 
     outhead0("org 32768");
+
+    if ( _environment->tenLinerRulesEnforced ) {
+        shell_injection( _environment );
+    }
+
+    cpu_call( _environment, "VARINIT" );
+
     variable_define( _environment, "bitmap_enabled", VT_BYTE, 0 );
     variable_global( _environment, "bitmap_enabled" );
     variable_define( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0x5800 );
@@ -100,50 +107,65 @@ void target_linkage( Environment * _environment ) {
     }
 
     if ( _environment->compilerFileName ) {
-        sprintf(executableName, "\"%s\"", _environment->compilerFileName );
-    } else if( access( "z88dk\\z88dk\\bin\\z88dk-z80asm.exe", F_OK ) == 0 ) {
-        sprintf(executableName, "%s", "z88dk\\z88dk\\bin\\z88dk-z80asm.exe" );
+        sprintf(executableName, "%s", _environment->compilerFileName );
+    } else if( access( "z88dk-z80asm.exe", F_OK ) == 0 ) {
+        sprintf(executableName, "%s", "z88dk-z80asm.exe" );
     } else {
         sprintf(executableName, "%s", "z88dk-z80asm" );
     }
 
     if ( _environment->listingFileName ) {
         sprintf( listingFileName, "-l" );
+    } else {
+        strcpy( listingFileName, "" );
     }
 
-    sprintf( commandLine, "%s %s -b %s",
+    sprintf( commandLine, "\"%s\" %s -b \"%s\"",
         executableName,
         listingFileName,
         _environment->asmFileName );
 
-    if ( system( commandLine ) ) {
+    if ( system_call( _environment,  commandLine ) ) {
         printf("The compilation of assembly program failed.\n\n");
         printf("Please use option '-I' to install chain tool.\n\n");
         return;
     }; 
 
-    strcpy( binaryName, _environment->exeFileName );
-    char * p = strstr( binaryName, ".tap" );
+    strcpy( binaryName, _environment->asmFileName );
+    char * p = strstr( binaryName, ".asm" );
     if ( p ) {
         *(p+1) = 'b';
         *(p+2) = 'i';
         *(p+3) = 'n';
     }
 
-    if( access( "z88dk\\z88dk\\bin\\z88dk-appmake.exe", F_OK ) == 0 ) {
-        sprintf(executableName, "%s", "z88dk\\z88dk\\bin\\z88dk-appmake.exe" );
+    if ( _environment->appMakerFileName ) {
+        sprintf(executableName, "%s", _environment->appMakerFileName );
+    } else if( access( "z88dk-appmake.exe", F_OK ) == 0 ) {
+        sprintf(executableName, "%s", "z88dk-appmake.exe" );
     } else {
         sprintf(executableName, "%s", "z88dk-appmake" );
     }
 
-    sprintf( commandLine, "%s +zx --org 32768 -b %s",
+    sprintf( commandLine, "\"%s\" +zx --org 32768 -b \"%s\"",
         executableName,
-       binaryName );
+        binaryName );
 
-    if ( system( commandLine ) ) {
+    p = strstr( binaryName, ".bin" );
+    if ( p ) {
+        *(p+1) = 't';
+        *(p+2) = 'a';
+        *(p+3) = 'p';
+    }
+
+    if ( system_call( _environment,  commandLine ) ) {
         printf("The compilation of assembly program failed.\n\n");
         printf("Please use option '-I' to install chain tool.\n\n");
         return;
     }; 
+
+    remove( _environment->exeFileName );
+
+    rename( binaryName, _environment->exeFileName );
 
 }

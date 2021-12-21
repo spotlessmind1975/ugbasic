@@ -644,10 +644,11 @@ void vic1_scroll_text( Environment * _environment, int _direction ) {
 
 }
 
-void vic1_text( Environment * _environment, char * _text, char * _text_size, char * _pen ) {
+void vic1_text( Environment * _environment, char * _text, char * _text_size ) {
 
     deploy( vic1vars, src_hw_vic1_vars_asm);
     deploy( vScrollText, src_hw_vic1_vscroll_text_asm );
+    deploy( cls, src_hw_vic1_cls_asm );
     deploy( textEncodedAt, src_hw_vic1_text_at_asm );
 
     outline1("LDA %s", _text);
@@ -656,8 +657,6 @@ void vic1_text( Environment * _environment, char * _text, char * _text_size, cha
     outline0("STA TEXTPTR+1" );
     outline1("LDA %s", _text_size);
     outline0("STA TEXTSIZE" );
-    outline1("LDA %s", _pen );
-    outline0("STA TEXTPEN" );
 
     outline0("JSR TEXTAT");
 
@@ -1362,9 +1361,9 @@ Variable * vic1_new_image( Environment * _environment, int _width, int _height, 
 
     int size = calculate_image_size( _environment, _width, _height, _mode );
 
-    if ( ! size ) {
-        CRITICAL_NEW_IMAGE_UNSUPPORTED_MODE( _mode );
-    }
+    // if ( ! size ) {
+    //     CRITICAL_NEW_IMAGE_UNSUPPORTED_MODE( _mode );
+    // }
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, "(new image)" );
 

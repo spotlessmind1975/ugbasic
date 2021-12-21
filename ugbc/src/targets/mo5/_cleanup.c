@@ -135,7 +135,7 @@ int convertbintok7(Environment * _environment)
 
     // Rename the output file into a temporary filename
     char temporaryFileName[MAX_TEMPORARY_STORAGE];
-    sprintf(temporaryFileName, "%s.bin", tmpnam(NULL) );
+    sprintf(temporaryFileName, "%s.bin", get_temporary_filename( _environment ) );
     rename( _environment->exeFileName, temporaryFileName );
     
     fr=fopen(temporaryFileName,"rb");
@@ -190,7 +190,7 @@ int convertbintok7(Environment * _environment)
     return 0;
 }
 
-void target_cleanup( Environment * _environment ) {
+void target_finalize( Environment * _environment ) {
 
 	if ( _environment->outputFileType == OUTPUT_FILE_TYPE_K7_NEW ) {
 	    convertbintok7( _environment );
@@ -198,7 +198,11 @@ void target_cleanup( Environment * _environment ) {
 	    mo5_convertbintok7_original( _environment );
 	}
 
-    unlink( _environment->asmFileName );
+}
+
+void target_cleanup( Environment * _environment ) {
+
+    remove( _environment->asmFileName );
 
     if ( _environment->analysis && _environment->listingFileName ) {
         target_analysis( _environment );

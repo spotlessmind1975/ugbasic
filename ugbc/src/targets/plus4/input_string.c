@@ -51,7 +51,7 @@ Variable * input_string( Environment * _environment, char * _size ) {
     Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of result of INPUT$)");
     Variable * size = variable_retrieve_or_define( _environment, _size, VT_BYTE, 0 );
     Variable * pressed = variable_temporary( _environment, VT_BYTE, "(key pressed?)");
-    Variable * key = variable_temporary( _environment, VT_BYTE, "(key pressed)");
+    Variable * key = variable_temporary( _environment, VT_CHAR, "(key pressed)");
 
     cpu_dsfree( _environment, result->realName );
     cpu_dsalloc( _environment, size->realName, result->realName );

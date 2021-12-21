@@ -164,6 +164,10 @@
 #define KEY_RIGHT                    151
 #define KEY_DIVISION                 154
 
+#define INPUT_DEFAULT_SEPARATOR     ','
+#define INPUT_DEFAULT_SIZE          32
+#define INPUT_DEFAULT_CURSOR        0x60
+
 #define SCREEN_CAPABILITIES         ( ( 1<<BITMAP_NATIVE ) )
 
 #define BITMAP_MODE_STANDARD        1           // Standard Bitmap Mode     192 x 256 x 2
@@ -178,7 +182,7 @@ void zx_color_border( Environment * _environment, char * _color );
 void zx_bitmap_enable( Environment * _environment, int _width, int _height, int _colors );
 void zx_tilemap_enable( Environment * _environment, int _width, int _height, int _colors );
 void zx_vscroll( Environment * _environment, int _displacement );
-void zx_text( Environment * _environment, char * _text, char * _text_size, char * _pen, char * _paper );
+void zx_text( Environment * _environment, char * _text, char * _text_size );
 void zx_cls( Environment * _environment, char * _pen, char * _paper );
 void zx_inkey( Environment * _environment, char * _pressed, char * _key );
 void zx_scancode( Environment * _environment, char * _pressed, char * _scacode );

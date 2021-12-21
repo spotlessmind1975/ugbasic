@@ -76,6 +76,7 @@ void cpu6809_limit_16bit( Environment * _environment, char * _variable, int _val
 void cpu6809_logical_and_8bit( Environment * _environment, char * _left, char * _right, char * _result );
 void cpu6809_logical_or_8bit( Environment * _environment, char * _left, char * _right, char * _result );
 void cpu6809_logical_not_8bit( Environment * _environment, char * _value, char * _result );
+void cpu6809_is_negative( Environment * _environment, char * _value, char * _result );
 void cpu6809_and_8bit( Environment * _environment, char * _left, char * _right, char * _result );
 void cpu6809_or_8bit( Environment * _environment, char * _left, char * _right, char * _result );
 void cpu6809_not_8bit( Environment * _environment, char * _value, char * _result );
@@ -235,6 +236,7 @@ void cpu6809_protothread_current( Environment * _environment, char * _current );
 #define cpu_logical_and_8bit( _environment, _left, _right,  _result ) cpu6809_logical_and_8bit( _environment, _left, _right,  _result )
 #define cpu_logical_or_8bit( _environment, _left, _right,  _result ) cpu6809_logical_or_8bit( _environment, _left, _right,  _result )
 #define cpu_not_8bit( _environment, _value, _result ) cpu6809_not_8bit( _environment, _value, _result )
+#define cpu_is_negative( _environment, _value, _result ) cpu6809_is_negative( _environment, _value, _result )
 #define cpu_and_8bit( _environment, _left, _right,  _result ) cpu6809_and_8bit( _environment, _left, _right,  _result )
 #define cpu_or_8bit( _environment, _left, _right,  _result ) cpu6809_or_8bit( _environment, _left, _right,  _result )
 #define cpu_not_16bit( _environment, _value, _result ) cpu6809_not_16bit( _environment, _value, _result )

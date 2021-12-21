@@ -44,6 +44,10 @@ void target_finalization( Environment * _environment ) {
 
 }
 
+void target_finalize( Environment * _environment ) {
+
+}
+
 void target_cleanup( Environment * _environment ) {
 
     char binFileName[MAX_TEMPORARY_STORAGE];
@@ -52,9 +56,9 @@ void target_cleanup( Environment * _environment ) {
     char * p = strrchr( binFileName, '.' );
     memcpy( p, ".bin", 4 );
 
-    unlink( _environment->configurationFileName );
-    unlink( binFileName );
-    unlink( _environment->asmFileName );
+    remove( _environment->configurationFileName );
+    remove( binFileName );
+    remove( _environment->asmFileName );
 
     if ( _environment->analysis && _environment->listingFileName ) {
         target_analysis( _environment );

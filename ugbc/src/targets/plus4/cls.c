@@ -55,8 +55,6 @@ void cls( Environment * _environment, char * _paper ) {
     }
 
     ted_cls( _environment );
-
-    outline0("JSR CLS");
     
 }
 

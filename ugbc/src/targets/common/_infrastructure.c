@@ -34,10 +34,15 @@
 
 #include "../../ugbc.h"
 #include <math.h>
+#include <ctype.h>
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
+
+#define strcmp_nocase strcasecmp
+
+extern RGBi SYSTEM_PALETTE[];
 
 /**
  * @brief Description of BANK TYPE, in readable format
@@ -86,6 +91,8 @@ void memory_area_assign( MemoryArea * _first, Variable * _variable ) {
 
     if ( _variable->type == VT_ARRAY ) {
         neededSpace = _variable->size;
+    } else if ( _variable->type == VT_DSTRING ) {
+        neededSpace = 1;
     } else {
         neededSpace = VT_BITWIDTH( _variable->type ) ? ( VT_BITWIDTH( _variable->type ) >> 3 ) : _variable->size;   
     }
@@ -97,8 +104,8 @@ void memory_area_assign( MemoryArea * _first, Variable * _variable ) {
         if ( actual->size > neededSpace ) {
             actual->size -= neededSpace;
             _variable->memoryArea = actual;
-            _variable->absoluteAddress = actual->start;
-            actual->start += neededSpace;
+            _variable->absoluteAddress = actual->current;
+            actual->current += neededSpace;
             break;
         }
         actual = actual->next;
@@ -121,10 +128,11 @@ static void variable_reset_pool( Environment * _environment, Variable * _pool ) 
     Variable * actual = _pool;
     while( actual ) {
         if ( actual->locked == 0 ) {
-            if ( actual->used && actual->type == VT_DSTRING ) {
-                cpu_dsfree( _environment, actual->realName );
+            if ( actual->used && actual->type != VT_DSTRING ) {
+                // outline0("; variable reset pool");
+                actual->used = 0;       
+                // cpu_dsfree( _environment, actual->realName );
             }     
-            actual->used = 0;       
         }
         actual = actual->next;
     }
@@ -241,6 +249,7 @@ void variable_global( Environment * _environment, char * _pattern ) {
  * 
  * Allowed types:
  * 
+ * - `VT_CHAR` (<b>CHAR</b>)
  * - `VT_BYTE` (<b>BYTE</b>)
  * - `VT_COLOR` (<b>COLOR</b>)
  * - `VT_WORD` (<b>WORD</b>)
@@ -310,22 +319,23 @@ Variable * variable_define( Environment * _environment, char * _name, VariableTy
         } else {
             _environment->variables = var;
         }
-        switch( var->type ) {
-            case VT_STRING:
-            case VT_DSTRING:
-            case VT_MOB:
-            case VT_BUFFER:
-            case VT_IMAGE:
-            case VT_IMAGES:
-            case VT_ARRAY:
-                break;
-            default:
-                variable_store( _environment, var->name, _value );
-        }
         if ( var->type == VT_ARRAY ) {
             memcpy( var->arrayDimensionsEach, ((struct _Environment *)_environment)->arrayDimensionsEach, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
             var->arrayDimensions = ((struct _Environment *)_environment)->arrayDimensions;
         }
+        // switch( var->type ) {
+        //     case VT_STRING:
+        //     case VT_DSTRING:
+        //     case VT_MOB:
+        //     case VT_BUFFER:
+        //     case VT_IMAGE:
+        //     case VT_IMAGES:
+        //     case VT_ARRAY:
+        //         break;
+        //     default:
+        //         ;
+        //         // variable_store( _environment, var->name, _value );
+        // }
         memory_area_assign( _environment->memoryAreas, var );
     }
     var->used = 1;
@@ -915,6 +925,126 @@ Variable * variable_store( Environment * _environment, char * _destination, unsi
     return destination;
 }
 
+#define UNESCAPE_COLOR( c, d ) \
+            else if ( strcmp_nocase( word, c ) == 0 ) { \
+                            if ( _printing ) { \
+                                *q = '*'; \
+                            } else { \
+                                *q = 1; \
+                            } \
+                            ++q; \
+                            if ( _printing ) { \
+                                *q = '*'; \
+                            } else { \
+                                *q = COLOR_##d; \
+                            } \
+                            ++q; \
+                    }
+
+char * unescape_string( Environment * _environment, char * _value, int _printing ) {
+
+    char * newValue = malloc( strlen( _value ) + 1 );
+    
+    memset( newValue, 0, strlen( _value ) + 1 );
+
+    char * p = _value, * q = newValue;
+    int c = 0;
+
+    while( *p ) {
+        if ( *p == '{' ) {
+            ++p;
+            if ( isdigit(*p) ) {
+                c = 0;
+                while( *p && *p != '}' ) {
+                    c = 10 * c + ( *p - '0' );
+                    ++p;
+                }
+                if ( _printing ) {
+                    *q = '*';
+                } else {
+                    *q = c;
+                }
+                ++q;
+                ++p;
+            } else {
+                char * p2 = strchr(p+1, '}' );
+                if ( p2 ) {
+                    char word[MAX_TEMPORARY_STORAGE];
+                    memset( word, 0, MAX_TEMPORARY_STORAGE );
+                    memcpy( word, p, p2-p );
+                    p = p2+1;
+                    // printf( "checking '%s'\n", word );
+
+                    if ( strcmp_nocase( word, "clear" ) == 0 ) {
+                        if ( _printing ) {
+                            *q = '*';
+                        } else {
+                            *q = 5;
+                        }
+                        ++q;
+                    } 
+                    UNESCAPE_COLOR( "black", BLACK )
+                    UNESCAPE_COLOR( "white", WHITE )
+                    UNESCAPE_COLOR( "red", RED )
+                    UNESCAPE_COLOR( "cyan", CYAN )
+                    UNESCAPE_COLOR( "violet", VIOLET )
+                    UNESCAPE_COLOR( "green", GREEN )
+                    UNESCAPE_COLOR( "blue", BLUE )
+                    UNESCAPE_COLOR( "yellow", YELLOW )
+                    UNESCAPE_COLOR( "orange", ORANGE )
+                    UNESCAPE_COLOR( "brown", BROWN )
+                    UNESCAPE_COLOR( "lt red", LIGHT_RED )
+                    UNESCAPE_COLOR( "light red", LIGHT_RED )
+                    UNESCAPE_COLOR( "dk grey", DARK_GREY )
+                    UNESCAPE_COLOR( "dark grey", DARK_GREY )
+                    UNESCAPE_COLOR( "dk gray", DARK_GREY )
+                    UNESCAPE_COLOR( "dark gray", DARK_GREY )
+                    UNESCAPE_COLOR( "grey", GREY )
+                    UNESCAPE_COLOR( "gray", GREY )
+                    UNESCAPE_COLOR( "lt green", LIGHT_GREEN )
+                    UNESCAPE_COLOR( "light green", LIGHT_GREEN )
+                    UNESCAPE_COLOR( "lt blue", LIGHT_BLUE )
+                    UNESCAPE_COLOR( "light blue", LIGHT_BLUE )
+                    UNESCAPE_COLOR( "lt grey", LIGHT_GREY )
+                    UNESCAPE_COLOR( "light grey", LIGHT_GREY )
+                    UNESCAPE_COLOR( "lt gray", LIGHT_GREY )
+                    UNESCAPE_COLOR( "light gray", LIGHT_GREY )
+                    UNESCAPE_COLOR( "dk blue", DARK_BLUE )
+                    UNESCAPE_COLOR( "dark blue", DARK_BLUE )
+                    UNESCAPE_COLOR( "magenta", MAGENTA )
+                    UNESCAPE_COLOR( "purple", PURPLE )
+                    UNESCAPE_COLOR( "lavender", LAVENDER )
+                    UNESCAPE_COLOR( "gold", GOLD )
+                    UNESCAPE_COLOR( "turquoise", TURQUOISE )
+                    UNESCAPE_COLOR( "tan", TAN )
+                    UNESCAPE_COLOR( "yellow green", YELLOW_GREEN )
+                    UNESCAPE_COLOR( "olive green", OLIVE_GREEN )
+                    UNESCAPE_COLOR( "pink", PINK )
+                    UNESCAPE_COLOR( "peach", PEACH )
+                } else {
+                    *q = *p;
+                    ++p;
+                    ++q;
+                }
+            }
+        } else {
+            *q = *p;
+            ++q;
+            ++p;
+        }
+    }
+
+    // printf( "\"%s\" = { ", _value );
+    // int i=0;
+    // for( i=0; i<strlen(newValue); ++i ) {
+    //     printf( "$%2.2x, ", (unsigned char)*(newValue+i) );
+    // }
+    // printf( "}\n" );
+
+    return newValue;
+
+}
+
 /**
  * @brief Store a string to a variable 
  * 
@@ -930,7 +1060,9 @@ Variable * variable_store_string( Environment * _environment, char * _destinatio
     switch( destination->type ) {
         case VT_STRING: {
             if ( !_environment->emptyProcedure ) {
-                destination->valueString = strdup( _value );
+                destination->valueString = strdup( unescape_string( _environment, _value, 0 ) );
+                destination->size = strlen( destination->valueString ) + 1;
+                memory_area_assign( _environment->memoryAreas, destination );
             } else {
                 destination->valueString = strdup( "" );
             }
@@ -984,16 +1116,20 @@ Variable * variable_store_buffer( Environment * _environment, char * _destinatio
                     destination->absoluteAddress = _at;
                     char bufferCopy[MAX_TEMPORARY_STORAGE]; sprintf( bufferCopy, "%scopy", destination->realName );
                     cpu_mem_move_direct_size( _environment, bufferCopy, destination->realName, _size );
+                } else {
+                    memory_area_assign( _environment->memoryAreas, destination );
                 }
             } else {
                 Variable * temporary = variable_temporary( _environment, destination->type, "(copy of buffer/image)");
                 temporary->valueBuffer = malloc( _size );
                 memcpy( temporary->valueBuffer, _buffer, _size );
                 temporary->size = _size;
+                memory_area_assign( _environment->memoryAreas, temporary );
                 if ( destination->size < _size ) {
                     destination->valueBuffer = realloc( destination->valueBuffer, _size );
                     memset( destination->valueBuffer + destination->size, 0, ( _size - destination->size ) );
                     destination->size = _size;
+                    memory_area_assign( _environment->memoryAreas, destination );
                 }
                 variable_move_naked( _environment, temporary->name, destination->name );                
             }
@@ -1055,6 +1191,11 @@ Variable * variable_store_array( Environment * _environment, char * _destination
 Variable * variable_move( Environment * _environment, char * _source, char * _destination ) {
 
     Variable * source = variable_retrieve( _environment, _source );
+    Variable * sign = variable_temporary( _environment, VT_BYTE, "(sign)" );
+
+    if ( ! VT_SIGNED( source->type ) ) {
+        variable_store( _environment, sign->name, 0 );
+    }
 
     Variable * target = variable_retrieve( _environment, _destination );
 
@@ -1093,17 +1234,27 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
         case 16:
             switch( VT_BITWIDTH( target->type ) ) {
                 case 32:
+                    if ( VT_SIGNED( source->type ) ) {
+                        cpu_is_negative( _environment, source->realName, sign->realName );
+                    }
                     #ifdef CPU_BIG_ENDIAN
                         {
-                            cpu_store_16bit( _environment, target->realName, 0 );
-                            char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s+2", target->realName );
+                            char targetRealName[MAX_TEMPORARY_STORAGE];
+                            sprintf( targetRealName, "%s", target->realName );
+                            cpu_move_8bit( _environment, sign->realName, targetRealName );
+                            sprintf( targetRealName, "%s+1", target->realName );
+                            cpu_move_8bit( _environment, sign->realName, targetRealName );
+                            sprintf( targetRealName, "%s+2", target->realName );
                             cpu_move_16bit( _environment, source->realName, targetRealName );
                         }
                     #else
                         {
-                            char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s+2", target->realName );
+                            char targetRealName[MAX_TEMPORARY_STORAGE];
+                            sprintf( targetRealName, "%s+3", target->realName );
+                            cpu_move_8bit( _environment, sign->realName, targetRealName );
+                            sprintf( targetRealName, "%s+2", target->realName );
+                            cpu_move_8bit( _environment, sign->realName, targetRealName );
                             cpu_move_16bit( _environment, source->realName, target->realName );
-                            cpu_store_16bit( _environment, targetRealName, 0 );
                         }
                     #endif
                     break;
@@ -1128,25 +1279,55 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
         case 8:
             switch( VT_BITWIDTH( target->type ) ) {
                 case 32:
-                    cpu_store_32bit( _environment, target->realName, 0 );
+                    if ( VT_SIGNED( source->type ) ) {
+                        cpu_is_negative( _environment, source->realName, sign->realName );
+                    }
                     #ifdef CPU_BIG_ENDIAN
                         {
-                            char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s+3", target->realName );
+                            char targetRealName[MAX_TEMPORARY_STORAGE];
+                            sprintf( targetRealName, "%s+3", target->realName );
                             cpu_move_8bit( _environment, source->realName, targetRealName );
+                            sprintf( targetRealName, "%s+2", target->realName );
+                            cpu_move_8bit( _environment, sign->realName, targetRealName );
+                            sprintf( targetRealName, "%s+1", target->realName );
+                            cpu_move_8bit( _environment, sign->realName, targetRealName );
+                            sprintf( targetRealName, "%s", target->realName );
+                            cpu_move_8bit( _environment, sign->realName, targetRealName );
                         }
                     #else
-                        cpu_move_8bit( _environment, source->realName, target->realName );
+                        {
+                            char targetRealName[MAX_TEMPORARY_STORAGE];
+                            sprintf( targetRealName, "%s", target->realName );
+                            cpu_move_8bit( _environment, source->realName, targetRealName );
+                            sprintf( targetRealName, "%s+1", target->realName );
+                            cpu_move_8bit( _environment, sign->realName, targetRealName );
+                            sprintf( targetRealName, "%s+2", target->realName );
+                            cpu_move_8bit( _environment, sign->realName, targetRealName );
+                            sprintf( targetRealName, "%s+3", target->realName );
+                            cpu_move_8bit( _environment, sign->realName, targetRealName );
+                        }
                     #endif
                     break;
                 case 16:
-                    cpu_store_16bit( _environment, target->realName, 0 );
+                    if ( VT_SIGNED( source->type ) ) {
+                        cpu_is_negative( _environment, source->realName, sign->realName );
+                    }
                     #ifdef CPU_BIG_ENDIAN
                         {
-                            char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s+1", target->realName );
+                            char targetRealName[MAX_TEMPORARY_STORAGE];
+                            sprintf( targetRealName, "%s+1", target->realName );
                             cpu_move_8bit( _environment, source->realName, targetRealName );
+                            sprintf( targetRealName, "%s", target->realName );
+                            cpu_move_8bit( _environment, sign->realName, targetRealName );
                         }
                     #else
-                        cpu_move_8bit( _environment, source->realName, target->realName );
+                        {
+                            char targetRealName[MAX_TEMPORARY_STORAGE];
+                            sprintf( targetRealName, "%s", target->realName );
+                            cpu_move_8bit( _environment, source->realName, targetRealName );
+                            sprintf( targetRealName, "%s+1", target->realName );
+                            cpu_move_8bit( _environment, sign->realName, targetRealName );
+                        }
                     #endif
                     break;
                 case 8:
@@ -1790,7 +1971,7 @@ Variable * variable_compare( Environment * _environment, char * _source, char * 
 
     MAKE_LABEL
 
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of compare)" );
+    Variable * result = variable_temporary( _environment, VT_SBYTE, "(result of compare)" );
     switch( VT_BITWIDTH( source->type ) ) {
         case 32:
             switch( VT_BITWIDTH( target->type ) ) {
@@ -2268,7 +2449,7 @@ Variable * variable_less_than( Environment * _environment, char * _source, char 
         target = variable_cast( _environment, _destination, source->type );
     }
 
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of compare)" );
+    Variable * result = variable_temporary( _environment, VT_SBYTE, "(result of compare)" );
     switch( VT_BITWIDTH( source->type ) ) {
         case 32:
             switch( VT_BITWIDTH( target->type ) ) {
@@ -2483,7 +2664,7 @@ Variable * variable_greater_than( Environment * _environment, char * _source, ch
         target = variable_cast( _environment, _destination, source->type );
     }
 
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of compare)" );
+    Variable * result = variable_temporary( _environment, VT_SBYTE, "(result of compare)" );
     switch( VT_BITWIDTH( source->type ) ) {
         case 32:
             switch( VT_BITWIDTH( target->type) ) {
@@ -2984,71 +3165,114 @@ utilizzo di questa funzione è sostituire il numero medio di caratteri.
 Variable * variable_string_mid( Environment * _environment, char * _string, char * _position, char * _len ) {
     Variable * string = variable_retrieve( _environment, _string );
     Variable * position = variable_retrieve_or_define( _environment, _position, VT_BYTE, 0 );
-    Variable * len;
-    if ( _len ) {
-        len = variable_retrieve_or_define( _environment, _len, VT_BYTE, 0 );
-    } else {
-        len = variable_temporary( _environment, VT_BYTE, "(calculated MID len)");
-        variable_store( _environment, len->name, 0 );
-    }
     Variable * result = variable_temporary( _environment, VT_DSTRING, "(result of mid)" );
+    Variable * len;
+    Variable * copyofLen = variable_temporary( _environment, VT_BYTE, "(copy of len)" );
 
+    MAKE_LABEL
+
+    char emptyResultLabel[MAX_TEMPORARY_STORAGE]; sprintf( emptyResultLabel, "%sempty", label );
+
+    cpu_compare_and_branch_8bit_const( _environment, position->realName, 0, emptyResultLabel, 1 );
+    
     switch( string->type ) {
-        case VT_STRING: {            
+        case VT_STRING: {          
+            outline0("; VT_STRING")  ;
             Variable * address = variable_temporary( _environment, VT_ADDRESS, "(result of mid)" );
             Variable * size = variable_temporary( _environment, VT_BYTE, "(result of mid)" );
             Variable * address2 = variable_temporary( _environment, VT_ADDRESS, "(result of mid)" );
             Variable * size2 = variable_temporary( _environment, VT_BYTE, "(result of mid)" );
             cpu_move_8bit( _environment, string->realName, size->realName );
+
+            if ( _len ) {
+                len = variable_retrieve_or_define( _environment, _len, VT_BYTE, 0 );
+                cpu_move_8bit( _environment, len->realName, copyofLen->realName );
+                Variable * temp = variable_temporary( _environment, VT_BYTE, "(checker)");
+                cpu_move_8bit( _environment, copyofLen->realName, temp->realName );
+                cpu_math_add_8bit( _environment, position->realName, temp->realName, temp->realName );
+                cpu_greater_than_8bit( _environment, temp->realName, size->realName, temp->realName, 0, 0 );
+
+                char unlimitedLenLabel[MAX_TEMPORARY_STORAGE]; sprintf( unlimitedLenLabel, "%sunlim", label );
+                cpu_compare_and_branch_8bit_const( _environment, temp->realName, 0, unlimitedLenLabel, 1 );
+                cpu_move_8bit( _environment, size->realName, temp->realName );
+                cpu_math_sub_8bit( _environment, temp->realName, position->realName, copyofLen->realName );
+                cpu_inc( _environment, copyofLen->realName );
+                cpu_label( _environment, unlimitedLenLabel );
+            } else {
+                cpu_move_8bit( _environment, size->realName, copyofLen->realName );
+            }
+
+            cpu_greater_than_8bit( _environment, position->realName, size->realName, size2->realName, 0, 0 );
+            cpu_compare_and_branch_8bit_const( _environment, size2->realName, (unsigned char) 0xff, emptyResultLabel, 1 );
+
             cpu_addressof_16bit( _environment, string->realName, address->realName );
             cpu_inc_16bit( _environment, address->realName );
             cpu_math_add_16bit_with_8bit( _environment, address->realName, position->realName, address->realName );
             cpu_dec_16bit( _environment, address->realName );
 
-            if ( _len ) {
-                cpu_dsfree( _environment, result->realName );
-                cpu_dsalloc( _environment, len->realName, result->realName );
-                cpu_dsdescriptor( _environment, result->realName, address2->realName, size2->realName );
-                cpu_mem_move( _environment, address->realName, address2->realName, len->realName );
-            } else {
-                cpu_move_8bit( _environment, size->realName, len->realName );
-                cpu_math_sub_8bit( _environment, len->realName, position->realName, len->realName );
-                cpu_inc( _environment, len->realName );
-                cpu_dsfree( _environment, result->realName );
-                cpu_dsalloc( _environment, len->realName, result->realName );
-                cpu_dsdescriptor( _environment, result->realName, address2->realName, size2->realName );
-                cpu_mem_move( _environment, address->realName, address2->realName, size2->realName );
-            }
+            cpu_dsfree( _environment, result->realName );
+            cpu_dsalloc( _environment, copyofLen->realName, result->realName );
+            cpu_dsdescriptor( _environment, result->realName, address2->realName, size2->realName );
+            cpu_mem_move( _environment, address->realName, address2->realName, copyofLen->realName );
+
             break;
         }
         case VT_DSTRING: {            
+            outline0("; VT_DSTRING")  ;
             Variable * address = variable_temporary( _environment, VT_ADDRESS, "(result of mid)" );
             Variable * size = variable_temporary( _environment, VT_BYTE, "(result of mid)" );
             Variable * address2 = variable_temporary( _environment, VT_ADDRESS, "(result of mid)" );
             Variable * size2 = variable_temporary( _environment, VT_BYTE, "(result of mid)" );
-            cpu_dsdescriptor( _environment, result->realName, address->realName, size->realName );
+            cpu_dsdescriptor( _environment, string->realName, address->realName, size->realName );
+
+            cpu_greater_than_8bit( _environment, position->realName, size->realName, size2->realName, 0, 0 );
+            cpu_compare_and_branch_8bit_const( _environment, size2->realName, 0, emptyResultLabel, 0 );
+
             cpu_math_add_16bit_with_8bit( _environment, address->realName, position->realName, address->realName );
             cpu_dec_16bit( _environment, address->realName );
             if ( _len ) {
-                cpu_dsfree( _environment, result->realName );
-                cpu_dsalloc( _environment, len->realName, result->realName );
-                cpu_dsdescriptor( _environment, result->realName, address2->realName, size2->realName );
-                cpu_mem_move( _environment, address->realName, address2->realName, len->realName );
+                len = variable_retrieve_or_define( _environment, _len, VT_BYTE, 0 );
+                cpu_move_8bit( _environment, len->realName, copyofLen->realName );
+                Variable * temp = variable_temporary( _environment, VT_BYTE, "(checker)");
+                cpu_move_8bit( _environment, len->realName, temp->realName );
+                cpu_math_add_8bit( _environment, position->realName, temp->realName, temp->realName );
+                cpu_greater_than_8bit( _environment, temp->realName, size->realName, temp->realName, 0, 0 );
+
+                char unlimitedLenLabel[MAX_TEMPORARY_STORAGE]; sprintf( unlimitedLenLabel, "%sunlim", label );
+                cpu_compare_and_branch_8bit_const( _environment, temp->realName, 0, unlimitedLenLabel, 1 );
+                cpu_move_8bit( _environment, size->realName, temp->realName );
+                cpu_math_sub_8bit( _environment, temp->realName, position->realName, copyofLen->realName );
+                cpu_inc( _environment, copyofLen->realName );
+                cpu_label( _environment, unlimitedLenLabel );
             } else {
-                cpu_move_8bit( _environment, size->realName, len->realName );
-                cpu_math_sub_8bit( _environment, len->realName, position->realName, len->realName );
-                cpu_inc( _environment, len->realName );
-                cpu_dsfree( _environment, result->realName );
-                cpu_dsalloc( _environment, len->realName, result->realName );
-                cpu_dsdescriptor( _environment, result->realName, address2->realName, size2->realName );
-                cpu_mem_move( _environment, address->realName, address2->realName, size2->realName );
+                cpu_move_8bit( _environment, size->realName, copyofLen->realName );
             }
+
+            cpu_greater_than_8bit( _environment, position->realName, size->realName, size2->realName, 0, 0 );
+            cpu_compare_and_branch_8bit_const( _environment, size2->realName, (unsigned char) 0xff, emptyResultLabel, 1 );
+
+            cpu_dsfree( _environment, result->realName );
+            cpu_dsalloc( _environment, copyofLen->realName, result->realName );
+            cpu_dsdescriptor( _environment, result->realName, address2->realName, size2->realName );
+            cpu_mem_move( _environment, address->realName, address2->realName, copyofLen->realName );
             break;
         }
         default:
             CRITICAL_MID_UNSUPPORTED( _string, DATATYPE_AS_STRING[string->type]);
             break;
     }
+
+    char doneLabel[MAX_TEMPORARY_STORAGE]; sprintf( doneLabel, "%sdone", label );
+
+    cpu_jump( _environment, doneLabel );
+
+    cpu_label( _environment, emptyResultLabel );
+
+    cpu_dsfree( _environment, result->realName );
+    cpu_dsalloc_size( _environment, 0, result->realName );
+
+    cpu_label( _environment, doneLabel );
+
     return result;
 }
 
@@ -4747,10 +4971,12 @@ int calculate_nearest_tile( TileDescriptor * _tile, TileDescriptors * _tiles ) {
     int i;
 
     for(i=0;i<256;++i) {
-        int affinity = calculate_tile_affinity( _tile, _tiles->descriptor[i] );
-        if ( minAffinity > affinity ) {
-            minAffinity = affinity;
-            nearestTileIndex = i;
+        if ( _tiles->descriptor[i] ) {
+            int affinity = calculate_tile_affinity( _tile, _tiles->descriptor[i] );
+            if ( minAffinity > affinity ) {
+                minAffinity = affinity;
+                nearestTileIndex = i;
+            }
         }
     }
 
@@ -5089,4 +5315,170 @@ float min_of_two(float _x, float _y) {
 
 float min_of_three(float _m, float _n, float _p) {
    return min_of_two(min_of_two(_m, _n), _p);
+}
+
+char * get_temporary_filename( Environment * _environment ) {
+
+    char * temp = tmpnam(NULL);
+    char temporaryFilename[MAX_TEMPORARY_STORAGE];
+
+    for(int i=0; i<strlen(temp); ++i ) {
+        if ( temp[i] == '.' ) {
+            temp[i] = '0';
+        }
+    }
+
+    if ( _environment->temporaryPath ) {
+        strcpy( temporaryFilename, _environment->temporaryPath );
+        strcat( temporaryFilename, temp );
+    } else {
+        strcpy( temporaryFilename, temp );
+    }
+
+    return strdup( temporaryFilename );
+
+}
+
+int system_call( Environment * _environment, char * _commandline ) {
+
+    #ifdef _WIN32
+
+        char batchFileName[MAX_TEMPORARY_STORAGE];
+
+        sprintf( batchFileName, "%s.bat", get_temporary_filename( _environment ) );
+
+        FILE * fh = fopen( batchFileName, "w+t" );
+        fprintf( fh, "@echo off\n%s\n", _commandline );
+        fclose( fh );
+
+        char batchFileName2[MAX_TEMPORARY_STORAGE];
+        sprintf( batchFileName2, "\"%s\"", batchFileName );
+
+        int result = system( batchFileName2 );
+
+        remove( batchFileName );
+
+        return result;
+        
+    #else
+
+        return system( _commandline );
+        
+    #endif
+
+}
+
+char * escape_newlines( char * _string ) {
+
+    char * result = malloc( 6 * strlen( _string ) + 1 );
+
+    memset( result, 0, 6 * strlen( _string ) + 1 );
+
+    char * p = _string, * q = result;
+
+    while( *p ) {
+        if ( *p == '\n' || *p == '\r' ) {
+            if ( (q-result) > 2 && ( *(q-1) == '"') && ( *(q-2) == ',') ) {
+                --q;
+            } else {
+                *q = '"';
+                ++q;
+                *q = ',';
+                ++q;
+            }
+            *q = '1';
+            ++q;
+            *q = '3';
+            ++q;
+            *q = ',';
+            ++q;
+            *q = '"';
+            ++q;
+            ++p;
+        } else if ( *p < 31 ) {
+            if ( (q-result) > 2 && ( *(q-1) == '"') && ( *(q-2) == ',') ) {
+                --q;
+            } else {
+                *q = '"';
+                ++q;
+                *q = ',';
+                ++q;
+            }
+            *q = '$';
+            ++q;
+            *q = ( ( (*p & 0xf0) >> 4 ) < 10 ) ? ( ( (*p & 0xf0) >> 4 ) + '0' ) : ( ( ( (*p & 0xf0) >> 4 ) - 10 ) + 'a' );
+            ++q;
+            *q = ( ( (*p & 0x0f) ) < 10 ) ? ( ( (*p & 0x0f) ) + '0' ) : ( ( ( (*p & 0x0f) ) - 10 ) + 'a' );
+            ++q;
+            *q = ',';
+            ++q;
+            *q = '"';
+            ++q;
+            ++p;
+        } else if ( *p == '"' ) {
+            if ( (q-result) > 2 && ( *(q-1) == '"') && ( *(q-2) == ',') ) {
+                --q;
+            } else {
+                *q = '"';
+                ++q;
+                *q = ',';
+                ++q;
+            }
+            *q = '3';
+            ++q;
+            *q = '4';
+            ++q;
+            *q = ',';
+            ++q;
+            *q = '"';
+            ++q;
+            ++p;
+        } else {
+            *q++ = *p++;
+        }
+    }
+
+    *q = 0;
+    int escaped = 1;
+    if ( ( *result == '"' ) && ( *(result+1) == ',' ) ) {
+        memmove( result, result+2, strlen( result ) - 2 );
+        escaped = 0;
+        *(result+strlen( result ) - 2) = 0;
+    }
+
+    if ( ( *(result+strlen( result )-1) == '"' ) && ( *(result+strlen( result )-2) == ',' ) ) {
+        *(result+strlen( result )-2 ) = 0;
+    }
+
+    q = result;
+
+    int close_escaped = 0;
+    while(*q) {
+        if ( *q == '"' ) {
+            close_escaped = ! close_escaped;
+        }
+        ++q;
+    }
+
+    char * result2 = malloc( 2 * strlen( result ) );
+
+    if ( escaped ) {
+        sprintf( result2, "\"%s", result );
+        close_escaped = ! close_escaped;
+    } else {
+        strcpy( result2, result );
+    }
+    strcpy( result, result2 );
+
+    if ( close_escaped ) {
+        sprintf( result2, "%s\"", result );
+    } else {
+        strcpy( result2, result );
+    }
+    strcpy( result, result2 );
+
+    free( result2 );
+    
+    return result;
+
 }

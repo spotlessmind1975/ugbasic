@@ -1241,10 +1241,11 @@ void gtia_scroll_text( Environment * _environment, int _direction ) {
 
 }
 
-void gtia_text( Environment * _environment, char * _text, char * _text_size, char * _pen ) {
+void gtia_text( Environment * _environment, char * _text, char * _text_size ) {
 
     deploy( gtiavars, src_hw_gtia_vars_asm );
     deploy( vScrollText, src_hw_gtia_vscroll_text_asm );
+    deploy( cls, src_hw_gtia_cls_asm );
     deploy( textEncodedAt, src_hw_gtia_text_at_asm );
 
     outline1("LDA %s", _text);
@@ -1253,10 +1254,14 @@ void gtia_text( Environment * _environment, char * _text, char * _text_size, cha
     outline0("STA TEXTPTR+1" );
     outline1("LDA %s", _text_size);
     outline0("STA TEXTSIZE" );
-    outline1("LDA %s", _pen );
-    outline0("STA TEXTPEN" );
 
-    outline0("JSR TEXTAT");
+    if ( _environment->currentMode >= 2 && _environment->currentMode <= 7 ) {
+        deploy( textEncodedAtText, src_hw_gtia_text_at_text_asm );
+        outline0("JSR TEXTATTILEMODE");
+    } else {
+        deploy( textEncodedAtGraphic, src_hw_gtia_text_at_graphic_asm );
+        outline0("JSR TEXTATBITMAPMODE");
+    }
 
 }
 

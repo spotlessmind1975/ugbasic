@@ -143,6 +143,24 @@ void on_gosub_index( Environment * _environment, char * _label ) {
 /**
  * @brief Emit ASM code for <b>... (of ON ... GOSUB ...)</b>
  * 
+ * This function outputs the code to implement any specific
+ * indexed jump with returning on forced jumps by expression.
+ * 
+ * @param _environment Current calling environment
+ * @param _label Line number to jump to
+ */
+void on_gosub_number( Environment * _environment, int _number ) {
+
+    char label[MAX_TEMPORARY_STORAGE]; sprintf( label, "_linenumber%d", _number );
+
+    on_gosub_index( _environment, label );
+
+};
+
+
+/**
+ * @brief Emit ASM code for <b>... (of ON ... GOSUB ...)</b>
+ * 
  * This function outputs the code to implement the end of
  * unconditional jump (with returning) by expression.
  * 

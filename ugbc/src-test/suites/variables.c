@@ -443,6 +443,89 @@ int test_powering_tester( TestEnvironment * _te ) {
 
 //===========================================================================
 
+void test_variable_string_mid_payload( TestEnvironment * _te ) {
+
+    Environment * e = &_te->environment;
+
+    Variable * source = variable_define( e, "source", VT_STRING, 0x0 );
+    Variable * position0 = variable_define( e, "position0", VT_BYTE, 0 );
+    Variable * position1 = variable_define( e, "position1", VT_BYTE, 1 );
+    Variable * position2 = variable_define( e, "position2", VT_BYTE, 2 );
+    Variable * position20 = variable_define( e, "position20", VT_BYTE, 20 );
+    Variable * size0 = variable_define( e, "size0", VT_BYTE, 0 );
+    Variable * size2 = variable_define( e, "size2", VT_BYTE, 2 );
+    Variable * size20 = variable_define( e, "size20", VT_BYTE, 20 );
+
+    variable_store_string( e, source->name, "chinatown" );
+
+    Variable * resultA0 = variable_string_mid( e, source->name, position0->name, size0->name );
+    Variable * resultB0 = variable_string_mid( e, source->name, position0->name, size2->name );
+    Variable * resultC0 = variable_string_mid( e, source->name, position0->name, size20->name );
+    Variable * resultA1 = variable_string_mid( e, source->name, position2->name, size0->name );
+    Variable * resultB1 = variable_string_mid( e, source->name, position2->name, size2->name );
+    Variable * resultC1 = variable_string_mid( e, source->name, position2->name, size20->name );
+    Variable * resultA2 = variable_string_mid( e, source->name, position20->name, size0->name );
+    Variable * resultB2 = variable_string_mid( e, source->name, position20->name, size2->name );
+    Variable * resultC2 = variable_string_mid( e, source->name, position20->name, size20->name );
+    Variable * resultP1 = variable_string_mid( e, source->name, position1->name, size2->name );
+
+    _te->trackedVariables[0] = resultA0;
+    _te->trackedVariables[1] = resultB0;
+    _te->trackedVariables[2] = resultC0;
+    _te->trackedVariables[3] = resultA1;
+    _te->trackedVariables[4] = resultB1;
+    _te->trackedVariables[5] = resultC1;
+    _te->trackedVariables[6] = resultA2;
+    _te->trackedVariables[7] = resultB2;
+    _te->trackedVariables[8] = resultC2;
+    _te->trackedVariables[9] = resultP1;
+
+}
+
+int test_variable_string_mid_tester( TestEnvironment * _te ) {
+
+    Variable * resultA0 = variable_retrieve( &_te->environment, _te->trackedVariables[0]->name );
+    Variable * resultB0 = variable_retrieve( &_te->environment, _te->trackedVariables[1]->name );
+    Variable * resultC0 = variable_retrieve( &_te->environment, _te->trackedVariables[2]->name );
+    Variable * resultA1 = variable_retrieve( &_te->environment, _te->trackedVariables[3]->name );
+    Variable * resultB1 = variable_retrieve( &_te->environment, _te->trackedVariables[4]->name );
+    Variable * resultC1 = variable_retrieve( &_te->environment, _te->trackedVariables[5]->name );
+    Variable * resultA2 = variable_retrieve( &_te->environment, _te->trackedVariables[6]->name );
+    Variable * resultB2 = variable_retrieve( &_te->environment, _te->trackedVariables[7]->name );
+    Variable * resultC2 = variable_retrieve( &_te->environment, _te->trackedVariables[8]->name );
+    Variable * resultP1 = variable_retrieve( &_te->environment, _te->trackedVariables[9]->name );
+
+// printf("resultA0 = %s (expected '')\n", resultA0->valueString );
+// printf("resultB0 = %s (expected '')\n", resultB0->valueString );
+// printf("resultC0 = %s (expected '')\n", resultC0->valueString );
+// printf("resultA1 = %s (expected '')\n", resultA1->valueString );
+// printf("resultB1 = %s (expected 'hi')\n", resultB1->valueString );
+// printf("resultC1 = %s (expected 'hinatown')\n", resultC1->valueString );
+// printf("resultA2 = %s (expected '')\n", resultA2->valueString );
+// printf("resultB2 = %s (expected '')\n", resultB2->valueString );
+// printf("resultC2 = %s (expected '')\n", resultC2->valueString );
+
+    return 
+        
+        strcasecmp( resultA0->valueString, "" ) == 0 &&
+        strcasecmp( resultB0->valueString, "" ) == 0 &&
+        strcasecmp( resultC0->valueString, "" ) == 0 &&
+        
+        strcasecmp( resultA1->valueString, "" ) == 0 &&
+        strcasecmp( resultB1->valueString, "hi" ) == 0 &&
+        strcasecmp( resultC1->valueString, "hinatown" ) == 0 &&
+
+        strcasecmp( resultA2->valueString, "" ) == 0 &&
+        strcasecmp( resultB2->valueString, "" ) == 0 &&
+        strcasecmp( resultC2->valueString, "" ) == 0 &&
+
+        strcasecmp( resultP1->valueString, "ch" ) == 0
+        ;
+    
+}
+
+//===========================================================================
+
 void test_variable_string_left_payload( TestEnvironment * _te ) {
 
     Environment * e = &_te->environment;
@@ -569,21 +652,22 @@ int test_distance_tester( TestEnvironment * _te ) {
 
 void test_variables( ) {
 
-    create_test( "variables_add01", &test_variables_add01_payload, &test_variables_add01_tester );    
-    create_test( "variables_greater", &test_variables_greater_than_payload, &test_variables_greater_than_tester );    
-    create_test( "variables_bin0", &test_variables_bin_payload0, &test_variables_bin_tester0 );    
-    create_test( "variables_bin", &test_variables_bin_payload, &test_variables_bin_tester );    
-    // // to be checked create_test( "variables_bin2", &test_variables_bin2_payload, &test_variables_bin2_tester );    
-    create_test( "variables_and", &test_variables_and_payload, &test_variables_and_tester );
-    create_test( "variables_not", &test_variables_not_payload, &test_variables_not_tester );
-    create_test( "variables_cast", &test_variables_not_payload, &test_variables_not_tester );
-    create_test( "variables_compare_not", &test_variable_compare_not_payload, &test_variable_compare_not_tester );
-    create_test( "variables_bit", &test_variables_bit_payload, &test_variables_bit_tester );
-    create_test( "variable_string_asc", &test_variable_string_asc_payload, &test_variable_string_asc_tester );
-    create_test( "variable_string_asc2", &test_variable_string_asc2_payload, &test_variable_string_asc2_tester );
-    create_test( "powering", &test_powering_payload, &test_powering_tester );
-    create_test( "variable_string_left", &test_variable_string_left_payload, &test_variable_string_left_tester );
-    create_test( "variable_string_right", &test_variable_string_right_payload, &test_variable_string_right_tester );
-    create_test( "distance", &test_distance_payload, &test_distance_tester );
+    // create_test( "variables_add01", &test_variables_add01_payload, &test_variables_add01_tester );    
+    // create_test( "variables_greater", &test_variables_greater_than_payload, &test_variables_greater_than_tester );    
+    // create_test( "variables_bin0", &test_variables_bin_payload0, &test_variables_bin_tester0 );    
+    // create_test( "variables_bin", &test_variables_bin_payload, &test_variables_bin_tester );    
+    // // // to be checked create_test( "variables_bin2", &test_variables_bin2_payload, &test_variables_bin2_tester );    
+    // create_test( "variables_and", &test_variables_and_payload, &test_variables_and_tester );
+    // create_test( "variables_not", &test_variables_not_payload, &test_variables_not_tester );
+    // create_test( "variables_cast", &test_variables_not_payload, &test_variables_not_tester );
+    // create_test( "variables_compare_not", &test_variable_compare_not_payload, &test_variable_compare_not_tester );
+    // create_test( "variables_bit", &test_variables_bit_payload, &test_variables_bit_tester );
+    // create_test( "variable_string_asc", &test_variable_string_asc_payload, &test_variable_string_asc_tester );
+    // create_test( "variable_string_asc2", &test_variable_string_asc2_payload, &test_variable_string_asc2_tester );
+    // create_test( "powering", &test_powering_payload, &test_powering_tester );
+    // create_test( "variable_string_left", &test_variable_string_left_payload, &test_variable_string_left_tester );
+    // create_test( "variable_string_right", &test_variable_string_right_payload, &test_variable_string_right_tester );
+    // create_test( "distance", &test_distance_payload, &test_distance_tester );
+    create_test( "variable_string_mid", &test_variable_string_mid_payload, &test_variable_string_mid_tester );
 
 }

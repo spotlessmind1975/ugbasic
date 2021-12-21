@@ -8,6 +8,9 @@ int yydebug=0;
 int errors=0;
 extern int yylineno;
 
+int yycolno;
+int yyposno;
+
 int yywrap() { return 1; }
  
 extern char DATATYPE_AS_STRING[][16];
@@ -56,7 +59,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token SQR TI CONST VBL POKE NOP FILL IN POSITIVE DEFINE ATARI ATARIXL C64 DRAGON DRAGON32 DRAGON64 PLUS4 ZX 
 %token FONT VIC20 PARALLEL YIELD SPAWN THREAD TASK IMAGES FRAME FRAMES XY YX ROLL MASKED USING TRANSPARENCY
 %token OVERLAYED CASE ENDSELECT OGP CGP ARRAY NEW GET DISTANCE TYPE MUL DIV RGB SHADES HEX PALETTE
-%token BAR XGRAPHIC YGRAPHIC XTEXT YTEXT COLUMNS
+%token BAR XGRAPHIC YGRAPHIC XTEXT YTEXT COLUMNS XGR YGR CHAR RAW SEPARATOR
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -69,6 +72,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token <string> String
 %token <integer> Integer
 %token <string> BufferDefinition
+%token <string> RawString
 
 %type <string> expr term modula factor exponential expr_math
 %type <integer> const_expr const_term const_modula const_factor const_expr_math
@@ -109,6 +113,9 @@ const_expr_string :
     String {
         $$ = $1;
     }
+    | RawString {
+        $$ = $1;
+    }
     | IF OP const_expr OP_COMMA const_expr_string OP_COMMA const_expr_string CP {
         if ( $3 ) {
             $$ = $5;
@@ -126,6 +133,9 @@ const_expr :
         $$ = ( $1 || $3 );
     } 
     | const_expr_math OP_EQUAL const_expr_math {
+        $$ = ( $1 == $3 );
+    }
+    | const_expr_math OP_ASSIGN const_expr_math {
         $$ = ( $1 == $3 );
     }
     | const_expr_math OP_DISEQUAL const_expr_math {
@@ -459,6 +469,9 @@ expr :
         $$ = variable_or( _environment, $1, $3 )->name;
     } 
     | expr_math OP_EQUAL expr {
+        $$ = variable_compare( _environment, $1, $3 )->name;
+    }
+    | expr_math OP_ASSIGN expr {
         $$ = variable_compare( _environment, $1, $3 )->name;
     }
     | expr_math OP_DISEQUAL expr {
@@ -1225,9 +1238,21 @@ exponential:
         $$ = variable_temporary( _environment, VT_SWORD, "(negative integer value)" )->name;
         variable_store( _environment, $$, -$2 );
       }
+    | OP_MINUS Identifier {
+        Variable * expr = variable_retrieve_or_define( _environment, $2, VT_SWORD, 0 ); 
+        Variable * zero = variable_temporary( _environment, expr->type, "(zero)" ); 
+        variable_store( _environment, zero->name, 0 );
+        $$ = variable_sub( _environment, zero->name, expr->name )->name;
+      }
     | String { 
         $$ = variable_temporary( _environment, VT_STRING, "(string value)" )->name;
         variable_store_string( _environment, $$, $1 );
+      }
+    | RawString { 
+        Variable * variable = variable_temporary( _environment, VT_STRING, "(string value)" );
+        variable_store_string( _environment, variable->name, $1 );
+        variable->printable = 1;
+        $$ = variable->name;
       }
     | OP BYTE CP Integer { 
         $$ = variable_temporary( _environment, VT_BYTE, "(BYTE value)" )->name;
@@ -1424,6 +1449,12 @@ exponential:
     | YPEN {
         $$ = ypen( _environment )->name;
       }
+    | XGR {
+        $$ = "XGR";
+      }
+    | YGR {
+        $$ = "YGR";
+      }
     | COLLISION OP direct_integer CP {
         $$ = collision_to( _environment, $3 )->name;
       }      
@@ -1501,6 +1532,12 @@ exponential:
     }
     | OP expr CP {
         $$ = $2;
+    }
+    | OP_MINUS OP expr CP {
+        Variable * expr = variable_retrieve( _environment, $3 );
+        Variable * zero = variable_temporary( _environment, VT_SIGN( expr->type ), "(zero)" );
+        variable_store( _environment, zero->name, 0 );
+        $$ = variable_sub( _environment, zero->name, expr->name )->name;
     }
     | FREE {
         cpu_dsgc( _environment );
@@ -2803,8 +2840,16 @@ on_goto_definition:
           on_goto_index( _environment, $1 );
           on_goto_end( _environment );
       }
+    |
+      Integer {
+          on_goto_number( _environment, $1 );
+          on_goto_end( _environment );
+      }
     | Identifier {
         on_goto_index( _environment, $1 );
+    } OP_COMMA on_goto_definition
+    | Integer {
+        on_goto_number( _environment, $1 );
     } OP_COMMA on_goto_definition;
 
 on_gosub_definition:
@@ -2812,8 +2857,15 @@ on_gosub_definition:
           on_gosub_index( _environment, $1 );
           on_gosub_end( _environment );
       }
+    | Integer {
+          on_gosub_number( _environment, $1 );
+          on_gosub_end( _environment );
+      }
     | Identifier {
           on_gosub_index( _environment, $1 );
+    } OP_COMMA on_gosub_definition
+    | Integer {
+          on_gosub_number( _environment, $1 );
     } OP_COMMA on_gosub_definition;
 
 on_proc_definition:
@@ -2963,7 +3015,8 @@ const_array_definitions :
     }
     | const_array_definitions1;
 
-array_assign: {
+array_assign:
+    {
         if ( ! ((struct _Environment *)_environment)->currentArray->memoryArea ) {
             memory_area_assign( ((struct _Environment *)_environment)->memoryAreas, ((struct _Environment *)_environment)->currentArray );
         }
@@ -3242,7 +3295,15 @@ parameters_expr :
           ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
           ++((struct _Environment *)_environment)->parameters;
     }
+    | RawString {
+          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
+          ++((struct _Environment *)_environment)->parameters;
+    }
     | String OP_COMMA parameters_expr {
+          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
+          ++((struct _Environment *)_environment)->parameters;
+    }
+    | RawString OP_COMMA parameters_expr {
           ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
           ++((struct _Environment *)_environment)->parameters;
     }
@@ -3258,6 +3319,46 @@ values :
           ++((struct _Environment *)_environment)->parameters;
     }
     ;
+
+print_buffer_definition :
+    expr {
+        print_buffer( _environment, $1, 1, 1 );
+    }
+  | expr OP_COMMA {
+        print_buffer( _environment, $1, 0, 1 );
+        print_tab( _environment, 0 );
+  }
+  | expr OP_SEMICOLON {
+        print_buffer( _environment, $1, 0, 1 );
+  }
+  | expr OP_COMMA {
+        print_buffer( _environment, $1, 0, 1 );
+        print_tab( _environment, 0 );
+  }  print_buffer_definition
+  | expr OP_SEMICOLON  {
+        print_buffer( _environment, $1, 0, 0 );
+  } print_buffer_definition
+  ;
+
+print_buffer_raw_definition :
+    expr {
+        print_buffer( _environment, $1, 1, 0 );
+    }
+  | expr OP_COMMA {
+        print_buffer( _environment, $1, 0, 0 );
+        print_tab( _environment, 0 );
+  }
+  | expr OP_SEMICOLON {
+        print_buffer( _environment, $1, 0, 0 );
+  }
+  | expr OP_COMMA {
+        print_buffer( _environment, $1, 0, 0 );
+        print_tab( _environment, 0 );
+  }  print_buffer_raw_definition
+  | expr OP_SEMICOLON  {
+        print_buffer( _environment, $1, 0, 0 );
+  } print_buffer_raw_definition
+  ;
 
 print_definition :
     expr {
@@ -3447,6 +3548,53 @@ input_definition :
         input( _environment, var->name );
     }  input_definition2
     | input_definition2
+    | RawString OP_SEMICOLON Identifier {
+        Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
+        variable_store_string( _environment, string->name, $1 );
+        string->printable = 1;
+        print( _environment, string->name, 0 );
+        input( _environment, $3 );
+        print_newline( _environment );
+    }
+    | RawString OP_SEMICOLON Identifier OP_DOLLAR {
+        Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
+        variable_store_string( _environment, string->name, $1 );
+        string->printable = 1;
+        print( _environment, string->name, 0 );
+        Variable * var = variable_retrieve_or_define( _environment, $3, VT_DSTRING, 0 );
+        input( _environment, var->name );
+        print_newline( _environment );
+    }
+    | RawString OP_SEMICOLON Identifier OP_SEMICOLON {
+        Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
+        variable_store_string( _environment, string->name, $1 );
+        string->printable = 1;
+        print( _environment, string->name, 0 );
+        input( _environment, $3 );
+    }
+    | RawString OP_SEMICOLON Identifier OP_DOLLAR OP_SEMICOLON {
+        Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
+        variable_store_string( _environment, string->name, $1 );
+        string->printable = 1;
+        print( _environment, string->name, 0 );
+        Variable * var = variable_retrieve_or_define( _environment, $3, VT_DSTRING, 0 );
+        input( _environment, var->name );
+    }
+    | RawString OP_SEMICOLON Identifier OP_SEMICOLON {
+        Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
+        variable_store_string( _environment, string->name, $1 );
+        string->printable = 1;
+        print( _environment, string->name, 0 );
+        input( _environment, $3 );
+    }  input_definition2
+    | RawString OP_SEMICOLON Identifier OP_DOLLAR OP_SEMICOLON {
+        Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
+        variable_store_string( _environment, string->name, $1 );
+        string->printable = 1;
+        print( _environment, string->name, 0 );
+        Variable * var = variable_retrieve_or_define( _environment, $3, VT_DSTRING, 0 );
+        input( _environment, var->name );
+    }  input_definition2
   ;
 
 poke_definition : 
@@ -3475,7 +3623,26 @@ define_definition :
     }
     | DEFAULT TYPE datatype {
         ((struct _Environment *)_environment)->defaultVariableType = $3;
-    };
+    }
+    | INPUT SIZE const_expr {
+        if ( $3 <= 0 ) {
+            CRITICAL_INVALID_INPUT_SIZE( $3 );
+        }
+        ((struct _Environment *)_environment)->inputConfig.size = $3;
+    }    
+    | INPUT SEPARATOR const_expr {
+        if ( $3 <= 0 ) {
+            CRITICAL_INVALID_INPUT_SEPARATOR( $3 );
+        }
+        ((struct _Environment *)_environment)->inputConfig.separator = $3;
+    }    
+    | INPUT CURSOR const_expr {
+        if ( $3 <= 0 ) {
+            CRITICAL_INVALID_INPUT_CURSOR( $3 );
+        }
+        ((struct _Environment *)_environment)->inputConfig.cursor = $3;
+    }    
+    ;
 
 define_definitions :
       define_definition
@@ -3642,6 +3809,8 @@ statement:
       outline0( "NOP" );
   }
   | PRINT print_definition
+  | PRINT BUFFER print_buffer_definition
+  | PRINT BUFFER RAW print_buffer_raw_definition
   | PRINT {
       print_newline( _environment );
   }
@@ -3650,6 +3819,9 @@ statement:
   }
   | INPUT input_definition
   | QM print_definition
+  | QM {
+      print_newline( _environment );
+  }
   | LOCATE locate_definition
   | GR LOCATE gr_locate_definition
   | MEMORIZE {
@@ -3682,11 +3854,17 @@ statement:
   | SET TAB expr {
       text_set_tab( _environment, $3 );
   }
+  | CENTER expr OP_SEMICOLON {
+      center( _environment, $2, 0 );
+  }
+  | CENTRE expr OP_SEMICOLON {
+      center( _environment, $2, 0 );
+  }
   | CENTER expr {
-      center( _environment, $2 );
+      center( _environment, $2, 1 );
   }
   | CENTRE expr {
-      center( _environment, $2 );
+      center( _environment, $2, 1 );
   }
   | CLS {
       cls( _environment, NULL );
@@ -3714,6 +3892,11 @@ statement:
   }
   | IF expr THEN {
       if_then( _environment, $2 );  
+  }
+  | IF expr THEN Integer {
+      if_then( _environment, $2 );
+      goto_number( _environment, $4 );
+      end_if_then( _environment );  
   }
   | ELSE {
       else_if_then_label( _environment );  
@@ -4267,7 +4450,7 @@ program :
 
 %%
 
-char version[MAX_TEMPORARY_STORAGE] = "1.6";
+char version[MAX_TEMPORARY_STORAGE] = "1.7";
 
 void show_usage_and_exit( int _argc, char *_argv[] ) {
 
@@ -4308,7 +4491,13 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     printf("\t-a           Show statistics on assembly listing generated\n" );
     printf("\t-I           Install needed chaintool for this target\n" );
     printf("\t-d           Enable debugging of IMAGE LOAD\n" );
+    printf("\t-C <file>    Path to compiler\n" );
+    printf("\t-A <file>    Path to app maker\n" );
+    printf("\t-T <path>    Path to temporary path\n" );
     printf("\t-c <file>    Output filename with linker configuration\n" );
+    printf("\t-1           Include source code into the executable\n" );
+    printf("\t             and an execution shell. It enforces other.\n" );
+    printf("\t             10-liners rules.\n" );
     printf("\t-o <exe>     Output filename with final executable file for target\n" );
     printf("\t-O <type>    Output file format for target:\n" );
 #if __atari__ 
@@ -4382,12 +4571,12 @@ int main( int _argc, char *_argv[] ) {
     _environment->outputFileType = OUTPUT_FILE_TYPE_PRG;
 #endif
 
-    while ((opt = getopt(_argc, _argv, "ae:c:Wo:Ie:l:EO:dL:C:V")) != -1) {
+    while ((opt = getopt(_argc, _argv, "ae:c:Wo:Ie:l:EO:dL:C:VA:T:1")) != -1) {
         switch (opt) {
                 case 'a':
                     if ( ! _environment->listingFileName ) {
                         char listingFileName[MAX_TEMPORARY_STORAGE];
-                        sprintf( listingFileName, "%s.lst", tmpnam(NULL) );
+                        sprintf( listingFileName, "%s.lst", get_temporary_filename( _environment ) );
                         _environment->listingFileName = strdup(listingFileName);
                     }
                     _environment->analysis = 1;
@@ -4400,6 +4589,15 @@ int main( int _argc, char *_argv[] ) {
                     if( access( _environment->compilerFileName, F_OK ) != 0 ) {
                         CRITICAL("Compiler no found.");
                     }
+                    break;
+                case 'A':
+                    _environment->appMakerFileName = strdup(optarg);
+                    if( access( _environment->appMakerFileName, F_OK ) != 0 ) {
+                        CRITICAL("App maker no found.");
+                    }
+                    break;
+                case 'T':
+                    _environment->temporaryPath = strdup(optarg);
                     break;
                 case 'o':
                     _environment->exeFileName = strdup(optarg);
@@ -4440,6 +4638,9 @@ int main( int _argc, char *_argv[] ) {
                 case 'V':
                     fprintf(stderr, "%s", version );
                     exit(0);
+                    break;
+                case '1':
+                    _environment->tenLinerRulesEnforced = 1;
                     break;
                 case 'e': {
                     char * p = strtok(optarg, ",");
@@ -4613,9 +4814,24 @@ int main( int _argc, char *_argv[] ) {
 
     _environment->sourceFileName = strdup(_argv[optind] );
 
+    if ( _environment->tenLinerRulesEnforced ) {
+        FILE * fh = fopen( _environment->sourceFileName, "rt" );
+        fseek( fh, 0, SEEK_END );
+        int sourceSize = ftell( fh );
+        fseek( fh, 0, SEEK_SET );
+        char * sourceText = malloc( sourceSize + 1 );
+        memset( sourceText, 0, sourceSize + 1 );
+        (void)!fread( sourceText, 1, sourceSize, fh );
+        fclose( fh );
+        char * escapedSourceText = unescape_string( _environment, sourceText, 1 );
+        Variable * source = variable_define( _environment, "SHELL_SOURCE", VT_BUFFER, 0 );
+        variable_store_buffer( _environment, source->name, escapedSourceText, strlen(escapedSourceText), 0 );
+        source->printable = 1;
+    }
+
     if ( _environment->exeFileName && !_argv[optind+1]) {
         char asmFileName[MAX_TEMPORARY_STORAGE];
-        sprintf( asmFileName, "%s.asm", tmpnam(NULL) );
+        sprintf( asmFileName, "%s.asm", get_temporary_filename( _environment ) );
         _environment->asmFileName = strdup(asmFileName);
     } else {
         _environment->asmFileName = strdup(_argv[optind+1] );
@@ -4790,8 +5006,7 @@ int main( int _argc, char *_argv[] ) {
 
 int yyerror (Environment * _ignored, const char *s) /* Called by yyparse on error */
 {
-        // TODO: better error message (like other compilers)
-      printf( "*** ERROR: %s at %d\n", s, yylineno);
+      fprintf(stderr,  "*** ERROR: %s at %d column %d (%d)\n", s, yylineno, (yycolno+1), (yyposno+1));
       exit(EXIT_FAILURE);
 }
 

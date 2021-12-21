@@ -123,6 +123,9 @@
 #define KEY_RUNSTOP                 0 // ?
 #define KEY_SEMICOLON               0 // ?
 
+#define INPUT_DEFAULT_SEPARATOR     ','
+#define INPUT_DEFAULT_SIZE          32
+#define INPUT_DEFAULT_CURSOR        0x0a
 
 #define SCREEN_CAPABILITIES         ( ( 1<<TILEMAP_NATIVE ) | ( 1<<BITMAP_NATIVE ) )
 

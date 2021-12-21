@@ -66,32 +66,17 @@ void c64_ypen( Environment * _environment, char * _destination ) {
 }
 
 void c64_inkey( Environment * _environment, char * _pressed, char * _key ) {
+
+    deploy( scancode, src_hw_c64_scancode_asm);
+
     MAKE_LABEL
-
-    // The KERNAL ROM contains four tables used by the system to convert keyboard codes into PETSCII character codes:
-    // Each table contains 65 bytes; one PETSCII code for each of the 64 keys assigned a keyboard code, plus a 
-    // 255/$FF which will be returned for the keyboard code of 64/$40 (indicating no key pressed).
-
-    // 60289–60353/$EB81–$EBC1: PETSCII codes for keys pressed without simultaneously using Shift, Commodore or Ctrl keys. 
-    // In this table, the entries for those three keys are 1, 2 and 4; values which get "sorted out" by the keyboard scan 
-    // routines in ROM and thus never "show up" in the adresses 203 and 197.
-
-    // 60354–60418/$EBC2–$EC02: PETSCII codes for keys pressed simultaneously with a Shift or the Shift Lock keys.
-    // 60419–60483/$EC03–$EC43: PETSCII codes for keys pressed simultaneously with the Commodore logo key.
-    // 60536–60600/$EC78–$ECB8: PETSCII codes for keys pressed simultaneously with the Ctrl key. 
-    // This table has several bytes with 255/$FF, indicating no character; if you press Ctrl along with e.g. Inst/Del, 
-    // the 64 behaves as if nothing was typed at all.
-
-    // Addresses 631-640 (Hex: $0277-$0280, name KEYD) is the keyboard buffer used by Commodore basic.
-
-    // When a key is pressed, the new character is placed in memory at position 631+PEEK(198), then the content of address 198 was incremented to increase the size of the buffer.
-
-    // When a key is retrieved from the buffer, the character at address 631 is read and handled. The other characters are then shifted onto the previous character, then the
 
     outline0("LDA #$0");
     outline1("STA %s", _pressed );
     outline0("LDA #$0");
     outline1("STA %s", _key );
+
+    outline0("JSR SCANCODE");
 
     outline0("LDX $c6");
     outline0("CPX #$0");
@@ -124,26 +109,16 @@ void c64_inkey( Environment * _environment, char * _pressed, char * _key ) {
 
 void c64_scancode( Environment * _environment, char * _pressed, char * _scancode ) {
 
+    deploy( scancode, src_hw_c64_scancode_asm);
+
     MAKE_LABEL
-
-    // The KERNAL ROM contains four tables used by the system to convert keyboard codes into PETSCII character codes:
-    // Each table contains 65 bytes; one PETSCII code for each of the 64 keys assigned a keyboard code, plus a 
-    // 255/$FF which will be returned for the keyboard code of 64/$40 (indicating no key pressed).
-
-    // 60289–60353/$EB81–$EBC1: PETSCII codes for keys pressed without simultaneously using Shift, Commodore or Ctrl keys. 
-    // In this table, the entries for those three keys are 1, 2 and 4; values which get "sorted out" by the keyboard scan 
-    // routines in ROM and thus never "show up" in the adresses 203 and 197.
-
-    // 60354–60418/$EBC2–$EC02: PETSCII codes for keys pressed simultaneously with a Shift or the Shift Lock keys.
-    // 60419–60483/$EC03–$EC43: PETSCII codes for keys pressed simultaneously with the Commodore logo key.
-    // 60536–60600/$EC78–$ECB8: PETSCII codes for keys pressed simultaneously with the Ctrl key. 
-    // This table has several bytes with 255/$FF, indicating no character; if you press Ctrl along with e.g. Inst/Del, 
-    // the 64 behaves as if nothing was typed at all.
 
     outline0("LDA #$0");
     outline1("STA %s", _pressed );
     outline0("LDA #$0");
     outline1("STA %s", _scancode );
+
+    outline0("JSR SCANCODE");
 
     outline0("LDY $c5");
     outline0("CPY #$40");
@@ -158,16 +133,6 @@ void c64_scancode( Environment * _environment, char * _pressed, char * _scancode
 }
 
 void c64_scanshift( Environment * _environment, char * _shifts ) {
-
-    // 653	
-    // Shift key indicator. Bits:
-    // Bit #0: 1 = One or more of left Shift, right Shift or Shift Lock is currently being pressed or locked.
-    // Bit #1: 1 = Commodore is currently being pressed.
-    // Bit #2: 1 = Control is currently being pressed.
-    // NO SHIFT (0) - if no SHIFT key pressed;
-    // LEFT SHIFT (1) - if the left SHIFT pressed;
-    // RIGHT SHIFT (2) - if the right SHIFT pressed;
-    // BOTH SHIFTS (3) - if both keys pressed.
 
     MAKE_LABEL
 
@@ -196,11 +161,11 @@ void c64_scanshift( Environment * _environment, char * _shifts ) {
 
 void c64_keyshift( Environment * _environment, char * _shifts ) {
 
-    // On the same way, KEY SHIFT is used to report the current status of those keys 
-    // which cannot be detected by either INKEY$ or SCANCODE because they do not 
-    // carry the relevant codes. These control keys cannot be tested individually, or a test can be set up for any combination of such keys pressed together. A single call to the KEY SHIFT function can test for all eventualities, by examining a bit map in the following format:
+    deploy( scancode, src_hw_c64_scancode_asm);
 
     MAKE_LABEL
+
+    outline0("JSR SCANCODE");
 
     outline0("LDA #0");
     outline1("STA %s", _shifts);

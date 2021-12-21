@@ -58,7 +58,7 @@ VIC2STARTUPL1:
     INC $FE
     DEX
     BNE VIC2STARTUPL1
-    LDA #$37
+    LDA #$35
     STA $01
     CLI
 
@@ -92,10 +92,6 @@ VIC2STARTUPL1:
     AND #$f1
     ORA #$08
     STA $d018
-
-    ; DISABLE BASIC ROM    
-    LDA #$36
-    STA $01
 
     ; SET STARTUP CURSOR POSITION    
     LDA #0

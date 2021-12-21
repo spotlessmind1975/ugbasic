@@ -80,7 +80,7 @@ void target_initialization( Environment * _environment ) {
 
     if ( !_environment->configurationFileName ) {
         char configurationFileName[MAX_TEMPORARY_STORAGE];
-        sprintf( configurationFileName, "%s.cfg", tmpnam(NULL) );
+        sprintf( configurationFileName, "%s.cfg", get_temporary_filename( _environment ) );
         _environment->configurationFileName = strdup(configurationFileName);
     }
 
@@ -94,6 +94,7 @@ void target_initialization( Environment * _environment ) {
     linker_setup( _environment );
 
     outhead0(".segment \"CODE\"");
+
     deploy( vars, src_hw_plus4_vars_asm);
     // bank_define( _environment, "STRINGS", BT_STRINGS, 0x4200, NULL );
     variable_define( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0xD800 );
@@ -102,6 +103,12 @@ void target_initialization( Environment * _environment ) {
     setup_text_variables( _environment );
 
     ted_initialization( _environment );
+
+    if ( _environment->tenLinerRulesEnforced ) {
+        shell_injection( _environment );
+    }
+
+    cpu_call( _environment, "VARINIT" );
 
 }
 
@@ -115,7 +122,7 @@ void target_linkage( Environment * _environment ) {
     }
 
     if ( _environment->compilerFileName ) {
-        sprintf(executableName, "\"%s\"", _environment->compilerFileName );
+        sprintf(executableName, "%s", _environment->compilerFileName );
     } else if( access( "cc65\\bin\\cl65.exe", F_OK ) == 0 ) {
         sprintf(executableName, "%s", "cc65\\bin\\cl65.exe" );
     } else {
@@ -125,17 +132,19 @@ void target_linkage( Environment * _environment ) {
     char listingFileName[MAX_TEMPORARY_STORAGE];
     memset( listingFileName, 0, MAX_TEMPORARY_STORAGE );
     if ( _environment->listingFileName ) {
-        sprintf( listingFileName, "-l %s", _environment->listingFileName );
+        sprintf( listingFileName, "-l \"%s\"", _environment->listingFileName );
+    } else {
+        strcpy( listingFileName, "" );
     }
 
-    sprintf( commandLine, "%s %s -o %s -u __EXEHDR__ -t plus4 -C %s %s",
+    sprintf( commandLine, "\"%s\" %s -o \"%s\" -u __EXEHDR__ -t plus4 -C \"%s\" \"%s\"",
         executableName,
         listingFileName,
         _environment->exeFileName, 
         _environment->configurationFileName, 
         _environment->asmFileName );
 
-    if ( system( commandLine ) ) {
+    if ( system_call( _environment,  commandLine ) ) {
         printf("The compilation of assembly program failed.\n\n");
         printf("Please use option '-I' to install chain tool.\n\n");
     }; 

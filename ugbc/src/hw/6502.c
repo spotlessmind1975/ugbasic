@@ -2439,7 +2439,7 @@ void cpu6502_less_than_32bit( Environment * _environment, char *_source, char *_
                 outline1("BEQ %smi", label );
             }
             outhead1("%spl:", label );
-            outline0("LDA #0" );
+            outline0("LDA #$FF" );
             if ( _other ) {
                 outline1("STA %s", _other);
             } else {
@@ -2447,7 +2447,7 @@ void cpu6502_less_than_32bit( Environment * _environment, char *_source, char *_
             }
             outline1("JMP %sen", label );
             outhead1("%smi:", label );
-            outline0("LDA #$ff" );
+            outline0("LDA #$00" );
             if ( _other ) {
                 outline1("STA %s", _other);
             } else {
@@ -3625,6 +3625,8 @@ void cpu6502_mem_move_direct_indirect_size( Environment * _environment, char *_s
             outline0("STX CPUMEMMOVE_SIZE" );
             outline1("LDX #$%2.2X", ( _size >> 8 ) & 0xff );
             outline0("STX CPUMEMMOVE_SIZE+1" );
+            outline1("LDA #>%s", _source );
+            outline0("STA TMPPTR+1" );
             outline1("LDA #<%s", _source );
             outline0("STA TMPPTR" );
             outline1("LDA %s+1", _destination );
@@ -4570,7 +4572,7 @@ void cpu6502_hex_to_string( Environment * _environment, char * _number, char * _
 
 void cpu6502_dsdefine( Environment * _environment, char * _string, char * _index ) {
 
-    deploy_with_vars( dstring, src_hw_6502_dstring_asm, cpu_dstring_vars );
+    deploy( dstring, src_hw_6502_dstring_asm );
 
     outline1( "LDA #<%s", _string );
     outline0( "STA DSADDRLO" );
@@ -4583,7 +4585,7 @@ void cpu6502_dsdefine( Environment * _environment, char * _string, char * _index
 
 void cpu6502_dsalloc( Environment * _environment, char * _size, char * _index ) {
 
-    deploy_with_vars( dstring, src_hw_6502_dstring_asm, cpu_dstring_vars );
+    deploy( dstring, src_hw_6502_dstring_asm );
 
     outline1( "LDA %s", _size );
     outline0( "STA DSSIZE" );
@@ -4594,7 +4596,7 @@ void cpu6502_dsalloc( Environment * _environment, char * _size, char * _index ) 
 
 void cpu6502_dsalloc_size( Environment * _environment, int _size, char * _index ) {
 
-    deploy_with_vars( dstring, src_hw_6502_dstring_asm, cpu_dstring_vars );
+    deploy( dstring, src_hw_6502_dstring_asm );
 
     outline1( "LDA #$%2.2x", _size );
     outline0( "STA DSSIZE" );
@@ -4605,7 +4607,7 @@ void cpu6502_dsalloc_size( Environment * _environment, int _size, char * _index 
 
 void cpu6502_dsfree( Environment * _environment, char * _index ) {
 
-    deploy_with_vars( dstring, src_hw_6502_dstring_asm, cpu_dstring_vars );
+    deploy( dstring, src_hw_6502_dstring_asm );
 
     outline1( "LDX %s", _index );
     outline0( "JSR DSFREE" );
@@ -4614,7 +4616,7 @@ void cpu6502_dsfree( Environment * _environment, char * _index ) {
 
 void cpu6502_dswrite( Environment * _environment, char * _index ) {
 
-    deploy_with_vars( dstring, src_hw_6502_dstring_asm, cpu_dstring_vars );
+    deploy( dstring, src_hw_6502_dstring_asm );
 
     outline1( "LDX %s", _index );
     outline0( "JSR DSWRITE" );
@@ -4623,7 +4625,7 @@ void cpu6502_dswrite( Environment * _environment, char * _index ) {
 
 void cpu6502_dsresize( Environment * _environment, char * _index, char * _resize ) {
 
-    deploy_with_vars( dstring, src_hw_6502_dstring_asm, cpu_dstring_vars );
+    deploy( dstring, src_hw_6502_dstring_asm );
 
     outline1( "LDX %s", _index );
     outline1( "LDA %s", _resize );
@@ -4634,7 +4636,7 @@ void cpu6502_dsresize( Environment * _environment, char * _index, char * _resize
 
 void cpu6502_dsresize_size( Environment * _environment, char * _index, int _resize ) {
 
-    deploy_with_vars( dstring,src_hw_6502_dstring_asm, cpu_dstring_vars );
+    deploy( dstring,src_hw_6502_dstring_asm );
 
     outline1( "LDX %s", _index );
     outline1( "LDA #$%2.2x", _resize );
@@ -4645,7 +4647,7 @@ void cpu6502_dsresize_size( Environment * _environment, char * _index, int _resi
 
 void cpu6502_dsgc( Environment * _environment ) {
 
-    deploy_with_vars( dstring,src_hw_6502_dstring_asm, cpu_dstring_vars );
+    deploy( dstring,src_hw_6502_dstring_asm );
 
     outline0( "JSR DSGC" );
 
@@ -4653,7 +4655,7 @@ void cpu6502_dsgc( Environment * _environment ) {
 
 void cpu6502_dsdescriptor( Environment * _environment, char * _index, char * _address, char * _size ) {
 
-    deploy_with_vars( dstring,src_hw_6502_dstring_asm, cpu_dstring_vars );
+    deploy( dstring,src_hw_6502_dstring_asm );
 
     outline1( "LDX %s", _index );
     outline0( "JSR DSDESCRIPTOR" );
@@ -4869,19 +4871,57 @@ void cpu6502_sqroot( Environment * _environment, char * _number, char * _result 
 
 }
 
+void emit_segment_if_enough_space( Environment * _environment, int _space ) {
+    MemoryArea * actual = _environment->memoryAreas;
+    int id = 0;
+    while( actual ) {
+        if ( actual->size > _space ) {
+            outhead1(".segment \"MA%3.3x\"", id );
+            actual->size -= _space;
+            break;
+        }
+        actual = actual->next;
+        ++id;
+    }
+}
+
 void cpu6502_dstring_vars( Environment * _environment ) {
 
     int count = _environment->dstring.count == 0 ? DSTRING_DEFAULT_COUNT : _environment->dstring.count;
     int space = _environment->dstring.space == 0 ? DSTRING_DEFAULT_SPACE : _environment->dstring.space;
 
+    emit_segment_if_enough_space( _environment, 1 );
     outhead1("MAXSTRINGS:                   .BYTE %d", count );
+    outhead0(".segment \"CODE\"" );
+
+    emit_segment_if_enough_space( _environment, count );
     outhead1("DESCRIPTORS_STATUS:           .RES %d", count );
+    outhead0(".segment \"CODE\"" );
+
+    emit_segment_if_enough_space( _environment, count );
     outhead1("DESCRIPTORS_ADDRESS_LO:       .RES %d", count );
+    outhead0(".segment \"CODE\"" );
+
+    emit_segment_if_enough_space( _environment, count );
     outhead1("DESCRIPTORS_ADDRESS_HI:       .RES %d", count );
+    outhead0(".segment \"CODE\"" );
+
+    emit_segment_if_enough_space( _environment, count );
     outhead1("DESCRIPTORS_SIZE:             .RES %d", count );
+    outhead0(".segment \"CODE\"" );
+
+    emit_segment_if_enough_space( _environment, space );
     outhead1("WORKING:                      .RES %d", space );
+    outhead0(".segment \"CODE\"" );
+
+    emit_segment_if_enough_space( _environment, space );
     outhead1("TEMPORARY:                    .RES %d", space );
+    outhead0(".segment \"CODE\"" );
+
+    emit_segment_if_enough_space( _environment, 2 );
     outhead1("FREE_STRING:                  .WORD %d", space );
+    outhead0(".segment \"CODE\"" );
+
 
 }
 
@@ -5003,6 +5043,27 @@ void cpu6502_protothread_current( Environment * _environment, char * _current ) 
 
     outline0("LDX PROTOTHREADCT" );
     outline1("STX %s", _current );
+
+}
+
+void cpu6502_is_negative( Environment * _environment, char * _value, char * _result ) {
+
+    MAKE_LABEL
+
+    inline( cpu_is_negative )
+
+        outline1("LDA %s", _value);
+        outline0("AND #$80");
+        outline1("BEQ %s", label);
+        outline0("LDA #$FF");
+        outline1("STA %s", _result );
+        outline1("JMP %sdone", label);
+        outhead1("%s:", label);
+        outline0("LDA #$00");
+        outline1("STA %s", _result );
+        outhead1("%sdone:", label);
+
+    no_embedded( cpu_is_negative )
 
 }
 

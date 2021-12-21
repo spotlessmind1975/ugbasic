@@ -477,6 +477,7 @@ void ted_textmap_at( Environment * _environment, char * _address ) {
 void ted_point_at_int( Environment * _environment, int _x, int _y ) {
 
     deploy( tedvars, src_hw_ted_vars_asm );
+    deploy( tedvarsGraphic, src_hw_ted_vars_graphic_asm );
     deploy( plot, src_hw_ted_plot_asm );
     
     outline1("LDA %2.2x", (_x & 0xff ) );
@@ -497,6 +498,7 @@ void ted_point_at_vars( Environment * _environment, char *_x, char *_y ) {
     Variable * y = variable_retrieve( _environment, _y );
 
     deploy( tedvars, src_hw_ted_vars_asm );
+    deploy( tedvarsGraphic, src_hw_ted_vars_graphic_asm );
     deploy( plot, src_hw_ted_plot_asm );
     
     outline1("LDA %s", x->realName );
@@ -518,6 +520,7 @@ void ted_point( Environment * _environment, char *_x, char *_y, char * _result )
     Variable * result = variable_retrieve( _environment, _result );
 
     deploy( tedvars, src_hw_ted_vars_asm );
+    deploy( tedvarsGraphic, src_hw_ted_vars_graphic_asm );
     deploy( plot, src_hw_ted_plot_asm );
     
     outline1("LDA %s", x->realName );
@@ -689,10 +692,14 @@ void ted_tiles_get_height( Environment * _environment, char *_result ) {
 }
 
 void ted_cls( Environment * _environment ) {
-    
-    deploy( cls, src_hw_ted_cls_asm );
 
-    outline0("JSR CLS");
+    if ( _environment->currentMode == 2 || _environment->currentMode == 3 ) {
+        deploy( clsGraphic, src_hw_ted_cls_graphic_asm );
+        outline0("JSR CLSG");
+    } else {
+        deploy( clsText, src_hw_ted_cls_text_asm );
+        outline0("JSR CLST");
+    }
 
 }
 
@@ -707,7 +714,7 @@ void ted_scroll_text( Environment * _environment, int _direction ) {
 
 }
 
-void ted_text( Environment * _environment, char * _text, char * _text_size, char * _pen ) {
+void ted_text( Environment * _environment, char * _text, char * _text_size ) {
 
     deploy( tedvars, src_hw_ted_vars_asm );
     deploy( vScrollText, src_hw_ted_vscroll_text_asm );
@@ -719,10 +726,17 @@ void ted_text( Environment * _environment, char * _text, char * _text_size, char
     outline0("STA TEXTPTR+1" );
     outline1("LDA %s", _text_size);
     outline0("STA TEXTSIZE" );
-    outline1("LDA %s", _pen );
-    outline0("STA TEXTPEN" );
 
-    outline0("JSR TEXTAT");
+    if ( _environment->currentMode == 2 || _environment->currentMode == 3 ) {
+        deploy( tedvarsGraphic, src_hw_ted_vars_graphic_asm );
+        deploy( clsGraphic, src_hw_ted_cls_graphic_asm );
+        deploy( textEncodedAtGraphic, src_hw_ted_text_at_graphic_asm );
+        outline0("JSR TEXTATBITMAPMODE");
+    } else {
+        deploy( clsText, src_hw_ted_cls_text_asm );
+        deploy( textEncodedAtText, src_hw_ted_text_at_text_asm );
+        outline0("JSR TEXTATTILEMODE");
+    }
 
 }
 
@@ -1127,6 +1141,7 @@ Variable * ted_image_converter( Environment * _environment, char * _data, int _w
 void ted_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _frame_size, int _flags ) {
 
     deploy( tedvars, src_hw_ted_vars_asm);
+    deploy( tedvarsGraphic, src_hw_ted_vars_graphic_asm );
     deploy( putimage, src_hw_ted_put_image_asm );
 
     outline1("LDA #$%2.2x", _flags );
@@ -1210,6 +1225,7 @@ Variable * ted_new_image( Environment * _environment, int _width, int _height, i
 void ted_get_image( Environment * _environment, char * _image, char * _x, char * _y ) {
 
     deploy( tedvars, src_hw_ted_vars_asm);
+    deploy( tedvarsGraphic, src_hw_ted_vars_graphic_asm );
     deploy( getimage, src_hw_ted_get_image_asm );
 
     outline1("LDA #<%s", _image );
