@@ -4757,20 +4757,11 @@ void cpu6809_protothread_current( Environment * _environment, char * _current ) 
 
 void cpu6809_is_negative( Environment * _environment, char * _value, char * _result ) {
 
-    MAKE_LABEL
-
     inline( cpu_is_negative )
 
-        outline1("LDA %s", _value);
-        outline0("ANDA #$80");
-        outline1("BEQ %s", label);
-        outline0("LDA #$FF");
+        outline1("LDB %s", _value);
+        outline0("SEX");
         outline1("STA %s", _result );
-        outline1("JMP %sdone", label);
-        outhead1("%s", label);
-        outline0("LDA #$00");
-        outline1("STA %s", _result );
-        outhead1("%sdone", label);
 
     no_embedded( cpu_is_negative )
 
