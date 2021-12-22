@@ -156,7 +156,7 @@ void target_linkage( Environment * _environment ) {
         strcpy( listingFileName, "" );
     }
 
-    sprintf( commandLine, "\"%s\" -g -Ln main.lbl %s -o \"%s\" -u __EXEHDR__ -t c64 -C \"%s\" \"%s\"",
+    sprintf( commandLine, "\"%s\" -g -Ln main.lbl %s -o \"%s\" -t c64 -C \"%s\" \"%s\"",
         executableName,
         listingFileName,
         _environment->exeFileName, 
