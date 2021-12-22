@@ -4240,7 +4240,7 @@ void cpu6809_protothread_vars( Environment * _environment ) {
     outhead0("PROTOTHREADLOOP");
 
     for( int i=0; i<count; ++i ) {
-        outline1("LDB #%d", i );
+        outline1("LDB #%d-1", i+1 ); /* prevents optimizer changing code length */
         outline0("STB PROTOTHREADCT" );
         outline0("JSR PROTOTHREADVOID" );
     }
