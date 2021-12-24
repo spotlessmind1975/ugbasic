@@ -143,8 +143,8 @@ void ef936x_border_color( Environment * _environment, char * _border_color ) {
  */
 void ef936x_background_color( Environment * _environment, int _index, int _background_color ) {
 
-    outline1("LDA #$%2.2x", ( _index & 0x0f ) * 2 );
-    outline0("STA $A7DB" );
+    outline1("LDB #$%2.2x", ( _index & 0x0f ) * 2 );
+    outline0("STB $A7DB" );
     outline1("LDD #$%4.4x", _background_color );
     outline0("STB $A7DA" );
     outline0("STA $A7DA" );
@@ -163,9 +163,9 @@ void ef936x_background_color( Environment * _environment, int _index, int _backg
  */
 void ef936x_background_color_vars( Environment * _environment, char * _index, char * _background_color ) {
 
-    outline1("LDA %s", _index );
-    outline0("ASLA" );
-    outline0("STA $A7DB" );
+    outline1("LDB %s", _index );
+    outline0("LSLB" );
+    outline0("STB $A7DB" );
     outline1("LDD %s", _background_color );
     outline0("STB $A7DA" );
     outline0("STA $A7DA" );
@@ -184,8 +184,8 @@ void ef936x_background_color_vars( Environment * _environment, char * _index, ch
  */
 void ef936x_background_color_semivars( Environment * _environment, int _index, char * _background_color ) {
 
-    outline1("LDA #$%2.2x", (_index*2) );
-    outline0("STA $A7DB" );
+    outline1("LDB #$%2.2x", (_index*2) );
+    outline0("STB $A7DB" );
     outline1("LDD %s", _background_color );
     outline0("STB $A7DA" );
     outline0("STA $A7DA" );
@@ -204,9 +204,9 @@ void ef936x_background_color_semivars( Environment * _environment, int _index, c
  */
 void ef936x_background_color_get_vars( Environment * _environment, char * _index, char * _background_color ) {
 
-    outline1("LDA %s", _index );
-    outline0("ASLA" );
-    outline0("STA $A7DB" );
+    outline1("LDB %s", _index );
+    outline0("ASLB" );
+    outline0("STB $A7DB" );
     outline0("LDB $A7DA" );
     outline0("LDA $A7DA" );
     outline1("STD %s", _background_color );
