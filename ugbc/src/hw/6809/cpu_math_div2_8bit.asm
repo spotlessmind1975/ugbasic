@@ -28,35 +28,35 @@
 ;  * autorizzazioni e le limitazioni previste dalla medesima.
 ;  ****************************************************************************/
 
-; singed A (unsigned B)
+; signed B (unsigned A)
 CPUMATHDIV28BIT_SIGNED
-    TSTA
+    TSTB
     BMI  CPUMATHDIV28BIT_NEG
 
-; unsigned A, unsigned B
+; unsigned B, unsigned A
 CPUMATHDIV28BIT
-    SUBB  #8
+    SUBA  #8
     BGE   CPUMATHDIV28BITL0
     LDX   #CPUMATHDIV28BITL1-1
-    NEGB
-    JMP   B,X
+    NEGA
+    JMP   A,X
 CPUMATHDIV28BITL0
-    CLRA
+    CLRB
     RTS
 CPUMATHDIV28BITL1
-    LSRA
-    LSRA
-    LSRA
-    LSRA
-    LSRA
-    LSRA
-    LSRA
+    LSRB
+    LSRB
+    LSRB
+    LSRB
+    LSRB
+    LSRB
+    LSRB
     RTS
 
-; singed A (unsigned B)
+; signed B (unsigned A)
 ; this one ensure that -1/2 gives 0
 CPUMATHDIV28BIT_NEG
-    NEGA
+    NEGB
     BSR CPUMATHDIV28BIT
-    NEGA
+    NEGB
     RTS

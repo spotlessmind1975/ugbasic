@@ -28,26 +28,26 @@
 ;  * autorizzazioni e le limitazioni previste dalla medesima.
 ;  ****************************************************************************/
 
-; unsigned 8 bit division A=A/B B=A.mod.A
+; unsigned 8 bit division B=B/A A=B.mod.A
 ; http://www.logicielsmoto.com/phpBB/viewtopic.php?p=1098#p1098
 
 
 CPUMATHDIV8BITTO8BIT
-    STB     CPUMATHDIV8BITTO8BIT1+3
-    STB     CPUMATHDIV8BITTO8BIT2-1
-    CLRB
+    STA     CPUMATHDIV8BITTO8BIT1+3
+    STA     CPUMATHDIV8BITTO8BIT2-1
+    CLRA
     LDX     #8
 CPUMATHDIV8BITTO8BIT1
-    ROLA
     ROLB
-    CMPB    #0
+    ROLA
+    CMPA    #0
     BCS     CPUMATHDIV8BITTO8BIT2
-    SUBB    #0
+    SUBA    #0
 CPUMATHDIV8BITTO8BIT2
     LEAX    -1,X
     BNE     CPUMATHDIV8BITTO8BIT1
-    ROLA
-    COMA
+    ROLB
+    COMB
     RTS
 
 CPUMATHDIV8BITTO8BIT_SIGNED
