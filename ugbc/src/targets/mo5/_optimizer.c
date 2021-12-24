@@ -375,13 +375,15 @@ static int sets_flag(buffer buf, char REG) {
     if(match(buf, " LSR*", tmp) && _toUpper(*tmp->str)==REG) return 1;
     if(match(buf, " ROL*", tmp) && _toUpper(*tmp->str)==REG) return 1;
     if(match(buf, " ROR*", tmp) && _toUpper(*tmp->str)==REG) return 1;
+    if(match(buf, " TST*", tmp) && _toUpper(*tmp->str)==REG) return 1;
+	if(match(buf, " ST* ", tmp) && _toUpper(*tmp->str)==REG) return 1;
 
     return 0;
 }
 
-/* returns true if buf matches a jump */
-static int isBranch(buffer buf) {
-    /* short jumps */
+/* returns true if this is a conditionnal branch */
+static int isConditionnal(buffer buf) {
+   /* short jumps */
     if(match(buf, " BGT ")) return 1;
     if(match(buf, " BLE ")) return 1;
     if(match(buf, " BGE ")) return 1;
@@ -394,8 +396,6 @@ static int isBranch(buffer buf) {
     if(match(buf, " BLO ")) return 1;
     if(match(buf, " BMI ")) return 1;
     if(match(buf, " BPL ")) return 1;
-    if(match(buf, " BRA ")) return 1;
-    if(match(buf, " BSR ")) return 1;
 
     /* long jumps */
     if(match(buf, " LBGT ")) return 1;
@@ -410,11 +410,18 @@ static int isBranch(buffer buf) {
     if(match(buf, " LBLO ")) return 1;
     if(match(buf, " LBMI ")) return 1;
     if(match(buf, " LBPL ")) return 1;
-    if(match(buf, " JMP "))  return 1;
-    if(match(buf, " JSR "))  return 1;
 
     return 0;
 }
+
+/* returns true if buf matches a jump */
+static int isBranch(buffer buf) {
+    if(match(buf, " BRA ")) return 1;
+    if(match(buf, " BSR ")) return 1;
+    if(match(buf, " JMP ")) return 1;
+    if(match(buf, " JSR ")) return 1;
+	return isConditionnal(buf);
+ }
 
 /* number of lines changed */
 static int change        = 0;
@@ -487,37 +494,57 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
     int unsafe = ALLOW_UNSAFE;
 
     /* various local buffers */
-    buffer variable1 = TMP_BUF;
-    buffer variable2 = TMP_BUF;
-    buffer variable3 = TMP_BUF;
-    buffer variable4 = TMP_BUF;
+    buffer v1 = TMP_BUF;
+    buffer v2 = TMP_BUF;
+    buffer v3 = TMP_BUF;
+    buffer v4 = TMP_BUF;
     
     /* move B stuff after A stuff */
-    if((match(buf[0], " LDB *", variable1) || match(buf[0], " STB *", variable1)) && !strchr("AD$", variable1->str[0])
-    &&  (match(buf[1], " CLRA") 
-    ||   match(buf[1], " COMA")
-    ||   match(buf[1], " NEGA") 
-    ||  (match(buf[1], " *A *", NULL, variable2) && _strcmp(variable1, variable2)))) {
+    if( (match(buf[0], " LDB *", v1) || match(buf[0], " STB *", v1)) && !strchr("AD$", v1->str[0])
+    &&  sets_flag(buf[1], 'A') 
+	&&  (!match(buf[1], " * *", NULL, v2) || _strcmp(v1, v2)) ) {
         int x = 1, i;
         if( match(buf[x+1], "* equ ", NULL)) ++x;
-        if(!match(buf[x+1], " IF ") && !isBranch(buf[x+1])) {
-            buf_cpy(variable1, buf[0]->str);
+        if(!match(buf[x+1], " IF ") && !isConditionnal(buf[x+1])) {
+            buf_cpy(v1, buf[0]->str);
             for(i=0; i<x; ++i) buf_cpy(buf[i], buf[i+1]->str);
-            buf_cpy(buf[x], variable1->str);
+            buf_cpy(buf[x], v1->str);
         }
     }
+	/* move D stuff before X stuff */
+	if( (match(buf[0], " LDX _*", v1) || match(buf[0], " LDX #*", v1) || match(buf[0], " STX _*", v1)) 
+    &&   match(buf[1], " *DD _*", NULL,v2) 
+	&&   strchr(v1->str,'+')==NULL
+	&&   strchr(v2->str,'+')==NULL
+	&&  _strcmp(v1, v2)) {
+        int x = 1, i;
+        if( match(buf[x+1], "* equ ", NULL)) ++x;
+        if(!match(buf[x+1], " IF ") && !isConditionnal(buf[x+1])) {
+            buf_cpy(v1, buf[0]->str);
+            for(i=0; i<x; ++i) buf_cpy(buf[i], buf[i+1]->str);
+            buf_cpy(buf[x], v1->str);
+        } else {
+			printf("XXX %s", buf[x+1]->str);
+		}
+    }
+	
     
     /* a bunch of rules */
-    if ( match( buf[0], " ST* *", variable1, variable2 )
-    &&   match( buf[1], " LD* *", variable3, variable4 )
-    &&  _strcmp(variable1, variable3)==0
-    &&  _strcmp(variable2, variable4)==0) {
-        if(0 && unsafe && match(variable2, "_Ttmp") && !match(buf[2], "*SR ") && !(*variable1->str=='D' && match(buf[2], " IF "))) {
+	if( match( buf[0], " LDA #*", v1)
+	&&  match( buf[1], " LDB #*", v2)) {
+	    optim( buf[0], RULE "(LDA,LDB)->(LDD)", NULL);
+		optim( buf[1], NULL, "\tLDD #((%s)&255)*256+((%s)&255)", v1->str, v2->str);
+    }
+	if ( match( buf[0], " ST* *", v1, v2 )
+    &&   match( buf[1], " LD* *", v3, v4 )
+    &&  _strcmp(v1, v3)==0
+    &&  _strcmp(v2, v4)==0) {
+        if(0 && unsafe && match(v2, "_Ttmp") && !match(buf[2], "*SR ") && !(*v1->str=='D' && match(buf[2], " IF "))) {
             char *fmt = NULL;
             /* in case flags are necessary (IF,LBcc), insert TST or LEAX */
             if(match(buf[2], " IF ") && match(buf[3], " LB"))
-                fmt = *variable1->str=='X' ? "\tLEAX ,X" : "\tTST%c";
-            optim( buf[0], "(unsafe, presumed dead)", fmt, _toUpper(*variable1->str));
+                fmt = *v1->str=='X' ? "\tLEAX ,X" : "\tTST%c";
+            optim( buf[0], "(unsafe, presumed dead)", fmt, _toUpper(*v1->str));
         }
 
         if(unsafe && match(buf[2], " * [", NULL))
@@ -525,26 +552,27 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
         optim( buf[1], RULE "(STORE*,LOAD*)->(STORE*)", NULL);
     }
 
-    if ( match( buf[0], " CLR *", variable1 )
-    &&   match( buf[2], " ST* *", variable2, variable3 )
-    &&   strchr("AB", _toUpper(*variable2->str))
-    &&  _strcmp(variable1, variable3)==0) {
+
+    if ( match( buf[0], " CLR *", v1 )
+    &&   match( buf[2], " ST* *", v2, v3 )
+    &&   strchr("AB", _toUpper(*v2->str))
+    &&  _strcmp(v1, v3)==0) {
         optim( buf[0], RULE "(CLEAR*,?,STORE*)->(?,STORE*)", NULL);
     }
 
-    if ( _isZero(match(buf[0], " LD* #*", variable1, variable2) )
-    &&   strchr("AB", _toUpper(*variable1->str)) ) {
-        optim(buf[0], RULE "(LOAD#0)->(CLEAR)", "\tCLR%c", _toUpper(*variable1->str));
+    if ( _isZero(match(buf[0], " LD* #*", v1, v2) )
+    &&   strchr("AB", _toUpper(*v1->str)) ) {
+        optim(buf[0], RULE "(LOAD#0)->(CLEAR)", "\tCLR%c", _toUpper(*v1->str));
     }
 
-    if ( match(buf[0], " EOR* #$ff", variable1)
-    &&   strchr("AB", _toUpper(*variable1->str)) ) {
-        optim(buf[0], RULE "(EOR#$FF)->(COM)", "\tCOM%c", _toUpper(*variable1->str));
+    if ( match(buf[0], " EOR* #$ff", v1)
+    &&   strchr("AB", _toUpper(*v1->str)) ) {
+        optim(buf[0], RULE "(EOR#$FF)->(COM)", "\tCOM%c", _toUpper(*v1->str));
     }
 
-    if ( (match(buf[0], " LD* ", variable1) || match(buf[0], " CLR*", variable1))
-    &&   match(buf[1], " LD* ", variable2)
-    &&  _strcmp(variable1,variable2)==0) {
+    if ( (match(buf[0], " LD* ", v1) || match(buf[0], " CLR*", v1))
+    &&   match(buf[1], " LD* ", v2)
+    &&  _strcmp(v1,v2)==0) {
         optim(buf[0], RULE "(LOAD/CLR,LOAD)->(LOAD)", NULL);
     }
     
@@ -554,17 +582,32 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
     && unsafe) {
         optim( buf[2], RULE "(LOAD*,STORE,LOAD*)->(LOAD*,STORE)", NULL);
     }
+    if ( match( buf[0], " LD")
+    &&   match( buf[1], " ST")
+    &&   match( buf[2], " ST")
+    && _strcmp( buf[3], buf[0] )==0
+    && unsafe) {
+        optim( buf[3], RULE "(LOAD*,STORE,STORE,LOAD*)->(LOAD*,STORE,STORE)", NULL);
+    }
+    if ( match( buf[0], " LD")
+    &&   match( buf[1], " ST")
+    &&   match( buf[2], " ST")
+    &&   match( buf[3], " ST")
+    && _strcmp( buf[4], buf[0] )==0
+    && unsafe) {
+        optim( buf[4], RULE "(LOAD*,STORE,STORE,STORE,LOAD*)->(LOAD*,STORE,STORE,STORE)", NULL);
+    }
 
-    if ( match(buf[0], " ST* *", NULL, variable1)
-    &&   match(buf[1], " LD* *", NULL, variable2)
-    && _strcmp(variable1, variable2)!=0
+    if ( match(buf[0], " ST* *", NULL, v1)
+    &&   match(buf[1], " LD* *", NULL, v2)
+    && _strcmp(v1, v2)!=0
     && _strcmp(buf[0],buf[2])==0 ) {
         optim(buf[0], RULE "(STORE*,LOAD,STORE*)->(LOAD,STORE*)", NULL);
     }
     
-    if ( (match( buf[0], " LD* ", variable1) || match( buf[0], " CLR*", variable1))
-    &&   (match( buf[1], " LD* ", variable2) || match( buf[1], " CLR*", variable2))
-    &&  _strcmp( variable1, variable2)==0) {
+    if ( (match( buf[0], " LD* ", v1) || match( buf[0], " CLR*", v1))
+    &&   (match( buf[1], " LD* ", v2) || match( buf[1], " CLR*", v2))
+    &&  _strcmp( v1, v2)==0) {
         optim(buf[0], RULE "(LOAD/CLR,LOAD/CLR)->(LOAD/CLR)", NULL);
     }
 
@@ -573,190 +616,209 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
     && _strcmp(buf[0], buf[1])==0) {
         optim(buf[0], RULE "(STORE*,STORE*)->(STORE*)", NULL);
     }
-    if ( (match(buf[0], " ST* *+", NULL, variable1) || match(buf[0], " ST* *", NULL, variable1))
-    &&   !isBranch(buf[1]) && match(buf[1], " * *", NULL, variable2) && _strcmp(variable1, variable2)!=0
+    if ( (match(buf[0], " ST* *+", NULL, v1) || match(buf[0], " ST* *", NULL, v1))
+    &&   !isBranch(buf[1]) && match(buf[1], " * *", NULL, v2) && _strcmp(v1, v2)!=0
     && _strcmp(buf[2], buf[0])==0) {
         optim(buf[0], RULE "(STORE*,?,STORE*)->(?,STORE*)", NULL);
     }
-    if ((match(buf[0], " ST* *+", NULL, variable1) || match(buf[0], " ST* *", NULL, variable1))
-    &&  !isBranch(buf[1]) && match(buf[1], " * *", NULL, variable2) && _strcmp(variable1, variable2)!=0
-    &&  !isBranch(buf[2]) && match(buf[2], " * *", NULL, variable2) && _strcmp(variable1, variable2)!=0
+    if ((match(buf[0], " ST* *+", NULL, v1) || match(buf[0], " ST* *", NULL, v1))
+    &&  !isBranch(buf[1]) && match(buf[1], " * *", NULL, v2) && _strcmp(v1, v2)!=0
+    &&  !isBranch(buf[2]) && match(buf[2], " * *", NULL, v2) && _strcmp(v1, v2)!=0
     && _strcmp(buf[3], buf[0])==0) {
         optim(buf[0], RULE "(STORE*,?,?,STORE*)->(?,?,STORE*)", NULL);
     }
 
-    if( (match(buf[0], " LD* ", variable1) || match(buf[0], " ST* ",variable1))
-    && _isZero(match(buf[1], " CMP* #*", variable2, variable3))
-    && _strcmp(variable1, variable2)==0) {
+    if( (match(buf[0], " LD* ", v1) || match(buf[0], " ST* ",v1))
+    && _isZero(match(buf[1], " CMP* #*", v2, v3))
+    && _strcmp(v1, v2)==0) {
         optim(buf[1], RULE "(LOAD/STORE,CMP#0)->(LOAD/STORE)", NULL);
     }
 
-    if ( match(buf[0], " LDD *", variable1)
-    &&   match(buf[1], " STD _Ttmp*", variable2)
+    if ( match(buf[0], " LDD *", v1)
+    &&   match(buf[1], " STD _Ttmp*", v2)
     &&   match(buf[2], " CLRB")
-    &&   match(buf[3], " LDX *", variable3)
-    &&   match(buf[4], " CMPX _Ttmp*", variable4)
-    &&  _strcmp(variable2, variable4)==0) {
+    &&   match(buf[3], " LDX *", v3)
+    &&   match(buf[4], " CMPX _Ttmp*", v4)
+    &&  _strcmp(v2, v4)==0) {
         if(unsafe) {
             optim(buf[0], RULE "(LDD+,STD*,LDX,CMPX*)->(LDX,CMP+)", NULL);
             optim(buf[1], "(unsafe, presumed dead)", NULL);
-            optim(buf[4], NULL, "\tCMPX %s", variable1->str);
+            optim(buf[4], NULL, "\tCMPX %s", v1->str);
         } else {
-            optim(buf[4], RULE "(LDD+,STD*,LDX,CMPX*)->(LDD+,STD*,LDX,CMPX+)", "\tCMPX %s", variable1->str);
+            optim(buf[4], RULE "(LDD+,STD*,LDX,CMPX*)->(LDD+,STD*,LDX,CMPX+)", "\tCMPX %s", v1->str);
         }
     }
 
-    if ( match(buf[0], " LDD *", variable1)
-    &&   match(buf[1], " STD _Ttmp*", variable2)
-    &&   match(buf[2], " LDD *", variable3)
-    &&   match(buf[3], " ADD _Ttmp*", variable4)
-    &&  _strcmp(variable2, variable4)==0) {
+    if ( match(buf[0], " LDD *", v1)
+    &&   match(buf[1], " STD _Ttmp*", v2)
+    &&   match(buf[2], " LDD *", v3)
+    &&   match(buf[3], " ADD _Ttmp*", v4)
+    &&  _strcmp(v2, v4)==0) {
         if(unsafe) {
             optim(buf[0], RULE "(LDD+,STD*,LDD,ADDD*)->(LDD,ADD+)", NULL);
             optim(buf[1], "(unsafe, presumed dead)", NULL);
-            optim(buf[3], NULL, "\tADDD %s", variable1->str);
+            optim(buf[3], NULL, "\tADDD %s", v1->str);
         } else {
-            optim(buf[3], RULE "(LDD+,STD*,LDD,ADDD*)->(LDD+,STD*,LDD,ADD+)", "\tADDD %s", variable1->str);
+            optim(buf[3], RULE "(LDD+,STD*,LDD,ADDD*)->(LDD+,STD*,LDD,ADD+)", "\tADDD %s", v1->str);
         }
     }
 
-    if ( match(buf[0], " STD *", variable1)
-    &&   match(buf[1], " LDX *", variable2)
-    &&  _strcmp(variable1,variable2)==0) {
+    if ( match(buf[0], " STD *", v1)
+    &&   match(buf[1], " LDX *", v2)
+    &&  _strcmp(v1,v2)==0) {
         //if(unsafe) optim(buf[0], "(unsafe, presumed dead)", NULL);
         optim(buf[1], RULE "(STD*,LDX*)->(STD*,TDX)", "\tTFR D,X");
     }
 
-    if ( match(buf[0], " STD *", variable1)
-    &&   match(buf[1], " LDB *+1", variable2)
-    &&  _strcmp(variable1, variable2)==0) {
+    if ( match(buf[0], " STD *", v1)
+    &&   match(buf[1], " LDB *+1", v2)
+    &&  _strcmp(v1, v2)==0) {
         if(unsafe) optim(buf[0], "(unsafe, presumed dead)", NULL);
         optim(buf[1], RULE "(STD,LDB+1)->()", NULL);
     }
 
-    if ( match(buf[0], " LDD #*", variable1)
-    &&   match(buf[1], " ADDD #*", variable2) 
+    if ( match(buf[0], " LDD #*", v1)
+    &&   match(buf[1], " ADDD #*", v2) 
     &&  !match(buf[2], "* equ ", NULL)) {
-        optim(buf[0], RULE "(LDD#,ADD#)->(LDD#)", "\tLDD #%s+%s", variable1->str, variable2->str);
+        optim(buf[0], RULE "(LDD#,ADD#)->(LDD#)", "\tLDD #%s+%s", v1->str, v2->str);
         optim(buf[1], NULL, NULL);
     }
 
-    if ( match(buf[0], " STX *", variable1)
+    if ( match(buf[0], " STX *", v1)
     &&   match(buf[1], " CLRA")
-    &&   match(buf[2], " LDX *", variable2)
-    &&  _strcmp(variable1,variable2)==0) {
+    &&   match(buf[2], " LDX *", v2)
+    &&  _strcmp(v1,v2)==0) {
         optim(buf[0], RULE "(STX*,CLRA,LDX*)->(CLRA,STX*)", NULL);
-        optim(buf[2], NULL, "\tSTX %s", variable1->str);
+        optim(buf[2], NULL, "\tSTX %s", v1->str);
     }
 
-    if ( match(buf[0], " STD *", variable1)
-    &&   match(buf[1], " LDD *", variable2)
-    &&   match(buf[2], " ADDD *", variable3)
-    &&  _strcmp(variable1,variable3)==0) {
+    if ( match(buf[0], " STD *", v1)
+    &&   match(buf[1], " LDD *", v2)
+    &&   match(buf[2], " ADDD *", v3)
+    &&  _strcmp(v1,v3)==0) {
         // if(unsafe) optim(buf[0], "(unsafe, presumed dead)", NULL);
         optim(buf[1], RULE "(STD*,LDD+,ADD*)->(STD*,ADD+)", NULL);
-        optim(buf[2], NULL, "\tADDD %s", variable2->str);
+        optim(buf[2], NULL, "\tADDD %s", v2->str);
     }
 
-    if ( match(buf[0], " STB *", variable1)
-    &&   match(buf[1], " LDB *", variable2)
-    &&   match(buf[2], " *B *", variable3, variable4)
-    &&  _strcmp(variable1,variable4)==0
-    &&   (match(variable3, "OR") || match(variable3,"AND") || match(variable3,"EOR") || match(variable3,"ADD"))
+    if ( match(buf[0], " STB *", v1)
+    &&   match(buf[1], " LDB *", v2)
+    &&   match(buf[2], " *B *", v3, v4)
+    &&  _strcmp(v1,v4)==0
+    &&   (match(v3, "OR") || match(v3,"AND") || match(v3,"EOR") || match(v3,"ADD"))
     ) {
         if(unsafe) optim(buf[0], "(unsafe, presumed dead)", NULL);
         optim(buf[1], RULE "(STB*,LDB+,ORB/ANDB/EORB/ADDB*)->(STB*,ORB/ANDB/EORB/ADDB+)", NULL);
-        optim(buf[2], NULL, "\t%sB %s", variable3->str, variable2->str);
+        optim(buf[2], NULL, "\t%sB %s", v3->str, v2->str);
     }
 
 
-    if ( match(buf[0], " STD _Ttmp*", variable1)  // 6
-    &&   match(buf[1], " LD* [_Ttmp*]", variable2, variable3) // 9
-    &&  _strcmp(variable1,variable3)==0) {
+    if ( match(buf[0], " STD _Ttmp*", v1)  // 6
+    &&   match(buf[1], " LD* [_Ttmp*]", v2, v3) // 9
+    &&  _strcmp(v1,v3)==0) {
         //if(unsafe) optim(buf[0], "(unsafe, presumed dead)", NULL);
-        optim(buf[1], RULE "(STD,LDD[])->(TDX,LOAD*X)", "\tTFR D,X\n\tLD%c ,X", _toUpper(*variable2->str));
+        optim(buf[1], RULE "(STD,LDD[])->(TDX,LOAD*X)", "\tTFR D,X\n\tLD%c ,X", _toUpper(*v2->str));
     }
 
-    if ( match(buf[1], " TST*", variable1)
-    &&  sets_flag(buf[0], *variable1->str)) {
+    if ( match(buf[1], " TST*", v1)
+    &&  sets_flag(buf[0], *v1->str)) {
         optim(buf[1], RULE "(FLAG-SET,TST)->(FLAG-SET)", NULL);
     }
 
     if ( match(buf[0], " LDB #$01")
-    &&   match(buf[1], " LDX *", variable1)
+    &&   match(buf[1], " LDX *", v1)
     &&   match(buf[2], " JSR CPUMATHMUL16BITTO32*", NULL)) {
-        optim(buf[0], RULE "(MUL#1)->(NOP)", "\tLDD %s", variable1->str);
+        optim(buf[0], RULE "(MUL#1)->(NOP)", "\tLDD %s", v1->str);
         optim(buf[1], NULL, "\tLDX #0");
         optim(buf[2], NULL, NULL);
     }
 
     // A VOIR
-    if ( match(buf[0], " STB *", variable1)
+    if ( match(buf[0], " STB *", v1)
     &&   match(buf[1], " STA ")
-    &&   match(buf[2], " LDA *", variable2)
-    &&   match(buf[3], " STA *", variable3)
-    &&  _strcmp(variable1, variable2)==0
+    &&   match(buf[2], " LDA *", v2)
+    &&   match(buf[3], " STA *", v3)
+    &&  _strcmp(v1, v2)==0
     &&   unsafe /* A is considered dead after */) {
         optim(buf[2], RULE "(STB*,STA,LDA*,STA+)->(STB*,STA,STB+)", NULL);
-        optim(buf[3], NULL, "\tSTB %s", variable3->str);
+        optim(buf[3], NULL, "\tSTB %s", v3->str);
     }
 
-    if( match(buf[0], " STD _Ttmp*", variable1)
-    &&  match(buf[1], " LDD _Ttmp*", variable2)
-    &&  match(buf[2], " LDX _Ttmp*", variable3)
-    && _strcmp(variable1,variable3)==0
+    if( match(buf[0], " STD _Ttmp*", v1)
+    &&  match(buf[1], " LDD _Ttmp*", v2)
+    &&  match(buf[2], " LDX _Ttmp*", v3)
+    && _strcmp(v1,v3)==0
     && !match(buf[3], " IF ")
     &&  unsafe) {
         optim(buf[0], RULE "(STD*,LDD,LDX*)->(TDX,LDD)", "\tTFR D,X");
         optim(buf[2], NULL, NULL);
     }
 
-    if( match(buf[0], " LDD *", variable1)
-    &&  match(buf[1], " STD *", variable2)
+    if( match(buf[0], " LDD *", v1)
+    &&  match(buf[1], " STD *", v2)
     &&  match(buf[2], " TFR D,X")
     && !match(buf[3], " *SR ", NULL)) {
-        optim(buf[0], RULE "(LDD*,STD+,TDX)->(LDX*,STX+)", "\tLDX %s", variable1->str);
-        optim(buf[1], NULL, "\tSTX %s", variable2->str);
+        optim(buf[0], RULE "(LDD*,STD+,TDX)->(LDX*,STX+)", "\tLDX %s", v1->str);
+        optim(buf[1], NULL, "\tSTX %s", v2->str);
         optim(buf[2], NULL, NULL);
     }
 
-    if( match(buf[0], " STD *", variable1)
-    &&  match(buf[1], " ST* *", NULL, variable2)
-    &&  match(buf[2], " LDD *", variable3)
-    && _strcmp(variable1, variable3)==0
-    && _strcmp(variable1, variable2)!=0
-    &&  strchr((const char*)variable2 ,'+')==NULL) {
+    if( match(buf[0], " STD *", v1)
+    &&  match(buf[1], " ST* *", NULL, v2)
+    &&  match(buf[2], " LDD *", v3)
+    && _strcmp(v1, v3)==0
+    && _strcmp(v1, v2)!=0
+    &&  strchr((const char*)v2 ,'+')==NULL) {
         optim(buf[2], RULE "(STD*,ST?,LDD*)->(STD*,ST?)", NULL);
     }
     
-    if( match(buf[0], " STD *", variable1)
+    if( match(buf[0], " STD *", v1)
     &&  match(buf[1], " LSLB")
     &&  match(buf[2], " ROLA")
-    &&  match(buf[3], " STD *", variable2)
-    && _strcmp(variable1, variable2)==0) {
+    &&  match(buf[3], " STD *", v2)
+    && _strcmp(v1, v2)==0) {
         optim(buf[0], RULE "(STD*,LSLB,ROLA,STD*)->(LSLB,ROLA,STD*)", NULL);
     }
 
-    if( match(buf[0], " STD *", variable1)
-    &&  match(buf[1], " ADDD *", variable2)
-    &&  match(buf[2], " STD *", variable3)
-    && _strcmp(variable1, variable3)==0
-    && _strcmp(variable1, variable2)!=0) {
+    if( match(buf[0], " STD *", v1)
+    &&  match(buf[1], " ADDD *", v2)
+    &&  match(buf[2], " STD *", v3)
+    && _strcmp(v1, v3)==0
+    && _strcmp(v1, v2)!=0) {
         optim(buf[0], RULE "(STD*,ADDD,STD*)->(ADDD,STD*)", NULL);
     }
     
     if ( peephole_pass>2
-    &&   match(buf[0], " STD _Ttmp*", variable1)
-    &&   match(buf[1], " LD* ", variable2)
-    &&   match(buf[2], " ST* [_Ttmp*]", variable3, variable4)
-    &&  _strcmp(variable2,variable3)==0
-    &&  _strcmp(variable1,variable4)==0) {
+    &&   match(buf[0], " STD _Ttmp*", v1)
+    &&   match(buf[1], " LD* ", v2)
+    &&   match(buf[2], " ST* [_Ttmp*]", v3, v4)
+    &&  _strcmp(v2,v3)==0
+    &&  _strcmp(v1,v4)==0) {
         if(unsafe)
             optim(buf[0], RULE "(unsafe, presumed dead) (STD,LOAD,STORE[])->(TDX,LOAD,STORE*X)", "\tTFR D,X");
         else
-            optim(buf[0], RULE "(STD,LOAD,STORE[])", "\tSTD _Ttmp%s\n\tTFR D,X", variable1->str);
-        optim(buf[2], NULL, "\tST%c ,X", *variable2->str);
+            optim(buf[0], RULE "(STD,LOAD,STORE[])", "\tSTD _Ttmp%s\n\tTFR D,X", v1->str);
+        optim(buf[2], NULL, "\tST%c ,X", *v2->str);
     }
+	
+	if(match( buf[0], " STD *", v1)
+	&& match( buf[1], " LDB *+1", v2)
+	&& _strcmp(v1, v2)==0) {
+		optim(buf[1], RULE "(STD,LDB+1)", NULL);
+	}
+	if(match( buf[0], " STD *", v1)
+	&& match( buf[1], " ST* *", NULL, v2) && 0!=_strcmp(v1,v2)
+	&& match( buf[2], " LDB *+1", v2)
+	&& _strcmp(v1, v2)==0) {
+		optim(buf[2], RULE "(STD,?,LDB+1)", NULL);
+	}
+	if(match( buf[0], " STD *", v1)
+	&& match( buf[1], " ST* *", NULL, v2) && 0!=_strcmp(v1,v2)
+	&& match( buf[2], " ST* *", NULL, v2) && 0!=_strcmp(v1,v2)
+	&& match( buf[3], " LDB *+1", v2)
+	&& _strcmp(v1, v2)==0) {
+		optim(buf[3], RULE "(STD,?,?,LDB+1)", NULL);
+	}
 }
 
 /* check if buffer matches any of xxyy (used for LDD #$xxyy op) */

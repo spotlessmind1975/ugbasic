@@ -46,24 +46,29 @@ PLOTAMA EQU $47
 
 PLOTP
     RTS
-
+    
+; input X=X coord, U=Y coord, A=(0 = erase, 1 = set, 2 = get pixel, 3 = get color)
+; output B result if A=2 or 3
 PLOT
-    LDX <PLOTY
-    CMPX CLIPY2   ; CMPX is faster than CMPD
-    BGT PLOTP
-    CMPX CLIPY1
-    BLT PLOTP
-    LDX <PLOTX
     CMPX CLIPX2
     BGT PLOTP
     CMPX CLIPX1   ; check if plotting out of clipped area
     BLT PLOTP     ; yes => return
 
-    LDB <PLOTY+1  ; no => compute video adress
+    CMPU CLIPY2
+    BGT PLOTP
+    CMPU CLIPY1
+    BLT PLOTP
+
+    STX <PLOTX
+    STU <PLOTY
+    STA <PLOTM
+    
+    LDB <PLOTY+1
     LDA #40
-    MUL
+    MUL           ; no => compute video adress
     ADDD BITMAPADDRESS ; 7
-    TFR D,X ; 6
+    TFR D,X       ; 6
     
     LDU #$A7C0    ; that adress is handy
     
@@ -224,19 +229,19 @@ PLOTG             ; get point $00=unset $ff=set
     CMPA #3
     BEQ PLOTG3
     INC ,U        ; plane 1
-    LDA ,X        ; get row with point in it
-    ANDA ,Y       ; bit set ?
+    LDB ,X        ; get row with point in it
+    ANDB ,Y       ; bit set ?
 PLOTG0
     BEQ PLOTG1    ; no => return 0
-    LDA #$FF      ; yes => return true
+    LDB #$FF      ; yes => return true
 PLOTG1
-    STA <PLOTM
+;   STB <PLOTM
     RTS
 PLOTG2
 PLOTG3
     BSR PLOTC     ; get current color
-    EORA _PAPER   ; same as paper ?
-    ANDA #$0F     ; yes => return 0
+    EORB _PAPER   ; same as paper ?
+    ANDB #$0F     ; yes => return 0
     BRA PLOTG0    ; no => return true
 
 ; Get pixel color according to video mode
@@ -249,41 +254,41 @@ PLOTC
 PLOT0C
 PLOT1C
 PLOT4C            ; modes 0/1/4
-    LDA ,X        ; get color byte
+    LDB ,X        ; get color byte
     INC ,U        ; bitmask plane
-    LDB ,X        ; get pixels byte
-    ANDB ,Y       ; bit set ?
+    LDA ,X        ; get pixels byte
+    ANDA ,Y       ; bit set ?
     BEQ PLOTC01   ; no => get lowwer nibble
 PLOTC00    
-    LSRA          ; yes => get upper nibble
-    LSRA
-    LSRA
-    LSRA
+    LSRB          ; yes => get upper nibble
+    LSRB
+    LSRB
+    LSRB
 PLOTC01
-    ANDA #15
-    STA <PLOTM    ; store result (in A also)
+    ANDB #15      ; result in B
+;   STB <PLOTM
     RTS
 
 PLOT2C
-    CLRA          ; mode 2 - clear all bits
-    LDB ,X        ; get bitmask at plane0
-    ANDB ,Y       ; point set ?   
+    CLRB          ; mode 2 - clear all bits
+    LDA ,X        ; get bitmask at plane0
+    ANDA ,Y       ; point set ?   
     BEQ PLOT2C0   ; no => skip
-    INCA          ; yes => set b0
+    INCB          ; yes => set b0
 PLOT2C0
     INC ,U        ; bit plane 1
-    LDB ,X        ; get bitmask
-    ANDB ,Y       ; point set ?
+    LDA ,X        ; get bitmask
+    ANDA ,Y       ; point set ?
     BEQ PLOT2C1   ; no => skip
-    ORA #2        ; yes => set b1
+    ORB #2        ; yes => set b1
 PLOT2C1    
-    STA <PLOTM    ; store result (in A also)
-    RTS
+;   STB <PLOTM
+    RTS           ; result in B
 
 PLOT3C
-    LDA ,X        ; mode 3 - get color pair
-    LDB <PLOTX+1
-    LSRB
+    LDB ,X        ; mode 3 - get color pair
+    LDA <PLOTX+1
+    LSRA
     BCS PLOTC01   ; odd column => lower nibble
     BRA PLOTC00   ; even column => upper nibble
 
