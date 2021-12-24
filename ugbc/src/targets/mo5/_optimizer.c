@@ -425,6 +425,10 @@ static void optim(buffer buf, const char *rule, const char *repl, ...)
     __attribute__ ((format (printf, 3, 4)));
 #endif
 
+#define R__(X)  #X
+#define R_(X)  R__(X)
+#define RULE "@" R_(__LINE__) " "
+
 /* replaces the buffer with an optimized code */
 /* original buffer is kept as comment */
 static void optim(buffer buf, const char *rule, const char *repl, ...) {
@@ -515,66 +519,66 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
 
         if(unsafe && match(buf[2], " * [", NULL))
             optim( buf[0], "(unsafe, presumed dead)", NULL);
-        optim( buf[1], "rule #1 (STORE*,LOAD*)->(STORE*)", NULL);
+        optim( buf[1], RULE "(STORE*,LOAD*)->(STORE*)", NULL);
     }
 
     if ( match( buf[0], " CLR *", variable1 )
     &&   match( buf[2], " ST* *", variable2, variable3 )
     &&   strchr("AB", _toUpper(*variable2->str))
     &&  _strcmp(variable1, variable3)==0) {
-        optim( buf[0], "rule #2 (CLEAR*,?,STORE*)->(?,STORE*)", NULL);
+        optim( buf[0], RULE "(CLEAR*,?,STORE*)->(?,STORE*)", NULL);
     }
 
     if ( _isZero(match(buf[0], " LD* #*", variable1, variable2) )
     &&   strchr("AB", _toUpper(*variable1->str)) ) {
-        optim(buf[0],"rule #3 (LOAD#0)->(CLEAR)", "\tCLR%c", _toUpper(*variable1->str));
+        optim(buf[0], RULE "(LOAD#0)->(CLEAR)", "\tCLR%c", _toUpper(*variable1->str));
     }
 
     if ( match(buf[0], " EOR* #$ff", variable1)
     &&   strchr("AB", _toUpper(*variable1->str)) ) {
-        optim(buf[0], "rule #4 (EOR#$FF)->(COM)", "\tCOM%c", _toUpper(*variable1->str));
+        optim(buf[0], RULE "(EOR#$FF)->(COM)", "\tCOM%c", _toUpper(*variable1->str));
     }
 
     if ( (match(buf[0], " LD* ", variable1) || match(buf[0], " CLR*", variable1))
     &&   match(buf[1], " LD* ", variable2)
     &&  _strcmp(variable1,variable2)==0) {
-        optim(buf[0], "rule #5 (LOAD/CLR,LOAD)->(LOAD)", NULL);
+        optim(buf[0], RULE "(LOAD/CLR,LOAD)->(LOAD)", NULL);
     }
 	
     if ( match( buf[0], " LD")
     &&   match( buf[1], " ST")
     && _strcmp( buf[2], buf[0] )==0
     && unsafe) {
-        optim( buf[2], "rule #6 (LOAD*,STORE,LOAD*)->(LOAD*,STORE)", NULL);
+        optim( buf[2], RULE "(LOAD*,STORE,LOAD*)->(LOAD*,STORE)", NULL);
     }
 
     if ( match(buf[0], " ST* *", NULL, variable1)
     &&   match(buf[1], " LD* *", NULL, variable2)
     && _strcmp(variable1, variable2)!=0
     && _strcmp(buf[0],buf[2])==0 ) {
-        optim(buf[0], "rule #7 (STORE*,LOAD,STORE*)->(LOAD,STORE*)", NULL);
+        optim(buf[0], RULE "(STORE*,LOAD,STORE*)->(LOAD,STORE*)", NULL);
     }
 
     if ( match(buf[0], " ST")
     && _strcmp(buf[0], buf[1])==0) {
-        optim(buf[0], "rule #8 (STORE*,STORE*)->(STORE*)", NULL);
+        optim(buf[0], RULE "(STORE*,STORE*)->(STORE*)", NULL);
     }
     if ( (match(buf[0], " ST* *+", NULL, variable1) || match(buf[0], " ST* *", NULL, variable1))
     &&   !isBranch(buf[1]) && match(buf[1], " * *", NULL, variable2) && _strcmp(variable1, variable2)!=0
     && _strcmp(buf[2], buf[0])==0) {
-        optim(buf[0], "rule #8 (STORE*,?,STORE*)->(?,STORE*)", NULL);
+        optim(buf[0], RULE "(STORE*,?,STORE*)->(?,STORE*)", NULL);
     }
     if ((match(buf[0], " ST* *+", NULL, variable1) || match(buf[0], " ST* *", NULL, variable1))
     &&  !isBranch(buf[1]) && match(buf[1], " * *", NULL, variable2) && _strcmp(variable1, variable2)!=0
     &&  !isBranch(buf[2]) && match(buf[2], " * *", NULL, variable2) && _strcmp(variable1, variable2)!=0
     && _strcmp(buf[3], buf[0])==0) {
-        optim(buf[0], "rule #8 (STORE*,?,?,STORE*)->(?,?,STORE*)", NULL);
+        optim(buf[0], RULE "(STORE*,?,?,STORE*)->(?,?,STORE*)", NULL);
     }
 
     if( (match(buf[0], " LD* ", variable1) || match(buf[0], " ST* ",variable1))
     && _isZero(match(buf[1], " CMP* #*", variable2, variable3))
     && _strcmp(variable1, variable2)==0) {
-        optim(buf[1], "rule #9 (LOAD/STORE,CMP#0)->(LOAD/STORE)", NULL);
+        optim(buf[1], RULE "(LOAD/STORE,CMP#0)->(LOAD/STORE)", NULL);
     }
 
     if ( match(buf[0], " LDD *", variable1)
@@ -584,11 +588,11 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
     &&   match(buf[4], " CMPX _Ttmp*", variable4)
     &&  _strcmp(variable2, variable4)==0) {
         if(unsafe) {
-			optim(buf[0], "rule #10 (LDD+,STD*,LDX,CMPX*)->(LDX,CMP+)", NULL);
+			optim(buf[0], RULE "(LDD+,STD*,LDX,CMPX*)->(LDX,CMP+)", NULL);
             optim(buf[1], "(unsafe, presumed dead)", NULL);
             optim(buf[4], NULL, "\tCMPX %s", variable1->str);
         } else {
-            optim(buf[4], "rule #10 (LDD+,STD*,LDX,CMPX*)->(LDD+,STD*,LDX,CMPX+)", "\tCMPX %s", variable1->str);
+            optim(buf[4], RULE "(LDD+,STD*,LDX,CMPX*)->(LDD+,STD*,LDX,CMPX+)", "\tCMPX %s", variable1->str);
         }
     }
 
@@ -598,11 +602,11 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
     &&   match(buf[3], " ADD _Ttmp*", variable4)
     &&  _strcmp(variable2, variable4)==0) {
         if(unsafe) {
-            optim(buf[0], "rule #11 (LDD+,STD*,LDD,ADDD*)->(LDD,ADD+)", NULL);
+            optim(buf[0], RULE "(LDD+,STD*,LDD,ADDD*)->(LDD,ADD+)", NULL);
             optim(buf[1], "(unsafe, presumed dead)", NULL);
             optim(buf[3], NULL, "\tADDD %s", variable1->str);
         } else {
-            optim(buf[3], "rule #11 (LDD+,STD*,LDD,ADDD*)->(LDD+,STD*,LDD,ADD+)", "\tADDD %s", variable1->str);
+            optim(buf[3], RULE "(LDD+,STD*,LDD,ADDD*)->(LDD+,STD*,LDD,ADD+)", "\tADDD %s", variable1->str);
         }
     }
 
@@ -610,20 +614,20 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
     &&   match(buf[1], " LDX *", variable2)
     &&  _strcmp(variable1,variable2)==0) {
         //if(unsafe) optim(buf[0], "(unsafe, presumed dead)", NULL);
-        optim(buf[1], "rule #12 (STD*,LDX*)->(STD*,TDX)", "\tTFR D,X");
+        optim(buf[1], RULE "(STD*,LDX*)->(STD*,TDX)", "\tTFR D,X");
     }
 
     if ( match(buf[0], " STD *", variable1)
     &&   match(buf[1], " LDB *+1", variable2)
     &&  _strcmp(variable1, variable2)==0) {
         if(unsafe) optim(buf[0], "(unsafe, presumed dead)", NULL);
-        optim(buf[1], "rule #13 (STD,LDB+1)->()", NULL);
+        optim(buf[1], RULE "(STD,LDB+1)->()", NULL);
     }
 
     if ( match(buf[0], " LDD #*", variable1)
     &&   match(buf[1], " ADDD #*", variable2) 
     &&  !match(buf[2], "* equ ", NULL)) {
-        optim(buf[0], "rule #14 (LDD#,ADD#)->(LDD#)", "\tLDD #%s+%s", variable1->str, variable2->str);
+        optim(buf[0], RULE "(LDD#,ADD#)->(LDD#)", "\tLDD #%s+%s", variable1->str, variable2->str);
         optim(buf[1], NULL, NULL);
     }
 
@@ -631,7 +635,7 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
     &&   match(buf[1], " CLRA")
     &&   match(buf[2], " LDX *", variable2)
     &&  _strcmp(variable1,variable2)==0) {
-        optim(buf[0], "rule #15 (STX*,CLRA,LDX*)->(CLRA,STX*)", NULL);
+        optim(buf[0], RULE "(STX*,CLRA,LDX*)->(CLRA,STX*)", NULL);
         optim(buf[2], NULL, "\tSTX %s", variable1->str);
     }
 
@@ -640,7 +644,7 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
     &&   match(buf[2], " ADDD *", variable3)
     &&  _strcmp(variable1,variable3)==0) {
         // if(unsafe) optim(buf[0], "(unsafe, presumed dead)", NULL);
-        optim(buf[1], "rule #16 (STD*,LDD+,ADD*)->(STD*,ADD+)", NULL);
+        optim(buf[1], RULE "(STD*,LDD+,ADD*)->(STD*,ADD+)", NULL);
         optim(buf[2], NULL, "\tADDD %s", variable2->str);
     }
 
@@ -651,7 +655,7 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
     &&   (match(variable3, "OR") || match(variable3,"AND") || match(variable3,"EOR") || match(variable3,"ADD"))
     ) {
         if(unsafe) optim(buf[0], "(unsafe, presumed dead)", NULL);
-        optim(buf[1], "rule #17 (STB*,LDB+,ORB/ANDB/EORB/ADDB*)->(STB*,ORB/ANDB/EORB/ADDB+)", NULL);
+        optim(buf[1], RULE "(STB*,LDB+,ORB/ANDB/EORB/ADDB*)->(STB*,ORB/ANDB/EORB/ADDB+)", NULL);
         optim(buf[2], NULL, "\t%sB %s", variable3->str, variable2->str);
     }
 
@@ -660,18 +664,18 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
     &&   match(buf[1], " LD* [_Ttmp*]", variable2, variable3) // 9
     &&  _strcmp(variable1,variable3)==0) {
         //if(unsafe) optim(buf[0], "(unsafe, presumed dead)", NULL);
-        optim(buf[1], "rule #18 (STD,LDD[])->(TDX,LOAD*X)", "\tTFR D,X\n\tLD%c ,X", _toUpper(*variable2->str));
+        optim(buf[1], RULE "(STD,LDD[])->(TDX,LOAD*X)", "\tTFR D,X\n\tLD%c ,X", _toUpper(*variable2->str));
     }
 
     if ( match(buf[1], " TST*", variable1)
     &&  sets_flag(buf[0], *variable1->str)) {
-        optim(buf[1], "rule #20 (FLAG-SET,TST)->(FLAG-SET)", NULL);
+        optim(buf[1], RULE "(FLAG-SET,TST)->(FLAG-SET)", NULL);
     }
 
     if ( match(buf[0], " LDB #$01")
     &&   match(buf[1], " LDX *", variable1)
     &&   match(buf[2], " JSR CPUMATHMUL16BITTO32*", NULL)) {
-        optim(buf[0], "rule #21 (MUL#1)->(NOP)", "\tLDD %s", variable1->str);
+        optim(buf[0], RULE "(MUL#1)->(NOP)", "\tLDD %s", variable1->str);
         optim(buf[1], NULL, "\tLDX #0");
         optim(buf[2], NULL, NULL);
     }
@@ -683,7 +687,7 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
     &&   match(buf[3], " STA *", variable3)
     &&  _strcmp(variable1, variable2)==0
     &&   unsafe /* A is considered dead after */) {
-        optim(buf[2], "rule #22 (STB*,STA,LDA*,STA+)->(STB*,STA,STB+)", NULL);
+        optim(buf[2], RULE "(STB*,STA,LDA*,STA+)->(STB*,STA,STB+)", NULL);
         optim(buf[3], NULL, "\tSTB %s", variable3->str);
     }
 
@@ -693,7 +697,7 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
     && _strcmp(variable1,variable3)==0
     && !match(buf[3], " IF ")
     &&  unsafe) {
-        optim(buf[0], "rule #23 (STD*,LDD,LDX*)->(TDX,LDD)", "\tTFR D,X");
+        optim(buf[0], RULE "(STD*,LDD,LDX*)->(TDX,LDD)", "\tTFR D,X");
         optim(buf[2], NULL, NULL);
     }
 
@@ -701,7 +705,7 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
     &&  match(buf[1], " STD *", variable2)
     &&  match(buf[2], " TFR D,X")
     && !match(buf[3], " *SR ", NULL)) {
-        optim(buf[0], "rule #24 (LDD*,STD+,TDX)->(LDX*,STX+)", "\tLDX %s", variable1->str);
+        optim(buf[0], RULE "(LDD*,STD+,TDX)->(LDX*,STX+)", "\tLDX %s", variable1->str);
         optim(buf[1], NULL, "\tSTX %s", variable2->str);
         optim(buf[2], NULL, NULL);
     }
@@ -712,7 +716,7 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
 	&& _strcmp(variable1, variable3)==0
 	&& _strcmp(variable1, variable2)!=0
 	&&  strchr((const char*)variable2 ,'+')==NULL) {
-        optim(buf[2], "rule #25 (STD*,ST?,LDD*)->(STD*,ST?)", NULL);
+        optim(buf[2], RULE "(STD*,ST?,LDD*)->(STD*,ST?)", NULL);
     }
 	
     if( match(buf[0], " STD *", variable1)
@@ -720,7 +724,7 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
     &&  match(buf[2], " ROLA")
     &&  match(buf[3], " STD *", variable2)
 	&& _strcmp(variable1, variable2)==0) {
-        optim(buf[0], "rule #27 (STD*,LSLB,ROLA,STD*)->(LSLB,ROLA,STD*)", NULL);
+        optim(buf[0], RULE "(STD*,LSLB,ROLA,STD*)->(LSLB,ROLA,STD*)", NULL);
     }
 
     if( match(buf[0], " STD *", variable1)
@@ -728,7 +732,7 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
     &&  match(buf[2], " STD *", variable3)
 	&& _strcmp(variable1, variable3)==0
 	&& _strcmp(variable1, variable2)!=0) {
-        optim(buf[0], "rule #26 (STD*,ADDD,STD*)->(ADDD,STD*)", NULL);
+        optim(buf[0], RULE "(STD*,ADDD,STD*)->(ADDD,STD*)", NULL);
     }
 	
 	if ( peephole_pass>2
@@ -738,9 +742,9 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
     &&  _strcmp(variable2,variable3)==0
     &&  _strcmp(variable1,variable4)==0) {
         if(unsafe)
-            optim(buf[0], "rule #19 (unsafe, presumed dead) (STD,LOAD,STORE[])->(TDX,LOAD,STORE*X)", "\tTFR D,X");
+            optim(buf[0], RULE "(unsafe, presumed dead) (STD,LOAD,STORE[])->(TDX,LOAD,STORE*X)", "\tTFR D,X");
         else
-            optim(buf[0], "rule #19 (STD,LOAD,STORE[])", "\tSTD _Ttmp%s\n\tTFR D,X", variable1->str);
+            optim(buf[0], RULE "(STD,LOAD,STORE[])", "\tSTD _Ttmp%s\n\tTFR D,X", variable1->str);
         optim(buf[2], NULL, "\tST%c ,X", *variable2->str);
     }
 }
@@ -832,34 +836,34 @@ static void optim_zAB(buffer buf[LOOK_AHEAD], int *zA, int *zB) {
 
     if(*zA) {
         if (match( buf[0], " CLRA")) {
-            optim( buf[0], "rule #1001 [A=0](CLRA)->()", NULL);
+            optim( buf[0], RULE "[A=0](CLRA)->()", NULL);
         } else if (match( buf[0], " LDA #$ff")) {
-            optim( buf[0], "rule #1002 [A=0](LDA#ff)->(DECA)", "\tDECA");
+            optim( buf[0], RULE "[A=0](LDA#ff)->(DECA)", "\tDECA");
             *zA = 0;
         } else if ( match(buf[0], " LDA #$01")) {
-            optim( buf[0], "rule #1003 [A=0](LDA#1)->(INCA)", "\tINCA");
+            optim( buf[0], RULE "[A=0](LDA#1)->(INCA)", "\tINCA");
             *zA = 0;
         } else if ( chkLDD( buf[0], "00--", v1)) {
-            optim(buf[0], "rule #1004 [A=0](LDD#00xx)->(LDB#xx)", "\tLDB #$%c%c", v1->str[2], v1->str[3]);
+            optim(buf[0], RULE "[A=0](LDD#00xx)->(LDB#xx)", "\tLDB #$%c%c", v1->str[2], v1->str[3]);
             *zB = 0;
         } else if (match( buf[0], " TFR A,B")) {
-            optim( buf[0], "rule #1005 [A=0](TAB)->(CLRB)", "\tCLRB");
+            optim( buf[0], RULE "[A=0](TAB)->(CLRB)", "\tCLRB");
             *zB = 1;
 		} else if (peephole_pass>2 
 			   &&  match( buf[0], " STA *", v1)
 			   &&  match( buf[1], " LDB *", v2)
 			   &&  _strcmp(v1,v2)==0) {
-			optim(buf[1], "rule #1006 [A=0](STA*,LDB*)->(CLRB)", "\tCLRB");
+			optim(buf[1], RULE "[A=0](STA*,LDB*)->(CLRB)", "\tCLRB");
         } else if (*zB
                &&  match(buf[0], " ADDD *", v1)) {
-            optim(buf[0], "rule #1007 [D=0](ADD)->(LDD)", "\tLDD %s", v1->str);
+            optim(buf[0], RULE "[D=0](ADD)->(LDD)", "\tLDD %s", v1->str);
         } else if (*zB
                &&  match(buf[0], " STD _Ttmp*", v1)
                &&  match(buf[1], " LDX *", v2)
                &&  match(buf[2], " CMPX _Ttmp*", v3)
                && _strcmp(v1, v3)==0) {
             if(unsafe) optim(buf[0], "(unsafe, presumed dead)", NULL);
-            optim(buf[2], "rule #1008 [D=0](STD*,LDX,CMPX*)->(LDX)", NULL);
+            optim(buf[2], RULE "[D=0](STD*,LDX,CMPX*)->(LDX)", NULL);
         } else if(can_nzA(buf[0])) {
             *zA = 0;
         }
@@ -869,18 +873,18 @@ static void optim_zAB(buffer buf[LOOK_AHEAD], int *zA, int *zB) {
 
     if(*zB) {
         if (match( buf[0], " CLRB")) {
-            optim( buf[0], "rule #1001 [B=0](CLRB)->()", NULL);
+            optim( buf[0], RULE "[B=0](CLRB)->()", NULL);
         } else if (match( buf[0], " LDB #$ff")) {
-            optim( buf[0], "rule #1002 [B=0](LDB#ff)->(DECB)", "\tDECB");
+            optim( buf[0], RULE "[B=0](LDB#ff)->(DECB)", "\tDECB");
             *zB = 0;
         } else if (match( buf[0], " LDB #$01")) {
-            optim( buf[0], "rule #1003 [B=0](LDB#1)->(INCB)", "\tINCB");
+            optim( buf[0], RULE "[B=0](LDB#1)->(INCB)", "\tINCB");
             *zB = 0;
         } else if ( chkLDD( buf[0], "--00", v1) ) {
-            optim( buf[0], "rule #1004 [B=0](LDB#xx00)->(LDA#xx)", "\tLDA #$%c%c", v1->str[0], v1->str[1]);
+            optim( buf[0], RULE "[B=0](LDB#xx00)->(LDA#xx)", "\tLDA #$%c%c", v1->str[0], v1->str[1]);
             *zA = 0;
         } else if (match( buf[0], " TFR B,A")) {
-            optim( buf[0], "rule #1005 [B=0](TBA)->(CLRA)", "\tCLRA");
+            optim( buf[0], RULE "[B=0](TBA)->(CLRA)", "\tCLRA");
             *zA = 1;
         } else if(can_nzB(buf[0])) {
             *zB = 0;
@@ -893,7 +897,7 @@ static void optim_zAB(buffer buf[LOOK_AHEAD], int *zA, int *zB) {
 	&& match( buf[0], " LDB #$*",  v1)
 	&& match( buf[1], " STB ")
 	&& match( buf[2], " CLRA")) {
-		optim(buf[0], "rule #1006 (LDB#,STB,CLRA)->(LDD#,STB)", "\tLDD #$00%s", v1->str);
+		optim(buf[0], RULE "(LDB#,STB,CLRA)->(LDD#,STB)", "\tLDD #$00%s", v1->str);
 		optim(buf[2], NULL, NULL);
 		*zA = 0;
 	}
