@@ -4450,7 +4450,7 @@ program :
 
 %%
 
-char version[MAX_TEMPORARY_STORAGE] = "1.7";
+char version[MAX_TEMPORARY_STORAGE] = "1.7.1";
 
 void show_usage_and_exit( int _argc, char *_argv[] ) {
 
@@ -4815,7 +4815,7 @@ int main( int _argc, char *_argv[] ) {
     _environment->sourceFileName = strdup(_argv[optind] );
 
     if ( _environment->tenLinerRulesEnforced ) {
-        FILE * fh = fopen( _environment->sourceFileName, "rt" );
+        FILE * fh = fopen( _environment->sourceFileName, "rb" );
         fseek( fh, 0, SEEK_END );
         int sourceSize = ftell( fh );
         fseek( fh, 0, SEEK_SET );

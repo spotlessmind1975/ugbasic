@@ -58,6 +58,16 @@ void linker_setup( Environment * _environment ) {
     cfgline0("HEADER:  	start = $0000, size = $0006, file = %O;");
     cfgline0("MAIN:     start = %S,    size = $8000, file = %O;");
     cfgline0("TRAILER:	start = $0000, size = $0006, file = %O;");
+
+    MemoryArea * actual = _environment->memoryAreas;
+    actual = _environment->memoryAreas;
+    while( actual ) {
+        if ( actual->type == MAT_RAM  ) {
+            cfgline3("RAM%3.3x:     file = \"\", start = $%4.4x,     size = $%4.4x;", actual->id, (unsigned short)actual->start, (unsigned short)(actual->end - actual->start) );
+        }
+        actual = actual->next;
+    }
+
     cfghead0("}");
 
     cfghead0("FEATURES {");

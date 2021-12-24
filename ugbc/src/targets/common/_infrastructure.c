@@ -101,7 +101,13 @@ void memory_area_assign( MemoryArea * _first, Variable * _variable ) {
 
     MemoryArea * actual = _first;
     while( actual ) {
-        if ( actual->size > neededSpace ) {
+        int enoughSpace = actual->size > neededSpace;
+        if ( actual->type == MAT_RAM ) {
+            if ( _variable->type == VT_STRING || _variable->type == VT_BUFFER || _variable->type == VT_IMAGE || _variable->type == VT_IMAGES ) {
+                enoughSpace = 0;
+            }
+        }
+        if ( enoughSpace ) {
             actual->size -= neededSpace;
             _variable->memoryArea = actual;
             _variable->absoluteAddress = actual->current;

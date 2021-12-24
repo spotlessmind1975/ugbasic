@@ -4761,7 +4761,10 @@ void cpu6502_mobinit( Environment * _environment, char * _index, char *_x, char 
 
     deploy( mob, src_hw_6502_mob_asm );
     deploy( mobcs, src_hw_chipset_mob_asm );
-    
+#ifdef __c64__
+    deploy( vic2varsGraphic, src_hw_vic2_vars_graphic_asm );
+#endif
+
     outline1("LDX %s", _index );
     outline1("LDA %s", _x );
     outline0("STA MOBX" );

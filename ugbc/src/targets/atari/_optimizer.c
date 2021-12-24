@@ -108,6 +108,8 @@ void target_peephole_optimizer( Environment * _environment ) {
     fclose( fileAsm );
     fclose( fileOptimized );
 
+    remove( _environment->asmFileName );
+    
     rename( fileNameOptimized, _environment->asmFileName );
 
 }
