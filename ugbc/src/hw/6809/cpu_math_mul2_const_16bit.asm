@@ -28,38 +28,59 @@
 ;  * autorizzazioni e le limitazioni previste dalla medesima.
 ;  ****************************************************************************/
 
-CPUMATHMUL2CONST16BIT
-    CMPX #0
-    BEQ CPUMATHMUL2CONST16BITL1
-CPUMATHMUL2CONST16BITL2
-    ASLB
-    ROLA
-    LEAX -1, X
-    CMPX #0
-    BNE CPUMATHMUL2CONST16BITL2
-CPUMATHMUL2CONST16BITL1
-    RTS
-
+; Division by a power of 2 using the duff device trick
 CPUMATHMUL2CONST16BIT_SIGNED
-    LDA #0
-    STA <MATHPTR0
-    TFR D, Y
-    ANDA #$80
-    BEQ CPUMATHMUL2CONST16BIT_SIGNEDL1
-    LDA #1
-    STA <MATHPTR0
-    TFR Y, D
-    EORA #$FF
-    EORB #$FF
-    ADDD #1
-CPUMATHMUL2CONST16BIT_SIGNEDL1
-    JSR CPUMATHMUL2CONST16BIT
-
-    LDA <MATHPTR0
-    BEQ CPUMATHMUL2CONST16BIT_SIGNEDL2
-    EORA #$FF
-    EORB #$FF
-    ADDD #1
-CPUMATHMUL2CONST16BIT_SIGNEDL2
+CPUMATHMUL2CONST16BIT
+    CMPX    #16
+    BLT     CPUMATHMUL2CONST16BIT1
+; X=16..    
+    LDD     #0
     RTS
+CPUMATHMUL2CONST16BIT1
+    CMPX    #8
+    BLO     CPUMATHMUL2CONST16BIT_duff2    
+    TFR     B,A
+; we could abuse illegal op and do TFR X,B here    
+    PSHS    X
+    LDB     1,S
+    NEGB
+    LDX     #CPUMATHMUL2CONST16BIT_duff1+16
+    JMP     B,X
+; X=8..15    
+CPUMATHMUL2CONST16BIT_duff1
+    LSLA
+    LSLA
+    LSLA
+    LSLA
+    LSLA
+    LSLA
+    LSLA
+    CLRB
+    PULS    X,PC
 
+; X=0..7
+CPUMATHMUL2CONST16BITL1_duff2    
+    PSHS    D,X
+    LDX     #CPUMATHMUL2CONST16BITL1_duff2tab-2
+    LDB     #8
+    SUBB    3,S
+    LSLB
+    ABX
+    PULS    D
+    JMP     ,X
+CPUMATHMUL2CONST16BITL1_duff2tab
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    PULS  X,PC
