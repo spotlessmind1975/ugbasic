@@ -41,7 +41,7 @@
 void shell_injection( Environment * _environment ) {
 
     Variable * presentationLine = variable_define( _environment, "SHELL_PRESENTATION", VT_STRING, 0 );
-    variable_store_string( _environment, presentationLine->name, "ugBASIC Runtime version 1.7" );
+    variable_store_string( _environment, presentationLine->name, "ugBASIC Runtime version 1.7.2" );
     Variable * prompt = variable_define( _environment, "SHELL_PROMPT", VT_STRING, 0 );
     variable_store_string( _environment, prompt->name, "READY" );
     Variable * command = variable_define( _environment, "SHELL_COMMAND", VT_DSTRING, 0 );

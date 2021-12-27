@@ -143,8 +143,8 @@ void ef936x_border_color( Environment * _environment, char * _border_color ) {
  */
 void ef936x_background_color( Environment * _environment, int _index, int _background_color ) {
 
-    outline1("LDA #$%2.2x", ( _index & 0x0f ) * 2 );
-    outline0("STA $A7DB" );
+    outline1("LDB #$%2.2x", ( _index & 0x0f ) * 2 );
+    outline0("STB $A7DB" );
     outline1("LDD #$%4.4x", _background_color );
     outline0("STB $A7DA" );
     outline0("STA $A7DA" );
@@ -163,9 +163,9 @@ void ef936x_background_color( Environment * _environment, int _index, int _backg
  */
 void ef936x_background_color_vars( Environment * _environment, char * _index, char * _background_color ) {
 
-    outline1("LDA %s", _index );
-    outline0("ASLA" );
-    outline0("STA $A7DB" );
+    outline1("LDB %s", _index );
+    outline0("LSLB" );
+    outline0("STB $A7DB" );
     outline1("LDD %s", _background_color );
     outline0("STB $A7DA" );
     outline0("STA $A7DA" );
@@ -184,8 +184,8 @@ void ef936x_background_color_vars( Environment * _environment, char * _index, ch
  */
 void ef936x_background_color_semivars( Environment * _environment, int _index, char * _background_color ) {
 
-    outline1("LDA #$%2.2x", (_index*2) );
-    outline0("STA $A7DB" );
+    outline1("LDB #$%2.2x", (_index*2) );
+    outline0("STB $A7DB" );
     outline1("LDD %s", _background_color );
     outline0("STB $A7DA" );
     outline0("STA $A7DA" );
@@ -204,9 +204,9 @@ void ef936x_background_color_semivars( Environment * _environment, int _index, c
  */
 void ef936x_background_color_get_vars( Environment * _environment, char * _index, char * _background_color ) {
 
-    outline1("LDA %s", _index );
-    outline0("ASLA" );
-    outline0("STA $A7DB" );
+    outline1("LDB %s", _index );
+    outline0("ASLB" );
+    outline0("STB $A7DB" );
     outline0("LDB $A7DA" );
     outline0("LDA $A7DA" );
     outline1("STD %s", _background_color );
@@ -437,15 +437,10 @@ void ef936x_point_at_int( Environment * _environment, int _x, int _y ) {
     deploy( ef936xvars, src_hw_ef936x_vars_asm );
     deploy( plot, src_hw_ef936x_plot_asm );
     
-    outline1("LDX %4.4x", (_x & 0xffff ) );
-    outline0("STX <PLOTX");
-    outline1("LDD %4.4x", ( _y & 0xffff ) );
-    outline0("STD <PLOTY");
     outline0("LDA #1");
-    outline0("STA <PLOTM");
-    outline0("JSR PLOT");
-    
-
+    outline1("LDX %4.4x", (_x & 0xffff ) );
+    outline1("LDU %4.4x", ( _y & 0xffff ) );
+    outline0("JSR PLOT");  
 }
 
 void ef936x_point_at_vars( Environment * _environment, char *_x, char *_y ) {
@@ -456,12 +451,9 @@ void ef936x_point_at_vars( Environment * _environment, char *_x, char *_y ) {
     deploy( ef936xvars, src_hw_ef936x_vars_asm );
     deploy( plot, src_hw_ef936x_plot_asm );
     
-    outline1("LDX %s", x->realName );
-    outline0("STX <PLOTX");
-    outline1("LDD %s", y->realName );
-    outline0("STD <PLOTY");
     outline0("LDA #1");
-    outline0("STA <PLOTM");
+    outline1("LDX %s", x->realName );
+    outline1("LDU %s", y->realName );
     outline0("JSR PLOT");
 
 }
@@ -475,15 +467,11 @@ void ef936x_point( Environment * _environment, char *_x, char *_y, char * _resul
     deploy( ef936xvars, src_hw_ef936x_vars_asm );
     deploy( plot, src_hw_ef936x_plot_asm );
     
-    outline1("LDD %s", x->realName );
-    outline0("STD <PLOTX");
-    outline1("LDD %s", y->realName );
-    outline0("STD <PLOTY");
     outline0("LDA #3");
-    outline0("STA <PLOTM");
+    outline1("LDX %s", x->realName );
+    outline1("LDU %s", y->realName );
     outline0("JSR PLOT");
-    outline0("LDA <PLOTM");
-    outline1("STA %s", result->realName );    
+    outline1("STB %s", result->realName );    
 
 }
 
@@ -557,36 +545,36 @@ void ef936x_horizontal_scroll( Environment * _environment, char * _displacement 
 
 void ef936x_get_width( Environment * _environment, char *_result ) {
 
-    outline0("LDX CURRENTWIDTH" );
-    outline1("STX %s", _result );
+    outline0("LDD CURRENTWIDTH" );
+    outline1("STD %s", _result );
 
 }
 
 void ef936x_tiles_get( Environment * _environment, char *_result ) {
 
-    outline0("LDA CURRENTTILES" );
-    outline1("STA %s", _result );
+    outline0("LDB CURRENTTILES" );
+    outline1("STB %s", _result );
 
 }
 
 void ef936x_tiles_get_width( Environment * _environment, char *_result ) {
 
-    outline0("LDA CURRENTTILESWIDTH" );
-    outline1("STA %s", _result );
+    outline0("LDB CURRENTTILESWIDTH" );
+    outline1("STB %s", _result );
 
 }
 
 void ef936x_get_height( Environment * _environment, char *_result ) {
 
-    outline0("LDX CURRENTHEIGHT" );
-    outline1("STX %s", _result );
+    outline0("LDD CURRENTHEIGHT" );
+    outline1("STD %s", _result );
 
 }
 
 void ef936x_tiles_get_height( Environment * _environment, char *_result ) {
 
-    outline0("LDA CURRENTTILESHEIGHT" );
-    outline1("STA %s", _result );
+    outline0("LDB CURRENTTILESHEIGHT" );
+    outline1("STB %s", _result );
 
 }
 
