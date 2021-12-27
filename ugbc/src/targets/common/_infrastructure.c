@@ -4821,6 +4821,8 @@ char * image_load_asserts( Environment * _environment, char * _filename ) {
     strcat( lookedFilename, "/mo5" );
 #elif __vic20__ 
     strcat( lookedFilename, "/vic20" );
+#elif __msx1__
+    strcat( lookedFilename, "/msx1" );
 #endif
     strcat( lookedFilename, lookedExtension );
 

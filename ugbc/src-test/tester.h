@@ -76,6 +76,8 @@ void test_print( );
     #include "tester_mo5.h"
 #elif defined( __vic20__ )
     #include "tester_vic20.h"
+#elif defined( __msx1__ )
+    #include "tester_msx1.h"
 #endif
 
 #endif

@@ -30,8 +30,8 @@
 
 FLEX_OPTIONS=--8bit 
 BISON_OPTIONS=--locations -d -Wcounterexamples
-CFLAGS=-O3 -g -fomit-frame-pointer
-LFLAGS=-g
+CFLAGS=-O3 -fomit-frame-pointer
+LFLAGS=
 LIBS=-lm
 
 .PHONY: paths clean all
@@ -133,6 +133,14 @@ SOURCES_TED := $(subst src/hw/ted/,src-generated/ted_,$(MODULES_TED:.asm=.c))
 
 src-generated/ted_%.c: $(MODULES_TED)
 	@xxd -i $(subst src-generated/ted_,src/hw/ted/,$(@:.c=.asm)) >$@
+
+# Texas Instruments TMS9918
+
+MODULES_TMS9918 := $(wildcard src/hw/tms9918/*.asm)
+SOURCES_TMS9918 := $(subst src/hw/tms9918/,src-generated/tms9918_,$(MODULES_TMS9918:.asm=.c))
+
+src-generated/tms9918_%.c: $(MODULES_TMS9918)
+	@xxd -i $(subst src-generated/tms9918_,src/hw/tms9918/,$(@:.c=.asm)) >$@
 
 # Zilog Z80
 
@@ -264,6 +272,19 @@ src-generated/modules_mo5.c: $(SOURCES_6809) $(SOURCES_EF936X) $(SOURCES_MO5)
 	@grep "src" src-generated/modules_mo5.c | awk -f modules.awk >src-generated/modules_mo5.h
 	@grep "data" src-generated/modules_mo5.c | awk -f modules.awk >>src-generated/modules_mo5.h
 
+# MSX1
+
+MODULES_MSX1 := $(wildcard src/hw/msx1/*.asm)
+SOURCES_MSX1 := $(subst src/hw/msx1/,src-generated/msx1_,$(MODULES_MSX1:.asm=.c))
+
+src-generated/msx1_%.c: $(MODULES_MSX)
+	@xxd -i $(subst src-generated/msx1_,src/hw/msx1/,$(@:.c=.asm)) >$@
+
+src-generated/modules_msx1.c: $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_MSX1)
+	@cat $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_MSX1) >src-generated/modules_msx1.c
+	@grep "src" src-generated/modules_msx1.c | awk -f modules.awk >src-generated/modules_msx1.h
+	@grep "data" src-generated/modules_msx1.c | awk -f modules.awk >>src-generated/modules_msx1.h
+
 # ZX Spectrum
 
 MODULES_ZX := $(wildcard src/hw/zx/*.asm)
@@ -310,7 +331,7 @@ SOURCESTEST += $(wildcard src/hw/*.c)
 SOURCESTEST += $(wildcard src/targets/common/*.c)
 SOURCESTEST += $(wildcard src/targets/$(target)/*.c)
 SOURCESTEST += $(wildcard src-test/suites/*.c)
-SOURCESTEST += src-generated/modules_$(target).c src-test/tester.c src-test/tester_c64.c src-test/tester_plus4.c src-test/tester_atari.c src-test/tester_atarixl.c src-test/tester_zx.c src-test/tester_d32.c src-test/tester_d64.c src-test/tester_pc128op.c src-test/tester_mo5.c src-test/tester_vic20.c
+SOURCESTEST += src-generated/modules_$(target).c src-test/tester.c src-test/tester_c64.c src-test/tester_plus4.c src-test/tester_atari.c src-test/tester_atarixl.c src-test/tester_msx1.c src-test/tester_zx.c src-test/tester_d32.c src-test/tester_d64.c src-test/tester_pc128op.c src-test/tester_mo5.c src-test/tester_vic20.c
 
 paths:
 	@mkdir -p src-generated

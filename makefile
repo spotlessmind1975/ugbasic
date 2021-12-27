@@ -118,6 +118,17 @@ generated/mo5/exe/%.k7: compiler
 generated/mo5/exe/%.bin: compiler
 	@asm6809 -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -D -e 10240 -o $@ $(subst /exe/,/asm/,$(@:.bin=.asm))
 
+generated/msx1/asm/%.asm:
+	ugbc/exe/ugbc.msx1 $(subst generated/msx1/asm/,examples/,$(@:.asm=.bas)) $@ 
+
+generated/msx1/exe/%.rom:
+	z88dk-z80asm -l -m -s -b $(subst /exe/,/asm/,$(@:.rom=.asm))
+	rm -f $(subst /exe/,/asm/,$(@:.rom=.o))
+	mv $(subst /exe/,/asm/,$(@:.rom=_code_user.bin)) $(@:.rom=_code_user.bin)
+	z88dk-appmake +msxrom -b $(@:.rom=_code_user.bin)
+	mv $(@:.rom=_code_user.rom) $@
+	rm -f $(@:.rom=.bin) $(@:.rom=_*.bin)
+
 paths:
 	@mkdir -p generated
 	@mkdir -p generated/$(target)/asm

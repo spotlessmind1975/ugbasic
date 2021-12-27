@@ -111,7 +111,9 @@ typedef enum _OutputFileType {
     OUTPUT_FILE_TYPE_XEX = 2,
     OUTPUT_FILE_TYPE_K7_ORIGINAL = 3,
     OUTPUT_FILE_TYPE_K7_NEW = 4,
-    OUTPUT_FILE_TYPE_TAP = 5
+    OUTPUT_FILE_TYPE_TAP = 5,
+    OUTPUT_FILE_TYPE_CAS = 6,
+    OUTPUT_FILE_TYPE_ROM = 7
 
 } OutputFileType;
 
@@ -887,6 +889,10 @@ typedef struct _Deployed {
     int gtiastartup;
     int gtiavars;
     int zxvars;
+    int msx1vars;
+    int tms9918vars;
+    int tms9918varsGraphic;
+    int tms9918startup;
     int ef936xvars;
     int ef936xstartup;
     int plot;
@@ -2356,6 +2362,11 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "hw/6502.h"
     #include "hw/vic1.h"
     #include "hw/vic20.h"
+#elif __msx1__
+    #include "../src-generated/modules_msx1.h"
+    #include "hw/z80.h"
+    #include "hw/msx1.h"
+    #include "hw/tms9918.h"
 #endif
 
 #endif
