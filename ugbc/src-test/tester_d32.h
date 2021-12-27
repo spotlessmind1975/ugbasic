@@ -98,6 +98,6 @@ typedef struct _TestEnvironment {
 void create_test( char *_name, void (*_payload)(TestEnvironment *), int (*_tester)(TestEnvironment *) );
 void stop_test( Environment * _environment );
 
-void test_zx( );
+void test_d32( );
 
 #endif
