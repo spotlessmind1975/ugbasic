@@ -39,10 +39,29 @@
  ****************************************************************************/
 
 Variable * joy( Environment * _environment, char * _port ) {
+    MAKE_LABEL
 
+    Variable * port = variable_retrieve_or_define( _environment, _port, VT_BYTE, 0 );
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of JOY)" );
 
-    cpu_store_8bit( _environment, result->realName, 0 );
+	/* TODO embed ? */
+	outline0("LDA $A7CC");
+    outline1("LDB %s", port->realName );
+    outline1("BEQ %sjoy0", label );
+	outline0("LDB #$40");
+	outline0("LSRA");
+	outline0("LSRA");
+	outline0("LSRA");
+	outline0("LSRA");
+    outhead1("%sjoy0", label );
+	outline0("ANDA #$0F");
+	outline0("ADDB #$40");
+	outline0("ANDB $A7CD");
+    outline1("BEQ %sact0", label );
+	outline0("ADDA #$10");
+	outhead1("%sact0", label );
+	outline0("EORA #$1F");
+	outline1("STA %s", result->realName );
 
     return result;
 

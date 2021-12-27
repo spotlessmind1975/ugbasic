@@ -41,29 +41,117 @@
 
 #if defined(__d32__) || defined(__d64__) || defined(__pc128op__) || defined(__mo5__)
 
+/* output code that is the best "JUMP" version between "small" and "long" branch.
+   LBRA and LBSR are transformed into JMP and JSR respectively. */
+#define B(code, label)                                                       \
+do { /* x-y+128<0 or 127-x+y<0 */                                            \
+    outline2("IF (((128+%s-(*+2))|(127-%s+(*+2)))&0x8000)",(label),(label)); \
+    if(!strcmp(#code,"RA")) {                                                \
+        outline1("JMP %s", (label));                                         \
+    } else if(!strcmp(#code,"SR")) {                                         \
+        outline1("JSR %s", (label));                                         \
+    } else {                                                                 \
+        outline2("LB%s %s", #code, (label));                                 \
+    }                                                                        \
+    outline0("ELSE");                                                        \
+    outline2("B%s %s", #code, (label));                                      \
+    outline0("ENDIF");                                                       \
+} while(0)
+
+/* Helper for 8/16 bits comparison */
+static void cpu6809_compare( Environment * _environment, char *_source, char *_destination,  char *_other, int _positive, int _bits) {
+    char REG = _bits==16 ? 'X' : 'A';
+
+    MAKE_LABEL
+
+    outline0("CLRB");
+    outline2("LD%c %s",  REG, _source);
+    outline2("CMP%c %s", REG, _destination);
+
+    if(_positive) {
+        outline1("BNE %s", label);
+        outline0("DECB");
+    } else {
+        outline1("BEQ %s", label);
+        outline0("DECB");
+    }
+
+    outhead1("%s", label );
+    outline1("STB %s", _other ? _other : _destination );
+}
+static void cpu6809_less_than( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed, int _bits) {
+    char REG = _bits==16 ? 'X' : 'A';
+
+    MAKE_LABEL
+
+    outline0("CLRB");
+    outline2("LD%c %s",  REG, _source);
+    outline2("CMP%c %s", REG, _destination);
+
+    if ( _signed ) {
+        if ( _equal ) {
+            outline1("BGT %s", label);
+        } else {
+            outline1("BGE %s", label);
+        }
+    } else {
+        if ( _equal ) {
+            outline1("BHI %s", label);
+        } else {
+            outline1("BHS %s", label);
+        }
+    }
+
+    outline0("DECB");
+    outhead1("%s", label );
+    outline1("STB %s", _other ? _other : _destination);
+}
+static void cpu6809_greater_than( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed, int _bits ) {
+    char REG = _bits==16 ? 'X' : 'A';
+
+    MAKE_LABEL
+
+    outline0("CLRB");
+    outline2("LD%c %s",  REG, _source);
+    outline2("CMP%c %s", REG, _destination);
+    if ( _signed ) {
+        if ( _equal ) {
+            outline1("BLT %s", label);
+        } else {
+            outline1("BLE %s", label);
+        }
+    } else {
+        if ( _equal ) {
+            outline1("BLO %s", label);
+        } else {
+            outline1("BLS %s", label);
+        }
+    }
+
+    outline0("DECB");
+    outhead1("%s", label );
+    outline1("STB %s", _other ? _other : _destination );
+}
+
 /**
  * @brief <i>CPU 6809</i>: emit code to make long conditional jump
- * 
- * This function outputs a code that guarantees an arbitrary distance jump 
- * with conditional check on equality. In fact, the opcode BEQ of the 
- * CPU 6809 processor allows to make a jump of maximum +/- 128 bytes with 
- * respect to the address where the processor is at that moment. 
+ *
+ * This function outputs a code that guarantees an arbitrary distance jump
+ * with conditional check on equality. In fact, the opcode BEQ of the
+ * CPU 6809 processor allows to make a jump of maximum +/- 128 bytes with
+ * respect to the address where the processor is at that moment.
  * To overcome this problem, this function will make a conditional jump to
- * a very close location, which (in turn) will make an unconditional jump 
+ * a very close location, which (in turn) will make an unconditional jump
  * to the true destination.
- * 
+ *
  * @param _environment Current calling environment
  * @param _label Destination of the conditional jump.
  */
 void cpu6809_beq( Environment * _environment, char * _label ) {
-    
-    MAKE_LABEL
 
     inline( cpu_beq )
 
-        outline1("BNE %s", label);
-        outline1("JMP %s", _label);    
-        outhead1("%s", label);
+        B(EQ, _label);
 
     no_embedded( cpu_beq )
 
@@ -71,19 +159,15 @@ void cpu6809_beq( Environment * _environment, char * _label ) {
 
 /**
  * @brief <i>CPU 6809</i>: emit code to make long conditional jump
- * 
+ *
  * @param _environment Current calling environment
  * @param _label Destination of the conditional jump.
  */
 void cpu6809_bneq( Environment * _environment, char * _label ) {
-    
-    MAKE_LABEL
 
     inline( cpu_bneq )
 
-        outline1("BEQ %s", label);
-        outline1("JMP %s", _label);    
-        outhead1("%s", label);
+        B(NE, _label);
 
     no_embedded( cpu_bneq )
 
@@ -93,9 +177,8 @@ void cpu6809_bveq( Environment * _environment, char * _value, char * _label ) {
 
     inline( cpu_bveq )
 
-        outline1("LDA %s", _value);
-        outline0("CMPA #0");
-        cpu6809_beq( _environment,  _label );
+        outline1("LDB %s", _value);
+        B(EQ, _label);
 
     no_embedded( cpu_bveq )
 
@@ -105,12 +188,11 @@ void cpu6809_bvneq( Environment * _environment, char * _value, char * _label ) {
 
     inline( cpu_bveq )
 
-        outline1("LDA %s", _value);
-        outline0("CMPA #0");
-        cpu6809_bneq( _environment,  _label );
+        outline1("LDB %s", _value);
+        B(NE, _label);
 
     no_embedded( cpu_bvneq )
-    
+
 }
 
 void cpu6809_label( Environment * _environment, char * _label ) {
@@ -127,9 +209,8 @@ void cpu6809_peek( Environment * _environment, char * _address, char * _target )
 
     inline( cpu_peek )
 
-        outline1("LDX %s", _address);
-        outline0("LDA , X");
-        outline1("STA %s", _target);
+        outline1("LDB [%s]", _address);
+        outline1("STB %s", _target);
 
     no_embedded( cpu_peek )
 
@@ -139,9 +220,8 @@ void cpu6809_poke( Environment * _environment, char * _address, char * _source )
 
     inline( cpu_poke )
 
-        outline1("LDA %s", _source );
-        outline1("LDX %s", _address);
-        outline0("STA ,X");
+        outline1("LDB %s", _source );
+        outline1("STB [%s]", _address);
 
     no_embedded( cpu_poke )
 
@@ -149,12 +229,12 @@ void cpu6809_poke( Environment * _environment, char * _address, char * _source )
 
 /**
  * @brief <i>CPU 6809</i>: emit code to fill up a memory area
- * 
- * This function can be used to output a piece of code that fills a given 
- * memory area with a given <PATTERN (<PATTERN size: 1 byte). The starting 
- * address must be contained in a variable, while the area must be a multiple 
+ *
+ * This function can be used to output a piece of code that fills a given
+ * memory area with a given <PATTERN (<PATTERN size: 1 byte). The starting
+ * address must be contained in a variable, while the area must be a multiple
  * of 256 bytes.
- * 
+ *
  * @param _environment Current calling environment
  * @param _address Starting address
  * @param _blocks Number of 256 bytes blocks to fill
@@ -199,12 +279,12 @@ void cpu6809_fill_blocks( Environment * _environment, char * _address, char * _b
 
 /**
  * @brief <i>CPU 6809</i>: emit code to fill up a memory area
- * 
- * This function can be used to output a piece of code that fills a given 
- * memory area with a given <PATTERN (<PATTERN size: 1 byte). The starting 
- * address must be contained in a variable, while the area must be a multiple 
+ *
+ * This function can be used to output a piece of code that fills a given
+ * memory area with a given <PATTERN (<PATTERN size: 1 byte). The starting
+ * address must be contained in a variable, while the area must be a multiple
  * of 256 bytes.
- * 
+ *
  * @param _environment Current calling environment
  * @param _address Starting address
  * @param _bytes Number of bytes to fill
@@ -243,12 +323,12 @@ void cpu6809_fill( Environment * _environment, char * _address, char * _bytes, c
 
 /**
  * @brief <i>CPU 6809</i>: emit code to fill up a memory area
- * 
- * This function can be used to output a piece of code that fills a given 
- * memory area with a given <PATTERN (<PATTERN size: 1 byte). The starting 
- * address must be contained in a variable, while the area must be a multiple 
+ *
+ * This function can be used to output a piece of code that fills a given
+ * memory area with a given <PATTERN (<PATTERN size: 1 byte). The starting
+ * address must be contained in a variable, while the area must be a multiple
  * of 256 bytes.
- * 
+ *
  * @param _environment Current calling environment
  * @param _address Starting address
  * @param _bytes Number of bytes to fill
@@ -287,12 +367,12 @@ void cpu6809_fill_size( Environment * _environment, char * _address, int _bytes,
 
 /**
  * @brief <i>CPU 6809</i>: emit code to fill up a memory area
- * 
- * This function can be used to output a piece of code that fills a given 
- * memory area with a given <PATTERN (<PATTERN size: 1 byte). The starting 
- * address must be contained in a variable, while the area must be a multiple 
+ *
+ * This function can be used to output a piece of code that fills a given
+ * memory area with a given <PATTERN (<PATTERN size: 1 byte). The starting
+ * address must be contained in a variable, while the area must be a multiple
  * of 256 bytes.
- * 
+ *
  * @param _environment Current calling environment
  * @param _address Starting address
  * @param _bytes Number of bytes to fill
@@ -331,12 +411,12 @@ void cpu6809_fill_size_value( Environment * _environment, char * _address, int _
 
 /**
  * @brief <i>CPU 6809</i>: emit code to fill up a memory area
- * 
- * This function can be used to output a piece of code that fills a given 
- * memory area with a given <PATTERN (<PATTERN size: 1 byte). The starting 
- * address must be contained in a variable, while the area must be a multiple 
+ *
+ * This function can be used to output a piece of code that fills a given
+ * memory area with a given <PATTERN (<PATTERN size: 1 byte). The starting
+ * address must be contained in a variable, while the area must be a multiple
  * of 256 bytes.
- * 
+ *
  * @param _environment Current calling environment
  * @param _address Starting address
  * @param _bytes Number of bytes to fill
@@ -375,12 +455,12 @@ void cpu6809_fill_direct( Environment * _environment, char * _address, char * _b
 
 /**
  * @brief <i>CPU 6809</i>: emit code to fill up a memory area
- * 
- * This function can be used to output a piece of code that fills a given 
- * memory area with a given <PATTERN (<PATTERN size: 1 byte). The starting 
- * address must be contained in a variable, while the area must be a multiple 
+ *
+ * This function can be used to output a piece of code that fills a given
+ * memory area with a given <PATTERN (<PATTERN size: 1 byte). The starting
+ * address must be contained in a variable, while the area must be a multiple
  * of 256 bytes.
- * 
+ *
  * @param _environment Current calling environment
  * @param _address Starting address
  * @param _bytes Number of bytes to fill
@@ -389,7 +469,7 @@ void cpu6809_fill_direct( Environment * _environment, char * _address, char * _b
 void cpu6809_fill_direct_size( Environment * _environment, char * _address, int _bytes, char * _pattern ) {
 
     inline( cpu_fill )
-    
+
         MAKE_LABEL
 
         outline1("LDB #$%2.2x", _bytes);
@@ -419,12 +499,12 @@ void cpu6809_fill_direct_size( Environment * _environment, char * _address, int 
 
 /**
  * @brief <i>CPU 6809</i>: emit code to fill up a memory area
- * 
- * This function can be used to output a piece of code that fills a given 
- * memory area with a given <PATTERN (<PATTERN size: 1 byte). The starting 
- * address must be contained in a variable, while the area must be a multiple 
+ *
+ * This function can be used to output a piece of code that fills a given
+ * memory area with a given <PATTERN (<PATTERN size: 1 byte). The starting
+ * address must be contained in a variable, while the area must be a multiple
  * of 256 bytes.
- * 
+ *
  * @param _environment Current calling environment
  * @param _address Starting address
  * @param _bytes Number of bytes to fill
@@ -467,7 +547,7 @@ void cpu6809_fill_direct_size_value( Environment * _environment, char * _address
 
 /**
  * @brief <i>CPU 6809</i>: emit code to move 8 bit
- * 
+ *
  * @param _environment Current calling environment
  * @param _source Source of movement
  * @param _destination Destination of movement
@@ -476,8 +556,8 @@ void cpu6809_move_8bit( Environment * _environment, char *_source, char *_destin
 
     inline( cpu_move_8bit )
 
-        outline1("LDA %s", _source);
-        outline1("STA %s", _destination);
+        outline1("LDB %s", _source);
+        outline1("STB %s", _destination);
 
     no_embedded( cpu_move_8bit )
 
@@ -485,7 +565,7 @@ void cpu6809_move_8bit( Environment * _environment, char *_source, char *_destin
 
 /**
  * @brief <i>CPU 6809</i>: emit code to store 8 bit
- * 
+ *
  * @param _environment Current calling environment
  * @param _destination Destination of store
  * @param _value Value to store
@@ -494,20 +574,22 @@ void cpu6809_store_8bit( Environment * _environment, char *_destination, int _va
 
     inline( cpu_store_8bit )
 
-        if ( _value ) {
-            outline1("LDA #$%2.2x", _value );
-            outline1("STA %s", _destination );
-        } else {
-            outline1("CLR %s", _destination );
-        }
-
+    if(_value) {
+        outline1("LDB #$%2.2x" , _value );
+        outline1("STB %s", _destination );
+    } else {
+        // make A=0 as much as possible
+        outline0("CLRA");
+        outline1("STA %s", _destination );
+    }
+        
     no_embedded( cpu_move_8bit )
-    
+
 }
 
 /**
  * @brief <i>CPU 6809</i>: emit code to compare two 8 bit values
- * 
+ *
  * @param _environment Current calling environment
  * @param _source First value to compare
  * @param _destination Second value to compare and destination address for result (if _other is NULL)
@@ -518,26 +600,7 @@ void cpu6809_compare_8bit( Environment * _environment, char *_source, char *_des
 
     inline( cpu_compare_8bit )
 
-        MAKE_LABEL
-
-        outline1("LDA %s", _source);
-        outline1("CMPA %s", _destination);
-        outline1("BEQ %seq", label);
-        outline1("LDA #$%2.2x", ( _positive ) ? 0x00 : 0xff );
-        if ( _other ) {
-            outline1("STA %s", _other);
-        } else {
-            outline1("STA %s", _destination);
-        }
-        outline1("JMP %sdone", label);
-        outhead1("%seq", label );
-        outline1("LDA #$%2.2x", ( _positive ) ? 0xff : 0x00 );
-        if ( _other ) {
-            outline1("STA %s", _other);
-        } else {
-            outline1("STA %s", _destination);
-        }
-        outhead1("%sdone", label );
+        cpu6809_compare(_environment,_source, _destination, _other, _positive, 8);
 
     no_embedded( cpu_compare_8bit )
 
@@ -556,12 +619,12 @@ void cpu6809_compare_and_branch_8bit_const( Environment * _environment, char *_s
 
     inline( cpu_compare_and_branch_8bit_const )
 
-        outline1("LDA %s", _source);
-        outline1("CMPA #$%2.2x", _destination);
+        outline1("LDB %s", _source);
+        outline1("CMPB #$%2.2x", _destination);
         if ( _positive ) {
-            outline1("LBEQ %s", _label);
+            B(EQ, _label);
         } else {
-            outline1("LBNE %s", _label);
+            B(NE, _label);
         }
 
     no_embedded( cpu_compare_and_branch_8bit_const )
@@ -570,7 +633,7 @@ void cpu6809_compare_and_branch_8bit_const( Environment * _environment, char *_s
 
 /**
  * @brief <i>CPU 6809</i>: emit code to compare two 8 bit values
- * 
+ *
  * @param _environment Current calling environment
  * @param _source First value to compare
  * @param _destination Second value to compare and destination address for result (if _other is NULL)
@@ -581,38 +644,7 @@ void cpu6809_less_than_8bit( Environment * _environment, char *_source, char *_d
 
     inline( cpu_less_than_8bit )
 
-        MAKE_LABEL
-
-        outline1("LDA %s", _source);
-        outline1("CMPA %s", _destination);
-        if ( _signed ) {
-            if ( _equal ) {
-                outline1("BLE %seq", label);
-            } else {
-                outline1("BLT %seq", label);
-            }
-        } else {
-            if ( _equal ) {
-                outline1("BLS %seq", label);
-            } else {
-                outline1("BLO %seq", label);    
-            }
-        }
-        outline1("LDA #$%2.2x", 0x00 );
-        if ( _other ) {
-            outline1("STA %s", _other);
-        } else {
-            outline1("STA %s", _destination);
-        }
-        outline1("JMP %sdone", label);
-        outhead1("%seq", label );
-        outline1("LDA #$%2.2x", 0xff );
-        if ( _other ) {
-            outline1("STA %s", _other);
-        } else {
-            outline1("STA %s", _destination);
-        }
-        outhead1("%sdone", label );
+        cpu6809_less_than(_environment, _source, _destination, _other, _equal, _signed, 8);
 
     no_embedded( cpu_less_than_8bit )
 
@@ -620,7 +652,7 @@ void cpu6809_less_than_8bit( Environment * _environment, char *_source, char *_d
 
 /**
  * @brief <i>CPU 6809</i>: emit code to compare two 8 bit values
- * 
+ *
  * @param _environment Current calling environment
  * @param _source First value to compare
  * @param _destination Second value to compare and destination address for result (if _other is NULL)
@@ -631,38 +663,7 @@ void cpu6809_greater_than_8bit( Environment * _environment, char *_source, char 
 
     inline( cpu_greater_than_8bit )
 
-        MAKE_LABEL
-
-        outline1("LDA %s", _source);
-        outline1("CMPA %s", _destination);
-        if ( _signed ) {
-            if ( _equal ) {
-                outline1("BGE %seq", label);
-            } else {
-                outline1("BGT %seq", label);
-            }
-        } else {
-            if ( _equal ) {
-                outline1("BHS %seq", label);
-            } else {
-                outline1("BHI %seq", label);    
-            }
-        }
-        outline1("LDA #$%2.2x", 0x00 );
-        if ( _other ) {
-            outline1("STA %s", _other);
-        } else {
-            outline1("STA %s", _destination);
-        }
-        outline1("JMP %sdone", label);
-        outhead1("%seq", label );
-        outline1("LDA #$%2.2x", 0xff );
-        if ( _other ) {
-            outline1("STA %s", _other);
-        } else {
-            outline1("STA %s", _destination);
-        }
-        outhead1("%sdone", label );
+        cpu6809_greater_than(_environment, _source, _destination, _other, _equal, _signed, 8);
 
     no_embedded( cpu_greater_than_8bit )
 
@@ -670,7 +671,7 @@ void cpu6809_greater_than_8bit( Environment * _environment, char *_source, char 
 
 /**
  * @brief <i>CPU 6809</i>: emit code to add two 8 bit values
- * 
+ *
  * @param _environment Current calling environment
  * @param _source First value to add
  * @param _destination Second value to add and destination address for result (if _other is NULL)
@@ -680,21 +681,17 @@ void cpu6809_math_add_8bit( Environment * _environment, char *_source, char *_de
 
     inline( cpu_math_add_8bit )
 
-        outline1("LDA %s", _source);
-        outline1("ADDA %s", _destination);
-        if ( _other ) {
-            outline1("STA %s", _other);
-        } else {
-            outline1("STA %s", _destination);
-        }
+        outline1("LDB %s", _source);
+        outline1("ADDB %s", _destination);
+        outline1("STB %s", _other ? _other : _destination);
 
-    no_embedded( cpu_greater_than_8bit )
+    no_embedded( cpu_math_add_8bit )
 
 }
 
 /**
  * @brief <i>CPU 6809</i>: emit code to subtract two 8 bit values
- * 
+ *
  * @param _environment Current calling environment
  * @param _source First value to subtract
  * @param _destination Second value to subtract and destination address for result (if _other is NULL)
@@ -704,13 +701,9 @@ void cpu6809_math_sub_8bit( Environment * _environment, char *_source, char *_de
 
     inline( cpu_math_sub_8bit )
 
-        outline1("LDA %s", _source);
-        outline1("SUBA %s", _destination);
-        if ( _other ) {
-            outline1("STA %s", _other);
-        } else {
-            outline1("STA %s", _destination);
-        }
+        outline1("LDB %s", _source);
+        outline1("SUBB %s", _destination);
+        outline1("STB %s", _other ? _other : _destination);
 
     no_embedded( cpu_math_sub_8bit )
 
@@ -718,7 +711,7 @@ void cpu6809_math_sub_8bit( Environment * _environment, char *_source, char *_de
 
 /**
  * @brief <i>CPU 6809</i>: emit code to double a 8 bit value
- * 
+ *
  * @param _environment Current calling environment
  * @param _source Value to double and destination for result (if _other is NULL)
  * @param _other Destination address for result
@@ -727,21 +720,17 @@ void cpu6809_math_double_8bit( Environment * _environment, char *_source, char *
 
     inline( cpu_math_sub_8bit )
 
-        outline1("LDA %s", _source);
-        outline0("ASLA");
-        if ( _other ) {
-            outline1("STA %s", _other);
-        } else {
-            outline1("STA %s", _source);
-        }
+        outline1("LDB %s", _source);
+        outline0("ASLB");
+        outline1("STB %s", _other ? _other : _source);
 
     no_embedded( cpu_math_sub_8bit )
 
 }
 
 /**
- * @brief <i>CPU 6809</i>: emit code to halves for several times a 8 bit value 
- * 
+ * @brief <i>CPU 6809</i>: emit code to halves for several times a 8 bit value
+ *
  * @param _environment Current calling environment
  * @param _source Value to halves and destination for result
  * @param _steps Times to halves
@@ -788,14 +777,14 @@ void cpu6809_math_div2_8bit( Environment * _environment, char *_source, int _ste
 
     embedded( cpu_math_div2_8bit, src_hw_6809_cpu_math_div2_8bit_asm );
 
-        outline1("LDA %s", _source);
-        outline1("LDB #$%2.2x", _steps);
+        outline1("LDB %s", _source);
+        outline1("LDA #$%2.2x", _steps);
         if ( _signed ) {
             outline0("JSR CPUMATHDIV28BIT_SIGNED");
         } else {
             outline0("JSR CPUMATHDIV28BIT");
         }
-        outline1("STA %s", _source);
+        outline1("STB %s", _source);
 
     done( )
 
@@ -803,7 +792,7 @@ void cpu6809_math_div2_8bit( Environment * _environment, char *_source, int _ste
 
 /**
  * @brief <i>CPU 6809</i>: emit code to multiply two 8bit values in a 16 bit register
- * 
+ *
  * @param _environment Current calling environment
  * @param _source First value to multipy (8 bit)
  * @param _destination Second value to multipy (8 bit)
@@ -871,19 +860,14 @@ void cpu6809_math_mul_8bit_to_16bit( Environment * _environment, char *_source, 
 
     embedded( cpu_math_mul_8bit_to_16bit, src_hw_6809_cpu_math_mul_8bit_to_16bit_asm );
 
+        outline1("LDB %s", _source );
+        outline1("LDA %s", _destination );
         if ( _signed ) {
-            outline1("LDA %s", _source );
-            outline0("STA <MATHPTR1" );
-            outline1("LDB %s", _destination );
-            outline0("STB <MATHPTR2" );
             outline0("JSR CPUMATHMUL8BITTO16BIT_SIGNED" );
-            outline1("STD %s", _other );
         } else {
-            outline1("LDA %s", _source );
-            outline1("LDB %s", _destination );
             outline0("MUL" );
-            outline1("STD %s", _other );
         }
+        outline1("STD %s", _other );
 
     done( )
 
@@ -955,28 +939,23 @@ void cpu6809_math_div_8bit_to_8bit( Environment * _environment, char *_source, c
 
     embedded( cpu_math_div_8bit_to_8bit, src_hw_6809_cpu_math_div_8bit_to_8bit_asm );
 
-        outline0("LDX #$0");
-        outline1("LDA %s", _source);
-        outline0("STA <MATHPTR0");
+        outline1("LDB %s", _source);
         outline1("LDA %s", _destination);
-        outline0("STA <MATHPTR1");
         if ( _signed ) {
             outline0("JSR CPUMATHDIV8BITTO8BIT_SIGNED");
         } else {
             outline0("JSR CPUMATHDIV8BITTO8BIT");
         }
-        outline0("LDA <MATHPTR2");
-        outline1("STA %s", _other);
-        outline0("LDA <MATHPTR3");
         outline1("STA %s", _other_remainder);
+        outline1("STB %s", _other);
 
     done( )
 
 }
 
 /**
- * @brief <i>CPU 6809</i>: emit code to halves for several times a 8 bit value 
- * 
+ * @brief <i>CPU 6809</i>: emit code to halves for several times a 8 bit value
+ *
  * @param _environment Current calling environment
  * @param _source Value to halves and destination for result
  * @param _steps Times to halves
@@ -1020,57 +999,43 @@ void cpu6809_math_div2_const_8bit( Environment * _environment, char *_source, in
 
     embedded( cpu_math_div2_8bit, src_hw_6809_cpu_math_div2_8bit_asm );
 
-        outline1("LDA %s", _source);
-        outline1("LDB #$%2.2x", _steps);
+        outline1("LDB %s", _source);
+        outline1("LDA #$%2.2x", _steps);
         if ( _signed ) {
             outline0("JSR CPUMATHDIV28BIT_SIGNED");
         } else {
             outline0("JSR CPUMATHDIV28BIT");
         }
-        outline1("STA %s", _source);
+        outline1("STB %s", _source);
 
     done( )
 }
 
 /**
- * @brief <i>CPU 6809</i>: emit code to double for several times a 8 bit value 
- * 
+ * @brief <i>CPU 6809</i>: emit code to double for several times a 8 bit value
+ *
  * @param _environment Current calling environment
  * @param _source Value to double and destination for result
  * @param _steps Times to double
  */
 void cpu6809_math_mul2_const_8bit( Environment * _environment, char *_source, int _steps, int _signed ) {
-
+    int i;
+    
     inline( cpu_math_mul2_const_8bit )
 
-        MAKE_LABEL
+        outline1("LDB %s", _source );           
+        for(i=0; i<_steps; ++i) {
+            outline0("LSLB" );
+        }
+        outline1("STB %s", _source );
 
-        outline1("LDA %s", _source);
-        outline1("LDB #$%2.2x", _steps);
-        outline0("CMPB #0");
-        outline1("BEQ %sdone", label);
-        outhead1("%sloop", label);
-        outline0("ASLA");
-        outline0("DECB");
-        outline0("CMPB #0");
-        outline1("BNE %sloop", label);
-        outhead1("%sdone", label);
-        outline1("STA %s", _source);
-
-    embedded( cpu_math_mul2_const_8bit, src_hw_6809_cpu_math_mul2_const_8bit_asm );
-
-        outline1("LDA %s", _source);
-        outline1("LDB #$%2.2x", _steps);
-        outline0("JSR CPUMATHMUL2CONST8BIT" );
-        outline1("STA %s", _source);
-
-    done( )
+    no_embedded( cpu_math_mul2_const_8bit );
 
 }
 
 /**
  * @brief <i>CPU 6809</i>: emit code to calculate an 8 bit complement of a number
- * 
+ *
  * @param _environment Current calling environment
  * @param _source Value to complement
  * @param _value Valure to use as base for complement
@@ -1079,9 +1044,9 @@ void cpu6809_math_complement_const_8bit( Environment * _environment, char *_sour
 
     inline( cpu_math_complement_const_8bit )
 
-        outline1("LDA #$%2.2x", _value);
-        outline1("SUBA %s", _source);
-        outline1("STA %s", _source);
+        outline1("LDB #$%2.2x", _value);
+        outline1("SUBB %s", _source);
+        outline1("STB %s", _source);
 
     no_embedded( cpu_math_complement_const_8bit )
 
@@ -1089,7 +1054,7 @@ void cpu6809_math_complement_const_8bit( Environment * _environment, char *_sour
 
 /**
  * @brief <i>CPU 6809</i>: emit code to mask with "and" a value of 8 bit
- * 
+ *
  * @param _environment Current calling environment
  * @param _source Value to mask (and destination of mask operation)
  * @param _mask Mask to use
@@ -1098,9 +1063,9 @@ void cpu6809_math_and_const_8bit( Environment * _environment, char *_source, int
 
     inline( cpu_math_and_const_8bit )
 
-        outline1("LDA %s", _source);
-        outline1("ANDA %2.2x", _mask);
-        outline1("STA %s", _source);
+        outline1("LDB %s", _source);
+        outline1("ANDB %2.2x", _mask);
+        outline1("STB %s", _source);
 
     no_embedded( cpu_math_and_const_8bit )
 
@@ -1112,7 +1077,7 @@ void cpu6809_math_and_const_8bit( Environment * _environment, char *_source, int
 
 /**
  * @brief <i>CPU 6809</i>: emit code to move 16 bit
- * 
+ *
  * @param _environment Current calling environment
  * @param _source Source of movement
  * @param _destination Destination of movement
@@ -1132,8 +1097,8 @@ void cpu6809_addressof_16bit( Environment * _environment, char *_source, char *_
 
     inline( cpu_addressof_16bit )
 
-        outline1("LDX #%s", _source);
-        outline1("STX %s", _destination);
+        outline1("LDD #%s", _source);
+        outline1("STD %s", _destination);
 
     no_embedded( cpu_addressof_16bit )
 
@@ -1141,7 +1106,7 @@ void cpu6809_addressof_16bit( Environment * _environment, char *_source, char *_
 
 /**
  * @brief <i>CPU 6809</i>: emit code to store 16 bit
- * 
+ *
  * @param _environment Current calling environment
  * @param _destination Destination of store
  * @param _value Value to store
@@ -1150,13 +1115,8 @@ void cpu6809_store_16bit( Environment * _environment, char *_destination, int _v
 
     inline( cpu_store_16bit )
 
-        if ( _value ) {
-            outline1("LDD #$%4.4x", (unsigned int)( _value & 0xffff ) );
-            outline1("STD %s", _destination );
-        } else {
-            outline1("CLR %s", _destination );
-            outline1("CLR %s+1", _destination );
-        }
+        outline1("LDD #$%4.4x", (unsigned int)( _value & 0xffff ) );
+        outline1("STD %s", _destination );
 
     no_embedded( cpu_store_16bit )
 
@@ -1164,7 +1124,7 @@ void cpu6809_store_16bit( Environment * _environment, char *_destination, int _v
 
 /**
  * @brief <i>CPU 6809</i>: emit code to compare two 16 bit values
- * 
+ *
  * @param _environment Current calling environment
  * @param _source First value to compare
  * @param _destination Second value to compare and destination address for result (if _other is NULL)
@@ -1175,26 +1135,7 @@ void cpu6809_compare_16bit( Environment * _environment, char *_source, char *_de
 
     inline( cpu_compare_16bit )
 
-        MAKE_LABEL
-
-        outline1("LDX %s", _source);
-        outline1("CMPX %s", _destination);
-        outline1("BEQ %seq", label);
-        outline1("LDA #$%2.2x", ( _positive ) ? 0x00 : 0xff );
-        if ( _other ) {
-            outline1("STA %s", _other);
-        } else {
-            outline1("STA %s", _destination);
-        }
-        outline1("JMP %sdone", label);
-        outhead1("%seq", label );
-        outline1("LDA #$%2.2x", ( _positive ) ? 0xff : 0x00 );
-        if ( _other ) {
-            outline1("STA %s", _other);
-        } else {
-            outline1("STA %s", _destination);
-        }
-        outhead1("%sdone", label );
+        cpu6809_compare( _environment, _source, _destination, _other, _positive, 16 );
 
     no_embedded( cpu_compare_16bit )
 
@@ -1216,9 +1157,9 @@ void cpu6809_compare_and_branch_16bit_const( Environment * _environment, char *_
         outline1("LDX %s", _source);
         outline1("CMPX #$%4.4x", _destination);
         if ( _positive ) {
-            outline1("LBEQ %s", _label);
+            B(EQ, _label);
         } else {
-            outline1("LBNE %s", _label);
+            B(NE, _label);
         }
 
     no_embedded( cpu_compare_and_branch_16bit_const )
@@ -1227,7 +1168,7 @@ void cpu6809_compare_and_branch_16bit_const( Environment * _environment, char *_
 
 /**
  * @brief <i>CPU 6809</i>: emit code to compare two 8 bit values
- * 
+ *
  * @param _environment Current calling environment
  * @param _source First value to compare
  * @param _destination Second value to compare and destination address for result (if _other is NULL)
@@ -1238,38 +1179,7 @@ void cpu6809_less_than_16bit( Environment * _environment, char *_source, char *_
 
     inline( cpu_less_than_16bit )
 
-        MAKE_LABEL
-
-        outline1("LDX %s", _source);
-        outline1("CMPX %s", _destination);
-        if ( _signed ) {
-            if ( _equal ) {
-                outline1("BLE %seq", label);
-            } else {
-                outline1("BLT %seq", label);
-            }
-        } else {
-            if ( _equal ) {
-                outline1("BLS %seq", label);
-            } else {
-                outline1("BLO %seq", label);    
-            }
-        }
-        outline1("LDA #$%2.2x", 0x00 );
-        if ( _other ) {
-            outline1("STA %s", _other);
-        } else {
-            outline1("STA %s", _destination);
-        }
-        outline1("JMP %sdone", label);
-        outhead1("%seq", label );
-        outline1("LDA #$%2.2x", 0xff );
-        if ( _other ) {
-            outline1("STA %s", _other);
-        } else {
-            outline1("STA %s", _destination);
-        }
-        outhead1("%sdone", label );
+        cpu6809_less_than( _environment, _source, _destination,  _other, _equal, _signed, 16 );
 
     no_embedded( cpu_compare_16bit )
 
@@ -1277,7 +1187,7 @@ void cpu6809_less_than_16bit( Environment * _environment, char *_source, char *_
 
 /**
  * @brief <i>CPU 6809</i>: emit code to compare two 8 bit values
- * 
+ *
  * @param _environment Current calling environment
  * @param _source First value to compare
  * @param _destination Second value to compare and destination address for result (if _other is NULL)
@@ -1288,38 +1198,7 @@ void cpu6809_greater_than_16bit( Environment * _environment, char *_source, char
 
     inline( cpu_greater_than_16bit )
 
-        MAKE_LABEL
-
-        outline1("LDX %s", _source);
-        outline1("CMPX %s", _destination);
-        if ( _signed ) {
-            if ( _equal ) {
-                outline1("BGE %seq", label);
-            } else {
-                outline1("BGT %seq", label);
-            }
-        } else {
-            if ( _equal ) {
-                outline1("BHS %seq", label);
-            } else {
-                outline1("BHI %seq", label);    
-            }
-        }
-        outline1("LDA #$%2.2x", 0x00 );
-        if ( _other ) {
-            outline1("STA %s", _other);
-        } else {
-            outline1("STA %s", _destination);
-        }
-        outline1("JMP %sdone", label);
-        outhead1("%seq", label );
-        outline1("LDA #$%2.2x", 0xff );
-        if ( _other ) {
-            outline1("STA %s", _other);
-        } else {
-            outline1("STA %s", _destination);
-        }
-        outhead1("%sdone", label );
+        cpu6809_greater_than( _environment, _source, _destination,  _other, _equal, _signed, 16 );
 
     no_embedded( cpu_greater_than_16bit )
 
@@ -1327,7 +1206,7 @@ void cpu6809_greater_than_16bit( Environment * _environment, char *_source, char
 
 /**
  * @brief <i>CPU 6809</i>: emit code to add two 16 bit values
- * 
+ *
  * @param _environment Current calling environment
  * @param _source First value to add
  * @param _destination Second value to add and destination address for result (if _other is NULL)
@@ -1337,13 +1216,10 @@ void cpu6809_math_add_16bit( Environment * _environment, char *_source, char *_d
 
     inline( cpu_math_add_16bit )
 
-        outline1("LDD %s", _source);
-        outline1("ADDD %s", _destination);
-        if ( _other ) {
-            outline1("STD %s", _other);
-        } else {
-            outline1("STD %s", _destination);
-        }
+        // this way has more affinity with peephole optimizations
+        outline1("LDD %s", _destination);
+        outline1("ADDD %s", _source);
+        outline1("STD %s", _other ? _other : _destination);
 
     no_embedded( cpu_math_add_16bit )
 
@@ -1351,7 +1227,7 @@ void cpu6809_math_add_16bit( Environment * _environment, char *_source, char *_d
 
 /**
  * @brief <i>CPU 6809</i>: emit code to add two 16 bit values
- * 
+ *
  * @param _environment Current calling environment
  * @param _source First value to add
  * @param _destination Second value to add and destination address for result (if _other is NULL)
@@ -1363,12 +1239,8 @@ void cpu6809_math_add_16bit_with_16bit( Environment * _environment, char *_sourc
 
         outline1("LDD %s", _source);
         outline1("ADDD #%s", _destination);
-        if ( _other ) {
-            outline1("STD %s", _other);
-        } else {
-            outline1("STD %s", _destination);
-        }
-
+        outline1("STD %s", _other ? _other : _destination);
+        
     no_embedded( cpu_math_add_16bit_with_16bit )
 
 }
@@ -1379,13 +1251,8 @@ void cpu6809_math_add_16bit_with_8bit( Environment * _environment, char *_source
 
         outline1("LDX %s", _source);
         outline1("LDB %s", _destination);
-        outline0("LDA #$0");
-        outline0("LEAX D, X");
-        if ( _other ) {
-            outline1("STX %s", _other);
-        } else {
-            outline1("STX %s", _destination);
-        }
+        outline0("ABX");
+        outline1("STX %s", _other ? _other : _destination );
 
     no_embedded( cpu_math_add_16bit_with_8bit )
 
@@ -1393,7 +1260,7 @@ void cpu6809_math_add_16bit_with_8bit( Environment * _environment, char *_source
 
 /**
  * @brief <i>CPU 6809</i>: emit code to double a 16 bit value
- * 
+ *
  * @param _environment Current calling environment
  * @param _source Value to double and destination for result (if _other is NULL)
  * @param _other Destination address for result
@@ -1402,13 +1269,14 @@ void cpu6809_math_double_16bit( Environment * _environment, char *_source, char 
 
     inline( cpu_math_double_16bit )
 
-        outline1("LDX %s", _source);
-        outline0("TFR X, D");
-        outline0("LEAX D, X");
-        if ( _other ) {
-            outline1("STX %s", _other);
+        if(_other) {
+            outline1("LDD %s", _source);
+            outline0("LSLB");
+            outline0("ROLA");
+            outline1("STD %s", _other);
         } else {
-            outline1("STX %s", _source);
+            outline1("LSL %s+1", _source);
+            outline1("ROL %s",   _source);
         }
 
     no_embedded( cpu_math_double_16bit )
@@ -1417,7 +1285,7 @@ void cpu6809_math_double_16bit( Environment * _environment, char *_source, char 
 
 /**
  * @brief <i>CPU 6809</i>: emit code to multiply two 16 bit values in a 32 bit register
- * 
+ *
  * @param _environment Current calling environment
  * @param _source First value to multipy (16 bit)
  * @param _destination Second value to multipy (16 bit)
@@ -1475,10 +1343,10 @@ void cpu6809_math_mul_16bit_to_32bit( Environment * _environment, char *_source,
             outline0("STX <MATHPTR2" );
             outhead1("%sdone2", label );
         } else {
-            outline1("LDX %s", _source );
-            outline0("STX <MATHPTR0" );
-            outline1("LDX %s", _destination );
-            outline0("STX <MATHPTR2" );
+            outline1("LDD %s", _source );
+            outline0("STD <MATHPTR0" );
+            outline1("LDD %s", _destination );
+            outline0("STD <MATHPTR2" );
         }
         outline0("LDA <MATHPTR0" );
         outline0("LDB <MATHPTR2" );
@@ -1490,7 +1358,7 @@ void cpu6809_math_mul_16bit_to_32bit( Environment * _environment, char *_source,
         outline0("MUL" );
         outline1("STD %s+2", _other );
 
-        outline0("LDA <MATHPTR1" ); 
+        outline0("LDA <MATHPTR1" );
         outline0("LDB <MATHPTR2" );
         outline0("MUL" );
         outline0("TFR D, X" );
@@ -1541,10 +1409,8 @@ void cpu6809_math_mul_16bit_to_32bit( Environment * _environment, char *_source,
 
     embedded( cpu_math_mul_16bit_to_32bit, src_hw_6809_cpu_math_mul_16bit_to_32bit_asm );
 
+        outline1("LDD %s", _destination );
         outline1("LDX %s", _source );
-        outline0("STX <MATHPTR0" );
-        outline1("LDX %s", _destination );
-        outline0("STX <MATHPTR2" );
 
         if ( _signed ) {
             outline0("JSR CPUMATHMUL16BITTO32BIT_SIGNED" );
@@ -1552,13 +1418,11 @@ void cpu6809_math_mul_16bit_to_32bit( Environment * _environment, char *_source,
             outline0("JSR CPUMATHMUL16BITTO32BIT" );
         }
 
-        outline0("LDX <MATHPTR4" );
         outline1("STX %s", _other );
-        outline0("LDX <MATHPTR6" );
-        outline1("STX %s+2", _other );
+        outline1("STD %s+2", _other );
 
     done( )
-    
+
 }
 
 void cpu6809_math_div_16bit_to_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, char * _other_remainder, int _signed ) {
@@ -1587,7 +1451,7 @@ void cpu6809_math_div_16bit_to_16bit( Environment * _environment, char *_source,
             outline0("ANDCC #$FE" );
             outline0("LDD <MATHPTR0" );
             outline0("ADDD #1" );
-            outline0("STD <MATHPTR0" );        
+            outline0("STD <MATHPTR0" );
             outline1("JMP %ssecond2", label );
             outhead1("%ssecond", label );
             outline1("LDD %s", _source );
@@ -1659,7 +1523,7 @@ void cpu6809_math_div_16bit_to_16bit( Environment * _environment, char *_source,
             outline0("ADDD #1" );
             outline1("STD %s", _other );
             outhead1("%sdone", label );
-                    
+
         } else {
 
             outline1("LDX %s", _source );
@@ -1691,23 +1555,23 @@ void cpu6809_math_div_16bit_to_16bit( Environment * _environment, char *_source,
 
     embedded( cpu_math_div_16bit_to_16bit, src_hw_6809_cpu_math_div_16bit_to_16bit_asm );
 
-        outline1("LDX %s", _source );
-        outline1("LDY %s", _destination );
+        outline1("LDD %s", _source );
+        outline1("LDX %s", _destination );
         if ( _signed ) {
             outline0("JSR CPUMATHDIV16BITTO16BIT_SIGNED" );
         } else {
             outline0("JSR CPUMATHDIV16BITTO16BIT" );
         }
-        outline1("STX %s", _other );
-        outline1("STY %s", _other_remainder );
+        outline1("STX %s", _other_remainder );
+        outline1("STD %s", _other );
 
     done( )
-    
+
 }
 
 /**
  * @brief <i>CPU 6809</i>: emit code to subtract two 16 bit values
- * 
+ *
  * @param _environment Current calling environment
  * @param _source First value to subtract
  * @param _destination Second value to subtract and destination address for result (if _other is NULL)
@@ -1717,19 +1581,9 @@ void cpu6809_math_sub_16bit( Environment * _environment, char *_source, char *_d
 
     inline( cpu_math_sub_16bit )
 
-        outline1("LDD %s", _destination );
-        outline0("ANDCC #$FE" );
-        outline0("EORA #$FF" );
-        outline0("EORB #$FF" );
-        outline0("ADDD #1" );
-
-        outline1("LDY %s", _source );
-        outline0("LEAY D, Y" );
-        if ( _other ) {
-            outline1("STY %s", _other );
-        } else {
-            outline1("STY %s", _destination );
-        }
+        outline1("LDD %s", _source );
+        outline1("SUBD %s", _destination);
+        outline1("STD %s", _other ? _other : _destination );
 
     no_embedded( cpu_math_sub_16bit );
 
@@ -1739,20 +1593,10 @@ void cpu6809_math_sub_16bit_with_8bit( Environment * _environment, char *_source
 
     inline( cpu_math_sub_16bit_with_8bit )
 
-        outline1("LDB %s", _destination );
-        outline0("LDA #0" );
-        outline0("ANDCC #$FE" );
-        outline0("EORA #$FF" );
-        outline0("EORB #$FF" );
-        outline0("ADDD #1" );
-
-        outline1("LDY %s", _source );
-        outline0("LEAY D, Y" );
-        if ( _other ) {
-            outline1("STY %s", _other );
-        } else {
-            outline1("STY %s", _destination );
-        }
+        outline1("LDD %s", _source );
+        outline1("SUBB %s", _destination);
+        outline0("SBCA #0");
+        outline1("STD %s", _other ? _other : _destination );
 
     no_embedded( cpu_math_sub_16bit_with_8bit );
 
@@ -1760,7 +1604,7 @@ void cpu6809_math_sub_16bit_with_8bit( Environment * _environment, char *_source
 
 /**
  * @brief <i>CPU 6809</i>: emit code to calculate a 16 bit complement of a number
- * 
+ *
  * @param _environment Current calling environment
  * @param _source Value to complement
  * @param _value Valure to use as base for complement
@@ -1769,22 +1613,17 @@ void cpu6809_math_complement_const_16bit( Environment * _environment, char *_sou
 
     inline( cpu_math_complement_const_16bit )
 
-        outline1("LDX #$%2.2x", _value);
-        outline1("LDD %s", _source );
-        outline0("ANDCC #$FE" );
-        outline0("EORA #$FF" );
-        outline0("EORB #$FF" );
-        outline0("ADDD #1" );
-        outline0("LEAX D, X");
-        outline1("STX %s", _source);
+        outline1("LDD #$%2.2x", _value);
+        outline1("SUBD %s", _source );
+        outline1("STD %s", _source);
 
     no_embedded( cpu_math_complement_const_16bit );
 
 }
 
 /**
- * @brief <i>CPU 6809</i>: emit code to halves for several times a 16 bit value 
- * 
+ * @brief <i>CPU 6809</i>: emit code to halves for several times a 16 bit value
+ *
  * @param _environment Current calling environment
  * @param _source Value to halves and destination for result
  * @param _steps Times to halves
@@ -1800,7 +1639,7 @@ void cpu6809_math_div2_const_16bit( Environment * _environment, char *_source, i
             outline1("LDA %s", _source);
             outline0("ANDA #$80");
             outline1("BEQ %spos", label );
-            
+
             outline1("LDD %s", _source );
             outline0("ANDCC #$FE" );
             outline0("EORA #$FF" );
@@ -1874,99 +1713,32 @@ void cpu6809_math_div2_const_16bit( Environment * _environment, char *_source, i
 }
 
 /**
- * @brief <i>CPU 6809</i>: emit code to halves for several times a 8 bit value 
- * 
+ * @brief <i>CPU 6809</i>: emit code to halves for several times a 8 bit value
+ *
  * @param _environment Current calling environment
  * @param _source Value to halves and destination for result
  * @param _steps Times to halves
  */
 void cpu6809_math_mul2_const_16bit( Environment * _environment, char *_source, int _steps, int _signed ) {
+    int i;
 
     inline( cpu_math_mul2_const_16bit )
 
-        MAKE_LABEL
 
-        if ( _signed ) {
-
-            outline1("LDA %s", _source);
-            outline0("ANDA #$80");
-            outline1("BEQ %spos", label );
-            
-            outline1("LDD %s", _source );
-            outline0("ANDCC #$FE" );
-            outline0("EORA #$FF" );
-            outline0("EORB #$FF" );
-            outline0("ADDD #1" );
-
-            outline1("JMP %sdone", label );
-
-            outhead1("%spos", label );
-            outline1("LDD %s", _source );
-
-            outhead1("%sdone", label );
-
-            outline1("LDX #$%2.2x", _steps );
-            outhead1("%sloop", label );
-            outline0("ANDCC #$FE" );
-            outline0("ASLB" );
+        outline1("LDD %s", _source );           
+        for(i=0; i<_steps; ++i) {
+            outline0("LSLB" );
             outline0("ROLA" );
-            outline0("LEAX -1, X");
-            outline0("CMPX #0");
-            outline1("BNE %sloop", label );
-
-            outline0("STD <MATHPTR0");
-
-            outline1("LDA %s", _source);
-            outline0("ANDA #$80");
-            outline1("BEQ %spos2", label );
-
-            outline0("LDD <MATHPTR0");
-            outline0("ANDCC #$FE" );
-            outline0("EORA #$FF" );
-            outline0("EORB #$FF" );
-            outline0("ADDD #1" );
-
-            outline1("JMP %sdone2", label );
-
-            outhead1("%spos2", label );
-            outline0("LDD <MATHPTR0");
-            outhead1("%sdone2", label );
-            outline1("STD %s", _source );
-
-        } else {
-
-            outline1("LDD %s", _source );
-            outline1("LDX #$%2.2x", _steps );
-            outhead1("%sloop", label );
-            outline0("ANDCC #$FE" );
-            outline0("ASLB" );
-            outline0("ROLA" );
-            outline0("LEAX -1, X");
-            outline0("CMPX #0");
-            outline1("BNE %sloop", label );
-            outline1("STD %s", _source );
-
-        }
-
-    embedded( cpu_math_mul2_const_16bit, src_hw_6809_cpu_math_mul2_const_16bit_asm );
-
-        outline1("LDD %s", _source );
-        outline1("LDX #$%2.2x", _steps );
-
-        if ( _signed ) {
-            outline0("JSR CPUMATHMUL2CONST16BIT_SIGNED");
-        } else {
-            outline0("JSR CPUMATHMUL2CONST16BIT");
         }
         outline1("STD %s", _source );
 
-    done( )
+    no_embedded( cpu_math_mul2_const_16bit );
 
 }
 
 /**
  * @brief <i>CPU 6809</i>: emit code to mask with "and" a value of 16 bit
- * 
+ *
  * @param _environment Current calling environment
  * @param _source Value to mask (and destination of mask operation)
  * @param _mask Mask to use
@@ -1990,7 +1762,7 @@ void cpu6809_math_and_const_16bit( Environment * _environment, char *_source, in
 
 /**
  * @brief <i>CPU 6809</i>: emit code to move 32 bit
- * 
+ *
  * @param _environment Current calling environment
  * @param _source Source of movement
  * @param _destination Destination of movement
@@ -2010,7 +1782,7 @@ void cpu6809_move_32bit( Environment * _environment, char *_source, char *_desti
 
 /**
  * @brief <i>CPU 6809</i>: emit code to store 32 bit
- * 
+ *
  * @param _environment Current calling environment
  * @param _destination Destination of store
  * @param _value Value to store
@@ -2019,17 +1791,11 @@ void cpu6809_store_32bit( Environment * _environment, char *_destination, int _v
 
     inline( cpu_store_32bit )
 
-        if ( _value ) {
-            outline1("LDD #$%4.4x", ( _value >> 16 ) & 0xffff );
-            outline1("STD %s", _destination );
-            outline1("LDD #$%4.4x", ( _value & 0xffff ) );
-            outline1("STD %s+2", _destination );
-        } else {
-            outline1("CLR %s", _destination );
-            outline1("CLR %s+1", _destination );
-            outline1("CLR %s+2", _destination );
-            outline1("CLR %s+3", _destination );
-        }
+        outline1("LDD #$%4.4x", ( _value >> 16 ) & 0xffff );
+        outline1("STD %s", _destination );
+        if((( _value >> 16 ) & 0xffff) != ( _value & 0xffff ))
+        outline1("LDD #$%4.4x", ( _value & 0xffff ) );
+        outline1("STD %s+2", _destination );
 
     no_embedded( cpu_store_32bit );
 
@@ -2043,7 +1809,7 @@ void cpu6809_math_div_32bit_to_16bit( Environment * _environment, char *_source,
 
 /**
  * @brief <i>CPU 6809</i>: emit code to compare two 32 bit values
- * 
+ *
  * @param _environment Current calling environment
  * @param _source First value to compare
  * @param _destination Second value to compare and destination address for result (if _other is NULL)
@@ -2063,7 +1829,7 @@ void cpu6809_compare_32bit( Environment * _environment, char *_source, char *_de
 
             cpu6809_compare_16bit( _environment, _source, _destination, _other, _positive );
 
-            outline1("LDA %s", _other );
+            outline1("LDB %s", _other );
             outline1("BEQ %sdone", label );
 
             cpu6809_compare_16bit( _environment, sourceEffective, destinationEffective, _other, _positive );
@@ -2072,7 +1838,7 @@ void cpu6809_compare_32bit( Environment * _environment, char *_source, char *_de
 
             cpu6809_compare_16bit( _environment, _source, _destination, _other, _positive );
 
-            outline1("LDA %s", _other );
+            outline1("LDB %s", _other );
             outline1("BNE %sdone", label );
 
             cpu6809_compare_16bit( _environment, sourceEffective, destinationEffective, _other, _positive );
@@ -2103,18 +1869,17 @@ void cpu6809_compare_and_branch_32bit_const( Environment * _environment, char *_
         outline1("LDX %s", _source);
         outline1("CMPX #$%4.4x", ( ( _destination >> 16 ) & 0xffff ) );
         if ( _positive ) {
-            outline1("BNE %s", label);
+            B(NE, label);
         } else {
-            outline1("BEQ %s", label);
+            B(EQ, label);
         }
         outline1("LDX %s+2", _source);
         outline1("CMPX #$%4.4x", ( _destination & 0xffff ) );
         if ( _positive ) {
-            outline1("BNE %s", label);
+            B(EQ, _label);
         } else {
-            outline1("BEQ %s", label);
+            B(NE, _label);
         }
-        outline1("JMP %s", _label);
         outhead1("%s", label);
 
     no_embedded( cpu_compare_and_branch_32bit_const )
@@ -2123,7 +1888,7 @@ void cpu6809_compare_and_branch_32bit_const( Environment * _environment, char *_
 
 /**
  * @brief <i>CPU 6809</i>: emit code to compare two 32 bit values
- * 
+ *
  * @param _environment Current calling environment
  * @param _source First value to compare
  * @param _destination Second value to compare and destination address for result (if _other is NULL)
@@ -2136,64 +1901,30 @@ void cpu6809_less_than_32bit( Environment * _environment, char *_source, char *_
 
         MAKE_LABEL
 
+        outline0("CLRA");
         outline1("LDX %s", _source);
         outline1("CMPX %s", _destination);
-        outline1("BEQ %slow", label);
-
-        outline1("LDX %s", _source);
-        outline1("CMPX %s", _destination);
-        if ( _signed ) {
-            if ( _equal ) {
-                outline1("BLE %seq", label);
-            } else {
-                outline1("BLT %seq", label);
-            }
-        } else {
-            if ( _equal ) {
-                outline1("BLS %seq", label);
-            } else {
-                outline1("BLO %seq", label);    
-            }
-        }
-        outline1("JMP %sdiff", label);
-
-        outhead1("%slow", label );
+        outline1("BNE %shigh", label);
         outline1("LDX %s+2", _source);
         outline1("CMPX %s+2", _destination);
+        outhead1("%shigh", label );
+
         if ( _signed ) {
             if ( _equal ) {
-                outline1("BLE %seq", label);
+                outline1("BGT %sdone", label);
             } else {
-                outline1("BLT %seq", label);
+                outline1("BGE %sdone", label);
             }
         } else {
             if ( _equal ) {
-                outline1("BLS %seq", label);
+                outline1("BHI %sdone", label);
             } else {
-                outline1("BLO %seq", label);    
+                outline1("BHS %sdone", label);
             }
         }
-        outline1("JMP %sdiff", label);
-
-        outhead1("%sdiff", label );
-        outline1("LDA #$%2.2x", 0x00 );
-        if ( _other ) {
-            outline1("STA %s", _other);
-        } else {
-            outline1("STA %s", _destination);
-        }
-        outline1("JMP %sdone", label);
-        outhead1("%seq", label );
-        outline1("LDA #$%2.2x", 0xff );
-        if ( _other ) {
-            outline1("STA %s", _other);
-        } else {
-            outline1("STA %s", _destination);
-        }
-        outline1("JMP %sdone", label);
-
-
+        outline0("DECA");
         outhead1("%sdone", label );
+        outline1("STA %s", _other ? _other : _destination );
 
     no_embedded( cpu_less_than_32bit )
 
@@ -2202,7 +1933,7 @@ void cpu6809_less_than_32bit( Environment * _environment, char *_source, char *_
 
 /**
  * @brief <i>CPU 6809</i>: emit code to compare two 8 bit values
- * 
+ *
  * @param _environment Current calling environment
  * @param _source First value to compare
  * @param _destination Second value to compare and destination address for result (if _other is NULL)
@@ -2214,64 +1945,32 @@ void cpu6809_greater_than_32bit( Environment * _environment, char *_source, char
     inline( cpu_greater_than_32bit )
 
         MAKE_LABEL
-        
+
+        outline0("CLRB");
         outline1("LDX %s", _source);
         outline1("CMPX %s", _destination);
-        outline1("BEQ %slow", label);
-
-        outline1("LDX %s", _source);
-        outline1("CMPX %s", _destination);
-        if ( _signed ) {
-            if ( _equal ) {
-                outline1("BGE %seq", label);
-            } else {
-                outline1("BGT %seq", label);
-            }
-        } else {
-            if ( _equal ) {
-                outline1("BHS %seq", label);
-            } else {
-                outline1("BHI %seq", label);    
-            }
-        }
-        outline1("JMP %sdiff", label);
-
-        outhead1("%slow", label );
+        outline1("BNE %shigh", label);
         outline1("LDX %s+2", _source);
         outline1("CMPX %s+2", _destination);
+        outhead1("%shigh", label );
+
         if ( _signed ) {
             if ( _equal ) {
-                outline1("BGE %seq", label);
+                outline1("BLT %sdone", label);
             } else {
-                outline1("BGT %seq", label);
+                outline1("BLE %sdone", label);
             }
         } else {
             if ( _equal ) {
-                outline1("BHS %seq", label);
+                outline1("BLO %sdone", label);
             } else {
-                outline1("BHI %seq", label);    
+                outline1("BLS %sdone", label);
             }
         }
-        outline1("JMP %sdiff", label);
 
-        outhead1("%sdiff", label );
-        outline1("LDA #$%2.2x", 0x00 );
-        if ( _other ) {
-            outline1("STA %s", _other);
-        } else {
-            outline1("STA %s", _destination);
-        }
-        outline1("JMP %sdone", label);
-        outhead1("%seq", label );
-        outline1("LDA #$%2.2x", 0xff );
-        if ( _other ) {
-            outline1("STA %s", _other);
-        } else {
-            outline1("STA %s", _destination);
-        }
-        outline1("JMP %sdone", label);
-
+        outline0("DECB");
         outhead1("%sdone", label );
+        outline1("STB %s", _other ? _other : _destination );
 
     no_embedded( cpu_greater_than_32bit )
 
@@ -2279,7 +1978,7 @@ void cpu6809_greater_than_32bit( Environment * _environment, char *_source, char
 
 /**
  * @brief <i>CPU 6809</i>: emit code to add two 32 bit values
- * 
+ *
  * @param _environment Current calling environment
  * @param _source First value to add
  * @param _destination Second value to add and destination address for result (if _other is NULL)
@@ -2291,40 +1990,18 @@ void cpu6809_math_add_32bit( Environment * _environment, char *_source, char *_d
 
         MAKE_LABEL
 
-        outline0("ANDCC #$FF");
         outline1("LDD %s+2", _source);
-        outline1("ADDD %s+2", _destination);
+        outline1("LDX #%s", _destination);
+        outline0("ADDD 2,X");
         if ( _other ) {
             outline1("STD %s+2", _other);
         } else {
-            outline1("STD %s+2", _destination);
+            outline0("STD 2,X");
         }
-        outline1("BCC %snocarry", label);
-        outline0("LDA #1");
-        outline0("STA <MATHPTR0");
-        outhead1("%snocarry", label);
         outline1("LDD %s", _source);
-        outline1("ADDD %s", _destination);
-        if ( _other ) {
-            outline1("STD %s", _other);
-        } else {
-            outline1("STD %s", _destination);
-        }
-        outline0("LDA <MATHPTR0");
-        outline0("CMPA #1");
-        outline1("BNE %snocarry2", label);
-        if ( _other ) {
-            outline1("LDD %s", _other);
-        } else {
-            outline1("LDD %s", _destination);
-        }
-        outline0("ADDD #1");
-        if ( _other ) {
-            outline1("STD %s", _other);
-        } else {
-            outline1("STD %s", _destination);
-        }
-        outhead1("%snocarry2", label);
+        outline0("ADCB 1,X");
+        outline0("ADCA ,X");
+        outline1("STD %s", _other ? _other : ",X" );
 
     no_embedded( cpu_math_add_32bit )
 
@@ -2332,7 +2009,7 @@ void cpu6809_math_add_32bit( Environment * _environment, char *_source, char *_d
 
 /**
  * @brief <i>CPU 6809</i>: emit code to double a 32 bit value
- * 
+ *
  * @param _environment Current calling environment
  * @param _source Value to double and destination for result (if _other is NULL)
  * @param _other Destination address for result
@@ -2341,7 +2018,21 @@ void cpu6809_math_double_32bit( Environment * _environment, char *_source, char 
 
     inline( cpu_math_double_32bit )
 
-    cpu6809_math_add_32bit( _environment, _source, _source, _other );
+        if(_other) {
+            outline1("LDD %s+2", _source);
+            outline0("LSLB");
+            outline0("ROLA");
+            outline1("STD %s+2", _other);
+            outline1("LDD %s", _source);
+            outline0("ROLB");
+            outline0("ROLA");
+            outline1("STD %s", _other);
+        } else {
+            outline1("LSL %s+3", _source);
+            outline1("ROL %s+2", _source);
+            outline1("ROL %s+1", _source);
+            outline1("ROL %s",   _source);
+        }
 
     no_embedded( cpu_math_double_32bit )
 
@@ -2349,7 +2040,7 @@ void cpu6809_math_double_32bit( Environment * _environment, char *_source, char 
 
 /**
  * @brief <i>CPU 6809</i>: emit code to subtract two 32 bit values
- * 
+ *
  * @param _environment Current calling environment
  * @param _source First value to subtract
  * @param _destination Second value to subtract and destination address for result (if _other is NULL)
@@ -2359,50 +2050,26 @@ void cpu6809_math_sub_32bit( Environment * _environment, char *_source, char *_d
 
     inline( cpu_math_sub_32bit )
 
-        MAKE_LABEL
-
-        outline0("ANDCC #$FF");
         outline1("LDD %s+2", _source);
-        outline1("SUBD %s+2", _destination);
+        outline1("LDX #%s", _destination);
+        outline0("SUBD 2,X");
         if ( _other ) {
             outline1("STD %s+2", _other);
         } else {
-            outline1("STD %s+2", _destination);
+            outline0("STD 2,X");
         }
-        outline1("BCC %snocarry", label);
-        outline0("LDA #1");
-        outline0("STA <MATHPTR0");
-        outhead1("%snocarry", label);
         outline1("LDD %s", _source);
-        outline1("SUBD %s", _destination);
-        if ( _other ) {
-            outline1("STD %s", _other);
-        } else {
-            outline1("STD %s", _destination);
-        }
-        outline0("LDA <MATHPTR0");
-        outline0("CMPA #1");
-        outline1("BNE %snocarry2", label);
-        if ( _other ) {
-            outline1("LDD %s", _other);
-        } else {
-            outline1("LDD %s", _destination);
-        }
-        outline0("SUBD #1");
-        if ( _other ) {
-            outline1("STD %s", _other);
-        } else {
-            outline1("STD %s", _destination);
-        }
-        outhead1("%snocarry2", label);
-    
+        outline0("SBCB 1,X");
+        outline0("SBCA ,X");
+        outline1("STD %s", _other ? _other : ",X");
+        
     no_embedded( cpu_math_sub_32bit )
 
 }
 
 /**
  * @brief <i>CPU 6809</i>: emit code to calculate a 32 bit complement of a number
- * 
+ *
  * @param _environment Current calling environment
  * @param _source Value to complement
  * @param _value Valure to use as base for complement
@@ -2411,34 +2078,22 @@ void cpu6809_math_complement_const_32bit( Environment * _environment, char *_sou
 
     inline( cpu_math_complement_const_32bit )
 
-        MAKE_LABEL
-
-        outline0("ANDCC #$FF");
+        outline1("LDX #%s", _source);
         outline1("LDD #$%4.4x", ( _value ) & 0xffff );
-        outline1("SUBD %s+2", _source);
-        outline1("STD %s+2", _source);
-        outline1("BCC %snocarry", label);
-        outline0("LDA #1");
-        outline0("STA <MATHPTR0");
-        outhead1("%snocarry", label);
+        outline0("SUBD 2,X");
+        outline0("STD 2,X");
         outline1("LDD #$%4.4x", ( _value>>16 ) & 0xffff );
-        outline1("SUBD %s", _source);
-        outline1("STD %s", _source);
-        outline0("LDA <MATHPTR0");
-        outline0("CMPA #1");
-        outline1("BNE %snocarry2", label);
-        outline1("LDD %s", _source);
-        outline0("SUBD #1");
-        outline1("STD %s", _source);
-        outhead1("%snocarry2", label);
+        outline0("SBCB 1,X");
+        outline0("SBCA ,X");
+        outline0("STD ,X");
 
     no_embedded( cpu_math_complement_const_32bit )
 
 }
 
 /**
- * @brief <i>CPU 6809</i>: emit code to halves for several times a 32 bit value 
- * 
+ * @brief <i>CPU 6809</i>: emit code to halves for several times a 32 bit value
+ *
  * @param _environment Current calling environment
  * @param _source Value to halves and destination for result
  * @param _steps Times to halves
@@ -2454,7 +2109,7 @@ void cpu6809_math_div2_const_32bit( Environment * _environment, char *_source, i
             outline1("LDA %s", _source);
             outline0("ANDA #$80");
             outline1("BEQ %spos", label );
-            
+
             outline1("LDD %s+2", _source );
             outline0("ANDCC #$FE" );
             outline0("EORA #$FF" );
@@ -2561,8 +2216,8 @@ void cpu6809_math_div2_const_32bit( Environment * _environment, char *_source, i
 }
 
 /**
- * @brief <i>CPU 6809</i>: emit code to double for several times a 32 bit value 
- * 
+ * @brief <i>CPU 6809</i>: emit code to double for several times a 32 bit value
+ *
  * @param _environment Current calling environment
  * @param _source Value to double and destination for result
  * @param _steps Times to double
@@ -2578,7 +2233,7 @@ void cpu6809_math_mul2_const_32bit( Environment * _environment, char *_source, i
             outline1("LDA %s", _source);
             outline0("ANDA #$80");
             outline1("BEQ %spos", label );
-            
+
             outline1("LDD %s+2", _source );
             outline0("ANDCC #$FE" );
             outline0("EORA #$FF" );
@@ -2686,7 +2341,7 @@ void cpu6809_math_mul2_const_32bit( Environment * _environment, char *_source, i
 
 /**
  * @brief <i>CPU 6809</i>: emit code to mask with "and" a value of 32 bit
- * 
+ *
  * @param _environment Current calling environment
  * @param _source Value to mask (and destination of mask operation)
  * @param _mask Mask to use
@@ -2695,14 +2350,23 @@ void cpu6809_math_and_const_32bit( Environment * _environment, char *_source, in
 
     inline( cpu_math_and_const_32bit )
 
-        outline1("LDD %s", _source );
-        outline1("ANDA #$%2.2x", ( _mask >> 24 ) & 0xff );
-        outline1("ANDB #$%2.2x", ( _mask >> 16 ) & 0xff );
-        outline1("STD %s", _source );
-        outline1("LDD %s+2", _source );
-        outline1("ANDA #$%2.2x", ( _mask >> 8 ) & 0xff );
-        outline1("ANDB #$%2.2x", ( _mask & 0xff ) );
-        outline1("STD %s+2", _source );
+        outline1("LDX #%s", _source );
+        if(_mask & 0xffff0000) {
+            outline0("LDD ,X");
+            outline1("ANDA #$%2.2x", ( _mask >> 24 ) & 0xff );
+            outline1("ANDB #$%2.2x", ( _mask >> 16 ) & 0xff );
+        } else {
+            outline0("LDD #0");
+        }
+        outline0("STD ,X");
+        if(_mask & 0x0000ffff) {
+            outline0("LDD 2,X");
+            outline1("ANDA #$%2.2x", ( _mask >> 8 ) & 0xff );
+            outline1("ANDB #$%2.2x", ( _mask >> 0 ) & 0xff );
+        } else {
+            outline0("LDD #0");
+        }
+        outline0("STD 2,X");
 
     no_embedded( cpu_math_and_const_32bit )
 
@@ -2712,15 +2376,15 @@ void cpu6809_combine_nibbles( Environment * _environment, char * _low_nibble, ch
 
     inline( cpu_combine_nibbles )
 
-        outline1("LDA %s", _low_nibble);
-        outline1("STA %s", _byte);
-        outline1("LDA %s", _hi_nibble);
-        outline0("LSLA");
-        outline0("LSLA");
-        outline0("LSLA");
-        outline0("LSLA");
-        outline1("ORA %s", _byte);
-        outline1("STA %s", _byte);
+        outline1("LDB %s", _low_nibble);
+        outline1("STB %s", _byte);
+        outline1("LDB %s", _hi_nibble);
+        outline0("LSLB");
+        outline0("LSLB");
+        outline0("LSLB");
+        outline0("LSLB");
+        outline1("ORB %s", _byte);
+        outline1("STB %s", _byte);
 
     no_embedded( cpu_combine_nibbles )
 
@@ -2730,7 +2394,7 @@ void cpu6809_jump( Environment * _environment, char * _label ) {
 
     inline( cpu_jump )
 
-        outline1( "JMP %s", _label );
+        B(RA, _label );
 
     no_embedded( cpu_jump )
 
@@ -2739,8 +2403,8 @@ void cpu6809_jump( Environment * _environment, char * _label ) {
 void cpu6809_call( Environment * _environment, char * _label ) {
 
     inline( cpu_call )
-    
-        outline1( "JSR %s", _label );
+
+        B(SR, _label );
 
     no_embedded( cpu_jump )
 
@@ -2772,8 +2436,9 @@ void cpu6809_halt( Environment * _environment ) {
 
         MAKE_LABEL
 
+        outline0( "; HALT" );
         outhead1("%s", label );
-        outline1("JMP %s", label);
+        B(RA, label);
 
     no_embedded( cpu_halt )
 
@@ -2783,7 +2448,7 @@ void cpu6809_end( Environment * _environment ) {
 
     inline( cpu_end )
 
-        outline0( "ANDCC #%6f" );
+        outline0( "ANDCC #$6f" );
         cpu6809_halt( _environment );
 
     no_embedded( cpu_end )
@@ -2817,8 +2482,8 @@ void cpu6809_random( Environment * _environment, char * _entropy ) {
 
     embedded( cpu_random, src_hw_6809_cpu_random_asm );
 
-        outline1( "LDA %s", _entropy );
-        outline0( "STA <PATTERN" );
+        outline1( "LDB %s", _entropy );
+        outline0( "STB <PATTERN" );
         outline0( "JSR CPURANDOM" );
 
     done( )
@@ -2829,8 +2494,8 @@ void cpu6809_random_8bit( Environment * _environment, char * _entropy, char * _r
 
     cpu6809_random( _environment, _entropy );
 
-    outline0("LDA CPURANDOM_SEED+3");
-    outline1("STA %s", _result );
+    outline0("LDB CPURANDOM_SEED+3");
+    outline1("STB %s", _result );
 
 }
 
@@ -2894,19 +2559,13 @@ void cpu6809_logical_and_8bit( Environment * _environment, char * _left, char * 
 
         MAKE_LABEL
 
-        outline1("LDA %s", _left );
-        outline0("CMPA #0" );
+        outline1("LDB %s", _left );
         outline1("BEQ %s", label );
-        outline1("LDA %s", _right );
-        outline0("CMPA #0" );
-        outline1("BEQ %s", label);
-        outline0("LDA #$FF");
-        outline1("STA %s", _result);
-        outline1("JMP %s_2", label);
+        outline1("LDB %s", _right );
+        outline1("BEQ %s", label );
+        outline0("LDB #$FF");
         outhead1("%s", label);
-        outline0("LDA #0");
-        outline1("STA %s", _result);
-        outhead1("%s_2", label);
+        outline1("STB %s", _result);
 
     no_embedded( cpu_logical_and_8bit )
 
@@ -2918,9 +2577,9 @@ void cpu6809_and_8bit( Environment * _environment, char * _left, char * _right, 
 
         MAKE_LABEL
 
-        outline1("LDA %s", _left );
-        outline1("ANDA %s", _right );
-        outline1("STA %s", _result);
+        outline1("LDB %s", _right );
+        outline1("ANDB %s", _left );
+        outline1("STB %s", _result);
 
     no_embedded( cpu_and_8bit )
 
@@ -2932,9 +2591,9 @@ void cpu6809_and_16bit( Environment * _environment, char * _left, char * _right,
 
         MAKE_LABEL
 
-        outline1("LDD %s", _left );
-        outline1("ANDA %s", _right );
-        outline1("ANDB %s+1", _right );
+        outline1("LDD %s", _right );
+        outline1("ANDA %s", _left );
+        outline1("ANDB %s+1", _left );
         outline1("STD %s", _result);
 
     no_embedded( cpu_and_16bit )
@@ -2966,21 +2625,12 @@ void cpu6809_logical_or_8bit( Environment * _environment, char * _left, char * _
 
         MAKE_LABEL
 
-        outline1("LDA %s", _left );
-        outline0("CMPA #0" );
-        outline1("BNE %s1", label );
-        outline1("LDA %s", _right );
-        outline0("CMPA #0" );
-        outline1("BNE %s1", label);
-        outline1("JMP %s0", label);
-        outhead1("%s1", label);
-        outline0("LDA #$FF");
-        outline1("STA %s", _result);
-        outline1("JMP %sx", label);
-        outhead1("%s0", label);
-        outline0("LDA #0");
-        outline1("STA %s", _result);
-        outhead1("%sx", label);
+        outline1("LDB %s", _left );
+        outline1("ORB %s", _right );
+        outline1("BEQ %s", label);
+        outline0("LDB #$FF");
+        outhead1("%s", label);
+        outline1("STB %s", _result);
 
     no_embedded( cpu_logical_or_8bit )
 
@@ -2992,9 +2642,9 @@ void cpu6809_or_8bit( Environment * _environment, char * _left, char * _right, c
 
         MAKE_LABEL
 
-        outline1("LDA %s", _left );
-        outline1("ORA %s", _right );
-        outline1("STA %s", _result);
+        outline1("LDB %s", _right );
+        outline1("ORB %s", _left );
+        outline1("STB %s", _result);
 
     no_embedded( cpu_or_8bit )
 
@@ -3038,9 +2688,9 @@ void cpu6809_logical_not_8bit( Environment * _environment, char * _value, char *
 
     inline( cpu_logical_not_8bit )
 
-        outline1("LDA %s", _value );
-        outline0("EORA #$FF" );
-        outline1("STA %s", _result );
+        outline1("LDB %s", _value );
+        outline0("COMA" );
+        outline1("STB %s", _result );
 
     no_embedded( cpu_logical_not_8bit )
 
@@ -3050,9 +2700,9 @@ void cpu6809_not_8bit( Environment * _environment, char * _value, char * _result
 
     inline( cpu_not_8bit )
 
-        outline1("LDA %s", _value );
-        outline0("EORA #$FF" );
-        outline1("STA %s", _result );
+        outline1("LDB %s", _value );
+        outline0("COMB" );
+        outline1("STB %s", _result );
 
     no_embedded( cpu_not_8bit )
 
@@ -3062,12 +2712,10 @@ void cpu6809_not_16bit( Environment * _environment, char * _value, char * _resul
 
     inline( cpu_not_16bit )
 
-        outline1("LDA %s", _value );
-        outline0("EORA #$FF" );
-        outline1("STA %s", _result );
-        outline1("LDA %s+1", _value );
-        outline0("EORA #$FF" );
-        outline1("STA %s+1", _result );
+        outline1("LDD %s", _value );
+        outline0("COMA" );
+        outline0("COMB" );
+        outline1("STD %s", _result );
 
     no_embedded( cpu_not_16bit )
 
@@ -3077,18 +2725,14 @@ void cpu6809_not_32bit( Environment * _environment, char * _value, char * _resul
 
     inline( cpu_not_32bit )
 
-        outline1("LDA %s", _value );
-        outline0("EORA #$FF" );
-        outline1("STA %s", _result );
-        outline1("LDA %s+1", _value );
-        outline0("EORA #$FF" );
-        outline1("STA %s+1", _result );
-        outline1("LDA %s+2", _value );
-        outline0("EORA #$FF" );
-        outline1("STA %s+2", _result );
-        outline1("LDA %s+3", _value );
-        outline0("EORA #$FF" );
-        outline1("STA %s+3", _result );
+        outline1("LDD %s", _value );
+        outline0("COMA" );
+        outline0("COMB" );
+        outline1("STD %s", _result );
+        outline1("LDD %s+2", _value );
+        outline0("COMA" );
+        outline0("COMB" );
+        outline1("STD %s+2", _result );
 
     no_embedded( cpu_not_32bit )
 
@@ -3116,9 +2760,18 @@ void cpu6809_inc_16bit( Environment * _environment, char * _variable ) {
 
     inline( cpu_inc_16bit )
 
-        outline1("LDD %s", _variable );
-        outline0("ADDD #1" );
-        outline1("STD %s", _variable );
+        // 16 cycles all times, but extra possibilites for peephole
+        // outline0("LDD #1" );
+        // outline1("ADDD %s", _variable );
+        // outline1("STD %s", _variable );
+
+        MAKE_LABEL
+
+        // 10 cycles 255 times out of 256 and 17 one out of 256
+        outline1("INC %s+1", _variable);
+        outline1("BNE %s", label);
+        outline1("INC %s", _variable);
+        outhead1("%s", label)
 
     no_embedded( cpu_inc_16bit )
 
@@ -3128,13 +2781,24 @@ void cpu6809_inc_32bit( Environment * _environment, char * _variable ) {
 
     inline( cpu_inc_32bit )
 
-        outline0("ANDCC #$fe" );
-        outline1("LDD %s+2", _variable );
-        outline0("ADDD #1" );
-        outline1("STD %s+2", _variable );
-        outline1("LDD %s", _variable );
-        outline0("ADDD #0" );
-        outline1("STD %s", _variable );
+        // outline1("LDD %s+2", _variable );
+        // outline0("ADDD #1" );
+        // outline1("STD %s+2", _variable );
+        // outline1("LDD %s", _variable );
+        // outline0("ADCB #0" );
+        // outline0("ADCA #0" );
+        // outline1("STD %s", _variable );
+
+        MAKE_LABEL
+
+        outline1("INC %s+3", _variable);
+        outline1("BNE %s", label);
+        outline1("INC %s+2", _variable);
+        outline1("BNE %s", label);
+        outline1("INC %s+1", _variable);
+        outline1("BNE %s", label);
+        outline1("INC %s", _variable);
+        outhead1("%s", label)
 
     no_embedded( cpu_inc_32bit )
 
@@ -3494,7 +3158,7 @@ void cpu6809_compare_memory( Environment * _environment, char *_source, char *_d
 }
 
 void cpu6809_compare_memory_size( Environment * _environment, char *_source, char *_destination, int _size, char * _result, int _equal ) {
-    
+
     inline( cpu_compare_memory_size )
 
         MAKE_LABEL
@@ -3548,7 +3212,7 @@ void cpu6809_compare_memory_size( Environment * _environment, char *_source, cha
             outhead1("%sdiff", label );
             outline1("LDA #$%2.2x", _equal ? 0x00 : 0xff );
             outline1("STA %s", _result );
-            outhead1("%sfinal", label );    
+            outhead1("%sfinal", label );
 
         }
 
@@ -3580,7 +3244,7 @@ void cpu6809_less_than_memory( Environment * _environment, char *_source, char *
         if ( _equal ) {
             outline1("BHI %sdiff", label);
         } else {
-            outline1("BHS %sdiff", label);    
+            outline1("BHS %sdiff", label);
         }
         outline0("ADDA #1" );
         outline0("CMPA #$7F" );
@@ -3601,7 +3265,7 @@ void cpu6809_less_than_memory( Environment * _environment, char *_source, char *
         if ( _equal ) {
             outline1("BHI %sdiff", label);
         } else {
-            outline1("BHS %sdiff", label);    
+            outline1("BHS %sdiff", label);
         }
         outline0("ADDA #1" );
         outline0("CMPA <MATHPTR0" );
@@ -3631,7 +3295,7 @@ void cpu6809_less_than_memory_size( Environment * _environment, char *_source, c
 
             outline1("LDY %s", _destination );
             outline1("LDX %s", _source );
-                
+
             if ( _size >= 0x7f ) {
 
                 outhead1("%sfirst", label );
@@ -3642,7 +3306,7 @@ void cpu6809_less_than_memory_size( Environment * _environment, char *_source, c
                 if ( _equal ) {
                     outline1("BHI %sdiff", label);
                 } else {
-                    outline1("BHS %sdiff", label);    
+                    outline1("BHS %sdiff", label);
                 }
                 outline0("ADDA #1" );
                 outline0("CMPA #$7F" );
@@ -3668,7 +3332,7 @@ void cpu6809_less_than_memory_size( Environment * _environment, char *_source, c
                 if ( _equal ) {
                     outline1("BHI %sdiff", label);
                 } else {
-                    outline1("BHS %sdiff", label);    
+                    outline1("BHS %sdiff", label);
                 }
                 outline0("ADDA #1" );
                 outline0("CMPA <MATHPTR0" );
@@ -3716,7 +3380,7 @@ void cpu6809_greater_than_memory( Environment * _environment, char *_source, cha
         if ( _equal ) {
             outline1("BLO %sdiff", label);
         } else {
-            outline1("BLS %sdiff", label);    
+            outline1("BLS %sdiff", label);
         }
         outline0("ADDA #1" );
         outline0("CMPA #$7F" );
@@ -3737,7 +3401,7 @@ void cpu6809_greater_than_memory( Environment * _environment, char *_source, cha
         if ( _equal ) {
             outline1("BLO %sdiff", label);
         } else {
-            outline1("BLS %sdiff", label);    
+            outline1("BLS %sdiff", label);
         }
         outline0("ADDA #1" );
         outline0("CMPA <MATHPTR0" );
@@ -3767,7 +3431,7 @@ void cpu6809_greater_than_memory_size( Environment * _environment, char *_source
 
             outline1("LDY %s", _destination );
             outline1("LDX %s", _source );
-                
+
             if ( _size >= 0x7f ) {
 
                 outhead1("%sfirst", label );
@@ -3778,7 +3442,7 @@ void cpu6809_greater_than_memory_size( Environment * _environment, char *_source
                 if ( _equal ) {
                     outline1("BLO %sdiff", label);
                 } else {
-                    outline1("BLS %sdiff", label);    
+                    outline1("BLS %sdiff", label);
                 }
                 outline0("ADDA #1" );
                 outline0("CMPA #$7F" );
@@ -3802,7 +3466,7 @@ void cpu6809_greater_than_memory_size( Environment * _environment, char *_source
                 if ( _equal ) {
                     outline1("BLO %sdiff", label);
                 } else {
-                    outline1("BLS %sdiff", label);    
+                    outline1("BLS %sdiff", label);
                 }
                 outline0("ADDA #1" );
                 outline0("CMPA <MATHPTR0" );
@@ -3830,9 +3494,8 @@ void cpu6809_move_8bit_indirect( Environment * _environment, char *_source, char
 
     inline( cpu_move_8bit_indirect )
 
-        outline1("LDX %s", _value);
-        outline1("LDA %s", _source);
-        outline0("STA ,X");
+        outline1("LDB %s", _source);
+        outline1("STB [%s]", _value);
 
     no_embedded( cpu_move_8bit_indirect )
 
@@ -3842,14 +3505,9 @@ void cpu6809_move_8bit_indirect_with_offset( Environment * _environment, char *_
 
     inline( cpu_move_8bit_with_offset )
 
+        outline1("LDB %s", _source);
         outline1("LDX %s", _value);
-        if ( _offset >= 0x7f ) {
-            outline0("LEAX 127,X" );
-            _offset -= 0x7f;
-        }
-        outline1("LEAX %d,X", ( _offset & 0x7f ) );
-        outline1("LDA %s", _source);
-        outline0("STA ,X");
+        outline1("STB %d,X", _offset );
 
     no_embedded( cpu_move_8bit_with_offset )
 
@@ -3861,27 +3519,10 @@ void cpu6809_move_8bit_indirect_with_offset2( Environment * _environment, char *
 
         MAKE_LABEL
 
-        outline1("LDX %s", _value);
-
-        outline1("LDA %s", _offset);
-        outline0("ANDA #$80");
-        outline1("BEQ %ssimple", label);
-
-        outline0("LEAX 127,X" );
-        outline0("LEAX 1,X" );
-        outline1("LDA %s", _offset);
-        outline0("ANDA #$7f");
-        outline0("LEAX A,X" );
-        outline1("JMP %sdone", label);
-
-        outhead1("%ssimple", label);
-        outline1("LDA %s", _offset);
-        outline0("ANDA #$7f");
-        outline0("LEAX A,X" );
-
-        outhead1("%sdone", label);
-
         outline1("LDA %s", _source);
+        outline1("LDX %s", _value);
+        outline1("LDB %s", _offset);
+        outline0("ABX");
         outline0("STA ,X");
 
     no_embedded( cpu_move_8bit_indirect_with_offset2 )
@@ -3927,9 +3568,8 @@ void cpu6809_move_8bit_indirect2( Environment * _environment, char * _value, cha
 
         MAKE_LABEL
 
-        outline1("LDX %s", _value);
-        outline0("LDA ,X");
-        outline1("STA %s", _source );
+        outline1("LDB [%s]", _value);
+        outline1("STB %s", _source );
 
     no_embedded( cpu_move_8bit_indirect_with_offset2 )
 
@@ -3941,9 +3581,8 @@ void cpu6809_move_16bit_indirect( Environment * _environment, char *_source, cha
 
         MAKE_LABEL
 
-        outline1("LDX %s", _value);
         outline1("LDD %s", _source);
-        outline0("STD ,X");
+        outline1("STD [%s]", _value);
 
     no_embedded( cpu_move_16bit_indirect )
 
@@ -3955,8 +3594,7 @@ void cpu6809_move_16bit_indirect2( Environment * _environment, char * _value, ch
 
         MAKE_LABEL
 
-        outline1("LDX %s", _value);
-        outline0("LDD ,X");
+        outline1("LDD [%s]", _value);
         outline1("STD %s", _source );
 
     no_embedded( cpu_move_16bit_indirect2 )
@@ -3972,8 +3610,7 @@ void cpu6809_move_32bit_indirect( Environment * _environment, char *_source, cha
         outline1("LDX %s", _value);
         outline0("LDD ,X");
         outline1("STD %s", _source );
-        outline0("LEAX 2,X");
-        outline0("LDD ,X");
+        outline0("LDD 2,X");
         outline1("STD %s+2", _source );
 
     no_embedded( cpu_move_32bit_indirect )
@@ -3989,10 +3626,9 @@ void cpu6809_move_32bit_indirect2( Environment * _environment, char * _value, ch
         outline1("LDX %s", _value);
         outline0("LDD ,X");
         outline1("STD %s", _source );
-        outline0("LEAX 2,X");
-        outline0("LDD ,X");
+        outline0("LDD 2,X");
         outline1("STD %s+2", _source );
-    
+
     no_embedded( cpu_move_32bit_indirect2 )
 
 }
@@ -4003,30 +3639,31 @@ void cpu6809_uppercase( Environment * _environment, char *_source, char *_size, 
 
         MAKE_LABEL
 
-        outline0("LDB #0" );
+        outline1("LDA %s ", _size );
+        B(EQ, label);
         outline1("LDX %s", _source );
         if ( _result ) {
-            outline1("LDY %s", _result );
+            outline1("LDU %s", _result );
         } else {
-            outline1("LDY %s", _source );
+            outline1("LDU %s", _source );
         }
         outhead1("%supper", label );
-        outline0("LDA B, X" );
-        
-        outline0("CMPA #97");
+        outline0("LDB ,X+" );
+
+        outline0("CMPB #97");
         outline1("BLO %snext", label);
 
-        outline0("CMPA #122");
+        outline0("CMPB #122");
         outline1("BHI %snext", label);
 
-        outline0("ANDCC #$FE");
-        outline0("SUBA #32");
+        outline0("SUBB #32");
 
         outhead1("%snext", label );
-        outline0("STA B, Y" );
-        outline0("ADDB #1" );
-        outline1("CMPB %s", _size );
+        outline0("STB ,U+" );
+        outline0("DECA" );
         outline1("BNE %supper", label );
+
+        outhead1("%s", label );
 
     no_embedded( cpu_uppercase )
 
@@ -4039,30 +3676,31 @@ void cpu6809_lowercase( Environment * _environment, char *_source, char *_size, 
 
         MAKE_LABEL
 
-        outline0("LDB #0" );
+        outline1("LDA %s ", _size );
+        B(EQ, label);
         outline1("LDX %s", _source );
         if ( _result ) {
-            outline1("LDY %s", _result );
+            outline1("LDU %s", _result );
         } else {
-            outline1("LDY %s", _source );
+            outline1("LDU %s", _source );
         }
-        outhead1("%slower", label );
-        outline0("LDA B, X" );
-        
-        outline0("CMPA #65");
+        outhead1("%supper", label );
+        outline0("LDB ,X+" );
+
+        outline0("CMPB #65");
         outline1("BLO %snext", label);
 
-        outline0("CMPA #90");
+        outline0("CMPB #90");
         outline1("BHI %snext", label);
 
-        outline0("ANDCC #$FE");
-        outline0("ADDA #32");
+        outline0("ADDB #32");
 
         outhead1("%snext", label );
-        outline0("STA B, Y" );
-        outline0("ADDB #1" );
-        outline1("CMPB %s", _size );
-        outline1("BNE %slower", label );
+        outline0("STB ,U+" );
+        outline0("DECA" );
+        outline1("BNE %supper", label );
+
+        outhead1("%s", label );
 
     no_embedded( cpu_lowercase )
 
@@ -4075,48 +3713,44 @@ void cpu6809_convert_string_into_16bit( Environment * _environment, char * _stri
         MAKE_LABEL
 
         // Y = 0
-        outline0("LDY #0");
+        outline1("LDB %s", _len);
+        outline1("beq %sdone", label );
+        outline0("STB ,-S");
+        outline1("LDU %s", _string);
 
-        outline0("LDB #0");
-        outline1("LDX %s", _string );
-
+        outline0("LDX #0");
         outhead1("%sloop", label );
-
-        // stringa finita? -> fine
-        outline1("CMPB %s", _len );
-        outline1("BEQ %sdone", label );
-
-        // moltiplico Y per 10
-        outline0("PSHS D" );
-        outline0("TFR Y, D" );
-        outline0("LEAY D, Y" );
-        outline0("LEAY D, Y" );
-        outline0("LEAY D, Y" );
-        outline0("LEAY D, Y" );
-        outline0("TFR Y, D" );
-        outline0("LEAY D, Y" );
-        outline0("PULS D" );
-
+        
+        // X=X*10
+        outline0("TFR X,D");    //6
+        outline0("LSLB");       //2
+        outline0("ROLA");       //2
+        outline0("TFR D,X");    //6 D=X=2val
+        outline0("LSLB");       //2 
+        outline0("ROLA");       //2 D=4val
+        outline0("LSLB");       //2 
+        outline0("ROLA");       //2 D=8val
+        outline0("LEAX D,X");   //8 D=8val+2val=10val (32 cycles)
+                
         // leggo carattere
-        outline0("LDA B,X" );
+        outline0("LDB ,U+" );
 
         // numero? no -> fine
-        outline0("CMPA #48" );
-        outline1("BLO %sdone", label );
-        outline0("CMPA #57" );
+        outline0("SUBB #48" );
+        outline1("BMI %sdone", label );
+        outline0("CMPB #9" );
         outline1("BHI %sdone", label );
 
-        // aggiungo il numero al registro Y
-        outline0("SUBA #48" );
-        outline0("LEAY A, Y" );
-
+        // aggiungo il numero al registro X
+        outline0("ABX");
+        
         // ripeti
-        outline0("INCB" );
-        outline1("JMP %sloop", label );
+        outline0("DEC ,S" );
+        outline1("BNE %sloop", label );
+        outline0("LEAS 1,S");
 
         outhead1("%sdone", label );
-
-        outline1("STY %s", _value );
+        outline1("STX %s", _value );
 
     no_embedded( cpu_convert_string_into_16bit )
 
@@ -4151,21 +3785,16 @@ void cpu6809_flip( Environment * _environment, char * _source, char * _size, cha
 
         MAKE_LABEL
 
-        outline1("LDX %s", _source);
-        outline1("LDY %s", _destination);
+        outline1("LDU %s", _source);
+        outline1("LDX %s", _destination);
         outline1("LDB %s", _size);
-        outline0("LEAY B, Y");
-        outline0("LEAY -1, Y");
-        outline0("LDB #0");
-
-        outhead1("%sx", label);
-        outline1("CMPB %s", _size);
         outline1("BEQ %sdone", label);
-        outline0("LDA B,X");
-        outline0("STA ,Y");
-        outline0("LEAY -1, Y");
-        outline0("INCB");
-        outline1("JMP %sx", label);
+        outline0("ABX");
+        outhead1("%sx", label);
+        outline0("LDA ,U+");
+        outline0("STA ,-X");
+        outline0("DECB");
+        outline1("BNE %sx", label);
         outhead1("%sdone", label);
 
     no_embedded( cpu_flip )
@@ -4178,32 +3807,26 @@ void cpu6809_bit_check( Environment * _environment, char * _value, int _position
 
         MAKE_LABEL
 
-        outline1("LDB #$%2.2x", 1 << ( ( _position ) & 0x07 ) );
-        outline0("STB <MATHPTR0" );
+        //outline0("STB <MATHPTR0" );
         switch( _position ) {
-            case 31: case 30: case 29: case 28: case 27: case 26: case 25: case 24: 
-                outline1("LDA %s", _value);
+            case 31: case 30: case 29: case 28: case 27: case 26: case 25: case 24:
+                outline1("LDB %s", _value);
                 break;
             case 23: case 22: case 21: case 20: case 19: case 18: case 17: case 16:
-                outline1("LDA %s+1", _value);
+                outline1("LDB %s+1", _value);
                 break;
             case 15: case 14: case 13: case 12: case 11: case 10: case 9: case 8:
-                outline2("LDA %s+%d", _value, ( _bitwidth / 8 ) - 2 );
+                outline2("LDB %s+%d", _value, ( _bitwidth / 8 ) - 2 );
                 break;
             case 7:  case 6:  case 5:  case 4:  case 3:  case 2:  case 1: case 0:
-                outline2("LDA %s+%d", _value, ( _bitwidth / 8 ) - 1 );
+                outline2("LDB %s+%d", _value, ( _bitwidth / 8 ) - 1 );
                 break;
         }
-        outline0("ANDA <MATHPTR0" );
-        outline0("CMPA #0" );
-        outline1("BEQ %szero", label);
-        outhead1("%sone", label)
-        outline0("LDA #$ff");
-        outline1("JMP %send", label );
-        outhead1("%szero", label)
-        outline0("LDA #$0");
+        outline1("ANDB #$%2.2x", 1 << ( ( _position ) & 0x07 ) );
+        outline1("BEQ %send", label);
+        outline0("LDB #$ff");
         outhead1("%send", label)
-        outline1("STA %s", _result);
+        outline1("STB %s", _result);
 
     no_embedded( cpu_bit_check )
 
@@ -4211,65 +3834,47 @@ void cpu6809_bit_check( Environment * _environment, char * _value, int _position
 
 void cpu6809_bit_check_extended( Environment * _environment, char * _value, char * _position, char *_result, int _bitwidth ) {
 
+    static int shift_tab = 0;
+    
     inline( cpu_bit_check_extended )
 
         MAKE_LABEL
-
-        outline0("LDA #1" );
-        outline1("LDB %s", _position );
-        outline0("ANDB #$07" );
-        outhead1("%s", label );
-        outline0("CMPB #0" );
-        outline1("BEQ %sdone", label );
-        outline0("LSLA" );
-        outline0("DECB" );
-        outline1("JMP %s", label );
-
-        outhead1("%sdone", label );
-        outline0("STA <MATHPTR0" );
-
-        outline1("LDB %s", _position );
-        outline0("CMPB #24" );
-        outline1("BLO %s_24", label );
-
-        // 32-24
-        outline1("LDA %s", _value );
-        outline1("JMP %seval", label );
-
-        outhead1("%s_24", label );
-        outline0("CMPB #16" );
-        outline1("BLO %s_16", label );
-
-        // 24-16
-        outline1("LDA %s+1", _value );
-        outline1("JMP %seval", label );
-
-        outhead1("%s_16", label );
-        outline0("CMPB #8" );
-        outline1("BLO %s_8", label );
-
-        // 16-8
-        outline2("LDA %s+%d", _value, ( _bitwidth / 8 ) - 2  );
-        outline1("JMP %seval", label );
-
-        outhead1("%s_8", label );
-
-        // 8-0
-        outline2("LDA %s+%d", _value, ( _bitwidth / 8 ) - 1  );
-        outline1("JMP %seval", label );
-
+        
+        if(!shift_tab) {
+            shift_tab = 1;
+            outline0("BRA _bit_check_extended_tab_after");
+            outhead0("bit_check_extended_tab");
+            outline0("fcb 1,2,4,8,16,32,64,128");
+            outhead0("_bit_check_extended_tab_after");
+        }
+        
+        outline2("LDB %s+%d", _value, ( _bitwidth / 8 ) - 1 );
+        outline1("LDA %s", _position);
+        if(_bitwidth>8) {
+            outline0("CMPA #8");
+            outline1("BLO %seval", label);
+            outline2("LDB %s+%d", _value, ( _bitwidth / 8 ) - 2 );
+        }
+        if(_bitwidth>16) {
+            outline0("CMPA #16");
+            outline1("BLO %seval", label);
+            outline1("LDB %s+1", _value);
+            outline0("CMPA #24");
+            outline1("BLO %seval", label);
+            outline1("LDB %s", _value);
+        }
+        
         outhead1("%seval", label );
-        outline0("ANDA <MATHPTR0" );
-        outline0("CMPA #0" );
-        outline1("BEQ %szero", label);
-        outhead1("%sone", label)
-        outline0("LDA #$ff");
-        outline1("JMP %send", label );
-        outhead1("%szero", label)
-        outline0("LDA #$0");
+        outline0("LDX #bit_check_extended_tab");
+        outline1("LDA %s", _position);
+        outline0("ANDA #7");
+        outline0("ANDB A,X");
+        
+        outline1("BEQ %send", label);
+        outline0("LDB #$ff");
         outhead1("%send", label)
-        outline1("STA %s", _result);
-
+        outline1("STB %s", _result);
+        
     no_embedded( cpu_bit_check_extended )
 
 }
@@ -4279,10 +3884,11 @@ void cpu6809_number_to_string( Environment * _environment, char * _number, char 
     MAKE_LABEL
 
     deploy( numberToString, src_hw_6809_number_to_string_asm );
+	
 
     switch( _bits ) {
         case 32:
-            outline1("LDD %s+2", _number );
+			outline1("LDD %s+2", _number );
             outline0("STD <MATHPTR2");
             outline1("LDD %s", _number );
             outline0("STD <MATHPTR0");
@@ -4354,7 +3960,7 @@ void cpu6809_bits_to_string( Environment * _environment, char * _number, char * 
             outline0("LDB #16" );
             outline1("STB %s", _string_size );
             break;
-        case 8:        
+        case 8:
             outline0("LDD #0" );
             outline0("STD <MATHPTR0" );
             outline0("LDA #0" );
@@ -4369,7 +3975,7 @@ void cpu6809_bits_to_string( Environment * _environment, char * _number, char * 
     outline1("LDB #$%2.2x", _bits );
     outline0("JSR BINSTR");
 
-    cpu6809_mem_move_direct_indirect_size( _environment, "BINSTRBUF", _string, _bits );    
+    cpu6809_mem_move_direct_indirect_size( _environment, "BINSTRBUF", _string, _bits );
 
 }
 
@@ -4395,7 +4001,7 @@ void cpu6809_hex_to_string( Environment * _environment, char * _number, char * _
 }
 
 void cpu6809_dsdefine( Environment * _environment, char * _string, char * _index ) {
-    
+
     deploy( dstring, src_hw_6809_dstring_asm );
 
     outline1( "LDY #%s", _string );
@@ -4485,89 +4091,59 @@ void cpu6809_dsdescriptor( Environment * _environment, char * _index, char * _ad
 
 void cpu6809_store_8bit_with_offset( Environment * _environment, char *_destination, int _value, int _offset ) {
 
-    outline1("LDB #$%2.2x", _offset);
-    outline1("LDX #%s", _destination);
-    outline1("LDA #$%2.2x", _value);
-    outline0("STA B,X");
+    outline1("LDX %s", _destination);
+    outline1("LDB #$%2.2x", _value);
+    outline1("STB $%2.2x,X", _offset);
 
 }
 
 void cpu6809_complement2_8bit( Environment * _environment, char * _source, char * _destination ) {
 
-    outline1( "LDA %s", _source );
-    outline0( "EORA #$FF" );
     if ( _destination ) {
-        outline1( "STA %s", _destination );
+        outline1( "LDB %s", _source );
+        outline0( "NEGB");
+        outline1( "STB %s", _destination );
     } else {
-        outline1( "STA %s", _source );
-    }
-    if ( _destination ) {
-        cpu6809_inc( _environment, _destination );
-    } else {
-        cpu6809_inc( _environment, _source );
+        outline1( "NEG %s", _source );
     }
 
 }
 
 void cpu6809_complement2_16bit( Environment * _environment, char * _source, char * _destination ) {
 
-    outline1( "LDA %s", _source );
-    outline0( "EORA #$FF" );
+    outline1( "LDD %s", _source );
+    outline0( "NEGA" );
+    outline0( "NEGB" );
+    outline0( "SBCA #0" );
     if ( _destination ) {
-        outline1( "STA %s", _destination );
+        outline1( "STD %s", _destination );
     } else {
-        outline1( "STA %s", _source );
+        outline1( "STD %s", _source );
     }
-    outline1( "LDA %s+1", _source );
-    outline0( "EORA #$FF" );
-    if ( _destination ) {
-        outline1( "STA %s+1", _destination );
-    } else {
-        outline1( "STA %s+1", _source );
-    }
-    if ( _destination ) {
-        cpu6809_inc_16bit( _environment, _destination );
-    } else {
-        cpu6809_inc_16bit( _environment, _source );
-    }    
 
 }
 
 void cpu6809_complement2_32bit( Environment * _environment, char * _source, char * _destination ) {
+    char *out = _destination ?_destination : _source;
 
-    outline1( "LDA %s", _source );
-    outline0( "EORA #$FF" );
-    if ( _destination ) {
-        outline1( "STA %s", _destination );
-    } else {
-        outline1( "STA %s", _source );
-    }
-    outline1( "LDA %s+1", _source );
-    outline0( "EORA #$FF" );
-    if ( _destination ) {
-        outline1( "STA %s+1", _destination );
-    } else {
-        outline1( "STA %s+1", _source );
-    }
-    outline1( "LDA %s+2", _source );
-    outline0( "EORA #$FF" );
-    if ( _destination ) {
-        outline1( "STA %s+2", _destination );
-    } else {
-        outline1( "STA %s+2", _source );
-    }
-    outline1( "LDA %s+3", _source );
-    outline0( "EORA #$FF" );
-    if ( _destination ) {
-        outline1( "STA %s+3", _destination );
-    } else {
-        outline1( "STA %s+3", _source );
-    }
-    if ( _destination ) {
-        cpu6809_inc_32bit( _environment, _destination );
-    } else {
-        cpu6809_inc_32bit( _environment, _source );
-    }
+    MAKE_LABEL
+    
+    outline1( "LDD %s", _source );
+    outline0( "COMA");
+    outline0( "COMB");
+    outline1( "STD %s", out );
+    
+    outline1( "LDD %s+2", _source );
+    outline0( "NEGA" );
+    outline0( "NEGB" );
+    outline0( "SBCA #0" );
+    outline1( "STD %s+2", out );
+    
+    outline1( "BNE %s", label);
+    outline1( "INC %s+1", out);
+    outline1( "BNE %s", label);
+    outline1( "INC %s", out);
+    outhead1( "%s", label);
 
 }
 
@@ -4584,47 +4160,46 @@ void cpu6809_mobinit( Environment * _environment, char * _index, char *_x, char 
 void cpu6809_mobshow( Environment * _environment, char * _index ) {
 
     // TODO: implementation
-    
+
 }
 
 void cpu6809_mobhide( Environment * _environment, char * _index ) {
 
     // TODO: implementation
-    
+
 }
 
 void cpu6809_mobat( Environment * _environment, char * _index, char *_x, char *_y ) {
 
     // TODO: implementation
-    
+
 }
 
 void cpu6809_mobrender( Environment * _environment, int _on_vbl ) {
 
     // TODO: implementation
-    
+
 }
 
 void cpu6809_mobcount( Environment * _environment, char * _index) {
 
     // TODO: implementation
-    
+
 }
 
 void cpu6809_sqroot( Environment * _environment, char * _number, char * _result ) {
 
     deploy( sqr, src_hw_6809_sqr_asm );
 
-    outline1("LDA %s", _number );
+    outline1("LDD %s", _number );
     outline0("STA <Numberh" );
-    outline1("LDA %s+1", _number );
-    outline0("STA <Numberl" );
+    outline0("STB <Numberl" );
 
     outline0("JSR SQROOT" );
 
-    outline0("LDA <Root" );
-    outline1("STA %s", _result );
-    
+    outline0("LDB <Root" );
+    outline1("STB %s", _result );
+
 }
 
 void cpu6809_dstring_vars( Environment * _environment ) {
@@ -4650,7 +4225,7 @@ void cpu6809_protothread_vars( Environment * _environment ) {
     outhead0("PROTOTHREADLOOP");
 
     for( int i=0; i<count; ++i ) {
-        outline1("LDB #%d", i );
+        outline1("LDB #%d-1", i+1 ); /* prevents optimizer changing code length */
         outline0("STB PROTOTHREADCT" );
         outline0("JSR PROTOTHREADVOID" );
     }
@@ -4720,7 +4295,7 @@ void cpu6809_protothread_restore( Environment * _environment, char * _index, cha
     outline0("JSR PROTOTHREADRESTORE" );
 
     outline1("STA %s", _step );
-    
+
 }
 
 void cpu6809_protothread_set_state( Environment * _environment, char * _index, int _state ) {
@@ -4757,20 +4332,11 @@ void cpu6809_protothread_current( Environment * _environment, char * _current ) 
 
 void cpu6809_is_negative( Environment * _environment, char * _value, char * _result ) {
 
-    MAKE_LABEL
-
     inline( cpu_is_negative )
 
-        outline1("LDA %s", _value);
-        outline0("ANDA #$80");
-        outline1("BEQ %s", label);
-        outline0("LDA #$FF");
+        outline1("LDB %s", _value);
+        outline0("SEX");
         outline1("STA %s", _result );
-        outline1("JMP %sdone", label);
-        outhead1("%s", label);
-        outline0("LDA #$00");
-        outline1("STA %s", _result );
-        outhead1("%sdone", label);
 
     no_embedded( cpu_is_negative )
 
