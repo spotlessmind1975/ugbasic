@@ -3373,9 +3373,15 @@ void z80_number_to_string( Environment * _environment, char * _number, char * _s
 
 }
 
+void z80_bits_to_string_vars( Environment * _environment ) {
+
+    variable_import( _environment, "BINSTRBUF", VT_BUFFER, 32 );
+    
+}
+
 void z80_bits_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits ) {
 
-    deploy( bitsToString,src_hw_z80_bits_to_string_asm );
+    deploy_with_vars( bitsToString,src_hw_z80_bits_to_string_asm, z80_bits_to_string_vars );
 
     switch( _bits ) {
         case 32:
@@ -3717,9 +3723,12 @@ void z80_protothread_vars( Environment * _environment ) {
 
     int count = _environment->protothreadConfig.count == 0 ? PROTOTHREAD_DEFAULT_COUNT : _environment->protothreadConfig.count;
 
-    outhead1("PROTOTHREADLC:      DEFS        %d", count );
-    outhead1("PROTOTHREADST:      DEFS        %d", count );
-    outhead0("PROTOTHREADCT:      DEFB        0" );
+    variable_import( _environment, "PROTOTHREADLC", VT_BUFFER, count );
+    // outhead1("PROTOTHREADLC:      DEFS        %d", count );
+    variable_import( _environment, "PROTOTHREADST", VT_BUFFER, count );
+    // outhead1("PROTOTHREADST:      DEFS        %d", count );
+    variable_import( _environment, "PROTOTHREADCT", VT_BYTE, 0 );
+    // outhead0("PROTOTHREADCT:      DEFB        0" );
     outhead0("PROTOTHREADLOOP:");
 
     for( int i=0; i<count; ++i ) {

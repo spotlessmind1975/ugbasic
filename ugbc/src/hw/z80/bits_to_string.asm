@@ -64,5 +64,3 @@ BINSTRO:
     JR NZ, BINSTRL
     INC HL
     RET
-
-BINSTRBUF:  DS  32

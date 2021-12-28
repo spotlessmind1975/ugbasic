@@ -35,31 +35,31 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-BITMAPADDRESS: DEFW $4000
-COLORMAPADDRESS: DEFW $5800
-TABCOUNT:   DEFB    4
-XCURS:      DEFB    0
-YCURS:      DEFB    0
-EMPTYTILE:  DEFB   32
-EVERYSTATUS:DEFB   0
-XCURSYS:      DEFB    0
-YCURSYS:      DEFB    0
+; BITMAPADDRESS: DEFW $4000
+; COLORMAPADDRESS: DEFW $5800
+; TABCOUNT:   DEFB    4
+; XCURS:      DEFB    0
+; YCURS:      DEFB    0
+; EMPTYTILE:  DEFB   32
+; EVERYSTATUS:DEFB   0
+; XCURSYS:      DEFB    0
+; YCURSYS:      DEFB    0
 
-XGR:    DEFW 0
-YGR:    DEFW 0
-LINE:   DEFB $ff, $ff
+; XGR:    DEFW 0
+; YGR:    DEFW 0
+; LINE:   DEFB $ff, $ff
 
-CLIPX1:    DEFW 0
-CLIPY1:    DEFW 0
-CLIPX2:    DEFW 255
-CLIPY2:    DEFW 191
-CURRENTWIDTH:   DEFW    256
-CURRENTHEIGHT:   DEFW    192
-CURRENTTILESWIDTH:   DEFB   32 
-CURRENTTILESHEIGHT:   DEFB    24
-CURRENTTILES:   DEFB    255
-CURRENTMODE:        DEFB 0
-TEXTWW:             DEFB 3
-FONTWIDTH:          DEFB 8
-FONTHEIGHT:         DEFB 8
-CPURANDOM_SEED:     DEFB $FF, $FF, $FF, $FF
+; CLIPX1:    DEFW 0
+; CLIPY1:    DEFW 0
+; CLIPX2:    DEFW 255
+; CLIPY2:    DEFW 191
+; CURRENTWIDTH:   DEFW    256
+; CURRENTHEIGHT:   DEFW    192
+; CURRENTTILESWIDTH:   DEFB   32 
+; CURRENTTILESHEIGHT:   DEFB    24
+; CURRENTTILES:   DEFB    255
+; CURRENTMODE:        DEFB 0
+; TEXTWW:             DEFB 3
+; FONTWIDTH:          DEFB 8
+; FONTHEIGHT:         DEFB 8
+; CPURANDOM_SEED:     DEFB $FF, $FF, $FF, $FF

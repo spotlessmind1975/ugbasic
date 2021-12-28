@@ -73,16 +73,12 @@ void target_initialization( Environment * _environment ) {
 
     bank_define( _environment, "VARIABLES", BT_VARIABLES, 0x5000, NULL );
     bank_define( _environment, "TEMPORARY", BT_TEMPORARY, 0x5100, NULL );
-    variable_import( _environment, "FREE_STRING", VT_WORD, DSTRING_DEFAULT_SPACE );
-    variable_global( _environment, "FREE_STRING" );    
 
     outhead0("org 32768");
 
     if ( _environment->tenLinerRulesEnforced ) {
         shell_injection( _environment );
     }
-
-    cpu_call( _environment, "VARINIT" );
 
     setup_text_variables( _environment );
 
