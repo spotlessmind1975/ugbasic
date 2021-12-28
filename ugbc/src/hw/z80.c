@@ -3292,11 +3292,19 @@ void z80_bit_check_extended( Environment * _environment, char *_value, char * _p
 
 }
 
+void z80_number_to_string_vars( Environment * _environment ) {
+
+    variable_import( _environment, "N2DINV", VT_BUFFER, 8 );
+    variable_import( _environment, "N2DBUF", VT_BUFFER, 20 );
+    variable_import( _environment, "N2DEND", VT_BUFFER, 1 );
+
+}
+
 void z80_number_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits, int _signed ) {
 
     MAKE_LABEL
-    
-    deploy( numberToString, src_hw_z80_number_to_string_asm );
+        
+    deploy_with_vars( numberToString, src_hw_z80_number_to_string_asm, z80_number_to_string_vars );
 
     switch( _bits ) {
         case 8:
