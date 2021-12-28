@@ -70,13 +70,23 @@ void target_initialization( Environment * _environment ) {
     variable_global( _environment, "BITMAPADDRESS" );
     variable_import( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0x0000 );
     variable_global( _environment, "COLORMAPADDRESS" );
+    variable_import( _environment, "TEXTADDRESS", VT_ADDRESS, 0x0000 );
+    variable_global( _environment, "TEXTADDRESS" );    
     variable_import( _environment, "EMPTYTILE", VT_BYTE, 32 );
     variable_global( _environment, "EMPTYTILE" );    
+    variable_import( _environment, "USING", VT_BYTE, 0 );
+    variable_import( _environment, "CPURANDOM_INTERNALSEED", VT_DWORD, 0xffffffff );
+    variable_global( _environment, "CPURANDOM_INTERNALSEED" );
+
+    variable_import( _environment, "COPYOFBITMAPADDRESS", VT_ADDRESS, 0x0000 );
+    variable_global( _environment, "COPYOFBITMAPADDRESS" );
+    variable_import( _environment, "COPYOFCOLORMAPADDRESS", VT_ADDRESS, 0x0000 );
+    variable_global( _environment, "COPYOFCOLORMAPADDRESS" );
+    variable_import( _environment, "COPYOFTEXTADDRESS", VT_ADDRESS, 0x0000 );
+    variable_global( _environment, "COPYOFTEXTADDRESS" );    
 
     bank_define( _environment, "VARIABLES", BT_VARIABLES, 0x5000, NULL );
     bank_define( _environment, "TEMPORARY", BT_TEMPORARY, 0x5100, NULL );
-    variable_import( _environment, "FREE_STRING", VT_WORD, DSTRING_DEFAULT_SPACE );
-    variable_global( _environment, "FREE_STRING" );    
 
     outhead0("SECTION code_user");
     outhead0("ORG $8000");

@@ -837,6 +837,25 @@ void tms9918_initialization( Environment * _environment ) {
     variable_import( _environment, "CLIPY2", VT_POSITION, 191 );
     variable_global( _environment, "CLIPY2" );
 
+    variable_import( _environment, "XCURS", VT_BYTE, 0 );
+    variable_global( _environment, "XCURS" );
+    variable_import( _environment, "YCURS", VT_BYTE, 0 );
+    variable_global( _environment, "YCURS" );
+    variable_import( _environment, "TABCOUNT", VT_BYTE, 0 );
+    variable_global( _environment, "TABCOUNT" );
+
+    variable_import( _environment, "CLINEX", VT_BYTE, 0 );
+    variable_global( _environment, "CLINEX" );
+
+    variable_import( _environment, "CLINEY", VT_BYTE, 0 );
+    variable_global( _environment, "CLINEY" );
+
+    variable_import( _environment, "TABSTODRAW", VT_BYTE, 0 );
+    variable_global( _environment, "TABSTODRAW" );
+
+    variable_import( _environment, "CURRENTMODE", VT_BYTE, 0 );
+    variable_global( _environment, "CURRENTMODE" );
+
     tms9918_cls( _environment );
 
     _environment->fontWidth = 6;
