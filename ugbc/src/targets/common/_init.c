@@ -66,9 +66,9 @@ void begin_build( Environment * _environment ) {
 
 void setup_text_variables( Environment * _environment ) {
 
-    variable_import( _environment, "XCURSYS", VT_BYTE );
+    variable_import( _environment, "XCURSYS", VT_BYTE, 0 );
     variable_global( _environment, "XCURSYS" );
-    variable_import( _environment, "YCURSYS", VT_BYTE );
+    variable_import( _environment, "YCURSYS", VT_BYTE, 0 );
     variable_global( _environment, "YCURSYS" );
     variable_define( _environment, "PEN", VT_COLOR, COLOR_WHITE );
     variable_global( _environment, "PEN" );
@@ -82,7 +82,7 @@ void setup_text_variables( Environment * _environment ) {
     variable_global( _environment, "windowW" );
     variable_define( _environment, "windowT", VT_BYTE, 4 );
     variable_global( _environment, "windowT" );
-    variable_import( _environment, "TEXTWW", VT_BYTE );
+    variable_import( _environment, "TEXTWW", VT_BYTE, 3 );
     variable_global( _environment, "TEXTWW" );
     variable_define( _environment, "TAB", VT_STRING, 0 );
     variable_store_string( _environment, "TAB", "\t");
@@ -92,9 +92,9 @@ void setup_text_variables( Environment * _environment ) {
     variable_global( _environment, "windowMX" );
     variable_define( _environment, "windowMY", VT_BYTE, 0 );                
     variable_global( _environment, "windowMY" );
-    variable_import( _environment, "PROTOTHREADCT", VT_BYTE );
+    variable_import( _environment, "PROTOTHREADCT", VT_BYTE, 0 );
     variable_global( _environment, "PROTOTHREADCT" );
-    variable_import( _environment, "CPURANDOM_SEED", VT_DWORD );
+    variable_import( _environment, "CPURANDOM_SEED", VT_DWORD, 0xffffffff );
     variable_global( _environment, "CPURANDOM_SEED" );
     
 }

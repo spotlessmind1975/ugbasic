@@ -60,33 +60,31 @@ void setup_embedded( Environment * _environment ) {
 
 void target_initialization( Environment * _environment ) {
 
-    variable_import( _environment, "EVERYSTATUS", VT_BYTE );
+    variable_import( _environment, "EVERYSTATUS", VT_BYTE, 0 );
     variable_global( _environment, "EVERYSTATUS" );
 
-    variable_import( _environment, "BITMAPADDRESS", VT_ADDRESS );
+    variable_import( _environment, "BITMAPADDRESS", 0x0c00 );
     variable_global( _environment, "BITMAPADDRESS" );
-    variable_import( _environment, "COLORMAPADDRESS", VT_ADDRESS );
+    variable_import( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0xa000 );
     variable_global( _environment, "COLORMAPADDRESS" );
-    variable_import( _environment, "TEXTADDRESS", VT_ADDRESS );
+    variable_import( _environment, "TEXTADDRESS", VT_ADDRESS, 0x0400 );
     variable_global( _environment, "TEXTADDRESS" );    
-    variable_import( _environment, "EMPTYTILE", VT_BYTE );
+    variable_import( _environment, "EMPTYTILE", VT_BYTE, 32 );
     variable_global( _environment, "EMPTYTILE" );    
 
     bank_define( _environment, "VARIABLES", BT_VARIABLES, 0x5000, NULL );
     bank_define( _environment, "TEMPORARY", BT_TEMPORARY, 0x5100, NULL );
-    variable_import( _environment, "FREE_STRING", VT_WORD );
+    variable_import( _environment, "FREE_STRING", VT_WORD, DSTRING_DEFAULT_SPACE );
     variable_global( _environment, "FREE_STRING" );    
 
     outline0("ORG $2800");
     outline0("LDS #$8000");
 
-    deploy( vars, src_hw_d64_vars_asm);
-    deploy( startup, src_hw_d64_startup_asm);
-    // bank_define( _environment, "STRINGS", BT_STRINGS, 0x4200, NULL );
-    variable_define( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0xD800 );
-    variable_global( _environment, "COLORMAPADDRESS" );
+    deploy( vars, src_hw_d32_vars_asm);
+    deploy( startup, src_hw_d32_startup_asm);
+    bank_define( _environment, "STRINGS", BT_STRINGS, 0x4200, NULL );
 
-    outline0( "JSR D64STARTUP" );
+    outline0( "JSR D32STARTUP" );
 
     setup_text_variables( _environment );
 

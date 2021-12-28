@@ -44,24 +44,7 @@ Variable * screen_get_height( Environment * _environment ) {
 
     Variable * height = variable_temporary( _environment, VT_POSITION, "(result of get height)");
 
-    variable_store( _environment, height->name, 192 );
-   
-    Variable * bitmap_enabled = variable_retrieve( _environment, "bitmap_enabled" );
-
-    char bitmapEnabledLabel[MAX_TEMPORARY_STORAGE]; sprintf(bitmapEnabledLabel, "%senabled", label );
-    char endLabel[MAX_TEMPORARY_STORAGE]; sprintf(endLabel, "%send", label );
-
-    cpu_bvneq( _environment, bitmap_enabled->realName, bitmapEnabledLabel );
-    
-    variable_store( _environment, height->name, 20 );
-
-    cpu_jump( _environment, endLabel );
-
-    cpu_label( _environment, bitmapEnabledLabel );
-
-    variable_store( _environment, height->name, 192 );
-
-    cpu_label( _environment, endLabel );
+    variable_move_naked( _environment, "CURRENTHEIGHT", height->name );
 
     return height;
 

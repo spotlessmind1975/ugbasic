@@ -61,19 +61,19 @@ void setup_embedded( Environment * _environment ) {
 
 void target_initialization( Environment * _environment ) {
 
-    variable_import( _environment, "EVERYSTATUS", VT_BYTE );
+    variable_import( _environment, "EVERYSTATUS", VT_BYTE, 0 );
     variable_global( _environment, "EVERYSTATUS" );
 
-    variable_import( _environment, "BITMAPADDRESS", VT_ADDRESS );
+    variable_import( _environment, "BITMAPADDRESS", VT_ADDRESS, 0x0000 );
     variable_global( _environment, "BITMAPADDRESS" );
-    variable_import( _environment, "COLORMAPADDRESS", VT_ADDRESS );
+    variable_import( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0x0000 );
     variable_global( _environment, "COLORMAPADDRESS" );
-    variable_import( _environment, "EMPTYTILE", VT_BYTE );
+    variable_import( _environment, "EMPTYTILE", VT_BYTE, 32 );
     variable_global( _environment, "EMPTYTILE" );    
 
     bank_define( _environment, "VARIABLES", BT_VARIABLES, 0x5000, NULL );
     bank_define( _environment, "TEMPORARY", BT_TEMPORARY, 0x5100, NULL );
-    variable_import( _environment, "FREE_STRING", VT_WORD );
+    variable_import( _environment, "FREE_STRING", VT_WORD, DSTRING_DEFAULT_SPACE );
     variable_global( _environment, "FREE_STRING" );    
 
     outhead0("org 32768");
@@ -83,11 +83,6 @@ void target_initialization( Environment * _environment ) {
     }
 
     cpu_call( _environment, "VARINIT" );
-
-    variable_define( _environment, "bitmap_enabled", VT_BYTE, 0 );
-    variable_global( _environment, "bitmap_enabled" );
-    variable_define( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0x5800 );
-    variable_global( _environment, "COLORMAPADDRESS" );
 
     setup_text_variables( _environment );
 

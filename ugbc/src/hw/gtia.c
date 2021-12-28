@@ -1272,19 +1272,19 @@ void gtia_initialization( Environment * _environment ) {
     src_hw_chipset_mob_asm = src_hw_gtia_mob_asm;
     src_hw_chipset_mob_asm_len = src_hw_gtia_mob_asm_len;
 
-    variable_import( _environment, "CURRENTWIDTH", VT_POSITION );
+    variable_import( _environment, "CURRENTWIDTH", VT_POSITION, 320 );
     variable_global( _environment, "CURRENTWIDTH" );
-    variable_import( _environment, "CURRENTHEIGHT", VT_POSITION  );
+    variable_import( _environment, "CURRENTHEIGHT", VT_POSITION, 199  );
     variable_global( _environment, "CURRENTHEIGHT" );
-    variable_import( _environment, "CURRENTTILES", VT_BYTE );
+    variable_import( _environment, "CURRENTTILES", VT_BYTE, 255 );
     variable_global( _environment, "CURRENTTILES" );
-    variable_import( _environment, "CURRENTTILESWIDTH", VT_BYTE );
+    variable_import( _environment, "CURRENTTILESWIDTH", VT_BYTE, 40 );
     variable_global( _environment, "CURRENTTILESWIDTH" );
-    variable_import( _environment, "CURRENTTILESHEIGHT", VT_BYTE );
+    variable_import( _environment, "CURRENTTILESHEIGHT", VT_BYTE, 25 );
     variable_global( _environment, "CURRENTTILESHEIGHT" );
-    variable_import( _environment, "FONTWIDTH", VT_BYTE );
+    variable_import( _environment, "FONTWIDTH", VT_BYTE, 8 );
     variable_global( _environment, "FONTWIDTH" );
-    variable_import( _environment, "FONTHEIGHT", VT_BYTE );
+    variable_import( _environment, "FONTHEIGHT", VT_BYTE, 8 );
     variable_global( _environment, "FONTHEIGHT" );
 
 #ifdef __atarixl__
@@ -1312,27 +1312,23 @@ void gtia_initialization( Environment * _environment ) {
 
     outline0("JSR GTIASTARTUP");
 
-    variable_import( _environment, "CURRENTMODE", VT_BYTE );
+    variable_import( _environment, "CURRENTMODE", VT_BYTE, 0 );
     variable_global( _environment, "CURRENTMODE" );
-    variable_import( _environment, "CURRENTWIDTH", VT_POSITION );
-    variable_global( _environment, "CURRENTWIDTH" );
-    variable_import( _environment, "CURRENTHEIGHT", VT_POSITION );
-    variable_global( _environment, "CURRENTHEIGHT" );
 
-    variable_import( _environment, "XGR", VT_POSITION );
+    variable_import( _environment, "XGR", VT_POSITION, 0 );
     variable_global( _environment, "XGR" );
-    variable_import( _environment, "YGR", VT_POSITION );
+    variable_import( _environment, "YGR", VT_POSITION, 0 );
     variable_global( _environment, "YGR" );
-    variable_import( _environment, "LINE", VT_WORD );
+    variable_import( _environment, "LINE", VT_WORD, (unsigned short) (0xffff) );
     variable_global( _environment, "LINE" );
 
-    variable_import( _environment, "CLIPX1", VT_POSITION );
+    variable_import( _environment, "CLIPX1", VT_POSITION, 0 );
     variable_global( _environment, "CLIPX1" );
-    variable_import( _environment, "CLIPX2", VT_POSITION );
+    variable_import( _environment, "CLIPX2", VT_POSITION, 319 );
     variable_global( _environment, "CLIPX2" );
-    variable_import( _environment, "CLIPY1", VT_POSITION );
+    variable_import( _environment, "CLIPY1", VT_POSITION, 0 );
     variable_global( _environment, "CLIPY1" );
-    variable_import( _environment, "CLIPY2", VT_POSITION );
+    variable_import( _environment, "CLIPY2", VT_POSITION, 199 );
     variable_global( _environment, "CLIPY2" );
 
     _environment->currentMode = 2;

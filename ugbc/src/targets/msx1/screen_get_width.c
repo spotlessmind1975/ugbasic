@@ -40,27 +40,10 @@
 
 Variable * screen_get_width( Environment * _environment ) {
 
-    MAKE_LABEL
-
     Variable * width = variable_temporary( _environment, VT_POSITION, "(result of get width)");
 
-    Variable * bitmap_enabled = variable_retrieve( _environment, "bitmap_enabled" );
-
-    char bitmapEnabledLabel[MAX_TEMPORARY_STORAGE]; sprintf(bitmapEnabledLabel, "%senabled", label );
-    char endLabel[MAX_TEMPORARY_STORAGE]; sprintf(endLabel, "%send", label );
-
-    cpu_bvneq( _environment, bitmap_enabled->realName, bitmapEnabledLabel );
+    variable_move_naked( _environment, "CURRENTWIDTH", width->name );
     
-    variable_store( _environment, width->name, 32 );
-
-    cpu_jump( _environment, endLabel );
-
-    cpu_label( _environment, bitmapEnabledLabel );
-
-    variable_store( _environment, width->name, 256 );
-
-    cpu_label( _environment, endLabel );
-
     return width;
 
 }

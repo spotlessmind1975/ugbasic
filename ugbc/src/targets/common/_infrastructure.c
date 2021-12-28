@@ -349,7 +349,7 @@ Variable * variable_define( Environment * _environment, char * _name, VariableTy
     return var;
 }
 
-Variable * variable_import( Environment * _environment, char * _name, VariableType _type ) {
+Variable * variable_import( Environment * _environment, char * _name, VariableType _type, int _size_or_value ) {
 
     Variable * var = variable_find( _environment->variables, _name );
     if ( var ) {
@@ -362,7 +362,11 @@ Variable * variable_import( Environment * _environment, char * _name, VariableTy
         var->name = strdup( _name );
         var->realName = strdup( _name );
         var->type = _type;
-        var->value = 0;
+        if ( var->type == VT_BUFFER ) {
+            var->size = _size_or_value;
+        } else {
+            var->value = _size_or_value;
+        }
         var->bank = NULL;
         Variable * varLast = _environment->variables;
         if ( varLast ) {

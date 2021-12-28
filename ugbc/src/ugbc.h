@@ -2227,7 +2227,7 @@ Variable *              variable_div2_const( Environment * _environment, char * 
 void                    variable_global( Environment * _environment, char * _pattern );
 Variable *              variable_greater_than( Environment * _environment, char * _source, char * _dest, int _equal );
 Variable *              variable_hex( Environment * _environment, char * _value );
-Variable *              variable_import( Environment * _environment, char * _name, VariableType _type );
+Variable *              variable_import( Environment * _environment, char * _name, VariableType _type, int _size_or_value );
 Variable *              variable_increment( Environment * _environment, char * _source );
 Variable *              variable_less_than( Environment * _environment, char * _source, char * _dest, int _equal );
 Variable *              variable_mod( Environment * _environment, char * _source, char * _destination );

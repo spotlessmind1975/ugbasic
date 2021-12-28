@@ -195,7 +195,7 @@ void test_cpu_dsgc_payload( TestEnvironment * _te ) {
 
     Environment * e = &_te->environment;
 
-    Variable * using = variable_import( e, "USING", VT_BYTE );
+    Variable * using = variable_import( e, "USING", VT_BYTE, 0 );
 
     Variable * st = variable_define( e, "st", VT_STRING, 0 );
     Variable * dy = variable_define( e, "dy", VT_DSTRING, 0 );
@@ -224,7 +224,7 @@ void test_cpu_dsgc_payloadA( TestEnvironment * _te ) {
 
     Environment * e = &_te->environment;
 
-    Variable * using = variable_import( e, "USING", VT_BYTE );
+    Variable * using = variable_import( e, "USING", VT_BYTE, 0 );
 
     Variable * st = variable_define( e, "st", VT_STRING, 0 );
     Variable * dy = variable_define( e, "dy", VT_DSTRING, 0 );
@@ -325,7 +325,7 @@ void test_cpu_dsgc_payloadB( TestEnvironment * _te ) {
 
     Environment * e = &_te->environment;
 
-    Variable * using = variable_import( e, "USING", VT_BYTE );
+    Variable * using = variable_import( e, "USING", VT_BYTE, 0 );
 
     Variable * st = variable_define( e, "st", VT_STRING, 0 );
     Variable * dy = variable_define( e, "dy", VT_DSTRING, 0 );

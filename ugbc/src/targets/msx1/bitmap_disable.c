@@ -48,7 +48,4 @@
  */
 void bitmap_disable( Environment * _environment ) {
 
-    Variable * bitmap_enabled = variable_retrieve_or_define( _environment, "bitmap_enabled", VT_BYTE, 0 );
-
-    variable_store( _environment, bitmap_enabled->name, 0 );
 }

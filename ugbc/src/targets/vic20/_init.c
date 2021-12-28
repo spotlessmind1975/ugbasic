@@ -63,23 +63,23 @@ void target_initialization( Environment * _environment ) {
 
     // MEMORY_AREA_DEFINE( MAT_DIRECT, 0x0400, 0x0fff );
 
-    variable_import( _environment, "EVERYSTATUS", VT_BYTE );
+    variable_import( _environment, "EVERYSTATUS", VT_BYTE, 0 );
     variable_global( _environment, "EVERYSTATUS" );
 
-    variable_import( _environment, "BITMAPADDRESS", VT_ADDRESS );
+    variable_import( _environment, "BITMAPADDRESS", VT_ADDRESS, 0x1000 );
     variable_global( _environment, "BITMAPADDRESS" );
-    variable_import( _environment, "COLORMAPADDRESS", VT_ADDRESS );
+    variable_import( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0x9400 );
     variable_global( _environment, "COLORMAPADDRESS" );
-    variable_import( _environment, "TEXTADDRESS", VT_ADDRESS );
+    variable_import( _environment, "TEXTADDRESS", VT_ADDRESS, 0x1000 );
     variable_global( _environment, "TEXTADDRESS" );    
-    variable_import( _environment, "EMPTYTILE", VT_BYTE );
+    variable_import( _environment, "EMPTYTILE", VT_BYTE, 32 );
     variable_global( _environment, "EMPTYTILE" );    
-    variable_import( _environment, "CPURANDOM_INTERNALSEED", VT_DWORD );
+    variable_import( _environment, "CPURANDOM_INTERNALSEED", VT_DWORD, (unsigned int)(0xffffffff) );
     variable_global( _environment, "CPURANDOM_INTERNALSEED" );
 
     bank_define( _environment, "VARIABLES", BT_VARIABLES, 0x5000, NULL );
     bank_define( _environment, "TEMPORARY", BT_TEMPORARY, 0x5100, NULL );
-    variable_import( _environment, "FREE_STRING", VT_WORD );
+    variable_import( _environment, "FREE_STRING", VT_WORD, DSTRING_DEFAULT_SPACE );
     variable_global( _environment, "FREE_STRING" );    
 
     if ( !_environment->configurationFileName ) {
@@ -102,9 +102,6 @@ void target_initialization( Environment * _environment ) {
     outhead0(".segment \"CODE\"");
 
     deploy( vars, src_hw_vic20_vars_asm);
-    // bank_define( _environment, "STRINGS", BT_STRINGS, 0x4200, NULL );
-    variable_define( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0xD800 );
-    variable_global( _environment, "COLORMAPADDRESS" );
 
     setup_text_variables( _environment );
 
