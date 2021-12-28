@@ -3716,7 +3716,7 @@ void z80_dstring_vars( Environment * _environment ) {
     outhead1("WORKING:                      DEFS %d", space );
     outhead1("TEMPORARY:                    DEFS %d", space );
     outhead1("FREE_STRING:                  DB $ff, $%2.2x", ((space)>>8)& 0xff );
-    
+
 }
 
 void z80_protothread_vars( Environment * _environment ) {

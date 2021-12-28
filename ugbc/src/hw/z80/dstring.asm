@@ -282,7 +282,3 @@ DSDESCRIPTOR:
 OUT_OF_MEMORY:
     JMP OUT_OF_MEMORY
 
-USING:                  DB    0
-    
-primo:                  DB 0
-secondo:                DB 0
