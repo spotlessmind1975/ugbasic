@@ -111,6 +111,7 @@ void target_initialization( Environment * _environment ) {
 
     outhead0("CODESTART:")
     
+    outline0("CALL VARINIT2");
     outline0("CALL VARINIT");
 
     if ( _environment->tenLinerRulesEnforced ) {
