@@ -61,7 +61,7 @@ void setup_embedded( Environment * _environment ) {
 
 void target_initialization( Environment * _environment ) {
 
-    MEMORY_AREA_DEFINE( MAT_RAM, 0xe000, 0xfff0 );
+    // MEMORY_AREA_DEFINE( MAT_RAM, 0xd000, 0xdff0 );
 
     variable_import( _environment, "EVERYSTATUS", VT_BYTE, 0 );
     variable_global( _environment, "EVERYSTATUS" );
@@ -91,7 +91,7 @@ void target_initialization( Environment * _environment ) {
     outhead0("SECTION code_user");
     outhead0("ORG $8000");
     outhead0("SECTION data_user");
-    outhead0("ORG $e000");
+    outhead0("ORG $C000");
     outhead0("SECTION code_user");
 
     // +0	ID	Put these first two bytes at 041H and 042H ("AB") to indicate that it is an additional ROM.
