@@ -125,8 +125,10 @@ generated/msx1/exe/%.rom:
 	z88dk-z80asm -l -m -s -b $(subst /exe/,/asm/,$(@:.rom=.asm))
 	rm -f $(subst /exe/,/asm/,$(@:.rom=.o))
 	mv $(subst /exe/,/asm/,$(@:.rom=_code_user.bin)) $(@:.rom=_code_user.bin)
-	z88dk-appmake +msxrom -b $(@:.rom=_code_user.bin)
-	mv $(@:.rom=_code_user.rom) $@
+	mv $(subst /exe/,/asm/,$(@:.rom=_data_user.bin)) $(@:.rom=_data_user.bin)
+	cat $(@:.rom=_code_user.bin) $(@:.rom=_data_user.bin) >$(@:.rom=.bin)
+	rm $(@:.rom=_code_user.bin) $(@:.rom=_data_user.bin)
+	z88dk-appmake +msxrom -b $(@:.rom=.bin)
 	rm -f $(@:.rom=.bin) $(@:.rom=_*.bin)
 
 paths:

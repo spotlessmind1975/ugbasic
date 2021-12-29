@@ -49,7 +49,7 @@ void target_finalization( Environment * _environment ) {
     outhead0("VARINIT2:");
     outline0("LD HL, CODEEND");
     outline0("LD DE, $E000");
-    outline0("LD BC, ( LASTVAR - $E000 )" );
+    outline0("LD BC, LASTVAR - $E000" );
     outline0("LDIR" );
     outline0("RET");
     outhead0("CODEEND:");
