@@ -819,6 +819,10 @@ void tms9918_initialization( Environment * _environment ) {
     SCREEN_MODE_DEFINE( BITMAP_MODE_GRAPHIC2, 1, 256, 192, 16, "Graphic II" );
     SCREEN_MODE_DEFINE( BITMAP_MODE_MULTICOLOR, 1, 256, 192, 16, "Multicolor" );
  
+    cpu_addressof_16bit( _environment, "FRAMEBUFFER", "TEXTADDRESS" );
+    cpu_addressof_16bit( _environment, "FRAMEBUFFER", "BITMAPADDRESS" );
+    cpu_addressof_16bit( _environment, "COLORBUFFER", "COLORMAPADDRESS" );
+
     outline0("CALL TMS9918STARTUP");
 
     variable_import( _environment, "XGR", VT_POSITION, 0 );

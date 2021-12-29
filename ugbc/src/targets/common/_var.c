@@ -38,7 +38,7 @@
  * CODE SECTION 
  ****************************************************************************/
 
-void variable_on_memory_init( Environment * _environment ) {
+void variable_on_memory_init( Environment * _environment, int _imported_too ) {
 
     int i=0;
 
@@ -46,7 +46,11 @@ void variable_on_memory_init( Environment * _environment ) {
 
     Variable * variable = _environment->variables;
     while( variable ) {
-        if ( ! variable->staticalInit && ! variable->imported ) {
+        int imported = variable->imported;
+        if ( _imported_too ) {
+            imported = 0;
+        }
+        if ( ! variable->staticalInit && ! imported ) {
             switch( variable->type ) {
                 case VT_STRING:
                 case VT_DSTRING:

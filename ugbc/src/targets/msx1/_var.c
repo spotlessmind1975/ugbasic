@@ -57,7 +57,9 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     if ( variable->memoryArea ) {
                         outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
+                        outhead0("section data_user");
                         outline1("%s: defs 1", variable->realName);
+                        outhead0("section code_user");
                     }
                     break;
                 case VT_WORD:
@@ -67,7 +69,9 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     if ( variable->memoryArea ) {
                         outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
+                        outhead0("section data_user");
                         outline1("%s: defs 2", variable->realName);
+                        outhead0("section code_user");
                     }
                     break;
                 case VT_DWORD:
@@ -75,7 +79,9 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     if ( variable->memoryArea ) {
                         outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
+                        outhead0("section data_user");
                         outline1("%s: defs 4", variable->realName);
+                        outhead0("section code_user");
                     }
                     break;
                 case VT_STRING:
@@ -95,14 +101,18 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     if ( variable->memoryArea ) {
                         outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
+                        outhead0("section data_user");
                         outline1("%s: db 0", variable->realName);
+                        outhead0("section code_user");
                     }
                     break;
                 case VT_MOB:
                     if ( variable->memoryArea ) {
                         outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
+                        outhead0("section data_user");
                         outline1("%s: db 0", variable->realName);
+                        outhead0("section code_user");
                     }
                     break;
                 case VT_IMAGE:
@@ -124,7 +134,9 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                 outline1("%d", variable->valueBuffer[(variable->size-1)]);
                             }
                         } else {
+                            outhead0("section data_user");
                             outline2("%s: defs %d", variable->realName, variable->size);
+                            outhead0("section code_user");
                         }
                     } else {
                         outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
@@ -146,6 +158,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     }
                     break;
                 case VT_ARRAY: {
+                    outhead0("section data_user");
                     if ( variable->valueBuffer ) {
                         out1("%s: db ", variable->realName);
                         int i=0;
@@ -158,6 +171,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     } else {
                         outline2("%s: defs %d", variable->realName, variable->size);
                     }
+                    outhead0("section code_user");
                     break;
                 }
             }
@@ -200,17 +214,9 @@ void variable_cleanup( Environment * _environment ) {
         Bank * actual = _environment->banks[i];
         while( actual ) {
             if ( actual->type == BT_VARIABLES ) {
-                // TODO: msx1: management of banks' variables
-                // outhead1("section %s", actual->name);
-                // outline1("org $%4.4x", actual->address);
                 Variable * variable = _environment->variables;
-
                 variable_cleanup_entry( _environment, variable );
-
             } else if ( actual->type == BT_TEMPORARY ) {
-                // TODO: msx1: management of banks' variables
-                // outhead1("section %s", actual->name);
-                // outline1("org $%4.4x", actual->address);
                 if ( _environment->bitmaskNeeded ) {
                     outhead0("BITMASK: defm $01,$02,$04,$08,$10,$20,$40,$80");
                     outhead0("BITMASKN: defm $fe,$fd,$fb,$f7,$ef,$df,$bf,$7f");
@@ -235,4 +241,6 @@ void variable_cleanup( Environment * _environment ) {
         }
     }    
 
+    variable_on_memory_init( _environment, 1 );
+    
 }

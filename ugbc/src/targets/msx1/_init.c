@@ -90,6 +90,9 @@ void target_initialization( Environment * _environment ) {
 
     outhead0("SECTION code_user");
     outhead0("ORG $8000");
+    outhead0("SECTION data_user");
+    outhead0("ORG $e000");
+    outhead0("SECTION code_user");
 
     // +0	ID	Put these first two bytes at 041H and 042H ("AB") to indicate that it is an additional ROM.
     // +2	INIT	Address of the routine to call to initialize a work area or I/O ports, or run a game, etc. The system calls the address from INIT of each ROM header during the MSX initialisation in that order.
@@ -107,6 +110,9 @@ void target_initialization( Environment * _environment ) {
     outline0("DEFW $0");
 
     outhead0("CODESTART:")
+    
+    outline0("CALL VARINIT");
+
     if ( _environment->tenLinerRulesEnforced ) {
         shell_injection( _environment );
     }

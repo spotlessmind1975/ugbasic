@@ -2239,7 +2239,7 @@ Variable *              variable_move_naked( Environment * _environment, char * 
 Variable *              variable_mul( Environment * _environment, char * _source, char * _dest );
 Variable *              variable_mul2_const( Environment * _environment, char * _source, int _bits );
 Variable *              variable_not( Environment * _environment, char * _value );
-void                    variable_on_memory_init( Environment * _environment );
+void                    variable_on_memory_init( Environment * _environment, int _imported_too );
 Variable *              variable_or( Environment * _environment, char * _left, char * _right );
 Variable *              variable_or( Environment * _environment, char * _source, char * _dest );
 void                    variable_temporary_remove( Environment * _environment, char * _name );

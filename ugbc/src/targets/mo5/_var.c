@@ -256,6 +256,6 @@ void variable_cleanup( Environment * _environment ) {
         }
     }   
 
-    variable_on_memory_init( _environment );
+    variable_on_memory_init( _environment, 0 );
 
 }

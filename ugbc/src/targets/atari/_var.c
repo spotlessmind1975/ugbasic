@@ -394,7 +394,7 @@ void variable_cleanup( Environment * _environment ) {
 
     outhead0(".segment \"CODE\"" );
 
-    variable_on_memory_init( _environment );
+    variable_on_memory_init( _environment, 0 );
 
 
 }

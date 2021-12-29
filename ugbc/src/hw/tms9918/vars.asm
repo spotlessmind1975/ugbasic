@@ -77,113 +77,113 @@
 
 ; SECTION code_user
 
-TMS9918VARINIT:
+; TMS9918VARINIT:
 
-    LD HL, FRAMEBUFFER
-    LD (TEXTADDRESS), HL
-    LD HL, FRAMEBUFFER
-    LD (BITMAPADDRESS), HL
-    LD HL, COLORBUFFER
-    LD (COLORMAPADDRESS), HL
+;     LD HL, FRAMEBUFFER
+;     LD (TEXTADDRESS), HL
+;     LD HL, FRAMEBUFFER
+;     LD (BITMAPADDRESS), HL
+;     LD HL, COLORBUFFER
+;     LD (COLORMAPADDRESS), HL
 
-    LD HL, 0
-    LD (COPYOFTEXTADDRESS), HL
-    LD (COPYOFBITMAPADDRESS), HL
-    LD (COPYOFCOLORMAPADDRESS), HL
-    LD (XGR), HL
-    LD (YGR), HL
+;     LD HL, 0
+;     LD (COPYOFTEXTADDRESS), HL
+;     LD (COPYOFBITMAPADDRESS), HL
+;     LD (COPYOFCOLORMAPADDRESS), HL
+;     LD (XGR), HL
+;     LD (YGR), HL
     
-    LD A, 4
-    LD (TABCOUNT), A
+;     LD A, 4
+;     LD (TABCOUNT), A
 
-    LD A, 0
-    LD (XCURS), A
-    LD (YCURS), A
-    LD (EVERYSTATUS), A
-    LD (XCURSYS), A
-    LD (YCURSYS), A
-    LD (CLINEX), A
-    LD (CLINEY), A
-    LD (YGR), A
+;     LD A, 0
+;     LD (XCURS), A
+;     LD (YCURS), A
+;     LD (EVERYSTATUS), A
+;     LD (XCURSYS), A
+;     LD (YCURSYS), A
+;     LD (CLINEX), A
+;     LD (CLINEY), A
+;     LD (YGR), A
 
-    LD (CLIPX1), HL
-    LD (CLIPY1), HL
-    LD HL, 255
-    LD (CLIPX2), HL
-    LD HL, 191
-    LD (CLIPY2), HL
+;     LD (CLIPX1), HL
+;     LD (CLIPY1), HL
+;     LD HL, 255
+;     LD (CLIPX2), HL
+;     LD HL, 191
+;     LD (CLIPY2), HL
 
-    LD HL, 256
-    LD (CURRENTWIDTH), HL
-    LD HL, 192
-    LD (CURRENTHEIGHT), HL
+;     LD HL, 256
+;     LD (CURRENTWIDTH), HL
+;     LD HL, 192
+;     LD (CURRENTHEIGHT), HL
 
-    LD A, 32
-    LD (EMPTYTILE), A
+;     LD A, 32
+;     LD (EMPTYTILE), A
 
-    LD HL, $ffff
-    LD (LINE), HL
+;     LD HL, $ffff
+;     LD (LINE), HL
 
-    LD A, 32
-    LD (CURRENTTILESWIDTH), A
-    LD A, 24
-    LD (CURRENTTILESHEIGHT), A
+;     LD A, 32
+;     LD (CURRENTTILESWIDTH), A
+;     LD A, 24
+;     LD (CURRENTTILESHEIGHT), A
 
-    LD A, 255
-    LD (CURRENTTILES), A
+;     LD A, 255
+;     LD (CURRENTTILES), A
 
-    LD A, 0
-    LD (CURRENTMODE), A
+;     LD A, 0
+;     LD (CURRENTMODE), A
 
-    LD A, 3
-    LD (TEXTWW), A
+;     LD A, 3
+;     LD (TEXTWW), A
 
-    LD A, 8
-    LD (FONTWIDTH), A
+;     LD A, 8
+;     LD (FONTWIDTH), A
 
-    LD A, 8
-    LD (FONTHEIGHT), A
+;     LD A, 8
+;     LD (FONTHEIGHT), A
 
-    LD A, $ff
-    LD HL, CPURANDOM_SEED
-    LD (HL),A
-    INC HL
-    LD (HL),A
-    INC HL
-    LD (HL),A
-    INC HL
-    LD (HL),A
-    INC HL
+;     LD A, $ff
+;     LD HL, CPURANDOM_SEED
+;     LD (HL),A
+;     INC HL
+;     LD (HL),A
+;     INC HL
+;     LD (HL),A
+;     INC HL
+;     LD (HL),A
+;     INC HL
 
-    LD A, 098H
-    LD (VDPDATAPORTREAD), A
-    LD (VDPDATAPORTWRITE), A
-    LD A, 099H
-    LD (VDPCONTROLPORTREAD), A
-    LD (VDPCONTROLPORTWRITE), A
+;     LD A, 098H
+;     LD (VDPDATAPORTREAD), A
+;     LD (VDPDATAPORTWRITE), A
+;     LD A, 099H
+;     LD (VDPCONTROLPORTREAD), A
+;     LD (VDPCONTROLPORTWRITE), A
 
-    LD A, (EMPTYTILE)
-    LD HL, FRAMEBUFFER
-    LD (HL), A
-    LD DE, FRAMEBUFFER
-    INC DE
-    LD BC, 40*24
-    LDIR
+;     LD A, (EMPTYTILE)
+;     LD HL, FRAMEBUFFER
+;     LD (HL), A
+;     LD DE, FRAMEBUFFER
+;     INC DE
+;     LD BC, 40*24
+;     LDIR
 
-    LD A, 0
-    LD HL, COLORBUFFER
-    LD (HL), A
-    LD DE, COLORBUFFER
-    INC DE
-    LD BC, 32*24
-    LDIR
+;     LD A, 0
+;     LD HL, COLORBUFFER
+;     LD (HL), A
+;     LD DE, COLORBUFFER
+;     INC DE
+;     LD BC, 32*24
+;     LDIR
 
-    LD A, 0
-    LD HL, TILEBUFFER
-    LD (HL), A
-    LD DE, TILEBUFFER
-    INC DE
-    LD BC, 32*24
-    LDIR
+;     LD A, 0
+;     LD HL, TILEBUFFER
+;     LD (HL), A
+;     LD DE, TILEBUFFER
+;     INC DE
+;     LD BC, 32*24
+;     LDIR
 
-    RET
+;     RET
