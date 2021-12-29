@@ -212,7 +212,7 @@ MOBCOUNT: DB 0
 ; MOBFREE:
 ;     LD HL, (MOBALLOCATED)
 ;     LD DE, (MOBSIZE)
-;     SUB HL, DE
+;     SBC HL, DE
 ;     LD MOBADDR, (HL)
 ;     RET
 

@@ -202,7 +202,7 @@ DSMALLOC:
     LD A, C
     LD E, A
     LD HL, (FREE_STRING)
-    SUB HL, DE
+    SBC HL, DE
     LD (FREE_STRING), HL
     PUSH HL
     POP DE

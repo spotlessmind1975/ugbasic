@@ -346,7 +346,7 @@ MOBDRAW_R: DB 0
 ;     LD E, A
 ;     LD A, 0
 ;     LD D, A
-;     SUB HL, DE
+;     SBC HL, DE
 ;     LD (TMPPTR), HL
 
 ;     ; se C < 0 FINE
@@ -457,7 +457,7 @@ MOBDRAW_R: DB 0
 ;     LD E, A
 ;     LD A, 0
 ;     LD D, A
-;     SUB HL, DE
+;     SBC HL, DE
 ;     LD (MOBADDR), HL
 
 ;     LD A, 0
@@ -489,7 +489,7 @@ MOBDRAW_R: DB 0
 ;     LD E, A
 ;     LD A, 0
 ;     LD D, A
-;     SUB HL, DE
+;     SBC HL, DE
 ;     LD (MOBADDR), HL
 
 ;     LD HL, (TMPPTR)
@@ -497,7 +497,7 @@ MOBDRAW_R: DB 0
 ;     LD E, A
 ;     LD A, 0
 ;     LD D, A
-;     SUB HL, DE
+;     SBC HL, DE
 ;     LD (TMPPTR), HL
 
 ;     ; se C < 0 FINE
