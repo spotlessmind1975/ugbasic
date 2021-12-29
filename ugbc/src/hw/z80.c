@@ -1248,7 +1248,7 @@ void z80_math_sub_16bit( Environment * _environment, char *_source, char *_desti
 
     outline1("LD HL, (%s)", _source );
     outline1("LD DE, (%s)", _destination );
-    outline0("SUB HL, DE" );
+    outline0("SBC HL, DE" );
     if ( _other ) {
         outline1("LD (%s), HL", _other );
     } else {
@@ -2637,7 +2637,7 @@ void z80_math_sub_16bit_with_8bit( Environment * _environment, char *_source, ch
     outline0("LD DE, 0" );
     outline1("LD A, (%s)", _destination );
     outline0("LD E, A" );
-    outline0("SUB HL, DE" );
+    outline0("SBC HL, DE" );
     if ( _other ) {
         outline1("LD (%s), HL", _other );
     } else {
@@ -3719,11 +3719,13 @@ void z80_dstring_vars( Environment * _environment ) {
     int count = _environment->dstring.count == 0 ? DSTRING_DEFAULT_COUNT : _environment->dstring.count;
     int space = _environment->dstring.space == 0 ? DSTRING_DEFAULT_SPACE : _environment->dstring.space;
 
+    outhead0("section data_user" );
     outhead1("MAXSTRINGS:                   DB %d", count );
     outhead1("DESCRIPTORS:                  DEFS %d", count * 4 );
     outhead1("WORKING:                      DEFS %d", space );
     outhead1("TEMPORARY:                    DEFS %d", space );
     outhead1("FREE_STRING:                  DB $ff, $%2.2x", ((space)>>8)& 0xff );
+    outhead0("section code_user" );
 
 }
 
