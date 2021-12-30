@@ -339,7 +339,7 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
             //      = Reserved Bit (must be set to O)
             //      = Selects Size 0 sprites (8x8 pixels)
             //      = Selects no magnification
-            WVDP_R1( 0xc0 );
+            WVDP_R1( 0xd0 );
 
             // Register 2 tells the VDP where the starting address of the Name Table is located in VRAM. The
             // range of its contents is from O-F. The contents of the register form the upper four bits of
@@ -495,9 +495,7 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
     cpu_store_16bit( _environment, "CURRENTWIDTH", _environment->screenWidth );
     cpu_store_16bit( _environment, "CURRENTHEIGHT", _environment->screenHeight );
     cpu_store_8bit( _environment, "CURRENTTILES", _environment->screenTiles );
-    _environment->screenTilesWidth = 40;
     cpu_store_8bit( _environment, "CURRENTTILESWIDTH", _environment->screenTilesWidth );
-    _environment->screenTilesHeight = 25;
     cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight );
     cpu_store_8bit( _environment, "FONTWIDTH", _environment->fontWidth );
     cpu_store_8bit( _environment, "FONTHEIGHT", _environment->fontHeight );
