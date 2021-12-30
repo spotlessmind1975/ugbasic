@@ -190,7 +190,6 @@ VDPFILL:
         PUSH    AF
         CALL    VDPWRITEADDR
         POP     AF
-        INC B
 VDPFILLLOOP:
         CALL    VDPRAMOUT
         DEC     C
@@ -216,13 +215,12 @@ VDPFILLA:
         PUSH    AF
         CALL    VDPWRITEADDR
         POP     AF
-        INC B
 VDPFILLALOOP:
         CALL    VDPRAMOUT
         DEC     C
         INC     A
-        JP      NZ, VDPFILLLOOP
-        DJNZ    VDPFILLLOOP
+        JP      NZ, VDPFILLALOOP
+        DJNZ    VDPFILLALOOP
         EI
         RET
 

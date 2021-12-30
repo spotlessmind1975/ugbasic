@@ -44,14 +44,10 @@
 CLSG:
     LD A, 0
     LD DE, $3800
-    LD BC, 256
-    CALL VDPFILLA
-    LD BC, 256
-    CALL VDPFILLA
-    LD BC, 256
+    LD BC, 255*3
     CALL VDPFILLA
 
-    LD BC, 255*8*8
+    LD BC, 256*8*3
     LD DE, $0000
     LD A, 0
     CALL VDPFILL
