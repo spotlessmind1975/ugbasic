@@ -445,13 +445,13 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
             //      = Reserved Bit (must be set to O)
             //      = Selects Size 0 sprites (8x8 pixels)
             //      = Selects no magnification
-            WVDP_R1( 0xc0 );
+            WVDP_R1( 0xc2 );
 
             // Register 2 tells the VDP where the starting address of the Name Table is located in VRAM. The
             // range of its contents is from O-F. The contents of the register form the upper four bits of
             // the 14-bit VDP address, therefore making the location of the Name Table in VRAM equal to
             // (Register 2) * 400 (Hex)
-            WVDP_RNAME( 0x00 );
+            WVDP_RNAME( 0x0e );
 
             // Register 3 tells the VDP where the starting address of the Color Table is located in VRAM. The
             // range of its contents is from O-FF. The contents of the register form the upper eight bits of
@@ -764,8 +764,6 @@ void tms9918_text( Environment * _environment, char * _text, char * _text_size )
         outline0("CALL TEXTATTILEMODE");
     }
 
-    outline0("CALL VDPUPDATE");
-
 }
 
 void tms9918_initialization( Environment * _environment ) {
@@ -802,25 +800,12 @@ void tms9918_initialization( Environment * _environment ) {
     variable_import( _environment, "VDPCONTROLPORTWRITE", VT_BYTE, 0x99 );
     variable_global( _environment, "VDPCONTROLPORTWRITE" );
 
-    variable_import( _environment, "FRAMEBUFFER", VT_BUFFER, 40*24 );
-    variable_global( _environment, "FRAMEBUFFER" );
-
-    variable_import( _environment, "COLORBUFFER", VT_BUFFER, 32*24 );
-    variable_global( _environment, "COLORBUFFER" );
-
-    variable_import( _environment, "TILEBUFFER", VT_BUFFER, 32*24 );
-    variable_global( _environment, "TILEBUFFER" );
-
     SCREEN_MODE_DEFINE( TILEMAP_MODE_STANDARD, 0, 40, 24, 20, "Text Mode" );
     SCREEN_MODE_DEFINE( TILEMAP_MODE_GRAPHIC1, 0, 32, 24, 16, "Graphic I" );
 
     SCREEN_MODE_DEFINE( BITMAP_MODE_GRAPHIC2, 1, 256, 192, 16, "Graphic II" );
     SCREEN_MODE_DEFINE( BITMAP_MODE_MULTICOLOR, 1, 256, 192, 16, "Multicolor" );
  
-    cpu_addressof_16bit( _environment, "FRAMEBUFFER", "TEXTADDRESS" );
-    cpu_addressof_16bit( _environment, "FRAMEBUFFER", "BITMAPADDRESS" );
-    cpu_addressof_16bit( _environment, "COLORBUFFER", "COLORMAPADDRESS" );
-
     outline0("CALL TMS9918STARTUP");
 
     variable_import( _environment, "XGR", VT_POSITION, 0 );
@@ -903,7 +888,6 @@ void tms9918_back( Environment * _environment ) {
     deploy( back, src_hw_tms9918_back_asm );
 
     outline0("CALL BACK");
-    outline0("CALL VDPUPDATE");
 
 }
 

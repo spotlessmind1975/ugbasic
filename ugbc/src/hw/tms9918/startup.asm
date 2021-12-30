@@ -130,6 +130,24 @@ VDPREADADDR:
         CALL    VDPREGOUT
         RET
 
+VDPOUTCHAR:
+        DI
+        PUSH AF
+        CALL    VDPWRITEADDR
+        POP AF
+        CALL    VDPRAMOUT
+        EI
+        RET
+
+VDPINCHAR:
+        DI
+        PUSH AF
+        CALL    VDPREADADDR
+        POP AF
+        CALL    VDPRAMIN
+        EI
+        RET
+
 VDPWRITE:
         DI
         CALL    VDPWRITEADDR
@@ -172,6 +190,7 @@ VDPFILL:
         PUSH    AF
         CALL    VDPWRITEADDR
         POP     AF
+        INC B
 VDPFILLLOOP:
         CALL    VDPRAMOUT
         DEC     C
@@ -189,6 +208,20 @@ VDPFILLLOOP8:
         CALL    VDPRAMOUT
         DEC     C
         JP      NZ, VDPFILLLOOP8
+        EI
+        RET
+
+VDPFILLA:
+        DI
+        PUSH    AF
+        CALL    VDPWRITEADDR
+        POP     AF
+VDPFILLALOOP:
+        CALL    VDPRAMOUT
+        DEC     C
+        INC     A
+        JP      NZ, VDPFILLLOOP
+        DJNZ    VDPFILLLOOP
         EI
         RET
 
@@ -392,59 +425,4 @@ TMS9918STARTUP:
     LD A, $01
     CALL VDPSETREG
 
-    RET
-
-VDPUPDATE:
-    LD A, (CURRENTMODE)
-    CP 0
-    JR Z,VDPUPDATE0
-    CP 1
-    JR Z,VDPUPDATE1
-    CP 2
-    JR Z,VDPUPDATE2
-    CP 3
-    JR Z,VDPUPDATE3
-    RET
-
-VDPUPDATE0: 
-	LD HL, 40*24
-    LD BC, HL
-	LD HL, $0000
-    LD DE, HL
-	LD HL, (TEXTADDRESS)
-
-    CALL VDPWRITE
-    RET
-
-VDPUPDATE1:
-	LD HL, 32*24
-    LD BC, HL
-	LD HL, $0000
-    LD DE, HL
-	LD HL, (TEXTADDRESS)
-
-	LD HL, 32
-    LD BC, HL
-	LD HL, $0480
-    LD DE, HL
-	LD HL, (COLORMAPADDRESS)
-
-    CALL VDPWRITE
-    RET
-
-VDPUPDATE2:
-VDPUPDATE3:
-	LD HL, 32*24
-    LD BC, HL
-	LD HL, $0000
-    LD DE, HL
-	LD HL, (TEXTADDRESS)
-
-	LD HL, 32*24
-    LD BC, HL
-	LD HL, $2000
-    LD DE, HL
-	LD HL, (COLORMAPADDRESS)
-
-    CALL VDPWRITE
     RET

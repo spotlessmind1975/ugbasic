@@ -36,16 +36,78 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 VSCROLLTDOWN:
-    LD HL, FRAMEBUFFER
-    LD D, 3
-    LD E, $c0
-    ADD HL, DE
-    PUSH HL
-    LD A, (CURRENTTILESWIDTH) 
+    LD A, (CURRENTMODE)
+    CP 0
+    JR Z,VSCROLLTDOWN0
+    CP 1
+    JR Z,VSCROLLTDOWN1
+    RET
+
+VSCROLLTDOWN0:
+    LD BC, 40 * 23
+    LD A, 40
     LD E, A
     LD D, 0
-    SBC HL, DE
+    LD HL, $0000
+    PUSH HL
+    JP VSCROLLTDOWNCOMMON
+
+VSCROLLTDOWN1:
+    LD BC, 32 * 23
+    LD A, 32
+    LD E, A
+    LD D, 0
+    LD HL, $0000
+    PUSH HL
+    JP VSCROLLTDOWNCOMMON
+
+VSCROLLTDOWNCOMMON:
+    LD HL, $0000
+    ADD HL, DE
+    PUSH HL
+    LD HL, $0000
+    ADD HL, BC
+    INC B
+    
+VSCROLLTDOWNLOOP:
+
+    PUSH DE
+    PUSH BC
+    LD DE, HL
+    LD BC, 1
+    CALL VDPINCHAR
+    POP BC
     POP DE
-    LD BC, 40*23
-    LDDR
+
+    PUSH BC
+    LD BC, 1
+    CALL VDPOUTCHAR
+    POP BC
+
+    DEC     DE
+    DEC     HL
+
+    DEC     C
+    JP      NZ, VSCROLLTUPLOOP
+    DJNZ    VSCROLLTUPLOOP
+
+    LD A, (CURRENTMODE)
+    CP 0
+    JR Z,VSCROLLTDOWNX0
+    CP 1
+    JR Z,VSCROLLTDOWNX1
+    RET
+
+VSCROLLTDOWNX0:
+    LD A, (EMPTYTILE)
+    LD BC, 40
+    POP DE
+    CALL VDPFILL
+    RET
+
+VSCROLLTDOWNX1:
+    LD A, (EMPTYTILE)
+    LD BC, 32
+    POP DE
+    CALL VDPFILL
     RET

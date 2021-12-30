@@ -35,6 +35,12 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+; 			        NAME		COLOR		PATTERN
+; VDPUPDATE0: 		$0000		
+; VDPUPDATE1:		$0000		$0480		$0800
+; VDPUPDATE2:		$3800		$2000
+; VDPUPDATE3:		$3800		$2000		$0000
+
 BACK:
     LD A, (CURRENTMODE)
     CP 0
@@ -55,22 +61,17 @@ BACK0:
     RET
 
 BACK1:
-    LD A, (_PAPER)
-    LD HL, COLORBUFFER
-    LD (HL), A
-    LD DE, COLORBUFFER
-    INC DE
+    LD DE, $0480
     LD BC, 32
-    LDIR
-    RET
+    JP BACKCOMMON
 
 BACK2:
 BACK3:
+    LD DE, $2000
+    LD BC, 32*24*8
+    JP BACKCOMMON
+
+BACKCOMMON:
     LD A, (_PAPER)
-    LD HL, COLORBUFFER
-    LD (HL), A
-    LD DE, COLORBUFFER
-    INC DE
-    LD BC, 32*24
-    LDIR
+    CALL VDPFILL
     RET

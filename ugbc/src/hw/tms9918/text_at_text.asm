@@ -35,6 +35,12 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+; 			        NAME		COLOR		PATTERN
+; VDPUPDATE0: 		$0000		
+; VDPUPDATE1:		$0000		$0480		$0800
+; VDPUPDATE2:		$3800		$2000
+; VDPUPDATE3:		$3800		$2000		$0000
+
 TEXTATTILEMODE:
     LD A, C
     CP 0
@@ -49,7 +55,7 @@ TEXTATTILEMODEGO:
     LD E, A
     LD D, 0
 
-    LD HL, (TEXTADDRESS)
+    LD HL, $0000
     LD (COPYOFTEXTADDRESS), HL
     LD A, 0
     LD B, A
@@ -319,7 +325,15 @@ TEXTATAT:
 
 TEXTATSP0:
     LD HL, (COPYOFTEXTADDRESS)
-    LD (HL), A
+
+    PUSH DE
+    PUSH BC
+    LD DE, HL
+    LD BC, 1
+    CALL VDPOUTCHAR
+    POP BC
+    POP DE
+
     LD A,(TEXTWW)
     AND $2
     JR Z, TEXTATCNOPEN

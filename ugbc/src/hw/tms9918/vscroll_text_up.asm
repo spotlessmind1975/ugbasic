@@ -35,18 +35,86 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+; 			        NAME		COLOR		PATTERN
+; VDPUPDATE0: 		$0000		
+; VDPUPDATE1:		$0000		$0480		$0800
+; VDPUPDATE2:		$3800		$2000
+; VDPUPDATE3:		$3800		$2000		$0000
+
 VSCROLLTUP:
-    LD HL, FRAMEBUFFER
-    PUSH HL
-    ; LD D, 3
-    ; LD E, $c0
-    ; ADD HL, DE
-    ; PUSH HL
-    LD A, (CURRENTTILESWIDTH) 
+    LD A, (CURRENTMODE)
+    CP 0
+    JR Z,VSCROLLTUP0
+    CP 1
+    JR Z,VSCROLLTUP1
+    RET
+
+VSCROLLTUP0:
+    LD BC, 40 * 23
+    LD A, 40
     LD E, A
     LD D, 0
+    LD HL, $0000
+    ADD HL, BC
+    PUSH HL
+    JP VSCROLLTUPCOMMON
+
+VSCROLLTUP1:
+    LD BC, 32 * 23
+    LD A, 32
+    LD E, A
+    LD D, 0
+    LD HL, $0000
+    ADD HL, BC
+    PUSH HL
+    JP VSCROLLTUPCOMMON
+
+VSCROLLTUPCOMMON:
+    LD HL, $0000
+    PUSH HL
     ADD HL, DE
     POP DE
-    LD BC, 40*23
-    LDIR
+    INC B
+    
+VSCROLLTUPLOOP:
+
+    PUSH DE
+    PUSH BC
+    LD DE, HL
+    LD BC, 1
+    CALL VDPINCHAR
+    POP BC
+    POP DE
+
+    PUSH BC
+    LD BC, 1
+    CALL VDPOUTCHAR
+    POP BC
+
+    INC     DE
+    INC     HL
+
+    DEC     C
+    JP      NZ, VSCROLLTUPLOOP
+    DJNZ    VSCROLLTUPLOOP
+
+    LD A, (CURRENTMODE)
+    CP 0
+    JR Z,VSCROLLTUPX0
+    CP 1
+    JR Z,VSCROLLTUPX1
+    RET
+
+VSCROLLTUPX0:
+    LD A, (EMPTYTILE)
+    LD BC, 40
+    POP DE
+    CALL VDPFILL
+    RET
+
+VSCROLLTUPX1:
+    LD A, (EMPTYTILE)
+    LD BC, 32
+    POP DE
+    CALL VDPFILL
     RET

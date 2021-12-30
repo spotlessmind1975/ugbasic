@@ -35,21 +35,30 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+; 			        NAME		COLOR		PATTERN
+; VDPUPDATE0: 		$0000		
+; VDPUPDATE1:		$0000		$0480		$0800
+; VDPUPDATE2:		$3800		$2000
+; VDPUPDATE3:		$3800		$2000		$0000
+
 CLSG:
     LD A, 0
-    LD HL, (FRAMEBUFFER)
-    LD (HL), A
-    LD DE, (FRAMEBUFFER)
-    INC DE
-    LD BC, 32*24
-    LDIR
+    LD DE, $3800
+    LD BC, 256
+    CALL VDPFILLA
+    LD BC, 256
+    CALL VDPFILLA
+    LD BC, 256
+    CALL VDPFILLA
 
-    LD A, (_PAPER)
-    LD HL, (COLORBUFFER)
-    LD (HL), A
-    LD DE, (COLORBUFFER)
-    INC DE
+    LD BC, 255*8
+    LD DE, $0000
+    LD A, 0
+    CALL VDPFILL8
+
     LD BC, 32*24
-    LDIR
+    LD DE, $2000
+    LD A, _PAPER
+    CALL VDPFILL8
 
     RET
