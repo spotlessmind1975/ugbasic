@@ -58,7 +58,7 @@ CLSG:
 
     LD BC, 32*24
     LD DE, $2000
-    LD A, _PAPER
+    LD A, (_PAPER)
     CALL VDPFILL8
 
     RET
