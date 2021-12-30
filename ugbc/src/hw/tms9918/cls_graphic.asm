@@ -51,14 +51,14 @@ CLSG:
     LD BC, 256
     CALL VDPFILLA
 
-    LD BC, 255*8
+    LD BC, 255*8*8
     LD DE, $0000
     LD A, 0
-    CALL VDPFILL8
+    CALL VDPFILL
 
-    LD BC, 32*24
+    LD BC, 32*24*8
     LD DE, $2000
     LD A, (_PAPER)
-    CALL VDPFILL8
+    CALL VDPFILL
 
     RET

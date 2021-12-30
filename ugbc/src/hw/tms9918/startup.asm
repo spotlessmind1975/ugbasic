@@ -205,7 +205,7 @@ VDPFILL8:
         CALL    VDPWRITEADDR
         POP     AF
 VDPFILLLOOP8:
-        CALL    VDPRAMOUT
+        CALL    VDPRAMOUT8
         DEC     C
         JP      NZ, VDPFILLLOOP8
         EI
@@ -216,6 +216,7 @@ VDPFILLA:
         PUSH    AF
         CALL    VDPWRITEADDR
         POP     AF
+        INC B
 VDPFILLALOOP:
         CALL    VDPRAMOUT
         DEC     C
