@@ -35,14 +35,17 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-VSCROLLTUP:
-    LD A, (EMPTYTILE)
-    LD HL, (FRAMEBUFFER)
-    LD (HL), A
+VSCROLLTDOWN:
+    LD HL, FRAMEBUFFER
+    LD D, 3
+    LD E, $c0
+    ADD HL, DE
+    PUSH HL
     LD A, (CURRENTTILESWIDTH) 
     LD E, A
     LD D, 0
-    ADD HL, DE
+    SBC HL, DE
+    POP DE
     LD BC, 40*23
-    LDIR
+    LDDR
     RET
