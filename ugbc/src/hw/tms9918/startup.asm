@@ -374,7 +374,7 @@ TMS9918STARTUP:
 
     LD A, VDP_R1
     LD E, A
-    LD A, $c0
+    LD A, $d0
     CALL VDPSETREG
 
     LD A, VDP_RNAME
