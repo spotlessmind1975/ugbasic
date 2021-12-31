@@ -48,8 +48,6 @@
  */
 void wait_milliseconds( Environment * _environment, int _timing ) {
 
-    
-
     char timingString[MAX_TEMPORARY_STORAGE]; sprintf(timingString, "#$%2.2x", _timing >> 4 );
 
     wait_ticks( _environment, _timing >> 4 );
@@ -66,13 +64,11 @@ void wait_milliseconds( Environment * _environment, int _timing ) {
  */
 void wait_milliseconds_var( Environment * _environment, char * _timing ) {
 
-    
-
     MAKE_LABEL
 
     Variable * timing = variable_retrieve( _environment, _timing );
 
-    Variable * temp = variable_cast( _environment, timing->name, VT_BYTE );
+    Variable * temp = variable_cast( _environment, timing->name, VT_WORD );
 
     temp = variable_div2_const( _environment, temp->name, 4 );
 

@@ -48,19 +48,24 @@
  */
 void wait_ticks( Environment * _environment, int _timing ) {
 
-    
-
-    char timingString[MAX_TEMPORARY_STORAGE]; sprintf(timingString, "$%2.2x", _timing );
-
     MAKE_LABEL
 
-    outline1("LD BC, %s", timingString);
+    outline0("LD HL, ($FC9E)");
+    outline0("LD DE, HL");
     outhead1("%s:", label);
-    outline0("HALT");
-    outline0("DEC BC");
-    outline0("LD A,B");
-    outline0("OR C");
-    outline1("JR Z, %s", label);
+    outline0("LD HL, ($FC9E)");
+    outline0("SBC HL, DE");
+    outline0("INC HL");
+    outline0("LD A, H");
+    outline1("CP $%2.2x", (_timing >> 8) );
+    outline1("JR Z, %s1", label );
+    outline1("JR C, %s", label );
+    outhead1("%s1:", label);
+    outline0("LD A, L");
+    outline1("CP $%2.2x", (_timing & 0xff) );
+    outline1("JR Z, %s2", label );
+    outline1("JR C, %s", label );
+    outhead1("%s2:", label);
 
 }
 
@@ -74,18 +79,29 @@ void wait_ticks( Environment * _environment, int _timing ) {
  */
 void wait_ticks_var( Environment * _environment, char * _timing ) {
 
-    
-
     MAKE_LABEL
 
     Variable * timing = variable_retrieve( _environment, _timing );
     
-    outline1("LD BC, (%s)", timing->realName);
+    outline0("LD HL, ($FC9E)");
+    outline0("LD DE, HL");
     outhead1("%s:", label);
-    outline0("HALT");
-    outline0("DEC BC");
-    outline0("LD A,B");
-    outline0("OR C");
-    outline1("JR Z, %s", label);
+    outline0("LD HL, ($FC9E)");
+    outline0("SBC HL, DE");
+    outline0("INC HL");
+    outline1("LD A, (%s+1)", timing->realName);
+    outline0("LD B, A");
+    outline0("LD A, H");
+    outline0("CP B" );
+    outline1("JR Z, %s1", label );
+    outline1("JR C, %s", label );
+    outhead1("%s1:", label);
+    outline1("LD A, (%s)", timing->realName);
+    outline0("LD B, A");
+    outline0("LD A, L");
+    outline0("CP B" );
+    outline1("JR Z, %s2", label );
+    outline1("JR C, %s", label );
+    outhead1("%s2:", label);
 
 }

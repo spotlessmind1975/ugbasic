@@ -339,7 +339,7 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
             //      = Reserved Bit (must be set to O)
             //      = Selects Size 0 sprites (8x8 pixels)
             //      = Selects no magnification
-            WVDP_R1( 0xd0 );
+            WVDP_R1( 0xf0 );
 
             // Register 2 tells the VDP where the starting address of the Name Table is located in VRAM. The
             // range of its contents is from O-F. The contents of the register form the upper four bits of
@@ -384,7 +384,7 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
             //      = Reserved Bit (must be set to O)
             //      = Selects Size 0 sprites (8x8 pixels)
             //      = Selects no magnification
-            WVDP_R1( 0xc0 );
+            WVDP_R1( 0xe0 );
 
             // Register 2 tells the VDP where the starting address of the Name Table is located in VRAM. The
             // range of its contents is from O-F. The contents of the register form the upper four bits of
@@ -445,7 +445,7 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
             //      = Reserved Bit (must be set to O)
             //      = Selects Size 0 sprites (8x8 pixels)
             //      = Selects no magnification
-            WVDP_R1( 0xc2 );
+            WVDP_R1( 0xe2 );
 
             // Register 2 tells the VDP where the starting address of the Name Table is located in VRAM. The
             // range of its contents is from O-F. The contents of the register form the upper four bits of
