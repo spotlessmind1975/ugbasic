@@ -51,19 +51,19 @@ CLST:
 
 CLST0:
     LD A, (EMPTYTILE)
-    LD BC, 40*24
+    LD BC, $100 + 40*24
     LD DE, $0000
     CALL VDPFILL
     RET
 
 CLST1:
     LD A, (EMPTYTILE)
-    LD BC, 32*24
+    LD BC, $100 + 32*24
     LD DE, $0000
     CALL VDPFILL
 
     LD A, (_PAPER)
-    LD BC, 32
+    LD BC, $100 + 32
     LD DE, $0480
     CALL VDPFILL
 

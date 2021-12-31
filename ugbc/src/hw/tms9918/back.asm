@@ -62,7 +62,7 @@ BACK0:
 
 BACK1:
     LD DE, $0480
-    LD BC, 32
+    LD BC, $32
     JP BACKCOMMON
 
 BACK2:
