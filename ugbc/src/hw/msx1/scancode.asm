@@ -36,35 +36,53 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 SCANCODE:
-;     LD HL,SCANCODEKM
-;     LD D,8
-;     LD C,$FE
-; SCANCODE0:
-;     LD B,(HL)
-;     INC HL
-;     IN A,(C)
-;     AND $1F
-;     LD E,5
-; SCANCODE1:
-;     SRL A
-;     JR NC,SCANCODE2
-;     INC HL
-;     DEC E
-;     JR NZ,SCANCODE1
-;     DEC D
-;     JR NZ,SCANCODE0
-;     AND A
-;     RET
-; SCANCODE2:
-;     LD A,(HL)
+    LD HL,SCANCODEKM
+    LD D, 10
+    LD B, 0
+SCANCODEROW:
+    LD E, 8
+    IN A,($AA)
+    AND $F0
+    OR B
+    OUT ($AA), A
+    IN A, ($A9)
+SCANCODE1:
+    SRL A
+    JR NC,SCANCODE2
+    INC HL
+    DEC E
+    JR NZ,SCANCODE1
+    DEC D
+    INC B
+    JR NZ,SCANCODEROW
+    AND A
     RET
- 
-; SCANCODEKM:
-;     DB $FE,$F1,"Z","X","C","V"
-;     DB $FD,"A","S","D","F","G"
-;     DB $FB,"Q","W","E","R","T"
-;     DB $F7,"1","2","3","4","5"
-;     DB $EF,"0","9","8","7","6"
-;     DB $DF,"P","O","I","U","Y"
-;     DB $BF,"#","L","K","J","H"
-;     DB $7F," ","#","M","N","B"
+SCANCODE2:
+    LD A,(HL)
+    RET
+
+SCANCODEKM:
+    DB "0", "1", "2", "3", "4", "5", "6", "7"
+    DB "8", "9", "-", "=", "\\","[", "]", ";"
+    DB "\"","~", "<", ">", "?", $00, "a", "b"
+    DB "c", "d", "e", "f", "g", "h", "i", "j"
+    DB "k", "l", "m", "n", "o", "p", "q", "r"
+    DB "s", "t", "u", "v", "w", "x", "y", "z"
+    DB $81, $82, $83, $84, $85, $F1, $F2, $F3
+    DB $F4, $F5, $27, $09, $08, $86, $87, $0D
+    DB " ", $88, $89, $90, $91, $92, $93, $94
+    DB "*", "+", "/", "0", "1", "2", "3", "4"
+    DB "5", "6", "7", "8", "9", "-", ",", "."
+
+SCANCODEKMS:
+    DB ")", "!", "@", "#", "$", "%", "^", "&"
+    DB "*", "(", "_", "+", "|", "{", "}", ":"
+    DB "'", "`", ",", ".", "/", $00, "A", "B"
+    DB "C", "D", "E", "F", "G", "H", "I", "J"
+    DB "K", "L", "M", "N", "O", "P", "Q", "R"
+    DB "S", "T", "U", "V", "W", "X", "Y", "Z"
+    DB $81, $82, $83, $84, $85, $F1, $F2, $F3
+    DB $F4, $F5, $27, $09, $08, $86, $87, $0D
+    DB " ", $88, $89, $90, $91, $92, $93, $94
+    DB "*", "+", "/", "0", "1", "2", "3", "4"
+    DB "5", "6", "7", "8", "9", "-", ",", "."
