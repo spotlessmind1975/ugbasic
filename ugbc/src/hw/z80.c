@@ -133,6 +133,8 @@ void z80_poke( Environment * _environment, char * _address, char * _source ) {
  */
 void z80_fill_blocks( Environment * _environment, char * _address, char * _blocks, char * _pattern ) {
 
+    MAKE_LABEL
+
     outline1("LD A,(%s)", _pattern);
     outline1("LD HL,(%s)", _address);
     outline0("LD (HL),A")
@@ -142,6 +144,8 @@ void z80_fill_blocks( Environment * _environment, char * _address, char * _block
     outline0("LD (DE),A")
     outline0("LD C,0");
     outline1("LD A,(%s)", _blocks);
+    outline0("CP 0");
+    outline1("JR Z, %sdone", label);
     outline0("DEC A");
     outline0("LD B,A");
     outline0("LDIR");
@@ -156,6 +160,7 @@ void z80_fill_blocks( Environment * _environment, char * _address, char * _block
     outline0("LD A,0");
     outline0("LD B,A");
     outline0("LDIR");
+    outhead1("%sdone:", label);
 
 }
 
@@ -174,6 +179,8 @@ void z80_fill_blocks( Environment * _environment, char * _address, char * _block
  */
 void z80_fill( Environment * _environment, char * _address, char * _bytes, char * _pattern ) {
 
+    MAKE_LABEL
+
     outline1("LD A,(%s)", _pattern);
     outline1("LD HL,(%s)", _address);
     outline0("LD (HL),A")
@@ -182,11 +189,14 @@ void z80_fill( Environment * _environment, char * _address, char * _bytes, char 
     outline0("INC DE");
     outline0("LD (DE),A")
     outline1("LD A,(%s)", _bytes);
+    outline0("CP 0");
+    outline1("JR Z, %sdone", label);
     outline0("DEC A");
     outline0("LD C,A");
     outline0("LD A,0");
     outline0("LD B,A");
     outline0("LDIR");
+    outhead1("%sdone:", label);
 
 }
 
@@ -205,6 +215,8 @@ void z80_fill( Environment * _environment, char * _address, char * _bytes, char 
  */
 void z80_fill_size( Environment * _environment, char * _address, int _bytes, char * _pattern ) {
 
+    MAKE_LABEL
+
     outline1("LD A,(%s)", _pattern);
     outline1("LD HL,(%s)", _address);
     outline0("LD (HL),A")
@@ -213,11 +225,13 @@ void z80_fill_size( Environment * _environment, char * _address, int _bytes, cha
     outline0("INC DE");
     outline0("LD (DE),A")
     outline1("LD A,$%2.2x", _bytes);
+    outline1("JR Z, %sdone", label);
     outline0("DEC A");
     outline0("LD C,A");
     outline0("LD A,0");
     outline0("LD B,A");
     outline0("LDIR");
+    outhead1("%sdone:", label);
 
 }
 
@@ -236,6 +250,8 @@ void z80_fill_size( Environment * _environment, char * _address, int _bytes, cha
  */
 void z80_fill_size_value( Environment * _environment, char * _address, int _bytes, int _pattern ) {
 
+    MAKE_LABEL
+    
     outline1("LD A,$%2.2x", _pattern);
     outline1("LD HL,(%s)", _address);
     outline0("LD (HL),A")
@@ -244,11 +260,14 @@ void z80_fill_size_value( Environment * _environment, char * _address, int _byte
     outline0("INC DE");
     outline0("LD (DE),A")
     outline1("LD A,$%2.2x", _bytes);
+    outline0("CP 0");
+    outline1("JR Z, %sdone", label);
     outline0("DEC A");
     outline0("LD C,A");
     outline0("LD A,0");
     outline0("LD B,A");
     outline0("LDIR");
+    outhead1("%sdone:", label);
 
 }
 
@@ -267,6 +286,8 @@ void z80_fill_size_value( Environment * _environment, char * _address, int _byte
  */
 void z80_fill_direct( Environment * _environment, char * _address, char * _bytes, char * _pattern ) {
 
+    MAKE_LABEL
+
     outline1("LD A,(%s)", _pattern);
     outline1("LD HL,%s", _address);
     outline0("LD (HL),A")
@@ -275,11 +296,14 @@ void z80_fill_direct( Environment * _environment, char * _address, char * _bytes
     outline0("INC DE");
     outline0("LD (DE),A")
     outline1("LD A,(%s)", _bytes);
+    outline0("CP 0");
+    outline1("JR Z, %sdone", label);
     outline0("DEC A");
     outline0("LD C,A");
     outline0("LD A,0");
     outline0("LD B,A");
     outline0("LDIR");
+    outhead1("%sdone:", label);
 
 }
 
@@ -298,6 +322,8 @@ void z80_fill_direct( Environment * _environment, char * _address, char * _bytes
  */
 void z80_fill_direct_size( Environment * _environment, char * _address, int _bytes, char * _pattern ) {
 
+    MAKE_LABEL
+
     outline1("LD A,(%s)", _pattern);
     outline1("LD HL,%s", _address);
     outline0("LD (HL),A")
@@ -306,11 +332,14 @@ void z80_fill_direct_size( Environment * _environment, char * _address, int _byt
     outline0("INC DE");
     outline0("LD (DE),A")
     outline1("LD A,$%2.2x", _bytes);
+    outline0("CP 0");
+    outline1("JR Z, %sdone", label);
     outline0("DEC A");
     outline0("LD C,A");
     outline0("LD A,0");
     outline0("LD B,A");
     outline0("LDIR");
+    outhead1("%sdone:", label);
 
 }
 
@@ -329,6 +358,8 @@ void z80_fill_direct_size( Environment * _environment, char * _address, int _byt
  */
 void z80_fill_direct_size_value( Environment * _environment, char * _address, int _bytes, int _pattern ) {
 
+    MAKE_LABEL
+    
     outline1("LD A,$%2.2x", _pattern);
     outline1("LD HL,%s", _address);
     outline0("LD (HL),A")
@@ -337,11 +368,16 @@ void z80_fill_direct_size_value( Environment * _environment, char * _address, in
     outline0("INC DE");
     outline0("LD (DE),A")
     outline1("LD A,$%2.2x", _bytes);
+    outline0("CP 0");
+    outline1("JR Z, %sdone", label);
     outline0("DEC A");
+    outline0("CP 0");
+    outline1("JR Z, %sdone", label);
     outline0("LD C,A");
     outline0("LD A,0");
     outline0("LD B,A");
     outline0("LDIR");
+    outhead1("%sdone:", label);
 
 }
 
@@ -2372,56 +2408,72 @@ void z80_dec_16bit( Environment * _environment, char * _variable ) {
 
 void z80_mem_move( Environment * _environment, char *_source, char *_destination,  char *_size ) {
 
+    MAKE_LABEL
+
     outline1("LD HL,(%s)", _source);
     outline1("LD DE,(%s)", _destination);
     outline1("LD A, (%s)", _size);
+    outline0("CP 0");
+    outline1("JR Z, %sdone", label);
     outline0("LD C, A");
     outline0("LD B, 0");
     outline0("LDIR");
+    outhead1("%sdone:", label);
 
 }
 
 void z80_mem_move_direct( Environment * _environment, char *_source, char *_destination,  char *_size ) {
 
+    MAKE_LABEL
+
     outline1("LD HL,%s", _source);
     outline1("LD DE,%s", _destination);
     outline1("LD A, (%s)", _size);
+    outline0("CP 0");
+    outline1("JR Z, %sdone", label);
     outline0("LD C, A");
     outline0("LD B, 0");
     outline0("LDIR");
+    outhead1("%sdone:", label);
 
 }
 
 void z80_mem_move_size( Environment * _environment, char *_source, char *_destination, int _size ) {
 
-    outline1("LD HL,(%s)", _source);
-    outline1("LD DE,(%s)", _destination);
-    outline1("LD A, $%2.2x", ( _size & 0xff ) );
-    outline0("LD C, A");
-    outline1("LD B, $%2.2x", ( _size >> 8 ) & 0xff );
-    outline0("LDIR");
+    if ( _size > 0 ) {
+        outline1("LD HL,(%s)", _source);
+        outline1("LD DE,(%s)", _destination);
+        outline1("LD A, $%2.2x", ( _size & 0xff ) );
+        outline0("LD C, A");
+        outline1("LD B, $%2.2x", ( _size >> 8 ) & 0xff );
+        outline0("LDIR");
+    }
 
 }
 
 void z80_mem_move_direct_size( Environment * _environment, char *_source, char *_destination, int _size ) {
 
-    outline1("LD HL,%s", _source);
-    outline1("LD DE,%s", _destination);
-    outline1("LD A, $%2.2x", ( _size & 0xff ) );
-    outline0("LD C, A");
-    outline1("LD B, $%2.2x", ( _size >> 8 ) & 0xff );
-    outline0("LDIR");
+    if ( _size > 0 ) {
+        outline1("LD HL,%s", _source);
+        outline1("LD DE,%s", _destination);
+        outline1("LD A, $%2.2x", ( _size & 0xff ) );
+        outline0("LD C, A");
+        outline1("LD B, $%2.2x", ( _size >> 8 ) & 0xff );
+        outline0("LDIR");
+    }
 
 }
 
 void z80_mem_move_direct_indirect_size( Environment * _environment, char *_source, char *_destination, int _size ) {
 
-    outline1("LD HL,%s", _source);
-    outline1("LD DE,(%s)", _destination);
-    outline1("LD A, $%2.2x", ( _size & 0xff ) );
-    outline0("LD C, A");
-    outline1("LD B, $%2.2x", ( _size >> 8 ) & 0xff );
-    outline0("LDIR");
+    if ( _size ) {
+        outline1("LD HL,%s", _source);
+        outline1("LD DE,(%s)", _destination);
+        outline1("LD A, $%2.2x", ( _size & 0xff ) );
+        outline0("LD C, A");
+        outline1("LD B, $%2.2x", ( _size >> 8 ) & 0xff );
+        outline0("LDIR");
+    }
 
 }
 
