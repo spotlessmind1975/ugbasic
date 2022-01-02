@@ -117,7 +117,7 @@ void print_buffer( Environment * _environment, char * _value, int _new_line, int
     cpu_dsalloc_size( _environment, bufferSize, dstring->realName );
     cpu_dsdescriptor( _environment, dstring->realName, address->realName, size->realName );
 
-    sprintf( sourceAddress, "(%s+%d)", value->realName, offset );
+    sprintf( sourceAddress, "%s+%d", value->realName, offset );
     cpu_mem_move_direct_indirect_size( _environment, sourceAddress, address->realName, bufferSize );
 
     text_text( _environment, dstring->name );
