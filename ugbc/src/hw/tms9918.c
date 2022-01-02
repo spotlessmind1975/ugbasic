@@ -894,8 +894,6 @@ void tms9918_back( Environment * _environment ) {
 void tms9918_cline( Environment * _environment, char * _characters ) {
 
     deploy( textCline, src_hw_tms9918_cline_asm );
-    Variable * x = variable_retrieve( _environment, "XCURSYS" );
-    Variable * y = variable_retrieve( _environment, "YCURSYS" );
 
     if ( _characters ) {
         outline1("LD A, (%s)", _characters);
@@ -904,10 +902,7 @@ void tms9918_cline( Environment * _environment, char * _characters ) {
         outline0("LD A, 0");
         outline0("LD C, A");
     }
-    outline1("LD A, (%s)", y->realName );
-    outline0("LD B, A" );
-    outline1("LD A, (%s)", x->realName );
-    outline0("JSR CLINE");
+    outline0("CALL CLINE");
 
 }
 

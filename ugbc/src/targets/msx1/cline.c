@@ -40,5 +40,12 @@
 
 void cline( Environment * _environment, char * _characters ) {
 
-   
+    if ( _characters ) {
+        Variable * characters = NULL;
+        characters = variable_retrieve( _environment, _characters );
+        tms9918_cline( _environment, characters->realName );
+    } else {
+        tms9918_cline( _environment, NULL );
+    }
+
 }

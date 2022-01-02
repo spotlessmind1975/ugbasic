@@ -42,4 +42,72 @@
 ; VDPUPDATE3:		$3800		$2000		$0000
 
 CLINE:
+    LD A, (CURRENTMODE)
+    CP 0
+    JR Z,CLINE0
+    CP 1
+    JR Z,CLINE1
     RET
+
+CLINE0:
+CLINE1:
+    PUSH BC
+    LD A, (CURRENTTILESWIDTH)
+    LD E, A
+    LD D, 0
+
+    LD HL, $0000
+    LD (COPYOFTEXTADDRESS), HL
+    LD A, 0
+    LD B, A
+    LD (TABSTODRAW), A
+
+    LD A, (YCURSYS)
+    CP 0
+    JR Z, CLINE0SKIP
+    LD C, A
+    LD HL, (COPYOFTEXTADDRESS)
+CLINE0LOOP1:
+    ADD HL, DE
+    DEC C
+    JR NZ, CLINE0LOOP1
+    LD (COPYOFTEXTADDRESS), HL
+
+CLINE0SKIP:
+    LD A, (XCURSYS)
+    LD E, A
+    LD A, 0
+    LD D, 0
+    LD HL, (COPYOFTEXTADDRESS)
+    ADD HL, DE
+    LD (COPYOFTEXTADDRESS), HL
+
+    POP BC
+
+    LD A, C
+    CP 0
+    JR Z, CLINE0CL
+    LD (XCURSYS), A
+CLINE0CL:
+    LD A, (XCURSYS)
+    LD B, A
+    LD A, (CURRENTTILESWIDTH)
+    SUB A, B
+    LD C, A
+    LD A, (EMPTYTILE)
+CLINE0CL1:
+
+    PUSH DE
+    PUSH BC
+    LD DE, HL
+    LD BC, 1
+    CALL VDPOUTCHAR
+    POP BC
+    POP DE
+
+    INC HL
+    DEC C
+    JR NZ, CLINE0CL1
+
+    RET
+
