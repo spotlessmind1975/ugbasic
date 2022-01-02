@@ -828,7 +828,7 @@ void tms9918_initialization( Environment * _environment ) {
     variable_global( _environment, "XCURS" );
     variable_import( _environment, "YCURS", VT_BYTE, 0 );
     variable_global( _environment, "YCURS" );
-    variable_import( _environment, "TABCOUNT", VT_BYTE, 0 );
+    variable_import( _environment, "TABCOUNT", VT_BYTE, 4 );
     variable_global( _environment, "TABCOUNT" );
 
     variable_import( _environment, "CLINEX", VT_BYTE, 0 );

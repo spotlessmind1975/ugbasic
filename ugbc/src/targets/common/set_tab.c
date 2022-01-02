@@ -67,7 +67,7 @@ il successivo TAB $.
 </usermanual> */
 void text_set_tab( Environment * _environment, char * _new_tab ) {
 
-    Variable * tab = variable_retrieve( _environment, "windowT" );
+    Variable * tab = variable_retrieve( _environment, "TABCOUNT" );
     Variable * new_tab = variable_retrieve_or_define( _environment, _new_tab, VT_BYTE, 4 );
 
     variable_move( _environment, new_tab->name, tab->name );
