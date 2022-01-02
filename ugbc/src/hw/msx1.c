@@ -56,10 +56,12 @@ void msx1_inkey( Environment * _environment, char * _pressed, char * _key ) {
 
     MAKE_LABEL
 
+    deploy( scancode, src_hw_msx1_scancode_asm );
+
     outline0("LD A, 0");
     outline1("LD (%s), A", _pressed );
     outline1("LD (%s), A", _key );
-    outline0("LD A, ($FBE5)");
+    outline0("CALL SCANCODE");
     outline0("CP 0");
     outline1("JR Z, %snokey", label );
     outline1("LD (%s), a", _key );

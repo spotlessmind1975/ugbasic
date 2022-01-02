@@ -2721,8 +2721,11 @@ void z80_uppercase( Environment * _environment, char *_source, char *_size, char
 
     outline0("SUB A, 32");
     outline0("LD (DE), A" );
+    outline1("JP %sdone", label );
 
     outhead1("%snext:", label );
+    outline0("LD (DE), A" );
+    outhead1("%sdone:", label );
     outline0("INC HL" );
     outline0("INC DE" );
     outline0("DEC C" );
@@ -2753,10 +2756,12 @@ void z80_lowercase( Environment * _environment, char *_source, char *_size, char
     outline0("CP 90");
     outline1("JR NC, %snext", label);
 
-    outline0("ADC A, 32");
+    outline0("ADC A, 31");
     outline0("LD (DE), A" );
-
+    outline1("JP %sdone", label );
     outhead1("%snext:", label );
+    outline0("LD (DE), A" );
+    outhead1("%sdone:", label );
     outline0("INC HL" );
     outline0("INC DE" );
     outline0("DEC C" );
