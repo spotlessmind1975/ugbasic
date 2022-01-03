@@ -262,7 +262,7 @@ PLOT3:
     LD D, 0
     ADD HL, DE
     POP DE
-    
+
     EXX
 
     EI
@@ -280,7 +280,7 @@ PLOT3:
     JR Z, PLOTG                  ;if = 2 then branch to get the point (0/1)
     CP 3
     JR Z, PLOTC                  ;if = 3 then branch to get the color index (0...15)
-    JP PLOTP
+    JP PLOTP2
 
 PLOTD:
     ;---------
@@ -318,7 +318,7 @@ PLOTD:
 
     EI
 
-    JMP PLOTP
+    JMP PLOTP2
 
     ;-----------
     ;erase point
@@ -333,7 +333,7 @@ PLOTE:                          ;handled same way as setting a point
     LD DE, HL
     CALL VDPOUTCHAR
     POP DE
-    JMP PLOTP
+    JMP PLOTP2
 
 PLOTG:      
     PUSH DE
@@ -345,16 +345,19 @@ PLOTG:
     JR Z, PLOTG0
 PLOTG1:
     LD A, $ff
-    JMP PLOTP
+    JMP PLOTP2
 PLOTG0:
     LD A, $0
-    JMP PLOTP
+    JMP PLOTP2
 
 PLOTC:                          
-    JMP PLOTP
+    JMP PLOTP2
 
 PLOTP:
+    POP AF
+PLOTP2:
     RET
+
 
 ;----------------------------------------------------------------
 
