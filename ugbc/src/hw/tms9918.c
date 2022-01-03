@@ -500,6 +500,8 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
     cpu_store_8bit( _environment, "FONTWIDTH", _environment->fontWidth );
     cpu_store_8bit( _environment, "FONTHEIGHT", _environment->fontHeight );
 
+    tms9918_cls( _environment );
+    
 }
 
 void tms9918_bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {
