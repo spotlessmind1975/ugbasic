@@ -10,6 +10,7 @@ REM Questo esempio mostra l'effetto dell'utilizzo del comando ''CLIP''.
 
     BITMAP ENABLE
     CLS BLACK
+    INK YELLOW
     CLIP 20,20 TO 50,50
     r = (POSITION) 0
     FOR r=4 TO 96 STEP 4
