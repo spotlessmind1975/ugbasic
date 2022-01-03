@@ -18,16 +18,13 @@ VDPREGIN:
         RET
 
 VDPRAMOUT:
-        DI
         PUSH    BC
         LD      BC, (VDPDATAPORTWRITE)
         OUT     (C), A
         POP     BC
-        EI
         RET
 
 VDPRAMOUT8:
-        DI
         PUSH    BC
         LD      BC, (VDPDATAPORTWRITE)
         OUT     (C), A
@@ -103,7 +100,6 @@ VDPRAMOUT8:
         NOP
         NOP
         POP     BC
-        EI
         RET
 
 VDPRAMIN:
