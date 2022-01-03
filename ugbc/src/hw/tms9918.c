@@ -326,7 +326,7 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
             _environment->screenTilesHeight = 24;
             _environment->screenTiles = 255;
             _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
-            _environment->screenHeight = _environment->screenTilesHeight * _environment->screenTilesHeight;
+            _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
             _environment->screenColors = 16;
 
             // M3 = 0
@@ -371,7 +371,7 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
             _environment->screenTilesHeight = 24;
             _environment->screenTiles = 255;
             _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
-            _environment->screenHeight = _environment->screenTilesHeight * _environment->screenTilesHeight;
+            _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
             _environment->screenColors = 16;    
 
             // M3 = 0
@@ -432,7 +432,7 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
             _environment->screenTilesHeight = 24;
             _environment->screenTiles = 255;
             _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
-            _environment->screenHeight = _environment->screenTilesHeight * _environment->screenTilesHeight;
+            _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
             _environment->screenColors = 16;    
 
             // M3 = 1
@@ -555,14 +555,12 @@ void tms9918_point_at_int( Environment * _environment, int _x, int _y ) {
     deploy( tms9918varsGraphic, src_hw_tms9918_vars_graphic_asm );
     deploy( plot, src_hw_tms9918_plot_asm );
     
-    outline1("LD A, %2.2x", (_x & 0xff ) );
-    outline0("LD L, A");
-    outline1("LD A, %2.2x", ( ( _x >> 8 ) & 0xff ) );
-    outline0("LD H, A");
-    outline1("LD A, %2.2x", ( _y & 0xff ) );
+    outline1("LD A, $%2.2x", _y );
+    outline0("LD D, A");
+    outline1("LD A, $%2.2x", _x );
     outline0("LD E, A");
-    outline0("LD A, #1");
-    outline0("JSR PLOT");
+    outline0("LD A, 1");
+    outline0("CALL PLOT");
 
 }
 
@@ -575,11 +573,12 @@ void tms9918_point_at_vars( Environment * _environment, char *_x, char *_y ) {
     deploy( tms9918varsGraphic, src_hw_tms9918_vars_graphic_asm );
     deploy( plot, src_hw_tms9918_plot_asm );
     
-    outline1("LD DE, (%s)", y->realName );
-    outline0("LD HL, DE");
-    outline1("LD HL, (%s)", x->realName );
-    outline0("LD A, #1");
-    outline0("JSR PLOT");
+    outline1("LD A, (%s)", y->realName );
+    outline0("LD D, A");
+    outline1("LD A, (%s)", x->realName );
+    outline0("LD E, A");
+    outline0("LD A, 1");
+    outline0("CALL PLOT");
 
 }
 
@@ -593,11 +592,12 @@ void tms9918_point( Environment * _environment, char *_x, char *_y, char * _resu
     deploy( tms9918varsGraphic, src_hw_tms9918_vars_graphic_asm );
     deploy( plot, src_hw_tms9918_plot_asm );
     
-    outline1("LD DE, (%s)", y->realName );
-    outline0("LD HL, DE");
-    outline1("LD HL, (%s)", x->realName );
-    outline0("LD A, #3");
-    outline0("JSR PLOT");
+    outline1("LD A, (%s)", y->realName );
+    outline0("LD D, A");
+    outline1("LD A, (%s)", x->realName );
+    outline0("LD E, A");
+    outline0("LD A, 3");
+    outline0("CALL PLOT");
     outline1("LD (%s), A", result->realName);
 
 }
