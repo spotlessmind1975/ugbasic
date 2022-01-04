@@ -46,6 +46,11 @@ void target_finalization( Environment * _environment ) {
     outhead0("LASTVAR: db $00");
     outhead0("section code_user");
 
+    if ( ! _environment->protothread ) {
+        outhead0("PROTOTHREADINIT:" );
+        outline0("RET");
+    }
+
     outhead0("VARINIT2:");
     outline0("LD HL, CODEEND");
     outline0("LD DE, $C000");

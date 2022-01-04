@@ -77,6 +77,8 @@ void target_initialization( Environment * _environment ) {
 
     outhead0("org 32768");
 
+    outline0("CALL PROTOTHREADINIT" );
+
     if ( _environment->tenLinerRulesEnforced ) {
         shell_injection( _environment );
     }

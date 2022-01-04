@@ -3796,16 +3796,9 @@ void z80_protothread_vars( Environment * _environment ) {
     // outhead1("PROTOTHREADST:      DEFS        %d", count );
     variable_import( _environment, "PROTOTHREADCT", VT_BYTE, 0 );
     // outhead0("PROTOTHREADCT:      DEFB        0" );
-    outhead0("PROTOTHREADLOOP:");
+    variable_import( _environment, "PROTOTHREADLOOP", VT_BUFFER, 1 + count * 8 );
+    variable_import( _environment, "PROTOTHREADCOUNT", VT_BYTE, count );
 
-    for( int i=0; i<count; ++i ) {
-        outline1("LD A, %d", i );
-        outline0("LD (PROTOTHREADCT), A" );
-        outline0("CALL PROTOTHREADVOID" );
-    }
-
-    outline0("RET" );
-    
 }
 
 

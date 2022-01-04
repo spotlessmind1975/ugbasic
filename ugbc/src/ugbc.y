@@ -3620,6 +3620,7 @@ define_definition :
             CRITICAL_INVALID_TASK_COUNT( $3 );
         }
         ((struct _Environment *)_environment)->protothreadConfig.count = $3;
+        variable_import( _environment, "PROTOTHREADCOUNT", VT_BYTE, $3 );
     }
     | DEFAULT TYPE datatype {
         ((struct _Environment *)_environment)->defaultVariableType = $3;

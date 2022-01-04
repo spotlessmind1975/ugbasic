@@ -117,6 +117,7 @@ void target_initialization( Environment * _environment ) {
     
     outline0("CALL VARINIT2");
     outline0("CALL VARINIT");
+    outline0("CALL PROTOTHREADINIT" );
 
     if ( _environment->tenLinerRulesEnforced ) {
         shell_injection( _environment );
