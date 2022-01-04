@@ -35,203 +35,116 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-IMAGEX:     DB 0
-IMAGEY:     DB 0
-IMAGEW:     DB 0
-IMAGEH:     DB 0
-IMAGEH2:    DB 0
+; IMAGET:     DB 0      -> A
+; IMAGEX:     DB 0      -> E
+; IMAGEY:     DB 0      -> D
+; IMAGEW:     DB 0      -> C
+; IMAGEH:     DB 0      -> B
+; IMAGEH2:    DB 0      -> ?
+; PTR:        DW 0      -> HL
 
 ; ----------------------------------------------------------------------------
 ; - Put image on bitmap
 ; ----------------------------------------------------------------------------
 
 PUTIMAGE:
-;     LD A, (CURRENTMODE)
-;     ; BITMAP_MODE_STANDARD
-;     CP 0
-;     JR NZ, PUTIMAGE0X
-;     JMP PUTIMAGE0
-; PUTIMAGE0X:
-;     ; TILEMAP_MODE_STANDARD
-;     CP 1
-;     JR NZ, PUTIMAGE1X
-;     JMP PUTIMAGE1
-; PUTIMAGE1X:
-;     RET
+    LD A, (CURRENTMODE)
+    CP 0
+    JR NZ, PUTIMAGE0X
+    JMP PUTIMAGE0
+PUTIMAGE0X:
+    CP 1
+    JR NZ, PUTIMAGE1X
+    JMP PUTIMAGE1
+PUTIMAGE1X:
+    CP 2
+    JR NZ, PUTIMAGE2X
+    JMP PUTIMAGE2
+PUTIMAGE2X:
+    CP 3
+    JR NZ, PUTIMAGE3X
+    JMP PUTIMAGE3
+PUTIMAGE3X:
+    RET
 
-; PUTIMAGE1:
-;     RET
+PUTIMAGE0:
+PUTIMAGE1:
+PUTIMAGE3:
+    RET
 
-; PUTIMAGE0:
-;     LD A, (HL)
-;     LD (IMAGEW), A
-;     ADD HL, 1
-;     LD A, (HL)
-;     SRL A
-;     SRL A
-;     SRL A
-;     LD (IMAGEH), A
-;     LD (IMAGEH2), A
-;     ADD HL, 1
+PUTIMAGE2:
+    LD A, (HL)
+    LD C, A
+    INC HL
+    LD A, (HL)
+    SRL A
+    SRL A
+    SRL A
+    LD B, A
+    INC HL
 
-;     PUSH HL
+    PUSH DE
+    PUSH BC
+    PUSH HL
+    PUSH BC
 
-;     LD A, (IMAGEX)
-;     AND $7
-;     LD B, A
-;     LD A, $8
-;     SUB B
-;     LD B, A
-;     LD E, 1
-; PUTIMAGE0A:
-;     DEC B
-;     JR Z,PUTIMAGE0B
-;     SLA E
-;     JMP PUTIMAGE0A
-; PUTIMAGE0B:
-;     LD A,(IMAGEY)
-;     LD B, A
-;     LD A,(IMAGEX)
-;     LD C, A
+    CALL VDPPOS
 
-;     LD A,B
-;     AND %00000111
-;     OR %01000000
-;     LD H,A
-;     LD A,B
-;     RRA
-;     RRA
-;     RRA
-;     AND %00011000
-;     OR H
-;     LD H,A
-;     LD A,B
-;     RLA
-;     RLA
-;     AND %11100000
-;     LD L,A
-;     LD A,C
-;     RRA
-;     RRA
-;     RRA
-;     AND %00011111
-;     OR L
-;     LD L,A
+    LD DE, HL
 
-;     PUSH HL
-;     POP DE
-;     POP HL
+    POP BC
+    POP HL
 
-;     LD A, (IMAGEH)
-;     LD C, A
-;     SLA C
-;     SLA C
-;     SLA C
-;     LD A, (IMAGEW)
-;     LD B, A
-; PUTIMAGE0CP:
-;     LD A, (HL)
-;     LD (DE), A
-;     INC HL
-;     INC DE
-;     DEC B
-;     JR NZ, PUTIMAGE0CP
-;     LD A, (IMAGEW)
-;     LD B, A
+PUTIMAGE0CPA:
+    PUSH DE
+    PUSH BC
+PUTIMAGE0CP:
+    LD A, (HL)
+    CALL VDPOUTCHAR
+    INC DE
+    INC HL
+    DEC C
+    JR NZ, PUTIMAGE0CP
+    POP BC
+    LD A, (CURRENTWIDTH)
+    SUB C
+    ADD E
+    JR NC,PUTIMAGE0CP2
+    INC D    
+PUTIMAGE0CP2:
+    DEC B
+    JR NZ, PUTIMAGE0CPA
 
-;     PUSH HL
-    
-;     LD A,(IMAGEY)
-;     ADD A, 1
-;     LD (IMAGEY), A
-;     LD B, A
-;     LD A,(IMAGEX)
-;     LD C, A
+    DI
 
-;     LD A,B
-;     AND %00000111
-;     OR %01000000
-;     LD H,A
-;     LD A,B
-;     RRA
-;     RRA
-;     RRA
-;     AND %00011000
-;     OR H
-;     LD H,A
-;     LD A,B
-;     RLA
-;     RLA
-;     AND %11100000
-;     LD L,A
-;     LD A,C
-;     RRA
-;     RRA
-;     RRA
-;     AND %00011111
-;     OR L
-;     LD L,A
+    EXX
 
-;     PUSH HL
-;     POP DE
-;     POP HL
+    POP BC
+    POP DE
 
-;     DEC C
-;     JR NZ, PUTIMAGE0CP
+PUTIMAGE0CPCA:
+    PUSH DE
+    PUSH BC
+PUTIMAGE0CPC:
+    LD A, (HL)
+    CALL VDPOUTCHAR
+    INC DE
+    INC HL
+    DEC C
+    JR NZ, PUTIMAGE0CPC
+    POP BC
+    LD A, (CURRENTWIDTH)
+    SUB C
+    ADD E
+    JR NC,PUTIMAGE0CPC2
+    INC D    
+PUTIMAGE0CPC2:
+    DEC B
+    JR NZ, PUTIMAGE0CPCA
 
-;     ;;;;
+    EXX
 
-;     PUSH HL
-
-;     LD HL,(IMAGEX)
-;     SRA H
-;     RR L
-;     SRA H
-;     RR L
-;     SRA H
-;     RR L
-;     LD DE,HL
-
-;     LD HL,(IMAGEY)
-;     SLA L
-;     RL H
-;     SLA L
-;     RL H
-;     ADD HL,DE
-;     LD DE,(COLORMAPADDRESS)
-;     ADD HL,DE
-
-;     PUSH HL
-
-;     POP DE
-;     POP HL
-
-;     LD A, (IMAGEH)
-;     LD C, A
-;     LD A, (IMAGEW)
-;     LD B, A
-; PUTIMAGE00CP:
-;     LD A, (HL)
-;     LD (DE), A
-;     INC HL
-;     INC DE
-;     DEC B
-;     JR NZ, PUTIMAGE00CP
-;     LD A, (IMAGEW)
-;     LD B, A
-
-;     PUSH HL
-
-;     LD A, (IMAGEW)
-;     LD C, A
-;     LD A, 0
-;     LD B, A
-
-;     ADD HL, 64
-;     SUB HL, BC
-
-;     DEC C
-;     JR NZ, PUTIMAGE00CP
+    EI
 
     RET
 

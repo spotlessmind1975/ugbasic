@@ -955,7 +955,188 @@ static int calculate_image_size( Environment * _environment, int _width, int _he
 
 static Variable * tms9918_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
 
+    deploy( tms9918varsGraphic, src_hw_tms9918_vars_graphic_asm );
+
+    image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
+
+    RGBi palette[MAX_PALETTE];
+
+    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
+
+    int i, j, k;
+
+    if ( ( _flags & FLAG_TRANSPARENCY ) ) {
+        if (colorUsed > 15) {
+            CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
+        }
+    } else if ( ( _flags & FLAG_OVERLAYED ) ) {
+        if (colorUsed > 15) {
+            CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
+        }
+    } else {
+        if (colorUsed > 16) {
+            CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
+        }
+    }
+
+    for( i=0; i<colorUsed; ++i ) {
+        int minDistance = 0xffff;
+        int colorIndex = 0;
+        for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
+            int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
+            if (distance < minDistance) {
+                for( k=0; k<i; ++k ) {
+                    if ( palette[k].index == SYSTEM_PALETTE[j].index ) {
+                        break;
+                    }
+                }
+                if ( k>=i ) {
+                    minDistance = distance;
+                    colorIndex = j;
+                }
+            }
+        }
+        palette[i].index = SYSTEM_PALETTE[colorIndex].index;
+        strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
+    }
+
+    if ( _flags & FLAG_OVERLAYED ) {
+        int i=0;
+        for( i=colorUsed-2; i>-1; --i) {
+            rgbi_move( &palette[i], &palette[i+1] );
+        }
+        rgbi_move( &SYSTEM_PALETTE[0], &palette[0] );
+    }
+
+    if ( _flags & FLAG_TRANSPARENCY ) {
+        if ( palette[0].index == SYSTEM_PALETTE[0].index ) {
+            int i=0;
+            for( i=colorUsed-2; i>0; --i) {
+                rgbi_move( &palette[i], &palette[i+1] );
+            }
+        } else {
+            int i=0;
+            for( i=colorUsed-1; i>0; --i) {
+                rgbi_move( &palette[i], &palette[i+1] );
+            }
+        }
+        rgbi_move( &SYSTEM_PALETTE[0], &palette[0] );
+        rgbi_move( &SYSTEM_PALETTE[0], &palette[1] );
+        ++colorUsed;
+    }
+
+    if ( _transparent_color != -1 ) {
+        if ( colorUsed < 4 ) {
+            for( i=0;i<COLOR_COUNT;++i) {
+                if ( SYSTEM_PALETTE[i].index == _transparent_color ) {
+                    rgbi_move(&palette[0], &palette[colorUsed]);
+                    ++colorUsed;
+                    rgbi_move(&SYSTEM_PALETTE[i], &palette[0]);
+                    break;
+                }
+            }
+        } else {
+            for(i=0;i<4;++i) {
+                if ( palette[i].index == _transparent_color ) {
+                    RGBi tmp;
+                    rgbi_move(&palette[i], &tmp);
+                    rgbi_move(&palette[0], &palette[i]);
+                    rgbi_move(&tmp, &palette[0]);
+                    break;
+                }
+            }
+        }
+    }
+
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
+ 
+    int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_GRAPHIC2 );
+    
+    char * buffer = malloc ( bufferSize );
+    memset( buffer, 0, bufferSize );
+
+    // Position of the pixel in the original image
+    int image_x, image_y;
+    
+    // Position of the pixel, in terms of tiles
+    int tile_x, tile_y;
+    
+    // Position of the pixel, in terms of offset and bitmask
+    int offset, offsetc, bitmask;
+
+    // Color of the pixel to convert
+    RGBi rgb;
+
+    *(buffer) = _frame_width;
+    *(buffer+1) = _frame_height;
+
+    _source += ( ( _offset_y * _width ) + _offset_x ) * 3;
+
+    // Loop for all the source surface.
+    for (image_y = 0; image_y < _frame_height; ++image_y) {
+        for (image_x = 0; image_x < _frame_width; ++image_x) {
+
+            // Take the color of the pixel
+            rgb.red = *_source;
+            rgb.green = *(_source + 1);
+            rgb.blue = *(_source + 2);
+
+            // Calculate the relative tile
+            tile_y = (image_y >> 3);
+            tile_x = (image_x >> 3);
+
+            // Calculate the offset starting from the tile surface area
+            // and the bit to set.
+            offset = (tile_y * 8 *( _frame_width >> 3 ) ) + (tile_x * 8) + (image_y & 0x07);
+            offsetc = (tile_y * ( _frame_width >> 3 ) ) + (tile_x);
+
+            int minDistance = 0xffff;
+            int colorIndex = 0;
+
+            for( i= ( _flags & FLAG_OVERLAYED ) ? 1 : 0; i<colorUsed; ++i ) {
+                if ( rgbi_equals_rgb( &palette[i], &rgb ) ) {
+                    break;
+                }
+            }
+
+            colorIndex = i;
+
+            if ( _environment->debugImageLoad ) {
+                printf( "%1.1x", colorIndex );
+            }
+
+            bitmask = ( colorIndex == 0 ? 0 : 1 ) << (8 - ((image_x & 0x7)));
+            *(buffer + 2 + ( ( _frame_width >> 3 ) * _frame_height ) + ( _frame_width >> 3 ) * ( _frame_height ) ) = ( palette[colorIndex].index << 4 | palette[0].index );
+            *(buffer + 2 + offset) |= bitmask;
+
+            _source += 3;
+
+        }
+
+        _source += 3 * ( _width - _frame_width );
+
+        if ( _environment->debugImageLoad ) {
+            printf("\n" );
+        }
+    }
+
+    if ( _environment->debugImageLoad ) {
+        printf("\n" );
+    
+        // printf("PALETTE:\n" );
+        // if ( ( _flags & FLAG_OVERLAYED ) == 0 ) {
+        //     printf("  background  (00) = %2.2x (%s)\n", palette[0].index, palette[0].description );
+        // } else {
+        //     printf("  background  (00) = %2.2x (%s) [currently ignored since it can be overlayed]\n", palette[0].index, palette[0].description );
+        // }
+        // printf("  low screen  (01) = %2.2x (%s)\n", palette[1].index, palette[1].description );
+        // printf("  high screen (10) = %2.2x (%s)\n", palette[2].index, palette[2].description );
+        // printf("  colormap    (11) = %2.2x (%s)\n", palette[3].index, palette[3].description );
+        // printf("\n" );
+        // printf("\n" );
+    }
+    
+    variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
  
     return result;
 
@@ -978,57 +1159,42 @@ Variable * tms9918_image_converter( Environment * _environment, char * _data, in
 
 void tms9918_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _frame_size, int _flags ) {
 
-    // deploy( tms9918vars, src_hw_tms9918_vars_asm);
-    // deploy( tms9918varsGraphic, src_hw_tms9918_vars_graphic_asm );
-    // deploy( putimage, src_hw_tms9918_put_image_asm );
+    deploy( tms9918vars, src_hw_tms9918_vars_asm);
+    deploy( tms9918varsGraphic, src_hw_tms9918_vars_graphic_asm );
+    deploy( putimage, src_hw_tms9918_put_image_asm );
 
-    // MAKE_LABEL
+    MAKE_LABEL
 
-    // outhead1("putimage%s:", label);
-    // outline1("LDA #$%2.2x", _flags );
-    // outline0("STA IMAGET" );
-    // outline1("LDA #<%s", _image );
-    // outline0("STA TMPPTR" );
-    // outline1("LDA #>%s", _image );
-    // outline0("STA TMPPTR+1" );
-    // if ( _frame ) {
-    //     outline0("CLC" );
-    //     outline0("LDA TMPPTR" );
-    //     outline0("ADC #2" );
-    //     outline0("STA TMPPTR" );
-    //     outline0("LDA TMPPTR+1" );
-    //     outline0("ADC #0" );
-    //     outline0("STA TMPPTR+1" );
-    //     if ( strlen(_frame) == 0 ) {
+    outhead1("putimage%s:", label);
+    outline1("LD A, $%2.2x", _flags );
+    outline1("LD HL, %s", _image );
+    if ( _frame ) {
+        outline0("LD DE, $0002" );
+        outline0("ADD HL, DE" );
+        if ( strlen(_frame) == 0 ) {
 
-    //     } else {
-    //         outline1("LDA #<OFFSETS%4.4x", _frame_size );
-    //         outline0("STA TMPPTR2" );
-    //         outline1("LDA #>OFFSETS%4.4x", _frame_size );
-    //         outline0("STA TMPPTR2+1" );
-    //         outline0("CLC" );
-    //         outline1("LDA %s", _frame );
-    //         outline0("ASL" );
-    //         outline0("TAY" );
-    //         outline0("LDA TMPPTR" );
-    //         outline0("ADC (TMPPTR2), Y" );
-    //         outline0("STA TMPPTR" );
-    //         outline0("INY" );
-    //         outline0("LDA TMPPTR+1" );
-    //         outline0("ADC (TMPPTR2), Y" );
-    //         outline0("STA TMPPTR+1" );
-    //     }
-    // }
-    // outline1("LDA %s", _x );
-    // outline0("STA IMAGEX" );
-    // outline1("LDA %s+1", _x );
-    // outline0("STA IMAGEX+1" );
-    // outline1("LDA %s", _y );
-    // outline0("STA IMAGEY" );
-    // outline1("LDA %s+1", _y );
-    // outline0("STA IMAGEY+1" );
+        } else {
+            outline0("PUSH HL" );
+            outline1("LD A, %s", _frame );
+            outline0("LD L, A" );
+            outline0("LD H, 0" );
+            outline0("ADD HL, HL" );
+            outline0("LD DE, HL" );
+            outline1("LD HL, OFFSETS%4.4x", _frame_size );
+            outline0("ADD HL, DE" );
+            outline0("LD A, (HL)" );
+            outline0("LD E, A" );
+            outline0("INC HL" );
+            outline0("LD A, (HL)" );
+            outline0("LD D, A" );
+            outline0("POP HL" );
+            outline0("ADD HL, DE" );
+        }
+    }
+    outline1("LD E, %s", _x );
+    outline1("LD D, %s", _y );
 
-    // outline0("JSR PUTIMAGE");
+    outline0("CALL PUTIMAGE");
 
 }
 
