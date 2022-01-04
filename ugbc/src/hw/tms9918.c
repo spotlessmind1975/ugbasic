@@ -38,8 +38,8 @@
 #include <math.h>
 
 static RGBi SYSTEM_PALETTE[] = {
-        { 0x00, 0x00, 0x00, 0, "TRANSPARENT" },
         { 0x00, 0x00, 0x00, 1, "BLACK" },
+        { 0x00, 0x00, 0x00, 0, "TRANSPARENT" },
         { 0x00, 0x80, 0x00, 2, "GREEN" },
         { 0x00, 0xff, 0x00, 3, "LIGHT_GREEN" },
         { 0x00, 0x00, 0x80, 4, "DARK_BLUE" },
@@ -500,8 +500,6 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
     cpu_store_8bit( _environment, "FONTWIDTH", _environment->fontWidth );
     cpu_store_8bit( _environment, "FONTHEIGHT", _environment->fontHeight );
 
-    tms9918_cls( _environment );
-    
 }
 
 void tms9918_bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {
@@ -514,6 +512,9 @@ void tms9918_bitmap_enable( Environment * _environment, int _width, int _height,
         cpu_store_8bit( _environment, "CURRENTMODE", mode->id );
         
         _environment->currentMode = mode->id;
+
+        tms9918_cls( _environment );
+
     } else {
         WARNING_SCREEN_MODE( -1 );
     }
@@ -533,6 +534,9 @@ void tms9918_tilemap_enable( Environment * _environment, int _width, int _height
         _environment->currentMode = mode->id;
 
         cpu_store_8bit( _environment, "CURRENTMODE", mode->id );
+
+        tms9918_cls( _environment );
+
     } else {
         WARNING_SCREEN_MODE( -1 );
     }
@@ -1107,9 +1111,11 @@ static Variable * tms9918_image_converter_bitmap_mode_standard( Environment * _e
                 printf( "%1.1x", colorIndex );
             }
 
-            bitmask = ( colorIndex == 0 ? 0 : 1 ) << (8 - ((image_x & 0x7)));
+            bitmask = ( colorIndex == 0 ? 0 : 1 ) << (7 - ((image_x & 0x7)));
             if ( colorIndex ) {
                 *(buffer + 2 + ( ( _frame_width >> 3 ) * _frame_height ) + offsetc ) = ( ( ( palette[colorIndex].index & 0x0f ) << 4 ) | palette[0].index );
+            } else {
+                *(buffer + 2 + ( ( _frame_width >> 3 ) * _frame_height ) + offsetc ) = ( ( ( palette[1].index & 0x0f ) << 4 ) | palette[0].index );
             }
             *(buffer + 2 + offset) |= bitmask;
 
