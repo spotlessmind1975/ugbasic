@@ -74,6 +74,9 @@ PUTIMAGE3:
 
 PUTIMAGE2:
     LD A, (HL)
+    SRL A
+    SRL A
+    SRL A
     LD C, A
     INC HL
     LD A, (HL)
@@ -83,7 +86,6 @@ PUTIMAGE2:
     LD B, A
     INC HL
 
-    PUSH DE
     PUSH BC
     PUSH HL
     PUSH BC
@@ -96,9 +98,36 @@ PUTIMAGE2:
     POP HL
 
 PUTIMAGE0CPA:
-    PUSH DE
     PUSH BC
 PUTIMAGE0CP:
+    LD A, (HL)
+    CALL VDPOUTCHAR
+    INC DE
+    INC HL
+    LD A, (HL)
+    CALL VDPOUTCHAR
+    INC DE
+    INC HL
+    LD A, (HL)
+    CALL VDPOUTCHAR
+    INC DE
+    INC HL
+    LD A, (HL)
+    CALL VDPOUTCHAR
+    INC DE
+    INC HL
+    LD A, (HL)
+    CALL VDPOUTCHAR
+    INC DE
+    INC HL
+    LD A, (HL)
+    CALL VDPOUTCHAR
+    INC DE
+    INC HL
+    LD A, (HL)
+    CALL VDPOUTCHAR
+    INC DE
+    INC HL
     LD A, (HL)
     CALL VDPOUTCHAR
     INC DE
@@ -106,26 +135,76 @@ PUTIMAGE0CP:
     DEC C
     JR NZ, PUTIMAGE0CP
     POP BC
-    LD A, (CURRENTWIDTH)
-    SUB C
-    ADD E
-    JR NC,PUTIMAGE0CP2
-    INC D    
+    PUSH HL
+    PUSH BC
+    LD HL, DE 
+    LD D, 0
+    LD A, (CURRENTTILESWIDTH)
+    LD E, A
+    ADC HL, DE
+    ADC HL, DE
+    ADC HL, DE
+    ADC HL, DE
+    ADC HL, DE
+    ADC HL, DE
+    ADC HL, DE
+    ADC HL, DE
+    LD B, 0
+    SBC HL, BC
+    SBC HL, BC
+    SBC HL, BC
+    SBC HL, BC
+    SBC HL, BC
+    SBC HL, BC
+    SBC HL, BC
+    SBC HL, BC
+    LD DE, HL
+    POP BC
+    POP HL
 PUTIMAGE0CP2:
     DEC B
     JR NZ, PUTIMAGE0CPA
 
     DI
-
     EXX
+    PUSH HL
+    EXX
+    EI
 
-    POP BC
     POP DE
+    POP BC
 
 PUTIMAGE0CPCA:
-    PUSH DE
     PUSH BC
 PUTIMAGE0CPC:
+    LD A, (HL)
+    CALL VDPOUTCHAR
+    INC DE
+    INC HL
+    LD A, (HL)
+    CALL VDPOUTCHAR
+    INC DE
+    INC HL
+    LD A, (HL)
+    CALL VDPOUTCHAR
+    INC DE
+    INC HL
+    LD A, (HL)
+    CALL VDPOUTCHAR
+    INC DE
+    INC HL
+    LD A, (HL)
+    CALL VDPOUTCHAR
+    INC DE
+    INC HL
+    LD A, (HL)
+    CALL VDPOUTCHAR
+    INC DE
+    INC HL
+    LD A, (HL)
+    CALL VDPOUTCHAR
+    INC DE
+    INC HL
     LD A, (HL)
     CALL VDPOUTCHAR
     INC DE
@@ -133,18 +212,35 @@ PUTIMAGE0CPC:
     DEC C
     JR NZ, PUTIMAGE0CPC
     POP BC
-    LD A, (CURRENTWIDTH)
-    SUB C
-    ADD E
-    JR NC,PUTIMAGE0CPC2
-    INC D    
-PUTIMAGE0CPC2:
+    PUSH HL
+    PUSH BC
+    LD HL, DE 
+    LD D, 0
+    LD A, (CURRENTTILESWIDTH)
+    LD E, A
+    ADC HL, DE
+    ADC HL, DE
+    ADC HL, DE
+    ADC HL, DE
+    ADC HL, DE
+    ADC HL, DE
+    ADC HL, DE
+    ADC HL, DE
+    LD B, 0
+    SBC HL, BC
+    SBC HL, BC
+    SBC HL, BC
+    SBC HL, BC
+    SBC HL, BC
+    SBC HL, BC
+    SBC HL, BC
+    SBC HL, BC
+    LD DE, HL
+    POP BC
+    POP HL
+PUTIMAGE0CP2C:
     DEC B
     JR NZ, PUTIMAGE0CPCA
-
-    EXX
-
-    EI
 
     RET
 

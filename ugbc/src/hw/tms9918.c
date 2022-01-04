@@ -941,7 +941,7 @@ static int calculate_image_size( Environment * _environment, int _width, int _he
 
         case BITMAP_MODE_GRAPHIC2:
 
-            return 2 + ( ( _width >> 3 ) * _height ) + ( ( _width >> 3 ) * ( _height >> 3 ) );
+            return 2 + ( ( _width >> 3 ) * _height ) + ( ( _width >> 3 ) * ( _height ) );
 
         case BITMAP_MODE_MULTICOLOR:
         case TILEMAP_MODE_STANDARD:
@@ -1052,6 +1052,8 @@ static Variable * tms9918_image_converter_bitmap_mode_standard( Environment * _e
  
     int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_GRAPHIC2 );
     
+    printf( "image size = %d\n", bufferSize );
+
     char * buffer = malloc ( bufferSize );
     memset( buffer, 0, bufferSize );
 
@@ -1088,7 +1090,7 @@ static Variable * tms9918_image_converter_bitmap_mode_standard( Environment * _e
             // Calculate the offset starting from the tile surface area
             // and the bit to set.
             offset = (tile_y * 8 *( _frame_width >> 3 ) ) + (tile_x * 8) + (image_y & 0x07);
-            offsetc = (tile_y * ( _frame_width >> 3 ) ) + (tile_x);
+            offsetc = (image_y * ( _frame_width >> 3 ) ) + (tile_x);
 
             int minDistance = 0xffff;
             int colorIndex = 0;
@@ -1106,7 +1108,9 @@ static Variable * tms9918_image_converter_bitmap_mode_standard( Environment * _e
             }
 
             bitmask = ( colorIndex == 0 ? 0 : 1 ) << (8 - ((image_x & 0x7)));
-            *(buffer + 2 + ( ( _frame_width >> 3 ) * _frame_height ) + ( _frame_width >> 3 ) * ( _frame_height ) ) = ( palette[colorIndex].index << 4 | palette[0].index );
+            if ( colorIndex ) {
+                *(buffer + 2 + ( ( _frame_width >> 3 ) * _frame_height ) + offsetc ) = ( ( ( palette[colorIndex].index & 0x0f ) << 4 ) | palette[0].index );
+            }
             *(buffer + 2 + offset) |= bitmask;
 
             _source += 3;
@@ -1123,7 +1127,10 @@ static Variable * tms9918_image_converter_bitmap_mode_standard( Environment * _e
     if ( _environment->debugImageLoad ) {
         printf("\n" );
     
-        // printf("PALETTE:\n" );
+        printf("PALETTE:\n" );
+        for( i=0; i<colorUsed; ++i ) {
+            printf("  (%2.2d) = %2.2d (%s)\n", i, palette[i].index, palette[i].description );
+        }
         // if ( ( _flags & FLAG_OVERLAYED ) == 0 ) {
         //     printf("  background  (00) = %2.2x (%s)\n", palette[0].index, palette[0].description );
         // } else {
@@ -1191,8 +1198,10 @@ void tms9918_put_image( Environment * _environment, char * _image, char * _x, ch
             outline0("ADD HL, DE" );
         }
     }
-    outline1("LD E, %s", _x );
-    outline1("LD D, %s", _y );
+    outline1("LD A, (%s)", _x );
+    outline0("LD E, A" );
+    outline1("LD A, (%s)", _y );
+    outline0("LD D, A" );
 
     outline0("CALL PUTIMAGE");
 
