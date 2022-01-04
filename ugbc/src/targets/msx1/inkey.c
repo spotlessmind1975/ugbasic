@@ -51,6 +51,7 @@ Variable * inkey( Environment * _environment ) {
 
     variable_store_string(_environment, result->name, resultString );
 
+    cpu_dswrite( _environment, result->realName );
     cpu_dsdescriptor( _environment, result->realName, address->realName, pressed->realName );
 
     MAKE_LABEL
@@ -63,7 +64,7 @@ Variable * inkey( Environment * _environment ) {
     cpu_bveq( _environment, pressed->realName, noKeyPressedLabel );
 
     cpu_move_8bit_indirect(_environment, key->realName, address->realName );
-    cpu_dsresize_size(_environment, result->realName, 0 );
+    cpu_dsresize_size(_environment, result->realName, 1 );
 
     cpu_jump( _environment, finishedLabel );
 
