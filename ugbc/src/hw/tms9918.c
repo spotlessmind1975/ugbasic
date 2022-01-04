@@ -1188,7 +1188,7 @@ void tms9918_put_image( Environment * _environment, char * _image, char * _x, ch
 
         } else {
             outline0("PUSH HL" );
-            outline1("LD A, %s", _frame );
+            outline1("LD A, (%s)", _frame );
             outline0("LD L, A" );
             outline0("LD H, 0" );
             outline0("ADD HL, HL" );
