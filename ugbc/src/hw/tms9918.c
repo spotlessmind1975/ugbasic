@@ -1249,27 +1249,19 @@ Variable * tms9918_new_image( Environment * _environment, int _width, int _heigh
 
 void tms9918_get_image( Environment * _environment, char * _image, char * _x, char * _y ) {
 
-    // deploy( tms9918vars, src_hw_tms9918_vars_asm);
-    // deploy( tms9918varsGraphic, src_hw_tms9918_vars_graphic_asm );
-    // deploy( getimage, src_hw_tms9918_get_image_asm );
+    deploy( tms9918vars, src_hw_tms9918_vars_asm);
+    deploy( tms9918varsGraphic, src_hw_tms9918_vars_graphic_asm );
+    deploy( getimage, src_hw_tms9918_get_image_asm );
 
-    // MAKE_LABEL
+    MAKE_LABEL
 
-    // outhead1("getimage%s:", label);
-    // outline1("LDA #<%s", _image );
-    // outline0("STA TMPPTR" );
-    // outline1("LDA #>%s", _image );
-    // outline0("STA TMPPTR+1" );
-    // outline1("LDA %s", _x );
-    // outline0("STA IMAGEX" );
-    // outline1("LDA %s+1", _x );
-    // outline0("STA IMAGEX+1" );
-    // outline1("LDA %s", _y );
-    // outline0("STA IMAGEY" );
-    // outline1("LDA %s+1", _y );
-    // outline0("STA IMAGEY+1" );
+    outline1("LD HL, %s", _image );
+    outline1("LD A, (%s)", _x );
+    outline0("LD E, A" );
+    outline1("LD A, (%s)", _y );
+    outline0("LD D, A" );
 
-    // outline0("JSR GETIMAGE");
+    outline0("CALL GETIMAGE");
 
 }
 
