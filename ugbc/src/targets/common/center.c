@@ -89,16 +89,38 @@ Alias per ''CENTRE''.
 
 void center( Environment * _environment, char * _string, int _newline ) {
 
+    MAKE_LABEL
+    
     setup_text_variables( _environment );
 
     Variable * y = variable_retrieve( _environment, "YCURSYS" );
     Variable * string = variable_retrieve( _environment, _string );
     Variable * currentWidth = variable_retrieve( _environment, "CURRENTTILESWIDTH");
+    Variable * len = variable_string_len( _environment, _string);
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(compare)");
+    Variable * zero = variable_temporary( _environment, VT_BYTE, "(zero)");
 
-    Variable * w = variable_sub( _environment, currentWidth->name, variable_string_len( _environment, _string)->name );
+    cpu_store_8bit( _environment, zero->realName, 0 );
+
+    cpu_greater_than_8bit( _environment, len->realName, currentWidth->realName, result->realName, 1, 0 );
+
+    char nothingLabel[MAX_TEMPORARY_STORAGE]; sprintf( nothingLabel, "%snothing", label );
+    char doneLabel[MAX_TEMPORARY_STORAGE]; sprintf( doneLabel, "%sdone", label );
+
+    cpu_bvneq( _environment, result->realName, nothingLabel );
+
+    Variable * w = variable_sub( _environment, currentWidth->name, len->name );
     w = variable_div2_const( _environment, w->name, 1 );
 
     locate( _environment, w->name, y->name );
+
+    cpu_jump( _environment, doneLabel );
+
+    cpu_label( _environment, nothingLabel );
+
+    locate( _environment, zero->name, y->name );
+
+    cpu_label( _environment, doneLabel );
 
     text_text( _environment, string->name );
 
