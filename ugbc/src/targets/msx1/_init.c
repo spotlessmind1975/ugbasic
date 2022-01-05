@@ -242,9 +242,9 @@ void target_linkage( Environment * _environment ) {
     char pipes[256];
 
     #ifdef _WIN32
-        strcpy( pipes, ">NUL:");
+        strcpy( pipes, ">nul 2>nul");
     #else
-        strcpy( pipes, ">/dev/null");
+        strcpy( pipes, ">/dev/null 2>/dev/null");
     #endif
 
     sprintf( commandLine, "\"%s\" +msxrom -b \"%s\" %s",
