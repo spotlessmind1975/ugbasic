@@ -252,6 +252,8 @@ void target_linkage( Environment * _environment ) {
         binaryName,
         pipes );
 
+printf( "%s\n", commandLine );
+
     p = strstr( binaryName, ".bin" );
     if ( p ) {
         *(p+1) = 'r';
