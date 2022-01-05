@@ -181,8 +181,6 @@ void target_linkage( Environment * _environment ) {
         strcat( p, "_code_user.bin");
     }
 
-    printf( "%s\n", binaryName );
-
     FILE * binaryFile = fopen( binaryName, "rb" );
     fseek( binaryFile, 0, SEEK_END );
     long size = ftell( binaryFile );
