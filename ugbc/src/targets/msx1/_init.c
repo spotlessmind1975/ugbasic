@@ -136,7 +136,7 @@ void target_linkage( Environment * _environment ) {
     char binaryName[64];
     char listingFileName[64];
     
-    if ( _environment->outputFileType != OUTPUT_FILE_TYPE_TAP ) {
+    if ( _environment->outputFileType != OUTPUT_FILE_TYPE_ROM ) {
         CRITICAL_UNSUPPORTED_OUTPUT_FILE_TYPE( OUTPUT_FILE_TYPE_AS_STRING[_environment->outputFileType] );
     }
 
@@ -170,10 +170,68 @@ printf( ">>>>> %s\n", commandLine );
     strcpy( binaryName, _environment->asmFileName );
     char * p = strstr( binaryName, ".asm" );
     if ( p ) {
-        *(p+1) = 'b';
-        *(p+2) = 'i';
-        *(p+3) = 'n';
+        *(p+1) = 'o';
+        *(p+2) = 0;
     }
+    remove(binaryName);
+
+    strcpy( binaryName, _environment->asmFileName );
+    p = strstr( binaryName, ".asm" );
+    if ( p ) {
+        *p = 0;
+        --p;
+        strcat( p, "_code_user.bin");
+    }
+
+    printf( "%s\n", binaryName );
+
+    FILE * binaryFile = fopen( binaryName, "rb" );
+    fseek( binaryFile, 0, SEEK_END );
+    long size = ftell( binaryFile );
+    fseek( binaryFile, 0, SEEK_SET );
+    char * part = malloc( size );
+    (void)!fread( part, size, 1, binaryFile );
+    fclose( binaryFile );
+
+    strcpy( binaryName, _environment->asmFileName );
+    p = strstr( binaryName, ".asm" );
+    if ( p ) {
+        *p = 0;
+        --p;
+        strcat( p, ".bin");
+    }
+
+    binaryFile = fopen( binaryName, "wb" );
+    fwrite( part, size, 1, binaryFile );
+    fclose( binaryFile );
+
+    strcpy( binaryName, _environment->asmFileName );
+    p = strstr( binaryName, ".asm" );
+    if ( p ) {
+        *p = 0;
+        --p;
+        strcat( p, "_data_user.bin");
+    }
+
+    binaryFile = fopen( binaryName, "rb" );
+    fseek( binaryFile, 0, SEEK_END );
+    size = ftell( binaryFile );
+    fseek( binaryFile, 0, SEEK_SET );
+    part = malloc( size );
+    (void)!fread( part, size, 1, binaryFile );
+    fclose( binaryFile );
+
+    strcpy( binaryName, _environment->asmFileName );
+    p = strstr( binaryName, ".asm" );
+    if ( p ) {
+        *p = 0;
+        --p;
+        strcat( p, ".bin");
+    }
+
+    binaryFile = fopen( binaryName, "a+b" );
+    fwrite( part, size, 1, binaryFile );
+    fclose( binaryFile );
 
     if ( _environment->appMakerFileName ) {
         sprintf(executableName, "%s", _environment->appMakerFileName );
@@ -183,7 +241,7 @@ printf( ">>>>> %s\n", commandLine );
         sprintf(executableName, "%s", "z88dk-appmake" );
     }
 
-    sprintf( commandLine, "\"%s\" +msx1 -b \"%s\"",
+    sprintf( commandLine, "\"%s\" +msxrom -b \"%s\"",
         executableName,
         binaryName );
 
@@ -191,9 +249,9 @@ printf( ">>>>> %s\n", commandLine );
 
     p = strstr( binaryName, ".bin" );
     if ( p ) {
-        *(p+1) = 'c';
-        *(p+2) = 'a';
-        *(p+3) = 's';
+        *(p+1) = 'r';
+        *(p+2) = 'o';
+        *(p+3) = 'm';
     }
 
     if ( system_call( _environment,  commandLine ) ) {
@@ -205,5 +263,19 @@ printf( ">>>>> %s\n", commandLine );
     remove( _environment->exeFileName );
 
     rename( binaryName, _environment->exeFileName );
+
+    strcpy( binaryName, _environment->asmFileName );
+    p = strstr( binaryName, ".asm" );
+    if ( p ) {
+        strcat( p, "_data_user.bin");
+    }
+    remove(binaryName);
+
+    strcpy( binaryName, _environment->asmFileName );
+    p = strstr( binaryName, ".asm" );
+    if ( p ) {
+        strcat( p, "_code_user.bin");
+    }
+    remove(binaryName);
 
 }

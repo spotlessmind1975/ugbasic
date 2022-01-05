@@ -4599,7 +4599,7 @@ int main( int _argc, char *_argv[] ) {
 #elif __vic20__
     _environment->outputFileType = OUTPUT_FILE_TYPE_PRG;
 #elif __msx1__
-    _environment->outputFileType = OUTPUT_FILE_TYPE_CAS;
+    _environment->outputFileType = OUTPUT_FILE_TYPE_ROM;
 #endif
 
     while ((opt = getopt(_argc, _argv, "ae:c:Wo:Ie:l:EO:dL:C:VA:T:1")) != -1) {
