@@ -159,8 +159,6 @@ void target_linkage( Environment * _environment ) {
         listingFileName,
         _environment->asmFileName );
 
-printf( ">>>>> %s\n", commandLine );
-
     if ( system_call( _environment,  commandLine ) ) {
         printf("The compilation of assembly program failed.\n\n");
         printf("Please use option '-I' to install chain tool.\n\n");
@@ -241,11 +239,18 @@ printf( ">>>>> %s\n", commandLine );
         sprintf(executableName, "%s", "z88dk-appmake" );
     }
 
-    sprintf( commandLine, "\"%s\" +msxrom -b \"%s\"",
-        executableName,
-        binaryName );
+    char pipes[256];
 
-printf( ">>>>> %s\n", commandLine );
+    #ifdef _WIN32
+        strcpy( pipes, ">NUL:");
+    #else
+        strcpy( pipes, ">/dev/null");
+    #endif
+
+    sprintf( commandLine, "\"%s\" +msxrom -b \"%s\" %s",
+        executableName,
+        binaryName,
+        pipes );
 
     p = strstr( binaryName, ".bin" );
     if ( p ) {
