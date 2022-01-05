@@ -4475,7 +4475,7 @@ program :
 
 %%
 
-char version[MAX_TEMPORARY_STORAGE] = "1.7.2";
+char version[MAX_TEMPORARY_STORAGE] = "1.8";
 
 void show_usage_and_exit( int _argc, char *_argv[] ) {
 
