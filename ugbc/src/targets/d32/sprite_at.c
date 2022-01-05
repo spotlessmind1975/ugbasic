@@ -52,8 +52,6 @@
  */
 /* <usermanual>
 @keyword SPRITE AT
-
-@target d32
 </usermanual> */
 void sprite_at( Environment * _environment, int _sprite, int _x, int _y ) {
 

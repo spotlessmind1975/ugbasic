@@ -52,18 +52,6 @@
  */
 /* <usermanual>
 @keyword SPRITE AT
-
-@english
-Position a sprite to the (x,y) on the screen.
-
-@italian
-Posiziona uno sprite sullo schermo alla posizione (x,y).
-
-@syntax SPRITE # [integer] AT ( # [integer], # [integer] )
-
-@example SPRITE #1 AT ( #42, #42 )
-
-@target vic20
 </usermanual> */
 void sprite_at( Environment * _environment, int _sprite, int _x, int _y ) {
 
