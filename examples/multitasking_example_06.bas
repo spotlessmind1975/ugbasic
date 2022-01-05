@@ -13,7 +13,7 @@ REM realizzare una semplice animazione di vari pipistrelli
 REM sullo schermo.
 
 BITMAP ENABLE (16)
-CLS
+CLS BLACK
 
 bat := IMAGES LOAD("examples/bat.png" ) FRAME SIZE (32,32)
 
