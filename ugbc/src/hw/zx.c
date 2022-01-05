@@ -238,6 +238,8 @@ void zx_initialization( Environment * _environment ) {
     variable_global( _environment, "YGR" );
     variable_import( _environment, "LINE", VT_WORD, (unsigned short)(0xffff) );
     variable_global( _environment, "LINE" );
+    variable_import( _environment, "TABCOUNT", VT_BYTE, 4 );
+    variable_global( _environment, "TABCOUNT" );
 
     variable_import( _environment, "CLIPX1", VT_POSITION, 0 );
     variable_global( _environment, "CLIPX1" );
