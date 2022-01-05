@@ -108,4 +108,29 @@ void msx1_clear_key( Environment * _environment ) {
 
 }
 
+
+void msx1_irq_at( Environment * _environment, char * _label ) {
+
+    // Variable * irq = variable_retrieve_or_define( _environment, "irq", VT_ADDRESS, 0 );
+
+    outline0("DI" );
+    outline0("LD A, 0xc3" );
+    outline0("LD ($FD9F), A" );
+    outline1("LD HL, %s", _label );
+    outline0("LD ($FDA0), HL" );
+    outline0("EI" );
+    
+}
+
+void msx1_follow_irq( Environment * _environment ) {
+
+    // Variable * irq = variable_retrieve_or_define( _environment, "irq", VT_ADDRESS, 0 );
+
+    // outline1("LD HL, (%s)", irq->realName );
+    // outline0("JP (HL)" );
+    
+    outline0("EI" );
+    outline0("RET" );
+    
+}
 #endif

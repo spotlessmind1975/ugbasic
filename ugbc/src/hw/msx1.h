@@ -143,5 +143,7 @@ void msx1_scancode( Environment * _environment, char * _pressed, char * _scacode
 void msx1_scanshift( Environment * _environment, char * _shifts );
 void msx1_keyshift( Environment * _environment, char * _shifts );
 void msx1_clear_key( Environment * _environment );
+void msx1_irq_at( Environment * _environment, char * _label );
+void msx1_follow_irq( Environment * _environment );
 
 #endif
