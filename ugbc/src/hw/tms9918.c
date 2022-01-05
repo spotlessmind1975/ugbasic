@@ -1094,7 +1094,7 @@ static Variable * tms9918_image_converter_bitmap_mode_standard( Environment * _e
             // Calculate the offset starting from the tile surface area
             // and the bit to set.
             offset = (tile_y * 8 *( _frame_width >> 3 ) ) + (tile_x * 8) + (image_y & 0x07);
-            offsetc = (image_y * ( _frame_width >> 3 ) ) + (tile_x);
+            offsetc = offset;
 
             int minDistance = 0xffff;
             int colorIndex = 0;
@@ -1108,15 +1108,11 @@ static Variable * tms9918_image_converter_bitmap_mode_standard( Environment * _e
             colorIndex = i;
 
             if ( _environment->debugImageLoad ) {
-                printf( "%1.1x", colorIndex );
+                printf( "%1.1x", ( palette[colorIndex].index & 0x0f ) );
             }
 
             bitmask = ( colorIndex == 0 ? 0 : 1 ) << (7 - ((image_x & 0x7)));
-            if ( colorIndex ) {
-                *(buffer + 2 + ( ( _frame_width >> 3 ) * _frame_height ) + offsetc ) = ( ( ( palette[colorIndex].index & 0x0f ) << 4 ) | palette[0].index );
-            } else {
-                *(buffer + 2 + ( ( _frame_width >> 3 ) * _frame_height ) + offsetc ) = ( ( ( palette[1].index & 0x0f ) << 4 ) | palette[0].index );
-            }
+            *(buffer + 2 + ( ( _frame_width >> 3 ) * _frame_height ) + offsetc ) = ( ( ( palette[colorIndex].index & 0x0f ) << 4 ) | palette[0].index );
             *(buffer + 2 + offset) |= bitmask;
 
             _source += 3;
