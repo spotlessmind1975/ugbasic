@@ -101,6 +101,9 @@ void target_initialization( Environment * _environment ) {
     variable_import( _environment, "VDPCONTROLPORTWRITE", VT_BYTE, 0xbf );
     variable_global( _environment, "VDPCONTROLPORTWRITE" );
 
+    variable_import( _environment, "CONTROLLER_BUFFER", VT_BUFFER, 12 );
+    variable_global( _environment, "CONTROLLER_BUFFER" );    
+
     bank_define( _environment, "VARIABLES", BT_VARIABLES, 0x5000, NULL );
     bank_define( _environment, "TEMPORARY", BT_TEMPORARY, 0x5100, NULL );
 
@@ -110,20 +113,20 @@ void target_initialization( Environment * _environment ) {
     outhead0("ORG $7030");
     outhead0("SECTION code_user");
 
-    // +0	ID	Put these first two bytes at 041H and 042H ("AB") to indicate that it is an additional ROM.
-    // +2	INIT	Address of the routine to call to initialize a work area or I/O ports, or run a game, etc. The system calls the address from INIT of each ROM header during the MSX initialisation in that order.
-    // +4	STATEMENT	Runtime address of a program whose purpose is to add instructions to the MSX-Basic using CALL. STATEMENT is called by CALL instructions. It is ignored when 0000h. It is not called at MSX start up.
-    // +6	DEVICE	Execution address of a program used to control a device built into the cartridge. For example, a disk interface. It is not called at MSX start up.
-    // +8	TEXT	Pointer of the tokenizen Basic program contained in ROM. TEXT must be always an address more than 8000h and be specified in the header of the page 8000h-BFFFh. In other cases, it must always be 0000h under penalty of causing crash or bug.
-    // +10	Reserved	6 bytes reserved for future updates.
-    outline0("DEFB $41, $42");
+    // DB       0AAh,055h       ;Cartridge present:  Colecovision logo
+    outline0("DEFB $aa, $55");
+    // ;DB       055h,0AAh       ;Cartridge present:  skip logo, Colecovision logo
+    // outline0("DEFB $55, $aa");
+    // DW       0000           ;Pointer to the sprite name table
+    outline0("DEFW $0000");
+    // DW       0000           ;Pointer to the sprite order table
+    outline0("DEFW $0000");
+    // DW       0000           ;Pointer to the working buffer for WR_SPR_NM_TBL
+    outline0("DEFW $0000");
+    // DW       CONTROLLER_BUFFER ;Pointer to the hand controller input areas
+    outline0("DEFW CONTROLLER_BUFFER");
+    // DW       START      ;Entry point to the user program
     outline0("DEFW CODESTART");
-    outline0("DEFW $0");
-    outline0("DEFW $0");
-    outline0("DEFW $0");
-    outline0("DEFW $0");
-    outline0("DEFW $0");
-    outline0("DEFW $0");
 
     outhead0("CODESTART:")
     
