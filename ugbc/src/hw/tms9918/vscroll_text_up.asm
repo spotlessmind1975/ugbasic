@@ -36,7 +36,7 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 ; 			        NAME		COLOR		PATTERN
-; VDPUPDATE0: 		$0000		
+; VDPUPDATE0: 		$1800		            $0000 (coleco)
 ; VDPUPDATE1:		$0000		$0480		$0800
 ; VDPUPDATE2:		$3800		$2000
 ; VDPUPDATE3:		$3800		$2000		$0000
@@ -70,7 +70,7 @@ VSCROLLTUP1:
     JP VSCROLLTUPCOMMON
 
 VSCROLLTUPCOMMON:
-    LD HL, $0000
+    LD HL, $1800
     PUSH HL
     ADD HL, DE
     POP DE

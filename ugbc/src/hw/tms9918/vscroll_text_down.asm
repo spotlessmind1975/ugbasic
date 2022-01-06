@@ -48,7 +48,7 @@ VSCROLLTDOWN0:
     LD A, 40
     LD E, A
     LD D, 0
-    LD HL, $0000
+    LD HL, $1800
     PUSH HL
     JP VSCROLLTDOWNCOMMON
 
@@ -57,15 +57,15 @@ VSCROLLTDOWN1:
     LD A, 32
     LD E, A
     LD D, 0
-    LD HL, $0000
+    LD HL, $1800
     PUSH HL
     JP VSCROLLTDOWNCOMMON
 
 VSCROLLTDOWNCOMMON:
-    LD HL, $0000
+    LD HL, $1800
     ADD HL, DE
     PUSH HL
-    LD HL, $0000
+    LD HL, $1800
     ADD HL, BC
     INC B
     

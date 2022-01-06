@@ -36,8 +36,8 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 ; 			        NAME		COLOR		PATTERN
-; VDPUPDATE0: 		$0000		
-; VDPUPDATE1:		$0000		$0480		$0800
+; VDPUPDATE0: 		$1800		            $0000 (coleco)
+; VDPUPDATE1:		$1800		$0480		$0000 (coleco)
 ; VDPUPDATE2:		$3800		$2000
 ; VDPUPDATE3:		$3800		$2000		$0000
 
@@ -52,14 +52,14 @@ CLST:
 CLST0:
     LD A, (EMPTYTILE)
     LD BC, $100 + 40*24
-    LD DE, $0000
+    LD DE, $1800
     CALL VDPFILL
     RET
 
 CLST1:
     LD A, (EMPTYTILE)
     LD BC, $100 + 32*24
-    LD DE, $0000
+    LD DE, $1800
     CALL VDPFILL
 
     LD A, (_PAPER)

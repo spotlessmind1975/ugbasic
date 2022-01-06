@@ -36,8 +36,8 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 ; 			        NAME		COLOR		PATTERN
-; VDPUPDATE0: 		$0000		
-; VDPUPDATE1:		$0000		$0480		$0800
+; VDPUPDATE0: 		$1800		            $0000 (coleco)
+; VDPUPDATE1:		$1800		$0480		$0000 (coleco)
 ; VDPUPDATE2:		$3800		$2000
 ; VDPUPDATE3:		$3800		$2000		$0000
 
@@ -56,7 +56,7 @@ CLINE1:
     LD E, A
     LD D, 0
 
-    LD HL, $0000
+    LD HL, $1800
     LD (COPYOFTEXTADDRESS), HL
     LD A, 0
     LD B, A

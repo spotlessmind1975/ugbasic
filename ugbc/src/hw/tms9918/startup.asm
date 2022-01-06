@@ -395,30 +395,48 @@ VDP_RCOLOR          EQU 87H
 
 TMS9918STARTUP:
 
-    LD A, VDP_R0
-    LD E, A
-    LD A, $00
-    CALL VDPSETREG
+        DI
+        LD A, VDP_R0
+        LD E, A
+        LD A, $00
+        CALL VDPSETREG
 
-    LD A, VDP_R1
-    LD E, A
-    LD A, $f0
-    CALL VDPSETREG
+        LD A, VDP_RNAME
+        LD E, A
+        LD A, $06
+        CALL VDPSETREG
 
-    LD A, VDP_RNAME
-    LD E, A
-    LD A, $00
-    CALL VDPSETREG
+        LD A, VDP_RCOLORTABLE
+        LD E, A
+        LD A, $80
+        CALL VDPSETREG
 
-    ; LD A, VDP_RCOLORTABLE
-    ; LD E, A
-    ; LD A, $ff
-    ; CALL VDPSETREG
+        LD A, VDP_RPATTERN
+        LD E, A
+        LD A, $00
+        CALL VDPSETREG
 
-    LD A, VDP_RPATTERN
-    LD E, A
-    LD A, $01
-    CALL VDPSETREG
+        LD A, VDP_RSPRITEA
+        LD E, A
+        LD A, $36
+        CALL VDPSETREG
 
-    RET
+        LD A, VDP_RSPRITEP
+        LD E, A
+        LD A, $07
+        CALL VDPSETREG
+
+        LD A, VDP_RCOLOR
+        LD E, A
+        LD A, $F1
+        CALL VDPSETREG
+
+        LD A, VDP_R1
+        LD E, A
+        LD A, $f0
+        CALL VDPSETREG
+
+        EI
+
+        RET
 

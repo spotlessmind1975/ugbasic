@@ -345,7 +345,7 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
             // range of its contents is from O-F. The contents of the register form the upper four bits of
             // the 14-bit VDP address, therefore making the location of the Name Table in VRAM equal to
             // (Register 2) * 400 (Hex)
-            WVDP_RNAME( 0x00 );
+            WVDP_RNAME( 0x06 );
 
             // Register 4 tells the VDP where the starting address of the Pattern Table is located in VRAM.
             // The range of its contents is from 0-7. The contents of the register form the upper three bits of
@@ -361,7 +361,7 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
             // 1. In either case, all the LSBs in Register 4 must be set to ls. Therefore, in
             // Graphics II Mode the only two values that work correctly in Register 4 are Hex
             // 03 and Hex 07.
-            WVDP_RPATTERN( 0x01 );
+            WVDP_RPATTERN( 0x00 );
 
             break;
         case TILEMAP_MODE_GRAPHIC1:
@@ -390,7 +390,7 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
             // range of its contents is from O-F. The contents of the register form the upper four bits of
             // the 14-bit VDP address, therefore making the location of the Name Table in VRAM equal to
             // (Register 2) * 400 (Hex)
-            WVDP_RNAME( 0x00 );
+            WVDP_RNAME( 0x06 );
 
             // Register 3 tells the VDP where the starting address of the Color Table is located in VRAM. The
             // range of its contents is from O-FF. The contents of the register form the upper eight bits of
@@ -421,7 +421,7 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
             // 1. In either case, all the LSBs in Register 4 must be set to ls. Therefore, in
             // Graphics II Mode the only two values that work correctly in Register 4 are Hex
             // 03 and Hex 07.
-            WVDP_RPATTERN( 0x1 );
+            WVDP_RPATTERN( 0x0 );
 
             break;
         case BITMAP_MODE_GRAPHIC2:

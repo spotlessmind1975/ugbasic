@@ -114,9 +114,9 @@ void target_initialization( Environment * _environment ) {
     outhead0("SECTION code_user");
 
     // DB       0AAh,055h       ;Cartridge present:  Colecovision logo
-    outline0("DEFB $aa, $55");
+    // outline0("DEFB $aa, $55");
     // ;DB       055h,0AAh       ;Cartridge present:  skip logo, Colecovision logo
-    // outline0("DEFB $55, $aa");
+    outline0("DEFB $55, $aa");
     // DW       0000           ;Pointer to the sprite name table
     outline0("DEFW $0000");
     // DW       0000           ;Pointer to the sprite order table
@@ -128,8 +128,36 @@ void target_initialization( Environment * _environment ) {
     // DW       START      ;Entry point to the user program
     outline0("DEFW CODESTART");
 
+outhead0("rst_8:");
+    outline0("RETI");
+    outline0("NOP");
+outhead0("rst_10:");
+    outline0("RETI");
+    outline0("NOP");
+outhead0("rst_18:");
+outhead0("JP $1ffd");
+outhead0("rst_20:");
+    outline0("RETI");
+    outline0("NOP");
+outhead0("rst_28:");
+    outline0("RETI");
+    outline0("NOP");
+outhead0("rst_30:");
+    outline0("RETI");
+    outline0("NOP");
+outhead0("rst_38:");
+    outline0("RETI");
+    outline0("NOP");
+
+    outline0("jp NMI");
+
+    outhead0("NMI:")
+    outline0("RETI");
+    outline0("NOP");
+
     outhead0("CODESTART:")
-    
+    outline0("LD SP, $737f");
+
     outline0("CALL VARINIT2");
     outline0("CALL VARINIT");
     outline0("CALL PROTOTHREADINIT" );
@@ -141,6 +169,8 @@ void target_initialization( Environment * _environment ) {
     setup_text_variables( _environment );
 
     tms9918_initialization( _environment );
+
+    outline0("CALL $1f7f");
 
 }
 
