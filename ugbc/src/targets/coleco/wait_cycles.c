@@ -1,6 +1,3 @@
-#ifndef __UGBASICTESTER__
-#define __UGBASICTESTER__
-
 /*****************************************************************************
  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
  *****************************************************************************
@@ -35,51 +32,49 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <limits.h>
-#include <unistd.h>
-
-#include "../src/ugbc.h"
+#include "../../ugbc.h"
 
 /****************************************************************************
- * DECLARATIONS AND DEFINITIONS SECTION 
+ * CODE SECTION 
  ****************************************************************************/
 
-void test_cpu( );
-void test_variables( );
-void test_conditionals( );
-void test_loops( );
-void test_ons( );
-void test_controls( );
-void test_examples( );
-void test_print( );
+/**
+ * @brief Emit ASM code for <b>WAIT [int] CYCLES</b>
+ * 
+ * This function outputs a code that engages the CPU in a busy wait.
+ * 
+ * @param _environment Current calling environment
+ * @param _timing Number of cycles to wait
+ */
+/* <usermanual>
+@keyword WAIT
 
-#if defined( __c64__ )
-    #include "tester_c64.h"
-#elif defined( __plus4__ )
-    #include "tester_plus4.h"
-#elif defined( __atari__ )
-    #include "tester_atari.h"
-#elif defined( __atarixl__ )
-    #include "tester_atarixl.h"
-#elif defined( __zx__ )
-    #include "tester_zx.h"
-#elif defined( __d32__ )
-    #include "tester_d32.h"
-#elif defined( __d64__ )
-    #include "tester_d64.h"
-#elif defined( __pc128op__ )
-    #include "tester_pc128op.h"
-#elif defined( __mo5__ )
-    #include "tester_mo5.h"
-#elif defined( __vic20__ )
-    #include "tester_vic20.h"
-#elif defined( __msx1__ )
-    #include "tester_msx1.h"
-#elif defined( __coleco__ )
-    #include "tester_coleco.h"
-#endif
+@target coleco
+</usermanual> */
+void wait_cycles( Environment * _environment, int _timing ) {
 
-#endif
+    
+
+    char timingString[MAX_TEMPORARY_STORAGE]; sprintf(timingString, "$%2.2x", _timing );
+
+    z80_busy_wait( _environment, timingString );
+
+}
+
+/**
+ * @brief Emit ASM code for <b>WAIT [int] CYCLES</b>
+ * 
+ * This function outputs a code that engages the CPU in a busy wait.
+ * 
+ * @param _environment Current calling environment
+ * @param _timing Number of cycles to wait
+ */
+void wait_cycles_var( Environment * _environment, char * _timing ) {
+
+    
+
+    Variable * timing = variable_retrieve( _environment, _timing );
+    
+    z80_busy_wait( _environment, timing->realName );
+
+}

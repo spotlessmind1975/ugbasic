@@ -133,6 +133,21 @@ generated/msx1/exe/%.rom:
 	@z88dk-appmake +msxrom -b $(@:.rom=.bin)
 	@rm -f $(@:.rom=.bin) $(@:.rom=_*.bin)
 
+generated/coleco/asm/%.asm:
+	@ugbc/exe/ugbc.coleco $(subst generated/coleco/asm/,examples/,$(@:.asm=.bas)) $@ 
+
+generated/coleco/exe/%.rom:
+	@z88dk-z80asm -l -m -s -g -b $(subst /exe/,/asm/,$(@:.rom=.asm))
+	@mv $(subst /exe/,/asm/,$(@:.rom=.sym)) $(subst /exe/,/asm/,$(@:.rom=.osym))
+	@php sym2msx.php $(subst /exe/,/asm/,$(@:.rom=.osym)) >$(subst /exe/,/asm/,$(@:.rom=.sym))
+	@rm -f $(subst /exe/,/asm/,$(@:.rom=.o))
+	@mv $(subst /exe/,/asm/,$(@:.rom=_code_user.bin)) $(@:.rom=_code_user.bin)
+	@mv $(subst /exe/,/asm/,$(@:.rom=_data_user.bin)) $(@:.rom=_data_user.bin)
+	@cat $(@:.rom=_code_user.bin) $(@:.rom=_data_user.bin) >$(@:.rom=.bin)
+	@rm $(@:.rom=_code_user.bin) $(@:.rom=_data_user.bin)
+	@z88dk-appmake +msxrom -b $(@:.rom=.bin)
+	@rm -f $(@:.rom=.bin) $(@:.rom=_*.bin)
+
 paths:
 	@mkdir -p generated
 	@mkdir -p generated/$(target)/asm

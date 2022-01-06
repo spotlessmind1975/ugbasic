@@ -32,7 +32,7 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#ifdef __msx1__
+#if defined(__msx1__) || defined(__coleco__)
 
 #include "../ugbc.h"
 #include <math.h>

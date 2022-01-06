@@ -172,6 +172,19 @@ src-generated/modules_atarixl.c: $(SOURCES_6502) $(SOURCES_ANTIC) $(SOURCES_ATAR
 	@grep "src" src-generated/modules_atarixl.c | awk -f modules.awk >src-generated/modules_atarixl.h
 	@grep "data" src-generated/modules_atarixl.c | awk -f modules.awk >>src-generated/modules_atarixl.h
 
+# ColecoVision
+
+MODULES_COLECO := $(wildcard src/hw/coleco/*.asm)
+SOURCES_COLECO := $(subst src/hw/coleco/,src-generated/coleco_,$(MODULES_COLECO:.asm=.c))
+
+src-generated/coleco_%.c: $(MODULES_MSX)
+	@xxd -i $(subst src-generated/coleco_,src/hw/coleco/,$(@:.c=.asm)) >$@
+
+src-generated/modules_coleco.c: $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_COLECO)
+	@cat $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_COLECO) >src-generated/modules_coleco.c
+	@grep "src" src-generated/modules_coleco.c | awk -f modules.awk >src-generated/modules_coleco.h
+	@grep "data" src-generated/modules_coleco.c | awk -f modules.awk >>src-generated/modules_coleco.h
+
 # Commodore 64
 
 MODULES_C64 := $(wildcard src/hw/c64/*.asm)
@@ -331,7 +344,7 @@ SOURCESTEST += $(wildcard src/hw/*.c)
 SOURCESTEST += $(wildcard src/targets/common/*.c)
 SOURCESTEST += $(wildcard src/targets/$(target)/*.c)
 SOURCESTEST += $(wildcard src-test/suites/*.c)
-SOURCESTEST += src-generated/modules_$(target).c src-test/tester.c src-test/tester_c64.c src-test/tester_plus4.c src-test/tester_atari.c src-test/tester_atarixl.c src-test/tester_msx1.c src-test/tester_zx.c src-test/tester_d32.c src-test/tester_d64.c src-test/tester_pc128op.c src-test/tester_mo5.c src-test/tester_vic20.c
+SOURCESTEST += src-generated/modules_$(target).c src-test/tester.c src-test/tester_c64.c src-test/tester_plus4.c src-test/tester_atari.c src-test/tester_atarixl.c src-test/tester_coleco.c src-test/tester_msx1.c src-test/tester_zx.c src-test/tester_d32.c src-test/tester_d64.c src-test/tester_pc128op.c src-test/tester_mo5.c src-test/tester_vic20.c
 
 paths:
 	@mkdir -p src-generated

@@ -890,6 +890,7 @@ typedef struct _Deployed {
     int gtiavars;
     int zxvars;
     int msx1vars;
+    int colecovars;
     int tms9918vars;
     int tms9918varsGraphic;
     int tms9918startup;
@@ -2366,6 +2367,11 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "../src-generated/modules_msx1.h"
     #include "hw/z80.h"
     #include "hw/msx1.h"
+    #include "hw/tms9918.h"
+#elif __coleco__
+    #include "../src-generated/modules_coleco.h"
+    #include "hw/z80.h"
+    #include "hw/coleco.h"
     #include "hw/tms9918.h"
 #endif
 

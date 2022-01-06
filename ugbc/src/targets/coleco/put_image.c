@@ -1,6 +1,3 @@
-#ifndef __UGBASICTESTER__
-#define __UGBASICTESTER__
-
 /*****************************************************************************
  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
  *****************************************************************************
@@ -35,51 +32,51 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <limits.h>
-#include <unistd.h>
-
-#include "../src/ugbc.h"
+#include "../../ugbc.h"
 
 /****************************************************************************
- * DECLARATIONS AND DEFINITIONS SECTION 
+ * CODE SECTION 
  ****************************************************************************/
 
-void test_cpu( );
-void test_variables( );
-void test_conditionals( );
-void test_loops( );
-void test_ons( );
-void test_controls( );
-void test_examples( );
-void test_print( );
+extern char DATATYPE_AS_STRING[][16];
 
-#if defined( __c64__ )
-    #include "tester_c64.h"
-#elif defined( __plus4__ )
-    #include "tester_plus4.h"
-#elif defined( __atari__ )
-    #include "tester_atari.h"
-#elif defined( __atarixl__ )
-    #include "tester_atarixl.h"
-#elif defined( __zx__ )
-    #include "tester_zx.h"
-#elif defined( __d32__ )
-    #include "tester_d32.h"
-#elif defined( __d64__ )
-    #include "tester_d64.h"
-#elif defined( __pc128op__ )
-    #include "tester_pc128op.h"
-#elif defined( __mo5__ )
-    #include "tester_mo5.h"
-#elif defined( __vic20__ )
-    #include "tester_vic20.h"
-#elif defined( __msx1__ )
-    #include "tester_msx1.h"
-#elif defined( __coleco__ )
-    #include "tester_coleco.h"
-#endif
+/**
+ * @brief Emit ASM code for <b>PUT IMAGE [image] AT [int],[int]</b>
+ * 
+ * This function outputs a code that draws an image on a bitmap. 
+ * 
+ * @param _environment Current calling environment
+ * @param _image Image to draw
+ * @param _x Abscissa of the point to draw
+ * @param _y Ordinate of the point
+ */
+/* <usermanual>
+@keyword PUT IMAGE
+</usermanual> */
+void put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _flags ) {
 
-#endif
+    Variable * image = variable_retrieve( _environment, _image );
+    Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
+    Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
+    Variable * frame = NULL;
+    if ( _frame) {
+        frame = variable_retrieve_or_define( _environment, _frame, VT_BYTE, 0 );
+    }
+
+    switch( image->type ) {
+        case VT_IMAGES:
+            if ( !frame ) {
+                tms9918_put_image( _environment, image->realName, x->realName, y->realName, "", image->frameSize, _flags );
+            } else {
+                tms9918_put_image( _environment, image->realName, x->realName, y->realName, frame->realName, image->frameSize, _flags );
+            }
+            break;
+        case VT_IMAGE:
+            tms9918_put_image( _environment, image->realName, x->realName, y->realName, NULL, 0, _flags );
+            break;
+        default:
+            CRITICAL_PUT_IMAGE_UNSUPPORTED( _image, DATATYPE_AS_STRING[image->type] );
+    }
+
+
+}

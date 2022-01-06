@@ -1,6 +1,3 @@
-#ifndef __UGBASICTESTER__
-#define __UGBASICTESTER__
-
 /*****************************************************************************
  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
  *****************************************************************************
@@ -35,51 +32,54 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <limits.h>
-#include <unistd.h>
-
-#include "../src/ugbc.h"
+#include "../../ugbc.h"
 
 /****************************************************************************
- * DECLARATIONS AND DEFINITIONS SECTION 
+ * CODE SECTION 
  ****************************************************************************/
 
-void test_cpu( );
-void test_variables( );
-void test_conditionals( );
-void test_loops( );
-void test_ons( );
-void test_controls( );
-void test_examples( );
-void test_print( );
+void every_ticks_call( Environment * _environment, char * _timing, char * _label ) {
 
-#if defined( __c64__ )
-    #include "tester_c64.h"
-#elif defined( __plus4__ )
-    #include "tester_plus4.h"
-#elif defined( __atari__ )
-    #include "tester_atari.h"
-#elif defined( __atarixl__ )
-    #include "tester_atarixl.h"
-#elif defined( __zx__ )
-    #include "tester_zx.h"
-#elif defined( __d32__ )
-    #include "tester_d32.h"
-#elif defined( __d64__ )
-    #include "tester_d64.h"
-#elif defined( __pc128op__ )
-    #include "tester_pc128op.h"
-#elif defined( __mo5__ )
-    #include "tester_mo5.h"
-#elif defined( __vic20__ )
-    #include "tester_vic20.h"
-#elif defined( __msx1__ )
-    #include "tester_msx1.h"
-#elif defined( __coleco__ )
-    #include "tester_coleco.h"
-#endif
 
-#endif
+    Variable * timing = variable_retrieve( _environment, _timing );
+
+    _environment->everyStatus = variable_retrieve( _environment, "EVERYSTATUS");
+    _environment->everyStatus->locked = 1;
+
+    _environment->everyCounter = variable_temporary( _environment, VT_WORD, "(every counter)");
+    _environment->everyCounter->locked = 1;
+    _environment->everyTiming = variable_cast( _environment, timing->name, VT_WORD );
+    _environment->everyTiming->locked = 1;
+
+    char skipEveryRoutineLabel[MAX_TEMPORARY_STORAGE]; sprintf(skipEveryRoutineLabel, "setg%d", UNIQUE_ID );
+    char everyRoutineLabel[MAX_TEMPORARY_STORAGE]; sprintf(everyRoutineLabel, "etg%d", UNIQUE_ID );
+    char endOfEveryRoutineLabel[MAX_TEMPORARY_STORAGE]; sprintf(endOfEveryRoutineLabel, "eetg%d", UNIQUE_ID );
+    
+    cpu_jump( _environment, skipEveryRoutineLabel );
+    
+    cpu_label( _environment, everyRoutineLabel );
+    
+    outline0("PUSH AF");
+
+    cpu_bveq( _environment, _environment->everyStatus->realName, endOfEveryRoutineLabel );
+
+    cpu_dec( _environment, _environment->everyCounter->realName );
+
+    cpu_bvneq( _environment, _environment->everyCounter->realName, endOfEveryRoutineLabel );
+
+    call_procedure( _environment, _label );
+
+    variable_move_naked( _environment, _environment->everyTiming->name, _environment->everyCounter->name );
+
+    cpu_label( _environment, endOfEveryRoutineLabel );
+
+    outline0("POP AF");
+    
+    coleco_follow_irq( _environment );
+
+    cpu_label( _environment, skipEveryRoutineLabel );
+
+    coleco_irq_at( _environment, everyRoutineLabel );
+
+}
+

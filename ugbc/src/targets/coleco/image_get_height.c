@@ -1,6 +1,3 @@
-#ifndef __UGBASICTESTER__
-#define __UGBASICTESTER__
-
 /*****************************************************************************
  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
  *****************************************************************************
@@ -35,51 +32,46 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <limits.h>
-#include <unistd.h>
-
-#include "../src/ugbc.h"
+#include "../../ugbc.h"
 
 /****************************************************************************
- * DECLARATIONS AND DEFINITIONS SECTION 
+ * CODE SECTION 
  ****************************************************************************/
 
-void test_cpu( );
-void test_variables( );
-void test_conditionals( );
-void test_loops( );
-void test_ons( );
-void test_controls( );
-void test_examples( );
-void test_print( );
+/**
+ * @brief Emit code for <strong>IMAGE HEIGHT(...)</strong>
+ * 
+ * @param _environment Current calling environment
+ * @param Image to measure.
+ */
+/* <usermanual>
+@keyword IMAGE HEIGHT
 
-#if defined( __c64__ )
-    #include "tester_c64.h"
-#elif defined( __plus4__ )
-    #include "tester_plus4.h"
-#elif defined( __atari__ )
-    #include "tester_atari.h"
-#elif defined( __atarixl__ )
-    #include "tester_atarixl.h"
-#elif defined( __zx__ )
-    #include "tester_zx.h"
-#elif defined( __d32__ )
-    #include "tester_d32.h"
-#elif defined( __d64__ )
-    #include "tester_d64.h"
-#elif defined( __pc128op__ )
-    #include "tester_pc128op.h"
-#elif defined( __mo5__ )
-    #include "tester_mo5.h"
-#elif defined( __vic20__ )
-    #include "tester_vic20.h"
-#elif defined( __msx1__ )
-    #include "tester_msx1.h"
-#elif defined( __coleco__ )
-    #include "tester_coleco.h"
-#endif
+@english
+The ''IMAGE HEIGHT'' function will allow you to obtain the height of an
+image (in pixels).
 
-#endif
+@italian
+La funzione ''IMAGE HEIGHT'' permette di ottenere l'altezza di una immagine (in pixel).
+
+@syntax = IMAGE HEIGHT([image])
+
+@example starshipHeight = IMAGE HEIGHT( IMAGE LOAD("starship.png") )
+
+@usedInExample mobs_example_01.bas
+
+@target all
+</usermanual> */
+Variable * image_get_height( Environment * _environment, char * _image ) {
+
+    Variable * image = variable_retrieve( _environment, _image );
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(image height)" );
+
+    outline1("LD HL, %s", image->realName );
+    outline0("ADD HL, 1" );
+    outline0("LD A, (HL)" );
+    outline1("LD (%s), A", result->realName );
+
+    return result;
+
+}

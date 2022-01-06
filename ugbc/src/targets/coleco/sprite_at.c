@@ -1,6 +1,3 @@
-#ifndef __UGBASICTESTER__
-#define __UGBASICTESTER__
-
 /*****************************************************************************
  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
  *****************************************************************************
@@ -35,51 +32,45 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <limits.h>
-#include <unistd.h>
-
-#include "../src/ugbc.h"
+#include "../../ugbc.h"
 
 /****************************************************************************
- * DECLARATIONS AND DEFINITIONS SECTION 
+ * CODE SECTION 
  ****************************************************************************/
 
-void test_cpu( );
-void test_variables( );
-void test_conditionals( );
-void test_loops( );
-void test_ons( );
-void test_controls( );
-void test_examples( );
-void test_print( );
+/**
+ * @brief Emit ASM code for <b>SPRITE [int] AT ([int],[int])</b>
+ * 
+ * This function emits a code capable of position a sprite to the (x,y)
+ * on the screen. This version is suitable when an integer number 
+ * is used. 
+ * 
+ * @param _environment Current calling environment
+ * @param _sprite Index of the sprite to position (0...7)
+ * @param _x The abscissa of the sprite
+ * @param _y The ordinate of the sprite
+ */
+void sprite_at( Environment * _environment, int _sprite, int _x, int _y ) {
 
-#if defined( __c64__ )
-    #include "tester_c64.h"
-#elif defined( __plus4__ )
-    #include "tester_plus4.h"
-#elif defined( __atari__ )
-    #include "tester_atari.h"
-#elif defined( __atarixl__ )
-    #include "tester_atarixl.h"
-#elif defined( __zx__ )
-    #include "tester_zx.h"
-#elif defined( __d32__ )
-    #include "tester_d32.h"
-#elif defined( __d64__ )
-    #include "tester_d64.h"
-#elif defined( __pc128op__ )
-    #include "tester_pc128op.h"
-#elif defined( __mo5__ )
-    #include "tester_mo5.h"
-#elif defined( __vic20__ )
-    #include "tester_vic20.h"
-#elif defined( __msx1__ )
-    #include "tester_msx1.h"
-#elif defined( __coleco__ )
-    #include "tester_coleco.h"
-#endif
+    outline3("; SPRITE %d AT (%d,%d) (ignored)", _sprite, _x, _y);
 
-#endif
+}
+
+/**
+ * @brief Emit ASM code for <b>SPRITE [expression] AT ([expression],[expression])</b>
+ * 
+ * This function emits a code capable of position a sprite to the (x,y)
+ * on the screen. This version is suitable when an expression
+ * is used. 
+ * 
+ * @param _environment Current calling environment
+ * @param _sprite Expression with the index of the sprite to position (0...7)
+ * @param _x Expression with the abscissa of the sprite
+ * @param _y Expression with the ordinate of the sprite
+ */
+void sprite_at_vars( Environment * _environment, char * _sprite, char * _x, char * _y ) {
+
+    outline3("; SPRITE %s AT (%s,%s) (ignored)", _sprite, _x, _y);
+
+}
+
