@@ -108,7 +108,7 @@ void target_initialization( Environment * _environment ) {
     outhead0("SECTION code_user");
     outhead0("ORG $8000");
     outhead0("SECTION data_user");
-    outhead0("ORG $7030");
+    outhead0("ORG $7030h");
     outhead0("SECTION code_user");
 
     // +0	ID	Put these first two bytes at 041H and 042H ("AB") to indicate that it is an additional ROM.
