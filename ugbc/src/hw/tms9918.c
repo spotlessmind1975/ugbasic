@@ -794,18 +794,6 @@ void tms9918_initialization( Environment * _environment ) {
     variable_import( _environment, "FONTHEIGHT", VT_BYTE, 8 );
     variable_global( _environment, "FONTHEIGHT" );
 
-    variable_import( _environment, "VDPDATAPORTREAD", VT_BYTE, 0x98 );
-    variable_global( _environment, "VDPDATAPORTREAD" );
-
-    variable_import( _environment, "VDPDATAPORTWRITE", VT_BYTE, 0x98 );
-    variable_global( _environment, "VDPDATAPORTWRITE" );
-
-    variable_import( _environment, "VDPCONTROLPORTREAD", VT_BYTE, 0x99 );
-    variable_global( _environment, "VDPCONTROLPORTREAD" );
-
-    variable_import( _environment, "VDPCONTROLPORTWRITE", VT_BYTE, 0x99 );
-    variable_global( _environment, "VDPCONTROLPORTWRITE" );
-
     SCREEN_MODE_DEFINE( TILEMAP_MODE_STANDARD, 0, 40, 24, 20, "Text Mode" );
     SCREEN_MODE_DEFINE( TILEMAP_MODE_GRAPHIC1, 0, 32, 24, 16, "Graphic I" );
 
