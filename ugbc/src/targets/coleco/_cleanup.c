@@ -43,7 +43,7 @@ void target_finalization( Environment * _environment ) {
     tms9918_finalization( _environment );
 
     outhead0("section data_user");
-    outhead0("LASTVAR: db $00");
+    outhead0("LASTVAR: db $42");
     outhead0("section code_user");
 
     if ( ! _environment->protothread ) {
@@ -52,11 +52,15 @@ void target_finalization( Environment * _environment ) {
     }
 
     outhead0("VARINIT2:");
+
+    outhead0("if (LASTVAR) < ( 1024 - 128 )"); 
     outline0("LD HL, CODEEND");
     outline0("LD DE, $7030");
-    outline0("LD BC, LASTVAR - $7030" );
+    outline0("LD BC, LASTVAR - $7030 + 1" );
     outline0("LDIR" );
+    outhead0("endif"); 
     outline0("RET");
+
     outhead0("CODEEND:");
 
 }

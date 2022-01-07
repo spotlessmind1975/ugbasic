@@ -63,6 +63,9 @@ void target_initialization( Environment * _environment ) {
 
     // MEMORY_AREA_DEFINE( MAT_RAM, 0xd000, 0xdff0 );
 
+    _environment->dstring.count = 32;
+    _environment->dstring.space = 256;
+    
     variable_import( _environment, "EVERYSTATUS", VT_BYTE, 0 );
     variable_global( _environment, "EVERYSTATUS" );
 
@@ -162,15 +165,25 @@ outhead0("rst_38:");
     outline0("CALL VARINIT");
     outline0("CALL PROTOTHREADINIT" );
 
-    if ( _environment->tenLinerRulesEnforced ) {
-        shell_injection( _environment );
-    }
-
     setup_text_variables( _environment );
 
     tms9918_initialization( _environment );
 
     outline0("CALL $1f7f");
+
+    z80_compare_and_branch_8bit_const( _environment, "LASTVAR", 0x42, "CODESTARTRUN", 1 );
+
+    Variable * outOfMemoryMessage = variable_define( _environment, "OOM", VT_STRING, 0 );
+    variable_store_string( _environment, outOfMemoryMessage->name, "OOM" );
+    print( _environment, outOfMemoryMessage->name, 1 );
+
+    cpu_halt( _environment );
+
+    outhead0("CODESTARTRUN:")
+
+    if ( _environment->tenLinerRulesEnforced ) {
+        shell_injection( _environment );
+    }
 
 }
 
