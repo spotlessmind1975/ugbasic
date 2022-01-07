@@ -117,7 +117,6 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_IMAGE:
                 case VT_IMAGES:
                 case VT_BUFFER:
-                printf("%s: %p %4.4x\n", variable->realName, variable->memoryArea, variable->absoluteAddress );
                     if ( ! variable->absoluteAddress ) {
                         if ( variable->valueBuffer ) {
                             if ( variable->printable ) {
@@ -224,7 +223,6 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
         case VT_IMAGE:
         case VT_IMAGES:
         case VT_BUFFER:
-                printf("%s: %p %4.4x\n", _variable->realName, _variable->memoryArea, _variable->absoluteAddress );
             if ( _variable->valueBuffer ) {
                 if ( _variable->printable ) {
                     char * string = malloc( _variable->size + 1 );

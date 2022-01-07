@@ -311,8 +311,6 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
     cpu_store_8bit( _environment, "_PEN", 0x01 );
     cpu_store_8bit( _environment, "_PAPER", 0x00 );
 
-    printf("Screen %d\n", _screen_mode->id );
-
     switch( _screen_mode->id ) {
         // M1 M2 M3 Display Mode
         // 0  0  0  Graphics I Mode
@@ -1049,8 +1047,6 @@ static Variable * tms9918_image_converter_bitmap_mode_standard( Environment * _e
  
     int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_GRAPHIC2 );
     
-    printf( "image size = %d\n", bufferSize );
-
     char * buffer = malloc ( bufferSize );
     memset( buffer, 0, bufferSize );
 

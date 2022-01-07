@@ -171,9 +171,13 @@ TEXTATLF:
     SUB A, B
     DEC A
 
+    PUSH DE
     LD HL, (COPYOFTEXTADDRESS)
-    ADD HL, A
+    LD D, 0
+    LD E, A
+    ADD HL, DE
     LD (COPYOFTEXTADDRESS), HL
+    POP DE
 
     JMP TEXTATNEXT2
 

@@ -190,8 +190,10 @@ TEXTATPC2:
     DEC D
     JP NZ, TEXTATPC2
 TEXTATROW:
-    LD A, E
-    ADD HL, A
+    PUSH DE
+    LD D,0
+    ADD HL, DE
+    POP DE
     POP DE
     LD A, (HL)
     AND $38
