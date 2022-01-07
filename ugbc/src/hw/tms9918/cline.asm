@@ -44,6 +44,7 @@
 if __coleco__
 
 CLINE:
+    CALL WAIT_VDP_HOOK
     LD HL, CLINENMI
     CALL SET_VDP_HOOK
     RET

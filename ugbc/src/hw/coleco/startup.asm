@@ -102,9 +102,9 @@ NMI:
 	RETN
 
 COLECOSTARTUP:
-	LD A, ($73c4)
-	OR 020h
-	LD C, A
-	LD B, 1
-	CALL $1fd9
+	; LD A, ($73c4)
+	; OR 020h
+	; LD C, A
+	; LD B, 1
+	; CALL $1fd9
     RET

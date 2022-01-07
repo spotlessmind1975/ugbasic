@@ -44,6 +44,7 @@
 if __coleco__
 
 BACK:
+    CALL WAIT_VDP_HOOK
     LD HL, BACKNMI
     CALL SET_VDP_HOOK
     RET

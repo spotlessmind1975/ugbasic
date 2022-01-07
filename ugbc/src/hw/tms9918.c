@@ -836,7 +836,7 @@ void tms9918_initialization( Environment * _environment ) {
     variable_global( _environment, "CURRENTMODE" );
 
     #if __coleco__
-        variable_import( _environment, "VDP_HOOK", VT_BUFFER, 4 + 4 );
+        variable_import( _environment, "VDP_HOOK", VT_BUFFER, 10 );
         variable_global( _environment, "VDP_HOOK" );
     #endif
 

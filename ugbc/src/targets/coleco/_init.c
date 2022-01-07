@@ -145,9 +145,13 @@ void target_initialization( Environment * _environment ) {
 
     setup_text_variables( _environment );
 
-    tms9918_initialization( _environment );
+    #if __coleco__
 
-    outline0("CALL $1f7f");
+        outline0("CALL $1f7f");
+
+    #endif
+
+    tms9918_initialization( _environment );
 
     z80_compare_and_branch_8bit_const( _environment, "LASTVAR", 0x42, "CODESTARTRUN", 1 );
 

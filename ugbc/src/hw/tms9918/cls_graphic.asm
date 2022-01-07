@@ -44,6 +44,7 @@
 if __coleco__
 
 CLSG:
+    CALL WAIT_VDP_HOOK
     LD HL, CLSGNMI
     CALL SET_VDP_HOOK0
     RET
