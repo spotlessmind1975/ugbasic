@@ -65,7 +65,7 @@ void target_initialization( Environment * _environment ) {
 
     _environment->dstring.count = 32;
     _environment->dstring.space = 256;
-    
+
     variable_import( _environment, "EVERYSTATUS", VT_BYTE, 0 );
     variable_global( _environment, "EVERYSTATUS" );
 
@@ -107,6 +107,9 @@ void target_initialization( Environment * _environment ) {
     variable_import( _environment, "CONTROLLER_BUFFER", VT_BUFFER, 12 );
     variable_global( _environment, "CONTROLLER_BUFFER" );    
 
+    variable_import( _environment, "COLECOTIMER", VT_WORD, 0 );
+    variable_global( _environment, "COLECOTIMER" );    
+
     bank_define( _environment, "VARIABLES", BT_VARIABLES, 0x5000, NULL );
     bank_define( _environment, "TEMPORARY", BT_TEMPORARY, 0x5100, NULL );
 
@@ -131,32 +134,7 @@ void target_initialization( Environment * _environment ) {
     // DW       START      ;Entry point to the user program
     outline0("DEFW CODESTART");
 
-outhead0("rst_8:");
-    outline0("RETI");
-    outline0("NOP");
-outhead0("rst_10:");
-    outline0("RETI");
-    outline0("NOP");
-outhead0("rst_18:");
-outhead0("JP $1ffd");
-outhead0("rst_20:");
-    outline0("RETI");
-    outline0("NOP");
-outhead0("rst_28:");
-    outline0("RETI");
-    outline0("NOP");
-outhead0("rst_30:");
-    outline0("RETI");
-    outline0("NOP");
-outhead0("rst_38:");
-    outline0("RETI");
-    outline0("NOP");
-
-    outline0("jp NMI");
-
-    outhead0("NMI:")
-    outline0("RETI");
-    outline0("NOP");
+    deploy_inplace( startup, src_hw_coleco_startup_asm);
 
     outhead0("CODESTART:")
     outline0("LD SP, $737f");
@@ -180,6 +158,7 @@ outhead0("rst_38:");
     cpu_halt( _environment );
 
     outhead0("CODESTARTRUN:")
+    outline0("CALL COLECOSTARTUP");
 
     if ( _environment->tenLinerRulesEnforced ) {
         shell_injection( _environment );
@@ -212,7 +191,7 @@ void target_linkage( Environment * _environment ) {
         strcpy( listingFileName, "" );
     }
 
-    sprintf( commandLine, "\"%s\" %s -b \"%s\"",
+    sprintf( commandLine, "\"%s\" %s -D__coleco__ -b \"%s\"",
         executableName,
         listingFileName,
         _environment->asmFileName );

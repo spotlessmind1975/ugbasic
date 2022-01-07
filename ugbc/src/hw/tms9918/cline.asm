@@ -41,13 +41,28 @@
 ; VDPUPDATE2:		$3800		$2000
 ; VDPUPDATE3:		$3800		$2000		$0000
 
+if __coleco__
+
 CLINE:
+    LD HL, CLINENMI
+    CALL SET_VDP_HOOK
+    RET
+
+CLINENMI:
+    CALL GET_VDP_HOOK
+
+else
+
+CLINE:
+
+endif
+
     LD A, (CURRENTMODE)
     CP 0
     JR Z,CLINE0
     CP 1
     JR Z,CLINE1
-    RET
+    JP CLINEDONE
 
 CLINE0:
 CLINE1:
@@ -109,5 +124,7 @@ CLINE0CL1:
     DEC C
     JR NZ, CLINE0CL1
 
-    RET
+    JP CLINEDONE
 
+CLINEDONE:
+    RET

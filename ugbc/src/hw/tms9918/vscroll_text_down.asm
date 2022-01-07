@@ -35,13 +35,27 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+if __coleco__
+
 VSCROLLTDOWN:
+    LD HL, VSCROLLTDOWNNMI
+    CALL SET_VDP_HOOK0
+    RET
+
+VSCROLLTDOWNNMI:
+
+else
+
+VSCROLLTDOWN:
+
+endif
+
     LD A, (CURRENTMODE)
     CP 0
     JR Z,VSCROLLTDOWN0
     CP 1
     JR Z,VSCROLLTDOWN1
-    RET
+    JP VSCROLLTDOWNDONE
 
 VSCROLLTDOWN0:
     LD BC, 40 * 23
@@ -96,18 +110,21 @@ VSCROLLTDOWNLOOP:
     JR Z,VSCROLLTDOWNX0
     CP 1
     JR Z,VSCROLLTDOWNX1
-    RET
+    JP VSCROLLTDOWNDONE
 
 VSCROLLTDOWNX0:
     LD A, (EMPTYTILE)
     LD BC, $128
     POP DE
     CALL VDPFILL
-    RET
+    JP VSCROLLTDOWNDONE
 
 VSCROLLTDOWNX1:
     LD A, (EMPTYTILE)
     LD BC, $120
     POP DE
     CALL VDPFILL
+    JP VSCROLLTDOWNDONE
+
+VSCROLLTDOWNDONE:
     RET

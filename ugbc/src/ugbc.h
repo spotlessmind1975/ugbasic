@@ -1727,6 +1727,11 @@ typedef struct _Environment {
             _environment->deployed.s = 1; \
         }
 
+#define deploy_inplace(s,e)  \
+        if ( ! _environment->deployed.s ) { \
+            outembedded0(e); \
+        }
+
 #define deploy_with_vars(s,e,v)  \
         if ( ! _environment->deployed.s ) { \
             int ignoreEmptyProcedure = _environment->emptyProcedure; \

@@ -41,20 +41,34 @@
 ; VDPUPDATE2:		$3800		$2000
 ; VDPUPDATE3:		$3800		$2000		$0000
 
+if __coleco__
+
 CLST:
+    LD HL, CLSTNMI
+    CALL SET_VDP_HOOK0
+    RET
+
+CLSTNMI:
+
+else
+
+CLST:
+
+endif
+
     LD A, (CURRENTMODE)
     CP 0
     JR Z,CLST0
     CP 1
     JR Z,CLST1
-    RET
+    JP CLSTDONE
 
 CLST0:
     LD A, (EMPTYTILE)
     LD BC, $100 + 40*24
     LD DE, $1800
     CALL VDPFILL
-    RET
+    JP CLSTDONE
 
 CLST1:
     LD A, (EMPTYTILE)
@@ -67,4 +81,7 @@ CLST1:
     LD DE, $0480
     CALL VDPFILL
 
+    JP CLSTDONE
+
+CLSTDONE:
     RET

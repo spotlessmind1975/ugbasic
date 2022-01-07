@@ -43,7 +43,21 @@
 
 ;--------------
 
+if __coleco__
+
 PLOT:
+    LD HL, PLOTNMI
+    CALL SET_VDP_HOOK
+    RET
+
+PLOTNMI:
+    CALL GET_VDP_HOOK
+
+else
+
+PLOT:
+
+endif
 
     PUSH AF
 
@@ -105,12 +119,12 @@ PLOT2X:
     JP PLOT3
 PLOT3X:
     POP AF
-    RET
+    JP PLOTDONE
 
 PLOT0:
 PLOT1:
     POP AF
-    RET
+    JP PLOTDONE
 
 PLOT2:
 PLOT3:
@@ -206,7 +220,7 @@ PLOTC:
 PLOTP:
     POP AF
 PLOTP2:
+    JP PLOTDONE
+
+PLOTDONE:
     RET
-
-
-;----------------------------------------------------------------

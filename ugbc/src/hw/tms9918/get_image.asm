@@ -39,7 +39,23 @@
 ; - Get image from bitmap
 ; ----------------------------------------------------------------------------
 
+if __coleco__
+
 GETIMAGE:
+    PUSH HL
+    LD HL, GETIMAGENMI
+    CALL SET_VDP_HOOK_HL
+    RET
+
+GETIMAGENMI:
+    CALL GET_VDP_HOOK
+
+else
+
+GETIMAGE:
+
+endif
+
     LD A, (CURRENTMODE)
     CP 0
     JR NZ, GETIMAGE0X
@@ -57,12 +73,12 @@ GETIMAGE2X:
     JR NZ, GETIMAGE3X
     JMP GETIMAGE3
 GETIMAGE3X:
-    RET
+    JP GETIMAGEDONE
 
 GETIMAGE0:
 GETIMAGE1:
 GETIMAGE3:
-    RET
+    JP GETIMAGEDONE
 
 GETIMAGE2:
     LD A, (HL)
@@ -234,5 +250,7 @@ GETIMAGE0CP2C:
     DEC B
     JR NZ, GETIMAGE0CPCA
 
-    RET
+    JP GETIMAGEDONE
 
+GETIMAGEDONE:
+    RET

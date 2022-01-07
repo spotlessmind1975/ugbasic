@@ -47,7 +47,24 @@
 ; - Put image on bitmap
 ; ----------------------------------------------------------------------------
 
+
+if __coleco__
+
 PUTIMAGE:
+    PUSH HL
+    LD HL, PUTIMAGENMI
+    CALL SET_VDP_HOOK_HL
+    RET
+
+PUTIMAGENMI:
+    CALL GET_VDP_HOOK
+
+else
+
+PUTIMAGE:
+
+endif
+
     LD A, (CURRENTMODE)
     CP 0
     JR NZ, PUTIMAGE0X
@@ -65,12 +82,12 @@ PUTIMAGE2X:
     JR NZ, PUTIMAGE3X
     JMP PUTIMAGE3
 PUTIMAGE3X:
-    RET
+    JP PUTIMAGEDONE
 
 PUTIMAGE0:
 PUTIMAGE1:
 PUTIMAGE3:
-    RET
+    JP PUTIMAGEDONE
 
 PUTIMAGE2:
     LD A, (HL)
@@ -242,5 +259,7 @@ PUTIMAGE0CP2C:
     DEC B
     JR NZ, PUTIMAGE0CPCA
 
-    RET
+    JP PUTIMAGEDONE
 
+PUTIMAGEDONE:
+    RET

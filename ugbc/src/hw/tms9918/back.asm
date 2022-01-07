@@ -41,7 +41,21 @@
 ; VDPUPDATE2:		$3800		$2000
 ; VDPUPDATE3:		$3800		$2000		$0000
 
+if __coleco__
+
 BACK:
+    LD HL, BACKNMI
+    CALL SET_VDP_HOOK
+    RET
+
+BACKNMI:
+
+else
+
+BACK:
+
+endif
+
     LD A, (CURRENTMODE)
     CP 0
     JR Z,BACK0
@@ -51,14 +65,14 @@ BACK:
     JR Z,BACK2
     CP 3
     JR Z,BACK3
-    RET
+    JP BACKDONE
 
 BACK0:
     LD A, VDP_RCOLOR
     LD E, A
     LD A, (_PAPER)
     CALL VDPSETREG
-    RET
+    JP BACKDONE
 
 BACK1:
     LD DE, $0480
@@ -74,4 +88,7 @@ BACK3:
 BACKCOMMON:
     LD A, (_PAPER)
     CALL VDPFILL
+    JP BACKDONE
+
+BACKDONE:
     RET

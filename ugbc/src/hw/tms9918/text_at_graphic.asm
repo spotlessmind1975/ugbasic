@@ -68,11 +68,27 @@ TEXTATDECODE0:
     ; AND $3F
     RET
 
+if __coleco__
+
 TEXTATBITMAPMODE:
+    PUSH HL
+    LD HL, TEXTATBITMAPMODENMI
+    CALL SET_VDP_HOOK_HL
+    RET
+
+TEXTATBITMAPMODENMI:
+    CALL GET_VDP_HOOK
+
+else
+
+TEXTATBITMAPMODE:
+
+endif
+
     LD A, C
     CP 0
     JR NZ,TEXTATBITMAPMODEGO
-    RET
+    JP TEXTATBITMAPMODEDONE
 
 TEXTATBITMAPMODEGO:
     PUSH BC
@@ -569,7 +585,11 @@ TEXTATBMNEXT3:
     PUSH BC
     PUSH DE
     PUSH HL
-    CALL VSCROLLTUP
+    if __coleco__
+        CALL VSCROLLTUPNMI
+    else
+        CALL VSCROLLTUP
+    endif
     POP HL
     POP DE
     POP BC
@@ -611,7 +631,7 @@ TEXTATBMXLOOP2:
     JR Z, TEXTATBMEND
     JP TEXTATBMLOOP2
 TEXTATBMEND:
-    RET
+    JP TEXTATBITMAPMODEDONE
 
 TEXTATBMFONT:
    DB $3c, $66, $6e, $6e, $60, $62, $3c, $00
@@ -1126,3 +1146,7 @@ TEXTATBMFONT:
    DB $e7, $e7, $e7, $07, $07, $ff, $ff, $ff
    DB $0f, $0f, $0f, $0f, $ff, $ff, $ff, $ff
    DB $0f, $0f, $0f, $0f, $f0, $f0, $f0, $f0
+
+TEXTATBITMAPMODEDONE:
+    RET
+    

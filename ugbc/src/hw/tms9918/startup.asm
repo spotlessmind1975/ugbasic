@@ -1,3 +1,81 @@
+if __coleco__
+
+SET_VDP_HOOK0:
+        LD A,(VDP_HOOK)
+        CP $cd
+        JR Z,SET_VDP_HOOK
+        LD A,$cd
+        LD (VDP_HOOK),A
+        LD (VDP_HOOK+1),HL
+        LD A,$c9
+        LD (VDP_HOOK+3),A
+        RET
+
+SET_VDP_HOOK:
+        LD A,(VDP_HOOK)
+        CP $cd
+        JR Z,SET_VDP_HOOK
+        LD A,$cd
+        LD (VDP_HOOK),A
+        LD (VDP_HOOK+1),HL
+        LD A,$c9
+        LD (VDP_HOOK+3),A
+        LD A, B
+        LD (VDP_HOOK+4),A
+        LD A, C
+        LD (VDP_HOOK+5),A
+        LD A, D
+        LD (VDP_HOOK+6),A
+        LD A, E
+        LD (VDP_HOOK+6),A
+        LD A, 0
+        LD (VDP_HOOK+7),A
+        LD (VDP_HOOK+8),A
+        RET
+
+SET_VDP_HOOK_HL:
+        LD A,(VDP_HOOK)
+        CP $cd
+        JR Z,SET_VDP_HOOK
+        LD A,$cd
+        LD (VDP_HOOK),A
+        LD (VDP_HOOK+1),HL
+        LD A,$c9
+        LD (VDP_HOOK+3),A
+        LD A, B
+        LD (VDP_HOOK+4),A
+        LD A, C
+        LD (VDP_HOOK+5),A
+        LD A, D
+        LD (VDP_HOOK+6),A
+        LD A, E
+        LD (VDP_HOOK+6),A
+        LD A, H
+        LD (VDP_HOOK+7),A
+        LD A, L
+        LD (VDP_HOOK+8),A
+        RET
+
+GET_VDP_HOOK:
+        LD A, (VDP_HOOK+4)
+        LD C, A
+        LD A, (VDP_HOOK+5)
+        LD D, A
+        LD A, (VDP_HOOK+6)
+        LD E, A
+        LD A, (VDP_HOOK+7)
+        LD H, A
+        LD A, (VDP_HOOK+8)
+        LD L, A
+        RET
+
+DONE_VDP_HOOK:
+        LD A,0
+        LD (VDP_HOOK),A
+        RET
+
+endif
+
 VDPWRITEBIT: EQU     40H
 
 VDPSETREG:

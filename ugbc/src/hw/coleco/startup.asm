@@ -3,7 +3,7 @@
 ;  *****************************************************************************
 ;  * Copyright 2021-2022 Marco Spedaletti (asimov@mclink.it)
 ;  *
-;  * Licensed under the Apache License, Version 2.0 (the "License");
+;  * Licensed under the Apache License, Version 2.0 (the "License
 ;  * you may not use this file except in compliance with the License.
 ;  * You may obtain a copy of the License at
 ;  *
@@ -16,7 +16,7 @@
 ;  * limitations under the License.
 ;  *----------------------------------------------------------------------------
 ;  * Concesso in licenza secondo i termini della Licenza Apache, versione 2.0
-;  * (la "Licenza"); è proibito usare questo file se non in conformità alla
+;  * (la "Licenza è proibito usare questo file se non in conformità alla
 ;  * Licenza. Una copia della Licenza è disponibile all'indirizzo:
 ;  *
 ;  * http://www.apache.org/licenses/LICENSE-2.0
@@ -29,46 +29,82 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                      CLEAR SCREEN ROUTINE FOR TMS9918 (graphic mode)        *
+;*                      STARTUP ROUTINE FOR COLECO                             *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-; 			        NAME		COLOR		PATTERN
-; VDPUPDATE0: 		$1800		            $0000 (coleco)
-; VDPUPDATE1:		$1800		$0480		$0000 (coleco)
-; VDPUPDATE2:		$3800		$2000
-; VDPUPDATE3:		$3800		$2000		$0000
+rst_8:
+    RETI
+    NOP
 
-if __coleco__
+rst_10:
+    RETI
+    NOP
 
-CLSG:
-    LD HL, CLSGNMI
-    CALL SET_VDP_HOOK0
-    RET
+rst_18:
+    JP $1ffd
 
-CLSGNMI:
+rst_20:
+    RETI
+    NOP
 
-else
+rst_28:
+    RETI
+    NOP
 
-CLSG:
+rst_30:
+    RETI
+    NOP
 
-endif
+rst_38:
+    RETI
+    NOP
 
-    LD A, 0
-    LD DE, $3800
-    LD BC, 256*3
-    CALL VDPFILLA
+jp NMI
 
-    LD BC, 256*8*3
-    LD DE, $0000
-    LD A, 0
-    CALL VDPFILL
+NMI:
+	PUSH	AF
+	PUSH	BC
+	PUSH	DE
+	PUSH	HL
+	PUSH	IX
+	PUSH	IY
+	EX	AF,AF'
+	PUSH	AF
+	EXX
+	PUSH	BC
+	PUSH	DE
+	PUSH	HL
+    LD HL,(COLECOTIMER)
+    INC HL
+    LD (COLECOTIMER),HL
+	POP	HL
+    LD A,(VDP_HOOK)
+    CP $cd
+    JR NZ,NMI2
+    CALL VDP_HOOK
+    CALL DONE_VDP_HOOK
+ NMI2:
+	CALL	$1fdc
+	POP	DE
+	POP	BC
+	EXX
+	POP	AF
+	EX	AF,AF'
+	POP	IY
+	POP	IX
+	POP	HL
+	POP	DE
+	POP	BC
+	POP	AF
+	RETN
 
-    LD BC, 32*24*8
-    LD DE, $2000
-    LD A, (_PAPER)
-    CALL VDPFILL
-
+COLECOSTARTUP:
+	LD A, ($73c4)
+	OR 020h
+	LD C, A
+	LD B, 1
+	CALL $1fd9
     RET
