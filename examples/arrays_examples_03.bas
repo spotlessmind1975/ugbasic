@@ -10,6 +10,7 @@ REM
 REM Questo piccolo esempio mostra la sintassi base per definire un array e per
 REM accedervi.
 REM
+REM @exclude coleco
 
     CONST a = 6
     CONST b = 7
