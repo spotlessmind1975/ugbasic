@@ -137,7 +137,7 @@ generated/coleco/asm/%.asm:
 	@ugbc/exe/ugbc.coleco $(subst generated/coleco/asm/,examples/,$(@:.asm=.bas)) $@ 
 
 generated/coleco/exe/%.rom:
-	@z88dk-z80asm -l -m -s -g -b $(subst /exe/,/asm/,$(@:.rom=.asm))
+	@z88dk-z80asm -D__coleco__ -l -m -s -g -b $(subst /exe/,/asm/,$(@:.rom=.asm))
 	@mv $(subst /exe/,/asm/,$(@:.rom=.sym)) $(subst /exe/,/asm/,$(@:.rom=.osym))
 	@php sym2msx.php $(subst /exe/,/asm/,$(@:.rom=.osym)) >$(subst /exe/,/asm/,$(@:.rom=.sym))
 	@rm -f $(subst /exe/,/asm/,$(@:.rom=.o))
