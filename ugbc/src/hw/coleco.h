@@ -145,5 +145,6 @@ void coleco_keyshift( Environment * _environment, char * _shifts );
 void coleco_clear_key( Environment * _environment );
 void coleco_irq_at( Environment * _environment, char * _label );
 void coleco_follow_irq( Environment * _environment );
+void coleco_joy( Environment * _environment, char * _port, char * _value );
 
 #endif

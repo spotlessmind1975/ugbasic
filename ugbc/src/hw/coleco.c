@@ -133,4 +133,15 @@ void coleco_follow_irq( Environment * _environment ) {
     outline0("RET" );
 
 }
+
+void coleco_joy( Environment * _environment, char * _port, char * _value ) {
+
+    deploy( joystick, src_hw_coleco_joystick_asm );
+
+    outline1("LD A, (%s)", _port);
+    outline0("LD B, A");
+    outline0("CALL JOYSTICK");
+    outline1("LD (%s), A", _value );
+
+}
 #endif
