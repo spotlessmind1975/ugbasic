@@ -9,6 +9,8 @@ REM ROUTINE DI MATEMATICA CON L'USO DI ESPRESSIONI (2)
 REM
 REM Questo esempio mostra un esempio di calcolo matematico, con l'uso dell'operatore elevamento a potenza (''^'')
 REM e moltiplicazione (''*'').
+REM
+REM @exclude coleco
 
     a = 3^5
     b = 3*3*3*3*3

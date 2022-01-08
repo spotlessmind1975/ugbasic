@@ -8,6 +8,8 @@ REM VARI ALTRI CONTRIBUTI NUMERI PRIMI (4)
 REM
 REM Questo piccolo esempio è stato preso ed adattato da [[https://www.linkedin.com/pulse/ottimizzazione-del-codice-massimo-sanna/|"Ottimizzazione del codice"]] di Massimo Sanna.
 REM
+REM
+REM @exclude coleco
 
 5 REM inizializzo limite massimo e array di flag 
 6 REM nums(x) = 0 -> x dentro

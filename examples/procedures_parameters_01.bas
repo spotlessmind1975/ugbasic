@@ -21,6 +21,8 @@ REM locali che vengono alimentate dal chiamante. Il valore restituito deve esser
 REM considerato come un valore che potrebbe essere utilizzato dal chiamante. 
 REM L'esempio implementerà una procedura che stampa il parametro, prefisso
 REM dalla stringa ''"HELLO"''.
+REM
+REM @exclude coleco
 
    PROCEDURE hello [name$]
       PRINT "HELLO " + name$

@@ -21,6 +21,8 @@ REM locali che vengono alimentate dal chiamante. Il valore restituito deve esser
 REM considerato come un valore che potrebbe essere utilizzato dal chiamante. 
 REM L'esempio implementerà procedure che stampano la somma di variabili di tipo 
 REM diverso, come interi e stringhe.
+REM
+REM @exclude coleco
 
    PROCEDURE twins[a,b]
       PRINT (a + b)

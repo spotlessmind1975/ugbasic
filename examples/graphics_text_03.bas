@@ -7,6 +7,8 @@ REM @italian
 REM PRIMITIVE DI GRAFICA COORDINATE DI SCHERMO E DI TESTO (2)
 REM
 REM Questo esempio mostrerà come passare dalle coordinate schermo a quelle testuali, e viceversa.
+REM
+REM @exclude coleco
 
     BITMAP ENABLE (160,200,16)
     CLS

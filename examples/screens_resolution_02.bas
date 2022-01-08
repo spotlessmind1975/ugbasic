@@ -21,6 +21,8 @@ REM attendono fino a tre parametri: la larghezza, l'altezza e il numero di color
 REM Larghezza e altezza sono misurate in pixel (se modalità ''BITMAP'') o in tile 
 REM (se modalità ''TILEMAP''). I colori sono sempre individuali, ovvero il numero 
 REM massimo di colori diversi consentiti.
+REM
+REM @exclude coleco
 
      BITMAP ENABLE (320,200)
      CLS

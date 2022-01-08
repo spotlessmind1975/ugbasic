@@ -7,6 +7,8 @@ REM @italian
 REM USARE IL MULTITASKING CON UN ESEMPIO (4)
 REM
 REM Questo esempio mostrerà come usare variabili separate per ogni task.
+REM
+REM @exclude coleco
 
     DIM x WITH 0 (3)
     GLOBAL x

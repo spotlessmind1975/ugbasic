@@ -9,6 +9,8 @@ REM PRIMITIVE DI GRAFICA PER POSIZIONE 2)
 REM
 REM Questo esempio mostra come ricavare la posizione grafica corrente,
 REM utilizzando le variabili ''XGR'' e ''YGR''.
+REM
+REM @exclude coleco
 
     BITMAP ENABLE
     CLS

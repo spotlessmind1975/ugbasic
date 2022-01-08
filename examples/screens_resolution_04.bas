@@ -7,6 +7,8 @@ REM @italian
 REM MANIPOLAZIONE DI SCHERMI CAMBIARE RISOLUZIONE (2)
 REM
 REM Questo esempio mostra la miglior risoluzione BITMAP disponibile. 
+REM
+REM @exclude coleco
 
      TILEMAP ENABLE
      CLS BLACK: PEN WHITE
