@@ -4411,8 +4411,10 @@ Variable * variable_bin( Environment * _environment, char * _value, char * _digi
 
         cpu_less_than_8bit( _environment, size->realName, digits->realName, pad->realName, 0, 0 );
 
-        cpu_bvneq( _environment, pad->realName, truncateLabel );
+        cpu_dsfree( _environment, result2->realName );
         cpu_dsalloc( _environment, digits->realName, result2->realName );
+
+        cpu_bvneq( _environment, pad->realName, truncateLabel );
 
         cpu_label( _environment, padLabel );
 
