@@ -78,6 +78,7 @@ DSWRITE:
     AND $7F
     LD (IX+3),A
     LD D, B
+    LD C, (IX)
     CALL DSCHECKFREE
 DSWRITEOK:
     LD C, (IX+1)
