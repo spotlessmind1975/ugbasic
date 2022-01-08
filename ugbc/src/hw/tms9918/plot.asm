@@ -46,13 +46,17 @@
 if __coleco__
 
 PLOT:
+    LD H, A
     CALL WAIT_VDP_HOOK
+    CALL SET_VDP_HOOK_HL
     LD HL, PLOTNMI
     CALL SET_VDP_HOOK
+    CALL WAIT_VDP_HOOK
     RET
 
 PLOTNMI:
     CALL GET_VDP_HOOK
+    LD A, H
 
 else
 
