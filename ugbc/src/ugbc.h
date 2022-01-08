@@ -1040,6 +1040,11 @@ typedef struct _Environment {
     int analysis;
 
     /**
+     * Maximum number of cycles for peep hole optimizations (0 = disable)
+     */
+    int peepholeOptimizationLimit;
+
+    /**
      * Enable the visualization of warnings during compilation.
      */
     int warningsEnabled;

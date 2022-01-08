@@ -1476,18 +1476,24 @@ static int optim_pass( Environment * _environment, buffer buf[LOOK_AHEAD], enum 
 
 /* main entry-point for this service */
 void target_peephole_optimizer( Environment * _environment ) {
-    buffer buf[LOOK_AHEAD];
-    int i;
+    if ( _environment->peepholeOptimizationLimit > 0 ) {
+        buffer buf[LOOK_AHEAD];
+        int i;
 
-    for(i=0; i<LOOK_AHEAD; ++i) buf[i] = buf_new(0);
+        for(i=0; i<LOOK_AHEAD; ++i) buf[i] = buf_new(0);
 
-    do {
-        while(optim_pass(_environment, buf, PEEPHOLE));
-        optim_pass(_environment, buf, DEADVARS);
-    } while(change);
-    optim_pass(_environment, buf, RELOCATION1);
-    optim_pass(_environment, buf, RELOCATION2);
+        int optimization_limit_count = _environment->peepholeOptimizationLimit;
 
-    for(i=0; i<LOOK_AHEAD; ++i) buf[i] = buf_del(buf[i]);
-    TMP_BUF_CLR;
+        do {
+            while(optim_pass(_environment, buf, PEEPHOLE)&&optimization_limit_count) {
+                --optimization_limit_count;
+            };
+            optim_pass(_environment, buf, DEADVARS);
+        } while(change&&optimization_limit_count);
+        optim_pass(_environment, buf, RELOCATION1);
+        optim_pass(_environment, buf, RELOCATION2);
+
+        for(i=0; i<LOOK_AHEAD; ++i) buf[i] = buf_del(buf[i]);
+        TMP_BUF_CLR;
+    }
 }
