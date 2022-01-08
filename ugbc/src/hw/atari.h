@@ -39,11 +39,12 @@
 #define JOYSTICK_2					2
 #define JOYSTICK_3					3
 #define JOYSTICK_COUNT				4
-#define JOYSTICK_UP					2
-#define JOYSTICK_DOWN				4
-#define JOYSTICK_LEFT				8
-#define JOYSTICK_RIGHT				16
-#define JOYSTICK_FIRE				1
+
+#define JOY_UP              1
+#define JOY_DOWN            2
+#define JOY_LEFT            3
+#define JOY_RIGHT           4
+#define JOY_FIRE            0
 
 #define KEY_NONE						255
 #define KEY_L						0

@@ -42,6 +42,12 @@
 #define JOYSTICK_RIGHT				128
 #define JOYSTICK_FIRE				32
 
+#define JOY_UP              2
+#define JOY_DOWN            3
+#define JOY_LEFT            4
+#define JOY_RIGHT           7
+#define JOY_FIRE            5
+
 #define KEY_NONE					64
 #define KEY_0						35
 #define KEY_1						56

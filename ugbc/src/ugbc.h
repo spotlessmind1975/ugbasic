@@ -1793,12 +1793,6 @@ typedef struct _Environment {
 #define WW_PEN              1
 #define WW_PAPER            2
 
-#define JOY_UP              0
-#define JOY_DOWN            1
-#define JOY_LEFT            2
-#define JOY_RIGHT           3
-#define JOY_FIRE            4
-
 #define SHIFT_LEFT          1
 #define SHIFT_RIGHT         2
 #define SHIFT_CAPSLOCK      4
