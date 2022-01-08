@@ -4518,7 +4518,7 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     printf("\t-a           Show statistics on assembly listing generated\n" );
     printf("\t-I           Install needed chaintool for this target\n" );
     printf("\t-d           Enable debugging of IMAGE LOAD\n" );
-    printf("\t-p <num>     Maximum number of peep hole optimizations passes (default: 4, 0 = disable)\n" );
+    printf("\t-p <num>     Maximum number of peep hole optimizations passes (default: 16, 0 = disable)\n" );
     printf("\t-C <file>    Path to compiler\n" );
     printf("\t-A <file>    Path to app maker\n" );
     printf("\t-T <path>    Path to temporary path\n" );
@@ -4579,7 +4579,7 @@ int main( int _argc, char *_argv[] ) {
 
     _environment->defaultVariableType = VT_WORD;
 
-    _environment->peepholeOptimizationLimit = 4;
+    _environment->peepholeOptimizationLimit = 16;
 
 #if defined(__atari__) 
     _environment->outputFileType = OUTPUT_FILE_TYPE_XEX;
