@@ -194,7 +194,8 @@ Variable * images_load( Environment * _environment, char * _filename, char * _al
         }
     }
 
-    char * buffer = malloc( bufferSize + 2 );
+    bufferSize += 2;
+    char * buffer = malloc( bufferSize );
     char * ptr = buffer;
     ptr[0] = wc*hc;
     ptr[1] = _frame_width;
