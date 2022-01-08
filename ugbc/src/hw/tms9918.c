@@ -311,6 +311,15 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
     cpu_store_8bit( _environment, "_PEN", 0x01 );
     cpu_store_8bit( _environment, "_PAPER", 0x00 );
 
+#ifdef __coleco__
+
+    MAKE_LABEL
+    
+    outline1("JP %sdone", label );
+    outhead1("%s:", label );
+
+#endif
+
     switch( _screen_mode->id ) {
         // M1 M2 M3 Display Mode
         // 0  0  0  Graphics I Mode
@@ -498,6 +507,17 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
     cpu_store_8bit( _environment, "FONTWIDTH", _environment->fontWidth );
     cpu_store_8bit( _environment, "FONTHEIGHT", _environment->fontHeight );
 
+#ifdef __coleco__
+
+    outline0("RET");
+    outline1("%sdone:", label );
+    outline0("CALL WAIT_VDP_HOOK" );
+    outline1("LD HL, %s", label );
+    outline0("CALL SET_VDP_HOOK0" );
+    outline0("CALL WAIT_VDP_HOOK");
+
+#endif
+
 }
 
 void tms9918_bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {
@@ -603,6 +623,7 @@ void tms9918_point( Environment * _environment, char *_x, char *_y, char * _resu
     outline0("LD A, 3");
     outline0("CALL PLOT");
     outline1("LD (%s), A", result->realName);
+
 
 }
 
@@ -1101,7 +1122,9 @@ static Variable * tms9918_image_converter_bitmap_mode_standard( Environment * _e
             }
 
             bitmask = ( colorIndex == 0 ? 0 : 1 ) << (7 - ((image_x & 0x7)));
-            *(buffer + 2 + ( ( _frame_width >> 3 ) * _frame_height ) + offsetc ) = ( ( ( palette[colorIndex].index & 0x0f ) << 4 ) | palette[0].index );
+            if ( colorIndex && ( *(buffer + 2 + ( ( _frame_width >> 3 ) * _frame_height ) + offsetc ) & 0xf0 ) == 0 ) {
+                *(buffer + 2 + ( ( _frame_width >> 3 ) * _frame_height ) + offsetc ) = ( ( ( palette[colorIndex].index & 0x0f ) << 4 ) | palette[0].index );
+            }
             *(buffer + 2 + offset) |= bitmask;
 
             _source += 3;
