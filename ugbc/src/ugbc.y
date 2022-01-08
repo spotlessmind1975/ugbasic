@@ -4483,7 +4483,7 @@ program :
 
 %%
 
-char version[MAX_TEMPORARY_STORAGE] = "1.8.1";
+char version[MAX_TEMPORARY_STORAGE] = "1.8.2";
 
 void show_usage_and_exit( int _argc, char *_argv[] ) {
 
@@ -4528,6 +4528,7 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     printf("\t-a           Show statistics on assembly listing generated\n" );
     printf("\t-I           Install needed chaintool for this target\n" );
     printf("\t-d           Enable debugging of IMAGE LOAD\n" );
+    printf("\t-p <num>     Maximum number of peep hole optimizations passes (default: 16, 0 = disable)\n" );
     printf("\t-C <file>    Path to compiler\n" );
     printf("\t-A <file>    Path to app maker\n" );
     printf("\t-T <path>    Path to temporary path\n" );
@@ -4590,6 +4591,8 @@ int main( int _argc, char *_argv[] ) {
 
     _environment->defaultVariableType = VT_WORD;
 
+    _environment->peepholeOptimizationLimit = 16;
+
 #if defined(__atari__) 
     _environment->outputFileType = OUTPUT_FILE_TYPE_XEX;
 #elif defined(__atarixl__) 
@@ -4614,7 +4617,7 @@ int main( int _argc, char *_argv[] ) {
     _environment->outputFileType = OUTPUT_FILE_TYPE_ROM;
 #endif
 
-    while ((opt = getopt(_argc, _argv, "ae:c:Wo:Ie:l:EO:dL:C:VA:T:1")) != -1) {
+    while ((opt = getopt(_argc, _argv, "ae:c:Wo:Ie:l:EO:dL:C:VA:T:1p:")) != -1) {
         switch (opt) {
                 case 'a':
                     if ( ! _environment->listingFileName ) {
@@ -4677,6 +4680,9 @@ int main( int _argc, char *_argv[] ) {
                     break;
                 case 'E':
                     _environment->embeddedStatsEnabled = 1;
+                    break;
+                case 'p':
+                    _environment->peepholeOptimizationLimit = atoi(optarg);
                     break;
                 case 'V':
                     fprintf(stderr, "%s", version );
