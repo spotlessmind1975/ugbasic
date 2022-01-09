@@ -62,4 +62,6 @@ void sprite_compress_horizontal( Environment * _environment, int _sprite ) {
  */
 void sprite_compress_horizontal_var( Environment * _environment, char * _sprite ) {
 
+    tms9918_sprite_compress_horizontal( _environment, _sprite );
+
 }

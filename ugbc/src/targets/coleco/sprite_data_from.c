@@ -66,5 +66,7 @@ void sprite_data_from( Environment * _environment, int _sprite, int _address ) {
  */
 void sprite_data_from_vars( Environment * _environment, char * _sprite, char * _address ) {
 
+    tms9918_sprite_data_from( _environment, _sprite, _address );
+
 }
 

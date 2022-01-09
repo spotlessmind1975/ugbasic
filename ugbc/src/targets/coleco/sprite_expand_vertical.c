@@ -66,5 +66,7 @@ void sprite_expand_vertical_var( Environment * _environment, char * _sprite ) {
 
     outline1("; SPRITE %s EXPAND VERTICAL (ignored)", _sprite);
 
+    tms9918_sprite_expand_vertical( _environment, _sprite );
+
 }
 

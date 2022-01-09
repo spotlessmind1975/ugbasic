@@ -53,7 +53,7 @@
 void sprite_at( Environment * _environment, int _sprite, int _x, int _y ) {
 
     outline3("; SPRITE %d AT (%d,%d) (ignored)", _sprite, _x, _y);
-
+    
 }
 
 /**
@@ -71,6 +71,8 @@ void sprite_at( Environment * _environment, int _sprite, int _x, int _y ) {
 void sprite_at_vars( Environment * _environment, char * _sprite, char * _x, char * _y ) {
 
     outline3("; SPRITE %s AT (%s,%s) (ignored)", _sprite, _x, _y);
+
+    tms9918_sprite_at( _environment, _sprite, _x, _y );
 
 }
 

@@ -734,33 +734,97 @@ void tms9918_screen_rows( Environment * _environment, char * _rows ) {
 
 void tms9918_sprite_data_from( Environment * _environment, char * _sprite, char * _address ) {
 
+    Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
+    Variable * address = variable_retrieve_or_define( _environment, _address, VT_ADDRESS, 0 );
+
+    deploy( sprite, src_hw_tms9918_sprite_asm );
+    
+    outline1("LD A, (%s)", sprite->realName );
+    outline0("LD B, A");
+    outline1("LD HL, (%s)", address->realName );
+    outline0("CALL SPRITEDATAFROM");
+
 }
 
 void tms9918_sprite_enable( Environment * _environment, char * _sprite ) {
+
+    Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
+
+    deploy( sprite, src_hw_tms9918_sprite_asm );
+    
+    outline1("LD A, (%s)", sprite->realName );
+    outline0("LD B, A");
+    outline0("CALL SPRITEENABLE");
 
 }
 
 void tms9918_sprite_disable( Environment * _environment, char * _sprite ) {
 
+    Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
+
+    deploy( sprite, src_hw_tms9918_sprite_asm );
+    
+    outline1("LD A, (%s)", sprite->realName );
+    outline0("LD B, A");
+    outline0("CALL SPRITEDISABLE");
+
 }
 
 void tms9918_sprite_at( Environment * _environment, char * _sprite, char * _x, char * _y ) {
+
+    Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
+    Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
+    Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
+
+    deploy( sprite, src_hw_tms9918_sprite_asm );
+    
+    outline1("LD A, (%s)", sprite->realName );
+    outline0("LD B, A");
+    outline1("LD A, (%s)", x->realName );
+    outline0("LD H, A");
+    outline1("LD A, (%s)", y->realName );
+    outline0("LD L, A");
+    outline0("CALL SPRITEAT");
 
 }
 
 void tms9918_sprite_expand_vertical( Environment * _environment, char * _sprite ) {
 
+    _sprite = NULL;
+
+    deploy( sprite, src_hw_tms9918_sprite_asm );
+    
+    outline0("CALL SPRITEEXPAND");
+
 }
 
 void tms9918_sprite_expand_horizontal( Environment * _environment, char * _sprite ) {
+
+    _sprite = NULL;
+
+    deploy( sprite, src_hw_tms9918_sprite_asm );
+    
+    outline0("CALL SPRITEEXPAND");
 
 }
 
 void tms9918_sprite_compress_vertical( Environment * _environment, char * _sprite ) {
 
+    _sprite = NULL;
+
+    deploy( sprite, src_hw_tms9918_sprite_asm );
+    
+    outline0("CALL SPRITECOMPRESS");
+
 }
 
 void tms9918_sprite_compress_horizontal( Environment * _environment, char * _sprite ) {
+
+    _sprite = NULL;
+
+    deploy( sprite, src_hw_tms9918_sprite_asm );
+    
+    outline0("CALL SPRITECOMPRESS");
 
 }
 
@@ -773,6 +837,17 @@ void tms9918_sprite_monocolor( Environment * _environment, char * _sprite ) {
 }
 
 void tms9918_sprite_color( Environment * _environment, char * _sprite, char * _color ) {
+
+    Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
+    Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_WHITE );
+
+    deploy( sprite, src_hw_tms9918_sprite_asm );
+    
+    outline1("LD A, (%s)", sprite->realName );
+    outline0("LD B, A");
+    outline1("LD A, (%s)", color->realName );
+    outline0("LD C, A");
+    outline0("CALL SPRITECOLOR");
 
 }
 

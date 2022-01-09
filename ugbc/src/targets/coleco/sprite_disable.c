@@ -62,5 +62,7 @@ void sprite_disable( Environment * _environment, int _sprite ) {
  */
 void sprite_disable_var( Environment * _environment, char * _sprite ) {
 
+    tms9918_sprite_disable( _environment, _sprite );
+
 }
 

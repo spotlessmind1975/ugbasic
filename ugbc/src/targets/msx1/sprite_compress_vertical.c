@@ -66,4 +66,6 @@ void sprite_compress_vertical_var( Environment * _environment, char * _sprite ) 
 
     outline1("; SPRITE %s COMPRESS VERTICAL (ignored)", _sprite);
 
+    tms9918_sprite_compress_vertical( _environment, _sprite );
+
 }
