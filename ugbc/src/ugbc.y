@@ -1785,6 +1785,9 @@ exponential:
     | IMAGE HEIGHT OP expr CP {
         $$ = image_get_height( _environment, $4 )->name;
     }
+    | SPRITE OP Identifier CP {
+        $$ = sprite_init( _environment, $3 )->name;
+    }
     | MOB OP expr CP {
         $$ = mob_init( _environment, $3, NULL, NULL )->name;
     }
@@ -2146,9 +2149,6 @@ color_definition_expression:
   }
   | BACKGROUND expr TO expr {
       color_background_vars( _environment, $2, $4 );
-  }
-  | SPRITE expr TO expr {
-      color_sprite_vars( _environment, $2, $4 );
   };
 
 color_definition:
@@ -2284,8 +2284,8 @@ sprite_definition_expression:
   | expr COLOUR expr {
       sprite_color_vars( _environment, $1, $3 );
   }
-  | expr position OP expr OP_COMMA expr CP {
-      sprite_at_vars( _environment, $1, $4, $6 );
+  | expr position expr OP_COMMA expr {
+      sprite_at_vars( _environment, $1, $3, $5 );
   }
   | expr ENABLE {
       sprite_enable_var( _environment, $1 );

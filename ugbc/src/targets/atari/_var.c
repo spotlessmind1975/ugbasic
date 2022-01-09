@@ -107,6 +107,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         outline1("%s: .res 1", variable->realName);
                     }
                     break;
+                case VT_SPRITE:
                 case VT_MOB:
                     if ( variable->memoryArea ) {
                         // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
@@ -218,6 +219,7 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
             break;
         case VT_DSTRING:
         case VT_MOB:
+        case VT_SPRITE:
             outline0("   .byte 0" );
             break;
         case VT_IMAGE:

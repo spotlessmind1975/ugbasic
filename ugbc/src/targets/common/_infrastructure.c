@@ -73,7 +73,9 @@ char DATATYPE_AS_STRING[][16] = {
     "MOB",  
     "IMAGE",
     "THREAD",
-    "IMAGES"
+    "IMAGES",
+    "CHAR",
+    "SPRITE"
 };
 
 char OUTPUT_FILE_TYPE_AS_STRING[][16] = {
@@ -82,7 +84,8 @@ char OUTPUT_FILE_TYPE_AS_STRING[][16] = {
     "xex",
     "k7 (original)",
     "k7 (new)",
-    "tap"
+    "tap",
+    "rom"
 };
 
 void memory_area_assign( MemoryArea * _first, Variable * _variable ) {
@@ -447,6 +450,7 @@ Variable * variable_define_local( Environment * _environment, char * _name, Vari
             case VT_STRING:
             case VT_DSTRING:
             case VT_MOB:
+            case VT_SPRITE:
             case VT_BUFFER:
             case VT_IMAGE:
             case VT_IMAGES:
@@ -707,6 +711,8 @@ Variable * variable_array_type( Environment * _environment, char *_name, Variabl
         size *= 1;
     } else if ( var->arrayType == VT_MOB ) {
         size *= 1;
+    } else if ( var->arrayType == VT_SPRITE ) {
+        size *= 1;
     } else {
         CRITICAL_DATATYPE_UNSUPPORTED("array(1)", DATATYPE_AS_STRING[var->arrayType]);
     }
@@ -741,6 +747,7 @@ Variable * variable_array_type( Environment * _environment, char *_name, Variabl
  * - `VT_DSTRING` (<b>DYNAMIC STRING</b>)
  * - `VT_BUFFER`
  * - `VT_MOB`
+ * - `VT_SPRITE`
  * 
  * @param _environment Current calling environment
  * @param _type Type of the variable to define
@@ -922,6 +929,8 @@ Variable * variable_store( Environment * _environment, char * _destination, unsi
                 } else if ( destination->arrayType == VT_DSTRING ) {
                     size *= 1;
                 } else if ( destination->arrayType == VT_MOB ) {
+                    size *= 1;
+                } else if ( destination->arrayType == VT_SPRITE ) {
                     size *= 1;
                 } else {
                     CRITICAL_DATATYPE_UNSUPPORTED("array(1)", DATATYPE_AS_STRING[destination->arrayType]);
@@ -1427,6 +1436,17 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                                     break;
                             }
                             break;
+                        case VT_SPRITE:
+                            switch( target->type ) {
+                                case VT_SPRITE: {
+                                    cpu_move_8bit( _environment, source->realName, target->realName );
+                                    break;
+                                }
+                                default:
+                                    CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
+                                    break;
+                            }
+                            break;
                         case VT_IMAGE:
                             switch( target->type ) {
                                 case VT_IMAGE:
@@ -1553,6 +1573,17 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
                 case VT_MOB:
                     switch( target->type ) {
                         case VT_MOB: {
+                            cpu_move_8bit( _environment, source->realName, target->realName );
+                            break;
+                        }
+                        default:
+                            CRITICAL_MOVE_NAKED_UNSUPPORTED( DATATYPE_AS_STRING[target->type]);
+                            break;
+                    }
+                    break;
+                case VT_SPRITE:
+                    switch( target->type ) {
+                        case VT_SPRITE: {
                             cpu_move_8bit( _environment, source->realName, target->realName );
                             break;
                         }

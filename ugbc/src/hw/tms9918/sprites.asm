@@ -66,7 +66,7 @@ endif
     INC HL
     LD DE, HL
     POP HL
-    LD A, (HL)
+    LD A, B
     CALL VDPOUTCHAR
 
     PUSH HL
@@ -79,6 +79,8 @@ endif
     ADD HL, DE
     LD DE, HL
     POP HL
+    INC HL
+    INC HL
     LD B, 8
 SPRITEDATAL1:
     LD A, (HL)
@@ -134,27 +136,6 @@ endif
 
     RET
 
-; SET SPRITE DISABLE(B)
-if __coleco__
-
-SPRITEDISABLE:
-    CALL WAIT_VDP_HOOK
-    LD HL, SPRITEDISABLEFROMNMI
-    CALL SET_VDP_HOOK
-    CALL WAIT_VDP_HOOK
-    RET
-
-SPRITEDISABLEFROMNMI:
-    CALL GET_VDP_HOOK
-
-else
-
-SPRITEDISABLEFROM:
-
-endif
-
-    RET
-
 ; SPRITE AT(B,D,E)
 if __coleco__
 
@@ -183,11 +164,11 @@ endif
     ADD HL, DE
     LD DE, HL
     POP HL
-    LD A, (HL)
+    LD A, L
     CALL VDPOUTCHAR
     INC DE
     INC HL
-    LD A, (HL)
+    LD A, H
     CALL VDPOUTCHAR
     INC DE
     INC HL
@@ -261,6 +242,9 @@ endif
     SLA E
     SLA E
     ADD HL, DE
+    INC HL
+    INC HL
+    INC HL
     LD DE, HL
     LD A, C
     AND $0F

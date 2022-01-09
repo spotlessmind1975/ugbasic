@@ -114,6 +114,13 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         outline1("%s: .res 1", variable->realName);
                     }
                     break;
+                case VT_SPRITE:
+                    if ( variable->memoryArea ) {
+                        outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
+                    } else {
+                        outline1("%s: .res 1", variable->realName);
+                    }
+                    break;
                 case VT_IMAGE:
                 case VT_IMAGES:
                 case VT_BUFFER:

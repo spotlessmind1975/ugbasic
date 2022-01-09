@@ -39,11 +39,12 @@
  ****************************************************************************/
 
 /**
- * @brief Emit code for <strong>IMAGE LOAD(...)</strong>
+ * @brief Emit code for <strong>MOB(...)</strong>
  * 
  * @param _environment Current calling environment
- * @param _filename Filename to read into buffer
- * @param _mode Mode to use to convert data
+ * @param _image image to use as MOB
+ * @param _x Horizontal position
+ * @param _y Vertical position
  */
 /* <usermanual>
 @keyword MOB
@@ -65,6 +66,7 @@ sintassi aggiuntive.
 
 @syntax MOB [index],[image] {VISIBILE|HIDDEN}
 @syntax MOB [index],[image] AT {[x]},{[y]} {VISIBILE|HIDDEN}
+@syntax MOB([image])
 
 @example starship = 1: MOB starship, IMAGE LOAD("starship.png")
 @example MOB 2, alien AT 100,100 HIDDEN

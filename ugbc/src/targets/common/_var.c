@@ -55,6 +55,7 @@ void variable_on_memory_init( Environment * _environment, int _imported_too ) {
                 case VT_STRING:
                 case VT_DSTRING:
                 case VT_MOB:
+                case VT_SPRITE:
                 case VT_BUFFER:
                 case VT_IMAGE:
                 case VT_IMAGES:

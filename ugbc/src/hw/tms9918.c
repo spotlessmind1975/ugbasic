@@ -141,9 +141,9 @@ void tms9918_border_color( Environment * _environment, char * _border_color ) {
  */
 void tms9918_background_color( Environment * _environment, int _index, int _background_color ) {
 
-    char value[MAX_TEMPORARY_STORAGE]; sprintf( value, "$2.2x", _background_color );
+    char value[MAX_TEMPORARY_STORAGE]; sprintf( value, "$%2.2x", _background_color );
 
-    tms9918_background_color_vars( _environment, NULL, value )
+    tms9918_background_color_vars( _environment, NULL, value );
     
 }
 
@@ -227,7 +227,7 @@ void tms9918_sprite_common_color( Environment * _environment, char * _index, cha
     outline0("CALL VDPINCHAR");
     outline0("AND $F0");
     outline0("LD B, A");
-    outline0("LD A, (%s)", _common_color );
+    outline1("LD A, (%s)", _common_color );
     outline0("OR B");
     outline0("CALL VDPOUTCHAR");
 #ifdef __coleco__
@@ -732,16 +732,16 @@ void tms9918_screen_rows( Environment * _environment, char * _rows ) {
 
 }
 
-void tms9918_sprite_data_from( Environment * _environment, char * _sprite, char * _address ) {
+void tms9918_sprite_data_from( Environment * _environment, char * _sprite, char * _image ) {
 
     Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
-    Variable * address = variable_retrieve_or_define( _environment, _address, VT_ADDRESS, 0 );
+    Variable * image = variable_retrieve_or_define( _environment, _image, VT_IMAGE, 0 );
 
-    deploy( sprite, src_hw_tms9918_sprite_asm );
+    deploy( sprite, src_hw_tms9918_sprites_asm );
     
     outline1("LD A, (%s)", sprite->realName );
     outline0("LD B, A");
-    outline1("LD HL, (%s)", address->realName );
+    outline1("LD HL, %s", image->realName );
     outline0("CALL SPRITEDATAFROM");
 
 }
@@ -750,7 +750,7 @@ void tms9918_sprite_enable( Environment * _environment, char * _sprite ) {
 
     Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
 
-    deploy( sprite, src_hw_tms9918_sprite_asm );
+    deploy( sprite, src_hw_tms9918_sprites_asm );
     
     outline1("LD A, (%s)", sprite->realName );
     outline0("LD B, A");
@@ -762,7 +762,7 @@ void tms9918_sprite_disable( Environment * _environment, char * _sprite ) {
 
     Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
 
-    deploy( sprite, src_hw_tms9918_sprite_asm );
+    deploy( sprite, src_hw_tms9918_sprites_asm );
     
     outline1("LD A, (%s)", sprite->realName );
     outline0("LD B, A");
@@ -776,7 +776,7 @@ void tms9918_sprite_at( Environment * _environment, char * _sprite, char * _x, c
     Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
     Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
 
-    deploy( sprite, src_hw_tms9918_sprite_asm );
+    deploy( sprite, src_hw_tms9918_sprites_asm );
     
     outline1("LD A, (%s)", sprite->realName );
     outline0("LD B, A");
@@ -792,7 +792,7 @@ void tms9918_sprite_expand_vertical( Environment * _environment, char * _sprite 
 
     _sprite = NULL;
 
-    deploy( sprite, src_hw_tms9918_sprite_asm );
+    deploy( sprite, src_hw_tms9918_sprites_asm );
     
     outline0("CALL SPRITEEXPAND");
 
@@ -802,7 +802,7 @@ void tms9918_sprite_expand_horizontal( Environment * _environment, char * _sprit
 
     _sprite = NULL;
 
-    deploy( sprite, src_hw_tms9918_sprite_asm );
+    deploy( sprite, src_hw_tms9918_sprites_asm );
     
     outline0("CALL SPRITEEXPAND");
 
@@ -812,7 +812,7 @@ void tms9918_sprite_compress_vertical( Environment * _environment, char * _sprit
 
     _sprite = NULL;
 
-    deploy( sprite, src_hw_tms9918_sprite_asm );
+    deploy( sprite, src_hw_tms9918_sprites_asm );
     
     outline0("CALL SPRITECOMPRESS");
 
@@ -822,7 +822,7 @@ void tms9918_sprite_compress_horizontal( Environment * _environment, char * _spr
 
     _sprite = NULL;
 
-    deploy( sprite, src_hw_tms9918_sprite_asm );
+    deploy( sprite, src_hw_tms9918_sprites_asm );
     
     outline0("CALL SPRITECOMPRESS");
 
@@ -841,7 +841,7 @@ void tms9918_sprite_color( Environment * _environment, char * _sprite, char * _c
     Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
     Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_WHITE );
 
-    deploy( sprite, src_hw_tms9918_sprite_asm );
+    deploy( sprite, src_hw_tms9918_sprites_asm );
     
     outline1("LD A, (%s)", sprite->realName );
     outline0("LD B, A");
@@ -1023,6 +1023,9 @@ void tms9918_initialization( Environment * _environment ) {
 
     variable_import( _environment, "CURRENTMODE", VT_BYTE, 0 );
     variable_global( _environment, "CURRENTMODE" );
+
+    variable_import( _environment, "SPRITECOUNT", VT_SPRITE, 0 );
+    variable_global( _environment, "SPRITECOUNT" );
 
     #if __coleco__
         variable_import( _environment, "VDP_HOOK", VT_BUFFER, 10 );

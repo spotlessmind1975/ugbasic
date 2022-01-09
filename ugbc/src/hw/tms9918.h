@@ -127,7 +127,7 @@ void tms9918_screen_on( Environment * _environment );
 void tms9918_screen_off( Environment * _environment );
 void tms9918_screen_rows( Environment * _environment, char * _rows );
 
-void tms9918_sprite_data_from( Environment * _environment, char * _sprite, char * _address );
+void tms9918_sprite_data_from( Environment * _environment, char * _sprite, char * _image );
 void tms9918_sprite_enable( Environment * _environment, char *_sprite );
 void tms9918_sprite_disable( Environment * _environment, char * _sprite );
 void tms9918_sprite_at( Environment * _environment, char * _sprite, char * _x, char * _y );
