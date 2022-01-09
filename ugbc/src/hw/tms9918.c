@@ -219,6 +219,9 @@ void tms9918_sprite_common_color( Environment * _environment, char * _index, cha
     outline1("LD E, (%s)", _index );
     outline0("SLA E");
     outline0("SLA E");
+    outline0("INC E");
+    outline0("INC E");
+    outline0("INC E");
     outline0("LD D, 0");
     outline0("ADD HL, DE");
     outline0("CALL VDPINCHAR");
@@ -680,15 +683,49 @@ void tms9918_point( Environment * _environment, char *_x, char *_y, char * _resu
     outline0("CALL PLOT");
     outline1("LD (%s), A", result->realName);
 
-
 }
 
 void tms9918_screen_on( Environment * _environment ) {
 
+#ifdef __coleco__
+    outline1("JP %sskip", label );
+    outhead1("%s:", label );
+#endif
+    outline1("LD E, %2.2x", VDP_R1 );
+    outline0("CALL VDPREGIN" );
+    outline0("OR $40" );
+    outline0("CALL VDPSETREG" );
+#ifdef __coleco__
+    outline0("RET" );
+    outhead0("%sskip:", label );
+    outline0("CALL WAIT_VDP_HOOK" );
+    outline1("LD HL, %sskip", label );
+    outline0("CALL SET_VDP_HOOK0" );
+    outline0("CALL WAIT_VDP_HOOK" );
+#endif
+
+
 }
 
 void tms9918_screen_off( Environment * _environment ) {
-    
+
+#ifdef __coleco__
+    outline1("JP %sskip", label );
+    outhead1("%s:", label );
+#endif
+    outline1("LD E, %2.2x", VDP_R1 );
+    outline0("CALL VDPREGIN" );
+    outline0("AND $BF" );
+    outline0("CALL VDPSETREG" );
+#ifdef __coleco__
+    outline0("RET" );
+    outhead0("%sskip:", label );
+    outline0("CALL WAIT_VDP_HOOK" );
+    outline1("LD HL, %sskip", label );
+    outline0("CALL SET_VDP_HOOK0" );
+    outline0("CALL WAIT_VDP_HOOK" );
+#endif
+
 }
 
 void tms9918_screen_rows( Environment * _environment, char * _rows ) {
