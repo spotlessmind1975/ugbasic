@@ -72,6 +72,8 @@ static RGBi SYSTEM_PALETTE[] = {
  * @param _result Where to store the result
  */
 void tms9918_collision( Environment * _environment, char * _sprite_mask, char * _result ) {
+    
+    //todo
 
 }
 
@@ -88,6 +90,8 @@ void tms9918_collision( Environment * _environment, char * _sprite_mask, char * 
  */
 void tms9918_hit( Environment * _environment, char * _sprite_mask, char * _result ) {
 
+    //todo
+
 }
 
 /**
@@ -101,9 +105,27 @@ void tms9918_hit( Environment * _environment, char * _sprite_mask, char * _resul
  */
 void tms9918_border_color( Environment * _environment, char * _border_color ) {
 
+#ifdef __coleco__
+    outline1("JP %sskip", label );
+    outhead1("%s:", label );
+#endif
+    outline1("LD E, %2.2x", VDP_RCOLOR );
+    outline0("CALL VDPREGIN" );
+    outline0("AND $F0" );
+    outline0("LD B, A" );
     outline1("LD E, %2.2x", VDP_RCOLOR );
     outline1("LD A, (%s)", _border_color );
+    outline0("AND $0F" );
+    outline0("OR B" );
     outline0("CALL VDPSETREG" );
+#ifdef __coleco__
+    outline0("RET" );
+    outhead0("%sskip:", label );
+    outline0("CALL WAIT_VDP_HOOK" );
+    outline1("LD HL, %sskip", label );
+    outline0("CALL SET_VDP_HOOK0" );
+    outline0("CALL WAIT_VDP_HOOK" );
+#endif
 
 }
 
@@ -119,8 +141,10 @@ void tms9918_border_color( Environment * _environment, char * _border_color ) {
  */
 void tms9918_background_color( Environment * _environment, int _index, int _background_color ) {
 
-    // @TODO
+    char value[MAX_TEMPORARY_STORAGE]; sprintf( value, "$2.2x", _background_color );
 
+    tms9918_background_color_vars( _environment, NULL, value )
+    
 }
 
 /**
@@ -135,7 +159,9 @@ void tms9918_background_color( Environment * _environment, int _index, int _back
  */
 void tms9918_background_color_vars( Environment * _environment, char * _index, char * _background_color ) {
 
-    // @TODO
+    _index = 0;
+
+    tms9918_border_color( _environment, _background_color );
 
 }
 
@@ -151,7 +177,9 @@ void tms9918_background_color_vars( Environment * _environment, char * _index, c
  */
 void tms9918_background_color_semivars( Environment * _environment, int _index, char * _background_color ) {
 
-    // @TODO
+    _index = 0;
+
+    tms9918_border_color( _environment, _background_color );
 
 }
 
@@ -167,7 +195,7 @@ void tms9918_background_color_semivars( Environment * _environment, int _index, 
  */
 void tms9918_background_color_get_vars( Environment * _environment, char * _index, char * _background_color ) {
 
-    // @TODO
+    //TODO
 
 }
 
@@ -183,7 +211,30 @@ void tms9918_background_color_get_vars( Environment * _environment, char * _inde
  */
 void tms9918_sprite_common_color( Environment * _environment, char * _index, char * _common_color ) {
 
-    // @TODO
+#ifdef __coleco__
+    outline1("JP %sskip", label );
+    outhead1("%s:", label );
+#endif
+    outline0("LD HL, $1000");
+    outline1("LD E, (%s)", _index );
+    outline0("SLA E");
+    outline0("SLA E");
+    outline0("LD D, 0");
+    outline0("ADD HL, DE");
+    outline0("CALL VDPINCHAR");
+    outline0("AND $F0");
+    outline0("LD B, A");
+    outline0("LD A, (%s)", _common_color );
+    outline0("OR B");
+    outline0("CALL VDPOUTCHAR");
+#ifdef __coleco__
+    outline0("RET" );
+    outhead0("%sskip:", label );
+    outline0("CALL WAIT_VDP_HOOK" );
+    outline1("LD HL, %sskip", label );
+    outline0("CALL SET_VDP_HOOK0" );
+    outline0("CALL WAIT_VDP_HOOK" );
+#endif
 
 }
 
@@ -204,8 +255,6 @@ void tms9918_sprite_common_color( Environment * _environment, char * _index, cha
  */
 void tms9918_raster_at( Environment * _environment, char * _label, char * _positionlo, char * _positionhi ) {
 
-    // @TODO
-
 }
 
 /**
@@ -219,8 +268,6 @@ void tms9918_raster_at( Environment * _environment, char * _label, char * _posit
  *
  */
 void tms9918_next_raster( Environment * _environment ) {
-
-    // @TODO
 
 }
 
@@ -238,8 +285,6 @@ void tms9918_next_raster( Environment * _environment ) {
  * @param _positionhi The vertical position to wait for (bit 8)
  */
 void tms9918_next_raster_at( Environment * _environment, char * _label, char * _positionlo, char * _positionhi ) {
-
-    // @TODO
 
 }
 
@@ -370,6 +415,9 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
             // 03 and Hex 07.
             WVDP_RPATTERN( 0x00 );
 
+            WVDP_RSPRITEA( 0xff );
+            WVDP_RSPRITEP( 0xff );
+
             break;
         case TILEMAP_MODE_GRAPHIC1:
             _environment->fontWidth = 8;
@@ -429,6 +477,9 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
             // Graphics II Mode the only two values that work correctly in Register 4 are Hex
             // 03 and Hex 07.
             WVDP_RPATTERN( 0x0 );
+
+            WVDP_RSPRITEA( 0x20 ); // 1000
+            WVDP_RSPRITEP( 0x00 ); // 0000
 
             break;
         case BITMAP_MODE_GRAPHIC2:
@@ -491,6 +542,9 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
             // 03 and Hex 07.
             WVDP_RPATTERN( 0x03 );
 
+            WVDP_RSPRITEA( 0x20 ); // 1000
+            WVDP_RSPRITEP( 0x00 ); // 0000
+
             break;
     }
 
@@ -539,6 +593,8 @@ void tms9918_bitmap_enable( Environment * _environment, int _width, int _height,
 }
 
 void tms9918_bitmap_disable( Environment * _environment ) {
+
+    //todo
 
 }
 
