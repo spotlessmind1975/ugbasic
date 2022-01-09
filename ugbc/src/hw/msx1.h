@@ -138,6 +138,12 @@
 
 #define JOY_COUNT           2
 
+#define JOY_UP              0
+#define JOY_DOWN            2
+#define JOY_LEFT            3
+#define JOY_RIGHT           4
+#define JOY_FIRE            0
+
 void msx1_inkey( Environment * _environment, char * _pressed, char * _key );
 void msx1_scancode( Environment * _environment, char * _pressed, char * _scacode );
 void msx1_scanshift( Environment * _environment, char * _shifts );
