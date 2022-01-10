@@ -2206,121 +2206,127 @@ wait_definition:
     wait_definition_simple
   | wait_definition_expression;
 
+sprite_definition_action_simple:
+    MULTICOLOR {
+      sprite_multicolor( _environment, ((Environment *)_environment)->currentSpriteNumber );
+  }
+  | MULTICOLOUR {
+      sprite_multicolor( _environment, ((Environment *)_environment)->currentSpriteNumber );
+  }
+  | MONOCOLOR {
+      sprite_monocolor( _environment, ((Environment *)_environment)->currentSpriteNumber );
+  }
+  | MONOCOLOUR {
+      sprite_monocolor( _environment, ((Environment *)_environment)->currentSpriteNumber );
+  }
+  | COLOR direct_integer {
+      sprite_color( _environment, ((Environment *)_environment)->currentSpriteNumber, $2 );
+  }
+  | COLOUR direct_integer {
+      sprite_color( _environment, ((Environment *)_environment)->currentSpriteNumber, $2 );
+  }
+  | position direct_integer OP_COMMA direct_integer {
+      sprite_at( _environment, ((Environment *)_environment)->currentSpriteNumber, $2, $4 );
+  }
+  | ENABLE {
+      sprite_enable( _environment, ((Environment *)_environment)->currentSpriteNumber );
+  }
+  | DISABLE {
+      sprite_disable( _environment, ((Environment *)_environment)->currentSpriteNumber );
+  }
+  | EXPAND VERTICAL {
+      sprite_expand_vertical( _environment, ((Environment *)_environment)->currentSpriteNumber );
+  }
+  | COMPRESS VERTICAL {
+      sprite_compress_vertical( _environment, ((Environment *)_environment)->currentSpriteNumber );
+  }
+  | VERTICAL EXPAND {
+      sprite_expand_vertical( _environment, ((Environment *)_environment)->currentSpriteNumber );
+  }
+  | VERTICAL COMPRESS {
+      sprite_compress_vertical( _environment, ((Environment *)_environment)->currentSpriteNumber );
+  }
+  | EXPAND HORIZONTAL {
+      sprite_expand_horizontal( _environment, ((Environment *)_environment)->currentSpriteNumber );
+  }
+  | COMPRESS HORIZONTAL {
+      sprite_compress_horizontal( _environment, ((Environment *)_environment)->currentSpriteNumber );
+  }
+  | HORIZONTAL EXPAND {
+      sprite_expand_horizontal( _environment, ((Environment *)_environment)->currentSpriteNumber );
+  }
+  | HORIZONTAL COMPRESS {
+      sprite_compress_horizontal( _environment, ((Environment *)_environment)->currentSpriteNumber );
+  };
+
 sprite_definition_simple:
-    direct_integer DATA FROM direct_integer {
-      sprite_data_from( _environment, $1, $4 );
+    sprite_definition_action_simple
+    | sprite_definition_action_simple sprite_definition_simple;
+
+sprite_definition_action_expression:
+    MULTICOLOR {
+      sprite_multicolor_var( _environment, ((Environment *)_environment)->currentSprite );
   }
-  | direct_integer MULTICOLOR {
-      sprite_multicolor( _environment, $1 );
+  | MULTICOLOUR {
+      sprite_multicolor_var( _environment, ((Environment *)_environment)->currentSprite );
   }
-  | direct_integer MULTICOLOUR {
-      sprite_multicolor( _environment, $1 );
+  | MONOCOLOR {
+      sprite_monocolor_var( _environment, ((Environment *)_environment)->currentSprite );
   }
-  | direct_integer MONOCOLOR {
-      sprite_monocolor( _environment, $1 );
+  | MONOCOLOUR {
+      sprite_monocolor_var( _environment, ((Environment *)_environment)->currentSprite );
   }
-  | direct_integer MONOCOLOUR {
-      sprite_monocolor( _environment, $1 );
+  | COLOR expr {
+      sprite_color_vars( _environment, ((Environment *)_environment)->currentSprite, $2 );
   }
-  | direct_integer COLOR direct_integer {
-      sprite_color( _environment, $1, $3 );
+  | COLOUR expr {
+      sprite_color_vars( _environment, ((Environment *)_environment)->currentSprite, $2 );
   }
-  | direct_integer COLOUR direct_integer {
-      sprite_color( _environment, $1, $3 );
+  | position expr OP_COMMA expr {
+      sprite_at_vars( _environment, ((Environment *)_environment)->currentSprite, $2, $4 );
   }
-  | direct_integer position OP direct_integer OP_COMMA direct_integer CP {
-      sprite_at( _environment, $1, $4, $6 );
+  | ENABLE {
+      sprite_enable_var( _environment, ((Environment *)_environment)->currentSprite );
   }
-  | direct_integer ENABLE {
-      sprite_enable( _environment, $1 );
+  | DISABLE {
+      sprite_disable_var( _environment, ((Environment *)_environment)->currentSprite );
   }
-  | direct_integer DISABLE {
-      sprite_disable( _environment, $1 );
+  | EXPAND VERTICAL {
+      sprite_expand_vertical_var( _environment, ((Environment *)_environment)->currentSprite );
   }
-  | direct_integer EXPAND VERTICAL {
-      sprite_expand_vertical( _environment, $1 );
+  | COMPRESS VERTICAL {
+      sprite_compress_vertical_var( _environment, ((Environment *)_environment)->currentSprite );
   }
-  | direct_integer COMPRESS VERTICAL {
-      sprite_compress_vertical( _environment, $1 );
+  | VERTICAL EXPAND {
+      sprite_expand_vertical_var( _environment, ((Environment *)_environment)->currentSprite );
   }
-  | direct_integer VERTICAL EXPAND {
-      sprite_expand_vertical( _environment, $1 );
+  | VERTICAL COMPRESS {
+      sprite_compress_vertical_var( _environment, ((Environment *)_environment)->currentSprite );
   }
-  | direct_integer VERTICAL COMPRESS {
-      sprite_compress_vertical( _environment, $1 );
+  | EXPAND HORIZONTAL {
+      sprite_expand_horizontal_var( _environment, ((Environment *)_environment)->currentSprite );
   }
-  | direct_integer EXPAND HORIZONTAL {
-      sprite_expand_horizontal( _environment, $1 );
+  | COMPRESS HORIZONTAL {
+      sprite_compress_horizontal_var( _environment, ((Environment *)_environment)->currentSprite );
   }
-  | direct_integer COMPRESS HORIZONTAL {
-      sprite_compress_horizontal( _environment, $1 );
+  | HORIZONTAL EXPAND {
+      sprite_expand_horizontal_var( _environment, ((Environment *)_environment)->currentSprite );
   }
-  | direct_integer HORIZONTAL EXPAND {
-      sprite_expand_horizontal( _environment, $1 );
-  }
-  | direct_integer HORIZONTAL COMPRESS {
-      sprite_compress_horizontal( _environment, $1 );
+  | HORIZONTAL COMPRESS {
+      sprite_compress_horizontal_var( _environment, ((Environment *)_environment)->currentSprite );
   };
 
 sprite_definition_expression:
-    expr DATA FROM expr {
-      sprite_data_from_vars( _environment, $1, $4 );
-  }
-  | expr MULTICOLOR {
-      sprite_multicolor_var( _environment, $1 );
-  }
-  | expr MULTICOLOUR {
-      sprite_multicolor_var( _environment, $1 );
-  }
-  | expr MONOCOLOR {
-      sprite_monocolor_var( _environment, $1 );
-  }
-  | expr MONOCOLOUR {
-      sprite_monocolor_var( _environment, $1 );
-  }
-  | expr COLOR expr {
-      sprite_color_vars( _environment, $1, $3 );
-  }
-  | expr COLOUR expr {
-      sprite_color_vars( _environment, $1, $3 );
-  }
-  | expr position expr OP_COMMA expr {
-      sprite_at_vars( _environment, $1, $3, $5 );
-  }
-  | expr ENABLE {
-      sprite_enable_var( _environment, $1 );
-  }
-  | expr DISABLE {
-      sprite_disable_var( _environment, $1 );
-  }
-  | expr EXPAND VERTICAL {
-      sprite_expand_vertical_var( _environment, $1 );
-  }
-  | expr COMPRESS VERTICAL {
-      sprite_compress_vertical_var( _environment, $1 );
-  }
-  | expr VERTICAL EXPAND {
-      sprite_expand_vertical_var( _environment, $1 );
-  }
-  | expr VERTICAL COMPRESS {
-      sprite_compress_vertical_var( _environment, $1 );
-  }
-  | expr EXPAND HORIZONTAL {
-      sprite_expand_horizontal_var( _environment, $1 );
-  }
-  | expr COMPRESS HORIZONTAL {
-      sprite_compress_horizontal_var( _environment, $1 );
-  }
-  | expr HORIZONTAL EXPAND {
-      sprite_expand_horizontal_var( _environment, $1 );
-  }
-  | expr HORIZONTAL COMPRESS {
-      sprite_compress_horizontal_var( _environment, $1 );
-  };
+    sprite_definition_action_expression
+    | sprite_definition_action_expression sprite_definition_expression;
 
 sprite_definition:
-    sprite_definition_simple
-  | sprite_definition_expression;
+    direct_integer {
+        ((Environment *)_environment)->currentSpriteNumber = $1;
+    } sprite_definition_simple
+  | expr {
+        ((Environment *)_environment)->currentSprite = strdup($1);
+    } sprite_definition_expression;
 
 optional_integer : 
     Integer {

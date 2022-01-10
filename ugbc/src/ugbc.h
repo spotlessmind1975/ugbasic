@@ -1250,6 +1250,16 @@ typedef struct _Environment {
     Variable * currentArray;
 
     /**
+     * Temporary storage for current sprite
+     */
+    char * currentSprite;
+
+    /**
+     * Temporary storage for current sprite number
+     */
+    int currentSpriteNumber;
+
+    /**
      * Current procedure
      */
     char * procedureName;
