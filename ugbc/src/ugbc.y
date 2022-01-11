@@ -4077,6 +4077,9 @@ statement:
   | FOR Identifier OP_ASSIGN expr TO expr {
       begin_for( _environment, $2, $4, $6 );  
   } 
+  | FOR OSP Identifier CSP OP_ASSIGN expr TO expr {
+      begin_for_mt( _environment, $3, $6, $8 );  
+  } 
   | NEXT {
       end_for( _environment );
   }
