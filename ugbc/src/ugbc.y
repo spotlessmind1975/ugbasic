@@ -393,6 +393,21 @@ const_factor:
       | FRAMES COUNT OP expr CP {
           $$ = frames( _environment, $4 );
       }
+      | SPRITE COUNT {
+          $$ = SPRITE_COUNT;
+      }
+      | SPRITE HEIGHT {
+          if ( SPRITE_HEIGHT < 0 ) {
+              CRITICAL_CANNOT_CALCULATE_SPRITE_HEIGHT( );
+          }
+          $$ = SPRITE_HEIGHT;
+      }
+      | SPRITE WIDTH {
+          if ( SPRITE_WIDTH < 0 ) {
+              CRITICAL_CANNOT_CALCULATE_SPRITE_WIDTH( );
+          }
+          $$ = SPRITE_WIDTH;
+      }
       | HEIGHT {
           $$ = ((Environment *)_environment)->screenHeight;
       }
@@ -1785,6 +1800,26 @@ exponential:
     | IMAGE HEIGHT OP expr CP {
         $$ = image_get_height( _environment, $4 )->name;
     }
+    | SPRITE COUNT {
+        $$ = variable_temporary( _environment, VT_WORD, "(SPRITE COUNT)" )->name;
+        variable_store( _environment, $$, SPRITE_COUNT );
+    }
+    | SPRITE HEIGHT {
+        if ( SPRITE_HEIGHT < 0 ) {
+            $$ = screen_get_height( _environment )->name;
+        } else {
+            $$ = variable_temporary( _environment, VT_WORD, "(SPRITE HEIGHT)" )->name;
+            variable_store( _environment, $$, SPRITE_HEIGHT );
+        }
+    }
+    | SPRITE WIDTH {
+        if ( SPRITE_HEIGHT < 0 ) {
+            $$ = screen_get_width( _environment )->name;
+        } else {
+            $$ = variable_temporary( _environment, VT_WORD, "(SPRITE WIDTH)" )->name;
+            variable_store( _environment, $$, SPRITE_WIDTH );
+        }
+    }
     | SPRITE OP Identifier CP {
         $$ = sprite_init( _environment, $3 )->name;
     }
@@ -2985,6 +3020,9 @@ datatype :
     }
     | IMAGES {
         $$ = VT_IMAGE;
+    }
+    | SPRITE {
+        $$ = VT_SPRITE;
     }
     | BUFFER {
         $$ = VT_BUFFER;

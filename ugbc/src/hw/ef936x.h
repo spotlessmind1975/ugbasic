@@ -111,6 +111,10 @@
 #define BITMAP_MODE_BITMAP_16       3
 #define BITMAP_MODE_PAGE            4
 
+#define SPRITE_COUNT                0
+#define SPRITE_WIDTH                0
+#define SPRITE_HEIGHT               0
+
 int ef936x_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode );
 
 void ef936x_initialization( Environment * _environment );

@@ -102,6 +102,10 @@
 #define TILEMAP_MODE_MULTICOLOR     1           // Multicolor Character Mode      40 x 25 x 16
 #define TILEMAP_MODE_EXTENDED       4           // Extended Background Color Mode 40 x 25 x 20
 
+#define SPRITE_COUNT                8
+#define SPRITE_WIDTH                24
+#define SPRITE_HEIGHT               21
+
 int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode );
 
 void vic2_initialization( Environment * _environment );

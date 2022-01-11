@@ -182,6 +182,10 @@
 
 #define COLOR_COUNT         255
 
+#define SPRITE_COUNT                8
+#define SPRITE_WIDTH                8
+#define SPRITE_HEIGHT               -1
+
 int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode );
 
 void gtia_initialization( Environment * _environment );

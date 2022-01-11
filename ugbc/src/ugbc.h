@@ -1527,6 +1527,8 @@ typedef struct _Environment {
 #define CRITICAL_INVALID_INPUT_SEPARATOR( d ) CRITICAL2i("E107 - invalid character used for INPUT separator", d);
 #define CRITICAL_INVALID_INPUT_SIZE( d ) CRITICAL2i("E108 - invalid size for INPUT temporary buffer", d);
 #define CRITICAL_INVALID_INPUT_CURSOR( d ) CRITICAL2i("E109 - invalid cursor character for INPUT", d);
+#define CRITICAL_CANNOT_CALCULATE_SPRITE_WIDTH( ) CRITICAL("E110 - cannot calculate SPRITE WIDTH statically" );
+#define CRITICAL_CANNOT_CALCULATE_SPRITE_HEIGHT( ) CRITICAL("E111 - cannot calculate SPRITE HEIGHT statically" );
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
 #define WARNING2i( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%i) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }

@@ -167,6 +167,9 @@
 // To return to text mode, clra, sta in $FF22, $FFC2, $FFC4
 // (7) In the CoCo 3, The SAM is mostly CoCo 1/2 compatible Write-Only registers
 
+#define SPRITE_COUNT               0
+#define SPRITE_WIDTH               0
+#define SPRITE_HEIGHT              0
 
 int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode );
 

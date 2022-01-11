@@ -70,6 +70,10 @@
 
 #define TILEMAP_MODE_STANDARD       0           // Standard Character Mode        22 x 23 x 8
 
+#define SPRITE_COUNT                0
+#define SPRITE_WIDTH                0
+#define SPRITE_HEIGHT               0
+
 int vic1_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode );
 
 void vic1_initialization( Environment * _environment );

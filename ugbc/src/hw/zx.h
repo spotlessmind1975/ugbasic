@@ -179,6 +179,8 @@
 #define JOY_RIGHT           0
 #define JOY_FIRE            0
 
+#define SPRITE_COUNT                0
+
 int zx_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode );
 
 void zx_initialization( Environment * _environment );
