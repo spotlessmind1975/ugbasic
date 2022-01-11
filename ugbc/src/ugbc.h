@@ -586,13 +586,16 @@ typedef enum _LoopType {
     LT_DO = 0,
 
     /** WHILE ... WEND */
-    LT_WHILE = 0,
+    LT_WHILE = 1,
 
     /** REPEAT ... UNTIL */
-    LT_REPEAT = 0,
+    LT_REPEAT = 2,
 
     /** FOR ... NEXT */
-    LT_FOR = 0,
+    LT_FOR = 3,
+
+    /** FOR ... NEXT (multithread) */
+    LT_FOR_MT = 4
 
 } LoopType;
 
@@ -1873,7 +1876,9 @@ void                    back( Environment * _environment, char * _color );
 Bank *                  bank_define( Environment * _environment, char * _name, BankType _type, int _address, char * _filename );
 void                    bar( Environment * _environment, char * _x0, char * _y0, char * _x1, char * _y1, char * _c );
 void                    begin_for( Environment * _environment, char * _index, char * _from, char * _to );  
+void                    begin_for_mt( Environment * _environment, char * _index, char * _from, char * _to );  
 void                    begin_for_step( Environment * _environment, char * _index, char * _from, char * _to, char * _step );  
+void                    begin_for_mt_step( Environment * _environment, char * _index, char * _from, char * _to, char * _step );  
 void                    begin_gameloop( Environment * _environment );
 void                    begin_loop( Environment * _environment );
 void                    begin_procedure( Environment * _environment, char * _name );

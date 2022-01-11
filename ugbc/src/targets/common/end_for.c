@@ -58,14 +58,43 @@ void end_for( Environment * _environment ) {
         CRITICAL("NEXT WITHOUT FOR");
     }
 
-    if ( loop->type != LT_FOR ) {
+    if ( loop->type != LT_FOR && loop->type != LT_FOR_MT ) {
         CRITICAL("NEXT outside a FOR loop");
     }
 
     unsigned char beginFor[MAX_TEMPORARY_STORAGE]; sprintf(beginFor, "%sbf", loop->label );
     unsigned char endFor[MAX_TEMPORARY_STORAGE]; sprintf(endFor, "%sbis", loop->label );
 
-    variable_add_inplace( _environment, loop->index->name, loop->step->name );
+    if ( loop->type == LT_FOR ) {
+        variable_add_inplace( _environment, loop->index->name, loop->step->name );
+    } else {
+        ++((struct _Environment *)_environment)->arrayNestedIndex;
+        memset( ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex], 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
+        ((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex] = 0;
+        ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex][((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex]] = strdup( "PROTOTHREADCT" );
+        ++((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex];
+        Variable * array = variable_retrieve( _environment, loop->index->name );
+        if ( array->type != VT_ARRAY ) {
+            CRITICAL_NOT_ARRAY( loop->index->name );
+        }
+        Variable * value = variable_move_from_array( _environment, loop->index->name );
+        --((struct _Environment *)_environment)->arrayNestedIndex;
+
+        variable_add_inplace( _environment, value->name, loop->step->name );
+
+        ++((struct _Environment *)_environment)->arrayNestedIndex;
+        memset( ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex], 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
+        ((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex] = 0;
+        ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex][((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex]] = strdup( "PROTOTHREADCT" );
+        ++((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex];
+        array = variable_retrieve( _environment, loop->index->name );
+        if ( array->type != VT_ARRAY ) {
+            CRITICAL_NOT_ARRAY( loop->index->name );
+        }
+        variable_move_array( _environment, loop->index->name, value->name );
+        --((struct _Environment *)_environment)->arrayNestedIndex;
+
+    }
 
     if ( _environment->procedureName && _environment->protothread ) {
         yield( _environment );
