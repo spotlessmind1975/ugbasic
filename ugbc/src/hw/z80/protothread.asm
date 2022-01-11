@@ -183,8 +183,7 @@ PROTOTHREADRESTORE:
     LD E, A
     ADC HL, DE
     POP AF
-    LD A, 0
-    LD (HL), A
+    LD A, (HL)
     RET
 
 ; PROTOTHREADSETSTATE(B,A)
