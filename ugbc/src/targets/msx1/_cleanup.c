@@ -67,20 +67,24 @@ void target_finalize( Environment * _environment ) {
 
 void target_cleanup( Environment * _environment ) {
 
-    char binFileName[MAX_TEMPORARY_STORAGE];
+    if ( _environment->exeFileName ) {
 
-    strcpy( binFileName, _environment->exeFileName );
-    char * p = strrchr( binFileName, '.' );
-    memcpy( p, ".bin", 4 );
+        char binFileName[MAX_TEMPORARY_STORAGE];
 
-    remove( _environment->configurationFileName );
-    remove( binFileName );
-    remove( _environment->asmFileName );
+        strcpy( binFileName, _environment->exeFileName );
+        char * p = strrchr( binFileName, '.' );
+        memcpy( p, ".bin", 4 );
 
-    if ( _environment->analysis && _environment->listingFileName ) {
-        target_analysis( _environment );
+        remove( _environment->configurationFileName );
+        remove( binFileName );
+        remove( _environment->asmFileName );
+
+        if ( _environment->analysis && _environment->listingFileName ) {
+            target_analysis( _environment );
+        }
+
     }
-
+    
 }
 
 void target_analysis( Environment * _environment ) {
