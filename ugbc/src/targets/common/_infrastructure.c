@@ -4190,26 +4190,42 @@ void variable_move_array( Environment * _environment, char * _array, char * _val
 
     Variable * offset = calculate_offset_in_array( _environment, _array);
 
-    offset = variable_mul2_const( _environment, offset->name, ( VT_BITWIDTH( array->arrayType ) >> 3 ) - 1 );
+    switch( array->arrayType ) {
+        case VT_STRING:
+            CRITICAL_DATATYPE_UNSUPPORTED("array(a)", DATATYPE_AS_STRING[array->arrayType]);
+         case VT_SPRITE:
+         case VT_DSTRING:
+            offset = variable_mul2_const( _environment, offset->name, 0 );
+            break;
+         default:
+            offset = variable_mul2_const( _environment, offset->name, ( VT_BITWIDTH( array->arrayType ) >> 3 ) - 1 );
+            break;
+    }
 
     cpu_math_add_16bit_with_16bit( _environment, offset->realName, array->realName, offset->realName );
 
     Variable * value = variable_cast( _environment, _value, array->arrayType );
 
-    switch( VT_BITWIDTH( array->arrayType ) ) {
-        case 32:
-            cpu_move_32bit_indirect( _environment, value->realName, offset->realName );
-            break;
-        case 16:
-            cpu_move_16bit_indirect( _environment, value->realName, offset->realName );
-            break;
-        case 8:
+    switch( array->arrayType ) {
+        case VT_SPRITE:
             cpu_move_8bit_indirect( _environment, value->realName, offset->realName );
             break;
-        case 0:
-            CRITICAL_DATATYPE_UNSUPPORTED("array(3)", DATATYPE_AS_STRING[array->arrayType]);
+        default:
+            switch( VT_BITWIDTH( array->arrayType ) ) {
+                case 32:
+                    cpu_move_32bit_indirect( _environment, value->realName, offset->realName );
+                    break;
+                case 16:
+                    cpu_move_16bit_indirect( _environment, value->realName, offset->realName );
+                    break;
+                case 8:
+                    cpu_move_8bit_indirect( _environment, value->realName, offset->realName );
+                    break;
+                case 0:
+                    CRITICAL_DATATYPE_UNSUPPORTED("array(3)", DATATYPE_AS_STRING[array->arrayType]);
+            }
+            break;
     }
-
 }
 
 void variable_move_array_string( Environment * _environment, char * _array, char * _string  ) {
@@ -4279,11 +4295,22 @@ Variable * variable_move_from_array( Environment * _environment, char * _array )
 
             break;
         }
+         case VT_SPRITE: {
+
+            offset = variable_mul2_const( _environment, offset->name, 0 );
+
+            cpu_math_add_16bit_with_16bit( _environment, offset->realName, array->realName, offset->realName );
+
+            cpu_move_8bit_indirect2( _environment, offset->realName, result->realName );
+
+            break;
+
+         }
          case VT_DSTRING: {
 
             cpu_math_add_16bit_with_16bit( _environment, offset->realName, array->realName, offset->realName );
 
-            Variable * dstring = variable_temporary( _environment, VT_DSTRING, "(array element)");
+            Variable * dstring = variable_temporary( _environment, array->arrayType, "(array element)");
 
             cpu_move_8bit_indirect2( _environment, offset->realName, dstring->realName );
 
