@@ -101,7 +101,6 @@ void target_initialization( Environment * _environment ) {
     variable_import( _environment, "VDPCONTROLPORTWRITE", VT_BYTE, 0x99 );
     variable_global( _environment, "VDPCONTROLPORTWRITE" );
 
-
     bank_define( _environment, "VARIABLES", BT_VARIABLES, 0x5000, NULL );
     bank_define( _environment, "TEMPORARY", BT_TEMPORARY, 0x5100, NULL );
 
