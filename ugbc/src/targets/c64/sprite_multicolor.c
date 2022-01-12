@@ -64,12 +64,6 @@ Abilita il multicolor per lo sprite dato.
 </usermanual> */
 void sprite_multicolor( Environment * _environment, int _sprite ) {
 
-    
-
-    char spriteString[MAX_TEMPORARY_STORAGE]; sprintf( spriteString, "#$%2.2x", _sprite );
-
-    vic2_sprite_multicolor( _environment, spriteString );
-
 }
 
 /**
@@ -92,13 +86,7 @@ void sprite_multicolor( Environment * _environment, int _sprite ) {
 </usermanual> */
 void sprite_multicolor_var( Environment * _environment, char * _sprite ) {
 
-    
-
-    _environment->bitmaskNeeded = 1;
-    
-    Variable * sprite = variable_retrieve( _environment, _sprite );
-
-    vic2_sprite_multicolor( _environment, sprite->realName );
+    vic2_sprite_multicolor( _environment, _sprite );
 
 }
 

@@ -58,12 +58,6 @@
 </usermanual> */
 void sprite_expand_horizontal( Environment * _environment, int _sprite ) {
 
-    
-
-    char spriteString[MAX_TEMPORARY_STORAGE]; sprintf( spriteString, "#$%2.2x", _sprite );
-
-    vic2_sprite_expand_horizontal( _environment, spriteString );
-
 }
 
 /**
@@ -86,12 +80,6 @@ void sprite_expand_horizontal( Environment * _environment, int _sprite ) {
 </usermanual> */
 void sprite_expand_horizontal_var( Environment * _environment, char * _sprite ) {
 
-    
-
-    _environment->bitmaskNeeded = 1;
-    
-    Variable * sprite = variable_retrieve( _environment, _sprite );
-
-    vic2_sprite_expand_horizontal( _environment, sprite->realName );
+    vic2_sprite_expand_horizontal( _environment, _sprite );
 
 }

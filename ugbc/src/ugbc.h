@@ -476,7 +476,13 @@ typedef struct _Variable {
     int staticalInit;
 
     /** Original bitmap data (if IMAGE/IMAGES) */
-    int originalBitmap;
+    char * originalBitmap;
+
+    /** Original bitmap width (if IMAGE/IMAGES) */
+    int originalWidth;
+
+    /** Original bitmap height (if IMAGE/IMAGES) */
+    int originalHeight;
 
     /** Link to the next variable (NULL if this is the last one) */
     struct _Variable * next;
@@ -2186,6 +2192,7 @@ void                    sprite_compress_horizontal( Environment * _environment, 
 void                    sprite_compress_horizontal_var( Environment * _environment, char * _sprite );
 void                    sprite_compress_vertical( Environment * _environment, int _sprite );
 void                    sprite_compress_vertical_var( Environment * _environment, char * _sprite );
+Variable *              sprite_converter( Environment * _environment, char * _data, int _width, int _height );
 void                    sprite_data_from( Environment * _environment, int _sprite, int _address );
 void                    sprite_data_from_vars( Environment * _environment, char * _sprite, char * _address );
 void                    sprite_disable( Environment * _environment, int _sprite );

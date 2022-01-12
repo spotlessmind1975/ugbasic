@@ -65,11 +65,6 @@ Cambia il colore specifico per un dato sprite.
 </usermanual> */
 void sprite_color( Environment * _environment, int _sprite, int _color ) {
 
-    char spriteString[MAX_TEMPORARY_STORAGE]; sprintf(spriteString, "#$%2.2x", _sprite );
-    char colorString[MAX_TEMPORARY_STORAGE]; sprintf(colorString, "#$%2.2x", _color );
-
-    vic2_sprite_color( _environment, spriteString, colorString );
-
 }
 
 /**
@@ -93,10 +88,6 @@ void sprite_color( Environment * _environment, int _sprite, int _color ) {
 </usermanual> */
 void sprite_color_vars( Environment * _environment, char * _sprite, char * _color ) {
 
-    Variable * sprite = variable_retrieve( _environment, _sprite );
-
-    Variable * color = variable_retrieve( _environment, _color );
-
-    vic2_sprite_color( _environment, sprite->realName, color->realName );
+    vic2_sprite_color( _environment, _sprite, _color );
 
 }

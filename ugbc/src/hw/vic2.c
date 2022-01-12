@@ -801,130 +801,130 @@ void vic2_screen_rows( Environment * _environment, char * _rows ) {
 
 }
 
-void vic2_sprite_data_from( Environment * _environment, char * _sprite, char * _address ) {
+void vic2_sprite_data_from( Environment * _environment, char * _sprite, char * _image ) {
 
-    outline1("LDA %s", _address );
-    outline0("LSR"  );
-    outline0("LSR"  );
-    outline0("LSR"  );
-    outline0("LSR"  );
-    outline0("LSR"  );
-    outline0("LSR"  );
-    outline0("LSR"  );
-    outline1("LDX %s", _sprite );
-    outline0("STA $07F8, X" );
+    Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
+    Variable * image = variable_retrieve_or_define( _environment, _image, VT_IMAGE, 0 );
+
+    deploy( sprite, src_hw_vic2_sprites_asm );
+
+    outline1("LDA #<%s", image->realName );
+    outline0("STA MATHPTR1"  );
+    outline1("LDA #>%s", image->realName );
+    outline0("STA MATHPTR2"  );
+    outline1("LDY %s", sprite->realName );
+    outline0("JSR SPRITEDATAFROM" );
 
 }
 
 void vic2_sprite_enable( Environment * _environment, char * _sprite ) {
 
+    Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
+
+    deploy( sprite, src_hw_vic2_sprites_asm );
+
     _environment->bitmaskNeeded = 1;
 
-    outline0("LDA $D015" );
-    outline1("LDX %s", _sprite );
-    outline0("ORA BITMASK,X");
-    outline0("STA $D015" );
+    outline1("LDY %s", sprite->realName );
+    outline0("JSR SPRITEENABLE" );
 
 }
 
 void vic2_sprite_disable( Environment * _environment, char * _sprite ) {
 
-    outline0("LDA $D015" );
-    outline1("LDX %s", _sprite );
-    outline0("AND BITMASKN,X");
-    outline0("STA $D015" );
+    Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
+
+    deploy( sprite, src_hw_vic2_sprites_asm );
+    
+    _environment->bitmaskNeeded = 1;
+
+    outline1("LDY %s", sprite->realName );
+    outline0("JSR SPRITEDISABLE" );
 
 }
 
 void vic2_sprite_at( Environment * _environment, char * _sprite, char * _x, char * _y ) {
 
-    MAKE_LABEL
+    Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
+    Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
+    Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
 
-    _environment->bitmaskNeeded = 1;
+    deploy( sprite, src_hw_vic2_sprites_asm );
     
-    outline1("LDA %s", _sprite );
-    outline0("ASL A" );
-    outline0("TAX");
-    outline1("LDA %s", _x);
-    outline0("STA $D000, X");
-    outline1("LDA %s+1", _x);
-    outline1("BEQ %s", label);
-    outline0("LDA $D010");
-    outline0("ORA BITMASK,X");
-    outline0("STA $D010" );
-    outline1("JMP %s_2", label);
-    outhead1("%s:", label);
-    outline0("LDA $D010");
-    outline0("AND BITMASKN,X");
-    outline0("STA $D010" );
-    outhead1("%s_2:", label);
-    outline0("INX");
-    outline1("LDA %s", _y);
-    outline0("STA $D000, X");
-    outline1("LDA %s+1", _y);
+    _environment->bitmaskNeeded = 1;
+
+    outline1("LDA %s", x->realName );
+    outline0("STA MATHPTR0"  );
+    outline1("LDA %s+1", x->realName );
+    outline0("STA MATHPTR1"  );
+    outline1("LDX %s", y->realName );
+    outline1("LDY %s", sprite->realName );
+    outline0("JSR SPRITEAT" );
 
 }
 
 void vic2_sprite_expand_vertical( Environment * _environment, char * _sprite ) {
 
-    outline1("LDX %s", _sprite);
-    outline0("LDA $D017" );
-    outline0("ORA BITMASK,X");
-    outline0("STA $D017" );
+    Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
+
+    deploy( sprite, src_hw_vic2_sprites_asm );
+    
+    outline1("LDY %s", sprite->realName );
+    outline0("JSR SPRITEEXPAND" );
 
 }
 
 void vic2_sprite_expand_horizontal( Environment * _environment, char * _sprite ) {
 
-    outline1("LDX %s", _sprite );
-    outline0("LDA $D01D" );
-    outline0("ORA BITMASK,X");
-    outline0("STA $D01D" );
+    Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
+
+    deploy( sprite, src_hw_vic2_sprites_asm );
+    
+    outline1("LDY %s", sprite->realName );
+    outline0("JSR SPRITEEXPAND" );
 
 }
 
 void vic2_sprite_compress_vertical( Environment * _environment, char * _sprite ) {
 
-    outline1("LDX _%s", _sprite );
-    outline0("LDA $D017" );
-    outline0("AND BITMASKN,X");
-    outline0("STA $D017" );
+    Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
+
+    deploy( sprite, src_hw_vic2_sprites_asm );
+    
+    outline1("LDY %s", sprite->realName );
+    outline0("JSR SPRITECOMPRESS" );
 
 }
 
 void vic2_sprite_compress_horizontal( Environment * _environment, char * _sprite ) {
 
-    outline1("LDX %s", _sprite );
-    outline0("LDA $D01D" );
-    outline0("AND BITMASKN,X");
-    outline0("STA $D01D" );
+    Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
+
+    deploy( sprite, src_hw_vic2_sprites_asm );
+    
+    outline1("LDY %s", sprite->realName );
+    outline0("JSR SPRITECOMPRESS" );
 
 }
 
 void vic2_sprite_multicolor( Environment * _environment, char * _sprite ) {
 
-    outline1("LDX %s", _sprite );
-    outline0("LDA $D01C" );
-    outline0("ORA BITMASK,X");
-    outline0("STA $D01C" );
-
 }
 
 void vic2_sprite_monocolor( Environment * _environment, char * _sprite ) {
-
-    outline1("LDX %s", _sprite );
-    outline0("LDA $D01C" );
-    outline0("AND BITMASKN, X");
-    outline0("STA $D01C" );
 
 }
 
 void vic2_sprite_color( Environment * _environment, char * _sprite, char * _color ) {
 
-    outline1("LDX %s", _sprite);
-    outline1("LDA %s", _color);
-    outline0("AND #$0f" );
-    outline0("STA D027, X" );
+    Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
+    Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_WHITE );
+
+    deploy( sprite, src_hw_vic2_sprites_asm );
+    
+    outline1("LDA %s", color->realName );
+    outline1("LDY %s", sprite->realName );
+    outline0("JSR SPRITECOLOR" );
 
 }
 
@@ -1119,6 +1119,9 @@ void vic2_initialization( Environment * _environment ) {
     variable_global( _environment, "CLIPY1" );
     variable_import( _environment, "CLIPY2", VT_POSITION, 199 );
     variable_global( _environment, "CLIPY2" );
+
+    variable_import( _environment, "SPRITECOUNT", VT_SPRITE, 0 );
+    variable_global( _environment, "SPRITECOUNT" );
 
     vic2_cls( _environment );
 
@@ -1855,6 +1858,120 @@ Variable * vic2_image_converter( Environment * _environment, char * _data, int _
     }
 
     CRITICAL_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
+
+}
+
+Variable * vic2_sprite_converter( Environment * _environment, char * _source, int _width, int _height ) {
+
+    RGBi palette[MAX_PALETTE];
+
+    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
+
+    if (colorUsed > 2) {
+        CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
+    }
+
+    int i, j, k;
+
+    for( i=0; i<colorUsed; ++i ) {
+        int minDistance = 0xffff;
+        int colorIndex = 0;
+        for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
+            int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
+            // printf("%d <-> %d [%d] = %d [min = %d]\n", i, j, SYSTEM_PALETTE[j].index, distance, minDistance );
+            if (distance < minDistance) {
+                // printf(" candidated...\n" );
+                for( k=0; k<i; ++k ) {
+                    if ( palette[k].index == SYSTEM_PALETTE[j].index ) {
+                        // printf(" ...used!\n" );
+                        break;
+                    }
+                }
+                if ( k>=i ) {
+                    // printf(" ...ok! (%d)\n", SYSTEM_PALETTE[j].index );
+                    minDistance = distance;
+                    colorIndex = j;
+                }
+            }
+        }
+        palette[i].index = SYSTEM_PALETTE[colorIndex].index;
+        strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
+        printf("%d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
+    }
+
+    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
+ 
+    int bufferSize = 64;
+
+    // printf("bufferSize = %d\n", bufferSize );
+
+    char * buffer = malloc ( bufferSize );
+    memset( buffer, 0, bufferSize );
+
+    // Position of the pixel in the original image
+    int image_x, image_y;
+    
+    // Position of the pixel, in terms of offset and bitmask
+    int offset, bitmask;
+
+    // Color of the pixel to convert
+    RGBi rgb;
+
+    // Loop for all the source surface.
+    for (image_y = 0; image_y < _height; ++image_y) {
+        if ( image_y == 21 ) {
+            break;
+        }
+        for (image_x = 0; image_x < _width; ++image_x) {
+            if ( image_x == 24 ) {
+                break;
+            }
+            // Take the color of the pixel
+            rgb.red = *_source;
+            rgb.green = *(_source + 1);
+            rgb.blue = *(_source + 2);
+
+            for( i=0; i<colorUsed; ++i ) {
+                if ( rgbi_equals_rgb( &palette[i], &rgb ) ) {
+                    break;
+                }
+            }
+            
+            // Calculate the offset starting from the tile surface area
+            // and the bit to set.
+            offset = ( image_y * 3 ) + (image_x >> 3);
+            bitmask = 1 << ( 7 - (image_x & 0x7) );
+
+            // If the pixes has enough luminance value, it must be 
+            // considered as "on"; otherwise, it is "off".
+            // int luminance = calculate_luminance(rgb);
+
+            if ( i == 1 ) {
+                *( buffer + offset) |= bitmask;
+                // printf("*");
+            } else {
+                *( buffer + offset) &= ~bitmask;
+                // printf(" ");
+            }
+
+            _source += 3;
+
+        }
+
+        // printf("\n");
+        _source += 3 * ( _width - image_x );
+
+        // printf("\n" );
+
+    }
+
+    // printf("----\n");
+
+    variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
+
+    // printf("----\n");
+
+    return result;
 
 }
 

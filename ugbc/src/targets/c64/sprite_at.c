@@ -67,16 +67,6 @@ Posiziona uno sprite sullo schermo alla posizione (x,y).
 </usermanual> */
 void sprite_at( Environment * _environment, int _sprite, int _x, int _y ) {
 
-    outline3("; SPRITE %d AT (%d,%d)", _sprite, _x, _y);
-
-    char spriteString[MAX_TEMPORARY_STORAGE]; sprintf( spriteString, "#$%2.2x", _sprite );
-    char yString[MAX_TEMPORARY_STORAGE]; sprintf( yString, "#$%2.2x", _y );
-    
-    Variable * x = variable_temporary( _environment, VT_POSITION, "(x)" );
-    variable_store( _environment, x->name, _x );
-
-    vic2_sprite_at( _environment, spriteString, x->realName, yString );
-
 }
 
 /**
@@ -100,15 +90,7 @@ void sprite_at( Environment * _environment, int _sprite, int _x, int _y ) {
 </usermanual> */
 void sprite_at_vars( Environment * _environment, char * _sprite, char * _x, char * _y ) {
 
-    Variable * sprite = variable_retrieve( _environment, _sprite );
-
-    Variable * x = variable_retrieve( _environment, _x );
-
-    Variable * y = variable_retrieve( _environment, _y );
-
-    outline3("; SPRITE %s AT (%s,%s)", sprite->name, x->name, y->name);
-
-    vic2_sprite_at( _environment, sprite->realName, x->realName, y->realName );
+    vic2_sprite_at( _environment, _sprite, _x, _y );
 
 }
 

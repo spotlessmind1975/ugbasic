@@ -1450,6 +1450,9 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                         case VT_IMAGE:
                             switch( target->type ) {
                                 case VT_IMAGE:
+                                    target->originalBitmap = source->originalBitmap;
+                                    target->originalWidth = source->originalWidth;
+                                    target->originalHeight = source->originalHeight;
                                 case VT_BUFFER:
                                     if ( target->size == 0 ) {
                                         target->size = source->size;
@@ -1593,6 +1596,9 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
                     }
                     break;
                 case VT_IMAGE:
+                    target->originalBitmap = source->originalBitmap;
+                    target->originalWidth = source->originalWidth;
+                    target->originalHeight = source->originalHeight;
                 case VT_IMAGES:
                 case VT_ARRAY:
                 case VT_BUFFER: {

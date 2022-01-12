@@ -38,48 +38,8 @@
  * CODE SECTION 
  ****************************************************************************/
 
-/**
- * @brief Emit ASM code for <b>SPRITE [int] COMPRESS HORIZONTAL</b>
- * 
- * This function emits a code capable of compressing horizontally a given sprite.
- * The index of sprite is given as a direct integer.
- * 
- * @param _environment Current calling environment
- * @param _sprite Index of the sprite to compress horizontally (0...7)
- */
-/* <usermanual>
-@keyword SPRITE COMPRESS
+Variable * sprite_converter( Environment * _environment, char * _data, int _width, int _height ) {
 
-@syntax SPRITE # [integer] COMPRESS HORIZONTAL
-
-@example SPRITE #1 COMPRESS HORIZONTAL
-
-@target c64
-</usermanual> */
-void sprite_compress_horizontal( Environment * _environment, int _sprite ) {
-    
-}
-
-/**
- * @brief Emit ASM code for <b>SPRITE [int] COMPRESS HORIZONTAL</b>
- * 
- * This function emits a code capable of compressing horizontally a given sprite.
- * The index of sprite is given as a direct integer.
- * 
- * @param _environment Current calling environment
- * @param _sprite Index of the sprite to compress horizontally (0...7)
- */
-/* <usermanual>
-@keyword SPRITE COMPRESS
-
-@syntax SPRITE [expression] COMPRESS HORIZONTAL
-
-@example SPRITE starship COMPRESS HORIZONTAL
-
-@target c64
-</usermanual> */
-void sprite_compress_horizontal_var( Environment * _environment, char * _sprite ) {
-
-    vic2_sprite_compress_horizontal( _environment, _sprite );
+    return vic2_sprite_converter( _environment, _data, _width, _height );
 
 }

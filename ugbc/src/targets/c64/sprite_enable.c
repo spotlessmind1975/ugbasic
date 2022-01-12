@@ -64,12 +64,6 @@ Abilita lo sprite.
 </usermanual> */
 void sprite_enable( Environment * _environment, int _sprite ) {
 
-    
-
-    char spriteString[MAX_TEMPORARY_STORAGE]; sprintf( spriteString, "#$%2.2x", _sprite );
-
-    vic2_sprite_enable( _environment, spriteString );
-
 }
 
 /**
@@ -90,11 +84,7 @@ void sprite_enable( Environment * _environment, int _sprite ) {
 </usermanual> */
 void sprite_enable_var( Environment * _environment, char * _sprite ) {
 
-    
-
-    Variable * sprite = variable_retrieve( _environment, _sprite );
-
-    vic2_sprite_enable( _environment, sprite->realName );
+    vic2_sprite_enable( _environment, _sprite );
 
 }
 

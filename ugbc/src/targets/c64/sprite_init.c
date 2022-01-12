@@ -39,47 +39,29 @@
  ****************************************************************************/
 
 /**
- * @brief Emit ASM code for <b>SPRITE [int] COMPRESS HORIZONTAL</b>
- * 
- * This function emits a code capable of compressing horizontally a given sprite.
- * The index of sprite is given as a direct integer.
+ * @brief Emit code for <strong>SPRITE(...)</strong>
  * 
  * @param _environment Current calling environment
- * @param _sprite Index of the sprite to compress horizontally (0...7)
+ * @param _image image to use as SPRITE
  */
 /* <usermanual>
-@keyword SPRITE COMPRESS
-
-@syntax SPRITE # [integer] COMPRESS HORIZONTAL
-
-@example SPRITE #1 COMPRESS HORIZONTAL
+@keyword SPRITE
 
 @target c64
 </usermanual> */
-void sprite_compress_horizontal( Environment * _environment, int _sprite ) {
-    
-}
+Variable * sprite_init( Environment * _environment, char * _image ) {
 
-/**
- * @brief Emit ASM code for <b>SPRITE [int] COMPRESS HORIZONTAL</b>
- * 
- * This function emits a code capable of compressing horizontally a given sprite.
- * The index of sprite is given as a direct integer.
- * 
- * @param _environment Current calling environment
- * @param _sprite Index of the sprite to compress horizontally (0...7)
- */
-/* <usermanual>
-@keyword SPRITE COMPRESS
+    Variable * spriteCount = variable_retrieve( _environment, "SPRITECOUNT" );
+    Variable * index = variable_temporary( _environment, VT_SPRITE, "(sprite index)" );
+    variable_move_naked( _environment, spriteCount->name, index->name );
+    cpu_inc( _environment, spriteCount->realName );
 
-@syntax SPRITE [expression] COMPRESS HORIZONTAL
+    Variable * image = variable_retrieve( _environment, _image );
 
-@example SPRITE starship COMPRESS HORIZONTAL
+    Variable * realImage = sprite_converter( _environment, image->originalBitmap, image->originalWidth, image->originalHeight );
 
-@target c64
-</usermanual> */
-void sprite_compress_horizontal_var( Environment * _environment, char * _sprite ) {
+    vic2_sprite_data_from( _environment, index->name, realImage->name );
 
-    vic2_sprite_compress_horizontal( _environment, _sprite );
+    return index;
 
 }
