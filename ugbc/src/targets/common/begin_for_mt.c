@@ -40,8 +40,6 @@
 
 void begin_for_mt( Environment * _environment, char * _index, char * _from, char * _to ) {
 
-printf("### OK! ###\n");
-
     Variable * index = variable_retrieve( _environment, _index );
     Variable * from = variable_retrieve( _environment, _from );
     Variable * to = variable_retrieve( _environment, _to );
