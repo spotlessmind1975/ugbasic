@@ -4350,6 +4350,7 @@ statement:
         }
         var->absoluteAddress = expr->absoluteAddress;
         var->bank = expr->bank;
+        var->originalBitmap = expr->originalBitmap;
         var->memoryArea = expr->memoryArea;
         var->arrayDimensions = expr->arrayDimensions;
         memcpy( var->arrayDimensionsEach, expr->arrayDimensionsEach, MAX_ARRAY_DIMENSIONS * sizeof( int ) );

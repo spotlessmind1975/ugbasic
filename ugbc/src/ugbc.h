@@ -474,7 +474,10 @@ typedef struct _Variable {
     int frameCount;
 
     int staticalInit;
-    
+
+    /** Original bitmap data (if IMAGE/IMAGES) */
+    int originalBitmap;
+
     /** Link to the next variable (NULL if this is the last one) */
     struct _Variable * next;
 

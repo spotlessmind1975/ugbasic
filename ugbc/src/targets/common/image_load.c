@@ -155,8 +155,9 @@ Variable * image_load( Environment * _environment, char * _filename, char * _ali
     }
     
     Variable * result = image_converter( _environment, source, width, height, 0, 0, 0, 0, _mode, _transparent_color, _flags );
-
-    stbi_image_free(source);
+    
+    result->originalBitmap = source;
+    // stbi_image_free(source);
 
     LoadedFile * loaded = malloc( sizeof( LoadedFile ) );
     loaded->next = first;
