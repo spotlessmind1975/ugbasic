@@ -1178,6 +1178,12 @@ typedef struct _Environment {
     int hasGameLoop;
 
     /**
+     * This flag marks if the program has called "run parallel"
+     * at least once.
+     */
+    int runParallel;
+
+    /**
      * This flag marks if the program needs a BITMASK/BITMASKN temporary variable.
      */
     int bitmaskNeeded;

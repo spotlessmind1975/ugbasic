@@ -61,6 +61,8 @@ Questa parola chiave eseguirà tutte le procedure invocate in precedenza
 void run_parallel( Environment * _environment ) {
 
     _environment->anyProtothread = 1;
+    _environment->runParallel = 1;
+    
     cpu_protothread_loop( _environment );
 
 }

@@ -66,7 +66,10 @@ Definisce il punto di arrivo di un loop di gioco.
 </usermanual> */
 void end_gameloop( Environment * _environment ) {
     if ( _environment->hasGameLoop ) {
-    //     cpu_jump( _environment, "__ugbgameloop");    
+        if ( _environment->anyProtothread && ! _environment->runParallel ) {
+            run_parallel( _environment );
+        }
+        // cpu_jump( _environment, "__ugbgameloop");    
         cpu_return( _environment );
         cpu_label( _environment, "__ugbgameloopend");
         _environment->hasGameLoop = 0;
