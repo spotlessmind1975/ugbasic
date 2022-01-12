@@ -803,6 +803,8 @@ void vic2_screen_rows( Environment * _environment, char * _rows ) {
 
 void vic2_sprite_data_from( Environment * _environment, char * _sprite, char * _image ) {
 
+    _environment->bitmaskNeeded = 1;
+
     Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
     Variable * image = variable_retrieve_or_define( _environment, _image, VT_IMAGE, 0 );
 
