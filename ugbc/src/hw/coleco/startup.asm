@@ -86,7 +86,12 @@ NMI:
     JR NZ,NMI2
     CALL VDP_HOOK
     CALL DONE_VDP_HOOK
- NMI2:
+NMI2:
+    LD A,(GAMELOOP_HOOK)
+    CP $cd
+    JR NZ,NMI3
+    CALL GAMELOOP_HOOK
+NMI3:
 	CALL	$1fdc
 	POP	DE
 	POP	BC
@@ -100,6 +105,14 @@ NMI:
 	POP	BC
 	POP	AF
 	RETN
+
+SET_GAMELOOP_HOOK:
+        LD (GAMELOOP_HOOK+1),HL
+        LD A,$c9
+        LD (GAMELOOP_HOOK+3),A
+        LD A,$cd
+        LD (GAMELOOP_HOOK),A
+        RET
 
 COLECOSTARTUP:
     LD	HL, $9b9b

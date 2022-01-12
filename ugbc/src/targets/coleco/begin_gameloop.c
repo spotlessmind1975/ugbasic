@@ -39,36 +39,54 @@
  ****************************************************************************/
 
 /**
- * @brief Emit ASM code for <b>END GAMELOOP</b>
+ * @brief Emit ASM code for <b>BEGIN GAMELOOP</b>
  * 
- * This function is called to emit the code necessary to define the ending 
- * point of a game loop.
- * 
- * @pre A <b>BEGIN GAMELOOP</b> must be issued before use this function.
+ * This function is called to emit the code necessary to define the starting 
+ * point of a game loop. A game loop is nothing more than an implicit loop, 
+ * within which all the logic of the program (or of the game) runs. 
+ * The end point of a game loop can correspond to the end of the program 
+ * or to the <b>END GAMELOOP</b> statement.
  * 
  * @param _environment Current calling environment
- * @throw EXIT_FAILURE "Cannot call END GAMELOOP without BEGIN GAMELOOP"
  */
 /* <usermanual>
-@keyword END GAMELOOP
+@keyword BEGIN GAMELOOP
 
 @english
-Define the ending point of a game loop.
+Define the starting point of a game loop. A game loop is nothing more 
+than an implicit loop, within which all the logic of the program (or
+of the game) runs. The end point of a game loop can correspond to 
+the end of the program or to the ''END GAMELOOP'' statement.
+
+In some platforms, it will implictly "sync" the activity with the
+vertical blank, so the action inside the loop should be executed
+in a single "frame" of game.
 
 @italian
-Definisce il punto di arrivo di un loop di gioco.
+Definisce il punto di partenza di un loop di gioco. Un loop di 
+gioco non è altro che un ciclo implicito, all'interno del quale 
+tutta la logica del programma (o del gioco) viene eseguita. 
+Il punto finale di un ciclo di gioco può corrispondere al termine
+del programma o all'istruzione ''END GAMELOOP''. 
 
-@syntax END GAMELOOP
+In alcune piattaforme, "sincronizza" implicitamente l'attività con il
+"vertical blank", quindi l'azione all'interno del ciclo dovrebbe 
+essere eseguita in un unico "frame" di gioco.
 
-@example END GAMELOOP
+@syntax BEGIN GAMELOOP
 
-@target all
+@example BEGIN GAMELOOP
+
+@target coleco
 </usermanual> */
-void end_gameloop( Environment * _environment ) {
-    if ( _environment->hasGameLoop ) {
-        cpu_jump( _environment, "__ugbgameloop");    
-        _environment->hasGameLoop = 0;
-    } else {
-        CRITICAL("Cannot call END GAMELOOP without BEGIN GAMELOOP");
-    }
+void begin_gameloop( Environment * _environment ) {
+
+    _environment->hasGameLoop = 1;
+
+    outline0("LD HL, __ugbgameloop");
+    outline0("CALL SET_GAMELOOP_HOOK");
+    outline0("JP __ugbgameloopend");
+
+    cpu_label( _environment, "__ugbgameloop");
+
 }

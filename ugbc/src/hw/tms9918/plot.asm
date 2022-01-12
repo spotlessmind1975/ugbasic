@@ -64,6 +64,8 @@ PLOT:
 
 endif
 
+PLOTNMI2:
+
     PUSH AF
 
     LD A, (CLIPY2)

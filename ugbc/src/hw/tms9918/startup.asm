@@ -7,16 +7,14 @@ WAIT_VDP_HOOK:
         RET
 
 SET_VDP_HOOK0:
-        LD A,$cd
-        LD (VDP_HOOK),A
         LD (VDP_HOOK+1),HL
         LD A,$c9
         LD (VDP_HOOK+3),A
+        LD A,$cd
+        LD (VDP_HOOK),A
         RET
 
 SET_VDP_HOOK:
-        LD A,$cd
-        LD (VDP_HOOK),A
         LD (VDP_HOOK+1),HL
         LD A,$c9
         LD (VDP_HOOK+3),A
@@ -28,6 +26,8 @@ SET_VDP_HOOK:
         LD (VDP_HOOK+6),A
         LD A, E
         LD (VDP_HOOK+7),A
+        LD A,$cd
+        LD (VDP_HOOK),A
         RET
 
 SET_VDP_HOOK_HL:

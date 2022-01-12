@@ -59,6 +59,8 @@ CLINE:
 
 endif
 
+CLINENMI2:
+
     LD A, (CURRENTMODE)
     CP 0
     JR Z,CLINE0

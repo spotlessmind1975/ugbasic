@@ -58,6 +58,8 @@ CLST:
 
 endif
 
+CLSTNMI2:
+
     LD A, (CURRENTMODE)
     CP 0
     JR Z,CLST0

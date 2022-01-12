@@ -47,21 +47,7 @@
 /* <usermanual>
 @keyword SPRITE
 
-@english
-The ''SPRITE'' command allows you to define an (hardware) movable object. 
-In order to be used, you must have loaded the image. 
-
-@italian
-Il comando ''SPRITE'' permette di definire un oggetto mobile (hardware). 
-Per poter essere utilizzato è necessario aver caricato l'immagine da utilizzare. 
-
-@syntax = SPRITE([image])
-
-@example starship = SPRITE(IMAGE LOAD("starship.png"))
-
-@usedInExample sprite_example_01.bas
-
-@target msx1
+@target coleco
 </usermanual> */
 Variable * sprite_init( Environment * _environment, char * _image ) {
 

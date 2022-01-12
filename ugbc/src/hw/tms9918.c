@@ -106,8 +106,11 @@ void tms9918_hit( Environment * _environment, char * _sprite_mask, char * _resul
 void tms9918_border_color( Environment * _environment, char * _border_color ) {
 
 #ifdef __coleco__
-    outline1("JP %sskip", label );
-    outhead1("%s:", label );
+    MAKE_LABEL
+    if ( ! _environment->hasGameLoop ) {
+        outline1("JP %sskip", label );
+        outhead1("%s:", label );
+    }
 #endif
     outline1("LD E, %2.2x", VDP_RCOLOR );
     outline0("CALL VDPREGIN" );
@@ -119,12 +122,14 @@ void tms9918_border_color( Environment * _environment, char * _border_color ) {
     outline0("OR B" );
     outline0("CALL VDPSETREG" );
 #ifdef __coleco__
-    outline0("RET" );
-    outhead0("%sskip:", label );
-    outline0("CALL WAIT_VDP_HOOK" );
-    outline1("LD HL, %sskip", label );
-    outline0("CALL SET_VDP_HOOK0" );
-    outline0("CALL WAIT_VDP_HOOK" );
+    if ( ! _environment->hasGameLoop ) {
+        outline0("RET" );
+        outhead1("%sskip:", label );
+        outline0("CALL WAIT_VDP_HOOK" );
+        outline1("LD HL, %sskip", label );
+        outline0("CALL SET_VDP_HOOK0" );
+        outline0("CALL WAIT_VDP_HOOK" );
+    }
 #endif
 
 }
@@ -212,8 +217,11 @@ void tms9918_background_color_get_vars( Environment * _environment, char * _inde
 void tms9918_sprite_common_color( Environment * _environment, char * _index, char * _common_color ) {
 
 #ifdef __coleco__
-    outline1("JP %sskip", label );
-    outhead1("%s:", label );
+    MAKE_LABEL
+    if ( ! _environment->hasGameLoop ) {
+        outline1("JP %sskip", label );
+        outhead1("%s:", label );
+    }
 #endif
     outline0("LD HL, $1000");
     outline1("LD E, (%s)", _index );
@@ -231,12 +239,14 @@ void tms9918_sprite_common_color( Environment * _environment, char * _index, cha
     outline0("OR B");
     outline0("CALL VDPOUTCHAR");
 #ifdef __coleco__
-    outline0("RET" );
-    outhead0("%sskip:", label );
-    outline0("CALL WAIT_VDP_HOOK" );
-    outline1("LD HL, %sskip", label );
-    outline0("CALL SET_VDP_HOOK0" );
-    outline0("CALL WAIT_VDP_HOOK" );
+    if ( ! _environment->hasGameLoop ) {
+        outline0("RET" );
+        outhead1("%sskip:", label );
+        outline0("CALL WAIT_VDP_HOOK" );
+        outline1("LD HL, %sskip", label );
+        outline0("CALL SET_VDP_HOOK0" );
+        outline0("CALL WAIT_VDP_HOOK" );
+    }
 #endif
 
 }
@@ -362,9 +372,11 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
 #ifdef __coleco__
 
     MAKE_LABEL
-    
-    outline1("JP %sdone", label );
-    outhead1("%s:", label );
+        
+    if ( ! _environment->hasGameLoop ) {
+        outline1("JP %sdone", label );
+        outhead1("%s:", label );
+    }
 
 #endif
 
@@ -566,13 +578,15 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
 
 #ifdef __coleco__
 
-    outline0("RET");
-    outline1("%sdone:", label );
-    outline0("CALL WAIT_VDP_HOOK" );
-    outline1("LD HL, %s", label );
-    outline0("CALL SET_VDP_HOOK0" );
-    outline0("CALL WAIT_VDP_HOOK");
-
+    if ( ! _environment->hasGameLoop ) {
+        outline0("RET");
+        outline1("%sdone:", label );
+        outline0("CALL WAIT_VDP_HOOK" );
+        outline1("LD HL, %s", label );
+        outline0("CALL SET_VDP_HOOK0" );
+        outline0("CALL WAIT_VDP_HOOK");
+    }
+    
 #endif
 
 }
@@ -643,7 +657,11 @@ void tms9918_point_at_int( Environment * _environment, int _x, int _y ) {
     outline1("LD A, $%2.2x", _x );
     outline0("LD E, A");
     outline0("LD A, 1");
-    outline0("CALL PLOT");
+    if ( ! _environment->hasGameLoop ) {
+        outline0("CALL PLOT");
+    } else {
+        outline0("CALL PLOTNMI2");
+    }
 
 }
 
@@ -661,7 +679,11 @@ void tms9918_point_at_vars( Environment * _environment, char *_x, char *_y ) {
     outline1("LD A, (%s)", x->realName );
     outline0("LD E, A");
     outline0("LD A, 1");
-    outline0("CALL PLOT");
+    if ( ! _environment->hasGameLoop ) {
+        outline0("CALL PLOT");
+    } else {
+        outline0("CALL PLOTNMI2");
+    }
 
 }
 
@@ -680,7 +702,11 @@ void tms9918_point( Environment * _environment, char *_x, char *_y, char * _resu
     outline1("LD A, (%s)", x->realName );
     outline0("LD E, A");
     outline0("LD A, 3");
-    outline0("CALL PLOT");
+    if ( ! _environment->hasGameLoop ) {
+        outline0("CALL PLOT");
+    } else {
+        outline0("CALL PLOTNMI2");
+    }    
     outline1("LD (%s), A", result->realName);
 
 }
@@ -688,42 +714,51 @@ void tms9918_point( Environment * _environment, char *_x, char *_y, char * _resu
 void tms9918_screen_on( Environment * _environment ) {
 
 #ifdef __coleco__
-    outline1("JP %sskip", label );
-    outhead1("%s:", label );
+    MAKE_LABEL
+    if ( ! _environment->hasGameLoop ) {
+        outline1("JP %sskip", label );
+        outhead1("%s:", label );
+    }
 #endif
     outline1("LD E, %2.2x", VDP_R1 );
     outline0("CALL VDPREGIN" );
     outline0("OR $40" );
     outline0("CALL VDPSETREG" );
 #ifdef __coleco__
-    outline0("RET" );
-    outhead0("%sskip:", label );
-    outline0("CALL WAIT_VDP_HOOK" );
-    outline1("LD HL, %sskip", label );
-    outline0("CALL SET_VDP_HOOK0" );
-    outline0("CALL WAIT_VDP_HOOK" );
+    if ( ! _environment->hasGameLoop ) {
+        outline0("RET" );
+        outhead1("%sskip:", label );
+        outline0("CALL WAIT_VDP_HOOK" );
+        outline1("LD HL, %sskip", label );
+        outline0("CALL SET_VDP_HOOK0" );
+        outline0("CALL WAIT_VDP_HOOK" );
+    }
 #endif
-
 
 }
 
 void tms9918_screen_off( Environment * _environment ) {
 
 #ifdef __coleco__
-    outline1("JP %sskip", label );
-    outhead1("%s:", label );
+    MAKE_LABEL
+    if ( ! _environment->hasGameLoop ) {
+        outline1("JP %sskip", label );
+        outhead1("%s:", label );
+    }
 #endif
     outline1("LD E, %2.2x", VDP_R1 );
     outline0("CALL VDPREGIN" );
     outline0("AND $BF" );
     outline0("CALL VDPSETREG" );
 #ifdef __coleco__
-    outline0("RET" );
-    outhead0("%sskip:", label );
-    outline0("CALL WAIT_VDP_HOOK" );
-    outline1("LD HL, %sskip", label );
-    outline0("CALL SET_VDP_HOOK0" );
-    outline0("CALL WAIT_VDP_HOOK" );
+    if ( ! _environment->hasGameLoop ) {
+        outline0("RET" );
+        outhead1("%sskip:", label );
+        outline0("CALL WAIT_VDP_HOOK" );
+        outline1("LD HL, %sskip", label );
+        outline0("CALL SET_VDP_HOOK0" );
+        outline0("CALL WAIT_VDP_HOOK" );
+    }
 #endif
 
 }
@@ -742,7 +777,11 @@ void tms9918_sprite_data_from( Environment * _environment, char * _sprite, char 
     outline1("LD A, (%s)", sprite->realName );
     outline0("LD B, A");
     outline1("LD HL, %s", image->realName );
-    outline0("CALL SPRITEDATAFROM");
+    if ( ! _environment->hasGameLoop ) {
+        outline0("CALL SPRITEDATAFROM");
+    } else {
+        outline0("CALL SPRITEDATAFROMNMI2");
+    }
 
 }
 
@@ -754,7 +793,11 @@ void tms9918_sprite_enable( Environment * _environment, char * _sprite ) {
     
     outline1("LD A, (%s)", sprite->realName );
     outline0("LD B, A");
-    outline0("CALL SPRITEENABLE");
+    if ( ! _environment->hasGameLoop ) {
+        outline0("CALL SPRITEENABLE");
+    } else {
+        outline0("CALL SPRITEENABLENMI2");
+    }
 
 }
 
@@ -766,7 +809,11 @@ void tms9918_sprite_disable( Environment * _environment, char * _sprite ) {
     
     outline1("LD A, (%s)", sprite->realName );
     outline0("LD B, A");
-    outline0("CALL SPRITEDISABLE");
+    if ( ! _environment->hasGameLoop ) {
+        outline0("CALL SPRITEDISABLE");
+    } else {
+        outline0("CALL SPRITEDISABLENMI2");
+    }
 
 }
 
@@ -784,7 +831,11 @@ void tms9918_sprite_at( Environment * _environment, char * _sprite, char * _x, c
     outline0("LD H, A");
     outline1("LD A, (%s)", y->realName );
     outline0("LD L, A");
-    outline0("CALL SPRITEAT");
+    if ( ! _environment->hasGameLoop ) {
+        outline0("CALL SPRITEAT");
+    } else {
+        outline0("CALL SPRITEATNMI2");
+    }
 
 }
 
@@ -794,7 +845,11 @@ void tms9918_sprite_expand_vertical( Environment * _environment, char * _sprite 
 
     deploy( sprite, src_hw_tms9918_sprites_asm );
     
-    outline0("CALL SPRITEEXPAND");
+    if ( ! _environment->hasGameLoop ) {
+        outline0("CALL SPRITEEXPAND");
+    } else {
+        outline0("CALL SPRITEEXPANDNMI2");
+    }
 
 }
 
@@ -804,7 +859,11 @@ void tms9918_sprite_expand_horizontal( Environment * _environment, char * _sprit
 
     deploy( sprite, src_hw_tms9918_sprites_asm );
     
-    outline0("CALL SPRITEEXPAND");
+    if ( ! _environment->hasGameLoop ) {
+        outline0("CALL SPRITEEXPAND");
+    } else {
+        outline0("CALL SPRITEEXPANDNMI2");
+    }
 
 }
 
@@ -814,7 +873,11 @@ void tms9918_sprite_compress_vertical( Environment * _environment, char * _sprit
 
     deploy( sprite, src_hw_tms9918_sprites_asm );
     
-    outline0("CALL SPRITECOMPRESS");
+    if ( ! _environment->hasGameLoop ) {
+        outline0("CALL SPRITECOMPRESS");
+    } else {
+        outline0("CALL SPRITECOMPRESSNMI2");
+    }
 
 }
 
@@ -824,7 +887,11 @@ void tms9918_sprite_compress_horizontal( Environment * _environment, char * _spr
 
     deploy( sprite, src_hw_tms9918_sprites_asm );
     
-    outline0("CALL SPRITECOMPRESS");
+    if ( ! _environment->hasGameLoop ) {
+        outline0("CALL SPRITECOMPRESS");
+    } else {
+        outline0("CALL SPRITECOMPRESSNMI2");
+    }
 
 }
 
@@ -847,7 +914,11 @@ void tms9918_sprite_color( Environment * _environment, char * _sprite, char * _c
     outline0("LD B, A");
     outline1("LD A, (%s)", color->realName );
     outline0("LD C, A");
-    outline0("CALL SPRITECOLOR");
+    if ( ! _environment->hasGameLoop ) {
+        outline0("CALL SPRITECOLOR");
+    } else {
+        outline0("CALL SPRITECOLORNMI2");
+    }
 
 }
 
@@ -917,10 +988,18 @@ void tms9918_cls( Environment * _environment ) {
     
     if ( _environment->currentMode == 2 || _environment->currentMode == 3 ) {
         deploy( clsGraphic, src_hw_tms9918_cls_graphic_asm );
-        outline0("CALL CLSG");
+        if ( ! _environment->hasGameLoop ) {
+            outline0("CALL CLSG");
+        } else {
+            outline0("CALL CLSGNMI2");
+        }
     } else {
         deploy( clsText, src_hw_tms9918_cls_text_asm );
-        outline0("CALL CLST");
+        if ( ! _environment->hasGameLoop ) {
+            outline0("CALL CLST");
+        } else {
+            outline0("CALL CLSTNMI2");
+        }
     }
 
 }
@@ -929,10 +1008,18 @@ void tms9918_scroll_text( Environment * _environment, int _direction ) {
 
     if ( _direction > 0 ) {
         deploy( vScrollTextDown, src_hw_tms9918_vscroll_text_down_asm );
-        outline0("CALL VSCROLLTDOWN");
+        if ( ! _environment->hasGameLoop ) {
+            outline0("CALL VSCROLLTDOWN");
+        } else {
+            outline0("CALL VSCROLLTDOWNNMI2");
+        }
     } else {
         deploy( vScrollTextUp, src_hw_tms9918_vscroll_text_up_asm );
-        outline0("CALL VSCROLLTUP");
+        if ( ! _environment->hasGameLoop ) {
+            outline0("CALL VSCROLLTUP");
+        } else {
+            outline0("CALL VSCROLLTUPNMI2");
+        }
     }
 
 }
@@ -950,11 +1037,19 @@ void tms9918_text( Environment * _environment, char * _text, char * _text_size )
         deploy( clsGraphic, src_hw_tms9918_cls_graphic_asm );
         deploy( tms9918varsGraphic, src_hw_tms9918_vars_graphic_asm );
         deploy( textEncodedAtGraphic, src_hw_tms9918_text_at_graphic_asm );
-        outline0("CALL TEXTATBITMAPMODE");
+        if ( ! _environment->hasGameLoop ) {
+            outline0("CALL TEXTATBITMAPMODE");
+        } else {
+            outline0("CALL TEXTATBITMAPMODENMI2");
+        }
     } else {
         deploy( clsText, src_hw_tms9918_cls_text_asm );
         deploy( textEncodedAtText, src_hw_tms9918_text_at_text_asm );
-        outline0("CALL TEXTATTILEMODE");
+        if ( ! _environment->hasGameLoop ) {
+            outline0("CALL TEXTATTILEMODE");
+        } else {
+            outline0("CALL TEXTATTILEMODENMI2");
+        }
     }
 
 }
@@ -1059,7 +1154,11 @@ void tms9918_hscroll_line( Environment * _environment, int _direction ) {
     Variable * y = variable_retrieve( _environment, "YCURSYS" );
     outline1("LD A, $%2.2x", ( _direction & 0xff ) );
     outline1("LD B, (%s)", y->realName );
-    outline0("CALL HSCROLLLT");
+    if ( ! _environment->hasGameLoop ) {
+        outline0("CALL HSCROLLLT");
+    } else {
+        outline0("CALL HSCROLLLTNMI2");
+    }
 
 }
 
@@ -1068,7 +1167,11 @@ void tms9918_hscroll_screen( Environment * _environment, int _direction ) {
     deploy( textHScroll, src_hw_tms9918_hscroll_text_asm );
 
     outline1("LD A, $%2.2x", ( _direction & 0xff ) );
-    outline0("CALL HSCROLLST");
+    if ( ! _environment->hasGameLoop ) {
+        outline0("CALL HSCROLLST");
+    } else {
+        outline0("CALL HSCROLLSTNMI2");
+    }
 
 }
 
@@ -1076,7 +1179,11 @@ void tms9918_back( Environment * _environment ) {
 
     deploy( back, src_hw_tms9918_back_asm );
 
-    outline0("CALL BACK");
+    if ( ! _environment->hasGameLoop ) {
+        outline0("CALL BACK");
+    } else {
+        outline0("CALL BACKNMI2");
+    }
 
 }
 
@@ -1091,7 +1198,11 @@ void tms9918_cline( Environment * _environment, char * _characters ) {
         outline0("LD A, 0");
         outline0("LD C, A");
     }
-    outline0("CALL CLINE");
+    if ( ! _environment->hasGameLoop ) {
+        outline0("CALL CLINE");
+    } else {
+        outline0("CALL CLINENMI2");
+    }
 
 }
 
@@ -1388,7 +1499,11 @@ void tms9918_put_image( Environment * _environment, char * _image, char * _x, ch
     outline1("LD A, (%s)", _y );
     outline0("LD D, A" );
 
-    outline0("CALL PUTIMAGE");
+    if ( ! _environment->hasGameLoop ) {
+        outline0("CALL PUTIMAGE");
+    } else {
+        outline0("CALL PUTIMAGENMI2");
+    }
 
 }
 
@@ -1440,7 +1555,11 @@ void tms9918_get_image( Environment * _environment, char * _image, char * _x, ch
     outline1("LD A, (%s)", _y );
     outline0("LD D, A" );
 
-    outline0("CALL GETIMAGE");
+    if ( ! _environment->hasGameLoop ) {
+        outline0("CALL GETIMAGE");
+    } else {
+        outline0("CALL GETIMAGENMI2");
+    }
 
 }
 

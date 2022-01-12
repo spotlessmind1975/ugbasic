@@ -58,6 +58,8 @@ GETIMAGE:
 
 endif
 
+GETIMAGENMI2:
+
     LD A, (CURRENTMODE)
     CP 0
     JR NZ, GETIMAGE0X

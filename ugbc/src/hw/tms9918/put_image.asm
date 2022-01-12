@@ -67,6 +67,8 @@ PUTIMAGE:
 
 endif
 
+PUTIMAGENMI2:
+
     LD A, (CURRENTMODE)
     CP 0
     JR NZ, PUTIMAGE0X

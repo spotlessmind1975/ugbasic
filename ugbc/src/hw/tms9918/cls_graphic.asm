@@ -58,6 +58,8 @@ CLSG:
 
 endif
 
+CLSGNMI2:
+
     LD A, 0
     LD DE, $3800
     LD BC, 256*3
