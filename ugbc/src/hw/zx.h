@@ -180,6 +180,8 @@
 #define JOY_FIRE            0
 
 #define SPRITE_COUNT                0
+#define SPRITE_WIDTH                0
+#define SPRITE_HEIGHT               0
 
 int zx_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode );
 
