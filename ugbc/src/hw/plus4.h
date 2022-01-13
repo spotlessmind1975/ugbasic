@@ -118,6 +118,12 @@
 #define INPUT_DEFAULT_SIZE          32
 #define INPUT_DEFAULT_CURSOR        0x60
 
+#define JOY_UP              1
+#define JOY_DOWN            2
+#define JOY_LEFT            3
+#define JOY_RIGHT           4
+#define JOY_FIRE            0
+
 #define SCREEN_CAPABILITIES         ( ( 1<<TILEMAP_NATIVE ) | ( 1<<BITMAP_NATIVE ) )
 
 void plus4_xpen( Environment * _environment, char * _destination );
