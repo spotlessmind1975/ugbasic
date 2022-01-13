@@ -1079,6 +1079,10 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
         CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
     }
 
+    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
+    result->originalColors = colorUsed;
+    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
+
     int i, j, k;
 
     for( i=0; i<colorUsed; ++i ) {
@@ -1102,8 +1106,6 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
         strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
     }
 
-    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
- 
     int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_RESOLUTION1 );
     // printf("bufferSize = %d\n", bufferSize );
 
@@ -1185,14 +1187,17 @@ static Variable * c6847_image_converter_multicolor_mode_standard( Environment * 
 
     // ignored on bitmap mode
     (void)!_transparent_color;
-    
+
     image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
+    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
+
+    RGBi * palette = malloc( sizeof( RGBi ) * MAX_PALETTE );
+    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
+    result->originalColors = colorUsed;
+    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
+
     if ( ! commonPalette ) {
-
-        RGBi * palette = malloc( sizeof( RGBi ) * MAX_PALETTE );
-
-        int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
 
         if (colorUsed > 4) {
             CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
@@ -1230,8 +1235,6 @@ static Variable * c6847_image_converter_multicolor_mode_standard( Environment * 
 
     }
 
-    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
- 
     int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_COLOR1 );
     
     char * buffer = malloc ( bufferSize );

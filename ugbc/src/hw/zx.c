@@ -336,6 +336,10 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
         CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
     }
 
+    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
+    result->originalColors = colorUsed;
+    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
+
     int i, j, k;
 
     for( i=0; i<colorUsed; ++i ) {
@@ -364,8 +368,6 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
         // printf("%d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
     }
 
-    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
- 
     int bufferSize = 2 + ( ( _frame_width >> 3 ) * _frame_height ) + ( ( _frame_width >> 3 ) * ( _frame_height >> 3 ) );
     // printf("bufferSize = %d\n", bufferSize );
 

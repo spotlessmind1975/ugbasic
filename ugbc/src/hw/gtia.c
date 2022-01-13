@@ -1557,6 +1557,10 @@ static Variable * gtia_image_converter_bitmap_mode_standard( Environment * _envi
         CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
     }
 
+    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
+    result->originalColors = colorUsed;
+    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
+
     int i, j, k;
 
     for( i=0; i<colorUsed; ++i ) {
@@ -1580,8 +1584,6 @@ static Variable * gtia_image_converter_bitmap_mode_standard( Environment * _envi
         strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
     }
 
-    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
- 
     int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_ANTIC9 );
     char * buffer = malloc ( bufferSize );
 
@@ -1667,16 +1669,19 @@ static Variable * gtia_image_converter_multicolor_mode_standard( Environment * _
 
     image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
+    RGBi * palette = malloc( MAX_PALETTE * sizeof(RGBi) );
+    memset( palette, 0, MAX_PALETTE * sizeof(RGBi) );
+
+    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
+    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
+    result->originalColors = colorUsed;
+    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
+
     int i, j, k;
 
     // printf( "%p %d %d %d %d", _source, _width, _height, _frame_width, _frame_height );
 
     if ( ! commonPalette ) {
-
-        RGBi * palette = malloc( MAX_PALETTE * sizeof(RGBi) );
-        memset( palette, 0, MAX_PALETTE * sizeof(RGBi) );
-
-        int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
 
         if (colorUsed > 4) {
             // for( i=0; i<colorUsed; ++i) {
@@ -1725,10 +1730,6 @@ static Variable * gtia_image_converter_multicolor_mode_standard( Environment * _
         lastUsedSlotInCommonPalette = colorUsed;
     
     } else {
-
-        RGBi * palette = malloc( MAX_PALETTE * sizeof(RGBi) );
-
-        int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
 
         if (colorUsed > 4) {
             // for( i=0; i<colorUsed; ++i) {
@@ -1802,8 +1803,6 @@ static Variable * gtia_image_converter_multicolor_mode_standard( Environment * _
 
     }
 
-    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
- 
     int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_ANTIC8 );
     
     char * buffer = malloc ( bufferSize );

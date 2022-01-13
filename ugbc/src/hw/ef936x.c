@@ -834,6 +834,10 @@ static Variable * ef936x_image_converter_bitmap_mode_standard( Environment * _en
         CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
     }
 
+    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
+    result->originalColors = colorUsed;
+    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
+
     int i, j, k;
 
     for( i=0; i<colorUsed; ++i ) {
@@ -862,8 +866,6 @@ static Variable * ef936x_image_converter_bitmap_mode_standard( Environment * _en
         // printf("%d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
     }
 
-    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
- 
     int bufferSize = 2 + ( ( _frame_width >> 3 ) * _frame_height );
     // printf("bufferSize = %d\n", bufferSize );
 
@@ -948,13 +950,16 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
 
     image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
+    int colorUsed;
+    RGBi * palette = malloc( MAX_PALETTE * sizeof(RGBi) );
+
+    colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
+
+    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
+    result->originalColors = colorUsed;
+    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
+
     if ( ! commonPalette ) {
-
-        int colorUsed;
-
-        RGBi * palette = malloc( MAX_PALETTE * sizeof(RGBi) );
-
-        colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
 
         if (colorUsed > 16) {
             CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
@@ -991,8 +996,6 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
         commonPalette = palette;
 
     }
-
-    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
  
     int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_40_COLUMN );
     
@@ -1088,13 +1091,17 @@ static Variable * ef936x_image_converter_multicolor_mode4( Environment * _enviro
 
     image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
+    RGBi * palette = malloc( MAX_PALETTE * sizeof(RGBi) );
+
+    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
+
+    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
+    result->originalColors = colorUsed;
+    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
+
     int i, j, k;
 
     if ( ! commonPalette ) {
-
-        RGBi * palette = malloc( MAX_PALETTE * sizeof(RGBi) );
-
-        int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
 
         if (colorUsed > 4) {
             CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
@@ -1129,8 +1136,6 @@ static Variable * ef936x_image_converter_multicolor_mode4( Environment * _enviro
         commonPalette = palette;
 
     }
-
-    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
  
     int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_BITMAP_4 );
     
@@ -1228,12 +1233,16 @@ static Variable * ef936x_image_converter_multicolor_mode16( Environment * _envir
 
     int i, j, k;
 
+    RGBi * palette = malloc( MAX_PALETTE * sizeof(RGBi) );
+    memset( palette, 0, MAX_PALETTE * sizeof(RGBi) );
+
+    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
+
+    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
+    result->originalColors = colorUsed;
+    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
+
     if ( ! commonPalette ) {
-
-        RGBi * palette = malloc( MAX_PALETTE * sizeof(RGBi) );
-        memset( palette, 0, MAX_PALETTE * sizeof(RGBi) );
-
-        int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
 
         if (colorUsed > 16) {
             CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
@@ -1269,10 +1278,6 @@ static Variable * ef936x_image_converter_multicolor_mode16( Environment * _envir
         lastUsedSlotInCommonPalette = colorUsed;
 
     } else {
-
-        RGBi * palette = malloc( MAX_PALETTE * sizeof(RGBi) );
-
-        int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
 
         if (colorUsed > 16) {
             CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
@@ -1334,8 +1339,6 @@ static Variable * ef936x_image_converter_multicolor_mode16( Environment * _envir
 
     }
 
-    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
- 
     int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_BITMAP_16 );
     
     char * buffer = malloc ( bufferSize );

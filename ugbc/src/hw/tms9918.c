@@ -1261,6 +1261,10 @@ static Variable * tms9918_image_converter_bitmap_mode_standard( Environment * _e
 
     int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
 
+    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
+    result->originalColors = colorUsed;
+    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
+
     int i, j, k;
 
     if ( ( _flags & FLAG_TRANSPARENCY ) ) {
@@ -1346,8 +1350,6 @@ static Variable * tms9918_image_converter_bitmap_mode_standard( Environment * _e
         }
     }
 
-    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
- 
     int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_GRAPHIC2 );
     
     char * buffer = malloc ( bufferSize );

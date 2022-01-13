@@ -118,6 +118,23 @@ typedef enum _OutputFileType {
 } OutputFileType;
 
 /**
+ * @brief Structure to store color components (red, green and blue)
+ * 
+ * This structure stores the color components (red, blue and green) 
+ * of a pixel, 8 bits wide. This structure is used both to represent the 
+ * retrocomputer palette and to process input data from image files.
+ */
+typedef struct _RGBi {
+    unsigned char red;
+    unsigned char green;
+    unsigned char blue;
+    unsigned char index;
+    char description[64];
+    unsigned char used;
+    int count;
+} RGBi;
+
+/**
  * @brief Type of variables
  * 
  * @todo support for data type VT_STRING
@@ -484,6 +501,12 @@ typedef struct _Variable {
     /** Original bitmap height (if IMAGE/IMAGES) */
     int originalHeight;
 
+    /** Original bitmap nr. colors (if IMAGE/IMAGES) */
+    int originalColors;
+
+    /** Original bitmap palette (if IMAGE/IMAGES) */
+    RGBi originalPalette[MAX_PALETTE];
+
     /** Link to the next variable (NULL if this is the last one) */
     struct _Variable * next;
 
@@ -717,23 +740,6 @@ typedef struct _ScreenMode {
             _environment->screenModes = screenMode; \
         } \
     }
-
-/**
- * @brief Structure to store color components (red, green and blue)
- * 
- * This structure stores the color components (red, blue and green) 
- * of a pixel, 8 bits wide. This structure is used both to represent the 
- * retrocomputer palette and to process input data from image files.
- */
-typedef struct _RGBi {
-    unsigned char red;
-    unsigned char green;
-    unsigned char blue;
-    unsigned char index;
-    char description[64];
-    unsigned char used;
-    int count;
-} RGBi;
 
 typedef struct _Embedded {
 
