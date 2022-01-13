@@ -41,4 +41,10 @@ CURRENTTILESWIDTH:      .byte 40
 CURRENTTILESHEIGHT:      .byte 25
 CURRENTTILES:      .byte 255
 TEXTWW:             .byte 3
+FONTWIDTH:          .byte 8
+FONTHEIGHT:         .byte 8
+CLIPX1:    .word 0
+CLIPY1:    .word 0
+CLIPX2:    .word 319
+CLIPY2:    .word 199
 

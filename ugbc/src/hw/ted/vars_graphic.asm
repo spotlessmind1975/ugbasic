@@ -43,14 +43,8 @@ XGR:    .word 0
 YGR:    .word 0
 LINE:   .byte $ff, $ff
 
-CLIPX1:    .word 0
-CLIPY1:    .word 0
-CLIPX2:    .word 319
-CLIPY2:    .word 199
 LASTCOLOR: .byte 0
 CURRENTSL:          .byte 0
-FONTWIDTH:          .byte 8
-FONTHEIGHT:         .byte 8
 
 IMAGEX = $17
 IMAGEY = $19
