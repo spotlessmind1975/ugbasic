@@ -1447,6 +1447,135 @@ static Variable * tms9918_image_converter_bitmap_mode_standard( Environment * _e
 
 }
 
+Variable * tms9918_sprite_converter( Environment * _environment, char * _source, int _width, int _height, RGBi * _color ) {
+
+    deploy( tms9918varsGraphic, src_hw_tms9918_vars_graphic_asm );
+
+    RGBi palette[MAX_PALETTE];
+
+    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
+
+    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
+    result->originalColors = colorUsed;
+    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
+
+    int i, j, k;
+
+    for( i=0; i<colorUsed; ++i ) {
+        int minDistance = 0xffff;
+        int colorIndex = 0;
+        for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
+            int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
+            if (distance < minDistance) {
+                for( k=0; k<i; ++k ) {
+                    if ( palette[k].index == SYSTEM_PALETTE[j].index ) {
+                        break;
+                    }
+                }
+                if ( k>=i ) {
+                    minDistance = distance;
+                    colorIndex = j;
+                }
+            }
+        }
+        palette[i].index = SYSTEM_PALETTE[colorIndex].index;
+        strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
+    }
+
+    int bufferSize = ( ( _width >> 3 ) * _height ) + 1;
+    
+    char * buffer = malloc ( bufferSize );
+    memset( buffer, 0, bufferSize );
+
+    // Position of the pixel in the original image
+    int image_x, image_y;
+    
+    // Position of the pixel, in terms of tiles
+    int tile_x, tile_y;
+    
+    // Position of the pixel, in terms of offset and bitmask
+    int offset, bitmask;
+
+    // Color of the pixel to convert
+    RGBi rgb;
+
+    // Loop for all the source surface.
+    for (image_y = 0; image_y < _height; ++image_y) {
+        if ( image_y == 8 ) {
+            break;
+        }
+        for (image_x = 0; image_x < _width; ++image_x) {
+            if ( image_x == 8 ) {
+                break;
+            }
+
+            // Take the color of the pixel
+            rgb.red = *_source;
+            rgb.green = *(_source + 1);
+            rgb.blue = *(_source + 2);
+
+            // Calculate the relative tile
+
+            // Calculate the offset starting from the tile surface area
+            // and the bit to set.
+            offset = (image_y * 8) + (image_x >> 3);
+
+            int minDistance = 0xffff;
+            int colorIndex = 0;
+
+            if ( rgbi_equals_rgb( _color, &rgb ) ) {
+                i = 1;
+            } else {
+                i = 0;
+            }
+
+            colorIndex = i;
+
+            if ( _environment->debugImageLoad ) {
+                printf( "%1.1x", ( palette[colorIndex].index & 0x0f ) );
+            }
+
+            bitmask = ( colorIndex == 0 ? 0 : 1 ) << (7 - ((image_x & 0x7)));
+            *(buffer + 2 + offset) |= bitmask;
+
+            _source += 3;
+
+        }
+
+        _source += 3 * ( _width - image_x );
+
+        if ( _environment->debugImageLoad ) {
+            printf("\n" );
+        }
+    }
+
+    *(buffer + ( ( _width >> 3 ) * _height )) = _color->index;
+
+    if ( _environment->debugImageLoad ) {
+        printf("\n" );
+    
+        printf("PALETTE:\n" );
+        for( i=0; i<colorUsed; ++i ) {
+            printf("  (%2.2d) = %2.2d (%s)\n", i, palette[i].index, palette[i].description );
+        }
+        // if ( ( _flags & FLAG_OVERLAYED ) == 0 ) {
+        //     printf("  background  (00) = %2.2x (%s)\n", palette[0].index, palette[0].description );
+        // } else {
+        //     printf("  background  (00) = %2.2x (%s) [currently ignored since it can be overlayed]\n", palette[0].index, palette[0].description );
+        // }
+        // printf("  low screen  (01) = %2.2x (%s)\n", palette[1].index, palette[1].description );
+        // printf("  high screen (10) = %2.2x (%s)\n", palette[2].index, palette[2].description );
+        // printf("  colormap    (11) = %2.2x (%s)\n", palette[3].index, palette[3].description );
+        // printf("\n" );
+        // printf("\n" );
+    }
+    
+    variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
+ 
+    return result;
+
+}
+
 Variable * tms9918_image_converter( Environment * _environment, char * _data, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags ) {
 
     switch( _mode ) {
