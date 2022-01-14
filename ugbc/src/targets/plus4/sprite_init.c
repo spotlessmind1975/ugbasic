@@ -51,8 +51,18 @@
 </usermanual> */
 Variable * sprite_init( Environment * _environment, char * _image ) {
 
-    Variable * index = variable_temporary( _environment, VT_SPRITE, "(sprite index)" );
+    Variable * index;
 
-    return index;
+    if ( _sprite ) {
+
+        index = variable_retrieve( _environment, _sprite );
+
+    } else {
+
+        Variable * index = variable_temporary( _environment, VT_SPRITE, "(sprite index)" );
+
+        return index;
+        
+    }
 
 }

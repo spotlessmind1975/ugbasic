@@ -1821,7 +1821,10 @@ exponential:
         }
     }
     | SPRITE OP Identifier CP {
-        $$ = sprite_init( _environment, $3 )->name;
+        $$ = sprite_init( _environment, $3, NULL )->name;
+    }
+    | SPRITE OP Identifier OP_COMMA Identifier CP {
+        $$ = sprite_init( _environment, $3, $5 )->name;
     }
     | CSPRITE OP Identifier CP {
         $$ = csprite_init( _environment, $3 )->name;

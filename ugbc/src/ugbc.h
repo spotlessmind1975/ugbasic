@@ -2210,7 +2210,7 @@ void                    sprite_expand_horizontal( Environment * _environment, in
 void                    sprite_expand_horizontal_var( Environment * _environment, char * _sprite );
 void                    sprite_expand_vertical( Environment * _environment, int _sprite );
 void                    sprite_expand_vertical_var( Environment * _environment, char * _sprite );
-Variable *              sprite_init( Environment * _environment, char * _image );
+Variable *              sprite_init( Environment * _environment, char * _image, char * _sprite );
 void                    sprite_monocolor( Environment * _environment, int _sprite );
 void                    sprite_monocolor_var( Environment * _environment, char * _sprite );
 void                    sprite_multicolor( Environment * _environment, int _sprite );
