@@ -80,8 +80,22 @@ SPRITEDATAL1:
     LDA (TMPPTR), Y
     STA (TMPPTR2), Y
     INY
-    CPY #64
+    CPY #63
     BNE SPRITEDATAL1
+    LDA (TMPPTR), Y
+    TAX
+
+    PLA
+    PHA
+    TAY
+
+    CLC
+    LDA #$27
+    STA TMPPTR2
+    LDA #$D0
+    STA TMPPTR2+1
+    TXA
+    STA (TMPPTR2),Y
 
     LDA TEXTADDRESS
     STA TMPPTR
@@ -97,11 +111,8 @@ SPRITEDATAL1:
     STA TMPPTR+1
 
     PLA
-    PHA
-    TAY
-    PLA
-
     STA (TMPPTR), Y
+
     RTS
 
 ; SET SPRITE DISABLE(Y)

@@ -1975,6 +1975,8 @@ Variable * vic2_sprite_converter( Environment * _environment, char * _source, in
 
     }
 
+    *(buffer+63) = palette[1].index;
+
     // printf("----\n");
 
     variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
