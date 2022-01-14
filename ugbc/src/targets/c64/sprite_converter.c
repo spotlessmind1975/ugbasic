@@ -38,8 +38,8 @@
  * CODE SECTION 
  ****************************************************************************/
 
-Variable * sprite_converter( Environment * _environment, char * _data, int _width, int _height ) {
+Variable * sprite_converter( Environment * _environment, char * _data, int _width, int _height, RGBi * _color ) {
 
-    return vic2_sprite_converter( _environment, _data, _width, _height );
+    return vic2_sprite_converter( _environment, _data, _width, _height, _color );
 
 }

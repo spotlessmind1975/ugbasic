@@ -58,7 +58,7 @@ Variable * sprite_init( Environment * _environment, char * _image ) {
 
     Variable * image = variable_retrieve( _environment, _image );
 
-    Variable * realImage = sprite_converter( _environment, image->originalBitmap, image->originalWidth, image->originalHeight );
+    Variable * realImage = sprite_converter( _environment, image->originalBitmap, image->originalWidth, image->originalHeight, NULL );
 
     vic2_sprite_data_from( _environment, index->name, realImage->name );
 

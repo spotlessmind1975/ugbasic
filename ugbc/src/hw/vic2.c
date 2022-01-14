@@ -1869,14 +1869,18 @@ Variable * vic2_image_converter( Environment * _environment, char * _data, int _
 
 }
 
-Variable * vic2_sprite_converter( Environment * _environment, char * _source, int _width, int _height ) {
+Variable * vic2_sprite_converter( Environment * _environment, char * _source, int _width, int _height, RGBi * _color ) {
 
     RGBi palette[MAX_PALETTE];
 
     int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
 
-    if (colorUsed > 2) {
-        CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
+    if ( ! _color ) {
+
+        if (colorUsed > 2) {
+            CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
+        }
+
     }
     
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
@@ -1941,9 +1945,17 @@ Variable * vic2_sprite_converter( Environment * _environment, char * _source, in
             rgb.green = *(_source + 1);
             rgb.blue = *(_source + 2);
 
-            for( i=0; i<colorUsed; ++i ) {
-                if ( rgbi_equals_rgb( &palette[i], &rgb ) ) {
-                    break;
+            if ( ! _color ) {
+                for( i=0; i<colorUsed; ++i ) {
+                    if ( rgbi_equals_rgb( &palette[i], &rgb ) ) {
+                        break;
+                    }
+                }
+            } else {
+                if ( rgbi_equals_rgb( _color, &rgb ) ) {
+                    i = 1;
+                } else {
+                    i = 0;
                 }
             }
             

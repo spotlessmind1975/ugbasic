@@ -1957,6 +1957,7 @@ void                    const_define_numeric( Environment * _environment, char *
 void                    const_define_string( Environment * _environment, char * _name, char * _value );
 void                    const_emit( Environment * _environment, char * _name );
 Constant *              constant_find( Constant * _constant, char * _name );
+Variable *              csprite_init( Environment * _environment, char * _image );
 
 //----------------------------------------------------------------------------
 // *D*
@@ -2198,7 +2199,7 @@ void                    sprite_compress_horizontal( Environment * _environment, 
 void                    sprite_compress_horizontal_var( Environment * _environment, char * _sprite );
 void                    sprite_compress_vertical( Environment * _environment, int _sprite );
 void                    sprite_compress_vertical_var( Environment * _environment, char * _sprite );
-Variable *              sprite_converter( Environment * _environment, char * _data, int _width, int _height );
+Variable *              sprite_converter( Environment * _environment, char * _data, int _width, int _height, RGBi * _color );
 void                    sprite_data_from( Environment * _environment, int _sprite, int _address );
 void                    sprite_data_from_vars( Environment * _environment, char * _sprite, char * _address );
 void                    sprite_disable( Environment * _environment, int _sprite );
