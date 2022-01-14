@@ -73,7 +73,7 @@ SPRITEDATAFROM:
     LDA MATHPTR2
     STA TMPPTR+1
 
-    TAY
+    TYA
     PHA
     LDY #0
 SPRITEDATAL1:
@@ -97,20 +97,10 @@ SPRITEDATAL1:
     STA TMPPTR+1
 
     PLA
-    ASL
-
-    CLC
-    ADC TMPPTR
-    STA TMPPTR
-    LDA #$00
-    ADC TMPPTR+1
-    STA TMPPTR+1
-
+    PHA
     TAY
-    LDA MATHPTR3
-    STA (TMPPTR), Y
-    INY
-    LDA MATHPTR4
+    PLA
+
     STA (TMPPTR), Y
     RTS
 
