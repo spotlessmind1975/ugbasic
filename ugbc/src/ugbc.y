@@ -1827,7 +1827,10 @@ exponential:
         $$ = sprite_init( _environment, $3, $5 )->name;
     }
     | CSPRITE OP Identifier CP {
-        $$ = csprite_init( _environment, $3 )->name;
+        $$ = csprite_init( _environment, $3, NULL )->name;
+    }
+    | CSPRITE OP Identifier OP_COMMA Identifier CP {
+        $$ = csprite_init( _environment, $3, $5 )->name;
     }
     | MOB OP expr CP {
         $$ = mob_init( _environment, $3, NULL, NULL )->name;
@@ -2355,6 +2358,9 @@ sprite_definition_action_expression:
   }
   | HORIZONTAL COMPRESS {
       sprite_compress_horizontal_var( _environment, ((Environment *)_environment)->currentSprite );
+  }
+  | REPLACE Identifier CP {
+      sprite_init( _environment, $2, ((Environment *)_environment)->currentSprite )->name;
   };
 
 sprite_definition_expression:
@@ -3849,6 +3855,7 @@ statement:
   } palette_definition
   | WAIT wait_definition
   | SPRITE sprite_definition
+  | CSPRITE sprite_definition
   | BITMAP bitmap_definition
   | TEXTMAP textmap_definition
   | TILEMAP tilemap_definition
@@ -4359,6 +4366,8 @@ statement:
         var->originalBitmap = expr->originalBitmap;
         var->originalWidth = expr->originalWidth;
         var->originalHeight = expr->originalHeight;
+        var->originalColors = expr->originalColors;
+        memcpy( var->originalPalette, expr->originalPalette, MAX_PALETTE * sizeof( RGBi ) );
         var->memoryArea = expr->memoryArea;
         var->arrayDimensions = expr->arrayDimensions;
         memcpy( var->arrayDimensionsEach, expr->arrayDimensionsEach, MAX_ARRAY_DIMENSIONS * sizeof( int ) );

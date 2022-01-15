@@ -49,12 +49,22 @@
 
 @target c64
 </usermanual> */
-Variable * sprite_init( Environment * _environment, char * _image ) {
+Variable * sprite_init( Environment * _environment, char * _image, char * _sprite ) {
 
-    Variable * spriteCount = variable_retrieve( _environment, "SPRITECOUNT" );
-    Variable * index = variable_temporary( _environment, VT_SPRITE, "(sprite index)" );
-    variable_move_naked( _environment, spriteCount->name, index->name );
-    cpu_inc( _environment, spriteCount->realName );
+    Variable * index;
+
+    if ( _sprite ) {
+
+        index = variable_retrieve_or_define( _environment, _sprite, VT_SPRITE, 0 );
+
+    } else {
+
+        Variable * spriteCount = variable_retrieve( _environment, "SPRITECOUNT" );
+        index = variable_temporary( _environment, VT_SPRITE, "(sprite index)" );
+        variable_move_naked( _environment, spriteCount->name, index->name );
+        cpu_inc( _environment, spriteCount->realName );
+
+    }
 
     Variable * image = variable_retrieve( _environment, _image );
 

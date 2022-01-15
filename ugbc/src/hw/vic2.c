@@ -1289,7 +1289,6 @@ static Variable * vic2_image_converter_bitmap_mode_standard( Environment * _envi
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = colorUsed;
-    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
 
     int i, j, k;
 
@@ -1318,6 +1317,8 @@ static Variable * vic2_image_converter_bitmap_mode_standard( Environment * _envi
         strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
         // printf("%d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
     }
+
+    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
 
     int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_STANDARD );
 
@@ -1414,7 +1415,6 @@ static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = colorUsed;
-    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
 
     int i, j, k;
 
@@ -1498,6 +1498,8 @@ static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _
             }
         }
     }
+
+    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
 
     int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_MULTICOLOR );
     
@@ -1621,7 +1623,6 @@ static Variable * vic2_image_converter_tilemap_mode_standard( Environment * _env
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = colorUsed;
-    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
 
     int i, j, k;
 
@@ -1650,6 +1651,8 @@ static Variable * vic2_image_converter_tilemap_mode_standard( Environment * _env
         strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
         // printf("%d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
     }
+
+    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
 
     int bufferSize;
     
@@ -1885,7 +1888,6 @@ Variable * vic2_sprite_converter( Environment * _environment, char * _source, in
     
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = colorUsed;
-    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
 
     int i, j, k;
 
@@ -1915,6 +1917,8 @@ Variable * vic2_sprite_converter( Environment * _environment, char * _source, in
         // printf("%d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
     }
 
+    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
+    
     int bufferSize = 64;
 
     // printf("bufferSize = %d\n", bufferSize );

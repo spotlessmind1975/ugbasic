@@ -836,7 +836,6 @@ static Variable * ef936x_image_converter_bitmap_mode_standard( Environment * _en
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = colorUsed;
-    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
 
     int i, j, k;
 
@@ -865,6 +864,8 @@ static Variable * ef936x_image_converter_bitmap_mode_standard( Environment * _en
         strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
         // printf("%d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
     }
+
+    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
 
     int bufferSize = 2 + ( ( _frame_width >> 3 ) * _frame_height );
     // printf("bufferSize = %d\n", bufferSize );
@@ -957,7 +958,6 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = colorUsed;
-    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
 
     if ( ! commonPalette ) {
 
@@ -997,6 +997,8 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
 
     }
  
+    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
+
     int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_40_COLUMN );
     
     char * buffer = malloc ( bufferSize );
@@ -1097,7 +1099,6 @@ static Variable * ef936x_image_converter_multicolor_mode4( Environment * _enviro
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = colorUsed;
-    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
 
     int i, j, k;
 
@@ -1137,6 +1138,8 @@ static Variable * ef936x_image_converter_multicolor_mode4( Environment * _enviro
 
     }
  
+    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
+
     int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_BITMAP_4 );
     
     char * buffer = malloc ( bufferSize );
@@ -1240,7 +1243,6 @@ static Variable * ef936x_image_converter_multicolor_mode16( Environment * _envir
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = colorUsed;
-    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
 
     if ( ! commonPalette ) {
 
@@ -1338,6 +1340,8 @@ static Variable * ef936x_image_converter_multicolor_mode16( Environment * _envir
         // }
 
     }
+
+    memcpy( result->originalPalette, commonPalette, MAX_PALETTE * sizeof( RGBi ) );
 
     int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_BITMAP_16 );
     

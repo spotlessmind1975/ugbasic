@@ -1453,6 +1453,8 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                                     target->originalBitmap = source->originalBitmap;
                                     target->originalWidth = source->originalWidth;
                                     target->originalHeight = source->originalHeight;
+                                    target->originalColors = source->originalColors;
+                                    memcpy( target->originalPalette, source->originalPalette, MAX_PALETTE * sizeof( RGBi ) );
                                 case VT_BUFFER:
                                     if ( target->size == 0 ) {
                                         target->size = source->size;
@@ -1599,6 +1601,8 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
                     target->originalBitmap = source->originalBitmap;
                     target->originalWidth = source->originalWidth;
                     target->originalHeight = source->originalHeight;
+                    target->originalColors = source->originalColors;
+                    memcpy( target->originalPalette, source->originalPalette, MAX_PALETTE * sizeof( RGBi ) );
                 case VT_IMAGES:
                 case VT_ARRAY:
                 case VT_BUFFER: {

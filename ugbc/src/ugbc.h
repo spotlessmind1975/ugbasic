@@ -1957,7 +1957,7 @@ void                    const_define_numeric( Environment * _environment, char *
 void                    const_define_string( Environment * _environment, char * _name, char * _value );
 void                    const_emit( Environment * _environment, char * _name );
 Constant *              constant_find( Constant * _constant, char * _name );
-Variable *              csprite_init( Environment * _environment, char * _image );
+Variable *              csprite_init( Environment * _environment, char * _image, char * _sprite );
 
 //----------------------------------------------------------------------------
 // *D*

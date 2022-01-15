@@ -890,7 +890,6 @@ static Variable * ted_image_converter_bitmap_mode_standard( Environment * _envir
     
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = colorUsed;
-    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
 
     int i, j, k;
 
@@ -920,6 +919,8 @@ static Variable * ted_image_converter_bitmap_mode_standard( Environment * _envir
         // printf("%d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
     }
  
+    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
+
     int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_STANDARD );
     // printf("bufferSize = %d\n", bufferSize );
 
@@ -1009,7 +1010,6 @@ static Variable * ted_image_converter_multicolor_mode_standard( Environment * _e
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = colorUsed;
-    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
 
     int i, j, k;
 
@@ -1039,6 +1039,8 @@ static Variable * ted_image_converter_multicolor_mode_standard( Environment * _e
         // printf("%d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
     }
 
+    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
+    
     int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_MULTICOLOR );
     
     char * buffer = malloc ( bufferSize );

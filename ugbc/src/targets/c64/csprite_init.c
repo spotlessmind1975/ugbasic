@@ -49,20 +49,33 @@
 
 @target c64
 </usermanual> */
-Variable * csprite_init( Environment * _environment, char * _image ) {
+Variable * csprite_init( Environment * _environment, char * _image, char * _sprite ) {
 
-    Variable * index = variable_temporary( _environment, VT_SPRITE, "(sprite index)" );
-    Variable * startIndex = variable_temporary( _environment, VT_SPRITE, "(sprite index)" );
+    Variable * index;
+    Variable * startIndex;
+
+    Variable * spriteCount;
+
+    if ( _sprite ) {
+        index = variable_retrieve_or_define( _environment, _sprite );   
+        startIndex = variable_temporary( _environment, VT_SPRITE, "(sprite index)" );
+        cpu_move_8bit( _environment, index->realName, startIndex->realName );
+        cpu_math_and_const_8bit( _environment, startIndex->realName, 0x0f );
+        Variable * spriteCount = variable_retrieve( _environment, "SPRITECOUNT" );
+        spriteCount = variable_retrieve( _environment, "SPRITECOUNT" );
+
+    } else {
+        index = variable_temporary( _environment, VT_SPRITE, "(sprite index)" );   
+        startIndex = variable_temporary( _environment, VT_SPRITE, "(sprite index)" );
+        variable_move_naked( _environment, spriteCount->name, startIndex->name );
+        spriteCount = variable_retrieve( _environment, "SPRITECOUNT" );
+    }
 
     Variable * image = variable_retrieve( _environment, _image );
 
-    Variable * spriteCount = variable_retrieve( _environment, "SPRITECOUNT" );
-
-    variable_move_naked( _environment, spriteCount->name, startIndex->name );
-
     int i = 0;
 
-    for (i=0; i<image->originalColors; ++i ) {
+    for (i=1; i<image->originalColors; ++i ) {
         variable_move_naked( _environment, spriteCount->name, index->name );
         Variable * realImage = sprite_converter( _environment, image->originalBitmap, image->originalWidth, image->originalHeight, &image->originalPalette[i] );
         vic2_sprite_data_from( _environment, index->name, realImage->name );

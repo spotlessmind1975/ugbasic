@@ -1559,7 +1559,6 @@ static Variable * gtia_image_converter_bitmap_mode_standard( Environment * _envi
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = colorUsed;
-    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
 
     int i, j, k;
 
@@ -1583,6 +1582,8 @@ static Variable * gtia_image_converter_bitmap_mode_standard( Environment * _envi
         palette[i].index = SYSTEM_PALETTE[colorIndex].index;
         strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
     }
+
+    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
 
     int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_ANTIC9 );
     char * buffer = malloc ( bufferSize );
@@ -1675,7 +1676,6 @@ static Variable * gtia_image_converter_multicolor_mode_standard( Environment * _
     int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = colorUsed;
-    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
 
     int i, j, k;
 
@@ -1802,6 +1802,8 @@ static Variable * gtia_image_converter_multicolor_mode_standard( Environment * _
         // }
 
     }
+
+    memcpy( result->originalPalette, commonPalette, MAX_PALETTE * sizeof( RGBi ) );
 
     int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_ANTIC8 );
     

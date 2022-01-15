@@ -1263,7 +1263,6 @@ static Variable * tms9918_image_converter_bitmap_mode_standard( Environment * _e
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = colorUsed;
-    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
 
     int i, j, k;
 
@@ -1349,6 +1348,8 @@ static Variable * tms9918_image_converter_bitmap_mode_standard( Environment * _e
             }
         }
     }
+
+    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
 
     int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_GRAPHIC2 );
     
@@ -1457,7 +1458,6 @@ Variable * tms9918_sprite_converter( Environment * _environment, char * _source,
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = colorUsed;
-    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
 
     int i, j, k;
 
@@ -1482,7 +1482,9 @@ Variable * tms9918_sprite_converter( Environment * _environment, char * _source,
         strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
     }
 
-    int bufferSize = ( ( _width >> 3 ) * _height ) + 1;
+    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
+
+    int bufferSize = ( ( _width >> 3 ) * _height ) + 3;
     
     char * buffer = malloc ( bufferSize );
     memset( buffer, 0, bufferSize );
@@ -1518,7 +1520,7 @@ Variable * tms9918_sprite_converter( Environment * _environment, char * _source,
 
             // Calculate the offset starting from the tile surface area
             // and the bit to set.
-            offset = (image_y * 8) + (image_x >> 3);
+            offset = (image_y * ( _width>>3 ) ) + (image_x >> 3);
 
             int minDistance = 0xffff;
             int colorIndex = 0;
@@ -1549,7 +1551,7 @@ Variable * tms9918_sprite_converter( Environment * _environment, char * _source,
         }
     }
 
-    *(buffer + ( ( _width >> 3 ) * _height )) = _color->index;
+    *(buffer + 2 + ( ( _width >> 3 ) * _height )) = _color->index | ( _color->index << 4 );
 
     if ( _environment->debugImageLoad ) {
         printf("\n" );

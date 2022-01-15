@@ -833,7 +833,6 @@ static Variable * vic1_image_converter_bitmap_mode_standard( Environment * _envi
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = colorUsed;
-    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
 
     int i, j, k;
 
@@ -862,6 +861,8 @@ static Variable * vic1_image_converter_bitmap_mode_standard( Environment * _envi
         strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
         // printf("%d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
     }
+
+    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
 
     int bufferSize = 2 + ( ( _frame_width >> 3 ) * _height ) + ( ( _frame_width >> 3 ) * ( _frame_height >> 3 ) );
     // printf("bufferSize = %d\n", bufferSize );
@@ -959,7 +960,6 @@ static Variable * vic1_image_converter_multicolor_mode_standard( Environment * _
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = colorUsed;
-    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
 
     int i, j, k;
 
@@ -988,6 +988,8 @@ static Variable * vic1_image_converter_multicolor_mode_standard( Environment * _
         strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
         // printf("%d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
     }
+
+    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
 
     int bufferSize = 2 + ( ( _frame_width >> 2 ) * _frame_height ) + 2 * ( ( _frame_width >> 2 ) * ( _frame_height >> 3 ) ) + 1;
     
@@ -1096,7 +1098,6 @@ static Variable * vic1_image_converter_tilemap_mode_standard( Environment * _env
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = colorUsed;
-    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
 
     int i, j, k;
 
@@ -1126,6 +1127,8 @@ static Variable * vic1_image_converter_tilemap_mode_standard( Environment * _env
         // printf("%d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
     }
 
+    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
+    
     int bufferSize;
     
     if ( colorUsed == 2 ) {

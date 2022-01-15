@@ -60,9 +60,9 @@ Variable * sprite_init( Environment * _environment, char * _image ) {
     } else {
 
         Variable * index = variable_temporary( _environment, VT_SPRITE, "(sprite index)" );
-
-        return index;
         
     }
 
+    return index;
+    
 }

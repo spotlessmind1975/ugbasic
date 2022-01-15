@@ -49,7 +49,7 @@
 
 @target c64
 </usermanual> */
-Variable * sprite_init( Environment * _environment, char * _image, char _sprite ) {
+Variable * sprite_init( Environment * _environment, char * _image, char * _sprite ) {
 
     Variable * index;
 
@@ -61,8 +61,8 @@ Variable * sprite_init( Environment * _environment, char * _image, char _sprite 
 
         Variable * index = variable_temporary( _environment, VT_SPRITE, "(sprite index)" );
 
-        return index;
-        
     }
+
+    return index;
 
 }

@@ -1081,7 +1081,6 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = colorUsed;
-    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
 
     int i, j, k;
 
@@ -1105,6 +1104,8 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
         palette[i].index = SYSTEM_PALETTE[colorIndex].index;
         strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
     }
+
+    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
 
     int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_RESOLUTION1 );
     // printf("bufferSize = %d\n", bufferSize );
@@ -1195,7 +1196,6 @@ static Variable * c6847_image_converter_multicolor_mode_standard( Environment * 
     RGBi * palette = malloc( sizeof( RGBi ) * MAX_PALETTE );
     int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
     result->originalColors = colorUsed;
-    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
 
     if ( ! commonPalette ) {
 
@@ -1234,6 +1234,8 @@ static Variable * c6847_image_converter_multicolor_mode_standard( Environment * 
         commonPalette = palette;
 
     }
+
+    memcpy( result->originalPalette, commonPalette, MAX_PALETTE * sizeof( RGBi ) );
 
     int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_COLOR1 );
     
