@@ -42,18 +42,13 @@
 </usermanual> */
 Variable * collision_to( Environment * _environment, int _sprite ) {
 
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(result)" );
-
-    return result;
+    FUNCTION_STUB( VT_BYTE );
 
 }
 
 Variable * collision_to_vars( Environment * _environment, char * _sprite ) {
 
-    // Safety check -- expression must exists (it should be always true)
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(result)" );
-
-    return result;
+    FUNCTION_STUB( VT_BYTE );
 
 }
 
