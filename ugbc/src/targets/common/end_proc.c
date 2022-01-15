@@ -92,11 +92,16 @@ void end_procedure( Environment * _environment, char * _value ) {
 
         char procedureEndedLabel[MAX_TEMPORARY_STORAGE]; sprintf(procedureEndedLabel, "%sended", _environment->procedureName );
         Variable * statusEnded = variable_temporary( _environment, VT_BYTE, "(status ended)" );
+        Variable * statusWaiting = variable_temporary( _environment, VT_BYTE, "(status waiting)" );
         Variable * status = variable_temporary( _environment, VT_BYTE, "(status)" );
         variable_store( _environment, statusEnded->name, PROTOTHREAD_STATUS_ENDED );
+        variable_store( _environment, statusWaiting->name, PROTOTHREAD_STATUS_WAITING );
         cpu_protothread_get_state( _environment, "PROTOTHREADCT", status->realName );
         cpu_compare_8bit( _environment, statusEnded->realName, status->realName, status->realName, 1 );
         cpu_bvneq( _environment, status->realName, procedureEndedLabel );
+        char protothreadLabelWaiting[MAX_TEMPORARY_STORAGE]; sprintf(protothreadLabelWaiting, "%spt%d", _environment->procedureName, 0 );
+        cpu_compare_8bit( _environment, statusWaiting->realName, status->realName, status->realName, 1 );
+        cpu_bvneq( _environment, status->realName, protothreadLabelWaiting );
         if ( _environment->protothreadStep > 1 ) {
             Variable * step = variable_temporary( _environment, VT_BYTE, "(dispatch)");
             Variable * index = variable_temporary( _environment, VT_BYTE, "(index)");
