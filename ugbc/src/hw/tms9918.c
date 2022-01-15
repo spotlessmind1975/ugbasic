@@ -71,10 +71,23 @@ static RGBi SYSTEM_PALETTE[] = {
  * @param _sprite_mask Sprite mask to use
  * @param _result Where to store the result
  */
-void tms9918_collision( Environment * _environment, char * _sprite_mask, char * _result ) {
-    
-    //todo
+Variable * tms9918_collision( Environment * _environment, char * _sprite ) {
 
+    Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(collision)" );
+
+    deploy( sprite, src_hw_tms9918_sprites_asm );
+    
+    if ( ! _environment->hasGameLoop ) {
+        outline0("CALL SPRITECOL");
+    } else {
+        outline0("CALL SPRITECOLNMI2");
+    }
+
+    outline1("LD (%s), A", result->realName )
+
+    return result;
+    
 }
 
 /**
@@ -126,7 +139,7 @@ void tms9918_border_color( Environment * _environment, char * _border_color ) {
         outline0("RET" );
         outhead1("%sskip:", label );
         outline0("CALL WAIT_VDP_HOOK" );
-        outline1("LD HL, %sskip", label );
+        outline1("LD HL, %s", label );
         outline0("CALL SET_VDP_HOOK0" );
         outline0("CALL WAIT_VDP_HOOK" );
     }
@@ -243,7 +256,7 @@ void tms9918_sprite_common_color( Environment * _environment, char * _index, cha
         outline0("RET" );
         outhead1("%sskip:", label );
         outline0("CALL WAIT_VDP_HOOK" );
-        outline1("LD HL, %sskip", label );
+        outline1("LD HL, %s", label );
         outline0("CALL SET_VDP_HOOK0" );
         outline0("CALL WAIT_VDP_HOOK" );
     }
@@ -729,7 +742,7 @@ void tms9918_screen_on( Environment * _environment ) {
         outline0("RET" );
         outhead1("%sskip:", label );
         outline0("CALL WAIT_VDP_HOOK" );
-        outline1("LD HL, %sskip", label );
+        outline1("LD HL, %s", label );
         outline0("CALL SET_VDP_HOOK0" );
         outline0("CALL WAIT_VDP_HOOK" );
     }
@@ -755,7 +768,7 @@ void tms9918_screen_off( Environment * _environment ) {
         outline0("RET" );
         outhead1("%sskip:", label );
         outline0("CALL WAIT_VDP_HOOK" );
-        outline1("LD HL, %sskip", label );
+        outline1("LD HL, %s", label );
         outline0("CALL SET_VDP_HOOK0" );
         outline0("CALL WAIT_VDP_HOOK" );
     }
@@ -1121,6 +1134,9 @@ void tms9918_initialization( Environment * _environment ) {
 
     variable_import( _environment, "SPRITECOUNT", VT_SPRITE, 0 );
     variable_global( _environment, "SPRITECOUNT" );
+
+    variable_import( _environment, "SPRITEXY", VT_BUFFER, SPRITE_COUNT * 2 );
+    variable_global( _environment, "SPRITEXY" );
 
     #if __coleco__
         variable_import( _environment, "VDP_HOOK", VT_BUFFER, 10 );

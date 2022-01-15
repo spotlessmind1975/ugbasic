@@ -223,6 +223,15 @@ SPRITEATNMI2SINGLE:
     INC DE
     LD A, H
     CALL VDPOUTCHAR
+    ; LD DE, HL
+    ; LD HL, SPRITEXY
+    ; LD D, 0
+    ; LD E, B
+    ; SLA E
+    ; ADD HL, DE
+    ; LD (HL), D
+    ; INC HL
+    ; LD (HL), E
     JP SPRITEATADONE
 
 SPRITEATADONE:
@@ -327,6 +336,37 @@ SPRITECOLORNMI2SINGLE:
 SPRITECOLORDONE:
     RET
 
+
+; SPRITE COLOR(B,C)
+if __coleco__
+
+SPRITECOL:
+    CALL WAIT_VDP_HOOK
+    LD HL, SPRITECOLNMI
+    CALL SET_VDP_HOOK
+    CALL WAIT_VDP_HOOK
+    RET
+
+SPRITECOLNMI:
+    CALL GET_VDP_HOOK
+
+else
+
+SPRITECOL:
+
+endif
+
+SPRITECOLNMI2:
+    CALL VDPREGIN
+    AND $20
+    CP 0
+    JR NZ, SPRITECOLNMI2YES
+    RET
+
+SPRITECOLNMI2YES:
+    LD A, $FF
+    RET
+
 SPRITEDECODEB:
     LD A, 0
     LD C, A
@@ -335,11 +375,11 @@ SPRITEDECODEB:
     JR C, SPRITEDECODEB0
     LD A, B
     AND $E0
-    SRA A
-    SRA A
-    SRA A
-    SRA A
-    SRA A
+    SRL A
+    SRL A
+    SRL A
+    SRL A
+    SRL A
     LD C, A
     LD A, B
     AND $1F
