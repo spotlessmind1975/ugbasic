@@ -1990,7 +1990,11 @@ Variable * vic2_sprite_converter( Environment * _environment, char * _source, in
 
     }
 
-    *(buffer+63) = _color->index;
+    if ( _color ) {
+        *(buffer+63) = _color->index;
+    } else {
+        *(buffer+63) = palette[1].index;
+    }
 
     // printf("----\n");
 
