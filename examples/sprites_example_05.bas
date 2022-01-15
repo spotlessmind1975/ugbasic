@@ -12,7 +12,7 @@ REM Questo esempio mostra come creare in automatico uno sprite multicolore,
 REM per avere più di un colore. Puoi avere sprite con fino a SPRITE COUNT
 REM colori indipendenti.
 
-BITMAP ENABLE (2)
+BITMAP ENABLE (16)
 
 spriteImageColor := IMAGE LOAD("examples/sprite_color.png")
 
