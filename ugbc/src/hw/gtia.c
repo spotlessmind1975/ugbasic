@@ -632,8 +632,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         // depend on whether the computer has a CTIA or GTIA chip, and the color of the background.
         // 40x24, 1 color
         case TILEMAP_MODE_ANTIC2:
-            _environment->screenWidth = 40;
-            _environment->screenHeight = 24;
+            _environment->screenWidth = 40 * _environment->fontWidth;
+            _environment->screenHeight = 24 * _environment->fontHeight;
             _environment->screenColors = 2;
             // 112	Blank 8 scan lines to provide for overscan
             DLI_BLANK( dliListCurrent, 8 );
@@ -678,8 +678,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         // (Internal # 97-122) are signed to register #1.
         // 20x24, 4 color
         case TILEMAP_MODE_ANTIC6:
-            _environment->screenWidth = 20;
-            _environment->screenHeight = 24;
+            _environment->screenWidth = 20 * _environment->fontWidth;
+            _environment->screenHeight = 24 * _environment->fontHeight;
             _environment->screenColors = 2;
             // 112	Blank 8 scan lines to provide for overscan
             DLI_BLANK( dliListCurrent, 8 );
@@ -717,8 +717,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         // Thus 12 rows of 20 characters are displayed on a full screen. Only ten rows fit on a split screen.
         // 20x12, 4 color
         case TILEMAP_MODE_ANTIC7:
-            _environment->screenWidth = 20;
-            _environment->screenHeight = 12;
+            _environment->screenWidth = 20 * _environment->fontWidth;
+            _environment->screenHeight = 12 * _environment->fontHeight;
             _environment->screenColors = 2;
             // 112	Blank 8 scan lines to provide for overscan
             DLI_BLANK( dliListCurrent, 8 );
@@ -758,8 +758,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         // allowing you to create lowercase characters with descenders.
         // 40x24, 4 color
         case TILEMAP_MODE_ANTIC3:
-            _environment->screenWidth = 40;
-            _environment->screenHeight = 24;
+            _environment->screenWidth = 40 * _environment->fontWidth;
+            _environment->screenHeight = 24 * _environment->fontHeight;
             _environment->screenColors = 2;
             // 112	Blank 8 scan lines to provide for overscan
             DLI_BLANK( dliListCurrent, 8 );
@@ -802,8 +802,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         // to form these characters.
         // 20x24, 4 color
         case TILEMAP_MODE_ANTIC4:
-            _environment->screenWidth = 20;
-            _environment->screenHeight = 24;
+            _environment->screenWidth = 20 * _environment->fontWidth;
+            _environment->screenHeight = 24 * _environment->fontHeight;
             _environment->screenColors = 4;
             // 112	Blank 8 scan lines to provide for overscan
             DLI_BLANK( dliListCurrent, 8 );
@@ -841,8 +841,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         // The character set data is still eight bytes high so ANTIC double plots each scan line.
         // 20x24, 4 color  
         case TILEMAP_MODE_ANTIC5:
-            _environment->screenWidth = 20;
-            _environment->screenHeight = 24;
+            _environment->screenWidth = 20 * _environment->fontWidth;
+            _environment->screenHeight = 24 * _environment->fontHeight;
             _environment->screenColors = 4;
             // 112	Blank 8 scan lines to provide for overscan
             DLI_BLANK( dliListCurrent, 8 );
@@ -882,9 +882,9 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     cpu_store_16bit( _environment, "CURRENTWIDTH", _environment->screenWidth );
     cpu_store_16bit( _environment, "CURRENTHEIGHT", _environment->screenHeight );
     cpu_store_8bit( _environment, "CURRENTTILES", _environment->screenTiles );
-    _environment->screenTilesWidth = _environment->screenWidth / 8;
+    _environment->screenTilesWidth = _environment->screenWidth / _environment->fontWidth;
     cpu_store_8bit( _environment, "CURRENTTILESWIDTH", _environment->screenTilesWidth );
-    _environment->screenTilesHeight = _environment->screenHeight / 8;
+    _environment->screenTilesHeight = _environment->screenHeight / _environment->fontHeight;
     cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight );
 
     cpu_store_16bit( _environment, "CLIPX1", 0) ;
