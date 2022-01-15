@@ -53,37 +53,46 @@ Variable * csprite_init( Environment * _environment, char * _image, char * _spri
 
     Variable * index;
     Variable * startIndex;
+    Variable * result = variable_temporary( _environment, VT_SPRITE, "(sprite index)" );   
 
     Variable * spriteCount;
 
     if ( _sprite ) {
-        index = variable_retrieve_or_define( _environment, _sprite );   
+        index = variable_retrieve_or_define( _environment, _sprite, VT_SPRITE, 0 );   
         startIndex = variable_temporary( _environment, VT_SPRITE, "(sprite index)" );
         cpu_move_8bit( _environment, index->realName, startIndex->realName );
         cpu_math_and_const_8bit( _environment, startIndex->realName, 0x0f );
         Variable * spriteCount = variable_retrieve( _environment, "SPRITECOUNT" );
         spriteCount = variable_retrieve( _environment, "SPRITECOUNT" );
-
     } else {
         index = variable_temporary( _environment, VT_SPRITE, "(sprite index)" );   
         startIndex = variable_temporary( _environment, VT_SPRITE, "(sprite index)" );
-        variable_move_naked( _environment, spriteCount->name, startIndex->name );
         spriteCount = variable_retrieve( _environment, "SPRITECOUNT" );
+        variable_move_naked( _environment, spriteCount->name, startIndex->name );
     }
 
     Variable * image = variable_retrieve( _environment, _image );
 
     int i = 0;
 
-    for (i=1; i<image->originalColors; ++i ) {
+    printf( ">>>>>>> %d\n", image->originalColors );
+    
+    for (i=0; i<image->originalColors; ++i ) {
+        if ( image->originalPalette[i].index == COLOR_BLACK ) continue;
+        printf( "********** %d\n", image->originalPalette[i].index );
         variable_move_naked( _environment, spriteCount->name, index->name );
         Variable * realImage = sprite_converter( _environment, image->originalBitmap, image->originalWidth, image->originalHeight, &image->originalPalette[i] );
         vic2_sprite_data_from( _environment, index->name, realImage->name );
         cpu_inc( _environment, spriteCount->realName );
+        cpu_inc( _environment, index->realName );
     }
 
-    cpu_combine_nibbles( _environment, startIndex->realName, index->realName, index->realName );
+    if ( _sprite ) {
+        variable_move_naked( _environment, index->realName, result->realName );
+    } else {
+        cpu_combine_nibbles( _environment, startIndex->realName, index->realName, result->realName );
+    }
 
-    return index;
+    return result;
 
 }

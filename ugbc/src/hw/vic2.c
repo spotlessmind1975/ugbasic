@@ -71,24 +71,23 @@ static RGBi SYSTEM_PALETTE[] = {
  * @param _sprite_mask Sprite mask to use
  * @param _result Where to store the result
  */
-void vic2_collision( Environment * _environment, char * _sprite_mask, char * _result ) {
+Variable * vic2_collision( Environment * _environment, char * _sprite ) {
 
-    // Generate unique label for ASM code.
+    _environment->bitmaskNeeded = 1;
+
+    deploy( sprite, src_hw_vic2_sprites_asm );
+
+    Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_SPRITE, 0 );
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(collision result)");
+
     MAKE_LABEL
 
-    // Check for collision using VIC-II registers
-    outline0("LDA $D01E");
-    outline1("AND %s", _sprite_mask);
-    cpu6502_beq(_environment, label);
+    outline1("LDA %s", sprite->realName);
+    outline0("STA MATHPTR3");
+    outline0("JSR SPRITECOL");
+    outline1("STA %s", result->realName);
 
-    outline0("LDA #$1");
-    outline1("STA %s", _result);
-    outline1("JMP %s_2", label);
-
-    outhead1("%s:", label);
-    outline0("LDA #0");
-    outline1("STA %s", _result);
-    outhead1("%s_2:", label);
+    return result;
 
 }
 
@@ -1991,7 +1990,7 @@ Variable * vic2_sprite_converter( Environment * _environment, char * _source, in
 
     }
 
-    *(buffer+63) = palette[1].index;
+    *(buffer+63) = _color->index;
 
     // printf("----\n");
 

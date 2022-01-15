@@ -86,10 +86,6 @@ Variable * collision_to( Environment * _environment, int _sprite ) {
 
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result)" );
 
-    char sprite[MAX_TEMPORARY_STORAGE]; sprintf(sprite, "#$%2.2x", _sprite);
-
-    vic2_collision( _environment, sprite, result->realName );
-
     return result;
 
 }
@@ -116,15 +112,7 @@ Variable * collision_to( Environment * _environment, int _sprite ) {
 </usermanual> */
 Variable * collision_to_vars( Environment * _environment, char * _sprite ) {
 
-    // Safety check -- expression must exists (it should be always true)
-    Variable * sprite = variable_retrieve( _environment, _sprite );
-
-    // Safety check -- expression must exists (it should be always true)
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(result)" );
-
-    vic2_collision( _environment, sprite->realName, result->realName );
-
-    return result;
+    return vic2_collision( _environment, _sprite );
 
 }
 

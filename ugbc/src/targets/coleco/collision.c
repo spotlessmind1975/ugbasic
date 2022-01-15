@@ -77,7 +77,7 @@ Variable * collision_to( Environment * _environment, int _sprite ) {
  * @return Variable* Temporary variable with the result of collision (0 = no 
  *                      collision, 1 = collision occurred)
  */
-Variable * collision_to_vars( Environment * _environment, char * _sprite ) {
+Variable * collision_to_vars( Environment * _environment, char * _sprite, char * _from, char * _to ) {
 
     // Safety check -- expression must exists (it should be always true)
     Variable * sprite = variable_retrieve( _environment, _sprite );
