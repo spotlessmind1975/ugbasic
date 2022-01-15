@@ -15,11 +15,13 @@ REM le performance sui sistemi che sono vincolati al vertical blank.
 
 BITMAP ENABLE (2)
 
-DEFINE TASK COUNT SPRITE COUNT 
+CONST spriteCount = IF(SPRITE COUNT>0,SPRITE COUNT,16)
 
-DIM sprites AS SPRITE (SPRITE COUNT)
-DIM x AS POSITION (SPRITE COUNT)
-DIM y AS POSITION (SPRITE COUNT)
+DEFINE TASK COUNT spriteCount
+
+DIM sprites AS SPRITE (spriteCount)
+DIM x AS POSITION (spriteCount)
+DIM y AS POSITION (spriteCount)
 
 spriteImage = IMAGE LOAD("examples/drop.png")
 
@@ -28,7 +30,7 @@ GLOBAL sprites,x,y,spriteImage
 drops = 0
 dropskip = (BYTE) ( SPRITE HEIGHT * 2 )
 
-FOR i=0 TO SPRITE COUNT-1
+FOR i=0 TO spriteCount-1
     sprites(i) = SPRITE(spriteImage)
 NEXT
 
@@ -44,7 +46,7 @@ BEGIN GAMELOOP
         LOOP
     END PROC    
 
-    IF drops < (SPRITE COUNT-1) THEN
+    IF drops < (spriteCount-1) THEN
         DEC dropskip
         IF dropskip = 0 THEN
             SPAWN dropDown
