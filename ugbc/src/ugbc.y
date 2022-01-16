@@ -4680,6 +4680,8 @@ int main( int _argc, char *_argv[] ) {
     _environment->outputFileType = OUTPUT_FILE_TYPE_PRG;
 #elif __msx1__
     _environment->outputFileType = OUTPUT_FILE_TYPE_ROM;
+#elif __coleco__
+    _environment->outputFileType = OUTPUT_FILE_TYPE_ROM;
 #endif
 
     while ((opt = getopt(_argc, _argv, "ae:c:Wo:Ie:l:EO:dL:C:VA:T:1p:")) != -1) {
@@ -4729,6 +4731,8 @@ int main( int _argc, char *_argv[] ) {
                         _environment->outputFileType = OUTPUT_FILE_TYPE_K7_NEW;
                     } else if ( strcmp( optarg, "tap") == 0 ) {
                         _environment->outputFileType = OUTPUT_FILE_TYPE_K7_NEW;
+                    } else if ( strcmp( optarg, "rom") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_ROM;
                     }
                     break;
                 case 'W':
