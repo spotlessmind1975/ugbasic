@@ -938,6 +938,7 @@ typedef struct _Deployed {
     int textHScroll;
     int textHScrollLine;
     int textHScrollScreen;
+    int scroll;
     int raster;
     int putimage;
     int getimage;
@@ -2188,6 +2189,7 @@ Variable *              screen_tiles_get_height( Environment * _environment );
 Variable *              screen_tiles_get_width( Environment * _environment );
 void                    screen_vertical_scroll( Environment * _environment, int _displacement );
 void                    screen_vertical_scroll_var( Environment * _environment, char * _displacement );
+void                    scroll( Environment * _environment, int _dx, int _dy );
 void                    select_case( Environment * _environment, char * _expression );
 void                    set_timer( Environment * _environment, char * _value );
 void                    shared( Environment * _environment );

@@ -4,14 +4,14 @@
 ;  * Copyright 2021-2022 Marco Spedaletti (asimov@mclink.it)
 ;  *
 ;  * Licensed under the Apache License, Version 2.0 (the "License");
-;  * you may not use this file eXcept in compliance with the License.
+;  * you may not use this file except in compliance with the License.
 ;  * You may obtain a copy of the License at
 ;  *
 ;  * http://www.apache.org/licenses/LICENSE-2.0
 ;  *
 ;  * Unless required by applicable law or agreed to in writing, software
 ;  * distributed under the License is distributed on an "AS IS" BASIS,
-;  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either eXpress or implied.
+;  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 ;  * See the License for the specific language governing permissions and
 ;  * limitations under the License.
 ;  *----------------------------------------------------------------------------
@@ -29,76 +29,84 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                           STARTUP ROUTINE ON VIC-II                         *
+;*                              SCROLL ON VIC-II                               *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-VIC2STARTUP:
-
-    SEI
-    LDX #$10
-    LDA #$33
-    STA $01
-    LDA #$D0
-    STA $FC
-    LDY #$00
-    STY $FB
-    LDA #$90
-    STA $FE
-    LDY #$00
-    STY $FD
-VIC2STARTUPL1:
-    LDA ($FB),Y
-    STA ($FD),Y
-    INY
-    BNE VIC2STARTUPL1
-    INC $FC
-    INC $FE
-    DEX
-    BNE VIC2STARTUPL1
-    LDA #$35
-    STA $01
-    CLI
-
-    ; SET_DATA_DIRECTION();
-    LDA $dd02
-    ORA #$03
-    STA $dd02
-
-    ; SET_BANK(2);
-    LDA $dd00
-    AND #$fc
-    ORA #$01
-    STA $dd00
-
-    ; SET_BACKGROUND_COLOR( MR_COLOR_BLACK );
+; SCROLL(MATHPTR0,MATHPTR1)
+SCROLL:
     LDA #0
-    STA $d021
+    STA XSCROLL
+    STA YSCROLL
 
-    ; SET_VIDEO(MR_SCREEN_DEFAULT);
-    LDA $d018
-    AND #$0f
-    ORA #$10
-    STA $d018
-
-    ; SET_BASIC_VIDEO(MR_SCREEN_DEFAULT);
-    AND #$84
-    STA $0288
-
-    ; SET_CHARSET(MR_TILESET_DEFAULT);
-    LDA $d018
-    AND #$f1
-    ORA #$08
-    STA $d018
-
-    ; SET STARTUP CURSOR POSITION    
+    LDA MATHPTR1
+    CMP #0
+    BNE SCROLLY
+    JMP SCROLLX
+SCROLLY:
+    CMP #$80
+    BCS SCROLLYUP
+SCROLLYDOWN:
+    LDA YSCROLLPOS
+    CMP #7
+    BEQ SCROLLYDOWN0
+    INC YSCROLLPOS
+    JMP SCROLLX
+SCROLLYDOWN0:
     LDA #0
-    STA $D3
-    LDA #0
-    STA $D6
+    STA YSCROLLPOS
+    LDA #$1
+    STA YSCROLL
+    JMP SCROLLX
+SCROLLYUP:
+    LDA YSCROLLPOS
+    CMP #0
+    BEQ SCROLLYUP0
+    DEC YSCROLLPOS
+    JMP SCROLLX
+SCROLLYUP0:
+    LDA #7
+    STA YSCROLLPOS
+    LDA #$FF
+    STA YSCROLL
+    JMP SCROLLX
 
+SCROLLX:
+    LDA MATHPTR0
+    CMP #0
+    BNE SCROLLXX
+    JMP SCROLLN
+SCROLLXX:
+    CMP #$80
+    BCS SCROLLXLEFT
+SCROLLXRIGHT:
+    LDA XSCROLLPOS
+    CMP #7
+    BEQ SCROLLXRIGHT0
+    INC XSCROLLPOS
+    JMP SCROLLN
+SCROLLXRIGHT0:
+    LDA #0
+    STA XSCROLLPOS
+    LDA #$1
+    STA XSCROLL
+    JMP SCROLLN
+SCROLLXLEFT:
+    LDA XSCROLLPOS
+    CMP #0
+    BEQ SCROLLXLEFT0
+    DEC XSCROLLPOS
+    JMP SCROLLN
+SCROLLXLEFT0:
+    LDA #7
+    STA XSCROLLPOS
+    LDA #$FF
+    STA XSCROLL
+    JMP SCROLLN
+
+SCROLLN:
     LDA $D011
     AND #%11111000;
     ORA YSCROLLPOS
@@ -107,5 +115,22 @@ VIC2STARTUPL1:
     AND #%11111000
     ORA XSCROLLPOS
     STA $D016
-    
+
+    LDA XSCROLL
+    BEQ SCROLLN2
+    CMP #$80
+    STA DIRECTION
+    JSR HSCROLLST
+
+SCROLLN2:
+    LDA YSCROLL
+    BEQ SCROLLN3
+    CMP #$80
+    BCS SCROLLNUP
+    JSR VSCROLLTDOWN
+    JMP SCROLLN3
+SCROLLNUP:
+    JSR VSCROLLTUP
+    JMP SCROLLN3
+SCROLLN3:
     RTS

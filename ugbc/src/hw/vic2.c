@@ -1121,6 +1121,15 @@ void vic2_initialization( Environment * _environment ) {
     variable_import( _environment, "CLIPY2", VT_POSITION, 199 );
     variable_global( _environment, "CLIPY2" );
 
+    variable_import( _environment, "XSCROLLPOS", VT_BYTE, 4 );
+    variable_global( _environment, "XSCROLLPOS" );
+    variable_import( _environment, "YSCROLLPOS", VT_BYTE, 4 );
+    variable_global( _environment, "YSCROLLPOS" );
+    variable_import( _environment, "XSCROLL", VT_BYTE, 0 );
+    variable_global( _environment, "XSCROLL" );
+    variable_import( _environment, "YSCROLL", VT_BYTE, 0 );
+    variable_global( _environment, "YSCROLL" );
+
     variable_import( _environment, "SPRITECOUNT", VT_SPRITE, 0 );
     variable_global( _environment, "SPRITECOUNT" );
 
@@ -2119,6 +2128,22 @@ void vic2_get_image( Environment * _environment, char * _image, char * _x, char 
     outline0("STA IMAGEY+1" );
 
     outline0("JSR GETIMAGE");
+
+}
+
+void vic2_scroll( Environment * _environment, int _dx, int _dy ) {
+
+    deploy( vic2vars, src_hw_vic2_vars_asm);
+    deploy( scroll, src_hw_vic2_scroll_asm);
+    deploy( textHScroll, src_hw_vic2_hscroll_text_asm );
+    deploy( vScrollTextDown, src_hw_vic2_vscroll_text_down_asm );
+    deploy( vScrollTextUp, src_hw_vic2_vscroll_text_up_asm );
+
+    outline1("LDA #$%2.2x", (unsigned char)(_dx&0xff) );
+    outline0("STA MATHPTR0" );
+    outline1("LDA #$%2.2x", (unsigned char)(_dy&0xff) );
+    outline0("STA MATHPTR1" );
+    outline0("JSR SCROLL");
 
 }
 

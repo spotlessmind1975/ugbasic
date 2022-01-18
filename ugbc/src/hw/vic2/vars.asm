@@ -59,6 +59,10 @@ TEXTWW:             .byte 3
 FONTWIDTH:          .byte 8
 FONTHEIGHT:         .byte 8
 CURRENTTILES:      .byte 255
+XSCROLLPOS:         .byte 4
+YSCROLLPOS:         .byte 4
+XSCROLL:            .byte 0
+YSCROLL:            .byte 0
 
 IMAGEX = $34
 IMAGEY = $36

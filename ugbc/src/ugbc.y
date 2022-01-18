@@ -88,6 +88,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> target targets
 %type <integer> protothread_definition
 %type <integer> on_targets
+%type <integer> scroll_definition_hdirection scroll_definition_vdirection
 %type <integer> image_load_flags image_load_flags1 image_load_flag
 %type <integer> images_load_flags images_load_flags1 images_load_flag
 %type <integer> put_image_flags put_image_flags1 put_image_flag
@@ -3816,6 +3817,36 @@ on_targets:
         $$ = $2;
     };
 
+scroll_definition_hdirection :
+    LEFT {
+        $$ = -1;
+    }
+    |
+    RIGHT {
+        $$ = 1;
+    };
+
+scroll_definition_vdirection :
+    UP {
+        $$ = -1;
+    }
+    |
+    DOWN {
+        $$ = 1;
+    };
+
+scroll_definition : 
+      scroll_definition_hdirection scroll_definition_vdirection {
+        scroll( _environment, $1, $2 );
+    }
+    | scroll_definition_hdirection {
+        scroll( _environment, $1, 0 );
+    }
+    | scroll_definition_vdirection {
+        scroll( _environment, 0, $1 );
+    }
+    ;
+
 palette_definition:
     OP_HASH const_expr {
         color( _environment, ((struct _Environment *)_environment)->paletteIndex++, $2 );
@@ -3922,6 +3953,7 @@ statement:
   }
   | HSCROLL hscroll_definition
   | VSCROLL vscroll_definition
+  | SCROLL scroll_definition
   | CMOVE cmove_definition
   | CUP {
       cmove_direct( _environment, 0, -1 );

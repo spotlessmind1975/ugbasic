@@ -170,6 +170,7 @@ void vic2_hscroll_line( Environment * _environment, int _direction );
 void vic2_hscroll_screen( Environment * _environment, int _direction );
 void vic2_text( Environment * _environment, char * _text, char * _text_size );
 void vic2_cline( Environment * _environment, char * _characters );
+void vic2_scroll( Environment * _environment, int _dx, int _dy );
 
 Variable * vic2_image_converter( Environment * _environment, char * _data, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags );
 Variable * vic2_sprite_converter( Environment * _environment, char * _data, int _width, int _height, RGBi * _color );
