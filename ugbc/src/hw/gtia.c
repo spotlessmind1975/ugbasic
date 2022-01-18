@@ -1333,7 +1333,7 @@ void gtia_initialization( Environment * _environment ) {
     variable_import( _environment, "CLIPY2", VT_POSITION, 199 );
     variable_global( _environment, "CLIPY2" );
 
-    gtia_tilemap_enable( _environment, 38, 24, 16 );
+    gtia_tilemap_enable( _environment, 40, 24, 1 );
 
     _environment->currentMode = 2;
 
