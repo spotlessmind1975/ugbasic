@@ -1333,6 +1333,8 @@ void gtia_initialization( Environment * _environment ) {
     variable_import( _environment, "CLIPY2", VT_POSITION, 199 );
     variable_global( _environment, "CLIPY2" );
 
+    gtia_tilemap_enable( _environment, 38, 24, 16 );
+
     _environment->currentMode = 2;
 
     gtia_cls( _environment );
@@ -2137,6 +2139,10 @@ void gtia_get_image( Environment * _environment, char * _image, char * _x, char 
     outline0("STA IMAGEY+1" );
 
     outline0("JSR GETIMAGE");
+
+}
+
+void gtia_scroll( Environment * _environment, int _dx, int _dy ) {
 
 }
 

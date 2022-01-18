@@ -62,7 +62,7 @@ void setup_embedded( Environment * _environment ) {
 
 void target_initialization( Environment * _environment ) {
 
-    MEMORY_AREA_DEFINE( MAT_RAM, 0xb000, 0xbfff );
+    // MEMORY_AREA_DEFINE( MAT_RAM, 0xb000, 0xbfff );
 
     variable_import( _environment, "EVERYSTATUS", VT_BYTE, 0 );
     variable_global( _environment, "EVERYSTATUS" );
