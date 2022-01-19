@@ -35,14 +35,14 @@
 
 #define         JOY_COUNT           2
 
-#define KEY_NONE					64
-#define KEY_ESC						52
-#define KEY_0						35 // ?
-#define KEY_1						56
-#define KEY_2						59
-#define KEY_3						8
-#define KEY_4						11
-#define KEY_5						16
+#define KEY_NONE					0
+#define KEY_ESC						27
+#define KEY_0						'0'
+#define KEY_1						'1'
+#define KEY_2						'2'
+#define KEY_3						'3'
+#define KEY_4						'4'
+#define KEY_5						'5'
 #define KEY_6						19
 #define KEY_7						24
 #define KEY_8						27

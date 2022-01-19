@@ -1253,4 +1253,8 @@ void ted_get_image( Environment * _environment, char * _image, char * _x, char *
 
 }
 
+void ted_scroll( Environment * _environment, int _dx, int _dy ) {
+
+}
+
 #endif
