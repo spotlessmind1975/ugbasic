@@ -40,11 +40,7 @@
 
 Variable * screen_tiles_get_width( Environment * _environment ) {
 
-    Variable * width = variable_temporary( _environment, VT_BYTE, "(result of get tiles width)");
-
-    MAKE_LABEL
-    
-    variable_store( _environment, width->name, 32 );
+    Variable * width = variable_retrieve( _environment, "CURRENTTILESWIDTH");
 
     return width;
 

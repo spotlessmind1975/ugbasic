@@ -40,11 +40,7 @@
 
 Variable * screen_tiles_get_height( Environment * _environment ) {
 
-    Variable * height = variable_temporary( _environment, VT_BYTE, "(result of get tiles height)");
-
-    MAKE_LABEL
-
-    variable_store( _environment, height->name, 24 );
+    Variable * height = variable_retrieve( _environment, "CURRENTTILESHEIGHT");
 
     return height;
 
