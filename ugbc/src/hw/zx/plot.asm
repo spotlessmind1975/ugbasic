@@ -119,7 +119,13 @@ PLOTLOOP2:
     LD A, B
     ADD A, L
     LD L, A
+    LD A, (_PAPER)
+    SLA A
+    SLA A 
+    SLA A
+    LD B, A
     LD A, (_PEN)
+    OR B
     LD (HL), A
     RET
 
