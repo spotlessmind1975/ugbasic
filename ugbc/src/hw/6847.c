@@ -1410,4 +1410,8 @@ void c6847_get_image( Environment * _environment, char * _image, char * _x, char
 
 }
 
+void c6847_scroll( Environment * _environment, int _dx, int _dy ) {
+
+}
+
 #endif
