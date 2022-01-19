@@ -1712,4 +1712,9 @@ void tms9918_get_image( Environment * _environment, char * _image, char * _x, ch
 
 }
 
+
+void tms9918_scroll( Environment * _environment, int _dx, int _dy ) {
+
+}
+
 #endif

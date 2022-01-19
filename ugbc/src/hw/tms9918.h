@@ -161,6 +161,7 @@ void tms9918_hscroll_line( Environment * _environment, int _direction );
 void tms9918_hscroll_screen( Environment * _environment, int _direction );
 void tms9918_text( Environment * _environment, char * _text, char * _text_size );
 void tms9918_cline( Environment * _environment, char * _characters );
+void tms9918_scroll( Environment * _environment, int _dx, int _dy );
 
 Variable * tms9918_image_converter( Environment * _environment, char * _data, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags );
 Variable * tms9918_sprite_converter( Environment * _environment, char * _data, int _width, int _height, RGBi * _color );
