@@ -2976,12 +2976,22 @@ div_definition :
         variable_move( _environment, variable_div( _environment, $1, $3, NULL )->name, $1 );
     }
     |
+    Identifier OP_COMMA OP_HASH const_expr {
+        if ( log2($4) != (int)log2($4) ) {
+            Variable * v = variable_retrieve( _environment, $1 );
+            Variable * temporary = variable_temporary( _environment, v->type, "(temp)" );
+            variable_store( _environment, v->name, $4 );
+            variable_move( _environment, variable_div( _environment, $1, temporary->name, NULL )->name, $1 );
+        } else {
+            variable_move( _environment, variable_div2_const( _environment, $1, log2($4) )->name, $1 );
+        }
+    }
+    |
     Identifier OP_COMMA expr OP_COMMA Identifier {
         variable_retrieve_or_define( _environment, $5, ((struct _Environment *)_environment)->defaultVariableType, 0);
         variable_move( _environment, variable_div( _environment, $1, $3, $5 )->name, $1 );
     }
     ;
-
 
 dimensions :
       const_expr {
