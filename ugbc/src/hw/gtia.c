@@ -1147,9 +1147,22 @@ void gtia_tiles_at( Environment * _environment, char * _address ) {
 
 void gtia_vertical_scroll( Environment * _environment, char * _displacement ) {
 
+
+
+    outline1("LDY %s", _displacement );
+    outline0("LDA #<YSCROLLOFFSET" );
+    outline0("STA TMPPTR" );
+    outline0("LDA #>YSCROLLOFFSET" );
+    outline0("STA TMPPTR+1" );
+    outline0("LDA (TMPPTR),Y" );
+    outline0("STA $D405" );
+
 }
 
 void gtia_horizontal_scroll( Environment * _environment, char * _displacement ) {
+
+    outline1("LDA %s", _displacement );
+    outline0("STA $D404" );
 
 }
 

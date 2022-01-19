@@ -84,6 +84,6 @@ void screen_horizontal_scroll_var( Environment * _environment, char * _displacem
 
     Variable * displacement = variable_retrieve( _environment, _displacement );
 
-    gtia_horizontal_scroll( _environment, _displacement );
+    gtia_horizontal_scroll( _environment, displacement->realName );
 
 }

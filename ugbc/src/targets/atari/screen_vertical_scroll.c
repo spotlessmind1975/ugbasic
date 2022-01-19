@@ -57,7 +57,7 @@ void screen_vertical_scroll( Environment * _environment, int _displacement ) {
 
     
 
-    char displacementString[MAX_TEMPORARY_STORAGE]; sprintf( displacementString, "#$%2.2x", _displacement );
+    char displacementString[MAX_TEMPORARY_STORAGE]; sprintf( displacementString, "#$%2.2x", ( _displacement - 4 ) > 0 ? ( _displacement - 4 ) : ( 4 - _displacement ) );
 
     gtia_vertical_scroll( _environment, displacementString );
 
@@ -79,8 +79,6 @@ void screen_vertical_scroll( Environment * _environment, int _displacement ) {
 @keyword SCREEN VERTICAL SCROLL
 </usermanual> */
 void screen_vertical_scroll_var( Environment * _environment, char * _displacement ) {
-
-    
 
     Variable * displacement = variable_retrieve( _environment, _displacement );
 

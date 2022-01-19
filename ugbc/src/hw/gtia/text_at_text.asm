@@ -36,6 +36,11 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 TEXTATTILEMODE:
+    LDA TEXTSIZE
+    BNE TEXTATTILEMODEGO
+    RTS
+
+TEXTATTILEMODEGO:
     LDA TEXTADDRESS
     STA COPYOFTEXTADDRESS
     LDA TEXTADDRESS+1

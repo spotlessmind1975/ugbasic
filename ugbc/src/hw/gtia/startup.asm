@@ -36,4 +36,7 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 GTIASTARTUP:
+    LDA #0
+    STA XCURSYS
+    STA YCURSYS
     RTS
