@@ -200,6 +200,7 @@ void zx_scanshift( Environment * _environment, char * _shifts );
 void zx_keyshift( Environment * _environment, char * _shifts );
 void zx_clear_key( Environment * _environment );
 void zx_back( Environment * _environment );
+void zx_scroll( Environment * _environment, int _dx, int _dy );
 
 #define         JOY_COUNT           0
 

@@ -529,4 +529,8 @@ void zx_get_image( Environment * _environment, char * _image, char * _x, char * 
     
 }
 
+void zx_scroll( Environment * _environment, int _dx, int _dy ) {
+    
+};
+
 #endif
