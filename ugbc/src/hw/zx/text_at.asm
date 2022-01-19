@@ -36,9 +36,9 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 TEXTAT:
-    LD A, (XCURS)
+    LD A, (XCURSYS)
     LD E, A
-    LD A, (YCURS)
+    LD A, (YCURSYS)
     LD D, A
 TEXTATL:
     LD A, (HL)
@@ -172,9 +172,9 @@ TEXTATNEXTCOL:
     DEC C
     JP NZ, TEXTATL
     LD A, D
-    LD (YCURS), A
+    LD (YCURSYS), A
     LD A, E
-    LD (XCURS), A
+    LD (XCURSYS), A
     RET
 
 TEXTATPC:
