@@ -93,111 +93,16 @@ void point_at( Environment * _environment, int _x, int _y ) {
  */
 void point_at_vars( Environment * _environment, char * _x, char * _y ) {
 
-    MAKE_LABEL
+    deploy( zxvars, src_hw_zx_vars_asm);
+    deploy( plot, src_hw_zx_plot_asm );
 
-    outline2("; POINT AT (%s,%s)", _x, _y);
+    Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
+    Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
 
-    Variable * y = variable_retrieve( _environment, _y );
-    Variable * x = variable_retrieve( _environment, _x );
-    Variable * clipX1 = variable_retrieve( _environment, "CLIPX1" );
-    Variable * clipX2 = variable_retrieve( _environment, "CLIPX2" );
-    Variable * clipY1 = variable_retrieve( _environment, "CLIPY1" );
-    Variable * clipY2 = variable_retrieve( _environment, "CLIPY2" );
-
-    outline1( "LD A,(%s)", clipX1->realName );
-    outline0( "LD B, A" );
-    outline1( "LD A,(%s)", clipX2->realName );
-    outline0( "LD D, A" );
-    outline1( "LD A,(%s)", x->realName );
-    outline0( "CMP B" );
-    outline1( "JP C, %sclipped", label );
-    outline0( "CMP D" );
-    outline1( "JR Z, %snoclipped", label );
-    outline1( "JP NC, %sclipped", label );
-    outhead1( "%snoclipped:", label );
-    outline1( "LD A,(%s)", clipY1->realName );
-    outline0( "LD B, A" );
-    outline1( "LD A,(%s)", clipY2->realName );
-    outline0( "LD D, A" );
-    outline1( "LD A,(%s)", y->realName );
-    outline0( "CMP B" );
-    outline1( "JP C, %sclipped", label );
-    outline0( "CMP D" );
-    outline1( "JR Z, %snoclipped2", label );
-    outline1( "JP NC, %sclipped", label );
-    outhead1( "%snoclipped2:", label );
-
-    outline1( "LD A,(%s)", x->realName );
-    outline0( "AND $7");
-    outline0( "LD B, A");
-    outline0( "LD A, $8");
-    outline0( "SUB B");
-    outline0( "LD B, A");
-    outline0( "LD E, 1");
-    outhead1( "%s:", label );
-    outline0( "DEC B");
-    outline1( "JR Z,%s_2", label);
-    outline0( "SLA E");
-    outline1( "JMP %s", label);
-    outhead1( "%s_2:", label );
-
-    outline1( "LD A,(%s)", y->realName );
-    outline0( "LD B, A");
-    outline1( "LD A,(%s)", x->realName );
-    outline0( "LD C, A");
-
-    outline0( "LD A,B");
-    outline0( "AND %00000111");
-    outline0( "OR %01000000");
-    outline0( "LD H,A");
-    outline0( "LD A,B");
-    outline0( "RRA");
-    outline0( "RRA");
-    outline0( "RRA");
-    outline0( "AND %00011000");
-    outline0( "OR H");
-    outline0( "LD H,A");
-    outline0( "LD A,B");
-    outline0( "RLA");
-    outline0( "RLA");
-    outline0( "AND %11100000");
-    outline0( "LD L,A");
-    outline0( "LD A,C");
-    outline0( "RRA");
-    outline0( "RRA");
-    outline0( "RRA");
-    outline0( "AND %00011111");
-    outline0( "OR L");
-    outline0( "LD L,A");
-
-    outline0( "LD A,(HL)");
-    outline0( "OR E");
-    outline0( "LD (HL),A");
-
-    outline1("LD HL,(%s)", x->realName );
-    outline0("SRA H" );
-    outline0("RR L" );
-    outline0("SRA H" );
-    outline0("RR L" );
-    outline0("SRA H" );
-    outline0("RR L" );
-    outline0("LD DE,HL");
-
-    outline1("LD HL,(%s)", y->realName );
-    outline0("SLA L" );
-    outline0("RL H" );
-    outline0("SLA L" );
-    outline0("RL H" );
-    outline0("ADD HL,DE" );
-    outline0("LD DE,(COLORMAPADDRESS)");
-    outline0("ADD HL,DE" );
-    outline0("LD A,(_PEN)" );
-    outline0("LD B,A" );
-    outline0("LD A,(HL)" );
-    outline0("AND $f8" );
-    outline0("OR A,B" );
-    outline0("LD (HL),A" );
-
-    outhead1( "%sclipped:", label );
+    outline1("LD A,(%s)", x->realName );
+    outline0("LD H, A");
+    outline1("LD A,(%s)", y->realName );
+    outline0("LD L, A");
+    outline0("CALL PLOT");
 
 }
