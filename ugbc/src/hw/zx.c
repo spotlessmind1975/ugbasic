@@ -262,6 +262,12 @@ void zx_initialization( Environment * _environment ) {
     
     _environment->currentRgbConverterFunction = rgbConverterFunction;
 
+    _environment->screenWidth = 256;
+    _environment->screenHeight = 192;
+    _environment->fontWidth = 8;
+    _environment->fontHeight = 8;
+    _environment->screenColors = 8;
+
 }
 
 void zx_finalization( Environment * _environment ) {
@@ -530,7 +536,7 @@ void zx_get_image( Environment * _environment, char * _image, char * _x, char * 
 }
 
 void zx_scroll( Environment * _environment, int _dx, int _dy ) {
-    
+
 };
 
 #endif
