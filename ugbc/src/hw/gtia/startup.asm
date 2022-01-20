@@ -39,4 +39,6 @@ GTIASTARTUP:
     LDA #0
     STA XCURSYS
     STA YCURSYS
+    STA $D404
+    STA $D405
     RTS
