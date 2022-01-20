@@ -198,7 +198,10 @@ typedef enum _VariableType {
     VT_SPRITE = 19,
 
     /** TILE (basic character sized graphic) */
-    VT_TILE = 20
+    VT_TILE = 20,
+
+    /** TILES (rectagled group of character sized graphics) */
+    VT_TILES = 21
 
 } VariableType;
 

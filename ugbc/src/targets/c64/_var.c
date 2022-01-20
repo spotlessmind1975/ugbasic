@@ -116,7 +116,13 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         outline1("%s: .res 1", variable->realName);
                     }
                     break;
-                case VT_IMAGE:
+                case VT_TILES:
+                    if ( variable->memoryArea ) {
+                        // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
+                    } else {
+                        outline1("%s: .res 4", variable->realName);
+                    }
+                    break;                case VT_IMAGE:
                 case VT_IMAGES:
                 case VT_BUFFER:
                     if ( ! variable->absoluteAddress ) {
@@ -223,6 +229,9 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
         case VT_TILE:
         case VT_MOB:
             outline0("   .byte 0" );
+            break;
+        case VT_TILES:
+            outline0("   .byte 0, 0, 0, 0" );
             break;
         case VT_IMAGE:
         case VT_IMAGES:

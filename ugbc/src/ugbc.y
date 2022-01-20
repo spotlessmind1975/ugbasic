@@ -3050,6 +3050,9 @@ datatype :
     | TILE {
         $$ = VT_TILE;
     }
+    | TILES {
+        $$ = VT_TILES;
+    }
     | BUFFER {
         $$ = VT_BUFFER;
     };

@@ -451,6 +451,7 @@ Variable * variable_define_local( Environment * _environment, char * _name, Vari
             case VT_DSTRING:
             case VT_MOB:
             case VT_TILE:
+            case VT_TILES:
             case VT_SPRITE:
             case VT_BUFFER:
             case VT_IMAGE:
@@ -752,6 +753,7 @@ Variable * variable_array_type( Environment * _environment, char *_name, Variabl
  * - `VT_MOB`
  * - `VT_SPRITE`
  * - `VT_TILE`
+ * - `VT_TILES`
  * 
  * @param _environment Current calling environment
  * @param _type Type of the variable to define
@@ -938,6 +940,8 @@ Variable * variable_store( Environment * _environment, char * _destination, unsi
                     size *= 1;
                 } else if ( destination->arrayType == VT_TILE ) {
                     size *= 1;
+                } else if ( destination->arrayType == VT_TILES ) {
+                    size *= 4;
                 } else {
                     CRITICAL_DATATYPE_UNSUPPORTED("array(1)", DATATYPE_AS_STRING[destination->arrayType]);
                 }
@@ -1464,6 +1468,17 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                                     break;
                             }
                             break;
+                        case VT_TILES:
+                            switch( target->type ) {
+                                case VT_TILES: {
+                                    cpu_move_32bit( _environment, source->realName, target->realName );
+                                    break;
+                                }
+                                default:
+                                    CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
+                                    break;
+                            }
+                            break;
                         case VT_IMAGE:
                             switch( target->type ) {
                                 case VT_IMAGE:
@@ -1618,6 +1633,17 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
                     switch( target->type ) {
                         case VT_TILE: {
                             cpu_move_8bit( _environment, source->realName, target->realName );
+                            break;
+                        }
+                        default:
+                            CRITICAL_MOVE_NAKED_UNSUPPORTED( DATATYPE_AS_STRING[target->type]);
+                            break;
+                    }
+                    break;
+                case VT_TILES:
+                    switch( target->type ) {
+                        case VT_TILES: {
+                            cpu_move_16bit( _environment, source->realName, target->realName );
                             break;
                         }
                         default:
@@ -4236,6 +4262,9 @@ void variable_move_array( Environment * _environment, char * _array, char * _val
          case VT_DSTRING:
             offset = variable_mul2_const( _environment, offset->name, 0 );
             break;
+         case VT_TILES:
+            offset = variable_mul2_const( _environment, offset->name, 2 );
+            break;
          default:
             offset = variable_mul2_const( _environment, offset->name, ( VT_BITWIDTH( array->arrayType ) >> 3 ) - 1 );
             break;
@@ -4246,6 +4275,9 @@ void variable_move_array( Environment * _environment, char * _array, char * _val
     Variable * value = variable_cast( _environment, _value, array->arrayType );
 
     switch( array->arrayType ) {
+        case VT_TILES:
+            cpu_move_32bit_indirect( _environment, value->realName, offset->realName );
+            break;
         case VT_TILE:
         case VT_SPRITE:
             cpu_move_8bit_indirect( _environment, value->realName, offset->realName );
@@ -4335,6 +4367,17 @@ Variable * variable_move_from_array( Environment * _environment, char * _array )
 
             break;
         }
+         case VT_TILES:{
+
+            offset = variable_mul2_const( _environment, offset->name, 2 );
+
+            cpu_math_add_16bit_with_16bit( _environment, offset->realName, array->realName, offset->realName );
+
+            cpu_move_32bit_indirect2( _environment, offset->realName, result->realName );
+
+            break;
+
+         }
          case VT_TILE:
          case VT_SPRITE: {
 
