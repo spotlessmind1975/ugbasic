@@ -75,7 +75,10 @@ char DATATYPE_AS_STRING[][16] = {
     "THREAD",
     "IMAGES",
     "CHAR",
-    "SPRITE"
+    "SPRITE",
+    "TILE",
+    "TILES",
+    "TILESET"
 };
 
 char OUTPUT_FILE_TYPE_AS_STRING[][16] = {
@@ -450,9 +453,9 @@ Variable * variable_define_local( Environment * _environment, char * _name, Vari
             case VT_STRING:
             case VT_DSTRING:
             case VT_MOB:
-            case VT_TILE:
-            case VT_TILESET:
-            case VT_TILES:
+            // case VT_TILE:
+            // case VT_TILESET:
+            // case VT_TILES:
             case VT_SPRITE:
             case VT_BUFFER:
             case VT_IMAGE:

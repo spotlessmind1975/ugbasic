@@ -211,6 +211,7 @@ typedef enum _VariableType {
 #define MAX_ARRAY_DIMENSIONS            256
 #define MAX_PARAMETERS                  256
 #define MAX_PALETTE                     256
+#define MAX_TILESETS                    256
 #define MAX_NESTED_ARRAYS               16
 #define MAX_PROCEDURES                  4096
 #define PROTOTHREAD_DEFAULT_COUNT       16

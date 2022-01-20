@@ -59,7 +59,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token SQR TI CONST VBL POKE NOP FILL IN POSITIVE DEFINE ATARI ATARIXL C64 DRAGON DRAGON32 DRAGON64 PLUS4 ZX 
 %token FONT VIC20 PARALLEL YIELD SPAWN THREAD TASK IMAGES FRAME FRAMES XY YX ROLL MASKED USING TRANSPARENCY
 %token OVERLAYED CASE ENDSELECT OGP CGP ARRAY NEW GET DISTANCE TYPE MUL DIV RGB SHADES HEX PALETTE
-%token BAR XGRAPHIC YGRAPHIC XTEXT YTEXT COLUMNS XGR YGR CHAR RAW SEPARATOR MSX MSX1 COLECO CSPRITE
+%token BAR XGRAPHIC YGRAPHIC XTEXT YTEXT COLUMNS XGR YGR CHAR RAW SEPARATOR MSX MSX1 COLECO CSPRITE TILESET
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -1383,6 +1383,14 @@ exponential:
       }      
     | SQR OP factor CP {
         $$ = sqroot( _environment, $3 )->name;
+      }
+    | NEW TILESET {
+        Variable * index = variable_temporary( _environment, VT_TILESET, "(tileset)");
+        cpu_store_8bit( _environment, index->realName, ((struct _Environment *)_environment )->tilesetCount );
+        ((struct _Environment *)_environment )->tilesets[((struct _Environment *)_environment )->tilesetCount] = malloc( sizeof( TileDescriptors ) );
+        memset( ((struct _Environment *)_environment )->tilesets[((struct _Environment *)_environment )->tilesetCount], 0, sizeof( TileDescriptors ) );
+        ++((struct _Environment *)_environment )->tilesetCount;
+        $$ = index->name;
       }
     | NEW IMAGE OP const_expr OP_COMMA const_expr CP {        
         $$ = new_image( _environment, $4, $6, ((struct _Environment *)_environment)->currentMode )->name;
