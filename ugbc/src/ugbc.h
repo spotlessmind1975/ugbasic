@@ -201,7 +201,10 @@ typedef enum _VariableType {
     VT_TILE = 20,
 
     /** TILES (rectagled group of character sized graphics) */
-    VT_TILES = 21
+    VT_TILES = 21,
+
+    /** TILESET (a set of tiles) */
+    VT_TILESET = 22
 
 } VariableType;
 
@@ -1392,6 +1395,16 @@ typedef struct _Environment {
     Offsetting * offsetting;
 
     TileDescriptors * descriptors;
+
+    /**
+     * Actual number of tilesets defined
+     */
+    int tilesetCount;
+
+    /**
+     * Data of each tileset
+     */
+    TileDescriptors * tilesets[MAX_TILESETS];
 
     /**
      * Debug during LOAD IMAGE.
