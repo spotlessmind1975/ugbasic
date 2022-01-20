@@ -45,8 +45,8 @@
 ; COPYOFBITMAPADDRESS: DEFW $0000
 ; COPYOFCOLORMAPADDRESS: DEFW $0000
 ; TABCOUNT:   DEFB    4
-; XCURS:      DEFB    0
-; YCURS:      DEFB    0
+; XCURSYS:      DEFB    0
+; YCURSYS:      DEFB    0
 ; EMPTYTILE:  DEFB   0
 ; EVERYSTATUS:DEFB   0
 ; XCURSYS:      DEFB    0
@@ -97,8 +97,8 @@
 ;     LD (TABCOUNT), A
 
 ;     LD A, 0
-;     LD (XCURS), A
-;     LD (YCURS), A
+;     LD (XCURSYS), A
+;     LD (YCURSYS), A
 ;     LD (EVERYSTATUS), A
 ;     LD (XCURSYS), A
 ;     LD (YCURSYS), A
