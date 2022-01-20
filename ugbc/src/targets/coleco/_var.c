@@ -106,6 +106,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         outhead0("section code_user");
                     }
                     break;
+                case VT_TILE:
                 case VT_SPRITE:
                 case VT_MOB:
                     if ( variable->memoryArea ) {

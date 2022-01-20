@@ -195,7 +195,10 @@ typedef enum _VariableType {
     VT_CHAR = 18,
 
     /** SPRITE (basic hardware movable objects) */
-    VT_SPRITE = 19
+    VT_SPRITE = 19,
+
+    /** TILE (basic character sized graphic) */
+    VT_TILE = 20
 
 } VariableType;
 

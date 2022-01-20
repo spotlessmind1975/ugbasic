@@ -107,6 +107,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         outline1("%s: .res 1", variable->realName);
                     }
                     break;
+                case VT_TILE:
                 case VT_SPRITE:
                 case VT_MOB:
                     if ( variable->memoryArea ) {
@@ -220,6 +221,7 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
         case VT_DSTRING:
         case VT_MOB:
         case VT_SPRITE:
+        case VT_TILE:
             outline0("   .byte 0" );
             break;
         case VT_IMAGE:

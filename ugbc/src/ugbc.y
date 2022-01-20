@@ -3047,6 +3047,9 @@ datatype :
     | SPRITE {
         $$ = VT_SPRITE;
     }
+    | TILE {
+        $$ = VT_TILE;
+    }
     | BUFFER {
         $$ = VT_BUFFER;
     };

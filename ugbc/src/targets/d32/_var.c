@@ -129,6 +129,13 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         outhead1("%s rzb 1", variable->realName);
                     }   
                     break;
+                case VT_TILE:
+                    if ( variable->memoryArea ) {
+                        outhead2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
+                    } else {
+                        outhead1("%s rzb 1", variable->realName);
+                    }   
+                    break;
                 case VT_IMAGE:
                 case VT_IMAGES:
                 case VT_BUFFER:
