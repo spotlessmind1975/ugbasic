@@ -95,8 +95,6 @@ void target_initialization( Environment * _environment ) {
         exit(EXIT_FAILURE);
     }
 
-    linker_setup( _environment );
-
     outhead0(".segment \"BASIC\"");
     outline0(".byte $01, $12, $0B, $12, $00, $00, $9E, $38, $31, $39, $32, $00, $00, $00, $00");
     outhead0(".segment \"CODE\"");

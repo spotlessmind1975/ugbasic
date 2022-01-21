@@ -91,8 +91,6 @@ void target_initialization( Environment * _environment ) {
         exit(EXIT_FAILURE);
     }
 
-    linker_setup( _environment );
-
     outhead0(".segment \"CODE\"");
 
     deploy( vars, src_hw_plus4_vars_asm);

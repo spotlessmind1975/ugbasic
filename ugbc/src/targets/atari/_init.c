@@ -94,8 +94,6 @@ void target_initialization( Environment * _environment ) {
         exit(EXIT_FAILURE);
     }
 
-    linker_setup( _environment );
-
     outhead0(".include \"atari.inc\"");
     outhead0(".segment \"CODE\"");
     outhead0(".proc MAINENTRY");

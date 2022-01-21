@@ -69,6 +69,7 @@ void end_compilation( Environment * _environment ) {
     target_finalization( _environment );
 
     if ( _environment->configurationFileName ) {
+        linker_setup( _environment );
         linker_cleanup( _environment );
         fclose(_environment->configurationFile);
     }
