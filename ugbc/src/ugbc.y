@@ -89,6 +89,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> protothread_definition
 %type <integer> on_targets
 %type <integer> scroll_definition_hdirection scroll_definition_vdirection
+%type <integer> tile_load_flags tile_load_flags1 tile_load_flag
 %type <integer> image_load_flags image_load_flags1 image_load_flag
 %type <integer> images_load_flags images_load_flags1 images_load_flag
 %type <integer> put_image_flags put_image_flags1 put_image_flag
@@ -612,6 +613,20 @@ image_load_flag :
         $$ = FLAG_OVERLAYED;
     };
 
+tile_load_flag :
+    FLIP X {
+        $$ = FLAG_FLIP_X;
+    }
+    | FLIP Y {
+        $$ = FLAG_FLIP_Y;
+    }
+    | FLIP XY {
+        $$ = FLAG_FLIP_X | FLAG_FLIP_Y;
+    }
+    | FLIP YX {
+        $$ = FLAG_FLIP_X | FLAG_FLIP_Y;
+    };
+
 put_image_flag :
     WITH TRANSPARENCY {
         $$ = FLAG_TRANSPARENCY;
@@ -654,6 +669,14 @@ image_load_flags1 :
         $$ = $1 | $2;
     };
 
+tile_load_flags1 :
+    tile_load_flag {
+        $$ = $1;
+    }
+    | tile_load_flag tile_load_flags1 {
+        $$ = $1 | $2;
+    };
+
 images_load_flags1 :
     images_load_flag {
         $$ = $1;
@@ -679,6 +702,14 @@ using_background :
     } 
     | BACKGROUND const_color_enumeration {
         $$ = $2;
+    };
+
+tile_load_flags :
+    {
+        $$ = 0;    
+    } 
+    | tile_load_flags1 {
+        $$ = $1;
     };
 
 image_load_flags :
@@ -1443,7 +1474,13 @@ exponential:
     | LOAD IMAGE OP String AS String OP_COMMA Integer CP image_load_flags  using_transparency using_background  {
         $$ = image_load( _environment, $4, $6, $8, $10, $11, $12 )->name;
       }
-   | SIZE OP expr CP {
+    | TILE LOAD OP String CP tile_load_flags {
+        $$ = tile_load( _environment, $4, $6 )->name;
+      }
+    | LOAD TILE OP String CP tile_load_flags {
+        $$ = tile_load( _environment, $4, $6 )->name;
+      }
+    | SIZE OP expr CP {
         Variable * v = variable_retrieve( _environment, $3 );
         switch( v->type ) {
             case VT_IMAGE:
@@ -2760,6 +2797,9 @@ put_definition_expression:
     }
     | IMAGE expr FRAME expr put_image_flags {
         put_image( _environment, $2, "XGR", "YGR", $4, $5 );
+    }
+    | TILE expr AT optional_x OP_COMMA optional_y {
+        put_tile( _environment, $2, $4, $6 );
     }
     ;
 

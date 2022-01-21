@@ -955,6 +955,7 @@ typedef struct _Deployed {
     int mob;
     int mobcs;
     int protothread;
+    int puttile;
 
     Embedded embedded;
 
@@ -997,6 +998,9 @@ typedef struct _TileData {
 
 typedef struct _TileDescriptors {
 
+    int                 first;
+    int                 firstFree;
+    int                 lastFree;
     int                 count;
 
     TileDescriptor *    descriptor[256];
@@ -1574,6 +1578,11 @@ typedef struct _Environment {
 #define CRITICAL_INVALID_INPUT_CURSOR( d ) CRITICAL2i("E109 - invalid cursor character for INPUT", d);
 #define CRITICAL_CANNOT_CALCULATE_SPRITE_WIDTH( ) CRITICAL("E110 - cannot calculate SPRITE WIDTH statically" );
 #define CRITICAL_CANNOT_CALCULATE_SPRITE_HEIGHT( ) CRITICAL("E111 - cannot calculate SPRITE HEIGHT statically" );
+#define CRITICAL_CANNOT_ALLOCATE_MORE_TILE( ) CRITICAL("E112 - cannot allocate one more tile on tileset" );
+#define CRITICAL_TILE_LOAD_MISSING_FILE(f) CRITICAL2("E113 - TILE LOAD missing file", f );
+#define CRITICAL_TILE_LOAD_UNKNOWN_FORMAT(f) CRITICAL2("E114 - TILE LOAD file format unknown", f );
+#define CRITICAL_TILE_INVALID_WIDTH( w ) CRITICAL2i("E115 - invalid width for tile, must be 8 pixels", w );
+#define CRITICAL_TILE_INVALID_HEIGHT( h ) CRITICAL2i("E116 - invalid height for tile, must be 8 pixels", h );
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
 #define WARNING2i( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%i) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -2162,6 +2171,7 @@ void                    print_newline( Environment * _environment );
 void                    print_question_mark( Environment * _environment );
 void                    print_tab( Environment * _environment, int _new_line );
 void                    put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _flags );
+void                    put_tile( Environment * _environment, char * _tile, char * _x, char * _y );
 
 //----------------------------------------------------------------------------
 // *Q*
@@ -2265,6 +2275,8 @@ void                    textmap_at( Environment * _environment, int _address );
 void                    textmap_at_var( Environment * _environment, char * _address );
 void                    tilemap_disable( Environment * _environment );
 void                    tilemap_enable( Environment * _environment, int _width, int _height, int _colors );
+int                     tile_allocate( TileDescriptors * _tiles, char * _data );
+Variable *              tile_load( Environment * _environment, char * _filename, int _flags );
 void                    tiles_at( Environment * _environment, int _address );
 void                    tiles_at_var( Environment * _environment, char * _address );
 

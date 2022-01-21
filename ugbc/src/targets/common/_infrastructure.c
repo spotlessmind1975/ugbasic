@@ -5221,6 +5221,22 @@ int calculate_exact_tile( TileDescriptor * _tile, TileDescriptors * _tiles ) {
 
 }
 
+int tile_allocate( TileDescriptors * _tiles, char * _data ) {
+
+    if ( _tiles->firstFree == _tiles->lastFree ) {
+        return -1;
+    }
+
+    memcpy( _tiles->data[_tiles->firstFree].data, _data, 8 );
+
+    _tiles->descriptor[_tiles->firstFree] = calculate_tile_descriptor( &_tiles->data[_tiles->firstFree] );
+
+    ++_tiles->count;
+
+    return _tiles->firstFree++;
+
+}
+
 Variable * parse_buffer_definition( Environment * _environment, char * _buffer, VariableType _type ) {
 
     char * buffer = malloc( strlen( _buffer ) / 2 );
