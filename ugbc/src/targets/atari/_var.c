@@ -338,9 +338,9 @@ void variable_cleanup( Environment * _environment ) {
 
                 variable_cleanup_entry( _environment, variable );
 
-            } else if ( actual->type == BT_STRINGS ) {
-                cfgline3("# BANK %s %s AT $%4.4x", BANK_TYPE_AS_STRING[actual->type], actual->name, actual->address);
-                cfgline2("%s:   load = MAIN,     type = ro,  optional = yes, start = $%4.4x;", actual->name, actual->address);
+            // } else if ( actual->type == BT_STRINGS ) {
+                // cfgline3("# BANK %s %s AT $%4.4x", BANK_TYPE_AS_STRING[actual->type], actual->name, actual->address);
+                // cfgline2("%s:   load = MAIN,     type = ro,  optional = yes, start = $%4.4x;", actual->name, actual->address);
             } else {
 
             }
@@ -349,17 +349,27 @@ void variable_cleanup( Environment * _environment ) {
     }    
 
     if ( _environment->descriptors ) {
-        outhead0(".segment \"UDCCHAR\"" );
+        outhead0("UDCCHAR:" );
         int i=0,j=0;
-        for(i=0;i<256;++i) {
+        for(i=0;i<_environment->descriptors->count;++i) {
             outline1("; $%2.2x ", i);
             out0(".byte " );
             for(j=0;j<7;++j) {
-                out1("$%2.2x,", ((unsigned char)_environment->descriptors->data[i].data[j]) );
+                out1("$%2.2x,", ((unsigned char)_environment->descriptors->data[_environment->descriptors->first+i].data[j]) );
             }
-            outline1("$%2.2x", ((unsigned char)_environment->descriptors->data[i].data[j]) );
+            outline1("$%2.2x", ((unsigned char)_environment->descriptors->data[_environment->descriptors->first+i].data[j]) );
         }
-    }    
+        outhead0(".segment \"CODE\"" );
+        outhead0("GTIAUDCCHAR:" );
+        char startAddress[MAX_TEMPORARY_STORAGE]; sprintf( startAddress, "$B000+%4.4x", _environment->descriptors->first );
+        cpu6502_mem_move_direct_size( _environment, "UDCCHAR", startAddress, _environment->descriptors->count*8 );
+        outline0("LDA #$B0" );
+        outline0("STA $2F4" );
+        outline0("RTS" );
+    } else {
+        outhead0("GTIAUDCCHAR:" );
+        outline0("RTS" );
+    }
 
     if ( _environment->memoryAreas ) {
         MemoryArea * memoryArea = _environment->memoryAreas;
