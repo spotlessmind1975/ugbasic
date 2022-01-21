@@ -1324,6 +1324,7 @@ void gtia_initialization( Environment * _environment ) {
 #endif
 
     outline0("JSR GTIASTARTUP");
+    outline0("JSR GTIAUDCCHAR");
 
     variable_import( _environment, "CURRENTMODE", VT_BYTE, 0 );
     variable_global( _environment, "CURRENTMODE" );
@@ -2098,6 +2099,22 @@ void gtia_put_image( Environment * _environment, char * _image, char * _x, char 
     outline0("STA IMAGEY+1" );
 
     outline0("JSR PUTIMAGE");
+
+}
+
+void gtia_put_tile( Environment * _environment, char * _tile, char * _x, char * _y ) {
+
+    deploy( gtiavars, src_hw_gtia_vars_asm);
+    deploy( puttile, src_hw_gtia_put_tile_asm );
+
+    outline1("LDA %s", _tile );
+    outline0("STA TILET" );
+    outline1("LDA %s", _x );
+    outline0("STA TILEX" );
+    outline1("LDA %s", _y );
+    outline0("STA TILEY" );
+
+    outline0("JSR PUTTILE");
 
 }
 

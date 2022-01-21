@@ -93,6 +93,8 @@
 #define BITMAP_MODE_GRAPHIC2        2           // Graphics II Mode
 #define BITMAP_MODE_MULTICOLOR      3           // Multicolor Mode
 
+#define BITMAP_MODE_DEFAULT     BITMAP_MODE_GRAPHIC2
+
 #define SPRITE_COUNT                32
 #define SPRITE_WIDTH                8
 #define SPRITE_HEIGHT               8

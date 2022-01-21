@@ -111,6 +111,8 @@
 #define BITMAP_MODE_BITMAP_16       3
 #define BITMAP_MODE_PAGE            4
 
+#define BITMAP_MODE_DEFAULT     BITMAP_MODE_BITMAP_4
+
 #define SPRITE_COUNT                0
 #define SPRITE_WIDTH                0
 #define SPRITE_HEIGHT               0

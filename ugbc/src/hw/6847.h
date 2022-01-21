@@ -85,6 +85,8 @@
 #define BITMAP_MODE_COLOR6          13      // Color Graphics 6	128 × 192	4	6144
 #define BITMAP_MODE_RESOLUTION6     14      // Resolution Graphics 6	256 × 192	1 + Black	6144
 
+#define BITMAP_MODE_DEFAULT     BITMAP_MODE_RESOLUTION6
+
 // (2) SAM_Vx are three pairs of addresses (V0-V2), and poking any value to
 // EVEN addresses sets bit Vx off (0) in Video Display Generator (VDG)
 // circuitry. Poking a value to ODD addresses sets bit on (1) in VDG circuit.

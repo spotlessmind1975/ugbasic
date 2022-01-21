@@ -68,6 +68,8 @@
 #define BITMAP_MODE_STANDARD        1           // Standard Bitmap Mode     128 x 64 x 8
 #define BITMAP_MODE_EXTENDED        2           // Extended Bitmap Mode     128 x 128 x 8
 
+#define BITMAP_MODE_DEFAULT     BITMAP_MODE_STANDARD
+
 #define TILEMAP_MODE_STANDARD       0           // Standard Character Mode        22 x 23 x 8
 
 #define SPRITE_COUNT                0

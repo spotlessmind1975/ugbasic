@@ -180,6 +180,8 @@
 // The character set data is still eight bytes high so ANTIC double plots each scan line.
 #define TILEMAP_MODE_ANTIC5         5       // 20x24, 4 color
 
+#define BITMAP_MODE_DEFAULT     BITMAP_MODE_ANTIC11
+
 #define COLOR_COUNT         255
 
 #define SPRITE_COUNT                8
