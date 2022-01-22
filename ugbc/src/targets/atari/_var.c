@@ -361,7 +361,7 @@ void variable_cleanup( Environment * _environment ) {
         }
         outhead0(".segment \"CODE\"" );
         outhead0("GTIAUDCCHAR:" );
-        char startAddress[MAX_TEMPORARY_STORAGE]; sprintf( startAddress, "$B000+%4.4x", _environment->descriptors->first );
+        char startAddress[MAX_TEMPORARY_STORAGE]; sprintf( startAddress, "$B000+$%4.4x", ( _environment->descriptors->first * 8) );
         cpu6502_mem_move_direct_size( _environment, "UDCCHAR", startAddress, _environment->descriptors->count*8 );
         outline0("LDA #$B0" );
         outline0("STA $2F4" );
