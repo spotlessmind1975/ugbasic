@@ -59,6 +59,13 @@ void put_tile( Environment * _environment, char * _tile, char * _x, char * _y ) 
     Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
     Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
 
-    gtia_put_tile( _environment, tile->realName, x->realName, y->realName );
+    switch( tile->type) {
+        case VT_TILE:
+            gtia_put_tile( _environment, tile->realName, x->realName, y->realName );
+            break;
+        case VT_TILES:
+            gtia_put_tiles( _environment, tile->realName, x->realName, y->realName );
+            break;
+    }
 
 }

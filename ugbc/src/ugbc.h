@@ -2277,6 +2277,7 @@ void                    tilemap_disable( Environment * _environment );
 void                    tilemap_enable( Environment * _environment, int _width, int _height, int _colors );
 int                     tile_allocate( TileDescriptors * _tiles, char * _data );
 Variable *              tile_load( Environment * _environment, char * _filename, int _flags );
+Variable *              tiles_load( Environment * _environment, char * _filename, int _flags );
 void                    tiles_at( Environment * _environment, int _address );
 void                    tiles_at_var( Environment * _environment, char * _address );
 

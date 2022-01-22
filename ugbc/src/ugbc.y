@@ -1480,6 +1480,12 @@ exponential:
     | LOAD TILE OP String CP tile_load_flags {
         $$ = tile_load( _environment, $4, $6 )->name;
       }
+    | TILES LOAD OP String CP tile_load_flags {
+        $$ = tiles_load( _environment, $4, $6 )->name;
+      }
+    | LOAD TILES OP String CP tile_load_flags {
+        $$ = tiles_load( _environment, $4, $6 )->name;
+      }
     | SIZE OP expr CP {
         Variable * v = variable_retrieve( _environment, $3 );
         switch( v->type ) {

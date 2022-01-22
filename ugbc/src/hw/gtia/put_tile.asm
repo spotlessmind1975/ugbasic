@@ -38,6 +38,8 @@
 TILEX = $92
 TILEY = $93
 TILET = $94
+TILEW = $95
+TILEH = $96
 
 ; ----------------------------------------------------------------------------
 ; - Put tile on tilemap
@@ -72,8 +74,31 @@ PUTTILEL1:
     ADC TMPPTR
     STA TMPPTR
 
-    LDA TILET
+PUTTILEL2A:
+    LDX TILEW
     LDY #0
+PUTTILEL2:
+    LDA TILET
     STA (TMPPTR),Y
+    INC TILET
+    INY
+    DEX
+    BNE PUTTILEL2
 
+    LDX TILEH
+    CPX #1
+    BEQ PUTTILEE
+
+    CLC
+    LDA CURRENTTILESWIDTH
+    ADC TMPPTR
+    STA TMPPTR
+    LDA #0
+    ADC TMPPTR
+    STA TMPPTR
+
+    DEC TILEH
+    BNE PUTTILEL2A
+
+PUTTILEE:
     RTS
