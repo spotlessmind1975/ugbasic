@@ -173,9 +173,15 @@ Variable * tiles_load( Environment * _environment, char * _filename, int _flags,
     int z = 0, a = 1;
 
     if ( _flags & FLAG_ROLL_X ) {
-        a = width;
+        a = a * width;
         source = image_enlarge_right( _environment, source, width, height, 8 );
         width += 8;
+    }
+
+    if ( _flags & FLAG_ROLL_Y ) {
+        a = a * height;
+        source = image_enlarge_bottom( _environment, source, width, height, 8 );
+        height += 8;
     }
 
     for( z=0; z<a; ++z ) {
@@ -197,6 +203,9 @@ Variable * tiles_load( Environment * _environment, char * _filename, int _flags,
         if ( _flags & FLAG_ROLL_X ) {
             source = image_roll_x_right( _environment, source, width, height );
         }
+        if ( _flags & FLAG_ROLL_Y ) {
+            source = image_roll_y_down( _environment, source, width, height );
+        }
     }
 
     if ( a > 1 ) {
@@ -205,7 +214,14 @@ Variable * tiles_load( Environment * _environment, char * _filename, int _flags,
         index->originalHeight = height;
     }
 
-    cpu_store_32bit( _environment, index->realName, firstTile | ( ( width >> 3 ) << 8 ) | ( ( height >> 3 ) << 16 ) | ( a << 24 ) );
+    cpu_store_32bit( _environment, index->realName,
+        firstTile | 
+        ( ( width >> 3 ) << 8 ) | 
+        ( ( height >> 3 ) << 16 ) | 
+        ( a << 24 ) | 
+        ( _flags & FLAG_ROLL_Y ? (1<<31) : (0) ) | 
+        ( _flags & FLAG_ROLL_X ? (1<<30) : (0) ) 
+        );
 
     stbi_image_free(source);
 

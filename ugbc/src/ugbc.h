@@ -1886,6 +1886,7 @@ typedef struct _Environment {
 #define FLAG_FLIP_Y         2
 #define FLAG_ROLL_X         4
 #define FLAG_OVERLAYED      8
+#define FLAG_ROLL_Y         16
 
 #define FLAG_TRANSPARENCY   1
 
@@ -2077,8 +2078,10 @@ void                    image_converter_asserts( Environment * _environment, int
 Variable *              image_get_height( Environment * _environment, char * _image );
 Variable *              image_get_width( Environment * _environment, char * _image );
 char *                  image_enlarge_right( Environment * _environment, char * _source, int _width, int _height, int _delta );
+char *                  image_enlarge_bottom( Environment * _environment, char * _source, int _width, int _height, int _delta );
 char *                  image_roll_x_left( Environment * _environment, char * _source, int _width, int _height );
 char *                  image_roll_x_right( Environment * _environment, char * _source, int _width, int _height );
+char *                  image_roll_y_down( Environment * _environment, char * _source, int _width, int _height );
 Variable *              images_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _frame_width, int _frame_height, int _flags, int _transparent_color, int _background_color );
 void                    ink( Environment * _environment, char * _expression );
 Variable *              inkey( Environment * _environment );

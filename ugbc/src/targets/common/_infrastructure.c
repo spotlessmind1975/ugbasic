@@ -5435,6 +5435,61 @@ char * image_roll_x_left( Environment * _environment, char * _source, int _width
 
 }
 
+char * image_roll_y_down( Environment * _environment, char * _source, int _width, int _height ) {
+
+    int x,y;
+
+    // FILE * f = fopen("/tmp/picture1.bin", "wb" );
+    // fwrite( _source, _width * _height * 3, 1, f );
+    // fclose( f );
+
+    // printf("*** %d,%d\n", _width, _height );
+
+    for( x=0; x < _width; ++x ) {
+
+        unsigned char * pixel2r = _source + ( ( _height - 1 ) * _width * 3 ) + x * 3;
+        unsigned char * pixel2g = _source + ( ( _height - 1 ) * _width * 3 ) + x * 3 + 1;
+        unsigned char * pixel2b = _source + ( ( _height - 1 ) * _width * 3 ) + x * 3 + 2;
+
+        unsigned char r, g, b;
+        
+        r = *pixel2r;
+        g = *pixel2g;
+        b = *pixel2b;
+
+        for( y=( _height - 2); y > -1; --y ) {
+            unsigned char * pixel1r = _source + ( y * _width * 3 ) + ( x * 3 );
+            unsigned char * pixel1g = _source + ( y * _width * 3 ) + ( x * 3 ) + 1;
+            unsigned char * pixel1b = _source + ( y * _width * 3 ) + ( x * 3 ) + 2;
+            unsigned char * pixel2r = _source + ( (y+1) * _width * 3 ) + ( x * 3 );
+            unsigned char * pixel2g = _source + ( (y+1) * _width * 3 ) + ( x * 3 ) + 1;
+            unsigned char * pixel2b = _source + ( (y+1) * _width * 3 ) + ( x * 3 ) + 2;
+            
+            // printf( "%d,%d : %2.2x%2.2x%2.2x -> %2.2x%2.2x%2.2x\n", y, x, (unsigned char) *pixel2r, (unsigned char) *pixel2g, (unsigned char) *pixel2b, (unsigned char) *pixel1r, (unsigned char) *pixel1g, (unsigned char) *pixel1b );
+
+            *pixel2r = (unsigned char) *pixel1r;
+            *pixel2g = (unsigned char) *pixel1g;
+            *pixel2b = (unsigned char) *pixel1b;
+
+        }
+
+        unsigned char * pixel1r = _source + x * 3;
+        unsigned char * pixel1g = _source + x * 3 + 1;
+        unsigned char * pixel1b = _source + x * 3 + 2;
+
+        *pixel1r = r;
+        *pixel1g = g;
+        *pixel1b = b;
+    }
+
+    // f = fopen("/tmp/picture2.bin", "wb" );
+    // fwrite( _source, _width * _height * 3, 1, f );
+    // fclose( f );
+
+    return _source;
+
+}
+
 char * image_enlarge_right( Environment * _environment, char * _source, int _width, int _height, int _delta ) {
 
     int x,y;
@@ -5469,6 +5524,19 @@ char * image_enlarge_right( Environment * _environment, char * _source, int _wid
     // f = fopen("/tmp/picture2.bin", "wb" );
     // fwrite( _source, _width * _height * 3, 1, f );
     // fclose( f );
+
+    return destination;
+
+}
+
+char * image_enlarge_bottom( Environment * _environment, char * _source, int _width, int _height, int _delta ) {
+
+    int x,y;
+
+    int size = ( _width ) * 3 * ( _height + _delta);
+    char * destination = malloc( size );
+    memset( destination, 0, size );
+    memcpy( destination, _source, ( _width ) * 3 * ( _height ) );
 
     return destination;
 

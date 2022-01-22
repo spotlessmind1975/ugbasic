@@ -628,6 +628,15 @@ tile_load_flag :
     }
     | ROLL X {
         $$ = FLAG_ROLL_X;
+    }
+    | ROLL Y {
+        $$ = FLAG_ROLL_Y;
+    }
+    | ROLL XY {
+        $$ = FLAG_ROLL_Y | FLAG_ROLL_X;
+    }
+    | ROLL YX {
+        $$ = FLAG_ROLL_Y | FLAG_ROLL_X;
     };
 
 put_image_flag :
@@ -648,13 +657,21 @@ images_load_flag :
     | FLIP YX {
         $$ = FLAG_FLIP_X | FLAG_FLIP_Y;
     }
-    | ROLL X {
-        $$ = FLAG_ROLL_X;
-    }
     | OVERLAYED {
         $$ = FLAG_OVERLAYED;
     }
-    ;
+    | ROLL X {
+        $$ = FLAG_ROLL_X;
+    }
+    | ROLL Y {
+        $$ = FLAG_ROLL_Y;
+    }
+    | ROLL XY {
+        $$ = FLAG_ROLL_Y | FLAG_ROLL_X;
+    }
+    | ROLL YX {
+        $$ = FLAG_ROLL_Y | FLAG_ROLL_X;
+    };
 
 put_image_flags1 :
     put_image_flag {
