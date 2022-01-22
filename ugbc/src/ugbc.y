@@ -3965,6 +3965,11 @@ palette_definition:
         }
     } OP_COMMA palette_definition;
 
+use_definition:
+    TILESET expr {
+        use_tileset( _environment, $2 );
+    };
+
 statement:
     BANK bank_definition
   | RASTER raster_definition
@@ -3998,6 +4003,7 @@ statement:
   | BAR bar_definition
   | POLYLINE polyline_definition
   | CLIP clip_definition
+  | USE use_definition
   | SET LINE expr {
       variable_move( _environment, $3, "LINE" );
   }

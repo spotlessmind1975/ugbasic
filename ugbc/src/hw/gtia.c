@@ -2141,6 +2141,17 @@ void gtia_put_tiles( Environment * _environment, char * _tile, char * _x, char *
 
 }
 
+void gtia_use_tileset( Environment * _environment, char * _tileset ) {
+
+    deploy( gtiavars, src_hw_gtia_vars_asm);
+    deploy( puttile, src_hw_gtia_put_tile_asm );
+
+    outline1("LDA %s", _tileset );
+
+    outline0("JSR USETILESET");
+
+}
+
 void gtia_wait_vbl( Environment * _environment ) {
 
     deploy( vbl, src_hw_gtia_vbl_asm);
