@@ -260,5 +260,6 @@ void gtia_get_image( Environment * _environment, char * _image, char * _x, char 
 
 void gtia_put_tile( Environment * _environment, char * _image, char * _x, char * _y );
 void gtia_put_tiles( Environment * _environment, char * _image, char * _x, char * _y );
+void gtia_use_tiles( Environment * _environment, char * _tileset );
 
 #endif
