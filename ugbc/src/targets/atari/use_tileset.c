@@ -60,7 +60,7 @@ Il comando ''USE TILESET'' permette di cambiare il tileset attivo.
 
 @target atari
 </usermanual> */
-Variable * use_tileset( Environment * _environment, char * _tileset ) {
+void use_tileset( Environment * _environment, char * _tileset ) {
 
     Variable * tileset = variable_retrieve( _environment, _tileset );
     if ( tileset->type != VT_TILESET ) {
@@ -71,7 +71,5 @@ Variable * use_tileset( Environment * _environment, char * _tileset ) {
     }
 
     gtia_use_tileset( _environment, tileset->realName );
-
-    return index;
 
 }
