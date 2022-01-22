@@ -955,7 +955,7 @@ typedef struct _Deployed {
     int mob;
     int mobcs;
     int protothread;
-    int puttile;
+    int tiles;
 
     Embedded embedded;
 

@@ -2105,7 +2105,7 @@ void gtia_put_image( Environment * _environment, char * _image, char * _x, char 
 void gtia_put_tile( Environment * _environment, char * _tile, char * _x, char * _y ) {
 
     deploy( gtiavars, src_hw_gtia_vars_asm);
-    deploy( puttile, src_hw_gtia_put_tile_asm );
+    deploy( tiles, src_hw_gtia_tiles_asm );
 
     outline1("LDA %s", _tile );
     outline0("STA TILET" );
@@ -2128,7 +2128,7 @@ void gtia_move_tiles( Environment * _environment, char * _tile, char * _x, char 
     Variable * y = variable_retrieve( _environment, _y );
 
     deploy( gtiavars, src_hw_gtia_vars_asm);
-    deploy( puttile, src_hw_gtia_put_tile_asm );
+    deploy( tiles, src_hw_gtia_tiles_asm );
 
     outline1("LDA %s", tile->realName );
     outline0("STA TILET" );
@@ -2163,7 +2163,7 @@ void gtia_move_tiles( Environment * _environment, char * _tile, char * _x, char 
 void gtia_put_tiles( Environment * _environment, char * _tile, char * _x, char * _y ) {
 
     deploy( gtiavars, src_hw_gtia_vars_asm);
-    deploy( puttile, src_hw_gtia_put_tile_asm );
+    deploy( tiles, src_hw_gtia_tiles_asm );
 
     outline1("LDA %s", _tile );
     outline0("STA TILET" );
@@ -2183,7 +2183,7 @@ void gtia_put_tiles( Environment * _environment, char * _tile, char * _x, char *
 void gtia_use_tileset( Environment * _environment, char * _tileset ) {
 
     deploy( gtiavars, src_hw_gtia_vars_asm);
-    deploy( puttile, src_hw_gtia_put_tile_asm );
+    deploy( tiles, src_hw_gtia_tiles_asm );
 
     outline1("LDA %s", _tileset );
 
