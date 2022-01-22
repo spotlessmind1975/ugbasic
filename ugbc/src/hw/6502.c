@@ -3481,13 +3481,13 @@ void cpu6502_mem_move_direct_size( Environment * _environment, char *_source, ch
 
                 outline0("LDX #$0" );
                 outline0("LDY #$0" );
-                outline1("LDA #>%s", _source );
+                outline1("LDA #>(%s)", _source );
                 outline0("STA TMPPTR+1" );
-                outline1("LDA #<%s", _source );
+                outline1("LDA #<(%s)", _source );
                 outline0("STA TMPPTR" );
-                outline1("LDA #>%s", _destination );
+                outline1("LDA #>(%s)", _destination );
                 outline0("STA TMPPTR2+1" );
-                outline1("LDA #<%s", _destination );
+                outline1("LDA #<(%s)", _destination );
                 outline0("STA TMPPTR2" );
                 outhead1("%s:", label );
                 outline0("LDA (TMPPTR), Y" );
@@ -3530,13 +3530,13 @@ void cpu6502_mem_move_direct_size( Environment * _environment, char *_source, ch
             outline0("STX CPUMEMMOVE_SIZE" );
             outline1("LDX #$%2.2X", ( _size >> 8 ) & 0xff );
             outline0("STX CPUMEMMOVE_SIZE+1" );
-            outline1("LDA #>%s", _source );
+            outline1("LDA #>(%s)", _source );
             outline0("STA TMPPTR+1" );
-            outline1("LDA #<%s", _source );
+            outline1("LDA #<(%s)", _source );
             outline0("STA TMPPTR" );
-            outline1("LDA #>%s", _destination );
+            outline1("LDA #>(%s)", _destination );
             outline0("STA TMPPTR2+1" );
-            outline1("LDA #<%s", _destination );
+            outline1("LDA #<(%s)", _destination );
             outline0("STA TMPPTR2" );
             outline0("JSR CPUMEMMOVE" );
 
