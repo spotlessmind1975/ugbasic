@@ -2287,6 +2287,7 @@ void                    tiles_at_var( Environment * _environment, char * _addres
 // *u*
 //----------------------------------------------------------------------------
 
+void                    use_tileset( Environment * _environment, char * _tileset );
 char *                  unescape_string( Environment * _environment, char * _value, int _printing );
 
 //----------------------------------------------------------------------------
