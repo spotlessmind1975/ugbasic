@@ -1585,6 +1585,7 @@ typedef struct _Environment {
 #define CRITICAL_TILE_INVALID_HEIGHT( h ) CRITICAL2i("E116 - invalid height for tile, must be 8 pixels", h );
 #define CRITICAL_TILE_LOAD_ON_NON_TILESET( t ) CRITICAL2("E117 - loading tile(s) on non tileset", t );
 #define CRITICAL_USE_TILESET_ON_NON_TILESET( t ) CRITICAL2("E118 - using a non tileset", t );
+#define CRITICAL_CANNOT_MOVE_UNROLLED_TILE( t ) CRITICAL2("E119 - cannot move an unrolled tile", t );
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
 #define WARNING2i( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%i) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -2075,6 +2076,7 @@ Variable *              image_converter( Environment * _environment, char * _dat
 void                    image_converter_asserts( Environment * _environment, int _width, int _height, int _offset_x, int _offset_y, int * _frame_width, int * _frame_height );
 Variable *              image_get_height( Environment * _environment, char * _image );
 Variable *              image_get_width( Environment * _environment, char * _image );
+char *                  image_enlarge_right( Environment * _environment, char * _source, int _width, int _height, int _delta );
 char *                  image_roll_x_left( Environment * _environment, char * _source, int _width, int _height );
 char *                  image_roll_x_right( Environment * _environment, char * _source, int _width, int _height );
 Variable *              images_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _frame_width, int _frame_height, int _flags, int _transparent_color, int _background_color );
@@ -2122,6 +2124,7 @@ void                    mob_hide( Environment * _environment, char * _index );
 Variable *              mob_init( Environment * _environment, char * _image, char * _x, char * _y );
 void                    mob_render( Environment * _environment, int _on_vbl );
 void                    mob_show( Environment * _environment, char * _index );
+void                    move_tile( Environment * _environment, char * _tile, char * _x, char * _y );
 
 //----------------------------------------------------------------------------
 // *N*

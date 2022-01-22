@@ -2121,6 +2121,45 @@ void gtia_put_tile( Environment * _environment, char * _tile, char * _x, char * 
 
 }
 
+void gtia_move_tiles( Environment * _environment, char * _tile, char * _x, char * _y ) {
+
+    Variable * tile = variable_retrieve( _environment, _tile );
+    Variable * x = variable_retrieve( _environment, _x );
+    Variable * y = variable_retrieve( _environment, _y );
+
+    deploy( gtiavars, src_hw_gtia_vars_asm);
+    deploy( puttile, src_hw_gtia_put_tile_asm );
+
+    outline1("LDA %s", tile->realName );
+    outline0("STA TILET" );
+    outline1("LDA %s", x->realName );
+    outline0("STA TILEX" );
+    outline1("LDA %s", y->realName );
+    outline0("STA TILEY" );
+    outline1("LDA %s+1", tile->realName );
+    outline0("STA TILEW" );
+    outline1("LDA %s+2", tile->realName );
+    outline0("STA TILEH" );
+    outline1("LDA %s+3", tile->realName );
+    outline0("STA TILEA" );
+
+    int size = ( tile->originalWidth >> 3 ) * ( tile->originalHeight >> 3 );
+
+    if ( size ) {
+        outline1("LDA #<OFFSETS%4.4x", size );
+        outline0("STA TMPPTR2" );
+        outline1("LDA #>OFFSETS%4.4x", size );
+        outline0("STA TMPPTR2+1" );
+    } else {
+        outline0("LDA #0" );
+        outline0("STA TMPPTR2" );
+        outline0("STA TMPPTR2+1" );
+    }
+
+    outline0("JSR MOVETILE");
+
+}
+
 void gtia_put_tiles( Environment * _environment, char * _tile, char * _x, char * _y ) {
 
     deploy( gtiavars, src_hw_gtia_vars_asm);

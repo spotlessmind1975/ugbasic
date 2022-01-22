@@ -59,7 +59,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token SQR TI CONST VBL POKE NOP FILL IN POSITIVE DEFINE ATARI ATARIXL C64 DRAGON DRAGON32 DRAGON64 PLUS4 ZX 
 %token FONT VIC20 PARALLEL YIELD SPAWN THREAD TASK IMAGES FRAME FRAMES XY YX ROLL MASKED USING TRANSPARENCY
 %token OVERLAYED CASE ENDSELECT OGP CGP ARRAY NEW GET DISTANCE TYPE MUL DIV RGB SHADES HEX PALETTE
-%token BAR XGRAPHIC YGRAPHIC XTEXT YTEXT COLUMNS XGR YGR CHAR RAW SEPARATOR MSX MSX1 COLECO CSPRITE TILESET
+%token BAR XGRAPHIC YGRAPHIC XTEXT YTEXT COLUMNS XGR YGR CHAR RAW SEPARATOR MSX MSX1 COLECO CSPRITE TILESET MOVE
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -2809,6 +2809,15 @@ mob_definition_expression:
 mob_definition:
     mob_definition_expression;
 
+get_definition_expression:
+      IMAGE Identifier FROM optional_x OP_COMMA optional_y  {
+        get_image( _environment, $2, $4, $6 );
+        gr_locate( _environment, $4, $6 );
+    };
+
+get_definition:
+    get_definition_expression;
+
 put_definition_expression:
       IMAGE expr AT optional_x OP_COMMA optional_y put_image_flags {
         put_image( _environment, $2, $4, $6, NULL, $7 );
@@ -2829,17 +2838,17 @@ put_definition_expression:
     }
     ;
 
-get_definition_expression:
-      IMAGE Identifier FROM optional_x OP_COMMA optional_y  {
-        get_image( _environment, $2, $4, $6 );
-        gr_locate( _environment, $4, $6 );
-    };
-
 put_definition:
     put_definition_expression;
 
-get_definition:
-    get_definition_expression;
+move_definition_expression:
+      TILE expr AT optional_x OP_COMMA optional_y {
+        move_tile( _environment, $2, $4, $6 );
+    }
+    ;
+
+move_definition:
+    move_definition_expression;
 
 draw_definition_expression:
       optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
@@ -4000,6 +4009,7 @@ statement:
   | DRAW draw_definition
   | LINE draw_definition
   | PUT put_definition
+  | MOVE move_definition
   | GET get_definition
   | MOB mob_definition
   | BOX box_definition

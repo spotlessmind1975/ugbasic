@@ -41,6 +41,7 @@ TILET = $94
 TILEW = $95
 TILEH = $96
 TILEX2 = $97
+TILEA = $98
 
 ; ----------------------------------------------------------------------------
 ; - Put tile on tilemap
@@ -138,4 +139,37 @@ PUTTILEE:
     RTS
 
 USETILESET:
+    RTS
+
+MOVETILE:
+    LDA TILET
+    STA TMPPTR
+    LDA #0
+    STA TMPPTR+1
+
+    LDA TILEX
+    AND #$07
+    ASL
+    TAY
+    LDA TMPPTR
+    ADC (TMPPTR2), Y
+    STA TMPPTR
+    INY
+    LDA TMPPTR+1
+    ADC (TMPPTR2), Y
+    STA TMPPTR+1
+
+    LDA TMPPTR
+    STA TILET
+
+    LSR TILEX
+    LSR TILEX
+    LSR TILEX
+
+    LSR TILEY
+    LSR TILEY
+    LSR TILEY
+
+    JSR PUTTILE
+
     RTS

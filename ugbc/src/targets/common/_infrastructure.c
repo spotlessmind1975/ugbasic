@@ -1489,6 +1489,8 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                         case VT_TILES:
                             switch( target->type ) {
                                 case VT_TILES: {
+                                    target->originalWidth = source->originalWidth;
+                                    target->originalHeight = source->originalHeight;
                                     cpu_move_32bit( _environment, source->realName, target->realName );
                                     break;
                                 }
@@ -1672,6 +1674,8 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
                 case VT_TILES:
                     switch( target->type ) {
                         case VT_TILES: {
+                            target->originalWidth = source->originalWidth;
+                            target->originalHeight = source->originalHeight;
                             cpu_move_16bit( _environment, source->realName, target->realName );
                             break;
                         }
@@ -5428,6 +5432,45 @@ char * image_roll_x_left( Environment * _environment, char * _source, int _width
     // fclose( f );
 
     return _source;
+
+}
+
+char * image_enlarge_right( Environment * _environment, char * _source, int _width, int _height, int _delta ) {
+
+    int x,y;
+
+    int size = ( _width + _delta ) * 3 * _height;
+    char * destination = malloc( size );
+    memset( destination, 0, size );
+
+    // FILE * f = fopen("/tmp/picture1.bin", "wb" );
+    // fwrite( _source, _width * _height * 3, 1, f );
+    // fclose( f );
+
+    // printf("*** %d,%d\n", _width, _height );
+
+    for( y=0; y<_height; ++y ) {
+        for( x=0; x < _width; ++x ) {
+            unsigned char * pixel1r = _source + ( y * _width * 3 ) + ( x * 3 );
+            unsigned char * pixel1g = _source + ( y * _width * 3 ) + ( x * 3 ) + 1;
+            unsigned char * pixel1b = _source + ( y * _width * 3 ) + ( x * 3 ) + 2;
+            unsigned char * pixel2r = destination + ( y * ( _width + _delta ) * 3 ) + ( (x+1) * 3 );
+            unsigned char * pixel2g = destination + ( y * ( _width + _delta ) * 3 ) + ( (x+1) * 3 ) + 1;
+            unsigned char * pixel2b = destination + ( y * ( _width + _delta ) * 3 ) + ( (x+1) * 3 ) + 2;
+            
+            // printf( "%d,%d : %2.2x%2.2x%2.2x -> %2.2x%2.2x%2.2x\n", y, x, (unsigned char) *pixel2r, (unsigned char) *pixel2g, (unsigned char) *pixel2b, (unsigned char) *pixel1r, (unsigned char) *pixel1g, (unsigned char) *pixel1b );
+
+            *pixel2r = (unsigned char) *pixel1r;
+            *pixel2g = (unsigned char) *pixel1g;
+            *pixel2b = (unsigned char) *pixel1b;
+        }
+    }
+
+    // f = fopen("/tmp/picture2.bin", "wb" );
+    // fwrite( _source, _width * _height * 3, 1, f );
+    // fclose( f );
+
+    return destination;
 
 }
 
