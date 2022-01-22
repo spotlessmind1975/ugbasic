@@ -104,7 +104,19 @@ ma con nomi diversi.
 
 @target all
 </usermanual> */
-Variable * tiles_load( Environment * _environment, char * _filename, int _flags ) {
+Variable * tiles_load( Environment * _environment, char * _filename, int _flags, char * _tileset ) {
+
+    Variable * tileset = NULL;
+
+    if ( _tileset ) {
+        tileset = variable_retrieve( _environment, _tileset );
+        if ( tileset->type != VT_TILESET ) {
+            CRITICAL_TILE_LOAD_ON_NON_TILESET( _tileset );
+        }
+        if ( ! _environment->tilesets[tileset->value] ) {
+            CRITICAL_TILE_LOAD_ON_NON_TILESET( _tileset );
+        }
+    }
 
     if ( _environment->tenLinerRulesEnforced ) {
         CRITICAL_10_LINE_RULES_ENFORCED( "TILES LOAD");
@@ -137,12 +149,19 @@ Variable * tiles_load( Environment * _environment, char * _filename, int _flags 
         source = image_flip_y( _environment, source, width, height );
     }
 
-    if ( ! _environment->descriptors ) {
-        _environment->descriptors = malloc( sizeof( TileDescriptors ) );
-        _environment->descriptors->count = 0;
-        _environment->descriptors->first = 0;
-        _environment->descriptors->firstFree = _environment->descriptors->first;
-        _environment->descriptors->lastFree = 128;
+    TileDescriptors * descriptors;
+
+    if ( tileset ) {
+        descriptors = _environment->tilesets[tileset->value];
+    } else {
+        if ( ! _environment->descriptors ) {
+            _environment->descriptors = malloc( sizeof( TileDescriptors ) );
+            _environment->descriptors->count = 0;
+            _environment->descriptors->first = 0;
+            _environment->descriptors->firstFree = _environment->descriptors->first;
+            _environment->descriptors->lastFree = 128;
+        }
+        descriptors = _environment->descriptors;
     }
 
     Variable * index = variable_temporary( _environment, VT_TILES, "(tile index)" );
@@ -155,7 +174,7 @@ Variable * tiles_load( Environment * _environment, char * _filename, int _flags 
         for (x=0; x<(width>>3);++x) {
             Variable * realImage = image_converter( _environment, source, width, height, x*8, y*8, 8, 8, BITMAP_MODE_DEFAULT, 0, _flags );
 
-            int tile = tile_allocate( _environment->descriptors, realImage->valueBuffer + 2 );
+            int tile = tile_allocate( descriptors, realImage->valueBuffer + 2 );
 
             if ( firstTile == -1 ) {
                 firstTile = tile;

@@ -104,7 +104,19 @@ ma con nomi diversi.
 
 @target all
 </usermanual> */
-Variable * tile_load( Environment * _environment, char * _filename, int _flags ) {
+Variable * tile_load( Environment * _environment, char * _filename, int _flags, char * _tileset ) {
+
+    Variable * tileset = NULL;
+
+    if ( _tileset ) {
+        tileset = variable_retrieve( _environment, _tileset );
+        if ( tileset->type != VT_TILESET ) {
+            CRITICAL_TILE_LOAD_ON_NON_TILESET( _tileset );
+        }
+        if ( ! _environment->tilesets[tileset->value] ) {
+            CRITICAL_TILE_LOAD_ON_NON_TILESET( _tileset );
+        }
+    }
 
     if ( _environment->tenLinerRulesEnforced ) {
         CRITICAL_10_LINE_RULES_ENFORCED( "TILE LOAD");
@@ -143,15 +155,22 @@ Variable * tile_load( Environment * _environment, char * _filename, int _flags )
 
     stbi_image_free(source);
 
-    if ( ! _environment->descriptors ) {
-        _environment->descriptors = malloc( sizeof( TileDescriptors ) );
-        _environment->descriptors->count = 0;
-        _environment->descriptors->first = 0;
-        _environment->descriptors->firstFree = _environment->descriptors->first;
-        _environment->descriptors->lastFree = 128;
+    TileDescriptors * descriptors;
+
+    if ( tileset ) {
+        descriptors = _environment->tilesets[tileset->value];
+    } else {
+        if ( ! _environment->descriptors ) {
+            _environment->descriptors = malloc( sizeof( TileDescriptors ) );
+            _environment->descriptors->count = 0;
+            _environment->descriptors->first = 0;
+            _environment->descriptors->firstFree = _environment->descriptors->first;
+            _environment->descriptors->lastFree = 128;
+        }
+        descriptors = _environment->descriptors;
     }
 
-    int tile = tile_allocate( _environment->descriptors, realImage->valueBuffer + 2 );
+    int tile = tile_allocate( descriptors, realImage->valueBuffer + 2 );
 
     if ( tile == -1 ) {
         CRITICAL_CANNOT_ALLOCATE_MORE_TILE();

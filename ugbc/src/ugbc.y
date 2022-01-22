@@ -1419,8 +1419,13 @@ exponential:
         Variable * index = variable_temporary( _environment, VT_TILESET, "(tileset)");
         cpu_store_8bit( _environment, index->realName, ((struct _Environment *)_environment )->tilesetCount );
         ((struct _Environment *)_environment )->tilesets[((struct _Environment *)_environment )->tilesetCount] = malloc( sizeof( TileDescriptors ) );
-        memset( ((struct _Environment *)_environment )->tilesets[((struct _Environment *)_environment )->tilesetCount], 0, sizeof( TileDescriptors ) );
-        ++((struct _Environment *)_environment )->tilesetCount;
+        TileDescriptors * descriptors = ((struct _Environment *)_environment )->tilesets[((struct _Environment *)_environment )->tilesetCount];
+        memset( descriptors, 0, sizeof( TileDescriptors ) );
+        descriptors->count = 0;
+        descriptors->first = 0;
+        descriptors->firstFree = descriptors->first;
+        descriptors->lastFree = 128;
+        index->value = ++((struct _Environment *)_environment )->tilesetCount;
         $$ = index->name;
       }
     | NEW IMAGE OP const_expr OP_COMMA const_expr CP {        
@@ -1475,16 +1480,28 @@ exponential:
         $$ = image_load( _environment, $4, $6, $8, $10, $11, $12 )->name;
       }
     | TILE LOAD OP String CP tile_load_flags {
-        $$ = tile_load( _environment, $4, $6 )->name;
+        $$ = tile_load( _environment, $4, $6, NULL )->name;
       }
-    | LOAD TILE OP String CP tile_load_flags {
-        $$ = tile_load( _environment, $4, $6 )->name;
+    | TILE LOAD OP String OP_COMMA expr CP tile_load_flags {
+        $$ = tile_load( _environment, $4, $8, $6 )->name;
       }
     | TILES LOAD OP String CP tile_load_flags {
-        $$ = tiles_load( _environment, $4, $6 )->name;
+        $$ = tiles_load( _environment, $4, $6, NULL )->name;
+      }
+    | TILES LOAD OP String OP_COMMA expr CP tile_load_flags {
+        $$ = tiles_load( _environment, $4, $8, $6 )->name;
+      }
+    | LOAD TILE OP String CP tile_load_flags {
+        $$ = tile_load( _environment, $4, $6, NULL )->name;
+      }
+    | LOAD TILE OP String OP_COMMA expr CP tile_load_flags {
+        $$ = tile_load( _environment, $4, $8, $6 )->name;
       }
     | LOAD TILES OP String CP tile_load_flags {
-        $$ = tiles_load( _environment, $4, $6 )->name;
+        $$ = tiles_load( _environment, $4, $6, NULL )->name;
+      }
+    | LOAD TILES OP String OP_COMMA expr CP tile_load_flags {
+        $$ = tiles_load( _environment, $4, $8, $6 )->name;
       }
     | SIZE OP expr CP {
         Variable * v = variable_retrieve( _environment, $3 );

@@ -1583,6 +1583,7 @@ typedef struct _Environment {
 #define CRITICAL_TILE_LOAD_UNKNOWN_FORMAT(f) CRITICAL2("E114 - TILE LOAD file format unknown", f );
 #define CRITICAL_TILE_INVALID_WIDTH( w ) CRITICAL2i("E115 - invalid width for tile, must be 8 pixels", w );
 #define CRITICAL_TILE_INVALID_HEIGHT( h ) CRITICAL2i("E116 - invalid height for tile, must be 8 pixels", h );
+#define CRITICAL_TILE_LOAD_ON_NON_TILESET( t ) CRITICAL2("E117 - loading tile(s) on non tileset", t );
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
 #define WARNING2i( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%i) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -2276,8 +2277,8 @@ void                    textmap_at_var( Environment * _environment, char * _addr
 void                    tilemap_disable( Environment * _environment );
 void                    tilemap_enable( Environment * _environment, int _width, int _height, int _colors );
 int                     tile_allocate( TileDescriptors * _tiles, char * _data );
-Variable *              tile_load( Environment * _environment, char * _filename, int _flags );
-Variable *              tiles_load( Environment * _environment, char * _filename, int _flags );
+Variable *              tile_load( Environment * _environment, char * _filename, int _flags, char * _tileset );
+Variable *              tiles_load( Environment * _environment, char * _filename, int _flags, char * _tileset );
 void                    tiles_at( Environment * _environment, int _address );
 void                    tiles_at_var( Environment * _environment, char * _address );
 
