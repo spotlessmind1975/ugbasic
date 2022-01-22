@@ -625,6 +625,9 @@ tile_load_flag :
     }
     | FLIP YX {
         $$ = FLAG_FLIP_X | FLAG_FLIP_Y;
+    }
+    | ROLL X {
+        $$ = FLAG_ROLL_X;
     };
 
 put_image_flag :
@@ -1422,7 +1425,7 @@ exponential:
         TileDescriptors * descriptors = ((struct _Environment *)_environment )->tilesets[((struct _Environment *)_environment )->tilesetCount];
         memset( descriptors, 0, sizeof( TileDescriptors ) );
         descriptors->count = 0;
-        descriptors->first = 0;
+        descriptors->first = 1;
         descriptors->firstFree = descriptors->first;
         descriptors->lastFree = 128;
         index->value = ++((struct _Environment *)_environment )->tilesetCount;
