@@ -163,7 +163,7 @@ Variable * tile_load( Environment * _environment, char * _filename, int _flags, 
         if ( ! _environment->descriptors ) {
             _environment->descriptors = malloc( sizeof( TileDescriptors ) );
             _environment->descriptors->count = 0;
-            _environment->descriptors->first = 0;
+            _environment->descriptors->first = 1;
             _environment->descriptors->firstFree = _environment->descriptors->first;
             _environment->descriptors->lastFree = 128;
         }

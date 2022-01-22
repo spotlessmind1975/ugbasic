@@ -157,7 +157,7 @@ Variable * tiles_load( Environment * _environment, char * _filename, int _flags,
         if ( ! _environment->descriptors ) {
             _environment->descriptors = malloc( sizeof( TileDescriptors ) );
             _environment->descriptors->count = 0;
-            _environment->descriptors->first = 0;
+            _environment->descriptors->first = 1;
             _environment->descriptors->firstFree = _environment->descriptors->first;
             _environment->descriptors->lastFree = 128;
         }
@@ -169,25 +169,35 @@ Variable * tiles_load( Environment * _environment, char * _filename, int _flags,
     int x, y;
 
     int firstTile = -1;
+    
+    int z = 0, a = 1;
 
-    for (y=0; y<(height>>3);++y) {
-        for (x=0; x<(width>>3);++x) {
-            Variable * realImage = image_converter( _environment, source, width, height, x*8, y*8, 8, 8, BITMAP_MODE_DEFAULT, 0, _flags );
-
-            int tile = tile_allocate( descriptors, realImage->valueBuffer + 2 );
-
-            if ( firstTile == -1 ) {
-                firstTile = tile;
-            }
-
-            if ( tile == -1 ) {
-                CRITICAL_CANNOT_ALLOCATE_MORE_TILE();
-            }    
-
-        }
+    if ( _flags & FLAG_ROLL_X ) {
+        a = (width - 1);
     }
 
-    cpu_store_32bit( _environment, index->realName, firstTile | ( ( width >> 3 ) << 8 ) | ( ( height >> 3 ) << 16 ) );
+    for( z=0; z<a; ++z ) {
+        for (y=0; y<(height>>3);++y) {
+            for (x=0; x<(width>>3);++x) {
+                Variable * realImage = image_converter( _environment, source, width, height, x*8, y*8, 8, 8, BITMAP_MODE_DEFAULT, 0, _flags );
+
+                int tile = tile_allocate( descriptors, realImage->valueBuffer + 2 );
+
+                if ( firstTile == -1 ) {
+                    firstTile = tile;
+                }
+
+                if ( tile == -1 ) {
+                    CRITICAL_CANNOT_ALLOCATE_MORE_TILE();
+                }    
+            }
+        }
+        if ( _flags & FLAG_ROLL_X ) {
+            source = image_roll_x_right( _environment, source, width, height );
+        }
+    }
+    
+    cpu_store_32bit( _environment, index->realName, firstTile | ( ( width >> 3 ) << 8 ) | ( ( height >> 3 ) << 16 ) | ( a << 24 ) );
 
     stbi_image_free(source);
 
