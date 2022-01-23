@@ -900,8 +900,8 @@ void c6847_initialization( Environment * _environment ) {
 
     deploy( c6847vars, src_hw_6847_vars_asm );
     deploy( c6847startup, src_hw_6847_startup_asm );
-    // src_hw_chipset_mob_asm = src_hw_c6847_mob_asm;
-    // src_hw_chipset_mob_asm_len = src_hw_c6847_mob_asm_len;
+    // src_hw_chipset_mob_asm = src_hw_6847_mob_asm;
+    // src_hw_chipset_mob_asm_len = src_hw_6847_mob_asm_len;
 
     variable_import( _environment, "CURRENTWIDTH", VT_POSITION, 256 );
     variable_global( _environment, "CURRENTWIDTH" );
@@ -1411,6 +1411,23 @@ void c6847_get_image( Environment * _environment, char * _image, char * _x, char
 }
 
 void c6847_scroll( Environment * _environment, int _dx, int _dy ) {
+
+}
+
+void c6847_put_tile( Environment * _environment, char * _tile, char * _x, char * _y ) {
+
+}
+
+void c6847_move_tiles( Environment * _environment, char * _tile, char * _x, char * _y ) {
+
+}
+
+void c6847_put_tiles( Environment * _environment, char * _tile, char * _x, char * _y ) {
+
+
+}
+
+void c6847_use_tileset( Environment * _environment, char * _tileset ) {
 
 }
 
