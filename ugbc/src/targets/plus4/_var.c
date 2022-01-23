@@ -379,11 +379,11 @@ void variable_cleanup( Environment * _environment ) {
     if ( _environment->memoryAreas ) {
         MemoryArea * memoryArea = _environment->memoryAreas;
         while( memoryArea ) {
-            if ( memoryArea->type == MAT_RAM ) {
-                cfgline3("MA%3.3x:  load = RAM%3.3x, type = overwrite,  optional = yes, start = $%4.4x;", memoryArea->id, memoryArea->id, memoryArea->start);
-            } else {
-                cfgline2("MA%3.3x:  load = MAIN, type = overwrite,  optional = yes, start = $%4.4x;", memoryArea->id, memoryArea->start);
-            }
+            // if ( memoryArea->type == MAT_RAM ) {
+            //     cfgline3("MA%3.3x:  load = RAM%3.3x, type = overwrite,  optional = yes, start = $%4.4x;", memoryArea->id, memoryArea->id, memoryArea->start);
+            // } else {
+            //     cfgline2("MA%3.3x:  load = MAIN, type = overwrite,  optional = yes, start = $%4.4x;", memoryArea->id, memoryArea->start);
+            // }
             outhead1(".segment \"MA%3.3x\"", memoryArea->id );
             for( i=memoryArea->start; i<memoryArea->end; ++i ) {
                 Variable * variable = _environment->variables;

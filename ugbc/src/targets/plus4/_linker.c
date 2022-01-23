@@ -56,6 +56,14 @@ void linker_setup( Environment * _environment ) {
     cfgline0("ZP:       file = \"\", start = $0002,  size = $001A,      define = yes;");
     cfgline0("LOADADDR: file = %O, start = %S - 2, size = $0002;");
     cfgline0("MAIN:     file = %O, start = %S,     size = $57FF - %S;");
+    actual = _environment->memoryAreas;
+    while( actual ) {
+        if ( actual->type == MAT_RAM  ) {
+            cfgline3("RAM%3.3x:     file = \"\", start = $%4.4x,     size = $%4.4x;", actual->id, (unsigned short)actual->start, (unsigned short)(actual->end - actual->start) );
+        }
+        actual = actual->next;
+    }
+
     cfghead0("}");
     cfghead0("SEGMENTS {");
     cfgline0("ZEROPAGE: load = ZP,       type = zp,  optional = yes;");
@@ -65,6 +73,16 @@ void linker_setup( Environment * _environment ) {
     cfgline0("RODATA:   load = MAIN,     type = ro,  optional = yes;");
     cfgline0("DATA:     load = MAIN,     type = rw,  optional = yes;");
     cfgline0("BSS:      load = MAIN,     type = bss, optional = yes, define = yes;");
+
+    actual = _environment->memoryAreas;
+    while( actual ) {
+        if ( actual->type == MAT_RAM ) {
+            cfgline3("MA%3.3x:  load = RAM%3.3x, type = overwrite,  optional = yes, start = $%4.4x;", actual->id, actual->id, actual->start);
+        } else {
+            cfgline2("MA%3.3x:  load = MAIN, type = overwrite,  optional = yes, start = $%4.4x;", actual->id, actual->start);
+        }        
+        actual = actual->next;
+    }
 
 }
 
