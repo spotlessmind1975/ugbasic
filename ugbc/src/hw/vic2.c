@@ -1143,6 +1143,11 @@ void vic2_initialization( Environment * _environment ) {
     _environment->screenHeight = _environment->screenTilesHeight * 8;
     _environment->descriptors = precalculate_tile_descriptors_for_font( data_fontvic2_bin );
 
+    _environment->descriptors->first = 128;
+    _environment->descriptors->firstFree  = _environment->descriptors->first;
+    _environment->descriptors->lastFree = 255;
+    _environment->descriptors->count = 128;
+    
     _environment->currentRgbConverterFunction = rgbConverterFunction;
     _environment->screenShades = 16;
 
@@ -2147,4 +2152,92 @@ void vic2_scroll( Environment * _environment, int _dx, int _dy ) {
 
 }
 
+void vic2_put_tile( Environment * _environment, char * _tile, char * _x, char * _y ) {
+
+    deploy( vic2vars, src_hw_vic2_vars_asm);
+    deploy( tiles, src_hw_vic2_tiles_asm );
+
+    outline1("LDA %s", _tile );
+    outline0("STA TILET" );
+    outline1("LDA %s", _x );
+    outline0("STA TILEX" );
+    outline1("LDA %s", _y );
+    outline0("STA TILEY" );
+    outline0("LDA #1" );
+    outline0("STA TILEW" );
+    outline0("STA TILEH" );
+
+    outline0("JSR PUTTILE");
+
+}
+
+void vic2_move_tiles( Environment * _environment, char * _tile, char * _x, char * _y ) {
+
+    Variable * tile = variable_retrieve( _environment, _tile );
+    Variable * x = variable_retrieve( _environment, _x );
+    Variable * y = variable_retrieve( _environment, _y );
+
+    deploy( vic2vars, src_hw_vic2_vars_asm);
+    deploy( tiles, src_hw_vic2_tiles_asm );
+
+    outline1("LDA %s", tile->realName );
+    outline0("STA TILET" );
+    outline1("LDA %s", x->realName );
+    outline0("STA TILEX" );
+    outline1("LDA %s", y->realName );
+    outline0("STA TILEY" );
+    outline1("LDA %s+1", tile->realName );
+    outline0("STA TILEW" );
+    outline1("LDA %s+2", tile->realName );
+    outline0("STA TILEH" );
+    outline1("LDA %s+3", tile->realName );
+    outline0("STA TILEA" );
+
+    int size = ( tile->originalWidth >> 3 ) * ( tile->originalHeight >> 3 );
+
+    if ( size ) {
+        outline1("LDA #<OFFSETS%4.4x", size );
+        outline0("STA TMPPTR2" );
+        outline1("LDA #>OFFSETS%4.4x", size );
+        outline0("STA TMPPTR2+1" );
+    } else {
+        outline0("LDA #0" );
+        outline0("STA TMPPTR2" );
+        outline0("STA TMPPTR2+1" );
+    }
+
+    outline0("JSR MOVETILE");
+
+}
+
+void vic2_put_tiles( Environment * _environment, char * _tile, char * _x, char * _y ) {
+
+    deploy( vic2vars, src_hw_vic2_vars_asm);
+    deploy( tiles, src_hw_vic2_tiles_asm );
+
+    outline1("LDA %s", _tile );
+    outline0("STA TILET" );
+    outline1("LDA %s", _x );
+    outline0("STA TILEX" );
+    outline1("LDA %s", _y );
+    outline0("STA TILEY" );
+    outline1("LDA %s+1", _tile );
+    outline0("STA TILEW" );
+    outline1("LDA %s+2", _tile );
+    outline0("STA TILEH" );
+
+    outline0("JSR PUTTILE");
+
+}
+
+void vic2_use_tileset( Environment * _environment, char * _tileset ) {
+
+    deploy( vic2vars, src_hw_vic2_vars_asm);
+    deploy( tiles, src_hw_vic2_tiles_asm );
+
+    outline1("LDA %s", _tileset );
+
+    outline0("JSR USETILESET");
+
+}
 #endif

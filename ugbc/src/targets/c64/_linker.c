@@ -78,12 +78,24 @@ void linker_setup( Environment * _environment ) {
     cfgline0("ZEROPAGE: load = ZP,       type = zp,  optional = yes;");
     // cfgline0("LOADADDR: load = LOADADDR, type = ro;");
     // cfgline0("EXEHDR:   load = MAIN,     type = ro,  optional = yes;");
+
     cfgline0("BASIC:    load = MAIN,     type = ro,  optional = no;");
     cfgline0("CODE:     load = MAIN,     type = rw;");
     cfgline0("RODATA:   load = MAIN,     type = ro,  optional = yes;");
     cfgline0("DATA:     load = MAIN,     type = rw,  optional = yes;");
     cfgline0("BSS:      load = MAIN,     type = bss, optional = yes, define = yes;");
     cfgline0("UDCCHAR:  load = MAIN, type = overwrite,  optional = yes, start = $A000;");
+
+    actual = _environment->memoryAreas;
+    while( actual ) {
+        if ( actual->type == MAT_RAM ) {
+            cfgline3("MA%3.3x:  load = RAM%3.3x, type = overwrite,  optional = yes, start = $%4.4x;", actual->id, actual->id, actual->start);
+        } else {
+            cfgline2("MA%3.3x:  load = MAIN, type = overwrite,  optional = yes, start = $%4.4x;", actual->id, actual->start);
+        }        
+        actual = actual->next;
+    }
+
 }
 
 /**
