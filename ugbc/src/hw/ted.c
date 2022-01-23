@@ -362,15 +362,15 @@ int ted_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
 
             break;
         case TILEMAP_MODE_STANDARD:
-            _environment->screenWidth = 40;
-            _environment->screenHeight = 25;
+            _environment->screenWidth = 320;
+            _environment->screenHeight = 200;
             _environment->screenColors = 16;
             // Let's disable graphics (and extended color)!
             outline0("LDA $FF06" );
             outline0("AND #%10011111");
             outline0("STA $FF06" );
 
-            cpu_store_16bit( _environment, colormapAddress->realName, 0xA000 );
+            cpu_store_16bit( _environment, colormapAddress->realName, 0x0800 );
 
             cpu_store_8bit( _environment, "_PEN", 0x01 );
             cpu_store_8bit( _environment, "_PAPER", 0x00 );
@@ -382,8 +382,8 @@ int ted_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
             break;
         case TILEMAP_MODE_MULTICOLOR:
         case TILEMAP_MODE_EXTENDED:
-            _environment->screenWidth = 40;
-            _environment->screenHeight = 25;
+            _environment->screenWidth = 320;
+            _environment->screenHeight = 200;
             _environment->screenColors = 16;
             // Let's disable graphics and enable extended color!
             outline0("LDA $FF06" );
@@ -391,7 +391,7 @@ int ted_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
             outline0("ORA #%01000000");
             outline0("STA $FF06" );
 
-            cpu_store_16bit( _environment, colormapAddress->realName, 0xA000 );
+            cpu_store_16bit( _environment, colormapAddress->realName, 0x0800 );
 
             cpu_store_8bit( _environment, "_PEN", 0x01 );
             cpu_store_8bit( _environment, "_PAPER", 0x00 );
@@ -762,10 +762,11 @@ void ted_initialization( Environment * _environment ) {
 
     SCREEN_MODE_DEFINE( BITMAP_MODE_STANDARD, 1, 320, 200, 2, "Standard Bitmap Mode" );
     SCREEN_MODE_DEFINE( BITMAP_MODE_MULTICOLOR, 1, 160, 200, 4, "Multicolor Bitmap Mode"  );
-    SCREEN_MODE_DEFINE( TILEMAP_MODE_STANDARD, 0, 40, 25, 2, "Standard Character Mode" );
+    SCREEN_MODE_DEFINE( TILEMAP_MODE_STANDARD, 0, 40, 25, 16, "Standard Character Mode" );
     SCREEN_MODE_DEFINE( TILEMAP_MODE_EXTENDED, 0, 40, 25, 20, "Extended Multicolor Character Mode" );
 
     outline0("JSR TEDSTARTUP");
+    outline0("JSR TEDUDCCHAR" );
 
     variable_import( _environment, "XGR", VT_POSITION, 0 );
     variable_global( _environment, "XGR" );
@@ -784,6 +785,8 @@ void ted_initialization( Environment * _environment ) {
     variable_global( _environment, "CLIPY1" );
     variable_import( _environment, "CLIPY2", VT_POSITION, 199 );
     variable_global( _environment, "CLIPY2" );
+
+    ted_tilemap_enable( _environment, 40, 25, 16 );
 
     ted_cls( _environment );
 
@@ -1254,6 +1257,95 @@ void ted_get_image( Environment * _environment, char * _image, char * _x, char *
 }
 
 void ted_scroll( Environment * _environment, int _dx, int _dy ) {
+
+}
+
+void ted_put_tile( Environment * _environment, char * _tile, char * _x, char * _y ) {
+
+    deploy( tedvars, src_hw_ted_vars_asm);
+    deploy( tiles, src_hw_ted_tiles_asm );
+
+    outline1("LDA %s", _tile );
+    outline0("STA TILET" );
+    outline1("LDA %s", _x );
+    outline0("STA TILEX" );
+    outline1("LDA %s", _y );
+    outline0("STA TILEY" );
+    outline0("LDA #1" );
+    outline0("STA TILEW" );
+    outline0("STA TILEH" );
+
+    outline0("JSR PUTTILE");
+
+}
+
+void ted_move_tiles( Environment * _environment, char * _tile, char * _x, char * _y ) {
+
+    Variable * tile = variable_retrieve( _environment, _tile );
+    Variable * x = variable_retrieve( _environment, _x );
+    Variable * y = variable_retrieve( _environment, _y );
+
+    deploy( tedvars, src_hw_ted_vars_asm);
+    deploy( tiles, src_hw_ted_tiles_asm );
+
+    outline1("LDA %s", tile->realName );
+    outline0("STA TILET" );
+    outline1("LDA %s", x->realName );
+    outline0("STA TILEX" );
+    outline1("LDA %s", y->realName );
+    outline0("STA TILEY" );
+    outline1("LDA %s+1", tile->realName );
+    outline0("STA TILEW" );
+    outline1("LDA %s+2", tile->realName );
+    outline0("STA TILEH" );
+    outline1("LDA %s+3", tile->realName );
+    outline0("STA TILEA" );
+
+    int size = ( tile->originalWidth >> 3 ) * ( tile->originalHeight >> 3 );
+
+    if ( size ) {
+        outline1("LDA #<OFFSETS%4.4x", size );
+        outline0("STA TMPPTR2" );
+        outline1("LDA #>OFFSETS%4.4x", size );
+        outline0("STA TMPPTR2+1" );
+    } else {
+        outline0("LDA #0" );
+        outline0("STA TMPPTR2" );
+        outline0("STA TMPPTR2+1" );
+    }
+
+    outline0("JSR MOVETILE");
+
+}
+
+void ted_put_tiles( Environment * _environment, char * _tile, char * _x, char * _y ) {
+
+    deploy( tedvars, src_hw_ted_vars_asm);
+    deploy( tiles, src_hw_ted_tiles_asm );
+
+    outline1("LDA %s", _tile );
+    outline0("STA TILET" );
+    outline1("LDA %s", _x );
+    outline0("STA TILEX" );
+    outline1("LDA %s", _y );
+    outline0("STA TILEY" );
+    outline1("LDA %s+1", _tile );
+    outline0("STA TILEW" );
+    outline1("LDA %s+2", _tile );
+    outline0("STA TILEH" );
+
+    outline0("JSR PUTTILE");
+
+}
+
+void ted_use_tileset( Environment * _environment, char * _tileset ) {
+
+    deploy( tedvars, src_hw_ted_vars_asm);
+    deploy( tiles, src_hw_ted_tiles_asm );
+
+    outline1("LDA %s", _tileset );
+
+    outline0("JSR USETILESET");
 
 }
 

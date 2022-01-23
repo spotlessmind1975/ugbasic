@@ -149,4 +149,9 @@ void ted_wait_vbl( Environment * _environment );
 Variable * ted_new_image( Environment * _environment, int _width, int _height, int _mode );
 void ted_get_image( Environment * _environment, char * _image, char * _x, char * _y );
 
+void ted_put_tile( Environment * _environment, char * _image, char * _x, char * _y );
+void ted_put_tiles( Environment * _environment, char * _image, char * _x, char * _y );
+void ted_move_tiles( Environment * _environment, char * _image, char * _x, char * _y );
+void ted_use_tileset( Environment * _environment, char * _tileset );
+
 #endif
