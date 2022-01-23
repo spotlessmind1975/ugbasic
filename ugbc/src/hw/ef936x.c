@@ -1511,4 +1511,21 @@ void ef936x_scroll( Environment * _environment, int _dx, int _dy ) {
 
 }
 
+void ef936x_put_tile( Environment * _environment, char * _tile, char * _x, char * _y ) {
+
+}
+
+void ef936x_move_tiles( Environment * _environment, char * _tile, char * _x, char * _y ) {
+
+}
+
+void ef936x_put_tiles( Environment * _environment, char * _tile, char * _x, char * _y ) {
+
+
+}
+
+void ef936x_use_tileset( Environment * _environment, char * _tileset ) {
+
+}
+
 #endif
