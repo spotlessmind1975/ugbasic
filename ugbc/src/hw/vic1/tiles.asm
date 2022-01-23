@@ -35,13 +35,13 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-TILEX = $92
-TILEY = $93
-TILET = $94
-TILEW = $95
-TILEH = $96
-TILEX2 = $97
-TILEA = $98
+TILEX = $31
+TILEY = $32
+TILET = $33
+TILEW = $34
+TILEH = $35
+TILEX2 = $36
+TILEA = $37
 
 ; ----------------------------------------------------------------------------
 ; - Put tile on tilemap
@@ -81,16 +81,16 @@ PUTTILEL0:
     ADC TMPPTR
     STA TMPPTR
     LDA #0
-    ADC TMPPTR
-    STA TMPPTR
+    ADC TMPPTR+1
+    STA TMPPTR+1
 
     CLC
     LDA CURRENTTILESWIDTH
     ADC TMPPTR2
     STA TMPPTR2
     LDA #0
-    ADC TMPPTR2
-    STA TMPPTR2
+    ADC TMPPTR2+1
+    STA TMPPTR2+1
 
     DEX
     BNE PUTTILEL0
@@ -101,16 +101,16 @@ PUTTILEL1:
     ADC TMPPTR
     STA TMPPTR
     LDA #0
-    ADC TMPPTR
-    STA TMPPTR
+    ADC TMPPTR+1
+    STA TMPPTR+1
 
     CLC
     LDA TILEX
     ADC TMPPTR2
     STA TMPPTR2
     LDA #0
-    ADC TMPPTR2
-    STA TMPPTR2
+    ADC TMPPTR2+1
+    STA TMPPTR2+1
 
 PUTTILEL2A:
     LDA TILEX
@@ -204,12 +204,13 @@ MOVETILEX:
     TAY
 
 MOVETILEZ:
+    CLC
     LDA TMPPTR
     ADC (TMPPTR2), Y
     STA TMPPTR
     INY
     LDA TMPPTR+1
-    ADC (TMPPTR2+1), Y
+    ADC (TMPPTR2), Y
     STA TMPPTR+1
 
     LDA TMPPTR

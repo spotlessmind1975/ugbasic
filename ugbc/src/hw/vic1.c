@@ -816,6 +816,9 @@ static int calculate_image_size( Environment * _environment, int _width, int _he
 
    switch( _mode ) {
 
+        case BITMAP_MODE_STANDARD:
+            return ( _width >> 3 ) * ( _height );
+            break;
         case TILEMAP_MODE_STANDARD:
             break;
     }
@@ -908,7 +911,7 @@ static Variable * vic1_image_converter_bitmap_mode_standard( Environment * _envi
                 }
             }
 
-            printf("%d", i );
+            // printf("%d", i );
 
             // Calculate the relative tile
             tile_y = (image_y >> 3);
@@ -938,11 +941,11 @@ static Variable * vic1_image_converter_bitmap_mode_standard( Environment * _envi
 
         _source += 3 * ( _width - _frame_width );
 
-        printf("\n" );
+        // printf("\n" );
 
     }
 
-    printf("\n----\n\n");
+    // printf("\n----\n\n");
 
     variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
 
