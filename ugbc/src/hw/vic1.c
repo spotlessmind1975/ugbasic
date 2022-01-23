@@ -718,6 +718,11 @@ void vic1_initialization( Environment * _environment ) {
     _environment->screenHeight = _environment->screenTilesHeight * 8;
     _environment->screenColors = 16;
     _environment->descriptors = precalculate_tile_descriptors_for_font( data_fontvic1_bin );
+    
+    _environment->descriptors->first = 128;
+    _environment->descriptors->firstFree  = _environment->descriptors->first;
+    _environment->descriptors->lastFree = 255;
+    _environment->descriptors->count = 128;
 
     _environment->currentRgbConverterFunction = rgbConverterFunction;
     _environment->screenShades = 8;
@@ -864,7 +869,8 @@ static Variable * vic1_image_converter_bitmap_mode_standard( Environment * _envi
 
     memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
 
-    int bufferSize = 2 + ( ( _frame_width >> 3 ) * _height ) + ( ( _frame_width >> 3 ) * ( _frame_height >> 3 ) );
+    int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_STANDARD );
+
     // printf("bufferSize = %d\n", bufferSize );
 
     char * buffer = malloc ( bufferSize );
@@ -885,11 +891,11 @@ static Variable * vic1_image_converter_bitmap_mode_standard( Environment * _envi
     *(buffer) = _frame_width;
     *(buffer+1) = _frame_height;
 
-    _source += ( ( _offset_y * _frame_width ) + _offset_x ) * 3;
+    _source += ( ( _offset_y * _width ) + _offset_x ) * 3;
 
     // Loop for all the source surface.
-    for (image_y = _offset_y; image_y < _height; ++image_y) {
-        for (image_x = _offset_x; image_x < _width; ++image_x) {
+    for (image_y = 0; image_y < _frame_height; ++image_y) {
+        for (image_x = 0; image_x < _frame_width; ++image_x) {
 
             // Take the color of the pixel
             rgb.red = *_source;
@@ -902,7 +908,7 @@ static Variable * vic1_image_converter_bitmap_mode_standard( Environment * _envi
                 }
             }
 
-            // printf("%d", i );
+            printf("%d", i );
 
             // Calculate the relative tile
             tile_y = (image_y >> 3);
@@ -930,13 +936,13 @@ static Variable * vic1_image_converter_bitmap_mode_standard( Environment * _envi
 
         }
 
-        _source += ( _width - _frame_width ) * 3;
+        _source += 3 * ( _width - _frame_width );
 
-        // printf("\n" );
+        printf("\n" );
 
     }
 
-    // printf("----\n");
+    printf("\n----\n\n");
 
     variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
 
@@ -1297,7 +1303,9 @@ static Variable * vic1_image_converter_tilemap_mode_standard( Environment * _env
 Variable * vic1_image_converter( Environment * _environment, char * _data, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags ) {
 
    switch( _mode ) {
-
+        case BITMAP_MODE_STANDARD:
+            return vic1_image_converter_bitmap_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+            break;
         case TILEMAP_MODE_STANDARD:
             return vic1_image_converter_tilemap_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
             break;
@@ -1385,6 +1393,110 @@ Variable * vic1_new_image( Environment * _environment, int _width, int _height, 
 
 void vic1_get_image( Environment * _environment, char * _image, char * _x, char * _y ) {
     
+}
+
+void vic1_scroll( Environment * _environment, int _dx, int _dy ) {
+
+    deploy( vic1vars, src_hw_vic1_vars_asm);
+    deploy( scroll, src_hw_vic1_scroll_asm);
+    deploy( textHScroll, src_hw_vic1_hscroll_text_asm );
+    deploy( vScrollText, src_hw_vic1_vscroll_text_asm );
+
+    outline1("LDA #$%2.2x", (unsigned char)(_dx&0xff) );
+    outline0("STA MATHPTR0" );
+    outline1("LDA #$%2.2x", (unsigned char)(_dy&0xff) );
+    outline0("STA MATHPTR1" );
+    outline0("JSR SCROLL");
+
+}
+
+void vic1_put_tile( Environment * _environment, char * _tile, char * _x, char * _y ) {
+
+    deploy( vic1vars, src_hw_vic1_vars_asm);
+    deploy( tiles, src_hw_vic1_tiles_asm );
+
+    outline1("LDA %s", _tile );
+    outline0("STA TILET" );
+    outline1("LDA %s", _x );
+    outline0("STA TILEX" );
+    outline1("LDA %s", _y );
+    outline0("STA TILEY" );
+    outline0("LDA #1" );
+    outline0("STA TILEW" );
+    outline0("STA TILEH" );
+
+    outline0("JSR PUTTILE");
+
+}
+
+void vic1_move_tiles( Environment * _environment, char * _tile, char * _x, char * _y ) {
+
+    Variable * tile = variable_retrieve( _environment, _tile );
+    Variable * x = variable_retrieve( _environment, _x );
+    Variable * y = variable_retrieve( _environment, _y );
+
+    deploy( vic1vars, src_hw_vic1_vars_asm);
+    deploy( tiles, src_hw_vic1_tiles_asm );
+
+    outline1("LDA %s", tile->realName );
+    outline0("STA TILET" );
+    outline1("LDA %s", x->realName );
+    outline0("STA TILEX" );
+    outline1("LDA %s", y->realName );
+    outline0("STA TILEY" );
+    outline1("LDA %s+1", tile->realName );
+    outline0("STA TILEW" );
+    outline1("LDA %s+2", tile->realName );
+    outline0("STA TILEH" );
+    outline1("LDA %s+3", tile->realName );
+    outline0("STA TILEA" );
+
+    int size = ( tile->originalWidth >> 3 ) * ( tile->originalHeight >> 3 );
+
+    if ( size ) {
+        outline1("LDA #<OFFSETS%4.4x", size );
+        outline0("STA TMPPTR2" );
+        outline1("LDA #>OFFSETS%4.4x", size );
+        outline0("STA TMPPTR2+1" );
+    } else {
+        outline0("LDA #0" );
+        outline0("STA TMPPTR2" );
+        outline0("STA TMPPTR2+1" );
+    }
+
+    outline0("JSR MOVETILE");
+
+}
+
+void vic1_put_tiles( Environment * _environment, char * _tile, char * _x, char * _y ) {
+
+    deploy( vic1vars, src_hw_vic1_vars_asm);
+    deploy( tiles, src_hw_vic1_tiles_asm );
+
+    outline1("LDA %s", _tile );
+    outline0("STA TILET" );
+    outline1("LDA %s", _x );
+    outline0("STA TILEX" );
+    outline1("LDA %s", _y );
+    outline0("STA TILEY" );
+    outline1("LDA %s+1", _tile );
+    outline0("STA TILEW" );
+    outline1("LDA %s+2", _tile );
+    outline0("STA TILEH" );
+
+    outline0("JSR PUTTILE");
+
+}
+
+void vic1_use_tileset( Environment * _environment, char * _tileset ) {
+
+    deploy( vic1vars, src_hw_vic1_vars_asm);
+    deploy( tiles, src_hw_vic1_tiles_asm );
+
+    outline1("LDA %s", _tileset );
+
+    outline0("JSR USETILESET");
+
 }
 
 #endif

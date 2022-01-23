@@ -140,11 +140,17 @@ void vic1_hscroll_line( Environment * _environment, int _direction );
 void vic1_hscroll_screen( Environment * _environment, int _direction );
 void vic1_text( Environment * _environment, char * _text, char * _text_size );
 void vic1_cline( Environment * _environment, char * _characters );
+void vic1_scroll( Environment * _environment, int _dx, int _dy );
 
 Variable * vic1_image_converter( Environment * _environment, char * _data, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags );
 void vic1_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _frame_size, int _flags );
 void vic1_wait_vbl( Environment * _environment );
 Variable * vic1_new_image( Environment * _environment, int _width, int _height, int _mode );
 void vic1_get_image( Environment * _environment, char * _image, char * _x, char * _y );
+
+void vic1_put_tile( Environment * _environment, char * _image, char * _x, char * _y );
+void vic1_put_tiles( Environment * _environment, char * _image, char * _x, char * _y );
+void vic1_move_tiles( Environment * _environment, char * _image, char * _x, char * _y );
+void vic1_use_tileset( Environment * _environment, char * _tileset );
 
 #endif
