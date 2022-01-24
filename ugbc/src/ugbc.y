@@ -1861,6 +1861,12 @@ exponential:
         $$ = variable_temporary( _environment, VT_BYTE, "(frame count)" )->name;
         variable_store( _environment, $$, frames( _environment, $3 ) );
     }
+    | TILES WIDTH OP expr CP {
+        $$ = tile_get_width( _environment, $4 )->name;
+    }
+    | TILE WIDTH OP expr CP {
+        $$ = tile_get_width( _environment, $4 )->name;
+    }
     | IMAGE WIDTH OP expr CP {
         $$ = image_get_width( _environment, $4 )->name;
     }
@@ -1885,6 +1891,12 @@ exponential:
     | FONT HEIGHT {
         $$ = variable_temporary( _environment, VT_POSITION, "(FONT HEIGHT)" )->name;
         variable_store( _environment, $$, ((struct _Environment *)_environment)->fontHeight );
+    }
+    | TILES HEIGHT OP expr CP {
+        $$ = tile_get_height( _environment, $4 )->name;
+    }
+    | TILE HEIGHT OP expr CP {
+        $$ = tile_get_height( _environment, $4 )->name;
     }
     | IMAGE HEIGHT OP expr CP {
         $$ = image_get_height( _environment, $4 )->name;
