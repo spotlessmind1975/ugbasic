@@ -243,12 +243,7 @@ MOVETILEX:
 MOVETILEZ:
     LD E, A
     LD D, 0
-    DI
-    EXX
-    PUSH HL
-    EXX
-    EI
-    POP HL
+    LD HL, (TILEO)
     ADD HL, DE
     LD A, (HL)
     LD E, A
