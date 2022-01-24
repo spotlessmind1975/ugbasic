@@ -1,0 +1,280 @@
+; /*****************************************************************************
+;  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
+;  *****************************************************************************
+;  * Copyright 2021-2022 Marco Spedaletti (asimov@mclink.it)
+;  *
+;  * Licensed under the Apache License, Version 2.0 (the "License");
+;  * you may not use this file except in compliance with the License.
+;  * You may obtain a copy of the License at
+;  *
+;  * http://www.apache.org/licenses/LICENSE-2.0
+;  *
+;  * Unless required by applicable law or agreed to in writing, software
+;  * distributed under the License is distributed on an "AS IS" BASIS,
+;  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+;  * See the License for the specific language governing permissions and
+;  * limitations under the License.
+;  *----------------------------------------------------------------------------
+;  * Concesso in licenza secondo i termini della Licenza Apache, versione 2.0
+;  * (la "Licenza"); è proibito usare questo file se non in conformità alla
+;  * Licenza. Una copia della Licenza è disponibile all'indirizzo:
+;  *
+;  * http://www.apache.org/licenses/LICENSE-2.0
+;  *
+;  * Se non richiesto dalla legislazione vigente o concordato per iscritto,
+;  * il software distribuito nei termini della Licenza è distribuito
+;  * "COSì COM'è", SENZA GARANZIE O CONDIZIONI DI ALCUN TIPO, esplicite o
+;  * implicite. Consultare la Licenza per il testo specifico che regola le
+;  * autorizzazioni e le limitazioni previste dalla medesima.
+;  ****************************************************************************/
+;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+;*                                                                             *
+;*                          TILES ROUTINE FOR TMS9918                          *
+;*                                                                             *
+;*                             by Marco Spedaletti                             *
+;*                                                                             *
+;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+; TILEA = A
+; TILEX = ..
+; TILEY = ..
+; TILET = B
+; TILEW = D
+; TILEH = E
+; >> TILEX2
+
+; ----------------------------------------------------------------------------
+; - Put tile on tilemap
+; ----------------------------------------------------------------------------
+
+if __coleco__
+
+PUTTILE:
+    CALL WAIT_VDP_HOOK
+    LD HL, PUTTILENMI
+    CALL SET_VDP_HOOK0
+    CALL WAIT_VDP_HOOK
+    RET
+
+PUTTILENMI:
+
+else
+
+PUTTILE:
+
+endif
+
+PUTTILENMI2:
+
+    LD HL, $1800
+
+    LD A, (CURRENTTILESWIDTH)
+    LD B, A
+    LD A, (TILEX)
+    CP B
+    JR Z, PUTTILEEX
+    JR NC, PUTTILEEX
+
+    LD A, (CURRENTTILESHEIGHT)
+    LD B, A
+    LD A, (TILEY)
+    CP 0
+    JR Z, PUTTILEL1
+    CP B
+    JR Z, PUTTILEEX
+    JR NC, PUTTILEEX
+
+    JMP PUTTILEL0
+
+PUTTILEEX:
+    JMP PUTTILEE
+
+PUTTILEL0:
+    LD A, (TILEY)
+    LD B, A
+
+    LD A, (CURRENTTILESWIDTH)
+    LD E, A
+    LD D, 0
+
+PUTTILEL0B:
+    ADD HL, DE
+    DEC B
+    JR NZ, PUTTILEL0B
+
+PUTTILEL1:
+    LD A, (TILEX)
+    LD E, A
+    LD D, 0
+    ADD HL, DE
+
+PUTTILEL2A:
+    LD A, (TILEX)
+    LD (TILEX2), A
+    LD A, (TILEW)
+    LD B, A
+PUTTILEL2:
+    PUSH BC
+    LD A, (TILET)
+    LD DE, HL
+    LD BC, 1
+    CALL VDPOUTCHAR
+    POP BC
+
+    INC A
+    LD (TILET), A
+
+    PUSH BC
+    LD A, (CURRENTTILESWIDTH)
+    LD B, A
+    LD A, (TILEX2)
+    INC A
+    LD (TILEX2), A
+
+    CP B
+    POP BC
+    JR Z, PUTTILERE
+    JR NC, PUTTILERE
+
+    DEC B
+    JR NZ, PUTTILEL2
+    JMP PUTTILENL
+
+PUTTILERE:
+    LD A, (TILET)
+PUTTILEREL:
+    INC A
+    DEC B
+    JR NZ, PUTTILEREL
+    DEC A
+    LD (TILET), A
+
+PUTTILENL:
+    LD A, (TILEH)
+    CP 1
+    JR Z, PUTTILEE
+
+    LD A, (CURRENTTILESWIDTH)
+    LD E, A
+    LD D, 0
+    ADD HL, DE
+    ; LD A, (TILEW)
+    ; LD E, A
+    ; LD D, 0
+    ; SBC HL, DE
+
+    LD A, (TILEH)
+    DEC A
+    LD (TILEH), A
+
+    LD A, (CURRENTTILESHEIGHT)
+    LD B, A
+    LD A, (TILEY)
+    INC A
+    LD (TILEY), A
+    CP B
+    JR Z, PUTTILEE
+    JR NC, PUTTILEE
+
+    JMP PUTTILEL2A
+
+PUTTILEE:
+    RET
+
+;;;;;;;;;;;;;;;
+
+if __coleco__
+
+USETILESET:
+    CALL WAIT_VDP_HOOK
+    LD HL, USETILESETNMI
+    CALL SET_VDP_HOOK0
+    CALL WAIT_VDP_HOOK
+    RET
+
+USETILESETNMI:
+
+else
+
+USETILESET:
+
+endif
+
+USETILESETNMI2:
+    RET
+
+;;;;;;;;;;;;;;;
+
+if __coleco__
+
+MOVETILE:
+    CALL WAIT_VDP_HOOK
+    LD HL, MOVETILENMI
+    CALL SET_VDP_HOOK0
+    CALL WAIT_VDP_HOOK
+    RET
+
+MOVETILENMI:
+
+else
+
+MOVETILE:
+
+endif
+
+MOVETILENMI2:
+
+    LD A, (TILEA)
+    AND $80
+    CP $80
+    JR NZ, MOVETILEX
+
+MOVETILEY:
+    LD A, (TILEY)
+    AND $07
+    SLA A
+    JMP MOVETILEZ
+
+MOVETILEX:
+    LD A, (TILEX)
+    AND $07
+    SLA A
+
+MOVETILEZ:
+    LD E, A
+    LD D, 0
+    DI
+    EXX
+    PUSH HL
+    EXX
+    EI
+    POP HL
+    ADD HL, DE
+    LD A, (HL)
+    LD E, A
+    INC HL
+    LD A, (HL)
+    LD D, A
+    LD HL, DE
+    LD A, (TILET)
+    LD E, A
+    LD D, 0
+    ADD HL, DE   
+    LD A, L 
+    LD (TILET), A
+
+    LD A, (TILEX)
+    SRA A
+    SRA A
+    SRA A
+    LD (TILEX), A
+
+    LD A, (TILEY)
+    SRA A
+    SRA A
+    SRA A
+    LD (TILEY), A
+
+    CALL PUTTILENMI2
+
+    RET

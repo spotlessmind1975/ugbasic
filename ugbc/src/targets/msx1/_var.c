@@ -277,5 +277,27 @@ void variable_cleanup( Environment * _environment ) {
     }    
 
     variable_on_memory_init( _environment, 1 );
-    
+
+    if ( _environment->descriptors ) {
+        outhead0("UDCCHAR:" );
+        int i=0,j=0;
+        for(i=_environment->descriptors->first;i<(_environment->descriptors->first+_environment->descriptors->count);++i) {
+            outline1("; $%2.2x ", i);
+            out0("DEFB " );
+            for(j=0;j<7;++j) {
+                out1("$%2.2x,", ((unsigned char)_environment->descriptors->data[i].data[j]) );
+            }
+            outline1("$%2.2x", ((unsigned char)_environment->descriptors->data[i].data[j]) );
+        }
+        outhead0("TMS9918AUDCCHAR:" );
+        outline1("LD BC, %d", _environment->descriptors->count * 8 );
+        outline0("LD HL, UDCCHAR" );
+        outline1("LD DE, $%4.4x", _environment->descriptors->first*8 );
+        outline0("CALL VDPWRITE" );
+        outline0("RET" );
+    } else {
+        outhead0("TMS9918AUDCCHAR:" );
+        outline0("RET" );
+    }
+
 }

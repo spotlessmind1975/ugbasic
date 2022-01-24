@@ -1138,10 +1138,29 @@ void tms9918_initialization( Environment * _environment ) {
     variable_import( _environment, "SPRITEXY", VT_BUFFER, SPRITE_COUNT * 2 );
     variable_global( _environment, "SPRITEXY" );
 
+    variable_import( _environment, "TILEX", VT_BYTE, 0 );
+    variable_global( _environment, "TILEX" );
+    variable_import( _environment, "TILEY", VT_BYTE, 0 );
+    variable_global( _environment, "TILEY" );
+    variable_import( _environment, "TILEX2", VT_BYTE, 0 );
+    variable_global( _environment, "TILEX2" );
+    variable_import( _environment, "TILET", VT_BYTE, 0 );
+    variable_global( _environment, "TILET" );
+    variable_import( _environment, "TILEW", VT_BYTE, 0 );
+    variable_global( _environment, "TILEW" );
+    variable_import( _environment, "TILEH", VT_BYTE, 0 );
+    variable_global( _environment, "TILEH" );
+    variable_import( _environment, "TILEA", VT_BYTE, 0 );
+    variable_global( _environment, "TILEA" );
+
     #if __coleco__
         variable_import( _environment, "VDP_HOOK", VT_BUFFER, 10 );
         variable_global( _environment, "VDP_HOOK" );
     #endif
+
+    tms9918_tilemap_enable( _environment, 40, 24, 1 );
+
+    outline0("CALL TMS9918AUDCCHAR");
 
     tms9918_cls( _environment );
 
@@ -1714,6 +1733,110 @@ void tms9918_get_image( Environment * _environment, char * _image, char * _x, ch
 
 
 void tms9918_scroll( Environment * _environment, int _dx, int _dy ) {
+
+}
+
+void tms9918_put_tile( Environment * _environment, char * _tile, char * _x, char * _y ) {
+
+    deploy( tms9918vars, src_hw_tms9918_vars_asm);
+    deploy( tiles, src_hw_tms9918_tiles_asm );
+
+    outline1("LD A, (%s)", _tile );
+    outline0("LD (TILET), A" );
+    outline1("LD A, (%s)", _x );
+    outline0("LD (TILEX), A" );
+    outline1("LD A, (%s)", _y );
+    outline0("LD (TILEY), A" );
+    outline0("LD A, 1" );
+    outline0("LD (TILEW), A" );
+    outline0("LD (TILEH), A" );
+
+    if ( ! _environment->hasGameLoop ) {
+        outline0("CALL PUTTILE");
+    } else {
+        outline0("CALL PUTTILENMI2");
+    }
+
+}
+
+void tms9918_move_tiles( Environment * _environment, char * _tile, char * _x, char * _y ) {
+
+    Variable * tile = variable_retrieve( _environment, _tile );
+    Variable * x = variable_retrieve( _environment, _x );
+    Variable * y = variable_retrieve( _environment, _y );
+
+    deploy( tms9918vars, src_hw_tms9918_vars_asm);
+    deploy( tiles, src_hw_tms9918_tiles_asm );
+
+    int size = ( tile->originalWidth >> 3 ) * ( tile->originalHeight >> 3 );
+
+    outline0("DI" );
+    outline0("EXX");
+    if ( size ) {
+        outline1("LD HL, OFFSETS%4.4x", size );
+    } else {
+        outline0("LD HL, 0" );
+    }
+    outline0("EXX");
+    outline0("EI");
+
+    outline1("LD A, (%s)", tile->realName );
+    outline0("LD (TILET), A" );
+    outline1("LD A, (%s)", x->realName );
+    outline0("LD (TILEX), A" );
+    outline1("LD A, (%s)", y->realName );
+    outline0("LD (TILEY), A" );
+    outline1("LD A, (%s+1)", tile->realName );
+    outline0("LD (TILEW), A" );
+    outline1("LD A, (%s+2)", tile->realName );
+    outline0("LD (TILEH), A" );
+    outline1("LD A, (%s+3)", tile->realName );
+    outline0("LD (TILEA), A" );
+
+    if ( ! _environment->hasGameLoop ) {
+        outline0("CALL MOVETILE");
+    } else {
+        outline0("CALL MOVETILENMI2");
+    }
+
+}
+
+void tms9918_put_tiles( Environment * _environment, char * _tile, char * _x, char * _y ) {
+
+    deploy( tms9918vars, src_hw_tms9918_vars_asm);
+    deploy( tiles, src_hw_tms9918_tiles_asm );
+
+    outline1("LD A, (%s)", _tile );
+    outline0("LD (TILET), A" );
+    outline1("LD A, (%s)", _x );
+    outline0("LD (TILEX), A" );
+    outline1("LD A, (%s)", _y );
+    outline0("LD (TILEY), A" );
+    outline1("LD A, (%s+1)", _tile );
+    outline0("LD (TILEW), A" );
+    outline1("LD A, (%s+2)", _tile );
+    outline0("LD (TILEH), A" );
+
+    if ( ! _environment->hasGameLoop ) {
+        outline0("CALL PUTTILE");
+    } else {
+        outline0("CALL PUTTILENMI2");
+    }
+
+}
+
+void tms9918_use_tileset( Environment * _environment, char * _tileset ) {
+
+    deploy( tms9918vars, src_hw_tms9918_vars_asm);
+    deploy( tiles, src_hw_tms9918_tiles_asm );
+
+    outline1("LD A, (%s)", _tileset );
+
+    if ( ! _environment->hasGameLoop ) {
+        outline0("CALL USETILESET");
+    } else {
+        outline0("CALL USETILESETNMI2");
+    }
 
 }
 
