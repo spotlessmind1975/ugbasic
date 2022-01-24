@@ -172,6 +172,7 @@
 
 #define BITMAP_MODE_STANDARD        1           // Standard Bitmap Mode     192 x 256 x 2
 #define TILEMAP_MODE_STANDARD       0           // Standard Character Mode  32 x 25 x 8
+#define BITMAP_MODE_DEFAULT         BITMAP_MODE_STANDARD
 
 #define JOY_UP              0
 #define JOY_DOWN            0
@@ -208,5 +209,10 @@ Variable * zx_image_converter( Environment * _environment, char * _data, int _wi
 void zx_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _frame_size, int _flags );
 Variable * zx_new_image( Environment * _environment, int _width, int _height, int _mode );
 void zx_get_image( Environment * _environment, char * _image, char * _x, char * _y );
+
+void zx_put_tile( Environment * _environment, char * _image, char * _x, char * _y );
+void zx_put_tiles( Environment * _environment, char * _image, char * _x, char * _y );
+void zx_move_tiles( Environment * _environment, char * _image, char * _x, char * _y );
+void zx_use_tileset( Environment * _environment, char * _tileset );
 
 #endif

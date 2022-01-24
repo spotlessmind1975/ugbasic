@@ -257,6 +257,23 @@ void zx_initialization( Environment * _environment ) {
     variable_import( _environment, "TABCOUNT", VT_BYTE, 4 );
     variable_global( _environment, "TABCOUNT" );
 
+    variable_import( _environment, "TILEX", VT_BYTE, 0 );
+    variable_global( _environment, "TILEX" );
+    variable_import( _environment, "TILEY", VT_BYTE, 0 );
+    variable_global( _environment, "TILEY" );
+    variable_import( _environment, "TILEX2", VT_BYTE, 0 );
+    variable_global( _environment, "TILEX2" );
+    variable_import( _environment, "TILET", VT_BYTE, 0 );
+    variable_global( _environment, "TILET" );
+    variable_import( _environment, "TILEW", VT_BYTE, 0 );
+    variable_global( _environment, "TILEW" );
+    variable_import( _environment, "TILEH", VT_BYTE, 0 );
+    variable_global( _environment, "TILEH" );
+    variable_import( _environment, "TILEA", VT_BYTE, 0 );
+    variable_global( _environment, "TILEA" );
+    variable_import( _environment, "TILEO", VT_WORD, 0 );
+    variable_global( _environment, "TILEO" );
+
     variable_import( _environment, "CURRENTMODE", VT_BYTE, 0 );
     variable_global( _environment, "CURRENTMODE" );
     
@@ -538,5 +555,95 @@ void zx_get_image( Environment * _environment, char * _image, char * _x, char * 
 void zx_scroll( Environment * _environment, int _dx, int _dy ) {
 
 };
+
+void zx_put_tile( Environment * _environment, char * _tile, char * _x, char * _y ) {
+
+    deploy( zxvars, src_hw_zx_vars_asm);
+    deploy( tiles, src_hw_zx_tiles_asm );
+
+    outline1("LD A, (%s)", _tile );
+    outline0("LD (TILET), A" );
+    outline1("LD A, (%s)", _x );
+    outline0("LD (TILEX), A" );
+    outline1("LD A, (%s)", _y );
+    outline0("LD (TILEY), A" );
+    outline0("LD A, 1" );
+    outline0("LD (TILEW), A" );
+    outline0("LD (TILEH), A" );
+
+    outline0("CALL PUTTILE");
+
+}
+
+void zx_move_tiles( Environment * _environment, char * _tile, char * _x, char * _y ) {
+
+    Variable * tile = variable_retrieve( _environment, _tile );
+    Variable * x = variable_retrieve( _environment, _x );
+    Variable * y = variable_retrieve( _environment, _y );
+
+    deploy( zxvars, src_hw_zx_vars_asm);
+    deploy( tiles, src_hw_zx_tiles_asm );
+
+    int size = ( tile->originalWidth >> 3 ) * ( tile->originalHeight >> 3 );
+
+    if ( size ) {
+        outline1("LD HL, OFFSETS%4.4x", size );
+        outline0("LD A, L" );
+        outline0("LD (TILEO), A" );
+        outline0("LD A, H" );
+        outline0("LD (TILEO+1), A" );
+    } else {
+        outline0("LD A, 0" );
+        outline0("LD (TILEO), A" );
+        outline0("LD (TILEO+1), A" );
+    }
+
+    outline1("LD A, (%s)", tile->realName );
+    outline0("LD (TILET), A" );
+    outline1("LD A, (%s)", x->realName );
+    outline0("LD (TILEX), A" );
+    outline1("LD A, (%s)", y->realName );
+    outline0("LD (TILEY), A" );
+    outline1("LD A, (%s+1)", tile->realName );
+    outline0("LD (TILEW), A" );
+    outline1("LD A, (%s+2)", tile->realName );
+    outline0("LD (TILEH), A" );
+    outline1("LD A, (%s+3)", tile->realName );
+    outline0("LD (TILEA), A" );
+
+    outline0("CALL MOVETILE");
+
+}
+
+void zx_put_tiles( Environment * _environment, char * _tile, char * _x, char * _y ) {
+
+    deploy( zxvars, src_hw_zx_vars_asm);
+    deploy( tiles, src_hw_zx_tiles_asm );
+
+    outline1("LD A, (%s)", _tile );
+    outline0("LD (TILET), A" );
+    outline1("LD A, (%s)", _x );
+    outline0("LD (TILEX), A" );
+    outline1("LD A, (%s)", _y );
+    outline0("LD (TILEY), A" );
+    outline1("LD A, (%s+1)", _tile );
+    outline0("LD (TILEW), A" );
+    outline1("LD A, (%s+2)", _tile );
+    outline0("LD (TILEH), A" );
+
+    outline0("CALL PUTTILE");
+
+}
+
+void zx_use_tileset( Environment * _environment, char * _tileset ) {
+
+    deploy( zxvars, src_hw_zx_vars_asm);
+    deploy( tiles, src_hw_zx_tiles_asm );
+
+    outline1("LD A, (%s)", _tileset );
+
+    outline0("CALL USETILESET");
+
+}
 
 #endif
