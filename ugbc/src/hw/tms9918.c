@@ -1152,6 +1152,8 @@ void tms9918_initialization( Environment * _environment ) {
     variable_global( _environment, "TILEH" );
     variable_import( _environment, "TILEA", VT_BYTE, 0 );
     variable_global( _environment, "TILEA" );
+    variable_import( _environment, "TILEO", VT_WORD, 0 );
+    variable_global( _environment, "TILEO" );
 
     #if __coleco__
         variable_import( _environment, "VDP_HOOK", VT_BUFFER, 10 );
@@ -1770,15 +1772,17 @@ void tms9918_move_tiles( Environment * _environment, char * _tile, char * _x, ch
 
     int size = ( tile->originalWidth >> 3 ) * ( tile->originalHeight >> 3 );
 
-    outline0("DI" );
-    outline0("EXX");
     if ( size ) {
         outline1("LD HL, OFFSETS%4.4x", size );
+        outline0("LD A, L" );
+        outline0("LD (TILEO), A" );
+        outline0("LD A, H" );
+        outline0("LD (TILEO+1), A" );
     } else {
-        outline0("LD HL, 0" );
+        outline0("LD A, 0" );
+        outline0("LD (TILEO), A" );
+        outline0("LD (TILEO+1), A" );
     }
-    outline0("EXX");
-    outline0("EI");
 
     outline1("LD A, (%s)", tile->realName );
     outline0("LD (TILET), A" );
