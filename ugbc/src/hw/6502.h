@@ -180,6 +180,7 @@ void cpu6502_mobrender( Environment * _environment, int _on_vbl );
 void cpu6502_mobcount( Environment * _environment, char * _index );
 void cpu6502_sqroot( Environment * _environment, char * _number, char * _result );
 void cpu6502_dstring_vars( Environment * _environment );
+void cpu6502_set_callback( Environment * _environment, char * _callback, char * _label );
 
 void cpu6502_protothread_vars( Environment * _environment );
 void cpu6502_protothread_loop( Environment * _environment );
@@ -332,6 +333,7 @@ void cpu6502_protothread_current( Environment * _environment, char * _current );
 #define cpu_complement2_8bit( _environment, _source, _destination ) cpu6502_complement2_8bit( _environment, _source, _destination )
 #define cpu_complement2_16bit( _environment, _source, _destination ) cpu6502_complement2_16bit( _environment, _source, _destination )
 #define cpu_complement2_32bit( _environment, _source, _destination ) cpu6502_complement2_32bit( _environment, _source, _destination )
+#define cpu_set_callback( _environment, _callback, _label ) cpu6502_set_callback( _environment, _callback, _label )
 
 extern char * src_hw_chipset_mob_asm;
 extern unsigned int src_hw_chipset_mob_asm_len;

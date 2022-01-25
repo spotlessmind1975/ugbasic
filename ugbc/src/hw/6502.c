@@ -5070,4 +5070,19 @@ void cpu6502_is_negative( Environment * _environment, char * _value, char * _res
 
 }
 
+void cpu6502_set_callback( Environment * _environment, char * _callback, char * _label ) {
+
+        outline1("LDA #<(%s+1)", _callback);
+        outline0("STA TMPPTR");
+        outline1("LDA #>(%s+1)", _callback);
+        outline0("STA TMPPTR+1");
+        outline0("LDY #0");
+        outline1("LDA #<%s", _label);
+        outline0("STA (TMPPTR), Y");
+        outline0("INY");
+        outline1("LDA #>%s", _label);
+        outline0("STA (TMPPTR), Y");
+
+}
+
 #endif

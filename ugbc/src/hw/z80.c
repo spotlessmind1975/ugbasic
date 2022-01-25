@@ -3926,4 +3926,14 @@ void z80_is_negative( Environment * _environment, char * _value, char * _result 
 
 }
 
+void z80_set_callback( Environment * _environment, char * _callback, char * _label ) {
+
+    outline1("LD DE, %s", _label );
+    outline1("LD HL, %s", _callback );
+    outline0("INC HL" );
+    outline0("LD (HL), E" );
+    outline0("INC HL" );
+    outline0("LD (HL), D" );
+
+}
 #endif

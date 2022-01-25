@@ -192,6 +192,7 @@ void z80_protothread_restore( Environment * _environment, char * _index, char * 
 void z80_protothread_set_state( Environment * _environment, char * _index, int _state );
 void z80_protothread_get_state( Environment * _environment, char * _index, char * _state );
 void z80_protothread_current( Environment * _environment, char * _current );
+void z80_set_callback( Environment * _environment, char * _callback, char * _label );
 
 #define cpu_beq( _environment,  _label  ) z80_beq( _environment,  _label  )
 #define cpu_bneq( _environment,  _label  ) z80_beq( _environment,  _label  )
@@ -332,6 +333,7 @@ void z80_protothread_current( Environment * _environment, char * _current );
 #define cpu_complement2_8bit( _environment, _source, _destination ) z80_complement2_8bit( _environment, _source, _destination )
 #define cpu_complement2_16bit( _environment, _source, _destination ) z80_complement2_16bit( _environment, _source, _destination )
 #define cpu_complement2_32bit( _environment, _source, _destination ) z80_complement2_32bit( _environment, _source, _destination )
+#define cpu_set_callback( _environment, _callback, _label ) z80_set_callback( _environment, _callback, _label )
 
 extern char * src_hw_chipset_mob_asm;
 extern unsigned int src_hw_chipset_mob_asm_len;

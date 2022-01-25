@@ -4342,4 +4342,13 @@ void cpu6809_is_negative( Environment * _environment, char * _value, char * _res
 
 }
 
+void cpu6809_set_callback( Environment * _environment, char * _callback, char * _label ) {
+
+    outline1("LDY #%s", _label );
+    outline1("LDU #%s", _callback );
+    outline0("LEAU 1, U" );
+    outline0("STY ,U" );
+
+}
+
 #endif
