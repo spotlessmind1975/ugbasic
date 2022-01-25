@@ -2155,6 +2155,8 @@ void                    on_goto_number( Environment * _environment, int _number 
 void                    on_proc( Environment * _environment, char * _expression );
 void                    on_proc_end( Environment * _environment );
 void                    on_proc_index( Environment * _environment, char * _label );
+void                    on_scroll_call( Environment * _environment, int _x, int _y, char * _label );
+void                    on_scroll_gosub( Environment * _environment, int _x, int _y, char * _label );
 
 //----------------------------------------------------------------------------
 // *P*

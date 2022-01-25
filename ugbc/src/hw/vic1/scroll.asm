@@ -35,6 +35,21 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+ONSCROLLVOID:
+    RTS
+
+ONSCROLLUP:
+    JMP ONSCROLLVOID
+
+ONSCROLLDOWN:
+    JMP ONSCROLLVOID
+
+ONSCROLLLEFT:
+    JMP ONSCROLLVOID
+
+ONSCROLLRIGHT:
+    JMP ONSCROLLVOID
+
 ; SCROLL(MATHPTR0,MATHPTR1)
 SCROLL:
     RTS
