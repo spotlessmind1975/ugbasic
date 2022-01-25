@@ -79,7 +79,14 @@ questo indice può essere letto dal programma come se fosse una normale variabil
 </usermanual> */
 void begin_for( Environment * _environment, char * _index, char * _from, char * _to ) {
 
-    Variable * index = variable_retrieve_or_define( _environment, _index, VT_WORD, 0 );
+    Variable * index = NULL;
+
+    if ( variable_exists( _environment, _index ) ) {
+        index = variable_retrieve( _environment, _index );
+    } else {
+        index = variable_retrieve_or_define( _environment, _index, VT_WORD, 0 );
+    }
+
     Variable * from = variable_retrieve( _environment, _from );
     Variable * to = variable_retrieve( _environment, _to );
     Variable * step = variable_resident( _environment, VT_WORD, "(step 1)" );

@@ -71,7 +71,16 @@ per modificare la dimensione dell'incremento del valore dell'indice.
 </usermanual> */
 void begin_for_step( Environment * _environment, char * _index, char * _from, char * _to, char * _step ) {
 
-    Variable * index = variable_retrieve_or_define( _environment, _index, VT_SWORD, 0 );
+    Variable * index = NULL;
+
+    if ( variable_exists( _environment, _index ) ) {
+        index = variable_retrieve( _environment, _index );
+    } else {
+        index = variable_retrieve_or_define( _environment, _index, VT_SWORD, 0 );
+    }
+
+    outline1("; index = %s", index->realName );
+
     Variable * from = variable_retrieve( _environment, _from );
     Variable * to = variable_retrieve( _environment, _to );
     Variable * step = variable_retrieve( _environment, _step );
