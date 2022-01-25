@@ -2000,6 +2000,8 @@ Variable *              csprite_init( Environment * _environment, char * _image,
 
 Variable *              distance( Environment * _environment, char * _x1, char * _y1, char * _x2, char * _y2 );
 void                    draw( Environment * _environment, char * _x0, char * _y0, char * _x1, char * _y1, char * _c );
+void                    draw_tile_column( Environment * _environment, char * _tile, char * _x, char * _y1, char * _y2, char * _color );
+void                    draw_tile_row( Environment * _environment, char * _tile, char * _y, char * _x1, char * _x2, char * _color );
 void                    dstring_cleanup( Environment * _Environment );
 
 //----------------------------------------------------------------------------

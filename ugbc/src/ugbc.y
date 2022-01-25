@@ -2898,8 +2898,23 @@ draw_definition_expression:
         gr_locate( _environment, $2, $4 );
     };
 
+draw_tile_definition_expression:
+      Identifier ROW optional_y OP_COMMA optional_x TO optional_x OP_COMMA optional_expr {
+        draw_tile_row( _environment, $1, $3, $5, $7, $9 );
+    }
+    | Identifier ROW optional_y OP_COMMA optional_x TO optional_x  {
+        draw_tile_row( _environment, $1, $3, $5, $7, NULL );
+    }
+    | Identifier COLUMN optional_x OP_COMMA optional_y TO optional_y OP_COMMA optional_expr {
+        draw_tile_column( _environment, $1, $3, $5, $7, $9 );
+    }
+    | Identifier COLUMN optional_x OP_COMMA optional_y TO optional_y  {
+        draw_tile_column( _environment, $1, $3, $5, $7, NULL );
+    };
+
 draw_definition:
-    draw_definition_expression;
+    draw_definition_expression
+    | TILE draw_tile_definition_expression;
 
 box_definition_expression:
       optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
