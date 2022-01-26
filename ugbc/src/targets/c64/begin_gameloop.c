@@ -60,8 +60,6 @@ void begin_gameloop( Environment * _environment ) {
 
     cpu_label( _environment, "__ugbgameloop");
 
-    outline0( "LDA $D012");
-    outline0( "CMP #$FA");
-    outline0( "BCC __ugbgameloop");
+    outline0( "JSR WAITVBL");
 
 }
