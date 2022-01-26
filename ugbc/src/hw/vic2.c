@@ -1331,6 +1331,17 @@ static Variable * vic2_image_converter_bitmap_mode_standard( Environment * _envi
         // printf("%d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
     }
 
+    if ( _flags & FLAG_TRANSPARENCY ) {
+        if ( palette[0].index == SYSTEM_PALETTE[0].index ) {
+
+        } else {
+            rgbi_move( &palette[1], &palette[2] );
+            rgbi_move( &palette[0], &palette[1] );
+            rgbi_move( &palette[2], &palette[0] );
+        }
+
+    }
+
     memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
 
     int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_STANDARD );

@@ -60,7 +60,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token FONT VIC20 PARALLEL YIELD SPAWN THREAD TASK IMAGES FRAME FRAMES XY YX ROLL MASKED USING TRANSPARENCY
 %token OVERLAYED CASE ENDSELECT OGP CGP ARRAY NEW GET DISTANCE TYPE MUL DIV RGB SHADES HEX PALETTE
 %token BAR XGRAPHIC YGRAPHIC XTEXT YTEXT COLUMNS XGR YGR CHAR RAW SEPARATOR MSX MSX1 COLECO CSPRITE 
-%token TILESET MOVE ROW COLUMN
+%token TILESET MOVE ROW COLUMN TRANSPARENT
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -638,6 +638,9 @@ tile_load_flag :
     }
     | ROLL YX {
         $$ = FLAG_ROLL_Y | FLAG_ROLL_X;
+    }
+    | TRANSPARENT {
+        $$ = FLAG_TRANSPARENCY;
     };
 
 put_image_flag :
@@ -1464,29 +1467,11 @@ exponential:
     | LOAD OP String AS String OP_COMMA Integer CP {
         $$ = load( _environment, $3, $5, $7 )->name;
       }
-    | IMAGES LOAD OP String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP images_load_flags  using_transparency using_background  {        
-        $$ = images_load( _environment, $4, NULL, ((struct _Environment *)_environment)->currentMode, $9, $11, $13, $14, $15 )->name;
-      }
-    | IMAGES LOAD OP String AS String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP images_load_flags  using_transparency using_background  {        
-        $$ = images_load( _environment, $4, $6, ((struct _Environment *)_environment)->currentMode, $11, $13, $15, $16, $17 )->name;
-      }
     | LOAD IMAGES OP String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP images_load_flags  using_transparency using_background  {        
         $$ = images_load( _environment, $4, NULL, ((struct _Environment *)_environment)->currentMode, $9, $11, $13, $14, $15 )->name;
       }
     | LOAD IMAGES OP String AS String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP images_load_flags  using_transparency using_background {
         $$ = images_load( _environment, $4, $6, ((struct _Environment *)_environment)->currentMode, $11, $13, $15, $16, $17 )->name;
-      }
-    | IMAGE LOAD OP String CP image_load_flags  using_transparency using_background  {
-        $$ = image_load( _environment, $4, NULL, ((struct _Environment *)_environment)->currentMode, $6, $7, $8 )->name;
-      }
-    | IMAGE LOAD OP String AS String CP image_load_flags  using_transparency using_background  {
-        $$ = image_load( _environment, $4, $6, ((struct _Environment *)_environment)->currentMode, $8, $9, $10 )->name;
-      }
-    | IMAGE LOAD OP String OP_COMMA Integer CP image_load_flags  using_transparency using_background  {
-        $$ = image_load( _environment, $4, NULL, $6, $8, $9, $10 )->name;
-      }
-    | IMAGE LOAD OP String AS String OP_COMMA Integer CP image_load_flags  using_transparency using_background  {
-        $$ = image_load( _environment, $4, $6, $8, $10, $11, $12 )->name;
       }
     | LOAD IMAGE OP String CP image_load_flags  using_transparency using_background  {
         $$ = image_load( _environment, $4, NULL, ((struct _Environment *)_environment)->currentMode, $6, $7, $8 )->name;
@@ -1499,18 +1484,6 @@ exponential:
       }
     | LOAD IMAGE OP String AS String OP_COMMA Integer CP image_load_flags  using_transparency using_background  {
         $$ = image_load( _environment, $4, $6, $8, $10, $11, $12 )->name;
-      }
-    | TILE LOAD OP String CP tile_load_flags {
-        $$ = tile_load( _environment, $4, $6, NULL )->name;
-      }
-    | TILE LOAD OP String OP_COMMA expr CP tile_load_flags {
-        $$ = tile_load( _environment, $4, $8, $6 )->name;
-      }
-    | TILES LOAD OP String CP tile_load_flags {
-        $$ = tiles_load( _environment, $4, $6, NULL )->name;
-      }
-    | TILES LOAD OP String OP_COMMA expr CP tile_load_flags {
-        $$ = tiles_load( _environment, $4, $8, $6 )->name;
       }
     | LOAD TILE OP String CP tile_load_flags {
         $$ = tile_load( _environment, $4, $6, NULL )->name;
@@ -1834,11 +1807,8 @@ exponential:
     | SCREEN TILES WIDTH {
         $$ = screen_tiles_get_width( _environment )->name;
     }
-    | TILES {
+    | TILES COUNT {
         $$ = screen_tiles_get( _environment )->name;
-    }
-    | TILES WIDTH {
-        $$ = screen_tiles_get_width( _environment )->name;
     }
     | SCREEN COLUMNS {
         $$ = screen_tiles_get_width( _environment )->name;
@@ -1878,9 +1848,6 @@ exponential:
         $$ = screen_get_height( _environment )->name;
     }
     | SCREEN TILES HEIGHT {
-        $$ = screen_tiles_get_height( _environment )->name;
-    }
-    | TILES HEIGHT {
         $$ = screen_tiles_get_height( _environment )->name;
     }
     | SCREEN ROWS {
@@ -2899,22 +2866,23 @@ draw_definition_expression:
     };
 
 draw_tile_definition_expression:
-      Identifier ROW optional_y OP_COMMA optional_x TO optional_x OP_COMMA optional_expr {
+      expr ROW optional_y OP_COMMA optional_x TO optional_x OP_COMMA optional_expr {
         draw_tile_row( _environment, $1, $3, $5, $7, $9 );
     }
-    | Identifier ROW optional_y OP_COMMA optional_x TO optional_x  {
+    | expr ROW optional_y OP_COMMA optional_x TO optional_x  {
         draw_tile_row( _environment, $1, $3, $5, $7, NULL );
     }
-    | Identifier COLUMN optional_x OP_COMMA optional_y TO optional_y OP_COMMA optional_expr {
+    | expr COLUMN optional_x OP_COMMA optional_y TO optional_y OP_COMMA optional_expr {
         draw_tile_column( _environment, $1, $3, $5, $7, $9 );
     }
-    | Identifier COLUMN optional_x OP_COMMA optional_y TO optional_y  {
+    | expr COLUMN optional_x OP_COMMA optional_y TO optional_y  {
         draw_tile_column( _environment, $1, $3, $5, $7, NULL );
     };
 
 draw_definition:
     draw_definition_expression
-    | TILE draw_tile_definition_expression;
+    | TILE draw_tile_definition_expression 
+    | TILES draw_tile_definition_expression;
 
 box_definition_expression:
       optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
