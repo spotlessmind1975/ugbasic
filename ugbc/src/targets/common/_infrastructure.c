@@ -721,6 +721,8 @@ Variable * variable_array_type( Environment * _environment, char *_name, Variabl
         size *= 1;
     } else if ( var->arrayType == VT_TILE ) {
         size *= 1;
+    } else if ( var->arrayType == VT_TILES ) {
+        size *= 4;
     } else {
         CRITICAL_DATATYPE_UNSUPPORTED("array(1)", DATATYPE_AS_STRING[var->arrayType]);
     }
