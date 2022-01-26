@@ -33,10 +33,8 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-CPUMEMMOVE_SIZE         = MATHPTR0
-
 CPUMEMMOVE:
-    LDY CPUMEMMOVE_SIZE+1
+    LDY MATHPTR0+1
     BEQ CPUMEMMOVER
     LDY #$0
 CPUMEMMOVE2:
@@ -46,7 +44,7 @@ CPUMEMMOVE2:
     BNE CPUMEMMOVE2
     INC TMPPTR+1
     INC TMPPTR2+1
-    DEC CPUMEMMOVE_SIZE+1
+    DEC MATHPTR0+1
     BNE CPUMEMMOVE2
 
 CPUMEMMOVER:
@@ -55,6 +53,6 @@ CPUMEMMOVER2:
     LDA (TMPPTR), Y
     STA (TMPPTR2), Y
     INY
-    CPY CPUMEMMOVE_SIZE
+    CPY MATHPTR0
     BNE CPUMEMMOVER2
     RTS

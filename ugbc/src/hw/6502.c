@@ -3341,9 +3341,9 @@ void cpu6502_mem_move( Environment * _environment, char *_source, char *_destina
 
         outline1("LDX %s", _size );
         outline1("BEQ %sdone", label );
-        outline0("STX CPUMEMMOVE_SIZE" );
+        outline0("STX MATHPTR0" );
         outline0("LDX #$0" );
-        outline0("STX CPUMEMMOVE_SIZE+1" );
+        outline0("STX MATHPTR0+1" );
         outline1("LDA %s+1", _source );
         outline0("STA TMPPTR+1" );
         outline1("LDA %s", _source );
@@ -3388,9 +3388,9 @@ void cpu6502_mem_move_direct( Environment * _environment, char *_source, char *_
 
         outline1("LDX %s", _size );
         outline1("BEQ %sdone", label );
-        outline0("STX CPUMEMMOVE_SIZE" );
+        outline0("STX MATHPTR0" );
         outline0("LDX #$0" );
-        outline0("STX CPUMEMMOVE_SIZE+1" );
+        outline0("STX MATHPTR0+1" );
         outline1("LDA #>%s", _source );
         outline0("STA TMPPTR+1" );
         outline1("LDA #<%s", _source );
@@ -3433,9 +3433,9 @@ void cpu6502_mem_move_size( Environment * _environment, char *_source, char *_de
         embedded( cpu_mem_move, src_hw_6502_cpu_mem_move_asm );
 
             outline1("LDX #$%2.2X", (_size & 0xff ) );
-            outline0("STX CPUMEMMOVE_SIZE" );
+            outline0("STX MATHPTR0" );
             outline1("LDX #$%2.2X", ( _size >> 8 ) & 0xff );
-            outline0("STX CPUMEMMOVE_SIZE+1" );
+            outline0("STX MATHPTR0+1" );
             outline1("LDA %s+1", _source );
             outline0("STA TMPPTR+1" );
             outline1("LDA %s", _source );
@@ -3527,9 +3527,9 @@ void cpu6502_mem_move_direct_size( Environment * _environment, char *_source, ch
         embedded( cpu_mem_move, src_hw_6502_cpu_mem_move_asm );
 
             outline1("LDX #$%2.2X", (_size & 0xff ) );
-            outline0("STX CPUMEMMOVE_SIZE" );
+            outline0("STX MATHPTR0" );
             outline1("LDX #$%2.2X", ( _size >> 8 ) & 0xff );
-            outline0("STX CPUMEMMOVE_SIZE+1" );
+            outline0("STX MATHPTR0+1" );
             outline1("LDA #>(%s)", _source );
             outline0("STA TMPPTR+1" );
             outline1("LDA #<(%s)", _source );
@@ -3622,9 +3622,9 @@ void cpu6502_mem_move_direct_indirect_size( Environment * _environment, char *_s
         embedded( cpu_mem_move, src_hw_6502_cpu_mem_move_asm );
 
             outline1("LDX #$%2.2X", (_size & 0xff ) );
-            outline0("STX CPUMEMMOVE_SIZE" );
+            outline0("STX MATHPTR0" );
             outline1("LDX #$%2.2X", ( _size >> 8 ) & 0xff );
-            outline0("STX CPUMEMMOVE_SIZE+1" );
+            outline0("STX MATHPTR0+1" );
             outline1("LDA #>%s", _source );
             outline0("STA TMPPTR+1" );
             outline1("LDA #<%s", _source );
