@@ -48,6 +48,14 @@ TILEA = $98
 ; ----------------------------------------------------------------------------
 
 PUTTILE:
+    LDA _PAPER
+    ASL
+    ASL
+    ASL
+    ASL
+    ORA _PEN
+    STA MATHPTR0
+    
     LDA TEXTADDRESS
     STA TMPPTR
     LDA TEXTADDRESS+1
@@ -120,8 +128,7 @@ PUTTILEL2A:
 PUTTILEL2:
     LDA TILET
     STA (TMPPTR),Y
-    LDA _PEN
-    ORA #$30
+    LDA MATHPTR0
     STA (TMPPTR2),Y
     INC TILET
     INC TILEX2
