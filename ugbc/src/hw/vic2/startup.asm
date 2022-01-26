@@ -109,3 +109,13 @@ VIC2STARTUPL1:
     STA $D016
     
     RTS
+
+WAITVBL:
+    LDA $D011
+    AND #$80
+    CMP #$80
+    BNE WAITVBL
+    LDA $D012
+    CMP #$29
+    BCC WAITVBL
+    RTS    
