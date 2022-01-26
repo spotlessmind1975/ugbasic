@@ -69,6 +69,12 @@ void end_gameloop( Environment * _environment ) {
         if ( _environment->anyProtothread && ! _environment->runParallel ) {
             run_parallel( _environment );
         }
+        outline0( "JSR WAITVBL");
+
+        deploy_embedded( cpu_mem_move, src_hw_6502_cpu_mem_move_asm );
+        if ( _environment->doubleBufferEnabled ) {
+            outline0( "JSR SWITCHTILEMAP");
+        }
         cpu_jump( _environment, "__ugbgameloop");    
         _environment->hasGameLoop = 0;
     } else {

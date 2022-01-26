@@ -60,6 +60,4 @@ void begin_gameloop( Environment * _environment ) {
 
     cpu_label( _environment, "__ugbgameloop");
 
-    outline0( "JSR WAITVBL");
-
 }

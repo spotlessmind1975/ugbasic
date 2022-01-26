@@ -60,7 +60,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token FONT VIC20 PARALLEL YIELD SPAWN THREAD TASK IMAGES FRAME FRAMES XY YX ROLL MASKED USING TRANSPARENCY
 %token OVERLAYED CASE ENDSELECT OGP CGP ARRAY NEW GET DISTANCE TYPE MUL DIV RGB SHADES HEX PALETTE
 %token BAR XGRAPHIC YGRAPHIC XTEXT YTEXT COLUMNS XGR YGR CHAR RAW SEPARATOR MSX MSX1 COLECO CSPRITE 
-%token TILESET MOVE ROW COLUMN TRANSPARENT
+%token TILESET MOVE ROW COLUMN TRANSPARENT DOUBLE
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -4489,6 +4489,12 @@ statement:
   }
   | TIMER OP_ASSIGN expr {
         set_timer( _environment, $3 );
+  }
+  | DOUBLE BUFFER ON {
+      double_buffer( _environment, 1 );
+  }
+  | DOUBLE BUFFER OFF {
+      double_buffer( _environment, 0 );
   }
   | Identifier OP_ASSIGN expr {
         Variable * expr = variable_retrieve( _environment, $3 );

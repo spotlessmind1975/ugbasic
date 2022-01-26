@@ -39,6 +39,8 @@ PLOTDEST = $28 ; $29
 PLOTCDEST= $26 ; $27
 PLOTC2DEST= $24 ; $25
 
+TILEMAPVISIBLE:     .byte 0
+
 XGR:    .word 0
 YGR:    .word 0
 LINE:   .byte $ff, $ff

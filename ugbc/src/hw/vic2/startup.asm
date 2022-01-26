@@ -35,6 +35,12 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+ONSWITCHTILEMAPVOID:
+    RTS
+
+ONSWITCHTILEMAP:
+    JMP ONSWITCHTILEMAPVOID
+
 VIC2STARTUP:
 
     SEI
@@ -84,7 +90,7 @@ VIC2STARTUPL1:
     STA $d018
 
     ; SET_BASIC_VIDEO(MR_SCREEN_DEFAULT);
-    AND #$84
+    LDA #$84
     STA $0288
 
     ; SET_CHARSET(MR_TILESET_DEFAULT);
@@ -119,3 +125,74 @@ WAITVBL:
     CMP #$29
     BCC WAITVBL
     RTS    
+
+DOUBLEBUFFERINIT:
+    LDA #0
+    STA TILEMAPVISIBLE
+    JSR COPYTILEMAP01
+    RTS
+
+COPYTILEMAP01:
+    LDX #<(40*25)
+    STX MATHPTR0
+    LDX #>(40*25)
+    STX MATHPTR0+1
+    LDA #00
+    STA TMPPTR
+    LDA #$84
+    STA TMPPTR+1
+    LDA #0
+    STA TMPPTR2
+    LDA #$88
+    STA TMPPTR2+1
+    JMP CPUMEMMOVE
+
+COPYTILEMAP10:
+    LDX #<(40*25)
+    STX MATHPTR0
+    LDX #>(40*25)
+    STX MATHPTR0+1
+    LDA #00
+    STA TMPPTR
+    LDA #$88
+    STA TMPPTR+1
+    LDA #0
+    STA TMPPTR2
+    LDA #$84
+    STA TMPPTR2+1
+    JMP CPUMEMMOVE
+    
+SWITCHTILEMAP:
+    JSR ONSWITCHTILEMAP
+    LDA TILEMAPVISIBLE
+    BEQ SWITCHTILEMAP1
+
+
+SWITCHTILEMAP0:
+    LDA $d018
+    AND #$0f
+    ORA #$10
+    STA $d018
+    LDA #0
+    STA TILEMAPVISIBLE
+    LDA #$88
+    STA TEXTADDRESS+1
+
+    JSR COPYTILEMAP01
+
+    RTS
+
+SWITCHTILEMAP1:
+    LDA $d018
+    AND #$0f
+    ORA #$20
+    STA $d018
+    LDA #1
+    STA TILEMAPVISIBLE
+    LDA #$84
+    STA TEXTADDRESS+1
+
+    JSR COPYTILEMAP10
+
+    RTS
+    
