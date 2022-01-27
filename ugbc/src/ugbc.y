@@ -1889,16 +1889,16 @@ exponential:
             variable_store( _environment, $$, SPRITE_WIDTH );
         }
     }
-    | SPRITE OP Identifier CP {
+    | SPRITE OP expr CP {
         $$ = sprite_init( _environment, $3, NULL )->name;
     }
-    | SPRITE OP Identifier OP_COMMA Identifier CP {
+    | SPRITE OP expr OP_COMMA Identifier CP {
         $$ = sprite_init( _environment, $3, $5 )->name;
     }
-    | CSPRITE OP Identifier CP {
+    | CSPRITE OP expr CP {
         $$ = csprite_init( _environment, $3, NULL )->name;
     }
-    | CSPRITE OP Identifier OP_COMMA Identifier CP {
+    | CSPRITE OP expr OP_COMMA Identifier CP {
         $$ = csprite_init( _environment, $3, $5 )->name;
     }
     | MOB OP expr CP {
