@@ -97,9 +97,26 @@ SPRITEDATAL1:
     TXA
     STA (TMPPTR2),Y
 
-    LDA TEXTADDRESS
+    LDA #$00
     STA TMPPTR
-    LDA TEXTADDRESS+1
+    LDA #$84
+    STA TMPPTR+1
+
+    CLC
+    LDA TMPPTR
+    ADC #$F8
+    STA TMPPTR
+    LDA TMPPTR+1
+    ADC #$03
+    STA TMPPTR+1
+
+    PLA
+    STA (TMPPTR), Y
+    PHA
+
+    LDA #$00
+    STA TMPPTR
+    LDA #$88
     STA TMPPTR+1
 
     CLC
