@@ -13,7 +13,7 @@ BITMAP ENABLE (16)
 
 CLS
 
-airplane = IMAGE LOAD("examples/air_attack_airplane.png")
+airplane = LOAD IMAGE("examples/air_attack_airplane.png")
 
 PUT IMAGE airplane AT 0,0
 PUT IMAGE airplane AT 16,16

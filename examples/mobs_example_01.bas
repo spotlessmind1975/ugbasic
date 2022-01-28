@@ -11,7 +11,7 @@ REM
 
 BITMAP ENABLE (2)
 
-airplaneImage = IMAGE LOAD("examples/air_attack_airplane.png")
+airplaneImage = LOAD IMAGE("examples/air_attack_airplane.png")
 
 h = SCREEN HEIGHT - IMAGE HEIGHT(airplaneImage)
 w = SCREEN WIDTH - IMAGE WIDTH(airplaneImage)

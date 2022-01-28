@@ -68,7 +68,7 @@ sintassi aggiuntive.
 @syntax MOB [index],[image] AT {[x]},{[y]} {VISIBILE|HIDDEN}
 @syntax MOB([image])
 
-@example starship = 1: MOB starship, IMAGE LOAD("starship.png")
+@example starship = 1: MOB starship, LOAD IMAGE("starship.png")
 @example MOB 2, alien AT 100,100 HIDDEN
 
 @usedInExample mobs_example_01.bas

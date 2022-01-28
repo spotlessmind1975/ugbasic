@@ -12,7 +12,7 @@ REM monocolore che può essere mosso liberamente sullo schermo.
 
 BITMAP ENABLE (16)
 
-spriteImage = IMAGE LOAD("examples/sprite.png")
+spriteImage = LOAD IMAGE("examples/sprite.png")
 
 sprite = SPRITE(spriteImage)
 

@@ -40,17 +40,17 @@
  ****************************************************************************/
 
 /**
- * @brief Emit code for <strong>IMAGE LOAD(...)</strong>
+ * @brief Emit code for <strong>LOAD IMAGE(...)</strong>
  * 
  * @param _environment Current calling environment
  * @param _filename Filename to read into buffer
  * @param _mode Mode to use to convert data
  */
 /* <usermanual>
-@keyword IMAGES LOAD
+@keyword LOAD IMAGES
 
 @english
-The ''IMAGES LOAD'' command allows you to load an image and to convert
+The ''LOAD IMAGES'' command allows you to load an image and to convert
 in an array of images. Each image will be of ''[w]x[h]'' pixels. Offset
 will be calculated automatically on the base of the original image.
 
@@ -75,7 +75,7 @@ to be able to indicate an "alias" with which to exceed this limit. In this regar
 the ''AS'' syntax, which allows you to load the same file several times but with different names.
 
 @italian
-Il comando ''IMAGES LOAD'' permette di caricare un'immagine e di convertirla
+Il comando ''LOAD IMAGES'' permette di caricare un'immagine e di convertirla
 in una serie di immagini. Ogni immagine sarà di ''[w]x[h]'' pixel. Lo scostamentto
 di ogni fotogramma è calcolato automaticamente sulla base dell'immagine originale. 
 
@@ -100,12 +100,12 @@ Dal momento in cui è possibile caricare un solo file dello stesso tipo alla vol
 esiste anche la sintassi ''AS'', che permette di caricare più volte lo stesso file 
 ma con nomi diversi.
 
-@syntax = IMAGES LOAD([filename]) FRAME SIZE ([w],[h])
-@syntax = IMAGES LOAD([filename] AS [alias]) FRAME SIZE ([w],[h])
+@syntax = LOAD IMAGES([filename]) FRAME SIZE ([w],[h])
+@syntax = LOAD IMAGES([filename] AS [alias]) FRAME SIZE ([w],[h])
 
-@example starship = IMAGES LOAD("starship.png") FRAME SIZE (8,8)
-@example alienAt11 = IMAGES LOAD("alien.png") FRAME SIZE (16,16)
-@example alien2 = IMAGES LOAD("alien.png" AS "alien2") FRAME SIZE (16,16)
+@example starship = LOAD IMAGES("starship.png") FRAME SIZE (8,8)
+@example alienAt11 = LOAD IMAGES("alien.png") FRAME SIZE (16,16)
+@example alien2 = LOAD IMAGES("alien.png" AS "alien2") FRAME SIZE (16,16)
 
 @usedInExample images_loading_01.bas
 
@@ -114,7 +114,7 @@ ma con nomi diversi.
 Variable * images_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _frame_width, int _frame_height, int _flags, int _transparent_color, int _background_color ) {
 
     if ( _environment->tenLinerRulesEnforced ) {
-        CRITICAL_10_LINE_RULES_ENFORCED( "IMAGES LOAD");
+        CRITICAL_10_LINE_RULES_ENFORCED( "LOAD IMAGES");
     }
 
     LoadedFile * first = _environment->loadedFiles;

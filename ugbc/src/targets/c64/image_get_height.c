@@ -68,7 +68,7 @@ istruzioni al momento della compilazione.
 
 @syntax = IMAGE HEIGHT([image])
 
-@example starshipHeight = IMAGE HEIGHT( IMAGE LOAD("starship.png") )
+@example starshipHeight = IMAGE HEIGHT( LOAD IMAGE("starship.png") )
 
 @usedInExample mobs_example_01.bas
 

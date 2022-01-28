@@ -10,8 +10,8 @@ REM Questo esempio mostra come verificare una collisione con sprite multicolore.
 
 BITMAP ENABLE (16)
 
-ballImage = IMAGE LOAD("examples/sprite_ball_color.png")
-basketImage = IMAGE LOAD("examples/sprite_basket_color.png")
+ballImage = LOAD IMAGE("examples/sprite_ball_color.png")
+basketImage = LOAD IMAGE("examples/sprite_basket_color.png")
 
 ball = CSPRITE(ballImage)
 basket = CSPRITE(basketImage)

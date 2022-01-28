@@ -56,7 +56,7 @@ La funzione ''IMAGE HEIGHT'' permette di ottenere l'altezza di una immagine (in 
 
 @syntax = IMAGE HEIGHT([image])
 
-@example starshipHeight = IMAGE HEIGHT( IMAGE LOAD("starship.png") )
+@example starshipHeight = IMAGE HEIGHT( LOAD IMAGE("starship.png") )
 
 @usedInExample mobs_example_01.bas
 

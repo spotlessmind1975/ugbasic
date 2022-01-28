@@ -57,7 +57,7 @@ Per poter essere utilizzato è necessario aver caricato l'immagine da utilizzare
 
 @syntax = SPRITE([image])
 
-@example starship = SPRITE(IMAGE LOAD("starship.png"))
+@example starship = SPRITE(LOAD IMAGE("starship.png"))
 
 @usedInExample sprite_example_01.bas
 

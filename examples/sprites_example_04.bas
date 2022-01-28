@@ -14,9 +14,9 @@ REM colori indipendenti.
 
 BITMAP ENABLE (2)
 
-spriteImageColor1 := IMAGE LOAD("examples/sprite_color1.png")
-spriteImageColor2 := IMAGE LOAD("examples/sprite_color2.png")
-spriteImageColor3 := IMAGE LOAD("examples/sprite_color3.png")
+spriteImageColor1 := LOAD IMAGE("examples/sprite_color1.png")
+spriteImageColor2 := LOAD IMAGE("examples/sprite_color2.png")
+spriteImageColor3 := LOAD IMAGE("examples/sprite_color3.png")
 
 spriteColor1 = SPRITE(spriteImageColor1)
 spriteColor2 = SPRITE(spriteImageColor2)

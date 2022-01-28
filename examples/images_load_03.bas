@@ -14,7 +14,7 @@ REM @exclude coleco
 
 BITMAP ENABLE (2)
 
-eye = IMAGE LOAD("examples/eye2.png" )
+eye = LOAD IMAGE("examples/eye2.png" )
 
 PUT IMAGE eye AT 0, 0
 

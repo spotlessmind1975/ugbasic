@@ -1526,8 +1526,8 @@ typedef struct _Environment {
 #define CRITICAL_LOAD_MISSING_FILE(f) CRITICAL2("E053 - LOAD missing file", f );
 #define CRITICAL_LOAD_FILE_TOO_LONG(f) CRITICAL2("E054 - LOAD file too long (>255 bytes)", f );
 #define CRITICAL_CANNOT_CAST_BUFFER_STRING_SIZE(a,b) CRITICAL3("E055 - Cannot cast BUFFER to STRING: buffer too long (>255 bytes)", a, b );
-#define CRITICAL_IMAGE_LOAD_MISSING_FILE(f) CRITICAL2("E056 - IMAGE LOAD missing file", f );
-#define CRITICAL_IMAGE_LOAD_UNKNOWN_FORMAT(f) CRITICAL2("E057 - IMAGE LOAD file format unknown", f );
+#define CRITICAL_IMAGE_LOAD_MISSING_FILE(f) CRITICAL2("E056 - LOAD IMAGE missing file", f );
+#define CRITICAL_IMAGE_LOAD_UNKNOWN_FORMAT(f) CRITICAL2("E057 - LOAD IMAGE file format unknown", f );
 #define CRITICAL_IMAGE_CONVERTER_UNSUPPORTED_MODE(f) CRITICAL2i("E058 - IMAGE converter unsupported for the given screen mode", f );
 #define CRITICAL_IMAGE_CONVERTER_TOO_COLORS(f) CRITICAL2i("E059 - IMAGE converter unsupported -- too much colors", f );
 #define CRITICAL_SQR_UNSUPPORTED( v, t ) CRITICAL3("E060 - SQR unsupported for variable of given datatype", v, t );

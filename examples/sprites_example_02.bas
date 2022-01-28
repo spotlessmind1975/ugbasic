@@ -21,7 +21,7 @@ DIM sprites AS SPRITE (spriteCount)
 DIM x AS POSITION (spriteCount)
 DIM y AS POSITION (spriteCount)
 
-spriteImage = IMAGE LOAD("examples/drop.png")
+spriteImage = LOAD IMAGE("examples/drop.png")
 
 GLOBAL sprites,x,y,spriteImage
 

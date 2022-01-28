@@ -39,7 +39,7 @@
  ****************************************************************************/
 
 /**
- * @brief Emit code for <strong>IMAGE LOAD(...)</strong>
+ * @brief Emit code for <strong>LOAD IMAGE(...)</strong>
  * 
  * @param _environment Current calling environment
  * @param _filename Filename to read into buffer

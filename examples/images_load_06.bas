@@ -14,7 +14,7 @@ REM
 BITMAP ENABLE (16)
 CLS
 
-bat := IMAGES LOAD("examples/bat.png" ) FRAME SIZE (32,32)
+bat := LOAD IMAGES("examples/bat.png" ) FRAME SIZE (32,32)
 
 frame = (BYTE) 0
 

@@ -12,6 +12,6 @@ REM
     BITMAP ENABLE(16)
     CLS
     COLOR BORDER BLACK
-    light := IMAGE LOAD("examples/light.png")
+    light := LOAD IMAGE("examples/light.png")
 
     PUT IMAGE light AT 0,0

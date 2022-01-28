@@ -6,7 +6,7 @@ INK WHITE
 CONST w = SCREEN TILES WIDTH - 5
 CONST h2 = IF(SCREEN TILES HEIGHT>24,2,1)
 
-joystick = IMAGE LOAD("examples/joystick4.png")
+joystick = LOAD IMAGE("examples/joystick4.png")
 
 LOCATE 0,10: CENTER "A TUTTO IL GRUPPO DI"
 LOCATE 0,12: CENTER "RetroProgramming Italia"

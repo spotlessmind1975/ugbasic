@@ -68,7 +68,7 @@ istruzioni al momento della compilazione.
 
 @syntax = IMAGE WIDTH([image])
 
-@example starshipWidth = IMAGE WIDTH( IMAGE LOAD("starship.png") )
+@example starshipWidth = IMAGE WIDTH( LOAD IMAGE("starship.png") )
 
 @usedInExample mobs_example_01.bas
 

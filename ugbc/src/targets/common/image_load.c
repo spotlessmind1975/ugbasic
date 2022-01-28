@@ -41,17 +41,17 @@
  ****************************************************************************/
 
 /**
- * @brief Emit code for <strong>IMAGE LOAD(...)</strong>
+ * @brief Emit code for <strong>LOAD IMAGE(...)</strong>
  * 
  * @param _environment Current calling environment
  * @param _filename Filename to read into buffer
  * @param _mode Mode to use to convert data
  */
 /* <usermanual>
-@keyword IMAGE LOAD
+@keyword LOAD IMAGE
 
 @english
-The ''IMAGE LOAD'' command allows you to load an image and to convert it into
+The ''LOAD IMAGE'' command allows you to load an image and to convert it into
 an ''IMAGE''. The second parameter is the mode to use to convert
 the given data (by default, it is equal to current mode)
 
@@ -76,7 +76,7 @@ to be able to indicate an "alias" with which to exceed this limit. In this regar
 the ''AS'' syntax, which allows you to load the same file several times but with different names.
 
 @italian
-Il comando ''IMAGE LOAD'' permette di caricare un file immagine, e di convertirlo
+Il comando ''LOAD IMAGE'' permette di caricare un file immagine, e di convertirlo
 in una ''IMAGE''. Il secondo parametro è la modalità grafica da usare
 per convertire il dato (per default, è il modo corrente).
 
@@ -101,13 +101,13 @@ Dal momento in cui è possibile caricare un solo file dello stesso tipo alla vol
 esiste anche la sintassi ''AS'', che permette di caricare più volte lo stesso file 
 ma con nomi diversi.
 
-@syntax = IMAGE LOAD([filename]{,[mode]})
-@syntax = IMAGE LOAD([filename] AS [alias]{,[mode]})
+@syntax = LOAD IMAGE([filename]{,[mode]})
+@syntax = LOAD IMAGE([filename] AS [alias]{,[mode]})
 
-@example starship = IMAGE LOAD("starship.png")
-@example starship2 = IMAGE LOAD("starship.png" AS "starship2")
-@example alienAt11 = IMAGE LOAD("alien.jpg",11)
-@example alien2 = IMAGE LOAD("alien.jpg" AS "alien2",11)
+@example starship = LOAD IMAGE("starship.png")
+@example starship2 = LOAD IMAGE("starship.png" AS "starship2")
+@example alienAt11 = LOAD IMAGE("alien.jpg",11)
+@example alien2 = LOAD IMAGE("alien.jpg" AS "alien2",11)
 
 @usedInExample image_loading_01.bas
 
@@ -116,7 +116,7 @@ ma con nomi diversi.
 Variable * image_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _flags, int _transparent_color, int _background_color ) {
 
     if ( _environment->tenLinerRulesEnforced ) {
-        CRITICAL_10_LINE_RULES_ENFORCED( "IMAGE LOAD");
+        CRITICAL_10_LINE_RULES_ENFORCED( "LOAD IMAGE");
     }
     
     LoadedFile * first = _environment->loadedFiles;
