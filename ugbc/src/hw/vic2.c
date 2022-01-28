@@ -507,9 +507,9 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             outline0("STA $D016" );
 
             // This fix is necessary to reset the lookup for rom character.
-            outline0("LDA $D018" );
-            outline0("AND #%11110111");
-            outline0("STA $D018" );
+            // outline0("LDA $D018" );
+            // outline0("AND #%11110111");
+            // outline0("STA $D018" );
 
             cpu_store_16bit( _environment, colormapAddress->realName, 0xd800 );
 
@@ -1132,6 +1132,8 @@ void vic2_initialization( Environment * _environment ) {
 
     variable_import( _environment, "SPRITECOUNT", VT_SPRITE, 0 );
     variable_global( _environment, "SPRITECOUNT" );
+
+    vic2_tilemap_enable( _environment, 40, 25, 2 );
 
     vic2_cls( _environment );
 
