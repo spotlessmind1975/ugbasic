@@ -78,8 +78,6 @@ void wait_ticks( Environment * _environment, int _timing ) {
 </usermanual> */
 void wait_ticks_var( Environment * _environment, char * _timing ) {
 
-    
-
     MAKE_LABEL
 
     Variable * timing = variable_retrieve( _environment, _timing );

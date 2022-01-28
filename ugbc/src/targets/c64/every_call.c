@@ -40,16 +40,19 @@
 
 void every_ticks_call( Environment * _environment, char * _timing, char * _label ) {
 
-    
-
     Variable * timing = variable_retrieve( _environment, _timing );
+
+    Variable * zero = variable_temporary( _environment, timing->type, "(zero)" );
+    variable_store( _environment, zero->name, 0 );
 
     _environment->everyStatus = variable_retrieve( _environment, "EVERYSTATUS");
     _environment->everyStatus->locked = 1;
-    _environment->everyCounter = variable_temporary( _environment, VT_WORD, "(every counter)");
+    _environment->everyCounter = variable_temporary( _environment, timing->type, "(every counter)");
     _environment->everyCounter->locked = 1;
-    _environment->everyTiming = variable_cast( _environment, timing->name, VT_WORD );
+    _environment->everyTiming = timing;
     _environment->everyTiming->locked = 1;
+
+    variable_move_naked( _environment, _environment->everyTiming->name, _environment->everyCounter->name );
 
     char skipEveryRoutineLabel[MAX_TEMPORARY_STORAGE]; sprintf(skipEveryRoutineLabel, "setg%d", UNIQUE_ID );
     char everyRoutineLabel[MAX_TEMPORARY_STORAGE]; sprintf(everyRoutineLabel, "etg%d", UNIQUE_ID );
@@ -63,9 +66,9 @@ void every_ticks_call( Environment * _environment, char * _timing, char * _label
 
     cpu_bveq( _environment, _environment->everyStatus->realName, endOfEveryRoutineLabel );
 
-    cpu_dec( _environment, _environment->everyCounter->realName );
+    variable_decrement( _environment, _environment->everyCounter->name );
 
-    cpu_bvneq( _environment, _environment->everyCounter->realName, endOfEveryRoutineLabel );
+    cpu_bvneq( _environment, variable_compare_not( _environment, _environment->everyCounter->name, zero->name )->realName, endOfEveryRoutineLabel );
 
     call_procedure( _environment, _label );
 

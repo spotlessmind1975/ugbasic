@@ -72,8 +72,6 @@ void wait_cycles( Environment * _environment, int _timing ) {
 </usermanual> */
 void wait_cycles_var( Environment * _environment, char * _timing ) {
 
-    
-
     MAKE_LABEL
 
     Variable * timing = variable_retrieve( _environment, _timing );

@@ -71,8 +71,6 @@ void wait_cycles( Environment * _environment, int _timing ) {
  */
 void wait_cycles_var( Environment * _environment, char * _timing ) {
 
-    
-
     Variable * timing = variable_retrieve( _environment, _timing );
     
     z80_busy_wait( _environment, timing->realName );

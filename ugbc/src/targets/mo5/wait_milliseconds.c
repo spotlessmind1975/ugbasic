@@ -71,8 +71,6 @@ void wait_milliseconds( Environment * _environment, int _timing ) {
 </usermanual> */
 void wait_milliseconds_var( Environment * _environment, char * _timing ) {
 
-    
-
     MAKE_LABEL
 
     Variable * timing = variable_retrieve( _environment, _timing );
