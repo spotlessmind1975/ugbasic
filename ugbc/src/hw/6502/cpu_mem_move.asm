@@ -33,26 +33,4 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-CPUMEMMOVE:
-    LDY MATHPTR0+1
-    BEQ CPUMEMMOVER
-    LDY #$0
-CPUMEMMOVE2:
-    LDA (TMPPTR), Y
-    STA (TMPPTR2), Y
-    INY
-    BNE CPUMEMMOVE2
-    INC TMPPTR+1
-    INC TMPPTR2+1
-    DEC MATHPTR0+1
-    BNE CPUMEMMOVE2
-
-CPUMEMMOVER:
-    LDY #$0
-CPUMEMMOVER2:
-    LDA (TMPPTR), Y
-    STA (TMPPTR2), Y
-    INY
-    CPY MATHPTR0
-    BNE CPUMEMMOVER2
-    RTS
+; this code is migrated inside VIC-II
