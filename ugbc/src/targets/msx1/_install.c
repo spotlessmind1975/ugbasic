@@ -42,12 +42,12 @@ void target_install( Environment * _environment ) {
 
     char answer;
 
-    printf("\nYou have requested to install the chaintool for the ZX Spectrum target.\n"); 
+    printf("\nYou have requested to install the chaintool for the MSX target.\n"); 
 
     #ifdef _WIN32
         printf("This implies that \"Z88DK - The Development Kit for Z80 Computers\"\n");
         printf("will be downloaded from the ugBASIC site, and it will be run automatically.\n");
-        printf("The size of the self-extracting executable is of about 22 MB.n\n\n");
+        printf("The size of the self-extracting executable is of about 6 MB.n\n\n");
 
         printf("Do you want to continue [y/N] ?");
 

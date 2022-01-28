@@ -42,7 +42,7 @@ void target_install( Environment * _environment ) {
 
     char answer;
 
-    printf("\nYou have requested to install the chaintool for the Dragon 32 target.\n"); 
+    printf("\nYou have requested to install the chaintool for the Thomson MO6 target.\n"); 
 
     #ifdef _WIN32
         printf("This implies that \"asm6809 assembler\"\n");
