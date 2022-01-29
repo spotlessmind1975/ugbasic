@@ -40,17 +40,17 @@
  ****************************************************************************/
 
 /**
- * @brief Emit code for <strong>TILE LOAD(...)</strong>
+ * @brief Emit code for <strong>LOAD TILE(...)</strong>
  * 
  * @param _environment Current calling environment
  * @param _filename Filename to read into buffer
  * @param _mode Mode to use to convert data
  */
 /* <usermanual>
-@keyword TILE LOAD
+@keyword LOAD TILE
 
 @english
-The ''TILE LOAD'' command allows you to load an image and to convert it into
+The ''LOAD TILE'' command allows you to load an image and to convert it into
 an ''TILE''.
 
 The command support a set of modern image format, like:
@@ -73,7 +73,7 @@ to be able to indicate an "alias" with which to exceed this limit. In this regar
 the ''AS'' syntax, which allows you to load the same file several times but with different names.
 
 @italian
-Il comando ''TILE LOAD'' permette di caricare un file immagine, e di convertirlo
+Il comando ''LOAD TILE'' permette di caricare un file immagine, e di convertirlo
 in una ''TILE''. Il secondo parametro è la modalità grafica da usare
 per convertire il dato (per default, è il modo corrente).
 
@@ -98,9 +98,9 @@ Dal momento in cui è possibile caricare un solo file dello stesso tipo alla vol
 esiste anche la sintassi ''AS'', che permette di caricare più volte lo stesso file 
 ma con nomi diversi.
 
-@syntax = TILE LOAD([filename])
+@syntax = LOAD TILE([filename])
 
-@example starship = TILE LOAD("starship.png")
+@example starship = LOAD TILE("starship.png")
 
 @target all
 </usermanual> */
@@ -119,7 +119,7 @@ Variable * tile_load( Environment * _environment, char * _filename, int _flags, 
     }
 
     if ( _environment->tenLinerRulesEnforced ) {
-        CRITICAL_10_LINE_RULES_ENFORCED( "TILE LOAD");
+        CRITICAL_10_LINE_RULES_ENFORCED( "LOAD TILE");
     }
     
     int width = 0;

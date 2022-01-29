@@ -58,7 +58,7 @@ o delle tiles (''TILES'') date, espressa in tiles.
 
 @syntax = TILE WIDTH([tile])
 
-@example starshipHeight = TILE WIDTH( TILE LOAD("starship.png") )
+@example starshipHeight = TILE WIDTH( LOAD TILE("starship.png") )
 
 @target atari
 </usermanual> */

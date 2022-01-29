@@ -1896,6 +1896,8 @@ Variable * vic2_image_converter( Environment * _environment, char * _data, int _
 
     WARNING_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
 
+    return vic2_new_image( _environment, 8, 8, BITMAP_MODE_STANDARD );
+
 }
 
 Variable * vic2_sprite_converter( Environment * _environment, char * _source, int _width, int _height, RGBi * _color ) {

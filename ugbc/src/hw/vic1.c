@@ -1316,6 +1316,8 @@ Variable * vic1_image_converter( Environment * _environment, char * _data, int _
 
     WARNING_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
 
+    return vic1_new_image( _environment, 8, 8, BITMAP_MODE_STANDARD );
+
 }
 
 void vic1_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _frame_size, int _flags ) {

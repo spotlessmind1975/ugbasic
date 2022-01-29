@@ -1628,6 +1628,8 @@ Variable * tms9918_image_converter( Environment * _environment, char * _data, in
 
     WARNING_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
 
+    return tms9918_new_image( _environment, 8, 8, BITMAP_MODE_GRAPHIC2 );
+
 }
 
 void tms9918_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _frame_size, int _flags ) {

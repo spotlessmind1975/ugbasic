@@ -58,7 +58,7 @@ o delle tiles (''TILES'') date, espressa in tiles.
 
 @syntax = TILE HEIGHT([tile])
 
-@example starshipHeight = TILE HEIGHT( TILE LOAD("starship.png") )
+@example starshipHeight = TILE HEIGHT( LOAD TILE("starship.png") )
 
 @target atari
 </usermanual> */

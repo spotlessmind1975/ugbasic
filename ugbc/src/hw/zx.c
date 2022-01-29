@@ -488,6 +488,8 @@ Variable * zx_image_converter( Environment * _environment, char * _data, int _wi
 
     WARNING_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
 
+    return vic2_new_image( _environment, 8, 8, BITMAP_MODE_STANDARD );
+
 }
 
 void zx_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _frame_size, int _flags ) {

@@ -1583,8 +1583,8 @@ typedef struct _Environment {
 #define CRITICAL_CANNOT_CALCULATE_SPRITE_WIDTH( ) CRITICAL("E110 - cannot calculate SPRITE WIDTH statically" );
 #define CRITICAL_CANNOT_CALCULATE_SPRITE_HEIGHT( ) CRITICAL("E111 - cannot calculate SPRITE HEIGHT statically" );
 #define CRITICAL_CANNOT_ALLOCATE_MORE_TILE( ) CRITICAL("E112 - cannot allocate one more tile on tileset" );
-#define CRITICAL_TILE_LOAD_MISSING_FILE(f) CRITICAL2("E113 - TILE LOAD missing file", f );
-#define CRITICAL_TILE_LOAD_UNKNOWN_FORMAT(f) CRITICAL2("E114 - TILE LOAD file format unknown", f );
+#define CRITICAL_TILE_LOAD_MISSING_FILE(f) CRITICAL2("E113 - LOAD TILE missing file", f );
+#define CRITICAL_TILE_LOAD_UNKNOWN_FORMAT(f) CRITICAL2("E114 - LOAD TILE file format unknown", f );
 #define CRITICAL_TILE_INVALID_WIDTH( w ) CRITICAL2i("E115 - invalid width for tile, must be 8 pixels", w );
 #define CRITICAL_TILE_INVALID_HEIGHT( h ) CRITICAL2i("E116 - invalid height for tile, must be 8 pixels", h );
 #define CRITICAL_TILE_LOAD_ON_NON_TILESET( t ) CRITICAL2("E117 - loading tile(s) on non tileset", t );
