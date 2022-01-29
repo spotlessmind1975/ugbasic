@@ -347,3 +347,4 @@ XSCROLL:            .byte 0
 YSCROLL:            .byte 0
 
 YSCROLLOFFSET:  .byte 7, 6, 5, 4, 3, 2, 1, 0
+XSCROLLOFFSET:  .byte 7, 6, 5, 4, 3, 2, 1, 0

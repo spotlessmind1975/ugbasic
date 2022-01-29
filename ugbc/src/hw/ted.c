@@ -565,6 +565,26 @@ void ted_screen_rows( Environment * _environment, char * _rows ) {
 
 }
 
+void ted_screen_columns( Environment * _environment, char * _columns ) {
+
+    MAKE_LABEL
+
+    outline1("LDA %s", _columns);
+    outline0("CMP #38");
+    outline1("BEQ %s", label);
+    outline0("LDA $FF07" );
+    outline0("ORA #%00010000");
+    outline0("STA $FF07" );
+    outline1("JMP %s_2", label);
+    outhead1("%s:", label );
+    outline0("LDA $FF07" );
+    outline0("AND #%11101111");
+    outline0("STA $FF07" );
+    outline1("JMP %s_2", label);
+    outhead1("%s_2:", label );
+
+}
+
 void ted_sprite_data_from( Environment * _environment, char * _sprite, char * _address ) {
 
 }

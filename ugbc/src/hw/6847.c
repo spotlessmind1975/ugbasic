@@ -759,6 +759,10 @@ void c6847_screen_rows( Environment * _environment, char * _rows ) {
 
 }
 
+void c6847_screen_columns( Environment * _environment, char * _columns ) {
+
+}
+
 void c6847_sprite_data_from( Environment * _environment, char * _sprite, char * _address ) {
 
 }

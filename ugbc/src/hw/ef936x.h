@@ -150,6 +150,7 @@ void ef936x_disable_mcm( Environment * _environment );
 void ef936x_screen_on( Environment * _environment );
 void ef936x_screen_off( Environment * _environment );
 void ef936x_screen_rows( Environment * _environment, char * _rows );
+void ef936x_screen_columns( Environment * _environment, char * _columns );
 
 void ef936x_sprite_data_from( Environment * _environment, char * _sprite, char * _address );
 void ef936x_sprite_enable( Environment * _environment, char *_sprite );

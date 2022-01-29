@@ -291,6 +291,14 @@ void zx_finalization( Environment * _environment ) {
 
 }
 
+void zx_screen_rows( Environment * _environment, char * _rows ) {
+
+}
+
+void zx_screen_columns( Environment * _environment, char * _columns ) {
+
+}
+
 int zx_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
     _environment->screenWidth = 256;
     _environment->screenHeight = 192;

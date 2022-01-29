@@ -109,6 +109,7 @@ void vic1_disable_mcm( Environment * _environment );
 void vic1_screen_on( Environment * _environment );
 void vic1_screen_off( Environment * _environment );
 void vic1_screen_rows( Environment * _environment, char * _rows );
+void vic1_screen_columns( Environment * _environment, char * _columns );
 
 void vic1_sprite_data_from( Environment * _environment, char * _sprite, char * _address );
 void vic1_sprite_enable( Environment * _environment, char *_sprite );

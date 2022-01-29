@@ -800,6 +800,26 @@ void vic2_screen_rows( Environment * _environment, char * _rows ) {
 
 }
 
+void vic2_screen_columns( Environment * _environment, char * _columns ) {
+
+    MAKE_LABEL
+
+    outline1("LDA %s", _columns);
+    outline0("CMP #38");
+    outline1("BEQ %s", label);
+    outline0("LDA $D016" );
+    outline0("ORA #%00001000");
+    outline0("STA $D016" );
+    outline1("JMP %s_2", label);
+    outhead1("%s:", label );
+    outline0("LDA $D016" );
+    outline0("AND #%11110111");
+    outline0("STA $D016" );
+    outline1("JMP %s_2", label);
+    outhead1("%s_2:", label );
+
+}
+
 void vic2_sprite_data_from( Environment * _environment, char * _sprite, char * _image ) {
 
     _environment->bitmaskNeeded = 1;

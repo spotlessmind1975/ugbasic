@@ -39,44 +39,44 @@
  ****************************************************************************/
 
 /**
- * @brief Emit ASM code for <b>SCREEN ROWS [integer]</b>
+ * @brief Emit ASM code for <b>SCREEN COLUMNS [integer]</b>
  * 
- * This function changes the number of lines that can be displayed. 
+ * This function changes the number of columns that can be displayed. 
  * Depending on the hardware, the effect can be different as different 
  * are the acceptable values. This version is the one called when an 
  * integer number of lines is given in the program.
  * 
  * @param _environment Current calling environment
- * @param _rows Number of rows
+ * @param _columns Number of columns
  */
 /* <usermanual>
-@keyword SCREEN ROWS
+@keyword SCREEN COLUMNS
 </usermanual> */
-void screen_rows( Environment * _environment, int _rows ) {
+void screen_columns( Environment * _environment, int _columns ) {
 
-    char rowsString[MAX_TEMPORARY_STORAGE]; sprintf( rowsString, "#$%2.2x", _rows );
+    char columnsString[MAX_TEMPORARY_STORAGE]; sprintf( columnsString, "#$%2.2x", _columns );
 
-    gtia_screen_rows( _environment, rowsString );
+    vic1_screen_columns( _environment, columnsString );
 
 }
 
 /**
- * @brief Emit ASM code for <b>SCREEN ROWS [int]x</b>
+ * @brief Emit ASM code for <b>SCREEN COLUMNS [int]x</b>
  * 
- * This function changes the number of lines that can be displayed. 
+ * This function changes the number of columns that can be displayed. 
  * Depending on the hardware, the effect can be different as different 
  * are the acceptable values. This version is the one called when an 
  * expression is given in the program.
  * 
  * @param _environment Current calling environment
- * @param _rows Number of rows
+ * @param _rows Number of columns
  */
 /* <usermanual>
-@keyword SCREEN ROWS
+@keyword SCREEN COLUMNS
 </usermanual> */
-void screen_rows_var( Environment * _environment, char * _rows ) {
+void screen_columns_var( Environment * _environment, char * _columns ) {
 
-    Variable * rows = variable_retrieve( _environment, _rows );
-    gtia_screen_rows( _environment, rows->realName );
+    Variable * columns = variable_retrieve( _environment, _columns );
+    vic1_screen_columns( _environment, columns->realName );
 
 }

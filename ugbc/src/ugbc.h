@@ -2224,6 +2224,8 @@ void                    run_parallel( Environment * _environment );
 Variable *              scancode( Environment * _environment );
 Variable *              scanshift( Environment * _environment );
 Variable *              screen_can( Environment * _environment, int _mode );
+void                    screen_columns( Environment * _environment, int _columns );
+void                    screen_columns_var( Environment * _environment, char * _columns );
 Variable *              screen_get_height( Environment * _environment );
 Variable *              screen_get_width( Environment * _environment );
 void                    screen_horizontal_scroll( Environment * _environment, int _displacement );

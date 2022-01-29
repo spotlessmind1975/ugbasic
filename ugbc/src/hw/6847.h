@@ -203,6 +203,7 @@ void c6847_disable_mcm( Environment * _environment );
 void c6847_screen_on( Environment * _environment );
 void c6847_screen_off( Environment * _environment );
 void c6847_screen_rows( Environment * _environment, char * _rows );
+void c6847_screen_columns( Environment * _environment, char * _columns );
 
 void c6847_sprite_data_from( Environment * _environment, char * _sprite, char * _address );
 void c6847_sprite_enable( Environment * _environment, char *_sprite );

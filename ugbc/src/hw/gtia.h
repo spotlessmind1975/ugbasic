@@ -219,6 +219,7 @@ void gtia_disable_mcm( Environment * _environment );
 void gtia_screen_on( Environment * _environment );
 void gtia_screen_off( Environment * _environment );
 void gtia_screen_rows( Environment * _environment, char * _rows );
+void gtia_screen_columns( Environment * _environment, char * _columns );
 
 void gtia_sprite_data_from( Environment * _environment, char * _sprite, char * _address );
 void gtia_sprite_enable( Environment * _environment, char *_sprite );

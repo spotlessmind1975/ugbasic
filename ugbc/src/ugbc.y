@@ -2597,6 +2597,9 @@ screen_definition_simple:
   | ROWS direct_integer {
       screen_rows( _environment, $2 );
   }
+  | COLUMNS direct_integer {
+      screen_columns( _environment, $2 );
+  }
   | VERTICAL SCROLL direct_integer {
       screen_vertical_scroll( _environment, $3 );
   }
@@ -2607,6 +2610,9 @@ screen_definition_simple:
 screen_definition_expression:
     ROWS expr {
       screen_rows_var( _environment, $2 );
+  }
+  | COLUMNS expr {
+      screen_columns_var( _environment, $2 );
   }
   | VERTICAL SCROLL expr {
       screen_vertical_scroll_var( _environment, $3 );
