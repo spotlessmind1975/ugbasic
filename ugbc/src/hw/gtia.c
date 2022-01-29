@@ -283,7 +283,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 72	\Display ANTIC mode 8 (BASIC 3) 64+8
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
-            DLI_LMS( dliListCurrent, 8, 0xA000 );
+            // DLI_LMS( dliListCurrent, 8, 0xA000 );
             DLI_LMS_VSCROLL( dliListCurrent, 8, 0xA000 );
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
@@ -328,7 +328,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 72	\Display ANTIC mode 9 (BASIC 3) 64+9
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
-            DLI_LMS( dliListCurrent, 9, 0xA000 );
+            // DLI_LMS( dliListCurrent, 9, 0xA000 );
             DLI_LMS_VSCROLL( dliListCurrent, 9, 0xA000 );
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
@@ -370,7 +370,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 74	\Display ANTIC mode 10 (BASIC 5) 64+10
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
-            DLI_LMS( dliListCurrent, 10, 0xA000 );
+            // DLI_LMS( dliListCurrent, 10, 0xA000 );
             DLI_LMS_VSCROLL( dliListCurrent, 10, 0xA000 );
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
@@ -412,7 +412,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 75	\Display ANTIC mode 11 (BASIC 8) 64+11
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
-            DLI_LMS( dliListCurrent, 11, 0xA000 );
+            // DLI_LMS( dliListCurrent, 11, 0xA000 );
             DLI_LMS_VSCROLL( dliListCurrent, 11, 0xA000 );
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
@@ -456,7 +456,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 77	\Display ANTIC mode 13 (BASIC 7) 64+13
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
-            DLI_LMS( dliListCurrent, 13, 0xA000 );
+            // DLI_LMS( dliListCurrent, 13, 0xA000 );
             DLI_LMS_VSCROLL( dliListCurrent, 13, 0xA000 );
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
@@ -507,7 +507,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 81	\Display ANTIC mode 15 (BASIC 7) 64+15
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
-            DLI_LMS( dliListCurrent, 15, 0xA000 );
+            // DLI_LMS( dliListCurrent, 15, 0xA000 );
             DLI_LMS_VSCROLL( dliListCurrent, 15, 0xA000 );
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
@@ -562,7 +562,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 76	\Display ANTIC mode 12 64+12
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
-            DLI_LMS( dliListCurrent, 12, 0xA000 );
+            // DLI_LMS( dliListCurrent, 12, 0xA000 );
             DLI_LMS_VSCROLL( dliListCurrent, 12, 0xA000 );
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
@@ -605,7 +605,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 76	\Display ANTIC mode 12 64+14
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
-            DLI_LMS( dliListCurrent, 14, 0xA000 );
+            // DLI_LMS( dliListCurrent, 14, 0xA000 );
             DLI_LMS_VSCROLL( dliListCurrent, 14, 0xA000 );
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
@@ -699,7 +699,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 66	\Display ANTIC mode 2 (BASIC 0) 64+2
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
-            DLI_LMS( dliListCurrent, 6, 40000 );
+            // DLI_LMS( dliListCurrent, 6, 40000 );
             DLI_LMS_VSCROLL( dliListCurrent, 6, 40000 );
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
@@ -739,7 +739,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 71	\Display ANTIC mode 2 (BASIC 0) 64+7
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
-            DLI_LMS( dliListCurrent, 7, 40000 );
+            // DLI_LMS( dliListCurrent, 7, 40000 );
             DLI_LMS_VSCROLL( dliListCurrent, 7, 40000 );
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
@@ -781,7 +781,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 66	\Display ANTIC mode 2 (BASIC 0) 64+2
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
-            DLI_LMS( dliListCurrent, 3, 40000 );
+            // DLI_LMS( dliListCurrent, 3, 40000 );
             DLI_LMS_VSCROLL( dliListCurrent, 3, 40000 );
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
@@ -826,7 +826,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 66	\Display ANTIC mode 2 (BASIC 0) 64+2
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
-            DLI_LMS( dliListCurrent, 4, 40000 );
+            // DLI_LMS( dliListCurrent, 4, 40000 );
             DLI_LMS_VSCROLL( dliListCurrent, 4, 40000 );
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
@@ -866,7 +866,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 66	\Display ANTIC mode 2 (BASIC 0) 64+2
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
-            DLI_LMS( dliListCurrent, 5, 40000 );
+            // DLI_LMS( dliListCurrent, 5, 40000 );
             DLI_LMS_VSCROLL( dliListCurrent, 5, 40000 );
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
