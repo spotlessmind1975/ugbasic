@@ -810,7 +810,7 @@ static int calculate_image_size( Environment * _environment, int _width, int _he
         case BITMAP_MODE_BITMAP_16:
             return 2 + 2 * ( ( _width >> 2 ) * _height ) /* + 16 * 2 */;
         case BITMAP_MODE_PAGE:
-            // CRITICAL_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
+            // WARNING_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
             break;
     }
 
@@ -1429,7 +1429,7 @@ Variable * ef936x_image_converter( Environment * _environment, char * _data, int
         case BITMAP_MODE_BITMAP_16:
             return ef936x_image_converter_multicolor_mode16( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
         case BITMAP_MODE_PAGE:
-            // CRITICAL_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
+            // WARNING_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
             break;
     }
 

@@ -875,7 +875,7 @@ static int calculate_image_size( Environment * _environment, int _width, int _he
             break;
     }
 
-    CRITICAL_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
+    WARNING_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
 
 }
 
@@ -1145,7 +1145,7 @@ Variable * ted_image_converter( Environment * _environment, char * _data, int _w
             break;
     }
 
-    CRITICAL_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
+    WARNING_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
 
 }
 

@@ -2042,7 +2042,7 @@ Variable * gtia_image_converter( Environment * _environment, char * _data, int _
             break;
     }
 
-    CRITICAL_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
+    WARNING_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
 
 }
 

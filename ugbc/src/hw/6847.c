@@ -1337,7 +1337,7 @@ Variable * c6847_image_converter( Environment * _environment, char * _data, int 
 
     }
 
-    CRITICAL_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
+    WARNING_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
 
 }
 
