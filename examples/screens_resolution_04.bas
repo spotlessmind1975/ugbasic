@@ -13,9 +13,9 @@ REM @exclude coleco
      TILEMAP ENABLE
      CLS BLACK: PEN WHITE
      PRINT WIDTH;"x";HEIGHT;" (";COLORS;" colors with ";SHADES;" shades)"
-     PRINT COLUMNS;"x";ROWS;" (";TILES;" tiles)"
+     PRINT COLUMNS;"x";ROWS;" (";TILES COUNT;" tiles)"
      WAIT KEY
      TILEMAP ENABLE(20,20,2)
      CLS BLACK: PEN WHITE
      PRINT WIDTH;"x";HEIGHT;" (";COLORS;" colors with ";SHADES;" shades)"
-     PRINT COLUMNS;"x";ROWS;" (";TILES;" tiles)"
+     PRINT COLUMNS;"x";ROWS;" (";TILES COUNT;" tiles)"
