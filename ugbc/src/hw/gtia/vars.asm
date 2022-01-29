@@ -341,4 +341,9 @@ IMAGEH = $F6
 IMAGEH2 = $F8
 IMAGET = $F9
 
-YSCROLLOFFSET:  .byte 3, 2, 1, 0, 7, 6, 5, 4
+XSCROLLPOS:         .byte 0
+YSCROLLPOS:         .byte 0
+XSCROLL:            .byte 0
+YSCROLL:            .byte 0
+
+YSCROLLOFFSET:  .byte 7, 6, 5, 4, 3, 2, 1, 0

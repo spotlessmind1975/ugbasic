@@ -284,12 +284,13 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             DLI_LMS( dliListCurrent, 8, 0xA000 );
+            DLI_LMS_VSCROLL( dliListCurrent, 8, 0xA000 );
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
             for( i=1; i<23; ++i ) {
                 // 8	\Display ANTIC mode 8 for second mode line
-                DLI_MODE( dliListCurrent, 8 );
+                DLI_MODE_VSCROLL( dliListCurrent, 8 );
             }
 
             DLI_IRQ( dliListCurrent, 8 );
@@ -328,12 +329,13 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             DLI_LMS( dliListCurrent, 9, 0xA000 );
+            DLI_LMS_VSCROLL( dliListCurrent, 9, 0xA000 );
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
             for( i=1; i<47; ++i ) {
                 // 8	\Display ANTIC mode 9 for second mode line
-                DLI_MODE( dliListCurrent, 9 );
+                DLI_MODE_VSCROLL( dliListCurrent, 9 );
             }
 
             DLI_IRQ( dliListCurrent, 9 );
@@ -369,12 +371,13 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             DLI_LMS( dliListCurrent, 10, 0xA000 );
+            DLI_LMS_VSCROLL( dliListCurrent, 10, 0xA000 );
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
             for( i=1; i<47; ++i ) {
                 // 8	\Display ANTIC mode 10 for second mode line
-                DLI_MODE( dliListCurrent, 10 );
+                DLI_MODE_VSCROLL( dliListCurrent, 10 );
             }
 
             DLI_IRQ( dliListCurrent, 10 );
@@ -410,12 +413,13 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             DLI_LMS( dliListCurrent, 11, 0xA000 );
+            DLI_LMS_VSCROLL( dliListCurrent, 11, 0xA000 );
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
             for( i=1; i<95; ++i ) {
                 // 8	\Display ANTIC mode 11 for second mode line
-                DLI_MODE( dliListCurrent, 11 );
+                DLI_MODE_VSCROLL( dliListCurrent, 11 );
             }
 
             DLI_IRQ( dliListCurrent, 10 );
@@ -453,12 +457,13 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             DLI_LMS( dliListCurrent, 13, 0xA000 );
+            DLI_LMS_VSCROLL( dliListCurrent, 13, 0xA000 );
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
             for( i=1; i<(96+16); ++i ) {
                 // 8	\Display ANTIC mode 13 for second mode line
-                DLI_MODE( dliListCurrent, 13 );
+                DLI_MODE_VSCROLL( dliListCurrent, 13 );
             }
 
             DLI_IRQ( dliListCurrent, 13 );
@@ -503,21 +508,22 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             DLI_LMS( dliListCurrent, 15, 0xA000 );
+            DLI_LMS_VSCROLL( dliListCurrent, 15, 0xA000 );
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
             for( i=1; i<96; ++i ) {
                 // 8	\Display ANTIC mode 15 for second mode line
-                DLI_MODE( dliListCurrent, 15 );
+                DLI_MODE_VSCROLL( dliListCurrent, 15 );
             }
 
-            DLI_LMS( dliListCurrent, 15, 0xA000 + 40 * 96 );
+            DLI_LMS_VSCROLL( dliListCurrent, 15, 0xA000 + 40 * 96 );
 
             screenMemoryOffset2 = dliListCurrent - dliListStart - 2;
 
             for( i=0; i<95; ++i ) {
                 // 8	\Display ANTIC mode 15 for second mode line
-                DLI_MODE( dliListCurrent, 15 );
+                DLI_MODE_VSCROLL( dliListCurrent, 15 );
             }
 
             DLI_IRQ( dliListCurrent, 15 );
@@ -557,12 +563,13 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             DLI_LMS( dliListCurrent, 12, 0xA000 );
+            DLI_LMS_VSCROLL( dliListCurrent, 12, 0xA000 );
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
             for( i=1; i<191; ++i ) {
                 // 8	\Display ANTIC mode 15 for second mode line
-                DLI_MODE( dliListCurrent, 12 );
+                DLI_MODE_VSCROLL( dliListCurrent, 12 );
             }
 
             DLI_IRQ( dliListCurrent, 12 );
@@ -599,12 +606,13 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             DLI_LMS( dliListCurrent, 14, 0xA000 );
+            DLI_LMS_VSCROLL( dliListCurrent, 14, 0xA000 );
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
             for( i=1; i<191; ++i ) {
                 // 8	\Display ANTIC mode 15 for second mode line
-                DLI_MODE( dliListCurrent, 14 );
+                DLI_MODE_VSCROLL( dliListCurrent, 14 );
             }
 
             DLI_IRQ( dliListCurrent, 14 );
@@ -644,13 +652,14 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 66	\Display ANTIC mode 2 (BASIC 0) 64+2
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
-            DLI_LMS( dliListCurrent, 2, 40000 );
+            // DLI_LMS( dliListCurrent, 2, 40000 );
+            DLI_LMS_VSCROLL( dliListCurrent, 2, 40000 );
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
             for(i=1; i<23; ++i ) {
                 // 2	\Display ANTIC mode 2 for second mode line
-                DLI_MODE( dliListCurrent, 2 );
+                DLI_MODE_VSCROLL( dliListCurrent, 2 );
             }
 
             DLI_IRQ( dliListCurrent, 2 );
@@ -691,12 +700,13 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             DLI_LMS( dliListCurrent, 6, 40000 );
+            DLI_LMS_VSCROLL( dliListCurrent, 6, 40000 );
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
             for(i=1; i<23; ++i ) {
                 // 2	\Display ANTIC mode 2 for second mode line
-                DLI_MODE( dliListCurrent, 6 );
+                DLI_MODE_VSCROLL( dliListCurrent, 6 );
             }
 
             DLI_IRQ( dliListCurrent, 6 );
@@ -730,12 +740,13 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             DLI_LMS( dliListCurrent, 7, 40000 );
+            DLI_LMS_VSCROLL( dliListCurrent, 7, 40000 );
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
             for(i=1; i<11; ++i ) {
                 // 2	\Display ANTIC mode 2 for second mode line
-                DLI_MODE( dliListCurrent, 7 );
+                DLI_MODE_VSCROLL( dliListCurrent, 7 );
             }
 
             DLI_IRQ( dliListCurrent, 7 );
@@ -771,12 +782,13 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             DLI_LMS( dliListCurrent, 3, 40000 );
+            DLI_LMS_VSCROLL( dliListCurrent, 3, 40000 );
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
             for(i=1; i<23; ++i ) {
                 // 2	\Display ANTIC mode 2 for second mode line
-                DLI_MODE( dliListCurrent, 3 );
+                DLI_MODE_VSCROLL( dliListCurrent, 3 );
             }
 
             DLI_IRQ( dliListCurrent, 3 );
@@ -815,12 +827,13 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             DLI_LMS( dliListCurrent, 4, 40000 );
+            DLI_LMS_VSCROLL( dliListCurrent, 4, 40000 );
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
             for(i=1; i<23; ++i ) {
                 // 2	\Display ANTIC mode 2 for second mode line
-                DLI_MODE( dliListCurrent, 4 );
+                DLI_MODE_VSCROLL( dliListCurrent, 4 );
             }
 
             DLI_IRQ( dliListCurrent, 4 );
@@ -854,12 +867,13 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             DLI_LMS( dliListCurrent, 5, 40000 );
+            DLI_LMS_VSCROLL( dliListCurrent, 5, 40000 );
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
             for(i=1; i<23; ++i ) {
                 // 2	\Display ANTIC mode 2 for second mode line
-                DLI_MODE( dliListCurrent, 5 );
+                DLI_MODE_VSCROLL( dliListCurrent, 5 );
             }
 
             DLI_IRQ( dliListCurrent, 5 );
@@ -1146,8 +1160,6 @@ void gtia_tiles_at( Environment * _environment, char * _address ) {
 }
 
 void gtia_vertical_scroll( Environment * _environment, char * _displacement ) {
-
-
 
     outline1("LDY %s", _displacement );
     outline0("LDA #<YSCROLLOFFSET" );
@@ -2248,6 +2260,17 @@ void gtia_get_image( Environment * _environment, char * _image, char * _x, char 
 }
 
 void gtia_scroll( Environment * _environment, int _dx, int _dy ) {
+
+    deploy( gtiavars, src_hw_gtia_vars_asm);
+    deploy( scroll, src_hw_gtia_scroll_asm);
+    deploy( textHScroll, src_hw_gtia_hscroll_text_asm );
+    deploy( vScrollText, src_hw_gtia_vscroll_text_asm );
+
+    outline1("LDA #$%2.2x", (unsigned char)(_dx&0xff) );
+    outline0("STA MATHPTR0" );
+    outline1("LDA #$%2.2x", (unsigned char)(_dy&0xff) );
+    outline0("STA MATHPTR1" );
+    outline0("JSR SCROLL");
 
 }
 
