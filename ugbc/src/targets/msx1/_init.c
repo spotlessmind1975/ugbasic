@@ -77,8 +77,6 @@ void target_initialization( Environment * _environment ) {
     variable_import( _environment, "EMPTYTILE", VT_BYTE, 32 );
     variable_global( _environment, "EMPTYTILE" );    
     variable_import( _environment, "USING", VT_BYTE, 0 );
-    variable_import( _environment, "CPURANDOM_INTERNALSEED", VT_DWORD, 0xffffffff );
-    variable_global( _environment, "CPURANDOM_INTERNALSEED" );
 
     variable_import( _environment, "COPYOFBITMAPADDRESS", VT_ADDRESS, 0x0000 );
     variable_global( _environment, "COPYOFBITMAPADDRESS" );
