@@ -2275,4 +2275,22 @@ void vic2_use_tileset( Environment * _environment, char * _tileset ) {
     outline0("JSR USETILESET");
 
 }
+
+Variable * vic2_get_raster_line( Environment * _environment ) {
+
+    Variable * result = variable_temporary( _environment, VT_WORD, "(raster line)" );
+
+    outline0( "LDA $D012" );
+    outline1( "STA %s", result->realName );
+    outline0( "LDA $D011" );
+    outline0( "ROL" );
+    outline0( "ROL" );
+    outline0( "AND #$01" );
+    outline1( "STA %s+1", result->realName );
+
+    return result;
+    
+}
+
+
 #endif

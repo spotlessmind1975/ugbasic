@@ -1911,6 +1911,9 @@ exponential:
     | MOB OP expr OP_COMMA HIDDEN CP {
         $$ = mob_init( _environment, $3, NULL, NULL )->name;
     }
+    | RASTER LINE {
+        $$ = get_raster_line( _environment )->name;
+    }
     | TI {
         $$ = get_timer( _environment )->name;
     }

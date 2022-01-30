@@ -259,6 +259,8 @@ void gtia_wait_vbl( Environment * _environment );
 Variable * gtia_new_image( Environment * _environment, int _width, int _height, int _mode );
 void gtia_get_image( Environment * _environment, char * _image, char * _x, char * _y );
 
+Variable * gtia_get_raster_line( Environment * _environment );
+
 void gtia_put_tile( Environment * _environment, char * _image, char * _x, char * _y );
 void gtia_put_tiles( Environment * _environment, char * _image, char * _x, char * _y );
 void gtia_move_tiles( Environment * _environment, char * _image, char * _x, char * _y );

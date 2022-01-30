@@ -1437,4 +1437,14 @@ void c6847_use_tileset( Environment * _environment, char * _tileset ) {
 
 }
 
+Variable * c6847_get_raster_line( Environment * _environment ) {
+
+    Variable * result = variable_temporary( _environment, VT_WORD, "(raster line)" );
+
+    variable_store( _environment, result->name, 0 );
+
+    return result;
+    
+}
+
 #endif

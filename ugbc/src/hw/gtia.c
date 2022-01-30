@@ -2283,4 +2283,14 @@ void gtia_scroll( Environment * _environment, int _dx, int _dy ) {
 
 }
 
+Variable * gtia_get_raster_line( Environment * _environment ) {
+
+    Variable * result = variable_temporary( _environment, VT_WORD, "(raster line)" );
+
+    variable_store( _environment, result->name, 0 );
+
+    return result;
+    
+}
+
 #endif

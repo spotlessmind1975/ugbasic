@@ -1532,4 +1532,14 @@ void ef936x_use_tileset( Environment * _environment, char * _tileset ) {
 
 }
 
+Variable * ef936x_get_raster_line( Environment * _environment ) {
+
+    Variable * result = variable_temporary( _environment, VT_WORD, "(raster line)" );
+
+    variable_store( _environment, result->name, 0 );
+
+    return result;
+    
+}
+
 #endif

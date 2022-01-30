@@ -2053,6 +2053,7 @@ Variable *              get_cmove_direct( Environment * _environment, int _x, in
 void                    get_image( Environment * _environment, char * _image, char * _x1, char * _y1 );
 Variable *              get_paper( Environment * _environment, char * _color );
 Variable *              get_pen( Environment * _environment, char * _color );
+Variable *              get_raster_line( Environment * _environment );
 Variable *              get_tab( Environment * _environment );
 char *                  get_temporary_filename( Environment * _environment );
 Variable *              get_timer( Environment * _environment );

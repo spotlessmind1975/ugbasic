@@ -144,6 +144,8 @@ void ted_hscroll_screen( Environment * _environment, int _direction );
 void ted_text( Environment * _environment, char * _text, char * _text_size );
 void ted_scroll( Environment * _environment, int _dx, int _dy );
 
+Variable * ted_get_raster_line( Environment * _environment );
+
 Variable * ted_image_converter( Environment * _environment, char * _data, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags );
 void ted_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _frame_size, int _flags );
 void ted_wait_vbl( Environment * _environment );

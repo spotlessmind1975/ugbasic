@@ -1371,4 +1371,18 @@ void ted_use_tileset( Environment * _environment, char * _tileset ) {
 
 }
 
+Variable * ted_get_raster_line( Environment * _environment ) {
+
+    Variable * result = variable_temporary( _environment, VT_WORD, "(raster line)" );
+
+    outline0( "LDA $FF0B" );
+    outline1( "STA %s", result->realName );
+    outline0( "LDA $FF0A" );
+    outline0( "AND #$01" );
+    outline1( "STA %s+1", result->realName );
+
+    return result;
+    
+}
+
 #endif

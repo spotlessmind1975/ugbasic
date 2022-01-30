@@ -1504,4 +1504,19 @@ void vic1_use_tileset( Environment * _environment, char * _tileset ) {
 
 }
 
+Variable * vic1_get_raster_line( Environment * _environment ) {
+
+    Variable * result = variable_temporary( _environment, VT_WORD, "(raster line)" );
+
+    outline0( "LDA $9004" );
+    outline0( "ASL" );
+    outline1( "STA %s", result->realName );
+    outline0( "LDA #$0" );
+    outline0( "ROL" );
+    outline1( "STA %s+1", result->realName );
+
+    return result;
+    
+}
+
 #endif

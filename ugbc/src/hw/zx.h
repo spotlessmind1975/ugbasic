@@ -205,6 +205,8 @@ void zx_scroll( Environment * _environment, int _dx, int _dy );
 void zx_screen_rows( Environment * _environment, char * _rows );
 void zx_screen_columns( Environment * _environment, char * _columns );
 
+Variable * zx_get_raster_line( Environment * _environment );
+
 #define         JOY_COUNT           0
 
 Variable * zx_image_converter( Environment * _environment, char * _data, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags );
