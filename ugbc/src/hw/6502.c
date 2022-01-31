@@ -2911,9 +2911,7 @@ void cpu6502_random( Environment * _environment, char * _entropy ) {
 
     embedded( cpu_random, src_hw_6502_cpu_random_asm );
 
-        outline1("LDA %s", _entropy );
-        outline0("STA CPURANDOM_ENTROPY" );
-        outline0("JSR CPURANDOM" );
+       
     done()
 
 }
@@ -2924,6 +2922,9 @@ void cpu6502_random_8bit( Environment * _environment, char * _entropy, char * _r
 
         cpu6502_random( _environment, _entropy );
 
+        outline1("LDA %s", _entropy );
+        outline0("STA CPURANDOM_ENTROPY" );
+        outline0("JSR CPURANDOM16" );
         outline0("LDA CPURANDOM_SEED" );
         outline1("STA %s", _result );
 
@@ -2937,6 +2938,9 @@ void cpu6502_random_16bit( Environment * _environment, char * _entropy, char * _
 
         cpu6502_random( _environment, _entropy );
 
+        outline1("LDA %s", _entropy );
+        outline0("STA CPURANDOM_ENTROPY" );
+        outline0("JSR CPURANDOM16" );
         outline0("LDA CPURANDOM_SEED" );
         outline1("STA %s", _result );
         outline0("LDA CPURANDOM_SEED+1" );
@@ -2952,6 +2956,9 @@ void cpu6502_random_32bit( Environment * _environment, char * _entropy, char * _
 
         cpu6502_random( _environment, _entropy );
 
+        outline1("LDA %s", _entropy );
+        outline0("STA CPURANDOM_ENTROPY" );
+        outline0("JSR CPURANDOM32" );
         outline0("LDA CPURANDOM_SEED" );
         outline1("STA %s", _result );
         outline0("LDA CPURANDOM_SEED+1" );
