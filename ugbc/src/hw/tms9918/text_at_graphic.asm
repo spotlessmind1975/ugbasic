@@ -111,6 +111,8 @@ TEXTATBITMAPMODEGO:
 
     LD HL, $2000
     LD (COPYOFCOLORMAPADDRESS), HL
+    LD HL, $0000
+    LD (COPYOFTEXTADDRESS), HL
 
     LD A, (YCURSYS)
     CP 0
@@ -135,9 +137,6 @@ TEXTATBMLOOP1B:
     LD (COPYOFTEXTADDRESS), HL
 
 TEXTATBMSKIP:
-    ; LD HL, $0000
-    ; LD (COPYOFTEXTADDRESS), HL
-
     LD A, (XCURSYS)
     LD E, A
     LD A, 0
@@ -232,16 +231,16 @@ TEXTATBMLF:
     SUB A, B
     DEC A
 
-    PUSH DE
+    ; PUSH DE
     LD E, A
     LD D, 0
-    PUSH HL
-    LD HL, DE
-    ADD HL, HL
-    ADD HL, HL
-    ADD HL, HL
-    LD DE, HL
-    POP HL
+    ; PUSH HL
+    ; LD HL, DE
+    ; ; ADD HL, HL
+    ; ; ADD HL, HL
+    ; ; ADD HL, HL
+    ; LD DE, HL
+    ; POP HL
 
     LD HL, (COPYOFCOLORMAPADDRESS)
     ADD HL, DE
@@ -317,16 +316,16 @@ TEXTATBMCMOVESUBPX:
     ADD 1
     LD (CLINEX), A
 
-    PUSH DE
+    ; PUSH DE
     LD E, A
     LD D, 0
-    PUSH HL
-    LD HL, DE
-    ADD HL, HL
-    ADD HL, HL
-    ADD HL, HL
-    LD DE, HL
-    POP HL
+    ; PUSH HL
+    ; LD HL, DE
+    ; ADD HL, HL
+    ; ADD HL, HL
+    ; ADD HL, HL
+    ; LD DE, HL
+    ; POP HL
 
     LD HL, (COPYOFCOLORMAPADDRESS)
     SBC HL, DE
@@ -347,13 +346,13 @@ TEXTATBMCMOVEADDPX:
     PUSH DE
     LD E, A
     LD D, 0
-    PUSH HL
-    LD HL, DE
-    ADD HL, HL
-    ADD HL, HL
-    ADD HL, HL
-    LD DE, HL
-    POP HL
+    ; PUSH HL
+    ; LD HL, DE
+    ; ADD HL, HL
+    ; ADD HL, HL
+    ; ADD HL, HL
+    ; LD DE, HL
+    ; POP HL
 
     LD HL, (COPYOFCOLORMAPADDRESS)
     ADC HL, DE
@@ -396,13 +395,13 @@ TEXTATBMCMOVELOOPYP:
     LD A, (CURRENTTILESWIDTH) 
     LD E, A
     LD D, 0
-    PUSH HL
-    LD HL, DE
-    ADD HL, HL
-    ADD HL, HL
-    ADD HL, HL
-    LD DE, HL
-    POP HL
+    ; PUSH HL
+    ; LD HL, DE
+    ; ADD HL, HL
+    ; ADD HL, HL
+    ; ADD HL, HL
+    ; LD DE, HL
+    ; POP HL
 
     LD HL, (COPYOFCOLORMAPADDRESS)
 TEXTATBMCMOVELOOPYC:
@@ -440,13 +439,13 @@ TEXTATBMCMOVELOOPYM:
     LD A, (CURRENTTILESWIDTH) 
     LD E, A
     LD D, 0
-    PUSH HL
-    LD HL, DE
-    ADD HL, HL
-    ADD HL, HL
-    ADD HL, HL
-    LD DE, HL
-    POP HL
+    ; PUSH HL
+    ; LD HL, DE
+    ; ADD HL, HL
+    ; ADD HL, HL
+    ; ADD HL, HL
+    ; LD DE, HL
+    ; POP HL
 
     PUSH AF
     PUSH BC
