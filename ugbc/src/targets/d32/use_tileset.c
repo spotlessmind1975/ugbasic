@@ -70,6 +70,6 @@ void use_tileset( Environment * _environment, char * _tileset ) {
         CRITICAL_USE_TILESET_ON_NON_TILESET( _tileset );
     }
 
-    gtia_use_tileset( _environment, tileset->realName );
+    c6847_use_tileset( _environment, tileset->realName );
 
 }

@@ -61,10 +61,10 @@ void put_tile( Environment * _environment, char * _tile, char * _x, char * _y ) 
 
     switch( tile->type) {
         case VT_TILE:
-            gtia_put_tile( _environment, tile->realName, x->realName, y->realName );
+            c6847_put_tile( _environment, tile->realName, x->realName, y->realName );
             break;
         case VT_TILES:
-            gtia_put_tiles( _environment, tile->realName, x->realName, y->realName );
+            c6847_put_tiles( _environment, tile->realName, x->realName, y->realName );
             break;
     }
 
