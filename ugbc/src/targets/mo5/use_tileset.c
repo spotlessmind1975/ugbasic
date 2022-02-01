@@ -70,6 +70,6 @@ void use_tileset( Environment * _environment, char * _tileset ) {
         CRITICAL_USE_TILESET_ON_NON_TILESET( _tileset );
     }
 
-    vic2_use_tileset( _environment, tileset->realName );
+    ef936x_use_tileset( _environment, tileset->realName );
 
 }
