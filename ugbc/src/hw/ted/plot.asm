@@ -429,14 +429,14 @@ PLOTD:
     STA (PLOTDEST),y           ;write back to $A000
     LDY #0
     LDA (PLOTCDEST),y          ;get row with point in it
-    AND #$0f                   ;isolate AND set the point
+    AND #$f0                   ;isolate AND set the point
     ORA _PEN                   ;isolate OR set the point
     STA (PLOTCDEST),y          ;write back to $A000    
 
     LDY #0
     LDA (PLOTLDEST),y          ;get row with point in it
     AND #$0f                   ;isolate AND set the point
-    ORA #$30                   ;increase luminance
+    ORA #$c0                   ;increase luminance
     STA (PLOTLDEST),y          ;write back to $A000    
 
     JMP PLOTP                  ;skip the erase-point section
