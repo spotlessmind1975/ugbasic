@@ -56,7 +56,7 @@ void linker_setup( Environment * _environment ) {
     cfgline0("ZP:       file = \"\", start = $0002,  size = $001A,      define = yes;");
     cfgline0("LOADADDR: file = %O, start = %S - 2, size = $0002;");
     cfgline0("MAIN:     file = %O, start = %S,     size = $57FF - %S;");
-    actual = _environment->memoryAreas;
+    MemoryArea * actual = _environment->memoryAreas;
     while( actual ) {
         if ( actual->type == MAT_RAM  ) {
             cfgline3("RAM%3.3x:     file = \"\", start = $%4.4x,     size = $%4.4x;", actual->id, (unsigned short)actual->start, (unsigned short)(actual->end - actual->start) );
