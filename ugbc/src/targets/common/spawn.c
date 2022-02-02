@@ -48,19 +48,24 @@
 @keyword SPAWN
 
 @english
-This keyword will invoke a (parallel) procedure. 
+This keyword will invoke a (parallel) procedure. The procedure can be
+invoked in an "halted" state using the keyword ''HALT'', so that a ''RESPAWN'' 
+command must be issued in order to "wake up" the procedure.
 
 @italian
 Questa parola chiave invoca una funzione affinché sia eseguita
-in parallelo.
+in parallelo. La procedura può essere invocata in uno stato "sospeso"
+con la parola chiave ''HALTED'', così che sia necessario usare
+il comando ''RESPAWN'' per "risvegliare" la procedura.
 
-@syntax SPAWN [name][{[parameter],{[parameter],....}}]
+@syntax [HALTED] SPAWN [name][{[parameter],{[parameter],....}}]
 
 @example SPAWN factorial(42)
+@example HALTED SPAWN moveArrow
 
 @target all
 </usermanual> */
-Variable * spawn_procedure( Environment * _environment, char * _name ) {
+Variable * spawn_procedure( Environment * _environment, char * _name, int _halted ) {
 
     Variable * threadId = variable_temporary( _environment, VT_THREAD, "(thread)");
 
@@ -99,7 +104,7 @@ Variable * spawn_procedure( Environment * _environment, char * _name ) {
     _environment->anyProtothread = 1;
 
     cpu_protothread_register( _environment, procedureLabel, threadId->realName );
-    cpu_protothread_set_state( _environment, threadId->realName, PROTOTHREAD_STATUS_WAITING );
+    cpu_protothread_set_state( _environment, threadId->realName, _halted ? PROTOTHREAD_STATUS_ENDED : PROTOTHREAD_STATUS_WAITING );
 
     return threadId;
 

@@ -60,7 +60,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token FONT VIC20 PARALLEL YIELD SPAWN THREAD TASK IMAGES FRAME FRAMES XY YX ROLL MASKED USING TRANSPARENCY
 %token OVERLAYED CASE ENDSELECT OGP CGP ARRAY NEW GET DISTANCE TYPE MUL DIV RGB SHADES HEX PALETTE
 %token BAR XGRAPHIC YGRAPHIC XTEXT YTEXT COLUMNS XGR YGR CHAR RAW SEPARATOR MSX MSX1 COLECO CSPRITE 
-%token TILESET MOVE ROW COLUMN TRANSPARENT DOUBLE
+%token TILESET MOVE ROW COLUMN TRANSPARENT DOUBLE RESPAWN HALTED
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -84,6 +84,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <string> writing_mode_definition writing_part_definition
 %type <string> key_scancode_definition key_scancode_alphadigit key_scancode_function_digit
 %type <integer> datatype as_datatype
+%type <integer> halted
 %type <integer> optional_integer
 %type <string> optional_expr optional_x optional_y
 %type <integer> target targets
@@ -784,6 +785,13 @@ random_definition_simple:
     }
     | HEIGHT {
         $$ = random_height( _environment )->name;
+    };
+
+halted:
+    {
+        $$ = 0;
+    } | HALTED {
+        $$ = 1;
     };
 
 random_definition:
@@ -1662,18 +1670,22 @@ exponential:
       call_procedure( _environment, $1 );
       $$ = param_procedure( _environment, $1 )->name;
     }
-    | SPAWN Identifier {
+    | halted SPAWN Identifier {
       ((struct _Environment *)_environment)->parameters = 0;
-      $$ = spawn_procedure( _environment, $2 )->name;
+      $$ = spawn_procedure( _environment, $3, $1 )->name;
     }
-    | SPAWN Identifier OSP {
+    | halted SPAWN Identifier OSP {
         ((struct _Environment *)_environment)->parameters = 0;
         } values CSP {
-      $$ = spawn_procedure( _environment, $2 )->name;
+      $$ = spawn_procedure( _environment, $3, $1 )->name;
     }
-    | SPAWN Identifier OSP CSP {
+    | halted SPAWN Identifier OSP CSP {
         ((struct _Environment *)_environment)->parameters = 0;
-      $$ = spawn_procedure( _environment, $2 )->name;
+      $$ = spawn_procedure( _environment, $3, $1 )->name;
+    }
+    | RESPAWN Identifier {
+      ((struct _Environment *)_environment)->parameters = 0;
+      $$ = respawn_procedure( _environment, $2 )->name;
     }
     | SGN OP expr CP {
         $$ = sign( _environment, $3 )->name;
@@ -4354,16 +4366,20 @@ statement:
   }
   | SPAWN Identifier {
       ((struct _Environment *)_environment)->parameters = 0;
-      spawn_procedure( _environment, $2 );
+      spawn_procedure( _environment, $2, 0 );
   }
   | SPAWN Identifier OSP {
       ((struct _Environment *)_environment)->parameters = 0;
     } values CSP {
-      spawn_procedure( _environment, $2 );
+      spawn_procedure( _environment, $2, 0 );
   }
   | SPAWN Identifier OSP CSP {
       ((struct _Environment *)_environment)->parameters = 0;
-      spawn_procedure( _environment, $2 );
+      spawn_procedure( _environment, $2, 0 );
+  }
+  | RESPAWN Identifier {
+      ((struct _Environment *)_environment)->parameters = 0;
+      respawn_procedure( _environment, $2 );
   }
   | YIELD {
       yield( _environment );

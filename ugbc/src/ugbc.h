@@ -1591,6 +1591,7 @@ typedef struct _Environment {
 #define CRITICAL_USE_TILESET_ON_NON_TILESET( t ) CRITICAL2("E118 - using a non tileset", t );
 #define CRITICAL_CANNOT_MOVE_UNROLLED_TILE( t ) CRITICAL2("E119 - cannot move an unrolled tile", t );
 #define CRITICAL_NOT_TILE( v ) CRITICAL2("E120 - variable is not a (set of) tile(s)", v );
+#define CRITICAL_CANNOT_RESPAWN_NOT_THREADID( v ) CRITICAL2("E121 - cannot respawn something that is not a thread id", v );
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
 #define WARNING2i( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%i) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -2209,6 +2210,7 @@ void                    raster_at( Environment * _environment, char * _label, in
 void                    raster_at_var( Environment * _environment, char * _label, char * _position );
 void                    remember( Environment * _environment );
 void                    repeat( Environment * _environment, char *_label );
+Variable *              respawn_procedure( Environment * _environment, char * _name );
 void                    return_label( Environment * _environment );
 void                    return_procedure( Environment * _environment, char * _value );
 int                     rgbi_equals_rgb( RGBi * _first, RGBi * _second );
@@ -2246,7 +2248,7 @@ void                    select_case( Environment * _environment, char * _express
 void                    set_timer( Environment * _environment, char * _value );
 void                    shared( Environment * _environment );
 Variable *              sign( Environment * _environment, char * _value );
-Variable *              spawn_procedure( Environment * _environment, char * _name );
+Variable *              spawn_procedure( Environment * _environment, char * _name , int _halted );
 void                    sprite_color( Environment * _environment, int _sprite, int _color );
 void                    sprite_color_vars( Environment * _environment, char * _sprite, char * _color );
 void                    sprite_compress_horizontal( Environment * _environment, int _sprite );
