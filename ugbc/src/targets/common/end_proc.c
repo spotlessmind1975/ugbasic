@@ -88,31 +88,29 @@ void end_procedure( Environment * _environment, char * _value ) {
     if ( _environment->protothread ) {
 
         char procedureParallelDispatch[MAX_TEMPORARY_STORAGE]; sprintf(procedureParallelDispatch, "%sdispatch", _environment->procedureName );
+        char procedureEndedLabel[MAX_TEMPORARY_STORAGE]; sprintf(procedureEndedLabel, "%sended", _environment->procedureName );
+        char protothreadLabelWaiting[MAX_TEMPORARY_STORAGE]; sprintf(protothreadLabelWaiting, "%spt%d", _environment->procedureName, 0 );
+
         cpu_label( _environment, procedureParallelDispatch  );
 
-        char procedureEndedLabel[MAX_TEMPORARY_STORAGE]; sprintf(procedureEndedLabel, "%sended", _environment->procedureName );
-        Variable * statusEnded = variable_temporary( _environment, VT_BYTE, "(status ended)" );
-        Variable * statusWaiting = variable_temporary( _environment, VT_BYTE, "(status waiting)" );
         Variable * status = variable_temporary( _environment, VT_BYTE, "(status)" );
-        variable_store( _environment, statusEnded->name, PROTOTHREAD_STATUS_ENDED );
-        variable_store( _environment, statusWaiting->name, PROTOTHREAD_STATUS_WAITING );
+
         cpu_protothread_get_state( _environment, "PROTOTHREADCT", status->realName );
-        cpu_compare_8bit( _environment, statusEnded->realName, status->realName, status->realName, 1 );
-        cpu_bvneq( _environment, status->realName, procedureEndedLabel );
-        char protothreadLabelWaiting[MAX_TEMPORARY_STORAGE]; sprintf(protothreadLabelWaiting, "%spt%d", _environment->procedureName, 0 );
-        cpu_compare_8bit( _environment, statusWaiting->realName, status->realName, status->realName, 1 );
-        cpu_bvneq( _environment, status->realName, protothreadLabelWaiting );
+
+        cpu_compare_and_branch_8bit_const( _environment, status->realName, PROTOTHREAD_STATUS_ENDED, procedureEndedLabel, 1 );
+        cpu_compare_and_branch_8bit_const( _environment, status->realName, PROTOTHREAD_STATUS_WAITING, protothreadLabelWaiting, 1 );
+
         if ( _environment->protothreadStep > 1 ) {
+            outline0("; start end proc with parallel");
             Variable * step = variable_temporary( _environment, VT_BYTE, "(dispatch)");
-            Variable * index = variable_temporary( _environment, VT_BYTE, "(index)");
             cpu_protothread_restore( _environment, "PROTOTHREADCT", step->realName );
 
             int i = 0;
 
             for(i=1;i<_environment->protothreadStep; ++i) {
+                outline1("; step %d", i );
                 char protothreadLabel[MAX_TEMPORARY_STORAGE]; sprintf(protothreadLabel, "%spt%d", _environment->procedureName, i );
-                variable_store( _environment, index->name, i );
-                cpu_bvneq( _environment, variable_compare( _environment, step->name, index->name )->realName, protothreadLabel );
+                cpu_compare_and_branch_8bit_const( _environment, step->realName, i, protothreadLabel, 1 );
             }
             cpu_protothread_save( _environment, "PROTOTHREADCT", 1 );
             char protothreadLabel[MAX_TEMPORARY_STORAGE]; sprintf(protothreadLabel, "%spt%d", _environment->procedureName, 0 );
