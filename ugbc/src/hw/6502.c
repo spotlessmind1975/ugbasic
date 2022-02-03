@@ -4039,6 +4039,22 @@ void cpu6502_move_32bit_indirect2( Environment * _environment, char * _value, ch
 
 }
 
+void cpu6502_move_8bit_indirect2_8bit( Environment * _environment, char * _value, char * _offset, char *_source ) {
+
+    inline( cpu_move_8bit_indirect2_8bit )
+
+        outline1("LDA #<%s", _value);
+        outline0("STA TMPPTR");
+        outline1("LDA #>%s", _value);
+        outline0("STA TMPPTR+1");
+        outline1("LDY %s", _offset );
+        outline0("LDA (TMPPTR),Y");
+        outline1("STA %s", _source);
+
+    no_embedded( cpu_move_8bit_indirect2_8bit )
+
+}
+
 void cpu6502_uppercase( Environment * _environment, char *_source, char *_size, char *_result ) {
 
     MAKE_LABEL

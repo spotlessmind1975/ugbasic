@@ -150,6 +150,7 @@ void z80_fill_indirect( Environment * _environment, char * _address, char * _siz
 void z80_flip( Environment * _environment, char * _source, char * _size, char * _destination );
 void z80_move_8bit_indirect( Environment * _environment, char *_source, char * _value );
 void z80_move_8bit_indirect2( Environment * _environment, char *_source, char * _value );
+void z80_move_8bit_indirect2_8bit( Environment * _environment, char * _value, char * _offset, char *_source );
 void z80_move_16bit_indirect( Environment * _environment, char *_source, char * _value );
 void z80_move_16bit_indirect2( Environment * _environment, char *_source, char * _value );
 void z80_move_32bit_indirect( Environment * _environment, char *_source, char * _value );

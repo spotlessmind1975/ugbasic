@@ -3575,6 +3575,21 @@ void cpu6809_move_8bit_indirect2( Environment * _environment, char * _value, cha
 
 }
 
+void cpu6809_move_8bit_indirect2_8bit( Environment * _environment, char * _value, char * _offset, char *_source ) {
+
+    inline( cpu_move_8bit_indirect2_8bit )
+
+        MAKE_LABEL
+
+        outline1("LDX %s", _value);
+        outline1("LDB %s", _offset);
+        outline0("LDA B,X" );
+        outline1("STA %s", _source );
+
+    no_embedded( cpu_move_8bit_indirect2_8bit )
+
+}
+
 void cpu6809_move_16bit_indirect( Environment * _environment, char *_source, char * _value ) {
 
     inline( cpu_move_16bit_indirect )

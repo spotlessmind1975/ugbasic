@@ -2933,6 +2933,19 @@ void z80_move_8bit_indirect2( Environment * _environment, char * _value, char *_
 
 }
 
+void z80_move_8bit_indirect2_8bit( Environment * _environment, char * _value, char * _offset, char *_source ) {
+
+    outline1("LD HL, %s", _value);
+    outline1("LD A, (%s)", _offset);
+    outline0("LD E, A");
+    outline1("LD A, 0", _offset);
+    outline0("LD D, A");
+    outline0("ADC HL, DE");
+    outline0("LD A, (HL)");
+    outline1("LD (%s), A", _source );
+
+}
+
 void z80_move_16bit_indirect( Environment * _environment, char *_source, char * _value ) {
 
     outline1("LD DE, (%s)", _value);
