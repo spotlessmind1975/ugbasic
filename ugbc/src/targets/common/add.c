@@ -111,3 +111,47 @@ void add_complex( Environment * _environment, char * _variable, char * _expressi
     cpu_label( _environment, endLabel );
 
 }
+
+/**
+ * @brief Emit code for <strong>ADD x,y,a TO b</strong>
+ * 
+ * @param _environment Current calling environment
+ * @param _variable Variable to operate on
+ * @param _expression Expression to add to the variable
+ * @param _limit_lower Lower limit
+ * @param _limit_upper Upper limit
+ */
+/* <usermanual>
+@keyword ADD
+
+@target all
+</usermanual> */
+void add_complex_mt( Environment * _environment, char * _variable, char * _expression, char * _limit_lower, char * _limit_upper ) { 
+
+    ++((struct _Environment *)_environment)->arrayNestedIndex;
+    memset( ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex], 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
+    ((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex] = 0;
+    ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex][((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex]] = strdup( "PROTOTHREADCT" );
+    ++((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex];
+    Variable * array = variable_retrieve( _environment, _variable );
+    if ( array->type != VT_ARRAY ) {
+        CRITICAL_NOT_ARRAY( _variable );
+    }
+    Variable * value = variable_move_from_array( _environment, array->name );
+    --((struct _Environment *)_environment)->arrayNestedIndex;
+
+    add_complex( _environment, value->name, _expression, _limit_lower, _limit_upper );
+
+    ++((struct _Environment *)_environment)->arrayNestedIndex;
+    memset( ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex], 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
+    ((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex] = 0;
+    ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex][((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex]] = strdup( "PROTOTHREADCT" );
+    ++((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex];
+    array = variable_retrieve( _environment, _variable );
+    if ( array->type != VT_ARRAY ) {
+        CRITICAL_NOT_ARRAY( _variable );
+    }
+    variable_move_array( _environment, array->name, value->name );
+    --((struct _Environment *)_environment)->arrayNestedIndex;
+
+}

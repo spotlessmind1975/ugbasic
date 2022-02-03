@@ -1841,6 +1841,51 @@ void variable_add_inplace( Environment * _environment, char * _source, char * _d
 }
 
 /**
+ * @brief Add two variable and return the sum of them on the first
+ * 
+ * This function allows you to sum the value of two variables. Note 
+ * that both variables must pre-exist before the operation, 
+ * under penalty of an exception.
+ * 
+ * @pre _source and _destination variables must exist
+ * 
+ * @param _environment Current calling environment
+ * @param _source Source variable's name and destination of sum
+ * @param _destination Value to sum
+ * @throw EXIT_FAILURE "Destination variable does not cast"
+ * @throw EXIT_FAILURE "Source variable does not exist"
+ */
+void variable_add_inplace_mt( Environment * _environment, char * _source, char * _destination ) {
+
+    ++((struct _Environment *)_environment)->arrayNestedIndex;
+    memset( ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex], 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
+    ((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex] = 0;
+    ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex][((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex]] = strdup( "PROTOTHREADCT" );
+    ++((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex];
+    Variable * array = variable_retrieve( _environment, _source );
+    if ( array->type != VT_ARRAY ) {
+        CRITICAL_NOT_ARRAY( _source );
+    }
+    Variable * value = variable_move_from_array( _environment, array->name );
+    --((struct _Environment *)_environment)->arrayNestedIndex;
+
+    variable_add_inplace( _environment, value->name, _destination );
+
+    ++((struct _Environment *)_environment)->arrayNestedIndex;
+    memset( ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex], 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
+    ((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex] = 0;
+    ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex][((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex]] = strdup( "PROTOTHREADCT" );
+    ++((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex];
+    array = variable_retrieve( _environment, _source );
+    if ( array->type != VT_ARRAY ) {
+        CRITICAL_NOT_ARRAY( _source );
+    }
+    variable_move_array( _environment, array->name, value->name );
+    --((struct _Environment *)_environment)->arrayNestedIndex;
+
+}
+
+/**
  * @brief Make a differenze between two variable and return the difference of them
  * 
  * This function allows you to difference the value of two variables. Note 

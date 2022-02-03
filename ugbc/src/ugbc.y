@@ -3104,6 +3104,12 @@ add_definition :
     | Identifier OP_COMMA expr OP_COMMA expr TO expr {
         add_complex( _environment, $1, $3, $5, $7 );
     }
+    | OSP Identifier CSP OP_COMMA expr {
+        variable_add_inplace_mt( _environment, $2, $5 );
+    }
+    | OSP Identifier CSP OP_COMMA expr OP_COMMA expr TO expr {
+        add_complex_mt( _environment, $2, $5, $7, $9 );
+    }
     ;
 
 mul_definition :

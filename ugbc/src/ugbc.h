@@ -1929,6 +1929,7 @@ Bank * bank_find( Bank * _first, char * _name );
 
 Variable *              absolute( Environment * _environment, char * _value );
 void                    add_complex( Environment * _environment, char * _variable, char * _expression, char * _limit_lower, char * _limit_upper );
+void                    add_complex_mt( Environment * _environment, char * _variable, char * _expression, char * _limit_lower, char * _limit_upper );
 
 //----------------------------------------------------------------------------
 // *B*
@@ -2320,6 +2321,7 @@ char *                  unescape_string( Environment * _environment, char * _val
 
 Variable *              variable_add( Environment * _environment, char * _source, char * _dest );
 void                    variable_add_inplace( Environment * _environment, char * _source, char * _dest );
+void                    variable_add_inplace_mt( Environment * _environment, char * _source, char * _destination );
 Variable *              variable_and( Environment * _environment, char * _left, char * _right );
 Variable *              variable_and_const( Environment * _environment, char * _source, int _mask );
 void                    variable_array_fill( Environment * _environment, char * _name, int _value );
