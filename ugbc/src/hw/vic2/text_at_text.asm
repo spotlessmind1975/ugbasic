@@ -54,8 +54,8 @@ TEXTATTILEMODEGO:
 
     SEI
 
-    LDA #23
-    STA 53272
+    ; LDA #23
+    ; STA 53272
     
     LDX YCURSYS
     BEQ TEXTATSKIP
