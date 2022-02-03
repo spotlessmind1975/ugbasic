@@ -1895,7 +1895,7 @@ typedef struct _Environment {
 #define FLAG_OVERLAYED      8
 #define FLAG_ROLL_Y         16
 
-#define FLAG_TRANSPARENCY   1
+#define FLAG_TRANSPARENCY   32
 
 void setup_embedded( Environment *_environment );
 void target_install( Environment *_environment );
