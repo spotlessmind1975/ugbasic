@@ -178,6 +178,8 @@ Variable * tile_load( Environment * _environment, char * _filename, int _flags, 
 
     cpu_store_8bit( _environment, index->realName, tile );
 
+    variable_delete( _environment, realImage->name );
+
     return index;
 
 }

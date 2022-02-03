@@ -2336,6 +2336,7 @@ Variable *              variable_complement_const( Environment * _environment, c
 Variable *              variable_decrement( Environment * _environment, char * _source );
 Variable *              variable_define( Environment * _environment, char * _name, VariableType _type, int _value );
 Variable *              variable_define_no_init( Environment * _environment, char * _name, VariableType _type );
+int                     variable_delete( Environment * _environment, char * _name );
 Variable *              variable_div( Environment * _environment, char * _source, char * _dest, char * _remainder );
 Variable *              variable_div2_const( Environment * _environment, char * _source, int _bits );
 void                    variable_global( Environment * _environment, char * _pattern );

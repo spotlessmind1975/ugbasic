@@ -197,7 +197,10 @@ Variable * tiles_load( Environment * _environment, char * _filename, int _flags,
 
                 if ( tile == -1 ) {
                     CRITICAL_CANNOT_ALLOCATE_MORE_TILE();
-                }    
+                }
+
+                variable_delete( _environment, realImage->name );
+    
             }
         }
         if ( _flags & FLAG_ROLL_X ) {

@@ -174,6 +174,25 @@ static Variable * variable_find( Variable * _first, char * _name ) {
     return actual;
 }
 
+static void variable_remove( Variable * _first, char * _name ) {
+
+    Variable * previous = NULL;
+    Variable * actual = _first;
+    while( actual ) {
+        if ( strcmp( actual->name, _name ) == 0 ) {
+            break;
+        }
+        previous = actual;
+        actual = actual->next;
+    }
+    if ( previous ) {
+        previous->next = actual->next;
+    } else {
+        _first->next = actual->next;
+    }
+
+}
+
 static Variable * variable_find_first_unused( Variable * _first, VariableType _type ) {
     Variable * actual = _first;
     while( actual ) {
@@ -607,6 +626,33 @@ int variable_exists( Environment * _environment, char * _name ) {
         return 0;
     }
     return 1;
+
+}
+
+int variable_delete( Environment * _environment, char * _name ) {
+
+    Variable * var = NULL;
+    if ( _environment->procedureName ) {
+        var = variable_find( _environment->tempVariables[_environment->currentProcedure], _name );
+        if ( var ) {
+            variable_remove( _environment->tempVariables[_environment->currentProcedure], _name );
+            return 1;
+        }
+    } else {
+        var = variable_find( _environment->tempVariables[0], _name );
+        if ( var ) {
+            variable_remove( _environment->tempVariables[0], _name );
+            return 1;
+        }
+    }
+    if ( ! var ) {
+        var = variable_find( _environment->tempResidentVariables, _name );
+        if ( var ) {
+            variable_remove( _environment->tempResidentVariables, _name );
+            return 1;
+        }
+    }
+    return 0;
 
 }
 
