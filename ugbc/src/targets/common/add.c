@@ -155,3 +155,31 @@ void add_complex_mt( Environment * _environment, char * _variable, char * _expre
     --((struct _Environment *)_environment)->arrayNestedIndex;
 
 }
+
+/**
+ * @brief Emit code for <strong>ADD x,y,a TO b</strong>
+ * 
+ * @param _environment Current calling environment
+ * @param _variable Variable to operate on
+ * @param _expression Expression to add to the variable
+ * @param _limit_lower Lower limit
+ * @param _limit_upper Upper limit
+ */
+/* <usermanual>
+@keyword ADD
+
+@target all
+</usermanual> */
+void add_complex_array( Environment * _environment, char * _variable, char * _expression, char * _limit_lower, char * _limit_upper ) { 
+
+    Variable * array = variable_retrieve( _environment, _variable );
+    if ( array->type != VT_ARRAY ) {
+        CRITICAL_NOT_ARRAY( _variable );
+    }
+    Variable * value = variable_move_from_array( _environment, array->name );
+
+    add_complex( _environment, value->name, _expression, _limit_lower, _limit_upper );
+
+    variable_move_array( _environment, array->name, value->name );
+
+}
