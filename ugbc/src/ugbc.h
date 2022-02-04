@@ -1300,6 +1300,16 @@ typedef struct _Environment {
     int currentSpriteNumber;
 
     /**
+     * Temporary storage for lower limit
+     */
+    char * lowerLimit;
+
+    /**
+     * Temporary storage for upper limit
+     */
+    char * upperLimit;
+
+    /**
      * Current procedure
      */
     char * procedureName;
@@ -1930,6 +1940,7 @@ Bank * bank_find( Bank * _first, char * _name );
 
 Variable *              absolute( Environment * _environment, char * _value );
 void                    add_complex( Environment * _environment, char * _variable, char * _expression, char * _limit_lower, char * _limit_upper );
+void                    add_complex_array( Environment * _environment, char * _variable, char * _expression, char * _limit_lower, char * _limit_upper );
 void                    add_complex_mt( Environment * _environment, char * _variable, char * _expression, char * _limit_lower, char * _limit_upper );
 
 //----------------------------------------------------------------------------
@@ -2322,6 +2333,7 @@ char *                  unescape_string( Environment * _environment, char * _val
 
 Variable *              variable_add( Environment * _environment, char * _source, char * _dest );
 void                    variable_add_inplace( Environment * _environment, char * _source, char * _dest );
+void                    variable_add_inplace_array( Environment * _environment, char * _source, char * _destination );
 void                    variable_add_inplace_mt( Environment * _environment, char * _source, char * _destination );
 Variable *              variable_and( Environment * _environment, char * _left, char * _right );
 Variable *              variable_and_const( Environment * _environment, char * _source, int _mask );
@@ -2335,6 +2347,8 @@ Variable *              variable_compare( Environment * _environment, char * _so
 Variable *              variable_compare_not( Environment * _environment, char * _source, char * _dest );
 Variable *              variable_complement_const( Environment * _environment, char * _source, int _mask );
 Variable *              variable_decrement( Environment * _environment, char * _source );
+Variable *              variable_decrement_array( Environment * _environment, char * _source );
+Variable *              variable_decrement_mt( Environment * _environment, char * _source );
 Variable *              variable_define( Environment * _environment, char * _name, VariableType _type, int _value );
 Variable *              variable_define_no_init( Environment * _environment, char * _name, VariableType _type );
 int                     variable_delete( Environment * _environment, char * _name );
@@ -2345,6 +2359,8 @@ Variable *              variable_greater_than( Environment * _environment, char 
 Variable *              variable_hex( Environment * _environment, char * _value );
 Variable *              variable_import( Environment * _environment, char * _name, VariableType _type, int _size_or_value );
 Variable *              variable_increment( Environment * _environment, char * _source );
+Variable *              variable_increment_array( Environment * _environment, char * _source );
+Variable *              variable_increment_mt( Environment * _environment, char * _source );
 Variable *              variable_less_than( Environment * _environment, char * _source, char * _dest, int _equal );
 Variable *              variable_mod( Environment * _environment, char * _source, char * _destination );
 Variable *              variable_move( Environment * _environment, char * _source, char * _dest );

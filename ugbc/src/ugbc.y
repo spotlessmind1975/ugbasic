@@ -3097,6 +3097,16 @@ every_definition :
           every_off( _environment );
     };
 
+limits: 
+    {
+        ((struct _Environment *)_environment)->upperLimit = NULL;
+        ((struct _Environment *)_environment)->lowerLimit = NULL;
+    }
+    | OP_COMMA expr TO expr {
+        ((struct _Environment *)_environment)->upperLimit = $2;
+        ((struct _Environment *)_environment)->lowerLimit = $4;
+    };
+
 add_definition :
     Identifier OP_COMMA expr {
         variable_add_inplace( _environment, $1, $3 );
@@ -3109,6 +3119,14 @@ add_definition :
     }
     | OSP Identifier CSP OP_COMMA expr OP_COMMA expr TO expr {
         add_complex_mt( _environment, $2, $5, $7, $9 );
+    }
+    | Identifier OP {
+        ++((struct _Environment *)_environment)->arrayNestedIndex;
+        memset( ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex], 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
+        ((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex] = 0;
+    } indexes CP OP_COMMA expr limits {
+        add_complex_array( _environment, $1, $7, ((struct _Environment *)_environment)->lowerLimit, ((struct _Environment *)_environment)->upperLimit );
+        --((struct _Environment *)_environment)->arrayNestedIndex;
     }
     ;
 
@@ -4178,6 +4196,28 @@ statement:
   }
   | OP_DEC Identifier {
       variable_decrement( _environment, $2 );
+  }
+  | OP_INC Identifier OP {
+        ++((struct _Environment *)_environment)->arrayNestedIndex;
+        memset( ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex], 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
+        ((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex] = 0;
+    } indexes CP {
+        variable_increment_array( _environment, $2 );
+        --((struct _Environment *)_environment)->arrayNestedIndex;
+  }
+  | OP_DEC Identifier OP {
+        ++((struct _Environment *)_environment)->arrayNestedIndex;
+        memset( ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex], 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
+        ((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex] = 0;
+    } indexes CP {
+        variable_decrement_array( _environment, $2 );
+        --((struct _Environment *)_environment)->arrayNestedIndex;
+  }
+  | OP_INC OSP Identifier CSP {
+        variable_increment_mt( _environment, $3 );
+  }
+  | OP_DEC OSP Identifier CSP {
+        variable_decrement_mt( _environment, $3 );
   }
   | RANDOMIZE {
       randomize( _environment, NULL );
