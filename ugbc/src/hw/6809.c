@@ -3712,9 +3712,11 @@ void cpu6809_move_8bit_indirect2_8bit( Environment * _environment, char * _value
         MAKE_LABEL
 
         outline1("LDX #%s", _value);
+        outline0("LDA #$0");
         outline1("LDB %s", _offset);
-        outline0("LDA B,X" );
-        outline1("STA %s", _source );
+        outline0("LEAX D,X");
+        outline0("LDA ,X");
+        outline1("STA %s", _source);
 
     no_embedded( cpu_move_8bit_indirect2_8bit )
 
