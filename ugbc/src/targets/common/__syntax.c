@@ -1175,3 +1175,61 @@ sono inclusi, mentre una parentesi tonda si intende che gli estremi sono esclusi
 
 @target all
 </usermanual> */
+
+/* <usermanual>
+@keyword DIM
+
+@english
+The ''DIM'' command allows you to define a vector or a multidimensional array of values, 
+and to initialize this array with the values ​​we prefer.
+
+The simplest syntax is that which defines a vector of a single dimension: in this case, 
+it is sufficient to indicate the number of elements in parentheses. With the keyword 
+''AS'' you can indicate the data type of each single element. You can, of course, 
+define a matrix (i.e. a vector with two or more dimensions). In this case it is 
+sufficient to indicate the number of elements for each dimension, separating them 
+with a comma.
+
+By definition, the array will be initialized with a value of zero for each element. 
+You can change this behavior by specifying an initialization by assignment. The 
+initialization can be done by indicating each single value of each single element, 
+with the same type of data with which the matrix was created (with the ''# {...}''
+syntax ), or by describing the memory area that will occupy the array, byte by byte 
+(with the ''# [...]'' syntax ).
+
+@italian
+Il comando ''DIM'' permette di definire un vettore o una matrice multidimensionale
+di valori, e di inizializzare tale array con i valori che preferiamo.
+
+La sintassi più semplice è quella che definisce un vettore di una singola dimensione:
+in tal caso, è sufficiente indicare il numero di elementi tra parentesi.
+Con la parola chiave ''AS'' si può indicare il tipo di dato di ogni singolo elemento.
+Si può, ovviamente, definire una matrice (cioè un vettore con due o più dimensioni). 
+In tal caso è sufficiente indicare il numero di elementi per ogni dimensione, 
+separandoli con una virgola.
+
+Per definizione, l'array sarà inizializzato con un valore pari a zero per ogni elemento. 
+Si può cambiare tale comportamento indicando una inizializzazione per assegnazione.
+
+L'inizializzazione può essere fatta indicando ogni singolo valore di ogni singolo 
+elemento, con lo stesso tipo di dato con cui è stata creata la matrice 
+(con la sintassi ''# { ... }''), oppure descrivendo l'area di memoria che 
+occuperà la matrice, byte per byte (con la sintassi ''#[...]'').
+
+@syntax DIM [identifier] {AS [datatype]} ( [dimension1] {, [dimension2], ... } )
+@syntax DIM [identifier] {AS [datatype]} ( [dimension1] {, [dimension2], ... } ) = # [...bytes...]
+@syntax DIM [identifier] {AS [datatype]} ( [dimension1] {, [dimension2], ... } ) = # { { value1, value2, ... }, ... }
+@syntax DIM [identifier] {AS [datatype]} WITH [value] ( [dimension1] {, [dimension2], ... } )
+
+@example DIM x(42)
+@example DIM values AS DWORD(20,20)
+@example DIM y AS BYTE(8) = #[ff80ff80ff80ff80]
+@example DIM z AS BYTE(8) = #{ 255, 128, 255, 128, 255, 128, 255, 128 }
+@example DIM scores WITH 0 (2)
+
+@usedInExample contrib_sierpinski.bas
+@usedInExample contrib_sierpinski2.bas
+@usedInExample contrib_sierpinski3.bas
+
+@target all
+</usermanual> */
