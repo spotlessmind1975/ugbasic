@@ -80,13 +80,13 @@ void target_initialization( Environment * _environment ) {
     outline0("CALL VARINIT");
     outline0("CALL PROTOTHREADINIT" );
 
-    if ( _environment->tenLinerRulesEnforced ) {
-        shell_injection( _environment );
-    }
-
     setup_text_variables( _environment );
 
     zx_initialization( _environment );
+
+    if ( _environment->tenLinerRulesEnforced ) {
+        shell_injection( _environment );
+    }
 
 }
 
