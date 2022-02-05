@@ -1843,6 +1843,29 @@ Variable * variable_add( Environment * _environment, char * _source, char * _des
     return result;
 }
 
+void variable_add_inplace( Environment * _environment, char * _source, int _destination ) {
+
+    Variable * source = variable_retrieve( _environment, _source );
+    if ( source->type == VT_STRING ) {
+        source = variable_cast( _environment, _source, VT_DSTRING );
+    }
+
+    switch( VT_BITWIDTH( source->type ) ) {
+        case 32:
+            cpu_math_add_32bit_const( _environment, source->realName, _destination, source->realName );
+            break;
+        case 16:
+            cpu_math_add_16bit_const( _environment, source->realName, _destination, source->realName );
+            break;
+        case 8:
+            cpu_math_add_8bit_const( _environment, source->realName, _destination, source->realName );
+            break;
+        case 0:
+            CRITICAL_ADD_INPLACE_UNSUPPORTED( _source, DATATYPE_AS_STRING[source->type]);
+    }
+
+}
+
 /**
  * @brief Add two variable and return the sum of them on the first
  * 
@@ -1858,7 +1881,7 @@ Variable * variable_add( Environment * _environment, char * _source, char * _des
  * @throw EXIT_FAILURE "Destination variable does not cast"
  * @throw EXIT_FAILURE "Source variable does not exist"
  */
-void variable_add_inplace( Environment * _environment, char * _source, char * _destination ) {
+void variable_add_inplace_vars( Environment * _environment, char * _source, char * _destination ) {
 
     Variable * source = variable_retrieve( _environment, _source );
     if ( source->type == VT_STRING ) {
@@ -1901,7 +1924,7 @@ void variable_add_inplace_array( Environment * _environment, char * _source, cha
     }
     Variable * value = variable_move_from_array( _environment, array->name );
 
-    variable_add_inplace( _environment, value->name, _destination );
+    variable_add_inplace_vars( _environment, value->name, _destination );
 
     variable_move_array( _environment, array->name, value->name );
 
@@ -1937,7 +1960,7 @@ void variable_add_inplace_mt( Environment * _environment, char * _source, char *
     Variable * value = variable_move_from_array( _environment, array->name );
     --((struct _Environment *)_environment)->arrayNestedIndex;
 
-    variable_add_inplace( _environment, value->name, _destination );
+    variable_add_inplace_vars( _environment, value->name, _destination );
 
     ++((struct _Environment *)_environment)->arrayNestedIndex;
     memset( ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex], 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
@@ -3032,6 +3055,30 @@ Variable * variable_less_than( Environment * _environment, char * _source, char 
                 default:
                     CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
             }
+            break;
+    }
+    return result;
+}
+
+Variable * variable_less_than_const( Environment * _environment, char * _source, int _destination, int _equal ) {
+
+    MAKE_LABEL
+
+    Variable * source = variable_retrieve( _environment, _source );
+
+    Variable * result = variable_temporary( _environment, VT_SBYTE, "(result of compare)" );
+    switch( VT_BITWIDTH( source->type ) ) {
+        case 32:
+            cpu_less_than_32bit_const( _environment, source->realName, _destination, result->realName, _equal, VT_SIGNED( source->type ) );
+            break;
+        case 16:
+            cpu_less_than_16bit_const( _environment, source->realName, _destination, result->realName, _equal, VT_SIGNED( source->type ) );
+            break;
+        case 8:
+            cpu_less_than_8bit_const( _environment, source->realName, _destination, result->realName, _equal, VT_SIGNED( source->type ) );
+            break;
+        default:
+            CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], "(const integer)" );
             break;
     }
     return result;
@@ -4488,7 +4535,7 @@ static Variable * calculate_offset_in_array( Environment * _environment, char * 
 
     if ( _environment->arrayIndexes[_environment->arrayNestedIndex] == 1 ) {
         Variable * index = variable_retrieve( _environment, _environment->arrayIndexesEach[_environment->arrayNestedIndex][0]);
-        variable_add_inplace( _environment, offset->name, index->name );
+        variable_add_inplace_vars( _environment, offset->name, index->name );
     } else {
         for( i = 0; i<_environment->arrayIndexes[_environment->arrayNestedIndex]; ++i ) {
             int baseValue = 1;
@@ -4499,9 +4546,9 @@ static Variable * calculate_offset_in_array( Environment * _environment, char * 
             if(baseValue!=1) {
                 variable_store( _environment, base->name, baseValue );
                 Variable * additionalOffset = variable_mul( _environment, index->name, base->name );
-                variable_add_inplace( _environment, offset->name, additionalOffset->name );
+                variable_add_inplace_vars( _environment, offset->name, additionalOffset->name );
             } else {
-                variable_add_inplace( _environment, offset->name, index->name );
+                variable_add_inplace_vars( _environment, offset->name, index->name );
             }
         }
     }

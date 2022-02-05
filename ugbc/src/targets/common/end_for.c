@@ -66,7 +66,7 @@ void end_for( Environment * _environment ) {
     unsigned char endFor[MAX_TEMPORARY_STORAGE]; sprintf(endFor, "%sbis", loop->label );
 
     if ( loop->type == LT_FOR ) {
-        variable_add_inplace( _environment, loop->index->name, loop->step->name );
+        variable_add_inplace_vars( _environment, loop->index->name, loop->step->name );
     } else {
         ++((struct _Environment *)_environment)->arrayNestedIndex;
         memset( ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex], 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
@@ -80,7 +80,7 @@ void end_for( Environment * _environment ) {
         Variable * value = variable_move_from_array( _environment, loop->index->name );
         --((struct _Environment *)_environment)->arrayNestedIndex;
 
-        variable_add_inplace( _environment, value->name, loop->step->name );
+        variable_add_inplace_vars( _environment, value->name, loop->step->name );
 
         ++((struct _Environment *)_environment)->arrayNestedIndex;
         memset( ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex], 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );

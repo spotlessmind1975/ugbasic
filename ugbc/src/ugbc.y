@@ -502,6 +502,12 @@ expr :
     | expr_math OP_LTE expr {
         $$ = variable_less_than( _environment, $1, $3, 1 )->name;
     }
+    | expr_math OP_LT OP_HASH const_expr {
+        $$ = variable_less_than_const( _environment, $1, $4, 0 )->name;
+    }
+    | expr_math OP_LTE OP_HASH const_expr {
+        $$ = variable_less_than_const( _environment, $1, $4, 1 )->name;
+    }
     | expr_math OP_GT expr {
         $$ = variable_greater_than( _environment, $1, $3, 0 )->name;
     }
@@ -3109,10 +3115,16 @@ limits:
 
 add_definition :
     Identifier OP_COMMA expr {
-        variable_add_inplace( _environment, $1, $3 );
+        variable_add_inplace_vars( _environment, $1, $3 );
+    }
+    | Identifier OP_COMMA OP_HASH const_expr {
+        variable_add_inplace( _environment, $1, $4 );
     }
     | Identifier OP_COMMA expr OP_COMMA expr TO expr {
-        add_complex( _environment, $1, $3, $5, $7 );
+        add_complex_vars( _environment, $1, $3, $5, $7 );
+    }
+    | Identifier OP_COMMA OP_HASH const_expr OP_COMMA OP_HASH const_expr TO OP_HASH const_expr {
+        add_complex( _environment, $1, $4, $7, $10 );
     }
     | OSP Identifier CSP OP_COMMA expr {
         variable_add_inplace_mt( _environment, $2, $5 );

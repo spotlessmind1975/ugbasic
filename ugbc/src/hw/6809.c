@@ -106,6 +106,35 @@ static void cpu6809_less_than( Environment * _environment, char *_source, char *
     outhead1("%s", label );
     outline1("STB %s", _other ? _other : _destination);
 }
+
+static void cpu6809_less_than_const( Environment * _environment, char *_source, int _destination,  char *_other, int _equal, int _signed, int _bits) {
+    char REG = _bits==16 ? 'X' : 'A';
+
+    MAKE_LABEL
+
+    outline0("CLRB");
+    outline2("LD%c %s",  REG, _source);
+    outline2("CMP%c #$%4.4x", REG, _destination);
+
+    if ( _signed ) {
+        if ( _equal ) {
+            outline1("BGT %s", label);
+        } else {
+            outline1("BGE %s", label);
+        }
+    } else {
+        if ( _equal ) {
+            outline1("BHI %s", label);
+        } else {
+            outline1("BHS %s", label);
+        }
+    }
+
+    outline0("DECB");
+    outhead1("%s", label );
+    outline1("STB %s", _other );
+}
+
 static void cpu6809_greater_than( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed, int _bits ) {
     char REG = _bits==16 ? 'X' : 'A';
 
@@ -650,6 +679,16 @@ void cpu6809_less_than_8bit( Environment * _environment, char *_source, char *_d
 
 }
 
+void cpu6809_less_than_8bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _equal, int _signed ) {
+
+    inline( cpu_less_than_8bit_const )
+
+        cpu6809_less_than(_environment, _source, _destination, _other, _equal, _signed, 8);
+
+    no_embedded( cpu_less_than_8bit_const )
+
+}
+
 /**
  * @brief <i>CPU 6809</i>: emit code to compare two 8 bit values
  *
@@ -683,6 +722,18 @@ void cpu6809_math_add_8bit( Environment * _environment, char *_source, char *_de
 
         outline1("LDB %s", _source);
         outline1("ADDB %s", _destination);
+        outline1("STB %s", _other ? _other : _destination);
+
+    no_embedded( cpu_math_add_8bit )
+
+}
+
+void cpu6809_math_add_8bit_const( Environment * _environment, char *_source, int _destination,  char *_other ) {
+
+    inline( cpu_math_add_8bit )
+
+        outline1("LDB %s", _source);
+        outline1("ADDB #$%2.2x", ( _destination & 0xff ) );
         outline1("STB %s", _other ? _other : _destination);
 
     no_embedded( cpu_math_add_8bit )
@@ -1185,6 +1236,16 @@ void cpu6809_less_than_16bit( Environment * _environment, char *_source, char *_
 
 }
 
+void cpu6809_less_than_16bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _equal, int _signed ) {
+
+    inline( cpu_less_than_16bit_const )
+
+        cpu6809_less_than_const( _environment, _source, _destination,  _other, _equal, _signed, 16 );
+
+    no_embedded( cpu_compare_16bit )
+
+}
+
 /**
  * @brief <i>CPU 6809</i>: emit code to compare two 8 bit values
  *
@@ -1224,6 +1285,20 @@ void cpu6809_math_add_16bit( Environment * _environment, char *_source, char *_d
     no_embedded( cpu_math_add_16bit )
 
 }
+
+void cpu6809_math_add_16bit_const( Environment * _environment, char *_source, int _destination,  char *_other ) {
+
+    inline( cpu_math_add_16bit_const )
+
+        // this way has more affinity with peephole optimizations
+        outline1("LDD #$%4.4x", ( _destination & 0xffff ) );
+        outline1("ADDD %s", _source);
+        outline1("STD %s", _other ? _other : _destination);
+
+    no_embedded( cpu_math_add_16bit )
+
+}
+
 
 /**
  * @brief <i>CPU 6809</i>: emit code to add two 16 bit values
@@ -1931,6 +2006,78 @@ void cpu6809_less_than_32bit( Environment * _environment, char *_source, char *_
 
 }
 
+void cpu6809_less_than_32bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _equal, int _signed ) {
+
+    inline( cpu_less_than_32bit_const )
+
+        MAKE_LABEL
+
+        outline0("CLRA");
+        outline1("LDX %s", _source);
+        outline1("CMPX #$%4.4x", ( ( _destination >> 16 ) & 0xffff ) );
+        outline1("BNE %shigh", label);
+        outline1("LDX %s+2", _source);
+        outline1("CMPX  #$%4.4x", ( _destination & 0xffff ) );
+        outhead1("%shigh", label );
+
+        if ( _signed ) {
+            if ( _equal ) {
+                outline1("BGT %sdone", label);
+            } else {
+                outline1("BGE %sdone", label);
+            }
+        } else {
+            if ( _equal ) {
+                outline1("BHI %sdone", label);
+            } else {
+                outline1("BHS %sdone", label);
+            }
+        }
+        outline0("DECA");
+        outhead1("%sdone", label );
+        outline1("STA %s", _other );
+
+    no_embedded( cpu_less_than_32bit_const )
+
+
+}
+
+void cpu6809_less_than_32bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed ) {
+
+    inline( cpu_less_than_32bit )
+
+        MAKE_LABEL
+
+        outline0("CLRA");
+        outline1("LDX %s", _source);
+        outline1("CMPX %s", _destination);
+        outline1("BNE %shigh", label);
+        outline1("LDX %s+2", _source);
+        outline1("CMPX %s+2", _destination);
+        outhead1("%shigh", label );
+
+        if ( _signed ) {
+            if ( _equal ) {
+                outline1("BGT %sdone", label);
+            } else {
+                outline1("BGE %sdone", label);
+            }
+        } else {
+            if ( _equal ) {
+                outline1("BHI %sdone", label);
+            } else {
+                outline1("BHS %sdone", label);
+            }
+        }
+        outline0("DECA");
+        outhead1("%sdone", label );
+        outline1("STA %s", _other ? _other : _destination );
+
+    no_embedded( cpu_less_than_32bit )
+
+
+}
+
 /**
  * @brief <i>CPU 6809</i>: emit code to compare two 8 bit values
  *
@@ -2004,6 +2151,25 @@ void cpu6809_math_add_32bit( Environment * _environment, char *_source, char *_d
         outline1("STD %s", _other ? _other : ",X" );
 
     no_embedded( cpu_math_add_32bit )
+
+}
+
+void cpu6809_math_add_32bit_const( Environment * _environment, char *_source, int _destination,  char *_other ) {
+
+    inline( cpu_math_add_32bit_const )
+
+        MAKE_LABEL
+
+        outline1("LDD %s+2", _source);
+        outline1("LDX #$%4.4x", ( _destination & 0xffff ) );
+        outline0("LEAX D,X");
+        outline1("STD %s+2", _other);
+        outline1("LDD %s", _source);
+        outline1("LDX #$%4.4x", ( ( _destination >> 16 ) & 0xffff ) );
+        outline0("LEAX D,X");
+        outline1("STD %s", _other ? _other : ",X" );
+
+    no_embedded( cpu_math_add_32bit_const )
 
 }
 

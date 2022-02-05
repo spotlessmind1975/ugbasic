@@ -682,6 +682,51 @@ void cpu6502_less_than_8bit( Environment * _environment, char *_source, char *_d
 
 }
 
+void cpu6502_less_than_8bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _equal, int _signed ) {
+
+    MAKE_LABEL
+
+    inline( cpu_less_than_8bit_const )
+
+        if ( _signed ) {
+            outline1("LDA %s", _source);
+            outline0("SEC" );
+            outline1("SBC #$%2.2x", ( _destination & 0xff ) );
+            outline1("BVC %sv0", label );
+            outline0("EOR #$80" );
+            outhead1("%sv0:", label );
+            outline1("BMI %smi", label );
+            if ( _equal ) {
+                outline1("BEQ %smi", label );
+            }
+            outhead1("%spl:", label );
+            outline0("LDA #0" );
+            outline1("STA %s", _other);
+            outline1("JMP %sen", label );
+            outhead1("%smi:", label );
+            outline0("LDA #$ff" );
+            outline1("STA %s", _other);
+            outhead1("%sen:", label);
+        } else {
+            outline1("LDA %s", _source);
+            outline1("CMP #$%2.2x", ( _destination & 0xff ) );
+            outline1("BCC %s", label);
+            if ( _equal ) {
+                outline1("BEQ %s", label);
+            }
+            outline0("LDA #0" );
+            outline1("STA %s", _other);
+            outline1("JMP %s_2", label);
+            outhead1("%s:", label);
+            outline0("LDA #$FF" );
+            outline1("STA %s", _other);
+            outhead1("%s_2:", label);
+        }
+
+    no_embedded( cpu6502_less_than_8bit_const )
+
+}
+
 /**
  * @brief <i>CPU 6502</i>: emit code to compare two 8 bit values
  * 
@@ -728,6 +773,27 @@ void cpu6502_math_add_8bit( Environment * _environment, char *_source, char *_de
         }
 
     no_embedded( cpu_math_add_8bit )
+
+}
+
+/**
+ * @brief <i>CPU 6502</i>: emit code to add two 8 bit values
+ * 
+ * @param _environment Current calling environment
+ * @param _source First value to add
+ * @param _destination Second value to add and destination address for result (if _other is NULL)
+ * @param _other Destination address for result
+ */
+void cpu6502_math_add_8bit_const( Environment * _environment, char *_source, int _destination,  char *_other ) {
+
+    inline( cpu_math_add_8bit_const )
+
+        outline0("CLC");
+        outline1("LDA %s", _source);
+        outline1("ADC #$%2.2x", ( _destination & 0xff ) );
+        outline1("STA %s", _other);
+
+    no_embedded( cpu_math_add_8bit_const )
 
 }
 
@@ -1429,6 +1495,66 @@ void cpu6502_less_than_16bit( Environment * _environment, char *_source, char *_
 
 }
 
+void cpu6502_less_than_16bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _equal, int _signed ) {
+
+    MAKE_LABEL
+
+    inline( cpu_less_than_16bit_const )
+
+        if ( _signed ) {
+
+            outline0("SEC");
+            outline1("LDA %s+1", _source );
+            outline1("SBC #$%2.2x", ( ( _destination >> 8 ) & 0xff ) );
+            outline1("BVC %sLABEL1", label);
+            outline0("EOR #$80" );
+            outhead1("%sLABEL1:", label );
+            outline1("BMI %sLABEL4", label );
+            outline1("BVC %sLABEL2", label );
+            outline0("EOR #$80" );
+            outhead1("%sLABEL2:", label );
+            outline1("BNE %sLABEL3", label );
+            outline1("LDA %s", _source );
+            outline1("SBC #$%2.2x", ( _destination & 0xff ) );
+            if ( _equal ) {
+                outline1("BEQ %sLABEL4", label );
+            }
+            outline1("BCC %sLABEL4", label );
+            outhead1("%sLABEL3:", label );
+            outline0("LDA #0" );
+            outline1("STA %s", _other);
+            outline1("JMP %sen", label );
+            outhead1("%sLABEL4:", label );
+            outline0("LDA #$ff" );
+            outline1("STA %s", _other);
+            outhead1("%sen:", label);
+        } else {
+            outline1("LDA %s+1", _source);
+            outline1("CMP #$%2.2x", ( ( _destination >> 8 ) & 0xff ) );
+            outline1("BEQ %s_1", label);
+            outline1("BCC %s", label);
+            outline1("BCS %s_0", label);
+            outhead1("%s_1:", label);
+            outline1("LDA %s", _source);
+            outline1("CMP #$%2.2x", ( _destination & 0xff ) );
+            if ( _equal ) {
+                outline1("BEQ %s", label);
+            }
+            outline1("BCC %s", label);
+            outhead1("%s_0:", label);
+            outline0("LDA #0" );
+            outline1("STA %s", _other);
+            outline1("JMP %s_2", label);
+            outhead1("%s:", label);
+            outline0("LDA #$FF" );
+            outline1("STA %s", _other);
+            outhead1("%s_2:", label);
+        }
+
+    no_embedded( cpu_less_than_16bit_const )
+
+}
+
 /**
  * @brief <i>CPU 6502</i>: emit code to compare two 8 bit values
  * 
@@ -1482,6 +1608,30 @@ void cpu6502_math_add_16bit( Environment * _environment, char *_source, char *_d
         }
 
     no_embedded( cpu_math_add_16bit )
+
+}
+
+/**
+ * @brief <i>CPU 6502</i>: emit code to add two 16 bit values
+ * 
+ * @param _environment Current calling environment
+ * @param _source First value to add
+ * @param _destination Second value to add and destination address for result (if _other is NULL)
+ * @param _other Destination address for result
+ */
+void cpu6502_math_add_16bit_const( Environment * _environment, char *_source, int _destination,  char *_other ) {
+
+    inline( cpu_math_add_16bit_const )
+
+        outline0("CLC");
+        outline1("LDA %s", _source);
+        outline1("ADC #$%2.2x", ( _destination & 0xff ) );
+        outline1("STA %s", _other);
+        outline1("LDA %s+1", _source);
+        outline1("ADC #$%2.2x", ( ( _destination >> 8 ) & 0xff ) );
+        outline1("STA %s+1", _other);
+
+    no_embedded( cpu_math_add_16bit_const )
 
 }
 
@@ -2501,6 +2651,75 @@ void cpu6502_less_than_32bit( Environment * _environment, char *_source, char *_
 
 }
 
+void cpu6502_less_than_32bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _equal, int _signed ) {
+
+    MAKE_LABEL
+
+    inline( cpu_less_than_32bit_const )
+
+        if ( _signed ) {
+            outline1("LDA %s", _source);
+            outline1("CMP #$%2.2x", ( _destination & 0xff ) );
+            outline1("LDA %s+1", _source);
+            outline1("SBC #$%2.2x", ( ( _destination >> 8 ) & 0xff ) );
+            outline1("LDA %s+2", _source);
+            outline1("SBC #$%2.2x", ( ( _destination >> 16 ) & 0xff ) );
+            outline1("LDA %s+3", _source);
+            outline1("SBC #$%2.2x", ( ( _destination >> 24 ) & 0xff ) );
+            outline1("BVC %sv0", label );
+            outline0("EOR #$80" );
+            outhead1("%sv0:", label );
+            outline1("BMI %smi", label );
+            if ( _equal ) {
+                outline1("BEQ %smi", label );
+            }
+            outhead1("%spl:", label );
+            outline0("LDA #$FF" );
+            outline1("STA %s", _other);
+            outline1("JMP %sen", label );
+            outhead1("%smi:", label );
+            outline0("LDA #$00" );
+            outline1("STA %s", _other);
+            outhead1("%sen:", label);
+
+        } else {
+            outline1("LDA %s+3", _source);
+            outline1("CMP #$%2.2x", ( ( _destination >> 24 ) & 0xff ) );
+            outline1("BEQ %s_1a", label);
+            outline1("BCC %s", label);
+            outline1("BCS %s_0", label);
+            outhead1("%s_1a:", label);
+            outline1("LDA %s+2", _source);
+            outline1("CMP #$%2.2x", ( ( _destination >> 16 ) & 0xff ) );
+            outline1("BEQ %s_1", label);
+            outline1("BCC %s", label);
+            outline1("BCS %s_0", label);
+            outhead1("%s_1:", label);
+            outline1("LDA %s+1", _source);
+            outline1("CMP #$%2.2x", ( ( _destination >> 8 ) & 0xff ) );
+            outline1("BEQ %s_1b", label);
+            outline1("BCC %s", label);
+            outline1("BCS %s_0", label);
+            outhead1("%s_1b:", label);
+            outline1("LDA %s", _source);
+            outline1("CMP #$%2.2x", ( _destination & 0xff ) );
+            if ( _equal ) {
+                outline1("BEQ %s", label);
+            }
+            outhead1("%s_0:", label);
+            outline0("LDA #0" );
+            outline1("STA %s", _other);
+            outline1("JMP %s_2", label);
+            outhead1("%s:", label);
+            outline0("LDA #$FF" );
+            outline1("STA %s", _other);
+            outhead1("%s_2:", label);
+        }
+
+    no_embedded( cpu_less_than_32bit_const )
+
+}
+
 /**
  * @brief <i>CPU 6502</i>: emit code to compare two 8 bit values
  * 
@@ -2570,6 +2789,29 @@ void cpu6502_math_add_32bit( Environment * _environment, char *_source, char *_d
     no_embedded( cpu_math_add_32bit )
 
 }
+
+void cpu6502_math_add_32bit_const( Environment * _environment, char *_source, int _destination,  char *_other ) {
+
+    inline( cpu_math_add_32bit_const )
+
+        outline0("CLC");
+        outline1("LDA %s", _source);
+        outline1("ADC #$%2.2x", ( _destination & 0xff ) );
+        outline1("STA %s", _other);
+        outline1("LDA %s+1", _source);
+        outline1("ADC #$%2.2x", ( ( _destination >> 8 ) & 0xff ) );
+        outline1("STA %s+1", _other);
+        outline1("LDA %s+2", _source);
+        outline1("ADC #$%2.2x", ( ( _destination >> 16 ) & 0xff ) );
+        outline1("STA %s+2", _other);
+        outline1("LDA %s+3", _source);
+        outline1("ADC #$%2.2x", ( ( _destination >> 24 ) & 0xff ) );
+        outline1("STA %s+3", _other);
+
+    no_embedded( cpu_math_add_32bit_const )
+
+}
+
 
 /**
  * @brief <i>CPU 6502</i>: emit code to double a 32 bit value

@@ -82,7 +82,7 @@ equivalenti. Quando questi altri parametri sono inclusi, il comando ''ADD v, a, 
 
 @target all
 </usermanual> */
-void add_complex( Environment * _environment, char * _variable, char * _expression, char * _limit_lower, char * _limit_upper ) { 
+void add_complex_vars( Environment * _environment, char * _variable, char * _expression, char * _limit_lower, char * _limit_upper ) { 
 
     MAKE_LABEL
 
@@ -90,7 +90,7 @@ void add_complex( Environment * _environment, char * _variable, char * _expressi
     char greaterThanLabel[MAX_TEMPORARY_STORAGE]; sprintf( greaterThanLabel, "%sg", label );
     char endLabel[MAX_TEMPORARY_STORAGE]; sprintf( endLabel, "%se", label );
     
-    variable_add_inplace( _environment, _variable, _expression );
+    variable_add_inplace_vars( _environment, _variable, _expression );
 
     Variable * less = variable_less_than( _environment, _variable, _limit_lower, 0 );
 
@@ -140,7 +140,7 @@ void add_complex_mt( Environment * _environment, char * _variable, char * _expre
     Variable * value = variable_move_from_array( _environment, array->name );
     --((struct _Environment *)_environment)->arrayNestedIndex;
 
-    add_complex( _environment, value->name, _expression, _limit_lower, _limit_upper );
+    add_complex_vars( _environment, value->name, _expression, _limit_lower, _limit_upper );
 
     ++((struct _Environment *)_environment)->arrayNestedIndex;
     memset( ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex], 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
@@ -178,8 +178,42 @@ void add_complex_array( Environment * _environment, char * _variable, char * _ex
     }
     Variable * value = variable_move_from_array( _environment, array->name );
 
-    add_complex( _environment, value->name, _expression, _limit_lower, _limit_upper );
+    add_complex_vars( _environment, value->name, _expression, _limit_lower, _limit_upper );
 
     variable_move_array( _environment, array->name, value->name );
+
+}
+
+/* <usermanual>
+@keyword ADD
+@target all
+</usermanual> */
+void add_complex( Environment * _environment, char * _variable, int _expression, int _limit_lower, int _limit_upper ) { 
+
+    MAKE_LABEL
+
+    char lessThanLabel[MAX_TEMPORARY_STORAGE]; sprintf( lessThanLabel, "%sl", label );
+    char greaterThanLabel[MAX_TEMPORARY_STORAGE]; sprintf( greaterThanLabel, "%sg", label );
+    char endLabel[MAX_TEMPORARY_STORAGE]; sprintf( endLabel, "%se", label );
+    
+    variable_add_inplace( _environment, _variable, _expression );
+
+    Variable * less = variable_less_than_const( _environment, _variable, _limit_lower, 0 );
+
+    cpu_bveq( _environment, less->realName, greaterThanLabel );
+
+    variable_store( _environment, _variable, _limit_upper );
+
+    cpu_jump( _environment, endLabel );
+
+    cpu_label( _environment, greaterThanLabel );
+
+    Variable * lesser = variable_less_than_const( _environment, _variable, _limit_upper, 1 );
+
+    cpu_bvneq( _environment, lesser->realName, endLabel );
+
+    variable_store( _environment, _variable, _limit_lower );
+
+    cpu_label( _environment, endLabel );
 
 }

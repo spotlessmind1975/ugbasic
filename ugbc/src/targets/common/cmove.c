@@ -48,7 +48,7 @@ void cmove_direct( Environment * _environment, int _dx, int _dy ) {
         Variable * dx = variable_temporary( _environment, VT_SBYTE, "(cmove hz)" );
         variable_store( _environment, dx->name, _dx );
         Variable * screenWidth = variable_retrieve( _environment, "CURRENTTILESWIDTH" );
-        add_complex( _environment, windowCX->name, dx->name, zero->name, screenWidth->name );
+        add_complex_vars( _environment, windowCX->name, dx->name, zero->name, screenWidth->name );
     }
 
     if ( _dy ) {
@@ -56,7 +56,7 @@ void cmove_direct( Environment * _environment, int _dx, int _dy ) {
         Variable * dy = variable_temporary( _environment, VT_SBYTE, "(cmove vt)" );
         variable_store( _environment, dy->name, _dy );
         Variable * screenHeight = variable_retrieve( _environment, "CURRENTTILESHEIGHT" );
-        add_complex( _environment, windowCY->name, dy->name, zero->name, screenHeight->name );
+        add_complex_vars( _environment, windowCY->name, dy->name, zero->name, screenHeight->name );
     }
 
 }
@@ -103,14 +103,14 @@ void cmove( Environment * _environment, char * _dx, char * _dy ) {
         Variable * windowCX = variable_retrieve( _environment, "XCURSYS" );
         Variable * dx = variable_retrieve_or_define( _environment, _dx, VT_SBYTE, 0 );
         Variable * screenWidth = variable_retrieve( _environment, "CURRENTTILESWIDTH" );        
-        add_complex( _environment, windowCX->name, dx->name, zero->name, screenWidth->name );
+        add_complex_vars( _environment, windowCX->name, dx->name, zero->name, screenWidth->name );
     }
 
     if ( _dy ) {
         Variable * windowCY = variable_retrieve( _environment, "YCURSYS" );
         Variable * dy = variable_retrieve_or_define( _environment, _dy, VT_SBYTE, 0 );
         Variable * screenHeight = variable_retrieve( _environment, "CURRENTTILESHEIGHT" );        
-        add_complex( _environment, windowCY->name, dy->name, zero->name, screenHeight->name );
+        add_complex_vars( _environment, windowCY->name, dy->name, zero->name, screenHeight->name );
     }
 
 }

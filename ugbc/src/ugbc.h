@@ -772,6 +772,9 @@ typedef struct _Embedded {
     int cpu_inc_32bit;
     int cpu_dec;
     int cpu_dec_16bit;
+    int cpu_less_than_16bit_const;
+    int cpu_less_than_32bit_const;
+    int cpu_less_than_8bit_const;
     int cpu_less_than_16bit;
     int cpu_less_than_32bit;
     int cpu_less_than_8bit;
@@ -801,10 +804,13 @@ typedef struct _Embedded {
     int cpu_and_32bit;
     int cpu_or_32bit;
     int cpu_math_add_16bit;
+    int cpu_math_add_16bit_const;
     int cpu_math_add_16bit_with_16bit;
     int cpu_math_add_16bit_with_8bit;
     int cpu_math_add_32bit;
+    int cpu_math_add_32bit_const;
     int cpu_math_add_8bit;
+    int cpu_math_add_8bit_const;
     int cpu_math_and_const_16bit;
     int cpu_math_and_const_32bit;
     int cpu_math_and_const_8bit;
@@ -1939,7 +1945,8 @@ Bank * bank_find( Bank * _first, char * _name );
 //----------------------------------------------------------------------------
 
 Variable *              absolute( Environment * _environment, char * _value );
-void                    add_complex( Environment * _environment, char * _variable, char * _expression, char * _limit_lower, char * _limit_upper );
+void                    add_complex( Environment * _environment, char * _variable, int _expression, int _limit_lower, int _limit_upper );
+void                    add_complex_vars( Environment * _environment, char * _variable, char * _expression, char * _limit_lower, char * _limit_upper );
 void                    add_complex_array( Environment * _environment, char * _variable, char * _expression, char * _limit_lower, char * _limit_upper );
 void                    add_complex_mt( Environment * _environment, char * _variable, char * _expression, char * _limit_lower, char * _limit_upper );
 
@@ -2332,7 +2339,8 @@ char *                  unescape_string( Environment * _environment, char * _val
 //----------------------------------------------------------------------------
 
 Variable *              variable_add( Environment * _environment, char * _source, char * _dest );
-void                    variable_add_inplace( Environment * _environment, char * _source, char * _dest );
+void                    variable_add_inplace( Environment * _environment, char * _source, int _dest );
+void                    variable_add_inplace_vars( Environment * _environment, char * _source, char * _dest );
 void                    variable_add_inplace_array( Environment * _environment, char * _source, char * _destination );
 void                    variable_add_inplace_mt( Environment * _environment, char * _source, char * _destination );
 Variable *              variable_and( Environment * _environment, char * _left, char * _right );
@@ -2362,6 +2370,7 @@ Variable *              variable_increment( Environment * _environment, char * _
 Variable *              variable_increment_array( Environment * _environment, char * _source );
 Variable *              variable_increment_mt( Environment * _environment, char * _source );
 Variable *              variable_less_than( Environment * _environment, char * _source, char * _dest, int _equal );
+Variable *              variable_less_than_const( Environment * _environment, char * _source, int _dest, int _equal );
 Variable *              variable_mod( Environment * _environment, char * _source, char * _destination );
 Variable *              variable_move( Environment * _environment, char * _source, char * _dest );
 void                    variable_move_array( Environment * _environment, char * _array, char * _value  );
