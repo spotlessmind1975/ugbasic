@@ -42,11 +42,14 @@
  * @brief Emit code for <strong>CLS</strong>
  * 
  * @param _environment Current calling environment
+ * @param _paper Color to use to clear the screen (NULL = default one)
  */
 /* <usermanual>
 @keyword CLS
+
 @target atari
 </usermanual> */
+
 void cls( Environment * _environment, char * _paper ) {
 
     if ( _paper ) {

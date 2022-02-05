@@ -38,26 +38,8 @@
  * CODE SECTION 
  ****************************************************************************/
 
-/**
- * @brief Emit code for <strong>CLS</strong>
- * 
- * @param _environment Current calling environment
- */
 /* <usermanual>
 @keyword CLS
-
-@english
-The ''CLS'' command clears the current window.
-
-@italian
-Il comando ''CLS'' cancella lo schermo corrente.
-
-@syntax CLS
-
-@example CLS
-
-@usedInExample texts_position_01.bas
-@usedInExample texts_position_02.bas
 
 @target vic20
 </usermanual> */

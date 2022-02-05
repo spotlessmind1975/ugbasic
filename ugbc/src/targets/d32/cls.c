@@ -38,11 +38,6 @@
  * CODE SECTION 
  ****************************************************************************/
 
-/**
- * @brief Emit code for <strong>CLS</strong>
- * 
- * @param _environment Current calling environment
- */
 /* <usermanual>
 @keyword CLS
 

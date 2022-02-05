@@ -1114,3 +1114,64 @@ Questa è la maschera di bit per indicare la modalità BITMAP.
 
 @target all
 </usermanual> */
+
+/* <usermanual>
+@keyword CONST
+
+@english
+Using the ''CONST'' command allows you to define one or more constants, which will be used later 
+in the program. Constants have the advantage of being calculated once and for 
+all, at compile time, directly by the compiler and can be used to initialize 
+variables. Furthermore, the constants are global, that is, they are always visible 
+everywhere, both in the main program and within the procedures. Finally, constants 
+do not take up memory space.
+
+In the definition of the constants itself it is possible to indicate whether it must 
+be positive or not, with the keyword ''POSITIVE''. This check is carried out at  
+compilation time and, in the event of a negative result, it will result in a 
+compilation error. This condition is useful to ensure that the preconditions related to
+the hardware are respected (as happens, for example, when calculating the margins 
+in the case of a screen smaller than the expected minimum).
+
+It is also possible to define a validity range of the values that will be represented
+in the constant. This interval is defined in a similar way to intervals in mathematics: 
+using the square bracket means that the extremes (minimum, maximum) are included, 
+while a round bracket means that the extremes are excluded.
+
+@italian
+L'uso del comando ''CONST'' permette di definire una costante, che sarà utilizzata 
+successivamente nel programma. Le costanti hanno il vantaggio di essere calcolate 
+una volta per tutte, al momento della compilazione, direttamente dal compilatore e 
+possono essere usate per inizializzare le variabili. Inoltre, le costanti sono globali, 
+cioè sono sempre visibili dovunque, sia nel programma principale che all'interno 
+delle procedure. Infine, le costanti non occupano spazio in memoria.
+
+Nella definizione stessa delle costanti è possibile indicare se la stessa deve 
+essere o meno positiva (con la parola chiave ''POSITIVE''). Tale controllo viene 
+svolto al momento della compilazione, e in caso dia esito negativo, darà luogo a 
+un errore di compilazione. Tale condizione è utile per garantire che le precondizioni 
+legate all'hardware siano rispettate (come avviene, ad esempio, calcolando i margini 
+in caso di uno schermo più piccolo del minimo atteso).
+
+E' anche possibile definire un intervallo di validità dei valori che saranno rappresentati 
+nella costante. Tale intervallo viene definito con una modalità analoga agli intervalli 
+in matematica: usando la parentesi quadra si intende che gli estremi (minimo, massimo) 
+sono inclusi, mentre una parentesi tonda si intende che gli estremi sono esclusi.
+
+@syntax CONST [identifier] = [constant value]
+@syntax CONST POSITIVE [identifier] = [constant value]
+@syntax CONST [identifier] IN ([min],[max]) = [constant value]
+@syntax CONST [identifier] IN [[min],[max]) = [constant value]
+@syntax CONST [identifier] IN ([min],[max]] = [constant value]
+@syntax CONST [identifier] IN [[min],[max]] = [constant value]
+
+@example CONST x = 42
+@example CONST POSITIVE y = -42: ' this raises an error!
+@example CONST width IN (0,320] = 128
+
+@usedInExample contrib_sierpinski.bas
+@usedInExample contrib_sierpinski2.bas
+@usedInExample contrib_sierpinski3.bas
+
+@target all
+</usermanual> */

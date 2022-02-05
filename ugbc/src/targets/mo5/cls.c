@@ -38,15 +38,10 @@
  * CODE SECTION 
  ****************************************************************************/
 
-/**
- * @brief Emit code for <strong>CLS</strong>
- * 
- * @param _environment Current calling environment
- */
 /* <usermanual>
 @keyword CLS
 
-@target mo5
+@target pc128op
 </usermanual> */
 void cls( Environment * _environment, char * _paper ) {
 
