@@ -2151,6 +2151,30 @@ Variable * variable_mul( Environment * _environment, char * _source, char * _des
  * @param _destination Destination variable's name
  * @return Variable* The quotient of source and destination variable
  */
+/* <usermanual>
+@keyword DIV
+
+@english
+The ''DIV'' statement allows you to make a division using the dividend 
+as a variable where the result will be stored. Optionally, it is possible 
+to indicate a variable where to store the remainder of the division operation. 
+
+@italian
+L'istruzione ''DIV'' consente di effettuare una divisione utilizzando il 
+dividendo come variabile dove sarà memorizzato il risultato. In opzione, 
+è possibile indicare una variabile dove memorizzare il resto dell'operazione 
+di divisione.
+
+@syntax DIV [variable],[divisor]
+@syntax DIV [variable],[divisor],[remainder]
+
+@example DIV a,2
+@example DIV a,3,q
+
+@usedInExample contrib_sierpinski3.bas
+
+@target all
+</usermanual> */
 Variable * variable_div( Environment * _environment, char * _source, char * _destination, char * _remainder ) {
     Variable * source = variable_retrieve( _environment, _source );
     Variable * target = variable_retrieve( _environment, _destination );
