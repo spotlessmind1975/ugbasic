@@ -62,6 +62,8 @@ affinché sia eseguita in parallelo.
 </usermanual> */
 Variable * respawn_procedure( Environment * _environment, char * _name ) {
 
+    MAKE_LABEL
+
     Variable * threadId = variable_retrieve( _environment, _name );
     Variable * threadState = variable_temporary( _environment, VT_BYTE, "(current thread state)" );
 
@@ -71,7 +73,7 @@ Variable * respawn_procedure( Environment * _environment, char * _name ) {
     
     _environment->anyProtothread = 1;
 
-    char doNothingLabel[MAX_TEMPORARY_STORAGE]; sprintf(doNothingLabel, "%snothing", doNothingLabel );
+    char doNothingLabel[MAX_TEMPORARY_STORAGE]; sprintf(doNothingLabel, "%snothing", label );
 
     cpu_protothread_get_state( _environment, threadId->realName, threadState->realName );
     cpu_compare_and_branch_8bit_const( _environment, threadState->realName, PROTOTHREAD_STATUS_ENDED, doNothingLabel, 0 );
