@@ -734,6 +734,21 @@ void ted_scroll_text( Environment * _environment, int _direction ) {
 
 }
 
+void ted_scroll( Environment * _environment, int _dx, int _dy ) {
+
+    deploy( tedvars, src_hw_ted_vars_asm);
+    deploy( scroll, src_hw_ted_scroll_asm);
+    deploy( textHScroll, src_hw_ted_hscroll_text_asm );
+    deploy( vScrollText, src_hw_ted_vscroll_text_asm );
+
+    outline1("LDA #$%2.2x", (unsigned char)(_dx&0xff) );
+    outline0("STA MATHPTR0" );
+    outline1("LDA #$%2.2x", (unsigned char)(_dy&0xff) );
+    outline0("STA MATHPTR1" );
+    outline0("JSR SCROLL");
+
+}
+
 void ted_text( Environment * _environment, char * _text, char * _text_size ) {
 
     deploy( tedvars, src_hw_ted_vars_asm );
@@ -1275,10 +1290,6 @@ void ted_get_image( Environment * _environment, char * _image, char * _x, char *
     outline0("STA IMAGEY+1" );
 
     outline0("JSR GETIMAGE");
-
-}
-
-void ted_scroll( Environment * _environment, int _dx, int _dy ) {
 
 }
 
