@@ -38,6 +38,12 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/* <usermanual>
+@keyword TIMER
+
+@target mo5
+</usermanual> */
+
 Variable * get_timer( Environment * _environment ) {
 
     Variable * result = variable_temporary( _environment, VT_WORD, "(result of get timer)");
@@ -49,6 +55,11 @@ Variable * get_timer( Environment * _environment ) {
     
 }
 
+/* <usermanual>
+@keyword TIMER
+
+@target mo5
+</usermanual> */
 
 void set_timer( Environment * _environment, char * _value ) {
 

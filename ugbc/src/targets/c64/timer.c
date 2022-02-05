@@ -38,6 +38,64 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/**
+ * @brief Emit code for <strong>= TI</strong>
+ * 
+ * Emit code to measure the current value of 60th/50th seconds passed.
+ * 
+ * @param _environment Current calling environment
+ * @return Temporary variable with the number of ticks passed
+ */
+/* <usermanual>
+@keyword TIMER
+
+@english
+This variable represents a "timer", which is the number of sixtieths / fiftieths 
+of a second that have passed since the machine was turned on. This variable, 
+when used as a value, measures the elapsed time. However, it can be set to an 
+arbitrary value, such as 0, to measure a defined period of time. 
+
+The refresh rate of this timer depends on the type of video standard used, 
+that is, PAL (50Hz) or NTSC (60Hz).
+
+This variable can be abbreviated as ''TI''.
+
+@italian
+Questa variable rappresenta un "timer", ovvero il numero di sessantesimi / 
+cinquantesimi di secondo che sono passati dall'accensione della macchina. 
+Questa variabile, se usata come valore, misura il tempo passato. Può essere 
+comunque impostata ad un valore arbitrario, come ad esempio 0, per misurare un 
+periodo di tempo definito. 
+
+La frequenza di aggiornamento di questo timer dipende dal tipo di standard 
+video utilizzato, ovvero se PAL (50Hz) oppure NTSC (60Hz).
+
+Questa variabile può essere abbreviata come ''TI''.
+
+@syntax = TIMER
+@syntax TIMER = [50th/60th seconds]
+
+@example PRINT TIMER
+
+@usedInExample contrib_sierpinski.bas
+@usedInExample contrib_sierpinski2.bas
+@usedInExample contrib_sierpinski3.bas
+
+@seeAlso TI
+@target c64
+</usermanual> */
+/* <usermanual>
+@keyword TI
+
+@english
+Alias for ''TIMER''.
+
+@italian
+Alias per ''TIMER''.
+
+@seeAlso TIMER
+@target all
+</usermanual> */
 Variable * get_timer( Environment * _environment ) {
 
     Variable * result = variable_temporary( _environment, VT_WORD, "(result of get timer)");
@@ -53,6 +111,17 @@ Variable * get_timer( Environment * _environment ) {
     
 }
 
+/**
+ * @brief Emit code for <strong>TI =</strong>
+ * 
+ * Emit code to assign the current value of the internal timer.
+ * 
+ * @param _environment Current calling environment
+ * @param _value Time to assign
+ */
+/* <usermanual>
+@keyword TIMER
+</usermanual> */
 
 void set_timer( Environment * _environment, char * _value ) {
 
