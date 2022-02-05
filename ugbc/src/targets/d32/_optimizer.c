@@ -498,19 +498,20 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
     buffer v2 = TMP_BUF;
     buffer v3 = TMP_BUF;
     buffer v4 = TMP_BUF;
-    
+
     /* move B stuff after A stuff */
-    if( (match(buf[0], " LDB *", v1) || match(buf[0], " STB *", v1)) && !strchr("AD$", v1->str[0])
-    &&  sets_flag(buf[1], 'A') 
-	&&  (!match(buf[1], " * *", NULL, v2) || _strcmp(v1, v2)) ) {
-        int x = 1, i;
-        if( match(buf[x+1], "* equ ", NULL)) ++x;
-        if(!match(buf[x+1], " IF ") && !isConditionnal(buf[x+1])) {
-            buf_cpy(v1, buf[0]->str);
-            for(i=0; i<x; ++i) buf_cpy(buf[i], buf[i+1]->str);
-            buf_cpy(buf[x], v1->str);
-        }
-    }
+    // if( (match(buf[0], " LDB *", v1) || match(buf[0], " STB *", v1)) && !strchr("AD$", v1->str[0])
+    // &&  sets_flag(buf[1], 'A') 
+	// &&  (!match(buf[1], " * *", NULL, v2) || _strcmp(v1, v2)) ) {
+    //     int x = 1, i;
+    //     if( match(buf[x+1], "* equ ", NULL)) ++x;
+    //     if(!match(buf[x+1], " IF ") && !isConditionnal(buf[x+1])) {
+    //         buf_cpy(v1, buf[0]->str);
+    //         for(i=0; i<x; ++i) buf_cpy(buf[i], buf[i+1]->str);
+    //         buf_cpy(buf[x], v1->str);
+    //     }
+    // }
+
 	/* move D stuff before X stuff */
 	if( (match(buf[0], " LDX _*", v1) || match(buf[0], " LDX #*", v1) || match(buf[0], " STX _*", v1)) 
     &&   match(buf[1], " *DD _*", NULL,v2) 
@@ -1468,7 +1469,21 @@ static int optim_pass( Environment * _environment, buffer buf[LOOK_AHEAD], enum 
     (void)fclose(fileAsm);
     (void)fclose(fileOptimized);
 
-    /* makes our generated file the new asm file */
+    // static int step = 0;
+    // /* makes our generated file the new asm file */
+    // char stepFileName[MAX_TEMPORARY_STORAGE];
+    // sprintf( stepFileName, "step%d.asm", step++ );
+
+    // fileOptimized = fopen(_environment->asmFileName, "rb");
+    // FILE * stepFile = fopen(stepFileName, "wb");
+    // while(!feof( fileOptimized ) ) {
+    //     char line[128];
+    //     fread( line, 1, 128, fileOptimized );
+    //     fwrite( line, 1, 128, stepFile );
+    // }
+    // fclose( stepFile );
+    // fclose( fileOptimized );
+
     (void)rename( fileNameOptimized, _environment->asmFileName );
     
     return change;
