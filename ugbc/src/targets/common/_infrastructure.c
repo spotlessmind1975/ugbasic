@@ -2227,6 +2227,25 @@ Variable * variable_div( Environment * _environment, char * _source, char * _des
  * @param _source Source variable's name
  * @return Variable* The source variable
  */
+/* <usermanual>
+@keyword INC
+
+@english
+The ''INC'' command allows you to increase a variable by one. 
+This is much more efficient than using the standard syntax ''v = v + 1''.
+
+@italian
+Il comando ''INC'' permette di incrementare di uno una variabile. 
+Tale operazione è assai più efficiente che utilizzare la sintassi standard ''v = v + 1''.
+
+@syntax INC [variable]
+
+@example INC v
+
+@usedInExample contrib_sierpinski3.bas
+
+@target all
+</usermanual> */
 Variable * variable_increment( Environment * _environment, char * _source ) {
     Variable * source = variable_retrieve( _environment, _source );
     switch( VT_BITWIDTH( source->type ) ) {
