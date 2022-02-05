@@ -38,10 +38,23 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/* <usermanual>
+@keyword PLOT
+
+@target plus4
+ </usermanual> */
 void plot( Environment * _environment, char * _x, char * _y, char *_c ) {
 
     if ( _c ) {
         pen( _environment, _c );
+    }
+
+    if ( !_x ) {
+        _x = variable_retrieve( _environment, "XGR" )->name;
+    }
+
+    if ( !_y ) {
+        _y = variable_retrieve( _environment, "YGR" )->name;
     }
 
     ted_point_at_vars( _environment, _x, _y );

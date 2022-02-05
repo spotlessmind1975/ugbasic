@@ -38,6 +38,11 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/* <usermanual>
+@keyword PLOT
+
+@target zx
+ </usermanual> */
 void plot( Environment * _environment, char * _x, char * _y, char *_c ) {
 
     if ( _c ) {

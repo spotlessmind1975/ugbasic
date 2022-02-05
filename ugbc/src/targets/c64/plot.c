@@ -38,6 +38,39 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/**
+ * @brief Emit code for <strong>PLOT</strong>
+ * 
+ * Emit code to draw a pixel at a given point.
+ * 
+ * @param _environment Current calling environment
+ * @param _x Abscissa of the pixel.
+ * @param _y Coordinate of the pixel.
+ * @param _c Color of the pixel.
+ */
+/* <usermanual>
+@keyword PLOT
+
+@english
+The ''PLOT'' instruction allows you to draw a point on the screen, at 
+the ''(x, y)'' coordinate and with any color. If the color is not 
+provided, the default color is the one set with the last ''INK'' / ''PEN'' command.
+
+@italian
+L'istruzione ''PLOT'' consente di disegnare un punto sullo schermo, alla 
+coordinata ''(x,y)'' e con l'eventuale colore. Se il colore non viene fornito, 
+il colore di default è quello impostato con l'ultimo comando ''INK'' / ''PEN''.
+
+@syntax PLOT [x], [y] {, [color]}
+
+@example PLOT 42, 42
+@example PLOT 100, 100, RED
+
+@usedInExample contrib_sierpinski3.bas
+
+@target c64
+ </usermanual> */
+
 void plot( Environment * _environment, char * _x, char * _y, char *_c ) {
 
     if ( _c ) {
