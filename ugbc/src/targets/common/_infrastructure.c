@@ -1329,7 +1329,7 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
 							
                             sprintf( targetRealName, "%s", target->realName );
                             cpu_move_8bit( _environment, sign->realName, targetRealName );
-                            sprintf( targetRealName, "%s+1", target->realName );
+                            sprintf( targetRealName, "(%s+1)", target->realName );
                             cpu_move_8bit( _environment, sign->realName, targetRealName );
                         }
                     #else
