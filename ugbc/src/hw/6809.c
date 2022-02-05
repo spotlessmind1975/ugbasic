@@ -683,7 +683,7 @@ void cpu6809_less_than_8bit_const( Environment * _environment, char *_source, in
 
     inline( cpu_less_than_8bit_const )
 
-        cpu6809_less_than(_environment, _source, _destination, _other, _equal, _signed, 8);
+        cpu6809_less_than_const(_environment, _source, _destination, _other, _equal, _signed, 8);
 
     no_embedded( cpu_less_than_8bit_const )
 
@@ -734,7 +734,7 @@ void cpu6809_math_add_8bit_const( Environment * _environment, char *_source, int
 
         outline1("LDB %s", _source);
         outline1("ADDB #$%2.2x", ( _destination & 0xff ) );
-        outline1("STB %s", _other ? _other : _destination);
+        outline1("STB %s", _other );
 
     no_embedded( cpu_math_add_8bit )
 
@@ -1293,7 +1293,7 @@ void cpu6809_math_add_16bit_const( Environment * _environment, char *_source, in
         // this way has more affinity with peephole optimizations
         outline1("LDD #$%4.4x", ( _destination & 0xffff ) );
         outline1("ADDD %s", _source);
-        outline1("STD %s", _other ? _other : _destination);
+        outline1("STD %s", _other );
 
     no_embedded( cpu_math_add_16bit )
 
@@ -2038,42 +2038,6 @@ void cpu6809_less_than_32bit_const( Environment * _environment, char *_source, i
         outline1("STA %s", _other );
 
     no_embedded( cpu_less_than_32bit_const )
-
-
-}
-
-void cpu6809_less_than_32bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed ) {
-
-    inline( cpu_less_than_32bit )
-
-        MAKE_LABEL
-
-        outline0("CLRA");
-        outline1("LDX %s", _source);
-        outline1("CMPX %s", _destination);
-        outline1("BNE %shigh", label);
-        outline1("LDX %s+2", _source);
-        outline1("CMPX %s+2", _destination);
-        outhead1("%shigh", label );
-
-        if ( _signed ) {
-            if ( _equal ) {
-                outline1("BGT %sdone", label);
-            } else {
-                outline1("BGE %sdone", label);
-            }
-        } else {
-            if ( _equal ) {
-                outline1("BHI %sdone", label);
-            } else {
-                outline1("BHS %sdone", label);
-            }
-        }
-        outline0("DECA");
-        outhead1("%sdone", label );
-        outline1("STA %s", _other ? _other : _destination );
-
-    no_embedded( cpu_less_than_32bit )
 
 
 }
@@ -3747,7 +3711,7 @@ void cpu6809_move_8bit_indirect2_8bit( Environment * _environment, char * _value
 
         MAKE_LABEL
 
-        outline1("LDX %s", _value);
+        outline1("LDX #%s", _value);
         outline1("LDB %s", _offset);
         outline0("LDA B,X" );
         outline1("STA %s", _source );
