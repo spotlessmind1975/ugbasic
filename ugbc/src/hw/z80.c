@@ -3931,7 +3931,10 @@ void z80_dsdescriptor( Environment * _environment, char * _index, char * _addres
 void z80_move_8bit_indirect_with_offset2( Environment * _environment, char *_source, char * _value, char * _offset ) {
 
     outline1("LD HL, (%s)", _value);
-    outline1("LD DE, (%s)", _offset );
+    outline1("LD A, (%s)", _offset );
+    outline0("LD E, A" );
+    outline0("LD A, 0" );
+    outline0("LD D, A" );
     outline0("ADD HL, DE" );
     outline1("LD A, (%s)", _source);
     outline0("LD (HL), A");
