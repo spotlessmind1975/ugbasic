@@ -105,6 +105,9 @@
 
 #endif
 
+#define DEFAULT_PEN_COLOR           COLOR_WHITE
+#define DEFAULT_PAPER_COLOR         COLOR_BLACK
+
 #define BITMAP_MODE_40_COLUMN       0
 #define BITMAP_MODE_80_COLUMN       1
 #define BITMAP_MODE_BITMAP_4        2

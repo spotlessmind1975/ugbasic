@@ -62,6 +62,9 @@
 #define COLOR_PEACH       			2 /* alias */
 #define COLOR_COUNT                 16
 
+#define DEFAULT_PEN_COLOR           COLOR_BLACK
+#define DEFAULT_PAPER_COLOR         COLOR_WHITE
+
 #define PORT_COLOR_BORDER           254
 
 #define TEXT_COLUMNS_COUNT          32
@@ -166,7 +169,7 @@
 
 #define INPUT_DEFAULT_SEPARATOR     ','
 #define INPUT_DEFAULT_SIZE          32
-#define INPUT_DEFAULT_CURSOR        0x60
+#define INPUT_DEFAULT_CURSOR        0x5f
 
 #define SCREEN_CAPABILITIES         ( ( 1<<BITMAP_NATIVE ) )
 

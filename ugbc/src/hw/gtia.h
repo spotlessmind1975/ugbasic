@@ -61,6 +61,9 @@
 #define COLOR_CYAN					0x6a
 #define COLOR_DARK_BLUE				0x60
 
+#define DEFAULT_PEN_COLOR           COLOR_WHITE
+#define DEFAULT_PAPER_COLOR         COLOR_BLACK
+
 #define TEXT_COLUMNS_COUNT          40
 #define TEXT_ROWS_COUNT             24
 
