@@ -509,7 +509,7 @@ void vic1_screen_rows( Environment * _environment, char * _rows ) {
 
 }
 
-void vic2_screen_columns( Environment * _environment, char * _columns ) {
+void vic1_screen_columns( Environment * _environment, char * _columns ) {
 
 }
 
