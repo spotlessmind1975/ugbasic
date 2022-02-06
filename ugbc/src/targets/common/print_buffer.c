@@ -76,8 +76,9 @@ void print_buffer( Environment * _environment, char * _value, int _new_line, int
 
     Variable * value = variable_retrieve( _environment, _value );
     Variable * dstring = variable_temporary( _environment, VT_DSTRING, "(temporary buffer)" );
-    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address)" );
+    Variable * targetAddress = variable_temporary( _environment, VT_ADDRESS, "(address)" );
     Variable * size = variable_temporary( _environment, VT_BYTE, "(size)" );
+    Variable * sourceAddress = variable_temporary( _environment, VT_ADDRESS, "(address)" );
     
     if ( value->type != VT_BUFFER ) {
         CRITICAL_PRINT_BUFFER_ON_A_NOT_BUFFER( _value );
@@ -85,28 +86,29 @@ void print_buffer( Environment * _environment, char * _value, int _new_line, int
 
     value->printable = _printable;
 
-    char sourceAddress[MAX_TEMPORARY_STORAGE]; 
-
     char * string = malloc( value->size + 1 );
     memset( string, 0, value->size );
     memcpy( string, value->valueBuffer, value->size );
-    
+
+    cpu_addressof_16bit( _environment, value->realName, sourceAddress->realName );
+
     int bufferSize = strlen( string );
     int offset = 0;
 
     if ( bufferSize > 127 ) {
 
         cpu_dsalloc_size( _environment, 127, dstring->realName );
-        cpu_dsdescriptor( _environment, dstring->realName, address->realName, size->realName );
+        cpu_dsdescriptor( _environment, dstring->realName, targetAddress->realName, size->realName );
 
         while( bufferSize > 127 ) {
 
-            sprintf( sourceAddress, "(%s+%d)", value->realName, offset );
-            cpu_mem_move_direct_indirect_size( _environment, sourceAddress, address->realName, 127 );
+            cpu_mem_move_size( _environment, sourceAddress->realName, targetAddress->realName, 127 );
+            // cpu_mem_move_direct_indirect_size( _environment, sourceAddress, address->realName, 127 );
             text_text( _environment, dstring->name );
 
             bufferSize -= 127;
-            offset += 127;
+
+            cpu_math_add_16bit_const( _environment, sourceAddress->realName, 127, sourceAddress->realName );
 
         }
 
@@ -115,10 +117,9 @@ void print_buffer( Environment * _environment, char * _value, int _new_line, int
     }
 
     cpu_dsalloc_size( _environment, bufferSize, dstring->realName );
-    cpu_dsdescriptor( _environment, dstring->realName, address->realName, size->realName );
+    cpu_dsdescriptor( _environment, dstring->realName, targetAddress->realName, size->realName );
 
-    sprintf( sourceAddress, "%s+%d", value->realName, offset );
-    cpu_mem_move_direct_indirect_size( _environment, sourceAddress, address->realName, bufferSize );
+    cpu_mem_move_size( _environment, sourceAddress->realName, targetAddress->realName, bufferSize );
 
     text_text( _environment, dstring->name );
 
