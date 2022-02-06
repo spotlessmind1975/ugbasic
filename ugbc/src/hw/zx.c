@@ -107,16 +107,17 @@ void zx_inkey( Environment * _environment, char * _pressed, char * _key ) {
 
     MAKE_LABEL
 
+    outhead1("zxinkey%s:",label);
     outline0("LD A, 0");
     outline1("LD (%s), A", _pressed );
     outline1("LD (%s), A", _key );
     outline0("LD A, ($5C08)");
-    outline0("CP 13");
+    outline0("CP 0");
     outline1("JR Z, %snokey", label );
     outline1("LD (%s), a", _key );
     outline0("LD A, $FF");
     outline1("LD (%s), A", _pressed );
-    outline0("LD A, 13");
+    outline0("LD A, 0");
     outline0("LD ($5C08), A");
     outhead1("%snokey:", label );
    
