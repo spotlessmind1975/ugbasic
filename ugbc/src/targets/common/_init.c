@@ -70,9 +70,9 @@ void setup_text_variables( Environment * _environment ) {
     variable_global( _environment, "XCURSYS" );
     variable_import( _environment, "YCURSYS", VT_BYTE, 0 );
     variable_global( _environment, "YCURSYS" );
-    variable_define( _environment, "PEN", VT_COLOR, COLOR_WHITE );
+    variable_define( _environment, "PEN", VT_COLOR, DEFAULT_PEN_COLOR );
     variable_global( _environment, "PEN" );
-    variable_define( _environment, "PAPER", VT_COLOR, COLOR_BLACK );
+    variable_define( _environment, "PAPER", VT_COLOR, DEFAULT_PAPER_COLOR );
     variable_global( _environment, "PAPER" );
     variable_define( _environment, "windowE", VT_BYTE, 0 );
     variable_global( _environment, "windowE" );
