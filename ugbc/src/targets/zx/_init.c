@@ -77,6 +77,9 @@ void target_initialization( Environment * _environment ) {
 
     outhead0("org 32768");
 
+    deploy( startup, src_hw_zx_startup_asm);
+    outline0("CALL ZXSTARTUP");
+
     outline0("CALL VARINIT");
     outline0("CALL PROTOTHREADINIT" );
 

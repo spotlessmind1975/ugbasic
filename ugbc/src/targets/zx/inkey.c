@@ -63,7 +63,7 @@ Variable * inkey( Environment * _environment ) {
     cpu_bveq( _environment, pressed->realName, noKeyPressedLabel );
 
     cpu_move_8bit_indirect(_environment, key->realName, address->realName );
-    cpu_dsresize_size(_environment, result->realName, 0 );
+    cpu_dsresize_size(_environment, result->realName, 1 );
 
     cpu_jump( _environment, finishedLabel );
 
