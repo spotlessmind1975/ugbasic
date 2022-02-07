@@ -121,9 +121,9 @@ CONST offsetX = IF(SCREEN WIDTH < 256, 0, ( SCREEN WIDTH - screenWidth ) \ #2)
 ' La procedura per disegnare il triangolo necessita di tre coordinate
 ' (di partenza), che sono i vertici del triangolo da cui partire. 
 '
-CONST x1=(screenWidth \ #2): CONST y1=0
-CONST x2=0: CONST y2=(screenHeight - 1 )
-CONST x3=(screenWidth - 1): CONST y3=(screenHeight - 1 )
+CONST x1=(screenWidth\#2): CONST y1=0
+CONST x2=0: CONST y2=(screenHeight-1)
+CONST x3=(screenWidth-1): CONST y3=(screenHeight-1)
 
 ' In order to ensure as "rectangular" distribution as possible of the points 
 ' chosen randomly, we generate an array of 256 elements. 
@@ -210,13 +210,13 @@ CONST limit = 10000
 ' man mano che sarà disegnato il triangolo. Il valore iniziale coincide con il 
 ' vertice superiore.
 '
-x = #x1 : y= #y1
+x = #x1 : y = #y1
 
 ' This variable keeps the number of points drawn so far.
 '
 ' Questa variabile mantiene il numero di punti disegnati fino a questo momento.
 '
-n=0
+n = 0
 
 ' Starting from this point we start the loop to draw the triangle. 
 ' It is a loop that will be repeated for the total number of points 
@@ -285,14 +285,14 @@ REPEAT
 '
 ' Ripetiamo il loop fino a che non abbiamo disegnato tutti i punti.
 '
-UNTIL n=limit
+UNTIL n = limit
 
 ' At the end we calculate how much time has passed, and show 
 ' it on the screen. Rounding is to the second.
 ' 
 ' Al termine calcoliamo quanto tempo è passato, e mostriamolo 
 ' a schermo. L'arrotondamento è al secondo.
-te=TI-t
+te = TI - t
 HOME
 PRINT "time = ";(te/60);" sec"
 PRINT "points = ";limit
