@@ -281,9 +281,9 @@ REPEAT
 	'
 	INC n
 
-' We repeat the loop until we have drawn 1/4 of the points.
+' We repeat the loop until we have drawn all the points.
 '
-' Ripetiamo il loop fino a che non abbiamo disegnato 1/4 dei punti.
+' Ripetiamo il loop fino a che non abbiamo disegnato tutti i punti.
 '
 UNTIL n=limit
 
