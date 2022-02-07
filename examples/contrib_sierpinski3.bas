@@ -2,14 +2,17 @@ REM @english
 REM OTHER CONTRIBUTIONS SIERPINSKI CHALLENGE (final)
 REM
 REM This example is the final version for the "Sierpinski Challenge",
-REM an exciting challenge regarding fractals. This example reproduces the famous "SIERPINSKI TRIANGLE" on the rear cars. It is a very simple fractal to obtain, which takes its name from the mathematician who first studied its properties. Such a triangle can have different shapes and sizes and can be obtained in various ways. One of the methods to create it is the
-REM so-called "Game of chaos". The fractal is built by creating iteratively 
-REM a sequence of points, starting from a random initial point, in which each point 
-REM of the sequence is a given fraction of the distance between the previous point 
-REM and one of the vertices of the polygon; the vertex is chosen at random in 
-REM each iteration. Repeating this iterative process a large number of times, 
-REM selecting the vertex at random at each iteration, often (but not always) 
-REM produces a fractal shape. Using a regular triangle and the factor 1/2, 
+REM an exciting challenge regarding fractals. This example reproduces the famous 
+REM "SIERPINSKI TRIANGLE" on retrocomputers. It is a very simple fractal to obtain, 
+REM which takes its name from the mathematician who first studied its properties.
+REM Such a triangle can have different shapes and sizes and can be obtained in various
+REM ways. One of the methods to create it is the so-called "Game of chaos". 
+REM The fractal is built by creating iteratively a sequence of points, starting from
+REM a random initial point, in which each point of the sequence is a given fraction 
+REM of the distance between the previous point and one of the vertices of the polygon; 
+REM the vertex is chosen at random in each iteration. Repeating this iterative process 
+REM a large number of times, selecting the vertex at random at each iteration, often 
+REM (but not always) produces a fractal shape. Using a regular triangle and the factor 1/2, 
 REM it will result in a Sierpinski triangle.
 REM
 REM This source joined the [[https://www.facebook.com/groups/retroprogramming/posts/879754189371504/|Sierpinski Challenge]] on **RetroProgramming Italia - RP Italia**.
