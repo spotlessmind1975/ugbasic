@@ -71,15 +71,15 @@ Variable * random_value( Environment * _environment, VariableType _type ) {
     switch(_type) {
         case VT_BYTE:
         case VT_COLOR:
-            z80_random_8bit( _environment, "$FC9E", result->realName );
+            z80_random_8bit( _environment, "SC3000TIMER", result->realName );
             break;
         case VT_WORD:
         case VT_POSITION:
         case VT_ADDRESS:
-            z80_random_16bit( _environment, "$FC9E", result->realName );
+            z80_random_16bit( _environment, "SC3000TIMER", result->realName );
             break;
         case VT_DWORD:
-            z80_random_32bit( _environment, "$FC9E", result->realName );
+            z80_random_32bit( _environment, "SC3000TIMER", result->realName );
             break;
     }
 
