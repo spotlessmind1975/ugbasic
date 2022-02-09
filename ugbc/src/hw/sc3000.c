@@ -54,53 +54,18 @@ static RGBi SYSTEM_PALETTE[] = {
 
 void sc3000_inkey( Environment * _environment, char * _pressed, char * _key ) {
 
-    MAKE_LABEL
-
-    deploy( scancode, src_hw_sc3000_scancode_asm );
-
-    outline0("LD A, 0");
-    outline1("LD (%s), A", _pressed );
-    outline1("LD (%s), A", _key );
-    outline0("CALL SCANCODE");
-    outline0("CP 0");
-    outline1("JR Z, %snokey", label );
-    outline1("LD (%s), a", _key );
-    outline0("LD A, $FF");
-    outline1("LD (%s), A", _pressed );
-    outhead1("%snokey:", label );
-   
+  
 }
 
 void sc3000_scancode( Environment * _environment, char * _pressed, char * _scancode ) {
 
-    MAKE_LABEL
-
-    deploy( scancode, src_hw_sc3000_scancode_asm );
-
-    outline0("LD A, 0");
-    outline1("LD (%s), A", _scancode );
-    outline1("LD (%s), A", _pressed );
-    outline0("CALL SCANCODE");
-    outline0("CP 0");
-    outline1("JR Z,%snokey", label);
-    outline1("LD (%s), A", _scancode );
-    outline0("LD A, $FF");
-    outline1("LD (%s), A", _pressed );
-    outhead1("%snokey:", label );
-   
 }
 
 void sc3000_scanshift( Environment * _environment, char * _shifts ) {
 
-    outline0("LD A, ($FBEB)");
-    outline1("LD (%s), A", _shifts );
-
 }
 
 void sc3000_keyshift( Environment * _environment, char * _shifts ) {
-
-    outline0("LD A, ($FBEB)");
-    outline1("LD (%s), A", _shifts );
 
 }
 
@@ -114,10 +79,7 @@ void sc3000_irq_at( Environment * _environment, char * _label ) {
     // Variable * irq = variable_retrieve_or_define( _environment, "irq", VT_ADDRESS, 0 );
 
     outline0("DI" );
-    outline0("LD A, 0xc3" );
-    outline0("LD ($FD9F), A" );
-    outline1("LD HL, %s", _label );
-    outline0("LD ($FDA0), HL" );
+    cpu_set_callback( _environment, "IRQVECTOR", _label );
     outline0("EI" );
     
 }

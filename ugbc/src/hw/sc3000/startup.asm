@@ -35,6 +35,15 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+PPI_Setting         = 0x92
+PPI_PortC           = 0xDE
+PPI_Control         = 0xDF
+JOY_PortA           = 0xDC
+JOY_PortB           = 0xDD
+
+KEYB_Detected       = 0x00
+KEYB_NotDetected    = 0xFF
+
 DEFS $35
 
 rst_38:
@@ -53,6 +62,7 @@ rst_38:
     LD HL,(SC3000TIMER)
     INC HL
     LD (SC3000TIMER),HL
+    CALL IRQVECTOR
     CALL VDPREGIN
 	POP	HL
 	POP	DE
@@ -68,9 +78,64 @@ rst_38:
 	POP	AF
 	RETI
 
+IRQVOID:
+    RET
+
 SC3000STARTUP:
+    LD DE, IRQVOID
+    LD HL, IRQVECTOR
+    LD A, $cd
+    LD (HL), A
+    INC HL
+    LD A, E
+    LD (HL), A
+    INC HL
+    LD A, D
+    LD (HL), A
+
 	LD HL, TEXTATBMFONT
 	LD BC, 2048
     LD DE, 0
     CALL VDPWRITE
+
+; Originally published on:
+; https://github.com/siriokds/SC-3000-Keyboard-support/blob/main/SC3000_SG1000_KeybJoy.asm
+
+; b = test value
+ppi_test:
+	ld		b, a
+	out		(PPI_PortC),a
+	in		a,(PPI_PortC)
+	cp		b
+	ld		a, KEYB_Detected	; "xor a" cannot be used. Zero Flag must be intact.
+	jr		z, ppi_test_noerr
+	dec		a					; c = 0xFF if not detected
+ppi_test_noerr:
+	ret
+
+; 1) Call this at start of the game
+;----------------------------------------------------------------
+;================================================================
+; SC3K_InputInit:
+;================================================================
+;----------------------------------------------------------------
+	ld		a,PPI_Setting
+	out		(PPI_Control),a
+
+	ld		a, KEYB_NotDetected
+	ld		(PPIKEYBOARD),a	; save it, 0 = keyboard present
+
+	ld		a,0x55
+	call	ppi_test
+	ld		c, a
+	ld		a,0xaa
+	call	ppi_test
+	
+	or		c					; merge the two attempts
+	ld		(PPIKEYBOARD),a	; save it, 0 = keyboard present
+
+	ld		a,0x07				; default row 7 (joystick)
+	out		(PPI_PortC),a
+
     RET
+
