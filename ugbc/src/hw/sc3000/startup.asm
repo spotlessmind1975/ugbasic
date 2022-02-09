@@ -98,6 +98,8 @@ SC3000STARTUP:
     LD DE, 0
     CALL VDPWRITE
 
+    JP SC3K_InputInit
+
 ; Originally published on:
 ; https://github.com/siriokds/SC-3000-Keyboard-support/blob/main/SC3000_SG1000_KeybJoy.asm
 
@@ -116,7 +118,7 @@ ppi_test_noerr:
 ; 1) Call this at start of the game
 ;----------------------------------------------------------------
 ;================================================================
-; SC3K_InputInit:
+SC3K_InputInit:
 ;================================================================
 ;----------------------------------------------------------------
 	ld		a,PPI_Setting
