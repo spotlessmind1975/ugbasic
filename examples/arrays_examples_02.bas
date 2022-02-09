@@ -11,6 +11,7 @@ REM Questo piccolo esempio mostra la sintassi base per definire un array e per
 REM accedervi.
 REM
 REM @exclude coleco
+REM @exclude sc3000
 
     CONST elements = 100
 
