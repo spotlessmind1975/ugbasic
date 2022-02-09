@@ -84,7 +84,7 @@ IRQVOID:
 SC3000STARTUP:
     LD DE, IRQVOID
     LD HL, IRQVECTOR
-    LD A, $cd
+    LD A, $c3
     LD (HL), A
     INC HL
     LD A, E
