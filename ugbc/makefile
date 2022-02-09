@@ -250,6 +250,19 @@ src-generated/modules_d64.c: $(SOURCES_6809) $(SOURCES_6847) $(SOURCES_D64)
 	@grep "src" src-generated/modules_d64.c | awk -f modules.awk >src-generated/modules_d64.h
 	@grep "data" src-generated/modules_d64.c | awk -f modules.awk >>src-generated/modules_d64.h
 
+# SEGA SC-3000
+
+MODULES_SC3000 := $(wildcard src/hw/sc3000/*.asm)
+SOURCES_SC3000 := $(subst src/hw/sc3000/,src-generated/sc3000_,$(MODULES_SC3000:.asm=.c))
+
+src-generated/sc3000_%.c: $(MODULES_SC3000)
+	@xxd -i $(subst src-generated/sc3000_,src/hw/sc3000/,$(@:.c=.asm)) >$@
+
+src-generated/modules_sc3000.c: $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_SC3000)
+	@cat $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_SC3000) >src-generated/modules_sc3000.c
+	@grep "src" src-generated/modules_sc3000.c | awk -f modules.awk >src-generated/modules_sc3000.h
+	@grep "data" src-generated/modules_sc3000.c | awk -f modules.awk >>src-generated/modules_sc3000.h
+
 # Olivetti Prodest PC 128
 # Thomson MO6 serie U
 # Thomson MO6 serie V
@@ -344,7 +357,7 @@ SOURCESTEST += $(wildcard src/hw/*.c)
 SOURCESTEST += $(wildcard src/targets/common/*.c)
 SOURCESTEST += $(wildcard src/targets/$(target)/*.c)
 SOURCESTEST += $(wildcard src-test/suites/*.c)
-SOURCESTEST += src-generated/modules_$(target).c src-test/tester.c src-test/tester_c64.c src-test/tester_plus4.c src-test/tester_atari.c src-test/tester_atarixl.c src-test/tester_coleco.c src-test/tester_msx1.c src-test/tester_zx.c src-test/tester_d32.c src-test/tester_d64.c src-test/tester_pc128op.c src-test/tester_mo5.c src-test/tester_vic20.c
+SOURCESTEST += src-generated/modules_$(target).c src-test/tester.c src-test/tester_c64.c src-test/tester_plus4.c src-test/tester_atari.c src-test/tester_atarixl.c src-test/tester_coleco.c src-test/tester_msx1.c src-test/tester_zx.c src-test/tester_d32.c src-test/tester_d64.c src-test/tester_pc128op.c src-test/tester_mo5.c src-test/tester_vic20.c src-test/tester_sc3000.c
 
 paths:
 	@mkdir -p src-generated

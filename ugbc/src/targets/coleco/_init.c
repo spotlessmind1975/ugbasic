@@ -146,11 +146,7 @@ void target_initialization( Environment * _environment ) {
 
     setup_text_variables( _environment );
 
-    #if __coleco__
-
-        outline0("CALL $1f7f");
-
-    #endif
+    outline0("CALL $1f7f");
 
     tms9918_initialization( _environment );
 

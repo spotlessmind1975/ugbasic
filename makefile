@@ -148,6 +148,17 @@ generated/coleco/exe/%.rom:
 	@z88dk-appmake +msxrom -b $(@:.rom=.bin)
 	@rm -f $(@:.rom=.bin) $(@:.rom=_*.bin)
 
+generated/sc3000/asm/%.asm:
+	@ugbc/exe/ugbc.sc3000 $(subst generated/sc3000/asm/,examples/,$(@:.asm=.bas)) $@ 
+
+generated/sc3000/exe/%.rom:
+	@z88dk-z80asm -D__sc3000__ -l -m -s -g -b $(subst /exe/,/asm/,$(@:.rom=.asm))
+	@mv $(subst /exe/,/asm/,$(@:.rom=.sym)) $(subst /exe/,/asm/,$(@:.rom=.osym))
+	@php sym2sc3000.php $(subst /exe/,/asm/,$(@:.rom=.osym)) >$(subst /exe/,/asm/,$(@:.rom=.sym))
+	@mv $(subst /exe/,/asm/,$(@:.rom=_code_user.bin)) $(@:.rom=_code_user.bin)
+	@mv $(subst /exe/,/asm/,$(@:.rom=_data_user.bin)) $(@:.rom=_data_user.bin)
+	@cat $(@:.rom=_code_user.bin) $(@:.rom=_data_user.bin) >$(@)
+
 paths:
 	@mkdir -p generated
 	@mkdir -p generated/$(target)/asm

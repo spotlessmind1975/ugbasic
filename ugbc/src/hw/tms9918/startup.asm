@@ -68,6 +68,26 @@ VDPREGOUT:
         PUSH    BC
         LD      BC, (VDPCONTROLPORTWRITE)
         OUT     (C), A
+        NOP
+        NOP
+        NOP
+        NOP
+        NOP
+        NOP
+        NOP
+        NOP
+        NOP
+        NOP        
+        NOP
+        NOP
+        NOP
+        NOP
+        NOP
+        NOP
+        NOP
+        NOP
+        NOP
+        NOP        
         POP     BC
         RET
 
@@ -75,6 +95,26 @@ VDPREGIN:
         PUSH    BC
         LD      BC, (VDPCONTROLPORTREAD)
         IN      A, (C)
+        NOP
+        NOP
+        NOP
+        NOP
+        NOP
+        NOP
+        NOP
+        NOP
+        NOP
+        NOP        
+        NOP
+        NOP
+        NOP
+        NOP
+        NOP
+        NOP
+        NOP
+        NOP
+        NOP
+        NOP        
         POP     BC
         RET
 
@@ -82,6 +122,26 @@ VDPRAMOUT:
         PUSH    BC
         LD      BC, (VDPDATAPORTWRITE)
         OUT     (C), A
+        NOP
+        NOP
+        NOP
+        NOP
+        NOP
+        NOP
+        NOP
+        NOP
+        NOP
+        NOP        
+        NOP
+        NOP
+        NOP
+        NOP
+        NOP
+        NOP
+        NOP
+        NOP
+        NOP
+        NOP        
         POP     BC
         RET
 

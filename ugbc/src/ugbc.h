@@ -929,6 +929,7 @@ typedef struct _Deployed {
     int gtiavars;
     int zxvars;
     int msx1vars;
+    int sc3000vars;
     int colecovars;
     int tms9918vars;
     int tms9918varsGraphic;
@@ -963,6 +964,7 @@ typedef struct _Deployed {
     int mobcs;
     int protothread;
     int tiles;
+    int font;
 
     Embedded embedded;
 
@@ -2512,6 +2514,11 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "../src-generated/modules_coleco.h"
     #include "hw/z80.h"
     #include "hw/coleco.h"
+    #include "hw/tms9918.h"
+#elif __sc3000__
+    #include "../src-generated/modules_sc3000.h"
+    #include "hw/z80.h"
+    #include "hw/sc3000.h"
     #include "hw/tms9918.h"
 #endif
 

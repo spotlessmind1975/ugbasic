@@ -32,7 +32,7 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#if defined(__msx1__) || defined(__coleco__)
+#if defined(__msx1__) || defined(__coleco__) || defined(__sc3000__)
 
 #include "../ugbc.h"
 #include <math.h>
@@ -1053,7 +1053,9 @@ void tms9918_text( Environment * _environment, char * _text, char * _text_size )
     if ( _environment->currentMode == 2 || _environment->currentMode == 3 ) {
         deploy( clsGraphic, src_hw_tms9918_cls_graphic_asm );
         deploy( tms9918varsGraphic, src_hw_tms9918_vars_graphic_asm );
+        deploy( textEncodedAt, src_hw_tms9918_text_asm );
         deploy( textEncodedAtGraphic, src_hw_tms9918_text_at_graphic_asm );
+        deploy( font, src_hw_tms9918_font_asm );
         if ( ! _environment->hasGameLoop ) {
             outline0("CALL TEXTATBITMAPMODE");
         } else {
@@ -1061,6 +1063,9 @@ void tms9918_text( Environment * _environment, char * _text, char * _text_size )
         }
     } else {
         deploy( clsText, src_hw_tms9918_cls_text_asm );
+        #if __sc3000__
+                deploy( textEncodedAt, src_hw_tms9918_text_asm );
+        #endif
         deploy( textEncodedAtText, src_hw_tms9918_text_at_text_asm );
         if ( ! _environment->hasGameLoop ) {
             outline0("CALL TEXTATTILEMODE");
