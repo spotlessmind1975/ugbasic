@@ -32,7 +32,7 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#if defined(__msx1__) || defined(__coleco__) || defined(__sc3000__)
+#if defined(__msx1__) || defined(__coleco__) || defined(__sc3000__) || defined(__sg1000__)
 
 #include "../ugbc.h"
 #include <math.h>
@@ -1063,7 +1063,7 @@ void tms9918_text( Environment * _environment, char * _text, char * _text_size )
         }
     } else {
         deploy( clsText, src_hw_tms9918_cls_text_asm );
-        #if __sc3000__
+        #if defined(__sc3000__) || defined(__sg1000__)
                 deploy( textEncodedAt, src_hw_tms9918_text_asm );
         #endif
         deploy( textEncodedAtText, src_hw_tms9918_text_at_text_asm );

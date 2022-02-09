@@ -5384,6 +5384,8 @@ char * image_load_asserts( Environment * _environment, char * _filename ) {
     strcat( lookedFilename, "/coleco" );
 #elif __sc3000__
     strcat( lookedFilename, "/sc3000" );
+#elif __sg1000__
+    strcat( lookedFilename, "/sg1000" );
 #endif
     strcat( lookedFilename, lookedExtension );
 

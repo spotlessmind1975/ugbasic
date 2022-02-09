@@ -263,6 +263,19 @@ src-generated/modules_sc3000.c: $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_SC30
 	@grep "src" src-generated/modules_sc3000.c | awk -f modules.awk >src-generated/modules_sc3000.h
 	@grep "data" src-generated/modules_sc3000.c | awk -f modules.awk >>src-generated/modules_sc3000.h
 
+# SEGA SG-1000
+
+MODULES_SG1000 := $(wildcard src/hw/sg1000/*.asm)
+SOURCES_SG1000 := $(subst src/hw/sg1000/,src-generated/sg1000_,$(MODULES_SG1000:.asm=.c))
+
+src-generated/sg1000_%.c: $(MODULES_SG1000)
+	@xxd -i $(subst src-generated/sg1000_,src/hw/sg1000/,$(@:.c=.asm)) >$@
+
+src-generated/modules_sg1000.c: $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_SG1000)
+	@cat $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_SG1000) >src-generated/modules_sg1000.c
+	@grep "src" src-generated/modules_sg1000.c | awk -f modules.awk >src-generated/modules_sg1000.h
+	@grep "data" src-generated/modules_sg1000.c | awk -f modules.awk >>src-generated/modules_sg1000.h
+
 # Olivetti Prodest PC 128
 # Thomson MO6 serie U
 # Thomson MO6 serie V
@@ -357,7 +370,7 @@ SOURCESTEST += $(wildcard src/hw/*.c)
 SOURCESTEST += $(wildcard src/targets/common/*.c)
 SOURCESTEST += $(wildcard src/targets/$(target)/*.c)
 SOURCESTEST += $(wildcard src-test/suites/*.c)
-SOURCESTEST += src-generated/modules_$(target).c src-test/tester.c src-test/tester_c64.c src-test/tester_plus4.c src-test/tester_atari.c src-test/tester_atarixl.c src-test/tester_coleco.c src-test/tester_msx1.c src-test/tester_zx.c src-test/tester_d32.c src-test/tester_d64.c src-test/tester_pc128op.c src-test/tester_mo5.c src-test/tester_vic20.c src-test/tester_sc3000.c
+SOURCESTEST += src-generated/modules_$(target).c src-test/tester.c src-test/tester_c64.c src-test/tester_plus4.c src-test/tester_atari.c src-test/tester_atarixl.c src-test/tester_coleco.c src-test/tester_msx1.c src-test/tester_zx.c src-test/tester_d32.c src-test/tester_d64.c src-test/tester_pc128op.c src-test/tester_mo5.c src-test/tester_vic20.c src-test/tester_sc3000.c src-test/tester_sg1000.c
 
 paths:
 	@mkdir -p src-generated

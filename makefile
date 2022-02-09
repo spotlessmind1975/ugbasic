@@ -159,6 +159,17 @@ generated/sc3000/exe/%.rom:
 	@mv $(subst /exe/,/asm/,$(@:.rom=_data_user.bin)) $(@:.rom=_data_user.bin)
 	@cat $(@:.rom=_code_user.bin) $(@:.rom=_data_user.bin) >$(@)
 
+generated/sg1000/asm/%.asm:
+	@ugbc/exe/ugbc.sg1000 $(subst generated/sg1000/asm/,examples/,$(@:.asm=.bas)) $@ 
+
+generated/sg1000/exe/%.rom:
+	@z88dk-z80asm -D__sg1000__ -l -m -s -g -b $(subst /exe/,/asm/,$(@:.rom=.asm))
+	@mv $(subst /exe/,/asm/,$(@:.rom=.sym)) $(subst /exe/,/asm/,$(@:.rom=.osym))
+	@php sym2sg1000.php $(subst /exe/,/asm/,$(@:.rom=.osym)) >$(subst /exe/,/asm/,$(@:.rom=.sym))
+	@mv $(subst /exe/,/asm/,$(@:.rom=_code_user.bin)) $(@:.rom=_code_user.bin)
+	@mv $(subst /exe/,/asm/,$(@:.rom=_data_user.bin)) $(@:.rom=_data_user.bin)
+	@cat $(@:.rom=_code_user.bin) $(@:.rom=_data_user.bin) >$(@)
+
 paths:
 	@mkdir -p generated
 	@mkdir -p generated/$(target)/asm
