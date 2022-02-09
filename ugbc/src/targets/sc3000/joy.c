@@ -44,6 +44,11 @@ Variable * joy( Environment * _environment, char * _port ) {
 
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of JOY)" );
 
+    deploy( joystick, src_hw_sc3000_joystick_asm );
+
+    outline0("CALL JOYSTICK");
+    outline1("LD (%s), A", result->realName );
+
     return result;
 
 }

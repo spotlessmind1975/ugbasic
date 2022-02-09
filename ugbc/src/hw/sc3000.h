@@ -139,10 +139,12 @@
 #define JOY_COUNT           2
 
 #define JOY_UP              0
-#define JOY_DOWN            2
-#define JOY_LEFT            3
-#define JOY_RIGHT           4
-#define JOY_FIRE            0
+#define JOY_DOWN            1
+#define JOY_LEFT            2
+#define JOY_RIGHT           3
+#define JOY_FIRE            4
+#define JOY_FIRE_LEFT       4
+#define JOY_FIRE_RIGHT      5
 
 void sc3000_inkey( Environment * _environment, char * _pressed, char * _key );
 void sc3000_scancode( Environment * _environment, char * _pressed, char * _scacode );
