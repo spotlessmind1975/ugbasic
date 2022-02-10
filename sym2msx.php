@@ -16,7 +16,7 @@
                     echo $symbol.": equ ".dechex(hexdec($offset))."h\n";
                 }
             } else {
-                echo $symbol.": equ ".dechex(0x8000+hexdec($offset))."h\n";
+                echo $symbol.": equ ".dechex(0x4000+hexdec($offset))."h\n";
             }
         }
     }

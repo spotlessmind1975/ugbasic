@@ -103,7 +103,7 @@ void target_initialization( Environment * _environment ) {
     bank_define( _environment, "TEMPORARY", BT_TEMPORARY, 0x5100, NULL );
 
     outhead0("SECTION code_user");
-    outhead0("ORG $8000");
+    outhead0("ORG $4000");
     outhead0("SECTION data_user");
     outhead0("ORG $C000");
     outhead0("SECTION code_user");
