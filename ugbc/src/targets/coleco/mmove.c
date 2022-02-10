@@ -87,7 +87,7 @@ Non è possibile copiare aree sovrapposte o due aree video.
 @example MMOVE $C000 TO VIDEO $0000 SIZE 2048
 @example MMOVE VIDEO $1800 TO VIDEO $0000 SIZE 2048
 
-@target atari
+@target coleco
 </usermanual> */
 void mmove_memory_memory( Environment * _environment, char * _from, char * _to, char * _size ) {
 

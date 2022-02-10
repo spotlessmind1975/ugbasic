@@ -53,41 +53,7 @@ extern char DATATYPE_AS_STRING[][16];
 /* <usermanual>
 @keyword MMOVE
 
-@english
-This low-level command can be used to move memory blocks at high speed 
-between addresses. There are several cases that are covered by this 
-command. The simplest is to copy data from one or more CPU memory 
-locations (RAM) to another CPU memory location (RAM). This can be 
-achieved with the standard version of the command.
-
-If you add the ''VIDEO'' keyword, you can indicate that the memory to copy 
-from or to copy to is not in the CPU RAM but in the RAM possibly 
-dedicated to the GPU. In this case it is called VRAM.
-
-You cannot move overlapped area or VRAMS together.
-
-@italian
-Questo comando a basso livello può essere utilizzato per muovere blocchi 
-di memoria ad alta velocità, tra un indirizzo e l'altro. Vi sono diverse 
-casistiche che sono coperte da questo comando. La più semplice è quella 
-di copiare dati da una o più locazioni di memoria della CPU (RAM) a 
-un'altra locazione di memoria della CPU (RAM). Questo lo si può ottenere 
-con la versione standard del comando.
-
-Se si aggiunge la parola chiave ''VIDEO'', si può indicare che la memoria da 
-cui copiare o in cui copiare si trova non nella RAM della CPU ma nella 
-RAM eventualmente dedicata alla GPU. In questo caso prende il nome di VRAM.
-
-Non è possibile copiare aree sovrapposte o due aree video.
-
-@syntax MMOVE {VIDEO} [address] TO {VIDEO} [address] SIZE [size]
-
-@example MMOVE $0000 TO $C000 SIZE 1024
-@example MMOVE VIDEO $1800 TO $C000 SIZE 960
-@example MMOVE $C000 TO VIDEO $0000 SIZE 2048
-@example MMOVE VIDEO $1800 TO VIDEO $0000 SIZE 2048
-
-@target atari
+@target c64
 </usermanual> */
 void mmove_memory_memory( Environment * _environment, char * _from, char * _to, char * _size ) {
 
