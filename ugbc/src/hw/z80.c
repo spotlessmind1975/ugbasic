@@ -2694,6 +2694,29 @@ void z80_mem_move( Environment * _environment, char *_source, char *_destination
 
 }
 
+void z80_mem_move_16bit( Environment * _environment, char *_source, char *_destination,  char *_size ) {
+
+    MAKE_LABEL
+
+    outline1("LD HL,(%s)", _source);
+    outline1("LD DE,(%s)", _destination);
+    outline1("LD A, (%s)", _size);
+    outline0("CP 0");
+    outline1("JR NZ, %sgo", label);
+    outline1("LD A, (%s+1)", _size);
+    outline0("CP 0");
+    outline1("JR NZ, %sgo", label);
+    outline0("JR %sdone");
+    outhead1("%sgo:", label);
+    outline1("LD A, (%s)", _size);
+    outline0("LD C, A");
+    outline1("LD A, (%s+1)", _size);
+    outline0("LD B, C");
+    outline0("LDIR");
+    outhead1("%sdone:", label);
+
+}
+
 void z80_mem_move_direct( Environment * _environment, char *_source, char *_destination,  char *_size ) {
 
     MAKE_LABEL

@@ -3009,6 +3009,24 @@ void cpu6809_mem_move( Environment * _environment, char *_source, char *_destina
 
 }
 
+void cpu6809_mem_move_16bit( Environment * _environment, char *_source, char *_destination,  char *_size ) {
+
+    inline( cpu_mem_move )
+
+        CRITICAL( "Inline cpu6809_mem_move_16bit is not available!");
+
+    embedded( cpu_mem_move, src_hw_6809_cpu_mem_move_asm )
+
+        outline1("LDD %s", _size );
+        outline0("TFR D, U" );
+        outline1("LDY %s", _source );
+        outline1("LDX %s", _destination );
+        outline0("JSR CPUMEMMOVE" );
+
+    done( )
+
+}
+
 void cpu6809_mem_move_direct( Environment * _environment, char *_source, char *_destination,  char *_size ) {
 
     inline( cpu_mem_move )

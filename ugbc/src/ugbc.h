@@ -1612,6 +1612,8 @@ typedef struct _Environment {
 #define CRITICAL_CANNOT_MOVE_UNROLLED_TILE( t ) CRITICAL2("E119 - cannot move an unrolled tile", t );
 #define CRITICAL_NOT_TILE( v ) CRITICAL2("E120 - variable is not a (set of) tile(s)", v );
 #define CRITICAL_CANNOT_RESPAWN_NOT_THREADID( v ) CRITICAL2("E121 - cannot respawn something that is not a thread id", v );
+#define CRITICAL_CANNOT_MMOVE_INVALID_SIZE( v ) CRITICAL2("E122 - invalid data type for SIZE on MMOVE", v );
+#define CRITICAL_CANNOT_MMOVE_UNSUPPORTED( ) CRITICAL("E123 - MMOVE VIDEO to VIDEO unsupported" );
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
 #define WARNING2i( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%i) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -2156,6 +2158,9 @@ void                    memory_area_assign( MemoryArea * _first, Variable * _var
 float                   min_of_two(float _x, float _y);
 float                   min_of_three(float _m, float _n, float _p);
 Variable *              minimum( Environment * _environment, char * _source, char * _dest );
+void                    mmove_memory_memory( Environment * _environment, char * _from, char * _to, char * _size );
+void                    mmove_memory_video( Environment * _environment, char * _from, char * _to, char * _size );
+void                    mmove_video_memory( Environment * _environment, char * _from, char * _to, char * _size );
 void                    mob_at( Environment * _environment, char * _index, char * _x, char * _y );
 void                    mob_hide( Environment * _environment, char * _index );
 Variable *              mob_init( Environment * _environment, char * _image, char * _x, char * _y );

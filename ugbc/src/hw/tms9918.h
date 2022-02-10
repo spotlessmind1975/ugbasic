@@ -183,4 +183,8 @@ void tms9918_put_tiles( Environment * _environment, char * _image, char * _x, ch
 void tms9918_move_tiles( Environment * _environment, char * _image, char * _x, char * _y );
 void tms9918_use_tileset( Environment * _environment, char * _tileset );
 
+void tms9918_move_memory_video( Environment * _environment, char * _from, char * _to, char * _size );
+void tms9918_move_video_memory( Environment * _environment, char * _from, char * _to, char * _size );
+void tms9918_move_video_video( Environment * _environment, char * _from, char * _to, char * _size );
+
 #endif

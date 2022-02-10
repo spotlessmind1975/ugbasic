@@ -3608,6 +3608,41 @@ void cpu6502_mem_move( Environment * _environment, char *_source, char *_destina
 
 }
 
+void cpu6502_mem_move_16bit( Environment * _environment, char *_source, char *_destination,  char *_size ) {
+
+    MAKE_LABEL
+
+    inline( cpu_mem_move )
+
+        CRITICAL( "Inline cpu_mem_move_16bit not available!")
+
+    embedded( cpu_mem_move, src_hw_6502_cpu_mem_move_asm );
+
+        outline1("LDX %s", _size );
+        outline1("BNE %sgo", label );
+        outline1("LDX %s+1", _size );
+        outline1("BNE %sgo", label );
+        outline1("JMP %sdone", label );
+
+        outhead1("%sgo:", label );
+        outline0("STX MATHPTR0" );
+        outline1("LDX %s+1", _size );
+        outline0("STX MATHPTR0+1" );
+        outline1("LDA %s+1", _source );
+        outline0("STA TMPPTR+1" );
+        outline1("LDA %s", _source );
+        outline0("STA TMPPTR" );
+        outline1("LDA %s+1", _destination );
+        outline0("STA TMPPTR2+1" );
+        outline1("LDA %s", _destination );
+        outline0("STA TMPPTR2" );
+        outline0("JSR CPUMEMMOVE" );
+        outhead1("%sdone:", label );
+
+    done()
+
+}
+
 void cpu6502_mem_move_direct( Environment * _environment, char *_source, char *_destination,  char *_size ) {
 
     MAKE_LABEL

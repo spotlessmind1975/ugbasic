@@ -60,7 +60,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token FONT VIC20 PARALLEL YIELD SPAWN THREAD TASK IMAGES FRAME FRAMES XY YX ROLL MASKED USING TRANSPARENCY
 %token OVERLAYED CASE ENDSELECT OGP CGP ARRAY NEW GET DISTANCE TYPE MUL DIV RGB SHADES HEX PALETTE
 %token BAR XGRAPHIC YGRAPHIC XTEXT YTEXT COLUMNS XGR YGR CHAR RAW SEPARATOR MSX MSX1 COLECO CSPRITE 
-%token TILESET MOVE ROW COLUMN TRANSPARENT DOUBLE RESPAWN HALTED SC3000 SG1000
+%token TILESET MOVE ROW COLUMN TRANSPARENT DOUBLE RESPAWN HALTED SC3000 SG1000 MEMORY VIDEO MMOVE
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -98,6 +98,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> const_color_enumeration
 %type <integer> using_transparency
 %type <integer> using_background
+%type <integer> memory_video
 
 %right Integer String CP 
 %left OP_DOLLAR
@@ -4092,6 +4093,17 @@ use_definition:
         use_tileset( _environment, $2 );
     };
 
+memory_video :
+    {
+        $$ = 0;
+    }
+    | MEMORY {
+        $$ = 0;
+    }
+    | VIDEO {
+        $$ = 1;
+    };
+
 statement:
     BANK bank_definition
   | RASTER raster_definition
@@ -4594,6 +4606,21 @@ statement:
   }
   | DOUBLE BUFFER OFF {
       double_buffer( _environment, 0 );
+  }
+  | MMOVE memory_video expr TO memory_video expr SIZE expr {
+      if ( $2 == 0 ) {
+        if ( $5 == 0 ) {
+            mmove_memory_memory( _environment, $3, $6, $8 );
+        } else {
+            mmove_memory_video( _environment, $3, $6, $8 );
+        }
+      } else {
+        if ( $5 == 0 ) {
+            mmove_video_memory( _environment, $3, $6, $8 );
+        } else {
+            CRITICAL_CANNOT_MMOVE_UNSUPPORTED( )
+        }
+      }
   }
   | Identifier OP_ASSIGN expr {
         Variable * expr = variable_retrieve( _environment, $3 );
