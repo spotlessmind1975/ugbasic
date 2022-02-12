@@ -1187,9 +1187,27 @@ void vic2_initialization( Environment * _environment ) {
     _environment->currentRgbConverterFunction = rgbConverterFunction;
     _environment->screenShades = 16;
 
+    outline0("JSR VIC2FINALIZATION");
+
 }
 
+static RGBi * multicolorSpritePalette[2];
+
 void vic2_finalization( Environment * _environment ) {
+
+    outhead0("VIC2FINALIZATION:");
+
+    if ( multicolorSpritePalette[0] ) {
+        outline1("LDA #$%2.2x", multicolorSpritePalette[0]->index );
+        outline0("STA $D025" );
+    }
+
+    if ( multicolorSpritePalette[1] ) {
+        outline1("LDA #$%2.2x", multicolorSpritePalette[1]->index );
+        outline0("STA $D026" );
+    }
+
+    outline0("RTS");
 
 }
 
@@ -1947,16 +1965,6 @@ Variable * vic2_sprite_converter( Environment * _environment, char * _source, in
             if (colorUsed > 4) {
                 CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
             }
-
-            if ( palette[0].index == SYSTEM_PALETTE[0].index ) {
-
-            } else {
-                rgbi_move( &palette[2], &palette[3] );
-                rgbi_move( &palette[1], &palette[2] );
-                rgbi_move( &palette[0], &palette[1] );
-                rgbi_move( &SYSTEM_PALETTE[0], &palette[0] );
-            }
-
         } else {
             if (colorUsed > 2) {
                 CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
@@ -1965,7 +1973,7 @@ Variable * vic2_sprite_converter( Environment * _environment, char * _source, in
 
     }
     
-    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
+    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );    
     result->originalColors = colorUsed;
 
     int i, j, k;
@@ -1994,6 +2002,76 @@ Variable * vic2_sprite_converter( Environment * _environment, char * _source, in
         palette[i].index = SYSTEM_PALETTE[colorIndex].index;
         strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
         // printf("%d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
+    }
+
+    if ( _flags & SPRITE_FLAG_MULTICOLOR ) {
+
+        // printf("PALETTE 0: %d\n", palette[0].index );
+        // printf("PALETTE 1: %d %2.2x%2.2x%2.2x\n", palette[1].index, palette[1].red, palette[1].green, palette[1].blue );
+        // printf("PALETTE 2: %d\n", palette[2].index );
+        // printf("PALETTE 3: %d\n", palette[3].index );
+
+        if ( palette[0].index == SYSTEM_PALETTE[0].index ) {
+
+        } else {
+            rgbi_move( &palette[2], &palette[3] );
+            rgbi_move( &palette[1], &palette[2] );
+            rgbi_move( &palette[0], &palette[1] );
+            rgbi_move( &SYSTEM_PALETTE[0], &palette[0] );
+        }
+
+        // printf("PALETTE 0: %d\n", palette[0].index );
+        // printf("PALETTE 1: %d %2.2x%2.2x%2.2x\n", palette[1].index, palette[1].red, palette[1].green, palette[1].blue );
+        // printf("PALETTE 2: %d\n", palette[2].index );
+        // printf("PALETTE 3: %d\n", palette[3].index );
+
+        // printf("Color used = %d\n", colorUsed);
+
+        // printf("Decoding multicolor sprite color #0\n");
+
+        if ( !multicolorSpritePalette[0] ) {
+            // printf("Initializing with color 1 (%d)\n", palette[1].index );
+            multicolorSpritePalette[0] = malloc( sizeof( RGBi ) );
+            memset( multicolorSpritePalette[0], 0, sizeof( RGBi ) );
+            rgbi_move( &palette[1], multicolorSpritePalette[0] );
+        }
+
+        // printf("Decoding multicolor sprite color #1\n");
+
+        if ( !multicolorSpritePalette[1] ) {
+            // printf("Initializing with color 2 (%d)\n", palette[2].index );
+            multicolorSpritePalette[1] = malloc( sizeof( RGBi ) );
+            memset( multicolorSpritePalette[1], 0, sizeof( RGBi ) );
+            rgbi_move( &palette[2], multicolorSpritePalette[1] );
+        }
+
+        RGBi temporaryPalette[MAX_PALETTE];
+        memset( temporaryPalette, 0, sizeof( RGBi ) * MAX_PALETTE );
+
+        rgbi_move( &SYSTEM_PALETTE[0], &temporaryPalette[0] );
+
+        for( int i=1; i<colorUsed; ++i ) {
+            if ( rgbi_equals_rgb( &palette[i], multicolorSpritePalette[0] ) ) {
+                // printf("%d) Color #%d == sprite palette 0\n", i, palette[i].index );
+                rgbi_move( &palette[i], &temporaryPalette[1] );
+            } else if ( rgbi_equals_rgb( &palette[i], multicolorSpritePalette[1] ) ) {
+                // printf("%d) Color #%d == sprite palette 1\n", i, palette[i].index );
+                rgbi_move( &palette[i], &temporaryPalette[3] );
+            } else {
+                // printf("%d) Color #%d == sprite custom\n", i, palette[i].index );
+                rgbi_move( &palette[i], &temporaryPalette[2] );
+            }
+        }
+
+        rgbi_move( &temporaryPalette[0], &palette[0] );
+        // printf("PALETTE 0: %d\n", palette[0].index );
+        rgbi_move( &temporaryPalette[1], &palette[1] );
+        // printf("PALETTE 1: %d\n", palette[1].index );
+        rgbi_move( &temporaryPalette[2], &palette[2] );
+        // printf("PALETTE 2: %d\n", palette[2].index );
+        rgbi_move( &temporaryPalette[3], &palette[3] );
+        // printf("PALETTE 3: %d\n", palette[3].index );
+
     }
 
     memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
@@ -2063,10 +2141,10 @@ Variable * vic2_sprite_converter( Environment * _environment, char * _source, in
 
                 if ( i > 0 ) {
                     *( buffer + offset) |= bitmask;
-                    // printf("*");
+                    // printf("%1.1x", i );
                 } else {
                     *( buffer + offset) &= ~bitmask;
-                    // printf(" ");
+                    // printf("%1.1x", i );
                 }
 
             } else {
@@ -2104,10 +2182,14 @@ Variable * vic2_sprite_converter( Environment * _environment, char * _source, in
     if ( _color ) {
         *(buffer+63) = _color->index;
     } else {
-        *(buffer+63) = palette[1].index;
+        if ( _flags & SPRITE_FLAG_MULTICOLOR ) {
+            *(buffer+63) = palette[3].index;
+        } else {
+            *(buffer+63) = palette[1].index;
+        }
     }
 
-    // printf("----\n");
+    // printf("\n----\n");
 
     variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
 

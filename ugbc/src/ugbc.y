@@ -776,12 +776,6 @@ sprite_flag :
     | MONOCOLOR {
         $$ = SPRITE_FLAG_MONOCOLOR;
     }
-    | COLOR const_expr {
-        $$ = SPRITE_FLAG_COLOR | $2;
-    }
-    | COLOUR const_expr {
-        $$ = SPRITE_FLAG_COLOR | $2;
-    }
     | EXPAND VERTICAL {
         $$ = SPRITE_FLAG_EXPAND_VERTICAL;
     }

@@ -87,8 +87,8 @@ SPRITEDATAL1:
 
     PLA
     PHA
-    TAY
-
+    TAY   
+    
     CLC
     LDA #$27
     STA TMPPTR2

@@ -70,18 +70,13 @@ Variable * sprite_init( Environment * _environment, char * _image, char * _sprit
 
     Variable * realImage = sprite_converter( _environment, image->originalBitmap, image->originalWidth, image->originalHeight, NULL, _flags );
 
-    vic2_sprite_data_from( _environment, index->name, realImage->name );
-
     if ( _flags & SPRITE_FLAG_MULTICOLOR) {
         sprite_multicolor_var( _environment, index->name );
     } else {
         sprite_monocolor_var( _environment, index->name );
     }
-
-    if ( _flags & SPRITE_FLAG_COLOR) {
-        char value[MAX_TEMPORARY_STORAGE]; sprintf( value, "$%2.2x", _flags & 0x0f );
-        sprite_color_vars( _environment, index->name, value );
-    }
+    
+    vic2_sprite_data_from( _environment, index->name, realImage->name );
 
     if ( _flags & SPRITE_FLAG_EXPAND_VERTICAL) {
         sprite_expand_horizontal_var( _environment, index->name );

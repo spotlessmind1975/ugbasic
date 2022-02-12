@@ -96,11 +96,6 @@ Variable * csprite_init( Environment * _environment, char * _image, char * _spri
         sprite_monocolor_var( _environment, result->name );
     }
 
-    if ( _flags & SPRITE_FLAG_COLOR) {
-        char value[MAX_TEMPORARY_STORAGE]; sprintf( value, "$%2.2x", _flags & 0x0f );
-        sprite_color_vars( _environment, result->name, value );
-    }
-
     if ( _flags & SPRITE_FLAG_EXPAND_VERTICAL) {
         sprite_expand_horizontal_var( _environment, result->name );
     } else {
