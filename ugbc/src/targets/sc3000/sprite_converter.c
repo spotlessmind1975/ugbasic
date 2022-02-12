@@ -38,7 +38,7 @@
  * CODE SECTION 
  ****************************************************************************/
 
-Variable * sprite_converter( Environment * _environment, char * _data, int _width, int _height, RGBi * _color ) {
+Variable * sprite_converter( Environment * _environment, char * _data, int _width, int _height, RGBi * _color, int _flags ) {
 
     return tms9918_sprite_converter( _environment, _data, _width, _height, _color );
 
