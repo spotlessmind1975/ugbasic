@@ -1949,13 +1949,13 @@ exponential:
     | SPRITE OP expr sprite_flags CP {
         $$ = sprite_init( _environment, $3, NULL, $4 )->name;
     }
-    | SPRITE OP expr OP_COMMA Identifier sprite_flags CP  {
+    | SPRITE OP expr OP_COMMA expr sprite_flags CP  {
         $$ = sprite_init( _environment, $3, $5, $6 )->name;
     }
     | CSPRITE OP expr sprite_flags CP {
         $$ = csprite_init( _environment, $3, NULL, $4 )->name;
     }
-    | CSPRITE OP expr OP_COMMA Identifier sprite_flags CP {
+    | CSPRITE OP expr OP_COMMA expr sprite_flags CP {
         $$ = csprite_init( _environment, $3, $5, $6 )->name;
     }
     | MOB OP expr CP {
