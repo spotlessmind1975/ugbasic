@@ -111,6 +111,14 @@
 #define SPRITE_WIDTH                24
 #define SPRITE_HEIGHT               21
 
+#define SPRITE_FLAG_MULTICOLOR          0x0010
+#define SPRITE_FLAG_MONOCOLOR           0x0000
+#define SPRITE_FLAG_COLOR               0x0020
+#define SPRITE_FLAG_EXPAND_VERTICAL     0x0040
+#define SPRITE_FLAG_COMPRESS_VERTICAL   0x0000
+#define SPRITE_FLAG_EXPAND_HORIZONTAL   0x0080
+#define SPRITE_FLAG_COMPRESS_HORIZONTAL 0x0000
+
 int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode );
 
 void vic2_initialization( Environment * _environment );
@@ -181,7 +189,7 @@ void vic2_scroll( Environment * _environment, int _dx, int _dy );
 Variable * vic2_get_raster_line( Environment * _environment );
 
 Variable * vic2_image_converter( Environment * _environment, char * _data, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags );
-Variable * vic2_sprite_converter( Environment * _environment, char * _data, int _width, int _height, RGBi * _color );
+Variable * vic2_sprite_converter( Environment * _environment, char * _data, int _width, int _height, RGBi * _color, int _flags );
 void vic2_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _frame_size, int _flags );
 void vic2_wait_vbl( Environment * _environment );
 Variable * vic2_new_image( Environment * _environment, int _width, int _height, int _mode );

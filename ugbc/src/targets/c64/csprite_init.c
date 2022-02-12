@@ -49,7 +49,7 @@
 
 @target c64
 </usermanual> */
-Variable * csprite_init( Environment * _environment, char * _image, char * _sprite ) {
+Variable * csprite_init( Environment * _environment, char * _image, char * _sprite, int _flags ) {
 
     Variable * index;
     Variable * startIndex;
@@ -78,7 +78,7 @@ Variable * csprite_init( Environment * _environment, char * _image, char * _spri
     for (i=0; i<image->originalColors; ++i ) {
         if ( image->originalPalette[i].index == COLOR_BLACK ) continue;
         variable_move_naked( _environment, spriteCount->name, index->name );
-        Variable * realImage = sprite_converter( _environment, image->originalBitmap, image->originalWidth, image->originalHeight, &image->originalPalette[i] );
+        Variable * realImage = sprite_converter( _environment, image->originalBitmap, image->originalWidth, image->originalHeight, &image->originalPalette[i], _flags );
         vic2_sprite_data_from( _environment, index->name, realImage->name );
         cpu_inc( _environment, spriteCount->realName );
         cpu_inc( _environment, index->realName );
@@ -88,6 +88,29 @@ Variable * csprite_init( Environment * _environment, char * _image, char * _spri
         variable_move_naked( _environment, index->realName, result->realName );
     } else {
         cpu_combine_nibbles( _environment, startIndex->realName, index->realName, result->realName );
+    }
+
+    if ( _flags & SPRITE_FLAG_MULTICOLOR) {
+        sprite_multicolor_var( _environment, result->name );
+    } else {
+        sprite_monocolor_var( _environment, result->name );
+    }
+
+    if ( _flags & SPRITE_FLAG_COLOR) {
+        char value[MAX_TEMPORARY_STORAGE]; sprintf( value, "$%2.2x", _flags & 0x0f );
+        sprite_color_vars( _environment, result->name, value );
+    }
+
+    if ( _flags & SPRITE_FLAG_EXPAND_VERTICAL) {
+        sprite_expand_horizontal_var( _environment, result->name );
+    } else {
+        sprite_compress_horizontal_var( _environment, result->name );
+    }
+
+    if ( _flags & SPRITE_FLAG_EXPAND_HORIZONTAL) {
+        sprite_expand_vertical_var( _environment, result->name );
+    } else {
+        sprite_compress_vertical_var( _environment, result->name );
     }
 
     return result;

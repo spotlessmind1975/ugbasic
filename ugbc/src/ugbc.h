@@ -2023,7 +2023,7 @@ void                    const_define_numeric( Environment * _environment, char *
 void                    const_define_string( Environment * _environment, char * _name, char * _value );
 void                    const_emit( Environment * _environment, char * _name );
 Constant *              constant_find( Constant * _constant, char * _name );
-Variable *              csprite_init( Environment * _environment, char * _image, char * _sprite );
+Variable *              csprite_init( Environment * _environment, char * _image, char * _sprite, int _flags );
 
 //----------------------------------------------------------------------------
 // *D*
@@ -2283,7 +2283,7 @@ void                    sprite_compress_horizontal( Environment * _environment, 
 void                    sprite_compress_horizontal_var( Environment * _environment, char * _sprite );
 void                    sprite_compress_vertical( Environment * _environment, int _sprite );
 void                    sprite_compress_vertical_var( Environment * _environment, char * _sprite );
-Variable *              sprite_converter( Environment * _environment, char * _data, int _width, int _height, RGBi * _color );
+Variable *              sprite_converter( Environment * _environment, char * _data, int _width, int _height, RGBi * _colorm, int _flags );
 void                    sprite_data_from( Environment * _environment, int _sprite, int _address );
 void                    sprite_data_from_vars( Environment * _environment, char * _sprite, char * _address );
 void                    sprite_disable( Environment * _environment, int _sprite );
@@ -2294,7 +2294,7 @@ void                    sprite_expand_horizontal( Environment * _environment, in
 void                    sprite_expand_horizontal_var( Environment * _environment, char * _sprite );
 void                    sprite_expand_vertical( Environment * _environment, int _sprite );
 void                    sprite_expand_vertical_var( Environment * _environment, char * _sprite );
-Variable *              sprite_init( Environment * _environment, char * _image, char * _sprite );
+Variable *              sprite_init( Environment * _environment, char * _image, char * _sprite, int _flags );
 void                    sprite_monocolor( Environment * _environment, int _sprite );
 void                    sprite_monocolor_var( Environment * _environment, char * _sprite );
 void                    sprite_multicolor( Environment * _environment, int _sprite );

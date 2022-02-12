@@ -930,9 +930,23 @@ void vic2_sprite_compress_horizontal( Environment * _environment, char * _sprite
 
 void vic2_sprite_multicolor( Environment * _environment, char * _sprite ) {
 
+    Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
+
+    deploy( sprite, src_hw_vic2_sprites_asm );
+    
+    outline1("LDY %s", sprite->realName );
+    outline0("JSR SPRITEMULTICOLOR" );
+
 }
 
 void vic2_sprite_monocolor( Environment * _environment, char * _sprite ) {
+
+    Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
+
+    deploy( sprite, src_hw_vic2_sprites_asm );
+    
+    outline1("LDY %s", sprite->realName );
+    outline0("JSR SPRITEMONOCOLOR" );
 
 }
 
@@ -1357,9 +1371,10 @@ static Variable * vic2_image_converter_bitmap_mode_standard( Environment * _envi
         if ( palette[0].index == SYSTEM_PALETTE[0].index ) {
 
         } else {
+            rgbi_move( &palette[2], &palette[3] );
             rgbi_move( &palette[1], &palette[2] );
             rgbi_move( &palette[0], &palette[1] );
-            rgbi_move( &palette[2], &palette[0] );
+            rgbi_move( &SYSTEM_PALETTE[0], &palette[0] );
         }
 
     }
@@ -1920,7 +1935,7 @@ Variable * vic2_image_converter( Environment * _environment, char * _data, int _
 
 }
 
-Variable * vic2_sprite_converter( Environment * _environment, char * _source, int _width, int _height, RGBi * _color ) {
+Variable * vic2_sprite_converter( Environment * _environment, char * _source, int _width, int _height, RGBi * _color, int _flags ) {
 
     RGBi palette[MAX_PALETTE];
 
@@ -1928,8 +1943,24 @@ Variable * vic2_sprite_converter( Environment * _environment, char * _source, in
 
     if ( ! _color ) {
 
-        if (colorUsed > 2) {
-            CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
+        if ( _flags & SPRITE_FLAG_MULTICOLOR ) {
+            if (colorUsed > 4) {
+                CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
+            }
+
+            if ( palette[0].index == SYSTEM_PALETTE[0].index ) {
+
+            } else {
+                rgbi_move( &palette[2], &palette[3] );
+                rgbi_move( &palette[1], &palette[2] );
+                rgbi_move( &palette[0], &palette[1] );
+                rgbi_move( &SYSTEM_PALETTE[0], &palette[0] );
+            }
+
+        } else {
+            if (colorUsed > 2) {
+                CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
+            }
         }
 
     }
@@ -1989,9 +2020,17 @@ Variable * vic2_sprite_converter( Environment * _environment, char * _source, in
             break;
         }
         for (image_x = 0; image_x < _width; ++image_x) {
-            if ( image_x == 24 ) {
-                break;
+
+            if ( _flags & SPRITE_FLAG_MULTICOLOR ) {
+                if ( image_x == 12 ) {
+                    break;
+                }
+            } else {
+                if ( image_x == 24 ) {
+                    break;
+                }
             }
+
             // Take the color of the pixel
             rgb.red = *_source;
             rgb.green = *(_source + 1);
@@ -2010,22 +2049,45 @@ Variable * vic2_sprite_converter( Environment * _environment, char * _source, in
                     i = 0;
                 }
             }
-            
-            // Calculate the offset starting from the tile surface area
-            // and the bit to set.
-            offset = ( image_y * 3 ) + (image_x >> 3);
-            bitmask = 1 << ( 7 - (image_x & 0x7) );
 
-            // If the pixes has enough luminance value, it must be 
-            // considered as "on"; otherwise, it is "off".
-            // int luminance = calculate_luminance(rgb);
+            if ( _flags & SPRITE_FLAG_MULTICOLOR ) {
 
-            if ( i == 1 ) {
-                *( buffer + offset) |= bitmask;
-                // printf("*");
+                // Calculate the offset starting from the tile surface area
+                // and the bit to set.
+                offset = ( image_y * 3 ) + (image_x >> 2);
+                bitmask = i << (6 - ((image_x & 0x3) * 2));
+
+                // If the pixes has enough luminance value, it must be 
+                // considered as "on"; otherwise, it is "off".
+                // int luminance = calculate_luminance(rgb);
+
+                if ( i > 0 ) {
+                    *( buffer + offset) |= bitmask;
+                    // printf("*");
+                } else {
+                    *( buffer + offset) &= ~bitmask;
+                    // printf(" ");
+                }
+
             } else {
-                *( buffer + offset) &= ~bitmask;
-                // printf(" ");
+
+                // Calculate the offset starting from the tile surface area
+                // and the bit to set.
+                offset = ( image_y * 3 ) + (image_x >> 3);
+                bitmask = 1 << ( 7 - (image_x & 0x7) );
+
+                // If the pixes has enough luminance value, it must be 
+                // considered as "on"; otherwise, it is "off".
+                // int luminance = calculate_luminance(rgb);
+
+                if ( i == 1 ) {
+                    *( buffer + offset) |= bitmask;
+                    // printf("*");
+                } else {
+                    *( buffer + offset) &= ~bitmask;
+                    // printf(" ");
+                }
+
             }
 
             _source += 3;

@@ -99,6 +99,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> using_transparency
 %type <integer> using_background
 %type <integer> memory_video
+%type <integer> sprite_flag sprite_flags sprite_flags1
 
 %right Integer String CP 
 %left OP_DOLLAR
@@ -765,6 +766,49 @@ images_load_flags :
         $$ = 0;    
     } 
     | images_load_flags1 {
+        $$ = $1;
+    };
+
+sprite_flag :
+    MULTICOLOR {
+        $$ = SPRITE_FLAG_MULTICOLOR;
+    }
+    | MONOCOLOR {
+        $$ = SPRITE_FLAG_MONOCOLOR;
+    }
+    | COLOR const_expr {
+        $$ = SPRITE_FLAG_COLOR | $2;
+    }
+    | COLOUR const_expr {
+        $$ = SPRITE_FLAG_COLOR | $2;
+    }
+    | EXPAND VERTICAL {
+        $$ = SPRITE_FLAG_EXPAND_VERTICAL;
+    }
+    | COMPRESS VERTICAL {
+        $$ = SPRITE_FLAG_COMPRESS_VERTICAL;
+    }
+    | EXPAND HORIZONTAL {
+        $$ = SPRITE_FLAG_EXPAND_HORIZONTAL;
+    }
+    | COMPRESS HORIZONTAL {
+        $$ = SPRITE_FLAG_COMPRESS_HORIZONTAL;
+    };
+
+sprite_flags1 :
+    sprite_flag {
+        $$ = $1;
+    }
+    | sprite_flag sprite_flags1 {
+        $$ = $1 | $2;
+    }
+    ;
+
+sprite_flags :
+    {
+        $$ = 0;    
+    } 
+    | sprite_flags1 {
         $$ = $1;
     };
 
@@ -1908,17 +1952,17 @@ exponential:
             variable_store( _environment, $$, SPRITE_WIDTH );
         }
     }
-    | SPRITE OP expr CP {
-        $$ = sprite_init( _environment, $3, NULL )->name;
+    | SPRITE OP expr sprite_flags CP {
+        $$ = sprite_init( _environment, $3, NULL, $4 )->name;
     }
-    | SPRITE OP expr OP_COMMA Identifier CP {
-        $$ = sprite_init( _environment, $3, $5 )->name;
+    | SPRITE OP expr OP_COMMA Identifier sprite_flags CP  {
+        $$ = sprite_init( _environment, $3, $5, $6 )->name;
     }
-    | CSPRITE OP expr CP {
-        $$ = csprite_init( _environment, $3, NULL )->name;
+    | CSPRITE OP expr sprite_flags CP {
+        $$ = csprite_init( _environment, $3, NULL, $4 )->name;
     }
-    | CSPRITE OP expr OP_COMMA Identifier CP {
-        $$ = csprite_init( _environment, $3, $5 )->name;
+    | CSPRITE OP expr OP_COMMA Identifier sprite_flags CP {
+        $$ = csprite_init( _environment, $3, $5, $6 )->name;
     }
     | MOB OP expr CP {
         $$ = mob_init( _environment, $3, NULL, NULL )->name;
@@ -2450,8 +2494,11 @@ sprite_definition_action_expression:
   | HORIZONTAL COMPRESS {
       sprite_compress_horizontal_var( _environment, ((Environment *)_environment)->currentSprite );
   }
-  | REPLACE Identifier CP {
-      sprite_init( _environment, $2, ((Environment *)_environment)->currentSprite )->name;
+  | REPLACE Identifier {
+      sprite_init( _environment, $2, ((Environment *)_environment)->currentSprite, 0 )->name;
+  }
+  | REPLACE Identifier OP sprite_flags CP {
+      sprite_init( _environment, $2, ((Environment *)_environment)->currentSprite, $4 )->name;
   };
 
 sprite_definition_expression:
