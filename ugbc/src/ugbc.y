@@ -3277,6 +3277,12 @@ datatype :
     }
     | BUFFER {
         $$ = VT_BUFFER;
+    }
+    | TASK {
+        $$ = VT_THREAD;
+    }
+    | THREAD {
+        $$ = VT_THREAD;
     };
 
 const_array_definition :
@@ -4504,7 +4510,7 @@ statement:
       ((struct _Environment *)_environment)->parameters = 0;
       spawn_procedure( _environment, $2, 0 );
   }
-  | RESPAWN Identifier {
+  | RESPAWN expr {
       ((struct _Environment *)_environment)->parameters = 0;
       respawn_procedure( _environment, $2 );
   }
