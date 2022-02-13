@@ -6071,9 +6071,7 @@ char * escape_newlines( char * _string ) {
     char * p = _string, * q = result;
 
     while( *p ) {
-        if ( *p == '\r' ) {
-            ++p;
-        } else if ( *p == '\n' ) {
+        if ( *p == '\n' || *p == '\r' ) {
             if ( (q-result) > 2 && ( *(q-1) == '"') && ( *(q-2) == ',') ) {
                 --q;
             } else {
