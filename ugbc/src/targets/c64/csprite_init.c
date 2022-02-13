@@ -58,12 +58,19 @@ Variable * csprite_init( Environment * _environment, char * _image, char * _spri
     Variable * spriteCount;
 
     if ( _sprite ) {
+        outline0("; ---------------------------vvvvvvvv");
         index = variable_retrieve_or_define( _environment, _sprite, VT_SPRITE, 0 );   
         startIndex = variable_temporary( _environment, VT_SPRITE, "(sprite index)" );
         cpu_move_8bit( _environment, index->realName, startIndex->realName );
         cpu_math_and_const_8bit( _environment, startIndex->realName, 0x0f );
-        Variable * spriteCount = variable_retrieve( _environment, "SPRITECOUNT" );
-        spriteCount = variable_retrieve( _environment, "SPRITECOUNT" );
+        spriteCount = variable_temporary( _environment, VT_SPRITE, "(sprite index)" );
+        cpu_move_8bit( _environment, index->realName, spriteCount->realName );
+        cpu_math_div2_8bit( _environment, spriteCount->realName, 4, 0 );
+        cpu_math_and_const_8bit( _environment, spriteCount->realName, 0x0f );
+        cpu_math_sub_8bit( _environment, spriteCount->realName, startIndex->realName, spriteCount->realName );
+        cpu_move_8bit( _environment, startIndex->realName, index->realName );
+        cpu_move_8bit( _environment, startIndex->realName, spriteCount->realName );
+        outline0("; ---------------------------^^^^^^^^^^");
     } else {
         index = variable_temporary( _environment, VT_SPRITE, "(sprite index)" );   
         startIndex = variable_temporary( _environment, VT_SPRITE, "(sprite index)" );
@@ -84,11 +91,7 @@ Variable * csprite_init( Environment * _environment, char * _image, char * _spri
         cpu_inc( _environment, index->realName );
     }
 
-    if ( _sprite ) {
-        variable_move_naked( _environment, index->realName, result->realName );
-    } else {
-        cpu_combine_nibbles( _environment, startIndex->realName, index->realName, result->realName );
-    }
+    cpu_combine_nibbles( _environment, startIndex->realName, index->realName, result->realName );
 
     if ( _flags & SPRITE_FLAG_MULTICOLOR) {
         sprite_multicolor_var( _environment, result->name );
