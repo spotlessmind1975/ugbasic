@@ -127,13 +127,13 @@ void begin_for_step( Environment * _environment, char * _index, char * _from, ch
 
     cpu_label( _environment, forwardFor );
 
-    cpu_bvneq( _environment, variable_greater_than( _environment, index->name, variable_add( _environment, loop->to->name, loop->step->name )->name, 0 )->realName, endFor );
+    cpu_bvneq( _environment, variable_greater_than( _environment, index->name, loop->to->name, 0 )->realName, endFor );
 
     cpu_jump( _environment, continueFor );
 
     cpu_label( _environment, backwardFor );
 
-    cpu_bvneq( _environment, variable_less_than( _environment, index->name, variable_add( _environment, loop->to->name, loop->step->name )->name, 1 )->realName, endFor );
+    cpu_bvneq( _environment, variable_less_than( _environment, index->name, loop->to->name, 1 )->realName, endFor );
 
     cpu_label( _environment, continueFor );
 
