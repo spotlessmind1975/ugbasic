@@ -194,7 +194,7 @@ Variable * ef936x_new_image( Environment * _environment, int _width, int _height
 void ef936x_get_image( Environment * _environment, char * _image, char * _x, char * _y );
 
 void ef936x_put_tile( Environment * _environment, char * _image, char * _x, char * _y );
-void ef936x_put_tiles( Environment * _environment, char * _image, char * _x, char * _y );
+void ef936x_put_tiles( Environment * _environment, char * _image, char * _x, char * _y, char *_w, char *_h );
 void ef936x_move_tiles( Environment * _environment, char * _image, char * _x, char * _y );
 void ef936x_use_tileset( Environment * _environment, char * _tileset );
 

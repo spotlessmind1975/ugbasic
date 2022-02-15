@@ -42,12 +42,24 @@ TILEW = $95
 TILEH = $96
 TILEX2 = $97
 TILEA = $98
+TILEW2 = $99
+TILEH2 = $9A
 
 ; ----------------------------------------------------------------------------
 ; - Put tile on tilemap
 ; ----------------------------------------------------------------------------
 
 PUTTILE:
+    LDA TILEH2
+    BNE PUTTILEEH2
+    JMP PUTTILEE
+PUTTILEEH2:
+    LDA TILEW2
+    BNE PUTTILEEW2
+    JMP PUTTILEE
+PUTTILEEW2:
+
+
     LDA TEXTADDRESS
     STA TMPPTR
     LDA TEXTADDRESS+1
@@ -115,7 +127,7 @@ PUTTILEL1:
 PUTTILEL2A:
     LDA TILEX
     STA TILEX2
-    LDX TILEW
+    LDX TILEW2
     LDY #0
 PUTTILEL2:
     LDA TILET
@@ -143,7 +155,14 @@ PUTTILERE:
     DEC TILET
 
 PUTTILENL:
-    LDX TILEH
+
+    SEC
+    LDA TILEW
+    SBC TILEW2
+    CLC
+    ADC TILET
+
+    LDX TILEH2
     CPX #1
     BEQ PUTTILEE
 
@@ -163,7 +182,7 @@ PUTTILENL:
     ADC TMPPTR2+1
     STA TMPPTR2+1
 
-    DEC TILEH
+    DEC TILEH2
 
     INC TILEY
     LDX TILEY

@@ -1159,6 +1159,10 @@ void tms9918_initialization( Environment * _environment ) {
     variable_global( _environment, "TILEW" );
     variable_import( _environment, "TILEH", VT_BYTE, 0 );
     variable_global( _environment, "TILEH" );
+    variable_import( _environment, "TILEW2", VT_BYTE, 0 );
+    variable_global( _environment, "TILEW2" );
+    variable_import( _environment, "TILEH2", VT_BYTE, 0 );
+    variable_global( _environment, "TILEH2" );
     variable_import( _environment, "TILEA", VT_BYTE, 0 );
     variable_global( _environment, "TILEA" );
     variable_import( _environment, "TILEO", VT_WORD, 0 );
@@ -1763,6 +1767,8 @@ void tms9918_put_tile( Environment * _environment, char * _tile, char * _x, char
     outline0("LD A, 1" );
     outline0("LD (TILEW), A" );
     outline0("LD (TILEH), A" );
+    outline0("LD (TILEW2), A" );
+    outline0("LD (TILEH2), A" );
 
     if ( ! _environment->hasGameLoop ) {
         outline0("CALL PUTTILE");
@@ -1803,8 +1809,10 @@ void tms9918_move_tiles( Environment * _environment, char * _tile, char * _x, ch
     outline0("LD (TILEY), A" );
     outline1("LD A, (%s+1)", tile->realName );
     outline0("LD (TILEW), A" );
+    outline0("LD (TILEW2), A" );
     outline1("LD A, (%s+2)", tile->realName );
     outline0("LD (TILEH), A" );
+    outline0("LD (TILEH2), A" );
     outline1("LD A, (%s+3)", tile->realName );
     outline0("LD (TILEA), A" );
 
@@ -1816,7 +1824,7 @@ void tms9918_move_tiles( Environment * _environment, char * _tile, char * _x, ch
 
 }
 
-void tms9918_put_tiles( Environment * _environment, char * _tile, char * _x, char * _y ) {
+void tms9918_put_tiles( Environment * _environment, char * _tile, char * _x, char * _y, char *_w, char *_h ) {
 
     deploy( tms9918vars, src_hw_tms9918_vars_asm);
     deploy( tiles, src_hw_tms9918_tiles_asm );
@@ -1829,8 +1837,16 @@ void tms9918_put_tiles( Environment * _environment, char * _tile, char * _x, cha
     outline0("LD (TILEY), A" );
     outline1("LD A, (%s+1)", _tile );
     outline0("LD (TILEW), A" );
+    if ( _w ) {
+        outline1("LD A, (%s)", _w );
+    }
+    outline0("LD (TILEW2), A" );
     outline1("LD A, (%s+2)", _tile );
     outline0("LD (TILEH), A" );
+    if ( _h ) {
+        outline1("LD A, (%s)", _h );
+    }
+    outline0("LD (TILEH2), A" );
 
     if ( ! _environment->hasGameLoop ) {
         outline0("CALL PUTTILE");

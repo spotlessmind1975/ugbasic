@@ -2220,7 +2220,7 @@ void                    print_newline( Environment * _environment );
 void                    print_question_mark( Environment * _environment );
 void                    print_tab( Environment * _environment, int _new_line );
 void                    put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _flags );
-void                    put_tile( Environment * _environment, char * _tile, char * _x, char * _y );
+void                    put_tile( Environment * _environment, char * _tile, char * _x, char * _y, char * _w, char * _h );
 
 //----------------------------------------------------------------------------
 // *Q*

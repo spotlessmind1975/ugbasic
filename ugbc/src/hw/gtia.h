@@ -265,7 +265,7 @@ void gtia_get_image( Environment * _environment, char * _image, char * _x, char 
 Variable * gtia_get_raster_line( Environment * _environment );
 
 void gtia_put_tile( Environment * _environment, char * _image, char * _x, char * _y );
-void gtia_put_tiles( Environment * _environment, char * _image, char * _x, char * _y );
+void gtia_put_tiles( Environment * _environment, char * _image, char * _x, char * _y, char *_w, char *_h );
 void gtia_move_tiles( Environment * _environment, char * _image, char * _x, char * _y );
 void gtia_use_tileset( Environment * _environment, char * _tileset );
 

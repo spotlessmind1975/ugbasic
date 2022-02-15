@@ -1523,7 +1523,7 @@ void ef936x_move_tiles( Environment * _environment, char * _tile, char * _x, cha
 
 }
 
-void ef936x_put_tiles( Environment * _environment, char * _tile, char * _x, char * _y ) {
+void ef936x_put_tiles( Environment * _environment, char * _tile, char * _x, char * _y, char *_w, char *_h ) {
 
 
 }

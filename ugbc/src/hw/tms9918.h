@@ -179,7 +179,7 @@ Variable * tms9918_new_image( Environment * _environment, int _width, int _heigh
 void tms9918_get_image( Environment * _environment, char * _image, char * _x, char * _y );
 
 void tms9918_put_tile( Environment * _environment, char * _image, char * _x, char * _y );
-void tms9918_put_tiles( Environment * _environment, char * _image, char * _x, char * _y );
+void tms9918_put_tiles( Environment * _environment, char * _image, char * _x, char * _y, char *_w, char *_h );
 void tms9918_move_tiles( Environment * _environment, char * _image, char * _x, char * _y );
 void tms9918_use_tileset( Environment * _environment, char * _tileset );
 

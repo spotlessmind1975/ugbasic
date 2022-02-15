@@ -53,18 +53,26 @@ extern char DATATYPE_AS_STRING[][16];
 /* <usermanual>
 @keyword PUT TILE
 </usermanual> */
-void put_tile( Environment * _environment, char * _tile, char * _x, char * _y ) {
+void put_tile( Environment * _environment, char * _tile, char * _x, char * _y, char * _w, char * _h ) {
 
     Variable * tile = variable_retrieve( _environment, _tile );
     Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
     Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
+    Variable * w = NULL;
+    if ( _w ) {
+        w = variable_retrieve_or_define( _environment, _w, VT_BYTE, 0 );
+    }
+    Variable * h = NULL;
+    if ( _h ) {
+        h = variable_retrieve_or_define( _environment, _h, VT_BYTE, 0 );
+    }
 
     switch( tile->type) {
         case VT_TILE:
             tms9918_put_tile( _environment, tile->realName, x->realName, y->realName );
             break;
         case VT_TILES:
-            tms9918_put_tiles( _environment, tile->realName, x->realName, y->realName );
+            tms9918_put_tiles( _environment, tile->realName, x->realName, y->realName, (w != NULL) ? w->realName : NULL, (h != NULL) ? h->realName : NULL );
             break;
     }
 

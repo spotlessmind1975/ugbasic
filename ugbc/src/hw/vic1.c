@@ -1433,6 +1433,8 @@ void vic1_put_tile( Environment * _environment, char * _tile, char * _x, char * 
     outline0("LDA #1" );
     outline0("STA TILEW" );
     outline0("STA TILEH" );
+    outline0("STA TILEW2" );
+    outline0("STA TILEH2" );
 
     outline0("JSR PUTTILE");
 
@@ -1455,8 +1457,10 @@ void vic1_move_tiles( Environment * _environment, char * _tile, char * _x, char 
     outline0("STA TILEY" );
     outline1("LDA %s+1", tile->realName );
     outline0("STA TILEW" );
+    outline0("STA TILEW2" );
     outline1("LDA %s+2", tile->realName );
     outline0("STA TILEH" );
+    outline0("STA TILEH2" );
     outline1("LDA %s+3", tile->realName );
     outline0("STA TILEA" );
 
@@ -1477,7 +1481,7 @@ void vic1_move_tiles( Environment * _environment, char * _tile, char * _x, char 
 
 }
 
-void vic1_put_tiles( Environment * _environment, char * _tile, char * _x, char * _y ) {
+void vic1_put_tiles( Environment * _environment, char * _tile, char * _x, char * _y, char *_w, char *_h ) {
 
     deploy( vic1vars, src_hw_vic1_vars_asm);
     deploy( tiles, src_hw_vic1_tiles_asm );
@@ -1490,8 +1494,16 @@ void vic1_put_tiles( Environment * _environment, char * _tile, char * _x, char *
     outline0("STA TILEY" );
     outline1("LDA %s+1", _tile );
     outline0("STA TILEW" );
+    if ( _w ) {
+        outline1("LDA %s", _w );
+    }
+    outline0("STA TILEW2" );
     outline1("LDA %s+2", _tile );
     outline0("STA TILEH" );
+    if ( _h ) {
+        outline1("LDA %s", _h );
+    }
+    outline0("STA TILEH2" );
 
     outline0("JSR PUTTILE");
 

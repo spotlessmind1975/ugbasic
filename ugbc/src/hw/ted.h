@@ -156,7 +156,7 @@ Variable * ted_new_image( Environment * _environment, int _width, int _height, i
 void ted_get_image( Environment * _environment, char * _image, char * _x, char * _y );
 
 void ted_put_tile( Environment * _environment, char * _image, char * _x, char * _y );
-void ted_put_tiles( Environment * _environment, char * _image, char * _x, char * _y );
+void ted_put_tiles( Environment * _environment, char * _image, char * _x, char * _y, char *_w, char *_h );
 void ted_move_tiles( Environment * _environment, char * _image, char * _x, char * _y );
 void ted_use_tileset( Environment * _environment, char * _tileset );
 

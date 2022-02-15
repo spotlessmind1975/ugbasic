@@ -66,6 +66,13 @@ endif
 
 PUTTILENMI2:
 
+    LD A, (TILEH2)
+    CP 0
+    RET Z
+    LD A, (TILEW2)
+    CP 0
+    RET Z
+
     LD HL, $1800
 
     LD A, (CURRENTTILESWIDTH)
@@ -111,7 +118,7 @@ PUTTILEL1:
 PUTTILEL2A:
     LD A, (TILEX)
     LD (TILEX2), A
-    LD A, (TILEW)
+    LD A, (TILEW2)
     LD B, A
 PUTTILEL2:
     PUSH BC
@@ -150,7 +157,19 @@ PUTTILEREL:
     LD (TILET), A
 
 PUTTILENL:
-    LD A, (TILEH)
+
+    PUSH BC
+    LD A, (TILEW2)
+    LD B, A
+    LD A, (TILEW)
+    SUB A, B
+    LD B, A
+    LD A, (TILET)
+    ADD A, B
+    LD (TILET), A
+    POP BC
+
+    LD A, (TILEH2)
     CP 1
     JR Z, PUTTILEE
 
@@ -163,9 +182,9 @@ PUTTILENL:
     ; LD D, 0
     ; SBC HL, DE
 
-    LD A, (TILEH)
+    LD A, (TILEH2)
     DEC A
-    LD (TILEH), A
+    LD (TILEH2), A
 
     LD A, (CURRENTTILESHEIGHT)
     LD B, A

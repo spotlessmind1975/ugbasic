@@ -195,7 +195,7 @@ Variable * vic2_new_image( Environment * _environment, int _width, int _height, 
 void vic2_get_image( Environment * _environment, char * _image, char * _x, char * _y );
 
 void vic2_put_tile( Environment * _environment, char * _image, char * _x, char * _y );
-void vic2_put_tiles( Environment * _environment, char * _image, char * _x, char * _y );
+void vic2_put_tiles( Environment * _environment, char * _image, char * _x, char * _y, char *_w, char *_h );
 void vic2_move_tiles( Environment * _environment, char * _image, char * _x, char * _y );
 void vic2_use_tileset( Environment * _environment, char * _tileset );
 

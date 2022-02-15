@@ -65,9 +65,14 @@ void draw_tile_row( Environment * _environment, char * _tile, char * _y, char * 
 
     Variable * index = variable_temporary( _environment, VT_BYTE, "(index for)" );
     Variable * tileWidth = tile_get_width( _environment, tile->name );
+    Variable * last = variable_sub( _environment, x2->name, tileWidth->name );
 
-    begin_for_step( _environment, index->name, x1->name, x2->name, tileWidth->name );
-        put_tile( _environment, tile->name, index->name, y->name );
+    begin_for_step( _environment, index->name, x1->name, last->name, tileWidth->name );
+        put_tile( _environment, tile->name, index->name, y->name, NULL, NULL );
     end_for( _environment );
+
+    Variable * residual = variable_sub( _environment, x2->name, index->name );
+    
+    put_tile( _environment, tile->name, index->name, y->name, residual->name, NULL );
 
 }

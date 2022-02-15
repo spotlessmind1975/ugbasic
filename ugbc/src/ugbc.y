@@ -2900,7 +2900,7 @@ put_definition_expression:
         put_image( _environment, $2, "XGR", "YGR", $4, $5 );
     }
     | TILE expr AT optional_x OP_COMMA optional_y {
-        put_tile( _environment, $2, $4, $6 );
+        put_tile( _environment, $2, $4, $6, NULL, NULL );
     }
     ;
 

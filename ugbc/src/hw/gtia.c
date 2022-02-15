@@ -2139,6 +2139,8 @@ void gtia_put_tile( Environment * _environment, char * _tile, char * _x, char * 
     outline0("LDA #1" );
     outline0("STA TILEW" );
     outline0("STA TILEH" );
+    outline0("STA TILEW2" );
+    outline0("STA TILEH2" );
 
     outline0("JSR PUTTILE");
 
@@ -2161,8 +2163,10 @@ void gtia_move_tiles( Environment * _environment, char * _tile, char * _x, char 
     outline0("STA TILEY" );
     outline1("LDA %s+1", tile->realName );
     outline0("STA TILEW" );
+    outline0("STA TILEW2" );
     outline1("LDA %s+2", tile->realName );
     outline0("STA TILEH" );
+    outline0("STA TILEH2" );
     outline1("LDA %s+3", tile->realName );
     outline0("STA TILEA" );
 
@@ -2183,7 +2187,7 @@ void gtia_move_tiles( Environment * _environment, char * _tile, char * _x, char 
 
 }
 
-void gtia_put_tiles( Environment * _environment, char * _tile, char * _x, char * _y ) {
+void gtia_put_tiles( Environment * _environment, char * _tile, char * _x, char * _y, char *_w, char *_h ) {
 
     deploy( gtiavars, src_hw_gtia_vars_asm);
     deploy( tiles, src_hw_gtia_tiles_asm );

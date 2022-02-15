@@ -155,7 +155,7 @@ Variable * vic1_new_image( Environment * _environment, int _width, int _height, 
 void vic1_get_image( Environment * _environment, char * _image, char * _x, char * _y );
 
 void vic1_put_tile( Environment * _environment, char * _image, char * _x, char * _y );
-void vic1_put_tiles( Environment * _environment, char * _image, char * _x, char * _y );
+void vic1_put_tiles( Environment * _environment, char * _image, char * _x, char * _y, char *_w, char *_h );
 void vic1_move_tiles( Environment * _environment, char * _image, char * _x, char * _y );
 void vic1_use_tileset( Environment * _environment, char * _tileset );
 

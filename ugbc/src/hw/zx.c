@@ -270,6 +270,10 @@ void zx_initialization( Environment * _environment ) {
     variable_global( _environment, "TILEW" );
     variable_import( _environment, "TILEH", VT_BYTE, 0 );
     variable_global( _environment, "TILEH" );
+    variable_import( _environment, "TILEW2", VT_BYTE, 0 );
+    variable_global( _environment, "TILEW2" );
+    variable_import( _environment, "TILEH2", VT_BYTE, 0 );
+    variable_global( _environment, "TILEH2" );
     variable_import( _environment, "TILEA", VT_BYTE, 0 );
     variable_global( _environment, "TILEA" );
     variable_import( _environment, "TILEO", VT_WORD, 0 );
@@ -581,6 +585,8 @@ void zx_put_tile( Environment * _environment, char * _tile, char * _x, char * _y
     outline0("LD A, 1" );
     outline0("LD (TILEW), A" );
     outline0("LD (TILEH), A" );
+    outline0("LD (TILEW2), A" );
+    outline0("LD (TILEH2), A" );
 
     outline0("CALL PUTTILE");
 
@@ -617,8 +623,10 @@ void zx_move_tiles( Environment * _environment, char * _tile, char * _x, char * 
     outline0("LD (TILEY), A" );
     outline1("LD A, (%s+1)", tile->realName );
     outline0("LD (TILEW), A" );
+    outline0("LD (TILEW2), A" );
     outline1("LD A, (%s+2)", tile->realName );
     outline0("LD (TILEH), A" );
+    outline0("LD (TILEH2), A" );
     outline1("LD A, (%s+3)", tile->realName );
     outline0("LD (TILEA), A" );
 
@@ -626,7 +634,7 @@ void zx_move_tiles( Environment * _environment, char * _tile, char * _x, char * 
 
 }
 
-void zx_put_tiles( Environment * _environment, char * _tile, char * _x, char * _y ) {
+void zx_put_tiles( Environment * _environment, char * _tile, char * _x, char * _y, char *_w, char *_h ) {
 
     deploy( zxvars, src_hw_zx_vars_asm);
     deploy( tiles, src_hw_zx_tiles_asm );
@@ -639,8 +647,16 @@ void zx_put_tiles( Environment * _environment, char * _tile, char * _x, char * _
     outline0("LD (TILEY), A" );
     outline1("LD A, (%s+1)", _tile );
     outline0("LD (TILEW), A" );
+    if ( _w ) {
+        outline1("LD A, (%s)", _w );
+    }
+    outline0("LD (TILEW2), A" );
     outline1("LD A, (%s+2)", _tile );
     outline0("LD (TILEH), A" );
+    if ( _h ) {
+        outline1("LD A, (%s)", _h );
+    }
+    outline0("LD (TILEH2), A" );
 
     outline0("CALL PUTTILE");
 
