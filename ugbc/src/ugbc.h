@@ -2266,6 +2266,7 @@ void                    screen_off( Environment * _environment );
 void                    screen_on( Environment * _environment );
 void                    screen_rows( Environment * _environment, int _rows );
 void                    screen_rows_var( Environment * _environment, char * _rows );
+void                    screen_swap( Environment * _environment );
 Variable *              screen_tiles_get( Environment * _environment );
 Variable *              screen_tiles_get_height( Environment * _environment );
 Variable *              screen_tiles_get_width( Environment * _environment );

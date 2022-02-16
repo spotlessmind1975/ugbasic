@@ -60,7 +60,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token FONT VIC20 PARALLEL YIELD SPAWN THREAD TASK IMAGES FRAME FRAMES XY YX ROLL MASKED USING TRANSPARENCY
 %token OVERLAYED CASE ENDSELECT OGP CGP ARRAY NEW GET DISTANCE TYPE MUL DIV RGB SHADES HEX PALETTE
 %token BAR XGRAPHIC YGRAPHIC XTEXT YTEXT COLUMNS XGR YGR CHAR RAW SEPARATOR MSX MSX1 COLECO CSPRITE 
-%token TILESET MOVE ROW COLUMN TRANSPARENT DOUBLE RESPAWN HALTED SC3000 SG1000 MEMORY VIDEO MMOVE
+%token TILESET MOVE ROW COLUMN TRANSPARENT DOUBLE RESPAWN HALTED SC3000 SG1000 MEMORY VIDEO MMOVE SWAP
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -3098,27 +3098,35 @@ on_proc_definition:
 
 on_definition:
       SCROLL LEFT COLUMN GOSUB Identifier {
+        scroll( _environment, 0, 0 );
         on_scroll_gosub( _environment, -1, 0, $5 );
     }
     | SCROLL RIGHT COLUMN GOSUB Identifier {
+        scroll( _environment, 0, 0 );
         on_scroll_gosub( _environment, 1, 0, $5 );
     }
     | SCROLL UP ROW GOSUB Identifier {
+        scroll( _environment, 0, 0 );
         on_scroll_gosub( _environment, 0, -1, $5 );
     }
     | SCROLL DOWN ROW GOSUB Identifier {
+        scroll( _environment, 0, 0 );
         on_scroll_gosub( _environment, 0, 1, $5 );
     }
     | SCROLL LEFT COLUMN CALL Identifier {
+        scroll( _environment, 0, 0 );
         on_scroll_call( _environment, -1, 0, $5 );
     }
     | SCROLL RIGHT COLUMN CALL Identifier {
+        scroll( _environment, 0, 0 );
         on_scroll_call( _environment, 1, 0, $5 );
     }
     | SCROLL UP ROW CALL Identifier {
+        scroll( _environment, 0, 0 );
         on_scroll_call( _environment, 0, -1, $5 );
     }
     | SCROLL DOWN ROW CALL Identifier {
+        scroll( _environment, 0, 0 );
         on_scroll_call( _environment, 0, 1, $5 );
     }
     | expr GOTO {
@@ -4653,6 +4661,9 @@ statement:
   }
   | DOUBLE BUFFER OFF {
       double_buffer( _environment, 0 );
+  }
+  | SCREEN SWAP {
+      screen_swap( _environment );
   }
   | MMOVE memory_video expr TO memory_video expr SIZE expr {
       if ( $2 == 0 ) {
