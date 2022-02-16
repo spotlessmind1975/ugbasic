@@ -2116,6 +2116,7 @@ Variable * vic2_sprite_converter( Environment * _environment, char * _source, in
 
             if ( ! _color ) {
                 for( i=0; i<colorUsed; ++i ) {
+                    // printf( "%d) %2.2x%2.2x%2.2x == %2.2x%2.2x%2.2x\n", i, palette[i].red, palette[i].green, palette[i].blue, rgb.red, rgb.green, rgb.blue );
                     if ( rgbi_equals_rgb( &palette[i], &rgb ) ) {
                         break;
                     }
