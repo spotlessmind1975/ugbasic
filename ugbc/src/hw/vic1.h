@@ -158,5 +158,6 @@ void vic1_put_tile( Environment * _environment, char * _image, char * _x, char *
 void vic1_put_tiles( Environment * _environment, char * _image, char * _x, char * _y, char *_w, char *_h );
 void vic1_move_tiles( Environment * _environment, char * _image, char * _x, char * _y );
 void vic1_use_tileset( Environment * _environment, char * _tileset );
+void vic1_tile_at( Environment * _environment, char * _x, char * _y, char * _result );
 
 #endif

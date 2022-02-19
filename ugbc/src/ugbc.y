@@ -61,6 +61,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token OVERLAYED CASE ENDSELECT OGP CGP ARRAY NEW GET DISTANCE TYPE MUL DIV RGB SHADES HEX PALETTE
 %token BAR XGRAPHIC YGRAPHIC XTEXT YTEXT COLUMNS XGR YGR CHAR RAW SEPARATOR MSX MSX1 COLECO CSPRITE 
 %token TILESET MOVE ROW COLUMN TRANSPARENT DOUBLE RESPAWN HALTED SC3000 SG1000 MEMORY VIDEO MMOVE SWAP
+%token BELONG FIRST
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -1889,6 +1890,15 @@ exponential:
         $$ = variable_temporary( _environment, VT_BYTE, "(frame count)" )->name;
         variable_store( _environment, $$, frames( _environment, $3 ) );
     }
+    | TILE BELONG OP expr OP_COMMA expr CP {
+        $$ = tile_belong( _environment, $4, $6 )->name;
+    }
+    | TILE AT OP expr OP_COMMA expr CP {
+        $$ = tile_at( _environment, $4, $6 )->name;
+    }
+    | TILES FIRST OP expr CP {
+        $$ = tile_get_first( _environment, $4 )->name;
+    }
     | TILES WIDTH OP expr CP {
         $$ = tile_get_width( _environment, $4 )->name;
     }
@@ -1973,6 +1983,12 @@ exponential:
     }
     | TI {
         $$ = get_timer( _environment )->name;
+    }
+    | EMPTYTILE {
+        $$ = "EMPTYTILE";
+    }
+    | EMPTY TILE {
+        $$ = "EMPTYTILE";
     }
     | TIMER {
         $$ = get_timer( _environment )->name;

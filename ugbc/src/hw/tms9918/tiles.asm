@@ -292,3 +292,63 @@ MOVETILEZ:
     CALL PUTTILENMI2
 
     RET
+
+if __coleco__
+
+TILEAT:
+    CALL WAIT_VDP_HOOK
+    LD HL, PUTTILENMI
+    CALL SET_VDP_HOOK0
+    CALL WAIT_VDP_HOOK
+    RET
+
+TILEATNMI:
+
+else
+
+TILEAT:
+
+endif
+
+TILEATNMI2:
+
+    LD HL, $1800
+
+    LD A, (CURRENTTILESHEIGHT)
+    LD B, A
+    LD A, (TILEY)
+    CP 0
+    JR Z, TILEATL1
+    CP B
+    JR Z, TILEATEX
+    JR NC, TILEATEX
+
+    JMP TILEATL0
+
+TILEATEX:
+    JMP TILEATEE
+
+TILEATL0:
+    LD A, (TILEY)
+    LD B, A
+
+    LD A, (CURRENTTILESWIDTH)
+    LD E, A
+    LD D, 0
+
+TILEATL0B:
+    ADD HL, DE
+    DEC B
+    JR NZ, TILEATL0B
+
+TILEATL1:
+    LD A, (TILEX)
+    LD E, A
+    LD D, 0
+    ADD HL, DE
+
+    CALL VDPINCHAR
+
+    LD (TILET), A
+    RET
+    

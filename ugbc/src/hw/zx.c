@@ -662,6 +662,23 @@ void zx_put_tiles( Environment * _environment, char * _tile, char * _x, char * _
 
 }
 
+void zx_tile_at( Environment * _environment, char * _x, char * _y, char * _result ) {
+
+    deploy( zxvars, src_hw_zx_vars_asm);
+    deploy( tiles, src_hw_zx_tiles_asm );
+
+    outline1("LD A, (%s)", _x );
+    outline0("LD (TILEX), A" );
+    outline1("LD A, (%s)", _y );
+    outline0("LD (TILEY), A" );
+
+    outline0("CALL TILEAT");
+
+    outline0("LD A, (TILET)" );
+    outline1("LD (%s), A", _result );
+
+}
+
 void zx_use_tileset( Environment * _environment, char * _tileset ) {
 
     deploy( zxvars, src_hw_zx_vars_asm);

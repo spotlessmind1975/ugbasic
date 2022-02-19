@@ -2207,6 +2207,23 @@ void gtia_put_tiles( Environment * _environment, char * _tile, char * _x, char *
 
 }
 
+void gtia_tile_at( Environment * _environment, char * _x, char * _y, char * _result ) {
+
+    deploy( gtiavars, src_hw_gtia_vars_asm);
+    deploy( tiles, src_hw_gtia_tiles_asm );
+
+    outline1("LDA %s", _x );
+    outline0("STA TILEX" );
+    outline1("LDA %s", _y );
+    outline0("STA TILEY" );
+
+    outline0("JSR TILEAT");
+
+    outline0("LDA TILET" );
+    outline1("STA %s", _result );
+
+}
+
 void gtia_use_tileset( Environment * _environment, char * _tileset ) {
 
     deploy( gtiavars, src_hw_gtia_vars_asm);

@@ -637,7 +637,10 @@ typedef enum _LoopType {
     LT_FOR = 3,
 
     /** FOR ... NEXT (multithread) */
-    LT_FOR_MT = 4
+    LT_FOR_MT = 4,
+
+    /** BEGIN...END GAMELOOP */
+    LT_GAMELOOP = 5
 
 } LoopType;
 
@@ -2328,7 +2331,10 @@ void                    textmap_at( Environment * _environment, int _address );
 void                    textmap_at_var( Environment * _environment, char * _address );
 void                    tilemap_disable( Environment * _environment );
 void                    tilemap_enable( Environment * _environment, int _width, int _height, int _colors );
+Variable *              tile_at( Environment * _environment, char * _x, char * _y );
 int                     tile_allocate( TileDescriptors * _tiles, char * _data );
+Variable *              tile_belong( Environment * _environment, char * _tile, char * _tiles );
+Variable *              tile_get_first( Environment * _environment, char * _tile );
 Variable *              tile_get_height( Environment * _environment, char * _tile );
 Variable *              tile_get_width( Environment * _environment, char * _tile );
 Variable *              tile_load( Environment * _environment, char * _filename, int _flags, char * _tileset );

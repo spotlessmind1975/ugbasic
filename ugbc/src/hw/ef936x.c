@@ -1528,6 +1528,10 @@ void ef936x_put_tiles( Environment * _environment, char * _tile, char * _x, char
 
 }
 
+void ef936x_tile_at( Environment * _environment, char * _x, char * _y, char * _result ) {
+
+}
+
 void ef936x_use_tileset( Environment * _environment, char * _tileset ) {
 
 }

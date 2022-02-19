@@ -1424,6 +1424,10 @@ void c6847_put_tile( Environment * _environment, char * _tile, char * _x, char *
 
 }
 
+void c6847_tile_at( Environment * _environment, char * _x, char * _y, char * _result ) {
+
+}
+
 void c6847_move_tiles( Environment * _environment, char * _tile, char * _x, char * _y ) {
 
 }

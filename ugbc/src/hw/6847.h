@@ -250,5 +250,6 @@ void c6847_put_tile( Environment * _environment, char * _image, char * _x, char 
 void c6847_put_tiles( Environment * _environment, char * _image, char * _x, char * _y, char *_w, char *_h );
 void c6847_move_tiles( Environment * _environment, char * _image, char * _x, char * _y );
 void c6847_use_tileset( Environment * _environment, char * _tileset );
+void c6847_tile_at( Environment * _environment, char * _x, char * _y, char * _result );
 
 #endif

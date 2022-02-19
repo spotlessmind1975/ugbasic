@@ -1856,6 +1856,27 @@ void tms9918_put_tiles( Environment * _environment, char * _tile, char * _x, cha
 
 }
 
+void tms9918_tile_at( Environment * _environment, char * _x, char * _y, char *_result ) {
+
+    deploy( tms9918vars, src_hw_tms9918_vars_asm);
+    deploy( tiles, src_hw_tms9918_tiles_asm );
+
+    outline1("LD A, (%s)", _x );
+    outline0("LD (TILEX), A" );
+    outline1("LD A, (%s)", _y );
+    outline0("LD (TILEY), A" );
+
+    if ( ! _environment->hasGameLoop ) {
+        outline0("CALL TILEAT");
+    } else {
+        outline0("CALL TILEATNMI2");
+    }
+
+    outline0("LD A, (TILET)" );
+    outline1("LD (%s), A", _result );
+
+}
+
 void tms9918_use_tileset( Environment * _environment, char * _tileset ) {
 
     deploy( tms9918vars, src_hw_tms9918_vars_asm);

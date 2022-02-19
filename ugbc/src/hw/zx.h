@@ -221,5 +221,6 @@ void zx_put_tile( Environment * _environment, char * _image, char * _x, char * _
 void zx_put_tiles( Environment * _environment, char * _image, char * _x, char * _y, char *_w, char *_h );
 void zx_move_tiles( Environment * _environment, char * _image, char * _x, char * _y );
 void zx_use_tileset( Environment * _environment, char * _tileset );
+void zx_tile_at( Environment * _environment, char * _x, char * _y, char * _result );
 
 #endif
