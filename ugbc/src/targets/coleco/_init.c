@@ -77,7 +77,7 @@ void target_initialization( Environment * _environment ) {
     variable_global( _environment, "TEXTADDRESS" );    
     variable_import( _environment, "TILESADDRESS", VT_ADDRESS, 0x0000 );
     variable_global( _environment, "TILESADDRESS" );    
-    variable_import( _environment, "EMPTYTILE", VT_BYTE, 32 );
+    variable_import( _environment, "EMPTYTILE", VT_TILE, 32 );
     variable_global( _environment, "EMPTYTILE" );    
     variable_import( _environment, "USING", VT_BYTE, 0 );
 
