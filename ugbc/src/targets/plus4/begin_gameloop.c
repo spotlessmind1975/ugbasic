@@ -56,14 +56,23 @@
 </usermanual> */
 void begin_gameloop( Environment * _environment ) {
 
+    MAKE_LABEL
+
+    Loop * loop = malloc( sizeof( Loop ) );
+    memset( loop, 0, sizeof( Loop ) );
+    loop->label = strdup( label );
+    loop->type = LT_GAMELOOP;
+    loop->next = _environment->loops;
+    _environment->loops = loop;
+    
+    cpu_label( _environment, loop->label );
+
     _environment->hasGameLoop = 1;
 
-    cpu_label( _environment, "__ugbgameloop");
-
     outline0( "LDA $FF1D");
-    outline0( "BNE __ugbgameloop");
+    outline1( "BNE %s", loop->label );
     outline0( "LDA $FF1C");
     outline0( "CMP #$FA");
-    outline0( "BCC __ugbgameloop");
+    outline1( "BCC ", loop->label );
 
 }

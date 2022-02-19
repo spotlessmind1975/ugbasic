@@ -56,12 +56,21 @@
 </usermanual> */
 void begin_gameloop( Environment * _environment ) {
 
-    _environment->hasGameLoop = 1;
+    MAKE_LABEL
 
-    cpu_label( _environment, "__ugbgameloop");
+    Loop * loop = malloc( sizeof( Loop ) );
+    memset( loop, 0, sizeof( Loop ) );
+    loop->label = strdup( label );
+    loop->type = LT_GAMELOOP;
+    loop->next = _environment->loops;
+    _environment->loops = loop;
+
+    cpu_label( _environment, loop->label );
+
+    _environment->hasGameLoop = 1;
 
     outline0( "LDA $D40B");
     outline0( "CMP #125");
-    outline0( "BCC __ugbgameloop");
+    outline1( "BCC %s", loop->label );
 
 }

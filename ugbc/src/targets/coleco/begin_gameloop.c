@@ -81,12 +81,24 @@ essere eseguita in un unico "frame" di gioco.
 </usermanual> */
 void begin_gameloop( Environment * _environment ) {
 
+    MAKE_LABEL
+
+    Loop * loop = malloc( sizeof( Loop ) );
+    memset( loop, 0, sizeof( Loop ) );
+    loop->label = strdup( label );
+    loop->type = LT_GAMELOOP;
+    loop->next = _environment->loops;
+    _environment->loops = loop;
+
     _environment->hasGameLoop = 1;
 
-    outline0("LD HL, __ugbgameloop");
-    outline0("CALL SET_GAMELOOP_HOOK");
-    outline0("JP __ugbgameloopend");
+    char labelEnd[MAX_TEMPORARY_STORAGE];
+    sprintf( labelEnd, "%send", loop->label  );
 
-    cpu_label( _environment, "__ugbgameloop");
+    outline1("LD HL, %s", loop->label );
+    outline0("CALL SET_GAMELOOP_HOOK");
+    outline1("JP %s", labelEnd );
+
+    cpu_label( _environment, loop->label );
 
 }

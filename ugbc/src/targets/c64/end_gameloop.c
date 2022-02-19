@@ -65,19 +65,34 @@ Definisce il punto di arrivo di un loop di gioco.
 @target c64
 </usermanual> */
 void end_gameloop( Environment * _environment ) {
+
+    Loop * loop = _environment->loops;
+
+    if ( ! loop ) {
+        CRITICAL("END GAMELOOP without BEGIN GAMELOOP");
+    }
+
+    if ( loop->type != LT_GAMELOOP ) {
+        CRITICAL("END GAMELOOP without BEGIN GAMELOOP");
+    }
+
+    _environment->loops = _environment->loops->next;
+
     if ( _environment->hasGameLoop ) {
         if ( _environment->anyProtothread && ! _environment->runParallel ) {
             run_parallel( _environment );
         }
         outline0( "JSR WAITVBL");
-
         deploy_embedded( cpu_mem_move, src_hw_6502_cpu_mem_move_asm );
         if ( _environment->doubleBufferEnabled ) {
             outline0( "JSR SWITCHTILEMAP");
         }
-        cpu_jump( _environment, "__ugbgameloop");    
+        cpu_jump( _environment, loop->label );
+        unsigned char newLabel[MAX_TEMPORARY_STORAGE]; sprintf(newLabel, "%sbis", loop->label );
+        cpu_label( _environment, newLabel );
         _environment->hasGameLoop = 0;
     } else {
          CRITICAL("Cannot call END GAMELOOP without BEGIN GAMELOOP");
     }
+
 }
