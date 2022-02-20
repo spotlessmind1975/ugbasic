@@ -350,5 +350,6 @@ TILEATL1:
     CALL VDPINCHAR
 
     LD (TILET), A
+TILEATEE:
     RET
     
