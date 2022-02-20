@@ -143,6 +143,7 @@ PUTTILEL2:
     JR Z, PUTTILERE
     JR NC, PUTTILERE
 
+    INC HL
     DEC B
     JR NZ, PUTTILEL2
     JMP PUTTILENL
@@ -177,10 +178,10 @@ PUTTILENL:
     LD E, A
     LD D, 0
     ADD HL, DE
-    ; LD A, (TILEW)
-    ; LD E, A
-    ; LD D, 0
-    ; SBC HL, DE
+    LD A, (TILEW)
+    LD E, A
+    LD D, 0
+    SBC HL, DE
 
     LD A, (TILEH2)
     DEC A
