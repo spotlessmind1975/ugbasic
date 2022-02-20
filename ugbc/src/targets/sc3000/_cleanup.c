@@ -46,7 +46,7 @@ void target_finalization( Environment * _environment ) {
     outhead0("LASTVAR: db $42");
     outhead0("section code_user");
 
-    if ( ! _environment->protothread ) {
+    if ( ! _environment->v ) {
         outhead0("PROTOTHREADINIT:" );
         outline0("RET");
     }

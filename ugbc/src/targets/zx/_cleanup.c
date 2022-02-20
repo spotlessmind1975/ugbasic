@@ -42,7 +42,7 @@ void target_finalization( Environment * _environment ) {
 
     zx_finalization( _environment );
 
-    if ( ! _environment->protothread ) {
+    if ( ! _environment->anyProtothread ) {
         outhead0("PROTOTHREADINIT:" );
         outline0("RET");
     }
