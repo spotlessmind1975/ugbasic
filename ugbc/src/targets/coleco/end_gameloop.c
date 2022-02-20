@@ -79,7 +79,7 @@ void end_gameloop( Environment * _environment ) {
     _environment->loops = _environment->loops->next;
 
     if ( _environment->hasGameLoop ) {
-        if ( _environment->anyProtothread && ! _environment->runParallel ) {
+        if ( _environment->anyProtothread ) {
             run_parallel( _environment );
         }
         cpu_return( _environment );

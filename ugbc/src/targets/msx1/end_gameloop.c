@@ -79,7 +79,7 @@ Loop * loop = _environment->loops;
     _environment->loops = _environment->loops->next;
 
     if ( _environment->hasGameLoop ) {
-        if ( _environment->anyProtothread && ! _environment->runParallel ) {
+        if ( _environment->anyProtothread ) {
             run_parallel( _environment );
         }
         cpu_jump( _environment, loop->label );
