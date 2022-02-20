@@ -174,7 +174,7 @@ void pc128op_bitmap_enable( Environment * _environment, int _width, int _height,
 
 }
 
-void pc128op_tilemap_enable( Environment * _environment, int _width, int _height, int _colors ) {
+void pc128op_tilemap_enable( Environment * _environment, int _width, int _height, int _colors, int _tile_width, int _tile_height ) {
     
 }
 

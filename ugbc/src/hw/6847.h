@@ -196,7 +196,7 @@ void c6847_bitmap_at( Environment * _environment, char * _address );
 void c6847_colormap_at( Environment * _environment, char * _address );
 void c6847_textmap_at( Environment * _environment, char * _address );
 void c6847_tiles_at( Environment * _environment, char * _address );
-void c6847_tilemap_enable( Environment * _environment, int _width, int _height, int _colors );
+void c6847_tilemap_enable( Environment * _environment, int _width, int _height, int _colors, int _tile_width, int _tile_height );
 
 void c6847_bank_select( Environment * _environment, int _bank );
 void c6847_enable_ecm( Environment * _environment );

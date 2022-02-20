@@ -606,7 +606,7 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
 
 void tms9918_bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {
 
-    ScreenMode * mode = find_screen_mode_by_suggestion( _environment, 1, _width, _height, _colors );
+    ScreenMode * mode = find_screen_mode_by_suggestion( _environment, 1, _width, _height, _colors, 8, 8 );
 
     if ( mode ) {
         tms9918_screen_mode_enable( _environment, mode );
@@ -628,9 +628,9 @@ void tms9918_bitmap_disable( Environment * _environment ) {
 
 }
 
-void tms9918_tilemap_enable( Environment * _environment, int _width, int _height, int _colors ) {
+void tms9918_tilemap_enable( Environment * _environment, int _width, int _height, int _colors, int _tile_width, int _tile_height ) {
 
-    ScreenMode * mode = find_screen_mode_by_suggestion( _environment, 0, _width, _height, _colors );
+    ScreenMode * mode = find_screen_mode_by_suggestion( _environment, 0, _width, _height, _colors, _tile_width, _tile_height );
 
     if ( mode ) {
         tms9918_screen_mode_enable( _environment, mode );
@@ -1098,11 +1098,11 @@ void tms9918_initialization( Environment * _environment ) {
     variable_import( _environment, "FONTHEIGHT", VT_BYTE, 8 );
     variable_global( _environment, "FONTHEIGHT" );
 
-    SCREEN_MODE_DEFINE( TILEMAP_MODE_STANDARD, 0, 40, 24, 20, "Text Mode" );
-    SCREEN_MODE_DEFINE( TILEMAP_MODE_GRAPHIC1, 0, 32, 24, 16, "Graphic I" );
+    SCREEN_MODE_DEFINE( TILEMAP_MODE_STANDARD, 0, 40, 24, 20, 6, 8, "Text Mode" );
+    SCREEN_MODE_DEFINE( TILEMAP_MODE_GRAPHIC1, 0, 32, 24, 16, 8, 8, "Graphic I" );
 
-    SCREEN_MODE_DEFINE( BITMAP_MODE_GRAPHIC2, 1, 256, 192, 16, "Graphic II" );
-    SCREEN_MODE_DEFINE( BITMAP_MODE_MULTICOLOR, 1, 256, 192, 16, "Multicolor" );
+    SCREEN_MODE_DEFINE( BITMAP_MODE_GRAPHIC2, 1, 256, 192, 16, 8, 8, "Graphic II" );
+    SCREEN_MODE_DEFINE( BITMAP_MODE_MULTICOLOR, 1, 256, 192, 16, 8, 8, "Multicolor" );
  
     outline0("CALL TMS9918STARTUP");
 
@@ -1173,7 +1173,7 @@ void tms9918_initialization( Environment * _environment ) {
         variable_global( _environment, "VDP_HOOK" );
     #endif
 
-    tms9918_tilemap_enable( _environment, 40, 24, 1 );
+    tms9918_tilemap_enable( _environment, 40, 24, 1, 8, 8 );
 
     outline0("CALL TMS9918AUDCCHAR");
 

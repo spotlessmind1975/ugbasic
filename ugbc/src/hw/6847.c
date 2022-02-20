@@ -612,7 +612,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
 
 void c6847_bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {
 
-    ScreenMode * mode = find_screen_mode_by_suggestion( _environment, 1, _width, _height, _colors );
+    ScreenMode * mode = find_screen_mode_by_suggestion( _environment, 1, _width, _height, _colors, 8, 8 );
 
     if ( mode ) {
         c6847_screen_mode_enable( _environment, mode );
@@ -630,9 +630,9 @@ void c6847_bitmap_disable( Environment * _environment ) {
 
 }
 
-void c6847_tilemap_enable( Environment * _environment, int _width, int _height, int _colors ) {
+void c6847_tilemap_enable( Environment * _environment, int _width, int _height, int _colors, int _tile_width, int _tile_height ) {
 
-    ScreenMode * mode = find_screen_mode_by_suggestion( _environment, 0, _width, _height, _colors );
+    ScreenMode * mode = find_screen_mode_by_suggestion( _environment, 0, _width, _height, _colors, _tile_width, _tile_height );
 
     if ( mode ) {
         c6847_screen_mode_enable( _environment, mode );
@@ -922,19 +922,19 @@ void c6847_initialization( Environment * _environment ) {
     variable_import( _environment, "FONTHEIGHT", VT_BYTE, 8 );
     variable_global( _environment, "FONTHEIGHT" );
 
-    SCREEN_MODE_DEFINE( TILEMAP_MODE_INTERNAL, 0, 32, 16, 2, "Alphanumeric Internal");
-    SCREEN_MODE_DEFINE( TILEMAP_MODE_EXTERNAL, 0, 32, 16, 2, "Alphanumeric External");
-    SCREEN_MODE_DEFINE( TILEMAP_MODE_SEMIGRAPHICS4, 0, 64, 32, 8, "Semigraphics 4" );
-    SCREEN_MODE_DEFINE( TILEMAP_MODE_SEMIGRAPHICS6, 0, 64, 48, 4, "Semigraphics 6" );
+    SCREEN_MODE_DEFINE( TILEMAP_MODE_INTERNAL, 0, 32, 16, 2, 8, 8, "Alphanumeric Internal");
+    SCREEN_MODE_DEFINE( TILEMAP_MODE_EXTERNAL, 0, 32, 16, 2, 8, 8, "Alphanumeric External");
+    SCREEN_MODE_DEFINE( TILEMAP_MODE_SEMIGRAPHICS4, 0, 64, 32, 8, 8, 8, "Semigraphics 4" );
+    SCREEN_MODE_DEFINE( TILEMAP_MODE_SEMIGRAPHICS6, 0, 64, 48, 4, 8, 8, "Semigraphics 6" );
 
-    SCREEN_MODE_DEFINE( BITMAP_MODE_RESOLUTION6, 1, 256, 192, 2, "Resolution Graphics 6" );
-    SCREEN_MODE_DEFINE( BITMAP_MODE_COLOR6, 1, 128, 192, 4, "Color Graphics 6" );
-    SCREEN_MODE_DEFINE( BITMAP_MODE_RESOLUTION3, 1, 128, 192, 2, "Resolution Graphics 3" );
-    SCREEN_MODE_DEFINE( BITMAP_MODE_COLOR3, 1, 128, 96, 4, "Color Graphics 3" );
-    SCREEN_MODE_DEFINE( BITMAP_MODE_RESOLUTION2, 1, 128, 96, 2, "Resolution Graphics 2" );
-    SCREEN_MODE_DEFINE( BITMAP_MODE_COLOR2, 1, 128, 64, 4, "Color Graphics 2" );
-    SCREEN_MODE_DEFINE( BITMAP_MODE_RESOLUTION1, 1, 128, 64, 2, "Resolution Graphics 1" );
-    SCREEN_MODE_DEFINE( BITMAP_MODE_COLOR1, 1, 64, 64, 4, "Color Graphics 1" );
+    SCREEN_MODE_DEFINE( BITMAP_MODE_RESOLUTION6, 1, 256, 192, 2, 8, 8, "Resolution Graphics 6" );
+    SCREEN_MODE_DEFINE( BITMAP_MODE_COLOR6, 1, 128, 192, 4, 8, 8, "Color Graphics 6" );
+    SCREEN_MODE_DEFINE( BITMAP_MODE_RESOLUTION3, 1, 128, 192, 2, 8, 8, "Resolution Graphics 3" );
+    SCREEN_MODE_DEFINE( BITMAP_MODE_COLOR3, 1, 128, 96, 4, 8, 8, "Color Graphics 3" );
+    SCREEN_MODE_DEFINE( BITMAP_MODE_RESOLUTION2, 1, 128, 96, 2, 8, 8, "Resolution Graphics 2" );
+    SCREEN_MODE_DEFINE( BITMAP_MODE_COLOR2, 1, 128, 64, 4, 8, 8, "Color Graphics 2" );
+    SCREEN_MODE_DEFINE( BITMAP_MODE_RESOLUTION1, 1, 128, 64, 2, 8, 8, "Resolution Graphics 1" );
+    SCREEN_MODE_DEFINE( BITMAP_MODE_COLOR1, 1, 64, 64, 4, 8, 8, "Color Graphics 1" );
 
     outline0("JSR C6847STARTUP");
 

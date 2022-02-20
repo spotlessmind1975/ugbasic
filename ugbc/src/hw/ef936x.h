@@ -143,7 +143,7 @@ void ef936x_bitmap_at( Environment * _environment, char * _address );
 void ef936x_colormap_at( Environment * _environment, char * _address );
 void ef936x_textmap_at( Environment * _environment, char * _address );
 void ef936x_tiles_at( Environment * _environment, char * _address );
-void ef936x_tilemap_enable( Environment * _environment, int _width, int _height, int _colors );
+void ef936x_tilemap_enable( Environment * _environment, int _width, int _height, int _colors, int _tile_width, int _tile_height );
 
 void ef936x_bank_select( Environment * _environment, int _bank );
 void ef936x_enable_ecm( Environment * _environment );

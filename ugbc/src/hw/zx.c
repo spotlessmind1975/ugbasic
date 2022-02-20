@@ -230,8 +230,8 @@ void zx_initialization( Environment * _environment ) {
     variable_import( _environment, "FONTHEIGHT", VT_BYTE, 8 );
     variable_global( _environment, "FONTHEIGHT" );
 
-    SCREEN_MODE_DEFINE( BITMAP_MODE_STANDARD, 1, 192, 256, 2, "Standard Bitmap Mode" );
-    SCREEN_MODE_DEFINE( TILEMAP_MODE_STANDARD, 0, 32, 25, 8, "(emulated) Standard Character Mode" );
+    SCREEN_MODE_DEFINE( BITMAP_MODE_STANDARD, 1, 192, 256, 2, 8, 8, "Standard Bitmap Mode" );
+    SCREEN_MODE_DEFINE( TILEMAP_MODE_STANDARD, 0, 32, 25, 8, 8, 8, "(emulated) Standard Character Mode" );
 
     variable_import( _environment, "XGR", VT_POSITION, 0 );
     variable_global( _environment, "XGR" );
@@ -318,7 +318,7 @@ void zx_bitmap_enable( Environment * _environment, int _width, int _height, int 
 
 }
 
-void zx_tilemap_enable( Environment * _environment, int _width, int _height, int _colors ) {
+void zx_tilemap_enable( Environment * _environment, int _width, int _height, int _colors, int _tile_width, int _tile_height ) {
     
 }
 

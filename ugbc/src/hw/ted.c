@@ -419,7 +419,7 @@ int ted_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
 
 void ted_bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {
 
-    ScreenMode * mode = find_screen_mode_by_suggestion( _environment, 1, _width, _height, _colors );
+    ScreenMode * mode = find_screen_mode_by_suggestion( _environment, 1, _width, _height, _colors, 8, 8 );
 
     if ( mode ) {
         ted_screen_mode_enable( _environment, mode );
@@ -446,9 +446,9 @@ void ted_bitmap_disable( Environment * _environment ) {
 
 }
 
-void ted_tilemap_enable( Environment * _environment, int _width, int _height, int _colors ) {
+void ted_tilemap_enable( Environment * _environment, int _width, int _height, int _colors, int _tile_width, int _tile_height ) {
 
-    ScreenMode * mode = find_screen_mode_by_suggestion( _environment, 0, _width, _height, _colors );
+    ScreenMode * mode = find_screen_mode_by_suggestion( _environment, 0, _width, _height, _colors, _tile_width, _tile_height );
 
     if ( mode ) {
         ted_screen_mode_enable( _environment, mode );
@@ -795,10 +795,10 @@ void ted_initialization( Environment * _environment ) {
     variable_import( _environment, "FONTHEIGHT", VT_BYTE, 8 );
     variable_global( _environment, "FONTHEIGHT" );
 
-    SCREEN_MODE_DEFINE( BITMAP_MODE_STANDARD, 1, 320, 200, 2, "Standard Bitmap Mode" );
-    SCREEN_MODE_DEFINE( BITMAP_MODE_MULTICOLOR, 1, 160, 200, 4, "Multicolor Bitmap Mode"  );
-    SCREEN_MODE_DEFINE( TILEMAP_MODE_STANDARD, 0, 40, 25, 16, "Standard Character Mode" );
-    SCREEN_MODE_DEFINE( TILEMAP_MODE_EXTENDED, 0, 40, 25, 20, "Extended Multicolor Character Mode" );
+    SCREEN_MODE_DEFINE( BITMAP_MODE_STANDARD, 1, 320, 200, 2, 8, 8, "Standard Bitmap Mode" );
+    SCREEN_MODE_DEFINE( BITMAP_MODE_MULTICOLOR, 1, 160, 200, 4, 8, 8, "Multicolor Bitmap Mode"  );
+    SCREEN_MODE_DEFINE( TILEMAP_MODE_STANDARD, 0, 40, 25, 16, 8, 8, "Standard Character Mode" );
+    SCREEN_MODE_DEFINE( TILEMAP_MODE_EXTENDED, 0, 40, 25, 20, 8, 8, "Extended Multicolor Character Mode" );
 
     outline0("JSR TEDSTARTUP");
     outline0("JSR TEDUDCCHAR" );
@@ -821,7 +821,7 @@ void ted_initialization( Environment * _environment ) {
     variable_import( _environment, "CLIPY2", VT_POSITION, 199 );
     variable_global( _environment, "CLIPY2" );
 
-    ted_tilemap_enable( _environment, 40, 25, 16 );
+    ted_tilemap_enable( _environment, 40, 25, 16, 8, 8 );
 
     ted_cls( _environment );
 

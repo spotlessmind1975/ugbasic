@@ -193,7 +193,7 @@ void d64_bitmap_enable( Environment * _environment, int _width, int _height, int
 
 }
 
-void d64_tilemap_enable( Environment * _environment, int _width, int _height, int _colors ) {
+void d64_tilemap_enable( Environment * _environment, int _width, int _height, int _colors, int _tile_width, int _tile_height ) {
     
 }
 

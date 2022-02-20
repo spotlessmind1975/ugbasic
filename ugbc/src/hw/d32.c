@@ -194,7 +194,7 @@ void d32_bitmap_enable( Environment * _environment, int _width, int _height, int
 
 }
 
-void d32_tilemap_enable( Environment * _environment, int _width, int _height, int _colors ) {
+void d32_tilemap_enable( Environment * _environment, int _width, int _height, int _colors, int _tile_width, int _tile_height ) {
     
 }
 

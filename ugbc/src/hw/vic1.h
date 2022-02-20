@@ -102,7 +102,7 @@ void vic1_bitmap_at( Environment * _environment, char * _address );
 void vic1_colormap_at( Environment * _environment, char * _address );
 void vic1_textmap_at( Environment * _environment, char * _address );
 void vic1_tiles_at( Environment * _environment, char * _address );
-void vic1_tilemap_enable( Environment * _environment, int _width, int _height, int _colors );
+void vic1_tilemap_enable( Environment * _environment, int _width, int _height, int _colors, int _tile_width, int _tile_height );
 
 void vic1_bank_select( Environment * _environment, int _bank );
 void vic1_enable_ecm( Environment * _environment );

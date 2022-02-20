@@ -390,7 +390,7 @@ int vic1_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
 void vic1_bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {
 
-    ScreenMode * mode = find_screen_mode_by_suggestion( _environment, 1, _width, _height, _colors );
+    ScreenMode * mode = find_screen_mode_by_suggestion( _environment, 1, _width, _height, _colors, 8, 8 );
 
     if ( mode ) {
         vic1_screen_mode_enable( _environment, mode );
@@ -408,9 +408,9 @@ void vic1_bitmap_disable( Environment * _environment ) {
 
 }
 
-void vic1_tilemap_enable( Environment * _environment, int _width, int _height, int _colors ) {
+void vic1_tilemap_enable( Environment * _environment, int _width, int _height, int _colors, int _tile_width, int _tile_height ) {
 
-    ScreenMode * mode = find_screen_mode_by_suggestion( _environment, 0, _width, _height, _colors );
+    ScreenMode * mode = find_screen_mode_by_suggestion( _environment, 0, _width, _height, _colors, _tile_width, _tile_height );
 
     if ( mode ) {
         vic1_screen_mode_enable( _environment, mode );
@@ -688,9 +688,9 @@ void vic1_initialization( Environment * _environment ) {
     variable_import( _environment, "FONTHEIGHT", VT_BYTE, 8 );
     variable_global( _environment, "FONTHEIGHT" );
 
-    SCREEN_MODE_DEFINE( TILEMAP_MODE_STANDARD, 0, 40, 25, 2, "Standard Character Mode" );
-    // SCREEN_MODE_DEFINE( BITMAP_MODE_STANDARD, 1, 128, 64, 8, "Standard Bitmap Mode" );
-    // SCREEN_MODE_DEFINE( BITMAP_MODE_EXTENDED, 1, 128, 128, 8, "Extended Bitmap Mode" );
+    SCREEN_MODE_DEFINE( TILEMAP_MODE_STANDARD, 0, 40, 25, 2, 8, 8, "Standard Character Mode" );
+    // SCREEN_MODE_DEFINE( BITMAP_MODE_STANDARD, 1, 128, 64, 8, 8, 8, "Standard Bitmap Mode" );
+    // SCREEN_MODE_DEFINE( BITMAP_MODE_EXTENDED, 1, 128, 128, 8, 8, 8, "Extended Bitmap Mode" );
 
     outline0("JSR VIC1STARTUP");
 

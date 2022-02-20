@@ -725,13 +725,17 @@ typedef struct _ScreenMode {
 
     int         colors;
 
+    int         tileWidth;
+
+    int         tileHeight;
+
     int         score;
 
     struct _ScreenMode  * next;
 
 } ScreenMode;
 
-#define SCREEN_MODE_DEFINE( _id, _bitmap, _width, _height, _colors, _description ) \
+#define SCREEN_MODE_DEFINE( _id, _bitmap, _width, _height, _colors, _tile_width, _tile_height, _description ) \
     { \
         ScreenMode * screenMode = malloc( sizeof( ScreenMode ) ); \
         memset( screenMode, 0, sizeof( screenMode ) ) ; \
@@ -740,6 +744,8 @@ typedef struct _ScreenMode {
         screenMode->width = _width; \
         screenMode->height = _height; \
         screenMode->colors = _colors; \
+        screenMode->tileWidth = _tile_width; \
+        screenMode->tileHeight = _tile_height; \
         screenMode->score = 0; \
         screenMode->description = strdup( _description ); \
         screenMode->next = NULL; \
@@ -1942,7 +1948,7 @@ void linker_cleanup( Environment * _environment );
 void linker_setup( Environment * _environment );
 int pattern_match( char * _pattern, char * _value );
 void setup_text_variables( Environment * _environment );
-ScreenMode * find_screen_mode_by_suggestion( Environment * _environment, int _bitmap, int _width, int _height, int _colors );
+ScreenMode * find_screen_mode_by_suggestion( Environment * _environment, int _bitmap, int _width, int _height, int _colors, int _tile_width, int _tile_height );
 ScreenMode * find_screen_mode_by_id( Environment * _environment, int _id );
 Bank * bank_find( Bank * _first, char * _name );
 
@@ -2330,7 +2336,7 @@ void                    text_vscroll_screen( Environment * _environment, int _di
 void                    textmap_at( Environment * _environment, int _address );
 void                    textmap_at_var( Environment * _environment, char * _address );
 void                    tilemap_disable( Environment * _environment );
-void                    tilemap_enable( Environment * _environment, int _width, int _height, int _colors );
+void                    tilemap_enable( Environment * _environment, int _width, int _height, int _colors, int _tile_width, int _tile_height );
 Variable *              tile_at( Environment * _environment, char * _x, char * _y );
 int                     tile_allocate( TileDescriptors * _tiles, char * _data );
 Variable *              tile_belong( Environment * _environment, char * _tile, char * _tiles );
