@@ -102,6 +102,13 @@
 #define SPRITE_WIDTH                8
 #define SPRITE_HEIGHT               8
 
+#define SPRITE_FLAG_MULTICOLOR          0x0010
+#define SPRITE_FLAG_MONOCOLOR           0x0000
+#define SPRITE_FLAG_EXPAND_VERTICAL     0x0040
+#define SPRITE_FLAG_COMPRESS_VERTICAL   0x0000
+#define SPRITE_FLAG_EXPAND_HORIZONTAL   0x0080
+#define SPRITE_FLAG_COMPRESS_HORIZONTAL 0x0000
+
 int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode );
 
 void tms9918_initialization( Environment * _environment );
