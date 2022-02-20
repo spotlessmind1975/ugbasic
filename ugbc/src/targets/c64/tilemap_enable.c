@@ -61,9 +61,9 @@ Abilita la modalità a tiles.
 
 @target c64
 </usermanual> */
-void tilemap_enable( Environment * _environment, int _width, int _height, int _colors ) {
+void tilemap_enable( Environment * _environment, int _width, int _height, int _colors, int _tile_width, int _tile_height ) {
     
-    vic2_tilemap_enable( _environment, _width, _height, _colors );
+    vic2_tilemap_enable( _environment, _width, _height, _colors, _tile_width, _tile_height );
 
 }
 

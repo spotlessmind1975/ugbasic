@@ -61,10 +61,10 @@ Abilita la modalità a tiles.
 
 @target sg1000
 </usermanual> */
-void tilemap_enable( Environment * _environment, int _width, int _height, int _colors ) {
+void tilemap_enable( Environment * _environment, int _width, int _height, int _colors, int _tile_width, int _tile_height ) {
     
     bitmap_disable( _environment );
 
-    tms9918_tilemap_enable( _environment, _width, _height, _colors );
+    tms9918_tilemap_enable( _environment, _width, _height, _colors, _tile_width, _tile_height );
     
 }

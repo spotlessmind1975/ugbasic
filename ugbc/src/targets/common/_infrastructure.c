@@ -5133,7 +5133,7 @@ Variable * variable_bit( Environment * _environment, char * _value, char * _posi
     return result;
 }
 
-ScreenMode * find_screen_mode_by_suggestion( Environment * _environment, int _bitmap, int _width, int _height, int _colors ) {
+ScreenMode * find_screen_mode_by_suggestion( Environment * _environment, int _bitmap, int _width, int _height, int _colors, int _tile_width, int _tile_height ) {
 
     ScreenMode * screenMode = _environment->screenModes;
     ScreenMode * firstMode = NULL;
@@ -5159,6 +5159,8 @@ ScreenMode * find_screen_mode_by_suggestion( Environment * _environment, int _bi
             screenMode->score -= ( _width ) ? ( abs( _width - screenMode->width ) ) : 0;
             screenMode->score -= ( _height ) ? ( abs( _height - screenMode->height ) ) : 0;
             screenMode->score -= ( _colors ) ? ( abs( _colors - screenMode->colors ) ) : 0;
+            screenMode->score -= ( _tile_width ) ? ( abs( _tile_width - screenMode->tileWidth ) * 10 ) : 0;
+            screenMode->score -= ( _tile_height ) ? ( abs( _tile_height - screenMode->tileHeight ) * 10 ) : 0;
         } else {
             screenMode->score = -1000;
         }

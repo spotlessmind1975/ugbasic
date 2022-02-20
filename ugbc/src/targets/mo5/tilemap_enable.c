@@ -49,9 +49,9 @@
 /* <usermanual>
 @keyword TILEMAP ENABLE
 </usermanual> */
-void tilemap_enable( Environment * _environment, int _width, int _height, int _colors ) {
+void tilemap_enable( Environment * _environment, int _width, int _height, int _colors, int _tile_width, int _tile_height ) {
 
-    ef936x_tilemap_enable( _environment, _width, _height, _colors );
+    ef936x_tilemap_enable( _environment, _width, _height, _colors, _tile_width, _tile_height );
 
 }
 
