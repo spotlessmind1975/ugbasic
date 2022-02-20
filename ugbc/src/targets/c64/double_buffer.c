@@ -61,6 +61,12 @@ void double_buffer( Environment * _environment, int _enabled ) {
                 cpu_set_callback( _environment, "ONSWITCHTILEMAP", "SCREENSCROLL" );
             }
             outline0("JSR DOUBLEBUFFERINIT")
+        } else {
+            if ( _environment->deployed.scroll ) {
+                cpu_set_callback( _environment, "SCREENSCROLLEMBED", "SCREENSCROLL" );
+                cpu_set_callback( _environment, "ONSWITCHTILEMAP", "SCREENSCROLLVOID" );
+            }
+            outline0("JSR DOUBLEBUFFERCLEANUP")
         }
 
     };
