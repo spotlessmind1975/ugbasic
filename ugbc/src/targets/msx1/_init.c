@@ -125,6 +125,28 @@ void target_initialization( Environment * _environment ) {
 
     outhead0("CODESTART:")
     
+    outline0("CALL $0138");
+	outline0("RRCA");
+	outline0("RRCA");
+	outline0("AND 3");
+    outline0("LD C, A");
+    outline0("LD B, 0");
+	outline0("LD HL, $FCC1");
+	outline0("ADD HL, BC");
+	outline0("LD A, (HL)");
+    outline0("AND $80");
+    outline0("OR C");
+	outline0("LD C, A");
+	outline0("INC HL");
+	outline0("INC HL");
+	outline0("INC HL");
+	outline0("INC HL");
+	outline0("LD A, (HL)");    
+	outline0("AND $C" );
+	outline0("OR C");
+	outline0("LD H, $80");
+	outline0("CALL $0024");
+
     outline0("CALL VARINIT2");
     outline0("CALL VARINIT");
     outline0("CALL PROTOTHREADINIT" );
