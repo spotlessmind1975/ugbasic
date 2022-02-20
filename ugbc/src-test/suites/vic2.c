@@ -220,42 +220,42 @@ void test_vic2_tilemap_enable_payload( TestEnvironment * _te ) {
     Variable * d016h = variable_define( e, "d016h", VT_BYTE, 0 );
 
     // a) Standard Character Mode
-    vic2_tilemap_enable( e, 0, 0, 0 );
+    vic2_tilemap_enable( e, 0, 0, 0, 8, 8 );
     cpu_move_8bit( e, "$D011", d011a->realName );
     cpu_move_8bit( e, "$D016", d016a->realName );
 
     // b) Standard Character Mode
-    vic2_tilemap_enable( e, 80, 0, 0 );
+    vic2_tilemap_enable( e, 80, 0, 0, 8, 8 );
     cpu_move_8bit( e, "$D011", d011b->realName );
     cpu_move_8bit( e, "$D016", d016b->realName );
 
     // c) Standard Character Mode
-    vic2_tilemap_enable( e, 30, 0, 0 );
+    vic2_tilemap_enable( e, 30, 0, 0, 8, 8 );
     cpu_move_8bit( e, "$D011", d011c->realName );
     cpu_move_8bit( e, "$D016", d016c->realName );
 
     // d) Standard Character Mode
-    vic2_tilemap_enable( e, 0, 30, 0 );
+    vic2_tilemap_enable( e, 0, 30, 0, 8, 8 );
     cpu_move_8bit( e, "$D011", d011d->realName );
     cpu_move_8bit( e, "$D016", d016d->realName );
     
     // e) Multicolor Character Mode
-    vic2_tilemap_enable( e, 0, 0, 8 );
+    vic2_tilemap_enable( e, 0, 0, 8, 8, 8 );
     cpu_move_8bit( e, "$D011", d011e->realName );
     cpu_move_8bit( e, "$D016", d016e->realName );
 
     // f) Multicolor Character Mode
-    vic2_tilemap_enable( e, 0, 0, 16 );
+    vic2_tilemap_enable( e, 0, 0, 16, 8, 8 );
     cpu_move_8bit( e, "$D011", d011f->realName );
     cpu_move_8bit( e, "$D016", d016f->realName );
 
     // g) Extended Multicolor Character Mode
-    vic2_tilemap_enable( e, 0, 0, 20 );
+    vic2_tilemap_enable( e, 0, 0, 20, 8, 8 );
     cpu_move_8bit( e, "$D011", d011g->realName );
     cpu_move_8bit( e, "$D016", d016g->realName );
 
     // h) Multicolor Character Mode
-    vic2_tilemap_enable( e, 0, 0, 16 );
+    vic2_tilemap_enable( e, 0, 0, 16, 8, 8 );
     cpu_move_8bit( e, "$D011", d011h->realName );
     cpu_move_8bit( e, "$D016", d016h->realName );
     

@@ -121,28 +121,28 @@ void test_zx_tilemap_enable_payload( TestEnvironment * _te ) {
     Environment * e = &_te->environment;
 
     // a) (Emulated) Standard Character Mode
-    zx_tilemap_enable( e, 0, 0, 0 );
+    zx_tilemap_enable( e, 0, 0, 0, 8, 8 );
 
     // b) (Emulated) Standard Character Mode
-    zx_tilemap_enable( e, 80, 0, 0 );
+    zx_tilemap_enable( e, 80, 0, 0, 8, 8 );
 
     // c) (Emulated) Standard Character Mode
-    zx_tilemap_enable( e, 30, 0, 0 );
+    zx_tilemap_enable( e, 30, 0, 0, 8, 8 );
 
     // d) (Emulated) Standard Character Mode
-    zx_tilemap_enable( e, 0, 30, 0 );
+    zx_tilemap_enable( e, 0, 30, 0, 8, 8 );
     
     // e) (Emulated) Standard Character Mode
-    zx_tilemap_enable( e, 0, 0, 8 );
+    zx_tilemap_enable( e, 0, 0, 8, 8, 8 );
 
     // f) (Emulated) Standard Character Mode
-    zx_tilemap_enable( e, 0, 0, 16 );
+    zx_tilemap_enable( e, 0, 0, 16, 8, 8 );
 
     // g) (Emulated) Standard Character Mode
-    zx_tilemap_enable( e, 0, 0, 20 );
+    zx_tilemap_enable( e, 0, 0, 20, 8, 8 );
 
     // h) (Emulated) Standard Character Mode
-    zx_tilemap_enable( e, 0, 0, 16 );
+    zx_tilemap_enable( e, 0, 0, 16, 8, 8 );
     
 }
 
