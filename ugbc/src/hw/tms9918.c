@@ -1751,6 +1751,8 @@ void tms9918_get_image( Environment * _environment, char * _image, char * _x, ch
 
 void tms9918_scroll( Environment * _environment, int _dx, int _dy ) {
 
+    deploy( scroll, src_hw_tms9918_scroll_asm);
+
 }
 
 void tms9918_put_tile( Environment * _environment, char * _tile, char * _x, char * _y ) {
