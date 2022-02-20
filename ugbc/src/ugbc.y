@@ -2602,17 +2602,20 @@ text_definition:
 
 tilemap_enable_resolution : 
       {
-        tilemap_enable( _environment, 0, 0, 0 );
+        tilemap_enable( _environment, 0, 0, 0, 0, 0 );
     }
     | OP optional_integer CP {
-        tilemap_enable( _environment, 0, 0, $2 );
+        tilemap_enable( _environment, 0, 0, $2, 0, 0 );
     }
     | OP optional_integer OP_COMMA optional_integer CP {
-        tilemap_enable( _environment, $2, $4, 0 );
+        tilemap_enable( _environment, $2, $4, 0, 0, 0 );
     }
     | OP optional_integer OP_COMMA optional_integer OP_COMMA optional_integer CP {
-        tilemap_enable( _environment, $2, $4, $6 );
+        tilemap_enable( _environment, $2, $4, $6, 0, 0 );
     }
+    | OP optional_integer OP_COMMA optional_integer OP_COMMA optional_integer OP_COMMA optional_integer OP_COMMA optional_integer CP {
+        tilemap_enable( _environment, $2, $4, $6, $8, $10 );
+    };
 
 tilemap_definition_simple:
     ENABLE tilemap_enable_resolution {
