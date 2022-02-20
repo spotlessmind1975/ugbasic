@@ -128,6 +128,33 @@ PUTTILEL2:
     CALL VDPOUTCHAR
     POP BC
 
+    PUSH HL
+    PUSH AF
+    PUSH DE
+    PUSH BC
+    LD A, (TILET)
+    SRL A
+    SRL A
+    SRL A
+    LD E, A
+    LD A, 0
+    LD D, A
+    LD HL, $480
+    ADC HL, DE
+    LD DE, HL
+    LD A, (_PEN)
+    SLA A
+    SLA A
+    SLA A
+    SLA A
+    LD BC, 1
+    CALL VDPOUTCHAR
+    POP BC
+    POP DE
+    POP AF
+    POP HL
+
+    LD A, (TILET)
     INC A
     LD (TILET), A
 
