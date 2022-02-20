@@ -126,6 +126,8 @@ Variable * tiles_load( Environment * _environment, char * _filename, int _flags,
     int height = 0;
     int depth = 3;
 
+    // printf( "Allocating tiles (%s)\n", _filename );
+
     char * lookedFilename = image_load_asserts( _environment, _filename );
 
     unsigned char* source = stbi_load(lookedFilename, &width, &height, &depth, 0);
@@ -155,11 +157,12 @@ Variable * tiles_load( Environment * _environment, char * _filename, int _flags,
         descriptors = _environment->tilesets[tileset->value];
     } else {
         if ( ! _environment->descriptors ) {
+            // printf("On demand allocating...\n");
             _environment->descriptors = malloc( sizeof( TileDescriptors ) );
             _environment->descriptors->count = 0;
-            _environment->descriptors->first = 1;
+            _environment->descriptors->first = 128;
             _environment->descriptors->firstFree = _environment->descriptors->first;
-            _environment->descriptors->lastFree = 128;
+            _environment->descriptors->lastFree = 255;
         }
         descriptors = _environment->descriptors;
     }
@@ -190,6 +193,8 @@ Variable * tiles_load( Environment * _environment, char * _filename, int _flags,
                 Variable * realImage = image_converter( _environment, source, width, height, x*8, y*8, 8, 8, BITMAP_MODE_DEFAULT, 0, _flags );
 
                 int tile = tile_allocate( descriptors, realImage->valueBuffer + 2 );
+
+                // printf( "Allocating tile (%d,%d) -> %d\n", x, y, tile );
 
                 if ( firstTile == -1 ) {
                     firstTile = tile;
