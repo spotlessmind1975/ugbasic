@@ -602,6 +602,8 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
     
 #endif
 
+    // printf("tms9918_tilemap_enable() -> screen tiles width %d\n", _environment->screenTilesWidth );
+
 }
 
 void tms9918_bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {
@@ -633,6 +635,9 @@ void tms9918_tilemap_enable( Environment * _environment, int _width, int _height
     ScreenMode * mode = find_screen_mode_by_suggestion( _environment, 0, _width, _height, _colors, _tile_width, _tile_height );
 
     if ( mode ) {
+
+        // printf("tms9918_tilemap_enable() -> %d\n", mode->id );
+        
         tms9918_screen_mode_enable( _environment, mode );
 
         _environment->currentMode = mode->id;
@@ -642,6 +647,7 @@ void tms9918_tilemap_enable( Environment * _environment, int _width, int _height
         tms9918_cls( _environment );
 
     } else {
+        // printf("tms9918_tilemap_enable() -> -1\n" );
         WARNING_SCREEN_MODE( -1 );
     }
 
@@ -665,9 +671,9 @@ void tms9918_point_at_int( Environment * _environment, int _x, int _y ) {
     deploy( tms9918varsGraphic, src_hw_tms9918_vars_graphic_asm );
     deploy( plot, src_hw_tms9918_plot_asm );
     
-    outline1("LD A, $%2.2x", _y );
+    outline1("LD A, $%2.2x", ( _y & 0xff ) );
     outline0("LD D, A");
-    outline1("LD A, $%2.2x", _x );
+    outline1("LD A, $%2.2x", ( _x & 0xff ) );
     outline0("LD E, A");
     outline0("LD A, 1");
     if ( ! _environment->hasGameLoop ) {
@@ -1202,15 +1208,6 @@ void tms9918_initialization( Environment * _environment ) {
 
     tms9918_cls( _environment );
 
-    _environment->fontWidth = 6;
-    _environment->fontHeight = 8;
-    _environment->screenTilesWidth = 40;
-    _environment->screenTilesHeight = 24;
-    _environment->screenTiles = 255;
-    _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
-    _environment->screenHeight = _environment->screenTilesHeight * _environment->screenTilesHeight;
-    _environment->screenColors = 16;
-
     _environment->currentRgbConverterFunction = rgbConverterFunction;
     _environment->screenShades = 16;
 
@@ -1677,7 +1674,7 @@ void tms9918_put_image( Environment * _environment, char * _image, char * _x, ch
     MAKE_LABEL
 
     outhead1("putimage%s:", label);
-    outline1("LD A, $%2.2x", _flags );
+    outline1("LD A, $%2.2x", ( _flags & 0xff ) );
     outline1("LD HL, %s", _image );
     if ( _frame ) {
         outline0("LD DE, $0002" );
