@@ -408,17 +408,17 @@ void z80_move_8bit( Environment * _environment, char *_source, char *_destinatio
  */
 void z80_store_8bit( Environment * _environment, char *_destination, int _value ) {
 
-    outline1("LD A, $%2.2x", _value);
+    outline1("LD A, $%2.2x", ( _value & 0xff ) );
     outline1("LD (%s), A", _destination);
 
 }
 
 void z80_store_8bit_with_offset( Environment * _environment, char *_destination, int _value, int _offset ) {
 
-    outline1("LD A, $%2.2x", _offset);
+    outline1("LD A, $%2.2x", ( _offset & 0xff ) );
     outline1("LD DE, %s", _destination);
     outline0("ADD DE,A");
-    outline1("LD A, $%2.2x", _value);
+    outline1("LD A, $%2.2x", ( _value & 0xff ) );
     outline0("LD (DE), A");
 
 }
@@ -949,7 +949,7 @@ void z80_math_complement_const_8bit( Environment * _environment, char *_source, 
 
     outline1("LD A, (%s)", _source );
     outline0("LD B, A" );
-    outline1("LD A, $%2.2x", _value );
+    outline1("LD A, $%2.2x", ( _value & 0xff ) );
     outline0("SUB A, B" );
     outline1("LD (%s), A", _source );
 
@@ -2809,7 +2809,7 @@ void z80_compare_memory_size( Environment * _environment, char *_source, char *_
 
     outline1("LD HL,(%s)", _source);
     outline1("LD DE,(%s)", _destination);
-    outline1("LD A, $%2.2x", _size);
+    outline1("LD A, $%2.2x", ( _size & 0xff ) );
     outline0("LD C, A");
     outhead1("%s:", label );
     outline0("LD A, (HL)");
@@ -2872,7 +2872,7 @@ void z80_less_than_memory_size( Environment * _environment, char *_source, char 
 
     outline1("LD HL,(%s)", _source);
     outline1("LD DE,(%s)", _destination);
-    outline1("LD A, $%2.2x", _size);
+    outline1("LD A, $%2.2x", ( _size & 0xff ) );
     outline0("LD C, A");
     outhead1("%s:", label );
     outline0("LD A, (DE)");
@@ -2938,7 +2938,7 @@ void z80_greater_than_memory_size( Environment * _environment, char *_source, ch
 
     outline1("LD HL,(%s)", _source);
     outline1("LD DE,(%s)", _destination);
-    outline1("LD A, $%2.2x", _size);
+    outline1("LD A, $%2.2x", ( _size & 0xff ) );
     outline0("LD C, A");
     outhead1("%s:", label );
     outline0("LD A, (DE)");
@@ -3279,7 +3279,6 @@ void z80_move_32bit_indirect2( Environment * _environment, char * _value, char *
     outline0("LD H, A");
     outline0("INC DE");
     outline1("LD (%s), HL", _source);
-    outline1("LD DE, (%s+2)", _value);
     outline0("LD A, (DE)");
     outline0("LD L, A");
     outline0("INC DE");
@@ -3782,16 +3781,16 @@ void z80_bits_to_string( Environment * _environment, char * _number, char * _str
             break;
     }
 
-    outline1("LD A, $%2.2x", _bits );
+    outline1("LD A, $%2.2x", ( _bits & 0xff ) );
     outline0("CALL BINSTR");
     
     outline1("LD DE,(%s)", _string);
-    outline1("LD A, $%2.2x", (_bits+1) );
+    outline1("LD A, $%2.2x", ( (_bits+1) & 0xff ) );
     outline0("LD C, A");
     outline0("LD B, 0");
     outline0("LDIR");
 
-    outline1("LD A, $%2.2x", _bits );
+    outline1("LD A, $%2.2x", ( _bits & 0xff ) );
     outline1("LD HL, %s", _string_size );
     outline0("LD (HL), A" );
 
@@ -3883,7 +3882,7 @@ void z80_dsalloc_size( Environment * _environment, int _size, char * _index ) {
 
     deploy( dstring,src_hw_z80_dstring_asm );
 
-    outline1( "LD A, $%2.2x", _size );
+    outline1( "LD A, $%2.2x", ( _size & 0xff ) );
     outline0( "LD C, A" );
     outline0( "CALL DSALLOC" );
     outline0( "LD A, B" );
@@ -3929,7 +3928,7 @@ void z80_dsresize_size( Environment * _environment, char * _index, int _resize )
 
     outline1( "LD A, (%s)", _index );
     outline0( "LD B, A" );
-    outline1( "LD A, $%2.2x", _resize );
+    outline1( "LD A, $%2.2x", ( _resize & 0xff ) );
     outline0( "LD C, A" );
     outline0( "CALL DSRESIZE" );
 
@@ -4171,7 +4170,7 @@ void z80_protothread_save( Environment * _environment, char * _index, int _step 
 
     outline1("LD A, (%s)", _index );
     outline0("LD B, A" );
-    outline1("LD A, $%2.2x", _step );
+    outline1("LD A, $%2.2x", ( _step & 0xff ) );
 
     outline0("CALL PROTOTHREADSAVE" );
 
@@ -4196,7 +4195,7 @@ void z80_protothread_set_state( Environment * _environment, char * _index, int _
 
     outline1("LD A, (%s)", _index );
     outline0("LD B, A" );
-    outline1("LD A, $%2.2x", _state );
+    outline1("LD A, $%2.2x", ( _state & 0xff ) );
 
     outline0("CALL PROTOTHREADSETSTATE" );
 
