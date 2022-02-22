@@ -43,9 +43,9 @@
 #define VDP_RCOLOR      0x87
 
 #define WVDP( r, v ) \
-    outline1("LD A, $%2.2x", r ); \
+    outline1("LD A, $%2.2x", ( r & 0xff ) ); \
     outline0("LD E, A" ); \
-    outline1("LD A, $%2.2x", v ); \
+    outline1("LD A, $%2.2x", ( v & 0xff ) ); \
     outline0("CALL VDPSETREG" );
 #define WVDP_R0( v )            WVDP( VDP_R0, v )
 #define WVDP_R1( v )            WVDP( VDP_R1, v )
@@ -108,6 +108,8 @@
 #define SPRITE_FLAG_COMPRESS_VERTICAL   0x0000
 #define SPRITE_FLAG_EXPAND_HORIZONTAL   0x0080
 #define SPRITE_FLAG_COMPRESS_HORIZONTAL 0x0000
+
+// #define TILES_PADDING           8
 
 int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode );
 
