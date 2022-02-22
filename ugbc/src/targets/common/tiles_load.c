@@ -233,6 +233,14 @@ Variable * tiles_load( Environment * _environment, char * _filename, int _flags,
 
     stbi_image_free(source);
 
+    // printf( "Last tile = %d\n", descriptors->firstFree );
+
+    // if ( ( descriptors->firstFree % TILES_PADDING ) ) {
+    //     printf( "Padding with %d ", TILES_PADDING-( _environment->descriptors->firstFree % TILES_PADDING ) );
+    //     descriptors->firstFree += TILES_PADDING-( _environment->descriptors->firstFree % TILES_PADDING );
+    //     printf( "Last tile = %d\n", descriptors->firstFree );
+    // }
+
     return index;
 
 }
