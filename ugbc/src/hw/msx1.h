@@ -139,10 +139,10 @@
 #define JOY_COUNT           2
 
 #define JOY_UP              0
-#define JOY_DOWN            2
-#define JOY_LEFT            3
-#define JOY_RIGHT           4
-#define JOY_FIRE            0
+#define JOY_DOWN            1
+#define JOY_LEFT            2
+#define JOY_RIGHT           3
+#define JOY_FIRE            4
 
 void msx1_inkey( Environment * _environment, char * _pressed, char * _key );
 void msx1_scancode( Environment * _environment, char * _pressed, char * _scacode );
@@ -151,5 +151,6 @@ void msx1_keyshift( Environment * _environment, char * _shifts );
 void msx1_clear_key( Environment * _environment );
 void msx1_irq_at( Environment * _environment, char * _label );
 void msx1_follow_irq( Environment * _environment );
+void msx1_joy( Environment * _environment, char * _port, char * _result );
 
 #endif
