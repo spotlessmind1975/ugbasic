@@ -511,6 +511,7 @@ TMS9918STARTUP:
         LD A, D
         LD (HL), A
 
+        LD A, $C3
         LD HL, ONSCROLLDOWN
         LD (HL), A
         INC HL
@@ -520,6 +521,7 @@ TMS9918STARTUP:
         LD A, D
         LD (HL), A
 
+        LD A, $C3
         LD HL, ONSCROLLLEFT
         LD (HL), A
         INC HL
@@ -529,6 +531,7 @@ TMS9918STARTUP:
         LD A, D
         LD (HL), A
 
+        LD A, $C3
         LD HL, ONSCROLLRIGHT
         LD (HL), A
         INC HL
@@ -551,5 +554,5 @@ WAITVBL2:
     CALL VDPREGIN
     AND $80
     CP 0
-    JR Z, WAITVBL
+    JR Z, WAITVBL2
     RET
