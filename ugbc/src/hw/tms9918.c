@@ -379,8 +379,8 @@ static int rgbConverterFunction( int _red, int _green, int _blue ) {
 
 int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
 
-    cpu_store_8bit( _environment, "_PEN", 0x01 );
-    cpu_store_8bit( _environment, "_PAPER", 0x00 );
+    cpu_store_8bit( _environment, "_PEN", DEFAULT_PEN_COLOR );
+    cpu_store_8bit( _environment, "_PAPER", DEFAULT_PAPER_COLOR );
 
 #ifdef __coleco__
 
@@ -1168,6 +1168,29 @@ void tms9918_initialization( Environment * _environment ) {
     variable_import( _environment, "TILEO", VT_WORD, 0 );
     variable_global( _environment, "TILEO" );
 
+    variable_import( _environment, "XSCROLLPOS", VT_BYTE, 0 );
+    variable_global( _environment, "XSCROLLPOS" );
+    variable_import( _environment, "YSCROLLPOS", VT_BYTE, 0 );
+    variable_global( _environment, "YSCROLLPOS" );
+    variable_import( _environment, "XSCROLL", VT_BYTE, 0 );
+    variable_global( _environment, "XSCROLL" );
+    variable_import( _environment, "YSCROLL", VT_BYTE, 0 );
+    variable_global( _environment, "YSCROLL" );
+    variable_import( _environment, "DIRECTION", VT_BYTE, 0 );
+    variable_global( _environment, "DIRECTION" );
+
+    variable_import( _environment, "ONSCROLLUP", VT_BUFFER, 3 );
+    variable_global( _environment, "ONSCROLLUP" );
+
+    variable_import( _environment, "ONSCROLLDOWN", VT_BUFFER, 3 );
+    variable_global( _environment, "ONSCROLLDOWN" );
+
+    variable_import( _environment, "ONSCROLLLEFT", VT_BUFFER, 3 );
+    variable_global( _environment, "ONSCROLLLEFT" );
+
+    variable_import( _environment, "ONSCROLLRIGHT", VT_BUFFER, 3 );
+    variable_global( _environment, "ONSCROLLRIGHT" );
+
     #if __coleco__
         variable_import( _environment, "VDP_HOOK", VT_BUFFER, 10 );
         variable_global( _environment, "VDP_HOOK" );
@@ -1751,7 +1774,17 @@ void tms9918_get_image( Environment * _environment, char * _image, char * _x, ch
 
 void tms9918_scroll( Environment * _environment, int _dx, int _dy ) {
 
+    deploy( vic2vars, src_hw_tms9918_vars_asm);
     deploy( scroll, src_hw_tms9918_scroll_asm);
+    deploy( textHScroll, src_hw_tms9918_hscroll_text_asm );
+    deploy( vScrollTextDown, src_hw_tms9918_vscroll_text_down_asm );
+    deploy( vScrollTextUp, src_hw_tms9918_vscroll_text_up_asm );
+
+    outline1("LD A, $%2.2x", (unsigned char)(_dx&0xff) );
+    outline0("LD B, A" );
+    outline1("LD A, $%2.2x", (unsigned char)(_dy&0xff) );
+    outline0("LD C, A" );
+    outline0("CALL SCROLL");
 
 }
 

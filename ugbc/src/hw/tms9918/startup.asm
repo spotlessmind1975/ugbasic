@@ -454,6 +454,9 @@ VDP_RSPRITEA        EQU 85H
 VDP_RSPRITEP        EQU 86H
 VDP_RCOLOR          EQU 87H
 
+ONSCROLLVOID:
+    RET
+
 TMS9918STARTUP:
 
         DI
@@ -497,7 +500,56 @@ TMS9918STARTUP:
         LD A, $f0
         CALL VDPSETREG
 
+        LD A, $C3
+        LD HL, ONSCROLLUP
+        LD (HL), A
+        INC HL
+        LD DE, ONSCROLLVOID
+        LD A, E
+        LD (HL), A
+        INC HL
+        LD A, D
+        LD (HL), A
+
+        LD HL, ONSCROLLDOWN
+        LD (HL), A
+        INC HL
+        LD A, E
+        LD (HL), A
+        INC HL
+        LD A, D
+        LD (HL), A
+
+        LD HL, ONSCROLLLEFT
+        LD (HL), A
+        INC HL
+        LD A, E
+        LD (HL), A
+        INC HL
+        LD A, D
+        LD (HL), A
+
+        LD HL, ONSCROLLRIGHT
+        LD (HL), A
+        INC HL
+        LD A, E
+        LD (HL), A
+        INC HL
+        LD A, D
+        LD (HL), A
+
         EI
 
         RET
 
+WAITVBL:
+    CALL VDPREGIN
+    AND $80
+    CP $80
+    JR Z, WAITVBL
+WAITVBL2:
+    CALL VDPREGIN
+    AND $80
+    CP 0
+    JR Z, WAITVBL
+    RET
