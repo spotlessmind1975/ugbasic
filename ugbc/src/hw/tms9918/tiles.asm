@@ -140,15 +140,22 @@ PUTTILEL2:
     LD A, 0
     LD D, A
     LD HL, $480
-    ADC HL, DE
+    ADD HL, DE
     LD DE, HL
+    LD BC, 1
+    CALL VDPINCHAR
+    AND $F0
+    CP 0
+    JR NZ, TILENOCOLOR
     LD A, (_PEN)
     SLA A
     SLA A
     SLA A
     SLA A
+    LD DE, HL
     LD BC, 1
     CALL VDPOUTCHAR
+TILENOCOLOR:    
     POP BC
     POP DE
     POP AF
