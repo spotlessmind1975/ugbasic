@@ -376,7 +376,7 @@ TEXTATSP0:
     LD A, 0
     LD D, A
     LD HL, $480
-    ADC HL, DE
+    ADD HL, DE
     LD DE, HL
     LD A, (_PEN)
     SLA A
