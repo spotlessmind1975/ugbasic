@@ -614,8 +614,10 @@ void tms9918_bitmap_enable( Environment * _environment, int _width, int _height,
         tms9918_screen_mode_enable( _environment, mode );
 
         cpu_store_8bit( _environment, "CURRENTMODE", mode->id );
-        
+        cpu_store_8bit( _environment, "CURRENTTILEMODE", 0 );
+
         _environment->currentMode = mode->id;
+        _environment->currentTileMode = 0;
 
         tms9918_cls( _environment );
 
@@ -641,8 +643,10 @@ void tms9918_tilemap_enable( Environment * _environment, int _width, int _height
         tms9918_screen_mode_enable( _environment, mode );
 
         _environment->currentMode = mode->id;
+        _environment->currentTileMode = 1;
 
         cpu_store_8bit( _environment, "CURRENTMODE", mode->id );
+        cpu_store_8bit( _environment, "CURRENTTILEMODE", 1 );
 
         tms9918_cls( _environment );
 
@@ -1009,7 +1013,7 @@ void tms9918_tiles_get_height( Environment * _environment, char *_result ) {
 
 void tms9918_cls( Environment * _environment ) {
     
-    if ( _environment->currentMode == 2 || _environment->currentMode == 3 ) {
+    if ( ( _environment->currentMode == 2 || _environment->currentMode == 3 ) && !_environment->currentTileMode ) {
         deploy( clsGraphic, src_hw_tms9918_cls_graphic_asm );
         if ( ! _environment->hasGameLoop ) {
             outline0("CALL CLSG");
@@ -1056,7 +1060,7 @@ void tms9918_text( Environment * _environment, char * _text, char * _text_size )
     outline1("LD A, (%s)", _text_size);
     outline0("LD C, A");
 
-    if ( _environment->currentMode == 2 || _environment->currentMode == 3 ) {
+    if ( ( _environment->currentMode == 2 || _environment->currentMode == 3 ) && !_environment->currentTileMode ) {
         deploy( clsGraphic, src_hw_tms9918_cls_graphic_asm );
         deploy( tms9918varsGraphic, src_hw_tms9918_vars_graphic_asm );
         deploy( textEncodedAt, src_hw_tms9918_text_asm );
@@ -1146,6 +1150,8 @@ void tms9918_initialization( Environment * _environment ) {
 
     variable_import( _environment, "CURRENTMODE", VT_BYTE, 0 );
     variable_global( _environment, "CURRENTMODE" );
+    variable_import( _environment, "CURRENTTILEMODE", VT_BYTE, 1 );
+    variable_global( _environment, "CURRENTTILEMODE" );
 
     variable_import( _environment, "SPRITECOUNT", VT_SPRITE, 0 );
     variable_global( _environment, "SPRITECOUNT" );

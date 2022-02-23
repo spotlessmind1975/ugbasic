@@ -58,9 +58,11 @@ void screen_mode( Environment * _environment, int _mode ) {
         c6847_screen_mode_enable( _environment, mode );    
 
         _environment->currentMode = mode->id;
+        _environment->currentTileMode = 0;
 
         cpu_store_8bit( _environment, "CURRENTMODE", mode->id );
-        
+        cpu_store_8bit( _environment, "CURRENTTILEMODE", 0 );
+
     } else {
         WARNING_SCREEN_MODE( _mode );
     }

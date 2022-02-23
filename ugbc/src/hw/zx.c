@@ -281,6 +281,8 @@ void zx_initialization( Environment * _environment ) {
 
     variable_import( _environment, "CURRENTMODE", VT_BYTE, 0 );
     variable_global( _environment, "CURRENTMODE" );
+    variable_import( _environment, "CURRENTTILEMODE", VT_BYTE, 1 );
+    variable_global( _environment, "CURRENTTILEMODE" );
     
     _environment->currentRgbConverterFunction = rgbConverterFunction;
 

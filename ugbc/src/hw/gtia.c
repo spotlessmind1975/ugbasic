@@ -997,7 +997,9 @@ void gtia_bitmap_enable( Environment * _environment, int _width, int _height, in
         gtia_screen_mode_enable( _environment, mode );
         // printf( "%d\n", mode->id);
         cpu_store_8bit( _environment, "CURRENTMODE", mode->id );    
+        cpu_store_8bit( _environment, "CURRENTTILEMODE", 0 );
         _environment->currentMode = mode->id;
+        _environment->currentTileMode = 0;
     } else {
         WARNING_SCREEN_MODE( -1 );
     }
@@ -1019,8 +1021,10 @@ void gtia_tilemap_enable( Environment * _environment, int _width, int _height, i
         cpu_store_8bit( _environment, "_PAPER", 0x00 );
 
         cpu_store_8bit( _environment, "CURRENTMODE", mode->id );
+        cpu_store_8bit( _environment, "CURRENTTILEMODE", 1 );
 
         _environment->currentMode = mode->id;
+        _environment->currentTileMode = 1;
     } else {
         WARNING_SCREEN_MODE( -1 );
     }
@@ -1349,6 +1353,8 @@ void gtia_initialization( Environment * _environment ) {
 
     variable_import( _environment, "CURRENTMODE", VT_BYTE, 0 );
     variable_global( _environment, "CURRENTMODE" );
+    variable_import( _environment, "CURRENTTILEMODE", VT_BYTE, 1 );
+    variable_global( _environment, "CURRENTTILEMODE" );
 
     variable_import( _environment, "XGR", VT_POSITION, 0 );
     variable_global( _environment, "XGR" );
@@ -1371,6 +1377,7 @@ void gtia_initialization( Environment * _environment ) {
     gtia_tilemap_enable( _environment, 40, 24, 1, 8, 8 );
 
     _environment->currentMode = 2;
+    _environment->currentTileMode = 1;
 
     gtia_cls( _environment );
 

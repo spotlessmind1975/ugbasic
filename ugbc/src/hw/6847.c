@@ -618,8 +618,10 @@ void c6847_bitmap_enable( Environment * _environment, int _width, int _height, i
         c6847_screen_mode_enable( _environment, mode );
 
         cpu_store_8bit( _environment, "CURRENTMODE", mode->id );
+        cpu_store_8bit( _environment, "CURRENTTILEMODE", 0 );
 
         _environment->currentMode = mode->id;
+        _environment->currentTileMode = 0;
     } else {
         WARNING_SCREEN_MODE( -1 );
     }
@@ -638,8 +640,11 @@ void c6847_tilemap_enable( Environment * _environment, int _width, int _height, 
         c6847_screen_mode_enable( _environment, mode );
 
         _environment->currentMode = mode->id;
+        _environment->currentTileMode = 1;
 
         cpu_store_8bit( _environment, "CURRENTMODE", mode->id );    
+        cpu_store_8bit( _environment, "CURRENTTILEMODE", 1 );
+
     } else {
         WARNING_SCREEN_MODE( -1 );
     }
@@ -906,6 +911,11 @@ void c6847_initialization( Environment * _environment ) {
     deploy( c6847startup, src_hw_6847_startup_asm );
     // src_hw_chipset_mob_asm = src_hw_6847_mob_asm;
     // src_hw_chipset_mob_asm_len = src_hw_6847_mob_asm_len;
+
+    variable_import( _environment, "CURRENTMODE", VT_BYTE, 0 );
+    variable_global( _environment, "CURRENTMODE" );
+    variable_import( _environment, "CURRENTTILEMODE", VT_BYTE, 1 );
+    variable_global( _environment, "CURRENTTILEMODE" );
 
     variable_import( _environment, "CURRENTWIDTH", VT_POSITION, 256 );
     variable_global( _environment, "CURRENTWIDTH" );
