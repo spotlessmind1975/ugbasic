@@ -1,0 +1,17 @@
+REM @english
+REM GRAPHICS PRIMITIVES VERTICAL BLANK SYNC
+REM
+REM This example will show how to programmatically syncronize with the vertical blank.
+REM
+REM @italian
+REM PRIMITIVE DI GRAFICA SINCRONIZZAZIONE CON IL VERTICAL BLANK
+REM
+REM Questo esempio mostra come sincronizzarsi, programmaticamente, con il vertical blank.
+REM
+
+    BITMAP ENABLE(16)
+    CLS
+    DO
+        PLOT RND(SCREEN COLUMNS-1), RND(SCREEN ROWS-1), RND(SCREEN COLORS-1)
+        WAIT VBL
+    LOOP
