@@ -60,11 +60,19 @@ endif
 
 CLSTNMI2:
 
+    LD A, (CURRENTTILEMODE)
+    CP 0
+    RET Z
+
     LD A, (CURRENTMODE)
     CP 0
     JR Z,CLST0
     CP 1
     JR Z,CLST1
+    CP 2
+    JR Z,CLST2
+    CP 3
+    JR Z,CLST3
     JP CLSTDONE
 
 CLST0:
@@ -83,6 +91,20 @@ CLST1:
     LD A, (_PAPER)
     LD BC, $100 + 32
     LD DE, $0480
+    CALL VDPFILL
+
+    JP CLSTDONE
+
+CLST2:
+CLST3:
+    LD A, (EMPTYTILE)
+    LD BC, $100 + 32*24
+    LD DE, $3800
+    CALL VDPFILL
+
+    LD A, (_PAPER)
+    LD BC, 32*24*8
+    LD DE, $2000
     CALL VDPFILL
 
     JP CLSTDONE

@@ -446,6 +446,8 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
             WVDP_RSPRITEA( 0xff );
             WVDP_RSPRITEP( 0xff );
 
+            outline0("CALL TMS9918AUDCCHAR01");
+
             break;
         case TILEMAP_MODE_GRAPHIC1:
             _environment->fontWidth = 8;
@@ -508,6 +510,8 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
 
             WVDP_RSPRITEA( 0x20 ); // 1000
             WVDP_RSPRITEP( 0x00 ); // 0000
+
+            outline0("CALL TMS9918AUDCCHAR01");
 
             break;
         case BITMAP_MODE_GRAPHIC2:
@@ -572,6 +576,8 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
 
             WVDP_RSPRITEA( 0x20 ); // 1000
             WVDP_RSPRITEP( 0x00 ); // 0000
+
+            outline0("CALL TMS9918AUDCCHAR23");
 
             break;
     }
@@ -1109,6 +1115,7 @@ void tms9918_initialization( Environment * _environment ) {
     variable_global( _environment, "FONTHEIGHT" );
 
     SCREEN_MODE_DEFINE( TILEMAP_MODE_STANDARD, 0, 40, 24, 20, 6, 8, "Text Mode" );
+    SCREEN_MODE_DEFINE( BITMAP_MODE_GRAPHIC2, 0, 32, 24, 16, 8, 8, "Graphic II" );
     SCREEN_MODE_DEFINE( TILEMAP_MODE_GRAPHIC1, 0, 32, 24, 16, 8, 8, "Graphic I" );
 
     SCREEN_MODE_DEFINE( BITMAP_MODE_GRAPHIC2, 1, 256, 192, 16, 8, 8, "Graphic II" );
@@ -1209,8 +1216,6 @@ void tms9918_initialization( Environment * _environment ) {
     #endif
 
     tms9918_tilemap_enable( _environment, 40, 24, 1, 8, 8 );
-
-    outline0("CALL TMS9918AUDCCHAR");
 
     tms9918_cls( _environment );
 

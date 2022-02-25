@@ -60,6 +60,16 @@ endif
 
 CLSGNMI2:
 
+    LD A, (CURRENTTILEMODE)
+    CP 1
+    RET Z
+
+    LD A, (CURRENTMODE)
+    CP 0
+    RET Z
+    CP 1
+    RET Z
+
     LD A, 0
     LD DE, $3800
     LD BC, 256*3

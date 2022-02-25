@@ -66,6 +66,10 @@ endif
 
 PLOTNMI2:
 
+    LD A, (CURRENTTILEMODE)
+    CP 1
+    RET Z
+
     PUSH AF
 
     LD A, (CLIPY2)

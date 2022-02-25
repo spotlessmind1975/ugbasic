@@ -1273,6 +1273,11 @@ typedef struct _Environment {
     int currentMode;
 
     /**
+     * Current tile / bitmap mode
+     */
+    int currentTileMode;
+
+    /**
      * Current RGB converter
      */
     RgbConverterFunction currentRgbConverterFunction;

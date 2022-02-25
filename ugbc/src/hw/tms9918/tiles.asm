@@ -66,6 +66,10 @@ endif
 
 PUTTILENMI2:
 
+    LD A, (CURRENTTILEMODE)
+    CP 0
+    RET Z
+
     LD A, (TILEH2)
     CP 0
     RET Z
@@ -73,8 +77,28 @@ PUTTILENMI2:
     CP 0
     RET Z
 
-    LD HL, $1800
+    LD A, (CURRENTMODE)
+    CP 0
+    JR Z,PUTTILENMI20
+    CP 1
+    JR Z,PUTTILENMI21
+    CP 2
+    JR Z,PUTTILENMI22
+    CP 3
+    JR Z,PUTTILENMI23
+    RET
 
+PUTTILENMI20:
+PUTTILENMI21:
+    LD HL, $1800
+    JMP PUTTILENMI2X
+
+PUTTILENMI22:
+PUTTILENMI23:
+    LD HL, $3800
+    JMP PUTTILENMI2X
+
+PUTTILENMI2X:
     LD A, (CURRENTTILESWIDTH)
     LD B, A
     LD A, (TILEX)
@@ -132,6 +156,20 @@ PUTTILEL2:
     PUSH AF
     PUSH DE
     PUSH BC
+
+    LD A, (CURRENTMODE)
+    CP 0
+    JR Z,PUTTILECOL20
+    CP 1
+    JR Z,PUTTILECOL21
+    CP 2
+    JR Z,PUTTILECOL22
+    CP 3
+    JR Z,PUTTILECOL23
+    RET
+
+PUTTILECOL20:
+PUTTILECOL21:
     LD A, (TILET)
     SRL A
     SRL A
@@ -152,9 +190,49 @@ PUTTILEL2:
     SLA A
     SLA A
     SLA A
-    LD DE, HL
     LD BC, 1
     CALL VDPOUTCHAR
+    JMP PUTTILECOL2X
+
+PUTTILECOL22:
+PUTTILECOL23:
+
+    LD A, (TILEX2)
+    LD E, A
+    LD D, 0
+    LD HL, PLOT8
+    ADD HL, DE
+    ADD HL, DE
+    LD A, (HL)
+    LD C, A
+    INC HL
+    LD A, (HL)
+    LD B, A
+
+    LD HL, PLOTCVBASE
+    LD A, (TILEY)
+    LD E, A
+    LD D, 0
+    ADD HL, DE
+    ADD HL, DE
+    LD A, (HL)
+    LD E, A
+    INC HL
+    LD A, (HL)
+    LD D, A
+    LD HL, DE
+    ADD HL, BC
+    LD DE, HL
+    LD A, (_PEN)
+    SLA A
+    SLA A
+    SLA A
+    SLA A
+    LD BC, 1
+    CALL VDPFILL8
+    JMP PUTTILECOL2X
+
+PUTTILECOL2X:
 TILENOCOLOR:    
     POP BC
     POP DE
@@ -179,7 +257,7 @@ TILENOCOLOR:
 
     INC HL
     DEC B
-    JR NZ, PUTTILEL2
+    JP NZ, PUTTILEL2
     JMP PUTTILENL
 
 PUTTILERE:
@@ -205,7 +283,7 @@ PUTTILENL:
     POP BC
 
     LD A, (TILEH2)
-    CP 1
+    CP 0
     JR Z, PUTTILEE
 
     LD A, (CURRENTTILESWIDTH)

@@ -60,6 +60,10 @@ endif
 
 GETIMAGENMI2:
 
+    LD A, (CURRENTTILEMODE)
+    CP 1
+    RET Z
+
     LD A, (CURRENTMODE)
     CP 0
     JR NZ, GETIMAGE0X
