@@ -39,7 +39,6 @@
 CLS
     PSHS  DP
 
-
     LDA CURRENTMODE
     BEQ CLS0
     DECA
@@ -92,6 +91,21 @@ CLS4
     LDU #0
     
 CLSG
+    PSHS D
+    LDA DOUBLEBUFFERENABLED
+    CMPA #0
+    BEQ CLSGORIG
+
+    LDA #$00
+    LDY BITMAPADDRESS
+CLSGDB
+    STA ,Y+
+    CMPY #$9FFF 
+    BNE CLSGDB
+    RTS		        
+
+CLSGORIG
+    PULS D
     LDX BITMAPADDRESS
     LEAX 10,X
     PSHS D,U
