@@ -83,6 +83,10 @@ Loop * loop = _environment->loops;
             run_parallel( _environment );
         }
         cpu_call( _environment, "WAITVBL");
+        deploy_embedded( cpu_mem_move, src_hw_6809_cpu_mem_move_asm );
+        if ( _environment->doubleBufferEnabled ) {
+            outline0( "JSR SWITCHTILEMAP");
+        }
         cpu_jump( _environment, loop->label );
         unsigned char newLabel[MAX_TEMPORARY_STORAGE]; sprintf(newLabel, "%sbis", loop->label );
         cpu_label( _environment, newLabel );

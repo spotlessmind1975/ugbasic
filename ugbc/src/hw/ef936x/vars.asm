@@ -57,6 +57,7 @@ CURRENTSL          fcb 40
 TEXTWW      fcb 3
 FONTWIDTH       fcb 8
 FONTHEIGHT      fcb 8
+TILEMAPVISIBLE  fcb 0
 
 IMAGEX EQU $41 ; $42
 IMAGEY EQU $43 ; $44
