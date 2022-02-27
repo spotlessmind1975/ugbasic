@@ -51,25 +51,6 @@ PLOTP
 ; output B result if A=2 or 3
 PLOT
 
-    ; Check if double buffering is active -- in case,
-    ; whe should use a different version.
-    LDA DOUBLEBUFFERENABLED
-    CMPA #0
-    BEQ PLOTORIG
-
-; ----------------------------------------------
-; Version active on double buffering ON
-; ----------------------------------------------
-
-PLOTDB
-	RTS
-
-; ----------------------------------------------
-; Version active on double buffering OFF
-; ----------------------------------------------
-
-PLOTORIG
-
     CMPX CLIPX2
     BGT PLOTP
     CMPX CLIPX1   ; check if plotting out of clipped area
@@ -79,6 +60,399 @@ PLOTORIG
     BGT PLOTP
     CMPU CLIPY1
     BLT PLOTP
+
+    ; Check if double buffering is active -- in case,
+    ; whe should use a different version.
+    LDA DOUBLEBUFFERENABLED
+    CMPA #0
+    LBEQ PLOTORIG
+
+; ----------------------------------------------
+; Version active on double buffering ON
+; ----------------------------------------------
+
+PLOTDB
+
+    LDX BITMAPADDRESS
+
+    ANDCC #$FE
+    LDD <PLOTY
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+
+    LSLB
+    ROLA
+
+    TFR D, Y
+
+    ANDCC #$FE
+    LDD <PLOTY
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+
+    LEAY D, Y
+    TFR Y, D
+    LEAX D, X
+
+PLOTMODEDB
+    LDA CURRENTMODE
+    CMPA #0
+    BNE PLOT0XDB
+    JMP PLOT0DB
+PLOT0XDB
+    CMPA #1
+    BNE PLOT1XDB
+    JMP PLOT1DB
+PLOT1XDB
+    CMPA #2
+    BNE PLOT2XDB
+    JMP PLOT2DB
+PLOT2XDB
+    CMPA #3
+    BNE PLOT3XDB
+    JMP PLOT3DB
+PLOT3XDB
+    CMPA #4
+    BNE PLOT4XDB
+    JMP PLOT4DB
+PLOT4XDB
+    RTS
+
+PLOT0DB
+PLOT1DB
+PLOT2DB
+PLOT4DB
+
+    ANDCC #$FE
+    LDD <PLOTX
+    LSRA
+    RORB
+    LSRA
+    RORB
+    LSRA
+    RORB
+    LEAX D, X
+
+    LDY #PLOTORBIT
+    LDB <(PLOTX+1)
+    ANDB #$07
+    LEAY B, Y
+
+    LDU #PLOTANDBIT
+    LEAU B, U
+
+    JMP PLOTCOMMONDB
+
+PLOT3DB
+
+    LDD <(PLOTY)
+    LSLB
+    ROLA
+    ADDD #PLOTVBASE
+    TFR D, X
+    LDD , X
+    TFR D, X
+
+    LDB <(PLOTX+1)
+    LSRB
+    LSRB
+    LEAX B, X
+
+    LDB <(PLOTX+1)
+    ANDB #$03
+    ; COMB
+    ; LDY #3
+    LEAY B, Y
+    TFR Y, D
+    LSRB
+
+;     ANDB #$01
+;     CMPB #$01
+;     BEQ PLOT3PAGE1
+
+; PLOT3PAGE0
+
+;     LDA $a7c0
+;     ORA #$01
+;     STA $a7c0
+
+;     JMP PLOT3PAGEF
+
+; PLOT3PAGE1
+
+;     LDA $a7c0
+;     ANDA #$fe
+;     STA $a7c0
+
+;     JMP PLOT3PAGEF
+
+; PLOT3PAGEF
+
+    JMP PLOTCOMMONDB
+
+PLOTCOMMONDB
+
+    ;----------------------------------------------
+    ;depending on PLOTM, routine draws or erases
+    ;----------------------------------------------
+
+    LDA <PLOTM                  ;(0 = erase, 1 = set, 2 = get pixel, 3 = get color)
+    CMPA #0
+    BNE PLOTEXDB                  ;if = 0 then branch to clear the point
+    JMP PLOTEDB
+PLOTEXDB
+    CMPA #1
+    BNE PLOTDXDB                  ;if = 1 then branch to draw the point
+    JMP PLOTDDB
+PLOTDXDB
+    CMPA #2
+    BEQ PLOTGXDB                  ;if = 2 then branch to get the point (0/1)
+    JMP PLOTGDB
+PLOTGXDB
+    CMPA #3
+    BEQ PLOTCXDB                  ;if = 3 then branch to get the color index (0...15)
+    JMP PLOTCDB
+PLOTCXDB
+    JMP PLOTP
+
+PLOTDDB
+
+    LDA CURRENTMODE
+    CMPA #0
+    BNE PLOTD0XDB
+    JMP PLOTD0DB
+PLOTD0XDB
+    CMPA #1
+    BNE PLOTD1XDB
+    JMP PLOTD1DB
+PLOTD1XDB
+    CMPA #2
+    BNE PLOTD2XDB
+    JMP PLOTD2DB
+PLOTD2XDB
+    CMPA #3
+    BNE PLOTD3XDB
+    JMP PLOTD3DB
+PLOTD3XDB
+    JMP PLOTP
+
+PLOTD0DB
+PLOTD1DB
+PLOTD4DB
+
+    ANDCC #$FE
+    LDA _PEN
+    ANDA #$0F
+    ASLA
+    ASLA
+    ASLA
+    ASLA
+    STA <MATHPTR5
+    
+    ;---------
+    ;set point
+    ;---------
+
+    ; LDA $a7c0
+    ; ORA #$01
+    ; STA $a7c0
+
+    LDA , X           ;get row with point in it
+    ANDA , U
+    ORA , Y               ;isolate AND set the point
+    STA , X           ;write back to $A000
+
+    ; LDA $a7c0
+    ; ANDA #$fe
+    ; STA $a7c0
+
+    LDA , X           ;get row with point in it
+    ANDA #$0F
+    ORA <MATHPTR5
+    STA , X           ;write back to $A000
+
+    JMP PLOTP                  ;skip the erase-point section
+
+PLOTD2DB
+
+    LDA _PEN
+    ANDA #$03
+    STA <MATHPTR5
+
+    ;---------
+    ;set point
+    ;---------
+
+    ; LDA $a7c0
+    ; ORA #$01
+    ; STA $a7c0
+
+    LDA <MATHPTR5
+    ANDA #$02
+    CMPA #$02
+    BNE PLOTD21DB
+
+PLOTD20DB
+    LDA , X           ;get row with point in it
+    ANDA , U
+    ORA , Y               ;isolate AND set the point
+    STA , X           ;write back to $A000
+    JMP PLOTD22DB
+
+PLOTD21DB
+    LDA , X           ;get row with point in it
+    ANDA , U
+    STA , X           ;write back to $A000
+    JMP PLOTD22DB
+
+PLOTD22DB
+    ; LDA $a7c0
+    ; ANDA #$fe
+    ; STA $a7c0
+
+    LDA <MATHPTR5
+    ANDA #$01
+    CMPA #$01
+    BNE PLOTD24DB
+
+PLOTD23DB
+    LDA , X           ;get row with point in it
+    ANDA , U
+    ORA , Y               ;isolate AND set the point
+    STA , X           ;write back to $A000
+    JMP PLOTD25DB
+
+PLOTD24DB
+    LDA , X           ;get row with point in it
+    ANDA , U
+    STA , X           ;write back to $A000
+    JMP PLOTD25DB
+
+PLOTD25DB
+    JMP PLOTP                  ;skip the erase-point section
+
+PLOTD3DB
+
+    LDA _PEN
+    ANDA #$0F
+    STA <MATHPTR5
+
+    ;---------
+    ;set point
+    ;---------
+
+    LDB <(PLOTX+1)
+    ANDB #$01
+    CMPB #$01
+    BEQ PLOTD3LODB
+
+PLOTD3HIDB
+
+    LDA <MATHPTR5
+    ASLA
+    ASLA
+    ASLA
+    ASLA
+    STA <MATHPTR5
+    LDA , X
+    ORA <MATHPTR5
+    STA , X
+    JMP PLOTD3FDB
+
+PLOTD3LODB
+
+    LDA , X
+    ORA <MATHPTR5
+    STA , X
+    JMP PLOTD3FDB
+
+PLOTD3FDB
+    JMP PLOTP                  ;skip the erase-point section
+
+    ;-----------
+    ;erase point
+    ;-----------
+PLOTEDB                          ;handled same way as setting a point
+    ; LDA $a7c0
+    ; ORA #$01
+    ; STA $a7c0
+
+    LDA , X           ;get row with point in it
+    ANDA , U
+    STA , X           ;write back to $A000
+
+    JMP PLOTP                  ;skip the erase-point section
+
+PLOTGDB      
+    ; LDA $a7c0
+    ; ORA #$01
+    ; STA $a7c0
+
+    LDA , X           ;get row with point in it
+    ANDA , U
+
+    CMPA #0
+    BEQ PLOTG0DB
+PLOTG1DB
+    LDA #$ff
+    STA PLOTM
+    JMP PLOTP
+PLOTG0DB
+    LDA #$0
+    STA PLOTM
+    JMP PLOTP            
+
+PLOTCDB
+    ; LDA $a7c0
+    ; ANDA #$fe
+    ; STA $a7c0
+
+    LDA , X           ;get row with point in it
+    LSRA
+    LSRA
+    LSRA
+    LSRA
+    STA PLOTM
+    JMP PLOTP
+
+	RTS
+
+PLOTORBIT4
+    fcb %00000001
+    fcb %00010000
+    fcb %00000010
+    fcb %00100000
+    fcb %00000100
+    fcb %01000000
+    fcb %00001000
+    fcb %10000000
+
+PLOTANDBIT4
+    fcb %11111110
+    fcb %11101111
+    fcb %11111101
+    fcb %11011111
+    fcb %11111011
+    fcb %10111111
+    fcb %11110111
+    fcb %01111111
+
+; ----------------------------------------------
+; Version active on double buffering OFF
+; ----------------------------------------------
+
+PLOTORIG
 
     STX <PLOTX
     STU <PLOTY
