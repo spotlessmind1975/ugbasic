@@ -38,7 +38,7 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 CLS
-    PSHS  DP
+    ; PSHS  DP
 
     LDA CURRENTMODE
     BEQ CLS0
@@ -50,7 +50,7 @@ CLS
     BEQ CLS3
     DECA
     BEQ CLS4
-    PULS DP,PC
+    RTS
 
 CLS2
     CLRA
@@ -157,5 +157,5 @@ CLSGL1
 CLSGL2
     CMPX #$5555
     BLO CLSGL1
-    PULS DP,PC
+    RTS
 
