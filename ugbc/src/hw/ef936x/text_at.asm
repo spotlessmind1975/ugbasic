@@ -73,6 +73,26 @@ TEXTAT
     RTS
 
 TEXTATGO
+
+    ; Check if double buffering is active -- in case,
+    ; whe should use a different version.
+    LDA DOUBLEBUFFERENABLED
+    CMPA #0
+    BEQ TEXTATGOORIG
+
+; ----------------------------------------------
+; Version active on double buffering ON
+; ----------------------------------------------
+
+TEXTATGODB
+	RTS
+
+; ----------------------------------------------
+; Version active on double buffering OFF
+; ----------------------------------------------
+
+TEXTATGOORIG
+
     LDY TEXTADDRESS
     STY <COPYOFTEXTADDRESS
     LDA #0

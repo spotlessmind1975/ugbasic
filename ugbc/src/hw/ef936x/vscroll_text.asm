@@ -37,6 +37,25 @@
 
 VSCROLLT
 
+    ; Check if double buffering is active -- in case,
+    ; whe should use a different version.
+    LDA DOUBLEBUFFERENABLED
+    CMPA #0
+    BEQ VSCROLLTORIG
+
+; ----------------------------------------------
+; Version active on double buffering ON
+; ----------------------------------------------
+
+VSCROLLTDB
+	RTS
+
+; ----------------------------------------------
+; Version active on double buffering OFF
+; ----------------------------------------------
+
+VSCROLLTORIG
+
     ANDCC #$FE
     LDA _PEN
     ANDA #$0F

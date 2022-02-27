@@ -36,6 +36,26 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 HSCROLLST
+
+    ; Check if double buffering is active -- in case,
+    ; whe should use a different version.
+    LDA DOUBLEBUFFERENABLED
+    CMPA #0
+    BEQ HSCROLLSTORIG
+
+; ----------------------------------------------
+; Version active on double buffering ON
+; ----------------------------------------------
+
+HSCROLLSTDB
+	RTS
+
+; ----------------------------------------------
+; Version active on double buffering OFF
+; ----------------------------------------------
+
+HSCROLLSTORIG
+
 	PSHS A,B,X,Y,U
     LDA <DIRECTION
 	CMPA #0

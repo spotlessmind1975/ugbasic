@@ -50,6 +50,26 @@ PLOTP
 ; input X=X coord, U=Y coord, A=(0 = erase, 1 = set, 2 = get pixel, 3 = get color)
 ; output B result if A=2 or 3
 PLOT
+
+    ; Check if double buffering is active -- in case,
+    ; whe should use a different version.
+    LDA DOUBLEBUFFERENABLED
+    CMPA #0
+    BEQ PLOTORIG
+
+; ----------------------------------------------
+; Version active on double buffering ON
+; ----------------------------------------------
+
+PLOTDB
+	RTS
+
+; ----------------------------------------------
+; Version active on double buffering OFF
+; ----------------------------------------------
+
+PLOTORIG
+
     CMPX CLIPX2
     BGT PLOTP
     CMPX CLIPX1   ; check if plotting out of clipped area

@@ -38,6 +38,25 @@
 ;--------------
 
 GETIMAGE
+
+    ; Check if double buffering is active -- in case,
+    ; whe should use a different version.
+    LDA DOUBLEBUFFERENABLED
+    CMPA #0
+    BEQ GETIMAGEORIG
+
+; ----------------------------------------------
+; Version active on double buffering ON
+; ----------------------------------------------
+
+GETIMAGEDB
+    RTS
+
+; ----------------------------------------------
+; Version active on double buffering OFF
+; ----------------------------------------------
+
+GETIMAGEORIG
     LDA CURRENTMODE
     CMPA #0
     BNE GETIMAGE0X

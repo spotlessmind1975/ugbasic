@@ -38,6 +38,25 @@
 ;--------------
 
 PUTIMAGE
+
+    ; Check if double buffering is active -- in case,
+    ; whe should use a different version.
+    LDA DOUBLEBUFFERENABLED
+    CMPA #0
+    BEQ PUTIMAGEORIG
+
+; ----------------------------------------------
+; Version active on double buffering ON
+; ----------------------------------------------
+
+PUTIMAGEDB
+	RTS
+
+; ----------------------------------------------
+; Version active on double buffering OFF
+; ----------------------------------------------
+
+PUTIMAGEORIG
     LDA CURRENTMODE
     CMPA #0
     BNE PUTIMAGE0X

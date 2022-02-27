@@ -33,6 +33,7 @@
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                     mc6809 optimization by Samuel Devulder                  *
+;*               added support for double buffering by Marco Spedaletti        *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -91,18 +92,28 @@ CLS4
     LDU #0
     
 CLSG
+    ; Check if double buffering is active -- in case,
+    ; whe should use a different version.
     PSHS D
     LDA DOUBLEBUFFERENABLED
     CMPA #0
     BEQ CLSGORIG
+    PULS D
 
-    LDA #$00
+; ----------------------------------------------
+; Version active on double buffering ON
+; ----------------------------------------------
+
     LDY BITMAPADDRESS
 CLSGDB
     STA ,Y+
     CMPY #$9FFF 
     BNE CLSGDB
     RTS		        
+
+; ----------------------------------------------
+; Version active on double buffering OFF
+; ----------------------------------------------
 
 CLSGORIG
     PULS D
