@@ -61,6 +61,10 @@ PLOT
     CMPU CLIPY1
     BLT PLOTP
 
+    STX <PLOTX
+    STU <PLOTY
+    STA <PLOTM
+
     ; Check if double buffering is active -- in case,
     ; whe should use a different version.
     LDA DOUBLEBUFFERENABLED
@@ -454,10 +458,6 @@ PLOTANDBIT4
 
 PLOTORIG
 
-    STX <PLOTX
-    STU <PLOTY
-    STA <PLOTM
-    
     LDB <PLOTY+1
     LDA #40
     MUL           ; no => compute video adress
