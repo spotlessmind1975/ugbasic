@@ -9,8 +9,7 @@ REM
 REM Questo esempio mostra come usare il double buffering.
 REM
 
-    SCREEN #3
-    CLS BLACK
+    SCREEN #2
     DOUBLE BUFFER ON
     CLS BLACK
     x1 = 0
