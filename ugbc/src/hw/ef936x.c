@@ -88,6 +88,25 @@ int lastUsedSlotInCommonPalette = 0;
  * CODE SECTION
  ****************************************************************************/
 
+
+static int rgbConverterFunction( int _red, int _green, int _blue ) {
+    
+    int value = ( ( ( _blue >> 4 ) & 0x0f ) << 8 ) |
+            ( ( ( _green >> 4 ) & 0x0f ) << 4 ) |
+            ( ( ( _red >> 4 ) & 0x0f ) );
+
+    return value;
+
+}
+
+static void rgbConverterFunctionInverse( int _value, unsigned char* _red, unsigned char* _green, unsigned char* _blue ) {
+    
+    *_red = (unsigned char)( _value & 0xf );
+    *_green = (unsigned char)( _value & 0xf0 ) >> 4;
+    *_blue = (unsigned char)( _value & 0xf00 ) >> 8;
+
+}
+
 /**
  * @brief <i>VIC-II</i>: emit code to check for collision
  * 
@@ -148,7 +167,13 @@ void ef936x_background_color( Environment * _environment, int _index, int _backg
     outline1("LDD #$%4.4x", _background_color );
     outline0("STB $A7DA" );
     outline0("STA $A7DA" );
-    
+
+    rgbConverterFunctionInverse( _background_color, &SYSTEM_PALETTE[_index].red, &SYSTEM_PALETTE[_index].green, &SYSTEM_PALETTE[_index].blue );
+    SYSTEM_PALETTE[_index].index = _index;
+    strcpy( SYSTEM_PALETTE[_index].description, "custom" );
+    SYSTEM_PALETTE[_index].used = 0;
+    SYSTEM_PALETTE[_index].count = 0;
+
 }
 
 /**
@@ -617,16 +642,6 @@ void ef936x_text( Environment * _environment, char * _text, char * _text_size ) 
 
 }
 
-static int rgbConverterFunction( int _red, int _green, int _blue ) {
-    
-    int value = ( ( ( _blue >> 4 ) & 0x0f ) << 8 ) |
-            ( ( ( _green >> 4 ) & 0x0f ) << 4 ) |
-            ( ( ( _red >> 4 ) & 0x0f ) );
-
-    return value;
-
-}
-
 void ef936x_initialization( Environment * _environment ) {
 
     deploy( ef936xvars, src_hw_ef936x_vars_asm );
@@ -714,11 +729,11 @@ void ef936x_finalization( Environment * _environment ) {
 
     RGBi * palette;
 
-    if ( commonPalette ) {
-        palette = commonPalette;
-    } else {
+    // if ( commonPalette ) {
+    //     palette = commonPalette;
+    // } else {
         palette = SYSTEM_PALETTE;
-    }
+    // }
 
     for( i=0; i<15; ++i ) {
         out4("$%1.1x%1.1x%1.1x%1.1x, ", 0, ( palette[i].blue >> 4 ) & 0x0f, ( palette[i].green >> 4 ) & 0x0f, ( palette[i].red >> 4 ) & 0x0f );
@@ -1064,9 +1079,10 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
 
             // printf( "%1.1x", colorIndex );
 
-            bitmask = colorIndex << 4;
-
-            *(buffer + 2 + ( ( _frame_width >> 3 ) * _frame_height ) + offset) |= bitmask;
+            if ( colorIndex && (*(buffer + 2 + ( ( _frame_width >> 3 ) * _frame_height ) + offset) == 0 ) ) {
+                bitmask = colorIndex << 4;
+                *(buffer + 2 + ( ( _frame_width >> 3 ) * _frame_height ) + offset) |= bitmask;
+            }
 
             _source += 3;
 
