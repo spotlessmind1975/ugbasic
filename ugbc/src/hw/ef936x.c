@@ -1538,6 +1538,18 @@ void ef936x_get_image( Environment * _environment, char * _image, char * _x, cha
 
 void ef936x_scroll( Environment * _environment, int _dx, int _dy ) {
 
+    deploy( ef936xvars, src_hw_ef936x_vars_asm);
+    deploy( scroll, src_hw_ef936x_scroll_asm);
+    deploy( textHScroll, src_hw_ef936x_hscroll_text_asm );
+    deploy( vScrollText, src_hw_ef936x_vscroll_text_asm );
+
+    outline1("LDA #$%2.2x", (unsigned char)(_dx&0xff) );
+    outline0("STA <MATHPTR0" );
+    outline1("LDA #$%2.2x", (unsigned char)(_dy&0xff) );
+    outline0("STA <MATHPTR1" );
+    outline0("JSR SCROLL");
+
+
 }
 
 void ef936x_put_tile( Environment * _environment, char * _tile, char * _x, char * _y ) {
