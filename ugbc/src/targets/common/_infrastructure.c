@@ -1308,7 +1308,22 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                     #endif
                     break;
                 case 0:
-                    CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
+                    switch( target->type ) {
+                        case VT_TILE:
+                            WARNING_DOWNCAST( _source, target->name );
+                            #ifdef CPU_BIG_ENDIAN
+                                {
+                                    char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s+3", source->realName );
+                                    cpu_move_8bit( _environment, sourceRealName, target->realName );
+                                }
+                            #else
+                                cpu_move_8bit( _environment, source->realName, target->realName );
+                            #endif
+                            break;
+                        default:
+                            CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
+                    }
+                    break;
             }
             break;
         case 16:
@@ -1365,7 +1380,22 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                     #endif
                     break;
                 case 0:
-                    CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
+                    switch( target->type ) {
+                        case VT_TILE:
+                            WARNING_DOWNCAST( _source, target->name );
+                            #ifdef CPU_BIG_ENDIAN
+                                {
+                                    char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s+1", source->realName );
+                                    cpu_move_8bit( _environment, sourceRealName, target->realName );
+                                }
+                            #else
+                                cpu_move_8bit( _environment, source->realName, target->realName );
+                            #endif
+                            break;
+                        default:
+                            CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
+                    }
+                    break;
             }
             break;
         case 8:
@@ -1448,7 +1478,14 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                     cpu_move_8bit( _environment, source->realName, target->realName );
                     break;
                 case 0:
-                    CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
+                    switch( target->type ) {
+                        case VT_TILE:
+                            cpu_move_8bit( _environment, source->realName, target->realName );
+                            break;
+                        default:
+                            CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
+                    }
+                    break;
             }
             break;
         case 0:
