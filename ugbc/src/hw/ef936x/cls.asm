@@ -38,7 +38,7 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 CLS
-    ; PSHS  DP
+    PSHS  DP
 
     LDA CURRENTMODE
     BEQ CLS0
@@ -50,7 +50,7 @@ CLS
     BEQ CLS3
     DECA
     BEQ CLS4
-    RTS
+    PULS DP,PC
 
 CLS2
     CLRA
@@ -123,7 +123,6 @@ CLSGORIG
     LDD CURRENTFRAMESIZE
     LEAU D,X
     STU CLSGL2+1
-    PSHS DP
     LDA #$A7
     TFR A,DP
     LDA <$C0
@@ -158,6 +157,5 @@ CLSGL1
 CLSGL2
     CMPX #$5555
     BLO CLSGL1
-    PULS DP
-    RTS
+    PULS DP,PC
 
