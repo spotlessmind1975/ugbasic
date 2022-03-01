@@ -109,7 +109,7 @@ CLSGDB
     STA ,Y+
     CMPY #$9FFF 
     BNE CLSGDB
-    RTS		        
+    PULS DP,PC
 
 ; ----------------------------------------------
 ; Version active on double buffering OFF

@@ -88,7 +88,7 @@ DOUBLEBUFFERINIT
     SUBD ,S
     TFR D, U
     LDX #$A000
-    LDS #$1FFF
+    LDS #$2000
     LEAX -1, X
     LEAS -1, S
 DOUBLEBUFFERINITSTACK
@@ -127,7 +127,7 @@ DOUBLEBUFFERCLEANUP
     LDD #$1FFF
     SUBD ,S
     TFR D, U
-    LDX #$1FFF
+    LDX #$2000
     LDS #$A000
     LEAX -1, X
     LEAS -1, S
