@@ -272,10 +272,10 @@ PLOTD4DB
     ; ORA #$01
     ; STA $a7c0
 
-    LDA , X           ;get row with point in it
+    LDA $2000, X           ;get row with point in it
     ANDA , U
     ORA , Y               ;isolate AND set the point
-    STA , X           ;write back to $A000
+    STA $2000, X           ;write back to $A000
 
     ; LDA $a7c0
     ; ANDA #$fe

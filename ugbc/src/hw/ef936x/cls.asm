@@ -107,8 +107,13 @@ CLSG
     LDY BITMAPADDRESS
 CLSGDB
     STA ,Y+
-    CMPY #$9FFF 
+    CMPY #$7FFF 
     BNE CLSGDB
+    LDA #0
+CLSGDB2
+    STA ,Y+
+    CMPY #$9FFF 
+    BNE CLSGDB2
     PULS DP,PC
 
 ; ----------------------------------------------
