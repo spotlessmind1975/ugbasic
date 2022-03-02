@@ -175,11 +175,17 @@ PLOT3DB
 
     LDB <(PLOTX+1)
     ANDB #$03
-    ; COMB
-    ; LDY #3
+    COMB
+    LDY #3
     LEAY B, Y
     TFR Y, D
     LSRB
+
+    PSHS D
+    TFR X, D
+    ADDD BITMAPADDRESS
+    TFR D, X
+    PULS D
 
 ;     ANDB #$01
 ;     CMPB #$01
@@ -372,6 +378,9 @@ PLOTD3HIDB
     LDA , X
     ORA <MATHPTR5
     STA , X
+    LDA $2000, X
+    ORA <MATHPTR5
+    STA $2000, X
     JMP PLOTD3FDB
 
 PLOTD3LODB
@@ -379,6 +388,9 @@ PLOTD3LODB
     LDA , X
     ORA <MATHPTR5
     STA , X
+    LDA $2000, X
+    ORA <MATHPTR5
+    STA $2000, X
     JMP PLOTD3FDB
 
 PLOTD3FDB
