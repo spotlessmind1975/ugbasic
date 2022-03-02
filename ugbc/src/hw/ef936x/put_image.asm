@@ -43,13 +43,383 @@ PUTIMAGE
     ; whe should use a different version.
     LDA DOUBLEBUFFERENABLED
     CMPA #0
-    BEQ PUTIMAGEORIG
+    LBEQ PUTIMAGEORIG
 
 ; ----------------------------------------------
 ; Version active on double buffering ON
 ; ----------------------------------------------
 
 PUTIMAGEDB
+    LDA CURRENTMODE
+    CMPA #0
+    BNE PUTIMAGE0XDB
+    JMP PUTIMAGE0DB
+PUTIMAGE0XDB
+    CMPA #1
+    BNE PUTIMAGE1XDB
+    JMP PUTIMAGE1DB
+PUTIMAGE1XDB
+    CMPA #2
+    BNE PUTIMAGE2XDB
+    JMP PUTIMAGE2DB
+PUTIMAGE2XDB
+    CMPA #3
+    BNE PUTIMAGE3XDB
+    JMP PUTIMAGE3DB
+PUTIMAGE3XDB
+    CMPA #4
+    BNE PUTIMAGE4XDB
+    JMP PUTIMAGE4DB
+PUTIMAGE4XDB
+    RTS
+
+PUTIMAGE1DB
+PUTIMAGE4DB
+    RTS
+
+PUTIMAGE0DB
+PUTIMAGE2DB
+
+    PSHS Y
+
+    LDX BITMAPADDRESS
+
+    ANDCC #$FE
+    LDD <IMAGEY
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+
+    LSLB
+    ROLA
+
+    TFR D, Y
+
+    ANDCC #$FE
+    LDD <IMAGEY
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+
+    LEAY D, Y
+    TFR Y, D
+    LEAX D, X
+
+    ANDCC #$FE
+    LDD <IMAGEX
+    LSRA
+    RORB
+    LSRA
+    RORB
+    LSRA
+    RORB
+    LEAX D, X
+
+    PULS Y
+
+    LDA ,Y
+    LSRA
+    LSRA
+    LSRA
+    STA <IMAGEW
+    LDA 1,Y
+    STA <IMAGEH
+    STA <IMAGEH2
+
+    LEAY 2,Y
+
+    LDA <IMAGEW
+    LDB <IMAGEH
+    PSHS X,D
+
+    JMP PUTIMAGE2YDB
+
+PUTIMAGE3DB
+
+    PSHS Y
+
+    LDD <(IMAGEY)
+    LSLB
+    ROLA
+    ADDD #PLOTVBASE
+    TFR D, X
+    LDD , X
+    TFR D, X
+
+    LDB <(IMAGEX+1)
+    LSRB
+    LSRB
+    LEAX B, X
+
+    PULS Y
+
+    LDA ,Y
+    LSRA
+    LSRA
+    STA <IMAGEW
+    LDA 1,Y
+    STA <IMAGEH
+    STA <IMAGEH2
+
+    LEAY 2,Y
+
+    LDA <IMAGEW
+    LDB <IMAGEH
+    PSHS X,D
+
+    JMP PUTIMAGE2YDB
+
+PUTIMAGE2YDB
+    LDA <IMAGET
+    LBEQ PUTIMAGE2YDEFDB
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+PUTIMAGE2YTRANSDB
+    LDA CURRENTMODE
+    ; CMPA #2
+    ; BEQ PUTIMAGE2YTRANS2
+    CMPA #3
+    BEQ PUTIMAGE2YTRANS3DB
+    JMP PUTIMAGE2YDEFDB
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+PUTIMAGE2YTRANS3DB
+    ; LDA $a7c0
+    ; ORA #$01
+    ; STA $a7c0
+
+    LDB <IMAGEW
+    DECB
+PUTIMAGE2YTRANS3L1DB
+    LDA #0
+    STA <MATHPTR5
+    LDA B,Y
+    ; 00 01 10 00
+    ANDA #$F0
+    ; -> 00 00 00 00
+    BEQ PUTIMAGE2YTRANS3L1P4XDB
+    LDA <MATHPTR5
+    ORA #$F0
+    STA <MATHPTR5
+PUTIMAGE2YTRANS3L1P4XDB
+    LDA B,Y
+    ; 00 01 10 00
+    ANDA #$0F
+    ; -> 00 01 00 00
+    BEQ PUTIMAGE2YTRANS3L1P3XDB
+    LDA <MATHPTR5
+    ORA #$0F
+    ; MATH PTR = 00 11 00 00
+    STA <MATHPTR5
+PUTIMAGE2YTRANS3L1P3XDB
+    LDA <MATHPTR5
+    ; 00 11 11 00
+    EORA #$FF
+    ; 11 00 00 11
+    STA <MATHPTR6
+    LDA B,X
+    ; 00 00 00 00
+    ANDA <MATHPTR6
+    STA <MATHPTR6
+    ; 00 00 00 00
+    LDA B,Y
+    ANDA <MATHPTR5
+    ORA <MATHPTR6
+    STA B,X
+
+    DECB
+    CMPB #0
+    BGE PUTIMAGE2YTRANS3L1DB
+
+    LDB <IMAGEW
+    LEAY B, Y
+
+    LDB CURRENTSL
+    LEAX B, X
+
+    DEC <IMAGEH
+    LDB <IMAGEH
+    CMPB #0
+    BEQ PUTIMAGE2YTRANS3COMMONE2DB
+
+    LDB <IMAGEW
+    DECB
+    JMP PUTIMAGE2YTRANS3L1DB
+
+PUTIMAGE2YTRANS3COMMONE2DB
+
+    PULS X,D
+
+    STA <IMAGEW
+    STB <IMAGEH
+
+    ; LDA $a7c0
+    ; ANDA #$fe
+    ; STA $a7c0
+
+    LDB <IMAGEW
+    DECB
+PUTIMAGE2YTRANS3L12DB
+    LDA #0
+    STA <MATHPTR5
+    LDA B,Y
+    ; 00 01 10 00
+    ANDA #$F0
+    ; -> 00 00 00 00
+    BEQ PUTIMAGE2YTRANS3L12P4XDB
+    LDA <MATHPTR5
+    ORA #$F0
+    STA <MATHPTR5
+PUTIMAGE2YTRANS3L12P4XDB
+    LDA B,Y
+    ; 00 01 10 00
+    ANDA #$0F
+    ; -> 00 01 00 00
+    BEQ PUTIMAGE2YTRANS3L12P3XDB
+    LDA <MATHPTR5
+    ORA #$0F
+    ; MATH PTR = 00 11 00 00
+    STA <MATHPTR5
+PUTIMAGE2YTRANS3L12P3XDB
+    LDA <MATHPTR5
+    ; 00 11 11 00
+    EORA #$FF
+    ; 11 00 00 11
+    STA <MATHPTR6
+    LDA B,X
+    ; 00 00 00 00
+    ANDA <MATHPTR6
+    STA <MATHPTR6
+    ; 00 00 00 00
+    LDA B,Y
+    ANDA <MATHPTR5
+    ORA <MATHPTR6
+    STA B,X
+
+    DECB
+    CMPB #0
+    BGE PUTIMAGE2YTRANS3L12DB
+
+    LDB <IMAGEW
+    LEAY B, Y
+
+    LDB CURRENTSL
+    LEAX B, X
+
+    DEC <IMAGEH
+    LDB <IMAGEH
+    CMPB #0
+    BEQ PUTIMAGECOMMONE5DB
+
+    LDB <IMAGEW
+    DECB
+    JMP PUTIMAGE2YTRANS3L12DB
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+PUTIMAGE2YDEFDB
+    ; LDA $a7c0
+    ; ORA #$01
+    ; STA $a7c0
+
+    LEAX $2000,X
+
+    LDB <IMAGEW
+    DECB
+PUTIMAGE2L1DB
+    LDA B,Y
+    STA B,X
+    DECB
+    CMPB #0
+    BGE PUTIMAGE2L1DB
+
+    LDB <IMAGEW
+    LEAY B, Y
+
+    LDB CURRENTSL
+    LEAX B, X
+
+    DEC <IMAGEH
+    LDB <IMAGEH
+    CMPB #0
+    BEQ PUTIMAGECOMMONE2DB
+
+    LDB <IMAGEW
+    DECB
+    JMP PUTIMAGE2L1DB
+
+PUTIMAGECOMMONE2DB
+
+    PULS X,D
+
+    LEAX -$2000,X
+
+    STA <IMAGEW
+    STB <IMAGEH
+
+    ; LDA $a7c0
+    ; ANDA #$fe
+    ; STA $a7c0
+
+    LDB <IMAGEW
+    DECB
+PUTIMAGE2L12DB
+    LDA B,Y
+    STA B,X
+    DECB
+    CMPB #0
+    BGE PUTIMAGE2L12DB
+
+    LDB <IMAGEW
+    LEAY B, Y
+
+    LDB CURRENTSL
+    LEAX B, X
+
+    DEC <IMAGEH
+    LDB <IMAGEH
+    CMPB #0
+    BEQ PUTIMAGECOMMONE5DB
+
+    LDB <IMAGEW
+    DECB
+    JMP PUTIMAGE2L12DB
+
+PUTIMAGECOMMONE5DB
+;     LDA CURRENTMODE
+;     CMPA #3
+;     BEQ PUTIMAGECOMMONE53
+;     LDU #4
+;     JMP PUTIMAGECOMMONE50
+; PUTIMAGECOMMONE53
+;     LDU #16
+;     JMP PUTIMAGECOMMONE50
+
+; PUTIMAGECOMMONE50
+;     LDA #0
+;     STA $A7DB
+; PUTIMAGECOMMONE50L1
+;     LDD ,Y
+;     LEAY 2,Y
+;     STB $A7DA
+;     STA $A7DA
+;     LEAU -1, U
+;     CMPU #$FFFF
+    ; BNE PUTIMAGECOMMONE50L1
+
+PUTIMAGECOMMONEDB
+
 	RTS
 
 ; ----------------------------------------------
