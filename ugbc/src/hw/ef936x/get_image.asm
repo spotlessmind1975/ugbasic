@@ -43,13 +43,234 @@ GETIMAGE
     ; whe should use a different version.
     LDA DOUBLEBUFFERENABLED
     CMPA #0
-    BEQ GETIMAGEORIG
+    LBEQ GETIMAGEORIG
 
 ; ----------------------------------------------
 ; Version active on double buffering ON
 ; ----------------------------------------------
 
+
 GETIMAGEDB
+    LDA CURRENTMODE
+    CMPA #0
+    BNE GETIMAGE0XDB
+    JMP GETIMAGE0DB
+GETIMAGE0XDB
+    CMPA #1
+    BNE GETIMAGE1XDB
+    JMP GETIMAGE1DB
+GETIMAGE1XDB
+    CMPA #2
+    BNE GETIMAGE2XDB
+    JMP GETIMAGE2DB
+GETIMAGE2XDB
+    CMPA #3
+    BNE GETIMAGE3XDB
+    JMP GETIMAGE3DB
+GETIMAGE3XDB
+    CMPA #4
+    BNE GETIMAGE4XDB
+    JMP GETIMAGE4DB
+GETIMAGE4XDB
+    RTS
+
+GETIMAGE1DB
+GETIMAGE4DB
+    RTS
+
+GETIMAGE0DB
+GETIMAGE2DB
+
+    PSHS Y
+
+    LDX BITMAPADDRESS
+
+    ANDCC #$FE
+    LDD <IMAGEY
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+
+    LSLB
+    ROLA
+
+    TFR D, Y
+
+    ANDCC #$FE
+    LDD <IMAGEY
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
+
+    LEAY D, Y
+    TFR Y, D
+    LEAX D, X
+
+    ANDCC #$FE
+    LDD <IMAGEX
+    LSRA
+    RORB
+    LSRA
+    RORB
+    LSRA
+    RORB
+    LEAX D, X
+
+    PULS Y
+
+    LDA ,Y
+    LSRA
+    LSRA
+    LSRA
+    STA <IMAGEW
+    LDA 1,Y
+    STA <IMAGEH
+    STA <IMAGEH2
+
+    LEAY 2,Y
+
+    LDA <IMAGEW
+    LDB <IMAGEH
+    PSHS X,D
+
+    JMP GETIMAGE2YDB
+
+GETIMAGE3DB
+
+    PSHS Y
+
+    LDD <(IMAGEY)
+    LSLB
+    ROLA
+    ADDD #PLOTVBASE
+    TFR D, X
+    LDD , X
+    TFR D, X
+
+    LDB <(IMAGEX+1)
+    LSRB
+    LSRB
+    LEAX B, X
+
+    PULS Y
+
+    LDA ,Y
+    LSRA
+    LSRA
+    STA <IMAGEW
+    LDA 1,Y
+    STA <IMAGEH
+    STA <IMAGEH2
+
+    LEAY 2,Y
+
+    LDA <IMAGEW
+    LDB <IMAGEH
+    PSHS X,D
+
+    JMP GETIMAGE2YDB
+
+GETIMAGE2YDB
+GETIMAGE2YDEFDB
+    ; LDA $a7c0
+    ; ORA #$01
+    ; STA $a7c0
+
+    LEAX $2000,X
+
+    LDB <IMAGEW
+    DECB
+GETIMAGE2L1DB
+    LDA B,X
+    STA B,Y
+    DECB
+    CMPB #0
+    BGE GETIMAGE2L1DB
+
+    LDB <IMAGEW
+    LEAY B, Y
+
+    LDB CURRENTSL
+    LEAX B, X
+
+    DEC <IMAGEH
+    LDB <IMAGEH
+    CMPB #0
+    BEQ GETIMAGECOMMONE2DB
+
+    LDB <IMAGEW
+    DECB
+    JMP GETIMAGE2L1DB
+
+GETIMAGECOMMONE2DB
+
+    LEAX -$2000,X
+
+    PULS X,D
+
+    STA <IMAGEW
+    STB <IMAGEH
+
+    ; LDA $a7c0
+    ; ANDA #$fe
+    ; STA $a7c0
+
+    LDB <IMAGEW
+    DECB
+GETIMAGE2L12DB
+    LDA B,X
+    STA B,Y
+    DECB
+    CMPB #0
+    BGE GETIMAGE2L12DB
+
+    LDB <IMAGEW
+    LEAY B, Y
+
+    LDB CURRENTSL
+    LEAX B, X
+
+    DEC <IMAGEH
+    LDB <IMAGEH
+    CMPB #0
+    BEQ GETIMAGECOMMONE5DB
+
+    LDB <IMAGEW
+    DECB
+    JMP GETIMAGE2L12DB
+
+GETIMAGECOMMONE5DB
+;     LDA CURRENTMODE
+;     CMPA #3
+;     BEQ GETIMAGECOMMONE53
+;     LDU #4
+;     JMP GETIMAGECOMMONE50
+; GETIMAGECOMMONE53
+;     LDU #16
+;     JMP GETIMAGECOMMONE50
+
+; GETIMAGECOMMONE50
+;     LDA #0
+;     STA $A7DB
+; GETIMAGECOMMONE50L1
+;     LDD ,Y
+;     LEAY 2,Y
+;     STB $A7DA
+;     STA $A7DA
+;     LEAU -1, U
+;     CMPU #$FFFF
+    ; BNE GETIMAGECOMMONE50L1
+
+GETIMAGECOMMONEDB
     RTS
 
 ; ----------------------------------------------
