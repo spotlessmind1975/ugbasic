@@ -1963,4 +1963,39 @@ void tms9918_move_video_memory( Environment * _environment, char * _from, char *
 
 }
 
+void tms9918_colors_vars( Environment * _environment, char * _foreground_color, char * _background_color ) {
+
+    MAKE_LABEL
+
+#ifdef __coleco__
+    MAKE_LABEL
+    if ( ! _environment->hasGameLoop ) {
+        outline1("JP %sskip", label );
+        outhead1("%s:", label );
+    }
+#endif
+    outline1("LD E, %2.2x", VDP_RCOLOR );
+    outline0("CALL VDPREGIN" );
+    outline1("LD A, (%s)", _foreground_color );
+    outline0("SLA A" );
+    outline0("SLA A" );
+    outline0("SLA A" );
+    outline0("SLA A" );
+    outline0("LD B, A" );
+    outline1("LD A, (%s)", _background_color );
+    outline0("OR B" );
+    outline0("CALL VDPSETREG" );
+#ifdef __coleco__
+    if ( ! _environment->hasGameLoop ) {
+        outline0("RET" );
+        outhead1("%sskip:", label );
+        outline0("CALL WAIT_VDP_HOOK" );
+        outline1("LD HL, %s", label );
+        outline0("CALL SET_VDP_HOOK0" );
+        outline0("CALL WAIT_VDP_HOOK" );
+    }
+#endif
+
+}
+
 #endif
