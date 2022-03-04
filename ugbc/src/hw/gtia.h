@@ -191,6 +191,13 @@
 #define SPRITE_WIDTH                8
 #define SPRITE_HEIGHT               -1
 
+#define SPRITE_FLAG_MULTICOLOR          0x0010
+#define SPRITE_FLAG_MONOCOLOR           0x0000
+#define SPRITE_FLAG_EXPAND_VERTICAL     0x0040
+#define SPRITE_FLAG_COMPRESS_VERTICAL   0x0000
+#define SPRITE_FLAG_EXPAND_HORIZONTAL   0x0080
+#define SPRITE_FLAG_COMPRESS_HORIZONTAL 0x0000
+
 int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode );
 
 void gtia_initialization( Environment * _environment );
