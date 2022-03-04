@@ -63,7 +63,7 @@ Per poter essere utilizzato è necessario aver caricato l'immagine da utilizzare
 
 @target sg1000
 </usermanual> */
-Variable * sprite_init( Environment * _environment, char * _image, char * _sprite ) {
+Variable * sprite_init( Environment * _environment, char * _image, char * _sprite, int _flags ) {
 
     Variable * index;
     Variable * image = variable_retrieve( _environment, _image );
