@@ -1965,8 +1965,6 @@ void tms9918_move_video_memory( Environment * _environment, char * _from, char *
 
 void tms9918_colors_vars( Environment * _environment, char * _foreground_color, char * _background_color ) {
 
-    MAKE_LABEL
-
 #ifdef __coleco__
     MAKE_LABEL
     if ( ! _environment->hasGameLoop ) {
