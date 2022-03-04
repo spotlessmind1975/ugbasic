@@ -2706,7 +2706,7 @@ void z80_mem_move_16bit( Environment * _environment, char *_source, char *_desti
     outline1("LD A, (%s+1)", _size);
     outline0("CP 0");
     outline1("JR NZ, %sgo", label);
-    outline0("JR %sdone");
+    outline1("JR %sdone", label);
     outhead1("%sgo:", label);
     outline1("LD A, (%s)", _size);
     outline0("LD C, A");
