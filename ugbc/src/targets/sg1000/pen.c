@@ -52,9 +52,15 @@
 
 void pen( Environment * _environment, char * _color ) {
 
+    MAKE_LABEL
+    
     Variable * pen = variable_retrieve( _environment, "PEN" );
     Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_BLACK );
 
     variable_move( _environment, color->name, pen->name );
+    
+    cpu_compare_and_branch_8bit_const( _environment, "CURRENTMODE", 0, label, 0 );
+    tms9918_colors_vars( _environment, "_PEN", "_PAPER" );
+    cpu_label( _environment, label );  
     
 }
