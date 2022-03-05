@@ -333,7 +333,7 @@ PUTIMAGE2YDEFDB
     ; ORA #$01
     ; STA $a7c0
 
-    LEAX $2000,X
+    LEAX $8000,X
 
     LDB <IMAGEW
     DECB
@@ -363,7 +363,7 @@ PUTIMAGECOMMONE2DB
 
     PULS X,D
 
-    LEAX -$2000,X
+    LEAX $6000,X
 
     STA <IMAGEW
     STB <IMAGEH
