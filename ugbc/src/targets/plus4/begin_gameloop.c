@@ -73,6 +73,6 @@ void begin_gameloop( Environment * _environment ) {
     outline1( "BNE %s", loop->label );
     outline0( "LDA $FF1C");
     outline0( "CMP #$FA");
-    outline1( "BCC ", loop->label );
+    outline1( "BCC %s", loop->label );
 
 }
