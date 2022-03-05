@@ -49,7 +49,7 @@
 
 @target coleco
 </usermanual> */
-Variable * csprite_init( Environment * _environment, char * _image, char *_sprite ) {
+Variable * csprite_init( Environment * _environment, char * _image, char *_sprite, int _flags ) {
 
     Variable * index;
     
