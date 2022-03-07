@@ -79,8 +79,30 @@ TEXTATTILEMODEGO:
     LD E, A
     LD D, 0
 
+    LD A, (CURRENTMODE)
+    CP 0
+    JR Z,TEXTATTILEMODEGO0
+    CP 1
+    JR Z,TEXTATTILEMODEGO1
+    CP 2
+    JR Z,TEXTATTILEMODEGO2
+    CP 3
+    JR Z,TEXTATTILEMODEGO3
+    RET
+
+TEXTATTILEMODEGO0:
+TEXTATTILEMODEGO1:
     LD HL, $1800
     LD (COPYOFTEXTADDRESS), HL
+    JMP TEXTATTILEMODEGOX
+
+TEXTATTILEMODEGO2:
+TEXTATTILEMODEGO3:
+    LD HL, $3800
+    LD (COPYOFTEXTADDRESS), HL
+    JMP TEXTATTILEMODEGOX
+
+TEXTATTILEMODEGOX:
     LD A, 0
     LD B, A
     LD (TABSTODRAW), A
@@ -368,17 +390,35 @@ TEXTATSP0:
     POP BC
     POP DE
     POP AF
-    
+
+    PUSH AF
+    LD A, (CURRENTMODE)
+    CP 0
+    JR Z,TEXTAT20
+    CP 1
+    JR Z,TEXTAT21
+    CP 2
+    JR Z,TEXTAT22
+    CP 3
+    JR Z,TEXTAT23
+    POP AF
+    RET
+
+TEXTAT20:
+TEXTAT21:
+    POP AF
     PUSH HL
     PUSH AF
     PUSH DE
     PUSH BC
+
     SRL A
     SRL A
     SRL A
     LD E, A
     LD A, 0
     LD D, A
+
     LD HL, $480
     ADD HL, DE
     LD DE, HL
@@ -393,9 +433,73 @@ TEXTATSP0:
     POP DE
     POP AF
     POP HL
+    POP AF
 
+    JMP TEXTAT2X
 
+TEXTAT22:
+TEXTAT23:
+    POP AF
+    PUSH HL
+    PUSH AF
+    PUSH DE
+    PUSH BC
 
+    LD L, A
+    LD A, 0
+    LD H, A
+    ADD HL, HL
+    ADD HL, HL
+    ADD HL, HL
+    LD DE, HL
+
+    PUSH DE
+    LD HL, $2000
+    ADD HL, DE
+    LD DE, HL
+    LD A, (_PEN)
+    SLA A
+    SLA A
+    SLA A
+    SLA A
+    LD BC, 1
+    CALL VDPFILL8
+    POP DE
+
+    PUSH DE
+    LD HL, $2800
+    ADD HL, DE
+    LD DE, HL
+    LD A, (_PEN)
+    SLA A
+    SLA A
+    SLA A
+    SLA A
+    LD BC, 1
+    CALL VDPFILL8
+    POP DE
+
+    PUSH DE
+    LD HL, $3000
+    ADD HL, DE
+    LD DE, HL
+    LD A, (_PEN)
+    SLA A
+    SLA A
+    SLA A
+    SLA A
+    LD BC, 1
+    CALL VDPFILL8
+    POP DE
+
+    POP BC
+    POP DE
+    POP AF
+    POP HL
+
+    JMP TEXTAT2X
+
+TEXTAT2X:
     LD A,(TEXTWW)
     AND $2
     JR Z, TEXTATCNOPEN
