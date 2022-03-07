@@ -32,7 +32,7 @@
 
 #include "../ugbc.h"
 
-unsigned int SOUND_FREQUENCIES[] = {
+static unsigned int SOUND_FREQUENCIES[] = {
     0,		0,		0,		0,		0,		0,		0,		0,		0,		0,
     0,		0,		0,		0,		0,		0,		0,		0,		0,		0,
     0,		0,		0,		268,	284,	301,	318,	337,	358,	379,
@@ -49,10 +49,6 @@ unsigned int SOUND_FREQUENCIES[] = {
 
 void sid_initialization( Environment * _environment ) {
 
-    deploy( sidstartup, src_hw_sid_startup_asm );
-
-    outline0("JSR SIDSTARTUP");
-
 }
 
 void sid_finalization( Environment * _environment ) {
@@ -61,6 +57,7 @@ void sid_finalization( Environment * _environment ) {
 
 void sid_start( Environment * _environment, int _channel ) {
 
+    deploy( sidvars, src_hw_sid_vars_asm );
     deploy( sidstartup, src_hw_sid_startup_asm );
 
     switch( ( _channel & 0x03 ) ) {
@@ -78,6 +75,18 @@ void sid_start( Environment * _environment, int _channel ) {
 }
 
 void sid_set_volume( Environment * _environment, int _channel, int _volume ) {
+
+    deploy( sidvars, src_hw_sid_vars_asm );
+    deploy( sidstartup, src_hw_sid_startup_asm );
+
+    outline1("LDX #%2.2x", ( _volume & 0x0f ) );
+    switch( ( _channel & 0x03 ) ) {
+        case 0:
+        case 1:
+        case 2:
+            outline0("JSR SIDSTARTVOL");
+            break;
+    }
 
 }
 
@@ -169,6 +178,9 @@ void sid_set_volume( Environment * _environment, int _channel, int _volume ) {
     outline0("JSR SIDSTOP" );
 
 void sid_set_program( Environment * _environment, int _channel, int _program ) {
+
+    deploy( sidvars, src_hw_sid_vars_asm );
+    deploy( sidstartup, src_hw_sid_startup_asm );
 
     switch (_program) {
         case IMF_INSTRUMENT_PAD_5_BOWED:
@@ -360,6 +372,7 @@ void sid_set_program( Environment * _environment, int _channel, int _program ) {
 
 void sid_set_parameter( Environment * _environment, int _channel, int _parameter, int _value ) {
 
+    deploy( sidvars, src_hw_sid_vars_asm );
     deploy( sidstartup, src_hw_sid_startup_asm );
 
     switch( ( _channel & 0x03 ) ) {
@@ -374,6 +387,7 @@ void sid_set_parameter( Environment * _environment, int _channel, int _parameter
 
 void sid_set_frequency( Environment * _environment, int _channel, int _frequency ) {
 
+    deploy( sidvars, src_hw_sid_vars_asm );
     deploy( sidstartup, src_hw_sid_startup_asm );
 
     outline1("LDX %2.2x", ( _frequency & 0xff ) );
@@ -395,14 +409,32 @@ void sid_set_frequency( Environment * _environment, int _channel, int _frequency
 
 void sid_set_note( Environment * _environment, int _channel, int _note ) {
 
+    sid_set_frequency( _environment, _channel, SOUND_FREQUENCIES[_note] );
+
 }
 
 void sid_stop( Environment * _environment, int _channel ) {
+
+    deploy( sidvars, src_hw_sid_vars_asm );
+    deploy( sidstartup, src_hw_sid_startup_asm );
+
+    switch( ( _channel & 0x03 ) ) {
+        case 0:
+            outline0("JSR SIDSTOP0");
+            break;
+        case 1:
+            outline0("JSR SIDSTOP1");
+            break;
+        case 2:
+            outline0("JSR SIDSTOP2");
+            break;
+    }
 
 }
 
 void sid_start_var( Environment * _environment, char * _channel ) {
 
+    deploy( sidvars, src_hw_sid_vars_asm );
     deploy( sidstartup, src_hw_sid_startup_asm );
 
     outline1("LDA %s", _channel );
@@ -412,10 +444,17 @@ void sid_start_var( Environment * _environment, char * _channel ) {
 
 void sid_set_volume_vars( Environment * _environment, char * _channel, char * _volume ) {
 
+    deploy( sidvars, src_hw_sid_vars_asm );
+    deploy( sidstartup, src_hw_sid_startup_asm );
+
+    outline1("LDX %s", _volume );
+    outline0("JSR SIDSTARTVOL");
+
 }
 
 void sid_set_frequency_vars( Environment * _environment, char * _channel, char * _frequency ) {
 
+    deploy( sidvars, src_hw_sid_vars_asm );
     deploy( sidstartup, src_hw_sid_startup_asm );
 
     outline1("LDA %s", _channel );
@@ -428,49 +467,36 @@ void sid_set_frequency_vars( Environment * _environment, char * _channel, char *
 
 void sid_set_note_vars( Environment * _environment, char * _channel, char * _note ) {
 
+    deploy( sidvars, src_hw_sid_vars_asm );
+    deploy( sidstartup, src_hw_sid_startup_asm );
+
+    outline0("LDA #<SIDFREQ");
+    outline0("STA TMPPTR");
+    outline0("LDA #>SIDFREQ");
+    outline0("STA TMPPTR+1");
+    outline1("LDY %2.2x", _note);
+    outline0("TYA");
+    outline0("ASL");
+    outline0("TAY");
+    outline0("LDA (TMPPTR),Y");
+    outline0("TAX");
+    outline0("INY");
+    outline0("LDA (TMPPTR),Y");
+    outline0("TAY");
+
+    outline1("LDA %s", _channel );
+
+    outline0("JSR SIDFREQ");
+
 }
 
 void sid_stop_vars( Environment * _environment, char * _channel ) {
 
-}
+    deploy( sidvars, src_hw_sid_vars_asm );
+    deploy( sidstartup, src_hw_sid_startup_asm );
 
-void mr_sound_program_change_channel_hd(unsigned char _channel, unsigned char _instrument) {
-
-
-}
-
-void mr_sound_frequency_channel_hd(unsigned char _channel, unsigned int _frequency, unsigned char _amplitude) {
-    //printf("mr_sound_frequency_channel_hd(%d %d %d)\n", _channel, _frequency, _amplitude);
-    //@todo: manage _number in mr_sound_start_hd on C64
-
-    unsigned char* baseAddr = CALCULATE_BASE_ADDRESS(_channel);
-
-    PROGRAM_FREQUENCY(baseAddr, shadowRegisters[_channel & 0x03], _frequency);
-
-    *((unsigned char*)0xd418) = 15;
-
-    while (_channel > 14) {
-        _channel -= 14;
-    }
-    mr_sid_set_frequency(_channel, _frequency);
-
-}
-
-// Hardware dependent sound library
-void mr_sound_stop_hd(unsigned char _channel) {
-
-    unsigned c;
-
-    unsigned char* baseAddr = CALCULATE_BASE_ADDRESS(_channel);
-
-    STOP_FREQUENCY(baseAddr, shadowRegisters[_channel & 0x03]);
-
-    //mr_sid_set_frequency((_channel & 0x03) == 3 ? 0 : (_channel & 0x03), 0);
-
-    //if (_channel > 11) {
-    //    c = 0;
-    //}
-    //mr_sid_set_frequency(c, 0);
+    outline1("LDA %s", _channel );
+    outline0("JSR SIDSTOP");
 
 }
 

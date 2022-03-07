@@ -126,6 +126,14 @@ SOURCES_VIC2 := $(subst src/hw/vic2/,src-generated/vic2_,$(MODULES_VIC2:.asm=.c)
 src-generated/vic2_%.c: $(MODULES_VIC2)
 	@xxd -i $(subst src-generated/vic2_,src/hw/vic2/,$(@:.c=.asm)) >$@
 
+# MOS Technology SID
+
+MODULES_SID := $(wildcard src/hw/sid/*.asm)
+SOURCES_SID := $(subst src/hw/sid/,src-generated/sid_,$(MODULES_SID:.asm=.c))
+
+src-generated/sid_%.c: $(MODULES_SID)
+	@xxd -i $(subst src-generated/sid_,src/hw/sid/,$(@:.c=.asm)) >$@
+
 # MOS Technology TED
 
 MODULES_TED := $(wildcard src/hw/ted/*.asm)
@@ -193,8 +201,8 @@ SOURCES_C64 := $(subst src/hw/c64/,src-generated/c64_,$(MODULES_C64:.asm=.c))
 src-generated/c64_%.c: $(MODULES_C64)
 	@xxd -i $(subst src-generated/c64_,src/hw/c64/,$(@:.c=.asm)) >$@
 
-src-generated/modules_c64.c: $(SOURCES_6502) $(SOURCES_C64) $(SOURCES_VIC2)
-	@cat $(SOURCES_6502) $(SOURCES_C64) $(SOURCES_VIC2) >src-generated/modules_c64.c
+src-generated/modules_c64.c: $(SOURCES_6502) $(SOURCES_C64) $(SOURCES_VIC2) $(SOURCES_SID)
+	@cat $(SOURCES_6502) $(SOURCES_C64) $(SOURCES_VIC2) $(SOURCES_SID) >src-generated/modules_c64.c
 	@grep "src" src-generated/modules_c64.c | awk -f modules.awk >src-generated/modules_c64.h
 	@grep "data" src-generated/modules_c64.c | awk -f modules.awk >>src-generated/modules_c64.h
 

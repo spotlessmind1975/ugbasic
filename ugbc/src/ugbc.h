@@ -975,6 +975,8 @@ typedef struct _Deployed {
     int protothread;
     int tiles;
     int font;
+    int sidvars;
+    int sidstartup;
 
     Embedded embedded;
 
@@ -2084,6 +2086,8 @@ typedef struct _Environment {
 #define IMF_OCTAVE_5                                 0x05
 #define IMF_OCTAVE_6                                 0x06
 #define IMF_OCTAVE_7                                 0x07
+#define IMF_OCTAVE_8                                 0x08
+#define IMF_OCTAVE_9                                 0x09
 
 #define IMF_NOTE( o, n )                                ( ( o ) * IMF_NOTE_COUNT + ( n ) )
 
@@ -2648,6 +2652,7 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "../src-generated/modules_c64.h"
     #include "hw/6502.h"
     #include "hw/vic2.h"
+    #include "hw/sid.h"
     #include "hw/c64.h"
 #elif __plus4__
     #include "../src-generated/modules_plus4.h"
