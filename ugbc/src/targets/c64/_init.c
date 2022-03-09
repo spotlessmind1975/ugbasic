@@ -115,6 +115,7 @@ void target_initialization( Environment * _environment ) {
     cpu_call( _environment, "C64STARTUP" );
 
     vic2_initialization( _environment );
+    sid_initialization( _environment );
 
     if ( _environment->tenLinerRulesEnforced ) {
         shell_injection( _environment );

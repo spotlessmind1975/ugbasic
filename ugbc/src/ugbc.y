@@ -61,7 +61,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token OVERLAYED CASE ENDSELECT OGP CGP ARRAY NEW GET DISTANCE TYPE MUL DIV RGB SHADES HEX PALETTE
 %token BAR XGRAPHIC YGRAPHIC XTEXT YTEXT COLUMNS XGR YGR CHAR RAW SEPARATOR MSX MSX1 COLECO CSPRITE 
 %token TILESET MOVE ROW COLUMN TRANSPARENT DOUBLE RESPAWN HALTED SC3000 SG1000 MEMORY VIDEO MMOVE SWAP
-%token BELONG FIRST
+%token BELONG FIRST SOUND
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -3760,6 +3760,35 @@ writing_definition :
     }
     ;
 
+sound_definition_simple : 
+    OP_HASH const_expr {
+        sound( _environment, $2, 0, 0xffff );
+    }
+    | OP_HASH const_expr OP_COMMA OP_HASH const_expr {
+        sound( _environment, $2, $5, 0xffff );
+    }
+    | OP_HASH const_expr OP_COMMA OP_HASH const_expr ON OP_HASH const_expr {
+        sound( _environment, $2, $5, $8 );
+    }
+    ;
+
+sound_definition_expression : 
+    expr {
+        sound_vars( _environment, $1, NULL, NULL );
+    }
+    | expr OP_COMMA expr {
+        sound_vars( _environment, $1, $3, NULL );
+    }
+    | expr OP_COMMA expr ON expr {
+        sound_vars( _environment, $1, $3, $5 );
+    }
+    ;
+
+sound_definition : 
+    sound_definition_simple
+    | sound_definition_expression
+    ;
+
 locate_definition : 
      OP_COMMA expr {
         locate( _environment, NULL, $2 );
@@ -4578,6 +4607,7 @@ statement:
   | GRAPHIC {
       graphic( _environment );
   }
+  | SOUND sound_definition
   | HALT {
       halt( _environment );
   }

@@ -49,62 +49,71 @@ static unsigned int SOUND_FREQUENCIES[] = {
 
 void sid_initialization( Environment * _environment ) {
 
+    cpu_call( _environment, "SIDSTARTUP" );
+
 }
 
 void sid_finalization( Environment * _environment ) {
 
-}
-
-void sid_start( Environment * _environment, int _channel ) {
-
-    deploy( sidvars, src_hw_sid_vars_asm );
-    deploy( sidstartup, src_hw_sid_startup_asm );
-
-    switch( ( _channel & 0x03 ) ) {
-        case 0:
-            outline0("JSR SIDSTART0");
-            break;
-        case 1:
-            outline0("JSR SIDSTART1");
-            break;
-        case 2:
-            outline0("JSR SIDSTART2");
-            break;
+    if ( ! _environment->deployed.sidstartup ) {
+        cpu_label( _environment, "SIDSTARTUP" );
+        outline0( "RTS" );
     }
 
 }
 
-void sid_set_volume( Environment * _environment, int _channel, int _volume ) {
+void sid_start( Environment * _environment, int _channels ) {
+
+    deploy( sidvars, src_hw_sid_vars_asm );
+    deploy( sidstartup, src_hw_sid_startup_asm );
+
+    if ( _channels & 0x01 ) {
+        outline0("JSR SIDSTART0");
+    }
+    if ( _channels & 0x02 ) {
+        outline0("JSR SIDSTART1");
+    }
+    if ( _channels & 0x04 ) {
+        outline0("JSR SIDSTART2");
+    }
+
+}
+
+void sid_set_volume( Environment * _environment, int _channels, int _volume ) {
 
     deploy( sidvars, src_hw_sid_vars_asm );
     deploy( sidstartup, src_hw_sid_startup_asm );
 
     outline1("LDX #%2.2x", ( _volume & 0x0f ) );
-    switch( ( _channel & 0x03 ) ) {
-        case 0:
-        case 1:
-        case 2:
-            outline0("JSR SIDSTARTVOL");
-            break;
-    }
+    outline0("JSR SIDSTARTVOL");
 
 }
 
 #define     PROGRAM_FREQUENCY( c, f ) \
     outline1("LDX %2.2x", ( f & 0xff ) ); \
     outline1("LDY %2.2x", ( ( f >> 8 ) & 0xff ) ); \
-    outline1("JSR SIDPROGFREQ%1.1x", ( c & 0x03 ) );
+    if ( ( c & 0x01 ) ) \
+        outline0("JSR SIDPROGFREQ0" ); \
+    if ( ( c & 0x02 ) ) \
+        outline0("JSR SIDPROGFREQ1" ); \
+    if ( ( c & 0x04 ) ) \
+        outline0("JSR SIDPROGFREQ2" );
 
 #define     PROGRAM_FREQUENCY_V( c, f ) \
     outline1("LDA %s", c ); \
     outline1("LDX %s", f ); \
     outline1("LDY %s+1", f ); \
-    outline0("JSR SIDPROGFREQ", c );
+    outline0("JSR SIDPROGFREQ" );
 
 #define     PROGRAM_PULSE( c, p ) \
     outline1("LDX %2.2x", ( p & 0xff ) ); \
     outline1("LDY %2.2x", ( ( p >> 8 ) & 0xff ) ); \
-    outline1("JSR SIDPROGPULSE%1.1x", ( c & 0x03 ) );
+    if ( ( c & 0x01 ) ) \
+        outline0("JSR SIDPROGPULSE0" ); \
+    if ( ( c & 0x02 ) ) \
+        outline0("JSR SIDPROGPULSE1" ); \
+    if ( ( c & 0x04 ) ) \
+        outline0("JSR SIDPROGPULSE2" );
 
 #define     PROGRAM_PULSE_V( c, p ) \
     outline1("LDA %s", c ); \
@@ -114,7 +123,12 @@ void sid_set_volume( Environment * _environment, int _channel, int _volume ) {
 
 #define     PROGRAM_NOISE( c ) \
     outline0("LDX $80" ); \
-    outline1("JSR SIDPROGCTR%1.1x", ( c & 0x03 ) );
+    if ( ( c & 0x01 ) ) \
+        outline0("JSR SIDPROGCTR0" ); \
+    if ( ( c & 0x02 ) ) \
+        outline0("JSR SIDPROGCTR1" ); \
+    if ( ( c & 0x04 ) ) \
+        outline0("JSR SIDPROGCTR2" );
 
 #define     PROGRAM_NOISE_V( c, p ) \
     outline1("LDA %s", c ); \
@@ -123,7 +137,12 @@ void sid_set_volume( Environment * _environment, int _channel, int _volume ) {
 
 #define     PROGRAM_SAW( c ) \
     outline0("LDX $20" ); \
-    outline1("JSR SIDPROGCTR%1.1x", ( c & 0x03 ) );
+    if ( ( c & 0x01 ) ) \
+        outline0("JSR SIDPROGCTR0" ); \
+    if ( ( c & 0x02 ) ) \
+        outline0("JSR SIDPROGCTR1" ); \
+    if ( ( c & 0x04 ) ) \
+        outline0("JSR SIDPROGCTR2" );
 
 #define     PROGRAM_SAW_V( c, p ) \
     outline1("LDA %s", c ); \
@@ -132,7 +151,12 @@ void sid_set_volume( Environment * _environment, int _channel, int _volume ) {
 
 #define     PROGRAM_TRIANGLE( c ) \
     outline0("LDX $10" ); \
-    outline1("JSR SIDPROGCTR%1.1x", ( c & 0x03 ) );
+    if ( ( c & 0x01 ) ) \
+        outline0("JSR SIDPROGCTR0" ); \
+    if ( ( c & 0x02 ) ) \
+        outline0("JSR SIDPROGCTR1" ); \
+    if ( ( c & 0x04 ) ) \
+        outline0("JSR SIDPROGCTR2" );
 
 #define     PROGRAM_TRIANGLE_V( c ) \
     outline1("LDA %s", c ); \
@@ -141,17 +165,26 @@ void sid_set_volume( Environment * _environment, int _channel, int _volume ) {
 
 #define     PROGRAM_SAW_TRIANGLE( c ) \
     outline0("LDX $30" ); \
-    outline1("JSR SIDPROGCTR%1.1x", ( c & 0x03 ) );
+    if ( ( c & 0x01 ) ) \
+        outline0("JSR SIDPROGCTR0" ); \
+    if ( ( c & 0x02 ) ) \
+        outline0("JSR SIDPROGCTR1" ); \
+    if ( ( c & 0x04 ) ) \
+        outline0("JSR SIDPROGCTR2" );
 
 #define     PROGRAM_SAW_TRIANGLE_V( c ) \
     outline1("LDA %s", c ); \
-    outline0("LDX $30" ); \
-    outline0("JSR SIDPROGCTR" );
+    outline0("LDX $30" );
 
 #define     PROGRAM_ATTACK_DECAY( c, a, d ) \
     outline1("LDX %2.2x", ( a & 0x0f ) ); \
     outline1("LDY %2.2x", ( d & 0x0f ) ); \
-    outline1("JSR SIDPROGCTR%1.1x", ( c & 0x03 ) );
+    if ( ( c & 0x01 ) ) \
+        outline0("JSR SIDPROGAD0" ); \
+    if ( ( c & 0x02 ) ) \
+        outline0("JSR SIDPROGAD1" ); \
+    if ( ( c & 0x04 ) ) \
+        outline0("JSR SIDPROGAD2" );
 
 #define     PROGRAM_ATTACK_DECAY_V( c, a, d ) \
     outline1("LDA %s", c ); \
@@ -162,22 +195,32 @@ void sid_set_volume( Environment * _environment, int _channel, int _volume ) {
 #define     PROGRAM_SUSTAIN_RELEASE( c, s, r ) \
     outline1("LDX %2.2x", ( s & 0x0f ) ); \
     outline1("LDY %2.2x", ( r & 0x0f ) ); \
-    outline1("JSR SIDPROGAD%1.1x", ( c & 0x03 ) );
+    if ( ( c & 0x01 ) ) \
+        outline0("JSR SIDPROGSR0" ); \
+    if ( ( c & 0x02 ) ) \
+        outline0("JSR SIDPROGSR1" ); \
+    if ( ( c & 0x04 ) ) \
+        outline0("JSR SIDPROGSR2" );
 
 #define     PROGRAM_SUSTAIN_RELEASE_V( c, s, r ) \
     outline1("LDA %s", c ); \
     outline1("LDX %s", s ); \
     outline1("LDY %s", r ); \
-    outline0("JSR SIDPROGAD" );
+    outline0("JSR SIDPROGSR" );
 
 #define     STOP_FREQUENCY( c ) \
-    outline1("JSR SIDSTOP%1.1x", ( c & 0x03 ) );
+    if ( ( c & 0x01 ) ) \
+        outline0("JSR SIDSTOP0" ); \
+    if ( ( c & 0x02 ) ) \
+        outline0("JSR SIDSTOP1" ); \
+    if ( ( c & 0x04 ) ) \
+        outline0("JSR SIDSTOP2" );
 
 #define     STOP_FREQUENCY_V( c ) \
     outline1("LDA %s", c ); \
     outline0("JSR SIDSTOP" );
 
-void sid_set_program( Environment * _environment, int _channel, int _program ) {
+void sid_set_program( Environment * _environment, int _channels, int _program ) {
 
     deploy( sidvars, src_hw_sid_vars_asm );
     deploy( sidstartup, src_hw_sid_startup_asm );
@@ -193,17 +236,17 @@ void sid_set_program( Environment * _environment, int _channel, int _program ) {
         case IMF_INSTRUMENT_HONKY_TONK_PIANO:
         case IMF_INSTRUMENT_ELECTRIC_PIANO1:
         case IMF_INSTRUMENT_ELECTRIC_PIANO2:
-            PROGRAM_TRIANGLE(_channel);
-            PROGRAM_ATTACK_DECAY(_channel, 4, 2);
-            PROGRAM_SUSTAIN_RELEASE(_channel, 14, 10);
+            PROGRAM_TRIANGLE(_channels);
+            PROGRAM_ATTACK_DECAY(_channels, 4, 2);
+            PROGRAM_SUSTAIN_RELEASE(_channels, 14, 10);
             break;
 
         case IMF_INSTRUMENT_HARPSICHORD:
         case IMF_INSTRUMENT_CLAVI:
         case IMF_INSTRUMENT_CELESTA:
-            PROGRAM_PULSE(_channel, 1024);
-            PROGRAM_ATTACK_DECAY(_channel, 3, 3);
-            PROGRAM_SUSTAIN_RELEASE(_channel, 14, 3);
+            PROGRAM_PULSE(_channels, 1024);
+            PROGRAM_ATTACK_DECAY(_channels, 3, 3);
+            PROGRAM_SUSTAIN_RELEASE(_channels, 14, 3);
             break;
 
         case IMF_INSTRUMENT_LEAD_3_CALLIOPE:
@@ -214,9 +257,9 @@ void sid_set_program( Environment * _environment, int _channel, int _program ) {
         case IMF_INSTRUMENT_XYLOPHONE:
         case IMF_INSTRUMENT_TUBULAR_BELLS:
         case IMF_INSTRUMENT_DULCIMER:
-            PROGRAM_TRIANGLE(_channel);
-            PROGRAM_ATTACK_DECAY(_channel, 2, 10);
-            PROGRAM_SUSTAIN_RELEASE(_channel, 12, 14);
+            PROGRAM_TRIANGLE(_channels);
+            PROGRAM_ATTACK_DECAY(_channels, 2, 10);
+            PROGRAM_SUSTAIN_RELEASE(_channels, 12, 14);
             break;
 
         default:
@@ -229,9 +272,9 @@ void sid_set_program( Environment * _environment, int _channel, int _program ) {
         case IMF_INSTRUMENT_ACCORDION:
         case IMF_INSTRUMENT_HARMONICA:
         case IMF_INSTRUMENT_TANGO_ACCORDION:
-            PROGRAM_TRIANGLE(_channel);
-            PROGRAM_ATTACK_DECAY(_channel, 3, 3);
-            PROGRAM_SUSTAIN_RELEASE(_channel, 14, 14);
+            PROGRAM_TRIANGLE(_channels);
+            PROGRAM_ATTACK_DECAY(_channels, 3, 3);
+            PROGRAM_SUSTAIN_RELEASE(_channels, 14, 14);
             break;
 
         case IMF_INSTRUMENT_ACOUSTIC_GUITAR_NYLON:
@@ -241,15 +284,15 @@ void sid_set_program( Environment * _environment, int _channel, int _program ) {
         case IMF_INSTRUMENT_OVERDRIVEN_GUITAR:
         case IMF_INSTRUMENT_DISTORTION_GUITAR:
         case IMF_INSTRUMENT_GUITAR_HARMONICS:
-            PROGRAM_PULSE(_channel, 128);
-            PROGRAM_ATTACK_DECAY(_channel, 10, 10);
-            PROGRAM_SUSTAIN_RELEASE(_channel, 14, 10);
+            PROGRAM_PULSE(_channels, 128);
+            PROGRAM_ATTACK_DECAY(_channels, 10, 10);
+            PROGRAM_SUSTAIN_RELEASE(_channels, 14, 10);
             break;
 
         case IMF_INSTRUMENT_ELECTRIC_GUITAR_MUTED:
-            PROGRAM_PULSE(_channel, 128);
-            PROGRAM_ATTACK_DECAY(_channel, 1, 2);
-            PROGRAM_SUSTAIN_RELEASE(_channel, 4, 3);
+            PROGRAM_PULSE(_channels, 128);
+            PROGRAM_ATTACK_DECAY(_channels, 1, 2);
+            PROGRAM_SUSTAIN_RELEASE(_channels, 4, 3);
             break;
 
         case IMF_INSTRUMENT_LEAD_8_BASS_LEAD:
@@ -261,9 +304,9 @@ void sid_set_program( Environment * _environment, int _channel, int _program ) {
         case IMF_INSTRUMENT_SLAP_BASS_2:
         case IMF_INSTRUMENT_SYNTH_BASS_1:
         case IMF_INSTRUMENT_SYNTH_BASS_2:
-            PROGRAM_TRIANGLE(_channel);
-            PROGRAM_ATTACK_DECAY(_channel, 2, 10);
-            PROGRAM_SUSTAIN_RELEASE(_channel, 12, 14);
+            PROGRAM_TRIANGLE(_channels);
+            PROGRAM_ATTACK_DECAY(_channels, 2, 10);
+            PROGRAM_SUSTAIN_RELEASE(_channels, 12, 14);
             break;
 
         case IMF_INSTRUMENT_LEAD_1_SQUARE:
@@ -278,9 +321,9 @@ void sid_set_program( Environment * _environment, int _channel, int _program ) {
         case IMF_INSTRUMENT_STRING_ENSEMBLE_2:
         case IMF_INSTRUMENT_SYNTHSTRINGS_1:
         case IMF_INSTRUMENT_SYNTHSTRINGS_2:
-            PROGRAM_PULSE(_channel, 128);
-            PROGRAM_ATTACK_DECAY(_channel, 10, 10);
-            PROGRAM_SUSTAIN_RELEASE(_channel, 14, 10);
+            PROGRAM_PULSE(_channels, 128);
+            PROGRAM_ATTACK_DECAY(_channels, 10, 10);
+            PROGRAM_SUSTAIN_RELEASE(_channels, 14, 10);
             break;
 
         case IMF_INSTRUMENT_PAD_4_CHOIR:
@@ -302,9 +345,9 @@ void sid_set_program( Environment * _environment, int _channel, int _program ) {
         case IMF_INSTRUMENT_TIMPANI:
         case IMF_INSTRUMENT_ORCHESTRA_HIT:
         case IMF_INSTRUMENT_APPLAUSE:
-            PROGRAM_NOISE(_channel);
-            PROGRAM_ATTACK_DECAY(_channel, 1, 14);
-            PROGRAM_SUSTAIN_RELEASE(_channel, 14, 14);
+            PROGRAM_NOISE(_channels);
+            PROGRAM_ATTACK_DECAY(_channels, 1, 14);
+            PROGRAM_SUSTAIN_RELEASE(_channels, 14, 14);
             break;
 
         case IMF_INSTRUMENT_LEAD_2_SAWTOOTH:
@@ -334,9 +377,9 @@ void sid_set_program( Environment * _environment, int _channel, int _program ) {
         case IMF_INSTRUMENT_SHAKUHACHI:
         case IMF_INSTRUMENT_WHISTLE:
         case IMF_INSTRUMENT_OCARINA:
-            PROGRAM_SAW(_channel);
-            PROGRAM_ATTACK_DECAY(_channel, 3, 3);
-            PROGRAM_SUSTAIN_RELEASE(_channel, 14, 14);
+            PROGRAM_SAW(_channels);
+            PROGRAM_ATTACK_DECAY(_channels, 3, 3);
+            PROGRAM_SUSTAIN_RELEASE(_channels, 14, 14);
             break;
 
         case IMF_INSTRUMENT_SITAR:
@@ -362,87 +405,57 @@ void sid_set_program( Environment * _environment, int _channel, int _program ) {
         case IMF_INSTRUMENT_TELEPHONE_RING:
         case IMF_INSTRUMENT_HELICOPTER:
         case IMF_INSTRUMENT_GUNSHOT:
-            PROGRAM_SAW(_channel);
-            PROGRAM_ATTACK_DECAY(_channel, 3, 3);
-            PROGRAM_SUSTAIN_RELEASE(_channel, 14, 14);
+            PROGRAM_SAW(_channels);
+            PROGRAM_ATTACK_DECAY(_channels, 3, 3);
+            PROGRAM_SUSTAIN_RELEASE(_channels, 14, 14);
             break;
     }
 
 }
 
-void sid_set_parameter( Environment * _environment, int _channel, int _parameter, int _value ) {
+void sid_set_parameter( Environment * _environment, int _channels, int _parameter, int _value ) {
+
+}
+
+void sid_set_frequency( Environment * _environment, int _channels, int _frequency ) {
 
     deploy( sidvars, src_hw_sid_vars_asm );
     deploy( sidstartup, src_hw_sid_startup_asm );
 
-    switch( ( _channel & 0x03 ) ) {
-        case 0:
-        case 1:
-        case 2:
-            outline0("JSR SIDSTARTVOL");
-            break;
+    PROGRAM_FREQUENCY( _channels, _frequency );
+
+}
+
+void sid_set_note( Environment * _environment, int _channels, int _note ) {
+
+    sid_set_frequency( _environment, _channels, SOUND_FREQUENCIES[_note] );
+
+}
+
+void sid_stop( Environment * _environment, int _channels ) {
+
+    deploy( sidvars, src_hw_sid_vars_asm );
+    deploy( sidstartup, src_hw_sid_startup_asm );
+
+    STOP_FREQUENCY( _channels );
+
+}
+
+void sid_start_var( Environment * _environment, char * _channels ) {
+
+    deploy( sidvars, src_hw_sid_vars_asm );
+    deploy( sidstartup, src_hw_sid_startup_asm );
+
+    if ( _channels ) {
+        outline1("LDA %s", _channels );
+    } else {
+        outline0("LDA #$7" );
     }
-
-}
-
-void sid_set_frequency( Environment * _environment, int _channel, int _frequency ) {
-
-    deploy( sidvars, src_hw_sid_vars_asm );
-    deploy( sidstartup, src_hw_sid_startup_asm );
-
-    outline1("LDX %2.2x", ( _frequency & 0xff ) );
-    outline1("LDY %2.2x", ( ( _frequency >> 8 ) & 0xff ) );
-
-    switch( ( _channel & 0x03 ) ) {
-        case 0:
-            outline0("JSR SIDFREQ0");
-            break;
-        case 1:
-            outline0("JSR SIDFREQ1");
-            break;
-        case 2:
-            outline0("JSR SIDFREQ2");
-            break;
-    }
-
-}
-
-void sid_set_note( Environment * _environment, int _channel, int _note ) {
-
-    sid_set_frequency( _environment, _channel, SOUND_FREQUENCIES[_note] );
-
-}
-
-void sid_stop( Environment * _environment, int _channel ) {
-
-    deploy( sidvars, src_hw_sid_vars_asm );
-    deploy( sidstartup, src_hw_sid_startup_asm );
-
-    switch( ( _channel & 0x03 ) ) {
-        case 0:
-            outline0("JSR SIDSTOP0");
-            break;
-        case 1:
-            outline0("JSR SIDSTOP1");
-            break;
-        case 2:
-            outline0("JSR SIDSTOP2");
-            break;
-    }
-
-}
-
-void sid_start_var( Environment * _environment, char * _channel ) {
-
-    deploy( sidvars, src_hw_sid_vars_asm );
-    deploy( sidstartup, src_hw_sid_startup_asm );
-
-    outline1("LDA %s", _channel );
     outline0("JSR SIDSTART");
 
 }
 
-void sid_set_volume_vars( Environment * _environment, char * _channel, char * _volume ) {
+void sid_set_volume_vars( Environment * _environment, char * _channels, char * _volume ) {
 
     deploy( sidvars, src_hw_sid_vars_asm );
     deploy( sidstartup, src_hw_sid_startup_asm );
@@ -452,29 +465,33 @@ void sid_set_volume_vars( Environment * _environment, char * _channel, char * _v
 
 }
 
-void sid_set_frequency_vars( Environment * _environment, char * _channel, char * _frequency ) {
+void sid_set_frequency_vars( Environment * _environment, char * _channels, char * _frequency ) {
 
     deploy( sidvars, src_hw_sid_vars_asm );
     deploy( sidstartup, src_hw_sid_startup_asm );
 
-    outline1("LDA %s", _channel );
+    if ( _channels ) {
+        outline1("LDA %s", _channels );
+    } else {
+        outline0("LDA #$7" );
+    }
     outline1("LDX %s", _frequency );
     outline1("LDY %s+1", _frequency );
 
-    outline0("JSR SIDFREQ");
+    outline0("JSR SIDSETFREQ");
 
 }
 
-void sid_set_note_vars( Environment * _environment, char * _channel, char * _note ) {
+void sid_set_note_vars( Environment * _environment, char * _channels, char * _note ) {
 
     deploy( sidvars, src_hw_sid_vars_asm );
     deploy( sidstartup, src_hw_sid_startup_asm );
 
-    outline0("LDA #<SIDFREQ");
+    outline0("LDA #<SIDFREQTABLE");
     outline0("STA TMPPTR");
-    outline0("LDA #>SIDFREQ");
+    outline0("LDA #>SIDFREQTABLE");
     outline0("STA TMPPTR+1");
-    outline1("LDY %2.2x", _note);
+    outline1("LDY %s", _note);
     outline0("TYA");
     outline0("ASL");
     outline0("TAY");
@@ -484,18 +501,22 @@ void sid_set_note_vars( Environment * _environment, char * _channel, char * _not
     outline0("LDA (TMPPTR),Y");
     outline0("TAY");
 
-    outline1("LDA %s", _channel );
+    if ( _channels ) {
+        outline1("LDA %s", _channels );
+    } else {
+        outline0("LDA #$7" );
+    }
 
-    outline0("JSR SIDFREQ");
+    outline0("JSR SIDSETFREQ");
 
 }
 
-void sid_stop_vars( Environment * _environment, char * _channel ) {
+void sid_stop_vars( Environment * _environment, char * _channels ) {
 
     deploy( sidvars, src_hw_sid_vars_asm );
     deploy( sidstartup, src_hw_sid_startup_asm );
 
-    outline1("LDA %s", _channel );
+    outline1("LDA %s", _channels );
     outline0("JSR SIDSTOP");
 
 }

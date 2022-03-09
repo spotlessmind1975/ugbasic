@@ -2448,6 +2448,8 @@ void                    scroll( Environment * _environment, int _dx, int _dy );
 void                    select_case( Environment * _environment, char * _expression );
 void                    set_timer( Environment * _environment, char * _value );
 void                    shared( Environment * _environment );
+void                    sound( Environment * _environment, int _freq, int _duration, int _channels );
+void                    sound_vars( Environment * _environment, char * _freq, char * _duration, char * _channels );
 Variable *              sign( Environment * _environment, char * _value );
 Variable *              spawn_procedure( Environment * _environment, char * _name , int _halted );
 void                    sprite_color( Environment * _environment, int _sprite, int _color );
