@@ -41,12 +41,14 @@ void sid_set_volume( Environment * _environment, int _channel, int _volume );
 void sid_set_program( Environment * _environment, int _channel, int _program );
 void sid_set_parameter( Environment * _environment, int _channel, int _parameter, int _value );
 void sid_set_frequency( Environment * _environment, int _channel, int _frequency );
+void sid_set_pitch( Environment * _environment, int _channel, int _pitch );
 void sid_set_note( Environment * _environment, int _channel, int _note );
 void sid_stop( Environment * _environment, int _channel );
 
 void sid_start_var( Environment * _environment, char * _channel );
 void sid_set_volume_vars( Environment * _environment, char * _channel, char * _volume );
 void sid_set_frequency_vars( Environment * _environment, char * _channel, char * _frequency );
+void sid_set_pitch_vars( Environment * _environment, char * _channel, char * _pitch );
 void sid_set_note_vars( Environment * _environment, char * _channel, char * _note );
 void sid_stop_vars( Environment * _environment, char * _channel );
 

@@ -90,6 +90,22 @@ void sid_set_volume( Environment * _environment, int _channels, int _volume ) {
 }
 
 #define     PROGRAM_FREQUENCY( c, f ) \
+    outline1("LDX #$%2.2x", ( ( ( f * 0xffff ) / 4000 ) & 0xff ) ); \
+    outline1("LDY #$%2.2x", ( ( ( ( f * 0xffff ) / 4000 ) >> 8 ) & 0xff ) ); \
+    if ( ( c & 0x01 ) ) \
+        outline0("JSR SIDPROGFREQ0" ); \
+    if ( ( c & 0x02 ) ) \
+        outline0("JSR SIDPROGFREQ1" ); \
+    if ( ( c & 0x04 ) ) \
+        outline0("JSR SIDPROGFREQ2" );
+
+#define     PROGRAM_FREQUENCY_V( c, f ) \
+    outline1("LDA %s", c ); \
+    outline1("LDX %s", f ); \
+    outline1("LDY %s+1", f ); \
+    outline0("JSR SIDFREQ" );
+
+#define     PROGRAM_PITCH( c, f ) \
     outline1("LDX #$%2.2x", ( f & 0xff ) ); \
     outline1("LDY #$%2.2x", ( ( f >> 8 ) & 0xff ) ); \
     if ( ( c & 0x01 ) ) \
@@ -99,7 +115,7 @@ void sid_set_volume( Environment * _environment, int _channels, int _volume ) {
     if ( ( c & 0x04 ) ) \
         outline0("JSR SIDPROGFREQ2" );
 
-#define     PROGRAM_FREQUENCY_V( c, f ) \
+#define     PROGRAM_PITCH_V( c, f ) \
     outline1("LDA %s", c ); \
     outline1("LDX %s", f ); \
     outline1("LDY %s+1", f ); \
@@ -427,9 +443,18 @@ void sid_set_frequency( Environment * _environment, int _channels, int _frequenc
 
 }
 
+void sid_set_pitch( Environment * _environment, int _channels, int _pitch ) {
+
+    deploy( sidvars, src_hw_sid_vars_asm );
+    deploy( sidstartup, src_hw_sid_startup_asm );
+
+    PROGRAM_PITCH( _channels, _pitch );
+
+}
+
 void sid_set_note( Environment * _environment, int _channels, int _note ) {
 
-    sid_set_frequency( _environment, _channels, SOUND_FREQUENCIES[_note] );
+    sid_set_pitch( _environment, _channels, SOUND_FREQUENCIES[_note] );
 
 }
 
@@ -478,6 +503,23 @@ void sid_set_frequency_vars( Environment * _environment, char * _channels, char 
     }
     outline1("LDX %s", _frequency );
     outline1("LDY %s+1", _frequency );
+
+    outline0("JSR SIDFREQ");
+
+}
+
+void sid_set_pitch_vars( Environment * _environment, char * _channels, char * _pitch ) {
+
+    deploy( sidvars, src_hw_sid_vars_asm );
+    deploy( sidstartup, src_hw_sid_startup_asm );
+
+    if ( _channels ) {
+        outline1("LDA %s", _channels );
+    } else {
+        outline0("LDA #$7" );
+    }
+    outline1("LDX %s", _pitch );
+    outline1("LDY %s+1", _pitch );
 
     outline0("JSR SIDPROGFREQ");
 
