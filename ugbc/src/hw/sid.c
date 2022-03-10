@@ -248,6 +248,11 @@ void sid_set_program( Environment * _environment, int _channels, int _program ) 
             PROGRAM_ATTACK_DECAY(_channels, 2, 11);
             PROGRAM_SUSTAIN_RELEASE(_channels, 0, 1);
             break;
+        case IMF_INSTRUMENT_GUNSHOT:
+            PROGRAM_NOISE(_channels);
+            PROGRAM_ATTACK_DECAY(_channels, 2, 4);
+            PROGRAM_SUSTAIN_RELEASE(_channels, 0, 1);
+            break;
         case IMF_INSTRUMENT_PAD_5_BOWED:
         case IMF_INSTRUMENT_PAD_6_METALLIC:
         case IMF_INSTRUMENT_PAD_7_HALO:
@@ -426,7 +431,6 @@ void sid_set_program( Environment * _environment, int _channels, int _program ) 
         case IMF_INSTRUMENT_BIRD_TWEET:
         case IMF_INSTRUMENT_TELEPHONE_RING:
         case IMF_INSTRUMENT_HELICOPTER:
-        case IMF_INSTRUMENT_GUNSHOT:
             PROGRAM_SAW(_channels);
             PROGRAM_ATTACK_DECAY(_channels, 3, 3);
             PROGRAM_SUSTAIN_RELEASE(_channels, 14, 14);

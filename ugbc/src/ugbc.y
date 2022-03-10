@@ -61,7 +61,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token OVERLAYED CASE ENDSELECT OGP CGP ARRAY NEW GET DISTANCE TYPE MUL DIV RGB SHADES HEX PALETTE
 %token BAR XGRAPHIC YGRAPHIC XTEXT YTEXT COLUMNS XGR YGR CHAR RAW SEPARATOR MSX MSX1 COLECO CSPRITE 
 %token TILESET MOVE ROW COLUMN TRANSPARENT DOUBLE RESPAWN HALTED SC3000 SG1000 MEMORY VIDEO MMOVE SWAP
-%token BELONG FIRST SOUND BOOM
+%token BELONG FIRST SOUND BOOM SHOOT
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -3817,6 +3817,19 @@ boom_definition :
     boom_definition_simple
     ;
 
+shoot_definition_simple : 
+    {
+        shoot( _environment, 0xffff );
+    }
+    | OP_HASH const_expr {
+        shoot( _environment, $2 );
+    }
+    ;
+
+shoot_definition : 
+    shoot_definition_simple
+    ;
+
 locate_definition : 
      OP_COMMA expr {
         locate( _environment, NULL, $2 );
@@ -4636,6 +4649,7 @@ statement:
       graphic( _environment );
   }
   | BOOM boom_definition
+  | SHOOT shoot_definition
   | SOUND sound_definition
   | HALT {
       halt( _environment );
