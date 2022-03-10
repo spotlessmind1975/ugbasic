@@ -138,7 +138,7 @@ void sid_set_volume( Environment * _environment, int _channels, int _volume ) {
     outline0("JSR SIDPROGPULSE" );
 
 #define     PROGRAM_NOISE( c ) \
-    outline0("LDX $80" ); \
+    outline0("LDX #$82" ); \
     if ( ( c & 0x01 ) ) \
         outline0("JSR SIDPROGCTR0" ); \
     if ( ( c & 0x02 ) ) \
@@ -148,11 +148,11 @@ void sid_set_volume( Environment * _environment, int _channels, int _volume ) {
 
 #define     PROGRAM_NOISE_V( c, p ) \
     outline1("LDA %s", c ); \
-    outline0("LDX $80" ); \
+    outline0("LDX #$82" ); \
     outline0("JSR SIDPROGCTR" );
 
 #define     PROGRAM_SAW( c ) \
-    outline0("LDX $22" ); \
+    outline0("LDX #$22" ); \
     if ( ( c & 0x01 ) ) \
         outline0("JSR SIDPROGCTR0" ); \
     if ( ( c & 0x02 ) ) \
@@ -162,11 +162,11 @@ void sid_set_volume( Environment * _environment, int _channels, int _volume ) {
 
 #define     PROGRAM_SAW_V( c, p ) \
     outline1("LDA %s", c ); \
-    outline0("LDX $22" ); \
+    outline0("LDX #$22" ); \
     outline0("JSR SIDPROGCTR" );
 
 #define     PROGRAM_TRIANGLE( c ) \
-    outline0("LDX $12" ); \
+    outline0("LDX #$12" ); \
     if ( ( c & 0x01 ) ) \
         outline0("JSR SIDPROGCTR0" ); \
     if ( ( c & 0x02 ) ) \
@@ -176,7 +176,7 @@ void sid_set_volume( Environment * _environment, int _channels, int _volume ) {
 
 #define     PROGRAM_TRIANGLE_V( c ) \
     outline1("LDA %s", c ); \
-    outline0("LDX $12" ); \
+    outline0("LDX #$12" ); \
     outline0("JSR SIDPROGCTR" );
 
 #define     PROGRAM_SAW_TRIANGLE( c ) \
@@ -190,7 +190,7 @@ void sid_set_volume( Environment * _environment, int _channels, int _volume ) {
 
 #define     PROGRAM_SAW_TRIANGLE_V( c ) \
     outline1("LDA %s", c ); \
-    outline0("LDX $32" ); \
+    outline0("LDX #$32" ); \
     outline0("JSR SIDPROGCTR" );
 
 #define     PROGRAM_ATTACK_DECAY( c, a, d ) \
@@ -243,6 +243,11 @@ void sid_set_program( Environment * _environment, int _channels, int _program ) 
     deploy( sidstartup, src_hw_sid_startup_asm );
 
     switch (_program) {
+        case IMF_INSTRUMENT_EXPLOSION:
+            PROGRAM_NOISE(_channels);
+            PROGRAM_ATTACK_DECAY(_channels, 2, 11);
+            PROGRAM_SUSTAIN_RELEASE(_channels, 0, 1);
+            break;
         case IMF_INSTRUMENT_PAD_5_BOWED:
         case IMF_INSTRUMENT_PAD_6_METALLIC:
         case IMF_INSTRUMENT_PAD_7_HALO:
