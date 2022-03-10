@@ -3767,8 +3767,17 @@ sound_definition_simple :
     | OP_HASH const_expr OP_COMMA OP_HASH const_expr {
         sound( _environment, $2, $5, 0xffff );
     }
+    | OP_HASH const_expr ON OP_HASH const_expr {
+        sound( _environment, $2, 0, $5 );
+    }
     | OP_HASH const_expr OP_COMMA OP_HASH const_expr ON OP_HASH const_expr {
         sound( _environment, $2, $5, $8 );
+    }
+    | OFF  {
+        sound_off( _environment, 0xffff );
+    }
+    | OFF ON OP_HASH const_expr {
+        sound_off( _environment, $4 );
     }
     ;
 
@@ -3781,6 +3790,12 @@ sound_definition_expression :
     }
     | expr OP_COMMA expr ON expr {
         sound_vars( _environment, $1, $3, $5 );
+    }
+    | expr ON expr {
+        sound_vars( _environment, $1, NULL, $3 );
+    }
+    | OFF ON expr {
+        sound_off_var( _environment, $3 );
     }
     ;
 
