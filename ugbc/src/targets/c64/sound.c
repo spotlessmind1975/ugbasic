@@ -78,9 +78,12 @@ espressa in millisecondi.
 </usermanual> */
 void sound( Environment * _environment, int _freq, int _delay, int _channels ) {
 
-    sid_start( _environment, 0 );
+    outline0("; sid_start");
+    sid_start( _environment, _channels );
+    outline0("; sid_set_frequency");
     sid_set_frequency( _environment, _channels, _freq );
     if ( _delay ) {
+        outline0("; wait_milliseconds");
         wait_milliseconds( _environment, _delay );
     }
 

@@ -166,15 +166,15 @@ IMF_INSTRUMENT_GUNSHOT						= $80
 
 SIDSTARTUP:
     LDA #$7
-    LDX $10
+    LDX #$32
     JSR SIDPROGCTR
     LDA #$7
-    LDX #2
-    LDY #14
+    LDX #1
+    LDY #1
     JSR SIDPROGAD
     LDA #$7
-    LDX #4
-    LDY #4
+    LDX #2
+    LDY #6
     JSR SIDPROGSR
     RTS
 
@@ -195,75 +195,36 @@ SIDSTART2X:
 
 SIDSTART0:
     PHA
-    ; 65, 129
-    LDA #33
+    LDA SIDSHADOW
+    ORA #$1
+    STA SIDSHADOW
     STA $D404
-    LDA #97
-    STA $D405
-    LDA #200
-    STA $D406
-    LDX #15
     PLA
+    LDX #15
     JMP SIDSTARTVOL
 
 SIDSTART1:
     PHA
-    ; 65, 129
-    LDA #33
+    LDA SIDSHADOW+1
+    ORA #$1
+    STA SIDSHADOW+1
     STA $D40B
-    LDA #97
-    STA $D40C
-    LDA #200
-    STA $D40D
-    LDX #15
     PLA
+    LDX #15
     JMP SIDSTARTVOL
 
 SIDSTART2:
     PHA
-    ; 65, 129
-    LDA #33
+    LDA SIDSHADOW+2
+    ORA #$1
+    STA SIDSHADOW+2
     STA $D412
-    LDA #97
-    STA $D413
-    LDA #200
-    STA $D414
-    LDX #15
     PLA
+    LDX #15
     JMP SIDSTARTVOL
 
 SIDSTARTVOL:
     STX $D418
-    RTS
-
-SIDSETFREQ:
-    LSR
-    BCC SIDSETFREQ0X
-    JSR SIDSETFREQ0
-SIDSETFREQ0X:
-    LSR
-    BCC SIDSETFREQ1X
-    JSR SIDSETFREQ1
-SIDSETFREQ1X:
-    LSR
-    BCC SIDSETFREQ2X
-    JSR SIDSETFREQ2
-SIDSETFREQ2X:
-    RTS
-
-SIDSETFREQ0:
-    STX $D400
-    STY $D401
-    RTS    
-
-SIDSETFREQ1:
-    STX $D407
-    STY $D408
-    RTS    
-
-SIDSETFREQ2:
-    STX $D40E
-    STY $D40F
     RTS
 
 SIDPROGFREQ:
@@ -333,7 +294,7 @@ SIDPROGPULSE0:
     PHA
     STX $D402
     STY $D403
-    LDA #$40
+    LDA #$42
     STA SIDSHADOW
     STA $D404
     PLA
@@ -343,7 +304,7 @@ SIDPROGPULSE1:
     PHA
     STX $D409
     STY $D40A
-    LDA #$40
+    LDA #$42
     STA SIDSHADOW+1
     STA $D40B
     PLA
@@ -353,7 +314,7 @@ SIDPROGPULSE2:
     PHA
     STX $D410
     STY $D411
-    LDA #$40
+    LDA #$42
     STA SIDSHADOW+2
     STA $D412
     PLA

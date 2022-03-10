@@ -90,8 +90,8 @@ void sid_set_volume( Environment * _environment, int _channels, int _volume ) {
 }
 
 #define     PROGRAM_FREQUENCY( c, f ) \
-    outline1("LDX %2.2x", ( f & 0xff ) ); \
-    outline1("LDY %2.2x", ( ( f >> 8 ) & 0xff ) ); \
+    outline1("LDX #$%2.2x", ( f & 0xff ) ); \
+    outline1("LDY #$%2.2x", ( ( f >> 8 ) & 0xff ) ); \
     if ( ( c & 0x01 ) ) \
         outline0("JSR SIDPROGFREQ0" ); \
     if ( ( c & 0x02 ) ) \
@@ -106,8 +106,8 @@ void sid_set_volume( Environment * _environment, int _channels, int _volume ) {
     outline0("JSR SIDPROGFREQ" );
 
 #define     PROGRAM_PULSE( c, p ) \
-    outline1("LDX %2.2x", ( p & 0xff ) ); \
-    outline1("LDY %2.2x", ( ( p >> 8 ) & 0xff ) ); \
+    outline1("LDX #$%2.2x", ( p & 0xff ) ); \
+    outline1("LDY #$%2.2x", ( ( p >> 8 ) & 0xff ) ); \
     if ( ( c & 0x01 ) ) \
         outline0("JSR SIDPROGPULSE0" ); \
     if ( ( c & 0x02 ) ) \
@@ -136,7 +136,7 @@ void sid_set_volume( Environment * _environment, int _channels, int _volume ) {
     outline0("JSR SIDPROGCTR" );
 
 #define     PROGRAM_SAW( c ) \
-    outline0("LDX $20" ); \
+    outline0("LDX $22" ); \
     if ( ( c & 0x01 ) ) \
         outline0("JSR SIDPROGCTR0" ); \
     if ( ( c & 0x02 ) ) \
@@ -146,11 +146,11 @@ void sid_set_volume( Environment * _environment, int _channels, int _volume ) {
 
 #define     PROGRAM_SAW_V( c, p ) \
     outline1("LDA %s", c ); \
-    outline0("LDX $20" ); \
+    outline0("LDX $22" ); \
     outline0("JSR SIDPROGCTR" );
 
 #define     PROGRAM_TRIANGLE( c ) \
-    outline0("LDX $10" ); \
+    outline0("LDX $12" ); \
     if ( ( c & 0x01 ) ) \
         outline0("JSR SIDPROGCTR0" ); \
     if ( ( c & 0x02 ) ) \
@@ -160,11 +160,11 @@ void sid_set_volume( Environment * _environment, int _channels, int _volume ) {
 
 #define     PROGRAM_TRIANGLE_V( c ) \
     outline1("LDA %s", c ); \
-    outline0("LDX $10" ); \
+    outline0("LDX $12" ); \
     outline0("JSR SIDPROGCTR" );
 
 #define     PROGRAM_SAW_TRIANGLE( c ) \
-    outline0("LDX $30" ); \
+    outline0("LDX #$32" ); \
     if ( ( c & 0x01 ) ) \
         outline0("JSR SIDPROGCTR0" ); \
     if ( ( c & 0x02 ) ) \
@@ -174,11 +174,12 @@ void sid_set_volume( Environment * _environment, int _channels, int _volume ) {
 
 #define     PROGRAM_SAW_TRIANGLE_V( c ) \
     outline1("LDA %s", c ); \
-    outline0("LDX $30" );
+    outline0("LDX $32" ); \
+    outline0("JSR SIDPROGCTR" );
 
 #define     PROGRAM_ATTACK_DECAY( c, a, d ) \
-    outline1("LDX %2.2x", ( a & 0x0f ) ); \
-    outline1("LDY %2.2x", ( d & 0x0f ) ); \
+    outline1("LDX #$%2.2x", ( a & 0x0f ) ); \
+    outline1("LDY #$%2.2x", ( d & 0x0f ) ); \
     if ( ( c & 0x01 ) ) \
         outline0("JSR SIDPROGAD0" ); \
     if ( ( c & 0x02 ) ) \
@@ -193,8 +194,8 @@ void sid_set_volume( Environment * _environment, int _channels, int _volume ) {
     outline0("JSR SIDPROGAD" );
 
 #define     PROGRAM_SUSTAIN_RELEASE( c, s, r ) \
-    outline1("LDX %2.2x", ( s & 0x0f ) ); \
-    outline1("LDY %2.2x", ( r & 0x0f ) ); \
+    outline1("LDX #$%2.2x", ( s & 0x0f ) ); \
+    outline1("LDY #$%2.2x", ( r & 0x0f ) ); \
     if ( ( c & 0x01 ) ) \
         outline0("JSR SIDPROGSR0" ); \
     if ( ( c & 0x02 ) ) \
@@ -478,7 +479,7 @@ void sid_set_frequency_vars( Environment * _environment, char * _channels, char 
     outline1("LDX %s", _frequency );
     outline1("LDY %s+1", _frequency );
 
-    outline0("JSR SIDSETFREQ");
+    outline0("JSR SIDPROGFREQ");
 
 }
 
@@ -507,7 +508,7 @@ void sid_set_note_vars( Environment * _environment, char * _channels, char * _no
         outline0("LDA #$7" );
     }
 
-    outline0("JSR SIDSETFREQ");
+    outline0("JSR SIDPROGFREQ");
 
 }
 
