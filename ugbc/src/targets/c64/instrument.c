@@ -39,72 +39,70 @@
  ****************************************************************************/
 
 /**
- * @brief Emit ASM code for <b>BELL ...</b>
+ * @brief Emit ASM code for <b>INSTRUMENT ...</b>
  * 
- * This function emits a code capable of play a bell sound
+ * This function emits a code capable of change the instrument 
+ * for one or more voices.
  * 
  * @param _environment Current calling environment
- * @param _pitch frequency to play
+ * @param _instrument instrument to use
  * @param _channels channels to play on
  */
 /* <usermanual>
-@keyword BELL
+@keyword INSTRUMENT
 
 @english
-This command makes the computer emit a bell-like sound. It is possible to indicate 
-on which voices the system should emit the sound. If omitted, it will be issued on all.
+This command allows you to select one of the available tools. Instruments 
+can be set for all voices, or for a set of particular voices.
 
 @italian
-Questo comando fa emettere al computer un suono tipo campana. E' possibile indicare su 
-quali voci il sistema dovrà emettere il suono. Se omesso, sarà emesso su tutte.
+Questo comando permette di selezionare uno tra gli strumenti disponibili. 
+Si possono impostare strumenti per tutte le voci, o per un insieme di voci 
+particolari. 
 
-@syntax BELL #[note] {ON #[channels]}
+@syntax INSTRUMENT #[instrument] {ON #[channels]}
+@syntax INSTRUMENT [symbolic name] {ON #[channels]}
 
-@example BELL #42
-@example BELL #42 ON #%001
+@example INSTRUMENT #42 ON %001
+@example INSTRUMENT SHAMISEN
 
 @target c64
 </usermanual> */
-void bell( Environment * _environment, int _note, int _channels ) {
+void instrument( Environment * _environment, int _instrument, int _channels ) {
 
     sid_start( _environment, _channels );
-    sid_set_program( _environment, _channels, IMF_INSTRUMENT_GLOCKENSPIEL );
-    sid_set_note( _environment, _channels, _note );
+    sid_set_program( _environment, _channels, _instrument );
 
 }
 
 /**
- * @brief Emit ASM code for <b>BELL ...</b>
+ * @brief Emit ASM code for <b>INSTRUMENT ...</b>
  * 
- * This function emits a code capable of play a bell-like sound.
+ * This function emits a code capable of change the instrument 
+ * for one or more voices.
  * 
  * @param _environment Current calling environment
- * @param _pitch frequency to play
+ * @param _instrument instrument to use
  * @param _channels channels to play on
  */
 /* <usermanual>
-@keyword BELL
+@keyword INSTRUMENT
 
-@syntax BELL [note] {ON [channels]}
+@syntax INSTRUMENT #[instrument] {ON [channels]}
 
-@example SOUND laDiesis
-@example SOUND solMaggiore, breve
-@example SOUND solMaggiore, lunga ON primaVoce
+@example INSTRUMENT FIDDLE ON primaVoce
 
 @target c64
 </usermanual> */
-void bell_vars( Environment * _environment, char * _note, char * _channels ) {
+void instrument_semi_var( Environment * _environment, int _instrument, char * _channels ) {
 
-    Variable * note = variable_retrieve_or_define( _environment, _note, VT_WORD, 42 );
     if ( _channels ) {
         Variable * channels = variable_retrieve_or_define( _environment, _channels, VT_WORD, 0x07 );
         sid_start_var( _environment, channels->realName );
-        sid_set_program_semi_var( _environment, channels->realName, IMF_INSTRUMENT_GLOCKENSPIEL );
-        sid_set_note_vars( _environment, channels->realName, note->realName );
+        sid_set_program_semi_var( _environment, channels->realName, _instrument );
     } else {
         sid_start_var( _environment, NULL );
-        sid_set_program_semi_var( _environment, NULL, IMF_INSTRUMENT_GLOCKENSPIEL );
-        sid_set_note_vars( _environment, NULL, note->realName );
+        sid_set_program_semi_var( _environment, NULL, _instrument );
     }
 
 }

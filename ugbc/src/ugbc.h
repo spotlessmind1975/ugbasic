@@ -2300,6 +2300,8 @@ void                    ink( Environment * _environment, char * _expression );
 Variable *              inkey( Environment * _environment );
 void                    input( Environment * _environment, char * _variable );
 Variable *              input_string( Environment * _environment, char * _size );
+void                    instrument( Environment * _environment, int _instrument, int _channels );
+void                    instrument_semi_var( Environment * _environment, int _instrument, char * _channels );
 
 //----------------------------------------------------------------------------
 // *J*
