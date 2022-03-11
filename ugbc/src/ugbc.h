@@ -2383,6 +2383,10 @@ Variable *              parse_buffer_definition( Environment * _environment, cha
 Variable *              peek( Environment * _environment, int _location );
 Variable *              peek_var( Environment * _environment, char * _location );
 void                    pen( Environment * _environment, char * _color );
+void                    play( Environment * _environment, int _note, int _duration, int _channels );
+void                    play_vars( Environment * _environment, char * _note, char * _duration, char * _channels );
+void                    play_off( Environment * _environment, int _channels );
+void                    play_off_var( Environment * _environment, char * _channels );
 void                    plot( Environment * _environment, char * _x, char * _y, char *_c );
 Variable *              point( Environment * _environment, char * _x, char * _y );
 void                    point_at( Environment * _environment, int _x, int _y );
