@@ -2145,6 +2145,8 @@ void                    begin_procedure( Environment * _environment, char * _nam
 void                    begin_repeat( Environment * _environment );
 void                    begin_while( Environment * _environment );
 void                    begin_while_condition( Environment * _environment, char * _expression );
+void                    bell( Environment * _environment, int _note, int _channels );
+void                    bell_vars( Environment * _environment, char * _note, char * _channels );
 void                    bitmap_at( Environment * _environment, int _address );
 void                    bitmap_at_var( Environment * _environment, char * _address );
 void                    bitmap_clear( Environment * _environment );
@@ -2153,6 +2155,7 @@ void                    bitmap_clear_with_vars( Environment * _environment, char
 void                    bitmap_disable( Environment * _environment );
 void                    bitmap_enable( Environment * _environment, int _width, int _height, int _colors );
 void                    boom( Environment * _environment, int _channels );
+void                    boom_var( Environment * _environment, char * _channels );
 void                    box( Environment * _environment, char * _x1, char * _y1, char * _x2, char * _y2, char * _c );
 
 //----------------------------------------------------------------------------
