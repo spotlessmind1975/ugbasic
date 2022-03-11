@@ -549,7 +549,22 @@ void sid_set_volume_vars( Environment * _environment, char * _channels, char * _
     deploy( sidvars, src_hw_sid_vars_asm );
     deploy( sidstartup, src_hw_sid_startup_asm );
 
-    outline1("LDX %s", _volume );
+    outline1("LDA %s", _volume );
+    outline0("LSR" );
+    outline0("LSR" );
+    outline0("LSR" );
+    outline0("LSR" );
+    outline0("TAX" );
+    outline0("JSR SIDSTARTVOL");
+
+}
+
+void sid_set_volume_semi_var( Environment * _environment, char * _channel, int _volume ) {
+
+    deploy( sidvars, src_hw_sid_vars_asm );
+    deploy( sidstartup, src_hw_sid_startup_asm );
+
+    outline1("LDX #$%2.2x", _volume );
     outline0("JSR SIDSTARTVOL");
 
 }

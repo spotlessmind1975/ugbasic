@@ -61,7 +61,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token OVERLAYED CASE ENDSELECT OGP CGP ARRAY NEW GET DISTANCE TYPE MUL DIV RGB SHADES HEX PALETTE
 %token BAR XGRAPHIC YGRAPHIC XTEXT YTEXT COLUMNS XGR YGR CHAR RAW SEPARATOR MSX MSX1 COLECO CSPRITE 
 %token TILESET MOVE ROW COLUMN TRANSPARENT DOUBLE RESPAWN HALTED SC3000 SG1000 MEMORY VIDEO MMOVE SWAP
-%token BELONG FIRST SOUND BOOM SHOOT BELL NOTE
+%token BELONG FIRST SOUND BOOM SHOOT BELL NOTE VOLUME
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -452,6 +452,12 @@ const_factor:
       }
       | SPRITE COUNT {
           $$ = SPRITE_COUNT;
+      }
+      | VOLUME MIN {
+          $$ = 0;
+      }
+      | VOLUME MAX {
+          $$ = 255;
       }
       | SPRITE HEIGHT {
           if ( SPRITE_HEIGHT < 0 ) {
@@ -1985,6 +1991,14 @@ exponential:
     }
     | IMAGE HEIGHT OP expr CP {
         $$ = image_get_height( _environment, $4 )->name;
+    }
+    | VOLUME MIN {
+        $$ = variable_temporary( _environment, VT_WORD, "(volume min)" )->name;
+        variable_store( _environment, $$, 0 );
+    }
+    | VOLUME MAX {
+        $$ = variable_temporary( _environment, VT_WORD, "(volume max)" )->name;
+        variable_store( _environment, $$, 255 );
     }
     | SPRITE COUNT {
         $$ = variable_temporary( _environment, VT_WORD, "(SPRITE COUNT)" )->name;
@@ -3854,6 +3868,38 @@ sound_definition :
     | sound_definition_expression
     ;
 
+volume_definition_simple : 
+    OP_HASH const_expr {
+        volume( _environment, $2, 0xffff );
+    }
+    | OP_HASH const_expr ON OP_HASH const_expr {
+        volume( _environment, $2, $5 );
+    }
+    | OFF  {
+        volume_off( _environment, 0xffff );
+    }
+    | OFF ON OP_HASH const_expr {
+        volume_off( _environment, $4 );
+    }
+    ;
+
+volume_definition_expression : 
+    expr {
+        volume_vars( _environment, $1, NULL );
+    }
+    | expr ON expr {
+        volume_vars( _environment, $1, $3 );
+    }
+    | OFF ON expr {
+        volume_off_var( _environment, $3 );
+    }
+    ;
+
+volume_definition : 
+    volume_definition_simple
+    | volume_definition_expression
+    ;
+
 bell_definition_simple : 
     NOTE const_note {
         bell( _environment, $2, 0xffff );
@@ -4738,6 +4784,7 @@ statement:
   | BOOM boom_definition
   | SHOOT shoot_definition
   | SOUND sound_definition
+  | VOLUME volume_definition
   | HALT {
       halt( _environment );
   }

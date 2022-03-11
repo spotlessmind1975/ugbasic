@@ -2609,6 +2609,10 @@ Variable *              variable_sub( Environment * _environment, char * _source
 void                    variable_sub_inplace( Environment * _environment, char * _source, char * _dest );
 Variable *              variable_temporary( Environment * _environment, VariableType _type, char * _meaning );
 Variable *              variable_resident( Environment * _environment, VariableType _type, char * _meaning );
+void                    volume( Environment * _environment, int _volume, int _channels );
+void                    volume_vars( Environment * _environment, char * _volume, char * _channels );
+void                    volume_off( Environment * _environment, int _channels );
+void                    volume_off_var( Environment * _environment, char * _channels );
 
 //----------------------------------------------------------------------------
 // *W*
