@@ -61,7 +61,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token OVERLAYED CASE ENDSELECT OGP CGP ARRAY NEW GET DISTANCE TYPE MUL DIV RGB SHADES HEX PALETTE
 %token BAR XGRAPHIC YGRAPHIC XTEXT YTEXT COLUMNS XGR YGR CHAR RAW SEPARATOR MSX MSX1 COLECO CSPRITE 
 %token TILESET MOVE ROW COLUMN TRANSPARENT DOUBLE RESPAWN HALTED SC3000 SG1000 MEMORY VIDEO MMOVE SWAP
-%token BELONG FIRST SOUND BOOM SHOOT BELL
+%token BELONG FIRST SOUND BOOM SHOOT BELL NOTE
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -101,6 +101,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> using_background
 %type <integer> memory_video
 %type <integer> sprite_flag sprite_flags sprite_flags1
+%type <integer> note octave const_note
 
 %right Integer String CP 
 %left OP_DOLLAR
@@ -115,6 +116,55 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %left AND OR OP_EQUAL OP_DISEQUAL OP_LT OP_LTE OP_GT OP_GTE
 
 %%
+
+note :
+    C {
+        $$ = 0;
+    }
+    |
+    D {
+        $$ = 2;
+    }
+    |
+    E {
+        $$ = 4;
+    }
+    |
+    F {
+        $$ = 5;
+    }
+    |
+    G {
+        $$ = 7;
+    }
+    |
+    A {
+        $$ = 9;
+    }
+    |
+    B {
+        $$ = 11;
+    }
+    ;
+
+octave :
+    Integer {
+        $$ = $1;
+    };
+
+const_note :
+    note {
+        $$ = $1 + ( 4 * 12 );
+    }
+    |
+    note octave {
+        $$ = $1 + ( $2 * 12 );
+    }
+    |
+    note OP_HASH octave {
+        $$ = ( $1 + 1 ) + ( $3 * 12 );
+    }
+    ;
 
 const_expr_string :
     String {
@@ -3805,8 +3855,14 @@ sound_definition :
     ;
 
 bell_definition_simple : 
-    OP_HASH const_expr {
+    NOTE const_note {
         bell( _environment, $2, 0xffff );
+    }
+    | OP_HASH const_expr {
+        bell( _environment, $2, 0xffff );
+    }
+    | NOTE const_note ON OP_HASH const_expr {
+        bell( _environment, $2, $5 );
     }
     | OP_HASH const_expr ON OP_HASH const_expr {
         bell( _environment, $2, $5 );
