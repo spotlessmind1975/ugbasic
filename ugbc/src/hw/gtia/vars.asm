@@ -340,6 +340,7 @@ IMAGEW = $F4
 IMAGEH = $F6
 IMAGEH2 = $F8
 IMAGET = $F9
+IMAGEF = $FA
 
 XSCROLLPOS:         .byte 0
 YSCROLLPOS:         .byte 0

@@ -1956,6 +1956,7 @@ typedef struct _Environment {
 #define FLAG_ROLL_Y         16
 
 #define FLAG_TRANSPARENCY   32
+#define FLAG_DOUBLE_Y   64
 
 void setup_embedded( Environment *_environment );
 void target_install( Environment *_environment );

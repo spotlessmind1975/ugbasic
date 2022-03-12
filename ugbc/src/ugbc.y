@@ -656,6 +656,9 @@ tile_load_flag :
 put_image_flag :
     WITH TRANSPARENCY {
         $$ = FLAG_TRANSPARENCY;
+    }
+    | DOUBLE Y {
+        $$ = FLAG_DOUBLE_Y;
     };
 
 images_load_flag :

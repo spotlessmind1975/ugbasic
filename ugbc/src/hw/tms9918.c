@@ -1211,6 +1211,9 @@ void tms9918_initialization( Environment * _environment ) {
     variable_import( _environment, "ONSCROLLRIGHT", VT_BUFFER, 3 );
     variable_global( _environment, "ONSCROLLRIGHT" );
 
+    variable_import( _environment, "IMAGEF", VT_BYTE, 0 );
+    variable_global( _environment, "IMAGEF" );
+
     #if __coleco__
         variable_import( _environment, "VDP_HOOK", VT_BUFFER, 10 );
         variable_global( _environment, "VDP_HOOK" );
@@ -1715,6 +1718,8 @@ void tms9918_put_image( Environment * _environment, char * _image, char * _x, ch
     outline0("LD E, A" );
     outline1("LD A, (%s)", _y );
     outline0("LD D, A" );
+    outline1("LD A, $%2.2x", _flags );
+    outline0("LD (IMAGEF), A" );
 
     if ( ! _environment->hasGameLoop ) {
         outline0("CALL PUTIMAGE");

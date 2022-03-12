@@ -1541,6 +1541,8 @@ void ef936x_put_image( Environment * _environment, char * _image, char * _x, cha
     outline0("STD <IMAGEX" );
     outline1("LDD %s", _y );
     outline0("STD <IMAGEY" );
+    outline1("LDA #$%2.2x", ( _flags & 0xff ) );
+    outline0("STA <IMAGEF" );
 
     outline0("JSR PUTIMAGE");
     
