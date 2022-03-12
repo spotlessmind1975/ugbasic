@@ -35,6 +35,18 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+CPUMEMMOVE
+    CMPU #0
+    BEQ CPUMEMMOVEDONE
+CPUMEMMOVEL1
+    LDA ,Y+
+    STA ,X+
+    LEAU -1,U
+    CMPU #$0
+    BNE CPUMEMMOVEL1
+CPUMEMMOVEDONE
+    RTS
+    
 EF936XSTARTUP
     LDU #COMMONPALETTE
     LDY #$A7DA
