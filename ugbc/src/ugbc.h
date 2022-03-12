@@ -118,6 +118,25 @@ typedef enum _OutputFileType {
 } OutputFileType;
 
 /**
+ * @brief Gamma correction type (for some palettes)
+ * 
+ * This enumeration represent the type of color correction
+ * to be used.
+ */
+typedef enum _GammaCorrection {
+
+    /* No gamma correction applied. */
+    GAMMA_CORRECTION_NONE = 0,
+
+    /* Gamma correction by Samuel Devulder */
+    GAMMA_CORRECTION_TYPE1 = 1,
+
+    /* Gamma correction by Dino Florenzi */
+    GAMMA_CORRECTION_TYPE2 = 2
+
+} GammaCorrection;
+
+/**
  * @brief Structure to store color components (red, green and blue)
  * 
  * This structure stores the color components (red, blue and green) 
@@ -1469,6 +1488,11 @@ typedef struct _Environment {
      * Is double buffering enabled?
      */
     int doubleBufferEnabled;
+
+    /*
+     * Gamma correction to be used.
+     */
+    GammaCorrection gammaCorrection;
 
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */

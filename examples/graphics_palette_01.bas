@@ -11,6 +11,8 @@ REM Questo esempio mostra come usare il comando PALETTE.
     BITMAP ENABLE(320,200,16)
     PALETTE RGB(0,0,0),RGB(255,0,0),RGB(0,255,0),RGB(0,0,255)
     CLS
-    BAR 0,0 TO 10,SCREEN HEIGHT-1,1
-    BAR 10,0 TO 20,SCREEN HEIGHT-1,2
-    BAR 20,0 TO 30,SCREEN HEIGHT-1,3
+    CONST w = SCREEN WIDTH / 3
+    CONST h = SCREEN HEIGHT-1
+    BAR 0,0 TO w,h,1
+    BAR w,0 TO 2*w,h,2
+    BAR 2*w,0 TO 3*w,h,3

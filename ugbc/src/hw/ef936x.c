@@ -729,6 +729,29 @@ void ef936x_initialization( Environment * _environment ) {
 
 extern RGBi * commonPalette;
 
+// Converts a PC color to a thomson color for ef936 
+// considering its very high gamma value.
+// Author: Samuel Devulder
+static int pc_to_ef936x(int _pc_color) {
+	// if(1) return (_pc_color>>4)&15;
+	double pc_color = _pc_color/255.0;
+	double ef936_color = 15*pow(pc_color, 1.67);
+	return 0x0F & (int)(ef936_color + 0.5);
+}
+
+// Calculate gamma value for each component.
+// Author: Dino Florenzi
+static unsigned short df_gamma(unsigned char c)
+{
+    int i,col=0;
+    int ef_vals[16]={0,60,90,110,130,148,165,180,193,205,215,225,230,235,240,255};
+    for (i=0;i<15;i++)
+    {
+        if((c>=ef_vals[i])&&(c<ef_vals[i+1])) return i;
+    }
+    return 15;
+}
+
 void ef936x_finalization( Environment * _environment ) {
 
     int i;
@@ -745,7 +768,32 @@ void ef936x_finalization( Environment * _environment ) {
     // }
 
     for( i=0; i<15; ++i ) {
-        out4("$%1.1x%1.1x%1.1x%1.1x, ", 0, ( palette[i].blue >> 4 ) & 0x0f, ( palette[i].green >> 4 ) & 0x0f, ( palette[i].red >> 4 ) & 0x0f );
+        switch( _environment->gammaCorrection ) {
+            case GAMMA_CORRECTION_NONE:
+                out4( "$%1.1x%1.1x%1.1x%1.1x, ", 
+                    0, 
+                    ( palette[i].blue >> 4 ) & 0x0f, 
+                    ( palette[i].green >> 4 ) & 0x0f, 
+                    ( palette[i].red >> 4 ) & 0x0f 
+                );
+                break;
+            case GAMMA_CORRECTION_TYPE1:
+                out4( "$%1.1x%1.1x%1.1x%1.1x, ", 
+                    0, 
+                    pc_to_ef936x( palette[i].blue >> 4 ) & 0x0f, 
+                    pc_to_ef936x( palette[i].green >> 4 ) & 0x0f, 
+                    pc_to_ef936x( palette[i].red >> 4 ) & 0x0f 
+                );
+                break;
+            case GAMMA_CORRECTION_TYPE2:
+                out4( "$%1.1x%1.1x%1.1x%1.1x, ", 
+                    0, 
+                    df_gamma( palette[i].blue >> 4 ) & 0x0f, 
+                    df_gamma( palette[i].green >> 4 ) & 0x0f, 
+                    df_gamma( palette[i].red >> 4 ) & 0x0f 
+                );
+                break;
+        }
     }
     outline4("$%1.1x%1.1x%1.1x%1.1x", 0, ( palette[15].blue >> 4 ) & 0x0f, ( palette[15].green >> 4 ) & 0x0f, ( palette[15].red >> 4 ) & 0x0f );
 
