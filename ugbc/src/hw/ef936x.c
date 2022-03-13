@@ -101,9 +101,9 @@ static int rgbConverterFunction( int _red, int _green, int _blue ) {
 
 static void rgbConverterFunctionInverse( int _value, unsigned char* _red, unsigned char* _green, unsigned char* _blue ) {
     
-    *_red = (unsigned char)( _value & 0xf );
-    *_green = (unsigned char)( _value & 0xf0 ) >> 4;
-    *_blue = (unsigned char)( _value & 0xf00 ) >> 8;
+    *_red = (unsigned char)( _value & 0xf ) << 4;
+    *_green = (unsigned char)( _value & 0xf0 );
+    *_blue = (unsigned char)( _value & 0xf00 ) >> 4;
 
 }
 
@@ -169,6 +169,13 @@ void ef936x_background_color( Environment * _environment, int _index, int _backg
     outline0("STA $A7DA" );
 
     rgbConverterFunctionInverse( _background_color, &SYSTEM_PALETTE[_index].red, &SYSTEM_PALETTE[_index].green, &SYSTEM_PALETTE[_index].blue );
+
+    // printf("SYSTEM_PALETTE[_index].index = %d\n", _index );
+    // printf("SYSTEM_PALETTE[_index].red = %2.2x\n", SYSTEM_PALETTE[_index].red );
+    // printf("SYSTEM_PALETTE[_index].green = %2.2x\n", SYSTEM_PALETTE[_index].green );
+    // printf("SYSTEM_PALETTE[_index].blue = %2.2x\n", SYSTEM_PALETTE[_index].blue );
+    // printf("\n" );
+
     SYSTEM_PALETTE[_index].index = _index;
     strcpy( SYSTEM_PALETTE[_index].description, "custom" );
     SYSTEM_PALETTE[_index].used = 0;
@@ -729,6 +736,29 @@ void ef936x_initialization( Environment * _environment ) {
 
 extern RGBi * commonPalette;
 
+// Converts a PC color to a thomson color for ef936 
+// considering its very high gamma value.
+// Author: Samuel Devulder
+static int pc_to_ef936x(int _pc_color) {
+	// if(1) return (_pc_color>>4)&15;
+	double pc_color = _pc_color/255.0;
+	double ef936_color = 15*pow(pc_color, 1.67);
+	return 0x0F & (int)(ef936_color + 0.5);
+}
+
+// Calculate gamma value for each component.
+// Author: Dino Florenzi
+static unsigned short df_gamma(unsigned char c)
+{
+    int i,col=0;
+    int ef_vals[16]={0,60,90,110,130,148,165,180,193,205,215,225,230,235,240,255};
+    for (i=0;i<15;i++)
+    {
+        if((c>=ef_vals[i])&&(c<ef_vals[i+1])) return i;
+    }
+    return 15;
+}
+
 void ef936x_finalization( Environment * _environment ) {
 
     int i;
@@ -745,7 +775,32 @@ void ef936x_finalization( Environment * _environment ) {
     // }
 
     for( i=0; i<15; ++i ) {
-        out4("$%1.1x%1.1x%1.1x%1.1x, ", 0, ( palette[i].blue >> 4 ) & 0x0f, ( palette[i].green >> 4 ) & 0x0f, ( palette[i].red >> 4 ) & 0x0f );
+        switch( _environment->gammaCorrection ) {
+            case GAMMA_CORRECTION_NONE:
+                out4( "$%1.1x%1.1x%1.1x%1.1x, ", 
+                    0, 
+                    ( palette[i].blue >> 4 ) & 0x0f, 
+                    ( palette[i].green >> 4 ) & 0x0f, 
+                    ( palette[i].red >> 4 ) & 0x0f 
+                );
+                break;
+            case GAMMA_CORRECTION_TYPE1:
+                out4( "$%1.1x%1.1x%1.1x%1.1x, ", 
+                    0, 
+                    pc_to_ef936x( palette[i].blue >> 4 ) & 0x0f, 
+                    pc_to_ef936x( palette[i].green >> 4 ) & 0x0f, 
+                    pc_to_ef936x( palette[i].red >> 4 ) & 0x0f 
+                );
+                break;
+            case GAMMA_CORRECTION_TYPE2:
+                out4( "$%1.1x%1.1x%1.1x%1.1x, ", 
+                    0, 
+                    df_gamma( palette[i].blue >> 4 ) & 0x0f, 
+                    df_gamma( palette[i].green >> 4 ) & 0x0f, 
+                    df_gamma( palette[i].red >> 4 ) & 0x0f 
+                );
+                break;
+        }
     }
     outline4("$%1.1x%1.1x%1.1x%1.1x", 0, ( palette[15].blue >> 4 ) & 0x0f, ( palette[15].green >> 4 ) & 0x0f, ( palette[15].red >> 4 ) & 0x0f );
 
@@ -1000,17 +1055,25 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
             int colorIndex = 0;
             for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
                 int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
-                // printf("%d (%2.2x%2.2x%2.2x) <-> %d (%2.2x%2.2x%2.2x) [%d] = %d [min = %d]\n", i, SYSTEM_PALETTE[j].red, SYSTEM_PALETTE[j].green, SYSTEM_PALETTE[j].blue, j, palette[i].red, palette[i].green, palette[i].blue, SYSTEM_PALETTE[j].index, distance, minDistance );
+                if ( _environment->debugImageLoad ) {
+                    printf("%d (%2.2x%2.2x%2.2x) <-> %d (%2.2x%2.2x%2.2x) [%d] = %d [min = %d]\n", i, SYSTEM_PALETTE[j].red, SYSTEM_PALETTE[j].green, SYSTEM_PALETTE[j].blue, j, palette[i].red, palette[i].green, palette[i].blue, SYSTEM_PALETTE[j].index, distance, minDistance );
+                }
                 if (distance < minDistance) {
-                    // printf(" candidated...\n" );
+                    if ( _environment->debugImageLoad ) {
+                        printf(" candidated...\n" );
+                    }
                     for( k=0; k<i; ++k ) {
                         if ( palette[k].index == SYSTEM_PALETTE[j].index ) {
-                            // printf(" ...used!\n" );
+                            if ( _environment->debugImageLoad ) {
+                                printf(" ...used!\n" );
+                            }
                             break;
                         }
                     }
                     if ( k>=i ) {
-                        // printf(" ...ok! (%d)\n", SYSTEM_PALETTE[j].index );
+                        if ( _environment->debugImageLoad ) {
+                            printf(" ...ok! (%d)\n", SYSTEM_PALETTE[j].index );
+                        }
                         minDistance = distance;
                         colorIndex = j;
                     }
@@ -1018,7 +1081,9 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
             }
             palette[i].index = SYSTEM_PALETTE[colorIndex].index;
             strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
-            // printf("%d) %d * %d %2.2x%2.2x%2.2x\n", i, colorIndex, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
+            if ( _environment->debugImageLoad ) {
+                printf("%d) %d * %d %2.2x%2.2x%2.2x\n", i, colorIndex, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
+            }
         }
 
         commonPalette = palette;
@@ -1086,7 +1151,9 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
 
             offset = ( image_y * ( _frame_width >> 3 ) ) + ( image_x >> 3 );
 
-            // printf( "%1.1x", colorIndex );
+            if ( _environment->debugImageLoad ) {
+                printf( "%1.1x", colorIndex );
+            }
 
             if ( colorIndex && (*(buffer + 2 + ( ( _frame_width >> 3 ) * _frame_height ) + offset) == 0 ) ) {
                 bitmask = colorIndex << 4;
@@ -1099,16 +1166,20 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
 
         _source += ( _width - _frame_width ) * 3;
 
-        // printf("\n" );
+        if ( _environment->debugImageLoad ) {
+            printf("\n" );
+        }
     }
 
     // for(i=0; i<4; ++i ) {
     //     printf( "%1.1x = %2.2x\n", i, palette[i].index );
     // }
 
-    // printf("\n" );
-    // printf("\n" );
-
+    if ( _environment->debugImageLoad ) {
+        printf("\n" );
+        printf("\n" );
+    }
+    
     variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
 
     return result;
@@ -1493,6 +1564,8 @@ void ef936x_put_image( Environment * _environment, char * _image, char * _x, cha
     outline0("STD <IMAGEX" );
     outline1("LDD %s", _y );
     outline0("STD <IMAGEY" );
+    outline1("LDA #$%2.2x", ( _flags & 0xff ) );
+    outline0("STA <IMAGEF" );
 
     outline0("JSR PUTIMAGE");
     

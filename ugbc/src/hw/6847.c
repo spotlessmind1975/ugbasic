@@ -1359,9 +1359,6 @@ Variable * c6847_image_converter( Environment * _environment, char * _data, int 
 
 void c6847_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _frame_size, int _flags ) {
 
-    // currently unused
-    (void)!_flags;
-
     deploy( c6847vars, src_hw_6847_vars_asm);
     deploy( putimage, src_hw_6847_put_image_asm );
 
@@ -1383,6 +1380,9 @@ void c6847_put_image( Environment * _environment, char * _image, char * _x, char
     outline0("STD IMAGEX" );
     outline1("LDD %s", _y );
     outline0("STD IMAGEY" );
+
+    outline1("LDA #$%2.2x", ( _flags & 0xff ) );
+    outline0("STA <IMAGEF" );
 
     outline0("JSR PUTIMAGE");
     

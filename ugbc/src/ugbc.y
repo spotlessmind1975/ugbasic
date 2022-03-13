@@ -855,6 +855,9 @@ tile_load_flag :
 put_image_flag :
     WITH TRANSPARENCY {
         $$ = FLAG_TRANSPARENCY;
+    }
+    | DOUBLE Y {
+        $$ = FLAG_DOUBLE_Y;
     };
 
 images_load_flag :
@@ -5408,6 +5411,12 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     printf("\t-A <file>    Path to app maker\n" );
     printf("\t-T <path>    Path to temporary path\n" );
     printf("\t-c <file>    Output filename with linker configuration\n" );
+#if defined(__pc128op__) || defined(__mo5__)
+    printf("\t-G <type>    Type of gamma correction on PALETTE generation:\n" );
+    printf("\t               none (0): no gamma correction\n" );
+    printf("\t               type1 (1): algorithmic\n" );
+    printf("\t               type2 (2): by threshold\n" );
+#endif
     printf("\t-1           Include source code into the executable\n" );
     printf("\t             and an execution shell. It enforces other.\n" );
     printf("\t             10-liners rules.\n" );
@@ -5500,7 +5509,7 @@ int main( int _argc, char *_argv[] ) {
     _environment->outputFileType = OUTPUT_FILE_TYPE_ROM;
 #endif
 
-    while ((opt = getopt(_argc, _argv, "ae:c:Wo:Ie:l:EO:dL:C:VA:T:1p:")) != -1) {
+    while ((opt = getopt(_argc, _argv, "ae:c:Wo:Ie:l:EO:dL:C:VA:T:1p:G:")) != -1) {
         switch (opt) {
                 case 'a':
                     if ( ! _environment->listingFileName ) {
@@ -5533,6 +5542,15 @@ int main( int _argc, char *_argv[] ) {
                     break;
                 case 'd':
                     _environment->debugImageLoad = 1;
+                    break;
+                case 'G':
+                    if ( strcmp( optarg, "none") == 0 || atoi( optarg ) == 0 ) {
+                        _environment->gammaCorrection = GAMMA_CORRECTION_NONE;
+                    } else if ( strcmp( optarg, "type1") == 0 || atoi( optarg ) == 1 ) {
+                        _environment->gammaCorrection = GAMMA_CORRECTION_TYPE1;
+                    } else if ( strcmp( optarg, "type2") == 0 || atoi( optarg ) == 2 ) {
+                        _environment->gammaCorrection = GAMMA_CORRECTION_TYPE2;
+                    }
                     break;
                 case 'O':
                     if ( strcmp( optarg, "bin") == 0 ) {

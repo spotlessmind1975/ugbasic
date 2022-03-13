@@ -48,4 +48,6 @@
 </usermanual> */
 void screen_swap( Environment * _environment ) {
 
+    outline0("JSR SWITCHTILEMAP");
+
 }

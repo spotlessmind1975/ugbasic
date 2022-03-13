@@ -543,6 +543,8 @@ void zx_put_image( Environment * _environment, char * _image, char * _x, char * 
     outline0("LD (IMAGEX), A" );
     outline1("LD A, (%s)", _y );
     outline0("LD (IMAGEY), A" );
+    outline1("LD A, #$%2.2x", ( _flags & 0xff ) );
+    outline0("LD (IMAGEF), A" );
 
     outline0("CALL PUTIMAGE");
 

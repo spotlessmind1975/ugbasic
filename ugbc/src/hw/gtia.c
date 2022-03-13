@@ -2078,9 +2078,6 @@ Variable * gtia_image_converter( Environment * _environment, char * _data, int _
 
 void gtia_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _frame_size, int _flags ) {
 
-    // currently unused
-    (void)!_flags;
-
     deploy( gtiavars, src_hw_gtia_vars_asm);
     deploy( putimage, src_hw_gtia_put_image_asm );
 
@@ -2127,6 +2124,8 @@ void gtia_put_image( Environment * _environment, char * _image, char * _x, char 
     outline0("STA IMAGEY" );
     outline1("LDA %s+1", _y );
     outline0("STA IMAGEY+1" );
+    outline1("LDA #$%2.2x", ( _flags & 0xff ) );
+    outline0("STA IMAGEF" );
 
     outline0("JSR PUTIMAGE");
 

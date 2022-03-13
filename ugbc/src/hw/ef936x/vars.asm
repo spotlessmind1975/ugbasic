@@ -70,6 +70,7 @@ IMAGEW EQU $45
 IMAGEH EQU $46
 IMAGEH2 EQU $47
 IMAGET EQU $48
+IMAGEF EQU $49
 
 ; ------------------------------------------------------------------------------
 ; BITMAP MODE 16 (MODE #3)

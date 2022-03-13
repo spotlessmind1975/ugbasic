@@ -42,8 +42,8 @@ TILEW = $95
 TILEH = $96
 TILEX2 = $97
 TILEA = $98
-TILEW = $99
-TILEH = $9A
+TILEW2 = $99
+TILEH2 = $9A
 
 ; ----------------------------------------------------------------------------
 ; - Put tile on tilemap
