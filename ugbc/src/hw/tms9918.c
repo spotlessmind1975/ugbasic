@@ -419,7 +419,7 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
             //      = Reserved Bit (must be set to O)
             //      = Selects Size 0 sprites (8x8 pixels)
             //      = Selects no magnification
-            WVDP_R1( 0xf0 );
+            WVDP_R1( 0xb0 );
 
             // Register 2 tells the VDP where the starting address of the Name Table is located in VRAM. The
             // range of its contents is from O-F. The contents of the register form the upper four bits of
@@ -448,6 +448,8 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
 
             outline0("CALL TMS9918AUDCCHAR01");
 
+            WVDP_R1( 0xf0 );
+
             break;
         case TILEMAP_MODE_GRAPHIC1:
             _environment->fontWidth = 8;
@@ -469,7 +471,7 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
             //      = Reserved Bit (must be set to O)
             //      = Selects Size 0 sprites (8x8 pixels)
             //      = Selects no magnification
-            WVDP_R1( 0xe0 );
+            WVDP_R1( 0xa0 );
 
             // Register 2 tells the VDP where the starting address of the Name Table is located in VRAM. The
             // range of its contents is from O-F. The contents of the register form the upper four bits of
@@ -513,6 +515,8 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
 
             outline0("CALL TMS9918AUDCCHAR01");
 
+            WVDP_R1( 0xe0 );
+
             break;
         case BITMAP_MODE_GRAPHIC2:
         case BITMAP_MODE_MULTICOLOR:
@@ -535,7 +539,7 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
             //      = Reserved Bit (must be set to O)
             //      = Selects Size 0 sprites (8x8 pixels)
             //      = Selects no magnification
-            WVDP_R1( 0xe0 );
+            WVDP_R1( 0x80 );
 
             // Register 2 tells the VDP where the starting address of the Name Table is located in VRAM. The
             // range of its contents is from O-F. The contents of the register form the upper four bits of
@@ -574,10 +578,12 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
             // 03 and Hex 07.
             WVDP_RPATTERN( 0x03 );
 
-            WVDP_RSPRITEA( 0x20 ); // 1000
-            WVDP_RSPRITEP( 0x00 ); // 0000
+            WVDP_RSPRITEA( 0x76 ); // 1000
+            WVDP_RSPRITEP( 0x03 ); // 0000
 
             outline0("CALL TMS9918AUDCCHAR23");
+
+            WVDP_R1( 0xC0 );
 
             break;
     }
@@ -1223,6 +1229,13 @@ void tms9918_initialization( Environment * _environment ) {
 
     tms9918_cls( _environment );
 
+    _environment->descriptors = precalculate_tile_descriptors_for_font( data_fonttms9918_bin );
+
+    _environment->descriptors->first = 0;
+    _environment->descriptors->firstFree = 128;
+    _environment->descriptors->lastFree = 255;
+    _environment->descriptors->count = 128;
+    
     _environment->currentRgbConverterFunction = rgbConverterFunction;
     _environment->screenShades = 16;
 
