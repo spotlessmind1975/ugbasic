@@ -1469,6 +1469,7 @@ static int optim_pass( Environment * _environment, buffer buf[LOOK_AHEAD], enum 
     (void)fclose(fileOptimized);
 
     /* makes our generated file the new asm file */
+    remove(_environment->asmFileName);
     (void)rename( fileNameOptimized, _environment->asmFileName );
     
     return change;
