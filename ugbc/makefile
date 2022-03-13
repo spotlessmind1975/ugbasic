@@ -57,6 +57,9 @@ src-generated/fontvic1.c:
 src-generated/fontvic2.c:
 	@xxd -i $(subst src-generated/,data/,$(@:.c=.bin)) >$@
 
+src-generated/fonttms9918.c:
+	@xxd -i $(subst src-generated/,data/,$(@:.c=.bin)) >$@
+
 # ----------------------------------------------------------------------------
 # Components and chipsets
 # ----------------------------------------------------------------------------
@@ -137,7 +140,7 @@ src-generated/ted_%.c: $(MODULES_TED)
 # Texas Instruments TMS9918
 
 MODULES_TMS9918 := $(wildcard src/hw/tms9918/*.asm)
-SOURCES_TMS9918 := $(subst src/hw/tms9918/,src-generated/tms9918_,$(MODULES_TMS9918:.asm=.c))
+SOURCES_TMS9918 := $(subst src/hw/tms9918/,src-generated/tms9918_,$(MODULES_TMS9918:.asm=.c))  src-generated/fonttms9918.c
 
 src-generated/tms9918_%.c: $(MODULES_TMS9918)
 	@xxd -i $(subst src-generated/tms9918_,src/hw/tms9918/,$(@:.c=.asm)) >$@
