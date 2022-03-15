@@ -108,6 +108,9 @@ void target_initialization( Environment * _environment ) {
     variable_import( _environment, "PPIKEYBOARD", VT_BYTE, 0 );
     variable_global( _environment, "PPIKEYBOARD" );   
 
+    variable_import( _environment, "VDP60HZ", VT_BYTE, 0 );
+    variable_global( _environment, "VDP60HZ" );   
+
     variable_import( _environment, "IRQVECTOR", VT_BUFFER, 3 );
     variable_global( _environment, "IRQVECTOR" );   
 
@@ -119,8 +122,6 @@ void target_initialization( Environment * _environment ) {
     outhead0("SECTION data_user");
     outhead0("ORG $C000");
     outhead0("SECTION code_user");
-
-    outline0("JP CODESTART");
 
     deploy_inplace(startup,src_hw_sc3000_startup_asm);
     deploy( font, src_hw_tms9918_font_asm );
