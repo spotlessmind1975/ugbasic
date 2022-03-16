@@ -138,10 +138,6 @@ RAM_TEST:
 
 		; call	VDP_INIT
 		
-		call	CheckIf60Hz
-		ld		(VDP60HZ),a				; save it, 00/01 = 50/60 Hz		
-		
-		
 KEYB_INIT_AND_TEST:
 		ld		a, $92					; Init PPI (if present). PortC = Ouput, PortA + PortB = Input		
 		out		(sc_ppi_control),a			

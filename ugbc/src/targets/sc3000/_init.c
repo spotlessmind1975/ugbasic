@@ -139,6 +139,9 @@ void target_initialization( Environment * _environment ) {
     
     tms9918_initialization( _environment );
 
+    outline0("call	CheckIf60Hz");
+    outline0("ld		(VDP60HZ),a				; save it, 00/01 = 50/60 Hz		");
+
     z80_compare_and_branch_8bit_const( _environment, "LASTVAR", 0x42, "CODESTARTRUN", 1 );
 
     Variable * outOfMemoryMessage = variable_define( _environment, "OOM", VT_STRING, 0 );
