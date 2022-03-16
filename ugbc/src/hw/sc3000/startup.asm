@@ -301,7 +301,7 @@ IRQVECTORSKIP:
 	POP	AF
 	IN A,(vdp_control)
 	EI
-	RET
+	RETI
 
 NMI_HANDLER2:
 	RETN
