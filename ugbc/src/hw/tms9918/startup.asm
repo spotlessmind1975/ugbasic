@@ -61,12 +61,22 @@ endif
 
 VDPWRITEBIT: EQU     40H
 
-VDPSETREG:
+VDPSETREGI:
         CALL    VDPREGOUT
         LD      A, E
 VDPREGOUT:
         PUSH    BC
         LD      BC, (VDPCONTROLPORTWRITE)
+; if __sc3000__
+;         NOP
+;         NOP
+;         NOP
+;         NOP
+;         NOP
+;         NOP
+;         NOP
+;         NOP
+; endif
         OUT     (C), A
         POP     BC
         RET
@@ -74,6 +84,16 @@ VDPREGOUT:
 VDPREGIN:
         PUSH    BC
         LD      BC, (VDPCONTROLPORTREAD)
+; if __sc3000__
+;         NOP
+;         NOP
+;         NOP
+;         NOP
+;         NOP
+;         NOP
+;         NOP
+;         NOP
+; endif
         IN      A, (C)
         POP     BC
         RET
@@ -81,6 +101,16 @@ VDPREGIN:
 VDPRAMOUT:
         PUSH    BC
         LD      BC, (VDPDATAPORTWRITE)
+; if __sc3000__
+;         NOP
+;         NOP
+;         NOP
+;         NOP
+;         NOP
+;         NOP
+;         NOP
+;         NOP
+; endif
         OUT     (C), A
         POP     BC
         RET
@@ -88,6 +118,16 @@ VDPRAMOUT:
 VDPRAMOUT8:
         PUSH    BC
         LD      BC, (VDPDATAPORTWRITE)
+; if __sc3000__
+;         NOP
+;         NOP
+;         NOP
+;         NOP
+;         NOP
+;         NOP
+;         NOP
+;         NOP
+; endif
         OUT     (C), A
         NOP
         NOP
@@ -166,6 +206,16 @@ VDPRAMOUT8:
 VDPRAMIN:
         PUSH    BC
         LD      BC, (VDPDATAPORTREAD)
+; if __sc3000__
+;         NOP
+;         NOP
+;         NOP
+;         NOP
+;         NOP
+;         NOP
+;         NOP
+;         NOP
+; endif
         IN      A, (C)
         POP     BC
         RET
@@ -185,6 +235,12 @@ VDPREADADDR:
         LD      A, D                    ; MASK OFF MSB TO MAX OF 16KB
         AND     3FH
         CALL    VDPREGOUT
+        RET
+
+VDPSETREG:
+        DI
+        CALL    VDPSETREGI
+        EI
         RET
 
 VDPOUTCHAR:
@@ -333,7 +389,7 @@ TMS9918STARTUP:
 
         LD A, VDP_R1
         LD E, A
-        LD A, $f0
+        LD A, $e0
         CALL VDPSETREG
 
         LD A, $C3

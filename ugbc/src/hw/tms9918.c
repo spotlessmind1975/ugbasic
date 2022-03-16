@@ -583,7 +583,7 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
 
             outline0("CALL TMS9918AUDCCHAR23");
 
-            WVDP_R1( 0xC0 );
+            WVDP_R1( 0xe0 );
 
             break;
     }
