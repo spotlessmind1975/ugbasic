@@ -41,13 +41,7 @@ sc_ppi_a         	= $DC
 sc_ppi_b         	= $DD
 sc_ppi_c         	= $DE
 sc_ppi_control   	= $DF
-aaaaaaa=1
-bbbbbbb=2
-ccccccc=3
-ddddddd=4
-eeeeeee=5
-INT_HANDLER      	= $0104
-NMI_HANDLER      	= $0108
+
 INITIAL_STACK    	= $C400
 
 PPI_Setting         = 0x92
@@ -127,7 +121,7 @@ COLD_RESET1:
 		DEFS 9
 
 ; This label starts as $0066
-		jp		NMI_HANDLER
+		jp		NMI_HANDLER2
 
 		DEFS 7
 
@@ -293,6 +287,7 @@ INT_HANDLER2:
 	JR Z, IRQVECTORSKIP
     CALL IRQVECTOR
 IRQVECTORSKIP:
+	IN A,(vdp_control)
 	POP	HL
 	POP	DE
 	POP	BC
@@ -305,8 +300,12 @@ IRQVECTORSKIP:
 	POP	DE
 	POP	BC
 	POP	AF
-	RET
+	EI
+	RETI
 
+NMI_HANDLER2:
+	RETN
+	
 IRQVOID:
     RET
 
