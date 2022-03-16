@@ -46,8 +46,6 @@ bbbbbbb=2
 ccccccc=3
 ddddddd=4
 eeeeeee=5
-INT_HANDLER      	= $0104
-NMI_HANDLER      	= $0108
 INITIAL_STACK    	= $C400
 
 PPI_Setting         = 0x92
@@ -127,7 +125,7 @@ COLD_RESET1:
 		DEFS 9
 
 ; This label starts as $0066
-		jp		NMI_HANDLER
+		jp		INT_HANDLER2
 
 		DEFS 7
 

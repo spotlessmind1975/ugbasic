@@ -66,11 +66,11 @@ endif
 
 PLOTNMI2:
 
+    PUSH AF
+
     LD A, (CURRENTTILEMODE)
     CP 1
     RET Z
-
-    PUSH AF
 
     LD A, (CLIPY2)
     LD B, A
@@ -234,4 +234,5 @@ PLOTP2:
     JP PLOTDONE
 
 PLOTDONE:
+    CALL VDPREGIN
     RET
