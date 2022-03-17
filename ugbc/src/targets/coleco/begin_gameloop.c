@@ -95,9 +95,9 @@ void begin_gameloop( Environment * _environment ) {
     char labelEnd[MAX_TEMPORARY_STORAGE];
     sprintf( labelEnd, "%send", loop->label  );
 
-    outline1("LD HL, %s", loop->label );
-    outline0("CALL SET_GAMELOOP_HOOK");
-    outline1("JP %s", labelEnd );
+    // outline1("LD HL, %s", loop->label );
+    // outline0("CALL SET_GAMELOOP_HOOK");
+    // outline1("JP %s", labelEnd );
 
     cpu_label( _environment, loop->label );
 

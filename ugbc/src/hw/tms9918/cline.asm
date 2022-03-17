@@ -41,23 +41,23 @@
 ; VDPUPDATE2:		$3800		$2000
 ; VDPUPDATE3:		$3800		$2000		$0000
 
-if __coleco__
+; if __coleco__
+
+; CLINE:
+;     CALL WAIT_VDP_HOOK
+;     LD HL, CLINENMI
+;     CALL SET_VDP_HOOK
+;     CALL WAIT_VDP_HOOK
+;     RET
+
+; CLINENMI:
+;     CALL GET_VDP_HOOK
+
+; else
 
 CLINE:
-    CALL WAIT_VDP_HOOK
-    LD HL, CLINENMI
-    CALL SET_VDP_HOOK
-    CALL WAIT_VDP_HOOK
-    RET
 
-CLINENMI:
-    CALL GET_VDP_HOOK
-
-else
-
-CLINE:
-
-endif
+; endif
 
 CLINENMI2:
 

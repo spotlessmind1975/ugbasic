@@ -80,19 +80,13 @@ NMI:
     LD HL,(COLECOTIMER)
     INC HL
     LD (COLECOTIMER),HL
-	POP	HL
-    LD A,(VDP_HOOK)
-    CP $cd
-    JR NZ,NMI2
-    CALL VDP_HOOK
-    CALL DONE_VDP_HOOK
-NMI2:
-    LD A,(GAMELOOP_HOOK)
-    CP $cd
-    JR NZ,NMI3
-    CALL GAMELOOP_HOOK
-NMI3:
+	LD A, (IRQVECTORREADY)
+	CMP 0
+	JR Z, IRQVECTORSKIP
+    CALL IRQVECTOR
+IRQVECTORSKIP:
 	CALL	$1fdc
+	POP	HL
 	POP	DE
 	POP	BC
 	EXX
@@ -106,15 +100,32 @@ NMI3:
 	POP	AF
 	RETN
 
-SET_GAMELOOP_HOOK:
-        LD (GAMELOOP_HOOK+1),HL
-        LD A,$c9
-        LD (GAMELOOP_HOOK+3),A
-        LD A,$cd
-        LD (GAMELOOP_HOOK),A
-        RET
+; SET_GAMELOOP_HOOK:
+;         LD (GAMELOOP_HOOK+1),HL
+;         LD A,$c9
+;         LD (GAMELOOP_HOOK+3),A
+;         LD A,$cd
+;         LD (GAMELOOP_HOOK),A
+;         RET
+
+IRQVOID:
+    RET
 
 COLECOSTARTUP:
     LD	HL, $9b9b
     LD	(CONTROLLER_BUFFER),HL
+
+    LD DE, IRQVOID
+    LD HL, IRQVECTOR
+    LD A, $c3
+    LD (HL), A
+    INC HL
+    LD A, E
+    LD (HL), A
+    INC HL
+    LD A, D
+    LD (HL), A
+	LD A, 1
+	LD (IRQVECTORREADY), A
+
     RET

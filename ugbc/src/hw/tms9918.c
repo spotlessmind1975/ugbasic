@@ -118,13 +118,13 @@ void tms9918_hit( Environment * _environment, char * _sprite_mask, char * _resul
  */
 void tms9918_border_color( Environment * _environment, char * _border_color ) {
 
-#ifdef __coleco__
-    MAKE_LABEL
-    if ( ! _environment->hasGameLoop ) {
-        outline1("JP %sskip", label );
-        outhead1("%s:", label );
-    }
-#endif
+// #ifdef __coleco__
+//     MAKE_LABEL
+//     if ( ! _environment->hasGameLoop ) {
+//         outline1("JP %sskip", label );
+//         outhead1("%s:", label );
+//     }
+// #endif
     outline1("LD E, %2.2x", VDP_RCOLOR );
     outline0("CALL VDPREGIN" );
     outline0("AND $F0" );
@@ -134,16 +134,16 @@ void tms9918_border_color( Environment * _environment, char * _border_color ) {
     outline0("AND $0F" );
     outline0("OR B" );
     outline0("CALL VDPSETREG" );
-#ifdef __coleco__
-    if ( ! _environment->hasGameLoop ) {
-        outline0("RET" );
-        outhead1("%sskip:", label );
-        outline0("CALL WAIT_VDP_HOOK" );
-        outline1("LD HL, %s", label );
-        outline0("CALL SET_VDP_HOOK0" );
-        outline0("CALL WAIT_VDP_HOOK" );
-    }
-#endif
+// #ifdef __coleco__
+//     if ( ! _environment->hasGameLoop ) {
+//         outline0("RET" );
+//         outhead1("%sskip:", label );
+//         outline0("CALL WAIT_VDP_HOOK" );
+//         outline1("LD HL, %s", label );
+//         outline0("CALL SET_VDP_HOOK0" );
+//         outline0("CALL WAIT_VDP_HOOK" );
+//     }
+// #endif
 
 }
 
@@ -229,13 +229,13 @@ void tms9918_background_color_get_vars( Environment * _environment, char * _inde
  */
 void tms9918_sprite_common_color( Environment * _environment, char * _index, char * _common_color ) {
 
-#ifdef __coleco__
-    MAKE_LABEL
-    if ( ! _environment->hasGameLoop ) {
-        outline1("JP %sskip", label );
-        outhead1("%s:", label );
-    }
-#endif
+// #ifdef __coleco__
+//     MAKE_LABEL
+//     if ( ! _environment->hasGameLoop ) {
+//         outline1("JP %sskip", label );
+//         outhead1("%s:", label );
+//     }
+// #endif
     outline0("LD HL, $1000");
     outline1("LD E, (%s)", _index );
     outline0("SLA E");
@@ -251,16 +251,16 @@ void tms9918_sprite_common_color( Environment * _environment, char * _index, cha
     outline1("LD A, (%s)", _common_color );
     outline0("OR B");
     outline0("CALL VDPOUTCHAR");
-#ifdef __coleco__
-    if ( ! _environment->hasGameLoop ) {
-        outline0("RET" );
-        outhead1("%sskip:", label );
-        outline0("CALL WAIT_VDP_HOOK" );
-        outline1("LD HL, %s", label );
-        outline0("CALL SET_VDP_HOOK0" );
-        outline0("CALL WAIT_VDP_HOOK" );
-    }
-#endif
+// #ifdef __coleco__
+//     if ( ! _environment->hasGameLoop ) {
+//         outline0("RET" );
+//         outhead1("%sskip:", label );
+//         outline0("CALL WAIT_VDP_HOOK" );
+//         outline1("LD HL, %s", label );
+//         outline0("CALL SET_VDP_HOOK0" );
+//         outline0("CALL WAIT_VDP_HOOK" );
+//     }
+// #endif
 
 }
 
@@ -382,16 +382,16 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
     cpu_store_8bit( _environment, "_PEN", DEFAULT_PEN_COLOR );
     cpu_store_8bit( _environment, "_PAPER", DEFAULT_PAPER_COLOR );
 
-#ifdef __coleco__
+// #ifdef __coleco__
 
-    MAKE_LABEL
+//     MAKE_LABEL
         
-    if ( ! _environment->hasGameLoop ) {
-        outline1("JP %sdone", label );
-        outhead1("%s:", label );
-    }
+//     if ( ! _environment->hasGameLoop ) {
+//         outline1("JP %sdone", label );
+//         outhead1("%s:", label );
+//     }
 
-#endif
+// #endif
 
     switch( _screen_mode->id ) {
         // M1 M2 M3 Display Mode
@@ -601,18 +601,18 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
     cpu_store_8bit( _environment, "FONTWIDTH", _environment->fontWidth );
     cpu_store_8bit( _environment, "FONTHEIGHT", _environment->fontHeight );
 
-#ifdef __coleco__
+// #ifdef __coleco__
 
-    if ( ! _environment->hasGameLoop ) {
-        outline0("RET");
-        outline1("%sdone:", label );
-        outline0("CALL WAIT_VDP_HOOK" );
-        outline1("LD HL, %s", label );
-        outline0("CALL SET_VDP_HOOK0" );
-        outline0("CALL WAIT_VDP_HOOK");
-    }
+//     if ( ! _environment->hasGameLoop ) {
+//         outline0("RET");
+//         outline1("%sdone:", label );
+//         outline0("CALL WAIT_VDP_HOOK" );
+//         outline1("LD HL, %s", label );
+//         outline0("CALL SET_VDP_HOOK0" );
+//         outline0("CALL WAIT_VDP_HOOK");
+//     }
     
-#endif
+// #endif
 
     // printf("tms9918_tilemap_enable() -> screen tiles width %d\n", _environment->screenTilesWidth );
 
@@ -748,53 +748,53 @@ void tms9918_point( Environment * _environment, char *_x, char *_y, char * _resu
 
 void tms9918_screen_on( Environment * _environment ) {
 
-#ifdef __coleco__
-    MAKE_LABEL
-    if ( ! _environment->hasGameLoop ) {
-        outline1("JP %sskip", label );
-        outhead1("%s:", label );
-    }
-#endif
+// #ifdef __coleco__
+//     MAKE_LABEL
+//     if ( ! _environment->hasGameLoop ) {
+//         outline1("JP %sskip", label );
+//         outhead1("%s:", label );
+//     }
+// #endif
     outline1("LD E, %2.2x", VDP_R1 );
     outline0("CALL VDPREGIN" );
     outline0("OR $40" );
     outline0("CALL VDPSETREG" );
-#ifdef __coleco__
-    if ( ! _environment->hasGameLoop ) {
-        outline0("RET" );
-        outhead1("%sskip:", label );
-        outline0("CALL WAIT_VDP_HOOK" );
-        outline1("LD HL, %s", label );
-        outline0("CALL SET_VDP_HOOK0" );
-        outline0("CALL WAIT_VDP_HOOK" );
-    }
-#endif
+// #ifdef __coleco__
+//     if ( ! _environment->hasGameLoop ) {
+//         outline0("RET" );
+//         outhead1("%sskip:", label );
+//         outline0("CALL WAIT_VDP_HOOK" );
+//         outline1("LD HL, %s", label );
+//         outline0("CALL SET_VDP_HOOK0" );
+//         outline0("CALL WAIT_VDP_HOOK" );
+//     }
+// #endif
 
 }
 
 void tms9918_screen_off( Environment * _environment ) {
 
-#ifdef __coleco__
-    MAKE_LABEL
-    if ( ! _environment->hasGameLoop ) {
-        outline1("JP %sskip", label );
-        outhead1("%s:", label );
-    }
-#endif
+// #ifdef __coleco__
+//     MAKE_LABEL
+//     if ( ! _environment->hasGameLoop ) {
+//         outline1("JP %sskip", label );
+//         outhead1("%s:", label );
+//     }
+// #endif
     outline1("LD E, %2.2x", VDP_R1 );
     outline0("CALL VDPREGIN" );
     outline0("AND $BF" );
     outline0("CALL VDPSETREG" );
-#ifdef __coleco__
-    if ( ! _environment->hasGameLoop ) {
-        outline0("RET" );
-        outhead1("%sskip:", label );
-        outline0("CALL WAIT_VDP_HOOK" );
-        outline1("LD HL, %s", label );
-        outline0("CALL SET_VDP_HOOK0" );
-        outline0("CALL WAIT_VDP_HOOK" );
-    }
-#endif
+// #ifdef __coleco__
+//     if ( ! _environment->hasGameLoop ) {
+//         outline0("RET" );
+//         outhead1("%sskip:", label );
+//         outline0("CALL WAIT_VDP_HOOK" );
+//         outline1("LD HL, %s", label );
+//         outline0("CALL SET_VDP_HOOK0" );
+//         outline0("CALL WAIT_VDP_HOOK" );
+//     }
+// #endif
 
 }
 
@@ -1220,10 +1220,10 @@ void tms9918_initialization( Environment * _environment ) {
     variable_import( _environment, "IMAGEF", VT_BYTE, 0 );
     variable_global( _environment, "IMAGEF" );
 
-    #if __coleco__
-        variable_import( _environment, "VDP_HOOK", VT_BUFFER, 10 );
-        variable_global( _environment, "VDP_HOOK" );
-    #endif
+    // #if __coleco__
+    //     variable_import( _environment, "VDP_HOOK", VT_BUFFER, 10 );
+    //     variable_global( _environment, "VDP_HOOK" );
+    // #endif
 
     tms9918_tilemap_enable( _environment, 40, 24, 1, 8, 8 );
 
@@ -1984,13 +1984,13 @@ void tms9918_move_video_memory( Environment * _environment, char * _from, char *
 
 void tms9918_colors_vars( Environment * _environment, char * _foreground_color, char * _background_color ) {
 
-#ifdef __coleco__
-    MAKE_LABEL
-    if ( ! _environment->hasGameLoop ) {
-        outline1("JP %sskip", label );
-        outhead1("%s:", label );
-    }
-#endif
+// #ifdef __coleco__
+//     MAKE_LABEL
+//     if ( ! _environment->hasGameLoop ) {
+//         outline1("JP %sskip", label );
+//         outhead1("%s:", label );
+//     }
+// #endif
     outline1("LD E, %2.2x", VDP_RCOLOR );
     outline0("CALL VDPREGIN" );
     outline1("LD A, (%s)", _foreground_color );
@@ -2002,16 +2002,16 @@ void tms9918_colors_vars( Environment * _environment, char * _foreground_color, 
     outline1("LD A, (%s)", _background_color );
     outline0("OR B" );
     outline0("CALL VDPSETREG" );
-#ifdef __coleco__
-    if ( ! _environment->hasGameLoop ) {
-        outline0("RET" );
-        outhead1("%sskip:", label );
-        outline0("CALL WAIT_VDP_HOOK" );
-        outline1("LD HL, %s", label );
-        outline0("CALL SET_VDP_HOOK0" );
-        outline0("CALL WAIT_VDP_HOOK" );
-    }
-#endif
+// #ifdef __coleco__
+//     if ( ! _environment->hasGameLoop ) {
+//         outline0("RET" );
+//         outhead1("%sskip:", label );
+//         outline0("CALL WAIT_VDP_HOOK" );
+//         outline1("LD HL, %s", label );
+//         outline0("CALL SET_VDP_HOOK0" );
+//         outline0("CALL WAIT_VDP_HOOK" );
+//     }
+// #endif
 
 }
 

@@ -39,24 +39,24 @@
 ; - Get image from bitmap
 ; ----------------------------------------------------------------------------
 
-if __coleco__
+; if __coleco__
+
+; GETIMAGE:
+;     CALL WAIT_VDP_HOOK
+;     CALL SET_VDP_HOOK_HL
+;     LD HL, GETIMAGENMI
+;     CALL SET_VDP_HOOK
+;     CALL WAIT_VDP_HOOK
+;     RET
+
+; GETIMAGENMI:
+;     CALL GET_VDP_HOOK
+
+; else
 
 GETIMAGE:
-    CALL WAIT_VDP_HOOK
-    CALL SET_VDP_HOOK_HL
-    LD HL, GETIMAGENMI
-    CALL SET_VDP_HOOK
-    CALL WAIT_VDP_HOOK
-    RET
 
-GETIMAGENMI:
-    CALL GET_VDP_HOOK
-
-else
-
-GETIMAGE:
-
-endif
+; endif
 
 GETIMAGENMI2:
 

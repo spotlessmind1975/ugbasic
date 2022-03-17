@@ -108,8 +108,10 @@ void target_initialization( Environment * _environment ) {
     variable_import( _environment, "COLECOTIMER", VT_WORD, 0 );
     variable_global( _environment, "COLECOTIMER" );    
 
-    variable_import( _environment, "GAMELOOP_HOOK", VT_BUFFER, 4 );
-    variable_global( _environment, "GAMELOOP_HOOK" );
+    variable_import( _environment, "IRQVECTOR", VT_BUFFER, 3 );
+    variable_global( _environment, "IRQVECTOR" );   
+    variable_import( _environment, "IRQVECTORREADY", VT_BYTE, 0 );
+    variable_global( _environment, "IRQVECTORREADY" );   
 
     bank_define( _environment, "VARIABLES", BT_VARIABLES, 0x5000, NULL );
     bank_define( _environment, "TEMPORARY", BT_TEMPORARY, 0x5100, NULL );

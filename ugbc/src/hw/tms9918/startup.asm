@@ -1,63 +1,63 @@
-if __coleco__
+; if __coleco__
 
-WAIT_VDP_HOOK:
-        LD A,(VDP_HOOK)
-        CP $cd
-        JR Z,WAIT_VDP_HOOK
-        RET
+; WAIT_VDP_HOOK:
+;         LD A,(VDP_HOOK)
+;         CP $cd
+;         JR Z,WAIT_VDP_HOOK
+;         RET
 
-SET_VDP_HOOK0:
-        LD (VDP_HOOK+1),HL
-        LD A,$c9
-        LD (VDP_HOOK+3),A
-        LD A,$cd
-        LD (VDP_HOOK),A
-        RET
+; SET_VDP_HOOK0:
+;         LD (VDP_HOOK+1),HL
+;         LD A,$c9
+;         LD (VDP_HOOK+3),A
+;         LD A,$cd
+;         LD (VDP_HOOK),A
+;         RET
 
-SET_VDP_HOOK:
-        LD (VDP_HOOK+1),HL
-        LD A,$c9
-        LD (VDP_HOOK+3),A
-        LD A, B
-        LD (VDP_HOOK+4),A
-        LD A, C
-        LD (VDP_HOOK+5),A
-        LD A, D
-        LD (VDP_HOOK+6),A
-        LD A, E
-        LD (VDP_HOOK+7),A
-        LD A,$cd
-        LD (VDP_HOOK),A
-        RET
+; SET_VDP_HOOK:
+;         LD (VDP_HOOK+1),HL
+;         LD A,$c9
+;         LD (VDP_HOOK+3),A
+;         LD A, B
+;         LD (VDP_HOOK+4),A
+;         LD A, C
+;         LD (VDP_HOOK+5),A
+;         LD A, D
+;         LD (VDP_HOOK+6),A
+;         LD A, E
+;         LD (VDP_HOOK+7),A
+;         LD A,$cd
+;         LD (VDP_HOOK),A
+;         RET
 
-SET_VDP_HOOK_HL:
-        LD A, H
-        LD (VDP_HOOK+8),A
-        LD A, L
-        LD (VDP_HOOK+9),A
-        RET
+; SET_VDP_HOOK_HL:
+;         LD A, H
+;         LD (VDP_HOOK+8),A
+;         LD A, L
+;         LD (VDP_HOOK+9),A
+;         RET
 
-GET_VDP_HOOK:
-        LD A, (VDP_HOOK+4)
-        LD B, A
-        LD A, (VDP_HOOK+5)
-        LD C, A
-        LD A, (VDP_HOOK+6)
-        LD D, A
-        LD A, (VDP_HOOK+7)
-        LD E, A
-        LD A, (VDP_HOOK+8)
-        LD H, A
-        LD A, (VDP_HOOK+9)
-        LD L, A
-        RET
+; GET_VDP_HOOK:
+;         LD A, (VDP_HOOK+4)
+;         LD B, A
+;         LD A, (VDP_HOOK+5)
+;         LD C, A
+;         LD A, (VDP_HOOK+6)
+;         LD D, A
+;         LD A, (VDP_HOOK+7)
+;         LD E, A
+;         LD A, (VDP_HOOK+8)
+;         LD H, A
+;         LD A, (VDP_HOOK+9)
+;         LD L, A
+;         RET
 
-DONE_VDP_HOOK:
-        LD A,0
-        LD (VDP_HOOK),A
-        RET
+; DONE_VDP_HOOK:
+;         LD A,0
+;         LD (VDP_HOOK),A
+;         RET
 
-endif
+; endif
 
 VDPWRITEBIT: EQU     40H
 
