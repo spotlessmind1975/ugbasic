@@ -1422,11 +1422,11 @@ exponential:
         $$ = variable_cast( _environment, $5, VT_WORD )->name;
       }
     | OP SIGNED WORD CP Integer { 
-        $$ = variable_temporary( _environment, VT_WORD, "(signed WORD value)" )->name;
+        $$ = variable_temporary( _environment, VT_SWORD, "(signed WORD value)" )->name;
         variable_store( _environment, $$, $5 );
     }
     | OP SIGNED WORD CP direct_integer { 
-        $$ = variable_temporary( _environment, VT_WORD, "(signed WORD value)" )->name;
+        $$ = variable_temporary( _environment, VT_SWORD, "(signed WORD value)" )->name;
         variable_store( _environment, $$, $5 );
       }
     | OP SIGNED WORD CP OP expr CP { 
