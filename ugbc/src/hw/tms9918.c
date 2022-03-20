@@ -1357,7 +1357,7 @@ static Variable * tms9918_image_converter_bitmap_mode_standard( Environment * _e
 
     RGBi palette[MAX_PALETTE];
 
-    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
+    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE, 1 /* sorted */);
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = colorUsed;
@@ -1552,7 +1552,7 @@ Variable * tms9918_sprite_converter( Environment * _environment, char * _source,
 
     RGBi palette[MAX_PALETTE];
 
-    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
+    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE, 1 /* sorted */);
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = colorUsed;

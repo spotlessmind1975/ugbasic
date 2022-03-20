@@ -1661,6 +1661,7 @@ typedef struct _Environment {
 #define WARNING_SCREEN_MODE( v1 ) WARNING2i("W003 - Screen mode unsupported", v1 );
 #define WARNING_USE_OF_UNDEFINED_ARRAY( v1 ) WARNING2("W004 - use of undefined array", v1 );
 #define WARNING_IMAGE_CONVERTER_UNSUPPORTED_MODE(f) WARNING2i("W005 - IMAGE converter unsupported for the given screen mode", f );
+#define WARNING_IMAGE_LOAD_EXACT_IGNORED( ) WARNING("W006 - Loading of the image will ignore EXACT flag" );
 
 #define outline0n(n,s,r)     \
     { \
@@ -1957,6 +1958,7 @@ typedef struct _Environment {
 
 #define FLAG_TRANSPARENCY   32
 #define FLAG_DOUBLE_Y   64
+#define FLAG_EXACT   128
 
 void setup_embedded( Environment *_environment );
 void target_install( Environment *_environment );
@@ -2281,7 +2283,7 @@ Variable *              respawn_procedure( Environment * _environment, char * _n
 void                    return_label( Environment * _environment );
 void                    return_procedure( Environment * _environment, char * _value );
 int                     rgbi_equals_rgb( RGBi * _first, RGBi * _second );
-int                     rgbi_extract_palette( unsigned char* _source, int _width, int _height, RGBi _palette[], int _palette_size);
+int                     rgbi_extract_palette( unsigned char* _source, int _width, int _height, RGBi _palette[], int _palette_size, int _sorted);
 void                    rgbi_move( RGBi * _source, RGBi * _destination );
 int                     rgbi_distance( RGBi * _source, RGBi * _destination );
 Variable *              rnd( Environment * _environment, char * _value );

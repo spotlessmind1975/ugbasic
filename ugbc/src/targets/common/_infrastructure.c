@@ -5975,7 +5975,7 @@ static int rgbi_qsort_compare(const void * _first, const void * _second ) {
  * @param _palette_size 
  * @return int 
  */
-int rgbi_extract_palette( unsigned char* _source, int _width, int _height, RGBi _palette[], int _palette_size) {
+int rgbi_extract_palette( unsigned char* _source, int _width, int _height, RGBi _palette[], int _palette_size, int _sorted) {
 
     RGBi rgb;
 
@@ -6023,7 +6023,9 @@ int rgbi_extract_palette( unsigned char* _source, int _width, int _height, RGBi 
     //     printf("  %i) %2.2x%2.2x%2.2x (%d)\n", i, _palette[i].red, _palette[i].green, _palette[i].blue, _palette[i].count );
     // }
 
-    qsort( _palette, _palette_size, sizeof( RGBi ), rgbi_qsort_compare );
+    if ( _sorted ) {
+        qsort( _palette, _palette_size, sizeof( RGBi ), rgbi_qsort_compare );
+    }
 
     // printf("QSORT:\n" );
     // for(i=0;i<8;++i) {

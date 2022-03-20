@@ -1595,7 +1595,7 @@ static Variable * gtia_image_converter_bitmap_mode_standard( Environment * _envi
 
     RGBi palette[MAX_PALETTE];
 
-    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
+    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE, ( ( _flags & FLAG_EXACT ) ? 0 : 1 ) /* sorted */);
 
     if (colorUsed > 2) {
         CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
@@ -1717,7 +1717,7 @@ static Variable * gtia_image_converter_multicolor_mode_standard( Environment * _
     RGBi * palette = malloc( MAX_PALETTE * sizeof(RGBi) );
     memset( palette, 0, MAX_PALETTE * sizeof(RGBi) );
 
-    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
+    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE, ( ( _flags & FLAG_EXACT ) ? 0 : 1 ) /* sorted */);
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = colorUsed;
 

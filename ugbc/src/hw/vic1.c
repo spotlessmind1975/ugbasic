@@ -847,7 +847,7 @@ static Variable * vic1_image_converter_bitmap_mode_standard( Environment * _envi
 
     RGBi palette[MAX_PALETTE];
 
-    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
+    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE, 1 /* sorted */);
 
     if (colorUsed > 2) {
         CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
@@ -975,7 +975,7 @@ static Variable * vic1_image_converter_multicolor_mode_standard( Environment * _
 
     RGBi palette[MAX_PALETTE];
 
-    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
+    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE, 1 /* sorted */);
 
     if (colorUsed > 4) {
         CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
@@ -1117,7 +1117,7 @@ static Variable * vic1_image_converter_tilemap_mode_standard( Environment * _env
 
     RGBi palette[MAX_PALETTE];
 
-    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
+    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE, 1 /* sorted */);
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = colorUsed;

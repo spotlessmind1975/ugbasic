@@ -1358,7 +1358,7 @@ static Variable * vic2_image_converter_bitmap_mode_standard( Environment * _envi
 
     RGBi palette[MAX_PALETTE];
 
-    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
+    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE, 1 /* sorted */);
 
     if (colorUsed > 2) {
         CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
@@ -1500,7 +1500,7 @@ static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _
 
     RGBi palette[MAX_PALETTE];
 
-    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
+    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE, 1 /* sorted */ );
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = colorUsed;
@@ -1708,7 +1708,7 @@ static Variable * vic2_image_converter_tilemap_mode_standard( Environment * _env
 
     RGBi palette[MAX_PALETTE];
 
-    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
+    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE, 1 /* sorted */ );
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = colorUsed;
@@ -1967,7 +1967,7 @@ Variable * vic2_sprite_converter( Environment * _environment, char * _source, in
 
     RGBi palette[MAX_PALETTE];
 
-    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
+    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE, 1 /* sorted */ );
 
     if ( ! _color ) {
 

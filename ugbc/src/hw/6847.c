@@ -1087,7 +1087,7 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
 
     RGBi palette[MAX_PALETTE];
 
-    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
+    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE, 1 /* sorted */ );
 
     if (colorUsed > 2) {
         CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
@@ -1208,7 +1208,7 @@ static Variable * c6847_image_converter_multicolor_mode_standard( Environment * 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
 
     RGBi * palette = malloc( sizeof( RGBi ) * MAX_PALETTE );
-    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
+    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE, 1 /* sorted */ );
     result->originalColors = colorUsed;
 
     if ( ! commonPalette ) {
