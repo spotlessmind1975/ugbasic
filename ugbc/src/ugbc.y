@@ -4105,7 +4105,24 @@ target :
         #else
             $$ = 0;
         #endif
-    };
+    }
+    |
+    PC128OP {
+        #ifdef __pc128op__
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }
+    |
+    MO5 {
+        #ifdef __mo5__
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }    
+    ;
 
 targets :
      target {
