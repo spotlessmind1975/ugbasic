@@ -549,7 +549,10 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
 
         if(unsafe && match(buf[2], " * [", NULL))
             optim( buf[0], "(unsafe, presumed dead)", NULL);
-        optim( buf[1], RULE "(STORE*,LOAD*)->(STORE*)", NULL);
+
+        if ( strcmp( v2->str, "$A7C1") ) {
+            optim( buf[1], RULE "(STORE*,LOAD*)->(STORE*)", NULL);
+        }
     }
 
 
