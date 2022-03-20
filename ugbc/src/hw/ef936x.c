@@ -1088,6 +1088,10 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
 
         commonPalette = palette;
 
+    } else {
+
+        palette = commonPalette;
+
     }
  
     memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
@@ -1236,6 +1240,10 @@ static Variable * ef936x_image_converter_multicolor_mode4( Environment * _enviro
 
         commonPalette = palette;
 
+    } else {
+
+        palette = commonPalette;
+        
     }
  
     memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
