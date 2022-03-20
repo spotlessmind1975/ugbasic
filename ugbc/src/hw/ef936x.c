@@ -1050,39 +1050,47 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
 
         int i, j, k;
 
-        for( i=0; i<colorUsed; ++i ) {
-            int minDistance = 0xffff;
-            int colorIndex = 0;
-            for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
-                int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
-                if ( _environment->debugImageLoad ) {
-                    printf("%d (%2.2x%2.2x%2.2x) <-> %d (%2.2x%2.2x%2.2x) [%d] = %d [min = %d]\n", i, SYSTEM_PALETTE[j].red, SYSTEM_PALETTE[j].green, SYSTEM_PALETTE[j].blue, j, palette[i].red, palette[i].green, palette[i].blue, SYSTEM_PALETTE[j].index, distance, minDistance );
-                }
-                if (distance < minDistance) {
-                    if ( _environment->debugImageLoad ) {
-                        printf(" candidated...\n" );
-                    }
-                    for( k=0; k<i; ++k ) {
-                        if ( palette[k].index == SYSTEM_PALETTE[j].index ) {
-                            if ( _environment->debugImageLoad ) {
-                                printf(" ...used!\n" );
-                            }
-                            break;
-                        }
-                    }
-                    if ( k>=i ) {
-                        if ( _environment->debugImageLoad ) {
-                            printf(" ...ok! (%d)\n", SYSTEM_PALETTE[j].index );
-                        }
-                        minDistance = distance;
-                        colorIndex = j;
-                    }
-                }
+        if ( _flags & FLAG_EXACT ) {
+            for( i=0; i<colorUsed; ++i ) {
+                palette[i].index = i;
+                rgbi_move( &palette[i], &SYSTEM_PALETTE[i] );
+                palette[i].used = 1;
             }
-            palette[i].index = SYSTEM_PALETTE[colorIndex].index;
-            strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
-            if ( _environment->debugImageLoad ) {
-                printf("%d) %d * %d %2.2x%2.2x%2.2x\n", i, colorIndex, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
+        } else {
+            for( i=0; i<colorUsed; ++i ) {
+                int minDistance = 0xffff;
+                int colorIndex = 0;
+                for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
+                    int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
+                    if ( _environment->debugImageLoad ) {
+                        printf("%d (%2.2x%2.2x%2.2x) <-> %d (%2.2x%2.2x%2.2x) [%d] = %d [min = %d]\n", i, SYSTEM_PALETTE[j].red, SYSTEM_PALETTE[j].green, SYSTEM_PALETTE[j].blue, j, palette[i].red, palette[i].green, palette[i].blue, SYSTEM_PALETTE[j].index, distance, minDistance );
+                    }
+                    if (distance < minDistance) {
+                        if ( _environment->debugImageLoad ) {
+                            printf(" candidated...\n" );
+                        }
+                        for( k=0; k<i; ++k ) {
+                            if ( palette[k].index == SYSTEM_PALETTE[j].index ) {
+                                if ( _environment->debugImageLoad ) {
+                                    printf(" ...used!\n" );
+                                }
+                                break;
+                            }
+                        }
+                        if ( k>=i ) {
+                            if ( _environment->debugImageLoad ) {
+                                printf(" ...ok! (%d)\n", SYSTEM_PALETTE[j].index );
+                            }
+                            minDistance = distance;
+                            colorIndex = j;
+                        }
+                    }
+                }
+                palette[i].index = SYSTEM_PALETTE[colorIndex].index;
+                strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
+                if ( _environment->debugImageLoad ) {
+                    printf("%d) %d * %d %2.2x%2.2x%2.2x\n", i, colorIndex, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
+                }
             }
         }
 
@@ -1212,32 +1220,40 @@ static Variable * ef936x_image_converter_multicolor_mode4( Environment * _enviro
             CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
         }
 
-        for( i=0; i<colorUsed; ++i ) {
-            int minDistance = 0xffff;
-            int colorIndex = 0;
-            for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
-                int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
-                // printf("%d <-> %d [%d] = %d [min = %d]\n", i, j, SYSTEM_PALETTE[j].index, distance, minDistance );
-                if (distance < minDistance) {
-                    // printf(" candidated...\n" );
-                    for( k=0; k<i; ++k ) {
-                        if ( palette[k].index == SYSTEM_PALETTE[j].index ) {
-                            // printf(" ...used!\n" );
-                            break;
+        if ( _flags & FLAG_EXACT ) {
+            for( i=0; i<colorUsed; ++i ) {
+                palette[i].index = i;
+                rgbi_move( &palette[i], &SYSTEM_PALETTE[i] );
+                palette[i].used = 1;
+            }
+        } else {
+            for( i=0; i<colorUsed; ++i ) {
+                int minDistance = 0xffff;
+                int colorIndex = 0;
+                for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
+                    int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
+                    // printf("%d <-> %d [%d] = %d [min = %d]\n", i, j, SYSTEM_PALETTE[j].index, distance, minDistance );
+                    if (distance < minDistance) {
+                        // printf(" candidated...\n" );
+                        for( k=0; k<i; ++k ) {
+                            if ( palette[k].index == SYSTEM_PALETTE[j].index ) {
+                                // printf(" ...used!\n" );
+                                break;
+                            }
+                        }
+                        if ( k>=i ) {
+                            // printf(" ...ok! (%d)\n", SYSTEM_PALETTE[j].index );
+                            minDistance = distance;
+                            colorIndex = j;
                         }
                     }
-                    if ( k>=i ) {
-                        // printf(" ...ok! (%d)\n", SYSTEM_PALETTE[j].index );
-                        minDistance = distance;
-                        colorIndex = j;
-                    }
                 }
+                palette[i].index = SYSTEM_PALETTE[colorIndex].index;
+                strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
+                // printf("%d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
             }
-            palette[i].index = SYSTEM_PALETTE[colorIndex].index;
-            strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
-            // printf("%d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
         }
-
+        
         commonPalette = palette;
 
     } else {
