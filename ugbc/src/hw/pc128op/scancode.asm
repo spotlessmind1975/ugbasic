@@ -35,5 +35,37 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+SCANCODETBL
+    FCB $76, $78, $7A, $7C, $7E
+    FCB $30, $6E, $5E, $4E, $3E, $2E, $1E, $0E
+    FCB      $6C, $5C, $4C, $3C, $2C, $1C, $0C, $62
+    FCB      $6A, $5A, $4A, $3A, $2A, $1A, $0A
+    FCB      $68, $58, $48, $38, $28, $18, $08, $52, $32
+    FCB $66, $22, $56, $46, $36, $26, $16, $06
+    FCB                     $34, $24, $14, $04, $68, $42
+    FCB $80, $60, $50, $64, $54, $44, $00, $10, $20, $30
+    FCB $72, $12, $02, $40
+
+    FCB     $FF
+
 SCANCODE
+    CLRB
+    LDX #SCANCODETBL
+    LDA B, X
+SCANCODEL1
+    STA $A7C1
+    LDA $A7C1
+    ANDA #$80
+    CMPA #$80
+    BEQ SCANCODEL2
+    LDA B, X
+    TFR A, B
+    RTS
+
+SCANCODEL2
+    INCB
+    LDA B, X
+    CMPA #$FF
+    BNE SCANCODEL1
+    CLRB
     RTS

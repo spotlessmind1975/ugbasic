@@ -1216,6 +1216,22 @@ key_scancode_definition :
         $$ = variable_temporary( _environment, VT_BYTE, "(scancode ARROW LEFT)")->name;
         variable_store( _environment, $$, KEY_LEFT_ARROW );
     }
+    | LEFT {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode LEFT)")->name;
+        variable_store( _environment, $$, KEY_LEFT );
+    }
+    | RIGHT {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode RIGHT)")->name;
+        variable_store( _environment, $$, KEY_RIGHT );
+    }
+    | UP {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode UP)")->name;
+        variable_store( _environment, $$, KEY_UP );
+    }
+    | DOWN {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode DOWN)")->name;
+        variable_store( _environment, $$, KEY_DOWN );
+    }
     | ARROW UP {
         $$ = variable_temporary( _environment, VT_BYTE, "(scancode ARROW UP)")->name;
         variable_store( _environment, $$, KEY_UP_ARROW );
