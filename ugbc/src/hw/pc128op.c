@@ -251,4 +251,15 @@ void pc128op_key_pressed( Environment * _environment, char *_scancode, char * _r
 
 }
 
+void pc128op_joystick( Environment * _environment, char * _joystick, char * _result ) {
+
+    MAKE_LABEL
+
+    deploy( joystick, src_hw_pc128op_joystick_asm );
+
+    outline1("LDA %s", _joystick );
+    outline0("JSR JOYSTICK");
+    outline1("STA %s", _result );
+
+}
 #endif
