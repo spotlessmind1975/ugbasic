@@ -907,7 +907,7 @@ static Variable * ef936x_image_converter_bitmap_mode_standard( Environment * _en
     // ignored on bitmap mode
     (void)!_transparent_color;
 
-    image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
+    image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
     RGBi palette[MAX_PALETTE];
 
@@ -1032,7 +1032,7 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
     // ignored on bitmap mode
     (void)!_transparent_color;
 
-    image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
+    image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
     int colorUsed;
     RGBi * palette = malloc( MAX_PALETTE * sizeof(RGBi) );
@@ -1203,7 +1203,7 @@ static Variable * ef936x_image_converter_multicolor_mode4( Environment * _enviro
     // ignored on bitmap mode
     (void)!_transparent_color;
 
-    image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
+    image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
     RGBi * palette = malloc( MAX_PALETTE * sizeof(RGBi) );
 
@@ -1356,7 +1356,7 @@ static Variable * ef936x_image_converter_multicolor_mode16( Environment * _envir
     // ignored on bitmap mode
     (void)!_transparent_color;
 
-    image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
+    image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
     int i, j, k;
 
