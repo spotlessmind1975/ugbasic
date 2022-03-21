@@ -231,4 +231,24 @@ void pc128op_follow_irq( Environment * _environment ) {
     outline0("JMP [PC128IRQO]" );
     
 }
+
+void pc128op_key_pressed( Environment * _environment, char *_scancode, char * _result ) {
+
+    MAKE_LABEL
+
+    deploy( scancode, src_hw_pc128op_scancode_asm );
+
+    outline1("LDA %s", _scancode );
+    outline0("JSR KEYPRESSED");
+    outline1("BEQ %snopressed", label );
+    outline0("LDA #1" );
+    outline1("STA %s", _result );
+    outline1("BRA %sfinish", label );
+    outhead1("%snopressed", label );
+    outline0("LDA #0" );
+    outline1("STA %s", _result );
+    outhead1("%sfinish", label );
+
+}
+
 #endif

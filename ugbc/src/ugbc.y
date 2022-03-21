@@ -61,7 +61,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token OVERLAYED CASE ENDSELECT OGP CGP ARRAY NEW GET DISTANCE TYPE MUL DIV RGB SHADES HEX PALETTE
 %token BAR XGRAPHIC YGRAPHIC XTEXT YTEXT COLUMNS XGR YGR CHAR RAW SEPARATOR MSX MSX1 COLECO CSPRITE 
 %token TILESET MOVE ROW COLUMN TRANSPARENT DOUBLE RESPAWN HALTED SC3000 SG1000 MEMORY VIDEO MMOVE SWAP
-%token BELONG FIRST EXACT
+%token BELONG FIRST EXACT PRESSED PC128OP MO5
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -84,6 +84,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <string> color_enumeration
 %type <string> writing_mode_definition writing_part_definition
 %type <string> key_scancode_definition key_scancode_alphadigit key_scancode_function_digit
+%type <integer> const_key_scancode_definition const_key_scancode_alphadigit const_key_scancode_function_digit
 %type <integer> datatype as_datatype
 %type <integer> halted
 %type <integer> optional_integer
@@ -480,6 +481,7 @@ const_factor:
           $$ = c->value;
       }
       | const_color_enumeration
+      | const_key_scancode_definition
       ;
 
 expr : 
@@ -1111,6 +1113,117 @@ key_scancode_alphadigit :
     }
     ;
 
+const_key_scancode_alphadigit :
+      "0" {
+        $$ = KEY_0;
+    }
+    | "1" {
+        $$ = KEY_1;
+    }
+    | "2" {
+        $$ = KEY_2;
+    }
+    | "3" {
+        $$ = KEY_3;
+    }
+    | "4" {
+        $$ = KEY_4;
+    }
+    | "5" {
+        $$ = KEY_5;
+    }
+    | "6" {
+        $$ = KEY_6;
+    }
+    | "7" {
+        $$ = KEY_7;
+    }
+    | "8" {
+        $$ = KEY_8;
+    }
+    | "9" {
+        $$ = KEY_9;
+    }
+    | A {
+        $$ = KEY_A;
+    }
+    | B {
+        $$ = KEY_B;
+    }
+    | C {
+        $$ = KEY_C;
+    }
+    | D {
+        $$ = KEY_D;
+    }
+    | E {
+        $$ = KEY_E;
+    }
+    | F {
+        $$ = KEY_F;
+    }
+    | G {
+        $$ = KEY_G;
+    }
+    | H {
+        $$ = KEY_H;
+    }
+    | I {
+        $$ = KEY_I;
+    }
+    | J {
+        $$ = KEY_J;
+    }
+    | K {
+        $$ = KEY_K;
+    }
+    | L {
+        $$ = KEY_L;
+    }
+    | M {
+        $$ = KEY_M;
+    }
+    | N {
+        $$ = KEY_N;
+    }
+    | O {
+        $$ = KEY_O;
+    }
+    | P {
+        $$ = KEY_P;
+    }
+    | Q {
+        $$ = KEY_Q;
+    }
+    | R {
+        $$ = KEY_R;
+    }
+    | S {
+        $$ = KEY_S;
+    }
+    | T {
+        $$ = KEY_T;
+    }
+    | U {
+        $$ = KEY_U;
+    }
+    | V {
+        $$ = KEY_V;
+    }
+    | X {
+        $$ = KEY_X;
+    }
+    | Y {
+        $$ = KEY_Y;
+    }
+    | W {
+        $$ = KEY_W;
+    }
+    | Z {
+        $$ = KEY_Z;
+    }
+    ;
+
 key_scancode_function_digit :
       F1 {
         $$ = variable_temporary( _environment, VT_BYTE, "(scancode F1)")->name;
@@ -1143,6 +1256,32 @@ key_scancode_function_digit :
     | F8 {
         $$ = variable_temporary( _environment, VT_BYTE, "(scancode F8)")->name;
         variable_store( _environment, $$, KEY_F8 );
+    };
+
+const_key_scancode_function_digit :
+      F1 {
+        $$ = KEY_F1;
+    }
+    | F2 {
+        $$ = KEY_F2;
+    }
+    | F3 {
+        $$ = KEY_F3;
+    }
+    | F4 {
+        $$ = KEY_F4;
+    }
+    | F5 {
+        $$ = KEY_F5;
+    }
+    | F6 {
+        $$ = KEY_F6;
+    }
+    | F7 {
+        $$ = KEY_F7;
+    }
+    | F8 {
+        $$ = KEY_F8;
     };
 
 key_scancode_definition : 
@@ -1279,6 +1418,110 @@ key_scancode_definition :
     | SPACE {
         $$ = variable_temporary( _environment, VT_BYTE, "(scancode SPACE)")->name;
         variable_store( _environment, $$, KEY_SPACE );        
+    };
+
+const_key_scancode_definition : 
+      NONE {
+        $$ = KEY_NONE;
+    }
+    | const_key_scancode_alphadigit {
+        $$ = $1;
+    }
+    | ASTERISK {
+        $$ = KEY_ASTERISK;
+    }
+    | AT {
+        $$ = KEY_AT;
+    }
+    | CLEAR {
+        $$ = KEY_CLEAR;
+    }
+    | COLON {
+        $$ = KEY_COLON;
+    }
+    | COMMA {
+        $$ = KEY_COMMA;
+    }
+    | COMMODORE {
+        $$ = KEY_COMMODORE;
+    }
+    | CONTROL {
+        $$ = KEY_CONTROL;
+    }
+    | CRSR LEFT RIGHT {
+        $$ = KEY_CRSR_LEFT_RIGHT;
+    }
+    | CRSR UP DOWN {
+        $$ = KEY_CRSR_UP_DOWN;
+    }
+    | DELETE {
+        $$ = KEY_DELETE;
+    }
+    | EQUAL {
+        $$ = KEY_EQUAL;
+    }
+    | const_key_scancode_function_digit {
+        $$ = $1;
+    }
+    | HOME {
+        $$ = KEY_HOME;
+    }
+    | INSERT {
+        $$ = KEY_INSERT;
+    }
+    | ARROW LEFT {
+        $$ = KEY_LEFT_ARROW;
+    }
+    | LEFT ARROW {
+        $$ = KEY_LEFT_ARROW;
+    }
+    | LEFT {
+        $$ = KEY_LEFT;
+    }
+    | RIGHT {
+        $$ = KEY_RIGHT;
+    }
+    | UP {
+        $$ = KEY_UP;
+    }
+    | DOWN {
+        $$ = KEY_DOWN;
+    }
+    | ARROW UP {
+        $$ = KEY_UP_ARROW;
+    }
+    | UP ARROW {
+        $$ = KEY_UP_ARROW;
+    }
+    | MINUS {
+        $$ = KEY_MINUS;
+    }
+    | PERIOD {
+        $$ = KEY_PERIOD;
+    }
+    | PLUS {
+        $$ = KEY_PLUS;
+    }
+    | POUND {
+        $$ = KEY_POUND;
+    }
+    | RETURN {
+        $$ = KEY_RETURN;
+    }
+    | RUNSTOP {
+        $$ = KEY_RUNSTOP;        
+    }
+    | RUN STOP {
+        $$ = KEY_RUNSTOP;        
+    }
+    | SEMICOLON {
+        $$ = KEY_SEMICOLON;
+    }
+    | SLASH {
+        $$ = KEY_SLASH;        
+    }
+    | SPACE {
+        $$ = KEY_SPACE;        
     };
 
 exponential:
@@ -2140,6 +2383,12 @@ exponential:
     }
     | SCAN CODE {
         $$ = scancode( _environment )->name;
+    }
+    | KEY PRESSED OP OP_HASH const_expr CP {
+        $$ = key_pressed( _environment, $5 )->name;
+    }
+    | KEY PRESSED OP expr CP {
+        $$ = key_pressed_var( _environment, $4 )->name;
     }
     | KEY STATE OP expr CP {
         $$ = keystate( _environment, $4 )->name;

@@ -48,15 +48,19 @@ SCANCODETBL
 
     FCB     $FF
 
+KEYPRESSED
+    STA $A7C1
+    LDA $A7C1
+    ANDA #$80
+    CMPA #$80
+    RTS
+    
 SCANCODE
     CLRB
     LDX #SCANCODETBL
     LDA B, X
 SCANCODEL1
-    STA $A7C1
-    LDA $A7C1
-    ANDA #$80
-    CMPA #$80
+    JSR KEYPRESSED
     BEQ SCANCODEL2
     LDA B, X
     TFR A, B
