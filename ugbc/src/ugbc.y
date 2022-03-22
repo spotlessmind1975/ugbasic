@@ -2558,9 +2558,23 @@ bank_definition_with_payload:
       bank_define( _environment, $2, BT_CODE, $4, $6 );
   };
 
+bank_expansion_definition_simple :
+    OP_HASH const_expr {
+        bank_set( _environment, $2 );
+    }
+    ;
+
+bank_expansion_definition_expression :
+    expr {
+        bank_set_var( _environment, $1 );
+    }
+    ;
+
 bank_definition: 
     bank_definition_simple
-  | bank_definition_with_payload;
+  | bank_definition_with_payload
+  | bank_expansion_definition_simple
+  | bank_expansion_definition_expression;
 
 raster_definition_simple:
     Identifier AT direct_integer {

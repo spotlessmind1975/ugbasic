@@ -2007,6 +2007,8 @@ Variable *              bank_get_address( Environment * _environment, int _bank 
 Variable *              bank_get_address_var( Environment * _environment, char * _bank );
 Variable *              bank_get_size( Environment * _environment, int _bank );
 Variable *              bank_get_size_var( Environment * _environment, char * _bank );
+void                    bank_set( Environment * _environment, int _bank );
+void                    bank_set_var( Environment * _environment, char * _bank );
 void                    bar( Environment * _environment, char * _x0, char * _y0, char * _x1, char * _y1, char * _c );
 void                    begin_for( Environment * _environment, char * _index, char * _from, char * _to );  
 void                    begin_for_mt( Environment * _environment, char * _index, char * _from, char * _to );  
