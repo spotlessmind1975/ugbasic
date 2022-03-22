@@ -86,7 +86,7 @@ ma con nomi diversi.
 
 @target all
 </usermanual> */
-Variable * load( Environment * _environment, char * _filename, char * _alias, int _at ) {
+Variable * load( Environment * _environment, char * _filename, char * _alias, int _at, int _bank_expansion ) {
 
     if ( _environment->tenLinerRulesEnforced ) {
         CRITICAL_10_LINE_RULES_ENFORCED( "LOAD");

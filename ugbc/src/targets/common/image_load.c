@@ -113,7 +113,7 @@ ma con nomi diversi.
 
 @target all
 </usermanual> */
-Variable * image_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _flags, int _transparent_color, int _background_color ) {
+Variable * image_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _flags, int _transparent_color, int _background_color, int _bank_expansion ) {
 
     if ( _environment->tenLinerRulesEnforced ) {
         CRITICAL_10_LINE_RULES_ENFORCED( "LOAD IMAGE");

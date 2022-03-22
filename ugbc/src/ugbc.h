@@ -752,6 +752,10 @@ typedef struct _ScreenMode {
 
     struct _ScreenMode  * next;
 
+    int         bank;
+
+    int         offset;
+
 } ScreenMode;
 
 #define SCREEN_MODE_DEFINE( _id, _bitmap, _width, _height, _colors, _tile_width, _tile_height, _description ) \
@@ -2157,7 +2161,7 @@ void                    home( Environment * _environment );
 void                    if_then( Environment * _environment, char * _expression );
 char *                  image_flip_x( Environment * _environment, char * _source, int _width, int _height );
 char *                  image_flip_y( Environment * _environment, char * _source, int _width, int _height );
-Variable *              image_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _flags, int _transparent_color, int _background_color );
+Variable *              image_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _flags, int _transparent_color, int _background_color, int _bank_expansion );
 char *                  image_load_asserts( Environment * _environment, char * _filename );
 Variable *              image_converter( Environment * _environment, char * _data, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags );
 void                    image_converter_asserts( Environment * _environment, int _width, int _height, int _offset_x, int _offset_y, int * _frame_width, int * _frame_height );
@@ -2168,7 +2172,7 @@ char *                  image_enlarge_bottom( Environment * _environment, char *
 char *                  image_roll_x_left( Environment * _environment, char * _source, int _width, int _height );
 char *                  image_roll_x_right( Environment * _environment, char * _source, int _width, int _height );
 char *                  image_roll_y_down( Environment * _environment, char * _source, int _width, int _height );
-Variable *              images_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _frame_width, int _frame_height, int _flags, int _transparent_color, int _background_color );
+Variable *              images_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _frame_width, int _frame_height, int _flags, int _transparent_color, int _background_color, int _bank_expansion );
 void                    ink( Environment * _environment, char * _expression );
 Variable *              inkey( Environment * _environment );
 void                    input( Environment * _environment, char * _variable );
@@ -2194,7 +2198,7 @@ Variable *              key_pressed_var( Environment * _environment, char * _sca
 // *L*
 //----------------------------------------------------------------------------
 
-Variable *              load( Environment * _environment, char * _filename, char * _alias, int _at );
+Variable *              load( Environment * _environment, char * _filename, char * _alias, int _at, int _bank_expansion );
 void                    locate( Environment * _environment, char * _x, char * _y );
 void                    loop( Environment * _environment, char *_label );
 

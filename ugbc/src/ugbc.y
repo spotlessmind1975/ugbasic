@@ -61,7 +61,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token OVERLAYED CASE ENDSELECT OGP CGP ARRAY NEW GET DISTANCE TYPE MUL DIV RGB SHADES HEX PALETTE
 %token BAR XGRAPHIC YGRAPHIC XTEXT YTEXT COLUMNS XGR YGR CHAR RAW SEPARATOR MSX MSX1 COLECO CSPRITE 
 %token TILESET MOVE ROW COLUMN TRANSPARENT DOUBLE RESPAWN HALTED SC3000 SG1000 MEMORY VIDEO MMOVE SWAP
-%token BELONG FIRST EXACT PRESSED PC128OP MO5 VARPTR READ WRITE
+%token BELONG FIRST EXACT PRESSED PC128OP MO5 VARPTR READ WRITE BANKED
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -102,6 +102,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> using_background
 %type <integer> memory_video
 %type <integer> sprite_flag sprite_flags sprite_flags1
+%type <integer> on_bank
 
 %right Integer String CP 
 %left OP_DOLLAR
@@ -782,6 +783,14 @@ images_load_flags :
     } 
     | images_load_flags1 {
         $$ = $1;
+    };
+
+on_bank :
+    {
+        $$ = 0;
+    }
+    | BANKED {
+        $$ = -1;
     };
 
 sprite_flag :
@@ -1780,35 +1789,35 @@ exponential:
     | NEW IMAGE OP const_expr OP_COMMA const_expr CP {        
         $$ = new_image( _environment, $4, $6, ((struct _Environment *)_environment)->currentMode )->name;
       }
-    | LOAD OP String CP {
-        $$ = load( _environment, $3, NULL, 0 )->name;
+    | LOAD OP String CP on_bank {
+        $$ = load( _environment, $3, NULL, 0, $5 )->name;
       }
-    | LOAD OP String AS String CP {
-        $$ = load( _environment, $3, $5, 0 )->name;
+    | LOAD OP String AS String CP on_bank {
+        $$ = load( _environment, $3, $5, 0, $7 )->name;
       }
-    | LOAD OP String OP_COMMA Integer CP {
-        $$ = load( _environment, $3, NULL, $5 )->name;
+    | LOAD OP String OP_COMMA Integer CP on_bank {
+        $$ = load( _environment, $3, NULL, $5, $7 )->name;
       }
-    | LOAD OP String AS String OP_COMMA Integer CP {
-        $$ = load( _environment, $3, $5, $7 )->name;
+    | LOAD OP String AS String OP_COMMA Integer CP on_bank {
+        $$ = load( _environment, $3, $5, $7, $9 )->name;
       }
-    | LOAD IMAGES OP String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP images_load_flags  using_transparency using_background  {        
-        $$ = images_load( _environment, $4, NULL, ((struct _Environment *)_environment)->currentMode, $9, $11, $13, $14, $15 )->name;
+    | LOAD IMAGES OP String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP images_load_flags  using_transparency using_background on_bank {        
+        $$ = images_load( _environment, $4, NULL, ((struct _Environment *)_environment)->currentMode, $9, $11, $13, $14, $15, $16 )->name;
       }
-    | LOAD IMAGES OP String AS String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP images_load_flags  using_transparency using_background {
-        $$ = images_load( _environment, $4, $6, ((struct _Environment *)_environment)->currentMode, $11, $13, $15, $16, $17 )->name;
+    | LOAD IMAGES OP String AS String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP images_load_flags  using_transparency using_background on_bank {
+        $$ = images_load( _environment, $4, $6, ((struct _Environment *)_environment)->currentMode, $11, $13, $15, $16, $17, $18 )->name;
       }
-    | LOAD IMAGE OP String CP image_load_flags  using_transparency using_background  {
-        $$ = image_load( _environment, $4, NULL, ((struct _Environment *)_environment)->currentMode, $6, $7, $8 )->name;
+    | LOAD IMAGE OP String CP image_load_flags  using_transparency using_background on_bank {
+        $$ = image_load( _environment, $4, NULL, ((struct _Environment *)_environment)->currentMode, $6, $7, $8, $9 )->name;
       }
-    | LOAD IMAGE OP String AS String CP image_load_flags  using_transparency using_background  {
-        $$ = image_load( _environment, $4, $6, ((struct _Environment *)_environment)->currentMode, $8, $9, $10 )->name;
+    | LOAD IMAGE OP String AS String CP image_load_flags  using_transparency using_background on_bank {
+        $$ = image_load( _environment, $4, $6, ((struct _Environment *)_environment)->currentMode, $8, $9, $10, $11 )->name;
       }
-    | LOAD IMAGE OP String OP_COMMA Integer CP image_load_flags  using_transparency using_background  {
-        $$ = image_load( _environment, $4, NULL, $6, $8, $9, $10 )->name;
+    | LOAD IMAGE OP String OP_COMMA Integer CP image_load_flags  using_transparency using_background on_bank {
+        $$ = image_load( _environment, $4, NULL, $6, $8, $9, $10, $11 )->name;
       }
-    | LOAD IMAGE OP String AS String OP_COMMA Integer CP image_load_flags  using_transparency using_background  {
-        $$ = image_load( _environment, $4, $6, $8, $10, $11, $12 )->name;
+    | LOAD IMAGE OP String AS String OP_COMMA Integer CP image_load_flags  using_transparency using_background on_bank {
+        $$ = image_load( _environment, $4, $6, $8, $10, $11, $12, $13 )->name;
       }
     | LOAD TILE OP String CP tile_load_flags {
         $$ = tile_load( _environment, $4, $6, NULL )->name;
@@ -4896,11 +4905,11 @@ statement:
   | Identifier OP_COLON {
       cpu_label( _environment, $1 );
   } 
-  | LOAD String OP_COMMA Integer {
-    load( _environment, $2, NULL, $4 );
+  | LOAD String OP_COMMA Integer on_bank {
+    load( _environment, $2, NULL, $4, $5 );
   }
-  | LOAD String AS String OP_COMMA Integer {
-    load( _environment, $2, $4, $6 );
+  | LOAD String AS String OP_COMMA Integer on_bank {
+    load( _environment, $2, $4, $6, $7 );
   }
   | RUN PARALLEL {
       run_parallel( _environment );
