@@ -2002,6 +2002,11 @@ void                    add_complex_mt( Environment * _environment, char * _vari
 
 void                    back( Environment * _environment, char * _color );
 Bank *                  bank_define( Environment * _environment, char * _name, BankType _type, int _address, char * _filename );
+Variable *              bank_get( Environment * _environment );
+Variable *              bank_get_address( Environment * _environment, int _bank );
+Variable *              bank_get_address_var( Environment * _environment, char * _bank );
+Variable *              bank_get_size( Environment * _environment, int _bank );
+Variable *              bank_get_size_var( Environment * _environment, char * _bank );
 void                    bar( Environment * _environment, char * _x0, char * _y0, char * _x1, char * _y1, char * _c );
 void                    begin_for( Environment * _environment, char * _index, char * _from, char * _to );  
 void                    begin_for_mt( Environment * _environment, char * _index, char * _from, char * _to );  

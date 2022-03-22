@@ -482,6 +482,9 @@ const_factor:
       }
       | const_color_enumeration
       | const_key_scancode_definition
+      | BANK COUNT {
+          $$ = BANK_COUNT;
+      }
       ;
 
 expr : 
@@ -1872,6 +1875,25 @@ exponential:
     }
     | RIGHT OP expr OP_COMMA expr CP {
         $$ = variable_string_right( _environment, $3, $5 )->name;
+    }
+    | BANK COUNT {
+        $$ = variable_temporary( _environment, VT_BYTE, "(bank count)" )->name;
+        variable_store( _environment, $$, BANK_COUNT );
+    }
+    | BANK OP CP {
+        $$ = bank_get( _environment )->name;
+    }
+    | BANK ADDRESS OP OP_HASH const_expr CP {
+        $$ = bank_get_address( _environment, $5 )->name;
+    }
+    | BANK ADDRESS OP expr CP {
+        $$ = bank_get_address_var( _environment, $4 )->name;
+    }
+    | BANK SIZE OP OP_HASH const_expr CP {
+        $$ = bank_get_size( _environment, $5 )->name;
+    }
+    | BANK SIZE OP expr CP {
+        $$ = bank_get_size_var( _environment, $4 )->name;
     }
     | MID OP expr OP_COMMA expr CP {
         $$ = variable_string_mid( _environment, $3, $5, NULL )->name;
