@@ -61,7 +61,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token OVERLAYED CASE ENDSELECT OGP CGP ARRAY NEW GET DISTANCE TYPE MUL DIV RGB SHADES HEX PALETTE
 %token BAR XGRAPHIC YGRAPHIC XTEXT YTEXT COLUMNS XGR YGR CHAR RAW SEPARATOR MSX MSX1 COLECO CSPRITE 
 %token TILESET MOVE ROW COLUMN TRANSPARENT DOUBLE RESPAWN HALTED SC3000 SG1000 MEMORY VIDEO MMOVE SWAP
-%token BELONG FIRST EXACT PRESSED PC128OP MO5
+%token BELONG FIRST EXACT PRESSED PC128OP MO5 VARPTR READ WRITE
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -1880,6 +1880,9 @@ exponential:
         $$ = variable_temporary( _environment, VT_BYTE, "(bank count)" )->name;
         variable_store( _environment, $$, BANK_COUNT );
     }
+    | VARPTR OP Identifier CP {
+        $$ = varptr( _environment, $3 )->name;
+    }
     | BANK OP CP {
         $$ = bank_get( _environment )->name;
     }
@@ -2567,6 +2570,12 @@ bank_expansion_definition_simple :
 bank_expansion_definition_expression :
     expr {
         bank_set_var( _environment, $1 );
+    }
+    | READ expr FROM expr TO expr SIZE expr {
+        bank_read_vars( _environment, $2, $4, $6, $8 );
+    }
+    | WRITE expr FROM expr TO expr SIZE expr {
+        bank_write_vars( _environment, $2, $4, $6, $8 );
     }
     ;
 

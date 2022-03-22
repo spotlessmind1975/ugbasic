@@ -2007,8 +2007,10 @@ Variable *              bank_get_address( Environment * _environment, int _bank 
 Variable *              bank_get_address_var( Environment * _environment, char * _bank );
 Variable *              bank_get_size( Environment * _environment, int _bank );
 Variable *              bank_get_size_var( Environment * _environment, char * _bank );
+void                    bank_read_vars( Environment * _environment, char * _bank, char * _address1, char * _address2, char * _size );
 void                    bank_set( Environment * _environment, int _bank );
 void                    bank_set_var( Environment * _environment, char * _bank );
+void                    bank_write_vars( Environment * _environment, char * _bank, char * _address1, char * _address2, char * _size );
 void                    bar( Environment * _environment, char * _x0, char * _y0, char * _x1, char * _y1, char * _c );
 void                    begin_for( Environment * _environment, char * _index, char * _from, char * _to );  
 void                    begin_for_mt( Environment * _environment, char * _index, char * _from, char * _to );  
@@ -2477,6 +2479,7 @@ Variable *              variable_sub( Environment * _environment, char * _source
 void                    variable_sub_inplace( Environment * _environment, char * _source, char * _dest );
 Variable *              variable_temporary( Environment * _environment, VariableType _type, char * _meaning );
 Variable *              variable_resident( Environment * _environment, VariableType _type, char * _meaning );
+Variable *              varptr( Environment * _environment, char * _identifier );
 
 //----------------------------------------------------------------------------
 // *W*
