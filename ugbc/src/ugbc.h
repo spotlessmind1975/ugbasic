@@ -555,6 +555,9 @@ typedef struct _Variable {
     /** Resident shared assigned to this */
     int residentAssigned;
 
+    /** Unique ID assigned to this variable (is banked) */
+    int variableUniqueId;
+
     /** Link to the next variable (NULL if this is the last one) */
     struct _Variable * next;
 
