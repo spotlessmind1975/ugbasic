@@ -106,6 +106,10 @@
 #define KEY_X						23
 #define KEY_Y						25
 #define KEY_Z						12
+#define KEY_UP  					0
+#define KEY_DOWN  					0
+#define KEY_LEFT					0
+#define KEY_RIGHT					0
 
 #define INPUT_DEFAULT_SEPARATOR     ','
 #define INPUT_DEFAULT_SIZE          32
@@ -118,6 +122,9 @@
 #define JOY_LEFT            2
 #define JOY_RIGHT           3
 #define JOY_FIRE            4
+
+#define BANK_COUNT          0
+#define BANK_SIZE           0
 
 void c64_xpen( Environment * _environment, char * _destination );
 void c64_ypen( Environment * _environment, char * _destination );

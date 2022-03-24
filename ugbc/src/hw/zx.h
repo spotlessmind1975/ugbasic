@@ -173,6 +173,9 @@
 
 #define SCREEN_CAPABILITIES         ( ( 1<<BITMAP_NATIVE ) )
 
+#define BANK_COUNT          0
+#define BANK_SIZE           0
+
 #define BITMAP_MODE_STANDARD        1           // Standard Bitmap Mode     192 x 256 x 2
 #define TILEMAP_MODE_STANDARD       0           // Standard Character Mode  32 x 25 x 8
 #define BITMAP_MODE_DEFAULT         BITMAP_MODE_STANDARD

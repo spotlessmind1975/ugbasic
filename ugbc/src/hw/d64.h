@@ -147,6 +147,9 @@
 
 #define SCREEN_CAPABILITIES         ( ( 1<<TILEMAP_NATIVE ) | ( 1<<BITMAP_NATIVE ) )
 
+#define BANK_COUNT          0
+#define BANK_SIZE           0
+
 void d64_xpen( Environment * _environment, char * _destination );
 void d64_ypen( Environment * _environment, char * _destination );
 void d64_inkey( Environment * _environment, char * _pressed, char * _key );
