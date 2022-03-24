@@ -67,10 +67,19 @@ void put_image( Environment * _environment, char * _image, char * _x, char * _y,
 
     switch( image->type ) {
         case VT_IMAGES:
-            if ( !frame ) {
-                ef936x_put_image( _environment, image->realName, x->realName, y->realName, "", image->frameSize, _flags );
+            if ( image->bankAssigned ) {
+                bank_read_semi_var( _environment, image->bankAssigned, image->absoluteAddress, "BANKWINDOW", image->size );
+                if ( !frame ) {
+                    ef936x_put_image( _environment, "BANKWINDOW", x->realName, y->realName, "", image->frameSize, _flags );
+                } else {
+                    ef936x_put_image( _environment, "BANKWINDOW", x->realName, y->realName, frame->realName, image->frameSize, _flags );
+                }
             } else {
-                ef936x_put_image( _environment, image->realName, x->realName, y->realName, frame->realName, image->frameSize, _flags );
+                if ( !frame ) {
+                    ef936x_put_image( _environment, image->realName, x->realName, y->realName, "", image->frameSize, _flags );
+                } else {
+                    ef936x_put_image( _environment, image->realName, x->realName, y->realName, frame->realName, image->frameSize, _flags );
+                }
             }
             break;
         case VT_IMAGE:
