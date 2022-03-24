@@ -73,7 +73,7 @@ Variable * bank_get_size( Environment * _environment, int _bank ) {
 
     Variable * result = variable_temporary( _environment, VT_ADDRESS, "(bank size)" );
 
-    outline0("LDD #$4000" );
+    outline1("LDD #$%4.4x", BANK_SIZE );
     outline1("STD %s", result->realName );
 
     return result;
@@ -97,13 +97,13 @@ Variable * bank_get_size( Environment * _environment, int _bank ) {
 
 @example = BANK SIZE(banco)
 
-@target pc128op
+@target all
 </usermanual> */
 Variable * bank_get_size_var( Environment * _environment, char * _bank ) {
 
     Variable * result = variable_temporary( _environment, VT_ADDRESS, "(bank size)" );
 
-    outline0("LDD #$4000" );
+    outline1("LDD #$%4.4x", BANK_SIZE );
     outline1("STD %s", result->realName );
 
     return result;
