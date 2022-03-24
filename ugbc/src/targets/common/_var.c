@@ -62,6 +62,7 @@ void variable_on_memory_init( Environment * _environment, int _imported_too ) {
                 case VT_BUFFER:
                 case VT_IMAGE:
                 case VT_IMAGES:
+                case VT_SEQUENCE:
                 case VT_ARRAY:
                     break;
                 default:

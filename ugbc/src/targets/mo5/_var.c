@@ -150,7 +150,8 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     }   
                     break;
                 case VT_IMAGE:
-                case VT_IMAGES:
+                case :
+                case VT_SEQUENCE:
                 case VT_BUFFER:
                     if ( ! variable->absoluteAddress ) {
                         if ( variable->valueBuffer ) {

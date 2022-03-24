@@ -61,7 +61,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token OVERLAYED CASE ENDSELECT OGP CGP ARRAY NEW GET DISTANCE TYPE MUL DIV RGB SHADES HEX PALETTE
 %token BAR XGRAPHIC YGRAPHIC XTEXT YTEXT COLUMNS XGR YGR CHAR RAW SEPARATOR MSX MSX1 COLECO CSPRITE 
 %token TILESET MOVE ROW COLUMN TRANSPARENT DOUBLE RESPAWN HALTED SC3000 SG1000 MEMORY VIDEO MMOVE SWAP
-%token BELONG FIRST EXACT PRESSED PC128OP MO5 VARPTR READ WRITE BANKED
+%token BELONG FIRST EXACT PRESSED PC128OP MO5 VARPTR READ WRITE BANKED SEQUENCE
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -385,7 +385,7 @@ const_factor:
       }
       | IMAGE WIDTH OP expr CP {
           Variable * v = variable_retrieve( _environment, $4 );
-          if ( v->type != VT_IMAGE && v->type != VT_IMAGES ) {
+          if ( v->type != VT_IMAGE && v->type != VT_IMAGES && v->type != VT_SEQUENCE ) {
               CRITICAL_NOT_IMAGE( v->name );
           }
           if ( !v->valueBuffer ) {
@@ -440,7 +440,7 @@ const_factor:
       }
       | IMAGE HEIGHT OP expr CP {
           Variable * v = variable_retrieve( _environment, $4 );
-          if ( v->type != VT_IMAGE && v->type != VT_IMAGES ) {
+          if ( v->type != VT_IMAGE && v->type != VT_IMAGES && v->type != VT_SEQUENCE ) {
               CRITICAL_NOT_IMAGE( v->name );
           }
           $$ = v->valueBuffer[1];
@@ -1839,6 +1839,7 @@ exponential:
         switch( v->type ) {
             case VT_IMAGE:
             case VT_IMAGES:
+            case VT_SEQUENCE:
             case VT_BUFFER:
             case VT_STRING: 
                 break;
@@ -3620,6 +3621,9 @@ datatype :
     }
     | IMAGES {
         $$ = VT_IMAGE;
+    }
+    | SEQUENCE {
+        $$ = VT_SEQUENCE;
     }
     | SPRITE {
         $$ = VT_SPRITE;

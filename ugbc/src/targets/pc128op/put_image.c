@@ -68,6 +68,36 @@ void put_image( Environment * _environment, char * _image, char * _x, char * _y,
     }
 
     switch( image->type ) {
+        case VT_SEQUENCE:
+            if ( image->bankAssigned ) {
+                
+                char alreadyLoadedLabel[MAX_TEMPORARY_STORAGE];
+                sprintf(alreadyLoadedLabel, "%salready", label );
+
+                char bankWindowId[MAX_TEMPORARY_STORAGE];
+                sprintf( bankWindowId, "BANKWINDOWID%2.2x", image->residentAssigned );
+
+                char bankWindowName[MAX_TEMPORARY_STORAGE];
+                sprintf( bankWindowName, "BANKWINDOW%2.2x", image->residentAssigned );
+
+                cpu_compare_and_branch_16bit_const( _environment, bankWindowId, image->variableUniqueId, alreadyLoadedLabel, 1 );
+                bank_read_semi_var( _environment, image->bankAssigned, image->absoluteAddress, bankWindowName, image->size );
+                cpu_store_16bit(_environment, bankWindowId, image->variableUniqueId );
+                cpu_label( _environment, alreadyLoadedLabel );
+
+                if ( !frame ) {
+                    ef936x_put_image( _environment, bankWindowName, x->realName, y->realName, "", image->frameSize, _flags );
+                } else {
+                    ef936x_put_image( _environment, bankWindowName, x->realName, y->realName, frame->realName, image->frameSize, _flags );
+                }
+            } else {
+                if ( !frame ) {
+                    ef936x_put_image( _environment, image->realName, x->realName, y->realName, "", image->frameSize, _flags );
+                } else {
+                    ef936x_put_image( _environment, image->realName, x->realName, y->realName, frame->realName, image->frameSize, _flags );
+                }
+            }
+            break;
         case VT_IMAGES:
             if ( image->bankAssigned ) {
                 

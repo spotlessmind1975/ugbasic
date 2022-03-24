@@ -235,7 +235,10 @@ typedef enum _VariableType {
     VT_TILES = 21,
 
     /** TILESET (a set of tiles) */
-    VT_TILESET = 22
+    VT_TILESET = 22,
+
+    /** SEQUENCE (a set of images) */
+    VT_SEQUENCE = 23
 
 } VariableType;
 
@@ -1685,6 +1688,7 @@ typedef struct _Environment {
 #define CRITICAL_CANNOT_MMOVE_INVALID_SIZE( v ) CRITICAL2("E122 - invalid data type for SIZE on MMOVE", v );
 #define CRITICAL_CANNOT_MMOVE_UNSUPPORTED( ) CRITICAL("E123 - MMOVE VIDEO to VIDEO unsupported" );
 #define CRITICAL_EXPANSION_OUT_OF_MEMORY_LOADING( v ) CRITICAL2("E124 - out of memory when loading BANKED resource", v );
+#define CRITICAL_NOT_ASSIGNED_SEQUENCE( v ) CRITICAL2("E125 - variable is not a set of loaded collection of images, please use assign operator", v );
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
 #define WARNING2i( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%i) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }

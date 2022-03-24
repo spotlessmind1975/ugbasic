@@ -64,6 +64,13 @@ void put_image( Environment * _environment, char * _image, char * _x, char * _y,
     }
 
     switch( image->type ) {
+        case VT_SEQUENCE:
+            if ( !frame ) {
+                gtia_put_image( _environment, image->realName, x->realName, y->realName, "", image->frameSize, _flags );
+            } else {
+                gtia_put_image( _environment, image->realName, x->realName, y->realName, frame->realName, image->frameSize, _flags );
+            }
+            break;
         case VT_IMAGES:
             if ( !frame ) {
                 gtia_put_image( _environment, image->realName, x->realName, y->realName, "", image->frameSize, _flags );

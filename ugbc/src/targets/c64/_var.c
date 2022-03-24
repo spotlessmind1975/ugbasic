@@ -125,6 +125,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     }
                     break;                case VT_IMAGE:
                 case VT_IMAGES:
+                case VT_SEQUENCE:
                 case VT_BUFFER:
                     if ( ! variable->absoluteAddress ) {
                         if ( variable->valueBuffer ) {
@@ -237,6 +238,7 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
             break;
         case VT_IMAGE:
         case VT_IMAGES:
+        case VT_SEQUENCE:
         case VT_BUFFER:
             if ( _variable->valueBuffer ) {
                 if ( _variable->printable ) {
