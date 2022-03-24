@@ -790,7 +790,10 @@ on_bank :
         $$ = 0;
     }
     | BANKED {
-        $$ = -1;
+        $$ = 1;
+    }
+    | BANKED OP const_expr CP {
+        $$ = $3;
     };
 
 sprite_flag :
@@ -5100,6 +5103,10 @@ statement:
         var->originalHeight = expr->originalHeight;
         var->originalColors = expr->originalColors;
         var->bankAssigned = expr->bankAssigned;
+        if ( var->bankAssigned ) {
+            var->absoluteAddress = expr->absoluteAddress;
+            var->residentAssigned = expr->residentAssigned;
+        }
         memcpy( var->originalPalette, expr->originalPalette, MAX_PALETTE * sizeof( RGBi ) );
         var->memoryArea = expr->memoryArea;
         var->arrayDimensions = expr->arrayDimensions;

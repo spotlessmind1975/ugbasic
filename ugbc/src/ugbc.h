@@ -245,6 +245,7 @@ typedef enum _VariableType {
 #define MAX_TILESETS                    256
 #define MAX_NESTED_ARRAYS               16
 #define MAX_PROCEDURES                  4096
+#define MAX_RESIDENT_SHAREDS            16
 #define PROTOTHREAD_DEFAULT_COUNT       16
 #define DSTRING_DEFAULT_COUNT           255
 #define DSTRING_DEFAULT_SPACE           1024
@@ -550,6 +551,9 @@ typedef struct _Variable {
 
     /** Bank to be used to store the content of this variable */
     int bankAssigned;
+
+    /** Resident shared assigned to this */
+    int residentAssigned;
 
     /** Link to the next variable (NULL if this is the last one) */
     struct _Variable * next;
@@ -1517,7 +1521,7 @@ typedef struct _Environment {
     /*
      * Max size of a single block allocated
      */
-    int maxExpansionBankSize;
+    int maxExpansionBankSize[MAX_RESIDENT_SHAREDS];
 
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */

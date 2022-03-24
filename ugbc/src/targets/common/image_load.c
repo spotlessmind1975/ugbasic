@@ -176,12 +176,13 @@ Variable * image_load( Environment * _environment, char * _filename, char * _ali
 
         result->bankAssigned = bank->id;
         result->absoluteAddress = bank->address;
+        result->residentAssigned = _bank_expansion;
         memcpy( &bank->data[bank->address], result->valueBuffer, result->size );
 
         bank->address += result->size;
         bank->remains -= result->size;
-        if ( _environment->maxExpansionBankSize < result->size ) {
-            _environment->maxExpansionBankSize = result->size;
+        if ( _environment->maxExpansionBankSize[_bank_expansion] < result->size ) {
+            _environment->maxExpansionBankSize[_bank_expansion] = result->size;
         }
 
     }

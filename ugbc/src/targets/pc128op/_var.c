@@ -247,8 +247,10 @@ void variable_cleanup( Environment * _environment ) {
         }
     }
 
-    if ( _environment->maxExpansionBankSize ) {
-        outhead1("BANKWINDOW rzb %d", _environment->maxExpansionBankSize);
+    for( i=0; i<MAX_RESIDENT_SHAREDS; ++i ) {
+        if ( _environment->maxExpansionBankSize[i] ) {
+            outhead2("BANKWINDOW%2.2x rzb %d", i, _environment->maxExpansionBankSize[i]);
+        }
     }
 
     for(i=0; i<BANK_TYPE_COUNT; ++i) {

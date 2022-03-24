@@ -1777,6 +1777,7 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
                     target->bankAssigned = source->bankAssigned;
                     if ( target->bankAssigned ) {
                         target->absoluteAddress = source->absoluteAddress;
+                        target->residentAssigned = source->residentAssigned;
                     }
                     memcpy( target->originalPalette, source->originalPalette, MAX_PALETTE * sizeof( RGBi ) );
                 case VT_IMAGES:

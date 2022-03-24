@@ -68,11 +68,13 @@ void put_image( Environment * _environment, char * _image, char * _x, char * _y,
     switch( image->type ) {
         case VT_IMAGES:
             if ( image->bankAssigned ) {
-                bank_read_semi_var( _environment, image->bankAssigned, image->absoluteAddress, "BANKWINDOW", image->size );
+                char bankWindowName[MAX_TEMPORARY_STORAGE];
+                sprintf( bankWindowName, "BANKWINDOW%2.2x", image->residentAssigned );
+                bank_read_semi_var( _environment, image->bankAssigned, image->absoluteAddress, bankWindowName, image->size );
                 if ( !frame ) {
-                    ef936x_put_image( _environment, "BANKWINDOW", x->realName, y->realName, "", image->frameSize, _flags );
+                    ef936x_put_image( _environment, bankWindowName, x->realName, y->realName, "", image->frameSize, _flags );
                 } else {
-                    ef936x_put_image( _environment, "BANKWINDOW", x->realName, y->realName, frame->realName, image->frameSize, _flags );
+                    ef936x_put_image( _environment, bankWindowName, x->realName, y->realName, frame->realName, image->frameSize, _flags );
                 }
             } else {
                 if ( !frame ) {
@@ -84,8 +86,10 @@ void put_image( Environment * _environment, char * _image, char * _x, char * _y,
             break;
         case VT_IMAGE:
             if ( image->bankAssigned ) {
-                bank_read_semi_var( _environment, image->bankAssigned, image->absoluteAddress, "BANKWINDOW", image->size );
-                ef936x_put_image( _environment, "BANKWINDOW", x->realName, y->realName, NULL, 0, _flags );
+                char bankWindowName[MAX_TEMPORARY_STORAGE];
+                sprintf( bankWindowName, "BANKWINDOW%2.2x", image->residentAssigned );
+                bank_read_semi_var( _environment, image->bankAssigned, image->absoluteAddress, bankWindowName, image->size );
+                ef936x_put_image( _environment, bankWindowName, x->realName, y->realName, NULL, 0, _flags );
             } else {
                 ef936x_put_image( _environment, image->realName, x->realName, y->realName, NULL, 0, _flags );
             }
