@@ -154,6 +154,7 @@ void mo5_xpen( Environment * _environment, char * _destination );
 void mo5_ypen( Environment * _environment, char * _destination );
 void mo5_inkey( Environment * _environment, char * _pressed, char * _key );
 void mo5_scancode( Environment * _environment, char * _pressed, char * _scacode );
+void mo5_key_pressed( Environment * _environment, char *_scancode, char * _result );
 void mo5_scanshift( Environment * _environment, char * _shifts );
 void mo5_keyshift( Environment * _environment, char * _shifts );
 void mo5_clear_key( Environment * _environment );

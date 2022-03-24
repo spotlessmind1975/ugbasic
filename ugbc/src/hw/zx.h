@@ -210,6 +210,7 @@ void zx_text( Environment * _environment, char * _text, char * _text_size );
 void zx_cls( Environment * _environment, char * _pen, char * _paper );
 void zx_inkey( Environment * _environment, char * _pressed, char * _key );
 void zx_scancode( Environment * _environment, char * _pressed, char * _scacode );
+void zx_key_pressed( Environment * _environment, char *_scancode, char * _result );
 void zx_scanshift( Environment * _environment, char * _shifts );
 void zx_keyshift( Environment * _environment, char * _shifts );
 void zx_clear_key( Environment * _environment );

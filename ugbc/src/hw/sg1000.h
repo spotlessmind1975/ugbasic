@@ -151,6 +151,7 @@
 
 void sg1000_inkey( Environment * _environment, char * _pressed, char * _key );
 void sg1000_scancode( Environment * _environment, char * _pressed, char * _scacode );
+void sg1000_key_pressed( Environment * _environment, char *_scancode, char * _result );
 void sg1000_scanshift( Environment * _environment, char * _shifts );
 void sg1000_keyshift( Environment * _environment, char * _shifts );
 void sg1000_clear_key( Environment * _environment );
