@@ -5099,6 +5099,7 @@ statement:
         var->originalWidth = expr->originalWidth;
         var->originalHeight = expr->originalHeight;
         var->originalColors = expr->originalColors;
+        var->bankAssigned = expr->bankAssigned;
         memcpy( var->originalPalette, expr->originalPalette, MAX_PALETTE * sizeof( RGBi ) );
         var->memoryArea = expr->memoryArea;
         var->arrayDimensions = expr->arrayDimensions;

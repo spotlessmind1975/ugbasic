@@ -87,6 +87,9 @@ typedef enum _BankType {
  */
 typedef struct _Bank {
 
+    /** ID of the bank */
+    int id;
+
     /** Name of the bank */
     char * name;
 
@@ -98,6 +101,15 @@ typedef struct _Bank {
 
     /** (optional) file name that will be loaded into the bank */
     char *filename;
+
+    /** Bank max size (in bytes) */
+    int space;
+
+    /** Bank remaining size (in bytes) */
+    int remains;
+
+    /** Data contained in the block */
+    char * data;
 
     /** Link to the next bank (NULL if this is the last one) */
     struct _Bank * next;
@@ -536,6 +548,9 @@ typedef struct _Variable {
     /** Original bitmap palette (if IMAGE/IMAGES) */
     RGBi originalPalette[MAX_PALETTE];
 
+    /** Bank to be used to store the content of this variable */
+    int bankAssigned;
+
     /** Link to the next variable (NULL if this is the last one) */
     struct _Variable * next;
 
@@ -751,10 +766,6 @@ typedef struct _ScreenMode {
     int         score;
 
     struct _ScreenMode  * next;
-
-    int         bank;
-
-    int         offset;
 
 } ScreenMode;
 
@@ -1498,6 +1509,16 @@ typedef struct _Environment {
      */
     GammaCorrection gammaCorrection;
 
+    /*
+     * List of available banks
+     */
+    Bank * expansionBanks;
+
+    /*
+     * Max size of a single block allocated
+     */
+    int maxExpansionBankSize;
+
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */
@@ -1656,6 +1677,7 @@ typedef struct _Environment {
 #define CRITICAL_CANNOT_RESPAWN_NOT_THREADID( v ) CRITICAL2("E121 - cannot respawn something that is not a thread id", v );
 #define CRITICAL_CANNOT_MMOVE_INVALID_SIZE( v ) CRITICAL2("E122 - invalid data type for SIZE on MMOVE", v );
 #define CRITICAL_CANNOT_MMOVE_UNSUPPORTED( ) CRITICAL("E123 - MMOVE VIDEO to VIDEO unsupported" );
+#define CRITICAL_EXPANSION_OUT_OF_MEMORY_LOADING( v ) CRITICAL2("E124 - out of memory when loading BANKED resource", v );
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
 #define WARNING2i( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%i) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -2011,6 +2033,7 @@ Variable *              bank_get_address( Environment * _environment, int _bank 
 Variable *              bank_get_address_var( Environment * _environment, char * _bank );
 Variable *              bank_get_size( Environment * _environment, int _bank );
 Variable *              bank_get_size_var( Environment * _environment, char * _bank );
+void                    bank_read_semi_var( Environment * _environment, int _bank, int _address1, char * _address2, int _size );
 void                    bank_read_vars( Environment * _environment, char * _bank, char * _address1, char * _address2, char * _size );
 void                    bank_set( Environment * _environment, int _bank );
 void                    bank_set_var( Environment * _environment, char * _bank );

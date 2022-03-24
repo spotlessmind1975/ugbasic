@@ -1774,6 +1774,10 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
                     target->originalWidth = source->originalWidth;
                     target->originalHeight = source->originalHeight;
                     target->originalColors = source->originalColors;
+                    target->bankAssigned = source->bankAssigned;
+                    if ( target->bankAssigned ) {
+                        target->absoluteAddress = source->absoluteAddress;
+                    }
                     memcpy( target->originalPalette, source->originalPalette, MAX_PALETTE * sizeof( RGBi ) );
                 case VT_IMAGES:
                 case VT_ARRAY:

@@ -74,7 +74,12 @@ void put_image( Environment * _environment, char * _image, char * _x, char * _y,
             }
             break;
         case VT_IMAGE:
-            ef936x_put_image( _environment, image->realName, x->realName, y->realName, NULL, 0, _flags );
+            if ( image->bankAssigned ) {
+                bank_read_semi_var( _environment, image->bankAssigned, image->absoluteAddress, "BANKWINDOW", image->size );
+                ef936x_put_image( _environment, "BANKWINDOW", x->realName, y->realName, NULL, 0, _flags );
+            } else {
+                ef936x_put_image( _environment, image->realName, x->realName, y->realName, NULL, 0, _flags );
+            }
             break;
         default:
             CRITICAL_PUT_IMAGE_UNSUPPORTED( _image, DATATYPE_AS_STRING[image->type] );
