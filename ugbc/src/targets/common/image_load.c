@@ -177,6 +177,7 @@ Variable * image_load( Environment * _environment, char * _filename, char * _ali
         result->bankAssigned = bank->id;
         result->absoluteAddress = bank->address;
         result->residentAssigned = _bank_expansion;
+        result->variableUniqueId = UNIQUE_RESOURCE_ID;
         memcpy( &bank->data[bank->address], result->valueBuffer, result->size );
 
         bank->address += result->size;

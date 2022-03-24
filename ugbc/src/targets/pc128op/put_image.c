@@ -58,7 +58,7 @@ extern char DATATYPE_AS_STRING[][16];
 void put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _flags ) {
 
     MAKE_LABEL
-    
+
     Variable * image = variable_retrieve( _environment, _image );
     Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
     Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
@@ -80,9 +80,9 @@ void put_image( Environment * _environment, char * _image, char * _x, char * _y,
                 char bankWindowName[MAX_TEMPORARY_STORAGE];
                 sprintf( bankWindowName, "BANKWINDOW%2.2x", image->residentAssigned );
 
-                cpu_compare_and_branch_8bit_const( _environment, bankWindowId, image->variableUniqueId, alreadyLoadedLabel, 1 );
+                cpu_compare_and_branch_16bit_const( _environment, bankWindowId, image->variableUniqueId, alreadyLoadedLabel, 1 );
                 bank_read_semi_var( _environment, image->bankAssigned, image->absoluteAddress, bankWindowName, image->size );
-                cpu_store_8bit(_environment, bankWindowId, image->variableUniqueId );
+                cpu_store_16bit(_environment, bankWindowId, image->variableUniqueId );
                 cpu_label( _environment, alreadyLoadedLabel );
 
                 if ( !frame ) {
@@ -110,9 +110,9 @@ void put_image( Environment * _environment, char * _image, char * _x, char * _y,
                 char bankWindowName[MAX_TEMPORARY_STORAGE];
                 sprintf( bankWindowName, "BANKWINDOW%2.2x", image->residentAssigned );
 
-                cpu_compare_and_branch_8bit_const( _environment, bankWindowId, image->variableUniqueId, alreadyLoadedLabel, 1 );
+                cpu_compare_and_branch_16bit_const( _environment, bankWindowId, image->variableUniqueId, alreadyLoadedLabel, 1 );
                 bank_read_semi_var( _environment, image->bankAssigned, image->absoluteAddress, bankWindowName, image->size );
-                cpu_store_8bit(_environment, bankWindowId, image->variableUniqueId );
+                cpu_store_16bit(_environment, bankWindowId, image->variableUniqueId );
                 cpu_label( _environment, alreadyLoadedLabel );
 
                 ef936x_put_image( _environment, bankWindowName, x->realName, y->realName, NULL, 0, _flags );

@@ -5106,6 +5106,7 @@ statement:
         if ( var->bankAssigned ) {
             var->absoluteAddress = expr->absoluteAddress;
             var->residentAssigned = expr->residentAssigned;
+            var->variableUniqueId = expr->variableUniqueId;
         }
         memcpy( var->originalPalette, expr->originalPalette, MAX_PALETTE * sizeof( RGBi ) );
         var->memoryArea = expr->memoryArea;
