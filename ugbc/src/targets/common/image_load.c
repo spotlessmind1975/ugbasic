@@ -159,7 +159,7 @@ Variable * image_load( Environment * _environment, char * _filename, char * _ali
     result->originalBitmap = source;
     result->originalWidth = width;
     result->originalHeight = height;
-    if ( _bank_expansion ) {
+    if ( _bank_expansion && _environment->expansionBanks ) {
 
         Bank * bank = _environment->expansionBanks;
 
