@@ -1689,6 +1689,8 @@ typedef struct _Environment {
 #define CRITICAL_CANNOT_MMOVE_UNSUPPORTED( ) CRITICAL("E123 - MMOVE VIDEO to VIDEO unsupported" );
 #define CRITICAL_EXPANSION_OUT_OF_MEMORY_LOADING( v ) CRITICAL2("E124 - out of memory when loading BANKED resource", v );
 #define CRITICAL_NOT_ASSIGNED_SEQUENCE( v ) CRITICAL2("E125 - variable is not a set of loaded collection of images, please use assign operator", v );
+#define CRITICAL_SEQUENCE_LOAD_INVALID_FRAME_WIDTH( w ) CRITICAL2i("E126 - invalid frame width, not multiple of width", w );
+#define CRITICAL_SEQUENCE_LOAD_INVALID_FRAME_HEIGHT( h ) CRITICAL2i("E127 - invalid frame height, not multiple of height", h );
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
 #define WARNING2i( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%i) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -2193,6 +2195,7 @@ void                    home( Environment * _environment );
 //----------------------------------------------------------------------------
 
 void                    if_then( Environment * _environment, char * _expression );
+char *                  image_cut( Environment * _environment, char * _source, int _x, int _y, int _width, int _height );
 char *                  image_flip_x( Environment * _environment, char * _source, int _width, int _height );
 char *                  image_flip_y( Environment * _environment, char * _source, int _width, int _height );
 Variable *              image_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _flags, int _transparent_color, int _background_color, int _bank_expansion );
@@ -2309,7 +2312,7 @@ void                    print_buffer( Environment * _environment, char * _buffer
 void                    print_newline( Environment * _environment );
 void                    print_question_mark( Environment * _environment );
 void                    print_tab( Environment * _environment, int _new_line );
-void                    put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _flags );
+void                    put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _flags );
 void                    put_tile( Environment * _environment, char * _tile, char * _x, char * _y, char * _w, char * _h );
 
 //----------------------------------------------------------------------------
@@ -2364,6 +2367,7 @@ void                    screen_vertical_scroll( Environment * _environment, int 
 void                    screen_vertical_scroll_var( Environment * _environment, char * _displacement );
 void                    scroll( Environment * _environment, int _dx, int _dy );
 void                    select_case( Environment * _environment, char * _expression );
+Variable *              sequence_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _frame_width, int _frame_height, int _flags, int _transparent_color, int _background_color, int _bank_expansion );
 void                    set_timer( Environment * _environment, char * _value );
 void                    shared( Environment * _environment );
 Variable *              sign( Environment * _environment, char * _value );

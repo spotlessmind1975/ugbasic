@@ -96,6 +96,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> tile_load_flags tile_load_flags1 tile_load_flag
 %type <integer> image_load_flags image_load_flags1 image_load_flag
 %type <integer> images_load_flags images_load_flags1 images_load_flag
+%type <integer> sequence_load_flags sequence_load_flags1 sequence_load_flag
 %type <integer> put_image_flags put_image_flags1 put_image_flag
 %type <integer> const_color_enumeration
 %type <integer> using_transparency
@@ -702,6 +703,26 @@ images_load_flag :
         $$ = FLAG_ROLL_Y | FLAG_ROLL_X;
     };
 
+sequence_load_flag :
+    FLIP X {
+        $$ = FLAG_FLIP_X;
+    }
+    | FLIP Y {
+        $$ = FLAG_FLIP_Y;
+    }
+    | FLIP XY {
+        $$ = FLAG_FLIP_X | FLAG_FLIP_Y;
+    }
+    | FLIP YX {
+        $$ = FLAG_FLIP_X | FLAG_FLIP_Y;
+    }
+    | OVERLAYED {
+        $$ = FLAG_OVERLAYED;
+    }
+    | EXACT {
+        $$ = FLAG_EXACT;
+    };
+
 put_image_flags1 :
     put_image_flag {
         $$ = $1;
@@ -731,6 +752,14 @@ images_load_flags1 :
         $$ = $1;
     }
     | images_load_flag images_load_flags1 {
+        $$ = $1 | $2;
+    };
+
+sequence_load_flags1 :
+    sequence_load_flag {
+        $$ = $1;
+    }
+    | sequence_load_flag sequence_load_flags1 {
         $$ = $1 | $2;
     };
 
@@ -782,6 +811,14 @@ images_load_flags :
         $$ = 0;    
     } 
     | images_load_flags1 {
+        $$ = $1;
+    };
+
+sequence_load_flags :
+    {
+        $$ = 0;    
+    } 
+    | sequence_load_flags1 {
         $$ = $1;
     };
 
@@ -1803,6 +1840,12 @@ exponential:
       }
     | LOAD OP String AS String OP_COMMA Integer CP on_bank {
         $$ = load( _environment, $3, $5, $7, $9 )->name;
+      }
+    | LOAD SEQUENCE OP String AS String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_background on_bank {
+        $$ = sequence_load( _environment, $4, $6, ((struct _Environment *)_environment)->currentMode, $11, $13, $15, $16, $17, $18 )->name;
+      }
+    | LOAD SEQUENCE OP String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_background on_bank {        
+        $$ = sequence_load( _environment, $4, NULL, ((struct _Environment *)_environment)->currentMode, $9, $11, $13, $14, $15, $16 )->name;
       }
     | LOAD IMAGES OP String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP images_load_flags  using_transparency using_background on_bank {        
         $$ = images_load( _environment, $4, NULL, ((struct _Environment *)_environment)->currentMode, $9, $11, $13, $14, $15, $16 )->name;
@@ -3237,18 +3280,25 @@ get_definition:
 
 put_definition_expression:
       IMAGE expr AT optional_x OP_COMMA optional_y put_image_flags {
-        put_image( _environment, $2, $4, $6, NULL, $7 );
+        put_image( _environment, $2, $4, $6, NULL, NULL, $7 );
         gr_locate( _environment, $4, $6 );
     }
     |  IMAGE expr FRAME expr AT optional_x OP_COMMA optional_y put_image_flags {
-        put_image( _environment, $2, $6, $8, $4, $9 );
+        put_image( _environment, $2, $6, $8, $4, NULL, $9 );
         gr_locate( _environment, $6, $8 );
     }
+    |  IMAGE expr SEQUENCE expr FRAME expr AT optional_x OP_COMMA optional_y put_image_flags {
+        put_image( _environment, $2, $8, $10, $6, $4, $11 );
+        gr_locate( _environment, $8, $10 );
+    }
     | IMAGE expr put_image_flags {
-        put_image( _environment, $2, "XGR", "YGR", NULL, $3 );
+        put_image( _environment, $2, "XGR", "YGR", NULL, NULL, $3 );
     }
     | IMAGE expr FRAME expr put_image_flags {
-        put_image( _environment, $2, "XGR", "YGR", $4, $5 );
+        put_image( _environment, $2, "XGR", "YGR", $4, NULL, $5 );
+    }
+    | IMAGE expr SEQUENCE expr FRAME expr put_image_flags {
+        put_image( _environment, $2, "XGR", "YGR", $6, $4, $7 );
     }
     | TILE expr AT optional_x OP_COMMA optional_y {
         put_tile( _environment, $2, $4, $6, NULL, NULL );

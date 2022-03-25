@@ -527,7 +527,7 @@ Variable * zx_image_converter( Environment * _environment, char * _data, int _wi
 
 }
 
-void zx_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _frame_size, int _flags ) {
+void zx_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags ) {
 
     // currently unused
     (void)!_flags;
@@ -538,15 +538,17 @@ void zx_put_image( Environment * _environment, char * _image, char * _x, char * 
     deploy( putimage, src_hw_zx_put_image_asm );
 
     outline1("LD HL, (%s)", _image );
-    if ( _frame ) {
+    if ( _sequence ) {
+
         outline0("INC HL" );
         outline0("INC HL" );
-        if ( strlen(_frame) == 0 ) {
+        outline0("INC HL" );
+        if ( strlen(_sequence) == 0 ) {
 
         } else {
 
-            outline1("LD DE, OFFSETS%4.4x", _frame_size );
-            outline1("LD A, (%s)", _frame );
+            outline1("LD DE, OFFSETS%4.4x", _frame_size * _frame_count );
+            outline1("LD A, (%s)", _sequence );
             outline0("CMP 0" );
             outline1("JR Z, %sdone", label );
             outhead1("%sloop:", label );
@@ -556,6 +558,50 @@ void zx_put_image( Environment * _environment, char * _image, char * _x, char * 
             outline1("JR NZ, %sloop", label );
             outline0("ADD HL, DE" );
             outhead1("%sdone:", label );
+        }
+
+        if ( _frame ) {
+            if ( strlen(_frame) == 0 ) {
+
+            } else {
+
+                outline1("LD DE, OFFSETS%4.4x", _frame_size );
+                outline1("LD A, (%s)", _frame );
+                outline0("CMP 0" );
+                outline1("JR Z, %sdone", label );
+                outhead1("%sloop:", label );
+                outline0("INC DE" );
+                outline0("DEC B" );
+                outline0("CMP 0" );
+                outline1("JR NZ, %sloop", label );
+                outline0("ADD HL, DE" );
+                outhead1("%sdone:", label );
+            }
+
+        }
+
+    } else {
+
+        if ( _frame ) {
+            outline0("INC HL" );
+            outline0("INC HL" );
+            if ( strlen(_frame) == 0 ) {
+
+            } else {
+
+                outline1("LD DE, OFFSETS%4.4x", _frame_size );
+                outline1("LD A, (%s)", _frame );
+                outline0("CMP 0" );
+                outline1("JR Z, %sdone", label );
+                outhead1("%sloop:", label );
+                outline0("INC DE" );
+                outline0("DEC B" );
+                outline0("CMP 0" );
+                outline1("JR NZ, %sloop", label );
+                outline0("ADD HL, DE" );
+                outhead1("%sdone:", label );
+            }
+
         }
 
     }

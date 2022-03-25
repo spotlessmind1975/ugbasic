@@ -1593,17 +1593,43 @@ void ef936x_put_image( Environment * _environment, char * _image, char * _x, cha
     outline1("LDA #$%2.2x", ( _flags & FLAG_TRANSPARENCY ) );
     outline0("STA <IMAGET" );
     outline1("LDY #%s", _image );
-    if ( _frame ) {
-        outline0("LEAY 2,y" );
-        if ( strlen(_frame) == 0 ) {
+    if ( _sequence ) {
+        outline0("LEAY 3,y" );
+        if ( strlen(_sequence) == 0 ) {
         } else {
-            outline1("LDX #OFFSETS%4.4x", _frame_size );
-            outline1("LDB %s", _frame );
+            outline1("LDX #OFFSETS%4.4x", _frame_size * _frame_count );
+            outline1("LDB %s", _sequence );
             outline0("LDA #0" );
             outline0("LEAX D, X" );
             outline0("LEAX D, X" );
             outline0("LDD ,X" );
             outline0("LEAY D, Y" );
+        }
+        if ( _frame ) {
+            if ( strlen(_frame) == 0 ) {
+            } else {
+                outline1("LDX #OFFSETS%4.4x", _frame_size );
+                outline1("LDB %s", _frame );
+                outline0("LDA #0" );
+                outline0("LEAX D, X" );
+                outline0("LEAX D, X" );
+                outline0("LDD ,X" );
+                outline0("LEAY D, Y" );
+            }
+        }
+    } else {
+        if ( _frame ) {
+            outline0("LEAY 2,y" );
+            if ( strlen(_frame) == 0 ) {
+            } else {
+                outline1("LDX #OFFSETS%4.4x", _frame_size );
+                outline1("LDB %s", _frame );
+                outline0("LDA #0" );
+                outline0("LEAX D, X" );
+                outline0("LEAX D, X" );
+                outline0("LDD ,X" );
+                outline0("LEAY D, Y" );
+            }
         }
     }
     outline1("LDD %s", _x );

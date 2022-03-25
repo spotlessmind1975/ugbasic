@@ -65,7 +65,7 @@ Questa funzione disegna una immagine in una specifica posizione dello schermo.
 
 @target all
 </usermanual> */
-void put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _flags ) {
+void put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _flags ) {
 
     Variable * image = variable_retrieve( _environment, _image );
     Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
@@ -74,24 +74,36 @@ void put_image( Environment * _environment, char * _image, char * _x, char * _y,
     if ( _frame) {
         frame = variable_retrieve_or_define( _environment, _frame, VT_BYTE, 0 );
     }
+    Variable * sequence = NULL;
+    if ( _sequence) {
+        sequence = variable_retrieve_or_define( _environment, _sequence, VT_BYTE, 0 );
+    }
 
     switch( image->type ) {
         case VT_SEQUENCE:
-            if ( !frame ) {
-                vic2_put_image( _environment, image->realName, x->realName, y->realName, "", image->frameSize, _flags );
+            if ( !sequence ) {
+                if ( !frame ) {
+                    vic2_put_image( _environment, image->realName, x->realName, y->realName, "", "", image->frameSize, image->frameCount, _flags );
+                } else {
+                    vic2_put_image( _environment, image->realName, x->realName, y->realName, frame->realName, "", image->frameSize, image->frameCount, _flags );
+                }
             } else {
-                vic2_put_image( _environment, image->realName, x->realName, y->realName, frame->realName, image->frameSize, _flags );
+                if ( !frame ) {
+                    vic2_put_image( _environment, image->realName, x->realName, y->realName, "", sequence->realName, image->frameSize, image->frameCount, _flags );
+                } else {
+                    vic2_put_image( _environment, image->realName, x->realName, y->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, _flags );
+                }
             }
             break;
         case VT_IMAGES:
             if ( !frame ) {
-                vic2_put_image( _environment, image->realName, x->realName, y->realName, "", image->frameSize, _flags );
+                vic2_put_image( _environment, image->realName, x->realName, y->realName, "", NULL, image->frameSize, 0, _flags );
             } else {
-                vic2_put_image( _environment, image->realName, x->realName, y->realName, frame->realName, image->frameSize, _flags );
+                vic2_put_image( _environment, image->realName, x->realName, y->realName, frame->realName, NULL, image->frameSize, 0, _flags );
             }
             break;
         case VT_IMAGE:
-            vic2_put_image( _environment, image->realName, x->realName, y->realName, NULL, 0, _flags );
+            vic2_put_image( _environment, image->realName, x->realName, y->realName, NULL, NULL, 0, 0, _flags );
             break;
         default:
             CRITICAL_PUT_IMAGE_UNSUPPORTED( _image, DATATYPE_AS_STRING[image->type] );

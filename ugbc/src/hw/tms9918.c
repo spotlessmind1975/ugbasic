@@ -1693,7 +1693,7 @@ Variable * tms9918_image_converter( Environment * _environment, char * _data, in
 
 }
 
-void tms9918_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _frame_size, int _flags ) {
+void tms9918_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, _frame_count, int _flags ) {
 
     deploy( tms9918vars, src_hw_tms9918_vars_asm);
     deploy( tms9918varsGraphic, src_hw_tms9918_vars_graphic_asm );
@@ -1704,19 +1704,20 @@ void tms9918_put_image( Environment * _environment, char * _image, char * _x, ch
     outhead1("putimage%s:", label);
     outline1("LD A, $%2.2x", ( _flags & 0xff ) );
     outline1("LD HL, %s", _image );
-    if ( _frame ) {
-        outline0("LD DE, $0002" );
+    if ( _sequence ) {
+
+        outline0("LD DE, $0003" );
         outline0("ADD HL, DE" );
-        if ( strlen(_frame) == 0 ) {
+        if ( strlen(_sequence) == 0 ) {
 
         } else {
             outline0("PUSH HL" );
-            outline1("LD A, (%s)", _frame );
+            outline1("LD A, (%s)", _sequence );
             outline0("LD L, A" );
             outline0("LD H, 0" );
             outline0("ADD HL, HL" );
             outline0("LD DE, HL" );
-            outline1("LD HL, OFFSETS%4.4x", _frame_size );
+            outline1("LD HL, OFFSETS%4.4x", _frame_size * _frame_count );
             outline0("ADD HL, DE" );
             outline0("LD A, (HL)" );
             outline0("LD E, A" );
@@ -1726,6 +1727,56 @@ void tms9918_put_image( Environment * _environment, char * _image, char * _x, ch
             outline0("POP HL" );
             outline0("ADD HL, DE" );
         }
+
+        if ( _frame ) {
+            if ( strlen(_frame) == 0 ) {
+
+            } else {
+                outline0("PUSH HL" );
+                outline1("LD A, (%s)", _frame );
+                outline0("LD L, A" );
+                outline0("LD H, 0" );
+                outline0("ADD HL, HL" );
+                outline0("LD DE, HL" );
+                outline1("LD HL, OFFSETS%4.4x", _frame_size * _frame_count );
+                outline0("ADD HL, DE" );
+                outline0("LD A, (HL)" );
+                outline0("LD E, A" );
+                outline0("INC HL" );
+                outline0("LD A, (HL)" );
+                outline0("LD D, A" );
+                outline0("POP HL" );
+                outline0("ADD HL, DE" );
+            }
+        }
+
+    } else {
+
+        if ( _frame ) {
+            outline0("LD DE, $0002" );
+            outline0("ADD HL, DE" );
+            if ( strlen(_frame) == 0 ) {
+
+            } else {
+                outline0("PUSH HL" );
+                outline1("LD A, (%s)", _frame );
+                outline0("LD L, A" );
+                outline0("LD H, 0" );
+                outline0("ADD HL, HL" );
+                outline0("LD DE, HL" );
+                outline1("LD HL, OFFSETS%4.4x", _frame_size );
+                outline0("ADD HL, DE" );
+                outline0("LD A, (HL)" );
+                outline0("LD E, A" );
+                outline0("INC HL" );
+                outline0("LD A, (HL)" );
+                outline0("LD D, A" );
+                outline0("POP HL" );
+                outline0("ADD HL, DE" );
+            }
+        }
+
+
     }
     outline1("LD A, (%s)", _x );
     outline0("LD E, A" );

@@ -1195,7 +1195,7 @@ Variable * ted_image_converter( Environment * _environment, char * _data, int _w
 
 }
 
-void ted_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _frame_size, int _flags ) {
+void ted_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags ) {
 
     deploy( tedvars, src_hw_ted_vars_asm);
     deploy( tedvarsGraphic, src_hw_ted_vars_graphic_asm );
@@ -1207,10 +1207,12 @@ void ted_put_image( Environment * _environment, char * _image, char * _x, char *
     outline0("STA TMPPTR" );
     outline1("LDA #>%s", _image );
     outline0("STA TMPPTR+1" );
-    if ( _frame ) {
+
+    if ( _sequence ) {
+
         outline0("CLC" );
         outline0("LDA TMPPTR" );
-        outline0("ADC #2" );
+        outline0("ADC #3" );
         outline0("STA TMPPTR" );
         outline0("LDA TMPPTR+1" );
         outline0("ADC #0" );
@@ -1218,12 +1220,12 @@ void ted_put_image( Environment * _environment, char * _image, char * _x, char *
         if ( strlen(_frame) == 0 ) {
 
         } else {
-            outline1("LDA #<OFFSETS%4.4x", _frame_size );
+            outline1("LDA #<OFFSETS%4.4x", _frame_size * _frame_count );
             outline0("STA TMPPTR2" );
-            outline1("LDA #>OFFSETS%4.4x", _frame_size );
+            outline1("LDA #>OFFSETS%4.4x", _frame_size * _frame_count );
             outline0("STA TMPPTR2+1" );
             outline0("CLC" );
-            outline1("LDA %s", _frame );
+            outline1("LDA %s", _sequence );
             outline0("ASL" );
             outline0("TAY" );
             outline0("LDA TMPPTR" );
@@ -1234,6 +1236,60 @@ void ted_put_image( Environment * _environment, char * _image, char * _x, char *
             outline0("ADC (TMPPTR2), Y" );
             outline0("STA TMPPTR+1" );
         }
+
+        if ( _frame ) {
+            if ( strlen(_frame) == 0 ) {
+
+            } else {
+                outline1("LDA #<OFFSETS%4.4x", _frame_size );
+                outline0("STA TMPPTR2" );
+                outline1("LDA #>OFFSETS%4.4x", _frame_size );
+                outline0("STA TMPPTR2+1" );
+                outline0("CLC" );
+                outline1("LDA %s", _frame );
+                outline0("ASL" );
+                outline0("TAY" );
+                outline0("LDA TMPPTR" );
+                outline0("ADC (TMPPTR2), Y" );
+                outline0("STA TMPPTR" );
+                outline0("INY" );
+                outline0("LDA TMPPTR+1" );
+                outline0("ADC (TMPPTR2), Y" );
+                outline0("STA TMPPTR+1" );
+            }
+        }
+
+    } else {
+
+        if ( _frame ) {
+            outline0("CLC" );
+            outline0("LDA TMPPTR" );
+            outline0("ADC #2" );
+            outline0("STA TMPPTR" );
+            outline0("LDA TMPPTR+1" );
+            outline0("ADC #0" );
+            outline0("STA TMPPTR+1" );
+            if ( strlen(_frame) == 0 ) {
+
+            } else {
+                outline1("LDA #<OFFSETS%4.4x", _frame_size );
+                outline0("STA TMPPTR2" );
+                outline1("LDA #>OFFSETS%4.4x", _frame_size );
+                outline0("STA TMPPTR2+1" );
+                outline0("CLC" );
+                outline1("LDA %s", _frame );
+                outline0("ASL" );
+                outline0("TAY" );
+                outline0("LDA TMPPTR" );
+                outline0("ADC (TMPPTR2), Y" );
+                outline0("STA TMPPTR" );
+                outline0("INY" );
+                outline0("LDA TMPPTR+1" );
+                outline0("ADC (TMPPTR2), Y" );
+                outline0("STA TMPPTR+1" );
+            }
+        }
+
     }
     outline1("LDA %s", _x );
     outline0("STA IMAGEX" );
