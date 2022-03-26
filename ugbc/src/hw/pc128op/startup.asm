@@ -82,6 +82,12 @@ PC128STARTUP3
     SWI
     FCB   $02
 
+    LDB   #0
+    STB   $2076
+    LDB   $2019
+    ORB   #8
+    STB   $2019
+
     LDU #BANKLOAD
     LDB #0
 BANKLOADL1
