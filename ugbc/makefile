@@ -352,6 +352,12 @@ src-generated/ugbc.yy.c: src/ugbc.lex src/ugbc.y
 src-generated/ugbc.tab.c: src/ugbc.lex src/ugbc.y
 	@bison ${BISON_OPTIONS} --file-prefix=src-generated/ugbc src/ugbc.y
 
+src-generated/ugbc.embed.yy.c: src/ugbc.embed.lex src/ugbc.embed.y
+	@flex ${FLEX_OPTIONS} --prefix=embed --outfile=src-generated/ugbc.embed.yy.c src/ugbc.embed.lex
+
+src-generated/ugbc.embed.tab.c: src/ugbc.embed.lex src/ugbc.embed.y
+	@bison ${BISON_OPTIONS} -p embed --file-prefix=src-generated/ugbc.embed src/ugbc.embed.y
+
 # ----------------------------------------------------------------------------
 # ----------------------------------------------------------------------------
 # COMPILATION RULES
@@ -363,7 +369,7 @@ SOURCES += $(wildcard src/targets/*.c)
 SOURCES += $(wildcard src/hw/*.c)
 SOURCES += $(wildcard src/targets/common/*.c)
 SOURCES += $(wildcard src/targets/$(target)/*.c)
-SOURCES += src-generated/ugbc.yy.c src-generated/ugbc.tab.c src-generated/modules_$(target).c
+SOURCES += src-generated/ugbc.yy.c src-generated/ugbc.tab.c src-generated/ugbc.embed.yy.c src-generated/ugbc.embed.tab.c src-generated/modules_$(target).c
 
 OBJS = $(SOURCES:%.c=objs.$(target)/%.o)
 
@@ -385,7 +391,7 @@ paths-test:
 compiler: $(OBJS)
 	@$(CC) $(LFLAGS) $^ -o exe/ugbc.$(target) $(LIBS)
 	
-objs.$(target)/%.o: %.c src-generated/ugbc.yy.c src-generated/ugbc.tab.c src-generated/modules_$(target).c
+objs.$(target)/%.o: %.c src-generated/ugbc.yy.c src-generated/ugbc.tab.c src-generated/ugbc.embed.yy.c src-generated/ugbc.embed.tab.c src-generated/modules_$(target).c
 	@mkdir -p $(dir $@)
 	@$(CC) $(CFLAGS) -D__$(target)__  -c $< -o $@
 

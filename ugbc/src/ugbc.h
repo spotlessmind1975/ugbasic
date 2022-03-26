@@ -1045,6 +1045,13 @@ typedef struct _InputConfig {
 
 } InputConfig;
 
+typedef struct _EmbedResult {
+
+    int excluded;
+    int conditional;
+
+} EmbedResult;
+
 typedef struct _TileDescriptor {
 
     int whiteArea;
@@ -1179,6 +1186,11 @@ typedef struct _Environment {
      * 
      */
     InputConfig inputConfig;
+
+    /**
+     * 
+     */
+    EmbedResult embedResult;
 
     /**
      * Type of output. 
@@ -1857,20 +1869,30 @@ typedef struct _Environment {
         } \
     } 
 
+int embed_scan_string (const char * yystr );
+
 #define outembedded0(e)     \
     { \
-        char parsed[32*MAX_TEMPORARY_STORAGE]; \
-        memset( parsed, 0, 32*MAX_TEMPORARY_STORAGE ); \
-        char * tmp = strdup( e ); \
-        tmp[e##_len] = 0; \
+        char * parsed = malloc( e##_len + 1 ); \
+        memset( parsed, 0, e##_len + 1 ); \
+        char * tmp = malloc( e##_len + 1 ); \
+        memset( tmp, 0, e##_len + 1 ); \
+        memcpy( tmp, e, e##_len ); \
         char * line = strtok( tmp, "\x0a" ); \
         while( line ) { \
-            strcat( parsed, line ); \
-            strcat( parsed, "\x0a" ); \
+            _environment->embedResult.conditional = 0; \
+            embed_scan_string( line ); \
+            if ( ! _environment->embedResult.conditional ) { \
+                if ( ! _environment->embedResult.excluded ) { \
+                    strcat( parsed, line ); \
+                    strcat( parsed, "\x0a" ); \
+                } \
+            } \
             line = strtok( NULL, "\x0a" ); \
         } \
         free( tmp ); \
         fwrite( parsed, strlen( parsed )-1, 1, ((Environment *)_environment)->asmFile ); \
+        free( parsed ); \
         fputs( "\n", ((Environment *)_environment)->asmFile ); \
     } 
 
