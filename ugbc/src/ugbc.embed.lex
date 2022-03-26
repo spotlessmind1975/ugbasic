@@ -26,11 +26,13 @@ extern int embedposno;
 "||" { RETURN(OP_OR,1); }
 "&&" { RETURN(OP_AND,1); }
 "!" { RETURN(OP_NOT,1); }
+"@" { RETURN(OP_AT,1); }
+"." { RETURN(OP_POINT,1); }
 
-"@IF" { RETURN(IF,1); }
-"@ELSE" { RETURN(ELSE,1); }
-"@ELSEIF" { RETURN(ELSEIF,1); }
-"@ENDIF" { RETURN(ENDIF,1); }
+IF { RETURN(IF,1); }
+ELSE { RETURN(ELSE,1); }
+ELSEIF { RETURN(ELSEIF,1); }
+ENDIF { RETURN(ENDIF,1); }
 
 \$[a-fA-F0-9]+ { embedlval.integer = strtol(embedtext+1,0,16); RETURN(Integer,1); }
 &[Hh][a-fA-F0-9]+ { embedlval.integer = strtol(embedtext+2,0,16); RETURN(Integer,1); }
@@ -41,6 +43,8 @@ extern int embedposno;
 [0-9]+ { embedlval.integer = atoi(embedtext); RETURN(Integer,1);  }
 
 [ \t]+ { embedcolno = (embedcolno + embedleng); embedposno = (embedposno + embedleng); }
+
+[a-z\_][A-Za-z0-9\_]* { embedlval.string = strdup(embedtext); RETURN(Identifier,1);  }
 
 . { embedcolno++; embedposno++; return(embedtext[0]); }
 

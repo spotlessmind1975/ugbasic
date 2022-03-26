@@ -1019,6 +1019,7 @@ typedef struct _Deployed {
     int protothread;
     int tiles;
     int font;
+    int doubleBuffer;
 
     Embedded embedded;
 
@@ -1044,6 +1045,12 @@ typedef struct _InputConfig {
     char cursor;
 
 } InputConfig;
+
+typedef struct _VestigialConfig {
+
+    char screenModeUnique;
+
+} VestigialConfig;
 
 typedef struct _EmbedResult {
 
@@ -1186,6 +1193,11 @@ typedef struct _Environment {
      * 
      */
     InputConfig inputConfig;
+
+    /**
+     * 
+     */
+    VestigialConfig vestigialConfig;
 
     /**
      * 
@@ -1869,7 +1881,8 @@ typedef struct _Environment {
         } \
     } 
 
-int embed_scan_string (const char * yystr );
+int embedparse (void *);
+int embed_scan_string (const char *);
 
 #define outembedded0(e)     \
     { \
@@ -1882,6 +1895,7 @@ int embed_scan_string (const char * yystr );
         while( line ) { \
             _environment->embedResult.conditional = 0; \
             embed_scan_string( line ); \
+            embedparse(_environment); \
             if ( ! _environment->embedResult.conditional ) { \
                 if ( ! _environment->embedResult.excluded ) { \
                     strcat( parsed, line ); \

@@ -26,11 +26,13 @@ int embedwrap() { return 1; }
 
 %union {
     int integer;
+    char * string;
 }
 
-%token OP CP OP_EQUAL OP_DISEQUAL OP_AND OP_OR OP_NOT
+%token OP CP OP_AT OP_EQUAL OP_DISEQUAL OP_AND OP_OR OP_NOT OP_POINT
 %token IF ELSE ELSEIF ENDIF
 
+%token <string> Identifier
 %token <integer> Integer
 
 %type <integer> const_expr const_term const_modula const_factor const_expr_math
@@ -80,18 +82,37 @@ const_factor:
       | OP const_expr CP {
           $$ = $2;
       }
+      | Identifier OP_POINT Identifier {
+        if ( strcmp( $1, "vestigialConfig" ) == 0 ) {
+            if ( strcmp( $3, "screenModeUnique" ) == 0 ) {
+                $$ = ((struct _Environment *)_environment)->vestigialConfig.screenModeUnique;
+            } else {
+                $$ = 0;
+            }
+        } else {
+            $$ = 0;
+        }
+      }
+      | Identifier {
+        if ( strcmp( $1, "currentMode" ) == 0 ) {
+            $$ = ((struct _Environment *)_environment)->currentMode;
+        } else {
+            $$ = 0;
+        }
+      }
       ;
 
 embed:
-  IF const_expr {
+    OP_AT IF const_expr {
+        printf("@IF %d\n", $3);
       ((struct _Environment *)_environment)->embedResult.conditional = 1;
-    if ( $2 ) {
+    if ( $3 ) {
         ((struct _Environment *)_environment)->embedResult.excluded = 0;
     } else {
         ((struct _Environment *)_environment)->embedResult.excluded = 1;
     }
   }
-  | ELSE {
+  | OP_AT ELSE {
     ((struct _Environment *)_environment)->embedResult.conditional = 1;
     if ( ((struct _Environment *)_environment)->embedResult.excluded ) {
         ((struct _Environment *)_environment)->embedResult.excluded = 0;
@@ -99,7 +120,17 @@ embed:
         ((struct _Environment *)_environment)->embedResult.excluded = 1;
     }
   }
-  | ELSE IF const_expr {
+  | OP_AT ELSE IF const_expr {
+    ((struct _Environment *)_environment)->embedResult.conditional = 1;
+    if ( ((struct _Environment *)_environment)->embedResult.excluded ) {
+        if ( $4 ) {
+            ((struct _Environment *)_environment)->embedResult.excluded = 0;
+        } else {
+            ((struct _Environment *)_environment)->embedResult.excluded = 1;
+        }
+    }
+  }
+  | OP_AT ELSEIF const_expr {
     ((struct _Environment *)_environment)->embedResult.conditional = 1;
     if ( ((struct _Environment *)_environment)->embedResult.excluded ) {
         if ( $3 ) {
@@ -109,18 +140,9 @@ embed:
         }
     }
   }
-  | ELSEIF const_expr {
+  | OP_AT ENDIF {
     ((struct _Environment *)_environment)->embedResult.conditional = 1;
-    if ( ((struct _Environment *)_environment)->embedResult.excluded ) {
-        if ( $2 ) {
-            ((struct _Environment *)_environment)->embedResult.excluded = 0;
-        } else {
-            ((struct _Environment *)_environment)->embedResult.excluded = 1;
-        }
-    }
-  }
-  | ENDIF {
-    ((struct _Environment *)_environment)->embedResult.conditional = 1;
+    ((struct _Environment *)_environment)->embedResult.excluded = 0;
   }
   ;
 
@@ -128,7 +150,6 @@ embed:
 
 int embederror (Environment * _ignored, const char *s) /* Called by embedparse on error */
 {
-      fprintf(stderr,  "*** EMBED ERROR: %s  column %d (%d)\n", s, (embedcolno+1), (embedposno+1));
-      exit(EXIT_FAILURE);
+
 }
 
