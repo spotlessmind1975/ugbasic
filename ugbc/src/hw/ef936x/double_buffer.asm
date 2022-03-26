@@ -29,48 +29,109 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                          STARTUP ROUTINE ON EF936X                          *
+;*                      DOUBLE BUFFER ROUTINE ON EF936X                        *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-CPUMEMMOVE
-    CMPU #0
-    BEQ CPUMEMMOVEDONE
-CPUMEMMOVEL1
-    LDA ,Y+
-    STA ,X+
-    LEAU -1,U
-    CMPU #$0
-    BNE CPUMEMMOVEL1
-CPUMEMMOVEDONE
-    RTS
-    
-EF936XSTARTUP
-    LDU #COMMONPALETTE
-    LDY #$A7DA
-    LDX #16
-    LDA #0
-    STA 1,Y
-EF936XSTARTUPL1
-    PULU D
-    STB ,Y
-    STA ,Y
-    LEAX -1,X
-    BNE EF936XSTARTUPL1
+ONSWITCHTILEMAPVOID
     RTS
 
-WAITVBL
-	PSHS D,CC
-	ORCC #$50
-WAITVBL0X
-	LDB $A7E7
-	ANDB #$80
-	BEQ WAITVBL0X
-WAITVBL1X
-	LDB $A7E7
-	ANDB #$80
-	BNE WAITVBL1X
-	PULS D,CC
-	RTS
+ONSWITCHTILEMAP
+    JMP ONSWITCHTILEMAPVOID
+
+DOUBLEBUFFERINIT
+    ; by Dino Florenzi
+    TFR S,X
+    PSHS X
+    LDD #$A000
+    SUBD ,S
+    TFR D, U
+    LDX #$A000
+    LDS #$2000
+    LEAX -1, X
+    LEAS -1, S
+DOUBLEBUFFERINITSTACK
+    LDA , X
+    STA , S
+    LEAX -1, X
+    LEAS -1, S
+    LEAU -1, U
+    CMPU #0
+    BNE DOUBLEBUFFERINITSTACK
+    LEAS 1, S
+
+    LDA #1
+    STA DOUBLEBUFFERENABLED
+    JSR SWITCHTILEMAP0
+    JSR CLS
+    JSR SWITCHTILEMAP1
+    JSR CLS
+    JSR SWITCHTILEMAP0
+    RTS
+
+DOUBLEBUFFERCLEANUP
+    TFR S,X
+    PSHS X
+    LDD #$1FFF
+    SUBD ,S
+    TFR D, U
+    LDX #$2000
+    LDS #$A000
+    LEAX -1, X
+    LEAS -1, S
+DOUBLEBUFFERCLEANUPSTACK
+    LDA , X
+    STA , S
+    LEAX -1, X
+    LEAS -1, S
+    LEAU -1, U
+    CMPU #0
+    BNE DOUBLEBUFFERCLEANUPSTACK
+    LEAS 1, S
+
+    LDD $0000
+    STD BITMAPADDRESS
+    STA DOUBLEBUFFERENABLED
+DOUBLEBUFFERCLEANUP2
+    LDB #$00
+    STB $A7DD
+    LDB #$00
+    STB $A7E5
+    STB BANKSHADOW
+    JSR ONSWITCHTILEMAP
+    LDA #$0
+    STA TILEMAPVISIBLE
+    RTS
+
+SWITCHTILEMAP
+    LDA TILEMAPVISIBLE
+    BEQ SWITCHTILEMAP1
+
+SWITCHTILEMAP0
+    LDB #$80
+    STB $A7DD
+    LDB #$03
+    STB $A7E5
+    STB BANKSHADOW
+    JSR ONSWITCHTILEMAP
+    LDA #$0
+    STA TILEMAPVISIBLE
+    LDD #$6000
+    STD BITMAPADDRESS
+    RTS
+
+SWITCHTILEMAP1
+    LDB #$C0
+    STB $A7DD
+    LDB #$02
+    STB $A7E5
+    STB BANKSHADOW
+    JSR ONSWITCHTILEMAP
+    LDA #$1
+    STA TILEMAPVISIBLE
+    LDD #$6000
+    STD BITMAPADDRESS
+    RTS
+    
