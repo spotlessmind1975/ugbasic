@@ -87,6 +87,9 @@ typedef enum _BankType {
  */
 typedef struct _Bank {
 
+    /** ID of the bank */
+    int id;
+
     /** Name of the bank */
     char * name;
 
@@ -98,6 +101,15 @@ typedef struct _Bank {
 
     /** (optional) file name that will be loaded into the bank */
     char *filename;
+
+    /** Bank max size (in bytes) */
+    int space;
+
+    /** Bank remaining size (in bytes) */
+    int remains;
+
+    /** Data contained in the block */
+    char * data;
 
     /** Link to the next bank (NULL if this is the last one) */
     struct _Bank * next;
@@ -223,7 +235,10 @@ typedef enum _VariableType {
     VT_TILES = 21,
 
     /** TILESET (a set of tiles) */
-    VT_TILESET = 22
+    VT_TILESET = 22,
+
+    /** SEQUENCE (a set of images) */
+    VT_SEQUENCE = 23
 
 } VariableType;
 
@@ -233,6 +248,7 @@ typedef enum _VariableType {
 #define MAX_TILESETS                    256
 #define MAX_NESTED_ARRAYS               16
 #define MAX_PROCEDURES                  4096
+#define MAX_RESIDENT_SHAREDS            16
 #define PROTOTHREAD_DEFAULT_COUNT       16
 #define DSTRING_DEFAULT_COUNT           255
 #define DSTRING_DEFAULT_SPACE           1024
@@ -535,6 +551,15 @@ typedef struct _Variable {
 
     /** Original bitmap palette (if IMAGE/IMAGES) */
     RGBi originalPalette[MAX_PALETTE];
+
+    /** Bank to be used to store the content of this variable */
+    int bankAssigned;
+
+    /** Resident shared assigned to this */
+    int residentAssigned;
+
+    /** Unique ID assigned to this variable (is banked) */
+    int variableUniqueId;
 
     /** Link to the next variable (NULL if this is the last one) */
     struct _Variable * next;
@@ -1496,6 +1521,16 @@ typedef struct _Environment {
      */
     GammaCorrection gammaCorrection;
 
+    /*
+     * List of available banks
+     */
+    Bank * expansionBanks;
+
+    /*
+     * Max size of a single block allocated
+     */
+    int maxExpansionBankSize[MAX_RESIDENT_SHAREDS];
+
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */
@@ -1654,6 +1689,10 @@ typedef struct _Environment {
 #define CRITICAL_CANNOT_RESPAWN_NOT_THREADID( v ) CRITICAL2("E121 - cannot respawn something that is not a thread id", v );
 #define CRITICAL_CANNOT_MMOVE_INVALID_SIZE( v ) CRITICAL2("E122 - invalid data type for SIZE on MMOVE", v );
 #define CRITICAL_CANNOT_MMOVE_UNSUPPORTED( ) CRITICAL("E123 - MMOVE VIDEO to VIDEO unsupported" );
+#define CRITICAL_EXPANSION_OUT_OF_MEMORY_LOADING( v ) CRITICAL2("E124 - out of memory when loading BANKED resource", v );
+#define CRITICAL_NOT_ASSIGNED_SEQUENCE( v ) CRITICAL2("E125 - variable is not a set of loaded collection of images, please use assign operator", v );
+#define CRITICAL_SEQUENCE_LOAD_INVALID_FRAME_WIDTH( w ) CRITICAL2i("E126 - invalid frame width, not multiple of width", w );
+#define CRITICAL_SEQUENCE_LOAD_INVALID_FRAME_HEIGHT( h ) CRITICAL2i("E127 - invalid frame height, not multiple of height", h );
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
 #define WARNING2i( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%i) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -1663,6 +1702,7 @@ typedef struct _Environment {
 #define WARNING_SCREEN_MODE( v1 ) WARNING2i("W003 - Screen mode unsupported", v1 );
 #define WARNING_USE_OF_UNDEFINED_ARRAY( v1 ) WARNING2("W004 - use of undefined array", v1 );
 #define WARNING_IMAGE_CONVERTER_UNSUPPORTED_MODE(f) WARNING2i("W005 - IMAGE converter unsupported for the given screen mode", f );
+#define WARNING_IMAGE_LOAD_EXACT_IGNORED( ) WARNING("W006 - Loading of the image will ignore EXACT flag" );
 
 #define outline0n(n,s,r)     \
     { \
@@ -1959,6 +1999,7 @@ typedef struct _Environment {
 
 #define FLAG_TRANSPARENCY   32
 #define FLAG_DOUBLE_Y   64
+#define FLAG_EXACT   128
 
 #define IMF_INSTRUMENT_EXPLOSION        			0x00
 #define IMF_INSTRUMENT_ACOUSTIC_GRAND_PIANO			0x01
@@ -2159,6 +2200,16 @@ void                    add_complex_mt( Environment * _environment, char * _vari
 
 void                    back( Environment * _environment, char * _color );
 Bank *                  bank_define( Environment * _environment, char * _name, BankType _type, int _address, char * _filename );
+Variable *              bank_get( Environment * _environment );
+Variable *              bank_get_address( Environment * _environment, int _bank );
+Variable *              bank_get_address_var( Environment * _environment, char * _bank );
+Variable *              bank_get_size( Environment * _environment, int _bank );
+Variable *              bank_get_size_var( Environment * _environment, char * _bank );
+void                    bank_read_semi_var( Environment * _environment, int _bank, int _address1, char * _address2, int _size );
+void                    bank_read_vars( Environment * _environment, char * _bank, char * _address1, char * _address2, char * _size );
+void                    bank_set( Environment * _environment, int _bank );
+void                    bank_set_var( Environment * _environment, char * _bank );
+void                    bank_write_vars( Environment * _environment, char * _bank, char * _address1, char * _address2, char * _size );
 void                    bar( Environment * _environment, char * _x0, char * _y0, char * _x1, char * _y1, char * _c );
 void                    begin_for( Environment * _environment, char * _index, char * _from, char * _to );  
 void                    begin_for_mt( Environment * _environment, char * _index, char * _from, char * _to );  
@@ -2307,9 +2358,10 @@ void                    home( Environment * _environment );
 //----------------------------------------------------------------------------
 
 void                    if_then( Environment * _environment, char * _expression );
+char *                  image_cut( Environment * _environment, char * _source, int _x, int _y, int _width, int _height );
 char *                  image_flip_x( Environment * _environment, char * _source, int _width, int _height );
 char *                  image_flip_y( Environment * _environment, char * _source, int _width, int _height );
-Variable *              image_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _flags, int _transparent_color, int _background_color );
+Variable *              image_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _flags, int _transparent_color, int _background_color, int _bank_expansion );
 char *                  image_load_asserts( Environment * _environment, char * _filename );
 Variable *              image_converter( Environment * _environment, char * _data, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags );
 void                    image_converter_asserts( Environment * _environment, int _width, int _height, int _offset_x, int _offset_y, int * _frame_width, int * _frame_height );
@@ -2320,7 +2372,7 @@ char *                  image_enlarge_bottom( Environment * _environment, char *
 char *                  image_roll_x_left( Environment * _environment, char * _source, int _width, int _height );
 char *                  image_roll_x_right( Environment * _environment, char * _source, int _width, int _height );
 char *                  image_roll_y_down( Environment * _environment, char * _source, int _width, int _height );
-Variable *              images_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _frame_width, int _frame_height, int _flags, int _transparent_color, int _background_color );
+Variable *              images_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _frame_width, int _frame_height, int _flags, int _transparent_color, int _background_color, int _bank_expansion );
 void                    ink( Environment * _environment, char * _expression );
 Variable *              inkey( Environment * _environment );
 void                    input( Environment * _environment, char * _variable );
@@ -2341,12 +2393,14 @@ Variable *              joy_direction( Environment * _environment, char * _port,
 
 Variable *              keystate( Environment * _environment, char * _scancode );
 Variable *              keyshift( Environment * _environment );
+Variable *              key_pressed( Environment * _environment, int _scancode );
+Variable *              key_pressed_var( Environment * _environment, char * _scancode );
 
 //----------------------------------------------------------------------------
 // *L*
 //----------------------------------------------------------------------------
 
-Variable *              load( Environment * _environment, char * _filename, char * _alias, int _at );
+Variable *              load( Environment * _environment, char * _filename, char * _alias, int _at, int _bank_expansion );
 void                    locate( Environment * _environment, char * _x, char * _y );
 void                    loop( Environment * _environment, char *_label );
 
@@ -2427,7 +2481,7 @@ void                    print_buffer( Environment * _environment, char * _buffer
 void                    print_newline( Environment * _environment );
 void                    print_question_mark( Environment * _environment );
 void                    print_tab( Environment * _environment, int _new_line );
-void                    put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _flags );
+void                    put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _flags );
 void                    put_tile( Environment * _environment, char * _tile, char * _x, char * _y, char * _w, char * _h );
 
 //----------------------------------------------------------------------------
@@ -2450,7 +2504,7 @@ Variable *              respawn_procedure( Environment * _environment, char * _n
 void                    return_label( Environment * _environment );
 void                    return_procedure( Environment * _environment, char * _value );
 int                     rgbi_equals_rgb( RGBi * _first, RGBi * _second );
-int                     rgbi_extract_palette( unsigned char* _source, int _width, int _height, RGBi _palette[], int _palette_size);
+int                     rgbi_extract_palette( unsigned char* _source, int _width, int _height, RGBi _palette[], int _palette_size, int _sorted);
 void                    rgbi_move( RGBi * _source, RGBi * _destination );
 int                     rgbi_distance( RGBi * _source, RGBi * _destination );
 Variable *              rnd( Environment * _environment, char * _value );
@@ -2482,6 +2536,7 @@ void                    screen_vertical_scroll( Environment * _environment, int 
 void                    screen_vertical_scroll_var( Environment * _environment, char * _displacement );
 void                    scroll( Environment * _environment, int _dx, int _dy );
 void                    select_case( Environment * _environment, char * _expression );
+Variable *              sequence_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _frame_width, int _frame_height, int _flags, int _transparent_color, int _background_color, int _bank_expansion );
 void                    set_timer( Environment * _environment, char * _value );
 void                    shared( Environment * _environment );
 void                    shoot( Environment * _environment, int _channels );
@@ -2640,6 +2695,7 @@ Variable *              variable_sub( Environment * _environment, char * _source
 void                    variable_sub_inplace( Environment * _environment, char * _source, char * _dest );
 Variable *              variable_temporary( Environment * _environment, VariableType _type, char * _meaning );
 Variable *              variable_resident( Environment * _environment, VariableType _type, char * _meaning );
+Variable *              varptr( Environment * _environment, char * _identifier );
 void                    volume( Environment * _environment, int _volume, int _channels );
 void                    volume_vars( Environment * _environment, char * _volume, char * _channels );
 void                    volume_off( Environment * _environment, int _channels );

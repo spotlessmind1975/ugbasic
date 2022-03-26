@@ -142,6 +142,26 @@ void zx_scancode( Environment * _environment, char * _pressed, char * _scancode 
    
 }
 
+void zx_key_pressed( Environment * _environment, char *_scancode, char * _result ) {
+
+    MAKE_LABEL
+
+    char nokeyLabel[MAX_TEMPORARY_STORAGE];
+    sprintf( nokeyLabel, "%slabel", label );
+    
+    Variable * temp = variable_temporary( _environment, VT_BYTE, "(pressed)" );
+
+    zx_scancode( _environment, temp->realName, _result );
+    cpu_compare_8bit( _environment, _result, _scancode,  temp->realName, 1 );
+    cpu_compare_and_branch_8bit_const( _environment, temp->realName, 0, nokeyLabel, 1 );
+    cpu_store_8bit( _environment, _result, 0xff );
+    cpu_return( _environment );
+    cpu_label( _environment, nokeyLabel );
+    cpu_store_8bit( _environment, _result, 0x00 );
+    cpu_return( _environment );
+
+}
+
 void zx_scanshift( Environment * _environment, char * _shifts ) {
 
     // 653	
@@ -364,11 +384,11 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
     // currently ignored
     (void)!_transparent_color;
 
-    image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
+    image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
     RGBi palette[MAX_PALETTE];
 
-    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
+    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE, 1 /* sorted */ );
 
     if (colorUsed > 2) {
         CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
@@ -507,7 +527,7 @@ Variable * zx_image_converter( Environment * _environment, char * _data, int _wi
 
 }
 
-void zx_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _frame_size, int _flags ) {
+void zx_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags ) {
 
     // currently unused
     (void)!_flags;
@@ -518,15 +538,17 @@ void zx_put_image( Environment * _environment, char * _image, char * _x, char * 
     deploy( putimage, src_hw_zx_put_image_asm );
 
     outline1("LD HL, (%s)", _image );
-    if ( _frame ) {
+    if ( _sequence ) {
+
         outline0("INC HL" );
         outline0("INC HL" );
-        if ( strlen(_frame) == 0 ) {
+        outline0("INC HL" );
+        if ( strlen(_sequence) == 0 ) {
 
         } else {
 
-            outline1("LD DE, OFFSETS%4.4x", _frame_size );
-            outline1("LD A, (%s)", _frame );
+            outline1("LD DE, OFFSETS%4.4x", _frame_size * _frame_count );
+            outline1("LD A, (%s)", _sequence );
             outline0("CMP 0" );
             outline1("JR Z, %sdone", label );
             outhead1("%sloop:", label );
@@ -536,6 +558,50 @@ void zx_put_image( Environment * _environment, char * _image, char * _x, char * 
             outline1("JR NZ, %sloop", label );
             outline0("ADD HL, DE" );
             outhead1("%sdone:", label );
+        }
+
+        if ( _frame ) {
+            if ( strlen(_frame) == 0 ) {
+
+            } else {
+
+                outline1("LD DE, OFFSETS%4.4x", _frame_size );
+                outline1("LD A, (%s)", _frame );
+                outline0("CMP 0" );
+                outline1("JR Z, %sdone", label );
+                outhead1("%sloop:", label );
+                outline0("INC DE" );
+                outline0("DEC B" );
+                outline0("CMP 0" );
+                outline1("JR NZ, %sloop", label );
+                outline0("ADD HL, DE" );
+                outhead1("%sdone:", label );
+            }
+
+        }
+
+    } else {
+
+        if ( _frame ) {
+            outline0("INC HL" );
+            outline0("INC HL" );
+            if ( strlen(_frame) == 0 ) {
+
+            } else {
+
+                outline1("LD DE, OFFSETS%4.4x", _frame_size );
+                outline1("LD A, (%s)", _frame );
+                outline0("CMP 0" );
+                outline1("JR Z, %sdone", label );
+                outhead1("%sloop:", label );
+                outline0("INC DE" );
+                outline0("DEC B" );
+                outline0("CMP 0" );
+                outline1("JR NZ, %sloop", label );
+                outline0("ADD HL, DE" );
+                outhead1("%sdone:", label );
+            }
+
         }
 
     }

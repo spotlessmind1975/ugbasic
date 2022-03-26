@@ -130,10 +130,14 @@
 
 #define SCREEN_CAPABILITIES         ( ( 1<<TILEMAP_NATIVE ) | ( 1<<BITMAP_NATIVE ) )
 
+#define BANK_COUNT          0
+#define BANK_SIZE           0
+
 void atari_xpen( Environment * _environment, char * _destination );
 void atari_ypen( Environment * _environment, char * _destination );
 void atari_inkey( Environment * _environment, char * _pressed, char * _key );
 void atari_scancode( Environment * _environment, char * _pressed, char * _scacode );
+void atari_key_pressed( Environment * _environment, char *_scancode, char * _result );
 void atari_scanshift( Environment * _environment, char * _shifts );
 void atari_keyshift( Environment * _environment, char * _shifts );
 void atari_clear_key( Environment * _environment );

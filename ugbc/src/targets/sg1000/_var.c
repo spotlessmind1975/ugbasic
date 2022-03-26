@@ -152,6 +152,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     break;
                 case VT_IMAGE:
                 case VT_IMAGES:
+                case VT_SEQUENCE:
                 case VT_BUFFER:
                     if ( ! variable->absoluteAddress ) {
                         if ( variable->valueBuffer ) {
@@ -170,7 +171,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                             }
                         } else {
                             outhead0("section data_user");
-                            outline2("%s: defs %d", variable->realName, variable->size);
+                            outline2("%s: defs %d,0", variable->realName, variable->size);
                             outhead0("section code_user");
                         }
                     } else {

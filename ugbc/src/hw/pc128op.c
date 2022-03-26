@@ -127,11 +127,10 @@ void pc128op_scancode( Environment * _environment, char * _pressed, char * _scan
     outline1("STA %s", _pressed );
     outline1("STA %s", _scancode );
 
-    outline0("SWI" );
-    outline0("fcb 10" );
-    outline0("TFR B,A" );
+    outline0("JSR SCANCODE" );
+    outline0("CMPB #$0" );
     outline1("BEQ %snokey", label );
-    outline1("STA %s", _scancode );
+    outline1("STB %s", _scancode );
     outline0("LDA #$FF" );
     outline1("STA %s", _pressed );
     outhead1("%snokey", label );
@@ -231,5 +230,36 @@ void pc128op_follow_irq( Environment * _environment ) {
 
     outline0("JMP [PC128IRQO]" );
     
+}
+
+void pc128op_key_pressed( Environment * _environment, char *_scancode, char * _result ) {
+
+    MAKE_LABEL
+
+    deploy( scancode, src_hw_pc128op_scancode_asm );
+
+    outline1("LDA %s", _scancode );
+    outline0("JSR KEYPRESSED");
+    outline1("BEQ %snopressed", label );
+    outline0("LDA #1" );
+    outline1("STA %s", _result );
+    outline1("BRA %sfinish", label );
+    outhead1("%snopressed", label );
+    outline0("LDA #0" );
+    outline1("STA %s", _result );
+    outhead1("%sfinish", label );
+
+}
+
+void pc128op_joystick( Environment * _environment, char * _joystick, char * _result ) {
+
+    MAKE_LABEL
+
+    deploy( joystick, src_hw_pc128op_joystick_asm );
+
+    outline1("LDA %s", _joystick );
+    outline0("JSR JOYSTICK");
+    outline1("STA %s", _result );
+
 }
 #endif

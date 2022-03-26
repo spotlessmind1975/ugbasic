@@ -82,4 +82,68 @@ PC128STARTUP3
     SWI
     FCB   $02
 
+    LDB   #0
+    STB   $2076
+    LDB   $2019
+    ORB   #8
+    STB   $2019
+
+    LDU #BANKLOAD
+    LDB #0
+BANKLOADL1
+    LDA B,U
+    CMPA #0
+    BEQ BANKLOADL2
+    STA $A7E5
+
+    PSHS D,Y,X
+    LDX #$6000
+
+    LDA #1
+    SWI
+    FCB $22
+
+BANKLOADL1REPEAT
+
+    LDY #$9000
+
+    LDA #1
+    LDB #0
+    SWI
+    FCB $20
+
+    CMPB #0
+    BEQ BANKLOADL1REPEAT
+    CMPB #$FF
+    BEQ BANKLOADL1END
+
+    CMPX #$6000
+    BNE BANKLOADL1MV
+
+    LEAY 6,Y
+
+BANKLOADL1MV
+
+    LDU #$00FE
+
+BANKLOADL1MV2
+    LDA ,Y+
+    STA ,X+
+    LEAU -1, U
+    CMPU #0
+    BNE BANKLOADL1MV2
+
+    JMP BANKLOADL1REPEAT
+
+BANKLOADL1END
+    LDA #0
+    SWI
+    FCB   $22
+    PULS D,Y,X
+BANKLOADL2
+    INCB
+    CMPB #6
+    BNE BANKLOADL1
+    LDA #0
+    STA $A7E5
     RTS

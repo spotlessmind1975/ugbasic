@@ -173,6 +173,9 @@
 
 #define SCREEN_CAPABILITIES         ( ( 1<<BITMAP_NATIVE ) )
 
+#define BANK_COUNT          0
+#define BANK_SIZE           0
+
 #define BITMAP_MODE_STANDARD        1           // Standard Bitmap Mode     192 x 256 x 2
 #define TILEMAP_MODE_STANDARD       0           // Standard Character Mode  32 x 25 x 8
 #define BITMAP_MODE_DEFAULT         BITMAP_MODE_STANDARD
@@ -207,6 +210,7 @@ void zx_text( Environment * _environment, char * _text, char * _text_size );
 void zx_cls( Environment * _environment, char * _pen, char * _paper );
 void zx_inkey( Environment * _environment, char * _pressed, char * _key );
 void zx_scancode( Environment * _environment, char * _pressed, char * _scacode );
+void zx_key_pressed( Environment * _environment, char *_scancode, char * _result );
 void zx_scanshift( Environment * _environment, char * _shifts );
 void zx_keyshift( Environment * _environment, char * _shifts );
 void zx_clear_key( Environment * _environment );
@@ -220,7 +224,7 @@ Variable * zx_get_raster_line( Environment * _environment );
 #define         JOY_COUNT           0
 
 Variable * zx_image_converter( Environment * _environment, char * _data, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags );
-void zx_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _frame_size, int _flags );
+void zx_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags );
 Variable * zx_new_image( Environment * _environment, int _width, int _height, int _mode );
 void zx_get_image( Environment * _environment, char * _image, char * _x, char * _y );
 

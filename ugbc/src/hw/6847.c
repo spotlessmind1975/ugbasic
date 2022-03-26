@@ -1083,11 +1083,11 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
     // ignored on bitmap mode
     (void)!_transparent_color;
 
-    image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
+    image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
     RGBi palette[MAX_PALETTE];
 
-    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
+    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE, 1 /* sorted */ );
 
     if (colorUsed > 2) {
         CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
@@ -1203,12 +1203,12 @@ static Variable * c6847_image_converter_multicolor_mode_standard( Environment * 
     // ignored on bitmap mode
     (void)!_transparent_color;
 
-    image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
+    image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
 
     RGBi * palette = malloc( sizeof( RGBi ) * MAX_PALETTE );
-    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
+    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE, 1 /* sorted */ );
     result->originalColors = colorUsed;
 
     if ( ! commonPalette ) {
@@ -1357,23 +1357,49 @@ Variable * c6847_image_converter( Environment * _environment, char * _data, int 
 
 }
 
-void c6847_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _frame_size, int _flags ) {
+void c6847_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags ) {
 
     deploy( c6847vars, src_hw_6847_vars_asm);
     deploy( putimage, src_hw_6847_put_image_asm );
 
     outline1("LDY #%s", _image );
-    if ( _frame ) {
-        outline0("LEAY 2,y" );
-        if ( strlen(_frame) == 0 ) {
+    if ( _sequence ) {
+        outline0("LEAY 3,y" );
+        if ( strlen(_sequence) == 0 ) {
         } else {
-            outline1("LDX #OFFSETS%4.4x", _frame_size );
-            outline1("LDB %s", _frame );
+            outline1("LDX #OFFSETS%4.4x", _frame_count * _frame_size );
+            outline1("LDB %s", _sequence );
             outline0("LDA #0" );
             outline0("LEAX D, X" );
             outline0("LEAX D, X" );
             outline0("LDD ,X" );
             outline0("LEAY D, Y" );
+        }
+        if ( _frame ) {
+            if ( strlen(_frame) == 0 ) {
+            } else {
+                outline1("LDX #OFFSETS%4.4x", _frame_size );
+                outline1("LDB %s", _frame );
+                outline0("LDA #0" );
+                outline0("LEAX D, X" );
+                outline0("LEAX D, X" );
+                outline0("LDD ,X" );
+                outline0("LEAY D, Y" );
+            }
+        }
+    } else {
+        if ( _frame ) {
+            outline0("LEAY 2,y" );
+            if ( strlen(_frame) == 0 ) {
+            } else {
+                outline1("LDX #OFFSETS%4.4x", _frame_size );
+                outline1("LDB %s", _frame );
+                outline0("LDA #0" );
+                outline0("LEAX D, X" );
+                outline0("LEAX D, X" );
+                outline0("LDD ,X" );
+                outline0("LEAY D, Y" );
+            }
         }
     }
     outline1("LDD %s", _x );

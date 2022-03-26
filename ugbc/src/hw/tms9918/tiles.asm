@@ -47,22 +47,22 @@
 ; - Put tile on tilemap
 ; ----------------------------------------------------------------------------
 
-if __coleco__
+; if __coleco__
+
+; PUTTILE:
+;     CALL WAIT_VDP_HOOK
+;     LD HL, PUTTILENMI
+;     CALL SET_VDP_HOOK0
+;     CALL WAIT_VDP_HOOK
+;     RET
+
+; PUTTILENMI:
+
+; else
 
 PUTTILE:
-    CALL WAIT_VDP_HOOK
-    LD HL, PUTTILENMI
-    CALL SET_VDP_HOOK0
-    CALL WAIT_VDP_HOOK
-    RET
 
-PUTTILENMI:
-
-else
-
-PUTTILE:
-
-endif
+; endif
 
 PUTTILENMI2:
 
@@ -315,44 +315,44 @@ PUTTILEE:
 
 ;;;;;;;;;;;;;;;
 
-if __coleco__
+; if __coleco__
+
+; USETILESET:
+;     CALL WAIT_VDP_HOOK
+;     LD HL, USETILESETNMI
+;     CALL SET_VDP_HOOK0
+;     CALL WAIT_VDP_HOOK
+;     RET
+
+; USETILESETNMI:
+
+; else
 
 USETILESET:
-    CALL WAIT_VDP_HOOK
-    LD HL, USETILESETNMI
-    CALL SET_VDP_HOOK0
-    CALL WAIT_VDP_HOOK
-    RET
 
-USETILESETNMI:
-
-else
-
-USETILESET:
-
-endif
+; endif
 
 USETILESETNMI2:
     RET
 
 ;;;;;;;;;;;;;;;
 
-if __coleco__
+; if __coleco__
+
+; MOVETILE:
+;     CALL WAIT_VDP_HOOK
+;     LD HL, MOVETILENMI
+;     CALL SET_VDP_HOOK0
+;     CALL WAIT_VDP_HOOK
+;     RET
+
+; MOVETILENMI:
+
+; else
 
 MOVETILE:
-    CALL WAIT_VDP_HOOK
-    LD HL, MOVETILENMI
-    CALL SET_VDP_HOOK0
-    CALL WAIT_VDP_HOOK
-    RET
 
-MOVETILENMI:
-
-else
-
-MOVETILE:
-
-endif
+; endif
 
 MOVETILENMI2:
 
@@ -406,22 +406,22 @@ MOVETILEZ:
 
     RET
 
-if __coleco__
+; if __coleco__
+
+; TILEAT:
+;     CALL WAIT_VDP_HOOK
+;     LD HL, PUTTILENMI
+;     CALL SET_VDP_HOOK0
+;     CALL WAIT_VDP_HOOK
+;     RET
+
+; TILEATNMI:
+
+; else
 
 TILEAT:
-    CALL WAIT_VDP_HOOK
-    LD HL, PUTTILENMI
-    CALL SET_VDP_HOOK0
-    CALL WAIT_VDP_HOOK
-    RET
 
-TILEATNMI:
-
-else
-
-TILEAT:
-
-endif
+; endif
 
 TILEATNMI2:
 

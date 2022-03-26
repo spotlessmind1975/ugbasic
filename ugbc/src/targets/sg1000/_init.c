@@ -108,8 +108,13 @@ void target_initialization( Environment * _environment ) {
     variable_import( _environment, "PPIKEYBOARD", VT_BYTE, 0 );
     variable_global( _environment, "PPIKEYBOARD" );   
 
+    variable_import( _environment, "VDP60HZ", VT_BYTE, 0 );
+    variable_global( _environment, "VDP60HZ" );   
+
     variable_import( _environment, "IRQVECTOR", VT_BUFFER, 3 );
     variable_global( _environment, "IRQVECTOR" );   
+    variable_import( _environment, "IRQVECTORREADY", VT_BYTE, 0 );
+    variable_global( _environment, "IRQVECTORREADY" );   
 
     bank_define( _environment, "VARIABLES", BT_VARIABLES, 0x5000, NULL );
     bank_define( _environment, "TEMPORARY", BT_TEMPORARY, 0x5100, NULL );
@@ -119,8 +124,6 @@ void target_initialization( Environment * _environment ) {
     outhead0("SECTION data_user");
     outhead0("ORG $C000");
     outhead0("SECTION code_user");
-
-    outline0("JP CODESTART");
 
     deploy_inplace(startup,src_hw_sg1000_startup_asm);
     deploy( font, src_hw_tms9918_font_asm );
@@ -135,6 +138,9 @@ void target_initialization( Environment * _environment ) {
     setup_text_variables( _environment );
     
     tms9918_initialization( _environment );
+
+    outline0("call	CheckIf60Hz");
+    outline0("ld		(VDP60HZ),a				; save it, 00/01 = 50/60 Hz		");
 
     z80_compare_and_branch_8bit_const( _environment, "LASTVAR", 0x42, "CODESTARTRUN", 1 );
 

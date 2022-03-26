@@ -61,7 +61,8 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token OVERLAYED CASE ENDSELECT OGP CGP ARRAY NEW GET DISTANCE TYPE MUL DIV RGB SHADES HEX PALETTE
 %token BAR XGRAPHIC YGRAPHIC XTEXT YTEXT COLUMNS XGR YGR CHAR RAW SEPARATOR MSX MSX1 COLECO CSPRITE 
 %token TILESET MOVE ROW COLUMN TRANSPARENT DOUBLE RESPAWN HALTED SC3000 SG1000 MEMORY VIDEO MMOVE SWAP
-%token BELONG FIRST SOUND BOOM SHOOT BELL NOTE VOLUME PLAY INSTRUMENT AAHS ACCORDION ACOUSTIC AGE AGOGO 
+%token BELONG FIRST EXACT PRESSED PC128OP MO5 VARPTR READ WRITE BANKED SEQUENCE
+%token SOUND BOOM SHOOT BELL NOTE VOLUME PLAY INSTRUMENT AAHS ACCORDION ACOUSTIC AGE AGOGO 
 %token ALTO APPLAUSE ATMOSPHERE BAG BANJO BARITONE BASS BASSOON BELLS BIRD BLOWN BOTTLE BOWED BRASS
 %token BREATH BRIGHT BRIGHTNESS CALLIOPE CELESTA CELLO CHARANG CHIFF CHOIR CHURCH CLARINET CLAVI CLEAN 
 %token CONTRABASS CRYSTAL CYMBAL DISTORTION DRAWBAR DRUM DRUMS DULCIMER ECHOES ELECTRIC ENGLISH ENSEMBLE
@@ -95,6 +96,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <string> color_enumeration
 %type <string> writing_mode_definition writing_part_definition
 %type <string> key_scancode_definition key_scancode_alphadigit key_scancode_function_digit
+%type <integer> const_key_scancode_definition const_key_scancode_alphadigit const_key_scancode_function_digit
 %type <integer> datatype as_datatype
 %type <integer> halted
 %type <integer> optional_integer
@@ -106,12 +108,14 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> tile_load_flags tile_load_flags1 tile_load_flag
 %type <integer> image_load_flags image_load_flags1 image_load_flag
 %type <integer> images_load_flags images_load_flags1 images_load_flag
+%type <integer> sequence_load_flags sequence_load_flags1 sequence_load_flag
 %type <integer> put_image_flags put_image_flags1 put_image_flag
 %type <integer> const_color_enumeration
 %type <integer> using_transparency
 %type <integer> using_background
 %type <integer> memory_video
 %type <integer> sprite_flag sprite_flags sprite_flags1
+%type <integer> on_bank
 %type <integer> note octave const_note
 %type <integer> const_instrument
 
@@ -576,7 +580,7 @@ const_factor:
       }
       | IMAGE WIDTH OP expr CP {
           Variable * v = variable_retrieve( _environment, $4 );
-          if ( v->type != VT_IMAGE && v->type != VT_IMAGES ) {
+          if ( v->type != VT_IMAGE && v->type != VT_IMAGES && v->type != VT_SEQUENCE ) {
               CRITICAL_NOT_IMAGE( v->name );
           }
           if ( !v->valueBuffer ) {
@@ -637,7 +641,7 @@ const_factor:
       }
       | IMAGE HEIGHT OP expr CP {
           Variable * v = variable_retrieve( _environment, $4 );
-          if ( v->type != VT_IMAGE && v->type != VT_IMAGES ) {
+          if ( v->type != VT_IMAGE && v->type != VT_IMAGES && v->type != VT_SEQUENCE ) {
               CRITICAL_NOT_IMAGE( v->name );
           }
           $$ = v->valueBuffer[1];
@@ -679,6 +683,10 @@ const_factor:
           $$ = c->value;
       }
       | const_color_enumeration
+      | const_key_scancode_definition
+      | BANK COUNT {
+          $$ = BANK_COUNT;
+      }
       ;
 
 expr : 
@@ -795,6 +803,10 @@ direct_integer:
     OP_HASH Integer {
         $$ = $2;
     }
+    |
+    OP_HASH OP_MINUS Integer {
+        $$ = -$3;
+    }
     | OP_HASH Identifier {
         Constant * c = constant_find( ((struct _Environment *)_environment)->constants, $2 );
         if ( !c ) {
@@ -821,6 +833,9 @@ image_load_flag :
     }
     | OVERLAYED {
         $$ = FLAG_OVERLAYED;
+    }
+    | EXACT {
+        $$ = FLAG_EXACT;
     };
 
 tile_load_flag :
@@ -876,6 +891,9 @@ images_load_flag :
     | OVERLAYED {
         $$ = FLAG_OVERLAYED;
     }
+    | EXACT {
+        $$ = FLAG_EXACT;
+    }
     | ROLL X {
         $$ = FLAG_ROLL_X;
     }
@@ -887,6 +905,26 @@ images_load_flag :
     }
     | ROLL YX {
         $$ = FLAG_ROLL_Y | FLAG_ROLL_X;
+    };
+
+sequence_load_flag :
+    FLIP X {
+        $$ = FLAG_FLIP_X;
+    }
+    | FLIP Y {
+        $$ = FLAG_FLIP_Y;
+    }
+    | FLIP XY {
+        $$ = FLAG_FLIP_X | FLAG_FLIP_Y;
+    }
+    | FLIP YX {
+        $$ = FLAG_FLIP_X | FLAG_FLIP_Y;
+    }
+    | OVERLAYED {
+        $$ = FLAG_OVERLAYED;
+    }
+    | EXACT {
+        $$ = FLAG_EXACT;
     };
 
 put_image_flags1 :
@@ -918,6 +956,14 @@ images_load_flags1 :
         $$ = $1;
     }
     | images_load_flag images_load_flags1 {
+        $$ = $1 | $2;
+    };
+
+sequence_load_flags1 :
+    sequence_load_flag {
+        $$ = $1;
+    }
+    | sequence_load_flag sequence_load_flags1 {
         $$ = $1 | $2;
     };
 
@@ -970,6 +1016,25 @@ images_load_flags :
     } 
     | images_load_flags1 {
         $$ = $1;
+    };
+
+sequence_load_flags :
+    {
+        $$ = 0;    
+    } 
+    | sequence_load_flags1 {
+        $$ = $1;
+    };
+
+on_bank :
+    {
+        $$ = 0;
+    }
+    | BANKED {
+        $$ = 1;
+    }
+    | BANKED OP const_expr CP {
+        $$ = $3;
     };
 
 sprite_flag :
@@ -1304,6 +1369,117 @@ key_scancode_alphadigit :
     }
     ;
 
+const_key_scancode_alphadigit :
+      "0" {
+        $$ = KEY_0;
+    }
+    | "1" {
+        $$ = KEY_1;
+    }
+    | "2" {
+        $$ = KEY_2;
+    }
+    | "3" {
+        $$ = KEY_3;
+    }
+    | "4" {
+        $$ = KEY_4;
+    }
+    | "5" {
+        $$ = KEY_5;
+    }
+    | "6" {
+        $$ = KEY_6;
+    }
+    | "7" {
+        $$ = KEY_7;
+    }
+    | "8" {
+        $$ = KEY_8;
+    }
+    | "9" {
+        $$ = KEY_9;
+    }
+    | A {
+        $$ = KEY_A;
+    }
+    | B {
+        $$ = KEY_B;
+    }
+    | C {
+        $$ = KEY_C;
+    }
+    | D {
+        $$ = KEY_D;
+    }
+    | E {
+        $$ = KEY_E;
+    }
+    | F {
+        $$ = KEY_F;
+    }
+    | G {
+        $$ = KEY_G;
+    }
+    | H {
+        $$ = KEY_H;
+    }
+    | I {
+        $$ = KEY_I;
+    }
+    | J {
+        $$ = KEY_J;
+    }
+    | K {
+        $$ = KEY_K;
+    }
+    | L {
+        $$ = KEY_L;
+    }
+    | M {
+        $$ = KEY_M;
+    }
+    | N {
+        $$ = KEY_N;
+    }
+    | O {
+        $$ = KEY_O;
+    }
+    | P {
+        $$ = KEY_P;
+    }
+    | Q {
+        $$ = KEY_Q;
+    }
+    | R {
+        $$ = KEY_R;
+    }
+    | S {
+        $$ = KEY_S;
+    }
+    | T {
+        $$ = KEY_T;
+    }
+    | U {
+        $$ = KEY_U;
+    }
+    | V {
+        $$ = KEY_V;
+    }
+    | X {
+        $$ = KEY_X;
+    }
+    | Y {
+        $$ = KEY_Y;
+    }
+    | W {
+        $$ = KEY_W;
+    }
+    | Z {
+        $$ = KEY_Z;
+    }
+    ;
+
 key_scancode_function_digit :
       F1 {
         $$ = variable_temporary( _environment, VT_BYTE, "(scancode F1)")->name;
@@ -1336,6 +1512,32 @@ key_scancode_function_digit :
     | F8 {
         $$ = variable_temporary( _environment, VT_BYTE, "(scancode F8)")->name;
         variable_store( _environment, $$, KEY_F8 );
+    };
+
+const_key_scancode_function_digit :
+      F1 {
+        $$ = KEY_F1;
+    }
+    | F2 {
+        $$ = KEY_F2;
+    }
+    | F3 {
+        $$ = KEY_F3;
+    }
+    | F4 {
+        $$ = KEY_F4;
+    }
+    | F5 {
+        $$ = KEY_F5;
+    }
+    | F6 {
+        $$ = KEY_F6;
+    }
+    | F7 {
+        $$ = KEY_F7;
+    }
+    | F8 {
+        $$ = KEY_F8;
     };
 
 key_scancode_definition : 
@@ -1409,6 +1611,22 @@ key_scancode_definition :
         $$ = variable_temporary( _environment, VT_BYTE, "(scancode ARROW LEFT)")->name;
         variable_store( _environment, $$, KEY_LEFT_ARROW );
     }
+    | LEFT {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode LEFT)")->name;
+        variable_store( _environment, $$, KEY_LEFT );
+    }
+    | RIGHT {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode RIGHT)")->name;
+        variable_store( _environment, $$, KEY_RIGHT );
+    }
+    | UP {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode UP)")->name;
+        variable_store( _environment, $$, KEY_UP );
+    }
+    | DOWN {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode DOWN)")->name;
+        variable_store( _environment, $$, KEY_DOWN );
+    }
     | ARROW UP {
         $$ = variable_temporary( _environment, VT_BYTE, "(scancode ARROW UP)")->name;
         variable_store( _environment, $$, KEY_UP_ARROW );
@@ -1456,6 +1674,110 @@ key_scancode_definition :
     | SPACE {
         $$ = variable_temporary( _environment, VT_BYTE, "(scancode SPACE)")->name;
         variable_store( _environment, $$, KEY_SPACE );        
+    };
+
+const_key_scancode_definition : 
+      NONE {
+        $$ = KEY_NONE;
+    }
+    | const_key_scancode_alphadigit {
+        $$ = $1;
+    }
+    | ASTERISK {
+        $$ = KEY_ASTERISK;
+    }
+    | AT {
+        $$ = KEY_AT;
+    }
+    | CLEAR {
+        $$ = KEY_CLEAR;
+    }
+    | COLON {
+        $$ = KEY_COLON;
+    }
+    | COMMA {
+        $$ = KEY_COMMA;
+    }
+    | COMMODORE {
+        $$ = KEY_COMMODORE;
+    }
+    | CONTROL {
+        $$ = KEY_CONTROL;
+    }
+    | CRSR LEFT RIGHT {
+        $$ = KEY_CRSR_LEFT_RIGHT;
+    }
+    | CRSR UP DOWN {
+        $$ = KEY_CRSR_UP_DOWN;
+    }
+    | DELETE {
+        $$ = KEY_DELETE;
+    }
+    | EQUAL {
+        $$ = KEY_EQUAL;
+    }
+    | const_key_scancode_function_digit {
+        $$ = $1;
+    }
+    | HOME {
+        $$ = KEY_HOME;
+    }
+    | INSERT {
+        $$ = KEY_INSERT;
+    }
+    | ARROW LEFT {
+        $$ = KEY_LEFT_ARROW;
+    }
+    | LEFT ARROW {
+        $$ = KEY_LEFT_ARROW;
+    }
+    | LEFT {
+        $$ = KEY_LEFT;
+    }
+    | RIGHT {
+        $$ = KEY_RIGHT;
+    }
+    | UP {
+        $$ = KEY_UP;
+    }
+    | DOWN {
+        $$ = KEY_DOWN;
+    }
+    | ARROW UP {
+        $$ = KEY_UP_ARROW;
+    }
+    | UP ARROW {
+        $$ = KEY_UP_ARROW;
+    }
+    | MINUS {
+        $$ = KEY_MINUS;
+    }
+    | PERIOD {
+        $$ = KEY_PERIOD;
+    }
+    | PLUS {
+        $$ = KEY_PLUS;
+    }
+    | POUND {
+        $$ = KEY_POUND;
+    }
+    | RETURN {
+        $$ = KEY_RETURN;
+    }
+    | RUNSTOP {
+        $$ = KEY_RUNSTOP;        
+    }
+    | RUN STOP {
+        $$ = KEY_RUNSTOP;        
+    }
+    | SEMICOLON {
+        $$ = KEY_SEMICOLON;
+    }
+    | SLASH {
+        $$ = KEY_SLASH;        
+    }
+    | SPACE {
+        $$ = KEY_SPACE;        
     };
 
 exponential:
@@ -1615,11 +1937,11 @@ exponential:
         $$ = variable_cast( _environment, $5, VT_WORD )->name;
       }
     | OP SIGNED WORD CP Integer { 
-        $$ = variable_temporary( _environment, VT_WORD, "(signed WORD value)" )->name;
+        $$ = variable_temporary( _environment, VT_SWORD, "(signed WORD value)" )->name;
         variable_store( _environment, $$, $5 );
     }
     | OP SIGNED WORD CP direct_integer { 
-        $$ = variable_temporary( _environment, VT_WORD, "(signed WORD value)" )->name;
+        $$ = variable_temporary( _environment, VT_SWORD, "(signed WORD value)" )->name;
         variable_store( _environment, $$, $5 );
       }
     | OP SIGNED WORD CP OP expr CP { 
@@ -1711,35 +2033,41 @@ exponential:
     | NEW IMAGE OP const_expr OP_COMMA const_expr CP {        
         $$ = new_image( _environment, $4, $6, ((struct _Environment *)_environment)->currentMode )->name;
       }
-    | LOAD OP String CP {
-        $$ = load( _environment, $3, NULL, 0 )->name;
+    | LOAD OP String CP on_bank {
+        $$ = load( _environment, $3, NULL, 0, $5 )->name;
       }
-    | LOAD OP String AS String CP {
-        $$ = load( _environment, $3, $5, 0 )->name;
+    | LOAD OP String AS String CP on_bank {
+        $$ = load( _environment, $3, $5, 0, $7 )->name;
       }
-    | LOAD OP String OP_COMMA Integer CP {
-        $$ = load( _environment, $3, NULL, $5 )->name;
+    | LOAD OP String OP_COMMA Integer CP on_bank {
+        $$ = load( _environment, $3, NULL, $5, $7 )->name;
       }
-    | LOAD OP String AS String OP_COMMA Integer CP {
-        $$ = load( _environment, $3, $5, $7 )->name;
+    | LOAD OP String AS String OP_COMMA Integer CP on_bank {
+        $$ = load( _environment, $3, $5, $7, $9 )->name;
       }
-    | LOAD IMAGES OP String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP images_load_flags  using_transparency using_background  {        
-        $$ = images_load( _environment, $4, NULL, ((struct _Environment *)_environment)->currentMode, $9, $11, $13, $14, $15 )->name;
+    | LOAD SEQUENCE OP String AS String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_background on_bank {
+        $$ = sequence_load( _environment, $4, $6, ((struct _Environment *)_environment)->currentMode, $11, $13, $15, $16, $17, $18 )->name;
       }
-    | LOAD IMAGES OP String AS String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP images_load_flags  using_transparency using_background {
-        $$ = images_load( _environment, $4, $6, ((struct _Environment *)_environment)->currentMode, $11, $13, $15, $16, $17 )->name;
+    | LOAD SEQUENCE OP String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_background on_bank {        
+        $$ = sequence_load( _environment, $4, NULL, ((struct _Environment *)_environment)->currentMode, $9, $11, $13, $14, $15, $16 )->name;
       }
-    | LOAD IMAGE OP String CP image_load_flags  using_transparency using_background  {
-        $$ = image_load( _environment, $4, NULL, ((struct _Environment *)_environment)->currentMode, $6, $7, $8 )->name;
+    | LOAD IMAGES OP String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP images_load_flags  using_transparency using_background on_bank {        
+        $$ = images_load( _environment, $4, NULL, ((struct _Environment *)_environment)->currentMode, $9, $11, $13, $14, $15, $16 )->name;
       }
-    | LOAD IMAGE OP String AS String CP image_load_flags  using_transparency using_background  {
-        $$ = image_load( _environment, $4, $6, ((struct _Environment *)_environment)->currentMode, $8, $9, $10 )->name;
+    | LOAD IMAGES OP String AS String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP images_load_flags  using_transparency using_background on_bank {
+        $$ = images_load( _environment, $4, $6, ((struct _Environment *)_environment)->currentMode, $11, $13, $15, $16, $17, $18 )->name;
       }
-    | LOAD IMAGE OP String OP_COMMA Integer CP image_load_flags  using_transparency using_background  {
-        $$ = image_load( _environment, $4, NULL, $6, $8, $9, $10 )->name;
+    | LOAD IMAGE OP String CP image_load_flags  using_transparency using_background on_bank {
+        $$ = image_load( _environment, $4, NULL, ((struct _Environment *)_environment)->currentMode, $6, $7, $8, $9 )->name;
       }
-    | LOAD IMAGE OP String AS String OP_COMMA Integer CP image_load_flags  using_transparency using_background  {
-        $$ = image_load( _environment, $4, $6, $8, $10, $11, $12 )->name;
+    | LOAD IMAGE OP String AS String CP image_load_flags  using_transparency using_background on_bank {
+        $$ = image_load( _environment, $4, $6, ((struct _Environment *)_environment)->currentMode, $8, $9, $10, $11 )->name;
+      }
+    | LOAD IMAGE OP String OP_COMMA Integer CP image_load_flags  using_transparency using_background on_bank {
+        $$ = image_load( _environment, $4, NULL, $6, $8, $9, $10, $11 )->name;
+      }
+    | LOAD IMAGE OP String AS String OP_COMMA Integer CP image_load_flags  using_transparency using_background on_bank {
+        $$ = image_load( _environment, $4, $6, $8, $10, $11, $12, $13 )->name;
       }
     | LOAD TILE OP String CP tile_load_flags {
         $$ = tile_load( _environment, $4, $6, NULL )->name;
@@ -1758,6 +2086,7 @@ exponential:
         switch( v->type ) {
             case VT_IMAGE:
             case VT_IMAGES:
+            case VT_SEQUENCE:
             case VT_BUFFER:
             case VT_STRING: 
                 break;
@@ -1806,6 +2135,28 @@ exponential:
     }
     | RIGHT OP expr OP_COMMA expr CP {
         $$ = variable_string_right( _environment, $3, $5 )->name;
+    }
+    | BANK COUNT {
+        $$ = variable_temporary( _environment, VT_BYTE, "(bank count)" )->name;
+        variable_store( _environment, $$, BANK_COUNT );
+    }
+    | VARPTR OP Identifier CP {
+        $$ = varptr( _environment, $3 )->name;
+    }
+    | BANK OP CP {
+        $$ = bank_get( _environment )->name;
+    }
+    | BANK ADDRESS OP OP_HASH const_expr CP {
+        $$ = bank_get_address( _environment, $5 )->name;
+    }
+    | BANK ADDRESS OP expr CP {
+        $$ = bank_get_address_var( _environment, $4 )->name;
+    }
+    | BANK SIZE OP OP_HASH const_expr CP {
+        $$ = bank_get_size( _environment, $5 )->name;
+    }
+    | BANK SIZE OP expr CP {
+        $$ = bank_get_size_var( _environment, $4 )->name;
     }
     | MID OP expr OP_COMMA expr CP {
         $$ = variable_string_mid( _environment, $3, $5, NULL )->name;
@@ -2326,6 +2677,12 @@ exponential:
     | SCAN CODE {
         $$ = scancode( _environment )->name;
     }
+    | KEY PRESSED OP OP_HASH const_expr CP {
+        $$ = key_pressed( _environment, $5 )->name;
+    }
+    | KEY PRESSED OP expr CP {
+        $$ = key_pressed_var( _environment, $4 )->name;
+    }
     | KEY STATE OP expr CP {
         $$ = keystate( _environment, $4 )->name;
     }
@@ -2472,9 +2829,29 @@ bank_definition_with_payload:
       bank_define( _environment, $2, BT_CODE, $4, $6 );
   };
 
+bank_expansion_definition_simple :
+    OP_HASH const_expr {
+        bank_set( _environment, $2 );
+    }
+    ;
+
+bank_expansion_definition_expression :
+    expr {
+        bank_set_var( _environment, $1 );
+    }
+    | READ expr FROM expr TO expr SIZE expr {
+        bank_read_vars( _environment, $2, $4, $6, $8 );
+    }
+    | WRITE expr FROM expr TO expr SIZE expr {
+        bank_write_vars( _environment, $2, $4, $6, $8 );
+    }
+    ;
+
 bank_definition: 
     bank_definition_simple
-  | bank_definition_with_payload;
+  | bank_definition_with_payload
+  | bank_expansion_definition_simple
+  | bank_expansion_definition_expression;
 
 raster_definition_simple:
     Identifier AT direct_integer {
@@ -3115,18 +3492,25 @@ get_definition:
 
 put_definition_expression:
       IMAGE expr AT optional_x OP_COMMA optional_y put_image_flags {
-        put_image( _environment, $2, $4, $6, NULL, $7 );
+        put_image( _environment, $2, $4, $6, NULL, NULL, $7 );
         gr_locate( _environment, $4, $6 );
     }
     |  IMAGE expr FRAME expr AT optional_x OP_COMMA optional_y put_image_flags {
-        put_image( _environment, $2, $6, $8, $4, $9 );
+        put_image( _environment, $2, $6, $8, $4, NULL, $9 );
         gr_locate( _environment, $6, $8 );
     }
+    |  IMAGE expr SEQUENCE expr FRAME expr AT optional_x OP_COMMA optional_y put_image_flags {
+        put_image( _environment, $2, $8, $10, $6, $4, $11 );
+        gr_locate( _environment, $8, $10 );
+    }
     | IMAGE expr put_image_flags {
-        put_image( _environment, $2, "XGR", "YGR", NULL, $3 );
+        put_image( _environment, $2, "XGR", "YGR", NULL, NULL, $3 );
     }
     | IMAGE expr FRAME expr put_image_flags {
-        put_image( _environment, $2, "XGR", "YGR", $4, $5 );
+        put_image( _environment, $2, "XGR", "YGR", $4, NULL, $5 );
+    }
+    | IMAGE expr SEQUENCE expr FRAME expr put_image_flags {
+        put_image( _environment, $2, "XGR", "YGR", $6, $4, $7 );
     }
     | TILE expr AT optional_x OP_COMMA optional_y {
         put_tile( _environment, $2, $4, $6, NULL, NULL );
@@ -3499,6 +3883,9 @@ datatype :
     }
     | IMAGES {
         $$ = VT_IMAGE;
+    }
+    | SEQUENCE {
+        $$ = VT_SEQUENCE;
     }
     | SPRITE {
         $$ = VT_SPRITE;
@@ -4495,7 +4882,24 @@ target :
         #else
             $$ = 0;
         #endif
-    };
+    }
+    |
+    PC128OP {
+        #ifdef __pc128op__
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }
+    |
+    MO5 {
+        #ifdef __mo5__
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }    
+    ;
 
 targets :
      target {
@@ -4975,11 +5379,11 @@ statement:
   | Identifier OP_COLON {
       cpu_label( _environment, $1 );
   } 
-  | LOAD String OP_COMMA Integer {
-    load( _environment, $2, NULL, $4 );
+  | LOAD String OP_COMMA Integer on_bank {
+    load( _environment, $2, NULL, $4, $5 );
   }
-  | LOAD String AS String OP_COMMA Integer {
-    load( _environment, $2, $4, $6 );
+  | LOAD String AS String OP_COMMA Integer on_bank {
+    load( _environment, $2, $4, $6, $7 );
   }
   | RUN PARALLEL {
       run_parallel( _environment );
@@ -5176,6 +5580,12 @@ statement:
         var->originalWidth = expr->originalWidth;
         var->originalHeight = expr->originalHeight;
         var->originalColors = expr->originalColors;
+        var->bankAssigned = expr->bankAssigned;
+        if ( var->bankAssigned ) {
+            var->absoluteAddress = expr->absoluteAddress;
+            var->residentAssigned = expr->residentAssigned;
+            var->variableUniqueId = expr->variableUniqueId;
+        }
         memcpy( var->originalPalette, expr->originalPalette, MAX_PALETTE * sizeof( RGBi ) );
         var->memoryArea = expr->memoryArea;
         var->arrayDimensions = expr->arrayDimensions;
@@ -5357,7 +5767,7 @@ program :
 
 %%
 
-char version[MAX_TEMPORARY_STORAGE] = "1.10.1";
+char version[MAX_TEMPORARY_STORAGE] = "1.10.2";
 
 void show_usage_and_exit( int _argc, char *_argv[] ) {
 

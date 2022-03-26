@@ -41,24 +41,24 @@
 ; VDPUPDATE2:		$3800		$2000
 ; VDPUPDATE3:		$3800		$2000		$0000
 
-if __coleco__
+; if __coleco__
+
+; TEXTATTILEMODE:
+;     CALL WAIT_VDP_HOOK
+;     CALL SET_VDP_HOOK_HL
+;     LD HL, TEXTATTILEMODENMI
+;     CALL SET_VDP_HOOK
+;     CALL WAIT_VDP_HOOK
+;     RET
+
+; TEXTATTILEMODENMI:
+;     CALL GET_VDP_HOOK
+
+; else
 
 TEXTATTILEMODE:
-    CALL WAIT_VDP_HOOK
-    CALL SET_VDP_HOOK_HL
-    LD HL, TEXTATTILEMODENMI
-    CALL SET_VDP_HOOK
-    CALL WAIT_VDP_HOOK
-    RET
 
-TEXTATTILEMODENMI:
-    CALL GET_VDP_HOOK
-
-else
-
-TEXTATTILEMODE:
-
-endif
+; endif
 
 TEXTATTILEMODENMI2:
 
@@ -547,11 +547,11 @@ TEXTATNEXT3:
     PUSH BC
     PUSH DE
     PUSH HL
-    if __coleco__
-        CALL VSCROLLTUPNMI
-    else
+    ; if __coleco__
+    ;     CALL VSCROLLTUPNMI
+    ; else
         CALL VSCROLLTUP
-    endif
+    ; endif
     POP HL
     POP DE
     POP BC

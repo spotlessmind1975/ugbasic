@@ -93,3 +93,5 @@ BITSTOCONVERT equ $4a
 
 XCURSYS fcb 0
 YCURSYS fcb 0
+
+BANKSHADOW      fcb     $00

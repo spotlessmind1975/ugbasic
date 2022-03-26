@@ -189,7 +189,7 @@ Variable * vic2_get_raster_line( Environment * _environment );
 
 Variable * vic2_image_converter( Environment * _environment, char * _data, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags );
 Variable * vic2_sprite_converter( Environment * _environment, char * _data, int _width, int _height, RGBi * _color, int _flags );
-void vic2_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _frame_size, int _flags );
+void vic2_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags );
 void vic2_wait_vbl( Environment * _environment );
 Variable * vic2_new_image( Environment * _environment, int _width, int _height, int _mode );
 void vic2_get_image( Environment * _environment, char * _image, char * _x, char * _y );

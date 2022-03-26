@@ -113,7 +113,7 @@ ma con nomi diversi.
 
 @target all
 </usermanual> */
-Variable * image_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _flags, int _transparent_color, int _background_color ) {
+Variable * image_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _flags, int _transparent_color, int _background_color, int _bank_expansion ) {
 
     if ( _environment->tenLinerRulesEnforced ) {
         CRITICAL_10_LINE_RULES_ENFORCED( "LOAD IMAGE");
@@ -159,6 +159,35 @@ Variable * image_load( Environment * _environment, char * _filename, char * _ali
     result->originalBitmap = source;
     result->originalWidth = width;
     result->originalHeight = height;
+    if ( _bank_expansion && _environment->expansionBanks ) {
+
+        Bank * bank = _environment->expansionBanks;
+
+        while( bank ) {
+            if ( bank->remains > result->size ) {
+                break;
+            }
+            bank = bank->next;
+        } 
+
+        if ( ! bank ) {
+            CRITICAL_EXPANSION_OUT_OF_MEMORY_LOADING( _filename );
+        }
+
+        result->bankAssigned = bank->id;
+        result->absoluteAddress = bank->address;
+        result->residentAssigned = _bank_expansion;
+        result->variableUniqueId = UNIQUE_RESOURCE_ID;
+        memcpy( &bank->data[bank->address], result->valueBuffer, result->size );
+
+        bank->address += result->size;
+        bank->remains -= result->size;
+        if ( _environment->maxExpansionBankSize[_bank_expansion] < result->size ) {
+            _environment->maxExpansionBankSize[_bank_expansion] = result->size;
+        }
+
+    }
+
     // stbi_image_free(source);
 
     LoadedFile * loaded = malloc( sizeof( LoadedFile ) );

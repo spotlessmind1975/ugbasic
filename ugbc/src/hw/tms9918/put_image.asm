@@ -48,24 +48,24 @@
 ; ----------------------------------------------------------------------------
 
 
-if __coleco__
+; if __coleco__
+
+; PUTIMAGE:
+;     CALL WAIT_VDP_HOOK
+;     CALL SET_VDP_HOOK_HL
+;     LD HL, PUTIMAGENMI
+;     CALL SET_VDP_HOOK
+;     CALL WAIT_VDP_HOOK
+;     RET
+
+; PUTIMAGENMI:
+;     CALL GET_VDP_HOOK
+
+; else
 
 PUTIMAGE:
-    CALL WAIT_VDP_HOOK
-    CALL SET_VDP_HOOK_HL
-    LD HL, PUTIMAGENMI
-    CALL SET_VDP_HOOK
-    CALL WAIT_VDP_HOOK
-    RET
 
-PUTIMAGENMI:
-    CALL GET_VDP_HOOK
-
-else
-
-PUTIMAGE:
-
-endif
+; endif
 
 PUTIMAGENMI2:
 

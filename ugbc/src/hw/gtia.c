@@ -1591,11 +1591,11 @@ static Variable * gtia_image_converter_bitmap_mode_standard( Environment * _envi
     // ignored on bitmap mode
     (void)!_transparent_color;
 
-    image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
+    image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
     RGBi palette[MAX_PALETTE];
 
-    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
+    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE, ( ( _flags & FLAG_EXACT ) ? 0 : 1 ) /* sorted */);
 
     if (colorUsed > 2) {
         CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
@@ -1712,12 +1712,12 @@ static Variable * gtia_image_converter_bitmap_mode_standard( Environment * _envi
 
 static Variable * gtia_image_converter_multicolor_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
 
-    image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
+    image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
     RGBi * palette = malloc( MAX_PALETTE * sizeof(RGBi) );
     memset( palette, 0, MAX_PALETTE * sizeof(RGBi) );
 
-    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE);
+    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE, ( ( _flags & FLAG_EXACT ) ? 0 : 1 ) /* sorted */);
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = colorUsed;
 
@@ -2076,7 +2076,7 @@ Variable * gtia_image_converter( Environment * _environment, char * _data, int _
 
 }
 
-void gtia_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, int _frame_size, int _flags ) {
+void gtia_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags ) {
 
     deploy( gtiavars, src_hw_gtia_vars_asm);
     deploy( putimage, src_hw_gtia_put_image_asm );
@@ -2088,10 +2088,12 @@ void gtia_put_image( Environment * _environment, char * _image, char * _x, char 
     outline0("STA TMPPTR" );
     outline1("LDA #>%s", _image );
     outline0("STA TMPPTR+1" );
-    if ( _frame ) {
+
+    if ( _sequence ) {
+
         outline0("CLC" );
         outline0("LDA TMPPTR" );
-        outline0("ADC #2" );
+        outline0("ADC #3" );
         outline0("STA TMPPTR" );
         outline0("LDA TMPPTR+1" );
         outline0("ADC #0" );
@@ -2099,12 +2101,12 @@ void gtia_put_image( Environment * _environment, char * _image, char * _x, char 
         if ( strlen(_frame) == 0 ) {
 
         } else {
-            outline1("LDA #<OFFSETS%4.4x", _frame_size );
+            outline1("LDA #<OFFSETS%4.4x", _frame_size * _frame_count );
             outline0("STA TMPPTR2" );
-            outline1("LDA #>OFFSETS%4.4x", _frame_size );
+            outline1("LDA #>OFFSETS%4.4x", _frame_size * _frame_count );
             outline0("STA TMPPTR2+1" );
             outline0("CLC" );
-            outline1("LDA %s", _frame );
+            outline1("LDA %s", _sequence );
             outline0("ASL" );
             outline0("TAY" );
             outline0("LDA TMPPTR" );
@@ -2115,6 +2117,61 @@ void gtia_put_image( Environment * _environment, char * _image, char * _x, char 
             outline0("ADC (TMPPTR2), Y" );
             outline0("STA TMPPTR+1" );
         }
+
+        if ( _frame ) {
+            if ( strlen(_frame) == 0 ) {
+
+            } else {
+                outline1("LDA #<OFFSETS%4.4x", _frame_size );
+                outline0("STA TMPPTR2" );
+                outline1("LDA #>OFFSETS%4.4x", _frame_size );
+                outline0("STA TMPPTR2+1" );
+                outline0("CLC" );
+                outline1("LDA %s", _frame );
+                outline0("ASL" );
+                outline0("TAY" );
+                outline0("LDA TMPPTR" );
+                outline0("ADC (TMPPTR2), Y" );
+                outline0("STA TMPPTR" );
+                outline0("INY" );
+                outline0("LDA TMPPTR+1" );
+                outline0("ADC (TMPPTR2), Y" );
+                outline0("STA TMPPTR+1" );
+            }
+        }
+
+    } else {
+
+        if ( _frame ) {
+            outline0("CLC" );
+            outline0("LDA TMPPTR" );
+            outline0("ADC #2" );
+            outline0("STA TMPPTR" );
+            outline0("LDA TMPPTR+1" );
+            outline0("ADC #0" );
+            outline0("STA TMPPTR+1" );
+            if ( strlen(_frame) == 0 ) {
+
+            } else {
+                outline1("LDA #<OFFSETS%4.4x", _frame_size );
+                outline0("STA TMPPTR2" );
+                outline1("LDA #>OFFSETS%4.4x", _frame_size );
+                outline0("STA TMPPTR2+1" );
+                outline0("CLC" );
+                outline1("LDA %s", _frame );
+                outline0("ASL" );
+                outline0("TAY" );
+                outline0("LDA TMPPTR" );
+                outline0("ADC (TMPPTR2), Y" );
+                outline0("STA TMPPTR" );
+                outline0("INY" );
+                outline0("LDA TMPPTR+1" );
+                outline0("ADC (TMPPTR2), Y" );
+                outline0("STA TMPPTR+1" );
+            }
+        }
+
+
     }
     outline1("LDA %s", _x );
     outline0("STA IMAGEX" );

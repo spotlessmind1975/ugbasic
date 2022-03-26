@@ -549,7 +549,10 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
 
         if(unsafe && match(buf[2], " * [", NULL))
             optim( buf[0], "(unsafe, presumed dead)", NULL);
-        optim( buf[1], RULE "(STORE*,LOAD*)->(STORE*)", NULL);
+
+        if ( strcmp( v2->str, "$A7C1") ) {
+            optim( buf[1], RULE "(STORE*,LOAD*)->(STORE*)", NULL);
+        }
     }
 
 
@@ -1469,6 +1472,7 @@ static int optim_pass( Environment * _environment, buffer buf[LOOK_AHEAD], enum 
     (void)fclose(fileOptimized);
 
     /* makes our generated file the new asm file */
+    remove(_environment->asmFileName);
     (void)rename( fileNameOptimized, _environment->asmFileName );
     
     return change;

@@ -139,6 +139,26 @@ void mo5_scancode( Environment * _environment, char * _pressed, char * _scancode
 
 }
 
+void mo5_key_pressed( Environment * _environment, char *_scancode, char * _result ) {
+
+    MAKE_LABEL
+
+    char nokeyLabel[MAX_TEMPORARY_STORAGE];
+    sprintf( nokeyLabel, "%slabel", label );
+    
+    Variable * temp = variable_temporary( _environment, VT_BYTE, "(pressed)" );
+
+    mo5_scancode( _environment, temp->realName, _result );
+    cpu_compare_8bit( _environment, _result, _scancode,  temp->realName, 1 );
+    cpu_compare_and_branch_8bit_const( _environment, temp->realName, 0, nokeyLabel, 1 );
+    cpu_store_8bit( _environment, _result, 0xff );
+    cpu_return( _environment );
+    cpu_label( _environment, nokeyLabel );
+    cpu_store_8bit( _environment, _result, 0x00 );
+    cpu_return( _environment );
+
+}
+
 void mo5_scanshift( Environment * _environment, char * _shifts ) {
 
     mo5_keyshift( _environment, _shifts );

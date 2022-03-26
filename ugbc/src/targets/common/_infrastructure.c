@@ -109,7 +109,7 @@ void memory_area_assign( MemoryArea * _first, Variable * _variable ) {
     while( actual ) {
         int enoughSpace = actual->size > neededSpace;
         if ( actual->type == MAT_RAM ) {
-            if ( _variable->type == VT_STRING || _variable->type == VT_BUFFER || _variable->type == VT_IMAGE || _variable->type == VT_IMAGES ) {
+            if ( _variable->type == VT_STRING || _variable->type == VT_BUFFER || _variable->type == VT_IMAGE || _variable->type == VT_IMAGES || _variable->type == VT_SEQUENCE ) {
                 enoughSpace = 0;
             }
         }
@@ -479,6 +479,7 @@ Variable * variable_define_local( Environment * _environment, char * _name, Vari
             case VT_BUFFER:
             case VT_IMAGE:
             case VT_IMAGES:
+            case VT_SEQUENCE:
             case VT_ARRAY:
                 break;
             default:
@@ -839,6 +840,9 @@ Variable * variable_temporary( Environment * _environment, VariableType _type, c
         } else if ( _type == VT_IMAGES ) {
             sprintf(name, "Timgs%d", UNIQUE_ID);
             var->locked = 1;
+        } else if ( _type == VT_SEQUENCE ) {
+            sprintf(name, "Tseq%d", UNIQUE_ID);
+            var->locked = 1;
         } else {
             sprintf(name, "Ttmp%d", UNIQUE_ID);
         }
@@ -887,6 +891,8 @@ Variable * variable_resident( Environment * _environment, VariableType _type, ch
         sprintf(name, "Timg%d", UNIQUE_ID);
     } else if ( _type == VT_IMAGES ) {
         sprintf(name, "Timgs%d", UNIQUE_ID);
+    } else if ( _type == VT_SEQUENCE ) {
+        sprintf(name, "Tseq%d", UNIQUE_ID);
     } else {
         sprintf(name, "Ttmp%d", UNIQUE_ID);
     }
@@ -1191,6 +1197,7 @@ Variable * variable_store_buffer( Environment * _environment, char * _destinatio
     switch( destination->type ) {
         case VT_IMAGE:
         case VT_IMAGES:
+        case VT_SEQUENCE:
         case VT_BUFFER:
             if ( ! destination->valueBuffer ) {
                 destination->valueBuffer = malloc( _size );
@@ -1623,6 +1630,23 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                                     CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
                             }
                             break;
+                        case VT_SEQUENCE:
+                            switch( target->type ) {
+                                case VT_SEQUENCE:
+                                case VT_BUFFER:
+                                    if ( target->size == 0 ) {
+                                        target->size = source->size;
+                                    }
+                                    if ( source->size <= target->size ) {
+                                        cpu_mem_move_direct_size( _environment, source->realName, target->realName, source->size );
+                                    } else {
+                                        CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
+                                    }
+                                    break;
+                                default:
+                                    CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
+                            }
+                            break;
                         case VT_BUFFER:
                             switch( target->type ) {
                                 case VT_DSTRING: {
@@ -1641,6 +1665,7 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                                     CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
                                 case VT_IMAGE:
                                 case VT_IMAGES:
+                                case VT_SEQUENCE:
                                 case VT_BUFFER:
                                     if ( target->size == 0 ) {
                                         target->size = source->size;
@@ -1774,8 +1799,15 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
                     target->originalWidth = source->originalWidth;
                     target->originalHeight = source->originalHeight;
                     target->originalColors = source->originalColors;
+                    target->bankAssigned = source->bankAssigned;
+                    if ( target->bankAssigned ) {
+                        target->absoluteAddress = source->absoluteAddress;
+                        target->residentAssigned = source->residentAssigned;
+                        target->variableUniqueId = source->variableUniqueId;
+                    }
                     memcpy( target->originalPalette, source->originalPalette, MAX_PALETTE * sizeof( RGBi ) );
                 case VT_IMAGES:
+                case VT_SEQUENCE:
                 case VT_ARRAY:
                 case VT_BUFFER: {
                     if ( target->size == 0 ) {
@@ -2603,6 +2635,7 @@ Variable * variable_compare( Environment * _environment, char * _source, char * 
                         }
                         case VT_IMAGE:
                         case VT_IMAGES:
+                        case VT_SEQUENCE:
                         case VT_BUFFER:
                         default:
                             CRITICAL_CANNOT_COMPARE(DATATYPE_AS_STRING[source->type],DATATYPE_AS_STRING[target->type]);
@@ -2648,11 +2681,13 @@ Variable * variable_compare( Environment * _environment, char * _source, char * 
                     break;
                 case VT_IMAGE:
                 case VT_IMAGES:
+                case VT_SEQUENCE:
                 case VT_BUFFER:
                     switch( target->type ) {
                         case VT_BUFFER:
                         case VT_IMAGE:
                         case VT_IMAGES:
+                        case VT_SEQUENCE:
                             cpu_compare_memory_size( _environment, source->realName, target->realName, source->size, result->realName, 1 );
                             break;
                         default:
@@ -3121,11 +3156,13 @@ Variable * variable_less_than( Environment * _environment, char * _source, char 
                     break;
                 case VT_IMAGE:
                 case VT_IMAGES:
+                case VT_SEQUENCE:
                 case VT_BUFFER:
                     switch( target->type ) {
                         case VT_BUFFER:
                         case VT_IMAGE:
                         case VT_IMAGES:
+                        case VT_SEQUENCE:
                             cpu_less_than_memory_size( _environment, source->realName, target->realName, source->size, result->realName, _equal );
                             break;
                         default:                
@@ -3401,11 +3438,13 @@ Variable * variable_greater_than( Environment * _environment, char * _source, ch
                     break;
                 case VT_IMAGE:
                 case VT_IMAGES:
+                case VT_SEQUENCE:
                 case VT_BUFFER:
                     switch( target->type ) {
                         case VT_BUFFER:
                         case VT_IMAGE:
                         case VT_IMAGES:
+                        case VT_SEQUENCE:
                             cpu_greater_than_memory_size( _environment, source->realName, target->realName, source->size, result->realName, _equal );
                             break;
                         default:                
@@ -3608,6 +3647,7 @@ Variable * variable_string_right( Environment * _environment, char * _string, ch
         }
         case VT_IMAGE:
         case VT_IMAGES:
+        case VT_SEQUENCE:
         case VT_BUFFER:
         default:
             CRITICAL_RIGHT_UNSUPPORTED( _string, DATATYPE_AS_STRING[string->type]);
@@ -5385,6 +5425,30 @@ void image_converter_asserts( Environment * _environment, int _width, int _heigh
 
 }
 
+void image_converter_asserts_free_height( Environment * _environment, int _width, int _height, int _offset_x, int _offset_y, int * _frame_width, int * _frame_height ) {
+
+    if ( _width % 8 ) {
+        CRITICAL_IMAGE_CONVERTER_INVALID_WIDTH( _width );
+    }
+
+    if ( *_frame_width == 0 ) {
+        *_frame_width = _width;
+    }
+
+    if ( (_offset_x < 0) || (_offset_x >= _width) || ( ( _offset_x + (*_frame_width ) ) > _width ) ) {
+        CRITICAL_IMAGE_CONVERTER_INVALID_OFFSET_X( _offset_x );
+    }
+
+    if ( *_frame_height == 0 ) {
+        *_frame_height = _height;
+    }
+
+    if ( (_offset_y < 0) || (_offset_y >= _height) || ( ( _offset_y + ( *_frame_height )) > _height ) ) {
+        CRITICAL_IMAGE_CONVERTER_INVALID_OFFSET_Y( _offset_y );
+    }
+
+}
+
 char * image_load_asserts( Environment * _environment, char * _filename ) {
 
     char * lookedFilename = malloc(MAX_TEMPORARY_STORAGE);
@@ -5975,7 +6039,7 @@ static int rgbi_qsort_compare(const void * _first, const void * _second ) {
  * @param _palette_size 
  * @return int 
  */
-int rgbi_extract_palette( unsigned char* _source, int _width, int _height, RGBi _palette[], int _palette_size) {
+int rgbi_extract_palette( unsigned char* _source, int _width, int _height, RGBi _palette[], int _palette_size, int _sorted) {
 
     RGBi rgb;
 
@@ -6023,7 +6087,9 @@ int rgbi_extract_palette( unsigned char* _source, int _width, int _height, RGBi 
     //     printf("  %i) %2.2x%2.2x%2.2x (%d)\n", i, _palette[i].red, _palette[i].green, _palette[i].blue, _palette[i].count );
     // }
 
-    qsort( _palette, _palette_size, sizeof( RGBi ), rgbi_qsort_compare );
+    if ( _sorted ) {
+        qsort( _palette, _palette_size, sizeof( RGBi ), rgbi_qsort_compare );
+    }
 
     // printf("QSORT:\n" );
     // for(i=0;i<8;++i) {

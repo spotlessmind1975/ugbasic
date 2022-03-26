@@ -35,22 +35,22 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-if __coleco__
+; if __coleco__
+
+; VSCROLLTDOWN:
+;     CALL WAIT_VDP_HOOK
+;     LD HL, VSCROLLTDOWNNMI
+;     CALL SET_VDP_HOOK0
+;     CALL WAIT_VDP_HOOK
+;     RET
+
+; VSCROLLTDOWNNMI:
+
+; else
 
 VSCROLLTDOWN:
-    CALL WAIT_VDP_HOOK
-    LD HL, VSCROLLTDOWNNMI
-    CALL SET_VDP_HOOK0
-    CALL WAIT_VDP_HOOK
-    RET
 
-VSCROLLTDOWNNMI:
-
-else
-
-VSCROLLTDOWN:
-
-endif
+; endif
 
 VSCROLLTDOWNNMI2:
 

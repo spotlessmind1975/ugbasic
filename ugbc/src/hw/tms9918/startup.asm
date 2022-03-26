@@ -1,72 +1,82 @@
-if __coleco__
+; if __coleco__
 
-WAIT_VDP_HOOK:
-        LD A,(VDP_HOOK)
-        CP $cd
-        JR Z,WAIT_VDP_HOOK
-        RET
+; WAIT_VDP_HOOK:
+;         LD A,(VDP_HOOK)
+;         CP $cd
+;         JR Z,WAIT_VDP_HOOK
+;         RET
 
-SET_VDP_HOOK0:
-        LD (VDP_HOOK+1),HL
-        LD A,$c9
-        LD (VDP_HOOK+3),A
-        LD A,$cd
-        LD (VDP_HOOK),A
-        RET
+; SET_VDP_HOOK0:
+;         LD (VDP_HOOK+1),HL
+;         LD A,$c9
+;         LD (VDP_HOOK+3),A
+;         LD A,$cd
+;         LD (VDP_HOOK),A
+;         RET
 
-SET_VDP_HOOK:
-        LD (VDP_HOOK+1),HL
-        LD A,$c9
-        LD (VDP_HOOK+3),A
-        LD A, B
-        LD (VDP_HOOK+4),A
-        LD A, C
-        LD (VDP_HOOK+5),A
-        LD A, D
-        LD (VDP_HOOK+6),A
-        LD A, E
-        LD (VDP_HOOK+7),A
-        LD A,$cd
-        LD (VDP_HOOK),A
-        RET
+; SET_VDP_HOOK:
+;         LD (VDP_HOOK+1),HL
+;         LD A,$c9
+;         LD (VDP_HOOK+3),A
+;         LD A, B
+;         LD (VDP_HOOK+4),A
+;         LD A, C
+;         LD (VDP_HOOK+5),A
+;         LD A, D
+;         LD (VDP_HOOK+6),A
+;         LD A, E
+;         LD (VDP_HOOK+7),A
+;         LD A,$cd
+;         LD (VDP_HOOK),A
+;         RET
 
-SET_VDP_HOOK_HL:
-        LD A, H
-        LD (VDP_HOOK+8),A
-        LD A, L
-        LD (VDP_HOOK+9),A
-        RET
+; SET_VDP_HOOK_HL:
+;         LD A, H
+;         LD (VDP_HOOK+8),A
+;         LD A, L
+;         LD (VDP_HOOK+9),A
+;         RET
 
-GET_VDP_HOOK:
-        LD A, (VDP_HOOK+4)
-        LD B, A
-        LD A, (VDP_HOOK+5)
-        LD C, A
-        LD A, (VDP_HOOK+6)
-        LD D, A
-        LD A, (VDP_HOOK+7)
-        LD E, A
-        LD A, (VDP_HOOK+8)
-        LD H, A
-        LD A, (VDP_HOOK+9)
-        LD L, A
-        RET
+; GET_VDP_HOOK:
+;         LD A, (VDP_HOOK+4)
+;         LD B, A
+;         LD A, (VDP_HOOK+5)
+;         LD C, A
+;         LD A, (VDP_HOOK+6)
+;         LD D, A
+;         LD A, (VDP_HOOK+7)
+;         LD E, A
+;         LD A, (VDP_HOOK+8)
+;         LD H, A
+;         LD A, (VDP_HOOK+9)
+;         LD L, A
+;         RET
 
-DONE_VDP_HOOK:
-        LD A,0
-        LD (VDP_HOOK),A
-        RET
+; DONE_VDP_HOOK:
+;         LD A,0
+;         LD (VDP_HOOK),A
+;         RET
 
-endif
+; endif
 
 VDPWRITEBIT: EQU     40H
 
-VDPSETREG:
+VDPSETREGI:
         CALL    VDPREGOUT
         LD      A, E
 VDPREGOUT:
         PUSH    BC
         LD      BC, (VDPCONTROLPORTWRITE)
+; if __sc3000__
+;         NOP
+;         NOP
+;         NOP
+;         NOP
+;         NOP
+;         NOP
+;         NOP
+;         NOP
+; endif
         OUT     (C), A
         POP     BC
         RET
@@ -74,6 +84,16 @@ VDPREGOUT:
 VDPREGIN:
         PUSH    BC
         LD      BC, (VDPCONTROLPORTREAD)
+; if __sc3000__
+;         NOP
+;         NOP
+;         NOP
+;         NOP
+;         NOP
+;         NOP
+;         NOP
+;         NOP
+; endif
         IN      A, (C)
         POP     BC
         RET
@@ -81,6 +101,16 @@ VDPREGIN:
 VDPRAMOUT:
         PUSH    BC
         LD      BC, (VDPDATAPORTWRITE)
+; if __sc3000__
+;         NOP
+;         NOP
+;         NOP
+;         NOP
+;         NOP
+;         NOP
+;         NOP
+;         NOP
+; endif
         OUT     (C), A
         POP     BC
         RET
@@ -88,6 +118,16 @@ VDPRAMOUT:
 VDPRAMOUT8:
         PUSH    BC
         LD      BC, (VDPDATAPORTWRITE)
+; if __sc3000__
+;         NOP
+;         NOP
+;         NOP
+;         NOP
+;         NOP
+;         NOP
+;         NOP
+;         NOP
+; endif
         OUT     (C), A
         NOP
         NOP
@@ -166,6 +206,16 @@ VDPRAMOUT8:
 VDPRAMIN:
         PUSH    BC
         LD      BC, (VDPDATAPORTREAD)
+; if __sc3000__
+;         NOP
+;         NOP
+;         NOP
+;         NOP
+;         NOP
+;         NOP
+;         NOP
+;         NOP
+; endif
         IN      A, (C)
         POP     BC
         RET
@@ -185,6 +235,12 @@ VDPREADADDR:
         LD      A, D                    ; MASK OFF MSB TO MAX OF 16KB
         AND     3FH
         CALL    VDPREGOUT
+        RET
+
+VDPSETREG:
+        DI
+        CALL    VDPSETREGI
+        EI
         RET
 
 VDPOUTCHAR:
@@ -281,170 +337,6 @@ VDPFILLALOOP:
         EI
         RET
 
-VDP_OUT:
-	; LD	HL, 2
-	; ADD	HL, SP
-	; LD	A, (HL)			; VAL
-	; INC 	HL
-	; INC 	HL
-	; LD	E, (HL)			; REG
-	JP 	VDPSETREG
-
-VDP_IN:
-	CALL	VDPREGIN
-	RET
-
-VDP_PUT:
-	LD	HL, 2
-	ADD	HL, SP
-    LD C,(HL)
-    INC HL
-    LD B,(HL)              ; BYTE COUNT
-    INC HL
-    LD E,(HL)
-    INC HL
-    LD D,(HL)              ; VRAM DESTINATION ADDRESS
-    INC HL
-    LD A, (HL)
-    INC HL
-    EX AF,AF'
-    LD A, (HL)
-    INC HL
-    LD H, A
-    EX AF,AF'
-    LD L, A
-    JP VDPWRITE
-
-VDP_PUT8:
-	LD	HL, 2
-	ADD	HL, SP
-    LD C,(HL)
-    INC HL
-    LD B,(HL)              ; BYTE COUNT
-    INC HL
-    LD E,(HL)
-    INC HL
-    LD D,(HL)              ; VRAM DESTINATION ADDRESS
-    INC HL
-    LD A, (HL)
-    INC HL
-    EX AF,AF'
-    LD A, (HL)
-    INC HL
-    LD H, A
-    EX AF,AF'
-    LD L, A
-    JP VDPWRITE8
-
-VDP_FILL8:
-	LD	HL, 2
-	ADD	HL, SP
-    LD C,(HL)
-    INC HL
-    LD B,(HL)              ; BYTE COUNT
-    INC HL
-    LD E,(HL)
-    INC HL
-    LD D,(HL)              ; VRAM DESTINATION ADDRESS
-    INC HL
-	LD	A, (HL)			    ; VALUE TO FILL
-    JP VDPFILL8
-
-VDP_FILL:
-	LD	HL, 2
-	ADD	HL, SP
-    LD C,(HL)
-    INC HL
-    LD B,(HL)              ; BYTE COUNT
-    INC HL
-    LD E,(HL)
-    INC HL
-    LD D,(HL)              ; VRAM DESTINATION ADDRESS
-    INC HL
-	LD	A, (HL)			    ; VALUE TO FILL
-    JP VDPFILL
-
-VDP_GET:
-	LD	HL, 2
-	ADD	HL, SP
-    LD E,(HL)
-    INC HL
-    LD D,(HL)              ; VRAM SOURCE ADDRESS
-    JP VDPREAD
-
-VDP_PORT:
-	LD	HL, 2
-	ADD	HL, SP
-	LD	A, (HL)			; PORT
-    LD (VDPDATAPORTREAD), A
-    LD (VDPDATAPORTWRITE), A
-    INC A
-    LD (VDPCONTROLPORTREAD), A
-    LD (VDPCONTROLPORTWRITE), A
-    RET
-
-VDP_PORT_READ:
-	LD	HL, 2
-	ADD	HL, SP
-	LD	A, (HL)			; PORT
-    LD (VDPDATAPORTREAD), A
-    INC A
-    LD (VDPCONTROLPORTREAD), A
-    RET
-
-VDP_PORT_WRITE:
-	LD	HL, 2
-	ADD	HL, SP
-	LD	A, (HL)			; PORT
-    LD (VDPDATAPORTWRITE), A
-    INC A
-    LD (VDPCONTROLPORTWRITE), A
-    RET
-
-VDP_DATA_PORT:
-	LD	HL, 2
-	ADD	HL, SP
-	LD	A, (HL)			; PORT
-    LD (VDPDATAPORTREAD), A
-    LD (VDPDATAPORTWRITE), A
-    RET
-
-VDP_DATA_PORT_READ:
-	LD	HL, 2
-	ADD	HL, SP
-	LD	A, (HL)			; PORT
-    LD (VDPDATAPORTREAD), A
-    RET
-
-VDP_DATA_PORT_WRITE:
-	LD	HL, 2
-	ADD	HL, SP
-	LD	A, (HL)			; PORT
-    LD (VDPDATAPORTWRITE), A
-    RET
-
-VDP_CONTROL_PORT:
-	LD	HL, 2
-	ADD	HL, SP
-	LD	A, (HL)			; PORT
-    LD (VDPCONTROLPORTREAD), A
-    LD (VDPCONTROLPORTWRITE), A
-    RET
-
-VDP_CONTROL_PORT_READ:
-	LD	HL, 2
-	ADD	HL, SP
-	LD	A, (HL)			; PORT
-    LD (VDPCONTROLPORTREAD), A
-    RET
-
-VDP_CONTROL_PORT_WRITE:
-	LD	HL, 2
-	ADD	HL, SP
-	LD	A, (HL)			; PORT
-    LD (VDPCONTROLPORTWRITE), A
-    RET
-
 VDP_R0              EQU 80H
 VDP_R1              EQU 81H
 VDP_RNAME           EQU 82H
@@ -497,7 +389,7 @@ TMS9918STARTUP:
 
         LD A, VDP_R1
         LD E, A
-        LD A, $f0
+        LD A, $e0
         CALL VDPSETREG
 
         LD A, $C3

@@ -144,10 +144,14 @@
 #define JOY_RIGHT           1
 #define JOY_FIRE            4
 
+#define BANK_COUNT          0
+#define BANK_SIZE           0
+
 void coleco_inkey( Environment * _environment, char * _pressed, char * _key );
 void coleco_scancode( Environment * _environment, char * _pressed, char * _scacode );
 void coleco_scanshift( Environment * _environment, char * _shifts );
 void coleco_keyshift( Environment * _environment, char * _shifts );
+void coleco_key_pressed( Environment * _environment, char *_scancode, char * _result );
 void coleco_clear_key( Environment * _environment );
 void coleco_irq_at( Environment * _environment, char * _label );
 void coleco_follow_irq( Environment * _environment );

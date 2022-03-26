@@ -181,9 +181,43 @@ int convertbintok7(Environment * _environment)
     write_word(fw, 0x0000); /* len = 0 */
     write_word(fw, runaddr); /* exec address */
     out_blk(fw); /* done with k7 block 1 */
-    
     new_blk(0xff); /* k7 block 0xff : end of k7 file */
     out_blk(fw); /* done with it */
+
+    Bank * bank = _environment->expansionBanks;
+
+    while( bank ) {
+
+        if ( bank->address ) {
+
+            char bankNumber[MAX_TEMPORARY_STORAGE];
+            sprintf( bankNumber, "bank%2.2x  dat", bank->id );
+
+            new_blk(0); /* k7 block 0: file name + type */
+            write_bytes(fw, bankNumber, 11); /* file name */
+            write_bytes(fw, &file_type[0], 3); /* file type */
+            out_blk(fw); /* done with block 0 */
+
+            new_blk(1); /* k7 block 2: content of file */
+            write_byte(fw, 0); /* binary chunk */
+            write_word(fw, bank->address); /* size of chunk */
+            write_word(fw, start); /* load address */
+            for (int i=0;i<bank->address;i++)
+            {
+                unsigned char byt = bank->data[i];
+                write_byte(fw, byt); /* data */
+            }
+            
+            out_blk(fw); /* done with k7 block 1 */
+
+        }
+    
+        new_blk(0xff); /* k7 block 0xff : end of k7 file */
+        out_blk(fw); /* done with it */
+
+        bank = bank->next;
+
+    }
         
     fclose(fr);
     fclose(fw);

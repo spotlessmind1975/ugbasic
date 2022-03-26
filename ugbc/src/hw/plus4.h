@@ -126,10 +126,14 @@
 
 #define SCREEN_CAPABILITIES         ( ( 1<<TILEMAP_NATIVE ) | ( 1<<BITMAP_NATIVE ) )
 
+#define BANK_COUNT          0
+#define BANK_SIZE           0
+
 void plus4_xpen( Environment * _environment, char * _destination );
 void plus4_ypen( Environment * _environment, char * _destination );
 void plus4_inkey( Environment * _environment, char * _pressed, char * _key );
 void plus4_scancode( Environment * _environment, char * _pressed, char * _scacode );
+void plus4_key_pressed( Environment * _environment, char *_scancode, char * _result );
 void plus4_scanshift( Environment * _environment, char * _shifts );
 void plus4_keyshift( Environment * _environment, char * _shifts );
 void plus4_clear_key( Environment * _environment );
