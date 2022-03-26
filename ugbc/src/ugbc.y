@@ -603,6 +603,10 @@ direct_integer:
     OP_HASH Integer {
         $$ = $2;
     }
+    |
+    OP_HASH OP_MINUS Integer {
+        $$ = -$3;
+    }
     | OP_HASH Identifier {
         Constant * c = constant_find( ((struct _Environment *)_environment)->constants, $2 );
         if ( !c ) {
