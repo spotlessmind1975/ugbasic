@@ -1859,7 +1859,18 @@ typedef struct _Environment {
 
 #define outembedded0(e)     \
     { \
-        fwrite( e, e##_len, 1, ((Environment *)_environment)->asmFile ); \
+        char parsed[32*MAX_TEMPORARY_STORAGE]; \
+        memset( parsed, 0, 32*MAX_TEMPORARY_STORAGE ); \
+        char * tmp = strdup( e ); \
+        tmp[e##_len] = 0; \
+        char * line = strtok( tmp, "\x0a" ); \
+        while( line ) { \
+            strcat( parsed, line ); \
+            strcat( parsed, "\x0a" ); \
+            line = strtok( NULL, "\x0a" ); \
+        } \
+        free( tmp ); \
+        fwrite( parsed, strlen( parsed )-1, 1, ((Environment *)_environment)->asmFile ); \
         fputs( "\n", ((Environment *)_environment)->asmFile ); \
     } 
 
