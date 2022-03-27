@@ -1049,12 +1049,16 @@ typedef struct _InputConfig {
 typedef struct _VestigialConfig {
 
     char screenModeUnique;
+    char doubleBufferSelected;
+    char doubleBuffer;
 
 } VestigialConfig;
 
 typedef struct _EmbedResult {
 
-    int excluded;
+    char * line;
+    int current;
+    int excluded[MAX_NESTED_ARRAYS];
     int conditional;
 
 } EmbedResult;
@@ -1893,11 +1897,12 @@ int embed_scan_string (const char *);
         memcpy( tmp, e, e##_len ); \
         char * line = strtok( tmp, "\x0a" ); \
         while( line ) { \
+            _environment->embedResult.line = line; \
             _environment->embedResult.conditional = 0; \
             embed_scan_string( line ); \
             embedparse(_environment); \
             if ( ! _environment->embedResult.conditional ) { \
-                if ( ! _environment->embedResult.excluded ) { \
+                if ( ! _environment->embedResult.excluded[_environment->embedResult.current-1] ) { \
                     strcat( parsed, line ); \
                     strcat( parsed, "\x0a" ); \
                 } \

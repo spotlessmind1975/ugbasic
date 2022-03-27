@@ -35,63 +35,65 @@ int embedwrap() { return 1; }
 %token <string> Identifier
 %token <integer> Integer
 
-%type <integer> const_expr const_term const_modula const_factor const_expr_math
+%type <integer> const_expr const_factor
 
 %right Integer String CP 
 %left OP
-%right ELSE
-%left AND OR
+%right ELSE OP_NOT
+%left OP_AND OP_OR
 
 %%
 
 const_expr : 
-      const_expr_math
-    | const_expr_math AND const_expr_math {        
+      const_factor {
+        // printf( "%d\n", $1 );
+      }
+    | const_factor OP_AND const_expr {        
+        // printf( "%d AND %d\n", $1, $3 );
         $$ = ( $1 && $3 );
     } 
-    | const_expr_math OR const_expr_math {
+    | const_factor OP_OR const_expr {
+        // printf( "%d OR %d\n", $1, $3 );
         $$ = ( $1 || $3 );
     } 
-    | const_expr_math OP_EQUAL const_expr_math {
+    | const_factor OP_EQUAL const_factor {
+        // printf( "%d == %d\n", $1, $3 );
         $$ = ( $1 == $3 );
     }
-    | const_expr_math OP_DISEQUAL const_expr_math {
+    | const_factor OP_DISEQUAL const_factor {
+        // printf( "%d != %d\n", $1, $3 );
         $$ = ( $1 != $3 );
     }
-    | OP_NOT const_expr {
+    | OP_NOT const_factor {
+        // printf( "NOT %d\n", $2 );
         $$ = ( ! $2 );
     }
     ;
     
-const_expr_math: 
-      const_term
-    ;
-
-const_term:
-      const_modula
-    ;
-
-const_modula: 
-      const_factor
-    ;
-
 const_factor: 
         Integer {
+        //   printf( "# %d\n", $1 );
           $$ = $1;
       }
       | OP const_expr CP {
+        //   printf( "(%d)\n", $2 );
           $$ = $2;
       }
       | Identifier OP_POINT Identifier {
         if ( strcmp( $1, "vestigialConfig" ) == 0 ) {
             if ( strcmp( $3, "screenModeUnique" ) == 0 ) {
                 $$ = ((struct _Environment *)_environment)->vestigialConfig.screenModeUnique;
+            } else if ( strcmp( $3, "doubleBufferSelected" ) == 0 ) {
+                $$ = ((struct _Environment *)_environment)->vestigialConfig.doubleBufferSelected;
+            } else if ( strcmp( $3, "doubleBuffer" ) == 0 ) {
+                $$ = ((struct _Environment *)_environment)->vestigialConfig.doubleBuffer;
             } else {
                 $$ = 0;
             }
         } else {
             $$ = 0;
         }
+        // printf( "%s.%s == %d\n", $1, $3, $$ );
       }
       | Identifier {
         if ( strcmp( $1, "currentMode" ) == 0 ) {
@@ -99,50 +101,57 @@ const_factor:
         } else {
             $$ = 0;
         }
+        //   printf( "%s == %d\n", $1, $$ );
       }
       ;
 
 embed:
     OP_AT IF const_expr {
-        printf("@IF %d\n", $3);
+    //    printf( "--- IF ---\n" );
+
       ((struct _Environment *)_environment)->embedResult.conditional = 1;
     if ( $3 ) {
-        ((struct _Environment *)_environment)->embedResult.excluded = 0;
+        ((struct _Environment *)_environment)->embedResult.excluded[((struct _Environment *)_environment)->embedResult.current] = 0;
     } else {
-        ((struct _Environment *)_environment)->embedResult.excluded = 1;
+        ((struct _Environment *)_environment)->embedResult.excluded[((struct _Environment *)_environment)->embedResult.current] = 1;
     }
+    ++((struct _Environment *)_environment)->embedResult.current;
   }
   | OP_AT ELSE {
     ((struct _Environment *)_environment)->embedResult.conditional = 1;
-    if ( ((struct _Environment *)_environment)->embedResult.excluded ) {
-        ((struct _Environment *)_environment)->embedResult.excluded = 0;
+    if ( ((struct _Environment *)_environment)->embedResult.excluded[((struct _Environment *)_environment)->embedResult.current-1] ) {
+        ((struct _Environment *)_environment)->embedResult.excluded[((struct _Environment *)_environment)->embedResult.current-1] = 0;
     } else {
-        ((struct _Environment *)_environment)->embedResult.excluded = 1;
+        ((struct _Environment *)_environment)->embedResult.excluded[((struct _Environment *)_environment)->embedResult.current-1] = 1;
     }
   }
   | OP_AT ELSE IF const_expr {
     ((struct _Environment *)_environment)->embedResult.conditional = 1;
-    if ( ((struct _Environment *)_environment)->embedResult.excluded ) {
+    if ( ((struct _Environment *)_environment)->embedResult.excluded[((struct _Environment *)_environment)->embedResult.current-1] ) {
         if ( $4 ) {
-            ((struct _Environment *)_environment)->embedResult.excluded = 0;
+            ((struct _Environment *)_environment)->embedResult.excluded[((struct _Environment *)_environment)->embedResult.current-1] = 0;
         } else {
-            ((struct _Environment *)_environment)->embedResult.excluded = 1;
+            ((struct _Environment *)_environment)->embedResult.excluded[((struct _Environment *)_environment)->embedResult.current-1] = 1;
         }
     }
   }
   | OP_AT ELSEIF const_expr {
     ((struct _Environment *)_environment)->embedResult.conditional = 1;
-    if ( ((struct _Environment *)_environment)->embedResult.excluded ) {
+    if ( ((struct _Environment *)_environment)->embedResult.excluded[((struct _Environment *)_environment)->embedResult.current-1] ) {
         if ( $3 ) {
-            ((struct _Environment *)_environment)->embedResult.excluded = 0;
+            ((struct _Environment *)_environment)->embedResult.excluded[((struct _Environment *)_environment)->embedResult.current-1] = 0;
         } else {
-            ((struct _Environment *)_environment)->embedResult.excluded = 1;
+            ((struct _Environment *)_environment)->embedResult.excluded[((struct _Environment *)_environment)->embedResult.current-1] = 1;
         }
     }
   }
   | OP_AT ENDIF {
     ((struct _Environment *)_environment)->embedResult.conditional = 1;
-    ((struct _Environment *)_environment)->embedResult.excluded = 0;
+    ((struct _Environment *)_environment)->embedResult.excluded[((struct _Environment *)_environment)->embedResult.current-1] = 0;
+    --((struct _Environment *)_environment)->embedResult.current;
+  }
+  | %empty {
+      return 0;
   }
   ;
 
@@ -150,6 +159,9 @@ embed:
 
 int embederror (Environment * _ignored, const char *s) /* Called by embedparse on error */
 {
+    fprintf(stderr, "*** LINE: %s\n", _ignored->embedResult.line );
+    fprintf(stderr,  "*** ERROR: %s at %d column %d (%d)\n", s, 0, (embedcolno+1), (yyposno+1));
 
+    // fprintf(stdout, "*** error!\n" );
 }
 

@@ -4363,6 +4363,14 @@ define_definition :
     | SCREEN MODE UNIQUE {
         ((struct _Environment *)_environment)->vestigialConfig.screenModeUnique = 1;
     }    
+    | DOUBLE BUFFER ON {
+        ((struct _Environment *)_environment)->vestigialConfig.doubleBufferSelected = 1;
+        ((struct _Environment *)_environment)->vestigialConfig.doubleBuffer = 1;
+    }    
+    | DOUBLE BUFFER OFF {
+        ((struct _Environment *)_environment)->vestigialConfig.doubleBufferSelected = 1;
+        ((struct _Environment *)_environment)->vestigialConfig.doubleBuffer = 0;
+    }    
     ;
 
 define_definitions :
