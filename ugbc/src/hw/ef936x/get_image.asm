@@ -84,7 +84,7 @@ GETIMAGE4XDB
     RTS
 @ENDIF
 
-@IF ! vestigialConfig.screenModeUnique || ( currentMode == 1 || currentMode == 4 )
+@IF ! vestigialConfig.screenModeUnique || ( (currentMode == 1) || (currentMode == 4) )
 
 GETIMAGE1DB
 GETIMAGE4DB
@@ -92,7 +92,7 @@ GETIMAGE4DB
 
 @ENDIF
 
-@IF ! vestigialConfig.screenModeUnique || ( currentMode == 0 || currentMode == 2 )
+@IF ! vestigialConfig.screenModeUnique || ( (currentMode == 0) || (currentMode == 2) )
 
 GETIMAGE0DB
 GETIMAGE2DB
@@ -333,7 +333,7 @@ GETIMAGE4X
 
 @ENDIF
 
-@IF ! vestigialConfig.screenModeUnique || ( currentMode == 1 || currentMode == 4 )
+@IF ! vestigialConfig.screenModeUnique || ( (currentMode == 1) || (currentMode == 4) )
 
 GETIMAGE1
 GETIMAGE4
@@ -341,7 +341,7 @@ GETIMAGE4
 
 @ENDIF
 
-@IF ! vestigialConfig.screenModeUnique || ( currentMode == 0 || currentMode == 2 )
+@IF ! vestigialConfig.screenModeUnique || ( (currentMode == 0) || (currentMode == 2) )
 
 GETIMAGE0
 GETIMAGE2

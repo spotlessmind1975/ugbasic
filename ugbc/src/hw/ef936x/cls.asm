@@ -38,11 +38,11 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 CLS
+    PSHS  DP
+
 @IF vestigialConfig.screenModeUnique
 
 @ELSE
-    PSHS  DP
-
     LDA CURRENTMODE
     BEQ CLS0
     DECA
