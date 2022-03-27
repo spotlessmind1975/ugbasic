@@ -65,15 +65,23 @@ PLOT
     STU <PLOTY
     STA <PLOTM
 
+@IF vestigialConfig.doubleBufferSelected
+
+@ELSE
+
     ; Check if double buffering is active -- in case,
     ; whe should use a different version.
     LDA DOUBLEBUFFERENABLED
     CMPA #0
     LBEQ PLOTORIG
 
+@ENDIF
+
 ; ----------------------------------------------
 ; Version active on double buffering ON
 ; ----------------------------------------------
+
+@IF !vestigialConfig.doubleBufferSelected || vestigialConfig.doubleBuffer
 
 PLOTDB
 
@@ -109,6 +117,10 @@ PLOTDB
     TFR Y, D
     LEAX D, X
 
+@IF vestigialConfig.screenModeUnique
+
+@ELSE
+
 PLOTMODEDB
     LDA CURRENTMODE
     CMPA #0
@@ -132,6 +144,10 @@ PLOT3XDB
     JMP PLOT4DB
 PLOT4XDB
     RTS
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 0 ) || ( currentMode == 1 ) || ( currentMode == 2 ) || ( currentMode == 4 ) )
 
 PLOT0DB
 PLOT1DB
@@ -157,6 +173,10 @@ PLOT4DB
     LEAU B, U
 
     JMP PLOTCOMMONDB
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 3 ) )
 
 PLOT3DB
 
@@ -211,6 +231,8 @@ PLOT3DB
 
     JMP PLOTCOMMONDB
 
+@ENDIF
+
 PLOTCOMMONDB
 
     ;----------------------------------------------
@@ -238,6 +260,10 @@ PLOTCXDB
 
 PLOTDDB
 
+@IF vestigialConfig.screenModeUnique
+
+@ELSE
+
     LDA CURRENTMODE
     CMPA #0
     BNE PLOTD0XDB
@@ -256,6 +282,10 @@ PLOTD2XDB
     JMP PLOTD3DB
 PLOTD3XDB
     JMP PLOTP
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 0 ) || ( currentMode == 1 ) ( currentMode == 4 ) )
 
 PLOTD0DB
 PLOTD1DB
@@ -293,6 +323,10 @@ PLOTD4DB
     STA , X           ;write back to $A000
 
     JMP PLOTP                  ;skip the erase-point section
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 2 ) )
 
 PLOTD2DB
 
@@ -352,6 +386,10 @@ PLOTD24DB
 PLOTD25DB
     JMP PLOTP                  ;skip the erase-point section
 
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 3 ) )
+
 PLOTD3DB
 
     LDA _PEN
@@ -395,6 +433,8 @@ PLOTD3LODB
 
 PLOTD3FDB
     JMP PLOTP                  ;skip the erase-point section
+
+#ENDIF
 
     ;-----------
     ;erase point
@@ -444,6 +484,8 @@ PLOTCDB
 
 	RTS
 
+@ENDIF
+
 PLOTORBIT4
     fcb %00000001
     fcb %00010000
@@ -468,6 +510,8 @@ PLOTANDBIT4
 ; Version active on double buffering OFF
 ; ----------------------------------------------
 
+@IF !vestigialConfig.doubleBufferSelected || !vestigialConfig.doubleBuffer
+
 PLOTORIG
 
     LDB <PLOTY+1
@@ -477,11 +521,19 @@ PLOTORIG
     TFR D,X       ; 6
     
     LDU #$A7C0    ; that adress is handy
-    
+
+@IF vestigialConfig.screenModeUnique
+
+@ELSE
+
 PLOTMODE
     LDA CURRENTMODE
     CMPA #3       ; mode 3 ?
     BNE PLOT0     ; no => goto common adress decoding
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( currentMode == 3 )
 
 PLOT3             ; yes
     LDA ,U
@@ -496,13 +548,23 @@ PLOT3             ; yes
     STA ,U        ; select proper plane
     
     BRA PLOTCOMMON
-    
+
+@ENDIF
+
+@IF vestigialConfig.screenModeUnique
+
+@ELSE
+
 PLOTD             ; plot draw (placed here to keep the jump small)
     LDA CURRENTMODE
     CMPA #2
     BEQ PLOTD2    ; plot in mode 2
     CMPA #3
     BEQ PLOTD3    ; plot in mode 3
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( (currentMode == 0) || (currentMode == 1) || (currentMode == 4) )
 
 PLOTD0
 PLOTD1
@@ -534,6 +596,8 @@ PLOTD4x
     STA ,X        ; write back to video memory
     RTS           ; done
 
+@ENDIF
+
     ;-----------
     ;erase point
     ;-----------
@@ -543,7 +607,9 @@ PLOTE
     ANDA 8,Y      ; clear bit
     STA ,X        ; write back to video memory
     RTS           ; done
-   
+
+@IF !vestigialConfig.screenModeUnique || ( (currentMode == 0) || (currentMode == 1) || (currentMode == 4) )
+
 PLOT0
 PLOT1
 PLOT2
@@ -564,6 +630,8 @@ PLOT4
     ANDB #254
     STB ,U
 
+@ENDIF
+
 PLOTCOMMON
     ;----------------------------------------------
     ;depending on PLOTM, routine draws or erases
@@ -577,6 +645,8 @@ PLOTCOMMON
     DECA            
     BEQ PLOTC     ; if = 3 then branch to get the color index (0...15)
     RTS
+
+@IF !vestigialConfig.screenModeUnique || ( (currentMode == 2) )
 
 PLOTD2            ; Draw point with mode 2 (we are in plane0)
     LDA ,X        ; get row with point in it
@@ -601,6 +671,10 @@ PLOTD24
 PLOTD25
     STA ,X        ; write back to video memory
     RTS           ; done
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( (currentMode == 3) )
 
 PLOTD3
     LDA _PEN      ; Draw point in mode 3
@@ -628,6 +702,8 @@ PLOTD3LO
     ANDA #$F0
     BRA PLOTD3nibble
 
+@ENDIF
+
 PLOTG             ; get point $00=unset $ff=set
     LDA CURRENTMODE
     CMPA #2
@@ -650,6 +726,10 @@ PLOTG3
     ANDB #$0F     ; yes => return 0
     BRA PLOTG0    ; no => return true
 
+@IF vestigialConfig.screenModeUnique
+
+@ELSE
+
 ; Get pixel color according to video mode
 PLOTC
     LDA CURRENTMODE
@@ -657,6 +737,11 @@ PLOTC
     BEQ PLOT2C    ; mode 2 specific
     CMPA #3
     BEQ PLOT3C    ; mode 3 specific
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 0 ) || ( currentMode == 1 ) || ( currentMode == 4 ) )
+
 PLOT0C
 PLOT1C
 PLOT4C            ; modes 0/1/4
@@ -675,6 +760,10 @@ PLOTC01
 ;   STB <PLOTM
     RTS
 
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 2 ) )
+
 PLOT2C
     CLRB          ; mode 2 - clear all bits
     LDA ,X        ; get bitmask at plane0
@@ -691,6 +780,10 @@ PLOT2C1
 ;   STB <PLOTM
     RTS           ; result in B
 
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 3 ) )
+
 PLOT3C
     LDB ,X        ; mode 3 - get color pair
     LDA <PLOTX+1
@@ -698,7 +791,11 @@ PLOT3C
     BCS PLOTC01   ; odd column => lower nibble
     BRA PLOTC00   ; even column => upper nibble
 
+@ENDIF
+
 ;----------------------------------------------------------------
+
+@ENDIF
 
 PLOTORBIT
     fcb %10000000

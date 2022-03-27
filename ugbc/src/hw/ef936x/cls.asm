@@ -38,6 +38,9 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 CLS
+@IF vestigialConfig.screenModeUnique
+
+@ELSE
     PSHS  DP
 
     LDA CURRENTMODE
@@ -51,7 +54,9 @@ CLS
     DECA
     BEQ CLS4
     PULS DP,PC
+@ENDIF
 
+@IF ( !vestigialConfig.screenModeUnique ) || ( currentMode == 2 )
 CLS2
     CLRA
     LDB _PAPER
@@ -66,7 +71,10 @@ CLS2
     LEAU B,U
     TFR A,B
     BRA CLSG
+@ENDIF
 
+
+@IF ( !vestigialConfig.screenModeUnique ) || ( currentMode == 3 )
 CLS3
     LDA _PAPER
     ANDA #$0F
@@ -75,7 +83,9 @@ CLS3
     TFR B,A
     TFR D,U
     BRA CLSG
+@ENDIF
 
+@IF ( ! vestigialConfig.screenModeUnique ) || ( ( currentMode == 0 ) || ( currentMode == 1 ) || ( currentMode == 4 ) )
 CLS0
 CLS1
 CLS4
@@ -90,8 +100,12 @@ CLS4
     ORA ,S+
     TFR A,B
     LDU #0
-    
+@ENDIF
+
 CLSG
+@IF vestigialConfig.doubleBufferSelected
+
+@ELSE
     ; Check if double buffering is active -- in case,
     ; whe should use a different version.
     PSHS D
@@ -99,10 +113,14 @@ CLSG
     CMPA #0
     BEQ CLSGORIG
     PULS D
+@ENDIF
+
 
 ; ----------------------------------------------
 ; Version active on double buffering ON
 ; ----------------------------------------------
+
+@IF ( !vestigialConfig.doubleBufferSelected ) || ( vestigialConfig.doubleBuffer )
 
     LDY BITMAPADDRESS
 CLSGDB
@@ -116,9 +134,13 @@ CLSGDB2
     BNE CLSGDB2
     PULS DP,PC
 
+@ENDIF
+
 ; ----------------------------------------------
 ; Version active on double buffering OFF
 ; ----------------------------------------------
+
+@IF ( !vestigialConfig.doubleBufferSelected ) || ( !vestigialConfig.doubleBuffer )
 
 CLSGORIG
     PULS D
@@ -164,3 +186,4 @@ CLSGL2
     BLO CLSGL1
     PULS DP,PC
 
+@ENDIF

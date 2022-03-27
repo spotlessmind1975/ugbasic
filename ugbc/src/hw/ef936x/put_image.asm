@@ -39,15 +39,27 @@
 
 PUTIMAGE
 
+@IF vestigialConfig.doubleBufferSelected 
+
+@ELSE
+
     ; Check if double buffering is active -- in case,
     ; whe should use a different version.
     LDA DOUBLEBUFFERENABLED
     CMPA #0
     LBEQ PUTIMAGEORIG
 
+@ENDIF
+
 ; ----------------------------------------------
 ; Version active on double buffering ON
 ; ----------------------------------------------
+
+@IF !vestigialConfig.doubleBufferSelected || vestigialConfig.doubleBuffer
+
+@IF vestigialConfig.screenModeUnique
+
+@ELSE
 
 PUTIMAGEDB
     LDA CURRENTMODE
@@ -73,9 +85,17 @@ PUTIMAGE3XDB
 PUTIMAGE4XDB
     RTS
 
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 1 ) || ( currentMode == 4 ) )
+
 PUTIMAGE1DB
 PUTIMAGE4DB
     RTS
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 0 ) || ( currentMode == 2 ) )
 
 PUTIMAGE0DB
 PUTIMAGE2DB
@@ -143,6 +163,10 @@ PUTIMAGE2DB
 
     JMP PUTIMAGE2YDB
 
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 3 ) )
+
 PUTIMAGE3DB
 
     PSHS Y
@@ -177,6 +201,8 @@ PUTIMAGE3DB
     PSHS X,D
 
     JMP PUTIMAGE2YDB
+
+@ENDIF
 
 PUTIMAGE2YDB
     LDA <IMAGET
@@ -531,11 +557,20 @@ PUTIMAGECOMMONEDB
 
 	RTS
 
+@ENDIF
+
 ; ----------------------------------------------
 ; Version active on double buffering OFF
 ; ----------------------------------------------
 
+@IF !vestigialConfig.doubleBufferSelected || !vestigialConfig.doubleBuffer
+
 PUTIMAGEORIG
+
+@IF vestigialConfig.screenModeUnique
+
+@ELSE
+
     LDA CURRENTMODE
     CMPA #0
     BNE PUTIMAGE0X
@@ -559,9 +594,17 @@ PUTIMAGE3X
 PUTIMAGE4X
     RTS
 
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 1 ) || ( currentMode == 4 ) )
+
 PUTIMAGE1
 PUTIMAGE4
     RTS
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 0 ) || ( currentMode == 2 ) )
 
 PUTIMAGE0
 PUTIMAGE2
@@ -629,6 +672,10 @@ PUTIMAGE2
 
     JMP PUTIMAGE2Y
 
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 3 ) )
+
 PUTIMAGE3
 
     PSHS Y
@@ -663,6 +710,8 @@ PUTIMAGE3
     PSHS X,D
 
     JMP PUTIMAGE2Y
+
+@ENDIF
 
 PUTIMAGE2Y
     LDA <IMAGET
@@ -753,9 +802,6 @@ PUTIMAGE2YTRANS3L1N0
     STA <IMAGEF
 
 PUTIMAGE2YTRANS3L1N
-
-
-
 
     LDB <IMAGEW
     LEAY B, Y
@@ -970,9 +1016,6 @@ PUTIMAGE2L12N0
 
 PUTIMAGE2L12N
 
-
-
-
     LDB <IMAGEW
     LEAY B, Y
 
@@ -1012,3 +1055,5 @@ PUTIMAGECOMMONE5
 
 PUTIMAGECOMMONE
     RTS
+
+@ENDIF
