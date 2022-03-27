@@ -64,10 +64,6 @@ const_expr :
         // printf( "%d != %d\n", $1, $3 );
         $$ = ( $1 != $3 );
     }
-    | OP_NOT const_factor {
-        // printf( "NOT %d\n", $2 );
-        $$ = ( ! $2 );
-    }
     ;
     
 const_factor: 
@@ -78,6 +74,10 @@ const_factor:
       | OP const_expr CP {
         //   printf( "(%d)\n", $2 );
           $$ = $2;
+      }
+      | OP_NOT const_factor {
+        // printf( "NOT %d\n", $2 );
+          $$ = ( ! $2 );
       }
       | Identifier OP_POINT Identifier {
         if ( strcmp( $1, "vestigialConfig" ) == 0 ) {

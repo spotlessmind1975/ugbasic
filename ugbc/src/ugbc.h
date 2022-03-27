@@ -1902,7 +1902,12 @@ int embed_scan_string (const char *);
             embed_scan_string( line ); \
             embedparse(_environment); \
             if ( ! _environment->embedResult.conditional ) { \
-                if ( ! _environment->embedResult.excluded[_environment->embedResult.current-1] ) { \
+                int i; \
+                for( i=0; i<_environment->embedResult.current; ++i ) { \
+                    if ( _environment->embedResult.excluded[i] ) \
+                        break; \
+                } \
+                if ( i>= _environment->embedResult.current ) { \
                     strcat( parsed, line ); \
                     strcat( parsed, "\x0a" ); \
                 } \
