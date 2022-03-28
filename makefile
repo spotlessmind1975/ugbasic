@@ -30,7 +30,7 @@
 
 .PHONY: paths compiler clean all
 
-EXAMPLES := $(wildcard examples/*.bas)
+EXAMPLES := examples/morror.bas
 COMPILED := $(subst examples/,generated/$(target)/asm/,$(EXAMPLES:.bas=.asm))
 EXECUTABLES := $(subst /asm/,/exe/,$(COMPILED:.asm=.$(output)))
 

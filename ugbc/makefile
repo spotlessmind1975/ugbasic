@@ -175,6 +175,19 @@ src-generated/modules_atarixl.c: $(SOURCES_6502) $(SOURCES_ANTIC) $(SOURCES_ATAR
 	@grep "src" src-generated/modules_atarixl.c | awk -f modules.awk >src-generated/modules_atarixl.h
 	@grep "data" src-generated/modules_atarixl.c | awk -f modules.awk >>src-generated/modules_atarixl.h
 
+# Amstrad CPC464
+
+MODULES_CPC := $(wildcard src/hw/cpc/*.asm)
+SOURCES_CPC := $(subst src/hw/cpc/,src-generated/cpc_,$(MODULES_CPC:.asm=.c))
+
+src-generated/cpc_%.c: $(MODULES_CPC)
+	@xxd -i $(subst src-generated/cpc_,src/hw/cpc/,$(@:.c=.asm)) >$@
+
+src-generated/modules_cpc.c: $(SOURCES_Z80) $(SOURCES_CPC)
+	@cat $(SOURCES_Z80) $(SOURCES_CPC) >src-generated/modules_cpc.c
+	@grep "src" src-generated/modules_cpc.c | awk -f modules.awk >src-generated/modules_cpc.h
+	@grep "data" src-generated/modules_cpc.c | awk -f modules.awk >>src-generated/modules_cpc.h
+
 # ColecoVision
 
 MODULES_COLECO := $(wildcard src/hw/coleco/*.asm)
@@ -356,7 +369,7 @@ src-generated/ugbc.embed.yy.c: src/ugbc.embed.lex src/ugbc.embed.y
 	@flex ${FLEX_OPTIONS} --prefix=embed --outfile=src-generated/ugbc.embed.yy.c src/ugbc.embed.lex
 
 src-generated/ugbc.embed.tab.c: src/ugbc.embed.lex src/ugbc.embed.y
-	@bison ${BISON_OPTIONS} -p embed --file-prefix=src-generated/ugbc.embed src/ugbc.embed.y
+	@bison ${BISON_OPTIONS} --debug -p embed --file-prefix=src-generated/ugbc.embed src/ugbc.embed.y
 
 # ----------------------------------------------------------------------------
 # ----------------------------------------------------------------------------
@@ -379,7 +392,7 @@ SOURCESTEST += $(wildcard src/hw/*.c)
 SOURCESTEST += $(wildcard src/targets/common/*.c)
 SOURCESTEST += $(wildcard src/targets/$(target)/*.c)
 SOURCESTEST += $(wildcard src-test/suites/*.c)
-SOURCESTEST += src-generated/modules_$(target).c src-test/tester.c src-test/tester_c64.c src-test/tester_plus4.c src-test/tester_atari.c src-test/tester_atarixl.c src-test/tester_coleco.c src-test/tester_msx1.c src-test/tester_zx.c src-test/tester_d32.c src-test/tester_d64.c src-test/tester_pc128op.c src-test/tester_mo5.c src-test/tester_vic20.c src-test/tester_sc3000.c src-test/tester_sg1000.c
+SOURCESTEST += src-generated/modules_$(target).c src-test/tester.c src-test/tester_c64.c src-test/tester_plus4.c src-test/tester_atari.c src-test/tester_atarixl.c src-test/tester_coleco.c src-test/tester_msx1.c src-test/tester_zx.c src-test/tester_d32.c src-test/tester_d64.c src-test/tester_pc128op.c src-test/tester_mo5.c src-test/tester_vic20.c src-test/tester_sc3000.c src-test/tester_sg1000.c src-test/tester_cpc.c
 
 paths:
 	@mkdir -p src-generated
