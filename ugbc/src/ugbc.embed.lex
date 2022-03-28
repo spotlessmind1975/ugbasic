@@ -34,6 +34,7 @@ ELSE { RETURN(ELSE,1); }
 ELSEIF { RETURN(ELSEIF,1); }
 ENDIF { RETURN(ENDIF,1); }
 
+[\n\r]+ { RETURN(NewLine,0);}
 \$[a-fA-F0-9]+ { embedlval.integer = strtol(embedtext+1,0,16); RETURN(Integer,1); }
 &[Hh][a-fA-F0-9]+ { embedlval.integer = strtol(embedtext+2,0,16); RETURN(Integer,1); }
 0x[a-fA-F0-9]+ { embedlval.integer = strtol(embedtext+2,0,16); RETURN(Integer,1); }
