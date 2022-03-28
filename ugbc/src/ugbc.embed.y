@@ -150,7 +150,7 @@ embed:
     ((struct _Environment *)_environment)->embedResult.excluded[((struct _Environment *)_environment)->embedResult.current-1] = 0;
     --((struct _Environment *)_environment)->embedResult.current;
   }
-  | %empty {
+  | {
       return 0;
   }
   ;
