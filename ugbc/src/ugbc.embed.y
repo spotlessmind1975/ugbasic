@@ -30,7 +30,7 @@ int embedwrap() { return 1; }
 }
 
 %token OP CP OP_AT OP_EQUAL OP_DISEQUAL OP_AND OP_OR OP_NOT OP_POINT
-%token IF ELSE ELSEIF ENDIF
+%token IF ELSE ELSEIF ENDIF NewLine
 
 %token <string> Identifier
 %token <integer> Integer
@@ -105,7 +105,7 @@ const_factor:
       }
       ;
 
-embed:
+embed2:
     OP_AT IF const_expr {
     //    printf( "--- IF ---\n" );
 
@@ -150,17 +150,21 @@ embed:
     ((struct _Environment *)_environment)->embedResult.excluded[((struct _Environment *)_environment)->embedResult.current-1] = 0;
     --((struct _Environment *)_environment)->embedResult.current;
   }
-  | %empty {
+  | {
       return 0;
   }
   ;
+
+embed :
+    embed2
+    | embed2 NewLine;
 
 %%
 
 int embederror (Environment * _ignored, const char *s) /* Called by embedparse on error */
 {
-    fprintf(stderr, "*** LINE: %s\n", _ignored->embedResult.line );
-    fprintf(stderr,  "*** ERROR: %s at %d column %d (%d)\n", s, 0, (embedcolno+1), (yyposno+1));
+    printf( "*** LINE: %s\n", _ignored->embedResult.line );
+    printf( "*** ERROR: %s at %d column %d (%d)\n", s, 0, (embedcolno+1), (yyposno+1));
 
     // fprintf(stdout, "*** error!\n" );
 }

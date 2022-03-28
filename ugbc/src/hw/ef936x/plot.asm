@@ -285,7 +285,7 @@ PLOTD3XDB
 
 @ENDIF
 
-@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 0 ) || ( currentMode == 1 ) ( currentMode == 4 ) )
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 0 ) || ( currentMode == 1 ) || ( currentMode == 4 ) )
 
 PLOTD0DB
 PLOTD1DB
