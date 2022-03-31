@@ -60,6 +60,9 @@ src-generated/fontvic2.c:
 src-generated/fonttms9918.c:
 	@xxd -i $(subst src-generated/,data/,$(@:.c=.bin)) >$@
 
+src-generated/fontcpc.c:
+	@xxd -i $(subst src-generated/,data/,$(@:.c=.bin)) >$@
+
 # ----------------------------------------------------------------------------
 # Components and chipsets
 # ----------------------------------------------------------------------------
@@ -183,8 +186,8 @@ SOURCES_CPC := $(subst src/hw/cpc/,src-generated/cpc_,$(MODULES_CPC:.asm=.c))
 src-generated/cpc_%.c: $(MODULES_CPC)
 	@xxd -i $(subst src-generated/cpc_,src/hw/cpc/,$(@:.c=.asm)) >$@
 
-src-generated/modules_cpc.c: $(SOURCES_Z80) $(SOURCES_CPC)
-	@cat $(SOURCES_Z80) $(SOURCES_CPC) >src-generated/modules_cpc.c
+src-generated/modules_cpc.c: $(SOURCES_Z80) $(SOURCES_CPC) src-generated/fontcpc.c
+	@cat $(SOURCES_Z80) $(SOURCES_CPC) src-generated/fontcpc.c >src-generated/modules_cpc.c
 	@grep "src" src-generated/modules_cpc.c | awk -f modules.awk >src-generated/modules_cpc.h
 	@grep "data" src-generated/modules_cpc.c | awk -f modules.awk >>src-generated/modules_cpc.h
 

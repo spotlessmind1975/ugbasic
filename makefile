@@ -30,7 +30,7 @@
 
 .PHONY: paths compiler clean all
 
-EXAMPLES := examples/morror.bas
+EXAMPLES := $(wildcard examples/*.bas)
 COMPILED := $(subst examples/,generated/$(target)/asm/,$(EXAMPLES:.bas=.asm))
 EXECUTABLES := $(subst /asm/,/exe/,$(COMPILED:.asm=.$(output)))
 
@@ -169,6 +169,18 @@ generated/sg1000/exe/%.rom:
 	@mv $(subst /exe/,/asm/,$(@:.rom=_code_user.bin)) $(@:.rom=_code_user.bin)
 	@mv $(subst /exe/,/asm/,$(@:.rom=_data_user.bin)) $(@:.rom=_data_user.bin)
 	@cat $(@:.rom=_code_user.bin) $(@:.rom=_data_user.bin) >$(@)
+
+generated/cpc/asm/%.asm:
+	@ugbc/exe/ugbc.cpc $(subst generated/cpc/asm/,examples/,$(@:.asm=.bas)) $@ 
+
+generated/cpc/exe/%.dsk:
+	@z88dk-z80asm -D__cpc__ -l -m -s -g -b $(subst /exe/,/asm/,$(@:.dsk=.asm))
+	@mv $(subst /exe/,/asm/,$(@:.dsk=.sym)) $(subst /exe/,/asm/,$(@:.dsk=.osym))
+	@php sym2cpc.php $(subst /exe/,/asm/,$(@:.dsk=.osym)) >$(subst /exe/,/asm/,$(@:.rom=.sym))
+	@rm -f $(subst /exe/,/asm/,$(@:.dsk=.o))
+	@mv $(subst /exe/,/asm/,$(@:.dsk=.bin)) $(@:.dsk=.bin)
+	@z88dk-appmake +cpc --org $1200 --disk -b $(@:.dsk=.bin) -o $(subst _,,$(@:.dsk=.com))
+	@rm -f $(@:.dsk=.bin) $(@:.dsk=_*.bin)
 
 paths:
 	@mkdir -p generated
