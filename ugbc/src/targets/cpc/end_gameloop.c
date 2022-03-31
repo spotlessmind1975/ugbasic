@@ -1,6 +1,3 @@
-#ifndef __UGBASICTESTER__
-#define __UGBASICTESTER__
-
 /*****************************************************************************
  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
  *****************************************************************************
@@ -35,53 +32,62 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <limits.h>
-#include <unistd.h>
-
-#include "../src/ugbc.h"
+#include "../../ugbc.h"
 
 /****************************************************************************
- * DECLARATIONS AND DEFINITIONS SECTION 
+ * CODE SECTION 
  ****************************************************************************/
 
-void test_cpu( );
-void test_variables( );
-void test_conditionals( );
-void test_loops( );
-void test_ons( );
-void test_controls( );
-void test_examples( );
-void test_print( );
+/**
+ * @brief Emit ASM code for <b>END GAMELOOP</b>
+ * 
+ * This function is called to emit the code necessary to define the ending 
+ * point of a game loop.
+ * 
+ * @pre A <b>BEGIN GAMELOOP</b> must be issued before use this function.
+ * 
+ * @param _environment Current calling environment
+ * @throw EXIT_FAILURE "Cannot call END GAMELOOP without BEGIN GAMELOOP"
+ */
+/* <usermanual>
+@keyword END GAMELOOP
 
-#if defined( __c64__ )
-    #include "tester_c64.h"
-#elif defined( __plus4__ )
-    #include "tester_plus4.h"
-#elif defined( __atari__ )
-    #include "tester_atari.h"
-#elif defined( __atarixl__ )
-    #include "tester_atarixl.h"
-#elif defined( __zx__ )
-    #include "tester_zx.h"
-#elif defined( __d32__ )
-    #include "tester_d32.h"
-#elif defined( __d64__ )
-    #include "tester_d64.h"
-#elif defined( __pc128op__ )
-    #include "tester_pc128op.h"
-#elif defined( __mo5__ )
-    #include "tester_mo5.h"
-#elif defined( __vic20__ )
-    #include "tester_vic20.h"
-#elif defined( __msx1__ )
-    #include "tester_msx1.h"
-#elif defined( __coleco__ )
-    #include "tester_coleco.h"
-#elif defined( __cpc__ )
-    #include "tester_cpc.h"
-#endif
+@english
+Define the ending point of a game loop.
 
-#endif
+@italian
+Definisce il punto di arrivo di un loop di gioco.
+
+@syntax END GAMELOOP
+
+@example END GAMELOOP
+
+@target coleco
+</usermanual> */
+void end_gameloop( Environment * _environment ) {
+
+    Loop * loop = _environment->loops;
+
+    if ( ! loop ) {
+        CRITICAL("END GAMELOOP without BEGIN GAMELOOP");
+    }
+
+    if ( loop->type != LT_GAMELOOP ) {
+        CRITICAL("END GAMELOOP without BEGIN GAMELOOP");
+    }
+
+    _environment->loops = _environment->loops->next;
+
+    if ( _environment->hasGameLoop ) {
+        if ( _environment->anyProtothread ) {
+            run_parallel( _environment );
+        }
+        cpu_return( _environment );
+        unsigned char newLabel[MAX_TEMPORARY_STORAGE]; sprintf(newLabel, "%send", loop->label );
+        cpu_label( _environment, newLabel );
+        _environment->hasGameLoop = 0;
+    } else {
+         CRITICAL("Cannot call END GAMELOOP without BEGIN GAMELOOP");
+    }
+
+}

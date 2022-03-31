@@ -1,6 +1,3 @@
-#ifndef __UGBASICTESTER__
-#define __UGBASICTESTER__
-
 /*****************************************************************************
  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
  *****************************************************************************
@@ -35,53 +32,33 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <limits.h>
-#include <unistd.h>
+#include "../../ugbc.h"
 
-#include "../src/ugbc.h"
+/**
+ * @brief Emit ASM code for instruction <b>COLOR BACKGROUND [int] TO [int]x</b>
+ * 
+ * This function outputs the ASM code to change the background color, among 
+ * those available. It should be used where the command is invoked with a 
+ * direct integer value.
+ * 
+ * @param _environment Current calling environment
+ * @param _index Index of the background color
+ * @param _background_color Index of the color to use
+ */
+void color_background( Environment * _environment, int _index, int _background_color ) {
+    
+}
 
-/****************************************************************************
- * DECLARATIONS AND DEFINITIONS SECTION 
- ****************************************************************************/
+/**
+ * @brief Emit ASM code for instruction <b>COLOR BACKGROUND [expression] TO [expression]</b>
+ * 
+ * This function outputs the ASM code to change the background color, among 
+ * those available. It should be used where the command is invoked with expressions.
+ * 
+ * @param _environment Current calling environment
+ * @param _index Expression with the index of the background color
+ * @param _background_color Expression with the index of the color to use
+ */
+void color_background_vars( Environment * _environment, char * _index, char * _background_color ) {
 
-void test_cpu( );
-void test_variables( );
-void test_conditionals( );
-void test_loops( );
-void test_ons( );
-void test_controls( );
-void test_examples( );
-void test_print( );
-
-#if defined( __c64__ )
-    #include "tester_c64.h"
-#elif defined( __plus4__ )
-    #include "tester_plus4.h"
-#elif defined( __atari__ )
-    #include "tester_atari.h"
-#elif defined( __atarixl__ )
-    #include "tester_atarixl.h"
-#elif defined( __zx__ )
-    #include "tester_zx.h"
-#elif defined( __d32__ )
-    #include "tester_d32.h"
-#elif defined( __d64__ )
-    #include "tester_d64.h"
-#elif defined( __pc128op__ )
-    #include "tester_pc128op.h"
-#elif defined( __mo5__ )
-    #include "tester_mo5.h"
-#elif defined( __vic20__ )
-    #include "tester_vic20.h"
-#elif defined( __msx1__ )
-    #include "tester_msx1.h"
-#elif defined( __coleco__ )
-    #include "tester_coleco.h"
-#elif defined( __cpc__ )
-    #include "tester_cpc.h"
-#endif
-
-#endif
+}

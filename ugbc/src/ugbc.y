@@ -5461,10 +5461,12 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     printf("\t                rom - cartridge ROM\n" );
 #elif __sc3000__
     printf("\t                rom - cartridge ROM\n" );
+#elif __cpc__
+    printf("\t                dsk - disk image\n" );
 #endif
     printf("\t-l <name>    Output filename with list of variables defined\n" );
     printf("\t-e <modules> Embed specified modules instead of inline code\n" );
-#if defined(__zx__) || defined(__msx1__) || defined(__coleco__) || defined(__sc3000__) || defined(__sg1000__)
+#if defined(__zx__) || defined(__msx1__) || defined(__coleco__) || defined(__sc3000__) || defined(__sg1000__) || defined(__cpc__)
     printf("\t-L <ignored> Output filename with assembly listing file\n" );
 #else
     printf("\t-L <listing> Output filename with assembly listing file\n" );
@@ -5518,6 +5520,8 @@ int main( int _argc, char *_argv[] ) {
     _environment->outputFileType = OUTPUT_FILE_TYPE_ROM;
 #elif __sg1000__
     _environment->outputFileType = OUTPUT_FILE_TYPE_ROM;
+#elif __cpc__
+    _environment->outputFileType = OUTPUT_FILE_TYPE_DSK;
 #endif
 
     while ((opt = getopt(_argc, _argv, "ae:c:Wo:Ie:l:EO:dL:C:VA:T:1p:G:")) != -1) {

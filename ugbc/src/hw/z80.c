@@ -38,7 +38,7 @@
  * CODE SECTION
  ****************************************************************************/
 
-#if defined(__zx__) || defined(__msx1__) || defined(__coleco__) || defined(__sc3000__) || defined(__sg1000__)
+#if defined(__zx__) || defined(__msx1__) || defined(__coleco__) || defined(__sc3000__) || defined(__sg1000__) || defined(__cpc__)
 
 /**
  * @brief <i>Z80</i>: emit code to make long conditional jump

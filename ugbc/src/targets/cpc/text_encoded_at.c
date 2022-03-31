@@ -1,6 +1,3 @@
-#ifndef __UGBASICTESTER__
-#define __UGBASICTESTER__
-
 /*****************************************************************************
  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
  *****************************************************************************
@@ -35,53 +32,38 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <limits.h>
-#include <unistd.h>
-
-#include "../src/ugbc.h"
+#include "../../ugbc.h"
 
 /****************************************************************************
- * DECLARATIONS AND DEFINITIONS SECTION 
+ * CODE SECTION 
  ****************************************************************************/
 
-void test_cpu( );
-void test_variables( );
-void test_conditionals( );
-void test_loops( );
-void test_ons( );
-void test_controls( );
-void test_examples( );
-void test_print( );
+void text_encoded( Environment * _environment, char * _text, char * _pen, char * _paper  ) {
 
-#if defined( __c64__ )
-    #include "tester_c64.h"
-#elif defined( __plus4__ )
-    #include "tester_plus4.h"
-#elif defined( __atari__ )
-    #include "tester_atari.h"
-#elif defined( __atarixl__ )
-    #include "tester_atarixl.h"
-#elif defined( __zx__ )
-    #include "tester_zx.h"
-#elif defined( __d32__ )
-    #include "tester_d32.h"
-#elif defined( __d64__ )
-    #include "tester_d64.h"
-#elif defined( __pc128op__ )
-    #include "tester_pc128op.h"
-#elif defined( __mo5__ )
-    #include "tester_mo5.h"
-#elif defined( __vic20__ )
-    #include "tester_vic20.h"
-#elif defined( __msx1__ )
-    #include "tester_msx1.h"
-#elif defined( __coleco__ )
-    #include "tester_coleco.h"
-#elif defined( __cpc__ )
-    #include "tester_cpc.h"
-#endif
+    Variable * text = variable_retrieve( _environment, _text );
+    Variable * pen = variable_retrieve( _environment, _pen );
+    Variable * paper = variable_retrieve( _environment, _paper );
 
-#endif
+    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
+    Variable * size = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
+
+    switch( text->type ) {
+        case VT_STRING: {
+            cpu_move_8bit( _environment, text->realName, size->realName );
+            cpu_addressof_16bit( _environment, text->realName, address->realName );
+            cpu_inc_16bit( _environment, address->realName );
+            break;
+        }
+        case VT_DSTRING: {
+            cpu_dsdescriptor( _environment, text->realName, address->realName, size->realName );
+            break;
+        }
+        case VT_CHAR:
+            cpu_addressof_16bit( _environment, text->realName, address->realName );
+            cpu_store_8bit( _environment, size->realName, 1 );
+            break;        
+    }
+
+    cpc_text( _environment, address->realName, size->realName );
+
+}

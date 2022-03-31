@@ -1,6 +1,3 @@
-#ifndef __UGBASICTESTER__
-#define __UGBASICTESTER__
-
 /*****************************************************************************
  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
  *****************************************************************************
@@ -35,53 +32,28 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <limits.h>
-#include <unistd.h>
-
-#include "../src/ugbc.h"
+#include "../../ugbc.h"
 
 /****************************************************************************
- * DECLARATIONS AND DEFINITIONS SECTION 
+ * CODE SECTION 
  ****************************************************************************/
 
-void test_cpu( );
-void test_variables( );
-void test_conditionals( );
-void test_loops( );
-void test_ons( );
-void test_controls( );
-void test_examples( );
-void test_print( );
+extern char DATATYPE_AS_STRING[][16];
 
-#if defined( __c64__ )
-    #include "tester_c64.h"
-#elif defined( __plus4__ )
-    #include "tester_plus4.h"
-#elif defined( __atari__ )
-    #include "tester_atari.h"
-#elif defined( __atarixl__ )
-    #include "tester_atarixl.h"
-#elif defined( __zx__ )
-    #include "tester_zx.h"
-#elif defined( __d32__ )
-    #include "tester_d32.h"
-#elif defined( __d64__ )
-    #include "tester_d64.h"
-#elif defined( __pc128op__ )
-    #include "tester_pc128op.h"
-#elif defined( __mo5__ )
-    #include "tester_mo5.h"
-#elif defined( __vic20__ )
-    #include "tester_vic20.h"
-#elif defined( __msx1__ )
-    #include "tester_msx1.h"
-#elif defined( __coleco__ )
-    #include "tester_coleco.h"
-#elif defined( __cpc__ )
-    #include "tester_cpc.h"
-#endif
+void wait_key( Environment * _environment ) {
 
-#endif
+    MAKE_LABEL
+
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of SCANCODE)");
+
+    Variable * pressed = variable_temporary( _environment, VT_BYTE, "(key pressed?)");
+
+    char repeatLabel[MAX_TEMPORARY_STORAGE]; sprintf(repeatLabel, "%srepeat", label );
+
+    cpu_label( _environment, repeatLabel );
+
+    cpc_scancode( _environment, pressed->realName, result->realName );
+
+    cpu_bveq( _environment, pressed->realName, repeatLabel );
+
+}

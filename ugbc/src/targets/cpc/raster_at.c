@@ -1,6 +1,3 @@
-#ifndef __UGBASICTESTER__
-#define __UGBASICTESTER__
-
 /*****************************************************************************
  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
  *****************************************************************************
@@ -35,53 +32,44 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <limits.h>
-#include <unistd.h>
-
-#include "../src/ugbc.h"
+#include "../../ugbc.h"
 
 /****************************************************************************
- * DECLARATIONS AND DEFINITIONS SECTION 
+ * CODE SECTION 
  ****************************************************************************/
 
-void test_cpu( );
-void test_variables( );
-void test_conditionals( );
-void test_loops( );
-void test_ons( );
-void test_controls( );
-void test_examples( );
-void test_print( );
+/**
+ * @brief Emit ASM code for <b>RASTER AT [int]x WITH label</b>
+ * 
+ * This function outputs assembly code needed to initialize a raster routine. 
+ * In other words, asynchronously and in parallel with the execution of the 
+ * main program, the routine starting from the label provided will be executed
+ * when the vertical brush on the screen reaches the value of _position. 
+ * This function is particularly useful when the position is communicated 
+ * is given as an integer.
+ * 
+ * @param _environment Current calling environment
+ * @param _label Label to jump to when vertical raster reach the value given
+ * @param _position The vertical position to wait for
+ */
+void raster_at( Environment * _environment, char * _label, int _position ) {
+    
+}
 
-#if defined( __c64__ )
-    #include "tester_c64.h"
-#elif defined( __plus4__ )
-    #include "tester_plus4.h"
-#elif defined( __atari__ )
-    #include "tester_atari.h"
-#elif defined( __atarixl__ )
-    #include "tester_atarixl.h"
-#elif defined( __zx__ )
-    #include "tester_zx.h"
-#elif defined( __d32__ )
-    #include "tester_d32.h"
-#elif defined( __d64__ )
-    #include "tester_d64.h"
-#elif defined( __pc128op__ )
-    #include "tester_pc128op.h"
-#elif defined( __mo5__ )
-    #include "tester_mo5.h"
-#elif defined( __vic20__ )
-    #include "tester_vic20.h"
-#elif defined( __msx1__ )
-    #include "tester_msx1.h"
-#elif defined( __coleco__ )
-    #include "tester_coleco.h"
-#elif defined( __cpc__ )
-    #include "tester_cpc.h"
-#endif
-
-#endif
+/**
+ * @brief Emit ASM code for <b>RASTER AT [expression] WITH label</b>
+ * 
+ * This function outputs assembly code needed to initialize a raster routine. 
+ * In other words, asynchronously and in parallel with the execution of the 
+ * main program, the routine starting from the label provided will be executed
+ * when the vertical brush on the screen reaches the value of _position. 
+ * This function is particularly useful when the position is communicated 
+ * is given as an expression
+ * 
+ * @param _environment Current calling environment
+ * @param _label Label to jump to when vertical raster reach the value given
+ * @param _position The vertical position to wait for
+ */
+void raster_at_var( Environment * _environment, char * _label, char * _position ) {
+   
+}

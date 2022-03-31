@@ -125,7 +125,8 @@ typedef enum _OutputFileType {
     OUTPUT_FILE_TYPE_K7_NEW = 4,
     OUTPUT_FILE_TYPE_TAP = 5,
     OUTPUT_FILE_TYPE_CAS = 6,
-    OUTPUT_FILE_TYPE_ROM = 7
+    OUTPUT_FILE_TYPE_ROM = 7,
+    OUTPUT_FILE_TYPE_DSK = 8
 
 } OutputFileType;
 
@@ -161,6 +162,7 @@ typedef struct _RGBi {
     unsigned char blue;
     unsigned char index;
     char description[64];
+    unsigned char hardwareIndex;
     unsigned char used;
     int count;
 } RGBi;
@@ -985,6 +987,9 @@ typedef struct _Deployed {
     int sc3000vars;
     int sg1000vars;
     int colecovars;
+    int cpcvars;
+    int cpcvarsGraphic;
+    int cpcstartup;
     int tms9918vars;
     int tms9918varsGraphic;
     int tms9918startup;
