@@ -173,14 +173,22 @@ generated/sg1000/exe/%.rom:
 generated/cpc/asm/%.asm:
 	@ugbc/exe/ugbc.cpc $(subst generated/cpc/asm/,examples/,$(@:.asm=.bas)) $@ 
 
+# to be loaded with:
+#
+# 10 MEMORY &1200
+# 20 LOAD "main.com",&1200
+# 30 CALL &1200
+# RUN
+#
 generated/cpc/exe/%.dsk:
 	@z88dk-z80asm -D__cpc__ -l -m -s -g -b $(subst /exe/,/asm/,$(@:.dsk=.asm))
 	@mv $(subst /exe/,/asm/,$(@:.dsk=.sym)) $(subst /exe/,/asm/,$(@:.dsk=.osym))
 	@php sym2cpc.php $(subst /exe/,/asm/,$(@:.dsk=.osym)) >$(subst /exe/,/asm/,$(@:.rom=.sym))
 	@rm -f $(subst /exe/,/asm/,$(@:.dsk=.o))
 	@mv $(subst /exe/,/asm/,$(@:.dsk=.bin)) $(@:.dsk=.bin)
-	@z88dk-appmake +cpc --org $1200 --disk -b $(@:.dsk=.bin) -o $(subst _,,$(@:.dsk=.com))
-	@rm -f $(@:.dsk=.bin) $(@:.dsk=_*.bin)
+	z88dk-appmake +cpc --org $1200 --disk -b $(@:.dsk=.bin) -o $(dir $@)main.com
+	@mv $(dir $@)main.dsk $@
+	@rm -f $(@:.dsk=.bin) $(@:.dsk=_*.bin) $(dir $@)main.com
 
 paths:
 	@mkdir -p generated
