@@ -130,7 +130,7 @@ generated/msx1/exe/%.rom:
 	@mv $(subst /exe/,/asm/,$(@:.rom=_data_user.bin)) $(@:.rom=_data_user.bin)
 	@cat $(@:.rom=_code_user.bin) $(@:.rom=_data_user.bin) >$(@:.rom=.bin)
 	@rm $(@:.rom=_code_user.bin) $(@:.rom=_data_user.bin)
-	@z88dk-appmake +msxrom -b $(@:.rom=.bin)
+	@z88dk-appmake +msxrom -b $(@:.rom=.bin) 2>/dev/null
 	@rm -f $(@:.rom=.bin) $(@:.rom=_*.bin)
 
 generated/coleco/asm/%.asm:
@@ -145,7 +145,7 @@ generated/coleco/exe/%.rom:
 	@mv $(subst /exe/,/asm/,$(@:.rom=_data_user.bin)) $(@:.rom=_data_user.bin)
 	@cat $(@:.rom=_code_user.bin) $(@:.rom=_data_user.bin) >$(@:.rom=.bin)
 	@rm $(@:.rom=_code_user.bin) $(@:.rom=_data_user.bin)
-	@z88dk-appmake +msxrom -b $(@:.rom=.bin)
+	@z88dk-appmake +msxrom -b $(@:.rom=.bin) 2>/dev/null
 	@rm -f $(@:.rom=.bin) $(@:.rom=_*.bin)
 
 generated/sc3000/asm/%.asm:

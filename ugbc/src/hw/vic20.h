@@ -119,6 +119,10 @@
 #define KEY_X						23
 #define KEY_Y						25
 #define KEY_Z						12
+#define KEY_UP                      0 // ?
+#define KEY_DOWN                    0 // ?
+#define KEY_LEFT                    0 // ?
+#define KEY_RIGHT                   0 // ?
 
 #define INPUT_DEFAULT_SEPARATOR     ','
 #define INPUT_DEFAULT_SIZE          32
