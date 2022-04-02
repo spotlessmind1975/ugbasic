@@ -162,5 +162,6 @@ void mo5_busy_wait( Environment * _environment, char * _timing );
 void mo5_irq_at( Environment * _environment, char * _label );
 void mo5_follow_irq( Environment * _environment );
 int mo5_convertbintok7_original(Environment * _environment);
+void mo5_joystick( Environment * _environment, char * _joystick, char * _result );
 
 #endif
