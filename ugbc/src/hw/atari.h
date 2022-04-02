@@ -123,6 +123,10 @@
 #define KEY_POUND                   0 // ?
 #define KEY_RUNSTOP                 0 // ?
 #define KEY_SEMICOLON               0 // ?
+#define KEY_UP                      0 // ?
+#define KEY_DOWN                    0 // ?
+#define KEY_LEFT                    0 // ?
+#define KEY_RIGHT                   0 // ?
 
 #define INPUT_DEFAULT_SEPARATOR     ','
 #define INPUT_DEFAULT_SIZE          32
