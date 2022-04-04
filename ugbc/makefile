@@ -30,7 +30,7 @@
 
 FLEX_OPTIONS=--8bit 
 BISON_OPTIONS=--locations -d -Wcounterexamples
-CFLAGS=-O3 -fomit-frame-pointer
+CFLAGS=-O3 -fomit-frame-pointer -g
 LFLAGS=
 LIBS=-lm
 
@@ -187,6 +187,19 @@ src-generated/modules_coleco.c: $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_COLE
 	@cat $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_COLECO) >src-generated/modules_coleco.c
 	@grep "src" src-generated/modules_coleco.c | awk -f modules.awk >src-generated/modules_coleco.h
 	@grep "data" src-generated/modules_coleco.c | awk -f modules.awk >>src-generated/modules_coleco.h
+
+# Commodore 128
+
+MODULES_C128 := $(wildcard src/hw/c128/*.asm)
+SOURCES_C128 := $(subst src/hw/c128/,src-generated/c128_,$(MODULES_C128:.asm=.c))
+
+src-generated/c128_%.c: $(MODULES_C128)
+	@xxd -i $(subst src-generated/c128_,src/hw/c128/,$(@:.c=.asm)) >$@
+
+src-generated/modules_c128.c: $(SOURCES_6502) $(SOURCES_C128) $(SOURCES_VIC2)
+	@cat $(SOURCES_6502) $(SOURCES_C128) $(SOURCES_VIC2) >src-generated/modules_c128.c
+	@grep "src" src-generated/modules_c128.c | awk -f modules.awk >src-generated/modules_c128.h
+	@grep "data" src-generated/modules_c128.c | awk -f modules.awk >>src-generated/modules_c128.h
 
 # Commodore 64
 
@@ -379,7 +392,7 @@ SOURCESTEST += $(wildcard src/hw/*.c)
 SOURCESTEST += $(wildcard src/targets/common/*.c)
 SOURCESTEST += $(wildcard src/targets/$(target)/*.c)
 SOURCESTEST += $(wildcard src-test/suites/*.c)
-SOURCESTEST += src-generated/modules_$(target).c src-test/tester.c src-test/tester_c64.c src-test/tester_plus4.c src-test/tester_atari.c src-test/tester_atarixl.c src-test/tester_coleco.c src-test/tester_msx1.c src-test/tester_zx.c src-test/tester_d32.c src-test/tester_d64.c src-test/tester_pc128op.c src-test/tester_mo5.c src-test/tester_vic20.c src-test/tester_sc3000.c src-test/tester_sg1000.c
+SOURCESTEST += src-generated/modules_$(target).c src-test/tester.c src-test/tester_c64.c src-test/tester_plus4.c src-test/tester_atari.c src-test/tester_atarixl.c src-test/tester_coleco.c src-test/tester_msx1.c src-test/tester_zx.c src-test/tester_d32.c src-test/tester_d64.c src-test/tester_pc128op.c src-test/tester_mo5.c src-test/tester_vic20.c src-test/tester_sc3000.c src-test/tester_sg1000.c src-test/tester_c128.c
 
 paths:
 	@mkdir -p src-generated

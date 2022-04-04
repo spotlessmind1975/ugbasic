@@ -2688,6 +2688,11 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "hw/z80.h"
     #include "hw/sg1000.h"
     #include "hw/tms9918.h"
+#elif __c128__
+    #include "../src-generated/modules_c128.h"
+    #include "hw/6502.h"
+    #include "hw/vic2.h"
+    #include "hw/c128.h"
 #endif
 
 #endif

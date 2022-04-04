@@ -5489,6 +5489,8 @@ char * image_load_asserts( Environment * _environment, char * _filename ) {
     strcat( lookedFilename, "/sc3000" );
 #elif __sg1000__
     strcat( lookedFilename, "/sg1000" );
+#elif __c128__
+    strcat( lookedFilename, "/c128" );
 #endif
     strcat( lookedFilename, lookedExtension );
 

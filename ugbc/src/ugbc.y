@@ -61,7 +61,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token OVERLAYED CASE ENDSELECT OGP CGP ARRAY NEW GET DISTANCE TYPE MUL DIV RGB SHADES HEX PALETTE
 %token BAR XGRAPHIC YGRAPHIC XTEXT YTEXT COLUMNS XGR YGR CHAR RAW SEPARATOR MSX MSX1 COLECO CSPRITE 
 %token TILESET MOVE ROW COLUMN TRANSPARENT DOUBLE RESPAWN HALTED SC3000 SG1000 MEMORY VIDEO MMOVE SWAP
-%token BELONG FIRST EXACT PRESSED PC128OP MO5 VARPTR READ WRITE BANKED SEQUENCE MODE UNIQUE
+%token BELONG FIRST EXACT PRESSED PC128OP MO5 VARPTR READ WRITE BANKED SEQUENCE MODE UNIQUE C128
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -4394,6 +4394,14 @@ target :
         #endif
     }
     |
+    C128 {
+        #ifdef __c128__
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }
+    |
     C64 {
         #ifdef __c64__
             $$ = 1;
@@ -5366,6 +5374,8 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     char target[MAX_TEMPORARY_STORAGE] = "ATARI 400/800";
 #elif defined(__atarixl__) 
     char target[MAX_TEMPORARY_STORAGE] = "ATARI XL";
+#elif __c128__
+    char target[MAX_TEMPORARY_STORAGE] = "Commodore 128";
 #elif __c64__
     char target[MAX_TEMPORARY_STORAGE] = "Commodore 64";
 #elif __plus4__
@@ -5428,6 +5438,8 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
 #elif __atarixl__ 
     printf("\t                xex - executable binary file\n" );
 #elif __c64__
+    printf("\t                prg - program binary file\n" );
+#elif __c128__
     printf("\t                prg - program binary file\n" );
 #elif __plus4__
     printf("\t                prg - program binary file\n" );
@@ -5508,6 +5520,8 @@ int main( int _argc, char *_argv[] ) {
     _environment->outputFileType = OUTPUT_FILE_TYPE_ROM;
 #elif __sg1000__
     _environment->outputFileType = OUTPUT_FILE_TYPE_ROM;
+#elif __c128__
+    _environment->outputFileType = OUTPUT_FILE_TYPE_PRG;
 #endif
 
     while ((opt = getopt(_argc, _argv, "ae:c:Wo:Ie:l:EO:dL:C:VA:T:1p:G:")) != -1) {
