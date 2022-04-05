@@ -49,6 +49,9 @@
 </usermanual> */
 void double_buffer( Environment * _environment, int _enabled ) {
 
+    deploy( cls, src_hw_ef936x_cls_asm );
+    deploy( doubleBuffer, src_hw_ef936x_double_buffer_asm );
+
     if ( _environment->doubleBufferEnabled != _enabled ) {
 
         _environment->doubleBufferEnabled = _enabled;

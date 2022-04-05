@@ -61,7 +61,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token OVERLAYED CASE ENDSELECT OGP CGP ARRAY NEW GET DISTANCE TYPE MUL DIV RGB SHADES HEX PALETTE
 %token BAR XGRAPHIC YGRAPHIC XTEXT YTEXT COLUMNS XGR YGR CHAR RAW SEPARATOR MSX MSX1 COLECO CSPRITE 
 %token TILESET MOVE ROW COLUMN TRANSPARENT DOUBLE RESPAWN HALTED SC3000 SG1000 MEMORY VIDEO MMOVE SWAP
-%token BELONG FIRST EXACT PRESSED PC128OP MO5 VARPTR READ WRITE BANKED SEQUENCE
+%token BELONG FIRST EXACT PRESSED PC128OP MO5 VARPTR READ WRITE BANKED SEQUENCE MODE UNIQUE C128
 %token SOUND BOOM SHOOT BELL NOTE VOLUME PLAY INSTRUMENT AAHS ACCORDION ACOUSTIC AGE AGOGO 
 %token ALTO APPLAUSE ATMOSPHERE BAG BANJO BARITONE BASS BASSOON BELLS BIRD BLOWN BOTTLE BOWED BRASS
 %token BREATH BRIGHT BRIGHTNESS CALLIOPE CELESTA CELLO CHARANG CHIFF CHOIR CHURCH CLARINET CLAVI CLEAN 
@@ -4773,6 +4773,17 @@ define_definition :
         }
         ((struct _Environment *)_environment)->inputConfig.cursor = $3;
     }    
+    | SCREEN MODE UNIQUE {
+        ((struct _Environment *)_environment)->vestigialConfig.screenModeUnique = 1;
+    }    
+    | DOUBLE BUFFER ON {
+        ((struct _Environment *)_environment)->vestigialConfig.doubleBufferSelected = 1;
+        ((struct _Environment *)_environment)->vestigialConfig.doubleBuffer = 1;
+    }    
+    | DOUBLE BUFFER OFF {
+        ((struct _Environment *)_environment)->vestigialConfig.doubleBufferSelected = 1;
+        ((struct _Environment *)_environment)->vestigialConfig.doubleBuffer = 0;
+    }    
     ;
 
 define_definitions :
@@ -4790,6 +4801,14 @@ target :
     |
     ATARIXL {
         #ifdef __atarixl__
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }
+    |
+    C128 {
+        #ifdef __c128__
             $$ = 1;
         #else
             $$ = 0;
@@ -5767,7 +5786,7 @@ program :
 
 %%
 
-char version[MAX_TEMPORARY_STORAGE] = "1.10.2";
+char version[MAX_TEMPORARY_STORAGE] = "1.10.3";
 
 void show_usage_and_exit( int _argc, char *_argv[] ) {
 
@@ -5775,6 +5794,8 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     char target[MAX_TEMPORARY_STORAGE] = "ATARI 400/800";
 #elif defined(__atarixl__) 
     char target[MAX_TEMPORARY_STORAGE] = "ATARI XL";
+#elif __c128__
+    char target[MAX_TEMPORARY_STORAGE] = "Commodore 128";
 #elif __c64__
     char target[MAX_TEMPORARY_STORAGE] = "Commodore 64";
 #elif __plus4__
@@ -5837,6 +5858,8 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
 #elif __atarixl__ 
     printf("\t                xex - executable binary file\n" );
 #elif __c64__
+    printf("\t                prg - program binary file\n" );
+#elif __c128__
     printf("\t                prg - program binary file\n" );
 #elif __plus4__
     printf("\t                prg - program binary file\n" );
@@ -5917,6 +5940,8 @@ int main( int _argc, char *_argv[] ) {
     _environment->outputFileType = OUTPUT_FILE_TYPE_ROM;
 #elif __sg1000__
     _environment->outputFileType = OUTPUT_FILE_TYPE_ROM;
+#elif __c128__
+    _environment->outputFileType = OUTPUT_FILE_TYPE_PRG;
 #endif
 
     while ((opt = getopt(_argc, _argv, "ae:c:Wo:Ie:l:EO:dL:C:VA:T:1p:G:")) != -1) {

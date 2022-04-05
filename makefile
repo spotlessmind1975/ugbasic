@@ -50,6 +50,13 @@ generated/c64/exe/%.prg: $(subst /exe/,/asm/,$(@:.prg=.asm))
 	@cl65 -Ln $(@:.prg=.lbl) --listing $(@:.prg=.lst) -g -o $@ --mapfile $(@:.prg=.map) -t c64 -C $(subst /exe/,/cfg/,$(@:.prg=.cfg)) $(subst /exe/,/asm/,$(@:.prg=.asm))
 	@rm -f $(@:.prg=.o)
 
+generated/c128/asm/%.asm:
+	@ugbc/exe/ugbc.c128 -c $(subst /asm/,/cfg/,$(@:.asm=.cfg)) $(subst generated/c128/asm/,examples/,$(@:.asm=.bas)) $@
+
+generated/c128/exe/%.prg: $(subst /exe/,/asm/,$(@:.prg=.asm))
+	@cl65 -Ln $(@:.prg=.lbl) --listing $(@:.prg=.lst) -g -o $@ --mapfile $(@:.prg=.map) -t c128 -C $(subst /exe/,/cfg/,$(@:.prg=.cfg)) $(subst /exe/,/asm/,$(@:.prg=.asm))
+	@rm -f $(@:.prg=.o)
+
 generated/vic20/asm/%.asm:
 	@ugbc/exe/ugbc.vic20 -c $(subst /asm/,/cfg/,$(@:.asm=.cfg)) $(subst generated/vic20/asm/,examples/,$(@:.asm=.bas)) $@
 
@@ -101,7 +108,7 @@ generated/d64/exe/%.bin: $(subst /exe/,/asm/,$(@:.bin=.asm))
 	@asm6809 -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -D -e 10240 -o $@ $(subst /exe/,/asm/,$(@:.bin=.asm))
 
 generated/pc128op/asm/%.asm: compiler
-	@ugbc/exe/ugbc.pc128op $(subst generated/pc128op/asm/,examples/,$(@:.asm=.bas)) $@
+	ugbc/exe/ugbc.pc128op $(subst generated/pc128op/asm/,examples/,$(@:.asm=.bas)) $@
 
 generated/pc128op/exe/%.k7: compiler
 	@ugbc/exe/ugbc.pc128op $(subst generated/pc128op/exe/,examples/,$(@:.k7=.bas)) -o $@
@@ -130,7 +137,7 @@ generated/msx1/exe/%.rom:
 	@mv $(subst /exe/,/asm/,$(@:.rom=_data_user.bin)) $(@:.rom=_data_user.bin)
 	@cat $(@:.rom=_code_user.bin) $(@:.rom=_data_user.bin) >$(@:.rom=.bin)
 	@rm $(@:.rom=_code_user.bin) $(@:.rom=_data_user.bin)
-	@z88dk-appmake +msxrom -b $(@:.rom=.bin)
+	@z88dk-appmake +msxrom -b $(@:.rom=.bin) 2>/dev/null
 	@rm -f $(@:.rom=.bin) $(@:.rom=_*.bin)
 
 generated/coleco/asm/%.asm:
@@ -145,7 +152,7 @@ generated/coleco/exe/%.rom:
 	@mv $(subst /exe/,/asm/,$(@:.rom=_data_user.bin)) $(@:.rom=_data_user.bin)
 	@cat $(@:.rom=_code_user.bin) $(@:.rom=_data_user.bin) >$(@:.rom=.bin)
 	@rm $(@:.rom=_code_user.bin) $(@:.rom=_data_user.bin)
-	@z88dk-appmake +msxrom -b $(@:.rom=.bin)
+	@z88dk-appmake +msxrom -b $(@:.rom=.bin) 2>/dev/null
 	@rm -f $(@:.rom=.bin) $(@:.rom=_*.bin)
 
 generated/sc3000/asm/%.asm:

@@ -44,7 +44,7 @@ Variable * joy( Environment * _environment, char * _port ) {
     Variable * port = variable_retrieve_or_define( _environment, _port, VT_BYTE, 0 );
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of JOY)" );
 
-	pc128op_joystick( _environment, port->realName, result->realName );
+	mo5_joystick( _environment, port->realName, result->realName );
 
     return result;
 

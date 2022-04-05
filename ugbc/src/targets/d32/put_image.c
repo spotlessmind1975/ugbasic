@@ -93,7 +93,7 @@ void put_image( Environment * _environment, char * _image, char * _x, char * _y,
             }
             break;
         case VT_IMAGE:
-            c6847_put_image( _environment, image->realName, x->realName, y->realName, NULL, 0, _flags );
+            c6847_put_image( _environment, image->realName, x->realName, y->realName, NULL, NULL, 0, 0, _flags );
             break;
         default:
             CRITICAL_PUT_IMAGE_UNSUPPORTED( _image, DATATYPE_AS_STRING[image->type] );

@@ -708,7 +708,7 @@ void ef936x_initialization( Environment * _environment ) {
     variable_import( _environment, "CLIPY2", VT_POSITION, 199 );
     variable_global( _environment, "CLIPY2" );
 
-    ef936x_cls( _environment );
+    // ef936x_cls( _environment );
 
     _environment->fontWidth = 8;
     _environment->fontHeight = 8;

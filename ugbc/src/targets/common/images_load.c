@@ -218,6 +218,35 @@ Variable * images_load( Environment * _environment, char * _filename, char * _al
 
     stbi_image_free(source);
 
+    if ( _bank_expansion && _environment->expansionBanks ) {
+
+        Bank * bank = _environment->expansionBanks;
+
+        while( bank ) {
+            if ( bank->remains > final->size ) {
+                break;
+            }
+            bank = bank->next;
+        } 
+
+        if ( ! bank ) {
+            CRITICAL_EXPANSION_OUT_OF_MEMORY_LOADING( _filename );
+        }
+
+        final->bankAssigned = bank->id;
+        final->absoluteAddress = bank->address;
+        final->residentAssigned = _bank_expansion;
+        final->variableUniqueId = UNIQUE_RESOURCE_ID;
+        memcpy( &bank->data[bank->address], final->valueBuffer, final->size );
+
+        bank->address += final->size;
+        bank->remains -= final->size;
+        if ( _environment->maxExpansionBankSize[_bank_expansion] < final->size ) {
+            _environment->maxExpansionBankSize[_bank_expansion] = final->size;
+        }
+
+    }
+
     LoadedFile * loaded = malloc( sizeof( LoadedFile ) );
     loaded->next = first;
     loaded->variable = final;

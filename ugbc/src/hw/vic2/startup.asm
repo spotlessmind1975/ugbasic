@@ -69,8 +69,13 @@ VIC2STARTUP:
 
     SEI
     LDX #$10
+if __c128__
+    LDA #$1
+    STA $FF00
+else
     LDA #$33
     STA $01
+endif
     LDA #$D0
     STA $FC
     LDY #$00
@@ -88,42 +93,50 @@ VIC2STARTUPL1:
     INC $FE
     DEX
     BNE VIC2STARTUPL1
+if __c128__
+    LDA #%00111110
+    STA $FF00
+else
     LDA #$35
     STA $01
+endif
     CLI
 
-    ; SET_DATA_DIRECTION();
+;     ; SET_DATA_DIRECTION();
     LDA $dd02
     ORA #$03
     STA $dd02
 
-    ; SET_BANK(2);
+;     ; SET_BANK(2);
     LDA $dd00
     AND #$fc
     ORA #$01
     STA $dd00
 
-    ; SET_BACKGROUND_COLOR( MR_COLOR_BLACK );
+;     ; SET_BACKGROUND_COLOR( MR_COLOR_BLACK );
     LDA #0
     STA $d021
 
-    ; SET_VIDEO(MR_SCREEN_DEFAULT);
+;     ; SET_VIDEO(MR_SCREEN_DEFAULT);
     LDA $d018
     AND #$0f
     ORA #$10
     STA $d018
 
-    ; SET_BASIC_VIDEO(MR_SCREEN_DEFAULT);
+;     ; SET_BASIC_VIDEO(MR_SCREEN_DEFAULT);
+if __c128__
+else
     LDA #$84
     STA $0288
+endif
 
-    ; SET_CHARSET(MR_TILESET_DEFAULT);
+;     ; SET_CHARSET(MR_TILESET_DEFAULT);
     LDA $d018
     AND #$f1
     ORA #$08
     STA $d018
 
-    ; SET STARTUP CURSOR POSITION    
+;     ; SET STARTUP CURSOR POSITION    
     LDA #0
     STA $D3
     LDA #0
@@ -137,7 +150,7 @@ VIC2STARTUPL1:
     AND #%11111000
     ORA XSCROLLPOS
     STA $D016
-    
+
     RTS
 
 WAITVBL:

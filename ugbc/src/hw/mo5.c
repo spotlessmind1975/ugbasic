@@ -253,4 +253,9 @@ void mo5_follow_irq( Environment * _environment ) {
     outline0("JMP [MO5IRQO]" );
     
 }
+
+void mo5_joystick( Environment * _environment, char * _joystick, char * _result ) {
+
+}
+
 #endif

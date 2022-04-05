@@ -80,6 +80,8 @@ void test_print( );
     #include "tester_msx1.h"
 #elif defined( __coleco__ )
     #include "tester_coleco.h"
+#elif defined( __c128__ )
+    #include "tester_c128.h"
 #endif
 
 #endif

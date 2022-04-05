@@ -38,6 +38,9 @@
 ;--------------
 
 GETIMAGE
+@IF vestigialConfig.doubleBufferSelected
+
+@ELSE
 
     ; Check if double buffering is active -- in case,
     ; whe should use a different version.
@@ -45,12 +48,18 @@ GETIMAGE
     CMPA #0
     LBEQ GETIMAGEORIG
 
+@ENDIF
+
 ; ----------------------------------------------
 ; Version active on double buffering ON
 ; ----------------------------------------------
 
+@IF ! vestigialConfig.doubleBufferSelected || vestigialConfig.doubleBuffer
 
 GETIMAGEDB
+@IF vestigialConfig.screenModeUnique
+
+@ELSE
     LDA CURRENTMODE
     CMPA #0
     BNE GETIMAGE0XDB
@@ -73,10 +82,17 @@ GETIMAGE3XDB
     JMP GETIMAGE4DB
 GETIMAGE4XDB
     RTS
+@ENDIF
+
+@IF ! vestigialConfig.screenModeUnique || ( (currentMode == 1) || (currentMode == 4) )
 
 GETIMAGE1DB
 GETIMAGE4DB
     RTS
+
+@ENDIF
+
+@IF ! vestigialConfig.screenModeUnique || ( (currentMode == 0) || (currentMode == 2) )
 
 GETIMAGE0DB
 GETIMAGE2DB
@@ -144,6 +160,10 @@ GETIMAGE2DB
 
     JMP GETIMAGE2YDB
 
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( currentMode == 3 )
+
 GETIMAGE3DB
 
     PSHS Y
@@ -178,6 +198,8 @@ GETIMAGE3DB
     PSHS X,D
 
     JMP GETIMAGE2YDB
+
+@ENDIF
 
 GETIMAGE2YDB
 GETIMAGE2YDEFDB
@@ -273,11 +295,19 @@ GETIMAGECOMMONE5DB
 GETIMAGECOMMONEDB
     RTS
 
+@ENDIF
+
 ; ----------------------------------------------
 ; Version active on double buffering OFF
 ; ----------------------------------------------
 
+@IF ! vestigialConfig.doubleBufferSelected || ! vestigialConfig.doubleBuffer
+
 GETIMAGEORIG
+@IF vestigialConfig.screenModeUnique
+
+@ELSE
+
     LDA CURRENTMODE
     CMPA #0
     BNE GETIMAGE0X
@@ -301,9 +331,17 @@ GETIMAGE3X
 GETIMAGE4X
     RTS
 
+@ENDIF
+
+@IF ! vestigialConfig.screenModeUnique || ( (currentMode == 1) || (currentMode == 4) )
+
 GETIMAGE1
 GETIMAGE4
     RTS
+
+@ENDIF
+
+@IF ! vestigialConfig.screenModeUnique || ( (currentMode == 0) || (currentMode == 2) )
 
 GETIMAGE0
 GETIMAGE2
@@ -371,6 +409,10 @@ GETIMAGE2
 
     JMP GETIMAGE2Y
 
+@ENDIF
+
+@IF ! vestigialConfig.screenModeUnique || ( currentMode == 3 )
+
 GETIMAGE3
 
     PSHS Y
@@ -405,6 +447,8 @@ GETIMAGE3
     PSHS X,D
 
     JMP GETIMAGE2Y
+
+@ENDIF
 
 GETIMAGE2Y
 GETIMAGE2YDEF
@@ -495,3 +539,5 @@ GETIMAGECOMMONE5
 
 GETIMAGECOMMONE
     RTS
+
+@ENDIF

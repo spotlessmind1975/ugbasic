@@ -1021,6 +1021,7 @@ typedef struct _Deployed {
     int font;
     int sidvars;
     int sidstartup;
+    int doubleBuffer;
 
     Embedded embedded;
 
@@ -1046,6 +1047,23 @@ typedef struct _InputConfig {
     char cursor;
 
 } InputConfig;
+
+typedef struct _VestigialConfig {
+
+    char screenModeUnique;
+    char doubleBufferSelected;
+    char doubleBuffer;
+
+} VestigialConfig;
+
+typedef struct _EmbedResult {
+
+    char * line;
+    int current;
+    int excluded[MAX_NESTED_ARRAYS];
+    int conditional;
+
+} EmbedResult;
 
 typedef struct _TileDescriptor {
 
@@ -1181,6 +1199,16 @@ typedef struct _Environment {
      * 
      */
     InputConfig inputConfig;
+
+    /**
+     * 
+     */
+    VestigialConfig vestigialConfig;
+
+    /**
+     * 
+     */
+    EmbedResult embedResult;
 
     /**
      * Type of output. 
@@ -1859,9 +1887,38 @@ typedef struct _Environment {
         } \
     } 
 
+int embedparse (void *);
+int embed_scan_string (const char *);
+
 #define outembedded0(e)     \
     { \
-        fwrite( e, e##_len, 1, ((Environment *)_environment)->asmFile ); \
+        char * parsed = malloc( e##_len + 1 ); \
+        memset( parsed, 0, e##_len + 1 ); \
+        char * tmp = malloc( e##_len + 1 ); \
+        memset( tmp, 0, e##_len + 1 ); \
+        memcpy( tmp, e, e##_len ); \
+        char * line = strtok( tmp, "\x0a" ); \
+        while( line ) { \
+            _environment->embedResult.line = line; \
+            _environment->embedResult.conditional = 0; \
+            embed_scan_string( line ); \
+            embedparse(_environment); \
+            if ( ! _environment->embedResult.conditional ) { \
+                int i; \
+                for( i=0; i<_environment->embedResult.current; ++i ) { \
+                    if ( _environment->embedResult.excluded[i] ) \
+                        break; \
+                } \
+                if ( i>= _environment->embedResult.current ) { \
+                    strcat( parsed, line ); \
+                    strcat( parsed, "\x0a" ); \
+                } \
+            } \
+            line = strtok( NULL, "\x0a" ); \
+        } \
+        free( tmp ); \
+        fwrite( parsed, strlen( parsed )-1, 1, ((Environment *)_environment)->asmFile ); \
+        free( parsed ); \
         fputs( "\n", ((Environment *)_environment)->asmFile ); \
     } 
 
@@ -2365,6 +2422,7 @@ Variable *              image_load( Environment * _environment, char * _filename
 char *                  image_load_asserts( Environment * _environment, char * _filename );
 Variable *              image_converter( Environment * _environment, char * _data, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags );
 void                    image_converter_asserts( Environment * _environment, int _width, int _height, int _offset_x, int _offset_y, int * _frame_width, int * _frame_height );
+void                    image_converter_asserts_free_height( Environment * _environment, int _width, int _height, int _offset_x, int _offset_y, int * _frame_width, int * _frame_height );
 Variable *              image_get_height( Environment * _environment, char * _image );
 Variable *              image_get_width( Environment * _environment, char * _image );
 char *                  image_enlarge_right( Environment * _environment, char * _source, int _width, int _height, int _delta );
@@ -2809,6 +2867,11 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "hw/z80.h"
     #include "hw/sg1000.h"
     #include "hw/tms9918.h"
+#elif __c128__
+    #include "../src-generated/modules_c128.h"
+    #include "hw/6502.h"
+    #include "hw/vic2.h"
+    #include "hw/c128.h"
 #endif
 
 #endif

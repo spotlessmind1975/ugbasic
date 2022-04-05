@@ -30,7 +30,7 @@
 
 FLEX_OPTIONS=--8bit 
 BISON_OPTIONS=--locations -d -Wcounterexamples
-CFLAGS=-O3 -fomit-frame-pointer
+CFLAGS=-O3 -fomit-frame-pointer -g
 LFLAGS=
 LIBS=-lm
 
@@ -196,6 +196,19 @@ src-generated/modules_coleco.c: $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_COLE
 	@grep "src" src-generated/modules_coleco.c | awk -f modules.awk >src-generated/modules_coleco.h
 	@grep "data" src-generated/modules_coleco.c | awk -f modules.awk >>src-generated/modules_coleco.h
 
+# Commodore 128
+
+MODULES_C128 := $(wildcard src/hw/c128/*.asm)
+SOURCES_C128 := $(subst src/hw/c128/,src-generated/c128_,$(MODULES_C128:.asm=.c))
+
+src-generated/c128_%.c: $(MODULES_C128)
+	@xxd -i $(subst src-generated/c128_,src/hw/c128/,$(@:.c=.asm)) >$@
+
+src-generated/modules_c128.c: $(SOURCES_6502) $(SOURCES_C128) $(SOURCES_VIC2)
+	@cat $(SOURCES_6502) $(SOURCES_C128) $(SOURCES_VIC2) >src-generated/modules_c128.c
+	@grep "src" src-generated/modules_c128.c | awk -f modules.awk >src-generated/modules_c128.h
+	@grep "data" src-generated/modules_c128.c | awk -f modules.awk >>src-generated/modules_c128.h
+
 # Commodore 64
 
 MODULES_C64 := $(wildcard src/hw/c64/*.asm)
@@ -360,6 +373,12 @@ src-generated/ugbc.yy.c: src/ugbc.lex src/ugbc.y
 src-generated/ugbc.tab.c: src/ugbc.lex src/ugbc.y
 	@bison ${BISON_OPTIONS} --file-prefix=src-generated/ugbc src/ugbc.y
 
+src-generated/ugbc.embed.yy.c: src/ugbc.embed.lex src/ugbc.embed.y
+	@flex ${FLEX_OPTIONS} --prefix=embed --outfile=src-generated/ugbc.embed.yy.c src/ugbc.embed.lex
+
+src-generated/ugbc.embed.tab.c: src/ugbc.embed.lex src/ugbc.embed.y
+	@bison ${BISON_OPTIONS} -p embed --file-prefix=src-generated/ugbc.embed src/ugbc.embed.y
+
 # ----------------------------------------------------------------------------
 # ----------------------------------------------------------------------------
 # COMPILATION RULES
@@ -371,7 +390,7 @@ SOURCES += $(wildcard src/targets/*.c)
 SOURCES += $(wildcard src/hw/*.c)
 SOURCES += $(wildcard src/targets/common/*.c)
 SOURCES += $(wildcard src/targets/$(target)/*.c)
-SOURCES += src-generated/ugbc.yy.c src-generated/ugbc.tab.c src-generated/modules_$(target).c
+SOURCES += src-generated/ugbc.yy.c src-generated/ugbc.tab.c src-generated/ugbc.embed.yy.c src-generated/ugbc.embed.tab.c src-generated/modules_$(target).c
 
 OBJS = $(SOURCES:%.c=objs.$(target)/%.o)
 
@@ -381,7 +400,7 @@ SOURCESTEST += $(wildcard src/hw/*.c)
 SOURCESTEST += $(wildcard src/targets/common/*.c)
 SOURCESTEST += $(wildcard src/targets/$(target)/*.c)
 SOURCESTEST += $(wildcard src-test/suites/*.c)
-SOURCESTEST += src-generated/modules_$(target).c src-test/tester.c src-test/tester_c64.c src-test/tester_plus4.c src-test/tester_atari.c src-test/tester_atarixl.c src-test/tester_coleco.c src-test/tester_msx1.c src-test/tester_zx.c src-test/tester_d32.c src-test/tester_d64.c src-test/tester_pc128op.c src-test/tester_mo5.c src-test/tester_vic20.c src-test/tester_sc3000.c src-test/tester_sg1000.c
+SOURCESTEST += src-generated/modules_$(target).c src-test/tester.c src-test/tester_c64.c src-test/tester_plus4.c src-test/tester_atari.c src-test/tester_atarixl.c src-test/tester_coleco.c src-test/tester_msx1.c src-test/tester_zx.c src-test/tester_d32.c src-test/tester_d64.c src-test/tester_pc128op.c src-test/tester_mo5.c src-test/tester_vic20.c src-test/tester_sc3000.c src-test/tester_sg1000.c src-test/tester_c128.c
 
 paths:
 	@mkdir -p src-generated
@@ -393,7 +412,7 @@ paths-test:
 compiler: $(OBJS)
 	@$(CC) $(LFLAGS) $^ -o exe/ugbc.$(target) $(LIBS)
 	
-objs.$(target)/%.o: %.c src-generated/ugbc.yy.c src-generated/ugbc.tab.c src-generated/modules_$(target).c
+objs.$(target)/%.o: %.c src-generated/ugbc.yy.c src-generated/ugbc.tab.c src-generated/ugbc.embed.yy.c src-generated/ugbc.embed.tab.c src-generated/modules_$(target).c
 	@mkdir -p $(dir $@)
 	@$(CC) $(CFLAGS) -D__$(target)__  -c $< -o $@
 
