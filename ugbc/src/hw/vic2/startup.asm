@@ -69,13 +69,13 @@ VIC2STARTUP:
 
     SEI
     LDX #$10
-if __c128__
+@IF C128
     LDA #$1
     STA $FF00
-else
+@ELSE
     LDA #$33
     STA $01
-endif
+@ENDIF
     LDA #$D0
     STA $FC
     LDY #$00
@@ -93,13 +93,13 @@ VIC2STARTUPL1:
     INC $FE
     DEX
     BNE VIC2STARTUPL1
-if __c128__
+@IF C128
     LDA #%00111110
     STA $FF00
-else
+@ELSE
     LDA #$35
     STA $01
-endif
+@ENDIF
     CLI
 
 ;     ; SET_DATA_DIRECTION();
@@ -124,11 +124,11 @@ endif
     STA $d018
 
 ;     ; SET_BASIC_VIDEO(MR_SCREEN_DEFAULT);
-if __c128__
-else
+@IF C128
+@ELSE
     LDA #$84
     STA $0288
-endif
+@ENDIF
 
 ;     ; SET_CHARSET(MR_TILESET_DEFAULT);
     LDA $d018
