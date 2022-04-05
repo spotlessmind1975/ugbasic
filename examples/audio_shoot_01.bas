@@ -12,6 +12,6 @@ REM che non interrompe l'esecuzione del programma.
 REM
 
     SHOOT
-    WAIT 25 MS
+    WAIT 1000 MS
     SHOOT
     PRINT "Ouch!"

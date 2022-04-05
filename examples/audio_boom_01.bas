@@ -12,6 +12,6 @@ REM che non interrompe l'esecuzione del programma.
 REM
 
     CENTRE "Thunderbolt and Lightning"
-    BOOM : WAIT 150 MS: BOOM: CLS
+    BOOM : WAIT 1000 MS: BOOM: CLS
     CENTRE "Very Very Frightening"
-    WAIT 50 MS: BOOM
+    WAIT 500 MS: BOOM
