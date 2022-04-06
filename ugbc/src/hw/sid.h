@@ -54,4 +54,6 @@ void sid_set_pitch_vars( Environment * _environment, char * _channel, char * _pi
 void sid_set_note_vars( Environment * _environment, char * _channel, char * _note );
 void sid_stop_vars( Environment * _environment, char * _channel );
 
+void sid_music( Environment * _environment, char * _music, int _size );
+
 #endif

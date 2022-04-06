@@ -35,6 +35,12 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+IMF_TOKEN_WAIT1								= $ff
+IMF_TOKEN_WAIT2								= $fe
+IMF_TOKEN_CONTROL							= $d0
+IMF_TOKEN_PROGRAM_CHANGE					= $e0
+IMF_TOKEN_NOTE								= $40
+
 IMF_INSTRUMENT_ACOUSTIC_GRAND_PIANO			= $01
 IMF_INSTRUMENT_BRIGHT_ACOUSTIC_PIANO			= $02
 IMF_INSTRUMENT_ELECTRIC_GRAND_PIANO			= $03
@@ -176,6 +182,15 @@ SIDSTARTUP:
     LDX #2
     LDY #6
     JSR SIDPROGSR
+    LDA #<SIDFREQTABLE
+    STA SIDTMPPTR2
+    LDA #>SIDFREQTABLE
+    STA SIDTMPPTR2+1
+    LDA #$0
+    STA SIDTMPPTR
+    STA SIDTMPPTR+1
+    STA SIDJIFFIES
+    STA SIDJIFFIES+1
     RTS
 
 SIDSTART:
@@ -564,4 +579,211 @@ SIDSTOP2:
     STA SIDSHADOW+2
     STA $D412
     PLA
+    RTS
+
+; This is the entry point for music play routine
+; using the interrupt. 
+MUSICPLAYER:
+    PHA
+    LDA SIDMUSICREADY
+    BEQ MUSICPLAYERQ
+    TXA
+    PHA
+    TYA
+    PHA
+    JSR MUSICPLAYERR
+    PLA
+    TAY
+    PLA
+    TAX
+MUSICPLAYERQ:
+    PLA
+    RTS
+
+MUSICPLAYERR:
+
+; This is the entry point to wait until the waiting jiffies
+; are exausted.
+MUSICPLAYERL1:
+    LDA SIDJIFFIES
+    BEQ MUSICPLAYERL1JIFFIES
+    DEC SIDJIFFIES
+    RTS
+
+MUSICPLAYERL1JIFFIES:    
+    LDA SIDJIFFIES+1
+    BEQ MUSICPLAYERL1B
+    DEC SIDJIFFIES+1
+    DEC SIDJIFFIES
+    RTS
+
+; This is the entry point to read the next instruction.
+MUSICPLAYERL1B:
+    ; Read the next byte.
+    JSR MUSICREADNEXTBYTE
+
+    ; Is the file NOT finished?
+    CPX #$0
+    BNE MUSICPLAYERL1X
+
+    ; Let's stop the play!
+    LDA #$0
+    STA SIDMUSICREADY
+    STA SIDTMPPTR
+    STA SIDTMPPTR+1
+    STA SIDJIFFIES
+    RTS
+
+; This is the entry point to decode the instruction
+; (contained into the A register).
+MUSICPLAYERL1X:
+    PHA
+    AND #IMF_TOKEN_WAIT1
+    CMP #IMF_TOKEN_WAIT1
+    BNE MUSICPLAYERL1X0
+    JMP MUSICTOKENWAIT1
+MUSICPLAYERL1X0:
+    PLA
+    PHA
+    AND #IMF_TOKEN_WAIT2
+    CMP #IMF_TOKEN_WAIT2
+    BNE MUSICPLAYERL1X0A
+    JMP MUSICTOKENWAIT2
+MUSICPLAYERL1X0A:
+    PLA
+    PHA
+    AND #IMF_TOKEN_CONTROL
+    CMP #IMF_TOKEN_CONTROL
+    BNE MUSICPLAYERL1X1
+    JMP MUSICTOKENCONTROL
+MUSICPLAYERL1X1:
+    PLA
+    PHA
+    AND #IMF_TOKEN_PROGRAM_CHANGE
+    CMP #IMF_TOKEN_PROGRAM_CHANGE
+    BNE MUSICPLAYERL1X2
+    JMP MUSICTOKENPROGRAMCHANGE
+MUSICPLAYERL1X2:
+    PLA
+    PHA
+    AND #IMF_TOKEN_NOTE
+    CMP #IMF_TOKEN_NOTE
+    BNE MUSICPLAYERL1X3
+    JMP MUSICTOKENNOTE
+MUSICPLAYERL1X3:
+    JMP MUSICTOKENSTOP
+
+MUSICTOKENWAIT1:
+    PLA
+    JSR MUSICREADNEXTBYTE
+    STA SIDJIFFIES
+    LDA #$0
+    STA SIDJIFFIES+1
+    RTS
+
+MUSICTOKENWAIT2:
+    PLA
+    JSR MUSICREADNEXTBYTE
+    STA SIDJIFFIES
+    JSR MUSICREADNEXTBYTE
+    STA SIDJIFFIES+1
+    RTS
+
+MUSICTOKENCONTROL:
+    PLA
+    JSR MUSICREADNEXTBYTE
+    JSR MUSICREADNEXTBYTE
+    RTS
+
+MUSICTOKENPROGRAMCHANGE:
+    PLA
+    JSR MUSICREADNEXTBYTE
+    RTS
+
+MUSICTOKENNOTE:
+    JSR MUSICREADNEXTBYTE
+    ASL
+    TAY
+    LDA (SIDTMPPTR2),Y
+    TAX
+    INY
+    LDA (SIDTMPPTR2),Y
+    TAY
+    PLA
+    AND #$07
+    BEQ MUSICTOKENNOTE0
+    CMP #$1
+    BEQ MUSICTOKENNOTE1
+    CMP #$2
+    BEQ MUSICTOKENNOTE2
+MUSICTOKENNOTE0:
+    LDA #$01
+    JMP MUSICTOKENNOTED
+MUSICTOKENNOTE1:
+    LDA #$02
+    JMP MUSICTOKENNOTED
+MUSICTOKENNOTE2:
+    LDA #$04
+    JMP MUSICTOKENNOTED
+MUSICTOKENNOTED:
+    JSR SIDPROGFREQ
+    RTS
+
+MUSICTOKENSTOP:
+    PLA
+    AND #$0F
+    JSR SIDSTOP
+    RTS    
+
+; This routine has been added in order to read the
+; next byte in a "blocked" byte stream.
+MUSICREADNEXTBYTE:
+    ; Let's check if we arrived at the end of the block.
+    ; In that case, we must "load" the next block (or end
+    ; the reading).
+    LDY SIDTMPOFS
+    CPY SIDTMPLEN
+    BEQ MUSICREADNEXTBYTELE
+
+MUSICREADNEXTBYTE2:
+    LDX #$ff
+    LDA (SIDTMPPTR), Y
+    INY
+    STY SIDTMPOFS
+    RTS
+
+; This is the entry point if a block (256 or less bytes)
+; is finished, and we must move forward to the next block.
+MUSICREADNEXTBYTELE:
+    ; Is file finished?
+    LDA SIDBLOCKS
+    BEQ MUSICREADNEXTBYTEEND
+
+    ; Put the index to 0
+    LDY #$0
+    STY SIDTMPOFS
+
+    ; Increment the base address by 256
+    INC SIDTMPPTR+1
+
+    ; Decrement the number of remaining blocks
+    DEC SIDBLOCKS
+
+    ; If remaining blocks are 0, the last block
+    ; length is different from 256 bytes.
+    BEQ MUSICPLAYERLE2
+
+    ; Remaining block is 256 bytes lenght.
+    LDY #$FF
+    STY SIDTMPLEN
+    JMP MUSICREADNEXTBYTE2
+
+    ; Remaining block is <256 bytes lenght.
+MUSICPLAYERLE2:
+    LDY SIDLASTBLOCK
+    STY SIDTMPLEN
+    JMP MUSICREADNEXTBYTE2
+
+MUSICREADNEXTBYTEEND:
+    LDX #$0
     RTS
