@@ -2877,6 +2877,7 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "../src-generated/modules_c128.h"
     #include "hw/6502.h"
     #include "hw/vic2.h"
+    #include "hw/sid.h"
     #include "hw/c128.h"
 #endif
 
