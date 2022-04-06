@@ -238,7 +238,10 @@ typedef enum _VariableType {
     VT_TILESET = 22,
 
     /** SEQUENCE (a set of images) */
-    VT_SEQUENCE = 23
+    VT_SEQUENCE = 23,
+
+    /** MUSIC (a [piece of] music) */
+    VT_MUSIC = 24
 
 } VariableType;
 
@@ -1721,6 +1724,7 @@ typedef struct _Environment {
 #define CRITICAL_NOT_ASSIGNED_SEQUENCE( v ) CRITICAL2("E125 - variable is not a set of loaded collection of images, please use assign operator", v );
 #define CRITICAL_SEQUENCE_LOAD_INVALID_FRAME_WIDTH( w ) CRITICAL2i("E126 - invalid frame width, not multiple of width", w );
 #define CRITICAL_SEQUENCE_LOAD_INVALID_FRAME_HEIGHT( h ) CRITICAL2i("E127 - invalid frame height, not multiple of height", h );
+#define CRITICAL_CANNOT_MUSIC( v ) CRITICAL2("E128 - variable is not MUSIC, so cannot music it", v );
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
 #define WARNING2i( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%i) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -2483,6 +2487,8 @@ Variable *              mob_init( Environment * _environment, char * _image, cha
 void                    mob_render( Environment * _environment, int _on_vbl );
 void                    mob_show( Environment * _environment, char * _index );
 void                    move_tile( Environment * _environment, char * _tile, char * _x, char * _y );
+Variable *              music_load( Environment * _environment, char * _filename, char * _alias, int _bank_expansion );
+void                    music_var( Environment * _environment, char * _music );
 
 //----------------------------------------------------------------------------
 // *N*

@@ -2045,6 +2045,12 @@ exponential:
     | LOAD OP String AS String OP_COMMA Integer CP on_bank {
         $$ = load( _environment, $3, $5, $7, $9 )->name;
       }
+    | LOAD MUSIC OP String CP on_bank {
+        $$ = music_load( _environment, $4, NULL, $6 )->name;
+      }
+    | LOAD MUSIC OP String AS String CP on_bank {
+        $$ = music_load( _environment, $4, $6, $8 )->name;
+      }
     | LOAD SEQUENCE OP String AS String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_background on_bank {
         $$ = sequence_load( _environment, $4, $6, ((struct _Environment *)_environment)->currentMode, $11, $13, $15, $16, $17, $18 )->name;
       }
@@ -3887,6 +3893,9 @@ datatype :
     | SEQUENCE {
         $$ = VT_SEQUENCE;
     }
+    | MUSIC {
+        $$ = VT_MUSIC;
+    }
     | SPRITE {
         $$ = VT_SPRITE;
     }
@@ -4422,6 +4431,15 @@ instrument_definition_expression :
 instrument_definition : 
     instrument_definition_simple
     | instrument_definition_expression
+    ;
+
+music_definition_expression:
+    expr {
+        music_var( _environment, $1 );
+    };
+
+music_definition:
+    music_definition_expression
     ;
 
 play_definition_simple : 
@@ -5421,6 +5439,7 @@ statement:
   | SHOOT shoot_definition
   | SOUND sound_definition
   | PLAY play_definition
+  | MUSIC music_definition
   | INSTRUMENT instrument_definition
   | VOLUME volume_definition
   | HALT {
