@@ -386,6 +386,7 @@ src-generated/ugbc.embed.tab.c: src/ugbc.embed.lex src/ugbc.embed.y
 # ----------------------------------------------------------------------------
 
 SOURCES := $(wildcard src/*.c)
+SOURCES += $(wildcard src/libs/*.c)
 SOURCES += $(wildcard src/targets/*.c)
 SOURCES += $(wildcard src/hw/*.c)
 SOURCES += $(wildcard src/targets/common/*.c)

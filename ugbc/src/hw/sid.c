@@ -854,8 +854,8 @@ void sid_music( Environment * _environment, char * _music, int _size ) {
     outline0("SEI");
     outline0("LDA #$0");
     outline0("STA SIDJIFFIES");
-    outline0("LDA #$1");
     outline0("STA SIDTMPOFS");
+    outline0("LDA #$1");
     outline0("STA SIDMUSICREADY");
     outline1("LDA #<%s", _music);
     outline0("STA SIDTMPPTR");
