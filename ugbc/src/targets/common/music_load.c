@@ -112,6 +112,10 @@ Variable * music_load( Environment * _environment, char * _filename, char * _ali
         int * used = malloc( iNum * sizeof( int ) );
         memset( used, 0xff, iNum * sizeof( int ) );
 
+        int channel = 0;
+        int * lastNoteOnChannel = malloc( iNum * sizeof( int ) );
+        memset( lastNoteOnChannel, 0, iNum * sizeof( int ) );
+
         // Current position examinated
         int pos = 0;
 
@@ -161,6 +165,8 @@ Variable * music_load( Environment * _environment, char * _filename, char * _ali
 
                 printf(" ");
 
+                channel = 0;
+
                 // For each track...
                 for( i=0; i<iNum; ++i ) {
 
@@ -195,25 +201,48 @@ Variable * music_load( Environment * _environment, char * _filename, char * _ali
                     // 11111110     AVAILABLE
                     // 11111111     AVAILABLE
                     switch(ev) {
-                        case	messageNoteOff:
+                        case	messageNoteOff: {
                             // 1110cccc
                             // printf( "NOTE OFF %d\n", msg[i].MsgData.NoteOff.iChannel);
-                            imfBuffer[size++] = 0xe0 | ( /*msg[i].MsgData.NoteOff.iChannel*/ i & 0x0f );
-                            printf("F");
+                            int j;
+                            for( j=0; j<iNum; ++j ) {
+                                if ( lastNoteOnChannel[j] == msg[i].MsgData.NoteOff.iNote ) {
+                                    lastNoteOnChannel[j] = 0;
+                                    imfBuffer[size++] = 0xe0 | ( /*msg[i].MsgData.NoteOff.iChannel*/ ( 1 << ( j & MAX_AUDIO_CHANNELS ) ) );
+                                    printf("F");
+                                    break;
+                                }
+                            }
+                            if ( j >= iNum ) {
+                                printf(".");
+                            }
                             break;
+                        }
                         case	messageNoteOn:
                             if ( msg[i].MsgData.NoteOn.iVolume > 0 ) {
                                 // 1100cccc
                                 // printf( "NOTE ON %d, %d\n", msg[i].MsgData.NoteOff.iChannel, msg[i].MsgData.NoteOn.iNote);
-                                imfBuffer[size++] = 0xc0 | ( /*msg[i].MsgData.NoteOff.iChannel*/ i & 0x0f );
+                                imfBuffer[size++] = 0xc0 | ( /*msg[i].MsgData.NoteOff.iChannel*/ ( 1 << ( channel & MAX_AUDIO_CHANNELS ) ) );
                                 // nnnnnnnn
                                 imfBuffer[size++] = msg[i].MsgData.NoteOn.iNote & 0xff;
-                                printf("O");
+                                printf("[%2.2x]", msg[i].MsgData.NoteOn.iNote & 0xff );
+                                lastNoteOnChannel[channel] = msg[i].MsgData.NoteOn.iNote;
+                                ++channel;
                             } else {
                                 // 1110cccc
                                 // printf( "NOTE OFF %d\n", msg[i].MsgData.NoteOff.iChannel);
-                                imfBuffer[size++] = 0xe0 | ( /*msg[i].MsgData.NoteOff.iChannel*/ i & 0x0f );
-                                printf("F");
+                                int j;
+                                for( j=0; j<iNum; ++j ) {
+                                    if ( lastNoteOnChannel[j] == msg[i].MsgData.NoteOff.iNote ) {
+                                        lastNoteOnChannel[j] = 0;
+                                        imfBuffer[size++] = 0xe0 | ( /*msg[i].MsgData.NoteOff.iChannel*/ ( 1 << ( j & MAX_AUDIO_CHANNELS ) ) );
+                                        printf("F");
+                                        break;
+                                    }
+                                }
+                                if ( j >= iNum ) {
+                                    printf(".");
+                                }
                                 break;
                             }
                             break;

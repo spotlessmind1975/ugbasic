@@ -126,6 +126,8 @@
 #define BANK_COUNT          0
 #define BANK_SIZE           0
 
+#define MAX_AUDIO_CHANNELS  3
+
 void c128_xpen( Environment * _environment, char * _destination );
 void c128_ypen( Environment * _environment, char * _destination );
 void c128_inkey( Environment * _environment, char * _pressed, char * _key );
