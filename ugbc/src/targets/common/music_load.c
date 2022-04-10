@@ -112,9 +112,13 @@ Variable * music_load( Environment * _environment, char * _filename, char * _ali
         int * used = malloc( iNum * sizeof( int ) );
         memset( used, 0xff, iNum * sizeof( int ) );
 
-        int channel = 0;
+        // int channel = 0;
         int * lastNoteOnChannel = malloc( iNum * sizeof( int ) );
         memset( lastNoteOnChannel, 0, iNum * sizeof( int ) );
+
+        // Used channels
+        int usedChannel[MAX_AUDIO_CHANNELS];
+        memset( usedChannel, 0, MAX_AUDIO_CHANNELS * sizeof( int ) );
 
         // Current position examinated
         int pos = 0;
@@ -129,22 +133,29 @@ Variable * music_load( Environment * _environment, char * _filename, char * _ali
             // If not, we must read another message from the MIDI
             // file for that track.
             for( int i=0; i<iNum; ++i ) {
-
-                // If the current position is AFTER the one
-                // in the message, and the message has been
-                // used, the message is outdated.
-                if ( used[i] && msg[i].dwAbsPos <= pos ) {
-                    // Try to read the next message. If the track
-                    // is finished, we take note of that.
-                    if ( !midiReadGetNextMessage(mf, i, &msg[i]) ) {
-                        finished[i] = 1;
-                        printf("E");
+                if ( ! finished[i] ) {
+                    // If the current position is AFTER the one
+                    // in the message, and the message has been
+                    // used, the message is outdated.
+                    if ( msg[i].dwAbsPos < pos ) {
+                        while( msg[i].dwAbsPos < pos ) {
+                            // Try to read the next message. If the track
+                            // is finished, we take note of that.
+                            if ( !midiReadGetNextMessage(mf, i, &msg[i]) ) {
+                                finished[i] = 1;
+                                printf("E[----]");
+                                break;
+                            }
+                        }
+                        if ( !finished[i] ) {
+                            used[i] = 0;
+                            printf("R[%4.4d]", msg[i].dwAbsPos);
+                        }
                     } else {
-                        used[i] = 0;
-                        printf("R");
+                        printf(".[    ]");
                     }
                 } else {
-                    printf(".");
+                    printf("E[----]");
                 }
             }
 
@@ -163,22 +174,22 @@ Variable * music_load( Environment * _environment, char * _filename, char * _ali
             // If the MIDI file is not finished...
             if ( ! done ) {
 
-                printf(" ");
+                // printf(" ");
 
-                channel = 0;
+                // channel = 0;
 
                 // For each track...
                 for( i=0; i<iNum; ++i ) {
 
                     // Skip if the track has been already used.
                     if ( used[i] ) {
-                        printf("u");
+                        // printf("u");
                         continue;
                     }
 
                     // Skip if message is after this moment
                     if ( msg[i].dwAbsPos > pos ) {
-                        printf("a");
+                        // printf("a");
                         continue;
                     }
 
@@ -205,16 +216,18 @@ Variable * music_load( Environment * _environment, char * _filename, char * _ali
                             // 1110cccc
                             // printf( "NOTE OFF %d\n", msg[i].MsgData.NoteOff.iChannel);
                             int j;
-                            for( j=0; j<iNum; ++j ) {
-                                if ( lastNoteOnChannel[j] == msg[i].MsgData.NoteOff.iNote ) {
+                            for( j=0; j<MAX_AUDIO_CHANNELS; ++j ) {
+                                if ( usedChannel[j] && lastNoteOnChannel[j] == msg[i].MsgData.NoteOff.iNote ) {
                                     lastNoteOnChannel[j] = 0;
+                                    usedChannel[j] = 0;
                                     imfBuffer[size++] = 0xe0 | ( /*msg[i].MsgData.NoteOff.iChannel*/ ( 1 << ( j & MAX_AUDIO_CHANNELS ) ) );
-                                    printf("F");
+                                    printf("(%d) <%1.1x> ", pos, j );
+                                    // printf("F");
                                     break;
                                 }
                             }
                             if ( j >= iNum ) {
-                                printf(".");
+                                printf("(%d) <<%1.1x>> ", pos, j );
                             }
                             break;
                         }
@@ -222,26 +235,36 @@ Variable * music_load( Environment * _environment, char * _filename, char * _ali
                             if ( msg[i].MsgData.NoteOn.iVolume > 0 ) {
                                 // 1100cccc
                                 // printf( "NOTE ON %d, %d\n", msg[i].MsgData.NoteOff.iChannel, msg[i].MsgData.NoteOn.iNote);
-                                imfBuffer[size++] = 0xc0 | ( /*msg[i].MsgData.NoteOff.iChannel*/ ( 1 << ( channel & MAX_AUDIO_CHANNELS ) ) );
-                                // nnnnnnnn
-                                imfBuffer[size++] = msg[i].MsgData.NoteOn.iNote & 0xff;
-                                printf("[%2.2x]", msg[i].MsgData.NoteOn.iNote & 0xff );
-                                lastNoteOnChannel[channel] = msg[i].MsgData.NoteOn.iNote;
-                                ++channel;
+                                int j;
+                                for (j=0; j<MAX_AUDIO_CHANNELS; ++j ) {
+                                    if ( ! usedChannel[j] ) break;
+                                }
+                                // printf( "j = %d", j );
+                                if ( j<MAX_AUDIO_CHANNELS ) {
+                                    usedChannel[j] = 1;
+                                    imfBuffer[size++] = 0xc0 | ( /*msg[i].MsgData.NoteOff.iChannel*/ ( 1 << ( j & MAX_AUDIO_CHANNELS ) ) );
+                                    // nnnnnnnn
+                                    imfBuffer[size++] = msg[i].MsgData.NoteOn.iNote & 0xff;
+                                    printf("(%d) [%1.1x][%2.2x] ", pos, j, msg[i].MsgData.NoteOn.iNote & 0xff );
+                                    lastNoteOnChannel[j] = msg[i].MsgData.NoteOn.iNote;
+                                } else {
+                                    printf("(%d) [[%1.1x][%2.2x]] ", pos, j, msg[i].MsgData.NoteOn.iNote & 0xff );
+                                }
                             } else {
                                 // 1110cccc
                                 // printf( "NOTE OFF %d\n", msg[i].MsgData.NoteOff.iChannel);
                                 int j;
-                                for( j=0; j<iNum; ++j ) {
-                                    if ( lastNoteOnChannel[j] == msg[i].MsgData.NoteOff.iNote ) {
+                                for( j=0; j<MAX_AUDIO_CHANNELS; ++j ) {
+                                    if ( usedChannel[j] && lastNoteOnChannel[j] == msg[i].MsgData.NoteOff.iNote ) {
+                                        usedChannel[j] = 0;
                                         lastNoteOnChannel[j] = 0;
                                         imfBuffer[size++] = 0xe0 | ( /*msg[i].MsgData.NoteOff.iChannel*/ ( 1 << ( j & MAX_AUDIO_CHANNELS ) ) );
-                                        printf("F");
+                                        printf("(%d) <%1.1x> ", pos, j );
                                         break;
                                     }
                                 }
-                                if ( j >= iNum ) {
-                                    printf(".");
+                                if ( j >= MAX_AUDIO_CHANNELS ) {
+                                    // printf("(%d) <<%1.1x>> ", pos, j );
                                 }
                                 break;
                             }
@@ -251,7 +274,7 @@ Variable * music_load( Environment * _environment, char * _filename, char * _ali
                         case	messageSetProgram:
                         case	messageChangePressure:
                         case	messageSetPitchWheel:
-                            printf("#");
+                            // printf("#");
                             break;
                         case	messageMetaEvent:
                             switch(msg[i].MsgData.MetaEvent.iType) {
@@ -269,19 +292,19 @@ Variable * music_load( Environment * _environment, char * _filename, char * _ali
                                 case	metaInfoTimeSig:
                                 case	metaInfoKeySig:
                                 case	metaInfoSequencerSpecific:
-                                    printf("#");
+                                    // printf("#");
                                     break;
                                 case	metaInfoSetTempo:
                                         // printf( "TEMPO %d\n", msg[i].MsgData.MetaEvent.Data.Tempo.iBPM);
                                         tempo = msg[i].MsgData.MetaEvent.Data.Tempo.iBPM;
-                                        printf("T");
+                                        // printf("T");
                                         break;
                                 }
                             break;
 
                         case	messageSysEx1:
                         case	messageSysEx2:
-                                printf("#");
+                                // printf("#");
                                 break;
                     }
 
@@ -299,28 +322,30 @@ Variable * music_load( Environment * _environment, char * _filename, char * _ali
                 // the nearest in terms of position.
 
                 int minPos = pos + 0xffffff;
-                printf(" ");
+                // printf(" ");
                 for( int i=0; i<iNum; ++i ) {
-                    printf("%1.1x", used[i]);
-                    if ( !used[i] && msg[i].dwAbsPos < minPos ) {
+                    // printf("%1.1x", used[i]);
+                    if ( !finished[i] && msg[i].dwAbsPos < minPos ) {
                         minPos = msg[i].dwAbsPos;
                     }
                 }
-                printf("\n");
+                // printf("\n");
 
-                if ( minPos < (pos + 0xffffff) ) {
-                    printf("%d:", pos);
-                    int jiffies = ( ( minPos - pos ) * 3000 ) / ( tempo * ppq );
+                if ( minPos > pos && minPos < (pos + 0xffffff) ) {
+                    // printf("%d:", pos);
+                    int jiffies = ( ( minPos - pos ) * 600 ) / ( tempo * ppq );
                     while( jiffies > 127 ) {
-                        printf("P");
+                        // printf("P");
                         // printf( "PAUSE 127\n");
+                        // printf(", ");
                         imfBuffer[size++] = 0x7f;
                         jiffies -= 127;
                         if ( size > 16 * MAX_TEMPORARY_STORAGE ) {
                             CRITICAL("out of memory");
                         }
                     }
-                    printf("P\n");
+                    // printf("P\n");
+                    // printf("; ");
                     imfBuffer[size++] = jiffies;
                     pos = minPos;
                     if ( size > 16 * MAX_TEMPORARY_STORAGE ) {
