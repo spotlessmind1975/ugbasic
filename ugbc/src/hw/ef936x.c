@@ -1128,52 +1128,81 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
 
     // Loop for all the source surface.
     for (image_y = 0; image_y < _frame_height; ++image_y) {
-        for (image_x = 0; image_x < _frame_width; ++image_x) {
+        for (image_x = 0; image_x < _frame_width; image_x+=8) {
+            int colorIndexes[8];
+            memset( colorIndexes, 0, 8*sizeof( int ) );
 
-            // Take the color of the pixel
-            rgb.red = *_source;
-            rgb.green = *(_source + 1);
-            rgb.blue = *(_source + 2);
+            for( int xx = 0; xx<8; ++xx ) {
+                // Take the color of the pixel
+                rgb.red = *_source;
+                rgb.green = *(_source + 1);
+                rgb.blue = *(_source + 2);
 
-            int colorIndex = 0;
-
-            int minDistance = 9999;
-            for( int i=0; i<sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++i ) {
-                int distance = rgbi_distance(&commonPalette[i], &rgb );
-                if ( distance < minDistance ) {
-                    minDistance = distance;
-                    colorIndex = commonPalette[i].index;
+                int minDistance = 9999;
+                for( int i=0; i<sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++i ) {
+                    int distance = rgbi_distance(&commonPalette[i], &rgb );
+                    if ( distance < minDistance ) {
+                        minDistance = distance;
+                        colorIndexes[xx] = commonPalette[i].index;
+                    }
                 }
+
+                _source += 3;
+
             }
 
-            offset = ( image_y * ( _frame_width >> 3 ) ) + ( image_x >> 3 );
-            bitmask = 1 << ( 7 - (image_x & 0x7) );
+            int colorIndexesCount[16];
+            memset( colorIndexesCount, 0, 16*sizeof( int ) );
 
-            // If the pixes has enough luminance value, it must be 
-            // considered as "on"; otherwise, it is "off".
-            // int luminance = calculate_luminance(rgb);
-
-            if ( colorIndex ) {
-                *( buffer + offset + 2) |= bitmask;
-                // printf("*");
-            } else {
-                *( buffer + offset + 2) &= ~bitmask;
-                // printf(" ");
+            for( int xx = 0; xx<8; ++xx ) {
+                ++colorIndexesCount[colorIndexes[xx]];
             }
 
-            offset = ( image_y * ( _frame_width >> 3 ) ) + ( image_x >> 3 );
-
-            if ( _environment->debugImageLoad ) {
-                printf( "%1.1x", colorIndex );
+            int colorBackground = 0;
+            int colorBackgroundMax = 0;
+            int colorForeground = 0;
+            int colorForegroundMax = 0;
+            for( int xx = 0; xx<16; ++xx ) {
+                if ( colorIndexesCount[xx] > colorBackgroundMax ) {
+                    colorBackground = xx;
+                    colorBackgroundMax = colorIndexesCount[xx];
+                };
             }
 
-            if ( colorIndex && (*(buffer + 2 + ( ( _frame_width >> 3 ) * _frame_height ) + offset) == 0 ) ) {
-                bitmask = colorIndex << 4;
-                *(buffer + 2 + ( ( _frame_width >> 3 ) * _frame_height ) + offset) |= bitmask;
+            colorIndexesCount[colorBackground] = 0;
+
+            for( int xx = 0; xx<16; ++xx ) {
+                if ( colorIndexesCount[xx] > colorForegroundMax ) {
+                    colorForeground = xx;
+                    colorForegroundMax = colorIndexesCount[xx];
+                };
             }
 
-            _source += 3;
+            for( int xx = 0; xx<8; ++xx ) {
+                offset = ( image_y * ( _frame_width >> 3 ) ) + ( image_x >> 3 );
+                bitmask = 1 << ( 7 - ((image_x+xx) & 0x7) );
 
+                // If the pixes has enough luminance value, it must be 
+                // considered as "on"; otherwise, it is "off".
+                // int luminance = calculate_luminance(rgb);
+
+                if ( colorIndexes[xx] != colorBackground ) {
+                    *( buffer + offset + 2) |= bitmask;
+                    // printf("*");
+                } else {
+                    *( buffer + offset + 2) &= ~bitmask;
+                    // printf(" ");
+                }
+
+                offset = ( image_y * ( _frame_width >> 3 ) ) + ( image_x >> 3 );
+
+                bitmask = colorForeground << 4 | ( colorBackground );
+                *(buffer + 2 + ( ( _frame_width >> 3 ) * _frame_height ) + offset) = bitmask;
+                if ( _environment->debugImageLoad ) {
+                    printf( "%1.1x", colorForeground );
+                }
+
+            }
         }
 
         _source += ( _width - _frame_width ) * 3;
