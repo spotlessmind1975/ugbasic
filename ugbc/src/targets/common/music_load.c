@@ -126,7 +126,7 @@ Variable * music_load( Environment * _environment, char * _filename, char * _ali
         // Repeat until the MIDI file is finished
 		while( ! done ) {
 
-            printf("%d:", pos );
+            // printf("%d:", pos );
 
             // For each track we must check if the current message
             // is "up to date" in respect of the current position.
@@ -143,23 +143,23 @@ Variable * music_load( Environment * _environment, char * _filename, char * _ali
                             // is finished, we take note of that.
                             if ( !midiReadGetNextMessage(mf, i, &msg[i]) ) {
                                 finished[i] = 1;
-                                printf("E[----]");
+                                // printf("E[----]");
                                 break;
                             }
                         }
                         if ( !finished[i] ) {
                             used[i] = 0;
-                            printf("R[%4.4d]", msg[i].dwAbsPos);
+                            // printf("R[%4.4d]", msg[i].dwAbsPos);
                         }
                     } else {
-                        printf(".[    ]");
+                        // printf(".[    ]");
                     }
                 } else {
-                    printf("E[----]");
+                    // printf("E[----]");
                 }
             }
 
-            printf("\n");
+            // printf("\n");
 
             // Now we check if the MIDI file is ended, that is
             // if every track is finished.
@@ -221,13 +221,13 @@ Variable * music_load( Environment * _environment, char * _filename, char * _ali
                                     lastNoteOnChannel[j] = 0;
                                     usedChannel[j] = 0;
                                     imfBuffer[size++] = 0xe0 | ( /*msg[i].MsgData.NoteOff.iChannel*/ ( 1 << ( j & MAX_AUDIO_CHANNELS ) ) );
-                                    printf("(%d) <%1.1x> ", pos, j );
+                                    // printf("(%d) <%1.1x> ", pos, j );
                                     // printf("F");
                                     break;
                                 }
                             }
                             if ( j >= iNum ) {
-                                printf("(%d) <<%1.1x>> ", pos, j );
+                                // printf("(%d) <<%1.1x>> ", pos, j );
                             }
                             break;
                         }
@@ -245,10 +245,10 @@ Variable * music_load( Environment * _environment, char * _filename, char * _ali
                                     imfBuffer[size++] = 0xc0 | ( /*msg[i].MsgData.NoteOff.iChannel*/ ( 1 << ( j & MAX_AUDIO_CHANNELS ) ) );
                                     // nnnnnnnn
                                     imfBuffer[size++] = msg[i].MsgData.NoteOn.iNote & 0xff;
-                                    printf("(%d) [%1.1x][%2.2x] ", pos, j, msg[i].MsgData.NoteOn.iNote & 0xff );
+                                    // printf("(%d) [%1.1x][%2.2x] ", pos, j, msg[i].MsgData.NoteOn.iNote & 0xff );
                                     lastNoteOnChannel[j] = msg[i].MsgData.NoteOn.iNote;
                                 } else {
-                                    printf("(%d) [[%1.1x][%2.2x]] ", pos, j, msg[i].MsgData.NoteOn.iNote & 0xff );
+                                    // printf("(%d) [[%1.1x][%2.2x]] ", pos, j, msg[i].MsgData.NoteOn.iNote & 0xff );
                                 }
                             } else {
                                 // 1110cccc
@@ -259,7 +259,7 @@ Variable * music_load( Environment * _environment, char * _filename, char * _ali
                                         usedChannel[j] = 0;
                                         lastNoteOnChannel[j] = 0;
                                         imfBuffer[size++] = 0xe0 | ( /*msg[i].MsgData.NoteOff.iChannel*/ ( 1 << ( j & MAX_AUDIO_CHANNELS ) ) );
-                                        printf("(%d) <%1.1x> ", pos, j );
+                                        // printf("(%d) <%1.1x> ", pos, j );
                                         break;
                                     }
                                 }
@@ -316,7 +316,7 @@ Variable * music_load( Environment * _environment, char * _filename, char * _ali
 
                 }
 
-                printf("\n");
+                // printf("\n");
 
                 // Now check for unused messages, to find out
                 // the nearest in terms of position.
