@@ -68,6 +68,10 @@ funzioni continueranno senza problemi.
 </usermanual> */
 void halt( Environment * _environment ) {
 
-    cpu_halt( _environment );
+    MAKE_LABEL
+
+    cpu_label( _environment, label );
+    interleaved_instructions( _environment );
+    cpu_jump( _environment, label );
     
 }

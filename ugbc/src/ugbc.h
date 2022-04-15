@@ -1024,6 +1024,7 @@ typedef struct _Deployed {
     int font;
     int sidvars;
     int sidstartup;
+    int pc128audiostartup;
     int doubleBuffer;
 
     Embedded embedded;
@@ -2441,6 +2442,8 @@ void                    input( Environment * _environment, char * _variable );
 Variable *              input_string( Environment * _environment, char * _size );
 void                    instrument( Environment * _environment, int _instrument, int _channels );
 void                    instrument_semi_var( Environment * _environment, int _instrument, char * _channels );
+void                    interleaved_instructions( Environment * _environment );
+
 
 //----------------------------------------------------------------------------
 // *J*

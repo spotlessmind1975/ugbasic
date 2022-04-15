@@ -5774,8 +5774,8 @@ statement:
   ;
 
 statements_no_linenumbers:
-      statement { ((Environment *)_environment)->yylineno = yylineno; variable_reset( _environment ); }
-    | statement OP_COLON { ((Environment *)_environment)->yylineno = yylineno; variable_reset( _environment );  } statements_no_linenumbers { }
+      statement { ((Environment *)_environment)->yylineno = yylineno; variable_reset( _environment ); interleaved_instructions( _environment ); }
+    | statement OP_COLON { ((Environment *)_environment)->yylineno = yylineno; variable_reset( _environment ); interleaved_instructions( _environment ); } statements_no_linenumbers { interleaved_instructions( _environment ); }
     ;
 
 statements_with_linenumbers:

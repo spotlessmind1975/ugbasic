@@ -108,6 +108,7 @@ void target_initialization( Environment * _environment ) {
     setup_text_variables( _environment );
 
     ef936x_initialization( _environment );
+    pc128opaudio_initialization( _environment );
 
     if ( _environment->tenLinerRulesEnforced ) {
         shell_injection( _environment );
@@ -152,5 +153,11 @@ void target_linkage( Environment * _environment ) {
         printf("The compilation of assembly program failed.\n\n");
         printf("Please use option '-I' to install chain tool.\n\n");
     }; 
+
+}
+
+void interleaved_instructions( Environment * _environment ) {
+
+    outline0( "JSR PC128AUDIOOPSAMPLE" );
 
 }
