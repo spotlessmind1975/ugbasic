@@ -96,6 +96,14 @@ SOURCES_6502 := $(subst src/hw/6502/,src-generated/6502_,$(MODULES_6502:.asm=.c)
 src-generated/6502_%.c: $(MODULES_6502)
 	@xxd -i $(subst src-generated/6502_,src/hw/6502/,$(@:.c=.asm)) >$@
 
+# ATARI POKEY
+
+MODULES_POKEY := $(wildcard src/hw/pokey/*.asm)
+SOURCES_POKEY := $(subst src/hw/pokey/,src-generated/pokey_,$(MODULES_POKEY:.asm=.c))
+
+src-generated/pokey_%.c: $(MODULES_POKEY)
+	@xxd -i $(subst src-generated/pokey_,src/hw/pokey/,$(@:.c=.asm)) >$@
+
 # Alphanumeric Television Interface Controller (ANTIC)
 
 MODULES_ANTIC := $(wildcard src/hw/antic/*.asm)
@@ -173,13 +181,13 @@ SOURCES_ATARI := $(subst src/hw/atari/,src-generated/atari_,$(MODULES_ATARI:.asm
 src-generated/atari_%.c: $(MODULES_ATARI)
 	@xxd -i $(subst src-generated/atari_,src/hw/atari/,$(@:.c=.asm)) >$@
 
-src-generated/modules_atari.c: $(SOURCES_6502) $(SOURCES_ANTIC) $(SOURCES_ATARI) $(SOURCES_GTIA)
-	@cat $(SOURCES_6502) $(SOURCES_ANTIC) $(SOURCES_ATARI) $(SOURCES_GTIA) >src-generated/modules_atari.c
+src-generated/modules_atari.c: $(SOURCES_6502) $(SOURCES_ANTIC) $(SOURCES_ATARI) $(SOURCES_GTIA) $(SOURCES_POKEY)
+	@cat $(SOURCES_6502) $(SOURCES_ANTIC) $(SOURCES_ATARI) $(SOURCES_GTIA) $(SOURCES_POKEY) >src-generated/modules_atari.c
 	@grep "src" src-generated/modules_atari.c | awk -f modules.awk >src-generated/modules_atari.h
 	@grep "data" src-generated/modules_atari.c | awk -f modules.awk >>src-generated/modules_atari.h
 
-src-generated/modules_atarixl.c: $(SOURCES_6502) $(SOURCES_ANTIC) $(SOURCES_ATARI) $(SOURCES_GTIA)
-	@cat $(SOURCES_6502) $(SOURCES_ANTIC) $(SOURCES_ATARI) $(SOURCES_GTIA) >src-generated/modules_atarixl.c
+src-generated/modules_atarixl.c: $(SOURCES_6502) $(SOURCES_ANTIC) $(SOURCES_ATARI) $(SOURCES_GTIA)  $(SOURCES_POKEY)
+	@cat $(SOURCES_6502) $(SOURCES_ANTIC) $(SOURCES_ATARI) $(SOURCES_GTIA) $(SOURCES_POKEY) >src-generated/modules_atarixl.c
 	@grep "src" src-generated/modules_atarixl.c | awk -f modules.awk >src-generated/modules_atarixl.h
 	@grep "data" src-generated/modules_atarixl.c | awk -f modules.awk >>src-generated/modules_atarixl.h
 

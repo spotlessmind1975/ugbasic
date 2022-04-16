@@ -4,14 +4,14 @@
 ;  * Copyright 2021-2022 Marco Spedaletti (asimov@mclink.it)
 ;  *
 ;  * Licensed under the Apache License, Version 2.0 (the "License");
-;  * you may not use this file eXcept in compliance with the License.
+;  * you may not use this file except in compliance with the License.
 ;  * You may obtain a copy of the License at
 ;  *
 ;  * http://www.apache.org/licenses/LICENSE-2.0
 ;  *
 ;  * Unless required by applicable law or agreed to in writing, software
 ;  * distributed under the License is distributed on an "AS IS" BASIS,
-;  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either eXpress or implied.
+;  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 ;  * See the License for the specific language governing permissions and
 ;  * limitations under the License.
 ;  *----------------------------------------------------------------------------
@@ -29,56 +29,33 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                            STARTUP ROUTINE ON GTIA                          *
+;*                      INTERNAL VARIABLES FOR POKEY HARDWARE                  *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-CPUMEMMOVE:
-    LDY MATHPTR0+1
-    BEQ CPUMEMMOVER
-    LDY #$0
-CPUMEMMOVE2:
-    LDA (TMPPTR), Y
-    STA (TMPPTR2), Y
-    INY
-    BNE CPUMEMMOVE2
-    INC TMPPTR+1
-    INC TMPPTR2+1
-    DEC MATHPTR0+1
-    BNE CPUMEMMOVE2
+POKEYFREQTABLE:    
+    .word 255,		255,		255,		255,		255,		255,		255,		255,		255,		255
+    .word 255,		255,		255,		255,		255,		255,		255,		255,		255,		255
+    .word 255,		255,		255,		255,        255,        255,        255,        255,        255,        255
+    .word 255,        255,        255,        255,        255,        255,        255,        255,        255,        255
+    .word 255,        255,        255,        255,        255,        255,        255,        255,        255,        255
+    .word 255,        255,        255,        255,        255,        255,        255,        255,        255,        243
+    .word 230,        217,        204,        193,        182,        172,        162,        153,        144,        136
+    .word 128,        121,        114,        108,        102,        96,         91,         85,         81,         76
+    .word 72,         68,         64,         60,         57,         53,         50,         47,         45,         42
+    .word 40,         37,         35,         33,         31,         30,         28,         26,         25,         23
+    .word 22,         21,         19,         18,         17,         16,         15,         14,         13,         12
+    .word 11,         10,         9,          8,          7,          6,          5,          4,          3,          2
+    .word 1
+    
+POKEYMUSICREADY: .byte $0
+POKEYBLOCKS: .word $0
+POKEYLASTBLOCK: .byte $0
 
-CPUMEMMOVER:
-    LDY #$0
-CPUMEMMOVER2:
-    LDA (TMPPTR), Y
-    STA (TMPPTR2), Y
-    INY
-    CPY MATHPTR0
-    BNE CPUMEMMOVER2
-    RTS
-
-GTIAVBLIRQPREV: .word $0
-
-GTIAVBLIRQ:
-    JSR MUSICPLAYER
-    JMP (GTIAVBLIRQPREV)
-
-GTIASTARTUP:
-    LDA #0
-    STA XCURSYS
-    STA YCURSYS
-    STA $D404
-    STA $D405
-    CLI
-    LDA $222
-    STA GTIAVBLIRQPREV
-    LDA $223
-    STA GTIAVBLIRQPREV+1
-    LDA #<GTIAVBLIRQ
-    STA $222
-    LDA #>GTIAVBLIRQ
-    STA $223
-    SEI
-    RTS
+POKEYTMPPTR2 = $03 ; $04
+POKEYTMPPTR = $05 ; $06
+POKEYTMPOFS = $07
+POKEYTMPLEN = $08
+POKEYJIFFIES = $09 ; $0A

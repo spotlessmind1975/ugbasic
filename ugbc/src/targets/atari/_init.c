@@ -108,7 +108,8 @@ void target_initialization( Environment * _environment ) {
 
     antic_initialization( _environment );
     gtia_initialization( _environment );
-
+    pokey_initialization( _environment );
+    
     if ( _environment->tenLinerRulesEnforced ) {
         shell_injection( _environment );
     }
@@ -153,5 +154,9 @@ void target_linkage( Environment * _environment ) {
         printf("The compilation of assembly program failed.\n\n");
         printf("Please use option '-I' to install chain tool.\n\n");
     }; 
+
+}
+
+void interleaved_instructions( Environment * _environment ) {
 
 }
