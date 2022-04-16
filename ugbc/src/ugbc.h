@@ -1026,6 +1026,8 @@ typedef struct _Deployed {
     int sidstartup;
     int pc128audiostartup;
     int doubleBuffer;
+    int pokeyvars;
+    int pokeystartup;
 
     Embedded embedded;
 
@@ -2809,12 +2811,14 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "hw/6502.h"
     #include "hw/antic.h"
     #include "hw/gtia.h"
+    #include "hw/pokey.h"
     #include "hw/atari.h"
 #elif defined(__atarixl__) 
     #include "../src-generated/modules_atarixl.h"
     #include "hw/6502.h"
     #include "hw/antic.h"
     #include "hw/gtia.h"
+    #include "hw/pokey.h"
     #include "hw/atari.h"
 #elif __c64__
     #include "../src-generated/modules_c64.h"
