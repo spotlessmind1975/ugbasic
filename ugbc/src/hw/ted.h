@@ -168,4 +168,24 @@ void ted_move_tiles( Environment * _environment, char * _image, char * _x, char 
 void ted_use_tileset( Environment * _environment, char * _tileset );
 void ted_tile_at( Environment * _environment, char * _x, char * _y, char * _result );
 
+void ted_start( Environment * _environment, int _channel );
+void ted_set_volume( Environment * _environment, int _channel, int _volume );
+void ted_set_program( Environment * _environment, int _channel, int _program );
+void ted_set_parameter( Environment * _environment, int _channel, int _parameter, int _value );
+void ted_set_frequency( Environment * _environment, int _channel, int _frequency );
+void ted_set_pitch( Environment * _environment, int _channel, int _pitch );
+void ted_set_note( Environment * _environment, int _channel, int _note );
+void ted_stop( Environment * _environment, int _channel );
+
+void ted_start_var( Environment * _environment, char * _channel );
+void ted_set_volume_semi_var( Environment * _environment, char * _channel, int _volume );
+void ted_set_volume_vars( Environment * _environment, char * _channel, char * _volume );
+void ted_set_program_semi_var( Environment * _environment, char * _channel, int _program );
+void ted_set_frequency_vars( Environment * _environment, char * _channel, char * _frequency );
+void ted_set_pitch_vars( Environment * _environment, char * _channel, char * _pitch );
+void ted_set_note_vars( Environment * _environment, char * _channel, char * _note );
+void ted_stop_vars( Environment * _environment, char * _channel );
+
+void ted_music( Environment * _environment, char * _music, int _size );
+
 #endif
