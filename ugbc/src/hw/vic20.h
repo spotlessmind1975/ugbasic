@@ -133,6 +133,8 @@
 #define BANK_COUNT          0
 #define BANK_SIZE           0
 
+#define MAX_AUDIO_CHANNELS  3
+
 void vic20_xpen( Environment * _environment, char * _destination );
 void vic20_ypen( Environment * _environment, char * _destination );
 void vic20_inkey( Environment * _environment, char * _pressed, char * _key );
