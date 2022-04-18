@@ -5453,14 +5453,15 @@ char * image_load_asserts( Environment * _environment, char * _filename ) {
 
     char * lookedFilename = malloc(MAX_TEMPORARY_STORAGE);
     char lookedExtension[MAX_TEMPORARY_STORAGE];
+    memset( lookedExtension, 0, MAX_TEMPORARY_STORAGE);
     strcpy( lookedFilename, _filename );
     char * c = strrchr( lookedFilename, '/' );
     if ( c ) {
         strcpy( lookedExtension, c );
+        *c = 0;
     } else {
         strcpy( lookedExtension, "" );
     }
-    *c = 0;
 #if defined(__atari__) 
     strcat( lookedFilename, "/atari" );
 #elif defined(__atarixl__) 
