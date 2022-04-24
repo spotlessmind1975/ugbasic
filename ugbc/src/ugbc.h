@@ -1028,6 +1028,8 @@ typedef struct _Deployed {
     int doubleBuffer;
     int pokeyvars;
     int pokeystartup;
+    int ay8910vars;
+    int ay8910startup;
 
     Embedded embedded;
 
@@ -2865,6 +2867,7 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "hw/z80.h"
     #include "hw/msx1.h"
     #include "hw/tms9918.h"
+    #include "hw/ay8910.h"
 #elif __coleco__
     #include "../src-generated/modules_coleco.h"
     #include "hw/z80.h"

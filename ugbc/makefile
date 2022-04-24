@@ -121,6 +121,14 @@ SOURCES_GTIA := $(subst src/hw/gtia/,src-generated/gtia_,$(MODULES_GTIA:.asm=.c)
 src-generated/gtia_%.c: $(MODULES_GTIA)
 	@xxd -i $(subst src-generated/gtia_,src/hw/gtia/,$(@:.c=.asm)) >$@
 
+# General Instrument AY-3-8910
+
+MODULES_AY8910 := $(wildcard src/hw/ay8910/*.asm)
+SOURCES_AY8910 := $(subst src/hw/ay8910/,src-generated/ay8910_,$(MODULES_AY8910:.asm=.c))
+
+src-generated/ay8910_%.c: $(MODULES_AY8910)
+	@xxd -i $(subst src-generated/ay8910_,src/hw/ay8910/,$(@:.c=.asm)) >$@
+
 # MOS Technology VIC-I
 
 MODULES_VIC1 := $(wildcard src/hw/vic1/*.asm)
@@ -351,8 +359,8 @@ SOURCES_MSX1 := $(subst src/hw/msx1/,src-generated/msx1_,$(MODULES_MSX1:.asm=.c)
 src-generated/msx1_%.c: $(MODULES_MSX)
 	@xxd -i $(subst src-generated/msx1_,src/hw/msx1/,$(@:.c=.asm)) >$@
 
-src-generated/modules_msx1.c: $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_MSX1)
-	@cat $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_MSX1) >src-generated/modules_msx1.c
+src-generated/modules_msx1.c: $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_AY8910) $(SOURCES_MSX1)
+	@cat $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_AY8910) $(SOURCES_MSX1) >src-generated/modules_msx1.c
 	@grep "src" src-generated/modules_msx1.c | awk -f modules.awk >src-generated/modules_msx1.h
 	@grep "data" src-generated/modules_msx1.c | awk -f modules.awk >>src-generated/modules_msx1.h
 
