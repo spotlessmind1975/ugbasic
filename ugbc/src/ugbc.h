@@ -1030,6 +1030,8 @@ typedef struct _Deployed {
     int pokeystartup;
     int ay8910vars;
     int ay8910startup;
+    int sn76489vars;
+    int sn76489startup;
 
     Embedded embedded;
 
@@ -2873,6 +2875,7 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "hw/z80.h"
     #include "hw/coleco.h"
     #include "hw/tms9918.h"
+    #include "hw/sn76489.h"
 #elif __sc3000__
     #include "../src-generated/modules_sc3000.h"
     #include "hw/z80.h"

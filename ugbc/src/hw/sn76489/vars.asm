@@ -3,7 +3,7 @@
 ;  *****************************************************************************
 ;  * Copyright 2021-2022 Marco Spedaletti (asimov@mclink.it)
 ;  *
-;  * Licensed under the Apache License, Version 2.0 (the "License
+;  * Licensed under the Apache License, Version 2.0 (the "License");
 ;  * you may not use this file except in compliance with the License.
 ;  * You may obtain a copy of the License at
 ;  *
@@ -16,7 +16,7 @@
 ;  * limitations under the License.
 ;  *----------------------------------------------------------------------------
 ;  * Concesso in licenza secondo i termini della Licenza Apache, versione 2.0
-;  * (la "Licenza è proibito usare questo file se non in conformità alla
+;  * (la "Licenza"); è proibito usare questo file se non in conformità alla
 ;  * Licenza. Una copia della Licenza è disponibile all'indirizzo:
 ;  *
 ;  * http://www.apache.org/licenses/LICENSE-2.0
@@ -29,104 +29,32 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                      STARTUP ROUTINE FOR COLECO                             *
+;*                      INTERNAL VARIABLES FOR SN-76489 HARDWARE               *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-rst_8:
-    RETI
-    NOP
+SN76489FREQTABLE:    
+    DW 255,		255,		255,		255,		255,		255,		255,		255,		255,		255
+    DW 255,		255,		255,		255,		255,		255,		255,		255,		255,		255
+    DW 255,		255,		255,        255,        255,        255,        255,        255,        255,        255
+    DW 255,        240,        227,        214,        202,        191,        180,        170,        160,        151
+    DW 143,        135,        127,        120,        113,        107,        101,        95,         90,         85
+    DW 80,         75,         71,         67,         63,         60,         56,         53,         50,         47
+    DW 45,         42,         40,         37,         35,         33,         31,         30,         28,         26
+    DW 25,         23,         22,         21,         20,         18,         17,         16,         15,         15
+    DW 14,         13,         12,         11,         11,         10,         10,         9,          8,          8
+    DW 7,          7,          7,          6,          6,          5,          5,          5,          5,          4
+    DW 4,          4,          3,          3,          3,          3,          3,          2,          2,          2
+    DW 2,          2,          2,          2,          1,          1,          1,          1,          1           
+    
+; SN76489MUSICREADY: .byte $0
+; SN76489BLOCKS: .word $0
+; SN76489LASTBLOCK: .byte $0
 
-rst_10:
-    RETI
-    NOP
-
-rst_18:
-    JP $1ffd
-
-rst_20:
-    RETI
-    NOP
-
-rst_28:
-    RETI
-    NOP
-
-rst_30:
-    RETI
-    NOP
-
-rst_38:
-    RETI
-    NOP
-
-jp NMI
-
-NMI:
-	PUSH	AF
-	PUSH	BC
-	PUSH	DE
-	PUSH	HL
-	PUSH	IX
-	PUSH	IY
-	EX	AF,AF'
-	PUSH	AF
-	EXX
-	PUSH	BC
-	PUSH	DE
-	PUSH	HL
-    LD HL,(COLECOTIMER)
-    INC HL
-    LD (COLECOTIMER),HL
-	LD A, (IRQVECTORREADY)
-	CMP 0
-	JR Z, IRQVECTORSKIP
-    CALL IRQVECTOR
-    CALL MUSICPLAYER
-IRQVECTORSKIP:
-	CALL	$1fdc
-	POP	HL
-	POP	DE
-	POP	BC
-	EXX
-	POP	AF
-	EX	AF,AF'
-	POP	IY
-	POP	IX
-	POP	HL
-	POP	DE
-	POP	BC
-	POP	AF
-	RETN
-
-; SET_GAMELOOP_HOOK:
-;         LD (GAMELOOP_HOOK+1),HL
-;         LD A,$c9
-;         LD (GAMELOOP_HOOK+3),A
-;         LD A,$cd
-;         LD (GAMELOOP_HOOK),A
-;         RET
-
-IRQVOID:
-    RET
-
-COLECOSTARTUP:
-    LD	HL, $9b9b
-    LD	(CONTROLLER_BUFFER),HL
-
-    LD DE, IRQVOID
-    LD HL, IRQVECTOR
-    LD A, $c3
-    LD (HL), A
-    INC HL
-    LD A, E
-    LD (HL), A
-    INC HL
-    LD A, D
-    LD (HL), A
-	LD A, 1
-	LD (IRQVECTORREADY), A
-
-    RET
+; SN76489TMPPTR2 = $03 ; $04
+; SN76489TMPPTR = $05 ; $06
+; SN76489TMPOFS = $07
+; SN76489TMPLEN = $08
+; SN76489JIFFIES = $09 ; $0A

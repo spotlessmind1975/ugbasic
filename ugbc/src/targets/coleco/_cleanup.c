@@ -41,6 +41,7 @@
 void target_finalization( Environment * _environment ) {
 
     tms9918_finalization( _environment );
+    sn76489_finalization( _environment );
 
     outhead0("section data_user");
     outhead0("LASTVAR: db $42");

@@ -161,6 +161,14 @@ SOURCES_TED := $(subst src/hw/ted/,src-generated/ted_,$(MODULES_TED:.asm=.c))
 src-generated/ted_%.c: $(MODULES_TED)
 	@xxd -i $(subst src-generated/ted_,src/hw/ted/,$(@:.c=.asm)) >$@
 
+# Texas Instruments SN76489
+
+MODULES_SN76489 := $(wildcard src/hw/sn76489/*.asm)
+SOURCES_SN76489 := $(subst src/hw/sn76489/,src-generated/sn76489_,$(MODULES_SN76489:.asm=.c))
+
+src-generated/sn76489_%.c: $(MODULES_SN76489)
+	@xxd -i $(subst src-generated/sn76489_,src/hw/sn76489/,$(@:.c=.asm)) >$@
+
 # Texas Instruments TMS9918
 
 MODULES_TMS9918 := $(wildcard src/hw/tms9918/*.asm)
@@ -207,8 +215,8 @@ SOURCES_COLECO := $(subst src/hw/coleco/,src-generated/coleco_,$(MODULES_COLECO:
 src-generated/coleco_%.c: $(MODULES_MSX)
 	@xxd -i $(subst src-generated/coleco_,src/hw/coleco/,$(@:.c=.asm)) >$@
 
-src-generated/modules_coleco.c: $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_COLECO)
-	@cat $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_COLECO) >src-generated/modules_coleco.c
+src-generated/modules_coleco.c: $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_SN76489) $(SOURCES_COLECO)
+	@cat $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_SN76489) $(SOURCES_COLECO) >src-generated/modules_coleco.c
 	@grep "src" src-generated/modules_coleco.c | awk -f modules.awk >src-generated/modules_coleco.h
 	@grep "data" src-generated/modules_coleco.c | awk -f modules.awk >>src-generated/modules_coleco.h
 
