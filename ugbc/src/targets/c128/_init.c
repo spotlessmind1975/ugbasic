@@ -150,6 +150,8 @@ void target_linkage( Environment * _environment ) {
         strcpy( listingFileName, "" );
     }
 
+    remove( _environment->exeFileName );
+
     sprintf( commandLine, "\"%s\" -g -Ln main.lbl %s -o \"%s\" -t c128 -C \"%s\" \"%s\"",
         executableName,
         listingFileName,

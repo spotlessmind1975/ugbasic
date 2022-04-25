@@ -143,6 +143,8 @@ void target_linkage( Environment * _environment ) {
         strcpy( listingFileName, "" );
     }
 
+    remove( _environment->exeFileName );
+
     sprintf( commandLine, "\"%s\" %s -o \"%s\" -t atari -C \"%s\" \"%s\"",
         executableName,
         listingFileName,

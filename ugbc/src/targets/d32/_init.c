@@ -122,6 +122,8 @@ void target_linkage( Environment * _environment ) {
         strcpy( listingFileName, "" );
     }
 
+    remove( _environment->exeFileName );
+
     sprintf( commandLine, "\"%s\" %s -o \"%s\" -D -e 10240 \"%s\"",
         executableName,
         listingFileName,
