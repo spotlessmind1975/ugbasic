@@ -34,6 +34,23 @@ ELSE { RETURN(ELSE,1); }
 ELSEIF { RETURN(ELSEIF,1); }
 ENDIF { RETURN(ENDIF,1); }
 
+ATARI  { RETURN(ATARI,1); }
+ATARIXL  { RETURN(ATARIXL,1); }
+C128  { RETURN(C128,1); }
+C64  { RETURN(C64,1); }
+VIC20  { RETURN(VIC20,1); }
+ZX  { RETURN(ZX,1); }
+COLECO  { RETURN(COLECO,1); }
+SC3000 { RETURN(SC3000,1); }
+SG1000  { RETURN(SG1000,1); }
+MSX  { RETURN(MSX,1); }
+MSX1  { RETURN(MSX1,1); }
+DRAGON  { RETURN(DRAGON,1); }
+DRAGON32  { RETURN(DRAGON32,1); }
+DRAGON64 { RETURN(DRAGON64,1); }
+PC128OP  { RETURN(PC128OP,1); }
+MO5  { RETURN(MO5,1); }
+
 [\n\r]+ { RETURN(NewLine,0);}
 \$[a-fA-F0-9]+ { embedlval.integer = strtol(embedtext+1,0,16); RETURN(Integer,1); }
 &[Hh][a-fA-F0-9]+ { embedlval.integer = strtol(embedtext+2,0,16); RETURN(Integer,1); }

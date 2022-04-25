@@ -238,7 +238,10 @@ typedef enum _VariableType {
     VT_TILESET = 22,
 
     /** SEQUENCE (a set of images) */
-    VT_SEQUENCE = 23
+    VT_SEQUENCE = 23,
+
+    /** MUSIC (a [piece of] music) */
+    VT_MUSIC = 24
 
 } VariableType;
 
@@ -1019,7 +1022,16 @@ typedef struct _Deployed {
     int protothread;
     int tiles;
     int font;
+    int sidvars;
+    int sidstartup;
+    int pc128audiostartup;
     int doubleBuffer;
+    int pokeyvars;
+    int pokeystartup;
+    int ay8910vars;
+    int ay8910startup;
+    int sn76489vars;
+    int sn76489startup;
 
     Embedded embedded;
 
@@ -1719,6 +1731,7 @@ typedef struct _Environment {
 #define CRITICAL_NOT_ASSIGNED_SEQUENCE( v ) CRITICAL2("E125 - variable is not a set of loaded collection of images, please use assign operator", v );
 #define CRITICAL_SEQUENCE_LOAD_INVALID_FRAME_WIDTH( w ) CRITICAL2i("E126 - invalid frame width, not multiple of width", w );
 #define CRITICAL_SEQUENCE_LOAD_INVALID_FRAME_HEIGHT( h ) CRITICAL2i("E127 - invalid frame height, not multiple of height", h );
+#define CRITICAL_CANNOT_MUSIC( v ) CRITICAL2("E128 - variable is not MUSIC, so cannot music it", v );
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
 #define WARNING2i( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%i) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -2056,6 +2069,163 @@ int embed_scan_string (const char *);
 #define FLAG_DOUBLE_Y   64
 #define FLAG_EXACT   128
 
+#define IMF_INSTRUMENT_EXPLOSION        			0x00
+#define IMF_INSTRUMENT_ACOUSTIC_GRAND_PIANO			0x01
+#define IMF_INSTRUMENT_BRIGHT_ACOUSTIC_PIANO		0x02
+#define IMF_INSTRUMENT_ELECTRIC_GRAND_PIANO			0x03
+#define IMF_INSTRUMENT_HONKY_TONK_PIANO				0x04
+#define IMF_INSTRUMENT_ELECTRIC_PIANO1				0x05
+#define IMF_INSTRUMENT_ELECTRIC_PIANO2				0x06
+#define IMF_INSTRUMENT_HARPSICHORD					0x07
+#define IMF_INSTRUMENT_CLAVI						0x08
+#define IMF_INSTRUMENT_CELESTA						0x09
+#define IMF_INSTRUMENT_GLOCKENSPIEL					0x0A
+#define IMF_INSTRUMENT_MUSIC_BOX					0x0B
+#define IMF_INSTRUMENT_VIBRAPHONE					0x0C
+#define IMF_INSTRUMENT_MARIMBA						0x0D
+#define IMF_INSTRUMENT_XYLOPHONE					0x0E
+#define IMF_INSTRUMENT_TUBULAR_BELLS				0x0F
+#define IMF_INSTRUMENT_DULCIMER						0x10
+#define IMF_INSTRUMENT_DRAWBAR_ORGAN				0x11
+#define IMF_INSTRUMENT_PERCUSSIVE_ORGAN				0x12
+#define IMF_INSTRUMENT_ROCK_ORGAN					0x13
+#define IMF_INSTRUMENT_CHURCH_ORGAN					0x14
+#define IMF_INSTRUMENT_REED_ORGAN					0x15
+#define IMF_INSTRUMENT_ACCORDION					0x16
+#define IMF_INSTRUMENT_HARMONICA					0x17
+#define IMF_INSTRUMENT_TANGO_ACCORDION				0x18
+#define IMF_INSTRUMENT_ACOUSTIC_GUITAR_NYLON		0x19
+#define IMF_INSTRUMENT_ACOUSTIC_GUITAR_STEEL		0x1A
+#define IMF_INSTRUMENT_ELECTRIC_GUITAR_JAZZ			0x1B
+#define IMF_INSTRUMENT_ELECTRIC_GUITAR_CLEAN		0x1C
+#define IMF_INSTRUMENT_ELECTRIC_GUITAR_MUTED		0x1D
+#define IMF_INSTRUMENT_OVERDRIVEN_GUITAR			0x1E
+#define IMF_INSTRUMENT_DISTORTION_GUITAR			0x1F
+#define IMF_INSTRUMENT_GUITAR_HARMONICS				0x20
+#define IMF_INSTRUMENT_ACOUSTIC_BASS				0x21
+#define IMF_INSTRUMENT_ELECTRIC_BASS_FINGER			0x22
+#define IMF_INSTRUMENT_ELECTRIC_BASS_PICK			0x23
+#define IMF_INSTRUMENT_FRETLESS_BASS				0x24
+#define IMF_INSTRUMENT_SLAP_BASS_1					0x25
+#define IMF_INSTRUMENT_SLAP_BASS_2					0x26
+#define IMF_INSTRUMENT_SYNTH_BASS_1					0x27
+#define IMF_INSTRUMENT_SYNTH_BASS_2					0x28
+#define IMF_INSTRUMENT_VIOLIN						0x29
+#define IMF_INSTRUMENT_VIOLA						0x2A
+#define IMF_INSTRUMENT_CELLO						0x2B
+#define IMF_INSTRUMENT_CONTRABASS					0x2C
+#define IMF_INSTRUMENT_TREMOLO_STRINGS				0x2D
+#define IMF_INSTRUMENT_PIZZICATO_STRINGS			0x2E
+#define IMF_INSTRUMENT_ORCHESTRAL_HARP				0x2F
+#define IMF_INSTRUMENT_TIMPANI						0x30
+#define IMF_INSTRUMENT_STRING_ENSEMBLE_1			0x31
+#define IMF_INSTRUMENT_STRING_ENSEMBLE_2			0x32
+#define IMF_INSTRUMENT_SYNTHSTRINGS_1				0x33
+#define IMF_INSTRUMENT_SYNTHSTRINGS_2				0x34
+#define IMF_INSTRUMENT_CHOIR_AAHS					0x35
+#define IMF_INSTRUMENT_VOICE_OOHS					0x36
+#define IMF_INSTRUMENT_SYNTH_VOICE					0x37
+#define IMF_INSTRUMENT_ORCHESTRA_HIT				0x38
+#define IMF_INSTRUMENT_TRUMPET						0x39
+#define IMF_INSTRUMENT_TROMBONE						0x3A
+#define IMF_INSTRUMENT_TUBA							0x3B
+#define IMF_INSTRUMENT_MUTED_TRUMPET				0x3C
+#define IMF_INSTRUMENT_FRENCH_HORN					0x3D
+#define IMF_INSTRUMENT_BRASS_SECTION				0x3E
+#define IMF_INSTRUMENT_SYNTHBRASS_1					0x3F
+#define IMF_INSTRUMENT_SYNTHBRASS_2					0x40
+#define IMF_INSTRUMENT_SOPRANO_SAX					0x41
+#define IMF_INSTRUMENT_ALTO_SAX						0x42
+#define IMF_INSTRUMENT_TENOR_SAX					0x43
+#define IMF_INSTRUMENT_BARITONE_SAX					0x44
+#define IMF_INSTRUMENT_OBOE							0x45
+#define IMF_INSTRUMENT_ENGLISH_HORN					0x46
+#define IMF_INSTRUMENT_BASSOON						0x47
+#define IMF_INSTRUMENT_CLARINET						0x48
+#define IMF_INSTRUMENT_PICCOLO						0x49
+#define IMF_INSTRUMENT_FLUTE						0x4A
+#define IMF_INSTRUMENT_RECORDER						0x4B
+#define IMF_INSTRUMENT_PAN_FLUTE					0x4C
+#define IMF_INSTRUMENT_BLOWN_BOTTLE					0x4D
+#define IMF_INSTRUMENT_SHAKUHACHI					0x4E
+#define IMF_INSTRUMENT_WHISTLE						0x4F
+#define IMF_INSTRUMENT_OCARINA						0x50
+#define IMF_INSTRUMENT_LEAD_1_SQUARE				0x51
+#define IMF_INSTRUMENT_LEAD_2_SAWTOOTH				0x52
+#define IMF_INSTRUMENT_LEAD_3_CALLIOPE				0x53
+#define IMF_INSTRUMENT_LEAD_4_CHIFF					0x54
+#define IMF_INSTRUMENT_LEAD_5_CHARANG				0x55
+#define IMF_INSTRUMENT_LEAD_6_VOICE					0x56
+#define IMF_INSTRUMENT_LEAD_7_FIFTHS				0x57
+#define IMF_INSTRUMENT_LEAD_8_BASS_LEAD				0x58
+#define IMF_INSTRUMENT_PAD_1_NEW_AGE				0x59
+#define IMF_INSTRUMENT_PAD_2_WARM					0x5A
+#define IMF_INSTRUMENT_PAD_3_POLYSYNTH				0x5B
+#define IMF_INSTRUMENT_PAD_4_CHOIR					0x5C
+#define IMF_INSTRUMENT_PAD_5_BOWED					0x5D
+#define IMF_INSTRUMENT_PAD_6_METALLIC				0x5E
+#define IMF_INSTRUMENT_PAD_7_HALO					0x5F
+#define IMF_INSTRUMENT_PAD_8_SWEEP					0x60
+#define IMF_INSTRUMENT_FX_1_RAIN					0x61
+#define IMF_INSTRUMENT_FX_2_SOUNDTRACK				0x62
+#define IMF_INSTRUMENT_FX_3_CRYSTAL					0x63
+#define IMF_INSTRUMENT_FX_4_ATMOSPHERE				0x64
+#define IMF_INSTRUMENT_FX_5_BRIGHTNESS				0x65
+#define IMF_INSTRUMENT_FX_6_GOBLINS					0x66
+#define IMF_INSTRUMENT_FX_7_ECHOES					0x67
+#define IMF_INSTRUMENT_FX_8_SCI_FI					0x68
+#define IMF_INSTRUMENT_SITAR						0x69
+#define IMF_INSTRUMENT_BANJO						0x6A
+#define IMF_INSTRUMENT_SHAMISEN						0x6B
+#define IMF_INSTRUMENT_KOTO							0x6C
+#define IMF_INSTRUMENT_KALIMBA						0x6D
+#define IMF_INSTRUMENT_BAG_PIPE						0x6E
+#define IMF_INSTRUMENT_FIDDLE						0x6F
+#define IMF_INSTRUMENT_SHANAI						0x70
+#define IMF_INSTRUMENT_TINKLE_BELL					0x71
+#define IMF_INSTRUMENT_AGOGO						0x72
+#define IMF_INSTRUMENT_STEEL_DRUMS					0x73
+#define IMF_INSTRUMENT_WOODBLOCK					0x74
+#define IMF_INSTRUMENT_TAIKO_DRUM					0x75
+#define IMF_INSTRUMENT_MELODIC_TOM					0x76
+#define IMF_INSTRUMENT_SYNTH_DRUM					0x77
+#define IMF_INSTRUMENT_REVERSE_CYMBAL				0x78
+#define IMF_INSTRUMENT_GUITAR_FRET_NOISE			0x79
+#define IMF_INSTRUMENT_BREATH_NOISE					0x7A
+#define IMF_INSTRUMENT_SEASHORE						0x7B
+#define IMF_INSTRUMENT_BIRD_TWEET					0x7C
+#define IMF_INSTRUMENT_TELEPHONE_RING				0x7D
+#define IMF_INSTRUMENT_HELICOPTER					0x7E
+#define IMF_INSTRUMENT_APPLAUSE						0x7F
+#define IMF_INSTRUMENT_GUNSHOT						0x80
+
+#define IMF_NOTE_C                                   0x00
+#define IMF_NOTE_CH                                  0x01
+#define IMF_NOTE_D                                   0x02
+#define IMF_NOTE_DH                                  0x03
+#define IMF_NOTE_E                                   0x04
+#define IMF_NOTE_F                                   0x05
+#define IMF_NOTE_FH                                  0x06
+#define IMF_NOTE_G                                   0x07
+#define IMF_NOTE_GH                                  0x08
+#define IMF_NOTE_A                                   0x09
+#define IMF_NOTE_AH                                  0x0A
+#define IMF_NOTE_B                                   0x0B
+#define IMF_NOTE_COUNT                               0x0C
+
+#define IMF_OCTAVE_0                                 0x00
+#define IMF_OCTAVE_1                                 0x01
+#define IMF_OCTAVE_2                                 0x02
+#define IMF_OCTAVE_3                                 0x03
+#define IMF_OCTAVE_4                                 0x04
+#define IMF_OCTAVE_5                                 0x05
+#define IMF_OCTAVE_6                                 0x06
+#define IMF_OCTAVE_7                                 0x07
+#define IMF_OCTAVE_8                                 0x08
+#define IMF_OCTAVE_9                                 0x09
+
+#define IMF_NOTE( o, n )                                ( ( o ) * IMF_NOTE_COUNT + ( n ) )
+
 void setup_embedded( Environment *_environment );
 void target_install( Environment *_environment );
 void begin_compilation( Environment * _environment );
@@ -2119,6 +2289,8 @@ void                    begin_procedure( Environment * _environment, char * _nam
 void                    begin_repeat( Environment * _environment );
 void                    begin_while( Environment * _environment );
 void                    begin_while_condition( Environment * _environment, char * _expression );
+void                    bell( Environment * _environment, int _note, int _channels );
+void                    bell_vars( Environment * _environment, char * _note, char * _channels );
 void                    bitmap_at( Environment * _environment, int _address );
 void                    bitmap_at_var( Environment * _environment, char * _address );
 void                    bitmap_clear( Environment * _environment );
@@ -2126,6 +2298,8 @@ void                    bitmap_clear_with( Environment * _environment, int _valu
 void                    bitmap_clear_with_vars( Environment * _environment, char * _value );
 void                    bitmap_disable( Environment * _environment );
 void                    bitmap_enable( Environment * _environment, int _width, int _height, int _colors );
+void                    boom( Environment * _environment, int _channels );
+void                    boom_var( Environment * _environment, char * _channels );
 void                    box( Environment * _environment, char * _x1, char * _y1, char * _x2, char * _y2, char * _c );
 
 //----------------------------------------------------------------------------
@@ -2272,6 +2446,10 @@ void                    ink( Environment * _environment, char * _expression );
 Variable *              inkey( Environment * _environment );
 void                    input( Environment * _environment, char * _variable );
 Variable *              input_string( Environment * _environment, char * _size );
+void                    instrument( Environment * _environment, int _instrument, int _channels );
+void                    instrument_semi_var( Environment * _environment, int _instrument, char * _channels );
+void                    interleaved_instructions( Environment * _environment );
+
 
 //----------------------------------------------------------------------------
 // *J*
@@ -2318,6 +2496,8 @@ Variable *              mob_init( Environment * _environment, char * _image, cha
 void                    mob_render( Environment * _environment, int _on_vbl );
 void                    mob_show( Environment * _environment, char * _index );
 void                    move_tile( Environment * _environment, char * _tile, char * _x, char * _y );
+Variable *              music_load( Environment * _environment, char * _filename, char * _alias, int _bank_expansion );
+void                    music_var( Environment * _environment, char * _music );
 
 //----------------------------------------------------------------------------
 // *N*
@@ -2357,6 +2537,10 @@ Variable *              parse_buffer_definition( Environment * _environment, cha
 Variable *              peek( Environment * _environment, int _location );
 Variable *              peek_var( Environment * _environment, char * _location );
 void                    pen( Environment * _environment, char * _color );
+void                    play( Environment * _environment, int _note, int _duration, int _channels );
+void                    play_vars( Environment * _environment, char * _note, char * _duration, char * _channels );
+void                    play_off( Environment * _environment, int _channels );
+void                    play_off_var( Environment * _environment, char * _channels );
 void                    plot( Environment * _environment, char * _x, char * _y, char *_c );
 Variable *              point( Environment * _environment, char * _x, char * _y );
 void                    point_at( Environment * _environment, int _x, int _y );
@@ -2428,6 +2612,11 @@ void                    select_case( Environment * _environment, char * _express
 Variable *              sequence_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _frame_width, int _frame_height, int _flags, int _transparent_color, int _background_color, int _bank_expansion );
 void                    set_timer( Environment * _environment, char * _value );
 void                    shared( Environment * _environment );
+void                    shoot( Environment * _environment, int _channels );
+void                    sound( Environment * _environment, int _freq, int _duration, int _channels );
+void                    sound_vars( Environment * _environment, char * _freq, char * _duration, char * _channels );
+void                    sound_off( Environment * _environment, int _channels );
+void                    sound_off_var( Environment * _environment, char * _channels );
 Variable *              sign( Environment * _environment, char * _value );
 Variable *              spawn_procedure( Environment * _environment, char * _name , int _halted );
 void                    sprite_color( Environment * _environment, int _sprite, int _color );
@@ -2580,6 +2769,10 @@ void                    variable_sub_inplace( Environment * _environment, char *
 Variable *              variable_temporary( Environment * _environment, VariableType _type, char * _meaning );
 Variable *              variable_resident( Environment * _environment, VariableType _type, char * _meaning );
 Variable *              varptr( Environment * _environment, char * _identifier );
+void                    volume( Environment * _environment, int _volume, int _channels );
+void                    volume_vars( Environment * _environment, char * _volume, char * _channels );
+void                    volume_off( Environment * _environment, int _channels );
+void                    volume_off_var( Environment * _environment, char * _channels );
 
 //----------------------------------------------------------------------------
 // *W*
@@ -2622,17 +2815,20 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "hw/6502.h"
     #include "hw/antic.h"
     #include "hw/gtia.h"
+    #include "hw/pokey.h"
     #include "hw/atari.h"
 #elif defined(__atarixl__) 
     #include "../src-generated/modules_atarixl.h"
     #include "hw/6502.h"
     #include "hw/antic.h"
     #include "hw/gtia.h"
+    #include "hw/pokey.h"
     #include "hw/atari.h"
 #elif __c64__
     #include "../src-generated/modules_c64.h"
     #include "hw/6502.h"
     #include "hw/vic2.h"
+    #include "hw/sid.h"
     #include "hw/c64.h"
 #elif __plus4__
     #include "../src-generated/modules_plus4.h"
@@ -2673,25 +2869,30 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "hw/z80.h"
     #include "hw/msx1.h"
     #include "hw/tms9918.h"
+    #include "hw/ay8910.h"
 #elif __coleco__
     #include "../src-generated/modules_coleco.h"
     #include "hw/z80.h"
     #include "hw/coleco.h"
     #include "hw/tms9918.h"
+    #include "hw/sn76489.h"
 #elif __sc3000__
     #include "../src-generated/modules_sc3000.h"
     #include "hw/z80.h"
     #include "hw/sc3000.h"
     #include "hw/tms9918.h"
+    #include "hw/sn76489.h"
 #elif __sg1000__
     #include "../src-generated/modules_sg1000.h"
     #include "hw/z80.h"
     #include "hw/sg1000.h"
     #include "hw/tms9918.h"
+    #include "hw/sn76489.h"
 #elif __c128__
     #include "../src-generated/modules_c128.h"
     #include "hw/6502.h"
     #include "hw/vic2.h"
+    #include "hw/sid.h"
     #include "hw/c128.h"
 #endif
 

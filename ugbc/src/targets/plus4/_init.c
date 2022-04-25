@@ -145,3 +145,7 @@ void target_linkage( Environment * _environment ) {
     }; 
     
 }
+
+void interleaved_instructions( Environment * _environment ) {
+
+}

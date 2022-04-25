@@ -197,6 +197,8 @@
 #define SPRITE_FLAG_EXPAND_HORIZONTAL   0x0080
 #define SPRITE_FLAG_COMPRESS_HORIZONTAL 0x0000
 
+#define MAX_AUDIO_CHANNELS  1
+
 int zx_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode );
 
 void zx_initialization( Environment * _environment );

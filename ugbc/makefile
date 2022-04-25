@@ -96,6 +96,14 @@ SOURCES_6502 := $(subst src/hw/6502/,src-generated/6502_,$(MODULES_6502:.asm=.c)
 src-generated/6502_%.c: $(MODULES_6502)
 	@xxd -i $(subst src-generated/6502_,src/hw/6502/,$(@:.c=.asm)) >$@
 
+# ATARI POKEY
+
+MODULES_POKEY := $(wildcard src/hw/pokey/*.asm)
+SOURCES_POKEY := $(subst src/hw/pokey/,src-generated/pokey_,$(MODULES_POKEY:.asm=.c))
+
+src-generated/pokey_%.c: $(MODULES_POKEY)
+	@xxd -i $(subst src-generated/pokey_,src/hw/pokey/,$(@:.c=.asm)) >$@
+
 # Alphanumeric Television Interface Controller (ANTIC)
 
 MODULES_ANTIC := $(wildcard src/hw/antic/*.asm)
@@ -113,6 +121,14 @@ SOURCES_GTIA := $(subst src/hw/gtia/,src-generated/gtia_,$(MODULES_GTIA:.asm=.c)
 src-generated/gtia_%.c: $(MODULES_GTIA)
 	@xxd -i $(subst src-generated/gtia_,src/hw/gtia/,$(@:.c=.asm)) >$@
 
+# General Instrument AY-3-8910
+
+MODULES_AY8910 := $(wildcard src/hw/ay8910/*.asm)
+SOURCES_AY8910 := $(subst src/hw/ay8910/,src-generated/ay8910_,$(MODULES_AY8910:.asm=.c))
+
+src-generated/ay8910_%.c: $(MODULES_AY8910)
+	@xxd -i $(subst src-generated/ay8910_,src/hw/ay8910/,$(@:.c=.asm)) >$@
+
 # MOS Technology VIC-I
 
 MODULES_VIC1 := $(wildcard src/hw/vic1/*.asm)
@@ -129,6 +145,14 @@ SOURCES_VIC2 := $(subst src/hw/vic2/,src-generated/vic2_,$(MODULES_VIC2:.asm=.c)
 src-generated/vic2_%.c: $(MODULES_VIC2)
 	@xxd -i $(subst src-generated/vic2_,src/hw/vic2/,$(@:.c=.asm)) >$@
 
+# MOS Technology SID
+
+MODULES_SID := $(wildcard src/hw/sid/*.asm)
+SOURCES_SID := $(subst src/hw/sid/,src-generated/sid_,$(MODULES_SID:.asm=.c))
+
+src-generated/sid_%.c: $(MODULES_SID)
+	@xxd -i $(subst src-generated/sid_,src/hw/sid/,$(@:.c=.asm)) >$@
+
 # MOS Technology TED
 
 MODULES_TED := $(wildcard src/hw/ted/*.asm)
@@ -136,6 +160,14 @@ SOURCES_TED := $(subst src/hw/ted/,src-generated/ted_,$(MODULES_TED:.asm=.c))
 
 src-generated/ted_%.c: $(MODULES_TED)
 	@xxd -i $(subst src-generated/ted_,src/hw/ted/,$(@:.c=.asm)) >$@
+
+# Texas Instruments SN76489
+
+MODULES_SN76489 := $(wildcard src/hw/sn76489/*.asm)
+SOURCES_SN76489 := $(subst src/hw/sn76489/,src-generated/sn76489_,$(MODULES_SN76489:.asm=.c))
+
+src-generated/sn76489_%.c: $(MODULES_SN76489)
+	@xxd -i $(subst src-generated/sn76489_,src/hw/sn76489/,$(@:.c=.asm)) >$@
 
 # Texas Instruments TMS9918
 
@@ -165,13 +197,13 @@ SOURCES_ATARI := $(subst src/hw/atari/,src-generated/atari_,$(MODULES_ATARI:.asm
 src-generated/atari_%.c: $(MODULES_ATARI)
 	@xxd -i $(subst src-generated/atari_,src/hw/atari/,$(@:.c=.asm)) >$@
 
-src-generated/modules_atari.c: $(SOURCES_6502) $(SOURCES_ANTIC) $(SOURCES_ATARI) $(SOURCES_GTIA)
-	@cat $(SOURCES_6502) $(SOURCES_ANTIC) $(SOURCES_ATARI) $(SOURCES_GTIA) >src-generated/modules_atari.c
+src-generated/modules_atari.c: $(SOURCES_6502) $(SOURCES_ANTIC) $(SOURCES_ATARI) $(SOURCES_GTIA) $(SOURCES_POKEY)
+	@cat $(SOURCES_6502) $(SOURCES_ANTIC) $(SOURCES_ATARI) $(SOURCES_GTIA) $(SOURCES_POKEY) >src-generated/modules_atari.c
 	@grep "src" src-generated/modules_atari.c | awk -f modules.awk >src-generated/modules_atari.h
 	@grep "data" src-generated/modules_atari.c | awk -f modules.awk >>src-generated/modules_atari.h
 
-src-generated/modules_atarixl.c: $(SOURCES_6502) $(SOURCES_ANTIC) $(SOURCES_ATARI) $(SOURCES_GTIA)
-	@cat $(SOURCES_6502) $(SOURCES_ANTIC) $(SOURCES_ATARI) $(SOURCES_GTIA) >src-generated/modules_atarixl.c
+src-generated/modules_atarixl.c: $(SOURCES_6502) $(SOURCES_ANTIC) $(SOURCES_ATARI) $(SOURCES_GTIA)  $(SOURCES_POKEY)
+	@cat $(SOURCES_6502) $(SOURCES_ANTIC) $(SOURCES_ATARI) $(SOURCES_GTIA) $(SOURCES_POKEY) >src-generated/modules_atarixl.c
 	@grep "src" src-generated/modules_atarixl.c | awk -f modules.awk >src-generated/modules_atarixl.h
 	@grep "data" src-generated/modules_atarixl.c | awk -f modules.awk >>src-generated/modules_atarixl.h
 
@@ -180,11 +212,11 @@ src-generated/modules_atarixl.c: $(SOURCES_6502) $(SOURCES_ANTIC) $(SOURCES_ATAR
 MODULES_COLECO := $(wildcard src/hw/coleco/*.asm)
 SOURCES_COLECO := $(subst src/hw/coleco/,src-generated/coleco_,$(MODULES_COLECO:.asm=.c))
 
-src-generated/coleco_%.c: $(MODULES_MSX)
+src-generated/coleco_%.c: $(MODULES_COLECO)
 	@xxd -i $(subst src-generated/coleco_,src/hw/coleco/,$(@:.c=.asm)) >$@
 
-src-generated/modules_coleco.c: $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_COLECO)
-	@cat $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_COLECO) >src-generated/modules_coleco.c
+src-generated/modules_coleco.c: $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_SN76489) $(SOURCES_COLECO)
+	@cat $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_SN76489) $(SOURCES_COLECO) >src-generated/modules_coleco.c
 	@grep "src" src-generated/modules_coleco.c | awk -f modules.awk >src-generated/modules_coleco.h
 	@grep "data" src-generated/modules_coleco.c | awk -f modules.awk >>src-generated/modules_coleco.h
 
@@ -196,8 +228,8 @@ SOURCES_C128 := $(subst src/hw/c128/,src-generated/c128_,$(MODULES_C128:.asm=.c)
 src-generated/c128_%.c: $(MODULES_C128)
 	@xxd -i $(subst src-generated/c128_,src/hw/c128/,$(@:.c=.asm)) >$@
 
-src-generated/modules_c128.c: $(SOURCES_6502) $(SOURCES_C128) $(SOURCES_VIC2)
-	@cat $(SOURCES_6502) $(SOURCES_C128) $(SOURCES_VIC2) >src-generated/modules_c128.c
+src-generated/modules_c128.c: $(SOURCES_6502) $(SOURCES_C128) $(SOURCES_VIC2) $(SOURCES_SID)
+	@cat $(SOURCES_6502) $(SOURCES_C128) $(SOURCES_VIC2) $(SOURCES_SID) >src-generated/modules_c128.c
 	@grep "src" src-generated/modules_c128.c | awk -f modules.awk >src-generated/modules_c128.h
 	@grep "data" src-generated/modules_c128.c | awk -f modules.awk >>src-generated/modules_c128.h
 
@@ -209,8 +241,8 @@ SOURCES_C64 := $(subst src/hw/c64/,src-generated/c64_,$(MODULES_C64:.asm=.c))
 src-generated/c64_%.c: $(MODULES_C64)
 	@xxd -i $(subst src-generated/c64_,src/hw/c64/,$(@:.c=.asm)) >$@
 
-src-generated/modules_c64.c: $(SOURCES_6502) $(SOURCES_C64) $(SOURCES_VIC2)
-	@cat $(SOURCES_6502) $(SOURCES_C64) $(SOURCES_VIC2) >src-generated/modules_c64.c
+src-generated/modules_c64.c: $(SOURCES_6502) $(SOURCES_C64) $(SOURCES_VIC2) $(SOURCES_SID)
+	@cat $(SOURCES_6502) $(SOURCES_C64) $(SOURCES_VIC2) $(SOURCES_SID) >src-generated/modules_c64.c
 	@grep "src" src-generated/modules_c64.c | awk -f modules.awk >src-generated/modules_c64.h
 	@grep "data" src-generated/modules_c64.c | awk -f modules.awk >>src-generated/modules_c64.h
 
@@ -274,8 +306,8 @@ SOURCES_SC3000 := $(subst src/hw/sc3000/,src-generated/sc3000_,$(MODULES_SC3000:
 src-generated/sc3000_%.c: $(MODULES_SC3000)
 	@xxd -i $(subst src-generated/sc3000_,src/hw/sc3000/,$(@:.c=.asm)) >$@
 
-src-generated/modules_sc3000.c: $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_SC3000)
-	@cat $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_SC3000) >src-generated/modules_sc3000.c
+src-generated/modules_sc3000.c: $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_SN76489) $(SOURCES_SC3000)
+	@cat $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_SN76489) $(SOURCES_SC3000) >src-generated/modules_sc3000.c
 	@grep "src" src-generated/modules_sc3000.c | awk -f modules.awk >src-generated/modules_sc3000.h
 	@grep "data" src-generated/modules_sc3000.c | awk -f modules.awk >>src-generated/modules_sc3000.h
 
@@ -287,8 +319,8 @@ SOURCES_SG1000 := $(subst src/hw/sg1000/,src-generated/sg1000_,$(MODULES_SG1000:
 src-generated/sg1000_%.c: $(MODULES_SG1000)
 	@xxd -i $(subst src-generated/sg1000_,src/hw/sg1000/,$(@:.c=.asm)) >$@
 
-src-generated/modules_sg1000.c: $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_SG1000)
-	@cat $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_SG1000) >src-generated/modules_sg1000.c
+src-generated/modules_sg1000.c: $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_SN76489) $(SOURCES_SG1000)
+	@cat $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_SN76489) $(SOURCES_SG1000) >src-generated/modules_sg1000.c
 	@grep "src" src-generated/modules_sg1000.c | awk -f modules.awk >src-generated/modules_sg1000.h
 	@grep "data" src-generated/modules_sg1000.c | awk -f modules.awk >>src-generated/modules_sg1000.h
 
@@ -335,8 +367,8 @@ SOURCES_MSX1 := $(subst src/hw/msx1/,src-generated/msx1_,$(MODULES_MSX1:.asm=.c)
 src-generated/msx1_%.c: $(MODULES_MSX)
 	@xxd -i $(subst src-generated/msx1_,src/hw/msx1/,$(@:.c=.asm)) >$@
 
-src-generated/modules_msx1.c: $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_MSX1)
-	@cat $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_MSX1) >src-generated/modules_msx1.c
+src-generated/modules_msx1.c: $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_AY8910) $(SOURCES_MSX1)
+	@cat $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_AY8910) $(SOURCES_MSX1) >src-generated/modules_msx1.c
 	@grep "src" src-generated/modules_msx1.c | awk -f modules.awk >src-generated/modules_msx1.h
 	@grep "data" src-generated/modules_msx1.c | awk -f modules.awk >>src-generated/modules_msx1.h
 
@@ -378,6 +410,7 @@ src-generated/ugbc.embed.tab.c: src/ugbc.embed.lex src/ugbc.embed.y
 # ----------------------------------------------------------------------------
 
 SOURCES := $(wildcard src/*.c)
+SOURCES += $(wildcard src/libs/*.c)
 SOURCES += $(wildcard src/targets/*.c)
 SOURCES += $(wildcard src/hw/*.c)
 SOURCES += $(wildcard src/targets/common/*.c)

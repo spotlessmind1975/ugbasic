@@ -62,6 +62,18 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token BAR XGRAPHIC YGRAPHIC XTEXT YTEXT COLUMNS XGR YGR CHAR RAW SEPARATOR MSX MSX1 COLECO CSPRITE 
 %token TILESET MOVE ROW COLUMN TRANSPARENT DOUBLE RESPAWN HALTED SC3000 SG1000 MEMORY VIDEO MMOVE SWAP
 %token BELONG FIRST EXACT PRESSED PC128OP MO5 VARPTR READ WRITE BANKED SEQUENCE MODE UNIQUE C128
+%token SOUND BOOM SHOOT BELL NOTE VOLUME PLAY INSTRUMENT AAHS ACCORDION ACOUSTIC AGE AGOGO 
+%token ALTO APPLAUSE ATMOSPHERE BAG BANJO BARITONE BASS BASSOON BELLS BIRD BLOWN BOTTLE BOWED BRASS
+%token BREATH BRIGHT BRIGHTNESS CALLIOPE CELESTA CELLO CHARANG CHIFF CHOIR CHURCH CLARINET CLAVI CLEAN 
+%token CONTRABASS CRYSTAL CYMBAL DISTORTION DRAWBAR DRUM DRUMS DULCIMER ECHOES ELECTRIC ENGLISH ENSEMBLE
+%token EXPLOSION FI FIDDLE FIFTHS FINGER FLUTE FRENCH FRET FRETLESS FX GLOCKENSPIEL GOBLINS GRAND GUITAR 
+%token GUNSHOT HALO HARMONICA HARMONICS HARP HARPSICHORD HELICOPTER HONKY HORN JAZZ KALIMBA KOTO LEAD
+%token MARIMBA MELODIC METALLIC MUSIC MUTED NOISE NYLON OBOE OCARINA OOHS ORCHESTRA ORCHESTRAL ORGAN 
+%token OVERDRIVEN PAD PAN PERCUSSIVE PIANO PICCOLO PICK PIPE PIZZICATO POLYSYNTH RAIN RECORDER REED REVERSE 
+%token RING ROCK SAWTOOTH SAX SCI SEASHORE SECTION SHAKUHACHI SHAMISEN SHANAI SITAR SLAP SOPRANO SOUNDTRACK
+%token SQUARE STEEL STRINGS SWEEP SYNTH SYNTHBRASS SYNTHSTRINGS TAIKO TANGO TELEPHONE TENOR TIMPANI TINKLE
+%token TOM TONK TREMOLO TROMBONE TRUMPET TUBA TUBULAR TWEET VIBRAPHONE VIOLA VIOLIN VOICE WARM WHISTLE WOODBLOCK 
+%token XYLOPHONE
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -104,6 +116,8 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> memory_video
 %type <integer> sprite_flag sprite_flags sprite_flags1
 %type <integer> on_bank
+%type <integer> note octave const_note
+%type <integer> const_instrument
 
 %right Integer String CP 
 %left OP_DOLLAR
@@ -118,6 +132,186 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %left AND OR OP_EQUAL OP_DISEQUAL OP_LT OP_LTE OP_GT OP_GTE
 
 %%
+
+const_instrument :
+    EXPLOSION { $$ = IMF_INSTRUMENT_EXPLOSION; } |
+    ACOUSTIC GRAND PIANO { $$ = IMF_INSTRUMENT_ACOUSTIC_GRAND_PIANO; } |
+    BRIGHT ACOUSTIC PIANO { $$ = IMF_INSTRUMENT_BRIGHT_ACOUSTIC_PIANO; } |
+    ELECTRIC GRAND PIANO { $$ = IMF_INSTRUMENT_ELECTRIC_GRAND_PIANO; } |
+    HONKY TONK PIANO { $$ = IMF_INSTRUMENT_HONKY_TONK_PIANO; } |
+    ELECTRIC PIANO "1" { $$ = IMF_INSTRUMENT_ELECTRIC_PIANO1; } |
+    ELECTRIC PIANO "2" { $$ = IMF_INSTRUMENT_ELECTRIC_PIANO2; } |
+    HARPSICHORD { $$ = IMF_INSTRUMENT_HARPSICHORD; } |
+    CLAVI { $$ = IMF_INSTRUMENT_CLAVI; } |
+    CELESTA { $$ = IMF_INSTRUMENT_CELESTA; } |
+    GLOCKENSPIEL { $$ = IMF_INSTRUMENT_GLOCKENSPIEL; } |
+    MUSIC BOX { $$ = IMF_INSTRUMENT_MUSIC_BOX; } |
+    VIBRAPHONE { $$ = IMF_INSTRUMENT_VIBRAPHONE; } |
+    MARIMBA { $$ = IMF_INSTRUMENT_MARIMBA; } |
+    XYLOPHONE { $$ = IMF_INSTRUMENT_XYLOPHONE; } |
+    TUBULAR BELLS { $$ = IMF_INSTRUMENT_TUBULAR_BELLS; } |
+    DULCIMER { $$ = IMF_INSTRUMENT_DULCIMER; } |
+    DRAWBAR ORGAN { $$ = IMF_INSTRUMENT_DRAWBAR_ORGAN; } |
+    PERCUSSIVE ORGAN { $$ = IMF_INSTRUMENT_PERCUSSIVE_ORGAN; } |
+    ROCK ORGAN { $$ = IMF_INSTRUMENT_ROCK_ORGAN; } |
+    CHURCH ORGAN { $$ = IMF_INSTRUMENT_CHURCH_ORGAN; } |
+    REED ORGAN { $$ = IMF_INSTRUMENT_REED_ORGAN; } |
+    ACCORDION { $$ = IMF_INSTRUMENT_ACCORDION; } |
+    HARMONICA { $$ = IMF_INSTRUMENT_HARMONICA; } |
+    TANGO ACCORDION { $$ = IMF_INSTRUMENT_TANGO_ACCORDION; } |
+    ACOUSTIC GUITAR NYLON { $$ = IMF_INSTRUMENT_ACOUSTIC_GUITAR_NYLON; } |
+    ACOUSTIC GUITAR STEEL { $$ = IMF_INSTRUMENT_ACOUSTIC_GUITAR_STEEL; } |
+    ELECTRIC GUITAR JAZZ { $$ = IMF_INSTRUMENT_ELECTRIC_GUITAR_JAZZ; } |
+    ELECTRIC GUITAR CLEAN { $$ = IMF_INSTRUMENT_ELECTRIC_GUITAR_CLEAN; } |
+    ELECTRIC GUITAR MUTED { $$ = IMF_INSTRUMENT_ELECTRIC_GUITAR_MUTED; } |
+    OVERDRIVEN GUITAR { $$ = IMF_INSTRUMENT_OVERDRIVEN_GUITAR; } |
+    DISTORTION GUITAR { $$ = IMF_INSTRUMENT_DISTORTION_GUITAR; } |
+    GUITAR HARMONICS { $$ = IMF_INSTRUMENT_GUITAR_HARMONICS; } |
+    ACOUSTIC BASS { $$ = IMF_INSTRUMENT_ACOUSTIC_BASS; } |
+    ELECTRIC BASS FINGER { $$ = IMF_INSTRUMENT_ELECTRIC_BASS_FINGER; } |
+    ELECTRIC BASS PICK { $$ = IMF_INSTRUMENT_ELECTRIC_BASS_PICK; } |
+    FRETLESS BASS { $$ = IMF_INSTRUMENT_FRETLESS_BASS; } |
+    SLAP BASS "1" { $$ = IMF_INSTRUMENT_SLAP_BASS_1; } |
+    SLAP BASS "2" { $$ = IMF_INSTRUMENT_SLAP_BASS_2; } |
+    SYNTH BASS "1" { $$ = IMF_INSTRUMENT_SYNTH_BASS_1; } |
+    SYNTH BASS "2" { $$ = IMF_INSTRUMENT_SYNTH_BASS_2; } |
+    VIOLIN { $$ = IMF_INSTRUMENT_VIOLIN; } |
+    VIOLA { $$ = IMF_INSTRUMENT_VIOLA; } |
+    CELLO { $$ = IMF_INSTRUMENT_CELLO; } |
+    CONTRABASS { $$ = IMF_INSTRUMENT_CONTRABASS; } |
+    TREMOLO STRINGS { $$ = IMF_INSTRUMENT_TREMOLO_STRINGS; } |
+    PIZZICATO STRINGS { $$ = IMF_INSTRUMENT_PIZZICATO_STRINGS; } |
+    ORCHESTRAL HARP { $$ = IMF_INSTRUMENT_ORCHESTRAL_HARP; } |
+    TIMPANI { $$ = IMF_INSTRUMENT_TIMPANI; } |
+    STRING ENSEMBLE "1" { $$ = IMF_INSTRUMENT_STRING_ENSEMBLE_1; } |
+    STRING ENSEMBLE "2" { $$ = IMF_INSTRUMENT_STRING_ENSEMBLE_2; } |
+    SYNTHSTRINGS "1" { $$ = IMF_INSTRUMENT_SYNTHSTRINGS_1; } |
+    SYNTHSTRINGS "2" { $$ = IMF_INSTRUMENT_SYNTHSTRINGS_2; } |
+    CHOIR AAHS { $$ = IMF_INSTRUMENT_CHOIR_AAHS; } |
+    VOICE OOHS { $$ = IMF_INSTRUMENT_VOICE_OOHS; } |
+    SYNTH VOICE { $$ = IMF_INSTRUMENT_SYNTH_VOICE; } |
+    ORCHESTRA HIT { $$ = IMF_INSTRUMENT_ORCHESTRA_HIT; } |
+    TRUMPET { $$ = IMF_INSTRUMENT_TRUMPET; } |
+    TROMBONE { $$ = IMF_INSTRUMENT_TROMBONE; } |
+    TUBA { $$ = IMF_INSTRUMENT_TUBA; } |
+    MUTED TRUMPET { $$ = IMF_INSTRUMENT_MUTED_TRUMPET; } |
+    FRENCH HORN { $$ = IMF_INSTRUMENT_FRENCH_HORN; } |
+    BRASS SECTION { $$ = IMF_INSTRUMENT_BRASS_SECTION; } |
+    SYNTHBRASS "1" { $$ = IMF_INSTRUMENT_SYNTHBRASS_1; } |
+    SYNTHBRASS "2" { $$ = IMF_INSTRUMENT_SYNTHBRASS_2; } |
+    SOPRANO SAX { $$ = IMF_INSTRUMENT_SOPRANO_SAX; } |
+    ALTO SAX { $$ = IMF_INSTRUMENT_ALTO_SAX; } |
+    TENOR SAX { $$ = IMF_INSTRUMENT_TENOR_SAX; } |
+    BARITONE SAX { $$ = IMF_INSTRUMENT_BARITONE_SAX; } |
+    OBOE { $$ = IMF_INSTRUMENT_OBOE; } |
+    ENGLISH HORN { $$ = IMF_INSTRUMENT_ENGLISH_HORN; } |
+    BASSOON { $$ = IMF_INSTRUMENT_BASSOON; } |
+    CLARINET { $$ = IMF_INSTRUMENT_CLARINET; } |
+    PICCOLO { $$ = IMF_INSTRUMENT_PICCOLO; } |
+    FLUTE { $$ = IMF_INSTRUMENT_FLUTE; } |
+    RECORDER { $$ = IMF_INSTRUMENT_RECORDER; } |
+    PAN FLUTE { $$ = IMF_INSTRUMENT_PAN_FLUTE; } |
+    BLOWN BOTTLE { $$ = IMF_INSTRUMENT_BLOWN_BOTTLE; } |
+    SHAKUHACHI { $$ = IMF_INSTRUMENT_SHAKUHACHI; } |
+    WHISTLE { $$ = IMF_INSTRUMENT_WHISTLE; } |
+    OCARINA { $$ = IMF_INSTRUMENT_OCARINA; } |
+    LEAD "1" SQUARE { $$ = IMF_INSTRUMENT_LEAD_1_SQUARE; } |
+    LEAD "2" SAWTOOTH { $$ = IMF_INSTRUMENT_LEAD_2_SAWTOOTH; } |
+    LEAD "3" CALLIOPE { $$ = IMF_INSTRUMENT_LEAD_3_CALLIOPE; } |
+    LEAD "4" CHIFF { $$ = IMF_INSTRUMENT_LEAD_4_CHIFF; } |
+    LEAD "5" CHARANG { $$ = IMF_INSTRUMENT_LEAD_5_CHARANG; } |
+    LEAD "6" VOICE { $$ = IMF_INSTRUMENT_LEAD_6_VOICE; } |
+    LEAD "7" FIFTHS { $$ = IMF_INSTRUMENT_LEAD_7_FIFTHS; } |
+    LEAD "8" BASS LEAD { $$ = IMF_INSTRUMENT_LEAD_8_BASS_LEAD; } |
+    PAD "1" NEW AGE { $$ = IMF_INSTRUMENT_PAD_1_NEW_AGE; } |
+    PAD "2" WARM { $$ = IMF_INSTRUMENT_PAD_2_WARM; } |
+    PAD "3" POLYSYNTH { $$ = IMF_INSTRUMENT_PAD_3_POLYSYNTH; } |
+    PAD "4" CHOIR { $$ = IMF_INSTRUMENT_PAD_4_CHOIR; } |
+    PAD "5" BOWED { $$ = IMF_INSTRUMENT_PAD_5_BOWED; } |
+    PAD "6" METALLIC { $$ = IMF_INSTRUMENT_PAD_6_METALLIC; } |
+    PAD "7" HALO { $$ = IMF_INSTRUMENT_PAD_7_HALO; } |
+    PAD "8" SWEEP { $$ = IMF_INSTRUMENT_PAD_8_SWEEP; } |
+    FX "1" RAIN { $$ = IMF_INSTRUMENT_FX_1_RAIN; } |
+    FX "2" SOUNDTRACK { $$ = IMF_INSTRUMENT_FX_2_SOUNDTRACK; } |
+    FX "3" CRYSTAL { $$ = IMF_INSTRUMENT_FX_3_CRYSTAL; } |
+    FX "4" ATMOSPHERE { $$ = IMF_INSTRUMENT_FX_4_ATMOSPHERE; } |
+    FX "5" BRIGHTNESS { $$ = IMF_INSTRUMENT_FX_5_BRIGHTNESS; } |
+    FX "6" GOBLINS { $$ = IMF_INSTRUMENT_FX_6_GOBLINS; } |
+    FX "7" ECHOES { $$ = IMF_INSTRUMENT_FX_7_ECHOES; } |
+    FX "8" SCI FI { $$ = IMF_INSTRUMENT_FX_8_SCI_FI; } |
+    SITAR { $$ = IMF_INSTRUMENT_SITAR; } |
+    BANJO { $$ = IMF_INSTRUMENT_BANJO; } |
+    SHAMISEN { $$ = IMF_INSTRUMENT_SHAMISEN; } |
+    KOTO { $$ = IMF_INSTRUMENT_KOTO; } |
+    KALIMBA { $$ = IMF_INSTRUMENT_KALIMBA; } |
+    BAG PIPE { $$ = IMF_INSTRUMENT_BAG_PIPE; } |
+    FIDDLE { $$ = IMF_INSTRUMENT_FIDDLE; } |
+    SHANAI { $$ = IMF_INSTRUMENT_SHANAI; } |
+    TINKLE BELL { $$ = IMF_INSTRUMENT_TINKLE_BELL; } |
+    AGOGO { $$ = IMF_INSTRUMENT_AGOGO; } |
+    STEEL DRUMS { $$ = IMF_INSTRUMENT_STEEL_DRUMS; } |
+    WOODBLOCK { $$ = IMF_INSTRUMENT_WOODBLOCK; } |
+    TAIKO DRUM { $$ = IMF_INSTRUMENT_TAIKO_DRUM; } |
+    MELODIC TOM { $$ = IMF_INSTRUMENT_MELODIC_TOM; } |
+    SYNTH DRUM { $$ = IMF_INSTRUMENT_SYNTH_DRUM; } |
+    REVERSE CYMBAL { $$ = IMF_INSTRUMENT_REVERSE_CYMBAL; } |
+    GUITAR FRET NOISE { $$ = IMF_INSTRUMENT_GUITAR_FRET_NOISE; } |
+    BREATH NOISE { $$ = IMF_INSTRUMENT_BREATH_NOISE; } |
+    SEASHORE { $$ = IMF_INSTRUMENT_SEASHORE; } |
+    BIRD TWEET { $$ = IMF_INSTRUMENT_BIRD_TWEET; } |
+    TELEPHONE RING { $$ = IMF_INSTRUMENT_TELEPHONE_RING; } |
+    HELICOPTER { $$ = IMF_INSTRUMENT_HELICOPTER; } |
+    APPLAUSE { $$ = IMF_INSTRUMENT_APPLAUSE; } |
+    GUNSHOT { $$ = IMF_INSTRUMENT_GUNSHOT; };
+
+note :
+    C {
+        $$ = 0;
+    }
+    |
+    D {
+        $$ = 2;
+    }
+    |
+    E {
+        $$ = 4;
+    }
+    |
+    F {
+        $$ = 5;
+    }
+    |
+    G {
+        $$ = 7;
+    }
+    |
+    A {
+        $$ = 9;
+    }
+    |
+    B {
+        $$ = 11;
+    }
+    ;
+
+octave :
+    Integer {
+        $$ = $1;
+    };
+
+const_note :
+    note {
+        $$ = $1 + ( 4 * 12 );
+    }
+    |
+    note octave {
+        $$ = $1 + ( $2 * 12 );
+    }
+    |
+    note OP_HASH octave {
+        $$ = ( $1 + 1 ) + ( $3 * 12 );
+    }
+    ;
 
 const_expr_string :
     String {
@@ -405,6 +599,12 @@ const_factor:
       }
       | SPRITE COUNT {
           $$ = SPRITE_COUNT;
+      }
+      | VOLUME MIN {
+          $$ = 0;
+      }
+      | VOLUME MAX {
+          $$ = 255;
       }
       | SPRITE HEIGHT {
           if ( SPRITE_HEIGHT < 0 ) {
@@ -1845,6 +2045,12 @@ exponential:
     | LOAD OP String AS String OP_COMMA Integer CP on_bank {
         $$ = load( _environment, $3, $5, $7, $9 )->name;
       }
+    | LOAD MUSIC OP String CP on_bank {
+        $$ = music_load( _environment, $4, NULL, $6 )->name;
+      }
+    | LOAD MUSIC OP String AS String CP on_bank {
+        $$ = music_load( _environment, $4, $6, $8 )->name;
+      }
     | LOAD SEQUENCE OP String AS String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_background on_bank {
         $$ = sequence_load( _environment, $4, $6, ((struct _Environment *)_environment)->currentMode, $11, $13, $15, $16, $17, $18 )->name;
       }
@@ -2288,6 +2494,14 @@ exponential:
     }
     | IMAGE HEIGHT OP expr CP {
         $$ = image_get_height( _environment, $4 )->name;
+    }
+    | VOLUME MIN {
+        $$ = variable_temporary( _environment, VT_WORD, "(volume min)" )->name;
+        variable_store( _environment, $$, 0 );
+    }
+    | VOLUME MAX {
+        $$ = variable_temporary( _environment, VT_WORD, "(volume max)" )->name;
+        variable_store( _environment, $$, 255 );
     }
     | SPRITE COUNT {
         $$ = variable_temporary( _environment, VT_WORD, "(SPRITE COUNT)" )->name;
@@ -3679,6 +3893,9 @@ datatype :
     | SEQUENCE {
         $$ = VT_SEQUENCE;
     }
+    | MUSIC {
+        $$ = VT_MUSIC;
+    }
     | SPRITE {
         $$ = VT_SPRITE;
     }
@@ -4147,6 +4364,220 @@ writing_definition :
     writing_mode_definition OP_COMMA writing_part_definition {
         writing( _environment, $1, $3 );
     }
+    ;
+
+sound_definition_simple : 
+    OP_HASH const_expr {
+        sound( _environment, $2, 0, 0xffff );
+    }
+    | OP_HASH const_expr OP_COMMA OP_HASH const_expr {
+        sound( _environment, $2, $5, 0xffff );
+    }
+    | OP_HASH const_expr ON OP_HASH const_expr {
+        sound( _environment, $2, 0, $5 );
+    }
+    | OP_HASH const_expr OP_COMMA OP_HASH const_expr ON OP_HASH const_expr {
+        sound( _environment, $2, $5, $8 );
+    }
+    | OFF  {
+        sound_off( _environment, 0xffff );
+    }
+    | OFF ON OP_HASH const_expr {
+        sound_off( _environment, $4 );
+    }
+    ;
+
+sound_definition_expression : 
+    expr {
+        sound_vars( _environment, $1, NULL, NULL );
+    }
+    | expr OP_COMMA expr {
+        sound_vars( _environment, $1, $3, NULL );
+    }
+    | expr OP_COMMA expr ON expr {
+        sound_vars( _environment, $1, $3, $5 );
+    }
+    | expr ON expr {
+        sound_vars( _environment, $1, NULL, $3 );
+    }
+    | OFF ON expr {
+        sound_off_var( _environment, $3 );
+    }
+    ;
+
+sound_definition : 
+    sound_definition_simple
+    | sound_definition_expression
+    ;
+
+instrument_definition_simple :
+    OP_HASH const_expr ON OP_HASH const_expr {
+        instrument( _environment, $2, $5 );
+    }
+    | const_instrument ON OP_HASH const_expr {
+        instrument( _environment, $1, $4 );
+    }
+    ;
+
+instrument_definition_expression :
+    OP_HASH const_expr ON expr {
+        instrument_semi_var( _environment, $2, $4 );
+    }
+    | const_instrument ON expr {
+        instrument_semi_var( _environment, $1, $3 );
+    }
+    ;
+
+instrument_definition : 
+    instrument_definition_simple
+    | instrument_definition_expression
+    ;
+
+music_definition_expression:
+    expr {
+        music_var( _environment, $1 );
+    };
+
+music_definition:
+    music_definition_expression
+    ;
+
+play_definition_simple : 
+    OP_HASH const_expr {
+        play( _environment, $2, 0, 0xffff );
+    }
+    | OP_HASH const_expr OP_COMMA OP_HASH const_expr {
+        play( _environment, $2, $5, 0xffff );
+    }
+    | OP_HASH const_expr ON OP_HASH const_expr {
+        play( _environment, $2, 0, $5 );
+    }
+    | OP_HASH const_expr OP_COMMA OP_HASH const_expr ON OP_HASH const_expr {
+        play( _environment, $2, $5, $8 );
+    }
+    | OFF  {
+        play_off( _environment, 0xffff );
+    }
+    | OFF ON OP_HASH const_expr {
+        play_off( _environment, $4 );
+    }
+    ;
+
+play_definition_expression : 
+    expr {
+        play_vars( _environment, $1, NULL, NULL );
+    }
+    | expr OP_COMMA expr {
+        play_vars( _environment, $1, $3, NULL );
+    }
+    | expr OP_COMMA expr ON expr {
+        play_vars( _environment, $1, $3, $5 );
+    }
+    | expr ON expr {
+        play_vars( _environment, $1, NULL, $3 );
+    }
+    | OFF ON expr {
+        play_off_var( _environment, $3 );
+    }
+    ;
+
+play_definition : 
+    play_definition_simple
+    | play_definition_expression
+    ;
+
+volume_definition_simple : 
+    OP_HASH const_expr {
+        volume( _environment, $2, 0xffff );
+    }
+    | OP_HASH const_expr ON OP_HASH const_expr {
+        volume( _environment, $2, $5 );
+    }
+    | OFF  {
+        volume_off( _environment, 0xffff );
+    }
+    | OFF ON OP_HASH const_expr {
+        volume_off( _environment, $4 );
+    }
+    ;
+
+volume_definition_expression : 
+    expr {
+        volume_vars( _environment, $1, NULL );
+    }
+    | expr ON expr {
+        volume_vars( _environment, $1, $3 );
+    }
+    | OFF ON expr {
+        volume_off_var( _environment, $3 );
+    }
+    ;
+
+volume_definition : 
+    volume_definition_simple
+    | volume_definition_expression
+    ;
+
+bell_definition_simple : 
+    NOTE const_note {
+        bell( _environment, $2, 0xffff );
+    }
+    | OP_HASH const_expr {
+        bell( _environment, $2, 0xffff );
+    }
+    | NOTE const_note ON OP_HASH const_expr {
+        bell( _environment, $2, $5 );
+    }
+    | OP_HASH const_expr ON OP_HASH const_expr {
+        bell( _environment, $2, $5 );
+    }
+    ;
+
+bell_definition_expression : 
+    expr {
+        bell_vars( _environment, $1, NULL );
+    }
+    | expr ON expr {
+        bell_vars( _environment, $1, $3 );
+    }
+    ;
+
+bell_definition : 
+    bell_definition_simple
+    | bell_definition_expression
+    ;
+
+boom_definition_simple : 
+    {
+        boom( _environment, 0xffff );
+    }
+    | OP_HASH const_expr {
+        boom( _environment, $2 );
+    }
+    ;
+
+boom_definition_expression : 
+    ON expr {
+        boom_var( _environment, $2 );
+    }
+    ;
+
+boom_definition : 
+    boom_definition_simple
+    | boom_definition_expression
+    ;
+
+shoot_definition_simple : 
+    {
+        shoot( _environment, 0xffff );
+    }
+    | OP_HASH const_expr {
+        shoot( _environment, $2 );
+    }
+    ;
+
+shoot_definition : 
+    shoot_definition_simple
     ;
 
 locate_definition : 
@@ -5003,6 +5434,14 @@ statement:
   | GRAPHIC {
       graphic( _environment );
   }
+  | BELL bell_definition
+  | BOOM boom_definition
+  | SHOOT shoot_definition
+  | SOUND sound_definition
+  | PLAY play_definition
+  | MUSIC music_definition
+  | INSTRUMENT instrument_definition
+  | VOLUME volume_definition
   | HALT {
       halt( _environment );
   }
@@ -5335,8 +5774,8 @@ statement:
   ;
 
 statements_no_linenumbers:
-      statement { ((Environment *)_environment)->yylineno = yylineno; variable_reset( _environment ); }
-    | statement OP_COLON { ((Environment *)_environment)->yylineno = yylineno; variable_reset( _environment );  } statements_no_linenumbers { }
+      statement { ((Environment *)_environment)->yylineno = yylineno; variable_reset( _environment ); interleaved_instructions( _environment ); }
+    | statement OP_COLON { ((Environment *)_environment)->yylineno = yylineno; variable_reset( _environment ); interleaved_instructions( _environment ); } statements_no_linenumbers { interleaved_instructions( _environment ); }
     ;
 
 statements_with_linenumbers:

@@ -167,4 +167,24 @@ void vic1_move_tiles( Environment * _environment, char * _image, char * _x, char
 void vic1_use_tileset( Environment * _environment, char * _tileset );
 void vic1_tile_at( Environment * _environment, char * _x, char * _y, char * _result );
 
+void vic1_start( Environment * _environment, int _channel );
+void vic1_set_volume( Environment * _environment, int _channel, int _volume );
+void vic1_set_program( Environment * _environment, int _channel, int _program );
+void vic1_set_parameter( Environment * _environment, int _channel, int _parameter, int _value );
+void vic1_set_frequency( Environment * _environment, int _channel, int _frequency );
+void vic1_set_pitch( Environment * _environment, int _channel, int _pitch );
+void vic1_set_note( Environment * _environment, int _channel, int _note );
+void vic1_stop( Environment * _environment, int _channel );
+
+void vic1_start_var( Environment * _environment, char * _channel );
+void vic1_set_volume_semi_var( Environment * _environment, char * _channel, int _volume );
+void vic1_set_volume_vars( Environment * _environment, char * _channel, char * _volume );
+void vic1_set_program_semi_var( Environment * _environment, char * _channel, int _program );
+void vic1_set_frequency_vars( Environment * _environment, char * _channel, char * _frequency );
+void vic1_set_pitch_vars( Environment * _environment, char * _channel, char * _pitch );
+void vic1_set_note_vars( Environment * _environment, char * _channel, char * _note );
+void vic1_stop_vars( Environment * _environment, char * _channel );
+
+void vic1_music( Environment * _environment, char * _music, int _size );
+
 #endif

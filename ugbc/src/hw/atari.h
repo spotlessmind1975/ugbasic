@@ -137,6 +137,8 @@
 #define BANK_COUNT          0
 #define BANK_SIZE           0
 
+#define MAX_AUDIO_CHANNELS  4
+
 void atari_xpen( Environment * _environment, char * _destination );
 void atari_ypen( Environment * _environment, char * _destination );
 void atari_inkey( Environment * _environment, char * _pressed, char * _key );

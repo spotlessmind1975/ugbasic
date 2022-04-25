@@ -99,6 +99,9 @@ void target_initialization( Environment * _environment ) {
     variable_import( _environment, "VDPCONTROLPORTWRITE", VT_BYTE, 0x99 );
     variable_global( _environment, "VDPCONTROLPORTWRITE" );
 
+    variable_import( _environment, "ISRSVC2", VT_BUFFER, 3 );
+    variable_global( _environment, "ISRSVC2" );
+
     bank_define( _environment, "VARIABLES", BT_VARIABLES, 0x5000, NULL );
     bank_define( _environment, "TEMPORARY", BT_TEMPORARY, 0x5100, NULL );
 
@@ -151,6 +154,10 @@ void target_initialization( Environment * _environment ) {
     outline0("CALL VARINIT");
     outline0("CALL PROTOTHREADINIT" );
 
+    deploy( startup, src_hw_msx1_startup_asm);
+
+    outline0("CALL MSX1STARTUP" );
+
     if ( _environment->tenLinerRulesEnforced ) {
         shell_injection( _environment );
     }
@@ -158,6 +165,7 @@ void target_initialization( Environment * _environment ) {
     setup_text_variables( _environment );
 
     tms9918_initialization( _environment );
+    ay8910_initialization( _environment );
 
 }
 
@@ -312,5 +320,9 @@ void target_linkage( Environment * _environment ) {
         strcat( p, "_code_user.bin");
     }
     remove(binaryName);
+
+}
+
+void interleaved_instructions( Environment * _environment ) {
 
 }

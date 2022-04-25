@@ -115,6 +115,7 @@ void target_initialization( Environment * _environment ) {
     cpu_call( _environment, "C64STARTUP" );
 
     vic2_initialization( _environment );
+    sid_initialization( _environment );
 
     if ( _environment->tenLinerRulesEnforced ) {
         shell_injection( _environment );
@@ -160,5 +161,9 @@ void target_linkage( Environment * _environment ) {
         printf("The compilation of assembly program failed.\n\n");
         printf("Please use option '-I' to install chain tool.\n\n");
     }; 
+
+}
+
+void interleaved_instructions( Environment * _environment ) {
 
 }

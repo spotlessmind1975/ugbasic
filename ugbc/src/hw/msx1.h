@@ -147,6 +147,8 @@
 #define JOY_RIGHT           3
 #define JOY_FIRE            4
 
+#define MAX_AUDIO_CHANNELS  3
+
 void msx1_inkey( Environment * _environment, char * _pressed, char * _key );
 void msx1_scancode( Environment * _environment, char * _pressed, char * _scacode );
 void msx1_key_pressed( Environment * _environment, char *_scancode, char * _result );

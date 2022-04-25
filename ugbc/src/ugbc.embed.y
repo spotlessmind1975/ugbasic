@@ -31,11 +31,12 @@ int embedwrap() { return 1; }
 
 %token OP CP OP_AT OP_EQUAL OP_DISEQUAL OP_AND OP_OR OP_NOT OP_POINT
 %token IF ELSE ELSEIF ENDIF NewLine
+%token ATARI ATARIXL C128 C64 VIC20 ZX COLECO SC3000 SG1000 MSX MSX1 DRAGON DRAGON32 DRAGON64 PC128OP MO5
 
 %token <string> Identifier
 %token <integer> Integer
 
-%type <integer> const_expr const_factor
+%type <integer> const_expr const_factor target
 
 %right Integer String CP 
 %left OP
@@ -43,6 +44,136 @@ int embedwrap() { return 1; }
 %left OP_AND OP_OR
 
 %%
+
+target : 
+    ATARI {
+        #ifdef __atari__
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }
+    |
+    ATARIXL {
+        #ifdef __atarixl__
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }
+    |
+    C128 {
+        #ifdef __c128__
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }
+    |
+    C64 {
+        #ifdef __c64__
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }
+    |
+    VIC20 {
+        #ifdef __vic20__
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }
+    |
+    ZX {
+        #ifdef __zx__
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }
+    |
+    COLECO {
+        #ifdef __coleco__
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }
+    |
+    SC3000 {
+        #ifdef __sc3000__
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }
+    |
+    SG1000 {
+        #ifdef __sg1000__
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }
+    |
+    MSX {
+        #ifdef __msx1__
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }
+    |
+    MSX1 {
+        #ifdef __msx1__
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }
+    |
+    DRAGON {
+        #if defined(__d32__) || defined(__d64__)
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }
+    |
+    DRAGON32 {
+        #ifdef __d32__
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }
+    |
+    DRAGON64 {
+        #ifdef __d64__
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }
+    |
+    PC128OP {
+        #ifdef __pc128op__
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }
+    |
+    MO5 {
+        #ifdef __mo5__
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }    
+    ;
 
 const_expr : 
       const_factor {
@@ -69,6 +200,10 @@ const_expr :
 const_factor: 
         Integer {
         //   printf( "# %d\n", $1 );
+          $$ = $1;
+      }
+      | target {
+        //   printf( "(%d)\n", $2 );
           $$ = $1;
       }
       | OP const_expr CP {

@@ -147,6 +147,8 @@
 #define BANK_COUNT          0
 #define BANK_SIZE           0
 
+#define MAX_AUDIO_CHANNELS  3
+
 void coleco_inkey( Environment * _environment, char * _pressed, char * _key );
 void coleco_scancode( Environment * _environment, char * _pressed, char * _scacode );
 void coleco_scanshift( Environment * _environment, char * _shifts );
