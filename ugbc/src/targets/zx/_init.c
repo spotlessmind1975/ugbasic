@@ -167,3 +167,7 @@ void target_linkage( Environment * _environment ) {
     rename( binaryName, _environment->exeFileName );
 
 }
+
+void interleaved_instructions( Environment * _environment ) {
+
+}
