@@ -28,7 +28,7 @@
  * autorizzazioni e le limitazioni previste dalla medesima.
  ****************************************************************************/
 
-#if defined(__coleco__)
+#if defined(__coleco__) || defined(__sc3000__) || defined(__sg1000__)
 
 #include "../ugbc.h"
 

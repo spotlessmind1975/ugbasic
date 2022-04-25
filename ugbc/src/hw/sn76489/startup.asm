@@ -40,6 +40,16 @@
     CSG_IN: EQU          $ff
 @ENDIF
 
+@IF SC3000
+    CSG_OUT: EQU         $7f
+    CSG_IN: EQU          $7f
+@ENDIF
+
+@IF SG1000
+    CSG_OUT: EQU         $7f
+    CSG_IN: EQU          $7f
+@ENDIF
+
 ; CSG_OUT: EQU         $06
 ; CSG_IN: EQU          $03
 

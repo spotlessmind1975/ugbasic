@@ -2881,11 +2881,13 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "hw/z80.h"
     #include "hw/sc3000.h"
     #include "hw/tms9918.h"
+    #include "hw/sn76489.h"
 #elif __sg1000__
     #include "../src-generated/modules_sg1000.h"
     #include "hw/z80.h"
     #include "hw/sg1000.h"
     #include "hw/tms9918.h"
+    #include "hw/sn76489.h"
 #elif __c128__
     #include "../src-generated/modules_c128.h"
     #include "hw/6502.h"

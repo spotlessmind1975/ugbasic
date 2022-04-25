@@ -212,7 +212,7 @@ src-generated/modules_atarixl.c: $(SOURCES_6502) $(SOURCES_ANTIC) $(SOURCES_ATAR
 MODULES_COLECO := $(wildcard src/hw/coleco/*.asm)
 SOURCES_COLECO := $(subst src/hw/coleco/,src-generated/coleco_,$(MODULES_COLECO:.asm=.c))
 
-src-generated/coleco_%.c: $(MODULES_MSX)
+src-generated/coleco_%.c: $(MODULES_COLECO)
 	@xxd -i $(subst src-generated/coleco_,src/hw/coleco/,$(@:.c=.asm)) >$@
 
 src-generated/modules_coleco.c: $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_SN76489) $(SOURCES_COLECO)
@@ -306,8 +306,8 @@ SOURCES_SC3000 := $(subst src/hw/sc3000/,src-generated/sc3000_,$(MODULES_SC3000:
 src-generated/sc3000_%.c: $(MODULES_SC3000)
 	@xxd -i $(subst src-generated/sc3000_,src/hw/sc3000/,$(@:.c=.asm)) >$@
 
-src-generated/modules_sc3000.c: $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_SC3000)
-	@cat $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_SC3000) >src-generated/modules_sc3000.c
+src-generated/modules_sc3000.c: $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_SN76489) $(SOURCES_SC3000)
+	@cat $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_SN76489) $(SOURCES_SC3000) >src-generated/modules_sc3000.c
 	@grep "src" src-generated/modules_sc3000.c | awk -f modules.awk >src-generated/modules_sc3000.h
 	@grep "data" src-generated/modules_sc3000.c | awk -f modules.awk >>src-generated/modules_sc3000.h
 
@@ -319,8 +319,8 @@ SOURCES_SG1000 := $(subst src/hw/sg1000/,src-generated/sg1000_,$(MODULES_SG1000:
 src-generated/sg1000_%.c: $(MODULES_SG1000)
 	@xxd -i $(subst src-generated/sg1000_,src/hw/sg1000/,$(@:.c=.asm)) >$@
 
-src-generated/modules_sg1000.c: $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_SG1000)
-	@cat $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_SG1000) >src-generated/modules_sg1000.c
+src-generated/modules_sg1000.c: $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_SN76489) $(SOURCES_SG1000)
+	@cat $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_SN76489) $(SOURCES_SG1000) >src-generated/modules_sg1000.c
 	@grep "src" src-generated/modules_sg1000.c | awk -f modules.awk >src-generated/modules_sg1000.h
 	@grep "data" src-generated/modules_sg1000.c | awk -f modules.awk >>src-generated/modules_sg1000.h
 
