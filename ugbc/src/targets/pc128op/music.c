@@ -48,27 +48,8 @@
  */
 /* <usermanual>
 @keyword MUSIC
-
-@english
-
-@italian
-
-@syntax MUSIC [music]
-
-@example MUSIC fugue
-
-@target pc128op
 </usermanual> */
 void music_var( Environment * _environment, char * _music ) {
-
-    Variable * music = variable_retrieve( _environment, _music );
-
-    if ( music->type != VT_MUSIC ) {
-        CRITICAL_CANNOT_MUSIC( _music );
-    }
-
-    pc128opaudio_start( _environment, 0xff );
-    pc128opaudio_music( _environment, music->realName, music->size );
 
 }
 

@@ -48,23 +48,8 @@
  */
 /* <usermanual>
 @keyword SOUND OFF
-
-@english
-This command allows you to stop the play on all channels or specific channels.
-
-@italian
-Questo comando permette di interrompere il suono su tutti i canali o su canali specifici.
-
-@syntax SOUND OFF {ON #channels}
-
-@example SOUND OFF
-@example SOUND OFF ON #%001
-
-@target pc128op
 </usermanual> */
 void sound_off( Environment * _environment, int _channels ) {
-
-    pc128opaudio_stop( _environment, _channels );
 
 }
 
@@ -78,21 +63,7 @@ void sound_off( Environment * _environment, int _channels ) {
  */
 /* <usermanual>
 @keyword SOUND OFF
-
-@syntax SOUND OFF {ON [channels]}
-
-@example SOUND OFF
-@example SOUND OFF ON primaVoce
-
-@target pc128op
 </usermanual> */
 void sound_off_var( Environment * _environment, char * _channels ) {
-
-    if ( _channels ) {
-        Variable * channels = variable_retrieve_or_define( _environment, _channels, VT_WORD, 0x07 );
-        pc128opaudio_stop_vars( _environment, channels->realName );
-    } else {
-        pc128opaudio_stop_vars( _environment, NULL );
-    }
 
 }

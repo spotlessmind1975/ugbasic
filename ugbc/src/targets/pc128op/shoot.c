@@ -48,27 +48,8 @@
  */
 /* <usermanual>
 @keyword SHOOT
-
-@english
-This command makes the computer emit an shoot-like sound. It is possible to indicate 
-on which voices the system should emit the sound. If omitted, it will be issued on all.
-
-@italian
-Questo comando fa emettere al computer un suono simile a un colpo. E' possibile
-indicare su quali voci il sistema dovrà emettere il suono. Se omesso, sarà emesso su tutte.
-
-@syntax SHOOT {ON #[channel]}
-
-@example SHOOT
-@example SHOOT ON %001
-
-@target pc128op
 </usermanual> */
 void shoot( Environment * _environment, int _channels ) {
-
-    pc128opaudio_set_program( _environment, _channels, IMF_INSTRUMENT_GUNSHOT );
-    pc128opaudio_start( _environment, _channels );
-    pc128opaudio_set_frequency( _environment, _channels, 1000 );
 
 }
 

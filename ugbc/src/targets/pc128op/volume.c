@@ -50,26 +50,8 @@
  */
 /* <usermanual>
 @keyword VOLUME
-
-@english
-This command allows you to change the volume at which the audio is generated. 
-In general, you can change the overall audio, or that of each individual voice.
-
-@italian
-Questo comando permette di modificare il volume con cui l'audio viene generato.
-In generale è possibile modificare l'audio complessivo, oppure quello di ogni
-singola voce.
-
-@syntax VOLUME #[value] {ON #[channels]}
-
-@example VOLUME #255
-@example VOLUME #0 ON #%001
-
-@target pc128op
 </usermanual> */
 void volume( Environment * _environment, int _volume, int _channels ) {
-
-    pc128opaudio_set_volume( _environment, _volume/16, _channels );
 
 }
 
@@ -85,22 +67,7 @@ void volume( Environment * _environment, int _volume, int _channels ) {
  */
 /* <usermanual>
 @keyword VOLUME
-
-@syntax VOLUME [volume] {ON [channels]}
-
-@example VOLUME massimo
-@example VOLUME zero ON voice1
-
-@target pc128op
 </usermanual> */
 void volume_vars( Environment * _environment, char * _volume, char * _channels ) {
-
-    Variable * volume = variable_retrieve_or_define( _environment, _volume, VT_BYTE, 255 );
-    if ( _channels ) {
-        Variable * channels = variable_retrieve_or_define( _environment, _channels, VT_WORD, 0x07 );
-        pc128opaudio_set_volume_vars( _environment, channels->realName, volume->realName );
-    } else {
-        pc128opaudio_set_volume_vars( _environment, NULL, volume->realName );
-    }
 
 }

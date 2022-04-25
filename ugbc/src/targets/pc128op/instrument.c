@@ -50,28 +50,8 @@
  */
 /* <usermanual>
 @keyword INSTRUMENT
-
-@english
-This command allows you to select one of the available tools. Instruments 
-can be set for all voices, or for a set of particular voices.
-
-@italian
-Questo comando permette di selezionare uno tra gli strumenti disponibili. 
-Si possono impostare strumenti per tutte le voci, o per un insieme di voci 
-particolari. 
-
-@syntax INSTRUMENT #[instrument] {ON #[channels]}
-@syntax INSTRUMENT [symbolic name] {ON #[channels]}
-
-@example INSTRUMENT #42 ON %001
-@example INSTRUMENT SHAMISEN
-
-@target pc128op
 </usermanual> */
 void instrument( Environment * _environment, int _instrument, int _channels ) {
-
-    pc128opaudio_start( _environment, _channels );
-    pc128opaudio_set_program( _environment, _channels, _instrument );
 
 }
 
@@ -87,22 +67,7 @@ void instrument( Environment * _environment, int _instrument, int _channels ) {
  */
 /* <usermanual>
 @keyword INSTRUMENT
-
-@syntax INSTRUMENT #[instrument] {ON [channels]}
-
-@example INSTRUMENT FIDDLE ON primaVoce
-
-@target pc128op
 </usermanual> */
 void instrument_semi_var( Environment * _environment, int _instrument, char * _channels ) {
-
-    if ( _channels ) {
-        Variable * channels = variable_retrieve_or_define( _environment, _channels, VT_WORD, 0x07 );
-        pc128opaudio_start_var( _environment, channels->realName );
-        pc128opaudio_set_program_semi_var( _environment, channels->realName, _instrument );
-    } else {
-        pc128opaudio_start_var( _environment, NULL );
-        pc128opaudio_set_program_semi_var( _environment, NULL, _instrument );
-    }
 
 }

@@ -49,27 +49,8 @@
  */
 /* <usermanual>
 @keyword BELL
-
-@english
-This command makes the computer emit a bell-like sound. It is possible to indicate 
-on which voices the system should emit the sound. If omitted, it will be issued on all.
-
-@italian
-Questo comando fa emettere al computer un suono tipo campana. E' possibile indicare su 
-quali voci il sistema dovrà emettere il suono. Se omesso, sarà emesso su tutte.
-
-@syntax BELL #[note] {ON #[channels]}
-
-@example BELL #42
-@example BELL #42 ON #%001
-
-@target pc128op
 </usermanual> */
 void bell( Environment * _environment, int _note, int _channels ) {
-
-    pc128opaudio_start( _environment, _channels );
-    pc128opaudio_set_program( _environment, _channels, IMF_INSTRUMENT_GLOCKENSPIEL );
-    pc128opaudio_set_note( _environment, _channels, _note );
 
 }
 
@@ -84,27 +65,7 @@ void bell( Environment * _environment, int _note, int _channels ) {
  */
 /* <usermanual>
 @keyword BELL
-
-@syntax BELL [note] {ON [channels]}
-
-@example SOUND laDiesis
-@example SOUND solMaggiore, breve
-@example SOUND solMaggiore, lunga ON primaVoce
-
-@target pc128op
 </usermanual> */
 void bell_vars( Environment * _environment, char * _note, char * _channels ) {
-
-    Variable * note = variable_retrieve_or_define( _environment, _note, VT_WORD, 42 );
-    if ( _channels ) {
-        Variable * channels = variable_retrieve_or_define( _environment, _channels, VT_WORD, 0x07 );
-        pc128opaudio_start_var( _environment, channels->realName );
-        pc128opaudio_set_program_semi_var( _environment, channels->realName, IMF_INSTRUMENT_GLOCKENSPIEL );
-        pc128opaudio_set_note_vars( _environment, channels->realName, note->realName );
-    } else {
-        pc128opaudio_start_var( _environment, NULL );
-        pc128opaudio_set_program_semi_var( _environment, NULL, IMF_INSTRUMENT_GLOCKENSPIEL );
-        pc128opaudio_set_note_vars( _environment, NULL, note->realName );
-    }
 
 }

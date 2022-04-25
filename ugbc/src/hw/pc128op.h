@@ -166,27 +166,4 @@ void pc128op_follow_irq( Environment * _environment );
 int pc128op_convertbintok7_original(Environment * _environment);
 void pc128op_joystick( Environment * _environment, char * _joystick, char * _result );
 
-void pc128opaudio_initialization( Environment * _environment );
-void pc128opaudio_finalization( Environment * _environment );
-
-void pc128opaudio_start( Environment * _environment, int _channel );
-void pc128opaudio_set_volume( Environment * _environment, int _channel, int _volume );
-void pc128opaudio_set_program( Environment * _environment, int _channel, int _program );
-void pc128opaudio_set_parameter( Environment * _environment, int _channel, int _parameter, int _value );
-void pc128opaudio_set_frequency( Environment * _environment, int _channel, int _frequency );
-void pc128opaudio_set_pitch( Environment * _environment, int _channel, int _pitch );
-void pc128opaudio_set_note( Environment * _environment, int _channel, int _note );
-void pc128opaudio_stop( Environment * _environment, int _channel );
-
-void pc128opaudio_start_var( Environment * _environment, char * _channel );
-void pc128opaudio_set_volume_semi_var( Environment * _environment, char * _channel, int _volume );
-void pc128opaudio_set_volume_vars( Environment * _environment, char * _channel, char * _volume );
-void pc128opaudio_set_program_semi_var( Environment * _environment, char * _channel, int _program );
-void pc128opaudio_set_frequency_vars( Environment * _environment, char * _channel, char * _frequency );
-void pc128opaudio_set_pitch_vars( Environment * _environment, char * _channel, char * _pitch );
-void pc128opaudio_set_note_vars( Environment * _environment, char * _channel, char * _note );
-void pc128opaudio_stop_vars( Environment * _environment, char * _channel );
-
-void pc128opaudio_music( Environment * _environment, char * _music, int _size );
-
 #endif

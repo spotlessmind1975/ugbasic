@@ -48,27 +48,8 @@
  */
 /* <usermanual>
 @keyword BOOM
-
-@english
-This command makes the computer emit an explosion-like sound. It is possible to indicate 
-on which voices the system should emit the sound. If omitted, it will be issued on all.
-
-@italian
-Questo comando fa emettere al computer un suono simile a una esplosione. E' possibile
-indicare su quali voci il sistema dovrà emettere il suono. Se omesso, sarà emesso su tutte.
-
-@syntax BOOM {ON #[channel]}
-
-@example BOOM
-@example BOOM ON %001
-
-@target pc128op
 </usermanual> */
 void boom( Environment * _environment, int _channels ) {
-
-    pc128opaudio_set_program( _environment, _channels, IMF_INSTRUMENT_EXPLOSION );
-    pc128opaudio_start( _environment, _channels );
-    pc128opaudio_set_frequency( _environment, _channels, 1000 );
 
 }
 
@@ -82,24 +63,8 @@ void boom( Environment * _environment, int _channels ) {
  */
 /* <usermanual>
 @keyword BOOM
-
-@syntax BOOM {ON [channel]}
-
-@example BOOM
-@example BOOM ON primoCanale
-
-@target pc128op
 </usermanual> */
 void boom_var( Environment * _environment, char * _channels ) {
-
-    if ( _channels ) {
-        Variable * channels = variable_retrieve_or_define( _environment, _channels, VT_WORD, 0x07 );
-        pc128opaudio_start_var( _environment, channels->realName );
-        pc128opaudio_set_program_semi_var( _environment, channels->realName, IMF_INSTRUMENT_EXPLOSION );
-    } else {
-        pc128opaudio_start_var( _environment, NULL );
-        pc128opaudio_set_program_semi_var( _environment, NULL, IMF_INSTRUMENT_EXPLOSION );
-    }
     
 }
 

@@ -48,26 +48,8 @@
  */
 /* <usermanual>
 @keyword VOLUME OFF
-
-@english
-This command allows you to mute the audio. 
-In general, you can mute the overall audio, or each individual voice.
-
-@italian
-Questo comando permette di silenziare l'audio generato.
-In generale è possibile silenziare l'audio complessivo, oppure quello di ogni
-singola voce.
-
-@syntax VOLUME OFF {ON #[channels]}
-
-@example VOLUME OFF
-@example VOLUME OFF ON #%001
-
-@target pc128op
 </usermanual> */
 void volume_off( Environment * _environment, int _channels ) {
-
-    pc128opaudio_set_volume( _environment, 0, _channels );
 
 }
 
@@ -81,20 +63,7 @@ void volume_off( Environment * _environment, int _channels ) {
  */
 /* <usermanual>
 @keyword VOLUME OFF
-
-@syntax VOLUME OFF {ON [channels]}
-
-@example VOLUME OFF ON voice1
-
-@target pc128op
 </usermanual> */
 void volume_off_var( Environment * _environment, char * _channels ) {
-
-    if ( _channels ) {
-        Variable * channels = variable_retrieve_or_define( _environment, _channels, VT_WORD, 0x07 );
-        pc128opaudio_set_volume_semi_var( _environment, channels->realName, 0 );
-    } else {
-        pc128opaudio_set_volume_semi_var( _environment, NULL, 0 );
-    }
 
 }

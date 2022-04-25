@@ -51,41 +51,8 @@
  */
 /* <usermanual>
 @keyword SOUND
-
-@english
-This command allows you to play a certain frequency, for a certain time and on certain 
-channels. The command has a number of variations. First, you can omit the channel. 
-In this case, the sound will be played on all channels (or on those enabled by the 
-''VOICES''/''CHANNELS'' command). Then you can omit the duration, in which case the sound will 
-continue to play while the next instruction is executed. Duration is expressed
-in milliseconds.
-
-@italian
-Questo comando permette di suonare una certa frequenza, per un certo tempo e su certi 
-canali. Il comando ha una serie di varianti. In primo luogo, è possibile omettere il 
-canale. In tal caso, il suono sarà suonato su tutti i canali (oppure su quelli abilitati 
-dal comando ''VOICES''/''CHANNELS''). Poi è possibile omettere la durata, e in tal caso il suono 
-continuerà ad essere suonato mentre viene eseguita l'istruzione successiva. La durata è
-espressa in millisecondi.
-
-@syntax SOUND #[freq] {, #[duration] {ON #[channels]}}
-
-@example SOUND #440
-@example SOUND #440, #250
-@example SOUND #440, #250 ON #%001
-
-@target pc128op
 </usermanual> */
 void sound( Environment * _environment, int _freq, int _delay, int _channels ) {
-
-    outline0("; pc128opaudio_start");
-    pc128opaudio_start( _environment, _channels );
-    outline0("; pc128opaudio_set_frequency");
-    pc128opaudio_set_frequency( _environment, _channels, _freq );
-    if ( _delay ) {
-        outline0("; wait_milliseconds");
-        wait_milliseconds( _environment, _delay );
-    }
 
 }
 
@@ -102,28 +69,7 @@ void sound( Environment * _environment, int _freq, int _delay, int _channels ) {
  */
 /* <usermanual>
 @keyword SOUND
-
-@syntax SOUND [freq] {, [duration] {ON [channels]}}
-
-@example SOUND laDiesis
-@example SOUND solMaggiore, breve
-@example SOUND solMaggiore, lunga ON primaVoce
-
-@target pc128op
 </usermanual> */
 void sound_vars( Environment * _environment, char * _freq, char * _delay, char * _channels ) {
-
-    Variable * freq = variable_retrieve_or_define( _environment, _freq, VT_WORD, 440 );
-    if ( _channels ) {
-        Variable * channels = variable_retrieve_or_define( _environment, _channels, VT_WORD, 0x07 );
-        pc128opaudio_start_var( _environment, channels->realName );
-        pc128opaudio_set_frequency_vars( _environment, channels->realName, freq->realName );
-    } else {
-        pc128opaudio_start_var( _environment, NULL );
-        pc128opaudio_set_frequency_vars( _environment, NULL, freq->realName );
-    }
-    if ( _delay ) {
-        wait_milliseconds_var( _environment, _delay );
-    }
 
 }
