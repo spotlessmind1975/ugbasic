@@ -41,7 +41,6 @@
 void target_finalization( Environment * _environment ) {
 
     ef936x_finalization( _environment );
-    pc128opaudio_finalization( _environment );
 
 }
 
