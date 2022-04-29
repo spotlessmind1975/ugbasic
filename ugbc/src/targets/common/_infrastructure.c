@@ -6155,10 +6155,17 @@ float min_of_three(float _m, float _n, float _p) {
 
 char * get_temporary_filename( Environment * _environment ) {
 
-    char * temp = tmpnam(NULL);
+    char temp[16];
+    memset( temp, 0, 16 );
+
     char temporaryFilename[MAX_TEMPORARY_STORAGE];
 
-    for(int i=0; i<strlen(temp); ++i ) {
+    int i = 0;
+    for( i=0; i<15; ++i ) {
+        temp[i] = 'a' + ((char) (rand() % 20));
+    }
+
+    for(i=0; i<strlen(temp); ++i ) {
         if ( temp[i] == '.' ) {
             temp[i] = '0';
         }
