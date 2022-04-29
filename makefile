@@ -108,7 +108,7 @@ generated/d64/exe/%.bin: $(subst /exe/,/asm/,$(@:.bin=.asm))
 	@asm6809 -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -D -e 10240 -o $@ $(subst /exe/,/asm/,$(@:.bin=.asm))
 
 generated/pc128op/asm/%.asm: compiler
-	ugbc/exe/ugbc.pc128op $(subst generated/pc128op/asm/,examples/,$(@:.asm=.bas)) $@
+	@ugbc/exe/ugbc.pc128op $(subst generated/pc128op/asm/,examples/,$(@:.asm=.bas)) $@
 
 generated/pc128op/exe/%.k7: compiler
 	@ugbc/exe/ugbc.pc128op $(subst generated/pc128op/exe/,examples/,$(@:.k7=.bas)) -o $@
