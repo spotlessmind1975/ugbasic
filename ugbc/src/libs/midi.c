@@ -352,7 +352,7 @@ long size;
 			if ((pMF->ptr = (BYTE *)malloc(size)))
 				{
 				fseek(fp, 0L, SEEK_SET);
-				(void)fread(pMF->ptr, sizeof(BYTE), size, fp);
+				(void)!fread(pMF->ptr, sizeof(BYTE), size, fp);
 				ptr = pMF->ptr;
 				if (*(ptr+0) == 'M' && *(ptr+1) == 'T' && 
 					*(ptr+2) == 'h' && *(ptr+3) == 'd')
