@@ -70,6 +70,7 @@ void bank_cleanup( Environment * _environment ) {
                 cfgline2("%s:   load = MAIN,     type = ro,  optional = yes, start = $%4.4x;", actual->name, actual->address);
                 if ( actual->filename ) {
                     int b = 0;
+                    check_if_filename_is_valid( _environment,  actual->filename );
                     FILE * file = fopen(actual->filename, "rb" );
                     if ( !file ) {
                         fprintf(stderr, "Compiler error: unable to open file %s\n", actual->filename);

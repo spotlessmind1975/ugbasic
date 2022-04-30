@@ -5488,6 +5488,9 @@ char * image_load_asserts( Environment * _environment, char * _filename ) {
     char * lookedFilename = malloc(MAX_TEMPORARY_STORAGE);
     char lookedExtension[MAX_TEMPORARY_STORAGE];
     memset( lookedExtension, 0, MAX_TEMPORARY_STORAGE);
+
+    check_if_filename_is_valid( _environment,  _filename );
+
     strcpy( lookedFilename, _filename );
     char * c = strrchr( lookedFilename, '/' );
     if ( c ) {
@@ -6323,5 +6326,19 @@ char * escape_newlines( char * _string ) {
     free( result2 );
     
     return result;
+
+}
+
+int check_if_filename_is_valid( Environment * _environment,  char * _filename ) {
+
+    if ( strchr( _filename, ':' ) ) {
+        CRITICAL_FILENAME_INVALID_COLON( _filename );
+    }
+
+    if ( strchr( _filename, '\\' ) ) {
+        CRITICAL_FILENAME_INVALID_BACKSLASH( _filename );
+    }
+
+    return 1;
 
 }

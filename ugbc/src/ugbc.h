@@ -1732,6 +1732,8 @@ typedef struct _Environment {
 #define CRITICAL_SEQUENCE_LOAD_INVALID_FRAME_WIDTH( w ) CRITICAL2i("E126 - invalid frame width, not multiple of width", w );
 #define CRITICAL_SEQUENCE_LOAD_INVALID_FRAME_HEIGHT( h ) CRITICAL2i("E127 - invalid frame height, not multiple of height", h );
 #define CRITICAL_CANNOT_MUSIC( v ) CRITICAL2("E128 - variable is not MUSIC, so cannot music it", v );
+#define CRITICAL_FILENAME_INVALID_COLON( v ) CRITICAL2("E129 - invalid filename, colon character not allowed", v );
+#define CRITICAL_FILENAME_INVALID_BACKSLASH( v ) CRITICAL2("E130 - invalid filename, backslash character not allowed", v );
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
 #define WARNING2i( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%i) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -2316,6 +2318,7 @@ void                    case_equals( Environment * _environment, int _value );
 void                    case_equals_var( Environment * _environment, char * _value );
 void                    case_equals_label( Environment * _environment );
 void                    center( Environment * _environment, char * _string, int _newline );
+int                     check_if_filename_is_valid( Environment * _environment,  char * _filename );
 void                    circle( Environment * _environment, char * _x, char * _y, char * _r, char *_c );
 Variable *              clear_key( Environment * _environment );
 void                    cline( Environment * _environment, char * _characters );

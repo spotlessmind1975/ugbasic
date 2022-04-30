@@ -367,6 +367,8 @@ Variable * music_load( Environment * _environment, char * _filename, char * _ali
 
     } else {
 
+        check_if_filename_is_valid( _environment,  _filename );
+
         FILE * file = fopen( _filename, "rb" );
 
         if ( !file ) {
