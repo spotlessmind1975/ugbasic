@@ -1024,7 +1024,7 @@ typedef struct _Deployed {
     int font;
     int sidvars;
     int sidstartup;
-    int pc128audiostartup;
+    int pc128audio;
     int doubleBuffer;
     int pokeyvars;
     int pokeystartup;

@@ -52,6 +52,10 @@
 </usermanual> */
 void bell( Environment * _environment, int _note, int _channels ) {
 
+    deploy( pc128audio, src_hw_pc128op_audio_asm );
+
+    outline0("JSR PC128AUDIOBELL");
+
 }
 
 /**
@@ -67,5 +71,10 @@ void bell( Environment * _environment, int _note, int _channels ) {
 @keyword BELL
 </usermanual> */
 void bell_vars( Environment * _environment, char * _note, char * _channels ) {
+
+    deploy( pc128audio, src_hw_pc128op_audio_asm );
+
+    outline0("LDY #$80");
+    outline0("JSR PC128AUDIOBELL");
 
 }

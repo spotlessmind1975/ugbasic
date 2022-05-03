@@ -51,6 +51,11 @@
 </usermanual> */
 void boom( Environment * _environment, int _channels ) {
 
+    deploy( pc128audio, src_hw_pc128op_audio_asm );
+
+    outline0("LDU #20");
+    outline0("JSR PC128AUDIOBOOM");
+
 }
 
 /**
@@ -66,5 +71,10 @@ void boom( Environment * _environment, int _channels ) {
 </usermanual> */
 void boom_var( Environment * _environment, char * _channels ) {
     
+    deploy( pc128audio, src_hw_pc128op_audio_asm );
+
+    outline0("LDU #512");
+    outline0("JSR PC128AUDIOBOOM");
+
 }
 
