@@ -1227,7 +1227,7 @@ static void vars_remove(buffer buf[LOOK_AHEAD]) {
                     rep = tst;
                 }
             }
-            optim(buf[0], "unread",rep);
+            optim(buf[0], "unread", rep!=NULL ? "%s" : NULL, rep);
         }
     }
 
