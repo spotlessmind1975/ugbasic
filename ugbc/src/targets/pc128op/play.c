@@ -54,6 +54,11 @@
 </usermanual> */
 void play( Environment * _environment, int _note, int _delay, int _channels ) {
 
+    deploy( pc128audio, src_hw_pc128op_audio_asm );
+
+    outline1("LDY #$%4.4x", _delay / 10 );
+    outline0("JSR PC128AUDIOBELL");
+
 }
 
 /**
@@ -71,5 +76,15 @@ void play( Environment * _environment, int _note, int _delay, int _channels ) {
 @keyword PLAY
 </usermanual> */
 void play_vars( Environment * _environment, char * _note, char * _delay, char * _channels ) {
+
+    deploy( pc128audio, src_hw_pc128op_audio_asm );
+
+    Variable * delay = variable_retrieve_or_define( _environment, _delay, VT_WORD, 0 );
+ 
+    outline1("LDD %s", delay->realName );
+    outline0("LSRA" );
+    outline0("RORB" );
+    outline0("TFR D, Y" );
+    outline0("JSR PC128AUDIOBELL");
 
 }
