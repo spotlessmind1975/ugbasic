@@ -74,9 +74,9 @@ void ay8910_finalization( Environment * _environment ) {
 
     if ( ! _environment->deployed.ay8910startup ) {
         cpu_label( _environment, "AY8910STARTUP" );
-        outline0( "RTS" );
+        outline0( "RET" );
         cpu_label( _environment, "MUSICPLAYER" );
-        outline0( "RTS" );
+        outline0( "RET" );
     }
 
 }
