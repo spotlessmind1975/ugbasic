@@ -5499,7 +5499,9 @@ char * image_load_asserts( Environment * _environment, char * _filename ) {
         strcpy( lookedExtension, c );
         *c = 0;
     } else {
-        strcpy( lookedExtension, "" );
+        strcpy( lookedFilename, "." );
+        strcpy( lookedExtension, "/" );
+        strcat( lookedExtension, _filename );
     }
     printf("%s\n", lookedExtension );
 #if defined(__atari__) 
@@ -5537,12 +5539,15 @@ char * image_load_asserts( Environment * _environment, char * _filename ) {
     if ( strlen( lookedExtension ) ) {
         strcat( lookedFilename, lookedExtension );
     }
+    printf("%s\n", lookedFilename );
 
     FILE * file = fopen( lookedFilename, "rb" );
 
     if ( !file ) {
 
         strcpy( lookedFilename, _filename );
+
+        printf("%s\n", lookedFilename );
 
         file = fopen( lookedFilename, "rb" );
 
@@ -5551,7 +5556,9 @@ char * image_load_asserts( Environment * _environment, char * _filename ) {
         }
     }
 
-    fclose( file );
+    if ( file ) {
+        fclose( file );
+    }
 
     return lookedFilename;
 
