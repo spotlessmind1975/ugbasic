@@ -41,7 +41,8 @@
 void target_finalization( Environment * _environment ) {
 
     vic2_finalization( _environment );
-
+    sid_finalization( _environment );
+    
 }
 
 void target_finalize( Environment * _environment ) {
