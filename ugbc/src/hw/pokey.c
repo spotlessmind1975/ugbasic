@@ -28,7 +28,7 @@
  * autorizzazioni e le limitazioni previste dalla medesima.
  ****************************************************************************/
 
-#if defined(__atari__)
+#if defined(__atari__) || defined(__atarixl__)
 
 #include "../ugbc.h"
 
