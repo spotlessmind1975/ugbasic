@@ -221,7 +221,7 @@ static unsigned int tmp_buf_hash(unsigned int key) {
 
 /* a static one-time buffer */
 static buffer tmp_buf(void *key1, unsigned int key2) {
-    int hash = tmp_buf_hash(((unsigned int)key1)*31 + key2) % TMP_BUF_POOL;
+    int hash = tmp_buf_hash((((intptr_t))key1)*31 + key2) % TMP_BUF_POOL;
     struct tmp_buf_pool *tmp = &tmp_buf_pool[hash];
     int count = 0;
 
@@ -1225,7 +1225,7 @@ static void vars_remove(buffer buf[LOOK_AHEAD]) {
                     rep = tst;
                 }
             }
-            optim(buf[0], "unread",rep);
+            optim(buf[0], "unread", rep != NULL ? "%s" : NULL, rep);
         }
     }
 
