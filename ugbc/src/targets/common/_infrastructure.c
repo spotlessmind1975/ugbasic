@@ -6216,9 +6216,9 @@ int system_call( Environment * _environment, char * _commandline ) {
 
 char * escape_newlines( char * _string ) {
 
-    char * result = malloc( 6 * strlen( _string ) + 1 );
+    char * result = malloc( 6 * strlen( _string ) + 2 );
 
-    memset( result, 0, 6 * strlen( _string ) + 1 );
+    memset( result, 0, 6 * strlen( _string ) + 2 );
 
     char * p = _string, * q = result;
 
