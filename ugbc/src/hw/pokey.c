@@ -56,7 +56,7 @@ void pokey_initialization( Environment * _environment ) {
 
 void pokey_finalization( Environment * _environment ) {
 
-    if ( ! _environment->deployed.sidstartup ) {
+    if ( ! _environment->deployed.pokeystartup ) {
         cpu_label( _environment, "POKEYSTARTUP" );
         outline0( "RTS" );
         cpu_label( _environment, "MUSICPLAYER" );
