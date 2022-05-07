@@ -568,14 +568,14 @@ void zx_put_image( Environment * _environment, char * _image, char * _x, char * 
                 outline1("LD DE, OFFSETS%4.4x", _frame_size );
                 outline1("LD A, (%s)", _frame );
                 outline0("CMP 0" );
-                outline1("JR Z, %sdone", label );
-                outhead1("%sloop:", label );
+                outline1("JR Z, %s2done", label );
+                outhead1("%s2loop:", label );
                 outline0("INC DE" );
                 outline0("DEC B" );
                 outline0("CMP 0" );
-                outline1("JR NZ, %sloop", label );
+                outline1("JR NZ, %s2loop", label );
                 outline0("ADD HL, DE" );
-                outhead1("%sdone:", label );
+                outhead1("%s2done:", label );
             }
 
         }
@@ -609,7 +609,7 @@ void zx_put_image( Environment * _environment, char * _image, char * _x, char * 
     outline0("LD (IMAGEX), A" );
     outline1("LD A, (%s)", _y );
     outline0("LD (IMAGEY), A" );
-    outline1("LD A, #$%2.2x", ( _flags & 0xff ) );
+    outline1("LD A, $%2.2x", ( _flags & 0xff ) );
     outline0("LD (IMAGEF), A" );
 
     outline0("CALL PUTIMAGE");
