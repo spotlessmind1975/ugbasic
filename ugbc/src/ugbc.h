@@ -1905,8 +1905,8 @@ int embed_scan_string (const char *);
 
 #define outembedded0(e)     \
     { \
-        char * parsed = malloc( e##_len + 1 ); \
-        memset( parsed, 0, e##_len + 1 ); \
+        char * parsed = malloc( (2*e##_len) + 1 ); \
+        memset( parsed, 0, (2*e##_len) + 1 ); \
         char * tmp = malloc( e##_len + 1 ); \
         memset( tmp, 0, e##_len + 1 ); \
         memcpy( tmp, e, e##_len ); \
