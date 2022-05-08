@@ -5493,7 +5493,6 @@ char * image_load_asserts( Environment * _environment, char * _filename ) {
     check_if_filename_is_valid( _environment,  _filename );
 
     strcpy( lookedFilename, _filename );
-    printf("%s\n", lookedFilename );
     char * c = strrchr( lookedFilename, '/' );
     if ( c ) {
         strcpy( lookedExtension, c );
@@ -5503,7 +5502,6 @@ char * image_load_asserts( Environment * _environment, char * _filename ) {
         strcpy( lookedExtension, "/" );
         strcat( lookedExtension, _filename );
     }
-    printf("%s\n", lookedExtension );
 #if defined(__atari__) 
     strcat( lookedFilename, "/atari" );
 #elif defined(__atarixl__) 
@@ -5535,19 +5533,15 @@ char * image_load_asserts( Environment * _environment, char * _filename ) {
 #elif __c128__
     strcat( lookedFilename, "/c128" );
 #endif
-    printf("%s\n", lookedFilename );
     if ( strlen( lookedExtension ) ) {
         strcat( lookedFilename, lookedExtension );
     }
-    printf("%s\n", lookedFilename );
 
     FILE * file = fopen( lookedFilename, "rb" );
 
     if ( !file ) {
 
         strcpy( lookedFilename, _filename );
-
-        printf("%s\n", lookedFilename );
 
         file = fopen( lookedFilename, "rb" );
 
