@@ -68,8 +68,8 @@ YSCROLL:            .byte 0
 
 IMAGEX = $34
 IMAGEY = $36
-IMAGEW = $32
-IMAGEH = $33
+IMAGEW = $32 ; $33
+IMAGEH = $39
 IMAGEH2 = $31
 IMAGET = $30
 IMAGEF = $38

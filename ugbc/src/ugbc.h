@@ -2441,6 +2441,7 @@ Variable *              image_get_height( Environment * _environment, char * _im
 Variable *              image_get_width( Environment * _environment, char * _image );
 char *                  image_enlarge_right( Environment * _environment, char * _source, int _width, int _height, int _delta );
 char *                  image_enlarge_bottom( Environment * _environment, char * _source, int _width, int _height, int _delta );
+RGBi *                  image_nearest_system_color( RGBi * _color );
 char *                  image_roll_x_left( Environment * _environment, char * _source, int _width, int _height );
 char *                  image_roll_x_right( Environment * _environment, char * _source, int _width, int _height );
 char *                  image_roll_y_down( Environment * _environment, char * _source, int _width, int _height );
