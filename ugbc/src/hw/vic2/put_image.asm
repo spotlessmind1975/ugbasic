@@ -645,6 +645,9 @@ PUTIMAGE3:
     STA IMAGEW
     LDY #1
     LDA (TMPPTR),Y
+    STA IMAGEW+1
+    LDY #2
+    LDA (TMPPTR),Y
     LSR
     LSR
     LSR
@@ -653,7 +656,7 @@ PUTIMAGE3:
 
     CLC
     LDA TMPPTR
-    ADC #2
+    ADC #3
     STA TMPPTR
     LDA TMPPTR+1
     ADC #0

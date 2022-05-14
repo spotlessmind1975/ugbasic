@@ -1643,7 +1643,7 @@ static int calculate_image_size( Environment * _environment, int _width, int _he
 
         case BITMAP_MODE_MULTICOLOR:
 
-            return 2 + ( ( _width >> 2 ) * _height ) + 2 * ( ( _width >> 2 ) * ( _height >> 3 ) );
+            return 3 + ( ( _width >> 2 ) * _height ) + 2 * ( ( _width >> 2 ) * ( _height >> 3 ) );
 
         case BITMAP_MODE_AH:
         case BITMAP_MODE_AIFLI:
@@ -1894,12 +1894,13 @@ static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _
     // Color of the pixel to convert
     RGBi rgb;
 
-    *(buffer) = _frame_width;
-    *(buffer+1) = _frame_height;
+    *(buffer) = ( _frame_width & 0xff );
+    *(buffer+1) = ( _frame_width >> 8 ) & 0xff;
+    *(buffer+2) = _frame_height;
 
     _source += ( ( _offset_y * _width ) + _offset_x ) * 3;
 
-    vic2_image_converter_tiles_multicolor( _source, buffer+2, _frame_width, _frame_height, _width, palette[0].index );
+    vic2_image_converter_tiles_multicolor( _source, buffer+3, _frame_width, _frame_height, _width, palette[0].index );
     
     variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
 
@@ -2489,7 +2490,7 @@ void vic2_put_image( Environment * _environment, char * _image, char * _x, char 
         if ( _frame ) {
             outline0("CLC" );
             outline0("LDA TMPPTR" );
-            outline0("ADC #2" );
+            outline0("ADC #3" );
             outline0("STA TMPPTR" );
             outline0("LDA TMPPTR+1" );
             outline0("ADC #0" );

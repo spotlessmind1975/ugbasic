@@ -194,15 +194,16 @@ Variable * images_load( Environment * _environment, char * _filename, char * _al
         }
     }
 
-    bufferSize += 2;
+    bufferSize += 3;
     char * buffer = malloc( bufferSize );
     char * ptr = buffer;
     ptr[0] = wc*hc;
-    ptr[1] = _frame_width;
+    ptr[1] = ( _frame_width & 0xff );
+    ptr[2] = ( _frame_width >> 8 ) & 0xff;
 
     offsetting_size_count( _environment, result[0]->size, realFramesCount );
 
-    ptr += 2;
+    ptr += 3;
     for(i=0; i<realFramesCount; ++i ) {
         memcpy( ptr, result[i]->valueBuffer, result[i]->size );
         ptr += result[i]->size;
