@@ -5433,9 +5433,9 @@ void variable_array_fill( Environment * _environment, char * _name, int _value )
 
 void image_converter_asserts( Environment * _environment, int _width, int _height, int _offset_x, int _offset_y, int * _frame_width, int * _frame_height ) {
 
-    if ( _width % 8 ) {
-        CRITICAL_IMAGE_CONVERTER_INVALID_WIDTH( _width );
-    }
+    // if ( _width % 8 ) {
+    //     CRITICAL_IMAGE_CONVERTER_INVALID_WIDTH( _width );
+    // }
 
     if ( *_frame_width == 0 ) {
         *_frame_width = _width;
