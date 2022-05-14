@@ -371,7 +371,7 @@ static void vic2_image_converter_tiles_multicolor( char * _source, char * _dest,
     memset( _dest, 0, bitmapSize + colormap1Size + colormap2Size );
 
     for( int y=0; y<_height; y+=8 ) {
-        for( int x=0; x<_width; x+=8 ) {
+        for( int x=0; x<_width; x+=4 ) {
 
             char * source = _source + ( ( y * _source_width ) + x ) * 3;
             char tile[10];
@@ -1803,9 +1803,9 @@ static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _
             CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
         }
     } else {
-        if (colorUsed > 4) {
-            CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
-        }
+        // if (colorUsed > 4) {
+        //     CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
+        // }
     }
 
     for( i=0; i<colorUsed; ++i ) {
