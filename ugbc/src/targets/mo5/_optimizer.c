@@ -1142,7 +1142,7 @@ static void vars_scan(buffer buf[LOOK_AHEAD]) {
     &&  arg->len==2
     &&  (*tmp->str!='_' || tmp->str[1]=='T')) {
         int v = strtol(arg->str, NULL, 16);
-        if (v > vars.page0_max) vars.page0_max = v+2;
+        if (v >= vars.page0_max) vars.page0_max = v+2;
     }
 }
 
