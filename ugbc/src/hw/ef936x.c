@@ -886,12 +886,12 @@ static int calculate_image_size( Environment * _environment, int _width, int _he
 
     switch( _mode ) {
         case BITMAP_MODE_40_COLUMN:
-            return 2 + 2 * ( ( _width >> 3 ) * _height );
+            return 3 + 2 * ( ( _width >> 3 ) * _height );
         case BITMAP_MODE_BITMAP_4:
-            return 2 + 2 * ( ( _width >> 3 ) * _height ) /*+ 8*/;
+            return 3 + 2 * ( ( _width >> 3 ) * _height ) /*+ 8*/;
         case BITMAP_MODE_80_COLUMN:
         case BITMAP_MODE_BITMAP_16:
-            return 2 + 2 * ( ( _width >> 2 ) * _height ) /* + 16 * 2 */;
+            return 3 + 2 * ( ( _width >> 2 ) * _height ) /* + 16 * 2 */;
         case BITMAP_MODE_PAGE:
             // WARNING_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
             break;
@@ -968,8 +968,9 @@ static Variable * ef936x_image_converter_bitmap_mode_standard( Environment * _en
     // Color of the pixel to convert
     RGBi rgb;
 
-    *(buffer) = _frame_width;
-    *(buffer+1) = _frame_height;
+    *(buffer) = (_frame_width >> 8 ) & 0xff;
+    *(buffer+1) = (_frame_width ) & 0xff;
+    *(buffer+2) = _frame_height;
 
     _source += ( ( _offset_y * _width ) + _offset_x ) * 3;
 
@@ -1000,10 +1001,10 @@ static Variable * ef936x_image_converter_bitmap_mode_standard( Environment * _en
             // int luminance = calculate_luminance(rgb);
 
             if ( i == 1 ) {
-                *( buffer + offset + 2) |= bitmask;
+                *( buffer + offset + 3) |= bitmask;
                 // printf("*");
             } else {
-                *( buffer + offset + 2) &= ~bitmask;
+                *( buffer + offset + 3) &= ~bitmask;
                 // printf(" ");
             }
 
@@ -1121,8 +1122,9 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
     // Color of the pixel to convert
     RGBi rgb;
 
-    *(buffer) = _frame_width;
-    *(buffer+1) = _frame_height;
+    *(buffer) = (_frame_width >> 8 ) & 0xff;
+    *(buffer+1) = ( _frame_width ) & 0xff;
+    *(buffer+2) = _frame_height;
 
     _source += ( ( _offset_y * _width ) + _offset_x ) * 3;
 
@@ -1187,17 +1189,17 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
                 // int luminance = calculate_luminance(rgb);
 
                 if ( colorIndexes[xx] != colorBackground ) {
-                    *( buffer + offset + 2) |= bitmask;
+                    *( buffer + offset + 3) |= bitmask;
                     // printf("*");
                 } else {
-                    *( buffer + offset + 2) &= ~bitmask;
+                    *( buffer + offset + 3) &= ~bitmask;
                     // printf(" ");
                 }
 
                 offset = ( image_y * ( _frame_width >> 3 ) ) + ( image_x >> 3 );
 
                 bitmask = colorForeground << 4 | ( colorBackground );
-                *(buffer + 2 + ( ( _frame_width >> 3 ) * _frame_height ) + offset) = bitmask;
+                *(buffer + 3 + ( ( _frame_width >> 3 ) * _frame_height ) + offset) = bitmask;
                 if ( _environment->debugImageLoad ) {
                     printf( "%1.1x", colorForeground );
                 }
@@ -1310,8 +1312,9 @@ static Variable * ef936x_image_converter_multicolor_mode4( Environment * _enviro
     // Color of the pixel to convert
     RGBi rgb;
 
-    *(buffer) = _frame_width;
-    *(buffer+1) = _frame_height;
+    *(buffer) = ( _frame_width >> 8 ) & 0xff;
+    *(buffer+1) = ( _frame_width ) & 0xff;
+    *(buffer+2) = _frame_height;
 
     _source += ( ( _offset_y * _width ) + _offset_x ) * 3;
 
@@ -1339,8 +1342,8 @@ static Variable * ef936x_image_converter_multicolor_mode4( Environment * _enviro
 
             bitmask = 1 << ( 7 - (image_x & 0x7) );
 
-            *(buffer + 2 + ( image_x >> 3 ) + ( ( _frame_width >> 3 ) * image_y ) ) |= ( ( colorIndex & 0x02 ) == 0x02 ) ? bitmask : 0;
-            *(buffer + 2 + ( ( _frame_width >> 3 ) * _frame_height ) + ( ( image_x >> 3 ) + ( _frame_width >> 3 ) * image_y ) ) |= ( ( colorIndex & 0x01 ) == 0x01 ) ? bitmask : 0;
+            *(buffer + 3 + ( image_x >> 3 ) + ( ( _frame_width >> 3 ) * image_y ) ) |= ( ( colorIndex & 0x02 ) == 0x02 ) ? bitmask : 0;
+            *(buffer + 3 + ( ( _frame_width >> 3 ) * _frame_height ) + ( ( image_x >> 3 ) + ( _frame_width >> 3 ) * image_y ) ) |= ( ( colorIndex & 0x01 ) == 0x01 ) ? bitmask : 0;
 
             _source += 3;
 
@@ -1535,8 +1538,9 @@ static Variable * ef936x_image_converter_multicolor_mode16( Environment * _envir
     // Color of the pixel to convert
     RGBi rgb;
 
-    *(buffer) = _frame_width;
-    *(buffer+1) = _frame_height;
+    *(buffer) = ( _frame_width >> 8 ) & 0xff;
+    *(buffer+1) = ( _frame_width ) & 0xff;
+    *(buffer+2) = _frame_height;
 
     _source += ( ( _offset_y * _width ) + _offset_x ) * 3;
 
@@ -1567,9 +1571,9 @@ static Variable * ef936x_image_converter_multicolor_mode16( Environment * _envir
             // printf( "%2.2x", bitmask );
 
             if ( ( ( image_x & 0x03 ) < 0x02 ) ) {
-                *(buffer + 2 + ( image_x >> 2 ) + ( ( _frame_width >> 2 ) * image_y ) ) |= bitmask;
+                *(buffer + 3 + ( image_x >> 2 ) + ( ( _frame_width >> 2 ) * image_y ) ) |= bitmask;
             } else {
-                *(buffer + 2 + ( ( _frame_width >> 2 ) * _frame_height ) + ( ( image_x >> 2 ) + ( _frame_width >> 2 ) * image_y ) ) |= bitmask;
+                *(buffer + 3 + ( ( _frame_width >> 2 ) * _frame_height ) + ( ( image_x >> 2 ) + ( _frame_width >> 2 ) * image_y ) ) |= bitmask;
             }
 
             _source += 3;
@@ -1648,7 +1652,7 @@ void ef936x_put_image( Environment * _environment, char * _image, char * _x, cha
         }
     } else {
         if ( _frame ) {
-            outline0("LEAY 2,y" );
+            outline0("LEAY 3,y" );
             if ( strlen(_frame) == 0 ) {
             } else {
                 outline1("LDX #OFFSETS%4.4x", _frame_size );
@@ -1685,8 +1689,9 @@ Variable * ef936x_new_image( Environment * _environment, int _width, int _height
     char * buffer = malloc ( size );
     memset( buffer, 0, size );
 
-    *(buffer) = _width;
-    *(buffer+1) = _height;
+    *(buffer) = ( _width >> 8 ) & 0xff;
+    *(buffer+1) = ( _width & 0xff );
+    *(buffer+2) = _height;
 
     result->valueBuffer = buffer;
     result->size = size;
