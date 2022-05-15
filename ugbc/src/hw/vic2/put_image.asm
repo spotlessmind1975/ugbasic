@@ -717,6 +717,9 @@ PUTIMAGE3:
     ADC PLOTC2VBASEHI,Y          ;do the high byte
     STA PLOTC2DEST+1
 
+    LDA #200
+    JSR PUTIMAGEWAITLINE
+
     LDX #0
     LDA IMAGEW
     ASL

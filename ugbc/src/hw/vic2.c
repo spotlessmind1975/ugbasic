@@ -87,7 +87,7 @@ RGBi * vic2_image_nearest_system_color( RGBi * _color ) {
  * this function will need the picture _width in order
  * to move to the next line to analyze.
  */
-static void vic2_image_converter_tile( char * _source, char * _dest, int _width ) {
+static void vic2_image_converter_tile( char * _source, char * _dest, int _width, int _source_width ) {
 
     int colorIndexesCount[COLOR_COUNT];
     memset(colorIndexesCount, 0, COLOR_COUNT * sizeof( int ) );
@@ -118,7 +118,7 @@ static void vic2_image_converter_tile( char * _source, char * _dest, int _width 
 
         }
 
-        source += 3 * ( _width - 8 );
+        source += 3 * ( _source_width - 8 );
 
     }
 
@@ -171,7 +171,7 @@ static void vic2_image_converter_tile( char * _source, char * _dest, int _width 
 
         }
 
-        source += 3 * ( _width - 8 );
+        source += 3 * ( _source_width - 8 );
 
     }
 
@@ -203,7 +203,7 @@ static void vic2_image_converter_tiles( char * _source, char * _dest, int _width
             char * source = _source + ( ( y * _source_width ) + x ) * 3;
             char tile[9];
 
-            vic2_image_converter_tile( source, tile, _width );
+            vic2_image_converter_tile( source, tile, _width, _source_width );
 
             int offset = ((y>>3) * 8 *( _width >> 3 ) ) + ((x>>3) * 8) + ((y) & 0x07);
             // x = 8, y = 8
@@ -236,7 +236,7 @@ static void vic2_image_converter_tiles( char * _source, char * _dest, int _width
  * color should be given since it is not settable and it will
  * be returned as low nibble of second color byte.
  */
-static void vic2_image_converter_tile_multicolor( char * _source, char * _dest, int _width, int _background ) {
+static void vic2_image_converter_tile_multicolor( char * _source, char * _dest, int _width, int _background, int _source_width ) {
 
     int colorIndexesCount[COLOR_COUNT];
     memset(colorIndexesCount, 0, COLOR_COUNT * sizeof( int ) );
@@ -267,7 +267,7 @@ static void vic2_image_converter_tile_multicolor( char * _source, char * _dest, 
 
         }
 
-        source += 3 * ( _width - 4 );
+        source += 3 * ( _source_width - 4 );
 
     }
 
@@ -340,7 +340,7 @@ static void vic2_image_converter_tile_multicolor( char * _source, char * _dest, 
 
         }
 
-        source += 3 * ( _width - 4 );
+        source += 3 * ( _source_width - 4 );
 
     }
 
@@ -376,7 +376,7 @@ static void vic2_image_converter_tiles_multicolor( char * _source, char * _dest,
             char * source = _source + ( ( y * _source_width ) + x ) * 3;
             char tile[10];
 
-            vic2_image_converter_tile_multicolor( source, tile, _width, _background );
+            vic2_image_converter_tile_multicolor( source, tile, _width, _background, _source_width );
 
             int offset = ((y>>3) * 8 *( _width >> 2 ) ) + ((x>>2) * 8) + ((y) & 0x07);
 
