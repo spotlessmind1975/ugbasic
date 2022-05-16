@@ -336,7 +336,7 @@ FONTWIDTH:          .byte 8
 FONTHEIGHT:         .byte 8
 IMAGEX = $F0
 IMAGEY = $F2
-IMAGEW = $F4
+IMAGEW = $F4 ; $F5
 IMAGEH = $F6
 IMAGEH2 = $F8
 IMAGET = $F9
