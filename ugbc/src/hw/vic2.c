@@ -2556,8 +2556,9 @@ Variable * vic2_new_image( Environment * _environment, int _width, int _height, 
     char * buffer = malloc ( size );
     memset( buffer, 0, size );
 
-    *(buffer) = _width;
-    *(buffer+1) = _height;
+    *(buffer) = (_width & 0xff);
+    *(buffer+1) = (_width>>8) & 0xff;
+    *(buffer+2) = _height;
 
     result->valueBuffer = buffer;
     result->size = size;
