@@ -96,7 +96,12 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                             out2("%s fcb %d,", variable->realName, c);
                             int i=0;
                             for (i=0; i<(c-1); ++i ) {
-                                out1("$%2.2x,", (unsigned char)variable->valueString[i]);
+                                if ( ( ( i + 1 ) % 16 ) == 0 ) {
+                                    outline1("$%2.2x", (unsigned char)variable->valueString[i]);
+                                    out0("   fcb ");
+                                } else {
+                                    out1("$%2.2x,", (unsigned char)variable->valueString[i]);
+                                }
                             }
                             outline1("$%2.2x", (unsigned char)variable->valueString[(c-1)]);                        
                         } else {
