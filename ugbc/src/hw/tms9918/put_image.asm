@@ -99,9 +99,14 @@ PUTIMAGE3:
 
 PUTIMAGE2:
     LD A, (HL)
-    SRL A
-    SRL A
-    SRL A
+    INC HL
+    LD B, (HL)
+    SRL B
+    RR A
+    SRL B
+    RR A
+    SRL B
+    RR A
     LD C, A
     INC HL
     LD A, (HL)

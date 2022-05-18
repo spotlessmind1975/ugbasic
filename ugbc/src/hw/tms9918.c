@@ -60,6 +60,179 @@ static RGBi SYSTEM_PALETTE[] = {
  * CODE SECTION
  ****************************************************************************/
 
+RGBi * tms9918_image_nearest_system_color( RGBi * _color ) {
+
+    int minDistance = 0xffff;
+    int colorIndex = 0;
+    for (int j = 0; j < COLOR_COUNT; ++j) {
+        int distance = rgbi_distance(&SYSTEM_PALETTE[j], _color);
+        if (distance < minDistance) {
+            minDistance = distance;
+            colorIndex = j;
+        }
+    }
+
+    return &SYSTEM_PALETTE[colorIndex];
+
+}
+
+/**
+ * This method can be used to convert 
+ *     8x8 RGB (3 bytes) pixel (_source) [8x8x3 = 192 bytes]
+ * into 
+ *     8x8 bitmap (1 bit) pixel + 8 (byte) [8x1 + 8 = 16 bytes]
+ *       foreground and background color (_dest)
+ * 
+ * Since the 8x8 pixel area belong to a larger picture,
+ * this function will need the picture _width in order
+ * to move to the next line to analyze.
+ */
+static void tms9918_image_converter_tile( char * _source, char * _dest, int _width, int _source_width ) {
+
+    int colorIndexesCount[COLOR_COUNT];
+
+    int colorBackgroundMax = 0;
+    int colorBackground[8];
+    memset( colorBackground, 0, 8 );
+    
+    int colorForegroundMax = 0;
+    int colorForeground[8];
+    memset( colorForeground, 0, 8 );
+
+    char * source = _source;
+
+    // Clear the box and colors
+    memset( _dest, 0, 16 );
+
+    // Loop for all the box surface
+    for (int y=0; y<8; ++y) {
+
+        memset(colorIndexesCount, 0, COLOR_COUNT * sizeof( int ) );
+        colorBackgroundMax = 0;
+        colorForegroundMax = 0;
+
+        for (int x=0; x<8; ++x) {
+
+            RGBi rgb;
+
+            memset( &rgb, 0, sizeof( RGBi ) );
+
+            // Take the color of the pixel
+            rgb.red = *source;
+            rgb.green = *(source + 1);
+            rgb.blue = *(source + 2);
+
+            RGBi *systemRgb = tms9918_image_nearest_system_color( &rgb );
+
+            ++colorIndexesCount[systemRgb->index];
+
+            source += 3;
+
+        }
+
+        for( int xx = 0; xx<COLOR_COUNT; ++xx ) {
+            if ( colorIndexesCount[xx] > colorBackgroundMax ) {
+                colorBackground[y] = xx;
+                colorBackgroundMax = colorIndexesCount[xx];
+            };
+        }
+
+        colorIndexesCount[colorBackground[y]] = 0;
+
+        for( int xx = 0; xx<COLOR_COUNT; ++xx ) {
+            if ( colorIndexesCount[xx] > colorForegroundMax ) {
+                colorForeground[y] = xx;
+                colorForegroundMax = colorIndexesCount[xx];
+            };
+        }
+
+        source += 3 * ( _source_width - 8 );
+
+    }
+
+    source = _source;
+
+    for (int y=0; y<8; ++y) {
+        for (int x=0; x<8; ++x) {
+
+            RGBi rgb;
+
+            memset( &rgb, 0, sizeof( RGBi ) );
+
+            rgb.red = *source;
+            rgb.green = *(source + 1);
+            rgb.blue = *(source + 2);
+
+            RGBi *systemRgb = tms9918_image_nearest_system_color( &rgb );
+
+            char bitmask = 1 << ( 7 - ((x) & 0x7) );
+
+            if ( systemRgb->index != colorBackground[y] ) {
+                *( _dest + y ) |= bitmask;
+                // printf("*");
+            } else {
+                *( _dest + y ) &= ~bitmask;
+                // printf(" ");
+            }
+
+            source += 3;
+
+        }
+
+        source += 3 * ( _source_width - 8 );
+
+    }
+
+    for( int i=0; i<8; ++i ) {
+        *( _dest + 8 + i ) = ( colorForeground[i] << 4 ) | colorBackground[i] ;
+    }
+
+}
+
+/**
+ * This method can be used to convert 
+ *     WxH RGB (3 bytes) pixel (_source) [WxHx3 bytes]
+ * into 
+ *     WxH bitmap (1 bit) pixel + (W/8xH + W/8xH) (bytes)
+ *       foreground and background color (_dest)
+ * 
+ * Since the WXH pixel area could belong to a larger picture,
+ * this function will need the picture _source_width in order
+ * to move to the next line to analyze.
+ */
+static void tms9918_image_converter_tiles( char * _source, char * _dest, int _width, int _height, int _source_width ) {
+
+    int bitmapSize = ( _width>>3 ) * _height;
+    int colormapSize = ( _width>>3 ) * _height;
+
+    memset( _dest, 0, bitmapSize + colormapSize );
+
+    for( int y=0; y<_height; y+=8 ) {
+        for( int x=0; x<_width; x+=8 ) {
+
+            char * source = _source + ( ( y * _source_width ) + x ) * 3;
+            char tile[16];
+
+            tms9918_image_converter_tile( source, tile, _width, _source_width );
+
+            int offset = ((y>>3) * 8 *( _width >> 3 ) ) + ((x>>3) * 8) + ((y) & 0x07);
+            // x = 8, y = 8
+            // offset = ((8 >> 3) * 8 * (16>>3) ) + ((8>>3) * 8) + ((8) & 7)
+            // offset = (1 * 8 * 2 ) + (1 * 8)
+            // offset = 16 + 8 = 24
+
+            char * destBitmap = _dest + offset;
+            char * destColormap = _dest + bitmapSize + offset;
+            for( int i=0; i<8; ++i ) {
+                *destBitmap = tile[i];
+                *destColormap = tile[i+8];
+                ++destBitmap;
+                ++destColormap;
+            }
+        }
+    }
+}
+
 /**
  * @brief <i>TMS9918</i>: emit code to check for collision
  * 
@@ -1337,7 +1510,7 @@ static int calculate_image_size( Environment * _environment, int _width, int _he
 
         case BITMAP_MODE_GRAPHIC2:
 
-            return 2 + ( ( _width >> 3 ) * _height ) + ( ( _width >> 3 ) * ( _height ) );
+            return 3 + ( ( _width >> 3 ) * _height ) + ( ( _width >> 3 ) * ( _height ) );
 
         case BITMAP_MODE_MULTICOLOR:
         case TILEMAP_MODE_STANDARD:
@@ -1373,9 +1546,9 @@ static Variable * tms9918_image_converter_bitmap_mode_standard( Environment * _e
             CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
         }
     } else {
-        if (colorUsed > 16) {
-            CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
-        }
+        // if (colorUsed > 16) {
+        //     CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
+        // }
     }
 
     for( i=0; i<colorUsed; ++i ) {
@@ -1466,60 +1639,13 @@ static Variable * tms9918_image_converter_bitmap_mode_standard( Environment * _e
     // Color of the pixel to convert
     RGBi rgb;
 
-    *(buffer) = _frame_width;
-    *(buffer+1) = _frame_height;
+    *(buffer) = (_frame_width & 0xff);
+    *(buffer+1) = (_frame_width >> 8 ) & 0xff;
+    *(buffer+2) = _frame_height;
 
     _source += ( ( _offset_y * _width ) + _offset_x ) * 3;
 
-    // Loop for all the source surface.
-    for (image_y = 0; image_y < _frame_height; ++image_y) {
-        for (image_x = 0; image_x < _frame_width; ++image_x) {
-
-            // Take the color of the pixel
-            rgb.red = *_source;
-            rgb.green = *(_source + 1);
-            rgb.blue = *(_source + 2);
-
-            // Calculate the relative tile
-            tile_y = (image_y >> 3);
-            tile_x = (image_x >> 3);
-
-            // Calculate the offset starting from the tile surface area
-            // and the bit to set.
-            offset = (tile_y * 8 *( _frame_width >> 3 ) ) + (tile_x * 8) + (image_y & 0x07);
-            offsetc = offset;
-
-            int minDistance = 0xffff;
-            int colorIndex = 0;
-
-            for( i= ( _flags & FLAG_OVERLAYED ) ? 1 : 0; i<colorUsed; ++i ) {
-                if ( rgbi_equals_rgb( &palette[i], &rgb ) ) {
-                    break;
-                }
-            }
-
-            colorIndex = i;
-
-            if ( _environment->debugImageLoad ) {
-                printf( "%1.1x", ( palette[colorIndex].index & 0x0f ) );
-            }
-
-            bitmask = ( colorIndex == 0 ? 0 : 1 ) << (7 - ((image_x & 0x7)));
-            if ( colorIndex && ( *(buffer + 2 + ( ( _frame_width >> 3 ) * _frame_height ) + offsetc ) & 0xf0 ) == 0 ) {
-                *(buffer + 2 + ( ( _frame_width >> 3 ) * _frame_height ) + offsetc ) = ( ( ( palette[colorIndex].index & 0x0f ) << 4 ) | palette[0].index );
-            }
-            *(buffer + 2 + offset) |= bitmask;
-
-            _source += 3;
-
-        }
-
-        _source += 3 * ( _width - _frame_width );
-
-        if ( _environment->debugImageLoad ) {
-            printf("\n" );
-        }
-    }
+    tms9918_image_converter_tiles( _source, buffer+3, _frame_width, _frame_height, _width );
 
     if ( _environment->debugImageLoad ) {
         printf("\n" );
@@ -1753,7 +1879,7 @@ void tms9918_put_image( Environment * _environment, char * _image, char * _x, ch
     } else {
 
         if ( _frame ) {
-            outline0("LD DE, $0002" );
+            outline0("LD DE, $0003" );
             outline0("ADD HL, DE" );
             if ( strlen(_frame) == 0 ) {
 
@@ -1817,8 +1943,9 @@ Variable * tms9918_new_image( Environment * _environment, int _width, int _heigh
     char * buffer = malloc ( size );
     memset( buffer, 0, size );
 
-    *(buffer) = _width;
-    *(buffer+1) = _height;
+    *(buffer) = (_width & 0xff);
+    *(buffer+1) = (_width>>8) & 0xff;
+    *(buffer+2) = _height;
 
     result->valueBuffer = buffer;
     result->size = size;
