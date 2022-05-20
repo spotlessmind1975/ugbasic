@@ -60,6 +60,339 @@ static RGBi SYSTEM_PALETTE[] = {
  * CODE SECTION
  ****************************************************************************/
 
+RGBi * ted_image_nearest_system_color( RGBi * _color ) {
+
+    int minDistance = 0xffff;
+    int colorIndex = 0;
+    for (int j = 0; j < COLOR_COUNT; ++j) {
+        int distance = rgbi_distance(&SYSTEM_PALETTE[j], _color);
+        if (distance < minDistance) {
+            minDistance = distance;
+            colorIndex = j;
+        }
+    }
+
+    return &SYSTEM_PALETTE[colorIndex];
+
+}
+
+/**
+ * This method can be used to convert 
+ *     8x8 RGB (3 bytes) pixel (_source) [8x8x3 = 192 bytes]
+ * into 
+ *     8x8 bitmap (1 bit) pixel + 1 (byte) [8x1 + 1 = 9 bytes]
+ *       foreground and background color (_dest)
+ * 
+ * Since the 8x8 pixel area belong to a larger picture,
+ * this function will need the picture _width in order
+ * to move to the next line to analyze.
+ */
+static void ted_image_converter_tile( char * _source, char * _dest, int _width, int _source_width ) {
+
+    int colorIndexesCount[COLOR_COUNT];
+    memset(colorIndexesCount, 0, COLOR_COUNT * sizeof( int ) );
+
+    char * source = _source;
+
+    // Clear the box and colors
+    memset( _dest, 0, 9 );
+
+    // Loop for all the box surface
+    for (int y=0; y<8; ++y) {
+        for (int x=0; x<8; ++x) {
+
+            RGBi rgb;
+
+            memset( &rgb, 0, sizeof( RGBi ) );
+
+            // Take the color of the pixel
+            rgb.red = *source;
+            rgb.green = *(source + 1);
+            rgb.blue = *(source + 2);
+
+            RGBi *systemRgb = ted_image_nearest_system_color( &rgb );
+
+            ++colorIndexesCount[systemRgb->index];
+
+            source += 3;
+
+        }
+
+        source += 3 * ( _source_width - 8 );
+
+    }
+
+    int colorBackground = 0;
+    int colorBackgroundMax = 0;
+    int colorForeground = 0;
+    int colorForegroundMax = 0;
+    for( int xx = 0; xx<COLOR_COUNT; ++xx ) {
+        if ( colorIndexesCount[xx] > colorBackgroundMax ) {
+            colorBackground = xx;
+            colorBackgroundMax = colorIndexesCount[xx];
+        };
+    }
+
+    colorIndexesCount[colorBackground] = 0;
+
+    for( int xx = 0; xx<COLOR_COUNT; ++xx ) {
+        if ( colorIndexesCount[xx] > colorForegroundMax ) {
+            colorForeground = xx;
+            colorForegroundMax = colorIndexesCount[xx];
+        };
+    }
+
+    source = _source;
+
+    for (int y=0; y<8; ++y) {
+        for (int x=0; x<8; ++x) {
+
+            RGBi rgb;
+
+            memset( &rgb, 0, sizeof( RGBi ) );
+
+            rgb.red = *source;
+            rgb.green = *(source + 1);
+            rgb.blue = *(source + 2);
+
+            RGBi *systemRgb = ted_image_nearest_system_color( &rgb );
+
+            char bitmask = 1 << ( 7 - ((x) & 0x7) );
+
+            if ( systemRgb->index != colorBackground ) {
+                *( _dest + y ) |= bitmask;
+                // printf("*");
+            } else {
+                *( _dest + y ) &= ~bitmask;
+                // printf(" ");
+            }
+
+            source += 3;
+
+        }
+
+        source += 3 * ( _source_width - 8 );
+
+    }
+
+    *( _dest + 8 ) = ( colorForeground << 4 ) | colorBackground ;
+
+}
+
+/**
+ * This method can be used to convert 
+ *     WxH RGB (3 bytes) pixel (_source) [WxHx3 bytes]
+ * into 
+ *     WxH bitmap (1 bit) pixel + (W/8xH + W/8xH/8) (bytes)
+ *       foreground and background color (_dest)
+ * 
+ * Since the WXH pixel area could belong to a larger picture,
+ * this function will need the picture _source_width in order
+ * to move to the next line to analyze.
+ */
+static void ted_image_converter_tiles( char * _source, char * _dest, int _width, int _height, int _source_width ) {
+
+    int bitmapSize = ( _width>>3 ) * _height;
+    int colormapSize = ( _width>>3 ) * (_height>>3);
+
+    memset( _dest, 0, bitmapSize + colormapSize );
+
+    for( int y=0; y<_height; y+=8 ) {
+        for( int x=0; x<_width; x+=8 ) {
+
+            char * source = _source + ( ( y * _source_width ) + x ) * 3;
+            char tile[9];
+
+            ted_image_converter_tile( source, tile, _width, _source_width );
+
+            int offset = ((y>>3) * 8 *( _width >> 3 ) ) + ((x>>3) * 8) + ((y) & 0x07);
+            // x = 8, y = 8
+            // offset = ((8 >> 3) * 8 * (16>>3) ) + ((8>>3) * 8) + ((8) & 7)
+            // offset = (1 * 8 * 2 ) + (1 * 8)
+            // offset = 16 + 8 = 24
+
+            char * destBitmap = _dest + offset;
+            char * destColormap = _dest + bitmapSize + ( ( ( y >> 3 ) * ( _width >> 3 ) ) + ( x >> 3 ) );
+            for( int i=0; i<8; ++i ) {
+                *destBitmap = tile[i];
+                ++destBitmap;
+            }
+            // printf("tile at %d,%d color = %2.2x\n", x, y, tile[8] );
+            *destColormap = tile[8];            
+        }
+    }
+}
+
+/**
+ * This method can be used to convert 
+ *     4x8 RGB (3 bytes) pixel (_source) [8x8x3 = 192 bytes]
+ * into 
+ *     4x8 colormap (2 bit) pixel + 1 (bytes) [8x1 + 2 = 10 bytes]
+ *       color1 [hi], color2, color3 [hi], background (_dest)
+ * 
+ * Since the 4x8 pixel area belong to a larger picture,
+ * this function will need the picture _width in order
+ * to move to the next line to analyze. Moreover, background
+ * color should be given since it is not settable and it will
+ * be returned as low nibble of second color byte.
+ */
+static void ted_image_converter_tile_multicolor( char * _source, char * _dest, int _width, int _background, int _source_width ) {
+
+    int colorIndexesCount[COLOR_COUNT];
+    memset(colorIndexesCount, 0, COLOR_COUNT * sizeof( int ) );
+
+    char * source = _source;
+
+    // Clear the box and colors
+    memset( _dest, 0, 10 );
+
+    // Loop for all the box surface
+    for (int y=0; y<8; ++y) {
+        for (int x=0; x<4; ++x) {
+
+            RGBi rgb;
+
+            memset( &rgb, 0, sizeof( RGBi ) );
+
+            // Take the color of the pixel
+            rgb.red = *source;
+            rgb.green = *(source + 1);
+            rgb.blue = *(source + 2);
+
+            RGBi *systemRgb = ted_image_nearest_system_color( &rgb );
+
+            ++colorIndexesCount[systemRgb->index];
+
+            source += 3;
+
+        }
+
+        source += 3 * ( _source_width - 4 );
+
+    }
+
+    colorIndexesCount[_background] = 0;
+
+    int colorFirst = 0;
+    int colorFirstMax = 0;
+    int colorSecond = 0;
+    int colorSecondMax = 0;
+    int colorThird = 0;
+    int colorThirdMax = 0;
+
+    for( int xx = 0; xx<COLOR_COUNT; ++xx ) {
+        if ( colorIndexesCount[xx] > colorFirstMax ) {
+            colorFirst = xx;
+            colorFirstMax = colorIndexesCount[xx];
+        };
+    }
+
+    colorIndexesCount[colorFirst] = 0;
+
+    for( int xx = 0; xx<COLOR_COUNT; ++xx ) {
+        if ( colorIndexesCount[xx] > colorSecondMax ) {
+            colorSecond = xx;
+            colorSecondMax = colorIndexesCount[xx];
+        };
+    }
+
+    colorIndexesCount[colorSecond] = 0;
+
+    for( int xx = 0; xx<COLOR_COUNT; ++xx ) {
+        if ( colorIndexesCount[xx] > colorThirdMax ) {
+            colorThird = xx;
+            colorThirdMax = colorIndexesCount[xx];
+        };
+    }
+
+    colorIndexesCount[colorThird] = 0;
+
+    source = _source;
+
+    for (int y=0; y<8; ++y) {
+        for (int x=0; x<4; ++x) {
+
+            RGBi rgb;
+
+            memset( &rgb, 0, sizeof( RGBi ) );
+
+            rgb.red = *source;
+            rgb.green = *(source + 1);
+            rgb.blue = *(source + 2);
+
+            RGBi *systemRgb = ted_image_nearest_system_color( &rgb );
+
+            char colorIndex = 0;
+
+            if ( systemRgb->index == colorFirst ) {
+                colorIndex = 1;
+            } else if ( systemRgb->index == colorSecond ) {
+                colorIndex = 2;
+            } else if ( systemRgb->index == colorThird ) {
+                colorIndex = 3;
+            }
+            
+            char bitmask = colorIndex << (6 - ((x & 0x3) * 2));
+
+            *(_dest + y) |= bitmask;
+
+            source += 3;
+
+        }
+
+        source += 3 * ( _source_width - 4 );
+
+    }
+
+    *( _dest + 8 ) = ( colorFirst << 4 ) | colorSecond ;
+    *( _dest + 9 ) = ( _background << 4 ) | colorThird;
+
+}
+
+/**
+ * This method can be used to convert 
+ *     WxH RGB (3 bytes) pixel (_source) [WxHx3 bytes]
+ * into 
+ *     WxH bitmap (2 bit) pixel + (W/4xH + 2*(W/4xH/8)) (bytes)
+ *       color1 [hi], color2, color3 [hi], background (_dest)
+ * 
+ * Since the WXH pixel area could belong to a larger picture,
+ * this function will need the picture _source_width in order
+ * to move to the next line to analyze. Moreover, background
+ * color is fixed also if it is returned as lower nibble
+ * of one byte of 2 of colors.
+ */
+static void ted_image_converter_tiles_multicolor( char * _source, char * _dest, int _width, int _height, int _source_width, int _background ) {
+
+    int bitmapSize = ( _width>>2 ) * _height;
+    int colormap1Size = ( _width>>2 ) * (_height>>3);
+    int colormap2Size = ( _width>>2 ) * (_height>>3);
+
+    memset( _dest, 0, bitmapSize + colormap1Size + colormap2Size );
+
+    for( int y=0; y<_height; y+=8 ) {
+        for( int x=0; x<_width; x+=4 ) {
+
+            char * source = _source + ( ( y * _source_width ) + x ) * 3;
+            char tile[10];
+
+            ted_image_converter_tile_multicolor( source, tile, _width, _background, _source_width );
+
+            int offset = ((y>>3) * 8 *( _width >> 2 ) ) + ((x>>2) * 8) + ((y) & 0x07);
+
+            char * destBitmap = _dest + offset;
+            char * destColormap1 = _dest + bitmapSize + ( ( ( y >> 3 ) * ( _width >> 2 ) ) + ( x >> 2 ) );
+            char * destColormap2 = _dest + bitmapSize + colormap1Size + ( ( ( y >> 3 ) * ( _width >> 2 ) ) + ( x >> 2 ) );
+            for( int i=0; i<8; ++i ) {
+                *destBitmap = tile[i];
+                ++destBitmap;
+            }
+            *destColormap1 = tile[8];
+            *destColormap2 = tile[9];
+        }
+    }
+}
+
 void ted_collision( Environment * _environment, char * _sprite_mask, char * _result ) {
 
 }
@@ -938,9 +1271,9 @@ static Variable * ted_image_converter_bitmap_mode_standard( Environment * _envir
 
     int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE, 1 /* sorted */);
 
-    if (colorUsed > 2) {
-        CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
-    }
+    // if (colorUsed > 2) {
+    //     CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
+    // }
     
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = colorUsed;
@@ -999,50 +1332,7 @@ static Variable * ted_image_converter_bitmap_mode_standard( Environment * _envir
 
     _source += ( ( _offset_y * _width ) + _offset_x ) * 3;
 
-    // Loop for all the source surface.
-    for (image_y = 0; image_y < _frame_height; ++image_y) {
-        for (image_x = 0; image_x < _frame_width; ++image_x) {
-
-            // Take the color of the pixel
-            rgb.red = *_source;
-            rgb.green = *(_source + 1);
-            rgb.blue = *(_source + 2);
-
-            for( i=0; i<colorUsed; ++i ) {
-                if ( rgbi_equals_rgb( &palette[i], &rgb ) ) {
-                    break;
-                }
-            }
-
-            // Calculate the relative tile
-            tile_y = (image_y >> 3);
-            tile_x = (image_x >> 3);
-            
-            // Calculate the offset starting from the tile surface area
-            // and the bit to set.
-            offset = (tile_y * 8 *( _frame_width >> 3 ) ) + (tile_x * 8) + (image_y & 0x07);
-            bitmask = 1 << ( 7 - (image_x & 0x7) );
-
-            // If the pixes has enough luminance value, it must be 
-            // contedered as "on"; otherwise, it is "off".
-            // int luminance = calculate_luminance(rgb);
-
-            if ( i == 1 ) {
-                *( buffer + offset + 3) |= bitmask;
-            } else {
-                *( buffer + offset + 3) &= ~bitmask;
-            }
-
-            offset = tile_y * ( _frame_width >> 3 ) + tile_x;
-            *( buffer + 3 + ( ( _frame_width >> 3 ) * _frame_height ) + offset ) = ( palette[1].index << 4 ) | palette[0].index; 
-
-            _source += 3;
-
-        }
-
-        _source += ( _width - _frame_width ) * 3;
-
-    }
+    ted_image_converter_tiles( _source, buffer+3, _frame_width, _frame_height, _width );
 
     variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
 
@@ -1059,9 +1349,9 @@ static Variable * ted_image_converter_multicolor_mode_standard( Environment * _e
 
     int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE, 1 /* sorted */);
 
-    if (colorUsed > 4) {
-        CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
-    }
+    // if (colorUsed > 4) {
+    //     CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
+    // }
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = colorUsed;
@@ -1119,61 +1409,7 @@ static Variable * ted_image_converter_multicolor_mode_standard( Environment * _e
 
     _source += ( ( _offset_y * _frame_width ) + _offset_x ) * 3;
 
-    // Loop for all the source surface.
-    for (image_y = 0; image_y < _frame_height; ++image_y) {
-        for (image_x = 0; image_x < _frame_width; ++image_x) {
-
-            // Take the color of the pixel
-            rgb.red = *_source;
-            rgb.green = *(_source + 1);
-            rgb.blue = *(_source + 2);
-
-            // Calculate the relative tile
-            tile_y = (image_y >> 3);
-            tile_x = (image_x >> 2);
-
-            // Calculate the offset starting from the tile surface area
-            // and the bit to set.
-            offset = (tile_y * 8 *( _frame_width >> 2 ) ) + (tile_x * 8) + (image_y & 0x07);
-            offsetc = (tile_y * ( _frame_width >> 2 ) ) + (tile_x);
-
-            int minDistance = 0xffff;
-            int colorIndex = 0;
-
-            for( i=0; i<colorUsed; ++i ) {
-                if ( rgbi_equals_rgb( &palette[i], &rgb ) ) {
-                    break;
-                }
-            }
-
-            colorIndex = i;
-
-            bitmask = colorIndex << (6 - ((image_x & 0x3) * 2));
-
-            switch( colorIndex ) {
-                case 0:
-                    *(buffer + 3 + ( ( _frame_width >> 2 ) * _frame_height ) + 2 * ( _frame_width >> 2 ) * ( _frame_height >> 3 ) ) = palette[colorIndex].index;
-                    break;
-                case 1:
-                case 2:
-                    *(buffer + 3 + ( ( _frame_width >> 2 ) * _frame_height ) + offsetc ) |= ( ( palette[1].index & 0xf0 ) << 4 ) | ( ( palette[2].index & 0xf0 ) );
-                    *(buffer + 3 + ( ( _frame_width >> 2 ) * _frame_height ) + ( _frame_width >> 2 ) * ( _frame_height >> 3 ) + offsetc ) |= ( ( palette[1].index & 0x0f ) ) | ( ( palette[2].index & 0x0f ) >> 4 );
-                    break;
-                case 3:
-                    *(buffer + 3 + ( ( _frame_width >> 2 ) * _frame_height ) + 2 * ( _frame_width >> 2 ) * ( _frame_height >> 3 ) + 1 ) = palette[colorIndex].index;
-                    break;
-            }
-
-            *(buffer + 3 + offset) |= bitmask;
-
-            _source += 3;
-
-        }
-
-        _source += ( _width - _frame_width ) * 3;
-        // printf("\n" );
-
-    }
+    ted_image_converter_tiles_multicolor( _source, buffer+3, _frame_width, _frame_height, _width, palette[0].index );
 
     variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
 
