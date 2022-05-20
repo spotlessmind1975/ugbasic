@@ -993,8 +993,9 @@ static Variable * ted_image_converter_bitmap_mode_standard( Environment * _envir
     // Color of the pixel to convert
     RGBi rgb;
 
-    *(buffer) = _frame_width;
-    *(buffer+1) = _frame_height;
+    *(buffer) = (_frame_width & 0xff );
+    *(buffer+1) = (_frame_width >> 8 ) & 0xff;
+    *(buffer+2) = _frame_height;
 
     _source += ( ( _offset_y * _width ) + _offset_x ) * 3;
 
@@ -1027,13 +1028,13 @@ static Variable * ted_image_converter_bitmap_mode_standard( Environment * _envir
             // int luminance = calculate_luminance(rgb);
 
             if ( i == 1 ) {
-                *( buffer + offset + 2) |= bitmask;
+                *( buffer + offset + 3) |= bitmask;
             } else {
-                *( buffer + offset + 2) &= ~bitmask;
+                *( buffer + offset + 3) &= ~bitmask;
             }
 
             offset = tile_y * ( _frame_width >> 3 ) + tile_x;
-            *( buffer + 2 + ( ( _frame_width >> 3 ) * _frame_height ) + offset ) = ( palette[1].index << 4 ) | palette[0].index; 
+            *( buffer + 3 + ( ( _frame_width >> 3 ) * _frame_height ) + offset ) = ( palette[1].index << 4 ) | palette[0].index; 
 
             _source += 3;
 
@@ -1112,8 +1113,9 @@ static Variable * ted_image_converter_multicolor_mode_standard( Environment * _e
     // Color of the pixel to convert
     RGBi rgb;
 
-    *(buffer) = _frame_width;
-    *(buffer+1) = _frame_height;
+    *(buffer) = (_frame_width & 0xff );
+    *(buffer+1) = (_frame_width >> 8 ) & 0xff;
+    *(buffer+2) = _frame_height;
 
     _source += ( ( _offset_y * _frame_width ) + _offset_x ) * 3;
 
@@ -1150,19 +1152,19 @@ static Variable * ted_image_converter_multicolor_mode_standard( Environment * _e
 
             switch( colorIndex ) {
                 case 0:
-                    *(buffer + 2 + ( ( _frame_width >> 2 ) * _frame_height ) + 2 * ( _frame_width >> 2 ) * ( _frame_height >> 3 ) ) = palette[colorIndex].index;
+                    *(buffer + 3 + ( ( _frame_width >> 2 ) * _frame_height ) + 2 * ( _frame_width >> 2 ) * ( _frame_height >> 3 ) ) = palette[colorIndex].index;
                     break;
                 case 1:
                 case 2:
-                    *(buffer + 2 + ( ( _frame_width >> 2 ) * _frame_height ) + offsetc ) |= ( ( palette[1].index & 0xf0 ) << 4 ) | ( ( palette[2].index & 0xf0 ) );
-                    *(buffer + 2 + ( ( _frame_width >> 2 ) * _frame_height ) + ( _frame_width >> 2 ) * ( _frame_height >> 3 ) + offsetc ) |= ( ( palette[1].index & 0x0f ) ) | ( ( palette[2].index & 0x0f ) >> 4 );
+                    *(buffer + 3 + ( ( _frame_width >> 2 ) * _frame_height ) + offsetc ) |= ( ( palette[1].index & 0xf0 ) << 4 ) | ( ( palette[2].index & 0xf0 ) );
+                    *(buffer + 3 + ( ( _frame_width >> 2 ) * _frame_height ) + ( _frame_width >> 2 ) * ( _frame_height >> 3 ) + offsetc ) |= ( ( palette[1].index & 0x0f ) ) | ( ( palette[2].index & 0x0f ) >> 4 );
                     break;
                 case 3:
-                    *(buffer + 2 + ( ( _frame_width >> 2 ) * _frame_height ) + 2 * ( _frame_width >> 2 ) * ( _frame_height >> 3 ) + 1 ) = palette[colorIndex].index;
+                    *(buffer + 3 + ( ( _frame_width >> 2 ) * _frame_height ) + 2 * ( _frame_width >> 2 ) * ( _frame_height >> 3 ) + 1 ) = palette[colorIndex].index;
                     break;
             }
 
-            *(buffer + 2 + offset) |= bitmask;
+            *(buffer + 3 + offset) |= bitmask;
 
             _source += 3;
 
@@ -1271,7 +1273,7 @@ void ted_put_image( Environment * _environment, char * _image, char * _x, char *
         if ( _frame ) {
             outline0("CLC" );
             outline0("LDA TMPPTR" );
-            outline0("ADC #2" );
+            outline0("ADC #3" );
             outline0("STA TMPPTR" );
             outline0("LDA TMPPTR+1" );
             outline0("ADC #0" );
@@ -1334,8 +1336,9 @@ Variable * ted_new_image( Environment * _environment, int _width, int _height, i
     char * buffer = malloc ( size );
     memset( buffer, 0, size );
 
-    *(buffer) = _width;
-    *(buffer+1) = _height;
+    *(buffer) = ( _width & 0xff );
+    *(buffer+1) = ( _width >> 8 ) & 0xff;
+    *(buffer+2) = _height;
 
     result->valueBuffer = buffer;
     result->size = size;
