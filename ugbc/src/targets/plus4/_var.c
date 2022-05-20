@@ -142,7 +142,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                 for (i=0; i<(variable->size-1); ++i ) {
                                     if ( ( ( i + 1 ) % 16 ) == 0 ) {
                                         outline1("%d", variable->valueBuffer[i]);
-                                        out0("  .byte");
+                                        out0("  .byte ");
                                     } else {
                                         out1("%d,", variable->valueBuffer[i]);
                                     }
