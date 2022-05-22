@@ -141,13 +141,13 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                 int i=0;
                                 for (i=0; i<(variable->size-1); ++i ) {
                                     if ( ( ( i + 1 ) % 16 ) == 0 ) {
-                                        outline1("%d", variable->valueBuffer[i]);
+                                        outline1("$%2.2x", variable->valueBuffer[i]);
                                         out0("  .byte ");
                                     } else {
-                                        out1("%d,", variable->valueBuffer[i]);
+                                        out1("$%2.2x,", variable->valueBuffer[i]);
                                     }
                                 }
-                                outline1("%d", variable->valueBuffer[(variable->size-1)]);
+                                outline1("$%2.2x", variable->valueBuffer[(variable->size-1)]);
                             }
                         } else {
                             outline2("%s: .res %d", variable->realName, variable->size);

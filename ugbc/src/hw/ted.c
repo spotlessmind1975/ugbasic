@@ -39,21 +39,21 @@
 
 static RGBi SYSTEM_PALETTE[] = {
     { 0x00, 0x00, 0x00, 0, "BLACK" },
-    { 0xff, 0xff, 0xff, 113, "WHITE" },
-    { 0xbc, 0x68, 0x59, 82, "RED"  },
-    { 0x43, 0x97, 0xa6, 83, "CYAN"   }, 
-    { 0xbc, 0x52, 0xcc, 84, "PURPLE"  }, 
-    { 0x43, 0xad, 0x33, 85, "GREEN"  }, 
-    { 0x80, 0x71, 0xcc, 86, "BLUE"  }, 
-    { 0x80, 0x8e, 0x33, 87, "YELLOW"  }, 
-    { 0xbc, 0x6f, 0x33, 88, "ORANGE" }, 
-    { 0x9e, 0x7f, 0x33, 89, "BROWN" }, 
-    { 0x61, 0x9e, 0x33, 90, "YELLOW GREEN"  }, 
-    { 0xbc, 0x61, 0x80, 91, "PINK" }, 
-    { 0x43, 0x9e, 0x80, 92, "BLUE GREEN" }, 
-    { 0x43, 0x90, 0xcc, 109, "LIGHT BLUE"  }, 
-    { 0x9e, 0x61, 0xcc, 62, "DARK BLUE" },
-    { 0x43, 0xa6, 0x59, 95, "LIGHT GREEN"  } 
+    { 0xff, 0xff, 0xff, 1, "WHITE" },
+    { 0xbc, 0x68, 0x59, 2, "RED"  },
+    { 0x43, 0x97, 0xa6, 3, "CYAN"   }, 
+    { 0xbc, 0x52, 0xcc, 4, "PURPLE"  }, 
+    { 0x43, 0xad, 0x33, 5, "GREEN"  }, 
+    { 0x80, 0x71, 0xcc, 6, "BLUE"  }, 
+    { 0x80, 0x8e, 0x33, 7, "YELLOW"  }, 
+    { 0xbc, 0x6f, 0x33, 8, "ORANGE" }, 
+    { 0x9e, 0x7f, 0x33, 9, "BROWN" }, 
+    { 0x61, 0x9e, 0x33, 10, "YELLOW GREEN"  }, 
+    { 0xbc, 0x61, 0x80, 11, "PINK" }, 
+    { 0x43, 0x9e, 0x80, 12, "BLUE GREEN" }, 
+    { 0x43, 0x90, 0xcc, 13, "LIGHT BLUE"  }, 
+    { 0x9e, 0x61, 0xcc, 14, "DARK BLUE" },
+    { 0x43, 0xa6, 0x59, 15, "LIGHT GREEN"  } 
 };
 
 /****************************************************************************
@@ -113,6 +113,8 @@ static void ted_image_converter_tile( char * _source, char * _dest, int _width, 
             RGBi *systemRgb = ted_image_nearest_system_color( &rgb );
 
             ++colorIndexesCount[systemRgb->index];
+
+// printf( "%2.2x %2.2x\n", systemRgb->index, colorIndexesCount[systemRgb->index] );
 
             source += 3;
 
@@ -177,6 +179,8 @@ static void ted_image_converter_tile( char * _source, char * _dest, int _width, 
 
     *( _dest + 8 ) = ( colorForeground << 4 ) | colorBackground ;
 
+    // printf( "%2.2x ", *( _dest + 8 ) );
+
 }
 
 /**
@@ -217,7 +221,7 @@ static void ted_image_converter_tiles( char * _source, char * _dest, int _width,
                 *destBitmap = tile[i];
                 ++destBitmap;
             }
-            // printf("tile at %d,%d color = %2.2x\n", x, y, tile[8] );
+            // printf("tile at %d,%d color = %2.2x\n", x, y, (unsigned char)(tile[8]) );
             *destColormap = tile[8];            
         }
     }
@@ -658,7 +662,7 @@ int ted_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
             outline0("AND #%11101111");
             outline0("STA $FF07" );
 
-            cpu_store_16bit( _environment, colormapAddress->realName, 0x0400 );
+            cpu_store_16bit( _environment, colormapAddress->realName, 0x0800 );
 
             cpu_store_8bit( _environment, "_PEN", 0x01 );
             cpu_store_8bit( _environment, "_PAPER", 0x00 );
@@ -684,7 +688,7 @@ int ted_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
             outline0("ORA #%00010000");
             outline0("STA $FF07" );
 
-            cpu_store_16bit( _environment, colormapAddress->realName, 0x0400 );
+            cpu_store_16bit( _environment, colormapAddress->realName, 0x0800 );
             
             cpu_store_8bit( _environment, "_PEN", 0x01 );
             cpu_store_8bit( _environment, "_PAPER", 0x00 );
@@ -1247,11 +1251,11 @@ static int calculate_image_size( Environment * _environment, int _width, int _he
     switch( _mode ) {
         case BITMAP_MODE_STANDARD:
 
-            return 2 + ( ( _width >> 3 ) * _height ) + ( ( _width >> 3 ) * ( _height >> 3 ) );
+            return 3 + ( ( _width >> 3 ) * _height ) + ( ( _width >> 3 ) * ( _height >> 3 ) );
 
         case BITMAP_MODE_MULTICOLOR:
 
-            return 2 + ( ( _width >> 2 ) * _height ) + 2 * ( ( _width >> 2 ) * ( _height >> 3 ) ) + 2;
+            return 3 + ( ( _width >> 2 ) * _height ) + 2 * ( ( _width >> 2 ) * ( _height >> 3 ) ) + 2;
 
         case TILEMAP_MODE_STANDARD:
         case TILEMAP_MODE_MULTICOLOR:
