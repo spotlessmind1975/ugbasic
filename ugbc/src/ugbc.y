@@ -618,6 +618,30 @@ const_factor:
           }
           $$ = SPRITE_WIDTH;
       }
+      | SPRITE X MIN {
+          $$ = SPRITE_X_MIN;
+      }
+      | SPRITE MIN X {
+          $$ = SPRITE_X_MIN;
+      }
+      | SPRITE MIN Y {
+          $$ = SPRITE_Y_MIN;
+      }
+      | SPRITE Y MIN {
+          $$ = SPRITE_Y_MIN;
+      }
+      | SPRITE X MAX {
+          $$ = SPRITE_X_MAX;
+      }
+      | SPRITE MAX X {
+          $$ = SPRITE_X_MAX;
+      }
+      | SPRITE MAX Y {
+          $$ = SPRITE_Y_MAX;
+      }
+      | SPRITE Y MAX {
+          $$ = SPRITE_Y_MAX;
+      }
       | HEIGHT {
           $$ = ((Environment *)_environment)->screenHeight;
       }
@@ -2522,6 +2546,38 @@ exponential:
             $$ = variable_temporary( _environment, VT_WORD, "(SPRITE WIDTH)" )->name;
             variable_store( _environment, $$, SPRITE_WIDTH );
         }
+    }
+    | SPRITE X MIN {
+        $$ = variable_temporary( _environment, VT_POSITION, "(SPRITE X MIN)" )->name;
+        variable_store( _environment, $$, SPRITE_X_MIN );
+    }
+    | SPRITE MIN X {
+        $$ = variable_temporary( _environment, VT_POSITION, "(SPRITE X MIN)" )->name;
+        variable_store( _environment, $$, SPRITE_X_MIN );
+    }
+    | SPRITE MIN Y {
+        $$ = variable_temporary( _environment, VT_POSITION, "(SPRITE Y MIN)" )->name;
+        variable_store( _environment, $$, SPRITE_Y_MIN );
+    }
+    | SPRITE Y MIN {
+        $$ = variable_temporary( _environment, VT_POSITION, "(SPRITE Y MIN)" )->name;
+        variable_store( _environment, $$, SPRITE_Y_MIN );
+    }
+    | SPRITE X MAX {
+        $$ = variable_temporary( _environment, VT_POSITION, "(SPRITE X MAX)" )->name;
+        variable_store( _environment, $$, SPRITE_X_MAX );
+    }
+    | SPRITE MAX X {
+        $$ = variable_temporary( _environment, VT_POSITION, "(SPRITE X MAX)" )->name;
+        variable_store( _environment, $$, SPRITE_X_MAX );
+    }
+    | SPRITE MAX Y {
+        $$ = variable_temporary( _environment, VT_POSITION, "(SPRITE Y MAX)" )->name;
+        variable_store( _environment, $$, SPRITE_Y_MAX );
+    }
+    | SPRITE Y MAX {
+        $$ = variable_temporary( _environment, VT_POSITION, "(SPRITE Y MAX)" )->name;
+        variable_store( _environment, $$, SPRITE_Y_MAX );
     }
     | SPRITE OP expr sprite_flags CP {
         $$ = sprite_init( _environment, $3, NULL, $4 )->name;
