@@ -71,17 +71,17 @@ CLSGNMI2:
     RET Z
 
     LD A, 0
-    LD DE, $3800
+    LD DE, (TEXTADDRESS)
     LD BC, 256*3
     CALL VDPFILLA
 
     LD BC, 256*8*3
-    LD DE, $0000
+    LD DE, (PATTERNADDRESS)
     LD A, 0
     CALL VDPFILL
 
     LD BC, 32*24*8
-    LD DE, $2000
+    LD DE, (COLORMAPADDRESS)
     LD A, (_PAPER)
     CALL VDPFILL
 

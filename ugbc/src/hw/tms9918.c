@@ -600,6 +600,8 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
             // (Register 2) * 400 (Hex)
             WVDP_RNAME( 0x06 );
 
+            cpu_store_16bit( _environment, "TEXTADDRESS", 6 * 0x0400 );
+
             // Register 4 tells the VDP where the starting address of the Pattern Table is located in VRAM.
             // The range of its contents is from 0-7. The contents of the register form the upper three bits of
             // the 14 bit VDP address, therefore making the location of the Pattern Table in VRAM equal to
@@ -615,6 +617,8 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
             // Graphics II Mode the only two values that work correctly in Register 4 are Hex
             // 03 and Hex 07.
             WVDP_RPATTERN( 0x00 );
+
+            cpu_store_16bit( _environment, "PATTERNADDRESS", 0x0000 );
 
             WVDP_RSPRITEA( 0xff );
             WVDP_RSPRITEP( 0xff );
@@ -652,6 +656,8 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
             // (Register 2) * 400 (Hex)
             WVDP_RNAME( 0x06 );
 
+            cpu_store_16bit( _environment, "TEXTADDRESS", 6 * 0x0400 );
+
             // Register 3 tells the VDP where the starting address of the Color Table is located in VRAM. The
             // range of its contents is from O-FF. The contents of the register form the upper eight bits of
             // the 14-bit VDP address, therefore making the. location of the Color Table in VRAM equal to
@@ -666,6 +672,8 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
             // Mode the only two values that work correctly in Register 3 are Hex 7F and Hex
             // FF.
             WVDP_RCOLORTABLE( 0x12 );
+
+            cpu_store_16bit( _environment, "COLORMAPADDRESS", 0x0480 );
 
             // Register 4 tells the VDP where the starting address of the Pattern Table is located in VRAM.
             // The range of its contents is from 0-7. The contents of the register form the upper three bits of
@@ -683,8 +691,13 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
             // 03 and Hex 07.
             WVDP_RPATTERN( 0x0 );
 
+            cpu_store_16bit( _environment, "PATTERNADDRESS", 0x0000 );
+
             WVDP_RSPRITEA( 0x20 ); // 1000
             WVDP_RSPRITEP( 0x00 ); // 0000
+
+            cpu_store_16bit( _environment, "SPRITEAADDRESS", 0x1000 );
+            cpu_store_16bit( _environment, "SPRITEADDRESS", 0x0000 );
 
             outline0("CALL TMS9918AUDCCHAR01");
 
@@ -720,6 +733,8 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
             // (Register 2) * 400 (Hex)
             WVDP_RNAME( 0x0e );
 
+            cpu_store_16bit( _environment, "TEXTADDRESS", 0x0e * 0x0400 );
+
             // Register 3 tells the VDP where the starting address of the Color Table is located in VRAM. The
             // range of its contents is from O-FF. The contents of the register form the upper eight bits of
             // the 14-bit VDP address, therefore making the. location of the Color Table in VRAM equal to
@@ -734,6 +749,8 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
             // Mode the only two values that work correctly in Register 3 are Hex 7F and Hex
             // FF.
             WVDP_RCOLORTABLE( 0xff );
+
+            cpu_store_16bit( _environment, "COLORMAPADDRESS", 0x2000 );
 
             // Register 4 tells the VDP where the starting address of the Pattern Table is located in VRAM.
             // The range of its contents is from 0-7. The contents of the register form the upper three bits of
@@ -751,8 +768,13 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
             // 03 and Hex 07.
             WVDP_RPATTERN( 0x03 );
 
+            cpu_store_16bit( _environment, "PATTERNADDRESS", 0x0000 );
+
             WVDP_RSPRITEA( 0x76 ); // 1000
             WVDP_RSPRITEP( 0x03 ); // 0000
+
+            cpu_store_16bit( _environment, "SPRITEAADDRESS", 0x3b00 );
+            cpu_store_16bit( _environment, "SPRITEADDRESS", 0x1800 );
 
             outline0("CALL TMS9918AUDCCHAR23");
 
@@ -1293,6 +1315,16 @@ void tms9918_initialization( Environment * _environment ) {
     variable_global( _environment, "FONTWIDTH" );
     variable_import( _environment, "FONTHEIGHT", VT_BYTE, 8 );
     variable_global( _environment, "FONTHEIGHT" );
+    variable_import( _environment, "SPRITEADDRESS", VT_ADDRESS, 0x0000 );
+    variable_global( _environment, "SPRITEADDRESS" );    
+    variable_import( _environment, "SPRITEAADDRESS", VT_ADDRESS, 0x1000 );
+    variable_global( _environment, "SPRITEAADDRESS" );    
+    variable_import( _environment, "TEXTADDRESS", VT_ADDRESS, 0x1800 );
+    variable_global( _environment, "TEXTADDRESS" );    
+    variable_import( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0x3800 );
+    variable_global( _environment, "COLORMAPADDRESS" );    
+    variable_import( _environment, "PATTERNADDRESS", VT_ADDRESS, 0x0000 );
+    variable_global( _environment, "PATTERNADDRESS" );    
 
     SCREEN_MODE_DEFINE( TILEMAP_MODE_STANDARD, 0, 40, 24, 20, 6, 8, "Text Mode" );
     SCREEN_MODE_DEFINE( BITMAP_MODE_GRAPHIC2, 0, 32, 24, 16, 8, 8, "Graphic II" );
