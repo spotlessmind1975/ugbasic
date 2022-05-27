@@ -437,6 +437,23 @@ TMS9918STARTUP:
 
         RET
 
+TMS9918SPRITEINIT:
+        PUSH HL
+        LD HL, (SPRITEAADDRESS)
+        LD B, 0
+        LD C, 32
+TMS9918SPRITEINITL1:
+        LD A, $D0
+        LD DE, HL
+        CALL VDPOUTCHAR
+        INC HL
+        INC HL
+        INC HL
+        INC HL
+        DEC C
+        JR NZ, TMS9918SPRITEINITL1
+        RET
+
 WAITVBL:
     CALL VDPREGIN
     AND $80

@@ -624,6 +624,7 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
             WVDP_RSPRITEP( 0xff );
 
             outline0("CALL TMS9918AUDCCHAR01");
+            outline0("CALL TMS9918SPRITEINIT");
 
             WVDP_R1( 0xf0 );
 
@@ -700,6 +701,7 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
             cpu_store_16bit( _environment, "SPRITEADDRESS", 0x0000 );
 
             outline0("CALL TMS9918AUDCCHAR01");
+            outline0("CALL TMS9918SPRITEINIT");
 
             WVDP_R1( 0xe0 );
 
@@ -777,6 +779,7 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
             cpu_store_16bit( _environment, "SPRITEADDRESS", 0x1800 );
 
             outline0("CALL TMS9918AUDCCHAR23");
+            outline0("CALL TMS9918SPRITEINIT");
 
             WVDP_R1( 0xe0 );
 
