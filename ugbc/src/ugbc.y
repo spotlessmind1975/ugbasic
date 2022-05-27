@@ -612,6 +612,12 @@ const_factor:
           }
           $$ = SPRITE_HEIGHT;
       }
+      | SCREEN BORDER X {
+          $$ = SCREEN_BORDER_X;
+      }
+      | SCREEN BORDER Y {
+          $$ = SCREEN_BORDER_Y;
+      }
       | SPRITE WIDTH {
           if ( SPRITE_WIDTH < 0 ) {
               CRITICAL_CANNOT_CALCULATE_SPRITE_WIDTH( );
@@ -2546,6 +2552,14 @@ exponential:
             $$ = variable_temporary( _environment, VT_WORD, "(SPRITE WIDTH)" )->name;
             variable_store( _environment, $$, SPRITE_WIDTH );
         }
+    }
+    | SCREEN BORDER X {
+        $$ = variable_temporary( _environment, VT_POSITION, "(SCREEN BORDER X)" )->name;
+        variable_store( _environment, $$, SCREEN_BORDER_X );
+    }
+    | SCREEN BORDER Y {
+        $$ = variable_temporary( _environment, VT_POSITION, "(SCREEN BORDER Y)" )->name;
+        variable_store( _environment, $$, SCREEN_BORDER_Y );
     }
     | SPRITE X MIN {
         $$ = variable_temporary( _environment, VT_POSITION, "(SPRITE X MIN)" )->name;

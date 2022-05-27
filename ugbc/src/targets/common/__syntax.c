@@ -1233,3 +1233,107 @@ occuperà la matrice, byte per byte (con la sintassi ''#[...]'').
 
 @target all
 </usermanual> */
+
+/* <usermanual>
+@keyword SPRITE MAX X
+
+@english
+This constant allows us to know which is the largest abscissa 
+(x) that can assume the horizontal position of a sprite. It 
+may or may not coincide with the horizontal resolution of the 
+screen, in the sense that some graphics chipsets can move 
+sprites far beyond what is representable (example: border 
+management on the VIC-II).
+
+@italian
+Questa costante permette di sapere qual è l'ascissa (x) più 
+grande che può assumere la posizione orizzontale di uno sprite.
+Può o meno coincidere con la risoluzione orizzontale dello 
+schermo, nel senso che  alcuni chipset grafici possono muovere 
+sprite ben oltre quello che è rappresentabile (esempio: 
+la gestione dei bordi sul VIC-II).
+
+@syntax = SPRITE MAX X
+
+@example maxX = SPRITE MAX X
+
+@target c64
+</usermanual> */
+
+/* <usermanual>
+@keyword SPRITE MIN X
+
+@english
+This constant allows us to know which is the smallest abscissa 
+(x) that can assume the horizontal position of a sprite. It 
+may or may not coincide with zero of the 
+screen, in the sense that some graphics chipsets can move 
+sprites far beyond what is representable (example: border 
+management on the VIC-II).
+
+@italian
+Questa costante permette di sapere qual è l'ascissa (x) più 
+piccola che può assumere la posizione orizzontale di uno sprite.
+Può o meno coincidere con la risoluzione orizzontale dello 
+schermo, nel senso che  alcuni chipset grafici possono muovere 
+sprite ben oltre quello che è rappresentabile (esempio: 
+la gestione dei bordi sul VIC-II).
+
+@syntax = SPRITE MIN X
+
+@example minX = SPRITE MIN X
+
+@target c64
+</usermanual> */
+
+/* <usermanual>
+@keyword SPRITE MAX Y
+
+@english
+This constant allows us to know which is the largest ordinate
+(y) that can assume the vertical position of a sprite. It 
+may or may not coincide with the horizontal resolution of the 
+screen, in the sense that some graphics chipsets can move 
+sprites far beyond what is representable (example: border 
+management on the VIC-II).
+
+@italian
+Questa costante permette di sapere qual è l'ordinata (y) più 
+grande che può assumere la posizione verticale di uno sprite.
+Può o meno coincidere con la risoluzione verticale dello 
+schermo, nel senso che  alcuni chipset grafici possono muovere 
+sprite ben oltre quello che è rappresentabile (esempio: 
+la gestione dei bordi sul VIC-II).
+
+@syntax = SPRITE MAX Y
+
+@example maxY = SPRITE MAX Y
+
+@target c64
+</usermanual> */
+
+/* <usermanual>
+@keyword SPRITE MIN Y
+
+@english
+This constant allows us to know which is the smallest ordinate 
+(y) that can assume the vertical position of a sprite. It 
+may or may not coincide with zero of the 
+screen, in the sense that some graphics chipsets can move 
+sprites far beyond what is representable (example: border 
+management on the VIC-II).
+
+@italian
+Questa costante permette di sapere qual è l'ordinata (y) più 
+piccola che può assumere la posizione verticale di uno sprite.
+Può o meno coincidere con lo zero dello 
+schermo, nel senso che  alcuni chipset grafici possono muovere 
+sprite ben oltre quello che è rappresentabile (esempio: 
+la gestione dei bordi sul VIC-II).
+
+@syntax = SPRITE MIN Y
+
+@example minX = SPRITE MIN Y
+
+@target c64
+</usermanual> */
