@@ -145,14 +145,14 @@ void target_linkage( Environment * _environment ) {
     char listingFileName[MAX_TEMPORARY_STORAGE];
     memset( listingFileName, 0, MAX_TEMPORARY_STORAGE );
     if ( _environment->listingFileName ) {
-        sprintf( listingFileName, "-l \"%s\"", _environment->listingFileName );
+        sprintf( listingFileName, "-g -Ln main.lbl -l \"%s\"", _environment->listingFileName );
     } else {
         strcpy( listingFileName, "" );
     }
 
     remove( _environment->exeFileName );
 
-    sprintf( commandLine, "\"%s\" -g -Ln main.lbl %s -o \"%s\" -t c64 -C \"%s\" \"%s\"",
+    sprintf( commandLine, "\"%s\" %s -o \"%s\" -t c64 -C \"%s\" \"%s\"",
         executableName,
         listingFileName,
         _environment->exeFileName, 
