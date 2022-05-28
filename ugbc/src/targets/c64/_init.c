@@ -151,7 +151,7 @@ void target_linkage( Environment * _environment ) {
     }
 
     remove( _environment->exeFileName );
-    
+
     sprintf( commandLine, "\"%s\" -g -Ln main.lbl %s -o \"%s\" -t c64 -C \"%s\" \"%s\"",
         executableName,
         listingFileName,
@@ -163,6 +163,14 @@ void target_linkage( Environment * _environment ) {
         printf("The compilation of assembly program failed.\n\n");
         printf("Please use option '-I' to install chain tool.\n\n");
     }; 
+
+    char objectFileName[MAX_TEMPORARY_STORAGE];
+    strcpy( objectFileName, _environment->asmFileName );
+    char * p = strstr(objectFileName, ".asm");
+    if ( p ) {
+        strcpy( p, ".o" );
+        remove( objectFileName );
+    }
 
 }
 
