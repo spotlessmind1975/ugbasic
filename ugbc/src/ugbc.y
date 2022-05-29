@@ -1918,7 +1918,17 @@ exponential:
         variable_store( _environment, $$, -$2 );
       }
     | OP_MINUS Identifier {
-        Variable * expr = variable_retrieve_or_define( _environment, $2, VT_SWORD, 0 ); 
+        Constant * c = constant_find( ((struct _Environment *)_environment)->constants, $2 );
+        Variable * expr = NULL;
+        if ( c ) {
+            if ( c->valueString ) {
+                CRITICAL_TYPE_MISMATCH_CONSTANT_STRING( $2 );
+            }
+            expr = variable_temporary( _environment, VT_SWORD, "(constant)" );
+            variable_store( _environment, expr->name, c->value );
+        } else {
+            expr = variable_retrieve_or_define( _environment, $2, VT_SWORD, 0 ); 
+        }
         Variable * zero = variable_temporary( _environment, expr->type, "(zero)" ); 
         variable_store( _environment, zero->name, 0 );
         $$ = variable_sub( _environment, zero->name, expr->name )->name;
