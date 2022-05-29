@@ -104,12 +104,9 @@ PROTOTHREADUNREG:
     ASL A
     ASL A
     ASL A
+    CLC
+    ADC #6
     TAY
-    INY
-    INY
-    INY
-    INY
-    INY
     LDA #<PROTOTHREADLOOP
     STA MATHPTR0
     LDA #>PROTOTHREADLOOP
