@@ -83,7 +83,7 @@ Variable * image_get_height( Environment * _environment, char * _image ) {
     outline0("STA TMPPTR" );
     outline1("LDA #>%s", image->realName );
     outline0("STA TMPPTR+1" );
-    outline0("LDY #1" );
+    outline0("LDY #2" );
     outline0("LDA (TMPPTR),Y" );
     outline1("STA %s", result->realName );
 
