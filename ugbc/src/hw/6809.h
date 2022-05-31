@@ -326,6 +326,7 @@ void cpu6809_protothread_current( Environment * _environment, char * _current );
 #define cpu_move_8bit_indirect2_8bit( _environment, _value, _offset, _source ) cpu6809_move_8bit_indirect2_8bit( _environment, _value, _offset, _source )
 #define cpu_move_16bit_indirect( _environment, _source, _value ) cpu6809_move_16bit_indirect( _environment, _source, _value )
 #define cpu_move_16bit_indirect2( _environment, _value, _source ) cpu6809_move_16bit_indirect2( _environment, _value, _source )
+#define cpu_move_16bit_indirect2_8bit( _environment, _value, _offset, _source ) cpu6809_move_16bit_indirect2_8bit( _environment, _value, _offset, _source )
 #define cpu_move_32bit_indirect( _environment, _source, _value ) cpu6809_move_32bit_indirect( _environment, _source, _value )
 #define cpu_move_32bit_indirect2( _environment, _value, _source ) cpu6809_move_32bit_indirect2( _environment, _value, _source )
 #define cpu_bit_check( _environment, _value, _position, _result, _bitwidth ) cpu6809_bit_check( _environment, _value, _position, _result, _bitwidth )
