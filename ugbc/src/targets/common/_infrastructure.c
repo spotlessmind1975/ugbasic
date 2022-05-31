@@ -4846,7 +4846,7 @@ Variable * variable_move_from_array( Environment * _environment, char * _array )
 
         Variable * index = variable_retrieve( _environment, _environment->arrayIndexesEach[_environment->arrayNestedIndex][0] );
 
-        cpu6502_move_16bit_indirect2_8bit( _environment, array->realName, index->realName, result->realName );
+        cpu_move_16bit_indirect2_8bit( _environment, array->realName, index->realName, result->realName );
 
     } else {
 
