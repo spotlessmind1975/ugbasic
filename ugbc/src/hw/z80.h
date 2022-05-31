@@ -160,6 +160,7 @@ void z80_move_8bit_indirect2( Environment * _environment, char *_source, char * 
 void z80_move_8bit_indirect2_8bit( Environment * _environment, char * _value, char * _offset, char *_source );
 void z80_move_16bit_indirect( Environment * _environment, char *_source, char * _value );
 void z80_move_16bit_indirect2( Environment * _environment, char *_source, char * _value );
+void z80_move_16bit_indirect2_8bit( Environment * _environment, char * _value, char * _offset, char *_source );
 void z80_move_32bit_indirect( Environment * _environment, char *_source, char * _value );
 void z80_move_32bit_indirect2( Environment * _environment, char *_source, char * _value );
 void z80_bit_check( Environment * _environment, char *_value, int _position, char * _result, int _bitwidth );
@@ -323,6 +324,7 @@ void z80_set_callback( Environment * _environment, char * _callback, char * _lab
 #define cpu_move_8bit_indirect2_8bit( _environment, _value, _offset, _source ) z80_move_8bit_indirect2_8bit(  _environment, _value, _offset, _source )
 #define cpu_move_16bit_indirect( _environment, _source, _value ) z80_move_16bit_indirect( _environment, _source, _value )
 #define cpu_move_16bit_indirect2( _environment, _source, _value ) z80_move_16bit_indirect2( _environment, _source, _value )
+#define cpu_move_16bit_indirect2_8bit( _environment, _value, _offset, _source ) z80_move_16bit_indirect2_8bit(  _environment, _value, _offset, _source )
 #define cpu_move_32bit_indirect( _environment, _source, _value ) z80_move_32bit_indirect( _environment, _source, _value )
 #define cpu_move_32bit_indirect2( _environment, _source, _value ) z80_move_32bit_indirect2( _environment, _source, _value )
 #define cpu_math_div_32bit_to_16bit( _environment, _source, _destination,  _other, _other_remainder, _signed  ) z80_math_div_32bit_to_16bit( _environment, _source, _destination, _other, _other_remainder, _signed )
