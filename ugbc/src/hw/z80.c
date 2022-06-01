@@ -2793,11 +2793,11 @@ void z80_compare_memory( Environment * _environment, char *_source, char *_desti
     outline0("DEC C");
     outline1("JR NZ, %s", label);
     outhead1("%sequal:", label );
-    outline1("LD A, %d", _equal ? 255 : 0 );
+    outline1("LD A, $%2.2x", _equal ? 255 : 0 );
     outline1("LD (%s), A", _result );
     outline1("JMP %sfinal", label );
     outhead1("%sdiff:", label );
-    outline1("LD A, %d", _equal ? 0 : 255 );
+    outline1("LD A, $%2.2x", _equal ? 0 : 255 );
     outline1("LD (%s), A", _result );
     outhead1("%sfinal:", label );
 
@@ -2821,11 +2821,11 @@ void z80_compare_memory_size( Environment * _environment, char *_source, char *_
     outline0("INC HL");
     outline0("DEC C");
     outline1("JR NZ, %s", label);
-    outline1("LD A, %d", _equal ? 255 : 0 );
+    outline1("LD A, $%2.2x", _equal ? 255 : 0 );
     outline1("LD (%s), A", _result );
     outline1("JMP %sfinal", label );
     outhead1("%sdiff:", label );
-    outline1("LD A, %d", _equal ? 0 : 255 );
+    outline1("LD A, $%2.2x", _equal ? 0 : 255 );
     outline1("LD (%s), A", _result );
     outhead1("%sfinal:", label );
 
@@ -2922,11 +2922,11 @@ void z80_greater_than_memory( Environment * _environment, char *_source, char *_
     outline0("INC HL");
     outline0("DEC C");
     outline1("JR NZ, %s", label);
-    outline1("LD A, %d", 255 );
+    outline1("LD A, $%2.2x", 255 );
     outline1("LD (%s), A", _result );
     outline1("JMP %sfinal", label );
     outhead1("%sdiff:", label );
-    outline1("LD A, %d", 0 );
+    outline1("LD A, $%2.2x", 0 );
     outline1("LD (%s), A", _result );
     outhead1("%sfinal:", label );
 
@@ -2953,11 +2953,11 @@ void z80_greater_than_memory_size( Environment * _environment, char *_source, ch
     outline0("INC HL");
     outline0("DEC C");
     outline1("JR NZ, %s", label);
-    outline1("LD A, %d", 255 );
+    outline1("LD A, $%2.2x", 255 );
     outline1("LD (%s), A", _result );
     outline1("JMP %sfinal", label );
     outhead1("%sdiff:", label );
-    outline1("LD A, %d", 0 );
+    outline1("LD A, $%2.2x", 0 );
     outline1("LD (%s), A", _result );
     outhead1("%sfinal:", label );
 
@@ -3262,7 +3262,7 @@ void z80_move_16bit_indirect2_8bit( Environment * _environment, char * _value, c
     outline1("LD (%s), A", _source );
     outline0("INC HL");
     outline0("LD A, (HL)");
-    outline1("LD (%s), A", _source );
+    outline1("LD (%s+1), A", _source );
 
 }
 
