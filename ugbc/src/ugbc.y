@@ -5935,6 +5935,8 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     printf("\t-C <file>    Path to compiler\n" );
     printf("\t-A <file>    Path to app maker\n" );
     printf("\t-T <path>    Path to temporary path\n" );
+    printf("\t-X <file>    Path to executer\n" );
+    printf("\t-P <file>    Path to profile (-L needed)\n" );
     printf("\t-c <file>    Output filename with linker configuration\n" );
 #if defined(__pc128op__) || defined(__mo5__)
     printf("\t-G <type>    Type of gamma correction on PALETTE generation:\n" );
