@@ -6189,6 +6189,7 @@ char * get_temporary_filename( Environment * _environment ) {
 
     if ( _environment->temporaryPath ) {
         strcpy( temporaryFilename, _environment->temporaryPath );
+        strcat( temporaryFilename, "/" );
         strcat( temporaryFilename, temp );
     } else {
         strcpy( temporaryFilename, temp );
