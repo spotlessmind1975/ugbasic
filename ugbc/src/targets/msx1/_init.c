@@ -345,7 +345,7 @@ void target_linkage( Environment * _environment ) {
                 sprintf(executableName, "%s", "runz80" );
             }
 
-            sprintf( commandLine, "\"%s\" -p \"%s\" %d -l 4000 %s -R 4030 -u %s %s",
+            sprintf( commandLine, "\"%s\" -p \"%s\" %d -l 4000 \"%s\" -R 4030 -u \"%s\" \"%s\"",
                 executableName,
                 binaryName,
                 _environment->profileCycles ? _environment->profileCycles : 1000000,
