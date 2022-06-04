@@ -350,7 +350,7 @@ void target_linkage( Environment * _environment ) {
                 binaryName,
                 _environment->profileCycles ? _environment->profileCycles : 1000000,
                 _environment->exeFileName,
-                listingName,
+                _environment->listingFileName,
                 pipes );
 
             if ( system_call( _environment,  commandLine ) ) {
