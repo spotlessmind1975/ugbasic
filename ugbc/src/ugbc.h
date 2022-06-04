@@ -1151,6 +1151,16 @@ typedef struct _Environment {
     char * listingFileName;
 
     /**
+     * Filename of profiled listing file (*.profile) 
+     */
+    char * profileFileName;
+
+    /**
+     * Filename of executer
+     */
+    char * executerFileName;
+
+    /**
      * Filename of compiler 
      */
     char * compilerFileName;
@@ -1174,6 +1184,11 @@ typedef struct _Environment {
      * Maximum number of cycles for peep hole optimizations (0 = disable)
      */
     int peepholeOptimizationLimit;
+
+    /**
+     * Maximum number of cycles for profiling.
+     */
+    int profileCycles;
 
     /**
      * Enable the visualization of warnings during compilation.

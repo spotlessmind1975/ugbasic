@@ -5114,7 +5114,7 @@ memory_video :
         $$ = 1;
     };
 
-statement:
+statement2:
     BANK bank_definition
   | RASTER raster_definition
   | NEXT RASTER next_raster_definition
@@ -5424,10 +5424,6 @@ statement:
   }
   | FOR Identifier OP_ASSIGN expr TO expr STEP expr {
       begin_for_step( _environment, $2, $4, $6, $8 );  
-  }
-  | Identifier " " {
-      ((struct _Environment *)_environment)->parameters = 0;
-      call_procedure( _environment, $1 );
   }
   | PROC Identifier {
       ((struct _Environment *)_environment)->parameters = 0;
@@ -5856,6 +5852,8 @@ statement:
   |
   ;
 
+statement: { outhead1("; L:%6.6d", yylineno); } statement2;
+
 statements_no_linenumbers:
       statement { ((Environment *)_environment)->yylineno = yylineno; variable_reset( _environment ); interleaved_instructions( _environment ); }
     | statement OP_COLON { ((Environment *)_environment)->yylineno = yylineno; variable_reset( _environment ); interleaved_instructions( _environment ); } statements_no_linenumbers { interleaved_instructions( _environment ); }
@@ -5863,7 +5861,6 @@ statements_no_linenumbers:
 
 statements_with_linenumbers:
       Integer {
-        outhead1("; BEGIN LINE %d OF BASIC PROGRAM", $1);
         char lineNumber[MAX_TEMPORARY_STORAGE];
         sprintf(lineNumber, "_linenumber%d", $1 );
         cpu_label( _environment, lineNumber);
@@ -5872,19 +5869,14 @@ statements_with_linenumbers:
     };
 
 statements_complex:
-    Identifier NewLine {
-        if ( strcmp( $1, "REM" ) != 0 ) {
-            call_procedure( _environment, $1 );
-        }
-    } statements_complex
-    | statements_no_linenumbers
+      statements_no_linenumbers
     | statements_no_linenumbers NewLine statements_complex
     | statements_with_linenumbers
     | statements_with_linenumbers NewLine statements_complex
     ;
 
 program : 
-  { ((Environment *)_environment)->yylineno = yylineno; } statements_complex;
+  { ((Environment *)_environment)->yylineno = yylineno; outhead1("; L:%6.6d", yylineno); } statements_complex;
 
 %%
 
@@ -6046,7 +6038,7 @@ int main( int _argc, char *_argv[] ) {
     _environment->outputFileType = OUTPUT_FILE_TYPE_PRG;
 #endif
 
-    while ((opt = getopt(_argc, _argv, "ae:c:Wo:Ie:l:EO:dL:C:VA:T:1p:G:")) != -1) {
+    while ((opt = getopt(_argc, _argv, "ae:c:Wo:Ie:l:EO:dL:C:VA:T:1p:G:X:P:")) != -1) {
         switch (opt) {
                 case 'a':
                     if ( ! _environment->listingFileName ) {
@@ -6062,8 +6054,17 @@ int main( int _argc, char *_argv[] ) {
                 case 'C':
                     _environment->compilerFileName = strdup(optarg);
                     if( access( _environment->compilerFileName, F_OK ) != 0 ) {
-                        CRITICAL("Compiler no found.");
+                        CRITICAL("Compiler not found.");
                     }
+                    break;
+                case 'X':
+                    _environment->executerFileName = strdup(optarg);
+                    if( access( _environment->executerFileName, F_OK ) != 0 ) {
+                        CRITICAL("Executer not found.");
+                    }
+                    break;
+                case 'P':
+                    _environment->profileFileName = strdup(optarg);
                     break;
                 case 'A':
                     _environment->appMakerFileName = strdup(optarg);
