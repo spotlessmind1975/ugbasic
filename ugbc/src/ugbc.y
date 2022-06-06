@@ -5852,7 +5852,7 @@ statement2:
   |
   ;
 
-statement: { outhead1("; L:%d", yylineno); } statement2;
+statement: { outline1("; L:%d", yylineno); } statement2;
 
 statements_no_linenumbers:
       statement { ((Environment *)_environment)->yylineno = yylineno; variable_reset( _environment ); interleaved_instructions( _environment ); }
@@ -5876,7 +5876,7 @@ statements_complex:
     ;
 
 program : 
-  { ((Environment *)_environment)->yylineno = yylineno; outhead1("; L:%d", yylineno); } statements_complex;
+  { ((Environment *)_environment)->yylineno = yylineno; outline1("; L:%d", yylineno); } statements_complex;
 
 %%
 
