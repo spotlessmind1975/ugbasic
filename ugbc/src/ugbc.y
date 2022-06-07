@@ -5937,6 +5937,7 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     printf("\t-T <path>    Path to temporary path\n" );
     printf("\t-X <file>    Path to executer\n" );
     printf("\t-P <file>    Path to profile (-L needed)\n" );
+    printf("\t-q <cycles>  Cycles for profiling (default: 1000000)\n" );
     printf("\t-c <file>    Output filename with linker configuration\n" );
 #if defined(__pc128op__) || defined(__mo5__)
     printf("\t-G <type>    Type of gamma correction on PALETTE generation:\n" );
@@ -6040,7 +6041,7 @@ int main( int _argc, char *_argv[] ) {
     _environment->outputFileType = OUTPUT_FILE_TYPE_PRG;
 #endif
 
-    while ((opt = getopt(_argc, _argv, "ae:c:Wo:Ie:l:EO:dL:C:VA:T:1p:G:X:P:")) != -1) {
+    while ((opt = getopt(_argc, _argv, "ae:c:Wo:Ie:l:EO:dL:C:VA:T:1p:G:X:P:q:")) != -1) {
         switch (opt) {
                 case 'a':
                     if ( ! _environment->listingFileName ) {
@@ -6126,6 +6127,9 @@ int main( int _argc, char *_argv[] ) {
                     break;
                 case 'p':
                     _environment->peepholeOptimizationLimit = atoi(optarg);
+                    break;
+                case 'p':
+                    _environment->profileCycles = atoi(optarg);
                     break;
                 case 'V':
                     fprintf(stderr, "%s", version );
