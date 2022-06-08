@@ -6128,7 +6128,7 @@ int main( int _argc, char *_argv[] ) {
                 case 'p':
                     _environment->peepholeOptimizationLimit = atoi(optarg);
                     break;
-                case 'p':
+                case 'q':
                     _environment->profileCycles = atoi(optarg);
                     break;
                 case 'V':
