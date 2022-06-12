@@ -155,6 +155,7 @@ void cpu6809_flip( Environment * _environment, char * _source, char * _size, cha
 void cpu6809_move_8bit_indirect( Environment * _environment, char *_source, char * _value );
 void cpu6809_move_8bit_indirect2( Environment * _environment, char * _value, char *_source );
 void cpu6809_move_8bit_indirect2_8bit( Environment * _environment, char * _value, char * _offset, char *_source );
+void cpu6809_move_16bit_indirect2_8bit( Environment * _environment, char * _value, char * _offset, char *_source );
 void cpu6809_move_16bit_indirect( Environment * _environment, char *_source, char * _value );
 void cpu6809_move_16bit_indirect2( Environment * _environment, char * _value, char *_source );
 void cpu6809_move_32bit_indirect( Environment * _environment, char *_source, char * _value );
