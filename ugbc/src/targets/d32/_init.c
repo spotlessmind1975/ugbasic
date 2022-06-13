@@ -117,7 +117,7 @@ void target_linkage( Environment * _environment ) {
     char listingFileName[MAX_TEMPORARY_STORAGE];
     memset( listingFileName, 0, MAX_TEMPORARY_STORAGE );
     if ( _environment->listingFileName ) {
-        sprintf( listingFileName, "-l %s", _environment->listingFileName );
+        sprintf( listingFileName, "-l \"%s\"", _environment->listingFileName );
     }  else {
         strcpy( listingFileName, "" );
     }
