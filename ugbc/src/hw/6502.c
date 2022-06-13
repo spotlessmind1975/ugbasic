@@ -4268,7 +4268,7 @@ void cpu6502_move_16bit_indirect2( Environment * _environment, char * _value, ch
 
 void cpu6502_move_16bit_indirect2_8bit( Environment * _environment, char * _value, char * _index, char *_source ) {
 
-    inline( cpu_move_16bit_indirect2 )
+    inline( cpu_move_16bit_indirect2_8bit )
 
         outline1("LDA #<%s", _value);
         outline0("STA TMPPTR");
@@ -4283,7 +4283,7 @@ void cpu6502_move_16bit_indirect2_8bit( Environment * _environment, char * _valu
         outline0("LDA (TMPPTR),Y");
         outline1("STA %s+1", _source);
 
-    no_embedded( cpu_move_16bit_indirect2 )
+    no_embedded( cpu_move_16bit_indirect2_8bit )
 
 }
 
