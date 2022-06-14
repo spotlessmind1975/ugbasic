@@ -172,6 +172,34 @@ void target_linkage( Environment * _environment ) {
         remove( objectFileName );
     }
 
+    if ( _environment->listingFileName ) {
+
+        if ( _environment->profileFileName ) {
+            if ( _environment->executerFileName ) {
+                sprintf(executableName, "%s", _environment->executerFileName );
+            } else if( access( "run6502.exe", F_OK ) == 0 ) {
+                sprintf(executableName, "%s", "run6502.exe" );
+            } else {
+                sprintf(executableName, "%s", "run6502" );
+            }
+
+            sprintf( commandLine, "\"%s\" -X 0000 -R 080d -l 07ff \"%s\" -u \"%s\" -p \"%s\" %d",
+                executableName,
+                _environment->exeFileName,
+                _environment->listingFileName,
+                _environment->profileFileName,
+                _environment->profileCycles ? _environment->profileCycles : 1000000
+                );
+
+            if ( system_call( _environment,  commandLine ) ) {
+                printf("The profiling of assembly program failed.\n\n");
+                return;
+            }; 
+
+        }
+    
+    }
+
 }
 
 void interleaved_instructions( Environment * _environment ) {
