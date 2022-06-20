@@ -32,8 +32,8 @@ REM poiché tali variabili sono globali.
       b = b + a
    END PROC
 
-   test1
-   test2
+   test1[]
+   test2[]
    
    PRINT "a = ";a
    PRINT "b = ";b

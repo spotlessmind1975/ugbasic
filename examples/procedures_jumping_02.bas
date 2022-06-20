@@ -23,7 +23,7 @@ REM in cui la procedura è stata chiamata.
       NEXT
    END PROC
 
-   escape
+   escape[]
 
    PRINT "I AM FREE!"
 

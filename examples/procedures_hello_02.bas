@@ -18,6 +18,6 @@ REM ''"HELLO I AM A PROCEDURE!"'' sullo schermo.
     PRINT "HELLO I AM A PROCEDURE!"
   END PROC
 
-  hello
+  hello[]
   
   HALT

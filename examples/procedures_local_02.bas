@@ -27,6 +27,6 @@ REM a livello globale, anche se hanno lo stesso nome.
    PRINT "a (global) = ";a
    PRINT "b (global) = ";b
 
-   example
+   example[]
 
    HALT

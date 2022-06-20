@@ -23,9 +23,9 @@ REM rimarrà sempre il medesimo.
       PRINT "a (local) after plus = ";a
    END PROC
 
-   plus
-   plus
-   plus
-   plus
+   plus[]
+   plus[]
+   plus[]
+   plus[]
 
    HALT
