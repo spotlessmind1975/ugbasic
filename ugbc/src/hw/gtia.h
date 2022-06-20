@@ -198,6 +198,14 @@
 #define SPRITE_FLAG_EXPAND_HORIZONTAL   0x0080
 #define SPRITE_FLAG_COMPRESS_HORIZONTAL 0x0000
 
+#define SPRITE_X_MIN                0
+#define SPRITE_Y_MIN                0
+#define SPRITE_X_MAX                0
+#define SPRITE_Y_MAX                0
+
+#define SCREEN_BORDER_X             0
+#define SCREEN_BORDER_Y             0
+
 int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode );
 
 void gtia_initialization( Environment * _environment );
