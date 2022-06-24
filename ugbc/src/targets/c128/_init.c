@@ -175,7 +175,7 @@ void target_linkage( Environment * _environment ) {
                 sprintf(executableName, "%s", "run6502" );
             }
 
-            sprintf( commandLine, "\"%s\" -X 0000 -R 1c0d -l 1bff \"%s\" -u \"%s\" -p \"%s\" %d",
+            sprintf( commandLine, "\"%s\" -X 0000 -R 1c0e -l 1bff \"%s\" -u \"%s\" -p \"%s\" %d",
                 executableName,
                 _environment->exeFileName,
                 _environment->listingFileName,
