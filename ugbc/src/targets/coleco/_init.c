@@ -310,17 +310,8 @@ void target_linkage( Environment * _environment ) {
     rename( binaryName, _environment->exeFileName );
 
     if ( _environment->listingFileName ) {
-        char tmp[MAX_TEMPORARY_STORAGE];
-        char path[MAX_TEMPORARY_STORAGE];
-        char filename[MAX_TEMPORARY_STORAGE];
-        strcpy( tmp, _environment->asmFileName );
-        strcpy( path, dirname( tmp ) );
-        strcpy( tmp, _environment->exeFileName );
-        strcpy( filename, basename( tmp ) );
-        strcpy( binaryName, path );
-        strcat( binaryName, "/" );
-        strcat( binaryName, filename );
-        p = strstr( binaryName, ".rom" );
+        strcpy( binaryName, _environment->asmFileName );
+        p = strstr( binaryName, ".asm" );
         if ( p ) {
             *p = 0;
             --p;
