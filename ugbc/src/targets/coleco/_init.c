@@ -190,7 +190,7 @@ void target_linkage( Environment * _environment ) {
     }
 
     if ( _environment->listingFileName ) {
-        sprintf( listingFileName, "-l" );
+        sprintf( listingFileName, "-l -m -s -g" );
     } else {
         strcpy( listingFileName, "" );
     }
