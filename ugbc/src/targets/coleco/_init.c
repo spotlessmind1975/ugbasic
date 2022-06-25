@@ -310,12 +310,13 @@ void target_linkage( Environment * _environment ) {
     rename( binaryName, _environment->exeFileName );
 
     if ( _environment->listingFileName ) {
+        char tmp[MAX_TEMPORARY_STORAGE];
         char path[MAX_TEMPORARY_STORAGE];
         char filename[MAX_TEMPORARY_STORAGE];
-        strcpy( path, _environment->asmFileName );
-        strcpy( path, dirname( path ) );
-        strcpy( filename, _environment->exeFileName );
-        strcpy( filename, basename( filename ) );
+        strcpy( tmp, _environment->asmFileName );
+        strcpy( path, dirname( tmp ) );
+        strcpy( tmp, _environment->exeFileName );
+        strcpy( filename, basename( tmp ) );
         strcpy( binaryName, path );
         strcat( binaryName, "/" );
         strcat( binaryName, filename );
