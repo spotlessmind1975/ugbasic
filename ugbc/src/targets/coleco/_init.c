@@ -33,6 +33,7 @@
  ****************************************************************************/
 
 #include "../../ugbc.h"
+#include <libgen.h>
 
 /****************************************************************************
  * CODE SECTION 
@@ -309,8 +310,16 @@ void target_linkage( Environment * _environment ) {
     rename( binaryName, _environment->exeFileName );
 
     if ( _environment->listingFileName ) {
-        strcpy( binaryName, _environment->asmFileName );
-        p = strstr( binaryName, ".asm" );
+        char path[MAX_TEMPORARY_STORAGE];
+        char filename[MAX_TEMPORARY_STORAGE];
+        strcpy( path, _environment->asmFileName );
+        strcpy( path, dirname( path ) );
+        strcpy( filename, _environment->exeFileName );
+        strcpy( filename, basename( filename ) );
+        strcpy( binaryName, path );
+        strcat( binaryName, "/" );
+        strcat( binaryName, filename );
+        p = strstr( binaryName, ".rom" );
         if ( p ) {
             *p = 0;
             --p;
@@ -328,7 +337,7 @@ void target_linkage( Environment * _environment ) {
                 sprintf(executableName, "%s", "runz80" );
             }
 
-            sprintf( commandLine, "\"%s\" -p \"%s\" %d -l 8000 \"%s\" -R 8075 -u \"%s\" \"%s\"",
+            sprintf( commandLine, "\"%s\" -c -p \"%s\" %d -l 8000 \"%s\" -R 8075 -u \"%s\" \"%s\"",
                 executableName,
                 binaryName,
                 _environment->profileCycles ? _environment->profileCycles : 1000000,
