@@ -267,7 +267,7 @@ void target_linkage( Environment * _environment ) {
     fwrite( part, size, 1, binaryFile );
     fclose( binaryFile );
 
-    remove( _environment->executerFileName );
+    remove( _environment->exeFileName );
 
     rename( binaryName, _environment->exeFileName );
 
