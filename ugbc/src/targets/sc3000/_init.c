@@ -170,6 +170,14 @@ void target_linkage( Environment * _environment ) {
         CRITICAL_UNSUPPORTED_OUTPUT_FILE_TYPE( OUTPUT_FILE_TYPE_AS_STRING[_environment->outputFileType] );
     }
 
+    char pipes[256];
+
+    #ifdef _WIN32
+        strcpy( pipes, ">nul 2>nul");
+    #else
+        strcpy( pipes, ">/dev/null 2>/dev/null");
+    #endif
+
     if ( _environment->compilerFileName ) {
         sprintf(executableName, "%s", _environment->compilerFileName );
     } else if( access( "z88dk-z80asm.exe", F_OK ) == 0 ) {
@@ -259,7 +267,46 @@ void target_linkage( Environment * _environment ) {
     fwrite( part, size, 1, binaryFile );
     fclose( binaryFile );
 
+    remove( _environment->executerFileName );
+
     rename( binaryName, _environment->exeFileName );
+
+    if ( _environment->listingFileName ) {
+        strcpy( binaryName, _environment->asmFileName );
+        p = strstr( binaryName, ".asm" );
+        if ( p ) {
+            *p = 0;
+            --p;
+            strcat( p, ".lis");
+            rename( binaryName, _environment->listingFileName );
+        }
+
+        if ( _environment->profileFileName ) {
+            strcpy( binaryName, _environment->profileFileName );
+            if ( _environment->executerFileName ) {
+                sprintf(executableName, "%s", _environment->executerFileName );
+            } else if( access( "runz80.exe", F_OK ) == 0 ) {
+                sprintf(executableName, "%s", "runz80.exe" );
+            } else {
+                sprintf(executableName, "%s", "runz80" );
+            }
+
+            sprintf( commandLine, "\"%s\" -c -p \"%s\" %d -l 0000 \"%s\" -R 0000 -u \"%s\" \"%s\"",
+                executableName,
+                binaryName,
+                _environment->profileCycles ? _environment->profileCycles : 1000000,
+                _environment->exeFileName,
+                _environment->listingFileName,
+                pipes );
+
+            if ( system_call( _environment,  commandLine ) ) {
+                printf("The profiling of assembly program failed.\n\n");
+                return;
+            }; 
+
+        }
+
+    }
 
     strcpy( binaryName, _environment->asmFileName );
     p = strstr( binaryName, ".asm" );
