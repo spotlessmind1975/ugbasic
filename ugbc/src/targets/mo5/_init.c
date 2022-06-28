@@ -135,6 +135,34 @@ void target_linkage( Environment * _environment ) {
         printf("Please use option '-I' to install chain tool.\n\n");
     }; 
 
+    if ( _environment->listingFileName ) {
+
+        if ( _environment->profileFileName ) {
+            if ( _environment->executerFileName ) {
+                sprintf(executableName, "%s", _environment->executerFileName );
+            } else if( access( "run6809.exe", F_OK ) == 0 ) {
+                sprintf(executableName, "%s", "run6809.exe" );
+            } else {
+                sprintf(executableName, "%s", "run6809" );
+            }
+
+            sprintf( commandLine, "\"%s\" -i \"%s\" -R 2800 -b -l 2800 \"%s\" -p \"%s\" %d",
+                executableName,
+                _environment->listingFileName,
+                _environment->exeFileName,
+                _environment->profileFileName,
+                _environment->profileCycles ? _environment->profileCycles : 1000000
+                );
+
+            if ( system_call( _environment,  commandLine ) ) {
+                printf("The profiling of assembly program failed.\n\n");
+                return;
+            }; 
+
+        }
+    
+    }
+
 }
 
 void interleaved_instructions( Environment * _environment ) {
