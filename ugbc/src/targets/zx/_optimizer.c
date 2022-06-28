@@ -50,7 +50,7 @@ int isAComment( char * _buffer ) {
         if ( *_buffer == ' ' || *_buffer == '\t' ) { 
             ++_buffer;
         } else if ( *_buffer == ';' ) {
-            return 1;
+            return 0; // comments are no more excluded
         } else {
             return 0;
         }
