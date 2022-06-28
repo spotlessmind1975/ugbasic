@@ -145,6 +145,14 @@ void target_linkage( Environment * _environment ) {
         sprintf(executableName, "%s", "z88dk-appmake" );
     }
 
+    char pipes[256];
+
+    #ifdef _WIN32
+        strcpy( pipes, ">nul 2>nul");
+    #else
+        strcpy( pipes, ">/dev/null 2>/dev/null");
+    #endif
+    
     sprintf( commandLine, "\"%s\" +zx --org 32768 -b \"%s\"",
         executableName,
         binaryName );
