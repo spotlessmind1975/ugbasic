@@ -166,6 +166,43 @@ void target_linkage( Environment * _environment ) {
 
     rename( binaryName, _environment->exeFileName );
 
+    if ( _environment->listingFileName ) {
+        strcpy( binaryName, _environment->asmFileName );
+        p = strstr( binaryName, ".asm" );
+        if ( p ) {
+            *p = 0;
+            --p;
+            strcat( p, ".lis");
+            rename( binaryName, _environment->listingFileName );
+        }
+
+        if ( _environment->profileFileName ) {
+            strcpy( binaryName, _environment->profileFileName );
+            if ( _environment->executerFileName ) {
+                sprintf(executableName, "%s", _environment->executerFileName );
+            } else if( access( "runz80.exe", F_OK ) == 0 ) {
+                sprintf(executableName, "%s", "runz80.exe" );
+            } else {
+                sprintf(executableName, "%s", "runz80" );
+            }
+
+            sprintf( commandLine, "\"%s\" -m -p \"%s\" %d -l 8000 \"%s\" -R 8000 -u \"%s\" \"%s\"",
+                executableName,
+                binaryName,
+                _environment->profileCycles ? _environment->profileCycles : 1000000,
+                _environment->exeFileName,
+                _environment->listingFileName,
+                pipes );
+
+            if ( system_call( _environment,  commandLine ) ) {
+                printf("The profiling of assembly program failed.\n\n");
+                return;
+            }; 
+
+        }
+
+    }
+
 }
 
 void interleaved_instructions( Environment * _environment ) {
