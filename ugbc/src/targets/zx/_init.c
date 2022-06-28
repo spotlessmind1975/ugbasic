@@ -152,7 +152,7 @@ void target_linkage( Environment * _environment ) {
     #else
         strcpy( pipes, ">/dev/null 2>/dev/null");
     #endif
-    
+
     sprintf( commandLine, "\"%s\" +zx --org 32768 -b \"%s\"",
         executableName,
         binaryName );
@@ -170,10 +170,6 @@ void target_linkage( Environment * _environment ) {
         return;
     }; 
 
-    remove( _environment->exeFileName );
-
-    rename( binaryName, _environment->exeFileName );
-
     if ( _environment->listingFileName ) {
         strcpy( binaryName, _environment->asmFileName );
         p = strstr( binaryName, ".asm" );
@@ -185,6 +181,16 @@ void target_linkage( Environment * _environment ) {
         }
 
         if ( _environment->profileFileName ) {
+
+            char binaryName2[MAX_TEMPORARY_STORAGE];
+            strcpy( binaryName2, _environment->asmFileName );
+            char * p = strstr( binaryName2, ".asm" );
+            if ( p ) {
+                *(p+1) = 'b';
+                *(p+2) = 'i';
+                *(p+3) = 'n';
+            }
+
             strcpy( binaryName, _environment->profileFileName );
             if ( _environment->executerFileName ) {
                 sprintf(executableName, "%s", _environment->executerFileName );
@@ -198,7 +204,7 @@ void target_linkage( Environment * _environment ) {
                 executableName,
                 binaryName,
                 _environment->profileCycles ? _environment->profileCycles : 1000000,
-                _environment->exeFileName,
+                binaryName2,
                 _environment->listingFileName,
                 pipes );
 
@@ -210,6 +216,10 @@ void target_linkage( Environment * _environment ) {
         }
 
     }
+
+    remove( _environment->exeFileName );
+
+    rename( binaryName, _environment->exeFileName );
 
 }
 
