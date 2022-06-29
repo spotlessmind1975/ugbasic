@@ -170,10 +170,10 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                     int i=0;
                                     for (i=0; i<(variable->size-1); ++i ) {
                                         if ( ( ( i + 1 ) % 16 ) == 0 ) {
-                                            outline1("$%2.2x", (unsigned char)variable->valueString[i]);
+                                            outline1("$%2.2x", (unsigned char)variable->valueBuffer[i]);
                                             out0("   fcb ");
                                         } else {
-                                            out1("$%2.2x,", (unsigned char)variable->valueString[i]);
+                                            out1("$%2.2x,", (unsigned char)variable->valueBuffer[i]);
                                         }
                                     }
                                     outhead1("%d", variable->valueBuffer[(variable->size-1)]);
