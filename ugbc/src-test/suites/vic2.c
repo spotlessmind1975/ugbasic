@@ -387,7 +387,7 @@ void test_vic2_cls2_payload( TestEnvironment * _te ) {
     ++_te->debug.inspections_count;
 
     // a) Standard Character Mode
-    vic2_tilemap_enable( e, 0, 0, 0 );
+    vic2_tilemap_enable( e, 0, 0, 0, 0, 0 );
     paper( e, red->name );
     pen( e, yellow->name );
     vic2_cls( e );
@@ -454,7 +454,7 @@ void test_vic2_cls3_payload( TestEnvironment * _te ) {
 
     // a) Standard Character Mode
     cpu_store_8bit( e, emptyTile->realName, 42 );
-    vic2_tilemap_enable( e, 0, 0, 0 );
+    vic2_tilemap_enable( e, 0, 0, 0, 0, 0 );
     paper( e, red->name );
     pen( e, yellow->name );
     vic2_cls( e );
