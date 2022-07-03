@@ -38,6 +38,10 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/* <usermanual>
+@keyword EVERY...CALL
+</usermanual> */
+
 void every_ticks_call( Environment * _environment, char * _timing, char * _label ) {
 
     outline2("; EVERY %s TICKS CALL %s (ignored)", _timing, _label );

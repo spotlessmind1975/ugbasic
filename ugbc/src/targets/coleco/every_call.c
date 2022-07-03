@@ -38,6 +38,41 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/* <usermanual>
+@keyword EVERY...CALL
+
+@english
+Define the call of a procedure at regular intervals, without 
+interfering with the main program. You must specifying the length of time 
+between every call, measured in TICKS. 
+
+Note that the procedure execution 
+time should be less than the interval time, or the main program timings 
+will be affected. After a procedure has been entered, the 
+''EVERY'' system is automatically disabled. This means that, 
+in order to call this feature continuously, an ''EVERY ON'' command 
+must be inserted into a subroutine before the final RETURN statement.
+
+@italian
+Definisce una chiamata a una procedura a intervalli regolari, senza
+interferire con il programma principale. È necessario specificare il
+periodo di tempo tra ogni chiamata, misurata in TICKS.
+
+Si fa notare che la durata dell'esecuzione della procedura dovrebbe essere 
+inferiore al tempo dell'intervallo indicato, altrimenti le temporizzazioni 
+del programma principale ne risentiranno. 
+
+Dopo essere entrati nella procedura, il sistema disabilita la chiamata
+periodica. Ciò significa che, per richiamare questa funzione in modo continuo,
+è necessario invocare il comando ''EVERY ON'' prima dell'istruzione ''RETURN'' finale.
+
+@syntax EVERY [timing] TICKS CALL [identifier]
+
+@example EVERY 50 TICKS CALL changeBorderColor
+@usedInExample control_periodic_02.bas
+
+@target coleco
+</usermanual> */
 void every_ticks_call( Environment * _environment, char * _timing, char * _label ) {
 
     Variable * timing = variable_retrieve( _environment, _timing );

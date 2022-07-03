@@ -38,6 +38,11 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/* <usermanual>
+@keyword EVERY...CALL
+
+@target c128
+</usermanual> */
 void every_ticks_call( Environment * _environment, char * _timing, char * _label ) {
 
     Variable * timing = variable_retrieve( _environment, _timing );
