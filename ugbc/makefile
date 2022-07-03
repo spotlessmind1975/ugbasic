@@ -420,12 +420,13 @@ SOURCES += src-generated/ugbc.yy.c src-generated/ugbc.tab.c src-generated/ugbc.e
 OBJS = $(SOURCES:%.c=objs.$(target)/%.o)
 
 SOURCESTEST := $(wildcard src/*.c)
+SOURCESTEST += $(wildcard src/libs/*.c)
 SOURCESTEST += $(wildcard src/targets/*.c)
 SOURCESTEST += $(wildcard src/hw/*.c)
 SOURCESTEST += $(wildcard src/targets/common/*.c)
 SOURCESTEST += $(wildcard src/targets/$(target)/*.c)
 SOURCESTEST += $(wildcard src-test/suites/*.c)
-SOURCESTEST += src-generated/modules_$(target).c src-test/tester.c src-test/tester_c64.c src-test/tester_plus4.c src-test/tester_atari.c src-test/tester_atarixl.c src-test/tester_coleco.c src-test/tester_msx1.c src-test/tester_zx.c src-test/tester_d32.c src-test/tester_d64.c src-test/tester_pc128op.c src-test/tester_mo5.c src-test/tester_vic20.c src-test/tester_sc3000.c src-test/tester_sg1000.c src-test/tester_c128.c
+SOURCESTEST += src-generated/modules_$(target).c src-generated/ugbc.embed.yy.c src-generated/ugbc.embed.tab.c src-test/tester.c src-test/tester_c64.c src-test/tester_plus4.c src-test/tester_atari.c src-test/tester_atarixl.c src-test/tester_coleco.c src-test/tester_msx1.c src-test/tester_zx.c src-test/tester_d32.c src-test/tester_d64.c src-test/tester_pc128op.c src-test/tester_mo5.c src-test/tester_vic20.c src-test/tester_sc3000.c src-test/tester_sg1000.c src-test/tester_c128.c
 
 paths:
 	@mkdir -p src-generated
