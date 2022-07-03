@@ -42,6 +42,7 @@
 #include <unistd.h>
 
 #include "../src/ugbc.h"
+#include "../src/libs/msc1.h"
 
 /****************************************************************************
  * DECLARATIONS AND DEFINITIONS SECTION 
@@ -55,6 +56,7 @@ void test_ons( );
 void test_controls( );
 void test_examples( );
 void test_print( );
+void test_msc1( );
 
 #if defined( __c64__ )
     #include "tester_c64.h"
