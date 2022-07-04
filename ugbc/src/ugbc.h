@@ -958,6 +958,7 @@ typedef struct _Embedded {
     int cpu_mobrender;
     int cpu_sqroot;
     int cpu_is_negative;
+    int cpu_msc1_uncompress;
 
 } Embedded;
 
@@ -2085,8 +2086,9 @@ int embed_scan_string (const char *);
 #define FLAG_ROLL_Y         16
 
 #define FLAG_TRANSPARENCY   32
-#define FLAG_DOUBLE_Y   64
-#define FLAG_EXACT   128
+#define FLAG_DOUBLE_Y       64
+#define FLAG_EXACT          128
+#define FLAG_COMPRESSED     256
 
 #define IMF_INSTRUMENT_EXPLOSION        			0x00
 #define IMF_INSTRUMENT_ACOUSTIC_GRAND_PIANO			0x01
@@ -2708,6 +2710,7 @@ void                    tiles_at_var( Environment * _environment, char * _addres
 
 void                    use_tileset( Environment * _environment, char * _tileset );
 char *                  unescape_string( Environment * _environment, char * _value, int _printing );
+Variable *              uncompress( Environment * _environment, char * _value );
 
 //----------------------------------------------------------------------------
 // *V*
