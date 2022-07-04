@@ -4534,4 +4534,68 @@ void cpu6809_set_callback( Environment * _environment, char * _callback, char * 
 
 }
 
+void cpu6809_msc1_uncompress_direct_direct( Environment * _environment, char * _input, char * _output ) {
+
+    MAKE_LABEL
+
+    inline( cpu_msc1_uncompress )
+
+    embedded( cpu_msc1_uncompress, src_hw_6809_msc1_asm );
+
+        outline1("LDX #%s", _input);
+        outline1("LDY #%s", _output);
+        outline0("JSR MSC1_UNCOMPRESS");
+
+    done()
+
+}
+
+void cpu6809_msc1_uncompress_direct_indirect( Environment * _environment, char * _input, char * _output ) {
+
+    MAKE_LABEL
+
+    inline( cpu_msc1_uncompress )
+
+    embedded( cpu_msc1_uncompress, src_hw_6809_msc1_asm );
+
+        outline1("LDX #%s", _input);
+        outline1("LDY %s", _output);
+        outline0("JSR MSC1_UNCOMPRESS");
+
+    done()
+
+}
+
+void cpu6809_msc1_uncompress_indirect_direct( Environment * _environment, char * _input, char * _output ) {
+
+    MAKE_LABEL
+
+    inline( cpu_msc1_uncompress )
+
+    embedded( cpu_msc1_uncompress, src_hw_6809_msc1_asm );
+
+        outline1("LDX %s", _input);
+        outline1("LDY #%s", _output);
+        outline0("JSR MSC1_UNCOMPRESS");
+
+    done()
+
+}
+
+void cpu6809_msc1_uncompress_indirect_indirect( Environment * _environment, char * _input, char * _output ) {
+
+    MAKE_LABEL
+
+    inline( cpu_msc1_uncompress )
+
+    embedded( cpu_msc1_uncompress, src_hw_6809_msc1_asm );
+
+        outline1("LDX %s", _input);
+        outline1("LDY %s", _output);
+        outline0("JSR MSC1_UNCOMPRESS");
+
+    done()
+
+}
+
 #endif

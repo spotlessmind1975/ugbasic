@@ -202,6 +202,11 @@ void cpu6809_protothread_set_state( Environment * _environment, char * _index, i
 void cpu6809_protothread_get_state( Environment * _environment, char * _index, char * _state );
 void cpu6809_protothread_current( Environment * _environment, char * _current );
 
+void cpu6809_msc1_uncompress_direct_direct( Environment * _environment, char * _input, char * _output );
+void cpu6809_msc1_uncompress_direct_indirect( Environment * _environment, char * _input, char * _output );
+void cpu6809_msc1_uncompress_indirect_direct( Environment * _environment, char * _input, char * _output );
+void cpu6809_msc1_uncompress_indirect_indirect( Environment * _environment, char * _input, char * _output );
+
 #define cpu_beq( _environment,  _label  ) cpu6809_beq( _environment,  _label  )
 #define cpu_bneq( _environment,  _label  ) cpu6809_beq( _environment,  _label  )
 #define cpu_busy_wait( _environment,  _timing  ) cpu6809_busy_wait( _environment,  _timing  )
@@ -376,6 +381,11 @@ extern unsigned int src_hw_chipset_mob_asm_len;
 #define cpu_protothread_set_state( _environment, _index, _state ) cpu6809_protothread_set_state( _environment, _index, _state )
 #define cpu_protothread_get_state( _environment, _index, _state ) cpu6809_protothread_get_state( _environment, _index, _state )
 #define cpu_protothread_current( _environment, _current ) cpu6809_protothread_current( _environment, _current )
+
+#define cpu_msc1_uncompress_direct_direct( _environment, _input, _output ) cpu6809_msc1_uncompress_direct_direct( _environment, _input, _output )
+#define cpu_msc1_uncompress_direct_indirect( _environment, _input, _output ) cpu6809_msc1_uncompress_direct_indirect( _environment, _input, _output )
+#define cpu_msc1_uncompress_indirect_direct( _environment, _input, _output ) cpu6809_msc1_uncompress_indirect_direct( _environment, _input, _output )
+#define cpu_msc1_uncompress_indirect_indirect( _environment, _input, _output ) cpu6809_msc1_uncompress_indirect_indirect( _environment, _input, _output )
 
 #define     CPU_BIG_ENDIAN      1
 
