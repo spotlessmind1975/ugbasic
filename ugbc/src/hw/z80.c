@@ -4272,4 +4272,68 @@ void z80_set_callback( Environment * _environment, char * _callback, char * _lab
 
 }
 
+void z80_msc1_uncompress_direct_direct( Environment * _environment, char * _input, char * _output ) {
+
+    MAKE_LABEL
+
+    inline( cpu_msc1_uncompress )
+
+    embedded( cpu_msc1_uncompress, src_hw_z80_msc1_asm );
+
+        outline1("LD HL, %s", _input);
+        outline1("LD DE, %s", _output);
+        outline0("CALL MSC1_UNCOMPRESS");
+
+    done()
+
+}
+
+void z80_msc1_uncompress_direct_indirect( Environment * _environment, char * _input, char * _output ) {
+
+    MAKE_LABEL
+
+    inline( cpu_msc1_uncompress )
+
+    embedded( cpu_msc1_uncompress, src_hw_z80_msc1_asm );
+
+        outline1("LD HL, %s", _input);
+        outline1("LD DE, (%s)", _output);
+        outline0("CALL MSC1_UNCOMPRESS");
+
+    done()
+
+}
+
+void z80_msc1_uncompress_indirect_direct( Environment * _environment, char * _input, char * _output ) {
+
+    MAKE_LABEL
+
+    inline( cpu_msc1_uncompress )
+
+    embedded( cpu_msc1_uncompress, src_hw_z80_msc1_asm );
+
+        outline1("LD HL, (%s)", _input);
+        outline1("LD DE, %s", _output);
+        outline0("CALL MSC1_UNCOMPRESS");
+
+    done()
+
+}
+
+void z80_msc1_uncompress_indirect_indirect( Environment * _environment, char * _input, char * _output ) {
+
+    MAKE_LABEL
+
+    inline( cpu_msc1_uncompress )
+
+    embedded( cpu_msc1_uncompress, src_hw_z80_msc1_asm );
+
+        outline1("LD HL, (%s)", _input);
+        outline1("LD DE, (%s)", _output);
+        outline0("CALL MSC1_UNCOMPRESS");
+
+    done()
+
+}
+
 #endif

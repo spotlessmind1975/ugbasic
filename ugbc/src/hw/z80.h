@@ -203,6 +203,11 @@ void z80_protothread_get_state( Environment * _environment, char * _index, char 
 void z80_protothread_current( Environment * _environment, char * _current );
 void z80_set_callback( Environment * _environment, char * _callback, char * _label );
 
+void z80_msc1_uncompress_direct_direct( Environment * _environment, char * _input, char * _output );
+void z80_msc1_uncompress_direct_indirect( Environment * _environment, char * _input, char * _output );
+void z80_msc1_uncompress_indirect_direct( Environment * _environment, char * _input, char * _output );
+void z80_msc1_uncompress_indirect_indirect( Environment * _environment, char * _input, char * _output );
+
 #define cpu_beq( _environment,  _label  ) z80_beq( _environment,  _label  )
 #define cpu_bneq( _environment,  _label  ) z80_beq( _environment,  _label  )
 #define cpu_busy_wait( _environment,  _timing  ) z80_busy_wait( _environment,  _timing  )
@@ -375,6 +380,11 @@ extern unsigned int src_hw_chipset_mob_asm_len;
 #define cpu_protothread_set_state( _environment, _index, _state ) z80_protothread_set_state( _environment, _index, _state )
 #define cpu_protothread_get_state( _environment, _index, _state ) z80_protothread_get_state( _environment, _index, _state )
 #define cpu_protothread_current( _environment, _current ) z80_protothread_current( _environment, _current )
+
+#define cpu_msc1_uncompress_direct_direct( _environment, _input, _output ) z80_msc1_uncompress_direct_direct( _environment, _input, _output )
+#define cpu_msc1_uncompress_direct_indirect( _environment, _input, _output ) z80_msc1_uncompress_direct_indirect( _environment, _input, _output )
+#define cpu_msc1_uncompress_indirect_direct( _environment, _input, _output ) z80_msc1_uncompress_indirect_direct( _environment, _input, _output )
+#define cpu_msc1_uncompress_indirect_indirect( _environment, _input, _output ) z80_msc1_uncompress_indirect_indirect( _environment, _input, _output )
 
 #define     CPU_LITTLE_ENDIAN      1
 
