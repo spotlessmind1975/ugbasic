@@ -657,7 +657,7 @@ MemoryBlock * msc1_uncompress( MSC1Compressor * _msc1, MemoryBlock * _input, int
             // printf( "rp=%4.4x - EOB\n", (pointer - _input) );
 		}
 
-        // If the upper bit of the token is setted,
+        // If the upper bit of the token is clear,
         // it means that there is a literal block
         // to emit on the output stream.
 		else if ((token & 0x80) == 0x00) {
