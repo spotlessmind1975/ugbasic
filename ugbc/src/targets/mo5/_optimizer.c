@@ -582,6 +582,7 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
     if ( match( buf[0], " LD")
     &&   match( buf[1], " ST")
     && _strcmp( buf[2], buf[0] )==0
+    && !strchr( buf[0]->str, '+' )
     && unsafe) {
         optim( buf[2], RULE "(LOAD*,STORE,LOAD*)->(LOAD*,STORE)", NULL);
     }
@@ -603,6 +604,7 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
 
     if ( match(buf[0], " ST* *", NULL, v1)
     &&   match(buf[1], " LD* *", NULL, v2)
+    &&  ( !strchr(v1->str,'+') && !strchr(v2->str,'+') )
     && _strcmp(v1, v2)!=0
     && _strcmp(buf[0],buf[2])==0 ) {
         optim(buf[0], RULE "(STORE*,LOAD,STORE*)->(LOAD,STORE*)", NULL);
@@ -621,6 +623,8 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
     }
     if ( (match(buf[0], " ST* *+", NULL, v1) || match(buf[0], " ST* *", NULL, v1))
     &&   !isBranch(buf[1]) && match(buf[1], " * *", NULL, v2) && _strcmp(v1, v2)!=0
+	&&  strchr(buf[0]->str,'+')==NULL
+	&&  strchr(buf[1]->str,'+')==NULL
     && _strcmp(buf[2], buf[0])==0) {
         optim(buf[0], RULE "(STORE*,?,STORE*)->(?,STORE*)", NULL);
     }
