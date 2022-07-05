@@ -73,7 +73,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token RING ROCK SAWTOOTH SAX SCI SEASHORE SECTION SHAKUHACHI SHAMISEN SHANAI SITAR SLAP SOPRANO SOUNDTRACK
 %token SQUARE STEEL STRINGS SWEEP SYNTH SYNTHBRASS SYNTHSTRINGS TAIKO TANGO TELEPHONE TENOR TIMPANI TINKLE
 %token TOM TONK TREMOLO TROMBONE TRUMPET TUBA TUBULAR TWEET VIBRAPHONE VIOLA VIOLIN VOICE WARM WHISTLE WOODBLOCK 
-%token XYLOPHONE KILL
+%token XYLOPHONE KILL COMPRESSED
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -861,6 +861,9 @@ image_load_flag :
     | FLIP YX {
         $$ = FLAG_FLIP_X | FLAG_FLIP_Y;
     }
+    | COMPRESSED {
+        $$ = FLAG_COMPRESSED;
+    }
     | OVERLAYED {
         $$ = FLAG_OVERLAYED;
     }
@@ -918,6 +921,9 @@ images_load_flag :
     | FLIP YX {
         $$ = FLAG_FLIP_X | FLAG_FLIP_Y;
     }
+    | COMPRESSED {
+        $$ = FLAG_COMPRESSED;
+    }
     | OVERLAYED {
         $$ = FLAG_OVERLAYED;
     }
@@ -949,6 +955,9 @@ sequence_load_flag :
     }
     | FLIP YX {
         $$ = FLAG_FLIP_X | FLAG_FLIP_Y;
+    }
+    | COMPRESSED {
+        $$ = FLAG_COMPRESSED;
     }
     | OVERLAYED {
         $$ = FLAG_OVERLAYED;
@@ -5702,6 +5711,7 @@ statement2:
             var->absoluteAddress = expr->absoluteAddress;
             var->residentAssigned = expr->residentAssigned;
             var->variableUniqueId = expr->variableUniqueId;
+            var->uncompressedSize = expr->uncompressedSize;
         }
         memcpy( var->originalPalette, expr->originalPalette, MAX_PALETTE * sizeof( RGBi ) );
         var->memoryArea = expr->memoryArea;
