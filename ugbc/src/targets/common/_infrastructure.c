@@ -1829,6 +1829,7 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
                         target->absoluteAddress = source->absoluteAddress;
                         target->residentAssigned = source->residentAssigned;
                         target->variableUniqueId = source->variableUniqueId;
+                        target->uncompressedSize = source->uncompressedSize;
                     }
                     memcpy( target->originalPalette, source->originalPalette, MAX_PALETTE * sizeof( RGBi ) );
                 case VT_IMAGES:
