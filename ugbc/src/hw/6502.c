@@ -5423,7 +5423,7 @@ void cpu6502_msc1_uncompress_direct_direct( Environment * _environment, char * _
         outline1("LDA #>%s", _output);
         outline0("STA TMPPTR2+1");
 
-        outline0("JSR MSC1_UNCOMPRESS");
+        outline0("JSR MSC1UNCOMPRESS");
 
     done()
 
@@ -5446,7 +5446,7 @@ void cpu6502_msc1_uncompress_direct_indirect( Environment * _environment, char *
         outline1("LDA %s+1", _output);
         outline0("STA TMPPTR2+1");
 
-        outline0("JSR MSC1_UNCOMPRESS");
+        outline0("JSR MSC1UNCOMPRESS");
 
     done()
 
@@ -5469,7 +5469,7 @@ void cpu6502_msc1_uncompress_indirect_direct( Environment * _environment, char *
         outline1("LDA #>%s", _output);
         outline0("STA TMPPTR2+1");
 
-        outline0("JSR MSC1_UNCOMPRESS");
+        outline0("JSR MSC1UNCOMPRESS");
 
     done()
 
@@ -5492,7 +5492,7 @@ void cpu6502_msc1_uncompress_indirect_indirect( Environment * _environment, char
         outline1("LDA %s+1", _output);
         outline0("STA TMPPTR2+1");
 
-        outline0("JSR MSC1_UNCOMPRESS");
+        outline0("JSR MSC1UNCOMPRESS");
 
     done()
 

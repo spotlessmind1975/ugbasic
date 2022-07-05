@@ -4282,7 +4282,7 @@ void z80_msc1_uncompress_direct_direct( Environment * _environment, char * _inpu
 
         outline1("LD HL, %s", _input);
         outline1("LD DE, %s", _output);
-        outline0("CALL MSC1_UNCOMPRESS");
+        outline0("CALL MSC1UNCOMPRESS");
 
     done()
 
@@ -4298,7 +4298,7 @@ void z80_msc1_uncompress_direct_indirect( Environment * _environment, char * _in
 
         outline1("LD HL, %s", _input);
         outline1("LD DE, (%s)", _output);
-        outline0("CALL MSC1_UNCOMPRESS");
+        outline0("CALL MSC1UNCOMPRESS");
 
     done()
 
@@ -4314,7 +4314,7 @@ void z80_msc1_uncompress_indirect_direct( Environment * _environment, char * _in
 
         outline1("LD HL, (%s)", _input);
         outline1("LD DE, %s", _output);
-        outline0("CALL MSC1_UNCOMPRESS");
+        outline0("CALL MSC1UNCOMPRESS");
 
     done()
 
@@ -4330,7 +4330,7 @@ void z80_msc1_uncompress_indirect_indirect( Environment * _environment, char * _
 
         outline1("LD HL, (%s)", _input);
         outline1("LD DE, (%s)", _output);
-        outline0("CALL MSC1_UNCOMPRESS");
+        outline0("CALL MSC1UNCOMPRESS");
 
     done()
 

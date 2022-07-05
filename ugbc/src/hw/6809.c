@@ -4544,7 +4544,7 @@ void cpu6809_msc1_uncompress_direct_direct( Environment * _environment, char * _
 
         outline1("LDX #%s", _input);
         outline1("LDY #%s", _output);
-        outline0("JSR MSC1_UNCOMPRESS");
+        outline0("JSR MSC1UNCOMPRESS");
 
     done()
 
@@ -4560,7 +4560,7 @@ void cpu6809_msc1_uncompress_direct_indirect( Environment * _environment, char *
 
         outline1("LDX #%s", _input);
         outline1("LDY %s", _output);
-        outline0("JSR MSC1_UNCOMPRESS");
+        outline0("JSR MSC1UNCOMPRESS");
 
     done()
 
@@ -4576,7 +4576,7 @@ void cpu6809_msc1_uncompress_indirect_direct( Environment * _environment, char *
 
         outline1("LDX %s", _input);
         outline1("LDY #%s", _output);
-        outline0("JSR MSC1_UNCOMPRESS");
+        outline0("JSR MSC1UNCOMPRESS");
 
     done()
 
@@ -4592,7 +4592,7 @@ void cpu6809_msc1_uncompress_indirect_indirect( Environment * _environment, char
 
         outline1("LDX %s", _input);
         outline1("LDY %s", _output);
-        outline0("JSR MSC1_UNCOMPRESS");
+        outline0("JSR MSC1UNCOMPRESS");
 
     done()
 
