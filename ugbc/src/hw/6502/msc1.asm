@@ -38,37 +38,34 @@
 ; Get a single byte from the input stream pointed by TMPPTRx2.
 ; This routine uses the MATHPTR0 to maintain the Y offset.
 MSC1UNCOMPRESSGETBYTE:
-    LDY MATHPTR0
+    LDY #0
     LDA (TMPPTR),Y
-    INY
+    INC TMPPTR
     BNE MSC1UNCOMPRESSGETBYTENE
     INC TMPPTR+1
 MSC1UNCOMPRESSGETBYTENE:
-    STY MATHPTR0
     RTS
 
 ; Put a single byte to the output stream pointed by TMPPTR2x2.
 ; This routine uses the MATHPTR1 to maintain the Y offset.
 MSC1UNCOMPRESSPUTBYTE:
-    LDY MATHPTR1
+    LDY #0
     STA (TMPPTR2),Y
-    INY
-    BNE MSC1UNCOMPRESSGETBYTENE
+    INC TMPPTR2
+    BNE MSC1UNCOMPRESSPUTBYTENE
     INC TMPPTR2+1
-MSC1UNCOMPRESSGETBYTENE:
-    STY MATHPTR1
+MSC1UNCOMPRESSPUTBYTENE:
     RTS
 
 ; Get a single byte from the output stream pointed by MATHPTR3:4.
 ; This routine uses the MATHPTR2 to maintain the Y offset.
 MSC1UNCOMPRESSREGETBYTE:
-    LDY MATHPTR2
+    LDY #0
     LDA (MATHPTR3),Y
-    INY
+    INC MATHPTR3
     BNE MSC1UNCOMPRESSREGETBYTENE
     INC MATHPTR4
 MSC1UNCOMPRESSREGETBYTENE:
-    STY MATHPTR2
     RTS
 
 ; This routine will uncompress a MSC1 compressed memory block
@@ -76,12 +73,6 @@ MSC1UNCOMPRESSREGETBYTENE:
 ; be pointed by TMPPTR while the output stream must be pointed
 ; by TMPPTR2.
 MSC1UNCOMPRESS:
-
-    ; Initialize the offsets for input and output streams.
-    LDY #0
-    STY MATHPTR0
-    STY MATHPTR1
-    STY MATHPTR2
 
     ; Loop through the entire input stream.
 MSC1UNCOMPRESSL1:
@@ -91,6 +82,7 @@ MSC1UNCOMPRESSL1:
     ; If token is zero the stream is finished.
     CMP #$0
     BNE MSC1UNCOMPRESSL1NE
+MSC1UNCOMPRESSDONE:
     RTS
 
     ; Check the kind of token.
@@ -134,18 +126,16 @@ MSC1DUPESNE:
     ; Recalculate the address from which to copy
     ; the output into the output again.
     SEC
-    LDA TMPPTR2
+    LDA TMPPTR
     SBC MATHPTR3
     STA MATHPTR3
-    LDA TMPPTR2+1
+    LDA TMPPTR+1
     SBC MATHPTR4
     STA MATHPTR4
 
     ; Initialize the counter and copy the same 
     ; 4 bytes for each repetition.
 MSC1DUPESL1:
-    LDY #0
-    STY MATHPTR2
     JSR MSC1UNCOMPRESSREGETBYTE
     JSR MSC1UNCOMPRESSPUTBYTE
     JSR MSC1UNCOMPRESSREGETBYTE
@@ -154,6 +144,13 @@ MSC1DUPESL1:
     JSR MSC1UNCOMPRESSPUTBYTE
     JSR MSC1UNCOMPRESSREGETBYTE
     JSR MSC1UNCOMPRESSPUTBYTE
+    SEC
+    LDA MATHPTR3
+    SBC #$4
+    STA MATHPTR3
+    LDA MATHPTR4
+    SBC #$0
+    STA MATHPTR4    
     DEX
     BNE MSC1DUPESL1
     JMP MSC1UNCOMPRESSL1
