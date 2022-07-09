@@ -8,10 +8,10 @@ REM ESPANSIONE DI MEMORIA CARICARE UNA IMMAGINE NELL'ESPANSIONE
 REM
 REM Questo esempio mostra come caricare una immagine su una espansione.
 
-BITMAP ENABLE (2)
+BITMAP ENABLE
 
-eye := LOAD IMAGE("examples/checkers2.png" ) BANKED
+checkers := LOAD IMAGE("examples/checkers2.png" ) BANKED
 
-PUT IMAGE eye AT 0, 0
+PUT IMAGE checkers AT 0, 0
 
 HALT
