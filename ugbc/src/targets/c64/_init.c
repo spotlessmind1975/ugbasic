@@ -63,8 +63,8 @@ void setup_embedded( Environment * _environment ) {
 
 void target_initialization( Environment * _environment ) {
 
-    /*MEMORY_AREA_DEFINE( MAT_DIRECT, 0xc000, 0xcfff );*/
-    MEMORY_AREA_DEFINE( MAT_RAM, 0xe000, 0xff00 );
+    MEMORY_AREA_DEFINE( MAT_DIRECT, 0xc000, 0xcfff );
+    /*MEMORY_AREA_DEFINE( MAT_RAM, 0xe000, 0xff00 );*/
 
     for(int i=0; i<BANK_COUNT; ++i) {
         Bank * bank = malloc( sizeof( Bank ) );
@@ -78,6 +78,7 @@ void target_initialization( Environment * _environment ) {
         bank->data = malloc( BANK_SIZE );
         memset( bank->data, 0, BANK_SIZE );
         _environment->expansionBanks = bank;
+        _environment->maxExpansionBankSize[i] = BANK_SIZE;
     }
 
     if ( _environment->tenLinerRulesEnforced ) {
