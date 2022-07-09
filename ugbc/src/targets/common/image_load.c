@@ -172,6 +172,17 @@ Variable * image_load( Environment * _environment, char * _filename, char * _ali
 
         int temporary;
         MemoryBlock * outputCheck = msc1_uncompress( compressor, output, result->size, &temporary );
+        // printf("\n0000: " );
+        // for( int k=0; k<result->uncompressedSize; ++k ) {
+        //     if ( outputCheck[k] == result->valueBuffer[k] ) {
+        //         printf( "        " );
+        //     } else {
+        //         printf( "%2.2x [%2.2x] ", outputCheck[k], result->valueBuffer[k] );
+        //     }
+        //     if ( ((k+1) % 8 == 0 ) ) {
+        //         printf("\n%4.4x: ", (k) );
+        //     };
+        // }
         if ( memcmp( outputCheck, result->valueBuffer, result->uncompressedSize ) != 0 ) {
             CRITICAL("Compression failed");
         }
