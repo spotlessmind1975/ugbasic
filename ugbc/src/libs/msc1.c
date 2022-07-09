@@ -473,8 +473,7 @@ MemoryBlock * msc1_compress( MSC1Compressor * _msc1, MemoryBlock * _input, int _
                         actual->used = NULL;
                     }
 
-                    // Write the number of symbols
-                    // minus the pattern to duplicate, and,
+                    // Write the number of symbols and,
                     // following, the literals themselves.
                     *wpointer = iliteral;
                     ++wpointer;
@@ -591,10 +590,10 @@ MemoryBlock * msc1_compress( MSC1Compressor * _msc1, MemoryBlock * _input, int _
                 // If there is at least one repetition,
                 // we can emit the relative command.
                 if ( repeats > 0 ) {
-                    *wpointer = 0x80 | ( ( repeats & 0x1f ) << 2 ) | ( ( ( wpointer - actual->used ) >> 8 ) & 0x03 );
-                    ++wpointer;
-                    *wpointer = ( ( ( wpointer - actual->used + 1 ) ) & 0xff );
-                    ++wpointer;
+                    MemoryBlock token1 = 0x80 | ( ( repeats & 0x1f ) << 2 ) | ( ( ( wpointer - actual->used + 2 ) >> 8 ) & 0x03 );
+                    MemoryBlock token2 = ( ( ( wpointer - actual->used + 2 ) ) & 0xff );
+                    *wpointer++ = token1;
+                    *wpointer++ = token2;
                 }
                 if ( repeats == 32 ) {
                     repeats = 0;
@@ -677,11 +676,15 @@ MemoryBlock * msc1_uncompress( MSC1Compressor * _msc1, MemoryBlock * _input, int
                 wpointer = output + reallocOffset;
             }
 
+            // printf( "rp=%4.4x - LITERAL %d characters\n", (pointer - _input), count );
+            // printf( "   ... %4.4x %2.2x %2.2x %2.2x %2.2x > %4.4x %2.2x %2.2x %2.2x %2.2x \n", 
+            //     (unsigned int)(pointer-_input), (pointer)[0], (pointer)[1], (pointer)[2], (pointer)[3],
+            //     (unsigned int)(wpointer-output), (wpointer)[0], (wpointer)[1], (wpointer)[2], (wpointer)[3] );
+
 			memcpy(wpointer, pointer, count);
 			wpointer += count;
             pointer += count;
 
-            // printf( "rp=%4.4x - LITERAL %d characters\n", (pointer - _input), count );
 		}
 
         // If the most significant bit is setted,
@@ -701,14 +704,21 @@ MemoryBlock * msc1_uncompress( MSC1Compressor * _msc1, MemoryBlock * _input, int
             // will be 32 times.
 			if (repetitions == 0) repetitions = 32;
 
-            // printf( "rp=%4.4x - DUPES %d times from %4.4x\n", (pointer-_input), repetitions, offset );
+            // printf( "rp=%4.4x - DUPES %d times from %4.4x\n", (unsigned int)(pointer-_input), repetitions, offset );
+            // printf( "   ... %4.4x %2.2x %2.2x %2.2x %2.2x > %4.4x %2.2x %2.2x %2.2x %2.2x \n", 
+            //     (unsigned int)(pointer-_input-offset), (pointer-offset)[0], (pointer-offset)[1], (pointer-offset)[2], (pointer-offset)[3],
+            //     (unsigned int)(wpointer-output), (wpointer)[0], (wpointer)[1], (wpointer)[2], (wpointer)[3] );
+
+            MemoryBlock * sourcePointer = pointer - offset;
 
             // Repeat the sequence from input stream
             // to the output stream.
             while( repetitions ) {
                 for( int j=0; j<4; ++j ) {
 
-                    *wpointer++ = *(pointer-offset+j);
+                    *wpointer = *(sourcePointer+j);
+
+                    ++wpointer;
 
                     // Check if (re)allocation is needed and,
                     // in that case, we reallocate the memory 
