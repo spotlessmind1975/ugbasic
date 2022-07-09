@@ -94,7 +94,7 @@ MSC1DUPESNE
 
     ; Recalculate the address from which to copy
     ; the output into the output again.
-    TFR Y, D
+    TFR X, D
     SUBD <MATHPTR0
     TFR D, U
 
