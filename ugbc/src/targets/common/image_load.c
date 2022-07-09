@@ -278,6 +278,7 @@ Variable * image_load( Environment * _environment, char * _filename, char * _ali
             free( result->valueBuffer );
             result->valueBuffer = output;
         }
+        result->residentAssigned = 1;
 
     }
 

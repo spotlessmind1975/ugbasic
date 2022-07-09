@@ -275,7 +275,7 @@ Variable * sequence_load( Environment * _environment, char * _filename, char * _
             _environment->maxExpansionBankSize[_bank_expansion] = realSize;
         }
 
-    } else if ( _flag & FLAG_COMPRESSED ) {
+    } else if ( _flags & FLAG_COMPRESSED ) {
 
         // Try to compress the result of image conversion.
         // This means that the buffer will be compressed using MSC1
@@ -305,6 +305,7 @@ Variable * sequence_load( Environment * _environment, char * _filename, char * _
             free( final->valueBuffer );
             final->valueBuffer = output;
         }
+        final->residentAssigned = 1;
 
     }
 
