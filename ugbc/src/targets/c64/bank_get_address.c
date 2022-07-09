@@ -46,10 +46,18 @@
  */
 /* <usermanual>
 @keyword BANK ADDRESS
+@target c64
 </usermanual> */
 Variable * bank_get_address( Environment * _environment, int _bank ) {
 
     Variable * result = variable_temporary( _environment, VT_ADDRESS, "(bank address)" );
+
+    int address = 0xC000 + ( BANK_SIZE * ( _bank - 1 ) );
+
+    outline1("LDA #$%2.2x", ( address & 0xff ) );
+    outline1("STA %s", result->realName );
+    outline1("LDA #$%2.2x", ( address >> 8 ) & 0xff );
+    outline1("STA %s+1", result->realName );
 
     return result;
     
@@ -67,10 +75,37 @@ Variable * bank_get_address( Environment * _environment, int _bank ) {
  */
 /* <usermanual>
 @keyword BANK ADDRESS
+@target c64
 </usermanual> */
 Variable * bank_get_address_var( Environment * _environment, char * _bank ) {
 
+    MAKE_LABEL
+
     Variable * result = variable_temporary( _environment, VT_ADDRESS, "(bank address)" );
+    Variable * bank = variable_temporary( _environment, VT_BYTE, "(bank number)" );
+
+    int address = 0xC000;
+
+    outline1("LDA #$%2.2x", ( address & 0xff ) );
+    outline1("STA %s", result->realName );
+    outline1("LDA #$%2.2x", ( address >> 8 ) & 0xff );
+    outline1("STA %s+1", result->realName );
+
+    outline1("LDX %s", bank->realName );
+    outline0("DEX" );
+    outline1("BEQ %sbgaf", label );
+
+    outhead1("%sbga:", label );
+    outline0("CLC" );
+    outline1("STA %s", result->realName );
+    outline1("ADC #$%2.2x", ( BANK_SIZE & 0xff ) );
+    outline1("STA %s", result->realName );
+    outline1("STA %s+1", result->realName );
+    outline1("ADC #$%2.2x", ( BANK_SIZE >> 8 ) & 0xff );
+    outline1("STA %s+1", result->realName );
+    outline0("DEX" );
+    outline1("BNE %sbga", label );
+    outhead1("%sbgaf:", label );
 
     return result;
     
