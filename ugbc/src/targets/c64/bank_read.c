@@ -53,7 +53,7 @@ void bank_read_semi_var( Environment * _environment, int _bank, int _address1, c
 
     Variable * previous = bank_get( _environment );
     bank_set( _environment, _bank );
-    int realAddress = 0xC000 + ( _bank - 1 ) * BANK_SIZE + _address1;
+    int realAddress = 0xe000 + ( _bank - 1 ) * BANK_SIZE + _address1;
     char realAddressAsString[MAX_TEMPORARY_STORAGE];
     sprintf(realAddressAsString, "$%4.4x", realAddress);
     cpu_mem_move_direct_size( _environment, realAddressAsString, _address2, _size );
