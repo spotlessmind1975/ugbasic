@@ -5707,11 +5707,11 @@ statement2:
         var->originalHeight = expr->originalHeight;
         var->originalColors = expr->originalColors;
         var->bankAssigned = expr->bankAssigned;
+        var->residentAssigned = expr->residentAssigned;
+        var->uncompressedSize = expr->uncompressedSize;
         if ( var->bankAssigned ) {
             var->absoluteAddress = expr->absoluteAddress;
-            var->residentAssigned = expr->residentAssigned;
             var->variableUniqueId = expr->variableUniqueId;
-            var->uncompressedSize = expr->uncompressedSize;
         }
         memcpy( var->originalPalette, expr->originalPalette, MAX_PALETTE * sizeof( RGBi ) );
         var->memoryArea = expr->memoryArea;
