@@ -640,6 +640,24 @@ MemoryBlock * msc1_compress( MSC1Compressor * _msc1, MemoryBlock * _input, int _
             // EMIT THE DUPLICATION COMMAND
             case MSC1_CS_DUPES:
 
+                if ( repeats > 0 ) {
+                    if ( wpointer - actual->used + 2 > 1000 ) {
+                        
+                        // printf(" rp=%4.4x wp=%4.4x EMIT: REPETITION %d [[ ", (unsigned int)(pointer - _input), (unsigned int)(wpointer - output), 4);
+                        // for( int i=0; i<4; ++i ) {
+                        //     printf("%2.2x ", actual->value[i]);
+                        // }
+                        // printf("]]\n");
+
+                        --repeats;
+                        *wpointer = 4;
+                        ++wpointer;
+                        memcpy( wpointer, actual->value, 4 );
+                        wpointer += ( 4 );
+                        actual->used = ( wpointer - 4 );
+                    }
+                }
+
                 // If there is at least one repetition,
                 // we can emit the relative command.
                 if ( repeats > 0 ) {
