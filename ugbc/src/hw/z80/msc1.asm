@@ -89,17 +89,22 @@ MSC1DUPESNE:
     POP A
 
     ; Extract the offset.
+    PUSH HL
     PUSH DE
     AND #$03
     LD D, A
     LD A, (HL)
     INC HL
     LD E, A
+    SBC HL, DE
+    LD BC, HL
+    POP DE
+    POP HL
+    PUSH HL
+    LD HL, BC
 
     ; Recalculate the address from which to copy
     ; the output into the output again.
-    PUSH HL
-    SBC HL, DE
 
     ; Initialize the counter and copy the same 
     ; 4 bytes for each repetition.
@@ -124,7 +129,6 @@ MSC1DUPESL1:
     DEC B
     JR NZ, MSC1DUPESL1
     POP HL
-    POP DE
     JP MSC1UNCOMPRESSL1
 
 MSC1LITERAL:
