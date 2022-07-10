@@ -253,6 +253,13 @@ Variable * image_load( Environment * _environment, char * _filename, char * _ali
         MemoryBlock * outputCheck = msc1_uncompress( compressor, output, result->size, &temporary );
         // printf("\n0000: " );
         // for( int k=0; k<result->uncompressedSize; ++k ) {
+        //     printf( "%2.2x ", result->valueBuffer[k] );
+        //     if ( ((k+1) % 8 == 0 ) ) {
+        //         printf("\n%4.4x: ", (k) );
+        //     };
+        // }
+        // printf("\n0000: " );
+        // for( int k=0; k<result->uncompressedSize; ++k ) {
         //     if ( outputCheck[k] == result->valueBuffer[k] ) {
         //         printf( "        " );
         //     } else {
