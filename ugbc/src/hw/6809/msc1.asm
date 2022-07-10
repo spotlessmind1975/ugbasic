@@ -60,6 +60,7 @@ MSC1UNCOMPRESSL1NE
     ; to emit on the output stream.
     TFR A, B
     ANDB #$80
+    CMPB #$0
     BNE MSC1UNCOMPRESSL1NE3
     JMP MSC1LITERAL
 MSC1UNCOMPRESSL1NE3
@@ -120,7 +121,7 @@ MSC1LITERAL
     TFR A, B
     ; Take the number of literals (1...127),
     ; and copy from the pointer to the output.
-    ANDB #$7F
+    ANDB #$7F   
 MSC1LITERALL1
     LDA ,X+
     STA ,Y+
