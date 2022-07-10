@@ -252,9 +252,9 @@ void msc1_dump( MSC1Sequences * _sequences ) {
     MSC1Sequence * actual = _sequences->first;
 
     while( actual ) {
-        printf( "  %c%c%c%c = %d offsets\n", 
-            actual->value[0], actual->value[1], 
-            actual->value[2], actual->value[3], 
+        printf( "  %2.2x %2.2x %2.2x %2.2x = %d offsets\n", 
+            (unsigned char)(actual->value[0]), (unsigned char)(actual->value[1]), 
+            (unsigned char)(actual->value[2]), (unsigned char)(actual->value[3]), 
             actual->count );
         actual = actual->next;
     }
@@ -415,7 +415,26 @@ MemoryBlock * msc1_compress( MSC1Compressor * _msc1, MemoryBlock * _input, int _
                 // to detect frequent patterns.
                 literal[iliteral] = *pointer;
 
-                if ( iliteral >= 4 ) {
+                // Move forward by 1 byte.
+                ++iliteral;
+                ++pointer;
+
+                // If the end of the memory is reached,
+                // we must emit the literal up to now.
+                if ( pointer == endPointer ) {
+                    _msc1->state = MSC1_CS_LITERAL;
+                    break;
+                }
+
+                // If we reach the limit of the stage area,
+                // we need to emit the literals and start
+                // over in collecting characters.
+                if ( iliteral == 127 ) {
+                    _msc1->state = MSC1_CS_LITERAL;
+                    break;
+                }
+
+                if ( iliteral > 3 ) {
                     // Since there are at least 4 characters, we can
                     // look if the last 4 characters belongs to the
                     // more frequent special sequences.
@@ -442,28 +461,7 @@ MemoryBlock * msc1_compress( MSC1Compressor * _msc1, MemoryBlock * _input, int _
 
                 break;
 
-            // MOVE THE READ POINTER FORWARD BY 1 CHARACTER
             case MSC1_CS_MOVE1:
-
-                // Increment the read pointer and the
-                // size of the stage area.
-                ++iliteral;
-                ++pointer;
-
-                // If the end of the memory is reached,
-                // we must emit the literal up to now.
-                if ( pointer == endPointer ) {
-                    _msc1->state = MSC1_CS_LITERAL;
-                    break;
-                }
-
-                // If we reach the limit of the stage area,
-                // we need to emit the literals and start
-                // over in collecting characters.
-                if ( iliteral == 127 ) {
-                    _msc1->state = MSC1_CS_LITERAL;
-                    break;
-                }
 
                 _msc1->state = MSC1_CS_STORE;
                 break;
@@ -482,25 +480,53 @@ MemoryBlock * msc1_compress( MSC1Compressor * _msc1, MemoryBlock * _input, int _
                         actual->used = NULL;
                     }
 
-                    // printf(" rp=%4.4x wp=%4.4x EMIT: LITERAL %d [ ", (unsigned int)(pointer - _input), (unsigned int)(wpointer - output), iliteral);
-                    // for( int i=0; i<iliteral-4; ++i ) {
-                    //     printf("%2.2x ", literal[i]);
-                    // }
-                    // printf("] [ ");
-                    // for( int i=iliteral-4; i<iliteral; ++i ) {
-                    //     printf("%2.2x ", literal[i]);
-                    // }
-                    // printf("]\n");
-
-                    // Write the number of symbols and,
-                    // following, the literals themselves.
-                    *wpointer = iliteral;
-                    ++wpointer;
-                    memcpy( wpointer, literal, iliteral );
-                    wpointer += ( iliteral );
-
                     if ( ! actual->used ) {
+                        // printf(" rp=%4.4x wp=%4.4x EMIT: LITERAL %d [ ", (unsigned int)(pointer - _input), (unsigned int)(wpointer - output), iliteral);
+                        // for( int i=0; i<iliteral-4; ++i ) {
+                        //     printf("%2.2x ", literal[i]);
+                        // }
+                        // printf("] [ ");
+                        // for( int i=iliteral-4; i<iliteral; ++i ) {
+                        //     printf("%2.2x ", literal[i]);
+                        // }
+                        // printf("]\n");
+
+                        // Write the number of symbols and,
+                        // following, the literals themselves.
+                        *wpointer = iliteral;
+                        ++wpointer;
+                        memcpy( wpointer, literal, iliteral );
+                        wpointer += ( iliteral );
+
                         actual->used = ( wpointer - 4 );
+
+                        repeats = 0;
+
+                    } else {
+
+                        if ( iliteral > 4 ) {
+
+                            // printf(" rp=%4.4x wp=%4.4x EMIT: LITERAL %d [ ", (unsigned int)(pointer - _input), (unsigned int)(wpointer - output), iliteral-4);
+                            // for( int i=0; i<iliteral-4; ++i ) {
+                            //     printf("%2.2x ", literal[i]);
+                            // }
+                            // printf("] < ");
+                            // for( int i=iliteral-4; i<iliteral; ++i ) {
+                            //     printf("%2.2x ", literal[i]);
+                            // }
+                            // printf(">\n");
+
+                            // Write the number of symbols and,
+                            // following, the literals themselves.
+                            *wpointer = iliteral-4;
+                            ++wpointer;
+                            memcpy( wpointer, literal, iliteral-4 );
+                            wpointer += ( iliteral - 4 );
+
+                        }
+
+                        repeats = 1;
+
                     }
 
                 } 
@@ -621,7 +647,9 @@ MemoryBlock * msc1_compress( MSC1Compressor * _msc1, MemoryBlock * _input, int _
                     MemoryBlock token1 = 0x80 | ( ( repeats & 0x1f ) << 2 ) | ( ( ( wpointer - actual->used + 2 ) >> 8 ) & 0x03 );
                     MemoryBlock token2 = ( ( ( wpointer - actual->used + 2 ) ) & 0xff );
 
-                    // printf(" rp=%4.4x wp=%4.4x EMIT: DUPES %d from %4.4x\n", (unsigned int)(pointer - _input), (unsigned int)(wpointer - output), repeats, wpointer - actual->used + 2 );
+                    // int offset = wpointer - actual->used + 2;
+                    // printf(" rp=%4.4x wp=%4.4x EMIT: DUPES %d from %4.4x [%2.2x %2.2x %2.2x %2.2x]\n", (unsigned int)(pointer - _input), (unsigned int)(wpointer - output), repeats, offset,
+                    //     (unsigned char)(*(wpointer-offset+2)), (unsigned char)(*(wpointer-offset+3)), (unsigned char)(*(wpointer-offset+4)), (unsigned char)(*(wpointer-offset+5)) );
 
                     *wpointer++ = token1;
                     *wpointer++ = token2;
@@ -716,6 +744,11 @@ MemoryBlock * msc1_uncompress( MSC1Compressor * _msc1, MemoryBlock * _input, int
             // printf( "   ... %4.4x %2.2x %2.2x %2.2x %2.2x > %4.4x %2.2x %2.2x %2.2x %2.2x \n", 
             //     (unsigned int)(pointer-_input), (pointer)[0], (pointer)[1], (pointer)[2], (pointer)[3],
             //     (unsigned int)(wpointer-output), (wpointer)[0], (wpointer)[1], (wpointer)[2], (wpointer)[3] );
+            // printf("   [ ");
+            // for(int i=0; i<count; ++i ) {
+            //     printf("%2.2x ", (pointer)[i] );
+            // }
+            // printf(" ]\n");
 
 			memcpy(wpointer, pointer, count);
 			wpointer += count;
