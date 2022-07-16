@@ -73,9 +73,9 @@ In tutti i casi la sintassi cambia leggermente.
 
 @example PUT IMAGE airplane AT 10,10
 
-@UsedInExample contrib_themill.bas
-@UsedInExample defines_screen_01.bas
-@UsedInExample images_load_05.bas
+@usedInExample contrib_themill.bas
+@usedInExample defines_screen_01.bas
+@usedInExample images_load_05.bas
 
 @target all
 </usermanual> */
