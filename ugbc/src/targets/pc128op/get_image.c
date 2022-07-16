@@ -52,8 +52,6 @@ extern char DATATYPE_AS_STRING[][16];
  */
 /* <usermanual>
 @keyword GET IMAGE
-
-@target all
 </usermanual> */
 void get_image( Environment * _environment, char * _image, char * _x, char * _y ) {
 

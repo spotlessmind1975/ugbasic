@@ -51,17 +51,17 @@ extern char DATATYPE_AS_STRING[][16];
  * @param _y Ordinate of the point
  */
 /* <usermanual>
-@keyword PUT IMAGE
+@keyword GET IMAGE
 
 @english
-This function draws an image at a specific position on the screen.
+This function get an image from a specific position on the screen.
 
 @italian
-Questa funzione disegna una immagine in una specifica posizione dello schermo.
+Questa funzione recupera una immagine da una specifica posizione dello schermo.
 
-@syntax PUT IMAGE [image] AT [x],[y]
+@syntax GET IMAGE [identifier] FROM [x], [y]
 
-@example PUT IMAGE airplane AT 10,10
+@example GET IMAGE airplane FROM 10,10
 
 @target all
 </usermanual> */

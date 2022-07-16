@@ -55,13 +55,27 @@ extern char DATATYPE_AS_STRING[][16];
 
 @english
 This function draws an image at a specific position on the screen.
+The programmer can draw on the screen a single image (''IMAGE''), a 
+frame of a series of images (''IMAGES'') or a frame of a pose of a 
+sequence of images (''SEQUENCES''). In all cases the syntax changes 
+slightly.
 
 @italian
 Questa funzione disegna una immagine in una specifica posizione dello schermo.
+Il programmatore può disegnare sullo schermo una singola immagine 
+(''IMAGE''), un frame di una serie di immagini (''IMAGES'') oppure 
+un frame di una posa di una sequenza di immagini (''SEQUENCES''). 
+In tutti i casi la sintassi cambia leggermente.
 
 @syntax PUT IMAGE [image] AT [x],[y]
+@syntax PUT IMAGE [image] FRAME [frame] AT [x],[y]
+@syntax PUT IMAGE [image] SEQUENCE [sequence] FRAME [frame] AT [x],[y]
 
 @example PUT IMAGE airplane AT 10,10
+
+@UsedInExample contrib_themill.bas
+@UsedInExample defines_screen_01.bas
+@UsedInExample images_load_05.bas
 
 @target all
 </usermanual> */

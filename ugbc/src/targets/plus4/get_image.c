@@ -51,19 +51,7 @@ extern char DATATYPE_AS_STRING[][16];
  * @param _y Ordinate of the point
  */
 /* <usermanual>
-@keyword PUT IMAGE
-
-@english
-This function draws an image at a specific position on the screen.
-
-@italian
-Questa funzione disegna una immagine in una specifica posizione dello schermo.
-
-@syntax PUT IMAGE [image] AT [x],[y]
-
-@example PUT IMAGE airplane AT 10,10
-
-@target all
+@keyword GET IMAGE
 </usermanual> */
 void get_image( Environment * _environment, char * _image, char * _x, char * _y ) {
 
