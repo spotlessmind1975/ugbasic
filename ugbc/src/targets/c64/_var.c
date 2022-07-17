@@ -47,7 +47,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
 
     while( variable ) {
 
-        if ( ( !variable->assigned || ( variable->assigned && !variable->temporary ) ) && !variable->imported && !variable->memoryArea ) {
+        if ( (variable->memoryArea && variable->bankAssigned && !variable->assigned) || ( !variable->assigned || ( variable->assigned && !variable->temporary ) ) && !variable->imported && !variable->memoryArea ) {
 
             if ( variable->memoryArea && _environment->debuggerLabelsFile ) {
                 fprintf( _environment->debuggerLabelsFile, "%4.4x %s\r\n", variable->absoluteAddress, variable->realName );
@@ -59,7 +59,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_SBYTE:
                 case VT_COLOR:
                 case VT_THREAD:
-                    if ( variable->memoryArea ) {
+                    if ( variable->memoryArea && !variable->bankAssigned ) {
                         // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
                         outline1("%s: .res 1", variable->realName);
@@ -69,7 +69,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_SWORD:
                 case VT_POSITION:
                 case VT_ADDRESS:
-                    if ( variable->memoryArea ) {
+                    if ( variable->memoryArea && !variable->bankAssigned ) {
                         // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
                         outline1("%s: .res 2", variable->realName);
@@ -77,14 +77,14 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     break;
                 case VT_DWORD:
                 case VT_SDWORD:
-                    if ( variable->memoryArea ) {
+                    if ( variable->memoryArea && !variable->bankAssigned ) {
                         // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
                         outline1("%s: .res 4", variable->realName);
                     }
                     break;
                 case VT_STRING:
-                    if ( variable->memoryArea ) {
+                    if ( variable->memoryArea && !variable->bankAssigned ) {
                         // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
                         if ( variable->printable ) {
@@ -101,7 +101,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     }
                     break;
                 case VT_DSTRING:
-                    if ( variable->memoryArea ) {
+                    if ( variable->memoryArea && !variable->bankAssigned ) {
                         // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
                         outline1("%s: .res 1", variable->realName);
@@ -111,14 +111,14 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_TILESET:
                 case VT_SPRITE:
                 case VT_MOB:
-                    if ( variable->memoryArea ) {
+                    if ( variable->memoryArea && !variable->bankAssigned ) {
                         // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
                         outline1("%s: .res 1", variable->realName);
                     }
                     break;
                 case VT_TILES:
-                    if ( variable->memoryArea ) {
+                    if ( variable->memoryArea && !variable->bankAssigned ) {
                         // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
                         outline1("%s: .res 4", variable->realName);
@@ -129,7 +129,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_SEQUENCE:
                 case VT_MUSIC:
                 case VT_BUFFER:
-                    if ( ! variable->absoluteAddress ) {
+                    if ( ! variable->absoluteAddress || variable->bankAssigned ) {
                         if ( variable->valueBuffer ) {
                             if ( variable->printable ) {
                                 char * string = malloc( variable->size + 1 );
@@ -153,7 +153,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                             outline2("%s: .res %d", variable->realName, variable->size);
                         }
                     } else {
-                        if ( ! variable->memoryArea && variable->valueBuffer ) {
+                        if ( ! variable->memoryArea && variable->valueBuffer && ! variable->bankAssigned ) {
                             outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                             if ( variable->printable ) {
                                 char * string = malloc( variable->size + 1 );
@@ -390,7 +390,9 @@ void variable_cleanup( Environment * _environment ) {
             for( i=memoryArea->start; i<memoryArea->end; ++i ) {
                 Variable * variable = _environment->variables;
                 while( variable ) {
-                    if ( !variable->assigned && variable->memoryArea == memoryArea && variable->absoluteAddress == i ) {
+                    if ( 
+                            ( !variable->assigned && variable->memoryArea == memoryArea && variable->absoluteAddress == i )
+                     ) {
                         variable_cleanup_memory_mapped( _environment, variable );
                         variable->staticalInit = ( memoryArea->type == MAT_RAM ? 0 : 1 );
                         break;
@@ -400,7 +402,9 @@ void variable_cleanup( Environment * _environment ) {
                 for( int j=0; j< (_environment->currentProcedure+1); ++j ) {
                     Variable * variable = _environment->tempVariables[j];
                     while( variable ) {
-                        if ( !variable->assigned && variable->memoryArea == memoryArea && variable->absoluteAddress == i ) {
+                        if ( 
+                            ( !variable->assigned && variable->memoryArea == memoryArea && variable->absoluteAddress == i ) 
+                            ){
                             variable_cleanup_memory_mapped( _environment, variable );
                             variable->staticalInit = ( memoryArea->type == MAT_RAM ? 0 : 1 );
                             break;
@@ -410,7 +414,9 @@ void variable_cleanup( Environment * _environment ) {
                 }
                 variable = _environment->tempResidentVariables;
                 while( variable ) {
-                    if ( !variable->assigned && variable->memoryArea == memoryArea && variable->absoluteAddress == i ) {
+                    if ( 
+                        ( !variable->assigned && variable->memoryArea == memoryArea && variable->absoluteAddress == i ) 
+                        ) {
                         variable_cleanup_memory_mapped( _environment, variable );
                         variable->staticalInit = ( memoryArea->type == MAT_RAM ? 0 : 1 );
                         break;

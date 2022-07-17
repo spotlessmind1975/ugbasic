@@ -70,7 +70,7 @@ void target_initialization( Environment * _environment ) {
         Bank * bank = malloc( sizeof( Bank ) );
         bank->address = 0x0;
         bank->filename = NULL;
-        bank->id = i;
+        bank->id = i+1;
         bank->name = strdup( "bank" );
         bank->remains = BANK_SIZE;
         bank->space = BANK_SIZE;
