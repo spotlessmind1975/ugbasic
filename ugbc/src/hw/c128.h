@@ -123,8 +123,8 @@
 #define JOY_RIGHT           3
 #define JOY_FIRE            4
 
-#define BANK_COUNT          0
-#define BANK_SIZE           0
+#define BANK_COUNT          1
+#define BANK_SIZE           4096
 
 #define MAX_AUDIO_CHANNELS  3
 
