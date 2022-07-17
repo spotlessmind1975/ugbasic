@@ -157,13 +157,13 @@ VDPPOS:
     POP BC
     POP DE
     
-    PUSH DE
-    LD A, D
-    AND $07
-    LD E, A
-    LD D, 0
-    ADD HL, DE
-    POP DE
+    ; PUSH DE
+    ; LD A, D
+    ; AND $07
+    ; LD E, A
+    ; LD D, 0
+    ; ADD HL, DE
+    ; POP DE
 
     DI
     PUSH DE
