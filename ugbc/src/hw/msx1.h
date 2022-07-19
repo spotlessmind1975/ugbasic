@@ -136,8 +136,8 @@
 
 #define SCREEN_CAPABILITIES         ( ( 1<<TILEMAP_NATIVE ) | ( 1<<BITMAP_NATIVE ) )
 
-#define BANK_COUNT          0
-#define BANK_SIZE           0
+#define BANK_COUNT          1
+#define BANK_SIZE           4096
 
 #define JOY_COUNT           2
 
