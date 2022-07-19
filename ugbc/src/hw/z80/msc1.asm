@@ -59,12 +59,12 @@ MSC1UNCOMPRESSL1NE:
     ; If the upper bit of the token is clear,
     ; it means that there is a literal block
     ; to emit on the output stream.
-    PUSH A
+    PUSH AF
     AND $80
     JR NZ, MSC1UNCOMPRESSL1NE3
     JP MSC1LITERAL
 MSC1UNCOMPRESSL1NE3:
-    POP A
+    POP AF
 
     ; This code will parse the token, in order to
     ; retrieve the number of repetitions and the
@@ -72,7 +72,7 @@ MSC1UNCOMPRESSL1NE3:
     ; same 4 bytes for the number of repetitions given. 
 MSC1DUPES:
 
-    PUSH A
+    PUSH AF
 
     ; Take out the number of repetitions.
     AND $7F
@@ -81,27 +81,28 @@ MSC1DUPES:
     ; If repetitions is zero then repetitions
     ; will be 32 times.
     CP 0
-    BNE MSC1DUPESNE
+    JR NZ, MSC1DUPESNE
     LD A, 32
 MSC1DUPESNE:
     LD B, A
 
-    POP A
+    POP AF
 
     ; Extract the offset.
     PUSH HL
     PUSH DE
-    AND #$03
+    AND $03
     LD D, A
     LD A, (HL)
     INC HL
     LD E, A
     SBC HL, DE
-    LD BC, HL
+    LD IX, HL
     POP DE
     POP HL
+
     PUSH HL
-    LD HL, BC
+    LD HL, IX
 
     ; Recalculate the address from which to copy
     ; the output into the output again.
@@ -125,14 +126,18 @@ MSC1DUPESL1:
     LD (DE), A
     INC HL
     INC DE
-    SBC HL, 4
+    DEC HL
+    DEC HL
+    DEC HL
+    DEC HL
     DEC B
     JR NZ, MSC1DUPESL1
     POP HL
+    INC HL
     JP MSC1UNCOMPRESSL1
 
 MSC1LITERAL:
-    POP A
+    POP AF
 
     ; Take the number of literals (1...127),
     ; and copy from the pointer to the output.
