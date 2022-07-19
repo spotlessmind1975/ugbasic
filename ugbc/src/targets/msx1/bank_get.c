@@ -50,6 +50,9 @@ Variable * bank_get( Environment * _environment ) {
 
     Variable * result = variable_temporary( _environment, VT_BYTE, "(bank number)" );
 
+    outline0("LD A, (BANKSHADOW)" );
+    outline1("LD (%s), A", result->realName );
+    
     return result;
     
 }

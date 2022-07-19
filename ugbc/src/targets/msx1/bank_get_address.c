@@ -51,6 +51,12 @@ Variable * bank_get_address( Environment * _environment, int _bank ) {
 
     Variable * result = variable_temporary( _environment, VT_ADDRESS, "(bank address)" );
 
+    int address = 0xf000 + ( BANK_SIZE * ( _bank - 1 ) );
+
+    outline1("LD HL, $%4.4x", address);
+    outline1("LD (%s), L", result->realName );
+    outline1("LD (%s+1), H", result->realName );
+
     return result;
     
 }
@@ -70,7 +76,27 @@ Variable * bank_get_address( Environment * _environment, int _bank ) {
 </usermanual> */
 Variable * bank_get_address_var( Environment * _environment, char * _bank ) {
 
+    MAKE_LABEL
+
     Variable * result = variable_temporary( _environment, VT_ADDRESS, "(bank address)" );
+    Variable * bank = variable_temporary( _environment, VT_BYTE, "(bank number)" );
+
+    int address = 0xebff;
+
+    outline1("LD HL, $%4.4x", address);
+
+    outline1("LD A, (%s)", bank->realName );
+    outline0("DEC A" );
+    outline1("JR Z, %sbgaf", label );
+
+    outhead1("%sbga:", label );
+    outline1("LD DE, $%4.4x", BANK_SIZE );
+    outline0("ADC HL, DE" );
+    outline0("DEC A" );
+    outline1("JR NZ, %sbga", label );
+
+    outhead1("%sbgaf:", label );
+    outline1("LD (%s), HL", result->realName );
 
     return result;
     

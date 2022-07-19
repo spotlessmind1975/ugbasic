@@ -64,6 +64,21 @@ void target_initialization( Environment * _environment ) {
 
     // MEMORY_AREA_DEFINE( MAT_RAM, 0xd000, 0xdff0 );
 
+    for(int i=0; i<BANK_COUNT; ++i) {
+        Bank * bank = malloc( sizeof( Bank ) );
+        bank->address = 0x0;
+        bank->filename = NULL;
+        bank->id = i+1;
+        bank->name = strdup( "bank" );
+        bank->remains = BANK_SIZE;
+        bank->space = BANK_SIZE;
+        bank->next = _environment->expansionBanks;
+        bank->data = malloc( BANK_SIZE );
+        memset( bank->data, 0, BANK_SIZE );
+        _environment->expansionBanks = bank;
+        _environment->maxExpansionBankSize[i+1] = BANK_SIZE;
+    }
+
     variable_import( _environment, "EVERYSTATUS", VT_BYTE, 0 );
     variable_global( _environment, "EVERYSTATUS" );
 
@@ -103,6 +118,23 @@ void target_initialization( Environment * _environment ) {
     variable_import( _environment, "ISRSVC2", VT_BUFFER, 3 );
     variable_global( _environment, "ISRSVC2" );
 
+    variable_import( _environment, "BANKSHADOW", VT_BYTE, 0 );
+
+    for( int i=0; i<MAX_RESIDENT_SHAREDS; ++i ) {
+        if ( _environment->maxExpansionBankSize[i] ) {
+            
+            char variableName[MAX_TEMPORARY_STORAGE];
+
+            sprintf( variableName, "BANKWINDOW%2.2x", i);
+            variable_import( _environment, variableName, VT_BUFFER, _environment->maxExpansionBankSize[i] );
+            variable_global( _environment, variableName );
+
+            sprintf( variableName, "BANKWINDOWID%2.2x", i);
+            variable_import( _environment, variableName, VT_WORD, 0xffff );
+            variable_global( _environment, variableName );
+        }
+    } 
+    
     bank_define( _environment, "VARIABLES", BT_VARIABLES, 0x5000, NULL );
     bank_define( _environment, "TEMPORARY", BT_TEMPORARY, 0x5100, NULL );
 
