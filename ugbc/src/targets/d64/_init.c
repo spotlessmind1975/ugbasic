@@ -60,6 +60,21 @@ void setup_embedded( Environment * _environment ) {
 
 void target_initialization( Environment * _environment ) {
 
+    for(int i=0; i<BANK_COUNT; ++i) {
+        Bank * bank = malloc( sizeof( Bank ) );
+        bank->address = 0x0;
+        bank->filename = NULL;
+        bank->id = i+1;
+        bank->name = strdup( "bank" );
+        bank->remains = BANK_SIZE;
+        bank->space = BANK_SIZE;
+        bank->next = _environment->expansionBanks;
+        bank->data = malloc( BANK_SIZE );
+        memset( bank->data, 0, BANK_SIZE );
+        _environment->expansionBanks = bank;
+        _environment->maxExpansionBankSize[i+1] = BANK_SIZE;
+    }
+    
     variable_import( _environment, "EVERYSTATUS", VT_BYTE, 0 );
     variable_global( _environment, "EVERYSTATUS" );
 
@@ -78,7 +93,7 @@ void target_initialization( Environment * _environment ) {
     variable_global( _environment, "FREE_STRING" );    
 
     outline0("ORG $2800");
-    outline0("LDS #$8000");
+    outline0("LDS #$7000");
 
     deploy( vars, src_hw_d64_vars_asm);
     deploy( startup, src_hw_d64_startup_asm);

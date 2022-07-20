@@ -35,61 +35,60 @@
 #include "../../ugbc.h"
 
 /**
- * @brief Emit ASM code for instruction <b>BANK READ ...</b>
+ * @brief Emit ASM code for instruction <b>BANK UNCOMPRESS ...</b>
  * 
- * This function outputs the ASM code to read data from
+ * This function outputs the ASM code to uncompress data from
  * a specific bank into the RAM.
  * 
  * @param _environment Current calling environment
- * @param _bank bank from read from
- * @param _address1 address to read from (0 based)
+ * @param _bank bank from uncompress from
+ * @param _address1 address to uncompress from (0 based)
  * @param _address2 address to write to (RAM)
- * @param _size size of memory to read/write
  */
 /* <usermanual>
-@keyword BANK READ
+@keyword BANK UNCOMPRESS
+@target c64
 </usermanual> */
-void bank_read_semi_var( Environment * _environment, int _bank, int _address1, char * _address2, int _size ) {
+void bank_uncompress_semi_var( Environment * _environment, int _bank, int _address1, char * _address2 ) {
 
-    outline0("; bank read")
+    outline0("; bank uncompress")
     Variable * previous = bank_get( _environment );
     bank_set( _environment, _bank );
-    int realAddress = 0x700F + _address1;
+    int realAddress = 0xf000 + ( _bank - 1 ) * BANK_SIZE + _address1;
     char realAddressAsString[MAX_TEMPORARY_STORAGE];
     sprintf(realAddressAsString, "$%4.4x", realAddress);
-    cpu_mem_move_direct_size( _environment, realAddressAsString, _address2, _size );
+    cpu_msc1_uncompress_direct_direct( _environment, realAddressAsString, _address2 );
     bank_set_var( _environment, previous->name );
-    outline0("; end bank read")
+    outline0("; end bank uncompress")
 
 }
 
 /**
- * @brief Emit ASM code for instruction <b>BANK READ ...</b>
+ * @brief Emit ASM code for instruction <b>BANK UNCOMPRESS ...</b>
  * 
- * This function outputs the ASM code to read data from
+ * This function outputs the ASM code to uncompress data from
  * a specific bank into the RAM.
  * 
  * @param _environment Current calling environment
- * @param _bank bank from read from
- * @param _address1 address to read from (0 based)
+ * @param _bank bank from uncompress from
+ * @param _address1 address to uncompress from (0 based)
  * @param _address2 address to write to (RAM)
- * @param _size size of memory to read/write
  */
 /* <usermanual>
-@keyword BANK READ
-
+@keyword BANK UNCOMPRESS
+@target c64
 </usermanual> */
-void bank_read_vars( Environment * _environment, char * _bank, char * _address1, char * _address2, char * _size ) {
+void bank_uncompress_vars( Environment * _environment, char * _bank, char * _address1, char * _address2 ) {
 
-    outline0("; bank read")
+    outline0("; bank uncompress")
     Variable * previous = bank_get( _environment );
     bank_set_var( _environment, _bank );
     Variable * bankAddress = bank_get_address_var( _environment, _bank );
     Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
     Variable * realAddress = variable_add( _environment, bankAddress->name, address1->name );
     Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
-    mmove_memory_memory( _environment, realAddress->name, address2->name, _size );
+    cpu_msc1_uncompress_indirect_indirect( _environment, realAddress->name, address2->name );
     bank_set_var( _environment, previous->name );
-    outline0("; end bank read")
-    
+    outline0("; end bank uncompress")
+
 }

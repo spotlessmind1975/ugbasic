@@ -250,6 +250,13 @@ void variable_cleanup( Environment * _environment ) {
         }
     }
 
+    for( i=0; i<MAX_RESIDENT_SHAREDS; ++i ) {
+        if ( _environment->maxExpansionBankSize[i] ) {
+            outhead2("BANKWINDOW%2.2x rzb %d", i, _environment->maxExpansionBankSize[i]);
+            outhead1("BANKWINDOWID%2.2x fcb $FF, $FF", i );
+        }
+    }
+
     for(i=0; i<BANK_TYPE_COUNT; ++i) {
         Bank * actual = _environment->banks[i];
         while( actual ) {

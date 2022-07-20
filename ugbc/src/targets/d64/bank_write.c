@@ -51,4 +51,15 @@
 </usermanual> */
 void bank_write_vars( Environment * _environment, char * _bank, char * _address1, char * _address2, char * _size ) {
 
+    outline0("; bank write")
+    Variable * previous = bank_get( _environment );
+    bank_set_var( _environment, _bank );
+    Variable * bankAddress = bank_get_address_var( _environment, _bank );
+    Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
+    Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
+    Variable * realAddress = variable_add( _environment, bankAddress->name, address2->name );
+    mmove_memory_memory( _environment, address1->name, realAddress->name, _size );
+    bank_set_var( _environment, previous->name );
+    outline0("; end bank write")
+    
 }
