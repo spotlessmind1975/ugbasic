@@ -498,20 +498,19 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
     buffer v2 = TMP_BUF;
     buffer v3 = TMP_BUF;
     buffer v4 = TMP_BUF;
-
+    
     /* move B stuff after A stuff */
-    // if( (match(buf[0], " LDB *", v1) || match(buf[0], " STB *", v1)) && !strchr("AD$", v1->str[0])
-    // &&  sets_flag(buf[1], 'A') 
-	// &&  (!match(buf[1], " * *", NULL, v2) || _strcmp(v1, v2)) ) {
-    //     int x = 1, i;
-    //     if( match(buf[x+1], "* equ ", NULL)) ++x;
-    //     if(!match(buf[x+1], " IF ") && !isConditionnal(buf[x+1])) {
-    //         buf_cpy(v1, buf[0]->str);
-    //         for(i=0; i<x; ++i) buf_cpy(buf[i], buf[i+1]->str);
-    //         buf_cpy(buf[x], v1->str);
-    //     }
-    // }
-
+    if( (match(buf[0], " LDB *", v1) || match(buf[0], " STB *", v1)) && !strchr("AD$", v1->str[0])
+    &&  sets_flag(buf[1], 'A') 
+	&&  (!match(buf[1], " * *", NULL, v2) || _strcmp(v1, v2)) ) {
+        int x = 1, i;
+        if( match(buf[x+1], "* equ ", NULL)) ++x;
+        if(!match(buf[x+1], " IF ") && !isConditionnal(buf[x+1])) {
+            buf_cpy(v1, buf[0]->str);
+            for(i=0; i<x; ++i) buf_cpy(buf[i], buf[i+1]->str);
+            buf_cpy(buf[x], v1->str);
+        }
+    }
 	/* move D stuff before X stuff */
 	if( (match(buf[0], " LDX _*", v1) || match(buf[0], " LDX #*", v1) || match(buf[0], " STX _*", v1)) 
     &&   match(buf[1], " *DD _*", NULL,v2) 
@@ -550,7 +549,10 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
 
         if(unsafe && match(buf[2], " * [", NULL))
             optim( buf[0], "(unsafe, presumed dead)", NULL);
-        optim( buf[1], RULE "(STORE*,LOAD*)->(STORE*)", NULL);
+
+        if ( strcmp( v2->str, "$A7C1") ) {
+            optim( buf[1], RULE "(STORE*,LOAD*)->(STORE*)", NULL);
+        }
     }
 
 
@@ -580,6 +582,7 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
     if ( match( buf[0], " LD")
     &&   match( buf[1], " ST")
     && _strcmp( buf[2], buf[0] )==0
+    && !strchr( buf[0]->str, '+' )
     && unsafe) {
         optim( buf[2], RULE "(LOAD*,STORE,LOAD*)->(LOAD*,STORE)", NULL);
     }
@@ -601,6 +604,7 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
 
     if ( match(buf[0], " ST* *", NULL, v1)
     &&   match(buf[1], " LD* *", NULL, v2)
+    &&  ( !strchr(v1->str,'+') && !strchr(v2->str,'+') )
     && _strcmp(v1, v2)!=0
     && _strcmp(buf[0],buf[2])==0 ) {
         optim(buf[0], RULE "(STORE*,LOAD,STORE*)->(LOAD,STORE*)", NULL);
@@ -619,6 +623,8 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
     }
     if ( (match(buf[0], " ST* *+", NULL, v1) || match(buf[0], " ST* *", NULL, v1))
     &&   !isBranch(buf[1]) && match(buf[1], " * *", NULL, v2) && _strcmp(v1, v2)!=0
+	&&  strchr(buf[0]->str,'+')==NULL
+	&&  strchr(buf[1]->str,'+')==NULL
     && _strcmp(buf[2], buf[0])==0) {
         optim(buf[0], RULE "(STORE*,?,STORE*)->(?,STORE*)", NULL);
     }
@@ -1140,7 +1146,7 @@ static void vars_scan(buffer buf[LOOK_AHEAD]) {
     &&  arg->len==2
     &&  (*tmp->str!='_' || tmp->str[1]=='T')) {
         int v = strtol(arg->str, NULL, 16);
-        if (v > vars.page0_max) vars.page0_max = v+2;
+        if (v >= vars.page0_max) vars.page0_max = v+2;
     }
 }
 
@@ -1469,21 +1475,8 @@ static int optim_pass( Environment * _environment, buffer buf[LOOK_AHEAD], enum 
     (void)fclose(fileAsm);
     (void)fclose(fileOptimized);
 
-    // static int step = 0;
-    // /* makes our generated file the new asm file */
-    // char stepFileName[MAX_TEMPORARY_STORAGE];
-    // sprintf( stepFileName, "step%d.asm", step++ );
-
-    // fileOptimized = fopen(_environment->asmFileName, "rb");
-    // FILE * stepFile = fopen(stepFileName, "wb");
-    // while(!feof( fileOptimized ) ) {
-    //     char line[128];
-    //     fread( line, 1, 128, fileOptimized );
-    //     fwrite( line, 1, 128, stepFile );
-    // }
-    // fclose( stepFile );
-    // fclose( fileOptimized );
-
+    /* makes our generated file the new asm file */
+    remove(_environment->asmFileName);
     (void)rename( fileNameOptimized, _environment->asmFileName );
     
     return change;
