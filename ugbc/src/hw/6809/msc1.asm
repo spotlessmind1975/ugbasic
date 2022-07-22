@@ -87,9 +87,8 @@ MSC1DUPESNE
 
     ; Extract the offset.
     LEAX -1, X
-    LDD ,X
+    LDD ,X++
     ANDA #$03
-    LEAX 2, X
 
     STD <MATHPTR0
 
