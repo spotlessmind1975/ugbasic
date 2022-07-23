@@ -56,9 +56,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     if ( variable->memoryArea ) {
                         outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outhead0("section data_user");
                         outline1("%s: defs 1", variable->realName);
-                        outhead0("section code_user");
                     }
                     break;
                 case VT_WORD:
@@ -68,9 +66,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     if ( variable->memoryArea ) {
                         outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outhead0("section data_user");
                         outline1("%s: defs 2", variable->realName);
-                        outhead0("section code_user");
                     }
                     break;
                 case VT_DWORD:
@@ -78,9 +74,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     if ( variable->memoryArea ) {
                         outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outhead0("section data_user");
                         outline1("%s: defs 4", variable->realName);
-                        outhead0("section code_user");
                     }
                     break;
                 case VT_STRING:
@@ -100,54 +94,42 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     if ( variable->memoryArea ) {
                         outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outhead0("section data_user");
                         outline1("%s: db 0", variable->realName);
-                        outhead0("section code_user");
                     }
                     break;
                 case VT_MOB:
                     if ( variable->memoryArea ) {
                         outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outhead0("section data_user");
                         outline1("%s: db 0", variable->realName);
-                        outhead0("section code_user");
                     }
                     break;
                 case VT_SPRITE:
                     if ( variable->memoryArea ) {
                         outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outhead0("section data_user");
                         outline1("%s: db 0", variable->realName);
-                        outhead0("section code_user");
                     }
                     break;
                 case VT_TILE:
                     if ( variable->memoryArea ) {
                         outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outhead0("section data_user");
                         outline1("%s: db 0", variable->realName);
-                        outhead0("section code_user");
                     }
                     break;
                 case VT_TILESET:
                     if ( variable->memoryArea ) {
                         outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outhead0("section data_user");
                         outline1("%s: db 0", variable->realName);
-                        outhead0("section code_user");
                     }
                     break;
                 case VT_TILES:
                     if ( variable->memoryArea ) {
                         outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outhead0("section data_user");
                         outline1("%s: db 0,0,0,0", variable->realName);
-                        outhead0("section code_user");
                     }
                     break;
                 case VT_IMAGE:
@@ -176,9 +158,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                 outline1("%d", variable->valueBuffer[(variable->size-1)]);
                             }
                         } else {
-                            outhead0("section data_user");
                             outline2("%s: defs %d", variable->realName, variable->size);
-                            outhead0("section code_user");
                         }
                     } else {
                         outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
@@ -200,7 +180,6 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     }
                     break;
                 case VT_ARRAY: {
-                    outhead0("section data_user");
                     if ( variable->valueBuffer ) {
                         out1("%s: db ", variable->realName);
                         int i=0;
@@ -213,7 +192,6 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     } else {
                         outline2("%s: defs %d", variable->realName, variable->size);
                     }
-                    outhead0("section code_user");
                     break;
                 }
             }
