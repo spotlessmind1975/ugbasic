@@ -138,7 +138,7 @@ void target_initialization( Environment * _environment ) {
     bank_define( _environment, "VARIABLES", BT_VARIABLES, 0x5000, NULL );
     bank_define( _environment, "TEMPORARY", BT_TEMPORARY, 0x5100, NULL );
 
-    outhead0("ORG $5000");
+    outhead0("ORG $4A0A");
     outhead0("CODESTART:")
     
     outline0("CALL VARINIT");

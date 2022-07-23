@@ -51,83 +51,11 @@ void target_finalization( Environment * _environment ) {
 
 // -------------------------------------------------------------------------
 // CONVERT BINARY TO K7 TAPE FILE 
-// ORIGINALLY FOR THOMSON MO6 / PC128 OLIVETTI PRODEST
-// PORTED TO VG5000
-//
-// This code was originally present in the repository 
-// "PC 128 Olivetti Prodest (Thomson MO6) tools collection"
-// https://github.com/dinoflorenzi/MO5
-//
-// Code courtesy of Dino Florenzi (https://github.com/dinoflorenzi)
-// Adapted by Marco Spedaletti for ugBASIC
 // -------------------------------------------------------------------------
 
 #include<stdlib.h>
 #include<stdio.h>
 #include<math.h>
-
-int frmt( Environment * _environment, char * ptr, char size,char* out)
-{
-	memset(out,0x20,11);
-	char * point=".";
-	int k=0,i=0;
-		int p=strcspn(ptr,point);
-		if(p==size-1||p>8||size>12||p==0)
-		{
-    		CRITICAL("abort");
-			// printf("incompatible string\nplease use *******.*** format\n");
-			// return -1;
-		}
-		for(i=0;i<size;i++)
-		{
-			if(i==p)
-			k+=(8-p);
-			else
-			{
-		      out[k]=ptr[i];
-		      k++;
-			}
-			
-		}
-		return 0;
-}
-
-/* http://dcmoto.free.fr/documentation/moniteur-mo5-casst/moniteur-mo5-casst_src.txt */
-static unsigned char blk[257];
-static void new_blk(int type) 
-{
-    blk[0] = type;                  /* set type ok k7 block: 0=file-name, 1=file-data, 0xFF=end-of-file */
-    blk[1] = 0;                     /* len = 0 */
-    blk[256] = 0;                   /* checksum = 0 */
-}
-static void out_blk(FILE *f) 
-{
-    static unsigned char hdr[]={1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0x3c,0x5a}; /* k7 block-header */
-    int pos = 2 + blk[1];	    /* get checksum pos */
-    blk[1] = pos;		    /* update block len */
-    blk[pos] = 256 - blk[256];      /* complement checksum */
-    fwrite(hdr, sizeof(hdr), 1, f); /* write block header */
-    fwrite(blk, pos+1, 1, f);       /* then block content */
-    new_blk(blk[0]);                /* prepare a new block of the same kind */
-}
-
-static void write_byte(FILE *f, int byte) 
-{
-    blk[256] += (unsigned char)byte;/* update checksum */
-    blk[2 + blk[1]++] = byte;       /* update index & store byte */
-    if(254 == blk[1]) out_blk(f);   /* when block is full, write it */
-}
-static void write_word(FILE *f, int word) 
-{
-    write_byte(f, word >> 8);
-    write_byte(f, word & 255);
-}
-static void write_bytes(FILE *f, void *array, int len) 
-{
-    unsigned char *ptr = array;
-    size_t cnt = len;
-    while(cnt--) write_byte(f, *ptr++);
-}
 
 int convertbintok7(Environment * _environment)
 {
@@ -151,13 +79,6 @@ int convertbintok7(Environment * _environment)
         CRITICAL_CANNOT_OPEN_EXECUTABLE_FILE( temporaryFileName );
     }
 
-    if(frmt(_environment, "main.exe",strlen("main.exe"),nome))
-    {
-        CRITICAL("abort");
-    }
-
-    unsigned char file_type[]={0x02,0x00,0x00}; /* binary k7 file */
-
     fr=fopen(temporaryFileName,"rb");
 
     strcpy(destin,_environment->exeFileName);
@@ -167,64 +88,62 @@ int convertbintok7(Environment * _environment)
     size = ftell(fr);
     rewind(fr);
 
-    new_blk(0); /* k7 block 0: file name + type */
-    write_bytes(fw, &nome[0], sizeof(nome)-1); /* file name */
-    write_bytes(fw, &file_type[0], 3); /* file type */
-    out_blk(fw); /* done with block 0 */
-    
-    new_blk(1); /* k7 block 1: content of file */
-    write_byte(fw, 0); /* binary chunk */
-    write_word(fw, size); /* size of chunk */
-    write_word(fw, start); /* load address */
-    for (int i=0;i<size;i++)
-    {
-        unsigned char byt;
-        (void)!fread(&byt,1,1,fr);
-        write_byte(fw, byt); /* data */
+    unsigned char header[] = {
+        0xd3, 0xd3, 0xd3, 0xd3, 0xd3, 0xd3, 0xd3, 0xd3,
+        0xd3, 0xd3, 0x4d, 'm', 'a', 'i', 'n', 0x00,
+        0x00, 0x00, 0x31, 0x30, 0x00, 0x00, 0x00, 0x00, 
+        0x00, 0x00, 0xfb, 0x49, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0xd6, 0xd6, 0xd6, 0xd6, 0xd6, 0xd6, 0xd6, 
+        0xd6, 0xd6, 0xd6
+    };
+
+    unsigned char basic[] = {
+        0x00, 0x08, 0x4a, 0x0a, 0x00,
+        0x9f, 0x31, 0x38, 0x39, 0x35,
+        0x34, 0x3a, 0x00, 0x00, 0x00
+    };
+
+    int length = size + sizeof( basic );
+    int checksum = 0;
+
+    for( int i=0; i<sizeof(basic); ++i ) {
+        checksum += basic[i];
     }
-    
-    write_byte(fw, 0xff); /* execution chunk */
-    write_word(fw, 0x0000); /* len = 0 */
-    write_word(fw, runaddr); /* exec address */
-    out_blk(fw); /* done with k7 block 1 */
-    new_blk(0xff); /* k7 block 0xff : end of k7 file */
-    out_blk(fw); /* done with it */
 
-    Bank * bank = _environment->expansionBanks;
-
-    while( bank ) {
-
-        if ( bank->address ) {
-
-            char bankNumber[MAX_TEMPORARY_STORAGE];
-            sprintf( bankNumber, "bank%2.2x  dat", bank->id );
-
-            new_blk(0); /* k7 block 0: file name + type */
-            write_bytes(fw, bankNumber, 11); /* file name */
-            write_bytes(fw, &file_type[0], 3); /* file type */
-            out_blk(fw); /* done with block 0 */
-
-            new_blk(1); /* k7 block 2: content of file */
-            write_byte(fw, 0); /* binary chunk */
-            write_word(fw, bank->address); /* size of chunk */
-            write_word(fw, start); /* load address */
-            for (int i=0;i<bank->address;i++)
-            {
-                unsigned char byt = bank->data[i];
-                write_byte(fw, byt); /* data */
-            }
-            
-            out_blk(fw); /* done with k7 block 1 */
-
-        }
-    
-        new_blk(0xff); /* k7 block 0xff : end of k7 file */
-        out_blk(fw); /* done with it */
-
-        bank = bank->next;
-
+    for( int i=0; i<size; ++i ) {
+        unsigned char c = (unsigned char) fgetc(fr);
+        checksum += c;
     }
-        
+
+    header[28] = ( length & 0xff );
+    header[29] = ( ( length>>8) & 0xff );
+    header[30] = ( checksum & 0xff );
+    header[31] = ( ( checksum >> 8 ) & 0xff );
+
+    fwrite( header, sizeof( header ), 1, fw );
+    fwrite( basic, sizeof( basic ), 1, fw );
+
+    fseek( fr, 0, SEEK_SET );
+    for( int i=0; i<size; ++i ) {
+        unsigned char c = (unsigned char) fgetc(fr);
+        fputc(c, fw);
+    }
+    fputc(0, fw);
+    fputc(0, fw);
+    fputc(0, fw);
+    fputc(0, fw);
+    fputc(0, fw);
+    fputc(0, fw);
+    fputc(0, fw);
+    fputc(0, fw);
+    fputc(0, fw);
+    fputc(0, fw);
+    fputc(0, fw);
+    fputc(0, fw);
+    fputc(0, fw);
+    fputc(0, fw);
+    fputc(0, fw);
+
     fclose(fr);
     fclose(fw);
     
