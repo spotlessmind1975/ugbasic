@@ -44,7 +44,7 @@ test:
 	@echo "--- END TEST ---"
 
 generated/c64/asm/%.asm:
-	@ugbc/exe/ugbc.c64 -c $(subst /asm/,/cfg/,$(@:.asm=.cfg)) $(subst generated/c64/asm/,examples/,$(@:.asm=.bas)) $@
+	@ugbc/exe/ugbc.c64 -L $(@:.asm=.listing) -c $(subst /asm/,/cfg/,$(@:.asm=.cfg)) $(subst generated/c64/asm/,examples/,$(@:.asm=.bas)) $@
 
 generated/c64/exe/%.prg: $(subst /exe/,/asm/,$(@:.prg=.asm))
 	@cl65 -Ln $(@:.prg=.lbl) --listing $(@:.prg=.lst) -g -o $@ --mapfile $(@:.prg=.map) -t c64 -C $(subst /exe/,/cfg/,$(@:.prg=.cfg)) $(subst /exe/,/asm/,$(@:.prg=.asm))
@@ -108,10 +108,10 @@ generated/d64/exe/%.bin: $(subst /exe/,/asm/,$(@:.bin=.asm))
 	@asm6809 -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -D -e 10240 -o $@ $(subst /exe/,/asm/,$(@:.bin=.asm))
 
 generated/pc128op/asm/%.asm: compiler
-	@ugbc/exe/ugbc.pc128op $(subst generated/pc128op/asm/,examples/,$(@:.asm=.bas)) $@
+	@ugbc/exe/ugbc.pc128op -L generated/pc128op/asm/output.listing $(subst generated/pc128op/asm/,examples/,$(@:.asm=.bas)) $@
 
 generated/pc128op/exe/%.k7: compiler
-	@ugbc/exe/ugbc.pc128op $(subst generated/pc128op/exe/,examples/,$(@:.k7=.bas)) -o $@
+	@ugbc/exe/ugbc.pc128op -L generated/pc128op/asm/output.listing $(subst generated/pc128op/exe/,examples/,$(@:.k7=.bas)) -o $@
 
 generated/pc128op/exe/%.bin: compiler
 	@asm6809 -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -D -e 10240 -o $@ $(subst /exe/,/asm/,$(@:.bin=.asm))
@@ -176,6 +176,15 @@ generated/sg1000/exe/%.rom:
 	@mv $(subst /exe/,/asm/,$(@:.rom=_code_user.bin)) $(@:.rom=_code_user.bin)
 	@mv $(subst /exe/,/asm/,$(@:.rom=_data_user.bin)) $(@:.rom=_data_user.bin)
 	@cat $(@:.rom=_code_user.bin) $(@:.rom=_data_user.bin) >$(@)
+
+generated/vg5000/asm/%.asm:
+	@ugbc/exe/ugbc.vg5000 $(subst generated/vg5000/asm/,examples/,$(@:.asm=.bas)) $@ 
+
+generated/vg5000/exe/%.bin: compiler
+	@z88dk-z80asm -l -m -s -g -b $(subst /exe/,/asm/,$(@:.rom=.asm))
+
+generated/vg5000/exe/%.k7:
+	@ugbc/exe/ugbc.vg5000 -L generated/vg5000/asm/output.listing $(subst generated/vg5000/exe/,examples/,$(@:.k7=.bas)) -o $@
 
 paths:
 	@mkdir -p generated

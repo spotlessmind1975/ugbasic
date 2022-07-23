@@ -5539,7 +5539,10 @@ char * image_load_asserts( Environment * _environment, char * _filename ) {
     strcat( lookedFilename, "/sg1000" );
 #elif __c128__
     strcat( lookedFilename, "/c128" );
+#elif __vg5000__
+    strcat( lookedFilename, "/vg5000" );
 #endif
+
     if ( strlen( lookedExtension ) ) {
         strcat( lookedFilename, lookedExtension );
     }

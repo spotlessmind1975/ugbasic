@@ -994,12 +994,15 @@ typedef struct _Deployed {
     int msx1vars;
     int sc3000vars;
     int sg1000vars;
+    int vg5000vars;
     int colecovars;
     int tms9918vars;
     int tms9918varsGraphic;
     int tms9918startup;
     int ef936xvars;
     int ef936xstartup;
+    int ef9345vars;
+    int ef9345startup;
     int plot;
     int dstring;
     int scancode;
@@ -2926,6 +2929,11 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "hw/vic2.h"
     #include "hw/sid.h"
     #include "hw/c128.h"
+#elif __vg5000__
+    #include "../src-generated/modules_vg5000.h"
+    #include "hw/z80.h"
+    #include "hw/vg5000.h"
+    #include "hw/ef9345.h"
 #endif
 
 #endif

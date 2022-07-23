@@ -5924,6 +5924,8 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     char target[MAX_TEMPORARY_STORAGE] = "SEGA SC-3000";
 #elif __sg1000__
     char target[MAX_TEMPORARY_STORAGE] = "SEGA SG-1000";
+#elif __vg5000__
+    char target[MAX_TEMPORARY_STORAGE] = "Philips VG5000";
 #endif
 
     printf("--------------------------------------------------\n");
@@ -5990,6 +5992,8 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     printf("\t                rom - cartridge ROM\n" );
 #elif __sc3000__
     printf("\t                rom - cartridge ROM\n" );
+#elif __vg5000__
+    printf("\t                k7 - K7 format\n" );
 #endif
     printf("\t-l <name>    Output filename with list of variables defined\n" );
     printf("\t-e <modules> Embed specified modules instead of inline code\n" );
@@ -6049,6 +6053,8 @@ int main( int _argc, char *_argv[] ) {
     _environment->outputFileType = OUTPUT_FILE_TYPE_ROM;
 #elif __c128__
     _environment->outputFileType = OUTPUT_FILE_TYPE_PRG;
+#elif __vg5000__
+    _environment->outputFileType = OUTPUT_FILE_TYPE_K7_NEW;
 #endif
 
     while ((opt = getopt(_argc, _argv, "ae:c:Wo:Ie:l:EO:dL:C:VA:T:1p:G:X:P:q:")) != -1) {

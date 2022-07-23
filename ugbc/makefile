@@ -30,7 +30,7 @@
 
 FLEX_OPTIONS=--8bit 
 BISON_OPTIONS=--locations -d -Wcounterexamples
-CFLAGS=-O3 -fomit-frame-pointer
+CFLAGS=-O3 -fomit-frame-pointer -g
 LFLAGS=
 LIBS=-lm
 
@@ -60,6 +60,9 @@ src-generated/fontvic2.c:
 src-generated/fonttms9918.c:
 	@xxd -i $(subst src-generated/,data/,$(@:.c=.bin)) >$@
 
+src-generated/fontef9345.c:
+	@xxd -i $(subst src-generated/,data/,$(@:.c=.bin)) >$@
+
 # ----------------------------------------------------------------------------
 # Components and chipsets
 # ----------------------------------------------------------------------------
@@ -79,6 +82,14 @@ SOURCES_6847 := $(subst src/hw/6847/,src-generated/6847_,$(MODULES_6847:.asm=.c)
 
 src-generated/6847_%.c: $(MODULES_6847)
 	@xxd -i $(subst src-generated/6847_,src/hw/6847/,$(@:.c=.asm)) >$@
+
+# Thomson EF9345
+
+MODULES_EF9345 := $(wildcard src/hw/ef9345/*.asm)
+SOURCES_EF9345 := $(subst src/hw/ef9345/,src-generated/ef9345_,$(MODULES_EF9345:.asm=.c)) src-generated/fontef9345.c
+
+src-generated/ef9345_%.c: $(MODULES_EF9345)
+	@xxd -i $(subst src-generated/ef9345_,src/hw/ef9345/,$(@:.c=.asm)) >$@
 
 # Thomson EF936x
 
@@ -371,6 +382,19 @@ src-generated/modules_msx1.c: $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_AY8910
 	@cat $(SOURCES_Z80) $(SOURCES_TMS9918) $(SOURCES_AY8910) $(SOURCES_MSX1) >src-generated/modules_msx1.c
 	@grep "src" src-generated/modules_msx1.c | awk -f modules.awk >src-generated/modules_msx1.h
 	@grep "data" src-generated/modules_msx1.c | awk -f modules.awk >>src-generated/modules_msx1.h
+
+# VG5000
+
+MODULES_VG5000 := $(wildcard src/hw/vg5000/*.asm)
+SOURCES_VG5000 := $(subst src/hw/vg5000/,src-generated/vg5000_,$(MODULES_VG5000:.asm=.c))
+
+src-generated/vg5000_%.c: $(MODULES_VG5000)
+	@xxd -i $(subst src-generated/vg5000_,src/hw/vg5000/,$(@:.c=.asm)) >$@
+
+src-generated/modules_vg5000.c: $(SOURCES_Z80) $(SOURCES_VG5000) $(SOURCES_EF9345)
+	@cat $(SOURCES_Z80) $(SOURCES_EF9345) $(SOURCES_VG5000) >src-generated/modules_vg5000.c
+	@grep "src" src-generated/modules_vg5000.c | awk -f modules.awk >src-generated/modules_vg5000.h
+	@grep "data" src-generated/modules_vg5000.c | awk -f modules.awk >>src-generated/modules_vg5000.h
 
 # ZX Spectrum
 
