@@ -4111,13 +4111,17 @@ void z80_dstring_vars( Environment * _environment ) {
     int count = _environment->dstring.count == 0 ? DSTRING_DEFAULT_COUNT : _environment->dstring.count;
     int space = _environment->dstring.space == 0 ? DSTRING_DEFAULT_SPACE : _environment->dstring.space;
 
+#ifndef __vg5000__
     outhead0("section data_user" );
+#endif
     outhead1("MAXSTRINGS:                   DB %d", count );
     outhead1("DESCRIPTORS:                  DEFS %d", count * 4 );
     outhead1("WORKING:                      DEFS %d", space );
     outhead1("TEMPORARY:                    DEFS %d", space );
     outhead1("FREE_STRING:                  DB $ff, $%2.2x", ((space)>>8)& 0xff );
+#ifndef __vg5000__
     outhead0("section code_user" );
+#endif
 
 }
 
