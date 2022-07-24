@@ -36,10 +36,15 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 TEXTATDECODE:
-    CP $61
-    JR C, TEXTATDECODE0
-    SUB $20
-TEXTATDECODE0:
+    ; CP $20
+    ; JR NC, TEXTATDECODE0
+;     CP $61
+;     JR C, TEXTATDECODE1
+;     SUB $20
+;     JP TEXTATDECODE1
+; TEXTATDECODE0:
+;     LD A, $20
+; TEXTATDECODE1:
     RET
 
 TEXTAT:
@@ -336,6 +341,10 @@ TEXTATSP0:
 
     LD D, REGISTER6
     LD A, (YCURSYS)
+    CP 0
+    JR Z, TEXTATSP0Y
+    ADD $07
+TEXTATSP0Y:
     LD E, A
     CALL EF9345LIB ; D=38 (registre R6) to say that we are going to give the line number, E line number
 
