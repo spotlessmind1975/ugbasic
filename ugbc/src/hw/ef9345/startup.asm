@@ -35,78 +35,6 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-; REDEFINE A CHARACTER
-;   A = character code
-;   HL = character definition
-EF9345CHARCREATION:
-    LD B, $C0
-    BIT 7,A
-    JR Z, EF9345CHARCREATIONL1
-    LD B, $40
-EF9345CHARCREATIONL1:
-    PUSH BC
-    LD (IX+$01), $00
-    SET 7, A
-    LD E, A
-    LD D, $22
-    EX AF, AF'    
-    CALL EF9345SETREG
-    POP AF
-    PUSH AF
-    XOR $80
-    LD E, A
-    LD D, $21
-    CALL EF9345SETREG
-    LD D, $20
-    LD E, $03
-    CALL EF9345SETREG
-    LD D, $24
-    EX AF, AF'
-    LD E, A
-    EX AF,AF'
-    LD A, E
-    RRA
-    RRA
-    AND $1F
-    LD E, A
-    CALL EF9345SETREG
-    LD D, $25
-    EX AF, AF'
-    AND $03
-    POP BC
-    OR B
-    LD E, A
-    CALL EF9345SETREG
-    LD D, $20
-    LD E, $34
-    CALL EF9345SETREG
-    LD B, $0A
-    LD A, (HL)
-    INC HL
-    PUSH BC    
-    LD B, $08
-EF9345CHARCREATIONL1B:
-    RLCA
-    RR C
-    DJNZ EF9345CHARCREATIONL1B
-    LD A,C
-    POP BC
-EF9345CHARCREATIONL1C:
-    LD E,A
-    LD D, $29
-    CALL EF9345SETREG
-    CALL EF9345WAIT
-    LD A, $25
-    OUT ($8F), A
-    IN A, ($CF)
-    ADD $04
-    LD E, A
-    LD D, $25
-    CALL EF9345SETREG
-    DJNZ EF9345CHARCREATIONL1C
-    LD (IX+$01), $01
-    RET
-
 ; WAIT UNTIL EF9345 IS FREE
 EF9345WAIT:
     LD A, $20
@@ -167,24 +95,6 @@ EF9345STARTUP:
     LD HL, EF9345CONFIG
     CALL EF9345INIT
 
-    ; LD D, REGISTER6
-    ; LD E, 0
-    ; CALL EF9345LIB ; D=38 (registre R6) to say that we are going to give the line number, E line number
-
-    ; LD D, REGISTER7
-    ; LD E, 39
-    ; CALL EF9345LIB ; D=39 (registre R7) to say that we are going to give the column number, E column number
-
-    ; LD D, REGISTER1
-    ; LD E, 65
-    ; CALL EF9345LIB  ;D=33(registre R1)to say that we are going to give the number of the character to display
-    ;                 ;E = character to display
-
-    ; LD D, REGISTERE
-    ; LD E, 0
-    ; CALL EF9345LIB ; D=40 (Registre R0 + 8 for execution) et E=0 says
-    ;                 ; to ef9345 to execute the commands we defined earlier
-
     ; Restore registers
     POP IX
     POP HL
@@ -200,7 +110,4 @@ EF9345CONFIG:
     DB  $21, $7F, $28, $83  ; PAT
     DB  $21, $02, $28, $82  ; MAT green margin color no cursor fixed characters
     DB  $21, $23, $28, $84  ; DOR video memory sharing
-
-EF9345CHARACTER:
-    DB  $18, $6F, $6D, $B4, $D1, $47, $1E, $79, $F9, $24
 
