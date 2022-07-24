@@ -1,5 +1,5 @@
-#ifndef __UGBC_EF945__
-#define __UGBC_EF945__
+#ifndef __UGBC_EF9345__
+#define __UGBC_EF9345__
 
 /*****************************************************************************
  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
@@ -33,53 +33,78 @@
 
 #include "../ugbc.h"
 
-#define COLOR_BLACK					0
-#define COLOR_WHITE					1
-#define COLOR_RED					2
-#define COLOR_CYAN					3
-#define COLOR_VIOLET				4
-#define COLOR_GREEN					5
-#define COLOR_BLUE					6
-#define COLOR_YELLOW				7	
-#define COLOR_ORANGE				COLOR_YELLOW
-#define COLOR_BROWN					COLOR_RED
-#define COLOR_LIGHT_RED				COLOR_RED
-#define COLOR_DARK_GREY				COLOR_BLUE
-#define COLOR_GREY					COLOR_CYAN
-#define COLOR_LIGHT_GREEN			COLOR_GREEN
-#define COLOR_LIGHT_BLUE		 	COLOR_BLUE
-#define COLOR_LIGHT_GREY			COLOR_WHITE
-#define COLOR_DARK_BLUE				6
-#define COLOR_MAGENTA				COLOR_RED
+#define VDP_R0          0x80
+#define VDP_R1          0x81
+#define VDP_RNAME       0x82
+#define VDP_RCOLORTABLE 0x83
+#define VDP_RPATTERN    0x84
+#define VDP_RSPRITEA    0x85
+#define VDP_RSPRITEP    0x86
+#define VDP_RCOLOR      0x87
+
+#define WVDP( r, v ) \
+    outline1("LD A, $%2.2x", ( r & 0xff ) ); \
+    outline0("LD E, A" ); \
+    outline1("LD A, $%2.2x", ( v & 0xff ) ); \
+    outline0("CALL VDPSETREG" );
+#define WVDP_R0( v )            WVDP( VDP_R0, v )
+#define WVDP_R1( v )            WVDP( VDP_R1, v )
+#define WVDP_RNAME( v )         WVDP( VDP_RNAME, v )
+#define WVDP_RCOLORTABLE( v )   WVDP( VDP_RCOLORTABLE, v )
+#define WVDP_RPATTERN( v )      WVDP( VDP_RPATTERN, v )
+#define WVDP_RSPRITEA( v )      WVDP( VDP_RSPRITEA, v )
+#define WVDP_RSPRITEP( v )      WVDP( VDP_RSPRITEP, v )
+#define WVDP_RCOLOR( v )        WVDP( VDP_RCOLOR, v )
+
+#define COLOR_BLACK					0x01
+#define COLOR_WHITE					0x0f
+#define COLOR_RED					0x08
+#define COLOR_CYAN					0x07
+#define COLOR_VIOLET				0x0d
+#define COLOR_GREEN					0x02
+#define COLOR_BLUE					0x07
+#define COLOR_YELLOW				0x0b
+#define COLOR_ORANGE				0x09
+#define COLOR_BROWN					0x06
+#define COLOR_LIGHT_RED				0x09
+#define COLOR_DARK_GREY				0x0e
+#define COLOR_GREY					0x0e
+#define COLOR_LIGHT_GREEN			0x03
+#define COLOR_LIGHT_BLUE			0x05
+#define COLOR_LIGHT_GREY			0x0e
+#define COLOR_DARK_BLUE				0x04
+#define COLOR_MAGENTA				0x0d
 #define COLOR_PURPLE				COLOR_VIOLET
 #define COLOR_LAVENDER       		COLOR_VIOLET
-#define COLOR_GOLD       			COLOR_YELLOW
+#define COLOR_GOLD       			0x0a
 #define COLOR_TURQUOISE       		COLOR_LIGHT_BLUE
 #define COLOR_TAN       		    COLOR_BROWN
-#define COLOR_YELLOW_GREEN       	COLOR_YELLOW
-#define COLOR_OLIVE_GREEN       	COLOR_GREEN
+#define COLOR_YELLOW_GREEN       	0x03
+#define COLOR_OLIVE_GREEN       	0x0c
 #define COLOR_PINK       			COLOR_LIGHT_RED
 #define COLOR_PEACH       			COLOR_PINK
-#define COLOR_COUNT                 8
+#define COLOR_COUNT                 16
 
 #define DEFAULT_PEN_COLOR           COLOR_WHITE
 #define DEFAULT_PAPER_COLOR         COLOR_BLACK
 
-#define TEXT_COLUMNS_COUNT          22
-#define TEXT_ROWS_COUNT             23
+#define TEXT_COLUMNS_COUNT          40
+#define TEXT_ROWS_COUNT             25
 
-#define TILEMAP_MODE_STANDARD       0           // Standard Character Mode        22 x 23 x 8
+#define TILEMAP_MODE_STANDARD       0           // Text Mode
+// #define TILEMAP_MODE_GRAPHIC1       1           // Graphics I Mode
+// #define BITMAP_MODE_GRAPHIC2        2           // Graphics II Mode
+// #define BITMAP_MODE_MULTICOLOR      3           // Multicolor Mode
 
-#define BITMAP_MODE_DEFAULT         TILEMAP_MODE_STANDARD
+#define BITMAP_MODE_DEFAULT     TILEMAP_MODE_STANDARD
 
-#define SPRITE_COUNT                0
-#define SPRITE_WIDTH                0
-#define SPRITE_HEIGHT               0
-
+#define SPRITE_COUNT                32
+#define SPRITE_WIDTH                8
+#define SPRITE_HEIGHT               8
 #define SPRITE_X_MIN                0
 #define SPRITE_Y_MIN                0
-#define SPRITE_X_MAX                0
-#define SPRITE_Y_MAX                0
+#define SPRITE_X_MAX                264
+#define SPRITE_Y_MAX                200
 
 #define SCREEN_BORDER_X             0
 #define SCREEN_BORDER_Y             0
@@ -91,6 +116,8 @@
 #define SPRITE_FLAG_EXPAND_HORIZONTAL   0x0080
 #define SPRITE_FLAG_COMPRESS_HORIZONTAL 0x0000
 
+// #define TILES_PADDING           8
+
 int ef9345_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode );
 
 void ef9345_initialization( Environment * _environment );
@@ -100,9 +127,10 @@ void ef9345_back( Environment * _environment );
 void ef9345_background_color( Environment * _environment, int _index, int _background_color );
 void ef9345_background_color_vars( Environment * _environment, char * _index, char * _background_color );
 void ef9345_background_color_semivars( Environment * _environment, int _index, char * _background_color );
+void ef9345_colors_vars( Environment * _environment, char * _foreground_color, char * _background_color );
 void ef9345_background_color_get_vars( Environment * _environment, char * _index, char * _background_color );
 void ef9345_border_color( Environment * _environment, char * _border_color );
-void ef9345_collision( Environment * _environment, char * _sprite_mask, char * _result );
+Variable * ef9345_collision( Environment * _environment, char * _sprite );
 void ef9345_hit( Environment * _environment, char * _sprite_mask, char * _result );
 void ef9345_next_raster( Environment * _environment );
 void ef9345_next_raster_at( Environment * _environment, char * _label, char * _positionlo, char * _positionhi );
@@ -126,7 +154,7 @@ void ef9345_screen_off( Environment * _environment );
 void ef9345_screen_rows( Environment * _environment, char * _rows );
 void ef9345_screen_columns( Environment * _environment, char * _columns );
 
-void ef9345_sprite_data_from( Environment * _environment, char * _sprite, char * _address );
+void ef9345_sprite_data_from( Environment * _environment, char * _sprite, char * _image );
 void ef9345_sprite_enable( Environment * _environment, char *_sprite );
 void ef9345_sprite_disable( Environment * _environment, char * _sprite );
 void ef9345_sprite_at( Environment * _environment, char * _sprite, char * _x, char * _y );
@@ -161,6 +189,7 @@ void ef9345_scroll( Environment * _environment, int _dx, int _dy );
 Variable * ef9345_get_raster_line( Environment * _environment );
 
 Variable * ef9345_image_converter( Environment * _environment, char * _data, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags );
+Variable * ef9345_sprite_converter( Environment * _environment, char * _data, int _width, int _height, RGBi * _color );
 void ef9345_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags );
 void ef9345_wait_vbl( Environment * _environment );
 Variable * ef9345_new_image( Environment * _environment, int _width, int _height, int _mode );
@@ -170,6 +199,10 @@ void ef9345_put_tile( Environment * _environment, char * _image, char * _x, char
 void ef9345_put_tiles( Environment * _environment, char * _image, char * _x, char * _y, char *_w, char *_h );
 void ef9345_move_tiles( Environment * _environment, char * _image, char * _x, char * _y );
 void ef9345_use_tileset( Environment * _environment, char * _tileset );
-void ef9345_tile_at( Environment * _environment, char * _x, char * _y, char * _result );
+void ef9345_tile_at( Environment * _environment, char * _x, char * _y, char *_result );
+
+void ef9345_move_memory_video( Environment * _environment, char * _from, char * _to, char * _size );
+void ef9345_move_video_memory( Environment * _environment, char * _from, char * _to, char * _size );
+void ef9345_move_video_video( Environment * _environment, char * _from, char * _to, char * _size );
 
 #endif

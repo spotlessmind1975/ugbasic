@@ -32,33 +32,206 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#ifdef __vg5000__
+#if defined(__vg5000__)
 
 #include "../ugbc.h"
 #include <math.h>
 
 static RGBi SYSTEM_PALETTE[] = {
-    { 0x00, 0x00, 0x00, 0, "BLACK" },
-    { 0xff, 0xff, 0xff, 1, "WHITE" },
-    { 0x88, 0x00, 0x00, 2, "RED" },
-    { 0xaa, 0xff, 0xe6, 3, "CYAN" },
-    { 0xcc, 0x44, 0xcc, 4, "VIOLET" },
-    { 0x00, 0xcc, 0x55, 5, "GREEN" },
-    { 0x00, 0x00, 0xaa, 6, "BLUE" },
-    { 0xee, 0xee, 0x77, 7, "YELLOW" },
-    { 0xa1, 0x68, 0x3c, 8, "ORANGE" },
-    { 0xdd, 0x88, 0x65, 9, "BROWN" },
-    { 0xff, 0x77, 0x77, 10, "LIGHT_RED" },
-    { 0x33, 0x33, 0x33, 11, "DARK_GREY" },
-    { 0x77, 0x77, 0x77, 12, "GREY" },
-    { 0xaa, 0xff, 0x66, 13, "LIGHT GREEN" },
-    { 0x00, 0x88, 0xff, 14, "LIGHT BLUE" },
-    { 0xbb, 0xbb, 0xbb, 15, "LIGHT GREY" }
+        { 0x00, 0x00, 0x00, 1, "BLACK" },
+        { 0x00, 0x00, 0x00, 0, "TRANSPARENT" },
+        { 0x00, 0x80, 0x00, 2, "GREEN" },
+        { 0x00, 0xff, 0x00, 3, "LIGHT_GREEN" },
+        { 0x00, 0x00, 0x80, 4, "DARK_BLUE" },
+        { 0x00, 0x00, 0xff, 5, "LIGHT_BLUE" },
+        { 0x80, 0x00, 0x00, 6, "DARK_RED" },
+        { 0x00, 0xff, 0xff, 7, "CYAN" },
+        { 0x80, 0x00, 0x00, 8, "RED" },
+        { 0xff, 0x00, 0x00, 9, "LIGHT_RED" },
+        { 0xff, 0xff, 0x20, 10, "DARK_YELLOW" },
+        { 0xff, 0xff, 0xee, 11, "LIGHT_YELLOW" },
+        { 0x00, 0x40, 0x00, 12, "DARK_GREEN" },
+        { 0xaa, 0x00, 0xaa, 13, "MAGENTA" },
+        { 0xaa, 0xaa, 0xaa, 14, "GRAY" },
+        { 0xff, 0xff, 0xff, 15, "WHITE" }
 };
 
 /****************************************************************************
  * CODE SECTION
  ****************************************************************************/
+
+RGBi * ef9345_image_nearest_system_color( RGBi * _color ) {
+
+    int minDistance = 0xffff;
+    int colorIndex = 0;
+    for (int j = 0; j < COLOR_COUNT; ++j) {
+        int distance = rgbi_distance(&SYSTEM_PALETTE[j], _color);
+        if (distance < minDistance) {
+            minDistance = distance;
+            colorIndex = j;
+        }
+    }
+
+    return &SYSTEM_PALETTE[colorIndex];
+
+}
+
+/**
+ * This method can be used to convert 
+ *     8x8 RGB (3 bytes) pixel (_source) [8x8x3 = 192 bytes]
+ * into 
+ *     8x8 bitmap (1 bit) pixel + 8 (byte) [8x1 + 8 = 16 bytes]
+ *       foreground and background color (_dest)
+ * 
+ * Since the 8x8 pixel area belong to a larger picture,
+ * this function will need the picture _width in order
+ * to move to the next line to analyze.
+ */
+static void ef9345_image_converter_tile( char * _source, char * _dest, int _width, int _source_width ) {
+
+    int colorIndexesCount[COLOR_COUNT];
+
+    int colorBackgroundMax = 0;
+    int colorBackground[8];
+    memset( colorBackground, 0, 8 );
+    
+    int colorForegroundMax = 0;
+    int colorForeground[8];
+    memset( colorForeground, 0, 8 );
+
+    char * source = _source;
+
+    // Clear the box and colors
+    memset( _dest, 0, 16 );
+
+    // Loop for all the box surface
+    for (int y=0; y<8; ++y) {
+
+        memset(colorIndexesCount, 0, COLOR_COUNT * sizeof( int ) );
+        colorBackgroundMax = 0;
+        colorForegroundMax = 0;
+
+        for (int x=0; x<8; ++x) {
+
+            RGBi rgb;
+
+            memset( &rgb, 0, sizeof( RGBi ) );
+
+            // Take the color of the pixel
+            rgb.red = *source;
+            rgb.green = *(source + 1);
+            rgb.blue = *(source + 2);
+
+            RGBi *systemRgb = ef9345_image_nearest_system_color( &rgb );
+
+            ++colorIndexesCount[systemRgb->index];
+
+            source += 3;
+
+        }
+
+        for( int xx = 0; xx<COLOR_COUNT; ++xx ) {
+            if ( colorIndexesCount[xx] > colorBackgroundMax ) {
+                colorBackground[y] = xx;
+                colorBackgroundMax = colorIndexesCount[xx];
+            };
+        }
+
+        colorIndexesCount[colorBackground[y]] = 0;
+
+        for( int xx = 0; xx<COLOR_COUNT; ++xx ) {
+            if ( colorIndexesCount[xx] > colorForegroundMax ) {
+                colorForeground[y] = xx;
+                colorForegroundMax = colorIndexesCount[xx];
+            };
+        }
+
+        source += 3 * ( _source_width - 8 );
+
+    }
+
+    source = _source;
+
+    for (int y=0; y<8; ++y) {
+        for (int x=0; x<8; ++x) {
+
+            RGBi rgb;
+
+            memset( &rgb, 0, sizeof( RGBi ) );
+
+            rgb.red = *source;
+            rgb.green = *(source + 1);
+            rgb.blue = *(source + 2);
+
+            RGBi *systemRgb = ef9345_image_nearest_system_color( &rgb );
+
+            char bitmask = 1 << ( 7 - ((x) & 0x7) );
+
+            if ( systemRgb->index != colorBackground[y] ) {
+                *( _dest + y ) |= bitmask;
+                // printf("*");
+            } else {
+                *( _dest + y ) &= ~bitmask;
+                // printf(" ");
+            }
+
+            source += 3;
+
+        }
+
+        source += 3 * ( _source_width - 8 );
+
+    }
+
+    for( int i=0; i<8; ++i ) {
+        *( _dest + 8 + i ) = ( colorForeground[i] << 4 ) | colorBackground[i] ;
+    }
+
+}
+
+/**
+ * This method can be used to convert 
+ *     WxH RGB (3 bytes) pixel (_source) [WxHx3 bytes]
+ * into 
+ *     WxH bitmap (1 bit) pixel + (W/8xH + W/8xH) (bytes)
+ *       foreground and background color (_dest)
+ * 
+ * Since the WXH pixel area could belong to a larger picture,
+ * this function will need the picture _source_width in order
+ * to move to the next line to analyze.
+ */
+static void ef9345_image_converter_tiles( char * _source, char * _dest, int _width, int _height, int _source_width ) {
+
+    int bitmapSize = ( _width>>3 ) * _height;
+    int colormapSize = ( _width>>3 ) * _height;
+
+    memset( _dest, 0, bitmapSize + colormapSize );
+
+    for( int y=0; y<_height; y+=8 ) {
+        for( int x=0; x<_width; x+=8 ) {
+
+            char * source = _source + ( ( y * _source_width ) + x ) * 3;
+            char tile[16];
+
+            ef9345_image_converter_tile( source, tile, _width, _source_width );
+
+            int offset = ((y>>3) * 8 *( _width >> 3 ) ) + ((x>>3) * 8) + ((y) & 0x07);
+            // x = 8, y = 8
+            // offset = ((8 >> 3) * 8 * (16>>3) ) + ((8>>3) * 8) + ((8) & 7)
+            // offset = (1 * 8 * 2 ) + (1 * 8)
+            // offset = 16 + 8 = 24
+
+            char * destBitmap = _dest + offset;
+            char * destColormap = _dest + bitmapSize + offset;
+            for( int i=0; i<8; ++i ) {
+                *destBitmap = tile[i];
+                *destColormap = tile[i+8];
+                ++destBitmap;
+                ++destColormap;
+            }
+        }
+    }
+}
 
 /**
  * @brief <i>EF9345</i>: emit code to check for collision
@@ -71,7 +244,7 @@ static RGBi SYSTEM_PALETTE[] = {
  * @param _sprite_mask Sprite mask to use
  * @param _result Where to store the result
  */
-void ef9345_collision( Environment * _environment, char * _sprite_mask, char * _result ) {
+Variable * ef9345_collision( Environment * _environment, char * _sprite ) {
 
 }
 
@@ -81,12 +254,14 @@ void ef9345_collision( Environment * _environment, char * _sprite_mask, char * _
  * This function can be used to issue code aimed at verifying if a sprite has 
  * had a collision with a tile. The result (0 = no collision, 1 = 
  * collision occurred) is returned in the output variable.
- * 
+ * *
  * @param _environment Current calling environment
  * @param _sprite_mask Sprite mask to use
  * @param _result Where to store the result
  */
 void ef9345_hit( Environment * _environment, char * _sprite_mask, char * _result ) {
+
+    //todo
 
 }
 
@@ -128,7 +303,7 @@ void ef9345_background_color( Environment * _environment, int _index, int _backg
  * @param _background_color Background color to use
  */
 void ef9345_background_color_vars( Environment * _environment, char * _index, char * _background_color ) {
- 
+
 }
 
 /**
@@ -142,7 +317,7 @@ void ef9345_background_color_vars( Environment * _environment, char * _index, ch
  * @param _background_color Background color to use
  */
 void ef9345_background_color_semivars( Environment * _environment, int _index, char * _background_color ) {
- 
+
 }
 
 /**
@@ -170,7 +345,7 @@ void ef9345_background_color_get_vars( Environment * _environment, char * _index
  * @param _common_color Index of the color to use
  */
 void ef9345_sprite_common_color( Environment * _environment, char * _index, char * _common_color ) {
- 
+
 }
 
 /**
@@ -288,64 +463,37 @@ static int rgbConverterFunction( int _red, int _green, int _blue ) {
 
 int ef9345_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
 
-    // deploy( bitmap, src_hw_ef9345_bitmap_asm );
-    Variable * colormapAddress = variable_retrieve( _environment, "COLORMAPADDRESS" );
+    cpu_store_8bit( _environment, "_PEN", DEFAULT_PEN_COLOR );
+    cpu_store_8bit( _environment, "_PAPER", DEFAULT_PAPER_COLOR );
 
-    _environment->fontWidth = 8;
-    _environment->fontHeight = 8;
-    _environment->screenTiles = 255;
     switch( _screen_mode->id ) {
-        // case BITMAP_MODE_STANDARD:
-        //     _environment->screenTilesWidth = 16;
-        //     _environment->screenTilesHeight = 16;
-
-        //     outline0("CALL BITMAPON1" );
-
-        //     cpu_store_8bit( _environment, "_PEN", 0X01 );
-        //     cpu_store_8bit( _environment, "_PAPER", 0x00 );
-        //     cpu_store_16bit( _environment, "CLIPX1", 0 );
-        //     cpu_store_16bit( _environment, "CLIPX2", (_environment->screenTilesWidth*8)-1 );
-        //     cpu_store_16bit( _environment, "CLIPY1", 0 );
-        //     cpu_store_16bit( _environment, "CLIPY2", (_environment->screenTilesHeight*8)-1 );
-
-        //     break;
-        // case BITMAP_MODE_EXTENDED:
-        //     _environment->screenTilesWidth = 22;
-        //     _environment->screenTilesHeight = 22;
-
-        //     outline0("CALL BITMAPON2" );
-
-        //     cpu_store_8bit( _environment, "_PEN", 0X01 );
-        //     cpu_store_8bit( _environment, "_PAPER", 0x00 );
-        //     cpu_store_16bit( _environment, "CLIPX1", 0 );
-        //     cpu_store_16bit( _environment, "CLIPX2", (_environment->screenTilesWidth*8)-1 );
-        //     cpu_store_16bit( _environment, "CLIPY1", 0 );
-        //     cpu_store_16bit( _environment, "CLIPY2", (_environment->screenTilesHeight*8)-1 );
-
-        //     break;
         case TILEMAP_MODE_STANDARD:
-            _environment->screenTilesWidth = 22;
-            _environment->screenTilesHeight = 23;
+            _environment->fontWidth = 8;
+            _environment->fontHeight = 10;
+            _environment->screenTilesWidth = 40;
+            _environment->screenTilesHeight = 21;
+            _environment->screenTiles = 127;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
+            _environment->screenColors = 8;
 
-            // outline0("CALL BITMAPOFF" );
-
-            ef9345_cls( _environment );
+            cpu_store_16bit( _environment, "TEXTADDRESS", 0x0000 );
 
             break;
-        default:
-            CRITICAL_SCREEN_UNSUPPORTED( _screen_mode->id );
     }
 
-    _environment->screenWidth = _environment->screenTilesWidth * 8;
-    _environment->screenHeight = _environment->screenTilesHeight * 8;
-    _environment->screenColors = 2;
-    _environment->screenShades = 8;
+    cpu_store_16bit( _environment, "CLIPX1", 0 );
+    cpu_store_16bit( _environment, "CLIPX2", (_environment->screenWidth-1) );
+    cpu_store_16bit( _environment, "CLIPY1", 0 );
+    cpu_store_16bit( _environment, "CLIPY2", (_environment->screenHeight-1) );
 
     cpu_store_16bit( _environment, "CURRENTWIDTH", _environment->screenWidth );
     cpu_store_16bit( _environment, "CURRENTHEIGHT", _environment->screenHeight );
     cpu_store_8bit( _environment, "CURRENTTILES", _environment->screenTiles );
     cpu_store_8bit( _environment, "CURRENTTILESWIDTH", _environment->screenTilesWidth );
     cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight );
+    cpu_store_8bit( _environment, "FONTWIDTH", _environment->fontWidth );
+    cpu_store_8bit( _environment, "FONTHEIGHT", _environment->fontHeight );
 
 }
 
@@ -361,13 +509,17 @@ void ef9345_bitmap_enable( Environment * _environment, int _width, int _height, 
 
         _environment->currentMode = mode->id;
         _environment->currentTileMode = 0;
+
+        ef9345_cls( _environment );
+
     } else {
         WARNING_SCREEN_MODE( -1 );
     }
-
 }
 
 void ef9345_bitmap_disable( Environment * _environment ) {
+
+    //todo
 
 }
 
@@ -376,6 +528,9 @@ void ef9345_tilemap_enable( Environment * _environment, int _width, int _height,
     ScreenMode * mode = find_screen_mode_by_suggestion( _environment, 0, _width, _height, _colors, _tile_width, _tile_height );
 
     if ( mode ) {
+
+        // printf("ef9345_tilemap_enable() -> %d\n", mode->id );
+        
         ef9345_screen_mode_enable( _environment, mode );
 
         _environment->currentMode = mode->id;
@@ -384,10 +539,12 @@ void ef9345_tilemap_enable( Environment * _environment, int _width, int _height,
         cpu_store_8bit( _environment, "CURRENTMODE", mode->id );
         cpu_store_8bit( _environment, "CURRENTTILEMODE", 1 );
 
+        ef9345_cls( _environment );
+
     } else {
+        // printf("ef9345_tilemap_enable() -> -1\n" );
         WARNING_SCREEN_MODE( -1 );
     }
-
 
 }
 
@@ -405,55 +562,13 @@ void ef9345_textmap_at( Environment * _environment, char * _address ) {
 
 void ef9345_point_at_int( Environment * _environment, int _x, int _y ) {
 
-    deploy( ef9345vars, src_hw_ef9345_vars_asm);
-    deploy( plot, src_hw_ef9345_plot_asm );
-    
-    outline1("LD A, $%2.2x", ( _y & 0xff ) );
-    outline0("LD D, A");
-    outline1("LD A, $%2.2x", ( _x & 0xff ) );
-    outline0("LD E, A");
-    outline0("LD A, 1");
-    outline0("CALL PLOT");
-
 }
 
 void ef9345_point_at_vars( Environment * _environment, char *_x, char *_y ) {
 
-    Variable * x = variable_retrieve( _environment, _x );
-    Variable * y = variable_retrieve( _environment, _y );
-
-    deploy( ef9345vars, src_hw_ef9345_vars_asm);
-    deploy( plot, src_hw_ef9345_plot_asm );
-    
-    outline1("LD A, (%s)", y->realName );
-    outline0("LD D, A");
-    outline1("LD A, (%s)", x->realName );
-    outline0("LD E, A");
-    outline0("LD A, 1");
-    outline0("CALL PLOT");
-
 }
 
 void ef9345_point( Environment * _environment, char *_x, char *_y, char * _result ) {
-
-    Variable * x = variable_retrieve( _environment, _x );
-    Variable * y = variable_retrieve( _environment, _y );
-    Variable * result = variable_retrieve( _environment, _result );
-
-    deploy( ef9345vars, src_hw_ef9345_vars_asm);
-    deploy( plot, src_hw_ef9345_plot_asm );
-    
-    outline1("LD A, (%s)", y->realName );
-    outline0("LD D, A");
-    outline1("LD A, (%s)", x->realName );
-    outline0("LD E, A");
-    outline0("LD A, 3");
-    if ( ! _environment->hasGameLoop ) {
-        outline0("CALL PLOT");
-    } else {
-        outline0("CALL PLOTNMI2");
-    }    
-    outline1("LD (%s), A", result->realName);
 
 }
 
@@ -473,7 +588,7 @@ void ef9345_screen_columns( Environment * _environment, char * _columns ) {
 
 }
 
-void ef9345_sprite_data_from( Environment * _environment, char * _sprite, char * _address ) {
+void ef9345_sprite_data_from( Environment * _environment, char * _sprite, char * _image ) {
 
 }
 
@@ -531,8 +646,6 @@ void ef9345_horizontal_scroll( Environment * _environment, char * _displacement 
 
 void ef9345_busy_wait( Environment * _environment, char * _timing ) {
 
-    MAKE_LABEL
-
 }
 
 void ef9345_get_width( Environment * _environment, char *_result ) {
@@ -572,30 +685,18 @@ void ef9345_tiles_get_height( Environment * _environment, char *_result ) {
 
 void ef9345_cls( Environment * _environment ) {
     
-    deploy( cls, src_hw_ef9345_cls_asm );
-
-    outline0("CALL CLS");
-
 }
 
 void ef9345_scroll_text( Environment * _environment, int _direction ) {
-
-    deploy( vScrollText, src_hw_ef9345_vscroll_text_asm );
-
-    if ( _direction > 0 ) {
-        outline0("CALL VSCROLLTDOWN");
-    } else {
-        outline0("CALL VSCROLLTUP");
-    }
 
 }
 
 void ef9345_text( Environment * _environment, char * _text, char * _text_size ) {
 
     deploy( ef9345vars, src_hw_ef9345_vars_asm);
-    deploy( vScrollText, src_hw_ef9345_vscroll_text_asm );
-    deploy( cls, src_hw_ef9345_cls_asm );
     deploy( textEncodedAt, src_hw_ef9345_text_at_asm );
+    // deploy( vScrollTextUp, src_hw_ef9345_vscroll_text_up_asm );
+    // deploy( clsText, src_hw_tms9918_cls_text_asm );
 
     outline1("LD DE, (%s)", _text);
     outline1("LD A, (%s)", _text_size);
@@ -609,33 +710,36 @@ void ef9345_initialization( Environment * _environment ) {
 
     deploy( ef9345vars, src_hw_ef9345_vars_asm );
     deploy( ef9345startup, src_hw_ef9345_startup_asm );
-    src_hw_chipset_mob_asm = src_hw_ef9345_mob_asm;
-    src_hw_chipset_mob_asm_len = src_hw_ef9345_mob_asm_len;
+    // src_hw_chipset_mob_asm = src_hw_ef9345_mob_asm;
+    // src_hw_chipset_mob_asm_len = src_hw_ef9345_mob_asm_len;
 
-    variable_import( _environment, "CURRENTMODE", VT_BYTE, 0 );
-    variable_global( _environment, "CURRENTMODE" );
-    variable_import( _environment, "CURRENTTILEMODE", VT_BYTE, 1 );
-    variable_global( _environment, "CURRENTTILEMODE" );
-
-    variable_import( _environment, "CURRENTWIDTH", VT_POSITION, 166 );
+    variable_import( _environment, "CURRENTWIDTH", VT_POSITION, 256 );
     variable_global( _environment, "CURRENTWIDTH" );
-    variable_import( _environment, "CURRENTHEIGHT", VT_POSITION, 184  );
+    variable_import( _environment, "CURRENTHEIGHT", VT_POSITION, 192  );
     variable_global( _environment, "CURRENTHEIGHT" );
     variable_import( _environment, "CURRENTTILES", VT_BYTE, 255 );
     variable_global( _environment, "CURRENTTILES" );
-    variable_import( _environment, "CURRENTTILESWIDTH", VT_BYTE, 22 );
+    variable_import( _environment, "CURRENTTILESWIDTH", VT_BYTE, 40 );
     variable_global( _environment, "CURRENTTILESWIDTH" );
-    variable_import( _environment, "CURRENTTILESHEIGHT", VT_BYTE, 23 );
+    variable_import( _environment, "CURRENTTILESHEIGHT", VT_BYTE, 24 );
     variable_global( _environment, "CURRENTTILESHEIGHT" );
     variable_import( _environment, "FONTWIDTH", VT_BYTE, 8 );
     variable_global( _environment, "FONTWIDTH" );
     variable_import( _environment, "FONTHEIGHT", VT_BYTE, 8 );
     variable_global( _environment, "FONTHEIGHT" );
+    variable_import( _environment, "SPRITEADDRESS", VT_ADDRESS, 0x0000 );
+    variable_global( _environment, "SPRITEADDRESS" );    
+    variable_import( _environment, "SPRITEAADDRESS", VT_ADDRESS, 0x1000 );
+    variable_global( _environment, "SPRITEAADDRESS" );    
+    variable_import( _environment, "TEXTADDRESS", VT_ADDRESS, 0x1800 );
+    variable_global( _environment, "TEXTADDRESS" );    
+    variable_import( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0x3800 );
+    variable_global( _environment, "COLORMAPADDRESS" );    
+    variable_import( _environment, "PATTERNADDRESS", VT_ADDRESS, 0x0000 );
+    variable_global( _environment, "PATTERNADDRESS" );    
 
-    SCREEN_MODE_DEFINE( TILEMAP_MODE_STANDARD, 0, 40, 25, 2, 8, 8, "Standard Character Mode" );
-    // SCREEN_MODE_DEFINE( BITMAP_MODE_STANDARD, 1, 128, 64, 8, 8, 8, "Standard Bitmap Mode" );
-    // SCREEN_MODE_DEFINE( BITMAP_MODE_EXTENDED, 1, 128, 128, 8, 8, 8, "Extended Bitmap Mode" );
-
+    SCREEN_MODE_DEFINE( TILEMAP_MODE_STANDARD, 0, 40, 24, 20, 6, 8, "Text Mode" );
+ 
     outline0("CALL EF9345STARTUP");
 
     variable_import( _environment, "XGR", VT_POSITION, 0 );
@@ -728,81 +832,39 @@ void ef9345_initialization( Environment * _environment ) {
     variable_import( _environment, "IMAGEF", VT_BYTE, 0 );
     variable_global( _environment, "IMAGEF" );
 
+    ef9345_tilemap_enable( _environment, 40, 21, 1, 8, 10 );
+
     ef9345_cls( _environment );
 
-    _environment->fontWidth = 8;
-    _environment->fontHeight = 8;
-    _environment->screenTilesWidth = 22;
-    _environment->screenTilesHeight = 23;
-    _environment->screenWidth = _environment->screenTilesWidth * 8;
-    _environment->screenHeight = _environment->screenTilesHeight * 8;
-    _environment->screenColors = 16;
     _environment->descriptors = precalculate_tile_descriptors_for_font( data_fontef9345_bin );
-    
-    _environment->descriptors->first = 128;
-    _environment->descriptors->firstFree  = _environment->descriptors->first;
+
+    _environment->descriptors->first = 0;
+    _environment->descriptors->firstFree = 128;
     _environment->descriptors->lastFree = 255;
     _environment->descriptors->count = 128;
-
+    
     _environment->currentRgbConverterFunction = rgbConverterFunction;
-    _environment->screenShades = 8;
+    _environment->screenShades = 16;
 
 }
 
 void ef9345_finalization( Environment * _environment ) {
 
-    if ( ! _environment->deployed.ef9345startup ) {
-        cpu_label( _environment, "EF9345STARTUP" );
-        outline0( "RTS" );
-        cpu_label( _environment, "MUSICPLAYER" );
-        outline0( "RTS" );
-    }
-
 }
 
 void ef9345_hscroll_line( Environment * _environment, int _direction ) {
-
-    deploy( textHScroll, src_hw_ef9345_hscroll_text_asm );
-
-    Variable * y = variable_retrieve( _environment, "YCURSYS" );
-    outline1("LD A, $%2.2x", ( _direction & 0xff ) );
-    outline1("LD B, (%s)", y->realName );
-    outline0("CALL HSCROLLLT");
 
 }
 
 void ef9345_hscroll_screen( Environment * _environment, int _direction ) {
 
-    deploy( textHScroll, src_hw_ef9345_hscroll_text_asm );
-
-    outline1("LD A, $%2.2x", ( _direction & 0xff ) );
-    outline0("CALL HSCROLLST");
-
 }
 
 void ef9345_back( Environment * _environment ) {
 
-    deploy( back, src_hw_ef9345_back_asm );
-
-    outline0("CALL BACK");
-
 }
 
 void ef9345_cline( Environment * _environment, char * _characters ) {
-
-    deploy( textCline, src_hw_ef9345_cline_asm );
-
-    Variable * x = variable_retrieve( _environment, "XCURSYS" );
-    Variable * y = variable_retrieve( _environment, "YCURSYS" );
-
-    if ( _characters ) {
-        outline1("LD A, (%s)", _characters);
-        outline0("LD C, A");
-    } else {
-        outline0("LD A, 0");
-        outline0("LD C, A");
-    }
-    outline0("CALL CLINE");
 
 }
 
@@ -835,11 +897,8 @@ static int calculate_luminance(RGBi _a) {
 
 static int calculate_image_size( Environment * _environment, int _width, int _height, int _mode ) {
 
-   switch( _mode ) {
+    switch( _mode ) {
 
-        // case BITMAP_MODE_STANDARD:
-        //     return ( _width >> 3 ) * ( _height );
-        //     break;
         case TILEMAP_MODE_STANDARD:
             break;
     }
@@ -848,492 +907,137 @@ static int calculate_image_size( Environment * _environment, int _width, int _he
 
 }
 
-static Variable * ef9345_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
+Variable * ef9345_sprite_converter( Environment * _environment, char * _source, int _width, int _height, RGBi * _color ) {
 
-    image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
+    // deploy( ef9345varsGraphic, src_hw_ef9345_vars_graphic_asm );
 
-    RGBi palette[MAX_PALETTE];
+    // RGBi palette[MAX_PALETTE];
 
-    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE, 1 /* sorted */);
-
-    if (colorUsed > 2) {
-        CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
-    }
+    // int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE, 1 /* sorted */);
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
-    result->originalColors = colorUsed;
+    // result->originalColors = colorUsed;
 
-    int i, j, k;
+    // int i, j, k;
 
-    for( i=0; i<colorUsed; ++i ) {
-        int minDistance = 0xffff;
-        int colorIndex = 0;
-        for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
-            int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
-            // printf("%d <-> %d [%d] = %d [min = %d]\n", i, j, SYSTEM_PALETTE[j].index, distance, minDistance );
-            if (distance < minDistance) {
-                // printf(" candidated...\n" );
-                for( k=0; k<i; ++k ) {
-                    if ( palette[k].index == SYSTEM_PALETTE[j].index ) {
-                        // printf(" ...used!\n" );
-                        break;
-                    }
-                }
-                if ( k>=i ) {
-                    // printf(" ...ok! (%d)\n", SYSTEM_PALETTE[j].index );
-                    minDistance = distance;
-                    colorIndex = j;
-                }
-            }
-        }
-        palette[i].index = SYSTEM_PALETTE[colorIndex].index;
-        strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
-        // printf("%d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
-    }
-
-    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
-
-    int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, TILEMAP_MODE_STANDARD );
-
-    // printf("bufferSize = %d\n", bufferSize );
-
-    char * buffer = malloc ( bufferSize );
-    memset( buffer, 0, bufferSize );
-
-    // Position of the pixel in the original image
-    int image_x, image_y;
-    
-    // Position of the pixel, in terms of tiles
-    int tile_x, tile_y;
-    
-    // Position of the pixel, in terms of offset and bitmask
-    int offset, bitmask;
-
-    // Color of the pixel to convert
-    RGBi rgb;
-
-    *(buffer) = _frame_width;
-    *(buffer+1) = _frame_height;
-
-    _source += ( ( _offset_y * _width ) + _offset_x ) * 3;
-
-    // Loop for all the source surface.
-    for (image_y = 0; image_y < _frame_height; ++image_y) {
-        for (image_x = 0; image_x < _frame_width; ++image_x) {
-
-            // Take the color of the pixel
-            rgb.red = *_source;
-            rgb.green = *(_source + 1);
-            rgb.blue = *(_source + 2);
-
-            for( i=0; i<colorUsed; ++i ) {
-                if ( rgbi_equals_rgb( &palette[i], &rgb ) ) {
-                    break;
-                }
-            }
-
-            // printf("%d", i );
-
-            // Calculate the relative tile
-            tile_y = (image_y >> 3);
-            tile_x = (image_x >> 3);
-            
-            // Calculate the offset starting from the tile surface area
-            // and the bit to set.
-            offset = (tile_y * 8 *( _frame_width >> 3 ) ) + (tile_x * 8) + (image_y & 0x07);
-            bitmask = 1 << ( 7 - (image_x & 0x7) );
-
-            // If the pixes has enough luminance value, it must be 
-            // considered as "on"; otherwise, it is "off".
-            // int luminance = calculate_luminance(rgb);
-
-            if ( i == 1 ) {
-                *( buffer + offset + 2) |= bitmask;
-            } else {
-                *( buffer + offset + 2) &= ~bitmask;
-            }
-
-            offset = tile_y * ( _frame_width >> 3 ) + tile_x;
-            *( buffer + 2 + ( ( _frame_width >> 3 ) * _frame_height ) + offset ) = ( palette[1].index << 4 ) | palette[0].index; 
-
-            _source += 3;
-
-        }
-
-        _source += 3 * ( _width - _frame_width );
-
-        // printf("\n" );
-
-    }
-
-    // printf("\n----\n\n");
-
-    variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
-
-    // printf("----\n");
-
-    return result;
-
-}
-
-static Variable * ef9345_image_converter_multicolor_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
-
-    image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
-
-    RGBi palette[MAX_PALETTE];
-
-    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE, 1 /* sorted */);
-
-    if (colorUsed > 4) {
-        CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
-    }
-
-    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
-    result->originalColors = colorUsed;
-
-    int i, j, k;
-
-    for( i=0; i<colorUsed; ++i ) {
-        int minDistance = 0xffff;
-        int colorIndex = 0;
-        for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
-            int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
-            // printf("%d <-> %d [%d] = %d [min = %d]\n", i, j, SYSTEM_PALETTE[j].index, distance, minDistance );
-            if (distance < minDistance) {
-                // printf(" candidated...\n" );
-                for( k=0; k<i; ++k ) {
-                    if ( palette[k].index == SYSTEM_PALETTE[j].index ) {
-                        // printf(" ...used!\n" );
-                        break;
-                    }
-                }
-                if ( k>=i ) {
-                    // printf(" ...ok! (%d)\n", SYSTEM_PALETTE[j].index );
-                    minDistance = distance;
-                    colorIndex = j;
-                }
-            }
-        }
-        palette[i].index = SYSTEM_PALETTE[colorIndex].index;
-        strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
-        // printf("%d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
-    }
-
-    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
-
-    int bufferSize = 2 + ( ( _frame_width >> 2 ) * _frame_height ) + 2 * ( ( _frame_width >> 2 ) * ( _frame_height >> 3 ) ) + 1;
-    
-    char * buffer = malloc ( bufferSize );
-    memset( buffer, 0, bufferSize );
-
-    // Position of the pixel in the original image
-    int image_x, image_y;
-    
-    // Position of the pixel, in terms of tiles
-    int tile_x, tile_y;
-    
-    // Position of the pixel, in terms of offset and bitmask
-    int offset, offsetc, bitmask;
-
-    // Color of the pixel to convert
-    RGBi rgb;
-
-    *(buffer) = _width;
-    *(buffer+1) = _height;
-
-    _source += ( ( _offset_y * _width ) + _offset_x ) * 3;
-
-    // Loop for all the source surface.
-    for (image_y = _offset_y; image_y < _height; ++image_y) {
-        for (image_x = _offset_x; image_x < _width; ++image_x) {
-
-            // Take the color of the pixel
-            rgb.red = *_source;
-            rgb.green = *(_source + 1);
-            rgb.blue = *(_source + 2);
-
-            // Calculate the relative tile
-            tile_y = (image_y >> 3);
-            tile_x = (image_x >> 2);
-
-            // Calculate the offset starting from the tile surface area
-            // and the bit to set.
-            offset = (tile_y * 8 *( _frame_width >> 2 ) ) + (tile_x * 8) + (image_y & 0x07);
-            offsetc = (tile_y * ( _frame_width >> 2 ) ) + (tile_x);
-
-            int minDistance = 0xffff;
-            int colorIndex = 0;
-
-            for( i=0; i<colorUsed; ++i ) {
-                if ( rgbi_equals_rgb( &palette[i], &rgb ) ) {
-                    break;
-                }
-            }
-
-            colorIndex = i;
-
-            // printf( "%1.1x", colorIndex );
-
-            bitmask = colorIndex << (6 - ((image_x & 0x3) * 2));
-
-            switch( colorIndex ) {
-                case 0:
-                    *(buffer + 2 + ( ( _frame_width >> 2 ) * _frame_height ) + 2 * ( _frame_width >> 2 ) * ( _frame_height >> 3 ) ) = palette[colorIndex].index;
-                    break;
-                case 1:
-                    *(buffer + 2 + ( ( _frame_width >> 2 ) * _frame_height ) + offsetc ) &= 0x0f;
-                    *(buffer + 2 + ( ( _frame_width >> 2 ) * _frame_height ) + offsetc ) |= ( palette[colorIndex].index << 4 );
-                    break;
-                case 2:
-                    *(buffer + 2 + ( ( _frame_width >> 2 ) * _frame_height ) + offsetc ) &= 0xf0;
-                    *(buffer + 2 + ( ( _frame_width >> 2 ) * _frame_height ) + offsetc ) |= palette[colorIndex].index;
-                    break;
-                case 3:
-                    *(buffer + 2 + ( ( _frame_width >> 2 ) * _frame_height ) + ( _frame_width >> 2 ) * ( _frame_height >> 3 ) + offsetc ) = palette[colorIndex].index;
-                    break;
-
-            }
-
-            *(buffer + 2 + offset) |= bitmask;
-
-            _source += 3;
-
-        }
-
-        _source += ( _width - _frame_width ) * 3;
-
-        // printf("\n" );
-    }
-
-    // for(i=0; i<4; ++i ) {
-    //     printf( "%1.1x = %2.2x\n", i, palette[i].index );
+    // for( i=0; i<colorUsed; ++i ) {
+    //     int minDistance = 0xffff;
+    //     int colorIndex = 0;
+    //     for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
+    //         int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
+    //         if (distance < minDistance) {
+    //             for( k=0; k<i; ++k ) {
+    //                 if ( palette[k].index == SYSTEM_PALETTE[j].index ) {
+    //                     break;
+    //                 }
+    //             }
+    //             if ( k>=i ) {
+    //                 minDistance = distance;
+    //                 colorIndex = j;
+    //             }
+    //         }
+    //     }
+    //     palette[i].index = SYSTEM_PALETTE[colorIndex].index;
+    //     strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
     // }
 
-    // printf("\n" );
-    // printf("\n" );
+    // memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
 
-    variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
-
-    return result;
-
-}
-
-static Variable * ef9345_image_converter_tilemap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
-
-    image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
-
-    RGBi palette[MAX_PALETTE];
-
-    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE, 1 /* sorted */);
-
-    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
-    result->originalColors = colorUsed;
-
-    int i, j, k;
-
-    for( i=0; i<colorUsed; ++i ) {
-        int minDistance = 0xffff;
-        int colorIndex = 0;
-        for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
-            int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
-            // printf("%d <-> %d [%d] = %d [min = %d]\n", i, j, SYSTEM_PALETTE[j].index, distance, minDistance );
-            if (distance < minDistance) {
-                // printf(" candidated...\n" );
-                for( k=0; k<i; ++k ) {
-                    if ( palette[k].index == SYSTEM_PALETTE[j].index ) {
-                        // printf(" ...used!\n" );
-                        break;
-                    }
-                }
-                if ( k>=i ) {
-                    // printf(" ...ok! (%d)\n", SYSTEM_PALETTE[j].index );
-                    minDistance = distance;
-                    colorIndex = j;
-                }
-            }
-        }
-        palette[i].index = SYSTEM_PALETTE[colorIndex].index;
-        strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
-        // printf("%d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
-    }
-
-    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
+    // int bufferSize = ( ( _width >> 3 ) * _height ) + 3;
     
-    int bufferSize;
+    // char * buffer = malloc ( bufferSize );
+    // memset( buffer, 0, bufferSize );
+
+    // // Position of the pixel in the original image
+    // int image_x, image_y;
     
-    if ( colorUsed == 2 ) {
-        bufferSize = 3 + ( ( _frame_width >> 3 ) * ( _frame_height >> 3 ) ) + 1;
-    } else {
-        bufferSize = 3 + 2* ( ( _frame_width >> 3 ) * ( _frame_height >> 3 ) );
-    } 
-
-    // printf("bufferSize = %d\n", bufferSize );
-
-    char * buffer = malloc ( bufferSize );
-    memset( buffer, 0, bufferSize );
-
-    // Position of the pixel in the original image
-    int image_x, image_y;
+    // // Position of the pixel, in terms of tiles
+    // int tile_x, tile_y;
     
-    // Position of the pixel, in terms of tiles
-    int tile_x, tile_y;
+    // // Position of the pixel, in terms of offset and bitmask
+    // int offset, bitmask;
+
+    // // Color of the pixel to convert
+    // RGBi rgb;
+
+    // // Loop for all the source surface.
+    // for (image_y = 0; image_y < _height; ++image_y) {
+    //     if ( image_y == 8 ) {
+    //         break;
+    //     }
+    //     for (image_x = 0; image_x < _width; ++image_x) {
+    //         if ( image_x == 8 ) {
+    //             break;
+    //         }
+
+    //         // Take the color of the pixel
+    //         rgb.red = *_source;
+    //         rgb.green = *(_source + 1);
+    //         rgb.blue = *(_source + 2);
+
+    //         // Calculate the relative tile
+
+    //         // Calculate the offset starting from the tile surface area
+    //         // and the bit to set.
+    //         offset = (image_y * ( _width>>3 ) ) + (image_x >> 3);
+
+    //         int minDistance = 0xffff;
+    //         int colorIndex = 0;
+
+    //         if ( rgbi_equals_rgb( _color, &rgb ) ) {
+    //             i = 1;
+    //         } else {
+    //             i = 0;
+    //         }
+
+    //         colorIndex = i;
+
+    //         if ( _environment->debugImageLoad ) {
+    //             printf( "%1.1x", ( palette[colorIndex].index & 0x0f ) );
+    //         }
+
+    //         bitmask = ( colorIndex == 0 ? 0 : 1 ) << (7 - ((image_x & 0x7)));
+    //         *(buffer + 2 + offset) |= bitmask;
+
+    //         _source += 3;
+
+    //     }
+
+    //     _source += 3 * ( _width - image_x );
+
+    //     if ( _environment->debugImageLoad ) {
+    //         printf("\n" );
+    //     }
+    // }
+
+    // *(buffer + 2 + ( ( _width >> 3 ) * _height )) = _color->index | ( _color->index << 4 );
+
+    // if ( _environment->debugImageLoad ) {
+    //     printf("\n" );
     
-    // Position of the pixel, in terms of offset and bitmask
-    int offset, bitmask;
-
-    // Color of the pixel to convert
-    RGBi rgb;
-
-    *(buffer) = _frame_width;
-    *(buffer+1) = _frame_height;
-
-    if ( colorUsed > 2 ) {
-        *(buffer+2) = 1;
-    } else {
-        *(buffer+2) = 0;
-    }
-
-    int cx=0,cy=0;
-
-    _source += ( ( _offset_y * _width ) + _offset_x ) * 3;
-
-    // commonTileDescriptors = precalculate_tile_descriptors_for_font( data_fontef9345_bin );
-
-    for( cy=0; cy<(_frame_height >> 3);++cy) {
-        for( cx=0; cx<(_frame_width >> 3);++cx) {
-
-            char *source = _source + ( ( cy * 8 * _width ) + cx * 8 ) * 3;
-
-            TileData tileData;
-            memset(&tileData,0,sizeof(TileData));
-
-            int mostFrequentColor[16];
-            memset(&mostFrequentColor[0],0,sizeof(int)*16);
-
-            int colorIndex = 0;
-
-            // Loop for all the source surface.
-            for (image_y = 0; image_y < 8; ++image_y) {
-                for (image_x = 0; image_x < 8; ++image_x) {
-
-                    // Take the color of the pixel
-                    rgb.red = *source;
-                    rgb.green = *(source + 1);
-                    rgb.blue = *(source + 2);
-
-                    int minDistance = 9999;
-                    for( int i=0; i<colorUsed; ++i ) {
-                        int distance = rgbi_distance(&palette[i], &rgb );
-                        if ( distance < minDistance ) {
-                            minDistance = distance;
-                            colorIndex = palette[i].index;
-                        }
-                    }
-
-                    // printf("%d", i );
-
-                    // Calculate the relative tile
-                    
-                    // Calculate the offset starting from the tile surface area
-                    // and the bit to set.
-                    offset = (image_y & 0x07);
-                    bitmask = 1 << ( 7 - (image_x & 0x7) );
-
-                    // If the pixes has enough luminance value, it must be 
-                    // considered as "on"; otherwise, it is "off".
-                    // int luminance = calculate_luminance(rgb);
-
-                    if (colorUsed == 2 ) {
-                        if ( colorIndex ) {
-                            tileData.data[offset] &= ~bitmask;
-                            // printf("%1.1x", colorIndex );
-                        } else {
-                            tileData.data[offset] |= bitmask;
-                            // printf("%1.1x", colorIndex );
-                        }
-                    } else {
-                        if ( colorIndex ) {
-                            mostFrequentColor[colorIndex]++;
-                            tileData.data[offset] &= ~bitmask;
-                            // printf("%1.1x", colorIndex );
-                        } else {
-                            tileData.data[offset] |= bitmask;
-                            // printf("%1.1x", colorIndex );
-                        }
-                    }
-
-                    source += 3;
-
-                }
-
-                source += 3 * ( _width - 8 );
-
-                // printf("\n" );
-
-            }
-
-            // printf("\n" );
-            
-            TileDescriptor * t = calculate_tile_descriptor( &tileData );
-
-            int tile = calculate_exact_tile( t, _environment->descriptors );
-
-            if ( tile == -1 ) {
-                if ( _environment->descriptors->count < 128 ) {
-                    tile = 0x5e + (_environment->descriptors->count++);
-                    _environment->descriptors->descriptor[tile] = t; 
-                    memcpy( &_environment->descriptors->data[tile], &tileData, sizeof( TileData ) ); 
-                } else {
-                    tile = calculate_nearest_tile( t, _environment->descriptors );
-                }
-                // printf("*** tile = %d\n", tile );
-            } else {
-                // printf("    tile = %d\n", tile );
-            }
-
-            *(buffer + 3 + (cy * ( _frame_width >> 3 ) ) + cx ) = tile;
-            if ( colorUsed > 2 ) {
-                int mostFrequentColorIndex = 1;
-                int mostFrequentColorCount = 0;
-                for(i=0;i<colorUsed;++i) {
-                    if ( mostFrequentColorCount < mostFrequentColor[palette[i].index] ) {
-                        mostFrequentColorCount = mostFrequentColor[palette[i].index];
-                        mostFrequentColorIndex = palette[i].index;
-                    }
-                }
-                // printf( "c = %1.1x\n", mostFrequentColorIndex );
-                *(buffer + 3 + ( ( _frame_width >> 3 ) * ( _frame_height >> 3 ) ) + (cy * ( _frame_width >> 3 ) ) + cx ) = ( ( mostFrequentColorIndex & 0x07 ) );
-            }
-
-            // printf("\ntile: %2.2x\n", tile );
-
-        }
-        // printf("\n");
-    }
-
-    if ( colorUsed <= 2 ) {
-        *(buffer + 3 + ( ( _frame_width >> 3 ) * ( _frame_height >> 3 ) ) ) = palette[0].index == 0 ? palette[1].index : palette[0].index;
-    }
-    // printf("----\n");
-
-    variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
-
-    // printf("----\n");
-
+    //     printf("PALETTE:\n" );
+    //     for( i=0; i<colorUsed; ++i ) {
+    //         printf("  (%2.2d) = %2.2d (%s)\n", i, palette[i].index, palette[i].description );
+    //     }
+    //     // if ( ( _flags & FLAG_OVERLAYED ) == 0 ) {
+    //     //     printf("  background  (00) = %2.2x (%s)\n", palette[0].index, palette[0].description );
+    //     // } else {
+    //     //     printf("  background  (00) = %2.2x (%s) [currently ignored since it can be overlayed]\n", palette[0].index, palette[0].description );
+    //     // }
+    //     // printf("  low screen  (01) = %2.2x (%s)\n", palette[1].index, palette[1].description );
+    //     // printf("  high screen (10) = %2.2x (%s)\n", palette[2].index, palette[2].description );
+    //     // printf("  colormap    (11) = %2.2x (%s)\n", palette[3].index, palette[3].description );
+    //     // printf("\n" );
+    //     // printf("\n" );
+    // }
+    
+    // variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
+ 
     return result;
 
 }
 
 Variable * ef9345_image_converter( Environment * _environment, char * _data, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags ) {
-
-   switch( _mode ) {
-        // case BITMAP_MODE_STANDARD:
-        //     return ef9345_image_converter_bitmap_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
-        //     break;
-        case TILEMAP_MODE_STANDARD:
-            return ef9345_image_converter_tilemap_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
-            break;
-    }
 
     WARNING_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
 
@@ -1343,107 +1047,9 @@ Variable * ef9345_image_converter( Environment * _environment, char * _data, int
 
 void ef9345_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags ) {
 
-    // currently unused
-    (void)!_flags;
-
-    deploy( ef9345vars, src_hw_ef9345_vars_asm);
-    deploy( putimage, src_hw_ef9345_put_image_asm );
-
-    MAKE_LABEL
-
-    outhead1("putimage%s:", label);
-    outline1("LD A, $%2.2x", ( _flags & 0xff ) );
-    outline1("LD HL, %s", _image );
-    if ( _sequence ) {
-
-        outline0("LD DE, $0003" );
-        outline0("ADD HL, DE" );
-        if ( strlen(_sequence) == 0 ) {
-
-        } else {
-            outline0("PUSH HL" );
-            outline1("LD A, (%s)", _sequence );
-            outline0("LD L, A" );
-            outline0("LD H, 0" );
-            outline0("ADD HL, HL" );
-            outline0("LD DE, HL" );
-            outline1("LD HL, OFFSETS%4.4x", _frame_size * _frame_count );
-            outline0("ADD HL, DE" );
-            outline0("LD A, (HL)" );
-            outline0("LD E, A" );
-            outline0("INC HL" );
-            outline0("LD A, (HL)" );
-            outline0("LD D, A" );
-            outline0("POP HL" );
-            outline0("ADD HL, DE" );
-        }
-
-        if ( _frame ) {
-            if ( strlen(_frame) == 0 ) {
-
-            } else {
-                outline0("PUSH HL" );
-                outline1("LD A, (%s)", _frame );
-                outline0("LD L, A" );
-                outline0("LD H, 0" );
-                outline0("ADD HL, HL" );
-                outline0("LD DE, HL" );
-                outline1("LD HL, OFFSETS%4.4x", _frame_size * _frame_count );
-                outline0("ADD HL, DE" );
-                outline0("LD A, (HL)" );
-                outline0("LD E, A" );
-                outline0("INC HL" );
-                outline0("LD A, (HL)" );
-                outline0("LD D, A" );
-                outline0("POP HL" );
-                outline0("ADD HL, DE" );
-            }
-        }
-
-    } else {
-
-        if ( _frame ) {
-            outline0("LD DE, $0003" );
-            outline0("ADD HL, DE" );
-            if ( strlen(_frame) == 0 ) {
-
-            } else {
-                outline0("PUSH HL" );
-                outline1("LD A, (%s)", _frame );
-                outline0("LD L, A" );
-                outline0("LD H, 0" );
-                outline0("ADD HL, HL" );
-                outline0("LD DE, HL" );
-                outline1("LD HL, OFFSETS%4.4x", _frame_size );
-                outline0("ADD HL, DE" );
-                outline0("LD A, (HL)" );
-                outline0("LD E, A" );
-                outline0("INC HL" );
-                outline0("LD A, (HL)" );
-                outline0("LD D, A" );
-                outline0("POP HL" );
-                outline0("ADD HL, DE" );
-            }
-        }
-
-
-    }
-    outline1("LD A, (%s)", _x );
-    outline0("LD E, A" );
-    outline1("LD A, (%s)", _y );
-    outline0("LD D, A" );
-    outline1("LD A, $%2.2x", _flags );
-    outline0("LD (IMAGEF), A" );
-
-    outline0("CALL PUTIMAGE");
-
 }
 
 void ef9345_wait_vbl( Environment * _environment ) {
-
-    deploy( vbl, src_hw_ef9345_vbl_asm);
-
-    outline0("CALL VBL");
 
 }
 
@@ -1451,167 +1057,69 @@ Variable * ef9345_new_image( Environment * _environment, int _width, int _height
 
     int size = calculate_image_size( _environment, _width, _height, _mode );
 
-    // if ( ! size ) {
-    //     CRITICAL_NEW_IMAGE_UNSUPPORTED_MODE( _mode );
-    // }
+    if ( ! size ) {
+        CRITICAL_NEW_IMAGE_UNSUPPORTED_MODE( _mode );
+    }
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, "(new image)" );
 
+    char * buffer = malloc ( size );
+    memset( buffer, 0, size );
+
+    *(buffer) = (_width & 0xff);
+    *(buffer+1) = (_width>>8) & 0xff;
+    *(buffer+2) = _height;
+
+    result->valueBuffer = buffer;
     result->size = size;
     
     return result;
+
 }
 
 void ef9345_get_image( Environment * _environment, char * _image, char * _x, char * _y ) {
-    
+
 }
 
+
 void ef9345_scroll( Environment * _environment, int _dx, int _dy ) {
-
-    deploy( ef9345vars, src_hw_ef9345_vars_asm);
-    deploy( scroll, src_hw_ef9345_scroll_asm);
-    deploy( textHScroll, src_hw_ef9345_hscroll_text_asm );
-    deploy( vScrollText, src_hw_ef9345_vscroll_text_asm );
-
-    outline1("LD A, $%2.2x", (unsigned char)(_dx&0xff) );
-    outline0("LD B, A" );
-    outline1("LD A, $%2.2x", (unsigned char)(_dy&0xff) );
-    outline0("LD C, A" );
-    outline0("CALL SCROLL");
 
 }
 
 void ef9345_put_tile( Environment * _environment, char * _tile, char * _x, char * _y ) {
 
-    deploy( ef9345vars, src_hw_ef9345_vars_asm);
-    deploy( tiles, src_hw_ef9345_tiles_asm );
-
-    outline1("LD A, (%s)", _tile );
-    outline0("LD (TILET), A" );
-    outline1("LD A, (%s)", _x );
-    outline0("LD (TILEX), A" );
-    outline1("LD A, (%s)", _y );
-    outline0("LD (TILEY), A" );
-    outline0("LD A, 1" );
-    outline0("LD (TILEW), A" );
-    outline0("LD (TILEH), A" );
-    outline0("LD (TILEW2), A" );
-    outline0("LD (TILEH2), A" );
-
-    outline0("CALL PUTTILE");
-
 }
 
 void ef9345_move_tiles( Environment * _environment, char * _tile, char * _x, char * _y ) {
-
-    Variable * tile = variable_retrieve( _environment, _tile );
-    Variable * x = variable_retrieve( _environment, _x );
-    Variable * y = variable_retrieve( _environment, _y );
-
-    deploy( ef9345vars, src_hw_ef9345_vars_asm);
-    deploy( tiles, src_hw_ef9345_tiles_asm );
-
-    int size = ( tile->originalWidth >> 3 ) * ( tile->originalHeight >> 3 );
-
-    if ( size ) {
-        outline1("LD HL, OFFSETS%4.4x", size );
-        outline0("LD A, L" );
-        outline0("LD (TILEO), A" );
-        outline0("LD A, H" );
-        outline0("LD (TILEO+1), A" );
-    } else {
-        outline0("LD A, 0" );
-        outline0("LD (TILEO), A" );
-        outline0("LD (TILEO+1), A" );
-    }
-
-    outline1("LD A, (%s)", tile->realName );
-    outline0("LD (TILET), A" );
-    outline1("LD A, (%s)", x->realName );
-    outline0("LD (TILEX), A" );
-    outline1("LD A, (%s)", y->realName );
-    outline0("LD (TILEY), A" );
-    outline1("LD A, (%s+1)", tile->realName );
-    outline0("LD (TILEW), A" );
-    outline0("LD (TILEW2), A" );
-    outline1("LD A, (%s+2)", tile->realName );
-    outline0("LD (TILEH), A" );
-    outline0("LD (TILEH2), A" );
-    outline1("LD A, (%s+3)", tile->realName );
-    outline0("LD (TILEA), A" );
-
-    outline0("CALL MOVETILE");
 
 }
 
 void ef9345_put_tiles( Environment * _environment, char * _tile, char * _x, char * _y, char *_w, char *_h ) {
 
-    deploy( ef9345vars, src_hw_ef9345_vars_asm);
-    deploy( tiles, src_hw_ef9345_tiles_asm );
-
-    outline1("LD A, (%s)", _tile );
-    outline0("LD (TILET), A" );
-    outline1("LD A, (%s)", _x );
-    outline0("LD (TILEX), A" );
-    outline1("LD A, (%s)", _y );
-    outline0("LD (TILEY), A" );
-    outline1("LD A, (%s+1)", _tile );
-    outline0("LD (TILEW), A" );
-    if ( _w ) {
-        outline1("LD A, (%s)", _w );
-    }
-    outline0("LD (TILEW2), A" );
-    outline1("LD A, (%s+2)", _tile );
-    outline0("LD (TILEH), A" );
-    if ( _h ) {
-        outline1("LD A, (%s)", _h );
-    }
-    outline0("LD (TILEH2), A" );
-
-    outline0("CALL PUTTILE");
-
 }
 
-void ef9345_tile_at( Environment * _environment, char * _x, char * _y, char * _result ) {
-
-    deploy( ef9345vars, src_hw_ef9345_vars_asm);
-    deploy( tiles, src_hw_ef9345_tiles_asm );
-
-    outline1("LD A, (%s)", _x );
-    outline0("LD (TILEX), A" );
-    outline1("LD A, (%s)", _y );
-    outline0("LD (TILEY), A" );
-
-    if ( ! _environment->hasGameLoop ) {
-        outline0("CALL TILEAT");
-    } else {
-        outline0("CALL TILEATNMI2");
-    }
-
-    outline0("LD A, (TILET)" );
-    outline1("LD (%s), A", _result );
+void ef9345_tile_at( Environment * _environment, char * _x, char * _y, char *_result ) {
 
 }
 
 void ef9345_use_tileset( Environment * _environment, char * _tileset ) {
 
-    deploy( ef9345vars, src_hw_ef9345_vars_asm);
-    deploy( tiles, src_hw_ef9345_tiles_asm );
-
-    outline1("LD A, (%s)", _tileset );
-
-    outline0("CALL USETILESET");
-
 }
 
 Variable * ef9345_get_raster_line( Environment * _environment ) {
 
-    Variable * result = variable_temporary( _environment, VT_WORD, "(raster line)" );
+}
 
-    variable_store( _environment, result->name, 0 );
+void ef9345_move_memory_video( Environment * _environment, char * _from, char * _to, char * _size ) {
 
-    return result;
-    
+}
+
+void ef9345_move_video_memory( Environment * _environment, char * _from, char * _to, char * _size ) {
+
+}
+
+void ef9345_colors_vars( Environment * _environment, char * _foreground_color, char * _background_color ) {
+
 }
 
 #endif

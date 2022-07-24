@@ -29,8 +29,19 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                      INTERNAL VARIABLES FOR EF9345 HARDWARE                 *
+;*                               VARS FOR EF9345                               *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+REGISTER0       =   $20
+REGISTER1       =   $21
+REGISTER2       =   $22
+REGISTER3       =   $23
+REGISTER4       =   $24
+REGISTER5       =   $25
+REGISTER6       =   $26
+REGISTER7       =   $27
+REGISTERE       =   $20 + $08
+REGISTER1E      =   $21 + $08

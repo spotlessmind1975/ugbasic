@@ -82,20 +82,10 @@ void target_initialization( Environment * _environment ) {
     variable_import( _environment, "EVERYSTATUS", VT_BYTE, 0 );
     variable_global( _environment, "EVERYSTATUS" );
 
-    variable_import( _environment, "BITMAPADDRESS", VT_ADDRESS, 0x0000 );
-    variable_global( _environment, "BITMAPADDRESS" );
-    variable_import( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0x0000 );
-    variable_global( _environment, "COLORMAPADDRESS" );
-    variable_import( _environment, "TEXTADDRESS", VT_ADDRESS, 0x0000 );
-    variable_global( _environment, "TEXTADDRESS" );    
-    variable_import( _environment, "TILESADDRESS", VT_ADDRESS, 0x0000 );
-    variable_global( _environment, "TILESADDRESS" );    
     variable_import( _environment, "EMPTYTILE", VT_TILE, 32 );
     variable_global( _environment, "EMPTYTILE" );    
     variable_import( _environment, "USING", VT_BYTE, 0 );
 
-    variable_import( _environment, "COPYOFBITMAPADDRESS", VT_ADDRESS, 0x0000 );
-    variable_global( _environment, "COPYOFBITMAPADDRESS" );
     variable_import( _environment, "COPYOFCOLORMAPADDRESS", VT_ADDRESS, 0x0000 );
     variable_global( _environment, "COPYOFCOLORMAPADDRESS" );
     variable_import( _environment, "COPYOFTEXTADDRESS", VT_ADDRESS, 0x0000 );
