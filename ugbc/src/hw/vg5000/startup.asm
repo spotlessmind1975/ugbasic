@@ -35,5 +35,23 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+ISRSVC:
+    RET
+
 VG5000STARTUP:
+
+    DI
+
+    LD HL, ISRSVC
+    LD ($47d1), HL
+    LD A, $c3
+    LD ($47d0), A
+
+    LD HL, ISRSVC
+    LD ($47e3), HL
+    LD A, $c3
+    LD ($47e2), A
+
+    EI
+
     RET
