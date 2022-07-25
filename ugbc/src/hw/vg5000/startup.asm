@@ -36,6 +36,10 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 ISRSVC:
+    INC SP
+    INC SP
+    INC SP
+    INC SP
     RET
 
 VG5000STARTUP:
