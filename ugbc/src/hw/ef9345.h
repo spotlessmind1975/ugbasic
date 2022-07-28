@@ -33,57 +33,35 @@
 
 #include "../ugbc.h"
 
-#define VDP_R0          0x80
-#define VDP_R1          0x81
-#define VDP_RNAME       0x82
-#define VDP_RCOLORTABLE 0x83
-#define VDP_RPATTERN    0x84
-#define VDP_RSPRITEA    0x85
-#define VDP_RSPRITEP    0x86
-#define VDP_RCOLOR      0x87
-
-#define WVDP( r, v ) \
-    outline1("LD A, $%2.2x", ( r & 0xff ) ); \
-    outline0("LD E, A" ); \
-    outline1("LD A, $%2.2x", ( v & 0xff ) ); \
-    outline0("CALL VDPSETREG" );
-#define WVDP_R0( v )            WVDP( VDP_R0, v )
-#define WVDP_R1( v )            WVDP( VDP_R1, v )
-#define WVDP_RNAME( v )         WVDP( VDP_RNAME, v )
-#define WVDP_RCOLORTABLE( v )   WVDP( VDP_RCOLORTABLE, v )
-#define WVDP_RPATTERN( v )      WVDP( VDP_RPATTERN, v )
-#define WVDP_RSPRITEA( v )      WVDP( VDP_RSPRITEA, v )
-#define WVDP_RSPRITEP( v )      WVDP( VDP_RSPRITEP, v )
-#define WVDP_RCOLOR( v )        WVDP( VDP_RCOLOR, v )
-
-#define COLOR_BLACK					0x01
-#define COLOR_WHITE					0x0f
-#define COLOR_RED					0x08
-#define COLOR_CYAN					0x07
-#define COLOR_VIOLET				0x0d
+#define COLOR_BLACK					0x00
+#define COLOR_RED					0x01
 #define COLOR_GREEN					0x02
-#define COLOR_BLUE					0x07
-#define COLOR_YELLOW				0x0b
-#define COLOR_ORANGE				0x09
-#define COLOR_BROWN					0x06
-#define COLOR_LIGHT_RED				0x09
-#define COLOR_DARK_GREY				0x0e
-#define COLOR_GREY					0x0e
-#define COLOR_LIGHT_GREEN			0x03
-#define COLOR_LIGHT_BLUE			0x05
-#define COLOR_LIGHT_GREY			0x0e
-#define COLOR_DARK_BLUE				0x04
-#define COLOR_MAGENTA				0x0d
+#define COLOR_YELLOW				0x03
+#define COLOR_BLUE					0x04
+#define COLOR_MAGENTA				0x05
+#define COLOR_CYAN					0x06
+#define COLOR_WHITE					0x07
+
+#define COLOR_VIOLET				COLOR_MAGENTA
+#define COLOR_ORANGE				COLOR_RED
+#define COLOR_BROWN					COLOR_RED
+#define COLOR_LIGHT_RED				COLOR_RED
+#define COLOR_DARK_GREY				COLOR_BLACK
+#define COLOR_GREY					COLOR_WHITE
+#define COLOR_LIGHT_GREEN			COLOR_GREEN
+#define COLOR_LIGHT_BLUE			COLOR_BLUE
+#define COLOR_LIGHT_GREY			COLOR_WHITE
+#define COLOR_DARK_BLUE				COLOR_BLUE
 #define COLOR_PURPLE				COLOR_VIOLET
 #define COLOR_LAVENDER       		COLOR_VIOLET
-#define COLOR_GOLD       			0x0a
+#define COLOR_GOLD       			COLOR_YELLOW
 #define COLOR_TURQUOISE       		COLOR_LIGHT_BLUE
 #define COLOR_TAN       		    COLOR_BROWN
-#define COLOR_YELLOW_GREEN       	0x03
-#define COLOR_OLIVE_GREEN       	0x0c
+#define COLOR_YELLOW_GREEN       	COLOR_YELLOW
+#define COLOR_OLIVE_GREEN       	COLOR_GREEN
 #define COLOR_PINK       			COLOR_LIGHT_RED
 #define COLOR_PEACH       			COLOR_PINK
-#define COLOR_COUNT                 16
+#define COLOR_COUNT                 8
 
 #define DEFAULT_PEN_COLOR           COLOR_WHITE
 #define DEFAULT_PAPER_COLOR         COLOR_BLACK
@@ -92,19 +70,16 @@
 #define TEXT_ROWS_COUNT             25
 
 #define TILEMAP_MODE_STANDARD       0           // Text Mode
-// #define TILEMAP_MODE_GRAPHIC1       1           // Graphics I Mode
-// #define BITMAP_MODE_GRAPHIC2        2           // Graphics II Mode
-// #define BITMAP_MODE_MULTICOLOR      3           // Multicolor Mode
 
 #define BITMAP_MODE_DEFAULT     TILEMAP_MODE_STANDARD
 
-#define SPRITE_COUNT                32
-#define SPRITE_WIDTH                8
-#define SPRITE_HEIGHT               8
+#define SPRITE_COUNT                0
+#define SPRITE_WIDTH                0
+#define SPRITE_HEIGHT               0
 #define SPRITE_X_MIN                0
 #define SPRITE_Y_MIN                0
-#define SPRITE_X_MAX                264
-#define SPRITE_Y_MAX                200
+#define SPRITE_X_MAX                0
+#define SPRITE_Y_MAX                0
 
 #define SCREEN_BORDER_X             0
 #define SCREEN_BORDER_Y             0
@@ -115,8 +90,6 @@
 #define SPRITE_FLAG_COMPRESS_VERTICAL   0x0000
 #define SPRITE_FLAG_EXPAND_HORIZONTAL   0x0080
 #define SPRITE_FLAG_COMPRESS_HORIZONTAL 0x0000
-
-// #define TILES_PADDING           8
 
 int ef9345_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode );
 
