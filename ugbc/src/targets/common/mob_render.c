@@ -61,7 +61,7 @@ Il comando ''MOB RENDER'' impone di aggiornare i MOB.
 
 @usedInExample mobs_example_01.bas
 
-@target all
+@target c64
 </usermanual> */
 void mob_render( Environment * _environment, int _on_vbl ) {
 

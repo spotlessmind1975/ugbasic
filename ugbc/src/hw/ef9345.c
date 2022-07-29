@@ -685,6 +685,9 @@ void ef9345_tiles_get_height( Environment * _environment, char *_result ) {
 
 void ef9345_cls( Environment * _environment ) {
     
+    deploy( clsText, src_hw_ef9345_cls_asm );
+    outline0("CALL CLS");
+
 }
 
 void ef9345_scroll_text( Environment * _environment, int _direction ) {

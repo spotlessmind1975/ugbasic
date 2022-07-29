@@ -60,7 +60,7 @@ Il comando ''MOB AT'' permette di mostrare un oggetto mobile su una specifica po
 
 @usedInExample mobs_example_01.bas
 
-@target all
+@target c64
 </usermanual> */
 void mob_at( Environment * _environment, char * _index, char * _x, char * _y ) {
 

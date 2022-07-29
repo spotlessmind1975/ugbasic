@@ -60,7 +60,7 @@ Il comando ''MOB SHOW'' permette di mostrare (abilitare) un oggetto mobile.
 
 @usedInExample mobs_example_01.bas
 
-@target all
+@target c64
 </usermanual> */
 void mob_show( Environment * _environment, char * _index ) {
 
