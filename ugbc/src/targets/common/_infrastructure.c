@@ -1013,6 +1013,8 @@ Variable * variable_store( Environment * _environment, char * _destination, unsi
                     CRITICAL_DATATYPE_UNSUPPORTED("array(1)", DATATYPE_AS_STRING[destination->arrayType]);
                 }
                 cpu_fill_direct_size_value( _environment, destination->realName, size, _value );
+            } else if ( destination->type == VT_TILE ) {
+                cpu_store_8bit( _environment, destination->realName, _value );
             } else {
                 CRITICAL_STORE_UNSUPPORTED(DATATYPE_AS_STRING[destination->type]);
             }
