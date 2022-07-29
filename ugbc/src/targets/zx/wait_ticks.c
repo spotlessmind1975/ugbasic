@@ -47,20 +47,16 @@
  * @param _timing Number of cycles to wait
  */
 void wait_ticks( Environment * _environment, int _timing ) {
-
     
-
-    char timingString[MAX_TEMPORARY_STORAGE]; sprintf(timingString, "$%2.2x", _timing );
-
     MAKE_LABEL
 
-    outline1("LD BC, %s", timingString);
+    outline1("LD BC, $4.4x", _timing);
     outhead1("%s:", label);
     outline0("HALT");
     outline0("DEC BC");
     outline0("LD A,B");
     outline0("OR C");
-    outline1("JR Z, %s", label);
+    outline1("JR NZ, %s", label);
 
 }
 
@@ -84,6 +80,6 @@ void wait_ticks_var( Environment * _environment, char * _timing ) {
     outline0("DEC BC");
     outline0("LD A,B");
     outline0("OR C");
-    outline1("JR Z, %s", label);
+    outline1("JR NZ, %s", label);
 
 }
