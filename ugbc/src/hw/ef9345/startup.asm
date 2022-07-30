@@ -69,6 +69,19 @@ EF9345SETREG:
     OUT (C), E
     RET
 
+; GET A REGISTER
+;    D = register number
+;    E = register value
+EF9345GETREG:
+    PUSH AF
+    LD C, $8F
+    OUT (C), D
+    LD C, $CF
+    IN A, (C)
+    LD E, A
+    POP AF
+    RET
+
 ; SET A REGISTER WHEN CARD IS READY
 ;    D = register number
 ;    E = register value
@@ -77,6 +90,18 @@ EF9345LIB:
     PUSH AF
     CALL EF9345WAIT
     CALL EF9345SETREG
+    POP AF
+    POP BC
+    RET
+
+; GET A REGISTER WHEN CARD IS READY
+;    D = register number
+;    E = register value
+EF9345LIBR:
+    PUSH BC
+    PUSH AF
+    CALL EF9345WAIT
+    CALL EF9345GETREG
     POP AF
     POP BC
     RET
