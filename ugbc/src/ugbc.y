@@ -5968,6 +5968,7 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     printf("\t                xex - executable binary file\n" );
 #elif __c64__
     printf("\t                prg - program binary file\n" );
+    printf("\t                d64 - D64 disk image\n" );
 #elif __c128__
     printf("\t                prg - program binary file\n" );
 #elif __plus4__
@@ -6124,6 +6125,8 @@ int main( int _argc, char *_argv[] ) {
                         _environment->outputFileType = OUTPUT_FILE_TYPE_K7_NEW;
                     } else if ( strcmp( optarg, "rom") == 0 ) {
                         _environment->outputFileType = OUTPUT_FILE_TYPE_ROM;
+                    } else if ( strcmp( optarg, "d64") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_D64;
                     }
                     break;
                 case 'W':

@@ -141,15 +141,11 @@ void target_initialization( Environment * _environment ) {
     
 }
 
-void target_linkage( Environment * _environment ) {
+void generate_prg( Environment * _environment ) {
 
     char commandLine[8*MAX_TEMPORARY_STORAGE];
     char executableName[MAX_TEMPORARY_STORAGE];
     
-    if ( _environment->outputFileType != OUTPUT_FILE_TYPE_PRG ) {
-        CRITICAL_UNSUPPORTED_OUTPUT_FILE_TYPE( OUTPUT_FILE_TYPE_AS_STRING[_environment->outputFileType] );
-    }
-
     if ( _environment->compilerFileName ) {
         sprintf(executableName, "%s", _environment->compilerFileName );
     } else if( access( "cc65\\bin\\cl65.exe", F_OK ) == 0 ) {
@@ -214,6 +210,48 @@ void target_linkage( Environment * _environment ) {
 
         }
     
+    }
+
+}
+
+void generate_d64( Environment * _environment ) {
+
+    char * internalFileName = strdup( _environment->exeFileName );
+    char * p = strstr( internalFileName, ".d64" );
+
+    if ( p ) {
+        strcpy( p, ".prg");
+    } else {
+        strcpy( internalFileName, "main.prg");
+    }
+
+    FILE * prgHandle = fopen(_environment->exeFileName, "rb");
+    fseek( prgHandle, 0, SEEK_END );
+    int prgSize = ftell( prgHandle );
+    fseek( prgHandle, 0, SEEK_SET );
+    unsigned char * prgContent = malloc( prgSize );
+    (void)!fread( prgContent, prgSize, 1, prgHandle );
+    fclose( prgHandle );
+
+    D64Handle * handle = d64_create( CBMDOS );
+    d64_write_file( handle, internalFileName, PRG, prgContent, prgSize );
+    d64_output( handle, _environment->exeFileName );
+    d64_free( handle );
+
+}
+
+void target_linkage( Environment * _environment ) {
+
+    switch( _environment->outputFileType ) {
+        case OUTPUT_FILE_TYPE_PRG:
+            generate_prg( _environment );
+            break;
+        case OUTPUT_FILE_TYPE_D64:
+            generate_prg( _environment );
+            generate_d64( _environment );
+            break;
+        default:
+            CRITICAL_UNSUPPORTED_OUTPUT_FILE_TYPE( OUTPUT_FILE_TYPE_AS_STRING[_environment->outputFileType] );
     }
 
 }

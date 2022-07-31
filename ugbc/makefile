@@ -437,6 +437,7 @@ SOURCES := $(wildcard src/*.c)
 SOURCES += $(wildcard src/libs/*.c)
 SOURCES += $(wildcard src/targets/*.c)
 SOURCES += $(wildcard src/hw/*.c)
+SOURCES += $(wildcard src/outputs/*.c)
 SOURCES += $(wildcard src/targets/common/*.c)
 SOURCES += $(wildcard src/targets/$(target)/*.c)
 SOURCES += src-generated/ugbc.yy.c src-generated/ugbc.tab.c src-generated/ugbc.embed.yy.c src-generated/ugbc.embed.tab.c src-generated/modules_$(target).c

@@ -125,7 +125,8 @@ typedef enum _OutputFileType {
     OUTPUT_FILE_TYPE_K7_NEW = 4,
     OUTPUT_FILE_TYPE_TAP = 5,
     OUTPUT_FILE_TYPE_CAS = 6,
-    OUTPUT_FILE_TYPE_ROM = 7
+    OUTPUT_FILE_TYPE_ROM = 7,
+    OUTPUT_FILE_TYPE_D64 = 8
 
 } OutputFileType;
 
@@ -2865,6 +2866,7 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "hw/vic2.h"
     #include "hw/sid.h"
     #include "hw/c64.h"
+    #include "outputs/d64.h"
 #elif __plus4__
     #include "../src-generated/modules_plus4.h"
     #include "hw/6502.h"

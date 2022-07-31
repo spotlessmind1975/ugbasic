@@ -30,7 +30,7 @@
 
 .PHONY: paths compiler clean all
 
-EXAMPLES := $(wildcard examples/*.bas)
+EXAMPLES := $(wildcard examples/texts_print_00.bas)
 COMPILED := $(subst examples/,generated/$(target)/asm/,$(EXAMPLES:.bas=.asm))
 EXECUTABLES := $(subst /asm/,/exe/,$(COMPILED:.asm=.$(output)))
 
@@ -49,6 +49,9 @@ generated/c64/asm/%.asm:
 generated/c64/exe/%.prg: $(subst /exe/,/asm/,$(@:.prg=.asm))
 	@cl65 -Ln $(@:.prg=.lbl) --listing $(@:.prg=.lst) -g -o $@ --mapfile $(@:.prg=.map) -t c64 -C $(subst /exe/,/cfg/,$(@:.prg=.cfg)) $(subst /exe/,/asm/,$(@:.prg=.asm))
 	@rm -f $(@:.prg=.o)
+
+generated/c64/exe/%.d64:
+	ugbc/exe/ugbc.c64 -O d64 $(subst generated/c64/exe/,examples/,$(@:.d64=.bas)) -o $@
 
 generated/c128/asm/%.asm:
 	@ugbc/exe/ugbc.c128 -c $(subst /asm/,/cfg/,$(@:.asm=.cfg)) $(subst generated/c128/asm/,examples/,$(@:.asm=.bas)) $@
