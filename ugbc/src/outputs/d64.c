@@ -519,7 +519,7 @@ static void d64_write_directory_entry( D64DirectoryEntry * _entry, unsigned char
     _entry->sectorFirstSector = _firstSector;
 
     // Update the filename.
-    memset( _entry->filename, 0xa0, 0 );
+    memset( _entry->filename, 0xa0, 16 );
     for( int i=0,c=strlen( _filename ) > 16 ? 16 : strlen( _filename ); i<c; ++i ) {
         _entry->filename[i] = toupper(_filename[i]);
     }
@@ -762,14 +762,6 @@ void d64_write_file( D64Handle * _handle, unsigned char * _filename, D64FileType
         // Increment the number of total sectors.
         ++sectors;
 
-        // Find out a free t/s sector.
-        d64_find_free_sector( _handle, &track, &sector );
-
-        // printf( "FREE SECTOR AT %d,%d\n", track, sector );
-
-        // Allocate the free t/s sector.
-        d64_allocate_sector( _handle, track, sector );
-
         // If there is a previous data sector, we must
         // update its t/s fields with the values found.
         if ( previous ) {
@@ -777,6 +769,12 @@ void d64_write_file( D64Handle * _handle, unsigned char * _filename, D64FileType
             previous->sector = sector;
             // printf( "(previous updated)\n" );
         }
+
+        // Find out a free t/s sector.
+        d64_find_free_sector( _handle, &track, &sector );
+
+        // Allocate the free t/s sector.
+        d64_allocate_sector( _handle, track, sector );
 
         // If the first track has not been setted, the
         // one found is the first track.
