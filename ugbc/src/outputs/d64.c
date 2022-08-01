@@ -336,29 +336,31 @@ static void d64_find_free_sector( D64Handle * _handle, D64Track * _track, D64Sec
     // This will contain the BAM entry with the free sector.
     D64BAMEntry * entry;
 
+    _handle->lastUsedTrack = 17;
+
     // We are going to examinate tracks from 1 to the maximum number.
-    for( int i=1; i<=_handle->tracks; ++i ) {
+    while( _handle->lastUsedTrack != 0 ) {
 
         // printf( " > track %d\n", i );
 
         // With tracks greater of 35 we have to use the extension
         // of the BAM based on disk's format.
-        if ( i > 35 ) {
+        if ( _handle->lastUsedTrack > 35 ) {
 
             switch( _handle->format ) {
                 case SPEEDDOS40:
                 case PROFESSIONALDOS40:
                 case PROFESSIONALDOS40B:
                 case PROSPEED40:
-                    entry = &bam->entriesSpeedDOS[i-36];
+                    entry = &bam->entriesSpeedDOS[_handle->lastUsedTrack-36];
                     break;
 
                 case DOLPHINDOS40:
-                    entry = &bam->entriesDolphinDOS[i-36];
+                    entry = &bam->entriesDolphinDOS[_handle->lastUsedTrack-36];
                     break;
 
                 case PROLOGICDOS40:
-                    entry = &bam->prologic.entriesPrologicDOS[i-36];
+                    entry = &bam->prologic.entriesPrologicDOS[_handle->lastUsedTrack-36];
                     break;
 
                 default:
@@ -367,7 +369,7 @@ static void d64_find_free_sector( D64Handle * _handle, D64Track * _track, D64Sec
             }
 
         } else {
-            entry = &bam->entries[i-1];
+            entry = &bam->entries[_handle->lastUsedTrack-1];
         }
 
         // printf( " > free sectors = %d\n", entry->freeSectors );
@@ -376,21 +378,35 @@ static void d64_find_free_sector( D64Handle * _handle, D64Track * _track, D64Sec
         if ( entry->freeSectors > 0 ) {
             // A detailed check to find out the correct sector
             // must be executed.
-            for( int j=0; j<D64SectorsPerTrack[i-1]; ++j ) {
+            int sector = 0;
+            for( int j=0; j<D64SectorsPerTrack[_handle->lastUsedTrack-1]; ++j ) {
                 // printf( " > sector = %d\n", j );
                 // Let's calculate the offset and the bitmap for the given sector.
-                int offset = j >> 3;
-                int bitmap = 1 << ( j & 0x07 ); 
+                int offset = sector >> 3;
+                int bitmap = 1 << ( sector & 0x07 ); 
                 // printf( " > offset, bitmap = %2.2x %2.2x\n", offset, bitmap );
                 // If the bit is set, the sector is free.
                 if ( ( entry->bitmappedFree[offset] & bitmap ) == bitmap ) {
                     // printf( "found %2.2x %2.2x\n", offset, bitmap );
-                    *_track = i;
-                    *_sector = j;
+                    *_track = _handle->lastUsedTrack;
+                    *_sector = sector;
                     return;
                 }
+                sector += 10;
+                sector = sector % D64SectorsPerTrack[_handle->lastUsedTrack-1];
             }
         }
+        
+        --_handle->lastUsedTrack;
+
+        if ( _handle->lastUsedTrack == 0 ) {
+            _handle->lastUsedTrack = _handle->tracks;
+        }
+
+        if ( _handle->lastUsedTrack == 17 ) {
+            _handle->lastUsedTrack = 0;
+        }
+
     }
 }
 
@@ -616,13 +632,16 @@ static void d64_format( D64Handle * _handle ) {
     d64_set_disk_name( _handle, "UGBASIC" );
 
     // Set the default disk id
-    d64_set_disk_id( _handle, 42 );
+    d64_set_disk_id( _handle, 0xa0a0 );
 
     // Set the dos type based on format
     d64_set_dos_type( _handle, dosTypeByFormat[_handle->format] );
 
     bam->unused5 = 0x00;
-    
+    bam->unused3 = 0xa0;
+
+    _handle->lastUsedTrack = 17;
+
 }
 
 /****************************************************************************
@@ -663,6 +682,8 @@ void d64_set_disk_name( D64Handle * _handle, unsigned char * _disk_name ) {
         default:
             memset( bam->standard.diskName, 0xa0, 16 );
             memcpy( bam->standard.diskName, _disk_name, strlen( _disk_name ) > 16 ? 16 : strlen( _disk_name ) );
+            bam->standard.unused2[0] = 0xa0;
+            bam->standard.unused2[1] = 0xa0;
             break;
     }
 
@@ -743,7 +764,7 @@ void d64_write_file( D64Handle * _handle, unsigned char * _filename, D64FileType
     D64Sector firstSector = 0;
 
     // Size of the file (in sectors)
-    D64WordLength sectors = 0;
+    D64WordLength sectors = 1;
 
     // Current track and sector.
     D64Track track = 0;

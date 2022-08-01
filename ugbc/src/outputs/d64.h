@@ -314,7 +314,7 @@ typedef struct _D64BAM {
 
     // BAM entries for each track, in groups of four bytes per track, 
     // starting on track 1 (see below for more details)
-    D64BAMEntry     entries[140];
+    D64BAMEntry     entries[35];
 
     union {
 
@@ -611,6 +611,9 @@ typedef struct _D64Handle {
 
     // Errors data size
     int                 errorsSize;
+
+    // 
+    D64Track            lastUsedTrack;
 
 } D64Handle;
 
