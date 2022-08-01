@@ -141,7 +141,7 @@ typedef struct _D64Attribute {
     // Values 5-15 are illegal, but if used will produce very strange results. 
     // The 1541 is inconsistent in how it treats these bits. Some routines use 
     // all 4 bits, others ignore bit 3, resulting in values from 0-7.
-    unsigned char     type:3;
+    unsigned char     type:4;
 
     // 4	Unused
     unsigned char     unused:1;
