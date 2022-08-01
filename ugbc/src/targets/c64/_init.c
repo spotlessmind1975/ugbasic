@@ -216,15 +216,6 @@ void generate_prg( Environment * _environment ) {
 
 void generate_d64( Environment * _environment ) {
 
-    char * internalFileName = strdup( _environment->exeFileName );
-    char * p = strstr( internalFileName, ".d64" );
-
-    if ( p ) {
-        strcpy( p, ".prg");
-    } else {
-        strcpy( internalFileName, "main.prg");
-    }
-
     FILE * prgHandle = fopen(_environment->exeFileName, "rb");
     fseek( prgHandle, 0, SEEK_END );
     int prgSize = ftell( prgHandle );
@@ -234,7 +225,7 @@ void generate_d64( Environment * _environment ) {
     fclose( prgHandle );
 
     D64Handle * handle = d64_create( CBMDOS );
-    d64_write_file( handle, internalFileName, PRG, prgContent, prgSize );
+    d64_write_file( handle, "MAIN", PRG, prgContent, prgSize );
     d64_output( handle, _environment->exeFileName );
     d64_free( handle );
 
