@@ -764,7 +764,7 @@ void d64_write_file( D64Handle * _handle, unsigned char * _filename, D64FileType
     D64Sector firstSector = 0;
 
     // Size of the file (in sectors)
-    D64WordLength sectors = 1;
+    D64WordLength sectors = 0;
 
     // Current track and sector.
     D64Track track = 0;
@@ -842,6 +842,14 @@ void d64_write_file( D64Handle * _handle, unsigned char * _filename, D64FileType
 
     }
 
+    // If there is a previous data sector, we must
+    // update its t/s fields with the values found.
+    if ( previous ) {
+        previous->track = track;
+        previous->sector = sector;
+        // printf( "(previous updated)\n" );
+    }
+    
     // Allocate a new directory's entry.
     D64DirectoryEntry * entry = d64_allocate_directory_entry( _handle );
 
