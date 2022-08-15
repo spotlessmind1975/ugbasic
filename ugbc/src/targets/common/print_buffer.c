@@ -86,13 +86,13 @@ void print_buffer( Environment * _environment, char * _value, int _new_line, int
 
     value->printable = _printable;
 
-    char * string = malloc( value->size + 1 );
-    memset( string, 0, value->size );
-    memcpy( string, value->valueBuffer, value->size );
+    // char * string = malloc( value->size + 1 );
+    // memset( string, 0, value->size );
+    // memcpy( string, value->valueBuffer, value->size );
 
     cpu_addressof_16bit( _environment, value->realName, sourceAddress->realName );
 
-    int bufferSize = strlen( string );
+    int bufferSize = value->size; // strlen( string );
     int offset = 0;
 
     if ( bufferSize > 127 ) {

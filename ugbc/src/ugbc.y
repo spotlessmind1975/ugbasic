@@ -105,6 +105,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> protothread_definition
 %type <integer> on_targets
 %type <integer> scroll_definition_hdirection scroll_definition_vdirection
+%type <integer> load_flags load_flags1 load_flag
 %type <integer> tile_load_flags tile_load_flags1 tile_load_flag
 %type <integer> image_load_flags image_load_flags1 image_load_flag
 %type <integer> images_load_flags images_load_flags1 images_load_flag
@@ -908,6 +909,11 @@ put_image_flag :
         $$ = FLAG_DOUBLE_Y;
     };
 
+load_flag :
+    COMPRESSED {
+        $$ = FLAG_COMPRESSED;
+    };
+
 images_load_flag :
     FLIP X {
         $$ = FLAG_FLIP_X;
@@ -982,6 +988,14 @@ image_load_flags1 :
         $$ = $1 | $2;
     };
 
+load_flags1 :
+    load_flag {
+        $$ = $1;
+    }
+    | load_flag load_flags1 {
+        $$ = $1 | $2;
+    };
+
 tile_load_flags1 :
     tile_load_flag {
         $$ = $1;
@@ -1046,6 +1060,14 @@ put_image_flags :
         $$ = 0;    
     } 
     | put_image_flags1 {
+        $$ = $1;
+    };
+
+load_flags :
+    {
+        $$ = 0;    
+    } 
+    | load_flags1 {
         $$ = $1;
     };
 
@@ -2082,17 +2104,17 @@ exponential:
     | NEW IMAGE OP const_expr OP_COMMA const_expr CP {        
         $$ = new_image( _environment, $4, $6, ((struct _Environment *)_environment)->currentMode )->name;
       }
-    | LOAD OP String CP on_bank {
-        $$ = load( _environment, $3, NULL, 0, $5 )->name;
+    | LOAD OP String CP on_bank load_flags {
+        $$ = load( _environment, $3, NULL, 0, $5, $6 )->name;
       }
-    | LOAD OP String AS String CP on_bank {
-        $$ = load( _environment, $3, $5, 0, $7 )->name;
+    | LOAD OP String AS String CP on_bank load_flags {
+        $$ = load( _environment, $3, $5, 0, $7, $8 )->name;
       }
-    | LOAD OP String OP_COMMA Integer CP on_bank {
-        $$ = load( _environment, $3, NULL, $5, $7 )->name;
+    | LOAD OP String OP_COMMA Integer CP on_bank load_flags {
+        $$ = load( _environment, $3, NULL, $5, $7, $8 )->name;
       }
-    | LOAD OP String AS String OP_COMMA Integer CP on_bank {
-        $$ = load( _environment, $3, $5, $7, $9 )->name;
+    | LOAD OP String AS String OP_COMMA Integer CP on_bank load_flags {
+        $$ = load( _environment, $3, $5, $7, $9, $10 )->name;
       }
     | LOAD MUSIC OP String CP on_bank {
         $$ = music_load( _environment, $4, NULL, $6 )->name;
@@ -5504,11 +5526,11 @@ statement2:
   | Identifier OP_COLON {
       cpu_label( _environment, $1 );
   } 
-  | LOAD String OP_COMMA Integer on_bank {
-    load( _environment, $2, NULL, $4, $5 );
+  | LOAD String OP_COMMA Integer on_bank load_flags {
+    load( _environment, $2, NULL, $4, $5, $6 );
   }
-  | LOAD String AS String OP_COMMA Integer on_bank {
-    load( _environment, $2, $4, $6, $7 );
+  | LOAD String AS String OP_COMMA Integer on_bank load_flags {
+    load( _environment, $2, $4, $6, $7, $8 );
   }
   | RUN PARALLEL {
       run_parallel( _environment );

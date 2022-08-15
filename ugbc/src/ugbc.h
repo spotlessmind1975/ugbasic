@@ -2506,7 +2506,7 @@ void                    kill_procedure( Environment * _environment, char * _hand
 // *L*
 //----------------------------------------------------------------------------
 
-Variable *              load( Environment * _environment, char * _filename, char * _alias, int _at, int _bank_expansion );
+Variable *              load( Environment * _environment, char * _filename, char * _alias, int _at, int _bank_expansion, int _flags );
 void                    locate( Environment * _environment, char * _x, char * _y );
 void                    loop( Environment * _environment, char *_label );
 
