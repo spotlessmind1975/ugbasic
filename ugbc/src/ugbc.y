@@ -73,7 +73,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token RING ROCK SAWTOOTH SAX SCI SEASHORE SECTION SHAKUHACHI SHAMISEN SHANAI SITAR SLAP SOPRANO SOUNDTRACK
 %token SQUARE STEEL STRINGS SWEEP SYNTH SYNTHBRASS SYNTHSTRINGS TAIKO TANGO TELEPHONE TENOR TIMPANI TINKLE
 %token TOM TONK TREMOLO TROMBONE TRUMPET TUBA TUBULAR TWEET VIBRAPHONE VIOLA VIOLIN VOICE WARM WHISTLE WOODBLOCK 
-%token XYLOPHONE KILL COMPRESSED
+%token XYLOPHONE KILL COMPRESSED STORAGE ENDSTORAGE FILEX DLOAD
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -2103,6 +2103,9 @@ exponential:
       }
     | NEW IMAGE OP const_expr OP_COMMA const_expr CP {        
         $$ = new_image( _environment, $4, $6, ((struct _Environment *)_environment)->currentMode )->name;
+      }
+    | DLOAD OP expr CP {
+        $$ = dload( _environment, $3 )->name;
       }
     | LOAD OP String CP on_bank load_flags {
         $$ = load( _environment, $3, NULL, 0, $5, $6 )->name;
@@ -5585,6 +5588,18 @@ statement2:
   }
   | MID OP expr OP_COMMA expr OP_COMMA expr CP OP_ASSIGN expr {
         variable_string_mid_assign( _environment, $3, $5, $7, $10 );
+  }
+  | STORAGE const_expr_string {
+        begin_storage( _environment, $2, NULL );
+  }
+  | STORAGE const_expr_string AS const_expr_string {
+        begin_storage( _environment, $2, $4 );
+  }
+  | FILEX const_expr_string AS const_expr_string {
+        file_storage( _environment, $2, $4 );
+  }
+  | ENDSTORAGE {
+        end_storage( _environment );
   }
   | DEFINE define_definitions
   | DIM dim_definitions

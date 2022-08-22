@@ -55,6 +55,12 @@
  * DECLARATIONS AND DEFINITIONS SECTION 
  ****************************************************************************/
 
+#ifdef _WIN32
+    #define PATH_SEPARATOR          '\\'
+#else
+    #define PATH_SEPARATOR          '/'
+#endif
+
 /**
  * @brief Type of memory banks
  */
@@ -115,6 +121,50 @@ typedef struct _Bank {
     struct _Bank * next;
 
 } Bank;
+
+/**
+ * @brief Structure of a single file inside a storage
+ */
+typedef struct _FileStorage {
+
+    /** ID of the file */
+    int id;
+
+    /** Source name of the file */
+    char * sourceName;
+
+    /** Target name of the file */
+    char * targetName;
+
+    /** Size of the file */
+    int size;
+
+    /** Link to the next file (NULL if this is the last one) */
+    struct _FileStorage * next;
+
+} FileStorage;
+
+/**
+ * @brief Structure of a single storage
+ */
+typedef struct _Storage {
+
+    /** ID of the storage */
+    int id;
+
+    /** Name of the storage */
+    char * name;
+
+    /** Filename of the storage */
+    char * fileName;
+
+    /** List of files */
+    FileStorage * files;
+
+    /** Link to the next storage (NULL if this is the last one) */
+    struct _Storage * next;
+
+} Storage;
 
 typedef enum _OutputFileType {
 
@@ -1043,6 +1093,7 @@ typedef struct _Deployed {
     int ay8910startup;
     int sn76489vars;
     int sn76489startup;
+    int storage;
 
     Embedded embedded;
 
@@ -1284,6 +1335,16 @@ typedef struct _Environment {
     Bank * banks[BANK_TYPE_COUNT];
 
     ScreenMode * screenModes;
+
+    /**
+     * Set of storages
+     */
+    Storage * storage;
+
+    /**
+     * Current storage
+     */
+    Storage * currentStorage;
 
     /**
      * List of temporary (but not reusable) variables.
@@ -1624,6 +1685,7 @@ typedef struct _Environment {
 #define UNIQUE_ID            _environment->uniqueId++
 #define UNIQUE_RESOURCE_ID   _environment->uniqueResourceId++
 #define MAKE_LABEL  char label[12]; sprintf( label, "_label%d", UNIQUE_ID);
+
 #define CRITICAL( s ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICAL2( s, v ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%s) at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, v, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICAL2i( s, v ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%d) at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, v, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
@@ -1761,6 +1823,10 @@ typedef struct _Environment {
 #define CRITICAL_FILENAME_INVALID_COLON( v ) CRITICAL2("E129 - invalid filename, colon character not allowed", v );
 #define CRITICAL_FILENAME_INVALID_BACKSLASH( v ) CRITICAL2("E130 - invalid filename, backslash character not allowed", v );
 #define CRITICAL_CANNOT_KILL_NOT_THREADID( v ) CRITICAL2("E131 - cannot KILL something that is not a thread id", v );
+#define CRITICAL_STORAGE_NESTED_UNSUPPORTED( n ) CRITICAL2("E132 - cannot define a nested storage (a storage inside a storage)", n ); 
+#define CRITICAL_STORAGE_NOT_OPENED() CRITICAL("E133 - ENDSTORAGE outside a storage definition" ); 
+#define CRITICAL_DLOAD_MISSING_FILE(f) CRITICAL2("E134 - DLOAD missing file", f );
+
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
 #define WARNING2i( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%i) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -2319,6 +2385,7 @@ void                    begin_gameloop( Environment * _environment );
 void                    begin_loop( Environment * _environment );
 void                    begin_procedure( Environment * _environment, char * _name );
 void                    begin_repeat( Environment * _environment );
+void                    begin_storage( Environment * _environment, char * _name, char * _file_name );
 void                    begin_while( Environment * _environment );
 void                    begin_while_condition( Environment * _environment, char * _expression );
 void                    bell( Environment * _environment, int _note, int _channels );
@@ -2384,6 +2451,7 @@ Variable *              csprite_init( Environment * _environment, char * _image,
 //----------------------------------------------------------------------------
 
 Variable *              distance( Environment * _environment, char * _x1, char * _y1, char * _x2, char * _y2 );
+Variable *              dload( Environment * _environment, char * _target_name );
 void                    double_buffer( Environment * _environment, int _enabled );
 void                    draw( Environment * _environment, char * _x0, char * _y0, char * _x1, char * _y1, char * _c );
 void                    draw_tile_column( Environment * _environment, char * _tile, char * _x, char * _y1, char * _y2, char * _color );
@@ -2405,6 +2473,7 @@ void                    end_loop( Environment * _environment );
 void                    end_procedure( Environment * _environment, char * _value );
 void                    end_repeat( Environment * _environment, char * _expression );
 void                    end_select_case( Environment * _environment );
+void                    end_storage( Environment * _environment );
 void                    end_while( Environment * _environment );
 char *                  escape_newlines( char * _string );
 void                    every_cleanup( Environment * _environment );
@@ -2421,6 +2490,7 @@ void                    exit_procedure( Environment * _environment );
 // *F*
 //----------------------------------------------------------------------------
 
+void                    file_storage( Environment * _environment, char * _source_name, char *_target_name );
 int                     frames( Environment * _environment, char * _image );
 
 //----------------------------------------------------------------------------

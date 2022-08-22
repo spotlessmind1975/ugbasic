@@ -136,5 +136,6 @@ void c64_key_pressed( Environment * _environment, char *_scancode, char * _resul
 void c64_scanshift( Environment * _environment, char * _shifts );
 void c64_keyshift( Environment * _environment, char * _shifts );
 void c64_clear_key( Environment * _environment );
+void c64_dload( Environment * _environment, char * _target_filename, char * _result );
 
 #endif
