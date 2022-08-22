@@ -16,7 +16,7 @@ ENDSTORAGE
 
 textCompileTime := LOAD("examples/test.txt")
 textCompileTimeAsString = (STRING) textCompileTime
-textRunTimeAsString = DLOAD("TEST,P,R")
+textRunTimeAsString = DLOAD("TEST")
 
 IF textCompileTimeAsString <> textRunTimeAsString THEN
     PRINT "TEST FAILED!"
