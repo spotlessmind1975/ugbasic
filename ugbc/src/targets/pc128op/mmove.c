@@ -86,7 +86,7 @@ void mmove_memory_video( Environment * _environment, char * _from, char * _to, c
 
     Variable * from = variable_retrieve_or_define( _environment, _from, VT_ADDRESS, 0 );
     Variable * to = variable_retrieve_or_define( _environment, _to, VT_ADDRESS, 0 );
-    Variable * size = variable_retrieve_or_define( _environment, _to, VT_ADDRESS, 0 );
+    Variable * size = variable_retrieve_or_define( _environment, _size, VT_WORD, 0 );
 
     if ( VT_BITWIDTH( size->type ) != 16 ) {
         CRITICAL_CANNOT_MMOVE_INVALID_SIZE( _size );
@@ -113,7 +113,7 @@ void mmove_video_memory( Environment * _environment, char * _from, char * _to, c
 
     Variable * from = variable_retrieve_or_define( _environment, _from, VT_ADDRESS, 0 );
     Variable * to = variable_retrieve_or_define( _environment, _to, VT_ADDRESS, 0 );
-    Variable * size = variable_retrieve_or_define( _environment, _to, VT_ADDRESS, 0 );
+    Variable * size = variable_retrieve_or_define( _environment, _size, VT_WORD, 0 );
 
     if ( VT_BITWIDTH( size->type ) != 16 ) {
         CRITICAL_CANNOT_MMOVE_INVALID_SIZE( _size );
