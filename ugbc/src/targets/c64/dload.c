@@ -68,7 +68,7 @@ caratteri, a seconda del target.
 
 @usedInExample storage_example_01.bas
 
-@target all
+@target c64
 </usermanual> */
 Variable * dload( Environment * _environment, char * _target_name ) {
 
