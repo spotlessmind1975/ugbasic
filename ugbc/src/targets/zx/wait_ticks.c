@@ -50,7 +50,7 @@ void wait_ticks( Environment * _environment, int _timing ) {
     
     MAKE_LABEL
 
-    outline1("LD BC, $4.4x", _timing);
+    outline1("LD BC, $%4.4x", _timing);
     outhead1("%s:", label);
     outline0("HALT");
     outline0("DEC BC");
