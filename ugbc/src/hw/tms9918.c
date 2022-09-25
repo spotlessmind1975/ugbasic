@@ -2182,7 +2182,7 @@ void tms9918_move_memory_video( Environment * _environment, char * _from, char *
     outline1("LD HL, (%s)", _from );
     outline1("LD DE, (%s)", _to );
     outline1("LD BC, (%s)", _size );
-    outline0("JP VDPWRITE" );
+    outline0("CALL VDPWRITE" );
 
 }
 
@@ -2191,7 +2191,7 @@ void tms9918_move_video_memory( Environment * _environment, char * _from, char *
     outline1("LD HL, (%s)", _to );
     outline1("LD DE, (%s)", _from );
     outline1("LD BC, (%s)", _size );
-    outline0("JP VDPREAD" );
+    outline0("CALL VDPREAD" );
 
 }
 
