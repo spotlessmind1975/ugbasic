@@ -5148,6 +5148,14 @@ memory_video :
         $$ = 1;
     };
 
+const_instruction :
+    CONST
+    | SHARED CONST
+    | CONST SHARED
+    | GLOBAL CONST
+    | CONST GLOBAL
+    ;
+
 statement2:
     BANK bank_definition
   | RASTER raster_definition
@@ -5604,25 +5612,25 @@ statement2:
   | DEFINE define_definitions
   | DIM dim_definitions
   | FILL fill_definitions
-  | CONST Identifier OP_ASSIGN const_expr_string {
+  | const_instruction Identifier OP_ASSIGN const_expr_string {
         const_define_string( _environment, $2, $4 );
   }
-  | CONST Identifier OP_ASSIGN const_expr {
+  | const_instruction Identifier OP_ASSIGN const_expr {
         const_define_numeric( _environment, $2, $4 );
   }
-  | CONST POSITIVE Identifier OP_ASSIGN const_expr {
+  | const_instruction POSITIVE Identifier OP_ASSIGN const_expr {
         if ( $5 < 0 ) {
             CRITICAL_NEGATIVE_CONSTANT( $3 );
         }
         const_define_numeric( _environment, $3, $5 );
   }
-  | POSITIVE CONST Identifier OP_ASSIGN const_expr {
+  | POSITIVE const_instruction Identifier OP_ASSIGN const_expr {
         if ( $5 < 0 ) {
             CRITICAL_NEGATIVE_CONSTANT( $3 );
         }
         const_define_numeric( _environment, $3, $5 );
   }
-  | CONST Identifier IN OP const_expr OP_COMMA const_expr CP OP_ASSIGN const_expr  {
+  | const_instruction Identifier IN OP const_expr OP_COMMA const_expr CP OP_ASSIGN const_expr  {
         if ( $10 < $5 ) {
             CRITICAL_TOO_LITTLE_CONSTANT( $2 );
         }
@@ -5631,7 +5639,7 @@ statement2:
         }
         const_define_numeric( _environment, $2, $10 );
   }
-  | CONST Identifier IN OSP const_expr OP_COMMA const_expr CP OP_ASSIGN const_expr  {
+  | const_instruction Identifier IN OSP const_expr OP_COMMA const_expr CP OP_ASSIGN const_expr  {
         if ( $10 <= $5 ) {
             CRITICAL_TOO_LITTLE_CONSTANT( $2 );
         }
@@ -5640,7 +5648,7 @@ statement2:
         }
         const_define_numeric( _environment, $2, $10 );
   }
-  | CONST Identifier IN OP const_expr OP_COMMA const_expr CSP OP_ASSIGN const_expr  {
+  | const_instruction Identifier IN OP const_expr OP_COMMA const_expr CSP OP_ASSIGN const_expr  {
         if ( $10 < $5 ) {
             CRITICAL_TOO_LITTLE_CONSTANT( $2 );
         }
@@ -5649,7 +5657,7 @@ statement2:
         }
         const_define_numeric( _environment, $2, $10 );
   }
-  | CONST Identifier IN OSP const_expr OP_COMMA const_expr CSP OP_ASSIGN const_expr {
+  | const_instruction Identifier IN OSP const_expr OP_COMMA const_expr CSP OP_ASSIGN const_expr {
         if ( $10 <= $5 ) {
             CRITICAL_TOO_LITTLE_CONSTANT( $2 );
         }
