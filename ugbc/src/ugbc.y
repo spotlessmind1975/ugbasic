@@ -82,7 +82,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token BROWN LIGHT DARK GREY GRAY MAGENTA PURPLE
 %token LAVENDER GOLD TURQUOISE TAN PINK PEACH OLIVE
 
-%token <string> Identifier ConstantIdentifier
+%token <string> Identifier
 %token <string> String
 %token <integer> Integer
 %token <string> BufferDefinition
@@ -119,7 +119,6 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> on_bank
 %type <integer> note octave const_note
 %type <integer> const_instrument
-%type <string> const_identifier
 
 %right Integer String CP 
 %left OP_DOLLAR
@@ -134,8 +133,6 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %left AND OR OP_EQUAL OP_DISEQUAL OP_LT OP_LTE OP_GT OP_GTE
 
 %%
-
-const_identifier : Identifier | ConstantIdentifier;
 
 const_instrument :
     EXPLOSION { $$ = IMF_INSTRUMENT_EXPLOSION; } |
@@ -680,7 +677,7 @@ const_factor:
           }
           $$ = v->valueBuffer[1];
       }
-      | LEN OP const_identifier CP {
+      | LEN OP Identifier CP {
           Constant * c = constant_find( ((Environment *)_environment)->constants, $3 );
           if ( c == NULL ) {
               CRITICAL_UNDEFINED_CONSTANT( $3 );
@@ -706,7 +703,7 @@ const_factor:
           }
           $$ = c->value;
       }
-      | OP_HASH const_identifier {
+      | OP_HASH Identifier {
           Constant * c = constant_find( ((Environment *)_environment)->constants, $2 );
           if ( c == NULL ) {
               CRITICAL_UNDEFINED_CONSTANT( $2 );
@@ -841,7 +838,7 @@ direct_integer:
     OP_HASH OP_MINUS Integer {
         $$ = -$3;
     }
-    | OP_HASH const_identifier {
+    | OP_HASH Identifier {
         Constant * c = constant_find( ((struct _Environment *)_environment)->constants, $2 );
         if ( !c ) {
             CRITICAL_UNDEFINED_CONSTANT($2);
@@ -1908,7 +1905,7 @@ exponential:
         $$ = variable_move_from_array( _environment, $2 )->name;
         --((struct _Environment *)_environment)->arrayNestedIndex;
     }
-    | const_identifier {
+    | Identifier {
         Constant * c = constant_find( ((struct _Environment *)_environment)->constants, $1 );
         if ( c ) {
             if ( c->valueString ) {
@@ -1951,7 +1948,7 @@ exponential:
         $$ = variable_temporary( _environment, VT_SWORD, "(negative integer value)" )->name;
         variable_store( _environment, $$, -$2 );
       }
-    | OP_MINUS const_identifier {
+    | OP_MINUS Identifier {
         Constant * c = constant_find( ((struct _Environment *)_environment)->constants, $2 );
         Variable * expr = NULL;
         if ( c ) {
@@ -5615,25 +5612,25 @@ statement2:
   | DEFINE define_definitions
   | DIM dim_definitions
   | FILL fill_definitions
-  | const_instruction const_identifier OP_ASSIGN const_expr_string {
+  | const_instruction Identifier OP_ASSIGN const_expr_string {
         const_define_string( _environment, $2, $4 );
   }
-  | const_instruction const_identifier OP_ASSIGN const_expr {
+  | const_instruction Identifier OP_ASSIGN const_expr {
         const_define_numeric( _environment, $2, $4 );
   }
-  | const_instruction POSITIVE const_identifier OP_ASSIGN const_expr {
+  | const_instruction POSITIVE Identifier OP_ASSIGN const_expr {
         if ( $5 < 0 ) {
             CRITICAL_NEGATIVE_CONSTANT( $3 );
         }
         const_define_numeric( _environment, $3, $5 );
   }
-  | POSITIVE const_instruction const_identifier OP_ASSIGN const_expr {
+  | POSITIVE const_instruction Identifier OP_ASSIGN const_expr {
         if ( $5 < 0 ) {
             CRITICAL_NEGATIVE_CONSTANT( $3 );
         }
         const_define_numeric( _environment, $3, $5 );
   }
-  | const_instruction const_identifier IN OP const_expr OP_COMMA const_expr CP OP_ASSIGN const_expr  {
+  | const_instruction Identifier IN OP const_expr OP_COMMA const_expr CP OP_ASSIGN const_expr  {
         if ( $10 < $5 ) {
             CRITICAL_TOO_LITTLE_CONSTANT( $2 );
         }
@@ -5642,7 +5639,7 @@ statement2:
         }
         const_define_numeric( _environment, $2, $10 );
   }
-  | const_instruction const_identifier IN OSP const_expr OP_COMMA const_expr CP OP_ASSIGN const_expr  {
+  | const_instruction Identifier IN OSP const_expr OP_COMMA const_expr CP OP_ASSIGN const_expr  {
         if ( $10 <= $5 ) {
             CRITICAL_TOO_LITTLE_CONSTANT( $2 );
         }
@@ -5651,7 +5648,7 @@ statement2:
         }
         const_define_numeric( _environment, $2, $10 );
   }
-  | const_instruction const_identifier IN OP const_expr OP_COMMA const_expr CSP OP_ASSIGN const_expr  {
+  | const_instruction Identifier IN OP const_expr OP_COMMA const_expr CSP OP_ASSIGN const_expr  {
         if ( $10 < $5 ) {
             CRITICAL_TOO_LITTLE_CONSTANT( $2 );
         }
@@ -5660,7 +5657,7 @@ statement2:
         }
         const_define_numeric( _environment, $2, $10 );
   }
-  | const_instruction const_identifier IN OSP const_expr OP_COMMA const_expr CSP OP_ASSIGN const_expr {
+  | const_instruction Identifier IN OSP const_expr OP_COMMA const_expr CSP OP_ASSIGN const_expr {
         if ( $10 <= $5 ) {
             CRITICAL_TOO_LITTLE_CONSTANT( $2 );
         }
