@@ -11,6 +11,12 @@ extern int yylineno;
 int yycolno;
 int yyposno;
 
+char * filenamestacked[256];
+int yylinenostacked[256];
+int yycolnostacked[256];
+int yyposnostacked[256];
+int stacked = 0;
+
 int yywrap() { return 1; }
  
 extern char DATATYPE_AS_STRING[][16];
@@ -73,7 +79,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token RING ROCK SAWTOOTH SAX SCI SEASHORE SECTION SHAKUHACHI SHAMISEN SHANAI SITAR SLAP SOPRANO SOUNDTRACK
 %token SQUARE STEEL STRINGS SWEEP SYNTH SYNTHBRASS SYNTHSTRINGS TAIKO TANGO TELEPHONE TENOR TIMPANI TINKLE
 %token TOM TONK TREMOLO TROMBONE TRUMPET TUBA TUBULAR TWEET VIBRAPHONE VIOLA VIOLIN VOICE WARM WHISTLE WOODBLOCK 
-%token XYLOPHONE KILL COMPRESSED STORAGE ENDSTORAGE FILEX DLOAD
+%token XYLOPHONE KILL COMPRESSED STORAGE ENDSTORAGE FILEX DLOAD INCLUDE
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -6403,6 +6409,8 @@ int main( int _argc, char *_argv[] ) {
         exit(EXIT_FAILURE);
     }
     
+    filenamestacked[0] = strdup( _environment->sourceFileName );
+
     begin_compilation( _environment );
 
     yydebug = 1;
@@ -6566,7 +6574,11 @@ int main( int _argc, char *_argv[] ) {
 
 int yyerror (Environment * _ignored, const char *s) /* Called by yyparse on error */
 {
+    if ( stacked == 0 ) {
       fprintf(stderr,  "*** ERROR: %s at %d column %d (%d)\n", s, yylineno, (yycolno+1), (yyposno+1));
+    } else {
+      fprintf(stderr,  "*** ERROR: %s at %d column %d (%d, %s)\n", s, yylineno, (yycolno+1), (yyposno+1), filenamestacked[stacked]);
+    }
       exit(EXIT_FAILURE);
 }
 

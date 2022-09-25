@@ -13,12 +13,51 @@
 extern int yycolno;
 extern int yyposno;
 
+extern char * filenamestacked[256];
+extern int yylinenostacked[];
+extern int yycolnostacked[];
+extern int yyposnostacked[];
+extern int stacked;
+
 %}
 
 %option yylineno
+%x incl
 
 
 %%
+
+INCLUDE             BEGIN(incl);
+<incl>[ \t]*        /* eat the whitespace */
+<incl>[^ \t\n\r]+     { /* got the include file name */
+    yyin = fopen( yytext, "rt" );
+    if ( ! yyin ) {
+        fprintf(stderr, "Missing include file %s\n", yytext );
+        exit(1);
+    }
+    yylinenostacked[stacked] = yylineno;
+    yycolnostacked[stacked] = yycolno;
+    yyposnostacked[stacked] = yyposno;
+    ++stacked;
+    filenamestacked[stacked] = strdup( yytext );
+    yylineno = 1;
+    yycolno = 0;
+    yyposno = 0;
+    yypush_buffer_state(yy_create_buffer( yyin, YY_BUF_SIZE ));
+    BEGIN(INITIAL);
+}
+<<EOF>> {
+    yypop_buffer_state();
+    if ( stacked ) {
+        --stacked;
+        yylineno = yylinenostacked[stacked];
+        yycolno = yycolnostacked[stacked];
+        yyposno = yyposnostacked[stacked];
+    }
+    if ( !YY_CURRENT_BUFFER ) {
+        yyterminate();
+    }
+}
 
 "#["[a-fA-F0-9]+"]" { yylval.string = strdup(yytext); RETURN(BufferDefinition,1); }
 "#["[a-fA-F0-9]+ { yylval.string = strdup(yytext); RETURN(BufferDefinition,1); }
