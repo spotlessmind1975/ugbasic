@@ -3454,7 +3454,7 @@ var_definition_simple:
   ;
 
 goto_definition:
-    Identifier {
+    const_identifier {
       goto_label( _environment, $1 );
   }
   | Integer {
@@ -3463,7 +3463,7 @@ goto_definition:
   ;
 
 gosub_definition:
-    Identifier {
+    const_identifier {
       gosub_label( _environment, $1 );
   }
   | Integer {
@@ -5537,7 +5537,7 @@ statement2:
       CRITICAL_NOT_SUPPORTED("INVERSE");
   }
   | WRITING writing_definition
-  | Identifier OP_COLON {
+  | const_identifier OP_COLON {
       cpu_label( _environment, $1 );
   } 
   | LOAD String OP_COMMA Integer on_bank load_flags {
