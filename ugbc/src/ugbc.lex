@@ -39,6 +39,10 @@ INCLUDE             BEGIN(incl);
     yycolnostacked[stacked] = yycolno;
     yyposnostacked[stacked] = yyposno;
     ++stacked;
+    if ( stacked == 256 ) {
+        fprintf(stderr, "Maximum number of stacked include files reached (256).\n" );
+        exit(1);
+    }
     filenamestacked[stacked] = strdup( yytext );
     yylineno = 1;
     yycolno = 0;
