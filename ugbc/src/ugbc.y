@@ -5546,6 +5546,9 @@ statement2:
       CRITICAL_NOT_SUPPORTED("INVERSE");
   }
   | WRITING writing_definition
+  | OSP Identifier OP_COLON CSP {
+      cpu_label( _environment, $2 );
+  } 
   | Identifier OP_COLON {
       cpu_label( _environment, $1 );
   } 
