@@ -5327,6 +5327,11 @@ statement2:
   | IF expr THEN {
       if_then( _environment, $2 );  
   }
+  | IF expr GOTO Integer {
+      if_then( _environment, $2 );
+      goto_number( _environment, $4 );
+      end_if_then( _environment );  
+  }
   | IF expr THEN Integer {
       if_then( _environment, $2 );
       goto_number( _environment, $4 );
