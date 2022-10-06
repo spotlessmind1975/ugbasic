@@ -52,13 +52,13 @@ extern char DATATYPE_AS_STRING[][16];
 
 @english
 The ''RND'' function generates integers at random, between zero and any number specified
-in brackets. If your specified number is greater than zero, random numbers will be generated 
+in brackets (minus one). If your specified number is greater than zero, random numbers will be generated 
 up to that maximum number. However, if you specify 0, then ''RND'' will return the last 
 random value it generated. This is useful for debugging programs.
 
 @italian
 La funzione ''RND'' genera numeri interi casuali, compresi tra zero e qualsiasi numero 
-specificato tra parentesi. Se il numero specificato è maggiore di zero, verranno generati 
+specificato tra parentesi (meno uno). Se il numero specificato è maggiore di zero, verranno generati 
 numeri casuali fino a quel numero massimo. Tuttavia, se si specifica 0, ''RND'' restituirà 
 l'ultimo valore casuale generato. Questo è utile per il debug dei programmi.
 
