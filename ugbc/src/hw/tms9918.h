@@ -101,6 +101,13 @@
 #define SPRITE_COUNT                32
 #define SPRITE_WIDTH                8
 #define SPRITE_HEIGHT               8
+#define SPRITE_X_MIN                0
+#define SPRITE_Y_MIN                0
+#define SPRITE_X_MAX                264
+#define SPRITE_Y_MAX                200
+
+#define SCREEN_BORDER_X             0
+#define SCREEN_BORDER_Y             0
 
 #define SPRITE_FLAG_MULTICOLOR          0x0010
 #define SPRITE_FLAG_MONOCOLOR           0x0000

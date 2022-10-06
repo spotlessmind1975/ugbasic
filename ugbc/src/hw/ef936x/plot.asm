@@ -434,7 +434,7 @@ PLOTD3LODB
 PLOTD3FDB
     JMP PLOTP                  ;skip the erase-point section
 
-#ENDIF
+@ENDIF
 
     ;-----------
     ;erase point

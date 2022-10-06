@@ -56,6 +56,7 @@ void setup_embedded( Environment * _environment ) {
     _environment->embedded.cpu_mem_move = 1;
     _environment->embedded.cpu_uppercase = 1;
     _environment->embedded.cpu_lowercase = 1;
+    _environment->embedded.cpu_msc1_uncompress = 1;
 
 }
 
@@ -95,7 +96,7 @@ void target_initialization( Environment * _environment ) {
 
 void target_linkage( Environment * _environment ) {
 
-    char commandLine[2*MAX_TEMPORARY_STORAGE];
+    char commandLine[8*MAX_TEMPORARY_STORAGE];
     char executableName[MAX_TEMPORARY_STORAGE];
     char binaryName[64];
     char listingFileName[64];
@@ -145,6 +146,14 @@ void target_linkage( Environment * _environment ) {
         sprintf(executableName, "%s", "z88dk-appmake" );
     }
 
+    char pipes[256];
+
+    #ifdef _WIN32
+        strcpy( pipes, ">nul 2>nul");
+    #else
+        strcpy( pipes, ">/dev/null 2>/dev/null");
+    #endif
+
     sprintf( commandLine, "\"%s\" +zx --org 32768 -b \"%s\"",
         executableName,
         binaryName );
@@ -162,8 +171,59 @@ void target_linkage( Environment * _environment ) {
         return;
     }; 
 
+    if ( _environment->listingFileName ) {
+        strcpy( binaryName, _environment->asmFileName );
+        p = strstr( binaryName, ".asm" );
+        if ( p ) {
+            *p = 0;
+            --p;
+            strcat( p, ".lis");
+            rename( binaryName, _environment->listingFileName );
+        }
+
+        if ( _environment->profileFileName ) {
+
+            char binaryName2[MAX_TEMPORARY_STORAGE];
+            strcpy( binaryName2, _environment->asmFileName );
+            char * p = strstr( binaryName2, ".asm" );
+            if ( p ) {
+                *(p+1) = 'b';
+                *(p+2) = 'i';
+                *(p+3) = 'n';
+            }
+
+            strcpy( binaryName, _environment->profileFileName );
+            if ( _environment->executerFileName ) {
+                sprintf(executableName, "%s", _environment->executerFileName );
+            } else if( access( "runz80.exe", F_OK ) == 0 ) {
+                sprintf(executableName, "%s", "runz80.exe" );
+            } else {
+                sprintf(executableName, "%s", "runz80" );
+            }
+
+            sprintf( commandLine, "\"%s\" -c -p \"%s\" %d -l 8000 \"%s\" -R 8000 -u \"%s\" \"%s\"",
+                executableName,
+                binaryName,
+                _environment->profileCycles ? _environment->profileCycles : 1000000,
+                binaryName2,
+                _environment->listingFileName,
+                pipes );
+
+            if ( system_call( _environment,  commandLine ) ) {
+                printf("The profiling of assembly program failed.\n\n");
+                return;
+            }; 
+
+        }
+
+    }
+
     remove( _environment->exeFileName );
 
     rename( binaryName, _environment->exeFileName );
+
+}
+
+void interleaved_instructions( Environment * _environment ) {
 
 }

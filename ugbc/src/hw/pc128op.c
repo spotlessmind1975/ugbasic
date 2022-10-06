@@ -215,6 +215,7 @@ void pc128op_busy_wait( Environment * _environment, char * _timing ) {
     outline0("LDX PC128TIMER");
     outline0("LEAX D, X");
     outhead1("%sfirst", label );
+    interleaved_instructions( _environment );
     outline0("CMPX PC128TIMER");
     outline1("BGT %sfirst", label);
 }
@@ -262,4 +263,5 @@ void pc128op_joystick( Environment * _environment, char * _joystick, char * _res
     outline1("STA %s", _result );
 
 }
+
 #endif

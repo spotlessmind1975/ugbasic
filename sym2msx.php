@@ -10,8 +10,8 @@
             if ( strpos( $line, "const") !== FALSE ) {
                 echo $symbol.": equ ".dechex(hexdec($offset))."h\n";
             } else if ( strpos( $line, "data_user") !== FALSE ) {
-                if ( hexdec($offset) < 0xe000 ) {
-                    echo $symbol.": equ ".dechex(0xe000+hexdec($offset))."h\n";
+                if ( hexdec($offset) < 0xc000 ) {
+                    echo $symbol.": equ ".dechex(0xc000+hexdec($offset))."h\n";
                 } else {
                     echo $symbol.": equ ".dechex(hexdec($offset))."h\n";
                 }

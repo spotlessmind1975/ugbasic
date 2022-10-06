@@ -38,7 +38,7 @@
  * CODE SECTION
  ****************************************************************************/
 
-#if defined(__c64__) || defined(__plus4__) || defined(__atari__) || defined(__atarixl__) || defined(__vic20__)
+#if defined(__c64__) || defined(__plus4__) || defined(__atari__) || defined(__atarixl__) || defined(__vic20__) || defined(__c128__)
 
 /**
  * @brief <i>CPU 6502</i>: emit code to make long conditional jump
@@ -4266,6 +4266,27 @@ void cpu6502_move_16bit_indirect2( Environment * _environment, char * _value, ch
 
 }
 
+void cpu6502_move_16bit_indirect2_8bit( Environment * _environment, char * _value, char * _index, char *_source ) {
+
+    inline( cpu_move_16bit_indirect2_8bit )
+
+        outline1("LDA #<%s", _value);
+        outline0("STA TMPPTR");
+        outline1("LDA #>%s", _value);
+        outline0("STA TMPPTR+1");
+        outline1("LDA %s", _index );
+        outline0("ASL");
+        outline0("TAY");
+        outline0("LDA (TMPPTR),Y");
+        outline1("STA %s", _source);
+        outline0("INY" );
+        outline0("LDA (TMPPTR),Y");
+        outline1("STA %s+1", _source);
+
+    no_embedded( cpu_move_16bit_indirect2_8bit )
+
+}
+
 void cpu6502_move_32bit_indirect( Environment * _environment, char *_source, char * _value ) {
 
     inline( cpu_move_32bit_indirect )
@@ -5061,7 +5082,7 @@ void cpu6502_mobinit( Environment * _environment, char * _index, char *_x, char 
 
     deploy( mob, src_hw_6502_mob_asm );
     deploy( mobcs, src_hw_chipset_mob_asm );
-#ifdef __c64__
+#if defined(__c64__) || defined(__c128__)
     deploy( vic2varsGraphic, src_hw_vic2_vars_graphic_asm );
 #endif
 
@@ -5382,6 +5403,98 @@ void cpu6502_set_callback( Environment * _environment, char * _callback, char * 
         outline0("INY");
         outline1("LDA #>%s", _label);
         outline0("STA (TMPPTR), Y");
+
+}
+
+void cpu6502_msc1_uncompress_direct_direct( Environment * _environment, char * _input, char * _output ) {
+
+    MAKE_LABEL
+
+    inline( cpu_msc1_uncompress )
+
+    embedded( cpu_msc1_uncompress, src_hw_6502_msc1_asm );
+
+        outline1("LDA #<%s", _input);
+        outline0("STA TMPPTR");
+        outline1("LDA #>%s", _input);
+        outline0("STA TMPPTR+1");
+        outline1("LDA #<%s", _output);
+        outline0("STA TMPPTR2");
+        outline1("LDA #>%s", _output);
+        outline0("STA TMPPTR2+1");
+
+        outline0("JSR MSC1UNCOMPRESS");
+
+    done()
+
+}
+
+void cpu6502_msc1_uncompress_direct_indirect( Environment * _environment, char * _input, char * _output ) {
+
+    MAKE_LABEL
+
+    inline( cpu_msc1_uncompress )
+
+    embedded( cpu_msc1_uncompress, src_hw_6502_msc1_asm );
+
+        outline1("LDA #<%s", _input);
+        outline0("STA TMPPTR");
+        outline1("LDA #>%s", _input);
+        outline0("STA TMPPTR+1");
+        outline1("LDA %s", _output);
+        outline0("STA TMPPTR2");
+        outline1("LDA %s+1", _output);
+        outline0("STA TMPPTR2+1");
+
+        outline0("JSR MSC1UNCOMPRESS");
+
+    done()
+
+}
+
+void cpu6502_msc1_uncompress_indirect_direct( Environment * _environment, char * _input, char * _output ) {
+
+    MAKE_LABEL
+
+    inline( cpu_msc1_uncompress )
+
+    embedded( cpu_msc1_uncompress, src_hw_6502_msc1_asm );
+
+        outline1("LDA %s", _input);
+        outline0("STA TMPPTR");
+        outline1("LDA %s+1", _input);
+        outline0("STA TMPPTR+1");
+        outline1("LDA #<%s", _output);
+        outline0("STA TMPPTR2");
+        outline1("LDA #>%s", _output);
+        outline0("STA TMPPTR2+1");
+
+        outline0("JSR MSC1UNCOMPRESS");
+
+    done()
+
+}
+
+void cpu6502_msc1_uncompress_indirect_indirect( Environment * _environment, char * _input, char * _output ) {
+
+    MAKE_LABEL
+
+    inline( cpu_msc1_uncompress )
+
+    embedded( cpu_msc1_uncompress, src_hw_6502_msc1_asm );
+
+        outline1("LDA %s", _input);
+        outline0("STA TMPPTR");
+        outline1("LDA %s+1", _input);
+        outline0("STA TMPPTR+1");
+        outline1("LDA %s", _output);
+        outline0("STA TMPPTR2");
+        outline1("LDA %s+1", _output);
+        outline0("STA TMPPTR2+1");
+
+        outline0("JSR MSC1UNCOMPRESS");
+
+    done()
 
 }
 

@@ -26,7 +26,7 @@ REM poiché tali variabili sono condivise (globali).
    a = 42
    b = 84
 
-   example
+   example[]
 
    PRINT "a = ";a
    PRINT "b = ";b

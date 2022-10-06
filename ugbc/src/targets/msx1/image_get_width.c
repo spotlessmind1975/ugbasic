@@ -52,11 +52,14 @@
 Variable * image_get_width( Environment * _environment, char * _image ) {
 
     Variable * image = variable_retrieve( _environment, _image );
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(image width)" );
+    Variable * result = variable_temporary( _environment, VT_WORD, "(image width)" );
 
     outline1("LD HL, %s", image->realName );
     outline0("LD A, (HL)" );
     outline1("LD (%s), A", result->realName );
+    outline0("INC HL" );
+    outline0("LD A, (HL)" );
+    outline1("LD (%s+1), A", result->realName );
 
     return result;
 

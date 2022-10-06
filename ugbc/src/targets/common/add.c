@@ -92,23 +92,31 @@ void add_complex_vars( Environment * _environment, char * _variable, char * _exp
     
     variable_add_inplace_vars( _environment, _variable, _expression );
 
-    Variable * less = variable_less_than( _environment, _variable, _limit_lower, 0 );
+    if ( _limit_lower ) {
 
-    cpu_bveq( _environment, less->realName, greaterThanLabel );
+        Variable * less = variable_less_than( _environment, _variable, _limit_lower, 0 );
 
-    variable_move( _environment, _limit_upper, _variable );
+        cpu_bveq( _environment, less->realName, greaterThanLabel );
 
-    cpu_jump( _environment, endLabel );
+        variable_move( _environment, _limit_upper, _variable );
 
-    cpu_label( _environment, greaterThanLabel );
+        cpu_jump( _environment, endLabel );
 
-    Variable * greater = variable_greater_than( _environment, _variable, _limit_upper, 0 );
+        cpu_label( _environment, greaterThanLabel );
 
-    cpu_bveq( _environment, greater->realName, endLabel );
+        if ( _limit_upper ) {
 
-    variable_move( _environment, _limit_lower, _variable );
+            Variable * greater = variable_greater_than( _environment, _variable, _limit_upper, 0 );
 
-    cpu_label( _environment, endLabel );
+            cpu_bveq( _environment, greater->realName, endLabel );
+
+            variable_move( _environment, _limit_lower, _variable );
+
+        }
+        
+        cpu_label( _environment, endLabel );
+
+    }
 
 }
 

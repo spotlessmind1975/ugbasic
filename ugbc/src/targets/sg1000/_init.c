@@ -56,6 +56,7 @@ void setup_embedded( Environment * _environment ) {
     _environment->embedded.cpu_mem_move = 1;
     _environment->embedded.cpu_uppercase = 1;
     _environment->embedded.cpu_lowercase = 1;
+    _environment->embedded.cpu_msc1_uncompress = 1;
 
 }
 
@@ -138,6 +139,7 @@ void target_initialization( Environment * _environment ) {
     setup_text_variables( _environment );
     
     tms9918_initialization( _environment );
+    sn76489_initialization( _environment );
 
     outline0("call	CheckIf60Hz");
     outline0("ld		(VDP60HZ),a				; save it, 00/01 = 50/60 Hz		");
@@ -160,7 +162,7 @@ void target_initialization( Environment * _environment ) {
 
 void target_linkage( Environment * _environment ) {
 
-    char commandLine[2*MAX_TEMPORARY_STORAGE];
+    char commandLine[8*MAX_TEMPORARY_STORAGE];
     char executableName[MAX_TEMPORARY_STORAGE];
     char binaryName[64];
     char listingFileName[64];
@@ -273,5 +275,10 @@ void target_linkage( Environment * _environment ) {
         strcat( p, "_code_user.bin");
     }
     remove(binaryName);
+
+}
+
+
+void interleaved_instructions( Environment * _environment ) {
 
 }

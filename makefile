@@ -30,7 +30,7 @@
 
 .PHONY: paths compiler clean all
 
-EXAMPLES := $(wildcard examples/*.bas)
+EXAMPLES := $(wildcard examples/texts_print_00.bas)
 COMPILED := $(subst examples/,generated/$(target)/asm/,$(EXAMPLES:.bas=.asm))
 EXECUTABLES := $(subst /asm/,/exe/,$(COMPILED:.asm=.$(output)))
 
@@ -44,10 +44,20 @@ test:
 	@echo "--- END TEST ---"
 
 generated/c64/asm/%.asm:
-	@ugbc/exe/ugbc.c64 -c $(subst /asm/,/cfg/,$(@:.asm=.cfg)) $(subst generated/c64/asm/,examples/,$(@:.asm=.bas)) $@
+	@ugbc/exe/ugbc.c64 -L $(@:.asm=.listing) -c $(subst /asm/,/cfg/,$(@:.asm=.cfg)) $(subst generated/c64/asm/,examples/,$(@:.asm=.bas)) $@
 
 generated/c64/exe/%.prg: $(subst /exe/,/asm/,$(@:.prg=.asm))
 	@cl65 -Ln $(@:.prg=.lbl) --listing $(@:.prg=.lst) -g -o $@ --mapfile $(@:.prg=.map) -t c64 -C $(subst /exe/,/cfg/,$(@:.prg=.cfg)) $(subst /exe/,/asm/,$(@:.prg=.asm))
+	@rm -f $(@:.prg=.o)
+
+generated/c64/exe/%.d64:
+	ugbc/exe/ugbc.c64 -O d64 $(subst generated/c64/exe/,examples/,$(@:.d64=.bas)) -o $@
+
+generated/c128/asm/%.asm:
+	@ugbc/exe/ugbc.c128 -c $(subst /asm/,/cfg/,$(@:.asm=.cfg)) $(subst generated/c128/asm/,examples/,$(@:.asm=.bas)) $@
+
+generated/c128/exe/%.prg: $(subst /exe/,/asm/,$(@:.prg=.asm))
+	@cl65 -Ln $(@:.prg=.lbl) --listing $(@:.prg=.lst) -g -o $@ --mapfile $(@:.prg=.map) -t c128 -C $(subst /exe/,/cfg/,$(@:.prg=.cfg)) $(subst /exe/,/asm/,$(@:.prg=.asm))
 	@rm -f $(@:.prg=.o)
 
 generated/vic20/asm/%.asm:
@@ -101,10 +111,10 @@ generated/d64/exe/%.bin: $(subst /exe/,/asm/,$(@:.bin=.asm))
 	@asm6809 -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -D -e 10240 -o $@ $(subst /exe/,/asm/,$(@:.bin=.asm))
 
 generated/pc128op/asm/%.asm: compiler
-	@ugbc/exe/ugbc.pc128op $(subst generated/pc128op/asm/,examples/,$(@:.asm=.bas)) $@
+	@ugbc/exe/ugbc.pc128op -L generated/pc128op/asm/output.listing $(subst generated/pc128op/asm/,examples/,$(@:.asm=.bas)) $@
 
 generated/pc128op/exe/%.k7: compiler
-	@ugbc/exe/ugbc.pc128op $(subst generated/pc128op/exe/,examples/,$(@:.k7=.bas)) -o $@
+	@ugbc/exe/ugbc.pc128op -L generated/pc128op/asm/output.listing $(subst generated/pc128op/exe/,examples/,$(@:.k7=.bas)) -o $@
 
 generated/pc128op/exe/%.bin: compiler
 	@asm6809 -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -D -e 10240 -o $@ $(subst /exe/,/asm/,$(@:.bin=.asm))
@@ -130,7 +140,7 @@ generated/msx1/exe/%.rom:
 	@mv $(subst /exe/,/asm/,$(@:.rom=_data_user.bin)) $(@:.rom=_data_user.bin)
 	@cat $(@:.rom=_code_user.bin) $(@:.rom=_data_user.bin) >$(@:.rom=.bin)
 	@rm $(@:.rom=_code_user.bin) $(@:.rom=_data_user.bin)
-	@z88dk-appmake +msxrom -b $(@:.rom=.bin)
+	@z88dk-appmake +msxrom -b $(@:.rom=.bin) 2>/dev/null
 	@rm -f $(@:.rom=.bin) $(@:.rom=_*.bin)
 
 generated/coleco/asm/%.asm:
@@ -145,7 +155,7 @@ generated/coleco/exe/%.rom:
 	@mv $(subst /exe/,/asm/,$(@:.rom=_data_user.bin)) $(@:.rom=_data_user.bin)
 	@cat $(@:.rom=_code_user.bin) $(@:.rom=_data_user.bin) >$(@:.rom=.bin)
 	@rm $(@:.rom=_code_user.bin) $(@:.rom=_data_user.bin)
-	@z88dk-appmake +msxrom -b $(@:.rom=.bin)
+	@z88dk-appmake +msxrom -b $(@:.rom=.bin) 2>/dev/null
 	@rm -f $(@:.rom=.bin) $(@:.rom=_*.bin)
 
 generated/sc3000/asm/%.asm:
@@ -189,6 +199,15 @@ generated/cpc/exe/%.dsk:
 	z88dk-appmake +cpc --org $1200 --disk -b $(@:.dsk=.bin) -o $(dir $@)main.com
 	@mv $(dir $@)main.dsk $@
 	@rm -f $(@:.dsk=.bin) $(@:.dsk=_*.bin) $(dir $@)main.com
+
+generated/vg5000/asm/%.asm:
+	@ugbc/exe/ugbc.vg5000 $(subst generated/vg5000/asm/,examples/,$(@:.asm=.bas)) $@ 
+
+generated/vg5000/exe/%.bin: compiler
+	@z88dk-z80asm -l -m -s -g -b $(subst /exe/,/asm/,$(@:.rom=.asm))
+
+generated/vg5000/exe/%.k7:
+	@ugbc/exe/ugbc.vg5000 -L generated/vg5000/asm/output.listing $(subst generated/vg5000/exe/,examples/,$(@:.k7=.bas)) -o $@
 
 paths:
 	@mkdir -p generated

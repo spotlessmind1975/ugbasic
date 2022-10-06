@@ -19,7 +19,7 @@ REM in un certo qual modo, equivalenti.
    
    PROC hello
    
-   hello
+   hello[]
    
    CALL hello
    

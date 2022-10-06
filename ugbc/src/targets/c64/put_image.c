@@ -55,18 +55,34 @@ extern char DATATYPE_AS_STRING[][16];
 
 @english
 This function draws an image at a specific position on the screen.
+The programmer can draw on the screen a single image (''IMAGE''), a 
+frame of a series of images (''IMAGES'') or a frame of a pose of a 
+sequence of images (''SEQUENCES''). In all cases the syntax changes 
+slightly.
 
 @italian
 Questa funzione disegna una immagine in una specifica posizione dello schermo.
+Il programmatore può disegnare sullo schermo una singola immagine 
+(''IMAGE''), un frame di una serie di immagini (''IMAGES'') oppure 
+un frame di una posa di una sequenza di immagini (''SEQUENCES''). 
+In tutti i casi la sintassi cambia leggermente.
 
 @syntax PUT IMAGE [image] AT [x],[y]
+@syntax PUT IMAGE [image] FRAME [frame] AT [x],[y]
+@syntax PUT IMAGE [image] SEQUENCE [sequence] FRAME [frame] AT [x],[y]
 
 @example PUT IMAGE airplane AT 10,10
+
+@usedInExample contrib_themill.bas
+@usedInExample defines_screen_01.bas
+@usedInExample images_load_05.bas
 
 @target all
 </usermanual> */
 void put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _flags ) {
 
+    MAKE_LABEL
+    
     Variable * image = variable_retrieve( _environment, _image );
     Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
     Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
@@ -81,32 +97,116 @@ void put_image( Environment * _environment, char * _image, char * _x, char * _y,
 
     switch( image->type ) {
         case VT_SEQUENCE:
-            if ( !sequence ) {
-                if ( !frame ) {
-                    vic2_put_image( _environment, image->realName, x->realName, y->realName, "", "", image->frameSize, image->frameCount, _flags );
+            if ( image->residentAssigned ) {
+                
+                char alreadyLoadedLabel[MAX_TEMPORARY_STORAGE];
+                sprintf(alreadyLoadedLabel, "%salready", label );
+
+                char bankWindowId[MAX_TEMPORARY_STORAGE];
+                sprintf( bankWindowId, "BANKWINDOWID%2.2x", image->residentAssigned );
+
+                char bankWindowName[MAX_TEMPORARY_STORAGE];
+                sprintf( bankWindowName, "BANKWINDOW%2.2x", image->residentAssigned );
+
+                cpu_compare_and_branch_16bit_const( _environment, bankWindowId, image->variableUniqueId, alreadyLoadedLabel, 1 );
+                if ( image->uncompressedSize ) {
+                    cpu_msc1_uncompress_direct_direct( _environment, image->realName, bankWindowName );
                 } else {
-                    vic2_put_image( _environment, image->realName, x->realName, y->realName, frame->realName, "", image->frameSize, image->frameCount, _flags );
+                    bank_read_semi_var( _environment, image->bankAssigned, image->absoluteAddress, bankWindowName, image->size );
+                }
+                cpu_store_16bit(_environment, bankWindowId, image->variableUniqueId );
+                cpu_label( _environment, alreadyLoadedLabel );
+
+                if ( !sequence ) {
+                    if ( !frame ) {
+                        vic2_put_image( _environment, image->realName, x->realName, y->realName, "", "", image->frameSize, image->frameCount, _flags );
+                    } else {
+                        vic2_put_image( _environment, image->realName, x->realName, y->realName, frame->realName, "", image->frameSize, image->frameCount, _flags );
+                    }
+                } else {
+                    if ( !frame ) {
+                        vic2_put_image( _environment, image->realName, x->realName, y->realName, "", sequence->realName, image->frameSize, image->frameCount, _flags );
+                    } else {
+                        vic2_put_image( _environment, image->realName, x->realName, y->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, _flags );
+                    }
                 }
             } else {
-                if ( !frame ) {
-                    vic2_put_image( _environment, image->realName, x->realName, y->realName, "", sequence->realName, image->frameSize, image->frameCount, _flags );
+                if ( !sequence ) {
+                    if ( !frame ) {
+                        vic2_put_image( _environment, image->realName, x->realName, y->realName, "", "", image->frameSize, image->frameCount, _flags );
+                    } else {
+                        vic2_put_image( _environment, image->realName, x->realName, y->realName, frame->realName, "", image->frameSize, image->frameCount, _flags );
+                    }
                 } else {
-                    vic2_put_image( _environment, image->realName, x->realName, y->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, _flags );
+                    if ( !frame ) {
+                        vic2_put_image( _environment, image->realName, x->realName, y->realName, "", sequence->realName, image->frameSize, image->frameCount, _flags );
+                    } else {
+                        vic2_put_image( _environment, image->realName, x->realName, y->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, _flags );
+                    }
                 }
             }
             break;
         case VT_IMAGES:
-            if ( !frame ) {
-                vic2_put_image( _environment, image->realName, x->realName, y->realName, "", NULL, image->frameSize, 0, _flags );
+            if ( image->residentAssigned ) {
+                
+                char alreadyLoadedLabel[MAX_TEMPORARY_STORAGE];
+                sprintf(alreadyLoadedLabel, "%salready", label );
+
+                char bankWindowId[MAX_TEMPORARY_STORAGE];
+                sprintf( bankWindowId, "BANKWINDOWID%2.2x", image->residentAssigned );
+
+                char bankWindowName[MAX_TEMPORARY_STORAGE];
+                sprintf( bankWindowName, "BANKWINDOW%2.2x", image->residentAssigned );
+
+                cpu_compare_and_branch_16bit_const( _environment, bankWindowId, image->variableUniqueId, alreadyLoadedLabel, 1 );
+                if ( image->uncompressedSize ) {
+                    cpu_msc1_uncompress_direct_direct( _environment, image->realName,  bankWindowName );
+                } else {
+                    bank_read_semi_var( _environment, image->bankAssigned, image->absoluteAddress, bankWindowName, image->size );
+                }
+                cpu_store_16bit(_environment, bankWindowId, image->variableUniqueId );
+                cpu_label( _environment, alreadyLoadedLabel );
+
+                if ( !frame ) {
+                    vic2_put_image( _environment, bankWindowName, x->realName, y->realName, "", NULL, image->frameSize, 0, _flags );
+                } else {
+                    vic2_put_image( _environment, bankWindowName, x->realName, y->realName, frame->realName, NULL, image->frameSize, 0, _flags );
+                }
             } else {
-                vic2_put_image( _environment, image->realName, x->realName, y->realName, frame->realName, NULL, image->frameSize, 0, _flags );
+                if ( !frame ) {
+                    vic2_put_image( _environment, image->realName, x->realName, y->realName, "", NULL, image->frameSize, 0, _flags );
+                } else {
+                    vic2_put_image( _environment, image->realName, x->realName, y->realName, frame->realName, NULL, image->frameSize, 0, _flags );
+                }
             }
             break;
         case VT_IMAGE:
-            vic2_put_image( _environment, image->realName, x->realName, y->realName, NULL, NULL, 0, 0, _flags );
+            if ( image->residentAssigned ) {
+
+                char alreadyLoadedLabel[MAX_TEMPORARY_STORAGE];
+                sprintf(alreadyLoadedLabel, "%salready", label );
+
+                char bankWindowId[MAX_TEMPORARY_STORAGE];
+                sprintf( bankWindowId, "BANKWINDOWID%2.2x", image->residentAssigned );
+
+                char bankWindowName[MAX_TEMPORARY_STORAGE];
+                sprintf( bankWindowName, "BANKWINDOW%2.2x", image->residentAssigned );
+
+                cpu_compare_and_branch_16bit_const( _environment, bankWindowId, image->variableUniqueId, alreadyLoadedLabel, 1 );
+                if ( image->uncompressedSize ) {
+                    cpu_msc1_uncompress_direct_direct( _environment, image->realName, bankWindowName );
+                } else {
+                    bank_read_semi_var( _environment, image->bankAssigned, image->absoluteAddress, bankWindowName, image->size );
+                }
+                cpu_store_16bit(_environment, bankWindowId, image->variableUniqueId );
+                cpu_label( _environment, alreadyLoadedLabel );
+
+                vic2_put_image( _environment, bankWindowName, x->realName, y->realName, NULL, NULL, 0, 0, _flags );
+            } else {
+                vic2_put_image( _environment, image->realName, x->realName, y->realName, NULL, NULL, 0, 0, _flags );
+            }
             break;
         default:
             CRITICAL_PUT_IMAGE_UNSUPPORTED( _image, DATATYPE_AS_STRING[image->type] );
     }
-
 }

@@ -60,6 +60,179 @@ static RGBi SYSTEM_PALETTE[] = {
  * CODE SECTION
  ****************************************************************************/
 
+RGBi * tms9918_image_nearest_system_color( RGBi * _color ) {
+
+    int minDistance = 0xffff;
+    int colorIndex = 0;
+    for (int j = 0; j < COLOR_COUNT; ++j) {
+        int distance = rgbi_distance(&SYSTEM_PALETTE[j], _color);
+        if (distance < minDistance) {
+            minDistance = distance;
+            colorIndex = j;
+        }
+    }
+
+    return &SYSTEM_PALETTE[colorIndex];
+
+}
+
+/**
+ * This method can be used to convert 
+ *     8x8 RGB (3 bytes) pixel (_source) [8x8x3 = 192 bytes]
+ * into 
+ *     8x8 bitmap (1 bit) pixel + 8 (byte) [8x1 + 8 = 16 bytes]
+ *       foreground and background color (_dest)
+ * 
+ * Since the 8x8 pixel area belong to a larger picture,
+ * this function will need the picture _width in order
+ * to move to the next line to analyze.
+ */
+static void tms9918_image_converter_tile( char * _source, char * _dest, int _width, int _source_width ) {
+
+    int colorIndexesCount[COLOR_COUNT];
+
+    int colorBackgroundMax = 0;
+    int colorBackground[8];
+    memset( colorBackground, 0, 8 );
+    
+    int colorForegroundMax = 0;
+    int colorForeground[8];
+    memset( colorForeground, 0, 8 );
+
+    char * source = _source;
+
+    // Clear the box and colors
+    memset( _dest, 0, 16 );
+
+    // Loop for all the box surface
+    for (int y=0; y<8; ++y) {
+
+        memset(colorIndexesCount, 0, COLOR_COUNT * sizeof( int ) );
+        colorBackgroundMax = 0;
+        colorForegroundMax = 0;
+
+        for (int x=0; x<8; ++x) {
+
+            RGBi rgb;
+
+            memset( &rgb, 0, sizeof( RGBi ) );
+
+            // Take the color of the pixel
+            rgb.red = *source;
+            rgb.green = *(source + 1);
+            rgb.blue = *(source + 2);
+
+            RGBi *systemRgb = tms9918_image_nearest_system_color( &rgb );
+
+            ++colorIndexesCount[systemRgb->index];
+
+            source += 3;
+
+        }
+
+        for( int xx = 0; xx<COLOR_COUNT; ++xx ) {
+            if ( colorIndexesCount[xx] > colorBackgroundMax ) {
+                colorBackground[y] = xx;
+                colorBackgroundMax = colorIndexesCount[xx];
+            };
+        }
+
+        colorIndexesCount[colorBackground[y]] = 0;
+
+        for( int xx = 0; xx<COLOR_COUNT; ++xx ) {
+            if ( colorIndexesCount[xx] > colorForegroundMax ) {
+                colorForeground[y] = xx;
+                colorForegroundMax = colorIndexesCount[xx];
+            };
+        }
+
+        source += 3 * ( _source_width - 8 );
+
+    }
+
+    source = _source;
+
+    for (int y=0; y<8; ++y) {
+        for (int x=0; x<8; ++x) {
+
+            RGBi rgb;
+
+            memset( &rgb, 0, sizeof( RGBi ) );
+
+            rgb.red = *source;
+            rgb.green = *(source + 1);
+            rgb.blue = *(source + 2);
+
+            RGBi *systemRgb = tms9918_image_nearest_system_color( &rgb );
+
+            char bitmask = 1 << ( 7 - ((x) & 0x7) );
+
+            if ( systemRgb->index != colorBackground[y] ) {
+                *( _dest + y ) |= bitmask;
+                // printf("*");
+            } else {
+                *( _dest + y ) &= ~bitmask;
+                // printf(" ");
+            }
+
+            source += 3;
+
+        }
+
+        source += 3 * ( _source_width - 8 );
+
+    }
+
+    for( int i=0; i<8; ++i ) {
+        *( _dest + 8 + i ) = ( colorForeground[i] << 4 ) | colorBackground[i] ;
+    }
+
+}
+
+/**
+ * This method can be used to convert 
+ *     WxH RGB (3 bytes) pixel (_source) [WxHx3 bytes]
+ * into 
+ *     WxH bitmap (1 bit) pixel + (W/8xH + W/8xH) (bytes)
+ *       foreground and background color (_dest)
+ * 
+ * Since the WXH pixel area could belong to a larger picture,
+ * this function will need the picture _source_width in order
+ * to move to the next line to analyze.
+ */
+static void tms9918_image_converter_tiles( char * _source, char * _dest, int _width, int _height, int _source_width ) {
+
+    int bitmapSize = ( _width>>3 ) * _height;
+    int colormapSize = ( _width>>3 ) * _height;
+
+    memset( _dest, 0, bitmapSize + colormapSize );
+
+    for( int y=0; y<_height; y+=8 ) {
+        for( int x=0; x<_width; x+=8 ) {
+
+            char * source = _source + ( ( y * _source_width ) + x ) * 3;
+            char tile[16];
+
+            tms9918_image_converter_tile( source, tile, _width, _source_width );
+
+            int offset = ((y>>3) * 8 *( _width >> 3 ) ) + ((x>>3) * 8) + ((y) & 0x07);
+            // x = 8, y = 8
+            // offset = ((8 >> 3) * 8 * (16>>3) ) + ((8>>3) * 8) + ((8) & 7)
+            // offset = (1 * 8 * 2 ) + (1 * 8)
+            // offset = 16 + 8 = 24
+
+            char * destBitmap = _dest + offset;
+            char * destColormap = _dest + bitmapSize + offset;
+            for( int i=0; i<8; ++i ) {
+                *destBitmap = tile[i];
+                *destColormap = tile[i+8];
+                ++destBitmap;
+                ++destColormap;
+            }
+        }
+    }
+}
+
 /**
  * @brief <i>TMS9918</i>: emit code to check for collision
  * 
@@ -427,6 +600,8 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
             // (Register 2) * 400 (Hex)
             WVDP_RNAME( 0x06 );
 
+            cpu_store_16bit( _environment, "TEXTADDRESS", 6 * 0x0400 );
+
             // Register 4 tells the VDP where the starting address of the Pattern Table is located in VRAM.
             // The range of its contents is from 0-7. The contents of the register form the upper three bits of
             // the 14 bit VDP address, therefore making the location of the Pattern Table in VRAM equal to
@@ -443,10 +618,13 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
             // 03 and Hex 07.
             WVDP_RPATTERN( 0x00 );
 
+            cpu_store_16bit( _environment, "PATTERNADDRESS", 0x0000 );
+
             WVDP_RSPRITEA( 0xff );
             WVDP_RSPRITEP( 0xff );
 
             outline0("CALL TMS9918AUDCCHAR01");
+            outline0("CALL TMS9918SPRITEINIT");
 
             WVDP_R1( 0xf0 );
 
@@ -479,6 +657,8 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
             // (Register 2) * 400 (Hex)
             WVDP_RNAME( 0x06 );
 
+            cpu_store_16bit( _environment, "TEXTADDRESS", 6 * 0x0400 );
+
             // Register 3 tells the VDP where the starting address of the Color Table is located in VRAM. The
             // range of its contents is from O-FF. The contents of the register form the upper eight bits of
             // the 14-bit VDP address, therefore making the. location of the Color Table in VRAM equal to
@@ -493,6 +673,8 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
             // Mode the only two values that work correctly in Register 3 are Hex 7F and Hex
             // FF.
             WVDP_RCOLORTABLE( 0x12 );
+
+            cpu_store_16bit( _environment, "COLORMAPADDRESS", 0x0480 );
 
             // Register 4 tells the VDP where the starting address of the Pattern Table is located in VRAM.
             // The range of its contents is from 0-7. The contents of the register form the upper three bits of
@@ -510,10 +692,16 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
             // 03 and Hex 07.
             WVDP_RPATTERN( 0x0 );
 
+            cpu_store_16bit( _environment, "PATTERNADDRESS", 0x0000 );
+
             WVDP_RSPRITEA( 0x20 ); // 1000
             WVDP_RSPRITEP( 0x00 ); // 0000
 
+            cpu_store_16bit( _environment, "SPRITEAADDRESS", 0x1000 );
+            cpu_store_16bit( _environment, "SPRITEADDRESS", 0x0000 );
+
             outline0("CALL TMS9918AUDCCHAR01");
+            outline0("CALL TMS9918SPRITEINIT");
 
             WVDP_R1( 0xe0 );
 
@@ -547,6 +735,8 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
             // (Register 2) * 400 (Hex)
             WVDP_RNAME( 0x0e );
 
+            cpu_store_16bit( _environment, "TEXTADDRESS", 0x0e * 0x0400 );
+
             // Register 3 tells the VDP where the starting address of the Color Table is located in VRAM. The
             // range of its contents is from O-FF. The contents of the register form the upper eight bits of
             // the 14-bit VDP address, therefore making the. location of the Color Table in VRAM equal to
@@ -561,6 +751,8 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
             // Mode the only two values that work correctly in Register 3 are Hex 7F and Hex
             // FF.
             WVDP_RCOLORTABLE( 0xff );
+
+            cpu_store_16bit( _environment, "COLORMAPADDRESS", 0x2000 );
 
             // Register 4 tells the VDP where the starting address of the Pattern Table is located in VRAM.
             // The range of its contents is from 0-7. The contents of the register form the upper three bits of
@@ -578,10 +770,16 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
             // 03 and Hex 07.
             WVDP_RPATTERN( 0x03 );
 
+            cpu_store_16bit( _environment, "PATTERNADDRESS", 0x0000 );
+
             WVDP_RSPRITEA( 0x76 ); // 1000
             WVDP_RSPRITEP( 0x03 ); // 0000
 
+            cpu_store_16bit( _environment, "SPRITEAADDRESS", 0x3b00 );
+            cpu_store_16bit( _environment, "SPRITEADDRESS", 0x1800 );
+
             outline0("CALL TMS9918AUDCCHAR23");
+            outline0("CALL TMS9918SPRITEINIT");
 
             WVDP_R1( 0xe0 );
 
@@ -1120,6 +1318,16 @@ void tms9918_initialization( Environment * _environment ) {
     variable_global( _environment, "FONTWIDTH" );
     variable_import( _environment, "FONTHEIGHT", VT_BYTE, 8 );
     variable_global( _environment, "FONTHEIGHT" );
+    variable_import( _environment, "SPRITEADDRESS", VT_ADDRESS, 0x0000 );
+    variable_global( _environment, "SPRITEADDRESS" );    
+    variable_import( _environment, "SPRITEAADDRESS", VT_ADDRESS, 0x1000 );
+    variable_global( _environment, "SPRITEAADDRESS" );    
+    variable_import( _environment, "TEXTADDRESS", VT_ADDRESS, 0x1800 );
+    variable_global( _environment, "TEXTADDRESS" );    
+    variable_import( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0x3800 );
+    variable_global( _environment, "COLORMAPADDRESS" );    
+    variable_import( _environment, "PATTERNADDRESS", VT_ADDRESS, 0x0000 );
+    variable_global( _environment, "PATTERNADDRESS" );    
 
     SCREEN_MODE_DEFINE( TILEMAP_MODE_STANDARD, 0, 40, 24, 20, 6, 8, "Text Mode" );
     SCREEN_MODE_DEFINE( BITMAP_MODE_GRAPHIC2, 0, 32, 24, 16, 8, 8, "Graphic II" );
@@ -1337,7 +1545,7 @@ static int calculate_image_size( Environment * _environment, int _width, int _he
 
         case BITMAP_MODE_GRAPHIC2:
 
-            return 2 + ( ( _width >> 3 ) * _height ) + ( ( _width >> 3 ) * ( _height ) );
+            return 3 + ( ( _width >> 3 ) * _height ) + ( ( _width >> 3 ) * ( _height ) );
 
         case BITMAP_MODE_MULTICOLOR:
         case TILEMAP_MODE_STANDARD:
@@ -1373,9 +1581,9 @@ static Variable * tms9918_image_converter_bitmap_mode_standard( Environment * _e
             CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
         }
     } else {
-        if (colorUsed > 16) {
-            CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
-        }
+        // if (colorUsed > 16) {
+        //     CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
+        // }
     }
 
     for( i=0; i<colorUsed; ++i ) {
@@ -1466,60 +1674,13 @@ static Variable * tms9918_image_converter_bitmap_mode_standard( Environment * _e
     // Color of the pixel to convert
     RGBi rgb;
 
-    *(buffer) = _frame_width;
-    *(buffer+1) = _frame_height;
+    *(buffer) = (_frame_width & 0xff);
+    *(buffer+1) = (_frame_width >> 8 ) & 0xff;
+    *(buffer+2) = _frame_height;
 
     _source += ( ( _offset_y * _width ) + _offset_x ) * 3;
 
-    // Loop for all the source surface.
-    for (image_y = 0; image_y < _frame_height; ++image_y) {
-        for (image_x = 0; image_x < _frame_width; ++image_x) {
-
-            // Take the color of the pixel
-            rgb.red = *_source;
-            rgb.green = *(_source + 1);
-            rgb.blue = *(_source + 2);
-
-            // Calculate the relative tile
-            tile_y = (image_y >> 3);
-            tile_x = (image_x >> 3);
-
-            // Calculate the offset starting from the tile surface area
-            // and the bit to set.
-            offset = (tile_y * 8 *( _frame_width >> 3 ) ) + (tile_x * 8) + (image_y & 0x07);
-            offsetc = offset;
-
-            int minDistance = 0xffff;
-            int colorIndex = 0;
-
-            for( i= ( _flags & FLAG_OVERLAYED ) ? 1 : 0; i<colorUsed; ++i ) {
-                if ( rgbi_equals_rgb( &palette[i], &rgb ) ) {
-                    break;
-                }
-            }
-
-            colorIndex = i;
-
-            if ( _environment->debugImageLoad ) {
-                printf( "%1.1x", ( palette[colorIndex].index & 0x0f ) );
-            }
-
-            bitmask = ( colorIndex == 0 ? 0 : 1 ) << (7 - ((image_x & 0x7)));
-            if ( colorIndex && ( *(buffer + 2 + ( ( _frame_width >> 3 ) * _frame_height ) + offsetc ) & 0xf0 ) == 0 ) {
-                *(buffer + 2 + ( ( _frame_width >> 3 ) * _frame_height ) + offsetc ) = ( ( ( palette[colorIndex].index & 0x0f ) << 4 ) | palette[0].index );
-            }
-            *(buffer + 2 + offset) |= bitmask;
-
-            _source += 3;
-
-        }
-
-        _source += 3 * ( _width - _frame_width );
-
-        if ( _environment->debugImageLoad ) {
-            printf("\n" );
-        }
-    }
+    tms9918_image_converter_tiles( _source, buffer+3, _frame_width, _frame_height, _width );
 
     if ( _environment->debugImageLoad ) {
         printf("\n" );
@@ -1693,7 +1854,7 @@ Variable * tms9918_image_converter( Environment * _environment, char * _data, in
 
 }
 
-void tms9918_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, _frame_count, int _flags ) {
+void tms9918_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags ) {
 
     deploy( tms9918vars, src_hw_tms9918_vars_asm);
     deploy( tms9918varsGraphic, src_hw_tms9918_vars_graphic_asm );
@@ -1753,7 +1914,7 @@ void tms9918_put_image( Environment * _environment, char * _image, char * _x, ch
     } else {
 
         if ( _frame ) {
-            outline0("LD DE, $0002" );
+            outline0("LD DE, $0003" );
             outline0("ADD HL, DE" );
             if ( strlen(_frame) == 0 ) {
 
@@ -1817,8 +1978,9 @@ Variable * tms9918_new_image( Environment * _environment, int _width, int _heigh
     char * buffer = malloc ( size );
     memset( buffer, 0, size );
 
-    *(buffer) = _width;
-    *(buffer+1) = _height;
+    *(buffer) = (_width & 0xff);
+    *(buffer+1) = (_width>>8) & 0xff;
+    *(buffer+2) = _height;
 
     result->valueBuffer = buffer;
     result->size = size;
@@ -2020,7 +2182,7 @@ void tms9918_move_memory_video( Environment * _environment, char * _from, char *
     outline1("LD HL, (%s)", _from );
     outline1("LD DE, (%s)", _to );
     outline1("LD BC, (%s)", _size );
-    outline0("JP VDPWRITE" );
+    outline0("CALL VDPWRITE" );
 
 }
 
@@ -2029,7 +2191,7 @@ void tms9918_move_video_memory( Environment * _environment, char * _from, char *
     outline1("LD HL, (%s)", _to );
     outline1("LD DE, (%s)", _from );
     outline1("LD BC, (%s)", _size );
-    outline0("JP VDPREAD" );
+    outline0("CALL VDPREAD" );
 
 }
 

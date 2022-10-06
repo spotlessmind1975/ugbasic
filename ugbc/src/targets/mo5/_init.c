@@ -54,6 +54,7 @@ void setup_embedded( Environment * _environment ) {
     _environment->embedded.cpu_random = 1;
     _environment->embedded.cpu_mem_move = 1;
     _environment->embedded.cpu_hex_to_string = 1;
+    _environment->embedded.cpu_msc1_uncompress = 1;
 
 }
 
@@ -101,7 +102,7 @@ void target_initialization( Environment * _environment ) {
 
 void target_linkage( Environment * _environment ) {
 
-    char commandLine[2*MAX_TEMPORARY_STORAGE];
+    char commandLine[8*MAX_TEMPORARY_STORAGE];
     char executableName[MAX_TEMPORARY_STORAGE];
 
     if ( _environment->outputFileType != OUTPUT_FILE_TYPE_K7_ORIGINAL && _environment->outputFileType != OUTPUT_FILE_TYPE_K7_NEW ) {
@@ -119,7 +120,7 @@ void target_linkage( Environment * _environment ) {
     char listingFileName[MAX_TEMPORARY_STORAGE];
     memset( listingFileName, 0, MAX_TEMPORARY_STORAGE );
     if ( _environment->listingFileName ) {
-        sprintf( listingFileName, "-l %s", _environment->listingFileName );
+        sprintf( listingFileName, "-l \"%s\"", _environment->listingFileName );
     } else {
         strcpy( listingFileName, "" );
     }
@@ -134,5 +135,37 @@ void target_linkage( Environment * _environment ) {
         printf("The compilation of assembly program failed.\n\n");
         printf("Please use option '-I' to install chain tool.\n\n");
     }; 
+
+    if ( _environment->listingFileName ) {
+
+        if ( _environment->profileFileName ) {
+            if ( _environment->executerFileName ) {
+                sprintf(executableName, "%s", _environment->executerFileName );
+            } else if( access( "run6809.exe", F_OK ) == 0 ) {
+                sprintf(executableName, "%s", "run6809.exe" );
+            } else {
+                sprintf(executableName, "%s", "run6809" );
+            }
+
+            sprintf( commandLine, "\"%s\" -i \"%s\" -R 3000 -b -l 3000 \"%s\" -p \"%s\" %d",
+                executableName,
+                _environment->listingFileName,
+                _environment->exeFileName,
+                _environment->profileFileName,
+                _environment->profileCycles ? _environment->profileCycles : 1000000
+                );
+
+            if ( system_call( _environment,  commandLine ) ) {
+                printf("The profiling of assembly program failed.\n\n");
+                return;
+            }; 
+
+        }
+    
+    }
+
+}
+
+void interleaved_instructions( Environment * _environment ) {
 
 }

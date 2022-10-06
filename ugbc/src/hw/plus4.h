@@ -129,6 +129,8 @@
 #define BANK_COUNT          0
 #define BANK_SIZE           0
 
+#define MAX_AUDIO_CHANNELS  2
+
 void plus4_xpen( Environment * _environment, char * _destination );
 void plus4_ypen( Environment * _environment, char * _destination );
 void plus4_inkey( Environment * _environment, char * _pressed, char * _key );

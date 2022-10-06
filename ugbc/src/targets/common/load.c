@@ -33,6 +33,7 @@
  ****************************************************************************/
 
 #include "../../ugbc.h"
+#include "../../libs/msc1.h"
 
 /****************************************************************************
  * CODE SECTION 
@@ -86,7 +87,7 @@ ma con nomi diversi.
 
 @target all
 </usermanual> */
-Variable * load( Environment * _environment, char * _filename, char * _alias, int _at, int _bank_expansion ) {
+Variable * load( Environment * _environment, char * _filename, char * _alias, int _at, int _bank_expansion, int _flags ) {
 
     if ( _environment->tenLinerRulesEnforced ) {
         CRITICAL_10_LINE_RULES_ENFORCED( "LOAD");
@@ -106,6 +107,8 @@ Variable * load( Environment * _environment, char * _filename, char * _alias, in
 
     Variable * result = variable_temporary( _environment, VT_BUFFER, "(buffer)" );
     
+    check_if_filename_is_valid( _environment,  _filename );
+
     FILE * file = fopen( _filename, "rb" );
 
     if ( !file ) {
@@ -123,6 +126,60 @@ Variable * load( Environment * _environment, char * _filename, char * _alias, in
     fclose( file );
 
     variable_store_buffer( _environment, result->name, buffer, size, _at );
+
+    if ( _flags & FLAG_COMPRESSED ) {
+
+        // Try to compress the result of image conversion.
+        // This means that the buffer will be compressed using MSC1
+        // algorithm, up to 32 frequent sequences. The original size of
+        // the buffer will be considered as "uncompressed" size.
+        MSC1Compressor * compressor = msc1_create( 32 );
+        result->uncompressedSize = result->size;
+        MemoryBlock * output = msc1_compress( compressor, result->valueBuffer, result->uncompressedSize, &result->size );
+
+        int temporary;
+        MemoryBlock * outputCheck = msc1_uncompress( compressor, output, result->size, &temporary );
+        // printf("\n0000: " );
+        // for( int k=0; k<result->uncompressedSize; ++k ) {
+        //     printf( "%2.2x ", result->valueBuffer[k] );
+        //     if ( ((k+1) % 8 == 0 ) ) {
+        //         printf("\n%4.4x: ", (k) );
+        //     };
+        // }
+        // printf("\n0000: " );
+        // for( int k=0; k<result->uncompressedSize; ++k ) {
+        //     if ( outputCheck[k] == result->valueBuffer[k] ) {
+        //         printf( "        " );
+        //     } else {
+        //         printf( "%2.2x [%2.2x] ", outputCheck[k], result->valueBuffer[k] );
+        //     }
+        //     if ( ((k+1) % 8 == 0 ) ) {
+        //         printf("\n%4.4x: ", (k) );
+        //     };
+        // }
+        if ( memcmp( outputCheck, result->valueBuffer, result->uncompressedSize ) != 0 ) {
+            CRITICAL("Compression failed");
+        }
+        msc1_free( compressor );
+        printf( "%s: %d bytes -> %d bytes\n", _filename, result->uncompressedSize, result->size );
+        // If the compressed memory is greater than the original
+        // size, we discard the compression and we will continue as
+        // usual.
+        if ( result->uncompressedSize < result->size ) {
+            result->size = result->uncompressedSize;
+            result->uncompressedSize = 0;
+            free( output );
+        } 
+        // Otherwise, we can safely replace the original data
+        // buffer with the compressed one.
+        else {
+            free( result->valueBuffer );
+            result->valueBuffer = output;
+        }
+        result->residentAssigned = 1;
+        _environment->maxExpansionBankSize[1] = BANK_SIZE;
+
+    }
 
     LoadedFile * loaded = malloc( sizeof( LoadedFile ) );
     loaded->next = first;

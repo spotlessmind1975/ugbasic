@@ -119,6 +119,10 @@
 #define KEY_X						23
 #define KEY_Y						25
 #define KEY_Z						12
+#define KEY_UP                      0 // ?
+#define KEY_DOWN                    0 // ?
+#define KEY_LEFT                    0 // ?
+#define KEY_RIGHT                   0 // ?
 
 #define INPUT_DEFAULT_SEPARATOR     ','
 #define INPUT_DEFAULT_SIZE          32
@@ -128,6 +132,8 @@
 
 #define BANK_COUNT          0
 #define BANK_SIZE           0
+
+#define MAX_AUDIO_CHANNELS  3
 
 void vic20_xpen( Environment * _environment, char * _destination );
 void vic20_ypen( Environment * _environment, char * _destination );

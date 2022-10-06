@@ -152,6 +152,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_IMAGE:
                 case VT_IMAGES:
                 case VT_SEQUENCE:
+                case VT_MUSIC:
                 case VT_BUFFER:
                     if ( variable->bankAssigned ) {
                         outhead2("; relocated on bank %d (at %4.4x)", variable->bankAssigned, variable->absoluteAddress );
@@ -168,7 +169,12 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                     out1("%s fcb ", variable->realName);
                                     int i=0;
                                     for (i=0; i<(variable->size-1); ++i ) {
-                                        out1("%d,", variable->valueBuffer[i]);
+                                        if ( ( ( i + 1 ) % 16 ) == 0 ) {
+                                            outline1("$%2.2x", (unsigned char)variable->valueBuffer[i]);
+                                            out0("   fcb ");
+                                        } else {
+                                            out1("$%2.2x,", (unsigned char)variable->valueBuffer[i]);
+                                        }
                                     }
                                     outhead1("%d", variable->valueBuffer[(variable->size-1)]);
                                 }

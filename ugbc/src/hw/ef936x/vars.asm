@@ -66,11 +66,14 @@ YSCROLLPOS fcb 0
 
 IMAGEX EQU $41 ; $42
 IMAGEY EQU $43 ; $44
-IMAGEW EQU $45
-IMAGEH EQU $46
-IMAGEH2 EQU $47
-IMAGET EQU $48
-IMAGEF EQU $49
+IMAGEW EQU $45 ; $56
+IMAGEH EQU $47
+IMAGEH2 EQU $48
+IMAGET EQU $49
+IMAGEF EQU $50
+IMAGEW2 EQU $51 ; $52
+; to avoid issue #443
+IMAGEW2l EQU $52
 
 ; ------------------------------------------------------------------------------
 ; BITMAP MODE 16 (MODE #3)

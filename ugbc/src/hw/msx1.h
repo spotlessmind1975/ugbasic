@@ -44,11 +44,11 @@
 #define KEY_7						'7'
 #define KEY_8						'8'
 #define KEY_9						'9'
-#define KEY_A						'A'
+#define KEY_A						'a'
 #define KEY_ASTERISK				'*'
 #define KEY_AT						'@'
-#define KEY_B						'B'
-#define KEY_C						'C'
+#define KEY_B						'b'
+#define KEY_C						'c'
 #define KEY_CLEAR					0xf9
 #define KEY_COLON					':'
 #define KEY_COMMA					','
@@ -56,11 +56,11 @@
 #define KEY_CONTROL					0x00
 #define KEY_CRSR_LEFT_RIGHT			0x00
 #define KEY_CRSR_UP_DOWN			0x00
-#define KEY_D						'D'
+#define KEY_D						'd'
 #define KEY_DELETE					0x90
-#define KEY_E						'E'
+#define KEY_E						'e'
 #define KEY_EQUAL					'='
-#define KEY_F						'F'
+#define KEY_F						'f'
 #define KEY_F1						0x00
 #define KEY_F2						0x00
 #define KEY_F3						0x00
@@ -69,41 +69,41 @@
 #define KEY_F6						0x00
 #define KEY_F7						0x00
 #define KEY_F8						0x00
-#define KEY_G						'G'
-#define KEY_H						'H'
+#define KEY_G						'g'
+#define KEY_H						'h'
 #define KEY_HOME					0x88
-#define KEY_I						'I'
+#define KEY_I						'i'
 #define KEY_INSERT					0x89
-#define KEY_J						'J'
-#define KEY_K						'K'
-#define KEY_L						'L'
+#define KEY_J						'j'
+#define KEY_K						'k'
+#define KEY_L						'l'
 #define KEY_LEFT_ARROW				0x91
 #define KEY_LEFT_SHIFT				0x81
-#define KEY_M						'M'
+#define KEY_M						'm'
 #define KEY_MINUS					'-'
-#define KEY_N						'N'
-#define KEY_O						'O'
-#define KEY_P						'P'
+#define KEY_N						'n'
+#define KEY_O						'o'
+#define KEY_P						'p'
 #define KEY_PERIOD					'.'
 #define KEY_PLUS					'+'
 #define KEY_POUND					0x00
-#define KEY_Q						'Q'
-#define KEY_R						'R'
+#define KEY_Q						'q'
+#define KEY_R						'r'
 #define KEY_RETURN					0x0d
 #define KEY_RIGHT_SHIFT				0x81
 #define KEY_RUNSTOP					0x86
-#define KEY_S						'S'
+#define KEY_S						's'
 #define KEY_SEMICOLON				';'
 #define KEY_SLASH					'/'
 #define KEY_SPACE					' '
-#define KEY_T						'T'
-#define KEY_U						'U'
+#define KEY_T						't'
+#define KEY_U						'u'
 #define KEY_UP_ARROW				0x92
-#define KEY_V						'V'
-#define KEY_W						'W'
-#define KEY_X						'X'
-#define KEY_Y						'Y'
-#define KEY_Z						'Z'
+#define KEY_V						'v'
+#define KEY_W						'w'
+#define KEY_X						'x'
+#define KEY_Y						'y'
+#define KEY_Z						'z'
 #define KEY_BACKSLASH                '\\'
 #define KEY_SQUARE_OPEN              0x00
 #define KEY_SQUARE_CLOSED            0x00
@@ -136,8 +136,8 @@
 
 #define SCREEN_CAPABILITIES         ( ( 1<<TILEMAP_NATIVE ) | ( 1<<BITMAP_NATIVE ) )
 
-#define BANK_COUNT          0
-#define BANK_SIZE           0
+#define BANK_COUNT          1
+#define BANK_SIZE           4096
 
 #define JOY_COUNT           2
 
@@ -146,6 +146,8 @@
 #define JOY_LEFT            2
 #define JOY_RIGHT           3
 #define JOY_FIRE            4
+
+#define MAX_AUDIO_CHANNELS  3
 
 void msx1_inkey( Environment * _environment, char * _pressed, char * _key );
 void msx1_scancode( Environment * _environment, char * _pressed, char * _scacode );

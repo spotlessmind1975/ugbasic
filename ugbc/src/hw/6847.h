@@ -90,6 +90,17 @@
 
 #define BITMAP_MODE_DEFAULT     BITMAP_MODE_RESOLUTION6
 
+#define SPRITE_COUNT                0
+#define SPRITE_WIDTH                0
+#define SPRITE_HEIGHT               0
+#define SPRITE_X_MIN                0
+#define SPRITE_Y_MIN                0
+#define SPRITE_X_MAX                0
+#define SPRITE_Y_MAX                0
+
+#define SCREEN_BORDER_X             0
+#define SCREEN_BORDER_Y             0
+
 // (2) SAM_Vx are three pairs of addresses (V0-V2), and poking any value to
 // EVEN addresses sets bit Vx off (0) in Video Display Generator (VDG)
 // circuitry. Poking a value to ODD addresses sets bit on (1) in VDG circuit.

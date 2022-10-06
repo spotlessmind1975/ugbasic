@@ -109,7 +109,7 @@ void memory_area_assign( MemoryArea * _first, Variable * _variable ) {
     while( actual ) {
         int enoughSpace = actual->size > neededSpace;
         if ( actual->type == MAT_RAM ) {
-            if ( _variable->type == VT_STRING || _variable->type == VT_BUFFER || _variable->type == VT_IMAGE || _variable->type == VT_IMAGES || _variable->type == VT_SEQUENCE ) {
+            if ( _variable->type == VT_STRING || _variable->type == VT_BUFFER || _variable->type == VT_IMAGE || _variable->type == VT_IMAGES || _variable->type == VT_SEQUENCE || _variable->type == VT_MUSIC ) {
                 enoughSpace = 0;
             }
         }
@@ -480,6 +480,7 @@ Variable * variable_define_local( Environment * _environment, char * _name, Vari
             case VT_IMAGE:
             case VT_IMAGES:
             case VT_SEQUENCE:
+            case VT_MUSIC:
             case VT_ARRAY:
                 break;
             default:
@@ -843,6 +844,9 @@ Variable * variable_temporary( Environment * _environment, VariableType _type, c
         } else if ( _type == VT_SEQUENCE ) {
             sprintf(name, "Tseq%d", UNIQUE_ID);
             var->locked = 1;
+        } else if ( _type == VT_MUSIC ) {
+            sprintf(name, "Tmus%d", UNIQUE_ID);
+            var->locked = 1;
         } else {
             sprintf(name, "Ttmp%d", UNIQUE_ID);
         }
@@ -893,6 +897,8 @@ Variable * variable_resident( Environment * _environment, VariableType _type, ch
         sprintf(name, "Timgs%d", UNIQUE_ID);
     } else if ( _type == VT_SEQUENCE ) {
         sprintf(name, "Tseq%d", UNIQUE_ID);
+    } else if ( _type == VT_MUSIC ) {
+        sprintf(name, "Tmus%d", UNIQUE_ID);
     } else {
         sprintf(name, "Ttmp%d", UNIQUE_ID);
     }
@@ -1007,6 +1013,8 @@ Variable * variable_store( Environment * _environment, char * _destination, unsi
                     CRITICAL_DATATYPE_UNSUPPORTED("array(1)", DATATYPE_AS_STRING[destination->arrayType]);
                 }
                 cpu_fill_direct_size_value( _environment, destination->realName, size, _value );
+            } else if ( destination->type == VT_TILE ) {
+                cpu_store_8bit( _environment, destination->realName, _value );
             } else {
                 CRITICAL_STORE_UNSUPPORTED(DATATYPE_AS_STRING[destination->type]);
             }
@@ -1198,6 +1206,7 @@ Variable * variable_store_buffer( Environment * _environment, char * _destinatio
         case VT_IMAGE:
         case VT_IMAGES:
         case VT_SEQUENCE:
+        case VT_MUSIC:
         case VT_BUFFER:
             if ( ! destination->valueBuffer ) {
                 destination->valueBuffer = malloc( _size );
@@ -1647,6 +1656,23 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                                     CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
                             }
                             break;
+                        case VT_MUSIC:
+                            switch( target->type ) {
+                                case VT_MUSIC:
+                                case VT_BUFFER:
+                                    if ( target->size == 0 ) {
+                                        target->size = source->size;
+                                    }
+                                    if ( source->size <= target->size ) {
+                                        cpu_mem_move_direct_size( _environment, source->realName, target->realName, source->size );
+                                    } else {
+                                        CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
+                                    }
+                                    break;
+                                default:
+                                    CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
+                            }
+                            break;
                         case VT_BUFFER:
                             switch( target->type ) {
                                 case VT_DSTRING: {
@@ -1666,6 +1692,7 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                                 case VT_IMAGE:
                                 case VT_IMAGES:
                                 case VT_SEQUENCE:
+                                case VT_MUSIC:
                                 case VT_BUFFER:
                                     if ( target->size == 0 ) {
                                         target->size = source->size;
@@ -1800,14 +1827,16 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
                     target->originalHeight = source->originalHeight;
                     target->originalColors = source->originalColors;
                     target->bankAssigned = source->bankAssigned;
+                    target->residentAssigned = source->residentAssigned;
+                    target->uncompressedSize = source->uncompressedSize;
                     if ( target->bankAssigned ) {
                         target->absoluteAddress = source->absoluteAddress;
-                        target->residentAssigned = source->residentAssigned;
                         target->variableUniqueId = source->variableUniqueId;
                     }
                     memcpy( target->originalPalette, source->originalPalette, MAX_PALETTE * sizeof( RGBi ) );
                 case VT_IMAGES:
                 case VT_SEQUENCE:
+                case VT_MUSIC:
                 case VT_ARRAY:
                 case VT_BUFFER: {
                     if ( target->size == 0 ) {
@@ -2636,6 +2665,7 @@ Variable * variable_compare( Environment * _environment, char * _source, char * 
                         case VT_IMAGE:
                         case VT_IMAGES:
                         case VT_SEQUENCE:
+                        case VT_MUSIC:
                         case VT_BUFFER:
                         default:
                             CRITICAL_CANNOT_COMPARE(DATATYPE_AS_STRING[source->type],DATATYPE_AS_STRING[target->type]);
@@ -2682,12 +2712,14 @@ Variable * variable_compare( Environment * _environment, char * _source, char * 
                 case VT_IMAGE:
                 case VT_IMAGES:
                 case VT_SEQUENCE:
+                case VT_MUSIC:
                 case VT_BUFFER:
                     switch( target->type ) {
                         case VT_BUFFER:
                         case VT_IMAGE:
                         case VT_IMAGES:
                         case VT_SEQUENCE:
+                        case VT_MUSIC:
                             cpu_compare_memory_size( _environment, source->realName, target->realName, source->size, result->realName, 1 );
                             break;
                         default:
@@ -3157,12 +3189,14 @@ Variable * variable_less_than( Environment * _environment, char * _source, char 
                 case VT_IMAGE:
                 case VT_IMAGES:
                 case VT_SEQUENCE:
+                case VT_MUSIC:
                 case VT_BUFFER:
                     switch( target->type ) {
                         case VT_BUFFER:
                         case VT_IMAGE:
                         case VT_IMAGES:
                         case VT_SEQUENCE:
+                        case VT_MUSIC:
                             cpu_less_than_memory_size( _environment, source->realName, target->realName, source->size, result->realName, _equal );
                             break;
                         default:                
@@ -3439,12 +3473,14 @@ Variable * variable_greater_than( Environment * _environment, char * _source, ch
                 case VT_IMAGE:
                 case VT_IMAGES:
                 case VT_SEQUENCE:
+                case VT_MUSIC:
                 case VT_BUFFER:
                     switch( target->type ) {
                         case VT_BUFFER:
                         case VT_IMAGE:
                         case VT_IMAGES:
                         case VT_SEQUENCE:
+                        case VT_MUSIC:
                             cpu_greater_than_memory_size( _environment, source->realName, target->realName, source->size, result->realName, _equal );
                             break;
                         default:                
@@ -3648,6 +3684,7 @@ Variable * variable_string_right( Environment * _environment, char * _string, ch
         case VT_IMAGE:
         case VT_IMAGES:
         case VT_SEQUENCE:
+        case VT_MUSIC:
         case VT_BUFFER:
         default:
             CRITICAL_RIGHT_UNSUPPORTED( _string, DATATYPE_AS_STRING[string->type]);
@@ -4808,6 +4845,12 @@ Variable * variable_move_from_array( Environment * _environment, char * _array )
 
         cpu_move_8bit_indirect2_8bit( _environment, array->realName, index->realName, result->realName );
 
+    } else if ( array->arrayDimensions == 1 && array->arrayDimensionsEach[0] <= 256 && VT_BITWIDTH( array->arrayType ) == 16 ) {
+
+        Variable * index = variable_retrieve( _environment, _environment->arrayIndexesEach[_environment->arrayNestedIndex][0] );
+
+        cpu_move_16bit_indirect2_8bit( _environment, array->realName, index->realName, result->realName );
+
     } else {
 
         Variable * offset = calculate_offset_in_array( _environment, _array);
@@ -5399,9 +5442,9 @@ void variable_array_fill( Environment * _environment, char * _name, int _value )
 
 void image_converter_asserts( Environment * _environment, int _width, int _height, int _offset_x, int _offset_y, int * _frame_width, int * _frame_height ) {
 
-    if ( _width % 8 ) {
-        CRITICAL_IMAGE_CONVERTER_INVALID_WIDTH( _width );
-    }
+    // if ( _width % 8 ) {
+    //     CRITICAL_IMAGE_CONVERTER_INVALID_WIDTH( _width );
+    // }
 
     if ( *_frame_width == 0 ) {
         *_frame_width = _width;
@@ -5453,14 +5496,21 @@ char * image_load_asserts( Environment * _environment, char * _filename ) {
 
     char * lookedFilename = malloc(MAX_TEMPORARY_STORAGE);
     char lookedExtension[MAX_TEMPORARY_STORAGE];
+    memset( lookedFilename, 0, MAX_TEMPORARY_STORAGE);
+    memset( lookedExtension, 0, MAX_TEMPORARY_STORAGE);
+
+    check_if_filename_is_valid( _environment,  _filename );
+
     strcpy( lookedFilename, _filename );
     char * c = strrchr( lookedFilename, '/' );
     if ( c ) {
         strcpy( lookedExtension, c );
+        *c = 0;
     } else {
-        strcpy( lookedExtension, "" );
+        strcpy( lookedFilename, "." );
+        strcpy( lookedExtension, "/" );
+        strcat( lookedExtension, _filename );
     }
-    *c = 0;
 #if defined(__atari__) 
     strcat( lookedFilename, "/atari" );
 #elif defined(__atarixl__) 
@@ -5491,8 +5541,15 @@ char * image_load_asserts( Environment * _environment, char * _filename ) {
     strcat( lookedFilename, "/sg1000" );
 #elif __cpc__
     strcat( lookedFilename, "/cpc" );
+#elif __c128__
+    strcat( lookedFilename, "/c128" );
+#elif __vg5000__
+    strcat( lookedFilename, "/vg5000" );
 #endif
-    strcat( lookedFilename, lookedExtension );
+
+    if ( strlen( lookedExtension ) ) {
+        strcat( lookedFilename, lookedExtension );
+    }
 
     FILE * file = fopen( lookedFilename, "rb" );
 
@@ -5507,7 +5564,9 @@ char * image_load_asserts( Environment * _environment, char * _filename ) {
         }
     }
 
-    fclose( file );
+    if ( file ) {
+        fclose( file );
+    }
 
     return lookedFilename;
 
@@ -6120,10 +6179,17 @@ float min_of_three(float _m, float _n, float _p) {
 
 char * get_temporary_filename( Environment * _environment ) {
 
-    char * temp = tmpnam(NULL);
+    char temp[16];
+    memset( temp, 0, 16 );
+
     char temporaryFilename[MAX_TEMPORARY_STORAGE];
 
-    for(int i=0; i<strlen(temp); ++i ) {
+    int i = 0;
+    for( i=0; i<15; ++i ) {
+        temp[i] = 'a' + ((char) (rand() % 20));
+    }
+
+    for(i=0; i<strlen(temp); ++i ) {
         if ( temp[i] == '.' ) {
             temp[i] = '0';
         }
@@ -6131,6 +6197,7 @@ char * get_temporary_filename( Environment * _environment ) {
 
     if ( _environment->temporaryPath ) {
         strcpy( temporaryFilename, _environment->temporaryPath );
+        strcat( temporaryFilename, "/" );
         strcat( temporaryFilename, temp );
     } else {
         strcpy( temporaryFilename, temp );
@@ -6171,9 +6238,9 @@ int system_call( Environment * _environment, char * _commandline ) {
 
 char * escape_newlines( char * _string ) {
 
-    char * result = malloc( 6 * strlen( _string ) + 1 );
+    char * result = malloc( 6 * strlen( _string ) + 2 );
 
-    memset( result, 0, 6 * strlen( _string ) + 1 );
+    memset( result, 0, 6 * strlen( _string ) + 2 );
 
     char * p = _string, * q = result;
 
@@ -6281,5 +6348,19 @@ char * escape_newlines( char * _string ) {
     free( result2 );
     
     return result;
+
+}
+
+int check_if_filename_is_valid( Environment * _environment,  char * _filename ) {
+
+    if ( strchr( _filename, ':' ) ) {
+        CRITICAL_FILENAME_INVALID_COLON( _filename );
+    }
+
+    if ( strchr( _filename, '\\' ) ) {
+        CRITICAL_FILENAME_INVALID_BACKSLASH( _filename );
+    }
+
+    return 1;
 
 }

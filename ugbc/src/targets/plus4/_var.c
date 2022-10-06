@@ -123,9 +123,11 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     } else {
                         outline1("%s: .res 4", variable->realName);
                     }
-                    break;                case VT_IMAGE:
+                    break;                
+                case VT_IMAGE:
                 case VT_IMAGES:
                 case VT_SEQUENCE:
+                case VT_MUSIC:
                 case VT_BUFFER:
                     if ( ! variable->absoluteAddress ) {
                         if ( variable->valueBuffer ) {
@@ -138,9 +140,14 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                 out1("%s: .byte ", variable->realName);
                                 int i=0;
                                 for (i=0; i<(variable->size-1); ++i ) {
-                                    out1("%d,", variable->valueBuffer[i]);
+                                    if ( ( ( i + 1 ) % 16 ) == 0 ) {
+                                        outline1("$%2.2x", variable->valueBuffer[i]);
+                                        out0("  .byte ");
+                                    } else {
+                                        out1("$%2.2x,", variable->valueBuffer[i]);
+                                    }
                                 }
-                                outline1("%d", variable->valueBuffer[(variable->size-1)]);
+                                outline1("$%2.2x", variable->valueBuffer[(variable->size-1)]);
                             }
                         } else {
                             outline2("%s: .res %d", variable->realName, variable->size);
@@ -239,6 +246,7 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
         case VT_IMAGE:
         case VT_IMAGES:
         case VT_SEQUENCE:
+        case VT_MUSIC:
         case VT_BUFFER:
             if ( _variable->valueBuffer ) {
                 if ( _variable->printable ) {

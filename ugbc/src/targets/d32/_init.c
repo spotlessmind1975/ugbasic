@@ -54,11 +54,27 @@ void setup_embedded( Environment * _environment ) {
     _environment->embedded.cpu_random = 1;
     _environment->embedded.cpu_mem_move = 1;
     _environment->embedded.cpu_hex_to_string = 1;
+    _environment->embedded.cpu_msc1_uncompress = 1;
 
 }
 
 void target_initialization( Environment * _environment ) {
 
+    for(int i=0; i<BANK_COUNT; ++i) {
+        Bank * bank = malloc( sizeof( Bank ) );
+        bank->address = 0x0;
+        bank->filename = NULL;
+        bank->id = i+1;
+        bank->name = strdup( "bank" );
+        bank->remains = BANK_SIZE;
+        bank->space = BANK_SIZE;
+        bank->next = _environment->expansionBanks;
+        bank->data = malloc( BANK_SIZE );
+        memset( bank->data, 0, BANK_SIZE );
+        _environment->expansionBanks = bank;
+        _environment->maxExpansionBankSize[i+1] = BANK_SIZE;
+    }
+    
     variable_import( _environment, "EVERYSTATUS", VT_BYTE, 0 );
     variable_global( _environment, "EVERYSTATUS" );
 
@@ -99,7 +115,7 @@ void target_initialization( Environment * _environment ) {
 
 void target_linkage( Environment * _environment ) {
 
-    char commandLine[2*MAX_TEMPORARY_STORAGE];
+    char commandLine[8*MAX_TEMPORARY_STORAGE];
     char executableName[MAX_TEMPORARY_STORAGE];
     
     if ( _environment->outputFileType != OUTPUT_FILE_TYPE_BIN ) {
@@ -117,10 +133,12 @@ void target_linkage( Environment * _environment ) {
     char listingFileName[MAX_TEMPORARY_STORAGE];
     memset( listingFileName, 0, MAX_TEMPORARY_STORAGE );
     if ( _environment->listingFileName ) {
-        sprintf( listingFileName, "-l %s", _environment->listingFileName );
+        sprintf( listingFileName, "-l \"%s\"", _environment->listingFileName );
     }  else {
         strcpy( listingFileName, "" );
     }
+
+    remove( _environment->exeFileName );
 
     sprintf( commandLine, "\"%s\" %s -o \"%s\" -D -e 10240 \"%s\"",
         executableName,
@@ -132,5 +150,37 @@ void target_linkage( Environment * _environment ) {
         printf("The compilation of assembly program failed.\n\n");
         printf("Please use option '-I' to install chain tool.\n\n");
     }; 
+
+    if ( _environment->listingFileName ) {
+
+        if ( _environment->profileFileName ) {
+            if ( _environment->executerFileName ) {
+                sprintf(executableName, "%s", _environment->executerFileName );
+            } else if( access( "run6809.exe", F_OK ) == 0 ) {
+                sprintf(executableName, "%s", "run6809.exe" );
+            } else {
+                sprintf(executableName, "%s", "run6809" );
+            }
+
+            sprintf( commandLine, "\"%s\" -i \"%s\" -R 2800 -b -l 27f7 \"%s\" -p \"%s\" %d",
+                executableName,
+                _environment->listingFileName,
+                _environment->exeFileName,
+                _environment->profileFileName,
+                _environment->profileCycles ? _environment->profileCycles : 1000000
+                );
+
+            if ( system_call( _environment,  commandLine ) ) {
+                printf("The profiling of assembly program failed.\n\n");
+                return;
+            }; 
+
+        }
+    
+    }
+
+}
+
+void interleaved_instructions( Environment * _environment ) {
 
 }

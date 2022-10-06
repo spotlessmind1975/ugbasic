@@ -150,6 +150,8 @@
 #define BANK_COUNT          6
 #define BANK_SIZE           16384
 
+#define MAX_AUDIO_CHANNELS  1
+
 void mo5_xpen( Environment * _environment, char * _destination );
 void mo5_ypen( Environment * _environment, char * _destination );
 void mo5_inkey( Environment * _environment, char * _pressed, char * _key );
@@ -162,5 +164,6 @@ void mo5_busy_wait( Environment * _environment, char * _timing );
 void mo5_irq_at( Environment * _environment, char * _label );
 void mo5_follow_irq( Environment * _environment );
 int mo5_convertbintok7_original(Environment * _environment);
+void mo5_joystick( Environment * _environment, char * _joystick, char * _result );
 
 #endif

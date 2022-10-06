@@ -1496,7 +1496,7 @@ static int calculate_image_size( Environment * _environment, int _width, int _he
         // particular color register. The screen data, however, is not character data but individual bytes. The user has a lot
         // more control, but this mode uses a lot more memory, approximately
         case BITMAP_MODE_ANTIC14:
-            return 2 + ( ( _width >> 2 ) * _height ) + 4;
+            return 3 + ( ( _width >> 2 ) * _height ) + 4;
 
         // Graphics 4 (ANTIC 9)
         // This is a two-color graphics mode with four times the resolution of GRAPHICS 3. The pixels are 4 x 4, and 48 rows of 80 
@@ -1528,7 +1528,7 @@ static int calculate_image_size( Environment * _environment, int _width, int _he
         // register #4. Each pixel is one scan line high and one color clock wide. This mode's advantages are that it 
         // only uses 4K of screen memory and doesn't have artifacting problems.
         case BITMAP_MODE_ANTIC12:
-            return 2 + ( ( _width >> 3 ) * _height ) + 2;
+            return 3 + ( ( _width >> 3 ) * _height ) + 2;
 
         // Graphics Mode 0 (ANTIC 2)
         // This is the normal-sized character or text mode that the computer defaults to on start up. 
@@ -1644,8 +1644,9 @@ static Variable * gtia_image_converter_bitmap_mode_standard( Environment * _envi
     // Color of the pixel to convert
     RGBi rgb;
 
-    *(buffer) = _frame_width;
-    *(buffer+1) = _frame_height;
+    *(buffer) = (_frame_width & 0xff);
+    *(buffer+1) = ( _frame_width >> 8 ) & 0xff;
+    *(buffer+2) = _frame_height;
 
     _source += ( ( _offset_y * _width ) + _offset_x ) * 3;
 
@@ -1676,9 +1677,9 @@ static Variable * gtia_image_converter_bitmap_mode_standard( Environment * _envi
             // int luminance = calculate_luminance(rgb);
 
             if ( i == 1 ) {
-                *( buffer + offset + 2) |= bitmask;
+                *( buffer + offset + 3) |= bitmask;
             } else {
-                *( buffer + offset + 2) &= ~bitmask;
+                *( buffer + offset + 3) &= ~bitmask;
             }
 
             _source += 3;
@@ -1692,15 +1693,15 @@ static Variable * gtia_image_converter_bitmap_mode_standard( Environment * _envi
     }
 
     if ( colorUsed > 1 ) {
-        *(buffer + 2 + ( ( _frame_width >> 3 ) * _frame_height ) + 1 ) = palette[1].index;
+        *(buffer + 3 + ( ( _frame_width >> 3 ) * _frame_height ) + 1 ) = palette[1].index;
     } else {
-        *(buffer + 2 + ( ( _frame_width >> 3 ) * _frame_height ) + 1 ) = 0;
+        *(buffer + 3 + ( ( _frame_width >> 3 ) * _frame_height ) + 1 ) = 0;
     }
 
     if ( colorUsed > 0 ) {
-        *(buffer + 2 + ( ( _frame_width >> 3 ) * _frame_height ) ) = palette[0].index;
+        *(buffer + 3 + ( ( _frame_width >> 3 ) * _frame_height ) ) = palette[0].index;
     } else {
-        *(buffer + 2 + ( ( _frame_width >> 3 ) * _frame_height ) ) = 0;
+        *(buffer + 3 + ( ( _frame_width >> 3 ) * _frame_height ) ) = 0;
     }
 
     variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
@@ -1866,8 +1867,9 @@ static Variable * gtia_image_converter_multicolor_mode_standard( Environment * _
     // Color of the pixel to convert
     RGBi rgb;
 
-    *(buffer) = _frame_width;
-    *(buffer+1) = _frame_height;
+    *(buffer) = (_frame_width & 0xff);
+    *(buffer+1) = (_frame_width >> 8 ) & 0xff;
+    *(buffer+2) = _frame_height;
 
     _source += ( ( _offset_y * _width ) + _offset_x ) * 3;
 
@@ -1901,7 +1903,7 @@ static Variable * gtia_image_converter_multicolor_mode_standard( Environment * _
 
             bitmask = colorIndex << (6 - ((image_x & 0x3) * 2));
 
-            *(buffer + 2 + offset) |= bitmask;
+            *(buffer + 3 + offset) |= bitmask;
 
             _source += 3;
 
@@ -1930,10 +1932,10 @@ static Variable * gtia_image_converter_multicolor_mode_standard( Environment * _
         printf("\n" );
     }
 
-    *(buffer + 2 + ( ( _frame_width >> 2 ) * _frame_height ) + 3 ) = commonPalette[3].index;
-    *(buffer + 2 + ( ( _frame_width >> 2 ) * _frame_height ) + 2 ) = commonPalette[2].index;
-    *(buffer + 2 + ( ( _frame_width >> 2 ) * _frame_height ) + 1 ) = commonPalette[1].index;
-    *(buffer + 2 + ( ( _frame_width >> 2 ) * _frame_height ) ) = commonPalette[0].index;
+    *(buffer + 3 + ( ( _frame_width >> 2 ) * _frame_height ) ) = commonPalette[0].index;
+    *(buffer + 3 + ( ( _frame_width >> 2 ) * _frame_height ) + 1 ) = commonPalette[3].index;
+    *(buffer + 3 + ( ( _frame_width >> 2 ) * _frame_height ) + 2 ) = commonPalette[2].index;
+    *(buffer + 3 + ( ( _frame_width >> 2 ) * _frame_height ) + 3 ) = commonPalette[1].index;
 
     variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
 
@@ -2145,7 +2147,7 @@ void gtia_put_image( Environment * _environment, char * _image, char * _x, char 
         if ( _frame ) {
             outline0("CLC" );
             outline0("LDA TMPPTR" );
-            outline0("ADC #2" );
+            outline0("ADC #3" );
             outline0("STA TMPPTR" );
             outline0("LDA TMPPTR+1" );
             outline0("ADC #0" );
@@ -2319,8 +2321,9 @@ Variable * gtia_new_image( Environment * _environment, int _width, int _height, 
     char * buffer = malloc ( size );
     memset( buffer, 0, size );
 
-    *(buffer) = _width;
-    *(buffer+1) = _height;
+    *(buffer) = (_width & 0xff);
+    *(buffer+1) = (_width >> 8 ) & 0xff;
+    *(buffer+2) = _height;
 
     result->valueBuffer = buffer;
     result->size = size;

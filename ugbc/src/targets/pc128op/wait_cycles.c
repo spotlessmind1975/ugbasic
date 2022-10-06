@@ -74,7 +74,7 @@ void wait_cycles_var( Environment * _environment, char * _timing ) {
 
     MAKE_LABEL
 
-    Variable * timing = variable_retrieve( _environment, _timing );
+    Variable * timing = variable_retrieve_or_define( _environment, _timing, VT_BYTE, 0 );
     
     cpu6809_busy_wait( _environment, timing->realName );
 

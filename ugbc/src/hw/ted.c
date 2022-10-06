@@ -39,26 +39,363 @@
 
 static RGBi SYSTEM_PALETTE[] = {
     { 0x00, 0x00, 0x00, 0, "BLACK" },
-    { 0xff, 0xff, 0xff, 113, "WHITE" },
-    { 0xbc, 0x68, 0x59, 82, "RED"  },
-    { 0x43, 0x97, 0xa6, 83, "CYAN"   }, 
-    { 0xbc, 0x52, 0xcc, 84, "PURPLE"  }, 
-    { 0x43, 0xad, 0x33, 85, "GREEN"  }, 
-    { 0x80, 0x71, 0xcc, 86, "BLUE"  }, 
-    { 0x80, 0x8e, 0x33, 87, "YELLOW"  }, 
-    { 0xbc, 0x6f, 0x33, 88, "ORANGE" }, 
-    { 0x9e, 0x7f, 0x33, 89, "BROWN" }, 
-    { 0x61, 0x9e, 0x33, 90, "YELLOW GREEN"  }, 
-    { 0xbc, 0x61, 0x80, 91, "PINK" }, 
-    { 0x43, 0x9e, 0x80, 92, "BLUE GREEN" }, 
-    { 0x43, 0x90, 0xcc, 109, "LIGHT BLUE"  }, 
-    { 0x9e, 0x61, 0xcc, 62, "DARK BLUE" },
-    { 0x43, 0xa6, 0x59, 95, "LIGHT GREEN"  } 
+    { 0xff, 0xff, 0xff, 1, "WHITE" },
+    { 0xbc, 0x68, 0x59, 2, "RED"  },
+    { 0x43, 0x97, 0xa6, 3, "CYAN"   }, 
+    { 0xbc, 0x52, 0xcc, 4, "PURPLE"  }, 
+    { 0x43, 0xad, 0x33, 5, "GREEN"  }, 
+    { 0x80, 0x71, 0xcc, 6, "BLUE"  }, 
+    { 0x80, 0x8e, 0x33, 7, "YELLOW"  }, 
+    { 0xbc, 0x6f, 0x33, 8, "ORANGE" }, 
+    { 0x9e, 0x7f, 0x33, 9, "BROWN" }, 
+    { 0x61, 0x9e, 0x33, 10, "YELLOW GREEN"  }, 
+    { 0xbc, 0x61, 0x80, 11, "PINK" }, 
+    { 0x43, 0x9e, 0x80, 12, "BLUE GREEN" }, 
+    { 0x43, 0x90, 0xcc, 13, "LIGHT BLUE"  }, 
+    { 0x9e, 0x61, 0xcc, 14, "DARK BLUE" },
+    { 0x43, 0xa6, 0x59, 15, "LIGHT GREEN"  } 
 };
 
 /****************************************************************************
  * CODE SECTION
  ****************************************************************************/
+
+RGBi * ted_image_nearest_system_color( RGBi * _color ) {
+
+    int minDistance = 0xffff;
+    int colorIndex = 0;
+    for (int j = 0; j < COLOR_COUNT; ++j) {
+        int distance = rgbi_distance(&SYSTEM_PALETTE[j], _color);
+        if (distance < minDistance) {
+            minDistance = distance;
+            colorIndex = j;
+        }
+    }
+
+    return &SYSTEM_PALETTE[colorIndex];
+
+}
+
+/**
+ * This method can be used to convert 
+ *     8x8 RGB (3 bytes) pixel (_source) [8x8x3 = 192 bytes]
+ * into 
+ *     8x8 bitmap (1 bit) pixel + 1 (byte) [8x1 + 1 = 9 bytes]
+ *       foreground and background color (_dest)
+ * 
+ * Since the 8x8 pixel area belong to a larger picture,
+ * this function will need the picture _width in order
+ * to move to the next line to analyze.
+ */
+static void ted_image_converter_tile( char * _source, char * _dest, int _width, int _source_width ) {
+
+    int colorIndexesCount[COLOR_COUNT];
+    memset(colorIndexesCount, 0, COLOR_COUNT * sizeof( int ) );
+
+    char * source = _source;
+
+    // Clear the box and colors
+    memset( _dest, 0, 9 );
+
+    // Loop for all the box surface
+    for (int y=0; y<8; ++y) {
+        for (int x=0; x<8; ++x) {
+
+            RGBi rgb;
+
+            memset( &rgb, 0, sizeof( RGBi ) );
+
+            // Take the color of the pixel
+            rgb.red = *source;
+            rgb.green = *(source + 1);
+            rgb.blue = *(source + 2);
+
+            RGBi *systemRgb = ted_image_nearest_system_color( &rgb );
+
+            ++colorIndexesCount[systemRgb->index];
+
+// printf( "%2.2x %2.2x\n", systemRgb->index, colorIndexesCount[systemRgb->index] );
+
+            source += 3;
+
+        }
+
+        source += 3 * ( _source_width - 8 );
+
+    }
+
+    int colorBackground = 0;
+    int colorBackgroundMax = 0;
+    int colorForeground = 0;
+    int colorForegroundMax = 0;
+    for( int xx = 0; xx<COLOR_COUNT; ++xx ) {
+        if ( colorIndexesCount[xx] > colorBackgroundMax ) {
+            colorBackground = xx;
+            colorBackgroundMax = colorIndexesCount[xx];
+        };
+    }
+
+    colorIndexesCount[colorBackground] = 0;
+
+    for( int xx = 0; xx<COLOR_COUNT; ++xx ) {
+        if ( colorIndexesCount[xx] > colorForegroundMax ) {
+            colorForeground = xx;
+            colorForegroundMax = colorIndexesCount[xx];
+        };
+    }
+
+    source = _source;
+
+    for (int y=0; y<8; ++y) {
+        for (int x=0; x<8; ++x) {
+
+            RGBi rgb;
+
+            memset( &rgb, 0, sizeof( RGBi ) );
+
+            rgb.red = *source;
+            rgb.green = *(source + 1);
+            rgb.blue = *(source + 2);
+
+            RGBi *systemRgb = ted_image_nearest_system_color( &rgb );
+
+            char bitmask = 1 << ( 7 - ((x) & 0x7) );
+
+            if ( systemRgb->index != colorBackground ) {
+                *( _dest + y ) |= bitmask;
+                // printf("*");
+            } else {
+                *( _dest + y ) &= ~bitmask;
+                // printf(" ");
+            }
+
+            source += 3;
+
+        }
+
+        source += 3 * ( _source_width - 8 );
+
+    }
+
+    *( _dest + 8 ) = ( colorForeground << 4 ) | colorBackground ;
+
+    // printf( "%2.2x ", *( _dest + 8 ) );
+
+}
+
+/**
+ * This method can be used to convert 
+ *     WxH RGB (3 bytes) pixel (_source) [WxHx3 bytes]
+ * into 
+ *     WxH bitmap (1 bit) pixel + (W/8xH + W/8xH/8) (bytes)
+ *       foreground and background color (_dest)
+ * 
+ * Since the WXH pixel area could belong to a larger picture,
+ * this function will need the picture _source_width in order
+ * to move to the next line to analyze.
+ */
+static void ted_image_converter_tiles( char * _source, char * _dest, int _width, int _height, int _source_width ) {
+
+    int bitmapSize = ( _width>>3 ) * _height;
+    int colormapSize = ( _width>>3 ) * (_height>>3);
+
+    memset( _dest, 0, bitmapSize + colormapSize );
+
+    for( int y=0; y<_height; y+=8 ) {
+        for( int x=0; x<_width; x+=8 ) {
+
+            char * source = _source + ( ( y * _source_width ) + x ) * 3;
+            char tile[9];
+
+            ted_image_converter_tile( source, tile, _width, _source_width );
+
+            int offset = ((y>>3) * 8 *( _width >> 3 ) ) + ((x>>3) * 8) + ((y) & 0x07);
+            // x = 8, y = 8
+            // offset = ((8 >> 3) * 8 * (16>>3) ) + ((8>>3) * 8) + ((8) & 7)
+            // offset = (1 * 8 * 2 ) + (1 * 8)
+            // offset = 16 + 8 = 24
+
+            char * destBitmap = _dest + offset;
+            char * destColormap = _dest + bitmapSize + ( ( ( y >> 3 ) * ( _width >> 3 ) ) + ( x >> 3 ) );
+            for( int i=0; i<8; ++i ) {
+                *destBitmap = tile[i];
+                ++destBitmap;
+            }
+            // printf("tile at %d,%d color = %2.2x\n", x, y, (unsigned char)(tile[8]) );
+            *destColormap = tile[8];            
+        }
+    }
+}
+
+/**
+ * This method can be used to convert 
+ *     4x8 RGB (3 bytes) pixel (_source) [8x8x3 = 192 bytes]
+ * into 
+ *     4x8 colormap (2 bit) pixel + 1 (bytes) [8x1 + 2 = 10 bytes]
+ *       color1 [hi], color2, color3 [hi], background (_dest)
+ * 
+ * Since the 4x8 pixel area belong to a larger picture,
+ * this function will need the picture _width in order
+ * to move to the next line to analyze. Moreover, background
+ * color should be given since it is not settable and it will
+ * be returned as low nibble of second color byte.
+ */
+static void ted_image_converter_tile_multicolor( char * _source, char * _dest, int _width, int _background, int _source_width ) {
+
+    int colorIndexesCount[COLOR_COUNT];
+    memset(colorIndexesCount, 0, COLOR_COUNT * sizeof( int ) );
+
+    char * source = _source;
+
+    // Clear the box and colors
+    memset( _dest, 0, 10 );
+
+    // Loop for all the box surface
+    for (int y=0; y<8; ++y) {
+        for (int x=0; x<4; ++x) {
+
+            RGBi rgb;
+
+            memset( &rgb, 0, sizeof( RGBi ) );
+
+            // Take the color of the pixel
+            rgb.red = *source;
+            rgb.green = *(source + 1);
+            rgb.blue = *(source + 2);
+
+            RGBi *systemRgb = ted_image_nearest_system_color( &rgb );
+
+            ++colorIndexesCount[systemRgb->index];
+
+            source += 3;
+
+        }
+
+        source += 3 * ( _source_width - 4 );
+
+    }
+
+    colorIndexesCount[_background] = 0;
+
+    int colorFirst = 0;
+    int colorFirstMax = 0;
+    int colorSecond = 0;
+    int colorSecondMax = 0;
+    int colorThird = 0;
+    int colorThirdMax = 0;
+
+    for( int xx = 0; xx<COLOR_COUNT; ++xx ) {
+        if ( colorIndexesCount[xx] > colorFirstMax ) {
+            colorFirst = xx;
+            colorFirstMax = colorIndexesCount[xx];
+        };
+    }
+
+    colorIndexesCount[colorFirst] = 0;
+
+    for( int xx = 0; xx<COLOR_COUNT; ++xx ) {
+        if ( colorIndexesCount[xx] > colorSecondMax ) {
+            colorSecond = xx;
+            colorSecondMax = colorIndexesCount[xx];
+        };
+    }
+
+    colorIndexesCount[colorSecond] = 0;
+
+    for( int xx = 0; xx<COLOR_COUNT; ++xx ) {
+        if ( colorIndexesCount[xx] > colorThirdMax ) {
+            colorThird = xx;
+            colorThirdMax = colorIndexesCount[xx];
+        };
+    }
+
+    colorIndexesCount[colorThird] = 0;
+
+    source = _source;
+
+    for (int y=0; y<8; ++y) {
+        for (int x=0; x<4; ++x) {
+
+            RGBi rgb;
+
+            memset( &rgb, 0, sizeof( RGBi ) );
+
+            rgb.red = *source;
+            rgb.green = *(source + 1);
+            rgb.blue = *(source + 2);
+
+            RGBi *systemRgb = ted_image_nearest_system_color( &rgb );
+
+            char colorIndex = 0;
+
+            if ( systemRgb->index == colorFirst ) {
+                colorIndex = 1;
+            } else if ( systemRgb->index == colorSecond ) {
+                colorIndex = 2;
+            } else if ( systemRgb->index == colorThird ) {
+                colorIndex = 3;
+            }
+            
+            char bitmask = colorIndex << (6 - ((x & 0x3) * 2));
+
+            *(_dest + y) |= bitmask;
+
+            source += 3;
+
+        }
+
+        source += 3 * ( _source_width - 4 );
+
+    }
+
+    *( _dest + 8 ) = ( colorFirst << 4 ) | colorSecond ;
+    *( _dest + 9 ) = ( _background << 4 ) | colorThird;
+
+}
+
+/**
+ * This method can be used to convert 
+ *     WxH RGB (3 bytes) pixel (_source) [WxHx3 bytes]
+ * into 
+ *     WxH bitmap (2 bit) pixel + (W/4xH + 2*(W/4xH/8)) (bytes)
+ *       color1 [hi], color2, color3 [hi], background (_dest)
+ * 
+ * Since the WXH pixel area could belong to a larger picture,
+ * this function will need the picture _source_width in order
+ * to move to the next line to analyze. Moreover, background
+ * color is fixed also if it is returned as lower nibble
+ * of one byte of 2 of colors.
+ */
+static void ted_image_converter_tiles_multicolor( char * _source, char * _dest, int _width, int _height, int _source_width, int _background ) {
+
+    int bitmapSize = ( _width>>2 ) * _height;
+    int colormap1Size = ( _width>>2 ) * (_height>>3);
+    int colormap2Size = ( _width>>2 ) * (_height>>3);
+
+    memset( _dest, 0, bitmapSize + colormap1Size + colormap2Size );
+
+    for( int y=0; y<_height; y+=8 ) {
+        for( int x=0; x<_width; x+=4 ) {
+
+            char * source = _source + ( ( y * _source_width ) + x ) * 3;
+            char tile[10];
+
+            ted_image_converter_tile_multicolor( source, tile, _width, _background, _source_width );
+
+            int offset = ((y>>3) * 8 *( _width >> 2 ) ) + ((x>>2) * 8) + ((y) & 0x07);
+
+            char * destBitmap = _dest + offset;
+            char * destColormap1 = _dest + bitmapSize + ( ( ( y >> 3 ) * ( _width >> 2 ) ) + ( x >> 2 ) );
+            char * destColormap2 = _dest + bitmapSize + colormap1Size + ( ( ( y >> 3 ) * ( _width >> 2 ) ) + ( x >> 2 ) );
+            for( int i=0; i<8; ++i ) {
+                *destBitmap = tile[i];
+                ++destBitmap;
+            }
+            *destColormap1 = tile[8];
+            *destColormap2 = tile[9];
+        }
+    }
+}
 
 void ted_collision( Environment * _environment, char * _sprite_mask, char * _result ) {
 
@@ -188,9 +525,9 @@ void ted_raster_at( Environment * _environment, char * _label, char * _positionl
 
     outline0("SEI");
     outline1("LDA #<%s", _label);
-    outline0("STA $0314");
+    outline0("STA TEDISRSVC+1");
     outline1("LDA #>%s", _label);
-    outline0("STA $0315");
+    outline0("STA TEDISRSVC+2");
     outline0("LDA #%00000010");
     outline0("STA $FF0A");
     outline1("LDA %s", _positionlo );
@@ -252,9 +589,9 @@ void ted_next_raster_at( Environment * _environment, char * _label, char * _posi
     outline0("STA $FF0A");
     outhead1("%s:", label );
     outline1("LDA #<%s", _label);
-    outline0("STA $0314");
+    outline0("STA $TEDISRSVC+1");
     outline1("LDA #>%s", _label);
-    outline0("STA $0315");
+    outline0("STA $TEDISRSVC+2");
 
     ted_next_raster( _environment );
 
@@ -325,7 +662,7 @@ int ted_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
             outline0("AND #%11101111");
             outline0("STA $FF07" );
 
-            cpu_store_16bit( _environment, colormapAddress->realName, 0x0400 );
+            cpu_store_16bit( _environment, colormapAddress->realName, 0x0800 );
 
             cpu_store_8bit( _environment, "_PEN", 0x01 );
             cpu_store_8bit( _environment, "_PAPER", 0x00 );
@@ -351,7 +688,7 @@ int ted_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
             outline0("ORA #%00010000");
             outline0("STA $FF07" );
 
-            cpu_store_16bit( _environment, colormapAddress->realName, 0x0400 );
+            cpu_store_16bit( _environment, colormapAddress->realName, 0x0800 );
             
             cpu_store_8bit( _environment, "_PEN", 0x01 );
             cpu_store_8bit( _environment, "_PAPER", 0x00 );
@@ -841,6 +1178,13 @@ void ted_initialization( Environment * _environment ) {
 
 void ted_finalization( Environment * _environment ) {
 
+    if ( ! _environment->deployed.tedstartup ) {
+        cpu_label( _environment, "TEDSTARTUP" );
+        outline0( "RTS" );
+        cpu_label( _environment, "MUSICPLAYER" );
+        outline0( "RTS" );
+    }
+
 }
 
 void ted_hscroll_line( Environment * _environment, int _direction ) {
@@ -907,11 +1251,11 @@ static int calculate_image_size( Environment * _environment, int _width, int _he
     switch( _mode ) {
         case BITMAP_MODE_STANDARD:
 
-            return 2 + ( ( _width >> 3 ) * _height ) + ( ( _width >> 3 ) * ( _height >> 3 ) );
+            return 3 + ( ( _width >> 3 ) * _height ) + ( ( _width >> 3 ) * ( _height >> 3 ) );
 
         case BITMAP_MODE_MULTICOLOR:
 
-            return 2 + ( ( _width >> 2 ) * _height ) + 2 * ( ( _width >> 2 ) * ( _height >> 3 ) ) + 2;
+            return 3 + ( ( _width >> 2 ) * _height ) + 2 * ( ( _width >> 2 ) * ( _height >> 3 ) ) + 2;
 
         case TILEMAP_MODE_STANDARD:
         case TILEMAP_MODE_MULTICOLOR:
@@ -931,9 +1275,9 @@ static Variable * ted_image_converter_bitmap_mode_standard( Environment * _envir
 
     int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE, 1 /* sorted */);
 
-    if (colorUsed > 2) {
-        CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
-    }
+    // if (colorUsed > 2) {
+    //     CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
+    // }
     
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = colorUsed;
@@ -986,55 +1330,13 @@ static Variable * ted_image_converter_bitmap_mode_standard( Environment * _envir
     // Color of the pixel to convert
     RGBi rgb;
 
-    *(buffer) = _frame_width;
-    *(buffer+1) = _frame_height;
+    *(buffer) = (_frame_width & 0xff );
+    *(buffer+1) = (_frame_width >> 8 ) & 0xff;
+    *(buffer+2) = _frame_height;
 
     _source += ( ( _offset_y * _width ) + _offset_x ) * 3;
 
-    // Loop for all the source surface.
-    for (image_y = 0; image_y < _frame_height; ++image_y) {
-        for (image_x = 0; image_x < _frame_width; ++image_x) {
-
-            // Take the color of the pixel
-            rgb.red = *_source;
-            rgb.green = *(_source + 1);
-            rgb.blue = *(_source + 2);
-
-            for( i=0; i<colorUsed; ++i ) {
-                if ( rgbi_equals_rgb( &palette[i], &rgb ) ) {
-                    break;
-                }
-            }
-
-            // Calculate the relative tile
-            tile_y = (image_y >> 3);
-            tile_x = (image_x >> 3);
-            
-            // Calculate the offset starting from the tile surface area
-            // and the bit to set.
-            offset = (tile_y * 8 *( _frame_width >> 3 ) ) + (tile_x * 8) + (image_y & 0x07);
-            bitmask = 1 << ( 7 - (image_x & 0x7) );
-
-            // If the pixes has enough luminance value, it must be 
-            // considered as "on"; otherwise, it is "off".
-            // int luminance = calculate_luminance(rgb);
-
-            if ( i == 1 ) {
-                *( buffer + offset + 2) |= bitmask;
-            } else {
-                *( buffer + offset + 2) &= ~bitmask;
-            }
-
-            offset = tile_y * ( _frame_width >> 3 ) + tile_x;
-            *( buffer + 2 + ( ( _frame_width >> 3 ) * _frame_height ) + offset ) = ( palette[1].index << 4 ) | palette[0].index; 
-
-            _source += 3;
-
-        }
-
-        _source += ( _width - _frame_width ) * 3;
-
-    }
+    ted_image_converter_tiles( _source, buffer+3, _frame_width, _frame_height, _width );
 
     variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
 
@@ -1051,9 +1353,9 @@ static Variable * ted_image_converter_multicolor_mode_standard( Environment * _e
 
     int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE, 1 /* sorted */);
 
-    if (colorUsed > 4) {
-        CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
-    }
+    // if (colorUsed > 4) {
+    //     CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
+    // }
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = colorUsed;
@@ -1105,66 +1407,13 @@ static Variable * ted_image_converter_multicolor_mode_standard( Environment * _e
     // Color of the pixel to convert
     RGBi rgb;
 
-    *(buffer) = _frame_width;
-    *(buffer+1) = _frame_height;
+    *(buffer) = (_frame_width & 0xff );
+    *(buffer+1) = (_frame_width >> 8 ) & 0xff;
+    *(buffer+2) = _frame_height;
 
     _source += ( ( _offset_y * _frame_width ) + _offset_x ) * 3;
 
-    // Loop for all the source surface.
-    for (image_y = 0; image_y < _frame_height; ++image_y) {
-        for (image_x = 0; image_x < _frame_width; ++image_x) {
-
-            // Take the color of the pixel
-            rgb.red = *_source;
-            rgb.green = *(_source + 1);
-            rgb.blue = *(_source + 2);
-
-            // Calculate the relative tile
-            tile_y = (image_y >> 3);
-            tile_x = (image_x >> 2);
-
-            // Calculate the offset starting from the tile surface area
-            // and the bit to set.
-            offset = (tile_y * 8 *( _frame_width >> 2 ) ) + (tile_x * 8) + (image_y & 0x07);
-            offsetc = (tile_y * ( _frame_width >> 2 ) ) + (tile_x);
-
-            int minDistance = 0xffff;
-            int colorIndex = 0;
-
-            for( i=0; i<colorUsed; ++i ) {
-                if ( rgbi_equals_rgb( &palette[i], &rgb ) ) {
-                    break;
-                }
-            }
-
-            colorIndex = i;
-
-            bitmask = colorIndex << (6 - ((image_x & 0x3) * 2));
-
-            switch( colorIndex ) {
-                case 0:
-                    *(buffer + 2 + ( ( _frame_width >> 2 ) * _frame_height ) + 2 * ( _frame_width >> 2 ) * ( _frame_height >> 3 ) ) = palette[colorIndex].index;
-                    break;
-                case 1:
-                case 2:
-                    *(buffer + 2 + ( ( _frame_width >> 2 ) * _frame_height ) + offsetc ) |= ( ( palette[1].index & 0xf0 ) << 4 ) | ( ( palette[2].index & 0xf0 ) );
-                    *(buffer + 2 + ( ( _frame_width >> 2 ) * _frame_height ) + ( _frame_width >> 2 ) * ( _frame_height >> 3 ) + offsetc ) |= ( ( palette[1].index & 0x0f ) ) | ( ( palette[2].index & 0x0f ) >> 4 );
-                    break;
-                case 3:
-                    *(buffer + 2 + ( ( _frame_width >> 2 ) * _frame_height ) + 2 * ( _frame_width >> 2 ) * ( _frame_height >> 3 ) + 1 ) = palette[colorIndex].index;
-                    break;
-            }
-
-            *(buffer + 2 + offset) |= bitmask;
-
-            _source += 3;
-
-        }
-
-        _source += ( _width - _frame_width ) * 3;
-        // printf("\n" );
-
-    }
+    ted_image_converter_tiles_multicolor( _source, buffer+3, _frame_width, _frame_height, _width, palette[0].index );
 
     variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
 
@@ -1264,7 +1513,7 @@ void ted_put_image( Environment * _environment, char * _image, char * _x, char *
         if ( _frame ) {
             outline0("CLC" );
             outline0("LDA TMPPTR" );
-            outline0("ADC #2" );
+            outline0("ADC #3" );
             outline0("STA TMPPTR" );
             outline0("LDA TMPPTR+1" );
             outline0("ADC #0" );
@@ -1327,8 +1576,9 @@ Variable * ted_new_image( Environment * _environment, int _width, int _height, i
     char * buffer = malloc ( size );
     memset( buffer, 0, size );
 
-    *(buffer) = _width;
-    *(buffer+1) = _height;
+    *(buffer) = ( _width & 0xff );
+    *(buffer+1) = ( _width >> 8 ) & 0xff;
+    *(buffer+2) = _height;
 
     result->valueBuffer = buffer;
     result->size = size;
@@ -1490,6 +1740,811 @@ Variable * ted_get_raster_line( Environment * _environment ) {
 
     return result;
     
+}
+
+/* audio */
+
+static unsigned int SOUND_FREQUENCIES[] = {
+    0,		0,		0,		0,		0,		0,		0,		0,		0,		0,
+    0,		0,		0,		0,		0,		0,		0,		0,		0,		0,
+    0,		0,		0,		-5816,  -5432,  -5070,  -4728,  -4405,  -4100,  -3812,
+    -3541,  -3285,  -3043,  -2815,  -2599,  -2396,  -2204,  -2023,  -1852,  -1690,
+    -1538,  -1394,  -1258,  -1130,  -1009,  -895,   -788,   -686,   -590,   -499,
+    -414,   -333,   -257,   -185,   -117,   -53,    7,      64,     118,    169,
+    217,    262,    305,    345,    383,    419,    453,    485,    516,    544,
+    571,    597,    621,    643,    665,    685,    704,    722,    739,    755,
+    770,    784,    798,    810,    822,    834,    844,    854,    864,    873,
+    881,    889,    897,    904,    911,    917,    923,    929,    934,    939,
+    944,    948,    953,    957,    960,    964,    967,    971,    974,    976,
+    979,    982,    984,    986,    988,    990,    992,    994,    996
+};
+
+void ted_start( Environment * _environment, int _channels ) {
+
+    deploy( tedvars, src_hw_ted_vars_asm );
+    deploy( tedstartup, src_hw_ted_startup_asm );
+
+    if ( _channels & 0x01 ) {
+        outline0("JSR TEDSTART0");
+    }
+    if ( _channels & 0x02 ) {
+        outline0("JSR TEDSTART1");
+    }
+
+}
+
+void ted_set_volume( Environment * _environment, int _channels, int _volume ) {
+
+    deploy( tedvars, src_hw_ted_vars_asm );
+    deploy( tedstartup, src_hw_ted_startup_asm );
+
+    outline1("LDX #%2.2x", ( _volume & 0x0f ) );
+    outline0("JSR TEDSTARTVOL");
+
+}
+
+#define FREQTED( f ) ( 1024 - (111841 / (f) ) )
+
+#define     PROGRAM_FREQUENCY( c, f ) \
+    outline1("LDX #$%2.2x", ( FREQTED( f ) ) & 0xff ); \
+    outline1("LDY #$%2.2x", ( ( FREQTED( f ) ) >> 8 ) & 0xff ); \
+    if ( ( c & 0x01 ) ) \
+        outline0("JSR TEDPROGFREQ0" ); \
+    if ( ( c & 0x02 ) ) \
+        outline0("JSR TEDPROGFREQ1" ); \
+
+#define     PROGRAM_FREQUENCY_V( c, f ) \
+    outline1("LDA %s", ( c == NULL ? "#$3" : c ) ); \
+    outline1("LDX %s", f ); \
+    outline1("LDY %s+1", f ); \
+    outline0("JSR TEDFREQ" );
+
+#define     PROGRAM_FREQUENCY_SV( c, f ) \
+    outline1("LDX #$%2.2x", ( FREQTED( f ) ) & 0xff ); \
+    outline1("LDY #$%2.2x", ( ( FREQTED( f ) ) >> 8 ) & 0xff ); \
+    outline1("LDA %s", ( c == NULL ? "#$3" : c ) ); \
+    outline0("JSR TEDFREQ2" );
+
+#define     PROGRAM_PITCH( c, f ) \
+    outline1("LDX #$%2.2x", ( f & 0xff ) ); \
+    outline1("LDY #$%2.2x", ( ( f >> 8 ) & 0xff ) ); \
+    if ( ( c & 0x01 ) ) \
+        outline0("JSR TEDPROGFREQ0" ); \
+    if ( ( c & 0x02 ) ) \
+        outline0("JSR TEDPROGFREQ1" ); \
+
+#define     PROGRAM_PITCH_V( c, f ) \
+    outline1("LDA %s", ( c == NULL ? "#$3" : c ) ); \
+    outline1("LDX %s", f ); \
+    outline1("LDY %s+1", f ); \
+    outline0("JSR TEDPROGFREQ" );
+
+#define     PROGRAM_PITCH_SV( c, f ) \
+    outline1("LDX #$%2.2x", ( f & 0xff ) ); \
+    outline1("LDY #$%2.2x", ( ( f >> 8 ) & 0xff ) ); \
+    outline1("LDA %s", ( c == NULL ? "#$3" : c ) ); \
+    outline0("JSR TEDPROGFREQ" );
+
+#define     PROGRAM_PULSE( c, p ) \
+    outline1("LDX #$%2.2x", ( p & 0xff ) ); \
+    outline1("LDY #$%2.2x", ( ( p >> 8 ) & 0xff ) ); \
+    if ( ( c & 0x01 ) ) \
+        outline0("JSR TEDPROGPULSE0" ); \
+    if ( ( c & 0x02 ) ) \
+        outline0("JSR TEDPROGPULSE1" ); \
+
+#define     PROGRAM_PULSE_V( c, p ) \
+    outline1("LDA %s", ( c == NULL ? "#$3" : c ) ); \
+    outline1("LDX %s", p ); \
+    outline1("LDY %s+1", p ); \
+    outline0("JSR TEDPROGPULSE" );
+
+#define     PROGRAM_PULSE_SV( c, p ) \
+    outline1("LDX #$%2.2x", ( p & 0xff ) ); \
+    outline1("LDY #$%2.2x", ( ( p >> 8 ) & 0xff ) ); \
+    outline1("LDA %s", ( c == NULL ? "#$3" : c ) ); \
+    outline0("JSR TEDPROGPULSE" );
+
+#define     PROGRAM_NOISE( c ) \
+    outline0("LDX #$82" ); \
+    if ( ( c & 0x01 ) ) \
+        outline0("JSR TEDPROGCTR0" ); \
+    if ( ( c & 0x02 ) ) \
+        outline0("JSR TEDPROGCTR1" ); \
+
+#define     PROGRAM_NOISE_V( c, p ) \
+    outline1("LDA %s", ( c == NULL ? "#$3" : c ) ); \
+    outline0("LDX #$82" ); \
+    outline0("JSR TEDPROGCTR" );
+
+#define     PROGRAM_NOISE_SV( c ) \
+    outline0("LDX #$82" ); \
+    outline1("LDA %s", ( c == NULL ? "#$3" : c ) ); \
+    outline0("JSR TEDPROGCTR" );
+
+#define     PROGRAM_SAW( c ) \
+    outline0("LDX #$22" ); \
+    if ( ( c & 0x01 ) ) \
+        outline0("JSR TEDPROGCTR0" ); \
+    if ( ( c & 0x02 ) ) \
+        outline0("JSR TEDPROGCTR1" ); \
+
+#define     PROGRAM_SAW_V( c) \
+    outline1("LDA %s", ( c == NULL ? "#$3" : c ) ); \
+    outline0("LDX #$22" ); \
+    outline0("JSR TEDPROGCTR" );
+
+#define     PROGRAM_SAW_SV( c ) \
+    outline0("LDX #$22" ); \
+    outline1("LDA %s", ( c == NULL ? "#$3" : c ) ); \
+    outline0("JSR TEDPROGCTR" );
+
+#define     PROGRAM_TRIANGLE( c ) \
+    outline0("LDX #$12" ); \
+    if ( ( c & 0x01 ) ) \
+        outline0("JSR TEDPROGCTR0" ); \
+    if ( ( c & 0x02 ) ) \
+        outline0("JSR TEDPROGCTR1" ); \
+
+#define     PROGRAM_TRIANGLE_V( c ) \
+    outline1("LDA %s", ( c == NULL ? "#$3" : c ) ); \
+    outline0("LDX #$12" ); \
+    outline0("JSR TEDPROGCTR" );
+
+#define     PROGRAM_TRIANGLE_SV( c ) \
+    outline1("LDA %s", ( c == NULL ? "#$3" : c ) ); \
+    outline0("LDX #$12" ); \
+    outline0("JSR TEDPROGCTR" );
+
+#define     PROGRAM_SAW_TRIANGLE( c ) \
+    outline0("LDX #$32" ); \
+    if ( ( c & 0x01 ) ) \
+        outline0("JSR TEDPROGCTR0" ); \
+    if ( ( c & 0x02 ) ) \
+        outline0("JSR TEDPROGCTR1" ); \
+
+#define     PROGRAM_SAW_TRIANGLE_V( c ) \
+    outline1("LDA %s", ( c == NULL ? "#$3" : c ) ); \
+    outline0("LDX #$32" ); \
+    outline0("JSR TEDPROGCTR" );
+
+#define     PROGRAM_SAW_TRIANGLE_SV( c ) \
+    outline1("LDA %s", ( c == NULL ? "#$3" : c ) ); \
+    outline0("LDX #$32" ); \
+    outline0("JSR TEDPROGCTR" );
+
+#define     PROGRAM_ATTACK_DECAY( c, a, d ) \
+    outline1("LDX #$%2.2x", ( a & 0x0f ) ); \
+    outline1("LDY #$%2.2x", ( d & 0x0f ) ); \
+    if ( ( c & 0x01 ) ) \
+        outline0("JSR TEDPROGAD0" ); \
+    if ( ( c & 0x02 ) ) \
+        outline0("JSR TEDPROGAD1" ); \
+
+#define     PROGRAM_ATTACK_DECAY_V( c, a, d ) \
+    outline1("LDA %s", ( c == NULL ? "#$3" : c ) ); \
+    outline1("LDX %s", a ); \
+    outline1("LDY %s", d ); \
+    outline0("JSR TEDPROGAD" );
+
+#define     PROGRAM_ATTACK_DECAY_SV( c, a, d ) \
+    outline1("LDX #$%2.2x", ( a & 0x0f ) ); \
+    outline1("LDY #$%2.2x", ( d & 0x0f ) ); \
+    outline1("LDA %s", ( c == NULL ? "#$3" : c ) ); \
+    outline0("JSR TEDPROGAD" );
+
+#define     PROGRAM_SUSTAIN_RELEASE( c, s, r ) \
+    outline1("LDX #$%2.2x", ( s & 0x0f ) ); \
+    outline1("LDY #$%2.2x", ( r & 0x0f ) ); \
+    if ( ( c & 0x01 ) ) \
+        outline0("JSR TEDPROGSR0" ); \
+    if ( ( c & 0x02 ) ) \
+        outline0("JSR TEDPROGSR1" ); \
+
+#define     PROGRAM_SUSTAIN_RELEASE_V( c, s, r ) \
+    outline1("LDA %s", ( c == NULL ? "#$3" : c ) ); \
+    outline1("LDX %s", s ); \
+    outline1("LDY %s", r ); \
+    outline0("JSR TEDPROGSR" );
+
+#define     PROGRAM_SUSTAIN_RELEASE_SV( c, s, r ) \
+    outline1("LDX #$%2.2x", ( s & 0x0f ) ); \
+    outline1("LDY #$%2.2x", ( r & 0x0f ) ); \
+    outline1("LDA %s", ( c == NULL ? "#$3" : c ) ); \
+    outline0("JSR TEDPROGSR" );
+
+#define     STOP_FREQUENCY( c ) \
+    if ( ( c & 0x01 ) ) \
+        outline0("JSR TEDSTOP0" ); \
+    if ( ( c & 0x02 ) ) \
+        outline0("JSR TEDSTOP1" ); \
+
+#define     STOP_FREQUENCY_V( c ) \
+    outline1("LDA %s", ( c == NULL ? "#$3" : c ) ); \
+    outline0("JSR TEDSTOP" );
+
+#define     STOP_FREQUENCY_SV( c ) \
+    outline1("LDA %s", ( c == NULL ? "#$3" : c ) ); \
+    outline0("JSR TEDSTOP" );
+
+void ted_set_program( Environment * _environment, int _channels, int _program ) {
+
+    deploy( tedvars, src_hw_ted_vars_asm );
+    deploy( tedstartup, src_hw_ted_startup_asm );
+
+    switch (_program) {
+        case IMF_INSTRUMENT_EXPLOSION:
+            PROGRAM_NOISE(_channels);
+            PROGRAM_ATTACK_DECAY(_channels, 2, 11);
+            PROGRAM_SUSTAIN_RELEASE(_channels, 0, 1);
+            break;
+        case IMF_INSTRUMENT_GUNSHOT:
+            PROGRAM_NOISE(_channels);
+            PROGRAM_ATTACK_DECAY(_channels, 2, 4);
+            PROGRAM_SUSTAIN_RELEASE(_channels, 0, 1);
+            break;
+        case IMF_INSTRUMENT_PAD_5_BOWED:
+        case IMF_INSTRUMENT_PAD_6_METALLIC:
+        case IMF_INSTRUMENT_PAD_7_HALO:
+        case IMF_INSTRUMENT_PAD_8_SWEEP:
+        case IMF_INSTRUMENT_ACOUSTIC_GRAND_PIANO:
+        case IMF_INSTRUMENT_BRIGHT_ACOUSTIC_PIANO:
+        case IMF_INSTRUMENT_ELECTRIC_GRAND_PIANO:
+        case IMF_INSTRUMENT_HONKY_TONK_PIANO:
+        case IMF_INSTRUMENT_ELECTRIC_PIANO1:
+        case IMF_INSTRUMENT_ELECTRIC_PIANO2:
+            PROGRAM_TRIANGLE(_channels);
+            PROGRAM_ATTACK_DECAY(_channels, 4, 2);
+            PROGRAM_SUSTAIN_RELEASE(_channels, 14, 10);
+            break;
+
+        case IMF_INSTRUMENT_HARPSICHORD:
+        case IMF_INSTRUMENT_CLAVI:
+        case IMF_INSTRUMENT_CELESTA:
+            PROGRAM_PULSE(_channels, 1024);
+            PROGRAM_ATTACK_DECAY(_channels, 3, 3);
+            PROGRAM_SUSTAIN_RELEASE(_channels, 14, 3);
+            break;
+
+        case IMF_INSTRUMENT_LEAD_3_CALLIOPE:
+        case IMF_INSTRUMENT_GLOCKENSPIEL:
+        case IMF_INSTRUMENT_MUSIC_BOX:
+        case IMF_INSTRUMENT_VIBRAPHONE:
+        case IMF_INSTRUMENT_MARIMBA:
+        case IMF_INSTRUMENT_XYLOPHONE:
+        case IMF_INSTRUMENT_TUBULAR_BELLS:
+        case IMF_INSTRUMENT_DULCIMER:
+            PROGRAM_TRIANGLE(_channels);
+            PROGRAM_ATTACK_DECAY(_channels, 2, 10);
+            PROGRAM_SUSTAIN_RELEASE(_channels, 12, 14);
+            break;
+
+        default:
+        case IMF_INSTRUMENT_PAD_3_POLYSYNTH:
+        case IMF_INSTRUMENT_DRAWBAR_ORGAN:
+        case IMF_INSTRUMENT_PERCUSSIVE_ORGAN:
+        case IMF_INSTRUMENT_ROCK_ORGAN:
+        case IMF_INSTRUMENT_CHURCH_ORGAN:
+        case IMF_INSTRUMENT_REED_ORGAN:
+        case IMF_INSTRUMENT_ACCORDION:
+        case IMF_INSTRUMENT_HARMONICA:
+        case IMF_INSTRUMENT_TANGO_ACCORDION:
+            PROGRAM_TRIANGLE(_channels);
+            PROGRAM_ATTACK_DECAY(_channels, 3, 3);
+            PROGRAM_SUSTAIN_RELEASE(_channels, 14, 14);
+            break;
+
+        case IMF_INSTRUMENT_ACOUSTIC_GUITAR_NYLON:
+        case IMF_INSTRUMENT_ACOUSTIC_GUITAR_STEEL:
+        case IMF_INSTRUMENT_ELECTRIC_GUITAR_JAZZ:
+        case IMF_INSTRUMENT_ELECTRIC_GUITAR_CLEAN:
+        case IMF_INSTRUMENT_OVERDRIVEN_GUITAR:
+        case IMF_INSTRUMENT_DISTORTION_GUITAR:
+        case IMF_INSTRUMENT_GUITAR_HARMONICS:
+            PROGRAM_PULSE(_channels, 128);
+            PROGRAM_ATTACK_DECAY(_channels, 10, 10);
+            PROGRAM_SUSTAIN_RELEASE(_channels, 14, 10);
+            break;
+
+        case IMF_INSTRUMENT_ELECTRIC_GUITAR_MUTED:
+            PROGRAM_PULSE(_channels, 128);
+            PROGRAM_ATTACK_DECAY(_channels, 1, 2);
+            PROGRAM_SUSTAIN_RELEASE(_channels, 4, 3);
+            break;
+
+        case IMF_INSTRUMENT_LEAD_8_BASS_LEAD:
+        case IMF_INSTRUMENT_ACOUSTIC_BASS:
+        case IMF_INSTRUMENT_ELECTRIC_BASS_FINGER:
+        case IMF_INSTRUMENT_ELECTRIC_BASS_PICK:
+        case IMF_INSTRUMENT_FRETLESS_BASS:
+        case IMF_INSTRUMENT_SLAP_BASS_1:
+        case IMF_INSTRUMENT_SLAP_BASS_2:
+        case IMF_INSTRUMENT_SYNTH_BASS_1:
+        case IMF_INSTRUMENT_SYNTH_BASS_2:
+            PROGRAM_TRIANGLE(_channels);
+            PROGRAM_ATTACK_DECAY(_channels, 2, 10);
+            PROGRAM_SUSTAIN_RELEASE(_channels, 12, 14);
+            break;
+
+        case IMF_INSTRUMENT_LEAD_1_SQUARE:
+        case IMF_INSTRUMENT_VIOLIN:
+        case IMF_INSTRUMENT_VIOLA:
+        case IMF_INSTRUMENT_CELLO:
+        case IMF_INSTRUMENT_CONTRABASS:
+        case IMF_INSTRUMENT_TREMOLO_STRINGS:
+        case IMF_INSTRUMENT_PIZZICATO_STRINGS:
+        case IMF_INSTRUMENT_ORCHESTRAL_HARP:
+        case IMF_INSTRUMENT_STRING_ENSEMBLE_1:
+        case IMF_INSTRUMENT_STRING_ENSEMBLE_2:
+        case IMF_INSTRUMENT_SYNTHSTRINGS_1:
+        case IMF_INSTRUMENT_SYNTHSTRINGS_2:
+            PROGRAM_PULSE(_channels, 128);
+            PROGRAM_ATTACK_DECAY(_channels, 10, 10);
+            PROGRAM_SUSTAIN_RELEASE(_channels, 14, 10);
+            break;
+
+        case IMF_INSTRUMENT_PAD_4_CHOIR:
+        case IMF_INSTRUMENT_CHOIR_AAHS:
+        case IMF_INSTRUMENT_VOICE_OOHS:
+        case IMF_INSTRUMENT_SYNTH_VOICE:
+        case IMF_INSTRUMENT_LEAD_4_CHIFF:
+        case IMF_INSTRUMENT_LEAD_5_CHARANG:
+        case IMF_INSTRUMENT_LEAD_6_VOICE:
+        case IMF_INSTRUMENT_LEAD_7_FIFTHS:
+        case IMF_INSTRUMENT_FX_1_RAIN:
+        case IMF_INSTRUMENT_FX_2_SOUNDTRACK:
+        case IMF_INSTRUMENT_FX_3_CRYSTAL:
+        case IMF_INSTRUMENT_FX_4_ATMOSPHERE:
+        case IMF_INSTRUMENT_FX_5_BRIGHTNESS:
+        case IMF_INSTRUMENT_FX_6_GOBLINS:
+        case IMF_INSTRUMENT_FX_7_ECHOES:
+        case IMF_INSTRUMENT_FX_8_SCI_FI:
+        case IMF_INSTRUMENT_TIMPANI:
+        case IMF_INSTRUMENT_ORCHESTRA_HIT:
+        case IMF_INSTRUMENT_APPLAUSE:
+            PROGRAM_NOISE(_channels);
+            PROGRAM_ATTACK_DECAY(_channels, 1, 14);
+            PROGRAM_SUSTAIN_RELEASE(_channels, 14, 14);
+            break;
+
+        case IMF_INSTRUMENT_LEAD_2_SAWTOOTH:
+        case IMF_INSTRUMENT_PAD_1_NEW_AGE:
+        case IMF_INSTRUMENT_PAD_2_WARM:
+        case IMF_INSTRUMENT_TRUMPET:
+        case IMF_INSTRUMENT_TROMBONE:
+        case IMF_INSTRUMENT_TUBA:
+        case IMF_INSTRUMENT_MUTED_TRUMPET:
+        case IMF_INSTRUMENT_FRENCH_HORN:
+        case IMF_INSTRUMENT_BRASS_SECTION:
+        case IMF_INSTRUMENT_SYNTHBRASS_1:
+        case IMF_INSTRUMENT_SYNTHBRASS_2:
+        case IMF_INSTRUMENT_SOPRANO_SAX:
+        case IMF_INSTRUMENT_ALTO_SAX:
+        case IMF_INSTRUMENT_TENOR_SAX:
+        case IMF_INSTRUMENT_BARITONE_SAX:
+        case IMF_INSTRUMENT_OBOE:
+        case IMF_INSTRUMENT_ENGLISH_HORN:
+        case IMF_INSTRUMENT_BASSOON:
+        case IMF_INSTRUMENT_CLARINET:
+        case IMF_INSTRUMENT_PICCOLO:
+        case IMF_INSTRUMENT_FLUTE:
+        case IMF_INSTRUMENT_RECORDER:
+        case IMF_INSTRUMENT_PAN_FLUTE:
+        case IMF_INSTRUMENT_BLOWN_BOTTLE:
+        case IMF_INSTRUMENT_SHAKUHACHI:
+        case IMF_INSTRUMENT_WHISTLE:
+        case IMF_INSTRUMENT_OCARINA:
+            PROGRAM_SAW(_channels);
+            PROGRAM_ATTACK_DECAY(_channels, 3, 3);
+            PROGRAM_SUSTAIN_RELEASE(_channels, 14, 14);
+            break;
+
+        case IMF_INSTRUMENT_SITAR:
+        case IMF_INSTRUMENT_BANJO:
+        case IMF_INSTRUMENT_SHAMISEN:
+        case IMF_INSTRUMENT_KOTO:
+        case IMF_INSTRUMENT_KALIMBA:
+        case IMF_INSTRUMENT_BAG_PIPE:
+        case IMF_INSTRUMENT_FIDDLE:
+        case IMF_INSTRUMENT_SHANAI:
+        case IMF_INSTRUMENT_TINKLE_BELL:
+        case IMF_INSTRUMENT_AGOGO:
+        case IMF_INSTRUMENT_STEEL_DRUMS:
+        case IMF_INSTRUMENT_WOODBLOCK:
+        case IMF_INSTRUMENT_TAIKO_DRUM:
+        case IMF_INSTRUMENT_MELODIC_TOM:
+        case IMF_INSTRUMENT_SYNTH_DRUM:
+        case IMF_INSTRUMENT_REVERSE_CYMBAL:
+        case IMF_INSTRUMENT_GUITAR_FRET_NOISE:
+        case IMF_INSTRUMENT_BREATH_NOISE:
+        case IMF_INSTRUMENT_SEASHORE:
+        case IMF_INSTRUMENT_BIRD_TWEET:
+        case IMF_INSTRUMENT_TELEPHONE_RING:
+        case IMF_INSTRUMENT_HELICOPTER:
+            PROGRAM_SAW(_channels);
+            PROGRAM_ATTACK_DECAY(_channels, 3, 3);
+            PROGRAM_SUSTAIN_RELEASE(_channels, 14, 14);
+            break;
+    }
+
+}
+
+void ted_set_parameter( Environment * _environment, int _channels, int _parameter, int _value ) {
+
+}
+
+void ted_set_frequency( Environment * _environment, int _channels, int _frequency ) {
+
+    deploy( tedvars, src_hw_ted_vars_asm );
+    deploy( tedstartup, src_hw_ted_startup_asm );
+
+    PROGRAM_FREQUENCY( _channels, _frequency );
+
+}
+
+void ted_set_pitch( Environment * _environment, int _channels, int _pitch ) {
+
+    deploy( tedvars, src_hw_ted_vars_asm );
+    deploy( tedstartup, src_hw_ted_startup_asm );
+
+    PROGRAM_PITCH( _channels, _pitch );
+
+}
+
+void ted_set_note( Environment * _environment, int _channels, int _note ) {
+
+    ted_set_pitch( _environment, _channels, SOUND_FREQUENCIES[_note] );
+
+}
+
+void ted_stop( Environment * _environment, int _channels ) {
+
+    deploy( tedvars, src_hw_ted_vars_asm );
+    deploy( tedstartup, src_hw_ted_startup_asm );
+
+    STOP_FREQUENCY( _channels );
+
+}
+
+void ted_start_var( Environment * _environment, char * _channels ) {
+
+    deploy( tedvars, src_hw_ted_vars_asm );
+    deploy( tedstartup, src_hw_ted_startup_asm );
+
+    if ( _channels ) {
+        outline1("LDA %s", _channels );
+    } else {
+        outline0("LDA #$3" );
+    }
+    outline0("JSR TEDSTART");
+
+}
+
+void ted_set_volume_vars( Environment * _environment, char * _channels, char * _volume ) {
+
+    deploy( tedvars, src_hw_ted_vars_asm );
+    deploy( tedstartup, src_hw_ted_startup_asm );
+
+    outline1("LDA %s", _volume );
+    outline0("LSR" );
+    outline0("LSR" );
+    outline0("LSR" );
+    outline0("LSR" );
+    outline0("TAX" );
+    outline0("JSR TEDSTARTVOL");
+
+}
+
+void ted_set_volume_semi_var( Environment * _environment, char * _channel, int _volume ) {
+
+    deploy( tedvars, src_hw_ted_vars_asm );
+    deploy( tedstartup, src_hw_ted_startup_asm );
+
+    outline1("LDX #$%2.2x", _volume );
+    outline0("JSR TEDSTARTVOL");
+
+}
+
+void ted_set_program_semi_var( Environment * _environment, char * _channels, int _program ) {
+
+    deploy( tedvars, src_hw_ted_vars_asm );
+    deploy( tedstartup, src_hw_ted_startup_asm );
+
+    switch (_program) {
+        case IMF_INSTRUMENT_EXPLOSION:
+            PROGRAM_NOISE_SV(_channels);
+            PROGRAM_ATTACK_DECAY_SV(_channels, 2, 11);
+            PROGRAM_SUSTAIN_RELEASE_SV(_channels, 0, 1);
+            break;
+        case IMF_INSTRUMENT_GUNSHOT:
+            PROGRAM_NOISE_SV(_channels);
+            PROGRAM_ATTACK_DECAY_SV(_channels, 2, 4);
+            PROGRAM_SUSTAIN_RELEASE_SV(_channels, 0, 1);
+            break;
+        case IMF_INSTRUMENT_PAD_5_BOWED:
+        case IMF_INSTRUMENT_PAD_6_METALLIC:
+        case IMF_INSTRUMENT_PAD_7_HALO:
+        case IMF_INSTRUMENT_PAD_8_SWEEP:
+        case IMF_INSTRUMENT_ACOUSTIC_GRAND_PIANO:
+        case IMF_INSTRUMENT_BRIGHT_ACOUSTIC_PIANO:
+        case IMF_INSTRUMENT_ELECTRIC_GRAND_PIANO:
+        case IMF_INSTRUMENT_HONKY_TONK_PIANO:
+        case IMF_INSTRUMENT_ELECTRIC_PIANO1:
+        case IMF_INSTRUMENT_ELECTRIC_PIANO2:
+            PROGRAM_TRIANGLE_SV(_channels);
+            PROGRAM_ATTACK_DECAY_SV(_channels, 4, 2);
+            PROGRAM_SUSTAIN_RELEASE_SV(_channels, 14, 10);
+            break;
+
+        case IMF_INSTRUMENT_HARPSICHORD:
+        case IMF_INSTRUMENT_CLAVI:
+        case IMF_INSTRUMENT_CELESTA:
+            PROGRAM_PULSE_SV(_channels, 1024);
+            PROGRAM_ATTACK_DECAY_SV(_channels, 3, 3);
+            PROGRAM_SUSTAIN_RELEASE_SV(_channels, 14, 3);
+            break;
+
+        case IMF_INSTRUMENT_LEAD_3_CALLIOPE:
+        case IMF_INSTRUMENT_GLOCKENSPIEL:
+        case IMF_INSTRUMENT_MUSIC_BOX:
+        case IMF_INSTRUMENT_VIBRAPHONE:
+        case IMF_INSTRUMENT_MARIMBA:
+        case IMF_INSTRUMENT_XYLOPHONE:
+        case IMF_INSTRUMENT_TUBULAR_BELLS:
+        case IMF_INSTRUMENT_DULCIMER:
+            PROGRAM_TRIANGLE_SV(_channels);
+            PROGRAM_ATTACK_DECAY_SV(_channels, 2, 10);
+            PROGRAM_SUSTAIN_RELEASE_SV(_channels, 12, 14);
+            break;
+
+        default:
+        case IMF_INSTRUMENT_PAD_3_POLYSYNTH:
+        case IMF_INSTRUMENT_DRAWBAR_ORGAN:
+        case IMF_INSTRUMENT_PERCUSSIVE_ORGAN:
+        case IMF_INSTRUMENT_ROCK_ORGAN:
+        case IMF_INSTRUMENT_CHURCH_ORGAN:
+        case IMF_INSTRUMENT_REED_ORGAN:
+        case IMF_INSTRUMENT_ACCORDION:
+        case IMF_INSTRUMENT_HARMONICA:
+        case IMF_INSTRUMENT_TANGO_ACCORDION:
+            PROGRAM_TRIANGLE_SV(_channels);
+            PROGRAM_ATTACK_DECAY_SV(_channels, 3, 3);
+            PROGRAM_SUSTAIN_RELEASE_SV(_channels, 14, 14);
+            break;
+
+        case IMF_INSTRUMENT_ACOUSTIC_GUITAR_NYLON:
+        case IMF_INSTRUMENT_ACOUSTIC_GUITAR_STEEL:
+        case IMF_INSTRUMENT_ELECTRIC_GUITAR_JAZZ:
+        case IMF_INSTRUMENT_ELECTRIC_GUITAR_CLEAN:
+        case IMF_INSTRUMENT_OVERDRIVEN_GUITAR:
+        case IMF_INSTRUMENT_DISTORTION_GUITAR:
+        case IMF_INSTRUMENT_GUITAR_HARMONICS:
+            PROGRAM_PULSE_SV(_channels, 128);
+            PROGRAM_ATTACK_DECAY_SV(_channels, 10, 10);
+            PROGRAM_SUSTAIN_RELEASE_SV(_channels, 14, 10);
+            break;
+
+        case IMF_INSTRUMENT_ELECTRIC_GUITAR_MUTED:
+            PROGRAM_PULSE_SV(_channels, 128);
+            PROGRAM_ATTACK_DECAY_SV(_channels, 1, 2);
+            PROGRAM_SUSTAIN_RELEASE_SV(_channels, 4, 3);
+            break;
+
+        case IMF_INSTRUMENT_LEAD_8_BASS_LEAD:
+        case IMF_INSTRUMENT_ACOUSTIC_BASS:
+        case IMF_INSTRUMENT_ELECTRIC_BASS_FINGER:
+        case IMF_INSTRUMENT_ELECTRIC_BASS_PICK:
+        case IMF_INSTRUMENT_FRETLESS_BASS:
+        case IMF_INSTRUMENT_SLAP_BASS_1:
+        case IMF_INSTRUMENT_SLAP_BASS_2:
+        case IMF_INSTRUMENT_SYNTH_BASS_1:
+        case IMF_INSTRUMENT_SYNTH_BASS_2:
+            PROGRAM_TRIANGLE_SV(_channels);
+            PROGRAM_ATTACK_DECAY_SV(_channels, 2, 10);
+            PROGRAM_SUSTAIN_RELEASE_SV(_channels, 12, 14);
+            break;
+
+        case IMF_INSTRUMENT_LEAD_1_SQUARE:
+        case IMF_INSTRUMENT_VIOLIN:
+        case IMF_INSTRUMENT_VIOLA:
+        case IMF_INSTRUMENT_CELLO:
+        case IMF_INSTRUMENT_CONTRABASS:
+        case IMF_INSTRUMENT_TREMOLO_STRINGS:
+        case IMF_INSTRUMENT_PIZZICATO_STRINGS:
+        case IMF_INSTRUMENT_ORCHESTRAL_HARP:
+        case IMF_INSTRUMENT_STRING_ENSEMBLE_1:
+        case IMF_INSTRUMENT_STRING_ENSEMBLE_2:
+        case IMF_INSTRUMENT_SYNTHSTRINGS_1:
+        case IMF_INSTRUMENT_SYNTHSTRINGS_2:
+            PROGRAM_PULSE_SV(_channels, 128);
+            PROGRAM_ATTACK_DECAY_SV(_channels, 10, 10);
+            PROGRAM_SUSTAIN_RELEASE_SV(_channels, 14, 10);
+            break;
+
+        case IMF_INSTRUMENT_PAD_4_CHOIR:
+        case IMF_INSTRUMENT_CHOIR_AAHS:
+        case IMF_INSTRUMENT_VOICE_OOHS:
+        case IMF_INSTRUMENT_SYNTH_VOICE:
+        case IMF_INSTRUMENT_LEAD_4_CHIFF:
+        case IMF_INSTRUMENT_LEAD_5_CHARANG:
+        case IMF_INSTRUMENT_LEAD_6_VOICE:
+        case IMF_INSTRUMENT_LEAD_7_FIFTHS:
+        case IMF_INSTRUMENT_FX_1_RAIN:
+        case IMF_INSTRUMENT_FX_2_SOUNDTRACK:
+        case IMF_INSTRUMENT_FX_3_CRYSTAL:
+        case IMF_INSTRUMENT_FX_4_ATMOSPHERE:
+        case IMF_INSTRUMENT_FX_5_BRIGHTNESS:
+        case IMF_INSTRUMENT_FX_6_GOBLINS:
+        case IMF_INSTRUMENT_FX_7_ECHOES:
+        case IMF_INSTRUMENT_FX_8_SCI_FI:
+        case IMF_INSTRUMENT_TIMPANI:
+        case IMF_INSTRUMENT_ORCHESTRA_HIT:
+        case IMF_INSTRUMENT_APPLAUSE:
+            PROGRAM_NOISE_SV(_channels);
+            PROGRAM_ATTACK_DECAY_SV(_channels, 1, 14);
+            PROGRAM_SUSTAIN_RELEASE_SV(_channels, 14, 14);
+            break;
+
+        case IMF_INSTRUMENT_LEAD_2_SAWTOOTH:
+        case IMF_INSTRUMENT_PAD_1_NEW_AGE:
+        case IMF_INSTRUMENT_PAD_2_WARM:
+        case IMF_INSTRUMENT_TRUMPET:
+        case IMF_INSTRUMENT_TROMBONE:
+        case IMF_INSTRUMENT_TUBA:
+        case IMF_INSTRUMENT_MUTED_TRUMPET:
+        case IMF_INSTRUMENT_FRENCH_HORN:
+        case IMF_INSTRUMENT_BRASS_SECTION:
+        case IMF_INSTRUMENT_SYNTHBRASS_1:
+        case IMF_INSTRUMENT_SYNTHBRASS_2:
+        case IMF_INSTRUMENT_SOPRANO_SAX:
+        case IMF_INSTRUMENT_ALTO_SAX:
+        case IMF_INSTRUMENT_TENOR_SAX:
+        case IMF_INSTRUMENT_BARITONE_SAX:
+        case IMF_INSTRUMENT_OBOE:
+        case IMF_INSTRUMENT_ENGLISH_HORN:
+        case IMF_INSTRUMENT_BASSOON:
+        case IMF_INSTRUMENT_CLARINET:
+        case IMF_INSTRUMENT_PICCOLO:
+        case IMF_INSTRUMENT_FLUTE:
+        case IMF_INSTRUMENT_RECORDER:
+        case IMF_INSTRUMENT_PAN_FLUTE:
+        case IMF_INSTRUMENT_BLOWN_BOTTLE:
+        case IMF_INSTRUMENT_SHAKUHACHI:
+        case IMF_INSTRUMENT_WHISTLE:
+        case IMF_INSTRUMENT_OCARINA:
+            PROGRAM_SAW_SV(_channels);
+            PROGRAM_ATTACK_DECAY_SV(_channels, 3, 3);
+            PROGRAM_SUSTAIN_RELEASE_SV(_channels, 14, 14);
+            break;
+
+        case IMF_INSTRUMENT_SITAR:
+        case IMF_INSTRUMENT_BANJO:
+        case IMF_INSTRUMENT_SHAMISEN:
+        case IMF_INSTRUMENT_KOTO:
+        case IMF_INSTRUMENT_KALIMBA:
+        case IMF_INSTRUMENT_BAG_PIPE:
+        case IMF_INSTRUMENT_FIDDLE:
+        case IMF_INSTRUMENT_SHANAI:
+        case IMF_INSTRUMENT_TINKLE_BELL:
+        case IMF_INSTRUMENT_AGOGO:
+        case IMF_INSTRUMENT_STEEL_DRUMS:
+        case IMF_INSTRUMENT_WOODBLOCK:
+        case IMF_INSTRUMENT_TAIKO_DRUM:
+        case IMF_INSTRUMENT_MELODIC_TOM:
+        case IMF_INSTRUMENT_SYNTH_DRUM:
+        case IMF_INSTRUMENT_REVERSE_CYMBAL:
+        case IMF_INSTRUMENT_GUITAR_FRET_NOISE:
+        case IMF_INSTRUMENT_BREATH_NOISE:
+        case IMF_INSTRUMENT_SEASHORE:
+        case IMF_INSTRUMENT_BIRD_TWEET:
+        case IMF_INSTRUMENT_TELEPHONE_RING:
+        case IMF_INSTRUMENT_HELICOPTER:
+            PROGRAM_SAW_SV(_channels);
+            PROGRAM_ATTACK_DECAY_SV(_channels, 3, 3);
+            PROGRAM_SUSTAIN_RELEASE_SV(_channels, 14, 14);
+            break;
+    }
+
+}
+
+void ted_set_frequency_vars( Environment * _environment, char * _channels, char * _frequency ) {
+
+    deploy( tedvars, src_hw_ted_vars_asm );
+    deploy( tedstartup, src_hw_ted_startup_asm );
+
+    if ( _channels ) {
+        outline1("LDA %s", _channels );
+    } else {
+        outline0("LDA #$3" );
+    }
+    outline1("LDX %s", _frequency );
+    outline1("LDY %s+1", _frequency );
+
+    outline0("JSR TEDFREQ");
+
+}
+
+void ted_set_pitch_vars( Environment * _environment, char * _channels, char * _pitch ) {
+
+    deploy( tedvars, src_hw_ted_vars_asm );
+    deploy( tedstartup, src_hw_ted_startup_asm );
+
+    if ( _channels ) {
+        outline1("LDA %s", _channels );
+    } else {
+        outline0("LDA #$3" );
+    }
+    outline1("LDX %s", _pitch );
+    outline1("LDY %s+1", _pitch );
+
+    outline0("JSR TEDPROGFREQ");
+
+}
+
+void ted_set_note_vars( Environment * _environment, char * _channels, char * _note ) {
+
+    deploy( tedvars, src_hw_ted_vars_asm );
+    deploy( tedstartup, src_hw_ted_startup_asm );
+
+    outline0("LDA #<TEDFREQTABLE");
+    outline0("STA TMPPTR");
+    outline0("LDA #>TEDFREQTABLE");
+    outline0("STA TMPPTR+1");
+    outline1("LDY %s", _note);
+    outline0("TYA");
+    outline0("ASL");
+    outline0("TAY");
+    outline0("LDA (TMPPTR),Y");
+    outline0("TAX");
+    outline0("INY");
+    outline0("LDA (TMPPTR),Y");
+    outline0("TAY");
+
+    if ( _channels ) {
+        outline1("LDA %s", _channels );
+    } else {
+        outline0("LDA #$3" );
+    }
+
+    outline0("JSR TEDPROGFREQ");
+
+}
+
+void ted_stop_vars( Environment * _environment, char * _channels ) {
+
+    deploy( tedvars, src_hw_ted_vars_asm );
+    deploy( tedstartup, src_hw_ted_startup_asm );
+
+    outline1("LDA %s", _channels );
+    outline0("JSR TEDSTOP");
+
+}
+
+void ted_music( Environment * _environment, char * _music, int _size ) {
+
+    deploy( tedvars, src_hw_ted_vars_asm );
+    deploy( tedstartup, src_hw_ted_startup_asm );
+
+    outline0("SEI");
+    outline0("LDA #$0");
+    outline0("STA TEDJIFFIES");
+    outline0("STA TEDTMPOFS");
+    outline0("LDA #$1");
+    outline0("STA TEDMUSICREADY");
+    outline1("LDA #<%s", _music);
+    outline0("STA TEDTMPPTR");
+    outline1("LDA #>%s", _music);
+    outline0("STA TEDTMPPTR+1");
+    outline1("LDA #$%2.2x", ( _size>>8 ) & 0xff);
+    outline0("STA TEDBLOCKS");
+    outline1("LDA #$%2.2x", _size & 0xff );
+    outline0("STA TEDLASTBLOCK");
+    if ( _size > 255 ) {
+        outline0("LDA #$ff");
+    }
+    outline0("STA TEDTMPLEN");
+    outline0("CLI");
+
 }
 
 #endif

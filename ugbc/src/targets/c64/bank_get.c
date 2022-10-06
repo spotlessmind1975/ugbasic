@@ -45,10 +45,14 @@
  */
 /* <usermanual>
 @keyword BANK
+@target c64
 </usermanual> */
 Variable * bank_get( Environment * _environment ) {
 
     Variable * result = variable_temporary( _environment, VT_BYTE, "(bank number)" );
+
+    outline0("LDA BANKSHADOW" );
+    outline1("STA %s", result->realName );
 
     return result;
     

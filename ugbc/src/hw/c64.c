@@ -241,4 +241,39 @@ void c64_clear_key( Environment * _environment ) {
    
 }
 
+void c64_dload( Environment * _environment, char * _target_name, char * _result ) {
+
+    deploy( storage, src_hw_c64_storage_asm);
+
+    MAKE_LABEL
+    
+    Variable * tnaddress = variable_temporary( _environment, VT_ADDRESS, "(address of target_name)");
+    Variable * tnsize = variable_temporary( _environment, VT_BYTE, "(size of target_name)");
+
+    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of result)");
+    Variable * size = variable_temporary( _environment, VT_BYTE, "(size of read)");
+
+    cpu_dsdescriptor( _environment, _target_name, tnaddress->realName, tnsize->realName );
+
+    outline1("LDA %s", tnaddress->realName);
+    outline0("STA TMPPTR");
+    outline1("LDA %s+1", tnaddress->realName);
+    outline0("STA TMPPTR+1");
+    outline1("LDA %s", tnsize->realName);
+    outline0("STA MATHPTR0");
+    outline0("JSR C64STORAGELOADSIZE");
+
+    cpu_dsfree( _environment, _result );
+    cpu_dsalloc( _environment, "MATHPTR1", _result );
+    cpu_dsdescriptor( _environment, _result, address->realName, size->realName );
+
+    outline1("LDA %s", address->realName);
+    outline0("STA TMPPTR2");
+    outline1("LDA %s+1", address->realName);
+    outline0("STA TMPPTR2+1");
+
+    outline0("JSR C64STORAGELOAD");
+
+}
+
 #endif

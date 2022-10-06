@@ -47,7 +47,7 @@
  */
 /* <usermanual>
 @keyword WAIT VBL
-@target c64
+@target pc128op
 </usermanual> */
 void wait_vbl( Environment * _environment ) {
 

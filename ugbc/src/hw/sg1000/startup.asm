@@ -72,10 +72,10 @@ CheckIf60Hz:
 		nop
 vdpSync:
 		in      a,(vdp_control)
-		and     80
+		and     $80
 		jr      z,vdpSync
 		
-		ld      hl,900
+		ld      hl,$900
 vdpLoop:
 		dec     hl
 		ld      a,h
@@ -283,6 +283,7 @@ INT_HANDLER2:
 	JR Z, IRQVECTORSKIP
     CALL IRQVECTOR
 IRQVECTORSKIP:
+    CALL MUSICPLAYER
 	IN A,(vdp_control)
 	POP	HL
 	POP	DE

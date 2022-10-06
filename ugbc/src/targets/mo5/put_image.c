@@ -52,8 +52,6 @@ extern char DATATYPE_AS_STRING[][16];
  */
 /* <usermanual>
 @keyword PUT IMAGE
-
-@target mo5
 </usermanual> */
 void put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _flags ) {
 

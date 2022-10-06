@@ -152,6 +152,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_IMAGE:
                 case VT_IMAGES:
                 case VT_SEQUENCE:
+                case VT_MUSIC:
                 case VT_BUFFER:
                     if ( ! variable->absoluteAddress ) {
                         if ( variable->valueBuffer ) {
@@ -164,7 +165,12 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                 out1("%s fcb ", variable->realName);
                                 int i=0;
                                 for (i=0; i<(variable->size-1); ++i ) {
-                                    out1("%d,", variable->valueBuffer[i]);
+                                    if ( ( ( i + 1 ) % 16 ) == 0 ) {
+                                        outline1("%d", variable->valueBuffer[i]);
+                                        out0("   fcb ");
+                                    } else {
+                                        out1("%d,", variable->valueBuffer[i]);
+                                    }
                                 }
                                 outhead1("%d", variable->valueBuffer[(variable->size-1)]);
                             }
@@ -240,6 +246,13 @@ void variable_cleanup( Environment * _environment ) {
                 }
             }
             actual = actual->next;
+        }
+    }
+
+    for( i=0; i<MAX_RESIDENT_SHAREDS; ++i ) {
+        if ( _environment->maxExpansionBankSize[i] ) {
+            outhead2("BANKWINDOW%2.2x rzb %d", i, _environment->maxExpansionBankSize[i]);
+            outhead1("BANKWINDOWID%2.2x fcb $FF, $FF", i );
         }
     }
 

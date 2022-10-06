@@ -56,6 +56,7 @@ void setup_embedded( Environment * _environment ) {
     _environment->embedded.cpu_mem_move = 1;
     _environment->embedded.cpu_uppercase = 1;
     _environment->embedded.cpu_lowercase = 1;
+    _environment->embedded.cpu_msc1_uncompress = 1;
 
 }
 
@@ -138,6 +139,7 @@ void target_initialization( Environment * _environment ) {
     setup_text_variables( _environment );
     
     tms9918_initialization( _environment );
+    sn76489_initialization( _environment );
 
     outline0("call	CheckIf60Hz");
     outline0("ld		(VDP60HZ),a				; save it, 00/01 = 50/60 Hz		");
@@ -160,7 +162,7 @@ void target_initialization( Environment * _environment ) {
 
 void target_linkage( Environment * _environment ) {
 
-    char commandLine[2*MAX_TEMPORARY_STORAGE];
+    char commandLine[8*MAX_TEMPORARY_STORAGE];
     char executableName[MAX_TEMPORARY_STORAGE];
     char binaryName[64];
     char listingFileName[64];
@@ -168,6 +170,14 @@ void target_linkage( Environment * _environment ) {
     if ( _environment->outputFileType != OUTPUT_FILE_TYPE_ROM ) {
         CRITICAL_UNSUPPORTED_OUTPUT_FILE_TYPE( OUTPUT_FILE_TYPE_AS_STRING[_environment->outputFileType] );
     }
+
+    char pipes[256];
+
+    #ifdef _WIN32
+        strcpy( pipes, ">nul 2>nul");
+    #else
+        strcpy( pipes, ">/dev/null 2>/dev/null");
+    #endif
 
     if ( _environment->compilerFileName ) {
         sprintf(executableName, "%s", _environment->compilerFileName );
@@ -258,7 +268,46 @@ void target_linkage( Environment * _environment ) {
     fwrite( part, size, 1, binaryFile );
     fclose( binaryFile );
 
+    remove( _environment->exeFileName );
+
     rename( binaryName, _environment->exeFileName );
+
+    if ( _environment->listingFileName ) {
+        strcpy( binaryName, _environment->asmFileName );
+        p = strstr( binaryName, ".asm" );
+        if ( p ) {
+            *p = 0;
+            --p;
+            strcat( p, ".lis");
+            rename( binaryName, _environment->listingFileName );
+        }
+
+        if ( _environment->profileFileName ) {
+            strcpy( binaryName, _environment->profileFileName );
+            if ( _environment->executerFileName ) {
+                sprintf(executableName, "%s", _environment->executerFileName );
+            } else if( access( "runz80.exe", F_OK ) == 0 ) {
+                sprintf(executableName, "%s", "runz80.exe" );
+            } else {
+                sprintf(executableName, "%s", "runz80" );
+            }
+
+            sprintf( commandLine, "\"%s\" -c -p \"%s\" %d -l 0000 \"%s\" -R 0000 -u \"%s\" \"%s\"",
+                executableName,
+                binaryName,
+                _environment->profileCycles ? _environment->profileCycles : 1000000,
+                _environment->exeFileName,
+                _environment->listingFileName,
+                pipes );
+
+            if ( system_call( _environment,  commandLine ) ) {
+                printf("The profiling of assembly program failed.\n\n");
+                return;
+            }; 
+
+        }
+
+    }
 
     strcpy( binaryName, _environment->asmFileName );
     p = strstr( binaryName, ".asm" );
@@ -273,5 +322,9 @@ void target_linkage( Environment * _environment ) {
         strcat( p, "_code_user.bin");
     }
     remove(binaryName);
+
+}
+
+void interleaved_instructions( Environment * _environment ) {
 
 }

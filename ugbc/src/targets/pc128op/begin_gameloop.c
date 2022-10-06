@@ -52,7 +52,7 @@
 /* <usermanual>
 @keyword BEGIN GAMELOOP
 
-@target c64
+@target pc128op
 </usermanual> */
 void begin_gameloop( Environment * _environment ) {
 

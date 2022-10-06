@@ -149,6 +149,8 @@
 #define JOY_FIRE_LEFT       4
 #define JOY_FIRE_RIGHT      5
 
+#define MAX_AUDIO_CHANNELS  3
+
 void sc3000_inkey( Environment * _environment, char * _pressed, char * _key );
 void sc3000_scancode( Environment * _environment, char * _pressed, char * _scacode );
 void sc3000_key_pressed( Environment * _environment, char *_scancode, char * _result );

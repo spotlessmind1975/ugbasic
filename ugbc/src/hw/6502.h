@@ -157,6 +157,7 @@ void cpu6502_move_8bit_indirect2( Environment * _environment, char * _value, cha
 void cpu6502_move_8bit_indirect2_8bit( Environment * _environment, char * _value, char * _offset, char *_source );
 void cpu6502_move_16bit_indirect( Environment * _environment, char *_source, char * _value );
 void cpu6502_move_16bit_indirect2( Environment * _environment, char * _value, char *_source );
+void cpu6502_move_16bit_indirect2_8bit( Environment * _environment, char * _value, char *_source, char * _index );
 void cpu6502_move_32bit_indirect( Environment * _environment, char *_source, char * _value );
 void cpu6502_move_32bit_indirect2( Environment * _environment, char * _value, char *_source );
 void cpu6502_bit_check( Environment * _environment, char * _value, int _position, char *_result, int _bitwidth );
@@ -200,6 +201,11 @@ void cpu6502_protothread_restore( Environment * _environment, char * _index, cha
 void cpu6502_protothread_set_state( Environment * _environment, char * _index, int _state );
 void cpu6502_protothread_get_state( Environment * _environment, char * _index, char * _state );
 void cpu6502_protothread_current( Environment * _environment, char * _current );
+
+void cpu6502_msc1_uncompress_direct_direct( Environment * _environment, char * _input, char * _output );
+void cpu6502_msc1_uncompress_direct_indirect( Environment * _environment, char * _input, char * _output );
+void cpu6502_msc1_uncompress_indirect_direct( Environment * _environment, char * _input, char * _output );
+void cpu6502_msc1_uncompress_indirect_indirect( Environment * _environment, char * _input, char * _output );
 
 #define cpu_beq( _environment,  _label  ) cpu6502_beq( _environment,  _label  )
 #define cpu_bneq( _environment,  _label  ) cpu6502_beq( _environment,  _label  )
@@ -327,6 +333,7 @@ void cpu6502_protothread_current( Environment * _environment, char * _current );
 
 #define cpu_move_16bit_indirect( _environment, _source, _value ) cpu6502_move_16bit_indirect( _environment, _source, _value )
 #define cpu_move_16bit_indirect2( _environment, _value, _source ) cpu6502_move_16bit_indirect2( _environment, _value, _source )
+#define cpu_move_16bit_indirect2_8bit( _environment, _value, _index, _source ) cpu6502_move_16bit_indirect2_8bit( _environment, _value, _index, _source )
 #define cpu_move_32bit_indirect( _environment, _source, _value ) cpu6502_move_32bit_indirect( _environment, _source, _value )
 #define cpu_move_32bit_indirect2( _environment, _value, _source ) cpu6502_move_32bit_indirect2( _environment, _value, _source )
 #define cpu_bit_check( _environment, _value, _position, _result, _bitwidth ) cpu6502_bit_check( _environment, _value, _position, _result, _bitwidth )
@@ -375,6 +382,11 @@ extern unsigned int src_hw_chipset_mob_asm_len;
 #define cpu_protothread_set_state( _environment, _index, _state ) cpu6502_protothread_set_state( _environment, _index, _state )
 #define cpu_protothread_get_state( _environment, _index, _state ) cpu6502_protothread_get_state( _environment, _index, _state )
 #define cpu_protothread_current( _environment, _current ) cpu6502_protothread_current( _environment, _current )
+
+#define cpu_msc1_uncompress_direct_direct( _environment, _input, _output ) cpu6502_msc1_uncompress_direct_direct( _environment, _input, _output )
+#define cpu_msc1_uncompress_direct_indirect( _environment, _input, _output ) cpu6502_msc1_uncompress_direct_indirect( _environment, _input, _output )
+#define cpu_msc1_uncompress_indirect_direct( _environment, _input, _output ) cpu6502_msc1_uncompress_indirect_direct( _environment, _input, _output )
+#define cpu_msc1_uncompress_indirect_indirect( _environment, _input, _output ) cpu6502_msc1_uncompress_indirect_indirect( _environment, _input, _output )
 
 #define     CPU_LITTLE_ENDIAN      1
 

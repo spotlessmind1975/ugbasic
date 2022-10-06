@@ -56,13 +56,13 @@ void variable_on_memory_init( Environment * _environment, int _imported_too ) {
                 case VT_DSTRING:
                 case VT_MOB:
                 case VT_SPRITE:
-                case VT_TILE:
                 case VT_TILESET:
                 case VT_TILES:
                 case VT_BUFFER:
                 case VT_IMAGE:
                 case VT_IMAGES:
                 case VT_SEQUENCE:
+                case VT_MUSIC:
                 case VT_ARRAY:
                     break;
                 default:

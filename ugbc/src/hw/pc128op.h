@@ -150,6 +150,8 @@
 #define BANK_COUNT                  6
 #define BANK_SIZE                   16384
 
+#define MAX_AUDIO_CHANNELS  1
+
 void pc128op_xpen( Environment * _environment, char * _destination );
 void pc128op_ypen( Environment * _environment, char * _destination );
 void pc128op_inkey( Environment * _environment, char * _pressed, char * _key );

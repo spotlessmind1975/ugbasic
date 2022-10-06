@@ -11,6 +11,12 @@ extern int yylineno;
 int yycolno;
 int yyposno;
 
+char * filenamestacked[256];
+int yylinenostacked[256];
+int yycolnostacked[256];
+int yyposnostacked[256];
+int stacked = 0;
+
 int yywrap() { return 1; }
  
 extern char DATATYPE_AS_STRING[][16];
@@ -61,7 +67,19 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token OVERLAYED CASE ENDSELECT OGP CGP ARRAY NEW GET DISTANCE TYPE MUL DIV RGB SHADES HEX PALETTE
 %token BAR XGRAPHIC YGRAPHIC XTEXT YTEXT COLUMNS XGR YGR CHAR RAW SEPARATOR MSX MSX1 COLECO CSPRITE 
 %token TILESET MOVE ROW COLUMN TRANSPARENT DOUBLE RESPAWN HALTED SC3000 SG1000 MEMORY VIDEO MMOVE SWAP
-%token BELONG FIRST EXACT PRESSED PC128OP MO5 VARPTR READ WRITE BANKED SEQUENCE MODE UNIQUE CPC
+%token BELONG FIRST EXACT PRESSED PC128OP MO5 VARPTR READ WRITE BANKED SEQUENCE MODE UNIQUE C128
+%token SOUND BOOM SHOOT BELL NOTE VOLUME PLAY INSTRUMENT AAHS ACCORDION ACOUSTIC AGE AGOGO 
+%token ALTO APPLAUSE ATMOSPHERE BAG BANJO BARITONE BASS BASSOON BELLS BIRD BLOWN BOTTLE BOWED BRASS
+%token BREATH BRIGHT BRIGHTNESS CALLIOPE CELESTA CELLO CHARANG CHIFF CHOIR CHURCH CLARINET CLAVI CLEAN 
+%token CONTRABASS CRYSTAL CYMBAL DISTORTION DRAWBAR DRUM DRUMS DULCIMER ECHOES ELECTRIC ENGLISH ENSEMBLE
+%token EXPLOSION FI FIDDLE FIFTHS FINGER FLUTE FRENCH FRET FRETLESS FX GLOCKENSPIEL GOBLINS GRAND GUITAR 
+%token GUNSHOT HALO HARMONICA HARMONICS HARP HARPSICHORD HELICOPTER HONKY HORN JAZZ KALIMBA KOTO LEAD
+%token MARIMBA MELODIC METALLIC MUSIC MUTED NOISE NYLON OBOE OCARINA OOHS ORCHESTRA ORCHESTRAL ORGAN 
+%token OVERDRIVEN PAD PAN PERCUSSIVE PIANO PICCOLO PICK PIPE PIZZICATO POLYSYNTH RAIN RECORDER REED REVERSE 
+%token RING ROCK SAWTOOTH SAX SCI SEASHORE SECTION SHAKUHACHI SHAMISEN SHANAI SITAR SLAP SOPRANO SOUNDTRACK
+%token SQUARE STEEL STRINGS SWEEP SYNTH SYNTHBRASS SYNTHSTRINGS TAIKO TANGO TELEPHONE TENOR TIMPANI TINKLE
+%token TOM TONK TREMOLO TROMBONE TRUMPET TUBA TUBULAR TWEET VIBRAPHONE VIOLA VIOLIN VOICE WARM WHISTLE WOODBLOCK 
+%token XYLOPHONE KILL COMPRESSED STORAGE ENDSTORAGE FILEX DLOAD INCLUDE LET
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -93,6 +111,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> protothread_definition
 %type <integer> on_targets
 %type <integer> scroll_definition_hdirection scroll_definition_vdirection
+%type <integer> load_flags load_flags1 load_flag
 %type <integer> tile_load_flags tile_load_flags1 tile_load_flag
 %type <integer> image_load_flags image_load_flags1 image_load_flag
 %type <integer> images_load_flags images_load_flags1 images_load_flag
@@ -104,6 +123,8 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> memory_video
 %type <integer> sprite_flag sprite_flags sprite_flags1
 %type <integer> on_bank
+%type <integer> note octave const_note
+%type <integer> const_instrument
 
 %right Integer String CP 
 %left OP_DOLLAR
@@ -118,6 +139,186 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %left AND OR OP_EQUAL OP_DISEQUAL OP_LT OP_LTE OP_GT OP_GTE
 
 %%
+
+const_instrument :
+    EXPLOSION { $$ = IMF_INSTRUMENT_EXPLOSION; } |
+    ACOUSTIC GRAND PIANO { $$ = IMF_INSTRUMENT_ACOUSTIC_GRAND_PIANO; } |
+    BRIGHT ACOUSTIC PIANO { $$ = IMF_INSTRUMENT_BRIGHT_ACOUSTIC_PIANO; } |
+    ELECTRIC GRAND PIANO { $$ = IMF_INSTRUMENT_ELECTRIC_GRAND_PIANO; } |
+    HONKY TONK PIANO { $$ = IMF_INSTRUMENT_HONKY_TONK_PIANO; } |
+    ELECTRIC PIANO "1" { $$ = IMF_INSTRUMENT_ELECTRIC_PIANO1; } |
+    ELECTRIC PIANO "2" { $$ = IMF_INSTRUMENT_ELECTRIC_PIANO2; } |
+    HARPSICHORD { $$ = IMF_INSTRUMENT_HARPSICHORD; } |
+    CLAVI { $$ = IMF_INSTRUMENT_CLAVI; } |
+    CELESTA { $$ = IMF_INSTRUMENT_CELESTA; } |
+    GLOCKENSPIEL { $$ = IMF_INSTRUMENT_GLOCKENSPIEL; } |
+    MUSIC BOX { $$ = IMF_INSTRUMENT_MUSIC_BOX; } |
+    VIBRAPHONE { $$ = IMF_INSTRUMENT_VIBRAPHONE; } |
+    MARIMBA { $$ = IMF_INSTRUMENT_MARIMBA; } |
+    XYLOPHONE { $$ = IMF_INSTRUMENT_XYLOPHONE; } |
+    TUBULAR BELLS { $$ = IMF_INSTRUMENT_TUBULAR_BELLS; } |
+    DULCIMER { $$ = IMF_INSTRUMENT_DULCIMER; } |
+    DRAWBAR ORGAN { $$ = IMF_INSTRUMENT_DRAWBAR_ORGAN; } |
+    PERCUSSIVE ORGAN { $$ = IMF_INSTRUMENT_PERCUSSIVE_ORGAN; } |
+    ROCK ORGAN { $$ = IMF_INSTRUMENT_ROCK_ORGAN; } |
+    CHURCH ORGAN { $$ = IMF_INSTRUMENT_CHURCH_ORGAN; } |
+    REED ORGAN { $$ = IMF_INSTRUMENT_REED_ORGAN; } |
+    ACCORDION { $$ = IMF_INSTRUMENT_ACCORDION; } |
+    HARMONICA { $$ = IMF_INSTRUMENT_HARMONICA; } |
+    TANGO ACCORDION { $$ = IMF_INSTRUMENT_TANGO_ACCORDION; } |
+    ACOUSTIC GUITAR NYLON { $$ = IMF_INSTRUMENT_ACOUSTIC_GUITAR_NYLON; } |
+    ACOUSTIC GUITAR STEEL { $$ = IMF_INSTRUMENT_ACOUSTIC_GUITAR_STEEL; } |
+    ELECTRIC GUITAR JAZZ { $$ = IMF_INSTRUMENT_ELECTRIC_GUITAR_JAZZ; } |
+    ELECTRIC GUITAR CLEAN { $$ = IMF_INSTRUMENT_ELECTRIC_GUITAR_CLEAN; } |
+    ELECTRIC GUITAR MUTED { $$ = IMF_INSTRUMENT_ELECTRIC_GUITAR_MUTED; } |
+    OVERDRIVEN GUITAR { $$ = IMF_INSTRUMENT_OVERDRIVEN_GUITAR; } |
+    DISTORTION GUITAR { $$ = IMF_INSTRUMENT_DISTORTION_GUITAR; } |
+    GUITAR HARMONICS { $$ = IMF_INSTRUMENT_GUITAR_HARMONICS; } |
+    ACOUSTIC BASS { $$ = IMF_INSTRUMENT_ACOUSTIC_BASS; } |
+    ELECTRIC BASS FINGER { $$ = IMF_INSTRUMENT_ELECTRIC_BASS_FINGER; } |
+    ELECTRIC BASS PICK { $$ = IMF_INSTRUMENT_ELECTRIC_BASS_PICK; } |
+    FRETLESS BASS { $$ = IMF_INSTRUMENT_FRETLESS_BASS; } |
+    SLAP BASS "1" { $$ = IMF_INSTRUMENT_SLAP_BASS_1; } |
+    SLAP BASS "2" { $$ = IMF_INSTRUMENT_SLAP_BASS_2; } |
+    SYNTH BASS "1" { $$ = IMF_INSTRUMENT_SYNTH_BASS_1; } |
+    SYNTH BASS "2" { $$ = IMF_INSTRUMENT_SYNTH_BASS_2; } |
+    VIOLIN { $$ = IMF_INSTRUMENT_VIOLIN; } |
+    VIOLA { $$ = IMF_INSTRUMENT_VIOLA; } |
+    CELLO { $$ = IMF_INSTRUMENT_CELLO; } |
+    CONTRABASS { $$ = IMF_INSTRUMENT_CONTRABASS; } |
+    TREMOLO STRINGS { $$ = IMF_INSTRUMENT_TREMOLO_STRINGS; } |
+    PIZZICATO STRINGS { $$ = IMF_INSTRUMENT_PIZZICATO_STRINGS; } |
+    ORCHESTRAL HARP { $$ = IMF_INSTRUMENT_ORCHESTRAL_HARP; } |
+    TIMPANI { $$ = IMF_INSTRUMENT_TIMPANI; } |
+    STRING ENSEMBLE "1" { $$ = IMF_INSTRUMENT_STRING_ENSEMBLE_1; } |
+    STRING ENSEMBLE "2" { $$ = IMF_INSTRUMENT_STRING_ENSEMBLE_2; } |
+    SYNTHSTRINGS "1" { $$ = IMF_INSTRUMENT_SYNTHSTRINGS_1; } |
+    SYNTHSTRINGS "2" { $$ = IMF_INSTRUMENT_SYNTHSTRINGS_2; } |
+    CHOIR AAHS { $$ = IMF_INSTRUMENT_CHOIR_AAHS; } |
+    VOICE OOHS { $$ = IMF_INSTRUMENT_VOICE_OOHS; } |
+    SYNTH VOICE { $$ = IMF_INSTRUMENT_SYNTH_VOICE; } |
+    ORCHESTRA HIT { $$ = IMF_INSTRUMENT_ORCHESTRA_HIT; } |
+    TRUMPET { $$ = IMF_INSTRUMENT_TRUMPET; } |
+    TROMBONE { $$ = IMF_INSTRUMENT_TROMBONE; } |
+    TUBA { $$ = IMF_INSTRUMENT_TUBA; } |
+    MUTED TRUMPET { $$ = IMF_INSTRUMENT_MUTED_TRUMPET; } |
+    FRENCH HORN { $$ = IMF_INSTRUMENT_FRENCH_HORN; } |
+    BRASS SECTION { $$ = IMF_INSTRUMENT_BRASS_SECTION; } |
+    SYNTHBRASS "1" { $$ = IMF_INSTRUMENT_SYNTHBRASS_1; } |
+    SYNTHBRASS "2" { $$ = IMF_INSTRUMENT_SYNTHBRASS_2; } |
+    SOPRANO SAX { $$ = IMF_INSTRUMENT_SOPRANO_SAX; } |
+    ALTO SAX { $$ = IMF_INSTRUMENT_ALTO_SAX; } |
+    TENOR SAX { $$ = IMF_INSTRUMENT_TENOR_SAX; } |
+    BARITONE SAX { $$ = IMF_INSTRUMENT_BARITONE_SAX; } |
+    OBOE { $$ = IMF_INSTRUMENT_OBOE; } |
+    ENGLISH HORN { $$ = IMF_INSTRUMENT_ENGLISH_HORN; } |
+    BASSOON { $$ = IMF_INSTRUMENT_BASSOON; } |
+    CLARINET { $$ = IMF_INSTRUMENT_CLARINET; } |
+    PICCOLO { $$ = IMF_INSTRUMENT_PICCOLO; } |
+    FLUTE { $$ = IMF_INSTRUMENT_FLUTE; } |
+    RECORDER { $$ = IMF_INSTRUMENT_RECORDER; } |
+    PAN FLUTE { $$ = IMF_INSTRUMENT_PAN_FLUTE; } |
+    BLOWN BOTTLE { $$ = IMF_INSTRUMENT_BLOWN_BOTTLE; } |
+    SHAKUHACHI { $$ = IMF_INSTRUMENT_SHAKUHACHI; } |
+    WHISTLE { $$ = IMF_INSTRUMENT_WHISTLE; } |
+    OCARINA { $$ = IMF_INSTRUMENT_OCARINA; } |
+    LEAD "1" SQUARE { $$ = IMF_INSTRUMENT_LEAD_1_SQUARE; } |
+    LEAD "2" SAWTOOTH { $$ = IMF_INSTRUMENT_LEAD_2_SAWTOOTH; } |
+    LEAD "3" CALLIOPE { $$ = IMF_INSTRUMENT_LEAD_3_CALLIOPE; } |
+    LEAD "4" CHIFF { $$ = IMF_INSTRUMENT_LEAD_4_CHIFF; } |
+    LEAD "5" CHARANG { $$ = IMF_INSTRUMENT_LEAD_5_CHARANG; } |
+    LEAD "6" VOICE { $$ = IMF_INSTRUMENT_LEAD_6_VOICE; } |
+    LEAD "7" FIFTHS { $$ = IMF_INSTRUMENT_LEAD_7_FIFTHS; } |
+    LEAD "8" BASS LEAD { $$ = IMF_INSTRUMENT_LEAD_8_BASS_LEAD; } |
+    PAD "1" NEW AGE { $$ = IMF_INSTRUMENT_PAD_1_NEW_AGE; } |
+    PAD "2" WARM { $$ = IMF_INSTRUMENT_PAD_2_WARM; } |
+    PAD "3" POLYSYNTH { $$ = IMF_INSTRUMENT_PAD_3_POLYSYNTH; } |
+    PAD "4" CHOIR { $$ = IMF_INSTRUMENT_PAD_4_CHOIR; } |
+    PAD "5" BOWED { $$ = IMF_INSTRUMENT_PAD_5_BOWED; } |
+    PAD "6" METALLIC { $$ = IMF_INSTRUMENT_PAD_6_METALLIC; } |
+    PAD "7" HALO { $$ = IMF_INSTRUMENT_PAD_7_HALO; } |
+    PAD "8" SWEEP { $$ = IMF_INSTRUMENT_PAD_8_SWEEP; } |
+    FX "1" RAIN { $$ = IMF_INSTRUMENT_FX_1_RAIN; } |
+    FX "2" SOUNDTRACK { $$ = IMF_INSTRUMENT_FX_2_SOUNDTRACK; } |
+    FX "3" CRYSTAL { $$ = IMF_INSTRUMENT_FX_3_CRYSTAL; } |
+    FX "4" ATMOSPHERE { $$ = IMF_INSTRUMENT_FX_4_ATMOSPHERE; } |
+    FX "5" BRIGHTNESS { $$ = IMF_INSTRUMENT_FX_5_BRIGHTNESS; } |
+    FX "6" GOBLINS { $$ = IMF_INSTRUMENT_FX_6_GOBLINS; } |
+    FX "7" ECHOES { $$ = IMF_INSTRUMENT_FX_7_ECHOES; } |
+    FX "8" SCI FI { $$ = IMF_INSTRUMENT_FX_8_SCI_FI; } |
+    SITAR { $$ = IMF_INSTRUMENT_SITAR; } |
+    BANJO { $$ = IMF_INSTRUMENT_BANJO; } |
+    SHAMISEN { $$ = IMF_INSTRUMENT_SHAMISEN; } |
+    KOTO { $$ = IMF_INSTRUMENT_KOTO; } |
+    KALIMBA { $$ = IMF_INSTRUMENT_KALIMBA; } |
+    BAG PIPE { $$ = IMF_INSTRUMENT_BAG_PIPE; } |
+    FIDDLE { $$ = IMF_INSTRUMENT_FIDDLE; } |
+    SHANAI { $$ = IMF_INSTRUMENT_SHANAI; } |
+    TINKLE BELL { $$ = IMF_INSTRUMENT_TINKLE_BELL; } |
+    AGOGO { $$ = IMF_INSTRUMENT_AGOGO; } |
+    STEEL DRUMS { $$ = IMF_INSTRUMENT_STEEL_DRUMS; } |
+    WOODBLOCK { $$ = IMF_INSTRUMENT_WOODBLOCK; } |
+    TAIKO DRUM { $$ = IMF_INSTRUMENT_TAIKO_DRUM; } |
+    MELODIC TOM { $$ = IMF_INSTRUMENT_MELODIC_TOM; } |
+    SYNTH DRUM { $$ = IMF_INSTRUMENT_SYNTH_DRUM; } |
+    REVERSE CYMBAL { $$ = IMF_INSTRUMENT_REVERSE_CYMBAL; } |
+    GUITAR FRET NOISE { $$ = IMF_INSTRUMENT_GUITAR_FRET_NOISE; } |
+    BREATH NOISE { $$ = IMF_INSTRUMENT_BREATH_NOISE; } |
+    SEASHORE { $$ = IMF_INSTRUMENT_SEASHORE; } |
+    BIRD TWEET { $$ = IMF_INSTRUMENT_BIRD_TWEET; } |
+    TELEPHONE RING { $$ = IMF_INSTRUMENT_TELEPHONE_RING; } |
+    HELICOPTER { $$ = IMF_INSTRUMENT_HELICOPTER; } |
+    APPLAUSE { $$ = IMF_INSTRUMENT_APPLAUSE; } |
+    GUNSHOT { $$ = IMF_INSTRUMENT_GUNSHOT; };
+
+note :
+    C {
+        $$ = 0;
+    }
+    |
+    D {
+        $$ = 2;
+    }
+    |
+    E {
+        $$ = 4;
+    }
+    |
+    F {
+        $$ = 5;
+    }
+    |
+    G {
+        $$ = 7;
+    }
+    |
+    A {
+        $$ = 9;
+    }
+    |
+    B {
+        $$ = 11;
+    }
+    ;
+
+octave :
+    Integer {
+        $$ = $1;
+    };
+
+const_note :
+    note {
+        $$ = $1 + ( 4 * 12 );
+    }
+    |
+    note octave {
+        $$ = $1 + ( $2 * 12 );
+    }
+    |
+    note OP_HASH octave {
+        $$ = ( $1 + 1 ) + ( $3 * 12 );
+    }
+    ;
 
 const_expr_string :
     String {
@@ -406,17 +607,53 @@ const_factor:
       | SPRITE COUNT {
           $$ = SPRITE_COUNT;
       }
+      | VOLUME MIN {
+          $$ = 0;
+      }
+      | VOLUME MAX {
+          $$ = 255;
+      }
       | SPRITE HEIGHT {
           if ( SPRITE_HEIGHT < 0 ) {
               CRITICAL_CANNOT_CALCULATE_SPRITE_HEIGHT( );
           }
           $$ = SPRITE_HEIGHT;
       }
+      | SCREEN BORDER X {
+          $$ = SCREEN_BORDER_X;
+      }
+      | SCREEN BORDER Y {
+          $$ = SCREEN_BORDER_Y;
+      }
       | SPRITE WIDTH {
           if ( SPRITE_WIDTH < 0 ) {
               CRITICAL_CANNOT_CALCULATE_SPRITE_WIDTH( );
           }
           $$ = SPRITE_WIDTH;
+      }
+      | SPRITE X MIN {
+          $$ = SPRITE_X_MIN;
+      }
+      | SPRITE MIN X {
+          $$ = SPRITE_X_MIN;
+      }
+      | SPRITE MIN Y {
+          $$ = SPRITE_Y_MIN;
+      }
+      | SPRITE Y MIN {
+          $$ = SPRITE_Y_MIN;
+      }
+      | SPRITE X MAX {
+          $$ = SPRITE_X_MAX;
+      }
+      | SPRITE MAX X {
+          $$ = SPRITE_X_MAX;
+      }
+      | SPRITE MAX Y {
+          $$ = SPRITE_Y_MAX;
+      }
+      | SPRITE Y MAX {
+          $$ = SPRITE_Y_MAX;
       }
       | HEIGHT {
           $$ = ((Environment *)_environment)->screenHeight;
@@ -631,6 +868,9 @@ image_load_flag :
     | FLIP YX {
         $$ = FLAG_FLIP_X | FLAG_FLIP_Y;
     }
+    | COMPRESSED {
+        $$ = FLAG_COMPRESSED;
+    }
     | OVERLAYED {
         $$ = FLAG_OVERLAYED;
     }
@@ -675,6 +915,11 @@ put_image_flag :
         $$ = FLAG_DOUBLE_Y;
     };
 
+load_flag :
+    COMPRESSED {
+        $$ = FLAG_COMPRESSED;
+    };
+
 images_load_flag :
     FLIP X {
         $$ = FLAG_FLIP_X;
@@ -687,6 +932,9 @@ images_load_flag :
     }
     | FLIP YX {
         $$ = FLAG_FLIP_X | FLAG_FLIP_Y;
+    }
+    | COMPRESSED {
+        $$ = FLAG_COMPRESSED;
     }
     | OVERLAYED {
         $$ = FLAG_OVERLAYED;
@@ -720,6 +968,9 @@ sequence_load_flag :
     | FLIP YX {
         $$ = FLAG_FLIP_X | FLAG_FLIP_Y;
     }
+    | COMPRESSED {
+        $$ = FLAG_COMPRESSED;
+    }
     | OVERLAYED {
         $$ = FLAG_OVERLAYED;
     }
@@ -740,6 +991,14 @@ image_load_flags1 :
         $$ = $1;
     }
     | image_load_flag image_load_flags1 {
+        $$ = $1 | $2;
+    };
+
+load_flags1 :
+    load_flag {
+        $$ = $1;
+    }
+    | load_flag load_flags1 {
         $$ = $1 | $2;
     };
 
@@ -807,6 +1066,14 @@ put_image_flags :
         $$ = 0;    
     } 
     | put_image_flags1 {
+        $$ = $1;
+    };
+
+load_flags :
+    {
+        $$ = 0;    
+    } 
+    | load_flags1 {
         $$ = $1;
     };
 
@@ -1688,7 +1955,17 @@ exponential:
         variable_store( _environment, $$, -$2 );
       }
     | OP_MINUS Identifier {
-        Variable * expr = variable_retrieve_or_define( _environment, $2, VT_SWORD, 0 ); 
+        Constant * c = constant_find( ((struct _Environment *)_environment)->constants, $2 );
+        Variable * expr = NULL;
+        if ( c ) {
+            if ( c->valueString ) {
+                CRITICAL_TYPE_MISMATCH_CONSTANT_STRING( $2 );
+            }
+            expr = variable_temporary( _environment, VT_SWORD, "(constant)" );
+            variable_store( _environment, expr->name, c->value );
+        } else {
+            expr = variable_retrieve_or_define( _environment, $2, VT_SWORD, 0 ); 
+        }
         Variable * zero = variable_temporary( _environment, expr->type, "(zero)" ); 
         variable_store( _environment, zero->name, 0 );
         $$ = variable_sub( _environment, zero->name, expr->name )->name;
@@ -1833,17 +2110,26 @@ exponential:
     | NEW IMAGE OP const_expr OP_COMMA const_expr CP {        
         $$ = new_image( _environment, $4, $6, ((struct _Environment *)_environment)->currentMode )->name;
       }
-    | LOAD OP String CP on_bank {
-        $$ = load( _environment, $3, NULL, 0, $5 )->name;
+    | DLOAD OP expr CP {
+        $$ = dload( _environment, $3 )->name;
       }
-    | LOAD OP String AS String CP on_bank {
-        $$ = load( _environment, $3, $5, 0, $7 )->name;
+    | LOAD OP String CP on_bank load_flags {
+        $$ = load( _environment, $3, NULL, 0, $5, $6 )->name;
       }
-    | LOAD OP String OP_COMMA Integer CP on_bank {
-        $$ = load( _environment, $3, NULL, $5, $7 )->name;
+    | LOAD OP String AS String CP on_bank load_flags {
+        $$ = load( _environment, $3, $5, 0, $7, $8 )->name;
       }
-    | LOAD OP String AS String OP_COMMA Integer CP on_bank {
-        $$ = load( _environment, $3, $5, $7, $9 )->name;
+    | LOAD OP String OP_COMMA Integer CP on_bank load_flags {
+        $$ = load( _environment, $3, NULL, $5, $7, $8 )->name;
+      }
+    | LOAD OP String AS String OP_COMMA Integer CP on_bank load_flags {
+        $$ = load( _environment, $3, $5, $7, $9, $10 )->name;
+      }
+    | LOAD MUSIC OP String CP on_bank {
+        $$ = music_load( _environment, $4, NULL, $6 )->name;
+      }
+    | LOAD MUSIC OP String AS String CP on_bank {
+        $$ = music_load( _environment, $4, $6, $8 )->name;
       }
     | LOAD SEQUENCE OP String AS String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_background on_bank {
         $$ = sequence_load( _environment, $4, $6, ((struct _Environment *)_environment)->currentMode, $11, $13, $15, $16, $17, $18 )->name;
@@ -2289,6 +2575,14 @@ exponential:
     | IMAGE HEIGHT OP expr CP {
         $$ = image_get_height( _environment, $4 )->name;
     }
+    | VOLUME MIN {
+        $$ = variable_temporary( _environment, VT_WORD, "(volume min)" )->name;
+        variable_store( _environment, $$, 0 );
+    }
+    | VOLUME MAX {
+        $$ = variable_temporary( _environment, VT_WORD, "(volume max)" )->name;
+        variable_store( _environment, $$, 255 );
+    }
     | SPRITE COUNT {
         $$ = variable_temporary( _environment, VT_WORD, "(SPRITE COUNT)" )->name;
         variable_store( _environment, $$, SPRITE_COUNT );
@@ -2308,6 +2602,46 @@ exponential:
             $$ = variable_temporary( _environment, VT_WORD, "(SPRITE WIDTH)" )->name;
             variable_store( _environment, $$, SPRITE_WIDTH );
         }
+    }
+    | SCREEN BORDER X {
+        $$ = variable_temporary( _environment, VT_POSITION, "(SCREEN BORDER X)" )->name;
+        variable_store( _environment, $$, SCREEN_BORDER_X );
+    }
+    | SCREEN BORDER Y {
+        $$ = variable_temporary( _environment, VT_POSITION, "(SCREEN BORDER Y)" )->name;
+        variable_store( _environment, $$, SCREEN_BORDER_Y );
+    }
+    | SPRITE X MIN {
+        $$ = variable_temporary( _environment, VT_POSITION, "(SPRITE X MIN)" )->name;
+        variable_store( _environment, $$, SPRITE_X_MIN );
+    }
+    | SPRITE MIN X {
+        $$ = variable_temporary( _environment, VT_POSITION, "(SPRITE X MIN)" )->name;
+        variable_store( _environment, $$, SPRITE_X_MIN );
+    }
+    | SPRITE MIN Y {
+        $$ = variable_temporary( _environment, VT_POSITION, "(SPRITE Y MIN)" )->name;
+        variable_store( _environment, $$, SPRITE_Y_MIN );
+    }
+    | SPRITE Y MIN {
+        $$ = variable_temporary( _environment, VT_POSITION, "(SPRITE Y MIN)" )->name;
+        variable_store( _environment, $$, SPRITE_Y_MIN );
+    }
+    | SPRITE X MAX {
+        $$ = variable_temporary( _environment, VT_POSITION, "(SPRITE X MAX)" )->name;
+        variable_store( _environment, $$, SPRITE_X_MAX );
+    }
+    | SPRITE MAX X {
+        $$ = variable_temporary( _environment, VT_POSITION, "(SPRITE X MAX)" )->name;
+        variable_store( _environment, $$, SPRITE_X_MAX );
+    }
+    | SPRITE MAX Y {
+        $$ = variable_temporary( _environment, VT_POSITION, "(SPRITE Y MAX)" )->name;
+        variable_store( _environment, $$, SPRITE_Y_MAX );
+    }
+    | SPRITE Y MAX {
+        $$ = variable_temporary( _environment, VT_POSITION, "(SPRITE Y MAX)" )->name;
+        variable_store( _environment, $$, SPRITE_Y_MAX );
     }
     | SPRITE OP expr sprite_flags CP {
         $$ = sprite_init( _environment, $3, NULL, $4 )->name;
@@ -3679,6 +4013,9 @@ datatype :
     | SEQUENCE {
         $$ = VT_SEQUENCE;
     }
+    | MUSIC {
+        $$ = VT_MUSIC;
+    }
     | SPRITE {
         $$ = VT_SPRITE;
     }
@@ -4149,6 +4486,220 @@ writing_definition :
     }
     ;
 
+sound_definition_simple : 
+    OP_HASH const_expr {
+        sound( _environment, $2, 0, 0xffff );
+    }
+    | OP_HASH const_expr OP_COMMA OP_HASH const_expr {
+        sound( _environment, $2, $5, 0xffff );
+    }
+    | OP_HASH const_expr ON OP_HASH const_expr {
+        sound( _environment, $2, 0, $5 );
+    }
+    | OP_HASH const_expr OP_COMMA OP_HASH const_expr ON OP_HASH const_expr {
+        sound( _environment, $2, $5, $8 );
+    }
+    | OFF  {
+        sound_off( _environment, 0xffff );
+    }
+    | OFF ON OP_HASH const_expr {
+        sound_off( _environment, $4 );
+    }
+    ;
+
+sound_definition_expression : 
+    expr {
+        sound_vars( _environment, $1, NULL, NULL );
+    }
+    | expr OP_COMMA expr {
+        sound_vars( _environment, $1, $3, NULL );
+    }
+    | expr OP_COMMA expr ON expr {
+        sound_vars( _environment, $1, $3, $5 );
+    }
+    | expr ON expr {
+        sound_vars( _environment, $1, NULL, $3 );
+    }
+    | OFF ON expr {
+        sound_off_var( _environment, $3 );
+    }
+    ;
+
+sound_definition : 
+    sound_definition_simple
+    | sound_definition_expression
+    ;
+
+instrument_definition_simple :
+    OP_HASH const_expr ON OP_HASH const_expr {
+        instrument( _environment, $2, $5 );
+    }
+    | const_instrument ON OP_HASH const_expr {
+        instrument( _environment, $1, $4 );
+    }
+    ;
+
+instrument_definition_expression :
+    OP_HASH const_expr ON expr {
+        instrument_semi_var( _environment, $2, $4 );
+    }
+    | const_instrument ON expr {
+        instrument_semi_var( _environment, $1, $3 );
+    }
+    ;
+
+instrument_definition : 
+    instrument_definition_simple
+    | instrument_definition_expression
+    ;
+
+music_definition_expression:
+    expr {
+        music_var( _environment, $1 );
+    };
+
+music_definition:
+    music_definition_expression
+    ;
+
+play_definition_simple : 
+    OP_HASH const_expr {
+        play( _environment, $2, 0, 0xffff );
+    }
+    | OP_HASH const_expr OP_COMMA OP_HASH const_expr {
+        play( _environment, $2, $5, 0xffff );
+    }
+    | OP_HASH const_expr ON OP_HASH const_expr {
+        play( _environment, $2, 0, $5 );
+    }
+    | OP_HASH const_expr OP_COMMA OP_HASH const_expr ON OP_HASH const_expr {
+        play( _environment, $2, $5, $8 );
+    }
+    | OFF  {
+        play_off( _environment, 0xffff );
+    }
+    | OFF ON OP_HASH const_expr {
+        play_off( _environment, $4 );
+    }
+    ;
+
+play_definition_expression : 
+    expr {
+        play_vars( _environment, $1, NULL, NULL );
+    }
+    | expr OP_COMMA expr {
+        play_vars( _environment, $1, $3, NULL );
+    }
+    | expr OP_COMMA expr ON expr {
+        play_vars( _environment, $1, $3, $5 );
+    }
+    | expr ON expr {
+        play_vars( _environment, $1, NULL, $3 );
+    }
+    | OFF ON expr {
+        play_off_var( _environment, $3 );
+    }
+    ;
+
+play_definition : 
+    play_definition_simple
+    | play_definition_expression
+    ;
+
+volume_definition_simple : 
+    OP_HASH const_expr {
+        volume( _environment, $2, 0xffff );
+    }
+    | OP_HASH const_expr ON OP_HASH const_expr {
+        volume( _environment, $2, $5 );
+    }
+    | OFF  {
+        volume_off( _environment, 0xffff );
+    }
+    | OFF ON OP_HASH const_expr {
+        volume_off( _environment, $4 );
+    }
+    ;
+
+volume_definition_expression : 
+    expr {
+        volume_vars( _environment, $1, NULL );
+    }
+    | expr ON expr {
+        volume_vars( _environment, $1, $3 );
+    }
+    | OFF ON expr {
+        volume_off_var( _environment, $3 );
+    }
+    ;
+
+volume_definition : 
+    volume_definition_simple
+    | volume_definition_expression
+    ;
+
+bell_definition_simple : 
+    NOTE const_note {
+        bell( _environment, $2, 0xffff );
+    }
+    | OP_HASH const_expr {
+        bell( _environment, $2, 0xffff );
+    }
+    | NOTE const_note ON OP_HASH const_expr {
+        bell( _environment, $2, $5 );
+    }
+    | OP_HASH const_expr ON OP_HASH const_expr {
+        bell( _environment, $2, $5 );
+    }
+    ;
+
+bell_definition_expression : 
+    expr {
+        bell_vars( _environment, $1, NULL );
+    }
+    | expr ON expr {
+        bell_vars( _environment, $1, $3 );
+    }
+    ;
+
+bell_definition : 
+    bell_definition_simple
+    | bell_definition_expression
+    ;
+
+boom_definition_simple : 
+    {
+        boom( _environment, 0xffff );
+    }
+    | OP_HASH const_expr {
+        boom( _environment, $2 );
+    }
+    ;
+
+boom_definition_expression : 
+    ON expr {
+        boom_var( _environment, $2 );
+    }
+    ;
+
+boom_definition : 
+    boom_definition_simple
+    | boom_definition_expression
+    ;
+
+shoot_definition_simple : 
+    {
+        shoot( _environment, 0xffff );
+    }
+    | OP_HASH const_expr {
+        shoot( _environment, $2 );
+    }
+    ;
+
+shoot_definition : 
+    shoot_definition_simple
+    ;
+
 locate_definition : 
      OP_COMMA expr {
         locate( _environment, NULL, $2 );
@@ -4394,6 +4945,14 @@ target :
         #endif
     }
     |
+    C128 {
+        #ifdef __c128__
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }
+    |
     C64 {
         #ifdef __c64__
             $$ = 1;
@@ -4603,7 +5162,15 @@ memory_video :
         $$ = 1;
     };
 
-statement:
+const_instruction :
+    CONST
+    | SHARED CONST
+    | CONST SHARED
+    | GLOBAL CONST
+    | CONST GLOBAL
+    ;
+
+statement2:
     BANK bank_definition
   | RASTER raster_definition
   | NEXT RASTER next_raster_definition
@@ -4643,6 +5210,7 @@ statement:
   }
   | INK ink_definition
   | VAR var_definition
+  | LET var_definition
   | TEXTADDRESS OP_ASSIGN expr {
       variable_move( _environment, $3, "ADDRESS" );
   }
@@ -4766,6 +5334,11 @@ statement:
   }
   | IF expr THEN {
       if_then( _environment, $2 );  
+  }
+  | IF expr GOTO Integer {
+      if_then( _environment, $2 );
+      goto_number( _environment, $4 );
+      end_if_then( _environment );  
   }
   | IF expr THEN Integer {
       if_then( _environment, $2 );
@@ -4914,10 +5487,6 @@ statement:
   | FOR Identifier OP_ASSIGN expr TO expr STEP expr {
       begin_for_step( _environment, $2, $4, $6, $8 );  
   }
-  | Identifier " " {
-      ((struct _Environment *)_environment)->parameters = 0;
-      call_procedure( _environment, $1 );
-  }
   | PROC Identifier {
       ((struct _Environment *)_environment)->parameters = 0;
       call_procedure( _environment, $2 );
@@ -4966,6 +5535,9 @@ statement:
       ((struct _Environment *)_environment)->parameters = 0;
       respawn_procedure( _environment, $2 );
   }
+  | KILL expr {
+      kill_procedure( _environment, $2 );
+  }
   | YIELD {
       yield( _environment );
   }
@@ -4982,14 +5554,17 @@ statement:
       CRITICAL_NOT_SUPPORTED("INVERSE");
   }
   | WRITING writing_definition
+  | OSP Identifier OP_COLON CSP {
+      cpu_label( _environment, $2 );
+  } 
   | Identifier OP_COLON {
       cpu_label( _environment, $1 );
   } 
-  | LOAD String OP_COMMA Integer on_bank {
-    load( _environment, $2, NULL, $4, $5 );
+  | LOAD String OP_COMMA Integer on_bank load_flags {
+    load( _environment, $2, NULL, $4, $5, $6 );
   }
-  | LOAD String AS String OP_COMMA Integer on_bank {
-    load( _environment, $2, $4, $6, $7 );
+  | LOAD String AS String OP_COMMA Integer on_bank load_flags {
+    load( _environment, $2, $4, $6, $7, $8 );
   }
   | RUN PARALLEL {
       run_parallel( _environment );
@@ -5003,6 +5578,14 @@ statement:
   | GRAPHIC {
       graphic( _environment );
   }
+  | BELL bell_definition
+  | BOOM boom_definition
+  | SHOOT shoot_definition
+  | SOUND sound_definition
+  | PLAY play_definition
+  | MUSIC music_definition
+  | INSTRUMENT instrument_definition
+  | VOLUME volume_definition
   | HALT {
       halt( _environment );
   }
@@ -5037,28 +5620,40 @@ statement:
   | MID OP expr OP_COMMA expr OP_COMMA expr CP OP_ASSIGN expr {
         variable_string_mid_assign( _environment, $3, $5, $7, $10 );
   }
+  | STORAGE const_expr_string {
+        begin_storage( _environment, $2, NULL );
+  }
+  | STORAGE const_expr_string AS const_expr_string {
+        begin_storage( _environment, $2, $4 );
+  }
+  | FILEX const_expr_string AS const_expr_string {
+        file_storage( _environment, $2, $4 );
+  }
+  | ENDSTORAGE {
+        end_storage( _environment );
+  }
   | DEFINE define_definitions
   | DIM dim_definitions
   | FILL fill_definitions
-  | CONST Identifier OP_ASSIGN const_expr_string {
+  | const_instruction Identifier OP_ASSIGN const_expr_string {
         const_define_string( _environment, $2, $4 );
   }
-  | CONST Identifier OP_ASSIGN const_expr {
+  | const_instruction Identifier OP_ASSIGN const_expr {
         const_define_numeric( _environment, $2, $4 );
   }
-  | CONST POSITIVE Identifier OP_ASSIGN const_expr {
+  | const_instruction POSITIVE Identifier OP_ASSIGN const_expr {
         if ( $5 < 0 ) {
             CRITICAL_NEGATIVE_CONSTANT( $3 );
         }
         const_define_numeric( _environment, $3, $5 );
   }
-  | POSITIVE CONST Identifier OP_ASSIGN const_expr {
+  | POSITIVE const_instruction Identifier OP_ASSIGN const_expr {
         if ( $5 < 0 ) {
             CRITICAL_NEGATIVE_CONSTANT( $3 );
         }
         const_define_numeric( _environment, $3, $5 );
   }
-  | CONST Identifier IN OP const_expr OP_COMMA const_expr CP OP_ASSIGN const_expr  {
+  | const_instruction Identifier IN OP const_expr OP_COMMA const_expr CP OP_ASSIGN const_expr  {
         if ( $10 < $5 ) {
             CRITICAL_TOO_LITTLE_CONSTANT( $2 );
         }
@@ -5067,7 +5662,7 @@ statement:
         }
         const_define_numeric( _environment, $2, $10 );
   }
-  | CONST Identifier IN OSP const_expr OP_COMMA const_expr CP OP_ASSIGN const_expr  {
+  | const_instruction Identifier IN OSP const_expr OP_COMMA const_expr CP OP_ASSIGN const_expr  {
         if ( $10 <= $5 ) {
             CRITICAL_TOO_LITTLE_CONSTANT( $2 );
         }
@@ -5076,7 +5671,7 @@ statement:
         }
         const_define_numeric( _environment, $2, $10 );
   }
-  | CONST Identifier IN OP const_expr OP_COMMA const_expr CSP OP_ASSIGN const_expr  {
+  | const_instruction Identifier IN OP const_expr OP_COMMA const_expr CSP OP_ASSIGN const_expr  {
         if ( $10 < $5 ) {
             CRITICAL_TOO_LITTLE_CONSTANT( $2 );
         }
@@ -5085,7 +5680,7 @@ statement:
         }
         const_define_numeric( _environment, $2, $10 );
   }
-  | CONST Identifier IN OSP const_expr OP_COMMA const_expr CSP OP_ASSIGN const_expr {
+  | const_instruction Identifier IN OSP const_expr OP_COMMA const_expr CSP OP_ASSIGN const_expr {
         if ( $10 <= $5 ) {
             CRITICAL_TOO_LITTLE_CONSTANT( $2 );
         }
@@ -5180,9 +5775,10 @@ statement:
         var->originalHeight = expr->originalHeight;
         var->originalColors = expr->originalColors;
         var->bankAssigned = expr->bankAssigned;
+        var->residentAssigned = expr->residentAssigned;
+        var->uncompressedSize = expr->uncompressedSize;
         if ( var->bankAssigned ) {
             var->absoluteAddress = expr->absoluteAddress;
-            var->residentAssigned = expr->residentAssigned;
             var->variableUniqueId = expr->variableUniqueId;
         }
         memcpy( var->originalPalette, expr->originalPalette, MAX_PALETTE * sizeof( RGBi ) );
@@ -5334,14 +5930,15 @@ statement:
   |
   ;
 
+statement: { outline1("; L:%d", yylineno); } statement2;
+
 statements_no_linenumbers:
-      statement { ((Environment *)_environment)->yylineno = yylineno; variable_reset( _environment ); }
-    | statement OP_COLON { ((Environment *)_environment)->yylineno = yylineno; variable_reset( _environment );  } statements_no_linenumbers { }
+      statement { ((Environment *)_environment)->yylineno = yylineno; variable_reset( _environment ); interleaved_instructions( _environment ); }
+    | statement OP_COLON { ((Environment *)_environment)->yylineno = yylineno; variable_reset( _environment ); interleaved_instructions( _environment ); } statements_no_linenumbers { interleaved_instructions( _environment ); }
     ;
 
 statements_with_linenumbers:
       Integer {
-        outhead1("; BEGIN LINE %d OF BASIC PROGRAM", $1);
         char lineNumber[MAX_TEMPORARY_STORAGE];
         sprintf(lineNumber, "_linenumber%d", $1 );
         cpu_label( _environment, lineNumber);
@@ -5350,23 +5947,18 @@ statements_with_linenumbers:
     };
 
 statements_complex:
-    Identifier NewLine {
-        if ( strcmp( $1, "REM" ) != 0 ) {
-            call_procedure( _environment, $1 );
-        }
-    } statements_complex
-    | statements_no_linenumbers
+      statements_no_linenumbers
     | statements_no_linenumbers NewLine statements_complex
     | statements_with_linenumbers
     | statements_with_linenumbers NewLine statements_complex
     ;
 
 program : 
-  { ((Environment *)_environment)->yylineno = yylineno; } statements_complex;
+  { ((Environment *)_environment)->yylineno = yylineno; outline1("; L:%d", yylineno); } statements_complex;
 
 %%
 
-char version[MAX_TEMPORARY_STORAGE] = "1.10.2";
+char version[MAX_TEMPORARY_STORAGE] = "1.11.2";
 
 void show_usage_and_exit( int _argc, char *_argv[] ) {
 
@@ -5374,6 +5966,8 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     char target[MAX_TEMPORARY_STORAGE] = "ATARI 400/800";
 #elif defined(__atarixl__) 
     char target[MAX_TEMPORARY_STORAGE] = "ATARI XL";
+#elif __c128__
+    char target[MAX_TEMPORARY_STORAGE] = "Commodore 128";
 #elif __c64__
     char target[MAX_TEMPORARY_STORAGE] = "Commodore 64";
 #elif __plus4__
@@ -5400,6 +5994,8 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     char target[MAX_TEMPORARY_STORAGE] = "SEGA SG-1000";
 #elif __cpc__
     char target[MAX_TEMPORARY_STORAGE] = "Amstrad CPC464";
+#elif __vg5000__
+    char target[MAX_TEMPORARY_STORAGE] = "Philips VG5000";
 #endif
 
     printf("--------------------------------------------------\n");
@@ -5421,6 +6017,9 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     printf("\t-C <file>    Path to compiler\n" );
     printf("\t-A <file>    Path to app maker\n" );
     printf("\t-T <path>    Path to temporary path\n" );
+    printf("\t-X <file>    Path to executer\n" );
+    printf("\t-P <file>    Path to profile (-L needed)\n" );
+    printf("\t-q <cycles>  Cycles for profiling (default: 1000000)\n" );
     printf("\t-c <file>    Output filename with linker configuration\n" );
 #if defined(__pc128op__) || defined(__mo5__)
     printf("\t-G <type>    Type of gamma correction on PALETTE generation:\n" );
@@ -5438,6 +6037,9 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
 #elif __atarixl__ 
     printf("\t                xex - executable binary file\n" );
 #elif __c64__
+    printf("\t                prg - program binary file\n" );
+    printf("\t                d64 - D64 disk image\n" );
+#elif __c128__
     printf("\t                prg - program binary file\n" );
 #elif __plus4__
     printf("\t                prg - program binary file\n" );
@@ -5463,6 +6065,8 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     printf("\t                rom - cartridge ROM\n" );
 #elif __cpc__
     printf("\t                dsk - disk image\n" );
+#elif __vg5000__
+    printf("\t                k7 - K7 format\n" );
 #endif
     printf("\t-l <name>    Output filename with list of variables defined\n" );
     printf("\t-e <modules> Embed specified modules instead of inline code\n" );
@@ -5522,9 +6126,13 @@ int main( int _argc, char *_argv[] ) {
     _environment->outputFileType = OUTPUT_FILE_TYPE_ROM;
 #elif __cpc__
     _environment->outputFileType = OUTPUT_FILE_TYPE_DSK;
+#elif __c128__
+    _environment->outputFileType = OUTPUT_FILE_TYPE_PRG;
+#elif __vg5000__
+    _environment->outputFileType = OUTPUT_FILE_TYPE_K7_NEW;
 #endif
 
-    while ((opt = getopt(_argc, _argv, "ae:c:Wo:Ie:l:EO:dL:C:VA:T:1p:G:")) != -1) {
+    while ((opt = getopt(_argc, _argv, "ae:c:Wo:Ie:l:EO:dL:C:VA:T:1p:G:X:P:q:")) != -1) {
         switch (opt) {
                 case 'a':
                     if ( ! _environment->listingFileName ) {
@@ -5540,8 +6148,17 @@ int main( int _argc, char *_argv[] ) {
                 case 'C':
                     _environment->compilerFileName = strdup(optarg);
                     if( access( _environment->compilerFileName, F_OK ) != 0 ) {
-                        CRITICAL("Compiler no found.");
+                        CRITICAL("Compiler not found.");
                     }
+                    break;
+                case 'X':
+                    _environment->executerFileName = strdup(optarg);
+                    if( access( _environment->executerFileName, F_OK ) != 0 ) {
+                        CRITICAL("Executer not found.");
+                    }
+                    break;
+                case 'P':
+                    _environment->profileFileName = strdup(optarg);
                     break;
                 case 'A':
                     _environment->appMakerFileName = strdup(optarg);
@@ -5582,6 +6199,8 @@ int main( int _argc, char *_argv[] ) {
                         _environment->outputFileType = OUTPUT_FILE_TYPE_K7_NEW;
                     } else if ( strcmp( optarg, "rom") == 0 ) {
                         _environment->outputFileType = OUTPUT_FILE_TYPE_ROM;
+                    } else if ( strcmp( optarg, "d64") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_D64;
                     }
                     break;
                 case 'W':
@@ -5601,6 +6220,9 @@ int main( int _argc, char *_argv[] ) {
                     break;
                 case 'p':
                     _environment->peepholeOptimizationLimit = atoi(optarg);
+                    break;
+                case 'q':
+                    _environment->profileCycles = atoi(optarg);
                     break;
                 case 'V':
                     fprintf(stderr, "%s", version );
@@ -5810,6 +6432,8 @@ int main( int _argc, char *_argv[] ) {
         exit(EXIT_FAILURE);
     }
     
+    filenamestacked[0] = strdup( _environment->sourceFileName );
+
     begin_compilation( _environment );
 
     yydebug = 1;
@@ -5973,7 +6597,11 @@ int main( int _argc, char *_argv[] ) {
 
 int yyerror (Environment * _ignored, const char *s) /* Called by yyparse on error */
 {
+    if ( stacked == 0 ) {
       fprintf(stderr,  "*** ERROR: %s at %d column %d (%d)\n", s, yylineno, (yycolno+1), (yyposno+1));
+    } else {
+      fprintf(stderr,  "*** ERROR: %s at %d column %d (%d, %s)\n", s, yylineno, (yycolno+1), (yyposno+1), filenamestacked[stacked]);
+    }
       exit(EXIT_FAILURE);
 }
 

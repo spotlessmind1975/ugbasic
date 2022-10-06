@@ -123,6 +123,10 @@
 #define KEY_POUND                   0 // ?
 #define KEY_RUNSTOP                 0 // ?
 #define KEY_SEMICOLON               0 // ?
+#define KEY_UP                      0 // ?
+#define KEY_DOWN                    0 // ?
+#define KEY_LEFT                    0 // ?
+#define KEY_RIGHT                   0 // ?
 
 #define INPUT_DEFAULT_SEPARATOR     ','
 #define INPUT_DEFAULT_SIZE          32
@@ -132,6 +136,8 @@
 
 #define BANK_COUNT          0
 #define BANK_SIZE           0
+
+#define MAX_AUDIO_CHANNELS  4
 
 void atari_xpen( Environment * _environment, char * _destination );
 void atari_ypen( Environment * _environment, char * _destination );

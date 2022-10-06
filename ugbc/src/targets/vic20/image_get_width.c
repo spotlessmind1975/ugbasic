@@ -52,7 +52,7 @@
 Variable * image_get_width( Environment * _environment, char * _image ) {
 
     Variable * image = variable_retrieve( _environment, _image );
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(image width)" );
+    Variable * result = variable_temporary( _environment, VT_WORD, "(image width)" );
 
     outline1("LDA #<%s", image->realName );
     outline0("STA TMPPTR" );
@@ -61,6 +61,9 @@ Variable * image_get_width( Environment * _environment, char * _image ) {
     outline0("LDY #0" );
     outline0("LDA (TMPPTR),Y" );
     outline1("STA %s", result->realName );
+    outline0("LDY #1" );
+    outline0("LDA (TMPPTR),Y" );
+    outline1("STA %s+1", result->realName );
 
     return result;
 

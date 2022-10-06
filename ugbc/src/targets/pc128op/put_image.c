@@ -52,8 +52,6 @@ extern char DATATYPE_AS_STRING[][16];
  */
 /* <usermanual>
 @keyword PUT IMAGE
-
-@target pc128op
 </usermanual> */
 void put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _flags ) {
 
@@ -85,7 +83,11 @@ void put_image( Environment * _environment, char * _image, char * _x, char * _y,
                 sprintf( bankWindowName, "BANKWINDOW%2.2x", image->residentAssigned );
 
                 cpu_compare_and_branch_16bit_const( _environment, bankWindowId, image->variableUniqueId, alreadyLoadedLabel, 1 );
-                bank_read_semi_var( _environment, image->bankAssigned, image->absoluteAddress, bankWindowName, image->size );
+                if ( image->uncompressedSize ) {
+                    bank_uncompress_semi_var( _environment, image->bankAssigned, image->absoluteAddress, bankWindowName );
+                } else {
+                    bank_read_semi_var( _environment, image->bankAssigned, image->absoluteAddress, bankWindowName, image->size );
+                }
                 cpu_store_16bit(_environment, bankWindowId, image->variableUniqueId );
                 cpu_label( _environment, alreadyLoadedLabel );
 
@@ -131,7 +133,11 @@ void put_image( Environment * _environment, char * _image, char * _x, char * _y,
                 sprintf( bankWindowName, "BANKWINDOW%2.2x", image->residentAssigned );
 
                 cpu_compare_and_branch_16bit_const( _environment, bankWindowId, image->variableUniqueId, alreadyLoadedLabel, 1 );
-                bank_read_semi_var( _environment, image->bankAssigned, image->absoluteAddress, bankWindowName, image->size );
+                if ( image->uncompressedSize ) {
+                    bank_uncompress_semi_var( _environment, image->bankAssigned, image->absoluteAddress, bankWindowName );
+                } else {
+                    bank_read_semi_var( _environment, image->bankAssigned, image->absoluteAddress, bankWindowName, image->size );
+                }
                 cpu_store_16bit(_environment, bankWindowId, image->variableUniqueId );
                 cpu_label( _environment, alreadyLoadedLabel );
 
@@ -161,7 +167,11 @@ void put_image( Environment * _environment, char * _image, char * _x, char * _y,
                 sprintf( bankWindowName, "BANKWINDOW%2.2x", image->residentAssigned );
 
                 cpu_compare_and_branch_16bit_const( _environment, bankWindowId, image->variableUniqueId, alreadyLoadedLabel, 1 );
-                bank_read_semi_var( _environment, image->bankAssigned, image->absoluteAddress, bankWindowName, image->size );
+                if ( image->uncompressedSize ) {
+                    bank_uncompress_semi_var( _environment, image->bankAssigned, image->absoluteAddress, bankWindowName );
+                } else {
+                    bank_read_semi_var( _environment, image->bankAssigned, image->absoluteAddress, bankWindowName, image->size );
+                }
                 cpu_store_16bit(_environment, bankWindowId, image->variableUniqueId );
                 cpu_label( _environment, alreadyLoadedLabel );
 
