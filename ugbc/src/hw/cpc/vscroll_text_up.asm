@@ -36,4 +36,38 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 VSCROLLTUP:
+
+    LD BC, 199
+    LD HL, PLOTVBASE
+
+VSCROLLTUPL1:
+
+    PUSH BC
+    PUSH HL
+
+    LD A, (HL)
+    LD E, A
+    INC HL
+    LD A, (HL)
+    LD D, A
+
+    INC HL
+    LD A, (HL)
+    LD C, A
+    INC HL
+    LD A, (HL)
+    LD B, A
+    LD HL, BC
+
+    LD BC, $50
+    LDIR
+
+    POP HL
+    POP BC
+
+    INC HL
+    INC HL
+    DEC C
+    JP NZ, VSCROLLTUPL1
+
     RET
