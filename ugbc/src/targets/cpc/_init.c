@@ -238,3 +238,7 @@ void target_linkage( Environment * _environment ) {
     remove(binaryName);
 
 }
+
+void interleaved_instructions( Environment * _environment ) {
+
+}

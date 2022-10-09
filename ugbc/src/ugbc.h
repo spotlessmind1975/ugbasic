@@ -3004,7 +3004,7 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "../src-generated/modules_cpc.h"
     #include "hw/z80.h"
     #include "hw/cpc.h"
-    #include "hw/sn76489.h"
+    #include "hw/ay8910.h"
 #elif __c128__
     #include "../src-generated/modules_c128.h"
     #include "hw/6502.h"

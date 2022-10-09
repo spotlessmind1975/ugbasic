@@ -28,7 +28,7 @@
  * autorizzazioni e le limitazioni previste dalla medesima.
  ****************************************************************************/
 
-#if defined(__msx1__)
+#if defined(__msx1__) || defined(__cpc__)
 
 #include "../ugbc.h"
 
