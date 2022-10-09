@@ -35,8 +35,17 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+CPCISVC:
+    RETI   
+
 CPCSTARTUP:
     RET
 
 CPCVIDEOSTARTUP:
+    DI
+    LD A, $C3
+    LD ($0038), A
+    LD HL, CPCISVC
+    LD ($0039), HL
+    EI
     RET

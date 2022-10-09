@@ -413,6 +413,7 @@ int cpc_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
             _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
             _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
             _environment->screenColors = 16;
+            CPC_GA_MASK( 0xc3, 0x80 );
             break;
         // "Mode 1" 320×200 pixels with 4 colors
         case BITMAP_MODE_GRAPHIC1:
@@ -422,6 +423,7 @@ int cpc_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
             _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
             _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
             _environment->screenColors = 4;
+            CPC_GA_MASK( 0xc3, 0x81 );
             break;
         // "Mode 2" 640×200 pixels with 2 colors
         case BITMAP_MODE_GRAPHIC2:
@@ -431,6 +433,7 @@ int cpc_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
             _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
             _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
             _environment->screenColors = 2;
+            CPC_GA_MASK( 0xc3, 0x82 );
             break;
         // "Mode 3" 160×200 pixels with 4 colors (2bpp) (this is not an official mode, but rather a side-effect of the hardware)
         case BITMAP_MODE_GRAPHIC3:
@@ -440,6 +443,7 @@ int cpc_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
             _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
             _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
             _environment->screenColors = 4;
+            CPC_GA_MASK( 0xc3, 0x83 );
             break;
     }
 
@@ -715,7 +719,7 @@ void cpc_text( Environment * _environment, char * _text, char * _text_size ) {
 
     deploy( clsGraphic, src_hw_cpc_cls_graphic_asm );
     deploy( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
-    deploy( textEncodedAt, src_hw_cpc_text_asm );
+    // deploy( textEncodedAt, src_hw_cpc_text_at_asm );
     deploy( textEncodedAtGraphic, src_hw_cpc_text_at_graphic_asm );
     deploy( font, src_hw_cpc_font_asm );
     outline0("CALL TEXTATBITMAPMODE");
@@ -839,7 +843,7 @@ void cpc_initialization( Environment * _environment ) {
     variable_import( _environment, "IMAGEF", VT_BYTE, 0 );
     variable_global( _environment, "IMAGEF" );
 
-    cpc_tilemap_enable( _environment, 40, 24, 1, 8, 8 );
+    cpc_screen_mode_enable( _environment, find_screen_mode_by_id( _environment, BITMAP_MODE_DEFAULT ) );
 
     cpc_cls( _environment );
 

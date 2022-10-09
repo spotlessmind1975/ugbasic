@@ -212,7 +212,7 @@ void cpc_joy( Environment * _environment, char * _port, char * _value );
 #define BITMAP_MODE_GRAPHIC2        2           // "Mode 2" 640×200 pixels with 2 colors
 #define BITMAP_MODE_GRAPHIC3        3           // "Mode 3" 160×200 pixels with 4 colors (2bpp) (this is not an official mode, but rather a side-effect of the hardware)
 
-#define BITMAP_MODE_DEFAULT     BITMAP_MODE_GRAPHIC0
+#define BITMAP_MODE_DEFAULT     BITMAP_MODE_GRAPHIC2
 
 #define SPRITE_COUNT                0
 #define SPRITE_WIDTH                0
@@ -234,6 +234,35 @@ void cpc_joy( Environment * _environment, char * _port, char * _value );
 #define SPRITE_FLAG_COMPRESS_HORIZONTAL 0x0000
 
 #define MAX_AUDIO_CHANNELS  3
+
+// IN r,(C)/OUT (C),r instructions: Bits b15-b8 come from the B register, 
+// bits b7-b0 come from r 
+// IN A,(n)/OUT (n),A instructions: Bits b15-b8 come from the A register, 
+// bits b7-b0 come from n 
+// Listed below are the internal hardware devices and the bit fields to 
+// which they respond. In the table:
+// - means this bit is ignored, 0 means the bit must be set to 0 for the 
+// hardware device to respond, 1 means the bit must be set to 1 for the hardware device to respond. r1 and r0 mean a bit used to define a register
+
+// Hardware device	Address	Read/Write	b15	b14	b13	b12	b11	b10	b9	b8
+// Gate-Array	&7f	Write Only	0	1	-	-	-	-	-	-
+
+// RAM Configuration	&7f	Write Only	0	-	-	-	-	-	-	-
+#define CPC_GA_MASK( mask, value ) \
+                            outline0( "LD B, $7F" ) \
+                            outline0( "IN C, (C)" ); \
+                            outline0( "LD A, C" ); \
+                            outline1( "AND A, $%2.2x", (unsigned char) ~( (unsigned char) mask & 0xff ) ); \
+                            outline1( "OR A, $%2.2x", (unsigned char) ( (unsigned char) value & 0xff ) ); \
+                            outline0( "LD C, A" ); \
+                            outline0( "OUT (C), C" );
+
+// CRTC	&BC-&BF	Read/Write	-	0	-	-	-	-	r1	r0
+// ROM select	&DF	Write only	-	-	0	-	-	-	-	-
+// Printer port	&EF	Write only	-	-	-	0	-	-	-	-
+// 8255 PPI	&F4-&F7	Read/Write	-	-	-	-	0	-	r1	r0
+// Expansion Peripherals	&F8-&FB	Read/Write	-	-	-	-	-	0	-	-
+
 
 // #define TILES_PADDING           8
 
