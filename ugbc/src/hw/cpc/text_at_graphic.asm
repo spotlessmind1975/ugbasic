@@ -44,12 +44,12 @@ TEXTATPIXPOS:
     LD A, (YCURSYS)
     CP 0
     JR Z, TEXTATPIXPOSSKIPY
+    SLA A
+    SLA A
+    SLA A
     LD E, A
     LD A, 0
     LD D, A
-    ADC HL, DE
-    ADC HL, DE
-    ADC HL, DE
 TEXTATPIXPOSSKIPY:    
     LD A, (HL)
     LD (COPYOFTEXTADDRESS), A
