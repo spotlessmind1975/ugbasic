@@ -35,6 +35,33 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+TEXTATDECODE:
+    CP 97
+    JR C, TEXTATDECODEX1F
+    SUB 96
+    JP TEXTATDECODE0
+TEXTATDECODEX1F:
+    CP 64
+    JR C, TEXTATDECODEX39
+    SUB 64
+    JP TEXTATDECODE0
+TEXTATDECODEX39:
+;     CP $5F
+;     JR C, TEXTATDECODEX5A
+;     SUB $40
+;     JP TEXTATDECODE0
+; TEXTATDECODEX5A:
+;     CP $7F
+;     JR C, TEXTATDECODEX7F
+;     SUB $20
+;     JP TEXTATDECODE0
+; TEXTATDECODEX7F:
+;     LD A, $60
+;     JP TEXTATDECODE0
+TEXTATDECODE0:
+    ; AND $3F
+    RET
+    
 TEXTATPIXPOS:
     PUSH AF
     PUSH DE
@@ -63,13 +90,13 @@ TEXTATPIXPOSSKIPY:
     LD E, A
     LD A, 0
     LD D, 0
-    PUSH HL
-    LD HL, DE
-    ADD HL, HL
-    ADD HL, HL
-    ADD HL, HL
-    LD DE, HL
-    POP HL
+    ; PUSH HL
+    ; LD HL, DE
+    ; ADD HL, HL
+    ; ADD HL, HL
+    ; ADD HL, HL
+    ; LD DE, HL
+    ; POP HL
 
     ADD HL, DE
     LD (COPYOFTEXTADDRESS), HL
@@ -264,7 +291,7 @@ TEXTATBMAT:
 
 TEXTATBMSP0:
     LD A, (DE)
-    ; CALL TEXTATDECODE
+    CALL TEXTATDECODE
 
     PUSH DE
     PUSH BC
@@ -319,7 +346,7 @@ TEXTATBMSKIPTAB:
 
 TEXTATBMINCX:
     LD HL, (COPYOFTEXTADDRESS)
-    ADD HL, 8
+    ADD HL, 1
     LD (COPYOFTEXTADDRESS), HL
     INC DE
     LD A,(XCURSYS)
