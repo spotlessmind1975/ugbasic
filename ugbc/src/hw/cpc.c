@@ -706,6 +706,14 @@ void cpc_cls( Environment * _environment ) {
 
 void cpc_scroll_text( Environment * _environment, int _direction ) {
 
+    if ( _direction > 0 ) {
+        deploy( vScrollTextDown, src_hw_cpc_vscroll_text_down_asm );
+        outline0("CALL VSCROLLTDOWN");
+    } else {
+        deploy( vScrollTextUp, src_hw_cpc_vscroll_text_up_asm );
+        outline0("CALL VSCROLLTUP");
+    }
+    
 }
 
 void cpc_text( Environment * _environment, char * _text, char * _text_size ) {

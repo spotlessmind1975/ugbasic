@@ -37,7 +37,7 @@
 
 VSCROLLTUP:
 
-    LD BC, 199
+    LD BC, 192
     LD HL, PLOTVBASE
 
 VSCROLLTUPL1:
@@ -50,8 +50,10 @@ VSCROLLTUPL1:
     INC HL
     LD A, (HL)
     LD D, A
-
     INC HL
+
+    ADD HL, 14
+
     LD A, (HL)
     LD C, A
     INC HL
@@ -69,5 +71,35 @@ VSCROLLTUPL1:
     INC HL
     DEC C
     JP NZ, VSCROLLTUPL1
+
+    LD BC, 8
+
+VSCROLLTUPL2:
+
+    PUSH BC
+    PUSH HL
+
+    LD A, (HL)
+    LD C, A
+    INC HL
+    LD A, (HL)
+    LD B, A
+    LD HL, BC
+
+    LD A, 0
+    LD (HL), A
+    LD E, L
+    LD D, H
+    INC DE
+    LD BC, $0050
+    LDIR
+
+    POP HL
+    POP BC
+
+    INC HL
+    INC HL
+    DEC C
+    JP NZ, VSCROLLTUPL2
 
     RET
