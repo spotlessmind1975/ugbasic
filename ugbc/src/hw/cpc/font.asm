@@ -255,6 +255,7 @@ TEXTATBMFONT:
    DB $e7, $e7, $e7, $07, $07, $ff, $ff, $ff
    DB $0f, $0f, $0f, $0f, $ff, $ff, $ff, $ff
    DB $0f, $0f, $0f, $0f, $f0, $f0, $f0, $f0
+TEXTATBMFONTLC:
    DB $3c, $66, $6e, $6e, $60, $62, $3c, $00
    DB $00, $00, $3c, $06, $3e, $66, $3e, $00
    DB $00, $60, $60, $7c, $66, $66, $7c, $00
