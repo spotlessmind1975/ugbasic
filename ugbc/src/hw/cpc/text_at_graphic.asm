@@ -71,12 +71,22 @@ TEXTATPIXPOS:
     LD A, (YCURSYS)
     CP 0
     JR Z, TEXTATPIXPOSSKIPY
-    SLA A
-    SLA A
-    SLA A
+
     LD E, A
-    LD A, 0
+    LD A, $0
     LD D, A
+
+    SLA E
+    RL D
+    SLA E
+    RL D
+    SLA E
+    RL D
+    SLA E
+    RL D
+
+    ADD HL, DE
+
 TEXTATPIXPOSSKIPY:    
     LD A, (HL)
     LD (COPYOFTEXTADDRESS), A
