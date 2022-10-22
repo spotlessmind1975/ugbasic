@@ -60,7 +60,7 @@ Questo comando permette di interrompere il suono su tutti i canali o su canali s
 @example PLAY OFF
 @example PLAY OFF ON #%001
 
-@target msx1
+@target cpc
 </usermanual> */
 void play_off( Environment * _environment, int _channels ) {
 
@@ -84,7 +84,7 @@ void play_off( Environment * _environment, int _channels ) {
 @example PLAY OFF
 @example PLAY OFF ON primaVoce
 
-@target msx1
+@target cpc
 </usermanual> */
 void play_off_var( Environment * _environment, char * _channels ) {
 

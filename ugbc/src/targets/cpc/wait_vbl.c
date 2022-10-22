@@ -47,7 +47,7 @@
  */
 /* <usermanual>
 @keyword WAIT VBL
-@target coleco
+@target cpc
 </usermanual> */
 void wait_vbl( Environment * _environment ) {
 

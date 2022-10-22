@@ -49,7 +49,7 @@
 /* <usermanual>
 @keyword RANDOM WIDTH
 
-@target coleco
+@target cpc
 </usermanual> */
 Variable * random_width( Environment * _environment ) {
  

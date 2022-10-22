@@ -41,7 +41,7 @@
 /* <usermanual>
 @keyword PLOT
 
-@target coleco
+@target cpc
  </usermanual> */
 void plot( Environment * _environment, char * _x, char * _y, char *_c ) {
 

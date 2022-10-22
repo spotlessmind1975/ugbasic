@@ -77,7 +77,7 @@ essere eseguita in un unico "frame" di gioco.
 
 @example BEGIN GAMELOOP
 
-@target coleco
+@target cpc
 </usermanual> */
 void begin_gameloop( Environment * _environment ) {
 

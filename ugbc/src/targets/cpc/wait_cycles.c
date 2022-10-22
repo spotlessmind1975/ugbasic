@@ -49,7 +49,7 @@
 /* <usermanual>
 @keyword WAIT
 
-@target coleco
+@target cpc
 </usermanual> */
 void wait_cycles( Environment * _environment, int _timing ) {
 

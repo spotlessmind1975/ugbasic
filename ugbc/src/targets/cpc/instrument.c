@@ -66,7 +66,7 @@ particolari.
 @example INSTRUMENT #42 ON %001
 @example INSTRUMENT SHAMISEN
 
-@target msx1
+@target cpc
 </usermanual> */
 void instrument( Environment * _environment, int _instrument, int _channels ) {
 
@@ -92,7 +92,7 @@ void instrument( Environment * _environment, int _instrument, int _channels ) {
 
 @example INSTRUMENT FIDDLE ON primaVoce
 
-@target msx1
+@target cpc
 </usermanual> */
 void instrument_semi_var( Environment * _environment, int _instrument, char * _channels ) {
 

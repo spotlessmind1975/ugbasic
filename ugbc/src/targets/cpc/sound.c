@@ -74,7 +74,7 @@ espressa in millisecondi.
 @example SOUND #440, #250
 @example SOUND #440, #250 ON #%001
 
-@target msx1
+@target cpc
 </usermanual> */
 void sound( Environment * _environment, int _freq, int _delay, int _channels ) {
 
@@ -109,7 +109,7 @@ void sound( Environment * _environment, int _freq, int _delay, int _channels ) {
 @example SOUND solMaggiore, breve
 @example SOUND solMaggiore, lunga ON primaVoce
 
-@target msx1
+@target cpc
 </usermanual> */
 void sound_vars( Environment * _environment, char * _freq, char * _delay, char * _channels ) {
 

@@ -53,7 +53,7 @@
 /* <usermanual>
 @keyword PEEK
 
-@target coleco
+@target cpc
 </usermanual> */
 Variable * peek( Environment * _environment, int _location ) {
 

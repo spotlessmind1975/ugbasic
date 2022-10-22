@@ -48,7 +48,7 @@
 /* <usermanual>
 @keyword TILE HEIGHT
 
-@target coleco
+@target cpc
 </usermanual> */
 Variable * tile_get_height( Environment * _environment, char * _tile ) {
 

@@ -57,7 +57,7 @@
 /* <usermanual>
 @keyword POINT AT
 
-@target coleco
+@target cpc
 </usermanual> */
 void point_at( Environment * _environment, int _x, int _y ) {
 

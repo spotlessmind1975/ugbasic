@@ -48,7 +48,7 @@
 /* <usermanual>
 @keyword TILE WIDTH
 
-@target coleco
+@target cpc
 </usermanual> */
 Variable * tile_get_width( Environment * _environment, char * _tile ) {
 

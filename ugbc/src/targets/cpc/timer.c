@@ -41,7 +41,7 @@
 /* <usermanual>
 @keyword TIMER
 
-@target coleco
+@target cpc
 </usermanual> */
 
 Variable * get_timer( Environment * _environment ) {
@@ -58,7 +58,7 @@ Variable * get_timer( Environment * _environment ) {
 /* <usermanual>
 @keyword TIMER
 
-@target coleco
+@target cpc
 </usermanual> */
 
 void set_timer( Environment * _environment, char * _value ) {

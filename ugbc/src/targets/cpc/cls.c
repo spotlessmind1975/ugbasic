@@ -41,7 +41,7 @@
 /* <usermanual>
 @keyword CLS
 
-@target coleco
+@target cpc
 </usermanual> */
 void cls( Environment * _environment, char * _paper ) {
 

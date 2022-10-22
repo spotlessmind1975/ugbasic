@@ -50,5 +50,5 @@ extern char BANK_TYPE_AS_STRING[][16];
  * @param _environment Current calling environment
  */
 void bank_cleanup( Environment * _environment ) {
-    // TODO: implement coleco/bank_cleanup
+    // TODO: implement cpc/bank_cleanup
 }

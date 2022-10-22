@@ -63,7 +63,7 @@ quali voci il sistema dovrà emettere il suono. Se omesso, sarà emesso su tutte
 @example BELL #42
 @example BELL #42 ON #%001
 
-@target msx1
+@target cpc
 </usermanual> */
 void bell( Environment * _environment, int _note, int _channels ) {
 
@@ -91,7 +91,7 @@ void bell( Environment * _environment, int _note, int _channels ) {
 @example SOUND solMaggiore, breve
 @example SOUND solMaggiore, lunga ON primaVoce
 
-@target msx1
+@target cpc
 </usermanual> */
 void bell_vars( Environment * _environment, char * _note, char * _channels ) {
 

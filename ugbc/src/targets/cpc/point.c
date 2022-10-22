@@ -41,7 +41,7 @@
 /* <usermanual>
 @keyword POINT
 
-@target coleco
+@target cpc
  </usermanual> */
 Variable * point( Environment * _environment, char * _x, char * _y ) {
 

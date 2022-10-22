@@ -74,7 +74,7 @@ espressa in millisecondi.
 @example PLAY #24, #250
 @example PLAY #60, #1250 ON #%001
 
-@target msx1
+@target cpc
 </usermanual> */
 void play( Environment * _environment, int _note, int _delay, int _channels ) {
 
@@ -106,7 +106,7 @@ void play( Environment * _environment, int _note, int _delay, int _channels ) {
 @example PLAY solMaggiore, breve
 @example PLAY solMaggiore, lunga ON primaVoce
 
-@target msx1
+@target cpc
 </usermanual> */
 void play_vars( Environment * _environment, char * _note, char * _delay, char * _channels ) {
 

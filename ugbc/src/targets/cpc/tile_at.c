@@ -48,7 +48,7 @@
  */
 /* <usermanual>
 @keyword TILE AT
-@target coleco
+@target cpc
 </usermanual> */
 Variable * tile_at( Environment * _environment, char * _x, char * _y ) {
 

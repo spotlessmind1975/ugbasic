@@ -46,7 +46,7 @@
 /* <usermanual>
 @keyword COLOR BORDER
 
-@target coleco
+@target cpc
 </usermanual> */
 void color_border( Environment * _environment, int _color ) {
     

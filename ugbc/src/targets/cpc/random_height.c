@@ -49,7 +49,7 @@
 /* <usermanual>
 @keyword RANDOM HEIGHT
 
-@target coleco
+@target cpc
 </usermanual> */
 Variable * random_height( Environment * _environment ) {
 

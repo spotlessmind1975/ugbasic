@@ -57,7 +57,7 @@
 /* <usermanual>
 @keyword COLORMAP AT
 
-@target coleco
+@target cpc
 </usermanual> */
 void colormap_at( Environment * _environment, int _address ) {
 

@@ -60,7 +60,7 @@
 /* <usermanual>
 @keyword RANDOM
 
-@target coleco
+@target cpc
 </usermanual> */
 Variable * random_value( Environment * _environment, VariableType _type ) {
 

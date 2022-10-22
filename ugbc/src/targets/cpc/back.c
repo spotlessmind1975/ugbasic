@@ -47,7 +47,7 @@
 /* <usermanual>
 @keyword COLOR BACK
 
-@target coleco
+@target cpc
 
 </usermanual> */
 void back( Environment * _environment, char * _color ) {

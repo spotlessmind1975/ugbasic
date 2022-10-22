@@ -62,7 +62,7 @@ indicare su quali voci il sistema dovrà emettere il suono. Se omesso, sarà eme
 @example BOOM
 @example BOOM ON %001
 
-@target msx1
+@target cpc
 </usermanual> */
 void boom( Environment * _environment, int _channels ) {
 
@@ -88,7 +88,7 @@ void boom( Environment * _environment, int _channels ) {
 @example BOOM
 @example BOOM ON primoCanale
 
-@target msx1
+@target cpc
 </usermanual> */
 void boom_var( Environment * _environment, char * _channels ) {
 

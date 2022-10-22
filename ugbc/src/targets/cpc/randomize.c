@@ -48,7 +48,7 @@
 /* <usermanual>
 @keyword RANDOMIZE
 
-@target coleco
+@target cpc
 </usermanual> */
 void randomize( Environment * _environment, char * _other_seed ) {
 

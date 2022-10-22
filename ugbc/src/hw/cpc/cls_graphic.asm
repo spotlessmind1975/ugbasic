@@ -36,68 +36,8 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 CLSG:
-    LD A, (CURRENTMODE)
-    CP 0
-    JR Z, CLSG0
-    CP 1
-    JR Z, CLSG1
-    CP 2
-    JR Z, CLSG2
-    CP 3
-    JR Z, CLSG3    
-    RET
-
-CLSG0:
-    LD A, (_PAPER)
-    SRL A
-    SRL A
-    SRL A
-    SRL A
-    LD B, A
-    LD A, (_PAPER)
-    OR B
-    JP CLSX
-
-CLSG1:
-CLSG3:
-    LD A, (_PAPER)
-    SRL A
-    SRL A
-    LD B, A
-    LD A, (_PAPER)
-    OR B
-    SRL A
-    SRL A
-    LD B, A
-    LD A, (_PAPER)
-    OR B
-    SRL A
-    SRL A
-    LD B, A
-    LD A, (_PAPER)
-    OR B
-    SRL A
-    SRL A
-    JP CLSX
-
-CLSG2:
-    LD A, (_PAPER)
-    SRL A
-    LD B, A
-    LD A, (_PAPER)
-    OR B
-    SRL A
-    LD B, A
-    LD A, (_PAPER)
-    OR B
-    SRL A
-    LD B, A
-    LD A, (_PAPER)
-    OR B
-    SRL A
-    JP CLSX
-
 CLSX:
+    LD A, 0
     LD HL, $C000
     LD (HL), A
     LD E, L

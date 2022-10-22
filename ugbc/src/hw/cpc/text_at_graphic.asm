@@ -345,6 +345,18 @@ TEXTATFONTL1:
     AND $2
     JR Z, TEXTATBMCNOPEN
 
+    PUSH BC
+    PUSH AF
+
+    LD BC, $7F01
+    OUT (C), C
+    LD A, (_PEN)
+    OR A, $40
+    OUT (C), A
+    
+    POP AF
+    POP BC
+
 TEXTATBMCNOPEN:
     JP TEXTATBMINCX
 

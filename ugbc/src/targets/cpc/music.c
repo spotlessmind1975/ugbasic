@@ -57,7 +57,7 @@
 
 @example MUSIC fugue
 
-@target msx1
+@target cpc
 </usermanual> */
 void music_var( Environment * _environment, char * _music ) {
 

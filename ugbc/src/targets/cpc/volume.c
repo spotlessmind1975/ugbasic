@@ -65,7 +65,7 @@ singola voce.
 @example VOLUME #255
 @example VOLUME #0 ON #%001
 
-@target msx1
+@target cpc
 </usermanual> */
 void volume( Environment * _environment, int _volume, int _channels ) {
 
@@ -91,7 +91,7 @@ void volume( Environment * _environment, int _volume, int _channels ) {
 @example VOLUME massimo
 @example VOLUME zero ON voice1
 
-@target msx1
+@target cpc
 </usermanual> */
 void volume_vars( Environment * _environment, char * _volume, char * _channels ) {
 
