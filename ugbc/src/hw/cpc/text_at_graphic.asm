@@ -358,58 +358,77 @@ TEXTATFONT0L1:
 
     PUSH DE
 
+    PUSH DE
+    LD A, 0
+    LD D, A
     LD A, (HL)
-    AND $03
-    LD B, A
-    SRA A
-    SRA A
-    OR B
-    LD B, A
-    SRA A
-    SRA A
-    OR B
+    SRL A
+    SRL A
+    SRL A
+    SRL A
+    SRL A
+    SRL A
+    LD E, A
+    PUSH HL
+    LD HL, CPCVIDEOBITMASK1
+    ADD HL, DE
+    LD A, (HL)
+    POP HL
+    POP DE
     LD (DE), A
     
     INC DE
 
+    PUSH DE
+    LD A, 0
+    LD D, A
     LD A, (HL)
-    AND $0C
-    LD B, A
-    SRA A
-    SRA A
-    OR B
-    LD B, A
-    SRA A
-    SRA A
-    OR B
+    SRL A
+    SRL A
+    SRL A
+    SRL A
+    AND $03
+    LD E, A
+    PUSH HL
+    LD HL, CPCVIDEOBITMASK1
+    ADD HL, DE
+    LD A, (HL)
+    POP HL
+    POP DE
     LD (DE), A
 
     INC DE
 
+    PUSH DE
+    LD A, 0
+    LD D, A
     LD A, (HL)
-    AND $30
-    LD B, A
-    SRA A
-    SRA A
-    OR B
-    LD B, A
-    SRA A
-    SRA A
-    OR B
+    SRL A
+    SRL A
+    AND $03
+    LD E, A
+    PUSH HL
+    LD HL, CPCVIDEOBITMASK1
+    ADD HL, DE
+    LD A, (HL)
+    POP HL
+    POP DE
     LD (DE), A
 
     INC DE
 
+    PUSH DE
+    LD A, 0
+    LD D, A
     LD A, (HL)
-    AND $C0
-    LD B, A
-    SRA A
-    SRA A
-    OR B
-    LD B, A
-    SRA A
-    SRA A
-    OR B
+    AND $03
+    LD E, A
+    PUSH HL
+    LD HL, CPCVIDEOBITMASK1
+    ADD HL, DE
+    LD A, (HL)
+    POP HL
+    POP DE
     LD (DE), A
 
     POP DE
