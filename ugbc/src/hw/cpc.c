@@ -822,7 +822,7 @@ void cpc_initialization( Environment * _environment ) {
     variable_import( _environment, "TABSTODRAW", VT_BYTE, 0 );
     variable_global( _environment, "TABSTODRAW" );
 
-    variable_import( _environment, "CURRENTMODE", VT_BYTE, 0 );
+    variable_import( _environment, "CURRENTMODE", VT_BYTE, 2 );
     variable_global( _environment, "CURRENTMODE" );
     variable_import( _environment, "CURRENTTILEMODE", VT_BYTE, 1 );
     variable_global( _environment, "CURRENTTILEMODE" );
