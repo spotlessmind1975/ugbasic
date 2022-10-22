@@ -108,6 +108,24 @@ TEXTATPIXPOSSKIPY:
     ; LD DE, HL
     ; POP HL
 
+    LD A, (CURRENTMODE)
+    CP 0
+    JP Z, TEXTATPIXPOSSKIPY0
+    CP 1
+    JP Z, TEXTATPIXPOSSKIPY1
+    CP 2
+    JP Z, TEXTATPIXPOSSKIPY2
+    CP 3
+    JP Z, TEXTATPIXPOSSKIPY3
+    JP TEXTATPIXPOSSKIPY2
+
+TEXTATPIXPOSSKIPY0:
+TEXTATPIXPOSSKIPY3:
+    ADD HL, DE
+    ADD HL, DE
+TEXTATPIXPOSSKIPY1:
+    ADD HL, DE
+TEXTATPIXPOSSKIPY2:
     ADD HL, DE
     LD (COPYOFTEXTADDRESS), HL
 
@@ -321,12 +339,80 @@ TEXTATBMSP0:
 
     LD DE, (COPYOFTEXTADDRESS)
 
-TEXTATFONTL1:
+    LD A, (CURRENTMODE)
+    CP 0
+    JP Z, TEXTATFONT0L1
+    CP 1
+    JP Z, TEXTATFONT1L1
+    CP 2
+    JP Z, TEXTATFONT2L1
+    CP 3
+    JP Z, TEXTATFONT0L1
+    JP TEXTATFONT2L1
+
+; Mode 0, 160×200, 16 colors (each byte of video memory represents 2 pixels):
+; bit 7	bit 6	bit 5	bit 4	bit 3	bit 2	bit 1	bit 0
+; pixel 0 (bit 0)	pixel 1 (bit 0)	pixel 0 (bit 2)	pixel 1 (bit 2)	pixel 0 (bit 1)	pixel 1 (bit 1)	pixel 0 (bit 3)	pixel 1 (bit 3)
+
+TEXTATFONT0L1:
+
+    PUSH DE
 
     LD A, (HL)
+    AND $03
+    LD B, A
+    SRA A
+    SRA A
+    OR B
+    LD B, A
+    SRA A
+    SRA A
+    OR B
+    LD (DE), A
+    
+    INC DE
+
+    LD A, (HL)
+    AND $0C
+    LD B, A
+    SRA A
+    SRA A
+    OR B
+    LD B, A
+    SRA A
+    SRA A
+    OR B
     LD (DE), A
 
-    INC HL
+    INC DE
+
+    LD A, (HL)
+    AND $30
+    LD B, A
+    SRA A
+    SRA A
+    OR B
+    LD B, A
+    SRA A
+    SRA A
+    OR B
+    LD (DE), A
+
+    INC DE
+
+    LD A, (HL)
+    AND $C0
+    LD B, A
+    SRA A
+    SRA A
+    OR B
+    LD B, A
+    SRA A
+    SRA A
+    OR B
+    LD (DE), A
+
+    POP DE
 
     PUSH HL
     LD HL, DE
@@ -335,9 +421,86 @@ TEXTATFONTL1:
     LD DE, HL
     POP HL
 
+    INC HL
     DEC C
-    JR NZ, TEXTATFONTL1
+    JR NZ, TEXTATFONT0L1
 
+    JP TEXTATFONTLE
+
+; Mode 1, 320×200, 4 colors (each byte of video memory represents 4 pixels):
+; bit 7	bit 6	bit 5	bit 4	bit 3	bit 2	bit 1	bit 0
+; pixel 0 (bit 1)	pixel 1 (bit 1)	pixel 2 (bit 1)	pixel 3 (bit 1)	pixel 0 (bit 0)	pixel 1(bit 0)	pixel 2 (bit 0)	pixel 3 (bit 0)
+
+TEXTATFONT1L1:
+
+    PUSH DE
+
+    PUSH DE
+    LD A, 0
+    LD D, A
+    LD A, (HL)
+    SRL A
+    SRL A
+    SRL A
+    SRL A
+    LD E, A
+    PUSH HL
+    LD HL, CPCVIDEOBITMASK1
+    ADC HL, DE
+    LD A, (HL)
+    POP HL
+    POP DE
+    LD (DE), A
+
+    INC DE
+
+    PUSH DE
+    LD A, 0
+    LD D, A
+    LD A, (HL)
+    AND $0F
+    LD E, A
+    PUSH HL
+    LD HL, CPCVIDEOBITMASK1
+    ADC HL, DE
+    LD A, (HL)
+    POP HL
+    POP DE
+    LD (DE), A
+    
+    POP DE
+
+    PUSH HL
+    LD HL, DE
+    LD DE, $800
+    ADD HL, DE
+    LD DE, HL
+    POP HL
+
+    INC HL
+    DEC C
+    JR NZ, TEXTATFONT1L1
+
+    JP TEXTATFONTLE
+
+TEXTATFONT2L1:
+
+    LD A, (HL)
+    LD (DE), A
+
+    PUSH HL
+    LD HL, DE
+    LD DE, $800
+    ADD HL, DE
+    LD DE, HL
+    POP HL
+
+    INC HL
+
+    DEC C
+    JR NZ, TEXTATFONT2L1
+
+TEXTATFONTLE:
     POP BC
     POP DE
 
@@ -353,7 +516,7 @@ TEXTATFONTL1:
     LD A, (_PEN)
     OR A, $40
     OUT (C), A
-    
+
     POP AF
     POP BC
 

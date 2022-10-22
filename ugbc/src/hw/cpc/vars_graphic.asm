@@ -192,3 +192,9 @@ CPCVIDEOCOL2L1:
 CPCVIDEOCOL2L2:
     POP AF
     RET    
+
+CPCVIDEOBITMASK1:
+    DB $00,$11,$22,$33
+    DB $44,$55,$66,$77
+    DB $88,$99,$aa,$bb
+    DB $cc,$dd,$ee,$ff    
