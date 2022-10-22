@@ -446,7 +446,7 @@ TEXTATFONT1L1:
     LD E, A
     PUSH HL
     LD HL, CPCVIDEOBITMASK1
-    ADC HL, DE
+    ADD HL, DE
     LD A, (HL)
     POP HL
     POP DE
@@ -462,12 +462,12 @@ TEXTATFONT1L1:
     LD E, A
     PUSH HL
     LD HL, CPCVIDEOBITMASK1
-    ADC HL, DE
+    ADD HL, DE
     LD A, (HL)
     POP HL
     POP DE
     LD (DE), A
-    
+
     POP DE
 
     PUSH HL
