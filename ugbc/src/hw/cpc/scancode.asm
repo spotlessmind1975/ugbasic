@@ -101,9 +101,12 @@ SCANCODE:
     LD B, A
 SCANCODEL10:
     LD A, $0
+    LD E, A
 SCANCODEL1:
+    PUSH BC
     PUSH AF
 	PUSH DE
+    PUSH HL
 	LD HL, BITMASK
 	LD A, 0
 	LD D, A
@@ -112,10 +115,16 @@ SCANCODEL1:
 	ADC HL, DE
 	LD A, (HL)
 	LD B, A
+    POP HL
     POP DE
-    POP AF
+
+    LD A, (HL)
+    XOR $ff
     AND B
+    CP B
     JR Z, SCANCODEVALUE
+    POP AF
+    POP BC
     INC E
     INC A
     CP 8
@@ -128,5 +137,11 @@ SCANCODEL1:
     LD A, $0
     LD D, A
     LD E, A
+    PUSH BC
+    PUSH AF
 SCANCODEVALUE:
+    LD B, A
+    POP AF
+    POP BC
+    LD A, B
     RET
