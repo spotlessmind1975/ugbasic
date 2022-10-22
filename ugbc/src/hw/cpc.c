@@ -880,6 +880,11 @@ void cpc_initialization( Environment * _environment ) {
     variable_import( _environment, "IMAGEF", VT_BYTE, 0 );
     variable_global( _environment, "IMAGEF" );
 
+    variable_import( _environment, "CPCTIMER", VT_WORD, 0 );
+    variable_global( _environment, "CPCTIMER" );
+    variable_import( _environment, "CPCTIMER2", VT_BYTE, 6 );
+    variable_global( _environment, "CPCTIMER2" );
+    
     cpc_screen_mode_enable( _environment, find_screen_mode_by_id( _environment, BITMAP_MODE_DEFAULT ) );
 
     cpc_cls( _environment );

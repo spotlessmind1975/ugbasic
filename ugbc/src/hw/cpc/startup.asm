@@ -36,7 +36,43 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 CPCISVC:
-    RETI   
+	PUSH	AF
+	PUSH	BC
+	PUSH	DE
+	PUSH	HL
+	PUSH	IX
+	PUSH	IY
+	EX	AF,AF'
+	PUSH	AF
+	EXX
+	PUSH	BC
+	PUSH	DE
+	PUSH	HL
+    LD A,(CPCTIMER2)
+    DEC A
+    LD (CPCTIMER2), A
+    CP 0
+    JR NZ,IRQVECTORSKIP
+    LD A,6
+    LD (CPCTIMER2), A
+    LD HL,(CPCTIMER)
+    INC HL
+    LD (CPCTIMER),HL
+IRQVECTORSKIP:
+	POP	HL
+	POP	DE
+	POP	BC
+	EXX
+	POP	AF
+	EX	AF,AF'
+	POP	IY
+	POP	IX
+	POP	HL
+	POP	DE
+	POP	BC
+	POP	AF
+    EI
+    RET   
 
 CPCSTARTUP:
     RET
