@@ -36,11 +36,26 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 HSCROLLLINE:
+    PUSH AF
+
+    LD HL, PLOTVBASE
+    LD A, B
+    SLA A
+    SLA A
+    SLA A
+    LD E, A
+    LD D, 0
+    ADD HL, DE
+    ADD HL, DE
+
+    POP AF
+
     CP $80
     JP C, HSCROLLLINER
 
-    LD BC, 200
-    LD HL, PLOTVBASE
+HSCROLLLINEL:
+
+    LD BC, 8
 
 HSCROLLLINEL1:
 
@@ -73,10 +88,9 @@ HSCROLLLINEL1:
 
 HSCROLLLINER:
 
-    LD BC, 200
-    LD HL, PLOTVBASE
+    LD BC, $8
 
-HSCROLLLINERL1:
+HSCROLLLINER1:
 
     PUSH BC
     PUSH HL
@@ -103,6 +117,6 @@ HSCROLLLINERL1:
     INC HL
     INC HL
     DEC C
-    JP NZ, HSCROLLLINERL1
+    JP NZ, HSCROLLLINER1
 
     RET    

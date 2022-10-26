@@ -36,4 +36,73 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 HSCROLLSCREEN:
+    CP $80
+    JP C, HSCROLLSCREENR
+
+    LD BC, 200
+    LD HL, PLOTVBASE
+
+HSCROLLSCREENL1:
+
+    PUSH BC
+    PUSH HL
+
+    LD A, (HL)
+    LD E, A
+    INC HL
+    LD A, (HL)
+    LD D, A
+    INC HL
+
+    LD HL, DE
+
+    INC HL
+
+    LD BC, $4F
+    LDIR
+
+    POP HL
+    POP BC
+
+    INC HL
+    INC HL
+    DEC C
+    JP NZ, HSCROLLSCREENL1
+
     RET
+
+HSCROLLSCREENR:
+
+    LD BC, 200
+    LD HL, PLOTVBASE
+
+HSCROLLSCREENRL1:
+
+    PUSH BC
+    PUSH HL
+
+    LD A, (HL)
+    LD E, A
+    INC HL
+    LD A, (HL)
+    LD D, A
+    INC HL
+
+    LD HL, DE
+    LD DE, $50
+    ADD HL, DE
+    LD DE, HL
+    DEC HL
+
+    LD BC, $4F
+    LDDR
+
+    POP HL
+    POP BC
+
+    INC HL
+    INC HL
+    DEC C
+    JP NZ, HSCROLLSCREENRL1
+
+    RET    
