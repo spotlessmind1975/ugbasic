@@ -907,9 +907,23 @@ void cpc_finalization( Environment * _environment ) {
 
 void cpc_hscroll_line( Environment * _environment, int _direction ) {
 
+    deploy( cpcvars, src_hw_cpc_vars_asm);
+    deploy( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
+    deploy( textHScrollLine, src_hw_cpc_hscroll_line_asm );
+
+    outline1("LD A, $%2.2x", _direction);
+    outline0("CALL HSCROLLLINE");
+
 }
 
 void cpc_hscroll_screen( Environment * _environment, int _direction ) {
+
+    deploy( cpcvars, src_hw_cpc_vars_asm);
+    deploy( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
+    deploy( textHScrollScreen, src_hw_cpc_hscroll_screen_asm );
+
+    outline1("LD A, $%2.2x", _direction);
+    outline0("CALL HSCROLLSCREEN");
 
 }
 
@@ -1131,7 +1145,8 @@ void cpc_scroll( Environment * _environment, int _dx, int _dy ) {
 
     deploy( vic2vars, src_hw_cpc_vars_asm);
     deploy( scroll, src_hw_cpc_scroll_asm);
-    deploy( textHScroll, src_hw_cpc_hscroll_text_asm );
+    deploy( textHScrollLine, src_hw_cpc_hscroll_line_asm );
+    deploy( textHScrollScreen, src_hw_cpc_hscroll_screen_asm );
     deploy( vScrollTextDown, src_hw_cpc_vscroll_text_down_asm );
     deploy( vScrollTextUp, src_hw_cpc_vscroll_text_up_asm );
 
