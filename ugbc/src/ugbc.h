@@ -909,12 +909,15 @@ typedef struct _Embedded {
     int cpu_not_8bit;
     int cpu_and_8bit;
     int cpu_or_8bit;
+    int cpu_xor_8bit;
     int cpu_not_16bit;
     int cpu_and_16bit;
     int cpu_or_16bit;
+    int cpu_xor_16bit;
     int cpu_not_32bit;
     int cpu_and_32bit;
     int cpu_or_32bit;
+    int cpu_xor_32bit;
     int cpu_math_add_16bit;
     int cpu_math_add_16bit_const;
     int cpu_math_add_16bit_with_16bit;
@@ -1827,6 +1830,7 @@ typedef struct _Environment {
 #define CRITICAL_STORAGE_NOT_OPENED() CRITICAL("E133 - ENDSTORAGE outside a storage definition" ); 
 #define CRITICAL_DLOAD_MISSING_FILE(f) CRITICAL2("E134 - DLOAD missing file", f );
 #define CRITICAL_INCLUDE_FILE_NOT_FOUND(f) CRITICAL2("E135 - INCLUDE missing file", f );
+#define CRITICAL_XOR_UNSUPPORTED( v, t ) CRITICAL3("E136 - Bitwise XOR unsupported for variable of given datatype", v, t );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -2875,6 +2879,7 @@ Variable *              variable_sub( Environment * _environment, char * _source
 void                    variable_sub_inplace( Environment * _environment, char * _source, char * _dest );
 Variable *              variable_temporary( Environment * _environment, VariableType _type, char * _meaning );
 Variable *              variable_resident( Environment * _environment, VariableType _type, char * _meaning );
+Variable *              variable_xor( Environment * _environment, char * _left, char * _right );
 Variable *              varptr( Environment * _environment, char * _identifier );
 void                    volume( Environment * _environment, int _volume, int _channels );
 void                    volume_vars( Environment * _environment, char * _volume, char * _channels );

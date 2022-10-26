@@ -2918,6 +2918,45 @@ Variable * variable_and( Environment * _environment, char * _left, char * _right
 }
 
 /**
+ * @brief Calculate logical "xor" and return it as the result
+ * 
+ * This function allows you to emit code to make a logical
+ * XOR between two expressions, and return the result
+ * as boolean.
+ * 
+ * @param _environment Current calling environment
+ * @param _left Left expression to check
+ * @param _right Right expression to check
+ * @return Variable* The result of operation
+ */
+Variable * variable_xor( Environment * _environment, char * _left, char * _right ) {
+
+    Variable * source = variable_retrieve( _environment, _left );
+    Variable * target = variable_cast( _environment, _right, source->type );
+    if ( ! target ) {
+        CRITICAL_VARIABLE(_right);
+    }
+
+    Variable * result = variable_temporary( _environment, source->type, "(result of OR)" );
+
+    switch( VT_BITWIDTH( source->type ) ) {
+        case 32:
+            cpu_xor_32bit( _environment, source->realName, target->realName, result->realName );
+            break;
+        case 16:
+            cpu_xor_16bit( _environment, source->realName, target->realName, result->realName );
+            break;
+        case 8:
+            cpu_xor_8bit( _environment, source->realName, target->realName, result->realName );
+            break;
+        case 0:
+            CRITICAL_XOR_UNSUPPORTED( _left, DATATYPE_AS_STRING[source->type]);
+    }
+
+    return result;
+}
+
+/**
  * @brief Calculate logical "or" and return it as the result
  * 
  * This function allows you to emit code to make a logical
