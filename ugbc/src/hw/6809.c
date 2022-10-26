@@ -2814,6 +2814,54 @@ void cpu6809_or_32bit( Environment * _environment, char * _left, char * _right, 
 
 }
 
+void cpu6809_xor_8bit( Environment * _environment, char * _left, char * _right, char * _result ) {
+
+    inline( cpu_xor_8bit )
+
+        MAKE_LABEL
+
+        outline1("LDB %s", _right );
+        outline1("XOR %s", _left );
+        outline1("STB %s", _result);
+
+    no_embedded( cpu_xor_8bit )
+
+}
+
+void cpu6809_xor_16bit( Environment * _environment, char * _left, char * _right, char * _result ) {
+
+    inline( cpu_xor_16bit )
+
+        MAKE_LABEL
+
+        outline1("LDD %s", _left );
+        outline1("EORA %s", _right );
+        outline1("EORB %s+1", _right );
+        outline1("STD %s", _result);
+
+    no_embedded( cpu_xor_16bit )
+
+}
+
+void cpu6809_xor_32bit( Environment * _environment, char * _left, char * _right, char * _result ) {
+
+    inline( cpu_xor_32bit )
+
+        MAKE_LABEL
+
+        outline1("LDD %s", _left );
+        outline1("EORA %s", _right );
+        outline1("EORB %s+1", _right );
+        outline1("STD %s", _result);
+        outline1("LDD %s+2", _left );
+        outline1("EORA %s+2", _right );
+        outline1("EORB %s+3", _right );
+        outline1("STD %s+2", _result);
+
+    no_embedded( cpu_xor_32bit )
+
+}
+
 void cpu6809_logical_not_8bit( Environment * _environment, char * _value, char * _result ) {
 
     inline( cpu_logical_not_8bit )

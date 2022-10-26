@@ -343,6 +343,9 @@ const_expr :
     | const_expr_math OR const_expr_math {
         $$ = ( $1 || $3 );
     } 
+    | const_expr_math XOR const_expr_math {
+        $$ = $1 ? !$3 : $3;
+    } 
     | const_expr_math OP_EQUAL const_expr_math {
         $$ = ( $1 == $3 );
     }
@@ -733,6 +736,9 @@ expr :
     } 
     | expr_math OR expr {
         $$ = variable_or( _environment, $1, $3 )->name;
+    } 
+    | expr_math XOR expr {        
+        $$ = variable_xor( _environment, $1, $3 )->name;
     } 
     | expr_math OP_EQUAL expr {
         $$ = variable_compare( _environment, $1, $3 )->name;
@@ -6279,12 +6285,15 @@ int main( int _argc, char *_argv[] ) {
                         parse_embedded( p, cpu_not_16bit );
                         parse_embedded( p, cpu_and_16bit );
                         parse_embedded( p, cpu_or_16bit );
+                        parse_embedded( p, cpu_xor_16bit );
                         parse_embedded( p, cpu_not_16bit );
                         parse_embedded( p, cpu_and_16bit );
                         parse_embedded( p, cpu_or_16bit );
+                        parse_embedded( p, cpu_xor_16bit );
                         parse_embedded( p, cpu_not_32bit );
                         parse_embedded( p, cpu_and_32bit );
                         parse_embedded( p, cpu_or_32bit );
+                        parse_embedded( p, cpu_xor_32bit );
                         parse_embedded( p, cpu_math_add_16bit );
                         parse_embedded( p, cpu_math_add_16bit_with_16bit );
                         parse_embedded( p, cpu_math_add_16bit_with_8bit );
@@ -6492,12 +6501,15 @@ int main( int _argc, char *_argv[] ) {
         stats_embedded( cpu_not_8bit );
         stats_embedded( cpu_and_8bit );
         stats_embedded( cpu_or_8bit );
+        stats_embedded( cpu_xor_8bit );
         stats_embedded( cpu_not_16bit );
         stats_embedded( cpu_and_16bit );
         stats_embedded( cpu_or_16bit );
+        stats_embedded( cpu_xor_16bit );
         stats_embedded( cpu_not_32bit );
         stats_embedded( cpu_and_32bit );
         stats_embedded( cpu_or_32bit );
+        stats_embedded( cpu_xor_32bit );
         stats_embedded( cpu_math_add_16bit );
         stats_embedded( cpu_math_add_16bit_with_16bit );
         stats_embedded( cpu_math_add_16bit_with_8bit );
