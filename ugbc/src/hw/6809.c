@@ -2862,6 +2862,56 @@ void cpu6809_xor_32bit( Environment * _environment, char * _left, char * _right,
 
 }
 
+void cpu6809_swap_8bit( Environment * _environment, char * _left, char * _right ) {
+
+    inline( cpu_swap_8bit )
+
+        MAKE_LABEL
+
+        outline1("LDA %s", _right );
+        outline1("LDB %s", _left );
+        outline1("STA %s", _left );
+        outline1("STB %s", _right );
+
+    no_embedded( cpu_swap_8bit )
+
+}
+
+void cpu6809_swap_16bit( Environment * _environment, char * _left, char * _right ) {
+
+    inline( cpu_swap_16bit )
+
+        MAKE_LABEL
+
+        outline1("LDD %s", _right );
+        outline1("LDU %s", _left );
+        outline1("STD %s", _left );
+        outline1("STU %s", _right );
+
+    no_embedded( cpu_swap_16bit )
+
+}
+
+void cpu6809_swap_32bit( Environment * _environment, char * _left, char * _right  ) {
+
+    inline( cpu_swap_32bit )
+
+        MAKE_LABEL
+
+        outline1("LDD %s", _right );
+        outline1("LDU %s", _left );
+        outline1("STD %s", _left );
+        outline1("STU %s", _right );
+
+        outline1("LDD %s+2", _right );
+        outline1("LDU %s+2", _left );
+        outline1("STD %s+2", _left );
+        outline1("STU %s+2", _right );
+
+    no_embedded( cpu_swap_32bit )
+
+}
+
 void cpu6809_logical_not_8bit( Environment * _environment, char * _value, char * _result ) {
 
     inline( cpu_logical_not_8bit )

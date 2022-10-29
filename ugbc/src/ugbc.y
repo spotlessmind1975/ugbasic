@@ -3937,6 +3937,12 @@ add_definition :
     }
     ;
 
+swap_definition :
+    Identifier OP_COMMA Identifier {
+        variable_swap( _environment, $1, $3 );
+    }
+    ;
+
 mul_definition :
     Identifier OP_COMMA expr {
         variable_move( _environment, variable_mul( _environment, $1, $3 )->name, $1 );
@@ -5225,6 +5231,7 @@ statement2:
   | NOP {
       outline0( "NOP" );
   }
+  | SWAP swap_definition
   | PRINT print_definition
   | PRINT BUFFER print_buffer_definition
   | PRINT BUFFER RAW print_buffer_raw_definition
@@ -6268,6 +6275,7 @@ int main( int _argc, char *_argv[] ) {
                         parse_embedded( p, cpu_not_8bit );
                         parse_embedded( p, cpu_and_8bit );
                         parse_embedded( p, cpu_or_8bit );
+                        parse_embedded( p, cpu_swap_8bit );
                         parse_embedded( p, cpu_not_16bit );
                         parse_embedded( p, cpu_and_16bit );
                         parse_embedded( p, cpu_or_16bit );
@@ -6275,11 +6283,13 @@ int main( int _argc, char *_argv[] ) {
                         parse_embedded( p, cpu_not_16bit );
                         parse_embedded( p, cpu_and_16bit );
                         parse_embedded( p, cpu_or_16bit );
+                        parse_embedded( p, cpu_swap_16bit );
                         parse_embedded( p, cpu_xor_16bit );
                         parse_embedded( p, cpu_not_32bit );
                         parse_embedded( p, cpu_and_32bit );
                         parse_embedded( p, cpu_or_32bit );
                         parse_embedded( p, cpu_xor_32bit );
+                        parse_embedded( p, cpu_swap_32bit );
                         parse_embedded( p, cpu_math_add_16bit );
                         parse_embedded( p, cpu_math_add_16bit_with_16bit );
                         parse_embedded( p, cpu_math_add_16bit_with_8bit );
@@ -6488,14 +6498,17 @@ int main( int _argc, char *_argv[] ) {
         stats_embedded( cpu_and_8bit );
         stats_embedded( cpu_or_8bit );
         stats_embedded( cpu_xor_8bit );
+        stats_embedded( cpu_swap_8bit );
         stats_embedded( cpu_not_16bit );
         stats_embedded( cpu_and_16bit );
+        stats_embedded( cpu_swap_16bit );
         stats_embedded( cpu_or_16bit );
         stats_embedded( cpu_xor_16bit );
         stats_embedded( cpu_not_32bit );
         stats_embedded( cpu_and_32bit );
         stats_embedded( cpu_or_32bit );
         stats_embedded( cpu_xor_32bit );
+        stats_embedded( cpu_swap_32bit );
         stats_embedded( cpu_math_add_16bit );
         stats_embedded( cpu_math_add_16bit_with_16bit );
         stats_embedded( cpu_math_add_16bit_with_8bit );

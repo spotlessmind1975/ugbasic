@@ -3456,6 +3456,85 @@ void cpu6502_xor_32bit( Environment * _environment, char * _left, char * _right,
 
 }
 
+void cpu6502_swap_8bit( Environment * _environment, char * _left, char * _right ) {
+
+    MAKE_LABEL
+
+    inline( cpu_swap_8bit )
+
+        outline1("LDA %s", _left );
+        outline0("PHA" );
+        outline1("LDA %s", _right );
+        outline1("STA %s", _left );
+        outline0("PLA" );
+        outline1("STA %s", _right);
+
+    no_embedded( cpu_swap_8bit )
+
+}
+
+void cpu6502_swap_16bit( Environment * _environment, char * _left, char * _right ) {
+
+    MAKE_LABEL
+
+    inline( cpu_swap_16bit )
+
+        outline1("LDA %s", _left );
+        outline0("PHA" );
+        outline1("LDA %s", _right );
+        outline1("STA %s", _left );
+        outline0("PLA" );
+        outline1("STA %s", _right);
+
+        outline1("LDA %s+1", _left );
+        outline0("PHA" );
+        outline1("LDA %s+1", _right );
+        outline1("STA %s+1", _left );
+        outline0("PLA" );
+        outline1("STA %s+1", _right);
+
+    no_embedded( cpu_swap_16bit )
+
+}
+
+void cpu6502_swap_32bit( Environment * _environment, char * _left, char * _right ) {
+
+    MAKE_LABEL
+
+    inline( cpu_swap_32bit )
+
+        outline1("LDA %s", _left );
+        outline0("PHA" );
+        outline1("LDA %s", _right );
+        outline1("STA %s", _left );
+        outline0("PLA" );
+        outline1("STA %s", _right);
+
+        outline1("LDA %s+1", _left );
+        outline0("PHA" );
+        outline1("LDA %s+1", _right );
+        outline1("STA %s+1", _left );
+        outline0("PLA" );
+        outline1("STA %s+1", _right);
+
+        outline1("LDA %s+2", _left );
+        outline0("PHA" );
+        outline1("LDA %s+2", _right );
+        outline1("STA %s+2", _left );
+        outline0("PLA" );
+        outline1("STA %s+2", _right);
+
+        outline1("LDA %s+3", _left );
+        outline0("PHA" );
+        outline1("LDA %s+3", _right );
+        outline1("STA %s+3", _left );
+        outline0("PLA" );
+        outline1("STA %s+3", _right);
+
+    no_embedded( cpu_swap_32bit )
+
+}
+
 void cpu6502_logical_not_8bit( Environment * _environment, char * _value, char * _result ) {
 
     MAKE_LABEL

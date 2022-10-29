@@ -81,14 +81,17 @@ void z80_and_8bit( Environment * _environment, char * _left, char * _right, char
 void z80_or_8bit( Environment * _environment, char * _left, char * _right, char * _result );
 void z80_xor_8bit( Environment * _environment, char * _left, char * _right, char * _result );
 void z80_not_8bit( Environment * _environment, char * _value, char * _result );
+void z80_swap_8bit( Environment * _environment, char * _left, char * _right );
 void z80_and_16bit( Environment * _environment, char * _left, char * _right, char * _result );
 void z80_or_16bit( Environment * _environment, char * _left, char * _right, char * _result );
 void z80_xor_16bit( Environment * _environment, char * _left, char * _right, char * _result );
 void z80_not_16bit( Environment * _environment, char * _value, char * _result );
+void z80_swap_16bit( Environment * _environment, char * _left, char * _right );
 void z80_and_32bit( Environment * _environment, char * _left, char * _right, char * _result );
 void z80_or_32bit( Environment * _environment, char * _left, char * _right, char * _result );
 void z80_xor_32bit( Environment * _environment, char * _left, char * _right, char * _result );
 void z80_not_32bit( Environment * _environment, char * _value, char * _result );
+void z80_swap_32bit( Environment * _environment, char * _left, char * _right );
 void z80_math_add_16bit( Environment * _environment, char *_source, char *_destination,  char *_name );
 void z80_math_add_16bit_const( Environment * _environment, char *_source, int _destination,  char *_name );
 void z80_math_add_16bit_with_16bit( Environment * _environment, char *_source, char *_destination,  char *_name );
@@ -259,14 +262,17 @@ void z80_msc1_uncompress_indirect_indirect( Environment * _environment, char * _
 #define cpu_or_8bit( _environment, _left, _right,  _result ) z80_or_8bit( _environment, _left, _right,  _result )
 #define cpu_xor_8bit( _environment, _left, _right,  _result ) z80_xor_8bit( _environment, _left, _right,  _result )
 #define cpu_not_8bit( _environment, _value,  _result ) z80_not_8bit( _environment, _value,  _result )
+#define cpu_swap_8bit( _environment, _value,  _result ) z80_swap_8bit( _environment, _value,  _result )
 #define cpu_and_16bit( _environment, _left, _right,  _result ) z80_and_16bit( _environment, _left, _right,  _result )
 #define cpu_or_16bit( _environment, _left, _right,  _result ) z80_or_16bit( _environment, _left, _right,  _result )
 #define cpu_xor_16bit( _environment, _left, _right,  _result ) z80_xor_16bit( _environment, _left, _right,  _result )
 #define cpu_not_16bit( _environment, _value,  _result ) z80_not_16bit( _environment, _value,  _result )
+#define cpu_swap_16bit( _environment, _value,  _result ) z80_swap_16bit( _environment, _value,  _result )
 #define cpu_and_32bit( _environment, _left, _right,  _result ) z80_and_32bit( _environment, _left, _right,  _result )
 #define cpu_or_32bit( _environment, _left, _right,  _result ) z80_or_32bit( _environment, _left, _right,  _result )
 #define cpu_xor_32bit( _environment, _left, _right,  _result ) z80_xor_32bit( _environment, _left, _right,  _result )
 #define cpu_not_32bit( _environment, _value,  _result ) z80_not_32bit( _environment, _value,  _result )
+#define cpu_swap_32bit( _environment, _value,  _result ) z80_swap_32bit( _environment, _value,  _result )
 #define cpu_math_add_16bit( _environment, _source, _destination,  _name  ) z80_math_add_16bit( _environment, _source, _destination,  _name  )
 #define cpu_math_add_16bit_const( _environment, _source, _destination,  _name  ) z80_math_add_16bit_const( _environment, _source, _destination,  _name  )
 #define cpu_math_add_16bit_with_16bit( _environment, _source, _destination,  _name  ) z80_math_add_16bit_with_16bit( _environment, _source, _destination,  _name  )
