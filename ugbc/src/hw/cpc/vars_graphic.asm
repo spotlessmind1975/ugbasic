@@ -65,6 +65,213 @@ PLOTVBASE:
 PALETTE:    
     DB $00, $00, $00, $00,  $00, $00, $00, $00
     DB $00, $00, $00, $00,  $00, $00, $00, $00
+PALETTELIMIT:
+    DB $00
+PALETTEUNUSED:
+    DB $01
+
+CPCSELECTPALETTE:
+    PUSH BC
+    PUSH HL
+    PUSH AF
+    PUSH DE
+    LD HL, PALETTE
+    LD A, 0
+    LD C, A
+    LD A, (_PEN)
+    LD B, A
+    INC C
+    INC HL
+CPCSELECTPALETTEL1:
+    LD A, (HL)
+    CP B
+    JR Z, CPCSELECTPALETTEL2
+    INC HL
+    INC C
+    LD A, (PALETTELIMIT)
+    LD E, A
+    LD A, C
+    CP E
+    JR NZ, CPCSELECTPALETTEL1
+    
+    PUSH BC
+
+    LD A, (PALETTELIMIT)
+    LD B, A
+    LD A, (PALETTEUNUSED)
+    INC A
+    CP B
+    JR C, CPCSELECTPALETTEC
+    LD A, 1
+CPCSELECTPALETTEC:
+    LD (PALETTEUNUSED), A
+    POP BC
+    LD A, (PALETTEUNUSED)
+    LD HL, PALETTE
+    LD E, A
+    LD A, 0
+    LD D, A
+    ADD HL, DE
+
+    LD A, B
+    LD (HL), A
+    LD A, (PALETTEUNUSED)
+    LD C, A
+CPCSELECTPALETTEL2:
+    POP DE
+    POP AF
+    POP HL
+    LD A, C
+    POP BC
+    RET
+
+; CPCVIDEOMUL8:
+;     PUSH HL
+;     PUSH DE
+;     PUSH BC
+;     LD E, A
+;     LD A, B
+;     LD H, A
+;     LD D,0
+;     LD L,D
+;     LD B,8
+; CPCVIDEOMUL8L1:
+;     ADD HL, HL
+;     JR NC, CPCVIDEOMUL8L1A
+;     ADD HL, DE
+; CPCVIDEOMUL8L1A:
+;     DJNZ CPCVIDEOMUL8L1
+;     LD A, L
+;     POP BC
+;     POP DE
+;     POP HL
+;     RET
+
+CPCVIDEOMUL82:
+    PUSH HL
+    PUSH BC
+    PUSH AF
+    LD A, B
+    AND $2
+    CP $0
+    JR Z, CPCVIDEOMUL82L0
+CPCVIDEOMUL82L1:
+    POP AF
+    LD L, A
+    JP CPCVIDEOMUL82H
+CPCVIDEOMUL82L0:
+    LD A, 0
+    LD L, A
+    POP AF
+CPCVIDEOMUL82H:    
+    PUSH AF
+    LD A, B
+    AND $1
+    CP $0
+    JR Z, CPCVIDEOMUL82H0
+CPCVIDEOMUL82H1:
+    POP AF
+    SLA A
+    SLA A
+    SLA A
+    SLA A
+    LD H, A
+    JP CPCVIDEOMUL82E
+CPCVIDEOMUL82H0:
+    LD A, 0
+    LD H, A
+    POP AF
+CPCVIDEOMUL82E:
+    POP BC
+    LD A, H
+    OR L
+    POP HL
+    RET
+
+CPCVIDEOMUL84:
+    PUSH HL
+    PUSH BC
+    PUSH AF
+    LD A, B
+    AND $1
+    CP $0
+    JR Z, CPCVIDEOMUL84L0
+CPCVIDEOMUL84L1:
+    POP AF
+    PUSH AF
+    AND $3
+    LD L, A
+    POP AF
+    JP CPCVIDEOMUL84H
+CPCVIDEOMUL84L0:
+    LD A, 0
+    LD L, A
+    POP AF
+CPCVIDEOMUL84H:    
+    PUSH AF
+    LD A, B
+    AND $2
+    CP $0
+    JR Z, CPCVIDEOMUL84H0
+CPCVIDEOMUL84H1:
+    POP AF
+    PUSH AF
+    SLA A
+    SLA A
+    AND $0C
+    OR L
+    LD L, A
+    POP AF
+    JP CPCVIDEOMUL84I
+CPCVIDEOMUL84H0:
+    POP AF
+CPCVIDEOMUL84I:
+    PUSH AF
+    LD A, B
+    AND $4
+    CP $0
+    JR Z, CPCVIDEOMUL84I0
+CPCVIDEOMUL84I1:
+    POP AF
+    PUSH AF
+    SLA A
+    SLA A
+    SLA A
+    SLA A
+    AND $30
+    OR L
+    LD L, A
+    POP AF
+    JP CPCVIDEOMUL84J
+CPCVIDEOMUL84I0:
+    POP AF
+CPCVIDEOMUL84J:
+    PUSH AF
+    LD A, B
+    AND $8
+    CP $0
+    JR Z, CPCVIDEOMUL84J0
+CPCVIDEOMUL84J1:
+    POP AF
+    PUSH AF
+    SLA A
+    SLA A
+    SLA A
+    SLA A
+    SLA A
+    SLA A
+    AND $C0
+    OR L
+    LD L, A
+    POP AF
+    JP CPCVIDEOMUL84K
+CPCVIDEOMUL84J0:
+    POP AF
+CPCVIDEOMUL84K:
+    POP BC
+    LD A, L
+    POP HL
+    RET
 
 CPCVIDEOPOS:
 

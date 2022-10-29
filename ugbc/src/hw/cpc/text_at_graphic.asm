@@ -344,28 +344,33 @@ TEXTATBMSP0:
 
     LD DE, (COPYOFTEXTADDRESS)
 
+    ; We draw the text using a different approach,
+    ; based on the current graphic mode.
+
     LD A, (CURRENTMODE)
     CP 0
-    JP Z, TEXTATFONT0L1
+    JP Z, TEXTATFONT0L1X
     CP 1
-    JP Z, TEXTATFONT1L1
+    JP Z, TEXTATFONT1L1X
     CP 2
-    JP Z, TEXTATFONT2L1
+    JP Z, TEXTATFONT2L1X
     CP 3
-    JP Z, TEXTATFONT0L1
+    JP Z, TEXTATFONT0L1X
     JP TEXTATFONT2L1
 
 ; Mode 0, 160×200, 16 colors (each byte of video memory represents 2 pixels):
 ; bit 7	bit 6	bit 5	bit 4	bit 3	bit 2	bit 1	bit 0
 ; pixel 0 (bit 0)	pixel 1 (bit 0)	pixel 0 (bit 2)	pixel 1 (bit 2)	pixel 0 (bit 1)	pixel 1 (bit 1)	pixel 0 (bit 3)	pixel 1 (bit 3)
 
+TEXTATFONT0L1X:
+
+    CALL CPCSELECTPALETTE
+    LD B, A
+
 TEXTATFONT0L1:
 
     PUSH DE
 
-    PUSH DE
-    LD A, 0
-    LD D, A
     LD A, (HL)
     SRL A
     SRL A
@@ -373,67 +378,31 @@ TEXTATFONT0L1:
     SRL A
     SRL A
     SRL A
-    LD E, A
-    PUSH HL
-    LD HL, CPCVIDEOBITMASK1
-    ADD HL, DE
-    LD A, (HL)
-    POP HL
-    POP DE
+    CALL CPCVIDEOMUL84
     LD (DE), A
     
     INC DE
 
-    PUSH DE
-    LD A, 0
-    LD D, A
     LD A, (HL)
     SRL A
     SRL A
     SRL A
     SRL A
-    AND $03
-    LD E, A
-    PUSH HL
-    LD HL, CPCVIDEOBITMASK1
-    ADD HL, DE
-    LD A, (HL)
-    POP HL
-    POP DE
+    CALL CPCVIDEOMUL84
     LD (DE), A
 
     INC DE
 
-    PUSH DE
-    LD A, 0
-    LD D, A
     LD A, (HL)
     SRL A
     SRL A
-    AND $03
-    LD E, A
-    PUSH HL
-    LD HL, CPCVIDEOBITMASK1
-    ADD HL, DE
-    LD A, (HL)
-    POP HL
-    POP DE
+    CALL CPCVIDEOMUL84
     LD (DE), A
 
     INC DE
 
-    PUSH DE
-    LD A, 0
-    LD D, A
     LD A, (HL)
-    AND $03
-    LD E, A
-    PUSH HL
-    LD HL, CPCVIDEOBITMASK1
-    ADD HL, DE
-    LD A, (HL)
-    POP HL
-    POP DE
+    CALL CPCVIDEOMUL84
     LD (DE), A
 
     POP DE
@@ -447,7 +416,31 @@ TEXTATFONT0L1:
 
     INC HL
     DEC C
-    JR NZ, TEXTATFONT0L1
+    JP NZ, TEXTATFONT0L1
+
+    LD A, B
+    LD H, A
+
+    POP BC
+    POP DE
+
+    LD A,(TEXTWW)
+    AND $2
+    JP Z, TEXTATBMCNOPEN
+
+    PUSH BC
+    PUSH AF
+
+    LD BC, $7F00
+    LD A, H
+    LD C, A
+    OUT (C), C
+    LD A, (_PEN)
+    OR A, $40
+    OUT (C), A
+
+    POP AF
+    POP BC
 
     JP TEXTATFONTLE
 
@@ -455,45 +448,30 @@ TEXTATFONT0L1:
 ; bit 7	bit 6	bit 5	bit 4	bit 3	bit 2	bit 1	bit 0
 ; pixel 0 (bit 1)	pixel 1 (bit 1)	pixel 2 (bit 1)	pixel 3 (bit 1)	pixel 0 (bit 0)	pixel 1(bit 0)	pixel 2 (bit 0)	pixel 3 (bit 0)
 
+TEXTATFONT1L1X:
+
+    CALL CPCSELECTPALETTE
+    LD B, A
+
 TEXTATFONT1L1:
 
-    PUSH DE
-
-    PUSH DE
-    LD A, 0
-    LD D, A
     LD A, (HL)
     SRL A
     SRL A
     SRL A
     SRL A
-    LD E, A
-    PUSH HL
-    LD HL, CPCVIDEOBITMASK1
-    ADD HL, DE
-    LD A, (HL)
-    POP HL
-    POP DE
+    CALL CPCVIDEOMUL82
     LD (DE), A
 
     INC DE
 
-    PUSH DE
-    LD A, 0
-    LD D, A
     LD A, (HL)
     AND $0F
-    LD E, A
-    PUSH HL
-    LD HL, CPCVIDEOBITMASK1
-    ADD HL, DE
-    LD A, (HL)
-    POP HL
-    POP DE
+    CALL CPCVIDEOMUL82
     LD (DE), A
 
-    POP DE
-
+    DEC DE
+    
     PUSH HL
     LD HL, DE
     LD DE, $800
@@ -505,7 +483,36 @@ TEXTATFONT1L1:
     DEC C
     JR NZ, TEXTATFONT1L1
 
+    LD A, B
+    LD H, A
+
+    POP BC
+    POP DE
+
+    LD A,(TEXTWW)
+    AND $2
+    JR Z, TEXTATBMCNOPEN
+
+    PUSH BC
+    PUSH AF
+
+    LD BC, $7F00
+    LD A, H
+    LD C, A
+    OUT (C), C
+    LD A, (_PEN)
+    OR A, $40
+    OUT (C), A
+
+    POP AF
+    POP BC
+
     JP TEXTATFONTLE
+
+TEXTATFONT2L1X:
+
+    CALL CPCSELECTPALETTE
+    LD B, A
 
 TEXTATFONT2L1:
 
@@ -524,7 +531,9 @@ TEXTATFONT2L1:
     DEC C
     JR NZ, TEXTATFONT2L1
 
-TEXTATFONTLE:
+    LD A, B
+    LD H, A
+    
     POP BC
     POP DE
 
@@ -537,12 +546,14 @@ TEXTATFONTLE:
 
     LD BC, $7F01
     OUT (C), C
-    LD A, (_PEN)
+    LD A, H
     OR A, $40
     OUT (C), A
 
     POP AF
     POP BC
+
+TEXTATFONTLE:
 
 TEXTATBMCNOPEN:
     JP TEXTATBMINCX
