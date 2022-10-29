@@ -2619,6 +2619,93 @@ void z80_xor_32bit( Environment * _environment, char * _left, char * _right, cha
 
 }
 
+void z80_swap_8bit( Environment * _environment, char * _left, char * _right ) {
+
+    MAKE_LABEL
+
+    outline1("LD HL, %s", _left );
+    outline1("LD DE, %s", _right );
+    outline0("LD A, (HL)" );
+    outline0("PUSH AF" );
+    outline0("LD A, (DE)" );
+    outline0("LD (HL), A" );
+    outline0("POP AF" );
+    outline0("LD (DE), A" );
+
+}
+
+void z80_swap_16bit( Environment * _environment, char * _left, char * _right ) {
+
+    MAKE_LABEL
+
+    outline1("LD HL, %s", _left );
+    outline1("LD DE, %s", _right );
+
+    outline0("LD A, (HL)" );
+    outline0("PUSH AF" );
+    outline0("LD A, (DE)" );
+    outline0("LD (HL), A" );
+    outline0("POP AF" );
+    outline0("LD (DE), A" );
+
+    outline0("INC HL" );
+    outline0("INC DE" );
+
+    outline0("LD A, (HL)" );
+    outline0("PUSH AF" );
+    outline0("LD A, (DE)" );
+    outline0("LD (HL), A" );
+    outline0("POP AF" );
+    outline0("LD (DE), A" );
+
+}
+
+void z80_swap_32bit( Environment * _environment, char * _left, char * _right ) {
+
+    MAKE_LABEL
+
+    outline1("LD HL, %s", _left );
+    outline1("LD DE, %s", _right );
+
+    outline0("LD A, (HL)" );
+    outline0("PUSH AF" );
+    outline0("LD A, (DE)" );
+    outline0("LD (HL), A" );
+    outline0("POP AF" );
+    outline0("LD (DE), A" );
+
+    outline0("INC HL" );
+    outline0("INC DE" );
+
+    outline0("LD A, (HL)" );
+    outline0("PUSH AF" );
+    outline0("LD A, (DE)" );
+    outline0("LD (HL), A" );
+    outline0("POP AF" );
+    outline0("LD (DE), A" );
+
+    outline0("INC HL" );
+    outline0("INC DE" );
+
+    outline0("LD A, (HL)" );
+    outline0("PUSH AF" );
+    outline0("LD A, (DE)" );
+    outline0("LD (HL), A" );
+    outline0("POP AF" );
+    outline0("LD (DE), A" );
+
+    outline0("INC HL" );
+    outline0("INC DE" );
+
+    outline0("LD A, (HL)" );
+    outline0("PUSH AF" );
+    outline0("LD A, (DE)" );
+    outline0("LD (HL), A" );
+    outline0("POP AF" );
+    outline0("LD (DE), A" );
+    
+}
+
 void z80_logical_not_8bit( Environment * _environment, char * _value, char * _result ) {
 
     outline1("LD A, (%s)", _value );

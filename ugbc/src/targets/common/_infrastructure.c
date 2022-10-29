@@ -2145,6 +2145,38 @@ void variable_sub_inplace( Environment * _environment, char * _source, char * _d
 }
 
 /**
+ * @brief Swap values of two variables
+ * 
+ * This function allows you to swap the value of two variables. Note 
+ * that none variable must pre-exist before the operation.
+ * 
+ * @param _environment Current calling environment
+ * @param _source Source variable's name
+ * @param _destination Destination variable's name
+ */
+void variable_swap( Environment * _environment, char * _source, char * _dest ) {
+    Variable * source = variable_retrieve_or_define( _environment, _source, _environment->defaultVariableType, 0 );
+    Variable * target = variable_retrieve_or_define( _environment, _dest, _environment->defaultVariableType, 0 );
+    if ( VT_BITWIDTH( source->type ) != VT_BITWIDTH( target->type ) ) {
+        CRITICAL_SWAP_DIFFERENT_BITWIDTH(target->name);
+    }
+    switch( VT_BITWIDTH( source->type ) ) {
+        case 32:
+            cpu_swap_32bit( _environment, source->realName, target->realName );
+            break;
+        case 16:
+            cpu_swap_16bit( _environment, source->realName, target->realName );
+            break;
+        case 8:
+            cpu_swap_8bit( _environment, source->realName, target->realName );
+            break;
+        case 0:
+            CRITICAL_SUB_INPLACE_UNSUPPORTED( _source, DATATYPE_AS_STRING[source->type]);
+     }
+
+}
+
+/**
  * @brief Calculate the complement of a variable
  * 
  * 
