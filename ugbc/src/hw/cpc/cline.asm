@@ -36,6 +36,77 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 CLINE:
+    PUSH AF
 
-CLINEDONE:
+    LD HL, PLOTVBASE
+    LD A, (YCURSYS)
+    SLA A
+    SLA A
+    SLA A
+    LD E, A
+    LD D, 0
+    ADD HL, DE
+    ADD HL, DE
+
+    POP AF
+
+    CP $0
+    JP NZ, CLINEC
+
+    LD A, $50
+    SUB (XCURSYS)
+CLINEC:
+    LD C, A
+    LD A, 0
+    LD B, A
+
+CLINECL:
+
+    LD A, 8
+
+CLINECL2:
+
+    PUSH AF
+    PUSH HL
+    PUSH BC
+
+    LD A, (HL)
+    LD E, A
+    INC HL
+    LD A, (HL)
+    LD D, A
+    INC HL
+
+    LD HL, DE
+
+    PUSH BC
+
+    LD A, (XCURSYS)
+    LD C, A
+    LD A, 0
+    LD B, A
+
+    ADD HL, BC
+    LD DE, HL
+
+    INC HL
+
+    LD A, 0
+    LD (HL),A
+
+    POP BC
+    POP BC
+    PUSH BC
+    LDIR
+    POP BC
+
+    POP HL
+    POP AF
+
+    INC HL
+    INC HL
+    DEC A
+    JP NZ, CLINECL2
+
     RET
+

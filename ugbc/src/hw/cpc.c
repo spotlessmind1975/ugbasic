@@ -936,6 +936,17 @@ void cpc_back( Environment * _environment ) {
 
 void cpc_cline( Environment * _environment, char * _characters ) {
 
+    deploy( cpcvars, src_hw_cpc_vars_asm);
+    deploy( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
+    deploy( textCline, src_hw_cpc_cline_asm );
+
+    if ( _characters ) {
+        outline1("LD A, (%s)", _characters);
+    } else {
+        outline0("LD A, 0");
+    }
+    outline0("CALL CLINE");
+
 }
 
 /**
