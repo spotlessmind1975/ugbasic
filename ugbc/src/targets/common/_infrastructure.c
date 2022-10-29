@@ -1025,6 +1025,10 @@ Variable * variable_store( Environment * _environment, char * _destination, unsi
 
 #define UNESCAPE_COLOR( c, d ) \
             else if ( strcmp_nocase( word, c ) == 0 ) { \
+                            int c2 = COLOR_##d;\
+                            if ( ! c2 ) { \
+                                c2 = 0xff; \
+                            } \
                             if ( _printing ) { \
                                 *q = '*'; \
                             } else { \
@@ -1034,7 +1038,7 @@ Variable * variable_store( Environment * _environment, char * _destination, unsi
                             if ( _printing ) { \
                                 *q = '*'; \
                             } else { \
-                                *q = COLOR_##d; \
+                                *q = c2; \
                             } \
                             ++q; \
                     }
