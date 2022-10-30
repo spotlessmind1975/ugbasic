@@ -140,8 +140,8 @@ SCANCODEL1:
     PUSH BC
     PUSH AF
 SCANCODEVALUE:
-    LD B, A
+    LD IXH, A
     POP AF
     POP BC
-    LD A, B
+    LD A, IXH
     RET
