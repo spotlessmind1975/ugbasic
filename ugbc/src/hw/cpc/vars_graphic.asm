@@ -65,8 +65,6 @@ PLOTVBASE:
 PALETTE:    
     DB $00, $00, $00, $00,  $00, $00, $00, $00
     DB $00, $00, $00, $00,  $00, $00, $00, $00
-PALETTELIMIT:
-    DB $00
 PALETTEUNUSED:
     DB $01
 

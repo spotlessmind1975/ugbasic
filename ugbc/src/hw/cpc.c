@@ -93,7 +93,8 @@ void cpc_inkey( Environment * _environment, char * _pressed, char * _key ) {
     outhead1("%skey:", label);
     outline0("LD A, 1");
     outline1("LD (%s), A", _pressed);
-    outline1("LD (%s), DE", _key);
+    outline0("LD A, E");
+    outline1("LD (%s), A", _key);
     outhead1("%sdone:", label);
    
 }
@@ -784,6 +785,8 @@ void cpc_initialization( Environment * _environment ) {
     variable_global( _environment, "FONTWIDTH" );
     variable_import( _environment, "FONTHEIGHT", VT_BYTE, 8 );
     variable_global( _environment, "FONTHEIGHT" );
+    variable_import( _environment, "PALETTELIMIT", VT_BYTE, 16 );
+    variable_global( _environment, "PALETTELIMIT" );
 
     SCREEN_MODE_DEFINE( BITMAP_MODE_GRAPHIC0, 1, 160, 200, 16, 8, 8, "Graphic Mode 0" );
     SCREEN_MODE_DEFINE( BITMAP_MODE_GRAPHIC1, 1, 320, 200, 4, 8, 8, "Graphic Mode 1" );
