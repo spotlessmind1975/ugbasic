@@ -66,6 +66,15 @@ PLOTCLIP2:
     JP PLOTP
 PLOTCLIP3:
 PLOTCLIP3B:
+    LD A, (CLIPX2+1)
+    LD B, A
+    LD A, IXL
+    CP B
+    JR C, PLOTCLIP4
+    JR Z, PLOTCLIP32
+    JP PLOTP
+PLOTCLIP32:
+PLOTCLIP32B:
     LD A, (CLIPX2)
     LD B, A
     LD A, E
@@ -75,6 +84,15 @@ PLOTCLIP3B:
     JP PLOTP
 PLOTCLIP4:
 PLOTCLIP4B:
+    LD A, (CLIPX1+1)
+    LD B, A
+    LD A, IXL
+    CP B
+    JR NC, PLOTCLIP5
+    JR Z, PLOTCLIP42
+    JP PLOTP
+PLOTCLIP42:
+PLOTCLIP42B:
     LD A, (CLIPX1)
     LD B, A
     LD A, E
@@ -94,38 +112,236 @@ PLOTMODE:
 
     POP AF
     CP 0
-    JR Z, PLOTE                  ;if = 0 then branch to clear the point
+    JP Z, PLOTE                  ;if = 0 then branch to clear the point
     CP 1
-    JR Z, PLOTD                  ;if = 1 then branch to draw the point
+    JP Z, PLOTD                  ;if = 1 then branch to draw the point
     CP 2
-    JR Z, PLOTG                  ;if = 2 then branch to get the point (0/1)
+    JP Z, PLOTG                  ;if = 2 then branch to get the point (0/1)
     CP 3
-    JR Z, PLOTC                  ;if = 3 then branch to get the color index (0...15)
+    JP Z, PLOTC                  ;if = 3 then branch to get the color index (0...15)
     JP PLOTP2
 
 PLOTD:
-    ;---------
-    ;set point
-    ;---------
+
+    CALL CPCSELECTPALETTE
+    LD IXH, A
+    LD B, A
+
+    LD A, (CURRENTMODE)
+    CP 0
+    JP Z, PLOTD0
+    CP 1
+    JP Z, PLOTD1
+    CP 2
+    JP Z, PLOTD2
+    CP 3
+    JP Z, PLOTD3
+    RET
+
+PLOTD0:
+    LD A, E
+    AND $01
+    CP 0
+    JR Z, PLOTD00
+    LD A, $55
+    JR PLOTD00X
+PLOTD00:
+    LD A, $aa
+PLOTD00X:
+
+    LD DE, HL
+
+    ; H = bitmask of pixels
+    ; B = color index
+    ; L = masking against existing pixels / existing pixels 
+    ; DE = starting memory location on screen
+    LD H, A
+
+    ; Calculate mask for this pixel component
+    LD A, H
+    ; Calculate color components for mask if color was
+    ; all 1's ($ff)
+    PUSH BC
+    LD B, $F
+    CALL CPCVIDEOMUL84
+
+    ; Negate it for masking
+    XOR $FF
+    LD L, A
+
+    POP BC
+
+    ; Masquerade existing pixels
+    LD A, (DE)
+    AND L
+    LD L, A
+
+    ; Calculate new pixels
+    LD A, H
+    CALL CPCVIDEOMUL84
+
+    ; Sum up old and new pixels.
+    OR L
+
+    ; Draw them
+    LD (DE),A
+    
+    LD BC, $7F00
+    LD A, IXH
+    LD C, A
+    OUT (C), C
     LD A, (_PEN)
-    CALL CPCVIDEOCOL
-    LD (HL), A
-    JMP PLOTP2
+    OR A, $40
+    OUT (C), A
+
+    JP PLOTDONE
+
+
+PLOTD1:
+    PUSH HL
+    PUSH DE
+    LD HL, CPCVIDEOBITMASK2
+    LD A, 0
+    LD D, A
+    LD A, E
+    AND $3
+    LD E, A
+    ADD HL, DE
+    LD A, (HL)
+    POP DE
+    POP HL
+
+    LD DE, HL
+
+    ; H = bitmask of pixels
+    ; B = color index
+    ; L = masking against existing pixels / existing pixels 
+    ; DE = starting memory location on screen
+    LD H, A
+
+    ; Calculate mask for this pixel component
+    LD A, H
+    ; Calculate color components for mask if color was
+    ; all 1's ($ff)
+    PUSH BC
+    LD B, $3
+    CALL CPCVIDEOMUL82
+
+    ; Negate it for masking
+    XOR $FF
+    LD L, A
+
+    POP BC
+
+    ; Masquerade existing pixels
+    LD A, (DE)
+    AND L
+    LD L, A
+
+    ; Calculate new pixels
+    LD A, H
+    CALL CPCVIDEOMUL82
+
+    ; Sum up old and new pixels.
+    OR L
+
+    ; Draw them
+    LD (DE),A
+    
+    LD BC, $7F00
+    LD A, IXH
+    LD C, A
+    OUT (C), C
+    LD A, (_PEN)
+    OR A, $40
+    OUT (C), A
+
+    JP PLOTDONE
+
+PLOTD2:
+    PUSH HL
+    PUSH DE
+    LD HL, CPCVIDEOBITMASK4
+    LD A, 0
+    LD D, A
+    LD A, E
+    AND $7
+    LD E, A
+    ADD HL, DE
+    LD A, (HL)
+    POP DE
+    POP HL
+
+    LD DE, HL
+
+    ; H = bitmask of pixels
+    ; B = color index
+    ; L = masking against existing pixels / existing pixels 
+    ; DE = starting memory location on screen
+    LD H, A
+
+    ; Calculate mask for this pixel component
+    LD A, H
+    ; Calculate color components for mask if color was
+    ; all 1's ($ff)
+    ; Negate it for masking
+    XOR $FF
+    LD L, A
+
+    ; Masquerade existing pixels
+    LD A, (DE)
+    AND L
+    LD L, A
+
+    ; Calculate new pixels
+    LD A, H
+
+    ; Sum up old and new pixels.
+    OR L
+
+    ; Draw them
+    LD (DE),A
+    
+    LD BC, $7F00
+    LD A, IXH
+    LD C, A
+    OUT (C), C
+    LD A, (_PEN)
+    OR A, $40
+    OUT (C), A
+
+    JP PLOTDONE
+
+PLOTD3:
+    JP PLOTDONE
 
     ;-----------
     ;erase point
     ;-----------
 PLOTE:                          ;handled same way as setting a point
-    LD A, (_PAPER)
-    CALL CPCVIDEOCOL
-    LD (HL), A
-    JMP PLOTP2
+    LD A, (CURRENTMODE)
+    CP 0
+    JR Z, PLOTE0
+    CP 1
+    JR Z, PLOTE1
+    CP 2
+    JR Z, PLOTE2
+    CP 3
+    JR Z, PLOTE3
+    RET
+
+PLOTE0:
+PLOTE1:
+PLOTE2:
+PLOTE3:
+    JP PLOTDONE
 
 PLOTG:      
 PLOTC:      
-    JMP PLOTP2
+    JP PLOTDONE
 
 PLOTP:
+    POP AF
 PLOTP2:
     JP PLOTDONE
 

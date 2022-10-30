@@ -63,8 +63,8 @@ PLOTVBASE:
     DW $C780, $CF80, $D780, $DF80, $E780, $EF80, $F780, $FF80
 
 PALETTE:    
-    DB $00, $00, $00, $00,  $00, $00, $00, $00
-    DB $00, $00, $00, $00,  $00, $00, $00, $00
+    DB $ff, $ff, $ff, $ff,  $ff, $ff, $ff, $ff
+    DB $ff, $ff, $ff, $ff,  $ff, $ff, $ff, $ff
 PALETTEUNUSED:
     DB $01
 
@@ -155,7 +155,10 @@ CPCVIDEOMUL82:
     JR Z, CPCVIDEOMUL82L0
 CPCVIDEOMUL82L1:
     POP AF
+    PUSH AF
+    AND $F
     LD L, A
+    POP AF
     JP CPCVIDEOMUL82H
 CPCVIDEOMUL82L0:
     LD A, 0
@@ -169,11 +172,10 @@ CPCVIDEOMUL82H:
     JR Z, CPCVIDEOMUL82H0
 CPCVIDEOMUL82H1:
     POP AF
-    SLA A
-    SLA A
-    SLA A
-    SLA A
+    PUSH AF
+    AND $F0
     LD H, A
+    POP AF
     JP CPCVIDEOMUL82E
 CPCVIDEOMUL82H0:
     LD A, 0
@@ -214,8 +216,6 @@ CPCVIDEOMUL84H:
 CPCVIDEOMUL84H1:
     POP AF
     PUSH AF
-    SLA A
-    SLA A
     AND $0C
     OR L
     LD L, A
@@ -232,10 +232,6 @@ CPCVIDEOMUL84I:
 CPCVIDEOMUL84I1:
     POP AF
     PUSH AF
-    SLA A
-    SLA A
-    SLA A
-    SLA A
     AND $30
     OR L
     LD L, A
@@ -252,12 +248,6 @@ CPCVIDEOMUL84J:
 CPCVIDEOMUL84J1:
     POP AF
     PUSH AF
-    SLA A
-    SLA A
-    SLA A
-    SLA A
-    SLA A
-    SLA A
     AND $C0
     OR L
     LD L, A
@@ -279,6 +269,7 @@ CPCVIDEOPOS:
 
     LD E, D
     LD D, 0
+    ADD HL, DE
     ADD HL, DE
 
     LD A, (HL)
@@ -309,97 +300,43 @@ CPCVIDEOPOS0:
     ADD HL, DE
     POP DE
     RET
+
 CPCVIDEOPOS1:
 CPCVIDEOPOS3:
     PUSH DE
-    SRL E
-    SRL E
-    LD A, 0
+    LD A, IXL
     LD D, A
+    SRL D
+    RR E
+    SRL D
+    RR E
     ADD HL, DE
     POP DE
     RET
+
 CPCVIDEOPOS2:
     PUSH DE
-    SRL E
-    SRL E
-    SRL E
-    LD A, 0
+    LD A, IXL
     LD D, A
+    SRL D
+    RR E
+    SRL D
+    RR E
+    SRL D
+    RR E
     ADD HL, DE
     POP DE
     RET
-
-CPCVIDEOCOL:
-    PUSH AF
-    LD A, (CURRENTMODE)
-    CP 0
-    JR Z, CPCVIDEOCOL0
-    CP 1
-    JR Z, CPCVIDEOCOL1
-    CP 2
-    JR Z, CPCVIDEOCOL2
-    CP 3
-    JR Z, CPCVIDEOCOL3
-    POP AF
-    RET
-
-CPCVIDEOCOL0:
-    LD A, E
-    AND $01
-    CP 0
-    JR Z, CPCVIDEOCOL0L2
-    LD B, A
-    POP AF
-CPCVIDEOCOL0L1:    
-    SRL A
-    SRL A
-    SRL A
-    SRL A
-    DEC B
-    JR NZ, CPCVIDEOCOL0L1
-    PUSH AF
-CPCVIDEOCOL0L2:
-    POP AF
-    RET    
-
-CPCVIDEOCOL1:
-CPCVIDEOCOL3:
-    LD A, E
-    AND $03
-    CP 0
-    JR Z, CPCVIDEOCOL1L2
-    LD B, A
-    POP AF
-CPCVIDEOCOL1L1:
-    SRL A
-    SRL A
-    DEC B
-    JR NZ, CPCVIDEOCOL1L1
-    PUSH AF
-CPCVIDEOCOL1L2:
-    POP AF
-    RET    
-
-CPCVIDEOCOL2:
-    LD A, E
-    AND $07
-    CP 0
-    JR Z, CPCVIDEOCOL2L2
-    LD B, A
-    POP AF
-CPCVIDEOCOL2L1:
-    SRL A
-    SRL A
-    DEC B
-    JR NZ, CPCVIDEOCOL2L1
-    PUSH AF
-CPCVIDEOCOL2L2:
-    POP AF
-    RET    
 
 CPCVIDEOBITMASK1:
     DB $00,$11,$22,$33
     DB $44,$55,$66,$77
     DB $88,$99,$aa,$bb
     DB $cc,$dd,$ee,$ff    
+
+CPCVIDEOBITMASK2:
+    DB $88,$44,$22,$11
+
+CPCVIDEOBITMASK4:
+    DB $80,$40,$20,$10
+    DB $08,$04,$02,$01
