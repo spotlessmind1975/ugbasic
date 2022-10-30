@@ -788,9 +788,9 @@ void cpc_initialization( Environment * _environment ) {
     variable_import( _environment, "PALETTELIMIT", VT_BYTE, 16 );
     variable_global( _environment, "PALETTELIMIT" );
 
+    SCREEN_MODE_DEFINE( BITMAP_MODE_GRAPHIC2, 1, 640, 200, 2, 8, 8, "Graphic Mode 2" );
     SCREEN_MODE_DEFINE( BITMAP_MODE_GRAPHIC0, 1, 160, 200, 16, 8, 8, "Graphic Mode 0" );
     SCREEN_MODE_DEFINE( BITMAP_MODE_GRAPHIC1, 1, 320, 200, 4, 8, 8, "Graphic Mode 1" );
-    SCREEN_MODE_DEFINE( BITMAP_MODE_GRAPHIC2, 1, 640, 200, 2, 8, 8, "Graphic Mode 2" );
     SCREEN_MODE_DEFINE( BITMAP_MODE_GRAPHIC3, 1, 160, 200, 4, 8, 8, "Graphic Mode 3" );
 
     outline0("CALL CPCVIDEOSTARTUP");
