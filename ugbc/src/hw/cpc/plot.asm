@@ -123,6 +123,8 @@ PLOTMODE:
 
 PLOTD:
 
+    LD A, (_PEN)
+    LD IXH, A
     CALL CPCSELECTPALETTE
     LD IXH, A
     LD B, A

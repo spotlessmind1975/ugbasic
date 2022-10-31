@@ -76,7 +76,7 @@ CPCSELECTPALETTE:
     LD HL, PALETTE
     LD A, 0
     LD C, A
-    LD A, (_PEN)
+    LD A, IXH
     LD B, A
     INC C
     INC HL
