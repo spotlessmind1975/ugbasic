@@ -55,10 +55,10 @@ H2STRINGN1:
     RRA
 
 H2STRINGN2:
-    OR  #$F0
+    OR  $F0
     DAA
-    ADD A, #$A0
-    ADC A, #$40
+    ADD A, $A0
+    ADC A, $40
 
     LD (DE),a
     INC DE

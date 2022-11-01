@@ -3973,7 +3973,8 @@ void z80_hex_to_string( Environment * _environment, char * _number, char * _stri
             case 8:
                 outline1("LD HL, (%s)", _number );
                 outline0("LD DE, HL" );
-                outline0("LD HL, (DE)" );
+                outline0("LD A, (DE)" );
+                outline0("LD L, A" );
                 outline0("LD H, 0" );
                 outline1("LD DE, (%s)", _string );
 
@@ -3983,7 +3984,11 @@ void z80_hex_to_string( Environment * _environment, char * _number, char * _stri
 
                 outline1("LD HL, (%s)", _number );
                 outline0("LD DE, HL" );
-                outline0("LD HL, (DE)" );
+                outline0("LD A, (DE)" );
+                outline0("LD L, A" );
+                outline0("INC DE" );
+                outline0("LD A, (DE)" );
+                outline0("LD H, A" );
                 outline1("LD DE, (%s)", _string );
 
                 outline0("CALL H2STRING" );
@@ -3993,14 +3998,22 @@ void z80_hex_to_string( Environment * _environment, char * _number, char * _stri
 
                 outline1("LD HL, (%s+2)", _number );
                 outline0("LD DE, HL" );
-                outline0("LD HL, (DE)" );
+                outline0("LD A, (DE)" );
+                outline0("LD L, A" );
+                outline0("INC DE" );
+                outline0("LD A, (DE)" );
+                outline0("LD H, A" );
                 outline1("LD DE, (%s)", _string );
 
                 outline0("CALL H2STRING" );
 
                 outline1("LD HL, (%s)", _number );
                 outline0("LD DE, HL" );
-                outline0("LD HL, (DE)" );
+                outline0("LD A, (DE)" );
+                outline0("LD L, A" );
+                outline0("INC DE" );
+                outline0("LD A, (DE)" );
+                outline0("LD H, A" );
                 outline1("LD DE, (%s)", _string );
                 outline0("INC DE" );
                 outline0("INC DE" );
@@ -4012,7 +4025,7 @@ void z80_hex_to_string( Environment * _environment, char * _number, char * _stri
 
         }
 
-        outline1("LD A, #$%2.2x", ( _bits >> 2 ) );
+        outline1("LD A, $%2.2x", ( _bits >> 2 ) );
         outline1("LD (%s), A", _string_size );
 
     done()
