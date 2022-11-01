@@ -65,120 +65,154 @@ PUTIMAGE:
     PUSH DE
 
     LD A, (CURRENTMODE)
-    ; CP 0
-    ; JP Z, PUTIMAGE0
-    ; CP 1
-    ; JP Z, PUTIMAGE1
+    CP 0
+    JP Z, PUTIMAGE0
+    CP 1
+    JP Z, PUTIMAGE1
     CP 2
     JP Z, PUTIMAGE2
-    ; CP 3
-    ; JP Z, PUTIMAGE3
+    CP 3
+    JP Z, PUTIMAGE3
     POP DE
     RET
 
 PUTIMAGE0:
-;     LD A, E
-;     AND $01
-;     CP 0
-;     JR Z, PLOTD00
-;     LD A, $55
-;     JR PLOTD00X
-; PLOTD00:
-;     LD A, $aa
-; PLOTD00X:
+PUTIMAGE3:
 
-;     LD DE, HL
+    SRA C
 
-;     ; H = bitmask of pixels
-;     ; B = color index
-;     ; L = masking against existing pixels / existing pixels 
-;     ; DE = starting memory location on screen
-;     LD H, A
+PUTIMAGE0L2:
 
-;     ; Calculate mask for this pixel component
-;     LD A, H
-;     ; Calculate color components for mask if color was
-;     ; all 1's ($ff)
-;     PUSH BC
-;     LD B, $F
-;     CALL CPCVIDEOMUL84
+    POP DE
 
-;     ; Negate it for masking
-;     XOR $FF
-;     LD L, A
+    INC D
 
-;     POP BC
+    PUSH DE
 
-;     ; Masquerade existing pixels
-;     LD A, (DE)
-;     AND L
-;     LD L, A
+    PUSH HL
+    CALL CPCVIDEOPOS
+    LD DE, HL
+    POP HL
 
-;     ; Calculate new pixels
-;     LD A, H
-;     CALL CPCVIDEOMUL84
+    PUSH BC
+PUTIMAGE0L1:
+    ; Calculate new pixels
+    LD A, (HL)
+    ; Draw them
+    LD (DE),A
 
-;     ; Sum up old and new pixels.
-;     OR L
+    INC DE
+    INC HL
 
-;     ; Draw them
-;     LD (DE),A
+    DEC C
+    JR NZ, PUTIMAGE1L1
+    LD A, IXL
+    CP $0
+    JR Z, PUTIMAGE0DONEROW
+    DEC IXL
+    LD A, $FF
+    LD C, A
+    JP PUTIMAGE1L1
+PUTIMAGE0DONEROW:
+    POP BC
+    DEC B
+    JR NZ, PUTIMAGE0L2
     
-;     JP PLOTDONE
+    LD A, 16
+    LD B, A
+    LD A, 0
+    LD C, A
 
+PUTIMAGE0DONEROWL1:
+    LD A, (HL)
+    LD IXL, B
+    LD IXH, C
+    LD IYL, 1
+    CALL CPCUPDATEPALETTE
+    INC HL
+    INC C
+    DEC B
+    JR NZ, PUTIMAGE0DONEROWL1
 
-; PLOTD1:
-;     PUSH HL
-;     PUSH DE
-;     LD HL, CPCVIDEOBITMASK2
-;     LD A, 0
-;     LD D, A
-;     LD A, E
-;     AND $3
-;     LD E, A
-;     ADD HL, DE
-;     LD A, (HL)
-;     POP DE
-;     POP HL
+    POP DE
 
-;     LD DE, HL
+    JP PUTIMAGEDONE
 
-;     ; H = bitmask of pixels
-;     ; B = color index
-;     ; L = masking against existing pixels / existing pixels 
-;     ; DE = starting memory location on screen
-;     LD H, A
+PUTIMAGE1:
 
-;     ; Calculate mask for this pixel component
-;     LD A, H
-;     ; Calculate color components for mask if color was
-;     ; all 1's ($ff)
-;     PUSH BC
-;     LD B, $3
-;     CALL CPCVIDEOMUL82
+    SRA C
+    SRA C
 
-;     ; Negate it for masking
-;     XOR $FF
-;     LD L, A
+PUTIMAGE1L2:
 
-;     POP BC
+    POP DE
 
-;     ; Masquerade existing pixels
-;     LD A, (DE)
-;     AND L
-;     LD L, A
+    INC D
 
-;     ; Calculate new pixels
-;     LD A, H
-;     CALL CPCVIDEOMUL82
+    PUSH DE
 
-;     ; Sum up old and new pixels.
-;     OR L
+    PUSH HL
+    CALL CPCVIDEOPOS
+    LD DE, HL
+    POP HL
 
-;     ; Draw them
-;     LD (DE),A
+    PUSH BC
+PUTIMAGE1L1:
+    ; Calculate new pixels
+    LD A, (HL)
+    ; Draw them
+    LD (DE),A
+
+    INC DE
+    INC HL
+
+    DEC C
+    JR NZ, PUTIMAGE1L1
+    LD A, IXL
+    CP $0
+    JR Z, PUTIMAGE1DONEROW
+    DEC IXL
+    LD A, $FF
+    LD C, A
+    JP PUTIMAGE1L1
+PUTIMAGE1DONEROW:
+    POP BC
+    DEC B
+    JR NZ, PUTIMAGE1L2
     
-;     JP PLOTDONE
+    LD A, (HL)
+    LD IXL, A
+    LD IXH, 0
+    LD IYL, 1
+    CALL CPCUPDATEPALETTE
+
+    INC HL
+
+    LD A, (HL)
+    LD IXL, A
+    LD IXH, 1
+    LD IYL, 1
+    CALL CPCUPDATEPALETTE
+
+    INC HL
+
+    LD A, (HL)
+    LD IXL, A
+    LD IXH, 2
+    LD IYL, 1
+    CALL CPCUPDATEPALETTE
+
+    INC HL
+
+    LD A, (HL)
+    LD IXL, A
+    LD IXH, 3
+    LD IYL, 1
+    CALL CPCUPDATEPALETTE
+
+    POP DE
+
+    JP PUTIMAGEDONE
 
 PUTIMAGE2:
 
@@ -222,12 +256,10 @@ PUTIMAGE2DONEROW:
     POP BC
     DEC B
     JR NZ, PUTIMAGE2L2
-    
+
     LD A, (HL)
     LD IXL, A
-    LD A, 0
-    LD IXH, A
-    LD A, 1
+    LD IXH, 0
     LD IYL, 1
     CALL CPCUPDATEPALETTE
 
@@ -235,17 +267,12 @@ PUTIMAGE2DONEROW:
 
     LD A, (HL)
     LD IXL, A
-    LD A, 1
-    LD IXH, A
-    LD A, 1
+    LD IXH, 1
     LD IYL, 1
     CALL CPCUPDATEPALETTE
 
     POP DE
 
-    JP PUTIMAGEDONE
-
-PUTIMAGE3:
     JP PUTIMAGEDONE
 
 PUTIMAGEDONE:
