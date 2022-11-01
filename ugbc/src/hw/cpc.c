@@ -1011,25 +1011,161 @@ static int calculate_image_size( Environment * _environment, int _width, int _he
 
         case BITMAP_MODE_GRAPHIC0:
 
-            return 2 + ( ( _width >> 1 ) * _height ) + 16;
+            return 3 + ( ( _width >> 1 ) * _height ) + 16;
 
         case BITMAP_MODE_GRAPHIC1:
         case BITMAP_MODE_GRAPHIC3:
 
-            return 2 + ( ( _width >> 2 ) * _height ) + 4;
+            return 3 + ( ( _width >> 2 ) * _height ) + 4;
 
         case BITMAP_MODE_GRAPHIC2:
 
-            return 2 + ( ( _width >> 3 ) * _height ) + 2;
+            return 3 + ( ( _width >> 3 ) * _height ) + 2;
     }
 
     return 0;
 
 }
 
+static Variable * cpc_image_converter_bitmap_mode_hires( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
+
+    // ignored on bitmap mode
+    (void)!_transparent_color;
+
+    image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
+
+    RGBi palette[MAX_PALETTE];
+
+    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE, ( ( _flags & FLAG_EXACT ) ? 0 : 1 ) /* sorted */);
+
+    if (colorUsed > 2) {
+        CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
+    }
+
+    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
+    result->originalColors = colorUsed;
+
+    int i, j, k;
+
+    for( i=0; i<colorUsed; ++i ) {
+        int minDistance = 0xffff;
+        int colorIndex = 0;
+        for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
+            int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
+            if (distance < minDistance) {
+                for( k=0; k<i; ++k ) {
+                    if ( palette[k].index == SYSTEM_PALETTE[j].index ) {
+                        break;
+                    }
+                }
+                if ( k>=i ) {
+                    minDistance = distance;
+                    colorIndex = j;
+                }
+            }
+        }
+        palette[i].index = SYSTEM_PALETTE[colorIndex].index;
+        palette[i].hardwareIndex = SYSTEM_PALETTE[colorIndex].hardwareIndex;
+        strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
+    }
+
+    printf("color 0 = %2.2x\n", palette[i].hardwareIndex );
+    printf("color 1 = %2.2x\n", palette[i].hardwareIndex );
+
+    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
+
+    int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_GRAPHIC2 );
+    char * buffer = malloc ( bufferSize );
+
+    // Position of the pixel in the original image
+    int image_x, image_y;
+    
+    // Position of the pixel, in terms of tiles
+    int tile_x, tile_y;
+    
+    // Position of the pixel, in terms of offset and bitmask
+    int offset, bitmask;
+
+    // Color of the pixel to convert
+    RGBi rgb;
+
+    *(buffer) = (_frame_width & 0xff);
+    *(buffer+1) = ( _frame_width >> 8 ) & 0xff;
+    *(buffer+2) = _frame_height;
+
+    _source += ( ( _offset_y * _width ) + _offset_x ) * 3;
+
+    // Loop for all the source surface.
+    for (image_y = 0; image_y < _frame_height; ++image_y) {
+        for (image_x = 0; image_x < _frame_width; ++image_x) {
+
+            // Take the color of the pixel
+            rgb.red = *_source;
+            rgb.green = *(_source + 1);
+            rgb.blue = *(_source + 2);
+
+            for( i=0; i<colorUsed; ++i ) {
+                if ( rgbi_equals_rgb( &palette[i], &rgb ) ) {
+                    break;
+                }
+            }
+
+            // printf("%d", i );
+
+            // Calculate the offset starting from the tile surface area
+            // and the bit to set.
+            offset = (image_y *( _frame_width >> 3 ) ) + (image_x >> 3 );
+            bitmask = 1 << ( 7 - (image_x & 0x7) );
+
+            // If the pixes has enough luminance value, it must be 
+            // considered as "on"; otherwise, it is "off".
+            // int luminance = calculate_luminance(rgb);
+
+            if ( i == 1 ) {
+                *( buffer + offset + 3) |= bitmask;
+            } else {
+                *( buffer + offset + 3) &= ~bitmask;
+            }
+
+            _source += 3;
+
+        }
+
+        _source += ( _width - _frame_width ) * 3;
+
+        // printf("\n" );
+
+    }
+
+    if ( colorUsed > 1 ) {
+        *(buffer + 3 + ( ( _frame_width >> 3 ) * _frame_height ) + 1 ) = palette[1].hardwareIndex;
+    } else {
+        *(buffer + 3 + ( ( _frame_width >> 3 ) * _frame_height ) + 1 ) = 0;
+    }
+
+    if ( colorUsed > 0 ) {
+        *(buffer + 3 + ( ( _frame_width >> 3 ) * _frame_height ) ) = palette[0].hardwareIndex;
+    } else {
+        *(buffer + 3 + ( ( _frame_width >> 3 ) * _frame_height ) ) = 0;
+    }
+
+    variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
+
+    return result;
+
+}
+
 Variable * cpc_image_converter( Environment * _environment, char * _data, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags ) {
 
     WARNING_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
+
+    switch( _mode ) {
+
+        case BITMAP_MODE_GRAPHIC2:
+
+            return cpc_image_converter_bitmap_mode_hires( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+            
+    }
 
     return cpc_new_image( _environment, 8, 8, _mode );
 
@@ -1044,7 +1180,6 @@ void cpc_put_image( Environment * _environment, char * _image, char * _x, char *
     MAKE_LABEL
 
     outhead1("putimage%s:", label);
-    outline1("LD A, $%2.2x", ( _flags & 0xff ) );
     outline1("LD HL, %s", _image );
     if ( _sequence ) {
 
@@ -1122,6 +1257,8 @@ void cpc_put_image( Environment * _environment, char * _image, char * _x, char *
     }
     outline1("LD A, (%s)", _x );
     outline0("LD E, A" );
+    outline1("LD A, (%s+1)", _x );
+    outline0("LD IXL, A" );
     outline1("LD A, (%s)", _y );
     outline0("LD D, A" );
     outline1("LD A, $%2.2x", _flags );
