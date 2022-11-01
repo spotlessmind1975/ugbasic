@@ -68,7 +68,10 @@ PALETTE:
 PALETTEUNUSED:
     DB $01
 
-CPCSELECTPALETTE:
+; Look for a specific color into the palette.
+;   input: IXL = color to look for
+;   output: IXH = index of ink, $FF if not found
+CPCLOOKFORPALETTE:
     PUSH BC
     PUSH HL
     PUSH AF
@@ -76,51 +79,148 @@ CPCSELECTPALETTE:
     LD HL, PALETTE
     LD A, 0
     LD C, A
-    LD A, IXH
+    LD A, IXL
     LD B, A
     INC C
     INC HL
-CPCSELECTPALETTEL1:
+CPCLOOKFORPALETTEL1:
     LD A, (HL)
     CP B
-    JR Z, CPCSELECTPALETTEL2
+    JR Z, CPCLOOKFORPALETTEFOUND
     INC HL
     INC C
     LD A, (PALETTELIMIT)
     LD E, A
     LD A, C
     CP E
-    JR NZ, CPCSELECTPALETTEL1
-    
-    PUSH BC
+    JR C, CPCLOOKFORPALETTEL1
+    JR NZ, CPCLOOKFORPALETTEL1
+    LD A, $FF
+    LD C, A
+CPCLOOKFORPALETTEFOUND:
+    POP DE
+    POP AF
+    POP HL
+    LD A, C
+    LD IXH, A
+    POP BC
+    RET
 
+; Insert a specific color into the palette.
+;   input: IXL = color to insert
+;   output: IXH = index of ink allocated
+CPCINSERTPALETTE:
+    PUSH BC
+    PUSH HL
+    PUSH DE
+    PUSH AF
     LD A, (PALETTELIMIT)
     LD B, A
     LD A, (PALETTEUNUSED)
     INC A
     CP B
-    JR C, CPCSELECTPALETTEC
+    JR C, CPCINSERTPALETTEUNDER
     LD A, 1
-CPCSELECTPALETTEC:
+CPCINSERTPALETTEUNDER:
     LD (PALETTEUNUSED), A
-    POP BC
+    LD IXH, A
     LD A, (PALETTEUNUSED)
     LD HL, PALETTE
     LD E, A
     LD A, 0
     LD D, A
     ADD HL, DE
-
-    LD A, B
+    LD A, IXL
     LD (HL), A
-    LD A, (PALETTEUNUSED)
+
+    LD A, IYL
+    CP $0
+    JR Z, CPCINSERTPALETTEDONE
+
+    LD BC, $7F00
+    LD A, IXH
     LD C, A
-CPCSELECTPALETTEL2:
-    POP DE
+    OUT (C), C
+    LD A, IXL
+    OR A, $40
+    OUT (C), A
+
+CPCINSERTPALETTEDONE:
     POP AF
+    POP DE
     POP HL
-    LD A, C
     POP BC
+    RET
+
+; Update a specific color into the palette.
+;   input: 
+;           IXH = index of ink to update
+;           IXL = color to update
+;           IYL > 0 update ink on GATE ARRAY, also
+CPCUPDATEPALETTE:
+    PUSH AF
+    PUSH HL
+    PUSH DE
+    LD E, IXH
+    LD A, 0
+    LD D, A
+    LD HL, (PALETTE)
+    ADD HL, DE
+    LD A, IXL
+    LD (HL), A
+    LD A, IYL
+    CP $0
+    JR Z, CPCUPDATEPALETTEDONE
+
+    LD BC, $7F00
+    LD A, IXH
+    LD C, A
+    OUT (C), C
+    LD A, IXL
+    OR A, $40
+    OUT (C), A
+
+CPCUPDATEPALETTEDONE:
+
+    POP DE
+    POP HL
+    POP AF
+    RET
+
+; Get a specific color from the palette.
+;   input: 
+;           IXH = index of ink
+;   output: 
+;           IXL = color
+CPCGETPALETTE:
+    PUSH AF
+    PUSH HL
+    PUSH DE
+    LD E, IXH
+    LD A, 0
+    LD D, A
+    LD HL, (PALETTE)
+    ADD HL, DE
+    LD A, (HL)
+    LD IXL, A
+    POP DE
+    POP HL
+    POP AF
+    RET
+
+; Look for a specific color into the palette and, if missing,
+; insert it into palette.
+;   input: 
+;           IXL = color to look for / insert
+;           IYL > 0 update ink on GATE ARRAY, also
+;   output: 
+;           IXH = index of ink
+CPCSELECTPALETTE:
+    CALL CPCLOOKFORPALETTE
+    LD A, IXH
+    CP $FF
+    RET NZ
+    CALL CPCINSERTPALETTE
     RET
 
 ; CPCVIDEOMUL8:

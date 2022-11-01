@@ -232,10 +232,16 @@ void cpc_border_color( Environment * _environment, char * _border_color ) {
  */
 void cpc_background_color( Environment * _environment, int _index, int _background_color ) {
 
-    outline1("LD BC,$%4.4x", 0x7f00 | ( _index & 0x0f ));
-    outline0("OUT (C), C");
-    outline1("LD A, $%2.2x", 0x40 | ( _background_color & 0x1f ) );
-    outline0("OUT (C), A");
+    deploy( cpcvars, src_hw_cpc_vars_asm);
+    deploy( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
+
+    outline1("LD A, $%2.2x", ( _index & 0x0f ));
+    outline0("LD IXH, A");
+    outline1("LD A, $%2.2x", ( _background_color & 0x0f ));
+    outline0("LD IXL, A");
+    outline0("LD A, 1");
+    outline0("LD IYL, A");
+    outline0("CALL CPCUPDATEPALETTE");
 
 }
 
@@ -251,15 +257,16 @@ void cpc_background_color( Environment * _environment, int _index, int _backgrou
  */
 void cpc_background_color_vars( Environment * _environment, char * _index, char * _background_color ) {
 
-    outline0("LD BC,$7F00");
+    deploy( cpcvars, src_hw_cpc_vars_asm);
+    deploy( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
+
     outline1("LD A, (%s)", _index);
-    outline0("AND A, $F");
-    outline0("LD C, A");
-    outline0("OUT (C), C");
+    outline0("LD IXH, A");
     outline1("LD A, (%s)", _background_color);
-    outline0("AND A, $1F");
-    outline0("OR A, $40");
-    outline0("OUT (C), A");
+    outline0("LD IXL, A");
+    outline0("LD A, 1");
+    outline0("LD IYL, A");
+    outline0("CALL CPCUPDATEPALETTE");
 
 }
 
@@ -275,12 +282,16 @@ void cpc_background_color_vars( Environment * _environment, char * _index, char 
  */
 void cpc_background_color_semivars( Environment * _environment, int _index, char * _background_color ) {
 
-    outline1("LD BC,$%4.4x", 0x7f00 | ( _index & 0x0f ));
-    outline0("OUT (C), C");
+    deploy( cpcvars, src_hw_cpc_vars_asm);
+    deploy( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
+
+    outline1("LD A, $%2.2x", ( _index & 0x0f ));
+    outline0("LD IXH, a");
     outline1("LD A, (%s)", _background_color);
-    outline0("AND A, $1F");
-    outline0("OR A, $40");
-    outline0("OUT (C), A");
+    outline0("LD IXL, a");
+    outline0("LD A, 1");
+    outline0("LD IYL, a");
+    outline0("CALL CPCUPDATEPALETTE");
 
 }
 
@@ -296,6 +307,15 @@ void cpc_background_color_semivars( Environment * _environment, int _index, char
  */
 void cpc_background_color_get_vars( Environment * _environment, char * _index, char * _background_color ) {
 
+    deploy( cpcvars, src_hw_cpc_vars_asm);
+    deploy( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
+
+    outline1("LD A, (%s)", _index);
+    outline0("LD IXH, A");
+    outline0("CALL CPCGETPALETTE");
+    outline0("LD A, IXL");
+    outline1("LD (%s), A", _background_color);
+    
 }
 
 /**

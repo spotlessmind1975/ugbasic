@@ -124,9 +124,12 @@ PLOTMODE:
 PLOTD:
 
     LD A, (_PEN)
-    LD IXH, A
+    LD IXL, A
+    LD A, 1
+    LD IYL, A
+    LD A, (_PEN)
     CALL CPCSELECTPALETTE
-    LD IXH, A
+    LD A, IXL
     LD B, A
 
     LD A, (CURRENTMODE)
@@ -188,14 +191,6 @@ PLOTD00X:
     ; Draw them
     LD (DE),A
     
-    LD BC, $7F00
-    LD A, IXH
-    LD C, A
-    OUT (C), C
-    LD A, (_PEN)
-    OR A, $40
-    OUT (C), A
-
     JP PLOTDONE
 
 
@@ -250,14 +245,6 @@ PLOTD1:
     ; Draw them
     LD (DE),A
     
-    LD BC, $7F00
-    LD A, IXH
-    LD C, A
-    OUT (C), C
-    LD A, (_PEN)
-    OR A, $40
-    OUT (C), A
-
     JP PLOTDONE
 
 PLOTD2:
@@ -304,14 +291,6 @@ PLOTD2:
     ; Draw them
     LD (DE),A
     
-    LD BC, $7F00
-    LD A, IXH
-    LD C, A
-    OUT (C), C
-    LD A, (_PEN)
-    OR A, $40
-    OUT (C), A
-
     JP PLOTDONE
 
 PLOTD3:

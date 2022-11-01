@@ -366,7 +366,10 @@ TEXTATFONT0L1X:
 
     LD A, (_PEN)
     LD IXH, A
+    LD A, 1
+    LD IYL, A
     CALL CPCSELECTPALETTE
+    LD A, IXL
     LD B, A
 
 TEXTATFONT0L1:
@@ -430,20 +433,6 @@ TEXTATFONT0L1:
     AND $2
     JP Z, TEXTATBMCNOPEN
 
-    PUSH BC
-    PUSH AF
-
-    LD BC, $7F00
-    LD A, H
-    LD C, A
-    OUT (C), C
-    LD A, (_PEN)
-    OR A, $40
-    OUT (C), A
-
-    POP AF
-    POP BC
-
     JP TEXTATFONTLE
 
 ; Mode 1, 320×200, 4 colors (each byte of video memory represents 4 pixels):
@@ -454,7 +443,10 @@ TEXTATFONT1L1X:
 
     LD A, (_PEN)
     LD IXH, A
+    LD A, 1
+    LD IYL, A
     CALL CPCSELECTPALETTE
+    LD A, IXL
     LD B, A
 
 TEXTATFONT1L1:
@@ -497,27 +489,16 @@ TEXTATFONT1L1:
     AND $2
     JR Z, TEXTATBMCNOPEN
 
-    PUSH BC
-    PUSH AF
-
-    LD BC, $7F00
-    LD A, H
-    LD C, A
-    OUT (C), C
-    LD A, (_PEN)
-    OR A, $40
-    OUT (C), A
-
-    POP AF
-    POP BC
-
     JP TEXTATFONTLE
 
 TEXTATFONT2L1X:
 
     LD A, (_PEN)
     LD IXH, A
+    LD A, 1
+    LD IYL, A
     CALL CPCSELECTPALETTE
+    LD A, IXL
     LD B, A
 
 TEXTATFONT2L1:
@@ -546,18 +527,6 @@ TEXTATFONT2L1:
     LD A,(TEXTWW)
     AND $2
     JR Z, TEXTATBMCNOPEN
-
-    PUSH BC
-    PUSH AF
-
-    LD BC, $7F01
-    OUT (C), C
-    LD A, H
-    OR A, $40
-    OUT (C), A
-
-    POP AF
-    POP BC
 
 TEXTATFONTLE:
 
