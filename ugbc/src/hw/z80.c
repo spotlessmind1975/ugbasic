@@ -3969,11 +3969,12 @@ void z80_hex_to_string( Environment * _environment, char * _number, char * _stri
 
     embedded( cpu_hex_to_string, src_hw_z80_cpu_hex_to_string_asm );
 
+        outline1("LD A, %2.2x", _bits);
+        outline0("LD IXL, A");
+
         switch( _bits ) {
             case 8:
-                outline1("LD HL, (%s)", _number );
-                outline0("LD DE, HL" );
-                outline0("LD A, (DE)" );
+                outline1("LD A, (%s)", _number );
                 outline0("LD L, A" );
                 outline0("LD H, 0" );
                 outline1("LD DE, (%s)", _string );
@@ -3983,12 +3984,6 @@ void z80_hex_to_string( Environment * _environment, char * _number, char * _stri
             case 16:
 
                 outline1("LD HL, (%s)", _number );
-                outline0("LD DE, HL" );
-                outline0("LD A, (DE)" );
-                outline0("LD L, A" );
-                outline0("INC DE" );
-                outline0("LD A, (DE)" );
-                outline0("LD H, A" );
                 outline1("LD DE, (%s)", _string );
 
                 outline0("CALL H2STRING" );
@@ -3997,23 +3992,11 @@ void z80_hex_to_string( Environment * _environment, char * _number, char * _stri
             case 32:
 
                 outline1("LD HL, (%s+2)", _number );
-                outline0("LD DE, HL" );
-                outline0("LD A, (DE)" );
-                outline0("LD L, A" );
-                outline0("INC DE" );
-                outline0("LD A, (DE)" );
-                outline0("LD H, A" );
                 outline1("LD DE, (%s)", _string );
 
                 outline0("CALL H2STRING" );
 
                 outline1("LD HL, (%s)", _number );
-                outline0("LD DE, HL" );
-                outline0("LD A, (DE)" );
-                outline0("LD L, A" );
-                outline0("INC DE" );
-                outline0("LD A, (DE)" );
-                outline0("LD H, A" );
                 outline1("LD DE, (%s)", _string );
                 outline0("INC DE" );
                 outline0("INC DE" );

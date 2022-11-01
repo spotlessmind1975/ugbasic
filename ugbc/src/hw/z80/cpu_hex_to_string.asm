@@ -39,10 +39,14 @@
 ; Output: ASCII string at (DE)
 
 H2STRING:
+    LD A, IXL
+    CP $8
+    JR Z, H2STRING8
     LD A, H
     CALL H2STRINGN1
     LD A, H
     CALL H2STRINGN2
+H2STRING8:
     LD A, L
     CALL H2STRINGN1
     LD A, L
@@ -60,6 +64,6 @@ H2STRINGN2:
     ADD A, $A0
     ADC A, $40
 
-    LD (DE),a
+    LD (DE),A
     INC DE
     RET
