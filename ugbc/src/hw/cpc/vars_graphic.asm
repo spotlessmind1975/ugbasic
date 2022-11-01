@@ -63,8 +63,10 @@ PLOTVBASE:
     DW $C780, $CF80, $D780, $DF80, $E780, $EF80, $F780, $FF80
 
 PALETTE:    
-    DB $ff, $ff, $ff, $ff,  $ff, $ff, $ff, $ff
-    DB $ff, $ff, $ff, $ff,  $ff, $ff, $ff, $ff
+    DB      4,  10,  19,  12 
+    DB     11,  20,  21,  13
+    DB      6,  30,  31,   7 
+    DB      18, 25,  10,   7
 PALETTEUNUSED:
     DB $01
 
@@ -164,7 +166,7 @@ CPCUPDATEPALETTE:
     LD E, IXH
     LD A, 0
     LD D, A
-    LD HL, (PALETTE)
+    LD HL, PALETTE
     ADD HL, DE
     LD A, IXL
     LD (HL), A
@@ -199,7 +201,7 @@ CPCGETPALETTE:
     LD E, IXH
     LD A, 0
     LD D, A
-    LD HL, (PALETTE)
+    LD HL, PALETTE
     ADD HL, DE
     LD A, (HL)
     LD IXL, A
