@@ -1731,7 +1731,7 @@ void cpc_put_image( Environment * _environment, char * _image, char * _x, char *
     } else {
 
         if ( _frame ) {
-            outline0("LD DE, $0002" );
+            outline0("LD DE, $0003" );
             outline0("ADD HL, DE" );
             if ( strlen(_frame) == 0 ) {
 
