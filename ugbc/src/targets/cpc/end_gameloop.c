@@ -82,7 +82,7 @@ void end_gameloop( Environment * _environment ) {
         if ( _environment->anyProtothread ) {
             run_parallel( _environment );
         }
-        cpu_return( _environment );
+        cpu_jump( _environment, loop->label );
         unsigned char newLabel[MAX_TEMPORARY_STORAGE]; sprintf(newLabel, "%send", loop->label );
         cpu_label( _environment, newLabel );
         _environment->hasGameLoop = 0;
