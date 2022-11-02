@@ -35,6 +35,241 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+; IMAGET:     DB 0      -> A
+; IMAGEX:     DB 0      -> E
+; IMAGEY:     DB 0      -> D
+; IMAGEW:     DB 0      -> C
+; IMAGEH:     DB 0      -> B
+; IMAGEH2:    DB 0      -> ?
+; PTR:        DW 0      -> HL
+
+; ----------------------------------------------------------------------------
+; - Put image on bitmap
+; ----------------------------------------------------------------------------
+
 GETIMAGE:
+
+    LD A, (CURRENTTILEMODE)
+    CP 1
+    RET Z
+
+    LD C, (HL)
+    INC HL
+    LD A, (HL)
+    LD IXL, A
+    INC HL
+    LD B, (HL)
+    INC HL
+
+    DEC D
+    PUSH DE
+
+    LD A, (CURRENTMODE)
+    CP 0
+    JP Z, GETIMAGE0
+    CP 1
+    JP Z, GETIMAGE1
+    CP 2
+    JP Z, GETIMAGE2
+    CP 3
+    JP Z, GETIMAGE3
+    POP DE
+    RET
+
+GETIMAGE0:
+GETIMAGE3:
+
+    SRA C
+
+GETIMAGE0L2:
+
+    POP DE
+
+    INC D
+
+    PUSH DE
+
+    PUSH HL
+    CALL CPCVIDEOPOS
+    LD DE, HL
+    POP HL
+
+    PUSH BC
+GETIMAGE0L1:
+    ; Calculate new pixels
+    LD A, (DE)
+    ; Draw them
+    LD (HL),A
+
+    INC DE
+    INC HL
+
+    DEC C
+    JR NZ, GETIMAGE0L1
+    LD A, IXL
+    CP $0
+    JR Z, GETIMAGE0DONEROW
+    DEC IXL
+    LD A, $FF
+    LD C, A
+    JP GETIMAGE0L1
+GETIMAGE0DONEROW:
+    POP BC
+
+    DEC B
+    JR NZ, GETIMAGE0L2
+    
+    LD A, 16
+    LD B, A
+    LD A, 0
+    LD C, A
+
+GETIMAGE0DONEROWL1:
+    LD IXH, C
+    CALL CPCGETPALETTE
+    LD A, IXL
+    LD (HL), A
+    INC HL
+    INC C
+    DEC B
+    JR NZ, GETIMAGE0DONEROWL1
+
+    POP DE
+
+    JP GETIMAGEDONE
+
+GETIMAGE1:
+
+    SRA C
+    SRA C
+
+GETIMAGE1L2:
+
+    POP DE
+
+    INC D
+
+    PUSH DE
+
+    PUSH HL
+    CALL CPCVIDEOPOS
+    LD DE, HL
+    POP HL
+
+    PUSH BC
+GETIMAGE1L1:
+    ; Calculate new pixels
+    LD A, (DE)
+    ; Draw them
+    LD (HL),A
+
+    INC DE
+    INC HL
+
+    DEC C
+    JR NZ, GETIMAGE1L1
+    LD A, IXL
+    CP $0
+    JR Z, GETIMAGE1DONEROW
+    DEC IXL
+    LD A, $FF
+    LD C, A
+    JP GETIMAGE1L1
+GETIMAGE1DONEROW:
+    POP BC
+
+    DEC B
+    JR NZ, GETIMAGE1L2
+    
+    LD IXH, 0
+    CALL CPCGETPALETTE
+    LD A,IXL
+    LD (HL), A
+
+    INC HL
+
+    LD IXH, 1
+    CALL CPCGETPALETTE
+    LD A,IXL
+    LD (HL), A
+
+    INC HL
+
+    LD IXH, 2
+    CALL CPCGETPALETTE
+    LD A,IXL
+    LD (HL), A
+
+    INC HL
+
+    LD IXH, 3
+    CALL CPCGETPALETTE
+    LD A,IXL
+    LD (HL), A
+
+    POP DE
+
+    JP GETIMAGEDONE
+
+GETIMAGE2:
+
+    SRA C
+    SRA C
+    SRA C
+
+GETIMAGE2L2:
+
+    POP DE
+
+    INC D
+
+    PUSH DE
+
+    PUSH HL
+    CALL CPCVIDEOPOS
+    LD DE, HL
+    POP HL
+
+    PUSH BC
+GETIMAGE2L1:
+    ; Calculate new pixels
+    LD A, (DE)
+    ; Draw them
+    LD (HL),A
+
+    INC DE
+    INC HL
+
+    DEC C
+    JR NZ, GETIMAGE2L1
+    LD A, IXL
+    CP $0
+    JR Z, GETIMAGE2DONEROW
+    DEC IXL
+    LD A, $FF
+    LD C, A
+    JP GETIMAGE2L1
+GETIMAGE2DONEROW:
+    POP BC
+
+    DEC B
+    JR NZ, GETIMAGE2L2
+
+    LD IXH, 0
+    CALL CPCGETPALETTE
+    LD A,IXL
+    LD (HL), A
+
+    INC HL
+
+    LD IXH, 1
+    CALL CPCGETPALETTE
+    LD A,IXL
+    LD (HL), A
+
+    POP DE
+
+    JP GETIMAGEDONE
+
 GETIMAGEDONE:
     RET

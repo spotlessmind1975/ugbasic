@@ -1793,8 +1793,9 @@ Variable * cpc_new_image( Environment * _environment, int _width, int _height, i
     char * buffer = malloc ( size );
     memset( buffer, 0, size );
 
-    *(buffer) = _width;
-    *(buffer+1) = _height;
+    *(buffer) = ( _width & 0xff );
+    *(buffer+1) = ( ( _width >> 8 ) & 0xff );
+    *(buffer+2) = _height;
 
     result->valueBuffer = buffer;
     result->size = size;
@@ -1814,13 +1815,14 @@ void cpc_get_image( Environment * _environment, char * _image, char * _x, char *
     outline1("LD HL, %s", _image );
     outline1("LD A, (%s)", _x );
     outline0("LD E, A" );
+    outline1("LD A, (%s+1)", _x );
+    outline0("LD IXL, A" );
     outline1("LD A, (%s)", _y );
     outline0("LD D, A" );
 
     outline0("CALL GETIMAGE");
 
 }
-
 
 void cpc_scroll( Environment * _environment, int _dx, int _dy ) {
 
