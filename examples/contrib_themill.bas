@@ -13,7 +13,7 @@ REM bitmap e mostrarla sullo schermo. L'immagine del [[https://www.deviantart.co
 REM (c) [[https://www.deviantart.com/oliverlindau|oliverlindau]] su Deviant Art.
 REM
 
-BITMAP ENABLE(320, 200, 16)
+BITMAP ENABLE(16)
 CLS
 COLOR BORDER BLACK
 themill := LOAD IMAGE("examples/themill.png")
