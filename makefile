@@ -30,7 +30,7 @@
 
 .PHONY: paths compiler clean all
 
-EXAMPLES := $(wildcard examples/texts_print_00.bas)
+EXAMPLES := $(wildcard examples/*.bas)
 COMPILED := $(subst examples/,generated/$(target)/asm/,$(EXAMPLES:.bas=.asm))
 EXECUTABLES := $(subst /asm/,/exe/,$(COMPILED:.asm=.$(output)))
 
@@ -183,13 +183,6 @@ generated/sg1000/exe/%.rom:
 generated/cpc/asm/%.asm:
 	@ugbc/exe/ugbc.cpc $(subst generated/cpc/asm/,examples/,$(@:.asm=.bas)) $@ 
 
-# to be loaded with:
-#
-# 10 MEMORY &1200
-# 20 LOAD "main.com",&1200
-# 30 CALL &1200
-# RUN
-#
 generated/cpc/exe/%.dsk:
 	@z88dk-z80asm -D__cpc__ -l -m -s -g -b $(subst /exe/,/asm/,$(@:.dsk=.asm))
 	@mv $(subst /exe/,/asm/,$(@:.dsk=.sym)) $(subst /exe/,/asm/,$(@:.dsk=.osym))
