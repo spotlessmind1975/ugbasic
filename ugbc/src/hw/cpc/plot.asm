@@ -129,7 +129,7 @@ PLOTD:
     LD IYL, A
     LD A, (_PEN)
     CALL CPCSELECTPALETTE
-    LD A, IXL
+    LD A, IXH
     LD B, A
 
     LD A, (CURRENTMODE)
