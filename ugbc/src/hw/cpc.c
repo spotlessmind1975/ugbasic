@@ -1218,18 +1218,17 @@ static Variable * cpc_image_converter_multicolor_mode_midres( Environment * _env
         commonPalette = palette;
         lastUsedSlotInCommonPalette = colorUsed;
     
-        printf("PALETTE:\n" );
-        if ( ( _flags & FLAG_OVERLAYED ) == 0 ) {
-            printf("  background  (00) = %2.2x (%s)\n", commonPalette[0].hardwareIndex, commonPalette[0].description );
-        } else {
-            printf("  background  (00) = %2.2x (%s) [currently ignored since it can be overlayed]\n", commonPalette[0].index, commonPalette[0].description );
-        }
-        printf("  pen         (01) = %2.2x (%s)\n", commonPalette[1].hardwareIndex, commonPalette[1].description );
-        printf("  pen         (10) = %2.2x (%s)\n", commonPalette[2].hardwareIndex, commonPalette[2].description );
-        printf("  pen         (11) = %2.2x (%s)\n", commonPalette[3].hardwareIndex, commonPalette[3].description );
-        printf("\n" );
-        printf("\n" );
-
+        // printf("PALETTE:\n" );
+        // if ( ( _flags & FLAG_OVERLAYED ) == 0 ) {
+        //     printf("  background  (00) = %2.2x (%s)\n", commonPalette[0].hardwareIndex, commonPalette[0].description );
+        // } else {
+        //     printf("  background  (00) = %2.2x (%s) [currently ignored since it can be overlayed]\n", commonPalette[0].index, commonPalette[0].description );
+        // }
+        // printf("  pen         (01) = %2.2x (%s)\n", commonPalette[1].hardwareIndex, commonPalette[1].description );
+        // printf("  pen         (10) = %2.2x (%s)\n", commonPalette[2].hardwareIndex, commonPalette[2].description );
+        // printf("  pen         (11) = %2.2x (%s)\n", commonPalette[3].hardwareIndex, commonPalette[3].description );
+        // printf("\n" );
+        // printf("\n" );
 
     } else {
 
