@@ -31,7 +31,7 @@ int embedwrap() { return 1; }
 
 %token OP CP OP_AT OP_EQUAL OP_DISEQUAL OP_AND OP_OR OP_NOT OP_POINT
 %token IF ELSE ELSEIF ENDIF NewLine
-%token ATARI ATARIXL C128 C64 VIC20 ZX COLECO SC3000 SG1000 MSX MSX1 DRAGON DRAGON32 DRAGON64 PC128OP MO5
+%token ATARI ATARIXL C128 C64 VIC20 ZX COLECO SC3000 SG1000 MSX MSX1 DRAGON DRAGON32 DRAGON64 PC128OP MO5 CPC
 
 %token <string> Identifier
 %token <integer> Integer
@@ -168,6 +168,14 @@ target :
     |
     MO5 {
         #ifdef __mo5__
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }    
+    |
+    CPC {
+        #ifdef __cpc__
             $$ = 1;
         #else
             $$ = 0;

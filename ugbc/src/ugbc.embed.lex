@@ -50,6 +50,7 @@ DRAGON32  { RETURN(DRAGON32,1); }
 DRAGON64 { RETURN(DRAGON64,1); }
 PC128OP  { RETURN(PC128OP,1); }
 MO5  { RETURN(MO5,1); }
+CPC  { RETURN(CPC,1); }
 
 [\n\r]+ { RETURN(NewLine,0);}
 \$[a-fA-F0-9]+ { embedlval.integer = strtol(embedtext+1,0,16); RETURN(Integer,1); }
