@@ -41,6 +41,15 @@ PSG_WP: EQU          $a1
 PSG_RP: EQU          $a2
 @ENDIF
 
+; @IF CPC
+; PSG_AP0: EQU          $F600
+; PSG_AP1: EQU          $F6C0
+; PSG_WP0: EQU          $F400
+; PSG_WP1: EQU          $F680
+; PSG_RP0: EQU          $F400
+; PSG_RP1: EQU          $F440
+; @ENDIF
+
 ; @IF LM80C
 ; PSG_AP: EQU          $40
 ; PSG_WP: EQU          $41
@@ -199,6 +208,136 @@ IMF_INSTRUMENT_HELICOPTER:					EQU $7E
 IMF_INSTRUMENT_APPLAUSE:						EQU $7F
 IMF_INSTRUMENT_GUNSHOT:						EQU $80
 
+;; Read a register from AY8910
+;;  input: C = register to read
+;;  output: IXL = value read
+AY8910READ:
+@IF CPC
+    PUSH BC
+    PUSH AF
+    
+    ; Setup register index on PPI port A
+    LD B, $F4 
+    OUT (C), C
+
+    ; Tell PSG to select register using data on PPI port A
+    LD BC, $F6C0         
+    OUT (C), C
+
+    ; Put PSG into inactive state
+    LD BC, $F600         
+    OUT (C), C
+
+    ; ** Set PPI port A to input mode. **
+    LD B, $F7               ; 8255 PPI Control
+    LD C, %10010010         ; mode and port configuration
+    OUT (C), C              ; Port A input, Port B input, Port C output
+                            ; All operating in mode 0. (see Programming
+                            ; 8255 PPI)
+
+    ; Tell PSG to put the data of the selected register to PPI port A to
+    LD BC, $F640
+    OUT (C),C
+
+    ; Read data from PPI port A
+    LD B, $F4            
+    IN A, (C)
+
+    ; ** Set PPI port A to output mode. *
+    LD B, $F7            ; 8255 PPI control
+    LD C, %10000010
+    OUT (C), C           ; Port A output, Port B input, Port C output
+
+    ; Return PSG to inactive mode.
+    LD BC, $F600         
+    OUT (C), C
+
+    LD IXL, A
+
+    POP AF
+    POP BC
+    RET
+@ENDIF
+
+@IF MSX
+    PUSH BC
+    PUSH AF
+    LD A, C
+    LD B, A
+    LD A, PSG_AP
+    LD C, A
+    LD A, B
+    OUT (C), A
+
+    LD A, PSG_RP
+    LD C, A
+    IN A, (C)
+    LD IXL, A
+
+    POP AF
+    POP BC
+    RET
+@ENDIF
+
+;; Write a register to AY8910
+;;  input: 
+;;     C   = register to read
+;;     IXL = register to write
+AY8910WRITE:
+@IF CPC
+    PUSH BC
+    PUSH AF
+    ; setup PSG register number on PPI port A
+    LD B, $F4
+    OUT (C), C
+
+    ; Tell PSG to select register from data on PPI port A
+    LD BC, $F6C0
+    OUT (C), C
+
+    ; Put PSG into inactive state.
+    LD BC, $F600
+    OUT (C), C
+
+    ; setup register data on PPI port A
+    LD B, $F4
+    LD A, IXL
+    OUT (C), A
+
+    ; Tell PSG to write data on PPI port A into selected register
+    LD BC, $F680
+    OUT (C), C
+
+    ; Put PSG into inactive state
+    LD BC, $F600
+    OUT (C), C
+
+    POP AF
+    POP BC
+    RET
+@ENDIF
+
+@IF MSX
+    PUSH BC
+    PUSH AF
+
+    LD A, PSG_WP
+    LD C, A
+    LD A, B
+    AND $FB
+    OUT (C), A
+
+    LD A, PSG_WP
+    LD C, A
+    LD A, B
+    AND $FE
+    OUT (C), A
+
+    POP AF
+    POP BC
+    RET
+@ENDIF
+
 AY8910STARTUP:
     LD HL,AY8910FREQTABLE
     LD (AY8910TMPPTR2), HL
@@ -226,64 +365,33 @@ AY8910START1X:
 AY8910START2X:
     RET
 
-AY8910STARTGEN:
-    LD A, PSG_AP
-    LD C, A
+AY8910STARTSTOPGEN:
     LD A, PSG_R7
-    OUT (C), A
-
-    LD A, PSG_RP
     LD C, A
-    IN A, (C)
-    LD B, A
-
-    LD A, PSG_AP
-    LD C, A
-    LD A, PSG_R7
-    OUT (C), A
+    CALL AY8910READ
+    LD A, IXL
+    AND D
+    OR E
+    LD IXL, A
+    CALL AY8910WRITE
     RET
 
-
 AY8910START0:
-    CALL AY8910STARTGEN
-@IF MSX
-    LD A, PSG_WP
-    LD C, A
-    LD A, B
-    AND $FE
-    OUT (C), A
-@ENDIF
-; @IF LM80C
-;         io_put(PSG_WP, 0xf8 | (value & 0x06));
-; @ENDIF
+    LD D, $FE
+    LD E, $0
+    CALL AY8910STARTSTOPGEN
     RET
 
 AY8910START1:
-    CALL AY8910STARTGEN
-@IF MSX
-    LD A, PSG_WP
-    LD C, A
-    LD A, B
-    AND $FD
-    OUT (C), A
-@ENDIF
-; @IF LM80C
-        ; io_put(PSG_WP, 0xf8 | (value & 0x05));
-; @ENDIF
+    LD D, $FD
+    LD E, $0
+    CALL AY8910STARTSTOPGEN
     RET
 
 AY8910START2:
-    CALL AY8910STARTGEN
-@IF MSX
-    LD A, PSG_WP
-    LD C, A
-    LD A, B
-    AND $FB
-    OUT (C), A
-@ENDIF
-; @IF LM80C
-        ; io_put(PSG_WP, 0xf8 | (value & 0x03));
-; @ENDIF
+    LD D, $FB
+    LD E, $0
+    CALL AY8910STARTSTOPGEN
     RET
 
 AY8910STARTVOL:
@@ -292,7 +400,7 @@ AY8910STARTVOL:
 AY8910FREQ:
     CALL AY8910CALCFREQ
     SRL A
-    JR C,AY8910FREQ0X
+    JR C, AY8910FREQ0X
     CALL AY8910FREQ0T
 AY8910FREQ0X:
     SRL A
@@ -339,94 +447,58 @@ AY8910PROGFREQ2X:
     RET
 
 AY8910PROGFREQ0:
-    LD A, PSG_AP
-    LD C, A
-    LD A, PSG_R0
-    OUT (C), A
-    LD A, PSG_WP
-    LD C, A
+    LD C, PSG_R0
     LD A, E
-    OUT (C), A
+    LD IXL, A
+    CALL AY8910WRITE
 
-    LD A, PSG_AP
-    LD C, A
-    LD A, PSG_R1
-    OUT (C), A
-    LD A, PSG_WP
-    LD C, A
+    LD C, PSG_R1
     LD A, D
     AND $0F
-    OUT (C), A
+    LD IXL, A
+    CALL AY8910WRITE
 
-    LD A, PSG_AP
-    LD C, A
-    LD A, PSG_R8
-    OUT (C), A
-    LD A, PSG_WP
-    LD C, A
+    LD C, PSG_R1
     LD A, $8
-    OUT (C), A
+    LD IXL, A
+    CALL AY8910WRITE
+
     RET
 
 AY8910PROGFREQ1:
-    LD A, PSG_AP
-    LD C, A
-    LD A, PSG_R2
-    OUT (C), A
-    LD A, PSG_WP
-    LD C, A
+    LD C, PSG_R2
     LD A, E
-    OUT (C), A
+    LD IXL, A
+    CALL AY8910WRITE
 
-    LD A, PSG_AP
-    LD C, A
-    LD A, PSG_R3
-    OUT (C), A
-    LD A, PSG_WP
-    LD C, A
+    LD C, PSG_R3
     LD A, D
     AND $0F
-    OUT (C), A
+    LD IXL, A
+    CALL AY8910WRITE
 
-    LD A, PSG_AP
-    LD C, A
-    LD A, PSG_R9
-    OUT (C), A
-    LD A, PSG_WP
-    LD C, A
+    LD C, PSG_R9
     LD A, $8
-    OUT (C), A
-
+    LD IXL, A
+    CALL AY8910WRITE
     RET
 
 AY8910PROGFREQ2:
-    LD A, PSG_AP
-    LD C, A
-    LD A, PSG_R4
-    OUT (C), A
-    LD A, PSG_WP
-    LD C, A
+    LD C, PSG_R4
     LD A, E
-    OUT (C), A
+    LD IXL, A
+    CALL AY8910WRITE
 
-    LD A, PSG_AP
-    LD C, A
-    LD A, PSG_R5
-    OUT (C), A
-    LD A, PSG_WP
-    LD C, A
+    LD C, PSG_R5
     LD A, D
     AND $0F
-    OUT (C), A
+    LD IXL, A
+    CALL AY8910WRITE
 
-    LD A, PSG_AP
-    LD C, A
-    LD A, PSG_R10
-    OUT (C), A
-    LD A, PSG_WP
-    LD C, A
+    LD C, PSG_R10
     LD A, $8
-    OUT (C), A
+    LD IXL, A
+    CALL AY8910WRITE
 
     RET
 
@@ -471,72 +543,33 @@ AY8910STOP2X:
     RET
 
 AY8910STOP0:
-    CALL AY8910STARTGEN
-@IF MSX
-    LD A, PSG_WP
-    LD C, A
-    LD A, B
-    AND $FE
-    OR $1
-    OUT (C), A
-@ENDIF
-; @IF LM80C
-;        io_put(PSG_WP, 0xf8 | (value & 0x07) | 0x01);
-; @ENDIF
-    LD A, PSG_AP
-    LD C, A
-    LD A, PSG_R8
-    OUT (C), A
-    LD A, PSG_WP
-    LD C, A
+    LD D, $FE
+    LD E, $1
+    CALL AY8910STARTSTOPGEN
+    LD C, PSG_R8
     LD A, $0
-    OUT (C), A
+    LD IXL, A
+    CALL AY8910WRITE
     RET
 
 AY8910STOP1:
-    CALL AY8910STARTGEN
-@IF MSX
-    LD A, PSG_WP
-    LD C, A
-    LD A, B
-    AND $FD
-    OR $2
-    OUT (C), A
-@ENDIF
-; @IF LM80C
-;        io_put(PSG_WP, 0xf8 | (value & 0x07) | 0x02);
-; @ENDIF
-    LD A, PSG_AP
-    LD C, A
-    LD A, PSG_R9
-    OUT (C), A
-    LD A, PSG_WP
-    LD C, A
+    LD D, $FD
+    LD E, $2
+    CALL AY8910STARTSTOPGEN
+    LD C, PSG_R9
     LD A, $0
-    OUT (C), A
+    LD IXL, A
+    CALL AY8910WRITE
     RET
 
 AY8910STOP2:
-    CALL AY8910STARTGEN
-@IF MSX
-    LD A, PSG_WP
-    LD C, A
-    LD A, B
-    AND $FB
-    OR $4
-    OUT (C), A
-@ENDIF
-; @IF LM80C
-;        io_put(PSG_WP, 0xf8 | (value & 0x07) | 0x04);
-; @ENDIF
-    LD A, PSG_AP
-    LD C, A
-    LD A, PSG_R10
-    OUT (C), A
-    LD A, PSG_WP
-    LD C, A
+    LD D, $FB
+    LD E, $4
+    CALL AY8910STARTSTOPGEN
+    LD C, PSG_R10
     LD A, $0
-    OUT (C), A
+    LD IXL, A
+    CALL AY8910WRITE
     RET
 
 ; This is the entry point for music play routine

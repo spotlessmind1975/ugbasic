@@ -118,6 +118,7 @@ void target_initialization( Environment * _environment ) {
     outline0("CALL PROTOTHREADINIT" );
 
     cpc_initialization( _environment );
+    ay8910_initialization( _environment );
     
     setup_text_variables( _environment );
 
