@@ -53,8 +53,10 @@ CLINE:
     CP $0
     JP NZ, CLINEC
 
+    LD A, (XCURSYS)
+    LD B, A
     LD A, $50
-    SUB (XCURSYS)
+    SUB B
 CLINEC:
     LD C, A
     LD A, 0
