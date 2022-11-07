@@ -65,14 +65,14 @@ static RGBi SYSTEM_PALETTE[] = {
         { 0xff, 0xff, 0xff, 26, "LIGHT WHITE", 0x0b },
 };
 
-static RGBi * commonPalette;
-int lastUsedSlotInCommonPalette = 0;
-
 /****************************************************************************
  * CODE SECTION
  ****************************************************************************/
 
 #ifdef __cpc__
+
+static RGBi * commonPalette;
+int lastUsedSlotInCommonPalette = 0;
 
 void cpc_inkey( Environment * _environment, char * _pressed, char * _key ) {
 
