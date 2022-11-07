@@ -51,7 +51,7 @@ generated/c64/exe/%.prg: $(subst /exe/,/asm/,$(@:.prg=.asm))
 	@rm -f $(@:.prg=.o)
 
 generated/c64/exe/%.d64:
-	ugbc/exe/ugbc.c64 -O d64 $(subst generated/c64/exe/,examples/,$(@:.d64=.bas)) -o $@
+	@ugbc/exe/ugbc.c64 -O d64 $(subst generated/c64/exe/,examples/,$(@:.d64=.bas)) -o $@
 
 generated/c128/asm/%.asm:
 	@ugbc/exe/ugbc.c128 -c $(subst /asm/,/cfg/,$(@:.asm=.cfg)) $(subst generated/c128/asm/,examples/,$(@:.asm=.bas)) $@
@@ -189,7 +189,7 @@ generated/cpc/exe/%.dsk:
 	@php sym2cpc.php $(subst /exe/,/asm/,$(@:.dsk=.osym)) >$(subst /exe/,/asm/,$(@:.rom=.sym))
 	@rm -f $(subst /exe/,/asm/,$(@:.dsk=.o))
 	@mv $(subst /exe/,/asm/,$(@:.dsk=.bin)) $(@:.dsk=.bin)
-	z88dk-appmake +cpc --org $1200 --disk -b $(@:.dsk=.bin) -o $(dir $@)main.com
+	@z88dk-appmake +cpc --org $1200 --disk -b $(@:.dsk=.bin) -o $(dir $@)main.com
 	@mv $(dir $@)main.dsk $@
 	@rm -f $(@:.dsk=.bin) $(@:.dsk=_*.bin) $(dir $@)main.com
 
