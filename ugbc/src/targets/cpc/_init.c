@@ -138,7 +138,7 @@ void target_linkage( Environment * _environment ) {
     char diskName[64];
     char listingFileName[64];
     
-    if ( _environment->outputFileType != OUTPUT_FILE_TYPE_ROM ) {
+    if ( _environment->outputFileType != OUTPUT_FILE_TYPE_DSK ) {
         CRITICAL_UNSUPPORTED_OUTPUT_FILE_TYPE( OUTPUT_FILE_TYPE_AS_STRING[_environment->outputFileType] );
     }
 
@@ -215,13 +215,6 @@ void target_linkage( Environment * _environment ) {
         diskName,
         pipes );
 
-    p = strstr( binaryName, ".bin" );
-    if ( p ) {
-        *(p+1) = 'd';
-        *(p+2) = 's';
-        *(p+3) = 'k';
-    }
-
     if ( system_call( _environment,  commandLine ) ) {
         printf("The compilation of assembly program failed.\n\n");
         printf("Please use option '-I' to install chain tool.\n\n");
@@ -230,14 +223,15 @@ void target_linkage( Environment * _environment ) {
 
     remove( _environment->exeFileName );
 
-    rename( binaryName, _environment->exeFileName );
+    rename( diskName, _environment->exeFileName );
 
     strcpy( binaryName, _environment->asmFileName );
     p = strstr( binaryName, ".asm" );
     if ( p ) {
         strcat( p, ".bin");
     }
-    remove(binaryName);
+ 
+   remove(binaryName);
 
 }
 
