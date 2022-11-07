@@ -589,9 +589,9 @@ void ted_next_raster_at( Environment * _environment, char * _label, char * _posi
     outline0("STA $FF0A");
     outhead1("%s:", label );
     outline1("LDA #<%s", _label);
-    outline0("STA $TEDISRSVC+1");
+    outline0("STA TEDISRSVC+1");
     outline1("LDA #>%s", _label);
-    outline0("STA $TEDISRSVC+2");
+    outline0("STA TEDISRSVC+2");
 
     ted_next_raster( _environment );
 
