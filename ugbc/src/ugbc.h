@@ -3010,6 +3010,7 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "hw/z80.h"
     #include "hw/sg1000.h"
     #include "hw/tms9918.h"
+    #include "hw/sn76489.h"
 #elif __cpc__
     #include "../src-generated/modules_cpc.h"
     #include "hw/z80.h"
