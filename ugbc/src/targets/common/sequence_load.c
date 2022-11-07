@@ -225,7 +225,7 @@ Variable * sequence_load( Environment * _environment, char * _filename, char * _
             CRITICAL("Compression failed");
         }
         msc1_free( compressor );
-        printf( "%s: %d bytes -> %d bytes\n", _filename, final->uncompressedSize, final->size );
+        // printf( "%s: %d bytes -> %d bytes\n", _filename, final->uncompressedSize, final->size );
         // If the compressed memory is greater than the original
         // size, we discard the compression and we will continue as
         // usual.
@@ -292,7 +292,7 @@ Variable * sequence_load( Environment * _environment, char * _filename, char * _
             CRITICAL("Compression failed");
         }
         msc1_free( compressor );
-        printf( "%s: %d bytes -> %d bytes\n", _filename, final->uncompressedSize, final->size );
+        // printf( "%s: %d bytes -> %d bytes\n", _filename, final->uncompressedSize, final->size );
         // If the compressed memory is greater than the original
         // size, we discard the compression and we will continue as
         // usual.

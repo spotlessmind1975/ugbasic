@@ -161,7 +161,7 @@ Variable * load( Environment * _environment, char * _filename, char * _alias, in
             CRITICAL("Compression failed");
         }
         msc1_free( compressor );
-        printf( "%s: %d bytes -> %d bytes\n", _filename, result->uncompressedSize, result->size );
+        // printf( "%s: %d bytes -> %d bytes\n", _filename, result->uncompressedSize, result->size );
         // If the compressed memory is greater than the original
         // size, we discard the compression and we will continue as
         // usual.

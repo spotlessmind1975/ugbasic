@@ -204,7 +204,7 @@ Variable * image_load( Environment * _environment, char * _filename, char * _ali
         }
         msc1_free( compressor );
 
-        printf( "%s: %d bytes -> %d bytes\n", _filename, result->uncompressedSize, result->size );
+        // printf( "%s: %d bytes -> %d bytes\n", _filename, result->uncompressedSize, result->size );
         // If the compressed memory is greater than the original
         // size, we discard the compression and we will continue as
         // usual.
@@ -289,7 +289,7 @@ Variable * image_load( Environment * _environment, char * _filename, char * _ali
             CRITICAL("Compression failed");
         }
         msc1_free( compressor );
-        printf( "%s: %d bytes -> %d bytes\n", _filename, result->uncompressedSize, result->size );
+        // printf( "%s: %d bytes -> %d bytes\n", _filename, result->uncompressedSize, result->size );
         // If the compressed memory is greater than the original
         // size, we discard the compression and we will continue as
         // usual.
