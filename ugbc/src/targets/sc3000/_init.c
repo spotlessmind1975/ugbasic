@@ -165,8 +165,8 @@ void target_linkage( Environment * _environment ) {
 
     char commandLine[8*MAX_TEMPORARY_STORAGE];
     char executableName[MAX_TEMPORARY_STORAGE];
-    char binaryName[64];
-    char listingFileName[64];
+    char binaryName[MAX_TEMPORARY_STORAGE];
+    char listingFileName[MAX_TEMPORARY_STORAGE];
     
     if ( _environment->outputFileType != OUTPUT_FILE_TYPE_ROM ) {
         CRITICAL_UNSUPPORTED_OUTPUT_FILE_TYPE( OUTPUT_FILE_TYPE_AS_STRING[_environment->outputFileType] );
