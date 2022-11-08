@@ -137,6 +137,7 @@ void target_linkage( Environment * _environment ) {
     char binaryName[MAX_TEMPORARY_STORAGE];
     char diskName[MAX_TEMPORARY_STORAGE];
     char listingFileName[MAX_TEMPORARY_STORAGE];
+    char binaryName2[MAX_TEMPORARY_STORAGE];
     
     if ( _environment->outputFileType != OUTPUT_FILE_TYPE_DSK ) {
         CRITICAL_UNSUPPORTED_OUTPUT_FILE_TYPE( OUTPUT_FILE_TYPE_AS_STRING[_environment->outputFileType] );
@@ -199,6 +200,37 @@ void target_linkage( Environment * _environment ) {
         *(p+3) = 'n';
         *(p+4) = 0;
     }
+
+    strcpy( binaryName2, _environment->sourceFileName );
+    p = strrstr( binaryName2, PATH_SEPARATOR );
+    if ( p ) {
+        strcpy( diskName, p+1 );
+    }
+
+    strcpy( binaryName2, _environment->asmFileName );
+    p = strrstr( binaryName2, PATH_SEPARATOR );
+    if ( p ) {
+        strcat( p, diskName );
+    }
+    p = strstr( binaryName2, ".bas" );
+    if ( p ) {
+        *(p+1) = 'b';
+        *(p+2) = 'i';
+        *(p+3) = 'n';
+        *(p+4) = 0;
+    }
+
+    strcpy( binaryName, _environment->asmFileName );
+    p = strstr( binaryName, ".asm" );
+    if ( p ) {
+        *(p+1) = 'b';
+        *(p+2) = 'i';
+        *(p+3) = 'n';
+        *(p+4) = 0;
+    }
+
+    move( binaryName, binaryName2 );
+    strcpy( binaryName, binaryName2 );
 
     strcpy( diskName, _environment->asmFileName );
     p = strstr( diskName, ".asm" );
