@@ -207,7 +207,7 @@ void target_linkage( Environment * _environment ) {
         p = strrchr( binaryName2, '\\' );
     }
     if ( p ) {
-        strcat( p, "main.bin" );
+        strcat( p+1, "main.bin" );
     }
 
     strcpy( binaryName, _environment->asmFileName );
