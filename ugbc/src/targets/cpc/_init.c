@@ -253,6 +253,15 @@ void target_linkage( Environment * _environment ) {
 
     // printf( "renaming %s to %s\n", diskName, _environment->exeFileName );
 
+    strcpy( diskName, _environment->exeFileName );
+    p = strrchr( diskName, '/' );
+    if ( !p ) {
+        p = strrchr( diskName, '\\' );
+    }
+    if ( p ) {
+        strcpy( p+1, "main.dsk" );
+    }
+
     rename( diskName, _environment->exeFileName );
 
     strcpy( binaryName, _environment->asmFileName );
