@@ -168,13 +168,17 @@ void target_linkage( Environment * _environment ) {
         return;
     }; 
 
+    char * p;
+
     strcpy( binaryName, _environment->asmFileName );
-    char * p = strstr( binaryName, ".asm" );
+    p = strstr( binaryName, ".asm" );
     if ( p ) {
         *(p+1) = 'o';
         *(p+2) = 0;
     }
     remove(binaryName);
+
+// printf( "%s\n", commandLine );
 
     if ( _environment->appMakerFileName ) {
         sprintf(executableName, "%s", _environment->appMakerFileName );
@@ -207,7 +211,7 @@ void target_linkage( Environment * _environment ) {
         p = strrchr( binaryName2, '\\' );
     }
     if ( p ) {
-        strcat( p+1, "main.bin" );
+        strcpy( p+1, "main.bin" );
     }
 
     strcpy( binaryName, _environment->asmFileName );
@@ -225,6 +229,13 @@ void target_linkage( Environment * _environment ) {
     remove( _environment->exeFileName );
 
     strcpy( diskName, _environment->exeFileName );
+    p = strrchr( diskName, '/' );
+    if ( !p ) {
+        p = strrchr( diskName, '\\' );
+    }
+    if ( p ) {
+        strcpy( p+1, "main.com" );
+    }
 
     sprintf( commandLine, "\"%s\" +cpc --org $1200 --disk -b \"%s\" -o \"%s\" %s",
         executableName,
@@ -237,6 +248,10 @@ void target_linkage( Environment * _environment ) {
         printf("Please use option '-I' to install chain tool.\n\n");
         return;
     }; 
+
+    // printf( "%s\n", commandLine );
+
+    // printf( "renaming %s to %s\n", diskName, _environment->exeFileName );
 
     rename( diskName, _environment->exeFileName );
 
