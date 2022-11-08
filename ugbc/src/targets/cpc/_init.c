@@ -157,7 +157,7 @@ void target_linkage( Environment * _environment ) {
         strcpy( listingFileName, "" );
     }
 
-    sprintf( commandLine, "\"%s\" %s -D__cpc__ -b \"%s\"",
+    sprintf( commandLine, "\"%s\" %s -D__cpc__ -m -s -g -b \"%s\"",
         executableName,
         listingFileName,
         _environment->asmFileName );
