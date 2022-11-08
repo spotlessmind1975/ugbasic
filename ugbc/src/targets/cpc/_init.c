@@ -201,23 +201,13 @@ void target_linkage( Environment * _environment ) {
         *(p+4) = 0;
     }
 
-    strcpy( binaryName2, _environment->sourceFileName );
-    p = strrchr( binaryName2, PATH_SEPARATOR );
-    if ( p ) {
-        strcpy( diskName, p+1 );
-    }
-
     strcpy( binaryName2, _environment->asmFileName );
-    p = strrchr( binaryName2, PATH_SEPARATOR );
-    if ( p ) {
-        strcat( p, diskName );
+    p = strrchr( binaryName2, "/" );
+    if ( !p ) {
+        p = strrchr( binaryName2, "\\" );
     }
-    p = strstr( binaryName2, ".bas" );
     if ( p ) {
-        *(p+1) = 'b';
-        *(p+2) = 'i';
-        *(p+3) = 'n';
-        *(p+4) = 0;
+        strcat( p, "main.bin" );
     }
 
     strcpy( binaryName, _environment->asmFileName );
