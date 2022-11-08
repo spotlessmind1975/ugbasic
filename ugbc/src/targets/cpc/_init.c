@@ -202,13 +202,13 @@ void target_linkage( Environment * _environment ) {
     }
 
     strcpy( binaryName2, _environment->sourceFileName );
-    p = strrstr( binaryName2, PATH_SEPARATOR );
+    p = strrchr( binaryName2, PATH_SEPARATOR );
     if ( p ) {
         strcpy( diskName, p+1 );
     }
 
     strcpy( binaryName2, _environment->asmFileName );
-    p = strrstr( binaryName2, PATH_SEPARATOR );
+    p = strrchr( binaryName2, PATH_SEPARATOR );
     if ( p ) {
         strcat( p, diskName );
     }
