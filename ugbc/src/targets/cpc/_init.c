@@ -222,14 +222,9 @@ void target_linkage( Environment * _environment ) {
     rename( binaryName, binaryName2 );
     strcpy( binaryName, binaryName2 );
 
-    strcpy( diskName, _environment->asmFileName );
-    p = strstr( diskName, ".asm" );
-    if ( p ) {
-        *(p+1) = 'd';
-        *(p+2) = 's';
-        *(p+3) = 'k';
-        *(p+4) = 0;
-    }
+    remove( _environment->exeFileName );
+
+    strcpy( diskName, _environment->exeFileName );
 
     sprintf( commandLine, "\"%s\" +cpc --org $1200 --disk -b \"%s\" -o \"%s\" %s",
         executableName,
@@ -243,8 +238,6 @@ void target_linkage( Environment * _environment ) {
         return;
     }; 
 
-    remove( _environment->exeFileName );
-
     rename( diskName, _environment->exeFileName );
 
     strcpy( binaryName, _environment->asmFileName );
@@ -253,7 +246,7 @@ void target_linkage( Environment * _environment ) {
         strcat( p, ".bin");
     }
  
-   remove(binaryName);
+    remove(binaryName);
 
 }
 
