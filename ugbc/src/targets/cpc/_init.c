@@ -229,7 +229,7 @@ void target_linkage( Environment * _environment ) {
         *(p+4) = 0;
     }
 
-    move( binaryName, binaryName2 );
+    rename( binaryName, binaryName2 );
     strcpy( binaryName, binaryName2 );
 
     strcpy( diskName, _environment->asmFileName );
