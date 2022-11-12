@@ -1,4 +1,4 @@
-[![ugBASIC](logo-ugbasic.png)]([www](https://ugbasic.iwashere.eu/))
+[![ugBASIC](logo-ugbasic.png)](https://ugbasic.iwashere.eu/)
 
 An **isomorphic BASIC** language compiler for retrocomputers by Marco Spedaletti (asimov@mclink.it)
 
