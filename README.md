@@ -9,6 +9,7 @@ A cross compiler of BASIC dialect specialized in programs that are [very efficie
  * [Installation guide](https://retroprogramming.iwashere.eu/ugbasic:installation)
  * [Usage guide](https://retroprogramming.iwashere.eu/ugbasic:usage)
  * [Supported targets](https://retroprogramming.iwashere.eu/ugbasic:targets)
+ * [Syntax](https://retroprogramming.iwashere.eu/ugbasic:syntax)
 
 ## WHY SHOULD I USE "ugBASIC"?
 
