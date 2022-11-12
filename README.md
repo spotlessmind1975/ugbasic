@@ -44,6 +44,14 @@ This is a short list of supported hardware and output file formats:
 
 The complete list of targets can be [found here](https://retroprogramming.iwashere.eu/ugbasic:targets).
 
+## WHAT DOES "ug" MEAN?
+
+It is an acronym.
+
+ * The letter **u** stands for "micro" because it is a "minimal" language, which is translated as linearly as possible into assembly without abstractions. Note that the nature of isomorphism is like that it may not be "minimal" in terms of syntax. There may be redundancies, but the concept remains.
+ * The letter **g** stands for "game", because the language was designed to write video games, even advanced ones. It has a number of primitives that hook directly to hardware characteristics. For example, there are instructions to synchronize the execution to the vertical blank, to manage animations, background music and so on.
+
+
 ## LICENSE
 
 Copyright 2021-2022 Marco Spedaletti
