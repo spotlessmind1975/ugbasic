@@ -9,7 +9,7 @@ A cross compiler of BASIC dialect specialized in programs that are [very efficie
 ## WHY SHOULD I USE "ugBASIC"?
 
  * **Modern programming** - all the most modern BASIC constructs are available, like dynamic strings, procedures, constants, functions, inclusion of libraries, ....
- * **[Multithreading](https://retroprogramming.iwashere.eu/ugbasic:user:multitasking)** - procedures can be called on a parallel way.
+ * **[Multitasking](https://retroprogramming.iwashere.eu/ugbasic:user:multitasking)** - procedures can be called on a parallel way.
  * **Fast execution** - BASIC source code, graphical and audio resources are compiled directly in assembly, and optimized for the specific CPU, and all calculations are done on integer numbers, moreover it does not use any stack.
  * **No ROM dependency** - the executable take care of all the hardware, with no dependency from installed ROM that will be swapped out, if possible.
  * **RAM optimizations** - all RAM is available for code and data, and it is available [a fast compression / decompression routine](https://retroprogramming.iwashere.eu/msc1) "out of the box".
