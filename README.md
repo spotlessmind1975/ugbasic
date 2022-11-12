@@ -6,6 +6,10 @@ An **isomorphic BASIC** language compiler for retrocomputers by Marco Spedaletti
 
 A cross compiler of BASIC dialect specialized in programs that are [very efficient "by design"](https://retroprogramming.iwashere.eu/midres_library:isomorphism) on various [8-bit platforms](https://retroprogramming.iwashere.eu/ugbasic:targets) (based on **[MOS 6502/6510](https://retroprogramming.iwashere.eu/ugbasic:targets#cpu_6502_based)**, **[Motorola 6809](https://retroprogramming.iwashere.eu/ugbasic:targets#based)** and **[Zilog Z80](https://retroprogramming.iwashere.eu/ugbasic:targets#z80_based)**), without the need for "fine tuning" them and without compromises of other dev-kits.
 
+ * [Installation guide](https://retroprogramming.iwashere.eu/ugbasic:installation)
+ * [Usage guide](https://retroprogramming.iwashere.eu/ugbasic:usage)
+ * [Supported targets](https://retroprogramming.iwashere.eu/ugbasic:targets)
+
 ## WHY SHOULD I USE "ugBASIC"?
 
  * **Modern programming** - all the most modern BASIC constructs are available, like dynamic strings, procedures, constants, functions, inclusion of libraries, ....
