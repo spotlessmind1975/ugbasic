@@ -79,7 +79,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token RING ROCK SAWTOOTH SAX SCI SEASHORE SECTION SHAKUHACHI SHAMISEN SHANAI SITAR SLAP SOPRANO SOUNDTRACK
 %token SQUARE STEEL STRINGS SWEEP SYNTH SYNTHBRASS SYNTHSTRINGS TAIKO TANGO TELEPHONE TENOR TIMPANI TINKLE
 %token TOM TONK TREMOLO TROMBONE TRUMPET TUBA TUBULAR TWEET VIBRAPHONE VIOLA VIOLIN VOICE WARM WHISTLE WOODBLOCK 
-%token XYLOPHONE KILL COMPRESSED STORAGE ENDSTORAGE FILEX DLOAD INCLUDE LET CPC INT INTEGER
+%token XYLOPHONE KILL COMPRESSED STORAGE ENDSTORAGE FILEX DLOAD INCLUDE LET CPC INT INTEGER LONG
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -1163,6 +1163,9 @@ random_definition_simple:
     | DWORD {
         $$ = random_value( _environment, VT_DWORD )->name;
     }
+    | LONG {
+        $$ = random_value( _environment, VT_SDWORD )->name;
+    }
     | POSITION {
         $$ = random_value( _environment, VT_POSITION )->name;
     }
@@ -1930,7 +1933,7 @@ exponential:
                 $$ = variable_temporary( _environment,  VT_STRING, "(constant)" )->name;
                 variable_store_string( _environment, $$, c->valueString );
             } else {
-                $$ = variable_temporary( _environment,  VT_WORD, "(constant)" )->name;
+                $$ = variable_temporary( _environment, ((struct _Environment *)_environment)->defaultVariableType, "(constant)" )->name;
                 variable_store( _environment, $$, c->value );
             }
         } else {
@@ -1955,7 +1958,7 @@ exponential:
       }
     | Integer { 
         if ( $1 < 0 ) {
-            $$ = variable_temporary( _environment, VT_SWORD, "(signed integer value)" )->name;
+            $$ = variable_temporary( _environment, VT_SIGN( ((struct _Environment *)_environment)->defaultVariableType ), "(signed integer value)" )->name;
             variable_store( _environment, $$, $1 );
         } else {
             $$ = variable_temporary( _environment, ((struct _Environment *)_environment)->defaultVariableType, "(integer value)" )->name;
@@ -4011,6 +4014,9 @@ datatype :
         $$ = VT_DWORD;
     }
     | SIGNED DWORD {
+        $$ = VT_SDWORD;
+    }
+    | LONG {
         $$ = VT_SDWORD;
     }
     | ADDRESS {
