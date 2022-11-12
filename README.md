@@ -10,6 +10,19 @@ A cross compiler of BASIC dialect specialized in programs that are [very efficie
  * [Usage guide](https://retroprogramming.iwashere.eu/ugbasic:usage)
  * [Supported targets](https://retroprogramming.iwashere.eu/ugbasic:targets)
  * [Syntax](https://retroprogramming.iwashere.eu/ugbasic:syntax)
+ * [Basics of language](https://retroprogramming.iwashere.eu/ugbasic:user:basics)
+ * [Strings](https://retroprogramming.iwashere.eu/ugbasic:user:strings)
+ * [Maths](https://retroprogramming.iwashere.eu/ugbasic:user:maths)
+ * [Control structures](https://retroprogramming.iwashere.eu/ugbasic:user:control)
+ * [Procedures](https://retroprogramming.iwashere.eu/ugbasic:user:procedures)
+ * [Texts](https://retroprogramming.iwashere.eu/ugbasic:user:texts)
+ * [I/O control](https://retroprogramming.iwashere.eu/ugbasic:user:controls)
+ * [Screens](https://retroprogramming.iwashere.eu/ugbasic:user:screens)
+ * [Graphics](https://retroprogramming.iwashere.eu/ugbasic:user:graphics)
+ * [Images](https://retroprogramming.iwashere.eu/ugbasic:user:images)
+ * [Multitasking](https://retroprogramming.iwashere.eu/ugbasic:user:multitasking)
+ * [Memory expansions](https://retroprogramming.iwashere.eu/ugbasic:user:expansion)
+ * [Audio](https://retroprogramming.iwashere.eu/ugbasic:user:audio)
 
 ## WHY SHOULD I USE "ugBASIC"?
 
