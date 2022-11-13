@@ -6311,6 +6311,18 @@ int system_call( Environment * _environment, char * _commandline ) {
 
 }
 
+int system_remove_safe( Environment * _environment, char * _filename ) {
+
+    FILE * f = fopen( _filename, "rb" );
+    if ( f ) {
+        fclose( f );
+        if ( remove( _filename ) != 0 ) {
+            CRITICAL_CANNOT_REMOVE_FILE( _filename );
+        }
+    }
+
+}
+
 char * escape_newlines( char * _string ) {
 
     char * result = malloc( 6 * strlen( _string ) + 2 );

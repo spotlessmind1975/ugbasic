@@ -1840,6 +1840,7 @@ typedef struct _Environment {
 #define CRITICAL_INCLUDE_FILE_NOT_FOUND(f) CRITICAL2("E135 - INCLUDE missing file", f );
 #define CRITICAL_XOR_UNSUPPORTED( v, t ) CRITICAL3("E136 - Bitwise XOR unsupported for variable of given datatype", v, t );
 #define CRITICAL_SWAP_DIFFERENT_BITWIDTH( v )  CRITICAL2("E137 - Bitwise SWAP supported only for variable of same bitwidth", v );
+#define CRITICAL_CANNOT_REMOVE_FILE(f) CRITICAL2("E138 - cannot remove file", f );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -2764,6 +2765,7 @@ void                    sprite_at( Environment * _environment, int _sprite, int 
 void                    sprite_at_vars( Environment * _environment, char * _sprite, char * _x, char * _y );
 Variable *              sqroot( Environment * _environment, char * _value );
 int                     system_call( Environment * _environment, char * _command );
+int                     system_remove_safe( Environment * _environment, char * _filename );
 
 //----------------------------------------------------------------------------
 // *T*

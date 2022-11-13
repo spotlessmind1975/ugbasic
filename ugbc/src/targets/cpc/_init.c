@@ -33,6 +33,7 @@
  ****************************************************************************/
 
 #include "../../ugbc.h"
+#include <unistd.h>
 
 /****************************************************************************
  * CODE SECTION 
@@ -176,7 +177,7 @@ void target_linkage( Environment * _environment ) {
         *(p+1) = 'o';
         *(p+2) = 0;
     }
-    remove(binaryName);
+    system_remove_safe( _environment, binaryName );
 
 // printf( "%s\n", commandLine );
 
@@ -223,10 +224,12 @@ void target_linkage( Environment * _environment ) {
         *(p+4) = 0;
     }
 
+    system_remove_safe( _environment, binaryName2 );
+
     rename( binaryName, binaryName2 );
     strcpy( binaryName, binaryName2 );
 
-    remove( _environment->exeFileName );
+    system_remove_safe( _environment, _environment->exeFileName );
 
     strcpy( diskName, _environment->exeFileName );
     p = strrchr( diskName, '/' );
@@ -270,7 +273,7 @@ void target_linkage( Environment * _environment ) {
         strcat( p, ".bin");
     }
  
-    remove(binaryName);
+    system_remove_safe( _environment, binaryName );
 
 }
 
