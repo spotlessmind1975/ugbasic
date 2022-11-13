@@ -6227,7 +6227,7 @@ int main( int _argc, char *_argv[] ) {
                     } else if ( strcmp( optarg, "k7") == 0 ) {
                         _environment->outputFileType = OUTPUT_FILE_TYPE_K7_NEW;
                     } else if ( strcmp( optarg, "tap") == 0 ) {
-                        _environment->outputFileType = OUTPUT_FILE_TYPE_K7_NEW;
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_TAP;
                     } else if ( strcmp( optarg, "rom") == 0 ) {
                         _environment->outputFileType = OUTPUT_FILE_TYPE_ROM;
                     } else if ( strcmp( optarg, "d64") == 0 ) {
