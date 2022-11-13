@@ -33,7 +33,6 @@
  ****************************************************************************/
 
 #include "../../ugbc.h"
-#include <unistd.h>
 
 /****************************************************************************
  * CODE SECTION 
@@ -251,6 +250,8 @@ void target_linkage( Environment * _environment ) {
         printf("Please use option '-I' to install chain tool.\n\n");
         return;
     }; 
+
+    system_remove_safe( _environment, diskName );
 
     // printf( "%s\n", commandLine );
 
