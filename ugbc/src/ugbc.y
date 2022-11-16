@@ -2201,6 +2201,14 @@ exponential:
     | color_enumeration { 
         $$ = $1;
       }
+    | RGB OP const_expr OP_COMMA const_expr OP_COMMA const_expr CP {
+        $$ = variable_temporary( _environment, VT_COLOR, "(color)" )->name;
+        if ( ((Environment *)_environment)->currentRgbConverterFunction ) {
+            variable_store( _environment, $$, ((Environment *)_environment)->currentRgbConverterFunction( $3, $5, $7 ) );
+        } else {
+            variable_store( _environment, $$, 0 );
+        }
+    }
     | DISTANCE OP optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y CP {
         $$ = distance( _environment, $3, $5, $7, $9 )->name;
     }
@@ -5155,25 +5163,11 @@ palette_definition:
     | expr {
         color_semivars( _environment, ((struct _Environment *)_environment)->paletteIndex++, $1 );
     }
-    | RGB OP const_expr OP_COMMA const_expr OP_COMMA const_expr CP {
-        if ( ((Environment *)_environment)->currentRgbConverterFunction ) {
-            color( _environment, ((struct _Environment *)_environment)->paletteIndex++, ((Environment *)_environment)->currentRgbConverterFunction( $3, $5, $7 ) );
-        } else {
-            color( _environment, ((struct _Environment *)_environment)->paletteIndex++, 0 );
-        }
-    }
     | OP_HASH const_expr {
         color( _environment, ((struct _Environment *)_environment)->paletteIndex++, $2 );
     } OP_COMMA palette_definition
     | expr {
         color_semivars( _environment, ((struct _Environment *)_environment)->paletteIndex++, $1 );
-    } OP_COMMA palette_definition
-    | RGB OP const_expr OP_COMMA const_expr OP_COMMA const_expr CP {
-        if ( ((Environment *)_environment)->currentRgbConverterFunction ) {
-            color( _environment, ((struct _Environment *)_environment)->paletteIndex++, ((Environment *)_environment)->currentRgbConverterFunction( $3, $5, $7 ) );
-        } else {
-            color( _environment, ((struct _Environment *)_environment)->paletteIndex++, 0 );
-        }
     } OP_COMMA palette_definition;
 
 use_definition:

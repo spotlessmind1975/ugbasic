@@ -214,7 +214,7 @@ static int rgbConverterFunction( int _red, int _green, int _blue ) {
     
     int colorIndex = 0;
     int j = 0;
-    int minDistance = 0xffffffff;
+    unsigned int minDistance = 0xffffffff;
 
     RGBi rgb;
     rgb.red = _red;

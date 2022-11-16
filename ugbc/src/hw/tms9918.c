@@ -530,7 +530,7 @@ void tms9918_bank_select( Environment * _environment, int _bank ) {
 static int rgbConverterFunction( int _red, int _green, int _blue ) {
     
     int colorIndex = 0;
-    int minDistance = 0xffffffff;
+    unsigned int minDistance = 0xffffffff;
     int j;
 
     RGBi rgb;

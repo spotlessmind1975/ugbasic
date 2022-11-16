@@ -428,7 +428,7 @@ void cpc_bank_select( Environment * _environment, int _bank ) {
 static int rgbConverterFunction( int _red, int _green, int _blue ) {
     
     int colorIndex = 0;
-    int minDistance = 0xffffffff;
+    unsigned int minDistance = 0xffffffff;
     int j;
 
     RGBi rgb;
@@ -440,7 +440,7 @@ static int rgbConverterFunction( int _red, int _green, int _blue ) {
         int distance = rgbi_distance(&SYSTEM_PALETTE[j], &rgb);
         if (distance < minDistance) {
             minDistance = distance;
-            colorIndex = j;
+            colorIndex = SYSTEM_PALETTE[j].hardwareIndex;
         }
     }
 
