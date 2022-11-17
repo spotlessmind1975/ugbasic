@@ -79,7 +79,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token RING ROCK SAWTOOTH SAX SCI SEASHORE SECTION SHAKUHACHI SHAMISEN SHANAI SITAR SLAP SOPRANO SOUNDTRACK
 %token SQUARE STEEL STRINGS SWEEP SYNTH SYNTHBRASS SYNTHSTRINGS TAIKO TANGO TELEPHONE TENOR TIMPANI TINKLE
 %token TOM TONK TREMOLO TROMBONE TRUMPET TUBA TUBULAR TWEET VIBRAPHONE VIOLA VIOLIN VOICE WARM WHISTLE WOODBLOCK 
-%token XYLOPHONE KILL COMPRESSED STORAGE ENDSTORAGE FILEX DLOAD INCLUDE LET CPC INT INTEGER LONG
+%token XYLOPHONE KILL COMPRESSED STORAGE ENDSTORAGE FILEX DLOAD INCLUDE LET CPC INT INTEGER LONG OP_PERC OP_AMPERSAND OP_AT
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -103,7 +103,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <string> writing_mode_definition writing_part_definition
 %type <string> key_scancode_definition key_scancode_alphadigit key_scancode_function_digit
 %type <integer> const_key_scancode_definition const_key_scancode_alphadigit const_key_scancode_function_digit
-%type <integer> datatype as_datatype
+%type <integer> datatype as_datatype as_datatype_suffix
 %type <integer> halted
 %type <integer> optional_integer
 %type <string> optional_expr optional_x optional_y
@@ -1944,6 +1944,23 @@ exponential:
             }
         }
     }
+    | Identifier as_datatype_suffix {
+        Constant * c = constant_find( ((struct _Environment *)_environment)->constants, $1 );
+        if ( c ) {
+            if ( c->valueString ) {
+                CRITICAL_TYPE_MISMATCH_CONSTANT_NUMERIC( $1 );
+            } else {
+                $$ = variable_temporary( _environment, $2, "(constant)" )->name;
+                variable_store( _environment, $$, c->value );
+            }
+        } else {
+            if ( !variable_exists( _environment, $1 ) ) {
+                $$ = variable_retrieve_or_define( _environment, $1, $2, 0 )->name;
+            } else {
+                $$ = variable_retrieve( _environment, $1 )->name;
+            }
+        }
+    }
     | Identifier OP_DOLLAR { 
         Constant * c = constant_find( ((struct _Environment *)_environment)->constants, $1 );
         if ( c ) {
@@ -3449,6 +3466,17 @@ as_datatype :
     }
     | AS datatype {
         $$ = $2;
+    };
+
+as_datatype_suffix :
+      OP_AT {
+        $$ = VT_SBYTE;
+    }
+    | OP_PERC {
+        $$ = VT_SWORD;
+    }
+    | OP_AMPERSAND {
+        $$ = VT_SDWORD;
     };
 
 var_definition_simple:
@@ -5769,6 +5797,26 @@ statement2:
             variable_move( _environment, expr->name, variable->name );
         }
 
+  }
+  | Identifier as_datatype_suffix OP_ASSIGN expr {
+        Variable * expr = variable_retrieve( _environment, $4 );
+        Variable * variable;
+        if ( variable_exists( _environment, $1 ) ) {
+            variable = variable_retrieve( _environment, $1 );
+        } else {
+            variable = variable_define( _environment, $1, $2, 0 );
+        }
+
+        if ( variable->type != $2 ) {
+            CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[variable->type], DATATYPE_AS_STRING[$2] );
+        }
+
+        if ( variable->type != expr->type ) {
+            Variable * casted = variable_cast( _environment, expr->name, variable->type );
+            variable_move( _environment, casted->name, variable->name );
+        } else {
+            variable_move( _environment, expr->name, variable->name );
+        }
   }
   | Identifier OP_ASSIGN OP_HASH const_expr as_datatype {
         if ( !variable_exists( _environment, $1 ) ) {

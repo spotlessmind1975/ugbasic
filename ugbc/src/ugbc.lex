@@ -98,6 +98,10 @@ _[\n\r]+ { yycolno = 0; }
 "}" { RETURN(CGP,1); }
 "?" { RETURN(QM,1); }
 
+"@" { RETURN(OP_AT,1); }
+"%" { RETURN(OP_PERC,1); }
+"&" { RETURN(OP_AMPERSAND,1); }
+
 8BIT { RETURN(BYTE,1); }
 16BIT { RETURN(WORD,1); }
 32BIT { RETURN(DWORD,1); }
