@@ -62,14 +62,6 @@ PLOTVBASE:
     DW $C730, $CF30, $D730, $DF30, $E730, $EF30, $F730, $FF30
     DW $C780, $CF80, $D780, $DF80, $E780, $EF80, $F780, $FF80
 
-PALETTE:    
-    DB      4,  10,  19,  12 
-    DB     11,  20,  21,  13
-    DB      6,  30,  31,   7 
-    DB      18, 25,  10,   7
-PALETTEUNUSED:
-    DB $01
-
 ; Look for a specific color into the palette.
 ;   input: IXL = color to look for
 ;   output: IXH = index of ink, $FF if not found
@@ -139,13 +131,7 @@ CPCINSERTPALETTEUNDER:
     CP $0
     JR Z, CPCINSERTPALETTEDONE
 
-    LD BC, $7F00
-    LD A, IXH
-    LD C, A
-    OUT (C), C
-    LD A, IXL
-    OR A, $40
-    OUT (C), A
+    CALL SETHWPALETTE
 
 CPCINSERTPALETTEDONE:
     POP AF
@@ -174,13 +160,7 @@ CPCUPDATEPALETTE:
     CP $0
     JR Z, CPCUPDATEPALETTEDONE
 
-    LD BC, $7F00
-    LD A, IXH
-    LD C, A
-    OUT (C), C
-    LD A, IXL
-    OR A, $40
-    OUT (C), A
+    CALL SETHWPALETTE
 
 CPCUPDATEPALETTEDONE:
 
@@ -302,6 +282,12 @@ CPCVIDEOMUL84L1:
     POP AF
     PUSH AF
     AND $3
+    SLA A
+    SLA A
+    SLA A
+    SLA A
+    SLA A
+    SLA A
     LD L, A
     POP AF
     JP CPCVIDEOMUL84H
@@ -357,12 +343,6 @@ CPCVIDEOMUL84J1:
     POP AF
     PUSH AF
     AND $3
-    SLA A
-    SLA A
-    SLA A
-    SLA A
-    SLA A
-    SLA A
     OR L
     LD L, A
     POP AF

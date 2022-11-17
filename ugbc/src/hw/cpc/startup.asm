@@ -35,6 +35,28 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+PALETTE:    
+    DB      4,  10,  19,  12 
+    DB     11,  20,  21,  13
+    DB      6,  30,  31,   7 
+    DB      18, 25,  10,   7
+PALETTEUNUSED:
+    DB $01
+
+SETHWPALETTE:
+	PUSH BC
+	PUSH AF
+    LD BC, $7F00
+    LD A, IXH
+    LD C, A
+    OUT (C), C
+    LD A, IXL
+    OR A, $40
+    OUT (C), A
+	POP AF
+	POP BC
+    RET
+
 CPCISVC:
 	PUSH	AF
 	PUSH	BC
@@ -85,4 +107,19 @@ CPCVIDEOSTARTUP:
     LD HL, CPCISVC
     LD ($0039), HL
     EI
+
+	LD HL, PALETTE
+	LD A, 0
+	LD BC, $0F00
+CPCVIDEOSTARTUPL1:
+	LD A, C
+	LD IXH, A
+	LD A, (HL)
+	LD IXL, A
+	CALL SETHWPALETTE
+	INC HL
+	INC C
+	DEC B
+	JR NZ, CPCVIDEOSTARTUPL1
+
     RET
