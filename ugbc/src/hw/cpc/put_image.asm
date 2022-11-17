@@ -131,7 +131,8 @@ PUTIMAGE0DONEROW:
     LD E, A
     LD A, 0
     LD D, A
-    SUB HL, DE
+    AND A
+    SBC HL, DE
     POP DE
     JP PUTIMAGE0L2
 
@@ -219,7 +220,8 @@ PUTIMAGE1DONEROW:
     LD E, A
     LD A, 0
     LD D, A
-    SUB HL, DE
+    AND A
+    SBC HL, DE
     POP DE
     JP PUTIMAGE0L2
 
@@ -322,7 +324,8 @@ PUTIMAGE2DONEROW:
     LD A, 0
     LD D, A
 
-    SUB HL, DE
+    AND A
+    SBC HL, DE
     POP DE
     JP PUTIMAGE0L2
 
