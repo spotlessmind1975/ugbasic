@@ -1389,7 +1389,7 @@ void c6847_put_image( Environment * _environment, char * _image, char * _x, char
         }
     } else {
         if ( _frame ) {
-            outline0("LEAY 2,y" );
+            outline0("LEAY 3,y" );
             if ( strlen(_frame) == 0 ) {
             } else {
                 outline1("LDX #OFFSETS%4.4x", _frame_size );
