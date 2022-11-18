@@ -11,6 +11,7 @@ A cross compiler of BASIC dialect specialized in programs that are [very efficie
  * [Supported targets](https://retroprogramming.iwashere.eu/ugbasic:targets)
  * [Syntax](https://retroprogramming.iwashere.eu/ugbasic:syntax)
  * [Data Types](https://retroprogramming.iwashere.eu/ugbasic:datatypes)
+ * [Variables (and constants)](https://retroprogramming.iwashere.eu/ugbasic:variables)
  * [Basics of language](https://retroprogramming.iwashere.eu/ugbasic:user:basics)
  * [Strings](https://retroprogramming.iwashere.eu/ugbasic:user:strings)
  * [Maths](https://retroprogramming.iwashere.eu/ugbasic:user:maths)
