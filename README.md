@@ -6,25 +6,28 @@ An **isomorphic BASIC** language compiler for retrocomputers by Marco Spedaletti
 
 A cross compiler of BASIC dialect specialized in programs that are [very efficient "by design"](https://retroprogramming.iwashere.eu/midres_library:isomorphism) on various [8-bit platforms](https://retroprogramming.iwashere.eu/ugbasic:targets) (based on **[MOS 6502/6510](https://retroprogramming.iwashere.eu/ugbasic:targets#cpu_6502_based)**, **[Motorola 6809](https://retroprogramming.iwashere.eu/ugbasic:targets#based)** and **[Zilog Z80](https://retroprogramming.iwashere.eu/ugbasic:targets#z80_based)**), without the need for "fine tuning" them and without compromises of other dev-kits.
 
- * [Installation guide](https://retroprogramming.iwashere.eu/ugbasic:installation)
- * [Usage guide](https://retroprogramming.iwashere.eu/ugbasic:usage)
- * [Supported targets](https://retroprogramming.iwashere.eu/ugbasic:targets)
- * [Syntax](https://retroprogramming.iwashere.eu/ugbasic:syntax)
- * [Data Types](https://retroprogramming.iwashere.eu/ugbasic:datatypes)
- * [Variables (and constants)](https://retroprogramming.iwashere.eu/ugbasic:variables)
- * [Basics of language](https://retroprogramming.iwashere.eu/ugbasic:user:basics)
- * [Strings](https://retroprogramming.iwashere.eu/ugbasic:user:strings)
- * [Maths](https://retroprogramming.iwashere.eu/ugbasic:user:maths)
- * [Control structures](https://retroprogramming.iwashere.eu/ugbasic:user:control)
- * [Procedures](https://retroprogramming.iwashere.eu/ugbasic:user:procedures)
- * [Texts](https://retroprogramming.iwashere.eu/ugbasic:user:texts)
- * [I/O control](https://retroprogramming.iwashere.eu/ugbasic:user:controls)
- * [Screens](https://retroprogramming.iwashere.eu/ugbasic:user:screens)
- * [Graphics](https://retroprogramming.iwashere.eu/ugbasic:user:graphics)
- * [Images](https://retroprogramming.iwashere.eu/ugbasic:user:images)
- * [Multitasking](https://retroprogramming.iwashere.eu/ugbasic:user:multitasking)
- * [Memory expansions](https://retroprogramming.iwashere.eu/ugbasic:user:expansion)
- * [Audio](https://retroprogramming.iwashere.eu/ugbasic:user:audio)
+ * **Installation and usage**
+    * [Installation guide](https://retroprogramming.iwashere.eu/ugbasic:installation)
+    * [Usage guide](https://retroprogramming.iwashere.eu/ugbasic:usage)
+    * [Supported targets](https://retroprogramming.iwashere.eu/ugbasic:targets)
+ * **About the language** 
+    * [Basics of language](https://retroprogramming.iwashere.eu/ugbasic:user:basics)
+    * [Syntax](https://retroprogramming.iwashere.eu/ugbasic:syntax)
+    * [Data Types](https://retroprogramming.iwashere.eu/ugbasic:datatypes)
+    * [Variables (and constants)](https://retroprogramming.iwashere.eu/ugbasic:variables)
+ * **Programming guides** 
+    * [Strings](https://retroprogramming.iwashere.eu/ugbasic:user:strings)
+    * [Maths](https://retroprogramming.iwashere.eu/ugbasic:user:maths)
+    * [Control structures](https://retroprogramming.iwashere.eu/ugbasic:user:control)
+    * [Procedures](https://retroprogramming.iwashere.eu/ugbasic:user:procedures)
+    * [Texts](https://retroprogramming.iwashere.eu/ugbasic:user:texts)
+    * [I/O control](https://retroprogramming.iwashere.eu/ugbasic:user:controls)
+    * [Screens](https://retroprogramming.iwashere.eu/ugbasic:user:screens)
+    * [Graphics](https://retroprogramming.iwashere.eu/ugbasic:user:graphics)
+    * [Images](https://retroprogramming.iwashere.eu/ugbasic:user:images)
+    * [Multitasking](https://retroprogramming.iwashere.eu/ugbasic:user:multitasking)
+    * [Memory expansions](https://retroprogramming.iwashere.eu/ugbasic:user:expansion)
+    * [Audio](https://retroprogramming.iwashere.eu/ugbasic:user:audio)
 
 ## WHY SHOULD I USE "ugBASIC"?
 
