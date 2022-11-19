@@ -4005,15 +4005,37 @@ void variable_string_mid_assign( Environment * _environment, char * _string, cha
             cpu_dsdescriptor( _environment, string->realName, address2->realName, size2->realName );
             cpu_dsdescriptor( _environment, expression->realName, address->realName, size->realName );
 
-            cpu_math_add_16bit_with_8bit( _environment, address2->realName, position->realName, address2->realName );
-            cpu_dec_16bit( _environment, address2->realName );
-
             if ( _len ) {
 
             } else {
-                cpu_move_8bit( _environment, size2->realName, len->realName );
-                cpu_math_sub_8bit( _environment, len->realName, position->realName, len->realName );
+                cpu_move_8bit( _environment, size->realName, len->realName );
+                // cpu_math_sub_8bit( _environment, len->realName, position->realName, len->realName );
             }
+            
+            MAKE_LABEL
+
+            char emptyLabel[MAX_TEMPORARY_STORAGE]; sprintf( emptyLabel, "%sempty", label );
+
+            Variable * flag = variable_temporary( _environment, VT_BYTE, "(flag for resizing)");
+            cpu_less_than_8bit( _environment, size2->realName, len->realName, flag->realName, 1, 0 );
+            cpu_bveq( _environment, flag->realName,  emptyLabel );
+
+            Variable * tmp = variable_temporary( _environment, VT_DSTRING, "(tmp)");
+            Variable * addressTmp = variable_temporary( _environment, VT_ADDRESS, "(result of mid)" );
+            Variable * sizeTmp = variable_temporary( _environment, VT_BYTE, "(result of mid)" );
+
+            cpu_dsalloc( _environment, len->realName, tmp->realName );
+            cpu_dsdescriptor( _environment, tmp->realName, addressTmp->realName, sizeTmp->realName );
+            cpu_mem_move( _environment, address2->realName, addressTmp->realName, size2->realName );
+            cpu_dsfree( _environment, string->realName );
+            cpu_move_8bit( _environment, tmp->realName, string->realName );
+            cpu_dsdescriptor( _environment, string->realName, address2->realName, size2->realName );
+
+            cpu_label( _environment, emptyLabel );
+
+            cpu_math_add_16bit_with_8bit( _environment, address2->realName, position->realName, address2->realName );
+            cpu_dec_16bit( _environment, address2->realName );
+
             cpu_mem_move( _environment, address->realName, address2->realName, len->realName );
             break;
         }
@@ -6217,21 +6239,21 @@ int rgbi_extract_palette( unsigned char* _source, int _width, int _height, RGBi 
         }
     }
 
-    // printf("USED PALETTE: %d\n", usedPalette );
+    printf("USED PALETTE: %d\n", usedPalette );
 
-    // printf("PALETTE:\n" );
-    // for(i=0;i<8;++i) {
-    //     printf("  %i) %2.2x%2.2x%2.2x (%d)\n", i, _palette[i].red, _palette[i].green, _palette[i].blue, _palette[i].count );
-    // }
+    printf("PALETTE:\n" );
+    for(i=0;i<8;++i) {
+        printf("  %i) %2.2x%2.2x%2.2x (%d)\n", i, _palette[i].red, _palette[i].green, _palette[i].blue, _palette[i].count );
+    }
 
     if ( _sorted ) {
         qsort( _palette, _palette_size, sizeof( RGBi ), rgbi_qsort_compare );
     }
 
-    // printf("QSORT:\n" );
-    // for(i=0;i<8;++i) {
-    //     printf("  %i) %2.2x%2.2x%2.2x (%d)\n", i, _palette[i].red, _palette[i].green, _palette[i].blue, _palette[i].count );
-    // }
+    printf("QSORT:\n" );
+    for(i=0;i<8;++i) {
+        printf("  %i) %2.2x%2.2x%2.2x (%d)\n", i, _palette[i].red, _palette[i].green, _palette[i].blue, _palette[i].count );
+    }
 
     return usedPalette;
 
