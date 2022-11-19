@@ -977,6 +977,11 @@ Variable * ef9345_sprite_converter( Environment * _environment, char * _source, 
     //         rgb.red = *_source;
     //         rgb.green = *(_source + 1);
     //         rgb.blue = *(_source + 2);
+            // if ( _depth > 3 ) {
+            //     rgb.alpha = *(_source + 3);
+            // } else {
+            //     rgb.alpha = 255;
+            // }
 
     //         // Calculate the relative tile
 
@@ -987,7 +992,7 @@ Variable * ef9345_sprite_converter( Environment * _environment, char * _source, 
     //         int minDistance = 0xffff;
     //         int colorIndex = 0;
 
-    //         if ( rgbi_equals_rgb( _color, &rgb ) ) {
+    //         if ( rgbi_equals_rgba( _color, &rgb ) ) {
     //             i = 1;
     //         } else {
     //             i = 0;

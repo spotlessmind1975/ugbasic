@@ -1658,9 +1658,14 @@ static Variable * gtia_image_converter_bitmap_mode_standard( Environment * _envi
             rgb.red = *_source;
             rgb.green = *(_source + 1);
             rgb.blue = *(_source + 2);
+            if ( _depth > 3 ) {
+                rgb.alpha = *(_source + 3);
+            } else {
+                rgb.alpha = 255;
+            }
 
             for( i=0; i<colorUsed; ++i ) {
-                if ( rgbi_equals_rgb( &palette[i], &rgb ) ) {
+                if ( rgbi_equals_rgba( &palette[i], &rgb ) ) {
                     break;
                 }
             }

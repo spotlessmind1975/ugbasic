@@ -220,6 +220,7 @@ Variable * tiles_load( Environment * _environment, char * _filename, int _flags,
         offsetting_size_count( _environment, ( width >> 3 ) * ( height >> 3 ), a );
         index->originalWidth = width;
         index->originalHeight = height;
+        index->originalDepth = depth;
     }
 
     cpu_store_32bit( _environment, index->realName,

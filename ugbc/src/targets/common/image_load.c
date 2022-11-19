@@ -160,6 +160,7 @@ Variable * image_load( Environment * _environment, char * _filename, char * _ali
     result->originalBitmap = source;
     result->originalWidth = width;
     result->originalHeight = height;
+    result->originalDepth = depth;
     if ( _bank_expansion && _environment->expansionBanks ) {
 
         // Try to compress the result of image conversion.

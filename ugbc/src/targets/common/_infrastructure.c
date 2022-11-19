@@ -1596,6 +1596,7 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                                 case VT_TILES: {
                                     target->originalWidth = source->originalWidth;
                                     target->originalHeight = source->originalHeight;
+                                    target->originalDepth = source->originalDepth;
                                     cpu_move_32bit( _environment, source->realName, target->realName );
                                     break;
                                 }
@@ -1611,6 +1612,7 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                                     target->originalWidth = source->originalWidth;
                                     target->originalHeight = source->originalHeight;
                                     target->originalColors = source->originalColors;
+                                    target->originalDepth = source->originalDepth;
                                     memcpy( target->originalPalette, source->originalPalette, MAX_PALETTE * sizeof( RGBi ) );
                                 case VT_BUFFER:
                                     if ( target->size == 0 ) {
@@ -1817,6 +1819,7 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
                         case VT_TILES: {
                             target->originalWidth = source->originalWidth;
                             target->originalHeight = source->originalHeight;
+                            target->originalDepth = source->originalDepth;
                             cpu_move_16bit( _environment, source->realName, target->realName );
                             break;
                         }
@@ -1829,6 +1832,7 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
                     target->originalBitmap = source->originalBitmap;
                     target->originalWidth = source->originalWidth;
                     target->originalHeight = source->originalHeight;
+                    target->originalDepth = source->originalDepth;
                     target->originalColors = source->originalColors;
                     target->bankAssigned = source->bankAssigned;
                     target->residentAssigned = source->residentAssigned;
@@ -6184,6 +6188,10 @@ int rgbi_equals_rgb( RGBi * _first, RGBi * _second ) {
     return _first->red == _second->red && _first->green == _second->green && _first->blue == _second->blue;
 }
 
+int rgbi_equals_rgba( RGBi * _first, RGBi * _second ) {
+    return ( _first->alpha == 255 && rgbi_equals_rgb( _first, _second ) ) || ( _first->alpha < 255 && ( _first->alpha == _second->alpha ) );
+}
+
 void rgbi_move( RGBi * _source, RGBi * _destination ) {
     memcpy( _destination, _source, sizeof( RGBi ) );
 }
@@ -6216,7 +6224,13 @@ static int rgbi_qsort_compare(const void * _first, const void * _second ) {
     RGBi * first = (RGBi *) _first;
     RGBi * second = (RGBi *) _second;
 
-    return ( first->count <= second->count );
+    if ( first->alpha < 255 ) {
+        return -1;
+    } else if ( second->alpha < 255) {
+        return 1;
+    } else {
+        return ( first->count <= second->count );
+    }
 
 }
 
@@ -6232,12 +6246,16 @@ int rgbi_extract_palette( unsigned char* _source, int _width, int _height, int _
 
     RGBi rgb;
 
-    memset( _palette, 0, sizeof( RGBi ) * _palette_size );
+    int i = 0;
 
+    memset( _palette, 0, sizeof( RGBi ) * _palette_size );
+    for( i=0; i<_palette_size; ++i ) {
+        _palette[i].alpha = 255;
+    }
+    
     int image_x, image_y;
 
     int usedPalette = 0;
-    int i = 0;
     unsigned char* source = _source;
 
     for (image_y = 0; image_y < _height; ++image_y) {
@@ -6245,10 +6263,15 @@ int rgbi_extract_palette( unsigned char* _source, int _width, int _height, int _
             rgb.red = *source;
             rgb.green = *(source + 1);
             rgb.blue = *(source + 2);
+            if (_depth>3) {
+                rgb.alpha = *(source + 3);
+            } else {
+                rgb.alpha = 255;
+            }
             rgb.count = 0;
 
             for (i = 0; i < usedPalette; ++i) {
-                if (rgbi_equals_rgb( &_palette[i], &rgb )) {
+                if (rgbi_equals_rgba( &_palette[i], &rgb )) {
                     break;
                 }
             }
@@ -6273,17 +6296,17 @@ int rgbi_extract_palette( unsigned char* _source, int _width, int _height, int _
 
     // printf("PALETTE:\n" );
     // for(i=0;i<8;++i) {
-    //     printf("  %i) %2.2x%2.2x%2.2x (%d)\n", i, _palette[i].red, _palette[i].green, _palette[i].blue, _palette[i].count );
+    //     printf("  %i) %2.2x%2.2x%2.2x %2.2x (%d)\n", i, _palette[i].red, _palette[i].green, _palette[i].blue, _palette[i].alpha, _palette[i].count );
     // }
 
     if ( _sorted ) {
         qsort( _palette, _palette_size, sizeof( RGBi ), rgbi_qsort_compare );
     }
 
-    // printf("QSORT:\n" );
-    // for(i=0;i<8;++i) {
-    //     printf("  %i) %2.2x%2.2x%2.2x (%d)\n", i, _palette[i].red, _palette[i].green, _palette[i].blue, _palette[i].count );
-    // }
+    printf("QSORT:\n" );
+    for(i=0;i<8;++i) {
+        printf("  %i) %2.2x%2.2x%2.2x %2.2x (%d)\n", i, _palette[i].red, _palette[i].green, _palette[i].blue, _palette[i].alpha, _palette[i].count );
+    }
 
     return usedPalette;
 

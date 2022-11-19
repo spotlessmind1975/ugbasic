@@ -2269,10 +2269,10 @@ Variable * vic2_sprite_converter( Environment * _environment, char * _source, in
         rgbi_move( &SYSTEM_PALETTE[0], &temporaryPalette[0] );
 
         for( int i=1; i<colorUsed; ++i ) {
-            if ( rgbi_equals_rgb( &palette[i], multicolorSpritePalette[0] ) ) {
+            if ( rgbi_equals_rgba( &palette[i], multicolorSpritePalette[0] ) ) {
                 // printf("%d) Color #%d == sprite palette 0\n", i, palette[i].index );
                 rgbi_move( &palette[i], &temporaryPalette[1] );
-            } else if ( rgbi_equals_rgb( &palette[i], multicolorSpritePalette[1] ) ) {
+            } else if ( rgbi_equals_rgba( &palette[i], multicolorSpritePalette[1] ) ) {
                 // printf("%d) Color #%d == sprite palette 1\n", i, palette[i].index );
                 rgbi_move( &palette[i], &temporaryPalette[3] );
             } else {
@@ -2331,16 +2331,21 @@ Variable * vic2_sprite_converter( Environment * _environment, char * _source, in
             rgb.red = *_source;
             rgb.green = *(_source + 1);
             rgb.blue = *(_source + 2);
+            if ( _depth > 3 ) {
+                rgb.alpha = *(_source + 3);
+            } else {
+                rgb.alpha = 255;
+            }
 
             if ( ! _color ) {
                 for( i=0; i<colorUsed; ++i ) {
                     // printf( "%d) %2.2x%2.2x%2.2x == %2.2x%2.2x%2.2x\n", i, palette[i].red, palette[i].green, palette[i].blue, rgb.red, rgb.green, rgb.blue );
-                    if ( rgbi_equals_rgb( &palette[i], &rgb ) ) {
+                    if ( rgbi_equals_rgba( &palette[i], &rgb ) ) {
                         break;
                     }
                 }
             } else {
-                if ( rgbi_equals_rgb( _color, &rgb ) ) {
+                if ( rgbi_equals_rgba( _color, &rgb ) ) {
                     i = 1;
                 } else {
                     i = 0;

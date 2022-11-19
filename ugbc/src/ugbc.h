@@ -216,6 +216,7 @@ typedef struct _RGBi {
     unsigned char hardwareIndex;
     unsigned char used;
     int count;
+    unsigned char alpha;
 } RGBi;
 
 /**
@@ -606,6 +607,9 @@ typedef struct _Variable {
 
     /** Original bitmap height (if IMAGE/IMAGES) */
     int originalHeight;
+
+    /** Original bitmap depth (if IMAGE/IMAGES) */
+    int originalDepth;
 
     /** Original bitmap nr. colors (if IMAGE/IMAGES) */
     int originalColors;
@@ -2697,6 +2701,7 @@ Variable *              respawn_procedure( Environment * _environment, char * _n
 void                    return_label( Environment * _environment );
 void                    return_procedure( Environment * _environment, char * _value );
 int                     rgbi_equals_rgb( RGBi * _first, RGBi * _second );
+int                     rgbi_equals_rgba( RGBi * _first, RGBi * _second );
 int                     rgbi_extract_palette( unsigned char* _source, int _width, int _height, int _depth, RGBi _palette[], int _palette_size, int _sorted);
 void                    rgbi_move( RGBi * _source, RGBi * _destination );
 int                     rgbi_distance( RGBi * _source, RGBi * _destination );
