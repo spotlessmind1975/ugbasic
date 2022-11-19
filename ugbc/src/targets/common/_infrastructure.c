@@ -4006,6 +4006,7 @@ void variable_string_mid_assign( Environment * _environment, char * _string, cha
             cpu_dsdescriptor( _environment, expression->realName, address->realName, size->realName );
 
             cpu_math_add_16bit_with_8bit( _environment, address2->realName, position->realName, address2->realName );
+            cpu_dec_16bit( _environment, address2->realName );
 
             if ( _len ) {
 
