@@ -124,7 +124,7 @@ Variable * tile_load( Environment * _environment, char * _filename, int _flags, 
     
     int width = 0;
     int height = 0;
-    int depth = 3;
+    int depth = 0;
 
     char * lookedFilename = image_load_asserts( _environment, _filename );
 
@@ -143,15 +143,15 @@ Variable * tile_load( Environment * _environment, char * _filename, int _flags, 
     }
 
     if( _flags & FLAG_FLIP_X ) {
-        source = image_flip_x( _environment, source, width, height );
+        source = image_flip_x( _environment, source, width, height, depth );
     }
     if( _flags & FLAG_FLIP_Y ) {
-        source = image_flip_y( _environment, source, width, height );
+        source = image_flip_y( _environment, source, width, height, depth );
     }
 
     Variable * index = variable_temporary( _environment, VT_TILE, "(tile index)" );
 
-    Variable * realImage = image_converter( _environment, source, 8, 8, 0, 0, 8, 8, BITMAP_MODE_DEFAULT, 0, _flags );
+    Variable * realImage = image_converter( _environment, source, 8, 8, depth, 0, 0, 8, 8, BITMAP_MODE_DEFAULT, 0, _flags );
 
     stbi_image_free(source);
 

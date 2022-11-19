@@ -124,7 +124,7 @@ Variable * tiles_load( Environment * _environment, char * _filename, int _flags,
     
     int width = 0;
     int height = 0;
-    int depth = 3;
+    int depth = 0;
 
     // printf( "Allocating tiles (%s)\n", _filename );
 
@@ -145,10 +145,10 @@ Variable * tiles_load( Environment * _environment, char * _filename, int _flags,
     }
 
     if( _flags & FLAG_FLIP_X ) {
-        source = image_flip_x( _environment, source, width, height );
+        source = image_flip_x( _environment, source, width, height, depth );
     }
     if( _flags & FLAG_FLIP_Y ) {
-        source = image_flip_y( _environment, source, width, height );
+        source = image_flip_y( _environment, source, width, height, depth );
     }
 
     TileDescriptors * descriptors;
@@ -190,7 +190,7 @@ Variable * tiles_load( Environment * _environment, char * _filename, int _flags,
     for( z=0; z<a; ++z ) {
         for (y=0; y<(height>>3);++y) {
             for (x=0; x<(width>>3);++x) {
-                Variable * realImage = image_converter( _environment, source, width, height, x*8, y*8, 8, 8, BITMAP_MODE_DEFAULT, 0, _flags );
+                Variable * realImage = image_converter( _environment, source, width, height, depth, x*8, y*8, 8, 8, BITMAP_MODE_DEFAULT, 0, _flags );
 
                 int tile = tile_allocate( descriptors, realImage->valueBuffer + 2 );
 

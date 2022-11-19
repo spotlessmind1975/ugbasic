@@ -78,7 +78,7 @@ RGBi * tms9918_image_nearest_system_color( RGBi * _color ) {
 
 /**
  * This method can be used to convert 
- *     8x8 RGB (3 bytes) pixel (_source) [8x8x3 = 192 bytes]
+ *     8x8 RGB (3/4 bytes) pixel (_source) [8x8x3/4 = 192/256 bytes]
  * into 
  *     8x8 bitmap (1 bit) pixel + 8 (byte) [8x1 + 8 = 16 bytes]
  *       foreground and background color (_dest)
@@ -87,7 +87,7 @@ RGBi * tms9918_image_nearest_system_color( RGBi * _color ) {
  * this function will need the picture _width in order
  * to move to the next line to analyze.
  */
-static void tms9918_image_converter_tile( char * _source, char * _dest, int _width, int _source_width ) {
+static void tms9918_image_converter_tile( char * _source, char * _dest, int _width, int _depth, int _source_width ) {
 
     int colorIndexesCount[COLOR_COUNT];
 
@@ -126,7 +126,7 @@ static void tms9918_image_converter_tile( char * _source, char * _dest, int _wid
 
             ++colorIndexesCount[systemRgb->index];
 
-            source += 3;
+            source += _depth;
 
         }
 
@@ -146,7 +146,7 @@ static void tms9918_image_converter_tile( char * _source, char * _dest, int _wid
             };
         }
 
-        source += 3 * ( _source_width - 8 );
+        source += _depth * ( _source_width - 8 );
 
     }
 
@@ -175,11 +175,11 @@ static void tms9918_image_converter_tile( char * _source, char * _dest, int _wid
                 // printf(" ");
             }
 
-            source += 3;
+            source += _depth;
 
         }
 
-        source += 3 * ( _source_width - 8 );
+        source += _depth * ( _source_width - 8 );
 
     }
 
@@ -191,7 +191,7 @@ static void tms9918_image_converter_tile( char * _source, char * _dest, int _wid
 
 /**
  * This method can be used to convert 
- *     WxH RGB (3 bytes) pixel (_source) [WxHx3 bytes]
+ *     WxH RGB (3/4 bytes) pixel (_source) [WxHx3/4 bytes]
  * into 
  *     WxH bitmap (1 bit) pixel + (W/8xH + W/8xH) (bytes)
  *       foreground and background color (_dest)
@@ -200,7 +200,7 @@ static void tms9918_image_converter_tile( char * _source, char * _dest, int _wid
  * this function will need the picture _source_width in order
  * to move to the next line to analyze.
  */
-static void tms9918_image_converter_tiles( char * _source, char * _dest, int _width, int _height, int _source_width ) {
+static void tms9918_image_converter_tiles( char * _source, char * _dest, int _width, int _height, int _depth, int _source_width ) {
 
     int bitmapSize = ( _width>>3 ) * _height;
     int colormapSize = ( _width>>3 ) * _height;
@@ -210,10 +210,10 @@ static void tms9918_image_converter_tiles( char * _source, char * _dest, int _wi
     for( int y=0; y<_height; y+=8 ) {
         for( int x=0; x<_width; x+=8 ) {
 
-            char * source = _source + ( ( y * _source_width ) + x ) * 3;
+            char * source = _source + ( ( y * _source_width ) + x ) * _depth;
             char tile[16];
 
-            tms9918_image_converter_tile( source, tile, _width, _source_width );
+            tms9918_image_converter_tile( source, tile, _width, _depth, _source_width );
 
             int offset = ((y>>3) * 8 *( _width >> 3 ) ) + ((x>>3) * 8) + ((y) & 0x07);
             // x = 8, y = 8
@@ -1557,7 +1557,7 @@ static int calculate_image_size( Environment * _environment, int _width, int _he
 
 }
 
-static Variable * tms9918_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
+static Variable * tms9918_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
 
     deploy( tms9918varsGraphic, src_hw_tms9918_vars_graphic_asm );
 
@@ -1565,7 +1565,7 @@ static Variable * tms9918_image_converter_bitmap_mode_standard( Environment * _e
 
     RGBi palette[MAX_PALETTE];
 
-    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE, 1 /* sorted */);
+    int colorUsed = rgbi_extract_palette(_source, _width, _height, _depth, palette, MAX_PALETTE, 1 /* sorted */);
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = colorUsed;
@@ -1680,7 +1680,7 @@ static Variable * tms9918_image_converter_bitmap_mode_standard( Environment * _e
 
     _source += ( ( _offset_y * _width ) + _offset_x ) * 3;
 
-    tms9918_image_converter_tiles( _source, buffer+3, _frame_width, _frame_height, _width );
+    tms9918_image_converter_tiles( _source, buffer+3, _frame_width, _depth, _frame_height, _width );
 
     if ( _environment->debugImageLoad ) {
         printf("\n" );
@@ -1713,7 +1713,7 @@ Variable * tms9918_sprite_converter( Environment * _environment, char * _source,
 
     RGBi palette[MAX_PALETTE];
 
-    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE, 1 /* sorted */);
+    int colorUsed = rgbi_extract_palette(_source, _width, _height, _depth, palette, MAX_PALETTE, 1 /* sorted */);
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = colorUsed;
@@ -1837,13 +1837,13 @@ Variable * tms9918_sprite_converter( Environment * _environment, char * _source,
 
 }
 
-Variable * tms9918_image_converter( Environment * _environment, char * _data, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags ) {
+Variable * tms9918_image_converter( Environment * _environment, char * _data, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags ) {
 
     switch( _mode ) {
 
         case BITMAP_MODE_GRAPHIC2:
 
-            return tms9918_image_converter_bitmap_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+            return tms9918_image_converter_bitmap_mode_standard( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
 
             break;
     }

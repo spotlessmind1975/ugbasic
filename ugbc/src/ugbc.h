@@ -2545,11 +2545,11 @@ void                    home( Environment * _environment );
 
 void                    if_then( Environment * _environment, char * _expression );
 char *                  image_cut( Environment * _environment, char * _source, int _x, int _y, int _width, int _height );
-char *                  image_flip_x( Environment * _environment, char * _source, int _width, int _height );
-char *                  image_flip_y( Environment * _environment, char * _source, int _width, int _height );
+char *                  image_flip_x( Environment * _environment, char * _source, int _width, int _height, int _depth );
+char *                  image_flip_y( Environment * _environment, char * _source, int _width, int _height, int _depth );
 Variable *              image_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _flags, int _transparent_color, int _background_color, int _bank_expansion );
 char *                  image_load_asserts( Environment * _environment, char * _filename );
-Variable *              image_converter( Environment * _environment, char * _data, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags );
+Variable *              image_converter( Environment * _environment, char * _data, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags );
 void                    image_converter_asserts( Environment * _environment, int _width, int _height, int _offset_x, int _offset_y, int * _frame_width, int * _frame_height );
 void                    image_converter_asserts_free_height( Environment * _environment, int _width, int _height, int _offset_x, int _offset_y, int * _frame_width, int * _frame_height );
 Variable *              image_get_height( Environment * _environment, char * _image );
@@ -2697,7 +2697,7 @@ Variable *              respawn_procedure( Environment * _environment, char * _n
 void                    return_label( Environment * _environment );
 void                    return_procedure( Environment * _environment, char * _value );
 int                     rgbi_equals_rgb( RGBi * _first, RGBi * _second );
-int                     rgbi_extract_palette( unsigned char* _source, int _width, int _height, RGBi _palette[], int _palette_size, int _sorted);
+int                     rgbi_extract_palette( unsigned char* _source, int _width, int _height, int _depth, RGBi _palette[], int _palette_size, int _sorted);
 void                    rgbi_move( RGBi * _source, RGBi * _destination );
 int                     rgbi_distance( RGBi * _source, RGBi * _destination );
 Variable *              rnd( Environment * _environment, char * _value );

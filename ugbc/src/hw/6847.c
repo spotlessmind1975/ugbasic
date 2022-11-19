@@ -1078,7 +1078,7 @@ static int calculate_image_size( Environment * _environment, int _width, int _he
 
 }
 
-static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
+static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
 
     // ignored on bitmap mode
     (void)!_transparent_color;
@@ -1087,7 +1087,7 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
 
     RGBi palette[MAX_PALETTE];
 
-    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE, 1 /* sorted */ );
+    int colorUsed = rgbi_extract_palette(_source, _width, _height, _depth, palette, MAX_PALETTE, 1 /* sorted */ );
 
     if (colorUsed > 2) {
         CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
@@ -1198,7 +1198,7 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
 
 }
 
-static Variable * c6847_image_converter_multicolor_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
+static Variable * c6847_image_converter_multicolor_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
 
     // ignored on bitmap mode
     (void)!_transparent_color;
@@ -1208,7 +1208,7 @@ static Variable * c6847_image_converter_multicolor_mode_standard( Environment * 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
 
     RGBi * palette = malloc( sizeof( RGBi ) * MAX_PALETTE );
-    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE, 1 /* sorted */ );
+    int colorUsed = rgbi_extract_palette(_source, _width, _height, _depth, palette, MAX_PALETTE, 1 /* sorted */ );
     result->originalColors = colorUsed;
 
     if ( ! commonPalette ) {
@@ -1322,7 +1322,7 @@ static Variable * c6847_image_converter_multicolor_mode_standard( Environment * 
 
 }
 
-Variable * c6847_image_converter( Environment * _environment, char * _data, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags ) {
+Variable * c6847_image_converter( Environment * _environment, char * _data, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags ) {
 
     switch( _mode ) {
         case TILEMAP_MODE_INTERNAL:         // Alphanumeric Internal	32 × 16	2	512
@@ -1338,7 +1338,7 @@ Variable * c6847_image_converter( Environment * _environment, char * _data, int 
         case BITMAP_MODE_COLOR3:            // Color Graphics 3	128 × 96	4	3072
         case BITMAP_MODE_COLOR6:            // Color Graphics 6	128 × 192	4	6144
 
-            return c6847_image_converter_multicolor_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+            return c6847_image_converter_multicolor_mode_standard( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
 
             break;
 
@@ -1347,7 +1347,7 @@ Variable * c6847_image_converter( Environment * _environment, char * _data, int 
         case BITMAP_MODE_RESOLUTION3:       // Resolution Graphics 3	128 × 192	1 + Black	3072
         case BITMAP_MODE_RESOLUTION6:       // Resolution Graphics 6	256 × 192	1 + Black	6144            break;
 
-            return c6847_image_converter_bitmap_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+            return c6847_image_converter_bitmap_mode_standard( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
 
     }
 

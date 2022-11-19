@@ -134,7 +134,7 @@ Variable * image_load( Environment * _environment, char * _filename, char * _ali
 
     int width = 0;
     int height = 0;
-    int depth = 3;
+    int depth = 0;
 
     char * lookedFilename = image_load_asserts( _environment, _filename );
 
@@ -145,17 +145,17 @@ Variable * image_load( Environment * _environment, char * _filename, char * _ali
     }
 
     if( _flags & FLAG_FLIP_X ) {
-        source = image_flip_x( _environment, source, width, height );
+        source = image_flip_x( _environment, source, width, height, depth );
     }
     if( _flags & FLAG_FLIP_Y ) {
-        source = image_flip_y( _environment, source, width, height );
+        source = image_flip_y( _environment, source, width, height, depth );
     }
 
     if ( _transparent_color != -1 ) {
         _flags |= FLAG_TRANSPARENCY;
     }
     
-    Variable * result = image_converter( _environment, source, width, height, 0, 0, 0, 0, _mode, _transparent_color, _flags );
+    Variable * result = image_converter( _environment, source, width, height, depth, 0, 0, 0, 0, _mode, _transparent_color, _flags );
     
     result->originalBitmap = source;
     result->originalWidth = width;

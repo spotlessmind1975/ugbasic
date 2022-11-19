@@ -259,7 +259,7 @@ void c6847_scroll( Environment * _environment, int _dx, int _dy );
 
 Variable * c6847_get_raster_line( Environment * _environment );
 
-Variable * c6847_image_converter( Environment * _environment, char * _data, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags );
+Variable * c6847_image_converter( Environment * _environment, char * _data, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags );
 void c6847_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags );
 Variable * c6847_new_image( Environment * _environment, int _width, int _height, int _mode );
 void c6847_get_image( Environment * _environment, char * _image, char * _x, char * _y );

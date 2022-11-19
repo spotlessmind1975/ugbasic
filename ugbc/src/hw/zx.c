@@ -379,7 +379,7 @@ static int calculate_luminance(RGBi _a) {
 
 }
 
-static Variable * zx_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
+static Variable * zx_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
 
     // currently ignored
     (void)!_transparent_color;
@@ -388,7 +388,7 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
 
     RGBi palette[MAX_PALETTE];
 
-    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE, 1 /* sorted */ );
+    int colorUsed = rgbi_extract_palette(_source, _width, _height, _depth, palette, MAX_PALETTE, 1 /* sorted */ );
 
     if (colorUsed > 2) {
         CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
@@ -448,7 +448,7 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
     *(buffer) = _frame_width;
     *(buffer+1) = _frame_height;
 
-    _source += ( ( _offset_y * _width ) + _offset_x ) * 3;
+    _source += ( ( _offset_y * _width ) + _offset_x ) * _depth;
 
     // Loop for all the source surface.
     for (image_y = 0; image_y < _frame_height; ++image_y) {
@@ -489,11 +489,11 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
             offset = tile_y * ( _frame_width >> 3 ) + tile_x;
             *( buffer + 2 + ( ( _frame_width >> 3 ) * _height ) + offset ) = ( palette[1].index << 3 ) | ( palette[0].index ); 
 
-            _source += 3;
+            _source += _depth;
 
         }
 
-        _source += 3 * ( _width - _frame_width );
+        _source += _depth * ( _width - _frame_width );
 
         // printf("\n" );
 
@@ -509,14 +509,14 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
 
 }
 
-Variable * zx_image_converter( Environment * _environment, char * _data, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags ) {
+Variable * zx_image_converter( Environment * _environment, char * _data, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags ) {
 
     switch( _mode ) {
 
         case BITMAP_MODE_STANDARD:
         case TILEMAP_MODE_STANDARD:
 
-            return zx_image_converter_bitmap_mode_standard( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+            return zx_image_converter_bitmap_mode_standard( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
 
             break;
     }

@@ -5867,18 +5867,26 @@ Variable * parse_buffer_definition( Environment * _environment, char * _buffer, 
 
 }
 
-char * image_flip_x( Environment * _environment, char * _source, int _width, int _height ) {
+char * image_flip_x( Environment * _environment, char * _source, int _width, int _height, int _depth ) {
 
     int x,y;
 
     for( y=0; y<_height; ++y ) {
         for( x=0; x<( _width >> 1 ); ++x ) {
-            char * pixel1r = _source + ( y * _width * 3 ) + ( x * 3 );
-            char * pixel1g = _source + ( y * _width * 3 ) + ( x * 3 ) + 1;
-            char * pixel1b = _source + ( y * _width * 3 ) + ( x * 3 ) + 2;
-            char * pixel2r = _source + ( y * _width * 3 ) + ( ( _width - x - 1 ) * 3 );
-            char * pixel2g = _source + ( y * _width * 3 ) + ( ( _width - x - 1 ) * 3 ) + 1;
-            char * pixel2b = _source + ( y * _width * 3 ) + ( ( _width - x - 1 ) * 3 ) + 2;
+            char * pixel1r = _source + ( y * _width * _depth ) + ( x * _depth );
+            char * pixel1g = _source + ( y * _width * _depth ) + ( x * _depth ) + 1;
+            char * pixel1b = _source + ( y * _width * _depth ) + ( x * _depth ) + 2;
+            char * pixel1a;
+            if ( _depth > 3 ) {
+                pixel1a = _source + ( y * _width * _depth ) + ( x * _depth ) + 3;
+            }
+            char * pixel2r = _source + ( y * _width * _depth ) + ( ( _width - x - 1 ) * _depth );
+            char * pixel2g = _source + ( y * _width * _depth ) + ( ( _width - x - 1 ) * _depth ) + 1;
+            char * pixel2b = _source + ( y * _width * _depth ) + ( ( _width - x - 1 ) * _depth ) + 2;
+            char * pixel2a;
+            if ( _depth > 3 ) {
+                pixel2a = _source + ( y * _width * _depth ) + ( ( _width - x - 1 ) * _depth ) + 3;
+            }
             
             char t;
             
@@ -5893,6 +5901,13 @@ char * image_flip_x( Environment * _environment, char * _source, int _width, int
             t = *pixel1b;
             *pixel1b = *pixel2b;
             *pixel2b = t;
+
+            if ( _depth > 3 ) {
+                t = *pixel1a;
+                *pixel1a = *pixel2a;
+                *pixel2a = t;
+            }
+
         }
     }
 
@@ -5900,18 +5915,26 @@ char * image_flip_x( Environment * _environment, char * _source, int _width, int
 
 }
 
-char * image_flip_y( Environment * _environment, char * _source, int _width, int _height ) {
+char * image_flip_y( Environment * _environment, char * _source, int _width, int _height, int _depth ) {
 
     int x,y;
 
     for( x=0; x<_width; ++x ) {
         for( y=0; y<( _height >> 1 ); ++y ) {
-            char * pixel1r = _source + ( y * _width * 3 ) + ( x * 3 );
-            char * pixel1g = _source + ( y * _width * 3 ) + ( x * 3 ) + 1;
-            char * pixel1b = _source + ( y * _width * 3 ) + ( x * 3 ) + 2;
-            char * pixel2r = _source + ( ( _height - y - 1) * _width * 3 ) + ( x * 3 );
-            char * pixel2g = _source + ( ( _height - y - 1) * _width * 3 ) + ( x * 3 ) + 1;
-            char * pixel2b = _source + ( ( _height - y - 1) * _width * 3 ) + ( x * 3 ) + 2;
+            char * pixel1r = _source + ( y * _width * _depth ) + ( x * _depth );
+            char * pixel1g = _source + ( y * _width * _depth ) + ( x * _depth ) + 1;
+            char * pixel1b = _source + ( y * _width * _depth ) + ( x * _depth ) + 2;
+            char * pixel1a;
+            if ( _depth > 3 ) {
+                pixel1b = _source + ( y * _width * _depth ) + ( x * _depth ) + 3;
+            }
+            char * pixel2r = _source + ( ( _height - y - 1) * _width * _depth ) + ( x * _depth );
+            char * pixel2g = _source + ( ( _height - y - 1) * _width * _depth ) + ( x * _depth ) + 1;
+            char * pixel2b = _source + ( ( _height - y - 1) * _width * _depth ) + ( x * _depth ) + 2;
+            char * pixel2a;
+            if ( _depth > 3 ) {
+                pixel2b = _source + ( ( _height - y - 1) * _width * _depth ) + ( x * _depth ) + 3;
+            }
             
             char t;
             
@@ -5926,6 +5949,13 @@ char * image_flip_y( Environment * _environment, char * _source, int _width, int
             t = *pixel1b;
             *pixel1b = *pixel2b;
             *pixel2b = t;
+
+            if ( _depth > 3 ) {
+                t = *pixel1a;
+                *pixel1a = *pixel2a;
+                *pixel2a = t;
+            }
+            
         }
     }
 
@@ -6198,7 +6228,7 @@ static int rgbi_qsort_compare(const void * _first, const void * _second ) {
  * @param _palette_size 
  * @return int 
  */
-int rgbi_extract_palette( unsigned char* _source, int _width, int _height, RGBi _palette[], int _palette_size, int _sorted) {
+int rgbi_extract_palette( unsigned char* _source, int _width, int _height, int _depth, RGBi _palette[], int _palette_size, int _sorted) {
 
     RGBi rgb;
 
@@ -6232,28 +6262,28 @@ int rgbi_extract_palette( unsigned char* _source, int _width, int _height, RGBi 
             } else {
                 ++_palette[i].count;
             }
-            source += 3;
+            source += _depth;
         }
         if (usedPalette > _palette_size) {
             break;
         }
     }
 
-    printf("USED PALETTE: %d\n", usedPalette );
+    // printf("USED PALETTE: %d\n", usedPalette );
 
-    printf("PALETTE:\n" );
-    for(i=0;i<8;++i) {
-        printf("  %i) %2.2x%2.2x%2.2x (%d)\n", i, _palette[i].red, _palette[i].green, _palette[i].blue, _palette[i].count );
-    }
+    // printf("PALETTE:\n" );
+    // for(i=0;i<8;++i) {
+    //     printf("  %i) %2.2x%2.2x%2.2x (%d)\n", i, _palette[i].red, _palette[i].green, _palette[i].blue, _palette[i].count );
+    // }
 
     if ( _sorted ) {
         qsort( _palette, _palette_size, sizeof( RGBi ), rgbi_qsort_compare );
     }
 
-    printf("QSORT:\n" );
-    for(i=0;i<8;++i) {
-        printf("  %i) %2.2x%2.2x%2.2x (%d)\n", i, _palette[i].red, _palette[i].green, _palette[i].blue, _palette[i].count );
-    }
+    // printf("QSORT:\n" );
+    // for(i=0;i<8;++i) {
+    //     printf("  %i) %2.2x%2.2x%2.2x (%d)\n", i, _palette[i].red, _palette[i].green, _palette[i].blue, _palette[i].count );
+    // }
 
     return usedPalette;
 

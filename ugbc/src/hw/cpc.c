@@ -1030,7 +1030,7 @@ static int calculate_image_size( Environment * _environment, int _width, int _he
 
 }
 
-static Variable * cpc_image_converter_bitmap_mode_hires( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
+static Variable * cpc_image_converter_bitmap_mode_hires( Environment * _environment, char * _source, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
 
     // ignored on bitmap mode
     (void)!_transparent_color;
@@ -1039,7 +1039,7 @@ static Variable * cpc_image_converter_bitmap_mode_hires( Environment * _environm
 
     RGBi palette[MAX_PALETTE];
 
-    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE, ( ( _flags & FLAG_EXACT ) ? 0 : 1 ) /* sorted */);
+    int colorUsed = rgbi_extract_palette(_source, _width, _height, _depth, palette, MAX_PALETTE, ( ( _flags & FLAG_EXACT ) ? 0 : 1 ) /* sorted */);
 
     if (colorUsed > 2) {
         CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
@@ -1155,14 +1155,14 @@ static Variable * cpc_image_converter_bitmap_mode_hires( Environment * _environm
 
 }
 
-static Variable * cpc_image_converter_multicolor_mode_midres( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
+static Variable * cpc_image_converter_multicolor_mode_midres( Environment * _environment, char * _source, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
 
     image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
     RGBi * palette = malloc( MAX_PALETTE * sizeof(RGBi) );
     memset( palette, 0, MAX_PALETTE * sizeof(RGBi) );
 
-    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE, ( ( _flags & FLAG_EXACT ) ? 0 : 1 ) /* sorted */);
+    int colorUsed = rgbi_extract_palette(_source, _width, _height, _depth, palette, MAX_PALETTE, ( ( _flags & FLAG_EXACT ) ? 0 : 1 ) /* sorted */);
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = colorUsed;
 
@@ -1400,14 +1400,14 @@ static Variable * cpc_image_converter_multicolor_mode_midres( Environment * _env
 
 }
 
-static Variable * cpc_image_converter_multicolor_mode_lores( Environment * _environment, char * _source, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
+static Variable * cpc_image_converter_multicolor_mode_lores( Environment * _environment, char * _source, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
 
     image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
     RGBi * palette = malloc( MAX_PALETTE * sizeof(RGBi) );
     memset( palette, 0, MAX_PALETTE * sizeof(RGBi) );
 
-    int colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE, ( ( _flags & FLAG_EXACT ) ? 0 : 1 ) /* sorted */);
+    int colorUsed = rgbi_extract_palette(_source, _width, _height, _depth, palette, MAX_PALETTE, ( ( _flags & FLAG_EXACT ) ? 0 : 1 ) /* sorted */);
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = colorUsed;
 
@@ -1646,7 +1646,7 @@ static Variable * cpc_image_converter_multicolor_mode_lores( Environment * _envi
 
 }
 
-Variable * cpc_image_converter( Environment * _environment, char * _data, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags ) {
+Variable * cpc_image_converter( Environment * _environment, char * _data, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags ) {
 
     WARNING_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
 
@@ -1654,16 +1654,16 @@ Variable * cpc_image_converter( Environment * _environment, char * _data, int _w
 
         case BITMAP_MODE_GRAPHIC2:
 
-            return cpc_image_converter_bitmap_mode_hires( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+            return cpc_image_converter_bitmap_mode_hires( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
             
         case BITMAP_MODE_GRAPHIC1:
 
-            return cpc_image_converter_multicolor_mode_midres( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+            return cpc_image_converter_multicolor_mode_midres( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
 
         case BITMAP_MODE_GRAPHIC0:
         case BITMAP_MODE_GRAPHIC3:
 
-            return cpc_image_converter_multicolor_mode_lores( _environment, _data, _width, _height, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+            return cpc_image_converter_multicolor_mode_lores( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
 
     }
 

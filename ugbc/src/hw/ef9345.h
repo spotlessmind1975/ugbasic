@@ -161,7 +161,7 @@ void ef9345_scroll( Environment * _environment, int _dx, int _dy );
 
 Variable * ef9345_get_raster_line( Environment * _environment );
 
-Variable * ef9345_image_converter( Environment * _environment, char * _data, int _width, int _height, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags );
+Variable * ef9345_image_converter( Environment * _environment, char * _data, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags );
 Variable * ef9345_sprite_converter( Environment * _environment, char * _data, int _width, int _height, RGBi * _color );
 void ef9345_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags );
 void ef9345_wait_vbl( Environment * _environment );

@@ -132,7 +132,7 @@ Variable * images_load( Environment * _environment, char * _filename, char * _al
 
     int width = 0;
     int height = 0;
-    int depth = 3;
+    int depth = 0;
 
     char * lookedFilename = image_load_asserts( _environment, _filename );
 
@@ -167,10 +167,10 @@ Variable * images_load( Environment * _environment, char * _filename, char * _al
     di = 1;
 
     if( _flags & FLAG_FLIP_X ) {
-        source = image_flip_x( _environment, source, width, height );
+        source = image_flip_x( _environment, source, width, height, depth );
     }
     if( _flags & FLAG_FLIP_Y ) {
-        source = image_flip_y( _environment, source, width, height );
+        source = image_flip_y( _environment, source, width, height, depth );
     }
 
     if ( _transparent_color != -1 ) {
@@ -181,7 +181,7 @@ Variable * images_load( Environment * _environment, char * _filename, char * _al
     for( z=0; z<a; ++z ) {
         for( y=0; y<height; y+=_frame_height ) {
             for( x=0; x<width; x+=_frame_width ) {
-                result[i] = image_converter( _environment, source, width, height, x, y, _frame_width, _frame_height, _mode, _transparent_color, _flags );
+                result[i] = image_converter( _environment, source, width, height, depth, x, y, _frame_width, _frame_height, _mode, _transparent_color, _flags );
                 bufferSize += result[i]->size;
                 i += di;
             }
