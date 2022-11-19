@@ -38,15 +38,15 @@
 #include <math.h>
 
 static RGBi SYSTEM_PALETTE[] = {
-        { 0x00, 0x00, 0x00, 0, "BLACK" },        
-        { 0x00, 0xcc, 0x55, 1, "GREEN" },
-        { 0xee, 0xee, 0x77, 2, "YELLOW" },
-        { 0x00, 0x00, 0xaa, 3, "BLUE" },
-        { 0x88, 0x00, 0x00, 4, "RED" },
-        { 0xf0, 0xf0, 0xf0, 5, "BUFF" },
-        { 0xaa, 0xff, 0xe6, 6, "CYAN" },
-        { 0xcc, 0x44, 0xcc, 7, "MAGENTA" },
-        { 0xa1, 0x68, 0x3c, 8, "ORANGE" }
+        // { 0x00, 0x00, 0x00, 0, "BLACK" },        
+        { 0x00, 0xcc, 0x55, 0, "GREEN" },
+        { 0xee, 0xee, 0x77, 1, "YELLOW" },
+        { 0x00, 0x00, 0xaa, 2, "BLUE" },
+        { 0x88, 0x00, 0x00, 3, "RED" }
+        // { 0xf0, 0xf0, 0xf0, 5, "BUFF" },
+        // { 0xaa, 0xff, 0xe6, 6, "CYAN" },
+        // { 0xcc, 0x44, 0xcc, 7, "MAGENTA" },
+        // { 0xa1, 0x68, 0x3c, 8, "ORANGE" }
 };
 
 static RGBi * commonPalette;
@@ -1099,7 +1099,7 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
     int i, j, k;
 
     for( i=0; i<colorUsed; ++i ) {
-        int minDistance = 0xffff;
+        unsigned int minDistance = 0xffff;
         int colorIndex = 0;
         for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
             int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
@@ -1220,21 +1220,21 @@ static Variable * c6847_image_converter_multicolor_mode_standard( Environment * 
         int i, j, k;
 
         for( i=0; i<colorUsed; ++i ) {
-            int minDistance = 0xffff;
+            unsigned int minDistance = 0xffff;
             int colorIndex = 0;
             for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
                 int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
-                // printf("%d (%2.2x%2.2x%2.2x) <-> %d (%2.2x%2.2x%2.2x) [%d] = %d [min = %d]\n", i, SYSTEM_PALETTE[j].red, SYSTEM_PALETTE[j].green, SYSTEM_PALETTE[j].blue, j, palette[i].red, palette[i].green, palette[i].blue, SYSTEM_PALETTE[j].index, distance, minDistance );
+                printf("%d (%2.2x%2.2x%2.2x) <-> %d (%2.2x%2.2x%2.2x) [%d] = %d [min = %d]\n", i, SYSTEM_PALETTE[j].red, SYSTEM_PALETTE[j].green, SYSTEM_PALETTE[j].blue, j, palette[i].red, palette[i].green, palette[i].blue, SYSTEM_PALETTE[j].index, distance, minDistance );
                 if (distance < minDistance) {
-                    // printf(" candidated...\n" );
+                    printf(" candidated...\n" );
                     for( k=0; k<i; ++k ) {
                         if ( palette[k].index == SYSTEM_PALETTE[j].index ) {
-                            // printf(" ...used!\n" );
+                            printf(" ...used!\n" );
                             break;
                         }
                     }
                     if ( k>=i ) {
-                        // printf(" ...ok! (%d)\n", SYSTEM_PALETTE[j].index );
+                        printf(" ...ok! (%d)\n", SYSTEM_PALETTE[j].index );
                         minDistance = distance;
                         colorIndex = j;
                     }
@@ -1242,7 +1242,7 @@ static Variable * c6847_image_converter_multicolor_mode_standard( Environment * 
             }
             palette[i].index = SYSTEM_PALETTE[colorIndex].index;
             strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
-            // printf("%d) %d * %d %2.2x%2.2x%2.2x\n", i, colorIndex, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
+            printf("%d) %d * %d %2.2x%2.2x%2.2x\n", i, colorIndex, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
         }
 
         commonPalette = palette;
@@ -1290,7 +1290,7 @@ static Variable * c6847_image_converter_multicolor_mode_standard( Environment * 
                 int distance = rgbi_distance(&commonPalette[i], &rgb );
                 if ( distance < minDistance ) {
                     minDistance = distance;
-                    colorIndex = i;
+                    colorIndex = commonPalette[i].index;
                 }
             }
 
