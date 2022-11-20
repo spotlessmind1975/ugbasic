@@ -1093,7 +1093,7 @@ static Variable * cpc_image_converter_bitmap_mode_hires( Environment * _environm
     *(buffer+1) = ( _frame_width >> 8 ) & 0xff;
     *(buffer+2) = _frame_height;
 
-    _source += ( ( _offset_y * _width ) + _offset_x ) * 3;
+    _source += ( ( _offset_y * _width ) + _offset_x ) * _depth;
 
     // Loop for all the source surface.
     for (image_y = 0; image_y < _frame_height; ++image_y) {
@@ -1109,9 +1109,13 @@ static Variable * cpc_image_converter_bitmap_mode_hires( Environment * _environm
                 rgb.alpha = 255;
             }
 
-            for( i=0; i<colorUsed; ++i ) {
-                if ( rgbi_equals_rgba( &palette[i], &rgb ) ) {
-                    break;
+            if ( rgb.alpha < 255 ) {
+                i = 0;
+            } else {
+                for( i=0; i<colorUsed; ++i ) {
+                    if ( rgbi_equals_rgba( &palette[i], &rgb ) ) {
+                        break;
+                    }
                 }
             }
 
@@ -1132,11 +1136,11 @@ static Variable * cpc_image_converter_bitmap_mode_hires( Environment * _environm
                 *( buffer + offset + 3) &= ~bitmask;
             }
 
-            _source += 3;
+            _source += _depth;
 
         }
 
-        _source += ( _width - _frame_width ) * 3;
+        _source += ( _width - _frame_width ) * _depth;
 
         // printf("\n" );
 
@@ -1257,28 +1261,29 @@ static Variable * cpc_image_converter_multicolor_mode_midres( Environment * _env
         //     printf("[§] common %d) %d %2.2x%2.2x%2.2x\n", j, commonPalette[j].index, commonPalette[j].red, commonPalette[j].green, commonPalette[j].blue);
         // }
 
-        for( i=1; i<colorUsed; ++i ) {
-            // printf("[-] palette %d) %2.2x%2.2x%2.2x\n", i, palette[i].red, palette[i].green, palette[i].blue);
-            for (j = 0; j < lastUsedSlotInCommonPalette; ++j) {
-                // printf("[+] common %d) %d %2.2x%2.2x%2.2x\n", j, commonPalette[j].index, commonPalette[j].red, commonPalette[j].green, commonPalette[j].blue);
-                if ( commonPalette[j].used ) {
-                    int distance = rgbi_distance(&commonPalette[j], &palette[i]);
-                    // printf("    (%d<->%d) >> %2.2x%2.2x%2.2x <-> %2.2x%2.2x%2.2x (%d)\n", j, i, commonPalette[j].red, commonPalette[j].green, commonPalette[j].blue, palette[i].red, palette[i].green, palette[i].blue, distance);
-                    if (distance < 5 ) {
-                        palette[i].used = 1;
-                        // printf("    (-------) >> %d = %d) %d %2.2x%2.2x%2.2x\n", j, i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
-                        break;
-                    }
-                }
-            }
-            // printf("\n");
-        }
+        // for( i=1; i<colorUsed; ++i ) {
+        //     // printf("[-] palette %d) %2.2x%2.2x%2.2x\n", i, palette[i].red, palette[i].green, palette[i].blue);
+        //     for (j = 0; j < lastUsedSlotInCommonPalette; ++j) {
+        //         // printf("[+] common %d) %d %2.2x%2.2x%2.2x\n", j, commonPalette[j].index, commonPalette[j].red, commonPalette[j].green, commonPalette[j].blue);
+        //         if ( commonPalette[j].used ) {
+        //             int distance = rgbi_distance(&commonPalette[j], &palette[i]);
+        //             // printf("    (%d<->%d) >> %2.2x%2.2x%2.2x <-> %2.2x%2.2x%2.2x (%d)\n", j, i, commonPalette[j].red, commonPalette[j].green, commonPalette[j].blue, palette[i].red, palette[i].green, palette[i].blue, distance);
+        //             if (distance < 5 ) {
+        //                 palette[i].used = 1;
+        //                 // printf("    (-------) >> %d = %d) %d %2.2x%2.2x%2.2x\n", j, i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
+        //                 break;
+        //             }
+        //         }
+        //     }
+        //     // printf("\n");
+        // }
 
         for( i=1; i<colorUsed; ++i ) {
             // printf("[*] %d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
-            if ( palette[i].used ) continue;
+            // if ( palette[i].used ) continue;
             int minDistance = 0xffff;
             int colorIndex = 0;
+            int addIndex = 0;
             for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
                 int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
                 // printf("%d <-> %d [%d] = %d [min = %d]\n", i, j, SYSTEM_PALETTE[j].index, distance, minDistance );
@@ -1294,12 +1299,15 @@ static Variable * cpc_image_converter_multicolor_mode_midres( Environment * _env
                         // printf(" ...ok! (%d)\n", SYSTEM_PALETTE[j].index );
                         minDistance = distance;
                         colorIndex = j;
+                        addIndex = 1;
                     }
                 }
             }
-            rgbi_move(&SYSTEM_PALETTE[colorIndex], &commonPalette[lastUsedSlotInCommonPalette]);
+            if ( addIndex ) {
+                rgbi_move(&SYSTEM_PALETTE[colorIndex], &commonPalette[lastUsedSlotInCommonPalette]);
+                ++lastUsedSlotInCommonPalette;
+            }
             commonPalette[lastUsedSlotInCommonPalette].used = 1;
-            ++lastUsedSlotInCommonPalette;
             // printf("#> %d) %d %2.2x%2.2x%2.2x\n", i, commonPalette[i].index, commonPalette[i].red, commonPalette[i].green, commonPalette[i].blue);
         }
 
@@ -1332,7 +1340,7 @@ static Variable * cpc_image_converter_multicolor_mode_midres( Environment * _env
     *(buffer+1) = (_frame_width >> 8 ) & 0xff;
     *(buffer+2) = _frame_height;
 
-    _source += ( ( _offset_y * _width ) + _offset_x ) * 3;
+    _source += ( ( _offset_y * _width ) + _offset_x ) * _depth;
 
     // Loop for all the source surface.
     for (image_y = 0; image_y < _frame_height; ++image_y) {
@@ -1342,6 +1350,11 @@ static Variable * cpc_image_converter_multicolor_mode_midres( Environment * _env
             rgb.red = *_source;
             rgb.green = *(_source + 1);
             rgb.blue = *(_source + 2);
+            if ( _depth > 3 ) {
+                rgb.alpha = *(_source + 3);
+            } else {
+                rgb.alpha = 255;
+            }
 
             // Calculate the offset starting from the tile surface area
             // and the bit to set.
@@ -1349,12 +1362,16 @@ static Variable * cpc_image_converter_multicolor_mode_midres( Environment * _env
 
             int colorIndex = 0;
 
-            int minDistance = 9999;
-            for( int i=0; i<lastUsedSlotInCommonPalette; ++i ) {
-                int distance = rgbi_distance(&commonPalette[i], &rgb );
-                if ( distance < minDistance ) {
-                    minDistance = distance;
-                    colorIndex = i;
+            if ( rgb.alpha < 255 ) {
+                colorIndex = 0;
+            } else {
+                int minDistance = 9999;
+                for( int i=0; i<lastUsedSlotInCommonPalette; ++i ) {
+                    int distance = rgbi_distance(&commonPalette[i], &rgb );
+                    if ( distance < minDistance ) {
+                        minDistance = distance;
+                        colorIndex = i;
+                    }
                 }
             }
 
@@ -1367,11 +1384,11 @@ static Variable * cpc_image_converter_multicolor_mode_midres( Environment * _env
 
             *(buffer + 3 + offset) |= bitmask;
 
-            _source += 3;
+            _source += _depth;
 
         }
 
-        _source += ( _width - _frame_width ) * 3;
+        _source += ( _width - _frame_width ) * _depth;
 
         if ( _environment->debugImageLoad ) {
             printf("\n" );
@@ -1417,8 +1434,6 @@ static Variable * cpc_image_converter_multicolor_mode_lores( Environment * _envi
     result->originalColors = colorUsed;
 
     int i, j, k;
-
-    // printf( "%p %d %d %d %d", _source, _width, _height, _frame_width, _frame_height );
 
     if ( ! commonPalette ) {
 
@@ -1498,59 +1513,63 @@ static Variable * cpc_image_converter_multicolor_mode_lores( Environment * _envi
             ++colorUsed;
         }
 
-        // for (j = 0; j < lastUsedSlotInCommonPalette; ++j) {
-        //     printf("[§] common %d) %d %2.2x%2.2x%2.2x\n", j, commonPalette[j].index, commonPalette[j].red, commonPalette[j].green, commonPalette[j].blue);
+        for (j = 0; j < lastUsedSlotInCommonPalette; ++j) {
+            printf("[§] common %d) %d %2.2x%2.2x%2.2x\n", j, commonPalette[j].index, commonPalette[j].red, commonPalette[j].green, commonPalette[j].blue);
+        }
+
+        // for( i=1; i<colorUsed; ++i ) {
+        //     palette[i].used = 0;
+        //     printf("[-] palette %d) %2.2x%2.2x%2.2x\n", i, palette[i].red, palette[i].green, palette[i].blue);
+        //     for (j = 0; j < lastUsedSlotInCommonPalette; ++j) {
+        //         printf("[+] common %d) %d %2.2x%2.2x%2.2x\n", j, commonPalette[j].index, commonPalette[j].red, commonPalette[j].green, commonPalette[j].blue);
+        //         if ( commonPalette[j].used ) {
+        //             int distance = rgbi_distance(&commonPalette[j], &palette[i]);
+        //             printf("    (%d<->%d) >> %2.2x%2.2x%2.2x <-> %2.2x%2.2x%2.2x (%d)\n", j, i, commonPalette[j].red, commonPalette[j].green, commonPalette[j].blue, palette[i].red, palette[i].green, palette[i].blue, distance);
+        //             if (distance < 1 ) {
+        //                 palette[i].used = 1;
+        //                 printf("    (-------) >> %d = %d) %d %2.2x%2.2x%2.2x\n", j, i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
+        //                 break;
+        //             }
+        //         }
+        //     }
+        //     printf("\n");
         // }
 
         for( i=1; i<colorUsed; ++i ) {
-            // printf("[-] palette %d) %2.2x%2.2x%2.2x\n", i, palette[i].red, palette[i].green, palette[i].blue);
-            for (j = 0; j < lastUsedSlotInCommonPalette; ++j) {
-                // printf("[+] common %d) %d %2.2x%2.2x%2.2x\n", j, commonPalette[j].index, commonPalette[j].red, commonPalette[j].green, commonPalette[j].blue);
-                if ( commonPalette[j].used ) {
-                    int distance = rgbi_distance(&commonPalette[j], &palette[i]);
-                    // printf("    (%d<->%d) >> %2.2x%2.2x%2.2x <-> %2.2x%2.2x%2.2x (%d)\n", j, i, commonPalette[j].red, commonPalette[j].green, commonPalette[j].blue, palette[i].red, palette[i].green, palette[i].blue, distance);
-                    if (distance < 5 ) {
-                        palette[i].used = 1;
-                        // printf("    (-------) >> %d = %d) %d %2.2x%2.2x%2.2x\n", j, i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
-                        break;
-                    }
-                }
-            }
-            // printf("\n");
-        }
-
-        for( i=1; i<colorUsed; ++i ) {
-            // printf("[*] %d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
-            if ( palette[i].used ) continue;
-            int minDistance = 0xffff;
+            printf("[*] %d) %d %2.2x%2.2x%2.2x %d\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue, palette[i].used);
+            // if ( palette[i].used ) continue;
+            unsigned int minDistance = 0xffff;
             int colorIndex = 0;
+            int addIndex = 1;
             for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
                 int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
-                // printf("%d <-> %d [%d] = %d [min = %d]\n", i, j, SYSTEM_PALETTE[j].index, distance, minDistance );
+                printf("%d <-> %d (%2.2x%2.2x%2.2x) [%d] = %d [min = %d]\n", i, j, SYSTEM_PALETTE[j].red, SYSTEM_PALETTE[j].green, SYSTEM_PALETTE[j].blue, SYSTEM_PALETTE[j].index, distance, minDistance );
                 if (distance < minDistance) {
-                    // printf(" candidated...\n" );
+                    printf(" candidated...\n" );
                     for( k=0; k<lastUsedSlotInCommonPalette; ++k ) {
                         if ( commonPalette[k].index == SYSTEM_PALETTE[j].index ) {
-                            // printf(" ...used!\n" );
+                            printf(" ...used!\n" );
+                            j = k;
+                            addIndex = 0;
                             break;
                         }
                     }
-                    if ( k>=lastUsedSlotInCommonPalette ) {
-                        // printf(" ...ok! (%d)\n", SYSTEM_PALETTE[j].index );
-                        minDistance = distance;
-                        colorIndex = j;
-                    }
+                    printf(" ...ok! (%d)\n", SYSTEM_PALETTE[j].index );
+                    minDistance = distance;
+                    colorIndex = j;
                 }
             }
-            rgbi_move(&SYSTEM_PALETTE[colorIndex], &commonPalette[lastUsedSlotInCommonPalette]);
-            commonPalette[lastUsedSlotInCommonPalette].used = 1;
-            ++lastUsedSlotInCommonPalette;
-            // printf("#> %d) %d %2.2x%2.2x%2.2x\n", i, commonPalette[i].index, commonPalette[i].red, commonPalette[i].green, commonPalette[i].blue);
+            if ( addIndex ) {
+                ++lastUsedSlotInCommonPalette;
+                rgbi_move(&SYSTEM_PALETTE[colorIndex], &commonPalette[lastUsedSlotInCommonPalette]);
+                commonPalette[lastUsedSlotInCommonPalette].used = 1;
+            }
+            printf("#> %d) %d %2.2x%2.2x%2.2x\n", i, commonPalette[i].index, commonPalette[i].red, commonPalette[i].green, commonPalette[i].blue);
         }
 
-        // for (j = 0; j < lastUsedSlotInCommonPalette; ++j) {
-        //     printf("[@] common %d) %d %2.2x%2.2x%2.2x\n", j, commonPalette[j].index, commonPalette[j].red, commonPalette[j].green, commonPalette[j].blue);
-        // }
+        for (j = 0; j < lastUsedSlotInCommonPalette; ++j) {
+            printf("[@] common %d) %d %2.2x%2.2x%2.2x\n", j, commonPalette[j].index, commonPalette[j].red, commonPalette[j].green, commonPalette[j].blue);
+        }
 
     }
 
@@ -1577,7 +1596,7 @@ static Variable * cpc_image_converter_multicolor_mode_lores( Environment * _envi
     *(buffer+1) = (_frame_width >> 8 ) & 0xff;
     *(buffer+2) = _frame_height;
 
-    _source += ( ( _offset_y * _width ) + _offset_x ) * 3;
+    _source += ( ( _offset_y * _width ) + _offset_x ) * _depth;
 
     // Loop for all the source surface.
     for (image_y = 0; image_y < _frame_height; ++image_y) {
@@ -1587,6 +1606,11 @@ static Variable * cpc_image_converter_multicolor_mode_lores( Environment * _envi
             rgb.red = *_source;
             rgb.green = *(_source + 1);
             rgb.blue = *(_source + 2);
+            if ( _depth > 3 ) {
+                rgb.alpha = *(_source + 3);
+            } else {
+                rgb.alpha = 255;
+            }
 
             // Calculate the offset starting from the tile surface area
             // and the bit to set.
@@ -1594,12 +1618,16 @@ static Variable * cpc_image_converter_multicolor_mode_lores( Environment * _envi
 
             int colorIndex = 0;
 
-            int minDistance = 9999;
-            for( int i=0; i<lastUsedSlotInCommonPalette; ++i ) {
-                int distance = rgbi_distance(&commonPalette[i], &rgb );
-                if ( distance < minDistance ) {
-                    minDistance = distance;
-                    colorIndex = i;
+            if ( rgb.alpha < 255 ) {
+                colorIndex = 0;
+            } else {
+                int minDistance = 9999;
+                for( int i=0; i<lastUsedSlotInCommonPalette; ++i ) {
+                    int distance = rgbi_distance(&commonPalette[i], &rgb );
+                    if ( distance < minDistance ) {
+                        minDistance = distance;
+                        colorIndex = i;
+                    }
                 }
             }
 
@@ -1609,16 +1637,16 @@ static Variable * cpc_image_converter_multicolor_mode_lores( Environment * _envi
 
             bitmask = ( ( colorIndex & 0x8 ) >> 3 ) << (1 - ((image_x & 0x1)));
             bitmask |= ( ( ( colorIndex & 0x2 ) ) << 1 ) << (1 - ((image_x & 0x1)));
-            bitmask |= ( ( ( colorIndex & 0x4 ) ) ) << (1 - ((image_x & 0x1)));
+            bitmask |= ( ( ( colorIndex & 0x4 ) ) << 2 ) << (1 - ((image_x & 0x1)));
             bitmask |= ( ( ( colorIndex & 0x1 ) ) << 6 ) << (1 - ((image_x & 0x1)));
 
             *(buffer + 3 + offset) |= bitmask;
 
-            _source += 3;
+            _source += _depth;
 
         }
 
-        _source += ( _width - _frame_width ) * 3;
+        _source += ( _width - _frame_width ) * _depth;
 
         if ( _environment->debugImageLoad ) {
             printf("\n" );
@@ -1720,7 +1748,7 @@ void cpc_put_image( Environment * _environment, char * _image, char * _x, char *
                 outline0("LD H, 0" );
                 outline0("ADD HL, HL" );
                 outline0("LD DE, HL" );
-                outline1("LD HL, OFFSETS%4.4x", _frame_size * _frame_count );
+                outline1("LD HL, OFFSETS%4.4x", _frame_size );
                 outline0("ADD HL, DE" );
                 outline0("LD A, (HL)" );
                 outline0("LD E, A" );
