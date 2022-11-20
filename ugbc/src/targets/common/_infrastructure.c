@@ -6303,10 +6303,10 @@ int rgbi_extract_palette( unsigned char* _source, int _width, int _height, int _
         qsort( _palette, _palette_size, sizeof( RGBi ), rgbi_qsort_compare );
     }
 
-    printf("QSORT:\n" );
-    for(i=0;i<8;++i) {
-        printf("  %i) %2.2x%2.2x%2.2x %2.2x (%d)\n", i, _palette[i].red, _palette[i].green, _palette[i].blue, _palette[i].alpha, _palette[i].count );
-    }
+    // printf("QSORT:\n" );
+    // for(i=0;i<8;++i) {
+    //     printf("  %i) %2.2x%2.2x%2.2x %2.2x (%d)\n", i, _palette[i].red, _palette[i].green, _palette[i].blue, _palette[i].alpha, _palette[i].count );
+    // }
 
     return usedPalette;
 
