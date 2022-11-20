@@ -234,11 +234,68 @@ PUTIMAGE1L2:
 
     PUSH BC
 PUTIMAGE1L1:
+    LD A, (IMAGEF)
+    AND $20
+    CP $20
+    JR Z, PUTIMAGE1L1T
+
     ; Calculate new pixels
     LD A, (HL)
     ; Draw them
     LD (DE),A
 
+    JP PUTIMAGE1L1T0
+
+PUTIMAGE0L1T:
+    PUSH BC
+    LD A, 0
+    LD IXH, A
+    LD A, (HL)
+    AND $88
+    CP $0
+    JR Z, PUTIMAGE1L1T2
+    LD A, IXH
+    OR $88
+    LD IXH, A
+PUTIMAGE1L1T2:
+    LD A, (HL)
+    AND $44
+    CP $0
+    JR Z, PUTIMAGE1L1T3
+    LD A, IXH
+    OR $44
+    LD IXH, A
+PUTIMAGE1L1T3:
+    LD A, (HL)
+    AND $22
+    CP $0
+    JR Z, PUTIMAGE1L1T4
+    LD A, IXH
+    OR $22
+    LD IXH, A
+PUTIMAGE1L1T4:
+    LD A, (HL)
+    AND $11
+    CP $0
+    JR Z, PUTIMAGE1L1T4
+    LD A, IXH
+    OR $11
+    LD IXH, A
+PUTIMAGE1L1T4:
+    LD A, IXH
+    XOR $FF
+    LD B, A
+    LD A, (DE)
+    AND B
+    LD B, A
+    LD A, (HL)
+    AND IXH
+    ORA B
+    ; Draw them
+    LD (DE),A
+    POP BC
+
+PUTIMAGE1L1T0:
     INC DE
     INC HL
 
@@ -337,11 +394,100 @@ PUTIMAGE2L2:
 
     PUSH BC
 PUTIMAGE2L1:
+    LD A, (IMAGEF)
+    AND $20
+    CP $20
+    JR Z, PUTIMAGE2L1T
+
     ; Calculate new pixels
     LD A, (HL)
     ; Draw them
     LD (DE),A
 
+    JP PUTIMAGE2L1T0
+
+PUTIMAGE2L1T:
+    PUSH BC
+    LD A, 0
+    LD IXH, A
+    LD A, (HL)
+    AND $80
+    CP $0
+    JR Z, PUTIMAGE2L1T2
+    LD A, IXH
+    OR $80
+    LD IXH, A
+PUTIMAGE1L2T2:
+    LD A, (HL)
+    AND $40
+    CP $0
+    JR Z, PUTIMAGE2L1T3
+    LD A, IXH
+    OR $40
+    LD IXH, A
+PUTIMAGE2L1T3:
+    LD A, (HL)
+    AND $20
+    CP $0
+    JR Z, PUTIMAGE2L1T4
+    LD A, IXH
+    OR $20
+    LD IXH, A
+PUTIMAGE2L1T4:
+    LD A, (HL)
+    AND $10
+    CP $0
+    JR Z, PUTIMAGE2L1T4
+    LD A, IXH
+    OR $10
+    LD IXH, A
+PUTIMAGE2L1T4:
+    LD A, (HL)
+    AND $08
+    CP $0
+    JR Z, PUTIMAGE2L1T5
+    LD A, IXH
+    OR $08
+    LD IXH, A
+PUTIMAGE2L2T5:
+    LD A, (HL)
+    AND $04
+    CP $0
+    JR Z, PUTIMAGE2L1T6
+    LD A, IXH
+    OR $04
+    LD IXH, A
+PUTIMAGE2L1T6:
+    LD A, (HL)
+    AND $02
+    CP $0
+    JR Z, PUTIMAGE2L1T7
+    LD A, IXH
+    OR $02
+    LD IXH, A
+PUTIMAGE2L1T7:
+    LD A, (HL)
+    AND $01
+    CP $0
+    JR Z, PUTIMAGE2L1T8
+    LD A, IXH
+    OR $01
+    LD IXH, A
+PUTIMAGE2L1T8:
+    LD A, IXH
+    XOR $FF
+    LD B, A
+    LD A, (DE)
+    AND B
+    LD B, A
+    LD A, (HL)
+    AND IXH
+    ORA B
+    ; Draw them
+    LD (DE),A
+    POP BC
+
+PUTIMAGE2L1T0:
     INC DE
     INC HL
 
