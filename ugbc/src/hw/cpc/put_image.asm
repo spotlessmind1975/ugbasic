@@ -96,11 +96,52 @@ PUTIMAGE0L2:
 
     PUSH BC
 PUTIMAGE0L1:
+    LD A, (IMAGEF)
+    AND $20
+    CP $20
+    JR Z, PUTIMAGE0L1T
+
     ; Calculate new pixels
     LD A, (HL)
     ; Draw them
     LD (DE),A
 
+    JP PUTIMAGE0L1T0
+
+PUTIMAGE0L1T:
+    PUSH BC
+    LD A, 0
+    LD IXH, A
+    LD A, (HL)
+    AND $AA
+    CP $0
+    JR Z, PUTIMAGE0L1T2
+    LD A, IXH
+    OR $AA
+    LD IXH, A
+PUTIMAGE0L1T2:
+    LD A, (HL)
+    AND $55
+    CP $0
+    JR Z, PUTIMAGE0L1T3
+    LD A, IXH
+    OR $55
+    LD IXH, A
+PUTIMAGE0L1T3:
+    LD A, IXH
+    XOR $FF
+    LD B, A
+    LD A, (DE)
+    AND B
+    LD B, A
+    LD A, (HL)
+    AND IXH
+    ORA B
+    ; Draw them
+    LD (DE),A
+    POP BC
+
+PUTIMAGE0L1T0:
     INC DE
     INC HL
 
@@ -142,12 +183,20 @@ PUTIMAGE0DONEROW2:
     LD (IMAGEF), A
 
     DEC B
-    JR NZ, PUTIMAGE0L2
+    JP NZ, PUTIMAGE0L2
     
     LD A, 16
     LD B, A
     LD A, 0
     LD C, A
+
+    LD A, (IMAGEF)
+    AND $20
+    CP $20
+    JR NZ, PUTIMAGE0DONEROWL1
+
+    INC HL
+    INC C
 
 PUTIMAGE0DONEROWL1:
     LD A, (HL)
