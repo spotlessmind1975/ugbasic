@@ -109,9 +109,13 @@ static void vic2_image_converter_tile( char * _source, char * _dest, int _width,
             rgb.red = *source;
             rgb.green = *(source + 1);
             rgb.blue = *(source + 2);
+            if ( _depth > 3 ) {
+                rgb.alpha = *(_source + 3);
+            } else {
+                rgb.alpha = 255;
+            }
 
             RGBi *systemRgb = vic2_image_nearest_system_color( &rgb );
-
             ++colorIndexesCount[systemRgb->index];
 
             source += _depth;
@@ -154,17 +158,26 @@ static void vic2_image_converter_tile( char * _source, char * _dest, int _width,
             rgb.red = *source;
             rgb.green = *(source + 1);
             rgb.blue = *(source + 2);
+            if ( _depth > 3 ) {
+                rgb.alpha = *(_source + 3);
+            } else {
+                rgb.alpha = 255;
+            }
 
             RGBi *systemRgb = vic2_image_nearest_system_color( &rgb );
 
             char bitmask = 1 << ( 7 - ((x) & 0x7) );
 
-            if ( systemRgb->index != colorBackground ) {
-                *( _dest + y ) |= bitmask;
-                // printf("*");
-            } else {
+            if ( rgb.alpha < 255 ) {
                 *( _dest + y ) &= ~bitmask;
-                // printf(" ");
+            } else {
+                if ( systemRgb->index != colorBackground ) {
+                    *( _dest + y ) |= bitmask;
+                    // printf("*");
+                } else {
+                    *( _dest + y ) &= ~bitmask;
+                    // printf(" ");
+                }
             }
 
             source += _depth;
@@ -258,10 +271,21 @@ static void vic2_image_converter_tile_multicolor( char * _source, char * _dest, 
             rgb.red = *source;
             rgb.green = *(source + 1);
             rgb.blue = *(source + 2);
+            if ( _depth > 3 ) {
+                rgb.alpha = *(_source + 3);
+            } else {
+                rgb.alpha = 255;
+            }
 
-            RGBi *systemRgb = vic2_image_nearest_system_color( &rgb );
+            if ( rgb.alpha < 255 ) {
 
-            ++colorIndexesCount[systemRgb->index];
+            } else {
+
+                RGBi *systemRgb = vic2_image_nearest_system_color( &rgb );
+
+                ++colorIndexesCount[systemRgb->index];
+
+            }
 
             source += _depth;
 
@@ -319,19 +343,30 @@ static void vic2_image_converter_tile_multicolor( char * _source, char * _dest, 
             rgb.red = *source;
             rgb.green = *(source + 1);
             rgb.blue = *(source + 2);
-
-            RGBi *systemRgb = vic2_image_nearest_system_color( &rgb );
+            if ( _depth > 3 ) {
+                rgb.alpha = *(_source + 3);
+            } else {
+                rgb.alpha = 255;
+            }
 
             char colorIndex = 0;
 
-            if ( systemRgb->index == colorFirst ) {
-                colorIndex = 1;
-            } else if ( systemRgb->index == colorSecond ) {
-                colorIndex = 2;
-            } else if ( systemRgb->index == colorThird ) {
-                colorIndex = 3;
+            if ( rgb.alpha < 255 ) {
+                colorIndex = 0;
+            } else {
+
+                RGBi *systemRgb = vic2_image_nearest_system_color( &rgb );
+
+                if ( systemRgb->index == colorFirst ) {
+                    colorIndex = 1;
+                } else if ( systemRgb->index == colorSecond ) {
+                    colorIndex = 2;
+                } else if ( systemRgb->index == colorThird ) {
+                    colorIndex = 3;
+                }
+
             }
-            
+
             char bitmask = colorIndex << (6 - ((x & 0x3) * 2));
 
             *(_dest + y) |= bitmask;
@@ -1767,7 +1802,7 @@ static Variable * vic2_image_converter_bitmap_mode_standard( Environment * _envi
 
     _source += ( ( _offset_y * _width ) + _offset_x ) * 3;
 
-    vic2_image_converter_tiles( _source, buffer+3, _frame_width, _depth, _frame_height, _width );
+    vic2_image_converter_tiles( _source, buffer+3, _frame_width, _frame_height, _depth, _width );
 
     // printf("----\n");
 
@@ -2012,14 +2047,25 @@ static Variable * vic2_image_converter_tilemap_mode_standard( Environment * _env
                     rgb.red = *source;
                     rgb.green = *(source + 1);
                     rgb.blue = *(source + 2);
+                    if ( _depth > 3 ) {
+                        rgb.alpha = *(_source + 3);
+                    } else {
+                        rgb.alpha = 255;
+                    }
 
-                    int minDistance = 9999;
-                    for( int i=0; i<colorUsed; ++i ) {
-                        int distance = rgbi_distance(&palette[i], &rgb );
-                        if ( distance < minDistance ) {
-                            minDistance = distance;
-                            colorIndex = palette[i].index;
+                    if ( rgb.alpha < 255 ) {
+                        colorIndex = palette[0].index;
+                    } else {
+
+                        int minDistance = 9999;
+                        for( int i=0; i<colorUsed; ++i ) {
+                            int distance = rgbi_distance(&palette[i], &rgb );
+                            if ( distance < minDistance ) {
+                                minDistance = distance;
+                                colorIndex = palette[i].index;
+                            }
                         }
+
                     }
 
                     // printf("%d", i );
@@ -2337,19 +2383,25 @@ Variable * vic2_sprite_converter( Environment * _environment, char * _source, in
                 rgb.alpha = 255;
             }
 
-            if ( ! _color ) {
-                for( i=0; i<colorUsed; ++i ) {
-                    // printf( "%d) %2.2x%2.2x%2.2x == %2.2x%2.2x%2.2x\n", i, palette[i].red, palette[i].green, palette[i].blue, rgb.red, rgb.green, rgb.blue );
-                    if ( rgbi_equals_rgba( &palette[i], &rgb ) ) {
-                        break;
+            if ( rgb.alpha < 255 ) {
+                i = 0;
+            } else {
+
+                if ( ! _color ) {
+                    for( i=0; i<colorUsed; ++i ) {
+                        // printf( "%d) %2.2x%2.2x%2.2x == %2.2x%2.2x%2.2x\n", i, palette[i].red, palette[i].green, palette[i].blue, rgb.red, rgb.green, rgb.blue );
+                        if ( rgbi_equals_rgba( &palette[i], &rgb ) ) {
+                            break;
+                        }
+                    }
+                } else {
+                    if ( rgbi_equals_rgba( _color, &rgb ) ) {
+                        i = 1;
+                    } else {
+                        i = 0;
                     }
                 }
-            } else {
-                if ( rgbi_equals_rgba( _color, &rgb ) ) {
-                    i = 1;
-                } else {
-                    i = 0;
-                }
+
             }
 
             if ( _flags & SPRITE_FLAG_MULTICOLOR ) {
