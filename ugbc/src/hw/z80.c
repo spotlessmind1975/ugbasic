@@ -3286,6 +3286,7 @@ void z80_fill_indirect( Environment * _environment, char * _address, char * _siz
     MAKE_LABEL
 
     // Use the current bitmap address as starting address for filling routine.
+    outline0("labelciccio:");
     outline1("LD DE, (%s)", _address);
     outline1("LD HL, (%s)", _pattern);
 
@@ -4255,7 +4256,7 @@ void z80_dstring_vars( Environment * _environment ) {
     int count = _environment->dstring.count == 0 ? DSTRING_DEFAULT_COUNT : _environment->dstring.count;
     int space = _environment->dstring.space == 0 ? DSTRING_DEFAULT_SPACE : _environment->dstring.space;
 
-#ifndef __vg5000__
+#if !defined(__vg5000__) && !defined(__cpc__)
     outhead0("section data_user" );
 #endif
     outhead1("MAXSTRINGS:                   DB %d", count );
@@ -4263,7 +4264,7 @@ void z80_dstring_vars( Environment * _environment ) {
     outhead1("WORKING:                      DEFS %d", space );
     outhead1("TEMPORARY:                    DEFS %d", space );
     outhead1("FREE_STRING:                  DB $ff, $%2.2x", ((space)>>8)& 0xff );
-#ifndef __vg5000__
+#if !defined(__vg5000__) && !defined(__cpc__)
     outhead0("section code_user" );
 #endif
 
