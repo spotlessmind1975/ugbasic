@@ -68,7 +68,7 @@ Variable * sprite_init( Environment * _environment, char * _image, char * _sprit
 
     Variable * image = variable_retrieve( _environment, _image );
 
-    Variable * realImage = sprite_converter( _environment, image->originalBitmap, image->originalWidth, image->originalHeight, NULL, _flags );
+    Variable * realImage = sprite_converter( _environment, image->originalBitmap, image->originalWidth, image->originalHeight, image->originalDepth, NULL, _flags );
 
     if ( _flags & SPRITE_FLAG_MULTICOLOR) {
         sprite_multicolor_var( _environment, index->name );

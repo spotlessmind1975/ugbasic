@@ -85,7 +85,7 @@ Variable * csprite_init( Environment * _environment, char * _image, char * _spri
     for (i=0; i<image->originalColors; ++i ) {
         if ( image->originalPalette[i].index == COLOR_BLACK ) continue;
         variable_move_naked( _environment, spriteCount->name, index->name );
-        Variable * realImage = sprite_converter( _environment, image->originalBitmap, image->originalWidth, image->originalHeight, &image->originalPalette[i], _flags );
+        Variable * realImage = sprite_converter( _environment, image->originalBitmap, image->originalWidth, image->originalHeight, image->originalDepth, &image->originalPalette[i], _flags );
         vic2_sprite_data_from( _environment, index->name, realImage->name );
         cpu_inc( _environment, spriteCount->realName );
         cpu_inc( _environment, index->realName );

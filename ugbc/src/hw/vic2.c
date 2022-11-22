@@ -203,7 +203,7 @@ static void vic2_image_converter_tiles( char * _source, char * _dest, int _width
             char * source = _source + ( ( y * _source_width ) + x ) * _depth;
             char tile[9];
 
-            vic2_image_converter_tile( source, tile, _width, _source_width );
+            vic2_image_converter_tile( source, tile, _width, _depth, _source_width );
 
             int offset = ((y>>3) * 8 *( _width >> 3 ) ) + ((x>>3) * 8) + ((y) & 0x07);
             // x = 8, y = 8
@@ -2171,7 +2171,7 @@ Variable * vic2_image_converter( Environment * _environment, char * _data, int _
 
 }
 
-Variable * vic2_sprite_converter( Environment * _environment, char * _source, int _width, int _height, RGBi * _color, int _flags ) {
+Variable * vic2_sprite_converter( Environment * _environment, char * _source, int _width, int _height, int _depth, RGBi * _color, int _flags ) {
 
     RGBi palette[MAX_PALETTE];
 

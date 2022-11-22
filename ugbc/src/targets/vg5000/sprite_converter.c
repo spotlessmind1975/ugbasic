@@ -38,8 +38,8 @@
  * CODE SECTION 
  ****************************************************************************/
 
-Variable * sprite_converter( Environment * _environment, char * _data, int _width, int _height, RGBi * _color, int _flags ) {
+Variable * sprite_converter( Environment * _environment, char * _data, int _width, int _height, int _depth, RGBi * _color, int _flags ) {
 
-    return ef9345_new_image( _environment, 8, 8, TILEMAP_MODE_STANDARD );
+    return ef9345_new_image( _environment, 8, 8, TILEMAP_MODE_STANDARD);
 
 }

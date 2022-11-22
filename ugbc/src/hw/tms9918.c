@@ -1707,7 +1707,7 @@ static Variable * tms9918_image_converter_bitmap_mode_standard( Environment * _e
 
 }
 
-Variable * tms9918_sprite_converter( Environment * _environment, char * _source, int _width, int _height, RGBi * _color ) {
+Variable * tms9918_sprite_converter( Environment * _environment, char * _source, int _width, int _height, int _depth, RGBi * _color ) {
 
     deploy( tms9918varsGraphic, src_hw_tms9918_vars_graphic_asm );
 

@@ -910,7 +910,7 @@ static int calculate_image_size( Environment * _environment, int _width, int _he
 
 }
 
-Variable * ef9345_sprite_converter( Environment * _environment, char * _source, int _width, int _height, RGBi * _color ) {
+Variable * ef9345_sprite_converter( Environment * _environment, char * _source, int _width, int _height, int _depth, RGBi * _color ) {
 
     // deploy( ef9345varsGraphic, src_hw_ef9345_vars_graphic_asm );
 
