@@ -1337,3 +1337,34 @@ la gestione dei bordi sul VIC-II).
 
 @target c64
 </usermanual> */
+/* <usermanual>
+@keyword POLYLINE
+
+@english
+This instruction draws a polyline, that is a line formed by multiple lines, on the 
+screen, starting from the coordinates ''(x1, y1)'' to arrive at the coordinates ''(xn, yn)'',
+using the color ''c''. The start can be omitted: in this case, ugBASIC will draw starting from 
+the last drawn position. If the color is 
+omitted, the last color selected with the ''INK'' or ''PEN'' command will be used. 
+Finally, the default line style is full but a 16 bit bitmask can be set with the ''SET LINE''
+command.
+
+@italian
+Questa istruzione disegna sullo schermo una polilinea, cioè una linea formata da più linee, 
+partendo dalle coordinate ''(x1, y1)'' per arrivare alle coordinate ''(xn, yn)'', 
+utilizzando il colore ''c''. La coordinata di partenza può essere omessa: in questo caso, 
+ugBASIC disegnerà partendo dall'ultima posizione estratta. Se il colore viene omesso, 
+verrà utilizzato l'ultimo colore selezionato con il comando ''INK'' o ''PEN''. Infine, lo 
+stile di linea predefinito è quello completo ma è possibile impostare una maschera di bit a 16 
+bit con il comando ''SET LINE''.
+
+@syntax POLYLINE { [x1] },{ [y1] } TO { [x2] },{ [x2] } { TO ... },{ [c] }
+@syntax POLYLINE { [x1] },{ [y1] } TO { [x2] },{ [x2] } { TO ... }
+@syntax POLYLINE TO { [x2] },{ [x2] } { TO ... },{ [c] }
+@syntax POLYLINE TO { [x2] },{ [x2] } { TO ... }
+
+@example POLYLINE 10,10 TO 20,20 TO 20,30 TO 20,10, WHITE
+@usedInExample graphics_shapes_01.bas
+
+@target all
+</usermanual> */
