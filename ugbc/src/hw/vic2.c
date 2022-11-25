@@ -62,7 +62,7 @@ static RGBi SYSTEM_PALETTE[] = {
 
 RGBi * vic2_image_nearest_system_color( RGBi * _color ) {
 
-    int minDistance = 0xffff;
+    unsigned int minDistance = 0xffff;
     int colorIndex = 0;
     for (int j = 0; j < COLOR_COUNT; ++j) {
         int distance = rgbi_distance(&SYSTEM_PALETTE[j], _color);
@@ -91,6 +91,7 @@ static void vic2_image_converter_tile( char * _source, char * _dest, int _width,
 
     int colorIndexesCount[COLOR_COUNT];
     memset(colorIndexesCount, 0, COLOR_COUNT * sizeof( int ) );
+    int trans = 0;
 
     char * source = _source;
 
@@ -115,8 +116,12 @@ static void vic2_image_converter_tile( char * _source, char * _dest, int _width,
                 rgb.alpha = 255;
             }
 
-            RGBi *systemRgb = vic2_image_nearest_system_color( &rgb );
-            ++colorIndexesCount[systemRgb->index];
+            if ( rgb.alpha < 255 ) {
+                trans = 1;
+            } else {
+                RGBi *systemRgb = vic2_image_nearest_system_color( &rgb );
+                ++colorIndexesCount[systemRgb->index];
+            }
 
             source += _depth;
 
@@ -144,6 +149,15 @@ static void vic2_image_converter_tile( char * _source, char * _dest, int _width,
             colorForeground = xx;
             colorForegroundMax = colorIndexesCount[xx];
         };
+    }
+
+    if ( trans ) {
+        if ( colorForeground == 0 ) {
+            colorForeground = colorBackground; 
+            colorBackground = 0;
+        } else {
+            colorBackground = 0;
+        }
     }
 
     source = _source;
@@ -253,6 +267,7 @@ static void vic2_image_converter_tile_multicolor( char * _source, char * _dest, 
 
     int colorIndexesCount[COLOR_COUNT];
     memset(colorIndexesCount, 0, COLOR_COUNT * sizeof( int ) );
+    int trans = 0;
 
     char * source = _source;
 
@@ -278,7 +293,7 @@ static void vic2_image_converter_tile_multicolor( char * _source, char * _dest, 
             }
 
             if ( rgb.alpha < 255 ) {
-
+                trans = 1;
             } else {
 
                 RGBi *systemRgb = vic2_image_nearest_system_color( &rgb );
@@ -295,6 +310,10 @@ static void vic2_image_converter_tile_multicolor( char * _source, char * _dest, 
 
     }
 
+    if ( trans ) {
+        _background = 0;
+    }
+    
     colorIndexesCount[_background] = 0;
 
     int colorFirst = 0;
