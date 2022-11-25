@@ -41,7 +41,7 @@ PALETTE:
     DB      6,  30,  31,   7 
     DB      18, 25,  10,   7
 PALETTEUNUSED:
-    DB $01
+    DB $00
 
 SETHWPALETTE:
 	PUSH BC
