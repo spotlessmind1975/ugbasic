@@ -1006,7 +1006,7 @@ void ay8910_music( Environment * _environment, char * _music, int _size ) {
     outline1("LD A, $%2.2x", _size & 0xff );
     outline0("LD (AY8910LASTBLOCK), A");
     if ( _size > 255 ) {
-        outline0("LD A, #$ff");
+        outline0("LD A, $ff");
     }
     outline0("LD (AY8910TMPLEN), A");
 
