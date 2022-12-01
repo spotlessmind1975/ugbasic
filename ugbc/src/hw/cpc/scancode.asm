@@ -75,6 +75,7 @@ SCANCODEPRECISE:
 	LD D, A
     LD A, E
     AND $07
+    LD E, A
 	ADC HL, DE
 	LD A, (HL)
 	LD B, A
@@ -101,7 +102,7 @@ SCANCODE:
     LD B, A
 SCANCODEL10:
     LD A, $0
-    LD E, A
+    ; LD E, A
 SCANCODEL1:
     PUSH BC
     PUSH AF
@@ -112,7 +113,8 @@ SCANCODEL1:
 	LD D, A
     LD A, E
     AND $07
-	ADC HL, DE
+    LD E, A
+	ADD HL, DE
 	LD A, (HL)
 	LD B, A
     POP HL
@@ -139,7 +141,9 @@ SCANCODEL1:
     LD E, A
     PUSH BC
     PUSH AF
+    JMP SCANCODEVALUE2
 SCANCODEVALUE:
+SCANCODEVALUE2:
     LD IXH, A
     POP AF
     POP BC

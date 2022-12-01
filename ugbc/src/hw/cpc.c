@@ -86,12 +86,10 @@ void cpc_inkey( Environment * _environment, char * _pressed, char * _key ) {
     outline0("LD A, E");
     outline0("CP 0");
     outline1("JR NZ, %skey", label);
-    outline0("LD A, D");
-    outline0("CP 0");
-    outline1("JR NZ, %skey", label);
     outhead1("%snokey:", label);
     outline0("LD A, 0");
     outline1("LD (%s), A", _pressed);
+    outline1("LD (%s), A", _key);
     outline1("JP %sdone", label);
     outhead1("%skey:", label);
     outline0("LD A, 1");
