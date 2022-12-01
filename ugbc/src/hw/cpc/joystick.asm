@@ -29,14 +29,16 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                      JOYSTICK ROUTINE FOR COLECO                            *
+;*                      JOYSTICK ROUTINE FOR    CPC                            *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 JOYSTICK:
+    PUSH BC
     CALL SCANCODEENTIRE
+    POP BC
     LD A, B
     CP 0
     JR Z, JOYSTICK0
@@ -44,13 +46,13 @@ JOYSTICK:
 JOYSTICK1:
     LD HL, KEYMAP
     ADD HL, 6
-    LDA 0
+    LD A,0
     JMP JOYSTICKC
 
 JOYSTICK0:
     LD HL, KEYMAP
     ADD HL, 9
-    LDA 0
+    LD A,0
     JMP JOYSTICKC
 
 JOYSTICKC:
@@ -58,22 +60,39 @@ JOYSTICK1UP:
     LD A, (HL)
     BIT 0, A
     JR NZ, JOYSTICK1DOWN
-    LD A, $1
+    LD IXL, $1
 JOYSTICK1DOWN:
     BIT 1, A
     JR NZ, JOYSTICK1LEFT
+    PUSH AF
+    LD A, IXL
     OR $2
+    LD IXL, A
+    POP AF
 JOYSTICK1LEFT:
     BIT 2, A
     JR NZ, JOYSTICK1RIGHT
+    PUSH AF
+    LD A, IXL
     OR $4
+    LD IXL, A
+    POP AF
 JOYSTICK1RIGHT:
     BIT 3, A
     JR NZ, JOYSTICK1FIRE
+    PUSH AF
+    LD A, IXL
     OR $8
+    LD IXL, A
+    POP AF
 JOYSTICK1FIRE:
     BIT 4, A
     JR NZ, JOYSTICK1DONE
+    PUSH AF
+    LD A, IXL
     OR $10
+    LD IXL, A
+    POP AF
 JOYSTICK1DONE:
+    LD A, IXL
     RET
