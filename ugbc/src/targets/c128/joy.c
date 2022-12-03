@@ -38,7 +38,7 @@
  * CODE SECTION 
  ****************************************************************************/
 
-Variable * joy( Environment * _environment, char * _port ) {
+Variable * joy_vars( Environment * _environment, char * _port ) {
 
     MAKE_LABEL
 
@@ -68,6 +68,34 @@ Variable * joy( Environment * _environment, char * _port ) {
     outline1("STA %s", result->realName );
 
     outhead1("%send2:", label );
+
+    return result;
+
+}
+
+Variable * joy( Environment * _environment, int _port ) {
+
+    MAKE_LABEL
+
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of JOY)" );
+
+    switch( _port ) {
+
+        case 0:
+            outline0("LDA $DC01");
+            outline0("EOR #$FF");
+            outline0("AND #$1F");
+            break;
+
+        case 1:
+            outline0("LDA $DC00");
+            outline0("EOR #$FF");
+            outline0("AND #$1F");
+            break;
+
+    }
+
+    outline1("STA %s", result->realName );
 
     return result;
 

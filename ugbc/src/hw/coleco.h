@@ -157,6 +157,7 @@ void coleco_key_pressed( Environment * _environment, char *_scancode, char * _re
 void coleco_clear_key( Environment * _environment );
 void coleco_irq_at( Environment * _environment, char * _label );
 void coleco_follow_irq( Environment * _environment );
-void coleco_joy( Environment * _environment, char * _port, char * _value );
+void coleco_joy( Environment * _environment, int _port, char * _value );
+void coleco_joy_vars( Environment * _environment, char * _port, char * _value );
 
 #endif

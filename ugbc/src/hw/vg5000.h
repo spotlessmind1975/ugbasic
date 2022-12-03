@@ -157,6 +157,7 @@ void vg5000_keyshift( Environment * _environment, char * _shifts );
 void vg5000_clear_key( Environment * _environment );
 void vg5000_irq_at( Environment * _environment, char * _label );
 void vg5000_follow_irq( Environment * _environment );
-void vg5000_joy( Environment * _environment, char * _port, char * _result );
+void vg5000_joy( Environment * _environment, int _port, char * _result );
+void vg5000_joy_vars( Environment * _environment, char * _port, char * _result );
 
 #endif

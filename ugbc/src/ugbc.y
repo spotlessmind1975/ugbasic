@@ -2760,26 +2760,29 @@ exponential:
     | TEXTADDRESS {
         $$ = strdup( "TEXTADDRESS" );
     }
+    | JOY OP OP_HASH const_expr CP {
+        $$ = joy( _environment, $4 )->name;
+    }
     | JOY OP expr CP {
-        $$ = joy( _environment, $3 )->name;
+        $$ = joy_vars( _environment, $3 )->name;
     }
     | JUP OP expr CP {
-        $$ = joy_direction( _environment, $3, JOY_UP )->name;
+        $$ = joy_direction_semivars( _environment, $3, JOY_UP )->name;
     }
     | JDOWN OP expr CP {
-        $$ = joy_direction( _environment, $3, JOY_DOWN )->name;
+        $$ = joy_direction_semivars( _environment, $3, JOY_DOWN )->name;
     }
     | JLEFT OP expr CP {
-        $$ = joy_direction( _environment, $3, JOY_LEFT )->name;
+        $$ = joy_direction_semivars( _environment, $3, JOY_LEFT )->name;
     }
     | JRIGHT OP expr CP {
-        $$ = joy_direction( _environment, $3, JOY_RIGHT )->name;
+        $$ = joy_direction_semivars( _environment, $3, JOY_RIGHT )->name;
     }
     | JFIRE OP expr CP {
-        $$ = joy_direction( _environment, $3, JOY_FIRE )->name;
+        $$ = joy_direction_semivars( _environment, $3, JOY_FIRE )->name;
     }
     | FIRE OP expr CP {
-        $$ = joy_direction( _environment, $3, JOY_FIRE )->name;
+        $$ = joy_direction_semivars( _environment, $3, JOY_FIRE )->name;
     }
     | JOY COUNT {
         $$ = variable_temporary( _environment, VT_BYTE, "(JOYCOUNT)" )->name;
@@ -3112,6 +3115,11 @@ wait_definition_simple:
     }
     | direct_integer milliseconds {
       wait_milliseconds( _environment, $1 );
+    }
+    | FIRE {
+        begin_loop( _environment );
+            exit_loop_if( _environment, joy_direction( _environment, 0, JOY_FIRE )->name, 0 );
+        end_loop( _environment );
     }
     | KEY {
       wait_key( _environment );

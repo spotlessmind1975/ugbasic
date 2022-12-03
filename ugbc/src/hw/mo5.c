@@ -254,7 +254,11 @@ void mo5_follow_irq( Environment * _environment ) {
     
 }
 
-void mo5_joystick( Environment * _environment, char * _joystick, char * _result ) {
+void mo5_joystick( Environment * _environment, int _joystick, char * _result ) {
+
+}
+
+void mo5_joystick_vars( Environment * _environment, char * _joystick, char * _result ) {
 
 }
 

@@ -38,7 +38,7 @@
  * CODE SECTION 
  ****************************************************************************/
 
-Variable * joy( Environment * _environment, char * _port ) {
+Variable * joy_vars( Environment * _environment, char * _port ) {
 
     MAKE_LABEL
 
@@ -110,6 +110,72 @@ Variable * joy( Environment * _environment, char * _port ) {
     outline0("AND #$1f");
     outline1("STA %s", result->realName);
     outhead1("%send2:", label );
+
+    return result;
+    
+}
+
+Variable * joy( Environment * _environment, int _port ) {
+
+    MAKE_LABEL
+
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of JOY)" );
+
+    switch( _port ) {
+        case 0:
+            outline0("LDA $D300");
+            outline0("AND #$0F");
+            outline0("ASL A");
+            outline1("STA %s", result->realName);
+            outline0("LDA $D010");
+            outline0("AND #$01");
+            outline1("ORA %s", result->realName);
+            outline1("STA %s", result->realName);
+            break;
+
+        case 1:
+            outline0("LDA $D300");
+            outline0("AND #$F0");
+            outline0("LSR A");
+            outline0("LSR A");
+            outline0("LSR A");
+            outline1("STA %s", result->realName);
+            outline0("LDA $D011");
+            outline0("AND #$01");
+            outline1("ORA %s", result->realName);
+            outline1("STA %s", result->realName);
+            break;
+
+        case 2:
+            outline0("LDA $D301");
+            outline0("AND #$0F");
+            outline0("ASL A");
+            outline1("STA %s", result->realName);
+            outline0("LDA $D012");
+            outline0("AND #$01");
+            outline1("ORA %s", result->realName);
+            outline1("STA %s", result->realName);
+            break;
+
+        case 3:
+            outline0("LDA $D301");
+            outline0("AND #$F0");
+            outline0("LSR A");
+            outline0("LSR A");
+            outline0("LSR A");
+            outline1("STA %s", result->realName);
+            outline0("LDA $D013");
+            outline0("AND #$01");
+            outline1("ORA %s", result->realName);
+            outline1("STA %s", result->realName);
+            break;
+
+    }
+
+    outline1("LDA %s", result->realName);
+    outline0("EOR #$ff");
+    outline0("AND #$1f");
+    outline1("STA %s", result->realName);
 
     return result;
     

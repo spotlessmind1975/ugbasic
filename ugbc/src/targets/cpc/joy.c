@@ -38,14 +38,26 @@
  * CODE SECTION 
  ****************************************************************************/
 
-Variable * joy( Environment * _environment, char * _port ) {
+Variable * joy_vars( Environment * _environment, char * _port ) {
 
     MAKE_LABEL
 
     Variable * port = variable_retrieve_or_define( _environment, _port, VT_BYTE, 0 );
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of JOY)" );
 
-    cpc_joy( _environment, port->realName, result->realName );
+    cpc_joy_vars( _environment, port->realName, result->realName );
+
+    return result;
+
+}
+
+Variable * joy( Environment * _environment, int _port ) {
+
+    MAKE_LABEL
+
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of JOY)" );
+
+    cpc_joy( _environment, _port, result->realName );
 
     return result;
 

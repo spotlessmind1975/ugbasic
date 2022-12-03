@@ -149,7 +149,7 @@ void cpc_follow_irq( Environment * _environment ) {
 
 }
 
-void cpc_joy( Environment * _environment, char * _port, char * _value ) {
+void cpc_joy_vars( Environment * _environment, char * _port, char * _value ) {
 
     _environment->bitmaskNeeded = 1;
 
@@ -157,6 +157,20 @@ void cpc_joy( Environment * _environment, char * _port, char * _value ) {
     deploy( joystick, src_hw_cpc_joystick_asm );
 
     outline1("LD A, (%s)", _port );
+    outline0("LD B, A" );
+    outline0("CALL JOYSTICK");
+    outline1("LD (%s), A", _value );
+
+}
+
+void cpc_joy( Environment * _environment, int _port, char * _value ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    deploy( scancode, src_hw_cpc_scancode_asm );
+    deploy( joystick, src_hw_cpc_joystick_asm );
+
+    outline1("LD A, $%2.2x", _port );
     outline0("LD B, A" );
     outline0("CALL JOYSTICK");
     outline1("LD (%s), A", _value );
@@ -286,6 +300,9 @@ void cpc_background_color_semivars( Environment * _environment, int _index, char
     deploy( cpcvars, src_hw_cpc_vars_asm);
     deploy( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
 
+    MAKE_LABEL
+
+    outline1("%sbackgroundcolor:", label );
     outline1("LD A, $%2.2x", ( _index & 0x0f ));
     outline0("LD IXH, a");
     outline1("LD A, (%s)", _background_color);

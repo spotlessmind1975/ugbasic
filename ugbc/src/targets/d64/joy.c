@@ -38,7 +38,7 @@
  * CODE SECTION 
  ****************************************************************************/
 
-Variable * joy( Environment * _environment, char * _port ) {
+Variable * joy_vars( Environment * _environment, char * _port ) {
 
     MAKE_LABEL
 
@@ -48,6 +48,24 @@ Variable * joy( Environment * _environment, char * _port ) {
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of JOY)" );
 
     outline1("LDA %s", port->realName);
+    outline0("STA PORT");
+    outline0("JSR JOYSTICK");
+    outline0("LDA DIRECTION");
+    outline1("STA %s", result->realName);
+
+    return result;
+
+}
+
+Variable * joy( Environment * _environment, int _port ) {
+
+    MAKE_LABEL
+
+    deploy( joystick, src_hw_d64_joystick_asm );
+
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of JOY)" );
+
+    outline1("LDA #$%2.2x", _port);
     outline0("STA PORT");
     outline0("JSR JOYSTICK");
     outline0("LDA DIRECTION");

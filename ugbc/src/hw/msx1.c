@@ -71,13 +71,26 @@ void msx1_inkey( Environment * _environment, char * _pressed, char * _key ) {
    
 }
 
-void msx1_joy( Environment * _environment, char * _port, char * _result ) {
+void msx1_joy_vars( Environment * _environment, char * _port, char * _result ) {
 
     MAKE_LABEL
 
     deploy( joystick, src_hw_msx1_joystick_asm );
 
     outline1("LD A, (%s)", _port );
+    outline0("LD B, A");
+    outline0("CALL JOYSTICK");
+    outline1("LD (%s), A", _result );
+   
+}
+
+void msx1_joy( Environment * _environment, int _port, char * _result ) {
+
+    MAKE_LABEL
+
+    deploy( joystick, src_hw_msx1_joystick_asm );
+
+    outline1("LD A, $%2.2x", _port );
     outline0("LD B, A");
     outline0("CALL JOYSTICK");
     outline1("LD (%s), A", _result );

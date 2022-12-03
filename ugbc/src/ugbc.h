@@ -2578,8 +2578,10 @@ void                    interleaved_instructions( Environment * _environment );
 // *J*
 //----------------------------------------------------------------------------
 
-Variable *              joy( Environment * _environment, char * _port );
-Variable *              joy_direction( Environment * _environment, char * _port, int _direction );
+Variable *              joy( Environment * _environment, int _port );
+Variable *              joy_vars( Environment * _environment, char * _port );
+Variable *              joy_direction( Environment * _environment, int _port, int _direction );
+Variable *              joy_direction_semivars( Environment * _environment, char * _port, int _direction );
 
 //----------------------------------------------------------------------------
 // *K*
