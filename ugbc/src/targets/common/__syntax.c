@@ -1377,6 +1377,26 @@ tasto sulla tastiera.
 </usermanual> */
 
 /* <usermanual>
+@keyword WAIT KEY OR FIRE
+
+@english
+This instruction allows you to wait for the pressure of the FIRE key on the 
+joystick or any key from keyboard. If the port number is not indicated, it means the first available 
+(the one with index 0).
+
+@italian
+Questa istruzione consente di attendere la pressione del tasto FIRE del
+joystick, oppure di un tasto sulla tastiera. Se non viene indicato il numero della porta, si intende il
+primo disponibile (quello con indice 0).
+
+@syntax WAIT KEY OR FIRE { ( [port] ) }
+
+@example WAIT KEY OR FIRE
+
+@target all
+</usermanual> */
+
+/* <usermanual>
 @keyword SPRITE MIN Y
 
 @english

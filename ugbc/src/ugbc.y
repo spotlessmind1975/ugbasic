@@ -3126,6 +3126,18 @@ wait_definition_simple:
             exit_loop_if( _environment, joy_direction( _environment, $4, JOY_FIRE )->name, 0 );
         end_loop( _environment );
     }
+    | KEY OR FIRE {
+        begin_loop( _environment );
+            exit_loop_if( _environment, scancode( _environment )->name, 0 );
+            exit_loop_if( _environment, joy_direction( _environment, 0, JOY_FIRE )->name, 0 );
+        end_loop( _environment );
+    }
+    | KEY OR FIRE OP OP_HASH const_expr CP {
+        begin_loop( _environment );
+            exit_loop_if( _environment, scancode( _environment )->name, 0 );
+            exit_loop_if( _environment, joy_direction( _environment, $6, JOY_FIRE )->name, 0 );
+        end_loop( _environment );
+    }
     | KEY {
       wait_key( _environment );
     }
