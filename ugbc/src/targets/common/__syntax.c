@@ -1337,34 +1337,67 @@ la gestione dei bordi sul VIC-II).
 
 @target c64
 </usermanual> */
+
 /* <usermanual>
-@keyword POLYLINE
+@keyword WAIT FIRE
 
 @english
-This instruction draws a polyline, that is a line formed by multiple lines, on the 
-screen, starting from the coordinates ''(x1, y1)'' to arrive at the coordinates ''(xn, yn)'',
-using the color ''c''. The start can be omitted: in this case, ugBASIC will draw starting from 
-the last drawn position. If the color is 
-omitted, the last color selected with the ''INK'' or ''PEN'' command will be used. 
-Finally, the default line style is full but a 16 bit bitmask can be set with the ''SET LINE''
-command.
+This instruction allows you to wait for the pressure of the FIRE key on the 
+joystick. If the port number is not indicated, it means the first available 
+(the one with index 0).
 
 @italian
-Questa istruzione disegna sullo schermo una polilinea, cioè una linea formata da più linee, 
-partendo dalle coordinate ''(x1, y1)'' per arrivare alle coordinate ''(xn, yn)'', 
-utilizzando il colore ''c''. La coordinata di partenza può essere omessa: in questo caso, 
-ugBASIC disegnerà partendo dall'ultima posizione estratta. Se il colore viene omesso, 
-verrà utilizzato l'ultimo colore selezionato con il comando ''INK'' o ''PEN''. Infine, lo 
-stile di linea predefinito è quello completo ma è possibile impostare una maschera di bit a 16 
-bit con il comando ''SET LINE''.
+Questa istruzione consente di attendere la pressione del tasto FIRE del
+joystick. Se non viene indicato il numero della porta, si intende il
+primo disponibile (quello con indice 0).
 
-@syntax POLYLINE { [x1] },{ [y1] } TO { [x2] },{ [x2] } { TO ... },{ [c] }
-@syntax POLYLINE { [x1] },{ [y1] } TO { [x2] },{ [x2] } { TO ... }
-@syntax POLYLINE TO { [x2] },{ [x2] } { TO ... },{ [c] }
-@syntax POLYLINE TO { [x2] },{ [x2] } { TO ... }
+@syntax WAIT FIRE { ( [port] ) }
 
-@example POLYLINE 10,10 TO 20,20 TO 20,30 TO 20,10, WHITE
-@usedInExample graphics_shapes_01.bas
+@example WAIT FIRE
 
 @target all
+</usermanual> */
+
+/* <usermanual>
+@keyword WAIT KEY
+
+@english
+This instruction allows you to wait for any key to be pressed
+key on the keyboard.
+
+@italian
+Questa istruzione consente di attendere la pressione di un qualsiasi
+tasto sulla tastiera.
+
+@syntax WAIT KEY
+
+@example WAIT KEY
+
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword SPRITE MIN Y
+
+@english
+This constant allows us to know which is the smallest ordinate 
+(y) that can assume the vertical position of a sprite. It 
+may or may not coincide with zero of the 
+screen, in the sense that some graphics chipsets can move 
+sprites far beyond what is representable (example: border 
+management on the VIC-II).
+
+@italian
+Questa costante permette di sapere qual è l'ordinata (y) più 
+piccola che può assumere la posizione verticale di uno sprite.
+Può o meno coincidere con lo zero dello 
+schermo, nel senso che  alcuni chipset grafici possono muovere 
+sprite ben oltre quello che è rappresentabile (esempio: 
+la gestione dei bordi sul VIC-II).
+
+@syntax = SPRITE MIN Y
+
+@example minX = SPRITE MIN Y
+
+@target c64
 </usermanual> */
