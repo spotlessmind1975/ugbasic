@@ -3121,6 +3121,11 @@ wait_definition_simple:
             exit_loop_if( _environment, joy_direction( _environment, 0, JOY_FIRE )->name, 0 );
         end_loop( _environment );
     }
+    | FIRE OP OP_HASH const_expr CP {
+        begin_loop( _environment );
+            exit_loop_if( _environment, joy_direction( _environment, $4, JOY_FIRE )->name, 0 );
+        end_loop( _environment );
+    }
     | KEY {
       wait_key( _environment );
     }
@@ -3137,6 +3142,11 @@ wait_definition_expression:
     }
     | expr milliseconds {
       wait_milliseconds_var( _environment, $1 );
+    }
+    | FIRE OP expr CP {
+        begin_loop( _environment );
+            exit_loop_if( _environment, joy_direction_semivars( _environment, $3, JOY_FIRE )->name, 0 );
+        end_loop( _environment );
     }
     | UNTIL { 
         wait_until( _environment );  
