@@ -6189,7 +6189,7 @@ int rgbi_equals_rgb( RGBi * _first, RGBi * _second ) {
 }
 
 int rgbi_equals_rgba( RGBi * _first, RGBi * _second ) {
-    return ( _first->alpha == 255 && rgbi_equals_rgb( _first, _second ) ) || ( _first->alpha < 255 && ( _first->alpha == _second->alpha ) );
+    return rgbi_equals_rgb( _first, _second );
 }
 
 void rgbi_move( RGBi * _source, RGBi * _destination ) {
@@ -6224,12 +6224,10 @@ static int rgbi_qsort_compare(const void * _first, const void * _second ) {
     RGBi * first = (RGBi *) _first;
     RGBi * second = (RGBi *) _second;
 
-    if ( first->alpha < 255 ) {
-        return -1;
-    } else if ( second->alpha < 255) {
-        return 1;
-    } else {
+    if ( first->alpha == second->alpha ) {
         return ( first->count <= second->count );
+    } else {
+        return first->alpha >= second->alpha;
     }
 
 }
@@ -6270,6 +6268,8 @@ int rgbi_extract_palette( unsigned char* _source, int _width, int _height, int _
             }
             rgb.count = 0;
 
+            // printf("%2.2x%2.2x%2.2x %2.2x\n", rgb.red, rgb.blue, rgb.green, rgb.alpha );
+
             for (i = 0; i < usedPalette; ++i) {
                 if (rgbi_equals_rgba( &_palette[i], &rgb )) {
                     break;
@@ -6277,12 +6277,14 @@ int rgbi_extract_palette( unsigned char* _source, int _width, int _height, int _
             }
 
             if (i >= usedPalette) {
+                // printf( "added\n");
                 rgbi_move( &rgb, &_palette[usedPalette] );
                 ++usedPalette;
                 if (usedPalette > _palette_size) {
                     break;
                 }
             } else {
+                // printf( "increment (%2.2x)\n", _palette[i].alpha);
                 ++_palette[i].count;
             }
             source += _depth;
