@@ -1426,10 +1426,34 @@ static Variable * cpc_image_converter_multicolor_mode_midres( Environment * _env
         printf("\n" );
     }
 
-    *(buffer + 3 + ( ( _frame_width >> 2 ) * _frame_height ) ) = commonPalette[0].hardwareIndex;
-    *(buffer + 3 + ( ( _frame_width >> 2 ) * _frame_height ) + 1 ) = commonPalette[1].hardwareIndex;
-    *(buffer + 3 + ( ( _frame_width >> 2 ) * _frame_height ) + 2 ) = commonPalette[2].hardwareIndex;
-    *(buffer + 3 + ( ( _frame_width >> 2 ) * _frame_height ) + 3 ) = commonPalette[3].hardwareIndex;
+    int hwIndex = 0;
+    if ( lastUsedSlotInCommonPalette < 2 ) {
+        hwIndex = commonPalette[0].hardwareIndex;
+    } else {
+        hwIndex = 0xff;
+    }
+    *(buffer + 3 + ( ( _frame_width >> 2 ) * _frame_height ) )= hwIndex;
+
+    if ( lastUsedSlotInCommonPalette < 3 ) {
+        hwIndex = commonPalette[1].hardwareIndex;
+    } else {
+        hwIndex = 0xff;
+    }
+    *(buffer + 3 + ( ( _frame_width >> 2 ) * _frame_height ) + 1 ) = hwIndex;
+
+    if ( lastUsedSlotInCommonPalette < 4 ) {
+        hwIndex = commonPalette[2].hardwareIndex;
+    } else {
+        hwIndex = 0xff;
+    }
+    *(buffer + 3 + ( ( _frame_width >> 2 ) * _frame_height ) + 2 ) = hwIndex;
+
+    if ( lastUsedSlotInCommonPalette < 5 ) {
+        hwIndex = commonPalette[3].hardwareIndex;
+    } else {
+        hwIndex = 0xff;
+    }
+    *(buffer + 3 + ( ( _frame_width >> 2 ) * _frame_height ) + 3 ) = hwIndex;
 
     variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
 
@@ -1685,7 +1709,11 @@ static Variable * cpc_image_converter_multicolor_mode_lores( Environment * _envi
     }
 
     for( int i=0; i<16; ++i ) {
-        *(buffer + 3 + ( ( _frame_width >> 1 ) * _frame_height ) + i ) = commonPalette[i].hardwareIndex;
+        int hwIndex = 0xff;
+        if ( lastUsedSlotInCommonPalette < ( i + 2 ) ) {
+            hwIndex = commonPalette[i].hardwareIndex;    
+        }
+        *(buffer + 3 + ( ( _frame_width >> 1 ) * _frame_height ) + i ) = hwIndex;
     }
 
     variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
