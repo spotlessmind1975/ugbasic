@@ -36,6 +36,7 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 JOYSTICK:
+    LD IXL, $0
     PUSH BC
     CALL SCANCODEENTIRE
     POP BC
