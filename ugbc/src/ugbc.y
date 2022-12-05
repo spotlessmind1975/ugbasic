@@ -686,7 +686,7 @@ const_factor:
           if ( v->type != VT_IMAGE && v->type != VT_IMAGES && v->type != VT_SEQUENCE ) {
               CRITICAL_NOT_IMAGE( v->name );
           }
-          $$ = v->valueBuffer[1];
+          $$ = v->valueBuffer[2];
       }
       | LEN OP Identifier CP {
           Constant * c = constant_find( ((Environment *)_environment)->constants, $3 );
