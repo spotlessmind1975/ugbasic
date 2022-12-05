@@ -80,7 +80,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token SQUARE STEEL STRINGS SWEEP SYNTH SYNTHBRASS SYNTHSTRINGS TAIKO TANGO TELEPHONE TENOR TIMPANI TINKLE
 %token TOM TONK TREMOLO TROMBONE TRUMPET TUBA TUBULAR TWEET VIBRAPHONE VIOLA VIOLIN VOICE WARM WHISTLE WOODBLOCK 
 %token XYLOPHONE KILL COMPRESSED STORAGE ENDSTORAGE FILEX DLOAD INCLUDE LET CPC INT INTEGER LONG OP_PERC OP_AMPERSAND OP_AT
-%token EMBEDDED NATIVE
+%token EMBEDDED NATIVE RELEASE
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -126,6 +126,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> on_bank
 %type <integer> note octave const_note
 %type <integer> const_instrument
+%type <integer> release
 
 %right Integer String CP 
 %left OP_DOLLAR
@@ -3106,6 +3107,15 @@ milliseconds:
     | MILLISECOND
     | MILLISECONDS;
 
+release :
+    {
+        $$ = 0;
+    }
+    | RELEASE {
+        $$ = 1;
+    }
+    ;
+
 wait_definition_simple:
       direct_integer CYCLES {
       wait_cycles( _environment, $1 );
@@ -3116,30 +3126,55 @@ wait_definition_simple:
     | direct_integer milliseconds {
       wait_milliseconds( _environment, $1 );
     }
-    | FIRE {
+    | FIRE release {
         begin_loop( _environment );
             exit_loop_if( _environment, joy_direction( _environment, 0, JOY_FIRE )->name, 0 );
         end_loop( _environment );
+        if ( $2 ) {
+            begin_loop( _environment );
+                exit_loop_if( _environment, variable_not( _environment, joy_direction( _environment, 0, JOY_FIRE )->name )->name, 0 );
+            end_loop( _environment );
+        }
     }
-    | FIRE OP OP_HASH const_expr CP {
+    | FIRE OP OP_HASH const_expr CP release {
         begin_loop( _environment );
             exit_loop_if( _environment, joy_direction( _environment, $4, JOY_FIRE )->name, 0 );
         end_loop( _environment );
+        if ( $6 ) {
+            begin_loop( _environment );
+                exit_loop_if( _environment, variable_not( _environment, joy_direction( _environment, 0, JOY_FIRE )->name )->name, 0 );
+            end_loop( _environment );
+        }
     }
-    | KEY OR FIRE {
+    | KEY OR FIRE release {
         begin_loop( _environment );
             exit_loop_if( _environment, scancode( _environment )->name, 0 );
             exit_loop_if( _environment, joy_direction( _environment, 0, JOY_FIRE )->name, 0 );
         end_loop( _environment );
+        if ( $4 ) {
+            begin_loop( _environment );
+                exit_loop_if( _environment, variable_not( _environment, variable_or( _environment, joy_direction( _environment, 0, JOY_FIRE )->name, scancode( _environment )->name )->name )->name, 0 );
+            end_loop( _environment );
+        }
     }
-    | KEY OR FIRE OP OP_HASH const_expr CP {
+    | KEY OR FIRE OP OP_HASH const_expr CP release {
         begin_loop( _environment );
             exit_loop_if( _environment, scancode( _environment )->name, 0 );
             exit_loop_if( _environment, joy_direction( _environment, $6, JOY_FIRE )->name, 0 );
         end_loop( _environment );
+        if ( $8 ) {
+            begin_loop( _environment );
+                exit_loop_if( _environment, variable_not( _environment, variable_or( _environment, joy_direction( _environment, $6, JOY_FIRE )->name, scancode( _environment )->name )->name )->name, 0 );
+            end_loop( _environment );
+        }
     }
-    | KEY {
-      wait_key( _environment );
+    | KEY release {
+        wait_key( _environment );
+        if ( $2 ) {
+            begin_loop( _environment );
+                exit_loop_if( _environment, variable_not( _environment, variable_or( _environment, scancode( _environment )->name, scancode( _environment )->name )->name )->name, 0 );
+            end_loop( _environment );
+        }
     }
     | VBL {
       wait_vbl( _environment );
@@ -3155,10 +3190,15 @@ wait_definition_expression:
     | expr milliseconds {
       wait_milliseconds_var( _environment, $1 );
     }
-    | FIRE OP expr CP {
+    | FIRE OP expr CP release {
         begin_loop( _environment );
             exit_loop_if( _environment, joy_direction_semivars( _environment, $3, JOY_FIRE )->name, 0 );
         end_loop( _environment );
+        if ( $5 ) {
+            begin_loop( _environment );
+                exit_loop_if( _environment, variable_not( _environment, joy_direction_semivars( _environment, $3, JOY_FIRE )->name )->name, 0 );
+            end_loop( _environment );
+        }
     }
     | UNTIL { 
         wait_until( _environment );  

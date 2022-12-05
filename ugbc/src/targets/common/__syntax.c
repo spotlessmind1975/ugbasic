@@ -1344,14 +1344,16 @@ la gestione dei bordi sul VIC-II).
 @english
 This instruction allows you to wait for the pressure of the FIRE key on the 
 joystick. If the port number is not indicated, it means the first available 
-(the one with index 0).
+(the one with index 0). If the keyword ''RELEASE'' is appended,
+the instruction will wait for the release of the key, as well.
 
 @italian
 Questa istruzione consente di attendere la pressione del tasto FIRE del
 joystick. Se non viene indicato il numero della porta, si intende il
-primo disponibile (quello con indice 0).
+primo disponibile (quello con indice 0). Se viene aggiunta la parola chiave
+''RELEASE'', l'istruzione attenderà anche il rilascio del tasto.
 
-@syntax WAIT FIRE { ( [port] ) }
+@syntax WAIT FIRE { ( [port] ) } { RELEASE }
 
 @example WAIT FIRE
 
@@ -1363,13 +1365,15 @@ primo disponibile (quello con indice 0).
 
 @english
 This instruction allows you to wait for any key to be pressed
-key on the keyboard.
+key on the keyboard. If the keyword ''RELEASE'' is appended,
+the instruction will wait for the release of the key, as well.
 
 @italian
 Questa istruzione consente di attendere la pressione di un qualsiasi
-tasto sulla tastiera.
+tasto sulla tastiera. Se viene aggiunta la parola chiave
+''RELEASE'', l'istruzione attenderà anche il rilascio del tasto.
 
-@syntax WAIT KEY
+@syntax WAIT KEY { RELEASE }
 
 @example WAIT KEY
 
@@ -1382,14 +1386,16 @@ tasto sulla tastiera.
 @english
 This instruction allows you to wait for the pressure of the FIRE key on the 
 joystick or any key from keyboard. If the port number is not indicated, it means the first available 
-(the one with index 0).
+(the one with index 0). If the keyword ''RELEASE'' is appended,
+the instruction will wait for the release of the key / fire button, as well.
 
 @italian
 Questa istruzione consente di attendere la pressione del tasto FIRE del
 joystick, oppure di un tasto sulla tastiera. Se non viene indicato il numero della porta, si intende il
-primo disponibile (quello con indice 0).
+primo disponibile (quello con indice 0). Se viene aggiunta la parola chiave
+''RELEASE'', l'istruzione attenderà anche il rilascio di entrambi i tasti.
 
-@syntax WAIT KEY OR FIRE { ( [port] ) }
+@syntax WAIT KEY OR FIRE { ( [port] ) } { RELEASE }
 
 @example WAIT KEY OR FIRE
 
