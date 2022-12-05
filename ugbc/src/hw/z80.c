@@ -1411,6 +1411,7 @@ void z80_math_sub_16bit( Environment * _environment, char *_source, char *_desti
 
     outline1("LD HL, (%s)", _source );
     outline1("LD DE, (%s)", _destination );
+    outline0("AND A" );
     outline0("SBC HL, DE" );
     if ( _other ) {
         outline1("LD (%s), HL", _other );
