@@ -164,6 +164,7 @@ void pc128op_busy_wait( Environment * _environment, char * _timing );
 void pc128op_irq_at( Environment * _environment, char * _label );
 void pc128op_follow_irq( Environment * _environment );
 int pc128op_convertbintok7_original(Environment * _environment);
-void pc128op_joystick( Environment * _environment, char * _joystick, char * _result );
+void pc128op_joystick_semivars( Environment * _environment, char * _joystick, char * _result );
+void pc128op_joystick( Environment * _environment, int _joystick, char * _result );
 
 #endif
