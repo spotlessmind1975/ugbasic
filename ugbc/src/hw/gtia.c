@@ -422,7 +422,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
                 DLI_MODE_VHSCROLL( dliListCurrent, 11 );
             }
 
-            DLI_IRQ( dliListCurrent, 10 );
+            DLI_IRQ( dliListCurrent, 11 );
 
             // 65	\JVB-Jump and wait for Vertical Blank
             // 32	|to display list address which starts
