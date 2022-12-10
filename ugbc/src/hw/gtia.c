@@ -1969,19 +1969,19 @@ static Variable * gtia_image_converter_multicolor_mode_standard( Environment * _
 
     *(buffer + 3 + ( ( _frame_width >> 2 ) * _frame_height ) ) = commonPalette[0].index;
 
-    if ( lastUsedSlotInCommonPalette > 0 ) {
+    if ( lastUsedSlotInCommonPalette > 1 ) {
         *(buffer + 3 + ( ( _frame_width >> 2 ) * _frame_height ) + 1 ) = commonPalette[1].index;
     } else {
         *(buffer + 3 + ( ( _frame_width >> 2 ) * _frame_height ) + 1 ) = 0xff;
     }
 
-    if ( lastUsedSlotInCommonPalette > 1 ) {
+    if ( lastUsedSlotInCommonPalette > 2 ) {
         *(buffer + 3 + ( ( _frame_width >> 2 ) * _frame_height ) + 2 ) = commonPalette[2].index;
     } else {
         *(buffer + 3 + ( ( _frame_width >> 2 ) * _frame_height ) + 2 ) = 0xff;
     }
 
-    if ( lastUsedSlotInCommonPalette > 2 ) {
+    if ( lastUsedSlotInCommonPalette > 3 ) {
         *(buffer + 3 + ( ( _frame_width >> 2 ) * _frame_height ) + 3 ) = commonPalette[3].index;
     } else {
         *(buffer + 3 + ( ( _frame_width >> 2 ) * _frame_height ) + 3 ) = 0xff;
