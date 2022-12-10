@@ -1740,7 +1740,7 @@ static Variable * gtia_image_converter_multicolor_mode_standard( Environment * _
             //     printf("%i : %s\n", i, palette[i].description );
             // }
 
-            CRITICALIMAGE_CONVERTER_TOO_COLORS( colorUsed );
+            CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
         }
 
         if ( _flags & FLAG_OVERLAYED ) {
