@@ -1835,7 +1835,7 @@ static Variable * gtia_image_converter_multicolor_mode_standard( Environment * _
         // }
 
         if ( lastUsedSlotInCommonPalette < 4 ) {
-            for( i=1; i<colorUsed; ++i ) {
+            for( i=( _flag & EXACT ) ? 1 : 0; i<colorUsed; ++i ) {
                 // printf("[*] %d) %d %2.2x%2.2x%2.2x %d\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue, palette[i].used);
                 // if ( palette[i].used ) continue;
                 unsigned int minDistance = 0xffff;
