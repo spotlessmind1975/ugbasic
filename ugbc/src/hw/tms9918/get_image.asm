@@ -106,6 +106,8 @@ GETIMAGE2:
     PUSH HL
     PUSH BC
 
+    LD IXL, 0
+
     CALL VDPPOS
 
     LD DE, HL
