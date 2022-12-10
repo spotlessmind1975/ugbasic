@@ -1796,7 +1796,7 @@ static Variable * gtia_image_converter_multicolor_mode_standard( Environment * _
 
     } else {
 
-        if (colorUsed > 16) {
+        if (colorUsed > 4) {
             // for( i=0; i<colorUsed; ++i) {
             //     printf("%i : %s\n", i, palette[i].index );
             // }            
@@ -1834,37 +1834,39 @@ static Variable * gtia_image_converter_multicolor_mode_standard( Environment * _
         //     printf("\n");
         // }
 
-        for( i=1; i<colorUsed; ++i ) {
-            // printf("[*] %d) %d %2.2x%2.2x%2.2x %d\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue, palette[i].used);
-            // if ( palette[i].used ) continue;
-            unsigned int minDistance = 0xffff;
-            int colorIndex = 0;
-            int addIndex = 1;
-            for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
-                int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
-                // printf("%d <-> %d (%2.2x%2.2x%2.2x) [%d] = %d [min = %d]\n", i, j, SYSTEM_PALETTE[j].red, SYSTEM_PALETTE[j].green, SYSTEM_PALETTE[j].blue, SYSTEM_PALETTE[j].index, distance, minDistance );
-                if (distance < minDistance) {
-                    addIndex = 1;
-                    // printf(" candidated...\n" );
-                    for( k=0; k<lastUsedSlotInCommonPalette; ++k ) {
-                        if ( commonPalette[k].index == SYSTEM_PALETTE[j].index ) {
-                            // printf(" ...used!\n" );
-                            j = k;
-                            addIndex = 0;
-                            break;
+        if ( lastUsedSlotInCommonPalette < 4 ) {
+            for( i=1; i<colorUsed; ++i ) {
+                // printf("[*] %d) %d %2.2x%2.2x%2.2x %d\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue, palette[i].used);
+                // if ( palette[i].used ) continue;
+                unsigned int minDistance = 0xffff;
+                int colorIndex = 0;
+                int addIndex = 1;
+                for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
+                    int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
+                    // printf("%d <-> %d (%2.2x%2.2x%2.2x) [%d] = %d [min = %d]\n", i, j, SYSTEM_PALETTE[j].red, SYSTEM_PALETTE[j].green, SYSTEM_PALETTE[j].blue, SYSTEM_PALETTE[j].index, distance, minDistance );
+                    if (distance < minDistance) {
+                        addIndex = 1;
+                        // printf(" candidated...\n" );
+                        for( k=0; k<lastUsedSlotInCommonPalette; ++k ) {
+                            if ( commonPalette[k].index == SYSTEM_PALETTE[j].index ) {
+                                // printf(" ...used!\n" );
+                                j = k;
+                                addIndex = 0;
+                                break;
+                            }
                         }
+                        // printf(" ...ok! (%d)\n", SYSTEM_PALETTE[j].index );
+                        minDistance = distance;
+                        colorIndex = j;
+                        SYSTEM_PALETTE[j].alpha = palette[i].alpha;
                     }
-                    // printf(" ...ok! (%d)\n", SYSTEM_PALETTE[j].index );
-                    minDistance = distance;
-                    colorIndex = j;
-                    SYSTEM_PALETTE[j].alpha = palette[i].alpha;
                 }
-            }
-            if ( addIndex ) {
-                rgbi_move(&SYSTEM_PALETTE[colorIndex], &commonPalette[lastUsedSlotInCommonPalette]);
-                commonPalette[lastUsedSlotInCommonPalette].used = 1;
-                // printf("#>%d->%d) %d %2.2x%2.2x%2.2x\n", colorIndex, lastUsedSlotInCommonPalette, commonPalette[lastUsedSlotInCommonPalette].index, commonPalette[lastUsedSlotInCommonPalette].red, commonPalette[lastUsedSlotInCommonPalette].green, commonPalette[lastUsedSlotInCommonPalette].blue);
-                ++lastUsedSlotInCommonPalette;
+                if ( addIndex ) {
+                    rgbi_move(&SYSTEM_PALETTE[colorIndex], &commonPalette[lastUsedSlotInCommonPalette]);
+                    commonPalette[lastUsedSlotInCommonPalette].used = 1;
+                    // printf("#>%d->%d) %d %2.2x%2.2x%2.2x\n", colorIndex, lastUsedSlotInCommonPalette, commonPalette[lastUsedSlotInCommonPalette].index, commonPalette[lastUsedSlotInCommonPalette].red, commonPalette[lastUsedSlotInCommonPalette].green, commonPalette[lastUsedSlotInCommonPalette].blue);
+                    ++lastUsedSlotInCommonPalette;
+                }
             }
         }
 
