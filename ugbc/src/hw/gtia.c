@@ -1740,7 +1740,7 @@ static Variable * gtia_image_converter_multicolor_mode_standard( Environment * _
             //     printf("%i : %s\n", i, palette[i].description );
             // }
 
-            CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
+            CRITICALIMAGE_CONVERTER_TOO_COLORS( colorUsed );
         }
 
         if ( _flags & FLAG_OVERLAYED ) {
@@ -1835,7 +1835,7 @@ static Variable * gtia_image_converter_multicolor_mode_standard( Environment * _
         // }
 
         if ( lastUsedSlotInCommonPalette < 4 ) {
-            for( i=( _flags & EXACT ) ? 1 : 0; i<colorUsed; ++i ) {
+            for( i=( _flags & FLAG_EXACT ) ? 1 : 0; i<colorUsed; ++i ) {
                 // printf("[*] %d) %d %2.2x%2.2x%2.2x %d\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue, palette[i].used);
                 // if ( palette[i].used ) continue;
                 unsigned int minDistance = 0xffff;
