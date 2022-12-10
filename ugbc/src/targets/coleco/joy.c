@@ -55,10 +55,9 @@ Variable * joy( Environment * _environment, int _port ) {
 
     MAKE_LABEL
 
-    Variable * port = variable_retrieve_or_define( _environment, _port, VT_BYTE, 0 );
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of JOY)" );
 
-    coleco_joy( _environment, port, result->realName );
+    coleco_joy( _environment, _port, result->realName );
 
     return result;
 
