@@ -891,7 +891,7 @@ static int calculate_image_size( Environment * _environment, int _width, int _he
             return 3 + 2 * ( ( _width >> 3 ) * _height ) /*+ 8*/;
         case BITMAP_MODE_80_COLUMN:
         case BITMAP_MODE_BITMAP_16:
-            return 3 + 2 * ( ( _width >> 2 ) * _height ) /* + 16 * 2 */;
+            return 3 + 2 * ( ( _width >> 2 ) * _height ) /*+ 32*/;
         case BITMAP_MODE_PAGE:
             // WARNING_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
             break;
@@ -972,7 +972,7 @@ static Variable * ef936x_image_converter_bitmap_mode_standard( Environment * _en
     *(buffer+1) = (_frame_width ) & 0xff;
     *(buffer+2) = _frame_height;
 
-    _source += ( ( _offset_y * _width ) + _offset_x ) * 3;
+    _source += ( ( _offset_y * _width ) + _offset_x ) * _depth;
 
     // Loop for all the source surface.
     for (image_y = 0; image_y < _frame_height; ++image_y) {
@@ -988,9 +988,13 @@ static Variable * ef936x_image_converter_bitmap_mode_standard( Environment * _en
                 rgb.alpha = 255;
             }
 
-            for( i=0; i<colorUsed; ++i ) {
-                if ( rgbi_equals_rgba( &palette[i], &rgb ) ) {
-                    break;
+            if ( rgb.alpha < 255 ) {
+                i = 0;
+            } else {
+                for( i=0; i<colorUsed; ++i ) {
+                    if ( rgbi_equals_rgba( &palette[i], &rgb ) ) {
+                        break;
+                    }
                 }
             }
 
@@ -1013,11 +1017,11 @@ static Variable * ef936x_image_converter_bitmap_mode_standard( Environment * _en
                 // printf(" ");
             }
 
-            _source += 3;
+            _source += _depth;
 
         }
 
-        _source += ( _width - _frame_width ) * 3;
+        _source += ( _width - _frame_width ) * _depth;
 
         // printf("\n" );
 
@@ -1043,7 +1047,7 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
     int colorUsed;
     RGBi * palette = malloc( MAX_PALETTE * sizeof(RGBi) );
 
-    colorUsed = rgbi_extract_palette(_source, _width, _height, palette, MAX_PALETTE, ( ( _flags & FLAG_EXACT ) ? 0 : 1 ) /* sorted */);
+    colorUsed = rgbi_extract_palette(_source, _width, _height, _depth, palette, MAX_PALETTE, ( ( _flags & FLAG_EXACT ) ? 0 : 1 ) /* sorted */);
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = colorUsed;
@@ -1058,9 +1062,25 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
 
         if ( _flags & FLAG_EXACT ) {
             for( i=0; i<colorUsed; ++i ) {
-                palette[i].index = i;
-                rgbi_move( &palette[i], &SYSTEM_PALETTE[i] );
-                palette[i].used = 1;
+                if ( palette[i].alpha < 255 ) {
+                    break;
+                }
+            }
+            int startIndex = 0;
+            int transIndex = 0;
+            if ( i<colorUsed ) {
+                rgbi_move( &palette[i], &SYSTEM_PALETTE[0] );
+                startIndex = 1;
+                transIndex = i;
+            }
+            for( i=startIndex; i<colorUsed; ++i ) {
+                int realIndex = i;
+                if ( startIndex && transIndex && (i > transIndex) ) {
+                    --realIndex;
+                }
+                palette[realIndex].index = realIndex;
+                rgbi_move( &palette[realIndex], &SYSTEM_PALETTE[i] );
+                palette[realIndex].used = 1;
             }
         } else {
             for( i=0; i<colorUsed; ++i ) {
@@ -1131,30 +1151,41 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
     *(buffer+1) = ( _frame_width ) & 0xff;
     *(buffer+2) = _frame_height;
 
-    _source += ( ( _offset_y * _width ) + _offset_x ) * 3;
+    _source += ( ( _offset_y * _width ) + _offset_x ) * _depth;
 
     // Loop for all the source surface.
     for (image_y = 0; image_y < _frame_height; ++image_y) {
         for (image_x = 0; image_x < _frame_width; image_x+=8) {
             int colorIndexes[8];
             memset( colorIndexes, 0, 8*sizeof( int ) );
+            int trans = 0;
 
             for( int xx = 0; xx<8; ++xx ) {
                 // Take the color of the pixel
                 rgb.red = *_source;
                 rgb.green = *(_source + 1);
                 rgb.blue = *(_source + 2);
+                if ( _depth > 3 ) {
+                    rgb.alpha = 255;
+                } else {
+                    rgb.alpha = *(_source + 3);
+                }
 
-                int minDistance = 9999;
-                for( int i=0; i<sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++i ) {
-                    int distance = rgbi_distance(&commonPalette[i], &rgb );
-                    if ( distance < minDistance ) {
-                        minDistance = distance;
-                        colorIndexes[xx] = commonPalette[i].index;
+                if ( rgb.alpha < 255 ) {
+                    colorIndexes[xx] = 0;
+                    trans = 1;
+                } else {
+                    int minDistance = 9999;
+                    for( int i=0; i<sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++i ) {
+                        int distance = rgbi_distance(&commonPalette[i], &rgb );
+                        if ( distance < minDistance ) {
+                            minDistance = distance;
+                            colorIndexes[xx] = commonPalette[i].index;
+                        }
                     }
                 }
 
-                _source += 3;
+                _source += _depth;
 
             }
 
@@ -1169,11 +1200,17 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
             int colorBackgroundMax = 0;
             int colorForeground = 0;
             int colorForegroundMax = 0;
-            for( int xx = 0; xx<16; ++xx ) {
-                if ( colorIndexesCount[xx] > colorBackgroundMax ) {
-                    colorBackground = xx;
-                    colorBackgroundMax = colorIndexesCount[xx];
-                };
+
+            if ( trans ) {
+
+            } else {
+                for( int xx = 0; xx<16; ++xx ) {
+                    if ( colorIndexesCount[xx] > colorBackgroundMax ) {
+                        colorBackground = xx;
+                        colorBackgroundMax = colorIndexesCount[xx];
+                    };
+                }
+
             }
 
             colorIndexesCount[colorBackground] = 0;
@@ -1212,7 +1249,7 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
             }
         }
 
-        _source += ( _width - _frame_width ) * 3;
+        _source += ( _width - _frame_width ) * _depth;
 
         if ( _environment->debugImageLoad ) {
             printf("\n" );
@@ -1258,9 +1295,25 @@ static Variable * ef936x_image_converter_multicolor_mode4( Environment * _enviro
 
         if ( _flags & FLAG_EXACT ) {
             for( i=0; i<colorUsed; ++i ) {
-                palette[i].index = i;
-                rgbi_move( &palette[i], &SYSTEM_PALETTE[i] );
-                palette[i].used = 1;
+                if ( palette[i].alpha < 255 ) {
+                    break;
+                }
+            }
+            int startIndex = 0;
+            int transIndex = 0;
+            if ( i < colorUsed ) {
+                rgbi_move( &palette[i], &SYSTEM_PALETTE[0] );
+                startIndex = 1;
+                transIndex = i;
+            }
+            for( i=startIndex; i<colorUsed; ++i ) {
+                int realIndex = i;
+                if ( startIndex && transIndex && (i > transIndex) ) {
+                    --realIndex;
+                }
+                palette[realIndex].index = realIndex;
+                rgbi_move( &palette[realIndex], &SYSTEM_PALETTE[i] );
+                palette[realIndex].used = 1;
             }
         } else {
             for( i=0; i<colorUsed; ++i ) {
@@ -1321,7 +1374,7 @@ static Variable * ef936x_image_converter_multicolor_mode4( Environment * _enviro
     *(buffer+1) = ( _frame_width ) & 0xff;
     *(buffer+2) = _frame_height;
 
-    _source += ( ( _offset_y * _width ) + _offset_x ) * 3;
+    _source += ( ( _offset_y * _width ) + _offset_x ) * _depth;
 
     // Loop for all the source surface.
     for (image_y = 0; image_y < _frame_height; ++image_y) {
@@ -1331,16 +1384,26 @@ static Variable * ef936x_image_converter_multicolor_mode4( Environment * _enviro
             rgb.red = *_source;
             rgb.green = *(_source + 1);
             rgb.blue = *(_source + 2);
+            if ( _depth > 3 ) {
+                rgb.alpha = *(_source + 3 );
+            } else {
+                rgb.alpha= 255;
+            }
 
             int minDistance = 0xffff;
             int colorIndex = 0;
 
             colorIndex = 0;
-            for( i=0; i<4; ++i ) {
-                int distance = rgbi_distance(&commonPalette[i], &rgb);
-                if ( minDistance > distance ) {
-                    minDistance = distance;
-                    colorIndex = i;
+
+            if ( rgb.alpha < 255 ) {
+
+            } else {
+                for( i=0; i<4; ++i ) {
+                    int distance = rgbi_distance(&commonPalette[i], &rgb);
+                    if ( minDistance > distance ) {
+                        minDistance = distance;
+                        colorIndex = i;
+                    }
                 }
             }
             // printf( "%1.1x", colorIndex );
@@ -1350,11 +1413,11 @@ static Variable * ef936x_image_converter_multicolor_mode4( Environment * _enviro
             *(buffer + 3 + ( image_x >> 3 ) + ( ( _frame_width >> 3 ) * image_y ) ) |= ( ( colorIndex & 0x02 ) == 0x02 ) ? bitmask : 0;
             *(buffer + 3 + ( ( _frame_width >> 3 ) * _frame_height ) + ( ( image_x >> 3 ) + ( _frame_width >> 3 ) * image_y ) ) |= ( ( colorIndex & 0x01 ) == 0x01 ) ? bitmask : 0;
 
-            _source += 3;
+            _source += _depth;
 
         }
 
-        _source += ( _width - _frame_width ) * 3;
+        _source += ( _width - _frame_width ) * _depth;
 
         // printf("\n" );
     }
@@ -1413,9 +1476,25 @@ static Variable * ef936x_image_converter_multicolor_mode16( Environment * _envir
 
         if ( _flags & FLAG_EXACT ) {
             for( i=0; i<colorUsed; ++i ) {
-                palette[i].index = i;
-                rgbi_move( &palette[i], &SYSTEM_PALETTE[i] );
-                palette[i].used = 1;
+                if ( palette[i].alpha < 255 ) {
+                    break;
+                }
+            }
+            int startIndex = 0;
+            int transIndex = 0;
+            if ( i < colorUsed ) {
+                rgbi_move( &palette[i], &SYSTEM_PALETTE[0] );
+                startIndex = 1;
+                transIndex = i;
+            }
+            for( i=startIndex; i<colorUsed; ++i ) {
+                int realIndex = i;
+                if ( startIndex && transIndex && (i > transIndex) ) {
+                    --realIndex;
+                }
+                palette[realIndex].index = realIndex;
+                rgbi_move( &palette[realIndex], &SYSTEM_PALETTE[i] );
+                palette[realIndex].used = 1;
             }
         } else {
             for( i=0; i<colorUsed; ++i ) {
@@ -1547,7 +1626,7 @@ static Variable * ef936x_image_converter_multicolor_mode16( Environment * _envir
     *(buffer+1) = ( _frame_width ) & 0xff;
     *(buffer+2) = _frame_height;
 
-    _source += ( ( _offset_y * _width ) + _offset_x ) * 3;
+    _source += ( ( _offset_y * _width ) + _offset_x ) * _depth;
 
     // Loop for all the source surface.
     for (image_y = 0; image_y < _frame_height; ++image_y) {
@@ -1557,16 +1636,26 @@ static Variable * ef936x_image_converter_multicolor_mode16( Environment * _envir
             rgb.red = *_source;
             rgb.green = *(_source + 1);
             rgb.blue = *(_source + 2);
+            if ( _depth > 3 ) {
+                rgb.alpha = *(_source + 3);
+            } else {
+                rgb.alpha = 255;
+            }
 
             int minDistance = 0xffff;
             int colorIndex = 0;
 
             colorIndex = 0;
-            for( i=0; i<16; ++i ) {
-                int distance = rgbi_distance(&commonPalette[i], &rgb);
-                if ( minDistance > distance ) {
-                    minDistance = distance;
-                    colorIndex = i;
+
+            if ( rgb.alpha < 255 ) {
+
+            } else {
+                for( i=0; i<16; ++i ) {
+                    int distance = rgbi_distance(&commonPalette[i], &rgb);
+                    if ( minDistance > distance ) {
+                        minDistance = distance;
+                        colorIndex = i;
+                    }
                 }
             }
             // printf( "%1.1x", colorIndex );
@@ -1581,11 +1670,11 @@ static Variable * ef936x_image_converter_multicolor_mode16( Environment * _envir
                 *(buffer + 3 + ( ( _frame_width >> 2 ) * _frame_height ) + ( ( image_x >> 2 ) + ( _frame_width >> 2 ) * image_y ) ) |= bitmask;
             }
 
-            _source += 3;
+            _source += _depth;
 
         }
 
-        _source += ( _width - _frame_width ) * 3;
+        _source += ( _width - _frame_width ) * _depth;
 
         // printf("\n" );
     }
