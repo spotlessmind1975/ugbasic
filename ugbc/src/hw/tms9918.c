@@ -62,7 +62,7 @@ static RGBi SYSTEM_PALETTE[] = {
 
 RGBi * tms9918_image_nearest_system_color( RGBi * _color ) {
 
-    int minDistance = 0xffff;
+    unsigned int minDistance = 0xffff;
     int colorIndex = 0;
     for (int j = 0; j < COLOR_COUNT; ++j) {
         int distance = rgbi_distance(&SYSTEM_PALETTE[j], _color);
@@ -169,19 +169,23 @@ static void tms9918_image_converter_tile( char * _source, char * _dest, int _wid
 
             if ( systemRgb->index != colorBackground[y] ) {
                 *( _dest + y ) |= bitmask;
-                // printf("*");
+                //printf("*");
             } else {
                 *( _dest + y ) &= ~bitmask;
-                // printf(" ");
+                //printf(" ");
             }
 
             source += _depth;
 
         }
+        
+        //printf("\n");
 
         source += _depth * ( _source_width - 8 );
 
     }
+
+    //printf("\n\n");
 
     for( int i=0; i<8; ++i ) {
         *( _dest + 8 + i ) = ( colorForeground[i] << 4 ) | colorBackground[i] ;
@@ -1678,9 +1682,9 @@ static Variable * tms9918_image_converter_bitmap_mode_standard( Environment * _e
     *(buffer+1) = (_frame_width >> 8 ) & 0xff;
     *(buffer+2) = _frame_height;
 
-    _source += ( ( _offset_y * _width ) + _offset_x ) * 3;
+    _source += ( ( _offset_y * _width ) + _offset_x ) * _depth;
 
-    tms9918_image_converter_tiles( _source, buffer+3, _frame_width, _depth, _frame_height, _width );
+    tms9918_image_converter_tiles( _source, buffer+3, _frame_width, _frame_height, _depth, _width );
 
     if ( _environment->debugImageLoad ) {
         printf("\n" );
