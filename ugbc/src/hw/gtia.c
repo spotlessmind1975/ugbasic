@@ -1932,6 +1932,9 @@ static Variable * gtia_image_converter_multicolor_mode_standard( Environment * _
                         colorIndex = i;
                     }
                 }
+                if ( colorIndex == lastUsedSlotInCommonPalette ) {
+                    colorIndex = 1;
+                }
             }
 
             if ( _environment->debugImageLoad ) {
