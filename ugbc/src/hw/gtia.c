@@ -1704,13 +1704,13 @@ static Variable * gtia_image_converter_bitmap_mode_standard( Environment * _envi
     if ( colorUsed > 1 ) {
         *(buffer + 3 + ( ( _frame_width >> 3 ) * _frame_height ) + 1 ) = palette[1].index;
     } else {
-        *(buffer + 3 + ( ( _frame_width >> 3 ) * _frame_height ) + 1 ) = 0;
+        *(buffer + 3 + ( ( _frame_width >> 3 ) * _frame_height ) + 1 ) = 0xff;
     }
 
     if ( colorUsed > 0 ) {
         *(buffer + 3 + ( ( _frame_width >> 3 ) * _frame_height ) ) = palette[0].index;
     } else {
-        *(buffer + 3 + ( ( _frame_width >> 3 ) * _frame_height ) ) = 0;
+        *(buffer + 3 + ( ( _frame_width >> 3 ) * _frame_height ) ) = 0xff;
     }
 
     variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
@@ -1968,9 +1968,24 @@ static Variable * gtia_image_converter_multicolor_mode_standard( Environment * _
     }
 
     *(buffer + 3 + ( ( _frame_width >> 2 ) * _frame_height ) ) = commonPalette[0].index;
-    *(buffer + 3 + ( ( _frame_width >> 2 ) * _frame_height ) + 1 ) = commonPalette[1].index;
-    *(buffer + 3 + ( ( _frame_width >> 2 ) * _frame_height ) + 2 ) = commonPalette[2].index;
-    *(buffer + 3 + ( ( _frame_width >> 2 ) * _frame_height ) + 3 ) = commonPalette[3].index;
+
+    if ( lastUsedSlotInCommonPalette > 0 ) {
+        *(buffer + 3 + ( ( _frame_width >> 2 ) * _frame_height ) + 1 ) = commonPalette[1].index;
+    } else {
+        *(buffer + 3 + ( ( _frame_width >> 2 ) * _frame_height ) + 1 ) = 0xff;
+    }
+
+    if ( lastUsedSlotInCommonPalette > 1 ) {
+        *(buffer + 3 + ( ( _frame_width >> 2 ) * _frame_height ) + 2 ) = commonPalette[2].index;
+    } else {
+        *(buffer + 3 + ( ( _frame_width >> 2 ) * _frame_height ) + 2 ) = 0xff;
+    }
+
+    if ( lastUsedSlotInCommonPalette > 2 ) {
+        *(buffer + 3 + ( ( _frame_width >> 2 ) * _frame_height ) + 3 ) = commonPalette[3].index;
+    } else {
+        *(buffer + 3 + ( ( _frame_width >> 2 ) * _frame_height ) + 3 ) = 0xff;
+    }
 
     variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
 
