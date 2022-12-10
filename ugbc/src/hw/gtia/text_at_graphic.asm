@@ -132,7 +132,7 @@ CALCPOS8:
     ;-------------------------
     LDA YCURSYS
     CLC
-    ADC #1
+    ; ADC #1
     ASL A
     ASL A
     ASL A
@@ -166,7 +166,7 @@ CALCPOS9:
     ;-------------------------
     LDA YCURSYS
     CLC
-    ADC #1
+    ; ADC #1
     ASL A
     ASL A
     ASL A
@@ -201,7 +201,7 @@ CALCPOS10:
     ;-------------------------
     LDA YCURSYS
     CLC
-    ADC #1
+    ; ADC #1
     ASL A
     ASL A
     ASL A
@@ -235,7 +235,7 @@ CALCPOS11:
     ;-------------------------
     LDA YCURSYS
     CLC
-    ADC #1
+    ; ADC #1
     ASL A
     ASL A
     ASL A
@@ -270,7 +270,7 @@ CALCPOS12:
     ;-------------------------
     LDA YCURSYS
     CLC
-    ADC #1
+    ; ADC #1
     ASL A
     ASL A
     ASL A
@@ -305,7 +305,7 @@ CALCPOS13:
     ;-------------------------
     LDA YCURSYS
     CLC
-    ADC #1
+    ; ADC #1
     ASL A
     ASL A
     ASL A
@@ -340,7 +340,7 @@ CALCPOS14:
     ;-------------------------
     LDA YCURSYS
     CLC
-    ADC #1
+    ; ADC #1
     ASL A
     ASL A
     ASL A
@@ -374,7 +374,7 @@ CALCPOS15:
     ;-------------------------
     LDA YCURSYS
     CLC
-    ADC #1
+    ; ADC #1
     ASL A
     ASL A
     ASL A
