@@ -1142,7 +1142,9 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
     *(buffer) = _frame_width;
     *(buffer+1) = _frame_height;
 
-    _source += ( ( _offset_y * _width ) + _offset_x ) * 3;
+    printf( "bitmap converter: %2.2x %2.2x\n", *(buffer), *(buffer+1) );
+
+    _source += ( ( _offset_y * _width ) + _offset_x ) * _depth;
 
     // Loop for all the source surface.
     for (image_y = 0; image_y < _frame_height; ++image_y) {
@@ -1183,11 +1185,11 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
                 // printf(" ");
             }
 
-            _source += 3;
+            _source += _depth;
 
         }
 
-        _source += ( _width - _frame_width ) * 3;
+        _source += ( _width - _frame_width ) * _depth;
 
         // printf("\n" );
 
@@ -1275,7 +1277,10 @@ static Variable * c6847_image_converter_multicolor_mode_standard( Environment * 
 
     *(buffer) = _frame_width;
     *(buffer+1) = _frame_height;
-    _source += ( ( _offset_y * _width ) + _offset_x ) * 3;
+
+    printf( "multicolor converter: %2.2x %2.2x\n", *(buffer), *(buffer+1) );
+
+    _source += ( ( _offset_y * _width ) + _offset_x ) * _depth;
 
     // Loop for all the source surface.
     for (image_y = 0; image_y < _frame_height; ++image_y) {
@@ -1309,7 +1314,7 @@ static Variable * c6847_image_converter_multicolor_mode_standard( Environment * 
 
         }
 
-        _source += ( _width - _frame_width ) * 3;
+        _source += ( _width - _frame_width ) * _depth;
 
         // printf("\n" );
     }
