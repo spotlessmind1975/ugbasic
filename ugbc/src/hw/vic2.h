@@ -62,6 +62,11 @@
 #define COLOR_PEACH       			COLOR_PINK
 #define COLOR_COUNT                 16
 
+#define IMAGE_WIDTH_SIZE                2
+#define IMAGE_WIDTH_OFFSET              0
+#define IMAGE_HEIGHT_SIZE               1
+#define IMAGE_HEIGHT_OFFSET             2
+
 #define DEFAULT_PEN_COLOR           COLOR_WHITE
 #define DEFAULT_PAPER_COLOR         COLOR_BLACK
 

@@ -91,6 +91,11 @@
 #define SPRITE_FLAG_EXPAND_HORIZONTAL   0x0080
 #define SPRITE_FLAG_COMPRESS_HORIZONTAL 0x0000
 
+#define IMAGE_WIDTH_SIZE                2
+#define IMAGE_WIDTH_OFFSET              0
+#define IMAGE_HEIGHT_SIZE               1
+#define IMAGE_HEIGHT_OFFSET             2
+
 int ef9345_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode );
 
 void ef9345_initialization( Environment * _environment );

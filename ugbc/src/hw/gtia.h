@@ -206,6 +206,11 @@
 #define SCREEN_BORDER_X             0
 #define SCREEN_BORDER_Y             0
 
+#define IMAGE_WIDTH_SIZE                2
+#define IMAGE_WIDTH_OFFSET              0
+#define IMAGE_HEIGHT_SIZE               1
+#define IMAGE_HEIGHT_OFFSET             2
+
 int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode );
 
 void gtia_initialization( Environment * _environment );
