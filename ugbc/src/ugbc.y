@@ -598,7 +598,19 @@ const_factor:
           if ( !v->valueBuffer ) {
               CRITICAL_NOT_ASSIGNED_IMAGE( v->name );
           }
-          $$ = v->valueBuffer[0];
+          #ifdef CPU_BIG_ENDIAN
+            if ( IMAGE_WIDTH_SIZE == 1 ) {
+                $$ = v->valueBuffer[IMAGE_WIDTH_OFFSET];
+            } else {
+                $$ = 256*v->valueBuffer[IMAGE_WIDTH_OFFSET] + v->valueBuffer[IMAGE_WIDTH_OFFSET+1];
+            }
+          #else
+            if ( IMAGE_WIDTH_SIZE == 1 ) {
+                $$ = v->valueBuffer[IMAGE_WIDTH_OFFSET];
+            } else {
+                $$ = v->valueBuffer[IMAGE_WIDTH_OFFSET] + 256 * v->valueBuffer[IMAGE_WIDTH_OFFSET+1];
+            }
+          #endif
       }
       | FRAMES OP expr CP {
           $$ = frames( _environment, $3 );
@@ -686,7 +698,20 @@ const_factor:
           if ( v->type != VT_IMAGE && v->type != VT_IMAGES && v->type != VT_SEQUENCE ) {
               CRITICAL_NOT_IMAGE( v->name );
           }
-          $$ = v->valueBuffer[2];
+          
+          #ifdef CPU_BIG_ENDIAN
+            if ( IMAGE_HEIGHT_SIZE == 1 ) {
+                $$ = v->valueBuffer[IMAGE_HEIGHT_OFFSET];
+            } else {
+                $$ = 256*v->valueBuffer[IMAGE_HEIGHT_OFFSET] + v->valueBuffer[IMAGE_HEIGHT_OFFSET+1];
+            }
+          #else
+            if ( IMAGE_HEIGHT_SIZE == 1 ) {
+                $$ = v->valueBuffer[IMAGE_HEIGHT_OFFSET];
+            } else {
+                $$ = v->valueBuffer[IMAGE_HEIGHT_OFFSET] + 256 * v->valueBuffer[IMAGE_HEIGHT_OFFSET+1];
+            }
+          #endif
       }
       | LEN OP Identifier CP {
           Constant * c = constant_find( ((Environment *)_environment)->constants, $3 );
