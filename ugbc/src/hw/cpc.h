@@ -236,6 +236,11 @@ void cpc_joy_vars( Environment * _environment, char * _port, char * _value );
 #define SPRITE_FLAG_EXPAND_HORIZONTAL   0x0080
 #define SPRITE_FLAG_COMPRESS_HORIZONTAL 0x0000
 
+#define IMAGE_WIDTH_SIZE                2
+#define IMAGE_WIDTH_OFFSET              0
+#define IMAGE_HEIGHT_SIZE               1
+#define IMAGE_HEIGHT_OFFSET             2
+
 #define MAX_AUDIO_CHANNELS  3
 
 // IN r,(C)/OUT (C),r instructions: Bits b15-b8 come from the B register, 
