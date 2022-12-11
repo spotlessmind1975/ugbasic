@@ -88,7 +88,6 @@ VDPPOS:
 
     PUSH DE
 
-    AND A
     ;-------------------------
     ;calc Y-cell, divide by 8
     ;y/8 is y-cell table index
@@ -135,16 +134,6 @@ VDPPOS:
 
     LD E, D
     LD D, 0
-
-    LD A, IXL
-    CP 1
-    JR Z, VDPPOSNOMOD
-
-    LD A, E
-    AND $F8
-    LD E, A
-
-VDPPOSNOMOD:
     ADD HL, DE
     ADD HL, DE
     LD A, (HL)
@@ -157,13 +146,8 @@ VDPPOSNOMOD:
 ; 3) Add the horizontal byte offset to the vertical starting address. This will give the actual
 ; address of the byte we need to write data to in order to plot our pixel.
 
-    LD A, IXL
-    CP 0
-    JR Z, VDPPOSNOBC
-
     ADD HL, BC
 
-VDPPOSNOBC:
     POP DE
 
 ; If there is any remainder after calculating (Y/8), add
@@ -173,10 +157,6 @@ VDPPOSNOBC:
     POP BC
     POP DE
     
-    LD A, IXL
-    CP 0
-    JR Z, VDPPOSNODE
-
     PUSH DE
     LD A, D
     AND $07
@@ -185,13 +165,9 @@ VDPPOSNOBC:
     ADD HL, DE
     POP DE
 
-VDPPOSNODE:
-
     DI
     PUSH DE
-    PUSH IX
     EXX
-    POP IX
     POP DE
 
     LD HL, $2000
@@ -224,20 +200,8 @@ VDPPOSNODE:
     LD A, (HL)
     LD D, A
     LD HL, DE
-
-    LD A, IXL
-    CP 0
-    JR Z, VDPPOSNOBCC
-
     ADD HL, BC
-
-VDPPOSNOBCC:
     POP DE
-
-    LD A, IXL
-    CP 0
-    JR Z, VDPPOSNODEC
-
     PUSH DE
     LD A, D
     AND $07
@@ -245,8 +209,6 @@ VDPPOSNOBCC:
     LD D, 0
     ADD HL, DE
     POP DE
-
-VDPPOSNODEC:
 
     EXX
 
