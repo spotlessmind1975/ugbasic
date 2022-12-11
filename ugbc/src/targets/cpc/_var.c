@@ -209,6 +209,20 @@ void variable_cleanup( Environment * _environment ) {
         }
     }
 
+    Constant * c = _environment->constants;
+    while( c ) {
+        if ( c->valueString ) {
+            int len = strlen( c->valueString );
+            out2("%s: db %d,", c->realName, len);
+            int i=0;
+            for (i=0; i<(len-1); ++i ) {
+                out1("$%2.2x,", (unsigned char)c->valueString[i]);
+            }
+            outline1("$%2.2x", (unsigned char)c->valueString[(len-1)]);
+        }
+        c = c->next;
+    }
+
     for(i=0; i<BANK_TYPE_COUNT; ++i) {
         Bank * actual = _environment->banks[i];
         while( actual ) {
