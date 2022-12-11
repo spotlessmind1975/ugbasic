@@ -68,7 +68,7 @@ Variable * image_get_height( Environment * _environment, char * _image ) {
     Variable * result = variable_temporary( _environment, VT_BYTE, "(image height)" );
 
     outline1("LD HL, %s", image->realName );
-    outline0("ADD HL, 2" );
+    outline0("ADD HL, 1" );
     outline0("LD A, (HL)" );
     outline1("LD (%s), A", result->realName );
 
