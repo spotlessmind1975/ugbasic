@@ -328,11 +328,11 @@ CALCPOS13:
 
 CALCPOS14:
 
-    LDA #2
+    LDA #0
     STA PATTERN
 
     LDA XCURSYS
-    ASL A
+    ; ASL A
     TAX                        ;tbl_8,x index
 
     ;-------------------------
