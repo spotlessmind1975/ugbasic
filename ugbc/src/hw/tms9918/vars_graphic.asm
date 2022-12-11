@@ -157,13 +157,13 @@ VDPPOSNOMOD:
 ; 3) Add the horizontal byte offset to the vertical starting address. This will give the actual
 ; address of the byte we need to write data to in order to plot our pixel.
 
-    ; LD A, IXL
-    ; CP 0
-    ; JR Z, VDPPOSNOBC
+    LD A, IXL
+    CP 0
+    JR Z, VDPPOSNOBC
 
     ADD HL, BC
 
-; VDPPOSNOBC:
+VDPPOSNOBC:
     POP DE
 
 ; If there is any remainder after calculating (Y/8), add
@@ -225,9 +225,9 @@ VDPPOSNODE:
     LD D, A
     LD HL, DE
 
-    ; LD A, IXL
-    ; CP 0
-    ; JR Z, VDPPOSNOBCC
+    LD A, IXL
+    CP 0
+    JR Z, VDPPOSNOBCC
 
     ADD HL, BC
 
