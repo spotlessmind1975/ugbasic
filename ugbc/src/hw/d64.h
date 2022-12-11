@@ -135,11 +135,11 @@
 #define JOYSTICK_1					1
 #define JOYSTICK_COUNT				2
 
-#define JOY_UP              1
-#define JOY_DOWN            2
-#define JOY_LEFT            3
-#define JOY_RIGHT           4
-#define JOY_FIRE            2
+#define JOY_UP              0
+#define JOY_DOWN            1
+#define JOY_LEFT            2
+#define JOY_RIGHT           3
+#define JOY_FIRE            5
 
 #define INPUT_DEFAULT_SEPARATOR     ','
 #define INPUT_DEFAULT_SIZE          32
