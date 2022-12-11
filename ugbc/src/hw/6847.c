@@ -1142,8 +1142,6 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
     *(buffer) = _frame_width;
     *(buffer+1) = _frame_height;
 
-    printf( "bitmap converter: %2.2x %2.2x\n", *(buffer), *(buffer+1) );
-
     _source += ( ( _offset_y * _width ) + _offset_x ) * _depth;
 
     // Loop for all the source surface.
@@ -1277,8 +1275,6 @@ static Variable * c6847_image_converter_multicolor_mode_standard( Environment * 
 
     *(buffer) = _frame_width;
     *(buffer+1) = _frame_height;
-
-    printf( "multicolor converter: %2.2x %2.2x\n", *(buffer), *(buffer+1) );
 
     _source += ( ( _offset_y * _width ) + _offset_x ) * _depth;
 
