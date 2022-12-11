@@ -45,29 +45,33 @@ Variable * joy_vars( Environment * _environment, char * _port ) {
     Variable * port = variable_retrieve_or_define( _environment, _port, VT_BYTE, 0 );
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of JOY)" );
 
-    outline1("LDA %s", port->realName );
-    outline0("CMP #0" );
-    outline1("BEQ %sjoy0", label );
-    outline0("CMP #1" );
-    outline1("BEQ %sjoy1", label );
-    outline1("JMP %send2", label );
+    outline1("LDX %s", port->realName );
+    outline1("BNE %sjoy2", label );
 
-    outhead1("%sjoy0:", label );
-    outline0("LDA $DC01");
-    outline0("EOR #$FF");
-    outline0("AND #$1F");
-    outline1("JMP %send", label );
+    outline1("%sjoy1:", label );
+    outline0("LDA #$7F" );
+    outline0("SEI" );
+    outline0("STA $DC00" );
+    outline0("LDA $DC01" );
+    outline0("CLI" );
+    outline0("AND #$1F" );
+    outline0("EOR #$1F" );
+    outline1("JMP %sendjoy", label );
 
-    outhead1("%sjoy1:", label );
-    outline0("LDA $DC00");
-    outline0("EOR #$FF");
-    outline0("AND #$1F");
-    outline1("JMP %send", label );
+    outline1("%sjoy2:", label );
+    outline0("LDX #0" );
+    outline0("LDA #$E0" );
+    outline0("LDY #$FF" );
+    outline0("SEI" );
+    outline0("STA $DC02" );
+    outline0("LDA $DC00" );
+    outline0("STY $DC02" );
+    outline0("CLI" );
+    outline0("AND #$1F" );
+    outline0("EOR #$1F" );
+    outhead1("%sendjoy:", label );
 
-    outhead1("%send:", label );
     outline1("STA %s", result->realName );
-
-    outhead1("%send2:", label );
 
     return result;
 
@@ -82,19 +86,32 @@ Variable * joy( Environment * _environment, int _port ) {
     switch( _port ) {
 
         case 0:
-            outline0("LDA $DC01");
-            outline0("EOR #$FF");
-            outline0("AND #$1F");
+            outline0("LDA #$7F" );
+            outline0("SEI" );
+            outline0("STA $DC00" );
+            outline0("LDA $DC01" );
+            outline0("CLI" );
+            outline0("AND #$1F" );
+            outline0("EOR #$1F" );
+            outline1("JMP %sendjoy", label );
             break;
 
         case 1:
-            outline0("LDA $DC00");
-            outline0("EOR #$FF");
-            outline0("AND #$1F");
+            outline0("LDX #0" );
+            outline0("LDA #$E0" );
+            outline0("LDY #$FF" );
+            outline0("SEI" );
+            outline0("STA $DC02" );
+            outline0("LDA $DC00" );
+            outline0("STY $DC02" );
+            outline0("CLI" );
+            outline0("AND #$1F" );
+            outline0("EOR #$1F" );
             break;
 
     }
 
+    outhead1("%sendjoy:", label );
     outline1("STA %s", result->realName );
 
     return result;
