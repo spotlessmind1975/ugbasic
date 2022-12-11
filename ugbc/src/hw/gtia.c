@@ -906,7 +906,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     cpu_move_16bit( _environment, "CURRENTWIDTH", "CLIPX2");
     cpu_move_16bit( _environment, "CURRENTHEIGHT", "CLIPY2");
 
-    dli->absoluteAddress = 0xA000 - (dliListCurrent - dliListStart) - 16;
+    // dli->absoluteAddress = 0xA000 - (dliListCurrent - dliListStart) - 16;
 
     variable_store_buffer( _environment, dli->name, dliListStart, ( dliListCurrent - dliListStart ), dli->absoluteAddress );
 
