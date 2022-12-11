@@ -580,9 +580,9 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             DLI_JVB( dliListCurrent, dli->absoluteAddress );
             dliListStartOffset = dliListCurrent - dliListStart - 2;
 
-            scanline = 40;
+            scanline = 20;
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
-            cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 40 );
+            cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 20 );
             cpu_store_8bit( _environment, "CURRENTSL", scanline );
             break;
 
