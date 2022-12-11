@@ -548,9 +548,9 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         // it receives its color information from color register #0, otherwise the color is set to the background color 
         // register #4. Each pixel is one scan line high and one color clock wide. This mode's advantages are that it 
         // only uses 4K of screen memory and doesn't have artifacting problems.
-        // 320x192, 2 colors
+        // 160x192, 2 colors
         case BITMAP_MODE_ANTIC12:
-            _environment->screenWidth = 320;
+            _environment->screenWidth = 160;
             _environment->screenHeight = 192;
             _environment->screenColors = 2;
             // 112	Blank 8 scan lines to provide for overscan
@@ -563,13 +563,13 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             // DLI_LMS( dliListCurrent, 12, 0xA000 );
-            DLI_LMS_VHSCROLL( dliListCurrent, 12, 0xA000 );
+            DLI_LMS( dliListCurrent, 12, 0xA000 );
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
             for( i=1; i<191; ++i ) {
                 // 8	\Display ANTIC mode 15 for second mode line
-                DLI_MODE_VHSCROLL( dliListCurrent, 12 );
+                DLI_MODE( dliListCurrent, 12 );
             }
 
             DLI_IRQ( dliListCurrent, 12 );
@@ -623,9 +623,9 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             DLI_JVB( dliListCurrent, dli->absoluteAddress );
             dliListStartOffset = dliListCurrent - dliListStart - 2;
 
-            scanline = 20;
+            scanline = 10;
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
-            cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 40 );
+            cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 20 );
             cpu_store_8bit( _environment, "CURRENTSL", scanline );
             break;
 
@@ -905,6 +905,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     cpu_store_16bit( _environment, "CLIPY2", 0) ;
     cpu_move_16bit( _environment, "CURRENTWIDTH", "CLIPX2");
     cpu_move_16bit( _environment, "CURRENTHEIGHT", "CLIPY2");
+
+    dli->absoluteAddress = 0xA000 - (dliListCurrent - dliListStart) - 16;
 
     variable_store_buffer( _environment, dli->name, dliListStart, ( dliListCurrent - dliListStart ), dli->absoluteAddress );
 
@@ -1326,13 +1328,13 @@ void gtia_initialization( Environment * _environment ) {
     variable_global( _environment, "FONTHEIGHT" );
 
 #ifdef __atarixl__
-    SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC14, 1, 160, 192, 4, 8, 8, "Antic E (Graphics 15-XL computers only)"  );
+    //SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC14, 1, 160, 192, 4, 8, 8, "Antic E (Graphics 15-XL computers only)"  );
 #endif
     SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC13, 1, 160, 96, 4, 8, 8, "Graphics 7 (ANTIC D or 13)"  );
 #ifdef __atarixl__
-    SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC12, 1, 320, 192, 2, 8, 8, "Antic C (Graphics 14-XL computers only)"  );
+    //SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC15, 1, 160, 192, 1, 8, 8, "Graphics 8 (ANTIC F or 15)"  );
+    SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC12, 1, 160, 192, 2, 8, 8, "Antic C (Graphics 14-XL computers only)"  );
 #endif
-    // SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC15, 1, 320, 192, 1, 8, 8, "Graphics 8 (ANTIC F or 15)"  );
     SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC8, 1, 40, 24, 4, 8, 8, "Graphics 3 (ANTIC 8)" );
     SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC9, 1, 80, 48, 2, 8, 8, "Graphics 4 (ANTIC 9)"  );
     SCREEN_MODE_DEFINE( BITMAP_MODE_ANTIC10, 1, 80, 48, 4, 8, 8, "Graphics 5 (ANTIC A or 10)"  );
