@@ -36,4 +36,80 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 VSCROLLTDOWN:
+
+    LD BC, 192
+    LD HL, PLOTVBASE
+
+    ADD HL, BC
+    ADD HL, BC
+
+    DEC HL
+    DEC HL
+    
+VSCROLLTDOWNL1:
+
+    PUSH BC
+    PUSH HL
+
+    LD A, (HL)
+    LD E, A
+    INC HL
+    LD A, (HL)
+    LD D, A
+    INC HL
+
+    LD BC, 16
+    SBC HL, BC
+
+    LD A, (HL)
+    LD C, A
+    INC HL
+    LD A, (HL)
+    LD B, A
+    LD HL, BC
+
+    LD BC, $50
+    LDIR
+
+    POP HL
+    POP BC
+
+    DEC HL
+    DEC HL
+    DEC C
+    JP NZ, VSCROLLTDOWNL1
+
+    LD HL, PLOTVBASE
+    LD BC, 7
+
+VSCROLLTDOWNL2:
+
+    PUSH BC
+    PUSH HL
+
+    LD A, (HL)
+    LD E, A
+    INC HL
+    LD A, (HL)
+    LD D, A
+    INC HL
+
+    LD HL, DE
+
+    LD BC, $50
+    LD A, 0
+VSCROLLTDOWNL2L:
+    LD (HL), A
+    INC HL
+    DEC C
+    JR NZ, VSCROLLTDOWNL2L
+
+    POP HL
+    POP BC
+
+    INC HL
+    INC HL
+    DEC C
+    JP NZ, VSCROLLTDOWNL2
+
     RET
