@@ -44,5 +44,11 @@
  * @param _environment Current calling environment
  */
 void every_off( Environment * _environment ) {
-   
+
+    if ( ! _environment->everyStatus ) {
+        CRITICAL("EVERY OFF without EVERY definition");
+    }
+
+    variable_store( _environment, _environment->everyStatus->name, 0x0 );
+
 }

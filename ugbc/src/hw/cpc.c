@@ -143,6 +143,17 @@ void cpc_clear_key( Environment * _environment ) {
 
 void cpc_irq_at( Environment * _environment, char * _label ) {
 
+    outline0("DI");
+    outline1("LD HL, %s", _label);
+    outline0("LD DE, IRQTIMERADDR");
+    outline0("INC DE");
+    outline0("LD A, L");
+    outline0("LD (DE), A");
+    outline0("INC DE");
+    outline0("LD A, H");
+    outline0("LD (DE), A");
+    outline0("EI");
+
 }
 
 void cpc_follow_irq( Environment * _environment ) {
@@ -931,7 +942,14 @@ void cpc_initialization( Environment * _environment ) {
     variable_global( _environment, "CPCTIMER" );
     variable_import( _environment, "CPCTIMER2", VT_BYTE, 6 );
     variable_global( _environment, "CPCTIMER2" );
-    
+
+    variable_import( _environment, "EVERYSTATUS", VT_BYTE, 0 );
+    variable_global( _environment, "EVERYSTATUS" );
+    variable_import( _environment, "EVERYCOUNTER", VT_BYTE, 0 );
+    variable_global( _environment, "EVERYCOUNTER" );
+    variable_import( _environment, "EVERYTIMING", VT_BYTE, 0 );
+    variable_global( _environment, "EVERYTIMING" );
+
     cpc_screen_mode_enable( _environment, find_screen_mode_by_id( _environment, BITMAP_MODE_DEFAULT ) );
 
     cpc_cls( _environment );
