@@ -190,7 +190,6 @@ generated/cpc/exe/%.dsk:
 	@rm -f $(subst /exe/,/asm/,$(@:.dsk=.o))
 	@mv $(subst /exe/,/asm/,$(@:.dsk=.bin)) $(@:.dsk=.bin)
 	@z88dk-appmake +cpc --org $1200 --disk -b $(@:.dsk=.bin) -o $(dir $@)main.com
-	@mv $(dir $@)main.dsk $@
 	@rm -f $(@:.dsk=.bin) $(@:.dsk=_*.bin) $(dir $@)main.com
 
 generated/vg5000/asm/%.asm:
