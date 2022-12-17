@@ -1,3 +1,0 @@
-[submodule "modules/z88dk"]
-	path = modules/z88dk
-	url = https://github.com/z88dk/z88dk.git
