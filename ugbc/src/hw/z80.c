@@ -415,9 +415,8 @@ void z80_store_8bit( Environment * _environment, char *_destination, int _value 
 
 void z80_store_8bit_with_offset( Environment * _environment, char *_destination, int _value, int _offset ) {
 
-    outline1("LD A, $%2.2x", ( _offset & 0xff ) );
     outline1("LD DE, %s", _destination);
-    outline0("ADD DE,A");
+    outline1("ADD DE, $%2.2x", ( _offset & 0xff ) );
     outline1("LD A, $%2.2x", ( _value & 0xff ) );
     outline0("LD (DE), A");
 
