@@ -48,7 +48,7 @@ void target_linkage( Environment * _environment ) {
 
     BUILD_SAFE_REMOVE( _environment, _environment->exeFileName );
 
-    BUILD_CHECK_FILETYPE(_environment, OUTPUT_FILE_TYPE_XEX)
+    BUILD_CHECK_FILETYPE(_environment, OUTPUT_FILE_TYPE_PRG)
 
     BUILD_TOOLCHAIN_CC65_GET_EXECUTABLE( _environment, executableName );
 
