@@ -28,7 +28,7 @@
 # * autorizzazioni e le limitazioni previste dalla medesima.
 # ****************************************************************************/
 
-.PHONY: paths toolchain compiler clean all
+.PHONY: paths toolchain compiler clean all built so
 
 ifndef target
 $(error missing 'target' (valid values: atari atarixl c128 c64 coleco cpc d32 d64 mo5 msx1 pc128 plus4 sc3000 sg1000 vg5000 vic20 zx))
@@ -74,8 +74,11 @@ EXAMPLES := $(wildcard examples/*.bas)
 # List of assembled files of examples
 COMPILED := $(subst examples/,generated/$(target)/asm/,$(EXAMPLES:.bas=.asm))
 
-# List of binary files of examples
+# List of binary files of examples (compiled with makefile)
 EXECUTABLES := $(subst /asm/,/exe/,$(COMPILED:.asm=.$(output)))
+
+# List of binary files of examples (compiled with ugbasic stand alone)
+EXECUTABLESSO := $(subst /asm/,/exeso/,$(COMPILED:.asm=.$(output)))
 
 #-----------------------------------------------------------------------------
 #--- MAKEFILES's RULES
@@ -86,7 +89,21 @@ EXECUTABLES := $(subst /asm/,/exe/,$(COMPILED:.asm=.$(output)))
 #    CATCH ALL RULE
 #------------------------------------------------ 
 # 
-all: paths toolchain compiler $(COMPILED) $(EXECUTABLES)
+all: paths toolchain compiler $(COMPILED) $(EXECUTABLES) $(EXECUTABLESSO)
+
+#------------------------------------------------ 
+# examples:
+#    COMPILE EXAMPLES with makefile
+#------------------------------------------------ 
+# 
+built: paths toolchain compiler $(COMPILED) $(EXECUTABLES)
+
+#------------------------------------------------ 
+# examples:
+#    COMPILE EXAMPLES stand alone
+#------------------------------------------------ 
+# 
+so: paths toolchain compiler $(EXECUTABLESSO)
 
 #------------------------------------------------ 
 # paths: 
@@ -102,6 +119,7 @@ paths:
 	@mkdir -p generated/$(target)/asm
 	@mkdir -p generated/$(target)/cfg
 	@mkdir -p generated/$(target)/exe
+	@mkdir -p generated/$(target)/exeso
 	@mkdir -p $(dir $(CL65))
 	@mkdir -p $(dir $(Z80ASM))
 	@mkdir -p $(dir $(APPMAKE))
@@ -219,6 +237,9 @@ generated/atari/exe/%.xex: $(subst /exe/,/asm/,$(@:.xex=.asm))
 	@$(CL65) -Ln $(@:.xex=.lbl) --listing $(@:.xex=.lst) -g -o $@ --mapfile $(@:.xex=.map) -t atari -C $(subst /exe/,/cfg/,$(@:.xex=.cfg)) $(subst /exe/,/asm/,$(@:.xex=.asm))
 	@rm -f $(@:.xex=.o)
 
+generated/atari/exeso/%.xex: $(subst /generated/exeso/,/examples/,$(@:.xex=.bas))
+	@ugbc/exe/ugbc.atari -O xex $(subst generated/atari/exeso/,examples/,$(@:.xex=.bas)) -o $@
+
 #------------------------------------------------ 
 # atarixl:
 #    ATARI 1200XL (6502)
@@ -235,6 +256,9 @@ generated/atarixl/exe/%.xex: $(subst /exe/,/asm/,$(@:.xex=.asm))
 	@$(CL65) -Ln $(@:.xex=.lbl) --listing $(@:.xex=.lst) -g -o $@ --mapfile $(@:.xex=.map) -t atari -D __atarixl__ -C $(subst /exe/,/cfg/,$(@:.xex=.cfg)) $(subst /exe/,/asm/,$(@:.xex=.asm))
 	@rm -f $(@:.xex=.o)
 
+generated/atarixl/exeso/%.xex: $(subst /generated/exeso/,/examples/,$(@:.xex=.bas))
+	@ugbc/exe/ugbc.atarixl -O xex $(subst generated/atarixl/exeso/,examples/,$(@:.xex=.bas)) -o $@
+
 #------------------------------------------------ 
 # c128:
 #    COMMODORE 128 (8502)
@@ -248,6 +272,9 @@ generated/c128/asm/%.asm:
 generated/c128/exe/%.prg: $(subst /exe/,/asm/,$(@:.prg=.asm))
 	@$(CL65) -Ln $(@:.prg=.lbl) --listing $(@:.prg=.lst) -g -o $@ --mapfile $(@:.prg=.map) -t c128 -C $(subst /exe/,/cfg/,$(@:.prg=.cfg)) $(subst /exe/,/asm/,$(@:.prg=.asm))
 	@rm -f $(@:.prg=.o)
+
+generated/c128/exeso/%.prg: $(subst /generated/exeso/,/examples/,$(@:.prg=.bas))
+	@ugbc/exe/ugbc.c128 -O prg $(subst generated/c128/exeso/,examples/,$(@:.prg=.bas)) -o $@
 
 #------------------------------------------------ 
 # c64:
@@ -265,6 +292,12 @@ generated/c64/exe/%.prg: $(subst /exe/,/asm/,$(@:.prg=.asm))
 
 generated/c64/exe/%.d64:
 	@ugbc/exe/ugbc.c64 -O d64 $(subst generated/c64/exe/,examples/,$(@:.d64=.bas)) -o $@
+
+generated/c64/exeso/%.prg: $(subst /generated/exeso/,/examples/,$(@:.prg=.bas))
+	@ugbc/exe/ugbc.c64 -O prg $(subst generated/c64/exeso/,examples/,$(@:.prg=.bas)) -o $@
+
+generated/c64/exeso/%.d64: $(subst /generated/exeso/,/examples/,$(@:.d64=.bas))
+	@ugbc/exe/ugbc.c64 -O d64 $(subst generated/c64/exeso/,examples/,$(@:.d64=.bas)) -o $@
 
 #------------------------------------------------ 
 # coleco:
@@ -288,6 +321,9 @@ generated/coleco/exe/%.rom:
 	@$(APPMAKE) +msxrom -b $(@:.rom=.bin) 2>/dev/null
 	@rm -f $(@:.rom=.bin) $(@:.rom=_*.bin)
 
+generated/coleco/exeso/%.rom: $(subst /generated/exeso/,/examples/,$(@:.rom=.bas))
+	@ugbc/exe/ugbc.coleco -O rom $(subst generated/coleco/exeso/,examples/,$(@:.rom=.bas)) -o $@
+
 #------------------------------------------------ 
 # cpc:
 #    AMSTRAD CPC 664 (Z80)
@@ -307,6 +343,9 @@ generated/cpc/exe/%.dsk:
 	@$(APPMAKE) +cpc --org $1200 --disk -b $(@:.dsk=.bin) -o $(dir $@)main.com
 	@rm -f $(@:.dsk=.bin) $(@:.dsk=_*.bin) $(dir $@)main.com
 
+generated/cpc/exeso/%.dsk: $(subst /generated/exeso/,/examples/,$(@:.dsk=.bas))
+	@ugbc/exe/ugbc.cpc -O dsk $(subst generated/cpc/exeso/,examples/,$(@:.dsk=.bas)) -o $@
+
 #------------------------------------------------ 
 # d32:
 #    DRAGON 32 (6809)
@@ -320,6 +359,9 @@ generated/d32/asm/%.asm: compiler
 generated/d32/exe/%.bin: $(subst /exe/,/asm/,$(@:.bin=.asm))
 	@$(ASM6809) -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -D -e 10240 -o $@ $(subst /exe/,/asm/,$(@:.bin=.asm))
 
+generated/d32/exeso/%.bin: $(subst /generated/exeso/,/examples/,$(@:.bin=.bas))
+	@ugbc/exe/ugbc.d32 -O bin $(subst generated/d32/exeso/,examples/,$(@:.bin=.bas)) -o $@
+
 #------------------------------------------------ 
 # d64:
 #    DRAGON 64 (6809)
@@ -332,6 +374,9 @@ generated/d64/asm/%.asm: compiler
 
 generated/d64/exe/%.bin: $(subst /exe/,/asm/,$(@:.bin=.asm))
 	@$(ASM6809) -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -D -e 10240 -o $@ $(subst /exe/,/asm/,$(@:.bin=.asm))
+
+generated/d32/exeso/%.bin: $(subst /generated/exeso/,/examples/,$(@:.bin=.bas))
+	@ugbc/exe/ugbc.d64 -O bin $(subst generated/d64/exeso/,examples/,$(@:.bin=.bas)) -o $@
 
 #------------------------------------------------ 
 # mo5:
@@ -348,6 +393,12 @@ generated/mo5/exe/%.k7: compiler
 
 generated/mo5/exe/%.bin: compiler
 	@$(ASM6809) -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -D -e 10240 -o $@ $(subst /exe/,/asm/,$(@:.bin=.asm))
+
+generated/mo5/exeso/%.bin: $(subst /generated/exeso/,/examples/,$(@:.bin=.bas))
+	@ugbc/exe/ugbc.mo5 -O bin $(subst generated/mo5/exeso/,examples/,$(@:.bin=.bas)) -o $@
+
+generated/mo5/exeso/%.k7: $(subst /generated/exeso/,/examples/,$(@:.k7=.bas))
+	@ugbc/exe/ugbc.mo5 -O k7 $(subst generated/mo5/exeso/,examples/,$(@:.k7=.bas)) -o $@
 
 #------------------------------------------------ 
 # msx1:
@@ -371,6 +422,9 @@ generated/msx1/exe/%.rom:
 	@$(APPMAKE) +msxrom -b $(@:.rom=.bin) 2>/dev/null
 	@rm -f $(@:.rom=.bin) $(@:.rom=_*.bin)
 
+generated/msx1/exeso/%.rom: $(subst /generated/exeso/,/examples/,$(@:.rom=.bas))
+	@ugbc/exe/ugbc.msx1 -O k7 $(subst generated/msx1/exeso/,examples/,$(@:.rom=.bas)) -o $@
+
 #------------------------------------------------ 
 # pc128:
 #    OLIVETTI PRODEST PC128 (6809)
@@ -387,6 +441,12 @@ generated/pc128op/exe/%.k7: compiler
 generated/pc128op/exe/%.bin: compiler
 	@$(ASM6809) -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -D -e 10240 -o $@ $(subst /exe/,/asm/,$(@:.bin=.asm))
 
+generated/pc128op/exeso/%.bin: $(subst /generated/exeso/,/examples/,$(@:.bin=.bas))
+	@ugbc/exe/ugbc.pc128op -O bin $(subst generated/pc128op/exeso/,examples/,$(@:.bin=.bas)) -o $@
+
+generated/pc128op/exeso/%.k7: $(subst /generated/exeso/,/examples/,$(@:.k7=.bas))
+	@ugbc/exe/ugbc.pc128op -O k7 $(subst generated/pc128op/exeso/,examples/,$(@:.k7=.bas)) -o $@
+
 #------------------------------------------------ 
 # plus4:
 #    COMMODORE PLUS/4 (7501/8501)
@@ -400,6 +460,9 @@ generated/plus4/asm/%.asm:
 generated/plus4/exe/%.prg: $(subst /exe/,/asm/,$(@:.prg=.asm))
 	@$(CL65) -Ln $(@:.prg=.lbl) --listing $(@:.prg=.lst) -g -o $@ --mapfile $(@:.prg=.map) -u __EXEHDR__ -t plus4 -C $(subst /exe/,/cfg/,$(@:.prg=.cfg)) $(subst /exe/,/asm/,$(@:.prg=.asm))
 	@rm -f $(@:.prg=.o)
+
+generated/plus4/exeso/%.prg: $(subst /generated/exeso/,/examples/,$(@:.prg=.bas))
+	@ugbc/exe/ugbc.plus4 -O prg $(subst generated/plus4/exeso/,examples/,$(@:.prg=.bas)) -o $@
 
 #------------------------------------------------ 
 # sc3000:
@@ -419,6 +482,9 @@ generated/sc3000/exe/%.rom:
 	@mv $(subst /exe/,/asm/,$(@:.rom=_data_user.bin)) $(@:.rom=_data_user.bin)
 	@cat $(@:.rom=_code_user.bin) $(@:.rom=_data_user.bin) >$(@)
 
+generated/sc3000/exeso/%.rom: $(subst /generated/exeso/,/examples/,$(@:.rom=.bas))
+	@ugbc/exe/ugbc.sc3000 -O rom $(subst generated/sc3000/exeso/,examples/,$(@:.rom=.bas)) -o $@
+
 #------------------------------------------------ 
 # sg1000:
 #    SEGA SG-1000 (Z80)
@@ -437,6 +503,9 @@ generated/sg1000/exe/%.rom:
 	@mv $(subst /exe/,/asm/,$(@:.rom=_data_user.bin)) $(@:.rom=_data_user.bin)
 	@cat $(@:.rom=_code_user.bin) $(@:.rom=_data_user.bin) >$(@)
 
+generated/sg1000/exeso/%.rom: $(subst /generated/exeso/,/examples/,$(@:.rom=.bas))
+	@ugbc/exe/ugbc.sg1000 -O rom $(subst generated/sg1000/exeso/,examples/,$(@:.rom=.bas)) -o $@
+
 #------------------------------------------------ 
 # vg5000:
 #    PHILIPS VG5000 (Z80)
@@ -453,6 +522,9 @@ generated/vg5000/exe/%.bin: compiler
 generated/vg5000/exe/%.k7:
 	@ugbc/exe/ugbc.vg5000 -L generated/vg5000/asm/output.listing $(subst generated/vg5000/exe/,examples/,$(@:.k7=.bas)) -o $@
 
+generated/vg5000/exeso/%.rom: $(subst /generated/exeso/,/examples/,$(@:.rom=.bas))
+	@ugbc/exe/ugbc.vg5000 -O rom $(subst generated/vg5000/exeso/,examples/,$(@:.rom=.bas)) -o $@
+
 #------------------------------------------------ 
 # vic20:
 #    COMMODORE VIC-20 (6502)
@@ -466,6 +538,9 @@ generated/vic20/asm/%.asm:
 generated/vic20/exe/%.prg: $(subst /exe/,/asm/,$(@:.prg=.asm))
 	@$(CL65) -Ln $(@:.prg=.lbl) --listing $(@:.prg=.lst) -g -o $@ --mapfile $(@:.prg=.map) -t vic20 -C $(subst /exe/,/cfg/,$(@:.prg=.cfg)) $(subst /exe/,/asm/,$(@:.prg=.asm))
 	@rm -f $(@:.prg=.o)
+
+generated/vic20/exeso/%.prg: $(subst /generated/exeso/,/examples/,$(@:.prg=.bas))
+	@ugbc/exe/ugbc.vic20 -O rom $(subst generated/vic20/exeso/,examples/,$(@:.prg=.bas)) -o $@
 
 #------------------------------------------------ 
 # zx:
@@ -483,3 +558,6 @@ generated/zx/exe/%.tap:
 	@mv $(subst /exe/,/asm/,$(@:.tap=.bin)) $(@:.tap=.bin)
 	@$(APPMAKE) +zx --org 32768 -b $(@:.tap=.bin)
 	@rm -f $(@:.tap=.bin) $(@:.tap=_*.bin)
+
+generated/zx/exeso/%.tap: $(subst /generated/exeso/,/examples/,$(@:.tap=.bas))
+	@ugbc/exe/ugbc.zx -O tap $(subst generated/zx/exeso/,examples/,$(@:.tap=.bas)) -o $@
