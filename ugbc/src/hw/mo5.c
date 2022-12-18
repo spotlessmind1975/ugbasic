@@ -254,7 +254,7 @@ void mo5_follow_irq( Environment * _environment ) {
     
 }
 
-void mo5_joystick( Environment * _environment, int _joystick, char * _result ) {
+void mo5_joystick_semivars( Environment * _environment, int _joystick, char * _result ) {
 
 }
 
