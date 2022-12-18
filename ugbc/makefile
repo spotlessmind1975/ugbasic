@@ -40,6 +40,16 @@ all: paths compiler
 
 test: paths-test tester
 
+#-----------------------------------------------------------------------------
+#--- MAKEFILE's ENVIRONMENT
+#-----------------------------------------------------------------------------
+
+ifeq ($(shell echo),)
+  EXESUFFIX = 
+else
+  EXESUFFIX = .exe
+endif
+
 # ----------------------------------------------------------------------------
 # ----------------------------------------------------------------------------
 # MODULES SECTION - embed ASM for each specific target
@@ -477,14 +487,14 @@ paths-test:
 	@mkdir -p exe-test
 
 compiler: $(OBJS)
-	@$(CC) $(LFLAGS) $^ -o exe/ugbc.$(target) $(LIBS)
+	@$(CC) $(LFLAGS) $^ -o exe/ugbc.$(target)$(EXESUFFIX) $(LIBS)
 	
 objs.$(target)/%.o: %.c src-generated/ugbc.yy.c src-generated/ugbc.tab.c src-generated/ugbc.embed.yy.c src-generated/ugbc.embed.tab.c src-generated/modules_$(target).c
 	@mkdir -p $(dir $@)
 	@$(CC) $(CFLAGS) -D__$(target)__  -c $< -o $@
 
 tester: $(SOURCESTEST)
-	@$(CC) $(CFLAGS) -D__$(target)__ $(SOURCESTEST) -o exe-test/ugbc.$(target) -lm
+	@$(CC) $(CFLAGS) -D__$(target)__ $(SOURCESTEST) -o exe-test/ugbc.$(target)$(EXESUFFIX) -lm
 
 clean:
 	@rm -rf objs.$(target)/*
