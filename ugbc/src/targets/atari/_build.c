@@ -51,9 +51,9 @@ void target_linkage( Environment * _environment ) {
     char executableName[MAX_TEMPORARY_STORAGE];
     char listingFileName[MAX_TEMPORARY_STORAGE];
 
-    BUILD_SAFE_REMOVE( _environment, _environment->exeFileName );
-
     BUILD_CHECK_FILETYPE(_environment, OUTPUT_FILE_TYPE_XEX)
+
+    BUILD_SAFE_REMOVE( _environment, _environment->exeFileName );
 
     BUILD_TOOLCHAIN_CC65_GET_EXECUTABLE( _environment, executableName );
 
