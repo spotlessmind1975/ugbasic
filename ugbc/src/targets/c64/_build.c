@@ -44,7 +44,7 @@ void generate_prg( Environment * _environment ) {
 
     char commandLine[8*MAX_TEMPORARY_STORAGE];
     char executableName[MAX_TEMPORARY_STORAGE];
-        char listingFileName[MAX_TEMPORARY_STORAGE];
+    char listingFileName[MAX_TEMPORARY_STORAGE];
 
     BUILD_SAFE_REMOVE( _environment, _environment->exeFileName );
 
