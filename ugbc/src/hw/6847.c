@@ -1229,17 +1229,17 @@ static Variable * c6847_image_converter_multicolor_mode_standard( Environment * 
             int colorIndex = 0;
             for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
                 int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
-                printf("%d (%2.2x%2.2x%2.2x) <-> %d (%2.2x%2.2x%2.2x) [%d] = %d [min = %d]\n", i, SYSTEM_PALETTE[j].red, SYSTEM_PALETTE[j].green, SYSTEM_PALETTE[j].blue, j, palette[i].red, palette[i].green, palette[i].blue, SYSTEM_PALETTE[j].index, distance, minDistance );
+                // printf("%d (%2.2x%2.2x%2.2x) <-> %d (%2.2x%2.2x%2.2x) [%d] = %d [min = %d]\n", i, SYSTEM_PALETTE[j].red, SYSTEM_PALETTE[j].green, SYSTEM_PALETTE[j].blue, j, palette[i].red, palette[i].green, palette[i].blue, SYSTEM_PALETTE[j].index, distance, minDistance );
                 if (distance < minDistance) {
-                    printf(" candidated...\n" );
+                    // printf(" candidated...\n" );
                     for( k=0; k<i; ++k ) {
                         if ( palette[k].index == SYSTEM_PALETTE[j].index ) {
-                            printf(" ...used!\n" );
+                            // printf(" ...used!\n" );
                             break;
                         }
                     }
                     if ( k>=i ) {
-                        printf(" ...ok! (%d)\n", SYSTEM_PALETTE[j].index );
+                        // printf(" ...ok! (%d)\n", SYSTEM_PALETTE[j].index );
                         minDistance = distance;
                         colorIndex = j;
                     }
@@ -1247,7 +1247,7 @@ static Variable * c6847_image_converter_multicolor_mode_standard( Environment * 
             }
             palette[i].index = SYSTEM_PALETTE[colorIndex].index;
             strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
-            printf("%d) %d * %d %2.2x%2.2x%2.2x\n", i, colorIndex, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
+            // printf("%d) %d * %d %2.2x%2.2x%2.2x\n", i, colorIndex, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
         }
 
         commonPalette = palette;
