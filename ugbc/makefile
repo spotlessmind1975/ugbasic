@@ -44,10 +44,10 @@ test: paths-test tester
 #--- MAKEFILE's ENVIRONMENT
 #-----------------------------------------------------------------------------
 
-ifeq ($(shell echo),)
-  EXESUFFIX = 
-else
+ifeq ($(OS),Windows_NT)
   EXESUFFIX = .exe
+else
+  EXESUFFIX = 
 endif
 
 # ----------------------------------------------------------------------------
