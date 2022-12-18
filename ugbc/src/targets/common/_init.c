@@ -58,12 +58,6 @@ void begin_compilation( Environment * _environment ) {
 
 }
 
-void begin_build( Environment * _environment ) {
-
-    target_linkage( _environment );
-
-}
-
 void setup_text_variables( Environment * _environment ) {
 
     variable_import( _environment, "XCURSYS", VT_BYTE, 0 );

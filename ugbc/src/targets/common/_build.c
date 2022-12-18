@@ -39,46 +39,25 @@
  ****************************************************************************/
 
 /**
- * @brief Emit source and configuration lines for game loops
+ * @brief Start building exe from assembly
  * 
- * This function can be called to generate all the definitions (on the source
- * file, on the configuration file and on any support file) necessary to 
- * implement the memory banks.
- * 
- * @param _environment Current calling environment
+ * @param _environment 
  */
-void gameloop_cleanup( Environment * _environment ) {
+void begin_build( Environment * _environment ) {
 
-    if ( _environment->hasGameLoop ) {
-        end_gameloop( _environment );
-    }
-    
-}
-
-void end_compilation( Environment * _environment ) {
-
-    gameloop_cleanup( _environment );
-
-    halt( _environment );
-        
-    bank_cleanup( _environment );
-    every_cleanup( _environment );
-    variable_cleanup( _environment );
-    dstring_cleanup( _environment );
-    
-    target_finalization( _environment );
-
-    if ( _environment->configurationFileName ) {
-        linker_setup( _environment );
-        linker_cleanup( _environment );
-        fclose(_environment->configurationFile);
-    }
-
-    if ( _environment->debuggerLabelsFile ) {
-        fclose(_environment->debuggerLabelsFile);
-    }
-
-    fclose(_environment->asmFile);
+    target_linkage( _environment );
 
 }
 
+/**
+ * @brief End building exe from asssembly
+ * 
+ * @param _environment 
+ */
+void end_build( Environment * _environment ) {
+
+    target_finalize( _environment );
+
+    target_cleanup( _environment );
+    
+}

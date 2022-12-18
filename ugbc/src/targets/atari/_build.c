@@ -38,47 +38,70 @@
  * CODE SECTION 
  ****************************************************************************/
 
+extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
+
 /**
- * @brief Emit source and configuration lines for game loops
+ * @brief Convert ATARI's assembly to executable
  * 
- * This function can be called to generate all the definitions (on the source
- * file, on the configuration file and on any support file) necessary to 
- * implement the memory banks.
- * 
- * @param _environment Current calling environment
+ * @param _environment 
  */
-void gameloop_cleanup( Environment * _environment ) {
+void target_linkage( Environment * _environment ) {
 
-    if ( _environment->hasGameLoop ) {
-        end_gameloop( _environment );
-    }
+    char commandLine[8*MAX_TEMPORARY_STORAGE];
+    char executableName[MAX_TEMPORARY_STORAGE];
+    char listingFileName[MAX_TEMPORARY_STORAGE];
+
+    BUILD_SAFE_REMOVE( _environment, _environment->exeFileName );
+
+    BUILD_CHECK_FILETYPE(_environment, OUTPUT_FILE_TYPE_XEX)
+
+    BUILD_TOOLCHAIN_CC65_GET_EXECUTABLE( _environment, executableName );
+
+    BUILD_TOOLCHAIN_CC65_GET_LISTING_FILE( _environment, listingFileName );
+
+    BUILD_TOOLCHAIN_CC65_EXEC( _environment, "atari", executableName, listingFileName );
+
+    if ( _environment->listingFileName ) {
+
+        if ( _environment->profileFileName ) {
+            if ( _environment->executerFileName ) {
+                sprintf(executableName, "%s", _environment->executerFileName );
+            } else if( access( "run6502.exe", F_OK ) == 0 ) {
+                sprintf(executableName, "%s", "run6502.exe" );
+            } else {
+                sprintf(executableName, "%s", "run6502" );
+            }
+
+            sprintf( commandLine, "\"%s\" -c atari -X 0000 -R 2000 -l 1ffa \"%s\" -u \"%s\" -p \"%s\" %d",
+                executableName,
+                _environment->exeFileName,
+                _environment->listingFileName,
+                _environment->profileFileName,
+                _environment->profileCycles ? _environment->profileCycles : 1000000
+                );
+
+            if ( system_call( _environment,  commandLine ) ) {
+                printf("The profiling of assembly program failed.\n\n");
+                return;
+            }; 
+
+        }
     
+    }
+
 }
 
-void end_compilation( Environment * _environment ) {
-
-    gameloop_cleanup( _environment );
-
-    halt( _environment );
-        
-    bank_cleanup( _environment );
-    every_cleanup( _environment );
-    variable_cleanup( _environment );
-    dstring_cleanup( _environment );
-    
-    target_finalization( _environment );
-
-    if ( _environment->configurationFileName ) {
-        linker_setup( _environment );
-        linker_cleanup( _environment );
-        fclose(_environment->configurationFile);
-    }
-
-    if ( _environment->debuggerLabelsFile ) {
-        fclose(_environment->debuggerLabelsFile);
-    }
-
-    fclose(_environment->asmFile);
+void target_finalize( Environment * _environment ) {
 
 }
 
+void target_cleanup( Environment * _environment ) {
+
+    remove( _environment->configurationFileName );
+    remove( _environment->asmFileName );
+
+    if ( _environment->analysis && _environment->listingFileName ) {
+        target_analysis( _environment );
+    }
+
+}

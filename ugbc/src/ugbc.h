@@ -2341,6 +2341,51 @@ int embed_scan_string (const char *);
 
 #define IMF_NOTE( o, n )                                ( ( o ) * IMF_NOTE_COUNT + ( n ) )
 
+#define BUILD_CHECK_FILETYPE(_environment, _filetype) \
+    if ( _environment->outputFileType != _filetype ) { \
+        CRITICAL_UNSUPPORTED_OUTPUT_FILE_TYPE( OUTPUT_FILE_TYPE_AS_STRING[_filetype] ); \
+    }
+
+#define BUILD_SAFE_REMOVE(_environment, filename) \
+    system_remove_safe( _environment, filename );
+
+#define BUILD_TOOLCHAIN_CC65_GET_EXECUTABLE( _environment, executableName ) \
+    if ( _environment->compilerFileName ) { \
+        sprintf( executableName, "%s", _environment->compilerFileName ); \
+    } else if( access( "cc65\\bin\\cl65.exe", F_OK ) == 0 ) { \
+        sprintf(executableName, "%s", "cc65\\bin\\cl65.exe" ); \
+    } else if( access( "modules\\cc65\\bin\\cl65.exe", F_OK ) == 0 ) { \
+        sprintf(executableName, "%s", "modules\\cc65\\bin\\cl65.exe" ); \
+    } else if( access( "cc65/bin/cl65", F_OK ) == 0 ) { \
+        sprintf(executableName, "%s", "cc65/bin/cl65" ); \
+    } else if( access( "modules//cc65/bin/cl65", F_OK ) == 0 ) { \
+        sprintf(executableName, "%s", "modules/cc65/bin/cl65" ); \
+    } else { \
+        sprintf(executableName, "%s", "cl65" ); \
+    }
+
+#define BUILD_TOOLCHAIN_CC65_GET_LISTING_FILE( _environment, listingFileName ) \
+    memset( listingFileName, 0, MAX_TEMPORARY_STORAGE ); \
+    if ( _environment->listingFileName ) { \
+        sprintf( listingFileName, "-l \"%s\"", _environment->listingFileName ); \
+    } else { \
+        strcpy( listingFileName, "" ); \
+    }
+
+#define BUILD_TOOLCHAIN_CC65_EXEC( _environment, target, executableName, listingFileName ) \
+    sprintf( commandLine, "\"%s\" %s -o \"%s\" -t %s -C \"%s\" \"%s\"", \
+        executableName, \
+        listingFileName, \
+        _environment->exeFileName, \
+        target, \
+        _environment->configurationFileName, \
+        _environment->asmFileName ); \
+    if ( system_call( _environment,  commandLine ) ) { \
+        printf("The compilation of assembly program failed.\n\n"); \
+        printf("Please use option '-I' to install chain tool.\n\n"); \
+    }; 
+
+
 void setup_embedded( Environment *_environment );
 void target_install( Environment *_environment );
 void begin_compilation( Environment * _environment );
