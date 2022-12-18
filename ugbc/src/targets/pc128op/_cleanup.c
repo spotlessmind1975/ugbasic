@@ -229,26 +229,6 @@ int convertbintok7(Environment * _environment)
     return 0;
 }
 
-void target_finalize( Environment * _environment ) {
-
-	if ( _environment->outputFileType == OUTPUT_FILE_TYPE_K7_NEW ) {
-	    convertbintok7( _environment );
-	} else {
-	    pc128op_convertbintok7_original( _environment );
-	}
-
-}
-
-void target_cleanup( Environment * _environment ) {
-
-    remove( _environment->asmFileName );
-
-    if ( _environment->analysis && _environment->listingFileName ) {
-        target_analysis( _environment );
-    }
-
-}
-
 void target_analysis( Environment * _environment ) {
     
 }
