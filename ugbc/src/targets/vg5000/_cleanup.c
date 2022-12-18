@@ -150,22 +150,6 @@ int convertbintok7(Environment * _environment)
     return 0;
 }
 
-void target_finalize( Environment * _environment ) {
-
-    convertbintok7( _environment );
-
-}
-
-void target_cleanup( Environment * _environment ) {
-
-    remove( _environment->asmFileName );
-
-    if ( _environment->analysis && _environment->listingFileName ) {
-        target_analysis( _environment );
-    }
-
-}
-
 void target_analysis( Environment * _environment ) {
     
 }
