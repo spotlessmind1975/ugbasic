@@ -2385,6 +2385,47 @@ int embed_scan_string (const char *);
         printf("Please use option '-I' to install chain tool.\n\n"); \
     }; 
 
+#define BUILD_TOOLCHAIN_Z88DK_GET_EXECUTABLE_Z80ASM( _environment, executableName ) \
+    if ( _environment->compilerFileName ) { \
+        sprintf( executableName, "%s", _environment->compilerFileName ); \
+    } else if( access( "modules\\z88dk\\src\\z80asm\\z88dk-z80asm.exe", F_OK ) == 0 ) { \
+        sprintf(executableName, "%s", "modules\\z88dk\\src\\z80asm\\z88dk-z80asm.exe" ); \
+    } else if( access( "modules/z88dk/src/z80asm/z88dk-z80asm", F_OK ) == 0 ) { \
+        sprintf(executableName, "%s", "modules/z88dk/src/z80asm/z88dk-z80asm" ); \
+    } else { \
+        sprintf(executableName, "%s", "z88dk-z80asm" ); \
+    }
+
+#define BUILD_TOOLCHAIN_Z88DK_GET_LISTING_FILE( _environment, listingFileName ) \
+    (void) listingFileName; \
+    if ( _environment->listingFileName ) { \
+        sprintf( listingFileName, "-l -m -s -g" ); \
+    } else { \
+        strcpy( listingFileName, "" ); \
+    }
+
+#define BUILD_TOOLCHAIN_Z88DK_EXEC( _environment, target, executableName, listingFileName ) \
+    sprintf( commandLine, "\"%s\" %s -D__%s__ -b \"%s\"", \
+        executableName, \
+        listingFileName, \
+        target, \
+        _environment->asmFileName ); \
+    if ( system_call( _environment,  commandLine ) ) { \
+        printf("The compilation of assembly program failed.\n\n"); \
+        printf("Please use option '-I' to install chain tool.\n\n"); \
+        return; \
+    }; 
+
+#define BUILD_TOOLCHAIN_Z88DK_GET_EXECUTABLE_APPNAKE( _environment, executableName ) \
+    if ( _environment->compilerFileName ) { \
+        sprintf( executableName, "%s", _environment->compilerFileName ); \
+    } else if( access( "modules\\z88dk\\src\\z80asm\\z88dk-appmake.exe", F_OK ) == 0 ) { \
+        sprintf(executableName, "%s", "modules\\z88dk\\src\\z80asm\\z88dk-appmake.exe" ); \
+    } else if( access( "modules/z88dk/src/z80asm/z88dk-appmake", F_OK ) == 0 ) { \
+        sprintf(executableName, "%s", "modules/z88dk/src/z80asm/z88dk-appmake" ); \
+    } else { \
+        sprintf(executableName, "%s", "z88dk-appmake" ); \
+    }
 
 void setup_embedded( Environment *_environment );
 void target_install( Environment *_environment );
