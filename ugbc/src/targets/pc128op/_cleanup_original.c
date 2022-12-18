@@ -268,5 +268,7 @@ int pc128op_convertbintok7_original(Environment * _environment)
 	fclose(fr);
 	fclose(fw);
 	
+    remove(temporaryFileName);
+
 	return 0;
 }

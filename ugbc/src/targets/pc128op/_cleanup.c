@@ -225,6 +225,8 @@ int convertbintok7(Environment * _environment)
         
     fclose(fr);
     fclose(fw);
+
+    remove(temporaryFileName);
     
     return 0;
 }
