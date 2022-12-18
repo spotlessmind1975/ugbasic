@@ -2427,6 +2427,41 @@ int embed_scan_string (const char *);
         sprintf(executableName, "%s", "z88dk-appmake" ); \
     }
 
+#define BUILD_TOOLCHAIN_ASM6809_GET_EXECUTABLE( _environment, executableName ) \
+    if ( _environment->compilerFileName ) { \
+        sprintf(executableName, "%s", _environment->compilerFileName ); \
+    } else if( access( "modules\\asm6809\\src\\asm6809.exe", F_OK ) == 0 ) { \
+        sprintf(executableName, "%s", "modules\\asm6809\\src\\asm6809.exe" ); \
+    } else if( access( "modules/asm6809/src/asm6809", F_OK ) == 0 ) { \
+        sprintf(executableName, "%s", "modules/asm6809/src/asm6809" ); \
+    } else if( access( "asm6809\\bin\\asm6809.exe", F_OK ) == 0 ) { \
+        sprintf(executableName, "%s", "asm6809\\bin\\asm6809.exe" ); \
+    } else { \
+        sprintf(executableName, "%s", "asm6809" ); \
+    }
+
+#define BUILD_TOOLCHAIN_ASM6809_GET_LISTING_FILE( _environment, listingFileName ) \
+    memset( listingFileName, 0, MAX_TEMPORARY_STORAGE ); \
+    if ( _environment->listingFileName ) { \
+        sprintf( listingFileName, "-l \"%s\"", _environment->listingFileName ); \
+    } else { \
+        strcpy( listingFileName, "" ); \
+    }
+
+#define BUILD_TOOLCHAIN_ASM6809EXEC( _environment, startingAddress, executableName, listingFileName ) \
+    sprintf( commandLine, "\"%s\" %s -o \"%s\" -D -e %d \"%s\"", \
+        executableName, \
+        listingFileName, \
+        _environment->exeFileName,  \
+        startingAddress, \
+        _environment->asmFileName ); \
+    if ( system_call( _environment,  commandLine ) ) { \
+        printf("The compilation of assembly program failed.\n\n"); \
+        printf("Please use option '-I' to install chain tool.\n\n"); \
+    };
+
+
+
 void setup_embedded( Environment *_environment );
 void target_install( Environment *_environment );
 void begin_compilation( Environment * _environment );
