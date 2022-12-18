@@ -207,7 +207,7 @@ static void ted_image_converter_tiles( char * _source, char * _dest, int _width,
             char * source = _source + ( ( y * _source_width ) + x ) * _depth;
             char tile[9];
 
-            ted_image_converter_tile( source, tile, _width, _source_width );
+            ted_image_converter_tile( source, tile, _width, _depth, _source_width );
 
             int offset = ((y>>3) * 8 *( _width >> 3 ) ) + ((x>>3) * 8) + ((y) & 0x07);
             // x = 8, y = 8
