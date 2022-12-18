@@ -35,24 +35,34 @@ $(error missing 'target' (valid values: atari atarixl c128 c64 coleco cpc d32 d6
 endif
 
 #-----------------------------------------------------------------------------
+#--- MAKEFILE's ENVIRONMENT
+#-----------------------------------------------------------------------------
+
+ifeq ($(shell echo),)
+  EXESUFFIX = 
+else
+  EXESUFFIX = .exe
+endif
+
+#-----------------------------------------------------------------------------
 #--- MAKEFILE's VARIABLES
 #-----------------------------------------------------------------------------
 
 #------------------------------------------------ 
 # CPU MOS 6502/6510/7501/8501/8502
 #------------------------------------------------ 
-CL65 = ./modules/cc65/bin/cl65
+CL65 = ./modules/cc65/bin/cl65$(EXESUFFIX)
 
 #------------------------------------------------ 
 # CPU ZILOG Z80
 #------------------------------------------------ 
-Z80ASM = ./modules/z88dk/src/z80asm/z88dk-z80asm
-APPMAKE = ./modules/z88dk/src/appmake/z88dk-appmake
+Z80ASM = ./modules/z88dk/src/z80asm/z88dk-z80asm$(EXESUFFIX)
+APPMAKE = ./modules/z88dk/src/appmake/z88dk-appmake$(EXESUFFIX)
 
 #------------------------------------------------ 
 # CPU MOTOROLA 6809
 #------------------------------------------------ 
-ASM6809 = ./modules/asm6809/src/asm6809
+ASM6809 = ./modules/asm6809/src/asm6809$(EXESUFFIX)
 
 #------------------------------------------------ 
 # Examples
