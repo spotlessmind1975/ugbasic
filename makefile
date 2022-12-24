@@ -253,7 +253,7 @@ generated/atari/exe/%.xex: $(subst /exe/,/asm/,$(@:.xex=.asm))
 	@rm -f $(@:.xex=.o)
 
 generated/atari/exeso/%.xex: $(subst /generated/exeso/,/examples/,$(@:.xex=.bas))
-	@ugbc/exe/ugbc.atari -O xex $(subst generated/atari/exeso/,examples/,$(@:.xex=.bas)) -o $@
+	@ugbc/exe/ugbc.atari -o $@ -O xex $(subst generated/atari/exeso/,examples/,$(@:.xex=.bas))
 
 #------------------------------------------------ 
 # atarixl:
@@ -272,7 +272,7 @@ generated/atarixl/exe/%.xex: $(subst /exe/,/asm/,$(@:.xex=.asm))
 	@rm -f $(@:.xex=.o)
 
 generated/atarixl/exeso/%.xex: $(subst /generated/exeso/,/examples/,$(@:.xex=.bas))
-	@ugbc/exe/ugbc.atarixl -O xex $(subst generated/atarixl/exeso/,examples/,$(@:.xex=.bas)) -o $@
+	@ugbc/exe/ugbc.atarixl -o $@ -O xex $(subst generated/atarixl/exeso/,examples/,$(@:.xex=.bas))
 
 #------------------------------------------------ 
 # c128:
@@ -289,7 +289,7 @@ generated/c128/exe/%.prg: $(subst /exe/,/asm/,$(@:.prg=.asm))
 	@rm -f $(@:.prg=.o)
 
 generated/c128/exeso/%.prg: $(subst /generated/exeso/,/examples/,$(@:.prg=.bas))
-	@ugbc/exe/ugbc.c128 -O prg $(subst generated/c128/exeso/,examples/,$(@:.prg=.bas)) -o $@
+	@ugbc/exe/ugbc.c128 -o $@ -O prg $(subst generated/c128/exeso/,examples/,$(@:.prg=.bas))
 
 #------------------------------------------------ 
 # c64:
@@ -306,13 +306,13 @@ generated/c64/exe/%.prg: $(subst /exe/,/asm/,$(@:.prg=.asm))
 	@rm -f $(@:.prg=.o)
 
 generated/c64/exe/%.d64:
-	@ugbc/exe/ugbc.c64 -O d64 $(subst generated/c64/exe/,examples/,$(@:.d64=.bas)) -o $@
+	@ugbc/exe/ugbc.c64 -o $@ -O d64 $(subst generated/c64/exe/,examples/,$(@:.d64=.bas))
 
 generated/c64/exeso/%.prg: $(subst /generated/exeso/,/examples/,$(@:.prg=.bas))
-	@ugbc/exe/ugbc.c64 -O prg $(subst generated/c64/exeso/,examples/,$(@:.prg=.bas)) -o $@
+	@ugbc/exe/ugbc.c64 -o $@ -O prg $(subst generated/c64/exeso/,examples/,$(@:.prg=.bas))
 
 generated/c64/exeso/%.d64: $(subst /generated/exeso/,/examples/,$(@:.d64=.bas))
-	@ugbc/exe/ugbc.c64 -O d64 $(subst generated/c64/exeso/,examples/,$(@:.d64=.bas)) -o $@
+	@ugbc/exe/ugbc.c64 -o $@ -O d64 $(subst generated/c64/exeso/,examples/,$(@:.d64=.bas))
 
 #------------------------------------------------ 
 # coleco:
@@ -337,7 +337,7 @@ generated/coleco/exe/%.rom:
 	@rm -f $(@:.rom=.bin) $(@:.rom=_*.bin)
 
 generated/coleco/exeso/%.rom: $(subst /generated/exeso/,/examples/,$(@:.rom=.bas))
-	@ugbc/exe/ugbc.coleco -O rom $(subst generated/coleco/exeso/,examples/,$(@:.rom=.bas)) -o $@
+	@ugbc/exe/ugbc.coleco -o $@ -O rom $(subst generated/coleco/exeso/,examples/,$(@:.rom=.bas))
 
 #------------------------------------------------ 
 # cpc:
@@ -359,7 +359,7 @@ generated/cpc/exe/%.dsk:
 	@rm -f $(@:.dsk=.bin) $(@:.dsk=_*.bin) $(dir $@)main.com
 
 generated/cpc/exeso/%.dsk: $(subst /generated/exeso/,/examples/,$(@:.dsk=.bas))
-	@ugbc/exe/ugbc.cpc -O dsk $(subst generated/cpc/exeso/,examples/,$(@:.dsk=.bas)) -o $@
+	@ugbc/exe/ugbc.cpc -o $@ -O dsk $(subst generated/cpc/exeso/,examples/,$(@:.dsk=.bas))
 
 #------------------------------------------------ 
 # d32:
@@ -375,7 +375,7 @@ generated/d32/exe/%.bin: $(subst /exe/,/asm/,$(@:.bin=.asm))
 	@$(ASM6809) -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -D -e 10240 -o $@ $(subst /exe/,/asm/,$(@:.bin=.asm))
 
 generated/d32/exeso/%.bin: $(subst /generated/exeso/,/examples/,$(@:.bin=.bas))
-	@ugbc/exe/ugbc.d32 -O bin $(subst generated/d32/exeso/,examples/,$(@:.bin=.bas)) -o $@
+	@ugbc/exe/ugbc.d32 -o $@ -O bin $(subst generated/d32/exeso/,examples/,$(@:.bin=.bas))
 
 #------------------------------------------------ 
 # d64:
@@ -391,7 +391,7 @@ generated/d64/exe/%.bin: $(subst /exe/,/asm/,$(@:.bin=.asm))
 	@$(ASM6809) -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -D -e 10240 -o $@ $(subst /exe/,/asm/,$(@:.bin=.asm))
 
 generated/d64/exeso/%.bin: $(subst /generated/exeso/,/examples/,$(@:.bin=.bas))
-	@ugbc/exe/ugbc.d64 -l $(@:.bin=.lis) -O bin $(subst generated/d64/exeso/,examples/,$(@:.bin=.bas)) -o $@
+	@ugbc/exe/ugbc.d64 -o $@ -l $(@:.bin=.lis) -O bin $(subst generated/d64/exeso/,examples/,$(@:.bin=.bas))
 
 #------------------------------------------------ 
 # mo5:
@@ -410,10 +410,10 @@ generated/mo5/exe/%.bin: compiler
 	@$(ASM6809) -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -D -e 10240 -o $@ $(subst /exe/,/asm/,$(@:.bin=.asm))
 
 generated/mo5/exeso/%.bin: $(subst /generated/exeso/,/examples/,$(@:.bin=.bas))
-	@ugbc/exe/ugbc.mo5 -O bin $(subst generated/mo5/exeso/,examples/,$(@:.bin=.bas)) -o $@
+	@ugbc/exe/ugbc.mo5 -o $@ -O bin $(subst generated/mo5/exeso/,examples/,$(@:.bin=.bas))
 
 generated/mo5/exeso/%.k7: $(subst /generated/exeso/,/examples/,$(@:.k7=.bas))
-	@ugbc/exe/ugbc.mo5 -O k7 $(subst generated/mo5/exeso/,examples/,$(@:.k7=.bas)) -o $@
+	@ugbc/exe/ugbc.mo5 -o $@ -O k7 $(subst generated/mo5/exeso/,examples/,$(@:.k7=.bas))
 
 #------------------------------------------------ 
 # msx1:
@@ -438,7 +438,7 @@ generated/msx1/exe/%.rom:
 	@rm -f $(@:.rom=.bin) $(@:.rom=_*.bin)
 
 generated/msx1/exeso/%.rom: $(subst /generated/exeso/,/examples/,$(@:.rom=.bas))
-	@ugbc/exe/ugbc.msx1 -O rom $(subst generated/msx1/exeso/,examples/,$(@:.rom=.bas)) -o $@
+	@ugbc/exe/ugbc.msx1 -o $@ -O rom $(subst generated/msx1/exeso/,examples/,$(@:.rom=.bas))
 
 #------------------------------------------------ 
 # pc128:
@@ -457,10 +457,10 @@ generated/pc128op/exe/%.bin: compiler
 	@$(ASM6809) -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -D -e 10240 -o $@ $(subst /exe/,/asm/,$(@:.bin=.asm))
 
 generated/pc128op/exeso/%.bin: $(subst /generated/exeso/,/examples/,$(@:.bin=.bas))
-	@ugbc/exe/ugbc.pc128op -O bin $(subst generated/pc128op/exeso/,examples/,$(@:.bin=.bas)) -o $@
+	@ugbc/exe/ugbc.pc128op -o $@ -O bin $(subst generated/pc128op/exeso/,examples/,$(@:.bin=.bas))
 
 generated/pc128op/exeso/%.k7: $(subst /generated/exeso/,/examples/,$(@:.k7=.bas))
-	@ugbc/exe/ugbc.pc128op -O k7 $(subst generated/pc128op/exeso/,examples/,$(@:.k7=.bas)) -o $@
+	@ugbc/exe/ugbc.pc128op -o $@ -O k7 $(subst generated/pc128op/exeso/,examples/,$(@:.k7=.bas))
 
 #------------------------------------------------ 
 # plus4:
@@ -477,7 +477,7 @@ generated/plus4/exe/%.prg: $(subst /exe/,/asm/,$(@:.prg=.asm))
 	@rm -f $(@:.prg=.o)
 
 generated/plus4/exeso/%.prg: $(subst /generated/exeso/,/examples/,$(@:.prg=.bas))
-	@ugbc/exe/ugbc.plus4 -O prg $(subst generated/plus4/exeso/,examples/,$(@:.prg=.bas)) -o $@
+	@ugbc/exe/ugbc.plus4 -o $@ -O prg $(subst generated/plus4/exeso/,examples/,$(@:.prg=.bas))
 
 #------------------------------------------------ 
 # sc3000:
@@ -498,7 +498,7 @@ generated/sc3000/exe/%.rom:
 	@cat $(@:.rom=_code_user.bin) $(@:.rom=_data_user.bin) >$(@)
 
 generated/sc3000/exeso/%.rom: $(subst /generated/exeso/,/examples/,$(@:.rom=.bas))
-	@ugbc/exe/ugbc.sc3000 -O rom $(subst generated/sc3000/exeso/,examples/,$(@:.rom=.bas)) -o $@
+	@ugbc/exe/ugbc.sc3000 -o $@ -O rom $(subst generated/sc3000/exeso/,examples/,$(@:.rom=.bas))
 
 #------------------------------------------------ 
 # sg1000:
@@ -519,7 +519,7 @@ generated/sg1000/exe/%.rom:
 	@cat $(@:.rom=_code_user.bin) $(@:.rom=_data_user.bin) >$(@)
 
 generated/sg1000/exeso/%.rom: $(subst /generated/exeso/,/examples/,$(@:.rom=.bas))
-	@ugbc/exe/ugbc.sg1000 -O rom $(subst generated/sg1000/exeso/,examples/,$(@:.rom=.bas)) -o $@
+	@ugbc/exe/ugbc.sg1000 -o $@ -O rom $(subst generated/sg1000/exeso/,examples/,$(@:.rom=.bas))
 
 #------------------------------------------------ 
 # vg5000:
@@ -535,10 +535,10 @@ generated/vg5000/exe/%.bin: compiler
 	@$(Z80ASM) -l -m -s -g -b $(subst /exe/,/asm/,$(@:.rom=.asm))
 
 generated/vg5000/exe/%.k7:
-	@ugbc/exe/ugbc.vg5000 -L generated/vg5000/asm/output.listing $(subst generated/vg5000/exe/,examples/,$(@:.k7=.bas)) -o $@
+	@ugbc/exe/ugbc.vg5000 -o $@ -L generated/vg5000/asm/output.listing $(subst generated/vg5000/exe/,examples/,$(@:.k7=.bas))
 
 generated/vg5000/exeso/%.rom: $(subst /generated/exeso/,/examples/,$(@:.rom=.bas))
-	@ugbc/exe/ugbc.vg5000 -O rom $(subst generated/vg5000/exeso/,examples/,$(@:.rom=.bas)) -o $@
+	@ugbc/exe/ugbc.vg5000 -o $@ -O rom $(subst generated/vg5000/exeso/,examples/,$(@:.rom=.bas))
 
 #------------------------------------------------ 
 # vic20:
@@ -555,7 +555,7 @@ generated/vic20/exe/%.prg: $(subst /exe/,/asm/,$(@:.prg=.asm))
 	@rm -f $(@:.prg=.o)
 
 generated/vic20/exeso/%.prg: $(subst /generated/exeso/,/examples/,$(@:.prg=.bas))
-	@ugbc/exe/ugbc.vic20 -O rom $(subst generated/vic20/exeso/,examples/,$(@:.prg=.bas)) -o $@
+	@ugbc/exe/ugbc.vic20 -o $@ -O rom $(subst generated/vic20/exeso/,examples/,$(@:.prg=.bas))
 
 #------------------------------------------------ 
 # zx:
@@ -576,4 +576,4 @@ generated/zx/exe/%.tap:
 	@rm -f $(@:.tap=.bin) $(@:.tap=_*.bin)
 
 generated/zx/exeso/%.tap: $(subst /generated/exeso/,/examples/,$(@:.tap=.bas))
-	@ugbc/exe/ugbc.zx -L $(@:.tap=.lst) -O tap $(subst generated/zx/exeso/,examples/,$(@:.tap=.bas)) -o $@
+	@ugbc/exe/ugbc.zx -o $@ -L $(@:.tap=.lst) -O tap $(subst generated/zx/exeso/,examples/,$(@:.tap=.bas))
