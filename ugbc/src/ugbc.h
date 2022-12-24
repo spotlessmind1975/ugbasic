@@ -2417,7 +2417,7 @@ int embed_scan_string (const char *);
 #define BUILD_TOOLCHAIN_Z88DK_GET_LISTING_FILE( _environment, listingFileName ) \
     (void) listingFileName; \
     if ( _environment->listingFileName ) { \
-        sprintf( listingFileName, "-l -m -s -g" ); \
+        sprintf( listingFileName, "-l" ); /* -m -s -g */ \
     } else { \
         strcpy( listingFileName, "" ); \
     }
