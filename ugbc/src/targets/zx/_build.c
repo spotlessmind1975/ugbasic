@@ -92,13 +92,20 @@ void target_linkage( Environment * _environment ) {
         return;
     }; 
 
+    system_remove_safe( _environment, _environment->exeFileName );
+
+    rename( binaryName, _environment->exeFileName );
+
     if ( _environment->listingFileName ) {
+        TRACE1( "  listing file = %s", _environment->listingFileName );
         strcpy( binaryName, _environment->asmFileName );
+        TRACE1( "  binary file = %s", binaryName );
         p = strstr( binaryName, ".asm" );
         if ( p ) {
             *p = 0;
             --p;
             strcat( p, ".lis");
+            TRACE2( "  rename %s to %s", binaryName, _environment->listingFileName );
             rename( binaryName, _environment->listingFileName );
         }
 
@@ -138,10 +145,6 @@ void target_linkage( Environment * _environment ) {
         }
 
     }
-
-    remove( _environment->exeFileName );
-
-    rename( binaryName, _environment->exeFileName );
 
 }
 
