@@ -569,10 +569,11 @@ generated/zx/asm/%.asm:
 
 generated/zx/exe/%.tap:
 	@$(Z80ASM) -l -b $(subst /exe/,/asm/,$(@:.tap=.asm))
+	@mv $(subst /exe/,/asm/,$(@:.tap=.lis)) $(@:.tap=.lis)
 	@rm -f $(subst /exe/,/asm/,$(@:.tap=.o))
 	@mv $(subst /exe/,/asm/,$(@:.tap=.bin)) $(@:.tap=.bin)
 	@$(APPMAKE) +zx --org 32768 -b $(@:.tap=.bin)
 	@rm -f $(@:.tap=.bin) $(@:.tap=_*.bin)
 
 generated/zx/exeso/%.tap: $(subst /generated/exeso/,/examples/,$(@:.tap=.bas))
-	@ugbc/exe/ugbc.zx -O tap $(subst generated/zx/exeso/,examples/,$(@:.tap=.bas)) -o $@
+	@ugbc/exe/ugbc.zx -L $(@:.tap=.lst) -O tap $(subst generated/zx/exeso/,examples/,$(@:.tap=.bas)) -o $@
