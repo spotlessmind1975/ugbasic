@@ -6405,7 +6405,7 @@ int system_call( Environment * _environment, char * _commandline ) {
 
         TRACE1( "  removing \"%s\"", batchFileName );
 
-        //remove( batchFileName );
+        remove( batchFileName );
 
         // Give back the result.
 
