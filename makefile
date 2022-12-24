@@ -391,7 +391,7 @@ generated/d64/exe/%.bin: $(subst /exe/,/asm/,$(@:.bin=.asm))
 	@$(ASM6809) -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -D -e 10240 -o $@ $(subst /exe/,/asm/,$(@:.bin=.asm))
 
 generated/d64/exeso/%.bin: $(subst /generated/exeso/,/examples/,$(@:.bin=.bas))
-	@ugbc/exe/ugbc.d64 -O bin $(subst generated/d64/exeso/,examples/,$(@:.bin=.bas)) -o $@
+	@ugbc/exe/ugbc.d64 -l $(@:.bin=.lis) -O bin $(subst generated/d64/exeso/,examples/,$(@:.bin=.bas)) -o $@
 
 #------------------------------------------------ 
 # mo5:
