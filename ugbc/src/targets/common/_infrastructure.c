@@ -6360,30 +6360,76 @@ char * get_temporary_filename( Environment * _environment ) {
 
 }
 
+/**
+ * @brief Call an external executable
+ * 
+ * @param _environment Enviroment to call
+ * @param _commandline Command line to execute
+ * @return int 0 if success, != 0 if failed
+ */
 int system_call( Environment * _environment, char * _commandline ) {
+
+    TRACE0( "system_call" );
+
+    // ----------------------------------------------------------
+    // ------------------------------------------ WINDOWS VERSION
+    // ----------------------------------------------------------
 
     #ifdef _WIN32
 
-        char batchFileName[MAX_TEMPORARY_STORAGE];
+        // First of all, we will create a temporary batch file
+        // to call in place of the original command line.
 
+        char batchFileName[MAX_TEMPORARY_STORAGE];
         sprintf( batchFileName, "%s.bat", get_temporary_filename( _environment ) );
+
+        TRACE1( "  creating batchfile \"%s\"", batchFileName );
 
         FILE * fh = fopen( batchFileName, "w+t" );
         fprintf( fh, "@echo off\n%s\n", _commandline );
         fclose( fh );
 
+        TRACE1( "  content \"%s\"", _commandline );
+
+        // Add quotes around the executable filename, 
+        // in order to avoid wrong execution.
+
         char batchFileName2[MAX_TEMPORARY_STORAGE];
         sprintf( batchFileName2, "\"%s\"", batchFileName );
 
+        // Now we can exec the batch file.
+
         int result = system( batchFileName2 );
 
-        remove( batchFileName );
+        // Remove the temporary batch file.
+
+        TRACE1( "  removing \"%s\"", batchFileName );
+
+        //remove( batchFileName );
+
+        // Give back the result.
+
+        TRACE1( "  result = %d", result );
 
         return result;
         
+    // ----------------------------------------------------------
+    // -------------------------------------------- LINUX VERSION
+    // ----------------------------------------------------------
+
     #else
 
-        return system( _commandline );
+        // We can directly execute the command line.
+
+        TRACE1( "  executing %s", _commandline );
+
+        int result = system( _commandline );
+
+        // Give back the result.
+
+        TRACE1( "  result = %d", result );
+
+        return result;
         
     #endif
 
