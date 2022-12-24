@@ -155,10 +155,6 @@ void target_linkage( Environment * _environment ) {
 
     system_remove_safe( _environment, diskName );
 
-    // printf( "%s\n", commandLine );
-
-    // printf( "renaming %s to %s\n", diskName, _environment->exeFileName );
-
     strcpy( diskName, _environment->asmFileName );
     p = strrchr( diskName, '/' );
     if ( !p ) {
@@ -199,7 +195,7 @@ void target_cleanup( Environment * _environment ) {
 
         remove( _environment->configurationFileName );
         remove( binFileName );
-        //remove( _environment->asmFileName );
+        remove( _environment->asmFileName );
 
         if ( _environment->analysis && _environment->listingFileName ) {
             target_analysis( _environment );
