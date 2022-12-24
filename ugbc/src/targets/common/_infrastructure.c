@@ -6395,7 +6395,7 @@ int system_call( Environment * _environment, char * _commandline ) {
         // in order to avoid wrong execution.
 
         char batchFileName2[MAX_TEMPORARY_STORAGE];
-        sprintf( batchFileName2, "cmd.exe \"%s\"", batchFileName );
+        sprintf( batchFileName2, "cmd.exe /C \"%s\"", batchFileName );
 
         // Now we can exec the batch file.
 
