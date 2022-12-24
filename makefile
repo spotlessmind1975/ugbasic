@@ -438,7 +438,7 @@ generated/msx1/exe/%.rom:
 	@rm -f $(@:.rom=.bin) $(@:.rom=_*.bin)
 
 generated/msx1/exeso/%.rom: $(subst /generated/exeso/,/examples/,$(@:.rom=.bas))
-	@ugbc/exe/ugbc.msx1 -O k7 $(subst generated/msx1/exeso/,examples/,$(@:.rom=.bas)) -o $@
+	@ugbc/exe/ugbc.msx1 -O rom $(subst generated/msx1/exeso/,examples/,$(@:.rom=.bas)) -o $@
 
 #------------------------------------------------ 
 # pc128:
