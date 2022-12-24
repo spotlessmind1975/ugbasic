@@ -368,6 +368,10 @@ PUTIMAGE14
     ROLA
     LSLB
     ROLA
+    LSLB
+    ROLA
+    LSLB
+    ROLA
     LEAX D, X
 
     LDD IMAGEX
