@@ -65,7 +65,7 @@ void target_linkage( Environment * _environment ) {
         *(p+3) = 'n';
     }
 
-    BUILD_TOOLCHAIN_Z88DK_GET_EXECUTABLE_APPNAKE( _environment, executableName );
+    BUILD_TOOLCHAIN_Z88DK_GET_EXECUTABLE_APPMAKE( _environment, executableName );
 
     char pipes[256];
 

@@ -61,6 +61,24 @@
     #define PATH_SEPARATOR          '/'
 #endif
 
+#ifdef _DEBUG
+    #define TRACE0( s )         (void)printf( "trace: %s\n", s );
+    #define TRACE1( s, p1 )     { \
+                                    char temporary[MAX_TEMPORARY_STORAGE]; \
+                                    (void)sprintf( temporary, s, p1 ); \
+                                    TRACE0( temporary ); \
+                                }
+    #define TRACE2( s, p1, p2 ) { \
+                                    char temporary[MAX_TEMPORARY_STORAGE]; \
+                                    (void)sprintf( temporary, s, p1, p2 ); \
+                                    TRACE0( temporary ); \
+                                }
+#else
+    #define TRACE0( s )             (void) s;
+    #define TRACE1( s, p1 )         (void) s; (void) p1;
+    #define TRACE2( s, p1, p2 )     (void) s; (void) p1; (void) p2;
+#endif
+
 /**
  * @brief Type of memory banks
  */
@@ -2416,13 +2434,13 @@ int embed_scan_string (const char *);
         return; \
     }; 
 
-#define BUILD_TOOLCHAIN_Z88DK_GET_EXECUTABLE_APPNAKE( _environment, executableName ) \
+#define BUILD_TOOLCHAIN_Z88DK_GET_EXECUTABLE_APPMAKE( _environment, executableName ) \
     if ( _environment->compilerFileName ) { \
         sprintf( executableName, "%s", _environment->compilerFileName ); \
-    } else if( access( "modules\\z88dk\\src\\z80asm\\z88dk-appmake.exe", F_OK ) == 0 ) { \
-        sprintf(executableName, "%s", "modules\\z88dk\\src\\z80asm\\z88dk-appmake.exe" ); \
-    } else if( access( "modules/z88dk/src/z80asm/z88dk-appmake", F_OK ) == 0 ) { \
-        sprintf(executableName, "%s", "modules/z88dk/src/z80asm/z88dk-appmake" ); \
+    } else if( access( "modules\\z88dk\\src\\appmake\\z88dk-appmake.exe", F_OK ) == 0 ) { \
+        sprintf(executableName, "%s", "modules\\z88dk\\src\\appmake\\z88dk-appmake.exe" ); \
+    } else if( access( "modules/z88dk/src/appmake/z88dk-appmake", F_OK ) == 0 ) { \
+        sprintf(executableName, "%s", "modules/z88dk/src/appmake/z88dk-appmake" ); \
     } else { \
         sprintf(executableName, "%s", "z88dk-appmake" ); \
     }

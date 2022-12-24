@@ -121,7 +121,7 @@ void target_linkage( Environment * _environment ) {
     fwrite( part, size, 1, binaryFile );
     fclose( binaryFile );
 
-    BUILD_TOOLCHAIN_Z88DK_GET_EXECUTABLE_APPNAKE( _environment, executableName );
+    BUILD_TOOLCHAIN_Z88DK_GET_EXECUTABLE_APPMAKE( _environment, executableName );
 
     char pipes[256];
 

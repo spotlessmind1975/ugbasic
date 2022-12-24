@@ -69,7 +69,7 @@ void target_linkage( Environment * _environment ) {
     }
     system_remove_safe( _environment, binaryName );
 
-    BUILD_TOOLCHAIN_Z88DK_GET_EXECUTABLE_APPNAKE( _environment, executableName );
+    BUILD_TOOLCHAIN_Z88DK_GET_EXECUTABLE_APPMAKE( _environment, executableName );
 
     char pipes[256];
 
@@ -95,6 +95,8 @@ void target_linkage( Environment * _environment ) {
     }
     if ( p ) {
         strcpy( p+1, "main.bin" );
+    } else {
+        strcpy( binaryName2, "main.bin" );
     }
 
     strcpy( binaryName, _environment->asmFileName );
@@ -108,8 +110,20 @@ void target_linkage( Environment * _environment ) {
 
     system_remove_safe( _environment, binaryName2 );
 
+    TRACE2( "  renaming %s to %s", binaryName, binaryName2 );
+    
     rename( binaryName, binaryName2 );
-    strcpy( binaryName, binaryName2 );
+
+    strcpy( binaryName, _environment->asmFileName );
+    p = strrchr( binaryName, '/' );
+    if ( !p ) {
+        p = strrchr( binaryName, '\\' );
+    }
+    if ( p ) {
+        strcpy( p+1, "main.bin" );
+    } else {
+        strcpy( binaryName, "main.bin" );
+    }
 
     system_remove_safe( _environment, _environment->exeFileName );
 
@@ -120,7 +134,12 @@ void target_linkage( Environment * _environment ) {
     }
     if ( p ) {
         strcpy( p+1, "main.com" );
+    } else {
+        strcpy( diskName, "main.com" );
     }
+
+    TRACE1( "exeFileName = %s", _environment->exeFileName );
+    TRACE1( "diskName    = %s", diskName );
 
     sprintf( commandLine, "\"%s\" +cpc --org $1200 --disk -b \"%s\" -o \"%s\" %s",
         executableName,
@@ -140,13 +159,15 @@ void target_linkage( Environment * _environment ) {
 
     // printf( "renaming %s to %s\n", diskName, _environment->exeFileName );
 
-    strcpy( diskName, _environment->exeFileName );
+    strcpy( diskName, _environment->asmFileName );
     p = strrchr( diskName, '/' );
     if ( !p ) {
         p = strrchr( diskName, '\\' );
     }
     if ( p ) {
         strcpy( p+1, "main.dsk" );
+    } else {
+        strcpy( diskName, "main.dsk" );
     }
 
     rename( diskName, _environment->exeFileName );
@@ -155,6 +176,8 @@ void target_linkage( Environment * _environment ) {
     p = strstr( binaryName, ".asm" );
     if ( p ) {
         strcat( p, ".bin");
+    } else {
+        strcpy( binaryName, "main.bin" );
     }
  
     system_remove_safe( _environment, binaryName );
@@ -176,7 +199,7 @@ void target_cleanup( Environment * _environment ) {
 
         remove( _environment->configurationFileName );
         remove( binFileName );
-        remove( _environment->asmFileName );
+        //remove( _environment->asmFileName );
 
         if ( _environment->analysis && _environment->listingFileName ) {
             target_analysis( _environment );
