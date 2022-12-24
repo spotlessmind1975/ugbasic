@@ -92,18 +92,33 @@ EXECUTABLESSO := $(subst /asm/,/exeso/,$(COMPILED:.asm=.$(output)))
 all: paths toolchain compiler $(COMPILED) $(EXECUTABLES) $(EXECUTABLESSO)
 
 #------------------------------------------------ 
-# examples:
+# built:
 #    COMPILE EXAMPLES with makefile
 #------------------------------------------------ 
 # 
 built: paths toolchain compiler $(COMPILED) $(EXECUTABLES)
 
 #------------------------------------------------ 
-# examples:
+# so:
 #    COMPILE EXAMPLES stand alone
 #------------------------------------------------ 
 # 
 so: paths toolchain compiler $(EXECUTABLESSO)
+
+#------------------------------------------------ 
+# verify:
+#    COMPILE EXAMPLES both and compare
+#------------------------------------------------ 
+# 
+verify: paths toolchain compiler $(COMPILED) $(EXECUTABLES) $(EXECUTABLESSO) compare
+
+#------------------------------------------------ 
+# compare:
+#    Binary compare of examples
+#------------------------------------------------ 
+# 
+compare: $(COMPILED) $(EXECUTABLES) $(EXECUTABLESSO)
+	@diff generated/$(target)/exe generated/$(target)/exeso | grep .$(output) || true
 
 #------------------------------------------------ 
 # paths: 
