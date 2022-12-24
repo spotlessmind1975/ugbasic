@@ -46,6 +46,7 @@ test: paths-test tester
 
 ifeq ($(OS),Windows_NT)
   EXESUFFIX = .exe
+  CFLAGS += -D_WIN32
 else
   EXESUFFIX = 
 endif
