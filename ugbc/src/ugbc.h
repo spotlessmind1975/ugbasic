@@ -1863,6 +1863,8 @@ typedef struct _Environment {
 #define CRITICAL_XOR_UNSUPPORTED( v, t ) CRITICAL3("E136 - Bitwise XOR unsupported for variable of given datatype", v, t );
 #define CRITICAL_SWAP_DIFFERENT_BITWIDTH( v )  CRITICAL2("E137 - Bitwise SWAP supported only for variable of same bitwidth", v );
 #define CRITICAL_CANNOT_REMOVE_FILE(f) CRITICAL2("E138 - cannot remove file", f );
+#define CRITICAL_CONSTANT_ALREADY_DEFINED(f) CRITICAL2("E139 - cannot define a variable with the same name of a constant", f );
+#define CRITICAL_VARIABLE_ALREADY_DEFINED(f) CRITICAL2("E140 - cannot define a constant with the same name of a variable", f );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }

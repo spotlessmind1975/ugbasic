@@ -327,6 +327,13 @@ Definisci una variabile [name] sul banko [bank]. Eventualmente,
 
 Variable * variable_define( Environment * _environment, char * _name, VariableType _type, int _value ) {
 
+    if (_environment->constants) {
+        Constant * c = constant_find( _environment->constants, _name );
+        if ( c ) {
+            CRITICAL_CONSTANT_ALREADY_DEFINED( _name );
+        }
+    }
+
     Variable * var = variable_find( _environment->variables, _name );
     if ( var ) {
         if ( var->type != _type ) {
@@ -376,6 +383,13 @@ Variable * variable_define( Environment * _environment, char * _name, VariableTy
 
 Variable * variable_import( Environment * _environment, char * _name, VariableType _type, int _size_or_value ) {
 
+    if (_environment->constants) {
+        Constant * c = constant_find( _environment->constants, _name );
+        if ( c ) {
+            CRITICAL_CONSTANT_ALREADY_DEFINED( _name );
+        }
+    }
+
     Variable * var = variable_find( _environment->variables, _name );
     if ( var ) {
         if ( var->type != _type ) {
@@ -411,6 +425,13 @@ Variable * variable_import( Environment * _environment, char * _name, VariableTy
 
 Variable * variable_define_no_init( Environment * _environment, char * _name, VariableType _type ) {
 
+    if (_environment->constants) {
+        Constant * c = constant_find( _environment->constants, _name );
+        if ( c ) {
+            CRITICAL_CONSTANT_ALREADY_DEFINED( _name );
+        }
+    }
+
     Variable * var = variable_find( _environment->variables, _name );
     if ( var ) {
         if ( var->type != _type ) {
@@ -444,6 +465,13 @@ Variable * variable_define_no_init( Environment * _environment, char * _name, Va
 }
 
 Variable * variable_define_local( Environment * _environment, char * _name, VariableType _type, int _value ) {
+
+    if (_environment->constants) {
+        Constant * c = constant_find( _environment->constants, _name );
+        if ( c ) {
+            CRITICAL_CONSTANT_ALREADY_DEFINED( _name );
+        }
+    }
 
     Variable * var = variable_find( _environment->procedureVariables, _name );
     if ( var ) {
@@ -660,6 +688,13 @@ int variable_delete( Environment * _environment, char * _name ) {
 
 Variable * variable_retrieve_or_define( Environment * _environment, char * _name, VariableType _type, int _value ) {
 
+    if (_environment->constants) {
+        Constant * c = constant_find( _environment->constants, _name );
+        if ( c ) {
+            CRITICAL_CONSTANT_ALREADY_DEFINED( _name );
+        }
+    }
+
     Variable * var = NULL;
     if ( _environment->procedureName ) {
         var = variable_find( _environment->tempVariables[_environment->currentProcedure], _name );
@@ -750,6 +785,14 @@ void variable_reset( Environment * _environment ) {
 }
 
 Variable * variable_array_type( Environment * _environment, char *_name, VariableType _type ) {
+
+    if (_environment->constants) {
+        Constant * c = constant_find( _environment->constants, _name );
+        if ( c ) {
+            CRITICAL_CONSTANT_ALREADY_DEFINED( _name );
+        }
+    }
+
     Variable * var = variable_find( _environment->variables, _name );
     if ( ! var ) {
         CRITICAL_VARIABLE( _name );
@@ -5466,6 +5509,10 @@ Variable * variable_mod( Environment * _environment, char * _source, char * _des
 
 void const_define_numeric( Environment * _environment, char * _name, int _value ) {
 
+    if (variable_exists( _environment, _name )) {
+        CRITICAL_VARIABLE_ALREADY_DEFINED( _name );
+    }
+
     Constant * c = constant_find( _environment->constants, _name );
     if ( c ) {
         if ( c->valueString ) {
@@ -5495,6 +5542,10 @@ void const_define_numeric( Environment * _environment, char * _name, int _value 
 }
 
 void const_define_string( Environment * _environment, char * _name, char * _value ) {
+
+    if (variable_exists( _environment, _name )) {
+        CRITICAL_VARIABLE_ALREADY_DEFINED( _name );
+    }
 
     Constant * c = constant_find( _environment->constants, _name );
     if ( c ) {
