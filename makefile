@@ -34,6 +34,60 @@ ifndef target
 $(error missing 'target' (valid values: atari atarixl c128 c64 coleco cpc d32 d64 mo5 msx1 pc128 plus4 sc3000 sg1000 vg5000 vic20 zx))
 endif
 
+ifndef output
+ifeq ($(target),atari)
+  output=xex
+endif
+ifeq ($(target),atarixl)
+  output=xex
+endif
+ifeq ($(target),c128)
+  output=prg
+endif
+ifeq ($(target),c64)
+  output=prg
+endif
+ifeq ($(target),coleco)
+  output=rom
+endif
+ifeq ($(target),cpc)
+  output=dsk
+endif
+ifeq ($(target),d32)
+  output=bin
+endif
+ifeq ($(target),d64)
+  output=bin
+endif
+ifeq ($(target),mo5)
+  output=k7
+endif
+ifeq ($(target),msx1)
+  output=rom
+endif
+ifeq ($(target),pc128)
+  output=k7
+endif
+ifeq ($(target),plus4)
+  output=prg
+endif
+ifeq ($(target),sc3000)
+  output=rom
+endif
+ifeq ($(target),sg1000)
+  output=rom
+endif
+ifeq ($(target),vg5000)
+  output=k7
+endif
+ifeq ($(target),vic20)
+  output=prg
+endif
+ifeq ($(target),zx)
+  output=tap
+endif
+endif
+
 #-----------------------------------------------------------------------------
 #--- MAKEFILE's ENVIRONMENT
 #-----------------------------------------------------------------------------
