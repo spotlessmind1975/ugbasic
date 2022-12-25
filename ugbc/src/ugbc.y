@@ -80,7 +80,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token SQUARE STEEL STRINGS SWEEP SYNTH SYNTHBRASS SYNTHSTRINGS TAIKO TANGO TELEPHONE TENOR TIMPANI TINKLE
 %token TOM TONK TREMOLO TROMBONE TRUMPET TUBA TUBULAR TWEET VIBRAPHONE VIOLA VIOLIN VOICE WARM WHISTLE WOODBLOCK 
 %token XYLOPHONE KILL COMPRESSED STORAGE ENDSTORAGE FILEX DLOAD INCLUDE LET CPC INT INTEGER LONG OP_PERC OP_AMPERSAND OP_AT
-%token EMBEDDED NATIVE RELEASE
+%token EMBEDDED NATIVE RELEASE READONLY
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -127,6 +127,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> note octave const_note
 %type <integer> const_instrument
 %type <integer> release
+%type <integer> readonly_optional
 
 %right Integer String CP 
 %left OP_DOLLAR
@@ -4380,6 +4381,17 @@ array_reassign:
         ((struct _Environment *)_environment)->currentArray = NULL;
     };    
 
+readonly_optional : 
+    {
+        $$ = 0;
+    }
+    | READONLY {
+        $$ = 1;
+    }
+    | READ ONLY {
+        $$ = 1;
+    };
+
 dim_definition :
     Identifier datatype {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
@@ -4387,7 +4399,10 @@ dim_definition :
       } OP dimensions CP {
         ((struct _Environment *)_environment)->currentArray = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
         variable_array_type( _environment, $1, $2 );
-    } array_assign
+    } array_assign readonly_optional {
+        Variable * array = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
+        array->readonly = $9;
+    }
     |
     Identifier OP_DOLLAR {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
@@ -4395,7 +4410,10 @@ dim_definition :
       } OP dimensions CP {
         ((struct _Environment *)_environment)->currentArray = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
         variable_array_type( _environment, $1, VT_DSTRING );
-    } array_assign
+    } array_assign readonly_optional {
+        Variable * array = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
+        array->readonly = $9;
+    }
     | Identifier datatype WITH const_expr {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
           ((struct _Environment *)_environment)->arrayDimensions = 0;
@@ -4409,14 +4427,20 @@ dim_definition :
         if ( ((struct _Environment *)_environment)->currentArray->memoryArea ) {
             variable_store( _environment, ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->value );
         }
-      }
+      } readonly_optional {
+        Variable * array = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
+        array->readonly = $10;
+    }
     | Identifier as_datatype {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
           ((struct _Environment *)_environment)->arrayDimensions = 0;
       } OP dimensions CP {
         ((struct _Environment *)_environment)->currentArray = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
         variable_array_type( _environment, $1, $2 );
-    } array_assign
+    } array_assign readonly_optional {
+        Variable * array = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
+        array->readonly = $9;
+    }
     | Identifier as_datatype WITH const_expr {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
           ((struct _Environment *)_environment)->arrayDimensions = 0;
@@ -4430,6 +4454,9 @@ dim_definition :
         if ( ((struct _Environment *)_environment)->currentArray->memoryArea ) {
             variable_store( _environment, ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->value );
         }
+    } readonly_optional {
+        Variable * array = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
+        array->readonly = $10;
     }
     ;
 

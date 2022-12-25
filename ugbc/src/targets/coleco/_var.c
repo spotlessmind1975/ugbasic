@@ -177,7 +177,11 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     }
                     break;
                 case VT_ARRAY: {
-                    outhead0("section data_user");
+                    if ( variable->readonly ) {
+
+                    } else {
+                        outhead0("section data_user");
+                    }
                     if ( variable->valueBuffer ) {
                         out1("%s: db ", variable->realName);
                         int i=0;
@@ -190,7 +194,11 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     } else {
                         outline2("%s: defs %d", variable->realName, variable->size);
                     }
-                    outhead0("section code_user");
+                    if ( variable->readonly ) {
+
+                    } else {
+                        outhead0("section code_user");
+                    }
                     break;
                 }
             }

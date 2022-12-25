@@ -644,6 +644,12 @@ typedef struct _Variable {
     /** Unique ID assigned to this variable (is banked) */
     int variableUniqueId;
 
+    /** 
+     * This flag mark if this variable is read only (1) or not (0); 
+     * read only variables could be stored into non writable memory.
+     */
+    int readonly;
+
     /** Link to the next variable (NULL if this is the last one) */
     struct _Variable * next;
 
