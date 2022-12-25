@@ -98,6 +98,10 @@ else
   EXESUFFIX = 
 endif
 
+ifndef debug
+debug = 0
+endif
+
 #-----------------------------------------------------------------------------
 #--- MAKEFILE's VARIABLES
 #-----------------------------------------------------------------------------
@@ -214,7 +218,7 @@ toolchain: toolchain.$(target)
 # for the specific target.
 #
 compiler:
-	@cd ugbc && $(MAKE) target=$(target) all
+	@cd ugbc && $(MAKE) target=$(target) debug=$(debug) all
 
 #------------------------------------------------ 
 # test: 
