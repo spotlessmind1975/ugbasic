@@ -354,9 +354,21 @@ void tms9918_background_color( Environment * _environment, int _index, int _back
  */
 void tms9918_background_color_vars( Environment * _environment, char * _index, char * _background_color ) {
 
-    _index = 0;
+    MAKE_LABEL
+
+    z80_compare_and_branch_8bit_const( _environment, _index, 0, label, 0 );
 
     tms9918_border_color( _environment, _background_color );
+
+    cpu_label( _environment, label );
+    outline1( "LD A, (%s)", _index );
+    outline0( "LD E, A" );
+    outline0( "LD A, 0" );
+    outline0( "LD D, A" );
+    outline0( "LD HL, PALETTE" );
+    outline0( "ADD HL, DE" );
+    outline1( "LD A, (%s)", _background_color );
+    outline0( "LD (HL), A" );
 
 }
 
@@ -372,9 +384,18 @@ void tms9918_background_color_vars( Environment * _environment, char * _index, c
  */
 void tms9918_background_color_semivars( Environment * _environment, int _index, char * _background_color ) {
 
-    _index = 0;
+    if ( ! _index ) {
+        tms9918_border_color( _environment, _background_color );
+    }
 
-    tms9918_border_color( _environment, _background_color );
+    outline1( "LD A, $%2.2x", _index );
+    outline0( "LD E, A" );
+    outline0( "LD A, 0" );
+    outline0( "LD D, A" );
+    outline0( "LD HL, PALETTE" );
+    outline0( "ADD HL, DE" );
+    outline1( "LD A, (%s)", _background_color );
+    outline0( "LD (HL), A" );
 
 }
 
@@ -390,7 +411,14 @@ void tms9918_background_color_semivars( Environment * _environment, int _index, 
  */
 void tms9918_background_color_get_vars( Environment * _environment, char * _index, char * _background_color ) {
 
-    //TODO
+    outline1( "LD A, (%s)", _index );
+    outline0( "LD E, A" );
+    outline0( "LD A, 0" );
+    outline0( "LD D, A" );
+    outline0( "LD HL, PALETTE" );
+    outline0( "ADD HL, DE" );
+    outline0( "LD A, (HL)" );
+    outline1( "LD (%s), A", _background_color );
 
 }
 
@@ -1332,6 +1360,8 @@ void tms9918_initialization( Environment * _environment ) {
     variable_global( _environment, "COLORMAPADDRESS" );    
     variable_import( _environment, "PATTERNADDRESS", VT_ADDRESS, 0x0000 );
     variable_global( _environment, "PATTERNADDRESS" );    
+    variable_import( _environment, "PALETTE", VT_BUFFER, 16 );
+    variable_global( _environment, "PALETTE" ); 
 
     SCREEN_MODE_DEFINE( TILEMAP_MODE_STANDARD, 0, 40, 24, 20, 6, 8, "Text Mode" );
     SCREEN_MODE_DEFINE( BITMAP_MODE_GRAPHIC2, 0, 32, 24, 16, 8, 8, "Graphic II" );

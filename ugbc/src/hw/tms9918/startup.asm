@@ -387,6 +387,18 @@ ONSCROLLVOID:
     RET
 
 TMS9918STARTUP:
+        
+        LD A, 16
+        LD C, A
+        LD A, 0
+        LD HL, PALETTE
+TMS9918STARTUPL1:        
+        LD (HL), A
+        INC HL
+        INC A
+        DEC C
+        JR NZ, TMS9918STARTUPL1
+
 
         DI
         LD A, VDP_R0
