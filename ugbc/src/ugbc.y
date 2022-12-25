@@ -2796,20 +2796,38 @@ exponential:
     | JUP OP expr CP {
         $$ = joy_direction_semivars( _environment, $3, JOY_UP )->name;
     }
+    | JUP OP OP_HASH const_expr CP {
+        $$ = joy_direction( _environment, $4, JOY_UP )->name;
+    }
     | JDOWN OP expr CP {
         $$ = joy_direction_semivars( _environment, $3, JOY_DOWN )->name;
+    }
+    | JDOWN OP OP_HASH const_expr CP {
+        $$ = joy_direction( _environment, $4, JOY_DOWN )->name;
     }
     | JLEFT OP expr CP {
         $$ = joy_direction_semivars( _environment, $3, JOY_LEFT )->name;
     }
+    | JLEFT OP OP_HASH const_expr CP {
+        $$ = joy_direction( _environment, $4, JOY_LEFT )->name;
+    }
     | JRIGHT OP expr CP {
         $$ = joy_direction_semivars( _environment, $3, JOY_RIGHT )->name;
+    }
+    | JRIGHT OP OP_HASH const_expr CP {
+        $$ = joy_direction( _environment, $4, JOY_RIGHT )->name;
     }
     | JFIRE OP expr CP {
         $$ = joy_direction_semivars( _environment, $3, JOY_FIRE )->name;
     }
+    | JFIRE OP OP_HASH const_expr CP {
+        $$ = joy_direction( _environment, $4, JOY_FIRE )->name;
+    }
     | FIRE OP expr CP {
         $$ = joy_direction_semivars( _environment, $3, JOY_FIRE )->name;
+    }
+    | FIRE OP OP_HASH const_expr CP {
+        $$ = joy_direction( _environment, $4, JOY_FIRE )->name;
     }
     | JOY COUNT {
         $$ = variable_temporary( _environment, VT_BYTE, "(JOYCOUNT)" )->name;
