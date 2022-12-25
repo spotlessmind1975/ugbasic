@@ -143,7 +143,7 @@ void target_initialization( Environment * _environment ) {
     deploy_inplace( startup, src_hw_coleco_startup_asm);
 
     outhead0("CODESTART:")
-    outline0("LD SP, $737f");
+    outline0("LD SP, $73b8");
 
     outline0("CALL VARINIT2");
     outline0("CALL VARINIT");
