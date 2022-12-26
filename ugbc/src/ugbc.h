@@ -1871,6 +1871,23 @@ typedef struct _Environment {
 #define CRITICAL_CANNOT_REMOVE_FILE(f) CRITICAL2("E138 - cannot remove file", f );
 #define CRITICAL_CONSTANT_ALREADY_DEFINED(f) CRITICAL2("E139 - cannot define a variable with the same name of a constant", f );
 #define CRITICAL_VARIABLE_ALREADY_DEFINED(f) CRITICAL2("E140 - cannot define a constant with the same name of a variable", f );
+#define CRITICAL_END_GAMELOOP_WITHOUT_GAMELOOP() CRITICAL("E141 - END GAMELOOP without BEGIN GAMELOOP" );
+#define CRITICAL_EVERY_OFF_WITHOUT_EVERY() CRITICAL("E142 - EVERY OFF without EVERY definition" );
+#define CRITICAL_WEND_WITHOUT_WHILE() CRITICAL("E143 - WEND without WHILE" );
+#define CRITICAL_EXIT_WITHOUT_LOOP() CRITICAL("E144 - EXIT without LOOP" );
+#define CRITICAL_EXIT_WITHOUT_ENOUGH_LOOP() CRITICAL("E145 - EXIT without enough LOOPs" );
+#define CRITICAL_ENDSELECT_WITHOUT_SELECT() CRITICAL("E146 - ENDSELECT without SELECT" );
+#define CRITICAL_UNTIL_WITHOUT_REPEAT() CRITICAL("E147 - UNTIL without REPEAT" );
+#define CRITICAL_LOOP_WITHOUT_DO() CRITICAL("E148 - LOOP without DO" );
+#define CRITICAL_ENDIF_WITHOUT_IF() CRITICAL("E149 - ENDIF without IF" );
+#define CRITICAL_NEXT_WITHOUT_FOR() CRITICAL("E150 - NEXT without FOR" );
+#define CRITICAL_ELSE_WITHOUT_IF() CRITICAL("E151 - ELSE without IF" );
+#define CRITICAL_CASE_WITHOUT_SELECT_CASE() CRITICAL("E152 - CASE without SELECT CASE" );
+#define CRITICAL_CASE_ELSE_WITHOUT_SELECT_CASE() CRITICAL("E153 - CASE ELSE without SELECT CASE" );
+#define CRITICAL_VARIABLE_REDEFINED_DIFFERENT_TYPE( f ) CRITICAL2("E154 - variable redefined with a different type", f );
+#define CRITICAL_VARIABLE_IMPORTED_DIFFERENT_TYPE( f ) CRITICAL2("E155 - variable imported with a different type", f );
+#define CRITICAL_CONSTANT_REDEFINED_DIFFERENT_TYPE( f ) CRITICAL2("E156 - constant redefined with a different type", f );
+#define CRITICAL_CONSTANT_REDEFINED_DIFFERENT_VALUE( f ) CRITICAL2("E157 - constant redefined with a different value", f );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }

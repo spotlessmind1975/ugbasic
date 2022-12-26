@@ -54,11 +54,11 @@ void end_loop( Environment * _environment ) {
     Loop * loop = _environment->loops;
 
     if ( ! loop ) {
-        CRITICAL("LOOP without DO");
+        CRITICAL_LOOP_WITHOUT_DO();
     }
 
     if ( loop->type != LT_DO ) {
-        CRITICAL("LOOP without DO");
+        CRITICAL_LOOP_WITHOUT_DO();
     }
 
     _environment->loops = _environment->loops->next;

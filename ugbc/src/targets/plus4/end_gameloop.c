@@ -69,11 +69,11 @@ void end_gameloop( Environment * _environment ) {
 Loop * loop = _environment->loops;
 
     if ( ! loop ) {
-        CRITICAL("END GAMELOOP without BEGIN GAMELOOP");
+        CRITICAL_END_GAMELOOP_WITHOUT_GAMELOOP();
     }
 
     if ( loop->type != LT_GAMELOOP ) {
-        CRITICAL("END GAMELOOP without BEGIN GAMELOOP");
+        CRITICAL_END_GAMELOOP_WITHOUT_GAMELOOP();
     }
 
     _environment->loops = _environment->loops->next;
@@ -87,7 +87,7 @@ Loop * loop = _environment->loops;
         cpu_label( _environment, newLabel );
         _environment->hasGameLoop = 0;
     } else {
-         CRITICAL("Cannot call END GAMELOOP without BEGIN GAMELOOP");
+         CRITICAL_END_GAMELOOP_WITHOUT_GAMELOOP();
     }
 
 }

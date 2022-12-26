@@ -125,11 +125,11 @@ void end_while( Environment * _environment ) {
     Loop * loop = _environment->loops;
 
     if ( ! loop ) {
-        CRITICAL("WEND without WHILE");
+        CRITICAL_WEND_WITHOUT_WHILE();
     }
 
     if ( loop->type != LT_WHILE ) {
-        CRITICAL("WEND outside a WHILE loop");
+        CRITICAL_WEND_WITHOUT_WHILE();
     }
 
     if ( _environment->procedureName && _environment->protothread ) {

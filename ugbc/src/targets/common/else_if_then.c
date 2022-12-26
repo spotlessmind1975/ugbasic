@@ -55,11 +55,11 @@ void else_if_then_label( Environment * _environment ) {
     Conditional * conditional = _environment->conditionals;
 
     if ( ! conditional ) {
-        CRITICAL("ELSE without IF");
+        CRITICAL_ELSE_WITHOUT_IF();
     }
 
     if ( conditional->type != CT_IF ) {
-        CRITICAL("ELSE outside IF");
+        CRITICAL_ELSE_WITHOUT_IF();
     }
 
     char endifLabel[MAX_TEMPORARY_STORAGE]; sprintf(endifLabel, "%sf", conditional->label );
@@ -90,11 +90,11 @@ void else_if_then( Environment * _environment, char * _expression ) {
     Conditional * conditional = _environment->conditionals;
 
     if ( ! conditional ) {
-        CRITICAL("ELSE without IF");
+        CRITICAL_ELSE_WITHOUT_IF();
     }
 
     if ( conditional->type != CT_IF ) {
-        CRITICAL("ELSE outside IF");
+        CRITICAL_ELSE_WITHOUT_IF();
     }
 
     char endifLabel[MAX_TEMPORARY_STORAGE]; sprintf(endifLabel, "%sf", conditional->label );

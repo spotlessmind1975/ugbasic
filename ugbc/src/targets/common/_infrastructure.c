@@ -337,7 +337,7 @@ Variable * variable_define( Environment * _environment, char * _name, VariableTy
     Variable * var = variable_find( _environment->variables, _name );
     if ( var ) {
         if ( var->type != _type ) {
-            CRITICAL( "Variable redefined with a different type");
+            CRITICAL_VARIABLE_REDEFINED_DIFFERENT_TYPE( _name );
         }
         var->value = _value;
     } else {
@@ -393,7 +393,7 @@ Variable * variable_import( Environment * _environment, char * _name, VariableTy
     Variable * var = variable_find( _environment->variables, _name );
     if ( var ) {
         if ( var->type != _type ) {
-            CRITICAL( "Variable imported with a different type");
+            CRITICAL_VARIABLE_IMPORTED_DIFFERENT_TYPE( _name );
         }
     } else {
         var = malloc( sizeof( Variable ) );
@@ -435,7 +435,7 @@ Variable * variable_define_no_init( Environment * _environment, char * _name, Va
     Variable * var = variable_find( _environment->variables, _name );
     if ( var ) {
         if ( var->type != _type ) {
-            CRITICAL( "Variable redefined with a different type");
+            CRITICAL_VARIABLE_REDEFINED_DIFFERENT_TYPE( _name );
         }
     } else {
         var = malloc( sizeof( Variable ) );
@@ -476,7 +476,7 @@ Variable * variable_define_local( Environment * _environment, char * _name, Vari
     Variable * var = variable_find( _environment->procedureVariables, _name );
     if ( var ) {
         if ( var->type != _type ) {
-            CRITICAL( "Variable redefined with a different type");
+            CRITICAL_VARIABLE_REDEFINED_DIFFERENT_TYPE( _name );
         }
         var->value = _value;
     } else {
@@ -5516,10 +5516,10 @@ void const_define_numeric( Environment * _environment, char * _name, int _value 
     Constant * c = constant_find( _environment->constants, _name );
     if ( c ) {
         if ( c->valueString ) {
-            CRITICAL( "Constant redefined with a different type (numeric -> string)");
+            CRITICAL_CONSTANT_REDEFINED_DIFFERENT_TYPE( _name );
         }
         if ( c->value != _value ) {
-            CRITICAL( "Numeric constant redefined with a different value");
+            CRITICAL_CONSTANT_REDEFINED_DIFFERENT_VALUE( _name );
         }
     } else {
         c = malloc( sizeof( Constant ) );
@@ -5550,10 +5550,10 @@ void const_define_string( Environment * _environment, char * _name, char * _valu
     Constant * c = constant_find( _environment->constants, _name );
     if ( c ) {
         if ( ! c->valueString ) {
-            CRITICAL( "Constant redefined with a different type (string -> numeric)");
+            CRITICAL_CONSTANT_REDEFINED_DIFFERENT_TYPE( _name );
         }
         if ( strcmp( c->valueString , _value ) != 0 ) {
-            CRITICAL( "String constant redefined with a different value");
+            CRITICAL_CONSTANT_REDEFINED_DIFFERENT_VALUE( _name );
         }
     } else {
         c = malloc( sizeof( Constant ) );

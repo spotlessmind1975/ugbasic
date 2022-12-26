@@ -55,11 +55,11 @@ void end_for( Environment * _environment ) {
     Loop * loop = _environment->loops;
 
     if ( ! loop ) {
-        CRITICAL("NEXT WITHOUT FOR");
+        CRITICAL_NEXT_WITHOUT_FOR();
     }
 
     if ( loop->type != LT_FOR && loop->type != LT_FOR_MT ) {
-        CRITICAL("NEXT outside a FOR loop");
+        CRITICAL_NEXT_WITHOUT_FOR();
     }
 
     unsigned char beginFor[MAX_TEMPORARY_STORAGE]; sprintf(beginFor, "%sbf", loop->label );

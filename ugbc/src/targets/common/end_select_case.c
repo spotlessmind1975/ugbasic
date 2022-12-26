@@ -56,11 +56,11 @@ void end_select_case( Environment * _environment ) {
     Conditional * conditional = _environment->conditionals;
 
     if ( ! conditional ) {
-        CRITICAL("ENDSELECT without SELECT CASE");
+        CRITICAL_ENDSELECT_WITHOUT_SELECT();
     }
 
     if ( conditional->type != CT_SELECT_CASE ) {
-        CRITICAL("ENDSELECT outside SELECT CASE");
+        CRITICAL_ENDSELECT_WITHOUT_SELECT();
     }
 
     if ( ! conditional->caseElse ) {

@@ -55,11 +55,11 @@ void end_if_then( Environment * _environment ) {
     Conditional * conditional = _environment->conditionals;
 
     if ( ! conditional ) {
-        CRITICAL("ENDIF without IF");
+        CRITICAL_ENDIF_WITHOUT_IF();
     }
 
     if ( conditional->type != CT_IF ) {
-        CRITICAL("ENDIF without IF");
+        CRITICAL_ENDIF_WITHOUT_IF();
     }
 
     char elseLabel[MAX_TEMPORARY_STORAGE]; sprintf(elseLabel, "%se%d", conditional->label, conditional->index );

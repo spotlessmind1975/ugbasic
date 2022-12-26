@@ -54,11 +54,11 @@ void end_repeat( Environment * _environment, char * _expression ) {
     Loop * loop = _environment->loops;
 
     if ( ! loop ) {
-        CRITICAL("UNTIL without REPEAT");
+        CRITICAL_UNTIL_WITHOUT_REPEAT();
     }
 
     if ( loop->type != LT_REPEAT ) {
-        CRITICAL("UNTIL outside a REPEAT loop");
+        CRITICAL_UNTIL_WITHOUT_REPEAT();
     }
 
     _environment->loops = _environment->loops->next;

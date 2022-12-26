@@ -43,11 +43,11 @@ void case_equals_label( Environment * _environment ) {
     Conditional * conditional = _environment->conditionals;
 
     if ( ! conditional ) {
-        CRITICAL("CASE without SELECT CASE");
+        CRITICAL_CASE_WITHOUT_SELECT_CASE();
     }
 
     if ( conditional->type != CT_SELECT_CASE ) {
-        CRITICAL("CASE outside SELECT CASE");
+        CRITICAL_CASE_WITHOUT_SELECT_CASE();
     }
 
     char endselectLabel[MAX_TEMPORARY_STORAGE]; sprintf(endselectLabel, "%sf", conditional->label );
@@ -80,11 +80,11 @@ void case_equals_var( Environment * _environment, char * _value ) {
     Conditional * conditional = _environment->conditionals;
 
     if ( ! conditional ) {
-        CRITICAL("CASE without SELECT CASE");
+        CRITICAL_CASE_WITHOUT_SELECT_CASE();
     }
 
     if ( conditional->type != CT_SELECT_CASE ) {
-        CRITICAL("CASE outside SELECT CASE");
+        CRITICAL_CASE_WITHOUT_SELECT_CASE();
     }
 
     Variable * value = variable_retrieve_or_define( _environment, _value, VT_BYTE, 0 );
@@ -122,11 +122,11 @@ void case_equals( Environment * _environment, int _value ) {
     Conditional * conditional = _environment->conditionals;
 
     if ( ! conditional ) {
-        CRITICAL("CASE without SELECT CASE");
+        CRITICAL_CASE_WITHOUT_SELECT_CASE();
     }
 
     if ( conditional->type != CT_SELECT_CASE ) {
-        CRITICAL("CASE outside SELECT CASE");
+        CRITICAL_CASE_WITHOUT_SELECT_CASE();
     }
 
     char thenLabel[MAX_TEMPORARY_STORAGE]; sprintf(thenLabel, "%st%d", conditional->label, conditional->index );

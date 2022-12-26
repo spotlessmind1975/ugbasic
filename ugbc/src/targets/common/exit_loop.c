@@ -84,7 +84,7 @@ void exit_loop( Environment * _environment, int _number ) {
     Loop * loop = _environment->loops;
 
     if ( ! loop ) {
-        CRITICAL("EXIT without any loop");
+        CRITICAL_EXIT_WITHOUT_LOOP();
     }
 
     if ( _number ) {
@@ -95,7 +95,7 @@ void exit_loop( Environment * _environment, int _number ) {
         loop = loop->next;
 
         if ( ! loop ) {
-            CRITICAL("EXIT without enough loops");
+            CRITICAL_EXIT_WITHOUT_ENOUGH_LOOP();
         }
     }
 

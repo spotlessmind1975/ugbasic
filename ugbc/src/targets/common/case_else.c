@@ -56,11 +56,11 @@ void case_else( Environment * _environment ) {
     Conditional * conditional = _environment->conditionals;
 
     if ( ! conditional ) {
-        CRITICAL("CASE ELSE without SELECT CASE");
+        CRITICAL_CASE_ELSE_WITHOUT_SELECT_CASE();
     }
 
     if ( conditional->type != CT_SELECT_CASE ) {
-        CRITICAL("CASE ELSE outside SELECT CASE");
+        CRITICAL_CASE_ELSE_WITHOUT_SELECT_CASE();
     }
 
     char endselectLabel[MAX_TEMPORARY_STORAGE]; sprintf(endselectLabel, "%sf", conditional->label );
