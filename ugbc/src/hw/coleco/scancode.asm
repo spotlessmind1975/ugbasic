@@ -36,4 +36,26 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 SCANCODE:
+    LD B, 0
+    LD A, 1
+    OUT	($80),A
+    NOP
+    NOP
+    NOP
+    NOP
+    LD	A,B
+    OR	A
+    JR	NZ,SCANCODE1
+SCANCODE0:
+    IN	A,($FC)
+    CPL
+    AND $7F
+    JP SCANCODEA
+SCANCODE1:
+    IN	A,($FF)
+    CPL
+    AND $7F
+    JP SCANCODEA
+
+SCANCODEA:
     RET
