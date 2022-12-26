@@ -65,7 +65,7 @@ endif
 ifeq ($(target),msx1)
   output=rom
 endif
-ifeq ($(target),pc128)
+ifeq ($(target),pc128op)
   output=k7
 endif
 ifeq ($(target),plus4)
