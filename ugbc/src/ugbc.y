@@ -80,7 +80,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token SQUARE STEEL STRINGS SWEEP SYNTH SYNTHBRASS SYNTHSTRINGS TAIKO TANGO TELEPHONE TENOR TIMPANI TINKLE
 %token TOM TONK TREMOLO TROMBONE TRUMPET TUBA TUBULAR TWEET VIBRAPHONE VIOLA VIOLIN VOICE WARM WHISTLE WOODBLOCK 
 %token XYLOPHONE KILL COMPRESSED STORAGE ENDSTORAGE FILEX DLOAD INCLUDE LET CPC INT INTEGER LONG OP_PERC OP_AMPERSAND OP_AT
-%token EMBEDDED NATIVE RELEASE READONLY
+%token EMBEDDED NATIVE RELEASE READONLY DIGIT
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -1333,45 +1333,40 @@ color_enumeration:
       };
 
 key_scancode_alphadigit :
-      "0" {
+    Integer {
         $$ = variable_temporary( _environment, VT_BYTE, "(scancode DIGIT 0)")->name;
-        variable_store( _environment, $$, KEY_0 );
-    }
-    | "1" {
-        $$ = variable_temporary( _environment, VT_BYTE, "(scancode DIGIT 1)")->name;
-        variable_store( _environment, $$, KEY_1 );
-    }
-    | "2" {
-        $$ = variable_temporary( _environment, VT_BYTE, "(scancode DIGIT 2)")->name;
-        variable_store( _environment, $$, KEY_2 );
-    }
-    | "3" {
-        $$ = variable_temporary( _environment, VT_BYTE, "(scancode DIGIT 3)")->name;
-        variable_store( _environment, $$, KEY_3 );
-    }
-    | "4" {
-        $$ = variable_temporary( _environment, VT_BYTE, "(scancode DIGIT 4)")->name;
-        variable_store( _environment, $$, KEY_4 );
-    }
-    | "5" {
-        $$ = variable_temporary( _environment, VT_BYTE, "(scancode DIGIT 5)")->name;
-        variable_store( _environment, $$, KEY_5 );
-    }
-    | "6" {
-        $$ = variable_temporary( _environment, VT_BYTE, "(scancode DIGIT 6)")->name;
-        variable_store( _environment, $$, KEY_6 );
-    }
-    | "7" {
-        $$ = variable_temporary( _environment, VT_BYTE, "(scancode DIGIT 7)")->name;
-        variable_store( _environment, $$, KEY_7 );
-    }
-    | "8" {
-        $$ = variable_temporary( _environment, VT_BYTE, "(scancode DIGIT 8)")->name;
-        variable_store( _environment, $$, KEY_8 );
-    }
-    | "9" {
-        $$ = variable_temporary( _environment, VT_BYTE, "(scancode DIGIT 9)")->name;
-        variable_store( _environment, $$, KEY_9 );
+        switch( $1 ) {
+            case 0:
+                variable_store( _environment, $$, KEY_0 );
+                break;
+            case 1:
+                variable_store( _environment, $$, KEY_1 );
+                break;
+            case 2:
+                variable_store( _environment, $$, KEY_2 );
+                break;
+            case 3:
+                variable_store( _environment, $$, KEY_3 );
+                break;
+            case 4:
+                variable_store( _environment, $$, KEY_4 );
+                break;
+            case 5:
+                variable_store( _environment, $$, KEY_5 );
+                break;
+            case 6:
+                variable_store( _environment, $$, KEY_6 );
+                break;
+            case 7:
+                variable_store( _environment, $$, KEY_7 );
+                break;
+            case 8:
+                variable_store( _environment, $$, KEY_8 );
+                break;
+            case 9:
+                variable_store( _environment, $$, KEY_9 );
+                break;
+        }
     }
     | A {
         $$ = variable_temporary( _environment, VT_BYTE, "(scancode LETTER A)")->name;
