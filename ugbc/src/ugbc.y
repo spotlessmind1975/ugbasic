@@ -1885,6 +1885,8 @@ const_key_scancode_definition :
         $$ = KEY_SPACE;        
     };
 
+load_image : LOAD IMAGE | IMAGE LOAD;
+
 exponential:
     Identifier {
         ++((struct _Environment *)_environment)->arrayNestedIndex;
@@ -2198,17 +2200,17 @@ exponential:
     | LOAD IMAGES OP String AS String CP FRAME SIZE OP const_expr OP_COMMA const_expr CP images_load_flags  using_transparency using_background on_bank {
         $$ = images_load( _environment, $4, $6, ((struct _Environment *)_environment)->currentMode, $11, $13, $15, $16, $17, $18 )->name;
       }
-    | LOAD IMAGE OP String CP image_load_flags  using_transparency using_background on_bank {
-        $$ = image_load( _environment, $4, NULL, ((struct _Environment *)_environment)->currentMode, $6, $7, $8, $9 )->name;
+    | load_image OP String CP image_load_flags  using_transparency using_background on_bank {
+        $$ = image_load( _environment, $3, NULL, ((struct _Environment *)_environment)->currentMode, $5, $6, $7, $8 )->name;
       }
-    | LOAD IMAGE OP String AS String CP image_load_flags  using_transparency using_background on_bank {
-        $$ = image_load( _environment, $4, $6, ((struct _Environment *)_environment)->currentMode, $8, $9, $10, $11 )->name;
+    | load_image OP String AS String CP image_load_flags  using_transparency using_background on_bank {
+        $$ = image_load( _environment, $3, $5, ((struct _Environment *)_environment)->currentMode, $7, $8, $9, $10 )->name;
       }
-    | LOAD IMAGE OP String OP_COMMA Integer CP image_load_flags  using_transparency using_background on_bank {
-        $$ = image_load( _environment, $4, NULL, $6, $8, $9, $10, $11 )->name;
+    | load_image OP String OP_COMMA Integer CP image_load_flags  using_transparency using_background on_bank {
+        $$ = image_load( _environment, $3, NULL, $5, $7, $8, $9, $10 )->name;
       }
-    | LOAD IMAGE OP String AS String OP_COMMA Integer CP image_load_flags  using_transparency using_background on_bank {
-        $$ = image_load( _environment, $4, $6, $8, $10, $11, $12, $13 )->name;
+    | load_image OP String AS String OP_COMMA Integer CP image_load_flags  using_transparency using_background on_bank {
+        $$ = image_load( _environment, $3, $5, $7, $9, $10, $11, $12 )->name;
       }
     | LOAD TILE OP String CP tile_load_flags {
         $$ = tile_load( _environment, $4, $6, NULL )->name;
