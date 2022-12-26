@@ -166,6 +166,7 @@ VDPRAMOUT8:
 ;         NOP
 ; endif
         OUT     (C), A
+if __msx1__
         NOP
         NOP
         NOP
@@ -174,7 +175,9 @@ VDPRAMOUT8:
         NOP
         NOP
         NOP
+endif
         OUT     (C), A
+if __msx1__
         NOP
         NOP
         NOP
@@ -183,7 +186,9 @@ VDPRAMOUT8:
         NOP
         NOP
         NOP
+endif
         OUT     (C), A
+if __msx1__
         NOP
         NOP
         NOP
@@ -192,7 +197,9 @@ VDPRAMOUT8:
         NOP
         NOP
         NOP
+endif
         OUT     (C), A
+if __msx1__
         NOP
         NOP
         NOP
@@ -201,7 +208,9 @@ VDPRAMOUT8:
         NOP
         NOP
         NOP
+endif
         OUT     (C), A
+if __msx1__
         NOP
         NOP
         NOP
@@ -210,7 +219,9 @@ VDPRAMOUT8:
         NOP
         NOP
         NOP
+endif
         OUT     (C), A
+if __msx1__
         NOP
         NOP
         NOP
@@ -219,7 +230,9 @@ VDPRAMOUT8:
         NOP
         NOP
         NOP
+endif
         OUT     (C), A
+if __msx1__
         NOP
         NOP
         NOP
@@ -228,7 +241,9 @@ VDPRAMOUT8:
         NOP
         NOP
         NOP
+endif
         OUT     (C), A
+if __msx1__
         NOP
         NOP
         NOP
@@ -237,6 +252,7 @@ VDPRAMOUT8:
         NOP
         NOP
         NOP
+endif
         POP     BC
         RET
 
