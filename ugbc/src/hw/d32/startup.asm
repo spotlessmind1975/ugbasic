@@ -35,7 +35,24 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+OLDISVC
+    fdb $0
+
+ISVCIRQ
+    PSHS D
+    LDD #0
+    STD $00e3
+    PULS D
+    JMP [OLDISVC]
+
 D32STARTUP
+
+    LDD $010D
+    STD OLDISVC
+
+    LDD #ISVCIRQ
+    STD $010D
+    
     LDA #0
     STA $011f
     RTS
