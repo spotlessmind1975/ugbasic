@@ -149,6 +149,6 @@ BANKLOADL2
     INCB
     CMPB #6
     BNE BANKLOADL1
-    LDA #0
+    LDA #7
     STA $A7E5
     RTS
