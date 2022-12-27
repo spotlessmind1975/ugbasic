@@ -2491,13 +2491,15 @@ int embed_scan_string (const char *);
         strcpy( listingFileName, "" ); \
     }
 
-#define BUILD_TOOLCHAIN_ASM6809EXEC( _environment, startingAddress, executableName, listingFileName ) \
-    sprintf( commandLine, "\"%s\" %s -o \"%s\" -D -e %d \"%s\"", \
+#define BUILD_TOOLCHAIN_ASM6809EXEC( _environment, flag, startingAddress, executableName, listingFileName ) \
+    sprintf( commandLine, "\"%s\" %s -o \"%s\" %s -e %d \"%s\"", \
         executableName, \
         listingFileName, \
         _environment->exeFileName,  \
+        flag, \
         startingAddress, \
         _environment->asmFileName ); \
+        printf( "%s\n", commandLine ); \
     if ( system_call( _environment,  commandLine ) ) { \
         printf("The compilation of assembly program failed.\n\n"); \
         printf("Please use option '-I' to install chain tool.\n\n"); \

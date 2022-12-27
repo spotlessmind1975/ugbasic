@@ -54,7 +54,7 @@ void target_linkage( Environment * _environment ) {
 
     BUILD_TOOLCHAIN_ASM6809_GET_LISTING_FILE( _environment, listingFileName );
 
-    BUILD_TOOLCHAIN_ASM6809EXEC( _environment, 10240, executableName, listingFileName );
+    BUILD_TOOLCHAIN_ASM6809EXEC( _environment, "-D", 10240, executableName, listingFileName );
 
     if ( _environment->listingFileName ) {
 
