@@ -69,7 +69,7 @@ void end_gameloop( Environment * _environment ) {
     Loop * loop = _environment->loops;
 
     if ( ! loop ) {
-        CRITICAL_END_GAMELOOP_WITHOUT_GAMELOOP())
+        CRITICAL_END_GAMELOOP_WITHOUT_GAMELOOP();
     }
 
     if ( loop->type != LT_GAMELOOP ) {
