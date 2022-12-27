@@ -1084,10 +1084,10 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
             }
         } else {
             for( i=0; i<colorUsed; ++i ) {
-                int minDistance = 0xffff;
+                unsigned int minDistance = 0xffff;
                 int colorIndex = 0;
                 for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
-                    int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
+                    unsigned int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
                     if ( _environment->debugImageLoad ) {
                         printf("%d (%2.2x%2.2x%2.2x) <-> %d (%2.2x%2.2x%2.2x) [%d] = %d [min = %d]\n", i, SYSTEM_PALETTE[j].red, SYSTEM_PALETTE[j].green, SYSTEM_PALETTE[j].blue, j, palette[i].red, palette[i].green, palette[i].blue, SYSTEM_PALETTE[j].index, distance, minDistance );
                     }
@@ -1390,7 +1390,7 @@ static Variable * ef936x_image_converter_multicolor_mode4( Environment * _enviro
                 rgb.alpha= 255;
             }
 
-            int minDistance = 0xffff;
+            unsigned int minDistance = 0xffff;
             int colorIndex = 0;
 
             colorIndex = 0;
@@ -1399,7 +1399,7 @@ static Variable * ef936x_image_converter_multicolor_mode4( Environment * _enviro
 
             } else {
                 for( i=0; i<4; ++i ) {
-                    int distance = rgbi_distance(&commonPalette[i], &rgb);
+                    unsigned int distance = rgbi_distance(&commonPalette[i], &rgb);
                     if ( minDistance > distance ) {
                         minDistance = distance;
                         colorIndex = i;
