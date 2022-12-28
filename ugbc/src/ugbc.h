@@ -2460,8 +2460,8 @@ int embed_scan_string (const char *);
     }; 
 
 #define BUILD_TOOLCHAIN_Z88DK_GET_EXECUTABLE_APPMAKE( _environment, executableName ) \
-    if ( _environment->compilerFileName ) { \
-        sprintf( executableName, "%s", _environment->compilerFileName ); \
+    if ( _environment->appMakerFileName ) { \
+        sprintf( executableName, "%s", _environment->appMakerFileName ); \
     } else if( access( "modules\\z88dk\\src\\appmake\\z88dk-appmake.exe", F_OK ) == 0 ) { \
         sprintf(executableName, "%s", "modules\\z88dk\\src\\appmake\\z88dk-appmake.exe" ); \
     } else if( access( "modules/z88dk/src/appmake/z88dk-appmake", F_OK ) == 0 ) { \
