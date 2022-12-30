@@ -1872,7 +1872,7 @@ void cpc_wait_vbl( Environment * _environment ) {
     deploy( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
     deploy( vbl, src_hw_cpc_vbl_asm);
 
-    outline0("JSR WAITVBL");
+    outline0("CALL WAITVBL");
 
 }
 
