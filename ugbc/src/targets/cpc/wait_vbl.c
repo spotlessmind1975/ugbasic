@@ -51,6 +51,6 @@
 </usermanual> */
 void wait_vbl( Environment * _environment ) {
 
-    // TODO: implementation
+    cpc_wait_vbl( _environment );
 
 }
