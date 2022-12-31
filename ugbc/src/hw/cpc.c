@@ -1663,7 +1663,7 @@ static Variable * cpc_image_converter_multicolor_mode_lores( Environment * _envi
                 lastUsedSlotInCommonPalette, 
                 ( _flags & FLAG_EXACT ) ? 1 : 0
             );
-            for( int i=0; i<lastUsedSlotInCommonPalette; ++i ) {
+            for( int i=0; i<colorUsed; ++i ) {
                 RGBi * rgbi = &commonPalette[i];
                 fprintf( fhandle, "%d:%d:%d:%d:%s:%d:%d:%d:%d:", 
                     rgbi->red, rgbi->green, rgbi->blue,
