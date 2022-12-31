@@ -1499,7 +1499,7 @@ static Variable * cpc_image_converter_multicolor_mode_lores( Environment * _envi
             );
             for( int i=0; i<colorUsed; ++i ) {
                 RGBi * rgbi = &palette[i];
-                fprintf( fhandle, "%d:%d:%d:%d:%s:%d:%d:%d:%d:", 
+                fprintf( fhandle, "9:%d:%d:%d:%d:%s:%d:%d:%d:%d:", 
                     rgbi->red, rgbi->green, rgbi->blue,
                     rgbi->index, rgbi->description, 
                     rgbi->hardwareIndex, rgbi->used,
@@ -1665,7 +1665,7 @@ static Variable * cpc_image_converter_multicolor_mode_lores( Environment * _envi
             );
             for( int i=0; i<colorUsed; ++i ) {
                 RGBi * rgbi = &commonPalette[i];
-                fprintf( fhandle, "%d:%d:%d:%d:%s:%d:%d:%d:%d:", 
+                fprintf( fhandle, "9:%d:%d:%d:%d:%s:%d:%d:%d:%d:", 
                     rgbi->red, rgbi->green, rgbi->blue,
                     rgbi->index, rgbi->description, 
                     rgbi->hardwareIndex, rgbi->used,
