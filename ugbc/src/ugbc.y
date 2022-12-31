@@ -6227,6 +6227,7 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     printf("\t-a           Show statistics on assembly listing generated\n" );
     printf("\t-I           Install needed chaintool for this target\n" );
     printf("\t-d           Enable debugging of LOAD IMAGE\n" );
+    printf("\t-D <file>    Enable dump of image elaboration\n" );
     printf("\t-p <num>     Maximum number of peep hole optimizations passes (default: 16, 0 = disable)\n" );
     printf("\t-C <file>    Path to compiler\n" );
     printf("\t-A <file>    Path to app maker\n" );
@@ -6346,7 +6347,7 @@ int main( int _argc, char *_argv[] ) {
     _environment->outputFileType = OUTPUT_FILE_TYPE_K7_NEW;
 #endif
 
-    while ((opt = getopt(_argc, _argv, "ae:c:Wo:Ie:l:EO:dL:C:VA:T:1p:G:X:P:q:")) != -1) {
+    while ((opt = getopt(_argc, _argv, "ae:c:Wo:Ie:l:EO:dD:L:C:VA:T:1p:G:X:P:q:")) != -1) {
         switch (opt) {
                 case 'a':
                     if ( ! _environment->listingFileName ) {
@@ -6388,6 +6389,10 @@ int main( int _argc, char *_argv[] ) {
                     break;
                 case 'd':
                     _environment->debugImageLoad = 1;
+                    break;
+                case 'D':
+                    _environment->dumpImageInfoFileName = strdup(optarg);
+                    system_remove_safe(_environment, _environment->dumpImageInfoFileName );
                     break;
                 case 'G':
                     if ( strcmp( optarg, "none") == 0 || atoi( optarg ) == 0 ) {
