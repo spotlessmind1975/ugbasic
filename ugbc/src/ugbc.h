@@ -2770,6 +2770,7 @@ void                    loop( Environment * _environment, char *_label );
 // *M*
 //----------------------------------------------------------------------------
 
+RGBi                *   malloc_palette( int _size );
 float                   max_of_two(float _x, float _y);
 float                   max_of_three(float _m, float _n, float _p);
 Variable *              maximum( Environment * _environment, char * _source, char * _dest );

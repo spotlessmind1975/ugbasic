@@ -6626,3 +6626,13 @@ int check_if_filename_is_valid( Environment * _environment,  char * _filename ) 
     return 1;
 
 }
+
+RGBi * malloc_palette( int _size ) {
+    
+    RGBi * palette = malloc( _size * sizeof(RGBi) );
+    
+    memset( palette, 0, _size * sizeof(RGBi) );
+    
+    return palette;
+
+}
