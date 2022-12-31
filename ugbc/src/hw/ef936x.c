@@ -855,33 +855,6 @@ void ef936x_cline( Environment * _environment, char * _characters ) {
 
 }
 
-/**
- * @brief Calculate the luminance of a color
- * 
- * This function calculates the luminance of a color. 
- * By luminance we mean the modulus of the three-dimensional 
- * vector, drawn in the space composed of the three components 
- * (red, green and blue). The returned value is normalized to
- * the nearest 8-bit value.
- * 
- * @param _a 
- * @return int 
- */
-// 
-
-static int calculate_luminance(RGBi _a) {
-
-    // Extract the vector's components 
-    // (each partecipate up to 1/3 of the luminance).
-    double red = (double) _a.red / 3;
-    double green = (double)_a.green / 3;
-    double blue = (double)_a.blue / 3;
-
-    // Calculate luminance using Pitagora's Theorem
-    return (int)sqrt(pow(red, 2) + pow(green, 2) + pow(blue, 2));
-
-}
-
 static int calculate_image_size( Environment * _environment, int _width, int _height, int _mode ) {
 
     switch( _mode ) {
@@ -1004,10 +977,6 @@ static Variable * ef936x_image_converter_bitmap_mode_standard( Environment * _en
             // and the bit to set.
             offset = ( image_y * ( _frame_width >> 3 ) ) + ( image_x >> 3 );
             bitmask = 1 << ( 7 - (image_x & 0x7) );
-
-            // If the pixes has enough luminance value, it must be 
-            // considered as "on"; otherwise, it is "off".
-            // int luminance = calculate_luminance(rgb);
 
             if ( i == 1 ) {
                 *( buffer + offset + 3) |= bitmask;
@@ -1225,10 +1194,6 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
             for( int xx = 0; xx<8; ++xx ) {
                 offset = ( image_y * ( _frame_width >> 3 ) ) + ( image_x >> 3 );
                 bitmask = 1 << ( 7 - ((image_x+xx) & 0x7) );
-
-                // If the pixes has enough luminance value, it must be 
-                // considered as "on"; otherwise, it is "off".
-                // int luminance = calculate_luminance(rgb);
 
                 if ( colorIndexes[xx] != colorBackground ) {
                     *( buffer + offset + 3) |= bitmask;
