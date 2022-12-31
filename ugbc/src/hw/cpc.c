@@ -1489,27 +1489,6 @@ static Variable * cpc_image_converter_multicolor_mode_lores( Environment * _envi
     memset( palette, 0, MAX_PALETTE * sizeof(RGBi) );
 
     int colorUsed = rgbi_extract_palette(_source, _width, _height, _depth, palette, MAX_PALETTE, ( ( _flags & FLAG_EXACT ) ? 0 : 1 ) /* sorted */);
-
-    if ( _environment->dumpImageInfoFileName ) {
-        FILE * fhandle = fopen( _environment->dumpImageInfoFileName, "at" );
-            fprintf( fhandle, "P:0:%d:%d:%d:", 
-                MAX_PALETTE,
-                colorUsed, 
-                ( _flags & FLAG_EXACT ) ? 1 : 0
-            );
-            for( int i=0; i<colorUsed; ++i ) {
-                RGBi * rgbi = &palette[i];
-                fprintf( fhandle, "9:%d:%d:%d:%d:%s:%d:%d:%d:%d:", 
-                    rgbi->red, rgbi->green, rgbi->blue,
-                    rgbi->index, rgbi->description, 
-                    rgbi->hardwareIndex, rgbi->used,
-                    rgbi->count, rgbi->alpha
-                );
-            }
-            fprintf( fhandle, "\n" );
-        fclose( fhandle );
-    }
-
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = colorUsed;
 
@@ -1654,26 +1633,6 @@ static Variable * cpc_image_converter_multicolor_mode_lores( Environment * _envi
         //     printf("[@] common %d) %d %2.2x%2.2x%2.2x\n", j, commonPalette[j].index, commonPalette[j].red, commonPalette[j].green, commonPalette[j].blue);
         // }
 
-    }
-
-    if ( _environment->dumpImageInfoFileName ) {
-        FILE * fhandle = fopen( _environment->dumpImageInfoFileName, "at" );
-            fprintf( fhandle, "C:0:%d:%d:%d:", 
-                MAX_PALETTE,
-                lastUsedSlotInCommonPalette, 
-                ( _flags & FLAG_EXACT ) ? 1 : 0
-            );
-            for( int i=0; i<colorUsed; ++i ) {
-                RGBi * rgbi = &commonPalette[i];
-                fprintf( fhandle, "9:%d:%d:%d:%d:%s:%d:%d:%d:%d:", 
-                    rgbi->red, rgbi->green, rgbi->blue,
-                    rgbi->index, rgbi->description, 
-                    rgbi->hardwareIndex, rgbi->used,
-                    rgbi->count, rgbi->alpha
-                );
-            }
-            fprintf( fhandle, "\n" );
-        fclose( fhandle );
     }
 
     memcpy( result->originalPalette, commonPalette, MAX_PALETTE * sizeof( RGBi ) );
