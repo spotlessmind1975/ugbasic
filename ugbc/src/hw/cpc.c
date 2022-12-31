@@ -1044,41 +1044,20 @@ static Variable * cpc_image_converter_bitmap_mode_hires( Environment * _environm
     image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
     RGBi * palette = malloc_palette( MAX_PALETTE );
-
+    
     int paletteColorCount = rgbi_extract_palette(_source, _width, _height, _depth, palette, MAX_PALETTE, ( ( _flags & FLAG_EXACT ) ? 0 : 1 ) /* sorted */);
 
     if (paletteColorCount > 2) {
         CRITICAL_IMAGE_CONVERTER_TOO_COLORS( paletteColorCount );
     }
 
-    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
-    result->originalColors = paletteColorCount;
-
     int i, j, k;
 
-    for( i=0; i<paletteColorCount; ++i ) {
-        int minDistance = 0xffff;
-        int colorIndex = 0;
-        for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
-            int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
-            if (distance < minDistance) {
-                for( k=0; k<i; ++k ) {
-                    if ( palette[k].index == SYSTEM_PALETTE[j].index ) {
-                        break;
-                    }
-                }
-                if ( k>=i ) {
-                    minDistance = distance;
-                    colorIndex = j;
-                }
-            }
-        }
-        palette[i].index = SYSTEM_PALETTE[colorIndex].index;
-        palette[i].hardwareIndex = SYSTEM_PALETTE[colorIndex].hardwareIndex;
-        strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
-    }
+    RGBi * matchedPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
 
-    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
+    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
+    result->originalColors = lastUsedSlotInCommonPalette;
+    memcpy( result->originalPalette, commonPalette, lastUsedSlotInCommonPalette * sizeof( RGBi ) );
 
     int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_GRAPHIC2 );
     char * buffer = malloc ( bufferSize );
@@ -1118,10 +1097,10 @@ static Variable * cpc_image_converter_bitmap_mode_hires( Environment * _environm
             if ( rgb.alpha < 255 ) {
                 i = 0;
             } else {
-                for( i=0; i<paletteColorCount; ++i ) {
-                    if ( rgbi_equals_rgba( &palette[i], &rgb ) ) {
-                        break;
-                    }
+                if ( ! rgbi_equals_rgba( &palette[0], &rgb ) ) {
+                    i = 1;
+                } else {
+                    i = 0;
                 }
             }
 
@@ -1144,17 +1123,21 @@ static Variable * cpc_image_converter_bitmap_mode_hires( Environment * _environm
 
     }
 
-    if ( paletteColorCount > 1 ) {
-        *(buffer + 3 + ( ( _frame_width >> 3 ) * _frame_height ) + 1 ) = palette[1].hardwareIndex;
-    } else {
-        *(buffer + 3 + ( ( _frame_width >> 3 ) * _frame_height ) + 1 ) = 0;
-    }
+    int hwIndex;
 
-    if ( paletteColorCount > 0 ) {
-        *(buffer + 3 + ( ( _frame_width >> 3 ) * _frame_height ) ) = palette[0].hardwareIndex;
+    if ( lastUsedSlotInCommonPalette > 1 ) {
+        hwIndex = matchedPalette[1].hardwareIndex;
     } else {
-        *(buffer + 3 + ( ( _frame_width >> 3 ) * _frame_height ) ) = 0;
+        hwIndex = 0xff;
     }
+    *(buffer + 3 + ( ( _frame_width >> 3 ) * _frame_height ) + 1 ) = hwIndex;
+
+    if ( lastUsedSlotInCommonPalette > 1 ) {
+        hwIndex = matchedPalette[0].hardwareIndex;
+    } else {
+        hwIndex = 0xff;
+    }
+    *(buffer + 3 + ( ( _frame_width >> 3 ) * _frame_height ) ) = hwIndex;
 
     variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
 
@@ -1167,98 +1150,35 @@ static Variable * cpc_image_converter_multicolor_mode_midres( Environment * _env
     image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
     RGBi * palette = malloc_palette( MAX_PALETTE );
-
+    
     int paletteColorCount = rgbi_extract_palette(_source, _width, _height, _depth, palette, MAX_PALETTE, ( ( _flags & FLAG_EXACT ) ? 0 : 1 ) /* sorted */);
-    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
-    result->originalColors = paletteColorCount;
+
+    if (paletteColorCount > 4) {
+        CRITICAL_IMAGE_CONVERTER_TOO_COLORS( paletteColorCount );
+    }
 
     int i, j, k;
 
     if ( ! commonPalette ) {
 
-        if (paletteColorCount > 4) {
-            CRITICAL_IMAGE_CONVERTER_TOO_COLORS( paletteColorCount );
-        }
-
-        if ( _flags & FLAG_OVERLAYED ) {
-            rgbi_move( &palette[2], &palette[3] );
-            rgbi_move( &palette[1], &palette[2] );
-            rgbi_move( &palette[0], &palette[1] );
-            rgbi_move( &SYSTEM_PALETTE[0], &palette[0] );
-            palette[0].used = 1;
-            ++paletteColorCount;
-        }
-        
-        for( i=(_flags & FLAG_OVERLAYED ? 1 : 0); i<paletteColorCount; ++i ) {
-            int minDistance = 0xffff;
-            int colorIndex = 0;
-            for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
-                int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
-                if (distance < minDistance) {
-                    for( k=0; k<i; ++k ) {
-                        if ( palette[k].hardwareIndex == SYSTEM_PALETTE[j].hardwareIndex ) {
-                            break;
-                        }
-                    }
-                    if ( k>=i ) {
-                        minDistance = distance;
-                        colorIndex = j;
-                        SYSTEM_PALETTE[j].alpha = palette[i].alpha;
-                    }
-                }
-            }
-            rgbi_move(&SYSTEM_PALETTE[colorIndex], &palette[i] );
-            palette[i].used = 1;
-        }
-
-        commonPalette = palette;
+        commonPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
         lastUsedSlotInCommonPalette = paletteColorCount;
     
     } else {
 
-        if (paletteColorCount > 4) {
-            CRITICAL_IMAGE_CONVERTER_TOO_COLORS( paletteColorCount );
-        }
+        RGBi * newPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
 
-        if ( ( _flags & FLAG_OVERLAYED ) && ( palette[0].index != 0 ) ) {
-            rgbi_move( &palette[2], &palette[3] );
-            rgbi_move( &palette[1], &palette[2] );
-            rgbi_move( &palette[0], &palette[1] );
-            rgbi_move( &SYSTEM_PALETTE[0], &palette[0] );
-            palette[0].used = 1;
-            ++paletteColorCount;
-        }
+        int mergedCommonPalette = 0;
 
-        for( i=1; i<paletteColorCount; ++i ) {
-            int minDistance = 0xffff;
-            int colorIndex = 0;
-            int addIndex = 0;
-            for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
-                int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
-                if (distance < minDistance) {
-                    for( k=0; k<lastUsedSlotInCommonPalette; ++k ) {
-                        if ( commonPalette[k].index == SYSTEM_PALETTE[j].index ) {
-                            break;
-                        }
-                    }
-                    if ( k>=lastUsedSlotInCommonPalette ) {
-                        minDistance = distance;
-                        colorIndex = j;
-                        addIndex = 1;
-                        SYSTEM_PALETTE[j].alpha = palette[i].alpha;
-                    }
-                }
-            }
-            if ( addIndex ) {
-                rgbi_move(&SYSTEM_PALETTE[colorIndex], &commonPalette[lastUsedSlotInCommonPalette]);
-                ++lastUsedSlotInCommonPalette;
-            }
-            commonPalette[lastUsedSlotInCommonPalette].used = 1;
-        }
+        commonPalette = palette_merge( commonPalette, lastUsedSlotInCommonPalette, newPalette, paletteColorCount, &mergedCommonPalette );
+
+        lastUsedSlotInCommonPalette = mergedCommonPalette;
 
     }
 
-    memcpy( result->originalPalette, commonPalette, MAX_PALETTE * sizeof( RGBi ) );
+    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
+    result->originalColors = lastUsedSlotInCommonPalette;
+    memcpy( result->originalPalette, commonPalette, lastUsedSlotInCommonPalette * sizeof( RGBi ) );
 
     int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_GRAPHIC1 );
     
@@ -1399,8 +1319,6 @@ static Variable * cpc_image_converter_multicolor_mode_lores( Environment * _envi
         CRITICAL_IMAGE_CONVERTER_TOO_COLORS( paletteColorCount );
     }
 
-    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
-
     int i, j, k;
 
     if ( ! commonPalette ) {
@@ -1420,6 +1338,7 @@ static Variable * cpc_image_converter_multicolor_mode_lores( Environment * _envi
 
     }
 
+    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = lastUsedSlotInCommonPalette;
     memcpy( result->originalPalette, commonPalette, lastUsedSlotInCommonPalette * sizeof( RGBi ) );
 
