@@ -229,12 +229,12 @@ typedef struct _RGBi {
     unsigned char red;
     unsigned char green;
     unsigned char blue;
+    unsigned char alpha;
     unsigned char index;
     char description[64];
     unsigned char hardwareIndex;
     unsigned char used;
     int count;
-    unsigned char alpha;
 } RGBi;
 
 /**
@@ -2823,6 +2823,7 @@ void                    on_scroll_gosub( Environment * _environment, int _x, int
 // *P*
 //----------------------------------------------------------------------------
 
+RGBi *                  palette_match( RGBi * _source, int _source_size, RGBi * _system, int _system_size );
 void                    paper( Environment * _environment, char * _paper );
 Variable *              param_procedure( Environment * _environment, char * _name );
 Variable *              parse_buffer_definition( Environment * _environment, char * _buffer, VariableType _type );

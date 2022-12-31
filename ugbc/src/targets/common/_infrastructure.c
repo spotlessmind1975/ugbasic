@@ -6627,6 +6627,12 @@ int check_if_filename_is_valid( Environment * _environment,  char * _filename ) 
 
 }
 
+/**
+ * @brief Allocate a palette space
+ * 
+ * @param _size Size of palette, in entries
+ * @return RGBi* Memory storage for the palette
+ */
 RGBi * malloc_palette( int _size ) {
     
     RGBi * palette = malloc( _size * sizeof(RGBi) );
@@ -6634,5 +6640,42 @@ RGBi * malloc_palette( int _size ) {
     memset( palette, 0, _size * sizeof(RGBi) );
     
     return palette;
+
+}
+
+/**
+ * @brief Make a "palette match"
+ * 
+ * @param _environment Enviroment to refer to.
+ * @param _source Source palette to match
+ * @param _source_size Size of the source palette
+ * @param _system System palette to use as reference
+ * @param _system_size Size of the reference palette
+ * @return RGBi* Matched palette
+ */
+RGBi * palette_match( RGBi * _source, int _source_size, RGBi * _system, int _system_size ) {
+
+    RGBi * matchedPalette = malloc_palette( _source_size );
+
+    int i, j;
+
+    for ( i=0; i<_source_size; ++i ) {
+
+        unsigned int minDistance = 0xffff;
+
+        for( j=0; j<_system_size; ++j ) {
+
+            unsigned int distance = rgbi_distance( &_source[i], &_system[j] );
+
+            if ( distance < minDistance ) {
+                rgbi_move( &_system[j], &matchedPalette[i] );
+                minDistance = distance;
+            }
+
+        }
+
+    }
+
+    return matchedPalette;
 
 }
