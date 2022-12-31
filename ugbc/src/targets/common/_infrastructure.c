@@ -6646,7 +6646,6 @@ RGBi * malloc_palette( int _size ) {
 /**
  * @brief Make a "palette match"
  * 
- * @param _environment Enviroment to refer to.
  * @param _source Source palette to match
  * @param _source_size Size of the source palette
  * @param _system System palette to use as reference
@@ -6657,7 +6656,7 @@ RGBi * palette_match( RGBi * _source, int _source_size, RGBi * _system, int _sys
 
     RGBi * matchedPalette = malloc_palette( _source_size );
 
-    int i, j;
+    int i, j, k;
 
     for ( i=0; i<_source_size; ++i ) {
 
@@ -6677,5 +6676,66 @@ RGBi * palette_match( RGBi * _source, int _source_size, RGBi * _system, int _sys
     }
 
     return matchedPalette;
+
+}
+
+/**
+ * @brief Make a "palette merge"
+ * 
+ * @param _palette1 First palette to merge
+ * @param _palette1_size Size of the first palette to merge
+ * @param _palette2 Second palette to merge
+ * @param _palette2_size Size of the second palette to merge
+ * @param _size Size of the merged palette
+ * @return RGBi* Merged palettes
+ */
+RGBi * palette_merge( RGBi * _palette1, int _palette1_size, RGBi * _palette2, int _palette2_size, int * _size ) {
+
+    RGBi * mergedPalette = malloc_palette( _palette1_size + _palette2_size );
+    *_size = 0;
+
+    int i, j, k;
+
+    for ( i=0; i<_palette1_size; ++i ) {
+        if ( _palette1[i].alpha < 255 ) {
+            rgbi_move( &_palette1[i], &mergedPalette[*_size] );
+            ++*_size;
+        }
+    }
+
+    for ( i=0; i<_palette2_size; ++i ) {
+        if ( _palette2[i].alpha < 255 ) {
+            rgbi_move( &_palette2[i], &mergedPalette[*_size] );
+            ++*_size;
+        }
+    }
+
+    for ( i=0; i<_palette1_size; ++i ) {
+        if ( _palette1[i].alpha < 255 ) continue;
+        for( j=0; j<*_size; ++j ) {
+            if ( rgbi_equals_rgb( &_palette1[i], &mergedPalette[j] ) ) {
+                break;
+            }
+        }
+        if ( j >= *_size ) {
+            rgbi_move( &_palette1[i], &mergedPalette[*_size] );
+            ++*_size;
+        }
+    }
+
+    for ( i=0; i<_palette2_size; ++i ) {
+        if ( _palette2[i].alpha < 255 ) continue;
+        for( j=0; j<*_size; ++j ) {
+            if ( rgbi_equals_rgb( &_palette2[i], &mergedPalette[j] ) ) {
+                break;
+            }
+        }
+        if ( j >= *_size ) {
+            rgbi_move( &_palette2[i], &mergedPalette[*_size] );
+            ++*_size;
+        }
+    }
+
+    return mergedPalette;
 
 }

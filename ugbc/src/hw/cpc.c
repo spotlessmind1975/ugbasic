@@ -1395,79 +1395,33 @@ static Variable * cpc_image_converter_multicolor_mode_lores( Environment * _envi
     
     int paletteColorCount = rgbi_extract_palette(_source, _width, _height, _depth, palette, MAX_PALETTE, ( ( _flags & FLAG_EXACT ) ? 0 : 1 ) /* sorted */);
 
-    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
+    if (paletteColorCount > 16) {
+        CRITICAL_IMAGE_CONVERTER_TOO_COLORS( paletteColorCount );
+    }
 
-    result->originalColors = paletteColorCount;
+    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
 
     int i, j, k;
 
     if ( ! commonPalette ) {
 
-        if (paletteColorCount > 16) {
-            CRITICAL_IMAGE_CONVERTER_TOO_COLORS( paletteColorCount );
-        }
-
-        for( i=0; i<paletteColorCount; ++i ) {
-            int minDistance = 0xffff;
-            int colorIndex = 0;
-            for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
-                int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
-                if (distance < minDistance) {
-                    for( k=0; k<i; ++k ) {
-                        if ( palette[k].hardwareIndex == SYSTEM_PALETTE[j].hardwareIndex ) {
-                            break;
-                        }
-                    }
-                    if ( k>=i ) {
-                        minDistance = distance;
-                        colorIndex = j;
-                        SYSTEM_PALETTE[j].alpha = palette[i].alpha;
-                    }
-                }
-            }
-            rgbi_move(&SYSTEM_PALETTE[colorIndex], &palette[i] );
-            palette[i].used = 1;
-        }
-
-        commonPalette = palette;
+        commonPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
         lastUsedSlotInCommonPalette = paletteColorCount;
     
     } else {
 
-        if (paletteColorCount > 16) {
-            CRITICAL_IMAGE_CONVERTER_TOO_COLORS( paletteColorCount );
-        }
+        RGBi * newPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
 
-        for( i=1; i<paletteColorCount; ++i ) {
-            unsigned int minDistance = 0xffff;
-            int colorIndex = 0;
-            int addIndex = 1;
-            for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
-                int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
-                if (distance < minDistance) {
-                    addIndex = 1;
-                    minDistance = distance;
-                    colorIndex = j;
-                    SYSTEM_PALETTE[j].alpha = palette[i].alpha;
-                }
-            }
-            if ( addIndex ) {
-                for( k=0; k<lastUsedSlotInCommonPalette; ++k ) {
-                    if ( commonPalette[k].index == SYSTEM_PALETTE[colorIndex].index ) {
-                        break;
-                    }
-                }
-                if ( k>=lastUsedSlotInCommonPalette ) {
-                    rgbi_move(&SYSTEM_PALETTE[colorIndex], &commonPalette[lastUsedSlotInCommonPalette]);
-                    commonPalette[lastUsedSlotInCommonPalette].used = 1;
-                    ++lastUsedSlotInCommonPalette;
-                }
-            }
-        }
+        int mergedCommonPalette = 0;
+
+        commonPalette = palette_merge( commonPalette, lastUsedSlotInCommonPalette, newPalette, paletteColorCount, &mergedCommonPalette );
+
+        lastUsedSlotInCommonPalette = mergedCommonPalette;
 
     }
 
-    memcpy( result->originalPalette, commonPalette, MAX_PALETTE * sizeof( RGBi ) );
+    result->originalColors = lastUsedSlotInCommonPalette;
+    memcpy( result->originalPalette, commonPalette, lastUsedSlotInCommonPalette * sizeof( RGBi ) );
 
     int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_GRAPHIC0 );
     
@@ -1556,7 +1510,7 @@ static Variable * cpc_image_converter_multicolor_mode_lores( Environment * _envi
         } else {
             printf("  background  (0000) = %2.2x (%s) [currently ignored since it can be overlayed]\n", commonPalette[0].index, commonPalette[0].description );
         }
-        for(int i=1;i<16;++i) {
+        for(int i=1;i<lastUsedSlotInCommonPalette;++i) {
             printf("  pen         (%d) = %2.2x (%s)\n", i, commonPalette[i].hardwareIndex, commonPalette[i].description );
         }
         printf("\n" );
