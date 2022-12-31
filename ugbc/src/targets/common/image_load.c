@@ -119,7 +119,7 @@ Variable * image_load( Environment * _environment, char * _filename, char * _ali
     if ( _environment->tenLinerRulesEnforced ) {
         CRITICAL_10_LINE_RULES_ENFORCED( "LOAD IMAGE");
     }
-
+    
     LoadedFile * first = _environment->loadedFiles;
     char *lookfor = _filename;
     if ( _alias ) {
@@ -154,21 +154,7 @@ Variable * image_load( Environment * _environment, char * _filename, char * _ali
     if ( _transparent_color != -1 ) {
         _flags |= FLAG_TRANSPARENCY;
     }
-
-    if ( _environment->dumpImageInfoFileName ) {
-        FILE * fhandle = fopen( _environment->dumpImageInfoFileName, "at" );
-            fprintf( fhandle, "I:0:%s:%s:%d:%d:%d:%d:%d:%d:%d\n", 
-                _filename,
-                lookedFilename, 
-                width, height, depth, 
-                (_flags & FLAG_FLIP_X) ? 1 : 0, 
-                (_flags & FLAG_FLIP_Y) ? 1 : 0, 
-                (_flags & FLAG_TRANSPARENCY) ? 1 : 0,
-                _transparent_color 
-            );
-        fclose( fhandle );
-    }
-
+    
     Variable * result = image_converter( _environment, source, width, height, depth, 0, 0, 0, 0, _mode, _transparent_color, _flags );
     
     result->originalBitmap = source;

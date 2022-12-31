@@ -1277,11 +1277,6 @@ typedef struct _Environment {
     char * temporaryPath;
 
     /**
-     * Filename for dumping image info
-     */
-    char * dumpImageInfoFileName;
-
-    /**
      * 
      */
     int analysis;
@@ -1664,7 +1659,7 @@ typedef struct _Environment {
      * Debug during LOAD IMAGE.
      */
     int debugImageLoad;
-
+    
     /**
      * Default type for variables.
      */

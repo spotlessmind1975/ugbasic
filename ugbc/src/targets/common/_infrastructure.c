@@ -6319,6 +6319,8 @@ int rgbi_extract_palette( unsigned char* _source, int _width, int _height, int _
             }
             rgb.count = 0;
 
+            // printf("%2.2x%2.2x%2.2x %2.2x\n", rgb.red, rgb.blue, rgb.green, rgb.alpha );
+
             for (i = 0; i < usedPalette; ++i) {
                 if (rgbi_equals_rgba( &_palette[i], &rgb )) {
                     break;
@@ -6326,12 +6328,14 @@ int rgbi_extract_palette( unsigned char* _source, int _width, int _height, int _
             }
 
             if (i >= usedPalette) {
+                // printf( "added\n");
                 rgbi_move( &rgb, &_palette[usedPalette] );
                 ++usedPalette;
                 if (usedPalette > _palette_size) {
                     break;
                 }
             } else {
+                // printf( "increment (%2.2x)\n", _palette[i].alpha);
                 ++_palette[i].count;
             }
             source += _depth;
@@ -6341,9 +6345,21 @@ int rgbi_extract_palette( unsigned char* _source, int _width, int _height, int _
         }
     }
 
+    // printf("USED PALETTE: %d\n", usedPalette );
+
+    // printf("PALETTE:\n" );
+    // for(i=0;i<8;++i) {
+    //     printf("  %i) %2.2x%2.2x%2.2x %2.2x (%d)\n", i, _palette[i].red, _palette[i].green, _palette[i].blue, _palette[i].alpha, _palette[i].count );
+    // }
+
     if ( _sorted ) {
         qsort( _palette, _palette_size, sizeof( RGBi ), rgbi_qsort_compare );
     }
+
+    // printf("QSORT:\n" );
+    // for(i=0;i<8;++i) {
+    //     printf("  %i) %2.2x%2.2x%2.2x %2.2x (%d)\n", i, _palette[i].red, _palette[i].green, _palette[i].blue, _palette[i].alpha, _palette[i].count );
+    // }
 
     return usedPalette;
 
