@@ -36,6 +36,9 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 TEXTATBITMAPMODE:
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 1 ) || ( currentMode == 2 ) )
+
     LDA TEXTSIZE
     BNE TEXTATBITMAPMODEGO
     RTS
@@ -398,4 +401,7 @@ TEXTATBMXLOOP2:
     JMP TEXTATBMLOOP2
 TEXTATBMEND:
     CLI
+
+@ENDIF
+
     RTS

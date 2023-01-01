@@ -36,6 +36,9 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 TEXTATTILEMODE:
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 0 ) )
+
     LDA TEXTSIZE
     BNE TEXTATTILEMODEGO
     RTS
@@ -452,4 +455,7 @@ TEXTATXLOOP2:
     JMP TEXTATLOOP2
 TEXTATEND:
     CLI
+
+@ENDIF
+
     RTS
