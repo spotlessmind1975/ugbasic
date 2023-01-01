@@ -56,7 +56,7 @@ PUTIMAGE:
     LD C, (HL)
     INC HL
     LD A, (HL)
-    LD IXL, A
+    LD IXH, A
     INC HL
     LD B, (HL)
     INC HL
@@ -147,10 +147,10 @@ PUTIMAGE0L1T0:
 
     DEC C
     JR NZ, PUTIMAGE0L1
-    LD A, IXL
+    LD A, IXH
     CP $0
     JR Z, PUTIMAGE0DONEROW
-    DEC IXL
+    DEC IXH
     LD A, $FF
     LD C, A
     JP PUTIMAGE0L1
@@ -301,10 +301,10 @@ PUTIMAGE1L1T0:
 
     DEC C
     JP NZ, PUTIMAGE1L1
-    LD A, IXL
+    LD A, IXH
     CP $0
     JR Z, PUTIMAGE1DONEROW
-    DEC IXL
+    DEC IXH
     LD A, $FF
     LD C, A
     JP PUTIMAGE1L1
@@ -499,10 +499,10 @@ PUTIMAGE2L1T0:
 
     DEC C
     JP NZ, PUTIMAGE2L1
-    LD A, IXL
+    LD A, IXH
     CP $0
     JR Z, PUTIMAGE2DONEROW
-    DEC IXL
+    DEC IXH
     LD A, $FF
     LD C, A
     JP PUTIMAGE2L1
