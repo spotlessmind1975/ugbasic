@@ -170,17 +170,36 @@ WAITVBL3:
     RTS    
 
 DOUBLEBUFFERINIT:
+
+@IF vestigialConfig.doubleBufferSelected || vestigialConfig.doubleBuffer
+
     LDA #0
     STA TILEMAPVISIBLE
     JSR COPYTILEMAP01
+
+@ENDIF
+
     RTS
 
 DOUBLEBUFFERCLEANUP:
+
+@IF vestigialConfig.doubleBufferSelected || vestigialConfig.doubleBuffer
+
     LDA TILEMAPVISIBLE
     BEQ DOUBLEBUFFERCLEANUP2
     JSR SWITCHTILEMAP0
 
+@ELSE
+
+    RTS
+
+@ENDIF
+
+
 DOUBLEBUFFERCLEANUP2:
+
+@IF vestigialConfig.doubleBufferSelected || vestigialConfig.doubleBuffer
+
     LDA $d018
     AND #$0f
     ORA #$10
@@ -192,7 +211,13 @@ DOUBLEBUFFERCLEANUP2:
     STA TEXTADDRESS+1
     RTS
 
+@ENDIF
+
+
 COPYTILEMAP01:
+
+@IF vestigialConfig.doubleBufferSelected || vestigialConfig.doubleBuffer
+
     LDX #<(40*25)
     STX MATHPTR0
     LDX #>(40*25)
@@ -206,8 +231,13 @@ COPYTILEMAP01:
     LDA #$88
     STA TMPPTR2+1
     JMP CPUMEMMOVE
+
+@ENDIF
 
 COPYTILEMAP10:
+
+@IF vestigialConfig.doubleBufferSelected || vestigialConfig.doubleBuffer
+
     LDX #<(40*25)
     STX MATHPTR0
     LDX #>(40*25)
@@ -221,11 +251,15 @@ COPYTILEMAP10:
     LDA #$84
     STA TMPPTR2+1
     JMP CPUMEMMOVE
-    
+
+@ENDIF
+
 SWITCHTILEMAP:
+
+@IF vestigialConfig.doubleBufferSelected || vestigialConfig.doubleBuffer
+
     LDA TILEMAPVISIBLE
     BEQ SWITCHTILEMAP1
-
 
 SWITCHTILEMAP0:
     LDA $d018
@@ -257,3 +291,8 @@ SWITCHTILEMAP1:
 
     RTS
     
+@ELSE
+
+    RTS
+
+@ENDIF
