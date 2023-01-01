@@ -1256,14 +1256,6 @@ static Variable * cpc_image_converter_multicolor_mode_midres( Environment * _env
         }
     }
 
-    for( int kkk = 0; kkk < bufferSize; ++kkk ) {
-        printf("%2.2x ", buffer[kkk] );
-        if ( ( (kkk+1) % 8 == 0 ) ) {
-            printf("\n");
-        }
-    }
-    printf("\n");
-
     if ( _environment->debugImageLoad ) {
         printf("\n" );
     
@@ -1570,7 +1562,7 @@ void cpc_put_image( Environment * _environment, char * _image, char * _x, char *
     outline1("LD A, (%s)", _x );
     outline0("LD E, A" );
     outline1("LD A, (%s+1)", _x );
-    outline0("LD IXL, A" );
+    outline0("LD IYL, A" );
     outline1("LD A, (%s)", _y );
     outline0("LD D, A" );
     outline1("LD A, $%2.2x", _flags );

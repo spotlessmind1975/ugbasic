@@ -109,6 +109,7 @@ PUTIMAGE0L1:
     JP PUTIMAGE0L1T0
 
 PUTIMAGE0L1T:
+    PUSH IX
     PUSH BC
     LD A, 0
     LD IXH, A
@@ -140,6 +141,7 @@ PUTIMAGE0L1T3:
     ; Draw them
     LD (DE),A
     POP BC
+    POP IX
 
 PUTIMAGE0L1T0:
     INC DE
@@ -247,6 +249,7 @@ PUTIMAGE1L1:
     JP PUTIMAGE1L1T0
 
 PUTIMAGE1L1T:
+    PUSH IX
     PUSH BC
     LD A, 0
     LD IXH, A
@@ -294,6 +297,7 @@ PUTIMAGE1L1T5:
     ; Draw them
     LD (DE),A
     POP BC
+    POP IX
 
 PUTIMAGE1L1T0:
     INC DE
@@ -413,6 +417,7 @@ PUTIMAGE2L1:
     JP PUTIMAGE2L1T0
 
 PUTIMAGE2L1T:
+    PUSH IX
     PUSH BC
     LD A, 0
     LD IXH, A
@@ -492,6 +497,7 @@ PUTIMAGE2L1T9:
     ; Draw them
     LD (DE),A
     POP BC
+    POP IX
 
 PUTIMAGE2L1T0:
     INC DE
