@@ -95,7 +95,6 @@ void target_initialization( Environment * _environment ) {
         exit(EXIT_FAILURE);
     }
 
-    outhead0(".include \"atari.inc\"");
     outhead0(".segment \"CODE\"");
     outhead0(".proc MAINENTRY");
 

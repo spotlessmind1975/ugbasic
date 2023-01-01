@@ -53,8 +53,8 @@ void target_finalization( Environment * _environment ) {
     outhead0(".word   MAINENTRY::MAINEND - 1");
 
     outhead0(".segment \"AUTOSTRT\"");
-    outhead0(".word   RUNAD                   ; defined in atari.h");
-    outhead0(".word   RUNAD+1");
+    outhead0(".word   $02E0");
+    outhead0(".word   $02E1");
     outhead0(".word   MAINENTRY");
 
 }
