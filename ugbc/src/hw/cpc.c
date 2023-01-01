@@ -1256,6 +1256,14 @@ static Variable * cpc_image_converter_multicolor_mode_midres( Environment * _env
         }
     }
 
+    for( int kkk = 0; kkk < bufferSize; ++kkk ) {
+        printf("%2.2x ", buffer[kkk] );
+        if ( ( (kkk+1) % 8 == 0 ) ) {
+            printf("\n");
+        }
+    }
+    printf("\n");
+
     if ( _environment->debugImageLoad ) {
         printf("\n" );
     
@@ -1273,28 +1281,28 @@ static Variable * cpc_image_converter_multicolor_mode_midres( Environment * _env
     }
 
     int hwIndex = 0;
-    if ( lastUsedSlotInCommonPalette > 1 ) {
+    if ( lastUsedSlotInCommonPalette > 0 ) {
         hwIndex = commonPalette[0].hardwareIndex;
     } else {
         hwIndex = 0xff;
     }
     *(buffer + 3 + ( ( _frame_width >> 2 ) * _frame_height ) )= hwIndex;
 
-    if ( lastUsedSlotInCommonPalette > 2 ) {
+    if ( lastUsedSlotInCommonPalette > 1 ) {
         hwIndex = commonPalette[1].hardwareIndex;
+    } else {
+        hwIndex = 0xff;
+    }
+    *(buffer + 3 + ( ( _frame_width >> 2 ) * _frame_height ) + 2 ) = hwIndex;
+
+    if ( lastUsedSlotInCommonPalette > 2 ) {
+        hwIndex = commonPalette[2].hardwareIndex;
     } else {
         hwIndex = 0xff;
     }
     *(buffer + 3 + ( ( _frame_width >> 2 ) * _frame_height ) + 1 ) = hwIndex;
 
     if ( lastUsedSlotInCommonPalette > 3 ) {
-        hwIndex = commonPalette[2].hardwareIndex;
-    } else {
-        hwIndex = 0xff;
-    }
-    *(buffer + 3 + ( ( _frame_width >> 2 ) * _frame_height ) + 2 ) = hwIndex;
-
-    if ( lastUsedSlotInCommonPalette > 4 ) {
         hwIndex = commonPalette[3].hardwareIndex;
     } else {
         hwIndex = 0xff;
