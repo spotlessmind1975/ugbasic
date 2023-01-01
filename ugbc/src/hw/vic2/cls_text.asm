@@ -36,6 +36,9 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 CLST:
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 0 ) )
+
     LDA TEXTADDRESS
     STA COPYOFTEXTADDRESS
     LDA TEXTADDRESS+1
@@ -81,5 +84,7 @@ CLSTC2:
 CLSTCNB:
     DEX
     BNE CLSTC
+
+@ENDIF
 
     RTS

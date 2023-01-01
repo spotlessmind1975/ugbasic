@@ -38,6 +38,9 @@
 
 
 CLSG:
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 1 ) || ( currentMode == 2 ) )
+
     LDA BITMAPADDRESS
     STA COPYOFBITMAPADDRESS
     LDA BITMAPADDRESS+1
@@ -86,5 +89,7 @@ CLGC2:
 CLGCNB:
     DEX
     BNE CLGC
+
+@ENDIF
 
     RTS

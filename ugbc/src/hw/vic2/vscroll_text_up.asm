@@ -36,6 +36,9 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 VSCROLLTUP:
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 0 ) )
+
     TXA
     PHA
     TYA
@@ -127,4 +130,7 @@ VSCROLLTCUEND:
     TAY
     PLA
     TAX
+
+@ENDIF
+
     RTS

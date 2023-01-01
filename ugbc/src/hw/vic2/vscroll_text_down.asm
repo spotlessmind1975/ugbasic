@@ -36,6 +36,9 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 VSCROLLTDOWN:
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 0 ) )
+
     TXA
     PHA
     TYA
@@ -162,4 +165,7 @@ SCROLLFILLUPC:
     TAY
     PLA
     TAX
+    
+@ENDIF
+
     RTS
