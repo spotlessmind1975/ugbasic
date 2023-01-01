@@ -1566,8 +1566,6 @@ void vic2_initialization( Environment * _environment ) {
 
     vic2_tilemap_enable( _environment, 40, 25, 2, 8, 8 );
 
-    vic2_cls( _environment );
-
     _environment->fontWidth = 8;
     _environment->fontHeight = 8;
     _environment->screenTilesWidth = 40;

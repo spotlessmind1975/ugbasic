@@ -1381,8 +1381,6 @@ void gtia_initialization( Environment * _environment ) {
     _environment->currentMode = 2;
     _environment->currentTileMode = 1;
 
-    gtia_cls( _environment );
-
     _environment->currentRgbConverterFunction = rgbConverterFunction;
 
 }

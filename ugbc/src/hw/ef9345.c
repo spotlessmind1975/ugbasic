@@ -837,8 +837,6 @@ void ef9345_initialization( Environment * _environment ) {
 
     ef9345_tilemap_enable( _environment, 40, 21, 1, 8, 10 );
 
-    ef9345_cls( _environment );
-
     _environment->descriptors = precalculate_tile_descriptors_for_font( data_fontef9345_bin );
 
     _environment->descriptors->first = 0;

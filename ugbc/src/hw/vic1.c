@@ -722,8 +722,6 @@ void vic1_initialization( Environment * _environment ) {
     variable_import( _environment, "CLIPY2", VT_POSITION, 183 );
     variable_global( _environment, "CLIPY2" );
 
-    vic1_cls( _environment );
-
     _environment->fontWidth = 8;
     _environment->fontHeight = 8;
     _environment->screenTilesWidth = 22;

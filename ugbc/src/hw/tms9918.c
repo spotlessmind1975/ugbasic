@@ -1469,8 +1469,6 @@ void tms9918_initialization( Environment * _environment ) {
 
     tms9918_tilemap_enable( _environment, 40, 24, 1, 8, 8 );
 
-    tms9918_cls( _environment );
-
     _environment->descriptors = precalculate_tile_descriptors_for_font( data_fonttms9918_bin );
 
     _environment->descriptors->first = 0;
