@@ -413,6 +413,23 @@ static int _isZero(buffer buf) {
     return buf!=NULL && isZero(buf->str);
 }
 
+/* returns true if buf matches any op using the ALU between memory and a register */
+static int chg_reg(buffer buf, char * REG) {
+    if ( strcmp( REG, "A" ) == 0 ) {
+        if(match(buf, " ADC")) return 1;
+        if(match(buf, " AND")) return 1;
+        if(match(buf, " EOR")) return 1;
+        if(match(buf, " LDA")) return 1;
+        if(match(buf, " ORA")) return 1;
+        if(match(buf, " SBC")) return 1;
+    } else if ( strcmp( REG, "X" ) == 0 ) {
+        if(match(buf, " LDX")) return 1;
+    } else if ( strcmp( REG, "Y" ) == 0 ) {
+        if(match(buf, " LDY")) return 1;
+    }
+    return 0;
+}
+
 /* perform basic peephole optimization with a length-4 look-ahead */
 static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
     /* allows presumably safe operations */
@@ -625,12 +642,15 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
         optim( buf[1], RULE "(LDA x, LDA x)->(LDA x) [1]", NULL );
     }
 
-	if( match( buf[0], " LDA *", v1 ) && match( buf[2], " LDA *", v2 )
+	if( match( buf[0], " LDA *", v1 ) && match( buf[2], " LDA *", v2 ) &&
+        ! chg_reg(buf[1], "A")
         && strcmp( v1->str, v2->str ) == 0 ) {
         optim( buf[2], RULE "(LDA x, LDA x)->(LDA x) [2]", NULL );
     }
 
-	if( match( buf[0], " LDA *", v1 ) && match( buf[3], " LDA *", v2 )
+	if( match( buf[0], " LDA *", v1 ) && match( buf[3], " LDA *", v2 ) &&
+        ! chg_reg(buf[1], "A") &&
+        ! chg_reg(buf[2], "A")
         && strcmp( v1->str, v2->str ) == 0 ) {
         optim( buf[3], RULE "(LDA x, LDA x)->(LDA x) [3]", NULL );
     }
