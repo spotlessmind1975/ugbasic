@@ -37,15 +37,14 @@
 
 VSCROLLTDOWN:
 
-    LD BC, 192
+    LD BC, 199
     LD HL, PLOTVBASE
 
     ADD HL, BC
     ADD HL, BC
 
-    DEC HL
-    DEC HL
-    
+    LD BC, 191
+
 VSCROLLTDOWNL1:
 
     PUSH BC
