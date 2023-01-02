@@ -1272,6 +1272,11 @@ typedef struct _Environment {
     char * appMakerFileName;
 
     /**
+     * Filename of additional information file
+     */
+    char * additionalInfoFileName;
+
+    /**
      * TemporaryPath 
      */
     char * temporaryPath;
@@ -1695,6 +1700,16 @@ typedef struct _Environment {
      */
     int maxExpansionBankSize[MAX_RESIDENT_SHAREDS];
 
+    /*
+     * Number of assembly lines produced until now.
+     */
+    int producedAssemblyLines;
+
+    /*
+     * Number of assembly lines produced until the previous step.
+     */
+    int previousProducedAssemblyLines;
+
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */
@@ -1718,6 +1733,13 @@ typedef struct _Environment {
      * Handle to the file opened to write the assembly listing.
      */
     FILE * listingFile;
+
+    /**
+     * Handle to the file opened to write the number of assembly lines 
+     * for each ugBASIC line.
+     */
+    FILE * additionalInfoFile;
+
 
 } Environment;
 
@@ -1900,6 +1922,8 @@ typedef struct _Environment {
 #define WARNING_IMAGE_CONVERTER_UNSUPPORTED_MODE(f) WARNING2i("W005 - IMAGE converter unsupported for the given screen mode", f );
 #define WARNING_IMAGE_LOAD_EXACT_IGNORED( ) WARNING("W006 - Loading of the image will ignore EXACT flag" );
 
+int assemblyLineIsAComment( char * _buffer );
+
 #define outline0n(n,s,r)     \
     { \
         int outsi; \
@@ -1909,8 +1933,12 @@ typedef struct _Environment {
             fputs("\t; (excluded by ON target) : ", ((Environment *)_environment)->asmFile); \
         } \
         fputs(s,((Environment *)_environment)->asmFile); \
-        if ( r ) \
+        if ( r ) { \
             fputs("\n", ((Environment *)_environment)->asmFile); \
+            if ( ! ((Environment *)_environment)->emptyProcedure ) { \
+                ((Environment *)_environment)->producedAssemblyLines += assemblyLineIsAComment( s ) ? 0 : 1; \
+            } \
+        } \
     }
 
 #define outline1n(n,s,a,r)   \
@@ -1922,8 +1950,12 @@ typedef struct _Environment {
             fputs("\t; (excluded by ON target) : ", ((Environment *)_environment)->asmFile); \
         } \
         fprintf(((Environment *)_environment)->asmFile, s, a); \
-        if ( r ) \
+        if ( r ) { \
             fputs("\n", ((Environment *)_environment)->asmFile); \
+            if ( ! ((Environment *)_environment)->emptyProcedure ) { \
+                ((Environment *)_environment)->producedAssemblyLines += assemblyLineIsAComment( s ) ? 0 : 1; \
+            } \
+        } \
     }
 
 #define outline2n(n,s,a,b,r)   \
@@ -1935,8 +1967,12 @@ typedef struct _Environment {
             fputs("\t; (excluded by ON target) : ", ((Environment *)_environment)->asmFile); \
         } \
         fprintf(((Environment *)_environment)->asmFile, s, a, b); \
-        if ( r ) \
+        if ( r ) { \
             fputs("\n", ((Environment *)_environment)->asmFile); \
+            if ( ! ((Environment *)_environment)->emptyProcedure ) { \
+                ((Environment *)_environment)->producedAssemblyLines += assemblyLineIsAComment( s ) ? 0 : 1; \
+            } \
+        } \
     }
 
 #define outline3n(n,s,a,b,c,r)   \
@@ -1948,8 +1984,12 @@ typedef struct _Environment {
             fputs("\t; (excluded by ON target) : ", ((Environment *)_environment)->asmFile); \
         } \
         fprintf(((Environment *)_environment)->asmFile, s, a, b, c); \
-        if ( r ) \
+        if ( r ) { \
             fputs("\n", ((Environment *)_environment)->asmFile); \
+            if ( ! ((Environment *)_environment)->emptyProcedure ) { \
+                ((Environment *)_environment)->producedAssemblyLines += assemblyLineIsAComment( s ) ? 0 : 1; \
+            } \
+        } \
     }
 
 #define outline4n(n,s,a,b,c,d,r)   \
@@ -1961,8 +2001,12 @@ typedef struct _Environment {
             fputs("\t; (excluded by ON target) : ", ((Environment *)_environment)->asmFile); \
         } \
         fprintf(((Environment *)_environment)->asmFile, s, a, b, c, d); \
-        if ( r ) \
+        if ( r ) { \
             fputs("\n", ((Environment *)_environment)->asmFile); \
+            if ( ! ((Environment *)_environment)->emptyProcedure ) { \
+                ((Environment *)_environment)->producedAssemblyLines += assemblyLineIsAComment( s ) ? 0 : 1; \
+            } \
+        } \
     }
 
 #define outline5n(n,s,a,b,c,d,e,r)   \
@@ -1974,8 +2018,12 @@ typedef struct _Environment {
             fputs("\t; (excluded by ON target) : ", ((Environment *)_environment)->asmFile); \
         } \
         fprintf(((Environment *)_environment)->asmFile, s, a, b, c, d, e); \
-        if ( r ) \
+        if ( r ) { \
             fputs("\n", ((Environment *)_environment)->asmFile); \
+            if ( ! ((Environment *)_environment)->emptyProcedure ) { \
+                ((Environment *)_environment)->producedAssemblyLines += assemblyLineIsAComment( s ) ? 0 : 1; \
+            } \
+        } \
     }
 
 #define cfgline0n(n,s,r)     \
@@ -2046,6 +2094,7 @@ typedef struct _Environment {
             while( ! feof( fh ) ) { \
                 if ( fgets( line, MAX_TEMPORARY_STORAGE, fh ) ) { \
                     fputs( line, ((Environment *)_environment)->asmFile); \
+                    ((Environment *)_environment)->producedAssemblyLines += assemblyLineIsAComment( line ) ? 0 : 1; \
                 } \
             } \
             fclose( fh ); \
@@ -2080,6 +2129,7 @@ int embed_scan_string (const char *);
                 if ( i>= _environment->embedResult.current ) { \
                     strcat( parsed, line ); \
                     strcat( parsed, "\x0a" ); \
+                    ((Environment *)_environment)->producedAssemblyLines += assemblyLineIsAComment( line ) ? 0 : 1; \
                 } \
             } \
             line = strtok( NULL, "\x0a" ); \

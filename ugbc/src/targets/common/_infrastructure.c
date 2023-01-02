@@ -6739,3 +6739,23 @@ RGBi * palette_merge( RGBi * _palette1, int _palette1_size, RGBi * _palette2, in
     return mergedPalette;
 
 }
+
+/* returns true if the buffer matches a comment or and empty line */
+int assemblyLineIsAComment( char * _buffer ) {
+    if ( ! *_buffer ) {
+        return 1;
+    }
+    if ( *_buffer == '\r' || *_buffer == '\n' ) {
+        return 1;
+    }
+    while( * _buffer ) {
+        if ( *_buffer == ' ' || *_buffer == '\t' ) { 
+            ++_buffer;
+        } else if ( *_buffer == ';' ) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+    return 0;
+}

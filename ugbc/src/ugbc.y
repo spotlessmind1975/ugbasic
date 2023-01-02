@@ -6144,7 +6144,29 @@ statement2:
   |
   ;
 
-statement: { outline1("; L:%d", yylineno); } statement2;
+statement: 
+    { 
+
+        if ( yylineno ) {
+
+            int producedLines = ((Environment *)_environment)->producedAssemblyLines 
+                    - ((Environment *)_environment)->previousProducedAssemblyLines;
+
+            outline1("; P:%d", producedLines); 
+
+            if ( ((Environment *)_environment)->additionalInfoFile ) {
+                fprintf( ((Environment *)_environment)->additionalInfoFile, "P:0:%d\n", producedLines );
+            }
+
+            ((Environment *)_environment)->previousProducedAssemblyLines = 
+                ((Environment *)_environment)->producedAssemblyLines; 
+
+        }
+
+        outline1("; L:%d", yylineno);   
+
+    } 
+    statement2;
 
 statements_no_linenumbers:
       statement { ((Environment *)_environment)->yylineno = yylineno; variable_reset( _environment ); interleaved_instructions( _environment ); }
@@ -6346,7 +6368,7 @@ int main( int _argc, char *_argv[] ) {
     _environment->outputFileType = OUTPUT_FILE_TYPE_K7_NEW;
 #endif
 
-    while ((opt = getopt(_argc, _argv, "ae:c:Wo:Ie:l:EO:dL:C:VA:T:1p:G:X:P:q:")) != -1) {
+    while ((opt = getopt(_argc, _argv, "ae:c:Wo:Ie:l:EO:dD:L:C:VA:T:1p:G:X:P:q:")) != -1) {
         switch (opt) {
                 case 'a':
                     if ( ! _environment->listingFileName ) {
@@ -6416,6 +6438,9 @@ int main( int _argc, char *_argv[] ) {
                     } else if ( strcmp( optarg, "d64") == 0 ) {
                         _environment->outputFileType = OUTPUT_FILE_TYPE_D64;
                     }
+                    break;
+                case 'D':
+                    _environment->additionalInfoFileName = strdup(optarg);
                     break;
                 case 'W':
                     _environment->warningsEnabled = 1;
@@ -6651,6 +6676,10 @@ int main( int _argc, char *_argv[] ) {
         fprintf(stderr, "Unable to open source file: %s\n", _environment->sourceFileName );
         exit(EXIT_FAILURE);
     }
+
+    if ( _environment->additionalInfoFileName ) {
+        _environment->additionalInfoFile = fopen( _environment->additionalInfoFileName, "wt" );
+    }
     
     filenamestacked[0] = strdup( _environment->sourceFileName );
 
@@ -6662,6 +6691,10 @@ int main( int _argc, char *_argv[] ) {
 
     end_compilation( _environment );
 
+    if ( _environment->additionalInfoFile ) {
+        fclose( _environment->additionalInfoFile );
+    }
+    
     target_peephole_optimizer( _environment );
 
     if ( _environment->exeFileName ) {
