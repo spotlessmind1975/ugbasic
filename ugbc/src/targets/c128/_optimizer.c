@@ -430,6 +430,18 @@ static int chg_reg(buffer buf, char * REG) {
     return 0;
 }
 
+/* returns true if buf matches any read op */
+static int chg_read(buffer buf) {
+    if(match(buf, "ADC")) return 1;
+    if(match(buf, "AND")) return 1;
+    if(match(buf, "EOR")) return 1;
+    if(match(buf, "LDA")) return 1;
+    if(match(buf, "ORA")) return 1;
+    if(match(buf, "SBC")) return 1;
+    if(match(buf, "CMP")) return 1;
+    return 0;
+}
+
 /* perform basic peephole optimization with a length-4 look-ahead */
 static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
     /* allows presumably safe operations */
@@ -637,18 +649,21 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
 	// 	optim( buf[1], NULL, NULL );
     // }
 
-	if( match( buf[0], " LDA *", v1 ) && match( buf[1], " LDA *", v2 )
+	if( ! match( buf[0], " LDA *,Y", v3 ) && 
+        match( buf[0], " LDA *", v1 ) && match( buf[1], " LDA *", v2 )
         && strcmp( v1->str, v2->str ) == 0 ) {
         optim( buf[1], RULE "(LDA x, LDA x)->(LDA x) [1]", NULL );
     }
 
-	if( match( buf[0], " LDA *", v1 ) && match( buf[2], " LDA *", v2 ) &&
+	if( ! match( buf[0], " LDA *,Y", v3 ) &&
+        match( buf[0], " LDA *", v1 ) && match( buf[2], " LDA *", v2 ) &&
         ! chg_reg(buf[1], "A")
         && strcmp( v1->str, v2->str ) == 0 ) {
         optim( buf[2], RULE "(LDA x, LDA x)->(LDA x) [2]", NULL );
     }
 
-	if( match( buf[0], " LDA *", v1 ) && match( buf[3], " LDA *", v2 ) &&
+	if( ! match( buf[0], " LDA *,Y", v3 ) &&
+        match( buf[0], " LDA *", v1 ) && match( buf[3], " LDA *", v2 ) &&
         ! chg_reg(buf[1], "A") &&
         ! chg_reg(buf[2], "A")
         && strcmp( v1->str, v2->str ) == 0 ) {
@@ -747,19 +762,55 @@ static int vars_ok(buffer name) {
 static void vars_scan(buffer buf[LOOK_AHEAD]) {
     buffer tmp = TMP_BUF;
     buffer arg = TMP_BUF;
+    buffer cmd = TMP_BUF;
 
     // if( match( buf[0], " * _*+", NULL, buf) ) {
         // struct var *v = vars_get(buf);
         // v->flags |= NO_INLINE;
     // }
 
-    if( match( buf[0], " LD* *",  tmp, arg ) && strstr("A X Y", tmp->str)!=NULL ) 
-        if(vars_ok(arg)) {
+    if( 
+        match( buf[0], " LD* *",  tmp, arg ) && 
+        strstr("A X Y", tmp->str)!=NULL
+     ) if(vars_ok(arg)) {
+            struct var *v = vars_get(arg);
+            v->nb_rd++;
+        };
+
+    if( match( buf[0], " * *", cmd, arg ) &&
+        chg_read(cmd)     
+    ) if(vars_ok(arg)) {
+            struct var *v = vars_get(arg);
+            v->nb_rd++;
+        };
+
+    if( match( buf[0], " * (*),Y", cmd, arg ) &&
+        chg_read(cmd)     
+    ) if(vars_ok(arg)) {
+            struct var *v = vars_get(arg);
+            v->nb_rd++;
+        };
+
+    if( match( buf[0], " * *,X", cmd, arg ) &&
+        chg_read(cmd) 
+    ) if(vars_ok(arg)) {
             struct var *v = vars_get(arg);
             v->nb_rd++;
         };
 
     if( match( buf[0], " ST* *",  tmp, arg ) && strstr("A X Y", tmp->str)!=NULL ) 
+        if(vars_ok(arg)) {
+            struct var *v = vars_get(arg);
+            v->nb_wr++;
+        };
+
+    if( match( buf[0], " STA (*),Y",  arg ) ) 
+        if(vars_ok(arg)) {
+            struct var *v = vars_get(arg);
+            v->nb_wr++;
+        };
+
+    if( match( buf[0], " STA *,X",  arg ) ) 
         if(vars_ok(arg)) {
             struct var *v = vars_get(arg);
             v->nb_wr++;
