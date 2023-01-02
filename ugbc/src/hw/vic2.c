@@ -1564,8 +1564,6 @@ void vic2_initialization( Environment * _environment ) {
     variable_import( _environment, "SPRITECOUNT", VT_SPRITE, 0 );
     variable_global( _environment, "SPRITECOUNT" );
 
-    vic2_tilemap_enable( _environment, 40, 25, 2, 8, 8 );
-
     _environment->fontWidth = 8;
     _environment->fontHeight = 8;
     _environment->screenTilesWidth = 40;
