@@ -84,6 +84,11 @@ PLOTCLIP4B:
 PLOTCLIP5:
 
 PLOTMODE:
+
+@IF vestigialConfig.screenModeUnique
+
+@ELSE
+
     LDA CURRENTMODE
     ; BITMAP_MODE_STANDARD
     CMP #2
@@ -112,11 +117,19 @@ PLOT1X:
 PLOT4X:
     RTS
 
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 0 ) || ( currentMode == 1 ) ( currentMode == 4 ) )
+
 PLOT0:
 PLOT1:
 PLOT4:
     RTS
-    
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 2 ) )
+
 PLOT2:
 
     ;-------------------------
@@ -218,6 +231,10 @@ PLOT2:
     TAY                        ;put into index register
 
     JMP PLOTCOMMON
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 3 ) )
 
 PLOT3:
 
@@ -402,6 +419,8 @@ PLOT3PEN:
     TAY  
 
     JMP PLOTCOMMON
+
+@ENDIF
 
 PLOTCOMMON:
 

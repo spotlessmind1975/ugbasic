@@ -36,6 +36,9 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 TEXTATTILEMODE:
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 0 ) || ( currentMode == 1 ) || ( currentMode == 4 ) )
+
     LDA TEXTADDRESS
     STA COPYOFTEXTADDRESS
     LDA TEXTADDRESS+1
@@ -438,4 +441,7 @@ TEXTATXLOOP2:
     JMP TEXTATLOOP2
 TEXTATEND:
     CLI
+
+@ENDIF
+
     RTS

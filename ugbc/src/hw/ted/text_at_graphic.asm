@@ -36,6 +36,9 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 TEXTATBITMAPMODE:
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 2 ) || ( currentMode == 3 ) )
+
     LDA TEXTADDRESS
     STA COPYOFTEXTADDRESS
     LDA TEXTADDRESS+1
@@ -333,5 +336,8 @@ TEXTATBMXLOOP2:
     JMP TEXTATBMLOOP2
 TEXTATBMEND:
     CLI
+
+@ENDIF
+
     RTS
 

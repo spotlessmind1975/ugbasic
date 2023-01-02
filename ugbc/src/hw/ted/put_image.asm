@@ -40,6 +40,11 @@
 ; ----------------------------------------------------------------------------
 
 PUTIMAGE:
+
+@IF vestigialConfig.screenModeUnique
+
+@ELSE
+
     LDA CURRENTMODE
     ; BITMAP_MODE_STANDARD
     CMP #2
@@ -68,10 +73,18 @@ PUTIMAGE1X:
 PUTIMAGE4X:
     RTS
 
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 0 ) || ( currentMode == 1 ) || ( currentMode == 4 ) )
+
 PUTIMAGE0:
 PUTIMAGE1:
 PUTIMAGE4:
     RTS
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 2 )  )
 
 PUTIMAGE2:
     LDY #0
@@ -464,7 +477,9 @@ PUTIMAGE2L2N2:
 PUTIMAGE2E:
     RTS
 
-;;;;;;;;;;;;;;;;;
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 3 )  )
 
 PUTIMAGE3:
     LDY #0
@@ -958,6 +973,8 @@ PUTIMAGE3E:
     LDY #1
     LDA (TMPPTR),Y
     STA $FF16
+
+@ENDIF
 
     RTS
 

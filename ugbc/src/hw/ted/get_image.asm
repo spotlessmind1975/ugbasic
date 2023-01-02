@@ -40,6 +40,11 @@
 ; ----------------------------------------------------------------------------
 
 GETIMAGE:
+
+@IF vestigialConfig.screenModeUnique
+
+@ELSE
+
     LDA CURRENTMODE
     ; BITMAP_MODE_STANDARD
     CMP #2
@@ -68,10 +73,18 @@ GETIMAGE1X:
 GETIMAGE4X:
     RTS
 
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 0 ) || ( currentMode == 1 ) ( currentMode == 4 ) )
+
 GETIMAGE0:
 GETIMAGE1:
 GETIMAGE4:
     RTS
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 2 ) )
 
 GETIMAGE2:
     LDY #0
@@ -267,7 +280,9 @@ GETIMAGE2L2:
 GETIMAGE2E:
     RTS
 
-;;;;;;;;;;;;;;;;;
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 3 ) )
 
 GETIMAGE3:
     LDY #0
@@ -479,3 +494,5 @@ GETIMAGE3E:
     STA (TMPPTR),Y
 
     RTS
+
+@ENDIF

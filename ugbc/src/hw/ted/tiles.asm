@@ -50,6 +50,9 @@ TILEH2 = $9A
 ; ----------------------------------------------------------------------------
 
 PUTTILE:
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 0 ) || ( currentMode == 1 ) || ( currentMode == 4 ) )
+
     LDA TILEH2
     BNE PUTTILEEH2
     JMP PUTTILEE
@@ -289,4 +292,7 @@ TILEATL1:
     STA TILET
     
 TILEATEE:
+
+@ENDIF
+
     RTS

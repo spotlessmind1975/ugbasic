@@ -36,6 +36,9 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 HSCROLLST:
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 0 ) || ( currentMode == 1 ) || ( currentMode == 4 ) )
+
     LDA TEXTADDRESS
     STA COPYOFTEXTADDRESS
     LDA TEXTADDRESS+1
@@ -210,4 +213,7 @@ HSCROLLLRIGHTL1:
     BNE HSCROLLLRIGHTL1
     LDA #32
     STA (COPYOFTEXTADDRESS2),Y
+
+@ENDIF
+
     RTS

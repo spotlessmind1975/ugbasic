@@ -36,6 +36,9 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 VSCROLLT:
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 0 ) || ( currentMode == 1 ) || ( currentMode == 4 ) )
+
     TXA
     PHA
     TYA
@@ -211,4 +214,7 @@ SCROLLFILLUP:
     TYA
     PLA
     TXA
+
+@ENDIF
+
     RTS
