@@ -657,7 +657,8 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
 
 	if( ! match( buf[0], " LDA *,Y", v3 ) &&
         match( buf[0], " LDA *", v1 ) && match( buf[2], " LDA *", v2 ) &&
-        ! chg_reg(buf[1], "A")
+        ! chg_reg(buf[1], "A") &&
+        ! match( buf[1], "*:", v3 )
         && strcmp( v1->str, v2->str ) == 0 ) {
         optim( buf[2], RULE "(LDA x, LDA x)->(LDA x) [2]", NULL );
     }
@@ -665,7 +666,9 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
 	if( ! match( buf[0], " LDA *,Y", v3 ) &&
         match( buf[0], " LDA *", v1 ) && match( buf[3], " LDA *", v2 ) &&
         ! chg_reg(buf[1], "A") &&
-        ! chg_reg(buf[2], "A")
+        ! chg_reg(buf[2], "A") &&
+        ! match( buf[1], "*:", v3 ) &&
+        ! match( buf[2], "*:", v3 )
         && strcmp( v1->str, v2->str ) == 0 ) {
         optim( buf[3], RULE "(LDA x, LDA x)->(LDA x) [3]", NULL );
     }
