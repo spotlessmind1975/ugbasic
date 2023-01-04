@@ -952,8 +952,6 @@ void cpc_initialization( Environment * _environment ) {
 
     cpc_screen_mode_enable( _environment, find_screen_mode_by_id( _environment, BITMAP_MODE_DEFAULT ) );
 
-    cpc_cls( _environment );
-
     _environment->descriptors = precalculate_tile_descriptors_for_font( data_fontcpc_bin );
 
     _environment->descriptors->first = 0;
