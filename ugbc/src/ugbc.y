@@ -6146,25 +6146,7 @@ statement2:
 
 statement: 
     { 
-
-        if ( yylineno ) {
-
-            int producedLines = ((Environment *)_environment)->producedAssemblyLines 
-                    - ((Environment *)_environment)->previousProducedAssemblyLines;
-
-            outline1("; P:%d", producedLines); 
-
-            if ( ((Environment *)_environment)->additionalInfoFile ) {
-                fprintf( ((Environment *)_environment)->additionalInfoFile, "P:0:%d:%d\n", yylineno - 1, producedLines );
-            }
-
-            ((Environment *)_environment)->previousProducedAssemblyLines = 
-                ((Environment *)_environment)->producedAssemblyLines; 
-
-        }
-
         outline1("; L:%d", yylineno);   
-
     } 
     statement2;
 
@@ -6182,11 +6164,27 @@ statements_with_linenumbers:
         ((Environment *)_environment)->yylineno = yylineno;
     };
 
+emit_additional_info: {
+
+    int producedLines = ((Environment *)_environment)->producedAssemblyLines 
+            - ((Environment *)_environment)->previousProducedAssemblyLines;
+
+    outline1("; P:%d", producedLines); 
+
+    if ( ((Environment *)_environment)->additionalInfoFile ) {
+        fprintf( ((Environment *)_environment)->additionalInfoFile, "P:0:%d:%d\n", yylineno, producedLines );
+    }
+
+    ((Environment *)_environment)->previousProducedAssemblyLines = 
+        ((Environment *)_environment)->producedAssemblyLines; 
+
+};
+
 statements_complex:
-      statements_no_linenumbers
-    | statements_no_linenumbers NewLine statements_complex
-    | statements_with_linenumbers
-    | statements_with_linenumbers NewLine statements_complex
+      statements_no_linenumbers emit_additional_info
+    | statements_no_linenumbers emit_additional_info NewLine statements_complex
+    | statements_with_linenumbers emit_additional_info
+    | statements_with_linenumbers emit_additional_info NewLine statements_complex
     ;
 
 program : 
