@@ -21,7 +21,6 @@ extern int stacked;
 
 %}
 
-%option yylineno
 %x incl
 
 
@@ -66,8 +65,8 @@ INCLUDE             BEGIN(incl);
 "#["[a-fA-F0-9]+"]" { yylval.string = strdup(yytext); RETURN(BufferDefinition,1); }
 "#["[a-fA-F0-9]+ { yylval.string = strdup(yytext); RETURN(BufferDefinition,1); }
 
-_[\n\r]+ { yycolno = 0; }
-[\n\r]+ { RETURN(NewLine,0);}
+_[\n\r] { yycolno = 0;  ++yylineno; }
+[\n\r] { ++yylineno; RETURN(NewLine,0); }
 ";" { RETURN(OP_SEMICOLON,1); }
 ":" { RETURN(OP_COLON,1); }
 "(" { RETURN(OP,1); }
