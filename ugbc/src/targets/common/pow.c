@@ -83,7 +83,7 @@ Variable * powering( Environment * _environment, char * _base, char * _exponenti
         CRITICAL_VARIABLE(_exponential);
     }
 
-    Variable * result;
+    Variable * result, * temporary;
 
     if ( base->type == VT_DWORD ) {
         CRITICAL_POW_UNSUPPORTED( _base, DATATYPE_AS_STRING[base->type]);
@@ -125,6 +125,7 @@ Variable * powering( Environment * _environment, char * _base, char * _exponenti
     switch( VT_BITWIDTH( base->type ) ) {
         case 32:
             result = variable_temporary( _environment, VT_SIGNED( base->type ) ? VT_SDWORD : VT_DWORD, "(result of pow)");
+            temporary = variable_temporary( _environment, VT_SIGNED( base->type ) ? VT_SDWORD : VT_DWORD, "(result of pow)");
             variable_store( _environment, result->name, 1 );
             cpu_bveq( _environment, counter->realName, endLabel );
             cpu_label( _environment, label );
@@ -132,28 +133,31 @@ Variable * powering( Environment * _environment, char * _base, char * _exponenti
                 {
                     char baseRealName[MAX_TEMPORARY_STORAGE]; sprintf( baseRealName, "%s+2", base->realName );
                     char resultRealName[MAX_TEMPORARY_STORAGE]; sprintf( resultRealName, "%s+2", result->realName );
-                    cpu_math_mul_16bit_to_32bit( _environment, baseRealName, resultRealName, result->realName, VT_SIGNED( base->type ) );
+                    cpu_math_mul_16bit_to_32bit( _environment, baseRealName, resultRealName, temporary->realName, VT_SIGNED( base->type ) );
                 }
             #else
-                cpu_math_mul_16bit_to_32bit( _environment, base->realName, result->realName, result->realName, VT_SIGNED( base->type ) );
+                cpu_math_mul_16bit_to_32bit( _environment, base->realName, result->realName, temporary->realName, VT_SIGNED( base->type ) );
             #endif
+            cpu_move_32bit( _environment, temporary->realName, result->realName );
             cpu_dec( _environment, counter->realName );
             cpu_bvneq( _environment, counter->realName, label );
             cpu_label( _environment, endLabel );
             break;
         case 16:
             result = variable_temporary( _environment, VT_SIGNED( base->type ) ? VT_SDWORD : VT_DWORD, "(result of pow)");
+            temporary = variable_temporary( _environment, VT_SIGNED( base->type ) ? VT_SDWORD : VT_DWORD, "(result of pow)");
             variable_store( _environment, result->name, 1 );
             cpu_bveq( _environment, counter->realName, endLabel );
             cpu_label( _environment, label );
             #ifdef CPU_BIG_ENDIAN
                 {
                     char resultRealName[MAX_TEMPORARY_STORAGE]; sprintf( resultRealName, "%s+2", result->realName );
-                    cpu_math_mul_16bit_to_32bit( _environment, base->realName, resultRealName, result->realName, VT_SIGNED( base->type ) );
+                    cpu_math_mul_16bit_to_32bit( _environment, base->realName, resultRealName, temporary->realName, VT_SIGNED( base->type ) );
                 }
             #else
-                cpu_math_mul_16bit_to_32bit( _environment, base->realName, result->realName, result->realName, VT_SIGNED( base->type ) );
+                cpu_math_mul_16bit_to_32bit( _environment, base->realName, result->realName, temporary->realName, VT_SIGNED( base->type ) );
             #endif
+            cpu_move_32bit( _environment, temporary->realName, result->realName );
             cpu_dec( _environment, counter->realName );
             cpu_bvneq( _environment, counter->realName, label );
             cpu_label( _environment, endLabel );
