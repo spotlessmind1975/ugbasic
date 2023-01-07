@@ -3475,7 +3475,9 @@ void z80_math_div_32bit_to_16bit( Environment * _environment, char *_source, cha
         outhead1("%spositive2:", label);
 
         outline1("LD HL, %s", _source);
-        outline0("LD IX, (HL)");
+        outline0("LD A, (HL)");
+        outline0("PUSH AF");
+        outline0("POP IX");
         outline0("INC HL");
         outline0("INC HL");
         outline0("LD A, (HL)");
@@ -3506,7 +3508,11 @@ void z80_math_div_32bit_to_16bit( Environment * _environment, char *_source, cha
         outhead1("%send:", label);
         outline1("LD (%s), HL", _other_remainder);
         outline1("LD HL, %s", _other);
-        outline0("LD (HL), IX");
+        outline0("PUSH AF");
+        outline0("PUSH IX");
+        outline0("POP AF");
+        outline0("LD (HL), A");
+        outline0("POP AF");
         outline0("INC HL");
         outline0("INC HL");
         outline0("INC HL");
@@ -3528,7 +3534,9 @@ void z80_math_div_32bit_to_16bit( Environment * _environment, char *_source, cha
     } else {
 
         outline1("LD HL, %s", _source);
-        outline0("LD IX, (HL)");
+        outline0("LD A, (HL)");
+        outline0("PUSH AF");
+        outline0("POP IX");
         outline0("INC HL");
         outline0("INC HL");
         outline0("LD A, (HL)");
@@ -3559,7 +3567,11 @@ void z80_math_div_32bit_to_16bit( Environment * _environment, char *_source, cha
         outhead1("%send:", label);
         outline1("LD (%s), HL", _other_remainder);
         outline1("LD HL, %s", _other);
-        outline0("LD (HL), IX");
+        outline0("PUSH AF");
+        outline0("PUSH IX");
+        outline0("POP AF");
+        outline0("LD (HL), A");
+        outline0("POP AF");
         outline0("INC HL");
         outline0("INC HL");
         outline0("INC HL");
