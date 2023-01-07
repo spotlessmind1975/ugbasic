@@ -3862,11 +3862,18 @@ void z80_number_to_string( Environment * _environment, char * _number, char * _s
             if ( _signed ) {
                 outline0("AND $80");
                 outline0("LD B, A");
+                outline0("PUSH BC");
+                outline0("CP 0");
                 outline1("JR Z, %sp8", label);
+                outline1("LD A, (%s)", _number);
                 outline0("XOR $FF");
                 outline0("ADC $1");
                 outhead1("%sp8:", label);
+            } else {
+                outline0("LD B, 0" );
+                outline0("PUSH BC");
             }
+            outline0("POP IX");
             outline0("CALL N2D8");
             break;
         case 16:
@@ -3875,6 +3882,8 @@ void z80_number_to_string( Environment * _environment, char * _number, char * _s
                 outline0("LD A, H");
                 outline0("AND $80");
                 outline0("LD B, A");
+                outline0("PUSH BC");
+                outline0("CP 0");
                 outline1("JR Z, %sp16", label);
                 outline0("LD A, H");
                 outline0("XOR $FF");
@@ -3886,7 +3895,11 @@ void z80_number_to_string( Environment * _environment, char * _number, char * _s
                 outline0("ADD HL, DE" );
                 outline0("LD DE, 0" );
                 outhead1("%sp16:", label);
+            } else {
+                outline0("LD B, 0" );
+                outline0("PUSH BC");
             }
+            outline0("POP IX");
             outline0("CALL N2D16");
             break;
         case 32:
@@ -3896,6 +3909,8 @@ void z80_number_to_string( Environment * _environment, char * _number, char * _s
                 outline0("LD A, D");
                 outline0("AND $80");
                 outline0("LD B, A");
+                outline0("PUSH BC");
+                outline0("CP 0");
                 outline1("JR Z, %sp32", label);
                 outline0("LD A, D");
                 outline0("XOR $FF");
@@ -3917,7 +3932,11 @@ void z80_number_to_string( Environment * _environment, char * _number, char * _s
                 outline0("ADD HL, DE" );
                 outline0("EXX" );
                 outhead1("%sp32:", label);
+            } else {
+                outline0("LD B, 0" );
+                outline0("PUSH BC");
             }
+            outline0("POP IX");
             outline0("CALL N2D32");
             break;
         default:
@@ -3925,7 +3944,15 @@ void z80_number_to_string( Environment * _environment, char * _number, char * _s
     }
 
     outline1("LD DE, (%s)", _string);
-    outline0("LD A,C");
+    outline0("LD A, IXH");
+    outline0("CP 0");
+    outline1("JR Z, %spos", label);
+    outline0("LD A, '-'");
+    outline0("LD (DE), A");
+    outline0("INC DE");
+    outline0("INC C");
+    outhead1("%spos:", label);
+    outline0("LD A, C");
     outline1("LD (%s), A", _string_size);
     outline0("LDIR");
 

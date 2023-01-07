@@ -9,8 +9,8 @@
 ;   N2D16           HL                  65535   5   "
 ;   N2D24         E:HL               16777215   8   "
 ;   N2D32        DE:HL             4294967295  10   "
-;   N2D48     BC:DE:HL        281474976710655  15   "
-;   N2D64  IX:BC:DE:HL   18446744073709551615  20   "
+; - N2D48     BC:DE:HL        281474976710655  15   "
+; - N2D64  IX:BC:DE:HL   18446744073709551615  20   "
 ;
 ; The resulting string is placed into a small buffer attached to this routine,
 ; this buffer needs no initialization and can be modified as desired.
@@ -31,11 +31,13 @@ N2D8:    LD H,0
 N2D16:   LD E,0
 N2D24:   LD D,0
 N2D32:   LD BC,0
-N2D48:   LD IX,0          ; zero all non-used bits
-N2D64:   LD (N2DINV),HL
+N2D48:   
+        ;  LD IX,0          ; zero all non-used bits
+N2D64:   
+         LD (N2DINV),HL
          LD (N2DINV+2),DE
-         LD (N2DINV+4),BC
-         LD (N2DINV+6),IX ; place full 64-bit input value in buffer
+        ;  LD (N2DINV+4),BC
+        ;  LD (N2DINV+6),IX ; place full 64-bit input value in buffer
          LD HL,N2DBUF
          LD DE,N2DBUF+1
          LD (HL), 32 ; space is ASCII 32
