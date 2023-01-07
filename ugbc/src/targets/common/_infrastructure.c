@@ -2373,21 +2373,82 @@ Variable * variable_div( Environment * _environment, char * _source, char * _des
 
     Variable * result = NULL;
     Variable * remainder = NULL;
+    Variable * realTarget = NULL;
+    Variable * realSource = NULL;
     switch( VT_BITWIDTH( source->type ) ) {
         case 32:
-            result = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SWORD : VT_WORD, "(result of division)" );
-            remainder = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SWORD : VT_WORD, "(remainder of division)" );
-            cpu_math_div_32bit_to_16bit( _environment, source->realName, target->realName, result->realName, remainder->realName, VT_SIGNED( source->type ) );
+            switch( VT_BITWIDTH( target->type ) ) {
+                case 32:
+                    WARNING_BITWIDTH( _source, _destination );
+                    realTarget = variable_cast( _environment, target->name, VT_SIGNED( target->type ) ? VT_SWORD : VT_WORD );
+                    result = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SDWORD : VT_DWORD, "(result of division)" );
+                    remainder = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SWORD : VT_WORD, "(remainder of division)" );
+                    cpu_math_div_32bit_to_16bit( _environment, source->realName, realTarget->realName, result->realName, remainder->realName, VT_SIGNED( source->type ) );
+                    break;
+                case 16:
+                    result = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SDWORD : VT_DWORD, "(result of division)" );
+                    remainder = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SWORD : VT_WORD, "(remainder of division)" );
+                    cpu_math_div_32bit_to_16bit( _environment, source->realName, target->realName, result->realName, remainder->realName, VT_SIGNED( source->type ) );
+                    break;
+                case 8:
+                    realTarget = variable_cast( _environment, target->name, VT_SIGNED( target->type ) ? VT_SWORD : VT_WORD );
+                    result = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SDWORD : VT_DWORD, "(result of division)" );
+                    remainder = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SWORD : VT_WORD, "(remainder of division)" );
+                    cpu_math_div_32bit_to_16bit( _environment, source->realName, realTarget->realName, result->realName, remainder->realName, VT_SIGNED( source->type ) );
+                    break;
+                case 0:
+                    CRITICAL_DIV_UNSUPPORTED(target->name, DATATYPE_AS_STRING[target->type]);
+                    break;
+            }
             break;
         case 16:
-            result = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SWORD : VT_WORD, "(result of division)" );
-            remainder = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SWORD : VT_WORD, "(remainder of division)" );
-            cpu_math_div_16bit_to_16bit( _environment, source->realName, target->realName, result->realName, remainder->realName, VT_SIGNED( source->type ) );
+            switch( VT_BITWIDTH( target->type ) ) {
+                case 32:
+                    realSource = variable_cast( _environment, source->name, VT_SIGNED( source->type ) ? VT_SWORD : VT_WORD );
+                    realTarget = variable_cast( _environment, target->name, VT_SIGNED( target->type ) ? VT_SWORD : VT_WORD );
+                    result = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SWORD : VT_WORD, "(result of division)" );
+                    remainder = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SWORD : VT_WORD, "(remainder of division)" );
+                    cpu_math_div_16bit_to_16bit( _environment, realSource->realName, realTarget->realName, result->realName, remainder->realName, VT_SIGNED( source->type ) );
+                    break;
+                case 16:
+                    result = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SWORD : VT_WORD, "(result of division)" );
+                    remainder = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SWORD : VT_WORD, "(remainder of division)" );
+                    cpu_math_div_16bit_to_16bit( _environment, source->realName, target->realName, result->realName, remainder->realName, VT_SIGNED( source->type ) );
+                    break;
+                case 8:
+                    realTarget = variable_cast( _environment, target->name, VT_SIGNED( target->type ) ? VT_SWORD : VT_WORD );
+                    result = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SBYTE : VT_BYTE, "(result of division)" );
+                    remainder = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SBYTE : VT_BYTE, "(remainder of division)" );
+                    cpu_math_div_16bit_to_16bit( _environment, source->realName, target->realName, result->realName, remainder->realName, VT_SIGNED( source->type ) );
+                    break;
+                case 0:
+                    CRITICAL_DIV_UNSUPPORTED(target->name, DATATYPE_AS_STRING[target->type]);
+                    break;
+            }
             break;
         case 8:
-            result = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SBYTE : VT_BYTE, "(result of division)" );
-            remainder = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SBYTE : VT_BYTE, "(remainder of division)" );
-            cpu_math_div_8bit_to_8bit( _environment, source->realName, target->realName, result->realName, remainder->realName, VT_SIGNED( source->type ) );
+            switch( VT_BITWIDTH( target->type ) ) {
+                case 32:
+                    realTarget = variable_cast( _environment, target->name, VT_SIGNED( target->type ) ? VT_SBYTE : VT_BYTE );
+                    result = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SWORD : VT_WORD, "(result of division)" );
+                    remainder = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SWORD : VT_WORD, "(remainder of division)" );
+                    cpu_math_div_8bit_to_8bit( _environment, source->realName, realTarget->realName, result->realName, remainder->realName, VT_SIGNED( source->type ) );
+                    break;
+                case 16:
+                    realTarget = variable_cast( _environment, target->name, VT_SIGNED( target->type ) ? VT_SBYTE : VT_BYTE );
+                    result = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SWORD : VT_WORD, "(result of division)" );
+                    remainder = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SWORD : VT_WORD, "(remainder of division)" );
+                    cpu_math_div_8bit_to_8bit( _environment, source->realName, realTarget->realName, result->realName, remainder->realName, VT_SIGNED( source->type ) );
+                    break;
+                case 8:
+                    result = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SBYTE : VT_BYTE, "(result of division)" );
+                    remainder = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SBYTE : VT_BYTE, "(remainder of division)" );
+                    cpu_math_div_8bit_to_8bit( _environment, source->realName, target->realName, result->realName, remainder->realName, VT_SIGNED( source->type ) );
+                    break;
+                case 0:
+                    CRITICAL_DIV_UNSUPPORTED(target->name, DATATYPE_AS_STRING[target->type]);
+                    break;
+            }
             break;
         case 0:
             CRITICAL_DIV_UNSUPPORTED(_source, DATATYPE_AS_STRING[source->type]);
