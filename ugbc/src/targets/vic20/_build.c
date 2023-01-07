@@ -54,7 +54,7 @@ void target_linkage( Environment * _environment ) {
 
     BUILD_TOOLCHAIN_CC65_GET_LISTING_FILE( _environment, listingFileName );
 
-    BUILD_TOOLCHAIN_CC65_EXEC( _environment, "vic20", executableName, listingFileName );
+    BUILD_TOOLCHAIN_CC65_EXEC( _environment, "vic20", executableName, listingFileName, "" );
 
     if ( _environment->listingFileName ) {
 

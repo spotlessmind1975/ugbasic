@@ -2465,11 +2465,12 @@ int embed_scan_string (const char *);
         strcpy( listingFileName, "" ); \
     }
 
-#define BUILD_TOOLCHAIN_CC65_EXEC( _environment, target, executableName, listingFileName ) \
-    sprintf( commandLine, "\"%s\" %s -o \"%s\" -t %s -C \"%s\" \"%s\"", \
+#define BUILD_TOOLCHAIN_CC65_EXEC( _environment, target, executableName, listingFileName, additionalParameters ) \
+    sprintf( commandLine, "\"%s\" %s -o \"%s\" %s -t %s -C \"%s\" \"%s\"", \
         executableName, \
         listingFileName, \
         _environment->exeFileName, \
+        additionalParameters, \
         target, \
         _environment->configurationFileName, \
         _environment->asmFileName ); \

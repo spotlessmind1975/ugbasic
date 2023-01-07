@@ -52,7 +52,7 @@ void generate_prg( Environment * _environment ) {
 
     BUILD_TOOLCHAIN_CC65_GET_LISTING_FILE( _environment, listingFileName );
 
-    BUILD_TOOLCHAIN_CC65_EXEC( _environment, "c64", executableName, listingFileName );
+    BUILD_TOOLCHAIN_CC65_EXEC( _environment, "c64", executableName, listingFileName, "" );
 
     char objectFileName[MAX_TEMPORARY_STORAGE];
     strcpy( objectFileName, _environment->asmFileName );

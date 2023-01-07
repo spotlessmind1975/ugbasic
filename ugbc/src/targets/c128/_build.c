@@ -54,7 +54,7 @@ void target_linkage( Environment * _environment ) {
 
     BUILD_TOOLCHAIN_CC65_GET_LISTING_FILE( _environment, listingFileName );
 
-    BUILD_TOOLCHAIN_CC65_EXEC( _environment, "c128", executableName, listingFileName );
+    BUILD_TOOLCHAIN_CC65_EXEC( _environment, "c128", executableName, listingFileName, "" );
 
     char objectFileName[MAX_TEMPORARY_STORAGE];
     strcpy( objectFileName, _environment->asmFileName );

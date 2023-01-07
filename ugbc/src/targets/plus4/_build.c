@@ -54,7 +54,7 @@ void target_linkage( Environment * _environment ) {
 
     BUILD_TOOLCHAIN_CC65_GET_LISTING_FILE( _environment, listingFileName );
 
-    BUILD_TOOLCHAIN_CC65_EXEC( _environment, "plus4", executableName, listingFileName );
+    BUILD_TOOLCHAIN_CC65_EXEC( _environment, "plus4", executableName, listingFileName, "-u __EXEHDR__" );
 
      if ( _environment->listingFileName ) {
 
