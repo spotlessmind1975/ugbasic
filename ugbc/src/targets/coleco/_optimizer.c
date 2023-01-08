@@ -759,7 +759,7 @@ static int vars_cmp(const void *_a, const void *_b) {
 }
 
 /* removes unread variables */
-static void vars_remove(buffer buf[LOOK_AHEAD]) {
+static void vars_remove(Environment * _environment, buffer buf[LOOK_AHEAD]) {
     buffer var = TMP_BUF;
     buffer op  = TMP_BUF;
     
@@ -771,6 +771,7 @@ static void vars_remove(buffer buf[LOOK_AHEAD]) {
         if(v->nb_rd == 0 && v->offset!=-2) {
             v->offset = 0;
             optim(buf[0], "unread", NULL);
+            ++_environment->removedAssemblyLines;
         }
     }
 
@@ -782,6 +783,7 @@ static void vars_remove(buffer buf[LOOK_AHEAD]) {
         if(v->nb_rd==0 && 0<v->size && v->size<=4 && 0==(v->flags & NO_REMOVE) && v->offset!=-2) {
             optim(buf[0], "unread",NULL);
             ++num_unread;
+            ++_environment->removedAssemblyLines;
         }             
      }
 }            
@@ -832,6 +834,15 @@ static int optim_pass( Environment * _environment, buffer buf[LOOK_AHEAD], PeepH
 
     int line = 0;
     int zA = 0, zB = 0;
+
+    int sourceLine = 0;
+
+    _environment->currentSourceLineAnalyzed = 0;
+    _environment->removedAssemblyLines = 0;
+
+    if ( _environment->additionalInfoFile ) {
+        fprintf( _environment->additionalInfoFile, "POP:0:%d:%d\n", peephole_pass, kind );
+    }
 
     sprintf( fileNameOptimized, "%s.asm", get_temporary_filename( _environment ) );
         
@@ -891,6 +902,18 @@ static int optim_pass( Environment * _environment, buffer buf[LOOK_AHEAD], PeepH
             fixes_indexed_syntax(buf[LOOK_AHEAD-1]);
             /* merge comment with previous line if we do not overflow the buffer */
             if(isAComment(buf[LOOK_AHEAD-1])) {
+                buffer ln = TMP_BUF;
+                if (match( buf[LOOK_AHEAD-1], " ; L:*", ln ) ) {
+                    sourceLine = atoi( ln->str );
+                    if ( ( sourceLine != _environment->currentSourceLineAnalyzed ) ) {
+                        if ( _environment->currentSourceLineAnalyzed  && _environment->additionalInfoFile ) {
+                            fprintf( _environment->additionalInfoFile, "POL:0:%d:%d:%d\n", 
+                                peephole_pass, _environment->currentSourceLineAnalyzed, _environment->removedAssemblyLines );
+                        }
+                        _environment->currentSourceLineAnalyzed = sourceLine;
+                        _environment->removedAssemblyLines = 0;
+                    }
+                }                
                 if(KEEP_COMMENTS) buf_cat(buf[LOOK_AHEAD-2], buf[LOOK_AHEAD-1]->str);
                 buf_cpy(buf[LOOK_AHEAD-1], "");
             } else break;
@@ -905,7 +928,7 @@ static int optim_pass( Environment * _environment, buffer buf[LOOK_AHEAD], PeepH
             break;
             
             case DEADVARS:
-            vars_remove(buf);
+            vars_remove(_environment, buf);
             break;
             
             case RELOCATION1:
