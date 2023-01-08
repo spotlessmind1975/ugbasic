@@ -3576,7 +3576,7 @@ void z80_math_div_32bit_to_16bit( Environment * _environment, char *_source, cha
         outline0("AND $80");
         outline0("CMP $80");
         outline1("JR NZ, %srepositive3", label );
-        z80_complement2_16bit( _environment, _other, NULL );
+        z80_complement2_32bit( _environment, _other, NULL );
         outhead1("%srepositive3:", label);
 
         outline0("; z80_math_div_32bit_to_16bit ----^")
@@ -3680,15 +3680,24 @@ void z80_math_div_16bit_to_16bit( Environment * _environment, char *_source, cha
         outline0("LD (DE), A");
 
         outline0("POP AF");
+        outline0("LD B, A");
         outline0("CMP $80");
         outline1("JR NZ, %srepositive", label);
         z80_complement2_16bit( _environment, _destination, NULL );
         outhead1("%srepositive:", label);
         outline0("POP AF");
+        outline0("LD C, A");
         outline0("CMP $80");
         outline1("JR NZ, %srepositive2", label );
-        z80_complement2_32bit( _environment, _source, NULL );
+        z80_complement2_16bit( _environment, _source, NULL );
         outhead1("%srepositive2:", label);
+        outline0("LD A, B");
+        outline0("XOR C");
+        outline0("AND $80");
+        outline0("CMP $80");
+        outline1("JR NZ, %srepositive3", label );
+        z80_complement2_16bit( _environment, _other, NULL );
+        outhead1("%srepositive3:", label);
 
     } else {
 
@@ -3974,13 +3983,19 @@ void z80_number_to_string( Environment * _environment, char * _number, char * _s
                 outline0("LD A, L");
                 outline0("XOR $FF");
                 outline0("LD L, A");
-                outline0("EXX" );
-                outline0("LD HL, 1" );
-                outline0("LD DE, 0" );
-                outline0("ADD HL, DE" );
-                outline0("EXX" );
-                outline0("ADD HL, DE" );
-                outline0("EXX" );
+                outline0("AND A");
+                outline0("INC HL");
+                outline0("LD A, L");
+                outline0("OR H");
+                outline1("JR NZ, %sp32", label);
+                outline0("INC DE");
+                // outline0("EXX" );
+                // outline0("LD HL, 1" );
+                // outline0("LD DE, 0" );
+                // outline0("ADD HL, DE" );
+                // outline0("EXX" );
+                // outline0("ADD HL, DE" );
+                // outline0("EXX" );
                 outhead1("%sp32:", label);
             } else {
                 outline0("LD B, 0" );
