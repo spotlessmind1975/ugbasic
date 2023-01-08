@@ -2112,11 +2112,11 @@ exponential:
         $$ = variable_cast( _environment, $5, VT_DWORD )->name;
       }
     | OP SIGNED DWORD CP Integer { 
-        $$ = variable_temporary( _environment, VT_DWORD, "(DWORD value)" )->name;
+        $$ = variable_temporary( _environment, VT_SDWORD, "(SDWORD value)" )->name;
         variable_store( _environment, $$, $5 );
       }
     | OP SIGNED DWORD CP direct_integer { 
-        $$ = variable_temporary( _environment, VT_DWORD, "(DWORD value)" )->name;
+        $$ = variable_temporary( _environment, VT_SDWORD, "(SDWORD value)" )->name;
         variable_store( _environment, $$, $5 );
       }
     | OP SIGNED DWORD CP OP expr CP { 
