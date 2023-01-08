@@ -994,10 +994,6 @@ static int optim_pass( Environment * _environment, buffer buf[LOOK_AHEAD], PeepH
                 buffer ln = TMP_BUF;
                 if (match( buf[LOOK_AHEAD-1], " ; L:*", ln ) ) {
                     sourceLine = atoi( ln->str );
-                    if ( sourceLine == 0 ) {
-                        printf( "Failed: %s\n", buf[LOOK_AHEAD-1]->str );
-                        exit(0);
-                    }
                     if ( ( sourceLine != _environment->currentSourceLineAnalyzed ) ) {
                         if ( _environment->currentSourceLineAnalyzed  && _environment->additionalInfoFile ) {
                             fprintf( _environment->additionalInfoFile, "POL:0:%d:%d:%d\n", 

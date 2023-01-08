@@ -1717,6 +1717,16 @@ typedef struct _Environment {
      */
     int previousProducedAssemblyLines;
 
+    /*
+     * Current source line analyzed by peephole optimizer.
+     */
+    int currentSourceLineAnalyzed;
+
+    /*
+     * Numer of assembly lines removed for currentSourceLine.
+     */
+    int removedAssemblyLines;
+
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */
