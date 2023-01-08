@@ -199,6 +199,13 @@ typedef enum _OutputFileType {
 
 } OutputFileType;
 
+typedef enum _PeepHoleOptimizationKind {
+    PEEPHOLE = 1, 
+    DEADVARS = 2, 
+    RELOCATION1 = 3, 
+    RELOCATION2 = 4
+} PeepHoleOptimizationKind;
+
 /**
  * @brief Gamma correction type (for some palettes)
  * 

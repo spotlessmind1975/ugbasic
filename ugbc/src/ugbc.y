@@ -6706,12 +6706,12 @@ int main( int _argc, char *_argv[] ) {
 
     end_compilation( _environment );
 
+    target_peephole_optimizer( _environment );
+
     if ( _environment->additionalInfoFile ) {
         fclose( _environment->additionalInfoFile );
     }
     
-    target_peephole_optimizer( _environment );
-
     if ( _environment->exeFileName ) {
         begin_build( _environment );
         end_build( _environment );

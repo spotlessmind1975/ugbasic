@@ -908,8 +908,7 @@ static void fixes_indexed_syntax(buffer buf) {
 }
 
 /* various kind of optimization */
-enum OPT_KIND {PEEPHOLE, DEADVARS, RELOCATION1, RELOCATION2};
-static int optim_pass( Environment * _environment, buffer buf[LOOK_AHEAD], enum OPT_KIND kind) {
+static int optim_pass( Environment * _environment, buffer buf[LOOK_AHEAD], PeepHoleOptimizationKind kind) {
     char fileNameOptimized[MAX_TEMPORARY_STORAGE];
     FILE * fileAsm;
     FILE * fileOptimized;
@@ -918,6 +917,10 @@ static int optim_pass( Environment * _environment, buffer buf[LOOK_AHEAD], enum 
 
     int line = 0;
     int zA = 0, zB = 0;
+
+    if ( _environment->additionalInfoFile ) {
+        fprintf( _environment->additionalInfoFile, "OP:0:%d\n", kind );
+    }
 
     sprintf( fileNameOptimized, "%s.asm", get_temporary_filename( _environment ) );
         

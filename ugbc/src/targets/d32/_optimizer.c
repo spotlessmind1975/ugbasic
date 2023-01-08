@@ -1364,8 +1364,7 @@ static void fixes_indexed_syntax(buffer buf) {
 }
 
 /* various kind of optimization */
-enum OPT_KIND {PEEPHOLE, DEADVARS, RELOCATION1, RELOCATION2};
-static int optim_pass( Environment * _environment, buffer buf[LOOK_AHEAD], enum OPT_KIND kind) {
+static int optim_pass( Environment * _environment, buffer buf[LOOK_AHEAD], PeepHoleOptimizationKind kind) {
     char fileNameOptimized[MAX_TEMPORARY_STORAGE];
     FILE * fileAsm;
     FILE * fileOptimized;
