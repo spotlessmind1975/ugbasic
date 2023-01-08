@@ -6631,14 +6631,18 @@ char * escape_newlines( char * _string ) {
 
     *q = 0;
     int escaped = 1;
-    if ( ( *result == '"' ) && ( *(result+1) == ',' ) ) {
-        memmove( result, result+2, strlen( result ) - 2 );
-        escaped = 0;
-        *(result+strlen( result ) - 2) = 0;
+    if ( strlen( result ) > 1 ) {
+        if ( ( *result == '"' ) && ( *(result+1) == ',' ) ) {
+            memmove( result, result+2, strlen( result ) - 2 );
+            escaped = 0;
+            *(result+strlen( result ) - 2) = 0;
+        }
     }
 
-    if ( ( *(result+strlen( result )-1) == '"' ) && ( *(result+strlen( result )-2) == ',' ) ) {
-        *(result+strlen( result )-2 ) = 0;
+    if ( strlen( result ) > 2 ) { 
+        if ( ( *(result+strlen( result )-1) == '"' ) && ( *(result+strlen( result )-2) == ',' ) ) {
+            *(result+strlen( result )-2 ) = 0;
+        }
     }
 
     q = result;
@@ -6651,7 +6655,7 @@ char * escape_newlines( char * _string ) {
         ++q;
     }
 
-    char * result2 = malloc( 2 * strlen( result ) );
+    char * result2 = malloc( 2 * strlen( result ) + MAX_TEMPORARY_STORAGE );
 
     if ( escaped ) {
         sprintf( result2, "\"%s", result );
