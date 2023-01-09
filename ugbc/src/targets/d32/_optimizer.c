@@ -489,7 +489,7 @@ static int _isZero(buffer buf) {
 }
 
 /* perform basic peephole optimization with a length-4 look-ahead */
-static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
+static void basic_peephole(Environment * _environment, buffer buf[LOOK_AHEAD], int zA, int zB) {
     /* allows presumably safe operations */
     int unsafe = ALLOW_UNSAFE;
 
@@ -547,11 +547,14 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
             optim( buf[0], "(unsafe, presumed dead)", fmt, _toUpper(*v1->str));
         }
 
-        if(unsafe && match(buf[2], " * [", NULL))
+        if(unsafe && match(buf[2], " * [", NULL)) {
             optim( buf[0], "(unsafe, presumed dead)", NULL);
+            ++_environment->removedAssemblyLines;
+        }
 
         if ( strcmp( v2->str, "$A7C1") ) {
             optim( buf[1], RULE "(STORE*,LOAD*)->(STORE*)", NULL);
+            ++_environment->removedAssemblyLines;
         }
     }
 
@@ -561,6 +564,7 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
     &&   strchr("AB", _toUpper(*v2->str))
     &&  _strcmp(v1, v3)==0) {
         optim( buf[0], RULE "(CLEAR*,?,STORE*)->(?,STORE*)", NULL);
+        ++_environment->removedAssemblyLines;
     }
 
     if ( _isZero(match(buf[0], " LD* #*", v1, v2) )
@@ -577,6 +581,7 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
     &&   match(buf[1], " LD* ", v2)
     &&  _strcmp(v1,v2)==0) {
         optim(buf[0], RULE "(LOAD/CLR,LOAD)->(LOAD)", NULL);
+        ++_environment->removedAssemblyLines;
     }
     
     if ( match( buf[0], " LD")
@@ -585,6 +590,7 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
     && !strchr( buf[0]->str, '+' )
     && unsafe) {
         optim( buf[2], RULE "(LOAD*,STORE,LOAD*)->(LOAD*,STORE)", NULL);
+        ++_environment->removedAssemblyLines;
     }
     if ( match( buf[0], " LD")
     &&   match( buf[1], " ST")
@@ -592,6 +598,7 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
     && _strcmp( buf[3], buf[0] )==0
     && unsafe) {
         optim( buf[3], RULE "(LOAD*,STORE,STORE,LOAD*)->(LOAD*,STORE,STORE)", NULL);
+        ++_environment->removedAssemblyLines;
     }
     if ( match( buf[0], " LD")
     &&   match( buf[1], " ST")
@@ -600,6 +607,7 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
     && _strcmp( buf[4], buf[0] )==0
     && unsafe) {
         optim( buf[4], RULE "(LOAD*,STORE,STORE,STORE,LOAD*)->(LOAD*,STORE,STORE,STORE)", NULL);
+        ++_environment->removedAssemblyLines;
     }
 
     if ( match(buf[0], " ST* *", NULL, v1)
@@ -608,18 +616,21 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
     && _strcmp(v1, v2)!=0
     && _strcmp(buf[0],buf[2])==0 ) {
         optim(buf[0], RULE "(STORE*,LOAD,STORE*)->(LOAD,STORE*)", NULL);
+        ++_environment->removedAssemblyLines;
     }
     
     if ( (match( buf[0], " LD* ", v1) || match( buf[0], " CLR*", v1))
     &&   (match( buf[1], " LD* ", v2) || match( buf[1], " CLR*", v2))
     &&  _strcmp( v1, v2)==0) {
         optim(buf[0], RULE "(LOAD/CLR,LOAD/CLR)->(LOAD/CLR)", NULL);
+        ++_environment->removedAssemblyLines;
     }
 
 
     if ( match(buf[0], " ST")
     && _strcmp(buf[0], buf[1])==0) {
         optim(buf[0], RULE "(STORE*,STORE*)->(STORE*)", NULL);
+        ++_environment->removedAssemblyLines;        
     }
     if ( (match(buf[0], " ST* *+", NULL, v1) || match(buf[0], " ST* *", NULL, v1))
     &&   !isBranch(buf[1]) && match(buf[1], " * *", NULL, v2) && _strcmp(v1, v2)!=0
@@ -627,18 +638,21 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
 	&&  strchr(buf[1]->str,'+')==NULL
     && _strcmp(buf[2], buf[0])==0) {
         optim(buf[0], RULE "(STORE*,?,STORE*)->(?,STORE*)", NULL);
+        ++_environment->removedAssemblyLines;
     }
     if ((match(buf[0], " ST* *+", NULL, v1) || match(buf[0], " ST* *", NULL, v1))
     &&  !isBranch(buf[1]) && match(buf[1], " * *", NULL, v2) && _strcmp(v1, v2)!=0
     &&  !isBranch(buf[2]) && match(buf[2], " * *", NULL, v2) && _strcmp(v1, v2)!=0
     && _strcmp(buf[3], buf[0])==0) {
         optim(buf[0], RULE "(STORE*,?,?,STORE*)->(?,?,STORE*)", NULL);
+        ++_environment->removedAssemblyLines;
     }
 
     if( (match(buf[0], " LD* ", v1) || match(buf[0], " ST* ",v1))
     && _isZero(match(buf[1], " CMP* #*", v2, v3))
     && _strcmp(v1, v2)==0) {
         optim(buf[1], RULE "(LOAD/STORE,CMP#0)->(LOAD/STORE)", NULL);
+        ++_environment->removedAssemblyLines;
     }
 
     if ( match(buf[0], " LDD *", v1)
@@ -649,7 +663,9 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
     &&  _strcmp(v2, v4)==0) {
         if(unsafe) {
             optim(buf[0], RULE "(LDD+,STD*,LDX,CMPX*)->(LDX,CMP+)", NULL);
+            ++_environment->removedAssemblyLines;
             optim(buf[1], "(unsafe, presumed dead)", NULL);
+            ++_environment->removedAssemblyLines;
             optim(buf[4], NULL, "\tCMPX %s", v1->str);
         } else {
             optim(buf[4], RULE "(LDD+,STD*,LDX,CMPX*)->(LDD+,STD*,LDX,CMPX+)", "\tCMPX %s", v1->str);
@@ -663,7 +679,9 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
     &&  _strcmp(v2, v4)==0) {
         if(unsafe) {
             optim(buf[0], RULE "(LDD+,STD*,LDD,ADDD*)->(LDD,ADD+)", NULL);
+            ++_environment->removedAssemblyLines;
             optim(buf[1], "(unsafe, presumed dead)", NULL);
+            ++_environment->removedAssemblyLines;
             optim(buf[3], NULL, "\tADDD %s", v1->str);
         } else {
             optim(buf[3], RULE "(LDD+,STD*,LDD,ADDD*)->(LDD+,STD*,LDD,ADD+)", "\tADDD %s", v1->str);
@@ -680,8 +698,12 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
     if ( match(buf[0], " STD *", v1)
     &&   match(buf[1], " LDB *+1", v2)
     &&  _strcmp(v1, v2)==0) {
-        if(unsafe) optim(buf[0], "(unsafe, presumed dead)", NULL);
+        if(unsafe) {
+            optim(buf[0], "(unsafe, presumed dead)", NULL);
+            ++_environment->removedAssemblyLines;
+        }
         optim(buf[1], RULE "(STD,LDB+1)->()", NULL);
+        ++_environment->removedAssemblyLines;
     }
 
     if ( match(buf[0], " LDD #*", v1)
@@ -689,6 +711,7 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
     &&  !match(buf[2], "* equ ", NULL)) {
         optim(buf[0], RULE "(LDD#,ADD#)->(LDD#)", "\tLDD #%s+%s", v1->str, v2->str);
         optim(buf[1], NULL, NULL);
+        ++_environment->removedAssemblyLines;
     }
 
     if ( match(buf[0], " STX *", v1)
@@ -714,7 +737,10 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
     &&  _strcmp(v1,v4)==0
     &&   (match(v3, "OR") || match(v3,"AND") || match(v3,"EOR") || match(v3,"ADD"))
     ) {
-        if(unsafe) optim(buf[0], "(unsafe, presumed dead)", NULL);
+        if(unsafe) {
+            optim(buf[0], "(unsafe, presumed dead)", NULL);
+            ++_environment->removedAssemblyLines;
+        }
         optim(buf[1], RULE "(STB*,LDB+,ORB/ANDB/EORB/ADDB*)->(STB*,ORB/ANDB/EORB/ADDB+)", NULL);
         optim(buf[2], NULL, "\t%sB %s", v3->str, v2->str);
     }
@@ -730,6 +756,7 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
     if ( match(buf[1], " TST*", v1)
     &&  sets_flag(buf[0], *v1->str)) {
         optim(buf[1], RULE "(FLAG-SET,TST)->(FLAG-SET)", NULL);
+        ++_environment->removedAssemblyLines;
     }
 
     if ( match(buf[0], " LDB #$01")
@@ -738,6 +765,7 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
         optim(buf[0], RULE "(MUL#1)->(NOP)", "\tLDD %s", v1->str);
         optim(buf[1], NULL, "\tLDX #0");
         optim(buf[2], NULL, NULL);
+        ++_environment->removedAssemblyLines;
     }
 
     // A VOIR
@@ -759,6 +787,7 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
     &&  unsafe) {
         optim(buf[0], RULE "(STD*,LDD,LDX*)->(TDX,LDD)", "\tTFR D,X");
         optim(buf[2], NULL, NULL);
+        ++_environment->removedAssemblyLines;
     }
 
     if( match(buf[0], " LDD *", v1)
@@ -768,6 +797,7 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
         optim(buf[0], RULE "(LDD*,STD+,TDX)->(LDX*,STX+)", "\tLDX %s", v1->str);
         optim(buf[1], NULL, "\tSTX %s", v2->str);
         optim(buf[2], NULL, NULL);
+        ++_environment->removedAssemblyLines;
     }
 
     if( match(buf[0], " STD *", v1)
@@ -777,6 +807,7 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
     && _strcmp(v1, v2)!=0
     &&  strchr((const char*)v2 ,'+')==NULL) {
         optim(buf[2], RULE "(STD*,ST?,LDD*)->(STD*,ST?)", NULL);
+        ++_environment->removedAssemblyLines;
     }
     
     if( match(buf[0], " STD *", v1)
@@ -785,6 +816,7 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
     &&  match(buf[3], " STD *", v2)
     && _strcmp(v1, v2)==0) {
         optim(buf[0], RULE "(STD*,LSLB,ROLA,STD*)->(LSLB,ROLA,STD*)", NULL);
+        ++_environment->removedAssemblyLines;
     }
 
     if( match(buf[0], " STD *", v1)
@@ -793,6 +825,7 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
     && _strcmp(v1, v3)==0
     && _strcmp(v1, v2)!=0) {
         optim(buf[0], RULE "(STD*,ADDD,STD*)->(ADDD,STD*)", NULL);
+        ++_environment->removedAssemblyLines;
     }
     
     if ( peephole_pass>2
@@ -812,12 +845,14 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
 	&& match( buf[1], " LDB *+1", v2)
 	&& _strcmp(v1, v2)==0) {
 		optim(buf[1], RULE "(STD,LDB+1)", NULL);
+        ++_environment->removedAssemblyLines;
 	}
 	if(match( buf[0], " STD *", v1)
 	&& match( buf[1], " ST* *", NULL, v2) && 0!=_strcmp(v1,v2)
 	&& match( buf[2], " LDB *+1", v2)
 	&& _strcmp(v1, v2)==0) {
 		optim(buf[2], RULE "(STD,?,LDB+1)", NULL);
+        ++_environment->removedAssemblyLines;
 	}
 	if(match( buf[0], " STD *", v1)
 	&& match( buf[1], " ST* *", NULL, v2) && 0!=_strcmp(v1,v2)
@@ -825,6 +860,7 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
 	&& match( buf[3], " LDB *+1", v2)
 	&& _strcmp(v1, v2)==0) {
 		optim(buf[3], RULE "(STD,?,?,LDB+1)", NULL);
+        ++_environment->removedAssemblyLines;
 	}
 }
 
@@ -906,7 +942,7 @@ static int can_nzB(buffer buf) {
 }
 
 /* optimizations related to A or B being zero */
-static void optim_zAB(buffer buf[LOOK_AHEAD], int *zA, int *zB) {
+static void optim_zAB(Environment * _environment, buffer buf[LOOK_AHEAD], int *zA, int *zB) {
     buffer v1 = TMP_BUF;
     buffer v2 = TMP_BUF;
     buffer v3 = TMP_BUF;
@@ -916,6 +952,7 @@ static void optim_zAB(buffer buf[LOOK_AHEAD], int *zA, int *zB) {
     if(*zA) {
         if (match( buf[0], " CLRA")) {
             optim( buf[0], RULE "[A=0](CLRA)->()", NULL);
+            ++_environment->removedAssemblyLines;            
         } else if (match( buf[0], " LDA #$ff")) {
             optim( buf[0], RULE "[A=0](LDA#ff)->(DECA)", "\tDECA");
             *zA = 0;
@@ -941,8 +978,12 @@ static void optim_zAB(buffer buf[LOOK_AHEAD], int *zA, int *zB) {
                &&  match(buf[1], " LDX *", v2)
                &&  match(buf[2], " CMPX _Ttmp*", v3)
                && _strcmp(v1, v3)==0) {
-            if(unsafe) optim(buf[0], "(unsafe, presumed dead)", NULL);
+            if(unsafe) {
+                optim(buf[0], "(unsafe, presumed dead)", NULL);
+                ++_environment->removedAssemblyLines;
+            }
             optim(buf[2], RULE "[D=0](STD*,LDX,CMPX*)->(LDX)", NULL);
+            ++_environment->removedAssemblyLines;            
         } else if(can_nzA(buf[0])) {
             *zA = 0;
         }
@@ -953,6 +994,7 @@ static void optim_zAB(buffer buf[LOOK_AHEAD], int *zA, int *zB) {
     if(*zB) {
         if (match( buf[0], " CLRB")) {
             optim( buf[0], RULE "[B=0](CLRB)->()", NULL);
+            ++_environment->removedAssemblyLines;
         } else if (match( buf[0], " LDB #$ff")) {
             optim( buf[0], RULE "[B=0](LDB#ff)->(DECB)", "\tDECB");
             *zB = 0;
@@ -978,6 +1020,7 @@ static void optim_zAB(buffer buf[LOOK_AHEAD], int *zA, int *zB) {
     && match( buf[2], " CLRA")) {
         optim(buf[0], RULE "(LDB#,STB,CLRA)->(LDD#,STB)", "\tLDD #$00%s", v1->str);
         optim(buf[2], NULL, NULL);
+        ++_environment->removedAssemblyLines;
         *zA = 0;
     }
 }
@@ -1221,7 +1264,7 @@ static void vars_prepare_relocation(void) {
 }
 
 /* removes unread variables */
-static void vars_remove(buffer buf[LOOK_AHEAD]) {
+static void vars_remove(Environment * _environment, buffer buf[LOOK_AHEAD]) {
     buffer var = TMP_BUF;
     buffer op  = TMP_BUF;
     
@@ -1242,6 +1285,7 @@ static void vars_remove(buffer buf[LOOK_AHEAD]) {
                 }
             }
             optim(buf[0], "unread", rep != NULL ? "%s" : NULL, rep);
+            ++_environment->removedAssemblyLines;
         }
     }
 
@@ -1252,6 +1296,7 @@ static void vars_remove(buffer buf[LOOK_AHEAD]) {
         struct var *v = vars_get(var);
         if(v->nb_rd==0 && 0<v->size && v->size<=4 && 0==(v->flags & NO_REMOVE) && v->offset!=-2) {
             optim(buf[0], "unread",NULL);
+            ++_environment->removedAssemblyLines;
             ++num_unread;
         }             
      }
@@ -1259,7 +1304,7 @@ static void vars_remove(buffer buf[LOOK_AHEAD]) {
 
 
 /* performs optimizations related to variables relocation */
-static void vars_relocate(buffer buf[LOOK_AHEAD]) {
+static void vars_relocate(Environment * _environment, buffer buf[LOOK_AHEAD]) {
     buffer REG = TMP_BUF;
     buffer var = TMP_BUF;
     buffer op  = TMP_BUF;
@@ -1308,6 +1353,7 @@ static void vars_relocate(buffer buf[LOOK_AHEAD]) {
             ++num_dp;
         } else if(v->offset == -2) {
             optim(buf[0], "inlined", NULL);
+            ++_environment->removedAssemblyLines;
             ++num_inlined;
          }            
      }
@@ -1374,6 +1420,15 @@ static int optim_pass( Environment * _environment, buffer buf[LOOK_AHEAD], PeepH
     int line = 0;
     int zA = 0, zB = 0;
 
+    int sourceLine = 0;
+
+    _environment->currentSourceLineAnalyzed = 0;
+    _environment->removedAssemblyLines = 0;
+
+    if ( _environment->additionalInfoFile ) {
+        fprintf( _environment->additionalInfoFile, "POP:0:%d:%d\n", peephole_pass, kind );
+    }
+
     sprintf( fileNameOptimized, "%s.asm", get_temporary_filename( _environment ) );
         
     /* prepare for phase */
@@ -1432,6 +1487,18 @@ static int optim_pass( Environment * _environment, buffer buf[LOOK_AHEAD], PeepH
             fixes_indexed_syntax(buf[LOOK_AHEAD-1]);
             /* merge comment with previous line if we do not overflow the buffer */
             if(isAComment(buf[LOOK_AHEAD-1])) {
+                buffer ln = TMP_BUF;
+                if (match( buf[LOOK_AHEAD-1], " ; L:*", ln ) ) {
+                    sourceLine = atoi( ln->str );
+                    if ( ( sourceLine != _environment->currentSourceLineAnalyzed ) ) {
+                        if ( _environment->currentSourceLineAnalyzed  && _environment->additionalInfoFile ) {
+                            fprintf( _environment->additionalInfoFile, "POL:0:%d:%d:%d\n", 
+                                peephole_pass, _environment->currentSourceLineAnalyzed, _environment->removedAssemblyLines );
+                        }
+                        _environment->currentSourceLineAnalyzed = sourceLine;
+                        _environment->removedAssemblyLines = 0;
+                    }
+                }                
                 if(KEEP_COMMENTS) buf_cat(buf[LOOK_AHEAD-2], buf[LOOK_AHEAD-1]->str);
                 buf_cpy(buf[LOOK_AHEAD-1], "");
             } else break;
@@ -1439,20 +1506,20 @@ static int optim_pass( Environment * _environment, buffer buf[LOOK_AHEAD], PeepH
 
         switch(kind) {
             case PEEPHOLE:
-            basic_peephole(buf, zA, zB);
-            optim_zAB(buf, &zA, &zB);
+            basic_peephole(_environment, buf, zA, zB);
+            optim_zAB(_environment, buf, &zA, &zB);
             
             /* only look fo variable when no peephole has been performed */
             if(change == 0) vars_scan(buf);
             break;
             
             case DEADVARS:
-            vars_remove(buf);
+            vars_remove(_environment, buf);
             break;
             
             case RELOCATION1:
             case RELOCATION2:
-            vars_relocate(buf);
+            vars_relocate(_environment, buf);
             break;
         }
 
