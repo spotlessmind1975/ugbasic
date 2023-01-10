@@ -849,8 +849,8 @@ void target_finalize( Environment * _environment ) {
         }
 
         if ( _environment->currentSourceLineAnalyzed  && _environment->additionalInfoFile ) {
-            fprintf( _environment->additionalInfoFile, "AB:0:%d:%d\n", 
-                _environment->currentSourceLineAnalyzed, _environment->bytesProduced );
+            fprintf( _environment->additionalInfoFile, "AF:0:%d\n", 
+                _environment->bytesProduced );
         }
 
         (void)fclose(fileListing);
