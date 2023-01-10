@@ -6456,6 +6456,14 @@ int main( int _argc, char *_argv[] ) {
                     break;
                 case 'D':
                     _environment->additionalInfoFileName = strdup(optarg);
+                    if ( ! _environment->listingFileName ) {
+                        char * p = strdup( _environment->additionalInfoFileName );
+                        char * q = strchr( p, '.' );
+                        if ( q ) {
+                            strcpy( q, ".listing" );
+                        } 
+                        _environment->listingFileName = p;
+                    }
                     break;
                 case 'W':
                     _environment->warningsEnabled = 1;
@@ -6708,13 +6716,13 @@ int main( int _argc, char *_argv[] ) {
 
     target_peephole_optimizer( _environment );
 
-    if ( _environment->additionalInfoFile ) {
-        fclose( _environment->additionalInfoFile );
-    }
-    
     if ( _environment->exeFileName ) {
         begin_build( _environment );
         end_build( _environment );
+    }
+
+    if ( _environment->additionalInfoFile ) {
+        fclose( _environment->additionalInfoFile );
     }
 
     if ( _environment->embeddedStatsEnabled ) {

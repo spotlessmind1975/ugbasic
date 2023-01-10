@@ -2494,7 +2494,7 @@ int embed_scan_string (const char *);
     if ( system_call( _environment,  commandLine ) ) { \
         printf("The compilation of assembly program failed.\n\n"); \
         printf("Please use option '-I' to install chain tool.\n\n"); \
-    }; 
+    };
 
 #define BUILD_TOOLCHAIN_Z88DK_GET_EXECUTABLE_Z80ASM( _environment, executableName ) \
     if ( _environment->compilerFileName ) { \
@@ -2525,7 +2525,15 @@ int embed_scan_string (const char *);
         printf("The compilation of assembly program failed.\n\n"); \
         printf("Please use option '-I' to install chain tool.\n\n"); \
         return; \
-    }; 
+    }; \
+    if ( _environment->listingFileName ) { \
+        char * p = strdup( _environment->asmFileName ); \
+        char * q = strchr( p, '.' ); \
+        if ( q ) { \
+            strcpy( q, ".lis" ); \
+        } \
+        rename( p, _environment->listingFileName ); \
+    }
 
 #define BUILD_TOOLCHAIN_Z88DK_GET_EXECUTABLE_APPMAKE( _environment, executableName ) \
     if ( _environment->appMakerFileName ) { \
