@@ -154,6 +154,26 @@ int po_buf_cmp(POBuffer a, POBuffer b) {
     else return -1;
 }
 
+void po_buf_trim(POBuffer buf) {
+    char * p = buf->str;
+    char * q = buf->str + buf->len - 1;
+    while((p-buf->str) < buf->len) {
+        if ( ! ( (*p == ' ') || (*p == '\n') || (*p == '\r') || (*p == 13) || (*p == 10) || (*p == '\t') ) ) {
+            break;
+        };
+        ++p;
+    }
+    while(q > p) {
+        if ( ! ( (*q == ' ') || (*q == '\n') || (*q == '\r') || (*q == 13) || (*q == 10) || (*q == '\t') ) ) {
+            break;
+        };
+        --q;
+    }
+    memmove( buf->str, p, ( q - p ) + 1 );
+    buf->len = q - p + 1;
+    *(buf->str + buf->len) = 0;
+}
+
 /* returns an UPPER-cased char */
 static inline char _toUpper(char a) {
     return (a>='a' && a<='z') ? a-'a'+'A' : a;

@@ -773,3 +773,72 @@ void target_peephole_optimizer( Environment * _environment ) {
         TMP_BUF_CLR;
     }
 }
+
+void target_finalize( Environment * _environment ) {
+
+    if ( _environment->additionalInfoFile ) {
+
+        char fileNameOptimized[MAX_TEMPORARY_STORAGE];
+        FILE * fileAsm;
+        FILE * fileListing;
+        POBuffer bufferAsm = TMP_BUF;
+        POBuffer bufferListing = TMP_BUF;
+        POBuffer bufferLine = TMP_BUF;
+        POBuffer bufferAddress = TMP_BUF;
+        POBuffer bufferBytes = TMP_BUF;
+
+        int sourceLine = 0;
+
+        _environment->currentSourceLineAnalyzed = 0;
+        _environment->bytesProduced = 0;
+
+        fileAsm = fopen( _environment->asmFileName, "rt" );
+        if(fileAsm == NULL) {
+            perror(_environment->asmFileName);
+            exit(-1);
+        }
+
+        fileListing = fopen( _environment->listingFileName, "rt" );
+        if(fileListing == NULL) {
+            perror(_environment->listingFileName);
+            exit(-1);
+        }            
+        
+        while( !feof(fileAsm) && !feof(fileListing)) {
+
+            po_buf_fgets( bufferAsm, fileAsm );
+            po_buf_trim( bufferAsm );
+
+            if ( isAComment( bufferAsm ) ) {
+                POBuffer ln = TMP_BUF;
+                if (po_buf_match( bufferAsm, "; L:*", ln ) ) {
+                    sourceLine = atoi( ln->str );
+                    if ( ( sourceLine != _environment->currentSourceLineAnalyzed ) ) {
+                        if ( _environment->currentSourceLineAnalyzed  && _environment->additionalInfoFile ) {
+                            fprintf( _environment->additionalInfoFile, "AB:0:%d:%d\n", 
+                                _environment->currentSourceLineAnalyzed, _environment->bytesProduced );
+                        }
+                        _environment->currentSourceLineAnalyzed = sourceLine;
+                        _environment->bytesProduced = 0;
+                    }
+                }
+                continue;
+            }
+
+            while( !feof(fileListing) && (strstr( bufferListing->str, bufferAsm->str ) == NULL) ) {
+                po_buf_fgets( bufferListing, fileListing );
+                po_buf_trim( bufferListing );
+            }
+
+            if ( po_buf_match( bufferListing, "* * * ", bufferLine, bufferAddress, bufferBytes ) ) {
+                _environment->bytesProduced += bufferBytes->len >> 1;
+            }
+
+        }
+
+        (void)fclose(fileListing);
+        (void)fclose(fileAsm);
+
+    }
+
+}

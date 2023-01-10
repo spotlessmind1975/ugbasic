@@ -1730,9 +1730,14 @@ typedef struct _Environment {
     int currentSourceLineAnalyzed;
 
     /*
-     * Numer of assembly lines removed for currentSourceLine.
+     * Number of assembly lines removed for currentSourceLine.
      */
     int removedAssemblyLines;
+
+    /*
+     * Number of bytes produced for currentSourceLine
+     */
+    int bytesProduced;
 
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
@@ -2596,6 +2601,7 @@ void target_initialization( Environment *_environment );
 void shell_injection( Environment * _environment );
 void target_finalization( Environment * _environment );
 void target_analysis( Environment * _environment );
+void target_deep_analyzer( Environment * _environment );
 void end_compilation( Environment * _environment );
 void target_peephole_optimizer( Environment * _environment );
 void begin_build( Environment * _environment );
@@ -2623,6 +2629,7 @@ POBuffer po_buf_add(POBuffer buf, char c);
 POBuffer po_buf_vprintf(POBuffer buf, const char *fmt, va_list ap);
 POBuffer po_buf_printf(POBuffer buf, const char *fmt, ...);
 POBuffer po_buf_fgets(POBuffer buf, FILE *f);
+void po_buf_trim(POBuffer buf);
 int po_buf_cmp(POBuffer a, POBuffer b);
 POBuffer tmp_buf(void *key1, unsigned int key2);
 void tmp_buf_clr(void *key1);

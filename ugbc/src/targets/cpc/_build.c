@@ -180,10 +180,6 @@ void target_linkage( Environment * _environment ) {
 
 }
 
-void target_finalize( Environment * _environment ) {
-
-}
-
 void target_cleanup( Environment * _environment ) {
 
     if ( _environment->exeFileName ) {
@@ -200,6 +196,7 @@ void target_cleanup( Environment * _environment ) {
         if ( _environment->analysis && _environment->listingFileName ) {
             target_analysis( _environment );
         }
+
     }
 
 }
