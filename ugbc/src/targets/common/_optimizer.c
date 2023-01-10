@@ -60,7 +60,7 @@ POBuffer po_buf_del(POBuffer buf) {
 
 /* allocate a buffer */
 POBuffer po_buf_new(int size) {
-    POBuffer buf = malloc(sizeof(POBuffer));
+    POBuffer buf = malloc(sizeof(*buf));
     if(buf != NULL) {
         buf->len = 0;
         buf->cap = size+1;

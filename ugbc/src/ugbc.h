@@ -207,11 +207,13 @@ typedef enum _PeepHoleOptimizationKind {
 } PeepHoleOptimizationKind;
 
 /* expanable string */
-typedef struct _POBuffer {
+struct _POBuffer {
     char *str; /* actual string */
     int   len; /* string length (not counting null char) */
     int   cap; /* capacity of buffer */
-} *POBuffer;
+};
+
+typedef struct _POBuffer *POBuffer;
 
 /**
  * @brief Gamma correction type (for some palettes)

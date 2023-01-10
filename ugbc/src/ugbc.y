@@ -6457,7 +6457,8 @@ int main( int _argc, char *_argv[] ) {
                 case 'D':
                     _environment->additionalInfoFileName = strdup(optarg);
                     if ( ! _environment->listingFileName ) {
-                        char * p = strdup( _environment->additionalInfoFileName );
+                        char * p = malloc( strlen( _environment->additionalInfoFileName ) + MAX_TEMPORARY_STORAGE );
+                        strcpy( p, _environment->additionalInfoFileName );
                         char * q = strchr( p, '.' );
                         if ( q ) {
                             strcpy( q, ".listing" );
