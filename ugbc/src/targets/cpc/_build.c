@@ -189,7 +189,6 @@ void target_cleanup( Environment * _environment ) {
         char * p = strrchr( binFileName, '.' );
         memcpy( p, ".bin", 4 );
 
-        remove( _environment->configurationFileName );
         remove( binFileName );
         remove( _environment->asmFileName );
 
