@@ -5121,7 +5121,18 @@ Variable * variable_move_from_array( Environment * _environment, char * _array )
                     array->arrayType = VT_WORD;
                 }
         
-                offset = variable_mul2_const( _environment, offset->name, ( VT_BITWIDTH( array->arrayType ) >> 3 ) - 1 );
+                switch( VT_BITWIDTH( array->arrayType ) ) {
+                    case 32:
+                        offset = variable_mul2_const( _environment, offset->name, 2 );
+                        break;
+                    case 16:
+                        offset = variable_mul2_const( _environment, offset->name, 1 );
+                        break;
+                    case 8:
+                        break;
+                    case 0:
+                        CRITICAL_DATATYPE_UNSUPPORTED("array(4a)", DATATYPE_AS_STRING[array->arrayType]);
+                }
 
                 cpu_math_add_16bit_with_16bit( _environment, offset->realName, array->realName, offset->realName );
 
@@ -5136,7 +5147,7 @@ Variable * variable_move_from_array( Environment * _environment, char * _array )
                         cpu_move_8bit_indirect2( _environment, offset->realName, result->realName );
                         break;
                     case 0:
-                        CRITICAL_DATATYPE_UNSUPPORTED("array(4)", DATATYPE_AS_STRING[array->arrayType]);
+                        CRITICAL_DATATYPE_UNSUPPORTED("array(4b)", DATATYPE_AS_STRING[array->arrayType]);
                 }
 
             }
