@@ -697,11 +697,6 @@ static int optim_pass( Environment * _environment, POBuffer buf[LOOK_AHEAD], Pee
             } else break;
         } while(!feof(fileAsm));
 
-        if ( _environment->currentSourceLineAnalyzed  && _environment->additionalInfoFile ) {
-            fprintf( _environment->additionalInfoFile, "POL:0:%d:%d:%d\n", 
-                peephole_pass, _environment->currentSourceLineAnalyzed, _environment->removedAssemblyLines );
-        }
-
         switch(kind) {
             case PEEPHOLE:
             // basic_peephole(buf, zA, zB);
@@ -721,6 +716,11 @@ static int optim_pass( Environment * _environment, POBuffer buf[LOOK_AHEAD], Pee
         }
 
         ++line;
+    }
+
+    if ( _environment->currentSourceLineAnalyzed  && _environment->additionalInfoFile ) {
+        fprintf( _environment->additionalInfoFile, "POL:0:%d:%d:%d\n", 
+            peephole_pass, _environment->currentSourceLineAnalyzed, _environment->removedAssemblyLines );
     }
 
     /* log info at the end of the file */
