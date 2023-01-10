@@ -792,6 +792,8 @@ void target_finalize( Environment * _environment ) {
         _environment->currentSourceLineAnalyzed = 0;
         _environment->bytesProduced = 0;
 
+        fprintf( _environment->additionalInfoFile, "A:0\n" );
+
         fileAsm = fopen( _environment->asmFileName, "rt" );
         if(fileAsm == NULL) {
             perror(_environment->asmFileName);
