@@ -684,7 +684,7 @@ static int optim_pass( Environment * _environment, POBuffer buf[LOOK_AHEAD], Pee
                 if (po_buf_match( buf[LOOK_AHEAD-1], " ; L:*", ln ) ) {
                     sourceLine = atoi( ln->str );
                     if ( ( sourceLine != _environment->currentSourceLineAnalyzed ) ) {
-                        if ( _environment->currentSourceLineAnalyzed  && _environment->additionalInfoFile ) {
+                        if ( _environment->additionalInfoFile ) {
                             fprintf( _environment->additionalInfoFile, "POL:0:%d:%d:%d\n", 
                                 peephole_pass, _environment->currentSourceLineAnalyzed, _environment->removedAssemblyLines );
                         }
@@ -718,7 +718,7 @@ static int optim_pass( Environment * _environment, POBuffer buf[LOOK_AHEAD], Pee
         ++line;
     }
 
-    if ( _environment->currentSourceLineAnalyzed  && _environment->additionalInfoFile ) {
+    if ( _environment->additionalInfoFile ) {
         fprintf( _environment->additionalInfoFile, "POL:0:%d:%d:%d\n", 
             peephole_pass, _environment->currentSourceLineAnalyzed, _environment->removedAssemblyLines );
     }
@@ -821,7 +821,7 @@ void target_finalize( Environment * _environment ) {
                 if (po_buf_match( bufferAsm, "; L:*", ln ) ) {
                     sourceLine = atoi( ln->str );
                     if ( ( sourceLine != _environment->currentSourceLineAnalyzed ) ) {
-                        if ( _environment->currentSourceLineAnalyzed  && _environment->additionalInfoFile ) {
+                        if ( _environment->additionalInfoFile ) {
                             fprintf( _environment->additionalInfoFile, "AB:0:%d:%d\n", 
                                 _environment->currentSourceLineAnalyzed, _environment->bytesProduced );
                         }
