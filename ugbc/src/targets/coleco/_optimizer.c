@@ -89,174 +89,23 @@
 #define DO_INLINE       1
 #define DO_UNREAD       1
 
-/* expanable string */
-typedef struct {
-    char *str; /* actual string */
-    int   len; /* string length (not counting null char) */
-    int   cap; /* capacity of buffer */
-} *buffer;
-
-/* deallocate a buffer */
-static buffer buf_del(buffer buf) {
-    if(buf != NULL) {
-        free(buf->str);
-        buf->str = NULL;
-        buf->cap = 0;
-        buf->len = 0;
-        free(buf);
-    }
-
-    return NULL;
+/* returns an UPPER-cased char */
+static inline char _toUpper(char a) {
+    return (a>='a' && a<='z') ? a-'a'+'A' : a;
 }
 
-/* allocate a buffer */
-static buffer buf_new(int size) {
-    buffer buf = malloc(sizeof(*buf));
-    if(buf != NULL) {
-        buf->len = 0;
-        buf->cap = size+1;
-        buf->str = malloc(buf->cap);
-        buf->str[0] = '\0';
-    }
-    return buf;
+/* returns true if char is end of line ? */
+static inline int _eol(char c) {
+    return c=='\0' || c=='\n';
 }
 
-/* ensure the buffer can hold len data */
-static buffer _buf_cap(buffer buf, int len) {
-    if(len+1 >= buf->cap) {
-        buf->cap = len + 1 + MAX_TEMPORARY_STORAGE;
-        buf->str = realloc(buf->str, buf->cap);
-    }
-    return buf;
+/* returns true if both char matches */
+static inline int _eq(char pat, char txt) {
+    return (pat<=' ') ? (txt<=' ') : (_toUpper(pat)==_toUpper(txt));
 }
 
-/* append a string to a buffer */
-static buffer buf_cat(buffer buf, char *string) {
-    if(buf != NULL) {
-        int len = strlen(string);
-        _buf_cap(buf, buf->len + len);
-        strcpy(&buf->str[buf->len], string);
-        buf->len += len;
-    }
-    return buf;
-}
-
-/* copy a string into a buffer */
-static buffer buf_cpy(buffer buf, char *string) {
-    if(buf != NULL) buf->len = 0;
-    return buf_cat(buf, string);
-}
-
-/* append a char at the end of the buffer */
-static inline buffer buf_add(buffer buf, char c) {
-    if(buf) {
-        _buf_cap(buf, buf->len + 1);
-        buf->str[buf->len] = c;
-        ++buf->len;
-        buf->str[buf->len] = '\0';
-    }
-    return buf;
-}
-
-/* vprintf like function */
-static buffer buf_vprintf(buffer buf, const char *fmt, va_list ap) {
-    if(buf != NULL) {
-        int len = 0, avl;
-        do {
-            _buf_cap(buf, buf->len + len);
-            avl = buf->cap - buf->len;
-            len = vsnprintf(&buf->str[buf->len], avl, fmt, ap);
-        } while(len >= avl);
-        buf->len += len;
-    }
-    return buf;
-}
-
-/* sprintf like function */
-#ifdef __GNUC__
-static buffer buf_printf(buffer buf, const char *fmt, ...)
-    __attribute__ ((format (printf, 2, 3)));
-#endif
-static buffer buf_printf(buffer buf, const char *fmt, ...) {
-    va_list ap;
-    va_start(ap, fmt);
-    buf_vprintf(buf, fmt, ap);
-    va_end(ap);
-    return buf;
-}
-
-/* fgets-like */
-static buffer buf_fgets(buffer buf, FILE *f) {
-    int c;
-
-    buf_cpy(buf, "");
-
-    while( (c = fgetc(f)) != EOF) {
-        buf_add(buf, (char)c);
-        if(c=='\n') break;
-    }
-
-    return buf;
-}
-
-/* strcmp */
-static int buf_cmp(buffer a, buffer b) {
-    if(a) return b ? strcmp(a->str, b->str) : 1;
-    else return -1;
-}
-
-#define TMP_BUF_POOL 32
-static struct tmp_buf_pool {
-    buffer buf;
-    void *key1;
-    int key2;
-} tmp_buf_pool[TMP_BUF_POOL];
-
-/* an integer hash
-   https://gist.github.com/badboy/6267743
-*/
-static unsigned int tmp_buf_hash(unsigned int key) {
-    key ^= (key<<17) | (key>>16);
-    return key;
-}
-
-/* a static one-time buffer */
-static buffer tmp_buf(void *key1, unsigned int key2) {
-    int hash = tmp_buf_hash(((intptr_t)key1)*31 + key2) % TMP_BUF_POOL;
-    struct tmp_buf_pool *tmp = &tmp_buf_pool[hash];
-    int count = 0;
-
-    while(tmp->buf!=NULL && (tmp->key1!=key1 || tmp->key2!=key2)) {
-        ++count;
-        if(++tmp == &tmp_buf_pool[TMP_BUF_POOL]) {
-            tmp = tmp_buf_pool;
-        }
-    }
-
-    if(tmp->buf == NULL) {
-        if(count == TMP_BUF_POOL) {
-            fprintf(stderr, "TMP_BUF_POOL to short\n");
-            exit(-1);
-        }
-        tmp->buf  = buf_new(0);
-        tmp->key1 = key1;
-        tmp->key2 = key2;
-    }
-
-    return tmp->buf;
-}
-#define TMP_BUF tmp_buf(__FILE__, __LINE__)
-
-static void tmp_buf_clr(void *key1) {
-    struct tmp_buf_pool *tmp = &tmp_buf_pool[0];
-    for(;tmp!=&tmp_buf_pool[TMP_BUF_POOL];++tmp) {
-        if(tmp->key1 == key1) tmp->buf = buf_del(tmp->buf);
-    }
-}
-#define TMP_BUF_CLR tmp_buf_clr(__FILE__)
-
-/* returns true if the buffer matches a comment or and empty line */
-int isAComment( buffer buf ) {
+/* returns true if the POBuffer matches a comment or and empty line */
+int isAComment( POBuffer buf ) {
     char * _buffer = buf->str;
 
     if ( ! *_buffer ) {
@@ -277,77 +126,6 @@ int isAComment( buffer buf ) {
     return 0;
 }
 
-/* returns an UPPER-cased char */
-static inline char _toUpper(char a) {
-    return (a>='a' && a<='z') ? a-'a'+'A' : a;
-}
-
-/* returns true if char is end of line ? */
-static inline int _eol(char c) {
-    return c=='\0' || c=='\n';
-}
-
-/* returns true if both char matches */
-static inline int _eq(char pat, char txt) {
-    return (pat<=' ') ? (txt<=' ') : (_toUpper(pat)==_toUpper(txt));
-}
-
-/* a version of strcmp that ends at EOL and deal our special equality. */
-int _strcmp(buffer _s, buffer _t) {
-    char *s = _s->str, *t = _t->str;
-
-    while(!_eol(*s) && !_eol(*t) && _eq(*s,*t)) {
-        ++s;
-        ++t;
-    }
-    return _eol(*s) && _eol(*t) ? 0 : _eol(*s) ? 1 : -1;
-}
-
-/* Matches a string:
-    - ' ' maches anthing <= ' ' (eg 'r', \n', '\t' or ' ' )
-    - '*' matches up to the next one in the pattern.
-   Matched content is copied into buffers passed as varargs. If
-   a passed variable is NULL the matched content corresponding
-   to it is not copied.
-
-   Returns the last matched '*' or the buffer if pattern is fully
-   matched, or NULL otherwise meaning "no match".
-*/
-static buffer match(buffer _buf, const char *_pattern, ...) {
-    buffer ret = _buf;
-    const char *s = _buf->str, *p = _pattern;
-    va_list ap;
-
-    va_start(ap, _pattern);
-
-    while(!_eol(*s) && *p) {
-        if(*p==' ') {while(*p==' ') ++p;
-            if(!_eq(' ', *s)) {
-                ret = NULL;
-                break;
-            }
-            while(!_eol(*s) && _eq(' ', *s)) ++s;
-        } else if(*p=='*') {
-            buffer m = va_arg(ap, buffer); ++p;
-            if(m != NULL) {
-                ret = buf_cpy(m, "");
-            }
-            while(!_eol(*s) && !_eq(*p, *s)) buf_add(m, *s++);
-            if(!_eq(*p,*s)) {
-                ret = NULL;
-                break;
-            }
-        } else if(_toUpper(*s++) != _toUpper(*p++)) {
-            ret = NULL;
-            break;
-        }
-    }
-
-    va_end(ap);
-
-    return *p=='\0' ? ret : NULL;
-}
-
 /* number of lines changed */
 static int change        = 0;
 static int peephole_pass = 0;
@@ -356,7 +134,7 @@ static int num_inlined   = 0; /* number of variables inlined */
 static int num_unread    = 0; /* number of variables not read */
 
 #ifdef __GNUC__
-static void optim(buffer buf, const char *rule, const char *repl, ...)
+static void optim(POBuffer buf, const char *rule, const char *repl, ...)
     __attribute__ ((format (printf, 3, 4)));
 #endif
 
@@ -364,38 +142,38 @@ static void optim(buffer buf, const char *rule, const char *repl, ...)
 #define R_(X)  R__(X)
 #define RULE "r" R_(__LINE__) " "
 
-/* replaces the buffer with an optimized code */
-/* original buffer is kept as comment */
-static void optim(buffer buf, const char *rule, const char *repl, ...) {
+/* replaces the POBuffer with an optimized code */
+/* original POBuffer is kept as comment */
+static void optim(POBuffer buf, const char *rule, const char *repl, ...) {
     va_list ap;
-    buffer tmp = TMP_BUF;
+    POBuffer tmp = TMP_BUF;
     char *s;
 
     va_start(ap, repl);
-    buf_cpy(tmp, "");
+    po_buf_cpy(tmp, "");
 
     /* add our own comment if any */
-    if(rule) buf_printf(tmp, "; peephole(%d): %s\n", peephole_pass, rule);
+    if(rule) po_buf_printf(tmp, "; peephole(%d): %s\n", peephole_pass, rule);
 
     /* comment out line */
-    buf_cat(tmp, ";");
+    po_buf_cat(tmp, ";");
 
     /* copy upto the end of string or upto end of string */
     if ( (s = strchr(buf->str, '\n')) != NULL) *s = '\0'; /* cut at \n */
-    buf_cat(tmp, buf->str);
-    if( s != NULL ) buf_add(tmp, *s++ = '\n'); /* restore \n */
+    po_buf_cat(tmp, buf->str);
+    if( s != NULL ) po_buf_add(tmp, *s++ = '\n'); /* restore \n */
 
     /* insert replacement if provided */
     if(repl) {
-        buf_vprintf(tmp, repl, ap);
-        buf_cat(tmp, "\n");
+        po_buf_vprintf(tmp, repl, ap);
+        po_buf_cat(tmp, "\n");
     }
 
     /* copy remaining comments */
-    if(s) buf_cat(tmp, s);
+    if(s) po_buf_cat(tmp, s);
 
-    /* write result back into input buffer */
-    buf_cpy(buf, tmp->str);
+    /* write result back into input POBuffer */
+    po_buf_cpy(buf, tmp->str);
 
     /* one more change */
     ++change;
@@ -403,26 +181,26 @@ static void optim(buffer buf, const char *rule, const char *repl, ...) {
     va_end(ap);
 }
 
-/* returns true if the buffer matches a zero value */
+/* returns true if the POBuffer matches a zero value */
 static int isZero(char *s) {
     if(*s == '$') ++s;
     while(*s == '0') ++s;
     return _eq(' ', *s);
 }
-static int _isZero(buffer buf) {
+static int _isZero(POBuffer buf) {
     return buf!=NULL && isZero(buf->str);
 }
 
 /* perform basic peephole optimization with a length-4 look-ahead */
-static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
+static void basic_peephole(POBuffer buf[LOOK_AHEAD], int zA, int zB) {
     /* allows presumably safe operations */
     int unsafe = ALLOW_UNSAFE;
 
     /* various local buffers */
-    buffer v1 = TMP_BUF;
-    buffer v2 = TMP_BUF;
-    buffer v3 = TMP_BUF;
-    buffer v4 = TMP_BUF;
+    POBuffer v1 = TMP_BUF;
+    POBuffer v2 = TMP_BUF;
+    POBuffer v3 = TMP_BUF;
+    POBuffer v4 = TMP_BUF;
     
     /* a bunch of rules */
 
@@ -433,7 +211,7 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
     // ;or
     //  sub a    ;disadvantages: changes flags
     // ; -> save 1 byte and 3 T-states    
-	if( match( buf[0], " LD *, 0", v1) && strchr( "A", _toUpper(*v1->str) ) != NULL ) {
+	if( po_buf_match( buf[0], " LD *, 0", v1) && strchr( "A", _toUpper(*v1->str) ) != NULL ) {
 		optim( buf[0], RULE "(LD A, 0)->(XOR A)", "\tXOR %c", _toUpper(*v1->str) );
     }
 
@@ -445,16 +223,16 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
     // ;or this
     //     ld bc,(b_num * 256) + c_num		;where b_num goes to b register and c_num to c register
     // ; -> save 1 byte and 4 T-states
-	if( match( buf[0], " LD B, $*", v1) && match( buf[1], " LD C, $*", v2) ) {
+	if( po_buf_match( buf[0], " LD B, $*", v1) && po_buf_match( buf[1], " LD C, $*", v2) ) {
 		optim( buf[0], RULE "(LD B, x; LD C, x)->(LD BC, xx)", "\tLD BC, ($%s * 256) + $%s", v1->str, v2->str );
 		optim( buf[1], "", NULL );
     }
 
     //
-	if( match( buf[0], " LD A, *", v1) && 
-        match( buf[1], " LD (*), A", v2) &&
-        match( buf[2], " LD A, *", v3) &&
-        _strcmp(v1,v3)==0
+	if( po_buf_match( buf[0], " LD A, *", v1) && 
+        po_buf_match( buf[1], " LD (*), A", v2) &&
+        po_buf_match( buf[2], " LD A, *", v3) &&
+        po_buf_strcmp(v1,v3)==0
         ) {
 		optim( buf[2], RULE "(LD A, x; LD (x), A; LD A, x)->(LD A, x; LD (x), A)", NULL );
     }
@@ -465,8 +243,8 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
     // ;try this
     // ld (hl),$42
     // ; -> save 1 byte and 4 T-states
-	if( match( buf[0], " LD A, $*", v1) && 
-        match( buf[1], " LD (HL), A")
+	if( po_buf_match( buf[0], " LD A, $*", v1) && 
+        po_buf_match( buf[1], " LD (HL), A")
         ) {
 		optim( buf[0], RULE "(LD A, x; LD (HL), A)->(LD (HL), x)", "\tLD HL, $%s", v1->str );
 		optim( buf[1], NULL, NULL );
@@ -481,10 +259,10 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
     //     inc (hl)
     //     ld a,(hl) ;if you don't need (hl) in a, delete this line
     // ; -> save 2 bytes and 2 T-states
-	if( match( buf[0], " LD A, (*)", v1) && 
-        match( buf[1], " INC A") &&
-        match( buf[2], " LD (*), A", v2 ) &&
-        _strcmp( v1, v2 ) == 0
+	if( po_buf_match( buf[0], " LD A, (*)", v1) && 
+        po_buf_match( buf[1], " INC A") &&
+        po_buf_match( buf[2], " LD (*), A", v2 ) &&
+        po_buf_strcmp( v1, v2 ) == 0
         ) {
 		optim( buf[0], RULE "(LD A, (x); INC A; LD (x), A)->(LD HL, x; INC (HL))", "\tLD HL, %s", v1->str );
 		optim( buf[1], NULL, "\tINC (HL)" );
@@ -500,10 +278,10 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
     // ldi
     // inc bc
     // ; -> save 1 byte and 4 T-states
-	if( match( buf[0], " LD A, (HL)") && 
-        match( buf[1], " LD (DE), A" ) &&
-        match( buf[2], " INC HL" ) &&
-        match( buf[3], " INC DE" )
+	if( po_buf_match( buf[0], " LD A, (HL)") && 
+        po_buf_match( buf[1], " LD (DE), A" ) &&
+        po_buf_match( buf[2], " INC HL" ) &&
+        po_buf_match( buf[3], " INC DE" )
         ) {
 		optim( buf[0], RULE "(LD A, (HL); LD (DE), A; INC HL; INC DE)->(LDI; INC BC)", "\tLDI" );
 		optim( buf[1], NULL, "\tINC BC" );
@@ -516,7 +294,7 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
     // ;Use
     //  or a
     // ; -> save 1 byte and 3 T-states
-	if( match( buf[0], " CP 0") ) {
+	if( po_buf_match( buf[0], " CP 0") ) {
 		optim( buf[0], RULE "(CP 0)->(OR A)", "\tOR A" );
     }
 
@@ -524,7 +302,7 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
     // ; >
     //   cpl
     // ; -> save 1 byte and 3 T-states
-	if( match( buf[0], " XOR $FF") ) {
+	if( po_buf_match( buf[0], " XOR $FF") ) {
 		optim( buf[0], RULE "(XOR $FF)->(CPL)", "\tCPL" );
     }
 
@@ -537,9 +315,9 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
     //     add hl,de
     // ; -> 2 bytes and 8 T-states !
 	if( 
-        match( buf[0], " LD DE, $*", v1 ) &&
-        match( buf[1], " OR A" ) &&
-        match( buf[2], " SBC HL, DE" ) 
+        po_buf_match( buf[0], " LD DE, $*", v1 ) &&
+        po_buf_match( buf[1], " OR A" ) &&
+        po_buf_match( buf[2], " SBC HL, DE" ) 
     ) {
 		optim( buf[0], RULE "(LD DE, x; OR A; SBC HL, DE)->(LD DE, -x; ADD HL, DE)", "\tLD DE, -$%s", v1->str );
 		optim( buf[1], NULL, "\tADD HL, DE" );
@@ -552,8 +330,8 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
     //   add hl,hl
     // ; -> save 3 bytes and 5 T-states
 	if( 
-        match( buf[0], " SLA L" ) &&
-        match( buf[1], " RL H" )
+        po_buf_match( buf[0], " SLA L" ) &&
+        po_buf_match( buf[1], " RL H" )
     ) {
 		optim( buf[0], RULE "(SLA+RL)->(ADD)", "\tADD HL, HL" );
 		optim( buf[1], NULL, NULL );
@@ -568,10 +346,10 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
     //   jr nz,foo
     // ; -> save 2 bytes and 7 T-states
 	if( 
-        match( buf[0], " AND $*", v1 ) &&
-        match( buf[1], " CP $*", v2 ) &&
-        match( buf[2], " JR Z, *", v3 ) &&
-        _strcmp( v1, v2 ) == 0
+        po_buf_match( buf[0], " AND $*", v1 ) &&
+        po_buf_match( buf[1], " CP $*", v2 ) &&
+        po_buf_match( buf[2], " JR Z, *", v3 ) &&
+        po_buf_strcmp( v1, v2 ) == 0
     ) {
 		optim( buf[1], NULL, NULL );
 		optim( buf[2], RULE "(AND+CP+JZ)->(AND+JNZ)", " JR NZ, %s", v3->str );
@@ -585,8 +363,8 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
     // ;only do this if the pushed pc to stack is not passed to the call. Example: some kind of inline vputs.
     // ; -> save 1 byte and 17 T-states
 	if( 
-        match( buf[0], " CALL *", v1 ) &&
-        match( buf[1], " RET" )
+        po_buf_match( buf[0], " CALL *", v1 ) &&
+        po_buf_match( buf[1], " RET" )
     ) {
 		optim( buf[0], RULE "(CALL+RET)->(JP)", "\tJP %s", v1->str );
 		optim( buf[1], NULL, NULL );
@@ -599,8 +377,8 @@ static void basic_peephole(buffer buf[LOOK_AHEAD], int zA, int zB) {
     //     djnz loop
     // ; save 1 byte and 3 T-states
 	if( 
-        match( buf[0], " DEC B" ) &&
-        match( buf[1], " JR NZ, *", v1 )
+        po_buf_match( buf[0], " DEC B" ) &&
+        po_buf_match( buf[1], " JR NZ, *", v1 )
     ) {
 		optim( buf[0], RULE "(DEC B+JR NZ)->(DJNZ)", "\tDJNZ %s", v1->str );
 		optim( buf[1], NULL, NULL );
@@ -643,7 +421,7 @@ static void vars_clear(void) {
 }
 
 /* gets (or creates) an entry for a variable from the data-base */
-struct var *vars_get(buffer _name) {
+struct var *vars_get(POBuffer _name) {
     char *name = _name->str;
     struct var *ret = NULL;
     int i;
@@ -675,72 +453,72 @@ struct var *vars_get(buffer _name) {
     return ret;
 }
 
-static int vars_ok(buffer name) {
-    if(match(name, "_Tstr"))   return 0;
-    if(match(name, "_label"))  return 0;
+static int vars_ok(POBuffer name) {
+    if(po_buf_match(name, "_Tstr"))   return 0;
+    if(po_buf_match(name, "_label"))  return 0;
 
     if(name->str[0]=='_')      return 1;
-    if(match(name, "CLIP"))    return 1;
-    if(match(name, "XCUR"))    return 1;
-    if(match(name, "YCUR"))    return 1;
-    if(match(name, "CURRENT")) return 1;
-    if(match(name, "FONT"))    return 1;
-    if(match(name, "TEXT"))    return 1;
-    if(match(name, "LAST"))    return 1;
-    if(match(name, "XGR"))     return 1;
-    if(match(name, "YGR"))     return 1;
-    if(match(name, "FREE_"))   return 1;
+    if(po_buf_match(name, "CLIP"))    return 1;
+    if(po_buf_match(name, "XCUR"))    return 1;
+    if(po_buf_match(name, "YCUR"))    return 1;
+    if(po_buf_match(name, "CURRENT")) return 1;
+    if(po_buf_match(name, "FONT"))    return 1;
+    if(po_buf_match(name, "TEXT"))    return 1;
+    if(po_buf_match(name, "LAST"))    return 1;
+    if(po_buf_match(name, "XGR"))     return 1;
+    if(po_buf_match(name, "YGR"))     return 1;
+    if(po_buf_match(name, "FREE_"))   return 1;
 
     return 0;
 }
 
 /* look for variable uses and collect data about he variables */
-static void vars_scan(buffer buf[LOOK_AHEAD]) {
-    buffer tmp = TMP_BUF;
-    buffer arg = TMP_BUF;
+static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
+    POBuffer tmp = TMP_BUF;
+    POBuffer arg = TMP_BUF;
 
     // if( match( buf[0], " * _*+", NULL, buf) ) {
         // struct var *v = vars_get(buf);
         // v->flags |= NO_INLINE;
     // }
 
-    if( match( buf[0], " LD *, (*)",  tmp, arg ) ) if(vars_ok(arg)) {
+    if( po_buf_match( buf[0], " LD *, (*)",  tmp, arg ) ) if(vars_ok(arg)) {
         struct var *v = vars_get(arg);
         v->nb_rd++;
     }
 
-    if( match( buf[0], " LD *, *",  tmp, arg ) &&
+    if( po_buf_match( buf[0], " LD *, *",  tmp, arg ) &&
         strstr("A B C D E AD BC DE HL IX IY", tmp->str)!=NULL
         ) if(vars_ok(arg)) {
         struct var *v = vars_get(arg);
         v->nb_rd++;
     }
 
-    if (match( buf[0], " LD (*), *", arg, tmp) ) if(vars_ok(arg)) {
+    if (po_buf_match( buf[0], " LD (*), *", arg, tmp) ) if(vars_ok(arg)) {
         struct var *v = vars_get(arg);
         v->nb_wr++;
     }
 
-    if (match( buf[0], " LD *, *", arg, tmp) &&
+    if (po_buf_match( buf[0], " LD *, *", arg, tmp) &&
         strstr("A B C D E AD BC DE HL IX IY", tmp->str)!=NULL        
         ) if(vars_ok(arg)) {
         struct var *v = vars_get(arg);
         v->nb_wr++;
     }
 
-    if( match( buf[0], " *: defs *", tmp, arg) && vars_ok(tmp)) {
+    if( po_buf_match( buf[0], " *: defs *", tmp, arg) && vars_ok(tmp)) {
         struct var *v = vars_get(tmp);
         v->size = atoi(arg->str);
         v->init = strdup("1-1");
     }
 
-    if( match(buf[0], " *: defb *", tmp, arg) && vars_ok(tmp) && strchr(buf[0]->str,',')==NULL) {
+    if( po_buf_match(buf[0], " *: defb *", tmp, arg) && vars_ok(tmp) && strchr(buf[0]->str,',')==NULL) {
         struct var *v = vars_get(tmp);
         v->size = 1;
         v->init = strdup(isZero(arg->str) ? "1-1" : arg->str);
     }
 
-    if( match(buf[0], " *: defw *", tmp, arg) && vars_ok(tmp) && strchr(buf[0]->str,',')==NULL) {
+    if( po_buf_match(buf[0], " *: defw *", tmp, arg) && vars_ok(tmp) && strchr(buf[0]->str,',')==NULL) {
         struct var *v = vars_get(tmp);
         v->size = 2;
         v->init = strdup(arg->str);
@@ -759,14 +537,14 @@ static int vars_cmp(const void *_a, const void *_b) {
 }
 
 /* removes unread variables */
-static void vars_remove(Environment * _environment, buffer buf[LOOK_AHEAD]) {
-    buffer var = TMP_BUF;
-    buffer op  = TMP_BUF;
+static void vars_remove(Environment * _environment, POBuffer buf[LOOK_AHEAD]) {
+    POBuffer var = TMP_BUF;
+    POBuffer op  = TMP_BUF;
     
     if(!DO_UNREAD) return;
     
     /* unread */
-    if(match( buf[0], " LD (*), *", var, op) && vars_ok(var)) {
+    if(po_buf_match( buf[0], " LD (*), *", var, op) && vars_ok(var)) {
         struct var *v = vars_get(var);
         if(v->nb_rd == 0 && v->offset!=-2) {
             v->offset = 0;
@@ -776,9 +554,9 @@ static void vars_remove(Environment * _environment, buffer buf[LOOK_AHEAD]) {
     }
 
     /* remove changed variables */
-    if(match( buf[0], " *: DEFS ", var)
-    || match( buf[0], " *: DEFB ", var)
-    || match( buf[0], " *: DEFW ", var) ) if(vars_ok(var)) {
+    if(po_buf_match( buf[0], " *: DEFS ", var)
+    || po_buf_match( buf[0], " *: DEFB ", var)
+    || po_buf_match( buf[0], " *: DEFW ", var) ) if(vars_ok(var)) {
         struct var *v = vars_get(var);
         if(v->nb_rd==0 && 0<v->size && v->size<=4 && 0==(v->flags & NO_REMOVE) && v->offset!=-2) {
             optim(buf[0], "unread",NULL);
@@ -789,7 +567,7 @@ static void vars_remove(Environment * _environment, buffer buf[LOOK_AHEAD]) {
 }            
 
 /* collapse all heading spaces into a single tabulation */
-static void out(FILE *f, buffer _buf) {
+static void out(FILE *f, POBuffer _buf) {
     char *s = _buf->str;
     int tab = 0;
     while(*s==' ' || *s=='\t') {tab = 1; ++s;}
@@ -798,7 +576,7 @@ static void out(FILE *f, buffer _buf) {
 }
 
 /* remove space that is sometimes used in indexing mode and makes the optimized produce bad dcode */
-static void fixes_indexed_syntax(buffer buf) {
+static void fixes_indexed_syntax(POBuffer buf) {
     char *s = buf->str;
 
     /* not an instruction */
@@ -825,7 +603,7 @@ static void fixes_indexed_syntax(buffer buf) {
 }
 
 /* various kind of optimization */
-static int optim_pass( Environment * _environment, buffer buf[LOOK_AHEAD], PeepHoleOptimizationKind kind) {
+static int optim_pass( Environment * _environment, POBuffer buf[LOOK_AHEAD], PeepHoleOptimizationKind kind) {
     char fileNameOptimized[MAX_TEMPORARY_STORAGE];
     FILE * fileAsm;
     FILE * fileOptimized;
@@ -880,30 +658,30 @@ static int optim_pass( Environment * _environment, buffer buf[LOOK_AHEAD], PeepH
     }            
     
     /* clears our look-ahead buffers */
-    for(i = 0; i<LOOK_AHEAD; ++i) buf_cpy(buf[i], "");
+    for(i = 0; i<LOOK_AHEAD; ++i) po_buf_cpy(buf[i], "");
 
     /* global change flag */
     change = 0;
 
     while( still_to_go ) {
-        /* print out oldest buffer */
+        /* print out oldest POBuffer */
         if ( line >= LOOK_AHEAD ) out(fileOptimized, buf[0]);
 
         /* shift the buffers */
-        for(i=0; i<LOOK_AHEAD-1; ++i) buf_cpy(buf[i], buf[i+1]->str);
+        for(i=0; i<LOOK_AHEAD-1; ++i) po_buf_cpy(buf[i], buf[i+1]->str);
 
         /* read next line, merging adjacent comments */
         if(feof(fileAsm)) {
             --still_to_go;
-            buf_cpy(buf[LOOK_AHEAD-1], "");
+            po_buf_cpy(buf[LOOK_AHEAD-1], "");
         } else do {
             /* read next line */
-            buf_fgets( buf[LOOK_AHEAD-1], fileAsm );
+            po_buf_fgets( buf[LOOK_AHEAD-1], fileAsm );
             fixes_indexed_syntax(buf[LOOK_AHEAD-1]);
-            /* merge comment with previous line if we do not overflow the buffer */
+            /* merge comment with previous line if we do not overflow the POBuffer */
             if(isAComment(buf[LOOK_AHEAD-1])) {
-                buffer ln = TMP_BUF;
-                if (match( buf[LOOK_AHEAD-1], " ; L:*", ln ) ) {
+                POBuffer ln = TMP_BUF;
+                if (po_buf_match( buf[LOOK_AHEAD-1], " ; L:*", ln ) ) {
                     sourceLine = atoi( ln->str );
                     if ( ( sourceLine != _environment->currentSourceLineAnalyzed ) ) {
                         if ( _environment->currentSourceLineAnalyzed  && _environment->additionalInfoFile ) {
@@ -914,8 +692,8 @@ static int optim_pass( Environment * _environment, buffer buf[LOOK_AHEAD], PeepH
                         _environment->removedAssemblyLines = 0;
                     }
                 }                
-                if(KEEP_COMMENTS) buf_cat(buf[LOOK_AHEAD-2], buf[LOOK_AHEAD-1]->str);
-                buf_cpy(buf[LOOK_AHEAD-1], "");
+                if(KEEP_COMMENTS) po_buf_cat(buf[LOOK_AHEAD-2], buf[LOOK_AHEAD-1]->str);
+                po_buf_cpy(buf[LOOK_AHEAD-1], "");
             } else break;
         } while(!feof(fileAsm));
 
@@ -975,10 +753,10 @@ static int optim_pass( Environment * _environment, buffer buf[LOOK_AHEAD], PeepH
 /* main entry-point for this service */
 void target_peephole_optimizer( Environment * _environment ) {
     if ( _environment->peepholeOptimizationLimit > 0 ) {
-        buffer buf[LOOK_AHEAD];
+        POBuffer buf[LOOK_AHEAD];
         int i;
 
-        for(i=0; i<LOOK_AHEAD; ++i) buf[i] = buf_new(0);
+        for(i=0; i<LOOK_AHEAD; ++i) buf[i] = po_buf_new(0);
 
         int optimization_limit_count = _environment->peepholeOptimizationLimit;
 
@@ -991,7 +769,7 @@ void target_peephole_optimizer( Environment * _environment ) {
         optim_pass(_environment, buf, RELOCATION1);
         optim_pass(_environment, buf, RELOCATION2);
 
-        for(i=0; i<LOOK_AHEAD; ++i) buf[i] = buf_del(buf[i]);
+        for(i=0; i<LOOK_AHEAD; ++i) buf[i] = po_buf_del(buf[i]);
         TMP_BUF_CLR;
     }
 }

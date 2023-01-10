@@ -206,6 +206,13 @@ typedef enum _PeepHoleOptimizationKind {
     RELOCATION2 = 4
 } PeepHoleOptimizationKind;
 
+/* expanable string */
+typedef struct _POBuffer {
+    char *str; /* actual string */
+    int   len; /* string length (not counting null char) */
+    int   cap; /* capacity of buffer */
+} *POBuffer;
+
 /**
  * @brief Gamma correction type (for some palettes)
  * 
@@ -2607,6 +2614,23 @@ ScreenMode * find_screen_mode_by_id( Environment * _environment, int _id );
 Bank * bank_find( Bank * _first, char * _name );
 
 #define FUNCTION_STUB( t )   Variable * result = variable_temporary( _environment, t, "(stub)" ); return result;
+
+POBuffer po_buf_del( POBuffer buf );
+POBuffer po_buf_new( int size );
+POBuffer po_buf_cat(POBuffer buf, char *string);
+POBuffer po_buf_cpy(POBuffer buf, char *string);
+POBuffer po_buf_add(POBuffer buf, char c);
+POBuffer po_buf_vprintf(POBuffer buf, const char *fmt, va_list ap);
+POBuffer po_buf_printf(POBuffer buf, const char *fmt, ...);
+POBuffer po_buf_fgets(POBuffer buf, FILE *f);
+int po_buf_cmp(POBuffer a, POBuffer b);
+POBuffer tmp_buf(void *key1, unsigned int key2);
+void tmp_buf_clr(void *key1);
+POBuffer po_buf_match(POBuffer _buf, const char *_pattern, ...);
+int po_buf_strcmp(POBuffer _s, POBuffer _t);
+
+#define TMP_BUF         tmp_buf(__FILE__, __LINE__)
+#define TMP_BUF_CLR     tmp_buf_clr(__FILE__)
 
 //----------------------------------------------------------------------------
 // *A*
