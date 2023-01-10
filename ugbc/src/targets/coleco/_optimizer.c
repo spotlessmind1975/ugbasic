@@ -827,15 +827,25 @@ void target_finalize( Environment * _environment ) {
                 continue;
             }
 
+            int pos = ftell( fileListing );
             while( !feof(fileListing) && (strstr( bufferListing->str, bufferAsm->str ) == NULL) ) {
                 po_buf_fgets( bufferListing, fileListing );
                 po_buf_trim( bufferListing );
             }
 
-            if ( po_buf_match( bufferListing, "* * * ", bufferLine, bufferAddress, bufferBytes ) ) {
-                _environment->bytesProduced += bufferBytes->len >> 1;
+            if ( feof(fileListing) ) {
+                fseek( fileListing, pos, SEEK_SET );
+            } else {
+                if ( po_buf_match( bufferListing, "* * * ", bufferLine, bufferAddress, bufferBytes ) ) {
+                    _environment->bytesProduced += bufferBytes->len >> 1;
+                }
             }
 
+        }
+
+        if ( _environment->currentSourceLineAnalyzed  && _environment->additionalInfoFile ) {
+            fprintf( _environment->additionalInfoFile, "AB:0:%d:%d\n", 
+                _environment->currentSourceLineAnalyzed, _environment->bytesProduced );
         }
 
         (void)fclose(fileListing);
