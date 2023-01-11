@@ -843,8 +843,14 @@ void target_finalize( Environment * _environment ) {
             } else {
                 if ( po_buf_match( bufferListing, "* * * ", bufferLine, bufferAddress, bufferBytes ) ) {
                     _environment->bytesProduced += bufferBytes->len >> 1;
+                    char * bufferAsmEscaped = strdup( bufferAsm->str );
+                    for( int i=0, c=strlen(bufferAsmEscaped); i<c; ++i ) {
+                        if ( bufferAsmEscaped[i] == ':' ) {
+                            bufferAsmEscaped[i] = '§';
+                        }
+                    }
                     fprintf( _environment->additionalInfoFile, "AL:0:%d:%*s%s\n", 
-                        _environment->currentSourceLineAnalyzed, leftPadding, "", bufferAsm->str );
+                        _environment->currentSourceLineAnalyzed, leftPadding, "", bufferAsmEscaped );
                 }
             }
 
