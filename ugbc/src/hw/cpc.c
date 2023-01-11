@@ -181,7 +181,7 @@ void cpc_joy( Environment * _environment, int _port, char * _value ) {
     deploy( scancode, src_hw_cpc_scancode_asm );
     deploy( joystick, src_hw_cpc_joystick_asm );
 
-    outline1("LD A, $%2.2x", _port );
+    outline1("LD A, $%2.2x", (unsigned char)(_port & 0xff) );
     outline0("LD B, A" );
     outline0("CALL JOYSTICK");
     outline1("LD (%s), A", _value );
@@ -988,7 +988,7 @@ void cpc_hscroll_screen( Environment * _environment, int _direction ) {
     deploy( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
     deploy( textHScrollScreen, src_hw_cpc_hscroll_screen_asm );
 
-    outline1("LD A, $%2.2x", _direction);
+    outline1("LD A, $%2.2x", (unsigned char)(_direction));
     outline0("CALL HSCROLLSCREEN");
 
 }
