@@ -156,14 +156,10 @@ void target_linkage( Environment * _environment ) {
     }
     remove(binaryName);
 
-}
-
-
-void target_finalize( Environment * _environment ) {
-
     convertbintok7( _environment );
 
 }
+
 
 void target_cleanup( Environment * _environment ) {
 
