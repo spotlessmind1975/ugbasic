@@ -846,6 +846,9 @@ void target_finalize( Environment * _environment ) {
                     if ( bufferAsmEscaped[i] == ':' ) {
                         bufferAsmEscaped[i] = 6;
                     }
+                    if ( bufferAsmEscaped[i] == 9 ) {
+                        bufferAsmEscaped[i] = ' ';
+                    }
                 }
                 if ( po_buf_match( bufferListing, "* * * ", bufferLine, bufferAddress, bufferBytes ) ) {
                     _environment->bytesProduced += bufferBytes->len >> 1;
