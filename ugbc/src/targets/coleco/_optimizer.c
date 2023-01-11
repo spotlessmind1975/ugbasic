@@ -844,7 +844,7 @@ void target_finalize( Environment * _environment ) {
                 char * bufferAsmEscaped = strdup( bufferAsm->str );
                 for( int i=0, c=strlen(bufferAsmEscaped); i<c; ++i ) {
                     if ( bufferAsmEscaped[i] == ':' ) {
-                        bufferAsmEscaped[i] = 9;
+                        bufferAsmEscaped[i] = 6;
                     }
                 }
                 if ( po_buf_match( bufferListing, "* * * ", bufferLine, bufferAddress, bufferBytes ) ) {
