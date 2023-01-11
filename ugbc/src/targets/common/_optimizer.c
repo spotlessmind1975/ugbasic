@@ -154,7 +154,7 @@ int po_buf_cmp(POBuffer a, POBuffer b) {
     else return -1;
 }
 
-void po_buf_trim(POBuffer buf) {
+int po_buf_trim(POBuffer buf) {
     char * p = buf->str;
     char * q = buf->str + buf->len - 1;
     while((p-buf->str) < buf->len) {
@@ -172,6 +172,7 @@ void po_buf_trim(POBuffer buf) {
     memmove( buf->str, p, ( q - p ) + 1 );
     buf->len = q - p + 1;
     *(buf->str + buf->len) = 0;
+    return p - buf->str;
 }
 
 /* returns an UPPER-cased char */

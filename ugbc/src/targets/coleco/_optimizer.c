@@ -814,7 +814,7 @@ void target_finalize( Environment * _environment ) {
         while( !feof(fileAsm) && !feof(fileListing)) {
 
             po_buf_fgets( bufferAsm, fileAsm );
-            po_buf_trim( bufferAsm );
+            int leftPadding = po_buf_trim( bufferAsm );
 
             if ( isAComment( bufferAsm ) ) {
                 POBuffer ln = TMP_BUF;
@@ -843,6 +843,8 @@ void target_finalize( Environment * _environment ) {
             } else {
                 if ( po_buf_match( bufferListing, "* * * ", bufferLine, bufferAddress, bufferBytes ) ) {
                     _environment->bytesProduced += bufferBytes->len >> 1;
+                    fprintf( _environment->additionalInfoFile, "AL:0:%d:%*s%s\n", 
+                        _environment->currentSourceLineAnalyzed, leftPadding, "", bufferAsm->str );
                 }
             }
 

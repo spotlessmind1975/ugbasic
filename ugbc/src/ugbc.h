@@ -2631,7 +2631,7 @@ POBuffer po_buf_add(POBuffer buf, char c);
 POBuffer po_buf_vprintf(POBuffer buf, const char *fmt, va_list ap);
 POBuffer po_buf_printf(POBuffer buf, const char *fmt, ...);
 POBuffer po_buf_fgets(POBuffer buf, FILE *f);
-void po_buf_trim(POBuffer buf);
+int po_buf_trim(POBuffer buf);
 int po_buf_cmp(POBuffer a, POBuffer b);
 POBuffer tmp_buf(void *key1, unsigned int key2);
 void tmp_buf_clr(void *key1);
