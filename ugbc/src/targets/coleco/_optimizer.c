@@ -841,17 +841,17 @@ void target_finalize( Environment * _environment ) {
             if ( feof(fileListing) ) {
                 fseek( fileListing, pos, SEEK_SET );
             } else {
+                char * bufferAsmEscaped = strdup( bufferAsm->str );
+                for( int i=0, c=strlen(bufferAsmEscaped); i<c; ++i ) {
+                    if ( bufferAsmEscaped[i] == ':' ) {
+                        bufferAsmEscaped[i] = 9;
+                    }
+                }
                 if ( po_buf_match( bufferListing, "* * * ", bufferLine, bufferAddress, bufferBytes ) ) {
                     _environment->bytesProduced += bufferBytes->len >> 1;
-                    char * bufferAsmEscaped = strdup( bufferAsm->str );
-                    for( int i=0, c=strlen(bufferAsmEscaped); i<c; ++i ) {
-                        if ( bufferAsmEscaped[i] == ':' ) {
-                            bufferAsmEscaped[i] = 9;
-                        }
-                    }
-                    fprintf( _environment->additionalInfoFile, "AL:0:%d:%*s%s\n", 
-                        _environment->currentSourceLineAnalyzed, leftPadding, "", bufferAsmEscaped );
                 }
+                fprintf( _environment->additionalInfoFile, "AL:0:%d:%*s%s\n", 
+                    _environment->currentSourceLineAnalyzed, leftPadding, "", bufferAsmEscaped );
             }
 
         }
