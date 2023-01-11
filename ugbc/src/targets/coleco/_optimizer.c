@@ -846,7 +846,7 @@ void target_finalize( Environment * _environment ) {
                     char * bufferAsmEscaped = strdup( bufferAsm->str );
                     for( int i=0, c=strlen(bufferAsmEscaped); i<c; ++i ) {
                         if ( bufferAsmEscaped[i] == ':' ) {
-                            bufferAsmEscaped[i] = '§';
+                            bufferAsmEscaped[i] = 9;
                         }
                     }
                     fprintf( _environment->additionalInfoFile, "AL:0:%d:%*s%s\n", 
