@@ -75,6 +75,7 @@
 
 #include "../../ugbc.h"
 #include <stdarg.h>
+#include <ctype.h>
 
 /****************************************************************************
  * CODE SECTION 
@@ -89,174 +90,23 @@
 #define DO_INLINE       1
 #define DO_UNREAD       1
 
-/* expanable string */
-typedef struct {
-    char *str; /* actual string */
-    int   len; /* string length (not counting null char) */
-    int   cap; /* capacity of buffer */
-} *buffer;
-
-/* deallocate a buffer */
-static buffer buf_del(buffer buf) {
-    if(buf != NULL) {
-        free(buf->str);
-        buf->str = NULL;
-        buf->cap = 0;
-        buf->len = 0;
-        free(buf);
-    }
-
-    return NULL;
+/* returns an UPPER-cased char */
+static inline char _toUpper(char a) {
+    return (a>='a' && a<='z') ? a-'a'+'A' : a;
 }
 
-/* allocate a buffer */
-static buffer buf_new(int size) {
-    buffer buf = malloc(sizeof(*buf));
-    if(buf != NULL) {
-        buf->len = 0;
-        buf->cap = size+1;
-        buf->str = malloc(buf->cap);
-        buf->str[0] = '\0';
-    }
-    return buf;
+/* returns true if char is end of line ? */
+static inline int _eol(char c) {
+    return c=='\0' || c=='\n';
 }
 
-/* ensure the buffer can hold len data */
-static buffer _buf_cap(buffer buf, int len) {
-    if(len+1 >= buf->cap) {
-        buf->cap = len + 1 + MAX_TEMPORARY_STORAGE;
-        buf->str = realloc(buf->str, buf->cap);
-    }
-    return buf;
+/* returns true if both char matches */
+static inline int _eq(char pat, char txt) {
+    return (pat<=' ') ? (txt<=' ') : (_toUpper(pat)==_toUpper(txt));
 }
 
-/* append a string to a buffer */
-static buffer buf_cat(buffer buf, char *string) {
-    if(buf != NULL) {
-        int len = strlen(string);
-        _buf_cap(buf, buf->len + len);
-        strcpy(&buf->str[buf->len], string);
-        buf->len += len;
-    }
-    return buf;
-}
-
-/* copy a string into a buffer */
-static buffer buf_cpy(buffer buf, char *string) {
-    if(buf != NULL) buf->len = 0;
-    return buf_cat(buf, string);
-}
-
-/* append a char at the end of the buffer */
-static inline buffer buf_add(buffer buf, char c) {
-    if(buf) {
-        _buf_cap(buf, buf->len + 1);
-        buf->str[buf->len] = c;
-        ++buf->len;
-        buf->str[buf->len] = '\0';
-    }
-    return buf;
-}
-
-/* vprintf like function */
-static buffer buf_vprintf(buffer buf, const char *fmt, va_list ap) {
-    if(buf != NULL) {
-        int len = 0, avl;
-        do {
-            _buf_cap(buf, buf->len + len);
-            avl = buf->cap - buf->len;
-            len = vsnprintf(&buf->str[buf->len], avl, fmt, ap);
-        } while(len >= avl);
-        buf->len += len;
-    }
-    return buf;
-}
-
-/* sprintf like function */
-#ifdef __GNUC__
-static buffer buf_printf(buffer buf, const char *fmt, ...)
-    __attribute__ ((format (printf, 2, 3)));
-#endif
-static buffer buf_printf(buffer buf, const char *fmt, ...) {
-    va_list ap;
-    va_start(ap, fmt);
-    buf_vprintf(buf, fmt, ap);
-    va_end(ap);
-    return buf;
-}
-
-/* fgets-like */
-static buffer buf_fgets(buffer buf, FILE *f) {
-    int c;
-
-    buf_cpy(buf, "");
-
-    while( (c = fgetc(f)) != EOF) {
-        buf_add(buf, (char)c);
-        if(c=='\n') break;
-    }
-
-    return buf;
-}
-
-/* strcmp */
-static int buf_cmp(buffer a, buffer b) {
-    if(a) return b ? strcmp(a->str, b->str) : 1;
-    else return -1;
-}
-
-#define TMP_BUF_POOL 32
-static struct tmp_buf_pool {
-    buffer buf;
-    void *key1;
-    int key2;
-} tmp_buf_pool[TMP_BUF_POOL];
-
-/* an integer hash
-   https://gist.github.com/badboy/6267743
-*/
-static unsigned int tmp_buf_hash(unsigned int key) {
-    key ^= (key<<17) | (key>>16);
-    return key;
-}
-
-/* a static one-time buffer */
-static buffer tmp_buf(void *key1, unsigned int key2) {
-    int hash = tmp_buf_hash(((intptr_t)key1)*31 + key2) % TMP_BUF_POOL;
-    struct tmp_buf_pool *tmp = &tmp_buf_pool[hash];
-    int count = 0;
-
-    while(tmp->buf!=NULL && (tmp->key1!=key1 || tmp->key2!=key2)) {
-        ++count;
-        if(++tmp == &tmp_buf_pool[TMP_BUF_POOL]) {
-            tmp = tmp_buf_pool;
-        }
-    }
-
-    if(tmp->buf == NULL) {
-        if(count == TMP_BUF_POOL) {
-            fprintf(stderr, "TMP_BUF_POOL to short\n");
-            exit(-1);
-        }
-        tmp->buf  = buf_new(0);
-        tmp->key1 = key1;
-        tmp->key2 = key2;
-    }
-
-    return tmp->buf;
-}
-#define TMP_BUF tmp_buf(__FILE__, __LINE__)
-
-static void tmp_buf_clr(void *key1) {
-    struct tmp_buf_pool *tmp = &tmp_buf_pool[0];
-    for(;tmp!=&tmp_buf_pool[TMP_BUF_POOL];++tmp) {
-        if(tmp->key1 == key1) tmp->buf = buf_del(tmp->buf);
-    }
-}
-#define TMP_BUF_CLR tmp_buf_clr(__FILE__)
-
-/* returns true if the buffer matches a comment or and empty line */
-int isAComment( buffer buf ) {
+/* returns true if the POBuffer matches a comment or and empty line */
+int isAComment( POBuffer buf ) {
     char * _buffer = buf->str;
 
     if ( ! *_buffer ) {
@@ -277,77 +127,6 @@ int isAComment( buffer buf ) {
     return 0;
 }
 
-/* returns an UPPER-cased char */
-static inline char _toUpper(char a) {
-    return (a>='a' && a<='z') ? a-'a'+'A' : a;
-}
-
-/* returns true if char is end of line ? */
-static inline int _eol(char c) {
-    return c=='\0' || c=='\n';
-}
-
-/* returns true if both char matches */
-static inline int _eq(char pat, char txt) {
-    return (pat<=' ') ? (txt<=' ') : (_toUpper(pat)==_toUpper(txt));
-}
-
-/* a version of strcmp that ends at EOL and deal our special equality. */
-int _strcmp(buffer _s, buffer _t) {
-    char *s = _s->str, *t = _t->str;
-
-    while(!_eol(*s) && !_eol(*t) && _eq(*s,*t)) {
-        ++s;
-        ++t;
-    }
-    return _eol(*s) && _eol(*t) ? 0 : _eol(*s) ? 1 : -1;
-}
-
-/* Matches a string:
-    - ' ' maches anthing <= ' ' (eg 'r', \n', '\t' or ' ' )
-    - '*' matches up to the next one in the pattern.
-   Matched content is copied into buffers passed as varargs. If
-   a passed variable is NULL the matched content corresponding
-   to it is not copied.
-
-   Returns the last matched '*' or the buffer if pattern is fully
-   matched, or NULL otherwise meaning "no match".
-*/
-static buffer match(buffer _buf, const char *_pattern, ...) {
-    buffer ret = _buf;
-    const char *s = _buf->str, *p = _pattern;
-    va_list ap;
-
-    va_start(ap, _pattern);
-
-    while(!_eol(*s) && *p) {
-        if(*p==' ') {while(*p==' ') ++p;
-            if(!_eq(' ', *s)) {
-                ret = NULL;
-                break;
-            }
-            while(!_eol(*s) && _eq(' ', *s)) ++s;
-        } else if(*p=='*') {
-            buffer m = va_arg(ap, buffer); ++p;
-            if(m != NULL) {
-                ret = buf_cpy(m, "");
-            }
-            while(!_eol(*s) && !_eq(*p, *s)) buf_add(m, *s++);
-            if(!_eq(*p,*s)) {
-                ret = NULL;
-                break;
-            }
-        } else if(_toUpper(*s++) != _toUpper(*p++)) {
-            ret = NULL;
-            break;
-        }
-    }
-
-    va_end(ap);
-
-    return *p=='\0' ? ret : NULL;
-}
-
 /* number of lines changed */
 static int change        = 0;
 static int peephole_pass = 0;
@@ -356,7 +135,7 @@ static int num_inlined   = 0; /* number of variables inlined */
 static int num_unread    = 0; /* number of variables not read */
 
 #ifdef __GNUC__
-static void optim(buffer buf, const char *rule, const char *repl, ...)
+static void optim(POBuffer buf, const char *rule, const char *repl, ...)
     __attribute__ ((format (printf, 3, 4)));
 #endif
 
@@ -366,36 +145,36 @@ static void optim(buffer buf, const char *rule, const char *repl, ...)
 
 /* replaces the buffer with an optimized code */
 /* original buffer is kept as comment */
-static void optim(buffer buf, const char *rule, const char *repl, ...) {
+static void optim(POBuffer buf, const char *rule, const char *repl, ...) {
     va_list ap;
-    buffer tmp = TMP_BUF;
+    POBuffer tmp = TMP_BUF;
     char *s;
 
     va_start(ap, repl);
-    buf_cpy(tmp, "");
+    po_buf_cpy(tmp, "");
 
     /* add our own comment if any */
-    if(rule) buf_printf(tmp, "; peephole(%d): %s\n", peephole_pass, rule);
+    if(rule) po_buf_printf(tmp, "; peephole(%d): %s\n", peephole_pass, rule);
 
     /* comment out line */
-    buf_cat(tmp, ";");
+    po_buf_cat(tmp, ";");
 
     /* copy upto the end of string or upto end of string */
     if ( (s = strchr(buf->str, '\n')) != NULL) *s = '\0'; /* cut at \n */
-    buf_cat(tmp, buf->str);
-    if( s != NULL ) buf_add(tmp, *s++ = '\n'); /* restore \n */
+    po_buf_cat(tmp, buf->str);
+    if( s != NULL ) po_buf_add(tmp, *s++ = '\n'); /* restore \n */
 
     /* insert replacement if provided */
     if(repl) {
-        buf_vprintf(tmp, repl, ap);
-        buf_cat(tmp, "\n");
+        po_buf_vprintf(tmp, repl, ap);
+        po_buf_cat(tmp, "\n");
     }
 
     /* copy remaining comments */
-    if(s) buf_cat(tmp, s);
+    if(s) po_buf_cat(tmp, s);
 
     /* write result back into input buffer */
-    buf_cpy(buf, tmp->str);
+    po_buf_cpy(buf, tmp->str);
 
     /* one more change */
     ++change;
@@ -409,49 +188,49 @@ static int isZero(char *s) {
     while(*s == '0') ++s;
     return _eq(' ', *s);
 }
-static int _isZero(buffer buf) {
+static int _isZero(POBuffer buf) {
     return buf!=NULL && isZero(buf->str);
 }
 
 /* returns true if buf matches any op using the ALU between memory and a register */
-static int chg_reg(buffer buf, char * REG) {
+static int chg_reg(POBuffer buf, char * REG) {
     if ( strcmp( REG, "A" ) == 0 ) {
-        if(match(buf, " ADC")) return 1;
-        if(match(buf, " AND")) return 1;
-        if(match(buf, " EOR")) return 1;
-        if(match(buf, " LDA")) return 1;
-        if(match(buf, " ORA")) return 1;
-        if(match(buf, " SBC")) return 1;
+        if(po_buf_match(buf, " ADC")) return 1;
+        if(po_buf_match(buf, " AND")) return 1;
+        if(po_buf_match(buf, " EOR")) return 1;
+        if(po_buf_match(buf, " LDA")) return 1;
+        if(po_buf_match(buf, " ORA")) return 1;
+        if(po_buf_match(buf, " SBC")) return 1;
     } else if ( strcmp( REG, "X" ) == 0 ) {
-        if(match(buf, " LDX")) return 1;
+        if(po_buf_match(buf, " LDX")) return 1;
     } else if ( strcmp( REG, "Y" ) == 0 ) {
-        if(match(buf, " LDY")) return 1;
+        if(po_buf_match(buf, " LDY")) return 1;
     }
     return 0;
 }
 
 /* returns true if buf matches any read op */
-static int chg_read(buffer buf) {
-    if(match(buf, "ADC")) return 1;
-    if(match(buf, "AND")) return 1;
-    if(match(buf, "EOR")) return 1;
-    if(match(buf, "LDA")) return 1;
-    if(match(buf, "ORA")) return 1;
-    if(match(buf, "SBC")) return 1;
-    if(match(buf, "CMP")) return 1;
+static int chg_read(POBuffer buf) {
+    if(po_buf_match(buf, "ADC")) return 1;
+    if(po_buf_match(buf, "AND")) return 1;
+    if(po_buf_match(buf, "EOR")) return 1;
+    if(po_buf_match(buf, "LDA")) return 1;
+    if(po_buf_match(buf, "ORA")) return 1;
+    if(po_buf_match(buf, "SBC")) return 1;
+    if(po_buf_match(buf, "CMP")) return 1;
     return 0;
 }
 
 /* perform basic peephole optimization with a length-4 look-ahead */
-static void basic_peephole(Environment * _environment, buffer buf[LOOK_AHEAD], int zA, int zB) {
+static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD], int zA, int zB) {
     /* allows presumably safe operations */
     int unsafe = ALLOW_UNSAFE;
 
     /* various local buffers */
-    buffer v1 = TMP_BUF;
-    buffer v2 = TMP_BUF;
-    buffer v3 = TMP_BUF;
-    buffer v4 = TMP_BUF;
+    POBuffer v1 = TMP_BUF;
+    POBuffer v2 = TMP_BUF;
+    POBuffer v3 = TMP_BUF;
+    POBuffer v4 = TMP_BUF;
     
     /* a bunch of rules */
 
@@ -475,7 +254,7 @@ static void basic_peephole(Environment * _environment, buffer buf[LOOK_AHEAD], i
     //
     // Savings : 9 cycles, 1 byte
 
-	if( match( buf[0], " JSR *", v1 ) && match( buf[1], " RTS " ) ) {
+	if( po_buf_match( buf[0], " JSR *", v1 ) && po_buf_match( buf[1], " RTS " ) ) {
 		optim( buf[0], RULE "(JSR, RTS)->(JMP)", "\tJMP %s", v1->str );
 		optim( buf[1], RULE "(JSR, RTS)->(JMP)", NULL );
         ++_environment->removedAssemblyLines;
@@ -650,28 +429,28 @@ static void basic_peephole(Environment * _environment, buffer buf[LOOK_AHEAD], i
 	// 	optim( buf[1], NULL, NULL );
     // }
 
-	if( ! match( buf[0], " LDA *,Y", v3 ) && 
-        match( buf[0], " LDA *", v1 ) && match( buf[1], " LDA *", v2 )
+	if( ! po_buf_match( buf[0], " LDA *,Y", v3 ) && 
+        po_buf_match( buf[0], " LDA *", v1 ) && po_buf_match( buf[1], " LDA *", v2 )
         && strcmp( v1->str, v2->str ) == 0 ) {
         optim( buf[1], RULE "(LDA x, LDA x)->(LDA x) [1]", NULL );
         ++_environment->removedAssemblyLines;
     }
 
-	if( ! match( buf[0], " LDA *,Y", v3 ) &&
-        match( buf[0], " LDA *", v1 ) && match( buf[2], " LDA *", v2 ) &&
+	if( ! po_buf_match( buf[0], " LDA *,Y", v3 ) &&
+        po_buf_match( buf[0], " LDA *", v1 ) && po_buf_match( buf[2], " LDA *", v2 ) &&
         ! chg_reg(buf[1], "A") &&
-        ! match( buf[1], "*:", v3 )
+        ! po_buf_match( buf[1], "*:", v3 )
         && strcmp( v1->str, v2->str ) == 0 ) {
         optim( buf[2], RULE "(LDA x, LDA x)->(LDA x) [2]", NULL );
         ++_environment->removedAssemblyLines;
     }
 
-	if( ! match( buf[0], " LDA *,Y", v3 ) &&
-        match( buf[0], " LDA *", v1 ) && match( buf[3], " LDA *", v2 ) &&
+	if( ! po_buf_match( buf[0], " LDA *,Y", v3 ) &&
+        po_buf_match( buf[0], " LDA *", v1 ) && po_buf_match( buf[3], " LDA *", v2 ) &&
         ! chg_reg(buf[1], "A") &&
         ! chg_reg(buf[2], "A") &&
-        ! match( buf[1], "*:", v3 ) &&
-        ! match( buf[2], "*:", v3 )
+        ! po_buf_match( buf[1], "*:", v3 ) &&
+        ! po_buf_match( buf[2], "*:", v3 )
         && strcmp( v1->str, v2->str ) == 0 ) {
         optim( buf[3], RULE "(LDA x, LDA x)->(LDA x) [3]", NULL );
         ++_environment->removedAssemblyLines;
@@ -714,7 +493,7 @@ static void vars_clear(void) {
 }
 
 /* gets (or creates) an entry for a variable from the data-base */
-struct var *vars_get(buffer _name) {
+struct var *vars_get(POBuffer _name) {
     char *name = _name->str;
     struct var *ret = NULL;
     int i;
@@ -746,30 +525,30 @@ struct var *vars_get(buffer _name) {
     return ret;
 }
 
-static int vars_ok(buffer name) {
-    if(match(name, "_Tstr"))   return 0;
-    if(match(name, "_label"))  return 0;
+static int vars_ok(POBuffer name) {
+    if(po_buf_match(name, "_Tstr"))   return 0;
+    if(po_buf_match(name, "_label"))  return 0;
 
     if(name->str[0]=='_')      return 1;
-    if(match(name, "CLIP"))    return 1;
-    if(match(name, "XCUR"))    return 1;
-    if(match(name, "YCUR"))    return 1;
-    if(match(name, "CURRENT")) return 1;
-    if(match(name, "FONT"))    return 1;
-    if(match(name, "TEXT"))    return 1;
-    if(match(name, "LAST"))    return 1;
-    if(match(name, "XGR"))     return 1;
-    if(match(name, "YGR"))     return 1;
-    if(match(name, "FREE_"))   return 1;
+    if(po_buf_match(name, "CLIP"))    return 1;
+    if(po_buf_match(name, "XCUR"))    return 1;
+    if(po_buf_match(name, "YCUR"))    return 1;
+    if(po_buf_match(name, "CURRENT")) return 1;
+    if(po_buf_match(name, "FONT"))    return 1;
+    if(po_buf_match(name, "TEXT"))    return 1;
+    if(po_buf_match(name, "LAST"))    return 1;
+    if(po_buf_match(name, "XGR"))     return 1;
+    if(po_buf_match(name, "YGR"))     return 1;
+    if(po_buf_match(name, "FREE_"))   return 1;
 
     return 0;
 }
 
 /* look for variable uses and collect data about he variables */
-static void vars_scan(buffer buf[LOOK_AHEAD]) {
-    buffer tmp = TMP_BUF;
-    buffer arg = TMP_BUF;
-    buffer cmd = TMP_BUF;
+static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
+    POBuffer tmp = TMP_BUF;
+    POBuffer arg = TMP_BUF;
+    POBuffer cmd = TMP_BUF;
 
     // if( match( buf[0], " * _*+", NULL, buf) ) {
         // struct var *v = vars_get(buf);
@@ -777,59 +556,59 @@ static void vars_scan(buffer buf[LOOK_AHEAD]) {
     // }
 
     if( 
-        match( buf[0], " LD* *",  tmp, arg ) && 
+        po_buf_match( buf[0], " LD* *",  tmp, arg ) && 
         strstr("A X Y", tmp->str)!=NULL
      ) if(vars_ok(arg)) {
             struct var *v = vars_get(arg);
             v->nb_rd++;
         };
 
-    if( match( buf[0], " * *", cmd, arg ) &&
+    if( po_buf_match( buf[0], " * *", cmd, arg ) &&
         chg_read(cmd)     
     ) if(vars_ok(arg)) {
             struct var *v = vars_get(arg);
             v->nb_rd++;
         };
 
-    if( match( buf[0], " * (*),Y", cmd, arg ) &&
+    if( po_buf_match( buf[0], " * (*),Y", cmd, arg ) &&
         chg_read(cmd)     
     ) if(vars_ok(arg)) {
             struct var *v = vars_get(arg);
             v->nb_rd++;
         };
 
-    if( match( buf[0], " * *,X", cmd, arg ) &&
+    if( po_buf_match( buf[0], " * *,X", cmd, arg ) &&
         chg_read(cmd) 
     ) if(vars_ok(arg)) {
             struct var *v = vars_get(arg);
             v->nb_rd++;
         };
 
-    if( match( buf[0], " ST* *",  tmp, arg ) && strstr("A X Y", tmp->str)!=NULL ) 
+    if( po_buf_match( buf[0], " ST* *",  tmp, arg ) && strstr("A X Y", tmp->str)!=NULL ) 
         if(vars_ok(arg)) {
             struct var *v = vars_get(arg);
             v->nb_wr++;
         };
 
-    if( match( buf[0], " STA (*),Y",  arg ) ) 
+    if( po_buf_match( buf[0], " STA (*),Y",  arg ) ) 
         if(vars_ok(arg)) {
             struct var *v = vars_get(arg);
             v->nb_wr++;
         };
 
-    if( match( buf[0], " STA *,X",  arg ) ) 
+    if( po_buf_match( buf[0], " STA *,X",  arg ) ) 
         if(vars_ok(arg)) {
             struct var *v = vars_get(arg);
             v->nb_wr++;
         };
 
-    if( match( buf[0], " *: .byte *", tmp, arg) && vars_ok(tmp) && strchr(buf[0]->str,',')==NULL) {
+    if( po_buf_match( buf[0], " *: .byte *", tmp, arg) && vars_ok(tmp) && strchr(buf[0]->str,',')==NULL) {
         struct var *v = vars_get(tmp);
         v->size = 1;
         v->init = strdup(isZero(arg->str) ? "1-1" : arg->str);
     }
 
-    if( match(buf[0], " *: .word *", tmp, arg) && vars_ok(tmp) && strchr(buf[0]->str,',')==NULL) {
+    if( po_buf_match(buf[0], " *: .word *", tmp, arg) && vars_ok(tmp) && strchr(buf[0]->str,',')==NULL) {
         struct var *v = vars_get(tmp);
         v->size = 2;
         v->init = strdup(arg->str);
@@ -848,14 +627,14 @@ static int vars_cmp(const void *_a, const void *_b) {
 }
 
 /* removes unread variables */
-static void vars_remove(Environment * _environment, buffer buf[LOOK_AHEAD]) {
-    buffer var = TMP_BUF;
-    buffer op  = TMP_BUF;
+static void vars_remove(Environment * _environment, POBuffer buf[LOOK_AHEAD]) {
+    POBuffer var = TMP_BUF;
+    POBuffer op  = TMP_BUF;
     
     if(!DO_UNREAD) return;
     
     /* unread */
-    if(match( buf[0], " ST* *", op, var) && vars_ok(var)) {
+    if(po_buf_match( buf[0], " ST* *", op, var) && vars_ok(var)) {
         struct var *v = vars_get(var);
         if(v->nb_rd == 0 && v->offset!=-2) {
             v->offset = 0;
@@ -865,8 +644,8 @@ static void vars_remove(Environment * _environment, buffer buf[LOOK_AHEAD]) {
     }
 
     /* remove changed variables */
-    if(match( buf[0], " *: .byte ", var)
-    || match( buf[0], " *: .word ", var)
+    if(po_buf_match( buf[0], " *: .byte ", var)
+    || po_buf_match( buf[0], " *: .word ", var)
     ) if(vars_ok(var)) {
         struct var *v = vars_get(var);
         if(v->nb_rd==0 && 0<v->size && v->size<=4 && 0==(v->flags & NO_REMOVE) && v->offset!=-2) {
@@ -878,7 +657,7 @@ static void vars_remove(Environment * _environment, buffer buf[LOOK_AHEAD]) {
 }            
 
 /* collapse all heading spaces into a single tabulation */
-static void out(FILE *f, buffer _buf) {
+static void out(FILE *f, POBuffer _buf) {
     char *s = _buf->str;
     int tab = 0;
     while(*s==' ' || *s=='\t') {tab = 1; ++s;}
@@ -887,7 +666,7 @@ static void out(FILE *f, buffer _buf) {
 }
 
 /* remove space that is sometimes used in indexing mode and makes the optimized produce bad dcode */
-static void fixes_indexed_syntax(buffer buf) {
+static void fixes_indexed_syntax(POBuffer buf) {
     char *s = buf->str;
 
     /* not an instruction */
@@ -914,7 +693,7 @@ static void fixes_indexed_syntax(buffer buf) {
 }
 
 /* various kind of optimization */
-static int optim_pass( Environment * _environment, buffer buf[LOOK_AHEAD], PeepHoleOptimizationKind kind) {
+static int optim_pass( Environment * _environment, POBuffer buf[LOOK_AHEAD], PeepHoleOptimizationKind kind) {
     char fileNameOptimized[MAX_TEMPORARY_STORAGE];
     FILE * fileAsm;
     FILE * fileOptimized;
@@ -969,7 +748,7 @@ static int optim_pass( Environment * _environment, buffer buf[LOOK_AHEAD], PeepH
     }            
     
     /* clears our look-ahead buffers */
-    for(i = 0; i<LOOK_AHEAD; ++i) buf_cpy(buf[i], "");
+    for(i = 0; i<LOOK_AHEAD; ++i) po_buf_cpy(buf[i], "");
 
     /* global change flag */
     change = 0;
@@ -979,20 +758,20 @@ static int optim_pass( Environment * _environment, buffer buf[LOOK_AHEAD], PeepH
         if ( line >= LOOK_AHEAD ) out(fileOptimized, buf[0]);
 
         /* shift the buffers */
-        for(i=0; i<LOOK_AHEAD-1; ++i) buf_cpy(buf[i], buf[i+1]->str);
+        for(i=0; i<LOOK_AHEAD-1; ++i) po_buf_cpy(buf[i], buf[i+1]->str);
 
         /* read next line, merging adjacent comments */
         if(feof(fileAsm)) {
             --still_to_go;
-            buf_cpy(buf[LOOK_AHEAD-1], "");
+            po_buf_cpy(buf[LOOK_AHEAD-1], "");
         } else do {
             /* read next line */
-            buf_fgets( buf[LOOK_AHEAD-1], fileAsm );
+            po_buf_fgets( buf[LOOK_AHEAD-1], fileAsm );
             fixes_indexed_syntax(buf[LOOK_AHEAD-1]);
             /* merge comment with previous line if we do not overflow the buffer */
             if(isAComment(buf[LOOK_AHEAD-1])) {
-                buffer ln = TMP_BUF;
-                if (match( buf[LOOK_AHEAD-1], " ; L:*", ln ) ) {
+                POBuffer ln = TMP_BUF;
+                if (po_buf_match( buf[LOOK_AHEAD-1], " ; L:*", ln ) ) {
                     sourceLine = atoi( ln->str );
                     if ( ( sourceLine != _environment->currentSourceLineAnalyzed ) ) {
                         if ( _environment->currentSourceLineAnalyzed  && _environment->additionalInfoFile ) {
@@ -1003,8 +782,8 @@ static int optim_pass( Environment * _environment, buffer buf[LOOK_AHEAD], PeepH
                         _environment->removedAssemblyLines = 0;
                     }
                 }
-                if(KEEP_COMMENTS) buf_cat(buf[LOOK_AHEAD-2], buf[LOOK_AHEAD-1]->str);
-                buf_cpy(buf[LOOK_AHEAD-1], "");
+                if(KEEP_COMMENTS) po_buf_cat(buf[LOOK_AHEAD-2], buf[LOOK_AHEAD-1]->str);
+                po_buf_cpy(buf[LOOK_AHEAD-1], "");
             } else break;
         } while(!feof(fileAsm));
 
@@ -1027,6 +806,11 @@ static int optim_pass( Environment * _environment, buffer buf[LOOK_AHEAD], PeepH
         }
 
         ++line;
+    }
+
+    if ( _environment->additionalInfoFile ) {
+        fprintf( _environment->additionalInfoFile, "POL:0:%d:%d:%d\n", 
+            peephole_pass, _environment->currentSourceLineAnalyzed, _environment->removedAssemblyLines );
     }
 
     /* log info at the end of the file */
@@ -1064,10 +848,10 @@ static int optim_pass( Environment * _environment, buffer buf[LOOK_AHEAD], PeepH
 /* main entry-point for this service */
 void target_peephole_optimizer( Environment * _environment ) {
     if ( _environment->peepholeOptimizationLimit > 0 ) {
-        buffer buf[LOOK_AHEAD];
+        POBuffer buf[LOOK_AHEAD];
         int i;
 
-        for(i=0; i<LOOK_AHEAD; ++i) buf[i] = buf_new(0);
+        for(i=0; i<LOOK_AHEAD; ++i) buf[i] = po_buf_new(0);
 
         int optimization_limit_count = _environment->peepholeOptimizationLimit;
 
@@ -1080,7 +864,149 @@ void target_peephole_optimizer( Environment * _environment ) {
         optim_pass(_environment, buf, RELOCATION1);
         optim_pass(_environment, buf, RELOCATION2);
 
-        for(i=0; i<LOOK_AHEAD; ++i) buf[i] = buf_del(buf[i]);
+        for(i=0; i<LOOK_AHEAD; ++i) buf[i] = po_buf_del(buf[i]);
         TMP_BUF_CLR;
     }
+}
+
+void target_finalize( Environment * _environment ) {
+
+    if ( _environment->additionalInfoFile ) {
+
+        char fileNameOptimized[MAX_TEMPORARY_STORAGE];
+        FILE * fileAsm;
+        FILE * fileListing;
+        POBuffer bufferAsm = TMP_BUF;
+        POBuffer bufferListing = TMP_BUF;
+
+        POBuffer bufferAddress = TMP_BUF;
+        POBuffer bufferVersion = TMP_BUF;
+        POBuffer bufferA = TMP_BUF;
+        POBuffer bufferB = TMP_BUF;
+        POBuffer bufferC = TMP_BUF;
+        POBuffer bufferD = TMP_BUF;
+        POBuffer bufferE = TMP_BUF;
+
+        int sourceLine = 0;
+
+        _environment->currentSourceLineAnalyzed = 0;
+        _environment->bytesProduced = 0;
+
+        fprintf( _environment->additionalInfoFile, "A:0\n" );
+
+        fileAsm = fopen( _environment->asmFileName, "rt" );
+        if(fileAsm == NULL) {
+            perror(_environment->asmFileName);
+            exit(-1);
+        }
+
+        fileListing = fopen( _environment->listingFileName, "rt" );
+        if(fileListing == NULL) {
+            perror(_environment->listingFileName);
+            exit(-1);
+        }            
+        
+        while( !feof(fileAsm) && !feof(fileListing)) {
+
+            po_buf_fgets( bufferAsm, fileAsm );
+            int leftPadding = po_buf_trim( bufferAsm );
+
+            if ( isAComment( bufferAsm ) ) {
+                POBuffer ln = TMP_BUF;
+                if (po_buf_match( bufferAsm, "; L:*", ln ) ) {
+                    sourceLine = atoi( ln->str );
+                    if ( ( sourceLine != _environment->currentSourceLineAnalyzed ) ) {
+                        if ( _environment->additionalInfoFile ) {
+                            fprintf( _environment->additionalInfoFile, "AB:0:%d:%d\n", 
+                                _environment->currentSourceLineAnalyzed, _environment->bytesProduced );
+                        }
+                        _environment->currentSourceLineAnalyzed = sourceLine;
+                        _environment->bytesProduced = 0;
+                    }
+                }
+                continue;
+            }
+
+            int pos = ftell( fileListing );
+            while( !feof(fileListing) && (strstr( bufferListing->str, bufferAsm->str ) == NULL) ) {
+                po_buf_fgets( bufferListing, fileListing );
+                po_buf_trim( bufferListing );
+            }
+
+            if ( feof(fileListing) ) {
+                fseek( fileListing, pos, SEEK_SET );
+            } else {
+                char * bufferAsmEscaped = strdup( bufferAsm->str );
+                for( int i=0, c=strlen(bufferAsmEscaped); i<c; ++i ) {
+                    if ( bufferAsmEscaped[i] == ':' ) {
+                        bufferAsmEscaped[i] = 6;
+                    }
+                    if ( bufferAsmEscaped[i] == 9 ) {
+                        bufferAsmEscaped[i] = ' ';
+                    }
+                } 
+                
+                if ( po_buf_match( bufferListing, "* * * * * *", bufferAddress, bufferVersion, 
+                    bufferA, bufferB, bufferC, bufferD ) ) {
+                    if ( bufferAddress->len == 7 ) {
+                        if ( bufferA->len == 2 && 
+                            ( ( isxdigit( bufferA->str[0] ) && isxdigit( bufferA->str[1] ) ) || strcmp( bufferA->str, "rr" ) == 0 ) 
+                            ) _environment->bytesProduced += 1;
+                        if ( bufferB->len == 2 && 
+                            ( ( isxdigit( bufferB->str[0] ) && isxdigit( bufferB->str[1] ) ) || strcmp( bufferB->str, "rr" ) == 0 ) 
+                            ) _environment->bytesProduced += 1;
+                        if ( bufferC->len == 2 && 
+                            ( ( isxdigit( bufferC->str[0] ) && isxdigit( bufferC->str[1] ) ) || strcmp( bufferC->str, "rr" ) == 0 ) 
+                            ) _environment->bytesProduced += 1;
+                        if ( bufferD->len == 2 && 
+                            ( ( isxdigit( bufferD->str[0] ) && isxdigit( bufferD->str[1] ) ) || strcmp( bufferD->str, "rr" ) == 0 ) 
+                            ) _environment->bytesProduced += 1;
+                     }
+                } else if ( po_buf_match( bufferListing, "* * * * *", bufferAddress, bufferVersion, 
+                    bufferA, bufferB, bufferC ) ) {
+                    if ( bufferAddress->len == 7 ) {
+                        if ( bufferA->len == 2 && 
+                            ( ( isxdigit( bufferA->str[0] ) && isxdigit( bufferA->str[1] ) ) || strcmp( bufferA->str, "rr" ) == 0 ) 
+                            ) _environment->bytesProduced += 1;
+                        if ( bufferB->len == 2 && 
+                            ( ( isxdigit( bufferB->str[0] ) && isxdigit( bufferB->str[1] ) ) || strcmp( bufferB->str, "rr" ) == 0 ) 
+                            ) _environment->bytesProduced += 1;
+                        if ( bufferC->len == 2 && 
+                            ( ( isxdigit( bufferC->str[0] ) && isxdigit( bufferC->str[1] ) ) || strcmp( bufferC->str, "rr" ) == 0 ) 
+                            ) _environment->bytesProduced += 1;
+                     }
+                } else if ( po_buf_match( bufferListing, "* * * *", bufferAddress, bufferVersion, 
+                    bufferA, bufferB ) ) {
+                    if ( bufferAddress->len == 7 ) {
+                        if ( bufferA->len == 2 && 
+                            ( ( isxdigit( bufferA->str[0] ) && isxdigit( bufferA->str[1] ) ) || strcmp( bufferA->str, "rr" ) == 0 ) 
+                            ) _environment->bytesProduced += 1;
+                        if ( bufferB->len == 2 && 
+                            ( ( isxdigit( bufferB->str[0] ) && isxdigit( bufferB->str[1] ) ) || strcmp( bufferB->str, "rr" ) == 0 ) 
+                            ) _environment->bytesProduced += 1;
+                     }
+                } else if ( po_buf_match( bufferListing, "* * *", bufferAddress, bufferVersion, 
+                    bufferA ) ) {
+                    if ( bufferAddress->len == 7 ) {
+                        if ( bufferA->len == 2 && 
+                            ( ( isxdigit( bufferA->str[0] ) && isxdigit( bufferA->str[1] ) ) || strcmp( bufferA->str, "rr" ) == 0 ) 
+                            ) _environment->bytesProduced += 1;
+                     }
+                }
+                fprintf( _environment->additionalInfoFile, "AL:0:%d:%*s%s\n", 
+                    _environment->currentSourceLineAnalyzed, leftPadding, "", bufferAsmEscaped );
+            }
+
+        }
+
+        if ( _environment->currentSourceLineAnalyzed  && _environment->additionalInfoFile ) {
+            fprintf( _environment->additionalInfoFile, "AF:0:%d\n", 
+                _environment->bytesProduced );
+        }
+
+        (void)fclose(fileListing);
+        (void)fclose(fileAsm);
+
+    }
+
 }
