@@ -2287,18 +2287,19 @@ Variable * variable_mul( Environment * _environment, char * _source, char * _des
 
     if ( VT_SIGNED( source->type ) != VT_SIGNED( target->type ) ) {
         if ( VT_SIGNED( source->type ) ) {
-            target = variable_cast( _environment, _destination, source->type );
+            target = variable_cast( _environment, _destination, VT_MAX_BITWIDTH_TYPE( source->type, target->type ) );
         } else {
-            source = variable_cast( _environment, _source, VT_SIGN( source->type ) );
-            target = variable_cast( _environment, _destination, VT_SIGN( source->type ) );
+            source = variable_cast( _environment, _source, VT_SIGN( VT_MAX_BITWIDTH_TYPE( source->type, target->type ) ) );
+            target = variable_cast( _environment, _destination, VT_SIGN( VT_MAX_BITWIDTH_TYPE( source->type, target->type ) ) );
         }
     } else {
-        target = variable_cast( _environment, _destination, source->type );
+        target = variable_cast( _environment, _destination, VT_MAX_BITWIDTH_TYPE( source->type, target->type ) );
     }
 
     Variable * result = NULL;
-    switch( VT_BITWIDTH( source->type ) ) {
+    switch( VT_BITWIDTH( VT_MAX_BITWIDTH_TYPE( source->type, target->type ) ) ) {
         case 32:
+            outline0(" ; 32bit multiplication" );
             WARNING_BITWIDTH(_source, _destination );
             result = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SDWORD : VT_DWORD, "(result of multiplication)" );
             #ifdef CPU_BIG_ENDIAN
@@ -2312,10 +2313,12 @@ Variable * variable_mul( Environment * _environment, char * _source, char * _des
             #endif
             break;
         case 16:
+            outline0(" ; 16bit multiplication" );
             result = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SDWORD : VT_DWORD, "(result of multiplication)" );
             cpu_math_mul_16bit_to_32bit( _environment, source->realName, target->realName, result->realName, VT_SIGNED( source->type ) );
             break;
         case 8:
+            outline0(" ; 8bit multiplication" );
             result = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SWORD : VT_WORD, "(result of multiplication)" );
             cpu_math_mul_8bit_to_16bit( _environment, source->realName, target->realName, result->realName, VT_SIGNED( source->type ) );
             break;
