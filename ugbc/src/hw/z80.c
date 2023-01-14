@@ -2035,8 +2035,7 @@ void z80_math_sub_32bit( Environment * _environment, char *_source, char *_desti
     outline0("INC DE" );
     outline0("LD A, D" );
     outline0("OR E" );
-    outline0("LD B, A" );
-    outline0("CP 0" );
+    outline0("PUSH AF" );
     outline0("EXX" );
     outline1("LD HL, (%s+2)", _source );
     outline1("LD DE, (%s+2)", _destination );
@@ -2046,7 +2045,7 @@ void z80_math_sub_32bit( Environment * _environment, char *_source, char *_desti
     outline0("LD A, D" );
     outline0("XOR $FF" );
     outline0("LD D, A" );
-    outline0("LD A, B" );
+    outline0("POP AF" );
     outline0("CP 0" );
     outline1("JR NZ, %snoincde", label );
     outline0("INC DE" );
