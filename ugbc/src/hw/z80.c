@@ -2022,6 +2022,8 @@ void z80_math_double_32bit( Environment * _environment, char *_source, char *_ot
  */
 void z80_math_sub_32bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
 
+    MAKE_LABEL
+
     outline1("LD HL, (%s)", _source );
     outline1("LD DE, (%s)", _destination );
     outline0("LD A, E" );
@@ -2031,6 +2033,10 @@ void z80_math_sub_32bit( Environment * _environment, char *_source, char *_desti
     outline0("XOR $FF" );
     outline0("LD D, A" );
     outline0("INC DE" );
+    outline0("LD A, D" );
+    outline0("OR E" );
+    outline0("LD B, A" );
+    outline0("CP 0" );
     outline0("EXX" );
     outline1("LD HL, (%s+2)", _source );
     outline1("LD DE, (%s+2)", _destination );
@@ -2040,6 +2046,11 @@ void z80_math_sub_32bit( Environment * _environment, char *_source, char *_desti
     outline0("LD A, D" );
     outline0("XOR $FF" );
     outline0("LD D, A" );
+    outline0("LD A, B" );
+    outline0("CP 0" );
+    outline1("JR NZ, %snoincde", label );
+    outline0("INC DE" );
+    outline1("%snoincde:", label );
     outline0("EXX" );
     outline0("ADD HL, DE" );
     outline0("EXX" );
