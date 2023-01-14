@@ -1412,11 +1412,14 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                         }
                     #else
                         {
+                            char sourceRealName[MAX_TEMPORARY_STORAGE];
+							sprintf( sourceRealName, "%s+1", source->realName );
+
                             char targetRealName[MAX_TEMPORARY_STORAGE];
                             cpu_move_16bit( _environment, source->realName, target->realName );
 							
 							if ( VT_SIGNED( source->type ) ) {
-								cpu_is_negative( _environment, source->realName, sign->realName );
+								cpu_is_negative( _environment, sourceRealName, sign->realName );
 							} else {
 								variable_store( _environment, sign->name, 0 );
 							}
