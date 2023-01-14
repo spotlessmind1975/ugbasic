@@ -793,7 +793,7 @@ expr :
         $$ = variable_greater_than( _environment, $1, $3, 0 )->name;
     }
     | expr_math OP_GTE expr {
-        $$ = variable_greater_than( _environment, $1, $3, 0 )->name;
+        $$ = variable_greater_than( _environment, $1, $3, 1 )->name;
     }
     | NOT expr {
         $$ = variable_not( _environment, $2 )->name;
