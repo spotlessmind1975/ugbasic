@@ -74,6 +74,7 @@
 
 #include "../../ugbc.h"
 #include <stdarg.h>
+#include <ctype.h>
 
 /****************************************************************************
  * CODE SECTION 
@@ -88,174 +89,23 @@
 #define DO_INLINE       1
 #define DO_UNREAD       1
 
-/* expanable string */
-typedef struct {
-    char *str; /* actual string */
-    int   len; /* string length (not counting null char) */
-    int   cap; /* capacity of buffer */
-} *buffer;
-
-/* deallocate a buffer */
-static buffer buf_del(buffer buf) {
-    if(buf != NULL) {
-        free(buf->str);
-        buf->str = NULL;
-        buf->cap = 0;
-        buf->len = 0;
-        free(buf);
-    }
-
-    return NULL;
+/* returns an UPPER-cased char */
+static inline char _toUpper(char a) {
+    return (a>='a' && a<='z') ? a-'a'+'A' : a;
 }
 
-/* allocate a buffer */
-static buffer buf_new(int size) {
-    buffer buf = malloc(sizeof(*buf));
-    if(buf != NULL) {
-        buf->len = 0;
-        buf->cap = size+1;
-        buf->str = malloc(buf->cap);
-        buf->str[0] = '\0';
-    }
-    return buf;
+/* returns true if char is end of line ? */
+static inline int _eol(char c) {
+    return c=='\0' || c=='\n';
 }
 
-/* ensure the buffer can hold len data */
-static buffer _buf_cap(buffer buf, int len) {
-    if(len+1 >= buf->cap) {
-        buf->cap = len + 1 + MAX_TEMPORARY_STORAGE;
-        buf->str = realloc(buf->str, buf->cap);
-    }
-    return buf;
+/* returns true if both char matches */
+static inline int _eq(char pat, char txt) {
+    return (pat<=' ') ? (txt<=' ') : (_toUpper(pat)==_toUpper(txt));
 }
 
-/* append a string to a buffer */
-static buffer buf_cat(buffer buf, char *string) {
-    if(buf != NULL) {
-        int len = strlen(string);
-        _buf_cap(buf, buf->len + len);
-        strcpy(&buf->str[buf->len], string);
-        buf->len += len;
-    }
-    return buf;
-}
-
-/* copy a string into a buffer */
-static buffer buf_cpy(buffer buf, char *string) {
-    if(buf != NULL) buf->len = 0;
-    return buf_cat(buf, string);
-}
-
-/* append a char at the end of the buffer */
-static inline buffer buf_add(buffer buf, char c) {
-    if(buf) {
-        _buf_cap(buf, buf->len + 1);
-        buf->str[buf->len] = c;
-        ++buf->len;
-        buf->str[buf->len] = '\0';
-    }
-    return buf;
-}
-
-/* vprintf like function */
-static buffer buf_vprintf(buffer buf, const char *fmt, va_list ap) {
-    if(buf != NULL) {
-        int len = 0, avl;
-        do {
-            _buf_cap(buf, buf->len + len);
-            avl = buf->cap - buf->len;
-            len = vsnprintf(&buf->str[buf->len], avl, fmt, ap);
-        } while(len >= avl);
-        buf->len += len;
-    }
-    return buf;
-}
-
-/* sprintf like function */
-#ifdef __GNUC__
-static buffer buf_printf(buffer buf, const char *fmt, ...)
-    __attribute__ ((format (printf, 2, 3)));
-#endif
-static buffer buf_printf(buffer buf, const char *fmt, ...) {
-    va_list ap;
-    va_start(ap, fmt);
-    buf_vprintf(buf, fmt, ap);
-    va_end(ap);
-    return buf;
-}
-
-/* fgets-like */
-static buffer buf_fgets(buffer buf, FILE *f) {
-    int c;
-
-    buf_cpy(buf, "");
-
-    while( (c = fgetc(f)) != EOF) {
-        buf_add(buf, (char)c);
-        if(c=='\n') break;
-    }
-
-    return buf;
-}
-
-/* strcmp */
-static int buf_cmp(buffer a, buffer b) {
-    if(a) return b ? strcmp(a->str, b->str) : 1;
-    else return -1;
-}
-
-#define TMP_BUF_POOL 32
-static struct tmp_buf_pool {
-    buffer buf;
-    void *key1;
-    int key2;
-} tmp_buf_pool[TMP_BUF_POOL];
-
-/* an integer hash
-   https://gist.github.com/badboy/6267743
-*/
-static unsigned int tmp_buf_hash(unsigned int key) {
-    key ^= (key<<17) | (key>>16);
-    return key;
-}
-
-/* a static one-time buffer */
-static buffer tmp_buf(void *key1, unsigned int key2) {
-    int hash = tmp_buf_hash(((intptr_t)key1)*31 + key2) % TMP_BUF_POOL;
-    struct tmp_buf_pool *tmp = &tmp_buf_pool[hash];
-    int count = 0;
-
-    while(tmp->buf!=NULL && (tmp->key1!=key1 || tmp->key2!=key2)) {
-        ++count;
-        if(++tmp == &tmp_buf_pool[TMP_BUF_POOL]) {
-            tmp = tmp_buf_pool;
-        }
-    }
-
-    if(tmp->buf == NULL) {
-        if(count == TMP_BUF_POOL) {
-            fprintf(stderr, "TMP_BUF_POOL to short\n");
-            exit(-1);
-        }
-        tmp->buf  = buf_new(0);
-        tmp->key1 = key1;
-        tmp->key2 = key2;
-    }
-
-    return tmp->buf;
-}
-#define TMP_BUF tmp_buf(__FILE__, __LINE__)
-
-static void tmp_buf_clr(void *key1) {
-    struct tmp_buf_pool *tmp = &tmp_buf_pool[0];
-    for(;tmp!=&tmp_buf_pool[TMP_BUF_POOL];++tmp) {
-        if(tmp->key1 == key1) tmp->buf = buf_del(tmp->buf);
-    }
-}
-#define TMP_BUF_CLR tmp_buf_clr(__FILE__)
-
-/* returns true if the buffer matches a comment or and empty line */
-int isAComment( buffer buf ) {
+/* returns true if the POBuffer matches a comment or and empty line */
+int isAComment( POBuffer buf ) {
     char * _buffer = buf->str;
 
     if ( ! *_buffer ) {
@@ -276,150 +126,79 @@ int isAComment( buffer buf ) {
     return 0;
 }
 
-/* returns an UPPER-cased char */
-static inline char _toUpper(char a) {
-    return (a>='a' && a<='z') ? a-'a'+'A' : a;
-}
-
-/* returns true if char is end of line ? */
-static inline int _eol(char c) {
-    return c=='\0' || c=='\n';
-}
-
-/* returns true if both char matches */
-static inline int _eq(char pat, char txt) {
-    return (pat<=' ') ? (txt<=' ') : (_toUpper(pat)==_toUpper(txt));
-}
-
-/* a version of strcmp that ends at EOL and deal our special equality. */
-int _strcmp(buffer _s, buffer _t) {
-    char *s = _s->str, *t = _t->str;
-
-    while(!_eol(*s) && !_eol(*t) && _eq(*s,*t)) {
-        ++s;
-        ++t;
-    }
-    return _eol(*s) && _eol(*t) ? 0 : _eol(*s) ? 1 : -1;
-}
-
-/* Matches a string:
-    - ' ' maches anthing <= ' ' (eg 'r', \n', '\t' or ' ' )
-    - '*' matches up to the next one in the pattern.
-   Matched content is copied into buffers passed as varargs. If
-   a passed variable is NULL the matched content corresponding
-   to it is not copied.
-
-   Returns the last matched '*' or the buffer if pattern is fully
-   matched, or NULL otherwise meaning "no match".
-*/
-static buffer match(buffer _buf, const char *_pattern, ...) {
-    buffer ret = _buf;
-    const char *s = _buf->str, *p = _pattern;
-    va_list ap;
-
-    va_start(ap, _pattern);
-
-    while(!_eol(*s) && *p) {
-        if(*p==' ') {while(*p==' ') ++p;
-            if(!_eq(' ', *s)) {
-                ret = NULL;
-                break;
-            }
-            while(!_eol(*s) && _eq(' ', *s)) ++s;
-        } else if(*p=='*') {
-            buffer m = va_arg(ap, buffer); ++p;
-            if(m != NULL) {
-                ret = buf_cpy(m, "");
-            }
-            while(!_eol(*s) && !_eq(*p, *s)) buf_add(m, *s++);
-            if(!_eq(*p,*s)) {
-                ret = NULL;
-                break;
-            }
-        } else if(_toUpper(*s++) != _toUpper(*p++)) {
-            ret = NULL;
-            break;
-        }
-    }
-
-    va_end(ap);
-
-    return *p=='\0' ? ret : NULL;
-}
-
 /* returns true if buf matches any op using the ALU between memory and a register */
-static int chg_reg(buffer buf, buffer REG) {
-    if(match(buf, " ADD* ", REG)) return 1;
-    if(match(buf, " AND* ", REG)) return 1;
-    if(match(buf, " CMP* ", REG)) return 1;
-    if(match(buf, " EOR* ", REG)) return 1;
-    if(match(buf, " LD* ",  REG)) return 1;
-    if(match(buf, " OR* ",  REG)) return 1;
-    if(match(buf, " SBC* ", REG)) return 1;
-    if(match(buf, " SUB* ", REG)) return 1;
+static int chg_reg(POBuffer buf, POBuffer REG) {
+    if(po_buf_match(buf, " ADD* ", REG)) return 1;
+    if(po_buf_match(buf, " AND* ", REG)) return 1;
+    if(po_buf_match(buf, " CMP* ", REG)) return 1;
+    if(po_buf_match(buf, " EOR* ", REG)) return 1;
+    if(po_buf_match(buf, " LD* ",  REG)) return 1;
+    if(po_buf_match(buf, " OR* ",  REG)) return 1;
+    if(po_buf_match(buf, " SBC* ", REG)) return 1;
+    if(po_buf_match(buf, " SUB* ", REG)) return 1;
 
     return 0;
 }
 
 /* returns true if buf matches an op that sets the CCR */
-static int sets_flag(buffer buf, char REG) {
-    buffer tmp = TMP_BUF;
+static int sets_flag(POBuffer buf, char REG) {
+    POBuffer tmp = TMP_BUF;
 
     if(chg_reg(buf, tmp)        && _toUpper(*tmp->str)==REG) return 1;
-    if(match(buf, " ASL*", tmp) && _toUpper(*tmp->str)==REG) return 1;
-    if(match(buf, " ASR*", tmp) && _toUpper(*tmp->str)==REG) return 1;
-    if(match(buf, " COM*", tmp) && _toUpper(*tmp->str)==REG) return 1;
-    if(match(buf, " DEC*", tmp) && _toUpper(*tmp->str)==REG) return 1;
-    if(match(buf, " INC*", tmp) && _toUpper(*tmp->str)==REG) return 1;
-    if(match(buf, " LSL*", tmp) && _toUpper(*tmp->str)==REG) return 1;
-    if(match(buf, " LSR*", tmp) && _toUpper(*tmp->str)==REG) return 1;
-    if(match(buf, " ROL*", tmp) && _toUpper(*tmp->str)==REG) return 1;
-    if(match(buf, " ROR*", tmp) && _toUpper(*tmp->str)==REG) return 1;
-    if(match(buf, " TST*", tmp) && _toUpper(*tmp->str)==REG) return 1;
-	if(match(buf, " ST* ", tmp) && _toUpper(*tmp->str)==REG) return 1;
+    if(po_buf_match(buf, " ASL*", tmp) && _toUpper(*tmp->str)==REG) return 1;
+    if(po_buf_match(buf, " ASR*", tmp) && _toUpper(*tmp->str)==REG) return 1;
+    if(po_buf_match(buf, " COM*", tmp) && _toUpper(*tmp->str)==REG) return 1;
+    if(po_buf_match(buf, " DEC*", tmp) && _toUpper(*tmp->str)==REG) return 1;
+    if(po_buf_match(buf, " INC*", tmp) && _toUpper(*tmp->str)==REG) return 1;
+    if(po_buf_match(buf, " LSL*", tmp) && _toUpper(*tmp->str)==REG) return 1;
+    if(po_buf_match(buf, " LSR*", tmp) && _toUpper(*tmp->str)==REG) return 1;
+    if(po_buf_match(buf, " ROL*", tmp) && _toUpper(*tmp->str)==REG) return 1;
+    if(po_buf_match(buf, " ROR*", tmp) && _toUpper(*tmp->str)==REG) return 1;
+    if(po_buf_match(buf, " TST*", tmp) && _toUpper(*tmp->str)==REG) return 1;
+	if(po_buf_match(buf, " ST* ", tmp) && _toUpper(*tmp->str)==REG) return 1;
 
     return 0;
 }
 
 /* returns true if this is a conditionnal branch */
-static int isConditionnal(buffer buf) {
+static int isConditionnal(POBuffer buf) {
    /* short jumps */
-    if(match(buf, " BGT ")) return 1;
-    if(match(buf, " BLE ")) return 1;
-    if(match(buf, " BGE ")) return 1;
-    if(match(buf, " BLT ")) return 1;
-    if(match(buf, " BEQ ")) return 1;
-    if(match(buf, " BNE ")) return 1;
-    if(match(buf, " BHI ")) return 1;
-    if(match(buf, " BLS ")) return 1;
-    if(match(buf, " BHS ")) return 1;
-    if(match(buf, " BLO ")) return 1;
-    if(match(buf, " BMI ")) return 1;
-    if(match(buf, " BPL ")) return 1;
+    if(po_buf_match(buf, " BGT ")) return 1;
+    if(po_buf_match(buf, " BLE ")) return 1;
+    if(po_buf_match(buf, " BGE ")) return 1;
+    if(po_buf_match(buf, " BLT ")) return 1;
+    if(po_buf_match(buf, " BEQ ")) return 1;
+    if(po_buf_match(buf, " BNE ")) return 1;
+    if(po_buf_match(buf, " BHI ")) return 1;
+    if(po_buf_match(buf, " BLS ")) return 1;
+    if(po_buf_match(buf, " BHS ")) return 1;
+    if(po_buf_match(buf, " BLO ")) return 1;
+    if(po_buf_match(buf, " BMI ")) return 1;
+    if(po_buf_match(buf, " BPL ")) return 1;
 
     /* long jumps */
-    if(match(buf, " LBGT ")) return 1;
-    if(match(buf, " LBLE ")) return 1;
-    if(match(buf, " LBGE ")) return 1;
-    if(match(buf, " LBLT ")) return 1;
-    if(match(buf, " LBEQ ")) return 1;
-    if(match(buf, " LBNE ")) return 1;
-    if(match(buf, " LBHI ")) return 1;
-    if(match(buf, " LBLS ")) return 1;
-    if(match(buf, " LBHS ")) return 1;
-    if(match(buf, " LBLO ")) return 1;
-    if(match(buf, " LBMI ")) return 1;
-    if(match(buf, " LBPL ")) return 1;
+    if(po_buf_match(buf, " LBGT ")) return 1;
+    if(po_buf_match(buf, " LBLE ")) return 1;
+    if(po_buf_match(buf, " LBGE ")) return 1;
+    if(po_buf_match(buf, " LBLT ")) return 1;
+    if(po_buf_match(buf, " LBEQ ")) return 1;
+    if(po_buf_match(buf, " LBNE ")) return 1;
+    if(po_buf_match(buf, " LBHI ")) return 1;
+    if(po_buf_match(buf, " LBLS ")) return 1;
+    if(po_buf_match(buf, " LBHS ")) return 1;
+    if(po_buf_match(buf, " LBLO ")) return 1;
+    if(po_buf_match(buf, " LBMI ")) return 1;
+    if(po_buf_match(buf, " LBPL ")) return 1;
 
     return 0;
 }
 
 /* returns true if buf matches a jump */
-static int isBranch(buffer buf) {
-    if(match(buf, " BRA ")) return 1;
-    if(match(buf, " BSR ")) return 1;
-    if(match(buf, " JMP ")) return 1;
-    if(match(buf, " JSR ")) return 1;
+static int isBranch(POBuffer buf) {
+    if(po_buf_match(buf, " BRA ")) return 1;
+    if(po_buf_match(buf, " BSR ")) return 1;
+    if(po_buf_match(buf, " JMP ")) return 1;
+    if(po_buf_match(buf, " JSR ")) return 1;
 	return isConditionnal(buf);
  }
 
@@ -431,7 +210,7 @@ static int num_inlined   = 0; /* number of variables inlined */
 static int num_unread    = 0; /* number of variables not read */
 
 #ifdef __GNUC__
-static void optim(buffer buf, const char *rule, const char *repl, ...)
+static void optim(POBuffer buf, const char *rule, const char *repl, ...)
     __attribute__ ((format (printf, 3, 4)));
 #endif
 
@@ -439,38 +218,38 @@ static void optim(buffer buf, const char *rule, const char *repl, ...)
 #define R_(X)  R__(X)
 #define RULE "r" R_(__LINE__) " "
 
-/* replaces the buffer with an optimized code */
-/* original buffer is kept as comment */
-static void optim(buffer buf, const char *rule, const char *repl, ...) {
+/* replaces the POBuffer with an optimized code */
+/* original POBuffer is kept as comment */
+static void optim(POBuffer buf, const char *rule, const char *repl, ...) {
     va_list ap;
-    buffer tmp = TMP_BUF;
+    POBuffer tmp = TMP_BUF;
     char *s;
 
     va_start(ap, repl);
-    buf_cpy(tmp, "");
+    po_buf_cpy(tmp, "");
 
     /* add our own comment if any */
-    if(rule) buf_printf(tmp, "; peephole(%d): %s\n", peephole_pass, rule);
+    if(rule) po_buf_printf(tmp, "; peephole(%d): %s\n", peephole_pass, rule);
 
     /* comment out line */
-    buf_cat(tmp, ";");
+    po_buf_cat(tmp, ";");
 
     /* copy upto the end of string or upto end of string */
     if ( (s = strchr(buf->str, '\n')) != NULL) *s = '\0'; /* cut at \n */
-    buf_cat(tmp, buf->str);
-    if( s != NULL ) buf_add(tmp, *s++ = '\n'); /* restore \n */
+    po_buf_cat(tmp, buf->str);
+    if( s != NULL ) po_buf_add(tmp, *s++ = '\n'); /* restore \n */
 
     /* insert replacement if provided */
     if(repl) {
-        buf_vprintf(tmp, repl, ap);
-        buf_cat(tmp, "\n");
+        po_buf_vprintf(tmp, repl, ap);
+        po_buf_cat(tmp, "\n");
     }
 
     /* copy remaining comments */
-    if(s) buf_cat(tmp, s);
+    if(s) po_buf_cat(tmp, s);
 
-    /* write result back into input buffer */
-    buf_cpy(buf, tmp->str);
+    /* write result back into input POBuffer */
+    po_buf_cpy(buf, tmp->str);
 
     /* one more change */
     ++change;
@@ -478,51 +257,51 @@ static void optim(buffer buf, const char *rule, const char *repl, ...) {
     va_end(ap);
 }
 
-/* returns true if the buffer matches a zero value */
+/* returns true if the POBuffer matches a zero value */
 static int isZero(char *s) {
     if(*s == '$') ++s;
     while(*s == '0') ++s;
     return _eq(' ', *s);
 }
-static int _isZero(buffer buf) {
+static int _isZero(POBuffer buf) {
     return buf!=NULL && isZero(buf->str);
 }
 
 /* perform basic peephole optimization with a length-4 look-ahead */
-static void basic_peephole(Environment * _environment, buffer buf[LOOK_AHEAD], int zA, int zB) {
+static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD], int zA, int zB) {
     /* allows presumably safe operations */
     int unsafe = ALLOW_UNSAFE;
 
     /* various local buffers */
-    buffer v1 = TMP_BUF;
-    buffer v2 = TMP_BUF;
-    buffer v3 = TMP_BUF;
-    buffer v4 = TMP_BUF;
+    POBuffer v1 = TMP_BUF;
+    POBuffer v2 = TMP_BUF;
+    POBuffer v3 = TMP_BUF;
+    POBuffer v4 = TMP_BUF;
     
     /* move B stuff after A stuff */
-    if( (match(buf[0], " LDB *", v1) || match(buf[0], " STB *", v1)) && !strchr("AD$", v1->str[0])
+    if( (po_buf_match(buf[0], " LDB *", v1) || po_buf_match(buf[0], " STB *", v1)) && !strchr("AD$", v1->str[0])
     &&  sets_flag(buf[1], 'A') 
-	&&  (!match(buf[1], " * *", NULL, v2) || _strcmp(v1, v2)) ) {
+	&&  (!po_buf_match(buf[1], " * *", NULL, v2) || po_buf_strcmp(v1, v2)) ) {
         int x = 1, i;
-        if( match(buf[x+1], "* equ ", NULL)) ++x;
-        if(!match(buf[x+1], " IF ") && !isConditionnal(buf[x+1])) {
-            buf_cpy(v1, buf[0]->str);
-            for(i=0; i<x; ++i) buf_cpy(buf[i], buf[i+1]->str);
-            buf_cpy(buf[x], v1->str);
+        if( po_buf_match(buf[x+1], "* equ ", NULL)) ++x;
+        if(!po_buf_match(buf[x+1], " IF ") && !isConditionnal(buf[x+1])) {
+            po_buf_cpy(v1, buf[0]->str);
+            for(i=0; i<x; ++i) po_buf_cpy(buf[i], buf[i+1]->str);
+            po_buf_cpy(buf[x], v1->str);
         }
     }
 	/* move D stuff before X stuff */
-	if( (match(buf[0], " LDX _*", v1) || match(buf[0], " LDX #*", v1) || match(buf[0], " STX _*", v1)) 
-    &&   match(buf[1], " *DD _*", NULL,v2) 
+	if( (po_buf_match(buf[0], " LDX _*", v1) || po_buf_match(buf[0], " LDX #*", v1) || po_buf_match(buf[0], " STX _*", v1)) 
+    &&   po_buf_match(buf[1], " *DD _*", NULL,v2) 
 	&&   strchr(v1->str,'+')==NULL
 	&&   strchr(v2->str,'+')==NULL
-	&&  _strcmp(v1, v2)) {
+	&&  po_buf_strcmp(v1, v2)) {
         int x = 1, i;
-        if( match(buf[x+1], "* equ ", NULL)) ++x;
-        if(!match(buf[x+1], " IF ") && !isConditionnal(buf[x+1])) {
-            buf_cpy(v1, buf[0]->str);
-            for(i=0; i<x; ++i) buf_cpy(buf[i], buf[i+1]->str);
-            buf_cpy(buf[x], v1->str);
+        if( po_buf_match(buf[x+1], "* equ ", NULL)) ++x;
+        if(!po_buf_match(buf[x+1], " IF ") && !isConditionnal(buf[x+1])) {
+            po_buf_cpy(v1, buf[0]->str);
+            for(i=0; i<x; ++i) po_buf_cpy(buf[i], buf[i+1]->str);
+            po_buf_cpy(buf[x], v1->str);
         } else {
 			printf("XXX %s", buf[x+1]->str);
 		}
@@ -530,24 +309,24 @@ static void basic_peephole(Environment * _environment, buffer buf[LOOK_AHEAD], i
 	
     
     /* a bunch of rules */
-	if( match( buf[0], " LDA #*", v1)
-	&&  match( buf[1], " LDB #*", v2)) {
+	if( po_buf_match( buf[0], " LDA #*", v1)
+	&&  po_buf_match( buf[1], " LDB #*", v2)) {
 	    optim( buf[0], RULE "(LDA,LDB)->(LDD)", NULL);
 		optim( buf[1], NULL, "\tLDD #((%s)&255)*256+((%s)&255)", v1->str, v2->str);
     }
-	if ( match( buf[0], " ST* *", v1, v2 )
-    &&   match( buf[1], " LD* *", v3, v4 )
-    &&  _strcmp(v1, v3)==0
-    &&  _strcmp(v2, v4)==0) {
-        if(0 && unsafe && match(v2, "_Ttmp") && !match(buf[2], "*SR ") && !(*v1->str=='D' && match(buf[2], " IF "))) {
+	if ( po_buf_match( buf[0], " ST* *", v1, v2 )
+    &&   po_buf_match( buf[1], " LD* *", v3, v4 )
+    &&  po_buf_strcmp(v1, v3)==0
+    &&  po_buf_strcmp(v2, v4)==0) {
+        if(0 && unsafe && po_buf_match(v2, "_Ttmp") && !po_buf_match(buf[2], "*SR ") && !(*v1->str=='D' && po_buf_match(buf[2], " IF "))) {
             char *fmt = NULL;
             /* in case flags are necessary (IF,LBcc), insert TST or LEAX */
-            if(match(buf[2], " IF ") && match(buf[3], " LB"))
+            if(po_buf_match(buf[2], " IF ") && po_buf_match(buf[3], " LB"))
                 fmt = *v1->str=='X' ? "\tLEAX ,X" : "\tTST%c";
             optim( buf[0], "(unsafe, presumed dead)", fmt, _toUpper(*v1->str));
         }
 
-        if(unsafe && match(buf[2], " * [", NULL)) {
+        if(unsafe && po_buf_match(buf[2], " * [", NULL)) {
             optim( buf[0], "(unsafe, presumed dead)", NULL);
             ++_environment->removedAssemblyLines;
         }
@@ -559,108 +338,108 @@ static void basic_peephole(Environment * _environment, buffer buf[LOOK_AHEAD], i
     }
 
 
-    if ( match( buf[0], " CLR *", v1 )
-    &&   match( buf[2], " ST* *", v2, v3 )
+    if ( po_buf_match( buf[0], " CLR *", v1 )
+    &&   po_buf_match( buf[2], " ST* *", v2, v3 )
     &&   strchr("AB", _toUpper(*v2->str))
-    &&  _strcmp(v1, v3)==0) {
+    &&  po_buf_strcmp(v1, v3)==0) {
         optim( buf[0], RULE "(CLEAR*,?,STORE*)->(?,STORE*)", NULL);
         ++_environment->removedAssemblyLines;
     }
 
-    if ( _isZero(match(buf[0], " LD* #*", v1, v2) )
+    if ( _isZero(po_buf_match(buf[0], " LD* #*", v1, v2) )
     &&   strchr("AB", _toUpper(*v1->str)) ) {
         optim(buf[0], RULE "(LOAD#0)->(CLEAR)", "\tCLR%c", _toUpper(*v1->str));
     }
 
-    if ( match(buf[0], " EOR* #$ff", v1)
+    if ( po_buf_match(buf[0], " EOR* #$ff", v1)
     &&   strchr("AB", _toUpper(*v1->str)) ) {
         optim(buf[0], RULE "(EOR#$FF)->(COM)", "\tCOM%c", _toUpper(*v1->str));
     }
 
-    if ( (match(buf[0], " LD* ", v1) || match(buf[0], " CLR*", v1))
-    &&   match(buf[1], " LD* ", v2)
-    &&  _strcmp(v1,v2)==0) {
+    if ( (po_buf_match(buf[0], " LD* ", v1) || po_buf_match(buf[0], " CLR*", v1))
+    &&   po_buf_match(buf[1], " LD* ", v2)
+    &&  po_buf_strcmp(v1,v2)==0) {
         optim(buf[0], RULE "(LOAD/CLR,LOAD)->(LOAD)", NULL);
         ++_environment->removedAssemblyLines;
     }
     
-    if ( match( buf[0], " LD")
-    &&   match( buf[1], " ST")
-    && _strcmp( buf[2], buf[0] )==0
+    if ( po_buf_match( buf[0], " LD")
+    &&   po_buf_match( buf[1], " ST")
+    && po_buf_strcmp( buf[2], buf[0] )==0
     && !strchr( buf[0]->str, '+' )
     && unsafe) {
         optim( buf[2], RULE "(LOAD*,STORE,LOAD*)->(LOAD*,STORE)", NULL);
         ++_environment->removedAssemblyLines;
     }
-    if ( match( buf[0], " LD")
-    &&   match( buf[1], " ST")
-    &&   match( buf[2], " ST")
-    && _strcmp( buf[3], buf[0] )==0
+    if ( po_buf_match( buf[0], " LD")
+    &&   po_buf_match( buf[1], " ST")
+    &&   po_buf_match( buf[2], " ST")
+    && po_buf_strcmp( buf[3], buf[0] )==0
     && unsafe) {
         optim( buf[3], RULE "(LOAD*,STORE,STORE,LOAD*)->(LOAD*,STORE,STORE)", NULL);
         ++_environment->removedAssemblyLines;
     }
-    if ( match( buf[0], " LD")
-    &&   match( buf[1], " ST")
-    &&   match( buf[2], " ST")
-    &&   match( buf[3], " ST")
-    && _strcmp( buf[4], buf[0] )==0
+    if ( po_buf_match( buf[0], " LD")
+    &&   po_buf_match( buf[1], " ST")
+    &&   po_buf_match( buf[2], " ST")
+    &&   po_buf_match( buf[3], " ST")
+    && po_buf_strcmp( buf[4], buf[0] )==0
     && unsafe) {
         optim( buf[4], RULE "(LOAD*,STORE,STORE,STORE,LOAD*)->(LOAD*,STORE,STORE,STORE)", NULL);
         ++_environment->removedAssemblyLines;
     }
 
-    if ( match(buf[0], " ST* *", NULL, v1)
-    &&   match(buf[1], " LD* *", NULL, v2)
+    if ( po_buf_match(buf[0], " ST* *", NULL, v1)
+    &&   po_buf_match(buf[1], " LD* *", NULL, v2)
     &&  ( !strchr(v1->str,'+') && !strchr(v2->str,'+') )
-    && _strcmp(v1, v2)!=0
-    && _strcmp(buf[0],buf[2])==0 ) {
+    && po_buf_strcmp(v1, v2)!=0
+    && po_buf_strcmp(buf[0],buf[2])==0 ) {
         optim(buf[0], RULE "(STORE*,LOAD,STORE*)->(LOAD,STORE*)", NULL);
         ++_environment->removedAssemblyLines;
     }
     
-    if ( (match( buf[0], " LD* ", v1) || match( buf[0], " CLR*", v1))
-    &&   (match( buf[1], " LD* ", v2) || match( buf[1], " CLR*", v2))
-    &&  _strcmp( v1, v2)==0) {
+    if ( (po_buf_match( buf[0], " LD* ", v1) || po_buf_match( buf[0], " CLR*", v1))
+    &&   (po_buf_match( buf[1], " LD* ", v2) || po_buf_match( buf[1], " CLR*", v2))
+    &&  po_buf_strcmp( v1, v2)==0) {
         optim(buf[0], RULE "(LOAD/CLR,LOAD/CLR)->(LOAD/CLR)", NULL);
         ++_environment->removedAssemblyLines;
     }
 
 
-    if ( match(buf[0], " ST")
-    && _strcmp(buf[0], buf[1])==0) {
+    if ( po_buf_match(buf[0], " ST")
+    && po_buf_strcmp(buf[0], buf[1])==0) {
         optim(buf[0], RULE "(STORE*,STORE*)->(STORE*)", NULL);
         ++_environment->removedAssemblyLines;        
     }
-    if ( (match(buf[0], " ST* *+", NULL, v1) || match(buf[0], " ST* *", NULL, v1))
-    &&   !isBranch(buf[1]) && match(buf[1], " * *", NULL, v2) && _strcmp(v1, v2)!=0
+    if ( (po_buf_match(buf[0], " ST* *+", NULL, v1) || po_buf_match(buf[0], " ST* *", NULL, v1))
+    &&   !isBranch(buf[1]) && po_buf_match(buf[1], " * *", NULL, v2) && po_buf_strcmp(v1, v2)!=0
 	&&  strchr(buf[0]->str,'+')==NULL
 	&&  strchr(buf[1]->str,'+')==NULL
-    && _strcmp(buf[2], buf[0])==0) {
+    && po_buf_strcmp(buf[2], buf[0])==0) {
         optim(buf[0], RULE "(STORE*,?,STORE*)->(?,STORE*)", NULL);
         ++_environment->removedAssemblyLines;
     }
-    if ((match(buf[0], " ST* *+", NULL, v1) || match(buf[0], " ST* *", NULL, v1))
-    &&  !isBranch(buf[1]) && match(buf[1], " * *", NULL, v2) && _strcmp(v1, v2)!=0
-    &&  !isBranch(buf[2]) && match(buf[2], " * *", NULL, v2) && _strcmp(v1, v2)!=0
-    && _strcmp(buf[3], buf[0])==0) {
+    if ((po_buf_match(buf[0], " ST* *+", NULL, v1) || po_buf_match(buf[0], " ST* *", NULL, v1))
+    &&  !isBranch(buf[1]) && po_buf_match(buf[1], " * *", NULL, v2) && po_buf_strcmp(v1, v2)!=0
+    &&  !isBranch(buf[2]) && po_buf_match(buf[2], " * *", NULL, v2) && po_buf_strcmp(v1, v2)!=0
+    && po_buf_strcmp(buf[3], buf[0])==0) {
         optim(buf[0], RULE "(STORE*,?,?,STORE*)->(?,?,STORE*)", NULL);
         ++_environment->removedAssemblyLines;
     }
 
-    if( (match(buf[0], " LD* ", v1) || match(buf[0], " ST* ",v1))
-    && _isZero(match(buf[1], " CMP* #*", v2, v3))
-    && _strcmp(v1, v2)==0) {
+    if( (po_buf_match(buf[0], " LD* ", v1) || po_buf_match(buf[0], " ST* ",v1))
+    && _isZero(po_buf_match(buf[1], " CMP* #*", v2, v3))
+    && po_buf_strcmp(v1, v2)==0) {
         optim(buf[1], RULE "(LOAD/STORE,CMP#0)->(LOAD/STORE)", NULL);
         ++_environment->removedAssemblyLines;
     }
 
-    if ( match(buf[0], " LDD *", v1)
-    &&   match(buf[1], " STD _Ttmp*", v2)
-    &&   match(buf[2], " CLRB")
-    &&   match(buf[3], " LDX *", v3)
-    &&   match(buf[4], " CMPX _Ttmp*", v4)
-    &&  _strcmp(v2, v4)==0) {
+    if ( po_buf_match(buf[0], " LDD *", v1)
+    &&   po_buf_match(buf[1], " STD _Ttmp*", v2)
+    &&   po_buf_match(buf[2], " CLRB")
+    &&   po_buf_match(buf[3], " LDX *", v3)
+    &&   po_buf_match(buf[4], " CMPX _Ttmp*", v4)
+    &&  po_buf_strcmp(v2, v4)==0) {
         if(unsafe) {
             optim(buf[0], RULE "(LDD+,STD*,LDX,CMPX*)->(LDX,CMP+)", NULL);
             ++_environment->removedAssemblyLines;
@@ -672,11 +451,11 @@ static void basic_peephole(Environment * _environment, buffer buf[LOOK_AHEAD], i
         }
     }
 
-    if ( match(buf[0], " LDD *", v1)
-    &&   match(buf[1], " STD _Ttmp*", v2)
-    &&   match(buf[2], " LDD *", v3)
-    &&   match(buf[3], " ADD _Ttmp*", v4)
-    &&  _strcmp(v2, v4)==0) {
+    if ( po_buf_match(buf[0], " LDD *", v1)
+    &&   po_buf_match(buf[1], " STD _Ttmp*", v2)
+    &&   po_buf_match(buf[2], " LDD *", v3)
+    &&   po_buf_match(buf[3], " ADD _Ttmp*", v4)
+    &&  po_buf_strcmp(v2, v4)==0) {
         if(unsafe) {
             optim(buf[0], RULE "(LDD+,STD*,LDD,ADDD*)->(LDD,ADD+)", NULL);
             ++_environment->removedAssemblyLines;
@@ -688,16 +467,16 @@ static void basic_peephole(Environment * _environment, buffer buf[LOOK_AHEAD], i
         }
     }
 
-    if ( match(buf[0], " STD *", v1)
-    &&   match(buf[1], " LDX *", v2)
-    &&  _strcmp(v1,v2)==0) {
+    if ( po_buf_match(buf[0], " STD *", v1)
+    &&   po_buf_match(buf[1], " LDX *", v2)
+    &&  po_buf_strcmp(v1,v2)==0) {
         //if(unsafe) optim(buf[0], "(unsafe, presumed dead)", NULL);
         optim(buf[1], RULE "(STD*,LDX*)->(STD*,TDX)", "\tTFR D,X");
     }
 
-    if ( match(buf[0], " STD *", v1)
-    &&   match(buf[1], " LDB *+1", v2)
-    &&  _strcmp(v1, v2)==0) {
+    if ( po_buf_match(buf[0], " STD *", v1)
+    &&   po_buf_match(buf[1], " LDB *+1", v2)
+    &&  po_buf_strcmp(v1, v2)==0) {
         if(unsafe) {
             optim(buf[0], "(unsafe, presumed dead)", NULL);
             ++_environment->removedAssemblyLines;
@@ -706,36 +485,36 @@ static void basic_peephole(Environment * _environment, buffer buf[LOOK_AHEAD], i
         ++_environment->removedAssemblyLines;
     }
 
-    if ( match(buf[0], " LDD #*", v1)
-    &&   match(buf[1], " ADDD #*", v2) 
-    &&  !match(buf[2], "* equ ", NULL)) {
+    if ( po_buf_match(buf[0], " LDD #*", v1)
+    &&   po_buf_match(buf[1], " ADDD #*", v2) 
+    &&  !po_buf_match(buf[2], "* equ ", NULL)) {
         optim(buf[0], RULE "(LDD#,ADD#)->(LDD#)", "\tLDD #%s+%s", v1->str, v2->str);
         optim(buf[1], NULL, NULL);
         ++_environment->removedAssemblyLines;
     }
 
-    if ( match(buf[0], " STX *", v1)
-    &&   match(buf[1], " CLRA")
-    &&   match(buf[2], " LDX *", v2)
-    &&  _strcmp(v1,v2)==0) {
+    if ( po_buf_match(buf[0], " STX *", v1)
+    &&   po_buf_match(buf[1], " CLRA")
+    &&   po_buf_match(buf[2], " LDX *", v2)
+    &&  po_buf_strcmp(v1,v2)==0) {
         optim(buf[0], RULE "(STX*,CLRA,LDX*)->(CLRA,STX*)", NULL);
         optim(buf[2], NULL, "\tSTX %s", v1->str);
     }
 
-    if ( match(buf[0], " STD *", v1)
-    &&   match(buf[1], " LDD *", v2)
-    &&   match(buf[2], " ADDD *", v3)
-    &&  _strcmp(v1,v3)==0) {
+    if ( po_buf_match(buf[0], " STD *", v1)
+    &&   po_buf_match(buf[1], " LDD *", v2)
+    &&   po_buf_match(buf[2], " ADDD *", v3)
+    &&  po_buf_strcmp(v1,v3)==0) {
         // if(unsafe) optim(buf[0], "(unsafe, presumed dead)", NULL);
         optim(buf[1], RULE "(STD*,LDD+,ADD*)->(STD*,ADD+)", NULL);
         optim(buf[2], NULL, "\tADDD %s", v2->str);
     }
 
-    if ( match(buf[0], " STB *", v1)
-    &&   match(buf[1], " LDB *", v2)
-    &&   match(buf[2], " *B *", v3, v4)
-    &&  _strcmp(v1,v4)==0
-    &&   (match(v3, "OR") || match(v3,"AND") || match(v3,"EOR") || match(v3,"ADD"))
+    if ( po_buf_match(buf[0], " STB *", v1)
+    &&   po_buf_match(buf[1], " LDB *", v2)
+    &&   po_buf_match(buf[2], " *B *", v3, v4)
+    &&  po_buf_strcmp(v1,v4)==0
+    &&   (po_buf_match(v3, "OR") || po_buf_match(v3,"AND") || po_buf_match(v3,"EOR") || po_buf_match(v3,"ADD"))
     ) {
         if(unsafe) {
             optim(buf[0], "(unsafe, presumed dead)", NULL);
@@ -746,22 +525,22 @@ static void basic_peephole(Environment * _environment, buffer buf[LOOK_AHEAD], i
     }
 
 
-    if ( match(buf[0], " STD _Ttmp*", v1)  // 6
-    &&   match(buf[1], " LD* [_Ttmp*]", v2, v3) // 9
-    &&  _strcmp(v1,v3)==0) {
+    if ( po_buf_match(buf[0], " STD _Ttmp*", v1)  // 6
+    &&   po_buf_match(buf[1], " LD* [_Ttmp*]", v2, v3) // 9
+    &&  po_buf_strcmp(v1,v3)==0) {
         //if(unsafe) optim(buf[0], "(unsafe, presumed dead)", NULL);
         optim(buf[1], RULE "(STD,LDD[])->(TDX,LOAD*X)", "\tTFR D,X\n\tLD%c ,X", _toUpper(*v2->str));
     }
 
-    if ( match(buf[1], " TST*", v1)
+    if ( po_buf_match(buf[1], " TST*", v1)
     &&  sets_flag(buf[0], *v1->str)) {
         optim(buf[1], RULE "(FLAG-SET,TST)->(FLAG-SET)", NULL);
         ++_environment->removedAssemblyLines;
     }
 
-    if ( match(buf[0], " LDB #$01")
-    &&   match(buf[1], " LDX *", v1)
-    &&   match(buf[2], " JSR CPUMATHMUL16BITTO32*", NULL)) {
+    if ( po_buf_match(buf[0], " LDB #$01")
+    &&   po_buf_match(buf[1], " LDX *", v1)
+    &&   po_buf_match(buf[2], " JSR CPUMATHMUL16BITTO32*", NULL)) {
         optim(buf[0], RULE "(MUL#1)->(NOP)", "\tLDD %s", v1->str);
         optim(buf[1], NULL, "\tLDX #0");
         optim(buf[2], NULL, NULL);
@@ -769,71 +548,71 @@ static void basic_peephole(Environment * _environment, buffer buf[LOOK_AHEAD], i
     }
 
     // A VOIR
-    if ( match(buf[0], " STB *", v1)
-    &&   match(buf[1], " STA ")
-    &&   match(buf[2], " LDA *", v2)
-    &&   match(buf[3], " STA *", v3)
-    &&  _strcmp(v1, v2)==0
+    if ( po_buf_match(buf[0], " STB *", v1)
+    &&   po_buf_match(buf[1], " STA ")
+    &&   po_buf_match(buf[2], " LDA *", v2)
+    &&   po_buf_match(buf[3], " STA *", v3)
+    &&  po_buf_strcmp(v1, v2)==0
     &&   unsafe /* A is considered dead after */) {
         optim(buf[2], RULE "(STB*,STA,LDA*,STA+)->(STB*,STA,STB+)", NULL);
         optim(buf[3], NULL, "\tSTB %s", v3->str);
     }
 
-    if( match(buf[0], " STD _Ttmp*", v1)
-    &&  match(buf[1], " LDD _Ttmp*", v2)
-    &&  match(buf[2], " LDX _Ttmp*", v3)
-    && _strcmp(v1,v3)==0
-    && !match(buf[3], " IF ")
+    if( po_buf_match(buf[0], " STD _Ttmp*", v1)
+    &&  po_buf_match(buf[1], " LDD _Ttmp*", v2)
+    &&  po_buf_match(buf[2], " LDX _Ttmp*", v3)
+    && po_buf_strcmp(v1,v3)==0
+    && !po_buf_match(buf[3], " IF ")
     &&  unsafe) {
         optim(buf[0], RULE "(STD*,LDD,LDX*)->(TDX,LDD)", "\tTFR D,X");
         optim(buf[2], NULL, NULL);
         ++_environment->removedAssemblyLines;
     }
 
-    if( match(buf[0], " LDD *", v1)
-    &&  match(buf[1], " STD *", v2)
-    &&  match(buf[2], " TFR D,X")
-    && !match(buf[3], " *SR ", NULL)) {
+    if( po_buf_match(buf[0], " LDD *", v1)
+    &&  po_buf_match(buf[1], " STD *", v2)
+    &&  po_buf_match(buf[2], " TFR D,X")
+    && !po_buf_match(buf[3], " *SR ", NULL)) {
         optim(buf[0], RULE "(LDD*,STD+,TDX)->(LDX*,STX+)", "\tLDX %s", v1->str);
         optim(buf[1], NULL, "\tSTX %s", v2->str);
         optim(buf[2], NULL, NULL);
         ++_environment->removedAssemblyLines;
     }
 
-    if( match(buf[0], " STD *", v1)
-    &&  match(buf[1], " ST* *", NULL, v2)
-    &&  match(buf[2], " LDD *", v3)
-    && _strcmp(v1, v3)==0
-    && _strcmp(v1, v2)!=0
+    if( po_buf_match(buf[0], " STD *", v1)
+    &&  po_buf_match(buf[1], " ST* *", NULL, v2)
+    &&  po_buf_match(buf[2], " LDD *", v3)
+    && po_buf_strcmp(v1, v3)==0
+    && po_buf_strcmp(v1, v2)!=0
     &&  strchr((const char*)v2 ,'+')==NULL) {
         optim(buf[2], RULE "(STD*,ST?,LDD*)->(STD*,ST?)", NULL);
         ++_environment->removedAssemblyLines;
     }
     
-    if( match(buf[0], " STD *", v1)
-    &&  match(buf[1], " LSLB")
-    &&  match(buf[2], " ROLA")
-    &&  match(buf[3], " STD *", v2)
-    && _strcmp(v1, v2)==0) {
+    if( po_buf_match(buf[0], " STD *", v1)
+    &&  po_buf_match(buf[1], " LSLB")
+    &&  po_buf_match(buf[2], " ROLA")
+    &&  po_buf_match(buf[3], " STD *", v2)
+    && po_buf_strcmp(v1, v2)==0) {
         optim(buf[0], RULE "(STD*,LSLB,ROLA,STD*)->(LSLB,ROLA,STD*)", NULL);
         ++_environment->removedAssemblyLines;
     }
 
-    if( match(buf[0], " STD *", v1)
-    &&  match(buf[1], " ADDD *", v2)
-    &&  match(buf[2], " STD *", v3)
-    && _strcmp(v1, v3)==0
-    && _strcmp(v1, v2)!=0) {
+    if( po_buf_match(buf[0], " STD *", v1)
+    &&  po_buf_match(buf[1], " ADDD *", v2)
+    &&  po_buf_match(buf[2], " STD *", v3)
+    && po_buf_strcmp(v1, v3)==0
+    && po_buf_strcmp(v1, v2)!=0) {
         optim(buf[0], RULE "(STD*,ADDD,STD*)->(ADDD,STD*)", NULL);
         ++_environment->removedAssemblyLines;
     }
     
     if ( peephole_pass>2
-    &&   match(buf[0], " STD _Ttmp*", v1)
-    &&   match(buf[1], " LD* ", v2)
-    &&   match(buf[2], " ST* [_Ttmp*]", v3, v4)
-    &&  _strcmp(v2,v3)==0
-    &&  _strcmp(v1,v4)==0) {
+    &&   po_buf_match(buf[0], " STD _Ttmp*", v1)
+    &&   po_buf_match(buf[1], " LD* ", v2)
+    &&   po_buf_match(buf[2], " ST* [_Ttmp*]", v3, v4)
+    &&  po_buf_strcmp(v2,v3)==0
+    &&  po_buf_strcmp(v1,v4)==0) {
         if(unsafe)
             optim(buf[0], RULE "(unsafe, presumed dead) (STD,LOAD,STORE[])->(TDX,LOAD,STORE*X)", "\tTFR D,X");
         else
@@ -841,32 +620,32 @@ static void basic_peephole(Environment * _environment, buffer buf[LOOK_AHEAD], i
         optim(buf[2], NULL, "\tST%c ,X", *v2->str);
     }
 	
-	if(match( buf[0], " STD *", v1)
-	&& match( buf[1], " LDB *+1", v2)
-	&& _strcmp(v1, v2)==0) {
+	if(po_buf_match( buf[0], " STD *", v1)
+	&& po_buf_match( buf[1], " LDB *+1", v2)
+	&& po_buf_strcmp(v1, v2)==0) {
 		optim(buf[1], RULE "(STD,LDB+1)", NULL);
         ++_environment->removedAssemblyLines;
 	}
-	if(match( buf[0], " STD *", v1)
-	&& match( buf[1], " ST* *", NULL, v2) && 0!=_strcmp(v1,v2)
-	&& match( buf[2], " LDB *+1", v2)
-	&& _strcmp(v1, v2)==0) {
+	if(po_buf_match( buf[0], " STD *", v1)
+	&& po_buf_match( buf[1], " ST* *", NULL, v2) && 0!=po_buf_strcmp(v1,v2)
+	&& po_buf_match( buf[2], " LDB *+1", v2)
+	&& po_buf_strcmp(v1, v2)==0) {
 		optim(buf[2], RULE "(STD,?,LDB+1)", NULL);
         ++_environment->removedAssemblyLines;
 	}
-	if(match( buf[0], " STD *", v1)
-	&& match( buf[1], " ST* *", NULL, v2) && 0!=_strcmp(v1,v2)
-	&& match( buf[2], " ST* *", NULL, v2) && 0!=_strcmp(v1,v2)
-	&& match( buf[3], " LDB *+1", v2)
-	&& _strcmp(v1, v2)==0) {
+	if(po_buf_match( buf[0], " STD *", v1)
+	&& po_buf_match( buf[1], " ST* *", NULL, v2) && 0!=po_buf_strcmp(v1,v2)
+	&& po_buf_match( buf[2], " ST* *", NULL, v2) && 0!=po_buf_strcmp(v1,v2)
+	&& po_buf_match( buf[3], " LDB *+1", v2)
+	&& po_buf_strcmp(v1, v2)==0) {
 		optim(buf[3], RULE "(STD,?,?,LDB+1)", NULL);
         ++_environment->removedAssemblyLines;
 	}
 }
 
-/* check if buffer matches any of xxyy (used for LDD #$xxyy op) */
-static buffer chkLDD(buffer buf, char *xxyy, buffer value) {
-    return match( buf, " LDD #$*", value) &&
+/* check if POBuffer matches any of xxyy (used for LDD #$xxyy op) */
+static POBuffer chkLDD(POBuffer buf, char *xxyy, POBuffer value) {
+    return po_buf_match( buf, " LDD #$*", value) &&
         value->len==4 &&
         (xxyy[0]=='-' || xxyy[0]==value->str[0]) &&
         (xxyy[1]=='-' || xxyy[1]==value->str[1]) &&
@@ -875,109 +654,109 @@ static buffer chkLDD(buffer buf, char *xxyy, buffer value) {
 }
 
 /* can this opcode make A non zero */
-static int can_nzA(buffer buf) {
+static int can_nzA(POBuffer buf) {
     char *s;
 
     for(s = buf->str; !_eol(*s) && *s!=','; ++s);
 
-    if(!match(buf, " ")) return 1;
-    if(match(buf, " ADDA ")) return 1;
-    if(match(buf, " ADDD ")) return 1;
-    if(match(buf, " BSR ")) return 1;
-    if(match(buf, " COMA")) return 1;
-    if(match(buf, " DECA")) return 1;
-    if(match(buf, " EORA ")) return 1;
-    if(match(buf, " EXG ")) return 1;
-    if(match(buf, " INCA")) return 1;
-    if(match(buf, " JSR ")) return 1;
-    if(match(buf, " LDA ")) return 1;
-    if(match(buf, " LDD ")) return 1;
-    if(match(buf, " ORA ")) return 1;
-    if(match(buf, " PULS ")) return 1;
-    if(match(buf, " PULU ")) return 1;
-    if(match(buf, " ROLA")) return 1;
-    if(match(buf, " RORA")) return 1;
-    if(match(buf, " RTI")) return 1;
-    if(match(buf, " RTS")) return 1;
-    if(match(buf, " SBCA ")) return 1;
-    if(match(buf, " SEX")) return 1;
-    if(match(buf, " SUBA ")) return 1;
-    if(match(buf, " SUBD ")) return 1;
-    if(match(buf, " TFR ") && s[0]==',' && (s[1]=='A' || s[1]=='D')) return 1;
+    if(!po_buf_match(buf, " ")) return 1;
+    if(po_buf_match(buf, " ADDA ")) return 1;
+    if(po_buf_match(buf, " ADDD ")) return 1;
+    if(po_buf_match(buf, " BSR ")) return 1;
+    if(po_buf_match(buf, " COMA")) return 1;
+    if(po_buf_match(buf, " DECA")) return 1;
+    if(po_buf_match(buf, " EORA ")) return 1;
+    if(po_buf_match(buf, " EXG ")) return 1;
+    if(po_buf_match(buf, " INCA")) return 1;
+    if(po_buf_match(buf, " JSR ")) return 1;
+    if(po_buf_match(buf, " LDA ")) return 1;
+    if(po_buf_match(buf, " LDD ")) return 1;
+    if(po_buf_match(buf, " ORA ")) return 1;
+    if(po_buf_match(buf, " PULS ")) return 1;
+    if(po_buf_match(buf, " PULU ")) return 1;
+    if(po_buf_match(buf, " ROLA")) return 1;
+    if(po_buf_match(buf, " RORA")) return 1;
+    if(po_buf_match(buf, " RTI")) return 1;
+    if(po_buf_match(buf, " RTS")) return 1;
+    if(po_buf_match(buf, " SBCA ")) return 1;
+    if(po_buf_match(buf, " SEX")) return 1;
+    if(po_buf_match(buf, " SUBA ")) return 1;
+    if(po_buf_match(buf, " SUBD ")) return 1;
+    if(po_buf_match(buf, " TFR ") && s[0]==',' && (s[1]=='A' || s[1]=='D')) return 1;
 
     return 0;
 }
 
 /* can this opcode make B non zero */
-static int can_nzB(buffer buf) {
+static int can_nzB(POBuffer buf) {
     char *s;
 
     for(s = buf->str; !_eol(*s) && *s!=','; ++s);
 
-    if(!match(buf, " ")) return 1;
-    if(match(buf, " ADDB ")) return 1;
-    if(match(buf, " ADDD ")) return 1;
-    if(match(buf, " BSR ")) return 1;
-    if(match(buf, " COMB")) return 1;
-    if(match(buf, " DECB")) return 1;
-    if(match(buf, " EORB ")) return 1;
-    if(match(buf, " EXG ")) return 1;
-    if(match(buf, " INCB")) return 1;
-    if(match(buf, " JSR ")) return 1;
-    if(match(buf, " LDB ")) return 1;
-    if(match(buf, " LDD ")) return 1;
-    if(match(buf, " ORB ")) return 1;
-    if(match(buf, " PULS ")) return 1;
-    if(match(buf, " PULU ")) return 1;
-    if(match(buf, " ROLB")) return 1;
-    if(match(buf, " RORB")) return 1;
-    if(match(buf, " RTI")) return 1;
-    if(match(buf, " RTS")) return 1;
-    if(match(buf, " SBCB ")) return 1;
-    if(match(buf, " SUBB ")) return 1;
-    if(match(buf, " SUBD ")) return 1;
-    if(match(buf, " TFR ") && s[0]==',' && (s[1]=='B' || s[1]=='D')) return 1;
+    if(!po_buf_match(buf, " ")) return 1;
+    if(po_buf_match(buf, " ADDB ")) return 1;
+    if(po_buf_match(buf, " ADDD ")) return 1;
+    if(po_buf_match(buf, " BSR ")) return 1;
+    if(po_buf_match(buf, " COMB")) return 1;
+    if(po_buf_match(buf, " DECB")) return 1;
+    if(po_buf_match(buf, " EORB ")) return 1;
+    if(po_buf_match(buf, " EXG ")) return 1;
+    if(po_buf_match(buf, " INCB")) return 1;
+    if(po_buf_match(buf, " JSR ")) return 1;
+    if(po_buf_match(buf, " LDB ")) return 1;
+    if(po_buf_match(buf, " LDD ")) return 1;
+    if(po_buf_match(buf, " ORB ")) return 1;
+    if(po_buf_match(buf, " PULS ")) return 1;
+    if(po_buf_match(buf, " PULU ")) return 1;
+    if(po_buf_match(buf, " ROLB")) return 1;
+    if(po_buf_match(buf, " RORB")) return 1;
+    if(po_buf_match(buf, " RTI")) return 1;
+    if(po_buf_match(buf, " RTS")) return 1;
+    if(po_buf_match(buf, " SBCB ")) return 1;
+    if(po_buf_match(buf, " SUBB ")) return 1;
+    if(po_buf_match(buf, " SUBD ")) return 1;
+    if(po_buf_match(buf, " TFR ") && s[0]==',' && (s[1]=='B' || s[1]=='D')) return 1;
 
     return 0;
 }
 
 /* optimizations related to A or B being zero */
-static void optim_zAB(Environment * _environment, buffer buf[LOOK_AHEAD], int *zA, int *zB) {
-    buffer v1 = TMP_BUF;
-    buffer v2 = TMP_BUF;
-    buffer v3 = TMP_BUF;
+static void optim_zAB(Environment * _environment, POBuffer buf[LOOK_AHEAD], int *zA, int *zB) {
+    POBuffer v1 = TMP_BUF;
+    POBuffer v2 = TMP_BUF;
+    POBuffer v3 = TMP_BUF;
 
     int unsafe = ALLOW_UNSAFE;
 
     if(*zA) {
-        if (match( buf[0], " CLRA")) {
+        if (po_buf_match( buf[0], " CLRA")) {
             optim( buf[0], RULE "[A=0](CLRA)->()", NULL);
             ++_environment->removedAssemblyLines;            
-        } else if (match( buf[0], " LDA #$ff")) {
+        } else if (po_buf_match( buf[0], " LDA #$ff")) {
             optim( buf[0], RULE "[A=0](LDA#ff)->(DECA)", "\tDECA");
             *zA = 0;
-        } else if ( match(buf[0], " LDA #$01")) {
+        } else if ( po_buf_match(buf[0], " LDA #$01")) {
             optim( buf[0], RULE "[A=0](LDA#1)->(INCA)", "\tINCA");
             *zA = 0;
         } else if ( chkLDD( buf[0], "00--", v1)) {
             optim(buf[0], RULE "[A=0](LDD#00xx)->(LDB#xx)", "\tLDB #$%c%c", v1->str[2], v1->str[3]);
             *zB = 0;
-        } else if (match( buf[0], " TFR A,B")) {
+        } else if (po_buf_match( buf[0], " TFR A,B")) {
             optim( buf[0], RULE "[A=0](TAB)->(CLRB)", "\tCLRB");
             *zB = 1;
         } else if (peephole_pass>2 
-               &&  match( buf[0], " STA *", v1)
-               &&  match( buf[1], " LDB *", v2)
-               &&  _strcmp(v1,v2)==0) {
+               &&  po_buf_match( buf[0], " STA *", v1)
+               &&  po_buf_match( buf[1], " LDB *", v2)
+               &&  po_buf_strcmp(v1,v2)==0) {
             optim(buf[1], RULE "[A=0](STA*,LDB*)->(CLRB)", "\tCLRB");
         } else if (*zB
-               &&  match(buf[0], " ADDD *", v1)) {
+               &&  po_buf_match(buf[0], " ADDD *", v1)) {
             optim(buf[0], RULE "[D=0](ADD)->(LDD)", "\tLDD %s", v1->str);
         } else if (*zB
-               &&  match(buf[0], " STD _Ttmp*", v1)
-               &&  match(buf[1], " LDX *", v2)
-               &&  match(buf[2], " CMPX _Ttmp*", v3)
-               && _strcmp(v1, v3)==0) {
+               &&  po_buf_match(buf[0], " STD _Ttmp*", v1)
+               &&  po_buf_match(buf[1], " LDX *", v2)
+               &&  po_buf_match(buf[2], " CMPX _Ttmp*", v3)
+               && po_buf_strcmp(v1, v3)==0) {
             if(unsafe) {
                 optim(buf[0], "(unsafe, presumed dead)", NULL);
                 ++_environment->removedAssemblyLines;
@@ -987,37 +766,37 @@ static void optim_zAB(Environment * _environment, buffer buf[LOOK_AHEAD], int *z
         } else if(can_nzA(buf[0])) {
             *zA = 0;
         }
-    } else if ( chkLDD(buf[0], "00--", v1) || match( buf[0], " LDD #0") || match( buf[0], " CLRA") ) {
+    } else if ( chkLDD(buf[0], "00--", v1) || po_buf_match( buf[0], " LDD #0") || po_buf_match( buf[0], " CLRA") ) {
         *zA = 1;
     }
 
     if(*zB) {
-        if (match( buf[0], " CLRB")) {
+        if (po_buf_match( buf[0], " CLRB")) {
             optim( buf[0], RULE "[B=0](CLRB)->()", NULL);
             ++_environment->removedAssemblyLines;
-        } else if (match( buf[0], " LDB #$ff")) {
+        } else if (po_buf_match( buf[0], " LDB #$ff")) {
             optim( buf[0], RULE "[B=0](LDB#ff)->(DECB)", "\tDECB");
             *zB = 0;
-        } else if (match( buf[0], " LDB #$01")) {
+        } else if (po_buf_match( buf[0], " LDB #$01")) {
             optim( buf[0], RULE "[B=0](LDB#1)->(INCB)", "\tINCB");
             *zB = 0;
         } else if ( chkLDD( buf[0], "--00", v1) ) {
             optim( buf[0], RULE "[B=0](LDB#xx00)->(LDA#xx)", "\tLDA #$%c%c", v1->str[0], v1->str[1]);
             *zA = 0;
-        } else if (match( buf[0], " TFR B,A")) {
+        } else if (po_buf_match( buf[0], " TFR B,A")) {
             optim( buf[0], RULE "[B=0](TBA)->(CLRA)", "\tCLRA");
             *zA = 1;
         } else if(can_nzB(buf[0])) {
             *zB = 0;
         }
-    } else if ( chkLDD(buf[0], "--00", v1) || match( buf[0], " LDD #0") || match( buf[0], " CLRB") ) {
+    } else if ( chkLDD(buf[0], "--00", v1) || po_buf_match( buf[0], " LDD #0") || po_buf_match( buf[0], " CLRB") ) {
         *zB = 1;
     }
     
     if(!*zA
-    && match( buf[0], " LDB #$*",  v1)
-    && match( buf[1], " STB ")
-    && match( buf[2], " CLRA")) {
+    && po_buf_match( buf[0], " LDB #$*",  v1)
+    && po_buf_match( buf[1], " STB ")
+    && po_buf_match( buf[2], " CLRA")) {
         optim(buf[0], RULE "(LDB#,STB,CLRA)->(LDD#,STB)", "\tLDD #$00%s", v1->str);
         optim(buf[2], NULL, NULL);
         ++_environment->removedAssemblyLines;
@@ -1060,7 +839,7 @@ static void vars_clear(void) {
 }
 
 /* gets (or creates) an entry for a variable from the data-base */
-struct var *vars_get(buffer _name) {
+struct var *vars_get(POBuffer _name) {
     char *name = _name->str;
     struct var *ret = NULL;
     int i;
@@ -1092,100 +871,100 @@ struct var *vars_get(buffer _name) {
     return ret;
 }
 
-static int vars_ok(buffer name) {
-    if(match(name, "_Tstr"))   return 0;
-    if(match(name, "_label"))  return 0;
+static int vars_ok(POBuffer name) {
+    if(po_buf_match(name, "_Tstr"))   return 0;
+    if(po_buf_match(name, "_label"))  return 0;
 
     if(name->str[0]=='_')      return 1;
-    if(match(name, "CLIP"))    return 1;
-    if(match(name, "XCUR"))    return 1;
-    if(match(name, "YCUR"))    return 1;
-    if(match(name, "CURRENT")) return 1;
-    if(match(name, "FONT"))    return 1;
-    if(match(name, "TEXT"))    return 1;
-    if(match(name, "LAST"))    return 1;
-    if(match(name, "XGR"))     return 1;
-    if(match(name, "YGR"))     return 1;
-    if(match(name, "FREE_"))   return 1;
+    if(po_buf_match(name, "CLIP"))    return 1;
+    if(po_buf_match(name, "XCUR"))    return 1;
+    if(po_buf_match(name, "YCUR"))    return 1;
+    if(po_buf_match(name, "CURRENT")) return 1;
+    if(po_buf_match(name, "FONT"))    return 1;
+    if(po_buf_match(name, "TEXT"))    return 1;
+    if(po_buf_match(name, "LAST"))    return 1;
+    if(po_buf_match(name, "XGR"))     return 1;
+    if(po_buf_match(name, "YGR"))     return 1;
+    if(po_buf_match(name, "FREE_"))   return 1;
 
     return 0;
 }
 
 /* look for variable uses and collect data about he variables */
-static void vars_scan(buffer buf[LOOK_AHEAD]) {
-    buffer tmp = TMP_BUF;
-    buffer arg = TMP_BUF;
+static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
+    POBuffer tmp = TMP_BUF;
+    POBuffer arg = TMP_BUF;
 
-    // if( match( buf[0], " * _*+", NULL, buf) ) {
+    // if( po_buf_match( buf[0], " * _*+", NULL, buf) ) {
         // struct var *v = vars_get(buf);
         // v->flags |= NO_INLINE;
     // }
 
-    if( match( buf[0], " * #*",  NULL, arg)
-    ||  match( buf[0], " * [*]", NULL, arg) ) if(vars_ok(arg)) {
+    if( po_buf_match( buf[0], " * #*",  NULL, arg)
+    ||  po_buf_match( buf[0], " * [*]", NULL, arg) ) if(vars_ok(arg)) {
         struct var *v = vars_get(arg);
         v->flags |= NO_REMOVE/*|NO_DP*/;
         v->nb_rd++;
     }
 
-    if( match( buf[0], " CLR *",  arg)
-    ||  match( buf[0], " ST* *",  tmp, arg) ) if(vars_ok(arg)) {
+    if( po_buf_match( buf[0], " CLR *",  arg)
+    ||  po_buf_match( buf[0], " ST* *",  tmp, arg) ) if(vars_ok(arg)) {
         struct var *v = vars_get(arg);
         v->nb_wr++;
     }
 
-    if (match( buf[0], " ADD* *", NULL, arg)
-    ||  match( buf[0], " ADC* *", NULL, arg)
-    ||  match( buf[0], " AND* *", NULL, arg)
-    ||  match( buf[0], " CMP* *", NULL, arg)
-    ||  match( buf[0], " EOR* *", NULL, arg)
-    ||  match( buf[0], " LD* *",  NULL, arg)
-    ||  match( buf[0], " OR* *",  NULL, arg)
-    ||  match( buf[0], " SBC* *", NULL, arg)
-    ||  match( buf[0], " SUB* *", NULL, arg) ) if(vars_ok(arg)) {
+    if (po_buf_match( buf[0], " ADD* *", NULL, arg)
+    ||  po_buf_match( buf[0], " ADC* *", NULL, arg)
+    ||  po_buf_match( buf[0], " AND* *", NULL, arg)
+    ||  po_buf_match( buf[0], " CMP* *", NULL, arg)
+    ||  po_buf_match( buf[0], " EOR* *", NULL, arg)
+    ||  po_buf_match( buf[0], " LD* *",  NULL, arg)
+    ||  po_buf_match( buf[0], " OR* *",  NULL, arg)
+    ||  po_buf_match( buf[0], " SBC* *", NULL, arg)
+    ||  po_buf_match( buf[0], " SUB* *", NULL, arg) ) if(vars_ok(arg)) {
         struct var *v = vars_get(arg);
         v->nb_rd++;
     }
-    if( match( buf[0], " ASL *", arg)
-    ||  match( buf[0], " ASR *", arg)
-    ||  match( buf[0], " COM *", arg)
-    ||  match( buf[0], " DEC *", arg)
-    ||  match( buf[0], " INC *", arg)
-    ||  match( buf[0], " LSL *", arg)
-    ||  match( buf[0], " LSR *", arg)
-    ||  match( buf[0], " ROL *", arg)
-    ||  match( buf[0], " ROR *", arg)
-    ||  match( buf[0], " TST *", arg)) if(vars_ok(arg)) {
+    if( po_buf_match( buf[0], " ASL *", arg)
+    ||  po_buf_match( buf[0], " ASR *", arg)
+    ||  po_buf_match( buf[0], " COM *", arg)
+    ||  po_buf_match( buf[0], " DEC *", arg)
+    ||  po_buf_match( buf[0], " INC *", arg)
+    ||  po_buf_match( buf[0], " LSL *", arg)
+    ||  po_buf_match( buf[0], " LSR *", arg)
+    ||  po_buf_match( buf[0], " ROL *", arg)
+    ||  po_buf_match( buf[0], " ROR *", arg)
+    ||  po_buf_match( buf[0], " TST *", arg)) if(vars_ok(arg)) {
         struct var *v = vars_get(arg);
         v->nb_wr++;
         v->nb_rd++;
     }
-    if( match(buf[0], " * *",   tmp, arg)
-    ||  match(buf[0], " * [*]", tmp, arg) ) if(vars_ok(arg)) {
+    if( po_buf_match(buf[0], " * *",   tmp, arg)
+    ||  po_buf_match(buf[0], " * [*]", tmp, arg) ) if(vars_ok(arg)) {
         struct var *v = vars_get(arg);
         v->offset = -1; /* candidate for inlining */
     }
 
-    if( match( buf[0], "* rzb *", tmp, arg) && vars_ok(tmp)) {
+    if( po_buf_match( buf[0], "* rzb *", tmp, arg) && vars_ok(tmp)) {
         struct var *v = vars_get(tmp);
         v->size = atoi(arg->str);
         v->init = strdup("1-1");
     }
 
-    if( match(buf[0], "* fcb *", tmp, arg) && vars_ok(tmp) && strchr(buf[0]->str,',')==NULL) {
+    if( po_buf_match(buf[0], "* fcb *", tmp, arg) && vars_ok(tmp) && strchr(buf[0]->str,',')==NULL) {
         struct var *v = vars_get(tmp);
         v->size = 1;
         v->init = strdup(isZero(arg->str) ? "1-1" : arg->str);
     }
 
-    if( match(buf[0], "* fdb *", tmp, arg) && vars_ok(tmp) && strchr(buf[0]->str,',')==NULL) {
+    if( po_buf_match(buf[0], "* fdb *", tmp, arg) && vars_ok(tmp) && strchr(buf[0]->str,',')==NULL) {
         struct var *v = vars_get(tmp);
         v->size = 2;
         v->init = strdup(arg->str);
     }
 
     /* heurstic to find the max used index in direct-page */
-    if( match(buf[0], "* equ $*", tmp, arg)
+    if( po_buf_match(buf[0], "* equ $*", tmp, arg)
     &&  arg->len==2
     &&  (*tmp->str!='_' || tmp->str[1]=='T')) {
         int v = strtol(arg->str, NULL, 16);
@@ -1264,19 +1043,19 @@ static void vars_prepare_relocation(void) {
 }
 
 /* removes unread variables */
-static void vars_remove(Environment * _environment, buffer buf[LOOK_AHEAD]) {
-    buffer var = TMP_BUF;
-    buffer op  = TMP_BUF;
+static void vars_remove(Environment * _environment, POBuffer buf[LOOK_AHEAD]) {
+    POBuffer var = TMP_BUF;
+    POBuffer op  = TMP_BUF;
     
     if(!DO_UNREAD) return;
     
     /* unread */
-    if(match( buf[0], " ST* *", op, var) && vars_ok(var)) {
+    if(po_buf_match( buf[0], " ST* *", op, var) && vars_ok(var)) {
         struct var *v = vars_get(var);
         if(v->nb_rd == 0 && v->offset!=-2) {
             char *rep = NULL;
             v->offset = 0;
-            if(match(buf[1], " IF ") && match(buf[2], " LB")) {
+            if(po_buf_match(buf[1], " IF ") && po_buf_match(buf[2], " LB")) {
                 if(*op->str=='X') rep = "\tLEAX ,X";
                 else {
                     static char tst[8];
@@ -1290,9 +1069,9 @@ static void vars_remove(Environment * _environment, buffer buf[LOOK_AHEAD]) {
     }
 
     /* remove changed variables */
-    if(match( buf[0], "* rzb ", var)
-    || match( buf[0], "* fcb ", var)
-    || match( buf[0], "* fdb ", var) ) if(vars_ok(var)) {
+    if(po_buf_match( buf[0], "* rzb ", var)
+    || po_buf_match( buf[0], "* fcb ", var)
+    || po_buf_match( buf[0], "* fdb ", var) ) if(vars_ok(var)) {
         struct var *v = vars_get(var);
         if(v->nb_rd==0 && 0<v->size && v->size<=4 && 0==(v->flags & NO_REMOVE) && v->offset!=-2) {
             optim(buf[0], "unread",NULL);
@@ -1304,13 +1083,13 @@ static void vars_remove(Environment * _environment, buffer buf[LOOK_AHEAD]) {
 
 
 /* performs optimizations related to variables relocation */
-static void vars_relocate(Environment * _environment, buffer buf[LOOK_AHEAD]) {
-    buffer REG = TMP_BUF;
-    buffer var = TMP_BUF;
-    buffer op  = TMP_BUF;
+static void vars_relocate(Environment * _environment, POBuffer buf[LOOK_AHEAD]) {
+    POBuffer REG = TMP_BUF;
+    POBuffer var = TMP_BUF;
+    POBuffer op  = TMP_BUF;
     
     /* direct page or inlined */
-   if(match( buf[0], " * *", op, var) && vars_ok(var) ) {
+   if(po_buf_match( buf[0], " * *", op, var) && vars_ok(var) ) {
         struct var *v = vars_get(var);
         if(v->offset > 0) {
             optim(buf[0], "direct-page", "\t%s <%s", op->str, var->str);
@@ -1325,7 +1104,7 @@ static void vars_relocate(Environment * _environment, buffer buf[LOOK_AHEAD]) {
         }            
     }
 
-    if(match( buf[0], " * [*]", op, var) && vars_ok(var)) {
+    if(po_buf_match( buf[0], " * [*]", op, var) && vars_ok(var)) {
         struct var *v = vars_get(var);
         if(v->offset > 0) {
             optim(buf[0], "direct-page", "\t%s [%s+$%04x]", op->str, var->str, DIRECT_PAGE);
@@ -1336,7 +1115,7 @@ static void vars_relocate(Environment * _environment, buffer buf[LOOK_AHEAD]) {
             }            
         }
 
-    if(match( buf[0], " * #*", op, var) && vars_ok(var) ) {
+    if(po_buf_match( buf[0], " * #*", op, var) && vars_ok(var) ) {
         struct var *v = vars_get(var);
         if(v->offset > 0 && strstr(var->str,"+$")==NULL) {
             optim(buf[0], "direct-page", "\t%s #%s+$%04x", op->str, var->str, DIRECT_PAGE);
@@ -1344,9 +1123,9 @@ static void vars_relocate(Environment * _environment, buffer buf[LOOK_AHEAD]) {
     }
     
     /* remove changed variables */
-    if(match( buf[0], "* rzb ", var)
-    || match( buf[0], "* fcb ", var)
-    || match( buf[0], "* fdb ", var) ) if(vars_ok(var)) {
+    if(po_buf_match( buf[0], "* rzb ", var)
+    || po_buf_match( buf[0], "* fcb ", var)
+    || po_buf_match( buf[0], "* fdb ", var) ) if(vars_ok(var)) {
         struct var *v = vars_get(var);
         if(v->offset > 0) {
             optim(buf[0], "direct-page", "%s equ $%02x", var->str, v->offset);
@@ -1360,7 +1139,7 @@ static void vars_relocate(Environment * _environment, buffer buf[LOOK_AHEAD]) {
 }            
 
 /* collapse all heading spaces into a single tabulation */
-static void out(FILE *f, buffer _buf) {
+static void out(FILE *f, POBuffer _buf) {
     char *s = _buf->str;
     int tab = 0;
     while(*s==' ' || *s=='\t') {tab = 1; ++s;}
@@ -1369,7 +1148,7 @@ static void out(FILE *f, buffer _buf) {
 }
 
 /* remove space that is sometimes used in indexing mode and makes the optimized produce bad dcode */
-static void fixes_indexed_syntax(buffer buf) {
+static void fixes_indexed_syntax(POBuffer buf) {
     char *s = buf->str;
 
     /* not an instruction */
@@ -1410,7 +1189,7 @@ static void fixes_indexed_syntax(buffer buf) {
 }
 
 /* various kind of optimization */
-static int optim_pass( Environment * _environment, buffer buf[LOOK_AHEAD], PeepHoleOptimizationKind kind) {
+static int optim_pass( Environment * _environment, POBuffer buf[LOOK_AHEAD], PeepHoleOptimizationKind kind) {
     char fileNameOptimized[MAX_TEMPORARY_STORAGE];
     FILE * fileAsm;
     FILE * fileOptimized;
@@ -1465,30 +1244,30 @@ static int optim_pass( Environment * _environment, buffer buf[LOOK_AHEAD], PeepH
     }            
     
     /* clears our look-ahead buffers */
-    for(i = 0; i<LOOK_AHEAD; ++i) buf_cpy(buf[i], "");
+    for(i = 0; i<LOOK_AHEAD; ++i) po_buf_cpy(buf[i], "");
 
     /* global change flag */
     change = 0;
 
     while( still_to_go ) {
-        /* print out oldest buffer */
+        /* print out oldest POBuffer */
         if ( line >= LOOK_AHEAD ) out(fileOptimized, buf[0]);
 
         /* shift the buffers */
-        for(i=0; i<LOOK_AHEAD-1; ++i) buf_cpy(buf[i], buf[i+1]->str);
+        for(i=0; i<LOOK_AHEAD-1; ++i) po_buf_cpy(buf[i], buf[i+1]->str);
 
         /* read next line, merging adjacent comments */
         if(feof(fileAsm)) {
             --still_to_go;
-            buf_cpy(buf[LOOK_AHEAD-1], "");
+            po_buf_cpy(buf[LOOK_AHEAD-1], "");
         } else do {
             /* read next line */
-            buf_fgets( buf[LOOK_AHEAD-1], fileAsm );
+            po_buf_fgets( buf[LOOK_AHEAD-1], fileAsm );
             fixes_indexed_syntax(buf[LOOK_AHEAD-1]);
-            /* merge comment with previous line if we do not overflow the buffer */
+            /* merge comment with previous line if we do not overflow the POBuffer */
             if(isAComment(buf[LOOK_AHEAD-1])) {
-                buffer ln = TMP_BUF;
-                if (match( buf[LOOK_AHEAD-1], " ; L:*", ln ) ) {
+                POBuffer ln = TMP_BUF;
+                if (po_buf_match( buf[LOOK_AHEAD-1], " ; L:*", ln ) ) {
                     sourceLine = atoi( ln->str );
                     if ( ( sourceLine != _environment->currentSourceLineAnalyzed ) ) {
                         if ( _environment->currentSourceLineAnalyzed  && _environment->additionalInfoFile ) {
@@ -1499,8 +1278,8 @@ static int optim_pass( Environment * _environment, buffer buf[LOOK_AHEAD], PeepH
                         _environment->removedAssemblyLines = 0;
                     }
                 }                
-                if(KEEP_COMMENTS) buf_cat(buf[LOOK_AHEAD-2], buf[LOOK_AHEAD-1]->str);
-                buf_cpy(buf[LOOK_AHEAD-1], "");
+                if(KEEP_COMMENTS) po_buf_cat(buf[LOOK_AHEAD-2], buf[LOOK_AHEAD-1]->str);
+                po_buf_cpy(buf[LOOK_AHEAD-1], "");
             } else break;
         } while(!feof(fileAsm));
 
@@ -1561,10 +1340,10 @@ static int optim_pass( Environment * _environment, buffer buf[LOOK_AHEAD], PeepH
 /* main entry-point for this service */
 void target_peephole_optimizer( Environment * _environment ) {
     if ( _environment->peepholeOptimizationLimit > 0 ) {
-        buffer buf[LOOK_AHEAD];
+        POBuffer buf[LOOK_AHEAD];
         int i;
 
-        for(i=0; i<LOOK_AHEAD; ++i) buf[i] = buf_new(0);
+        for(i=0; i<LOOK_AHEAD; ++i) buf[i] = po_buf_new(0);
 
         int optimization_limit_count = _environment->peepholeOptimizationLimit;
 
@@ -1577,7 +1356,113 @@ void target_peephole_optimizer( Environment * _environment ) {
         optim_pass(_environment, buf, RELOCATION1);
         optim_pass(_environment, buf, RELOCATION2);
 
-        for(i=0; i<LOOK_AHEAD; ++i) buf[i] = buf_del(buf[i]);
+        for(i=0; i<LOOK_AHEAD; ++i) buf[i] = po_buf_del(buf[i]);
         TMP_BUF_CLR;
     }
+}
+
+void target_finalize( Environment * _environment ) {
+
+    if ( _environment->additionalInfoFile ) {
+
+        char fileNameOptimized[MAX_TEMPORARY_STORAGE];
+        FILE * fileAsm;
+        FILE * fileListing;
+        POBuffer bufferAsm = TMP_BUF;
+        POBuffer bufferListing = TMP_BUF;
+        POBuffer bufferAddress = TMP_BUF;
+        POBuffer bufferVersion = TMP_BUF;
+        POBuffer bufferBytes = TMP_BUF;
+
+        int sourceLine = 0;
+
+        _environment->currentSourceLineAnalyzed = 0;
+        _environment->bytesProduced = 0;
+
+        fprintf( _environment->additionalInfoFile, "A:0\n" );
+
+        fileAsm = fopen( _environment->asmFileName, "rt" );
+        if(fileAsm == NULL) {
+            perror(_environment->asmFileName);
+            exit(-1);
+        }
+
+        fileListing = fopen( _environment->listingFileName, "rt" );
+        if(fileListing == NULL) {
+            perror(_environment->listingFileName);
+            exit(-1);
+        }            
+        
+        while( !feof(fileAsm) && !feof(fileListing)) {
+
+            po_buf_fgets( bufferAsm, fileAsm );
+            int leftPadding = po_buf_trim( bufferAsm );
+
+            if ( isAComment( bufferAsm ) ) {
+                POBuffer ln = TMP_BUF;
+                if (po_buf_match( bufferAsm, "; L:*", ln ) ) {
+                    sourceLine = atoi( ln->str );
+                    if ( ( sourceLine != _environment->currentSourceLineAnalyzed ) ) {
+                        if ( _environment->additionalInfoFile ) {
+                            fprintf( _environment->additionalInfoFile, "AB:0:%d:%d\n", 
+                                _environment->currentSourceLineAnalyzed, _environment->bytesProduced );
+                        }
+                        _environment->currentSourceLineAnalyzed = sourceLine;
+                        _environment->bytesProduced = 0;
+                    }
+                }
+                continue;
+            }
+
+            int pos = ftell( fileListing );
+            while( !feof(fileListing) && (strstr( bufferListing->str, bufferAsm->str ) == NULL) ) {
+                po_buf_fgets( bufferListing, fileListing );
+                po_buf_trim( bufferListing );
+            }
+
+            if ( feof(fileListing) ) {
+                fseek( fileListing, pos, SEEK_SET );
+            } else {
+                char * bufferAsmEscaped = strdup( bufferAsm->str );
+                for( int i=0, c=strlen(bufferAsmEscaped); i<c; ++i ) {
+                    if ( bufferAsmEscaped[i] == ':' ) {
+                        bufferAsmEscaped[i] = 6;
+                    }
+                    if ( bufferAsmEscaped[i] == 9 ) {
+                        bufferAsmEscaped[i] = ' ';
+                    }
+                } 
+
+                // 2822                  D32STARTUP
+                // 2822  FC010D                  LDD $010D               
+                if ( po_buf_match( bufferListing, "* * *", bufferAddress, bufferBytes, bufferVersion ) ) {
+                    if ( bufferAddress->len == 4 ) {
+                        int i = 0;
+                        for( i=0; i<bufferBytes->len; ++i ) {
+                            if ( !isxdigit(bufferBytes->str[i]) )
+                                break;
+                        }
+                        if ( i<bufferBytes->len ) {
+
+                        } else {
+                            _environment->bytesProduced += bufferBytes->len >> 1;
+                        }
+                     }
+                }
+                fprintf( _environment->additionalInfoFile, "AL:0:%d:%*s%s\n", 
+                    _environment->currentSourceLineAnalyzed, leftPadding, "", bufferAsmEscaped );
+            }
+
+        }
+
+        if ( _environment->currentSourceLineAnalyzed  && _environment->additionalInfoFile ) {
+            fprintf( _environment->additionalInfoFile, "AF:0:%d\n", 
+                _environment->bytesProduced );
+        }
+
+        (void)fclose(fileListing);
+        (void)fclose(fileAsm);
+
+    }
+
 }

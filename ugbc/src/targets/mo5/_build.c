@@ -86,10 +86,6 @@ void target_linkage( Environment * _environment ) {
     
     }
 
-}
-
-void target_finalize( Environment * _environment ) {
-
 	if ( _environment->outputFileType == OUTPUT_FILE_TYPE_K7_NEW ) {
 	    convertbintok7( _environment );
 	} else {

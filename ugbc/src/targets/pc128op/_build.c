@@ -90,6 +90,12 @@ void target_linkage( Environment * _environment ) {
     
     }
 
+	if ( _environment->outputFileType == OUTPUT_FILE_TYPE_K7_NEW ) {
+	    convertbintok7( _environment );
+	} else {
+	    pc128op_convertbintok7_original( _environment );
+	}
+
 }
 
 static unsigned int sum=0;
@@ -307,18 +313,8 @@ int mo5_convertbintok7_original(Environment * _environment)
 		
 	fclose(fr);
 	fclose(fw);
-	
+
 	return 0;
-}
-
-void target_finalize( Environment * _environment ) {
-
-	if ( _environment->outputFileType == OUTPUT_FILE_TYPE_K7_NEW ) {
-	    convertbintok7( _environment );
-	} else {
-	    pc128op_convertbintok7_original( _environment );
-	}
-
 }
 
 void target_cleanup( Environment * _environment ) {
