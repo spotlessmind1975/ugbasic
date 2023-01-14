@@ -1375,7 +1375,7 @@ void z80_math_mul_16bit_to_32bit( Environment * _environment, char *_source, cha
 
         outline0("POP AF" );
         outline1("JR Z, %srepositive3", label );
-        z80_complement2_16bit( _environment, _other, NULL );
+        z80_complement2_32bit( _environment, _other, NULL );
         outhead1("%srepositive3:", label);
 
     } else {
