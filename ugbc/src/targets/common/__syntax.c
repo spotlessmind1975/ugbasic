@@ -1427,3 +1427,44 @@ la gestione dei bordi sul VIC-II).
 
 @target c64
 </usermanual> */
+
+/* <usermanual>
+@keyword OPTION EXPLICIT
+
+@english
+When ''OPTION EXPLICT'' or ''OPTION EXPLICIT ON'' appears in a source file,
+the programmer must explicitly declare all variables by using the ''VAR'' or
+''DIM'' statements. 
+
+If the programmer tries to use an undeclared variable 
+name, an error occurs at compile time. The ''OPTION EXPLICT OFF'' statement 
+allows implicit declaration of variables. If used, the ''OPTION EXPLICT'' 
+statement can appear everywhere in a source file, before any other source 
+code statements to check.
+
+Setting ''OPTION EXPLICT OFF'' is generally not a good practice. The programmer
+could misspell a variable name in one or more locations, which would cause 
+unexpected results when the program is run.
+
+@italian
+Quando ''OPTION EXPLICT'' o ''OPTION EXPLICIT ON'' appare in un file sorgente, 
+il programmatore deve dichiarare esplicitamente tutte le variabili usando le 
+istruzioni ''VAR'' o ''DIM''.
+
+Se il programmatore tenta di utilizzare un nome di variabile non dichiarato, 
+si verifica un errore in fase di compilazione. L'istruzione ''OPTION EXPLICT OFF'' 
+consente la dichiarazione implicita di variabili. Se utilizzata, l'istruzione 
+''OPTION EXPLICT'' può apparire ovunque in un file sorgente, prima di qualsiasi 
+altra istruzione del codice sorgente da controllare.
+
+L'impostazione di ''OPTION EXPLICT OFF'' generalmente non è una buona pratica. 
+Il programmatore potrebbe digitare in modo errato un nome di variabile in una 
+o più posizioni, il che causerebbe risultati imprevisti durante l'esecuzione 
+del programma.
+
+@syntax OPTION EXPLICT {[ON|OFF]}
+
+@example OPTION EXPLICIT ON
+
+@target all
+</usermanual> */

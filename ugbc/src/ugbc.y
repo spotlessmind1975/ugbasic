@@ -80,7 +80,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token SQUARE STEEL STRINGS SWEEP SYNTH SYNTHBRASS SYNTHSTRINGS TAIKO TANGO TELEPHONE TENOR TIMPANI TINKLE
 %token TOM TONK TREMOLO TROMBONE TRUMPET TUBA TUBULAR TWEET VIBRAPHONE VIOLA VIOLIN VOICE WARM WHISTLE WOODBLOCK 
 %token XYLOPHONE KILL COMPRESSED STORAGE ENDSTORAGE FILEX DLOAD INCLUDE LET CPC INT INTEGER LONG OP_PERC OP_AMPERSAND OP_AT
-%token EMBEDDED NATIVE RELEASE READONLY DIGIT
+%token EMBEDDED NATIVE RELEASE READONLY DIGIT OPTION EXPLICIT
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -128,6 +128,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> const_instrument
 %type <integer> release
 %type <integer> readonly_optional
+%type <integer> option_explicit
 
 %right Integer String CP 
 %left OP_DOLLAR
@@ -5379,6 +5380,22 @@ const_instruction :
     | CONST GLOBAL
     ;
 
+option_explicit : 
+    {
+        $$ = 1;
+    }
+    | ON {
+        $$ = 1;
+    }
+    | OFF {
+        $$ = 0;
+    };
+
+option_definitions :
+    EXPLICIT option_explicit {
+        ((struct _Environment *)_environment)->optionExplicit = $2;
+    };
+
 statement2:
     BANK bank_definition
   | RASTER raster_definition
@@ -5843,6 +5860,7 @@ statement2:
         end_storage( _environment );
   }
   | DEFINE define_definitions
+  | OPTION option_definitions
   | DIM dim_definitions
   | FILL fill_definitions
   | const_instruction Identifier OP_ASSIGN const_expr_string {

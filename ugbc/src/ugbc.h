@@ -1365,6 +1365,11 @@ typedef struct _Environment {
      */
     OutputFileType outputFileType;
 
+    /*
+     * Variables must be explicitly defined?
+     */
+    int optionExplicit;
+
     /* --------------------------------------------------------------------- */
     /* INTERNAL STRUCTURES                                                   */
     /* --------------------------------------------------------------------- */
@@ -1944,6 +1949,7 @@ typedef struct _Environment {
 #define CRITICAL_VARIABLE_IMPORTED_DIFFERENT_TYPE( f ) CRITICAL2("E155 - variable imported with a different type", f );
 #define CRITICAL_CONSTANT_REDEFINED_DIFFERENT_TYPE( f ) CRITICAL2("E156 - constant redefined with a different type", f );
 #define CRITICAL_CONSTANT_REDEFINED_DIFFERENT_VALUE( f ) CRITICAL2("E157 - constant redefined with a different value", f );
+#define CRITICAL_VARIABLE_UNDEFINED(f) CRITICAL2("E158 - undefined variable (OPTION EXPLICIT ON)", f );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }

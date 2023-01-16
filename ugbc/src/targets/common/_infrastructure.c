@@ -748,14 +748,22 @@ Variable * variable_retrieve_or_define( Environment * _environment, char * _name
         if ( isGlobal ) {
             var = variable_find( _environment->variables, _name );
             if ( ! var  ) {
-                if ( _environment->procedureName ) {
-                    var = variable_define_no_init( _environment, _name, _type );
+                if ( !_environment->optionExplicit ) {
+                    if ( _environment->procedureName ) {
+                        var = variable_define_no_init( _environment, _name, _type );
+                    } else {
+                        var = variable_define( _environment, _name, _type, _value );
+                    }
                 } else {
-                    var = variable_define( _environment, _name, _type, _value );
+                    CRITICAL_VARIABLE_UNDEFINED( _name );
                 }
             }
         } else {
-            var = variable_define_local( _environment, _name, _type, _value );
+            if ( !_environment->optionExplicit ) {
+                var = variable_define_local( _environment, _name, _type, _value );
+            } else {
+                CRITICAL_VARIABLE_UNDEFINED( _name );
+            }
         }        
     }
     if (!var) {
