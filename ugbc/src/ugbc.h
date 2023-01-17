@@ -1749,6 +1749,26 @@ typedef struct _Environment {
      */
     int bytesProduced;
 
+    /*
+     * Origin is used
+     */
+    int originUsed;
+
+    /*
+     * Origin's abscissa
+     */
+    int originX;
+
+    /*
+     * Origin's ordinate
+     */
+    int originY;
+
+    /*
+     * Origin axis ordinate
+     */
+    int originYDirection;
+
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */

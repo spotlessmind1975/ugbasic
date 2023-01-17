@@ -80,7 +80,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token SQUARE STEEL STRINGS SWEEP SYNTH SYNTHBRASS SYNTHSTRINGS TAIKO TANGO TELEPHONE TENOR TIMPANI TINKLE
 %token TOM TONK TREMOLO TROMBONE TRUMPET TUBA TUBULAR TWEET VIBRAPHONE VIOLA VIOLIN VOICE WARM WHISTLE WOODBLOCK 
 %token XYLOPHONE KILL COMPRESSED STORAGE ENDSTORAGE FILEX DLOAD INCLUDE LET CPC INT INTEGER LONG OP_PERC OP_AMPERSAND OP_AT
-%token EMBEDDED NATIVE RELEASE READONLY DIGIT OPTION EXPLICIT
+%token EMBEDDED NATIVE RELEASE READONLY DIGIT OPTION EXPLICIT ORIGIN
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -128,7 +128,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> const_instrument
 %type <integer> release
 %type <integer> readonly_optional
-%type <integer> option_explicit
+%type <integer> option_explicit origin_direction
 
 %right Integer String CP 
 %left OP_DOLLAR
@@ -3667,7 +3667,7 @@ point_definition_simple:
     ;
 
 point_definition_expression:
-      AT OP expr OP_COMMA expr CP {
+      AT OP optional_x OP_COMMA optional_y CP {
         point_at_vars( _environment, $3, $5 );
     };
 
@@ -3677,19 +3677,45 @@ point_definition:
 
 optional_x:
     expr {
-        $$ = $1;
+        if ( ((struct _Environment *)_environment)->originUsed ) {
+            $$ = variable_add( _environment, "ORIGINX", $1 )->name;
+        } else {
+            $$ = $1;
+        }
     }
     | {
-        $$ = strdup( "XGR" );
+        if ( ((struct _Environment *)_environment)->originUsed ) {
+            $$ = variable_add( _environment, "ORIGINX", "XGR" )->name;
+        } else {
+            $$ = strdup( "XGR" );
+        }
     }
     ;
 
 optional_y:
     expr {
-        $$ = $1;
+        if ( ((struct _Environment *)_environment)->originUsed ) {
+            if ( ((struct _Environment *)_environment)->originYDirection > 0 ) {
+                $$ = variable_add( _environment, "ORIGINY", $1 )->name;
+            } else {
+                $$ = variable_sub( _environment, "ORIGINY", $1 )->name;
+            }
+        } else {
+            if ( ((struct _Environment *)_environment)->originYDirection > 0 ) {
+                $$ = $1;
+            } else {
+                Variable * temp = variable_temporary( _environment, VT_POSITION, "(zero)");
+                variable_store( _environment, temp->name, 0 );
+                $$ = variable_sub( _environment, temp->name, $1 )->name;
+            }
+        }
     }
     | {
-        $$ = strdup( "YGR" );
+        if ( ((struct _Environment *)_environment)->originUsed ) {
+            $$ = variable_add( _environment, "ORIGINY", "YGR" )->name;
+        } else {
+            $$ = strdup( "YGR" );
+        }
     }
     ;
 
@@ -5396,6 +5422,26 @@ option_definitions :
         ((struct _Environment *)_environment)->optionExplicit = $2;
     };
 
+origin_direction :
+    {
+        $$ = 1;
+    }
+    | DOWN {
+        $$ = 1;
+    }
+    | UP {
+        $$ = -1;
+    };
+
+origin_definitions :
+    expr OP_COMMA expr origin_direction {
+        ((struct _Environment *)_environment)->originUsed = 1;
+        variable_move( ((struct _Environment *)_environment), $1, "ORIGINX" );
+        variable_move( ((struct _Environment *)_environment), $3, "ORIGINY" );
+        ((struct _Environment *)_environment)->originYDirection = $4;
+    }
+    ;
+
 statement2:
     BANK bank_definition
   | RASTER raster_definition
@@ -5861,6 +5907,7 @@ statement2:
   }
   | DEFINE define_definitions
   | OPTION option_definitions
+  | ORIGIN origin_definitions
   | DIM dim_definitions
   | FILL fill_definitions
   | const_instruction Identifier OP_ASSIGN const_expr_string {
