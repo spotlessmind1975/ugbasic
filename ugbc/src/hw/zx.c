@@ -271,6 +271,11 @@ void zx_initialization( Environment * _environment ) {
     variable_import( _environment, "CLIPY2", VT_POSITION, 191 );
     variable_global( _environment, "CLIPY2" );
 
+    variable_import( _environment, "ORIGINX", VT_POSITION, 0 );
+    variable_global( _environment, "ORIGINX" );
+    variable_import( _environment, "ORIGINY", VT_POSITION, 0 );
+    variable_global( _environment, "ORIGINY" );
+
     variable_import( _environment, "XCURSYS", VT_BYTE, 0 );
     variable_global( _environment, "XCURS" );
     variable_import( _environment, "YCURSYS", VT_BYTE, 0 );

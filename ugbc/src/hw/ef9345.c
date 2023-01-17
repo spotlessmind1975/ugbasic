@@ -487,6 +487,9 @@ int ef9345_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
     cpu_store_16bit( _environment, "CLIPY1", 0 );
     cpu_store_16bit( _environment, "CLIPY2", (_environment->screenHeight-1) );
 
+    cpu_store_16bit( _environment, "ORIGINX", 0 );
+    cpu_store_16bit( _environment, "ORIGINY", 0 );
+
     cpu_store_16bit( _environment, "CURRENTWIDTH", _environment->screenWidth );
     cpu_store_16bit( _environment, "CURRENTHEIGHT", _environment->screenHeight );
     cpu_store_8bit( _environment, "CURRENTTILES", _environment->screenTiles );
@@ -760,6 +763,11 @@ void ef9345_initialization( Environment * _environment ) {
     variable_global( _environment, "CLIPY1" );
     variable_import( _environment, "CLIPY2", VT_POSITION, 191 );
     variable_global( _environment, "CLIPY2" );
+
+    variable_import( _environment, "ORIGINX", VT_POSITION, 0 );
+    variable_global( _environment, "ORIGINX" );
+    variable_import( _environment, "ORIGINY", VT_POSITION, 0 );
+    variable_global( _environment, "ORIGINY" );
 
     variable_import( _environment, "XCURSYS", VT_BYTE, 0 );
     variable_global( _environment, "XCURSYS" );

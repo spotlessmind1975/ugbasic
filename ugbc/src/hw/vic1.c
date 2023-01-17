@@ -469,7 +469,11 @@ void vic1_point_at_vars( Environment * _environment, char *_x, char *_y ) {
     
     outline1("LDA %s", x->realName );
     outline0("STA PLOTX");
-    outline1("LDA %s+1", x->realName );
+    if ( VT_BITWIDTH( x->type ) > 8 ) {
+        outline1("LDA %s+1", x->realName );
+    } else {
+        outline0("LDA #0");
+    }
     outline0("STA PLOTX+1");
     outline1("LDA %s", y->realName );
     outline0("STA PLOTY");
@@ -721,6 +725,11 @@ void vic1_initialization( Environment * _environment ) {
     variable_global( _environment, "CLIPY1" );
     variable_import( _environment, "CLIPY2", VT_POSITION, 183 );
     variable_global( _environment, "CLIPY2" );
+
+    variable_import( _environment, "ORIGINX", VT_POSITION, 0 );
+    variable_global( _environment, "ORIGINX" );
+    variable_import( _environment, "ORIGINY", VT_POSITION, 0 );
+    variable_global( _environment, "ORIGINY" );
 
     _environment->fontWidth = 8;
     _environment->fontHeight = 8;

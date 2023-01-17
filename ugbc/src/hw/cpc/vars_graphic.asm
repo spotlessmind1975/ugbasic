@@ -407,7 +407,7 @@ CPCVIDEOPOS0:
 CPCVIDEOPOS1:
 CPCVIDEOPOS3:
     PUSH DE
-    LD A, IYL
+    LD A, IXL
     LD D, A
     SRL D
     RR E
@@ -419,7 +419,7 @@ CPCVIDEOPOS3:
 
 CPCVIDEOPOS2:
     PUSH DE
-    LD A, IYL
+    LD A, IXL
     LD D, A
     SRL D
     RR E

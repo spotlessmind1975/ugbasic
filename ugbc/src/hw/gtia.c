@@ -901,6 +901,9 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     _environment->screenTilesHeight = _environment->screenHeight / _environment->fontHeight;
     cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight );
 
+    cpu_store_16bit( _environment, "ORIGINX", 0) ;
+    cpu_store_16bit( _environment, "ORIGINY", 0) ;
+
     cpu_store_16bit( _environment, "CLIPX1", 0) ;
     cpu_store_16bit( _environment, "CLIPY2", 0) ;
     cpu_move_16bit( _environment, "CURRENTWIDTH", "CLIPX2");
@@ -1072,7 +1075,11 @@ void gtia_point_at_vars( Environment * _environment, char *_x, char *_y ) {
     
     outline1("LDA %s", x->realName );
     outline0("STA PLOTX");
-    outline1("LDA %s+1", x->realName );
+    if ( VT_BITWIDTH( x->type ) > 8 ) {
+        outline1("LDA %s+1", x->realName );
+    } else {
+        outline0("LDA #0");
+    }
     outline0("STA PLOTX+1");
     outline1("LDA %s", y->realName );
     outline0("STA PLOTY");
@@ -1375,6 +1382,11 @@ void gtia_initialization( Environment * _environment ) {
     variable_global( _environment, "CLIPY1" );
     variable_import( _environment, "CLIPY2", VT_POSITION, 199 );
     variable_global( _environment, "CLIPY2" );
+
+    variable_import( _environment, "ORIGINX", VT_POSITION, 0 );
+    variable_global( _environment, "ORIGINX" );
+    variable_import( _environment, "ORIGINY", VT_POSITION, 0 );
+    variable_global( _environment, "ORIGINY" );
 
     gtia_tilemap_enable( _environment, 40, 24, 1, 8, 8 );
 

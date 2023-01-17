@@ -602,6 +602,8 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             CRITICAL_SCREEN_UNSUPPORTED( _screen_mode->id );
     }
 
+    cpu_store_16bit( _environment, "ORIGINX", 0 );
+    cpu_store_16bit( _environment, "ORIGINY", 0 );
     cpu_store_16bit( _environment, "CURRENTWIDTH", _environment->screenWidth );
     cpu_store_16bit( _environment, "CURRENTHEIGHT", _environment->screenHeight );
     cpu_store_8bit( _environment, "CURRENTTILES", _environment->screenTiles );

@@ -322,6 +322,8 @@ CLIPX1:    .word 0
 CLIPY1:    .word 0
 CLIPX2:    .word 319
 CLIPY2:    .word 199
+ORIGINX:   .word 0
+ORIGINY:   .word 0
 
 CURRENTWIDTH:      .word 40
 CURRENTHEIGHT:      .word 24

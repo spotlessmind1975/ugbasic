@@ -47,6 +47,8 @@ CLIPX1:    .word 0
 CLIPY1:    .word 0
 CLIPX2:    .word 319
 CLIPY2:    .word 199
+ORIGINX:   .word 0
+ORIGINY:   .word 0
 XSCROLLPOS:         .byte 0
 YSCROLLPOS:         .byte 4
 XSCROLL:            .byte 0
