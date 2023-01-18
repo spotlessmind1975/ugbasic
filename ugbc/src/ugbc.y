@@ -3731,9 +3731,11 @@ optional_expr:
 plot_definition_expression:
       optional_x OP_COMMA optional_y OP_COMMA optional_expr {
         plot( _environment, $1, $3, $5 );
+        gr_locate( _environment, $1, $3 );
     }
     | optional_x OP_COMMA optional_y {
         plot( _environment, $1, $3, NULL );
+        gr_locate( _environment, $1, $3 );
     };
 
 plot_definition:
@@ -4963,13 +4965,7 @@ locate_definition :
     ;
 
 gr_locate_definition : 
-     OP_COMMA expr {
-        gr_locate( _environment, NULL, $2 );
-    }
-    | expr OP_COMMA {
-        gr_locate( _environment, $1, NULL );
-    } 
-    | expr OP_COMMA expr {
+    optional_x OP_COMMA optional_y {
         gr_locate( _environment, $1, $3 );
     }
     ;
