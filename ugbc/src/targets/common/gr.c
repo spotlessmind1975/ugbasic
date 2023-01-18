@@ -82,10 +82,12 @@ void gr_locate( Environment * _environment, char * _x, char * _y ) {
         Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
         Variable * ygr = variable_retrieve( _environment, "YGR" );
         if ( _environment->originUsed ) {
+            variable_move( _environment, variable_sub( _environment, y->name, "ORIGINY")->name, ygr->name );
             if ( _environment->originYDirection > 0 ) {
-                variable_move( _environment, variable_sub( _environment, y->name, "ORIGINY")->name, ygr->name );
             } else {
-                variable_move( _environment, variable_add( _environment, y->name, "ORIGINY")->name, ygr->name );
+                Variable * temp = variable_temporary( _environment, VT_POSITION, "(zero)");
+                variable_store( _environment, temp->name, 0 );
+                variable_move( _environment, variable_sub( _environment, temp->name, ygr->name )->name, ygr->name );
             }
         } else {
             variable_move( _environment, y->name, ygr->name );

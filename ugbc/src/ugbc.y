@@ -80,7 +80,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token SQUARE STEEL STRINGS SWEEP SYNTH SYNTHBRASS SYNTHSTRINGS TAIKO TANGO TELEPHONE TENOR TIMPANI TINKLE
 %token TOM TONK TREMOLO TROMBONE TRUMPET TUBA TUBULAR TWEET VIBRAPHONE VIOLA VIOLIN VOICE WARM WHISTLE WOODBLOCK 
 %token XYLOPHONE KILL COMPRESSED STORAGE ENDSTORAGE FILEX DLOAD INCLUDE LET CPC INT INTEGER LONG OP_PERC OP_AMPERSAND OP_AT
-%token EMBEDDED NATIVE RELEASE READONLY DIGIT OPTION EXPLICIT ORIGIN
+%token EMBEDDED NATIVE RELEASE READONLY DIGIT OPTION EXPLICIT ORIGIN RELATIVE DTILE DTILES
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -128,9 +128,9 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> const_instrument
 %type <integer> release
 %type <integer> readonly_optional
-%type <integer> option_explicit origin_direction
+%type <integer> option_explicit origin_direction relative_option
 
-%right Integer String CP 
+%right Integer String CP
 %left OP_DOLLAR
 %left OP
 %right THEN ELSE OP_ASSIGN_DIRECT
@@ -3675,12 +3675,28 @@ point_definition:
     point_definition_simple
   | point_definition_expression;
 
+relative_option:
+    {
+        $$ = 0;
+    }
+    | RELATIVE {
+        $$ = 1;
+    };
+
 optional_x:
-    expr {
-        if ( ((struct _Environment *)_environment)->originUsed ) {
-            $$ = variable_add( _environment, "ORIGINX", $1 )->name;
+    relative_option expr {
+        if ( $1 ) {
+            if ( ((struct _Environment *)_environment)->originUsed ) {
+                $$ = variable_add( _environment, "ORIGINX", variable_add( _environment, "XGR", $2 )->name )->name;
+            } else {
+                $$ = variable_add( _environment, "XGR", $2 )->name;
+            }
         } else {
-            $$ = $1;
+            if ( ((struct _Environment *)_environment)->originUsed ) {
+                $$ = variable_add( _environment, "ORIGINX", $2 )->name;
+            } else {
+                $$ = $2;
+            }
         }
     }
     | {
@@ -3693,26 +3709,48 @@ optional_x:
     ;
 
 optional_y:
-    expr {
-        if ( ((struct _Environment *)_environment)->originUsed ) {
-            if ( ((struct _Environment *)_environment)->originYDirection > 0 ) {
-                $$ = variable_add( _environment, "ORIGINY", $1 )->name;
+    relative_option expr {
+        if ( $1 ) {
+            if ( ((struct _Environment *)_environment)->originUsed ) {
+                if ( ((struct _Environment *)_environment)->originYDirection > 0 ) {
+                    $$ = variable_add( _environment, "ORIGINY", variable_add( _environment, "YGR", $2 )->name )->name;
+                } else {
+                    $$ = variable_sub( _environment, "ORIGINY", variable_add( _environment, "YGR", $2 )->name )->name;
+                }
             } else {
-                $$ = variable_sub( _environment, "ORIGINY", $1 )->name;
+                if ( ((struct _Environment *)_environment)->originYDirection > 0 ) {
+                    $$ = $2;
+                } else {
+                    Variable * temp = variable_temporary( _environment, VT_POSITION, "(zero)");
+                    variable_store( _environment, temp->name, 0 );
+                    $$ = variable_sub( _environment, temp->name, variable_add( _environment, "YGR", $2 )->name )->name;
+                }
             }
         } else {
-            if ( ((struct _Environment *)_environment)->originYDirection > 0 ) {
-                $$ = $1;
+            if ( ((struct _Environment *)_environment)->originUsed ) {
+                if ( ((struct _Environment *)_environment)->originYDirection > 0 ) {
+                    $$ = variable_add( _environment, "ORIGINY", $2 )->name;
+                } else {
+                    $$ = variable_sub( _environment, "ORIGINY", $2 )->name;
+                }
             } else {
-                Variable * temp = variable_temporary( _environment, VT_POSITION, "(zero)");
-                variable_store( _environment, temp->name, 0 );
-                $$ = variable_sub( _environment, temp->name, $1 )->name;
+                if ( ((struct _Environment *)_environment)->originYDirection > 0 ) {
+                    $$ = $2;
+                } else {
+                    Variable * temp = variable_temporary( _environment, VT_POSITION, "(zero)");
+                    variable_store( _environment, temp->name, 0 );
+                    $$ = variable_sub( _environment, temp->name, $2 )->name;
+                }
             }
         }
     }
     | {
         if ( ((struct _Environment *)_environment)->originUsed ) {
-            $$ = variable_add( _environment, "ORIGINY", "YGR" )->name;
+            if ( ((struct _Environment *)_environment)->originYDirection > 0 ) {
+                $$ = variable_add( _environment, "ORIGINY", "YGR" )->name;
+            } else {
+                $$ = variable_sub( _environment, "ORIGINY", "YGR" )->name;
+            }
         } else {
             $$ = strdup( "YGR" );
         }
@@ -3885,23 +3923,24 @@ draw_definition_expression:
     };
 
 draw_tile_definition_expression:
-      expr ROW optional_y OP_COMMA optional_x TO optional_x OP_COMMA optional_expr {
+      expr ROW expr OP_COMMA expr TO expr OP_COMMA optional_expr {
         draw_tile_row( _environment, $1, $3, $5, $7, $9 );
     }
-    | expr ROW optional_y OP_COMMA optional_x TO optional_x  {
+    | expr ROW expr OP_COMMA expr TO expr  {
         draw_tile_row( _environment, $1, $3, $5, $7, NULL );
     }
-    | expr COLUMN optional_x OP_COMMA optional_y TO optional_y OP_COMMA optional_expr {
+    | expr COLUMN expr OP_COMMA expr TO expr OP_COMMA optional_expr {
         draw_tile_column( _environment, $1, $3, $5, $7, $9 );
     }
-    | expr COLUMN optional_x OP_COMMA optional_y TO optional_y  {
+    | expr COLUMN expr OP_COMMA expr TO expr  {
         draw_tile_column( _environment, $1, $3, $5, $7, NULL );
     };
 
 draw_definition:
-    draw_definition_expression
-    | TILE draw_tile_definition_expression 
-    | TILES draw_tile_definition_expression;
+    draw_definition_expression;
+
+draw_tile_definition: 
+    draw_tile_definition_expression;
 
 box_definition_expression:
       optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
@@ -5463,6 +5502,8 @@ statement2:
   | CIRCLE circle_definition
   | ELLIPSE ellipse_definition
   | DRAW draw_definition
+  | DTILE draw_tile_definition
+  | DTILES draw_tile_definition
   | LINE draw_definition
   | PUT put_definition
   | MOVE move_definition
