@@ -1468,3 +1468,28 @@ del programma.
 
 @target all
 </usermanual> */
+
+/* <usermanual>
+@keyword ORIGIN
+
+@english
+The ''ORIGIN'' command can be used to set the origin of the cartesian axes with 
+respect to which drawing instructions will operate. The command accepts the 
+coordinates ''x, y'' of the origin, and the indication whether the Y axis is 
+oriented upwards (''UP'') or downwards (''DOWN''). If not used, the reference 
+system by default is placed at the top left with the Y axis downwards.
+
+@italian
+Il comando ''ORIGIN'' può essere utilizzato per impostare l'origine degli assi 
+cartesiani rispetto ai quali opereranno le istruzioni di disegno. Il comando 
+accetta le coordinate ''x, y'' dell'origine, e l'indicazione se l'asse delle 
+Y è orientato verso l'alto (''UP'') oppure verso il basso (''DOWN''). 
+Se non utilizzato, il sistema di riferimento per default viene posto in alto a 
+sinistra con l'asse delle Y verso il basso. 
+
+@syntax ORIGIN [x], [y] {UP|DOWN}
+
+@example ORIGIN 100, 100 UP
+
+@target all
+</usermanual> */
