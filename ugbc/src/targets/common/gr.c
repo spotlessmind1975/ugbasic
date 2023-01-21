@@ -95,7 +95,7 @@ void gr_locate( Environment * _environment, char * _x, char * _y ) {
         }
         if ( _environment->originUsed ) {
             variable_move( _environment, variable_sub( _environment, y->name, "ORIGINY")->name, ygr->name );
-            if ( _environment->originYDirection > 0 ) {
+            if ( _environment->originYDirection >= 0 ) {
             } else {
                 Variable * temp = variable_temporary( _environment, VT_POSITION, "(zero)");
                 variable_store( _environment, temp->name, 0 );
