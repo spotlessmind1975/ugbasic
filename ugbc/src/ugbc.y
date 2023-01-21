@@ -3617,28 +3617,28 @@ as_datatype_suffix :
 
 var_definition_simple:
   Identifier as_datatype {
-      variable_retrieve_or_define( _environment, $1, $2, 0 );
+      variable_define( _environment, $1, $2, 0 );
   }
   | Identifier as_datatype OP_ASSIGN const_expr {
-      variable_retrieve_or_define( _environment, $1, $2, $4 );
+      variable_define( _environment, $1, $2, $4 );
   }
   | Identifier ON Identifier {
-      variable_retrieve_or_define( _environment, $1, VT_BYTE, 0 );
+      variable_define( _environment, $1, VT_BYTE, 0 );
   }
   | Identifier OP_DOLLAR ON Identifier {
-      variable_retrieve_or_define( _environment, $1, VT_DSTRING, 0 );
+      variable_define( _environment, $1, VT_DSTRING, 0 );
   }
   | Identifier ON Identifier OP_ASSIGN direct_integer {
-      variable_retrieve_or_define( _environment, $1, VT_BYTE, $5 );
+      variable_define( _environment, $1, VT_BYTE, $5 );
   }
   | Identifier ON Identifier OP_ASSIGN expr {
       Variable * v = variable_retrieve( _environment, $5 );
-      Variable * d = variable_retrieve_or_define( _environment, $1, v->type, v->value );
+      Variable * d = variable_define( _environment, $1, v->type, v->value );
       variable_move_naked( _environment, v->name, d->name );
   }
   | Identifier OP_DOLLAR ON Identifier OP_ASSIGN expr {
       Variable * v = variable_retrieve( _environment, $6 );
-      Variable * d = variable_retrieve_or_define( _environment, $1, VT_DSTRING, 0 );
+      Variable * d = variable_define( _environment, $1, VT_DSTRING, 0 );
       variable_move( _environment, v->name, d->name );
   }
   ;
@@ -4567,7 +4567,8 @@ dim_definition :
     ;
 
 dim_definitions :
-      dim_definition
+      var_definition
+    | dim_definition
     | dim_definition OP_COMMA dim_definitions
     ;
 
