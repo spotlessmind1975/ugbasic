@@ -3738,7 +3738,7 @@ optional_y:
                     $$ = variable_sub( _environment, "ORIGINY", $2 )->name;
                 }
             } else {
-                if ( ((struct _Environment *)_environment)->originYDirection > 0 ) {
+                if ( ((struct _Environment *)_environment)->originYDirection >= 0 ) {
                     $$ = $2;
                 } else {
                     Variable * temp = variable_temporary( _environment, VT_POSITION, "(zero)");
