@@ -196,6 +196,8 @@ void cpu6502_mobcount( Environment * _environment, char * _index );
 void cpu6502_sqroot( Environment * _environment, char * _number, char * _result );
 void cpu6502_dstring_vars( Environment * _environment );
 void cpu6502_set_callback( Environment * _environment, char * _callback, char * _label );
+void cpu6502_out( Environment * _environment, char * _port, char * _value );
+void cpu6502_in( Environment * _environment, char * _port, char * _value );
 
 void cpu6502_protothread_vars( Environment * _environment );
 void cpu6502_protothread_loop( Environment * _environment );
@@ -342,7 +344,6 @@ void cpu6502_msc1_uncompress_indirect_indirect( Environment * _environment, char
 #define cpu_move_8bit_indirect( _environment, _source, _value ) cpu6502_move_8bit_indirect( _environment, _source, _value )
 #define cpu_move_8bit_indirect2( _environment, _value, _source ) cpu6502_move_8bit_indirect2( _environment, _value, _source )
 #define cpu_move_8bit_indirect2_8bit( _environment, _value, _offset, _source ) cpu6502_move_8bit_indirect2_8bit( _environment, _value, _offset, _source )
-
 #define cpu_move_16bit_indirect( _environment, _source, _value ) cpu6502_move_16bit_indirect( _environment, _source, _value )
 #define cpu_move_16bit_indirect2( _environment, _value, _source ) cpu6502_move_16bit_indirect2( _environment, _value, _source )
 #define cpu_move_16bit_indirect2_8bit( _environment, _value, _index, _source ) cpu6502_move_16bit_indirect2_8bit( _environment, _value, _index, _source )
@@ -370,6 +371,8 @@ void cpu6502_msc1_uncompress_indirect_indirect( Environment * _environment, char
 #define cpu_complement2_16bit( _environment, _source, _destination ) cpu6502_complement2_16bit( _environment, _source, _destination )
 #define cpu_complement2_32bit( _environment, _source, _destination ) cpu6502_complement2_32bit( _environment, _source, _destination )
 #define cpu_set_callback( _environment, _callback, _label ) cpu6502_set_callback( _environment, _callback, _label )
+#define cpu_in( _environment, _port, _value ) cpu6502_in( _environment, _port, _value )
+#define cpu_out( _environment, _port, _value ) cpu6502_out( _environment, _port, _value )
 
 extern char * src_hw_chipset_mob_asm;
 extern unsigned int src_hw_chipset_mob_asm_len;

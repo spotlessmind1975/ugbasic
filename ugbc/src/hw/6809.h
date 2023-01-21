@@ -196,6 +196,8 @@ void cpu6809_mobcount( Environment * _environment, char * _index);
 void cpu6809_sqroot( Environment * _environment, char * _number, char * _result );
 void cpu6809_dstring_vars( Environment * _environment );
 void cpu6809_set_callback( Environment * _environment, char * _callback, char * _label );
+void cpu6809_out( Environment * _environment, char * _port, char * _value );
+void cpu6809_in( Environment * _environment, char * _port, char * _value );
 
 void cpu6809_protothread_vars( Environment * _environment );
 void cpu6809_protothread_loop( Environment * _environment );
@@ -369,6 +371,8 @@ void cpu6809_msc1_uncompress_indirect_indirect( Environment * _environment, char
 #define cpu_complement2_16bit( _environment, _source, _destination ) cpu6809_complement2_16bit( _environment, _source, _destination )
 #define cpu_complement2_32bit( _environment, _source, _destination ) cpu6809_complement2_32bit( _environment, _source, _destination )
 #define cpu_set_callback( _environment, _callback, _label ) cpu6809_set_callback( _environment, _callback, _label )
+#define cpu_in( _environment, _port, _value ) cpu6809_in( _environment, _port, _value )
+#define cpu_out( _environment, _port, _value ) cpu6809_out( _environment, _port, _value )
 
 extern char * src_hw_chipset_mob_asm;
 extern unsigned int src_hw_chipset_mob_asm_len;

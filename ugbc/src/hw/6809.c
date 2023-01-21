@@ -4696,4 +4696,12 @@ void cpu6809_msc1_uncompress_indirect_indirect( Environment * _environment, char
 
 }
 
+void cpu6809_out( Environment * _environment, char * _port, char * _value ) {
+
+}
+
+void cpu6809_in( Environment * _environment, char * _port, char * _value ) {
+    
+}
+
 #endif

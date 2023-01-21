@@ -4617,4 +4617,20 @@ void z80_msc1_uncompress_indirect_indirect( Environment * _environment, char * _
 
 }
 
+void z80_out( Environment * _environment, char * _port, char * _value ) {
+
+    outline1("LD A, %s", _value );
+    outline1("LD BC, (%s)", _port );
+    outline0("OUT (C), A" );
+
+}
+
+void z80_in( Environment * _environment, char * _port, char * _value ) {
+
+    outline1("LD BC, (%s)", _port );
+    outline0("IN A, (C)" );
+    outline1("LD (%s), A", _value );
+        
+}
+
 #endif

@@ -5631,4 +5631,12 @@ void cpu6502_msc1_uncompress_indirect_indirect( Environment * _environment, char
 
 }
 
+void cpu6502_out( Environment * _environment, char * _port, char * _value ) {
+
+}
+
+void cpu6502_in( Environment * _environment, char * _port, char * _value ) {
+    
+}
+
 #endif

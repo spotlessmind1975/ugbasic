@@ -80,7 +80,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token SQUARE STEEL STRINGS SWEEP SYNTH SYNTHBRASS SYNTHSTRINGS TAIKO TANGO TELEPHONE TENOR TIMPANI TINKLE
 %token TOM TONK TREMOLO TROMBONE TRUMPET TUBA TUBULAR TWEET VIBRAPHONE VIOLA VIOLIN VOICE WARM WHISTLE WOODBLOCK 
 %token XYLOPHONE KILL COMPRESSED STORAGE ENDSTORAGE FILEX DLOAD INCLUDE LET CPC INT INTEGER LONG OP_PERC OP_AMPERSAND OP_AT
-%token EMBEDDED NATIVE RELEASE READONLY DIGIT OPTION EXPLICIT ORIGIN RELATIVE DTILE DTILES
+%token EMBEDDED NATIVE RELEASE READONLY DIGIT OPTION EXPLICIT ORIGIN RELATIVE DTILE DTILES OUT
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -2289,6 +2289,10 @@ exponential:
     | YGR {
         $$ = "YGR";
       }
+    | IN OP expr CP {
+        $$ = variable_temporary( _environment, VT_BYTE, "(data)" )->name;
+        cpu_in( _environment, $3, $$ );
+    }
     | COLLISION OP direct_integer CP {
         $$ = collision_to( _environment, $3 )->name;
       }      
@@ -5477,6 +5481,12 @@ origin_definitions :
     }
     ;
 
+out_definition : 
+    expr OP_COMMA expr {
+        cpu_out( _environment, $1, $3 );
+    }
+    ;
+
 statement2:
     BANK bank_definition
   | RASTER raster_definition
@@ -5537,6 +5547,7 @@ statement2:
       outline0( "NOP" );
   }
   | SWAP swap_definition
+  | OUT out_definition
   | PRINT print_definition
   | PRINT BUFFER print_buffer_definition
   | PRINT BUFFER RAW print_buffer_raw_definition
