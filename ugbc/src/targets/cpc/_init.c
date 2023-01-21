@@ -108,7 +108,7 @@ void target_initialization( Environment * _environment ) {
     deploy( startup, src_hw_cpc_startup_asm);
 
     outhead0("CODESTART:")
-    outline0("LD SP, $8000");
+    outline0("LD SP, $C000");
 
     // outline0("CALL VARINIT2");
     outline0("CALL VARINIT");
