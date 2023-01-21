@@ -384,6 +384,14 @@ static void basic_peephole(POBuffer buf[LOOK_AHEAD], int zA, int zB) {
 		optim( buf[1], NULL, NULL );
     }
 
+	if( 
+        po_buf_match( buf[0], " LD A, *", v1 ) &&
+        po_buf_match( buf[2], " LD A, *", v3 ) &&
+        po_buf_strcmp( v1, v3 ) == 0
+    ) {
+		optim( buf[2], RULE "(LD A, *; LD A, *)->(LD, A)", NULL );
+    }
+
 }
 
 /* optimizations related to variables */
@@ -699,7 +707,7 @@ static int optim_pass( Environment * _environment, POBuffer buf[LOOK_AHEAD], Pee
 
         switch(kind) {
             case PEEPHOLE:
-            // basic_peephole(buf, zA, zB);
+            basic_peephole(buf, zA, zB);
             
             /* only look fo variable when no peephole has been performed */
             if(change == 0) vars_scan(buf);
