@@ -1493,3 +1493,32 @@ sinistra con l'asse delle Y verso il basso.
 
 @target all
 </usermanual> */
+
+/* <usermanual>
+@keyword RESOLUTION
+
+@english
+This keyword allows to have a "virtual" resolution. Even when you select a graphical mode with only 
+160 pixel x 200 pixel, the graphical instructions execute the same thing, the only difference is that 
+the pixels will be proportional to virtual resolution. The choice to add this instruction is guided 
+by mathematical ratio, since 640x400 pixels gives 1,6 where 640x200 gives 3,2. 1.6 isn't a perfect 
+4/3 ratio but at least it's closer. By default, the virtual resolution will be set equal to the 
+resolution given by ''BITMAP ENABLE''. Then, after ''RESOLUTION'', the graphical instructions 
+will use this virtual resolution.
+
+@italian
+Questa parola chiave permette di avere una risoluzione "virtuale". Anche quando si seleziona una 
+modalità grafica con soli 160 pixel x 200 pixel, le istruzioni grafiche funzioneranno con le
+stesse identiche dimensioni. L'unica differenza è che i pixel saranno proporzionali alla 
+risoluzione virtuale. La scelta di aggiungere questa istruzione è guidata dal rapporto matematico, 
+poiché 640x400 pixel dà 1,6 dove 640x200 dà 3,2. 1.6 non è un perfetto rapporto 4/3 ma almeno è più 
+vicino. Di default, la risoluzione virtuale sarà impostata uguale alla risoluzione data da 
+''BITMAP ENABLE''. Quindi, dopo ''RESOLUTION'', le istruzioni grafiche utilizzeranno 
+questa risoluzione virtuale.
+
+@syntax RESOLUTION [x], [y]
+
+@example RESOLUTION 100, 100
+
+@target all
+</usermanual> */

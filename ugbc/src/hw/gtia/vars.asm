@@ -324,6 +324,8 @@ CLIPX2:    .word 319
 CLIPY2:    .word 199
 ORIGINX:   .word 0
 ORIGINY:   .word 0
+RESOLUTIONX: .word 0
+RESOLUTIONY: .word 0
 
 CURRENTWIDTH:      .word 40
 CURRENTHEIGHT:      .word 24

@@ -51,6 +51,8 @@ ORIGINY:    .word 0
 LASTCOLOR: .byte 0
 CURRENTWIDTH:      .word 176
 CURRENTHEIGHT:      .word 184
+RESOLUTIONX:       .word 0
+RESOLUTIONY:      .word 0
 CURRENTTILESWIDTH:      .byte 22
 CURRENTTILESHEIGHT:      .byte 23
 CURRENTTILES:      .byte 255

@@ -973,6 +973,8 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
     cpu_store_16bit( _environment, "CURRENTWIDTH", _environment->screenWidth );
     cpu_store_16bit( _environment, "CURRENTHEIGHT", _environment->screenHeight );
+    cpu_move_16bit( _environment, "CURRENTWIDTH", "RESOLUTIONX" );
+    cpu_move_16bit( _environment, "CURRENTHEIGHT", "RESOLUTIONY" );
     cpu_store_8bit( _environment, "CURRENTTILES", _environment->screenTiles );
     _environment->screenTilesWidth = 40;
     cpu_store_8bit( _environment, "CURRENTTILESWIDTH", _environment->screenTilesWidth );

@@ -606,6 +606,8 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
     cpu_store_16bit( _environment, "ORIGINY", 0 );
     cpu_store_16bit( _environment, "CURRENTWIDTH", _environment->screenWidth );
     cpu_store_16bit( _environment, "CURRENTHEIGHT", _environment->screenHeight );
+    cpu_move_16bit( _environment, "CURRENTWIDTH", "RESOLUTIONX" );
+    cpu_move_16bit( _environment, "CURRENTHEIGHT", "RESOLUTIONY" );
     cpu_store_8bit( _environment, "CURRENTTILES", _environment->screenTiles );
     cpu_store_8bit( _environment, "CURRENTTILESWIDTH", _environment->screenTilesWidth );
     cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight );

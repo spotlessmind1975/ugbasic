@@ -71,6 +71,12 @@ void gr_locate( Environment * _environment, char * _x, char * _y ) {
     if ( _x ) {
         Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
         Variable * xgr = variable_retrieve( _environment, "XGR" );
+        if ( ((struct _Environment *)_environment)->resolutionUsed ) {
+            variable_move( _environment, 
+                variable_div( _environment, variable_mul( _environment, x->name, "RESOLUTIONX" )->name, "CURRENTWIDTH", NULL )->name, 
+                x->name 
+            );
+        }
         if ( _environment->originUsed ) {
             variable_move( _environment, variable_sub( _environment, x->name, "ORIGINX")->name, xgr->name );
         } else {
@@ -81,6 +87,12 @@ void gr_locate( Environment * _environment, char * _x, char * _y ) {
     if ( _y ) {
         Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
         Variable * ygr = variable_retrieve( _environment, "YGR" );
+        if ( ((struct _Environment *)_environment)->resolutionUsed ) {
+            variable_move( _environment, 
+                variable_div( _environment, variable_mul( _environment, y->name, "RESOLUTIONY" )->name, "CURRENTHEIGHT", NULL )->name, 
+                y->name 
+            );
+        }
         if ( _environment->originUsed ) {
             variable_move( _environment, variable_sub( _environment, y->name, "ORIGINY")->name, ygr->name );
             if ( _environment->originYDirection > 0 ) {

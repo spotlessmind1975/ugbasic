@@ -1769,6 +1769,21 @@ typedef struct _Environment {
      */
     int originYDirection;
 
+    /*
+     * Resolution's used
+     */
+    int resolutionUsed;
+
+    /*
+     * Resolution's abscissa
+     */
+    int resolutionX;
+
+    /*
+     * Resolution's ordinate
+     */
+    int resolutionY;
+
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */

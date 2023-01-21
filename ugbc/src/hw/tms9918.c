@@ -828,6 +828,8 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
 
     cpu_store_16bit( _environment, "CURRENTWIDTH", _environment->screenWidth );
     cpu_store_16bit( _environment, "CURRENTHEIGHT", _environment->screenHeight );
+    cpu_move_16bit( _environment, "CURRENTWIDTH", "RESOLUTIONX" );
+    cpu_move_16bit( _environment, "CURRENTHEIGHT", "RESOLUTIONY" );
     cpu_store_8bit( _environment, "CURRENTTILES", _environment->screenTiles );
     cpu_store_8bit( _environment, "CURRENTTILESWIDTH", _environment->screenTilesWidth );
     cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight );
@@ -1396,6 +1398,11 @@ void tms9918_initialization( Environment * _environment ) {
     variable_import( _environment, "ORIGINY", VT_POSITION, 0 );
     variable_global( _environment, "ORIGINY" );
 
+    variable_import( _environment, "RESOLUTIONX", VT_POSITION, 0 );
+    variable_global( _environment, "RESOLUTIONX" );
+    variable_import( _environment, "RESOLUTIONY", VT_POSITION, 0 );
+    variable_global( _environment, "RESOLUTIONY" );
+    
     variable_import( _environment, "XCURSYS", VT_BYTE, 0 );
     variable_global( _environment, "XCURSYS" );
     variable_import( _environment, "YCURSYS", VT_BYTE, 0 );

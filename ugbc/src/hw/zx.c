@@ -276,6 +276,11 @@ void zx_initialization( Environment * _environment ) {
     variable_import( _environment, "ORIGINY", VT_POSITION, 0 );
     variable_global( _environment, "ORIGINY" );
 
+    variable_import( _environment, "RESOLUTIONX", VT_POSITION, 0 );
+    variable_global( _environment, "RESOLUTIONX" );
+    variable_import( _environment, "RESOLUTIONY", VT_POSITION, 0 );
+    variable_global( _environment, "RESOLUTIONY" );
+    
     variable_import( _environment, "XCURSYS", VT_BYTE, 0 );
     variable_global( _environment, "XCURS" );
     variable_import( _environment, "YCURSYS", VT_BYTE, 0 );
@@ -309,6 +314,9 @@ void zx_initialization( Environment * _environment ) {
     variable_import( _environment, "CURRENTTILEMODE", VT_BYTE, 1 );
     variable_global( _environment, "CURRENTTILEMODE" );
     
+    cpu_move_16bit( _environment, "CURRENTWIDTH", "RESOLUTIONX" );
+    cpu_move_16bit( _environment, "CURRENTHEIGHT", "RESOLUTIONY" );
+
     _environment->currentRgbConverterFunction = rgbConverterFunction;
 
     _environment->screenWidth = 256;

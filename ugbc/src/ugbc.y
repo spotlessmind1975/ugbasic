@@ -80,7 +80,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token SQUARE STEEL STRINGS SWEEP SYNTH SYNTHBRASS SYNTHSTRINGS TAIKO TANGO TELEPHONE TENOR TIMPANI TINKLE
 %token TOM TONK TREMOLO TROMBONE TRUMPET TUBA TUBULAR TWEET VIBRAPHONE VIOLA VIOLIN VOICE WARM WHISTLE WOODBLOCK 
 %token XYLOPHONE KILL COMPRESSED STORAGE ENDSTORAGE FILEX DLOAD INCLUDE LET CPC INT INTEGER LONG OP_PERC OP_AMPERSAND OP_AT
-%token EMBEDDED NATIVE RELEASE READONLY DIGIT OPTION EXPLICIT ORIGIN RELATIVE DTILE DTILES OUT
+%token EMBEDDED NATIVE RELEASE READONLY DIGIT OPTION EXPLICIT ORIGIN RELATIVE DTILE DTILES OUT RESOLUTION
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -3702,12 +3702,26 @@ optional_x:
                 $$ = $2;
             }
         }
+        if ( ((struct _Environment *)_environment)->resolutionUsed ) {
+            outline0("; begin resolution");
+            variable_move( _environment, 
+                variable_div( _environment, variable_mul( _environment, $$, "CURRENTWIDTH" )->name, "RESOLUTIONX", NULL )->name, 
+                $$ 
+            );
+            outline0("; end resolution");
+        }
     }
     | {
         if ( ((struct _Environment *)_environment)->originUsed ) {
             $$ = variable_add( _environment, "ORIGINX", "XGR" )->name;
         } else {
             $$ = strdup( "XGR" );
+        }
+        if ( ((struct _Environment *)_environment)->resolutionUsed ) {
+            variable_move( _environment, 
+                variable_div( _environment, variable_mul( _environment, $$, "CURRENTWIDTH" )->name, "RESOLUTIONX", NULL )->name, 
+                $$ 
+            );
         }
     }
     ;
@@ -3747,6 +3761,12 @@ optional_y:
                 }
             }
         }
+        if ( ((struct _Environment *)_environment)->resolutionUsed ) {
+            variable_move( _environment, 
+                variable_div( _environment, variable_mul( _environment, $$, "CURRENTHEIGHT" )->name, "RESOLUTIONY", NULL )->name, 
+                $$ 
+            );
+        }
     }
     | {
         if ( ((struct _Environment *)_environment)->originUsed ) {
@@ -3757,6 +3777,12 @@ optional_y:
             }
         } else {
             $$ = strdup( "YGR" );
+        }
+        if ( ((struct _Environment *)_environment)->resolutionUsed ) {
+            variable_move( _environment, 
+                variable_div( _environment, variable_mul( _environment, $$, "CURRENTHEIGHT" )->name, "RESOLUTIONY", NULL )->name, 
+                $$ 
+            );
         }
     }
     ;
@@ -5482,6 +5508,14 @@ origin_definitions :
     }
     ;
 
+resolution_definitions :
+    expr OP_COMMA expr {
+        ((struct _Environment *)_environment)->resolutionUsed = 1;
+        variable_move( ((struct _Environment *)_environment), $1, "RESOLUTIONX" );
+        variable_move( ((struct _Environment *)_environment), $3, "RESOLUTIONY" );
+    }
+    ;
+
 out_definition : 
     expr OP_COMMA expr {
         cpu_out( _environment, $1, $3 );
@@ -5957,6 +5991,7 @@ statement2:
   | DEFINE define_definitions
   | OPTION option_definitions
   | ORIGIN origin_definitions
+  | RESOLUTION resolution_definitions
   | DIM dim_definitions
   | FILL fill_definitions
   | const_instruction Identifier OP_ASSIGN const_expr_string {

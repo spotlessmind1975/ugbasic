@@ -731,6 +731,9 @@ void vic1_initialization( Environment * _environment ) {
     variable_import( _environment, "ORIGINY", VT_POSITION, 0 );
     variable_global( _environment, "ORIGINY" );
 
+    cpu_move_16bit( _environment, "CURRENTWIDTH", "RESOLUTIONX" );
+    cpu_move_16bit( _environment, "CURRENTHEIGHT", "RESOLUTIONY" );
+
     _environment->fontWidth = 8;
     _environment->fontHeight = 8;
     _environment->screenTilesWidth = 22;
