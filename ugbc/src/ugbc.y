@@ -3729,13 +3729,13 @@ optional_y:
     relative_option expr {
         if ( $1 ) {
             if ( ((struct _Environment *)_environment)->originUsed ) {
-                if ( ((struct _Environment *)_environment)->originYDirection > 0 ) {
+                if ( ((struct _Environment *)_environment)->originYDirection >= 0 ) {
                     $$ = variable_add( _environment, "ORIGINY", variable_add( _environment, "YGR", $2 )->name )->name;
                 } else {
                     $$ = variable_sub( _environment, "ORIGINY", variable_add( _environment, "YGR", $2 )->name )->name;
                 }
             } else {
-                if ( ((struct _Environment *)_environment)->originYDirection > 0 ) {
+                if ( ((struct _Environment *)_environment)->originYDirection >= 0 ) {
                     $$ = $2;
                 } else {
                     Variable * temp = variable_temporary( _environment, VT_POSITION, "(zero)");
@@ -3745,7 +3745,7 @@ optional_y:
             }
         } else {
             if ( ((struct _Environment *)_environment)->originUsed ) {
-                if ( ((struct _Environment *)_environment)->originYDirection > 0 ) {
+                if ( ((struct _Environment *)_environment)->originYDirection >= 0 ) {
                     $$ = variable_add( _environment, "ORIGINY", $2 )->name;
                 } else {
                     $$ = variable_sub( _environment, "ORIGINY", $2 )->name;
@@ -3769,7 +3769,7 @@ optional_y:
     }
     | {
         if ( ((struct _Environment *)_environment)->originUsed ) {
-            if ( ((struct _Environment *)_environment)->originYDirection > 0 ) {
+            if ( ((struct _Environment *)_environment)->originYDirection >= 0 ) {
                 $$ = variable_add( _environment, "ORIGINY", "YGR" )->name;
             } else {
                 $$ = variable_sub( _environment, "ORIGINY", "YGR" )->name;
