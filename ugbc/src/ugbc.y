@@ -2290,8 +2290,7 @@ exponential:
         $$ = "YGR";
       }
     | IN OP expr CP {
-        $$ = variable_temporary( _environment, VT_BYTE, "(data)" )->name;
-        cpu_in( _environment, $3, $$ );
+        $$ = in_var( _environment, $3 )->name;
     }
     | COLLISION OP direct_integer CP {
         $$ = collision_to( _environment, $3 )->name;
@@ -5518,7 +5517,7 @@ resolution_definitions :
 
 out_definition : 
     expr OP_COMMA expr {
-        cpu_out( _environment, $1, $3 );
+        out_var( _environment, $1, $3 );
     }
     ;
 

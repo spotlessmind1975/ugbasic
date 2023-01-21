@@ -2883,6 +2883,7 @@ char *                  image_roll_x_left( Environment * _environment, char * _s
 char *                  image_roll_x_right( Environment * _environment, char * _source, int _width, int _height );
 char *                  image_roll_y_down( Environment * _environment, char * _source, int _width, int _height );
 Variable *              images_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _frame_width, int _frame_height, int _flags, int _transparent_color, int _background_color, int _bank_expansion );
+Variable *              in_var( Environment * _environment, char * _port );
 void                    ink( Environment * _environment, char * _expression );
 Variable *              inkey( Environment * _environment );
 void                    input( Environment * _environment, char * _variable );
@@ -2971,6 +2972,7 @@ void                    on_proc_end( Environment * _environment );
 void                    on_proc_index( Environment * _environment, char * _label );
 void                    on_scroll_call( Environment * _environment, int _x, int _y, char * _label );
 void                    on_scroll_gosub( Environment * _environment, int _x, int _y, char * _label );
+void                    out_var( Environment * _environment, char * _port, char * _value );
 
 //----------------------------------------------------------------------------
 // *P*
