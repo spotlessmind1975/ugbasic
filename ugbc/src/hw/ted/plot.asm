@@ -119,7 +119,7 @@ PLOT4X:
 
 @ENDIF
 
-@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 0 ) || ( currentMode == 1 ) ( currentMode == 4 ) )
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 0 ) || ( currentMode == 1 ) || ( currentMode == 4 ) )
 
 PLOT0:
 PLOT1:
