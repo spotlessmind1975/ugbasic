@@ -829,7 +829,6 @@ void cpc_text( Environment * _environment, char * _text, char * _text_size ) {
     deploy( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
     // deploy( textEncodedAt, src_hw_cpc_text_at_asm );
     deploy( textEncodedAtGraphic, src_hw_cpc_text_at_graphic_asm );
-    deploy( font, src_hw_cpc_font_asm );
     outline0("CALL TEXTATBITMAPMODE");
 
 }
