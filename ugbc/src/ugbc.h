@@ -3126,8 +3126,8 @@ Variable *              tile_belong( Environment * _environment, char * _tile, c
 Variable *              tile_get_first( Environment * _environment, char * _tile );
 Variable *              tile_get_height( Environment * _environment, char * _tile );
 Variable *              tile_get_width( Environment * _environment, char * _tile );
-Variable *              tile_load( Environment * _environment, char * _filename, int _flags, char * _tileset );
-Variable *              tiles_load( Environment * _environment, char * _filename, int _flags, char * _tileset );
+Variable *              tile_load( Environment * _environment, char * _filename, int _flags, char * _tileset, int _index );
+Variable *              tiles_load( Environment * _environment, char * _filename, int _flags, char * _tileset, int _index );
 void                    tiles_at( Environment * _environment, int _address );
 void                    tiles_at_var( Environment * _environment, char * _address );
 

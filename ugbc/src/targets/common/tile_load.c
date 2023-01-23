@@ -99,12 +99,14 @@ esiste anche la sintassi ''AS'', che permette di caricare più volte lo stesso f
 ma con nomi diversi.
 
 @syntax = LOAD TILE([filename])
+@syntax TILE LOAD [filename] TO [index]
 
 @example starship = LOAD TILE("starship.png")
+@example LOAD TILE "letter_a.png" to 65
 
 @target all
 </usermanual> */
-Variable * tile_load( Environment * _environment, char * _filename, int _flags, char * _tileset ) {
+Variable * tile_load( Environment * _environment, char * _filename, int _flags, char * _tileset, int _index ) {
 
     Variable * tileset = NULL;
 
@@ -170,7 +172,14 @@ Variable * tile_load( Environment * _environment, char * _filename, int _flags, 
         descriptors = _environment->descriptors;
     }
 
-    int tile = tile_allocate( descriptors, realImage->valueBuffer + 2 );
+    int tile = _index;
+
+    if ( tile == -1 ) {
+        tile = tile_allocate( descriptors, realImage->valueBuffer + 2 );
+    } else {
+        memcpy( descriptors->data[tile].data, realImage->valueBuffer + 2, 8 );
+        descriptors->descriptor[tile] = calculate_tile_descriptor( &descriptors->data[tile] );
+    }
 
     if ( tile == -1 ) {
         CRITICAL_CANNOT_ALLOCATE_MORE_TILE();

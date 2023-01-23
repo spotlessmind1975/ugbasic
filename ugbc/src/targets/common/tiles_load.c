@@ -99,12 +99,13 @@ esiste anche la sintassi ''AS'', che permette di caricare più volte lo stesso f
 ma con nomi diversi.
 
 @syntax = LOAD TILES([filename])
+@syntax = TILE LOAD [filename] TO [index]
 
 @example starship = LOAD TILES("starship.png")
 
 @target all
 </usermanual> */
-Variable * tiles_load( Environment * _environment, char * _filename, int _flags, char * _tileset ) {
+Variable * tiles_load( Environment * _environment, char * _filename, int _flags, char * _tileset, int _index ) {
 
     Variable * tileset = NULL;
 
@@ -171,7 +172,7 @@ Variable * tiles_load( Environment * _environment, char * _filename, int _flags,
 
     int x, y;
 
-    int firstTile = -1;
+    int firstTile = _index;
     
     int z = 0, a = 1;
 
@@ -192,16 +193,20 @@ Variable * tiles_load( Environment * _environment, char * _filename, int _flags,
             for (x=0; x<(width>>3);++x) {
                 Variable * realImage = image_converter( _environment, source, width, height, depth, x*8, y*8, 8, 8, BITMAP_MODE_DEFAULT, 0, _flags );
 
-                int tile = tile_allocate( descriptors, realImage->valueBuffer + 2 );
+                if ( _index == -1 ) {
+                    int tile = tile_allocate( descriptors, realImage->valueBuffer + 2 );
 
-                // printf( "Allocating tile (%d,%d) -> %d\n", x, y, tile );
+                    if ( firstTile == -1 ) {
+                        firstTile = tile;
+                    }
 
-                if ( firstTile == -1 ) {
-                    firstTile = tile;
-                }
-
-                if ( tile == -1 ) {
-                    CRITICAL_CANNOT_ALLOCATE_MORE_TILE();
+                    if ( tile == -1 ) {
+                        CRITICAL_CANNOT_ALLOCATE_MORE_TILE();
+                    }
+                } else {
+                    memcpy( descriptors->data[_index].data, realImage->valueBuffer + 2, 8 );
+                    descriptors->descriptor[_index] = calculate_tile_descriptor( &descriptors->data[_index] );
+                    ++_index;
                 }
 
                 variable_delete( _environment, realImage->name );

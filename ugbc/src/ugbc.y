@@ -2233,16 +2233,16 @@ exponential:
         $$ = image_load( _environment, $3, $5, $7, $9, $10, $11, $12 )->name;
       }
     | LOAD TILE OP String CP tile_load_flags {
-        $$ = tile_load( _environment, $4, $6, NULL )->name;
+        $$ = tile_load( _environment, $4, $6, NULL, -1 )->name;
       }
     | LOAD TILE OP String OP_COMMA expr CP tile_load_flags {
-        $$ = tile_load( _environment, $4, $8, $6 )->name;
+        $$ = tile_load( _environment, $4, $8, $6, -1 )->name;
       }
     | LOAD TILES OP String CP tile_load_flags {
-        $$ = tiles_load( _environment, $4, $6, NULL )->name;
+        $$ = tiles_load( _environment, $4, $6, NULL, -1 )->name;
       }
     | LOAD TILES OP String OP_COMMA expr CP tile_load_flags {
-        $$ = tiles_load( _environment, $4, $8, $6 )->name;
+        $$ = tiles_load( _environment, $4, $8, $6, -1 )->name;
       }
     | SIZE OP expr CP {
         Variable * v = variable_retrieve( _environment, $3 );
@@ -3519,7 +3519,13 @@ tilemap_definition:
 tiles_definition_simple:
     AT direct_integer {
       tiles_at( _environment, $2 );
-  };
+  }
+  | LOAD String tile_load_flags {
+        tiles_load( _environment, $2, $3, NULL, -1 );
+    };
+  | LOAD String TO Integer tile_load_flags {
+        tiles_load( _environment, $2, $5, NULL, $4 );
+    };
 
 tiles_definition_expression:
     AT expr {
@@ -5521,6 +5527,11 @@ out_definition :
     }
     ;
 
+tile_definition : 
+    LOAD String TO Integer tile_load_flags {
+        tile_load( _environment, $2, $5, NULL, $4 );
+    };
+
 statement2:
     BANK bank_definition
   | RASTER raster_definition
@@ -5537,6 +5548,7 @@ statement2:
   | TEXTMAP textmap_definition
   | TILEMAP tilemap_definition
   | TEXT text_definition
+  | TILE tile_definition
   | TILES tiles_definition
   | COLORMAP colormap_definition
   | COLOURMAP colormap_definition
