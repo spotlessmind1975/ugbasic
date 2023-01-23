@@ -5550,6 +5550,7 @@ statement2:
   | TEXT text_definition
   | TILE tile_definition
   | TILES tiles_definition
+  | FONT tiles_definition
   | COLORMAP colormap_definition
   | COLOURMAP colormap_definition
   | SCREEN screen_definition
