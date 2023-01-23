@@ -194,7 +194,7 @@ Variable * tiles_load( Environment * _environment, char * _filename, int _flags,
                 Variable * realImage = image_converter( _environment, source, width, height, depth, x*8, y*8, 8, 8, BITMAP_MODE_DEFAULT, 0, _flags );
 
                 if ( _index == -1 ) {
-                    int tile = tile_allocate( descriptors, realImage->valueBuffer + 2 );
+                    int tile = tile_allocate( descriptors, realImage->valueBuffer + IMAGE_WIDTH_SIZE + IMAGE_HEIGHT_SIZE );
 
                     if ( firstTile == -1 ) {
                         firstTile = tile;
@@ -203,14 +203,17 @@ Variable * tiles_load( Environment * _environment, char * _filename, int _flags,
                     if ( tile == -1 ) {
                         CRITICAL_CANNOT_ALLOCATE_MORE_TILE();
                     }
+
+                    _index = -1;
+
                 } else {
-                    memcpy( descriptors->data[_index].data, realImage->valueBuffer + 2, 8 );
+                    memcpy( descriptors->data[_index].data, realImage->valueBuffer + IMAGE_WIDTH_SIZE + IMAGE_HEIGHT_SIZE, 8 );
                     descriptors->descriptor[_index] = calculate_tile_descriptor( &descriptors->data[_index] );
                     ++_index;
                 }
 
                 variable_delete( _environment, realImage->name );
-    
+                
             }
         }
         if ( _flags & FLAG_ROLL_X ) {

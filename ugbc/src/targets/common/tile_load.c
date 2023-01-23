@@ -175,9 +175,9 @@ Variable * tile_load( Environment * _environment, char * _filename, int _flags, 
     int tile = _index;
 
     if ( tile == -1 ) {
-        tile = tile_allocate( descriptors, realImage->valueBuffer + 2 );
+        tile = tile_allocate( descriptors, realImage->valueBuffer + IMAGE_WIDTH_SIZE + IMAGE_HEIGHT_SIZE );
     } else {
-        memcpy( descriptors->data[tile].data, realImage->valueBuffer + 2, 8 );
+        memcpy( descriptors->data[tile].data, realImage->valueBuffer + IMAGE_WIDTH_SIZE + IMAGE_HEIGHT_SIZE, 8 );
         descriptors->descriptor[tile] = calculate_tile_descriptor( &descriptors->data[tile] );
     }
 
