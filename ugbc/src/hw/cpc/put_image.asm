@@ -149,13 +149,13 @@ PUTIMAGE0L1T0:
 
     DEC C
     JR NZ, PUTIMAGE0L1
-    LD A, IXH
-    CP $0
-    JR Z, PUTIMAGE0DONEROW
-    DEC IXH
-    LD A, $FF
-    LD C, A
-    JP PUTIMAGE0L1
+    ; LD A, IXH
+    ; CP $0
+    ; JR Z, PUTIMAGE0DONEROW
+    ; DEC IXH
+    ; LD A, $FF
+    ; LD C, A
+    ; JP PUTIMAGE0L1
 PUTIMAGE0DONEROW:
     POP BC
 
@@ -218,9 +218,19 @@ PUTIMAGE0DONEROWL1:
 
 PUTIMAGE1:
 
-    SRL C
-    SRL C
-
+    PUSH BC
+    LD A, IXH
+    LD B, A
+    SRL B
+    RR C
+    SRL B
+    RR C
+    SRL B
+    RR C
+    LD A, C
+    POP BC
+    LD C, A
+    
 PUTIMAGE1L2:
 
     POP DE
@@ -308,10 +318,10 @@ PUTIMAGE1L1T0:
     LD A, IXH
     CP $0
     JR Z, PUTIMAGE1DONEROW
-    DEC IXH
-    LD A, $FF
-    LD C, A
-    JP PUTIMAGE1L1
+    ; DEC IXH
+    ; LD A, $FF
+    ; LD C, A
+    ; JP PUTIMAGE1L1
 PUTIMAGE1DONEROW:
     POP BC
 
@@ -385,9 +395,18 @@ PUTIMAGE1DONEROW2T:
 
 PUTIMAGE2:
 
-    SRL C
-    SRL C
-    SRL C
+    PUSH BC
+    LD A, IXH
+    LD B, A
+    SRL B
+    RR C
+    SRL B
+    RR C
+    SRL B
+    RR C
+    LD A, C
+    POP BC
+    LD C, A
 
 PUTIMAGE2L2:
 
@@ -505,13 +524,13 @@ PUTIMAGE2L1T0:
 
     DEC C
     JP NZ, PUTIMAGE2L1
-    LD A, IXH
-    CP $0
-    JR Z, PUTIMAGE2DONEROW
-    DEC IXH
-    LD A, $FF
-    LD C, A
-    JP PUTIMAGE2L1
+    ; LD A, IXH
+    ; CP $0
+    ; JR Z, PUTIMAGE2DONEROW
+    ; DEC IXH
+    ; LD A, $FF
+    ; LD C, A
+    ; JP PUTIMAGE2L1
 PUTIMAGE2DONEROW:
     POP BC
 

@@ -1584,7 +1584,7 @@ void cpc_put_image( Environment * _environment, char * _image, char * _x, char *
     outline1("LD A, (%s)", _x );
     outline0("LD E, A" );
     outline1("LD A, (%s+1)", _x );
-    outline0("LD IYL, A" );
+    outline0("LD IXL, A" );
     outline1("LD A, (%s)", _y );
     outline0("LD D, A" );
     outline1("LD A, $%2.2x", _flags );
