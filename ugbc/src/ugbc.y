@@ -3742,7 +3742,7 @@ optional_y:
                 }
             } else {
                 if ( ((struct _Environment *)_environment)->originYDirection >= 0 ) {
-                    $$ = $2;
+                    $$ = variable_add( _environment, "YGR", $2 )->name;
                 } else {
                     Variable * temp = variable_temporary( _environment, VT_POSITION, "(zero)");
                     variable_store( _environment, temp->name, 0 );
