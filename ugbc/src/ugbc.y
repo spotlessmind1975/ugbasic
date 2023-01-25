@@ -6092,11 +6092,15 @@ statement2:
   }
   | Identifier OP_ASSIGN expr {
         Variable * expr = variable_retrieve( _environment, $3 );
-        Variable * variable;
+        Variable * variable;        
         if ( variable_exists( _environment, $1 ) ) {
             variable = variable_retrieve( _environment, $1 );
         } else {
-            variable = variable_define( _environment, $1, expr->type == VT_STRING ? VT_DSTRING : expr->type, 0 );
+            if ( !((struct _Environment *)_environment)->optionExplicit ) {
+                variable = variable_define( _environment, $1, expr->type == VT_STRING ? VT_DSTRING : expr->type, 0 );
+            } else {
+                CRITICAL_VARIABLE_UNDEFINED( $1 );
+            }
         }
 
         if ( variable->type == VT_ARRAY ) {
@@ -6122,7 +6126,11 @@ statement2:
         if ( variable_exists( _environment, $1 ) ) {
             variable = variable_retrieve( _environment, $1 );
         } else {
-            variable = variable_define( _environment, $1, $2, 0 );
+            if ( !((struct _Environment *)_environment)->optionExplicit ) {
+                variable = variable_define( _environment, $1, $2, 0 );
+            } else {
+                CRITICAL_VARIABLE_UNDEFINED( $1 );
+            }
         }
 
         if ( variable->type != $2 ) {
@@ -6148,7 +6156,11 @@ statement2:
         if ( variable_exists( _environment, $1 ) ) {
             var = variable_retrieve( _environment, $1 );
         } else {
-            var = variable_define( _environment, $1, expr->type == VT_STRING ? VT_DSTRING : expr->type, 0 );
+            if ( !((struct _Environment *)_environment)->optionExplicit ) {
+                var = variable_define( _environment, $1, expr->type == VT_STRING ? VT_DSTRING : expr->type, 0 );
+            } else {
+                CRITICAL_VARIABLE_UNDEFINED( $1 );
+            }
         }
         var->value = expr->value;
         if ( expr->valueString ) {
@@ -6203,7 +6215,11 @@ statement2:
   | Identifier OP_DOLLAR OP_ASSIGN expr {
         Variable * expr = variable_retrieve( _environment, $4 );
         if ( !variable_exists( _environment, $1 ) ) {
-            variable_define( _environment, $1, VT_DSTRING, 0 );
+            if ( !((struct _Environment *)_environment)->optionExplicit ) {
+                variable_define( _environment, $1, VT_DSTRING, 0 );
+            } else {
+                CRITICAL_VARIABLE_UNDEFINED( $1 );
+            }
         }
         variable_move( _environment, $4, $1 );
   }
