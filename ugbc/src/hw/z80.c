@@ -3252,7 +3252,7 @@ void z80_convert_string_into_16bit( Environment * _environment, char * _string, 
     outhead1("%srepeat:", label );
 
     outline0("LD A, (HL)" );
-    outline0("CP $39" );
+    outline0("CP $40" );
     outline1("JR NC, %send", label);
     outline0("CP $30" );
     outline1("JR C, %send", label);
