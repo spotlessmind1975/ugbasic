@@ -35,6 +35,58 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+KEYASCII:
+    ; 0
+    ;       0   1   2   3   4   5   6   7   8   9
+    DB      0, 00, 00,  0,  0,'V',  0,  0, 00,  0
+    ; 1
+    ;       0   1   2   3   4   5   6   7   8   9
+    DB      0,  0,  0,  0,  0,  0, 00,  0, 13,'\\'
+    ; 2
+    ;       0   1   2   3   4   5   6   7   8   9
+    DB      0, 00,  0, 00, 00, '-',  0,'P',  0,  0
+    ; 3
+    ;       0   1   2   3   4   5   6   7   8   9
+    DB      0, '.','+','9','O','I','L','K','M',','
+    ; 4
+    ;       0   1   2   3   4   5   6   7   8   9
+    DB     '0','7','U','Y','H','J','N',' ', '8','5'
+    ; 5
+    ;       0   1   2   3   4   5   6   7   8   9
+    DB     'R','T','G','F','B','V','6','3','E','W'
+    ; 6
+    ;       0   1   2   3   4   5   6   7   8   9
+    DB     'S','D','C','X','4','2', 27,'Q',  9,'A'
+    ; 7
+    ;       0   1   2   3   4   5   6   7   8   9
+    DB     00,'Z','1',  0,  0,  0,  0,  0,  0,  8
+
+KEYASCIISHIFT:
+    ; 0
+    ;       0   1   2   3   4   5   6   7   8   9
+    DB      0, 00, 00,  0,  0,'v',  0,  0, 00,  0
+    ; 1
+    ;       0   1   2   3   4   5   6   7   8   9
+    DB      0,  0,  0,  0,  0,  0, 00,  0, 13,'|'
+    ; 2
+    ;       0   1   2   3   4   5   6   7   8   9
+    DB      0, 00,  0, 00, 00, '_',  0,'p',  0,  0
+    ; 3
+    ;       0   1   2   3   4   5   6   7   8   9
+    DB      0, ':','*',')','o','i','l','k','m',';'
+    ; 4
+    ;       0   1   2   3   4   5   6   7   8   9
+    DB     '=','/','u','y','h','L','n',' ','(','%'
+    ; 5
+    ;       0   1   2   3   4   5   6   7   8   9
+    DB     'r','t','g','f','b','v','&','/','e','w'
+    ; 6
+    ;       0   1   2   3   4   5   6   7   8   9
+    DB     's','d','c','x','$','"', 27,'q',  9,'a'
+    ; 7
+    ;       0   1   2   3   4   5   6   7   8   9
+    DB     00,'z','!',  0,  0,  0,  0,  0,  0,  8
+
 KEYMAP:      DS 10
 
 SCANCODEENTIRE:
@@ -94,6 +146,7 @@ SCANCODEPRECISE:
 
 SCANCODE:
     CALL SCANCODEENTIRE
+    LD IXL, 0
     LD HL, KEYMAP
     LD A, $1
     LD E, A
@@ -124,7 +177,14 @@ SCANCODEL1:
     XOR $ff
     AND B
     CP B
-    JR Z, SCANCODEVALUE
+    JR NZ, SCANCODENOVALUE
+    LD A, E
+    CP 21
+    JR Z, SCANCODEVALUESHIFT
+    JP SCANCODEVALUE
+SCANCODEVALUESHIFT:
+    LD IXL, 1
+SCANCODENOVALUE:
     POP AF
     POP BC
     INC E
@@ -144,8 +204,28 @@ SCANCODEL1:
     JMP SCANCODEVALUE2
 SCANCODEVALUE:
 SCANCODEVALUE2:
+    LD A, E
     LD IXH, A
     POP AF
     POP BC
-    LD A, IXH
+    RET
+
+INKEY:
+    CALL SCANCODE
+    LD A, E
+    AND $7F
+    LD E, A
+    LD A, 0
+    LD D, A
+    LD A, IXL
+    CP 1
+    JR Z, INKEYSHIFT
+    LD HL, KEYASCII
+    ADD HL, DE
+    LD A, (HL)
+    RET
+INKEYSHIFT:
+    LD HL, KEYASCIISHIFT
+    ADD HL, DE
+    LD A, (HL)
     RET
