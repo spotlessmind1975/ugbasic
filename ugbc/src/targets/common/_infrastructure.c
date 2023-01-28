@@ -4489,11 +4489,16 @@ Questa funzione converte le stringhe in numeri.
 @target all
  </usermanual> */
 Variable * variable_string_val( Environment * _environment, char * _value ) {
+
+    MAKE_LABEL
+
     Variable * value = variable_retrieve( _environment, _value );
     Variable * result = variable_temporary( _environment, VT_WORD, "(result of val)" );
     Variable * address = variable_temporary( _environment, VT_ADDRESS, "(result of val)" );
     Variable * size = variable_temporary( _environment, VT_BYTE, "(result of val)" );
 
+    cpu_store_16bit( _environment, result->realName, 0 );
+    
     switch( value->type ) {
         case VT_STRING: {
             cpu_move_8bit( _environment, value->realName, size->realName );
@@ -4504,7 +4509,9 @@ Variable * variable_string_val( Environment * _environment, char * _value ) {
         }
         case VT_DSTRING: {
             cpu_dsdescriptor( _environment, value->realName, address->realName, size->realName );
+            cpu_compare_and_branch_8bit_const( _environment, size->realName, 0, label, 1 );
             cpu_convert_string_into_16bit( _environment, address->realName, size->realName, result->realName );
+            cpu_label( _environment, label );
             break;
         }
         default:
