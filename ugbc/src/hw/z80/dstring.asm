@@ -111,6 +111,12 @@ DSRESIZE:
     CALL DSDESCRIPTOR
     LD A, C
     LD (IX), A    
+    CP 0
+    JR NZ, DSRESIZEDONE
+    LD A, (IX+3)
+    OR $80
+    LD (IX+3), A
+DSRESIZEDONE:
     RET
 
 ; DSGC()
