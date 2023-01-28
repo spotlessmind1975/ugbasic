@@ -4817,6 +4817,8 @@ Questa funzione ritorna il codice ASCII del primo carattere di una stringa.
  </usermanual> */
 Variable * variable_string_asc( Environment * _environment, char * _char  ) {
 
+    MAKE_LABEL
+
     Variable * character = variable_retrieve_or_define( _environment, _char, VT_BYTE, 0 );
 
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of ASC)");
@@ -4839,7 +4841,10 @@ Variable * variable_string_asc( Environment * _environment, char * _char  ) {
             CRITICAL_ASC_UNSUPPORTED( _char, DATATYPE_AS_STRING[character->type]);
     }
 
+    cpu_compare_and_branch_8bit_const( _environment, size->realName, 0, label, 1 );
     cpu_move_8bit_indirect2( _environment, address->realName, result->realName );
+
+    cpu_label( _environment, label );
 
     return result;
     
