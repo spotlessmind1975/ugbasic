@@ -2295,12 +2295,14 @@ Variable * variable_mul( Environment * _environment, char * _source, char * _des
 
     if ( VT_SIGNED( source->type ) != VT_SIGNED( target->type ) ) {
         if ( VT_SIGNED( source->type ) ) {
+            source = variable_cast( _environment, _source, VT_MAX_BITWIDTH_TYPE( source->type, target->type ) );
             target = variable_cast( _environment, _destination, VT_MAX_BITWIDTH_TYPE( source->type, target->type ) );
         } else {
             source = variable_cast( _environment, _source, VT_SIGN( VT_MAX_BITWIDTH_TYPE( source->type, target->type ) ) );
             target = variable_cast( _environment, _destination, VT_SIGN( VT_MAX_BITWIDTH_TYPE( source->type, target->type ) ) );
         }
     } else {
+        source = variable_cast( _environment, _source, VT_MAX_BITWIDTH_TYPE( source->type, target->type ) );
         target = variable_cast( _environment, _destination, VT_MAX_BITWIDTH_TYPE( source->type, target->type ) );
     }
 
