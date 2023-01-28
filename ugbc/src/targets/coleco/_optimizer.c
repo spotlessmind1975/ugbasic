@@ -294,9 +294,9 @@ static void basic_peephole(POBuffer buf[LOOK_AHEAD], int zA, int zB) {
     // ;Use
     //  or a
     // ; -> save 1 byte and 3 T-states
-	if( po_buf_match( buf[0], " CP 0") ) {
-		optim( buf[0], RULE "(CP 0)->(OR A)", "\tOR A" );
-    }
+	// if( po_buf_match( buf[0], " CP 0") ) {
+	// 	optim( buf[0], RULE "(CP 0)->(OR A)", "\tOR A" );
+    // }
 
     //   xor %11111111
     // ; >
