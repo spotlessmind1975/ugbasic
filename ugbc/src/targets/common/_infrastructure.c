@@ -330,7 +330,7 @@ Variable * variable_define( Environment * _environment, char * _name, VariableTy
     if (_environment->constants) {
         Constant * c = constant_find( _environment->constants, _name );
         if ( c ) {
-            CRITICAL_CONSTANT_ALREADY_DEFINED( _name );
+            CRITICAL_CONSTANT_ALREADY_DEFINED_AS_VARIABLE( _name );
         }
     }
 
@@ -386,7 +386,7 @@ Variable * variable_import( Environment * _environment, char * _name, VariableTy
     if (_environment->constants) {
         Constant * c = constant_find( _environment->constants, _name );
         if ( c ) {
-            CRITICAL_CONSTANT_ALREADY_DEFINED( _name );
+            CRITICAL_CONSTANT_ALREADY_DEFINED_AS_VARIABLE( _name );
         }
     }
 
@@ -428,7 +428,7 @@ Variable * variable_define_no_init( Environment * _environment, char * _name, Va
     if (_environment->constants) {
         Constant * c = constant_find( _environment->constants, _name );
         if ( c ) {
-            CRITICAL_CONSTANT_ALREADY_DEFINED( _name );
+            CRITICAL_CONSTANT_ALREADY_DEFINED_AS_VARIABLE( _name );
         }
     }
 
@@ -469,7 +469,7 @@ Variable * variable_define_local( Environment * _environment, char * _name, Vari
     if (_environment->constants) {
         Constant * c = constant_find( _environment->constants, _name );
         if ( c ) {
-            CRITICAL_CONSTANT_ALREADY_DEFINED( _name );
+            CRITICAL_CONSTANT_ALREADY_DEFINED_AS_VARIABLE( _name );
         }
     }
 
@@ -691,7 +691,7 @@ Variable * variable_retrieve_or_define( Environment * _environment, char * _name
     if (_environment->constants) {
         Constant * c = constant_find( _environment->constants, _name );
         if ( c ) {
-            CRITICAL_CONSTANT_ALREADY_DEFINED( _name );
+            CRITICAL_CONSTANT_ALREADY_DEFINED_AS_VARIABLE( _name );
         }
     }
 
@@ -797,7 +797,7 @@ Variable * variable_array_type( Environment * _environment, char *_name, Variabl
     if (_environment->constants) {
         Constant * c = constant_find( _environment->constants, _name );
         if ( c ) {
-            CRITICAL_CONSTANT_ALREADY_DEFINED( _name );
+            CRITICAL_CONSTANT_ALREADY_DEFINED_AS_VARIABLE( _name );
         }
     }
 
@@ -5610,7 +5610,7 @@ Variable * variable_mod( Environment * _environment, char * _source, char * _des
 void const_define_numeric( Environment * _environment, char * _name, int _value ) {
 
     if (variable_exists( _environment, _name )) {
-        CRITICAL_VARIABLE_ALREADY_DEFINED( _name );
+        CRITICAL_VARIABLE_ALREADY_DEFINED_AS_CONSTANT( _name );
     }
 
     Constant * c = constant_find( _environment->constants, _name );
@@ -5644,7 +5644,7 @@ void const_define_numeric( Environment * _environment, char * _name, int _value 
 void const_define_string( Environment * _environment, char * _name, char * _value ) {
 
     if (variable_exists( _environment, _name )) {
-        CRITICAL_VARIABLE_ALREADY_DEFINED( _name );
+        CRITICAL_VARIABLE_ALREADY_DEFINED_AS_CONSTANT( _name );
     }
 
     Constant * c = constant_find( _environment->constants, _name );

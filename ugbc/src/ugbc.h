@@ -1965,8 +1965,8 @@ typedef struct _Environment {
 #define CRITICAL_XOR_UNSUPPORTED( v, t ) CRITICAL3("E136 - Bitwise XOR unsupported for variable of given datatype", v, t );
 #define CRITICAL_SWAP_DIFFERENT_BITWIDTH( v )  CRITICAL2("E137 - Bitwise SWAP supported only for variable of same bitwidth", v );
 #define CRITICAL_CANNOT_REMOVE_FILE(f) CRITICAL2("E138 - cannot remove file", f );
-#define CRITICAL_CONSTANT_ALREADY_DEFINED(f) CRITICAL2("E139 - cannot define a variable with the same name of a constant", f );
-#define CRITICAL_VARIABLE_ALREADY_DEFINED(f) CRITICAL2("E140 - cannot define a constant with the same name of a variable", f );
+#define CRITICAL_CONSTANT_ALREADY_DEFINED_AS_VARIABLE(f) CRITICAL2("E139 - cannot define a variable with the same name of a constant", f );
+#define CRITICAL_VARIABLE_ALREADY_DEFINED_AS_CONSTANT(f) CRITICAL2("E140 - cannot define a constant with the same name of a variable", f );
 #define CRITICAL_END_GAMELOOP_WITHOUT_GAMELOOP() CRITICAL("E141 - END GAMELOOP without BEGIN GAMELOOP" );
 #define CRITICAL_EVERY_OFF_WITHOUT_EVERY() CRITICAL("E142 - EVERY OFF without EVERY definition" );
 #define CRITICAL_WEND_WITHOUT_WHILE() CRITICAL("E143 - WEND without WHILE" );
