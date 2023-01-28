@@ -264,9 +264,9 @@ static void basic_peephole(POBuffer buf[LOOK_AHEAD], int zA, int zB) {
         po_buf_match( buf[2], " LD (*), A", v2 ) &&
         po_buf_strcmp( v1, v2 ) == 0
         ) {
-		optim( buf[0], RULE "(LD A, (x); INC A; LD (x), A)->(LD HL, x; INC (HL))", "\tLD HL, %s", v1->str );
+		optim( buf[0], RULE "(LD A, (x); INC A; LD (x), A)->(LD HL, x; INC (HL); LD A, (HL)", "\tLD HL, %s", v1->str );
 		optim( buf[1], NULL, "\tINC (HL)" );
-		optim( buf[2], NULL, NULL );
+		optim( buf[2], NULL, "\tLD A, (HL)" );
     }
 
     // ; Instead of :
