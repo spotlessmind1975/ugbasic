@@ -82,6 +82,29 @@ void cpc_inkey( Environment * _environment, char * _pressed, char * _key ) {
 
     deploy( scancode, src_hw_cpc_scancode_asm );
 
+    outline0("CALL INKEY");
+    outline0("CP 0");
+    outline1("JR NZ, %skey", label);
+    outhead1("%snokey:", label);
+    outline1("LD (%s), A", _pressed);
+    outline1("LD (%s), A", _key);
+    outline1("JP %sdone", label);
+    outhead1("%skey:", label);
+    outline1("LD (%s), A", _key);
+    outline0("LD A, 1");
+    outline1("LD (%s), A", _pressed);
+    outhead1("%sdone:", label);
+   
+}
+
+void cpc_scancode( Environment * _environment, char * _pressed, char * _scancode ) {
+
+    MAKE_LABEL
+
+    _environment->bitmaskNeeded = 1;
+
+    deploy( scancode, src_hw_cpc_scancode_asm );
+
     outline0("CALL SCANCODE");
     outline0("LD A, E");
     outline0("CP 0");
@@ -89,20 +112,14 @@ void cpc_inkey( Environment * _environment, char * _pressed, char * _key ) {
     outhead1("%snokey:", label);
     outline0("LD A, 0");
     outline1("LD (%s), A", _pressed);
-    outline1("LD (%s), A", _key);
+    outline1("LD (%s), A", _scancode);
     outline1("JP %sdone", label);
     outhead1("%skey:", label);
     outline0("LD A, 1");
     outline1("LD (%s), A", _pressed);
     outline0("LD A, E");
-    outline1("LD (%s), A", _key);
+    outline1("LD (%s), A", _scancode);
     outhead1("%sdone:", label);
-   
-}
-
-void cpc_scancode( Environment * _environment, char * _pressed, char * _scancode ) {
-
-    cpc_inkey( _environment, _pressed, _scancode );
    
 }
 
