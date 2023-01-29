@@ -270,6 +270,164 @@ void variable_global( Environment * _environment, char * _pattern ) {
 
 }
 
+static int variable_is_global( Environment * _environment, char * _name ) {
+
+    int isGlobal = 0;
+
+    // Has the variable the "form" of a parameter?
+    // In that case, it is global by definition.
+
+    if ( strstr( _name, "__" ) != NULL ) {
+        isGlobal = 1;
+    }
+
+    if ( !isGlobal ) {
+
+        // Has the variable a "global" pattern?
+
+        Pattern * current = _environment->globalVariablePatterns;
+
+        while( current ) {
+            if ( pattern_match( current->pattern, _name ) ) {
+                isGlobal = 1;
+                break;
+            }
+            current = current->next;
+        }
+
+    }
+
+    return isGlobal;
+
+}
+
+/**
+ * @brief Retrieve the definition of a variable
+ * 
+ * This function allows you to retrieve the definition of an actual or temporary 
+ * variable, searching for it by name. Where the variable does not exist, a NULL 
+ * will be returned. Otherwise, a pointer to the structure with the variable 
+ * definition.
+ * 
+ * @param _environment Current calling environment
+ * @param _name Name of the variable to look for.
+ * @return Variable* Definition of the variable (if it exists) or NULL.
+ */
+Variable * variable_retrieve_internal( Environment * _environment, char * _name, int _mandatory ) {
+
+    // Try to retrieve a variable in a rational way.
+
+    Variable * var = NULL;
+
+    // Check if the variable is global or not.
+
+    int isGlobal = variable_is_global( _environment, _name );
+
+    // If the variable is not global and we are inside a procedure...
+
+    if ( _environment->procedureName && !isGlobal ) {
+
+        // Look for parameters
+
+        char parameterName[MAX_TEMPORARY_STORAGE]; sprintf( parameterName, "%s__%s", _environment->procedureName, _name );
+        var = variable_find( _environment->variables, parameterName );
+
+        // If not found, look for variable inside the set of temporary variables
+        // for this specific procedure.
+
+        if ( !var ) {
+            var = variable_find( _environment->tempVariables[_environment->currentProcedure], _name );
+        }
+
+        // If not found, take a look to the resident ones.
+
+        if ( !var ) {
+            var = variable_find( _environment->tempResidentVariables, _name );
+        }
+
+        // Again, if not found, take a look into the variables for this specific procedure.
+
+        if ( !var ) {
+            var = variable_find( _environment->procedureVariables, _name );
+        }
+
+    } else {
+
+        // Look for variable inside the set of temporary variables
+        // for the main program.
+
+        var = variable_find( _environment->tempVariables[0], _name );
+
+        // If not found, take a look to the resident ones.
+        
+        if ( !var ) {
+            var = variable_find( _environment->tempResidentVariables, _name );
+        }
+
+        // Again, if not found, take a look into the variables
+        // for the program.
+
+        if ( !var ) {
+            var = variable_find( _environment->variables, _name );
+        }
+
+    }
+
+    // If the variable has been found, we will convert it into the target
+    // data type if it is different from the source one.
+
+    if ( !var && _mandatory ) {
+        CRITICAL_VARIABLE( _name );
+    }
+
+    return var;
+
+}
+
+static Variable * variable_define_internal( Environment * _environment, Variable ** _variables, char * _name, char * _procedure_name, VariableType _type, int _value ) {
+
+    Variable * var = malloc( sizeof( Variable ) );
+    memset( var, 0, sizeof( Variable ) );
+    var->name = strdup( _name );
+
+    if ( _procedure_name ) {
+        var->realName = malloc( strlen( _name ) + strlen( _procedure_name ) + 3 ); 
+        strcpy( var->realName, "_" ); 
+        strcat( var->realName, _procedure_name );
+        strcat( var->realName, "_" );
+        strcat( var->realName, var->name );
+    } else {
+        var->realName = malloc( strlen( _name ) + 2 ); 
+        strcpy( var->realName, "_" ); 
+        strcat( var->realName, var->name );
+    }
+
+    var->type = _type;
+    var->value = _value;
+    var->bank = _environment->banks[BT_VARIABLES];
+    var->used = 1;
+    var->locked = 0;
+
+    Variable * varLast = *_variables;
+    if ( varLast ) {
+        while( varLast->next ) {
+            varLast = varLast->next;
+        }
+        varLast->next = var;
+    } else {
+        *_variables = var;
+    }
+
+    if ( var->type == VT_ARRAY ) {
+        memcpy( var->arrayDimensionsEach, ((struct _Environment *)_environment)->arrayDimensionsEach, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
+        var->arrayDimensions = ((struct _Environment *)_environment)->arrayDimensions;
+    }
+    memory_area_assign( _environment->memoryAreas, var );
+
+    return var;
+
+}
+
 /**
  * @brief Define a variable for the program
  * 
@@ -327,6 +485,13 @@ Definisci una variabile [name] sul banko [bank]. Eventualmente,
 
 Variable * variable_define( Environment * _environment, char * _name, VariableType _type, int _value ) {
 
+    // Let's manage the variable definition in a more rational way.
+
+    int isGlobal = 0;
+
+    // First of all, avoid to define a variable if a constant with the same
+    // name already exists.
+
     if (_environment->constants) {
         Constant * c = constant_find( _environment->constants, _name );
         if ( c ) {
@@ -334,51 +499,48 @@ Variable * variable_define( Environment * _environment, char * _name, VariableTy
         }
     }
 
-    Variable * var = variable_find( _environment->variables, _name );
+    isGlobal = variable_is_global( _environment, _name );
+
+    // Now, we have to look if the variable is already defined in the
+    // correct context. 
+
+    Variable * var = variable_retrieve_internal( _environment, _name, 0 );
+
+    // If the variable already exists, we can use it if it is of the
+    // very same type. This is allowed in BASIC programs.
+
     if ( var ) {
         if ( var->type != _type ) {
             CRITICAL_VARIABLE_REDEFINED_DIFFERENT_TYPE( _name );
-        }
-        var->value = _value;
-    } else {
-        var = malloc( sizeof( Variable ) );
-        memset( var, 0, sizeof( Variable ) );
-        var->name = strdup( _name );
-        var->realName = malloc( strlen( _name ) + strlen( var->name ) + 2 ); strcpy( var->realName, "_" ); strcat( var->realName, var->name );
-        var->type = _type;
-        var->value = _value;
-        var->bank = _environment->banks[BT_VARIABLES];
-        Variable * varLast = _environment->variables;
-        if ( varLast ) {
-            while( varLast->next ) {
-                varLast = varLast->next;
-            }
-            varLast->next = var;
         } else {
-            _environment->variables = var;
+            return var;
         }
-        if ( var->type == VT_ARRAY ) {
-            memcpy( var->arrayDimensionsEach, ((struct _Environment *)_environment)->arrayDimensionsEach, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
-            var->arrayDimensions = ((struct _Environment *)_environment)->arrayDimensions;
-        }
-        // switch( var->type ) {
-        //     case VT_STRING:
-        //     case VT_DSTRING:
-        //     case VT_MOB:
-        //     case VT_BUFFER:
-        //     case VT_IMAGE:
-        //     case VT_IMAGES:
-        //     case VT_ARRAY:
-        //         break;
-        //     default:
-        //         ;
-        //         // variable_store( _environment, var->name, _value );
-        // }
-        memory_area_assign( _environment->memoryAreas, var );
     }
-    var->used = 1;
-    var->locked = 0;
+
+    // Now, you can define a variable of STRING type, but it will be
+    // always a dynamic string. Static string cannot be variables.
+    // if ( _type == VT_STRING ) {
+    //     _type = VT_DSTRING;
+    // }
+
+    // Global variable must be defined in a different way from local variables.
+
+    if ( _environment->procedureName && !isGlobal ) {
+
+        var = variable_define_internal( _environment, &_environment->procedureVariables, _name, _environment->procedureName, _type, _value );
+
+    } 
+    
+    // Here we define a local variable
+
+    else {
+
+        var = variable_define_internal( _environment, &_environment->variables, _name, NULL, _type, _value );
+
+    }        
+
     return var;
+
 }
 
 Variable * variable_import( Environment * _environment, char * _name, VariableType _type, int _size_or_value ) {
@@ -464,68 +626,6 @@ Variable * variable_define_no_init( Environment * _environment, char * _name, Va
     return var;
 }
 
-Variable * variable_define_local( Environment * _environment, char * _name, VariableType _type, int _value ) {
-
-    if (_environment->constants) {
-        Constant * c = constant_find( _environment->constants, _name );
-        if ( c ) {
-            CRITICAL_CONSTANT_ALREADY_DEFINED_AS_VARIABLE( _name );
-        }
-    }
-
-    Variable * var = variable_find( _environment->procedureVariables, _name );
-    if ( var ) {
-        if ( var->type != _type ) {
-            CRITICAL_VARIABLE_REDEFINED_DIFFERENT_TYPE( _name );
-        }
-        var->value = _value;
-    } else {
-        var = malloc( sizeof( Variable ) );
-        memset( var, 0, sizeof( Variable ) );
-        var->name = strdup( _name );
-        var->realName = malloc( strlen( _name ) + strlen( _environment->procedureName ) + 3 ); strcpy( var->realName, "_" ); strcat( var->realName, _environment->procedureName ); strcat( var->realName, "_" ); strcat( var->realName, _name );
-        var->type = _type;
-        var->value = _value;
-        var->bank = _environment->banks[BT_VARIABLES];
-        Variable * varLast = _environment->procedureVariables;
-        if ( varLast ) {
-            while( varLast->next ) {
-                varLast = varLast->next;
-            }
-            varLast->next = var;
-        } else {
-            _environment->procedureVariables = var;
-        }
-        switch( var->type ) {
-            case VT_STRING:
-            case VT_DSTRING:
-            case VT_MOB:
-            // case VT_TILE:
-            // case VT_TILESET:
-            // case VT_TILES:
-            case VT_SPRITE:
-            case VT_BUFFER:
-            case VT_IMAGE:
-            case VT_IMAGES:
-            case VT_SEQUENCE:
-            case VT_MUSIC:
-            case VT_ARRAY:
-                break;
-            default:
-                variable_store( _environment, var->name, _value );
-        }
-        if ( var->type == VT_ARRAY ) {
-            memcpy( var->arrayDimensionsEach, ((struct _Environment *)_environment)->arrayDimensionsEach, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
-            var->arrayDimensions = ((struct _Environment *)_environment)->arrayDimensions;
-        }
-        memory_area_assign( _environment->memoryAreas, var );
-    }
-    var->used = 1;
-    var->locked = 0;
-    return var;
-}
-
-
 Variable * variable_retrieve_by_realname( Environment * _environment, char * _name ) {
 
     Variable * var = NULL;
@@ -547,115 +647,15 @@ Variable * variable_retrieve_by_realname( Environment * _environment, char * _na
     return var;
 }
 
-/**
- * @brief Retrieve the definition of a variable
- * 
- * This function allows you to retrieve the definition of an actual or temporary 
- * variable, searching for it by name. Where the variable does not exist, a NULL 
- * will be returned. Otherwise, a pointer to the structure with the variable 
- * definition.
- * 
- * @param _environment Current calling environment
- * @param _name Name of the variable to look for.
- * @return Variable* Definition of the variable (if it exists) or NULL.
- */
 Variable * variable_retrieve( Environment * _environment, char * _name ) {
 
-    if ( _environment->procedureName && strstr( _name, "__" ) == NULL ) {
-        char parameterName[MAX_TEMPORARY_STORAGE]; sprintf( parameterName, "%s__%s", _environment->procedureName, _name );
-        Variable * var = variable_find( _environment->variables, parameterName );
-        if ( var ) {
-            return var;
-        }
-    }
+    return variable_retrieve_internal( _environment, _name, 1 );
 
-    int isGlobal = 0;
-    Variable * var = NULL;
-    if ( _environment->procedureName ) {
-        var = variable_find( _environment->tempVariables[_environment->currentProcedure], _name );
-    } else {
-        var = variable_find( _environment->tempVariables[0], _name );
-    }
-    if ( ! var ) {
-        var = variable_find( _environment->tempResidentVariables, _name );
-    }
-    if ( ! var ) {
-        Pattern * current = _environment->globalVariablePatterns;
-        if ( _environment->procedureName ) {
-            if ( strstr( _name, "__" ) != NULL ) {
-                isGlobal = 1;
-            } else {
-                while( current ) {
-                    if ( pattern_match( current->pattern, _name ) == 0 ) {
-                        isGlobal = 1;
-                        break;
-                    }
-                    current = current->next;
-                }
-            }
-        } else {
-            isGlobal = 1;
-        }
-        if ( isGlobal ) {
-            var = variable_find( _environment->variables, _name );
-        } else {
-            var = variable_find( _environment->procedureVariables, _name );
-        }
-        // _environment->globalVariablePatterns;
-    }
-    if ( ! var ) {
-        CRITICAL_VARIABLE( _name );
-    }
-    return var;
 }
 
 int variable_exists( Environment * _environment, char * _name ) {
-    if ( _environment->procedureName && strstr( _name, "__" ) == NULL ) {
-        char parameterName[MAX_TEMPORARY_STORAGE]; sprintf( parameterName, "%s__%s", _environment->procedureName, _name );
-        Variable * var = variable_find( _environment->variables, parameterName );
-        if ( var ) {
-            return 1;
-        }
-    }
 
-    int isGlobal = 0;
-    Variable * var = NULL;
-    if ( _environment->procedureName ) {
-        var = variable_find( _environment->tempVariables[_environment->currentProcedure], _name );
-    } else {
-        var = variable_find( _environment->tempVariables[0], _name );
-    }
-    if ( ! var ) {
-        var = variable_find( _environment->tempResidentVariables, _name );
-    }
-    if ( ! var ) {
-        Pattern * current = _environment->globalVariablePatterns;
-        if ( _environment->procedureName ) {
-            if ( strstr( _name, "__" ) != NULL ) {
-                isGlobal = 1;
-            } else {
-                while( current ) {
-                    if ( pattern_match( current->pattern, _name ) == 0 ) {
-                        isGlobal = 1;
-                        break;
-                    }
-                    current = current->next;
-                }
-            }
-        } else {
-            isGlobal = 1;
-        }
-        if ( isGlobal ) {
-            var = variable_find( _environment->variables, _name );
-        } else {
-            var = variable_find( _environment->procedureVariables, _name );
-        }
-        // _environment->globalVariablePatterns;
-    }
-    if ( ! var ) {
-        return 0;
-    }
-    return 1;
+    return variable_retrieve_internal( _environment, _name, 0 ) != NULL;
 
 }
 
@@ -688,92 +688,64 @@ int variable_delete( Environment * _environment, char * _name ) {
 
 Variable * variable_retrieve_or_define( Environment * _environment, char * _name, VariableType _type, int _value ) {
 
-    if (_environment->constants) {
-        Constant * c = constant_find( _environment->constants, _name );
-        if ( c ) {
-            CRITICAL_CONSTANT_ALREADY_DEFINED_AS_VARIABLE( _name );
-        }
-    }
+    // Try to retrieve / create a variable in a rational way.
 
-    Variable * var = NULL;
-    if ( _environment->procedureName ) {
-        var = variable_find( _environment->tempVariables[_environment->currentProcedure], _name );
-    } else {
-        var = variable_find( _environment->tempVariables[0], _name );
-    }
-    if ( !var ) {
-        var = variable_find( _environment->tempResidentVariables, _name );
-    }
-    if ( var ){
+    // Check if the variable is global or not.
+
+    int isGlobal = variable_is_global( _environment, _name );
+
+    Variable * var = variable_retrieve_internal( _environment, _name, 0 );
+
+    // If the variable has been found, we will convert it into the target
+    // data type if it is different from the source one.
+
+    if ( var ) {
         if ( VT_BITWIDTH( var->type ) != VT_BITWIDTH( _type ) && VT_BITWIDTH( _type ) > 0 && VT_BITWIDTH( var->type ) > 0 ) {
             var = variable_cast( _environment, var->name, _type );
         }
         return var;
     }
 
-    if ( _environment->procedureName && strstr( _name, "__" ) == NULL ) {
-        char parameterName[MAX_TEMPORARY_STORAGE]; sprintf( parameterName, "%s__%s", _environment->procedureName, _name );
-        var = variable_find( _environment->variables, parameterName );
-        if ( var ) {
-            if ( VT_BITWIDTH( var->type ) != VT_BITWIDTH( _type ) && VT_BITWIDTH( _type ) > 0 && VT_BITWIDTH( var->type ) > 0 ) {
-                var = variable_cast( _environment, var->name, _type );
-            }
-            return var;
-        }
+    // When retrieving a variable of type STRING, ad it does not exists,
+    // we are going to redefine it as a dynamic string.
+
+    if ( _type == VT_STRING ) {
+        _type = VT_DSTRING;
     }
 
-    var = variable_find( _environment->procedureVariables, _name );
+    // If the variables has been detected as global,
+    // we must define it. But, if we are inside a procedure,
+    // we have to define it without initialization.
+    if ( _environment->procedureName && !isGlobal ) {
 
-    if ( ! var ) {
-        if ( _type == VT_STRING ) {
-            _type = VT_DSTRING;
-        }
-        int isGlobal = 0;
-        Pattern * current = _environment->globalVariablePatterns;
-        if ( _environment->procedureName ) {
-            if ( strstr( _name, "__" ) != NULL ) {
-                isGlobal = 1;
-            } else {
-                while( current ) {
-                    if ( pattern_match( current->pattern, _name ) == 0 ) {
-                        isGlobal = 1;
-                        break;
-                    }
-                    current = current->next;
-                }
-            }
+        // If OPTION EXPLICIT is on, we cannot define a (local) variable
+        // if it is not already defined.
+
+        if ( !_environment->optionExplicit ) {
+            var = variable_define_internal( _environment, &_environment->procedureVariables, _name, _environment->procedureName, _type, _value );
         } else {
-            isGlobal = 1;
+            CRITICAL_VARIABLE_UNDEFINED( _name );
         }
-        if ( isGlobal ) {
-            var = variable_find( _environment->variables, _name );
-            if ( ! var  ) {
-                if ( !_environment->optionExplicit ) {
-                    if ( _environment->procedureName ) {
-                        var = variable_define_no_init( _environment, _name, _type );
-                    } else {
-                        var = variable_define( _environment, _name, _type, _value );
-                    }
-                } else {
-                    CRITICAL_VARIABLE_UNDEFINED( _name );
-                }
-            }
-        } else {
-            if ( !_environment->optionExplicit ) {
-                var = variable_define_local( _environment, _name, _type, _value );
-            } else {
-                CRITICAL_VARIABLE_UNDEFINED( _name );
-            }
-        }        
-    }
-    if (!var) {
-        CRITICAL_VARIABLE( _name );
+
     } else {
-        if ( VT_BITWIDTH( var->type ) != VT_BITWIDTH( _type ) && VT_BITWIDTH( _type ) > 0 && VT_BITWIDTH( var->type ) > 0 ) {
-            var = variable_cast( _environment, var->name, _type );
+
+        // If OPTION EXPLICIT is on, we cannot define a variable
+        // if it is not already defined.
+
+        if ( !_environment->optionExplicit ) {
+            if ( _environment->procedureName ) {
+                var = variable_define_no_init( _environment, _name, _type );
+            } else {
+                var = variable_define_internal( _environment, &_environment->variables, _name, _environment->procedureName, _type, _value );
+            }
+        } else {
+            CRITICAL_VARIABLE_UNDEFINED( _name );
         }
-    }
+
+    }        
+
     return var;
+
 }
 
 /**
@@ -867,71 +839,106 @@ Variable * variable_array_type( Environment * _environment, char *_name, Variabl
  */
 Variable * variable_temporary( Environment * _environment, VariableType _type, char * _meaning ) {
 
+    // Make a rational way to define temporary variables.
+
     Variable * var = NULL;
+
+    // The set of temporary.
+
+    Variable ** variableSet = NULL;
+
+    // We have a different set of temporary variables if we are inside 
+    // a procedure or outside.
+
     if ( _environment->procedureName ) {
-        var = variable_find_first_unused( _environment->tempVariables[_environment->currentProcedure], _type );
+
+        // Take the set of temporary variables inside the procedure.
+
+        variableSet = &_environment->tempVariables[_environment->currentProcedure];
+
     } else {
-        var = variable_find_first_unused( _environment->tempVariables[0], _type );
+
+        // Take the set of temporary variables inside the program.
+
+        variableSet = &_environment->tempVariables[0];
+
     }    
+
+    // Take a look at the temporary variable, to see if any
+    // temporary variable is available, inside the procedure.
+
+    var = variable_find_first_unused( *variableSet, _type );
+
+    // If the var has been found, we change its meaning.
+
     if ( var ) {
-        var->meaningName = _meaning;
+
+        var->meaningName = strdup( _meaning );
+
     } else {
+       
+        // Calculate the name of the temporary variable.
+
         char * name = malloc(MAX_TEMPORARY_STORAGE);
-        var = malloc( sizeof( Variable ) );
-        memset( var, 0, sizeof( Variable ) );
-        var->locked = 0;
         if ( _type == VT_STRING ) {
             sprintf(name, "Tstr%d", UNIQUE_ID);
-            var->locked = 1;
         } else if ( _type == VT_BUFFER ) {
             sprintf(name, "Tbuf%d", UNIQUE_ID);
-            var->locked = 1;
         } else if ( _type == VT_IMAGE ) {
             sprintf(name, "Timg%d", UNIQUE_ID);
-            var->locked = 1;
         } else if ( _type == VT_IMAGES ) {
             sprintf(name, "Timgs%d", UNIQUE_ID);
-            var->locked = 1;
         } else if ( _type == VT_SEQUENCE ) {
             sprintf(name, "Tseq%d", UNIQUE_ID);
-            var->locked = 1;
         } else if ( _type == VT_MUSIC ) {
             sprintf(name, "Tmus%d", UNIQUE_ID);
-            var->locked = 1;
         } else {
             sprintf(name, "Ttmp%d", UNIQUE_ID);
         }
-        var->name = name;
-        var->realName = malloc( strlen( var->name ) + 2 ); strcpy( var->realName, "_" ); strcat( var->realName, var->name );
-        var->meaningName = _meaning;
-        var->type = _type;
-        var->bank = _environment->banks[BT_TEMPORARY];
-        Variable * varLast = NULL;
-        if ( _environment->procedureName ) {
-            varLast = _environment->tempVariables[_environment->currentProcedure];
-        } else {
-            varLast = _environment->tempVariables[0];
-        }        
-        if ( varLast ) {
-            while( varLast->next ) {
-                varLast = varLast->next;
-            }
-            varLast->next = var;
-        } else {
-            if ( _environment->procedureName ) {
-                _environment->tempVariables[_environment->currentProcedure] = var;
-            } else {
-                _environment->tempVariables[0] = var;
-            }                
-        }
-        memory_area_assign( _environment->memoryAreas, var );
-    }
-    if ( var->meaningName ) {
+
+        // Allocate the variable.
+
+        var = variable_define_internal( _environment, variableSet, name, _environment->procedureName, _type, 0 );
+
+        // Make it "locked" if the correct type.
         
+        if ( _type == VT_STRING ) {
+            var->locked = 1;
+        } else if ( _type == VT_BUFFER ) {
+            var->locked = 1;
+        } else if ( _type == VT_IMAGE ) {
+            var->locked = 1;
+        } else if ( _type == VT_IMAGES ) {
+            var->locked = 1;
+        } else if ( _type == VT_SEQUENCE ) {
+            var->locked = 1;
+        } else if ( _type == VT_MUSIC ) {
+            var->locked = 1;
+        } else {
+
+        }
+
+        // Update the meaning of this temporary variable.
+
+        var->meaningName = _meaning ? strdup( _meaning ) : NULL;
+
+        // Assign the correct bank.
+
+        var->bank = _environment->banks[BT_TEMPORARY];
+
+        // Assign the correct memory ara.
+
+        memory_area_assign( _environment->memoryAreas, var );
+
     }
+
+    // Mark this variable as used and temporary.
+
     var->used = 1;
     var->temporary = 1;
+
     return var;
+
 }
 
 Variable * variable_resident( Environment * _environment, VariableType _type, char * _meaning ) {
@@ -1126,7 +1133,6 @@ char * unescape_string( Environment * _environment, char * _value, int _printing
                     memset( word, 0, MAX_TEMPORARY_STORAGE );
                     memcpy( word, p, p2-p );
                     p = p2+1;
-                    // printf( "checking '%s'\n", word );
 
                     if ( strcmp_nocase( word, "clear" ) == 0 ) {
                         if ( _printing ) {
@@ -1186,13 +1192,6 @@ char * unescape_string( Environment * _environment, char * _value, int _printing
             ++p;
         }
     }
-
-    // printf( "\"%s\" = { ", _value );
-    // int i=0;
-    // for( i=0; i<strlen(newValue); ++i ) {
-    //     printf( "$%2.2x, ", (unsigned char)*(newValue+i) );
-    // }
-    // printf( "}\n" );
 
     return newValue;
 
