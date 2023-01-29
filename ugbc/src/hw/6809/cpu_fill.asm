@@ -39,6 +39,6 @@ CPUFILL
 CPUFILLL1
     DECB
     STA B,X
-    CMPB #$ff
+    CMPB #$0
     BNE CPUFILLL1
     RTS
