@@ -1071,41 +1071,21 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
 
     image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
-    RGBi palette[MAX_PALETTE];
+    RGBi * palette = malloc_palette( MAX_PALETTE );
+    
+    int paletteColorCount = rgbi_extract_palette(_source, _width, _height, _depth, palette, MAX_PALETTE, ( ( _flags & FLAG_EXACT ) ? 0 : 1 ) /* sorted */);
 
-    int colorUsed = rgbi_extract_palette(_source, _width, _height, _depth, palette, MAX_PALETTE, 1 /* sorted */ );
-
-    if (colorUsed > 2) {
-        CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
+    if (paletteColorCount > 2) {
+        CRITICAL_IMAGE_CONVERTER_TOO_COLORS( paletteColorCount );
     }
-
-    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
-    result->originalColors = colorUsed;
 
     int i, j, k;
 
-    for( i=0; i<colorUsed; ++i ) {
-        unsigned int minDistance = 0xffff;
-        int colorIndex = 0;
-        for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
-            int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
-            if (distance < minDistance) {
-                for( k=0; k<i; ++k ) {
-                    if ( palette[k].index == SYSTEM_PALETTE[j].index ) {
-                        break;
-                    }
-                }
-                if ( k>=i ) {
-                    minDistance = distance;
-                    colorIndex = j;
-                }
-            }
-        }
-        palette[i].index = SYSTEM_PALETTE[colorIndex].index;
-        strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
-    }
+    RGBi * matchedPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
 
-    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
+    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
+    result->originalColors = paletteColorCount;
+    memcpy( result->originalPalette, commonPalette, paletteColorCount * sizeof( RGBi ) );
 
     int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_RESOLUTION1 );
     // printf("bufferSize = %d\n", bufferSize );
@@ -1144,7 +1124,7 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
                 rgb.alpha = 255;
             }
 
-            for( i=0; i<colorUsed; ++i ) {
+            for( i=0; i<paletteColorCount; ++i ) {
                 if ( rgbi_equals_rgba( &palette[i], &rgb ) ) {
                     break;
                 }
@@ -1192,49 +1172,33 @@ static Variable * c6847_image_converter_multicolor_mode_standard( Environment * 
 
     image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
-    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
+    RGBi * palette = malloc_palette( MAX_PALETTE );
+    
+    int paletteColorCount = rgbi_extract_palette(_source, _width, _height, _depth, palette, MAX_PALETTE, ( ( _flags & FLAG_EXACT ) ? 0 : 1 ) /* sorted */);
 
-    RGBi * palette = malloc( sizeof( RGBi ) * MAX_PALETTE );
-    int colorUsed = rgbi_extract_palette(_source, _width, _height, _depth, palette, MAX_PALETTE, 1 /* sorted */ );
-    result->originalColors = colorUsed;
+    if (paletteColorCount > 4) {
+        CRITICAL_IMAGE_CONVERTER_TOO_COLORS( paletteColorCount );
+    }
+
+    int i, j, k;
 
     if ( ! commonPalette ) {
 
-        if (colorUsed > 4) {
-            CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
-        }
+        commonPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
+    
+    } else {
 
-        int i, j, k;
+        RGBi * newPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
 
-        for( i=0; i<colorUsed; ++i ) {
-            unsigned int minDistance = 0xffff;
-            int colorIndex = 0;
-            for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
-                int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
-                // printf("%d (%2.2x%2.2x%2.2x) <-> %d (%2.2x%2.2x%2.2x) [%d] = %d [min = %d]\n", i, SYSTEM_PALETTE[j].red, SYSTEM_PALETTE[j].green, SYSTEM_PALETTE[j].blue, j, palette[i].red, palette[i].green, palette[i].blue, SYSTEM_PALETTE[j].index, distance, minDistance );
-                if (distance < minDistance) {
-                    // printf(" candidated...\n" );
-                    for( k=0; k<i; ++k ) {
-                        if ( palette[k].index == SYSTEM_PALETTE[j].index ) {
-                            // printf(" ...used!\n" );
-                            break;
-                        }
-                    }
-                    if ( k>=i ) {
-                        // printf(" ...ok! (%d)\n", SYSTEM_PALETTE[j].index );
-                        minDistance = distance;
-                        colorIndex = j;
-                    }
-                }
-            }
-            palette[i].index = SYSTEM_PALETTE[colorIndex].index;
-            strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
-            // printf("%d) %d * %d %2.2x%2.2x%2.2x\n", i, colorIndex, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
-        }
+        int mergedCommonPalette = 0;
 
-        commonPalette = palette;
+        commonPalette = palette_merge( commonPalette, paletteColorCount, newPalette, paletteColorCount, &mergedCommonPalette );
 
     }
+
+    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
+
+    result->originalColors = paletteColorCount;
 
     memcpy( result->originalPalette, commonPalette, MAX_PALETTE * sizeof( RGBi ) );
 
@@ -1268,17 +1232,26 @@ static Variable * c6847_image_converter_multicolor_mode_standard( Environment * 
             rgb.red = *_source;
             rgb.green = *(_source + 1);
             rgb.blue = *(_source + 2);
+            if ( _depth > 3 ) {
+                rgb.alpha = *(_source + 3);
+            } else {
+                rgb.alpha = 255;
+            }
 
             offset = ( image_y * ( _frame_width >> 2 ) ) + ( image_x >> 2 );
 
             int colorIndex = 0;
 
-            int minDistance = 9999;
-            for( int i=0; i<4; ++i ) {
-                int distance = rgbi_distance(&commonPalette[i], &rgb );
-                if ( distance < minDistance ) {
-                    minDistance = distance;
-                    colorIndex = commonPalette[i].index;
+            if ( rgb.alpha < 255 ) {
+                colorIndex = 0;
+            } else {
+                int minDistance = 9999;
+                for( int i=0; i<4; ++i ) {
+                    int distance = rgbi_distance(&commonPalette[i], &rgb );
+                    if ( distance < minDistance ) {
+                        minDistance = distance;
+                        colorIndex = commonPalette[i].index;
+                    }
                 }
             }
 
@@ -1288,7 +1261,7 @@ static Variable * c6847_image_converter_multicolor_mode_standard( Environment * 
 
             *(buffer + 2 + offset) |= bitmask;
 
-            _source += 3;
+            _source += _depth;
 
         }
 
