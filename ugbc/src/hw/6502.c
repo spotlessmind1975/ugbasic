@@ -3131,25 +3131,27 @@ void cpu6502_random( Environment * _environment, char * _entropy ) {
 
     inline( cpu_random )
 
-        outhead1("%s:", label);
-        outline0("ASL CPURANDOM_SEED");
-        outline0("ROL CPURANDOM_SEED+1");
-        outline0("ROL CPURANDOM_SEED+2");
-        outline0("ROL CPURANDOM_SEED+3");
-        outline1("BCC %sxx2", label);
-        outline0("LDA CPURANDOM_SEED");
-        outline1("EOR %s", _entropy)
-        outline0("STA CPURANDOM_SEED");
-        outline0("LDA CPURANDOM_SEED+1");
-        outline0("EOR #$1D");
-        outline0("STA CPURANDOM_SEED+1" );
-        outline0("LDA CPURANDOM_SEED+2" );
-        outline0("EOR #$C1" );
-        outline0("STA CPURANDOM_SEED+2" );
-        outline0("LDA CPURANDOM_SEED+3" );
-        outline0("EOR #$04" );
-        outline0("STA CPURANDOM_SEED+3" );
-        outhead1("%sxx2:", label);
+        if ( _entropy ) {
+            outhead1("%s:", label);
+            outline0("ASL CPURANDOM_SEED");
+            outline0("ROL CPURANDOM_SEED+1");
+            outline0("ROL CPURANDOM_SEED+2");
+            outline0("ROL CPURANDOM_SEED+3");
+            outline1("BCC %sxx2", label);
+            outline0("LDA CPURANDOM_SEED");
+            outline1("EOR %s", _entropy)
+            outline0("STA CPURANDOM_SEED");
+            outline0("LDA CPURANDOM_SEED+1");
+            outline0("EOR #$1D");
+            outline0("STA CPURANDOM_SEED+1" );
+            outline0("LDA CPURANDOM_SEED+2" );
+            outline0("EOR #$C1" );
+            outline0("STA CPURANDOM_SEED+2" );
+            outline0("LDA CPURANDOM_SEED+3" );
+            outline0("EOR #$04" );
+            outline0("STA CPURANDOM_SEED+3" );
+            outhead1("%sxx2:", label);
+        }
 
     embedded( cpu_random, src_hw_6502_cpu_random_asm );
 
@@ -3164,11 +3166,13 @@ void cpu6502_random_8bit( Environment * _environment, char * _entropy, char * _r
 
         cpu6502_random( _environment, _entropy );
 
-        outline1("LDA %s", _entropy );
-        outline0("STA CPURANDOM_ENTROPY" );
-        outline0("JSR CPURANDOM16" );
-        outline0("LDA CPURANDOM_SEED" );
-        outline1("STA %s", _result );
+        if ( _result ) {
+            outline1("LDA %s", _entropy );
+            outline0("STA CPURANDOM_ENTROPY" );
+            outline0("JSR CPURANDOM16" );
+            outline0("LDA CPURANDOM_SEED" );
+            outline1("STA %s", _result );
+        }
 
     no_embedded( cpu_random_8bit );
 
@@ -3180,13 +3184,15 @@ void cpu6502_random_16bit( Environment * _environment, char * _entropy, char * _
 
         cpu6502_random( _environment, _entropy );
 
-        outline1("LDA %s", _entropy );
-        outline0("STA CPURANDOM_ENTROPY" );
-        outline0("JSR CPURANDOM16" );
-        outline0("LDA CPURANDOM_SEED" );
-        outline1("STA %s", _result );
-        outline0("LDA CPURANDOM_SEED+1" );
-        outline1("STA %s+1", _result );
+        if ( _result ) {
+            outline1("LDA %s", _entropy );
+            outline0("STA CPURANDOM_ENTROPY" );
+            outline0("JSR CPURANDOM16" );
+            outline0("LDA CPURANDOM_SEED" );
+            outline1("STA %s", _result );
+            outline0("LDA CPURANDOM_SEED+1" );
+            outline1("STA %s+1", _result );
+        }
 
     no_embedded( cpu_random_8bit );
 
@@ -3198,17 +3204,19 @@ void cpu6502_random_32bit( Environment * _environment, char * _entropy, char * _
 
         cpu6502_random( _environment, _entropy );
 
-        outline1("LDA %s", _entropy );
-        outline0("STA CPURANDOM_ENTROPY" );
-        outline0("JSR CPURANDOM32" );
-        outline0("LDA CPURANDOM_SEED" );
-        outline1("STA %s", _result );
-        outline0("LDA CPURANDOM_SEED+1" );
-        outline1("STA %s+1", _result );
-        outline0("LDA CPURANDOM_SEED+2" );
-        outline1("STA %s+2", _result );
-        outline0("LDA CPURANDOM_SEED+3" );
-        outline1("STA %s+3", _result );
+        if ( _result ) {
+            outline1("LDA %s", _entropy );
+            outline0("STA CPURANDOM_ENTROPY" );
+            outline0("JSR CPURANDOM32" );
+            outline0("LDA CPURANDOM_SEED" );
+            outline1("STA %s", _result );
+            outline0("LDA CPURANDOM_SEED+1" );
+            outline1("STA %s+1", _result );
+            outline0("LDA CPURANDOM_SEED+2" );
+            outline1("STA %s+2", _result );
+            outline0("LDA CPURANDOM_SEED+3" );
+            outline1("STA %s+3", _result );
+        }
 
     no_embedded( cpu_random_32bit );
 

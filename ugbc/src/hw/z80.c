@@ -2308,40 +2308,42 @@ void z80_random( Environment * _environment, char * _entropy ) {
 
     inline( cpu_random )
 
-        outline0("LD HL, (CPURANDOM_SEED)");
-        outline0("LD B, (HL)");
-        outline0("INC HL");
-        outline0("LD A, (HL)");
-        outline0("XOR B");
-        outline1("LD DE, (%s)", _entropy);
-        // outline0("LD B, H");
-        outline0("LD C, L");
-        outline0("ADD HL, HL");
-        outline0("RL E");
-        outline0("RL D");
-        outline0("ADD HL, DE");
-        outline0("RL E");
-        outline0("RL D");
-        outline0("INC L");
-        outline0("ADD HL, BC");
-        outline0("LD (CPURANDOM_SEED), HL");
-        outline0("LD HL, (CPURANDOM_SEED+2)");
-        outline0("ADD HL, DE");
-        outline0("LD (CPURANDOM_SEED+1), HL");
-        outline0("EX DE, HL");
-        outline0("LD HL, (CPURANDOM_SEED)");
-        outline1("LD DE, (%s)", _entropy);
-        outline0("ADD HL, HL");
-        outline0("RL C");
-        outline0("RL B");
-        outline0("LD (CPURANDOM_SEED+1), BC");
-        outline0("SBC A, A");
-        outline0("AND %11000101");
-        outline0("XOR L");
-        outline0("LD L, A");
-        outline0("LD (CPURANDOM_SEED+1), HL");
-        outline0("EX DE, HL");
-        outline0("ADD HL, BC");
+        if ( _entropy ) {
+            outline0("LD HL, (CPURANDOM_SEED)");
+            outline0("LD B, (HL)");
+            outline0("INC HL");
+            outline0("LD A, (HL)");
+            outline0("XOR B");
+            outline1("LD DE, (%s)", _entropy);
+            // outline0("LD B, H");
+            outline0("LD C, L");
+            outline0("ADD HL, HL");
+            outline0("RL E");
+            outline0("RL D");
+            outline0("ADD HL, DE");
+            outline0("RL E");
+            outline0("RL D");
+            outline0("INC L");
+            outline0("ADD HL, BC");
+            outline0("LD (CPURANDOM_SEED), HL");
+            outline0("LD HL, (CPURANDOM_SEED+2)");
+            outline0("ADD HL, DE");
+            outline0("LD (CPURANDOM_SEED+1), HL");
+            outline0("EX DE, HL");
+            outline0("LD HL, (CPURANDOM_SEED)");
+            outline1("LD DE, (%s)", _entropy);
+            outline0("ADD HL, HL");
+            outline0("RL C");
+            outline0("RL B");
+            outline0("LD (CPURANDOM_SEED+1), BC");
+            outline0("SBC A, A");
+            outline0("AND %11000101");
+            outline0("XOR L");
+            outline0("LD L, A");
+            outline0("LD (CPURANDOM_SEED+1), HL");
+            outline0("EX DE, HL");
+            outline0("ADD HL, BC");
+        }
 
     embedded( cpu_random, src_hw_z80_cpu_random_asm );
        
@@ -2354,10 +2356,12 @@ void z80_random_8bit( Environment * _environment, char * _entropy, char * _resul
 
     z80_random( _environment, _entropy );
 
-    outline1("LD DE, (%s)", _entropy );
-    outline0("CALL CPURANDOM16" );
-    outline0("LD A, H" );
-    outline1("LD (%s), A", _result );
+    if ( _result ) {
+        outline1("LD DE, (%s)", _entropy );
+        outline0("CALL CPURANDOM16" );
+        outline0("LD A, H" );
+        outline1("LD (%s), A", _result );
+    }
 
 }
 
@@ -2365,9 +2369,11 @@ void z80_random_16bit( Environment * _environment, char * _entropy, char * _resu
 
     z80_random( _environment, _entropy );
 
-    outline1("LD DE, (%s)", _entropy );
-    outline0("CALL CPURANDOM16" );
-    outline1("LD (%s), HL", _result );
+    if ( _result ) {
+        outline1("LD DE, (%s)", _entropy );
+        outline0("CALL CPURANDOM16" );
+        outline1("LD (%s), HL", _result );
+    }
 
 }
 
@@ -2375,10 +2381,12 @@ void z80_random_32bit( Environment * _environment, char * _entropy, char * _resu
 
     z80_random( _environment, _entropy );
 
-    outline1("LD DE, (%s)", _entropy );
-    outline0("CALL CPURANDOM32" );
-    outline1("LD (%s), HL", _result );
-    outline1("LD (%s+2), BC", _result );
+    if ( _result ) {
+        outline1("LD DE, (%s)", _entropy );
+        outline0("CALL CPURANDOM32" );
+        outline1("LD (%s), HL", _result );
+        outline1("LD (%s+2), BC", _result );
+    }
 
 }
 

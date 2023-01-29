@@ -2593,28 +2593,32 @@ void cpu6809_random( Environment * _environment, char * _entropy ) {
 
         srand( time( NULL ) );
 
-        outline0("LDD CPURANDOM_SEED");
-        outline0("ASLB");
-        outline0("ASLB");
-        outline0("ROLA");
-        outline0("ADDD CPURANDOM_SEED+2");
-        outline0("LSR CPURANDOM_SEED");
-        outline0("ROR CPURANDOM_SEED+1");
-        outline0("ASLB");
-        outline0("ROLA");
-        outline1("ADDA %s", _entropy);
-        outline0("ASLB");
-        outline0("ROLA");
-        outline0("ASLB");
-        outline0("ROLA");
-        outline0("ADDD CPURANDOM_SEED+1");
-        outline0("STD CPURANDOM_SEED+1");
+        if ( _entropy ) {
+            outline0("LDD CPURANDOM_SEED");
+            outline0("ASLB");
+            outline0("ASLB");
+            outline0("ROLA");
+            outline0("ADDD CPURANDOM_SEED+2");
+            outline0("LSR CPURANDOM_SEED");
+            outline0("ROR CPURANDOM_SEED+1");
+            outline0("ASLB");
+            outline0("ROLA");
+            outline1("ADDA %s", _entropy);
+            outline0("ASLB");
+            outline0("ROLA");
+            outline0("ASLB");
+            outline0("ROLA");
+            outline0("ADDD CPURANDOM_SEED+1");
+            outline0("STD CPURANDOM_SEED+1");
+        }
 
     embedded( cpu_random, src_hw_6809_cpu_random_asm );
 
-        outline1( "LDB %s", _entropy );
-        outline0( "STB <PATTERN" );
-        outline0( "JSR CPURANDOM" );
+        if ( _entropy ) {
+            outline1( "LDB %s", _entropy );
+            outline0( "STB <PATTERN" );
+            outline0( "JSR CPURANDOM" );
+        }
 
     done( )
 
@@ -2624,8 +2628,10 @@ void cpu6809_random_8bit( Environment * _environment, char * _entropy, char * _r
 
     cpu6809_random( _environment, _entropy );
 
-    outline0("LDB CPURANDOM_SEED+3");
-    outline1("STB %s", _result );
+    if ( _result ) {
+        outline0("LDB CPURANDOM_SEED+3");
+        outline1("STB %s", _result );
+    }
 
 }
 
@@ -2633,8 +2639,10 @@ void cpu6809_random_16bit( Environment * _environment, char * _entropy, char * _
 
     cpu6809_random( _environment, _entropy );
 
-    outline0("LDD CPURANDOM_SEED+2");
-    outline1("STD %s", _result );
+    if ( _result ) {
+        outline0("LDD CPURANDOM_SEED+2");
+        outline1("STD %s", _result );
+    }
 
 }
 
@@ -2642,10 +2650,12 @@ void cpu6809_random_32bit( Environment * _environment, char * _entropy, char * _
 
     cpu6809_random( _environment, _entropy );
 
-    outline0("LDD CPURANDOM_SEED");
-    outline1("STD %s", _result );
-    outline0("LDD CPURANDOM_SEED+2");
-    outline1("STD %s+2", _result );
+    if ( _result ) {
+        outline0("LDD CPURANDOM_SEED");
+        outline1("STD %s", _result );
+        outline0("LDD CPURANDOM_SEED+2");
+        outline1("STD %s+2", _result );
+    }
 
 }
 

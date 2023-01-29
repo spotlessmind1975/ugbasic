@@ -61,4 +61,6 @@ void randomize( Environment * _environment, char * _other_seed ) {
         variable_store( _environment, seed->name, 0xf0f0f0f0 );
     }
 
+    cpu_random_8bit( _environment, NULL, NULL );
+
 }
