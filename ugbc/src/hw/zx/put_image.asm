@@ -229,7 +229,7 @@ PUTIMAGE00CP:
     LD B, A
 
     ADD HL, 64
-    SUB HL, BC
+    SBC HL, BC
 
     DEC C
     JR NZ, PUTIMAGE00CP
