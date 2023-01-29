@@ -872,7 +872,8 @@ struct var *vars_get(POBuffer _name) {
 }
 
 static int vars_ok(POBuffer name) {
-    if(po_buf_match(name, "_Tstr"))   return 0;
+    if(po_buf_match(name, "^_Tstr"))   return 0;
+    if(po_buf_match(name, "_^_Tstr"))   return 0;
     if(po_buf_match(name, "_label"))  return 0;
 
     if(name->str[0]=='_')      return 1;
@@ -1339,6 +1340,7 @@ static int optim_pass( Environment * _environment, POBuffer buf[LOOK_AHEAD], Pee
 
 /* main entry-point for this service */
 void target_peephole_optimizer( Environment * _environment ) {
+
     if ( _environment->peepholeOptimizationLimit > 0 ) {
         POBuffer buf[LOOK_AHEAD];
         int i;

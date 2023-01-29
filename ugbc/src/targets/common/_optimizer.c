@@ -273,6 +273,13 @@ POBuffer po_buf_match(POBuffer _buf, const char *_pattern, ...) {
                 break;
             }
             while(!_eol(*s) && _eq(' ', *s)) ++s;
+        } else if(*p=='^') {
+            ++p;
+            while(!_eol(*s) && !_eq(*p, *s)) ++s;
+            if(!_eq(*p,*s)) {
+                ret = NULL;
+                break;
+            }
         } else if(*p=='*') {
             POBuffer m = va_arg(ap, POBuffer); ++p;
             if(m != NULL) {
