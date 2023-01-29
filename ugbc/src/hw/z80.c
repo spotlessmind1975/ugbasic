@@ -2407,7 +2407,7 @@ void z80_busy_wait( Environment * _environment, char * _timing ) {
 
     MAKE_LABEL
 
-    outline1("LD A, %s", _timing );
+    outline1("LD A, (%s)", _timing );
     outhead1("%s:", label );
     outline0("DEC A");
     outline1("JR NZ, %s", label);
