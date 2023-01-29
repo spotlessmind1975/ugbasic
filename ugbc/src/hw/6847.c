@@ -970,6 +970,15 @@ void c6847_initialization( Environment * _environment ) {
     variable_import( _environment, "CLIPY2", VT_POSITION, 127 );
     variable_global( _environment, "CLIPY2" );
 
+    variable_import( _environment, "ORIGINX", VT_POSITION, 0 );
+    variable_global( _environment, "ORIGINX" );
+    variable_import( _environment, "ORIGINY", VT_POSITION, 0 );
+    variable_global( _environment, "ORIGINY" );
+    variable_import( _environment, "RESOLUTIONX", VT_POSITION, 0 );
+    variable_global( _environment, "RESOLUTIONX" );
+    variable_import( _environment, "RESOLUTIONY", VT_POSITION, 0 );
+    variable_global( _environment, "RESOLUTIONY" );
+
     c6847_cls( _environment );
 
 }

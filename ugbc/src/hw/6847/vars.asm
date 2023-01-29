@@ -42,12 +42,16 @@ XGR    fdb 0
 YGR    fdb 0
 LINE   fcb $ff, $ff
 
+ORIGINX    fdb 0
+ORIGINY    fdb 0
+RESOLUTIONX    fdb 0
+RESOLUTIONY    fdb 0
+
 CLIPX1    fdb 0
 CLIPY1    fdb 0
 CLIPX2    fdb 319
 CLIPY2    fdb 199
-ORIGIN    fdb 0
-ORIGINY    fdb 0
+
 LASTCOLOR fcb 0
 CURRENTWIDTH      fdb 32
 CURRENTHEIGHT      fdb 16
