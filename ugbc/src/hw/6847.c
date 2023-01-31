@@ -1085,7 +1085,8 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = paletteColorCount;
-    memcpy( result->originalPalette, commonPalette, paletteColorCount * sizeof( RGBi ) );
+
+    memcpy( result->originalPalette, matchedPalette, paletteColorCount * sizeof( RGBi ) );
 
     int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_RESOLUTION1 );
     // printf("bufferSize = %d\n", bufferSize );
