@@ -49,6 +49,18 @@
 </usermanual> */
 void color( Environment * _environment, int _index, int _shade ) {
 
+    char indexAsString[MAX_TEMPORARY_STORAGE];
+    char shadeAsString[MAX_TEMPORARY_STORAGE];
+
+    sprintf( indexAsString, "#$%2.2x", _index );
+    sprintf( shadeAsString, "#$%2.2x", _shade );
+
+    if ( _index == 0 ) {
+        c6847_border_color( _environment, shadeAsString );
+    }
+
+    c6847_background_color( _environment, indexAsString, shadeAsString );
+
 }
 
 /**
@@ -66,6 +78,18 @@ void color( Environment * _environment, int _index, int _shade ) {
 </usermanual> */
 void color_semivars( Environment * _environment, int _index, char *_shade ) {
 
+    char indexAsString[MAX_TEMPORARY_STORAGE];
+
+    Variable * shade = variable_retrieve_or_define( _environment, _shade, VT_COLOR, 0 );
+
+    sprintf( indexAsString, "#$%2.2x", _index );
+
+    if ( _index == 0 ) {
+        c6847_border_color( _environment, shade->realName );
+    }
+
+    c6847_background_color( _environment, indexAsString, shade->realName );
+
 }
 
 /**
@@ -82,5 +106,18 @@ void color_semivars( Environment * _environment, int _index, char *_shade ) {
 @keyword COLOR
 </usermanual> */
 void color_vars( Environment * _environment, char *_index, char *_shade ) {
+
+    MAKE_LABEL
+
+    Variable * index = variable_retrieve_or_define( _environment, _index, VT_BYTE, 0 );
+    Variable * shade = variable_retrieve_or_define( _environment, _shade, VT_COLOR, 0 );
+
+    cpu6809_compare_and_branch_8bit_const( _environment, index->realName, 0, label, 0 );
+
+    c6847_border_color( _environment, shade->realName );
+
+    cpu_label( _environment, label );
+
+    c6847_background_color( _environment, index->realName, shade->realName );
 
 }

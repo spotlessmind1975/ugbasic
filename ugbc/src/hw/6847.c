@@ -37,17 +37,23 @@
 #include "../ugbc.h"
 #include <math.h>
 
-static RGBi SYSTEM_PALETTE[] = {
-        // { 0x00, 0x00, 0x00, 0, "BLACK" },        
-        { 0x00, 0xcc, 0x55, 0xff, 0, "GREEN" },
-        { 0xee, 0xee, 0x77, 0xff, 1, "YELLOW" },
-        { 0x00, 0x00, 0xaa, 0xff, 2, "BLUE" },
-        { 0x88, 0x00, 0x00, 0xff, 3, "RED" }
-        // { 0xf0, 0xf0, 0xf0, 5, "BUFF" },
-        // { 0xaa, 0xff, 0xe6, 6, "CYAN" },
-        // { 0xcc, 0x44, 0xcc, 7, "MAGENTA" },
-        // { 0xa1, 0x68, 0x3c, 8, "ORANGE" }
+static RGBi SYSTEM_PALETTE_ALTERNATE[][4] = {
+        {
+            { 0x00, 0xcc, 0x55, 0xff, 0, "GREEN" },
+            { 0xee, 0xee, 0x77, 0xff, 1, "YELLOW" },
+            { 0x00, 0x00, 0xaa, 0xff, 2, "BLUE" },
+            { 0x88, 0x00, 0x00, 0xff, 3, "RED" }
+        },
+        {
+            { 0x00, 0x00, 0x00, 0xff, 0, "BLACK" },        
+            { 0xf0, 0xf0, 0xf0, 0xff, 5, "BUFF" },
+            { 0xaa, 0xff, 0xe6, 0xff, 6, "CYAN" },
+            { 0xcc, 0x44, 0xcc, 0xff, 7, "MAGENTA" } //,
+            // { 0xa1, 0x68, 0x3c, 0xff, 8, "ORANGE" }            
+        }
 };
+
+static RGBi * SYSTEM_PALETTE = &SYSTEM_PALETTE_ALTERNATE[1][0];
 
 static RGBi * commonPalette;
 
@@ -96,6 +102,18 @@ void c6847_hit( Environment * _environment, char * _sprite_mask, char * _result 
  */
 void c6847_border_color( Environment * _environment, char * _border_color ) {
 
+    MAKE_LABEL
+
+    outline1( "LDA %s", _border_color );
+    outline0( "CMPA 4" );
+    outline1( "BCs %scss0", label );
+    outhead1( "%scss1", label );
+    CSS_SET;
+    outline1( "JMP %sdone", label );
+    outhead1( "%scss0", label );
+    CSS_CLR;
+    outhead1( "%sdone", label );
+
 }
 
 /**
@@ -109,6 +127,20 @@ void c6847_border_color( Environment * _environment, char * _border_color ) {
  * @param _background_color Background color to use
  */
 void c6847_background_color( Environment * _environment, char * _index, char * _background_color ) {
+
+    MAKE_LABEL
+
+    (void) _index;
+
+    outline1( "LDA %s", _background_color );
+    outline0( "CMPA 4" );
+    outline1( "BCs %scss0", label );
+    outhead1( "%scss1", label );
+    CSS_SET;
+    outline1( "JMP %sdone", label );
+    outhead1( "%scss0", label );
+    CSS_CLR;
+    outhead1( "%sdone", label );
 
 }
 
