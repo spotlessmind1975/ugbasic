@@ -18,6 +18,8 @@ REM eseguirà un ciclo controllato (''FOR...NEXT'') che disegnerà tutti i pixel
 
   BITMAP ENABLE
   CLS BLACK
+  COLOR #0, #5
+  
   y = (POSITION) 0
   x = (POSITION) 0
   FOR y = 0 TO SCREEN HEIGHT - 1

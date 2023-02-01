@@ -7,7 +7,7 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
 
     printf("ugBASIC Compiler TESTER v1.0\n");
     printf("----------------------------\n");
-    printf("Copyright 2021-2022 Marco Spedaletti (asimov@mclink.it)\n\n");
+    printf("Copyright 2021-2023 Marco Spedaletti (asimov@mclink.it)\n\n");
     printf("Licensed under the Apache License, Version 2.0 (the \"License\");\n");
     printf("you may not use this program except in compliance with the License.\n\n");
 

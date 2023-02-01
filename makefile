@@ -1,7 +1,7 @@
 #/*****************************************************************************
 # * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
 # *****************************************************************************
-# * Copyright 2020-2022 Marco Spedaletti (asimov@mclink.it)
+# * Copyright 2020-2023 Marco Spedaletti (asimov@mclink.it)
 # *
 # * Licensed under the Apache License, Version 2.0 (the "License");
 # * you may not use this file except in compliance with the License.
@@ -127,7 +127,7 @@ ASM6809 = ./modules/asm6809/src/asm6809$(EXESUFFIX)
 #------------------------------------------------ 
 
 # List of examples to compile
-EXAMPLES := $(wildcard examples/*.bas)
+EXAMPLES := $(wildcard examples/picture.bas)
 
 # List of assembled files of examples
 COMPILED := $(subst examples/,generated/$(target)/asm/,$(EXAMPLES:.bas=.asm))
@@ -405,7 +405,7 @@ generated/coleco/exeso/%.rom: $(subst /generated/exeso/,/examples/,$(@:.rom=.bas
 toolchain.cpc: z88dk
 
 generated/cpc/asm/%.asm:
-	@ugbc/exe/ugbc.cpc $(subst generated/cpc/asm/,examples/,$(@:.asm=.bas)) $@ 
+	ugbc/exe/ugbc.cpc $(subst generated/cpc/asm/,examples/,$(@:.asm=.bas)) $@ 
 
 generated/cpc/exe/%.dsk:
 	@$(Z80ASM) -D__cpc__ -l -m -s -g -b $(subst /exe/,/asm/,$(@:.dsk=.asm))
@@ -417,7 +417,7 @@ generated/cpc/exe/%.dsk:
 	@rm -f $(@:.dsk=.bin) $(@:.dsk=_*.bin) $(dir $@)main.com
 
 generated/cpc/exeso/%.dsk: $(subst /generated/exeso/,/examples/,$(@:.dsk=.bas))
-	@ugbc/exe/ugbc.cpc -o $@ -O dsk $(subst generated/cpc/exeso/,examples/,$(@:.dsk=.bas))
+	ugbc/exe/ugbc.cpc -o $@ -O dsk $(subst generated/cpc/exeso/,examples/,$(@:.dsk=.bas))
 
 #------------------------------------------------ 
 # d32:
@@ -427,13 +427,13 @@ generated/cpc/exeso/%.dsk: $(subst /generated/exeso/,/examples/,$(@:.dsk=.bas))
 toolchain.d32: asm6809
 
 generated/d32/asm/%.asm: compiler
-	@ugbc/exe/ugbc.d32 $(subst generated/d32/asm/,examples/,$(@:.asm=.bas)) $@
+	ugbc/exe/ugbc.d32 $(subst generated/d32/asm/,examples/,$(@:.asm=.bas)) $@
 
 generated/d32/exe/%.bin: $(subst /exe/,/asm/,$(@:.bin=.asm))
 	@$(ASM6809) -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -D -e 10240 -o $@ $(subst /exe/,/asm/,$(@:.bin=.asm))
 
 generated/d32/exeso/%.bin: $(subst /generated/exeso/,/examples/,$(@:.bin=.bas))
-	@ugbc/exe/ugbc.d32 -o $@ -O bin $(subst generated/d32/exeso/,examples/,$(@:.bin=.bas))
+	ugbc/exe/ugbc.d32 -o $@ -O bin $(subst generated/d32/exeso/,examples/,$(@:.bin=.bas))
 
 #------------------------------------------------ 
 # d64:
