@@ -308,7 +308,7 @@ asm6809: paths $(dir $(ASM6809))
 # decb from Toolshed 2.2
 #
 $(DECB): $(dir $(DECB))./*.o
-	cd $(dir $(DECB)) && make -C build/unix install CC=gcc
+	cd $(dir $(DECB))../.. && make -C build/unix install CC=gcc
 
 decb: paths $(DECB)
 
