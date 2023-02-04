@@ -421,7 +421,7 @@ generated/coleco/exeso/%.rom: $(subst /generated/exeso/,/examples/,$(@:.rom=.bas
 toolchain.cpc: z88dk
 
 generated/cpc/asm/%.asm:
-	ugbc/exe/ugbc.cpc $(subst generated/cpc/asm/,examples/,$(@:.asm=.bas)) $@ 
+	@ugbc/exe/ugbc.cpc $(subst generated/cpc/asm/,examples/,$(@:.asm=.bas)) $@ 
 
 generated/cpc/exe/%.dsk:
 	@$(Z80ASM) -D__cpc__ -l -m -s -g -b $(subst /exe/,/asm/,$(@:.dsk=.asm))
@@ -433,7 +433,7 @@ generated/cpc/exe/%.dsk:
 	@rm -f $(@:.dsk=.bin) $(@:.dsk=_*.bin) $(dir $@)main.com
 
 generated/cpc/exeso/%.dsk: $(subst /generated/exeso/,/examples/,$(@:.dsk=.bas))
-	ugbc/exe/ugbc.cpc -o $@ -O dsk $(subst generated/cpc/exeso/,examples/,$(@:.dsk=.bas))
+	@ugbc/exe/ugbc.cpc -o $@ -O dsk $(subst generated/cpc/exeso/,examples/,$(@:.dsk=.bas))
 
 #------------------------------------------------ 
 # coco:
@@ -461,13 +461,13 @@ generated/coco/exeso/%.dsk: $(subst /generated/exeso/,/examples/,$(@:.bin=.bas))
 toolchain.d32: asm6809
 
 generated/d32/asm/%.asm: compiler
-	ugbc/exe/ugbc.d32 $(subst generated/d32/asm/,examples/,$(@:.asm=.bas)) $@
+	@ugbc/exe/ugbc.d32 $(subst generated/d32/asm/,examples/,$(@:.asm=.bas)) $@
 
 generated/d32/exe/%.bin: $(subst /exe/,/asm/,$(@:.bin=.asm))
 	@$(ASM6809) -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -D -e 10240 -o $@ $(subst /exe/,/asm/,$(@:.bin=.asm))
 
 generated/d32/exeso/%.bin: $(subst /generated/exeso/,/examples/,$(@:.bin=.bas))
-	ugbc/exe/ugbc.d32 -o $@ -O bin $(subst generated/d32/exeso/,examples/,$(@:.bin=.bas))
+	@ugbc/exe/ugbc.d32 -o $@ -O bin $(subst generated/d32/exeso/,examples/,$(@:.bin=.bas))
 
 #------------------------------------------------ 
 # d64:
