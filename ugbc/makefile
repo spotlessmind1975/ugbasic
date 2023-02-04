@@ -30,7 +30,7 @@
 
 FLEX_OPTIONS=--8bit 
 BISON_OPTIONS=--locations -d -Wcounterexamples
-CFLAGS=-O3 -fomit-frame-pointer -g
+CFLAGS=-O3 -fomit-frame-pointer
 LFLAGS=
 LIBS=-lm
 
