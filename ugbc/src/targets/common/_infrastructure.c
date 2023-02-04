@@ -6862,3 +6862,36 @@ int assemblyLineIsAComment( char * _buffer ) {
     }
     return 0;
 }
+
+char * strtoupper( char * _string ) {
+
+    char * target = strdup( _string );
+
+    char * p = target;
+
+    while( *p ) {
+        *p = toupper(*p);
+        ++p;
+    }
+
+    return target;
+
+}
+
+char * basename( char * _path ) {
+
+    char * target = strdup( _path );
+
+    char * p = strrchr( target, '/' );
+
+    if ( !p ) {
+        p = strrchr( target, '\\' );
+    }
+
+    if ( p ) {
+        return p+1;
+    } else {
+        return target;
+    }
+    
+}

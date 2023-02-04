@@ -39,7 +39,7 @@
  * CODE SECTION
  ****************************************************************************/
 
-#if defined(__d32__) || defined(__d64__) || defined(__pc128op__) || defined(__mo5__)
+#if defined(__d32__) || defined(__d64__) || defined(__pc128op__) || defined(__mo5__) || defined(__coco__)
 
 /* output code that is the best "JUMP" version between "small" and "long" branch.
    LBRA and LBSR are transformed into JMP and JSR respectively. */

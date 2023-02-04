@@ -81,6 +81,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token TOM TONK TREMOLO TROMBONE TRUMPET TUBA TUBULAR TWEET VIBRAPHONE VIOLA VIOLIN VOICE WARM WHISTLE WOODBLOCK 
 %token XYLOPHONE KILL COMPRESSED STORAGE ENDSTORAGE FILEX DLOAD INCLUDE LET CPC INT INTEGER LONG OP_PERC OP_AMPERSAND OP_AT
 %token EMBEDDED NATIVE RELEASE READONLY DIGIT OPTION EXPLICIT ORIGIN RELATIVE DTILE DTILES OUT RESOLUTION
+%token COPEN COCO
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -5346,6 +5347,14 @@ target :
         #endif
     }
     |
+    COCO {
+        #if defined(__coco__)
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }
+    |
     DRAGON {
         #if defined(__d32__) || defined(__d64__)
             $$ = 1;
@@ -6424,6 +6433,8 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     char target[MAX_TEMPORARY_STORAGE] = "Amstrad CPC464";
 #elif __vg5000__
     char target[MAX_TEMPORARY_STORAGE] = "Philips VG5000";
+#elif __coco__
+    char target[MAX_TEMPORARY_STORAGE] = "TRS-80 Color Computer";
 #endif
 
     printf("--------------------------------------------------\n");
@@ -6473,6 +6484,8 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     printf("\t                prg - program binary file\n" );
 #elif __zx__
     printf("\t                tap - tape file\n" );
+#elif __coco__
+    printf("\t                dsk - COCO disk basic\n" );
 #elif __d32__
     printf("\t                bin - dragon dos binary file\n" );
 #elif __d64__
@@ -6534,6 +6547,8 @@ int main( int _argc, char *_argv[] ) {
     _environment->outputFileType = OUTPUT_FILE_TYPE_PRG;
 #elif __zx__
     _environment->outputFileType = OUTPUT_FILE_TYPE_TAP;
+#elif __coco__
+    _environment->outputFileType = OUTPUT_FILE_TYPE_DSK;
 #elif __d32__
     _environment->outputFileType = OUTPUT_FILE_TYPE_BIN;
 #elif __d64__

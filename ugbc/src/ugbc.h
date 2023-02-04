@@ -1291,6 +1291,11 @@ typedef struct _Environment {
     char * appMakerFileName;
 
     /**
+     * Filename of decb
+     */
+    char * decbFileName;
+
+    /**
      * Filename of additional information file
      */
     char * additionalInfoFileName;
@@ -2510,6 +2515,9 @@ int embed_scan_string (const char *);
 
 #define IMF_NOTE( o, n )                                ( ( o ) * IMF_NOTE_COUNT + ( n ) )
 
+char * strtoupper( char * _string );
+char * basename( char * _path );
+
 #define BUILD_CHECK_FILETYPE(_environment, _filetype) \
     if ( _environment->outputFileType != _filetype ) { \
         CRITICAL_UNSUPPORTED_OUTPUT_FILE_TYPE( OUTPUT_FILE_TYPE_AS_STRING[_filetype] ); \
@@ -2639,7 +2647,36 @@ int embed_scan_string (const char *);
         printf("Please use option '-I' to install chain tool.\n\n"); \
     };
 
+#define BUILD_TOOLCHAIN_DECB_GET_EXECUTABLE( _environment, executableName ) \
+    if ( _environment->decbFileName ) { \
+        sprintf(executableName, "%s", _environment->decbFileName ); \
+    } else if( access( "modules\\toolshed\\build\\unix\\decb\\decb.exe", F_OK ) == 0 ) { \
+        sprintf(executableName, "%s", "modules\\toolshed\\build\\unix\\decb\\decb.exe" ); \
+    } else if( access( "modules/toolshed/build/unix/decb/decb", F_OK ) == 0 ) { \
+        sprintf(executableName, "%s", "modules/toolshed/build/unix/decb/decb" ); \
+    } else { \
+        sprintf(executableName, "%s", "decb" ); \
+    }
 
+#define BUILD_TOOLCHAIN_DECB( _environment, executableName, binaryFileName ) \
+    sprintf( commandLine, "\"%s\" dskini \"%s\"", \
+        executableName, \
+        _environment->exeFileName ); \
+        printf( "%s\n", commandLine ); \
+    if ( system_call( _environment,  commandLine ) ) { \
+        printf("The compilation of assembly program failed.\n\n"); \
+        printf("Please use option '-I' to install chain tool.\n\n"); \
+    }; \
+    sprintf( commandLine, "\"%s\" copy -2 \"%s\" \"%s,%s\"", \
+        executableName, \
+        binaryFileName,  \
+        _environment->exeFileName, \
+        strtoupper( basename( binaryFileName ) ) ); \
+        printf( "%s\n", commandLine ); \
+    if ( system_call( _environment,  commandLine ) ) { \
+        printf("The compilation of assembly program failed.\n\n"); \
+        printf("Please use option '-I' to install chain tool.\n\n"); \
+    };
 
 void setup_embedded( Environment *_environment );
 void target_install( Environment *_environment );
@@ -3295,6 +3332,11 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "../src-generated/modules_zx.h"
     #include "hw/z80.h"
     #include "hw/zx.h"
+#elif __coco__ 
+    #include "../src-generated/modules_coco.h"
+    #include "hw/6809.h"
+    #include "hw/6847.h"
+    #include "hw/coco.h"
 #elif __d32__ 
     #include "../src-generated/modules_d32.h"
     #include "hw/6809.h"

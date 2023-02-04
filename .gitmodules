@@ -7,3 +7,6 @@
 [submodule "modules/asm6809"]
 	path = modules/asm6809
 	url = https://github.com/mwenge/asm6809.git
+[submodule "modules/toolshed"]
+	path = modules/toolshed
+	url = https://github.com/spotlessmind1975/toolshed.git
