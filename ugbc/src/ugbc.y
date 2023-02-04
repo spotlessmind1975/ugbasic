@@ -6575,7 +6575,7 @@ int main( int _argc, char *_argv[] ) {
     _environment->outputFileType = OUTPUT_FILE_TYPE_K7_NEW;
 #endif
 
-    while ((opt = getopt(_argc, _argv, "ae:c:Wo:Ie:l:EO:dD:L:C:VA:T:1p:G:X:P:q:")) != -1) {
+    while ((opt = getopt(_argc, _argv, "ab:e:c:Wo:Ie:l:EO:dD:L:C:VA:T:1p:G:X:P:q:")) != -1) {
         switch (opt) {
                 case 'a':
                     if ( ! _environment->listingFileName ) {
@@ -6592,6 +6592,12 @@ int main( int _argc, char *_argv[] ) {
                     _environment->compilerFileName = strdup(optarg);
                     if( access( _environment->compilerFileName, F_OK ) != 0 ) {
                         CRITICAL("Compiler not found.");
+                    }
+                    break;
+                case 'b':
+                    _environment->decbFileName = strdup(optarg);
+                    if( access( _environment->decbFileName, F_OK ) != 0 ) {
+                        CRITICAL("Image tool not found.");
                     }
                     break;
                 case 'X':
