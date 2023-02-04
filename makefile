@@ -31,7 +31,7 @@
 .PHONY: paths toolchain compiler clean all built so
 
 ifndef target
-$(error missing 'target' (valid values: atari atarixl c128 c64 coleco cpc d32 d64 mo5 msx1 pc128 plus4 sc3000 sg1000 vg5000 vic20 zx))
+$(error missing 'target' (valid values: atari atarixl c128 c64 coco coleco cpc d32 d64 mo5 msx1 pc128 plus4 sc3000 sg1000 vg5000 vic20 zx))
 endif
 
 ifndef output
@@ -46,6 +46,9 @@ ifeq ($(target),c128)
 endif
 ifeq ($(target),c64)
   output=prg
+endif
+ifeq ($(target),coco)
+  output=dsk
 endif
 ifeq ($(target),coleco)
   output=rom
@@ -121,6 +124,7 @@ APPMAKE = ./modules/z88dk/src/appmake/z88dk-appmake$(EXESUFFIX)
 # CPU MOTOROLA 6809
 #------------------------------------------------ 
 ASM6809 = ./modules/asm6809/src/asm6809$(EXESUFFIX)
+DECB = ./modules/toolshed/build/unix/decb/decb$(EXESUFFIX)
 
 #------------------------------------------------ 
 # Examples
@@ -297,6 +301,18 @@ $(dir $(ASM6809)): $(dir $(ASM6809))../Makefile
 asm6809: paths $(dir $(ASM6809))
 
 #------------------------------------------------ 
+# decb:
+#    TOOL FOR DECB DISK IMAGES
+#------------------------------------------------ 
+# 
+# decb from Toolshed 2.2
+#
+$(DECB): $(dir $(DECB))./*.o
+	cd $(dir $(DECB)) && make -C build/unix install CC=gcc
+
+decb: paths $(DECB)
+
+#------------------------------------------------ 
 # atari:
 #    ATARI 400/800 (6502)
 #------------------------------------------------ 
@@ -418,6 +434,24 @@ generated/cpc/exe/%.dsk:
 
 generated/cpc/exeso/%.dsk: $(subst /generated/exeso/,/examples/,$(@:.dsk=.bas))
 	ugbc/exe/ugbc.cpc -o $@ -O dsk $(subst generated/cpc/exeso/,examples/,$(@:.dsk=.bas))
+
+#------------------------------------------------ 
+# coco:
+#    TRS-80 Color Computer (6809)
+#------------------------------------------------ 
+# 
+toolchain.coco: asm6809 decb
+
+generated/coco/asm/%.asm: compiler
+	ugbc/exe/ugbc.coco $(subst generated/coco/asm/,examples/,$(@:.asm=.bas)) $@
+
+generated/coco/exe/%.dsk: $(subst /exe/,/asm/,$(@:.bin=.asm))
+	$(ASM6809) -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -C -e 10752 -o $(@:.dsk=.bin) $(subst /exe/,/asm/,$(@:.dsk=.asm))
+	$(DECB) dskini $(@)
+	$(DECB) copy -2 $(@:.dsk=.bin) $(@),$(shell echo $(generated/coco/exe/,,$(@:.dsk=.bin)) | tr '[:lower:]' '[:upper:]')
+ 
+generated/coco/exeso/%.dsk: $(subst /generated/exeso/,/examples/,$(@:.bin=.bas))
+	ugbc/exe/ugbc.coco -o $@ -O dsk $(subst generated/coco/exeso/,examples/,$(@:.dsk=.bas))
 
 #------------------------------------------------ 
 # d32:
