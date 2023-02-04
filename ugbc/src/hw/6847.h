@@ -134,13 +134,13 @@
 #define GM2_SET     outline0("LDA $FF22"); outline0("ORA #$40"); outline0("STA $FF22");
 #define GM2_CLR     outline0("LDA $FF22"); outline0("ANDA #$BF"); outline0("STA $FF22");
 
-#define CSS_SET     outline0("LDA $FF22"); outline0("ORA #$80"); outline0("STA $FF22");
-#define CSS_CLR     outline0("LDA $FF22"); outline0("ANDA #$7F"); outline0("STA $FF22");
+#define CSS_SET     outline0("LDA $FF22"); outline0("ORA #$08"); outline0("STA $FF22");
+#define CSS_CLR     outline0("LDA $FF22"); outline0("ANDA #$F7"); outline0("STA $FF22");
 
 // (3) These registers work with $FF22 for setting modes, and should match up
 
-#define VDG_GRAPH  outline0("LDA $FF22"); outline0("ORA #$08"); outline0("STA $FF22");  
-#define VDG_TEXT   outline0("LDA $FF22"); outline0("ANDA #$f7"); outline0("STA $FF22");  
+#define VDG_GRAPH  outline0("LDA $FF22"); outline0("ORA #$80"); outline0("STA $FF22");  
+#define VDG_TEXT   outline0("LDA $FF22"); outline0("ANDA #$7f"); outline0("STA $FF22");  
 
 // (4) Default screen mode is semigraphic-4
 // (5) Mode correspondence between the SAM and the VDG:
