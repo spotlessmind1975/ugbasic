@@ -1101,6 +1101,9 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
     // ignored on bitmap mode
     (void)!_transparent_color;
 
+    RGBi white = { 0xff, 0xff, 0xff, 0xff };
+    RGBi black = { 0x00, 0x00, 0x00, 0x00 };
+
     image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
     RGBi * palette = malloc_palette( MAX_PALETTE );
@@ -1157,9 +1160,15 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
                 rgb.alpha = 255;
             }
 
-            for( i=0; i<paletteColorCount; ++i ) {
-                if ( rgbi_equals_rgba( &palette[i], &rgb ) ) {
-                    break;
+            if ( ( rgb.alpha < 255 ) || rgbi_equals_rgba( &black, &rgb ) ) {
+                i = 0;
+            } else if ( ( rgb.alpha == 255 ) && rgbi_equals_rgba( &white, &rgb ) ) {
+                i = 1;
+            } else {
+                for( i=0; i<paletteColorCount; ++i ) {
+                    if ( rgbi_equals_rgba( &palette[i], &rgb ) ) {
+                        break;
+                    }
                 }
             }
 
