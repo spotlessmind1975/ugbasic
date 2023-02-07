@@ -795,7 +795,7 @@ Variable * variable_array_type( Environment * _environment, char *_name, Variabl
     } else if ( var->arrayType == VT_TILES ) {
         size *= 4;
     } else {
-        CRITICAL_DATATYPE_UNSUPPORTED("array(1)", DATATYPE_AS_STRING[var->arrayType]);
+        CRITICAL_DATATYPE_UNSUPPORTED("array(1a)", DATATYPE_AS_STRING[var->arrayType]);
     }
     var->size = size;
 }
@@ -1068,7 +1068,7 @@ Variable * variable_store( Environment * _environment, char * _destination, unsi
                 } else if ( destination->arrayType == VT_TILES ) {
                     size *= 4;
                 } else {
-                    CRITICAL_DATATYPE_UNSUPPORTED("array(1)", DATATYPE_AS_STRING[destination->arrayType]);
+                    CRITICAL_DATATYPE_UNSUPPORTED("array(1b)", DATATYPE_AS_STRING[destination->arrayType]);
                 }
                 cpu_fill_direct_size_value( _environment, destination->realName, size, _value );
             } else if ( destination->type == VT_TILE ) {
