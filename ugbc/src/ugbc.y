@@ -2169,7 +2169,7 @@ exponential:
     | OP IMAGES CP BufferDefinition { 
         $$ = parse_buffer_definition( _environment, $4, VT_IMAGES )->name;
       }      
-    | SQR OP factor CP {
+    | SQR OP expr CP {
         $$ = sqroot( _environment, $3 )->name;
       }
     | NEW TILESET {
