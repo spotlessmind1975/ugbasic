@@ -6485,6 +6485,7 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
 #elif __zx__
     printf("\t                tap - tape file\n" );
 #elif __coco__
+    printf("\t                bin - COCO binary file\n" );
     printf("\t                dsk - COCO disk basic\n" );
 #elif __d32__
     printf("\t                bin - dragon dos binary file\n" );

@@ -48,17 +48,21 @@ void target_linkage( Environment * _environment ) {
     char binaryName[MAX_TEMPORARY_STORAGE];
     char originalFileName[MAX_TEMPORARY_STORAGE];
 
-    BUILD_CHECK_FILETYPE(_environment, OUTPUT_FILE_TYPE_DSK)
+    if (  _environment->outputFileType != OUTPUT_FILE_TYPE_DSK && _environment->outputFileType != OUTPUT_FILE_TYPE_BIN ) {
+        CRITICAL_UNSUPPORTED_OUTPUT_FILE_TYPE( OUTPUT_FILE_TYPE_AS_STRING[_environment->outputFileType] )
+    }
 
     BUILD_SAFE_REMOVE( _environment, _environment->exeFileName );
 
-    strcpy( originalFileName, _environment->exeFileName );
-    strcpy( binaryName, _environment->exeFileName );
-    char * p = strstr( binaryName, ".dsk" );
-    if ( p ) {
-        strcpy( p, ".bin" );
+    if ( _environment->outputFileType == OUTPUT_FILE_TYPE_DSK ) {
+        strcpy( originalFileName, _environment->exeFileName );
+        strcpy( binaryName, _environment->exeFileName );
+        char * p = strstr( binaryName, ".dsk" );
+        if ( p ) {
+            strcpy( p, ".bin" );
+        }
+        strcpy( _environment->exeFileName, binaryName );
     }
-    strcpy( _environment->exeFileName, binaryName );
 
     BUILD_TOOLCHAIN_ASM6809_GET_EXECUTABLE( _environment, executableName );
 
@@ -66,11 +70,12 @@ void target_linkage( Environment * _environment ) {
 
     BUILD_TOOLCHAIN_ASM6809EXEC( _environment, "-C", 0x2A00, executableName, listingFileName );
 
-    strcpy( _environment->exeFileName, originalFileName );
-
-    BUILD_TOOLCHAIN_DECB_GET_EXECUTABLE( _environment, executableName );
-
-    BUILD_TOOLCHAIN_DECB( _environment, executableName, binaryName );
+    if ( _environment->outputFileType == OUTPUT_FILE_TYPE_DSK ) {
+        strcpy( _environment->exeFileName, originalFileName );
+        BUILD_TOOLCHAIN_DECB_GET_EXECUTABLE( _environment, executableName );
+        BUILD_TOOLCHAIN_DECB( _environment, executableName, binaryName );
+        BUILD_SAFE_REMOVE( _environment, binaryName );
+    }
 
     if ( _environment->listingFileName ) {
 
