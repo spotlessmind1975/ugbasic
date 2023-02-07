@@ -800,6 +800,12 @@ expr :
     | NOT expr {
         $$ = variable_not( _environment, $2 )->name;
     }
+    | OP_MINUS expr {
+        Variable * expr = variable_retrieve( _environment, $2 );
+        Variable * zero = variable_temporary( _environment, VT_SIGN( expr->type ), "(zero)" );
+        variable_store( _environment, zero->name, 0 );
+        $$ = variable_sub( _environment, zero->name, expr->name )->name;
+    }
     ;
     
 expr_math: 
@@ -2022,32 +2028,6 @@ exponential:
         }
         variable_store( _environment, $$, $1 );
       }
-    | OP_MINUS Integer { 
-        if ( ($2) > (0x7fff) ) {
-            $$ = variable_temporary( _environment, VT_SDWORD, "(integer dword value)" )->name;
-        } else if ( ($2) > (0x7f) ) {
-            $$ = variable_temporary( _environment, VT_SWORD, "(integer word value)" )->name;
-        } else {
-            $$ = variable_temporary( _environment, VT_SBYTE, "(integer byte value)" )->name;
-        }
-        variable_store( _environment, $$, -$2 );
-      }
-    | OP_MINUS Identifier {
-        Constant * c = constant_find( ((struct _Environment *)_environment)->constants, $2 );
-        Variable * expr = NULL;
-        if ( c ) {
-            if ( c->valueString ) {
-                CRITICAL_TYPE_MISMATCH_CONSTANT_STRING( $2 );
-            }
-            expr = variable_temporary( _environment, VT_SWORD, "(constant)" );
-            variable_store( _environment, expr->name, c->value );
-        } else {
-            expr = variable_retrieve_or_define( _environment, $2, VT_SWORD, 0 ); 
-        }
-        Variable * zero = variable_temporary( _environment, expr->type, "(zero)" ); 
-        variable_store( _environment, zero->name, 0 );
-        $$ = variable_sub( _environment, zero->name, expr->name )->name;
-      }
     | String { 
         $$ = variable_temporary( _environment, VT_STRING, "(string value)" )->name;
         variable_store_string( _environment, $$, $1 );
@@ -2392,12 +2372,6 @@ exponential:
     }
     | OP expr CP {
         $$ = $2;
-    }
-    | OP_MINUS OP expr CP {
-        Variable * expr = variable_retrieve( _environment, $3 );
-        Variable * zero = variable_temporary( _environment, VT_SIGN( expr->type ), "(zero)" );
-        variable_store( _environment, zero->name, 0 );
-        $$ = variable_sub( _environment, zero->name, expr->name )->name;
     }
     | FREE {
         cpu_dsgc( _environment );
