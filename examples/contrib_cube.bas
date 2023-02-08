@@ -15,7 +15,6 @@ REM
 BITMAP ENABLE(16) : CLS BLACK
 
 DIM t AS BYTE : DIM z AS BYTE
-DIM tw(10) : FOR i=1 TO 7 : tw(i)=tw(i-1)*2 : NEXT
 DIM p AS POSITION(5), q AS POSITION(5), x AS POSITION(5), y AS POSITION(5)
 
 a=20 : b=20 : f=(b^2)/(a^2) : c=70 : d=45  : e=c
