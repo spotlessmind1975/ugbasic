@@ -4509,10 +4509,10 @@ dim_definition :
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
           ((struct _Environment *)_environment)->arrayDimensions = 0;
       } OP dimensions CP {
-        ((struct _Environment *)_environment)->currentArray = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
+        ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_ARRAY, 0 );
         variable_array_type( _environment, $1, $2 );
     } array_assign readonly_optional {
-        Variable * array = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
+        Variable * array = variable_retrieve( _environment, $1 );
         array->readonly = $9;
     }
     |
@@ -4520,17 +4520,17 @@ dim_definition :
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
           ((struct _Environment *)_environment)->arrayDimensions = 0;
       } OP dimensions CP {
-        ((struct _Environment *)_environment)->currentArray = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
+        ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_ARRAY, 0 );
         variable_array_type( _environment, $1, VT_DSTRING );
     } array_assign readonly_optional {
-        Variable * array = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
+        Variable * array = variable_retrieve( _environment, $1 );
         array->readonly = $9;
     }
     | Identifier datatype WITH const_expr {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
           ((struct _Environment *)_environment)->arrayDimensions = 0;
       } OP dimensions CP {
-        ((struct _Environment *)_environment)->currentArray = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
+        ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_ARRAY, 0 );
         ((struct _Environment *)_environment)->currentArray->value = $4;
         variable_array_type( _environment, $1, $2 );
         if ( ! ((struct _Environment *)_environment)->currentArray->memoryArea ) {
@@ -4540,24 +4540,24 @@ dim_definition :
             variable_store( _environment, ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->value );
         }
       } readonly_optional {
-        Variable * array = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
+        Variable * array = variable_retrieve( _environment, $1 );
         array->readonly = $10;
     }
     | Identifier as_datatype {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
           ((struct _Environment *)_environment)->arrayDimensions = 0;
       } OP dimensions CP {
-        ((struct _Environment *)_environment)->currentArray = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
+        ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_ARRAY, 0 );
         variable_array_type( _environment, $1, $2 );
     } array_assign readonly_optional {
-        Variable * array = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
+        Variable * array = variable_retrieve( _environment, $1 );
         array->readonly = $9;
     }
     | Identifier as_datatype WITH const_expr {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
           ((struct _Environment *)_environment)->arrayDimensions = 0;
       } OP dimensions CP {
-        ((struct _Environment *)_environment)->currentArray = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
+        ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_ARRAY, 0 );
         ((struct _Environment *)_environment)->currentArray->value = $4;
         variable_array_type( _environment, $1, $2 );
         if ( ! ((struct _Environment *)_environment)->currentArray->memoryArea ) {
@@ -4567,7 +4567,7 @@ dim_definition :
             variable_store( _environment, ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->value );
         }
     } readonly_optional {
-        Variable * array = variable_retrieve_or_define( _environment, $1, VT_ARRAY, 0 );
+        Variable * array = variable_retrieve( _environment, $1 );
         array->readonly = $10;
     }
     ;
