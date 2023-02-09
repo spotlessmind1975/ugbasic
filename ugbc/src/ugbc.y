@@ -6877,9 +6877,9 @@ int main( int _argc, char *_argv[] ) {
     unsigned char utf8check = fgetc( yyin );
 
     if ( utf8check == 0xef ) {
-        int fseek(yyin, 3, SEEK_SET );
+        fseek(yyin, 3, SEEK_SET );
     } else {
-        int fseek(yyin, 0, SEEK_SET );
+        fseek(yyin, 0, SEEK_SET );
     }
 
     if ( _environment->additionalInfoFileName ) {
