@@ -6874,6 +6874,14 @@ int main( int _argc, char *_argv[] ) {
         exit(EXIT_FAILURE);
     }
 
+    unsigned char utf8check = fgetc( yyin );
+
+    if ( utf8check == 0xef ) {
+        int fseek(yyin, 3, SEEK_SET );
+    } else {
+        int fseek(yyin, 0, SEEK_SET );
+    }
+
     if ( _environment->additionalInfoFileName ) {
         _environment->additionalInfoFile = fopen( _environment->additionalInfoFileName, "wt" );
     }
