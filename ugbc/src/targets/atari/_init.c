@@ -110,6 +110,8 @@ void target_initialization( Environment * _environment ) {
     gtia_initialization( _environment );
     pokey_initialization( _environment );
     
+    cpu_call( _environment, "VARINIT" );
+
     if ( _environment->tenLinerRulesEnforced ) {
         shell_injection( _environment );
     }
