@@ -6852,6 +6852,13 @@ int main( int _argc, char *_argv[] ) {
         fseek( fh, 0, SEEK_SET );
         char * sourceText = malloc( sourceSize + 1 );
         memset( sourceText, 0, sourceSize + 1 );
+        unsigned char utf8check = fgetc( fh );
+        if ( utf8check == 0xef ) {
+            fseek(fh, 3, SEEK_SET );
+            sourceSize -= 3;
+        } else {
+            fseek(fh, 0, SEEK_SET );
+        }
         (void)!fread( sourceText, 1, sourceSize, fh );
         fclose( fh );
         char * escapedSourceText = unescape_string( _environment, sourceText, 1 );
