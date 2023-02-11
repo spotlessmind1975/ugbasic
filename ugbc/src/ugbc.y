@@ -1906,8 +1906,12 @@ exponential:
       OP indexes CP {
         Variable * array;
         if ( ! variable_exists( _environment, $1 ) ) {
-            array = variable_define( _environment, $1, VT_ARRAY, 0 );
-            array->arrayType = ((struct _Environment *)_environment)->defaultVariableType;
+            if ( ((struct _Environment *)_environment)->optionExplicit ) {
+                CRITICAL_VARIABLE_UNDEFINED( $1 );
+            } else {
+                array = variable_define( _environment, $1, VT_ARRAY, 0 );
+                array->arrayType = ((struct _Environment *)_environment)->defaultVariableType;
+            }
         }        
         array = variable_retrieve( _environment, $1 );
         if ( array->type != VT_ARRAY ) {
