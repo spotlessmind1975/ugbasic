@@ -1977,7 +1977,11 @@ exponential:
             }
         } else {
             if ( !variable_exists( _environment, $1 ) ) {
-                $$ = variable_retrieve_or_define( _environment, $1, ((struct _Environment *)_environment)->defaultVariableType, 0 )->name;
+                if ( ((struct _Environment *)_environment)->optionExplicit ) {
+                    CRITICAL_VARIABLE_UNDEFINED( $1 );
+                } else {
+                    $$ = variable_retrieve_or_define( _environment, $1, ((struct _Environment *)_environment)->defaultVariableType, 0 )->name;
+                }
             } else {
                 $$ = variable_retrieve( _environment, $1 )->name;
             }
@@ -1994,7 +1998,11 @@ exponential:
             }
         } else {
             if ( !variable_exists( _environment, $1 ) ) {
-                $$ = variable_retrieve_or_define( _environment, $1, $2, 0 )->name;
+                if ( ((struct _Environment *)_environment)->optionExplicit ) {
+                    CRITICAL_VARIABLE_UNDEFINED( $1 );
+                } else {
+                    $$ = variable_retrieve_or_define( _environment, $1, $2, 0 )->name;
+                }
             } else {
                 $$ = variable_retrieve( _environment, $1 )->name;
             }
