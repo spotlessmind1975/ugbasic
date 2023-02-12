@@ -882,6 +882,7 @@ Variable * variable_temporary( Environment * _environment, VariableType _type, c
 
     if ( var ) {
 
+        var->reflected = NULL;
         var->meaningName = strdup( _meaning );
 
     } else {
@@ -6904,4 +6905,82 @@ char * basename( char * _path ) {
         return target;
     }
     
+}
+
+Variable * origin_resolution_relative_transform_x( Environment * _environment, char * _x, int _is_relative ) {
+
+    if (  !_x && !_is_relative && !((struct _Environment *)_environment)->originUsed && !((struct _Environment *)_environment)->resolutionUsed ) {
+        return variable_retrieve( _environment, "XGR" );
+    }
+
+    Variable * x;
+    Variable * result = variable_temporary( _environment, VT_POSITION, "(x)" );
+
+    result->reflected = _x;
+    
+    if ( _x ) {
+        x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
+        if ( _is_relative ) {
+            x = variable_add( _environment, "XGR", x->name );
+        }
+    } else {
+        x = variable_retrieve( _environment, "XGR" );
+    }
+
+    if ( ((struct _Environment *)_environment)->originUsed ) {
+        x = variable_add( _environment, "ORIGINX", x->name );
+    }
+
+    if ( ((struct _Environment *)_environment)->resolutionUsed ) {
+        variable_move( _environment, 
+            variable_div( _environment, variable_mul( _environment, x->name, "CURRENTWIDTH" )->name, "RESOLUTIONX", NULL )->name, 
+            result->name 
+        );
+    } else {
+        variable_move( _environment, x->name, result->name );
+    }
+
+    return result;
+
+}
+
+Variable * origin_resolution_relative_transform_y( Environment * _environment, char * _y, int _is_relative ) {
+
+    if (  !_y && !_is_relative && !((struct _Environment *)_environment)->originUsed && !((struct _Environment *)_environment)->resolutionUsed ) {
+        return variable_retrieve( _environment, "YGR" );
+    }
+
+    Variable * y;
+    Variable * result = variable_temporary( _environment, VT_POSITION, "(y)" );
+
+    result->reflected = _y;
+    
+    if ( _y ) {
+        y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
+        if ( _is_relative ) {
+            y = variable_add( _environment, "YGR", y->name );
+        }
+    } else {
+        y = variable_retrieve( _environment, "YGR" );
+    }
+
+    if ( ((struct _Environment *)_environment)->originUsed ) {
+        if ( ((struct _Environment *)_environment)->originYDirection >= 0 ) {
+            y = variable_add( _environment, "ORIGINY", y->name );
+        } else {
+            y = variable_sub( _environment, "ORIGINY", y->name );
+        }
+    }
+
+    if ( ((struct _Environment *)_environment)->resolutionUsed ) {
+        variable_move( _environment, 
+            variable_div( _environment, variable_mul( _environment, y->name, "CURRENTWIDTH" )->name, "RESOLUTIONY", NULL )->name, 
+            result->name 
+        );
+    } else {
+        variable_move( _environment, y->name, result->name );
+    }
+
+    return result;
+
 }

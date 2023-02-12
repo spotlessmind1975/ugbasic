@@ -578,6 +578,11 @@ typedef struct _Variable {
     unsigned char * valueBuffer;
 
     /** 
+     * Reflected variable.
+     */
+    unsigned char * reflected;
+
+    /** 
      * The size of the (naive/compressed) static buffer (in bytes).
      */
     int size;
@@ -3010,6 +3015,8 @@ void                    on_proc_end( Environment * _environment );
 void                    on_proc_index( Environment * _environment, char * _label );
 void                    on_scroll_call( Environment * _environment, int _x, int _y, char * _label );
 void                    on_scroll_gosub( Environment * _environment, int _x, int _y, char * _label );
+Variable *              origin_resolution_relative_transform_x( Environment * _environment, char * _x, int _is_relative );
+Variable *              origin_resolution_relative_transform_y( Environment * _environment, char * _y, int _is_relative );
 void                    out_var( Environment * _environment, char * _port, char * _value );
 
 //----------------------------------------------------------------------------

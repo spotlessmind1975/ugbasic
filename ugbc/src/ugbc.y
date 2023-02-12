@@ -3690,101 +3690,19 @@ relative_option:
 
 optional_x:
     relative_option expr {
-        if ( $1 ) {
-            if ( ((struct _Environment *)_environment)->originUsed ) {
-                $$ = variable_add( _environment, "ORIGINX", variable_add( _environment, "XGR", $2 )->name )->name;
-            } else {
-                $$ = variable_add( _environment, "XGR", $2 )->name;
-            }
-        } else {
-            if ( ((struct _Environment *)_environment)->originUsed ) {
-                $$ = variable_add( _environment, "ORIGINX", $2 )->name;
-            } else {
-                $$ = $2;
-            }
-        }
-        if ( ((struct _Environment *)_environment)->resolutionUsed ) {
-            outline0("; begin resolution");
-            variable_move( _environment, 
-                variable_div( _environment, variable_mul( _environment, $$, "CURRENTWIDTH" )->name, "RESOLUTIONX", NULL )->name, 
-                $$ 
-            );
-            outline0("; end resolution");
-        }
+        $$ = origin_resolution_relative_transform_x( _environment, $2, $1 )->name;
     }
     | {
-        if ( ((struct _Environment *)_environment)->originUsed ) {
-            $$ = variable_add( _environment, "ORIGINX", "XGR" )->name;
-        } else {
-            $$ = strdup( "XGR" );
-        }
-        if ( ((struct _Environment *)_environment)->resolutionUsed ) {
-            variable_move( _environment, 
-                variable_div( _environment, variable_mul( _environment, $$, "CURRENTWIDTH" )->name, "RESOLUTIONX", NULL )->name, 
-                $$ 
-            );
-        }
+        $$ = origin_resolution_relative_transform_x( _environment, NULL, 0 )->name;
     }
     ;
 
 optional_y:
     relative_option expr {
-        if ( $1 ) {
-            if ( ((struct _Environment *)_environment)->originUsed ) {
-                if ( ((struct _Environment *)_environment)->originYDirection >= 0 ) {
-                    $$ = variable_add( _environment, "ORIGINY", variable_add( _environment, "YGR", $2 )->name )->name;
-                } else {
-                    $$ = variable_sub( _environment, "ORIGINY", variable_add( _environment, "YGR", $2 )->name )->name;
-                }
-            } else {
-                if ( ((struct _Environment *)_environment)->originYDirection >= 0 ) {
-                    $$ = variable_add( _environment, "YGR", $2 )->name;
-                } else {
-                    Variable * temp = variable_temporary( _environment, VT_POSITION, "(zero)");
-                    variable_store( _environment, temp->name, 0 );
-                    $$ = variable_sub( _environment, temp->name, variable_add( _environment, "YGR", $2 )->name )->name;
-                }
-            }
-        } else {
-            if ( ((struct _Environment *)_environment)->originUsed ) {
-                if ( ((struct _Environment *)_environment)->originYDirection >= 0 ) {
-                    $$ = variable_add( _environment, "ORIGINY", $2 )->name;
-                } else {
-                    $$ = variable_sub( _environment, "ORIGINY", $2 )->name;
-                }
-            } else {
-                if ( ((struct _Environment *)_environment)->originYDirection >= 0 ) {
-                    $$ = $2;
-                } else {
-                    Variable * temp = variable_temporary( _environment, VT_POSITION, "(zero)");
-                    variable_store( _environment, temp->name, 0 );
-                    $$ = variable_sub( _environment, temp->name, $2 )->name;
-                }
-            }
-        }
-        if ( ((struct _Environment *)_environment)->resolutionUsed ) {
-            variable_move( _environment, 
-                variable_div( _environment, variable_mul( _environment, $$, "CURRENTHEIGHT" )->name, "RESOLUTIONY", NULL )->name, 
-                $$ 
-            );
-        }
+        $$ = origin_resolution_relative_transform_y( _environment, $2, $1 )->name;
     }
     | {
-        if ( ((struct _Environment *)_environment)->originUsed ) {
-            if ( ((struct _Environment *)_environment)->originYDirection >= 0 ) {
-                $$ = variable_add( _environment, "ORIGINY", "YGR" )->name;
-            } else {
-                $$ = variable_sub( _environment, "ORIGINY", "YGR" )->name;
-            }
-        } else {
-            $$ = strdup( "YGR" );
-        }
-        if ( ((struct _Environment *)_environment)->resolutionUsed ) {
-            variable_move( _environment, 
-                variable_div( _environment, variable_mul( _environment, $$, "CURRENTHEIGHT" )->name, "RESOLUTIONY", NULL )->name, 
-                $$ 
-            );
-        }
+        $$ = origin_resolution_relative_transform_y( _environment, NULL, 0 )->name;
     }
     ;
 
@@ -3910,13 +3828,19 @@ put_definition_expression:
         gr_locate( _environment, $8, $10 );
     }
     | IMAGE expr put_image_flags {
-        put_image( _environment, $2, "XGR", "YGR", NULL, NULL, $3 );
+        Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
+        Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
+        put_image( _environment, $2, implicitX->name, implicitY->name, NULL, NULL, $3 );
     }
     | IMAGE expr FRAME expr put_image_flags {
-        put_image( _environment, $2, "XGR", "YGR", $4, NULL, $5 );
+        Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
+        Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
+        put_image( _environment, $2, implicitX->name, implicitY->name, $4, NULL, $5 );
     }
     | IMAGE expr SEQUENCE expr FRAME expr put_image_flags {
-        put_image( _environment, $2, "XGR", "YGR", $6, $4, $7 );
+        Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
+        Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
+        put_image( _environment, $2, implicitX->name, implicitY->name, $6, $4, $7 );
     }
     | TILE expr AT optional_x OP_COMMA optional_y {
         put_tile( _environment, $2, $4, $6, NULL, NULL );
@@ -3945,11 +3869,15 @@ draw_definition_expression:
         gr_locate( _environment, $5, $7 );
     }
     | TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
-        draw( _environment, "XGR", "YGR", $2, $4, $6 );
+        Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
+        Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
+        draw( _environment, implicitX->name, implicitY->name, $2, $4, $6 );
         gr_locate( _environment, $2, $4 );
     }
     | TO optional_x OP_COMMA optional_y  {
-        draw( _environment, "XGR", "YGR", $2, $4, NULL );
+        Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
+        Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
+        draw( _environment, implicitX->name, implicitY->name, $2, $4, NULL );
         gr_locate( _environment, $2, $4 );
     };
 
@@ -3983,11 +3911,15 @@ box_definition_expression:
         gr_locate( _environment, $5, $7 );
     }
     | TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
-        box( _environment, "XGR", "YGR", $2, $4, $6 );
+        Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
+        Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
+        box( _environment, implicitX->name, implicitY->name, $2, $4, $6 );
         gr_locate( _environment, $2, $4 );
     }
     | TO optional_x OP_COMMA optional_y  {
-        box( _environment, "XGR", "YGR", $2, $4, NULL );
+        Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
+        Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
+        box( _environment, implicitX->name, implicitY->name, $2, $4, NULL );
         gr_locate( _environment, $2, $4 );
     };
 
@@ -4004,11 +3936,15 @@ bar_definition_expression:
         gr_locate( _environment, $5, $7 );
     }
     | TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
-        bar( _environment, "XGR", "YGR", $2, $4, $6 );
+        Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
+        Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
+        bar( _environment, implicitX->name, implicitY->name, $2, $4, $6 );
         gr_locate( _environment, $2, $4 );
     }
     | TO optional_x OP_COMMA optional_y  {
-        bar( _environment, "XGR", "YGR", $2, $4, NULL );
+        Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
+        Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
+        bar( _environment, implicitX->name, implicitY->name, $2, $4, NULL );
         gr_locate( _environment, $2, $4 );
     };
 
@@ -4028,15 +3964,21 @@ clip_definition:
 
 polyline_definition_expression_continue:
       TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
-        draw( _environment, "XGR", "YGR", $2, $4, $6 );
+        Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
+        Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
+        draw( _environment, implicitX->name, implicitY->name, $2, $4, $6 );
         gr_locate( _environment, $2, $4 );
     }
     | TO optional_x OP_COMMA optional_y  {
-        draw( _environment, "XGR", "YGR", $2, $4, NULL );
+        Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
+        Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
+        draw( _environment, implicitX->name, implicitY->name, $2, $4, NULL );
         gr_locate( _environment, $2, $4 );
     } polyline_definition_expression_continue
     | TO optional_x OP_COMMA optional_y  {
-        draw( _environment, "XGR", "YGR", $2, $4, NULL );
+        Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
+        Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
+        draw( _environment, implicitX->name, implicitY->name, $2, $4, NULL );
         gr_locate( _environment, $2, $4 );
     };
 
@@ -4054,15 +3996,21 @@ polyline_definition_expression:
         gr_locate( _environment, $5, $7 );
     } polyline_definition_expression_continue
     | TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
-        draw( _environment, "XGR", "YGR", $2, $4, $6 );
+        Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
+        Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
+        draw( _environment, implicitX->name, implicitY->name, $2, $4, $6 );
         gr_locate( _environment, $2, $4 );
     }
     | TO optional_x OP_COMMA optional_y  {
-        draw( _environment, "XGR", "YGR", $2, $4, NULL );
+        Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
+        Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
+        draw( _environment, implicitX->name, implicitY->name, $2, $4, NULL );
         gr_locate( _environment, $2, $4 );
     }
     | TO optional_x OP_COMMA optional_y  {
-        draw( _environment, "XGR", "YGR", $2, $4, NULL );
+        Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
+        Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
+        draw( _environment, implicitX->name, implicitY->name, $2, $4, NULL );
         gr_locate( _environment, $2, $4 );
     } polyline_definition_expression_continue;
 

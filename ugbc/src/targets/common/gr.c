@@ -70,40 +70,20 @@ void gr_locate( Environment * _environment, char * _x, char * _y ) {
 
     if ( _x ) {
         Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
+        if ( x->reflected ) {
+            x = variable_retrieve( _environment, x->reflected );
+        }
         Variable * xgr = variable_retrieve( _environment, "XGR" );
-        if ( ((struct _Environment *)_environment)->resolutionUsed ) {
-            variable_move( _environment, 
-                variable_div( _environment, variable_mul( _environment, x->name, "RESOLUTIONX" )->name, "CURRENTWIDTH", NULL )->name, 
-                x->name 
-            );
-        }
-        if ( _environment->originUsed ) {
-            variable_move( _environment, variable_sub( _environment, x->name, "ORIGINX")->name, xgr->name );
-        } else {
-            variable_move( _environment, x->name, xgr->name );
-        }
+        variable_move( _environment, x->name, xgr->name );
     }
 
     if ( _y ) {
         Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
+        if ( y->reflected ) {
+            y = variable_retrieve( _environment, y->reflected );
+        }
         Variable * ygr = variable_retrieve( _environment, "YGR" );
-        if ( ((struct _Environment *)_environment)->resolutionUsed ) {
-            variable_move( _environment, 
-                variable_div( _environment, variable_mul( _environment, y->name, "RESOLUTIONY" )->name, "CURRENTHEIGHT", NULL )->name, 
-                y->name 
-            );
-        }
-        if ( _environment->originUsed ) {
-            variable_move( _environment, variable_sub( _environment, y->name, "ORIGINY")->name, ygr->name );
-            if ( _environment->originYDirection >= 0 ) {
-            } else {
-                Variable * temp = variable_temporary( _environment, VT_POSITION, "(zero)");
-                variable_store( _environment, temp->name, 0 );
-                variable_move( _environment, variable_sub( _environment, temp->name, ygr->name )->name, ygr->name );
-            }
-        } else {
-            variable_move( _environment, y->name, ygr->name );
-        }
+        variable_move( _environment, y->name, ygr->name );
     }
 
 }
