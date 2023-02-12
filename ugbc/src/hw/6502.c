@@ -2435,25 +2435,25 @@ void cpu6502_math_div_32bit_to_16bit( Environment * _environment, char *_source,
     embedded( cpu_math_div_32bit_to_16bit, src_hw_6502_cpu_math_div_32bit_to_16bit_asm )
 
         outline1("LDA %s", _source );
-        outline0("STA CPUMATHDIV32BITTO16BIT_SOURCEX");
+        outline0("STA MATHPTR4");
         outline1("LDA %s+1", _source );
-        outline0("STA CPUMATHDIV32BITTO16BIT_SOURCEX+1");
+        outline0("STA MATHPTR5");
         outline1("LDA %s+2", _source );
-        outline0("STA CPUMATHDIV32BITTO16BIT_SOURCEY");
+        outline0("STA MATHPTR2");
         outline1("LDA %s+3", _source );
-        outline0("STA CPUMATHDIV32BITTO16BIT_SOURCEY+1" );
+        outline0("STA MATHPTR3" );
         outline1("LDA %s", _destination );
-        outline0("STA CPUMATHDIV32BITTO16BIT_DESTINATION");
+        outline0("STA MATHPTR0");
         outline1("LDA %s+1", _destination );
-        outline0("STA CPUMATHDIV32BITTO16BIT_DESTINATION+1" );
+        outline0("STA MATHPTR1" );
         outline0("JSR CPUMATHDIV32BITTO16BIT" );
-        outline0("LDA CPUMATHDIV32BITTO16BIT_SOURCEX");
+        outline0("LDA MATHPTR4");
         outline1("STA %s", _other );
-        outline0("LDA CPUMATHDIV32BITTO16BIT_SOURCEX+1");
+        outline0("LDA MATHPTR5");
         outline1("STA %s+1", _other );
-        outline0("LDA CPUMATHDIV32BITTO16BIT_SOURCEY");
+        outline0("LDA MATHPTR2");
         outline1("STA %s", _other_remainder );
-        outline0("LDA CPUMATHDIV32BITTO16BIT_SOURCEY+1");
+        outline0("LDA MATHPTR3");
         outline1("STA %s+1", _other_remainder );
 
     done()
