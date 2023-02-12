@@ -353,10 +353,19 @@ Variable * variable_retrieve_internal( Environment * _environment, char * _name,
 
     } else {
 
+        // If not found, look for variable inside the set of temporary variables
+        // for this specific procedure.
+
+        if ( !var ) {
+            var = variable_find( _environment->tempVariables[_environment->currentProcedure], _name );
+        }
+
         // Look for variable inside the set of temporary variables
         // for the main program.
 
-        var = variable_find( _environment->tempVariables[0], _name );
+        if ( !var ) {
+            var = variable_find( _environment->tempVariables[0], _name );
+        }
 
         // If not found, take a look to the resident ones.
         
@@ -5189,6 +5198,7 @@ Variable * variable_move_from_array( Environment * _environment, char * _array )
 
 int pattern_match(char *_pattern, char * _value)
 {
+
     // If we reach at the end of both strings, we are done
     if (*_pattern == '\0' && *_value == '\0')
         return 1;
