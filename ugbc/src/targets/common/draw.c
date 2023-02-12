@@ -87,6 +87,13 @@ bitmask di 16 bit con il comando ''SET LINE''.
 </usermanual> */
 void draw( Environment * _environment, char * _x0, char * _y0, char * _x1, char * _y1, char * _c ) {
 
+    deploy_begin( draw );
+
+    Variable * x0 = variable_retrieve_or_define( _environment, "draw__x0", VT_POSITION, 0 );
+    Variable * y0 = variable_retrieve_or_define( _environment, "draw__y0", VT_POSITION, 0 );
+    Variable * x1 = variable_retrieve_or_define( _environment, "draw__x1", VT_POSITION, 0 );
+    Variable * y1 = variable_retrieve_or_define( _environment, "draw__y1", VT_POSITION, 0 );
+
     Variable * zero = variable_temporary( _environment, VT_POSITION, "(0)" );
     variable_store( _environment, zero->name, 0 );
     Variable * sixteen = variable_temporary( _environment, VT_BYTE, "(16)" );
@@ -95,10 +102,6 @@ void draw( Environment * _environment, char * _x0, char * _y0, char * _x1, char 
     Variable * pattern = variable_retrieve( _environment, "LINE" );
     Variable * bit = variable_temporary( _environment, VT_BYTE, "(bit)" );
     Variable * fraction = variable_temporary( _environment, VT_POSITION, "(fraction)");
-    Variable * x0 = variable_retrieve_or_define( _environment, _x0, VT_POSITION, 0 );
-    Variable * y0 = variable_retrieve_or_define( _environment, _y0, VT_POSITION, 0 );
-    Variable * x1 = variable_retrieve_or_define( _environment, _x1, VT_POSITION, 0 );
-    Variable * y1 = variable_retrieve_or_define( _environment, _y1, VT_POSITION, 0 );
     Variable * x = variable_temporary( _environment, VT_POSITION, "(x)" );
     Variable * y = variable_temporary( _environment, VT_POSITION, "(y)" );
 
@@ -180,4 +183,24 @@ void draw( Environment * _environment, char * _x0, char * _y0, char * _x1, char 
             end_if_then( _environment );
         end_while( _environment );
    end_if_then( _environment );
+
+    deploy_end( draw );
+
+    x0 = variable_retrieve_or_define( _environment, _x0, VT_POSITION, 0 );
+    y0 = variable_retrieve_or_define( _environment, _y0, VT_POSITION, 0 );
+    x1 = variable_retrieve_or_define( _environment, _x1, VT_POSITION, 0 );
+    y1 = variable_retrieve_or_define( _environment, _y1, VT_POSITION, 0 );
+
+    Variable * dx0 = variable_retrieve( _environment, "draw__x0" );
+    Variable * dy0 = variable_retrieve( _environment, "draw__y0" );
+    Variable * dx1 = variable_retrieve( _environment, "draw__x1" );
+    Variable * dy1 = variable_retrieve( _environment, "draw__y1" );
+
+    variable_move( _environment, x0->name, dx0->name );
+    variable_move( _environment, y0->name, dy0->name );
+    variable_move( _environment, x1->name, dx1->name );
+    variable_move( _environment, y1->name, dy1->name );
+
+    cpu_call( _environment, "lib_draw");
+
 }

@@ -1158,6 +1158,8 @@ typedef struct _Deployed {
     int sn76489startup;
     int storage;
 
+    int draw;
+
     Embedded embedded;
 
 } Deployed;
@@ -1676,6 +1678,11 @@ typedef struct _Environment {
      * If true, the body of procedure will not be produced
      */
     int emptyProcedure;
+
+    /**
+     * Saved flag if inside a deployed library
+     */
+    int emptyProcedureSaved;
 
     /**
      * List of offset table to generate.
@@ -2301,6 +2308,21 @@ int embed_scan_string (const char *);
             cpu_label( _environment, #s "_after" ); \
             _environment->emptyProcedure = ignoreEmptyProcedure; \
             _environment->deployed.embedded.s = 1; \
+        }
+
+#define deploy_begin(s)  \
+        if ( ! _environment->deployed.s ) { \
+            _environment->emptyProcedureSaved = _environment->emptyProcedure; \
+            _environment->emptyProcedure = 0; \
+            cpu_jump( _environment, #s "_after" ); \
+            cpu_label( _environment, "lib_" #s ); \
+        }
+
+#define deploy_end(s)  \
+        if ( ! _environment->deployed.s ) { \
+            cpu_label( _environment, #s "_after" ); \
+            _environment->emptyProcedure = _environment->emptyProcedureSaved; \
+            _environment->deployed.s = 1; \
         }
 
 #define inline(s) \
