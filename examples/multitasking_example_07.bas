@@ -36,7 +36,7 @@ PARALLEL PROCEDURE moveBat
 END PROC
 
 PARALLEL PROCEDURE moveBoy
-    SHARED bat, x, y, f
+    SHARED bat, x, y, f, boy
     DO
         PUT IMAGE boy FRAME [f] AT [x],[y]
         [f] = [f] + 1
