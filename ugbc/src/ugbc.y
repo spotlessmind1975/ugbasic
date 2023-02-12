@@ -6874,10 +6874,17 @@ int main( int _argc, char *_argv[] ) {
         (void)!fread( sourceText, 1, sourceSize, fh );
         fclose( fh );
         char * escapedSourceText = unescape_string( _environment, sourceText, 1 );
-        for( int i=0, c=strlen(escapedSourceText); i<c; ++i ) {
+        int i=0;
+        for( int c=strlen(escapedSourceText); i<c; ++i ) {
             if ( escapedSourceText[i] == 0x0d ) {
                 escapedSourceText[i] = 0x20;
             }
+        }
+        for( ; i>0; --i ) {
+            if ( escapedSourceText[i] != 0x20 && escapedSourceText[i] != 0x0a ) {
+                break;
+            }
+            escapedSourceText[i] = 0;
         }
         Variable * source = variable_define( _environment, "SHELL_SOURCE", VT_BUFFER, 0 );
         variable_store_buffer( _environment, source->name, escapedSourceText, strlen(escapedSourceText), 0 );
