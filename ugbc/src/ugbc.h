@@ -1680,11 +1680,6 @@ typedef struct _Environment {
     int emptyProcedure;
 
     /**
-     * Saved flag if inside a deployed library
-     */
-    int emptyProcedureSaved;
-
-    /**
      * List of offset table to generate.
      */
     Offsetting * offsetting;
@@ -2312,16 +2307,14 @@ int embed_scan_string (const char *);
 
 #define deploy_begin(s)  \
         if ( ! _environment->deployed.s ) { \
-            _environment->emptyProcedureSaved = _environment->emptyProcedure; \
+            int ignoreEmptyProcedure = _environment->emptyProcedure; \
             _environment->emptyProcedure = 0; \
             cpu_jump( _environment, #s "_after" ); \
             cpu_label( _environment, "lib_" #s ); \
-        }
 
 #define deploy_end(s)  \
-        if ( ! _environment->deployed.s ) { \
             cpu_label( _environment, #s "_after" ); \
-            _environment->emptyProcedure = _environment->emptyProcedureSaved; \
+            _environment->emptyProcedure = ignoreEmptyProcedure; \
             _environment->deployed.s = 1; \
         }
 
