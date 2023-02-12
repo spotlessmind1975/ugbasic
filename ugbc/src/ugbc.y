@@ -800,12 +800,6 @@ expr :
     | NOT expr {
         $$ = variable_not( _environment, $2 )->name;
     }
-    | OP_MINUS expr {
-        Variable * expr = variable_retrieve( _environment, $2 );
-        Variable * zero = variable_temporary( _environment, VT_SIGN( expr->type ), "(zero)" );
-        variable_store( _environment, zero->name, 0 );
-        $$ = variable_sub( _environment, zero->name, expr->name )->name;
-    }
     ;
     
 expr_math: 
@@ -875,6 +869,12 @@ factor:
       }
       | BIT exponential OF factor {
         $$ = variable_bit( _environment, $4, $2 )->name;
+      }
+      | OP_MINUS factor {
+        Variable * expr = variable_retrieve( _environment, $2 );
+        Variable * zero = variable_temporary( _environment, VT_SIGN( expr->type ), "(zero)" );
+        variable_store( _environment, zero->name, 0 );
+        $$ = variable_sub( _environment, zero->name, expr->name )->name;
       }
       ;
 
