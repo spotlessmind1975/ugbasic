@@ -66,7 +66,7 @@ La funzione ''SQR'' restituisce un valore che rappresenta la radice quadrata di 
 </usermanual> */
 
 Variable * sqroot( Environment * _environment, char * _value ) {
-    Variable * value = variable_retrieve( _environment, _value );
+    Variable * value = variable_retrieve_or_define( _environment, _value, VT_WORD, 0 );
 
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of SQR)");
 
