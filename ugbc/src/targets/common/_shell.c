@@ -91,9 +91,7 @@ void shell_injection( Environment * _environment ) {
     cpu_label( _environment, "PROGLIST" );
 
     print_newline( _environment );
-
-    print_newline( _environment );
-
+    
     print_buffer( _environment, source->name, 1, 0 );
 
     cpu_jump( _environment, "SHELLPROMPT" );
