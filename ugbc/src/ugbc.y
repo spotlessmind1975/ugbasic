@@ -3223,7 +3223,16 @@ wait_definition_simple:
         wait_key( _environment );
         if ( $2 ) {
             begin_loop( _environment );
-                exit_loop_if( _environment, variable_not( _environment, variable_or( _environment, scancode( _environment )->name, scancode( _environment )->name )->name )->name, 0 );
+                Variable * noKey = variable_temporary( _environment, VT_BYTE, "nokey" );
+                variable_move( _environment, scancode( _environment )->name, noKey->name );
+                exit_loop_if( _environment, 
+                    variable_not( _environment, 
+                        variable_compare( _environment, 
+                            scancode( _environment )->name, 
+                            noKey->name 
+                        )->name 
+                    )->name, 0 
+                );
             end_loop( _environment );
         }
     }
