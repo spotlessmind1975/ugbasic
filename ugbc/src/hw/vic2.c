@@ -1566,6 +1566,11 @@ void vic2_initialization( Environment * _environment ) {
     variable_import( _environment, "ORIGINY", VT_POSITION, 0 );
     variable_global( _environment, "ORIGINY" );
 
+    variable_import( _environment, "RESOLUTIONX", VT_POSITION, 0 );
+    variable_global( _environment, "RESOLUTIONX" );
+    variable_import( _environment, "RESOLUTIONY", VT_POSITION, 0 );
+    variable_global( _environment, "RESOLUTIONY" );
+
     variable_import( _environment, "XSCROLLPOS", VT_BYTE, 4 );
     variable_global( _environment, "XSCROLLPOS" );
     variable_import( _environment, "YSCROLLPOS", VT_BYTE, 4 );
