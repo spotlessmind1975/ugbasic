@@ -92,7 +92,7 @@ void shell_injection( Environment * _environment ) {
 
     print_newline( _environment );
     
-    print_buffer( _environment, source->name, 1, 0 );
+    print_buffer( _environment, source->name, 1, 1 );
 
     cpu_jump( _environment, "SHELLPROMPT" );
 
