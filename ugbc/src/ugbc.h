@@ -2682,7 +2682,6 @@ char * basename( char * _path );
     sprintf( commandLine, "\"%s\" dskini \"%s\"", \
         executableName, \
         _environment->exeFileName ); \
-        printf( "%s\n", commandLine ); \
     if ( system_call( _environment,  commandLine ) ) { \
         printf("The compilation of assembly program failed.\n\n"); \
         printf("Please use option '-I' to install chain tool.\n\n"); \
@@ -2692,7 +2691,6 @@ char * basename( char * _path );
         binaryFileName,  \
         _environment->exeFileName, \
         strtoupper( basename( binaryFileName ) ) ); \
-        printf( "%s\n", commandLine ); \
     if ( system_call( _environment,  commandLine ) ) { \
         printf("The compilation of assembly program failed.\n\n"); \
         printf("Please use option '-I' to install chain tool.\n\n"); \
