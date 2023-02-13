@@ -875,6 +875,7 @@ static int vars_ok(POBuffer name) {
     if(po_buf_match(name, "^_Tstr"))   return 0;
     if(po_buf_match(name, "_^_Tstr"))   return 0;
     if(po_buf_match(name, "_label"))  return 0;
+    if(po_buf_match(name, "_SHELL"))  return 0;
 
     if(name->str[0]=='_')      return 1;
     if(po_buf_match(name, "CLIP"))    return 1;
