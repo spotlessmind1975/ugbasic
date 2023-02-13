@@ -6439,9 +6439,11 @@ int rgbi_extract_palette( unsigned char* _source, int _width, int _height, int _
 
             if (i >= usedPalette) {
                 // printf( "added\n");
+                // printf( "_palette[%d] vs %d\n", usedPalette, _palette_size);
                 rgbi_move( &rgb, &_palette[usedPalette] );
                 ++usedPalette;
-                if (usedPalette > _palette_size) {
+                if (usedPalette >= (_palette_size-1)) {
+                    // printf( " done!");
                     break;
                 }
             } else {
@@ -6450,7 +6452,7 @@ int rgbi_extract_palette( unsigned char* _source, int _width, int _height, int _
             }
             source += _depth;
         }
-        if (usedPalette > _palette_size) {
+        if (usedPalette > (_palette_size-1)) {
             break;
         }
     }
