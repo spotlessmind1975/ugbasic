@@ -77,12 +77,12 @@ SCANCODEE
     RTS
 
 SCANCODEMATRIX
-    fcb '0','8','@','H','P','X',$0d,$00     ; // UNUSED
-    fcb '1','9','A','I','Q','Y',$F9,$00     ; // CLR, UNUSED
-    fcb '2','*','B','J','R','Z',$00,$00     ; // BRK, UNUSED
-    fcb '3',',','C','K','S',$FA,$00,$00     ; // UP, UNUSED, UNUSED
-    fcb '4','-','D','L','T',$FB,$00,$00     ; // DOWN, UNUSED, UNUSED
-    fcb '5',$00,'E','M','U',$FC,$00,$00     ; // ??, .., LEFT, UNUSED, UNUSED
-    fcb '6','/','F','N','V',$FD,$00,$00     ; // RIGHT, UNUSED, UNUSED
+    fcb '@','H','P','X','0','8',$0d,$00     ; // UNUSED
+    fcb 'A','I','Q','Y','1','9',$F9,$00     ; // CLR, UNUSED
+    fcb 'B','J','R','Z','2',':',$00,$00     ; // BRK, UNUSED
+    fcb 'C','K','S',$FA,'3',';',$00,$00     ; // UP $FA, UNUSED, UNUSED
+    fcb 'D','L','T',$FB,'4',',',$00,$00     ; // DOWN $FB, UNUSED, UNUSED
+    fcb 'E','M','U',$FC,'5','-',$00,$00     ; // ?? $FC, .., LEFT, UNUSED, UNUSED
+    fcb 'F','N','V',$FD,'6','.',$00,$00     ; // RIGHT $FD, UNUSED, UNUSED
 SCANCODEMATRIXE
-    fcb '7',' ','G','O','W',' ',$00,$FE     ; // UNUSED, SHIFT
+    fcb '7','O','W',' ','7','/',$00,$FE     ; // UNUSED, SHIFT
