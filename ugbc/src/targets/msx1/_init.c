@@ -192,14 +192,14 @@ void target_initialization( Environment * _environment ) {
 
     outline0("CALL MSX1STARTUP" );
 
-    if ( _environment->tenLinerRulesEnforced ) {
-        shell_injection( _environment );
-    }
-
     setup_text_variables( _environment );
 
     tms9918_initialization( _environment );
     ay8910_initialization( _environment );
+    
+    if ( _environment->tenLinerRulesEnforced ) {
+        shell_injection( _environment );
+    }
 
 }
 
