@@ -65,7 +65,7 @@ void input( Environment * _environment, char * _variable ) {
 
     cpu_store_8bit( _environment, enter->realName, 13 );
     cpu_store_8bit( _environment, offset->realName, 0 );
-    cpu_store_8bit( _environment, backspace->realName, 20 );
+    cpu_store_8bit( _environment, backspace->realName, 8 );
     cpu_store_8bit( _environment, space->realName, 32 );
     cpu_store_8bit( _environment, zero->realName, 0 );
 
