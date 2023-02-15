@@ -1004,12 +1004,7 @@ void cpc_initialization( Environment * _environment ) {
 
     cpc_screen_mode_enable( _environment, find_screen_mode_by_id( _environment, BITMAP_MODE_DEFAULT ) );
 
-    _environment->descriptors = precalculate_tile_descriptors_for_font( data_fontcpc_bin );
-
-    _environment->descriptors->first = 0;
-    _environment->descriptors->firstFree = 128;
-    _environment->descriptors->lastFree = 255;
-    _environment->descriptors->count = 128;
+    font_descriptors_init( _environment, 0 );
     
     _environment->currentRgbConverterFunction = rgbConverterFunction;
     _environment->screenShades = 16;
