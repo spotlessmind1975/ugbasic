@@ -63,23 +63,21 @@ CFLAGS += -D_DEBUG -g
 endif
 
 # ----------------------------------------------------------------------------
-# DEFAULT FONT
+# FONTS
 # ----------------------------------------------------------------------------
 
-src-generated/fontvic1.c:
-	@xxd -i $(subst src-generated/,data/,$(@:.c=.bin)) >$@
+src-generated/font_standard.c:
+	@xxd -i $(subst src-generated/font_,data/font/,$(@:.c=.bin)) >$@
 
-src-generated/fontvic2.c:
-	@xxd -i $(subst src-generated/,data/,$(@:.c=.bin)) >$@
+src-generated/font_semigraphic.c:
+	@xxd -i $(subst src-generated/font_,data/font/,$(@:.c=.bin)) >$@
 
-src-generated/fonttms9918.c:
-	@xxd -i $(subst src-generated/,data/,$(@:.c=.bin)) >$@
+src-generated/font_complete.c:
+	@xxd -i $(subst src-generated/font_,data/font/,$(@:.c=.bin)) >$@
 
-src-generated/fontcpc.c:
-	@xxd -i $(subst src-generated/,data/,$(@:.c=.bin)) >$@
-
-src-generated/fontef9345.c:
-	@xxd -i $(subst src-generated/,data/,$(@:.c=.bin)) >$@
+FONTS := src-generated/font_standard.c \
+			src-generated/font_semigraphic.c \
+			src-generated/font_complete.c
 
 # ----------------------------------------------------------------------------
 # Components and chipsets
@@ -96,7 +94,7 @@ src-generated/6809_%.c: $(MODULES_6809)
 # Motorola 6847
 
 MODULES_6847 := $(wildcard src/hw/6847/*.asm)
-SOURCES_6847 := $(subst src/hw/6847/,src-generated/6847_,$(MODULES_6847:.asm=.c))
+SOURCES_6847 := $(subst src/hw/6847/,src-generated/6847_,$(MODULES_6847:.asm=.c)) $(FONTS)
 
 src-generated/6847_%.c: $(MODULES_6847)
 	@xxd -i $(subst src-generated/6847_,src/hw/6847/,$(@:.c=.asm)) >$@
@@ -104,7 +102,7 @@ src-generated/6847_%.c: $(MODULES_6847)
 # Thomson EF9345
 
 MODULES_EF9345 := $(wildcard src/hw/ef9345/*.asm)
-SOURCES_EF9345 := $(subst src/hw/ef9345/,src-generated/ef9345_,$(MODULES_EF9345:.asm=.c)) src-generated/fontef9345.c
+SOURCES_EF9345 := $(subst src/hw/ef9345/,src-generated/ef9345_,$(MODULES_EF9345:.asm=.c)) $(FONTS)
 
 src-generated/ef9345_%.c: $(MODULES_EF9345)
 	@xxd -i $(subst src-generated/ef9345_,src/hw/ef9345/,$(@:.c=.asm)) >$@
@@ -112,7 +110,7 @@ src-generated/ef9345_%.c: $(MODULES_EF9345)
 # Thomson EF936x
 
 MODULES_EF936X := $(wildcard src/hw/ef936x/*.asm)
-SOURCES_EF936X := $(subst src/hw/ef936x/,src-generated/ef936x_,$(MODULES_EF936X:.asm=.c))
+SOURCES_EF936X := $(subst src/hw/ef936x/,src-generated/ef936x_,$(MODULES_EF936X:.asm=.c)) $(FONTS)
 
 src-generated/ef936x_%.c: $(MODULES_EF936X)
 	@xxd -i $(subst src-generated/ef936x_,src/hw/ef936x/,$(@:.c=.asm)) >$@
@@ -145,7 +143,7 @@ src-generated/antic_%.c: $(MODULES_ANTIC)
 # Graphic Television Interface Adaptor[1] (GTIA) 
 
 MODULES_GTIA := $(wildcard src/hw/gtia/*.asm)
-SOURCES_GTIA := $(subst src/hw/gtia/,src-generated/gtia_,$(MODULES_GTIA:.asm=.c))
+SOURCES_GTIA := $(subst src/hw/gtia/,src-generated/gtia_,$(MODULES_GTIA:.asm=.c)) $(FONTS)
 
 src-generated/gtia_%.c: $(MODULES_GTIA)
 	@xxd -i $(subst src-generated/gtia_,src/hw/gtia/,$(@:.c=.asm)) >$@
@@ -161,7 +159,7 @@ src-generated/ay8910_%.c: $(MODULES_AY8910)
 # MOS Technology VIC-I
 
 MODULES_VIC1 := $(wildcard src/hw/vic1/*.asm)
-SOURCES_VIC1 := $(subst src/hw/vic1/,src-generated/vic1_,$(MODULES_VIC1:.asm=.c)) src-generated/fontvic1.c
+SOURCES_VIC1 := $(subst src/hw/vic1/,src-generated/vic1_,$(MODULES_VIC1:.asm=.c)) $(FONTS)
 
 src-generated/vic1_%.c: $(MODULES_VIC1)
 	@xxd -i $(subst src-generated/vic1_,src/hw/vic1/,$(@:.c=.asm)) >$@
@@ -169,7 +167,7 @@ src-generated/vic1_%.c: $(MODULES_VIC1)
 # MOS Technology VIC-II
 
 MODULES_VIC2 := $(wildcard src/hw/vic2/*.asm)
-SOURCES_VIC2 := $(subst src/hw/vic2/,src-generated/vic2_,$(MODULES_VIC2:.asm=.c)) src-generated/fontvic2.c
+SOURCES_VIC2 := $(subst src/hw/vic2/,src-generated/vic2_,$(MODULES_VIC2:.asm=.c)) $(FONTS)
 
 src-generated/vic2_%.c: $(MODULES_VIC2)
 	@xxd -i $(subst src-generated/vic2_,src/hw/vic2/,$(@:.c=.asm)) >$@
@@ -185,7 +183,7 @@ src-generated/sid_%.c: $(MODULES_SID)
 # MOS Technology TED
 
 MODULES_TED := $(wildcard src/hw/ted/*.asm)
-SOURCES_TED := $(subst src/hw/ted/,src-generated/ted_,$(MODULES_TED:.asm=.c))
+SOURCES_TED := $(subst src/hw/ted/,src-generated/ted_,$(MODULES_TED:.asm=.c)) $(FONTS)
 
 src-generated/ted_%.c: $(MODULES_TED)
 	@xxd -i $(subst src-generated/ted_,src/hw/ted/,$(@:.c=.asm)) >$@
@@ -201,7 +199,7 @@ src-generated/sn76489_%.c: $(MODULES_SN76489)
 # Texas Instruments TMS9918
 
 MODULES_TMS9918 := $(wildcard src/hw/tms9918/*.asm)
-SOURCES_TMS9918 := $(subst src/hw/tms9918/,src-generated/tms9918_,$(MODULES_TMS9918:.asm=.c))  src-generated/fonttms9918.c
+SOURCES_TMS9918 := $(subst src/hw/tms9918/,src-generated/tms9918_,$(MODULES_TMS9918:.asm=.c)) $(FONTS)
 
 src-generated/tms9918_%.c: $(MODULES_TMS9918)
 	@xxd -i $(subst src-generated/tms9918_,src/hw/tms9918/,$(@:.c=.asm)) >$@
@@ -244,8 +242,8 @@ SOURCES_CPC := $(subst src/hw/cpc/,src-generated/cpc_,$(MODULES_CPC:.asm=.c))
 src-generated/cpc_%.c: $(MODULES_CPC)
 	@xxd -i $(subst src-generated/cpc_,src/hw/cpc/,$(@:.c=.asm)) >$@
 
-src-generated/modules_cpc.c: $(SOURCES_Z80) $(SOURCES_CPC) $(SOURCES_AY8910) src-generated/fontcpc.c
-	@cat $(SOURCES_Z80) $(SOURCES_CPC) $(SOURCES_AY8910) src-generated/fontcpc.c >src-generated/modules_cpc.c
+src-generated/modules_cpc.c: $(SOURCES_Z80) $(SOURCES_CPC) $(SOURCES_AY8910) $(FONTS)
+	@cat $(SOURCES_Z80) $(SOURCES_CPC) $(SOURCES_AY8910) $(FONTS) >src-generated/modules_cpc.c
 	@grep "src" src-generated/modules_cpc.c | awk -f modules.awk >src-generated/modules_cpc.h
 	@grep "data" src-generated/modules_cpc.c | awk -f modules.awk >>src-generated/modules_cpc.h
 

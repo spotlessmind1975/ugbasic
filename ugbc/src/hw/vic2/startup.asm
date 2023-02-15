@@ -67,6 +67,7 @@ ONSWITCHTILEMAP:
 
 VIC2STARTUP:
 
+@IF fontConfig.schema
     SEI
     LDX #$10
 @IF C128
@@ -76,6 +77,7 @@ VIC2STARTUP:
     LDA #$33
     STA $01
 @ENDIF
+
     LDA #$D0
     STA $FC
     LDY #$00
@@ -93,6 +95,7 @@ VIC2STARTUPL1:
     INC $FE
     DEX
     BNE VIC2STARTUPL1
+
 @IF C128
     LDA #%00111110
     STA $FF00
@@ -100,7 +103,11 @@ VIC2STARTUPL1:
     LDA #$35
     STA $01
 @ENDIF
+
     CLI
+
+@ENDIF
+
 
 ;     ; SET_DATA_DIRECTION();
     LDA $dd02
@@ -132,11 +139,15 @@ VIC2STARTUPL1:
 
 ;     ; SET_CHARSET(MR_TILESET_DEFAULT);
     LDA $d018
-    AND #$f1
-    ORA #$08
+    AND #$f0
+@IF fontConfig.schema
+    ORA #$09
+@ELSE
+    ORA #$06
+@ENDIF
     STA $d018
 
-;     ; SET STARTUP CURSOR POSITION    
+    ; SET STARTUP CURSOR POSITION    
     LDA #0
     STA $D3
     LDA #0

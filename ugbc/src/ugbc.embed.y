@@ -241,6 +241,12 @@ const_factor:
             } else {
                 $$ = 0;
             }
+        } else if ( strcmp( $1, "fontConfig" ) == 0 ) {
+            if ( strcmp( $3, "schema" ) == 0 ) {
+                $$ = ((struct _Environment *)_environment)->fontConfig.schema;
+            } else {
+                $$ = 0;
+            }
         } else {
             $$ = 0;
         }

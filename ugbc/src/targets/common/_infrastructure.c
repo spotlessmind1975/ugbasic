@@ -5927,14 +5927,14 @@ TileDescriptor * calculate_tile_descriptor( TileData * _tileData ) {
 
 }
 
-TileDescriptors * precalculate_tile_descriptors_for_font( char * _fontData ) {
+TileDescriptors * precalculate_tile_descriptors_for_font( char * _fontData, int _fontSize ) {
 
     TileDescriptors * tileDescriptors = malloc( sizeof( TileDescriptors ) );
     memset( tileDescriptors, 0, sizeof( TileDescriptors ) );
     
     int i=0,j=0;
 
-    for(i=0;i<128;++i) {
+    for(i=0;i<_fontSize;++i) {
         for(j=0;j<8;++j) {
             tileDescriptors->data[i].data[j] = *(_fontData + i*8 + j);
         }
@@ -6984,5 +6984,39 @@ Variable * origin_resolution_relative_transform_y( Environment * _environment, c
     }
 
     return result;
+
+}
+
+void font_descriptors_init( Environment * _environment, int _embedded_present ) {
+
+    char * data = NULL; int dataSize = 0;
+
+    switch( _environment->fontConfig.schema ) {
+        case FONT_SCHEMA_EMBEDDED:
+            if ( _embedded_present ) {
+                break;
+            }
+        case FONT_SCHEMA_STANDARD:
+        default:
+            data = data_font_standard_bin;
+            dataSize = data_font_standard_bin_len / 8;
+            break;
+        case FONT_SCHEMA_SEMIGRAPHIC:
+            data = data_font_semigraphic_bin;
+            dataSize = data_font_semigraphic_bin_len / 8;
+            break;
+        case FONT_SCHEMA_COMPLETE:
+            data = data_font_complete_bin;
+            dataSize = data_font_complete_bin_len / 8;
+            break;
+    }
+
+    if ( data ) {
+        _environment->descriptors = precalculate_tile_descriptors_for_font( data, dataSize );
+        _environment->descriptors->first = 0;
+        _environment->descriptors->firstFree = ( dataSize - 1 );
+        _environment->descriptors->lastFree = 255;
+        _environment->descriptors->count = 255;
+    }
 
 }

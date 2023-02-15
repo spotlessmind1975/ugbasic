@@ -851,13 +851,8 @@ void ef9345_initialization( Environment * _environment ) {
     variable_global( _environment, "IMAGEF" );
 
     ef9345_tilemap_enable( _environment, 40, 21, 1, 8, 10 );
-
-    _environment->descriptors = precalculate_tile_descriptors_for_font( data_fontef9345_bin );
-
-    _environment->descriptors->first = 0;
-    _environment->descriptors->firstFree = 128;
-    _environment->descriptors->lastFree = 255;
-    _environment->descriptors->count = 128;
+    
+    font_descriptors_init( _environment, 0 );
     
     _environment->currentRgbConverterFunction = rgbConverterFunction;
     _environment->screenShades = 16;

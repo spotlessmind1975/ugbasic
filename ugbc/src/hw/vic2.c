@@ -1589,13 +1589,9 @@ void vic2_initialization( Environment * _environment ) {
     _environment->screenTilesHeight = 25;
     _environment->screenWidth = _environment->screenTilesWidth * 8;
     _environment->screenHeight = _environment->screenTilesHeight * 8;
-    _environment->descriptors = precalculate_tile_descriptors_for_font( data_fontvic2_bin );
 
-    _environment->descriptors->first = 128;
-    _environment->descriptors->firstFree  = _environment->descriptors->first;
-    _environment->descriptors->lastFree = 255;
-    _environment->descriptors->count = 128;
-    
+    font_descriptors_init( _environment, 1 );
+
     _environment->currentRgbConverterFunction = rgbConverterFunction;
     _environment->screenShades = 16;
 

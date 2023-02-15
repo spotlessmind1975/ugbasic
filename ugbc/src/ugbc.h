@@ -344,6 +344,12 @@ typedef enum _VariableType {
 #define DSTRING_DEFAULT_COUNT           255
 #define DSTRING_DEFAULT_SPACE           1024
 
+#define FONT_SCHEMA_EMBEDDED            0
+#define FONT_SCHEMA_STANDARD            1
+#define FONT_SCHEMA_SEMIGRAPHIC         2
+#define FONT_SCHEMA_COMPLETE            3
+#define FONT_DEFAULT_SCHEMA             FONT_SCHEMA_EMBEDDED
+
 #define VT_BW_8BIT( t, v )              ( ( (t) == (v) ) ? 8 : 0 )
 #define VT_BW_16BIT( t, v )             ( ( (t) == (v) ) ? 16 : 0 )
 #define VT_BW_32BIT( t, v )             ( ( (t) == (v) ) ? 32 : 0 )
@@ -1193,6 +1199,12 @@ typedef struct _VestigialConfig {
 
 } VestigialConfig;
 
+typedef struct _FontConfig {
+
+    int schema;
+
+} FontConfig;
+
 typedef struct _EmbedResult {
 
     char * line;
@@ -1351,6 +1363,11 @@ typedef struct _Environment {
      * 
      */
     DString dstring;
+
+    /**
+     * 
+     */
+    FontConfig fontConfig;
 
     /**
      * 
@@ -2884,6 +2901,7 @@ void                    exit_procedure( Environment * _environment );
 //----------------------------------------------------------------------------
 
 void                    file_storage( Environment * _environment, char * _source_name, char *_target_name );
+void                    font_descriptors_init( Environment * _environment, int _embedded_present );
 int                     frames( Environment * _environment, char * _image );
 
 //----------------------------------------------------------------------------
@@ -3055,7 +3073,7 @@ void                    point_at_vars( Environment * _environment, char * _x, ch
 void                    poke_var( Environment * _environment, char * _address, char * _value );
 void                    pop( Environment * _environment );
 Variable *              powering( Environment * _environment, char * _source, char * _dest );
-TileDescriptors *       precalculate_tile_descriptors_for_font( char * _fontData );
+TileDescriptors *       precalculate_tile_descriptors_for_font( char * _fontData, int _fontSize );
 void                    print( Environment * _environment, char * _text, int _new_line );
 void                    print_buffer( Environment * _environment, char * _buffer, int _new_line, int _printable );
 void                    print_newline( Environment * _environment );
