@@ -76,35 +76,17 @@ void c128_inkey( Environment * _environment, char * _pressed, char * _key ) {
     outline0("LDA #$0");
     outline1("STA %s", _key );
 
-    outline0("JSR SCANCODE");
+    outline0("JSR INKEY");
 
-    outline0("LDX $c6");
-    outline0("CPX #$0");
+    outline0("CMP #$0");
     outline1("BEQ %snokey", label );
 
-    outline0("LDA $0277" );
-    outline0("CMP #$FF");
-    outline1("BEQ %snopetscii", label );
     outline1("STA %s", _key );
-    outline0("LDA #$FF");
+    outline0("LDA #$ff");
     outline1("STA %s", _pressed );
-
-    outline0("LDX #0");
-    outhead1("%sclkeys:", label);
-    outline0("LDA $0278,X" );
-    outline0("LDA $0277,X" );
-    outline0("INX");
-    outline0("CPX $c6");
-    outline1("BNE %sclkeys", label);
-    outline0("DEC $c6");
-
-    outline1("JMP %snokey", label );
-
-    outhead1("%snopetscii:", label );
-    outline0("LDA #0");
-    outline1("STA %s", _key );
+    
     outhead1("%snokey:", label );
-   
+
 }
 
 void c128_scancode( Environment * _environment, char * _pressed, char * _scancode ) {
@@ -120,14 +102,13 @@ void c128_scancode( Environment * _environment, char * _pressed, char * _scancod
 
     outline0("JSR SCANCODE");
 
-    outline0("LDY $c5");
-    outline0("CPY #$40");
+    outline0("CMP #$0");
     outline1("BEQ %snokey", label );
 
-    outline1("STY %s", _scancode );
+    outline1("STA %s", _scancode );
     outline0("LDA #$ff");
     outline1("STA %s", _pressed );
-
+    
     outhead1("%snokey:", label );
    
 }
