@@ -4714,4 +4714,28 @@ void cpu6809_in( Environment * _environment, char * _port, char * _value ) {
     
 }
 
+void cpu6809_string_sub( Environment * _environment, char * _source, char * _source_size, char * _pattern, char * _pattern_size, char * _destination, char * _destination_size ) {
+    
+    MAKE_LABEL
+
+    inline( cpu_string_sub )
+
+    embedded( cpu_string_sub, src_hw_6809_cpu_string_sub_asm );
+
+        outline1("LDY %s", _source);
+        outline1("LDA %s", _source_size);
+        outline0("STA MATHPTR0");
+        outline1("LDX %s", _pattern);
+        outline1("LDA %s", _pattern_size);
+        outline0("STA MATHPTR1");
+        outline1("LDU %s", _destination);
+
+        outline0("JSR CPUSTRINGSUB");
+
+        outline0("LDA MATHPTR2");
+        outline1("STA %s", _destination_size);
+
+    done()
+}
+
 #endif

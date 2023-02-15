@@ -199,6 +199,7 @@ void z80_sqroot( Environment * _environment, char * _number, char * _result );
 void z80_dstring_vars( Environment * _environment );
 void z80_out( Environment * _environment, char * _port, char * _value );
 void z80_in( Environment * _environment, char * _port, char * _value );
+void z80_string_sub( Environment * _environment, char * _source, char * _source_size, char * _pattern, char * _pattern_size, char * _destination, char * _destination_size );
 
 void z80_protothread_loop( Environment * _environment );
 void z80_protothread_register_at( Environment * _environment, char * _index, char * _label );
@@ -373,6 +374,7 @@ void z80_msc1_uncompress_indirect_indirect( Environment * _environment, char * _
 #define cpu_set_callback( _environment, _callback, _label ) z80_set_callback( _environment, _callback, _label )
 #define cpu_in( _environment, _port, _value ) z80_in( _environment, _port, _value )
 #define cpu_out( _environment, _port, _value ) z80_out( _environment, _port, _value )
+#define cpu_string_sub( _environment, _source, _source_size, _pattern, _pattern_size, _destination, _destination_size ) z80_string_sub( _environment, _source, _source_size, _pattern, _pattern_size, _destination, _destination_size );
 
 extern char * src_hw_chipset_mob_asm;
 extern unsigned int src_hw_chipset_mob_asm_len;

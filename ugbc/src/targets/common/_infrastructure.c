@@ -2163,21 +2163,46 @@ void variable_add_inplace_mt( Environment * _environment, char * _source, char *
  */
 Variable * variable_sub( Environment * _environment, char * _source, char * _dest ) {
     Variable * source = variable_retrieve( _environment, _source );
-    Variable * target = variable_cast( _environment, _dest, source->type );
-    Variable * result = variable_temporary( _environment, source->type, "(result of subtracting)" );
-    switch( VT_BITWIDTH( source->type ) ) {
-        case 32:
-            cpu_math_sub_32bit( _environment, source->realName, target->realName, result->realName );
-            break;
-        case 16:
-            cpu_math_sub_16bit( _environment, source->realName, target->realName, result->realName );
-            break;
-        case 8:
-            cpu_math_sub_8bit( _environment, source->realName, target->realName, result->realName );
-            break;
-        case 0:
-            CRITICAL_SUB_UNSUPPORTED( _source, DATATYPE_AS_STRING[source->type]);
-     }
+    Variable * target = variable_retrieve( _environment, _dest );
+    Variable * result;
+    if ( 
+            ( source->type == VT_STRING || source->type == VT_DSTRING ) &&
+            ( target->type == VT_STRING || target->type == VT_DSTRING )
+        ) {
+
+            Variable * source = variable_cast( _environment, _source, VT_DSTRING );
+            Variable * target = variable_cast( _environment, _dest, VT_DSTRING );
+            result = variable_temporary( _environment, VT_DSTRING, "(result of subtracting)" );
+
+            Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
+            Variable * size = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
+            Variable * address2 = variable_temporary( _environment, VT_ADDRESS, "(address of STRING)");
+            Variable * size2 = variable_temporary( _environment, VT_BYTE, "(size of STRING)");
+            Variable * address3 = variable_temporary( _environment, VT_ADDRESS, "(address of STRING)");
+            Variable * size3 = variable_temporary( _environment, VT_BYTE, "(size of STRING)");
+            cpu_dsdescriptor( _environment, source->realName, address->realName, size->realName );
+            cpu_dsdescriptor( _environment, target->realName, address2->realName, size2->realName );
+            cpu_dsalloc( _environment, size->realName, result->realName );
+            cpu_dsdescriptor( _environment, result->realName, address3->realName, size3->realName );
+            cpu_string_sub( _environment, address->realName, size->realName, address2->realName, size2->realName, address3->realName, size3->realName );
+            cpu_dsresize( _environment, result->realName, size3->realName );
+    } else {
+        Variable * target = variable_cast( _environment, _dest, source->type );
+        result = variable_temporary( _environment, source->type, "(result of subtracting)" );
+        switch( VT_BITWIDTH( source->type ) ) {
+            case 32:
+                cpu_math_sub_32bit( _environment, source->realName, target->realName, result->realName );
+                break;
+            case 16:
+                cpu_math_sub_16bit( _environment, source->realName, target->realName, result->realName );
+                break;
+            case 8:
+                cpu_math_sub_8bit( _environment, source->realName, target->realName, result->realName );
+                break;
+            case 0:
+                CRITICAL_SUB_UNSUPPORTED( _source, DATATYPE_AS_STRING[source->type]);
+        }
+    }
     return result;
 }
 

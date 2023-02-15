@@ -1081,6 +1081,7 @@ typedef struct _Embedded {
     int cpu_sqroot;
     int cpu_is_negative;
     int cpu_msc1_uncompress;
+    int cpu_string_sub;
 
 } Embedded;
 

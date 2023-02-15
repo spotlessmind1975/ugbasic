@@ -4641,4 +4641,39 @@ void z80_in( Environment * _environment, char * _port, char * _value ) {
         
 }
 
+void z80_string_sub( Environment * _environment, char * _source, char * _source_size, char * _pattern, char * _pattern_size, char * _destination, char * _destination_size ) {
+    
+    MAKE_LABEL
+
+    inline( cpu_string_sub )
+
+    embedded( cpu_string_sub, src_hw_z80_cpu_string_sub_asm );
+
+        outline1("LD A, (%s)", _source);
+        outline0("LD L, A");
+        outline1("LD A, (%s+1)", _source);
+        outline0("LD H, A");
+        outline1("LD A, (%s)", _source_size);
+        outline0("LD IYL, A");
+
+        outline1("LD A, (%s)", _pattern);
+        outline0("LD IXL, A");
+        outline1("LD A, (%s+1)", _pattern);
+        outline0("LD IXH, A");
+        outline1("LD A, (%s)", _pattern_size);
+        outline0("LD IYH, A");
+
+        outline1("LD A, (%s)", _destination);
+        outline0("LD E, A");
+        outline1("LD A, (%s+1)", _destination);
+        outline0("LD D, A");
+
+        outline0("CALL CPUSTRINGSUB");
+
+        outline0("LD A, IYL");
+        outline1("LD (%s), A", _destination_size);
+
+    done()
+}
+
 #endif
