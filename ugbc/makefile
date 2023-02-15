@@ -441,7 +441,7 @@ src-generated/modules_vg5000.c: $(SOURCES_Z80) $(SOURCES_VG5000) $(SOURCES_EF934
 # ZX Spectrum
 
 MODULES_ZX := $(wildcard src/hw/zx/*.asm)
-SOURCES_ZX := $(subst src/hw/zx/,src-generated/zx_,$(MODULES_ZX:.asm=.c))
+SOURCES_ZX := $(subst src/hw/zx/,src-generated/zx_,$(MODULES_ZX:.asm=.c)) $(FONTS)
 
 src-generated/zx_%.c: $(MODULES_ZX)
 	@xxd -i $(subst src-generated/zx_,src/hw/zx/,$(@:.c=.asm)) >$@
