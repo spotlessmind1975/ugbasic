@@ -970,7 +970,7 @@ void sn76489_set_note_vars( Environment * _environment, char * _channels, char *
     outline0("LD D, A");
 
     if ( _channels ) {
-        outline1("LD A,(%s)", _channels );
+        outline1("LD A, (%s)", _channels );
     } else {
         outline0("LD A,$7" );
     }
@@ -984,7 +984,7 @@ void sn76489_stop_vars( Environment * _environment, char * _channels ) {
     deploy( sn76489vars, src_hw_sn76489_vars_asm );
     deploy( sn76489startup, src_hw_sn76489_startup_asm );
 
-    outline1("LD A,(%s)", _channels );
+    outline1("LD A, (%s)", _channels );
     outline0("CALL SN76489STOP");
 
 }

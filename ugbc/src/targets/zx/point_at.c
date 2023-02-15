@@ -99,9 +99,9 @@ void point_at_vars( Environment * _environment, char * _x, char * _y ) {
     Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
     Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
 
-    outline1("LD A,(%s)", x->realName );
+    outline1("LD A, (%s)", x->realName );
     outline0("LD H, A");
-    outline1("LD A,(%s)", y->realName );
+    outline1("LD A, (%s)", y->realName );
     outline0("LD L, A");
     outline0("CALL PLOT");
 

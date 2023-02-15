@@ -42,7 +42,7 @@ SCANCODE:
 SCANCODE0:
     LD B,(HL)
     INC HL
-    IN A,(C)
+    IN A, (C)
     AND $1F
     LD E,5
 SCANCODE1:
@@ -56,7 +56,7 @@ SCANCODE1:
     AND A
     RET
 SCANCODE2:
-    LD A,(HL)
+    LD A, (HL)
     RET
  
 SCANCODEKM:

@@ -64,7 +64,7 @@ N2DLUS2: PUSH HL
 N2DLUS1: LD HL,N2DEND-1  ; address LSB of BCD value
          LD B,E          ; current length of BCD value in bytes
          RL D            ; highest bit from input value -> carry
-N2DLUS0: LD A,(HL)
+N2DLUS0: LD A, (HL)
          ADC A,A
          DAA
          LD (HL),A       ; double 1 BCD byte from intermediate result

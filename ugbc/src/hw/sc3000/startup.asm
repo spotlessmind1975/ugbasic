@@ -284,7 +284,7 @@ INT_HANDLER2:
     CALL IRQVECTOR
 IRQVECTORSKIP:
     CALL MUSICPLAYER
-	IN A,(vdp_control)
+	IN A, (vdp_control)
 	POP	HL
 	POP	DE
 	POP	BC

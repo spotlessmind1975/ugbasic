@@ -48,12 +48,12 @@ JOYSTICK:
     OR	A
     JR	NZ,JOYSTICK1
 JOYSTICK0:
-    IN	A,($FC)
+    IN	A, ($FC)
     CPL
     AND $7F
     JP JOYSTICKA
 JOYSTICK1:
-    IN	A,($FF)
+    IN	A, ($FF)
     CPL
     AND $7F
     JP JOYSTICKA

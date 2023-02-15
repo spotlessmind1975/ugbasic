@@ -42,7 +42,7 @@ SCANCODE:
     LD B, 0
 SCANCODEROW:
     LD E, 8
-    IN A,($AA)
+    IN A, ($AA)
     AND $F0
     OR B
     OUT ($AA), A
@@ -60,7 +60,7 @@ SCANCODE1:
     POP BC
     RET
 SCANCODE2:
-    LD A,(HL)
+    LD A, (HL)
     POP BC
     RET
 

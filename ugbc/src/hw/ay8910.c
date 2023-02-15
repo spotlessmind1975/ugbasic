@@ -970,9 +970,9 @@ void ay8910_set_note_vars( Environment * _environment, char * _channels, char * 
     outline0("LD D, A");
 
     if ( _channels ) {
-        outline1("LD A,(%s)", _channels );
+        outline1("LD A, (%s)", _channels );
     } else {
-        outline0("LD A,$7" );
+        outline0("LD A, $7" );
     }
 
     outline0("CALL AY8910PROGFREQ");
@@ -984,7 +984,7 @@ void ay8910_stop_vars( Environment * _environment, char * _channels ) {
     deploy( ay8910vars, src_hw_ay8910_vars_asm );
     deploy( ay8910startup, src_hw_ay8910_startup_asm );
 
-    outline1("LD A,(%s)", _channels );
+    outline1("LD A, (%s)", _channels );
     outline0("CALL AY8910STOP");
 
 }

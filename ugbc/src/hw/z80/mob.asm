@@ -82,31 +82,31 @@ MOBCOUNT: DB 0
 ;     LD (IX), A
 
 ;     ; Initialize position
-;     LD A,(MOBX)
+;     LD A, (MOBX)
 ;     LD (IX+1), A
 ;     LD (IX+5), A
-;     LD A,(MOBX+1)
+;     LD A, (MOBX+1)
 ;     LD (IX+2), A
 ;     LD (IX+5), A
-;     LD A,(MOBY)
+;     LD A, (MOBY)
 ;     LD (IX+3), A
 ;     LD (IX+7), A
-;     LD A,(MOBY+1)
+;     LD A, (MOBY+1)
 ;     LD (IX+4), A
 ;     LD (IX+8), A
 
 ;     ; Initialize size
-;     LD A,(MOBX)
+;     LD A, (MOBX)
 ;     LD (IX+9), A
-;     LD A,(MOBH)
+;     LD A, (MOBH)
 ;     LD (IX+10), A
 
 ;     ; Save address of the given data.
 ;     ; Note that specific chipset 
 ;     ; initialization can easily override this.
-;     LD A,(MOBADDR)
+;     LD A, (MOBADDR)
 ;     LD (IX+11), A
-;     LD A,(MOBADDR+1)
+;     LD A, (MOBADDR+1)
 ;     LD (IX+12), A
 
 ;     ; Initialize to 0 the space for saving

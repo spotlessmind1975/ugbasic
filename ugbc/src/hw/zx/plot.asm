@@ -36,9 +36,9 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 PLOT:
-    LD A,(CLIPX1)
+    LD A, (CLIPX1)
     LD B, A
-    LD A,(CLIPX2)
+    LD A, (CLIPX2)
     LD D, A
     LD A, H
     CMP B
@@ -47,9 +47,9 @@ PLOT:
     JP Z, PLOTNOCLIPPED
     JP NC, PLOTCLIPPED
 PLOTNOCLIPPED:
-    LD A,(CLIPY1)
+    LD A, (CLIPY1)
     LD B, A
-    LD A,(CLIPY2)
+    LD A, (CLIPY2)
     LD D, A
     LD A, L
     CMP B
@@ -58,7 +58,7 @@ PLOTNOCLIPPED:
     JR Z, PLOTNOCLIPPED2
     JR NC, PLOTCLIPPED
 PLOTNOCLIPPED2: 
-    LD A,H
+    LD A, H
     AND $7
     LD B, A
     LD A, $8
@@ -79,15 +79,15 @@ PLOTLOOP2:
     LD A,B
     AND %00000111
     OR %01000000
-    LD H,A
-    LD A,B
+    LD H, A
+    LD A, B
     RRA
     RRA
     RRA
     AND %00011000
     OR H
-    LD H,A
-    LD A,B
+    LD H, A
+    LD A, B 
     RLA
     RLA
     AND %11100000

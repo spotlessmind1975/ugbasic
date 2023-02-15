@@ -174,7 +174,7 @@ DSGCLOOP3:
     CP (HL)
     JR NZ, DSGCLOOP
 DSGCEND:
-    LD A,(USING)
+    LD A, (USING)
     XOR $FF
     LD (USING),A
     POP IX

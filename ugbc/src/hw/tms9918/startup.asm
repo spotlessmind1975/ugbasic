@@ -38,7 +38,7 @@
 ; if __coleco__
 
 ; WAIT_VDP_HOOK:
-;         LD A,(VDP_HOOK)
+;         LD A, (VDP_HOOK)
 ;         CP $cd
 ;         JR Z,WAIT_VDP_HOOK
 ;         RET

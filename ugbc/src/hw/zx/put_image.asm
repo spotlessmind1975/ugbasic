@@ -90,9 +90,9 @@ PUTIMAGE0A:
     SLA E
     JMP PUTIMAGE0A
 PUTIMAGE0B:
-    LD A,(IMAGEY)
+    LD A, (IMAGEY)
     LD B, A
-    LD A,(IMAGEX)
+    LD A, (IMAGEX)
     LD C, A
 
     LD A,B
@@ -142,11 +142,11 @@ PUTIMAGE0CP:
 
     PUSH HL
     
-    LD A,(IMAGEY)
+    LD A, (IMAGEY)
     ADD A, 1
     LD (IMAGEY), A
     LD B, A
-    LD A,(IMAGEX)
+    LD A, (IMAGEX)
     LD C, A
 
     LD A,B

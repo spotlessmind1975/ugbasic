@@ -456,12 +456,12 @@ generated/coco/asm/%.asm: compiler
 	@ugbc/exe/ugbc.coco $(OPTIONS) $(subst generated/coco/asm/,examples/,$(@:.asm=.bas)) $@
 
 generated/coco/exe/%.dsk: $(subst /exe/,/asm/,$(@:.dsk=.asm))
-	$(ASM6809) -l $(@:.dsk=.lis) -s $(@:.dsk=.lbl) -C -e 10752 -o $(@:.dsk=.bin) $(subst /exe/,/asm/,$(@:.dsk=.asm))
-	$(DECB) dskini $(@)
-	$(DECB) copy -2 $(@:.dsk=.bin) $(@),$(shell echo $(generated/coco/exe/,,$(@:.dsk=.bin)) | tr '[:lower:]' '[:upper:]')
+	@$(ASM6809) -l $(@:.dsk=.lis) -s $(@:.dsk=.lbl) -C -e 10752 -o $(@:.dsk=.bin) $(subst /exe/,/asm/,$(@:.dsk=.asm))
+	@$(DECB) dskini $(@)
+	@$(DECB) copy -2 $(@:.dsk=.bin) $(@),$(shell echo $(generated/coco/exe/,,$(@:.dsk=.bin)) | tr '[:lower:]' '[:upper:]')
 
 generated/coco/exe/%.bin: $(subst /exe/,/asm/,$(@:.bin=.asm))
-	$(ASM6809) $(OPTIONS) -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -C -e 10752 -o $(@) $(subst /exe/,/asm/,$(@:.bin=.asm))
+	@$(ASM6809) $(OPTIONS) -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -C -e 10752 -o $(@) $(subst /exe/,/asm/,$(@:.bin=.asm))
 
 generated/coco/exeso/%.dsk: $(subst /generated/exeso/,/examples/,$(@:.dsk=.bas))
 	@ugbc/exe/ugbc.coco $(OPTIONS) -o $@ -O dsk $(subst generated/coco/exeso/,examples/,$(@:.dsk=.bas))

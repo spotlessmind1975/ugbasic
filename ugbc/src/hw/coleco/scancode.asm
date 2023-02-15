@@ -47,7 +47,7 @@ SCANCODE:
     OR	A
     JR	NZ,SCANCODE1
 SCANCODE0:
-    IN	A,($FC)
+    IN	A, ($FC)
     CPL
     AND $0F
     JR Z, SCANCODEA
@@ -55,7 +55,7 @@ SCANCODE0B:
     NOP
     JP SCANCODEA
 SCANCODE1:
-    IN	A,($FF)
+    IN	A, ($FF)
     CPL
     AND $0F
     JP SCANCODEA

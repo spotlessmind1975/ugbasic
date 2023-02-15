@@ -248,7 +248,7 @@ TEXTATPC5:
     CALL TEXTATGC
     LD B,8
 TEXTATL1:
-    LD A,(HL)
+    LD A, (HL)
     LD (DE),A
     INC HL
     INC D

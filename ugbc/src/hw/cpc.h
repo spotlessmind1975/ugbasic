@@ -245,7 +245,7 @@ void cpc_joy_vars( Environment * _environment, char * _port, char * _value );
 
 // IN r,(C)/OUT (C),r instructions: Bits b15-b8 come from the B register, 
 // bits b7-b0 come from r 
-// IN A,(n)/OUT (n),A instructions: Bits b15-b8 come from the A register, 
+// IN A, (n)/OUT (n),A instructions: Bits b15-b8 come from the A register, 
 // bits b7-b0 come from n 
 // Listed below are the internal hardware devices and the bit fields to 
 // which they respond. In the table:
