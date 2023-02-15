@@ -128,7 +128,6 @@ void target_initialization( Environment * _environment ) {
     outhead0("SECTION code_user");
 
     deploy_inplace(startup,src_hw_sg1000_startup_asm);
-    deploy( font, src_hw_tms9918_font_asm );
 
     outhead0("CODESTART:")
     
