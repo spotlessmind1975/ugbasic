@@ -36,6 +36,7 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 SCANCODE:
+    PUSH BC
     LD HL,SCANCODEKM
     LD D, 10
     LD B, 0
@@ -56,9 +57,11 @@ SCANCODE1:
     INC B
     JR NZ,SCANCODEROW
     AND A
+    POP BC
     RET
 SCANCODE2:
     LD A,(HL)
+    POP BC
     RET
 
 SCANCODEKM:

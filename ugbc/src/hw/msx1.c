@@ -64,9 +64,16 @@ void msx1_inkey( Environment * _environment, char * _pressed, char * _key ) {
     outline0("CALL SCANCODE");
     outline0("CP 0");
     outline1("JR Z, %snokey", label );
-    outline1("LD (%s), a", _key );
+    outline0("LD B, A");
+    outline1("LD (%s), A", _key );
     outline0("LD A, $FF");
     outline1("LD (%s), A", _pressed );
+    outline0("CALL SCANCODE");
+    outhead1("%srelease:", label );
+    outline0("CP B");
+    outline1("JR Z, %srelease", label );
+    outhead1("%snopkey:", label );
+    outline0("NOP");
     outhead1("%snokey:", label );
    
 }
