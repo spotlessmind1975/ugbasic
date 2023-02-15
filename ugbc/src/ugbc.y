@@ -81,7 +81,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token TOM TONK TREMOLO TROMBONE TRUMPET TUBA TUBULAR TWEET VIBRAPHONE VIOLA VIOLIN VOICE WARM WHISTLE WOODBLOCK 
 %token XYLOPHONE KILL COMPRESSED STORAGE ENDSTORAGE FILEX DLOAD INCLUDE LET CPC INT INTEGER LONG OP_PERC OP_AMPERSAND OP_AT
 %token EMBEDDED NATIVE RELEASE READONLY DIGIT OPTION EXPLICIT ORIGIN RELATIVE DTILE DTILES OUT RESOLUTION
-%token COPEN COCO
+%token COPEN COCO STANDARD SEMIGRAPHIC COMPLETE
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -130,6 +130,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> release
 %type <integer> readonly_optional
 %type <integer> option_explicit origin_direction relative_option
+%type <integer> font_schema
 
 %right Integer String CP
 %left OP_DOLLAR
@@ -5135,8 +5136,26 @@ poke_definition :
         poke_var( _environment, $1, $3 );
     };
   
+font_schema : 
+    EMBEDDED {
+        $$ = FONT_SCHEMA_EMBEDDED;
+    }
+    | STANDARD {
+        $$ = FONT_SCHEMA_STANDARD;
+    }
+    | SEMIGRAPHIC {
+        $$ = FONT_SCHEMA_SEMIGRAPHIC;
+    } 
+    | COMPLETE {
+        $$ = FONT_SCHEMA_COMPLETE;
+    } 
+    ;
+
 define_definition :
-      STRING COUNT const_expr {
+      FONT font_schema {
+        ((struct _Environment *)_environment)->fontConfig.schema = $2;
+    }
+    | STRING COUNT const_expr {
         if ( $3 <= 0 ) {
             CRITICAL_INVALID_STRING_COUNT( $3 );
         }
