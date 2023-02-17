@@ -89,10 +89,10 @@ void draw( Environment * _environment, char * _x0, char * _y0, char * _x1, char 
 
     deploy_begin( draw );
 
-        Variable * x0 = variable_retrieve_or_define( _environment, "draw__x0", VT_POSITION, 0 );
-        Variable * y0 = variable_retrieve_or_define( _environment, "draw__y0", VT_POSITION, 0 );
-        Variable * x1 = variable_retrieve_or_define( _environment, "draw__x1", VT_POSITION, 0 );
-        Variable * y1 = variable_retrieve_or_define( _environment, "draw__y1", VT_POSITION, 0 );
+        Variable * x0 = variable_define( _environment, "draw__x0", VT_POSITION, 0 );
+        Variable * y0 = variable_define( _environment, "draw__y0", VT_POSITION, 0 );
+        Variable * x1 = variable_define( _environment, "draw__x1", VT_POSITION, 0 );
+        Variable * y1 = variable_define( _environment, "draw__y1", VT_POSITION, 0 );
 
         Variable * zero = variable_temporary( _environment, VT_POSITION, "(0)" );
         variable_store( _environment, zero->name, 0 );
