@@ -3645,6 +3645,10 @@ var_definition_simple:
   }
   ;
 
+var_definition_complex:
+    var_definition_simple
+    | var_definition_simple OP_COMMA var_definition_complex;
+
 goto_definition:
     Identifier {
       goto_label( _environment, $1 );
@@ -3664,7 +3668,7 @@ gosub_definition:
   ;
 
 var_definition:
-    var_definition_simple;
+    var_definition_complex;
 
 point_definition_simple:
       AT OP direct_integer OP_COMMA direct_integer CP {
