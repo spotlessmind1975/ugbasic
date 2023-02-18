@@ -883,7 +883,7 @@ Variable * variable_temporary( Environment * _environment, VariableType _type, c
     if ( var ) {
 
         var->reflected = NULL;
-        var->meaningName = strdup( _meaning );
+        var->meaningName = ( _meaning) ? strdup( _meaning ) : NULL;
 
     } else {
        

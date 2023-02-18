@@ -1412,6 +1412,8 @@ void c6847_put_image( Environment * _environment, char * _image, char * _x, char
 
     outline1("LDA #$%2.2x", ( _flags & 0xff ) );
     outline0("STA <IMAGEF" );
+    outline1("LDA #$%2.2x", ( (_flags>>8) & 0xff ) );
+    outline0("STA <IMAGET" );
 
     outline0("JSR PUTIMAGE");
     
@@ -1440,7 +1442,7 @@ Variable * c6847_new_image( Environment * _environment, int _width, int _height,
 
 }
 
-void c6847_get_image( Environment * _environment, char * _image, char * _x, char * _y ) {
+void c6847_get_image( Environment * _environment, char * _image, char * _x, char * _y, int _palette ) {
 
     deploy( c6847vars, src_hw_6847_vars_asm);
     deploy( getimage, src_hw_6847_get_image_asm );
@@ -1450,6 +1452,8 @@ void c6847_get_image( Environment * _environment, char * _image, char * _x, char
     outline0("STD IMAGEX" );
     outline1("LDD %s", _y );
     outline0("STD IMAGEY" );
+    outline1("LDA $%2.2x", _palette );
+    outline0("STA IMAGET");
 
     outline0("JSR GETIMAGE");
 

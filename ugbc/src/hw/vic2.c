@@ -2475,8 +2475,6 @@ void vic2_put_image( Environment * _environment, char * _image, char * _x, char 
     MAKE_LABEL
 
     outhead1("putimage%s:", label);
-    outline1("LDA #$%2.2x", _flags );
-    outline0("STA IMAGET" );
     outline1("LDA #<%s", _image );
     outline0("STA TMPPTR" );
     outline1("LDA #>%s", _image );
@@ -2575,6 +2573,8 @@ void vic2_put_image( Environment * _environment, char * _image, char * _x, char 
     outline0("STA IMAGEY+1" );
     outline1("LDA #$%2.2x", ( _flags & 0xff ) );
     outline0("STA IMAGEF" );
+    outline1("LDA #$%2.2x", ( (_flags>>8) & 0xff ) );
+    outline0("STA IMAGET" );
 
     outline0("JSR PUTIMAGE");
 
@@ -2615,7 +2615,7 @@ Variable * vic2_new_image( Environment * _environment, int _width, int _height, 
 
 }
 
-void vic2_get_image( Environment * _environment, char * _image, char * _x, char * _y ) {
+void vic2_get_image( Environment * _environment, char * _image, char * _x, char * _y, int _palette ) {
 
     deploy( vic2vars, src_hw_vic2_vars_asm);
     deploy( vic2varsGraphic, src_hw_vic2_vars_graphic_asm );
@@ -2636,6 +2636,8 @@ void vic2_get_image( Environment * _environment, char * _image, char * _x, char 
     outline0("STA IMAGEY" );
     outline1("LDA %s+1", _y );
     outline0("STA IMAGEY+1" );
+    outline1("LDA $%2.2x", _palette );
+    outline0("STA IMAGET" );
 
     outline0("JSR GETIMAGE");
 

@@ -41,6 +41,7 @@ IMAGEW:     DB 0
 IMAGEH:     DB 0
 IMAGEH2:    DB 0
 IMAGEF:     DB 0
+IMAGET:     DB 0
 
 ; ----------------------------------------------------------------------------
 ; - Put image on bitmap

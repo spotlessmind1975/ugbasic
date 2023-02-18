@@ -171,7 +171,7 @@ Variable * ef9345_sprite_converter( Environment * _environment, char * _data, in
 void ef9345_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags );
 void ef9345_wait_vbl( Environment * _environment );
 Variable * ef9345_new_image( Environment * _environment, int _width, int _height, int _mode );
-void ef9345_get_image( Environment * _environment, char * _image, char * _x, char * _y );
+void ef9345_get_image( Environment * _environment, char * _image, char * _x, char * _y, int _palette );
 
 void ef9345_put_tile( Environment * _environment, char * _image, char * _x, char * _y );
 void ef9345_put_tiles( Environment * _environment, char * _image, char * _x, char * _y, char *_w, char *_h );

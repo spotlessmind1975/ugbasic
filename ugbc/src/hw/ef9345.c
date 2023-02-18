@@ -850,6 +850,9 @@ void ef9345_initialization( Environment * _environment ) {
     variable_import( _environment, "IMAGEF", VT_BYTE, 0 );
     variable_global( _environment, "IMAGEF" );
 
+    variable_import( _environment, "IMAGET", VT_BYTE, 0 );
+    variable_global( _environment, "IMAGET" );
+
     ef9345_tilemap_enable( _environment, 40, 21, 1, 8, 10 );
     
     font_descriptors_init( _environment, 0 );
@@ -1066,7 +1069,7 @@ Variable * ef9345_new_image( Environment * _environment, int _width, int _height
 
 }
 
-void ef9345_get_image( Environment * _environment, char * _image, char * _x, char * _y ) {
+void ef9345_get_image( Environment * _environment, char * _image, char * _x, char * _y, int _palette ) {
 
 }
 

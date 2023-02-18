@@ -241,7 +241,7 @@ Variable * zx_get_raster_line( Environment * _environment );
 Variable * zx_image_converter( Environment * _environment, char * _data, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags );
 void zx_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags );
 Variable * zx_new_image( Environment * _environment, int _width, int _height, int _mode );
-void zx_get_image( Environment * _environment, char * _image, char * _x, char * _y );
+void zx_get_image( Environment * _environment, char * _image, char * _x, char * _y,  int _palette );
 
 void zx_put_tile( Environment * _environment, char * _image, char * _x, char * _y );
 void zx_put_tiles( Environment * _environment, char * _image, char * _x, char * _y, char *_w, char *_h );

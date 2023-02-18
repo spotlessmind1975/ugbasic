@@ -143,16 +143,19 @@ GETIMAGE2DB
 
     PULS Y
 
-    LDA ,Y
+    LDD ,Y
     LSRA
+    RORB
     LSRA
+    RORB
     LSRA
-    STA <IMAGEW
-    LDA 1,Y
+    RORB
+    STB <IMAGEW
+    LDA 2,Y
     STA <IMAGEH
     STA <IMAGEH2
 
-    LEAY 2,Y
+    LEAY 3,Y
 
     LDA <IMAGEW
     LDB <IMAGEH
@@ -183,15 +186,17 @@ GETIMAGE3DB
 
     PULS Y
 
-    LDA ,Y
+    LDD ,Y
     LSRA
+    RORB
     LSRA
-    STA <IMAGEW
-    LDA 1,Y
+    RORB
+    STB <IMAGEW
+    LDA 2,Y
     STA <IMAGEH
     STA <IMAGEH2
 
-    LEAY 2,Y
+    LEAY 3,Y
 
     LDA <IMAGEW
     LDB <IMAGEH
@@ -392,16 +397,19 @@ GETIMAGE2
 
     PULS Y
 
-    LDA ,Y
+    LDD ,Y
     LSRA
+    RORB
     LSRA
+    RORB
     LSRA
-    STA <IMAGEW
-    LDA 1,Y
+    RORB
+    STB <IMAGEW
+    LDA 2,Y
     STA <IMAGEH
     STA <IMAGEH2
 
-    LEAY 2,Y
+    LEAY 3,Y
 
     LDA <IMAGEW
     LDB <IMAGEH
@@ -432,15 +440,17 @@ GETIMAGE3
 
     PULS Y
 
-    LDA ,Y
+    LDD ,Y
     LSRA
+    RORB
     LSRA
-    STA <IMAGEW
-    LDA 1,Y
+    RORB
+    STb <IMAGEW
+    LDA 2,Y
     STA <IMAGEH
     STA <IMAGEH2
 
-    LEAY 2,Y
+    LEAY 3,Y
 
     LDA <IMAGEW
     LDB <IMAGEH

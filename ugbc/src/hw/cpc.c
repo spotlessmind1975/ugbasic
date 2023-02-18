@@ -989,6 +989,8 @@ void cpc_initialization( Environment * _environment ) {
 
     variable_import( _environment, "IMAGEF", VT_BYTE, 0 );
     variable_global( _environment, "IMAGEF" );
+    variable_import( _environment, "IMAGET", VT_BYTE, 0 );
+    variable_global( _environment, "IMAGET" );
 
     variable_import( _environment, "CPCTIMER", VT_WORD, 0 );
     variable_global( _environment, "CPCTIMER" );
@@ -1610,8 +1612,10 @@ void cpc_put_image( Environment * _environment, char * _image, char * _x, char *
     outline0("LD IXL, A" );
     outline1("LD A, (%s)", _y );
     outline0("LD D, A" );
-    outline1("LD A, $%2.2x", _flags );
+    outline1("LD A, $%2.2x", (_flags & 0Xff) );
     outline0("LD (IMAGEF), A" );
+    outline1("LD A, $%2.2x", ((_flags>>8) & 0Xff) );
+    outline0("LD (IMAGET), A" );
 
     outline0("CALL PUTIMAGE");
 
@@ -1652,7 +1656,7 @@ Variable * cpc_new_image( Environment * _environment, int _width, int _height, i
 
 }
 
-void cpc_get_image( Environment * _environment, char * _image, char * _x, char * _y ) {
+void cpc_get_image( Environment * _environment, char * _image, char * _x, char * _y, int _palette ) {
 
     deploy( cpcvars, src_hw_cpc_vars_asm);
     deploy( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
@@ -1667,6 +1671,8 @@ void cpc_get_image( Environment * _environment, char * _image, char * _x, char *
     outline0("LD IXL, A" );
     outline1("LD A, (%s)", _y );
     outline0("LD D, A" );
+    outline1("LD A, $%2.2x", _palette );
+    outline0("LD IXH, A" );
 
     outline0("CALL GETIMAGE");
 

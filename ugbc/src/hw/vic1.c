@@ -1427,6 +1427,8 @@ void vic1_put_image( Environment * _environment, char * _image, char * _x, char 
     outline0("STA IMAGEY+1" );
     outline1("LDA #$%2.2x", ( _flags & 0xff ) );
     outline0("STA IMAGEF" );
+    outline1("LDA #$%2.2x", ( (_flags>>8) & 0xff ) );
+    outline0("STA IMAGET" );
 
     outline0("JSR PUTIMAGE");
 
@@ -1455,7 +1457,7 @@ Variable * vic1_new_image( Environment * _environment, int _width, int _height, 
     return result;
 }
 
-void vic1_get_image( Environment * _environment, char * _image, char * _x, char * _y ) {
+void vic1_get_image( Environment * _environment, char * _image, char * _x, char * _y, int _palette ) {
     
 }
 

@@ -598,6 +598,8 @@ void zx_put_image( Environment * _environment, char * _image, char * _x, char * 
     outline0("LD (IMAGEY), A" );
     outline1("LD A, $%2.2x", ( _flags & 0xff ) );
     outline0("LD (IMAGEF), A" );
+    outline1("LD A, $%2.2x", ( (_flags>>8) & 0xff ) );
+    outline0("LD (IMAGET), A" );
 
     outline0("CALL PUTIMAGE");
 
@@ -620,7 +622,7 @@ Variable * zx_new_image( Environment * _environment, int _width, int _height, in
 
 }
 
-void zx_get_image( Environment * _environment, char * _image, char * _x, char * _y ) {
+void zx_get_image( Environment * _environment, char * _image, char * _x, char * _y, int _palette ) {
     
 }
 

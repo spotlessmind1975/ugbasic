@@ -2126,8 +2126,6 @@ void gtia_put_image( Environment * _environment, char * _image, char * _x, char 
     deploy( gtiavars, src_hw_gtia_vars_asm);
     deploy( putimage, src_hw_gtia_put_image_asm );
 
-    outline1("LDA #$%2.2x", _flags );
-    outline0("STA IMAGET" );
     outline1("LDA #<%s", _image );
     outline0("STA TMPPTR" );
     outline1("LDA #>%s", _image );
@@ -2227,6 +2225,8 @@ void gtia_put_image( Environment * _environment, char * _image, char * _x, char 
     outline0("STA IMAGEY+1" );
     outline1("LDA #$%2.2x", ( _flags & 0xff ) );
     outline0("STA IMAGEF" );
+    outline1("LDA #$%2.2x", ( (_flags>>8) & 0xff ) );
+    outline0("STA IMAGET" );
 
     outline0("JSR PUTIMAGE");
 
@@ -2374,7 +2374,7 @@ Variable * gtia_new_image( Environment * _environment, int _width, int _height, 
 
 }
 
-void gtia_get_image( Environment * _environment, char * _image, char * _x, char * _y ) {
+void gtia_get_image( Environment * _environment, char * _image, char * _x, char * _y, int _palette ) {
 
     deploy( gtiavars, src_hw_gtia_vars_asm);
     deploy( getimage, src_hw_gtia_get_image_asm );
@@ -2392,6 +2392,8 @@ void gtia_get_image( Environment * _environment, char * _image, char * _x, char 
     outline0("STA IMAGEY" );
     outline1("LDA %s+1", _y );
     outline0("STA IMAGEY+1" );
+    outline1("LDA $%2.2x", _palette );
+    outline0("STA IMAGET" );
 
     outline0("JSR GETIMAGE");
 

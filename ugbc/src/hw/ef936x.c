@@ -1772,7 +1772,7 @@ Variable * ef936x_new_image( Environment * _environment, int _width, int _height
     
 }
 
-void ef936x_get_image( Environment * _environment, char * _image, char * _x, char * _y ) {
+void ef936x_get_image( Environment * _environment, char * _image, char * _x, char * _y, int _palette ) {
 
     deploy( ef936xvars, src_hw_ef936x_vars_asm);
     deploy( getimage, src_hw_ef936x_get_image_asm );
@@ -1782,6 +1782,8 @@ void ef936x_get_image( Environment * _environment, char * _image, char * _x, cha
     outline0("STD <IMAGEX" );
     outline1("LDD %s", _y );
     outline0("STD <IMAGEY" );
+    outline1("LDA $%2.2x", _palette );
+    outline0("STA <IMAGET" );
 
     outline0("JSR GETIMAGE");
     

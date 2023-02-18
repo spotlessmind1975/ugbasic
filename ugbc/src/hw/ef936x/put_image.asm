@@ -214,8 +214,10 @@ PUTIMAGE3DB
 @ENDIF
 
 PUTIMAGE2YDB
-    LDA <IMAGET
-    LBEQ PUTIMAGE2YDEFDB
+    LDA <IMAGEF
+    ANDA #32
+    CMPA #32
+    LBNE PUTIMAGE2YDEFDB
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -788,8 +790,10 @@ PUTIMAGE3
 @ENDIF
 
 PUTIMAGE2Y
-    LDA <IMAGET
-    LBEQ PUTIMAGE2YDEF
+    LDA <IMAGEF
+    ANDA #32
+    CMPA #32
+    LBNE PUTIMAGE2YDEF
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

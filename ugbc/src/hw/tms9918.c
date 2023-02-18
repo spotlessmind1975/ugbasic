@@ -1476,6 +1476,9 @@ void tms9918_initialization( Environment * _environment ) {
     variable_import( _environment, "IMAGEF", VT_BYTE, 0 );
     variable_global( _environment, "IMAGEF" );
 
+    variable_import( _environment, "IMAGET", VT_BYTE, 0 );
+    variable_global( _environment, "IMAGET" );
+
     // #if __coleco__
     //     variable_import( _environment, "VDP_HOOK", VT_BUFFER, 10 );
     //     variable_global( _environment, "VDP_HOOK" );
@@ -2008,7 +2011,7 @@ Variable * tms9918_new_image( Environment * _environment, int _width, int _heigh
 
 }
 
-void tms9918_get_image( Environment * _environment, char * _image, char * _x, char * _y ) {
+void tms9918_get_image( Environment * _environment, char * _image, char * _x, char * _y, int _palette ) {
 
     deploy( tms9918vars, src_hw_tms9918_vars_asm);
     deploy( tms9918varsGraphic, src_hw_tms9918_vars_graphic_asm );
@@ -2021,6 +2024,8 @@ void tms9918_get_image( Environment * _environment, char * _image, char * _x, ch
     outline0("LD E, A" );
     outline1("LD A, (%s)", _y );
     outline0("LD D, A" );
+    outline1("LD A, $%2.2x", _palette );
+    outline0("LD IXH, A" );
 
     if ( ! _environment->hasGameLoop ) {
         outline0("CALL GETIMAGE");

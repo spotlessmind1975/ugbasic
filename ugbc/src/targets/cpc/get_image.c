@@ -65,7 +65,7 @@ Questa funzione disegna una immagine in una specifica posizione dello schermo.
 
 @target all
 </usermanual> */
-void get_image( Environment * _environment, char * _image, char * _x, char * _y ) {
+void get_image( Environment * _environment, char * _image, char * _x, char * _y, int _palette ) {
 
     Variable * image = variable_retrieve( _environment, _image );
     Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
@@ -73,7 +73,7 @@ void get_image( Environment * _environment, char * _image, char * _x, char * _y 
 
     switch( image->type ) {
         case VT_IMAGE:
-            cpc_get_image( _environment, image->realName, x->realName, y->realName );
+            cpc_get_image( _environment, image->realName, x->realName, y->realName, _palette );
             break;
         default:
             CRITICAL_GET_IMAGE_UNSUPPORTED( _image, DATATYPE_AS_STRING[image->type] );
