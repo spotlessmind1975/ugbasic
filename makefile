@@ -556,10 +556,10 @@ generated/msx1/exeso/%.rom: $(subst /generated/exeso/,/examples/,$(@:.rom=.bas))
 toolchain.pc128op: asm6809
 
 generated/pc128op/asm/%.asm: compiler
-	@ugbc/exe/ugbc.pc128op $(OPTIONS) -L generated/pc128op/asm/output.listing $(subst generated/pc128op/asm/,examples/,$(@:.asm=.bas)) $@
+	@ugbc/exe/ugbc.pc128op $(OPTIONS) -L $(@:.k7=.lis) $(subst generated/pc128op/asm/,examples/,$(@:.asm=.bas)) $@
 
 generated/pc128op/exe/%.k7: compiler
-	@ugbc/exe/ugbc.pc128op $(OPTIONS) -L generated/pc128op/asm/output.listing $(subst generated/pc128op/exe/,examples/,$(@:.k7=.bas)) -o $@
+	@ugbc/exe/ugbc.pc128op $(OPTIONS) -L $(@:.k7=.lis) $(subst generated/pc128op/exe/,examples/,$(@:.k7=.bas)) -o $@
 
 generated/pc128op/exe/%.bin: compiler
 	@$(ASM6809) -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -D -e 10240 -o $@ $(subst /exe/,/asm/,$(@:.bin=.asm))
