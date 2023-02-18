@@ -2756,32 +2756,62 @@ exponential:
     | TIMER {
         $$ = get_timer( _environment )->name;
     }
+    | PEN OP expr CP {
+        $$ = get_pen( _environment, $3 )->name;
+    }
     | PEN OP_DOLLAR OP expr CP {
         $$ = get_pen( _environment, $4 )->name;
+    }
+    | PAPER OP expr CP {
+        $$ = get_paper( _environment, $3 )->name;
     }
     | PAPER OP_DOLLAR OP expr CP {
         $$ = get_paper( _environment, $4 )->name;
     }
+    | CMOVE OP expr OP_COMMA expr CP {
+        $$ = get_cmove( _environment, $3, $5 )->name;
+    }
     | CMOVE OP_DOLLAR OP expr OP_COMMA expr CP {
         $$ = get_cmove( _environment, $4, $6 )->name;
+    }
+    | CUP {
+        $$ = get_cmove_direct( _environment, 0, -1 )->name;
     }
     | CUP OP_DOLLAR {
         $$ = get_cmove_direct( _environment, 0, -1 )->name;
     }
+    | CDOWN {
+        $$ = get_cmove_direct( _environment, 0, 1 )->name;
+    }
     | CDOWN OP_DOLLAR {
         $$ = get_cmove_direct( _environment, 0, 1 )->name;
+    }
+    | CLEFT {
+        $$ = get_cmove_direct( _environment, -1, 0 )->name;
     }
     | CLEFT OP_DOLLAR {
         $$ = get_cmove_direct( _environment, -1, 0 )->name;
     }
+    | CRIGHT {
+        $$ = get_cmove_direct( _environment, 1, 0 )->name;
+    }
     | CRIGHT OP_DOLLAR {
         $$ = get_cmove_direct( _environment, 1, 0 )->name;
+    }
+    | AT OP expr OP_COMMA expr CP {
+        $$ = get_at( _environment, $3, $5 )->name;
     }
     | AT OP_DOLLAR OP expr OP_COMMA expr CP {
         $$ = get_at( _environment, $4, $6 )->name;
     }
+    | LOCATE OP expr OP_COMMA expr CP {
+        $$ = get_at( _environment, $3, $5 )->name;
+    }
     | LOCATE OP_DOLLAR OP expr OP_COMMA expr CP {
         $$ = get_at( _environment, $4, $6 )->name;
+    }
+    | TAB {
+        $$ = get_tab( _environment )->name;
     }
     | TAB OP_DOLLAR {
         $$ = get_tab( _environment )->name;
@@ -2887,6 +2917,9 @@ exponential:
     | JOY FIRE {
         $$ = variable_temporary( _environment, VT_BYTE, "(FIRE)" )->name;
         variable_store( _environment, $$, JOY_FIRE );
+    }
+    | INPUT OP expr CP {
+        $$ = input_string( _environment, $3 )->name;
     }
     | INPUT OP_DOLLAR OP expr CP {
         $$ = input_string( _environment, $4 )->name;
