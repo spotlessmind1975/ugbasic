@@ -67,7 +67,6 @@ ONSWITCHTILEMAP:
 
 VIC2STARTUP:
 
-@IF fontConfig.schema
     SEI
     LDX #$10
 @IF C128
@@ -105,9 +104,6 @@ VIC2STARTUPL1:
 @ENDIF
 
     CLI
-
-@ENDIF
-
 
 ;     ; SET_DATA_DIRECTION();
     LDA $dd02
