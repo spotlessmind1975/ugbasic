@@ -90,7 +90,7 @@ GETIMAGE2:
 
     CLC
     LDA TMPPTR
-    ADC #2
+    ADC #3
     STA TMPPTR
     LDA TMPPTR+1
     ADC #0
@@ -389,13 +389,13 @@ GETIMAGE3L1F:
     ADC #0
     STA TMPPTR+1
 
-    CLC
-    LDA TMPPTR
-    ADC IMAGEW
-    STA TMPPTR
-    LDA TMPPTR+1
-    ADC #0
-    STA TMPPTR+1
+    ; CLC
+    ; LDA TMPPTR
+    ; ADC IMAGEW
+    ; STA TMPPTR
+    ; LDA TMPPTR+1
+    ; ADC #0
+    ; STA TMPPTR+1
 
     CLC
     LDA PLOTDEST
