@@ -4695,6 +4695,7 @@ void cpu6502_convert_string_into_16bit( Environment * _environment, char * _stri
         outline0("JSR CPUCONVERTSTRINGINTO16BIT" );
         outline0("LDA CPUCONVERTSTRINGINTO16BIT_VALUE" );
         outline1("STA %s", _value );
+        outline0("LDA CPUCONVERTSTRINGINTO16BIT_VALUE+1" );
         outline1("STA %s+1", _value );
 
     done()
