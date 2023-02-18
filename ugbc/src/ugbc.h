@@ -2395,6 +2395,7 @@ int embed_scan_string (const char *);
 #define FLAG_DOUBLE_Y       64
 #define FLAG_EXACT          128
 #define FLAG_COMPRESSED     256
+#define FLAG_WITH_PALETTE   512
 
 #define IMF_INSTRUMENT_EXPLOSION        			0x00
 #define IMF_INSTRUMENT_ACOUSTIC_GRAND_PIANO			0x01
@@ -2912,7 +2913,7 @@ int                     frames( Environment * _environment, char * _image );
 Variable *              get_at( Environment * _environment, char * _x, char * _y );
 Variable *              get_cmove( Environment * _environment, char * _x, char * _y );
 Variable *              get_cmove_direct( Environment * _environment, int _x, int _y );
-void                    get_image( Environment * _environment, char * _image, char * _x1, char * _y1 );
+void                    get_image( Environment * _environment, char * _image, char * _x1, char * _y1, int _palette );
 Variable *              get_paper( Environment * _environment, char * _color );
 Variable *              get_pen( Environment * _environment, char * _color );
 Variable *              get_raster_line( Environment * _environment );
