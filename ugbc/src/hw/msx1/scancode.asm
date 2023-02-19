@@ -37,6 +37,8 @@
 
 SCANCODE:
     PUSH BC
+    PUSH DE
+    PUSH HL
     LD HL,SCANCODEKM
     LD D, 10
     LD B, 0
@@ -57,10 +59,14 @@ SCANCODE1:
     INC B
     JR NZ,SCANCODEROW
     AND A
+    POP HL
+    POP DE
     POP BC
     RET
 SCANCODE2:
     LD A, (HL)
+    POP HL
+    POP DE
     POP BC
     RET
 

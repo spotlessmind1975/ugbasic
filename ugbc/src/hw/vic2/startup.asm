@@ -139,7 +139,7 @@ VIC2STARTUPL1:
 @IF fontConfig.schema
     ORA #$09
 @ELSE
-    ORA #$06
+    ORA #$07
 @ENDIF
     STA $d018
 
