@@ -1681,7 +1681,7 @@ static int calculate_image_size( Environment * _environment, int _width, int _he
 
         case BITMAP_MODE_MULTICOLOR:
 
-            return 3 + ( ( _width >> 2 ) * _height ) + 2 * ( ( _width >> 2 ) * ( _height >> 3 ) );
+            return 3 + ( ( _width >> 2 ) * _height ) + 2 * ( ( _width >> 2 ) * ( _height >> 3 ) ) + 1;
 
         case BITMAP_MODE_AH:
         case BITMAP_MODE_AIFLI:
@@ -2644,7 +2644,7 @@ void vic2_get_image( Environment * _environment, char * _image, char * _x, char 
     outline0("STA IMAGEY" );
     outline1("LDA %s+1", _y );
     outline0("STA IMAGEY+1" );
-    outline1("LDA $%2.2x", _palette );
+    outline1("LDA #$%2.2x", _palette );
     outline0("STA IMAGET" );
 
     outline0("JSR GETIMAGE");
