@@ -389,13 +389,13 @@ GETIMAGE3L1F:
     ADC #0
     STA TMPPTR+1
 
-    ; CLC
-    ; LDA TMPPTR
-    ; ADC IMAGEW
-    ; STA TMPPTR
-    ; LDA TMPPTR+1
-    ; ADC #0
-    ; STA TMPPTR+1
+    CLC
+    LDA TMPPTR
+    ADC IMAGEW
+    STA TMPPTR
+    LDA TMPPTR+1
+    ADC #0
+    STA TMPPTR+1
 
     CLC
     LDA PLOTDEST
