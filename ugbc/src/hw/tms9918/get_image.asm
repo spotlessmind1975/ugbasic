@@ -107,7 +107,6 @@ GETIMAGE2:
     LD B, A
     INC HL
 
-    PUSH BC
     PUSH HL
     PUSH BC
 
