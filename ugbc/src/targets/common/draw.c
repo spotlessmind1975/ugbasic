@@ -93,6 +93,7 @@ void draw( Environment * _environment, char * _x0, char * _y0, char * _x1, char 
         Variable * y0 = variable_define( _environment, "draw__y0", VT_POSITION, 0 );
         Variable * x1 = variable_define( _environment, "draw__x1", VT_POSITION, 0 );
         Variable * y1 = variable_define( _environment, "draw__y1", VT_POSITION, 0 );
+        Variable * c = variable_define( _environment, "draw__c", VT_COLOR, 0 );
 
         Variable * zero = variable_temporary( _environment, VT_POSITION, "(0)" );
         variable_store( _environment, zero->name, 0 );
@@ -139,7 +140,7 @@ void draw( Environment * _environment, char * _x0, char * _y0, char * _x1, char 
         variable_move_naked( _environment, dx->name, dx2->name );
         dx2 = variable_mul2_const( _environment, dx2->name, 1 );
         if_then( _environment, variable_bit( _environment, pattern->name, bit->name )->name );
-            plot( _environment, x->name, y->name, _c );
+            plot( _environment, x->name, y->name, c->name );
         end_if_then( _environment );
         variable_increment( _environment, bit->name );
         if_then( _environment, variable_compare( _environment, bit->name, sixteen->name )->name );
@@ -156,7 +157,7 @@ void draw( Environment * _environment, char * _x0, char * _y0, char * _x1, char 
                 end_if_then( _environment );
                 variable_move( _environment, variable_add( _environment, fraction->name, dy2->name )->name, fraction->name );
                 if_then( _environment, variable_bit( _environment, pattern->name, bit->name )->name );
-                    plot( _environment, x->name, y->name, _c );
+                    plot( _environment, x->name, y->name, c->name );
                 end_if_then( _environment );
                 variable_increment( _environment, bit->name );
                 if_then( _environment, variable_compare( _environment, bit->name, sixteen->name )->name );
@@ -175,7 +176,7 @@ void draw( Environment * _environment, char * _x0, char * _y0, char * _x1, char 
                 variable_move( _environment, variable_add( _environment, y->name, stepy->name )->name, y->name );
                 variable_move( _environment, variable_add( _environment, fraction->name, dx2->name )->name, fraction->name );
                 if_then( _environment, variable_bit( _environment, pattern->name, bit->name )->name );
-                    plot( _environment, x->name, y->name, _c );
+                    plot( _environment, x->name, y->name, c->name );
                 end_if_then( _environment );
                 variable_increment( _environment, bit->name );
                 if_then( _environment, variable_compare( _environment, bit->name, sixteen->name )->name );
@@ -192,16 +193,20 @@ void draw( Environment * _environment, char * _x0, char * _y0, char * _x1, char 
     Variable * y0 = variable_retrieve_or_define( _environment, _y0, VT_POSITION, 0 );
     Variable * x1 = variable_retrieve_or_define( _environment, _x1, VT_POSITION, 0 );
     Variable * y1 = variable_retrieve_or_define( _environment, _y1, VT_POSITION, 0 );
+    Variable * c = variable_retrieve_or_define( _environment, _c, VT_COLOR, 0 );
 
     Variable * dx0 = variable_retrieve( _environment, "draw__x0" );
     Variable * dy0 = variable_retrieve( _environment, "draw__y0" );
     Variable * dx1 = variable_retrieve( _environment, "draw__x1" );
     Variable * dy1 = variable_retrieve( _environment, "draw__y1" );
+    Variable * dc = variable_retrieve( _environment, "draw__c" );
 
     variable_move( _environment, x0->name, dx0->name );
     variable_move( _environment, y0->name, dy0->name );
     variable_move( _environment, x1->name, dx1->name );
     variable_move( _environment, y1->name, dy1->name );
+    variable_move( _environment, y1->name, dy1->name );
+    variable_move( _environment, c->name, dc->name );
 
     cpu_call( _environment, "lib_draw");
 
