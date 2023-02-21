@@ -55,8 +55,8 @@ SCANCODE1:
     INC HL
     DEC E
     JR NZ,SCANCODE1
-    DEC D
     INC B
+    DEC D
     JR NZ,SCANCODEROW
     AND A
     POP HL
@@ -64,6 +64,16 @@ SCANCODE1:
     POP BC
     RET
 SCANCODE2:
+    INC B
+SCANCODE2L2:
+    IN A, ($AA)
+    AND $F0
+    OR B
+    OUT ($AA), A
+    IN A, ($A9)
+    INC B
+    DEC D
+    JR NZ, SCANCODE2L2
     LD A, (HL)
     POP HL
     POP DE
