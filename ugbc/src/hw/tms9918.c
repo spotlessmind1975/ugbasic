@@ -1965,8 +1965,10 @@ void tms9918_put_image( Environment * _environment, char * _image, char * _x, ch
     outline0("LD E, A" );
     outline1("LD A, (%s)", _y );
     outline0("LD D, A" );
-    outline1("LD A, $%2.2x", _flags );
+    outline1("LD A, $%2.2x", ( _flags & 0xff ) );
     outline0("LD (IMAGEF), A" );
+    outline1("LD A, $%2.2x", ( (_flags>>8) & 0xff ) );
+    outline0("LD (IMAGET), A" );
 
     if ( ! _environment->hasGameLoop ) {
         outline0("CALL PUTIMAGE");
