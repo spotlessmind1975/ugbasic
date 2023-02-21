@@ -193,7 +193,10 @@ void draw( Environment * _environment, char * _x0, char * _y0, char * _x1, char 
     Variable * y0 = variable_retrieve_or_define( _environment, _y0, VT_POSITION, 0 );
     Variable * x1 = variable_retrieve_or_define( _environment, _x1, VT_POSITION, 0 );
     Variable * y1 = variable_retrieve_or_define( _environment, _y1, VT_POSITION, 0 );
-    Variable * c = variable_retrieve_or_define( _environment, _c, VT_COLOR, 0 );
+    Variable * c = NULL;
+    if ( _c ) {
+        c = variable_retrieve_or_define( _environment, _c, VT_COLOR, 0 );
+    }
 
     Variable * dx0 = variable_retrieve( _environment, "draw__x0" );
     Variable * dy0 = variable_retrieve( _environment, "draw__y0" );
@@ -206,7 +209,12 @@ void draw( Environment * _environment, char * _x0, char * _y0, char * _x1, char 
     variable_move( _environment, x1->name, dx1->name );
     variable_move( _environment, y1->name, dy1->name );
     variable_move( _environment, y1->name, dy1->name );
-    variable_move( _environment, c->name, dc->name );
+
+    if ( c ) {
+        variable_move( _environment, c->name, dc->name );
+    } else {
+        variable_move( _environment, "PEN", dc->name );
+    }
 
     cpu_call( _environment, "lib_draw");
 
