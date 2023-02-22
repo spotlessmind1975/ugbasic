@@ -81,9 +81,21 @@ void pc128op_cls( Environment * _environment, char * _pen, char * _paper ) {
 
 void pc128op_inkey( Environment * _environment, char * _pressed, char * _key ) {
 
+    deploy( scancode, src_hw_pc128op_scancode_asm );
+
     MAKE_LABEL
 
-    pc128op_scancode( _environment, _pressed, _key );
+    outline0("LDA #0" );
+    outline1("STA %s", _pressed );
+    outline1("STA %s", _key );
+
+    outline0("JSR INKEY" );
+    outline0("CMPB #$00" );
+    outline1("BEQ %snokey", label );
+    outline1("STB %s", _key );
+    outline0("LDA #$FF" );
+    outline1("STA %s", _pressed );
+    outhead1("%snokey", label );
 
     outline1("LDA %s", _pressed );
     outline0("CMPA #0" );
@@ -128,7 +140,7 @@ void pc128op_scancode( Environment * _environment, char * _pressed, char * _scan
     outline1("STA %s", _scancode );
 
     outline0("JSR SCANCODE" );
-    outline0("CMPB #$0" );
+    outline0("CMPB #$FF" );
     outline1("BEQ %snokey", label );
     outline1("STB %s", _scancode );
     outline0("LDA #$FF" );
