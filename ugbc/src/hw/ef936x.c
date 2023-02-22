@@ -745,6 +745,8 @@ void ef936x_initialization( Environment * _environment ) {
     _environment->currentRgbConverterFunction = rgbConverterFunction;
     _environment->screenShades = 4096;
 
+    ef936x_screen_mode_enable( _environment, _environment->screenModes );
+
 }
 
 extern RGBi * commonPalette;
