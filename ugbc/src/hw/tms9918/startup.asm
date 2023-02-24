@@ -166,7 +166,7 @@ VDPRAMOUT8:
 ;         NOP
 ; endif
         OUT     (C), A
-if __msx1__
+@IF MSX1
         NOP
         NOP
         NOP
@@ -175,9 +175,9 @@ if __msx1__
         NOP
         NOP
         NOP
-endif
+@ENDIF
         OUT     (C), A
-if __msx1__
+@IF MSX1
         NOP
         NOP
         NOP
@@ -186,9 +186,9 @@ if __msx1__
         NOP
         NOP
         NOP
-endif
+@ENDIF
         OUT     (C), A
-if __msx1__
+@IF MSX1
         NOP
         NOP
         NOP
@@ -197,9 +197,9 @@ if __msx1__
         NOP
         NOP
         NOP
-endif
+@ENDIF
         OUT     (C), A
-if __msx1__
+@IF MSX1
         NOP
         NOP
         NOP
@@ -208,9 +208,9 @@ if __msx1__
         NOP
         NOP
         NOP
-endif
+@ENDIF
         OUT     (C), A
-if __msx1__
+@IF MSX1
         NOP
         NOP
         NOP
@@ -219,9 +219,9 @@ if __msx1__
         NOP
         NOP
         NOP
-endif
+@ENDIF
         OUT     (C), A
-if __msx1__
+@IF MSX1
         NOP
         NOP
         NOP
@@ -230,9 +230,9 @@ if __msx1__
         NOP
         NOP
         NOP
-endif
+@ENDIF
         OUT     (C), A
-if __msx1__
+@IF MSX1
         NOP
         NOP
         NOP
@@ -241,9 +241,9 @@ if __msx1__
         NOP
         NOP
         NOP
-endif
+@ENDIF
         OUT     (C), A
-if __msx1__
+@IF MSX1
         NOP
         NOP
         NOP
@@ -252,7 +252,7 @@ if __msx1__
         NOP
         NOP
         NOP
-endif
+@ENDIF
         POP     BC
         RET
 
