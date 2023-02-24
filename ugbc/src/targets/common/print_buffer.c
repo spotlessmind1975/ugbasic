@@ -95,20 +95,20 @@ void print_buffer( Environment * _environment, char * _value, int _new_line, int
     int bufferSize = value->size; // strlen( string );
     int offset = 0;
 
-    if ( bufferSize > 127 ) {
+    if ( bufferSize > 120 ) {
 
-        cpu_dsalloc_size( _environment, 127, dstring->realName );
+        cpu_dsalloc_size( _environment, 120, dstring->realName );
         cpu_dsdescriptor( _environment, dstring->realName, targetAddress->realName, size->realName );
 
-        while( bufferSize > 127 ) {
+        while( bufferSize > 120 ) {
 
-            cpu_mem_move_size( _environment, sourceAddress->realName, targetAddress->realName, 127 );
-            // cpu_mem_move_direct_indirect_size( _environment, sourceAddress, address->realName, 127 );
+            cpu_mem_move_size( _environment, sourceAddress->realName, targetAddress->realName, 120 );
+            // cpu_mem_move_direct_indirect_size( _environment, sourceAddress, address->realName, 120 );
             text_text( _environment, dstring->name );
 
-            bufferSize -= 127;
+            bufferSize -= 120;
 
-            cpu_math_add_16bit_const( _environment, sourceAddress->realName, 127, sourceAddress->realName );
+            cpu_math_add_16bit_const( _environment, sourceAddress->realName, 120, sourceAddress->realName );
 
         }
 
@@ -122,6 +122,8 @@ void print_buffer( Environment * _environment, char * _value, int _new_line, int
     cpu_mem_move_size( _environment, sourceAddress->realName, targetAddress->realName, bufferSize );
 
     text_text( _environment, dstring->name );
+
+    cpu_dsfree( _environment, dstring->realName );
 
     if ( _new_line ) {
         text_newline( _environment );
