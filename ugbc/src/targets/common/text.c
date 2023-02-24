@@ -60,7 +60,7 @@ void text_newline( Environment * _environment ) {
 
     cpu_inc( _environment, y->realName );
 
-    Variable * result = variable_compare( _environment, y->name, screenHeight->name );    
+    Variable * result = variable_greater_than( _environment, y->name, screenHeight->name, 1 );    
 
     char endLabel[MAX_TEMPORARY_STORAGE]; sprintf(endLabel, "%send", label);
     char scrollLabel[MAX_TEMPORARY_STORAGE]; sprintf(scrollLabel, "%sscroll", label);
@@ -73,6 +73,7 @@ void text_newline( Environment * _environment ) {
 
     text_vscroll_screen( _environment, -1 );
 
+    cpu_move_8bit( _environment, screenHeight->realName, y->realName );
     cpu_dec( _environment, y->realName );
 
     cpu_label( _environment, endLabel );
