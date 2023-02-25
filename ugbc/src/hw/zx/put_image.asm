@@ -125,7 +125,6 @@ PUTIMAGE0B:
     SLA C
     SLA C
     SLA C
-    INC C
     LD A, (IMAGEW)
     SRL A
     SRL A
@@ -216,7 +215,6 @@ PUTIMAGE0CP:
 
     LD A, (IMAGEH)
     LD C, A
-    INC C
     LD A, (IMAGEW)
     SRL A
     SRL A
