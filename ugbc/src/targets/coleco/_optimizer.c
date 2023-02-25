@@ -259,15 +259,15 @@ static void basic_peephole(POBuffer buf[LOOK_AHEAD], int zA, int zB) {
     //     inc (hl)
     //     ld a,(hl) ;if you don't need (hl) in a, delete this line
     // ; -> save 2 bytes and 2 T-states
-	if( po_buf_match( buf[0], " LD A, (*)", v1) && 
-        po_buf_match( buf[1], " INC A") &&
-        po_buf_match( buf[2], " LD (*), A", v2 ) &&
-        po_buf_strcmp( v1, v2 ) == 0
-        ) {
-		optim( buf[0], RULE "(LD A, (x); INC A; LD (x), A)->(LD HL, x; INC (HL); LD A, (HL)", "\tLD HL, %s", v1->str );
-		optim( buf[1], NULL, "\tINC (HL)" );
-		optim( buf[2], NULL, "\tLD A, (HL)" );
-    }
+	// if( po_buf_match( buf[0], " LD A, (*)", v1) && 
+    //     po_buf_match( buf[1], " INC A") &&
+    //     po_buf_match( buf[2], " LD (*), A", v2 ) &&
+    //     po_buf_strcmp( v1, v2 ) == 0
+    //     ) {
+	// 	optim( buf[0], RULE "(LD A, (x); INC A; LD (x), A)->(LD HL, x; INC (HL); LD A, (HL)", "\tLD HL, %s", v1->str );
+	// 	optim( buf[1], NULL, "\tINC (HL)" );
+	// 	optim( buf[2], NULL, "\tLD A, (HL)" );
+    // }
 
     // ; Instead of :
     // ld a, (hl)
