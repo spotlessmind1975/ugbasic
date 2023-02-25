@@ -218,6 +218,9 @@ PUTIMAGE0CP:
     LD C, A
     INC C
     LD A, (IMAGEW)
+    SRL A
+    SRL A
+    SRL A
     LD B, A
 PUTIMAGE00CP:
     LD A, (HL)
@@ -240,6 +243,9 @@ PUTIMAGE00CP:
     POP BC
 
     LD A, (IMAGEW)
+    SRL A
+    SRL A
+    SRL A
     LD B, A
     DEC C
     JR NZ, PUTIMAGE00CP

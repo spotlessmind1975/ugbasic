@@ -121,7 +121,6 @@ GETIMAGE0B:
     SLA C
     SLA C
     SLA C
-    INC C
     LD A, (IMAGEW)
     SRL A
     SRL A
@@ -212,8 +211,10 @@ GETIMAGE0CP:
 
     LD A, (IMAGEH)
     LD C, A
-    INC C
     LD A, (IMAGEW)
+    SRL A
+    SRL A
+    SRL A
     LD B, A
 GETIMAGE00CP:
     LD A, (DE)
@@ -236,6 +237,9 @@ GETIMAGE00CP:
     POP BC
 
     LD A, (IMAGEW)
+    SRL A
+    SRL A
+    SRL A
     LD B, A
     DEC C
     JR NZ, GETIMAGE00CP
