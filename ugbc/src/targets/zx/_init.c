@@ -74,7 +74,22 @@ void target_initialization( Environment * _environment ) {
     variable_import( _environment, "EMPTYTILE", VT_TILE, 32 );
     variable_global( _environment, "EMPTYTILE" );    
     variable_import( _environment, "USING", VT_BYTE, 0 );
-    
+
+    variable_import( _environment, "IMAGEX", VT_BYTE, 0 );
+    variable_global( _environment, "IMAGEX" );    
+    variable_import( _environment, "IMAGEY", VT_BYTE, 0 );
+    variable_global( _environment, "IMAGEY" );    
+    variable_import( _environment, "IMAGEW", VT_BYTE, 0 );
+    variable_global( _environment, "IMAGEW" );    
+    variable_import( _environment, "IMAGEH", VT_BYTE, 0 );
+    variable_global( _environment, "IMAGEH" );    
+    variable_import( _environment, "IMAGEH2", VT_BYTE, 0 );
+    variable_global( _environment, "IMAGEH2" );    
+    variable_import( _environment, "IMAGEF", VT_BYTE, 0 );
+    variable_global( _environment, "IMAGEF" );    
+    variable_import( _environment, "IMAGET", VT_BYTE, 0 );
+    variable_global( _environment, "IMAGET" );    
+
     bank_define( _environment, "VARIABLES", BT_VARIABLES, 0x5000, NULL );
     bank_define( _environment, "TEMPORARY", BT_TEMPORARY, 0x5100, NULL );
 

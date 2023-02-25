@@ -35,36 +35,32 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-IMAGEX:     DB 0
-IMAGEY:     DB 0
-IMAGEW:     DB 0
-IMAGEH:     DB 0
-IMAGEH2:    DB 0
-IMAGEF:     DB 0
-IMAGET:     DB 0
-
 ; ----------------------------------------------------------------------------
 ; - Put image on bitmap
 ; ----------------------------------------------------------------------------
 
 PUTIMAGE:
-    LD A, (CURRENTMODE)
-    ; BITMAP_MODE_STANDARD
-    CP 0
-    JR NZ, PUTIMAGE0X
-    JMP PUTIMAGE0
-PUTIMAGE0X:
-    ; TILEMAP_MODE_STANDARD
-    CP 1
-    JR NZ, PUTIMAGE1X
-    JMP PUTIMAGE1
-PUTIMAGE1X:
-    RET
+    
+    DI
 
-PUTIMAGE1:
-    RET
+;     LD A, (CURRENTMODE)
+;     ; BITMAP_MODE_STANDARD
+;     CP 0
+;     JR NZ, PUTIMAGE0X
+;     JMP PUTIMAGE0
+; PUTIMAGE0X:
+;     ; TILEMAP_MODE_STANDARD
+;     CP 1
+;     JR NZ, PUTIMAGE1X
+;     JMP PUTIMAGE1
+; PUTIMAGE1X:
+;     RET
+
+; PUTIMAGE1:
+;     RET
 
 PUTIMAGE0:
+PUTIMAGE1:
     LD A, (HL)
     LD (IMAGEW), A
     ADD HL, 1
@@ -129,7 +125,11 @@ PUTIMAGE0B:
     SLA C
     SLA C
     SLA C
+    INC C
     LD A, (IMAGEW)
+    SRL A
+    SRL A
+    SRL A
     LD B, A
 PUTIMAGE0CP:
     LD A, (HL)
@@ -139,8 +139,12 @@ PUTIMAGE0CP:
     DEC B
     JR NZ, PUTIMAGE0CP
     LD A, (IMAGEW)
+    SRL A
+    SRL A
+    SRL A
     LD B, A
 
+    PUSH BC
     PUSH HL
     
     LD A, (IMAGEY)
@@ -178,6 +182,8 @@ PUTIMAGE0CP:
     POP DE
     POP HL
 
+    POP BC
+
     DEC C
     JR NZ, PUTIMAGE0CP
 
@@ -210,6 +216,7 @@ PUTIMAGE0CP:
 
     LD A, (IMAGEH)
     LD C, A
+    INC C
     LD A, (IMAGEW)
     LD B, A
 PUTIMAGE00CP:
@@ -219,10 +226,8 @@ PUTIMAGE00CP:
     INC DE
     DEC B
     JR NZ, PUTIMAGE00CP
-    LD A, (IMAGEW)
-    LD B, A
 
-    PUSH HL
+    PUSH BC
 
     LD A, (IMAGEW)
     LD C, A
@@ -232,8 +237,14 @@ PUTIMAGE00CP:
     ADD HL, 64
     SBC HL, BC
 
+    POP BC
+
+    LD A, (IMAGEW)
+    LD B, A
     DEC C
     JR NZ, PUTIMAGE00CP
+
+    EI
 
     RET
 

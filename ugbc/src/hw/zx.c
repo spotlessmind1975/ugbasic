@@ -52,6 +52,20 @@ static RGBi SYSTEM_PALETTE[] = {
 
 #ifdef __zx__
 
+static int calculate_image_size( Environment * _environment, int _width, int _height, int _mode ) {
+
+    switch( _mode ) {
+
+        case BITMAP_MODE_STANDARD:
+        case TILEMAP_MODE_STANDARD:
+            return 2 + ( ( _width >> 3 ) * _height ) + ( ( _width >> 3 ) * ( _height >> 3 ) );
+
+    }
+
+    return 0;
+
+}
+
 void zx_color_border( Environment * _environment, char * _color ) {
 
     char port[MAX_TEMPORARY_STORAGE]; sprintf(port, "$%2.2x", PORT_COLOR_BORDER);
@@ -524,7 +538,7 @@ void zx_put_image( Environment * _environment, char * _image, char * _x, char * 
     deploy( vars, src_hw_zx_vars_asm);
     deploy( putimage, src_hw_zx_put_image_asm );
 
-    outline1("LD HL, (%s)", _image );
+    outline1("LD HL, %s", _image );
     if ( _sequence ) {
 
         outline0("INC HL" );
@@ -607,23 +621,46 @@ void zx_put_image( Environment * _environment, char * _image, char * _x, char * 
 
 Variable * zx_new_image( Environment * _environment, int _width, int _height, int _mode ) {
 
-    switch( _mode ) {
+    deploy( vars, src_hw_zx_vars_asm );
 
-        case BITMAP_MODE_STANDARD:
-        case TILEMAP_MODE_STANDARD:
-            break;
+    int size = calculate_image_size( _environment, _width, _height, _mode );
+
+    if ( ! size ) {
+        CRITICAL_NEW_IMAGE_UNSUPPORTED_MODE( _mode );
     }
-
-    // CRITICAL_NEW_IMAGE_UNSUPPORTED_MODE( _mode );
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, "(new image)" );
 
+    char * buffer = malloc ( size );
+    memset( buffer, 0, size );
+
+    *(buffer) = ( _width & 0xff );
+    *(buffer+1) = _height;
+
+    result->valueBuffer = buffer;
+    result->size = size;
+    
     return result;
 
 }
 
 void zx_get_image( Environment * _environment, char * _image, char * _x, char * _y, int _palette ) {
     
+    MAKE_LABEL
+
+    deploy( vars, src_hw_zx_vars_asm);
+    deploy( getimage, src_hw_zx_get_image_asm );
+
+    outline1("LD HL, %s", _image );
+    outline1("LD A, (%s)", _x );
+    outline0("LD (IMAGEX), A" );
+    outline1("LD A, (%s)", _y );
+    outline0("LD (IMAGEY), A" );
+    outline1("LD A, $%2.2x", _palette & 0xff );
+    outline0("LD (IMAGET), A" );
+
+    outline0("CALL GETIMAGE");
+
 }
 
 void zx_scroll( Environment * _environment, int _dx, int _dy ) {
