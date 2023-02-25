@@ -278,16 +278,16 @@ static void basic_peephole(POBuffer buf[LOOK_AHEAD], int zA, int zB) {
     // ldi
     // inc bc
     // ; -> save 1 byte and 4 T-states
-	if( po_buf_match( buf[0], " LD A, (HL)") && 
-        po_buf_match( buf[1], " LD (DE), A" ) &&
-        po_buf_match( buf[2], " INC HL" ) &&
-        po_buf_match( buf[3], " INC DE" )
-        ) {
-		optim( buf[0], RULE "(LD A, (HL); LD (DE), A; INC HL; INC DE)->(LDI; INC BC)", "\tLDI" );
-		optim( buf[1], NULL, "\tINC BC" );
-		optim( buf[2], NULL, NULL );
-		optim( buf[3], NULL, NULL );
-    }
+	// if( po_buf_match( buf[0], " LD A, (HL)") && 
+    //     po_buf_match( buf[1], " LD (DE), A" ) &&
+    //     po_buf_match( buf[2], " INC HL" ) &&
+    //     po_buf_match( buf[3], " INC DE" )
+    //     ) {
+	// 	optim( buf[0], RULE "(LD A, (HL); LD (DE), A; INC HL; INC DE)->(LDI; INC BC)", "\tLDI" );
+	// 	optim( buf[1], NULL, "\tINC BC" );
+	// 	optim( buf[2], NULL, NULL );
+	// 	optim( buf[3], NULL, NULL );
+    // }
 
     // ;Instead of:
     //  cp 0
