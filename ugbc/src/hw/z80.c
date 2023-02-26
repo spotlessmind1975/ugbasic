@@ -106,7 +106,8 @@ void z80_label( Environment * _environment, char * _label ) {
 
 void z80_peek( Environment * _environment, char * _address, char * _target ) {
 
-    outline1("LD A, (%s)", _address);
+    outline1("LD HL, (%s)", _address);
+    outline0("LD A, (HL)");
     outline1("LD (%s), A", _target);
 
 }

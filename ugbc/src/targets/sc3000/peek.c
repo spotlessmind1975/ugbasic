@@ -43,37 +43,6 @@
  * 
  * This function outputs valid code to retrieve a byte from memory, 
  * and returns it as a temporary variable. This version is valid 
- * for use where the location to be read is a fixed and integer 
- * value.
- * 
- * @param _environment Current calling environment
- * @param _location Location to read from.
- * @return Variable* Temporary variable with the content of the location (1 byte).
- */
-/* <usermanual>
-@keyword PEEK
-
-@target sc3000
-</usermanual> */
-Variable * peek( Environment * _environment, int _location ) {
-
-    outline1("; PEEK(%d)", _location );
-
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(result)" );
-
-    char location[MAX_TEMPORARY_STORAGE]; sprintf(location, "$%4.4x", ( _location & 0xffff ) );
-
-    z80_peek( _environment, location, result->realName );
-
-    return result;
-
-}
-
-/**
- * @brief Emit ASM code for <b>PEEK(...)</b>
- * 
- * This function outputs valid code to retrieve a byte from memory, 
- * and returns it as a temporary variable. This version is valid 
  * for use where the location to be read is an expression
  * 
  * @param _environment Current calling environment
