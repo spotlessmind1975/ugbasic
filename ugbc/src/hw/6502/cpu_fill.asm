@@ -37,9 +37,12 @@
 
 CPUFILL:
     LDY #0
+    CPX #0
+    BEQ CPUFILL2X
 CPUFILL2:
     STA (TMPPTR),Y
     INY
     DEX
     BNE CPUFILL2
+CPUFILL2X:
     RTS
