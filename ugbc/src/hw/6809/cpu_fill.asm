@@ -36,9 +36,12 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 CPUFILL
+    CMPB #$0
+    BEQ CPUFILLL1X
 CPUFILLL1
     DECB
     STA B,X
     CMPB #$0
     BNE CPUFILLL1
+CPUFILLL1X
     RTS
