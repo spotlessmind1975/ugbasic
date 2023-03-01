@@ -93,7 +93,7 @@ void begin_gameloop( Environment * _environment ) {
     _environment->hasGameLoop = 1;
 
     char labelEnd[MAX_TEMPORARY_STORAGE];
-    sprintf( labelEnd, "%send", loop->label  );
+    sprintf( labelEnd, "%sbis", loop->label  );
 
     // outline1("LD HL, %s", loop->label );
     // outline0("CALL SET_GAMELOOP_HOOK");
