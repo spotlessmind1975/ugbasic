@@ -243,12 +243,12 @@ static void basic_peephole(POBuffer buf[LOOK_AHEAD], int zA, int zB) {
     // ;try this
     // ld (hl),$42
     // ; -> save 1 byte and 4 T-states
-	if( po_buf_match( buf[0], " LD A, $*", v1) && 
-        po_buf_match( buf[1], " LD (HL), A")
-        ) {
-		optim( buf[0], RULE "(LD A, x; LD (HL), A)->(LD (HL), x)", "\tLD HL, $%s", v1->str );
-		optim( buf[1], NULL, NULL );
-    }
+	// if( po_buf_match( buf[0], " LD A, $*", v1) && 
+    //     po_buf_match( buf[1], " LD (HL), A")
+    //     ) {
+	// 	optim( buf[0], RULE "(LD A, x; LD (HL), A)->(LD (HL), x)", "\tLD HL, $%s", v1->str );
+	// 	optim( buf[1], NULL, NULL );
+    // }
 
     // ;Instead of
     //     ld a,(var)
