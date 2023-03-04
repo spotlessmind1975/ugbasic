@@ -98,6 +98,17 @@ PUTIMAGE3:
     JP PUTIMAGEDONE
 
 PUTIMAGE2:
+
+    LD A, D
+    SRL A
+    SRL A
+    SRL A
+    SLA A
+    SLA A
+    SLA A
+    LD D, A
+
+
     LD A, (HL)
     INC HL
     LD B, (HL)
