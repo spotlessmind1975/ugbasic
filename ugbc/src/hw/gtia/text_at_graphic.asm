@@ -36,6 +36,10 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 TEXTATBITMAPMODE:
+    LDA TEXTSIZE
+    BNE TEXTATBITMAPMODEGO
+    RTS
+TEXTATBITMAPMODEGO:
     LDA TEXTADDRESS
     STA COPYOFTEXTADDRESS
     LDA TEXTADDRESS+1
