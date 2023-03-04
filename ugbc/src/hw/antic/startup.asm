@@ -38,8 +38,10 @@
 ANTICVBL:   .BYTE       0
 
 IRQLISTENER:
+    PHA
     LDA #1
     STA ANTICVBL
+    PLA
     RTI
 
 ANTICSTARTUP:
@@ -76,6 +78,8 @@ ANTICSTARTUP:
     STA $0200
     LDA #>IRQLISTENER
     STA $0201
+	LDA #$C0
+	STA $D40E
     CLI
 
     ; LDY #0
