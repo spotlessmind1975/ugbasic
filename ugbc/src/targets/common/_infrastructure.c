@@ -968,7 +968,7 @@ Variable * variable_resident( Environment * _environment, VariableType _type, ch
     } else if ( _type == VT_MUSIC ) {
         sprintf(name, "Tmus%d", UNIQUE_ID);
     } else {
-        sprintf(name, "Ttmp%d", UNIQUE_ID);
+        sprintf(name, "TRtmp%d", UNIQUE_ID);
     }
     var->name = name;
     var->realName = malloc( strlen( var->name ) + 2 ); strcpy( var->realName, "_" ); strcat( var->realName, var->name );
@@ -4686,7 +4686,7 @@ Variable * variable_string_string( Environment * _environment, char * _string, c
     cpu_fill_indirect( _environment, address2->realName, size2->realName, address->realName );
 
     cpu_label( _environment, label );
-    
+
     return result;
     
 }
