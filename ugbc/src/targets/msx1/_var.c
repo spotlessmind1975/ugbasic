@@ -163,6 +163,9 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                 memcpy( string, variable->valueBuffer, variable->size );
                                 outline2("%s: db %s", variable->realName, escape_newlines( string ) );
                             } else {
+                                if ( !variable->readonly ) {
+                                    outhead0("section data_user");
+                                }
                                 out1("%s: db ", variable->realName);
                                 int i=0;
                                 for (i=0; i<(variable->size-1); ++i ) {
@@ -174,6 +177,9 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                     }
                                 }
                                 outline1("%d", variable->valueBuffer[(variable->size-1)]);
+                                if ( !variable->readonly ) {
+                                    outhead0("section code_user");
+                                }
                             }
                         } else {
                             outhead0("section data_user");
