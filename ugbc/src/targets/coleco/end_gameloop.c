@@ -83,7 +83,7 @@ void end_gameloop( Environment * _environment ) {
             run_parallel( _environment );
         }
         cpu_return( _environment );
-        unsigned char newLabel[MAX_TEMPORARY_STORAGE]; sprintf(newLabel, "%send", loop->label );
+        unsigned char newLabel[MAX_TEMPORARY_STORAGE]; sprintf(newLabel, "%sbis", loop->label );
         cpu_label( _environment, newLabel );
         _environment->hasGameLoop = 0;
     } else {
