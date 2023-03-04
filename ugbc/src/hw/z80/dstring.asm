@@ -148,6 +148,9 @@ DSGCLOOP:
     LD A, (IX+3)
     AND $40
     JR Z, DSGCLOOP2
+    LD A, (IX)
+    CP 0
+    JR Z, DSGCLOOP3
     LD C, (IX+1)
     LD B, (IX+2)
     PUSH BC
