@@ -82,7 +82,7 @@
 
 #define DIRECT_PAGE     0x2100
 #define LOOK_AHEAD      5
-#define ALLOW_UNSAFE    1
+#define ALLOW_UNSAFE    0
 #define KEEP_COMMENTS   1
 
 #define DO_DIRECT_PAGE  1
@@ -874,6 +874,7 @@ struct var *vars_get(POBuffer _name) {
 static int vars_ok(POBuffer name) {
     if(po_buf_match(name, "^_Tstr"))   return 0;
     if(po_buf_match(name, "_^_Tstr"))   return 0;
+    if(po_buf_match(name, "^_TRtmp"))   return 0;
     if(po_buf_match(name, "_label"))  return 0;
     if(po_buf_match(name, "_SHELL"))  return 0;
 
