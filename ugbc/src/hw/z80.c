@@ -3317,7 +3317,6 @@ void z80_fill_indirect( Environment * _environment, char * _address, char * _siz
     MAKE_LABEL
 
     // Use the current bitmap address as starting address for filling routine.
-    outline0("labelciccio:");
     outline1("LD DE, (%s)", _address);
     outline1("LD HL, (%s)", _pattern);
 
