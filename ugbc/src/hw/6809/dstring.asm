@@ -168,7 +168,7 @@ DSGCLOOP
     BSR   DSUSINGALLOC
     LDU 1, X
     LDA , X
-    BSR   DSWRITECOPY
+    LBSR  DSWRITECOPY
     BRA   DSGCLOOP3
 DSGCLOOP1
 ;    CLRA       (A already = 0 here)
