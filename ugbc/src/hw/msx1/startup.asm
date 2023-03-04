@@ -37,6 +37,10 @@
 
 ISRSVC:
     CALL MUSICPLAYER
+    PUSH AF
+    LD A, 1
+    LD (VBLFLAG), A
+    POP AF
     RET
 
 MSX1STARTUP:

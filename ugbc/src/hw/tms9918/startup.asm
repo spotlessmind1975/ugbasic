@@ -521,13 +521,10 @@ TMS9918SPRITEINITL1:
         RET
 
 WAITVBL:
-    CALL VDPREGIN
-    AND $80
-    CP $80
-    JR Z, WAITVBL
+        LD A, 0
+        LD (VBLFLAG), A
 WAITVBL2:
-    CALL VDPREGIN
-    AND $80
-    CP 0
-    JR Z, WAITVBL2
-    RET
+        LD A, (VBLFLAG)
+        CP 0
+        JR Z, WAITVBL2
+        RET

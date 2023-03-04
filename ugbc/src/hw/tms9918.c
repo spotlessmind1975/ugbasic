@@ -1484,6 +1484,9 @@ void tms9918_initialization( Environment * _environment ) {
     //     variable_global( _environment, "VDP_HOOK" );
     // #endif
 
+    variable_import( _environment, "VBLFLAG", VT_BYTE, 0 );
+    variable_global( _environment, "VBLFLAG" ); 
+
     tms9918_tilemap_enable( _environment, 40, 24, 1, 8, 8 );
 
     font_descriptors_init( _environment, 0 );
