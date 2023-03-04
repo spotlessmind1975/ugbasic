@@ -314,14 +314,14 @@ static void basic_peephole(POBuffer buf[LOOK_AHEAD], int zA, int zB) {
     //     ld de,-767 ;negation of de
     //     add hl,de
     // ; -> 2 bytes and 8 T-states !
-	if( 
-        po_buf_match( buf[0], " LD DE, $*", v1 ) &&
-        po_buf_match( buf[1], " OR A" ) &&
-        po_buf_match( buf[2], " SBC HL, DE" ) 
-    ) {
-		optim( buf[0], RULE "(LD DE, x; OR A; SBC HL, DE)->(LD DE, -x; ADD HL, DE)", "\tLD DE, -$%s", v1->str );
-		optim( buf[1], NULL, "\tADD HL, DE" );
-    }
+	// if( 
+    //     po_buf_match( buf[0], " LD DE, $*", v1 ) &&
+    //     po_buf_match( buf[1], " OR A" ) &&
+    //     po_buf_match( buf[2], " SBC HL, DE" ) 
+    // ) {
+	// 	optim( buf[0], RULE "(LD DE, x; OR A; SBC HL, DE)->(LD DE, -x; ADD HL, DE)", "\tLD DE, -$%s", v1->str );
+	// 	optim( buf[1], NULL, "\tADD HL, DE" );
+    // }
 
     // ;Instead of
     //   sla l
@@ -345,15 +345,15 @@ static void basic_peephole(POBuffer buf[LOOK_AHEAD], int zA, int zB) {
     //   and 1         ;and sets zero flag, no need for cp
     //   jr nz,foo
     // ; -> save 2 bytes and 7 T-states
-	if( 
-        po_buf_match( buf[0], " AND $*", v1 ) &&
-        po_buf_match( buf[1], " CP $*", v2 ) &&
-        po_buf_match( buf[2], " JR Z, *", v3 ) &&
-        po_buf_strcmp( v1, v2 ) == 0
-    ) {
-		optim( buf[1], NULL, NULL );
-		optim( buf[2], RULE "(AND+CP+JZ)->(AND+JNZ)", " JR NZ, %s", v3->str );
-    }
+	// if( 
+    //     po_buf_match( buf[0], " AND $*", v1 ) &&
+    //     po_buf_match( buf[1], " CP $*", v2 ) &&
+    //     po_buf_match( buf[2], " JR Z, *", v3 ) &&
+    //     po_buf_strcmp( v1, v2 ) == 0
+    // ) {
+	// 	optim( buf[1], NULL, NULL );
+	// 	optim( buf[2], RULE "(AND+CP+JZ)->(AND+JNZ)", " JR NZ, %s", v3->str );
+    // }
 
     // ;Instead of
     // call xxxx
