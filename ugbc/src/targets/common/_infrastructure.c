@@ -4650,6 +4650,8 @@ della stringa in ingresso.
  </usermanual> */
 Variable * variable_string_string( Environment * _environment, char * _string, char * _repetitions  ) {
 
+    MAKE_LABEL
+
     Variable * string = variable_retrieve( _environment, _string );
     Variable * repetitions = variable_retrieve_or_define( _environment, _repetitions, VT_BYTE, 0 );
     Variable * result = variable_temporary( _environment, VT_DSTRING, "(result of STRING)");
@@ -4661,6 +4663,9 @@ Variable * variable_string_string( Environment * _environment, char * _string, c
 
     cpu_dsfree( _environment, result->realName );
     cpu_dsalloc( _environment, repetitions->realName, result->realName );
+
+    cpu_compare_and_branch_8bit_const( _environment, repetitions->realName, 0, label, 1 );
+
     cpu_dsdescriptor( _environment, result->realName, address2->realName, size2->realName );
 
     switch( string->type ) {
@@ -4680,6 +4685,8 @@ Variable * variable_string_string( Environment * _environment, char * _string, c
 
     cpu_fill_indirect( _environment, address2->realName, size2->realName, address->realName );
 
+    cpu_label( _environment, label );
+    
     return result;
     
 }
