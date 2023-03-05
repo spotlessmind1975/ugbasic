@@ -117,7 +117,7 @@ void begin_procedure( Environment * _environment, char * _name ) {
     int i = 0;
     for( i=0; i<_environment->parameters; ++i ) {
         char parameterName[MAX_TEMPORARY_STORAGE]; sprintf( parameterName, "%s__%s", procedure->name, _environment->parametersEach[i] );
-        Variable * parameter = variable_retrieve_or_define( _environment, parameterName, _environment->parametersTypeEach[i], 0 );
+        Variable * parameter = variable_define( _environment, parameterName, _environment->parametersTypeEach[i], 0 );
     }
 
     procedure->parameters = _environment->parameters;
