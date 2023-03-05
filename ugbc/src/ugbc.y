@@ -110,7 +110,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> optional_integer
 %type <string> optional_expr optional_x optional_y
 %type <integer> target targets
-%type <integer> protothread_definition
+%type <integer> parallel_optional
 %type <integer> on_targets
 %type <integer> scroll_definition_hdirection scroll_definition_vdirection
 %type <integer> load_flags load_flags1 load_flag
@@ -3208,6 +3208,9 @@ wait_definition_simple:
     | direct_integer TICKS {
       wait_ticks( _environment, $1 );
     }
+    | direct_integer {
+      wait_cycles( _environment, $1 );
+    }
     | direct_integer milliseconds {
       wait_milliseconds( _environment, $1 );
     }
@@ -5441,7 +5444,7 @@ targets :
         $$ = $1 || $3;
      };
 
-protothread_definition: 
+parallel_optional: 
     PARALLEL {
         $$ = 1;
     }
@@ -5867,13 +5870,13 @@ statement2:
   | NEXT {
       end_for( _environment );
   }
-  | protothread_definition PROCEDURE Identifier on_targets {
+  | parallel_optional PROCEDURE Identifier on_targets {
         ((struct _Environment *)_environment)->parameters = 0;
       ((struct _Environment *)_environment)->protothread = $1;
         begin_procedure( _environment, $3 );
         ((struct _Environment *)_environment)->emptyProcedure = !$4;
   }
-  | protothread_definition PROCEDURE Identifier {
+  | parallel_optional PROCEDURE Identifier {
       ((struct _Environment *)_environment)->parameters = 0;
       ((struct _Environment *)_environment)->protothread = $1;
     } OSP parameters CSP on_targets {
