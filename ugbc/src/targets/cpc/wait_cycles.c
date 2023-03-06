@@ -51,13 +51,39 @@
 
 @target cpc
 </usermanual> */
-void wait_cycles( Environment * _environment, int _timing ) {
+void wait_cycles( Environment * _environment, int _timing, int _parallel ) {
 
-    
+    if ( _environment->protothread && _environment->procedureName && _parallel ) {
 
-    char timingString[MAX_TEMPORARY_STORAGE]; sprintf(timingString, "$%2.2x", _timing );
+        char waitVariableName[MAX_TEMPORARY_STORAGE]; sprintf(waitVariableName, "%swaitms%d", _environment->procedureName, _environment->protothreadStep );
 
-    z80_busy_wait( _environment, timingString );
+        Variable * waitVariable = variable_retrieve_or_define( _environment, waitVariableName, VT_WORD, _timing );
+
+        variable_store( _environment, waitVariable->name, _timing );
+
+        yield( _environment );
+
+        char protothreadLabel[MAX_TEMPORARY_STORAGE]; sprintf(protothreadLabel, "%spt%d", _environment->procedureName, _environment->protothreadStep );
+
+        cpu_dec_16bit( _environment, waitVariable->realName );
+        cpu_compare_and_branch_16bit_const( _environment, waitVariable->realName, 0, protothreadLabel, 1 );
+
+        cpu_protothread_save( _environment, "PROTOTHREADCT", ( _environment->protothreadStep - 1 ) );
+        cpu_protothread_set_state( _environment, "PROTOTHREADCT", PROTOTHREAD_STATUS_WAITING );
+        cpu_return( _environment );
+
+        cpu_label( _environment, protothreadLabel );
+        cpu_protothread_set_state( _environment, "PROTOTHREADCT", PROTOTHREAD_STATUS_RUNNING );
+
+        ++_environment->protothreadStep;
+
+    } else {
+
+        char timingString[MAX_TEMPORARY_STORAGE]; sprintf(timingString, "$%2.2x", _timing );
+
+        z80_busy_wait( _environment, timingString );
+
+    }
 
 }
 
@@ -69,10 +95,38 @@ void wait_cycles( Environment * _environment, int _timing ) {
  * @param _environment Current calling environment
  * @param _timing Number of cycles to wait
  */
-void wait_cycles_var( Environment * _environment, char * _timing ) {
+void wait_cycles_var( Environment * _environment, char * _timing, int _parallel ) {
 
     Variable * timing = variable_retrieve( _environment, _timing );
-    
-    z80_busy_wait( _environment, timing->realName );
+        
+    if ( _environment->protothread && _environment->procedureName && _parallel ) {
+
+        char waitVariableName[MAX_TEMPORARY_STORAGE]; sprintf(waitVariableName, "%swaitms%d", _environment->procedureName, _environment->protothreadStep );
+
+        Variable * waitVariable = variable_retrieve_or_define( _environment, waitVariableName, VT_WORD, 1 );
+
+        variable_move( _environment, timing->name, waitVariable->name );
+
+        yield( _environment );
+
+        char protothreadLabel[MAX_TEMPORARY_STORAGE]; sprintf(protothreadLabel, "%spt%d", _environment->procedureName, _environment->protothreadStep );
+
+        cpu_dec_16bit( _environment, waitVariable->realName );
+        cpu_compare_and_branch_16bit_const( _environment, waitVariable->realName, 0, protothreadLabel, 1 );
+
+        cpu_protothread_save( _environment, "PROTOTHREADCT", ( _environment->protothreadStep - 1 ) );
+        cpu_protothread_set_state( _environment, "PROTOTHREADCT", PROTOTHREAD_STATUS_WAITING );
+        cpu_return( _environment );
+
+        cpu_label( _environment, protothreadLabel );
+        cpu_protothread_set_state( _environment, "PROTOTHREADCT", PROTOTHREAD_STATUS_RUNNING );
+
+        ++_environment->protothreadStep;
+
+    } else {
+
+        z80_busy_wait( _environment, timing->realName );
+
+    }
 
 }

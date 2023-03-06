@@ -46,7 +46,7 @@
  * @param _environment Current calling environment
  * @param _timing Number of cycles to wait
  */
-void wait_ticks( Environment * _environment, int _timing ) {
+void wait_ticks( Environment * _environment, int _timing, int _parallel ) {
 
     MAKE_LABEL
 
@@ -77,7 +77,7 @@ void wait_ticks( Environment * _environment, int _timing ) {
  * @param _environment Current calling environment
  * @param _timing Number of cycles to wait
  */
-void wait_ticks_var( Environment * _environment, char * _timing ) {
+void wait_ticks_var( Environment * _environment, char * _timing, int _parallel ) {
 
     MAKE_LABEL
 

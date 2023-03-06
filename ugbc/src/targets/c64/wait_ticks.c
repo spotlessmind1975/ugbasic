@@ -53,7 +53,7 @@
 
 @target c64
 </usermanual> */
-void wait_ticks( Environment * _environment, int _timing ) {
+void wait_ticks( Environment * _environment, int _timing, int _parallel ) {
 
     
 
@@ -76,7 +76,7 @@ void wait_ticks( Environment * _environment, int _timing ) {
 
 @example WAIT timing TICKS
 </usermanual> */
-void wait_ticks_var( Environment * _environment, char * _timing ) {
+void wait_ticks_var( Environment * _environment, char * _timing, int _parallel ) {
 
     MAKE_LABEL
 

@@ -3310,13 +3310,13 @@ void                    volume_off_var( Environment * _environment, char * _chan
 // *W*
 //----------------------------------------------------------------------------
 
-void                    wait_cycles( Environment * _environment, int _timing );
-void                    wait_cycles_var( Environment * _environment, char * _timing );
+void                    wait_cycles( Environment * _environment, int _timing, int _parallel );
+void                    wait_cycles_var( Environment * _environment, char * _timing, int _parallel );
 void                    wait_key( Environment * _environment );
-void                    wait_milliseconds( Environment * _environment, int _timing );
-void                    wait_milliseconds_var( Environment * _environment, char * _timing );
-void                    wait_ticks( Environment * _environment, int _timing );
-void                    wait_ticks_var( Environment * _environment, char * _timing );
+void                    wait_milliseconds( Environment * _environment, int _timing, int _parallel );
+void                    wait_milliseconds_var( Environment * _environment, char * _timing, int _parallel );
+void                    wait_ticks( Environment * _environment, int _timing, int _parallel );
+void                    wait_ticks_var( Environment * _environment, char * _timing, int _parallel );
 void                    wait_vbl( Environment * _environment );
 void                    wait_until( Environment * _environment );
 void                    wait_until_condition( Environment * _environment, char * _condition );
