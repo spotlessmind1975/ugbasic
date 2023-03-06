@@ -53,7 +53,7 @@
 
 @target c128
 </usermanual> */
-void wait_milliseconds( Environment * _environment, int _timing ) {
+void wait_milliseconds( Environment * _environment, int _timing, int _parallel ) {
 
     
 
@@ -76,7 +76,7 @@ void wait_milliseconds( Environment * _environment, int _timing ) {
 
 @example WAIT timing MILLISECONDS
 </usermanual> */
-void wait_milliseconds_var( Environment * _environment, char * _timing ) {
+void wait_milliseconds_var( Environment * _environment, char * _timing, int _parallel ) {
 
     MAKE_LABEL
 

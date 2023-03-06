@@ -50,7 +50,7 @@
 @keyword WAIT
 @target atari
 </usermanual> */
-void wait_ticks( Environment * _environment, int _timing ) {
+void wait_ticks( Environment * _environment, int _timing, int _parallel ) {
 
     
 
@@ -71,7 +71,7 @@ void wait_ticks( Environment * _environment, int _timing ) {
 /* <usermanual>
 @keyword WAIT
 </usermanual> */
-void wait_ticks_var( Environment * _environment, char * _timing ) {
+void wait_ticks_var( Environment * _environment, char * _timing, int _parallel ) {
 
     MAKE_LABEL
 

@@ -69,7 +69,7 @@ o millisecondi (''MILLISECONDS'' oppure ''MS'').
 
 @target c128
 </usermanual> */
-void wait_cycles( Environment * _environment, int _timing ) {
+void wait_cycles( Environment * _environment, int _timing, int _parallel ) {
 
     
 
@@ -92,7 +92,7 @@ void wait_cycles( Environment * _environment, int _timing ) {
 
 @example WAIT delay CYCLES
 </usermanual> */
-void wait_cycles_var( Environment * _environment, char * _timing ) {
+void wait_cycles_var( Environment * _environment, char * _timing, int _parallel ) {
 
     MAKE_LABEL
 

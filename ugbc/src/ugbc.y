@@ -3202,17 +3202,17 @@ release :
     ;
 
 wait_definition_simple:
-      direct_integer CYCLES {
-      wait_cycles( _environment, $1 );
+      direct_integer CYCLES parallel_optional {
+      wait_cycles( _environment, $1, $3 );
     }
-    | direct_integer TICKS {
-      wait_ticks( _environment, $1 );
+    | direct_integer TICKS parallel_optional {
+      wait_ticks( _environment, $1, $3 );
     }
-    | direct_integer {
-      wait_cycles( _environment, $1 );
+    | direct_integer parallel_optional {
+      wait_cycles( _environment, $1, $3 );
     }
-    | direct_integer milliseconds {
-      wait_milliseconds( _environment, $1 );
+    | direct_integer milliseconds parallel_optional {
+      wait_milliseconds( _environment, $1, $3 );
     }
     | FIRE release {
         begin_loop( _environment );
@@ -3278,14 +3278,14 @@ wait_definition_simple:
     };
 
 wait_definition_expression:
-      expr CYCLES {
-      wait_cycles_var( _environment, $1 );
+      expr CYCLES parallel_optional {
+      wait_cycles_var( _environment, $1, $3 );
     }
-    | expr TICKS {
-      wait_ticks_var( _environment, $1 );
+    | expr TICKS parallel_optional {
+      wait_ticks_var( _environment, $1, $3 );
     }
-    | expr milliseconds {
-      wait_milliseconds_var( _environment, $1 );
+    | expr milliseconds parallel_optional {
+      wait_milliseconds_var( _environment, $1, $3 );
     }
     | FIRE OP expr CP release {
         begin_loop( _environment );
