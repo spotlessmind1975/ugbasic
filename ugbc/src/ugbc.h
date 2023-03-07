@@ -3235,6 +3235,8 @@ Variable *              variable_bit( Environment * _environment, char * _value,
 Variable *              variable_cast( Environment * _environment, char * _source, VariableType _type );
 void                    variable_cleanup( Environment * _Environment );
 Variable *              variable_compare( Environment * _environment, char * _source, char * _dest );
+void                    variable_compare_and_branch_const( Environment * _environment, char *_source, int _destination,  char *_name, int _positive );
+Variable *              variable_compare_const( Environment * _environment, char * _source, int _dest );
 Variable *              variable_compare_not( Environment * _environment, char * _source, char * _dest );
 Variable *              variable_complement_const( Environment * _environment, char * _source, int _mask );
 Variable *              variable_decrement( Environment * _environment, char * _source );
@@ -3259,6 +3261,8 @@ Variable *              variable_move( Environment * _environment, char * _sourc
 void                    variable_move_array( Environment * _environment, char * _array, char * _value  );
 void                    variable_move_array_string( Environment * _environment, char * _array, char * _string  );
 Variable *              variable_move_from_array( Environment * _environment, char * _array );
+Variable *              variable_move_from_mt( Environment * _environment, char * _source, char * _destination );
+Variable *              variable_move_to_mt( Environment * _environment, char * _source, char * _destination );
 Variable *              variable_move_naked( Environment * _environment, char * _source, char * _dest );
 Variable *              variable_mul( Environment * _environment, char * _source, char * _dest );
 Variable *              variable_mul2_const( Environment * _environment, char * _source, int _bits );
@@ -3274,7 +3278,9 @@ Variable *              variable_retrieve( Environment * _environment, char * _n
 Variable *              variable_retrieve_by_realname( Environment * _environment, char * _name );
 Variable *              variable_retrieve_or_define( Environment * _environment, char * _name, VariableType _type, int _value );
 Variable *              variable_store( Environment * _environment, char * _source, unsigned int _value );
+void                    variable_store_mt( Environment * _environment, char * _source, unsigned int _value );
 Variable *              variable_store_array( Environment * _environment, char * _destination, unsigned char * _buffer, int _size, int _at );
+void                    variable_store_array_const( Environment * _environment, char * _array, int _value  );
 Variable *              variable_store_buffer( Environment * _environment, char * _destination, unsigned char * _buffer, int _size, int _at );
 Variable *              variable_store_string( Environment * _environment, char * _source, char * _string );
 Variable *              variable_string_asc( Environment * _environment, char * _char );
@@ -3313,10 +3319,10 @@ void                    volume_off_var( Environment * _environment, char * _chan
 void                    wait_cycles( Environment * _environment, int _timing, int _parallel );
 void                    wait_cycles_var( Environment * _environment, char * _timing, int _parallel );
 void                    wait_key( Environment * _environment );
-void                    wait_milliseconds( Environment * _environment, int _timing, int _parallel );
-void                    wait_milliseconds_var( Environment * _environment, char * _timing, int _parallel );
-void                    wait_ticks( Environment * _environment, int _timing, int _parallel );
-void                    wait_ticks_var( Environment * _environment, char * _timing, int _parallel );
+void                    wait_milliseconds( Environment * _environment, int _timing );
+void                    wait_milliseconds_var( Environment * _environment, char * _timing );
+void                    wait_ticks( Environment * _environment, int _timing );
+void                    wait_ticks_var( Environment * _environment, char * _timing );
 void                    wait_vbl( Environment * _environment );
 void                    wait_until( Environment * _environment );
 void                    wait_until_condition( Environment * _environment, char * _condition );

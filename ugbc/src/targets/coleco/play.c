@@ -81,7 +81,7 @@ void play( Environment * _environment, int _note, int _delay, int _channels ) {
     sn76489_start( _environment, _channels );
     sn76489_set_note( _environment, _channels, _note );
     if ( _delay ) {
-        wait_milliseconds( _environment, _delay, 0 );
+        wait_milliseconds( _environment, _delay );
     }
 
 }
@@ -120,7 +120,7 @@ void play_vars( Environment * _environment, char * _note, char * _delay, char * 
         sn76489_set_note_vars( _environment, NULL, note->realName );
     }
     if ( _delay ) {
-        wait_milliseconds_var( _environment, _delay, 0 );
+        wait_milliseconds_var( _environment, _delay );
     }
 
 }

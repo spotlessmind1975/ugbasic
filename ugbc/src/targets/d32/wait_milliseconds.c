@@ -49,7 +49,7 @@
 /* <usermanual>
 @keyword WAIT
 </usermanual> */
-void wait_milliseconds( Environment * _environment, int _timing, int _parallel ) {
+void wait_milliseconds( Environment * _environment, int _timing ) {
 
     
 
@@ -69,7 +69,7 @@ void wait_milliseconds( Environment * _environment, int _timing, int _parallel )
 /* <usermanual>
 @keyword WAIT
 </usermanual> */
-void wait_milliseconds_var( Environment * _environment, char * _timing, int _parallel ) {
+void wait_milliseconds_var( Environment * _environment, char * _timing ) {
 
     MAKE_LABEL
 

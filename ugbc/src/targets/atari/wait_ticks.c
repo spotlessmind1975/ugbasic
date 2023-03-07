@@ -50,9 +50,7 @@
 @keyword WAIT
 @target atari
 </usermanual> */
-void wait_ticks( Environment * _environment, int _timing, int _parallel ) {
-
-    
+void wait_ticks( Environment * _environment, int _timing ) {
 
     char timingString[MAX_TEMPORARY_STORAGE]; sprintf(timingString, "#$%2.2x", _timing );
 
@@ -71,7 +69,7 @@ void wait_ticks( Environment * _environment, int _timing, int _parallel ) {
 /* <usermanual>
 @keyword WAIT
 </usermanual> */
-void wait_ticks_var( Environment * _environment, char * _timing, int _parallel ) {
+void wait_ticks_var( Environment * _environment, char * _timing ) {
 
     MAKE_LABEL
 

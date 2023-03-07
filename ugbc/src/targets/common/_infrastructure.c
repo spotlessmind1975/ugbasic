@@ -782,7 +782,7 @@ Variable * variable_array_type( Environment * _environment, char *_name, Variabl
         }
     }
 
-    Variable * var = variable_find( _environment->variables, _name );
+    Variable * var = variable_retrieve( _environment, _name );
     if ( ! var ) {
         CRITICAL_VARIABLE( _name );
     }
@@ -2579,6 +2579,78 @@ Variable * variable_increment_array( Environment * _environment, char * _source 
 }
 
 /**
+ * @brief Store a variable's value
+ * 
+ * @param _environment Current calling environment
+ * @param _source Source variable's name
+ * @return Variable* The source variable
+ */
+void variable_store_mt( Environment * _environment, char * _source, unsigned int _value ) {
+
+    ++((struct _Environment *)_environment)->arrayNestedIndex;
+    memset( ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex], 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
+    ((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex] = 0;
+    ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex][((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex]] = strdup( "PROTOTHREADCT" );
+    ++((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex];
+    Variable * array = variable_retrieve( _environment, _source );
+    if ( array->type != VT_ARRAY ) {
+        CRITICAL_NOT_ARRAY( _source );
+    }
+    variable_store_array_const( _environment, array->name, _value );
+    --((struct _Environment *)_environment)->arrayNestedIndex;
+    
+}
+
+/**
+ * @brief Increment a variable by one
+ * 
+ * @param _environment Current calling environment
+ * @param _source Source variable's name
+ * @return Variable* The source variable
+ */
+Variable * variable_move_from_mt( Environment * _environment, char * _source, char * _destination ) {
+
+    ++((struct _Environment *)_environment)->arrayNestedIndex;
+    memset( ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex], 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
+    ((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex] = 0;
+    ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex][((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex]] = strdup( "PROTOTHREADCT" );
+    ++((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex];
+    Variable * array = variable_retrieve( _environment, _source );
+    if ( array->type != VT_ARRAY ) {
+        CRITICAL_NOT_ARRAY( _source );
+    }
+    Variable * value = variable_move_from_array( _environment, array->name );
+    --((struct _Environment *)_environment)->arrayNestedIndex;
+
+    Variable * destination = variable_retrieve( _environment, _destination );
+
+    variable_move( _environment, value->name, destination->name );
+
+    return destination;
+    
+}
+
+Variable * variable_move_to_mt( Environment * _environment, char * _source, char * _destination ) {
+
+    Variable * source = variable_retrieve( _environment, _source );
+
+    ++((struct _Environment *)_environment)->arrayNestedIndex;
+    memset( ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex], 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
+    ((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex] = 0;
+    ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex][((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex]] = strdup( "PROTOTHREADCT" );
+    ++((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex];
+    Variable * array = variable_retrieve( _environment, _destination );
+    if ( array->type != VT_ARRAY ) {
+        CRITICAL_NOT_ARRAY( _destination );
+    }
+    variable_move_array( _environment, array->name, source->name );
+    --((struct _Environment *)_environment)->arrayNestedIndex;
+
+    return source;
+    
+}
+
+/**
  * @brief Increment a variable by one
  * 
  * @param _environment Current calling environment
@@ -2674,6 +2746,8 @@ Variable * variable_decrement_array( Environment * _environment, char * _source 
  */
 Variable * variable_decrement_mt( Environment * _environment, char * _source ) {
 
+    outline0("; variable_decrement_mt 0 ");
+
     ++((struct _Environment *)_environment)->arrayNestedIndex;
     memset( ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex], 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
     ((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex] = 0;
@@ -2686,8 +2760,12 @@ Variable * variable_decrement_mt( Environment * _environment, char * _source ) {
     Variable * value = variable_move_from_array( _environment, array->name );
     --((struct _Environment *)_environment)->arrayNestedIndex;
 
+    outline0("; variable_decrement_mt 1 ");
+    
     variable_decrement( _environment, value->name );
 
+    outline0("; variable_decrement_mt 2 ");
+    
     ++((struct _Environment *)_environment)->arrayNestedIndex;
     memset( ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex], 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
     ((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex] = 0;
@@ -2700,7 +2778,31 @@ Variable * variable_decrement_mt( Environment * _environment, char * _source ) {
     variable_move_array( _environment, array->name, value->name );
     --((struct _Environment *)_environment)->arrayNestedIndex;
 
+    outline0("; variable_decrement_mt 3 ");
+
     return value;
+
+}
+
+void variable_compare_and_branch_const( Environment * _environment, char *_source, int _destination,  char *_name, int _positive ) {
+
+    Variable * source = variable_retrieve( _environment, _source );
+
+    MAKE_LABEL
+
+    switch( VT_BITWIDTH( source->type ) ) {
+        case 32:
+            cpu_compare_and_branch_32bit_const( _environment, source->realName, _destination,  _name, _positive );
+            break;
+        case 16:
+            cpu_compare_and_branch_16bit_const( _environment, source->realName, _destination,  _name, _positive );
+            break;
+        case 8:
+            cpu_compare_and_branch_8bit_const( _environment, source->realName, _destination,  _name, _positive );
+            break;
+        case 0:
+            CRITICAL_CANNOT_COMPARE(DATATYPE_AS_STRING[source->type],DATATYPE_AS_STRING[source->type]);
+    }
 
 }
 
@@ -4987,6 +5089,69 @@ static Variable * calculate_offset_in_array( Environment * _environment, char * 
 
     return offset;
 
+}
+
+void variable_store_array_const( Environment * _environment, char * _array, int _value  ) {
+
+    MAKE_LABEL;
+
+    Variable * array = variable_retrieve( _environment, _array );
+
+    if ( array->arrayDimensions != _environment->arrayIndexes[_environment->arrayNestedIndex] ) {
+        CRITICAL_ARRAY_SIZE_MISMATCH( _array, array->arrayDimensions, _environment->arrayIndexes[_environment->arrayNestedIndex] );
+    }
+
+    if ( array->arrayType == 0 ) {
+        WARNING_USE_OF_UNDEFINED_ARRAY( array->name );
+        array->arrayType = VT_WORD;
+    }
+
+    Variable * offset = calculate_offset_in_array( _environment, _array);
+
+    switch( array->arrayType ) {
+        case VT_STRING:
+            CRITICAL_DATATYPE_UNSUPPORTED("array(a)", DATATYPE_AS_STRING[array->arrayType]);
+         case VT_TILE:
+         case VT_TILESET:
+         case VT_SPRITE:
+         case VT_DSTRING:
+            offset = variable_mul2_const( _environment, offset->name, 0 );
+            break;
+         case VT_TILES:
+            offset = variable_mul2_const( _environment, offset->name, 2 );
+            break;
+         default:
+            offset = variable_mul2_const( _environment, offset->name, ( VT_BITWIDTH( array->arrayType ) >> 3 ) - 1 );
+            break;
+    }
+
+    cpu_math_add_16bit_with_16bit( _environment, offset->realName, array->realName, offset->realName );
+
+    switch( array->arrayType ) {
+        case VT_TILES:
+            cpu_store_32bit( _environment, offset->realName, _value );
+            break;
+        case VT_TILE:
+        case VT_TILESET:
+        case VT_SPRITE:
+            cpu_store_8bit( _environment, offset->realName, _value );
+            break;
+        default:
+            switch( VT_BITWIDTH( array->arrayType ) ) {
+                case 32:
+                    cpu_store_32bit( _environment, offset->realName, _value );
+                    break;
+                case 16:
+                    cpu_store_16bit( _environment, offset->realName, _value );
+                    break;
+                case 8:
+                    cpu_store_8bit( _environment, offset->realName, _value );
+                    break;
+                case 0:
+                    CRITICAL_DATATYPE_UNSUPPORTED("array(3x)", DATATYPE_AS_STRING[array->arrayType]);
+            }
+            break;
+    }
 }
 
 void variable_move_array( Environment * _environment, char * _array, char * _value  ) {

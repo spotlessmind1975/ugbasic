@@ -78,13 +78,10 @@ espressa in millisecondi.
 </usermanual> */
 void sound( Environment * _environment, int _freq, int _delay, int _channels ) {
 
-    outline0("; pokey_start");
     pokey_start( _environment, _channels );
-    outline0("; pokey_set_frequency");
     pokey_set_frequency( _environment, _channels, _freq );
     if ( _delay ) {
-        outline0("; wait_milliseconds");
-        wait_milliseconds( _environment, _delay, 0 );
+        wait_milliseconds( _environment, _delay );
     }
 
 }
@@ -119,7 +116,7 @@ void sound_vars( Environment * _environment, char * _freq, char * _delay, char *
         pokey_start_var( _environment, channels->realName );
         pokey_set_frequency_vars( _environment, channels->realName, freq->realName );
     } else {
-        pokey_start_var( _environment, NULL );, 0
+        pokey_start_var( _environment, NULL );
         pokey_set_frequency_vars( _environment, NULL, freq->realName );
     }
     if ( _delay ) {
