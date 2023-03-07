@@ -144,6 +144,6 @@ void wait_cycles_var( Environment * _environment, char * _timing, int _parallel 
 
         z80_busy_wait( _environment, timing->realName );
 
-    }ù
-    
+    }
+
 }

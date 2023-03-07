@@ -126,7 +126,7 @@ void wait_cycles( Environment * _environment, int _timing, int _parallel ) {
 
 @example WAIT delay CYCLES
 </usermanual> */
-void wait_cycles_var( Environment * _environment, char * _timing ) {
+void wait_cycles_var( Environment * _environment, char * _timing, int _parallel ) {
 
     MAKE_LABEL
 
@@ -170,5 +170,5 @@ void wait_cycles_var( Environment * _environment, char * _timing ) {
         cpu6502_busy_wait( _environment, timing->realName );
 
     }
-    
+
 }

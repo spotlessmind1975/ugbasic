@@ -51,7 +51,7 @@
 
 @target zx
 </usermanual> */
-void wait_cycles( Environment * _environment, int _timing ) {
+void wait_cycles( Environment * _environment, int _timing, int _parallel ) {
 
     if ( _environment->protothread && _environment->procedureName && _parallel ) {
 
@@ -103,7 +103,7 @@ void wait_cycles( Environment * _environment, int _timing ) {
  * @param _environment Current calling environment
  * @param _timing Number of cycles to wait
  */
-void wait_cycles_var( Environment * _environment, char * _timing ) {
+void wait_cycles_var( Environment * _environment, char * _timing, int _parallel ) {
 
     Variable * timing = variable_retrieve( _environment, _timing );
     
@@ -145,5 +145,5 @@ void wait_cycles_var( Environment * _environment, char * _timing ) {
         z80_busy_wait( _environment, timing->realName );
 
     }
-    
+
 }
