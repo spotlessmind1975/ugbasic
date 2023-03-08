@@ -69,7 +69,7 @@ void wait_cycles( Environment * _environment, int _timing, int _parallel ) {
         cpu_compare_and_branch_16bit_const( _environment, waitVariable->realName, 0, protothreadLabel, 1 );
 
         cpu_protothread_save( _environment, "PROTOTHREADCT", ( _environment->protothreadStep - 1 ) );
-        cpu_protothread_set_state( _environment, "PROTOTHREADCT", PROTOTHREAD_STATUS_WAITING );
+        cpu_protothread_set_state( _environment, "PROTOTHREADCT", PROTOTHREAD_STATUS_YIELDED );
         cpu_return( _environment );
 
         cpu_label( _environment, protothreadLabel );
