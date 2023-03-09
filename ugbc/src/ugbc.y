@@ -501,7 +501,9 @@ const_color_enumeration:
       };
 
 const_factor: 
-        Integer
+        Integer {
+            $$ = $1;
+        }
       | IF OP const_expr OP_COMMA const_expr OP_COMMA const_expr CP {
           if ( $3 ) {
               $$ = $5;
