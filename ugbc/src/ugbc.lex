@@ -1041,7 +1041,7 @@ ZX { RETURN(ZX,1); }
 0x[a-fA-F0-9]+ { yylval.integer = strtol(yytext+2,0,16); RETURN(Integer,1); }
 [a-fA-F0-9]+[hH] { int c = strlen(yytext); yytext[c-1] = 0; yylval.integer = strtol(yytext,0,16); RETURN(Integer,1); }
 %[0-1]+ { yylval.integer = strtol(yytext+1,0,2); RETURN(Integer,1); }
-\s[-][0-9]+ { yylval.integer = atoi(yytext); RETURN(Integer,1);  }
+[-][0-9]+ { yylval.integer = atoi(yytext); RETURN(Integer,1);  }
 [0-9]+ { yylval.integer = atoi(yytext); RETURN(Integer,1);  }
 
 [ \t]+ { yycolno = (yycolno + yyleng); yyposno = (yyposno + yyleng); }
