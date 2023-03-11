@@ -231,6 +231,8 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
     POBuffer v2 = TMP_BUF;
     POBuffer v3 = TMP_BUF;
     POBuffer v4 = TMP_BUF;
+    POBuffer v5 = TMP_BUF;
+    POBuffer v6 = TMP_BUF;
     
     /* a bunch of rules */
 
@@ -469,7 +471,7 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
             po_buf_match( buf[0], " LDA *", v1 ) && 
             po_buf_match( buf[1], " STA *", v2 ) &&
             po_buf_match( buf[2], " LDA *", v3 ) && 
-            po_buf_match( buf[3], " STA ", v4 ) &&
+            po_buf_match( buf[3], " STA *", v4 ) &&
             ( strcmp( v2->str, v3->str ) == 0 ) &&
             ( strstr( v2->str,"_Ttmp" ) != NULL )
     ) {
@@ -490,7 +492,7 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
 		optim( buf[2], RULE "(LDA x, STA v1, LDA v1, STA v2)->(..., LDA x, STA v2)", NULL );
         ++_environment->removedAssemblyLines;
         ++_environment->removedAssemblyLines;
-        
+
             // printf( "-------------------\n" );
             // printf(" %s\n", buf[0]->str );
             // printf(" %s\n", buf[1]->str );
