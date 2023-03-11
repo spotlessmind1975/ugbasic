@@ -59,7 +59,7 @@ void wait_cycles( Environment * _environment, int _timing, int _parallel ) {
 
         ///////////
         memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
-        ((struct _Environment *)_environment)->arrayDimensionsEach[((struct _Environment *)_environment)->arrayDimensions] = _environment->protothreadConfig.count;
+        ((struct _Environment *)_environment)->arrayDimensionsEach[0] = _environment->protothreadConfig.count;
         ((struct _Environment *)_environment)->arrayDimensions = 1;
         variable_define( _environment, waitVariableName, VT_ARRAY, 0 );
         variable_array_type( _environment, waitVariableName, VT_WORD );
@@ -113,7 +113,7 @@ void wait_cycles_var( Environment * _environment, char * _timing, int _parallel 
 
         ///////////
         memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
-        ((struct _Environment *)_environment)->arrayDimensionsEach[((struct _Environment *)_environment)->arrayDimensions] = _environment->protothreadConfig.count;
+        ((struct _Environment *)_environment)->arrayDimensionsEach[0] = _environment->protothreadConfig.count;
         ((struct _Environment *)_environment)->arrayDimensions = 1;
         variable_define( _environment, waitVariableName, VT_ARRAY, 0 );
         variable_array_type( _environment, waitVariableName, VT_WORD );
