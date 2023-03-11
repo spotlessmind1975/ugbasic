@@ -82,7 +82,7 @@
  ****************************************************************************/
 
 #define DIRECT_PAGE     0x2100
-#define LOOK_AHEAD      5
+#define LOOK_AHEAD      10
 #define ALLOW_UNSAFE    1
 #define KEEP_COMMENTS   1
 
@@ -455,6 +455,69 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
         optim( buf[3], RULE "(LDA x, LDA x)->(LDA x) [3]", NULL );
         ++_environment->removedAssemblyLines;
     }
+
+// 0:                           LDA #$06
+// 1: 000DC8r 1  8D rr rr     	STA _printScore_Ttmp13
+// 2: 000DCBr 1  A9 00        	LDA #$00
+// 3: 000DCDr 1  8D rr rr     	STA _printScore_Ttmp16
+// 4: 000DD0r 1  AD rr rr     	LDA _printScore_Ttmp13
+// 5: 000DD3r 1  85 A7        	STA XCURSYS
+// 6: 000DD5r 1  AD rr rr     	LDA _printScore_Ttmp16
+// 7: 000DD8r 1  85 A8        	STA YCURSYS
+
+	if( 
+            po_buf_match( buf[0], " LDA *", v1 ) && 
+            po_buf_match( buf[1], " STA *", v2 ) &&
+            po_buf_match( buf[2], " LDA *", v3 ) && 
+            po_buf_match( buf[3], " STA ", v4 ) &&
+            ( strcmp( v2->str, v3->str ) == 0 ) &&
+            ( strstr( v2->str,"_Ttmp" ) != NULL )
+    ) {
+
+            // printf( "*******************\n" );
+            // printf( "v2 = %s, v3 = %s\n", v2->str, v3->str );
+            // printf( "-------------------\n" );
+            // printf(" %s\n", buf[0]->str );
+            // printf(" %s\n", buf[1]->str );
+            // printf(" %s\n", buf[2]->str );
+            // printf(" %s\n", buf[3]->str );
+            // printf(" -> \n" );
+            // printf(" %s\n", buf[0]->str );
+            // printf(" %s\n", buf[3]->str );
+            // printf( "-------------------\n" );
+
+		optim( buf[1], RULE "(LDA x, STA v1, LDA v1, STA v2)->(..., LDA x, STA v2)", NULL );
+		optim( buf[2], RULE "(LDA x, STA v1, LDA v1, STA v2)->(..., LDA x, STA v2)", NULL );
+        ++_environment->removedAssemblyLines;
+        ++_environment->removedAssemblyLines;
+        
+            // printf( "-------------------\n" );
+            // printf(" %s\n", buf[0]->str );
+            // printf(" %s\n", buf[1]->str );
+            // printf(" %s\n", buf[2]->str );
+            // printf(" %s\n", buf[3]->str );
+            // printf(" -> \n" );
+            // printf(" %s\n", buf[0]->str );
+            // printf(" %s\n", buf[3]->str );
+            // printf( "-------------------\n" );
+            // printf( "*******************\n\n" );
+
+    }
+
+	// if( 
+    //         po_buf_match( buf[0], " LDA *", v1 ) && 
+    //         po_buf_match( buf[1], " STA ", v2 ) &&
+    //         po_buf_match( buf[4], " LDA *", v3 ) && 
+    //         po_buf_match( buf[5], " STA ", v4 ) &&
+    //         ( strcmp( v2->str, v3->str ) == 0 ) &&
+    //         ( strstr( v2->str,"_Ttmp" ) != NULL )
+    // ) {
+    //         printf("**** %s\n", v2->str );
+	// 	optim( buf[0], RULE "(LDA x, STA v1, ..., LDA v1, STA v2)->(..., LDA x, STA v2)", NULL );
+	// 	optim( buf[1], RULE "(LDA x, STA v1, ..., LDA v1, STA v2)->(..., LDA x, STA v2)", NULL );
+	// 	optim( buf[4], RULE "(LDA x, STA v1, ..., LDA v1, STA v2)->(..., LDA x, STA v2)", "LDA %s", v1->str );
+    //     ++_environment->removedAssemblyLines;
+    // }
 
 }
 
@@ -848,26 +911,26 @@ static int optim_pass( Environment * _environment, POBuffer buf[LOOK_AHEAD], Pee
 
 /* main entry-point for this service */
 void target_peephole_optimizer( Environment * _environment ) {
-    // if ( _environment->peepholeOptimizationLimit > 0 ) {
-    //     POBuffer buf[LOOK_AHEAD];
-    //     int i;
+    if ( _environment->peepholeOptimizationLimit > 0 ) {
+        POBuffer buf[LOOK_AHEAD];
+        int i;
 
-    //     for(i=0; i<LOOK_AHEAD; ++i) buf[i] = po_buf_new(0);
+        for(i=0; i<LOOK_AHEAD; ++i) buf[i] = po_buf_new(0);
 
-    //     int optimization_limit_count = _environment->peepholeOptimizationLimit;
+        int optimization_limit_count = _environment->peepholeOptimizationLimit;
 
-    //     do {
-    //         while(optim_pass(_environment, buf, PEEPHOLE)&&optimization_limit_count) {
-    //             --optimization_limit_count;
-    //         };
-    //         optim_pass(_environment, buf, DEADVARS);
-    //     } while(change&&optimization_limit_count);
-    //     optim_pass(_environment, buf, RELOCATION1);
-    //     optim_pass(_environment, buf, RELOCATION2);
+        do {
+            while(optim_pass(_environment, buf, PEEPHOLE)&&optimization_limit_count) {
+                --optimization_limit_count;
+            };
+            optim_pass(_environment, buf, DEADVARS);
+        } while(change&&optimization_limit_count);
+        optim_pass(_environment, buf, RELOCATION1);
+        optim_pass(_environment, buf, RELOCATION2);
 
-    //     for(i=0; i<LOOK_AHEAD; ++i) buf[i] = po_buf_del(buf[i]);
-    //     TMP_BUF_CLR;
-    // }
+        for(i=0; i<LOOK_AHEAD; ++i) buf[i] = po_buf_del(buf[i]);
+        TMP_BUF_CLR;
+    }
 }
 
 void target_finalize( Environment * _environment ) {
