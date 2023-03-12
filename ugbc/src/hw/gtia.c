@@ -251,6 +251,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
     deploy( gtiavars, src_hw_gtia_vars_asm );
     
+    outline1( "; enabling mode %d", _screen_mode->id );
+
     unsigned char * dliListStart = malloc( DLI_COUNT ), * dliListCurrent = dliListStart;
     
     Variable * dli = variable_retrieve_or_define( _environment, "DLI", VT_BUFFER, 0 );
@@ -653,7 +655,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             // DLI_LMS( dliListCurrent, 2, 40000 );
-            DLI_LMS_VHSCROLL( dliListCurrent, 2, 40000 );
+            DLI_LMS_VHSCROLL( dliListCurrent, 2, 0xa000 );
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
@@ -700,7 +702,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             // DLI_LMS( dliListCurrent, 6, 40000 );
-            DLI_LMS_VHSCROLL( dliListCurrent, 6, 40000 );
+            DLI_LMS_VHSCROLL( dliListCurrent, 6, 0xa000 );
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
@@ -740,7 +742,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             // DLI_LMS( dliListCurrent, 7, 40000 );
-            DLI_LMS_VHSCROLL( dliListCurrent, 7, 40000 );
+            DLI_LMS_VHSCROLL( dliListCurrent, 7, 0xa000 );
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
@@ -782,7 +784,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             // DLI_LMS( dliListCurrent, 3, 40000 );
-            DLI_LMS_VHSCROLL( dliListCurrent, 3, 40000 );
+            DLI_LMS_VHSCROLL( dliListCurrent, 3, 0xa000 );
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
@@ -827,7 +829,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             // DLI_LMS( dliListCurrent, 4, 40000 );
-            DLI_LMS_VHSCROLL( dliListCurrent, 4, 40000 );
+            DLI_LMS_VHSCROLL( dliListCurrent, 4, 0xa000 );
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
@@ -867,7 +869,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             // DLI_LMS( dliListCurrent, 5, 40000 );
-            DLI_LMS_VHSCROLL( dliListCurrent, 5, 40000 );
+            DLI_LMS_VHSCROLL( dliListCurrent, 5, 0xa000 );
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
