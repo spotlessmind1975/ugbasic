@@ -125,9 +125,17 @@ void end_procedure( Environment * _environment, char * _value ) {
 
     cpu_label( _environment, procedureAfterLabel );
 
-    _environment->procedureName = NULL;
-
     Variable * current = _environment->procedureVariables;
+
+    if ( current ) {
+        while( current->next ) {
+            current->name = current->realName;
+            current = current->next;
+        }
+        current->name = current->realName;
+    }
+
+    current = _environment->procedureVariables;
 
     Variable * varLast = _environment->variables;
     if ( varLast ) {
@@ -138,6 +146,8 @@ void end_procedure( Environment * _environment, char * _value ) {
     } else {
         _environment->variables = current;
     }
+
+    _environment->procedureName = NULL;
 
     _environment->procedureVariables = NULL;
 
