@@ -1054,7 +1054,7 @@ void gtia_textmap_at( Environment * _environment, char * _address ) {
 
 void gtia_point_at_int( Environment * _environment, int _x, int _y ) {
 
-    deploy( gtiavarsGraphic, src_hw_gtia_vars_graphics_asm );
+    deploy_deferred( gtiavarsGraphic, src_hw_gtia_vars_graphics_asm );
     deploy( plot, src_hw_gtia_plot_asm );
     
     outline1("LDA %2.2x", (_x & 0xff ) );
@@ -1074,7 +1074,7 @@ void gtia_point_at_vars( Environment * _environment, char *_x, char *_y ) {
     Variable * x = variable_retrieve( _environment, _x );
     Variable * y = variable_retrieve( _environment, _y );
 
-    deploy( gtiavarsGraphic, src_hw_gtia_vars_graphics_asm );
+    deploy_deferred( gtiavarsGraphic, src_hw_gtia_vars_graphics_asm );
     deploy( plot, src_hw_gtia_plot_asm );
     
     outline1("LDA %s", x->realName );
@@ -1099,7 +1099,7 @@ void gtia_point( Environment * _environment, char *_x, char *_y, char * _result 
     Variable * y = variable_retrieve( _environment, _y );
     Variable * result = variable_retrieve( _environment, _result );
 
-    deploy( gtiavarsGraphic, src_hw_gtia_vars_graphics_asm );
+    deploy_deferred( gtiavarsGraphic, src_hw_gtia_vars_graphics_asm );
     deploy( plot, src_hw_gtia_plot_asm );
     
     outline1("LDA %s", x->realName );
@@ -1295,7 +1295,7 @@ void gtia_scroll_text( Environment * _environment, int _direction ) {
 void gtia_text( Environment * _environment, char * _text, char * _text_size ) {
 
     deploy( gtiavars, src_hw_gtia_vars_asm );
-    deploy( gtiavarsGraphic, src_hw_gtia_vars_graphics_asm );
+    deploy_deferred( gtiavarsGraphic, src_hw_gtia_vars_graphics_asm );
     deploy( vScrollText, src_hw_gtia_vscroll_text_asm );
     deploy( cls, src_hw_gtia_cls_asm );
     deploy( textEncodedAt, src_hw_gtia_text_at_asm );
@@ -2127,7 +2127,7 @@ Variable * gtia_image_converter( Environment * _environment, char * _data, int _
 void gtia_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags ) {
 
     deploy( gtiavars, src_hw_gtia_vars_asm);
-    deploy( gtiavarsGraphic, src_hw_gtia_vars_graphics_asm );
+    deploy_deferred( gtiavarsGraphic, src_hw_gtia_vars_graphics_asm );
     deploy( putimage, src_hw_gtia_put_image_asm );
 
     outline1("LDA #<%s", _image );
@@ -2239,7 +2239,7 @@ void gtia_put_image( Environment * _environment, char * _image, char * _x, char 
 void gtia_put_tile( Environment * _environment, char * _tile, char * _x, char * _y ) {
 
     deploy( gtiavars, src_hw_gtia_vars_asm);
-    deploy( gtiavarsGraphic, src_hw_gtia_vars_graphics_asm );
+    deploy_deferred( gtiavarsGraphic, src_hw_gtia_vars_graphics_asm );
     deploy( tiles, src_hw_gtia_tiles_asm );
 
     outline1("LDA %s", _tile );
@@ -2265,7 +2265,7 @@ void gtia_move_tiles( Environment * _environment, char * _tile, char * _x, char 
     Variable * y = variable_retrieve( _environment, _y );
 
     deploy( gtiavars, src_hw_gtia_vars_asm);
-    deploy( gtiavarsGraphic, src_hw_gtia_vars_graphics_asm );
+    deploy_deferred( gtiavarsGraphic, src_hw_gtia_vars_graphics_asm );
     deploy( tiles, src_hw_gtia_tiles_asm );
 
     outline1("LDA %s", tile->realName );
@@ -2323,7 +2323,7 @@ void gtia_put_tiles( Environment * _environment, char * _tile, char * _x, char *
 void gtia_tile_at( Environment * _environment, char * _x, char * _y, char * _result ) {
 
     deploy( gtiavars, src_hw_gtia_vars_asm);
-    deploy( gtiavarsGraphic, src_hw_gtia_vars_graphics_asm );
+    deploy_deferred( gtiavarsGraphic, src_hw_gtia_vars_graphics_asm );
     deploy( tiles, src_hw_gtia_tiles_asm );
 
     outline1("LDA %s", _x );
@@ -2384,7 +2384,7 @@ Variable * gtia_new_image( Environment * _environment, int _width, int _height, 
 void gtia_get_image( Environment * _environment, char * _image, char * _x, char * _y, int _palette ) {
 
     deploy( gtiavars, src_hw_gtia_vars_asm);
-    deploy( gtiavarsGraphic, src_hw_gtia_vars_graphics_asm );
+    deploy_deferred( gtiavarsGraphic, src_hw_gtia_vars_graphics_asm );
     deploy( getimage, src_hw_gtia_get_image_asm );
 
     outline1("LDA #<%s", _image );
@@ -2410,7 +2410,7 @@ void gtia_get_image( Environment * _environment, char * _image, char * _x, char 
 void gtia_scroll( Environment * _environment, int _dx, int _dy ) {
 
     deploy( gtiavars, src_hw_gtia_vars_asm);
-    deploy( gtiavarsGraphic, src_hw_gtia_vars_graphics_asm );
+    deploy_deferred( gtiavarsGraphic, src_hw_gtia_vars_graphics_asm );
     deploy( scroll, src_hw_gtia_scroll_asm);
     deploy( textHScroll, src_hw_gtia_hscroll_text_asm );
     deploy( vScrollText, src_hw_gtia_vscroll_text_asm );
