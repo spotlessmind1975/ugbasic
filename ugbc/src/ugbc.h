@@ -333,6 +333,8 @@ typedef enum _VariableType {
 
 } VariableType;
 
+#define MAX_TEMPORARY_STORAGE           1024
+
 #define MAX_ARRAY_DIMENSIONS            256
 #define MAX_PARAMETERS                  256
 #define MAX_PALETTE                     256
@@ -1815,6 +1817,13 @@ typedef struct _Environment {
      */
     int resolutionY;
 
+    /*
+     * Used for deferred writing of assembly file.
+     */
+    char *deferredEmbedded[MAX_TEMPORARY_STORAGE];
+
+    int deferredEmbeddedSize[MAX_TEMPORARY_STORAGE];
+
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */
@@ -2215,7 +2224,7 @@ int embedparse (void *);
 int embed_scan_string (const char *);
 
 #define outembedded0(e)     \
-    { \
+     { \
         char * parsed = malloc( (2*e##_len) + 1 ); \
         memset( parsed, 0, (2*e##_len) + 1 ); \
         char * tmp = malloc( e##_len + 1 ); \
@@ -2245,7 +2254,27 @@ int embed_scan_string (const char *);
         fwrite( parsed, strlen( parsed )-1, 1, ((Environment *)_environment)->asmFile ); \
         free( parsed ); \
         fputs( "\n", ((Environment *)_environment)->asmFile ); \
-    } 
+    }
+
+#define outembeddeddef0(e) \
+    { \
+        int deferredIndex = 0; \
+        \
+        for( deferredIndex = 0; deferredIndex < MAX_TEMPORARY_STORAGE; ++deferredIndex ) { \
+            if ( !_environment->deferredEmbedded[deferredIndex] ) { \
+                break; \
+            } \
+        } \
+        \
+        char * tmp = malloc( e##_len + 1 ); \
+        memset( tmp, 0, e##_len + 1 ); \
+        memcpy( tmp, e, e##_len ); \
+        \
+        _environment->deferredEmbedded[deferredIndex] = tmp; \
+        _environment->deferredEmbeddedSize[deferredIndex] = e##_len; \
+        \
+    }
+
 
 #define outhead0(s)             outline0n(0, s, 1)
 #define outhead1(s,a)           outline1n(0, s, a, 1)
@@ -2296,6 +2325,12 @@ int embed_scan_string (const char *);
             _environment->deployed.s = 1; \
         }
 
+#define deploy_deferred(s,e)  \
+        if ( ! _environment->deployed.s ) { \
+            outembeddeddef0(e); \
+            _environment->deployed.s = 1; \
+        }
+
 #define deploy_inplace(s,e)  \
         if ( ! _environment->deployed.s ) { \
             outembedded0(e); \
@@ -2313,6 +2348,13 @@ int embed_scan_string (const char *);
             _environment->deployed.s = 1; \
         }
 
+#define deploy_deferred_with_vars(s,e,v)  \
+        if ( ! _environment->deployed.s ) { \
+            outembeddeddef0(e); \
+            v(_environment);\
+            _environment->deployed.s = 1; \
+        }
+
 #define deploy_embedded(s,e)  \
         if ( ! _environment->deployed.embedded.s ) { \
             int ignoreEmptyProcedure = _environment->emptyProcedure; \
@@ -2321,6 +2363,12 @@ int embed_scan_string (const char *);
             outembedded0(e); \
             cpu_label( _environment, #s "_after" ); \
             _environment->emptyProcedure = ignoreEmptyProcedure; \
+            _environment->deployed.embedded.s = 1; \
+        }
+
+#define deploy_deferred_embedded(s,e)  \
+        if ( ! _environment->deployed.embedded.s ) { \
+            outembeddeddef0(e); \
             _environment->deployed.embedded.s = 1; \
         }
 
@@ -2364,8 +2412,6 @@ int embed_scan_string (const char *);
 
 #define stats_embedded(s) \
     printf("%s:\t%d\t%s\t\n", #s, _environment->embeddedStats.s, _environment->embedded.s ? "embedded" : "inline" );
-
-#define MAX_TEMPORARY_STORAGE   1024
 
 #define WW_PEN              1
 #define WW_PAPER            2

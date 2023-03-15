@@ -60,7 +60,40 @@ void end_compilation( Environment * _environment ) {
     gameloop_cleanup( _environment );
 
     halt( _environment );
-        
+
+    int j=0;
+    for( j=0; j<MAX_TEMPORARY_STORAGE; ++j ) {
+        if ( _environment->deferredEmbedded[j] ) {
+            int size = _environment->deferredEmbeddedSize[j];
+            char * parsed = malloc( (2*size) + 1 );
+            memset( parsed, 0, (2*size) + 1 );
+            char * line = strtok( _environment->deferredEmbedded[j], "\x0a" );
+            while( line ) {
+                _environment->embedResult.line = line;
+                _environment->embedResult.conditional = 0;
+                embed_scan_string( line );
+                embedparse(_environment);
+                if ( ! _environment->embedResult.conditional ) {
+                    int i;
+                    for( i=0; i<_environment->embedResult.current; ++i ) {
+                        if ( _environment->embedResult.excluded[i] )
+                            break;
+                    }
+                    if ( i>= _environment->embedResult.current ) {
+                        strcat( parsed, line );
+                        strcat( parsed, "\x0a" );
+                        ((Environment *)_environment)->producedAssemblyLines += assemblyLineIsAComment( line ) ? 0 : 1;
+                    }
+                }
+                line = strtok( NULL, "\x0a" );
+            }
+            free( _environment->deferredEmbedded[j] );
+            fwrite( parsed, strlen( parsed )-1, 1, ((Environment *)_environment)->asmFile );
+            free( parsed );
+            fputs( "\n", ((Environment *)_environment)->asmFile );
+        }
+    }
+
     bank_cleanup( _environment );
     every_cleanup( _environment );
     variable_cleanup( _environment );
@@ -77,7 +110,7 @@ void end_compilation( Environment * _environment ) {
     if ( _environment->debuggerLabelsFile ) {
         fclose(_environment->debuggerLabelsFile);
     }
-
+    
     fclose(_environment->asmFile);
 
 }
