@@ -1108,6 +1108,7 @@ typedef struct _Deployed {
     int anticstartup;
     int gtiastartup;
     int gtiavars;
+    int gtiavarsGraphic;
     int zxvars;
     int msx1vars;
     int sc3000vars;

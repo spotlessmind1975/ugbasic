@@ -29,7 +29,7 @@ int embedwrap() { return 1; }
     char * string;
 }
 
-%token OP CP OP_AT OP_EQUAL OP_DISEQUAL OP_AND OP_OR OP_NOT OP_POINT
+%token OP CP OP_AT OP_EQUAL OP_DISEQUAL OP_AND OP_OR OP_NOT OP_POINT OP_LT OP_LTE OP_GT OP_GTE
 %token IF ELSE ELSEIF ENDIF NewLine
 %token ATARI ATARIXL C128 C64 VIC20 ZX COLECO SC3000 SG1000 MSX MSX1 DRAGON DRAGON32 DRAGON64 PC128OP MO5 CPC COCO
 
@@ -211,6 +211,22 @@ const_expr :
         // printf( "%d != %d\n", $1, $3 );
         $$ = ( $1 != $3 );
     }
+    | const_factor OP_LT const_factor {
+        // printf( "%d != %d\n", $1, $3 );
+        $$ = ( $1 < $3 );
+    }
+    | const_factor OP_LTE const_factor {
+        // printf( "%d != %d\n", $1, $3 );
+        $$ = ( $1 <= $3 );
+    }
+    | const_factor OP_GT const_factor {
+        // printf( "%d != %d\n", $1, $3 );
+        $$ = ( $1 > $3 );
+    }
+    | const_factor OP_GTE const_factor {
+        // printf( "%d != %d\n", $1, $3 );
+        $$ = ( $1 >= $3 );
+    }
     ;
     
 const_factor: 
@@ -258,7 +274,7 @@ const_factor:
         } else {
             $$ = 0;
         }
-        //   printf( "%s == %d\n", $1, $$ );
+        // printf( "%s == %d\n", $1, $$ );
       }
       ;
 

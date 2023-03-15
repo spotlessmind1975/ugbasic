@@ -40,6 +40,9 @@
 ; ----------------------------------------------------------------------------
 
 PUTIMAGE:
+
+@IF !vestigialConfig.screenModeUnique
+
     LDA CURRENTMODE
     CMP #8
     BNE PUTIMAGE8X
@@ -75,6 +78,10 @@ PUTIMAGE12X:
 PUTIMAGE14X:
     RTS
 
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 9 ) )
+
 PUTIMAGE9:
 
     LDA IMAGEX
@@ -104,6 +111,10 @@ PUTIMAGE9:
 
     JMP PUTIMAGECOMMON
 
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 11 ) )
+
 PUTIMAGE11:
 
     LDA IMAGEX
@@ -132,6 +143,10 @@ PUTIMAGE11:
     STA PLOTDEST+1
 
     JMP PUTIMAGECOMMON
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 15 ) )
 
 PUTIMAGE15:
 
@@ -163,6 +178,10 @@ PUTIMAGE15:
 
     JMP PUTIMAGECOMMON
 
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 12 ) )
+
 PUTIMAGE12:
 
     LDA IMAGEX
@@ -192,6 +211,136 @@ PUTIMAGE12:
     STA PLOTDEST+1
 
     JMP PUTIMAGECOMMON
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 8 ) )
+
+PUTIMAGE8:
+
+    LDA IMAGEX
+    LSR                        ;lo byte / 2
+    LSR                        ;lo byte / 4
+    TAX                        ;tbl_8,x index
+
+    ;-------------------------
+    ;calc Y-cell
+    ;-------------------------
+    LDA IMAGEY
+    TAY                         ;tbl_8,y index
+
+    ;----------------------------------
+    ;add x & y to calc cell point is in
+    ;----------------------------------
+    CLC
+
+    LDA PLOT4VBASELO,Y          ;table of $9C40 row base addresses
+    ADC PLOT4LO,X              ;+ (4 * Xcell)
+    STA PLOTDEST               ;= cell address
+
+    LDA PLOT4VBASEHI,Y          ;do the high byte
+    ADC PLOT4HI,X
+    STA PLOTDEST+1
+
+    JMP PUTIMAGECOMMONC
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 10 ) )
+
+PUTIMAGE10:
+
+    LDA IMAGEX
+    LSR                        ;lo byte / 2
+    LSR                        ;lo byte / 4
+    TAX                        ;tbl_8,x index
+
+    ;-------------------------
+    ;calc Y-cell
+    ;-------------------------
+    LDA IMAGEY
+    TAY                         ;tbl_8,y index
+
+    ;----------------------------------
+    ;add x & y to calc cell point is in
+    ;----------------------------------
+    CLC
+
+    TXA
+    ADC PLOT5VBASELO,Y          ;table of $9C40 row base addresses
+    STA PLOTDEST               ;= cell address
+
+    LDA #0
+    ADC PLOT5VBASEHI,Y          ;do the high byte
+    STA PLOTDEST+1
+
+    JMP PUTIMAGECOMMONC
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 13 ) )
+
+PUTIMAGE13:
+
+    LDA IMAGEX
+    LSR                        ;lo byte / 2
+    LSR                        ;lo byte / 4
+    TAX                        ;tbl_8,x index
+
+    ;-------------------------
+    ;calc Y-cell
+    ;-------------------------
+    LDA IMAGEY
+    TAY                         ;tbl_8,y index
+
+    ;----------------------------------
+    ;add x & y to calc cell point is in
+    ;----------------------------------
+    CLC
+
+    TXA
+    ADC PLOT6VBASELO,Y          ;table of $9C40 row base addresses
+    STA PLOTDEST               ;= cell address
+
+    LDA #0
+    ADC PLOT6VBASEHI,Y          ;do the high byte
+    STA PLOTDEST+1
+
+    JMP PUTIMAGECOMMONC
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 14 ) )
+
+PUTIMAGE14:
+
+    LDA IMAGEX
+    LSR                        ;lo byte / 2
+    LSR                        ;lo byte / 4
+    TAX                        ;tbl_8,x index
+
+    ;-------------------------
+    ;calc Y-cell
+    ;-------------------------
+    LDA IMAGEY
+    TAY                         ;tbl_8,y index
+
+    ;----------------------------------
+    ;add x & y to calc cell point is in
+    ;----------------------------------
+    CLC
+
+    TXA
+    ADC PLOT5VBASELO,Y          ;table of $9C40 row base addresses
+    STA PLOTDEST               ;= cell address
+
+    LDA #0
+    ADC PLOT5VBASEHI,Y          ;do the high byte
+    STA PLOTDEST+1
+
+    JMP PUTIMAGECOMMONC
+
+@ENDIF
 
 PUTIMAGECOMMON:
     LDY #0
@@ -358,118 +507,6 @@ PUTIMAGECOMMONE:
     RTS
 
 ;;;;;;;;;;;;;;;;;
-
-PUTIMAGE8:
-
-    LDA IMAGEX
-    LSR                        ;lo byte / 2
-    LSR                        ;lo byte / 4
-    TAX                        ;tbl_8,x index
-
-    ;-------------------------
-    ;calc Y-cell
-    ;-------------------------
-    LDA IMAGEY
-    TAY                         ;tbl_8,y index
-
-    ;----------------------------------
-    ;add x & y to calc cell point is in
-    ;----------------------------------
-    CLC
-
-    LDA PLOT4VBASELO,Y          ;table of $9C40 row base addresses
-    ADC PLOT4LO,X              ;+ (4 * Xcell)
-    STA PLOTDEST               ;= cell address
-
-    LDA PLOT4VBASEHI,Y          ;do the high byte
-    ADC PLOT4HI,X
-    STA PLOTDEST+1
-
-    JMP PUTIMAGECOMMONC
-
-PUTIMAGE10:
-
-    LDA IMAGEX
-    LSR                        ;lo byte / 2
-    LSR                        ;lo byte / 4
-    TAX                        ;tbl_8,x index
-
-    ;-------------------------
-    ;calc Y-cell
-    ;-------------------------
-    LDA IMAGEY
-    TAY                         ;tbl_8,y index
-
-    ;----------------------------------
-    ;add x & y to calc cell point is in
-    ;----------------------------------
-    CLC
-
-    TXA
-    ADC PLOT5VBASELO,Y          ;table of $9C40 row base addresses
-    STA PLOTDEST               ;= cell address
-
-    LDA #0
-    ADC PLOT5VBASEHI,Y          ;do the high byte
-    STA PLOTDEST+1
-
-    JMP PUTIMAGECOMMONC
-
-PUTIMAGE13:
-
-    LDA IMAGEX
-    LSR                        ;lo byte / 2
-    LSR                        ;lo byte / 4
-    TAX                        ;tbl_8,x index
-
-    ;-------------------------
-    ;calc Y-cell
-    ;-------------------------
-    LDA IMAGEY
-    TAY                         ;tbl_8,y index
-
-    ;----------------------------------
-    ;add x & y to calc cell point is in
-    ;----------------------------------
-    CLC
-
-    TXA
-    ADC PLOT6VBASELO,Y          ;table of $9C40 row base addresses
-    STA PLOTDEST               ;= cell address
-
-    LDA #0
-    ADC PLOT6VBASEHI,Y          ;do the high byte
-    STA PLOTDEST+1
-
-    JMP PUTIMAGECOMMONC
-
-PUTIMAGE14:
-
-    LDA IMAGEX
-    LSR                        ;lo byte / 2
-    LSR                        ;lo byte / 4
-    TAX                        ;tbl_8,x index
-
-    ;-------------------------
-    ;calc Y-cell
-    ;-------------------------
-    LDA IMAGEY
-    TAY                         ;tbl_8,y index
-
-    ;----------------------------------
-    ;add x & y to calc cell point is in
-    ;----------------------------------
-    CLC
-
-    TXA
-    ADC PLOT5VBASELO,Y          ;table of $9C40 row base addresses
-    STA PLOTDEST               ;= cell address
-
-    LDA #0
-    ADC PLOT5VBASEHI,Y          ;do the high byte
-    STA PLOTDEST+1
-
-    JMP PUTIMAGECOMMONC
 
 PUTIMAGECOMMONC:
 

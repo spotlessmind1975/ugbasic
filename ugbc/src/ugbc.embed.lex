@@ -28,6 +28,10 @@ extern int embedposno;
 "!" { RETURN(OP_NOT,1); }
 "@" { RETURN(OP_AT,1); }
 "." { RETURN(OP_POINT,1); }
+"<" { RETURN(OP_LT,1); }
+"<=" { RETURN(OP_LTE,1); }
+">" { RETURN(OP_GT,1); }
+">=" { RETURN(OP_GTE,1); }
 
 IF { RETURN(IF,1); }
 ELSE { RETURN(ELSE,1); }

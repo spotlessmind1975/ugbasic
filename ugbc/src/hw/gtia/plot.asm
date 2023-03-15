@@ -83,6 +83,8 @@ PLOT4B:
     JMP PLOTP
 PLOT5:
 
+@IF !vestigialConfig.screenModeUnique 
+
     LDA CURRENTMODE
     CMP #8
     BEQ PLOTANTIC8
@@ -116,6 +118,8 @@ PLOTANTIC12X:
 PLOTANTIC14X:
     JMP PLOTP
 
+@ENDIF
+
 ; Graphics 3 (ANTIC 8)
 ; This four-color graphics mode turns a split screen into 20 rows of 40 graphics cells or pixels. 
 ; Each pixel is 8 x 8 or the size of a normal character. The data in each pixel is encoded as two bit pairs, 
@@ -123,6 +127,8 @@ PLOTANTIC14X:
 ; The bits 00 is assigned to the background color register and the rest refer to the three foreground color registers. 
 ; When the CTIA/GTIA chip interprets the data for the four adjacent pixels stored within the byte, it refers to the color 
 ; register encoded in the bit pattern to plot the color.
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 8 ) )
 
 PLOTANTIC8:
 
@@ -252,6 +258,10 @@ PLOTANTIC8PEN:
 ; memory is needed for a display of similiar-sized pixels.
 ; 80x48, 2 colors
 
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 9 ) )
+
 PLOTANTIC9:
 
     LDA _PEN
@@ -327,6 +337,10 @@ PLOTANTIC9PEN:
 ; the four color registers. With only four adjacent pixels encoded within a byte, the screen uses twice as much memory, 
 ; about 1K.
 ; 80x48, 4 colors
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 10 ) )
 
 PLOTANTIC10:
 
@@ -453,6 +467,10 @@ PLOTANTIC10PEN:
 ; on a full screen. Although only a single bit is used to encode the color, screen memory still requires approximately 2K.
 ; 160x96, 2 colors
 
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 11 ) )
+
 PLOTANTIC11:
 
     LDA _PEN
@@ -523,7 +541,11 @@ PLOTANTIC11PEN:
     
     JMP PLOTGENERIC
 
+@ENDIF
+
 ;;;;;;;;;;;;;;;;;;;
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 13 ) )
 
 PLOTANTIC13:
 
@@ -648,6 +670,10 @@ PLOTANTIC13PEN:
 ; on background color and luminance.
 ; 320x192, 3 colors
 
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 15 ) )
+
 PLOTANTIC15:
 
     LDA _PEN
@@ -731,6 +757,10 @@ PLOTANTIC15PEN:
 ; only uses 4K of screen memory and doesn't have artifacting problems.
 ; 320x192, 2 colors
 
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 12 ) )
+
 PLOTANTIC12:
 
     LDA _PEN
@@ -805,6 +835,10 @@ PLOTANTIC12PEN:
 ; particular color register. The screen data, however, is not character data but individual bytes. The user has a lot
 ; more control, but this mode uses a lot more memory, approximately
 ; 160x192, 4 colors
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 14 ) )
 
 PLOTANTIC14:
 
@@ -925,6 +959,8 @@ PLOTANTIC14PEN:
     STA PLOTDEST+1
     
     JMP PLOTGENERIC
+
+@ENDIF
 
 PLOTGENERIC:
 

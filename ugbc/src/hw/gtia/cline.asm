@@ -36,6 +36,9 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 CLINE:
+
+@IF !vestigialConfig.screenModeUnique 
+
     LDA CURRENTMODE
     CMP #2
     BNE CLINEANTIC2X
@@ -81,6 +84,10 @@ CLINEANTIC5X:
     ; CMP #14
     ; BEQ PLOTANTIC14
     RTS
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode >= 2 ) && ( currentMode <= 7 ) )
 
 CLINEANTIC2:
 CLINEANTIC6:
@@ -169,3 +176,5 @@ CLINEANTIC2INC2X:
     CMP CURRENTWIDTH
     BNE CLINEANTIC2INC2X
     RTS
+
+@ENDIF

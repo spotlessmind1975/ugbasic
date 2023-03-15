@@ -36,6 +36,9 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 CLS:
+
+@IF !vestigialConfig.screenModeUnique
+
     LDA CURRENTMODE
     CMP #9
     BNE CLSANTIC9X
@@ -95,36 +98,65 @@ CLSANTIC5X:
 CLSANTIC8X:
     RTS    
 
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 8 ) )
+
 CLSANTIC8:
     LDA #25
     STA TMPPTR
     LDA #0
     STA TMPPTR+1
     JMP CLSG
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 9 ) )
+
 CLSANTIC9:
     LDA #1
     STA TMPPTR
     LDA #224
     STA TMPPTR+1
     JMP CLSG
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 10 ) )
+
 CLSANTIC10:
     LDA #3
     STA TMPPTR
     LDA #3
     STA TMPPTR+1
     JMP CLSG
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 11 ) )
+
 CLSANTIC11:
     LDA #7
     STA TMPPTR
     LDA #128
     STA TMPPTR+1
     JMP CLSG
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 13 ) )
+
 CLSANTIC13:
     LDA #15
     STA TMPPTR
     LDA #0
     STA TMPPTR+1
     JMP CLSG
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 12 ) || ( currentMode == 14 ) || ( currentMode == 15 ) )
+
 CLSANTIC15:
 CLSANTIC12:
 CLSANTIC14:
@@ -133,6 +165,44 @@ CLSANTIC14:
     LDA #0
     STA TMPPTR+1
     JMP CLSG
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 2 ) || ( currentMode == 3 ) )
+
+CLSANTIC2:
+CLSANTIC3:
+    LDA #3
+    STA TMPPTR
+    LDA #192
+    STA TMPPTR+1
+    JMP CLST
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 5 ) || ( currentMode == 6 ) || ( currentMode == 4 ) )
+
+CLSANTIC6:
+CLSANTIC4:
+CLSANTIC5:
+    LDA #1
+    STA TMPPTR
+    LDA #224
+    STA TMPPTR+1
+    JMP CLSG
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 7 ) )
+
+CLSANTIC7:
+    LDA #0
+    STA TMPPTR
+    LDA #242
+    STA TMPPTR+1
+    JMP CLSG
+
+@ENDIF
 
 CLSG:
     LDA BITMAPADDRESS
@@ -158,29 +228,6 @@ CLSGY2:
     BNE CLSGY2
 CLSGY2F:
     RTS
-
-CLSANTIC2:
-CLSANTIC3:
-    LDA #3
-    STA TMPPTR
-    LDA #192
-    STA TMPPTR+1
-    JMP CLST
-CLSANTIC6:
-CLSANTIC4:
-CLSANTIC5:
-    LDA #1
-    STA TMPPTR
-    LDA #224
-    STA TMPPTR+1
-    JMP CLSG
-CLSANTIC7:
-    LDA #0
-    STA TMPPTR
-    LDA #242
-    STA TMPPTR+1
-    JMP CLSG
-
 
 CLST:
     LDA TEXTADDRESS

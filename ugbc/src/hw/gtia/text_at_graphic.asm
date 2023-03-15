@@ -35,58 +35,10 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-TEXTATBITMAPMODE:
-    LDA TEXTSIZE
-    BNE TEXTATBITMAPMODEGO
-    RTS
-TEXTATBITMAPMODEGO:
-    LDA TEXTADDRESS
-    STA COPYOFTEXTADDRESS
-    LDA TEXTADDRESS+1
-    STA COPYOFTEXTADDRESS+1
-    LDA #0
-    STA TABSTODRAW
-    LDA COLORMAPADDRESS
-    STA COPYOFCOLORMAPADDRESS
-    LDA COLORMAPADDRESS+1
-    STA COPYOFCOLORMAPADDRESS+1
-
-    LDA CURRENTMODE
-    CMP #8
-    BNE TEXTATANTIC8X
-    JMP TEXTATANTIC8
-TEXTATANTIC8X:
-    CMP #9
-    BNE TEXTATANTIC9X
-    JMP TEXTATANTIC9
-TEXTATANTIC9X:
-    CMP #10
-    BNE TEXTATANTIC10X
-    JMP TEXTATANTIC10
-TEXTATANTIC10X:
-    CMP #11
-    BNE TEXTATANTIC11X
-    JMP TEXTATANTIC11
-TEXTATANTIC11X:
-    CMP #12
-    BNE TEXTATANTIC12X
-    JMP TEXTATANTIC12
-TEXTATANTIC12X:
-    CMP #13
-    BNE TEXTATANTIC13X
-    JMP TEXTATANTIC13
-TEXTATANTIC13X:
-    CMP #14
-    BNE TEXTATANTIC14X
-    JMP TEXTATANTIC14
-TEXTATANTIC14X:
-    CMP #15
-    BNE TEXTATANTIC15X
-    JMP TEXTATANTIC15
-TEXTATANTIC15X:
-    RTS
-
 CALCPOSG:
+
+@IF !vestigialConfig.screenModeUnique 
+
     LDA CURRENTMODE
     CMP #8
     BNE CALCPOS8X
@@ -121,6 +73,10 @@ CALCPOS14X:
     JMP CALCPOS15
 CALCPOS15X:
     RTS
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 8 ) )
 
 CALCPOS8:
 
@@ -157,6 +113,10 @@ CALCPOS8:
 
     RTS
 
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 9 ) )
+
 CALCPOS9:
 
     LDA #1
@@ -190,6 +150,10 @@ CALCPOS9:
     STA PLOTDEST+1
 
     RTS
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 10 ) )
 
 CALCPOS10:
 
@@ -226,6 +190,10 @@ CALCPOS10:
 
     RTS
 
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 11 ) )
+
 CALCPOS11:
 
     LDA #1
@@ -259,6 +227,10 @@ CALCPOS11:
     STA PLOTDEST+1
 
     RTS
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 12 ) )
 
 CALCPOS12:
 
@@ -295,6 +267,10 @@ CALCPOS12:
     
     RTS
 
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 13 ) )
+
 CALCPOS13:
 
     LDA #2
@@ -329,6 +305,10 @@ CALCPOS13:
     STA PLOTDEST+1
 
     RTS
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 14 ) )
 
 CALCPOS14:
 
@@ -365,6 +345,10 @@ CALCPOS14:
 
     RTS
 
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 15 ) )
+
 CALCPOS15:
 
     LDA #0
@@ -399,6 +383,64 @@ CALCPOS15:
 
     RTS
 
+@ENDIF
+
+TEXTATBITMAPMODE:
+    LDA TEXTSIZE
+    BNE TEXTATBITMAPMODEGO
+    RTS
+TEXTATBITMAPMODEGO:
+    LDA TEXTADDRESS
+    STA COPYOFTEXTADDRESS
+    LDA TEXTADDRESS+1
+    STA COPYOFTEXTADDRESS+1
+    LDA #0
+    STA TABSTODRAW
+    LDA COLORMAPADDRESS
+    STA COPYOFCOLORMAPADDRESS
+    LDA COLORMAPADDRESS+1
+    STA COPYOFCOLORMAPADDRESS+1
+
+@IF !vestigialConfig.screenModeUnique
+
+    LDA CURRENTMODE
+    CMP #8
+    BNE TEXTATANTIC8X
+    JMP TEXTATANTIC8
+TEXTATANTIC8X:
+    CMP #9
+    BNE TEXTATANTIC9X
+    JMP TEXTATANTIC9
+TEXTATANTIC9X:
+    CMP #10
+    BNE TEXTATANTIC10X
+    JMP TEXTATANTIC10
+TEXTATANTIC10X:
+    CMP #11
+    BNE TEXTATANTIC11X
+    JMP TEXTATANTIC11
+TEXTATANTIC11X:
+    CMP #12
+    BNE TEXTATANTIC12X
+    JMP TEXTATANTIC12
+TEXTATANTIC12X:
+    CMP #13
+    BNE TEXTATANTIC13X
+    JMP TEXTATANTIC13
+TEXTATANTIC13X:
+    CMP #14
+    BNE TEXTATANTIC14X
+    JMP TEXTATANTIC14
+TEXTATANTIC14X:
+    CMP #15
+    BNE TEXTATANTIC15X
+    JMP TEXTATANTIC15
+TEXTATANTIC15X:
+    RTS
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 8 ) )
+
 ;-----------------------------------------------------------------------------
 ; BITMAP MODE
 ;-----------------------------------------------------------------------------
@@ -409,11 +451,19 @@ TEXTATANTIC8:
 
     JMP TEXTATBMCOMMON
 
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 9 ) )
+
 TEXTATANTIC9:
 
     JSR CALCPOS9
 
     JMP TEXTATBMCOMMON
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 10 ) )
 
 TEXTATANTIC10:
 
@@ -421,11 +471,19 @@ TEXTATANTIC10:
 
     JMP TEXTATBMCOMMON
 
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 11 ) )
+
 TEXTATANTIC11:
 
     JSR CALCPOS11
 
     JMP TEXTATBMCOMMON
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 12 ) )
 
 TEXTATANTIC12:
 
@@ -433,11 +491,19 @@ TEXTATANTIC12:
     
     JMP TEXTATBMCOMMON
 
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 13 ) )
+
 TEXTATANTIC13:
 
     JSR CALCPOS13
 
     JMP TEXTATBMCOMMON
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 14 ) )
 
 TEXTATANTIC14:
 
@@ -445,11 +511,17 @@ TEXTATANTIC14:
 
     JMP TEXTATBMCOMMON
 
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 15 ) )
+
 TEXTATANTIC15:
 
     JSR CALCPOS15
 
     JMP TEXTATBMCOMMON
+
+@ENDIF
 
 TEXTATBMCOMMON:
 

@@ -36,6 +36,9 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 BACK:
+
+@IF !vestigialConfig.screenModeUnique
+
     LDA CURRENTMODE
     CMP #9
     BNE BACKANTIC9X
@@ -95,6 +98,8 @@ BACKANTIC5X:
 BACKANTIC8X:
     RTS
 
+@ENDIF
+
 ; GRAPHICS 0                    SETCOLOR     Register
 ; Character luminance              1           709
 ; Background                       2           710
@@ -106,12 +111,15 @@ BACKANTIC8X:
 ; Background color              2             0       710
 ; Border                        4            --       712
 
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 2 ) || ( currentMode == 3 ) )
+
 BACKANTIC2:
 BACKANTIC3:
     LDA _PAPER
     STA $02C6
     RTS
 
+@ENDIF
 
 ; GRAPHICS 1 and 2              SETCOLOR     Register
 ; Uppercase and numbers            0           708
@@ -132,6 +140,8 @@ BACKANTIC3:
 ; Graphics point                0             1       708
 ; Background, border            4             0       712
 
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode >= 4 ) && ( currentMode <= 15 ) )
+
 BACKANTIC4:
 BACKANTIC5:
 BACKANTIC6:
@@ -148,3 +158,4 @@ BACKANTIC15:
     STA $02C8
     RTS
 
+@ENDIF
