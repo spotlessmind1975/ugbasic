@@ -438,25 +438,25 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
         ++_environment->removedAssemblyLines;
     }
 
-	if( ! po_buf_match( buf[0], " LDA *,Y", v3 ) &&
-        po_buf_match( buf[0], " LDA *", v1 ) && po_buf_match( buf[2], " LDA *", v2 ) &&
-        ! chg_reg(buf[1], "A") &&
-        ! po_buf_match( buf[1], "*:", v3 )
-        && strcmp( v1->str, v2->str ) == 0 ) {
-        optim( buf[2], RULE "(LDA x, LDA x)->(LDA x) [2]", NULL );
-        ++_environment->removedAssemblyLines;
-    }
+	// if( ! po_buf_match( buf[0], " LDA *,Y", v3 ) &&
+    //     po_buf_match( buf[0], " LDA *", v1 ) && po_buf_match( buf[2], " LDA *", v2 ) &&
+    //     ! chg_reg(buf[1], "A") &&
+    //     ! po_buf_match( buf[1], "*:", v3 )
+    //     && strcmp( v1->str, v2->str ) == 0 ) {
+    //     optim( buf[2], RULE "(LDA x, LDA x)->(LDA x) [2]", NULL );
+    //     ++_environment->removedAssemblyLines;
+    // }
 
-	if( ! po_buf_match( buf[0], " LDA *,Y", v3 ) &&
-        po_buf_match( buf[0], " LDA *", v1 ) && po_buf_match( buf[3], " LDA *", v2 ) &&
-        ! chg_reg(buf[1], "A") &&
-        ! chg_reg(buf[2], "A") &&
-        ! po_buf_match( buf[1], "*:", v3 ) &&
-        ! po_buf_match( buf[2], "*:", v3 )
-        && strcmp( v1->str, v2->str ) == 0 ) {
-        optim( buf[3], RULE "(LDA x, LDA x)->(LDA x) [3]", NULL );
-        ++_environment->removedAssemblyLines;
-    }
+	// if( ! po_buf_match( buf[0], " LDA *,Y", v3 ) &&
+    //     po_buf_match( buf[0], " LDA *", v1 ) && po_buf_match( buf[3], " LDA *", v2 ) &&
+    //     ! chg_reg(buf[1], "A") &&
+    //     ! chg_reg(buf[2], "A") &&
+    //     ! po_buf_match( buf[1], "*:", v3 ) &&
+    //     ! po_buf_match( buf[2], "*:", v3 )
+    //     && strcmp( v1->str, v2->str ) == 0 ) {
+    //     optim( buf[3], RULE "(LDA x, LDA x)->(LDA x) [3]", NULL );
+    //     ++_environment->removedAssemblyLines;
+    // }
 
 // 0:                           LDA #$06
 // 1: 000DC8r 1  8D rr rr     	STA _printScore_Ttmp13
