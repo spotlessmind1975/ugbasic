@@ -46,6 +46,9 @@
  * @param _environment Current calling environment
  */
 void linker_setup( Environment * _environment ) {
+
+    int size = _environment->frameBufferStart - 0x2000;
+
     cfghead0("FEATURES {");
     cfgline0("STARTADDRESS: default = $2000;");
     cfghead0("}");
@@ -56,7 +59,7 @@ void linker_setup( Environment * _environment ) {
     cfghead0("MEMORY {");
     cfgline0("ZP:      	start = $0096, size = $007E, type = rw, define = yes;");
     cfgline0("HEADER:  	start = $0000, size = $0006, file = %O;");
-    cfgline0("MAIN:     start = %S,    size = $8000, file = %O;");
+    cfgline1("MAIN:     start = %%S,    size = $%4.4x, file = %%O;", size);
     cfgline0("TRAILER:	start = $0000, size = $0006, file = %O;");
 
     MemoryArea * actual = _environment->memoryAreas;

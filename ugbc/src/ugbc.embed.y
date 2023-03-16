@@ -30,7 +30,7 @@ int embedwrap() { return 1; }
 }
 
 %token OP CP OP_AT OP_EQUAL OP_DISEQUAL OP_AND OP_OR OP_NOT OP_POINT OP_LT OP_LTE OP_GT OP_GTE
-%token IF ELSE ELSEIF ENDIF NewLine
+%token IF ELSE ELSEIF ENDIF EMIT AS NewLine
 %token ATARI ATARIXL C128 C64 VIC20 ZX COLECO SC3000 SG1000 MSX MSX1 DRAGON DRAGON32 DRAGON64 PC128OP MO5 CPC COCO
 
 %token <string> Identifier
@@ -322,6 +322,12 @@ embed2:
     ((struct _Environment *)_environment)->embedResult.conditional = 1;
     ((struct _Environment *)_environment)->embedResult.excluded[((struct _Environment *)_environment)->embedResult.current-1] = 0;
     --((struct _Environment *)_environment)->embedResult.current;
+  }
+  | OP_AT EMIT Identifier AS Identifier {
+        if ( strcmp( $3, "frameBufferStart" ) == 0 ) {
+            outline2( "%s=$%4.4x", $5, ((struct _Environment *)_environment)->frameBufferStart );
+        }
+        ((struct _Environment *)_environment)->embedResult.conditional = 1;
   }
   | {
       return 0;

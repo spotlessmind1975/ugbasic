@@ -38,6 +38,9 @@ ELSE { RETURN(ELSE,1); }
 ELSEIF { RETURN(ELSEIF,1); }
 ENDIF { RETURN(ENDIF,1); }
 
+AS { RETURN(AS,1); }
+EMIT { RETURN(EMIT,1); }
+
 ATARI  { RETURN(ATARI,1); }
 ATARIXL  { RETURN(ATARIXL,1); }
 C128  { RETURN(C128,1); }
@@ -68,7 +71,7 @@ CPC  { RETURN(CPC,1); }
 
 [ \t]+ { embedcolno = (embedcolno + embedleng); embedposno = (embedposno + embedleng); }
 
-[a-z\_][A-Za-z0-9\_]* { embedlval.string = strdup(embedtext); RETURN(Identifier,1);  }
+[A-Za-z0-9\_]* { embedlval.string = strdup(embedtext); RETURN(Identifier,1);  }
 
 . { embedcolno++; embedposno++; return(embedtext[0]); }
 

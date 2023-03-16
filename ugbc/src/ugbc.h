@@ -1824,6 +1824,11 @@ typedef struct _Environment {
 
     int deferredEmbeddedSize[MAX_TEMPORARY_STORAGE];
 
+    /*
+     * Starting address of frame buffer
+     */
+    int frameBufferStart;
+    
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */

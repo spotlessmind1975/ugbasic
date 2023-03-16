@@ -272,7 +272,14 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         // When the CTIA/GTIA chip interprets the data for the four adjacent pixels stored within the byte, it refers to the color 
         // register encoded in the bit pattern to plot the color.        
         // 40x20, 4 colors
+
         case BITMAP_MODE_ANTIC8:
+
+            // 8	3	4	8	40	10	240
+            if ( _environment->frameBufferStart > ( 0xbfff - 240 ) ) {
+                _environment->frameBufferStart = ( 0xbfff - 240 );
+            }
+
             _environment->screenWidth = 40;
             _environment->screenHeight = 24;
             _environment->screenColors = 4;
@@ -286,7 +293,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             // DLI_LMS( dliListCurrent, 8, 0xA000 );
-            DLI_LMS_VHSCROLL( dliListCurrent, 8, 0xA000 );
+            DLI_LMS_VHSCROLL( dliListCurrent, 8, _environment->frameBufferStart );
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
@@ -318,6 +325,12 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         // memory is needed for a display of similiar-sized pixels.
         // 80x48, 2 colors
         case BITMAP_MODE_ANTIC9:
+
+            // 9	4	2	4	80	10	480
+            if ( _environment->frameBufferStart > ( 0xbfff - 480 ) ) {
+                _environment->frameBufferStart = ( 0xbfff - 480 );
+            }
+
             _environment->screenWidth = 80;
             _environment->screenHeight = 48;
             _environment->screenColors = 2;
@@ -331,7 +344,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             // DLI_LMS( dliListCurrent, 9, 0xA000 );
-            DLI_LMS_VHSCROLL( dliListCurrent, 9, 0xA000 );
+            DLI_LMS_VHSCROLL( dliListCurrent, 9, _environment->frameBufferStart );
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
@@ -360,6 +373,12 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         // about 1K.
         // 80x48, 4 colors
         case BITMAP_MODE_ANTIC10:
+
+            // A	5	4	4	80	20	960
+            if ( _environment->frameBufferStart > ( 0xbfff - 960 ) ) {
+                _environment->frameBufferStart = ( 0xbfff - 960 );
+            }
+
             _environment->screenWidth = 80;
             _environment->screenHeight = 48;
             _environment->screenColors = 4;
@@ -373,7 +392,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             // DLI_LMS( dliListCurrent, 10, 0xA000 );
-            DLI_LMS_VHSCROLL( dliListCurrent, 10, 0xA000 );
+            DLI_LMS_VHSCROLL( dliListCurrent, 10, _environment->frameBufferStart );
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
@@ -387,7 +406,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 65	\JVB-Jump and wait for Vertical Blank
             // 32	|to display list address which starts
             // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) - 16
-            DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) - 16 );
+            DLI_JVB( dliListCurrent, _environment->frameBufferStart - (dliListCurrent - dliListStart) - 16 );
             dliListStartOffset = dliListCurrent - dliListStart - 2;
 
             currentHeight = 48;
@@ -402,6 +421,12 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         // on a full screen. Although only a single bit is used to encode the color, screen memory still requires approximately 2K.
         // 160x96, 2 colors
         case BITMAP_MODE_ANTIC11: 
+
+            // B	6	2	2	160	20	1920
+            if ( _environment->frameBufferStart > ( 0xbfff - 1920 ) ) {
+                _environment->frameBufferStart = ( 0xbfff - 1920 );
+            }
+
             _environment->screenWidth = 160;
             _environment->screenHeight = 96;
             _environment->screenColors = 2;
@@ -415,7 +440,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             // DLI_LMS( dliListCurrent, 11, 0xA000 );
-            DLI_LMS_VHSCROLL( dliListCurrent, 11, 0xA000 );
+            DLI_LMS_VHSCROLL( dliListCurrent, 11, _environment->frameBufferStart );
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
@@ -446,6 +471,12 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         // with another 104 bytes for the display list.
         // 160x96, 4 colors
         case BITMAP_MODE_ANTIC13:
+
+            // D	7	4	2	160	40	3840
+            if ( _environment->frameBufferStart > ( 0xbfff - 3840 ) ) {
+                _environment->frameBufferStart = ( 0xbfff - 3840 );
+            }
+
             _environment->screenWidth = 160;
             _environment->screenHeight = 96;
             _environment->screenColors = 4;
@@ -459,7 +490,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             // DLI_LMS( dliListCurrent, 13, 0xA000 );
-            DLI_LMS_VHSCROLL( dliListCurrent, 13, 0xA000 );
+            DLI_LMS_VHSCROLL( dliListCurrent, 13, _environment->frameBufferStart );
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
@@ -473,7 +504,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 65	\JVB-Jump and wait for Vertical Blank
             // 32	|to display list address which starts
             // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) - 16
-            DLI_JVB( dliListCurrent, 0xA000 - (dliListCurrent - dliListStart) );
+            DLI_JVB( dliListCurrent, _environment->frameBufferStart - (dliListCurrent - dliListStart) );
             dliListStartOffset = dliListCurrent - dliListStart - 2;
 
             currentHeight = 96;
@@ -497,6 +528,12 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         // on background color and luminance.
         // 320x192, 3 colors
         case BITMAP_MODE_ANTIC15:
+
+            // F	8	2	1	320	40	7680
+            if ( _environment->frameBufferStart > ( 0xbfff - 7680 ) ) {
+                _environment->frameBufferStart = ( 0xbfff - 7680 );
+            }
+
             _environment->screenWidth = 320;
             _environment->screenHeight = 192;
             _environment->screenColors = 2;
@@ -510,7 +547,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             // DLI_LMS( dliListCurrent, 15, 0xA000 );
-            DLI_LMS_VHSCROLL( dliListCurrent, 15, 0xA000 );
+            DLI_LMS_VHSCROLL( dliListCurrent, 15, _environment->frameBufferStart );
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
@@ -519,7 +556,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
                 DLI_MODE_VHSCROLL( dliListCurrent, 15 );
             }
 
-            DLI_LMS_VHSCROLL( dliListCurrent, 15, 0xA000 + 40 * 96 );
+            DLI_LMS_VHSCROLL( dliListCurrent, 15, _environment->frameBufferStart + 40 * 96 );
 
             screenMemoryOffset2 = dliListCurrent - dliListStart - 2;
 
@@ -552,6 +589,12 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         // only uses 4K of screen memory and doesn't have artifacting problems.
         // 160x192, 2 colors
         case BITMAP_MODE_ANTIC12:
+
+            // C	none	2	1	160	20	3840
+            if ( _environment->frameBufferStart > ( 0xbfff - 3840 ) ) {
+                _environment->frameBufferStart = ( 0xbfff - 3840 );
+            }
+
             _environment->screenWidth = 160;
             _environment->screenHeight = 192;
             _environment->screenColors = 2;
@@ -565,7 +608,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             // DLI_LMS( dliListCurrent, 12, 0xA000 );
-            DLI_LMS( dliListCurrent, 12, 0xA000 );
+            DLI_LMS( dliListCurrent, 12, _environment->frameBufferStart );
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
@@ -595,6 +638,12 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         // more control, but this mode uses a lot more memory, approximately
         // 160x192, 4 colors
         case BITMAP_MODE_ANTIC14:
+
+            // E	none	4	1	160	40	7680
+            if ( _environment->frameBufferStart > ( 0xbfff - 7680 ) ) {
+                _environment->frameBufferStart = ( 0xbfff - 7680 );
+            }
+
             _environment->screenWidth = 160;
             _environment->screenHeight = 192;
             _environment->screenColors = 4;
@@ -608,7 +657,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             // DLI_LMS( dliListCurrent, 14, 0xA000 );
-            DLI_LMS_VHSCROLL( dliListCurrent, 14, 0xA000 );
+            DLI_LMS_VHSCROLL( dliListCurrent, 14, _environment->frameBufferStart );
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
@@ -642,6 +691,12 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         // depend on whether the computer has a CTIA or GTIA chip, and the color of the background.
         // 40x24, 1 color
         case TILEMAP_MODE_ANTIC2:
+
+            // 2	0	2	8	40	40	960
+            if ( _environment->frameBufferStart > ( 0xbfff - 960 ) ) {
+                _environment->frameBufferStart = ( 0xbfff - 960 );
+            }
+
             _environment->screenWidth = 40 * _environment->fontWidth;
             _environment->screenHeight = 24 * _environment->fontHeight;
             _environment->screenColors = 2;
@@ -655,7 +710,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             // DLI_LMS( dliListCurrent, 2, 40000 );
-            DLI_LMS_VHSCROLL( dliListCurrent, 2, 0xa000 );
+            DLI_LMS_VHSCROLL( dliListCurrent, 2, _environment->frameBufferStart );
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
@@ -689,6 +744,12 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         // (Internal # 97-122) are signed to register #1.
         // 20x24, 4 color
         case TILEMAP_MODE_ANTIC6:
+
+            // 6	1	5	8	20	20	480
+            if ( _environment->frameBufferStart > ( 0xbfff - 480 ) ) {
+                _environment->frameBufferStart = ( 0xbfff - 480 );
+            }
+
             _environment->screenWidth = 20 * _environment->fontWidth;
             _environment->screenHeight = 24 * _environment->fontHeight;
             _environment->screenColors = 2;
@@ -702,7 +763,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             // DLI_LMS( dliListCurrent, 6, 40000 );
-            DLI_LMS_VHSCROLL( dliListCurrent, 6, 0xa000 );
+            DLI_LMS_VHSCROLL( dliListCurrent, 6, _environment->frameBufferStart );
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
@@ -729,6 +790,12 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         // Thus 12 rows of 20 characters are displayed on a full screen. Only ten rows fit on a split screen.
         // 20x12, 4 color
         case TILEMAP_MODE_ANTIC7:
+
+            // 7	2	5	16	20	20	240
+            if ( _environment->frameBufferStart > ( 0xbfff - 240 ) ) {
+                _environment->frameBufferStart = ( 0xbfff - 240 );
+            }
+
             _environment->screenWidth = 20 * _environment->fontWidth;
             _environment->screenHeight = 12 * _environment->fontHeight;
             _environment->screenColors = 2;
@@ -742,7 +809,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             // DLI_LMS( dliListCurrent, 7, 40000 );
-            DLI_LMS_VHSCROLL( dliListCurrent, 7, 0xa000 );
+            DLI_LMS_VHSCROLL( dliListCurrent, 7, _environment->frameBufferStart );
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
@@ -771,6 +838,12 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         // allowing you to create lowercase characters with descenders.
         // 40x24, 4 color
         case TILEMAP_MODE_ANTIC3:
+
+            // 3	none	2	10	40	40	760
+            if ( _environment->frameBufferStart > ( 0xbfff - 760 ) ) {
+                _environment->frameBufferStart = ( 0xbfff - 760 );
+            }
+
             _environment->screenWidth = 40 * _environment->fontWidth;
             _environment->screenHeight = 24 * _environment->fontHeight;
             _environment->screenColors = 2;
@@ -784,7 +857,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             // DLI_LMS( dliListCurrent, 3, 40000 );
-            DLI_LMS_VHSCROLL( dliListCurrent, 3, 0xa000 );
+            DLI_LMS_VHSCROLL( dliListCurrent, 3, _environment->frameBufferStart );
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
@@ -816,6 +889,12 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         // to form these characters.
         // 20x24, 4 color
         case TILEMAP_MODE_ANTIC4:
+
+            // 4	none	4	8	40	40	960
+            if ( _environment->frameBufferStart > ( 0xbfff - 960 ) ) {
+                _environment->frameBufferStart = ( 0xbfff - 960 );
+            }
+
             _environment->screenWidth = 20 * _environment->fontWidth;
             _environment->screenHeight = 24 * _environment->fontHeight;
             _environment->screenColors = 4;
@@ -829,7 +908,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             // DLI_LMS( dliListCurrent, 4, 40000 );
-            DLI_LMS_VHSCROLL( dliListCurrent, 4, 0xa000 );
+            DLI_LMS_VHSCROLL( dliListCurrent, 4, _environment->frameBufferStart );
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
@@ -856,6 +935,12 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         // The character set data is still eight bytes high so ANTIC double plots each scan line.
         // 20x24, 4 color  
         case TILEMAP_MODE_ANTIC5:
+
+            // 5	none	4	16	40	40	480
+            if ( _environment->frameBufferStart > ( 0xbfff - 480 ) ) {
+                _environment->frameBufferStart = ( 0xbfff - 480 );
+            }
+
             _environment->screenWidth = 20 * _environment->fontWidth;
             _environment->screenHeight = 24 * _environment->fontHeight;
             _environment->screenColors = 4;
@@ -869,7 +954,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             // DLI_LMS( dliListCurrent, 5, 40000 );
-            DLI_LMS_VHSCROLL( dliListCurrent, 5, 0xa000 );
+            DLI_LMS_VHSCROLL( dliListCurrent, 5, _environment->frameBufferStart );
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
@@ -912,6 +997,9 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     cpu_store_16bit( _environment, "CLIPY2", 0) ;
     cpu_move_16bit( _environment, "CURRENTWIDTH", "CLIPX2");
     cpu_move_16bit( _environment, "CURRENTHEIGHT", "CLIPY2");
+
+    cpu_store_16bit( _environment, "TEXTADDRESS", _environment->frameBufferStart );
+    cpu_store_16bit( _environment, "BITMAPADDRESS", _environment->frameBufferStart );
 
     // dli->absoluteAddress = 0xA000 - (dliListCurrent - dliListStart) - 16;
 
@@ -1398,17 +1486,18 @@ void gtia_initialization( Environment * _environment ) {
     variable_import( _environment, "RESOLUTIONY", VT_POSITION, 0 );
     variable_global( _environment, "RESOLUTIONY" );
 
-    gtia_tilemap_enable( _environment, 40, 24, 1, 8, 8 );
-
     _environment->currentMode = 2;
     _environment->currentTileMode = 1;
 
     _environment->currentRgbConverterFunction = rgbConverterFunction;
+    _environment->frameBufferStart = 0xbfff;
+
+    gtia_tilemap_enable( _environment, 40, 24, 1, 8, 8 );
 
 }
 
 void gtia_finalization( Environment * _environment ) {
-
+    
 }
 
 void gtia_hscroll_line( Environment * _environment, int _direction ) {
