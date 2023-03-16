@@ -629,6 +629,22 @@ static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
             v->nb_rd++;
         };
 
+    if( 
+        po_buf_match( buf[0], " LD* #<*",  tmp, arg ) && 
+        strstr("A X Y", tmp->str)!=NULL
+     ) if(vars_ok(arg)) {
+            struct var *v = vars_get(arg);
+            v->nb_rd++;
+        };
+
+    if( 
+        po_buf_match( buf[0], " LD* #>*",  tmp, arg ) && 
+        strstr("A X Y", tmp->str)!=NULL
+     ) if(vars_ok(arg)) {
+            struct var *v = vars_get(arg);
+            v->nb_rd++;
+        };
+
     if( po_buf_match( buf[0], " * *", cmd, arg ) &&
         chg_read(cmd)     
     ) if(vars_ok(arg)) {
