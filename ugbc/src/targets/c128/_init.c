@@ -83,7 +83,7 @@ void target_initialization( Environment * _environment ) {
         bank->data = malloc( BANK_SIZE );
         memset( bank->data, 0, BANK_SIZE );
         _environment->expansionBanks = bank;
-        _environment->maxExpansionBankSize[i+1] = BANK_SIZE;
+        _environment->maxExpansionBankSize[i+1] = 0;
     }
 
     if ( _environment->tenLinerRulesEnforced ) {

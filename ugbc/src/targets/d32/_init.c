@@ -61,20 +61,20 @@ void setup_embedded( Environment * _environment ) {
 
 void target_initialization( Environment * _environment ) {
 
-    // for(int i=0; i<BANK_COUNT; ++i) {
-    //     Bank * bank = malloc( sizeof( Bank ) );
-    //     bank->address = 0x0;
-    //     bank->filename = NULL;
-    //     bank->id = i+1;
-    //     bank->name = strdup( "bank" );
-    //     bank->remains = BANK_SIZE;
-    //     bank->space = BANK_SIZE;
-    //     bank->next = _environment->expansionBanks;
-    //     bank->data = malloc( BANK_SIZE );
-    //     memset( bank->data, 0, BANK_SIZE );
-    //     _environment->expansionBanks = bank;
-    //     _environment->maxExpansionBankSize[i+1] = BANK_SIZE;
-    // }
+    for(int i=0; i<BANK_COUNT; ++i) {
+        Bank * bank = malloc( sizeof( Bank ) );
+        bank->address = 0x0;
+        bank->filename = NULL;
+        bank->id = i+1;
+        bank->name = strdup( "bank" );
+        bank->remains = BANK_SIZE;
+        bank->space = BANK_SIZE;
+        bank->next = _environment->expansionBanks;
+        bank->data = malloc( BANK_SIZE );
+        memset( bank->data, 0, BANK_SIZE );
+        _environment->expansionBanks = bank;
+        _environment->maxExpansionBankSize[i+1] = 0;
+    }
     
     _environment->dstring.count = 32;
     _environment->dstring.space = 512;
