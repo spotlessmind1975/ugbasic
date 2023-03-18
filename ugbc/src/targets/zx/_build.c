@@ -109,7 +109,7 @@ void target_linkage( Environment * _environment ) {
             rename( binaryName, _environment->listingFileName );
         }
 
-        if ( _environment->profileFileName ) {
+        if ( _environment->profileFileName && _environment->profileCycles ) {
 
             char binaryName2[MAX_TEMPORARY_STORAGE];
             strcpy( binaryName2, _environment->asmFileName );

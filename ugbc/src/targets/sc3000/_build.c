@@ -143,7 +143,7 @@ void target_linkage( Environment * _environment ) {
             rename( binaryName, _environment->listingFileName );
         }
 
-        if ( _environment->profileFileName ) {
+        if ( _environment->profileFileName && _environment->profileCycles ) {
             strcpy( binaryName, _environment->profileFileName );
             if ( _environment->executerFileName ) {
                 sprintf(executableName, "%s", _environment->executerFileName );

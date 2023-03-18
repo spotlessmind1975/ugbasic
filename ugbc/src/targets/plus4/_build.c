@@ -58,7 +58,7 @@ void target_linkage( Environment * _environment ) {
 
      if ( _environment->listingFileName ) {
 
-        if ( _environment->profileFileName ) {
+        if ( _environment->profileFileName && _environment->profileCycles ) {
             if ( _environment->executerFileName ) {
                 sprintf(executableName, "%s", _environment->executerFileName );
             } else if( access( "run6502.exe", F_OK ) == 0 ) {
