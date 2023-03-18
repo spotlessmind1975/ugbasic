@@ -75,6 +75,7 @@ void target_initialization( Environment * _environment ) {
         bank->data = malloc( BANK_SIZE );
         memset( bank->data, 0, BANK_SIZE );
         _environment->expansionBanks = bank;
+        _environment->maxExpansionBankSize[i+1] = 0;
     }
 
     // MEMORY_AREA_DEFINE( MAT_DIRECT, 0x8000, 0x9fff );
