@@ -37,7 +37,7 @@
 
 VSCROLLTDOWN:
 
-@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 0 ) )
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 0 ) || ( currentMode == 1 ) )
 
     TXA
     PHA

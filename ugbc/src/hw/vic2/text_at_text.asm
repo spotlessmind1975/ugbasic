@@ -37,7 +37,7 @@
 
 TEXTATTILEMODE:
 
-@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 0 ) )
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 0 ) || ( currentMode == 1 ) )
 
     LDA TEXTSIZE
     BNE TEXTATTILEMODEGO

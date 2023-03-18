@@ -39,7 +39,7 @@
 
 CLSG:
 
-@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 1 ) || ( currentMode == 2 ) )
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 2 ) || ( currentMode == 3 ) )
 
     LDA BITMAPADDRESS
     STA COPYOFBITMAPADDRESS
