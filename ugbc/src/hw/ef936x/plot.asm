@@ -81,9 +81,9 @@ PLOT
 ; Version active on double buffering ON
 ; ----------------------------------------------
 
-@IF !vestigialConfig.doubleBufferSelected || vestigialConfig.doubleBuffer
-
 PLOTDB
+
+@IF !vestigialConfig.doubleBufferSelected || vestigialConfig.doubleBuffer
 
     LDX BITMAPADDRESS
 
@@ -117,11 +117,12 @@ PLOTDB
     TFR Y, D
     LEAX D, X
 
+PLOTMODEDB
+
 @IF vestigialConfig.screenModeUnique
 
 @ELSE
 
-PLOTMODEDB
     LDA CURRENTMODE
     CMPA #0
     BNE PLOT0XDB
@@ -551,11 +552,12 @@ PLOT3             ; yes
 
 @ENDIF
 
+PLOTD             ; plot draw (placed here to keep the jump small)
+
 @IF vestigialConfig.screenModeUnique
 
 @ELSE
 
-PLOTD             ; plot draw (placed here to keep the jump small)
     LDA CURRENTMODE
     CMPA #2
     BEQ PLOTD2    ; plot in mode 2
@@ -726,12 +728,13 @@ PLOTG3
     ANDB #$0F     ; yes => return 0
     BRA PLOTG0    ; no => return true
 
+; Get pixel color according to video mode
+PLOTC
+
 @IF vestigialConfig.screenModeUnique
 
 @ELSE
 
-; Get pixel color according to video mode
-PLOTC
     LDA CURRENTMODE
     CMPA #2
     BEQ PLOT2C    ; mode 2 specific
@@ -788,8 +791,9 @@ PLOT3C
     LDB ,X        ; mode 3 - get color pair
     LDA <PLOTX+1
     LSRA
-    BCS PLOTC01   ; odd column => lower nibble
-    BRA PLOTC00   ; even column => upper nibble
+    ; BCS PLOTC01   ; odd column => lower nibble
+    ; BRA PLOTC00   ; even column => upper nibble
+    RTS
 
 @ENDIF
 
