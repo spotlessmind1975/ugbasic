@@ -76,6 +76,9 @@ void target_initialization( Environment * _environment ) {
     //     _environment->maxExpansionBankSize[i+1] = BANK_SIZE;
     // }
     
+    _environment->dstring.count = 32;
+    _environment->dstring.space = 512;
+
     variable_import( _environment, "EVERYSTATUS", VT_BYTE, 0 );
     variable_global( _environment, "EVERYSTATUS" );
 
