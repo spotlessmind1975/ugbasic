@@ -96,8 +96,8 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token <string> BufferDefinition
 %token <string> RawString
 
-%type <string> expr term modula factor exponential expr_math
-%type <integer> const_expr const_term const_modula const_factor const_expr_math
+%type <string> expr term modula factor exponential expr_math expr_math2
+%type <integer> const_expr const_term const_modula const_factor const_expr_math const_expr_math2
 %type <string> const_expr_string
 %type <integer> direct_integer
 %type <string> random_definition_simple random_definition
@@ -352,38 +352,42 @@ const_expr :
     | const_expr_math XOR const_expr_math {
         $$ = $1 ? !$3 : $3;
     } 
-    | const_expr_math OP_EQUAL const_expr_math {
-        $$ = ( $1 == $3 );
-    }
-    | const_expr_math OP_ASSIGN const_expr_math {
-        $$ = ( $1 == $3 );
-    }
-    | const_expr_math OP_DISEQUAL const_expr_math {
-        $$ = ( $1 != $3 );
-    }
-    | const_expr_math OP_LT const_expr_math {
-        $$ = ( $1 < $3 );
-    }
-    | const_expr_math OP_LTE const_expr_math {
-        $$ = ( $1 <= $3 );
-    }
-    | const_expr_math OP_GT const_expr_math {
-        $$ = ( $1 > $3 );
-    }
-    | const_expr_math OP_GTE const_expr_math {
-        $$ = ( $1 >= $3 );
-    }
     | NOT const_expr {
         $$ = ( ! $2 );
     }
     ;
-    
-const_expr_math: 
+
+const_expr_math : 
+      const_expr_math2
+    | const_expr_math2 OP_EQUAL const_expr_math2 {
+        $$ = ( $1 == $3 );
+    }
+    | const_expr_math2 OP_ASSIGN const_expr_math2 {
+        $$ = ( $1 == $3 );
+    }
+    | const_expr_math2 OP_DISEQUAL const_expr_math2 {
+        $$ = ( $1 != $3 );
+    }
+    | const_expr_math2 OP_LT const_expr_math2 {
+        $$ = ( $1 < $3 );
+    }
+    | const_expr_math2 OP_LTE const_expr_math2 {
+        $$ = ( $1 <= $3 );
+    }
+    | const_expr_math2 OP_GT const_expr_math2 {
+        $$ = ( $1 > $3 );
+    }
+    | const_expr_math2 OP_GTE const_expr_math2 {
+        $$ = ( $1 >= $3 );
+    }
+    ;
+
+const_expr_math2: 
       const_term
-    | const_expr_math OP_PLUS const_term {
+    | const_expr_math2 OP_PLUS const_term {
         $$ = $1 + $3;
     }
-    | const_expr_math OP_MINUS const_term {
+    | const_expr_math2 OP_MINUS const_term {
         $$ = $1 - $3;
     }
     ;
@@ -773,44 +777,48 @@ expr :
     | expr_math XOR expr {        
         $$ = variable_xor( _environment, $1, $3 )->name;
     } 
-    | expr_math OP_EQUAL expr {
-        $$ = variable_compare( _environment, $1, $3 )->name;
-    }
-    | expr_math OP_ASSIGN expr {
-        $$ = variable_compare( _environment, $1, $3 )->name;
-    }
-    | expr_math OP_DISEQUAL expr {
-        $$ = variable_compare_not( _environment, $1, $3 )->name;
-    }
-    | expr_math OP_LT expr {
-        $$ = variable_less_than( _environment, $1, $3, 0 )->name;
-    }
-    | expr_math OP_LTE expr {
-        $$ = variable_less_than( _environment, $1, $3, 1 )->name;
-    }
-    | expr_math OP_LT OP_HASH const_expr {
-        $$ = variable_less_than_const( _environment, $1, $4, 0 )->name;
-    }
-    | expr_math OP_LTE OP_HASH const_expr {
-        $$ = variable_less_than_const( _environment, $1, $4, 1 )->name;
-    }
-    | expr_math OP_GT expr {
-        $$ = variable_greater_than( _environment, $1, $3, 0 )->name;
-    }
-    | expr_math OP_GTE expr {
-        $$ = variable_greater_than( _environment, $1, $3, 1 )->name;
-    }
     | NOT expr {
         $$ = variable_not( _environment, $2 )->name;
     }
     ;
-    
-expr_math: 
+
+expr_math : 
+      expr_math2
+    | expr_math2 OP_EQUAL expr_math {
+        $$ = variable_compare( _environment, $1, $3 )->name;
+    }
+    | expr_math2 OP_ASSIGN expr_math {
+        $$ = variable_compare( _environment, $1, $3 )->name;
+    }
+    | expr_math2 OP_DISEQUAL expr_math {
+        $$ = variable_compare_not( _environment, $1, $3 )->name;
+    }
+    | expr_math2 OP_LT expr_math {
+        $$ = variable_less_than( _environment, $1, $3, 0 )->name;
+    }
+    | expr_math2 OP_LTE expr_math {
+        $$ = variable_less_than( _environment, $1, $3, 1 )->name;
+    }
+    | expr_math2 OP_LT OP_HASH const_expr_math2 {
+        $$ = variable_less_than_const( _environment, $1, $4, 0 )->name;
+    }
+    | expr_math2 OP_LTE OP_HASH const_expr_math2 {
+        $$ = variable_less_than_const( _environment, $1, $4, 1 )->name;
+    }
+    | expr_math2 OP_GT expr_math {
+        $$ = variable_greater_than( _environment, $1, $3, 0 )->name;
+    }
+    | expr_math2 OP_GTE expr_math {
+        $$ = variable_greater_than( _environment, $1, $3, 1 )->name;
+    }
+    ;
+
+expr_math2: 
       term
-    | expr_math OP_PLUS term {
+    | expr_math2 OP_PLUS term {
         $$ = variable_add( _environment, $1, $3 )->name;
     }
-    | expr_math OP_MINUS term {
+    | expr_math2 OP_MINUS term {
         $$ = variable_sub( _environment, $1, $3 )->name;
     }
     ;
