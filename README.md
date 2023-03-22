@@ -63,6 +63,7 @@ This is a short list of supported hardware and output file formats:
  * MSX (`msx1`)
  * SEGA SC-3000 (`sc3000`)
  * SEGA SG-1000 (`sg1000`)
+ * TRS-80 Color Computer (`coco`)
  * ZX Spectrum 48K (`zx`)
 
 The complete list of targets can be [found here](https://retroprogramming.iwashere.eu/ugbasic:targets).
