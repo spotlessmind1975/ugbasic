@@ -43,12 +43,12 @@
 #define COLOR_YELLOW				6
 #define COLOR_ORANGE				2 /* alias */
 #define COLOR_BROWN					2 /* alias */
-#define COLOR_LIGHT_RED				2 /* alias */
+#define COLOR_LIGHT_RED				10 /* alias */
 #define COLOR_DARK_GREY				0 /* alias */
 #define COLOR_GREY					7 /* alias */
-#define COLOR_LIGHT_GREEN			4 /* alias */
-#define COLOR_LIGHT_BLUE			5 /* alias */
-#define COLOR_LIGHT_GREY			7 /* alias */
+#define COLOR_LIGHT_GREEN			12 /* alias */
+#define COLOR_LIGHT_BLUE			13 /* alias */
+#define COLOR_LIGHT_GREY			15 /* alias */
 #define COLOR_DARK_BLUE				3 /* alias */
 #define COLOR_MAGENTA				3
 #define COLOR_PURPLE				2 /* alias */
