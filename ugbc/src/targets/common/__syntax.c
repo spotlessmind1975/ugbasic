@@ -1522,3 +1522,58 @@ questa risoluzione virtuale.
 
 @target all
 </usermanual> */
+
+/* <usermanual>
+@keyword FONT LOAD
+
+@english
+The ''FONT LOAD'' command allows you to load an image and to convert it into
+a font.
+
+The command support a set of modern image format, like:
+
+  * JPEG baseline & progressive
+  * PNG 1/2/4/8/16-bit-per-channel
+  * TGA
+  * BMP (non-1bpp, non-RLE)
+  * PSD (composited view only, no extra channels, 8/16 bit-per-channel)
+  * GIF
+  * HDR (radiance rgbE format)
+  * PIC (Softimage PIC)
+  * PNM (PPM and PGM binary only)
+
+The image will be converted into a way that can be efficiently drawn
+on the screen using the default characters.
+
+It is also possible to indicate the index from which to start loading the various characters. 
+The index is not the ASCII code but the screen code.
+
+@italian
+Il comando ''FONT LOAD'' permette di caricare un file immagine, e di convertirlo
+in una serie di caratteri (font). 
+
+Il comando supporta una serie di formati moderni:
+
+  * JPEG baseline & progressive
+  * PNG 1/2/4/8/16-bit-per-canale
+  * TGA
+  * BMP (non-1bpp, non-RLE)
+  * PSD (vista composita, nessun canale extra, 8/16 bit-per-canale)
+  * GIF
+  * HDR (formato radiance rgbE)
+  * PIC (Softimage PIC)
+  * PNM (solo formato binario PPM e PGM)
+
+L'immagine verrà convertita in un modo che possa essere disegnata in modo efficiente
+sullo schermo. Potrebbe essere convertita in una tavolozza indicizzata, e potrebbe essere
+anche ridimensionata.
+
+E' inoltre possibile indicare l'indice da cui iniziare a caricare i vari caratteri. 
+L'indice non è il codice ASCII ma lo screen code.
+
+@syntax FONT LOAD [filename] TO [index]
+
+@example FONT LOAD "digit0.png" TO 48
+
+@target all
+</usermanual> */
