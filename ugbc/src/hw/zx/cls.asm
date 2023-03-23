@@ -47,7 +47,7 @@ CLS:
 
     LD HL, (COLORMAPADDRESS)
     LD A, (_PAPER)
-    AND $07
+    AND $0F
     SLA A
     SLA A
     SLA A
@@ -55,6 +55,13 @@ CLS:
     LD A, (_PEN)
     AND $07
     OR A, B
+    LD B, A
+    LD A, (_PEN)
+    AND $08
+    SLA A
+    SLA A
+    SLA A
+    OR A, B    
     LD (HL), A
     LD DE, (COLORMAPADDRESS)
     INC DE

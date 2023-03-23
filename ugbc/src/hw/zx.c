@@ -337,7 +337,7 @@ void zx_initialization( Environment * _environment ) {
     _environment->screenHeight = 192;
     _environment->fontWidth = 8;
     _environment->fontHeight = 8;
-    _environment->screenColors = 8;
+    _environment->screenColors = COLOR_COUNT;
 
 }
 

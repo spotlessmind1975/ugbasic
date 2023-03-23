@@ -38,7 +38,7 @@
 BACK:
     LD HL, (COLORMAPADDRESS)
     LD A, (_PAPER)
-    AND $07
+    AND $0F
     SLA A
     SLA A
     SLA A
