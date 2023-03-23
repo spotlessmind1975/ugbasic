@@ -57,6 +57,6 @@ void paper( Environment * _environment, char * _color ) {
     variable_move( _environment, color->name, paper->name );
     
     ted_background_color_vars( _environment, "#0", color->realName );
-    ted_border_color( _environment, color->realName );
+    // ted_border_color( _environment, color->realName );
     
 }

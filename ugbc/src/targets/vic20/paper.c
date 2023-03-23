@@ -80,6 +80,6 @@ void paper( Environment * _environment, char * _color ) {
     variable_move( _environment, color->name, paper->name );
     
     vic1_background_color_vars( _environment, paper->realName, color->realName );
-    vic1_border_color( _environment, color->realName );
+    // vic1_border_color( _environment, color->realName );
     
 }

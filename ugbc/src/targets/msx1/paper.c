@@ -55,6 +55,6 @@ void paper( Environment * _environment, char * _color ) {
 
     variable_move( _environment, color->name, paper->name );
     
-    tms9918_border_color( _environment, color->realName );
+    // tms9918_border_color( _environment, color->realName );
     
 }

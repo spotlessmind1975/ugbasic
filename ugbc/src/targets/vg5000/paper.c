@@ -55,6 +55,6 @@ void paper( Environment * _environment, char * _color ) {
 
     variable_move( _environment, color->name, paper->name );
     
-    ef9345_border_color( _environment, color->realName );
+    // ef9345_border_color( _environment, color->realName );
     
 }

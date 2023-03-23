@@ -55,6 +55,6 @@ void paper( Environment * _environment, char * _color ) {
 
     variable_move( _environment, color->name, paper->name );
     
-    zx_color_border( _environment, color->realName );
+    // zx_color_border( _environment, color->realName );
     
 }
