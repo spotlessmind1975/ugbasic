@@ -6480,7 +6480,7 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
 #elif __sg1000__
     char target[MAX_TEMPORARY_STORAGE] = "SEGA SG-1000";
 #elif __cpc__
-    char target[MAX_TEMPORARY_STORAGE] = "Amstrad CPC464";
+    char target[MAX_TEMPORARY_STORAGE] = "Amstrad CPC664";
 #elif __vg5000__
     char target[MAX_TEMPORARY_STORAGE] = "Philips VG5000";
 #elif __coco__
