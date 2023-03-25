@@ -439,7 +439,7 @@ generated/cpc/exe/%.dsk:
 	@php sym2cpc.php $(subst /exe/,/asm/,$(@:.dsk=.osym)) >$(subst /exe/,/asm/,$(@:.rom=.sym))
 	@rm -f $(subst /exe/,/asm/,$(@:.dsk=.o))
 	@mv $(subst /exe/,/asm/,$(@:.dsk=.bin)) $(@:.dsk=.bin)
-	@$(APPMAKE) +cpc --org $1200 --disk -b $(@:.dsk=.bin) -o $(dir $@)main.com
+	@$(APPMAKE) +cpc --org 4608 --exec 4608 --disk -b $(@:.dsk=.bin) -o $(dir $@)main.com
 	@rm -f $(@:.dsk=.bin) $(@:.dsk=_*.bin) $(dir $@)main.com
 
 generated/cpc/exeso/%.dsk: $(subst /generated/exeso/,/examples/,$(@:.dsk=.bas))
