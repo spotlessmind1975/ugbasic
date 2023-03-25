@@ -133,9 +133,9 @@ void target_linkage( Environment * _environment ) {
         p = strrchr( diskName, '\\' );
     }
     if ( p ) {
-        strcpy( p+1, "main.com" );
+        strcpy( p+1, "main." );
     } else {
-        strcpy( diskName, "main.com" );
+        strcpy( diskName, "main." );
     }
 
     TRACE1( "exeFileName = %s", _environment->exeFileName );
@@ -171,9 +171,9 @@ void target_linkage( Environment * _environment ) {
     strcpy( binaryName, _environment->asmFileName );
     p = strstr( binaryName, ".asm" );
     if ( p ) {
-        strcat( p, ".bin");
+        strcat( p, ".");
     } else {
-        strcpy( binaryName, "main.bin" );
+        strcpy( binaryName, "main." );
     }
  
     system_remove_safe( _environment, binaryName );
