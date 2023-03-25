@@ -141,7 +141,7 @@ void target_linkage( Environment * _environment ) {
     TRACE1( "exeFileName = %s", _environment->exeFileName );
     TRACE1( "diskName    = %s", diskName );
 
-    sprintf( commandLine, "\"%s\" +cpc --org 4608 --exec 4608 --disk -b \"%s\" -o \"%s\" %s",
+    sprintf( commandLine, "\"%s\" +cpc --org 256 --exec 256 --disk -b \"%s\" -o \"%s\" %s",
         executableName,
         binaryName,
         diskName,
