@@ -1320,7 +1320,7 @@ void tms9918_text( Environment * _environment, char * _text, char * _text_size )
     } else {
         deploy( tms9918varsGraphic, src_hw_tms9918_vars_graphic_asm );
         deploy( clsText, src_hw_tms9918_cls_text_asm );
-        #if defined(__sc3000__) || defined(__sg1000__)  || defined(__msx1__)
+        #if defined(__sc3000__) || defined(__sg1000__)  || defined(__msx1__) || defined(__coleco__)
                 deploy( textEncodedAt, src_hw_tms9918_text_asm );
         #endif
         deploy( textEncodedAtText, src_hw_tms9918_text_at_text_asm );
