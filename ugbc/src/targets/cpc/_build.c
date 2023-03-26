@@ -171,7 +171,7 @@ void target_linkage( Environment * _environment ) {
     strcpy( binaryName, _environment->asmFileName );
     p = strstr( binaryName, ".asm" );
     if ( p ) {
-        strcat( p, ".");
+        strcpy( p, ".");
     } else {
         strcpy( binaryName, "main." );
     }
