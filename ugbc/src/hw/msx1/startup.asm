@@ -38,8 +38,13 @@
 ISRSVC:
     CALL MUSICPLAYER
     PUSH AF
+    PUSH HL
     LD A, 1
     LD (VBLFLAG), A
+    LD HL, ($FC9E)
+    ADD HL, 1
+    LD ($FC9E), HL
+    POP HL
     POP AF
     RET
 
