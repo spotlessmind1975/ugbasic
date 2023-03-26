@@ -1402,21 +1402,27 @@ void vic2_busy_wait( Environment * _environment, char * _timing ) {
 
     MAKE_LABEL
 
-    outline0("LDA #$00");
+    outline1("LDA %s", _timing );
     outline0("STA TMPPTR");
+    outline1("LDA %s+1", _timing );
+    outline0("STA TMPPTR+1");
     outhead1("%sfirst:", label );
-    outline0("LDA #$01");
+    outline0("LDA $01");
     outhead1("%ssecond:", label );
     outline0("CMP $D012");
     outline1("BNE %ssecond", label);
     outhead1("%sthird:", label );
     outline0("CMP $D012");
     outline1("BEQ %sthird", label);
-    outline0("INC TMPPTR");
+    outline0("DEC TMPPTR");
     outline0("LDA TMPPTR");
-    outline1("CMP %s", _timing );
-    outline1("BNE %sfirst", label );
-
+    outline0("CMP #$FF");
+    outline1("BNE %sfirst", label);
+    outline0("DEC TMPPTR+1");
+    outline0("LDA TMPPTR+1");
+    outline0("CMP #$FF");
+    outline1("BNE %sfirst", label);
+    
 }
 
 void vic2_get_width( Environment * _environment, char *_result ) {
