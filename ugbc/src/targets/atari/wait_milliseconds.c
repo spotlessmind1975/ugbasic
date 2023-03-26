@@ -52,9 +52,10 @@
 </usermanual> */
 void wait_milliseconds( Environment * _environment, int _timing ) {
 
-    char timingString[MAX_TEMPORARY_STORAGE]; sprintf(timingString, "#$%2.2x", _timing >> 2 );
+    Variable * timing = variable_temporary( _environment, VT_WORD, "(0)" );
+    variable_store( _environment, timing->name, _timing >> 5 );
 
-    gtia_busy_wait( _environment, timingString );
+    gtia_busy_wait( _environment, timing->realName );
 
 }
 
@@ -75,12 +76,12 @@ void wait_milliseconds_var( Environment * _environment, char * _timing ) {
     MAKE_LABEL
 
     Variable * timing = variable_retrieve( _environment, _timing );
-    Variable * zero = variable_temporary( _environment, VT_BYTE, "(0)" );
+    Variable * zero = variable_temporary( _environment, VT_WORD, "(0)" );
     variable_store( _environment, zero->name, 0 );
 
-    Variable * temp = variable_cast( _environment, timing->name, VT_BYTE );
+    Variable * temp = variable_cast( _environment, timing->name, VT_WORD );
 
-    temp = variable_div2_const( _environment, temp->name, 2 );
+    temp = variable_div2_const( _environment, temp->name, 5 );
 
     if_then( _environment, variable_compare_not( _environment, temp->name, zero->name )->name );
         gtia_busy_wait( _environment, temp->realName );
