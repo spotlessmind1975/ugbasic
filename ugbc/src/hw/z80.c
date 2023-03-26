@@ -3615,51 +3615,90 @@ void z80_math_div_32bit_to_16bit( Environment * _environment, char *_source, cha
 
     } else {
 
-        outline1("LD HL, %s", _source);
-        outline0("LD A, (HL)");
-        outline0("PUSH AF");
-        outline0("POP IX");
-        outline0("INC HL");
-        outline0("INC HL");
-        outline0("LD A, (HL)");
-        outline0("LD C, A");
-        outline0("INC HL");
-        outline0("LD A, (HL)");
-        outline1("LD DE, (%s)", _destination);
+        // outline1("LD HL, %s", _source);
+        // outline0("LD A, (HL)");
+        // outline0("PUSH AF");
+        // outline0("POP IX");
+        // outline0("INC HL");
+        // outline0("INC HL");
+        // outline0("LD A, (HL)");
+        // outline0("LD C, A");
+        // outline0("INC HL");
+        // outline0("LD A, (HL)");
+        // outline1("LD DE, (%s)", _destination);
 
-        outline0("LD HL, 0");
+        // outline0("LD HL, 0");
+        // outline0("LD B, 32");
+        // outhead1("%sloop:", label);
+        // outline0("ADD IX, IX");
+        // outline0("RL C");
+        // outline0("RLA");
+        // outline0("ADC HL, HL");
+        // outline1("JR C, %soverflow", label);
+        // outline0("SBC HL, DE");
+        // outline1("JR NC, %ssetbit", label);
+        // outline0("ADD HL, DE");
+        // outline1("DJNZ %sloop", label);
+        // outline1("JMP %send", label);
+        // outhead1("%soverflow:", label);
+        // outline0("OR A");
+        // outline0("SBC HL, DE");
+        // outhead1("%ssetbit:", label);
+        // outline0("INC IXL");
+        // outline1("DJNZ %sloop", label);
+        // outhead1("%send:", label);
+        // outline1("LD (%s), HL", _other_remainder);
+        // outline1("LD HL, %s", _other);
+        // outline0("PUSH AF");
+        // outline0("PUSH IX");
+        // outline0("POP AF");
+        // outline0("LD (HL), A");
+        // outline0("POP AF");
+        // outline0("INC HL");
+        // outline0("INC HL");
+        // outline0("INC HL");
+        // outline0("LD (HL), A");
+        // outline0("DEC HL");
+        // outline0("LD C, (HL)");
+        // ; IN:	ACIX=dividend, DE=divisor
+        // ; OUT:	ACIX=quotient, DE=divisor, HL=remainder, B=0
+
+	    outline1("LD HL, (%s)", _source);
+	    outline0("LD IX, HL");
+	    outline1("LD HL, (%s+2)", _source);
+	    outline0("LD A, L");
+	    outline0("LD C, A");
+	    outline0("LD A, H");
+	    outline1("LD DE, (%s)", _destination);
+
+	    outline0("LD HL, 0");
         outline0("LD B, 32");
-        outhead1("%sloop:", label);
+        outhead1("%sloop1:", label);
         outline0("ADD IX, IX");
         outline0("RL C");
         outline0("RLA");
         outline0("ADC HL, HL");
-        outline1("JR C, %soverflow", label);
+        outline1("JR C, %sloop2", label);
         outline0("SBC HL, DE");
-        outline1("JR NC, %ssetbit", label);
+        outline1("JR NC, %sloop3", label);
         outline0("ADD HL, DE");
-        outline1("DJNZ %sloop", label);
-        outline1("JMP %send", label);
-        outhead1("%soverflow:", label);
+        outline1("DJNZ %sloop1", label);
+        outline1("JR %sdone", label);
+        outhead1("%sloop2:", label);
         outline0("OR A");
         outline0("SBC HL, DE");
-        outhead1("%ssetbit:", label);
+        outhead1("%sloop3:", label);
         outline0("INC IXL");
-        outline1("DJNZ %sloop", label);
-        outhead1("%send:", label);
-        outline1("LD (%s), HL", _other_remainder);
-        outline1("LD HL, %s", _other);
-        outline0("PUSH AF");
-        outline0("PUSH IX");
-        outline0("POP AF");
-        outline0("LD (HL), A");
-        outline0("POP AF");
-        outline0("INC HL");
-        outline0("INC HL");
-        outline0("INC HL");
-        outline0("LD (HL), A");
-        outline0("DEC HL");
-        outline0("LD C, (HL)");
+        outline1("DJNZ %sloop1", label);
+        outhead1("%sdone:", label);
+
+	    outline1("LD (%s), HL", _other_remainder);
+	    outline0("LD H, A");
+	    outline0("LD A, C");
+	    outline0("LD L, C");
+	    outline1("LD (%s+1), HL", _other);
+	    outline0("LD HL, IX");
+	    outline1("LD (%s), HL", _other);
 
     }
  
