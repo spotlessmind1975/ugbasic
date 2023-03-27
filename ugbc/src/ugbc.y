@@ -6704,7 +6704,7 @@ int main( int _argc, char *_argv[] ) {
                     } else if ( strcmp( optarg, "dsk") == 0 ) {
                         _environment->outputFileType = OUTPUT_FILE_TYPE_DSK;                    }
                     } else {
-                        CRITICAL1("Unknown output format", optarg);
+                        CRITICAL2("Unknown output format", optarg);
                     }
                     break;
                 case 'D':
