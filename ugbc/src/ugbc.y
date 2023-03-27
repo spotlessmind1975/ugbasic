@@ -6701,6 +6701,10 @@ int main( int _argc, char *_argv[] ) {
                         _environment->outputFileType = OUTPUT_FILE_TYPE_ROM;
                     } else if ( strcmp( optarg, "d64") == 0 ) {
                         _environment->outputFileType = OUTPUT_FILE_TYPE_D64;
+                    } else if ( strcmp( optarg, "dsk") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_DSK;                    }
+                    } else {
+                        CRITICAL1("Unknown output format", optarg);
                     }
                     break;
                 case 'D':
