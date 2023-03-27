@@ -53,7 +53,7 @@
 void wait_milliseconds( Environment * _environment, int _timing ) {
 
     Variable * timing = variable_temporary( _environment, VT_WORD, "(0)" );
-    variable_store( _environment, timing->name, _timing >> 5 );
+    variable_store( _environment, timing->name, _timing >> 4 );
 
     gtia_busy_wait( _environment, timing->realName );
 
@@ -81,7 +81,7 @@ void wait_milliseconds_var( Environment * _environment, char * _timing ) {
 
     Variable * temp = variable_cast( _environment, timing->name, VT_WORD );
 
-    temp = variable_div2_const( _environment, temp->name, 5 );
+    temp = variable_div2_const( _environment, temp->name, 4 );
 
     if_then( _environment, variable_compare_not( _environment, temp->name, zero->name )->name );
         gtia_busy_wait( _environment, temp->realName );
