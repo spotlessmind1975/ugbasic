@@ -6702,7 +6702,7 @@ int main( int _argc, char *_argv[] ) {
                     } else if ( strcmp( optarg, "d64") == 0 ) {
                         _environment->outputFileType = OUTPUT_FILE_TYPE_D64;
                     } else if ( strcmp( optarg, "dsk") == 0 ) {
-                        _environment->outputFileType = OUTPUT_FILE_TYPE_DSK;                    }
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_DSK;
                     } else {
                         CRITICAL2("Unknown output format", optarg);
                     }
