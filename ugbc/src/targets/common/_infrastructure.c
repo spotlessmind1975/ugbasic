@@ -6014,6 +6014,8 @@ char * image_load_asserts( Environment * _environment, char * _filename ) {
     strcat( lookedFilename, "/c128" );
 #elif __vg5000__
     strcat( lookedFilename, "/vg5000" );
+#elif __coco__
+    strcat( lookedFilename, "/coco" );
 #endif
 
     if ( strlen( lookedExtension ) ) {
