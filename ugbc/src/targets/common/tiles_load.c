@@ -131,6 +131,8 @@ Variable * tiles_load( Environment * _environment, char * _filename, int _flags,
 
     char * lookedFilename = image_load_asserts( _environment, _filename );
 
+    adiline2("LTS:%s:%s", _filename, lookedFilename );
+
     unsigned char* source = stbi_load(lookedFilename, &width, &height, &depth, 0);
 
     if ( !source ) {

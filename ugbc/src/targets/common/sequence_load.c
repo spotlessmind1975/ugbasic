@@ -136,6 +136,8 @@ Variable * sequence_load( Environment * _environment, char * _filename, char * _
 
     char * lookedFilename = image_load_asserts( _environment, _filename );
 
+    adiline2("LS:%s:%s", _filename, lookedFilename );
+
     unsigned char* source = stbi_load(lookedFilename, &width, &height, &depth, 0);
 
     if ( !source ) {
