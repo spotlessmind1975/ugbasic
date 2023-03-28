@@ -2281,6 +2281,37 @@ int embed_scan_string (const char *);
     }
 
 
+#define adiline0(s) \
+    if ( ((Environment *)_environment)->additionalInfoFile ) { \
+            fprintf( ((Environment *)_environment)->additionalInfoFile, s ); \
+            fprintf( ((Environment *)_environment)->additionalInfoFile, "\n" ); \
+    }
+#define adiline1(s,a) \
+    if ( ((Environment *)_environment)->additionalInfoFile ) { \
+            fprintf( ((Environment *)_environment)->additionalInfoFile, s, a ); \
+            fprintf( ((Environment *)_environment)->additionalInfoFile, "\n" ); \
+    }
+#define adiline2(s,a,b) \
+    if ( ((Environment *)_environment)->additionalInfoFile ) { \
+            fprintf( ((Environment *)_environment)->additionalInfoFile, s, a, b ); \
+            fprintf( ((Environment *)_environment)->additionalInfoFile, "\n" ); \
+    }
+#define adiline3(s,a,b,c) \
+    if ( ((Environment *)_environment)->additionalInfoFile ) { \
+            fprintf( ((Environment *)_environment)->additionalInfoFile, s, a, b, c ); \
+            fprintf( ((Environment *)_environment)->additionalInfoFile, "\n" ); \
+    }
+#define adiline4(s,a,b,c,d) \
+    if ( ((Environment *)_environment)->additionalInfoFile ) { \
+            fprintf( ((Environment *)_environment)->additionalInfoFile, s, a, b, c, d ); \
+            fprintf( ((Environment *)_environment)->additionalInfoFile, "\n" ); \
+    }
+#define adiline5(s,a,b,c,d,e) \
+    if ( ((Environment *)_environment)->additionalInfoFile ) { \
+            fprintf( ((Environment *)_environment)->additionalInfoFile, s, a, b, c, d, e ); \
+            fprintf( ((Environment *)_environment)->additionalInfoFile, "\n" ); \
+    }
+
 #define outhead0(s)             outline0n(0, s, 1)
 #define outhead1(s,a)           outline1n(0, s, a, 1)
 #define outhead2(s,a,b)         outline2n(0, s, a, b, 1)

@@ -627,9 +627,7 @@ static int optim_pass( Environment * _environment, POBuffer buf[LOOK_AHEAD], Pee
     _environment->currentSourceLineAnalyzed = 0;
     _environment->removedAssemblyLines = 0;
 
-    if ( _environment->additionalInfoFile ) {
-        fprintf( _environment->additionalInfoFile, "POP:0:%d:%d\n", peephole_pass, kind );
-    }
+    adiline2( "POP:0:%d:%d\n", peephole_pass, kind );
 
     sprintf( fileNameOptimized, "%s.asm", get_temporary_filename( _environment ) );
         
@@ -693,10 +691,8 @@ static int optim_pass( Environment * _environment, POBuffer buf[LOOK_AHEAD], Pee
                 if (po_buf_match( buf[LOOK_AHEAD-1], " ; L:*", ln ) ) {
                     sourceLine = atoi( ln->str );
                     if ( ( sourceLine != _environment->currentSourceLineAnalyzed ) ) {
-                        if ( _environment->additionalInfoFile ) {
-                            fprintf( _environment->additionalInfoFile, "POL:0:%d:%d:%d\n", 
-                                peephole_pass, _environment->currentSourceLineAnalyzed, _environment->removedAssemblyLines );
-                        }
+                        adiline3( "POL:0:%d:%d:%d\n", 
+                            peephole_pass, _environment->currentSourceLineAnalyzed, _environment->removedAssemblyLines );
                         _environment->currentSourceLineAnalyzed = sourceLine;
                         _environment->removedAssemblyLines = 0;
                     }
@@ -727,10 +723,8 @@ static int optim_pass( Environment * _environment, POBuffer buf[LOOK_AHEAD], Pee
         ++line;
     }
 
-    if ( _environment->additionalInfoFile ) {
-        fprintf( _environment->additionalInfoFile, "POL:0:%d:%d:%d\n", 
-            peephole_pass, _environment->currentSourceLineAnalyzed, _environment->removedAssemblyLines );
-    }
+    adiline3( "POL:0:%d:%d:%d\n", 
+        peephole_pass, _environment->currentSourceLineAnalyzed, _environment->removedAssemblyLines );
 
     /* log info at the end of the file */
     switch(kind) {
@@ -806,7 +800,7 @@ void target_finalize( Environment * _environment ) {
         _environment->currentSourceLineAnalyzed = 0;
         _environment->bytesProduced = 0;
 
-        fprintf( _environment->additionalInfoFile, "A:0\n" );
+        adiline0( "A:0\n" );
 
         fileAsm = fopen( _environment->asmFileName, "rt" );
         if(fileAsm == NULL) {
@@ -830,10 +824,8 @@ void target_finalize( Environment * _environment ) {
                 if (po_buf_match( bufferAsm, "; L:*", ln ) ) {
                     sourceLine = atoi( ln->str );
                     if ( ( sourceLine != _environment->currentSourceLineAnalyzed ) ) {
-                        if ( _environment->additionalInfoFile ) {
-                            fprintf( _environment->additionalInfoFile, "AB:0:%d:%d\n", 
-                                _environment->currentSourceLineAnalyzed, _environment->bytesProduced );
-                        }
+                        adiline2( "AB:0:%d:%d\n", 
+                            _environment->currentSourceLineAnalyzed, _environment->bytesProduced );
                         _environment->currentSourceLineAnalyzed = sourceLine;
                         _environment->bytesProduced = 0;
                     }
@@ -862,14 +854,14 @@ void target_finalize( Environment * _environment ) {
                 if ( po_buf_match( bufferListing, "* * * ", bufferLine, bufferAddress, bufferBytes ) ) {
                     _environment->bytesProduced += bufferBytes->len >> 1;
                 }
-                fprintf( _environment->additionalInfoFile, "AL:0:%d:%*s%s\n", 
+                adiline4( "AL:0:%d:%*s%s\n", 
                     _environment->currentSourceLineAnalyzed, leftPadding, "", bufferAsmEscaped );
             }
 
         }
 
-        if ( _environment->currentSourceLineAnalyzed  && _environment->additionalInfoFile ) {
-            fprintf( _environment->additionalInfoFile, "AF:0:%d\n", 
+        if ( _environment->currentSourceLineAnalyzed ) {
+            adiline1( "AF:0:%d\n", 
                 _environment->bytesProduced );
         }
 

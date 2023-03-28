@@ -6424,9 +6424,7 @@ emit_additional_info: {
 
     outline1("; P:%d", producedLines); 
 
-    if ( ((Environment *)_environment)->additionalInfoFile ) {
-        fprintf( ((Environment *)_environment)->additionalInfoFile, "P:0:%d:%d\n", yylineno - 1, producedLines );
-    }
+    adiline2( "P:0:%d:%d", yylineno - 1, producedLines );
 
     ((Environment *)_environment)->previousProducedAssemblyLines = 
         ((Environment *)_environment)->producedAssemblyLines; 
