@@ -6609,7 +6609,7 @@ static int rgbi_qsort_compare(const void * _first, const void * _second ) {
  * @param _palette_size 
  * @return int 
  */
-int rgbi_extract_palette( unsigned char* _source, int _width, int _height, int _depth, RGBi _palette[], int _palette_size, int _sorted) {
+int rgbi_extract_palette( Environment * _environment, unsigned char* _source, int _width, int _height, int _depth, RGBi _palette[], int _palette_size, int _sorted) {
 
     RGBi rgb;
 
@@ -6672,8 +6672,11 @@ int rgbi_extract_palette( unsigned char* _source, int _width, int _height, int _
     //     printf("  %i) %2.2x%2.2x%2.2x %2.2x (%d)\n", i, _palette[i].red, _palette[i].green, _palette[i].blue, _palette[i].alpha, _palette[i].count );
     // }
 
+    adilinepalette( "EPO:%d", usedPalette, _palette );
+
     if ( _sorted ) {
         qsort( _palette, _palette_size, sizeof( RGBi ), rgbi_qsort_compare );
+        adilinepalette( "EPS:%d", usedPalette, _palette );
     }
 
     // printf("QSORT:\n" );

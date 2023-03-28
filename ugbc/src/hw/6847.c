@@ -1108,7 +1108,7 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
 
     RGBi * palette = malloc_palette( MAX_PALETTE );
     
-    int paletteColorCount = rgbi_extract_palette(_source, _width, _height, _depth, palette, MAX_PALETTE, ( ( _flags & FLAG_EXACT ) ? 0 : 1 ) /* sorted */);
+    int paletteColorCount = rgbi_extract_palette(_environment, _source, _width, _height, _depth, palette, MAX_PALETTE, ( ( _flags & FLAG_EXACT ) ? 0 : 1 ) /* sorted */);
 
     if (paletteColorCount > 2) {
         CRITICAL_IMAGE_CONVERTER_TOO_COLORS( paletteColorCount );
@@ -1216,7 +1216,7 @@ static Variable * c6847_image_converter_multicolor_mode_standard( Environment * 
 
     RGBi * palette = malloc_palette( MAX_PALETTE );
     
-    int paletteColorCount = rgbi_extract_palette(_source, _width, _height, _depth, palette, MAX_PALETTE, ( ( _flags & FLAG_EXACT ) ? 0 : 1 ) /* sorted */);
+    int paletteColorCount = rgbi_extract_palette(_environment, _source, _width, _height, _depth, palette, MAX_PALETTE, ( ( _flags & FLAG_EXACT ) ? 0 : 1 ) /* sorted */);
 
     if (paletteColorCount > 4) {
         CRITICAL_IMAGE_CONVERTER_TOO_COLORS( paletteColorCount );

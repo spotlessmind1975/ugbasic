@@ -2312,6 +2312,18 @@ int embed_scan_string (const char *);
             fprintf( ((Environment *)_environment)->additionalInfoFile, "\n" ); \
     }
 
+#define adilinepalette(s,c,p) \
+    if ( ((Environment *)_environment)->additionalInfoFile ) { \
+            fprintf( ((Environment *)_environment)->additionalInfoFile, s, c ); \
+            fprintf( ((Environment *)_environment)->additionalInfoFile, ":" ); \
+            int i = 0; \
+            for( i=0; i<c; ++i ) { \
+                fprintf( ((Environment *)_environment)->additionalInfoFile, "%2.2x%2.2x%2.2x%2.2x:", \
+                    p[i].alpha, p[i].red, p[i].green, p[i].blue ); \
+            } \
+            fprintf( ((Environment *)_environment)->additionalInfoFile, "\n" ); \
+    }
+
 #define outhead0(s)             outline0n(0, s, 1)
 #define outhead1(s,a)           outline1n(0, s, a, 1)
 #define outhead2(s,a,b)         outline2n(0, s, a, b, 1)
@@ -3188,7 +3200,7 @@ void                    return_label( Environment * _environment );
 void                    return_procedure( Environment * _environment, char * _value );
 int                     rgbi_equals_rgb( RGBi * _first, RGBi * _second );
 int                     rgbi_equals_rgba( RGBi * _first, RGBi * _second );
-int                     rgbi_extract_palette( unsigned char* _source, int _width, int _height, int _depth, RGBi _palette[], int _palette_size, int _sorted);
+int                     rgbi_extract_palette( Environment * _environment, unsigned char* _source, int _width, int _height, int _depth, RGBi _palette[], int _palette_size, int _sorted);
 void                    rgbi_move( RGBi * _source, RGBi * _destination );
 int                     rgbi_distance( RGBi * _source, RGBi * _destination );
 Variable *              rnd( Environment * _environment, char * _value );

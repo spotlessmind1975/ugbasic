@@ -1258,7 +1258,7 @@ static Variable * ted_image_converter_bitmap_mode_standard( Environment * _envir
     
     RGBi palette[MAX_PALETTE];
 
-    int colorUsed = rgbi_extract_palette(_source, _width, _height, _depth, palette, MAX_PALETTE, 1 /* sorted */);
+    int colorUsed = rgbi_extract_palette(_environment, _source, _width, _height, _depth, palette, MAX_PALETTE, 1 /* sorted */);
 
     // if (colorUsed > 2) {
     //     CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
@@ -1336,7 +1336,7 @@ static Variable * ted_image_converter_multicolor_mode_standard( Environment * _e
 
     RGBi palette[MAX_PALETTE];
 
-    int colorUsed = rgbi_extract_palette(_source, _width, _height, _depth, palette, MAX_PALETTE, 1 /* sorted */);
+    int colorUsed = rgbi_extract_palette(_environment, _source, _width, _height, _depth, palette, MAX_PALETTE, 1 /* sorted */);
 
     // if (colorUsed > 4) {
     //     CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
