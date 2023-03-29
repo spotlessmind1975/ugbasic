@@ -2318,7 +2318,7 @@ int embed_scan_string (const char *);
             fprintf( ((Environment *)_environment)->additionalInfoFile, ":" ); \
             int i = 0; \
             for( i=0; i<c; ++i ) { \
-                fprintf( ((Environment *)_environment)->additionalInfoFile, "%2.2x%2.2x%2.2x%2.2x:%2.2x:%s:%2.2x:%2.2x:%2.2x", \
+                fprintf( ((Environment *)_environment)->additionalInfoFile, "%2.2x%2.2x%2.2x%2.2x:%2.2x:%s:%2.2x:%2.2x:%2.2x:", \
                     p[i].alpha, p[i].red, p[i].green, p[i].blue, p[i].index, p[i].description, p[i].hardwareIndex, p[i].used, p[i].count ); \
             } \
             fprintf( ((Environment *)_environment)->additionalInfoFile, "\n" ); \
