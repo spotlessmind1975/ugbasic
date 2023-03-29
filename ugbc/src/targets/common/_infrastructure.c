@@ -6627,6 +6627,9 @@ int rgbi_extract_palette( Environment * _environment, unsigned char* _source, in
 
     for (image_y = 0; image_y < _height; ++image_y) {
         for (image_x = 0; image_x < _width; ++image_x) {
+            
+            memset( &rgb, 0, sizeof( RGBi ) );
+
             rgb.red = *source;
             rgb.green = *(source + 1);
             rgb.blue = *(source + 2);
