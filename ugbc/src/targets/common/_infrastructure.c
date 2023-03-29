@@ -6594,9 +6594,21 @@ static int rgbi_qsort_compare(const void * _first, const void * _second ) {
     RGBi * second = (RGBi *) _second;
 
     if ( first->alpha == second->alpha ) {
-        return ( first->count <= second->count );
+        if ( first->count < second->count ) {
+            return 1;
+        } else if ( first->count > second->count ) {
+            return -1;
+        } else {
+            return 0;
+        }
     } else {
-        return first->alpha >= second->alpha;
+        if ( first->alpha > second->alpha ) {
+            return 1;
+        } else if ( first->alpha < second->alpha ) {
+            return -1;
+        } else {
+            return 0
+        };
     }
 
 }
