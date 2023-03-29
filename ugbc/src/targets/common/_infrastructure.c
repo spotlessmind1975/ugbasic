@@ -6607,7 +6607,7 @@ static int rgbi_qsort_compare(const void * _first, const void * _second ) {
         } else if ( first->alpha < second->alpha ) {
             return -1;
         } else {
-            return 0
+            return 0;
         };
     }
 
