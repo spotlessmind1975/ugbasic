@@ -2331,12 +2331,12 @@ int embed_scan_string (const char *);
 
 #define adilinepixel(p) \
     if ( ((Environment *)_environment)->additionalInfoFile ) { \
-            fprintf( ((Environment *)_environment)->additionalInfoFile, "%2.2x:" ); \
+            fprintf( ((Environment *)_environment)->additionalInfoFile, "%2.2x:", p ); \
     }
 
-#define adilineendbitmap(s) \
+#define adilineendbitmap() \
     if ( ((Environment *)_environment)->additionalInfoFile ) { \
-            fprintf( ((Environment *)_environment)->additionalInfoFile, "\n", s ); \
+            fprintf( ((Environment *)_environment)->additionalInfoFile, "\n" ); \
     }
 
 #define outhead0(s)             outline0n(0, s, 1)

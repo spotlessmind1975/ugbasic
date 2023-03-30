@@ -1396,7 +1396,7 @@ static Variable * cpc_image_converter_multicolor_mode_lores( Environment * _envi
 
     int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_GRAPHIC0 );
     
-    adiline4("BMP:%4.4x:%4.4x:%2.2x", _frame_width, _frame_height, BITMAP_MODE_GRAPHIC0 );
+    adiline3("BMP:%4.4x:%4.4x:%2.2x", _frame_width, _frame_height, BITMAP_MODE_GRAPHIC0 );
 
     adilinebeginbitmap("BMD");
 
