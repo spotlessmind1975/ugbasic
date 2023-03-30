@@ -1372,16 +1372,21 @@ static Variable * cpc_image_converter_multicolor_mode_lores( Environment * _envi
 
         commonPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
         lastUsedSlotInCommonPalette = paletteColorCount;
-    
+        adilinepalette( "CPB:%d", paletteColorCount, commonPalette );
+
     } else {
 
         RGBi * newPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
+
+        adilinepalette( "CPM1:%d", paletteColorCount, newPalette );
 
         int mergedCommonPalette = 0;
 
         commonPalette = palette_merge( commonPalette, lastUsedSlotInCommonPalette, newPalette, paletteColorCount, &mergedCommonPalette );
 
         lastUsedSlotInCommonPalette = mergedCommonPalette;
+
+        adilinepalette( "CPM2:%d", lastUsedSlotInCommonPalette, commonPalette );
 
     }
 
@@ -1391,6 +1396,10 @@ static Variable * cpc_image_converter_multicolor_mode_lores( Environment * _envi
 
     int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_GRAPHIC0 );
     
+    adiline4("BMP:%4.4x:%4.4x:%2.2x", _frame_width, _frame_height, BITMAP_MODE_GRAPHIC0 );
+
+    adilinebeginbitmap("BMD");
+
     char * buffer = malloc ( bufferSize );
     memset( buffer, 0, bufferSize );
 
@@ -1449,6 +1458,8 @@ static Variable * cpc_image_converter_multicolor_mode_lores( Environment * _envi
                 printf("%1.1x", colorIndex );
             }
 
+            adilinepixel(colorIndex);
+            
             bitmask = ( ( colorIndex & 0x8 ) >> 3 ) << (1 - ((image_x & 0x1)));
             bitmask |= ( ( ( colorIndex & 0x2 ) ) << 1 ) << (1 - ((image_x & 0x1)));
             bitmask |= ( ( ( colorIndex & 0x4 ) ) << 2 ) << (1 - ((image_x & 0x1)));
@@ -1466,6 +1477,8 @@ static Variable * cpc_image_converter_multicolor_mode_lores( Environment * _envi
             printf("\n" );
         }
     }
+
+    adilineendbitmap();
 
     if ( _environment->debugImageLoad ) {
         printf("\n" );

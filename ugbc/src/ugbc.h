@@ -2324,6 +2324,21 @@ int embed_scan_string (const char *);
             fprintf( ((Environment *)_environment)->additionalInfoFile, "\n" ); \
     }
 
+#define adilinebeginbitmap(s) \
+    if ( ((Environment *)_environment)->additionalInfoFile ) { \
+            fprintf( ((Environment *)_environment)->additionalInfoFile, "%s:", s ); \
+    }
+
+#define adilinepixel(p) \
+    if ( ((Environment *)_environment)->additionalInfoFile ) { \
+            fprintf( ((Environment *)_environment)->additionalInfoFile, "%2.2x:" ); \
+    }
+
+#define adilineendbitmap(s) \
+    if ( ((Environment *)_environment)->additionalInfoFile ) { \
+            fprintf( ((Environment *)_environment)->additionalInfoFile, "\n", s ); \
+    }
+
 #define outhead0(s)             outline0n(0, s, 1)
 #define outhead1(s,a)           outline1n(0, s, a, 1)
 #define outhead2(s,a,b)         outline2n(0, s, a, b, 1)
