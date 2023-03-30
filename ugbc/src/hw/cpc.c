@@ -1372,7 +1372,7 @@ static Variable * cpc_image_converter_multicolor_mode_lores( Environment * _envi
 
         commonPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
         lastUsedSlotInCommonPalette = paletteColorCount;
-        adilinepalette( "CPB:%d", paletteColorCount, commonPalette );
+        adilinepalette( "CPM1:%d", paletteColorCount, commonPalette );
 
     } else {
 
