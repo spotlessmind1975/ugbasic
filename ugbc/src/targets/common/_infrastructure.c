@@ -7052,6 +7052,8 @@ RGBi * palette_remove_duplicates( RGBi * _source, int _source_size, int * _uniqu
     RGBi * uniquePalette = malloc_palette( _source_size );
     *_unique_size = 0;
 
+    int i, j;
+
     for ( i=0; i<_source_size; ++i ) {
 
         for( j=0; j<*_unique_size; ++j ) {
