@@ -6558,7 +6558,7 @@ int rgbi_equals_rgb( RGBi * _first, RGBi * _second ) {
 }
 
 int rgbi_equals_rgba( RGBi * _first, RGBi * _second ) {
-    return rgbi_equals_rgb( _first, _second );
+    return rgbi_equals_rgb( _first, _second ) && ( _first->alpha == _second->alpha );
 }
 
 void rgbi_move( RGBi * _source, RGBi * _destination ) {
@@ -7064,7 +7064,7 @@ RGBi * palette_remove_duplicates( RGBi * _source, int _source_size, int * _uniqu
 
         }
 
-        if ( !rgbi_equals_rgba( &_source[i], &uniquePalette[j] ) ) {
+        if ( j >= *_unique_size ) {
             rgbi_move( &_source[i], &uniquePalette[*_unique_size]);
             ++*_unique_size;
         }
