@@ -7040,6 +7040,40 @@ RGBi * palette_match( RGBi * _source, int _source_size, RGBi * _system, int _sys
 }
 
 /**
+ * @brief Remove duplicates from a palette
+ * 
+ * @param _source Source palette to check
+ * @param _source_size Size of the source palette
+ * @param _unique_size Size of the unique palette
+ * @return RGBi* Palette without duplications
+ */
+RGBi * palette_remove_duplicates( RGBi * _source, int _source_size, int * _unique_size ) {
+
+    RGBi * uniquePalette = malloc_palette( _source_size );
+    *_unique_size = 0;
+
+    for ( i=0; i<_source_size; ++i ) {
+
+        for( j=0; j<*_unique_size; ++j ) {
+
+            if ( rgbi_equals_rgba( &_source[i], uniquePalette[j] ) ) {
+                break;
+            }
+
+        }
+
+        if ( !rgbi_equals_rgba( &_source[i], uniquePalette[j] ) ) {
+            rgbi_move( &_source[i], uniquePalette[*_unique_size]);
+            ++*_unique_size;
+        }
+
+    }
+
+    return uniquePalette;
+
+}
+
+/**
  * @brief Make a "palette merge"
  * 
  * @param _palette1 First palette to merge

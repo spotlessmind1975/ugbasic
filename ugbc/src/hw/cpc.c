@@ -1371,12 +1371,15 @@ static Variable * cpc_image_converter_multicolor_mode_lores( Environment * _envi
     if ( ! commonPalette ) {
 
         commonPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
+        commonPalette = palette_remove_duplicates( commonPalette, paletteColorCount, &paletteColorCount );
         lastUsedSlotInCommonPalette = paletteColorCount;
         adilinepalette( "CPM1:%d", paletteColorCount, commonPalette );
 
     } else {
 
         RGBi * newPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
+        
+        newPalette = palette_remove_duplicates( newPalette, paletteColorCount, &paletteColorCount );
 
         adilinepalette( "CPM1:%d", paletteColorCount, newPalette );
 

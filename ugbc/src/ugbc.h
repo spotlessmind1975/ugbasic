@@ -3168,6 +3168,7 @@ void                    out_var( Environment * _environment, char * _port, char 
 
 RGBi *                  palette_match( RGBi * _source, int _source_size, RGBi * _system, int _system_size );
 RGBi *                  palette_merge( RGBi * _palette1, int _palette1_size, RGBi * _palette2, int _palette2_size, int * _size );
+RGBi *                  palette_remove_duplicates( RGBi * _source, int _source_size, int * _unique_size );
 void                    paper( Environment * _environment, char * _paper );
 Variable *              param_procedure( Environment * _environment, char * _name );
 Variable *              parse_buffer_definition( Environment * _environment, char * _buffer, VariableType _type );
