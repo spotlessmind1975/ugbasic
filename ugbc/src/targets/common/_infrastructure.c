@@ -7058,14 +7058,14 @@ RGBi * palette_remove_duplicates( RGBi * _source, int _source_size, int * _uniqu
 
         for( j=0; j<*_unique_size; ++j ) {
 
-            if ( rgbi_equals_rgba( &_source[i], uniquePalette[j] ) ) {
+            if ( rgbi_equals_rgba( &_source[i], &uniquePalette[j] ) ) {
                 break;
             }
 
         }
 
-        if ( !rgbi_equals_rgba( &_source[i], uniquePalette[j] ) ) {
-            rgbi_move( &_source[i], uniquePalette[*_unique_size]);
+        if ( !rgbi_equals_rgba( &_source[i], &uniquePalette[j] ) ) {
+            rgbi_move( &_source[i], &uniquePalette[*_unique_size]);
             ++*_unique_size;
         }
 
