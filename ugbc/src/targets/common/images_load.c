@@ -136,8 +136,6 @@ Variable * images_load( Environment * _environment, char * _filename, char * _al
 
     char * lookedFilename = image_load_asserts( _environment, _filename );
 
-    adiline2("LIS:%s:%s", _filename, lookedFilename );
-
     unsigned char* source = stbi_load(lookedFilename, &width, &height, &depth, 0);
 
     if ( !source ) {
@@ -167,6 +165,8 @@ Variable * images_load( Environment * _environment, char * _filename, char * _al
     int realFramesCount = (a*hc*wc);
     i = 0;
     di = 1;
+
+    adiline2("LIS:%s:%s:%2.2x", _filename, lookedFilename, realFramesCount );
 
     if( _flags & FLAG_FLIP_X ) {
         source = image_flip_x( _environment, source, width, height, depth );
