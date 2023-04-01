@@ -6650,6 +6650,11 @@ int rgbi_extract_palette( Environment * _environment, unsigned char* _source, in
             } else {
                 rgb.alpha = 255;
             }
+            if ( rgb.alpha == 0 ) {
+                rgb.red = 0;
+                rgb.green = 0;
+                rgb.blue = 0;
+            }
             rgb.count = 0;
 
             // printf("%2.2x%2.2x%2.2x %2.2x\n", rgb.red, rgb.blue, rgb.green, rgb.alpha );
