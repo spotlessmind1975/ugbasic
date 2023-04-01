@@ -710,7 +710,7 @@ Variable * variable_retrieve_or_define( Environment * _environment, char * _name
 
     if ( var ) {
         if ( VT_BITWIDTH( var->type ) != VT_BITWIDTH( _type ) && VT_BITWIDTH( _type ) > 0 && VT_BITWIDTH( var->type ) > 0 ) {
-            var = variable_cast( _environment, var->name, _type );
+            var = variable_cast( _environment, var->name, VT_SIGNED( var->type ) ? VT_SIGN( _type ) : _type );
         }
         return var;
     }
