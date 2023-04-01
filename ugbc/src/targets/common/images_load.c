@@ -166,7 +166,7 @@ Variable * images_load( Environment * _environment, char * _filename, char * _al
     i = 0;
     di = 1;
 
-    adiline2("LIS:%s:%s:%2.2x", _filename, lookedFilename, realFramesCount );
+    adiline3("LIS:%s:%s:%2.2x", _filename, lookedFilename, realFramesCount );
 
     if( _flags & FLAG_FLIP_X ) {
         source = image_flip_x( _environment, source, width, height, depth );
