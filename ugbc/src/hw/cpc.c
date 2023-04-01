@@ -1143,6 +1143,8 @@ static Variable * cpc_image_converter_bitmap_mode_hires( Environment * _environm
     // Position of the pixel, in terms of offset and bitmask
     int offset, bitmask;
 
+    int colorIndex;
+    
     // Color of the pixel to convert
     RGBi rgb;
 
@@ -1172,23 +1174,26 @@ static Variable * cpc_image_converter_bitmap_mode_hires( Environment * _environm
             }
 
             if ( rgb.alpha < 255 ) {
-                i = 0;
+                colorIndex = 0;
             } else {
-                if ( ! rgbi_equals_rgba( &commonPalette[0], &rgb ) ) {
-                    i = 1;
-                } else {
-                    i = 0;
+                int minDistance = 9999;
+                for( int i=0; i<lastUsedSlotInCommonPalette; ++i ) {
+                    int distance = rgbi_distance(&commonPalette[i], &rgb );
+                    if ( distance < minDistance ) {
+                        minDistance = distance;
+                        colorIndex = i;
+                    }
                 }
             }
 
-            adilinepixel(i);
+            adilinepixel(colorIndex);
 
             // Calculate the offset starting from the tile surface area
             // and the bit to set.
             offset = (image_y *( _frame_width >> 3 ) ) + (image_x >> 3 );
             bitmask = 1 << ( 7 - (image_x & 0x7) );
 
-            if ( i == 1 ) {
+            if ( colorIndex == 1 ) {
                 *( buffer + offset + 3) |= bitmask;
             } else {
                 *( buffer + offset + 3) &= ~bitmask;
@@ -1494,7 +1499,7 @@ static Variable * cpc_image_converter_multicolor_mode_lores( Environment * _envi
                 rgb.green = 0;
                 rgb.blue = 0;
             }
-            
+
             // Calculate the offset starting from the tile surface area
             // and the bit to set.
             offset = (image_y * ( _frame_width >> 1 ) ) + (image_x>>1);
