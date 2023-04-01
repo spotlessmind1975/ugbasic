@@ -1165,6 +1165,11 @@ static Variable * cpc_image_converter_bitmap_mode_hires( Environment * _environm
             } else {
                 rgb.alpha = 255;
             }
+            if ( rgb.alpha == 0 ) {
+                rgb.red = 0;
+                rgb.green = 0;
+                rgb.blue = 0;
+            }
 
             if ( rgb.alpha < 255 ) {
                 i = 0;
@@ -1300,6 +1305,11 @@ static Variable * cpc_image_converter_multicolor_mode_midres( Environment * _env
                 rgb.alpha = *(_source + 3);
             } else {
                 rgb.alpha = 255;
+            }
+            if ( rgb.alpha == 0 ) {
+                rgb.red = 0;
+                rgb.green = 0;
+                rgb.blue = 0;
             }
 
             // Calculate the offset starting from the tile surface area
@@ -1479,7 +1489,12 @@ static Variable * cpc_image_converter_multicolor_mode_lores( Environment * _envi
             } else {
                 rgb.alpha = 255;
             }
-
+            if ( rgb.alpha == 0 ) {
+                rgb.red = 0;
+                rgb.green = 0;
+                rgb.blue = 0;
+            }
+            
             // Calculate the offset starting from the tile surface area
             // and the bit to set.
             offset = (image_y * ( _frame_width >> 1 ) ) + (image_x>>1);
