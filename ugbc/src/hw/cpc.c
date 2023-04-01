@@ -1100,10 +1100,27 @@ static Variable * cpc_image_converter_bitmap_mode_hires( Environment * _environm
 
     int i, j, k;
 
-    RGBi * matchedPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
-    palette = palette_remove_duplicates( palette, paletteColorCount, &paletteColorCount );
+    if ( ! commonPalette ) {
 
-    adilinepalette( "CPM1:%d", paletteColorCount, matchedPalette );
+        commonPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
+        commonPalette = palette_remove_duplicates( commonPalette, paletteColorCount, &paletteColorCount );
+        lastUsedSlotInCommonPalette = paletteColorCount;
+        adilinepalette( "CPM1:%d", paletteColorCount, commonPalette );
+
+    } else {
+
+        RGBi * newPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
+        newPalette = palette_remove_duplicates( newPalette, paletteColorCount, &paletteColorCount );
+        adilinepalette( "CPM1:%d", paletteColorCount, newPalette );
+
+        int mergedCommonPalette = 0;
+
+        commonPalette = palette_merge( commonPalette, lastUsedSlotInCommonPalette, newPalette, paletteColorCount, &mergedCommonPalette );
+
+        lastUsedSlotInCommonPalette = mergedCommonPalette;
+        adilinepalette( "CPM2:%d", lastUsedSlotInCommonPalette, commonPalette );
+
+    }
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = lastUsedSlotInCommonPalette;
@@ -1152,7 +1169,7 @@ static Variable * cpc_image_converter_bitmap_mode_hires( Environment * _environm
             if ( rgb.alpha < 255 ) {
                 i = 0;
             } else {
-                if ( ! rgbi_equals_rgba( &palette[0], &rgb ) ) {
+                if ( ! rgbi_equals_rgba( &commonPalette[0], &rgb ) ) {
                     i = 1;
                 } else {
                     i = 0;
@@ -1185,14 +1202,14 @@ static Variable * cpc_image_converter_bitmap_mode_hires( Environment * _environm
     int hwIndex;
 
     if ( lastUsedSlotInCommonPalette > 1 ) {
-        hwIndex = matchedPalette[1].hardwareIndex;
+        hwIndex = commonPalette[1].hardwareIndex;
     } else {
         hwIndex = 0xff;
     }
     *(buffer + 3 + ( ( _frame_width >> 3 ) * _frame_height ) + 1 ) = hwIndex;
 
     if ( lastUsedSlotInCommonPalette > 1 ) {
-        hwIndex = matchedPalette[0].hardwareIndex;
+        hwIndex = commonPalette[0].hardwareIndex;
     } else {
         hwIndex = 0xff;
     }
