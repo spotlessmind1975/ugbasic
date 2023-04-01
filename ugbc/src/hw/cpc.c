@@ -1235,6 +1235,10 @@ static Variable * cpc_image_converter_multicolor_mode_midres( Environment * _env
 
     int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_GRAPHIC1 );
     
+    adiline3("BMP:%4.4x:%4.4x:%2.2x", _frame_width, _frame_height, BITMAP_MODE_GRAPHIC0 );
+
+    adilinebeginbitmap("BMD");
+
     char * buffer = malloc ( bufferSize );
     memset( buffer, 0, bufferSize );
 
@@ -1292,6 +1296,8 @@ static Variable * cpc_image_converter_multicolor_mode_midres( Environment * _env
             if ( _environment->debugImageLoad ) {
                 printf("%1.1x", colorIndex );
             }
+            
+            adilinepixel(colorIndex);
 
             bitmask = ( ( colorIndex & 0x1 ) ) << (3 - ((image_x & 0x3)));
             bitmask |= ( ( ( colorIndex & 0x2 ) ) << 3 ) << (3 - ((image_x & 0x3)));
