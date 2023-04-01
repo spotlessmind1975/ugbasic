@@ -2240,7 +2240,7 @@ void gtia_put_image( Environment * _environment, char * _image, char * _x, char 
         outline0("LDA TMPPTR+1" );
         outline0("ADC #0" );
         outline0("STA TMPPTR+1" );
-        if ( strlen(_frame) == 0 ) {
+        if ( strlen(_sequence) == 0 ) {
 
         } else {
             outline1("LDA #<OFFSETS%4.4x", _frame_size * _frame_count );
