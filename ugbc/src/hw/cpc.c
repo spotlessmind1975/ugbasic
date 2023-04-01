@@ -1235,7 +1235,7 @@ static Variable * cpc_image_converter_multicolor_mode_midres( Environment * _env
 
     int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_GRAPHIC1 );
     
-    adiline3("BMP:%4.4x:%4.4x:%2.2x", _frame_width, _frame_height, BITMAP_MODE_GRAPHIC0 );
+    adiline3("BMP:%4.4x:%4.4x:%2.2x", _frame_width, _frame_height, BITMAP_MODE_GRAPHIC1 );
 
     adilinebeginbitmap("BMD");
 
@@ -1314,6 +1314,8 @@ static Variable * cpc_image_converter_multicolor_mode_midres( Environment * _env
             printf("\n" );
         }
     }
+
+    adilineendbitmap();
 
     if ( _environment->debugImageLoad ) {
         printf("\n" );
