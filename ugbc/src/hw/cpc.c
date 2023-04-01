@@ -1118,6 +1118,9 @@ static Variable * cpc_image_converter_bitmap_mode_hires( Environment * _environm
         commonPalette = palette_merge( commonPalette, lastUsedSlotInCommonPalette, newPalette, paletteColorCount, &mergedCommonPalette );
 
         lastUsedSlotInCommonPalette = mergedCommonPalette;
+        if ( lastUsedSlotInCommonPalette > 2 ) {
+            lastUsedSlotInCommonPalette = 2;
+        }
         adilinepalette( "CPM2:%d", lastUsedSlotInCommonPalette, commonPalette );
 
     }
@@ -1144,7 +1147,7 @@ static Variable * cpc_image_converter_bitmap_mode_hires( Environment * _environm
     int offset, bitmask;
 
     int colorIndex;
-    
+
     // Color of the pixel to convert
     RGBi rgb;
 
@@ -1263,6 +1266,9 @@ static Variable * cpc_image_converter_multicolor_mode_midres( Environment * _env
         commonPalette = palette_merge( commonPalette, lastUsedSlotInCommonPalette, newPalette, paletteColorCount, &mergedCommonPalette );
 
         lastUsedSlotInCommonPalette = mergedCommonPalette;
+        if ( lastUsedSlotInCommonPalette > 4 ) {
+            lastUsedSlotInCommonPalette = 4;
+        }
         adilinepalette( "CPM2:%d", lastUsedSlotInCommonPalette, commonPalette );
 
     }
@@ -1445,7 +1451,9 @@ static Variable * cpc_image_converter_multicolor_mode_lores( Environment * _envi
         commonPalette = palette_merge( commonPalette, lastUsedSlotInCommonPalette, newPalette, paletteColorCount, &mergedCommonPalette );
 
         lastUsedSlotInCommonPalette = mergedCommonPalette;
-
+        if ( lastUsedSlotInCommonPalette > 16 ) {
+            lastUsedSlotInCommonPalette = 16;
+        }
         adilinepalette( "CPM2:%d", lastUsedSlotInCommonPalette, commonPalette );
 
     }
