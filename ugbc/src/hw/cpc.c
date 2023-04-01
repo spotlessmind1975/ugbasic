@@ -1101,6 +1101,8 @@ static Variable * cpc_image_converter_bitmap_mode_hires( Environment * _environm
     int i, j, k;
 
     RGBi * matchedPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
+    commonPalette = palette_remove_duplicates( commonPalette, paletteColorCount, &paletteColorCount );
+
     adilinepalette( "CPM1:%d", paletteColorCount, matchedPalette );
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
@@ -1108,6 +1110,11 @@ static Variable * cpc_image_converter_bitmap_mode_hires( Environment * _environm
     memcpy( result->originalPalette, commonPalette, lastUsedSlotInCommonPalette * sizeof( RGBi ) );
 
     int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_GRAPHIC2 );
+
+    adiline3("BMP:%4.4x:%4.4x:%2.2x", _frame_width, _frame_height, BITMAP_MODE_GRAPHIC2 );
+
+    adilinebeginbitmap("BMD");
+
     char * buffer = malloc ( bufferSize );
 
     // Position of the pixel in the original image
@@ -1152,6 +1159,8 @@ static Variable * cpc_image_converter_bitmap_mode_hires( Environment * _environm
                 }
             }
 
+            adilinepixel(i);
+
             // Calculate the offset starting from the tile surface area
             // and the bit to set.
             offset = (image_y *( _frame_width >> 3 ) ) + (image_x >> 3 );
@@ -1170,6 +1179,8 @@ static Variable * cpc_image_converter_bitmap_mode_hires( Environment * _environm
         _source += ( _width - _frame_width ) * _depth;
 
     }
+
+    adilineendbitmap();
 
     int hwIndex;
 
