@@ -1684,43 +1684,51 @@ static Variable * gtia_image_converter_bitmap_mode_standard( Environment * _envi
 
     image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
-    RGBi palette[MAX_PALETTE];
+    RGBi * palette = malloc_palette( MAX_PALETTE );
+    
+    int paletteColorCount = rgbi_extract_palette(_environment, _source, _width, _height, _depth, palette, MAX_PALETTE, ( ( _flags & FLAG_EXACT ) ? 0 : 1 ) /* sorted */);
 
-    int colorUsed = rgbi_extract_palette(_environment, _source, _width, _height, _depth, palette, MAX_PALETTE, ( ( _flags & FLAG_EXACT ) ? 0 : 1 ) /* sorted */);
-
-    if (colorUsed > 2) {
-        CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
+    if (paletteColorCount > 2) {
+        CRITICAL_IMAGE_CONVERTER_TOO_COLORS( paletteColorCount );
     }
-
-    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
-    result->originalColors = colorUsed;
 
     int i, j, k;
 
-    for( i=0; i<colorUsed; ++i ) {
-        int minDistance = 0xffff;
-        int colorIndex = 0;
-        for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
-            int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
-            if (distance < minDistance) {
-                for( k=0; k<i; ++k ) {
-                    if ( palette[k].index == SYSTEM_PALETTE[j].index ) {
-                        break;
-                    }
-                }
-                if ( k>=i ) {
-                    minDistance = distance;
-                    colorIndex = j;
-                }
-            }
+    if ( ! commonPalette ) {
+
+        commonPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
+        commonPalette = palette_remove_duplicates( commonPalette, paletteColorCount, &paletteColorCount );
+        lastUsedSlotInCommonPalette = paletteColorCount;
+        adilinepalette( "CPM1:%d", paletteColorCount, commonPalette );
+
+    } else {
+
+        RGBi * newPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
+        newPalette = palette_remove_duplicates( newPalette, paletteColorCount, &paletteColorCount );
+        adilinepalette( "CPM1:%d", paletteColorCount, newPalette );
+
+        int mergedCommonPalette = 0;
+
+        commonPalette = palette_merge( commonPalette, lastUsedSlotInCommonPalette, newPalette, paletteColorCount, &mergedCommonPalette );
+
+        lastUsedSlotInCommonPalette = mergedCommonPalette;
+        if ( lastUsedSlotInCommonPalette > 2 ) {
+            lastUsedSlotInCommonPalette = 2;
         }
-        palette[i].index = SYSTEM_PALETTE[colorIndex].index;
-        strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
+        adilinepalette( "CPM2:%d", lastUsedSlotInCommonPalette, commonPalette );
+
     }
 
-    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
+    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
+    result->originalColors = lastUsedSlotInCommonPalette;
+    memcpy( result->originalPalette, commonPalette, lastUsedSlotInCommonPalette * sizeof( RGBi ) );
 
     int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_ANTIC9 );
+
+    adiline3("BMP:%4.4x:%4.4x:%2.2x", _frame_width, _frame_height, BITMAP_MODE_ANTIC9 );
+
+    adilinebeginbitmap("BMD");
+
     char * buffer = malloc ( bufferSize );
 
     // Position of the pixel in the original image
@@ -1731,6 +1739,8 @@ static Variable * gtia_image_converter_bitmap_mode_standard( Environment * _envi
     
     // Position of the pixel, in terms of offset and bitmask
     int offset, bitmask;
+
+    int colorIndex;
 
     // Color of the pixel to convert
     RGBi rgb;
@@ -1754,16 +1764,26 @@ static Variable * gtia_image_converter_bitmap_mode_standard( Environment * _envi
             } else {
                 rgb.alpha = 255;
             }
+            if ( rgb.alpha == 0 ) {
+                rgb.red = 0;
+                rgb.green = 0;
+                rgb.blue = 0;
+            }
 
             if ( rgb.alpha < 255 ) {
-                i = 0;
+                colorIndex = 0;
             } else {
-                for( i=0; i<colorUsed; ++i ) {
-                    if ( rgbi_equals_rgba( &palette[i], &rgb ) ) {
-                        break;
+                int minDistance = 9999;
+                for( int i=0; i<lastUsedSlotInCommonPalette; ++i ) {
+                    int distance = rgbi_distance(&commonPalette[i], &rgb );
+                    if ( distance < minDistance ) {
+                        minDistance = distance;
+                        colorIndex = i;
                     }
                 }
             }
+
+            adilinepixel(colorIndex);
 
             // printf("%d", i );
 
@@ -1788,13 +1808,15 @@ static Variable * gtia_image_converter_bitmap_mode_standard( Environment * _envi
 
     }
 
-    if ( colorUsed > 1 ) {
+    adilineendbitmap();
+
+    if ( lastUsedSlotInCommonPalette > 1 ) {
         *(buffer + 3 + ( ( _frame_width >> 3 ) * _frame_height ) + 1 ) = palette[1].index;
     } else {
         *(buffer + 3 + ( ( _frame_width >> 3 ) * _frame_height ) + 1 ) = 0xff;
     }
 
-    if ( colorUsed > 0 ) {
+    if ( lastUsedSlotInCommonPalette > 0 ) {
         *(buffer + 3 + ( ( _frame_width >> 3 ) * _frame_height ) ) = palette[0].index;
     } else {
         *(buffer + 3 + ( ( _frame_width >> 3 ) * _frame_height ) ) = 0xff;
