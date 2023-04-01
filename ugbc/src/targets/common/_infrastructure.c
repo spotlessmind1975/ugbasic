@@ -7072,6 +7072,9 @@ RGBi * palette_remove_duplicates( RGBi * _source, int _source_size, int * _uniqu
         if ( j >= *_unique_size ) {
             rgbi_move( &_source[i], &uniquePalette[*_unique_size]);
             ++*_unique_size;
+            if ( *_unique_size == _source_size ) {
+                break;
+            }
         }
 
     }

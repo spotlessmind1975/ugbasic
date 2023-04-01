@@ -1101,7 +1101,7 @@ static Variable * cpc_image_converter_bitmap_mode_hires( Environment * _environm
     int i, j, k;
 
     RGBi * matchedPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
-    commonPalette = palette_remove_duplicates( commonPalette, paletteColorCount, &paletteColorCount );
+    palette = palette_remove_duplicates( palette, paletteColorCount, &paletteColorCount );
 
     adilinepalette( "CPM1:%d", paletteColorCount, matchedPalette );
 
