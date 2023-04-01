@@ -1101,6 +1101,7 @@ static Variable * cpc_image_converter_bitmap_mode_hires( Environment * _environm
     int i, j, k;
 
     RGBi * matchedPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
+    adilinepalette( "CPM1:%d", paletteColorCount, matchedPalette );
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = lastUsedSlotInCommonPalette;
@@ -1209,17 +1210,22 @@ static Variable * cpc_image_converter_multicolor_mode_midres( Environment * _env
     if ( ! commonPalette ) {
 
         commonPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
+        commonPalette = palette_remove_duplicates( commonPalette, paletteColorCount, &paletteColorCount );
         lastUsedSlotInCommonPalette = paletteColorCount;
-    
+        adilinepalette( "CPM1:%d", paletteColorCount, commonPalette );
+
     } else {
 
         RGBi * newPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
+        newPalette = palette_remove_duplicates( newPalette, paletteColorCount, &paletteColorCount );
+        adilinepalette( "CPM1:%d", paletteColorCount, newPalette );
 
         int mergedCommonPalette = 0;
 
         commonPalette = palette_merge( commonPalette, lastUsedSlotInCommonPalette, newPalette, paletteColorCount, &mergedCommonPalette );
 
         lastUsedSlotInCommonPalette = mergedCommonPalette;
+        adilinepalette( "CPM2:%d", lastUsedSlotInCommonPalette, commonPalette );
 
     }
 
