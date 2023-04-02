@@ -1767,60 +1767,30 @@ static Variable * vic2_image_converter_bitmap_mode_standard( Environment * _envi
 
     image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
-    RGBi palette[MAX_PALETTE];
+    RGBi * palette = malloc_palette( MAX_PALETTE );
+    
+    int paletteColorCount = rgbi_extract_palette(_environment, _source, _width, _height, _depth, palette, MAX_PALETTE, ( ( _flags & FLAG_EXACT ) ? 0 : 1 ) /* sorted */);
 
-    int colorUsed = rgbi_extract_palette(_environment, _source, _width, _height, _depth, palette, COLOR_COUNT, 1 /* sorted */);
-
-    // if (colorUsed > 2) {
-    //     CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
-    // }
-
-    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
-    result->originalColors = colorUsed;
+    if (paletteColorCount > 16) {
+        CRITICAL_IMAGE_CONVERTER_TOO_COLORS( paletteColorCount );
+    }
 
     int i, j, k;
 
-    for( i=0; i<colorUsed; ++i ) {
-        int minDistance = 0xffff;
-        int colorIndex = 0;
-        for (j = 0; j < COLOR_COUNT; ++j) {
-            int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
-            // printf("%d <-> %d [%d] = %d [min = %d]\n", i, j, SYSTEM_PALETTE[j].index, distance, minDistance );
-            if (distance < minDistance) {
-                // printf(" candidated...\n" );
-                for( k=0; k<i; ++k ) {
-                    if ( palette[k].index == SYSTEM_PALETTE[j].index ) {
-                        // printf(" ...used!\n" );
-                        break;
-                    }
-                }
-                if ( k>=i ) {
-                    // printf(" ...ok! (%d)\n", SYSTEM_PALETTE[j].index );
-                    minDistance = distance;
-                    colorIndex = j;
-                }
-            }
-        }
-        palette[i].index = SYSTEM_PALETTE[colorIndex].index;
-        strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
-        // printf("%d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
-    }
+    commonPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
+    commonPalette = palette_remove_duplicates( commonPalette, paletteColorCount, &paletteColorCount );
+    lastUsedSlotInCommonPalette = paletteColorCount;
+    adilinepalette( "CPM1:%d", paletteColorCount, commonPalette );
 
-    if ( _flags & FLAG_TRANSPARENCY ) {
-        if ( palette[0].index == SYSTEM_PALETTE[0].index ) {
+    adilinepalette( "CPMS:%d", sizeof(SYSTEM_PALETTE) / sizeof(RGBi), SYSTEM_PALETTE );
 
-        } else {
-            rgbi_move( &palette[2], &palette[3] );
-            rgbi_move( &palette[1], &palette[2] );
-            rgbi_move( &palette[0], &palette[1] );
-            rgbi_move( &SYSTEM_PALETTE[0], &palette[0] );
-        }
-
-    }
-
-    memcpy( result->originalPalette, palette, COLOR_COUNT * sizeof( RGBi ) );
+    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
+    result->originalColors = lastUsedSlotInCommonPalette;
+    memcpy( result->originalPalette, commonPalette, lastUsedSlotInCommonPalette * sizeof( RGBi ) );
 
     int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_STANDARD );
+
+    adiline3("BMP:%4.4x:%4.4x:%2.2x", _frame_width, _frame_height, BITMAP_MODE_STANDARD );
 
     // printf("bufferSize = %d\n", bufferSize );
 
@@ -1863,100 +1833,31 @@ static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _
 
     image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
-    RGBi palette[MAX_PALETTE];
+    RGBi * palette = malloc_palette( MAX_PALETTE );
+    
+    int paletteColorCount = rgbi_extract_palette(_environment, _source, _width, _height, _depth, palette, MAX_PALETTE, ( ( _flags & FLAG_EXACT ) ? 0 : 1 ) /* sorted */);
 
-    int colorUsed = rgbi_extract_palette(_environment, _source, _width, _height, _depth, palette, MAX_PALETTE, 1 /* sorted */ );
-
-    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
-    result->originalColors = colorUsed;
+    if (paletteColorCount > 16) {
+        CRITICAL_IMAGE_CONVERTER_TOO_COLORS( paletteColorCount );
+    }
 
     int i, j, k;
 
-    if ( ( _flags & FLAG_TRANSPARENCY ) ) {
-        if (colorUsed > 3) {
-            CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
-        }
-    } else if ( ( _flags & FLAG_OVERLAYED ) ) {
-        if (colorUsed > 3) {
-            CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
-        }
-    } else {
-        // if (colorUsed > 4) {
-        //     CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
-        // }
-    }
+    commonPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
+    commonPalette = palette_remove_duplicates( commonPalette, paletteColorCount, &paletteColorCount );
+    lastUsedSlotInCommonPalette = paletteColorCount;
+    adilinepalette( "CPM1:%d", paletteColorCount, commonPalette );
 
-    for( i=0; i<colorUsed; ++i ) {
-        int minDistance = 0xffff;
-        int colorIndex = 0;
-        for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
-            int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
-            if (distance < minDistance) {
-                for( k=0; k<i; ++k ) {
-                    if ( palette[k].index == SYSTEM_PALETTE[j].index ) {
-                        break;
-                    }
-                }
-                if ( k>=i ) {
-                    minDistance = distance;
-                    colorIndex = j;
-                }
-            }
-        }
-        palette[i].index = SYSTEM_PALETTE[colorIndex].index;
-        strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
-    }
+    adilinepalette( "CPMS:%d", sizeof(SYSTEM_PALETTE) / sizeof(RGBi), SYSTEM_PALETTE );
 
-    if ( _flags & FLAG_OVERLAYED ) {
-        rgbi_move( &palette[2], &palette[3] );
-        rgbi_move( &palette[1], &palette[2] );
-        rgbi_move( &palette[0], &palette[1] );
-        rgbi_move( &SYSTEM_PALETTE[0], &palette[0] );
-        ++colorUsed;
-    }
-
-    if ( _flags & FLAG_TRANSPARENCY ) {
-        if ( palette[0].index == SYSTEM_PALETTE[0].index ) {
-            rgbi_move( &palette[2], &palette[3] );
-            rgbi_move( &palette[1], &palette[2] );
-            rgbi_move( &SYSTEM_PALETTE[0], &palette[0] );
-            rgbi_move( &SYSTEM_PALETTE[0], &palette[1] );
-        } else {
-            rgbi_move( &palette[1], &palette[3] );
-            rgbi_move( &palette[0], &palette[2] );
-            rgbi_move( &SYSTEM_PALETTE[0], &palette[0] );
-            rgbi_move( &SYSTEM_PALETTE[0], &palette[1] );
-        }
-        ++colorUsed;
-    }
-
-    if ( _transparent_color != -1 ) {
-        if ( colorUsed < 4 ) {
-            for( i=0;i<COLOR_COUNT;++i) {
-                if ( SYSTEM_PALETTE[i].index == _transparent_color ) {
-                    rgbi_move(&palette[0], &palette[colorUsed]);
-                    ++colorUsed;
-                    rgbi_move(&SYSTEM_PALETTE[i], &palette[0]);
-                    break;
-                }
-            }
-        } else {
-            for(i=0;i<4;++i) {
-                if ( palette[i].index == _transparent_color ) {
-                    RGBi tmp;
-                    rgbi_move(&palette[i], &tmp);
-                    rgbi_move(&palette[0], &palette[i]);
-                    rgbi_move(&tmp, &palette[0]);
-                    break;
-                }
-            }
-        }
-    }
-
-    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
+    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
+    result->originalColors = lastUsedSlotInCommonPalette;
+    memcpy( result->originalPalette, commonPalette, lastUsedSlotInCommonPalette * sizeof( RGBi ) );
 
     int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_MULTICOLOR );
     
+    adiline3("BMP:%4.4x:%4.4x:%2.2x", _frame_width, _frame_height, BITMAP_MODE_MULTICOLOR );
+
     char * buffer = malloc ( bufferSize );
     memset( buffer, 0, bufferSize );
 
