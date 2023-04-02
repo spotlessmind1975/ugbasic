@@ -56,6 +56,7 @@ static RGBi SYSTEM_PALETTE_ALTERNATE[][4] = {
 static RGBi * SYSTEM_PALETTE = &SYSTEM_PALETTE_ALTERNATE[0][0];
 
 static RGBi * commonPalette;
+int lastUsedSlotInCommonPalette = 0;
 
 /****************************************************************************
  * CODE SECTION
@@ -1104,6 +1105,9 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
     RGBi white = { 0xff, 0xff, 0xff, 0xff };
     RGBi black = { 0x00, 0x00, 0x00, 0x00 };
 
+    // ignored on bitmap mode
+    (void)!_transparent_color;
+
     image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
     RGBi * palette = malloc_palette( MAX_PALETTE );
@@ -1116,15 +1120,21 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
 
     int i, j, k;
 
-    RGBi * matchedPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
+    commonPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
+    commonPalette = palette_remove_duplicates( commonPalette, paletteColorCount, &paletteColorCount );
+    lastUsedSlotInCommonPalette = paletteColorCount;
+    adilinepalette( "CPM1:%d", paletteColorCount, commonPalette );
+
+    adilinepalette( "CPMS:%ld", sizeof(SYSTEM_PALETTE) / sizeof(RGBi), SYSTEM_PALETTE );
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
-    result->originalColors = paletteColorCount;
-
-    memcpy( result->originalPalette, matchedPalette, paletteColorCount * sizeof( RGBi ) );
+    result->originalColors = lastUsedSlotInCommonPalette;
+    memcpy( result->originalPalette, commonPalette, lastUsedSlotInCommonPalette * sizeof( RGBi ) );
 
     int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_RESOLUTION1 );
     // printf("bufferSize = %d\n", bufferSize );
+
+    adiline3("BMP:%4.4x:%4.4x:%2.2x", _frame_width, _frame_height, BITMAP_MODE_RESOLUTION1 );
 
     char * buffer = malloc ( bufferSize );
     memset( buffer, 0, bufferSize );
@@ -1146,6 +1156,10 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
 
     _source += ( ( _offset_y * _width ) + _offset_x ) * _depth;
 
+    adilinebeginbitmap("MD2");
+
+    int colorIndex = 0;
+
     // Loop for all the source surface.
     for (image_y = 0; image_y < _frame_height; ++image_y) {
         for (image_x = 0; image_x < _frame_width; ++image_x) {
@@ -1159,15 +1173,23 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
             } else {
                 rgb.alpha = 255;
             }
+            if ( rgb.alpha == 0 ) {
+                rgb.red = 0;
+                rgb.green = 0;
+                rgb.blue = 0;
+            }
 
             if ( ( rgb.alpha < 255 ) || rgbi_equals_rgba( &black, &rgb ) ) {
                 i = 0;
             } else if ( ( rgb.alpha == 255 ) && rgbi_equals_rgba( &white, &rgb ) ) {
                 i = 1;
             } else {
-                for( i=0; i<paletteColorCount; ++i ) {
-                    if ( rgbi_equals_rgba( &palette[i], &rgb ) ) {
-                        break;
+                int minDistance = 9999;
+                for( int i=0; i<lastUsedSlotInCommonPalette; ++i ) {
+                    int distance = rgbi_distance(&commonPalette[i], &rgb );
+                    if ( distance < minDistance ) {
+                        minDistance = distance;
+                        colorIndex = commonPalette[i].index;
                     }
                 }
             }
@@ -1187,6 +1209,8 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
                 // printf(" ");
             }
 
+            adilinepixel(colorIndex);
+
             _source += _depth;
 
         }
@@ -1196,6 +1220,8 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
         // printf("\n" );
 
     }
+
+    adilineendbitmap();
 
     // printf("----\n");
 
