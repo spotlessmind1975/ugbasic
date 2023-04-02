@@ -1185,11 +1185,11 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
                 i = 1;
             } else {
                 int minDistance = 9999;
-                for( int i=0; i<(sizeof(SYSTEM_PALETTE[0]) / sizeof(RGBi)); ++i ) {
-                    int distance = rgbi_distance(&SYSTEM_PALETTE[i], &rgb );
+                for( int i=0; i<2; ++i ) {
+                    int distance = rgbi_distance(&commonPalette[i], &rgb );
                     if ( distance < minDistance ) {
                         minDistance = distance;
-                        colorIndex = SYSTEM_PALETTE[i].index;
+                        colorIndex = commonPalette[i].index;
                     }
                 }
             }
@@ -1201,7 +1201,7 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
             offset = ( image_y * ( _frame_width >> 3 ) ) + ( image_x >> 3 );
             bitmask = 1 << ( 7 - (image_x & 0x7) );
 
-            if ( i == 1 ) {
+            if ( colorIndex == commonPalette[1].index) {
                 *( buffer + offset + 2) |= bitmask;
                 // printf("*");
             } else {
@@ -1209,7 +1209,7 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
                 // printf(" ");
             }
 
-            adilinepixel(colorIndex);
+            adilinepixel(commonPalette[colorIndex].index);
 
             _source += _depth;
 
