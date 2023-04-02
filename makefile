@@ -431,7 +431,7 @@ generated/coleco/exeso/%.rom: $(subst /generated/exeso/,/examples/,$(@:.rom=.bas
 toolchain.cpc: z88dk
 
 generated/cpc/asm/%.asm:
-	@ugbc/exe/ugbc.cpc $(OPTIONS) $(subst generated/cpc/asm/,examples/,$(@:.asm=.bas)) $@ 
+	ugbc/exe/ugbc.cpc $(OPTIONS) $(subst generated/cpc/asm/,examples/,$(@:.asm=.bas)) $@ 
 
 generated/cpc/exe/%.dsk:
 	@$(Z80ASM) -D__cpc__ -l -m -s -g -b $(subst /exe/,/asm/,$(@:.dsk=.asm))
@@ -443,7 +443,7 @@ generated/cpc/exe/%.dsk:
 	@rm -f $(@:.dsk=.bin) $(@:.dsk=_*.bin) $(@:.dsk=.) $(@:.dsk=_*.) $(dir $@)main.
 
 generated/cpc/exeso/%.dsk: $(subst /generated/exeso/,/examples/,$(@:.dsk=.bas))
-	@ugbc/exe/ugbc.cpc $(OPTIONS) -o $@ -O dsk $(subst generated/cpc/exeso/,examples/,$(@:.dsk=.bas))
+	ugbc/exe/ugbc.cpc $(OPTIONS) -d -D $(@:.dsk=.info) -o $@ -O dsk $(subst generated/cpc/exeso/,examples/,$(@:.dsk=.bas))
 
 #------------------------------------------------ 
 # coco:
@@ -546,7 +546,7 @@ generated/msx1/exe/%.rom:
 	@rm -f $(@:.rom=.bin) $(@:.rom=_*.bin)
 
 generated/msx1/exeso/%.rom: $(subst /generated/exeso/,/examples/,$(@:.rom=.bas))
-	@ugbc/exe/ugbc.msx1 $(OPTIONS) -o $@ -O rom $(subst generated/msx1/exeso/,examples/,$(@:.rom=.bas))
+	@ugbc/exe/ugbc.msx1 $(OPTIONS) -D $(@:.rom=.info) -o $@ -O rom $(subst generated/msx1/exeso/,examples/,$(@:.rom=.bas))
 
 #------------------------------------------------ 
 # pc128:
@@ -663,7 +663,7 @@ generated/vic20/exe/%.prg: $(subst /exe/,/asm/,$(@:.prg=.asm))
 	@rm -f $(@:.prg=.o)
 
 generated/vic20/exeso/%.prg: $(subst /generated/exeso/,/examples/,$(@:.prg=.bas))
-	@ugbc/exe/ugbc.vic20 $(OPTIONS) -o $@ -O rom $(subst generated/vic20/exeso/,examples/,$(@:.prg=.bas))
+	@ugbc/exe/ugbc.vic20 $(OPTIONS) -o $@ -O prg $(subst generated/vic20/exeso/,examples/,$(@:.prg=.bas))
 
 #------------------------------------------------ 
 # zx:
