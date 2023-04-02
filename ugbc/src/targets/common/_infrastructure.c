@@ -6194,6 +6194,14 @@ int calculate_exact_tile( TileDescriptor * _tile, TileDescriptors * _tiles ) {
 
     int i=0;
 
+    if ( ! _tiles ) {
+        return -1;
+    }
+
+    if ( ! _tiles->descriptor ) {
+        return -1;
+    }
+
     for(i=0;i<256;++i) {
         if ( _tiles->descriptor[i] ) {
             if ( calculate_tile_affinity( _tile, _tiles->descriptor[i] ) == 0 ) {
