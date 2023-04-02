@@ -197,6 +197,7 @@ static void vic2_image_converter_tile( Environment * _environment, char * _sourc
 
             if ( rgb.alpha < 255 ) {
                 *( _dest + y ) &= ~bitmask;
+                adilinepixel(colorBackground);
             } else {
                 if ( systemRgb->index != colorBackground ) {
                     adilinepixel(colorForeground);
@@ -401,22 +402,26 @@ static void vic2_image_converter_tile_multicolor( Environment * _environment, ch
             char colorIndex = 0;
 
             if ( rgb.alpha < 255 ) {
+                adilinepixel(colorBackground);
                 colorIndex = 0;
             } else {
 
                 RGBi *systemRgb = vic2_image_nearest_system_color( &rgb );
 
                 if ( systemRgb->index == colorFirst ) {
+                    adilinepixel(colorFirst);
                     colorIndex = 1;
                 } else if ( systemRgb->index == colorSecond ) {
+                    adilinepixel(colorSecond);
                     colorIndex = 2;
                 } else if ( systemRgb->index == colorThird ) {
+                    adilinepixel(colorThird);
                     colorIndex = 3;
+                } else {
+                    adilinepixel(colorBackground);
                 }
 
             }
-
-            adilinepixel(colorIndex);
 
             char bitmask = colorIndex << (6 - ((x & 0x3) * 2));
 
