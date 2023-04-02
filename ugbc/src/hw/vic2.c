@@ -418,7 +418,7 @@ static void vic2_image_converter_tile_multicolor( Environment * _environment, ch
                     adilinepixel(colorThird);
                     colorIndex = 3;
                 } else {
-                    adilinepixel(colorBackground);
+                    adilinepixel(_background);
                 }
 
             }
