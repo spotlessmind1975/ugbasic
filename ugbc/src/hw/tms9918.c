@@ -38,8 +38,8 @@
 #include <math.h>
 
 static RGBi SYSTEM_PALETTE[] = {
-        { 0x00, 0x00, 0x00, 0xff, 1, "BLACK" },
         { 0x00, 0x00, 0x00, 0xff, 0, "TRANSPARENT" },
+        { 0x00, 0x00, 0x00, 0xff, 1, "BLACK" },
         { 0x00, 0x80, 0x00, 0xff, 2, "GREEN" },
         { 0x00, 0xff, 0x00, 0xff, 3, "LIGHT_GREEN" },
         { 0x00, 0x00, 0x80, 0xff, 4, "DARK_BLUE" },
@@ -185,7 +185,7 @@ static void tms9918_image_converter_tile( Environment * _environment, char * _so
                 rgb.green = 0;
                 rgb.blue = 0;
             }
-            
+
             RGBi *systemRgb = tms9918_image_nearest_system_color( &rgb );
 
             char bitmask = 1 << ( 7 - ((x) & 0x7) );
