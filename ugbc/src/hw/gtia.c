@@ -1840,7 +1840,7 @@ static Variable * gtia_image_converter_multicolor_mode_standard( Environment * _
     
     int paletteColorCount = rgbi_extract_palette(_environment, _source, _width, _height, _depth, palette, MAX_PALETTE, ( ( _flags & FLAG_EXACT ) ? 0 : 1 ) /* sorted */);
 
-    if (paletteColorCount > 2) {
+    if (paletteColorCount > 4) {
         CRITICAL_IMAGE_CONVERTER_TOO_COLORS( paletteColorCount );
     }
 
@@ -1874,7 +1874,7 @@ static Variable * gtia_image_converter_multicolor_mode_standard( Environment * _
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = lastUsedSlotInCommonPalette;
     memcpy( result->originalPalette, commonPalette, lastUsedSlotInCommonPalette * sizeof( RGBi ) );
-    
+
     int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_ANTIC8 );
     
     adiline3("BMP:%4.4x:%4.4x:%2.2x", _frame_width, _frame_height, BITMAP_MODE_ANTIC8 );
