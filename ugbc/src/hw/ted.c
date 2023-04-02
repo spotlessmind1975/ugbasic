@@ -56,6 +56,9 @@ static RGBi SYSTEM_PALETTE[] = {
     { 0x43, 0xa6, 0x59, 0xff, 15, "LIGHT GREEN"  } 
 };
 
+static RGBi * commonPalette;
+int lastUsedSlotInCommonPalette = 0;
+
 /****************************************************************************
  * CODE SECTION
  ****************************************************************************/
@@ -87,7 +90,7 @@ RGBi * ted_image_nearest_system_color( RGBi * _color ) {
  * this function will need the picture _width in order
  * to move to the next line to analyze.
  */
-static void ted_image_converter_tile( char * _source, char * _dest, int _width, int _depth, int _source_width ) {
+static void ted_image_converter_tile( Environment * _environment, char * _source, char * _dest, int _width, int _depth, int _source_width ) {
 
     int colorIndexesCount[COLOR_COUNT];
     memset(colorIndexesCount, 0, COLOR_COUNT * sizeof( int ) );
@@ -109,6 +112,16 @@ static void ted_image_converter_tile( char * _source, char * _dest, int _width, 
             rgb.red = *source;
             rgb.green = *(source + 1);
             rgb.blue = *(source + 2);
+            if ( _depth > 3 ) {
+                rgb.alpha = *(_source + 3);
+            } else {
+                rgb.alpha = 255;
+            }
+            if ( rgb.alpha == 0 ) {
+                rgb.red = 0;
+                rgb.green = 0;
+                rgb.blue = 0;
+            }
 
             RGBi *systemRgb = ted_image_nearest_system_color( &rgb );
 
@@ -156,17 +169,34 @@ static void ted_image_converter_tile( char * _source, char * _dest, int _width, 
             rgb.red = *source;
             rgb.green = *(source + 1);
             rgb.blue = *(source + 2);
+            if ( _depth > 3 ) {
+                rgb.alpha = *(_source + 3);
+            } else {
+                rgb.alpha = 255;
+            }
+            if ( rgb.alpha == 0 ) {
+                rgb.red = 0;
+                rgb.green = 0;
+                rgb.blue = 0;
+            }
 
             RGBi *systemRgb = ted_image_nearest_system_color( &rgb );
 
             char bitmask = 1 << ( 7 - ((x) & 0x7) );
 
-            if ( systemRgb->index != colorBackground ) {
-                *( _dest + y ) |= bitmask;
-                // printf("*");
-            } else {
+            if ( rgb.alpha < 255 ) {
                 *( _dest + y ) &= ~bitmask;
-                // printf(" ");
+                adilinepixel(colorBackground);
+            } else {
+                if ( systemRgb->index != colorBackground ) {
+                    adilinepixel(colorForeground);
+                    *( _dest + y ) |= bitmask;
+                    // printf("*");
+                } else {
+                   adilinepixel(colorBackground);
+                     *( _dest + y ) &= ~bitmask;
+                    // printf(" ");
+                }
             }
 
             source += _depth;
@@ -194,12 +224,14 @@ static void ted_image_converter_tile( char * _source, char * _dest, int _width, 
  * this function will need the picture _source_width in order
  * to move to the next line to analyze.
  */
-static void ted_image_converter_tiles( char * _source, char * _dest, int _width, int _height, int _depth, int _source_width ) {
+static void ted_image_converter_tiles( Environment * _environment, char * _source, char * _dest, int _width, int _height, int _depth, int _source_width ) {
 
     int bitmapSize = ( _width>>3 ) * _height;
     int colormapSize = ( _width>>3 ) * (_height>>3);
 
     memset( _dest, 0, bitmapSize + colormapSize );
+
+    adilinebeginbitmap("BMD4");
 
     for( int y=0; y<_height; y+=8 ) {
         for( int x=0; x<_width; x+=8 ) {
@@ -207,7 +239,7 @@ static void ted_image_converter_tiles( char * _source, char * _dest, int _width,
             char * source = _source + ( ( y * _source_width ) + x ) * _depth;
             char tile[9];
 
-            ted_image_converter_tile( source, tile, _width, _depth, _source_width );
+            ted_image_converter_tile( _environment, source, tile, _width, _depth, _source_width );
 
             int offset = ((y>>3) * 8 *( _width >> 3 ) ) + ((x>>3) * 8) + ((y) & 0x07);
             // x = 8, y = 8
@@ -225,6 +257,9 @@ static void ted_image_converter_tiles( char * _source, char * _dest, int _width,
             *destColormap = tile[8];            
         }
     }
+
+     adilineendbitmap();
+   
 }
 
 /**
@@ -240,7 +275,7 @@ static void ted_image_converter_tiles( char * _source, char * _dest, int _width,
  * color should be given since it is not settable and it will
  * be returned as low nibble of second color byte.
  */
-static void ted_image_converter_tile_multicolor( char * _source, char * _dest, int _width, int _depth, int _background, int _source_width ) {
+static void ted_image_converter_tile_multicolor( Environment * _environment, char * _source, char * _dest, int _width, int _depth, int _background, int _source_width ) {
 
     int colorIndexesCount[COLOR_COUNT];
     memset(colorIndexesCount, 0, COLOR_COUNT * sizeof( int ) );
@@ -262,6 +297,16 @@ static void ted_image_converter_tile_multicolor( char * _source, char * _dest, i
             rgb.red = *source;
             rgb.green = *(source + 1);
             rgb.blue = *(source + 2);
+            if ( _depth > 3 ) {
+                rgb.alpha = *(_source + 3);
+            } else {
+                rgb.alpha = 255;
+            }
+            if ( rgb.alpha == 0 ) {
+                rgb.red = 0;
+                rgb.green = 0;
+                rgb.blue = 0;
+            }
 
             RGBi *systemRgb = ted_image_nearest_system_color( &rgb );
 
@@ -323,19 +368,43 @@ static void ted_image_converter_tile_multicolor( char * _source, char * _dest, i
             rgb.red = *source;
             rgb.green = *(source + 1);
             rgb.blue = *(source + 2);
+            if ( _depth > 3 ) {
+                rgb.alpha = *(_source + 3);
+            } else {
+                rgb.alpha = 255;
+            }
+            if ( rgb.alpha == 0 ) {
+                rgb.red = 0;
+                rgb.green = 0;
+                rgb.blue = 0;
+            }
 
             RGBi *systemRgb = ted_image_nearest_system_color( &rgb );
 
             char colorIndex = 0;
 
-            if ( systemRgb->index == colorFirst ) {
-                colorIndex = 1;
-            } else if ( systemRgb->index == colorSecond ) {
-                colorIndex = 2;
-            } else if ( systemRgb->index == colorThird ) {
-                colorIndex = 3;
+            if ( rgb.alpha < 255 ) {
+                adilinepixel(_background);
+                colorIndex = 0;
+            } else {
+
+                RGBi *systemRgb = ted_image_nearest_system_color( &rgb );
+
+                if ( systemRgb->index == colorFirst ) {
+                    adilinepixel(colorFirst);
+                    colorIndex = 1;
+                } else if ( systemRgb->index == colorSecond ) {
+                    adilinepixel(colorSecond);
+                    colorIndex = 2;
+                } else if ( systemRgb->index == colorThird ) {
+                    adilinepixel(colorThird);
+                    colorIndex = 3;
+                } else {
+                    adilinepixel(_background);
+                }
+
             }
-            
+
             char bitmask = colorIndex << (6 - ((x & 0x3) * 2));
 
             *(_dest + y) |= bitmask;
@@ -366,7 +435,7 @@ static void ted_image_converter_tile_multicolor( char * _source, char * _dest, i
  * color is fixed also if it is returned as lower nibble
  * of one byte of 2 of colors.
  */
-static void ted_image_converter_tiles_multicolor( char * _source, char * _dest, int _width, int _height, int _depth, int _source_width, int _background ) {
+static void ted_image_converter_tiles_multicolor( Environment * _environment, char * _source, char * _dest, int _width, int _height, int _depth, int _source_width, int _background ) {
 
     int bitmapSize = ( _width>>2 ) * _height;
     int colormap1Size = ( _width>>2 ) * (_height>>3);
@@ -374,13 +443,15 @@ static void ted_image_converter_tiles_multicolor( char * _source, char * _dest, 
 
     memset( _dest, 0, bitmapSize + colormap1Size + colormap2Size );
 
+    adilinebeginbitmap("BMD4");
+
     for( int y=0; y<_height; y+=8 ) {
         for( int x=0; x<_width; x+=4 ) {
 
             char * source = _source + ( ( y * _source_width ) + x ) * _depth;
             char tile[10];
 
-            ted_image_converter_tile_multicolor( source, tile, _width, _depth, _background, _source_width );
+            ted_image_converter_tile_multicolor( _environment, source, tile, _width, _depth, _background, _source_width );
 
             int offset = ((y>>3) * 8 *( _width >> 2 ) ) + ((x>>2) * 8) + ((y) & 0x07);
 
@@ -395,6 +466,9 @@ static void ted_image_converter_tiles_multicolor( char * _source, char * _dest, 
             *destColormap2 = tile[9];
         }
     }
+
+    adilineendbitmap();
+
 }
 
 void ted_collision( Environment * _environment, char * _sprite_mask, char * _result ) {
@@ -423,7 +497,7 @@ void ted_border_color( Environment * _environment, char * _border_color ) {
 }
 
 /**
- * @brief <i>TED</i>: emit code to change background color
+ * @brief <i>TED</i>: emit code to change bac_kground color
  * 
  * This function can be used to issue code aimed at changing the
  * background color of the screen.
@@ -1255,50 +1329,32 @@ static int calculate_image_size( Environment * _environment, int _width, int _he
 static Variable * ted_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
 
     image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
-    
-    RGBi palette[MAX_PALETTE];
 
-    int colorUsed = rgbi_extract_palette(_environment, _source, _width, _height, _depth, palette, MAX_PALETTE, 1 /* sorted */);
-
-    // if (colorUsed > 2) {
-    //     CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
-    // }
+    RGBi * palette = malloc_palette( MAX_PALETTE );
     
-    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
-    result->originalColors = colorUsed;
+    int paletteColorCount = rgbi_extract_palette(_environment, _source, _width, _height, _depth, palette, MAX_PALETTE, ( ( _flags & FLAG_EXACT ) ? 0 : 1 ) /* sorted */);
+
+    if (paletteColorCount > 16) {
+        CRITICAL_IMAGE_CONVERTER_TOO_COLORS( paletteColorCount );
+    }
 
     int i, j, k;
 
-    for( i=0; i<colorUsed; ++i ) {
-        int minDistance = 0xffff;
-        int colorIndex = 0;
-        for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
-            int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
-            // printf("%d <-> %d [%d] = %d [min = %d]\n", i, j, SYSTEM_PALETTE[j].index, distance, minDistance );
-            if (distance < minDistance) {
-                // printf(" candidated...\n" );
-                for( k=0; k<i; ++k ) {
-                    if ( palette[k].index == SYSTEM_PALETTE[j].index ) {
-                        // printf(" ...used!\n" );
-                        break;
-                    }
-                }
-                if ( k>=i ) {
-                    // printf(" ...ok! (%d)\n", SYSTEM_PALETTE[j].index );
-                    minDistance = distance;
-                    colorIndex = j;
-                }
-            }
-        }
-        palette[i].index = SYSTEM_PALETTE[colorIndex].index;
-        strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
-        // printf("%d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
-    }
- 
-    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
+    commonPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
+    commonPalette = palette_remove_duplicates( commonPalette, paletteColorCount, &paletteColorCount );
+    lastUsedSlotInCommonPalette = paletteColorCount;
+    adilinepalette( "CPM1:%d", paletteColorCount, commonPalette );
+
+    adilinepalette( "CPMS:%ld", sizeof(SYSTEM_PALETTE) / sizeof(RGBi), SYSTEM_PALETTE );
+
+    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
+    result->originalColors = lastUsedSlotInCommonPalette;
+    memcpy( result->originalPalette, commonPalette, lastUsedSlotInCommonPalette * sizeof( RGBi ) );
 
     int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_STANDARD );
     // printf("bufferSize = %d\n", bufferSize );
+
+    adiline3("BMP:%4.4x:%4.4x:%2.2x", _frame_width, _frame_height, BITMAP_MODE_STANDARD );
 
     char * buffer = malloc ( bufferSize );
     memset( buffer, 0, bufferSize );
@@ -1321,7 +1377,7 @@ static Variable * ted_image_converter_bitmap_mode_standard( Environment * _envir
 
     _source += ( ( _offset_y * _width ) + _offset_x ) * _depth;
 
-    ted_image_converter_tiles( _source, buffer+3, _frame_width, _frame_height, _depth, _width );
+    ted_image_converter_tiles( _environment, _source, buffer+3, _frame_width, _frame_height, _depth, _width );
 
     variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
 
@@ -1334,49 +1390,31 @@ static Variable * ted_image_converter_multicolor_mode_standard( Environment * _e
 
     image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
-    RGBi palette[MAX_PALETTE];
+    RGBi * palette = malloc_palette( MAX_PALETTE );
+    
+    int paletteColorCount = rgbi_extract_palette(_environment, _source, _width, _height, _depth, palette, MAX_PALETTE, ( ( _flags & FLAG_EXACT ) ? 0 : 1 ) /* sorted */);
 
-    int colorUsed = rgbi_extract_palette(_environment, _source, _width, _height, _depth, palette, MAX_PALETTE, 1 /* sorted */);
-
-    // if (colorUsed > 4) {
-    //     CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
-    // }
-
-    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
-    result->originalColors = colorUsed;
+    if (paletteColorCount > 16) {
+        CRITICAL_IMAGE_CONVERTER_TOO_COLORS( paletteColorCount );
+    }
 
     int i, j, k;
 
-    for( i=0; i<colorUsed; ++i ) {
-        int minDistance = 0xffff;
-        int colorIndex = 0;
-        for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
-            int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
-            //printf("%d <-> %d [%d] = %d [min = %d]\n", i, j, SYSTEM_PALETTE[j].index, distance, minDistance );
-            if (distance < minDistance) {
-                //printf(" candidated...\n" );
-                for( k=0; k<i; ++k ) {
-                    if ( palette[k].index == SYSTEM_PALETTE[j].index ) {
-                        //printf(" ...used!\n" );
-                        break;
-                    }
-                }
-                if ( k>=i ) {
-                    //printf(" ...ok! (%d)\n", SYSTEM_PALETTE[j].index );
-                    minDistance = distance;
-                    colorIndex = j;
-                }
-            }
-        }
-        palette[i].index = SYSTEM_PALETTE[colorIndex].index;
-        strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
-        // printf("%d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
-    }
+    commonPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
+    commonPalette = palette_remove_duplicates( commonPalette, paletteColorCount, &paletteColorCount );
+    lastUsedSlotInCommonPalette = paletteColorCount;
+    adilinepalette( "CPM1:%d", paletteColorCount, commonPalette );
 
-    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
+    adilinepalette( "CPMS:%ld", sizeof(SYSTEM_PALETTE) / sizeof(RGBi), SYSTEM_PALETTE );
+
+    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
+    result->originalColors = lastUsedSlotInCommonPalette;
+    memcpy( result->originalPalette, commonPalette, lastUsedSlotInCommonPalette * sizeof( RGBi ) );
     
     int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_MULTICOLOR );
     
+    adiline3("BMP:%4.4x:%4.4x:%2.2x", _frame_width, _frame_height, BITMAP_MODE_MULTICOLOR );
+
     char * buffer = malloc ( bufferSize );
     memset( buffer, 0, bufferSize );
 
@@ -1398,7 +1436,7 @@ static Variable * ted_image_converter_multicolor_mode_standard( Environment * _e
 
     _source += ( ( _offset_y * _frame_width ) + _offset_x ) * 3;
 
-    ted_image_converter_tiles_multicolor( _source, buffer+3, _frame_width, _frame_height, _depth, _width, palette[0].index );
+    ted_image_converter_tiles_multicolor( _environment, _source, buffer+3, _frame_width, _frame_height, _depth, _width, palette[0].index );
 
     variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
 
