@@ -1631,6 +1631,8 @@ static Variable * tms9918_image_converter_bitmap_mode_standard( Environment * _e
 
     }
 
+    adilinepalette( "CPMS:%d", sizeof(SYSTEM_PALETTE) / sizeof(RGBi), SYSTEM_PALETTE );
+
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = lastUsedSlotInCommonPalette;
     memcpy( result->originalPalette, commonPalette, lastUsedSlotInCommonPalette * sizeof( RGBi ) );
