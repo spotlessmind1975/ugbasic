@@ -1120,12 +1120,12 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
 
     int i, j, k;
 
-    commonPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
+    commonPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE_ALTERNATE[0]) / sizeof(RGBi) );
     commonPalette = palette_remove_duplicates( commonPalette, paletteColorCount, &paletteColorCount );
     lastUsedSlotInCommonPalette = paletteColorCount;
     adilinepalette( "CPM1:%d", paletteColorCount, commonPalette );
 
-    adilinepalette( "CPMS:%ld", sizeof(SYSTEM_PALETTE) / sizeof(RGBi), SYSTEM_PALETTE );
+    adilinepalette( "CPMS:%ld", sizeof(SYSTEM_PALETTE_ALTERNATE[0]) / sizeof(RGBi), SYSTEM_PALETTE );
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = lastUsedSlotInCommonPalette;
@@ -1156,7 +1156,7 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
 
     _source += ( ( _offset_y * _width ) + _offset_x ) * _depth;
 
-    adilinebeginbitmap("MD2");
+    adilinebeginbitmap("BMD2");
 
     int colorIndex = 0;
 
