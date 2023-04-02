@@ -107,8 +107,6 @@ static void tms9918_image_converter_tile( Environment * _environment, char * _so
     // Clear the box and colors
     memset( _dest, 0, 16 );
 
-    adilinebeginbitmap("BMD2");
-
     // Loop for all the box surface
     for (int y=0; y<8; ++y) {
 
@@ -192,8 +190,6 @@ static void tms9918_image_converter_tile( Environment * _environment, char * _so
 
     }
 
-    adilineendbitmap();
-
     //printf("\n\n");
 
     for( int i=0; i<8; ++i ) {
@@ -220,6 +216,8 @@ static void tms9918_image_converter_tiles( Environment * _environment, char * _s
 
     memset( _dest, 0, bitmapSize + colormapSize );
 
+    adilinebeginbitmap("BMD2");
+
     for( int y=0; y<_height; y+=8 ) {
         for( int x=0; x<_width; x+=8 ) {
 
@@ -244,6 +242,9 @@ static void tms9918_image_converter_tiles( Environment * _environment, char * _s
             }
         }
     }
+
+    adilineendbitmap();
+
 }
 
 /**
