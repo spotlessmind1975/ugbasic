@@ -1614,7 +1614,7 @@ static Variable * tms9918_image_converter_bitmap_mode_standard( Environment * _e
     // ignored on bitmap mode
     (void)!_transparent_color;
 
-    image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
+    image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
     RGBi * palette = malloc_palette( MAX_PALETTE );
     
@@ -1631,7 +1631,7 @@ static Variable * tms9918_image_converter_bitmap_mode_standard( Environment * _e
     lastUsedSlotInCommonPalette = paletteColorCount;
     adilinepalette( "CPM1:%d", paletteColorCount, commonPalette );
 
-    adilinepalette( "CPMS:%d", sizeof(SYSTEM_PALETTE) / sizeof(RGBi), SYSTEM_PALETTE );
+    adilinepalette( "CPMS:%ld", sizeof(SYSTEM_PALETTE) / sizeof(RGBi), SYSTEM_PALETTE );
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = lastUsedSlotInCommonPalette;
