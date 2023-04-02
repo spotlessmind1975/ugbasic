@@ -92,6 +92,7 @@ RGBi * ted_image_nearest_system_color( RGBi * _color ) {
  */
 static void ted_image_converter_tile( Environment * _environment, char * _source, char * _dest, int _width, int _depth, int _source_width ) {
 
+    int trans = 0;
     int colorIndexesCount[COLOR_COUNT];
     memset(colorIndexesCount, 0, COLOR_COUNT * sizeof( int ) );
 
@@ -166,7 +167,7 @@ static void ted_image_converter_tile( Environment * _environment, char * _source
             colorBackground = 0;
         }
     }
-    
+
     source = _source;
 
     for (int y=0; y<8; ++y) {
