@@ -240,7 +240,7 @@ static void vic2_image_converter_tiles( Environment * _environment, char * _sour
 
     memset( _dest, 0, bitmapSize + colormapSize );
 
-    adilinebeginbitmap("BMD2");
+    adilinebeginbitmap("BMD4");
 
     for( int y=0; y<_height; y+=8 ) {
         for( int x=0; x<_width; x+=8 ) {
@@ -461,7 +461,7 @@ static void vic2_image_converter_tiles_multicolor( Environment * _environment, c
 
     memset( _dest, 0, bitmapSize + colormap1Size + colormap2Size );
 
-    adilinebeginbitmap("BMD2");
+    adilinebeginbitmap("BMD4");
 
     for( int y=0; y<_height; y+=8 ) {
         for( int x=0; x<_width; x+=4 ) {
