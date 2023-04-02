@@ -240,7 +240,7 @@ static void vic2_image_converter_tiles( Environment * _environment, char * _sour
 
     memset( _dest, 0, bitmapSize + colormapSize );
 
-    adilinebeginbitmap("BMD4");
+    adilinebeginbitmap("BMD2");
 
     for( int y=0; y<_height; y+=8 ) {
         for( int x=0; x<_width; x+=8 ) {

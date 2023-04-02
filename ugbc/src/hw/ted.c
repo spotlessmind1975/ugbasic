@@ -123,11 +123,12 @@ static void ted_image_converter_tile( Environment * _environment, char * _source
                 rgb.blue = 0;
             }
 
-            RGBi *systemRgb = ted_image_nearest_system_color( &rgb );
-
-            ++colorIndexesCount[systemRgb->index];
-
-// printf( "%2.2x %2.2x\n", systemRgb->index, colorIndexesCount[systemRgb->index] );
+            if ( rgb.alpha < 255 ) {
+                trans = 1;
+            } else {
+                RGBi *systemRgb = ted_image_nearest_system_color( &rgb );
+                ++colorIndexesCount[systemRgb->index];
+            }
 
             source += _depth;
 
@@ -157,6 +158,15 @@ static void ted_image_converter_tile( Environment * _environment, char * _source
         };
     }
 
+    if ( trans ) {
+        if ( colorForeground == 0 ) {
+            colorForeground = colorBackground; 
+            colorBackground = 0;
+        } else {
+            colorBackground = 0;
+        }
+    }
+    
     source = _source;
 
     for (int y=0; y<8; ++y) {
