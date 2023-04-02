@@ -402,7 +402,7 @@ static void vic2_image_converter_tile_multicolor( Environment * _environment, ch
             char colorIndex = 0;
 
             if ( rgb.alpha < 255 ) {
-                adilinepixel(colorBackground);
+                adilinepixel(_background);
                 colorIndex = 0;
             } else {
 
