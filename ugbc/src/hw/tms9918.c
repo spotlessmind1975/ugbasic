@@ -175,7 +175,17 @@ static void tms9918_image_converter_tile( Environment * _environment, char * _so
             rgb.red = *source;
             rgb.green = *(source + 1);
             rgb.blue = *(source + 2);
-
+            if ( _depth > 3 ) {
+                rgb.alpha = *(_source + 3);
+            } else {
+                rgb.alpha = 255;
+            }
+            if ( rgb.alpha == 0 ) {
+                rgb.red = 0;
+                rgb.green = 0;
+                rgb.blue = 0;
+            }
+            
             RGBi *systemRgb = tms9918_image_nearest_system_color( &rgb );
 
             char bitmask = 1 << ( 7 - ((x) & 0x7) );
