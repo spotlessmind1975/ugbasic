@@ -56,6 +56,9 @@ static RGBi SYSTEM_PALETTE[] = {
         { 0xbb, 0xbb, 0xbb, 0xff, 15, "LIGHT GREY" }
 };
 
+static RGBi * commonPalette;
+int lastUsedSlotInCommonPalette = 0;
+
 /****************************************************************************
  * CODE SECTION
  ****************************************************************************/
@@ -1782,7 +1785,7 @@ static Variable * vic2_image_converter_bitmap_mode_standard( Environment * _envi
     lastUsedSlotInCommonPalette = paletteColorCount;
     adilinepalette( "CPM1:%d", paletteColorCount, commonPalette );
 
-    adilinepalette( "CPMS:%d", sizeof(SYSTEM_PALETTE) / sizeof(RGBi), SYSTEM_PALETTE );
+    adilinepalette( "CPMS:%ld", sizeof(SYSTEM_PALETTE) / sizeof(RGBi), SYSTEM_PALETTE );
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = lastUsedSlotInCommonPalette;
@@ -1848,7 +1851,7 @@ static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _
     lastUsedSlotInCommonPalette = paletteColorCount;
     adilinepalette( "CPM1:%d", paletteColorCount, commonPalette );
 
-    adilinepalette( "CPMS:%d", sizeof(SYSTEM_PALETTE) / sizeof(RGBi), SYSTEM_PALETTE );
+    adilinepalette( "CPMS:%ld", sizeof(SYSTEM_PALETTE) / sizeof(RGBi), SYSTEM_PALETTE );
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
     result->originalColors = lastUsedSlotInCommonPalette;
