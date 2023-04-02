@@ -1185,11 +1185,11 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
                 i = 1;
             } else {
                 int minDistance = 9999;
-                for( int i=0; i<lastUsedSlotInCommonPalette; ++i ) {
-                    int distance = rgbi_distance(&commonPalette[i], &rgb );
+                for( int i=0; i<(sizeof(SYSTEM_PALETTE[0]) / sizeof(RGBi)); ++i ) {
+                    int distance = rgbi_distance(&SYSTEM_PALETTE[i], &rgb );
                     if ( distance < minDistance ) {
                         minDistance = distance;
-                        colorIndex = commonPalette[i].index;
+                        colorIndex = SYSTEM_PALETTE[i].index;
                     }
                 }
             }
