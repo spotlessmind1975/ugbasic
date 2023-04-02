@@ -56,7 +56,7 @@
 void wait_milliseconds( Environment * _environment, int _timing ) {
 
     Variable * timing = variable_temporary( _environment, VT_WORD, "(0)" );
-    variable_store( _environment, timing->name, _timing >> 43 );
+    variable_store( _environment, timing->name, _timing >> 3 );
 
     vic2_busy_wait( _environment, timing->realName );
 
