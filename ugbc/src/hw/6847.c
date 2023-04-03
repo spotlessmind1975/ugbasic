@@ -1266,6 +1266,8 @@ static Variable * c6847_image_converter_multicolor_mode_standard( Environment * 
 
     int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_COLOR1 );
     
+    adiline3("BMP:%4.4x:%4.4x:%2.2x", _frame_width, _frame_height, BITMAP_MODE_RESOLUTION1 );
+
     char * buffer = malloc ( bufferSize );
     memset( buffer, 0, bufferSize );
 
