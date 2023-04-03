@@ -7107,7 +7107,7 @@ RGBi * palette_shift( RGBi * _source, int _source_size, int _offset ) {
         return _source;
     }
 
-    RGBi * shiftedPalette = malloc_palette( _source_size );
+    RGBi * shiftedPalette = malloc_palette( MAX_PALETTE );
 
     if ( _offset > 0 ) {
         memmove( shiftedPalette + ( _offset * sizeof( RGBi ) ), _source, _source_size * sizeof( RGBi ) );
