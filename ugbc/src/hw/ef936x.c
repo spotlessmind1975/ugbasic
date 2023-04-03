@@ -909,15 +909,13 @@ static Variable * ef936x_image_converter_bitmap_mode_standard( Environment * _en
 
     if ( ! commonPalette ) {
 
-        commonPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
-        commonPalette = palette_remove_duplicates( commonPalette, paletteColorCount, &paletteColorCount );
+        commonPalette = palette_remove_duplicates( palette, paletteColorCount, &paletteColorCount );
         lastUsedSlotInCommonPalette = paletteColorCount;
         adilinepalette( "CPM1:%d", paletteColorCount, commonPalette );
 
     } else {
 
-        RGBi * newPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
-        newPalette = palette_remove_duplicates( newPalette, paletteColorCount, &paletteColorCount );
+        newPalette = palette_remove_duplicates( palette, paletteColorCount, &paletteColorCount );
         adilinepalette( "CPM1:%d", paletteColorCount, newPalette );
 
         int mergedCommonPalette = 0;
@@ -1048,15 +1046,13 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
 
     if ( ! commonPalette ) {
 
-        commonPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
-        commonPalette = palette_remove_duplicates( commonPalette, paletteColorCount, &paletteColorCount );
+        commonPalette = palette_remove_duplicates( palette, paletteColorCount, &paletteColorCount );
         lastUsedSlotInCommonPalette = paletteColorCount;
         adilinepalette( "CPM1:%d", paletteColorCount, commonPalette );
 
     } else {
 
-        RGBi * newPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
-        newPalette = palette_remove_duplicates( newPalette, paletteColorCount, &paletteColorCount );
+        newPalette = palette_remove_duplicates( palette, paletteColorCount, &paletteColorCount );
         adilinepalette( "CPM1:%d", paletteColorCount, newPalette );
 
         int mergedCommonPalette = 0;
@@ -1241,15 +1237,13 @@ static Variable * ef936x_image_converter_multicolor_mode4( Environment * _enviro
 
     if ( ! commonPalette ) {
 
-        commonPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
-        commonPalette = palette_remove_duplicates( commonPalette, paletteColorCount, &paletteColorCount );
+        commonPalette = palette_remove_duplicates( palette, paletteColorCount, &paletteColorCount );
         lastUsedSlotInCommonPalette = paletteColorCount;
         adilinepalette( "CPM1:%d", paletteColorCount, commonPalette );
 
     } else {
 
-        RGBi * newPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
-        newPalette = palette_remove_duplicates( newPalette, paletteColorCount, &paletteColorCount );
+        newPalette = palette_remove_duplicates( palette, paletteColorCount, &paletteColorCount );
         adilinepalette( "CPM1:%d", paletteColorCount, newPalette );
 
         int mergedCommonPalette = 0;
@@ -1395,17 +1389,15 @@ static Variable * ef936x_image_converter_multicolor_mode16( Environment * _envir
 
     if ( ! commonPalette ) {
 
-        commonPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
-        commonPalette = palette_remove_duplicates( commonPalette, paletteColorCount, &paletteColorCount );
+        commonPalette = palette_remove_duplicates( palette, paletteColorCount, &paletteColorCount );
         lastUsedSlotInCommonPalette = paletteColorCount;
         adilinepalette( "CPM1:%d", paletteColorCount, commonPalette );
 
     } else {
 
-        RGBi * newPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
-        newPalette = palette_remove_duplicates( newPalette, paletteColorCount, &paletteColorCount );
+        newPalette = palette_remove_duplicates( palette, paletteColorCount, &paletteColorCount );
         adilinepalette( "CPM1:%d", paletteColorCount, newPalette );
-
+        
         int mergedCommonPalette = 0;
 
         commonPalette = palette_merge( commonPalette, lastUsedSlotInCommonPalette, newPalette, paletteColorCount, &mergedCommonPalette );
