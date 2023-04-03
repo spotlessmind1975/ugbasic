@@ -1180,9 +1180,9 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
             }
 
             if ( ( rgb.alpha < 255 ) || rgbi_equals_rgba( &black, &rgb ) ) {
-                i = 0;
+                colorIndex = 0;
             } else if ( ( rgb.alpha == 255 ) && rgbi_equals_rgba( &white, &rgb ) ) {
-                i = 1;
+                colorIndex = 1;
             } else {
                 int minDistance = 9999;
                 for( int i=0; i<2; ++i ) {
