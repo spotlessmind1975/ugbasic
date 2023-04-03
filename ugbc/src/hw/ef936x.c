@@ -915,7 +915,7 @@ static Variable * ef936x_image_converter_bitmap_mode_standard( Environment * _en
 
     } else {
 
-        newPalette = palette_remove_duplicates( palette, paletteColorCount, &paletteColorCount );
+        RGBi * newPalette = palette_remove_duplicates( palette, paletteColorCount, &paletteColorCount );
         adilinepalette( "CPM1:%d", paletteColorCount, newPalette );
 
         int mergedCommonPalette = 0;
@@ -1052,7 +1052,7 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
 
     } else {
 
-        newPalette = palette_remove_duplicates( palette, paletteColorCount, &paletteColorCount );
+        RGBi * newPalette = palette_remove_duplicates( palette, paletteColorCount, &paletteColorCount );
         adilinepalette( "CPM1:%d", paletteColorCount, newPalette );
 
         int mergedCommonPalette = 0;
@@ -1243,7 +1243,7 @@ static Variable * ef936x_image_converter_multicolor_mode4( Environment * _enviro
 
     } else {
 
-        newPalette = palette_remove_duplicates( palette, paletteColorCount, &paletteColorCount );
+        RGBi * newPalette = palette_remove_duplicates( palette, paletteColorCount, &paletteColorCount );
         adilinepalette( "CPM1:%d", paletteColorCount, newPalette );
 
         int mergedCommonPalette = 0;
@@ -1395,9 +1395,9 @@ static Variable * ef936x_image_converter_multicolor_mode16( Environment * _envir
 
     } else {
 
-        newPalette = palette_remove_duplicates( palette, paletteColorCount, &paletteColorCount );
+        RGBi * newPalette = palette_remove_duplicates( palette, paletteColorCount, &paletteColorCount );
         adilinepalette( "CPM1:%d", paletteColorCount, newPalette );
-        
+
         int mergedCommonPalette = 0;
 
         commonPalette = palette_merge( commonPalette, lastUsedSlotInCommonPalette, newPalette, paletteColorCount, &mergedCommonPalette );
