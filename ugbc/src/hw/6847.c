@@ -1288,7 +1288,7 @@ static Variable * c6847_image_converter_multicolor_mode_standard( Environment * 
 
     _source += ( ( _offset_y * _width ) + _offset_x ) * _depth;
 
-    adilinebeginbitmap("BMD2");
+    adilinebeginbitmap("BMD");
 
     // Loop for all the source surface.
     for (image_y = 0; image_y < _frame_height; ++image_y) {
