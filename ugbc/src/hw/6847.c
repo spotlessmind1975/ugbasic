@@ -1338,12 +1338,12 @@ static Variable * c6847_image_converter_multicolor_mode_standard( Environment * 
 
         }
 
-        adilineendbitmap();
-
         _source += ( _width - _frame_width ) * _depth;
 
         // printf("\n" );
     }
+
+    adilineendbitmap();
 
     // for(i=0; i<4; ++i ) {
     //     printf( "%1.1x = %2.2x\n", i, palette[i].index );
