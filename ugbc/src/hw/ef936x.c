@@ -984,7 +984,7 @@ static Variable * ef936x_image_converter_bitmap_mode_standard( Environment * _en
             if ( rgb.alpha < 255 ) {
                 i = 0;
             } else {
-                for( i=0; i<2; ++i ) {
+                for( i=0; i<lastUsedSlotInCommonPalette; ++i ) {
                     if ( rgbi_equals_rgba( &commonPalette[i], &rgb ) ) {
                         break;
                     }
@@ -1324,7 +1324,7 @@ static Variable * ef936x_image_converter_multicolor_mode4( Environment * _enviro
             if ( rgb.alpha < 255 ) {
 
             } else {
-                for( i=0; i<4; ++i ) {
+                for( i=0; i<lastUsedSlotInCommonPalette; ++i ) {
                     unsigned int distance = rgbi_distance(&commonPalette[i], &rgb);
                     if ( minDistance > distance ) {
                         minDistance = distance;
@@ -1480,7 +1480,7 @@ static Variable * ef936x_image_converter_multicolor_mode16( Environment * _envir
             if ( rgb.alpha < 255 ) {
 
             } else {
-                for( i=0; i<16; ++i ) {
+                for( i=0; i<lastUsedSlotInCommonPalette; ++i ) {
                     int distance = rgbi_distance(&commonPalette[i], &rgb);
                     if ( minDistance > distance ) {
                         minDistance = distance;
