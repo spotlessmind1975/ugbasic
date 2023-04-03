@@ -1156,7 +1156,7 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
 
     _source += ( ( _offset_y * _width ) + _offset_x ) * _depth;
 
-    adilinebeginbitmap("BMD2");
+    adilinebeginbitmap("BMD");
 
     int colorIndex = 0;
 
@@ -1235,6 +1235,9 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
 
 static Variable * c6847_image_converter_multicolor_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
 
+    RGBi white = { 0xff, 0xff, 0xff, 0xff };
+    RGBi black = { 0x00, 0x00, 0x00, 0x00 };
+
     // ignored on bitmap mode
     (void)!_transparent_color;
 
@@ -1250,25 +1253,16 @@ static Variable * c6847_image_converter_multicolor_mode_standard( Environment * 
 
     int i, j, k;
 
-    if ( ! commonPalette ) {
+    commonPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE_ALTERNATE[0]) / sizeof(RGBi) );
+    commonPalette = palette_remove_duplicates( commonPalette, paletteColorCount, &paletteColorCount );
+    lastUsedSlotInCommonPalette = paletteColorCount;
+    adilinepalette( "CPM1:%d", paletteColorCount, commonPalette );
 
-        commonPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
-    
-    } else {
-
-        RGBi * newPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
-
-        int mergedCommonPalette = 0;
-
-        commonPalette = palette_merge( commonPalette, paletteColorCount, newPalette, paletteColorCount, &mergedCommonPalette );
-
-    }
+    adilinepalette( "CPMS:%ld", sizeof(SYSTEM_PALETTE_ALTERNATE[0]) / sizeof(RGBi), SYSTEM_PALETTE );
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
-
-    result->originalColors = paletteColorCount;
-
-    memcpy( result->originalPalette, commonPalette, MAX_PALETTE * sizeof( RGBi ) );
+    result->originalColors = lastUsedSlotInCommonPalette;
+    memcpy( result->originalPalette, commonPalette, lastUsedSlotInCommonPalette * sizeof( RGBi ) );
 
     int bufferSize = calculate_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_COLOR1 );
     
@@ -1292,6 +1286,8 @@ static Variable * c6847_image_converter_multicolor_mode_standard( Environment * 
 
     _source += ( ( _offset_y * _width ) + _offset_x ) * _depth;
 
+    adilinebeginbitmap("BMD");
+
     // Loop for all the source surface.
     for (image_y = 0; image_y < _frame_height; ++image_y) {
         for (image_x = 0; image_x < _frame_width; ++image_x) {
@@ -1305,6 +1301,11 @@ static Variable * c6847_image_converter_multicolor_mode_standard( Environment * 
             } else {
                 rgb.alpha = 255;
             }
+            if ( rgb.alpha == 0 ) {
+                rgb.red = 0;
+                rgb.green = 0;
+                rgb.blue = 0;
+            }
 
             offset = ( image_y * ( _frame_width >> 2 ) ) + ( image_x >> 2 );
 
@@ -1314,7 +1315,7 @@ static Variable * c6847_image_converter_multicolor_mode_standard( Environment * 
                 colorIndex = 0;
             } else {
                 int minDistance = 9999;
-                for( int i=0; i<4; ++i ) {
+                for( int i=0; i<lastUsedSlotInCommonPalette; ++i ) {
                     int distance = rgbi_distance(&commonPalette[i], &rgb );
                     if ( distance < minDistance ) {
                         minDistance = distance;
@@ -1322,6 +1323,8 @@ static Variable * c6847_image_converter_multicolor_mode_standard( Environment * 
                     }
                 }
             }
+
+            adilinepixel(colorIndex);
 
             // printf( "%1.1x", colorIndex );
 
@@ -1332,6 +1335,8 @@ static Variable * c6847_image_converter_multicolor_mode_standard( Environment * 
             _source += _depth;
 
         }
+
+        adilineendbitmap();
 
         _source += ( _width - _frame_width ) * _depth;
 
