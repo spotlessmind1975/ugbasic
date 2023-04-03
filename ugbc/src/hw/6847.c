@@ -1201,7 +1201,7 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
             offset = ( image_y * ( _frame_width >> 3 ) ) + ( image_x >> 3 );
             bitmask = 1 << ( 7 - (image_x & 0x7) );
 
-            if ( colorIndex == commonPalette[1].index) {
+            if ( colorIndex > 0) {
                 *( buffer + offset + 2) |= bitmask;
                 // printf("*");
             } else {
@@ -1209,7 +1209,7 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
                 // printf(" ");
             }
 
-            adilinepixel(commonPalette[colorIndex].index);
+            adilinepixel(colorIndex);
 
             _source += _depth;
 
