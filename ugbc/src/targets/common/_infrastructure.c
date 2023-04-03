@@ -7092,34 +7092,6 @@ RGBi * palette_remove_duplicates( RGBi * _source, int _source_size, int * _uniqu
 }
 
 /**
- * @brief Shift colors in palette
- * 
- * @param _source Source palette to shift
- * @param _source_size Size of the source palette
- * @param _offset Offset to shift (> 0 to right, < 0 to left)
- * @return RGBi* Shifted palette
- */
-RGBi * palette_shift( RGBi * _source, int _source_size, int _offset ) {
-
-    int i = 0;
-
-    if ( _offset == 0 ) {
-        return _source;
-    }
-
-    RGBi * shiftedPalette = malloc_palette( _source_size );
-
-    if ( _offset > 0 ) {
-        memmove( shiftedPalette + ( _offset * sizeof( RGBi ) ), _source, _source_size - ( _offset * sizeof( RGBi ) ) );
-    } else if ( _offset < 0 ) {
-        memmove( shiftedPalette, _source - ( _offset * sizeof( RGBi ) ), _source_size - ( _offset * sizeof( RGBi ) ) );
-   }
-
-    return shiftedPalette;
-
-}
-
-/**
  * @brief Make a "palette merge"
  * 
  * @param _palette1 First palette to merge

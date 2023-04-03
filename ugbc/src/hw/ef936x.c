@@ -1047,7 +1047,6 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
     if ( ! commonPalette ) {
 
         commonPalette = palette_remove_duplicates( palette, paletteColorCount, &paletteColorCount );
-        commonPalette = palette_shift( commonPalette, paletteColorCount, 1 );
         lastUsedSlotInCommonPalette = paletteColorCount;
         adilinepalette( "CPM1:%d", paletteColorCount, commonPalette );
 
@@ -1239,7 +1238,6 @@ static Variable * ef936x_image_converter_multicolor_mode4( Environment * _enviro
     if ( ! commonPalette ) {
 
         commonPalette = palette_remove_duplicates( palette, paletteColorCount, &paletteColorCount );
-        commonPalette = palette_shift( commonPalette, paletteColorCount, 1 );
         lastUsedSlotInCommonPalette = paletteColorCount;
         adilinepalette( "CPM1:%d", paletteColorCount, commonPalette );
 
@@ -1392,7 +1390,6 @@ static Variable * ef936x_image_converter_multicolor_mode16( Environment * _envir
     if ( ! commonPalette ) {
 
         commonPalette = palette_remove_duplicates( palette, paletteColorCount, &paletteColorCount );
-        commonPalette = palette_shift( commonPalette, paletteColorCount, 1 );
         lastUsedSlotInCommonPalette = paletteColorCount;
         adilinepalette( "CPM1:%d", paletteColorCount, commonPalette );
 
