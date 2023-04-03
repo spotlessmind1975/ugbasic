@@ -783,11 +783,11 @@ void ef936x_finalization( Environment * _environment ) {
 
     RGBi * palette;
 
-    // if ( commonPalette ) {
-    //     palette = commonPalette;
-    // } else {
+    if ( commonPalette ) {
+        palette = commonPalette;
+    } else {
         palette = SYSTEM_PALETTE;
-    // }
+    }
 
     for( i=0; i<15; ++i ) {
         switch( _environment->gammaCorrection ) {
