@@ -1047,7 +1047,7 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
     if ( ! commonPalette ) {
 
         commonPalette = palette_remove_duplicates( palette, paletteColorCount, &paletteColorCount );
-        commonPalette = palette_shift( commonPalette, paletteColorCount, 1 );
+        commonPalette = palette_shift( commonPalette, (paletteColorCount == MAX_PALETTE) ? (MAX_PALETTE-1) : (paletteColorCount), 1 );
         if ( paletteColorCount < 4 ) {
            ++paletteColorCount; 
         }
@@ -1242,7 +1242,7 @@ static Variable * ef936x_image_converter_multicolor_mode4( Environment * _enviro
     if ( ! commonPalette ) {
 
         commonPalette = palette_remove_duplicates( palette, paletteColorCount, &paletteColorCount );
-        commonPalette = palette_shift( commonPalette, paletteColorCount, 1 );
+        commonPalette = palette_shift( commonPalette, (paletteColorCount == MAX_PALETTE) ? (MAX_PALETTE-1) : (paletteColorCount), 1 );
         if ( paletteColorCount < 4 ) {
            ++paletteColorCount; 
         }
@@ -1398,7 +1398,7 @@ static Variable * ef936x_image_converter_multicolor_mode16( Environment * _envir
     if ( ! commonPalette ) {
 
         commonPalette = palette_remove_duplicates( palette, paletteColorCount, &paletteColorCount );
-        commonPalette = palette_shift( commonPalette, paletteColorCount, 1 );
+        commonPalette = palette_shift( commonPalette, (paletteColorCount == MAX_PALETTE) ? (MAX_PALETTE-1) : (paletteColorCount), 1 );
         if ( paletteColorCount < 16 ) {
            ++paletteColorCount; 
         }
