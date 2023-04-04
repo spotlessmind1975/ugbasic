@@ -46,6 +46,9 @@ static RGBi SYSTEM_PALETTE[] = {
         { 0xff, 0xff, 0xff, 0xff, 7, "WHITE" }
 };
 
+static RGBi * commonPalette;
+int lastUsedSlotInCommonPalette = 0;
+
 /****************************************************************************
  * CODE SECTION
  ****************************************************************************/
@@ -381,54 +384,37 @@ void zx_back( Environment * _environment ) {
 
 static Variable * zx_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
 
-    // currently ignored
     (void)!_transparent_color;
 
     image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
-    RGBi palette[MAX_PALETTE];
+    RGBi * palette = malloc_palette( MAX_PALETTE );
+    
+    int paletteColorCount = rgbi_extract_palette(_environment, _source, _width, _height, _depth, palette, MAX_PALETTE, ( ( _flags & FLAG_EXACT ) ? 0 : 1 ) /* sorted */);
 
-    int colorUsed = rgbi_extract_palette(_environment, _source, _width, _height, _depth, palette, MAX_PALETTE, 1 /* sorted */ );
-
-    if (colorUsed > 2) {
-        CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
+    if (paletteColorCount > 16) {
+        CRITICAL_IMAGE_CONVERTER_TOO_COLORS( paletteColorCount );
     }
-
-    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
-    result->originalColors = colorUsed;
 
     int i, j, k;
 
-    for( i=0; i<colorUsed; ++i ) {
-        int minDistance = 0xffff;
-        int colorIndex = 0;
-        for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
-            int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
-            // printf("%d <-> %d [%d] = %d [min = %d]\n", i, j, SYSTEM_PALETTE[j].index, distance, minDistance );
-            if (distance < minDistance) {
-                // printf(" candidated...\n" );
-                for( k=0; k<i; ++k ) {
-                    if ( palette[k].index == SYSTEM_PALETTE[j].index ) {
-                        // printf(" ...used!\n" );
-                        break;
-                    }
-                }
-                if ( k>=i ) {
-                    // printf(" ...ok! (%d)\n", SYSTEM_PALETTE[j].index );
-                    minDistance = distance;
-                    colorIndex = j;
-                }
-            }
-        }
-        palette[i].index = SYSTEM_PALETTE[colorIndex].index;
-        strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
-        // printf("%d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
-    }
+    commonPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
+    commonPalette = palette_remove_duplicates( commonPalette, paletteColorCount, &paletteColorCount );
+    lastUsedSlotInCommonPalette = paletteColorCount;
+    adilinepalette( "CPM1:%d", paletteColorCount, commonPalette );
 
-    memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
+    adilinepalette( "CPMS:%ld", sizeof(SYSTEM_PALETTE) / sizeof(RGBi), SYSTEM_PALETTE );
+
+    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
+    result->originalColors = lastUsedSlotInCommonPalette;
+    memcpy( result->originalPalette, commonPalette, lastUsedSlotInCommonPalette * sizeof( RGBi ) );
     
     int bufferSize = 2 + ( ( _frame_width >> 3 ) * _frame_height ) + ( ( _frame_width >> 3 ) * ( _frame_height >> 3 ) );
     // printf("bufferSize = %d\n", bufferSize );
+
+    adiline3("BMP:%4.4x:%4.4x:%2.2x", _frame_width, _frame_height, BITMAP_MODE_DEFAULT );
+
+    adilinebeginbitmap("BMD");
 
     char * buffer = malloc ( bufferSize );
     memset( buffer, 0, bufferSize );
@@ -452,45 +438,122 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
 
     // Loop for all the source surface.
     for (image_y = 0; image_y < _frame_height; ++image_y) {
-        for (image_x = 0; image_x < _frame_width; ++image_x) {
+        for (image_x = 0; image_x < _frame_width; image_x+=8) {
 
-            // Take the color of the pixel
-            rgb.red = *_source;
-            rgb.green = *(_source + 1);
-            rgb.blue = *(_source + 2);
-            if ( _depth > 3 ) {
-                rgb.alpha = *(_source + 3);
-            } else {
-                rgb.alpha = 255;
-            }
+            int colorIndexCount[16];
 
-            for( i=0; i<colorUsed; ++i ) {
-                if ( rgbi_equals_rgba( &palette[i], &rgb ) ) {
-                    break;
+            int xx;
+
+            int colorIndex = 0;
+
+            for( xx = 0; xx < 8; ++xx ) {
+                            // Take the color of the pixel
+                rgb.red = *_source;
+                rgb.green = *(_source + 1);
+                rgb.blue = *(_source + 2);
+                if ( _depth > 3 ) {
+                    rgb.alpha = *(_source + 3);
+                } else {
+                    rgb.alpha = 255;
                 }
+                if ( rgb.alpha == 0 ) {
+                    rgb.red = 0;
+                    rgb.green = 0;
+                    rgb.blue = 0;
+                }
+
+                colorIndex = 0;
+
+                int minDistance = 9999;
+                for( int i=0; i<(sizeof(SYSTEM_PALETTE)/sizeof(RGBi)); ++i ) {
+                    int distance = rgbi_distance(&SYSTEM_PALETTE[i], &rgb );
+                    if ( distance < minDistance ) {
+                        minDistance = distance;
+                        colorIndex = SYSTEM_PALETTE[i].index;
+                    }
+                }
+
+                ++colorIndexCount[colorIndex];
+
+                _source += _depth;
+
             }
 
-            // printf("%d", i );
+            *_source -= 8 * ( _depth );
 
-            // Calculate the relative tile
-            tile_y = (image_y >> 3);
-            tile_x = (image_x >> 3);
-            
-            // Calculate the offset starting from the tile surface area
-            // and the bit to set.
-            offset = (tile_y * 8 *( _frame_width >> 3 ) ) + (tile_x * 8) + (image_y & 0x07);
-            bitmask = 1 << ( 7 - (image_x & 0x7) );
+            int colorBackgroundMax = 0;
+            int colorBackground = 0;
+            int colorForegroundMax = 0;
+            int colorForeground = 0;
 
-            if ( i == 1 ) {
-                *( buffer + offset + 2) |= bitmask;
-            } else {
-                *( buffer + offset + 2) &= ~bitmask;
+            for( int xx = 0; xx<COLOR_COUNT; ++xx ) {
+                if ( colorIndexCount[xx] > colorBackgroundMax ) {
+                    colorBackground = xx;
+                    colorBackgroundMax = colorIndexCount[xx];
+                };
             }
 
-            offset = tile_y * ( _frame_width >> 3 ) + tile_x;
-            *( buffer + 2 + ( ( _frame_width >> 3 ) * _height ) + offset ) = ( palette[1].index << 3 ) | ( palette[0].index ); 
+            colorIndexCount[colorBackground] = 0;
 
-            _source += _depth;
+            for( int xx = 0; xx<COLOR_COUNT; ++xx ) {
+                if ( colorIndexCount[xx] > colorForegroundMax ) {
+                    colorForeground = xx;
+                    colorForegroundMax = colorIndexCount[xx];
+                };
+            }
+
+            colorIndexCount[colorForeground] = 0;
+
+            for( xx = 0; xx < 8; ++xx ) {
+                            // Take the color of the pixel
+                rgb.red = *_source;
+                rgb.green = *(_source + 1);
+                rgb.blue = *(_source + 2);
+                if ( _depth > 3 ) {
+                    rgb.alpha = *(_source + 3);
+                } else {
+                    rgb.alpha = 255;
+                }
+                if ( rgb.alpha == 0 ) {
+                    rgb.red = 0;
+                    rgb.green = 0;
+                    rgb.blue = 0;
+                }
+
+                colorIndex = 0;
+
+                int minDistance = 9999;
+                for( int i=0; i<(sizeof(SYSTEM_PALETTE)/sizeof(RGBi)); ++i ) {
+                    int distance = rgbi_distance(&SYSTEM_PALETTE[i], &rgb );
+                    if ( distance < minDistance ) {
+                        minDistance = distance;
+                        colorIndex = SYSTEM_PALETTE[i].index;
+                    }
+                }
+
+                // printf("%d", i );
+
+                // Calculate the relative tile
+                tile_y = (image_y >> 3);
+                tile_x = (image_x >> 3);
+                
+                // Calculate the offset starting from the tile surface area
+                // and the bit to set.
+                offset = (tile_y * 8 *( _frame_width >> 3 ) ) + (tile_x * 8) + (image_y & 0x07);
+                bitmask = 1 << ( 7 - (image_x & 0x7) );
+
+                if ( colorIndex != colorBackground ) {
+                    *( buffer + offset + 2) |= bitmask;
+                } else {
+                    *( buffer + offset + 2) &= ~bitmask;
+                }
+
+                offset = tile_y * ( _frame_width >> 3 ) + tile_x;
+                *( buffer + 2 + ( ( _frame_width >> 3 ) * _height ) + offset ) = ( colorForeground << 3 ) | ( colorBackground ); 
+
+                _source += _depth;
+
+            }
 
         }
 
