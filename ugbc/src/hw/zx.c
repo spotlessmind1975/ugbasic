@@ -486,7 +486,7 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
             int colorForegroundMax = 0;
             int colorForeground = 0;
 
-            for( int xx = 0; xx<COLOR_COUNT; ++xx ) {
+            for( int xx = 0; xx<(sizeof(SYSTEM_PALETTE)/sizeof(RGBi)); ++xx ) {
                 if ( colorIndexCount[xx] > colorBackgroundMax ) {
                     colorBackground = xx;
                     colorBackgroundMax = colorIndexCount[xx];
@@ -495,7 +495,7 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
 
             colorIndexCount[colorBackground] = 0;
 
-            for( int xx = 0; xx<COLOR_COUNT; ++xx ) {
+            for( int xx = 0; xx<(sizeof(SYSTEM_PALETTE)/sizeof(RGBi)); ++xx ) {
                 if ( colorIndexCount[xx] > colorForegroundMax ) {
                     colorForeground = xx;
                     colorForegroundMax = colorIndexCount[xx];
@@ -566,7 +566,7 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
     }
 
     adilineendbitmap();
-    
+
     // printf("----\n");
 
     variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
