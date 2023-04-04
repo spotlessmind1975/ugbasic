@@ -480,7 +480,7 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
 
             }
 
-            *_source -= 8 * ( _depth );
+            _source -= 8 * ( _depth );
 
             int colorBackgroundMax = 0;
             int colorBackground = 0;
