@@ -436,77 +436,84 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
 
     _source += ( ( _offset_y * _width ) + _offset_x ) * _depth;
 
+    int * colorBackground = malloc( ( _frame_width >> 3 ) * sizeof( int ) );
+    int * colorForeground = malloc( ( _frame_width >> 3 ) * sizeof( int ) );
+
     // Loop for all the source surface.
     for (image_y = 0; image_y < _frame_height; ++image_y) {
+
         for (image_x = 0; image_x < _frame_width; image_x+=8) {
 
-            int colorIndexCount[16];
-            memset( colorIndexCount, 0, 16 * sizeof(int) );
-
+            int colorIndex = 0;
             int xx;
 
-            int colorIndex = 0;
+            if ( ( image_y & 0x7 ) == 0 ) {
+
+                int colorIndexCount[16];
+                memset( colorIndexCount, 0, 16 * sizeof(int) );
+
+                for( xx = 0; xx < 8; ++xx ) {
+                    // Take the color of the pixel
+                    rgb.red = *_source;
+                    rgb.green = *(_source + 1);
+                    rgb.blue = *(_source + 2);
+                    if ( _depth > 3 ) {
+                        rgb.alpha = *(_source + 3);
+                    } else {
+                        rgb.alpha = 255;
+                    }
+                    if ( rgb.alpha == 0 ) {
+                        rgb.red = 0;
+                        rgb.green = 0;
+                        rgb.blue = 0;
+                    }
+
+                    colorIndex = 0;
+
+                    int minDistance = 9999;
+                    for( int i=0; i<(sizeof(SYSTEM_PALETTE)/sizeof(RGBi)); ++i ) {
+                        int distance = rgbi_distance(&SYSTEM_PALETTE[i], &rgb );
+                        if ( distance < minDistance ) {
+                            minDistance = distance;
+                            colorIndex = SYSTEM_PALETTE[i].index;
+                        }
+                    }
+
+                    ++colorIndexCount[colorIndex];
+
+                    _source += _depth;
+
+                }
+
+                _source -= 8 * ( _depth );
+
+                int colorBackgroundMax = 0;
+                colorBackground[image_x>>3] = 0;
+                int colorForegroundMax = 0;
+                colorForeground[image_x>>3] = 0;
+
+                for( int xx = 0; xx<(sizeof(SYSTEM_PALETTE)/sizeof(RGBi)); ++xx ) {
+                    if ( colorIndexCount[xx] > colorBackgroundMax ) {
+                        colorBackground[image_x>>3] = xx;
+                        colorBackgroundMax = colorIndexCount[xx];
+                    };
+                }
+
+                colorIndexCount[colorBackground[image_x>>3]] = 0;
+
+                for( int xx = 0; xx<(sizeof(SYSTEM_PALETTE)/sizeof(RGBi)); ++xx ) {
+                    if ( colorIndexCount[xx] > colorForegroundMax ) {
+                        colorForeground[image_x>>3] = xx;
+                        colorForegroundMax = colorIndexCount[xx];
+                    };
+                }
+
+                colorIndexCount[colorForeground[image_x>>3]] = 0;
+
+            }
 
             for( xx = 0; xx < 8; ++xx ) {
                 // Take the color of the pixel
-                rgb.red = *_source;
-                rgb.green = *(_source + 1);
-                rgb.blue = *(_source + 2);
-                if ( _depth > 3 ) {
-                    rgb.alpha = *(_source + 3);
-                } else {
-                    rgb.alpha = 255;
-                }
-                if ( rgb.alpha == 0 ) {
-                    rgb.red = 0;
-                    rgb.green = 0;
-                    rgb.blue = 0;
-                }
-
-                colorIndex = 0;
-
-                int minDistance = 9999;
-                for( int i=0; i<(sizeof(SYSTEM_PALETTE)/sizeof(RGBi)); ++i ) {
-                    int distance = rgbi_distance(&SYSTEM_PALETTE[i], &rgb );
-                    if ( distance < minDistance ) {
-                        minDistance = distance;
-                        colorIndex = SYSTEM_PALETTE[i].index;
-                    }
-                }
-
-                ++colorIndexCount[colorIndex];
-
-                _source += _depth;
-
-            }
-
-            _source -= 8 * ( _depth );
-
-            int colorBackgroundMax = 0;
-            int colorBackground = 0;
-            int colorForegroundMax = 0;
-            int colorForeground = 0;
-
-            for( int xx = 0; xx<(sizeof(SYSTEM_PALETTE)/sizeof(RGBi)); ++xx ) {
-                if ( colorIndexCount[xx] > colorBackgroundMax ) {
-                    colorBackground = xx;
-                    colorBackgroundMax = colorIndexCount[xx];
-                };
-            }
-
-            colorIndexCount[colorBackground] = 0;
-
-            for( int xx = 0; xx<(sizeof(SYSTEM_PALETTE)/sizeof(RGBi)); ++xx ) {
-                if ( colorIndexCount[xx] > colorForegroundMax ) {
-                    colorForeground = xx;
-                    colorForegroundMax = colorIndexCount[xx];
-                };
-            }
-
-            colorIndexCount[colorForeground] = 0;
-
-            for( xx = 0; xx < 8; ++xx ) {
-                            // Take the color of the pixel
                 rgb.red = *_source;
                 rgb.green = *(_source + 1);
                 rgb.blue = *(_source + 2);
@@ -543,16 +550,16 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
                 offset = (tile_y * 8 *( _frame_width >> 3 ) ) + (tile_x * 8) + (image_y & 0x07);
                 bitmask = 1 << ( 7 - ((image_x+xx) & 0x7) );
 
-                if ( colorIndex != colorBackground ) {
-                    adilinepixel(colorForeground);
+                if ( colorIndex != colorBackground[image_x>>3] ) {
+                    adilinepixel(colorForeground[image_x>>3]);
                     *( buffer + offset + 2) |= bitmask;
                 } else {
-                    adilinepixel(colorBackground);
+                    adilinepixel(colorBackground[image_x>>3]);
                     *( buffer + offset + 2) &= ~bitmask;
                 }
 
                 offset = tile_y * ( _frame_width >> 3 ) + tile_x;
-                *( buffer + 2 + ( ( _frame_width >> 3 ) * _height ) + offset ) = ( colorForeground << 3 ) | ( colorBackground ); 
+                *( buffer + 2 + ( ( _frame_width >> 3 ) * _height ) + offset ) = ( colorBackground[image_x>>3] << 3 ) | ( colorForeground[image_x>>3] ); 
 
                 _source += _depth;
 
