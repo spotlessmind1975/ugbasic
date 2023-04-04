@@ -544,7 +544,7 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
                 offset = (tile_y * 8 *( _frame_width >> 3 ) ) + (tile_x * 8) + (image_y & 0x07);
                 bitmask = 1 << ( 7 - ((image_x+xx) & 0x7) );
 
-                if ( colorIndex == colorForeground ) {
+                if ( colorIndex != colorBackground ) {
                     *( buffer + offset + 2) |= bitmask;
                 } else {
                     *( buffer + offset + 2) &= ~bitmask;
