@@ -441,6 +441,7 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
         for (image_x = 0; image_x < _frame_width; image_x+=8) {
 
             int colorIndexCount[16];
+            memset( colorIndexCount, 0, 16 * sizeof(int) );
 
             int xx;
 
@@ -542,7 +543,7 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
                 offset = (tile_y * 8 *( _frame_width >> 3 ) ) + (tile_x * 8) + (image_y & 0x07);
                 bitmask = 1 << ( 7 - (image_x & 0x7) );
 
-                if ( colorIndex != colorBackground ) {
+                if ( colorIndex == colorForeground ) {
                     adilinepixel(colorForeground);
                     *( buffer + offset + 2) |= bitmask;
                 } else {
