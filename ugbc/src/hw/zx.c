@@ -448,7 +448,7 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
             int colorIndex = 0;
 
             for( xx = 0; xx < 8; ++xx ) {
-                            // Take the color of the pixel
+                // Take the color of the pixel
                 rgb.red = *_source;
                 rgb.green = *(_source + 1);
                 rgb.blue = *(_source + 2);
@@ -541,7 +541,7 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
                 // Calculate the offset starting from the tile surface area
                 // and the bit to set.
                 offset = (tile_y * 8 *( _frame_width >> 3 ) ) + (tile_x * 8) + (image_y & 0x07);
-                bitmask = 1 << ( 7 - (image_x & 0x7) );
+                bitmask = 1 << ( 7 - ((image_x+xx) & 0x7) );
 
                 if ( colorIndex == colorForeground ) {
                     adilinepixel(colorForeground);
