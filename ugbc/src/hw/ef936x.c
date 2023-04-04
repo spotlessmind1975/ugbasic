@@ -1130,7 +1130,7 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
                     trans = 1;
                 } else {
                     int minDistance = 9999;
-                    for( int i=0; i<sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++i ) {
+                    for( int i=0; i<lastUsedSlotInCommonPalette; ++i ) {
                         int distance = rgbi_distance(&commonPalette[i], &rgb );
                         if ( distance < minDistance ) {
                             minDistance = distance;
