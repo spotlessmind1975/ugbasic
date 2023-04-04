@@ -120,6 +120,9 @@ PUTIMAGE0B:
     POP DE
     POP HL
 
+    LD A, (IMAGEY)
+    LD IXL, A
+
     LD A, (IMAGEH)
     LD C, A
     SLA C
@@ -146,9 +149,8 @@ PUTIMAGE0CP:
     PUSH BC
     PUSH HL
     
-    LD A, (IMAGEY)
-    ADD A, 1
-    LD (IMAGEY), A
+    INC IXL
+    LD A, IXL
     LD B, A
     LD A, (IMAGEX)
     LD C, A
@@ -190,7 +192,11 @@ PUTIMAGE0CP:
 
     PUSH HL
 
-    LD HL,(IMAGEX)
+    LD A,(IMAGEX)
+    LD L,A
+    LD A,0
+    LD H,A
+    AND A
     SRA H
     RR L
     SRA H
@@ -199,7 +205,11 @@ PUTIMAGE0CP:
     RR L
     LD DE,HL
 
-    LD HL,(IMAGEY)
+    LD A,(IMAGEY)
+    LD L,A
+    LD A,0
+    LD H,A
+    AND A
     SLA L
     RL H
     SLA L
@@ -231,12 +241,19 @@ PUTIMAGE00CP:
     PUSH BC
 
     LD A, (IMAGEW)
+    SRL A
+    SRL A
+    SRL A
     LD C, A
     LD A, 0
     LD B, A
 
-    ADD HL, 64
+    PUSH HL
+    LD HL, DE
+    ADD HL, 32
     SBC HL, BC
+    LD DE, HL
+    POP HL
 
     POP BC
 
