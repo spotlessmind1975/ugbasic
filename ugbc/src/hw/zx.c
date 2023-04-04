@@ -532,11 +532,12 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
                     }
                 }
 
+                adilinepixel(colorIndex);
                 // printf("%d", i );
 
                 // Calculate the relative tile
                 tile_y = (image_y >> 3);
-                tile_x = (image_x >> 3);
+                tile_x = ((image_x+xx) >> 3);
                 
                 // Calculate the offset starting from the tile surface area
                 // and the bit to set.
@@ -544,10 +545,8 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
                 bitmask = 1 << ( 7 - ((image_x+xx) & 0x7) );
 
                 if ( colorIndex == colorForeground ) {
-                    adilinepixel(colorForeground);
                     *( buffer + offset + 2) |= bitmask;
                 } else {
-                    adilinepixel(colorBackground);
                     *( buffer + offset + 2) &= ~bitmask;
                 }
 
