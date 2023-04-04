@@ -543,8 +543,10 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
                 bitmask = 1 << ( 7 - (image_x & 0x7) );
 
                 if ( colorIndex != colorBackground ) {
+                    adilinepixel(colorForeground);
                     *( buffer + offset + 2) |= bitmask;
                 } else {
+                    adilinepixel(colorBackground);
                     *( buffer + offset + 2) &= ~bitmask;
                 }
 
@@ -563,6 +565,8 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
 
     }
 
+    adilineendbitmap();
+    
     // printf("----\n");
 
     variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
