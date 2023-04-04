@@ -981,17 +981,22 @@ static Variable * ef936x_image_converter_bitmap_mode_standard( Environment * _en
                 rgb.blue = 0;
             }
 
+            int colorIndex = 0;
+
             if ( rgb.alpha < 255 ) {
-                i = 0;
+
             } else {
+                unsigned int minDistance = 0xffff;
                 for( i=0; i<lastUsedSlotInCommonPalette; ++i ) {
-                    if ( rgbi_equals_rgba( &commonPalette[i], &rgb ) ) {
-                        break;
+                    unsigned int distance = rgbi_distance(&commonPalette[i], &rgb);
+                    if ( minDistance > distance ) {
+                        minDistance = distance;
+                        colorIndex = i;
                     }
                 }
             }
 
-            adilinepixel(i);
+            adilinepixel(colorIndex);
 
             // printf("%d", i );
 
@@ -1134,7 +1139,7 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
                         int distance = rgbi_distance(&commonPalette[i], &rgb );
                         if ( distance < minDistance ) {
                             minDistance = distance;
-                            colorIndexes[xx] = commonPalette[i].index;
+                            colorIndexes[xx] = i;
                         }
                     }
                 }
