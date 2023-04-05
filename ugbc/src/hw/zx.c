@@ -47,7 +47,7 @@ static RGBi SYSTEM_PALETTE[] = {
 };
 
 static RGBi * commonPalette;
-int lastUsedSlotInCommonPalette = 0;
+static int lastUsedSlotInCommonPalette = 0;
 
 /****************************************************************************
  * CODE SECTION
