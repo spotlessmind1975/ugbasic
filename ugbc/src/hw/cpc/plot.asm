@@ -317,8 +317,159 @@ PLOTE2:
 PLOTE3:
     JP PLOTDONE
 
+PLOTC:
+    LD A, (CURRENTMODE)
+    CP 0
+    JP Z, PLOTC0
+    CP 1
+    JP Z, PLOTC1
+    CP 2
+    JP Z, PLOTC2
+    CP 3
+    JP Z, PLOTC3
+    RET
+
+PLOTC0:
+    LD A, E
+    AND $01
+    CP 1
+    JR Z, PLOTC00
+
+    LD DE, HL
+    LD A, (DE)
+    SRL A
+
+    JR PLOTC00X
+
+PLOTC00:
+
+    LD DE, HL
+    LD A, (DE)
+
+PLOTC00X:
+
+    PUSH AF
+    AND $01
+    SLA A
+    SLA A
+    SLA A
+    LD D, A
+    POP AF
+
+    PUSH AF
+    AND $04
+    SRL A
+    SRL A
+    LD E, A
+    POP AF
+
+    PUSH AF
+    AND $10
+    SRL A
+    SRL A
+    LD IXL, A
+    POP AF
+
+    PUSH AF
+    AND $40
+    SRL A
+    SRL A
+    SRL A
+    LD E, A
+    POP AF
+
+    LD A, D
+    OR E
+    OR IXL
+    OR IXH
+    JP PLOTCDONE
+
+
+PLOTC1:
+    LD A, E
+    AND $03
+    CP 3
+    JR Z, PLOTC13
+    CP 2
+    JR Z, PLOTC12
+    CP 1
+    JR Z, PLOTC11
+PLOTC10:
+    LD DE, HL    
+    LD A, (DE)
+    SRL A
+    SRL A
+    SRL A
+    JR PLOTC100
+PLOTC11:
+    LD DE, HL    
+    LD A, (DE)
+    SRL A
+    SRL A
+    JR PLOTC100
+PLOTC12:
+    LD DE, HL    
+    LD A, (DE)
+    SRL A
+    JR PLOTC100
+PLOTC13:
+    LD DE, HL    
+    LD A, (DE)
+    JR PLOTC100
+PLOTC100:
+    PUSH AF
+    AND $01
+    SLA A
+    SLA A
+    SLA A
+    SLA A
+    LD D, A
+    POP AF
+
+    PUSH AF
+    AND $10
+    SRL A
+    SRL A
+    SRL A
+    SRL A
+    LD E, A
+    POP AF
+
+    LD A, D
+    OR E
+    JP PLOTCDONE
+
+PLOTC2:
+    LD A, E
+    AND $07
+    LD C, A
+    LD A, 8
+    SUB C
+    LD C, A
+    LD DE, HL
+    LD A, (DE)
+PLOTC2L:
+    SRL A
+    DEC C
+    JR NZ, PLOTC2L
+
+    JR NC, PLOTC2N
+    LD A, 1
+    JP PLOTCDONE
+PLOTC2N:
+    LD A, 0
+    JP PLOTCDONE
+
+PLOTC3:
+    JP PLOTCDONE
+
+PLOTCDONE:
+    LD IXH, A
+    CALL CPCGETPALETTE
+    LD A, IXL
+    JP PLOTDONE
+
 PLOTG:      
-PLOTC:      
     JP PLOTDONE
 
 PLOTP:

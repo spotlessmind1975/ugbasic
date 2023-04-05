@@ -72,7 +72,7 @@ static RGBi SYSTEM_PALETTE[] = {
 #ifdef __cpc__
 
 static RGBi * commonPalette;
-int lastUsedSlotInCommonPalette = 0;
+static int lastUsedSlotInCommonPalette = 0;
 
 void cpc_inkey( Environment * _environment, char * _pressed, char * _key ) {
 
