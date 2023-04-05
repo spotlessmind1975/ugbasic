@@ -823,7 +823,7 @@ void target_finalize( Environment * _environment ) {
                 POBuffer ln = TMP_BUF;
                 if (po_buf_match( bufferAsm, "; L:*", ln ) ) {
                     sourceLine = atoi( ln->str );
-                    if ( ( sourceLine != _environment->currentSourceLineAnalyzed ) ) {
+                    if ( ( sourceLine != _environment->currentSourceLineAnalyzed ) && (  _environment->bytesProduced > 0 ) ) {
                         adiline2( "AB:0:%d:%d\n", 
                             _environment->currentSourceLineAnalyzed, _environment->bytesProduced );
                         _environment->currentSourceLineAnalyzed = sourceLine;
