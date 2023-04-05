@@ -45,6 +45,8 @@
  </usermanual> */
 Variable * point( Environment * _environment, char * _x, char * _y ) {
 
+    MAKE_LABEL
+
     Variable * result = variable_temporary( _environment, VT_COLOR, "(point's result)");
 
     if ( !_x ) {
@@ -58,7 +60,10 @@ Variable * point( Environment * _environment, char * _x, char * _y ) {
     Variable * y = variable_retrieve( _environment, _y );
     Variable * x = variable_retrieve( _environment, _x );
 
-    outline1("LD HL,(%s)", x->realName );
+    outline1("LD A,(%s)", x->realName );
+    outline0("LD L, A" );
+    outline0("LD A, 0" );
+    outline0("LD H, A" );
     outline0("SRA H" );
     outline0("RR L" );
     outline0("SRA H" );
@@ -67,15 +72,26 @@ Variable * point( Environment * _environment, char * _x, char * _y ) {
     outline0("RR L" );
     outline0("LD DE,HL");
 
-    outline1("LD HL,(%s)", y->realName );
+    outline1("LD A,(%s)", y->realName );
+    outline0("LD L, A" );
+    outline0("LD A, 0" );
+    outline0("LD H, A" );
     outline0("SLA L" );
     outline0("RL H" );
     outline0("SLA L" );
     outline0("RL H" );
-    outline0("ADD HL,DE" );
-    outline0("LD DE,(COLORMAPADDRESS)");
-    outline0("ADD HL,DE" );
+    outline0("ADD HL, DE" );
+    outline0("LD DE, (COLORMAPADDRESS)");
+    outline0("ADD HL, DE" );
     outline0("LD A, (HL)");
+    outline0("AND $40");
+    outline0("JR Z, %s", label);
+    outline0("LD A, 1");
+    outhead1("%s:", label);
+    outline0("LD B, A");
+    outline0("LD A, (HL)");
+    outline0("AND $7");
+    outline0("ADD B");
     outline1("LD (%s), A", result->realName );
 
     return result;
