@@ -3,7 +3,7 @@
 ;  *****************************************************************************
 ;  * Copyright 2021-2023 Marco Spedaletti (asimov@mclink.it)
 ;  *
-;  * Licensed under the Apache License, Version 2.0 (the "License");
+;  * Licensed under the Apache License, Version 2.0 (the "License
 ;  * you may not use this file except in compliance with the License.
 ;  * You may obtain a copy of the License at
 ;  *
@@ -16,7 +16,7 @@
 ;  * limitations under the License.
 ;  *----------------------------------------------------------------------------
 ;  * Concesso in licenza secondo i termini della Licenza Apache, versione 2.0
-;  * (la "Licenza"); è proibito usare questo file se non in conformità alla
+;  * (la "Licenza è proibito usare questo file se non in conformità alla
 ;  * Licenza. Una copia della Licenza è disponibile all'indirizzo:
 ;  *
 ;  * http://www.apache.org/licenses/LICENSE-2.0
@@ -105,20 +105,31 @@ PLOTLOOP2:
     LD (HL),A
 
     POP BC
-    LD A, C
-    RRCA
-    RRCA
-    RRCA
-    LD L, A
-    AND 3
-    ADD A, 88
-    LD H, A
-    LD A, L
-    AND 224
-    LD L, A
+
     LD A, B
-    ADD A, L
     LD L, A
+    LD A, 0
+    LD H, A
+    SRA H
+    RR L
+    SRA H
+    RR L
+    SRA H
+    RR L
+    LD DE,HL
+
+    LD A, C
+    LD L, A
+    LD A, 0
+    LD H, A
+    SLA L
+    RL H
+    SLA L
+    RL H
+    ADD HL, DE
+    LD DE, (COLORMAPADDRESS)
+    ADD HL, DE
+
     LD A, (_PAPER)
     AND $0F
     SLA A

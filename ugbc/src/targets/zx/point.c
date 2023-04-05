@@ -86,7 +86,7 @@ Variable * point( Environment * _environment, char * _x, char * _y ) {
     outline0("LD A, (HL)");
     outline0("AND $40");
     outline1("JR Z, %s", label);
-    outline0("LD A, 1");
+    outline0("LD A, $10");
     outhead1("%s:", label);
     outline0("LD B, A");
     outline0("LD A, (HL)");
