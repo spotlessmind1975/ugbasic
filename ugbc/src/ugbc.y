@@ -6443,7 +6443,7 @@ program :
 
 %%
 
-char version[MAX_TEMPORARY_STORAGE] = "1.13.1";
+char version[MAX_TEMPORARY_STORAGE] = "1.13.2";
 
 void show_usage_and_exit( int _argc, char *_argv[] ) {
 
@@ -6521,42 +6521,59 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     printf("\t-O <type>    Output file format for target:\n" );
 #if __atari__ 
     printf("\t                xex - executable binary file\n" );
+    #define defaultExtension "xex"
 #elif __atarixl__ 
     printf("\t                xex - executable binary file\n" );
+    #define defaultExtension "xex"
 #elif __c64__
     printf("\t                prg - program binary file\n" );
     printf("\t                d64 - D64 disk image\n" );
+    #define defaultExtension "prg"
 #elif __c128__
     printf("\t                prg - program binary file\n" );
+    #define defaultExtension "prg"
 #elif __plus4__
     printf("\t                prg - program binary file\n" );
+    #define defaultExtension "prg"
 #elif __zx__
     printf("\t                tap - tape file\n" );
+    #define defaultExtension "tap"
 #elif __coco__
     printf("\t                bin - COCO binary file\n" );
     printf("\t                dsk - COCO disk basic\n" );
+    #define defaultExtension "bin"
 #elif __d32__
     printf("\t                bin - dragon dos binary file\n" );
+    #define defaultExtension "bin"
 #elif __d64__
     printf("\t                bin - dragon dos binary file\n" );
+    #define defaultExtension "bin"
 #elif __pc128op__
     printf("\t                k7o - K7 format (original algorithm)\n" );
     printf("\t                k7 - K7 format\n" );
+    #define defaultExtension "k7"
 #elif __mo5__
     printf("\t                k7o - K7 format (original algorithm)\n" );
     printf("\t                k7 - K7 format\n" );
+    #define defaultExtension "k7"
 #elif __vic20__
     printf("\t                prg - program binary file\n" );
+    #define defaultExtension "prg"
 #elif __msx1__
     printf("\t                rom - cartridge ROM\n" );
+    #define defaultExtension "rom"
 #elif __coleco__
     printf("\t                rom - cartridge ROM\n" );
+    #define defaultExtension "rom"
 #elif __sc3000__
     printf("\t                rom - cartridge ROM\n" );
+    #define defaultExtension "rom"
 #elif __cpc__
     printf("\t                dsk - disk image\n" );
+    #define defaultExtension "dsk"
 #elif __vg5000__
     printf("\t                k7 - K7 format\n" );
+    #define defaultExtension "k7"
 #endif
     printf("\t-l <name>    Output filename with list of variables defined\n" );
     printf("\t-e <modules> Embed specified modules instead of inline code\n" );
@@ -6568,6 +6585,13 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     printf("\t-E           Show stats of embedded modules\n" );
     printf("\t-W           Enable warnings during compilation\n" );
     printf("\t-V           Output version (example: '%s')\n", version );
+    printf("\n\n" );
+    printf("Examples:\n" );
+    printf("\tTo generate an assembly starting from basic source:\n" );
+    printf("\t\t%s source.bas source.asm\n\n", _argv[0] );
+    printf("To generate directly an executable:\n" );
+    printf("\t\t%s -O %s source.bas -o source.%s\n\n", _argv[0], defaultExtension, defaultExtension );
+
     exit(EXIT_FAILURE);
 }
 
