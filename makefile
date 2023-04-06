@@ -31,7 +31,7 @@
 .PHONY: paths toolchain compiler clean all built so
 
 ifndef target
-$(error missing 'target' (valid values: atari atarixl c128 c64 coco coleco cpc d32 d64 mo5 msx1 pc128 plus4 sc3000 sg1000 vg5000 vic20 zx))
+$(error missing 'target' (valid values: atari atarixl c128 c64 coco coleco cpc d32 d64 mo5 msx1 pc128op plus4 sc3000 sg1000 vg5000 vic20 zx))
 endif
 
 ifdef 10liner
