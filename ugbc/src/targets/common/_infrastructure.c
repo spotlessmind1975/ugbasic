@@ -5932,7 +5932,7 @@ void image_converter_asserts( Environment * _environment, int _width, int _heigh
     }
 
     if ( *_frame_height % 8 ) {
-        CRITICAL_IMAGE_CONVERTER_INVALID_FRAME_HEIGHT( _height );
+        CRITICAL_IMAGE_CONVERTER_INVALID_FRAME_HEIGHT( _frame_height );
     }
 
     if ( (_offset_y < 0) || (_offset_y >= _height) || ( ( _offset_y + ( *_frame_height )) > _height ) ) {
