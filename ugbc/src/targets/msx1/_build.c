@@ -55,7 +55,7 @@ void target_linkage( Environment * _environment ) {
 
     BUILD_TOOLCHAIN_Z88DK_GET_LISTING_FILE( _environment, listingFileName );
 
-    BUILD_TOOLCHAIN_Z88DK_EXEC( _environment, "cpc", executableName, listingFileName );
+    BUILD_TOOLCHAIN_Z88DK_EXEC( _environment, "msx1", executableName, listingFileName );
 
     strcpy( binaryName, _environment->asmFileName );
     char * p = strstr( binaryName, ".asm" );
@@ -63,7 +63,7 @@ void target_linkage( Environment * _environment ) {
         *(p+1) = 'o';
         *(p+2) = 0;
     }
-    remove(binaryName);
+    system_remove_safe( _environment, binaryName );
 
     strcpy( binaryName, _environment->asmFileName );
     p = strstr( binaryName, ".asm" );
