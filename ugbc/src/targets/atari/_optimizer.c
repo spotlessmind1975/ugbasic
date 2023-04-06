@@ -853,7 +853,7 @@ static int optim_pass( Environment * _environment, POBuffer buf[LOOK_AHEAD], Pee
                 POBuffer ln = TMP_BUF;
                 if (po_buf_match( buf[LOOK_AHEAD-1], " ; L:*", ln ) ) {
                     sourceLine = atoi( ln->str );
-                    if ( ( sourceLine != _environment->currentSourceLineAnalyzed ) && ) {
+                    if ( ( sourceLine != _environment->currentSourceLineAnalyzed ) ) {
                         if ( _environment->currentSourceLineAnalyzed ) {
                             adiline3( "POL:0:%d:%d:%d", 
                                 peephole_pass, _environment->currentSourceLineAnalyzed, _environment->removedAssemblyLines );
