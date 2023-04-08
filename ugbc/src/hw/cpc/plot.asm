@@ -333,7 +333,7 @@ PLOTC0:
     LD A, E
     AND $01
     CP 1
-    JR Z, PLOTC00
+    JR NZ, PLOTC00
 
     LD DE, HL
     LD A, (DE)
