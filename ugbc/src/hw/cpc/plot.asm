@@ -375,6 +375,9 @@ PLOTC00X:
     SRL A
     SRL A
     SRL A
+    SRL A
+    SRL A
+    SRL A
     LD IXH, A
     POP AF
 
