@@ -359,7 +359,6 @@ PLOTC00X:
     PUSH AF
     AND $04
     SRL A
-    SRL A
     LD E, A
     POP AF
 
