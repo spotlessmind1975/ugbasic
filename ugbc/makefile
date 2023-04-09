@@ -467,7 +467,7 @@ src-generated/ugbc.embed.yy.c: src/ugbc.embed.lex src/ugbc.embed.y
 	@flex ${FLEX_OPTIONS} --prefix=embed --outfile=src-generated/ugbc.embed.yy.c src/ugbc.embed.lex
 
 src-generated/ugbc.embed.tab.c: src/ugbc.embed.lex src/ugbc.embed.y
-	@bison ${BISON_OPTIONS} --debug -p embed --file-prefix=src-generated/ugbc.embed src/ugbc.embed.y
+	@bison ${BISON_OPTIONS} -p embed --file-prefix=src-generated/ugbc.embed src/ugbc.embed.y
 
 # ----------------------------------------------------------------------------
 # ----------------------------------------------------------------------------
