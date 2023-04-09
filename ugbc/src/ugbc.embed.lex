@@ -32,6 +32,9 @@ extern int embedposno;
 "<=" { RETURN(OP_LTE,1); }
 ">" { RETURN(OP_GT,1); }
 ">=" { RETURN(OP_GTE,1); }
+"," { RETURN(OP_COMMA,1); }
+"\t" { RETURN(OP_TAB,1); }
+"|" { RETURN(OP_PIPE,1); }
 
 IF { RETURN(IF,1); }
 ELSE { RETURN(ELSE,1); }
@@ -60,6 +63,10 @@ PC128OP  { RETURN(PC128OP,1); }
 MO5  { RETURN(MO5,1); }
 CPC  { RETURN(CPC,1); }
 
+MACRO { RETURN(MACRO,1); }
+ENDMACRO { RETURN(ENDMACRO,1); }
+INLINE { RETURN(INLINE,1); }
+
 [\n\r]+ { RETURN(NewLine,0);}
 \$[a-fA-F0-9]+ { embedlval.integer = strtol(embedtext+1,0,16); RETURN(Integer,1); }
 &[Hh][a-fA-F0-9]+ { embedlval.integer = strtol(embedtext+2,0,16); RETURN(Integer,1); }
@@ -68,10 +75,11 @@ CPC  { RETURN(CPC,1); }
 %[0-1]+ { embedlval.integer = strtol(embedtext+1,0,2); RETURN(Integer,1); }
 \s[-][0-9]+ { embedlval.integer = atoi(embedtext); RETURN(Integer,1);  }
 [0-9]+ { embedlval.integer = atoi(embedtext); RETURN(Integer,1);  }
-
 [ \t]+ { embedcolno = (embedcolno + embedleng); embedposno = (embedposno + embedleng); }
 
 [A-Za-z0-9\_]* { embedlval.string = strdup(embedtext); RETURN(Identifier,1);  }
+[\t]+[^\n]+ { embedlval.string = strdup(embedtext); RETURN(Content,1);  }
+\[[^\)]+\] { char * value = strdup(embedtext); embedlval.string = value+1; embedlval.string[strlen(embedlval.string)-1] = 0; RETURN(Value,1);  }
 
 . { embedcolno++; embedposno++; return(embedtext[0]); }
 

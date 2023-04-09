@@ -1209,12 +1209,27 @@ typedef struct _FontConfig {
 
 } FontConfig;
 
+typedef struct _Macro {
+
+    char * name;
+    char * parameters[MAX_TEMPORARY_STORAGE];
+    int parameterCount;
+    char * lines[MAX_TEMPORARY_STORAGE];
+    int lineCount;
+    struct _Macro * next;
+    
+} Macro;
+
 typedef struct _EmbedResult {
 
     char * line;
     int current;
     int excluded[MAX_NESTED_ARRAYS];
     int conditional;
+    Macro * macro;
+    Macro * currentMacro;
+    char * values[MAX_TEMPORARY_STORAGE];
+    int valueCount;
 
 } EmbedResult;
 
@@ -2031,6 +2046,12 @@ typedef struct _Environment {
 #define CRITICAL_CONSTANT_REDEFINED_DIFFERENT_VALUE( f ) CRITICAL2("E157 - constant redefined with a different value", f );
 #define CRITICAL_VARIABLE_UNDEFINED(f) CRITICAL2("E158 - undefined variable (OPTION EXPLICIT ON)", f );
 #define CRITICAL_VARIABLE_ALREADY_DEFINED(f) CRITICAL2("E159 - variable already defined", f );
+#define CRITICAL_MACRO_TOO_MUCH_PARAMETERS(m, p) CRITICAL3("E160 - too much parameters in macro", m, p );
+#define CRITICAL_MACRO_TOO_MUCH_LINES(m) CRITICAL2("E160 - too much lines in macro", m );
+#define CRITICAL_MACRO_TOO_MUCH_VALUES(m,v) CRITICAL3("E161 - too much values in macro", m, v );
+#define CRITICAL_MACRO_MISMATCH_PARAMETER_VALUES(m) CRITICAL2("E162 - mismatch number of values and parameters", m );
+#define CRITICAL_MACRO_UNDEFINED(m) CRITICAL2("E163 - macro undefined", m );
+
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }

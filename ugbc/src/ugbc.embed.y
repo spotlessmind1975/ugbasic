@@ -14,6 +14,52 @@ int embedwrap() { return 1; }
 
 #include <math.h>
 
+char *str_replace( char *orig, char *rep, char *with ) {
+    char *result; // the return string
+    char *ins;    // the next insert point
+    char *tmp;    // varies
+    int len_rep;  // length of rep (the string to remove)
+    int len_with; // length of with (the string to replace rep with)
+    int len_front; // distance between rep and end of last rep
+    int count;    // number of replacements
+
+    // sanity checks and initialization
+    if (!orig || !rep)
+        return NULL;
+    len_rep = strlen(rep);
+    if (len_rep == 0)
+        return NULL; // empty rep causes infinite loop during count
+    if (!with)
+        with = "";
+    len_with = strlen(with);
+
+    // count the number of replacements needed
+    ins = orig;
+    for (count = 0; tmp = strstr(ins, rep); ++count) {
+        ins = tmp + len_rep;
+    }
+
+    tmp = result = malloc(strlen(orig) + (len_with - len_rep) * count + 1);
+
+    if (!result)
+        return NULL;
+
+    // first time through the loop, all the variable are set correctly
+    // from here on,
+    //    tmp points to the end of the result string
+    //    ins points to the next occurrence of rep in orig
+    //    orig points to the remainder of orig after "end of rep"
+    while (count--) {
+        ins = strstr(orig, rep);
+        len_front = ins - orig;
+        tmp = strncpy(tmp, orig, len_front) + len_front;
+        tmp = strcpy(tmp, with) + len_with;
+        orig += len_front + len_rep; // move to next "end of rep"
+    }
+    strcpy(tmp, orig);
+    return result;
+}
+
 %}
 
 %parse-param {void * _environment}
@@ -29,11 +75,14 @@ int embedwrap() { return 1; }
     char * string;
 }
 
-%token OP CP OP_AT OP_EQUAL OP_DISEQUAL OP_AND OP_OR OP_NOT OP_POINT OP_LT OP_LTE OP_GT OP_GTE
+%token OP CP OP_AT OP_EQUAL OP_DISEQUAL OP_AND OP_OR OP_NOT OP_POINT OP_LT OP_LTE OP_GT OP_GTE OP_COMMA OP_TAB OP_PIPE
 %token IF ELSE ELSEIF ENDIF EMIT AS NewLine
 %token ATARI ATARIXL C128 C64 VIC20 ZX COLECO SC3000 SG1000 MSX MSX1 DRAGON DRAGON32 DRAGON64 PC128OP MO5 CPC COCO
+%token MACRO ENDMACRO INLINE
 
 %token <string> Identifier
+%token <string> Content
+%token <string> Value
 %token <integer> Integer
 
 %type <integer> const_expr const_factor target
@@ -278,6 +327,31 @@ const_factor:
       }
       ;
 
+macro_parameter :
+    Identifier {
+        Macro * currentMacro = ((struct _Environment *)_environment)->embedResult.currentMacro;
+        currentMacro->parameters[currentMacro->parameterCount++] = strdup( $1 );
+        if ( currentMacro->parameterCount == MAX_TEMPORARY_STORAGE ) {
+            CRITICAL_MACRO_TOO_MUCH_PARAMETERS( currentMacro->name, $1 );
+        }
+    };
+
+macro_parameters : 
+    macro_parameter
+    | macro_parameter OP_COMMA macro_parameters;
+
+macro_value :
+    Value {
+        ((struct _Environment *)_environment)->embedResult.values[((struct _Environment *)_environment)->embedResult.valueCount++] = strdup( $1 );
+        if ( ((struct _Environment *)_environment)->embedResult.valueCount == MAX_TEMPORARY_STORAGE ) {
+            CRITICAL_MACRO_TOO_MUCH_VALUES( ((struct _Environment *)_environment)->embedResult.currentMacro->name, $1 );
+        }
+    };
+
+macro_values : 
+    macro_value
+    | macro_value OP_COMMA macro_values;
+
 embed2:
     OP_AT IF const_expr {
     //    printf( "--- IF ---\n" );
@@ -328,6 +402,78 @@ embed2:
             outline2( "%s=$%4.4x", $5, ((struct _Environment *)_environment)->frameBufferStart );
         }
         ((struct _Environment *)_environment)->embedResult.conditional = 1;
+  }
+  | OP_AT MACRO Identifier 
+  {
+    ((struct _Environment *)_environment)->embedResult.currentMacro = malloc( sizeof( Macro ) );
+    memset( ((struct _Environment *)_environment)->embedResult.currentMacro, 0, sizeof( Macro ) );
+    Macro * currentMacro = ((struct _Environment *)_environment)->embedResult.currentMacro;
+    currentMacro->name = strdup( $3 );
+  } macro_parameters {
+
+  }
+  | OP_AT ENDMACRO
+  {
+    Macro * currentMacro = ((struct _Environment *)_environment)->embedResult.currentMacro;
+    Macro * macro = ((struct _Environment *)_environment)->embedResult.macro;
+    currentMacro->next = macro;
+    ((struct _Environment *)_environment)->embedResult.macro = currentMacro;
+    ((struct _Environment *)_environment)->embedResult.currentMacro = NULL;
+  }
+  | Content {
+    Macro * currentMacro = ((struct _Environment *)_environment)->embedResult.currentMacro;
+    if ( ! currentMacro ) {
+        return 0;
+    }
+    currentMacro->lines[currentMacro->lineCount++] = strdup( $1 );
+    if ( currentMacro->lineCount == MAX_TEMPORARY_STORAGE ) {
+        CRITICAL_MACRO_TOO_MUCH_LINES( currentMacro->name );
+    }  
+  }
+  | OP_AT INLINE Identifier {
+    Macro * macro = ((struct _Environment *)_environment)->embedResult.macro;
+    if ( ! macro ) {
+        CRITICAL_MACRO_UNDEFINED( $3 );
+    }
+    while( macro ) {
+        if ( strcmp( macro->name, $3 ) == 0 ) {
+            break;
+        }
+        macro = macro->next;
+    }
+    if ( ! macro ) {
+        CRITICAL_MACRO_UNDEFINED( $3 );
+    }
+    ((struct _Environment *)_environment)->embedResult.currentMacro = macro;
+  } macro_values {
+    Macro * currentMacro = ((struct _Environment *)_environment)->embedResult.currentMacro;
+    if ( ((struct _Environment *)_environment)->embedResult.valueCount != currentMacro->parameterCount ) {
+        CRITICAL_MACRO_MISMATCH_PARAMETER_VALUES( currentMacro->name );
+    }
+
+    if ( ! ((struct _Environment *)_environment)->embedResult.conditional ) {
+        int i;
+        for( i=0; i<((struct _Environment *)_environment)->embedResult.current; ++i ) {
+            if ( ((struct _Environment *)_environment)->embedResult.excluded[i] )
+                break;
+        }
+        if ( i>= ((struct _Environment *)_environment)->embedResult.current ) {
+            int j=0;
+            for( j=0; j<currentMacro->lineCount; ++j ) {
+                char * line = currentMacro->lines[j];
+                int k=0;
+                for( k=0; k<currentMacro->parameterCount; ++k ) {
+                    char * nextLine = str_replace( line, currentMacro->parameters[k], ((struct _Environment *)_environment)->embedResult.values[k] );
+                    if ( nextLine ) {
+                        line = nextLine;
+                    }
+                }
+                outline0( line );
+                ((Environment *)_environment)->producedAssemblyLines += assemblyLineIsAComment( line ) ? 0 : 1; \
+            }
+        }
+    }
+    ((struct _Environment *)_environment)->embedResult.currentMacro = NULL;
   }
   | {
       return 0;
