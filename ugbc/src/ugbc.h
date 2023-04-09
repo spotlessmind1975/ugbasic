@@ -1230,6 +1230,8 @@ typedef struct _EmbedResult {
     Macro * currentMacro;
     char * values[MAX_TEMPORARY_STORAGE];
     int valueCount;
+    char * lines[MAX_TEMPORARY_STORAGE];
+    int lineCount;
 
 } EmbedResult;
 
@@ -2251,8 +2253,8 @@ int embed_scan_string (const char *);
 
 #define outembedded0(e)     \
      { \
-        char * parsed = malloc( (2*e##_len) + 1 ); \
-        memset( parsed, 0, (2*e##_len) + 1 ); \
+        char * parsed = malloc( (8*e##_len) + 1 ); \
+        memset( parsed, 0, (8*e##_len) + 1 ); \
         char * tmp = malloc( e##_len + 1 ); \
         memset( tmp, 0, e##_len + 1 ); \
         memcpy( tmp, e, e##_len ); \
@@ -2260,6 +2262,7 @@ int embed_scan_string (const char *);
         while( line ) { \
             _environment->embedResult.line = line; \
             _environment->embedResult.conditional = 0; \
+            _environment->embedResult.lineCount = 0; \
             embed_scan_string( line ); \
             embedparse(_environment); \
             if ( ! _environment->embedResult.conditional ) { \
@@ -2269,9 +2272,18 @@ int embed_scan_string (const char *);
                         break; \
                 } \
                 if ( i>= _environment->embedResult.current ) { \
-                    strcat( parsed, line ); \
-                    strcat( parsed, "\x0a" ); \
-                    ((Environment *)_environment)->producedAssemblyLines += assemblyLineIsAComment( line ) ? 0 : 1; \
+                    if ( _environment->embedResult.lineCount ) { \
+                        int j=0; \
+                        for( j=0; j<_environment->embedResult.lineCount; ++j ) { \
+                            strcat( parsed, _environment->embedResult.lines[j] ); \
+                            strcat( parsed, "\x0a" ); \
+                            ((Environment *)_environment)->producedAssemblyLines += assemblyLineIsAComment( _environment->embedResult.lines[j] ) ? 0 : 1; \
+                        } \
+                    } else { \
+                        strcat( parsed, line ); \
+                        strcat( parsed, "\x0a" ); \
+                        ((Environment *)_environment)->producedAssemblyLines += assemblyLineIsAComment( line ) ? 0 : 1; \
+                    } \
                 } \
             } \
             line = strtok( NULL, "\x0a" ); \

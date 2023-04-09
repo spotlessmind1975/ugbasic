@@ -78,7 +78,7 @@ INLINE { RETURN(INLINE,1); }
 [ \t]+ { embedcolno = (embedcolno + embedleng); embedposno = (embedposno + embedleng); }
 
 [A-Za-z0-9\_]* { embedlval.string = strdup(embedtext); RETURN(Identifier,1);  }
-[\t]+[^\n]+ { embedlval.string = strdup(embedtext); RETURN(Content,1);  }
+@@[^\n]+ { char * content = strdup(embedtext); embedlval.string = content+2; RETURN(Content,1);  }
 \[[^\)]+\] { char * value = strdup(embedtext); embedlval.string = value+1; embedlval.string[strlen(embedlval.string)-1] = 0; RETURN(Value,1);  }
 
 . { embedcolno++; embedposno++; return(embedtext[0]); }

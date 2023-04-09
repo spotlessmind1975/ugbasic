@@ -330,14 +330,16 @@ const_factor:
 macro_parameter :
     Identifier {
         Macro * currentMacro = ((struct _Environment *)_environment)->embedResult.currentMacro;
-        currentMacro->parameters[currentMacro->parameterCount++] = strdup( $1 );
-        if ( currentMacro->parameterCount == MAX_TEMPORARY_STORAGE ) {
-            CRITICAL_MACRO_TOO_MUCH_PARAMETERS( currentMacro->name, $1 );
+        if ( currentMacro ) {
+            currentMacro->parameters[currentMacro->parameterCount++] = strdup( $1 );
+            if ( currentMacro->parameterCount == MAX_TEMPORARY_STORAGE ) {
+                CRITICAL_MACRO_TOO_MUCH_PARAMETERS( currentMacro->name, $1 );
+            }
         }
     };
 
 macro_parameters : 
-    macro_parameter
+    | macro_parameter
     | macro_parameter OP_COMMA macro_parameters;
 
 macro_value :
@@ -349,7 +351,7 @@ macro_value :
     };
 
 macro_values : 
-    macro_value
+    | macro_value
     | macro_value OP_COMMA macro_values;
 
 embed2:
@@ -405,32 +407,52 @@ embed2:
   }
   | OP_AT MACRO Identifier 
   {
-    ((struct _Environment *)_environment)->embedResult.currentMacro = malloc( sizeof( Macro ) );
-    memset( ((struct _Environment *)_environment)->embedResult.currentMacro, 0, sizeof( Macro ) );
-    Macro * currentMacro = ((struct _Environment *)_environment)->embedResult.currentMacro;
-    currentMacro->name = strdup( $3 );
-  } macro_parameters {
 
+    int i; 
+    for( i=0; i<((struct _Environment *)_environment)->embedResult.current; ++i ) {
+        if ( ((struct _Environment *)_environment)->embedResult.excluded[i] )
+        break;
+    }
+    if ( i>= ((struct _Environment *)_environment)->embedResult.current ) {
+        // printf( "@MACRO %s\n", $3 );
+
+        ((struct _Environment *)_environment)->embedResult.currentMacro = malloc( sizeof( Macro ) );
+        memset( ((struct _Environment *)_environment)->embedResult.currentMacro, 0, sizeof( Macro ) );
+        Macro * currentMacro = ((struct _Environment *)_environment)->embedResult.currentMacro;
+        currentMacro->name = strdup( $3 );
+    }
+  } macro_parameters {
+    ((struct _Environment *)_environment)->embedResult.conditional = 1;
   }
   | OP_AT ENDMACRO
   {
+    // printf( "@ENDMACRO\n" );
+
     Macro * currentMacro = ((struct _Environment *)_environment)->embedResult.currentMacro;
-    Macro * macro = ((struct _Environment *)_environment)->embedResult.macro;
-    currentMacro->next = macro;
-    ((struct _Environment *)_environment)->embedResult.macro = currentMacro;
-    ((struct _Environment *)_environment)->embedResult.currentMacro = NULL;
+    if ( currentMacro ) {
+        Macro * macro = ((struct _Environment *)_environment)->embedResult.macro;
+        currentMacro->next = macro;
+        ((struct _Environment *)_environment)->embedResult.macro = currentMacro;
+        ((struct _Environment *)_environment)->embedResult.currentMacro = NULL;
+    }
+    ((struct _Environment *)_environment)->embedResult.conditional = 1;
   }
   | Content {
+    // printf( " MACRO CONTENT = %s\n", $1 );
+
     Macro * currentMacro = ((struct _Environment *)_environment)->embedResult.currentMacro;
-    if ( ! currentMacro ) {
-        return 0;
+    if ( currentMacro ) {
+        currentMacro->lines[currentMacro->lineCount++] = strdup( $1 );
+        if ( currentMacro->lineCount == MAX_TEMPORARY_STORAGE ) {
+            CRITICAL_MACRO_TOO_MUCH_LINES( currentMacro->name );
+        }  
     }
-    currentMacro->lines[currentMacro->lineCount++] = strdup( $1 );
-    if ( currentMacro->lineCount == MAX_TEMPORARY_STORAGE ) {
-        CRITICAL_MACRO_TOO_MUCH_LINES( currentMacro->name );
-    }  
+    ((struct _Environment *)_environment)->embedResult.conditional = 1;
   }
   | OP_AT INLINE Identifier {
+
+    // printf( "@INLINE %s\n", $3 );
+
     Macro * macro = ((struct _Environment *)_environment)->embedResult.macro;
     if ( ! macro ) {
         CRITICAL_MACRO_UNDEFINED( $3 );
@@ -445,35 +467,28 @@ embed2:
         CRITICAL_MACRO_UNDEFINED( $3 );
     }
     ((struct _Environment *)_environment)->embedResult.currentMacro = macro;
+    ((struct _Environment *)_environment)->embedResult.lineCount = 0;
   } macro_values {
     Macro * currentMacro = ((struct _Environment *)_environment)->embedResult.currentMacro;
     if ( ((struct _Environment *)_environment)->embedResult.valueCount != currentMacro->parameterCount ) {
         CRITICAL_MACRO_MISMATCH_PARAMETER_VALUES( currentMacro->name );
     }
 
-    if ( ! ((struct _Environment *)_environment)->embedResult.conditional ) {
-        int i;
-        for( i=0; i<((struct _Environment *)_environment)->embedResult.current; ++i ) {
-            if ( ((struct _Environment *)_environment)->embedResult.excluded[i] )
-                break;
-        }
-        if ( i>= ((struct _Environment *)_environment)->embedResult.current ) {
-            int j=0;
-            for( j=0; j<currentMacro->lineCount; ++j ) {
-                char * line = currentMacro->lines[j];
-                int k=0;
-                for( k=0; k<currentMacro->parameterCount; ++k ) {
-                    char * nextLine = str_replace( line, currentMacro->parameters[k], ((struct _Environment *)_environment)->embedResult.values[k] );
-                    if ( nextLine ) {
-                        line = nextLine;
-                    }
-                }
-                outline0( line );
-                ((Environment *)_environment)->producedAssemblyLines += assemblyLineIsAComment( line ) ? 0 : 1; \
+    int j=0;
+    for( j=0; j<currentMacro->lineCount; ++j ) {
+        char * line = currentMacro->lines[j];
+        int k=0;
+        for( k=0; k<currentMacro->parameterCount; ++k ) {
+            char * nextLine = str_replace( line, currentMacro->parameters[k], ((struct _Environment *)_environment)->embedResult.values[k] );
+            if ( nextLine ) {
+                line = nextLine;
             }
         }
+        ((struct _Environment *)_environment)->embedResult.lines[((struct _Environment *)_environment)->embedResult.lineCount++] = line;
+        ((Environment *)_environment)->producedAssemblyLines += assemblyLineIsAComment( line ) ? 0 : 1; \
     }
     ((struct _Environment *)_environment)->embedResult.currentMacro = NULL;
+    // printf( " lineCount = %d\n", ((struct _Environment *)_environment)->embedResult.lineCount );
   }
   | {
       return 0;
@@ -488,9 +503,9 @@ embed :
 
 int embederror (Environment * _ignored, const char *s) /* Called by embedparse on error */
 {
-    printf( "*** LINE: %s\n", _ignored->embedResult.line );
-    printf( "*** ERROR: %s at %d column %d (%d)\n", s, 0, (embedcolno+1), (yyposno+1));
+    printf( "*** LINE2: %s\n", _ignored->embedResult.line );
+    printf( "*** ERROR2: %s at %d column %d (%d)\n", s, 0, (embedcolno+1), (yyposno+1));
 
-    // fprintf(stdout, "*** error!\n" );
+    exit(0);
 }
 

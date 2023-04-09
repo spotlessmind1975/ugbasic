@@ -65,12 +65,13 @@ void end_compilation( Environment * _environment ) {
     for( j=0; j<MAX_TEMPORARY_STORAGE; ++j ) {
         if ( _environment->deferredEmbedded[j] ) {
             int size = _environment->deferredEmbeddedSize[j];
-            char * parsed = malloc( (2*size) + 1 );
-            memset( parsed, 0, (2*size) + 1 );
+            char * parsed = malloc( (8*size) + 1 );
+            memset( parsed, 0, (8*size) + 1 );
             char * line = strtok( _environment->deferredEmbedded[j], "\x0a" );
             while( line ) {
                 _environment->embedResult.line = line;
                 _environment->embedResult.conditional = 0;
+                 _environment->embedResult.lineCount = 0;
                 embed_scan_string( line );
                 embedparse(_environment);
                 if ( ! _environment->embedResult.conditional ) {
@@ -80,9 +81,18 @@ void end_compilation( Environment * _environment ) {
                             break;
                     }
                     if ( i>= _environment->embedResult.current ) {
-                        strcat( parsed, line );
-                        strcat( parsed, "\x0a" );
-                        ((Environment *)_environment)->producedAssemblyLines += assemblyLineIsAComment( line ) ? 0 : 1;
+                        if ( _environment->embedResult.lineCount ) {
+                            int j=0;
+                            for( j=0; j<_environment->embedResult.lineCount; ++j ) {
+                                strcat( parsed, _environment->embedResult.lines[j] );
+                                strcat( parsed, "\x0a" );
+                                ((Environment *)_environment)->producedAssemblyLines += assemblyLineIsAComment( _environment->embedResult.lines[j] ) ? 0 : 1;
+                            }
+                        } else {
+                            strcat( parsed, line );
+                            strcat( parsed, "\x0a" );
+                            ((Environment *)_environment)->producedAssemblyLines += assemblyLineIsAComment( line ) ? 0 : 1;
+                        }                        
                     }
                 }
                 line = strtok( NULL, "\x0a" );
