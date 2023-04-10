@@ -1414,6 +1414,8 @@ void gtia_text( Environment * _environment, char * _text, char * _text_size ) {
 
 void gtia_initialization( Environment * _environment ) {
 
+    _environment->vestigialConfig.palettePreserve = 1;
+    
     deploy( gtiavars, src_hw_gtia_vars_asm );
     deploy( gtiastartup, src_hw_gtia_startup_asm );
     src_hw_chipset_mob_asm = src_hw_gtia_mob_asm;
