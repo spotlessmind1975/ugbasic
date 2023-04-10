@@ -303,6 +303,8 @@ const_factor:
                 $$ = ((struct _Environment *)_environment)->vestigialConfig.doubleBufferSelected;
             } else if ( strcmp( $3, "doubleBuffer" ) == 0 ) {
                 $$ = ((struct _Environment *)_environment)->vestigialConfig.doubleBuffer;
+            } else if ( strcmp( $3, "palettePreserve" ) == 0 ) {
+                $$ = ((struct _Environment *)_environment)->vestigialConfig.palettePreserve;
             } else {
                 $$ = 0;
             }
@@ -414,7 +416,7 @@ embed2:
         break;
     }
     if ( i>= ((struct _Environment *)_environment)->embedResult.current ) {
-        // printf( "@MACRO %s\n", $3 );
+        // printf( "%d @MACRO %s\n", ((struct _Environment *)_environment)->embedResult.current, $3 );
 
         ((struct _Environment *)_environment)->embedResult.currentMacro = malloc( sizeof( Macro ) );
         memset( ((struct _Environment *)_environment)->embedResult.currentMacro, 0, sizeof( Macro ) );
@@ -468,7 +470,11 @@ embed2:
     }
     ((struct _Environment *)_environment)->embedResult.currentMacro = macro;
     ((struct _Environment *)_environment)->embedResult.lineCount = 0;
+    ((struct _Environment *)_environment)->embedResult.valueCount = 0;
   } macro_values {
+    
+    MAKE_LABEL
+
     Macro * currentMacro = ((struct _Environment *)_environment)->embedResult.currentMacro;
     if ( ((struct _Environment *)_environment)->embedResult.valueCount != currentMacro->parameterCount ) {
         CRITICAL_MACRO_MISMATCH_PARAMETER_VALUES( currentMacro->name );
@@ -483,6 +489,10 @@ embed2:
             if ( nextLine ) {
                 line = nextLine;
             }
+        }
+        char * nextLine = str_replace( line, "label", label );
+        if ( nextLine ) {
+            line = nextLine;
         }
         ((struct _Environment *)_environment)->embedResult.lines[((struct _Environment *)_environment)->embedResult.lineCount++] = line;
         ((Environment *)_environment)->producedAssemblyLines += assemblyLineIsAComment( line ) ? 0 : 1; \
