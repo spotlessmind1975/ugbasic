@@ -1200,6 +1200,7 @@ typedef struct _VestigialConfig {
     char screenModeUnique;
     char doubleBufferSelected;
     char doubleBuffer;
+    char palettePreserve;
 
 } VestigialConfig;
 
@@ -1879,8 +1880,8 @@ typedef struct _Environment {
 
 } Environment;
 
-#define UNIQUE_ID            _environment->uniqueId++
-#define UNIQUE_RESOURCE_ID   _environment->uniqueResourceId++
+#define UNIQUE_ID            ((struct _Environment *)_environment)->uniqueId++
+#define UNIQUE_RESOURCE_ID   ((struct _Environment *)_environment)->uniqueResourceId++
 #define MAKE_LABEL  char label[12]; sprintf( label, "_label%d", UNIQUE_ID);
 
 #define CRITICAL( s ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
