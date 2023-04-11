@@ -93,21 +93,21 @@ PALETTEPRESERVEUSED:
 @MACRO PALETTEPRESERVE2C4 value, increment
 @@
 @@  LDA PALETTEPRESERVEUSED
-@@  AND $1
-@@  CMP $1
+@@  AND #$1
+@@  CMP #$1
 @@  BEQ PALETTEPRESERVE1_label
 @@
 @@  LDA value
 @@  STA $02C4
 @@
 @@  LDA PALETTEPRESERVEUSED
-@@  ORA $1
+@@  ORA #$1
 @@  STA PALETTEPRESERVEUSED
 @@
 @@PALETTEPRESERVE1_label:
 @@
 @@  LDA increment
-@@  CMP $1
+@@  CMP #$1
 @@  BNE PALETTEPRESERVE1_label2
 @@
 @@  INC LASTCOLOR 
@@ -119,21 +119,21 @@ PALETTEPRESERVEUSED:
 @MACRO PALETTEPRESERVE2C5 value, increment
 @@
 @@  LDA PALETTEPRESERVEUSED
-@@  AND $2
-@@  CMP $2
+@@  AND #$2
+@@  CMP #$2
 @@  BEQ PALETTEPRESERVE2_label
 @@
 @@  LDA value
 @@  STA $02C5
 @@
 @@  LDA PALETTEPRESERVEUSED
-@@  ORA $2
+@@  ORA #$2
 @@  STA PALETTEPRESERVEUSED
 @@
 @@PALETTEPRESERVE2_label:
 @@
 @@  LDA increment
-@@  CMP $1
+@@  CMP #$1
 @@  BNE PALETTEPRESERVE2_label2
 @@
 @@  INC LASTCOLOR 
@@ -145,21 +145,21 @@ PALETTEPRESERVEUSED:
 @MACRO PALETTEPRESERVE2C6 value, increment
 @@
 @@  LDA PALETTEPRESERVEUSED
-@@  AND $4
-@@  CMP $4
+@@  AND #$4
+@@  CMP #$4
 @@  BEQ PALETTEPRESERVE4_label
 @@
 @@  LDA value
 @@  STA $02C6
 @@
 @@  LDA PALETTEPRESERVEUSED
-@@  ORA $4
+@@  ORA #$4
 @@  STA PALETTEPRESERVEUSED
 @@
 @@PALETTEPRESERVE4_label:
 @@
 @@  LDA increment
-@@  CMP $1
+@@  CMP #$1
 @@  BNE PALETTEPRESERVE4_label2
 @@
 @@  INC LASTCOLOR 
@@ -171,21 +171,21 @@ PALETTEPRESERVEUSED:
 @MACRO PALETTEPRESERVE2C7 value, increment
 @@
 @@  LDA PALETTEPRESERVEUSED
-@@  AND $8
-@@  CMP $8
+@@  AND #$8
+@@  CMP #$8
 @@  BEQ PALETTEPRESERVE8_label
 @@
 @@  LDA value
 @@  STA $02C7
 @@
 @@  LDA PALETTEPRESERVEUSED
-@@  ORA $8
+@@  ORA #$8
 @@  STA PALETTEPRESERVEUSED
 @@
 @@PALETTEPRESERVE8_label:
 @@
 @@  LDA increment
-@@  CMP $1
+@@  CMP #$1
 @@  BNE PALETTEPRESERVE8_label2
 @@
 @@  INC LASTCOLOR 
@@ -197,21 +197,21 @@ PALETTEPRESERVEUSED:
 @MACRO PALETTEPRESERVE2C8 value, increment
 @@
 @@  LDA PALETTEPRESERVEUSED
-@@  AND $10
-@@  CMP $10
+@@  AND #$10
+@@  CMP #$10
 @@  BEQ PALETTEPRESERVE16_label
 @@
 @@  LDA value
 @@  STA $02C8
 @@
 @@  LDA PALETTEPRESERVEUSED
-@@  ORA $10
+@@  ORA #$10
 @@  STA PALETTEPRESERVEUSED
 @@
 @@PALETTEPRESERVE16_label:
 @@
 @@  LDA increment
-@@  CMP $1
+@@  CMP #$1
 @@  BNE PALETTEPRESERVE16_label2
 @@
 @@  INC LASTCOLOR 
@@ -228,7 +228,7 @@ PALETTEPRESERVEUSED:
 @@  STA $02C4
 @@
 @@  LDA increment
-@@  CMP $1
+@@  CMP #$1
 @@  BNE PALETTEPRESERVE1_label2
 @@
 @@  INC LASTCOLOR 
@@ -243,7 +243,7 @@ PALETTEPRESERVEUSED:
 @@  STA $02C5
 @@
 @@  LDA increment
-@@  CMP $1
+@@  CMP #$1
 @@  BNE PALETTEPRESERVE2_label2
 @@
 @@  INC LASTCOLOR 
@@ -258,7 +258,7 @@ PALETTEPRESERVEUSED:
 @@  STA $02C6
 @@
 @@  LDA increment
-@@  CMP $1
+@@  CMP #$1
 @@  BNE PALETTEPRESERVE4_label2
 @@
 @@  INC LASTCOLOR 
@@ -273,7 +273,7 @@ PALETTEPRESERVEUSED:
 @@  STA $02C7
 @@
 @@  LDA increment
-@@  CMP $1
+@@  CMP #$1
 @@  BNE PALETTEPRESERVE8_label2
 @@
 @@  INC LASTCOLOR 
@@ -288,7 +288,7 @@ PALETTEPRESERVEUSED:
 @@  STA $02C8
 @@
 @@  LDA increment
-@@  CMP $1
+@@  CMP #$1
 @@  BNE PALETTEPRESERVE16_label2
 @@
 @@  INC LASTCOLOR 
