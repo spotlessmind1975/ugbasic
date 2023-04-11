@@ -116,6 +116,11 @@ void target_initialization( Environment * _environment ) {
 
     if ( _environment->tenLinerRulesEnforced ) {
         shell_injection( _environment );
+        if ( _environment->vestigialConfig.palettePreserve ) {
+            outline0("LDA #$0");
+            outline0("STA PALETTEPRESERVEUSED");
+            outline0("STA LASTCOLOR");
+        }
     }
     
     cpu_call( _environment, "VARINIT" );
