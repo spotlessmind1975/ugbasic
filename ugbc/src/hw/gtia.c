@@ -1143,6 +1143,7 @@ void gtia_textmap_at( Environment * _environment, char * _address ) {
 void gtia_point_at_int( Environment * _environment, int _x, int _y ) {
 
     deploy_deferred( gtiavarsGraphic, src_hw_gtia_vars_graphics_asm );
+    deploy( gtiapreproc, src_hw_gtia__preproc_asm );
     deploy( plot, src_hw_gtia_plot_asm );
     
     outline1("LDA %2.2x", (_x & 0xff ) );
@@ -1403,9 +1404,11 @@ void gtia_text( Environment * _environment, char * _text, char * _text_size ) {
     outline0("STA TEXTSIZE" );
 
     if ( _environment->currentMode >= 2 && _environment->currentMode <= 7 ) {
+        deploy( gtiapreproc, src_hw_gtia__preproc_asm );
         deploy( textEncodedAtText, src_hw_gtia_text_at_text_asm );
         outline0("JSR TEXTATTILEMODE");
     } else {
+        deploy( gtiapreproc, src_hw_gtia__preproc_asm );
         deploy( textEncodedAtGraphic, src_hw_gtia_text_at_graphic_asm );
         outline0("JSR TEXTATBITMAPMODE");
     }
@@ -1535,6 +1538,7 @@ void gtia_hscroll_screen( Environment * _environment, int _direction ) {
 
 void gtia_back( Environment * _environment ) {
 
+    deploy( gtiapreproc, src_hw_gtia__preproc_asm );
     deploy( back, src_hw_gtia_back_asm );
 
     outline0("JSR BACK");
@@ -2146,6 +2150,7 @@ void gtia_put_image( Environment * _environment, char * _image, char * _x, char 
 
     deploy( gtiavars, src_hw_gtia_vars_asm);
     deploy_deferred( gtiavarsGraphic, src_hw_gtia_vars_graphics_asm );
+    deploy( gtiapreproc, src_hw_gtia__preproc_asm );
     deploy( putimage, src_hw_gtia_put_image_asm );
 
     outline1("LDA #<%s", _image );

@@ -1111,6 +1111,7 @@ typedef struct _Deployed {
     int gtiastartup;
     int gtiavars;
     int gtiavarsGraphic;
+    int gtiapreproc;
     int zxvars;
     int msx1vars;
     int sc3000vars;
