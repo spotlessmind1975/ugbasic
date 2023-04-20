@@ -72,6 +72,16 @@ IMAGEH2 EQU $47
 IMAGET EQU $48
 IMAGEF EQU $49
 
+BLITTMPPTR EQU $50 ; $51
+BLITTMPPTR2 EQU $52 ; $53
+BLITS0 EQU $54
+BLITS1 EQU $55
+BLITS2 EQU $56
+BLITR0 EQU $57
+BLITR1 EQU $58
+BLITR2 EQU $59
+BLITR3 EQU $60
+
 ; ------------------------------------------------------------------------------
 ; BITMAP MODE (MODE #2)
 ; ------------------------------------------------------------------------------
