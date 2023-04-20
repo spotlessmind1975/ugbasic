@@ -462,6 +462,7 @@ struct var *vars_get(POBuffer _name) {
 }
 
 static int vars_ok(POBuffer name) {
+
     if(po_buf_match(name, "^_Tstr"))   return 0;
     if(po_buf_match(name, "_^_Tstr"))   return 0;
     if(po_buf_match(name, "_label"))  return 0;
@@ -477,7 +478,7 @@ static int vars_ok(POBuffer name) {
     if(po_buf_match(name, "XGR"))     return 1;
     if(po_buf_match(name, "YGR"))     return 1;
     if(po_buf_match(name, "FREE_"))   return 1;
-
+    
     return 0;
 }
 
@@ -485,16 +486,20 @@ static int vars_ok(POBuffer name) {
 static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
     POBuffer tmp = TMP_BUF;
     POBuffer arg = TMP_BUF;
+    POBuffer ofs = TMP_BUF;
 
     // if( match( buf[0], " * _*+", NULL, buf) ) {
         // struct var *v = vars_get(buf);
         // v->flags |= NO_INLINE;
     // }
 
-    if( po_buf_match( buf[0], " LD *, (*)",  tmp, arg ) ) if(vars_ok(arg)) {
+    if( po_buf_match( buf[0], " LD *, (*+*)",  tmp, arg, ofs ) ) { if(vars_ok(arg)) {
         struct var *v = vars_get(arg);
         v->nb_rd++;
-    }
+    } } else if( po_buf_match( buf[0], " LD *, (*)",  tmp, arg ) ) { if(vars_ok(arg)) {
+        struct var *v = vars_get(arg);
+        v->nb_rd++;
+    } }
 
     if( po_buf_match( buf[0], " LD *, *",  tmp, arg ) &&
         strstr("A B C D E AD BC DE HL IX IY", tmp->str)!=NULL
@@ -503,10 +508,13 @@ static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
         v->nb_rd++;
     }
 
-    if (po_buf_match( buf[0], " LD (*), *", arg, tmp) ) if(vars_ok(arg)) {
+    if (po_buf_match( buf[0], " LD (*+*), *", arg, ofs, tmp) ) { if(vars_ok(arg)) {
         struct var *v = vars_get(arg);
         v->nb_wr++;
-    }
+    } } else if (po_buf_match( buf[0], " LD (*), *", arg, tmp) ) { if(vars_ok(arg)) {
+        struct var *v = vars_get(arg);
+        v->nb_wr++;
+    } }
 
     if (po_buf_match( buf[0], " LD *, *", arg, tmp) &&
         strstr("A B C D E AD BC DE HL IX IY", tmp->str)!=NULL        
@@ -549,11 +557,19 @@ static int vars_cmp(const void *_a, const void *_b) {
 static void vars_remove(Environment * _environment, POBuffer buf[LOOK_AHEAD]) {
     POBuffer var = TMP_BUF;
     POBuffer op  = TMP_BUF;
+    POBuffer ofs = TMP_BUF;
     
     if(!DO_UNREAD) return;
     
     /* unread */
-    if(po_buf_match( buf[0], " LD (*), *", var, op) && vars_ok(var)) {
+    if(po_buf_match( buf[0], " LD (*+*), *", var, ofs, op) && vars_ok(var)) {
+        struct var *v = vars_get(var);
+        if(v->nb_rd == 0 && v->offset!=-2) {
+            v->offset = 0;
+            optim(buf[0], "unread", NULL);
+            ++_environment->removedAssemblyLines;
+        }
+    } else if(po_buf_match( buf[0], " LD (*), *", var, op) && vars_ok(var)) {
         struct var *v = vars_get(var);
         if(v->nb_rd == 0 && v->offset!=-2) {
             v->offset = 0;
