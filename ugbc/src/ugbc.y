@@ -6430,22 +6430,29 @@ emit_additional_info: {
 
     outline1("; P:%d", producedLines); 
 
-    adiline2( "P:0:%d:%d", yylineno - 2, producedLines );
+    adiline2( "P:0:%d:%d", yylineno - 1, producedLines );
 
     ((Environment *)_environment)->previousProducedAssemblyLines = 
         ((Environment *)_environment)->producedAssemblyLines; 
 
 };
 
-statements_complex:
-      statements_no_linenumbers emit_additional_info
-    | statements_no_linenumbers emit_additional_info NewLine statements_complex
+statements_complex2:
+    statements_no_linenumbers emit_additional_info
     | statements_with_linenumbers emit_additional_info
-    | statements_with_linenumbers emit_additional_info NewLine statements_complex
+    ;
+
+statements_complex:
+      statements_complex2
+    | statements_complex2 NewLine statements_complex
     ;
 
 program : 
-  { ((Environment *)_environment)->yylineno = yylineno; outline1("; L:%d", yylineno); } statements_complex;
+  { ((Environment *)_environment)->yylineno = yylineno; outline1("; L:%d", yylineno); }
+  statements_complex 
+  { ++yylineno; ((Environment *)_environment)->yylineno = yylineno; outline1("; L:%d", yylineno); }
+  emit_additional_info
+  { return 0; }
 
 %%
 
