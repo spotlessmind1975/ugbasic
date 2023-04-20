@@ -643,6 +643,7 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
             _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
             _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
             _environment->screenColors = 16;
+            _environment->currentModeBW = 0;
 
             // M3 = 0
             WVDP_R0( 0x00 );
@@ -700,6 +701,7 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
             _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
             _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
             _environment->screenColors = 16;    
+            _environment->currentModeBW = 1;
 
             // M3 = 0
             WVDP_R0( 0x00 );
@@ -778,6 +780,7 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
             _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
             _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
             _environment->screenColors = 16;    
+            _environment->currentModeBW = 1;
 
             // M3 = 1
             WVDP_R0( 0x02 );
@@ -1509,6 +1512,13 @@ void tms9918_initialization( Environment * _environment ) {
     variable_import( _environment, "IMAGET", VT_BYTE, 0 );
     variable_global( _environment, "IMAGET" );
 
+    variable_import( _environment, "BLITIMAGEBLITTINGADDR", VT_ADDRESS, 0 );
+    variable_global( _environment, "BLITIMAGEBLITTINGADDR" );
+    variable_import( _environment, "BLITTMPPTR", VT_ADDRESS, 0 );
+    variable_global( _environment, "BLITTMPPTR" );
+    variable_import( _environment, "BLITTMPPTR2", VT_ADDRESS, 0 );
+    variable_global( _environment, "BLITTMPPTR2" );
+
     // #if __coleco__
     //     variable_import( _environment, "VDP_HOOK", VT_BUFFER, 10 );
     //     variable_global( _environment, "VDP_HOOK" );
@@ -1838,6 +1848,133 @@ Variable * tms9918_image_converter( Environment * _environment, char * _data, in
     WARNING_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
 
     return tms9918_new_image( _environment, 8, 8, BITMAP_MODE_GRAPHIC2 );
+
+}
+
+static void tms9918_load_image_address_to_register( Environment * _environment, char * _register, char * _source, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {
+
+    outline1("LD HL, %s", _source );
+    if ( _sequence ) {
+
+        outline0("LD DE, $0003" );
+        outline0("ADD HL, DE" );
+        if ( strlen(_sequence) == 0 ) {
+
+        } else {
+            outline0("PUSH HL" );
+            outline1("LD A, (%s)", _sequence );
+            outline0("LD L, A" );
+            outline0("LD H, 0" );
+            outline0("ADD HL, HL" );
+            outline0("LD DE, HL" );
+            outline1("LD HL, OFFSETS%4.4x", _frame_size * _frame_count );
+            outline0("ADD HL, DE" );
+            outline0("LD A, (HL)" );
+            outline0("LD E, A" );
+            outline0("INC HL" );
+            outline0("LD A, (HL)" );
+            outline0("LD D, A" );
+            outline0("POP HL" );
+            outline0("ADD HL, DE" );
+        }
+
+        if ( _frame ) {
+            if ( strlen(_frame) == 0 ) {
+
+            } else {
+                outline0("PUSH HL" );
+                outline1("LD A, (%s)", _frame );
+                outline0("LD L, A" );
+                outline0("LD H, 0" );
+                outline0("ADD HL, HL" );
+                outline0("LD DE, HL" );
+                outline1("LD HL, OFFSETS%4.4x", _frame_size * _frame_count );
+                outline0("ADD HL, DE" );
+                outline0("LD A, (HL)" );
+                outline0("LD E, A" );
+                outline0("INC HL" );
+                outline0("LD A, (HL)" );
+                outline0("LD D, A" );
+                outline0("POP HL" );
+                outline0("ADD HL, DE" );
+            }
+        }
+
+    } else {
+
+        if ( _frame ) {
+            outline0("LD DE, $0003" );
+            outline0("ADD HL, DE" );
+            if ( strlen(_frame) == 0 ) {
+
+            } else {
+                outline0("PUSH HL" );
+                outline1("LD A, (%s)", _frame );
+                outline0("LD L, A" );
+                outline0("LD H, 0" );
+                outline0("ADD HL, HL" );
+                outline0("LD DE, HL" );
+                outline1("LD HL, OFFSETS%4.4x", _frame_size );
+                outline0("ADD HL, DE" );
+                outline0("LD A, (HL)" );
+                outline0("LD E, A" );
+                outline0("INC HL" );
+                outline0("LD A, (HL)" );
+                outline0("LD D, A" );
+                outline0("POP HL" );
+                outline0("ADD HL, DE" );
+            }
+        }
+
+    }
+    outline1("LD (%s), HL", _register );
+
+}
+
+void tms9918_blit_image( Environment * _environment, char * _sources[], int _source_count, char * _blit, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags ) {
+
+    deploy( tms9918vars, src_hw_tms9918_vars_asm);
+    deploy( tms9918varsGraphic, src_hw_tms9918_vars_graphic_asm );
+    deploy( blitimage, src_hw_tms9918_blit_image_asm );
+
+    if ( _source_count > 2 ) {
+        CRITICAL_BLIT_TOO_MUCH_SOURCES( );
+    }
+
+    MAKE_LABEL
+
+    outline1("LD HL, %s", _blit );
+    outline0("LD (BLITIMAGEBLITTINGADDR), HL");
+
+    outhead1("blitimage%s:", label);
+    if ( _source_count > 0 ) {
+        tms9918_load_image_address_to_register( _environment, "BLITTMPPTR", _sources[0], _sequence, _frame, _frame_size, _frame_count );
+    } else {
+        outline0( "LD HL, 0" );
+        outline0( "LD (BLITTMPPTR), HL" );
+    }
+
+    if ( _source_count > 1 ) {
+        tms9918_load_image_address_to_register( _environment, "BLITTMPPTR2", _sources[1], _sequence, _frame, _frame_size, _frame_count );
+    } else {
+        outline0( "LD HL, 0" );
+        outline0( "LD (BLITTMPPTR2), HL" );
+    }
+
+    outline1("LD A, (%s)", _x );
+    outline0("LD E, A" );
+    outline1("LD A, (%s)", _y );
+    outline0("LD D, A" );
+    outline1("LD A, $%2.2x", ( _flags & 0xff ) );
+    outline0("LD (IMAGEF), A" );
+    outline1("LD A, $%2.2x", ( (_flags>>8) & 0xff ) );
+    outline0("LD (IMAGET), A" );
+
+    if ( ! _environment->hasGameLoop ) {
+        outline0("CALL BLITIMAGE");
+    } else {
+        outline0("CALL BLITIMAGENMI2");
+    }
 
 }
 
