@@ -1393,6 +1393,97 @@ Variable * c6847_image_converter( Environment * _environment, char * _data, int 
 
 }
 
+static void c6847_load_image_address_to_register( Environment * _environment, char * _register, char * _source, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {
+
+    outline1("LDY #%s", _source );
+    if ( _sequence ) {
+        outline0("LEAY 3,y" );
+        if ( strlen(_sequence) == 0 ) {
+        } else {
+            outline1("LDX #OFFSETS%4.4x", _frame_count * _frame_size );
+            outline1("LDB %s", _sequence );
+            outline0("LDA #0" );
+            outline0("LEAX D, X" );
+            outline0("LEAX D, X" );
+            outline0("LDD ,X" );
+            outline0("LEAY D, Y" );
+        }
+        if ( _frame ) {
+            if ( strlen(_frame) == 0 ) {
+            } else {
+                outline1("LDX #OFFSETS%4.4x", _frame_size );
+                outline1("LDB %s", _frame );
+                outline0("LDA #0" );
+                outline0("LEAX D, X" );
+                outline0("LEAX D, X" );
+                outline0("LDD ,X" );
+                outline0("LEAY D, Y" );
+            }
+        }
+    } else {
+        if ( _frame ) {
+            outline0("LEAY 3,y" );
+            if ( strlen(_frame) == 0 ) {
+            } else {
+                outline1("LDX #OFFSETS%4.4x", _frame_size );
+                outline1("LDB %s", _frame );
+                outline0("LDA #0" );
+                outline0("LEAX D, X" );
+                outline0("LEAX D, X" );
+                outline0("LDD ,X" );
+                outline0("LEAY D, Y" );
+            }
+        }
+    }
+
+    outline1("STY %s", _register );
+
+}
+
+void c6847_blit_image( Environment * _environment, char * _sources[], int _source_count, char * _blit, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags ) {
+
+    deploy( c6847vars, src_hw_6847_vars_asm);
+    deploy( blitimage, src_hw_6847_blit_image_asm );
+
+    if ( _source_count > 2 ) {
+        CRITICAL_BLIT_TOO_MUCH_SOURCES( );
+    }
+
+    MAKE_LABEL
+
+    outhead1("blitimage%s", label);
+
+    outline1("LDY #%s", _blit );
+    outline0("STY BLITIMAGEBLITADDR" );
+
+    if ( _source_count > 0 ) {
+        c6847_load_image_address_to_register( _environment, "BLITTMPPTR", _sources[0], _sequence, _frame, _frame_size, _frame_count );
+    } else {
+        outline0( "LDY #0" );
+        outline0( "STY BLITTMPPTR" );
+    }
+
+    if ( _source_count > 1 ) {
+        c6847_load_image_address_to_register( _environment, "BLITTMPPTR2", _sources[0], _sequence, _frame, _frame_size, _frame_count );
+    } else {
+        outline0( "LDY #0" );
+        outline0( "STY BLITTMPPTR2" );
+    }
+
+    outline1("LDD %s", _x );
+    outline0("STD IMAGEX" );
+    outline1("LDD %s", _y );
+    outline0("STD IMAGEY" );
+
+    outline1("LDA #$%2.2x", ( _flags & 0xff ) );
+    outline0("STA <IMAGEF" );
+    outline1("LDA #$%2.2x", ( (_flags>>8) & 0xff ) );
+    outline0("STA <IMAGET" );
+
+    outline0("JSR BLITIMAGE");
+    
+}
+
 void c6847_put_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags ) {
 
     deploy( c6847vars, src_hw_6847_vars_asm);
