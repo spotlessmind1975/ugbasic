@@ -216,6 +216,12 @@ void cpu6502_msc1_uncompress_direct_indirect( Environment * _environment, char *
 void cpu6502_msc1_uncompress_indirect_direct( Environment * _environment, char * _input, char * _output );
 void cpu6502_msc1_uncompress_indirect_indirect( Environment * _environment, char * _input, char * _output );
 
+void cpu6502_blit_initialize( Environment * _environment );
+char*cpu6502_blit_register_name( Environment * _environment, int _register );
+int  cpu6502_blit_alloc_register( Environment * _environment );
+void cpu6502_blit_free_register( Environment * _environment, int _register );
+void cpu6502_blit_finalize( Environment * _environment );
+
 #define cpu_beq( _environment,  _label  ) cpu6502_beq( _environment,  _label  )
 #define cpu_bneq( _environment,  _label  ) cpu6502_beq( _environment,  _label  )
 #define cpu_busy_wait( _environment,  _timing  ) cpu6502_busy_wait( _environment,  _timing  )
@@ -404,6 +410,12 @@ extern unsigned int src_hw_chipset_mob_asm_len;
 #define cpu_msc1_uncompress_direct_indirect( _environment, _input, _output ) cpu6502_msc1_uncompress_direct_indirect( _environment, _input, _output )
 #define cpu_msc1_uncompress_indirect_direct( _environment, _input, _output ) cpu6502_msc1_uncompress_indirect_direct( _environment, _input, _output )
 #define cpu_msc1_uncompress_indirect_indirect( _environment, _input, _output ) cpu6502_msc1_uncompress_indirect_indirect( _environment, _input, _output )
+
+#define cpu_blit_initialize( _environment ) cpu6502_blit_initialize( _environment )
+#define cpu_blit_register_name( _environment, _register ) cpu6502_blit_register_name( _environment, _register )
+#define cpu_blit_alloc_register( _environment ) cpu6502_blit_alloc_register( _environment )
+#define cpu_blit_free_register( _environment, _register ) cpu6502_blit_free_register( _environment, _register )
+#define cpu_blit_finalize( _environment ) cpu6502_blit_finalize( _environment )
 
 #define     CPU_LITTLE_ENDIAN      1
 

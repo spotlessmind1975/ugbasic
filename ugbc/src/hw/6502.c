@@ -5681,5 +5681,103 @@ void cpu6502_string_sub( Environment * _environment, char * _source, char * _sou
     done()
 }
 
+static char CPU6502_BLIT_REGISTER[][9] = {
+    "BLITR0",
+    "BLITR1",
+    "BLITR2",
+    "BLITR3"
+};
+
+#define CPU6502_BLIT_REGISTER_COUNT ( sizeof( CPU6502_BLIT_REGISTER ) / 9 )
+
+void cpu6502_blit_initialize( Environment * _environment ) {
+
+    _environment->blit.freeRegisters = 0;
+    _environment->blit.usedMemory = 0;
+
+}
+
+void cpu6502_blit_finalize( Environment * _environment ) {
+
+    _environment->blit.freeRegisters = 0;
+    _environment->blit.usedMemory = 0;
+
+}
+
+char * cpu6502_blit_register_name(  Environment * _environment, int _register ) {
+    
+    if ( _register < CPU6502_BLIT_REGISTER_COUNT ) {
+        return &CPU6502_BLIT_REGISTER[_register][0];
+    } else {
+        return &CPU6502_BLIT_REGISTER[ (_register & 0xff00) >> 8][0];
+    }
+}
+
+int cpu6502_blit_alloc_register(  Environment * _environment ) {
+
+    int reg = 0;
+
+    for( reg = 0; reg < CPU6502_BLIT_REGISTER_COUNT; ++reg ) {
+        int registerMask = ( 0x01 << reg );
+        int isRegisterUsed = _environment->blit.freeRegisters & registerMask;
+        if ( ! isRegisterUsed ) {
+            _environment->blit.freeRegisters |= registerMask;
+            // printf( "z80_blit_alloc_register() %4.4x -> $%4.4x\n", _environment->blit.freeRegisters, reg );
+            return reg;
+        }
+    }
+
+    int location = _environment->blit.usedMemory++;
+
+    if ( location > 0xff ) {
+        CRITICAL_BLIT_ALLOC_MEMORY_EXHAUSTED( );
+    }
+
+    for( reg = 0; reg < CPU6502_BLIT_REGISTER_COUNT; ++reg ) {
+        int registerMask = ( 0x10 << reg );
+        int isRegisterUsed = _environment->blit.freeRegisters & registerMask;
+        if ( ! isRegisterUsed ) {
+            outline1( "LDA %s", &CPU6502_BLIT_REGISTER[reg][0] );
+            outline2( "STA _%sbs+$%2.2x",  _environment->blit.name, location );
+            _environment->blit.freeRegisters |= registerMask;
+            // printf( "z80_blit_alloc_register() -> %4.4x $%4.4x\n", _environment->blit.freeRegisters, ( ( reg << 8 ) | location ) );
+            return ( ( reg << 8 ) | location );
+        }
+    }
+
+    CRITICAL_BLIT_ALLOC_REGISTER_EXHAUSTED( );
+
+}
+
+void cpu6502_blit_free_register(  Environment * _environment, int _register ) {
+
+    // printf( "z80_blit_free_register($%4.4x)\n", _register );
+
+    int location = _register & 0xff;
+    int reg;
+
+    if ( _register < CPU6502_BLIT_REGISTER_COUNT ) {
+        int registerMask = ( 0x01 << _register );
+        int isRegisterUsed = _environment->blit.freeRegisters & registerMask;
+        if ( isRegisterUsed ) {
+            _environment->blit.freeRegisters &= ~registerMask;
+            return;
+        } else {
+            CRITICAL_BLIT_INVALID_FREE_REGISTER( _environment->blit.name, _register );
+        }
+    } else {
+        int registerMask = 0x10 << ( ( _register >> 8 ) & 0xff );
+        int isRegisterUsed = _environment->blit.freeRegisters & registerMask;
+        if ( isRegisterUsed ) {
+            outline2( "LDA (_%sbs+$%2.2x)",  _environment->blit.name, location );
+            outline1( "LDA %s", &CPU6502_BLIT_REGISTER[reg][0] );
+            _environment->blit.freeRegisters &= ~registerMask;
+            return;
+        }
+    }
+
+    CRITICAL_BLIT_INVALID_FREE_REGISTER( _environment->blit.name, _register );
+
+}
 
 #endif
