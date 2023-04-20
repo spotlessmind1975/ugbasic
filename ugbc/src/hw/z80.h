@@ -217,6 +217,12 @@ void z80_msc1_uncompress_direct_indirect( Environment * _environment, char * _in
 void z80_msc1_uncompress_indirect_direct( Environment * _environment, char * _input, char * _output );
 void z80_msc1_uncompress_indirect_indirect( Environment * _environment, char * _input, char * _output );
 
+void z80_blit_initialize( Environment * _environment );
+char*z80_blit_register_name( Environment * _environment, int _register );
+int  z80_blit_alloc_register( Environment * _environment );
+void z80_blit_free_register( Environment * _environment, int _register );
+void z80_blit_finalize( Environment * _environment );
+
 #define cpu_beq( _environment,  _label  ) z80_beq( _environment,  _label  )
 #define cpu_bneq( _environment,  _label  ) z80_beq( _environment,  _label  )
 #define cpu_busy_wait( _environment,  _timing  ) z80_busy_wait( _environment,  _timing  )
@@ -403,6 +409,12 @@ extern unsigned int src_hw_chipset_mob_asm_len;
 #define cpu_msc1_uncompress_direct_indirect( _environment, _input, _output ) z80_msc1_uncompress_direct_indirect( _environment, _input, _output )
 #define cpu_msc1_uncompress_indirect_direct( _environment, _input, _output ) z80_msc1_uncompress_indirect_direct( _environment, _input, _output )
 #define cpu_msc1_uncompress_indirect_indirect( _environment, _input, _output ) z80_msc1_uncompress_indirect_indirect( _environment, _input, _output )
+
+#define cpu_blit_initialize( _environment ) z80_blit_initialize( _environment )
+#define cpu_blit_register_name( _environment, _register ) z80_blit_register_name( _environment, _register )
+#define cpu_blit_alloc_register( _environment ) z80_blit_alloc_register( _environment )
+#define cpu_blit_free_register( _environment, _register ) z80_blit_free_register( _environment, _register )
+#define cpu_blit_finalize( _environment ) z80_blit_finalize( _environment )
 
 #define     CPU_LITTLE_ENDIAN      1
 
