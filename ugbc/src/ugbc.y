@@ -6430,7 +6430,7 @@ emit_additional_info: {
 
     outline1("; P:%d", producedLines); 
 
-    adiline2( "P:0:%d:%d", yylineno - 1, producedLines );
+    adiline2( "P:0:%d:%d", yylineno - 2, producedLines );
 
     ((Environment *)_environment)->previousProducedAssemblyLines = 
         ((Environment *)_environment)->producedAssemblyLines; 
