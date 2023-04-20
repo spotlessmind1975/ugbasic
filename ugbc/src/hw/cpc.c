@@ -520,6 +520,7 @@ int cpc_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
             _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
             _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
             _environment->screenColors = 16;
+            _environment->currentModeBW = 4;
             CPC_GA_MASK( 0xc3, 0x80 );
             break;
         // "Mode 1" 320×200 pixels with 4 colors
@@ -530,6 +531,7 @@ int cpc_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
             _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
             _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
             _environment->screenColors = 4;
+            _environment->currentModeBW = 2;
             CPC_GA_MASK( 0xc3, 0x81 );
             break;
         // "Mode 2" 640×200 pixels with 2 colors
@@ -540,6 +542,7 @@ int cpc_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
             _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
             _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
             _environment->screenColors = 2;
+            _environment->currentModeBW = 1;
             CPC_GA_MASK( 0xc3, 0x82 );
             break;
         // "Mode 3" 160×200 pixels with 4 colors (2bpp) (this is not an official mode, but rather a side-effect of the hardware)
@@ -550,6 +553,7 @@ int cpc_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
             _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
             _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
             _environment->screenColors = 4;
+            _environment->currentModeBW = 2;
             CPC_GA_MASK( 0xc3, 0x83 );
             break;
     }
@@ -1704,6 +1708,135 @@ void cpc_put_image( Environment * _environment, char * _image, char * _x, char *
     outline0("LD (IMAGET), A" );
 
     outline0("CALL PUTIMAGE");
+
+}
+
+static void cpc_load_image_address_to_register( Environment * _environment, char * _register, char * _source, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {
+
+    outline2("LD %s, %s", _register, _source );
+    if ( _sequence ) {
+
+        outline0("LD DE, $0003" );
+        outline0("ADD HL, DE" );
+        if ( strlen(_sequence) == 0 ) {
+
+        } else {
+            outline0("PUSH HL" );
+            outline1("LD A, (%s)", _sequence );
+            outline0("LD L, A" );
+            outline0("LD H, 0" );
+            outline0("ADD HL, HL" );
+            outline0("LD DE, HL" );
+            outline1("LD HL, OFFSETS%4.4x", _frame_size * _frame_count );
+            outline0("ADD HL, DE" );
+            outline0("LD A, (HL)" );
+            outline0("LD E, A" );
+            outline0("INC HL" );
+            outline0("LD A, (HL)" );
+            outline0("LD D, A" );
+            outline0("POP HL" );
+            outline0("ADD HL, DE" );
+        }
+
+        if ( _frame ) {
+            if ( strlen(_frame) == 0 ) {
+
+            } else {
+                outline0("PUSH HL" );
+                outline1("LD A, (%s)", _frame );
+                outline0("LD L, A" );
+                outline0("LD H, 0" );
+                outline0("ADD HL, HL" );
+                outline0("LD DE, HL" );
+                outline1("LD HL, OFFSETS%4.4x", _frame_size );
+                outline0("ADD HL, DE" );
+                outline0("LD A, (HL)" );
+                outline0("LD E, A" );
+                outline0("INC HL" );
+                outline0("LD A, (HL)" );
+                outline0("LD D, A" );
+                outline0("POP HL" );
+                outline0("ADD HL, DE" );
+            }
+        }
+
+    } else {
+
+        if ( _frame ) {
+            outline0("LD DE, $0003" );
+            outline0("ADD HL, DE" );
+            if ( strlen(_frame) == 0 ) {
+
+            } else {
+                outline0("PUSH HL" );
+                outline1("LD A, (%s)", _frame );
+                outline0("LD L, A" );
+                outline0("LD H, 0" );
+                outline0("ADD HL, HL" );
+                outline0("LD DE, HL" );
+                outline1("LD HL, OFFSETS%4.4x", _frame_size );
+                outline0("ADD HL, DE" );
+                outline0("LD A, (HL)" );
+                outline0("LD E, A" );
+                outline0("INC HL" );
+                outline0("LD A, (HL)" );
+                outline0("LD D, A" );
+                outline0("POP HL" );
+                outline0("ADD HL, DE" );
+            }
+        }
+
+    }
+
+}
+
+void cpc_blit_image( Environment * _environment, char * _sources[], int _source_count, char * _blit, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags ) {
+
+    deploy( cpcvars, src_hw_cpc_vars_asm);
+    deploy( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
+    deploy( blitimage, src_hw_cpc_blit_image_asm );
+
+    if ( _source_count > 2 ) {
+        CRITICAL_BLIT_TOO_MUCH_SOURCES( );
+    }
+
+    MAKE_LABEL
+
+    outhead1("blitimage%s:", label);
+    if ( _source_count > 0 ) {
+        cpc_load_image_address_to_register( _environment, "HL", _sources[0], _sequence, _frame, _frame_size, _frame_count );
+    } else {
+        outline0( "LD HL, 0" );
+    }
+
+    outline0("DI");
+    outline0("EXX");
+    outline0("EI");
+
+    if ( _source_count > 1 ) {
+        cpc_load_image_address_to_register( _environment, "HL", _sources[1], _sequence, _frame, _frame_size, _frame_count );
+    } else {
+        outline0( "LD HL, 0" );
+    }
+
+    outline1("LD DE, %s", _blit );
+
+    outline0("DI");
+    outline0("EXX");
+    outline0("EI");
+
+    outline1("LD A, (%s)", _x );
+    outline0("LD E, A" );
+    outline1("LD A, (%s+1)", _x );
+    outline0("LD IXL, A" );
+    outline1("LD A, (%s)", _y );
+    outline0("LD D, A" );
+    outline1("LD A, $%2.2x", (_flags & 0Xff) );
+    outline0("LD (IMAGEF), A" );
+    outline1("LD A, $%2.2x", ((_flags>>8) & 0Xff) );
+    outline0("LD (IMAGET), A" );
+
+    outline0("CALL BLITIMAGE");
 
 }
 
