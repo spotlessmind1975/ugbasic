@@ -81,7 +81,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token TOM TONK TREMOLO TROMBONE TRUMPET TUBA TUBULAR TWEET VIBRAPHONE VIOLA VIOLIN VOICE WARM WHISTLE WOODBLOCK 
 %token XYLOPHONE KILL COMPRESSED STORAGE ENDSTORAGE FILEX DLOAD INCLUDE LET CPC INT INTEGER LONG OP_PERC OP_AMPERSAND OP_AT
 %token EMBEDDED NATIVE RELEASE READONLY DIGIT OPTION EXPLICIT ORIGIN RELATIVE DTILE DTILES OUT RESOLUTION
-%token COPEN COCO STANDARD SEMIGRAPHIC COMPLETE PRESERVE
+%token COPEN COCO STANDARD SEMIGRAPHIC COMPLETE PRESERVE BLIT COPY THRESHOLD SOURCE DESTINATION VALUE
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -119,6 +119,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> images_load_flags images_load_flags1 images_load_flag
 %type <integer> sequence_load_flags sequence_load_flags1 sequence_load_flag
 %type <integer> put_image_flags put_image_flags1 put_image_flag
+%type <integer> blit_image_flags blit_image_flags1 blit_image_flag
 %type <integer> const_color_enumeration
 %type <integer> using_transparency
 %type <integer> using_background
@@ -131,6 +132,8 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> readonly_optional
 %type <integer> option_explicit origin_direction relative_option
 %type <integer> font_schema
+%type <integer> blit_unary_op blit_binary_op blit_operand
+%type <integer> blit_expression blit_compounded
 
 %right Integer String CP
 %left OP_DOLLAR
@@ -968,6 +971,11 @@ put_image_flag :
         $$ = FLAG_DOUBLE_Y;
     };
 
+blit_image_flag :
+    DOUBLE Y {
+        $$ = FLAG_DOUBLE_Y;
+    };
+
 load_flag :
     COMPRESSED {
         $$ = FLAG_COMPRESSED;
@@ -1036,6 +1044,14 @@ put_image_flags1 :
         $$ = $1;
     }
     | put_image_flag put_image_flags1 {
+        $$ = $1 | $2;
+    };
+
+blit_image_flags1 :
+    blit_image_flag {
+        $$ = $1;
+    }
+    | blit_image_flag blit_image_flags1 {
         $$ = $1 | $2;
     };
 
@@ -1119,6 +1135,14 @@ put_image_flags :
         $$ = 0;    
     } 
     | put_image_flags1 {
+        $$ = $1;
+    };
+
+blit_image_flags :
+    {
+        $$ = 0;    
+    } 
+    | blit_image_flags1 {
         $$ = $1;
     };
 
@@ -3939,6 +3963,230 @@ put_definition_expression:
 put_definition:
     put_definition_expression;
 
+blit_unary_op:
+    COPY {
+        $$ = 1 << ((struct _Environment *)_environment)->currentModeBW;
+    }
+    | INVERSE {
+        $$ = ( 1 << ((struct _Environment *)_environment)->currentModeBW ) + 1;
+    }
+    | VALUE const_expr {
+        $$ = $2 & ( ( 1 << ((struct _Environment *)_environment)->currentModeBW ) - 1 );
+    }
+    | IGNORE {
+        $$ = ( 1 << ((struct _Environment *)_environment)->currentModeBW ) + 2;
+    }
+    | THRESHOLD {
+        $$ = ( 1 << ((struct _Environment *)_environment)->currentModeBW ) + 3;
+    }
+    ;
+
+blit_binary_op:
+    AND {
+        $$ = 0;
+    }
+    | OR {
+        $$ = 1;
+    }
+    | XOR {
+        $$ = 2;
+    }
+    | A {
+        $$ = 3;
+    }
+    | B {
+        $$ = 4;
+    }
+    | COPY A {
+        $$ = 3;
+    }
+    | COPY B {
+        $$ = 4;
+    }
+    | MASKED {
+        $$ = 5;
+    }
+    ;
+
+blit_operand :
+    SOURCE const_factor {
+        $$ = $2;
+    }
+    | DESTINATION {
+        $$ = 0 ;
+    }
+    ;
+
+blit_sources :
+    expr {
+        ((struct _Environment *)_environment)->blit.sources[((struct _Environment *)_environment)->blit.sourceCount++] = strdup( $1 );
+    }
+    | expr {
+        ((struct _Environment *)_environment)->blit.sources[((struct _Environment *)_environment)->blit.sourceCount++] = strdup( $1 );
+    } OP_COMMA blit_sources
+    ;
+
+blit_expression :
+    OP blit_operand CP {
+        // Take a free register for operand
+        int operand = cpu_blit_alloc_register( _environment );
+        blit_define_compound_operand_to_register( _environment, operand, $2 );
+        // Take a free register for result
+        int result = cpu_blit_alloc_register( _environment );
+        // U ( operand ) -> result
+        blit_define_compound_unary( _environment, 1 << ((struct _Environment *)_environment)->currentModeBW /* COPY */, operand, result );
+        // Free operand
+        cpu_blit_free_register( _environment, operand );
+        //printf( "( O%2.2x (R%2.2X) ) -> R%2.2x\n", $2, operand, result );
+        $$ = result;
+
+    }
+    | OP blit_unary_op blit_operand CP {
+        // Take a free register for operand
+        int operand = cpu_blit_alloc_register( _environment );
+        blit_define_compound_operand_to_register( _environment, operand, $3 );
+        // Take a free register for result
+        int result = cpu_blit_alloc_register( _environment );
+        // U ( operand ) -> result
+        blit_define_compound_unary( _environment, $2, operand, result );
+        // Free operand
+        cpu_blit_free_register( _environment, operand );
+        //printf( "*( [%2.2x] O%2.2x (R%2.2x) ) -> R%2.2x\n", $2, $3, operand, result );
+        $$ = result;
+    }
+    | OP blit_operand blit_binary_op blit_operand CP {
+        // Take a free register for operand1
+        int operand1 = cpu_blit_alloc_register( _environment );
+        blit_define_compound_operand_to_register( _environment, operand1, $2 );
+        // Take a free register for operand2
+        int operand2 = cpu_blit_alloc_register( _environment );
+        blit_define_compound_operand_to_register( _environment, operand2, $4 );
+        // Take a free register for result
+        int result = cpu_blit_alloc_register( _environment );
+        // B ( operand1, operand2 ) -> result
+        blit_define_compound_binary( _environment, $3, operand1, operand2, result );
+        // Free operand1
+        cpu_blit_free_register( _environment, operand1 );
+        // Free operand2
+        cpu_blit_free_register( _environment, operand2 );
+        //printf( "( O%2.2x R%2.2x [%2.2x] O%2.2x R%2.2x ) -> R%2.2x\n", $2, operand1, $3, $4, operand2, result );
+        $$ = result;
+    }
+    ;
+
+blit_compounded :
+    blit_expression {
+        //printf( "R%2.2x -> R%2.2x\n", $1, $1 );
+        // Pass result register
+        $$ = $1;
+    }
+    | OP blit_compounded CP {
+        //printf( "(R%2.2x) -> R%2.2x \n", $2, $2 );
+        // Pass result register
+        $$ = $2;
+    }
+    | OP blit_unary_op blit_compounded CP {
+        // Take a free register for result
+        int result = cpu_blit_alloc_register( _environment );
+        // B ( result1, result2 ) -> result
+        blit_define_compound_unary( _environment, $2, $3, result );
+        // Pass result register
+        //printf( "( [%2.2x] R%2.2x) -> R%2.2x\n", $2, $3, result );
+        $$ = result;
+    }
+    | OP blit_compounded blit_binary_op blit_compounded CP {
+        // Take a free register for result
+        int result = cpu_blit_alloc_register( _environment );
+        // B ( result1, result2 ) -> result
+        blit_define_compound_binary( _environment, $3, $2, $4, result );
+        // Pass result register
+        //printf( "( R%2.2x [%2.2x] R%2.2x) -> R%2.2x\n", $2, $3, $4, result );
+        $$ = result;
+    }
+    ;
+
+op_assign : 
+    OP_ASSIGN 
+    | OP_ASSIGN_DIRECT
+    ;
+
+blit_definition_expression:
+    Identifier AS {
+        //printf( "\n\n%s\n", $1 );
+        blit_define_begin_compound( _environment, $1 );  
+    } blit_compounded {
+        //printf( "R%2.2x -> final\n\n", $4 );
+        blit_define_end_compound( _environment, $4 );
+      }
+    | Identifier op_assign blit_unary_op OP_COMMA blit_unary_op OP_COMMA blit_binary_op OP_COMMA blit_unary_op OP_COMMA blit_unary_op OP_COMMA blit_binary_op OP_COMMA blit_unary_op {
+        blit_define( _environment, $1, $3, $5, $7, $9, $11, $13, $15 );
+      }
+    |  IMAGE blit_sources AT optional_x OP_COMMA optional_y WITH Identifier blit_image_flags {
+        $9 = $9 | FLAG_WITH_PALETTE;
+        blit_image( _environment, $8, $4, $6, NULL, NULL, $9 );
+        gr_locate( _environment, $4, $6 );
+    }
+    |  IMAGE blit_sources FRAME expr AT optional_x OP_COMMA optional_y WITH Identifier blit_image_flags {
+        $11 = $11 | FLAG_WITH_PALETTE;
+        blit_image( _environment, $10, $6, $8, $4, NULL, $11 );
+        gr_locate( _environment, $6, $8 );
+    }
+    |  IMAGE blit_sources SEQUENCE expr FRAME expr AT optional_x OP_COMMA optional_y WITH Identifier blit_image_flags {
+        $13 = $13 | FLAG_WITH_PALETTE;
+        blit_image( _environment, $12, $8, $10, $6, $4, $13 );
+        gr_locate( _environment, $8, $10 );
+    }
+    | IMAGE blit_sources WITH Identifier blit_image_flags {
+        $5 = $5 | FLAG_WITH_PALETTE;
+        Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
+        Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
+        blit_image( _environment, $4, implicitX->name, implicitY->name, NULL, NULL, $5 );
+    }
+    | IMAGE blit_sources FRAME expr WITH Identifier blit_image_flags {
+        $7 = $7 | FLAG_WITH_PALETTE;
+        Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
+        Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
+        blit_image( _environment, $6, implicitX->name, implicitY->name, $4, NULL, $7 );
+    }
+    | IMAGE blit_sources SEQUENCE expr FRAME expr WITH Identifier blit_image_flags {
+        $9 = $9 | FLAG_WITH_PALETTE;
+        Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
+        Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
+        blit_image( _environment, $8, implicitX->name, implicitY->name, $6, $4, $9 );
+    }
+    |
+      BITMAP blit_sources AT optional_x OP_COMMA optional_y WITH Identifier blit_image_flags {
+        blit_image( _environment, $8, $4, $6, NULL, NULL, $9 );
+        gr_locate( _environment, $4, $6 );
+    }
+    | BITMAP blit_sources FRAME expr AT optional_x OP_COMMA optional_y WITH Identifier blit_image_flags {
+        blit_image( _environment, $10, $6, $8, $4, NULL, $11 );
+        gr_locate( _environment, $6, $8 );
+    }
+    | BITMAP blit_sources SEQUENCE expr FRAME expr AT optional_x OP_COMMA optional_y WITH Identifier blit_image_flags {
+        blit_image( _environment, $12, $8, $10, $6, $4, $13 );
+        gr_locate( _environment, $8, $10 );
+    }
+    | BITMAP blit_sources WITH Identifier blit_image_flags {
+        Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
+        Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
+        blit_image( _environment, $4, implicitX->name, implicitY->name, NULL, NULL, $5 );
+    }
+    | BITMAP blit_sources FRAME expr WITH Identifier blit_image_flags {
+        Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
+        Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
+        blit_image( _environment, $6, implicitX->name, implicitY->name, $4, NULL, $7 );
+    }
+    | BITMAP blit_sources SEQUENCE expr FRAME expr WITH Identifier blit_image_flags {
+        Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
+        Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
+        blit_image( _environment, $8, implicitX->name, implicitY->name, $6, $4, $9 );
+    }
+    ;
+
+blit_definition:
+    blit_definition_expression;
+
 move_definition_expression:
       TILE expr AT optional_x OP_COMMA optional_y {
         move_tile( _environment, $2, $4, $6 );
@@ -5628,6 +5876,7 @@ statement2:
   | DTILES draw_tile_definition
   | LINE draw_definition
   | PUT put_definition
+  | BLIT blit_definition
   | MOVE move_definition
   | GET get_definition
   | MOB mob_definition

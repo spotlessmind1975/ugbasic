@@ -1152,6 +1152,7 @@ typedef struct _Deployed {
     int raster;
     int putimage;
     int getimage;
+    int blitimage;
     int mob;
     int mobcs;
     int protothread;
@@ -1267,6 +1268,16 @@ typedef int (*RgbConverterFunction)(int, int, int);
 
 extern int yycolno;
 extern int yyposno;
+
+typedef struct _Blit {
+
+    char * name;
+    int freeRegisters;
+    int usedMemory;
+    int sourceCount;
+    char * sources[MAX_TEMPORARY_STORAGE];
+
+} Blit;
 
 /**
  * @brief Structure of compilation environment
@@ -1422,6 +1433,8 @@ typedef struct _Environment {
      */
     int optionExplicit;
 
+    Blit blit;
+
     /* --------------------------------------------------------------------- */
     /* INTERNAL STRUCTURES                                                   */
     /* --------------------------------------------------------------------- */
@@ -1562,6 +1575,11 @@ typedef struct _Environment {
      * Current graphical mode
      */
     int currentMode;
+
+    /**
+     * Current bitwidth for current mode
+     */
+    int currentModeBW;
 
     /**
      * Current tile / bitmap mode
@@ -1889,6 +1907,7 @@ typedef struct _Environment {
 #define CRITICAL2( s, v ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%s) at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, v, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICAL2i( s, v ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%d) at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, v, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICAL3( s, v1, v2 ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%s, %s) at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, v1, v2, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
+#define CRITICAL3i( s, v1, v2 ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%s, %d) at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, v1, v2, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICAL4si( s, v, d1, d2 ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%s, %d, %d) at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, v, d1, d2, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICAL_UNIMPLEMENTED( v ) CRITICAL2("E000 - Internal method not implemented:", v );
 #define CRITICAL_TEMPORARY2( v ) CRITICAL2("E001 - Unable to create space for temporary variable", v );
@@ -2055,7 +2074,12 @@ typedef struct _Environment {
 #define CRITICAL_MACRO_TOO_MUCH_VALUES(m,v) CRITICAL3("E161 - too much values in macro", m, v );
 #define CRITICAL_MACRO_MISMATCH_PARAMETER_VALUES(m) CRITICAL2("E162 - mismatch number of values and parameters", m );
 #define CRITICAL_MACRO_UNDEFINED(m) CRITICAL2("E163 - macro undefined", m );
-
+#define CRITICAL_BLIT_IMAGE_UNSUPPORTED( v, t ) CRITICAL3("E164 - BLIT IMAGE unsupported for given datatype", v, t );
+#define CRITICAL_BLIT_ALLOC_REGISTER_EXHAUSTED( ) CRITICAL("E165 - CPU registers exhausted in BLIT definition" );
+#define CRITICAL_BLIT_ALLOC_MEMORY_EXHAUSTED( ) CRITICAL("E166 - CPU memory exhausted in BLIT definition" );
+#define CRITICAL_BLIT_INVALID_FREE_REGISTER( s, r ) CRITICAL3i("E167 - invalid free CPU register free in BLIT definition", s, r );
+#define CRITICAL_BLIT_TOO_MUCH_SOURCES( ) CRITICAL("E168 - too much sources on BLIT IMAGE for this target" );
+#define CRITICAL_BLIT_CANNOT_MIX_IMAGE_TYPES( n ) CRITICAL2("E169 - cannot mix image types with BLIT IMAGE", n );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
@@ -2954,6 +2978,13 @@ void                    bitmap_clear_with( Environment * _environment, int _valu
 void                    bitmap_clear_with_vars( Environment * _environment, char * _value );
 void                    bitmap_disable( Environment * _environment );
 void                    bitmap_enable( Environment * _environment, int _width, int _height, int _colors );
+void                    blit_define( Environment * _environment, char * _name, int _sop, int _mop, int _smop, int _iop, int _dop, int _idop, int _top );
+void                    blit_define_begin_compound( Environment * _environment, char * _name );
+void                    blit_define_compound_binary( Environment * _environment, int _operation, int _operand1, int _operand2, int _result );
+void                    blit_define_compound_unary( Environment * _environment, int _operation, int _operand, int _result );
+void                    blit_define_compound_operand_to_register( Environment * _environment, int _register, int _source );
+void                    blit_define_end_compound( Environment * _environment, int _register );
+void                    blit_image( Environment * _environment, char * _blit, char * _x, char * _y, char * _frame, char * _sequence, int _flags );
 void                    boom( Environment * _environment, int _channels );
 void                    boom_var( Environment * _environment, char * _channels );
 void                    box( Environment * _environment, char * _x1, char * _y1, char * _x2, char * _y2, char * _c );
