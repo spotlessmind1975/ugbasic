@@ -6405,6 +6405,23 @@ statement2:
 
 statement: 
     { 
+        if ( yylineno == 1 &&
+            ((Environment *)_environment)->previousProducedAssemblyLines != 
+                ((Environment *)_environment)->producedAssemblyLines &&
+                ((Environment *)_environment)->producedAssemblyLines
+         ) {
+            int producedLines = ((Environment *)_environment)->producedAssemblyLines 
+                - ((Environment *)_environment)->previousProducedAssemblyLines;
+
+            outline0("; L:0");   
+            outline1("; P:%d", producedLines); 
+
+            adiline2( "P:0:%d:%d", yylineno - 1, producedLines );
+
+            ((Environment *)_environment)->previousProducedAssemblyLines = 
+            ((Environment *)_environment)->producedAssemblyLines; 
+        }
+
         outline1("; L:%d", yylineno);   
     } 
     statement2;
@@ -6448,11 +6465,9 @@ statements_complex:
     ;
 
 program : 
-  { ((Environment *)_environment)->yylineno = yylineno; outline1("; L:%d", yylineno); }
   statements_complex 
   { ++yylineno; ((Environment *)_environment)->yylineno = yylineno; outline1("; L:%d", yylineno); }
-  emit_additional_info
-  { return 0; }
+  emit_additional_info;
 
 %%
 

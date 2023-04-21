@@ -65,8 +65,9 @@ INCLUDE             BEGIN(incl);
 "#["[a-fA-F0-9]+"]" { yylval.string = strdup(yytext); RETURN(BufferDefinition,1); }
 "#["[a-fA-F0-9]+ { yylval.string = strdup(yytext); RETURN(BufferDefinition,1); }
 
+[\x0d] { }
 _[\x0a]|_[\x0d][\x0a] { yycolno = 0;  ++yylineno; }
-[\x0a]|[\X0d][\X0a] { ++yylineno; RETURN(NewLine,0); }
+[\x0a] { ++yylineno; RETURN(NewLine,0); }
 ";" { RETURN(OP_SEMICOLON,1); }
 ":" { RETURN(OP_COLON,1); }
 "(" { RETURN(OP,1); }
@@ -1034,8 +1035,8 @@ Yp { RETURN(YPEN,1); }
 Z { RETURN(Z,1); }
 ZX { RETURN(ZX,1); }
 
-"REM"[^\n\r]* { RETURN(Remark,1);  }
-"'"[^\n\r]* { RETURN(Remark,1);  }
+"REM"[^\x0a]* { RETURN(Remark,1);  }
+"'"[^\x0a]* { RETURN(Remark,1);  }
 
 \"(\\.|[^"\\])*\" { yylval.string = strdup(yytext); memcpy(yylval.string,yylval.string+1,strlen(yylval.string)); yylval.string[strlen(yylval.string)-1]=0; RETURN(String,1);  }
 #\"(\\.|[^"\\])*\" { yylval.string = strdup(yytext); memcpy(yylval.string,yylval.string+2,strlen(yylval.string)-2); yylval.string[strlen(yylval.string)-3]=0; RETURN(RawString,1);  }
