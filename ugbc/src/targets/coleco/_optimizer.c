@@ -638,12 +638,12 @@ static int optim_pass( Environment * _environment, POBuffer buf[LOOK_AHEAD], Pee
     int line = 0;
     int zA = 0, zB = 0;
 
-    int sourceLine = 0;
+    int sourceLine = -1;
 
     _environment->currentSourceLineAnalyzed = 0;
     _environment->removedAssemblyLines = 0;
 
-    adiline2( "POP:0:%d:%d\n", peephole_pass, kind );
+    adiline2( "POP:0:%d:%d", peephole_pass, kind );
 
     sprintf( fileNameOptimized, "%s.asm", get_temporary_filename( _environment ) );
         
@@ -707,7 +707,7 @@ static int optim_pass( Environment * _environment, POBuffer buf[LOOK_AHEAD], Pee
                 if (po_buf_match( buf[LOOK_AHEAD-1], " ; L:*", ln ) ) {
                     sourceLine = atoi( ln->str );
                     if ( ( sourceLine != _environment->currentSourceLineAnalyzed ) ) {
-                        adiline3( "POL:0:%d:%d:%d\n", 
+                        adiline3( "POL:0:%d:%d:%d", 
                             peephole_pass, _environment->currentSourceLineAnalyzed, _environment->removedAssemblyLines );
                         _environment->currentSourceLineAnalyzed = sourceLine;
                         _environment->removedAssemblyLines = 0;
@@ -739,7 +739,7 @@ static int optim_pass( Environment * _environment, POBuffer buf[LOOK_AHEAD], Pee
         ++line;
     }
 
-    adiline3( "POL:0:%d:%d:%d\n", 
+    adiline3( "POL:0:%d:%d:%d", 
         peephole_pass, _environment->currentSourceLineAnalyzed, _environment->removedAssemblyLines );
 
     /* log info at the end of the file */
@@ -811,12 +811,12 @@ void target_finalize( Environment * _environment ) {
         POBuffer bufferAddress = TMP_BUF;
         POBuffer bufferBytes = TMP_BUF;
 
-        int sourceLine = 0;
+        int sourceLine = -1;
 
         _environment->currentSourceLineAnalyzed = 0;
         _environment->bytesProduced = 0;
 
-        adiline0( "A:0\n" );
+        adiline0( "A:0" );
 
         fileAsm = fopen( _environment->asmFileName, "rt" );
         if(fileAsm == NULL) {
@@ -840,7 +840,7 @@ void target_finalize( Environment * _environment ) {
                 if (po_buf_match( bufferAsm, "; L:*", ln ) ) {
                     sourceLine = atoi( ln->str );
                     if ( ( sourceLine != _environment->currentSourceLineAnalyzed ) && (  _environment->bytesProduced > 0 ) ) {
-                        adiline2( "AB:0:%d:%d\n", 
+                        adiline2( "AB:0:%d:%d", 
                             _environment->currentSourceLineAnalyzed, _environment->bytesProduced );
                         _environment->currentSourceLineAnalyzed = sourceLine;
                         _environment->bytesProduced = 0;
@@ -870,14 +870,14 @@ void target_finalize( Environment * _environment ) {
                 if ( po_buf_match( bufferListing, "* * * ", bufferLine, bufferAddress, bufferBytes ) ) {
                     _environment->bytesProduced += bufferBytes->len >> 1;
                 }
-                adiline4( "AL:0:%d:%*s%s\n", 
+                adiline4( "AL:0:%d:%*s%s", 
                     _environment->currentSourceLineAnalyzed, leftPadding, "", bufferAsmEscaped );
             }
 
         }
 
         if ( _environment->currentSourceLineAnalyzed ) {
-            adiline1( "AF:0:%d\n", 
+            adiline1( "AF:0:%d", 
                 _environment->bytesProduced );
         }
 
