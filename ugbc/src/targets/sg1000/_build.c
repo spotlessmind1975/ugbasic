@@ -57,8 +57,23 @@ void target_linkage( Environment * _environment ) {
 
     BUILD_TOOLCHAIN_Z88DK_EXEC( _environment, "sc3000", executableName, listingFileName );
 
+    char * p;
+
+    if ( _environment->listingFileName ) {
+        strcpy( binaryName, _environment->asmFileName );
+        p = strstr( binaryName, ".asm" );
+        if ( p ) {
+            *(p+1) = 'l';
+            *(p+2) = 'i';
+            *(p+3) = 's';
+            *(p+4) = 0;
+        }
+        TRACE2( "  renaming %s to %s", binaryName, _environment->listingFileName );
+        rename( binaryName, _environment->listingFileName );
+    }
+
     strcpy( binaryName, _environment->asmFileName );
-    char * p = strstr( binaryName, ".asm" );
+    p = strstr( binaryName, ".asm" );
     if ( p ) {
         *(p+1) = 'o';
         *(p+2) = 0;
