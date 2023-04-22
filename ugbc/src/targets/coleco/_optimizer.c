@@ -839,7 +839,7 @@ void target_finalize( Environment * _environment ) {
                 POBuffer ln = TMP_BUF;
                 if (po_buf_match( bufferAsm, "; L:*", ln ) ) {
                     sourceLine = atoi( ln->str );
-                    if ( ( sourceLine != _environment->currentSourceLineAnalyzed ) && (  _environment->bytesProduced > 0 ) ) {
+                    if ( ( sourceLine != _environment->currentSourceLineAnalyzed ) ) {
                         adiline2( "AB:0:%d:%d", 
                             _environment->currentSourceLineAnalyzed, _environment->bytesProduced );
                         _environment->currentSourceLineAnalyzed = sourceLine;
@@ -850,13 +850,14 @@ void target_finalize( Environment * _environment ) {
             }
 
             int pos = ftell( fileListing );
+            po_buf_trim( bufferAsm );
             while( !feof(fileListing) && (strstr( bufferListing->str, bufferAsm->str ) == NULL) ) {
                 po_buf_fgets( bufferListing, fileListing );
                 po_buf_trim( bufferListing );
             }
 
             if ( feof(fileListing) ) {
-                fseek( fileListing, pos, SEEK_SET );
+
             } else {
                 char * bufferAsmEscaped = strdup( bufferAsm->str );
                 for( int i=0, c=strlen(bufferAsmEscaped); i<c; ++i ) {
@@ -874,6 +875,8 @@ void target_finalize( Environment * _environment ) {
                     _environment->currentSourceLineAnalyzed, leftPadding, "", bufferAsmEscaped );
             }
 
+            fseek( fileListing, pos, SEEK_SET );
+            
         }
 
         if ( _environment->currentSourceLineAnalyzed ) {
