@@ -7,6 +7,7 @@ int yyerror(Environment *, const char *);
 int yydebug=0;
 int errors=0;
 extern int yylineno;
+extern int yyconcatlineno;
 
 int yycolno;
 int yyposno;
@@ -6415,14 +6416,15 @@ statement:
 
             outline0("; L:0");   
             outline1("; P:%d", producedLines); 
-
             adiline2( "P:0:%d:%d", yylineno - 1, producedLines );
+
+            ((Environment *)_environment)->yylineno = yylineno;
 
             ((Environment *)_environment)->previousProducedAssemblyLines = 
             ((Environment *)_environment)->producedAssemblyLines; 
         }
 
-        outline1("; L:%d", yylineno);   
+        outline1("; L:%d", ((Environment *)_environment)->yylineno);   
     } 
     statement2;
 
@@ -6447,8 +6449,8 @@ emit_additional_info: {
 
     outline1("; P:%d", producedLines); 
 
-    adiline2( "P:0:%d:%d", yylineno - 1, producedLines );
-
+    adiline2( "P:0:%d:%d", ((Environment *)_environment)->yylineno - 1 - yyconcatlineno, producedLines );
+    
     ((Environment *)_environment)->previousProducedAssemblyLines = 
         ((Environment *)_environment)->producedAssemblyLines; 
 
@@ -6461,7 +6463,7 @@ statements_complex2:
 
 statements_complex:
       statements_complex2
-    | statements_complex2 NewLine statements_complex
+    | statements_complex2 NewLine { yyconcatlineno = 0; } statements_complex
     ;
 
 program : 
@@ -7209,6 +7211,8 @@ int main( int _argc, char *_argv[] ) {
         stats_embedded( cpu_mobrender );
         stats_embedded( cpu_sqroot );
     }
+
+    return 0;
 
 }
 

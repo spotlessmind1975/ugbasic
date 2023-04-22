@@ -19,6 +19,8 @@ extern int yycolnostacked[];
 extern int yyposnostacked[];
 extern int stacked;
 
+int yyconcatlineno;
+
 %}
 
 %x incl
@@ -44,6 +46,7 @@ INCLUDE             BEGIN(incl);
     }
     filenamestacked[stacked] = strdup( yytext );
     yylineno = 1;
+    yyconcatlineno = 0;
     yycolno = 0;
     yyposno = 0;
     yypush_buffer_state(yy_create_buffer( yyin, YY_BUF_SIZE ));
@@ -56,6 +59,7 @@ INCLUDE             BEGIN(incl);
         yylineno = yylinenostacked[stacked];
         yycolno = yycolnostacked[stacked];
         yyposno = yyposnostacked[stacked];
+        yyconcatlineno = 0;
     }
     if ( !YY_CURRENT_BUFFER ) {
         yyterminate();
@@ -66,7 +70,7 @@ INCLUDE             BEGIN(incl);
 "#["[a-fA-F0-9]+ { yylval.string = strdup(yytext); RETURN(BufferDefinition,1); }
 
 [\x0d] { }
-_[\x0a]|_[\x0d][\x0a] { yycolno = 0;  ++yylineno; }
+_[\x0a]|_[\x0d][\x0a] { yycolno = 0; ++yylineno; ++yyconcatlineno; }
 [\x0a] { ++yylineno; RETURN(NewLine,0); }
 ";" { RETURN(OP_SEMICOLON,1); }
 ":" { RETURN(OP_COLON,1); }
