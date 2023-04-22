@@ -35,6 +35,7 @@
 #include "../../ugbc.h"
 #include <math.h>
 #include <ctype.h>
+#include <errno.h>
 
 /****************************************************************************
  * CODE SECTION 
