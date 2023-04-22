@@ -6847,7 +6847,7 @@ int system_remove_safe( Environment * _environment, char * _filename ) {
     if ( f ) {
         fclose( f );
         if ( remove( _filename ) != 0 ) {
-            CRITICAL_CANNOT_REMOVE_FILE( _filename );
+            CRITICAL_CANNOT_REMOVE_FILE( _filename, strerror(errno) );
         }
     }
 
