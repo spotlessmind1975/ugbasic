@@ -7,6 +7,7 @@ int yyerror(Environment *, const char *);
 int yydebug=0;
 int errors=0;
 extern int yylineno;
+extern int yyconcatlineno;
 
 int yycolno;
 int yyposno;
@@ -6654,7 +6655,25 @@ statement2:
 
 statement: 
     { 
-        outline1("; L:%d", yylineno);   
+        if ( yylineno == 1 &&
+            ((Environment *)_environment)->previousProducedAssemblyLines != 
+                ((Environment *)_environment)->producedAssemblyLines &&
+                ((Environment *)_environment)->producedAssemblyLines
+         ) {
+            int producedLines = ((Environment *)_environment)->producedAssemblyLines 
+                - ((Environment *)_environment)->previousProducedAssemblyLines;
+
+            outline0("; L:0");   
+            outline1("; P:%d", producedLines); 
+            adiline2( "P:0:%d:%d", yylineno - 1, producedLines );
+
+            ((Environment *)_environment)->yylineno = yylineno;
+
+            ((Environment *)_environment)->previousProducedAssemblyLines = 
+            ((Environment *)_environment)->producedAssemblyLines; 
+        }
+
+        outline1("; L:%d", ((Environment *)_environment)->yylineno);   
     } 
     statement2;
 
@@ -6679,26 +6698,31 @@ emit_additional_info: {
 
     outline1("; P:%d", producedLines); 
 
-    adiline2( "P:0:%d:%d", yylineno - 1, producedLines );
-
+    adiline2( "P:0:%d:%d", ((Environment *)_environment)->yylineno - 1 - yyconcatlineno, producedLines );
+    
     ((Environment *)_environment)->previousProducedAssemblyLines = 
         ((Environment *)_environment)->producedAssemblyLines; 
 
 };
 
-statements_complex:
-      statements_no_linenumbers emit_additional_info
-    | statements_no_linenumbers emit_additional_info NewLine statements_complex
+statements_complex2:
+    statements_no_linenumbers emit_additional_info
     | statements_with_linenumbers emit_additional_info
-    | statements_with_linenumbers emit_additional_info NewLine statements_complex
+    ;
+
+statements_complex:
+      statements_complex2
+    | statements_complex2 NewLine { yyconcatlineno = 0; } statements_complex
     ;
 
 program : 
-  { ((Environment *)_environment)->yylineno = yylineno; outline1("; L:%d", yylineno); } statements_complex;
+  statements_complex 
+  { ++yylineno; ((Environment *)_environment)->yylineno = yylineno; outline1("; L:%d", yylineno); }
+  emit_additional_info;
 
 %%
 
-char version[MAX_TEMPORARY_STORAGE] = "1.13.2";
+char version[MAX_TEMPORARY_STORAGE] = "1.13.3";
 
 void show_usage_and_exit( int _argc, char *_argv[] ) {
 
@@ -7436,6 +7460,8 @@ int main( int _argc, char *_argv[] ) {
         stats_embedded( cpu_mobrender );
         stats_embedded( cpu_sqroot );
     }
+
+    return 0;
 
 }
 

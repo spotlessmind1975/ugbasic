@@ -462,6 +462,7 @@ struct var *vars_get(POBuffer _name) {
 }
 
 static int vars_ok(POBuffer name) {
+
     if(po_buf_match(name, "^_Tstr"))   return 0;
     if(po_buf_match(name, "_^_Tstr"))   return 0;
     if(po_buf_match(name, "_label"))  return 0;
@@ -477,7 +478,7 @@ static int vars_ok(POBuffer name) {
     if(po_buf_match(name, "XGR"))     return 1;
     if(po_buf_match(name, "YGR"))     return 1;
     if(po_buf_match(name, "FREE_"))   return 1;
-
+    
     return 0;
 }
 
@@ -485,16 +486,20 @@ static int vars_ok(POBuffer name) {
 static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
     POBuffer tmp = TMP_BUF;
     POBuffer arg = TMP_BUF;
+    POBuffer ofs = TMP_BUF;
 
     // if( match( buf[0], " * _*+", NULL, buf) ) {
         // struct var *v = vars_get(buf);
         // v->flags |= NO_INLINE;
     // }
 
-    if( po_buf_match( buf[0], " LD *, (*)",  tmp, arg ) ) if(vars_ok(arg)) {
+    if( po_buf_match( buf[0], " LD *, (*+*)",  tmp, arg, ofs ) ) { if(vars_ok(arg)) {
         struct var *v = vars_get(arg);
         v->nb_rd++;
-    }
+    } } else if( po_buf_match( buf[0], " LD *, (*)",  tmp, arg ) ) { if(vars_ok(arg)) {
+        struct var *v = vars_get(arg);
+        v->nb_rd++;
+    } }
 
     if( po_buf_match( buf[0], " LD *, *",  tmp, arg ) &&
         strstr("A B C D E AD BC DE HL IX IY", tmp->str)!=NULL
@@ -503,10 +508,13 @@ static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
         v->nb_rd++;
     }
 
-    if (po_buf_match( buf[0], " LD (*), *", arg, tmp) ) if(vars_ok(arg)) {
+    if (po_buf_match( buf[0], " LD (*+*), *", arg, ofs, tmp) ) { if(vars_ok(arg)) {
         struct var *v = vars_get(arg);
         v->nb_wr++;
-    }
+    } } else if (po_buf_match( buf[0], " LD (*), *", arg, tmp) ) { if(vars_ok(arg)) {
+        struct var *v = vars_get(arg);
+        v->nb_wr++;
+    } }
 
     if (po_buf_match( buf[0], " LD *, *", arg, tmp) &&
         strstr("A B C D E AD BC DE HL IX IY", tmp->str)!=NULL        
@@ -549,11 +557,19 @@ static int vars_cmp(const void *_a, const void *_b) {
 static void vars_remove(Environment * _environment, POBuffer buf[LOOK_AHEAD]) {
     POBuffer var = TMP_BUF;
     POBuffer op  = TMP_BUF;
+    POBuffer ofs = TMP_BUF;
     
     if(!DO_UNREAD) return;
     
     /* unread */
-    if(po_buf_match( buf[0], " LD (*), *", var, op) && vars_ok(var)) {
+    if(po_buf_match( buf[0], " LD (*+*), *", var, ofs, op) && vars_ok(var)) {
+        struct var *v = vars_get(var);
+        if(v->nb_rd == 0 && v->offset!=-2) {
+            v->offset = 0;
+            optim(buf[0], "unread", NULL);
+            ++_environment->removedAssemblyLines;
+        }
+    } else if(po_buf_match( buf[0], " LD (*), *", var, op) && vars_ok(var)) {
         struct var *v = vars_get(var);
         if(v->nb_rd == 0 && v->offset!=-2) {
             v->offset = 0;
@@ -622,12 +638,12 @@ static int optim_pass( Environment * _environment, POBuffer buf[LOOK_AHEAD], Pee
     int line = 0;
     int zA = 0, zB = 0;
 
-    int sourceLine = 0;
+    int sourceLine = -1;
 
     _environment->currentSourceLineAnalyzed = 0;
     _environment->removedAssemblyLines = 0;
 
-    adiline2( "POP:0:%d:%d\n", peephole_pass, kind );
+    adiline2( "POP:0:%d:%d", peephole_pass, kind );
 
     sprintf( fileNameOptimized, "%s.asm", get_temporary_filename( _environment ) );
         
@@ -691,7 +707,7 @@ static int optim_pass( Environment * _environment, POBuffer buf[LOOK_AHEAD], Pee
                 if (po_buf_match( buf[LOOK_AHEAD-1], " ; L:*", ln ) ) {
                     sourceLine = atoi( ln->str );
                     if ( ( sourceLine != _environment->currentSourceLineAnalyzed ) ) {
-                        adiline3( "POL:0:%d:%d:%d\n", 
+                        adiline3( "POL:0:%d:%d:%d", 
                             peephole_pass, _environment->currentSourceLineAnalyzed, _environment->removedAssemblyLines );
                         _environment->currentSourceLineAnalyzed = sourceLine;
                         _environment->removedAssemblyLines = 0;
@@ -723,7 +739,7 @@ static int optim_pass( Environment * _environment, POBuffer buf[LOOK_AHEAD], Pee
         ++line;
     }
 
-    adiline3( "POL:0:%d:%d:%d\n", 
+    adiline3( "POL:0:%d:%d:%d", 
         peephole_pass, _environment->currentSourceLineAnalyzed, _environment->removedAssemblyLines );
 
     /* log info at the end of the file */
@@ -795,12 +811,12 @@ void target_finalize( Environment * _environment ) {
         POBuffer bufferAddress = TMP_BUF;
         POBuffer bufferBytes = TMP_BUF;
 
-        int sourceLine = 0;
+        int sourceLine = -1;
 
         _environment->currentSourceLineAnalyzed = 0;
         _environment->bytesProduced = 0;
 
-        adiline0( "A:0\n" );
+        adiline0( "A:0" );
 
         fileAsm = fopen( _environment->asmFileName, "rt" );
         if(fileAsm == NULL) {
@@ -823,8 +839,8 @@ void target_finalize( Environment * _environment ) {
                 POBuffer ln = TMP_BUF;
                 if (po_buf_match( bufferAsm, "; L:*", ln ) ) {
                     sourceLine = atoi( ln->str );
-                    if ( ( sourceLine != _environment->currentSourceLineAnalyzed ) && (  _environment->bytesProduced > 0 ) ) {
-                        adiline2( "AB:0:%d:%d\n", 
+                    if ( ( sourceLine != _environment->currentSourceLineAnalyzed ) ) {
+                        adiline2( "AB:0:%d:%d", 
                             _environment->currentSourceLineAnalyzed, _environment->bytesProduced );
                         _environment->currentSourceLineAnalyzed = sourceLine;
                         _environment->bytesProduced = 0;
@@ -834,13 +850,14 @@ void target_finalize( Environment * _environment ) {
             }
 
             int pos = ftell( fileListing );
+            po_buf_trim( bufferAsm );
             while( !feof(fileListing) && (strstr( bufferListing->str, bufferAsm->str ) == NULL) ) {
                 po_buf_fgets( bufferListing, fileListing );
                 po_buf_trim( bufferListing );
             }
 
             if ( feof(fileListing) ) {
-                fseek( fileListing, pos, SEEK_SET );
+
             } else {
                 char * bufferAsmEscaped = strdup( bufferAsm->str );
                 for( int i=0, c=strlen(bufferAsmEscaped); i<c; ++i ) {
@@ -854,14 +871,16 @@ void target_finalize( Environment * _environment ) {
                 if ( po_buf_match( bufferListing, "* * * ", bufferLine, bufferAddress, bufferBytes ) ) {
                     _environment->bytesProduced += bufferBytes->len >> 1;
                 }
-                adiline4( "AL:0:%d:%*s%s\n", 
+                adiline4( "AL:0:%d:%*s%s", 
                     _environment->currentSourceLineAnalyzed, leftPadding, "", bufferAsmEscaped );
             }
 
+            fseek( fileListing, pos, SEEK_SET );
+            
         }
 
         if ( _environment->currentSourceLineAnalyzed ) {
-            adiline1( "AF:0:%d\n", 
+            adiline1( "AF:0:%d", 
                 _environment->bytesProduced );
         }
 

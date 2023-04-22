@@ -155,6 +155,11 @@ int po_buf_cmp(POBuffer a, POBuffer b) {
 }
 
 int po_buf_trim(POBuffer buf) {
+ 
+    if ( buf->len <= 1 ) {
+        return 0;
+    }
+ 
     char * p = buf->str;
     char * q = buf->str + buf->len - 1;
     while((p-buf->str) < buf->len) {
@@ -164,14 +169,24 @@ int po_buf_trim(POBuffer buf) {
         ++p;
     }
     while(q > p) {
-        if ( ! ( (*q == ' ') || (*q == '\n') || (*q == '\r') || (*q == 13) || (*q == 10) || (*q == '\t') ) ) {
+        if ( ! ( (*q == ' ') || (*q == 10) || (*q == '\t') ) ) {
             break;
         };
         --q;
     }
-    memmove( buf->str, p, ( q - p ) + 1 );
-    buf->len = q - p + 1;
-    *(buf->str + buf->len) = 0;
+    while(q > p) {
+        if ( ! ( (*q == 13) ) || (*q == 10) ) {
+            break;
+        };
+        --q;
+    }
+    *(q+1) = 0;
+    unsigned long realLen = ( q - p ) + 1;
+    if ( p != buf->str ) {
+        memmove( buf->str, p, realLen );
+    }
+    buf->len = realLen;
+    *(buf->str + realLen) = 0;
     return p - buf->str;
 }
 

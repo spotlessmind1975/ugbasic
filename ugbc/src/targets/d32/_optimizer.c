@@ -1202,12 +1202,12 @@ static int optim_pass( Environment * _environment, POBuffer buf[LOOK_AHEAD], Pee
     int line = 0;
     int zA = 0, zB = 0;
 
-    int sourceLine = 0;
+    int sourceLine = -1;
 
     _environment->currentSourceLineAnalyzed = 0;
     _environment->removedAssemblyLines = 0;
 
-    adiline2( "POP:0:%d:%d\n", peephole_pass, kind );
+    adiline2( "POP:0:%d:%d", peephole_pass, kind );
 
     sprintf( fileNameOptimized, "%s.asm", get_temporary_filename( _environment ) );
         
@@ -1272,7 +1272,7 @@ static int optim_pass( Environment * _environment, POBuffer buf[LOOK_AHEAD], Pee
                     sourceLine = atoi( ln->str );
                     if ( ( sourceLine != _environment->currentSourceLineAnalyzed ) ) {
                         if ( _environment->currentSourceLineAnalyzed   ) {
-                            adiline3( "POL:0:%d:%d:%d\n", 
+                            adiline3( "POL:0:%d:%d:%d", 
                                 peephole_pass, _environment->currentSourceLineAnalyzed, _environment->removedAssemblyLines );
                         }
                         _environment->currentSourceLineAnalyzed = sourceLine;
@@ -1376,20 +1376,20 @@ void target_finalize( Environment * _environment ) {
         POBuffer bufferVersion = TMP_BUF;
         POBuffer bufferBytes = TMP_BUF;
 
-        int sourceLine = 0;
+        int sourceLine = -1;
 
         _environment->currentSourceLineAnalyzed = 0;
         _environment->bytesProduced = 0;
 
-        adiline0( "A:0\n" );
+        adiline0( "A:0" );
 
-        fileAsm = fopen( _environment->asmFileName, "rt" );
+        fileAsm = fopen( _environment->asmFileName, "rb" );
         if(fileAsm == NULL) {
             perror(_environment->asmFileName);
             exit(-1);
         }
 
-        fileListing = fopen( _environment->listingFileName, "rt" );
+        fileListing = fopen( _environment->listingFileName, "rb" );
         if(fileListing == NULL) {
             perror(_environment->listingFileName);
             exit(-1);
@@ -1404,8 +1404,8 @@ void target_finalize( Environment * _environment ) {
                 POBuffer ln = TMP_BUF;
                 if (po_buf_match( bufferAsm, "; L:*", ln ) ) {
                     sourceLine = atoi( ln->str );
-                    if ( ( sourceLine != _environment->currentSourceLineAnalyzed ) && (  _environment->bytesProduced > 0 ) ) {
-                        adiline2( "AB:0:%d:%d\n", 
+                    if ( ( sourceLine != _environment->currentSourceLineAnalyzed ) ) {
+                        adiline2( "AB:0:%d:%d", 
                             _environment->currentSourceLineAnalyzed, _environment->bytesProduced );
                         _environment->currentSourceLineAnalyzed = sourceLine;
                         _environment->bytesProduced = 0;
@@ -1414,6 +1414,7 @@ void target_finalize( Environment * _environment ) {
                 continue;
             }
 
+            *bufferListing->str = 0;
             int pos = ftell( fileListing );
             while( !feof(fileListing) && (strstr( bufferListing->str, bufferAsm->str ) == NULL) ) {
                 po_buf_fgets( bufferListing, fileListing );
@@ -1433,8 +1434,6 @@ void target_finalize( Environment * _environment ) {
                     }
                 } 
 
-                // 2822                  D32STARTUP
-                // 2822  FC010D                  LDD $010D               
                 if ( po_buf_match( bufferListing, "* * *", bufferAddress, bufferBytes, bufferVersion ) ) {
                     if ( bufferAddress->len == 4 ) {
                         int i = 0;
@@ -1449,14 +1448,14 @@ void target_finalize( Environment * _environment ) {
                         }
                      }
                 }
-                adiline4( "AL:0:%d:%*s%s\n", 
+                adiline4( "AL:0:%d:%*s%s", 
                     _environment->currentSourceLineAnalyzed, leftPadding, "", bufferAsmEscaped );
             }
 
         }
 
         if ( _environment->currentSourceLineAnalyzed ) {
-            adiline1( "AF:0:%d\n", 
+            adiline1( "AF:0:%d", 
                 _environment->bytesProduced );
         }
 
