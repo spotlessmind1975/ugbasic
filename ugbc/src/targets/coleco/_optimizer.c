@@ -818,13 +818,13 @@ void target_finalize( Environment * _environment ) {
 
         adiline0( "A:0" );
 
-        fileAsm = fopen( _environment->asmFileName, "rt" );
+        fileAsm = fopen( _environment->asmFileName, "rb" );
         if(fileAsm == NULL) {
             perror(_environment->asmFileName);
             exit(-1);
         }
 
-        fileListing = fopen( _environment->listingFileName, "rt" );
+        fileListing = fopen( _environment->listingFileName, "rb" );
         if(fileListing == NULL) {
             perror(_environment->listingFileName);
             exit(-1);
@@ -849,6 +849,7 @@ void target_finalize( Environment * _environment ) {
                 continue;
             }
 
+            *bufferListing->str = 0;
             int pos = ftell( fileListing );
             po_buf_trim( bufferAsm );
             while( !feof(fileListing) && (strstr( bufferListing->str, bufferAsm->str ) == NULL) ) {
@@ -859,6 +860,7 @@ void target_finalize( Environment * _environment ) {
             if ( feof(fileListing) ) {
 
             } else {
+                pos = ftell( fileListing );
                 char * bufferAsmEscaped = strdup( bufferAsm->str );
                 for( int i=0, c=strlen(bufferAsmEscaped); i<c; ++i ) {
                     if ( bufferAsmEscaped[i] == ':' ) {
