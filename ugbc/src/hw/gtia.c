@@ -1158,6 +1158,7 @@ void gtia_point_at_int( Environment * _environment, int _x, int _y ) {
 
     deploy_deferred( gtiavarsGraphic, src_hw_gtia_vars_graphics_asm );
     deploy( gtiapreproc, src_hw_gtia__preproc_asm );
+    deploy( gtiapreproc, src_hw_gtia__preproc_asm );
     deploy( plot, src_hw_gtia_plot_asm );
     
     outline1("LDA %2.2x", (_x & 0xff ) );
