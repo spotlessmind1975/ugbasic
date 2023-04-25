@@ -1041,6 +1041,10 @@ void ef9345_put_image( Environment * _environment, char * _image, char * _x, cha
 
 }
 
+void ef9345_blit_image( Environment * _environment, char * _sources[], int _source_count, char * _blit, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags ) {
+
+}
+
 void ef9345_wait_vbl( Environment * _environment ) {
 
 }
