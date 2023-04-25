@@ -63,14 +63,6 @@ void case_else( Environment * _environment ) {
         CRITICAL_CASE_ELSE_WITHOUT_SELECT_CASE();
     }
 
-    char endselectLabel[MAX_TEMPORARY_STORAGE]; sprintf(endselectLabel, "%sf", conditional->label );
-
-    if ( conditional->index > 0 ) {
-        cpu_jump( _environment, endselectLabel );
-    }
-
-    char elseLabel[MAX_TEMPORARY_STORAGE]; sprintf(elseLabel, "%se%d", conditional->label, conditional->index );
-
-    cpu_label( _environment, elseLabel );
+    conditional->caseElse = 1;
 
 }
