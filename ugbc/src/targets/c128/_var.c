@@ -123,6 +123,8 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     } else {
                         outline1("%s: .res 4", variable->realName);
                     }
+                    break;
+                case VT_BLIT:
                     break;                
                 case VT_IMAGE:
                 case VT_IMAGES:
@@ -244,6 +246,8 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
         case VT_TILES:
             outline0("   .byte 0, 0, 0, 0" );
             break;
+        case VT_BLIT:
+            break;                
         case VT_IMAGE:
         case VT_IMAGES:
         case VT_SEQUENCE:

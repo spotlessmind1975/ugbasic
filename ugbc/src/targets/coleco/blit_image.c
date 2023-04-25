@@ -74,6 +74,11 @@ void blit_image( Environment * _environment, char * _blit, char * _x, char * _y,
         }
     }
 
+    Variable * blit = variable_retrieve( _environment, _blit );
+    if ( blit->type != VT_BLIT ) {
+        CRITICAL_BLIT_CANNOT_BLIT( _blit );
+    }
+
     char blitLabel[MAX_TEMPORARY_STORAGE]; sprintf( blitLabel, "_%sblit", _blit );
     Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
     Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );

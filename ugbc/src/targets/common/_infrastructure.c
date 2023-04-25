@@ -79,7 +79,10 @@ char DATATYPE_AS_STRING[][16] = {
     "SPRITE",
     "TILE",
     "TILES",
-    "TILESET"
+    "TILESET",
+    "SEQUENCE",
+    "MUSIC",
+    "BLIT"
 };
 
 char OUTPUT_FILE_TYPE_AS_STRING[][16] = {
@@ -89,7 +92,10 @@ char OUTPUT_FILE_TYPE_AS_STRING[][16] = {
     "k7 (original)",
     "k7 (new)",
     "tap",
-    "rom"
+    "cas",
+    "rom",
+    "d64",
+    "dsk"
 };
 
 void memory_area_assign( MemoryArea * _first, Variable * _variable ) {
@@ -1775,6 +1781,8 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                                     break;
                             }
                             break;
+                        default:
+                            CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
                     }
                     break;
 

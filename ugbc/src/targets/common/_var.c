@@ -64,6 +64,7 @@ void variable_on_memory_init( Environment * _environment, int _imported_too ) {
                 case VT_SEQUENCE:
                 case VT_MUSIC:
                 case VT_ARRAY:
+                case VT_BLIT:
                     break;
                 default:
                     variable_store( _environment, variable->name, variable->value );

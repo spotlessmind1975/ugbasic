@@ -329,7 +329,10 @@ typedef enum _VariableType {
     VT_SEQUENCE = 23,
 
     /** MUSIC (a [piece of] music) */
-    VT_MUSIC = 24
+    VT_MUSIC = 24,
+
+    /** BLIT (blit definition) */
+    VT_BLIT = 25
 
 } VariableType;
 
@@ -2080,6 +2083,8 @@ typedef struct _Environment {
 #define CRITICAL_BLIT_INVALID_FREE_REGISTER( s, r ) CRITICAL3i("E167 - invalid free CPU register free in BLIT definition", s, r );
 #define CRITICAL_BLIT_TOO_MUCH_SOURCES( ) CRITICAL("E168 - too much sources on BLIT IMAGE for this target" );
 #define CRITICAL_BLIT_CANNOT_MIX_IMAGE_TYPES( n ) CRITICAL2("E169 - cannot mix image types with BLIT IMAGE", n );
+#define CRITICAL_BLIT_ALREADY_DEFINED( n ) CRITICAL2("E170 - BLIT with same name already defined", n );
+#define CRITICAL_BLIT_CANNOT_BLIT( n ) CRITICAL2("E171 - BLIT IMAGE with something that is not a blit", n );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }

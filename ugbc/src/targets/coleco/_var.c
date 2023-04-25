@@ -127,6 +127,8 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         outhead0("section code_user");
                     }
                     break;
+                case VT_BLIT:
+                    break;                
                 case VT_IMAGE:
                 case VT_IMAGES:
                 case VT_SEQUENCE:

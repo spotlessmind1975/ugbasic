@@ -4602,6 +4602,9 @@ datatype :
     | MUSIC {
         $$ = VT_MUSIC;
     }
+    | BLIT {
+        $$ = VT_BLIT;
+    }
     | SPRITE {
         $$ = VT_SPRITE;
     }

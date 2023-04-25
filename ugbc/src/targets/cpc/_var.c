@@ -115,6 +115,8 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         outline1("%s: db 0,0,0,0", variable->realName);
                     }
                     break;
+                case VT_BLIT:
+                    break;
                 case VT_IMAGE:
                 case VT_IMAGES:
                 case VT_SEQUENCE:
