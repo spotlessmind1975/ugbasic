@@ -79,6 +79,16 @@ IMAGEW2 EQU $51 ; $52
 ; to avoid issue #443
 IMAGEW2l EQU $52
 
+BLITTMPPTR fdb $0
+BLITTMPPTR2 fdb $0
+BLITS0 fcb $0
+BLITS1 fcb $0
+BLITS2 fcb $0
+BLITR0 fcb $0
+BLITR1 fcb $0
+BLITR2 fcb $0
+BLITR3 fcb $0
+
 ; ------------------------------------------------------------------------------
 ; BITMAP MODE 16 (MODE #3)
 ; ------------------------------------------------------------------------------

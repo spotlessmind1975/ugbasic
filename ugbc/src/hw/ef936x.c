@@ -363,6 +363,7 @@ int ef936x_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
             _environment->screenTilesWidth = 40;
             _environment->screenTilesHeight = 25;
             _environment->screenColors = 16;
+            _environment->currentModeBW = 4;
             outline0("LDA #%00000000");
             outline0("STA $A7DC");
             break;
@@ -372,6 +373,7 @@ int ef936x_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
             _environment->screenTilesWidth = 80;
             _environment->screenTilesHeight = 25;
             _environment->screenColors = 4;
+            _environment->currentModeBW = 2;
             outline0("LDA #%00101010");
             outline0("STA $A7DC");
             break;
@@ -381,6 +383,7 @@ int ef936x_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
             _environment->screenTilesWidth = 40;
             _environment->screenTilesHeight = 25;
             _environment->screenColors = 4;
+            _environment->currentModeBW = 2;
             outline0("LDA #%00100001");
             outline0("STA $A7DC");
             break;
@@ -390,6 +393,7 @@ int ef936x_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
             _environment->screenTilesWidth = 20;
             _environment->screenTilesHeight = 25;
             _environment->screenColors = 16;
+            _environment->currentModeBW = 4;
             outline0("LDA #%01111011");
             outline0("STA $A7DC");
             break;
@@ -399,6 +403,7 @@ int ef936x_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
             _environment->screenTilesWidth = 40;
             _environment->screenTilesHeight = 25;
             _environment->screenColors = 4;
+            _environment->currentModeBW = 2;
             outline0("LDA #%00100100");
             outline0("STA $A7DC");
             break;
@@ -1695,6 +1700,97 @@ Variable * ef936x_get_raster_line( Environment * _environment ) {
     variable_store( _environment, result->name, 0 );
 
     return result;
+    
+}
+
+static void ef936x_load_image_address_to_register( Environment * _environment, char * _register, char * _source, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {
+
+    outline1("LDY #%s", _source );
+    if ( _sequence ) {
+        outline0("LEAY 3,y" );
+        if ( strlen(_sequence) == 0 ) {
+        } else {
+            outline1("LDX #OFFSETS%4.4x", _frame_count * _frame_size );
+            outline1("LDB %s", _sequence );
+            outline0("LDA #0" );
+            outline0("LEAX D, X" );
+            outline0("LEAX D, X" );
+            outline0("LDD ,X" );
+            outline0("LEAY D, Y" );
+        }
+        if ( _frame ) {
+            if ( strlen(_frame) == 0 ) {
+            } else {
+                outline1("LDX #OFFSETS%4.4x", _frame_size );
+                outline1("LDB %s", _frame );
+                outline0("LDA #0" );
+                outline0("LEAX D, X" );
+                outline0("LEAX D, X" );
+                outline0("LDD ,X" );
+                outline0("LEAY D, Y" );
+            }
+        }
+    } else {
+        if ( _frame ) {
+            outline0("LEAY 3,y" );
+            if ( strlen(_frame) == 0 ) {
+            } else {
+                outline1("LDX #OFFSETS%4.4x", _frame_size );
+                outline1("LDB %s", _frame );
+                outline0("LDA #0" );
+                outline0("LEAX D, X" );
+                outline0("LEAX D, X" );
+                outline0("LDD ,X" );
+                outline0("LEAY D, Y" );
+            }
+        }
+    }
+
+    outline1("STY %s", _register );
+
+}
+
+void ef936x_blit_image( Environment * _environment, char * _sources[], int _source_count, char * _blit, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags ) {
+
+    deploy( ef936xvars, src_hw_ef936x_vars_asm);
+    deploy( blitimage, src_hw_ef936x_blit_image_asm );
+
+    if ( _source_count > 2 ) {
+        CRITICAL_BLIT_TOO_MUCH_SOURCES( );
+    }
+
+    MAKE_LABEL
+
+    outhead1("blitimage%s", label);
+
+    outline1("LDY #%s", _blit );
+    outline0("STY BLITIMAGEBLITADDR" );
+
+    if ( _source_count > 0 ) {
+        ef936x_load_image_address_to_register( _environment, "BLITTMPPTR", _sources[0], _sequence, _frame, _frame_size, _frame_count );
+    } else {
+        outline0( "LDY #0" );
+        outline0( "STY BLITTMPPTR" );
+    }
+
+    if ( _source_count > 1 ) {
+        ef936x_load_image_address_to_register( _environment, "BLITTMPPTR2", _sources[1], _sequence, _frame, _frame_size, _frame_count );
+    } else {
+        outline0( "LDY #0" );
+        outline0( "STY BLITTMPPTR2" );
+    }
+
+    outline1("LDD %s", _x );
+    outline0("STD <IMAGEX" );
+    outline1("LDD %s", _y );
+    outline0("STD <IMAGEY" );
+
+    outline1("LDA #$%2.2x", ( _flags & 0xff ) );
+    outline0("STA <IMAGEF" );
+    outline1("LDA #$%2.2x", ( (_flags>>8) & 0xff ) );
+    outline0("STA <IMAGET" );
+
+    outline0("JSR BLITIMAGE");
     
 }
 
