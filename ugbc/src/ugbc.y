@@ -4537,7 +4537,11 @@ div_definition :
     ;
 
 dimensions :
-      const_expr {
+    {
+          ((struct _Environment *)_environment)->arrayDimensionsEach[((struct _Environment *)_environment)->arrayDimensions] = -1;
+          ++((struct _Environment *)_environment)->arrayDimensions;
+    }
+    | const_expr {
           ((struct _Environment *)_environment)->arrayDimensionsEach[((struct _Environment *)_environment)->arrayDimensions] = $1;
           ++((struct _Environment *)_environment)->arrayDimensions;
     }
@@ -4666,12 +4670,29 @@ array_assign:
         if ( ((struct _Environment *)_environment)->currentArray->memoryArea ) {
             variable_store( _environment, ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->value );
         }
+        int i=0;
+        for( i=0; i<((struct _Environment *)_environment)->arrayDimensions; ++i ) {
+            if ( ((struct _Environment *)_environment)->arrayDimensionsEach[i] <= 0 ) {
+                CRITICAL_ARRAY_MISSING_SIZE( ((struct _Environment *)_environment)->currentArray->name );
+            }
+        }
     }
     | OP_ASSIGN BufferDefinition {
         int size = ( strlen( $2 ) - 3 ) / 2;
-        if ( size != ((struct _Environment *)_environment)->currentArray->size ) {
-            CRITICAL_BUFFER_SIZE_MISMATCH_ARRAY_SIZE( ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->size, size );
+        if ( ((struct _Environment *)_environment)->currentArray->arrayDimensions > 1 ) {
+            if ( size != ((struct _Environment *)_environment)->currentArray->size ) {
+                CRITICAL_BUFFER_SIZE_MISMATCH_ARRAY_SIZE( ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->size, size );
+            }
+        } else {
+            if ( ((struct _Environment *)_environment)->currentArray->arrayDimensionsEach[0] >= 0 ) {
+                if ( size != ((struct _Environment *)_environment)->currentArray->size ) {
+                    CRITICAL_BUFFER_SIZE_MISMATCH_ARRAY_SIZE( ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->size, size );
+                }
+            } else {
+                ((struct _Environment *)_environment)->currentArray->arrayDimensionsEach[0] = size / ( VT_BITWIDTH( ((struct _Environment *)_environment)->currentArray->arrayType ) / 8 );
+            }
         }
+
         char * buffer = malloc( size );
         char hexdigits[3];
         int i = 0, c = 0, j = 0;
@@ -4686,11 +4707,131 @@ array_assign:
         ((struct _Environment *)_environment)->currentArray->memoryArea = NULL;
         ((struct _Environment *)_environment)->currentArray = NULL;
     }
+    | OP_ASSIGN LOAD String AS TEXT {
+        Variable *currentArray = ((struct _Environment *)_environment)->currentArray;
+        
+        currentArray->arrayInitialization = NULL;
+
+        FILE * handle = fopen( $3, "rt" );
+        if ( ! handle ) {
+            CRITICAL_ARRAY_DEFINITION_FILE_NOT_FOUND( $3 );
+        }
+
+        currentArray->arrayInitialization = malloc( sizeof( Constant ) );
+        memset( currentArray->arrayInitialization, 0, sizeof( Constant ) );
+
+        Constant * current = currentArray->arrayInitialization;
+
+        while( !feof( handle ) ) {
+
+            char valueString[MAX_TEMPORARY_STORAGE];
+            memset( valueString, 0, MAX_TEMPORARY_STORAGE );
+            int p=0, j=0;
+
+            while( !feof( handle ) ) {
+                char c = fgetc(handle);
+                if ( j == 0 ) {
+                    if ( (c < '0') || (c > '9') ) {
+                        continue;
+                    }
+                    j = 1;
+                } else {
+                    if ( (c < '0') || (c > '9') ) {
+                        break;
+                    }
+                }
+                valueString[p] = c;
+                ++p;
+            }
+
+            current->value = atoi( valueString );
+
+            current->next = malloc( sizeof( Constant ) );
+            memset( current->next, 0, sizeof( Constant ) );
+            current = current->next;
+
+        }
+
+        fclose( handle );
+
+        int size = 0;
+        Constant * first = currentArray->arrayInitialization;
+        while( first->next ) {
+            first = first->next;
+            ++size;
+        }
+
+        if ( currentArray->arrayDimensions == 1 ) {
+            if ( currentArray->size < 0 ) {
+                currentArray->size = ( size * ( VT_BITWIDTH( currentArray->arrayType ) / 8 ) );
+            } else {
+                if ( size != ((struct _Environment *)_environment)->currentArray->size ) {
+                    CRITICAL_BUFFER_SIZE_MISMATCH_ARRAY_SIZE( ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->size, size );
+                }
+            }
+        } else {
+            if ( size != ((struct _Environment *)_environment)->currentArray->size ) {
+                CRITICAL_BUFFER_SIZE_MISMATCH_ARRAY_SIZE( ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->size, size );
+            }
+        }
+
+        char * buffer = malloc( currentArray->size ), * ptr = buffer;
+        int i=0;
+        Constant * initializationValues = currentArray->arrayInitialization;
+        while(initializationValues->next) {
+            switch( VT_BITWIDTH(currentArray->arrayType) ) {
+                case 8:
+                    *ptr = (initializationValues->value) & 0xff;
+                    ++ptr;
+                    break;
+                case 16:
+                    #ifdef CPU_BIG_ENDIAN
+                        *ptr = ( initializationValues->value >> 8 ) & 0xff;
+                        *(ptr+1) = ( initializationValues->value ) & 0xff;
+                    #else
+                        *(ptr+1) = ( initializationValues->value >> 8 ) & 0xff;
+                        *ptr = ( initializationValues->value ) & 0xff;
+                    #endif
+                    ptr += 2;
+                    break;
+                case 32:
+                    #ifdef CPU_BIG_ENDIAN
+                        *ptr = ( initializationValues->value >> 24 ) & 0xff;
+                        *(ptr+1) = ( initializationValues->value >> 16 ) & 0xff;
+                        *(ptr+2) = ( initializationValues->value >> 8 ) & 0xff;
+                        *(ptr+3) = ( initializationValues->value ) & 0xff;
+                    #else
+                        *(ptr+3) = ( initializationValues->value >> 24 ) & 0xff;
+                        *(ptr+2) = ( initializationValues->value >> 16 ) & 0xff;
+                        *(ptr+1) = ( initializationValues->value >> 8 ) & 0xff;
+                        *ptr = ( initializationValues->value ) & 0xff;
+                    #endif
+                    ptr += 4;
+                    break;
+            }
+            initializationValues = initializationValues->next;
+        }
+        if ( ( ptr - buffer ) != currentArray->size ) {
+            CRITICAL_BUFFER_SIZE_MISMATCH_ARRAY_SIZE( currentArray->name, currentArray->size, (int)(ptr-buffer));
+        }
+        ((struct _Environment *)_environment)->currentArray->valueBuffer = buffer;
+        ((struct _Environment *)_environment)->currentArray->memoryArea = NULL;
+        ((struct _Environment *)_environment)->currentArray = NULL;
+    }
     | OP_ASSIGN {
         Variable *currentArray = ((struct _Environment *)_environment)->currentArray;
         currentArray->arrayInitialization = NULL;
     } OP_HASH OGP const_array_definitions CGP {
         Variable *currentArray = ((struct _Environment *)_environment)->currentArray;
+        if ( currentArray->size < 0 ) {
+            int size = 0;
+            Constant * first = currentArray->arrayInitialization;
+            while( first ) {
+                first = first->next;
+                ++size;
+            }
+            currentArray->size = ( size * ( VT_BITWIDTH( currentArray->arrayType ) / 8 ) );
+        }
         char * buffer = malloc( currentArray->size ), * ptr = buffer;
         int i=0;
         Constant * initializationValues = currentArray->arrayInitialization;
