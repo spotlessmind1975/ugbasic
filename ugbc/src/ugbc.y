@@ -83,7 +83,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token XYLOPHONE KILL COMPRESSED STORAGE ENDSTORAGE FILEX DLOAD INCLUDE LET CPC INT INTEGER LONG OP_PERC OP_AMPERSAND OP_AT
 %token EMBEDDED NATIVE RELEASE READONLY DIGIT OPTION EXPLICIT ORIGIN RELATIVE DTILE DTILES OUT RESOLUTION
 %token COPEN COCO STANDARD SEMIGRAPHIC COMPLETE PRESERVE BLIT COPY THRESHOLD SOURCE DESTINATION VALUE
-%token LBOUND UBOUND
+%token LBOUND UBOUND BINARY
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -4790,6 +4790,119 @@ array_assign:
             }
 
             current->value = atoi( valueString );
+
+            current->next = malloc( sizeof( Constant ) );
+            memset( current->next, 0, sizeof( Constant ) );
+            current = current->next;
+
+        }
+
+        fclose( handle );
+
+        int size = 0;
+        Constant * first = currentArray->arrayInitialization;
+        while( first->next ) {
+            first = first->next;
+            ++size;
+        }
+
+        if ( currentArray->arrayDimensions == 1 ) {
+            if ( currentArray->size < 0 ) {
+                currentArray->size = ( size * ( VT_BITWIDTH( currentArray->arrayType ) / 8 ) );
+                currentArray->arrayDimensionsEach[0] = size;
+            } else {
+                if ( size != ((struct _Environment *)_environment)->currentArray->size ) {
+                    CRITICAL_BUFFER_SIZE_MISMATCH_ARRAY_SIZE( ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->size, size );
+                }
+            }
+        } else {
+            if ( size != ((struct _Environment *)_environment)->currentArray->size ) {
+                CRITICAL_BUFFER_SIZE_MISMATCH_ARRAY_SIZE( ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->size, size );
+            }
+        }
+
+        char * buffer = malloc( currentArray->size ), * ptr = buffer;
+        int i=0;
+        Constant * initializationValues = currentArray->arrayInitialization;
+        while(initializationValues->next) {
+            switch( VT_BITWIDTH(currentArray->arrayType) ) {
+                case 8:
+                    *ptr = (initializationValues->value) & 0xff;
+                    ++ptr;
+                    break;
+                case 16:
+                    #ifdef CPU_BIG_ENDIAN
+                        *ptr = ( initializationValues->value >> 8 ) & 0xff;
+                        *(ptr+1) = ( initializationValues->value ) & 0xff;
+                    #else
+                        *(ptr+1) = ( initializationValues->value >> 8 ) & 0xff;
+                        *ptr = ( initializationValues->value ) & 0xff;
+                    #endif
+                    ptr += 2;
+                    break;
+                case 32:
+                    #ifdef CPU_BIG_ENDIAN
+                        *ptr = ( initializationValues->value >> 24 ) & 0xff;
+                        *(ptr+1) = ( initializationValues->value >> 16 ) & 0xff;
+                        *(ptr+2) = ( initializationValues->value >> 8 ) & 0xff;
+                        *(ptr+3) = ( initializationValues->value ) & 0xff;
+                    #else
+                        *(ptr+3) = ( initializationValues->value >> 24 ) & 0xff;
+                        *(ptr+2) = ( initializationValues->value >> 16 ) & 0xff;
+                        *(ptr+1) = ( initializationValues->value >> 8 ) & 0xff;
+                        *ptr = ( initializationValues->value ) & 0xff;
+                    #endif
+                    ptr += 4;
+                    break;
+            }
+            initializationValues = initializationValues->next;
+        }
+        if ( ( ptr - buffer ) != currentArray->size ) {
+            CRITICAL_BUFFER_SIZE_MISMATCH_ARRAY_SIZE( currentArray->name, currentArray->size, (int)(ptr-buffer));
+        }
+        ((struct _Environment *)_environment)->currentArray->valueBuffer = buffer;
+        ((struct _Environment *)_environment)->currentArray->memoryArea = NULL;
+        ((struct _Environment *)_environment)->currentArray = NULL;
+    }
+    | OP_ASSIGN LOAD String AS BINARY {
+        Variable *currentArray = ((struct _Environment *)_environment)->currentArray;
+        
+        currentArray->arrayInitialization = NULL;
+
+        FILE * handle = fopen( $3, "rt" );
+        if ( ! handle ) {
+            CRITICAL_ARRAY_DEFINITION_FILE_NOT_FOUND( $3 );
+        }
+
+        currentArray->arrayInitialization = malloc( sizeof( Constant ) );
+        memset( currentArray->arrayInitialization, 0, sizeof( Constant ) );
+
+        Constant * current = currentArray->arrayInitialization;
+
+        while( !feof( handle ) ) {
+
+            switch( VT_BITWIDTH( currentArray->arrayType ) ) {
+                case 8: {
+                    unsigned char value = 0;
+                    (void)!fread( &value, 1, 1, handle );
+                    current->value = value;
+                    break;
+                }
+                case 16: {
+                    int value = 0;
+                    (void)!fread( &value, 1, 2, handle );
+                    current->value = value;
+                    break;
+                }
+                case 32: {
+                    long value = 0;
+                    (void)!fread( &value, 1, 4, handle );
+                    current->value = value;
+                    break;
+                }
+                default:
+                    CRITICAL_ARRAY_DATATYPE_NOT_SUPPORTED( $3 );
+            }
 
             current->next = malloc( sizeof( Constant ) );
             memset( current->next, 0, sizeof( Constant ) );

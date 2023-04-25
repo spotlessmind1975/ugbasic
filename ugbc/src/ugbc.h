@@ -2088,6 +2088,7 @@ typedef struct _Environment {
 #define CRITICAL_ARRAY_DEFINITION_FILE_NOT_FOUND( n ) CRITICAL2("E172 - file not found for initialize array", n );
 #define CRITICAL_ARRAY_MISSING_SIZE( n ) CRITICAL2("E173 - missing size on one or more dimensions", n );
 #define CRITICAL_ARRAY_MULTIDIMENSIONAL( n ) CRITICAL2("E174 - simple UBOUND/LBOUND cannot be used on multidimensional array", n );
+#define CRITICAL_ARRAY_DATATYPE_NOT_SUPPORTED( n ) CRITICAL2("E175 - datatype not supported for array loading from binary file", n );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
