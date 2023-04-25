@@ -959,6 +959,8 @@ void tms9918_point_at_int( Environment * _environment, int _x, int _y ) {
     outline0("LD D, A");
     outline1("LD A, $%2.2x", ( _x & 0xff ) );
     outline0("LD E, A");
+    outline1("LD A, $%2.2x", ( ( _x >> 8 ) & 0xff ) );
+    outline0("LD IXH, A");
     outline0("LD A, 1");
     if ( ! _environment->hasGameLoop ) {
         outline0("CALL PLOT");
@@ -981,6 +983,8 @@ void tms9918_point_at_vars( Environment * _environment, char *_x, char *_y ) {
     outline0("LD D, A");
     outline1("LD A, (%s)", x->realName );
     outline0("LD E, A");
+    outline1("LD A, (%s+1)", x->realName );
+    outline0("LD IXH, A");
     outline0("LD A, 1");
     if ( ! _environment->hasGameLoop ) {
         outline0("CALL PLOT");
