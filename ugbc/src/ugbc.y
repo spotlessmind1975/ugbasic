@@ -83,6 +83,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token XYLOPHONE KILL COMPRESSED STORAGE ENDSTORAGE FILEX DLOAD INCLUDE LET CPC INT INTEGER LONG OP_PERC OP_AMPERSAND OP_AT
 %token EMBEDDED NATIVE RELEASE READONLY DIGIT OPTION EXPLICIT ORIGIN RELATIVE DTILE DTILES OUT RESOLUTION
 %token COPEN COCO STANDARD SEMIGRAPHIC COMPLETE PRESERVE BLIT COPY THRESHOLD SOURCE DESTINATION VALUE
+%token LBOUND UBOUND
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -726,6 +727,26 @@ const_factor:
                 $$ = v->valueBuffer[IMAGE_HEIGHT_OFFSET] + 256 * v->valueBuffer[IMAGE_HEIGHT_OFFSET+1];
             }
           #endif
+      }
+      | UBOUND OP Identifier CP {
+          Variable * array = variable_retrieve( _environment, $3 );
+          if ( array->type != VT_ARRAY ) {
+            CRITICAL_NOT_ARRAY( $3 );
+          }
+          if ( array->arrayDimensions > 1 ) {
+            CRITICAL_ARRAY_MULTIDIMENSIONAL( $3 );
+          }
+          $$ = array->arrayDimensionsEach[0];
+      }
+      | LBOUND OP Identifier CP {
+          Variable * array = variable_retrieve( _environment, $3 );
+          if ( array->type != VT_ARRAY ) {
+            CRITICAL_NOT_ARRAY( $3 );
+          }
+          if ( array->arrayDimensions > 1 ) {
+            CRITICAL_ARRAY_MULTIDIMENSIONAL( $3 );
+          }
+          $$ = 0;
       }
       | LEN OP Identifier CP {
           Constant * c = constant_find( ((Environment *)_environment)->constants, $3 );
@@ -2402,6 +2423,30 @@ exponential:
     }
     | ASC OP expr CP {
         $$ = variable_string_asc( _environment, $3 )->name;
+    }
+    | UBOUND OP expr CP {
+        Variable * array = variable_retrieve( _environment, $3 );
+        if ( array->type != VT_ARRAY ) {
+        CRITICAL_NOT_ARRAY( $3 );
+        }
+        if ( array->arrayDimensions > 1 ) {
+        CRITICAL_ARRAY_MULTIDIMENSIONAL( $3 );
+        }
+        Variable * value = variable_temporary( _environment, VT_WORD, "(ubound)" );
+        variable_store( _environment, value->name, array->arrayDimensionsEach[0] );
+        $$ = value->name;
+    }
+    | LBOUND OP expr CP {
+        Variable * array = variable_retrieve( _environment, $3 );
+        if ( array->type != VT_ARRAY ) {
+        CRITICAL_NOT_ARRAY( $3 );
+        }
+        if ( array->arrayDimensions > 1 ) {
+        CRITICAL_ARRAY_MULTIDIMENSIONAL( $3 );
+        }
+        Variable * value = variable_temporary( _environment, VT_WORD, "(lbound)" );
+        variable_store( _environment, value->name, 0 );
+        $$ = value->name;
     }
     | LEN OP expr CP {
         $$ = variable_string_len( _environment, $3 )->name;
@@ -4764,6 +4809,7 @@ array_assign:
         if ( currentArray->arrayDimensions == 1 ) {
             if ( currentArray->size < 0 ) {
                 currentArray->size = ( size * ( VT_BITWIDTH( currentArray->arrayType ) / 8 ) );
+                currentArray->arrayDimensionsEach[0] = size;
             } else {
                 if ( size != ((struct _Environment *)_environment)->currentArray->size ) {
                     CRITICAL_BUFFER_SIZE_MISMATCH_ARRAY_SIZE( ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->size, size );
@@ -4831,6 +4877,7 @@ array_assign:
                 ++size;
             }
             currentArray->size = ( size * ( VT_BITWIDTH( currentArray->arrayType ) / 8 ) );
+            currentArray->arrayDimensionsEach[0] = size;
         }
         char * buffer = malloc( currentArray->size ), * ptr = buffer;
         int i=0;
