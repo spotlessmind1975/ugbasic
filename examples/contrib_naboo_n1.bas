@@ -20,18 +20,19 @@ REM Per ulteriori informazioni, fare clic qui: [[http://patsos.de/New_Weblog/?p=
 REM
 
 BITMAP ENABLE(320,200)
+
 CLS
 
-DIM data() = LOAD "examples/contrib_naboo_n1.txt" AS TEXT
+DIM data() = LOAD "examples/contrib_naboo_n1.txt" AS TEXT READONLY
 
 DIM pos AS INTEGER = 0
 
 DO
 	mode = data(pos): x = data(pos+1): y = data(pos+2)
 	SELECT CASE mode
-		CASE 0
+		CASE #0
 			PLOT x, y
-		CASE 1
+		CASE #1
 			LINE TO x, y
 		CASE ELSE
 			HALT
