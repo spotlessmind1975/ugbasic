@@ -4111,7 +4111,7 @@ op_assign :
     | OP_ASSIGN_DIRECT
     ;
 
-blit_definition_expression:
+blit_definition_define_expression : 
     Identifier AS {
         //printf( "\n\n%s\n", $1 );
         blit_define_begin_compound( _environment, $1 );  
@@ -4122,6 +4122,10 @@ blit_definition_expression:
     | Identifier op_assign blit_unary_op OP_COMMA blit_unary_op OP_COMMA blit_binary_op OP_COMMA blit_unary_op OP_COMMA blit_unary_op OP_COMMA blit_binary_op OP_COMMA blit_unary_op {
         blit_define( _environment, $1, $3, $5, $7, $9, $11, $13, $15 );
       }
+    ;
+
+blit_definition_expression:
+    blit_definition_define_expression
     |  IMAGE blit_sources AT optional_x OP_COMMA optional_y WITH Identifier blit_image_flags {
         $9 = $9 | FLAG_WITH_PALETTE;
         blit_image( _environment, $8, $4, $6, NULL, NULL, $9 );
@@ -5549,6 +5553,7 @@ define_definition :
     | PALETTE NOT PRESERVE {
         ((struct _Environment *)_environment)->vestigialConfig.palettePreserve = 0;
     }    
+    | BLIT blit_definition_define_expression
     ;
 
 define_definitions :
