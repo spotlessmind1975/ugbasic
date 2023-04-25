@@ -1589,6 +1589,153 @@ void ted_put_image( Environment * _environment, char * _image, char * _x, char *
 
 }
 
+static void ted_load_image_address_to_register( Environment * _environment, char * _register, char * _source, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {
+
+    outline1("LDA #<%s", _source );
+    outline1("STA %s", _register );
+    outline1("LDA #>%s", _source );
+    outline1("STA %s+1", _register );
+
+    if ( _sequence ) {
+
+        outline0("CLC" );
+        outline1("LDA %s", _register );
+        outline0("ADC #3" );
+        outline1("STA %s", _register );
+        outline1("LDA %s+1", _register );
+        outline0("ADC #0" );
+        outline1("STA %s+1", _register );
+        if ( strlen(_sequence) == 0 ) {
+
+        } else {
+            outline1("LDA #<OFFSETS%4.4x", _frame_size * _frame_count );
+            outline0("STA MATHPTR0" );
+            outline1("LDA #>OFFSETS%4.4x", _frame_size * _frame_count );
+            outline0("STA MATHPTR0+1" );
+            outline0("CLC" );
+            outline1("LDA %s", _sequence );
+            outline0("ASL" );
+            outline0("TAY" );
+            outline1("LDA %s", _register );
+            outline0("ADC (MATHPTR0), Y" );
+            outline1("STA %s", _register );
+            outline0("INY" );
+            outline1("LDA %s+1", _register );
+            outline0("ADC (MATHPTR0+1), Y" );
+            outline1("STA %s+1", _register );
+        }
+
+        if ( _frame ) {
+            if ( strlen(_frame) == 0 ) {
+
+            } else {
+                outline1("LDA #<OFFSETS%4.4x", _frame_size );
+                outline0("STA MATHPTR0" );
+                outline1("LDA #>OFFSETS%4.4x", _frame_size );
+                outline0("STA MATHPTR0+1" );
+                outline0("CLC" );
+                outline1("LDA %s", _frame );
+                outline0("ASL" );
+                outline0("TAY" );
+                outline1("LDA %s", _register );
+                outline0("ADC (MATHPTR0), Y" );
+                outline1("STA %s", _register );
+                outline0("INY" );
+                outline1("LDA %s+1", _register );
+                outline0("ADC (MATHPTR0), Y" );
+                outline1("STA %s+1", _register );
+            }
+        }
+
+    } else {
+
+        if ( _frame ) {
+            outline0("CLC" );
+            outline1("LDA %s", _register );
+            outline0("ADC #3" );
+            outline1("STA %s", _register );
+            outline1("LDA %s+1", _register );
+            outline0("ADC #0" );
+            outline1("STA %s+1", _register );
+            if ( strlen(_frame) == 0 ) {
+
+            } else {
+                outline1("LDA #<OFFSETS%4.4x", _frame_size );
+                outline0("STA MATHPTR0" );
+                outline1("LDA #>OFFSETS%4.4x", _frame_size );
+                outline0("STA MATHPTR0+1" );
+                outline0("CLC" );
+                outline1("LDA %s", _frame );
+                outline0("ASL" );
+                outline0("TAY" );
+                outline1("LDA %s", _register );
+                outline0("ADC (NATHPTR0), Y" );
+                outline1("STA %s", _register );
+                outline0("INY" );
+                outline1("LDA %s+1", _register );
+                outline0("ADC (MATHPTR0), Y" );
+                outline1("STA %s+1", _register );
+            }
+        }
+
+    }
+
+}
+
+void ted_blit_image( Environment * _environment, char * _sources[], int _source_count, char * _blit, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags ) {
+
+    deploy( tedvars, src_hw_ted_vars_asm);
+    deploy( tedvarsGraphic, src_hw_ted_vars_graphic_asm );
+    deploy( blitimage, src_hw_ted_blit_image_asm );
+
+    if ( _source_count > 2 ) {
+        CRITICAL_BLIT_TOO_MUCH_SOURCES( );
+    }
+
+    MAKE_LABEL
+
+    outhead1("blitimage%s:", label);
+
+    outline1("LDA #<%s", _blit );
+    outline0("STA BLITIMAGEBLITADDR" );
+    outline1("LDA #>%s", _blit );
+    outline0("STA BLITIMAGEBLITADDR+1" );
+
+    if ( _source_count > 0 ) {
+        ted_load_image_address_to_register( _environment, "BLITTMPPTR", _sources[0], _sequence, _frame, _frame_size, _frame_count );
+    } else {
+        outline0( "LDA #$0" );
+        outline0( "STA BLITTMPPTR" );
+        outline0( "STA BLITTMPPTR+1" );
+    }
+
+    if ( _source_count > 1 ) {
+        ted_load_image_address_to_register( _environment, "BLITTMPPTR2", _sources[1], _sequence, _frame, _frame_size, _frame_count );
+    } else {
+        outline0( "LDA #$0" );
+        outline0( "STA BLITTMPPTR2" );
+        outline0( "STA BLITTMPPTR2+1" );
+    }
+
+    outhead1("blitimage%s:", label);
+
+    outline1("LDA %s", _x );
+    outline0("STA IMAGEX" );
+    outline1("LDA %s+1", _x );
+    outline0("STA IMAGEX+1" );
+    outline1("LDA %s", _y );
+    outline0("STA IMAGEY" );
+    outline1("LDA %s+1", _y );
+    outline0("STA IMAGEY+1" );
+    outline1("LDA #$%2.2x", ( _flags & 0xff ) );
+    outline0("STA IMAGEF" );
+    outline1("LDA #$%2.2x", ( (_flags>>8) & 0xff ) );
+    outline0("STA IMAGET" );
+
+    outline0("JSR BLITIMAGE");
+
+}
+
 void ted_wait_vbl( Environment * _environment ) {
 
     deploy( vbl, src_hw_ted_vbl_asm);

@@ -54,6 +54,16 @@ IMAGEH2 = $24
 IMAGET = $25
 IMAGEF = $16
 
+BLITTMPPTR = $FE ; $FF
+BLITTMPPTR2 = $FC ; $FD
+BLITS0 = $FA ; $FB
+BLITS1 = $F8 ; $F9
+BLITS2 = $F6 ; $F7
+BLITR0 = $F4 ; $F5
+BLITR1 = $F2 ; $F3
+BLITR2 = $F0 ; $F1
+BLITR3 = $EE ; $EF
+
 PLOTVBASELO:
     .byte <($6000+(0*320)),<($6000+(1*320)),<($6000+(2*320)),<($6000+(3*320))
     .byte <($6000+(4*320)),<($6000+(5*320)),<($6000+(6*320)),<($6000+(7*320))
