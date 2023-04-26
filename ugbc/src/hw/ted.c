@@ -747,6 +747,9 @@ int ted_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
             outline0("AND #%11101111");
             outline0("STA $FF07" );
 
+            outline0("LDA $18" );
+            outline0("STA $FF12" );
+
             cpu_store_16bit( _environment, colormapAddress->realName, 0x0800 );
 
             cpu_store_8bit( _environment, "_PEN", 0x01 );
@@ -773,6 +776,9 @@ int ted_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
             outline0("ORA #%00010000");
             outline0("STA $FF07" );
 
+            outline0("LDA $18" );
+            outline0("STA $FF12" );
+            
             cpu_store_16bit( _environment, colormapAddress->realName, 0x0800 );
             
             cpu_store_8bit( _environment, "_PEN", 0x01 );
