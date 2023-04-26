@@ -4,12 +4,12 @@ An **isomorphic BASIC** language compiler for retrocomputers by Marco Spedaletti
 
 ## ABOUT THIS SOFTWARE
 
-A cross compiler of BASIC dialect specialized in programs that are [very efficient "by design"](https://retroprogramming.iwashere.eu/midres_library:isomorphism) on various [8-bit platforms](https://retroprogramming.iwashere.eu/ugbasic:targets) (based on **[MOS 6502/6510](https://retroprogramming.iwashere.eu/ugbasic:targets#cpu_6502_based)**, **[Motorola 6809](https://retroprogramming.iwashere.eu/ugbasic:targets#based)** and **[Zilog Z80](https://retroprogramming.iwashere.eu/ugbasic:targets#z80_based)**), without the need for "fine tuning" them and without compromises of other dev-kits.
+A cross compiler of BASIC dialect specialized in programs that are [very efficient "by design"](https://retroprogramming.iwashere.eu/midres_library:isomorphism) on various [8-bit platforms](https://ugbasic.iwashere.eu/targets) (based on **[MOS 6502/6510](https://ugbasic.iwashere.eu/targets)**, **[Motorola 6809](https://ugbasic.iwashere.eu/targets)** and **[Zilog Z80](https://ugbasic.iwashere.eu/targets)**), without the need for "fine tuning" them and without compromises of other dev-kits.
 
  * **Installation and usage**
     * [Installation guide](https://retroprogramming.iwashere.eu/ugbasic:installation)
     * [Usage guide](https://retroprogramming.iwashere.eu/ugbasic:usage)
-    * [Supported targets](https://retroprogramming.iwashere.eu/ugbasic:targets)
+    * [Supported targets](https://ugbasic.iwashere.eu/targets)
  * **About the language** 
     * [Basics of language](https://retroprogramming.iwashere.eu/ugbasic:user:basics)
     * [Syntax](https://retroprogramming.iwashere.eu/ugbasic:syntax)
@@ -66,7 +66,7 @@ This is a short list of supported hardware and output file formats:
  * TRS-80 Color Computer (`coco`)
  * ZX Spectrum 48K (`zx`)
 
-The complete list of targets can be [found here](https://retroprogramming.iwashere.eu/ugbasic:targets).
+The complete list of targets can be [found here](https://ugbasic.iwashere.eu/targets).
 
 ## WHAT DOES "ug" MEAN?
 
