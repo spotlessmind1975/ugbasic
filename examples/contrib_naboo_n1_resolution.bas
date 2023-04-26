@@ -1,10 +1,11 @@
 ﻿REM @english
-REM OTHER CONTRIBUTIONS NABOO N1 STARFIGHTER
+REM OTHER CONTRIBUTIONS NABOO N1 STARFIGHTER (SCALED)
 REM
 REM This is a renderer for the data file produced by the converter from Blender Freestyle SVG 
 REM (Scalable Vector Graphics) into sequential files. The file is stored on the host file
 REM system, then loaded and used by ugBASIC to initialize the array. This example will render
-REM a "Naboo N1 Starfighter".
+REM a "Naboo N1 Starfighter", and a scaler is implemented, to guarantee that the image
+REM will be drawn inside a "virtual screen" of 320x200 pixels.
 REM
 REM For more information please click here: [[http://patsos.de/New_Weblog/?p=671|http://patsos.de/New_Weblog/?p=671]]
 REM 
@@ -14,7 +15,8 @@ REM
 REM Questo è un programma per riprodurre la grafica a partire dai dati prodotti dal convertitore 
 REM da Blender Freestyle SVG (Scalable Vector Graphics) in file sequenziali. Il file viene 
 REM memorizzato sul file system host, quindi caricato e utilizzato da ugBASIC per inizializzare 
-REM l'array. Questo esempio renderizza "Naboo N1 Starfighter".
+REM l'array. Questo esempio renderizza "Naboo N1 Starfighter", e viene aggiunto uno scalatore,
+REM per garantire the l'immagine sia disegnata all'interno di uno "schermo virtuale" di 320x200 pixel.
 REM 
 REM Per ulteriori informazioni, fare clic qui: [[http://patsos.de/New_Weblog/?p=671|http://patsos.de/New_Weblog/?p=671]]
 REM
