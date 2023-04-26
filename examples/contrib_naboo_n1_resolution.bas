@@ -7,10 +7,11 @@ REM system, then loaded and used by ugBASIC to initialize the array. This exampl
 REM a "Naboo N1 Starfighter", and a scaler is implemented, to guarantee that the image
 REM will be drawn inside a "virtual screen" of 320x200 pixels.
 REM
-REM For more information please click here: [[http://patsos.de/New_Weblog/?p=671|http://patsos.de/New_Weblog/?p=671]]
+REM For more information please click here:
+REM http://patsos.de/New_Weblog/?p=671
 REM 
 REM @italian
-REM VARI ALTRI CONTRIBUTI CACCIA STELLARE NABOO
+REM VARI ALTRI CONTRIBUTI CACCIA STELLARE NABOO (SCALATO)
 REM
 REM Questo è un programma per riprodurre la grafica a partire dai dati prodotti dal convertitore 
 REM da Blender Freestyle SVG (Scalable Vector Graphics) in file sequenziali. Il file viene 
@@ -18,7 +19,8 @@ REM memorizzato sul file system host, quindi caricato e utilizzato da ugBASIC pe
 REM l'array. Questo esempio renderizza "Naboo N1 Starfighter", e viene aggiunto uno scalatore,
 REM per garantire the l'immagine sia disegnata all'interno di uno "schermo virtuale" di 320x200 pixel.
 REM 
-REM Per ulteriori informazioni, fare clic qui: [[http://patsos.de/New_Weblog/?p=671|http://patsos.de/New_Weblog/?p=671]]
+REM Per ulteriori informazioni, fare clic qui: 
+REM http://patsos.de/New_Weblog/?p=671
 REM
 
 BITMAP ENABLE(320,200)
