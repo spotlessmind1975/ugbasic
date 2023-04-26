@@ -93,16 +93,22 @@ void point_at( Environment * _environment, int _x, int _y ) {
  */
 void point_at_vars( Environment * _environment, char * _x, char * _y ) {
 
+    MAKE_LABEL
+
     deploy( zxvars, src_hw_zx_vars_asm);
     deploy( plot, src_hw_zx_plot_asm );
 
     Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
     Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
 
+    outline1("LD A, (%s+1)", x->realName );
+    outline0("CP 0");
+    outline1("JR NZ, %s", label );
     outline1("LD A, (%s)", x->realName );
     outline0("LD H, A");
     outline1("LD A, (%s)", y->realName );
     outline0("LD L, A");
     outline0("CALL PLOT");
+    outhead1("%s:", label );
 
 }
