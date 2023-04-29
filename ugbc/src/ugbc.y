@@ -83,7 +83,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token XYLOPHONE KILL COMPRESSED STORAGE ENDSTORAGE FILEX DLOAD INCLUDE LET CPC INT INTEGER LONG OP_PERC OP_AMPERSAND OP_AT
 %token EMBEDDED NATIVE RELEASE READONLY DIGIT OPTION EXPLICIT ORIGIN RELATIVE DTILE DTILES OUT RESOLUTION
 %token COPEN COCO STANDARD SEMIGRAPHIC COMPLETE PRESERVE BLIT COPY THRESHOLD SOURCE DESTINATION VALUE
-%token LBOUND UBOUND BINARY
+%token LBOUND UBOUND BINARY C128Z
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -5889,6 +5889,14 @@ target :
         #endif
     }
     |
+    C128Z {
+        #ifdef __c128z__
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }
+    |
     C64 {
         #ifdef __c64__
             $$ = 1;
@@ -7040,7 +7048,9 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
 #elif defined(__atarixl__) 
     char target[MAX_TEMPORARY_STORAGE] = "ATARI XL";
 #elif __c128__
-    char target[MAX_TEMPORARY_STORAGE] = "Commodore 128";
+    char target[MAX_TEMPORARY_STORAGE] = "Commodore 128 (MOS 8510 native)";
+#elif __c128z__
+    char target[MAX_TEMPORARY_STORAGE] = "Commodore 128 (ZILOG Z80 native)";
 #elif __c64__
     char target[MAX_TEMPORARY_STORAGE] = "Commodore 64";
 #elif __plus4__
@@ -7120,6 +7130,9 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
 #elif __c128__
     printf("\t                prg - program binary file\n" );
     #define defaultExtension "prg"
+#elif __c128z__
+    printf("\t                prg - program binary file\n" );
+    #define defaultExtension "prg"
 #elif __plus4__
     printf("\t                prg - program binary file\n" );
     #define defaultExtension "prg"
@@ -7168,7 +7181,7 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
 #endif
     printf("\t-l <name>    Output filename with list of variables defined\n" );
     printf("\t-e <modules> Embed specified modules instead of inline code\n" );
-#if defined(__zx__) || defined(__msx1__) || defined(__coleco__) || defined(__sc3000__) || defined(__sg1000__) || defined(__cpc__)
+#if defined(__zx__) || defined(__msx1__) || defined(__coleco__) || defined(__sc3000__) || defined(__sg1000__) || defined(__cpc__) || defined(__c128z__)
     printf("\t-L <ignored> Output filename with assembly listing file\n" );
 #else
     printf("\t-L <listing> Output filename with assembly listing file\n" );
@@ -7234,6 +7247,8 @@ int main( int _argc, char *_argv[] ) {
 #elif __cpc__
     _environment->outputFileType = OUTPUT_FILE_TYPE_DSK;
 #elif __c128__
+    _environment->outputFileType = OUTPUT_FILE_TYPE_PRG;
+#elif __c128z__
     _environment->outputFileType = OUTPUT_FILE_TYPE_PRG;
 #elif __vg5000__
     _environment->outputFileType = OUTPUT_FILE_TYPE_K7_NEW;

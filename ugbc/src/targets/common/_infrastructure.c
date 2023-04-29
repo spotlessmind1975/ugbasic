@@ -6025,6 +6025,8 @@ char * image_load_asserts( Environment * _environment, char * _filename ) {
     strcat( lookedFilename, "/cpc" );
 #elif __c128__
     strcat( lookedFilename, "/c128" );
+#elif __c128z__
+    strcat( lookedFilename, "/c128z" );
 #elif __vg5000__
     strcat( lookedFilename, "/vg5000" );
 #elif __coco__

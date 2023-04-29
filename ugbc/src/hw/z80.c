@@ -38,7 +38,7 @@
  * CODE SECTION
  ****************************************************************************/
 
-#if defined(__zx__) || defined(__msx1__) || defined(__coleco__) || defined(__sc3000__) || defined(__sg1000__) || defined(__cpc__) || defined(__vg5000__)
+#if defined(__zx__) || defined(__msx1__) || defined(__coleco__) || defined(__sc3000__) || defined(__sg1000__) || defined(__cpc__) || defined(__vg5000__) || defined(__c128z__)
 
 /**
  * @brief <i>Z80</i>: emit code to make long conditional jump
@@ -4434,7 +4434,7 @@ void z80_dstring_vars( Environment * _environment ) {
     int count = _environment->dstring.count == 0 ? DSTRING_DEFAULT_COUNT : _environment->dstring.count;
     int space = _environment->dstring.space == 0 ? DSTRING_DEFAULT_SPACE : _environment->dstring.space;
 
-#if !defined(__vg5000__) && !defined(__cpc__)
+#if !defined(__vg5000__) && !defined(__cpc__) && !defined(__c128z__)
     outhead0("section data_user" );
 #endif
     outhead1("MAXSTRINGS:                   DB %d", count );
@@ -4442,7 +4442,7 @@ void z80_dstring_vars( Environment * _environment ) {
     outhead1("WORKING:                      DEFS %d", space );
     outhead1("TEMPORARY:                    DEFS %d", space );
     outhead1("FREE_STRING:                  DB $ff, $%2.2x", ((space)>>8)& 0xff );
-#if !defined(__vg5000__) && !defined(__cpc__)
+#if !defined(__vg5000__) && !defined(__cpc__) && !defined(__c128z__)
     outhead0("section code_user" );
 #endif
 

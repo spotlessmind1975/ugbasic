@@ -1107,6 +1107,9 @@ typedef struct _Deployed {
     int vic2vars;
     int vic2varsGraphic;
     int vic2startup;
+    int vdcvars;
+    int vdcvarsGraphic;
+    int vdcstartup;
     int tedvars;
     int tedvarsGraphic;
     int tedstartup;
@@ -1124,6 +1127,9 @@ typedef struct _Deployed {
     int cpcvars;
     int cpcvarsGraphic;
     int cpcstartup;
+    int c128zvars;
+    int c128zvarsGraphic;
+    int c128zstartup;
     int tms9918vars;
     int tms9918varsGraphic;
     int tms9918startup;
@@ -3630,6 +3636,12 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "hw/vic2.h"
     #include "hw/sid.h"
     #include "hw/c128.h"
+#elif __c128z__
+    #include "../src-generated/modules_c128z.h"
+    #include "hw/z80.h"
+    #include "hw/vdc.h"
+    #include "hw/sidz.h"
+    #include "hw/c128z.h"
 #elif __vg5000__
     #include "../src-generated/modules_vg5000.h"
     #include "hw/z80.h"
