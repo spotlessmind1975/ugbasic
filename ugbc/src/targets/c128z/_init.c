@@ -67,6 +67,10 @@ void target_initialization( Environment * _environment ) {
 
     variable_import( _environment, "EVERYSTATUS", VT_BYTE, 0 );
     variable_global( _environment, "EVERYSTATUS" );
+    variable_import( _environment, "EVERYCOUNTER", VT_WORD, 0 );
+    variable_global( _environment, "EVERYCOUNTER" );
+    variable_import( _environment, "EVERYTIMING", VT_WORD, 0 );
+    variable_global( _environment, "EVERYTIMING" );
 
     variable_import( _environment, "BITMAPADDRESS", VT_ADDRESS, 0xc000 );
     variable_global( _environment, "BITMAPADDRESS" );
@@ -91,6 +95,8 @@ void target_initialization( Environment * _environment ) {
 
     variable_import( _environment, "C128ZTIMER", VT_WORD, 0 );
     variable_global( _environment, "C128ZTIMER" );    
+    variable_import( _environment, "C128ZTIMER2", VT_WORD, 0 );
+    variable_global( _environment, "C128ZTIMER2" );    
 
     variable_import( _environment, "IRQVECTOR", VT_BUFFER, 3 );
     variable_global( _environment, "IRQVECTOR" );   

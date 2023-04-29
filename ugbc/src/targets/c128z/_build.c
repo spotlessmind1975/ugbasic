@@ -49,7 +49,7 @@ void target_linkage( Environment * _environment ) {
     char listingFileName[MAX_TEMPORARY_STORAGE];
     char binaryName2[MAX_TEMPORARY_STORAGE];
     
-    BUILD_CHECK_FILETYPE(_environment, OUTPUT_FILE_TYPE_DSK)
+    BUILD_CHECK_FILETYPE(_environment, OUTPUT_FILE_TYPE_PRG)
 
     BUILD_SAFE_REMOVE( _environment, _environment->exeFileName );
 

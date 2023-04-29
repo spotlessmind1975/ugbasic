@@ -49,11 +49,21 @@ static unsigned int SOUND_FREQUENCIES[] = {
 
 void sidz_initialization( Environment * _environment ) {
 
+    cpu_call( _environment, "SIDZSTARTUP" );
+
 }
 
 void sidz_finalization( Environment * _environment ) {
 
+    if ( ! _environment->deployed.sidstartup ) {
+        cpu_label( _environment, "SIDZSTARTUP" );
+        outline0( "RET" );
+        cpu_label( _environment, "MUSICPLAYER" );
+        outline0( "RET" );
+    }
+
 }
+
 
 void sidz_start( Environment * _environment, int _channels ) {
 
