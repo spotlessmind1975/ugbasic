@@ -50,6 +50,9 @@ endif
 ifeq ($(target),c128)
   output=prg
 endif
+ifeq ($(target),c128z)
+  output=prg
+endif
 ifeq ($(target),c64)
   output=prg
 endif
@@ -140,7 +143,7 @@ DECB = ./modules/toolshed/build/unix/decb/decb$(EXESUFFIX)
 ifdef 10liner
 EXAMPLES := $(wildcard examples/*_10lines.bas)
 else
-EXAMPLES := $(wildcard examples/*.bas)
+EXAMPLES := $(wildcard examples/stargame.bas)
 endif
 
 # List of assembled files of examples
@@ -360,7 +363,7 @@ generated/atarixl/exeso/%.xex: $(subst /generated/exeso/,/examples/,$(@:.xex=.ba
 
 #------------------------------------------------ 
 # c128:
-#    COMMODORE 128 (8502)
+#    COMMODORE 128 (8510)
 #------------------------------------------------ 
 # 
 toolchain.c128: cc65
@@ -374,6 +377,29 @@ generated/c128/exe/%.prg: $(subst /exe/,/asm/,$(@:.prg=.asm))
 
 generated/c128/exeso/%.prg: $(subst /generated/exeso/,/examples/,$(@:.prg=.bas))
 	@ugbc/exe/ugbc.c128 $(OPTIONS) -o $@ -O prg $(subst generated/c128/exeso/,examples/,$(@:.prg=.bas))
+
+#------------------------------------------------ 
+# c128z:
+#    COMMODORE 128 (Z80)
+#------------------------------------------------ 
+# 
+toolchain.c128z: z88dk
+
+generated/c128z/asm/%.asm:
+	ugbc/exe/ugbc.c128z $(OPTIONS) $(subst generated/c128z/asm/,examples/,$(@:.asm=.bas)) $@ 
+
+generated/c128z/exe/%.prg:
+	$(Z80ASM) -D__c128z__ -l -m -s -g -b $(subst /exe/,/asm/,$(@:.prg=.asm))
+	
+# @mv $(subst /exe/,/asm/,$(@:.dsk=.sym)) $(subst /exe/,/asm/,$(@:.dsk=.osym))
+# @php sym2c128z.php $(subst /exe/,/asm/,$(@:.dsk=.osym)) >$(subst /exe/,/asm/,$(@:.rom=.sym))
+# @rm -f $(subst /exe/,/asm/,$(@:.dsk=.o))
+# @mv $(subst /exe/,/asm/,$(@:.dsk=.bin)) $(@:.dsk=.)
+# @$(APPMAKE) +c128 --org 256 --disk -b $(@:.dsk=.) -o $(dir $@)main.
+# @rm -f $(@:.dsk=.bin) $(@:.dsk=_*.bin) $(@:.dsk=.) $(@:.dsk=_*.) $(dir $@)main.
+
+generated/c128z/exeso/%.prg: $(subst /generated/exeso/,/examples/,$(@:.prg=.bas))
+	ugbc/exe/ugbc.c128z $(OPTIONS) -d -D $(@:.prg=.info) -o $@ -O prg $(subst generated/c128z/exeso/,examples/,$(@:.prg=.bas))
 
 #------------------------------------------------ 
 # c64:
