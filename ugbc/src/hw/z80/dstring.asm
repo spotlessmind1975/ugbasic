@@ -151,9 +151,11 @@ DSGCLOOP:
     LD A, (IX)
     CP 0
     JR Z, DSGCLOOP3
+    LD A, B
     LD C, (IX+1)
     LD B, (IX+2)
     PUSH BC
+    LD B, A
     LD C, (IX)
     CALL DSMALLOC
     POP BC
@@ -166,15 +168,17 @@ DSGCLOOP:
     POP HL
     JMP DSGCLOOP3
 DSGCLOOP2:
-    LD A, 0
-    LD (IX), A
+    ; LD A, 0
+    ; LD (IX), A
     JMP DSGCLOOP3
 DSGCLOOP3:
     POP BC
     INC B
     LD A, B
+    LD DE, HL
 	LD HL, MAXSTRINGS
     CP (HL)
+    LD HL, DE
     JR NZ, DSGCLOOP
 DSGCEND:
     LD A, (USING)
