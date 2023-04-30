@@ -1189,7 +1189,7 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
                     int distance = rgbi_distance(&commonPalette[i], &rgb );
                     if ( distance < minDistance ) {
                         minDistance = distance;
-                        colorIndex = commonPalette[i].index;
+                        colorIndex = i;
                     }
                 }
             }
