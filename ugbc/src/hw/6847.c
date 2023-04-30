@@ -1103,7 +1103,7 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
     (void)!_transparent_color;
 
     RGBi white = { 0xff, 0xff, 0xff, 0xff };
-    RGBi black = { 0x00, 0x00, 0x00, 0x00 };
+    RGBi black = { 0x00, 0x00, 0x00, 0xff };
 
     // ignored on bitmap mode
     (void)!_transparent_color;
