@@ -49,11 +49,11 @@ IRQWRAPPER:
 
     LDA $FF1C
     LSR A
-    BCS IRQWRAPPEREND
+    BCS IRQWRAPPEREND2
 
     LDA $FF1D
     CMP #206
-    BCC IRQWRAPPEREND
+    BCC IRQWRAPPEREND2
 
     TSX
     LDA $101,X ; recupero il registro di stato salvato nello stack
@@ -75,6 +75,8 @@ IRQWRAPPER:
 IRQWRAPPEREND:
 
     SEI
+    
+IRQWRAPPEREND2:
 
     ; myEndIRQ:
     ; ... ; disabilita ROM
