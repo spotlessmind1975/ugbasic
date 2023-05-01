@@ -47,6 +47,14 @@ IRQWRAPPER:
     TXA
     PHA
 
+    LDA $FF1C
+    LSR A
+    BCS IRQWRAPPEREND
+
+    LDA $FF1D
+    CMP #206
+    BCC IRQWRAPPEREND
+
     TSX
     LDA $101,X ; recupero il registro di stato salvato nello stack
     TAX
