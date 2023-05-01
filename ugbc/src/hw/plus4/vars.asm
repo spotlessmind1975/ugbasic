@@ -35,9 +35,9 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-TEXTADDRESS:        .WORD   $0C00
+TEXTADDRESS:        .WORD   $EC00
 BITMAPADDRESS:      .WORD   $6000
-COLORMAPADDRESS:       .WORD  $0800
+COLORMAPADDRESS:       .WORD  $E800
 MOBADDRESS:         .WORD   $A000
 CURRENTMODE:    .BYTE   0
 CURRENTTILEMODE:    .BYTE   1
