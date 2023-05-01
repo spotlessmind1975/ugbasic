@@ -97,6 +97,9 @@ void target_initialization( Environment * _environment ) {
     outhead0(".segment \"CODE\"");
 
     deploy( vars, src_hw_plus4_vars_asm);
+    deploy( startup, src_hw_plus4_startup_asm);
+
+    cpu_call( _environment, "PLUS4STARTUP" );
 
     setup_text_variables( _environment );
 
