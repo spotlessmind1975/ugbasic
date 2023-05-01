@@ -35,6 +35,15 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+	DEFB $01, $1C, $0F, $1C, $00, $00, $FE, $02
+	DEFB $30, $3A, $9E, $37, $31, $38, $35, $00
+	DEFB $00, $00, $78, $A9, $C3, $8D, $EE, $FF
+	DEFB $A9, $2F, $8D, $EF, $FF, $A9, $1C, $8D
+	DEFB $F0, $FF, $A9, $3E, $8D, $00, $FF, $A9
+	DEFB $B0, $8D, $05, $D5, $EA, $EA, $EA, $EA
+
+	JP CODESTART
+
 IRQTIMERVOID:
 	RET
 

@@ -107,14 +107,13 @@ void target_initialization( Environment * _environment ) {
     bank_define( _environment, "TEMPORARY", BT_TEMPORARY, 0x5100, NULL );
 
     // outhead0("SECTION code_user");
-    outhead0("ORG $100");
-    // outhead0("SECTION data_user");
-    // outhead0("ORG $7030");
-    // outhead0("SECTION code_user");
+    outhead0("ORG $1BFF");
 
-    deploy( startup, src_hw_c128z_startup_asm);
+    deploy_inplace( startup, src_hw_c128z_startup_asm);
 
     outhead0("CODESTART:")
+
+
     outline0("LD SP, $C000");
 
     // outline0("CALL VARINIT2");

@@ -386,20 +386,18 @@ generated/c128/exeso/%.prg: $(subst /generated/exeso/,/examples/,$(@:.prg=.bas))
 toolchain.c128z: z88dk
 
 generated/c128z/asm/%.asm:
-	ugbc/exe/ugbc.c128z $(OPTIONS) $(subst generated/c128z/asm/,examples/,$(@:.asm=.bas)) $@ 
+	@ugbc/exe/ugbc.c128z $(OPTIONS) $(subst generated/c128z/asm/,examples/,$(@:.asm=.bas)) $@ 
 
 generated/c128z/exe/%.prg:
 	$(Z80ASM) -D__c128z__ -l -m -s -g -b $(subst /exe/,/asm/,$(@:.prg=.asm))
-	
-# @mv $(subst /exe/,/asm/,$(@:.dsk=.sym)) $(subst /exe/,/asm/,$(@:.dsk=.osym))
-# @php sym2c128z.php $(subst /exe/,/asm/,$(@:.dsk=.osym)) >$(subst /exe/,/asm/,$(@:.rom=.sym))
-# @rm -f $(subst /exe/,/asm/,$(@:.dsk=.o))
-# @mv $(subst /exe/,/asm/,$(@:.dsk=.bin)) $(@:.dsk=.)
-# @$(APPMAKE) +c128 --org 256 --disk -b $(@:.dsk=.) -o $(dir $@)main.
-# @rm -f $(@:.dsk=.bin) $(@:.dsk=_*.bin) $(@:.dsk=.) $(@:.dsk=_*.) $(dir $@)main.
+	mv $(subst /exe/,/asm/,$(@:.prg=.sym)) $(subst /exe/,/asm/,$(@:.prg=.osym))
+	php sym2c128z.php $(subst /exe/,/asm/,$(@:.prg=.osym)) >$(subst /exe/,/asm/,$(@:.prg=.sym))
+	rm -f $(subst /exe/,/asm/,$(@:.prg=.o))
+	mv $(subst /exe/,/asm/,$(@:.prg=.bin)) $@
+	rm -f $(@:.prg=.bin) $(@:.prg=_*.bin) $(@:.prg=.) $(@:.prg=_*.)
 
 generated/c128z/exeso/%.prg: $(subst /generated/exeso/,/examples/,$(@:.prg=.bas))
-	ugbc/exe/ugbc.c128z $(OPTIONS) -d -D $(@:.prg=.info) -o $@ -O prg $(subst generated/c128z/exeso/,examples/,$(@:.prg=.bas))
+	@ugbc/exe/ugbc.c128z $(OPTIONS) -d -D $(@:.prg=.info) -o $@ -O prg $(subst generated/c128z/exeso/,examples/,$(@:.prg=.bas))
 
 #------------------------------------------------ 
 # c64:
