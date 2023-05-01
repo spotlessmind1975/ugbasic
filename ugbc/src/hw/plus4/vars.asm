@@ -36,7 +36,7 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 TEXTADDRESS:        .WORD   $EC00
-BITMAPADDRESS:      .WORD   $6000
+BITMAPADDRESS:      .WORD   $E000
 COLORMAPADDRESS:       .WORD  $E800
 MOBADDRESS:         .WORD   $A000
 CURRENTMODE:    .BYTE   0
