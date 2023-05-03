@@ -61,7 +61,7 @@
 </usermanual> */
 void point_at( Environment * _environment, int _x, int _y ) {
 
-    vdc_point_at_int( _environment, _x, _y );
+    vdcz_point_at_int( _environment, _x, _y );
 
 }
 
@@ -85,6 +85,6 @@ void point_at( Environment * _environment, int _x, int _y ) {
  */
 void point_at_vars( Environment * _environment, char * _x, char * _y ) {
 
-    vdc_point_at_vars( _environment, _x, _y );
+    vdcz_point_at_vars( _environment, _x, _y );
 
 }

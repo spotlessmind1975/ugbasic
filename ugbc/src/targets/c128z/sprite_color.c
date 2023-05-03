@@ -64,6 +64,6 @@ void sprite_color( Environment * _environment, int _sprite, int _color ) {
  */
 void sprite_color_vars( Environment * _environment, char * _sprite, char * _color ) {
 
-    vdc_sprite_color( _environment, _sprite, _color );
+    vdcz_sprite_color( _environment, _sprite, _color );
 
 }

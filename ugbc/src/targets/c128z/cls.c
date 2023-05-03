@@ -49,6 +49,6 @@ void cls( Environment * _environment, char * _paper ) {
         paper( _environment, _paper );
     }
 
-    vdc_cls( _environment );
+    vdcz_cls( _environment );
     
 }

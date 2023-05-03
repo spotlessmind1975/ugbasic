@@ -1,5 +1,5 @@
 ; /*****************************************************************************
-;  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
+;  * ugBASIC - an isomorphic BASIC language compiler for RTSrocomputers        *
 ;  *****************************************************************************
 ;  * Copyright 2021-2023 Marco Spedaletti (asimov@mclink.it)
 ;  *
@@ -37,28 +37,28 @@
 
 SPRITEDATAFROM:
 SPRITEDATADONE:
-    RET
+    RTS
 
 SPRITEDISABLE:
 SPRITEDISABLEDONE:
-    RET
+    RTS
 
 SPRITEENABLE:
-    RET
+    RTS
 
 SPRITEAT:
-    RET
+    RTS
 
 SPRITEEXPAND:
-    RET
+    RTS
 
 SPRITECOMPRESS:
-    RET
+    RTS
 
 SPRITECOLOR:
-    RET
+    RTS
 SPRITECOLORDONE:
-    RET
+    RTS
 
 SPRITECOL:
-    RET
+    RTS

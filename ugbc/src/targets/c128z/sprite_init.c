@@ -63,7 +63,7 @@ Variable * sprite_init( Environment * _environment, char * _image, char * _sprit
         cpu_inc( _environment, spriteCount->realName );
     }
 
-    vdc_sprite_data_from( _environment, index->name, image->name );
+    vdcz_sprite_data_from( _environment, index->name, image->name );
 
     return index;
 

@@ -77,7 +77,7 @@ Variable * csprite_init( Environment * _environment, char * _image, char *_sprit
     for (i=1; i<image->originalColors; ++i ) {
         variable_move_naked( _environment, spriteCount->name, index->name );
         Variable * realImage = sprite_converter( _environment, image->originalBitmap, image->originalWidth, image->originalHeight, image->originalDepth, &image->originalPalette[i], _flags );
-        vdc_sprite_data_from( _environment, index->name, realImage->name );
+        vdcz_sprite_data_from( _environment, index->name, realImage->name );
         cpu_inc( _environment, spriteCount->realName );
     }
 

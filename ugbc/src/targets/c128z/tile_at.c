@@ -56,7 +56,7 @@ Variable * tile_at( Environment * _environment, char * _x, char * _y ) {
     Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
     Variable * result = variable_temporary( _environment, VT_TILE, "(tileAt)");
     
-    vdc_tile_at( _environment, x->realName, y->realName, result->realName );
+    vdcz_tile_at( _environment, x->realName, y->realName, result->realName );
 
     return result;
 

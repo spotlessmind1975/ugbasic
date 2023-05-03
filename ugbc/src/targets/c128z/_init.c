@@ -120,7 +120,7 @@ void target_initialization( Environment * _environment ) {
     outline0("CALL VARINIT");
     outline0("CALL PROTOTHREADINIT" );
 
-    vdc_initialization( _environment );
+    vdcz_initialization( _environment );
     sidz_initialization( _environment );
     
     setup_text_variables( _environment );

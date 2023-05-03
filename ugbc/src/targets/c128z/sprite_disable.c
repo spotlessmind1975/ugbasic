@@ -62,7 +62,7 @@ void sprite_disable( Environment * _environment, int _sprite ) {
  */
 void sprite_disable_var( Environment * _environment, char * _sprite ) {
 
-    vdc_sprite_disable( _environment, _sprite );
+    vdcz_sprite_disable( _environment, _sprite );
 
 }
 

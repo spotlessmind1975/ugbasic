@@ -66,6 +66,6 @@ void sprite_expand_horizontal_var( Environment * _environment, char * _sprite ) 
 
     outline1("; SPRITE %s EXPAND HORIZONTAL (ignored)", _sprite);
 
-    vdc_sprite_expand_horizontal( _environment, _sprite );
+    vdcz_sprite_expand_horizontal( _environment, _sprite );
 
 }

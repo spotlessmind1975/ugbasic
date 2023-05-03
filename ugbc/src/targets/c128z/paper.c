@@ -55,7 +55,7 @@ void paper( Environment * _environment, char * _color ) {
 
     variable_move( _environment, color->name, paper->name );
     
-    vdc_background_color_semivars( _environment, 0, color->realName );
+    vdcz_background_color_semivars( _environment, 0, color->realName );
     // c128z_border_color( _environment, color->realName );
     
 }

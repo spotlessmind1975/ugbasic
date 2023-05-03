@@ -1,2 +1,2 @@
 WAITVBL:
-    RET
+    RTS

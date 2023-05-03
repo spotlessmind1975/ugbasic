@@ -43,9 +43,9 @@ void cline( Environment * _environment, char * _characters ) {
     if ( _characters ) {
         Variable * characters = NULL;
         characters = variable_retrieve( _environment, _characters );
-        vdc_cline( _environment, characters->realName );
+        vdcz_cline( _environment, characters->realName );
     } else {
-        vdc_cline( _environment, NULL );
+        vdcz_cline( _environment, NULL );
     }
 
 }

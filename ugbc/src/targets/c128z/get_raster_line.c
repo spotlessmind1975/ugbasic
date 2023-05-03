@@ -54,6 +54,6 @@ extern char DATATYPE_AS_STRING[][16];
 </usermanual> */
 Variable * get_raster_line( Environment * _environment ) {
 
-    return vdc_get_raster_line( _environment );
+    return vdcz_get_raster_line( _environment );
 
 }

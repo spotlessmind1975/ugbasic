@@ -40,6 +40,6 @@
 
 void scroll( Environment * _environment, int _dx, int _dy ) {
 
-    vdc_scroll( _environment, _dx, _dy );
+    vdcz_scroll( _environment, _dx, _dy );
     
 }

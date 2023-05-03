@@ -54,6 +54,6 @@ void back( Environment * _environment, char * _color ) {
 
     paper( _environment, _color );
 
-    vdc_back( _environment );
+    vdcz_back( _environment );
 
 }

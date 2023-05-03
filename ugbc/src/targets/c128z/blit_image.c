@@ -95,27 +95,27 @@ void blit_image( Environment * _environment, char * _blit, char * _x, char * _y,
         case VT_SEQUENCE:
             if ( !sequence ) {
                 if ( !frame ) {
-                    vdc_blit_image( _environment, sources, _environment->blit.sourceCount, blitLabel, x->realName, y->realName, "", "", image->frameSize, image->frameCount, _flags );
+                    vdcz_blit_image( _environment, sources, _environment->blit.sourceCount, blitLabel, x->realName, y->realName, "", "", image->frameSize, image->frameCount, _flags );
                 } else {
-                    vdc_blit_image( _environment, sources, _environment->blit.sourceCount, blitLabel, x->realName, y->realName, frame->realName, "", image->frameSize, image->frameCount, _flags );
+                    vdcz_blit_image( _environment, sources, _environment->blit.sourceCount, blitLabel, x->realName, y->realName, frame->realName, "", image->frameSize, image->frameCount, _flags );
                 }
             } else {
                 if ( !frame ) {
-                    vdc_blit_image( _environment, sources, _environment->blit.sourceCount, blitLabel, x->realName, y->realName, "", sequence->realName, image->frameSize, image->frameCount, _flags );
+                    vdcz_blit_image( _environment, sources, _environment->blit.sourceCount, blitLabel, x->realName, y->realName, "", sequence->realName, image->frameSize, image->frameCount, _flags );
                 } else {
-                    vdc_blit_image( _environment, sources, _environment->blit.sourceCount, blitLabel, x->realName, y->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, _flags );
+                    vdcz_blit_image( _environment, sources, _environment->blit.sourceCount, blitLabel, x->realName, y->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, _flags );
                 }
             }
             break;
         case VT_IMAGES:
             if ( !frame ) {
-                vdc_blit_image( _environment, sources, _environment->blit.sourceCount, blitLabel, x->realName, y->realName, "", NULL, image->frameSize, 0, _flags );
+                vdcz_blit_image( _environment, sources, _environment->blit.sourceCount, blitLabel, x->realName, y->realName, "", NULL, image->frameSize, 0, _flags );
             } else {
-                vdc_blit_image( _environment, sources, _environment->blit.sourceCount, blitLabel, x->realName, y->realName, frame->realName, NULL, image->frameSize, 0, _flags );
+                vdcz_blit_image( _environment, sources, _environment->blit.sourceCount, blitLabel, x->realName, y->realName, frame->realName, NULL, image->frameSize, 0, _flags );
             }
             break;
         case VT_IMAGE:
-            vdc_blit_image( _environment, sources, _environment->blit.sourceCount, blitLabel, x->realName, y->realName, NULL, NULL, 0, 0, _flags );
+            vdcz_blit_image( _environment, sources, _environment->blit.sourceCount, blitLabel, x->realName, y->realName, NULL, NULL, 0, 0, _flags );
             break;
         default:
             CRITICAL_BLIT_IMAGE_UNSUPPORTED( image->name, DATATYPE_AS_STRING[image->type] );

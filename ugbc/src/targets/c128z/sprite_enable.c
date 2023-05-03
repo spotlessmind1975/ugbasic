@@ -62,7 +62,7 @@ void sprite_enable( Environment * _environment, int _sprite ) {
  */
 void sprite_enable_var( Environment * _environment, char * _sprite ) {
 
-    vdc_sprite_enable( _environment, _sprite );
+    vdcz_sprite_enable( _environment, _sprite );
 
 }
 

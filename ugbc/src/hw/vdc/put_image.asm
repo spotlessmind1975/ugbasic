@@ -1,5 +1,5 @@
 ; /*****************************************************************************
-;  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
+;  * ugBASIC - an isomorphic BASIC language compiler for RTSrocomputers        *
 ;  *****************************************************************************
 ;  * Copyright 2021-2023 Marco Spedaletti (asimov@mclink.it)
 ;  *
@@ -37,5 +37,5 @@
 
 PUTIMAGE:
 
-    RET
+    RTS
 

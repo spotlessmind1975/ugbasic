@@ -69,10 +69,10 @@ void put_tile( Environment * _environment, char * _tile, char * _x, char * _y, c
 
     switch( tile->type) {
         case VT_TILE:
-            vdc_put_tile( _environment, tile->realName, x->realName, y->realName );
+            vdcz_put_tile( _environment, tile->realName, x->realName, y->realName );
             break;
         case VT_TILES:
-            vdc_put_tiles( _environment, tile->realName, x->realName, y->realName, (w != NULL) ? w->realName : NULL, (h != NULL) ? h->realName : NULL );
+            vdcz_put_tiles( _environment, tile->realName, x->realName, y->realName, (w != NULL) ? w->realName : NULL, (h != NULL) ? h->realName : NULL );
             break;
     }
 

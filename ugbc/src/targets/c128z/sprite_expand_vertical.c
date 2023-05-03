@@ -66,7 +66,7 @@ void sprite_expand_vertical_var( Environment * _environment, char * _sprite ) {
 
     outline1("; SPRITE %s EXPAND VERTICAL (ignored)", _sprite);
 
-    vdc_sprite_expand_vertical( _environment, _sprite );
+    vdcz_sprite_expand_vertical( _environment, _sprite );
 
 }
 

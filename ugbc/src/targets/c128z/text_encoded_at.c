@@ -64,6 +64,6 @@ void text_encoded( Environment * _environment, char * _text, char * _pen, char *
             break;        
     }
 
-    vdc_text( _environment, address->realName, size->realName );
+    vdcz_text( _environment, address->realName, size->realName );
 
 }

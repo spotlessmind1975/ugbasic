@@ -54,7 +54,7 @@ void screen_mode( Environment * _environment, int _mode ) {
     ScreenMode * mode = find_screen_mode_by_id( _environment, _mode );
 
     if ( mode ) {
-        vdc_screen_mode_enable( _environment, mode );    
+        vdcz_screen_mode_enable( _environment, mode );    
 
         _environment->currentMode = mode->id;
         _environment->currentTileMode = 0;

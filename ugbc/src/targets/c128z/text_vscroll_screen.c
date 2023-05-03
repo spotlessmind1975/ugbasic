@@ -40,6 +40,6 @@
 
 void text_vscroll_screen( Environment * _environment, int _direction ) {
 
-    vdc_scroll_text( _environment, _direction );
+    vdcz_scroll_text( _environment, _direction );
 
 }

@@ -164,13 +164,21 @@ SOURCES_VIC1 := $(subst src/hw/vic1/,src-generated/vic1_,$(MODULES_VIC1:.asm=.c)
 src-generated/vic1_%.c: $(MODULES_VIC1)
 	@xxd -i $(subst src-generated/vic1_,src/hw/vic1/,$(@:.c=.asm)) >$@
 
-# MOS Technology VIC-II
+# MOS Technology VIC-II (under MOS 6510/8510)
 
 MODULES_VIC2 := $(wildcard src/hw/vic2/*.asm)
 SOURCES_VIC2 := $(subst src/hw/vic2/,src-generated/vic2_,$(MODULES_VIC2:.asm=.c)) $(FONTS)
 
 src-generated/vic2_%.c: $(MODULES_VIC2)
 	@xxd -i $(subst src-generated/vic2_,src/hw/vic2/,$(@:.c=.asm)) >$@
+
+# MOS Technology VIC-II (under ZILOG Z80)
+
+MODULES_VIC2Z := $(wildcard src/hw/vic2z/*.asm)
+SOURCES_VIC2Z := $(subst src/hw/vic2z/,src-generated/vic2z_,$(MODULES_VIC2Z:.asm=.c)) $(FONTS)
+
+src-generated/vic2z_%.c: $(MODULES_VIC2Z)
+	@xxd -i $(subst src-generated/vic2z_,src/hw/vic2z/,$(@:.c=.asm)) >$@
 
 # MOS Technology SID (under MOS 6510/8510)
 
@@ -188,13 +196,21 @@ SOURCES_SIDZ := $(subst src/hw/sidz/,src-generated/sidz_,$(MODULES_SIDZ:.asm=.c)
 src-generated/sidz_%.c: $(MODULES_SIDZ)
 	@xxd -i $(subst src-generated/sidz_,src/hw/sidz/,$(@:.c=.asm)) >$@
 
-# MOS Technology VDC (under ZILOG Z80)
+# MOS Technology VDC (under MOS 6502/6510)
 
 MODULES_VDC := $(wildcard src/hw/vdc/*.asm)
-SOURCES_VDC := $(subst src/hw/vdc/,src-generated/vdc_,$(MODULES_VDC:.asm=.c)) $(FONTS)
+SOURCES_VDC := $(subst src/hw/vdc/,src-generated/vdc_,$(MODULES_VDC:.asm=.c))
 
 src-generated/vdc_%.c: $(MODULES_VDC)
 	@xxd -i $(subst src-generated/vdc_,src/hw/vdc/,$(@:.c=.asm)) >$@
+
+# MOS Technology VDC (under ZILOG Z80)
+
+MODULES_VDCZ := $(wildcard src/hw/vdcz/*.asm)
+SOURCES_VDCZ := $(subst src/hw/vdcz/,src-generated/vdcz_,$(MODULES_VDCZ:.asm=.c))
+
+src-generated/vdcz_%.c: $(MODULES_VDCZ)
+	@xxd -i $(subst src-generated/vdcz_,src/hw/vdcz/,$(@:.c=.asm)) >$@
 
 # MOS Technology TED
 
@@ -284,8 +300,8 @@ SOURCES_C128 := $(subst src/hw/c128/,src-generated/c128_,$(MODULES_C128:.asm=.c)
 src-generated/c128_%.c: $(MODULES_C128)
 	@xxd -i $(subst src-generated/c128_,src/hw/c128/,$(@:.c=.asm)) >$@
 
-src-generated/modules_c128.c: $(SOURCES_6502) $(SOURCES_C128) $(SOURCES_VIC2) $(SOURCES_SID)
-	@cat $(SOURCES_6502) $(SOURCES_C128) $(SOURCES_VIC2) $(SOURCES_SID) >src-generated/modules_c128.c
+src-generated/modules_c128.c: $(SOURCES_6502) $(SOURCES_C128) $(SOURCES_VIC2) $(SOURCES_VDC) $(SOURCES_SID)
+	@cat $(SOURCES_6502) $(SOURCES_C128) $(SOURCES_VIC2) $(SOURCES_VDC) $(SOURCES_SID) >src-generated/modules_c128.c
 	@grep "src" src-generated/modules_c128.c | awk -f modules.awk >src-generated/modules_c128.h
 	@grep "data" src-generated/modules_c128.c | awk -f modules.awk >>src-generated/modules_c128.h
 
@@ -297,8 +313,8 @@ SOURCES_C128Z := $(subst src/hw/c128z/,src-generated/c128z_,$(MODULES_C128Z:.asm
 src-generated/c128z_%.c: $(MODULES_C128Z)
 	@xxd -i $(subst src-generated/c128z_,src/hw/c128z/,$(@:.c=.asm)) >$@
 
-src-generated/modules_c128z.c: $(SOURCES_Z80) $(SOURCES_C128Z) $(SOURCES_VDC) $(SOURCES_SIDZ)
-	@cat $(SOURCES_Z80) $(SOURCES_C128Z) $(SOURCES_VDC) $(SOURCES_SIDZ) >src-generated/modules_c128z.c
+src-generated/modules_c128z.c: $(SOURCES_Z80) $(SOURCES_C128Z) $(SOURCES_VIC2Z) $(SOURCES_VDCZ) $(SOURCES_SIDZ)
+	@cat $(SOURCES_Z80) $(SOURCES_C128Z) $(SOURCES_VIC2Z) $(SOURCES_VDCZ) $(SOURCES_SIDZ) >src-generated/modules_c128z.c
 	@grep "src" src-generated/modules_c128z.c | awk -f modules.awk >src-generated/modules_c128z.h
 	@grep "data" src-generated/modules_c128z.c | awk -f modules.awk >>src-generated/modules_c128z.h
 

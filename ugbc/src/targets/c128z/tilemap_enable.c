@@ -65,6 +65,6 @@ void tilemap_enable( Environment * _environment, int _width, int _height, int _c
     
     bitmap_disable( _environment );
 
-    vdc_tilemap_enable( _environment, _width, _height, _colors, _tile_width, _tile_height );
+    vdcz_tilemap_enable( _environment, _width, _height, _colors, _tile_width, _tile_height );
     
 }

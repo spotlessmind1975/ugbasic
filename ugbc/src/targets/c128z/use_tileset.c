@@ -70,6 +70,6 @@ void use_tileset( Environment * _environment, char * _tileset ) {
         CRITICAL_USE_TILESET_ON_NON_TILESET( _tileset );
     }
 
-    vdc_use_tileset( _environment, tileset->realName );
+    vdcz_use_tileset( _environment, tileset->realName );
 
 }

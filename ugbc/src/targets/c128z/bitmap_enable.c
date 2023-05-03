@@ -61,6 +61,6 @@ void bitmap_enable( Environment * _environment, int _width, int _height, int _co
     // Let's define the special variable colormapAddress.
     Variable * colormapAddress = variable_retrieve_or_define( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0x5800 );
 
-    vdc_bitmap_enable( _environment, _width, _height, _colors );
+    vdcz_bitmap_enable( _environment, _width, _height, _colors );
     
 }

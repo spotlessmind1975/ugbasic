@@ -56,7 +56,7 @@ void screen_columns( Environment * _environment, int _columns ) {
 
     char columnsString[MAX_TEMPORARY_STORAGE]; sprintf( columnsString, "#$%2.2x", _columns );
 
-    vdc_screen_columns( _environment, columnsString );
+    vdcz_screen_columns( _environment, columnsString );
 
 }
 
@@ -77,6 +77,6 @@ void screen_columns( Environment * _environment, int _columns ) {
 void screen_columns_var( Environment * _environment, char * _columns ) {
 
     Variable * columns = variable_retrieve( _environment, _columns );
-    vdc_screen_columns( _environment, columns->realName );
+    vdcz_screen_columns( _environment, columns->realName );
 
 }

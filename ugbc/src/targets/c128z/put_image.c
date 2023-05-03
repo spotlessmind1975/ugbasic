@@ -71,27 +71,27 @@ void put_image( Environment * _environment, char * _image, char * _x, char * _y,
         case VT_SEQUENCE:
             if ( !sequence ) {
                 if ( !frame ) {
-                    vdc_put_image( _environment, image->realName, x->realName, y->realName, "", "", image->frameSize, image->frameCount, _flags );
+                    vdcz_put_image( _environment, image->realName, x->realName, y->realName, "", "", image->frameSize, image->frameCount, _flags );
                 } else {
-                    vdc_put_image( _environment, image->realName, x->realName, y->realName, frame->realName, "", image->frameSize, image->frameCount, _flags );
+                    vdcz_put_image( _environment, image->realName, x->realName, y->realName, frame->realName, "", image->frameSize, image->frameCount, _flags );
                 }
             } else {
                 if ( !frame ) {
-                    vdc_put_image( _environment, image->realName, x->realName, y->realName, "", sequence->realName, image->frameSize, image->frameCount, _flags );
+                    vdcz_put_image( _environment, image->realName, x->realName, y->realName, "", sequence->realName, image->frameSize, image->frameCount, _flags );
                 } else {
-                    vdc_put_image( _environment, image->realName, x->realName, y->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, _flags );
+                    vdcz_put_image( _environment, image->realName, x->realName, y->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, _flags );
                 }
             }
             break;
         case VT_IMAGES:
             if ( !frame ) {
-                vdc_put_image( _environment, image->realName, x->realName, y->realName, "", NULL, image->frameSize, 0, _flags );
+                vdcz_put_image( _environment, image->realName, x->realName, y->realName, "", NULL, image->frameSize, 0, _flags );
             } else {
-                vdc_put_image( _environment, image->realName, x->realName, y->realName, frame->realName, NULL, image->frameSize, 0, _flags );
+                vdcz_put_image( _environment, image->realName, x->realName, y->realName, frame->realName, NULL, image->frameSize, 0, _flags );
             }
             break;
         case VT_IMAGE:
-            vdc_put_image( _environment, image->realName, x->realName, y->realName, NULL, NULL, 0, 0, _flags );
+            vdcz_put_image( _environment, image->realName, x->realName, y->realName, NULL, NULL, 0, 0, _flags );
             break;
         default:
             CRITICAL_PUT_IMAGE_UNSUPPORTED( _image, DATATYPE_AS_STRING[image->type] );

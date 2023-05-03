@@ -73,7 +73,7 @@ Variable * collision_to( Environment * _environment, int _sprite ) {
  */
 Variable * collision_to_vars( Environment * _environment, char * _sprite ) {
 
-    return vdc_collision( _environment, _sprite );
+    return vdcz_collision( _environment, _sprite );
 
 }
 

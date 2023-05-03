@@ -51,6 +51,6 @@
 </usermanual> */
 void wait_vbl( Environment * _environment ) {
 
-    vdc_wait_vbl( _environment );
+    vdcz_wait_vbl( _environment );
 
 }
